@@ -103,7 +103,7 @@ namespace mfront {
         const AbstractBehaviourDSL& dsl,
         const StressPotential& sp,
         const std::string& id) const {
-      constexpr const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+      constexpr auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
       ViscoplasticFlowBase::endTreatment(bd, dsl, sp, id);
       CodeBlock i;
       i.code += generateMaterialPropertiesInitializationCode(dsl, bd, "A" + id,

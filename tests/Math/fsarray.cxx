@@ -45,12 +45,12 @@ struct FSArrayTest final : public tfel::tests::TestCase {
   void test1() {
     using namespace std;
     using namespace tfel::math;
-    constexpr const fsarray<3u, int> a1(0);
-    constexpr const fsarray<3u, int> a2{a1};
-    constexpr const fsarray<3u, int> a3({3, 2, 6});
-    constexpr const fsarray<3u, int> a4{a3};
-    constexpr const fsarray<3u, int> a5 = {5, 3, 9};
-    constexpr const fsarray<3u, int> a6{a5};
+    constexpr fsarray<3u, int> a1(0);
+    constexpr fsarray<3u, int> a2{a1};
+    constexpr fsarray<3u, int> a3({3, 2, 6});
+    constexpr fsarray<3u, int> a4{a3};
+    constexpr fsarray<3u, int> a5 = {5, 3, 9};
+    constexpr fsarray<3u, int> a6{a5};
     TFEL_TESTS_STATIC_ASSERT(a1[0] == 0);
     TFEL_TESTS_STATIC_ASSERT(a1[1] == 0);
     TFEL_TESTS_STATIC_ASSERT(a1[2] == 0);

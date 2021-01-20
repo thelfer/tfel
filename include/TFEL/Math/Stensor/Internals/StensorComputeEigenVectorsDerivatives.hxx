@@ -87,7 +87,7 @@ namespace tfel::math::internals {
       typedef base_type<NumType> base;
       typedef
           BinaryOperationResult<base,NumType,OpDiv> InvNumType;
-      constexpr const auto icste = Cste<base>::isqrt2;
+      constexpr auto icste = Cste<base>::isqrt2;
       const tvector<3u, base> v0 = m.template column_view<0u>();
       const tvector<3u, base> v1 = m.template column_view<1u>();
       const stensor<2u, base> n01 =
@@ -119,7 +119,7 @@ namespace tfel::math::internals {
         const NumType eps) {
       using namespace tfel::math;
       typedef base_type<NumType> base;
-      constexpr const auto cste = Cste<base>::isqrt2;
+      constexpr auto cste = Cste<base>::isqrt2;
       const tvector<3u, base> v0 = m.template column_view<0u>();
       const tvector<3u, base> v1 = m.template column_view<1u>();
       const tvector<3u, base> v2 = m.template column_view<2u>();

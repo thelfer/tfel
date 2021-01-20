@@ -55,7 +55,7 @@ namespace mtest {
     using TangentOperator =
         tfel::material::FiniteStrainBehaviourTangentOperatorBase;
     using tfel::material::convert;
-    constexpr const auto sqrt2 = Cste<real>::sqrt2;
+    constexpr auto sqrt2 = Cste<real>::sqrt2;
     const auto h = this->getHypothesis();
     auto throw_if = [](const bool c, const std::string& m) {
       tfel::raise_if(c,
@@ -238,7 +238,7 @@ namespace mtest {
                (h == ModellingHypothesis::PLANESTRAIN) ||
                (h == ModellingHypothesis::PLANESTRESS)) {
       if (h == ModellingHypothesis::PLANESTRESS) {
-        constexpr const auto zero = AnsysReal{0};
+        constexpr auto zero = AnsysReal{0};
         // D has been as a 3*3 fortran matrix. The terms associated with
         // the 2 indices are omitted.
         // D = D00 D10 D30 D01 D11 D31 D03 D13 D33

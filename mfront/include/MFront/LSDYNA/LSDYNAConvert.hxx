@@ -27,7 +27,7 @@ namespace lsdyna{
   struct UMATImportGradients
   {
     //! space dimension
-    static constexpr const unsigned short N =
+    static constexpr unsigned short N =
       tfel::material::ModellingHypothesisToSpaceDimension<H>::value;
     /*!
      * \tparam T: type of the thermodynamique forces
@@ -65,7 +65,7 @@ namespace lsdyna{
     template<typename T>
     static inline void
     exe(tfel::math::stensor<2u,T>& e,const LSDYNAReal* const v){
-      constexpr const auto icste = tfel::math::Cste<LSDYNAReal>::isqrt2;
+      constexpr auto icste = tfel::math::Cste<LSDYNAReal>::isqrt2;
       e[0]=v[0];
       e[1]=v[1];
       e[2]=LSDYNAReal{0};
@@ -91,7 +91,7 @@ namespace lsdyna{
   struct UMATImportThermodynamicForces
   {
     //! space dimension
-    static constexpr const unsigned short N =
+    static constexpr unsigned short N =
       tfel::material::ModellingHypothesisToSpaceDimension<H>::value;
     /*!
      * \tparam T: type of the thermodynamique forces
@@ -119,7 +119,7 @@ namespace lsdyna{
     template<typename T>
     static inline void
     exe(tfel::math::stensor<2u,T>& s,const LSDYNAReal* const v){
-      constexpr const auto cste = tfel::math::Cste<LSDYNAReal>::sqrt2;
+      constexpr auto cste = tfel::math::Cste<LSDYNAReal>::sqrt2;
       s[0]=v[0];
       s[1]=v[1];
       s[2]=LSDYNAReal{0};
@@ -135,7 +135,7 @@ namespace lsdyna{
   struct UMATExportThermodynamicForces
   {
     //! space dimension
-    static constexpr const unsigned short N =
+    static constexpr unsigned short N =
       tfel::material::ModellingHypothesisToSpaceDimension<H>::value;
     /*!
      * \tparam T: type of the thermodynamique forces
@@ -163,7 +163,7 @@ namespace lsdyna{
     template<typename T>
     static inline void
     exe(LSDYNAReal* const v,const tfel::math::stensor<2u,T>& s){
-      constexpr const auto icste = tfel::math::Cste<LSDYNAReal>::isqrt2;
+      constexpr auto icste = tfel::math::Cste<LSDYNAReal>::isqrt2;
       v[0]=s[0];
       v[1]=s[1];
       v[2]=s[3]*icste;

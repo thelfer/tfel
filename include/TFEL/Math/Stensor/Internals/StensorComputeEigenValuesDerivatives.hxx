@@ -35,8 +35,8 @@ namespace tfel {
             StensorType& n2,
             const rotation_matrix<numeric_type<StensorType>>&) {
           using real = base_type<numeric_type<StensorType>>;
-          constexpr const auto zero = real(0);
-          constexpr const auto one = real(1);
+          constexpr auto zero = real(0);
+          constexpr auto one = real(1);
           n0 = {one, zero, zero};
           n1 = {zero, one, zero};
           n2 = {zero, zero, one};
@@ -55,8 +55,8 @@ namespace tfel {
             StensorType& n2,
             const rotation_matrix<numeric_type<StensorType>>& m) {
           using real = base_type<numeric_type<StensorType>>;
-          constexpr const auto zero = real(0);
-          constexpr const auto one = real(1);
+          constexpr auto zero = real(0);
+          constexpr auto one = real(1);
           const tvector<3u, real> v0 = m.template column_view<0u>();
           const tvector<3u, real> v1 = m.template column_view<1u>();
           n0 = StensorType::buildFromVectorDiadicProduct(v0);

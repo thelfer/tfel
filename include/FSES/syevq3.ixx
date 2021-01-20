@@ -47,9 +47,9 @@ namespace fses {
   int syevq3(MatrixType& Q,VectorType& w,const MatrixType2& A)
   {
     using real = GetMatrixNumericType_t<MatrixType2>;
-    constexpr const auto zero = real(0);
-    constexpr const auto one  = real(1);
-    constexpr const auto two  = real(2);
+    constexpr auto zero = real(0);
+    constexpr auto one  = real(1);
+    constexpr auto two  = real(2);
 
     const int n = 3;
     real e[3];                   // The third element is used only as temporary workspace

@@ -93,7 +93,7 @@ namespace mfront {
         BehaviourDescription::MaterialProperty& mp,
         const std::string& t,
         const std::string& n) {
-      constexpr const auto h =
+      constexpr auto h =
           tfel::material::ModellingHypothesis::UNDEFINEDHYPOTHESIS;
       if (mp.is<BehaviourDescription::ConstantMaterialProperty>()) {
         auto& cmp = mp.get<BehaviourDescription::ConstantMaterialProperty>();
@@ -114,7 +114,7 @@ namespace mfront {
         const std::string& t,
         const std::string& n,
         const std::string& en) {
-      constexpr const auto h =
+      constexpr auto h =
           tfel::material::ModellingHypothesis::UNDEFINEDHYPOTHESIS;
       declareParameterOrLocalVariable(bd, mp, t, n);
       if (mp.is<BehaviourDescription::ConstantMaterialProperty>()) {
@@ -128,7 +128,7 @@ namespace mfront {
         const std::string& t,
         const std::string& n,
         const tfel::glossary::GlossaryEntry& g) {
-      constexpr const auto h =
+      constexpr auto h =
           tfel::material::ModellingHypothesis::UNDEFINEDHYPOTHESIS;
       declareParameterOrLocalVariable(bd, mp, t, n);
       if (mp.is<BehaviourDescription::ConstantMaterialProperty>()) {
@@ -261,7 +261,7 @@ namespace mfront {
                                       const tfel::glossary::GlossaryEntry& g,
                                       const unsigned short s,
                                       const bool bo) {
-      constexpr const auto uh =
+      constexpr auto uh =
           tfel::material::ModellingHypothesis::UNDEFINEDHYPOTHESIS;
       const auto b = [bd, &n, &g, &bo, uh] {
         for (const auto& v : bd.getBehaviourData(uh).getStateVariables()) {
@@ -289,7 +289,7 @@ namespace mfront {
                                       const std::string& e,
                                       const unsigned short s,
                                       const bool bo) {
-      constexpr const auto uh =
+      constexpr auto uh =
           tfel::material::ModellingHypothesis::UNDEFINEDHYPOTHESIS;
       const auto b = [bd, &n, &e, &bo, uh] {
         for (const auto& v : bd.getBehaviourData(uh).getStateVariables()) {
@@ -317,7 +317,7 @@ namespace mfront {
                                       const tfel::glossary::GlossaryEntry& g,
                                       const unsigned short s,
                                       const bool bo) {
-      constexpr const auto uh =
+      constexpr auto uh =
           tfel::material::ModellingHypothesis::UNDEFINEDHYPOTHESIS;
       const auto b = [bd, &n, &g, &bo, uh] {
         for (const auto& v : bd.getBehaviourData(uh).getAuxiliaryStateVariables()) {
@@ -346,7 +346,7 @@ namespace mfront {
                                       const std::string& e,
                                       const unsigned short s,
                                       const bool bo) {
-      constexpr const auto uh =
+      constexpr auto uh =
           tfel::material::ModellingHypothesis::UNDEFINEDHYPOTHESIS;
       const auto b = [bd, &n, &e, &bo, uh] {
         for (const auto& v : bd.getBehaviourData(uh).getAuxiliaryStateVariables()) {
@@ -588,7 +588,7 @@ namespace mfront {
     }  // end of handleEigenSolverOption
 
     std::string getBrokenTest(const BehaviourDescription& bd, const bool b) {
-      constexpr const auto uh =
+      constexpr auto uh =
           tfel::material::ModellingHypothesis::UNDEFINEDHYPOTHESIS;
       const auto& d = bd.getBehaviourData(uh);
       const auto& asvs = d.getAuxiliaryStateVariables();
@@ -663,7 +663,7 @@ namespace mfront {
         std::vector<BehaviourDescription::MaterialProperty>& mps,
         const std::string& t,
         const std::string& n) {
-      constexpr const auto h =
+      constexpr auto h =
           tfel::material::ModellingHypothesis::UNDEFINEDHYPOTHESIS;
       if (mps.empty()) {
         tfel::raise(

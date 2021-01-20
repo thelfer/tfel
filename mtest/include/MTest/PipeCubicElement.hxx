@@ -37,12 +37,12 @@ namespace mtest{
   {
 #ifndef _MSC_VER
     // value of the Gauss points position in the reference element
-    static constexpr const real pg_radii[4] = {-0.861136311594053,
+    static constexpr real pg_radii[4] = {-0.861136311594053,
 					       -0.339981043584856,
 					        0.339981043584856,
 					        0.861136311594053};
     // Gauss point weight
-    static constexpr const real wg[4] =  {0.347854845137454,
+    static constexpr real wg[4] =  {0.347854845137454,
 					  0.652145154862546,
 					  0.652145154862546,
 					  0.347854845137454};
@@ -117,9 +117,9 @@ namespace mtest{
 					const size_t);
   private:
 #ifndef _MSC_VER
-    static constexpr const real one_third = real{ 1}/real{3};
-    static constexpr const real cste      = real{ 9}/real{16};
-    static constexpr const real cste2     = real{27}/real{16};
+    static constexpr real one_third = real{ 1}/real{3};
+    static constexpr real cste      = real{ 9}/real{16};
+    static constexpr real cste2     = real{27}/real{16};
 #else /* _MSC_VER */
     static const real one_third;
     static const real cste;

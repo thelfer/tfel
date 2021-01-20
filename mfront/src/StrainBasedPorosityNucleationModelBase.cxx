@@ -46,7 +46,7 @@ namespace mfront {
         AbstractBehaviourDSL& dsl,
         const std::string& id,
         const DataMap& d) {
-      constexpr const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+      constexpr auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
       const auto mn = this->getModelName();
       PorosityNucleationModelBase::initialize(bd, dsl, id, d);
       bd.appendToIncludes("#include \"TFEL/Material/" + mn + ".hxx\"");
@@ -77,7 +77,7 @@ namespace mfront {
         const std::string& id) const {
       PorosityNucleationModelBase::endTreatment(bd, dsl, sp, iflows, id);
       //
-      constexpr const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+      constexpr auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
       const auto mn = this->getModelName();
       const auto& idsl = dynamic_cast<const ImplicitDSLBase&>(dsl);
       const auto requiresAnalyticalJacobian =

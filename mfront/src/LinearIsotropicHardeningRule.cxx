@@ -27,7 +27,7 @@ namespace mfront {
                                                   const std::string& id,
                                                   const DataMap& d) {
       using namespace tfel::glossary;
-      constexpr const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+      constexpr auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
       // this shall be captured in gcc 4.7.2
       auto get_mp = [&dsl, &bd, &fid, &id, &d,this](const std::string& n) {
         const auto ni = IsotropicHardeningRule::getVariableId(n, fid, id);
@@ -143,7 +143,7 @@ namespace mfront {
         const std::string& id) const {
       auto mts = getMiddleOfTimeStepModifier(bd);
       // computation of the material properties
-      constexpr const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+      constexpr auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
       CodeBlock i;
       std::ostringstream mps;
       if ((!this->R0.empty()) &&

@@ -46,7 +46,7 @@ namespace mfront {
         AbstractBehaviourDSL& dsl,
         const std::string& id,
         const DataMap& d) {
-      constexpr const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+      constexpr auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
       PorosityNucleationModelBase::initialize(bd, dsl, id, d);
       const auto mn = this->getModelName();
       bd.appendToIncludes("#include \"TFEL/Material/" + mn + ".hxx\"");
@@ -75,7 +75,7 @@ namespace mfront {
         const std::map<std::string, std::shared_ptr<bbrick::InelasticFlow>>&
             iflows,
         const std::string& id) const {
-      constexpr const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+      constexpr auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
       PorosityNucleationModelBase::endTreatment(bd, dsl, sp, iflows, id);
       const auto mn = this->getModelName();
       const auto& idsl = dynamic_cast<const ImplicitDSLBase&>(dsl);

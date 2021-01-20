@@ -46,11 +46,11 @@ namespace fses {
 	     real& cs, real& sn,
 	     const real A, const real B, const real C)
   {
-    constexpr const auto zero = real(0);
-    constexpr const auto one  = real(1);
-    constexpr const auto two  = real(2);
-    constexpr const auto four = real(4);
-    constexpr const auto one_half = one/two;
+    constexpr auto zero = real(0);
+    constexpr auto one  = real(1);
+    constexpr auto two  = real(2);
+    constexpr auto four = real(4);
+    constexpr auto one_half = one/two;
     
     real sm = A + C;
     real df = A - C;

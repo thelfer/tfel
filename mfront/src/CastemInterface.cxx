@@ -2453,7 +2453,7 @@ namespace mfront {
       auto gen_emp = [this, &bd, &out](
           const BehaviourDescription::MaterialProperty& emp,
           const MaterialPropertyDescription& empd, const char* const n) {
-        constexpr const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+        constexpr auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
         if (emp.is<BehaviourDescription::ConstantMaterialProperty>()) {
           auto& cmp = emp.get<BehaviourDescription::ConstantMaterialProperty>();
           out << n << " = " << cmp.value << ";\n";

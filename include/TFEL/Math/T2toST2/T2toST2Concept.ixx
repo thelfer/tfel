@@ -35,9 +35,9 @@ namespace tfel::math {
     using NumType = numeric_type<T2toST2Type>;
     using AbsNumType = typename tfel::typetraits::AbsType<NumType>::type;
     AbsNumType a(0);
-    constexpr const auto ssize =
+    constexpr auto ssize =
         StensorDimeToSize<getSpaceDimension<T2toST2Type>()>::value;
-    constexpr const auto tsize =
+    constexpr auto tsize =
         TensorDimeToSize<getSpaceDimension<T2toST2Type>()>::value;
     for (unsigned short i = 0; i < ssize; ++i) {
       for (unsigned short j = 0; j < tsize; ++j) {
@@ -110,8 +110,8 @@ namespace tfel::math {
                                const StensorType& S,
                                const TensorType& F) {
     typedef numeric_type<T2toST2Type> value_type;
-    constexpr const auto cste = Cste<value_type>::sqrt2;
-    constexpr const auto icste = Cste<value_type>::isqrt2;
+    constexpr auto cste = Cste<value_type>::sqrt2;
+    constexpr auto icste = Cste<value_type>::isqrt2;
     // derivative with respect to F0
     dTdF(0, 0) =
         F[0] * ((F[3] * dSdF(3, 0)) * icste + F[0] * dSdF(0, 0) + S[0]) +
@@ -196,8 +196,8 @@ namespace tfel::math {
                                const StensorType& S,
                                const TensorType& F) {
     typedef numeric_type<T2toST2Type> value_type;
-    constexpr const auto cste = Cste<value_type>::sqrt2;
-    constexpr const auto icste = Cste<value_type>::isqrt2;
+    constexpr auto cste = Cste<value_type>::sqrt2;
+    constexpr auto icste = Cste<value_type>::isqrt2;
     // derivative with respect to F0
     dTdF(0, 0) =
         F[3] * ((F[5] * dSdF(5, 0)) * icste + (F[0] * dSdF(3, 0)) * icste +

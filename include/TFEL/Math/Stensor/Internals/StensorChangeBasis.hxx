@@ -40,7 +40,7 @@ namespace tfel {
       struct StensorChangeBasis<2u> {
         template <typename T>
         static void exe(T* s, const tfel::math::rotation_matrix<T>& m) {
-          constexpr const auto cste = Cste<T>::sqrt2;
+          constexpr auto cste = Cste<T>::sqrt2;
           T tmp[3];
           // Works begin
           tmp[0] = cste * m(0, 0) * m(1, 0) * s[3] + m(1, 0) * m(1, 0) * s[1] +
@@ -60,7 +60,7 @@ namespace tfel {
       struct StensorChangeBasis<3u> {
         template <typename T>
         static void exe(T* s, const tfel::math::rotation_matrix<T>& m) {
-          constexpr const auto cste = Cste<T>::sqrt2;
+          constexpr auto cste = Cste<T>::sqrt2;
           T tmp[6];
           const auto a = m(0, 0);
           const auto b = m(0, 1);

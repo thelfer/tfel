@@ -24,9 +24,9 @@
 namespace mtest{
 
 #ifndef _MSC_VER
-  constexpr const real PipeLinearElement::abs_pg;
-  constexpr const real PipeLinearElement::wg;
-  constexpr const real PipeLinearElement::pg_radii[2];
+  constexpr real PipeLinearElement::abs_pg;
+  constexpr real PipeLinearElement::wg;
+  constexpr real PipeLinearElement::pg_radii[2];
 #else /* _MSC_VER */
   const real PipeLinearElement::abs_pg = real(1)/(std::sqrt(3));
   const real PipeLinearElement::wg = 1;
@@ -119,7 +119,7 @@ namespace mtest{
 							 const StiffnessMatrixType mt,
 							 const size_t i){
     //! a simple alias
-    constexpr const real pi = 3.14159265358979323846;
+    constexpr real pi = 3.14159265358979323846;
     // number of elements
     const auto ne = size_t(m.number_of_elements);
     // number of nodes

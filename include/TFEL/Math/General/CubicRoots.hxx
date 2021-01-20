@@ -240,7 +240,7 @@ namespace tfel::math {
       const auto prec = 10 * std::max(emin, std::abs(vp) * eps);
       auto x = vp;
       auto dfv = df(x);
-      constexpr const integer iter_max = 50;
+      constexpr integer iter_max = 50;
       if (std::abs(dfv) < 100 * emin) {
         return;
       }

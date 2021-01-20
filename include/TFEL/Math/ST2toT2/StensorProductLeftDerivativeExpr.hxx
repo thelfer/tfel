@@ -127,7 +127,7 @@ namespace tfel::math {
       static_assert(isAssignableTo<numeric_type<StensorType>,
                                    numeric_type<ST2toT2ResultType>>());
       using real = base_type<ST2toT2ResultType>;
-      constexpr const auto icste = Cste<real>::isqrt2;
+      constexpr auto icste = Cste<real>::isqrt2;
       const value_type zero = value_type(0);
       const real one_half = real(1) / 2;
       this->v[0u] = b(0);
@@ -169,7 +169,7 @@ namespace tfel::math {
                              numeric_type<ST2toST2Type>, OpMult>::Result,
                          numeric_type<ST2toT2ResultType>>());
       using real = base_type<ST2toT2ResultType>;
-      constexpr const auto icste = Cste<real>::isqrt2;
+      constexpr auto icste = Cste<real>::isqrt2;
       const real one_half = real(1) / 2;
       this->v[0u] = (C(3, 0) * b(3)) * one_half + C(0, 0) * b(0);
       this->v[1u] = (C(3, 1) * b(3)) * one_half + C(0, 1) * b(0);
@@ -236,7 +236,7 @@ namespace tfel::math {
       static_assert(isAssignableTo<numeric_type<StensorType>,
                                    numeric_type<ST2toT2ResultType>>());
       using real = base_type<ST2toT2ResultType>;
-      constexpr const auto icste = Cste<real>::isqrt2;
+      constexpr auto icste = Cste<real>::isqrt2;
       const value_type zero = value_type(0);
       const real one_half = real(1) / 2;
       this->v[0u] = b(0);
@@ -312,8 +312,8 @@ namespace tfel::math {
                              numeric_type<ST2toST2Type>, OpMult>::Result,
                          numeric_type<ST2toT2ResultType>>());
       using real = base_type<ST2toT2ResultType>;
-      constexpr const real one_half = real(1) / 2;
-      constexpr const auto icste = Cste<real>::isqrt2;
+      constexpr real one_half = real(1) / 2;
+      constexpr auto icste = Cste<real>::isqrt2;
       this->v[0u] =
           (C(4, 0) * b(4) + C(3, 0) * b(3)) * one_half + C(0, 0) * b(0);
       this->v[1u] =

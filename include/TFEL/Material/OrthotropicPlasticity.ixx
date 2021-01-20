@@ -202,7 +202,7 @@ namespace tfel{
 			       const tfel::math::base_type<StensorType>)
     {
       using real = tfel::math::base_type<StensorType>;
-      constexpr const auto zero = real{0};
+      constexpr auto zero = real{0};
       return {(a3+a1)/3,-a1/3,-a3/3,zero,
 	  -a1/3,(a2+a1)/3,-a2/3,zero,
 	  -a3/3,-a2/3,(a2+a3)/3,zero,
@@ -226,7 +226,7 @@ namespace tfel{
 			       const tfel::math::base_type<StensorType> a6)
     {
       using real = tfel::math::base_type<StensorType>;
-      constexpr const auto zero = real{0};
+      constexpr auto zero = real{0};
       return {(a3+a1)/3,-a1/3,-a3/3,zero,zero,zero,
 	  -a1/3,(a2+a1)/3,-a2/3,zero,zero,zero,
 	  -a3/3,-a2/3,(a2+a3)/3,zero,zero,zero,

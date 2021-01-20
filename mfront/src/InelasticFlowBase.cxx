@@ -94,7 +94,7 @@ namespace mfront {
                                        AbstractBehaviourDSL& dsl,
                                        const std::string& id,
                                        const DataMap& d) {
-      constexpr const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+      constexpr auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
       auto raise = [](const std::string& m) {
         tfel::raise("InelasticFlowBase::initialize: " + m);
       };  // end of raise
@@ -430,7 +430,7 @@ namespace mfront {
                                          const AbstractBehaviourDSL& dsl,
                                          const StressPotential& sp,
                                          const std::string& id) const {
-      constexpr const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+      constexpr auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
       const auto& idsl = dynamic_cast<const ImplicitDSLBase&>(dsl);
       if (this->fc != nullptr) {
         this->sc->endTreatment(bd, dsl, id, StressCriterion::STRESSCRITERION);
@@ -665,7 +665,7 @@ namespace mfront {
         return "";
       }
       const auto df = [this, &bd, &id] {
-        constexpr const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+        constexpr auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
         const auto& f =
             bd.getBehaviourData(uh).getStateVariableDescriptionByExternalName(
                 tfel::glossary::Glossary::Porosity);
@@ -712,7 +712,7 @@ namespace mfront {
       if (!this->contributesToPorosityGrowth()) {
         return;
       }
-      constexpr const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+      constexpr auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
       const auto& idsl = dynamic_cast<const ImplicitDSLBase&>(dsl);
       const auto requiresAnalyticalJacobian =
           ((idsl.getSolver().usesJacobian()) &&

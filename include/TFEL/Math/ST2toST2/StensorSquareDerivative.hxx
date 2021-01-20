@@ -49,7 +49,7 @@ namespace tfel::math {
                     getSpaceDimension<StensorType>());
       static_assert(isAssignableTo<numeric_type<StensorType>,
                                    numeric_type<ST2toST2ResultType>>());
-      constexpr const value_type zero = value_type(0);
+      constexpr value_type zero = value_type(0);
       this->v[0] = 2 * B[0];
       this->v[4] = 2 * B[1];
       this->v[8] = 2 * B[2];
@@ -126,7 +126,7 @@ namespace tfel::math {
                     getSpaceDimension<StensorType>());
       static_assert(isAssignableTo<numeric_type<StensorType>,
                                    numeric_type<ST2toST2ResultType>>());
-      constexpr const value_type zero = value_type(0);
+      constexpr value_type zero = value_type(0);
       this->v[0] = 2 * s(0);
       this->v[1] = zero;
       this->v[2] = zero;
@@ -223,7 +223,7 @@ namespace tfel::math {
       using real = base_type<value_type>;
       TFEL_CONSTEXPR const auto zero = value_type(0);
       TFEL_CONSTEXPR const auto one_half = real(1) / 2;
-      constexpr const auto icste = Cste<value_type>::isqrt2;
+      constexpr auto icste = Cste<value_type>::isqrt2;
       this->v[0] = 2 * s(0);
       this->v[1] = zero;
       this->v[2] = zero;
@@ -280,7 +280,7 @@ namespace tfel::math {
                          numeric_type<ST2toST2ResultType>>());
       using real = base_type<value_type>;
       TFEL_CONSTEXPR const auto one_half = real(1) / real(2);
-      constexpr const auto cste = Cste<real>::sqrt2;
+      constexpr auto cste = Cste<real>::sqrt2;
       this->v[0] = C(4, 0) * s(4) + C(3, 0) * s(3) + 2 * C(0, 0) * s(0);
       this->v[1] = C(4, 1) * s(4) + C(3, 1) * s(3) + 2 * C(0, 1) * s(0);
       this->v[2] = C(4, 2) * s(4) + C(3, 2) * s(3) + 2 * C(0, 2) * s(0);

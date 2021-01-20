@@ -61,7 +61,7 @@ namespace castem {
         const StressFreeExpansionHandler &sfeh) {
       using namespace tfel::meta;
       using namespace tfel::material;
-      constexpr const ModellingHypothesis::Hypothesis H =
+      constexpr ModellingHypothesis::Hypothesis H =
           ModellingHypothesis::PLANESTRESS;
       //! a simple alias
       using BV = Behaviour<H, CastemReal, false>;
@@ -261,8 +261,8 @@ namespace castem {
             ModellingHypothesis::GENERALISEDPLANESTRAIN, Behaviour>;
         using BV = Behaviour<ModellingHypothesis::GENERALISEDPLANESTRAIN,
                              CastemReal, false>;
-        constexpr const auto offset = CastemTraits<BV>::propertiesOffset;
-        constexpr const auto nprops =
+        constexpr auto offset = CastemTraits<BV>::propertiesOffset;
+        constexpr auto nprops =
             MechanicalBehaviourTraits<BV>::material_properties_nb;
         static_assert(offset == 4u, "invalid offset value");
         CastemReal nPROPS[offset + nprops];
@@ -305,13 +305,13 @@ namespace castem {
           const StressFreeExpansionHandler &sfeh) {
         using namespace tfel::meta;
         using namespace tfel::material;
-        constexpr const auto H = ModellingHypothesis::GENERALISEDPLANESTRAIN;
+        constexpr auto H = ModellingHypothesis::GENERALISEDPLANESTRAIN;
         typedef Behaviour<H, CastemReal, false> BV;
         typedef CastemOrthotropicBehaviourHandler<STANDARDSTRAINBASEDBEHAVIOUR,
                                                   H, Behaviour>
             BehaviourHandler;
-        constexpr const auto offset = CastemTraits<BV>::propertiesOffset;
-        constexpr const auto nprops =
+        constexpr auto offset = CastemTraits<BV>::propertiesOffset;
+        constexpr auto nprops =
             MechanicalBehaviourTraits<BV>::material_properties_nb;
         static_assert(offset == 13u, "invalid offset value");
         CastemReal nPROPS[offset + nprops];

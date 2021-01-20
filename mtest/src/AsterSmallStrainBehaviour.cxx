@@ -55,7 +55,7 @@ namespace mtest
     using namespace tfel::math;
     using namespace aster;
     using tfel::math::vector;
-    constexpr const auto sqrt2 = Cste<real>::sqrt2;
+    constexpr auto sqrt2 = Cste<real>::sqrt2;
     unsigned short dimension;
     AsterInt ntens;
     AsterInt nprops = s.mprops1.size() == 0 ? 1 : static_cast<AsterInt>(s.mprops1.size());

@@ -25,7 +25,7 @@ struct test_SplineInterpolation
 
   tfel::tests::TestResult execute() override
   {
-    constexpr const double eps = 1.e-14;
+    constexpr double eps = 1.e-14;
     tfel::check::SplineInterpolation i;
     i.interpolate({1.,2.},{5.,7.});
     TFEL_TESTS_ASSERT(std::abs(6.-i.getValue(1.5))<eps);

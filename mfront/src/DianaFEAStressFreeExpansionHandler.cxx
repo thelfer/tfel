@@ -25,7 +25,7 @@ namespace dianafea {
       const real *const s0,
       const real *const s1,
       const DianaFEAInt d) {
-    constexpr const auto cste = tfel::math::Cste<real>::sqrt2;
+    constexpr auto cste = tfel::math::Cste<real>::sqrt2;
     e[0]  -= s0[0];
     e[1]  -= s0[1];
     e[2]  -= s0[2];

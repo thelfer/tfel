@@ -24,28 +24,10 @@
 namespace tfel::math {
 
   /*
-   * Partial Specialisation of ComputeBinaryResult_ for stensor's operation
-   */
-  template <typename A, typename B, typename Op>
-  class ComputeBinaryResult_<StensorTag, StensorTag, A, B, Op> {
-    struct DummyHandle {};
-    //! \brief a simple alias
-    using StensA = EvaluationResult<A>;
-    //! \brief a simple alias
-    using StensB = EvaluationResult<B>;
-
-   public:
-    using Result = result_type<StensA, StensB, Op>;
-    using Handle = std::conditional_t<isInvalid<Result>(),
-                                      DummyHandle,
-                                      Expr<Result, BinaryOperation<A, B, Op>>>;
-  };
-
-  /*
-   * Partial Specialisation of ComputeBinaryResult_ for stensor's multiplication
+   * Partial Specialisation of ComputeBinaryOperationHandler for stensor's multiplication
    */
   template <typename A, typename B>
-  class ComputeBinaryResult_<StensorTag, StensorTag, A, B, OpMult> {
+  class ComputeBinaryOperationHandler<StensorTag, StensorTag, A, B, OpMult> {
     struct DummyHandle {};
     //! \brief a simple alias
     using StensA = EvaluationResult<A>;
@@ -67,10 +49,10 @@ namespace tfel::math {
   };
 
   /*
-   * Partial Specialisation of ComputeBinaryResult_ for stensor's operation
+   * Partial Specialisation of ComputeBinaryOperationHandler for stensor's operation
    */
   template <typename A, typename B>
-  class ComputeBinaryResult_<StensorTag, StensorTag, A, B, OpDiadicProduct> {
+  class ComputeBinaryOperationHandler<StensorTag, StensorTag, A, B, OpDiadicProduct> {
     struct DummyHandle {};
     //! \brief a simple alias
     using StensA = EvaluationResult<A>;
@@ -83,42 +65,6 @@ namespace tfel::math {
         std::conditional_t<isInvalid<Result>(),
                            DummyHandle,
                            Expr<Result, DiadicProductOperation<A, B>>>;
-  };
-
-  /*
-   * Partial Specialisation of ComputeBinaryResult_ for scalar-stensor
-   * operations
-   */
-  template <typename A, typename B, typename Op>
-  class ComputeBinaryResult_<ScalarTag, StensorTag, A, B, Op> {
-    struct DummyHandle {};
-    //! \brief a simple alias
-    using StensB = EvaluationResult<B>;
-
-   public:
-    typedef result_type<A, StensB, Op> Result;
-    using Handle =
-        std::conditional_t<isInvalid<Result>(),
-                           DummyHandle,
-                           Expr<Result, ScalarObjectOperation<A, B, Op>>>;
-  };
-
-  /*
-   * Partial Specialisation of ComputeBinaryResult_ for stensor-scalar
-   * operations
-   */
-  template <typename A, typename B, typename Op>
-  class ComputeBinaryResult_<StensorTag, ScalarTag, A, B, Op> {
-    struct DummyHandle {};
-    //! \brief a simple alias
-    using StensA = EvaluationResult<A>;
-
-   public:
-    typedef result_type<StensA, B, Op> Result;
-    using Handle =
-        std::conditional_t<isInvalid<Result>(),
-                           DummyHandle,
-                           Expr<Result, ObjectScalarOperation<A, B, Op>>>;
   };
 
   /*
@@ -138,7 +84,7 @@ namespace tfel::math {
   };
 
   template <typename A, typename B>
-  class ComputeBinaryResult_<StensorTag, StensorTag, A, B, OpDotProduct> {
+  class ComputeBinaryOperationHandler<StensorTag, StensorTag, A, B, OpDotProduct> {
     struct DummyHandle {};
     //! \brief a simple alias
     using StensorA = EvaluationResult<A>;

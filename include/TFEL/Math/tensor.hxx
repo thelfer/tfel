@@ -24,7 +24,9 @@
 #include "TFEL/Math/General/MathObjectTraits.hxx"
 #include "TFEL/Math/General/BasicOperations.hxx"
 #include "TFEL/Math/General/EmptyRunTimeProperties.hxx"
-#include "TFEL/Math/fsarray.hxx"
+#include "TFEL/Math/Array/GenericFixedSizeArray.hxx"
+#include "TFEL/Math/Array/View.hxx"
+#include "TFEL/Math/Array/ConstView.hxx"
 #include "TFEL/Math/Vector/VectorUtilities.hxx"
 #include "TFEL/Math/Tensor/TensorSizeToDime.hxx"
 #include "TFEL/Math/Tensor/TensorConcept.hxx"
@@ -213,6 +215,21 @@ namespace tfel::math {
     template <typename InputIterator>
     TFEL_MATH_INLINE2 void copy(const InputIterator src);
   };  // end of struct tensor
+
+  /*!
+   * \brief a simple alias for backward compatibility
+   * \tparam N: space dimension
+   * \tparam T: value type
+   */
+  template <unsigned short N, typename T>
+  using TensorView = View<tensor<N, T>>;
+  /*!
+   * \brief a simple alias for backward compatibility
+   * \tparam N: space dimension
+   * \tparam T: value type
+   */
+  template <unsigned short N, typename T>
+  using ConstTensorView = ConstView<tensor<N, T>>;
 
   template <unsigned short N, typename T, typename OutputIterator>
   TFEL_MATH_INLINE2 std::enable_if_t<isScalar<T>(), void>

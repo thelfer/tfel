@@ -334,7 +334,7 @@ namespace mfront {
              "finite strain behaviours");
     checkFiniteStrainStrategyDefinitionConsistency(mb);
     // the only supported modelling hypothesis
-    constexpr const auto h = ModellingHypothesis::TRIDIMENSIONAL;
+    constexpr auto h = ModellingHypothesis::TRIDIMENSIONAL;
     const auto& d = mb.getBehaviourData(h);
     throw_if(d.getExternalStateVariables().size() != 1u,
              "external state variables are not supported "
@@ -742,7 +742,7 @@ namespace mfront {
                      "LogarithmicStrainFunction: " +
                          m);
     };
-    constexpr const auto h = ModellingHypothesis::TRIDIMENSIONAL;
+    constexpr auto h = ModellingHypothesis::TRIDIMENSIONAL;
     const auto& ivs = mb.getBehaviourData(h).getPersistentVariables();
     const auto nivs = ivs.getTypeSize().getValueForModellingHypothesis(h);
     const std::string sfeh =
@@ -1021,7 +1021,7 @@ namespace mfront {
 
   void CalculiXInterface::writeCalculiXBehaviourTraits(
       std::ostream& out, const BehaviourDescription& mb) const {
-    constexpr const auto h = ModellingHypothesis::TRIDIMENSIONAL;
+    constexpr auto h = ModellingHypothesis::TRIDIMENSIONAL;
     const auto mvs = mb.getMainVariablesSize();
     const auto mprops = this->buildMaterialPropertiesList(mb, h);
     out << "template<typename Type";

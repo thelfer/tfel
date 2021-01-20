@@ -41,7 +41,7 @@ namespace tfel {
     template <typename T1, typename T2>
     struct DerivativeType {
       //! boolean stating if both variables are scalar
-      static constexpr const auto are_scalars =
+      static constexpr auto are_scalars =
           isScalar<T1>() &&
           isScalar<T2>();
       //! the result

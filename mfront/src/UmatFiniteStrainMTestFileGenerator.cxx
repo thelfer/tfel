@@ -92,7 +92,7 @@ namespace mfront
   void
   UmatFiniteStrainMTestFileGenerator::writeGradients(std::ostream& os) const
   {
-    constexpr const auto cste = tfel::math::Cste<real>::sqrt2;
+    constexpr auto cste = tfel::math::Cste<real>::sqrt2;
     const auto& n = this->getDeformationGradientComponentsNames();
     tfel::raise_if(this->times.size()!=2,
 		   "UmatFiniteStrainMTestFileGenerator::writeGradients: "

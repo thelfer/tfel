@@ -77,8 +77,8 @@ private:
   }
   template<unsigned short N>
   void test0(const tfel::math::stensor<N,double>& s){
-    constexpr const auto prec = 1e-14;
-    constexpr const auto one  = double(1); 
+    constexpr auto prec = 1e-14;
+    constexpr auto one  = double(1); 
     const auto J3  = det(deviator(s));
     const auto J3O = tfel::material::computeJ3O(s,one,one,one,
 						one,one,one,
@@ -88,9 +88,9 @@ private:
   }
   template<unsigned short N>
   void test1(const tfel::math::stensor<N,double>& s){
-    constexpr const auto eps  = 1e-6;
-    constexpr const auto prec = 2e-13;
-    constexpr const auto one  = double(1);
+    constexpr auto eps  = 1e-6;
+    constexpr auto prec = 2e-13;
+    constexpr auto one  = double(1);
     const auto c = tfel::math::tvector<11,double>{one,one,one,
 						  one,one,one,
 						  one,one,one,
@@ -110,7 +110,7 @@ private:
     using namespace tfel::math;
     using namespace tfel::material;
     using size_type = typename stensor<N,double>::size_type;
-    constexpr const auto one  = double(1);
+    constexpr auto one  = double(1);
     const auto c = tfel::math::tvector<11,double>{one,one,one,
 						  one,one,one,
 						  one,one,one,

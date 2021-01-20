@@ -124,7 +124,7 @@ namespace mtest
   tfel::math::st2tost2<3u,real>
   CalculiXStandardBehaviour::convertTangentOperator(const real* const D) const{
     tfel::math::st2tost2<3u,real> K;
-    constexpr const auto sqrt2  = tfel::math::Cste<real>::sqrt2;
+    constexpr auto sqrt2  = tfel::math::Cste<real>::sqrt2;
     K(0,0)       =D[0];
     K(0,1)=K(1,0)=D[1];
     K(1,1)       =D[2];

@@ -89,7 +89,7 @@ namespace tfel {
       template <typename T>
       struct isDataTypeCheck {
         //! \brief result type
-        static constexpr const bool value =
+        static constexpr bool value =
             tfel::meta::TLCountNbrOfT<typename std::decay<T>::type,
                                       tfel::utilities::DataTypes>::value == 1;
       };

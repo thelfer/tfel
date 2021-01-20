@@ -29,24 +29,8 @@ namespace tfel::math {
     using type = VectorVectorDotProduct;
   };
 
-  /*
-   * Partial Specialisation of ComputeBinaryResult_ for vector's operation
-   */
-  template <typename A, typename B, typename Op>
-  class ComputeBinaryResult_<VectorTag, VectorTag, A, B, Op> {
-    struct DummyHandle {};
-    using VectorTypeA = EvaluationResult<A>;
-    using VectorTypeB = EvaluationResult<B>;
-
-   public:
-    using Result = result_type<VectorTypeA, VectorTypeB, Op>;
-    using Handle = std::conditional_t<isInvalid<Result>(),
-                                      DummyHandle,
-                                      Expr<Result, BinaryOperation<A, B, Op>>>;
-  };
-
   template <typename A, typename B>
-  class ComputeBinaryResult_<VectorTag, VectorTag, A, B, OpDotProduct> {
+  class ComputeBinaryOperationHandler<VectorTag, VectorTag, A, B, OpDotProduct> {
     struct DummyHandle {};
     using VectorTypeA = EvaluationResult<A>;
     using VectorTypeB = EvaluationResult<B>;
@@ -58,10 +42,10 @@ namespace tfel::math {
   };
 
   /*
-   * Partial Specialisation of ComputeBinaryResult_ for vector's operation
+   * Partial Specialisation of ComputeBinaryOperationHandler for vector's operation
    */
   template <typename A, typename B>
-  class ComputeBinaryResult_<VectorTag, VectorTag, A, B, OpDiadicProduct> {
+  class ComputeBinaryOperationHandler<VectorTag, VectorTag, A, B, OpDiadicProduct> {
     struct DummyHandle {};
     using VectorTypeA = EvaluationResult<A>;
     using VectorTypeB = EvaluationResult<B>;
@@ -72,38 +56,6 @@ namespace tfel::math {
         std::conditional_t<isInvalid<Result>(),
                            DummyHandle,
                            Expr<Result, DiadicProductOperation<A, B>>>;
-  };
-
-  /*
-   * Partial Specialisation of ComputeBinaryResult_ for scalar-vector operations
-   */
-  template <typename A, typename B, typename Op>
-  struct ComputeBinaryResult_<ScalarTag, VectorTag, A, B, Op> {
-    struct DummyHandle {};
-    using VectorTypeB = EvaluationResult<B>;
-
-   public:
-    using Result = result_type<std::decay_t<A>, VectorTypeB, Op>;
-    using Handle =
-        std::conditional_t<isInvalid<Result>(),
-                           DummyHandle,
-                           Expr<Result, ScalarObjectOperation<A, B, Op>>>;
-  };
-
-  /*
-   * Partial Specialisation of ComputeBinaryResult_ for vector-scalar operations
-   */
-  template <typename A, typename B, typename Op>
-  class ComputeBinaryResult_<VectorTag, ScalarTag, A, B, Op> {
-    struct DummyHandle {};
-    using VectorTypeA = EvaluationResult<A>;
-
-   public:
-    using Result = result_type<VectorTypeA, B, Op>;
-    using Handle =
-        std::conditional_t<isInvalid<Result>(),
-                           DummyHandle,
-                           Expr<Result, ObjectScalarOperation<A, B, Op>>>;
   };
 
   /*

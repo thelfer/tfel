@@ -54,7 +54,7 @@ namespace mtest
     using namespace tfel::math;
     using namespace calculix;
     using tfel::math::vector;
-    constexpr const auto sqrt2 = Cste<real>::sqrt2;
+    constexpr auto sqrt2 = Cste<real>::sqrt2;
     const auto h = this->getHypothesis();
     auto throw_if = [](const bool c, const std::string& m){
       tfel::raise_if(c,"CalculiXSmallStrainBehaviour::"

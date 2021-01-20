@@ -65,7 +65,7 @@ namespace mfront {
         const std::string& fid,
         const std::string& kid) const {
       KinematicHardeningRuleBase::endTreatment(bd, dsl, fid, kid);
-      constexpr const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+      constexpr auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
       const auto Dn = KinematicHardeningRule::getVariableId("D", fid, kid);
       const auto en = KinematicHardeningRule::getVariableId("eta", fid, kid);
       auto c = generateMaterialPropertyInitializationCode(dsl, bd, Dn, this->D);

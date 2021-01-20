@@ -114,7 +114,7 @@ namespace tfel::math {
   convertSpatialModuliToKirchhoffJaumanRateModuli(const ST2toST2Type& C_s,
                                                   const StensorType& tau) {
     using NumType = numeric_type<ST2toST2Type>;
-    constexpr const auto icste = Cste<NumType>::isqrt2;
+    constexpr auto icste = Cste<NumType>::isqrt2;
     st2tost2<3u, NumType> C_tJ;
     C_tJ(0, 0) = C_s(0, 0) + 2 * tau[0];
     C_tJ(1, 1) = C_s(1, 1) + 2 * tau[1];

@@ -421,7 +421,7 @@ namespace mfront{
 	  this->headerFile << "#line " << p2->lineNumber << " \"" 
 			   << fd.fileName << "\"\n";
 	}
-	this->headerFile << "static constexpr const " << getVariableType(p2->type) << " " << p2->name
+	this->headerFile << "static constexpr " << getVariableType(p2->type) << " " << p2->name
 			 << " = " << p2->value << ";" << '\n';
       }
       this->headerFile << '\n';

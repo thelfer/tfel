@@ -52,7 +52,7 @@ namespace mfront {
         const AbstractBehaviourDSL& dsl,
         const std::string& fid,
         const std::string& kid) const {
-      constexpr const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+      constexpr auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
       KinematicHardeningRuleBase::endTreatment(bd, dsl, fid, kid);
       const auto Dn = KinematicHardeningRule::getVariableId("D", fid, kid);
       const auto c =

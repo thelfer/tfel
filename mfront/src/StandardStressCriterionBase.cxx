@@ -71,7 +71,7 @@ namespace mfront {
                                                    const AbstractBehaviourDSL& dsl,
                                                    const std::string& id,
                                                    const Role r) {
-      constexpr const auto uh =
+      constexpr auto uh =
           tfel::material::ModellingHypothesis::UNDEFINEDHYPOTHESIS;
       StressCriterionBase::endTreatment(bd, dsl, id, r);
       const auto params = StressCriterion::getVariableId("sscb_parameters", id, r);

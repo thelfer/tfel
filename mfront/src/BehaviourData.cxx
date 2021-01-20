@@ -12,6 +12,7 @@
  * project under specific licensing conditions.
  */
 
+#include <cstring>
 #include <sstream>
 #include <iterator>
 #include <algorithm>
@@ -21,6 +22,7 @@
 #include "TFEL/Glossary/Glossary.hxx"
 #include "TFEL/Glossary/GlossaryEntry.hxx"
 #include "TFEL/Utilities/CxxTokenizer.hxx"
+#include "TFEL/Utilities/StringAlgorithms.hxx"
 #include "MFront/MFrontUtilities.hxx"
 #include "MFront/DSLUtilities.hxx"
 #include "MFront/PerformanceProfiling.hxx"
@@ -30,6 +32,8 @@
 
 namespace mfront {
 
+  const char* const BehaviourData::UserDefinedInitializeCodeBlock =
+      "UserDefinedInitializeCodeBlock";
   const char* const BehaviourData::FlowRule = "FlowRule";
   const char* const BehaviourData::BeforeInitializeLocalVariables =
       "BeforeInitializeLocalVariables";
@@ -521,6 +525,20 @@ namespace mfront {
     }
   }  // end of BehaviourData::addAuxiliaryStateVariable
 
+  void BehaviourData::addPostProcessingVariable(const VariableDescription& v) {
+    this->reserveName(v.name);
+    if (!v.symbolic_form.empty()) {
+      this->reserveName(v.symbolic_form);
+    }
+    if (v.hasGlossaryName()) {
+      this->glossaryNames.insert({v.name, v.getExternalName()});
+    }
+    if (v.hasEntryName()) {
+      this->entryNames.insert({v.name, v.getExternalName()});
+    }
+    this->postProcessingVariables.push_back(v);
+  }  // end of BehaviourData::addPostProcessingVariable
+
   void BehaviourData::addExternalStateVariable(const VariableDescription& v,
                                                const RegistrationStatus s) {
     this->addVariable(this->externalStateVariables, v, s, true);
@@ -609,7 +627,11 @@ namespace mfront {
 
   bool BehaviourData::isAuxiliaryStateVariableName(const std::string& n) const {
     return this->getAuxiliaryStateVariables().contains(n);
-  }  // end of BehaviourData::isStateVariableName
+  }  // end of BehaviourData::isAuxiliaryStateVariableName
+
+  bool BehaviourData::isPostProcessingVariableName(const std::string& n) const {
+    return this->getPostProcessingVariables().contains(n);
+  }  // end of BehaviourData::isPostProcessingVariableName
 
   bool BehaviourData::isExternalStateVariableName(const std::string& n) const {
     return this->getExternalStateVariables().contains(n);
@@ -673,6 +695,8 @@ namespace mfront {
       m = &BehaviourData::getStateVariables;
     } else if (t == "AuxiliaryStateVariable") {
       m = &BehaviourData::getAuxiliaryStateVariables;
+    } else if (t == "PostProcessingVariable") {
+      m = &BehaviourData::getPostProcessingVariables;
     } else if (t == "ExternalStateVariable") {
       m = &BehaviourData::getExternalStateVariables;
     } else if (t == "Parameter") {
@@ -684,7 +708,7 @@ namespace mfront {
           t + "'");
     }
     return (this->*m)();
-  }  // end of BehaviourData::getIntegrationVariables
+  }  // end of BehaviourData::getVariables
 
   const VariableDescriptionContainer& BehaviourData::getIntegrationVariables()
       const {
@@ -699,6 +723,11 @@ namespace mfront {
   BehaviourData::getAuxiliaryStateVariables() const {
     return this->auxiliaryStateVariables;
   }  // end of BehaviourData::getAuxiliaryStateVariables
+
+  const VariableDescriptionContainer&
+  BehaviourData::getPostProcessingVariables() const {
+    return this->postProcessingVariables;
+  }  // end of BehaviourData::getPostProcessingVariables
 
   const VariableDescriptionContainer& BehaviourData::getExternalStateVariables()
       const {
@@ -783,6 +812,9 @@ namespace mfront {
     if (contains(this->auxiliaryStateVariables)) {
       return this->auxiliaryStateVariables.getVariableByExternalName(n);
     }
+    if (contains(this->postProcessingVariables)) {
+      return this->postProcessingVariables.getVariableByExternalName(n);
+    }
     if (contains(this->integrationVariables)) {
       return this->integrationVariables.getVariableByExternalName(n);
     }
@@ -803,6 +835,7 @@ namespace mfront {
         "- a state variable\n"
         "- an auxiliary state variable\n"
         "- an integration variable\n"
+        "- an post-processing variable\n"
         "- an external state variable\n"
         "- a parameter");
   }  // end of BehaviourData::getVariableDescriptionByExternalName
@@ -827,6 +860,9 @@ namespace mfront {
     if (this->externalStateVariables.contains(n)) {
       return this->externalStateVariables.getVariable(n);
     }
+    if (this->postProcessingVariables.contains(n)) {
+      return this->postProcessingVariables.getVariable(n);
+    }
     if (this->parameters.contains(n)) {
       return this->parameters.getVariable(n);
     }
@@ -842,6 +878,7 @@ namespace mfront {
         "- an auxiliary state variable\n"
         "- an integration variable\n"
         "- an external state variable\n"
+        "- an post-processing variable\n"
         "- a parameter");
   }  // end of BehaviourData::getVariableDescription
 
@@ -861,6 +898,7 @@ namespace mfront {
     set_if(this->integrationVariables);
     set_if(this->stateVariables);
     set_if(this->auxiliaryStateVariables);
+    set_if(this->postProcessingVariables);
     set_if(this->persistentVariables);
     set_if(this->externalStateVariables);
     set_if(this->parameters);
@@ -894,6 +932,9 @@ namespace mfront {
     if (this->auxiliaryStateVariables.contains(n)) {
       return this->auxiliaryStateVariables.getVariable(n);
     }
+    if (this->postProcessingVariables.contains(n)) {
+      return this->postProcessingVariables.getVariable(n);
+    }
     if (this->integrationVariables.contains(n)) {
       return this->integrationVariables.getVariable(n);
     }
@@ -915,6 +956,7 @@ namespace mfront {
         "- an auxiliary state variable\n"
         "- an integration variable\n"
         "- an external state variable\n"
+        "- an post-processing variable\n"
         "- a parameter");
   }  // end of BehaviourData::getVariableDescription
 
@@ -1188,6 +1230,7 @@ namespace mfront {
         (this->integrationVariables.contains(n)) ||
         (this->stateVariables.contains(n)) ||
         (this->auxiliaryStateVariables.contains(n)) ||
+        (this->postProcessingVariables.contains(n)) ||
         (this->externalStateVariables.contains(n)) ||
         (this->localVariables.contains(n)) || (this->parameters.contains(n)) ||
         (this->staticVariables.contains(n))) {
@@ -1494,6 +1537,7 @@ namespace mfront {
     set_glossary_name(this->localVariables);
     set_glossary_name(this->stateVariables);
     set_glossary_name(this->auxiliaryStateVariables);
+    set_glossary_name(this->postProcessingVariables);
     set_glossary_name(this->integrationVariables);
     set_glossary_name(this->persistentVariables);
     set_glossary_name(this->externalStateVariables);
@@ -1551,6 +1595,7 @@ namespace mfront {
     set_entry_name(this->localVariables);
     set_entry_name(this->stateVariables);
     set_entry_name(this->auxiliaryStateVariables);
+    set_entry_name(this->postProcessingVariables);
     set_entry_name(this->integrationVariables);
     set_entry_name(this->persistentVariables);
     set_entry_name(this->externalStateVariables);
@@ -1753,6 +1798,7 @@ namespace mfront {
     mfront::getSymbols(symbols, this->externalStateVariables);
     mfront::getSymbols(symbols, this->localVariables);
     mfront::getSymbols(symbols, this->parameters);
+    mfront::getSymbols(symbols, this->postProcessingVariables);
   }  // end of BehaviourData::getSymbols
 
   void BehaviourData::overrideByAParameter(const std::string& n,
@@ -1765,6 +1811,25 @@ namespace mfront {
     }
     this->overriding_parameters[n] = v;
   }  // end of BehaviourData::overrideByAParameter
+
+  const CodeBlock& BehaviourData::getUserDefinedInitializeCodeBlock(
+      const std::string& n) const {
+    return this->getCodeBlock(BehaviourData::UserDefinedInitializeCodeBlock +
+                              n);
+  }  // end of BehaviourData::getUserDefinedInitializeCodeBlock
+
+  std::vector<std::string>
+  BehaviourData::getUserDefinedInitializeCodeBlocksNames() const {
+    const auto pos = std::strlen(BehaviourData::UserDefinedInitializeCodeBlock);
+    auto initialize_methods = std::vector<std::string> {};
+    for(const auto &n : this->getCodeBlockNames()){
+      if (tfel::utilities::starts_with(
+              n, BehaviourData::UserDefinedInitializeCodeBlock)) {
+        initialize_methods.push_back(n.substr(pos));
+      }
+    }
+    return initialize_methods;
+  }  // end of getUserDefinedInitializeCodeBlocksNames
 
   BehaviourData::~BehaviourData() = default;
 

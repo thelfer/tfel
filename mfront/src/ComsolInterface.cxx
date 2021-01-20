@@ -106,7 +106,7 @@ namespace mfront {
     throw_if(bd.getSymmetryType() != mfront::ISOTROPIC,
              "the comsol interface only supports isotropic behaviours");
     // the only supported modelling hypothesis
-    constexpr const auto h = ModellingHypothesis::TRIDIMENSIONAL;
+    constexpr auto h = ModellingHypothesis::TRIDIMENSIONAL;
     const auto& d = bd.getBehaviourData(h);
     throw_if(d.getExternalStateVariables().size() != 1u,
              "external state variables are not supported "
@@ -249,7 +249,7 @@ namespace mfront {
       out << "using StressFreeExpansionType = "
              "Behaviour::StressFreeExpansionType;\n";
     }
-    out << "constexpr const auto cste = tfel::math::Cste<double>::sqrt2;\n";
+    out << "constexpr auto cste = tfel::math::Cste<double>::sqrt2;\n";
     // inputs checks
     const auto nprops =
         d.getMaterialProperties().getTypeSize().getValueForDimension(3) + 1;

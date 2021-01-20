@@ -57,9 +57,9 @@ private:
   void test(const tfel::math::stensor<N,double>& t){
     using tfel::math::power;
     using stensor = tfel::math::stensor<N,double>;
-    constexpr const double c    = -1.058;
-    constexpr const double e    = 1.e-6;
-    constexpr const double prec = 2.e-10;
+    constexpr double c    = -1.058;
+    constexpr double e    = 1.e-6;
+    constexpr double prec = 2.e-10;
     auto fseq   = [](const stensor& sig){
       const auto s    = deviator(sig);
       const auto J2   = (s|s)/2;
@@ -103,9 +103,9 @@ private:
     using stensor   = tfel::math::stensor<N,double>;
     using st2tost2  = tfel::math::st2tost2<N,double>;
     using size_type = unsigned short;
-    constexpr const double c    = -1.058;
-    constexpr const double e    = 1.e-7;
-    constexpr const double prec = 1.e-8;
+    constexpr double c    = -1.058;
+    constexpr double e    = 1.e-7;
+    constexpr double prec = 1.e-8;
     auto normal = [c](const stensor& sig)
       -> stensor{
       const auto s    = deviator(sig);

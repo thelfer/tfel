@@ -18,7 +18,9 @@
 #include "TFEL/Config/TFELConfig.hxx"
 #include "TFEL/TypeTraits/IsAssignableTo.hxx"
 #include "TFEL/TypeTraits/IsSafelyReinterpretCastableTo.hxx"
-#include "TFEL/Math/fsarray.hxx"
+#include "TFEL/Math/Array/GenericFixedSizeArray.hxx"
+#include "TFEL/Math/Array/View.hxx"
+#include "TFEL/Math/Array/ConstView.hxx"
 #include "TFEL/Math/tensor.hxx"
 #include "TFEL/Math/stensor.hxx"
 #include "TFEL/Math/General/MathObjectTraits.hxx"
@@ -68,62 +70,7 @@ namespace tfel::math {
         derivative_type<numeric_type<StensorType1>, numeric_type<TensorType2>>>;
   };  // end of struct DerivativeTypeDispatcher
 
-  /*!
-   * \brief a base for stensor or classes acting like stensor.
-   * \param Child : child class
-   * \param N     : spatial dimension
-   * \param T     : numerical type
-   */
-  template <typename Child>
-  struct t2tost2_base {
-    /*!
-     * Assignement operator
-     */
-    template <typename T2toST2Type>
-    TFEL_MATH_INLINE std::enable_if_t<
-        implementsT2toST2Concept<T2toST2Type>() &&
-            getSpaceDimension<Child>() == getSpaceDimension<T2toST2Type>() &&
-            isAssignableTo<numeric_type<T2toST2Type>, numeric_type<Child>>(),
-        Child&>
-    operator=(const T2toST2Type&);
-    //! Assignement operator
-    template <typename T2toST2Type>
-    TFEL_MATH_INLINE std::enable_if_t<
-        implementsT2toST2Concept<T2toST2Type>() &&
-            getSpaceDimension<Child>() == getSpaceDimension<T2toST2Type>() &&
-            isAssignableTo<numeric_type<T2toST2Type>, numeric_type<Child>>(),
-        Child&>
-    operator+=(const T2toST2Type&);
-    //! Assignement operator
-    template <typename T2toST2Type>
-    TFEL_MATH_INLINE std::enable_if_t<
-        implementsT2toST2Concept<T2toST2Type>() &&
-            getSpaceDimension<Child>() == getSpaceDimension<T2toST2Type>() &&
-            isAssignableTo<numeric_type<T2toST2Type>, numeric_type<Child>>(),
-        Child&>
-    operator-=(const T2toST2Type&);
-    /*!
-     * operator*=
-     */
-    template <typename T2>
-    TFEL_MATH_INLINE std::enable_if_t<
-        isScalar<T2>() &&
-            std::is_same<result_type<numeric_type<Child>, T2, OpMult>,
-                         numeric_type<Child>>::value,
-        Child&>
-    operator*=(const T2);
-    /*!
-     * operator/=
-     */
-    template <typename T2>
-    TFEL_MATH_INLINE std::enable_if_t<
-        isScalar<T2>() &&
-            std::is_same<result_type<numeric_type<Child>, T2, OpDiv>,
-                         numeric_type<Child>>::value,
-        Child&>
-    operator/=(const T2);
-  };  // end of struct t2tost2_base
-
+  //
   template <unsigned short N, typename ValueType>
   struct t2tost2
       : T2toST2Concept<t2tost2<N, ValueType>>,
@@ -180,6 +127,21 @@ namespace tfel::math {
     template <typename InputIterator>
     TFEL_MATH_INLINE2 void copy(const InputIterator src);
   };
+
+  /*!
+   * \brief a simple alias for backward compatibility
+   * \tparam N: space dimension
+   * \tparam T: value type
+   */
+  template <unsigned short N, typename T>
+  using T2toST2View = View<t2tost2<N, T>>;
+  /*!
+   * \brief a simple alias for backward compatibility
+   * \tparam N: space dimension
+   * \tparam T: value type
+   */
+  template <unsigned short N, typename T>
+  using ConstT2toST2View = ConstView<t2tost2<N, T>>;
 
   /*!
    * \return change the basis of a 1D t2tost2

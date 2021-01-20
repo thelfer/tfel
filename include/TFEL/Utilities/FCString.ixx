@@ -279,7 +279,7 @@ namespace tfel {
 
     template <std::size_t N, typename CharT, typename Traits>
     std::size_t basic_fcstring<N, CharT, Traits>::strnlen(const CharT* s) {
-      constexpr const auto e = '\0';
+      constexpr auto e = '\0';
       auto i = size_t{};
       while ((s[i] != e) && (i != N + 1)) {
         ++i;

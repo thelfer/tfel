@@ -34,7 +34,7 @@ namespace mfront {
                                                 const std::string& fid,
                                                 const std::string& kid,
                                                 const DataMap& d) {
-      constexpr const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+      constexpr auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
       const auto an = KinematicHardeningRule::getVariableId("a", fid, kid);
       const auto Xn = KinematicHardeningRule::getVariableId("X", fid, kid);
       const auto Cn = KinematicHardeningRule::getVariableId("C", fid, kid);
@@ -83,7 +83,7 @@ namespace mfront {
         const AbstractBehaviourDSL& dsl,
         const std::string& fid,
         const std::string& kid) const {
-      constexpr const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+      constexpr auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
       auto mts = getMiddleOfTimeStepModifier(bd);
       if (!this->C.is<BehaviourDescription::ConstantMaterialProperty>()) {
         const auto Cn = KinematicHardeningRule::getVariableId("C", fid, kid);

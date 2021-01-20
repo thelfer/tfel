@@ -48,7 +48,7 @@ namespace tfel {
                                                          const real L,
                                                          const real,
                                                          const real) {
-          constexpr const auto zero = real{0};
+          constexpr auto zero = real{0};
           return {F + H, -F, -H,    zero, -F,   G + F, -G,   zero,
                   -H,    -G, H + G, zero, zero, zero,  zero, L};
         }
@@ -62,7 +62,7 @@ namespace tfel {
                                                          const real L,
                                                          const real M,
                                                          const real N) {
-          constexpr const auto zero = real{0};
+          constexpr auto zero = real{0};
           return {F + H, -F,   -H,   zero, zero, zero,  -F,   G + F, -G,
                   zero,  zero, zero, -H,   -G,   H + G, zero, zero,  zero,
                   zero,  zero, zero, L,    zero, zero,  zero, zero,  zero,
@@ -100,7 +100,7 @@ namespace tfel {
                 tfel::material::ModellingHypothesisToSpaceDimension<H>::value,
                 real> {
         //! \brief space dimension
-        static constexpr const auto N =
+        static constexpr auto N =
             tfel::material::ModellingHypothesisToSpaceDimension<H>::value;
         //! \brief return type
         using result_type = tfel::math::st2tost2<N, real>;
@@ -147,7 +147,7 @@ namespace tfel {
                 tfel::material::ModellingHypothesisToSpaceDimension<H>::value,
                 real> {
         //! \brief space dimension
-        static constexpr const unsigned short N =
+        static constexpr unsigned short N =
             tfel::material::ModellingHypothesisToSpaceDimension<H>::value;
         //! \brief return type
         using result_type = tfel::math::st2tost2<N, real>;

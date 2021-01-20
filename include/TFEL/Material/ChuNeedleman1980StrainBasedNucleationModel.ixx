@@ -32,7 +32,7 @@ namespace tfel {
             params,
         const real p) {
       // 1 / sqrt(2*pi)
-      constexpr const auto cste = real(0.398942280401433);
+      constexpr auto cste = real(0.398942280401433);
       const auto x = (p - params.en) / (params.sn);
       // porosity rate
       const auto fr = cste * params.fn / (params.sn) * std::exp(-x * x / 2);
@@ -46,7 +46,7 @@ namespace tfel {
             params,
         const real p) {
       // 1 / sqrt(2*pi)
-      constexpr const auto cste = real(0.398942280401433);
+      constexpr auto cste = real(0.398942280401433);
       const auto x = (p - params.en) / (params.sn);
       // porosity rate
       const auto fr = cste * params.fn / (params.sn) * std::exp(-x * x / 2);
@@ -67,7 +67,7 @@ namespace tfel {
       if (dp < 0) {
         return 0;
       }
-      constexpr const auto cste = tfel::math::Cste<real>::sqrt2;
+      constexpr auto cste = tfel::math::Cste<real>::sqrt2;
       const auto Fa = std::erf((p - params.en) / (cste * (params.sn)));
       const auto Fb = std::erf((p + dp - params.en) / (cste * (params.sn)));
       return (params.fn) * (Fb - Fa) / 2;
@@ -85,7 +85,7 @@ namespace tfel {
       if (dp < 0) {
         return std::make_tuple(real(0),real(0));
       }
-      constexpr const auto cste = tfel::math::Cste<real>::sqrt2;
+      constexpr auto cste = tfel::math::Cste<real>::sqrt2;
       const auto Fa = std::erf((p - params.en) / (cste * (params.sn)));
       const auto Fb = std::erf((p + dp - params.en) / (cste * (params.sn)));
       const auto An =

@@ -1044,7 +1044,7 @@ namespace mfront {
   }  // end of BehaviourDescription::declareAsGenericBehaviour
 
   void BehaviourDescription::declareAsASmallStrainStandardBehaviour() {
-    constexpr const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+    constexpr auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     tfel::raise_if(
         !this->type.empty(),
         "BehaviourDescription::declareAsASmallStrainStandardBehaviour: "
@@ -1069,7 +1069,7 @@ namespace mfront {
 
   void BehaviourDescription::declareAsAFiniteStrainStandardBehaviour(
       const bool b) {
-    constexpr const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+    constexpr auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     tfel::raise_if(
         !this->type.empty(),
         "BehaviourDescription::declareAsAFiniteStrainStandardBehaviour: "
@@ -1097,7 +1097,7 @@ namespace mfront {
   }
 
   void BehaviourDescription::declareAsACohesiveZoneModel() {
-    constexpr const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+    constexpr auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     tfel::raise_if(!this->type.empty(),
                    "BehaviourDescription::declareAsACohesiveZoneModel: "
                    "behaviour type has already been defined");
@@ -1161,7 +1161,7 @@ namespace mfront {
 
   void BehaviourDescription::addMainVariable(const Gradient& g,
                                              const ThermodynamicForce& f) {
-    constexpr const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+    constexpr auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     tfel::raise_if(
         this->getBehaviourType() != BehaviourDescription::GENERALBEHAVIOUR,
         "BehaviourDescription::addMainVariables: "
@@ -1797,7 +1797,7 @@ namespace mfront {
 
   void BehaviourDescription::setModellingHypotheses(
       const std::set<Hypothesis>& mh, const bool b) {
-    constexpr const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+    constexpr auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     auto throw_if = [](const bool c, const std::string& m) {
       tfel::raise_if(c, "BehaviourDescription::setHypotheses: " + m);
     };
@@ -1878,7 +1878,7 @@ namespace mfront {
   }  // end of BehaviourDescription::getModelsDescriptions
 
   void BehaviourDescription::addModelDescription(const ModelDescription& md) {
-    constexpr const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+    constexpr auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     for (auto ov : md.outputs) {
       VariableDescription dov{ov.type, "d" + ov.name, ov.arraySize,
                               ov.lineNumber};
@@ -2009,6 +2009,27 @@ namespace mfront {
     mptr f = &BehaviourData::addExternalStateVariable;
     this->addVariable(h, v, s, f);
   }
+
+  void BehaviourDescription::addPostProcessingVariables(
+      const Hypothesis h,
+      const VariableDescriptionContainer& v) {
+    for (const auto& ppv : v) {
+      this->addPostProcessingVariable(h, ppv);
+    }
+  }  // end of addPostProcessingVariables
+
+  void BehaviourDescription::addPostProcessingVariable(
+      const Hypothesis h,
+      const VariableDescription& v) {
+    if (h == ModellingHypothesis::UNDEFINEDHYPOTHESIS) {
+      this->d.addPostProcessingVariable(v);
+      for (auto& md : this->sd) {
+        md.second->addPostProcessingVariable(v);
+      }
+    } else {
+      this->getBehaviourData2(h).addPostProcessingVariable(v);
+    }
+  }  // end of addPostProcessingVariable
 
   void BehaviourDescription::addLocalVariables(
       const Hypothesis h,
@@ -2336,7 +2357,7 @@ namespace mfront {
     if (!this->areAllMechanicalDataSpecialised()) {
       this->requiresTVectorOrVectorIncludes(b1, b2, d);
     }
-    for (const auto& md : this->sd) {
+   for (const auto& md : this->sd) {
       this->requiresTVectorOrVectorIncludes(b1, b2, *(md.second));
     }
   }  // end of BehaviourDescription::requiresTVectorOrVectorIncludes
@@ -2415,6 +2436,11 @@ namespace mfront {
     return this->getData(
         h, &BehaviourData::isExternalStateVariableIncrementName, n);
   }  // end of BehaviourDescription::isExternalStateVariableIncrementName
+
+  bool BehaviourDescription::isPostProcessingVariableName(
+      const Hypothesis h, const std::string& n) const {
+    return this->getData(h, &BehaviourData::isPostProcessingVariableName, n);
+  }  // end of BehaviourDescription::isPostProcessingVariableName
 
   bool BehaviourDescription::isParameterName(const Hypothesis h,
                                              const std::string& v) const {
@@ -2545,7 +2571,7 @@ namespace mfront {
                    "'" +
                        gn + "' is not a glossary name");
     for (auto& v : this->mvariables) {
-      constexpr const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+      constexpr auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
       if (v.first.name == n) {
         v.first.setGlossaryName(gn);
         this->registerGlossaryName(h, n, gn);
@@ -2568,7 +2594,7 @@ namespace mfront {
                        e + "' is a glossary name");
     std::for_each(this->mvariables.begin(), this->mvariables.end(),
                   [this, &n, &e](MainVariable& v) {
-                    constexpr const auto h =
+                    constexpr auto h =
                         ModellingHypothesis::UNDEFINEDHYPOTHESIS;
                     if (v.first.name == n) {
                       v.first.setEntryName(e);

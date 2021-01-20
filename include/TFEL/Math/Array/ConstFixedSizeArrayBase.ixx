@@ -19,7 +19,7 @@
 namespace tfel::math {
 
   template <typename Child, typename ArrayPolicy>
-  constexpr const typename ArrayPolicy::IndexingPolicy&
+  constexpr typename ArrayPolicy::IndexingPolicy&
   ConstFixedSizeArrayBase<Child, ArrayPolicy>::getIndexingPolicy() const {
     return *this;
   }  // end of getIndexingPolicy

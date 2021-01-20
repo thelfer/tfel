@@ -19,12 +19,14 @@
 #include "TFEL/Config/TFELConfig.hxx"
 #include "TFEL/TypeTraits/IsAssignableTo.hxx"
 #include "TFEL/TypeTraits/IsSafelyReinterpretCastableTo.hxx"
-#include "TFEL/Math/fsarray.hxx"
 #include "TFEL/Math/tmatrix.hxx"
 #include "TFEL/Math/stensor.hxx"
 #include "TFEL/Math/General/MathObjectTraits.hxx"
 #include "TFEL/Math/General/BasicOperations.hxx"
 #include "TFEL/Math/General/EmptyRunTimeProperties.hxx"
+#include "TFEL/Math/Array/GenericFixedSizeArray.hxx"
+#include "TFEL/Math/Array/View.hxx"
+#include "TFEL/Math/Array/ConstView.hxx"
 #include "TFEL/Math/Forward/st2tost2.hxx"
 #include "TFEL/Math/T2toST2/T2toST2Concept.hxx"
 #include "TFEL/Math/Stensor/StensorSizeToDime.hxx"
@@ -227,6 +229,21 @@ namespace tfel::math {
     template <typename InputIterator>
     TFEL_MATH_INLINE2 void copy(const InputIterator src);
   };
+
+  /*!
+   * \brief a simple alias for backward compatibility
+   * \tparam N: space dimension
+   * \tparam T: value type
+   */
+  template <unsigned short N, typename T>
+  using ST2toST2View = View<st2tost2<N, T>>;
+  /*!
+   * \brief a simple alias for backward compatibility
+   * \tparam N: space dimension
+   * \tparam T: value type
+   */
+  template <unsigned short N, typename T>
+  using ConstST2toST2View = ConstView<st2tost2<N, T>>;
 
   /*!
    * \return change the basis of a st2tost2

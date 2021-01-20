@@ -17,7 +17,7 @@
 namespace mfront {
 
   template <typename T, typename T2>
-  BehaviourDSLCommon::CodeBlockOptions BehaviourDSLCommon::readCodeBlock(
+  BehaviourDSLCommon::CodeBlockOptions BehaviourDSLCommon::treatCodeBlock(
       T& child,
       const std::string& n,
       std::string (T2::*m)(const Hypothesis, const std::string&, const bool),
@@ -26,11 +26,11 @@ namespace mfront {
     std::function<std::string(const Hypothesis, const std::string&, const bool)>
         f = [&child, m](const Hypothesis h, const std::string& sv,
                         const bool bv) { return (child.*m)(h, sv, bv); };
-    return this->readCodeBlock(n, f, b, s);
+    return this->treatCodeBlock(n, f, b, s);
   }
 
   template <typename T, typename T2, typename T3>
-  BehaviourDSLCommon::CodeBlockOptions BehaviourDSLCommon::readCodeBlock(
+  BehaviourDSLCommon::CodeBlockOptions BehaviourDSLCommon::treatCodeBlock(
       T& child,
       const std::string& n,
       std::string (T2::*m)(const Hypothesis, const std::string&, const bool),
@@ -44,11 +44,11 @@ namespace mfront {
         [&child, a](CodeBlock&, const Hypothesis h, const std::string& sv) {
           (child.*a)(h, sv);
         };
-    return this->readCodeBlock(n, fm, fa, b, s);
-  }  // end of BehaviourDSLCommon::readCodeBlock
+    return this->treatCodeBlock(n, fm, fa, b, s);
+  }  // end of BehaviourDSLCommon::treatCodeBlock
 
   template <typename T, typename T2, typename T3>
-  void BehaviourDSLCommon::readCodeBlock(
+  void BehaviourDSLCommon::treatCodeBlock(
       T& child,
       const BehaviourDSLCommon::CodeBlockOptions& o,
       const std::string& n,
@@ -62,11 +62,11 @@ namespace mfront {
         [&child, a](CodeBlock&, const Hypothesis h, const std::string& sv) {
           (child.*a)(h, sv);
         };
-    this->readCodeBlock(o, n, fm, fa, b);
-  }  // end of BehaviourDSLCommon::readCodeBlock
+    this->treatCodeBlock(o, n, fm, fa, b);
+  }  // end of BehaviourDSLCommon::treatCodeBlock
 
   template <typename T, typename T2>
-  void BehaviourDSLCommon::readCodeBlock(
+  void BehaviourDSLCommon::treatCodeBlock(
       T& child,
       const BehaviourDSLCommon::CodeBlockOptions& o,
       const std::string& n,
@@ -75,11 +75,11 @@ namespace mfront {
     std::function<std::string(const Hypothesis, const std::string&, const bool)>
         f = [&child, m](const Hypothesis h, const std::string& sv,
                         const bool bv) { return (child.*m)(h, sv, bv); };
-    this->readCodeBlock(o, n, f, b);
-  }  // end of BehaviourDSLCommon::readCodeBlock
+    this->treatCodeBlock(o, n, f, b);
+  }  // end of BehaviourDSLCommon::treatCodeBlock
 
   template <typename T, typename T2>
-  BehaviourDSLCommon::CodeBlockOptions BehaviourDSLCommon::readCodeBlock(
+  BehaviourDSLCommon::CodeBlockOptions BehaviourDSLCommon::treatCodeBlock(
       T& child,
       const std::string& n1,
       const std::string& n2,
@@ -93,11 +93,11 @@ namespace mfront {
     std::function<std::string(const Hypothesis, const std::string&, const bool)>
         f2 = [&child, m2](const Hypothesis h, const std::string& sv,
                           const bool bv) { return (child.*m2)(h, sv, bv); };
-    return this->readCodeBlock(n1, n2, f1, f2, b, s);
-  }  // end of BehaviourDSLCommon::readCodeBlock
+    return this->treatCodeBlock(n1, n2, f1, f2, b, s);
+  }  // end of BehaviourDSLCommon::treatCodeBlock
 
   template <typename T, typename T2>
-  void BehaviourDSLCommon::readCodeBlock(
+  void BehaviourDSLCommon::treatCodeBlock(
       T& child,
       const BehaviourDSLCommon::CodeBlockOptions& o,
       const std::string& n1,
@@ -111,8 +111,8 @@ namespace mfront {
     std::function<std::string(const Hypothesis, const std::string&, const bool)>
         f2 = [&child, m2](const Hypothesis h, const std::string& sv,
                           const bool bv) { (child.*m2)(h, sv, bv); };
-    this->readCodeBlock(o, n1, n2, f1, f2, b);
-  }  // end of BehaviourDSLCommon::readCodeBlock
+    this->treatCodeBlock(o, n1, n2, f1, f2, b);
+  }  // end of BehaviourDSLCommon::treatCodeBlock
 
 }  // end of namespace mfront
 

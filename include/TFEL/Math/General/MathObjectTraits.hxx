@@ -65,7 +65,7 @@ namespace tfel::math {
      * This value is set to 0 if the object is not related to the space
      * dimension
      */
-    static constexpr const unsigned short dime = 0u;
+    static constexpr unsigned short dime = 0u;
   };  // end of struct MathObjectTraits
 
   //! \brief a simple alias

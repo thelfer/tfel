@@ -146,6 +146,7 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Math/Forward/st2tot2.hxx                                                                \
 			TFEL/Math/Forward/TinyNewtonRaphson.hxx                                                      \
 			TFEL/Math/General/Forward/General.hxx                                                        \
+			TFEL/Math/Forward/Expr.hxx                                                      \
 			TFEL/Math/Bindings/atlas.hxx                                                                 \
 			TFEL/Math/Array/StandardTemplateLibraryCompatibilityLayers.hxx				     \
 			TFEL/Math/Array/StandardTemplateLibraryCompatibilityLayers.ixx				     \
@@ -158,7 +159,7 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Math/Array/ConstRuntimeArrayBase.hxx						     \
 			TFEL/Math/Array/ConstRuntimeArrayBase.ixx						     \
 			TFEL/Math/Array/View.hxx								     \
-TFEL/Math/Array/ConstView.hxx								     \
+			TFEL/Math/Array/ConstView.hxx								     \
 			TFEL/Math/Array/FixedSizeArrayPolicies.hxx						     \
 			TFEL/Math/Array/FixedSizeIndexingPolicies.hxx						     \
 			TFEL/Math/Array/GenericFixedSizeArray.hxx						     \
@@ -175,6 +176,7 @@ TFEL/Math/Array/ConstView.hxx								     \
 			TFEL/Math/Array/MutableRuntimeArrayBase.ixx						     \
 			TFEL/Math/Array/RuntimeArrayPolicies.hxx						     \
 			TFEL/Math/Array/RuntimeIndexingPolicies.hxx						     \
+			TFEL/Math/Array/FixedSizeArrayDerivative.hxx						     \
 			TFEL/Math/Parser/BinaryFunction.hxx					                     \
 			TFEL/Math/Parser/EvaluatorBase.hxx 					                     \
 			TFEL/Math/Parser/Negation.hxx					                             \
@@ -265,7 +267,6 @@ TFEL/Math/Array/ConstView.hxx								     \
 			TFEL/Math/Tensor/TensorFromTinyMatrixRowView2.hxx					     \
 			TFEL/Math/Tensor/TensorFromTinyMatrixColumnView.hxx					     \
 			TFEL/Math/Tensor/TensorFromTinyMatrixColumnView2.hxx					     \
-			TFEL/Math/Tensor/TensorView.hxx					                                             \
 			TFEL/Math/Stensor/Internals/StensorChangeBasis.hxx                                           \
 			TFEL/Math/Stensor/Internals/StensorEigenSolver.hxx                                           \
 			TFEL/Math/Stensor/Internals/StensorComputeEigenValues.hxx                                    \
@@ -293,8 +294,6 @@ TFEL/Math/Array/ConstView.hxx								     \
 			TFEL/Math/Stensor/StensorFromTinyMatrixRowView.hxx                                           \
 			TFEL/Math/Stensor/StensorFromTinyMatrixRowView2.hxx                                          \
 			TFEL/Math/Stensor/StensorFromTinyVectorView.hxx                                              \
-			TFEL/Math/Stensor/StensorView.hxx			        			     \
-			TFEL/Math/Stensor/ConstStensorView.hxx			        			     \
 			TFEL/Math/Stensor/DecompositionInPositiveAndNegativeParts.hxx                                \
 			TFEL/Math/Stensor/DecompositionInPositiveAndNegativeParts.ixx                                \
 			TFEL/Math/Stensor/SymmetricStensorProduct.hxx						     \
@@ -316,8 +315,6 @@ TFEL/Math/Array/ConstView.hxx								     \
 			TFEL/Math/Vector/TinyVectorOfTinyVectorFromTinyVectorViewIO.hxx                              \
 			TFEL/Math/Vector/TinyVectorOfStensorFromTinyVectorView.hxx                                   \
 			TFEL/Math/Vector/TinyVectorOfStensorFromTinyVectorViewIO.hxx                                 \
-			TFEL/Math/Vector/TVectorView.hxx			        			     \
-			TFEL/Math/Vector/ConstTVectorView.hxx			        			     \
 			TFEL/Math/Vector/TVectorFromTinyVectorView.hxx						     \
 			TFEL/Math/Vector/TVectorFromTinyMatrixRowView.hxx					     \
 			TFEL/Math/Vector/TVectorFromTinyMatrixRowView2.hxx					     \
@@ -348,8 +345,6 @@ TFEL/Math/Array/ConstView.hxx								     \
 			TFEL/Math/Matrix/MatrixConceptOperations.hxx                                                 \
 			TFEL/Math/Matrix/TMatrixTVectorExpr.hxx                                                      \
 			TFEL/Math/Matrix/TVectorTMatrixExpr.hxx                                                      \
-			TFEL/Math/Matrix/TMatrixView.hxx                                                             \
-			TFEL/Math/Matrix/ConstTMatrixView.hxx                                                        \
 	                TFEL/Math/General/MathObjectTraits.hxx                                                          \
 	                TFEL/Math/General/ConceptRebind.hxx                                                          \
 	                TFEL/Math/General/MathConstants.hxx                                                          \
@@ -371,7 +366,6 @@ TFEL/Math/Array/ConstView.hxx								     \
 			TFEL/Math/General/UnaryResultType.hxx	                                                     \
 			TFEL/Math/General/ComputeObjectTag.ixx	                                                     \
 			TFEL/Math/General/ComputeObjectTag.hxx	                                                     \
-			TFEL/Math/General/DerivativeType.ixx	                                                     \
 			TFEL/Math/General/DerivativeType.hxx	                                                     \
 			TFEL/Math/General/Complex.hxx		                                                     \
 			TFEL/Math/General/ObjectObjectRandomAccessConstIterator.hxx                                  \
@@ -414,7 +408,6 @@ TFEL/Math/Array/ConstView.hxx								     \
 			TFEL/Math/T2toT2/T2toT2Concept.hxx                                                           \
 			TFEL/Math/T2toT2/T2toT2Concept.ixx                                                           \
 			TFEL/Math/T2toT2/T2toT2ConceptIO.hxx                                                         \
-			TFEL/Math/T2toT2/T2toT2View.hxx                                                         \
 			TFEL/Math/T2toT2/T2toT2ConceptOperations.hxx                                                 \
 			TFEL/Math/T2toT2/t2tot2ResultType.hxx                                                        \
 			TFEL/Math/T2toT2/TensorProductLeftDerivativeExpr.hxx                                         \
@@ -441,8 +434,6 @@ TFEL/Math/Array/ConstView.hxx								     \
 			TFEL/Math/ST2toST2/StensorST2toST2ProductExpr.hxx					     \
 			TFEL/Math/ST2toST2/ST2toST2ST2toST2ProductExpr.hxx					     \
 			TFEL/Math/ST2toST2/ConvertT2toST2ToST2toST2Expr.hxx                                          \
-			TFEL/Math/ST2toST2/ST2toST2View.hxx			        			     \
-			TFEL/Math/ST2toST2/ConstST2toST2View.hxx			        		     \
 			TFEL/Math/ST2toST2/StensorSquareDerivative.hxx                                               \
 			TFEL/Math/ST2toST2/BuildFromRotationMatrix.hxx                                               \
 			TFEL/Math/ST2toST2/ChangeBasis.hxx                                                           \
@@ -468,8 +459,6 @@ TFEL/Math/Array/ConstView.hxx								     \
 			TFEL/Math/T2toST2/StensorT2toST2ProductExpr.hxx						     \
 			TFEL/Math/T2toST2/T2toST2T2toT2ProductExpr.hxx                                               \
 			TFEL/Math/T2toST2/ST2toST2T2toST2ProductExpr.hxx					     \
-			TFEL/Math/T2toST2/T2toST2View.hxx                                                            \
-			TFEL/Math/T2toST2/ConstT2toST2View.hxx                                                       \
                         TFEL/Math/T2toST2/ConvertKirchhoffStressJaumanRateModuliToKirchhoffStressDerivative.hxx      \
 			TFEL/Math/st2tot2.hxx                                                                        \
 			TFEL/Math/ST2toT2/st2tot2.ixx                                                                \
@@ -486,7 +475,6 @@ TFEL/Math/Array/ConstView.hxx								     \
 			TFEL/Math/ST2toT2/ST2toT2ST2toST2ProductExpr.hxx					                         \
 			TFEL/Math/ST2toT2/T2toST2ST2toT2ProductExpr.hxx						                         \
 			TFEL/Math/ST2toT2/ST2toT2T2toST2ProductExpr.hxx						                         \
-			TFEL/Math/ST2toT2/ST2toT2View.hxx						                                     \
 			TFEL/Math/Broyden.hxx                                                                        \
 			TFEL/Math/Broyden2.hxx                                                                       \
 			TFEL/Math/RootFinding/BissectionAlgorithmBase.hxx                                            \
@@ -529,6 +517,7 @@ TFEL/Math/Array/ConstView.hxx								     \
 			TFEL/Metaprogramming/EmptyClass.hxx    	                                                     \
 			TFEL/Metaprogramming/HasRandomAccessIterator.hxx                                             \
 			TFEL/Metaprogramming/ResultOf.hxx                                                            \
+			TFEL/Metaprogramming/MakeIntegerRange.hxx                                                    \
 			TFEL/System/RecursiveFind.hxx                                                                \
 			TFEL/System/ExternalFunctionsPrototypes.hxx                                                  \
 			TFEL/System/ExternalLibraryManager.hxx                                                       \

@@ -24,8 +24,8 @@ namespace tfel{
     TinyMatrixInvert<N,T>::exe(tfel::math::tmatrix<N,N,T>& m,
 			       const T eps)
     {
-      constexpr const auto zero = T(0);
-      constexpr const auto one  = T(1);
+      constexpr auto zero = T(0);
+      constexpr auto one  = T(1);
       tmatrix<N,N,T> t(m);
       TinyPermutation<N> p;
       TinyMatrixSolve<N,T>::decomp(t,p,eps);

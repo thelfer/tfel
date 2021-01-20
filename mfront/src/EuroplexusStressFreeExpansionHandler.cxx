@@ -15,8 +15,6 @@
 #include<limits>
 #include<stdexcept>
 #include"TFEL/Raise.hxx"
-#include"TFEL/Math/Stensor/StensorView.hxx"
-#include"TFEL/Math/Stensor/ConstStensorView.hxx"
 #include"MFront/Europlexus/EuroplexusStressFreeExpansionHandler.hxx"
 
 namespace epx

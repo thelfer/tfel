@@ -218,7 +218,7 @@ namespace mfront {
      * \param[in] s     : allow specialisation
      */
     template <typename T, typename T2>
-    CodeBlockOptions readCodeBlock(T&,
+    CodeBlockOptions treatCodeBlock(T&,
                                    const std::string&,
                                    std::string (T2::*)(const Hypothesis,
                                                        const std::string&,
@@ -234,7 +234,7 @@ namespace mfront {
      * \param[in] b     : add "this->" in front of variables
      */
     template <typename T, typename T2>
-    void readCodeBlock(T&,
+    void treatCodeBlock(T&,
                        const CodeBlockOptions&,
                        const std::string&,
                        std::string (T2::*)(const Hypothesis,
@@ -252,7 +252,7 @@ namespace mfront {
      * \param[in] s     : allow specialisation
      */
     template <typename T, typename T2, typename T3>
-    CodeBlockOptions readCodeBlock(
+    CodeBlockOptions treatCodeBlock(
         T&,
         const std::string&,
         std::string (T2::*)(const Hypothesis, const std::string&, const bool),
@@ -270,7 +270,7 @@ namespace mfront {
      * \param[in] s     : allow specialisation
      */
     template <typename T, typename T2, typename T3>
-    void readCodeBlock(T&,
+    void treatCodeBlock(T&,
                        const CodeBlockOptions&,
                        const std::string&,
                        std::string (T2::*)(const Hypothesis,
@@ -290,7 +290,7 @@ namespace mfront {
      * \param[in] s     : allow specialisation
      */
     template <typename T, typename T2>
-    CodeBlockOptions readCodeBlock(
+    CodeBlockOptions treatCodeBlock(
         T&,
         const std::string&,
         const std::string&,
@@ -309,7 +309,7 @@ namespace mfront {
      * \param[in] b     : add "this->" in front of variables
      */
     template <typename T, typename T2>
-    void readCodeBlock(
+    void treatCodeBlock(
         T&,
         const CodeBlockOptions&,
         const std::string&,
@@ -325,7 +325,7 @@ namespace mfront {
      * \param[in] b     : add "this->" in front of variables
      * \param[in] s     : allow specialisation
      */
-    CodeBlockOptions readCodeBlock(
+    CodeBlockOptions treatCodeBlock(
         const std::string&,
         std::function<
             std::string(const Hypothesis, const std::string&, const bool)>,
@@ -338,7 +338,7 @@ namespace mfront {
      * \param[in] m     : modifier
      * \param[in] b     : add "this->" in front of variables
      */
-    void readCodeBlock(const CodeBlockOptions&,
+    void treatCodeBlock(const CodeBlockOptions&,
                        const std::string&,
                        std::function<std::string(
                            const Hypothesis, const std::string&, const bool)>,
@@ -352,7 +352,7 @@ namespace mfront {
      * \param[in] b     : add "this->" in front of variables
      * \param[in] s     : allow specialisation
      */
-    CodeBlockOptions readCodeBlock(
+    CodeBlockOptions treatCodeBlock(
         const std::string&,
         std::function<
             std::string(const Hypothesis, const std::string&, const bool)>,
@@ -368,7 +368,7 @@ namespace mfront {
      * \param[in] b     : add "this->" in front of variables
      * \param[in] s     : allow specialisation
      */
-    void readCodeBlock(
+    void treatCodeBlock(
         const CodeBlockOptions&,
         const std::string&,
         std::function<
@@ -385,7 +385,7 @@ namespace mfront {
      * \param[in] b     : add "this->" in front of variables
      * \param[in] s     : allow specialisation
      */
-    CodeBlockOptions readCodeBlock(
+    CodeBlockOptions treatCodeBlock(
         const std::string&,
         const std::string&,
         std::function<
@@ -403,7 +403,7 @@ namespace mfront {
      * \param[in] m2    : modifier
      * \param[in] b     : add "this->" in front of variables
      */
-    void readCodeBlock(const CodeBlockOptions&,
+    void treatCodeBlock(const CodeBlockOptions&,
                        const std::string&,
                        const std::string&,
                        std::function<std::string(
@@ -411,6 +411,36 @@ namespace mfront {
                        std::function<std::string(
                            const Hypothesis, const std::string&, const bool)>,
                        const bool);
+    /*!
+     * \brief read the next code block for the given hypothesis
+     * \param[in] h: hypothesis
+     * \param[in] n: name of the method read
+     * \param[in] m: modifier
+     * \param[in] a: word analyser
+     * \param[in] b: add "this->" in front of variables
+     */
+    CodeBlock readNextBlock(
+        const Hypothesis,
+        const std::string&,
+        std::function<
+            std::string(const Hypothesis, const std::string&, const bool)>,
+        std::function<void(CodeBlock&, const Hypothesis, const std::string&)>,
+        const bool);
+    /*!
+     * \brief read the next code block for the given hypothesis
+     * \param[in] h: hypothesis
+     * \param[in] n: name of the method read
+     * \param[in] m: modifier
+     * \param[in] b: add "this->" in front of variables
+     */
+    CodeBlock readNextBlock(
+        const Hypothesis,
+        const std::string&,
+        std::function<
+            std::string(const Hypothesis, const std::string&, const bool)>,
+        const bool);
+    //
+    using DSLBase::readNextBlock;
     //! \brief throw an exception is some options were not recognized
     void treatUnsupportedCodeBlockOptions(const CodeBlockOptions&);
     /*!
@@ -543,9 +573,9 @@ namespace mfront {
     /*!
      * Assign a list variables to mechanical data associated with the given
      * hypotheses.
-     * \param[out] h : modelling hypothesis on which the variables were declared
-     * \param[out] v : the declared variables
-     * \param[in]  m : method used to assign the variables
+     * \param[out] h : modelling hypothesis on which the variables were
+     * declared \param[out] v : the declared variables \param[in]  m : method
+     * used to assign the variables
      */
     virtual void addVariableList(const std::set<Hypothesis>&,
                                  const VariableDescriptionContainer&,
@@ -630,6 +660,8 @@ namespace mfront {
     virtual void treatModellingHypotheses();
     //! \brief treat the `@UpdateAuxiliaryStateVariables` keyword
     virtual void treatUpdateAuxiliaryStateVariables();
+    //! \brief treat the `@Initialize` keyword
+    virtual void treatInitialize();
     //! \brief treat the `@InternalEnergy` keyword
     virtual void treatInternalEnergy();
     //! \brief treat the `@DissipatedEnergy` keyword
@@ -753,7 +785,8 @@ namespace mfront {
      * \param[in]  v                 : variable to be declared
      * \param[in]  prefix            : prefix added to variable's names
      * \param[in]  suffix            : suffix added to variable's names
-     * \param[in]  useTimeDerivative : declare time derivative of the variables
+     * \param[in]  useTimeDerivative : declare time derivative of the
+     * variables
      */
     virtual void writeVariableDeclaration(std::ostream&,
                                           const VariableDescription&,
@@ -767,7 +800,8 @@ namespace mfront {
      * \param[in]  v                 : variables to be declared
      * \param[in]  prefix            : prefix added to variable's names
      * \param[in]  suffix            : suffix added to variable's names
-     * \param[in]  useTimeDerivative : declare time derivative of the variables
+     * \param[in]  useTimeDerivative : declare time derivative of the
+     * variables
      */
     virtual void writeVariablesDeclarations(std::ostream&,
                                             const VariableDescriptionContainer&,
@@ -825,6 +859,9 @@ namespace mfront {
 
     virtual void writeBehaviourDataOutputOperator(std::ostream&,
                                                   const Hypothesis) const;
+
+    virtual void writeBehaviourDataInitializeMethods(std::ostream&,
+                                                     const Hypothesis) const;
 
     virtual void writeBehaviourDataExport(std::ostream&,
                                           const Hypothesis) const;
@@ -937,9 +974,9 @@ namespace mfront {
      * \brief write the checks associated to a bound
      * \param[out] os: output stream
      * \param[in]  v:  variable description
-     * \param[in]  b:  if true, checks are written also on the variable updated
-     * with its increment
-     * \note if the variable has no bounds, nothing is done
+     * \param[in]  b:  if true, checks are written also on the variable
+     * updated with its increment \note if the variable has no bounds, nothing
+     * is done
      */
     virtual void writeBoundsChecks(std::ostream&,
                                    const VariableDescription&,
@@ -948,9 +985,9 @@ namespace mfront {
      * \brief write the checks associated to a physical bound
      * \param[out] os: output stream
      * \param[in]  v:  variable description
-     * \param[in]  b:  if true, checks are written also on the variable updated
-     * with its increment
-     * \note if the variable has no physical bounds, nothing is done
+     * \param[in]  b:  if true, checks are written also on the variable
+     * updated with its increment \note if the variable has no physical
+     * bounds, nothing is done
      */
     virtual void writePhysicalBoundsChecks(std::ostream&,
                                            const VariableDescription&,
@@ -1230,8 +1267,8 @@ namespace mfront {
     //! \brief write the code returning the tangent operator
     virtual void writeBehaviourGetTangentOperator(std::ostream&) const;
     /*!
-     * \brief write the code declaring with the tangent operator and its blocks,
-     * if required.
+     * \brief write the code declaring with the tangent operator and its
+     * blocks, if required.
      */
     virtual void writeBehaviourTangentOperator(std::ostream&) const;
     /*!
@@ -1306,12 +1343,10 @@ namespace mfront {
     virtual void setMinimalTangentOperator();
     /*!
      * \brief if the compte final thermodynamic forces code is not available,
-     * create it from the ComputeFinalThermodynamicForcesCandidate code if it is
-     * available.
-     * \note This method is not trivial because one has to take care
-     * not to create artifical mechanical data specialisation
-     * \note This method is meant to be used in the
-     * endsInputFileProcessing method.
+     * create it from the ComputeFinalThermodynamicForcesCandidate code if it
+     * is available. \note This method is not trivial because one has to take
+     * care not to create artifical mechanical data specialisation \note This
+     * method is meant to be used in the endsInputFileProcessing method.
      */
     virtual void
     setComputeFinalThermodynamicForcesFromComputeFinalThermodynamicForcesCandidateIfNecessary();
@@ -1345,7 +1380,7 @@ namespace mfront {
 
     bool useStateVarTimeDerivative;
     bool explicitlyDeclaredUsableInPurelyImplicitResolution;
-  };  // end of struct BehaviourDSLCommon
+    };  // end of struct BehaviourDSLCommon
 
 }  // end of namespace mfront
 

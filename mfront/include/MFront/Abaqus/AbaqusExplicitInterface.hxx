@@ -62,7 +62,7 @@ namespace abaqus {
   struct TFEL_VISIBILITY_LOCAL AbaqusExplicitInterface
       : protected AbaqusInterfaceExceptions {
     //! space dimension
-    static constexpr const unsigned short N =
+    static constexpr unsigned short N =
         tfel::material::ModellingHypothesisToSpaceDimension<H>::value;
     //! simple alias
     using MechanicalBehaviourBase = tfel::material::MechanicalBehaviourBase;
@@ -115,11 +115,11 @@ namespace abaqus {
     struct TFEL_VISIBILITY_LOCAL DoNothingEnergyComputer {
       TFEL_ABAQUS_INLINE static void exe(T&, const BV&, const T&) {}
     };  // end of struct DoNothingEnergyComputer
-    static constexpr const bool bs = ATraits::requiresStiffnessTensor;
-    static constexpr const bool ba =
+    static constexpr bool bs = ATraits::requiresStiffnessTensor;
+    static constexpr bool ba =
         ATraits::requiresThermalExpansionCoefficientTensor;
-    static constexpr const bool bi = MTraits::hasComputeInternalEnergy;
-    static constexpr const bool bd = MTraits::hasComputeDissipatedEnergy;
+    static constexpr bool bi = MTraits::hasComputeInternalEnergy;
+    static constexpr bool bd = MTraits::hasComputeDissipatedEnergy;
     using SInitializer = typename std::conditional<bs,
                                                    StiffnessOperatorInitializer,
                                                    DoNothingInitializer>::type;
@@ -144,7 +144,7 @@ namespace abaqus {
       //! simple alias
       using TangentOperatorTraits = tfel::material::TangentOperatorTraits<
           MechanicalBehaviourBase::STANDARDSTRAINBASEDBEHAVIOUR>;
-      constexpr const T zero = T{0};
+      constexpr T zero = T{0};
       const tfel::math::stensor<N, T> e(zero);
       const tfel::math::stensor<N, T> de(zero);
       const tfel::math::stensor<N, T> s(zero);
@@ -172,7 +172,7 @@ namespace abaqus {
       //! simple alias
       using TangentOperatorTraits = tfel::material::TangentOperatorTraits<
           MechanicalBehaviourBase::STANDARDFINITESTRAINBEHAVIOUR>;
-      constexpr const T zero = T{0};
+      constexpr T zero = T{0};
       const tfel::math::tensor<N, T> F0(tfel::math::tensor<N, T>::Id());
       const tfel::math::tensor<N, T> F1(tfel::math::tensor<N, T>::Id());
       const tfel::math::stensor<N, T> s(zero);

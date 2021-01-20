@@ -26,6 +26,9 @@
 #include "TFEL/Math/General/BasicOperations.hxx"
 #include "TFEL/Math/General/EmptyRunTimeProperties.hxx"
 #include "TFEL/Math/General/DerivativeType.hxx"
+#include "TFEL/Math/Array/GenericFixedSizeArray.hxx"
+#include "TFEL/Math/Array/View.hxx"
+#include "TFEL/Math/Array/ConstView.hxx"
 #include "TFEL/Math/Vector/VectorUtilities.hxx"
 #include "TFEL/Math/Vector/VectorConcept.hxx"
 #include "TFEL/Math/Matrix/MatrixConcept.hxx"
@@ -36,7 +39,6 @@
 #include "TFEL/Math/Forward/tmatrix.hxx"
 #include "TFEL/Math/Forward/stensor.hxx"
 #include "TFEL/Math/Forward/st2tost2.hxx"
-#include "TFEL/Math/fsarray.hxx"
 
 namespace tfel::math {
 
@@ -748,7 +750,22 @@ namespace tfel::math {
                                           const FunctionDerivative&,
                                           const ValueType,
                                           const bool = false) const;
-  };  // end of stensor
+  };  // end of struct stensor
+
+  /*!
+   * \brief a simple alias for backward compatibility
+   * \tparam N: space dimension
+   * \tparam T: value type
+   */
+  template <unsigned short N, typename T>
+  using StensorView = View<stensor<N, T>>;
+  /*!
+   * \brief a simple alias for backward compatibility
+   * \tparam N: space dimension
+   * \tparam T: value type
+   */
+  template <unsigned short N, typename T>
+  using ConstStensorView = ConstView<stensor<N, T>>;
 
   /*!
    * export the given vector to an array of the

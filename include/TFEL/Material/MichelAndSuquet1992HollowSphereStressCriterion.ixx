@@ -44,8 +44,8 @@ computeMichelAndSuquet1992HollowSphereStress(
     const MichelAndSuquet1992HollowSphereStressType<StressStensor> seps) {
   // a simple alias to the underlying numeric type
   using real = MichelAndSuquet1992HollowSphereBaseType<StressStensor>;
-  constexpr const auto cste_3_2 = real(3) / 2;
-  constexpr const auto cste_9_4 = real(9) / 4;
+  constexpr auto cste_3_2 = real(3) / 2;
+  constexpr auto cste_9_4 = real(9) / 4;
   const auto s = deviator(s);
   const auto s2 = cste_3_2 * (s | s);
   const auto pr = trace(sig) / 3;
@@ -70,11 +70,11 @@ computeMichelAndSuquet1992HollowSphereStressNormal(
         StressStensor> &p,
     const MichelAndSuquet1992HollowSphereStressType<StressStensor> seps) {
   using real = MichelAndSuquet1992HollowSphereBaseType<StressStensor>;
-  constexpr const auto id =
+  constexpr auto id =
       MichelAndSuquet1992HollowSphereStressNormalType<StressStensor>::Id();
-  constexpr const auto cste_2_3 = real(2) / 3;
-  constexpr const auto cste_3_2 = real(3) / 2;
-  constexpr const auto cste_9_4 = real(9) / 4;
+  constexpr auto cste_2_3 = real(2) / 3;
+  constexpr auto cste_3_2 = real(3) / 2;
+  constexpr auto cste_9_4 = real(9) / 4;
   const auto s = deviator(sig);
   const auto s2 = cste_3_2 * (s | s);
   const auto pr = trace(sig) / 3;
@@ -113,14 +113,14 @@ computeMichelAndSuquet1992HollowSphereStressSecondDerivative(
     const MichelAndSuquet1992HollowSphereStressCriterionParameters<
         StressStensor> &p,
     const MichelAndSuquet1992HollowSphereStressType<StressStensor> seps) {
-  constexpr const auto N = tfel::math::getSpaceDimension<StressStensor>();
+  constexpr auto N = tfel::math::getSpaceDimension<StressStensor>();
   using real = MichelAndSuquet1992HollowSphereBaseType<StressStensor>;
   using normal = MichelAndSuquet1992HollowSphereStressNormalType<StressStensor>;
   using Stensor4 = tfel::math::st2tost2<N, real>;
-  constexpr const auto id = normal::Id();
-  constexpr const auto cste_2_3 = real(2) / 3;
-  constexpr const auto cste_3_2 = real(3) / 2;
-  constexpr const auto cste_9_4 = real(9) / 4;
+  constexpr auto id = normal::Id();
+  constexpr auto cste_2_3 = real(2) / 3;
+  constexpr auto cste_3_2 = real(3) / 2;
+  constexpr auto cste_9_4 = real(9) / 4;
   const auto s = deviator(sig);
   const auto s2 = cste_3_2 * (s | s);
   const auto pr = trace(sig) / 3;

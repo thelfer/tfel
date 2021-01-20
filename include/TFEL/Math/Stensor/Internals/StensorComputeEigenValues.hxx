@@ -58,7 +58,7 @@ namespace tfel::math::internals {
         const T* const v, T& vp1, T& vp2, T& vp3, const bool) {
       static_assert(tfel::typetraits::IsFundamentalNumericType<T>::cond);
       static_assert(tfel::typetraits::IsReal<T>::cond);
-      constexpr const auto zero = T(0);
+      constexpr auto zero = T(0);
       TFEL_CONSTEXPR const auto one_half = T(1) / T(2);
       const auto tr = v[0] + v[1];
       const auto tmp = v[0] - v[1];
@@ -80,7 +80,7 @@ namespace tfel::math::internals {
       static_assert(tfel::typetraits::IsFundamentalNumericType<T>::cond);
       static_assert(tfel::typetraits::IsReal<T>::cond);
       using tfel::math::constexpr_fct::sqrt;
-      constexpr const auto icste = Cste<T>::isqrt2;
+      constexpr auto icste = Cste<T>::isqrt2;
       TFEL_CONSTEXPR const auto one_half = 1 / T{2};
       TFEL_CONSTEXPR const auto one_third = 1 / T{3};
       stensor<3u, T> s(v);

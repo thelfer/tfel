@@ -136,12 +136,18 @@ namespace mfront {
 
   void GenericBehaviourSymbolsGenerator::writeAdditionalSymbols(
       std::ostream& os,
-      const StandardBehaviourInterface&,
-      const BehaviourDescription&,
+      const StandardBehaviourInterface& i,
+      const BehaviourDescription& bd,
       const FileDescription&,
-      const std::string&,
-      Hypothesis) const {
-    os << '\n';
+      const std::string& name,
+      const Hypothesis h) const {
+    const auto& d = bd.getBehaviourData(h);
+    const auto fn = this->getSymbolName(i, name, h);
+    const auto ifcts = d.getUserDefinedInitializeCodeBlocksNames();
+    os << "MFRONT_SHAREDOBJ unsigned short " << fn
+        << "_nInitializeFunctions= " << ifcts.size() << ";\n\n";
+    this->writeArrayOfStringsSymbol(os, fn + "_InitializeFunctions", ifcts);
+    os << "\n";
   }  // end of GenericBehaviourSymbolsGenerator::writeAdditionalSymbols
 
   bool GenericBehaviourSymbolsGenerator::handleStrainMeasure() const{
@@ -151,4 +157,4 @@ namespace mfront {
   GenericBehaviourSymbolsGenerator::~GenericBehaviourSymbolsGenerator() =
       default;
 
-}  // end of namespace mfront
+  }  // end of namespace mfront

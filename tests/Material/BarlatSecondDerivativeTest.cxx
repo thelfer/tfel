@@ -268,7 +268,7 @@ struct BarlatSecondDerivativeTest final
   void test3(const double* values){
     using namespace tfel::math;
     using namespace tfel::material;
-    constexpr const auto a  = double(8);
+    constexpr auto a  = double(8);
     const auto l1 = makeBarlatLinearTransformation<N,double>(-0.069888,
     							     0.936408,
     							     0.079143,

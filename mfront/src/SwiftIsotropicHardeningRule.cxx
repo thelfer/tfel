@@ -27,7 +27,7 @@ namespace mfront {
                                                   const std::string& id,
                                                   const DataMap& d) {
       using namespace tfel::glossary;
-      constexpr const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+      constexpr auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
       // this shall be captured in gcc 4.7.2
       auto get_mp = [&dsl, &bd, &fid, &id, &d, this](
           const std::string& mpn, const std::string& t, const std::string& vn) {
@@ -141,7 +141,7 @@ namespace mfront {
         dsl.writeMaterialPropertyEvaluation(mps, this->n, mts);
         mps << ";\n";
       }
-      constexpr const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+      constexpr auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
       CodeBlock i;
       i.code += mps.str();
       if (!i.code.empty()) {

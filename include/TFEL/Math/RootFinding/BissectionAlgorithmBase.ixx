@@ -123,7 +123,7 @@ namespace tfel {
     bool BissectionAlgorithmBase<NumericType>::haveSameSign(
         const NumericType a, const NumericType b) {
       auto sgn = [](const NumericType value) {
-        constexpr const auto zero = NumericType{};
+        constexpr auto zero = NumericType{};
         return (zero < value) - (value < zero);
       };
       return sgn(a) == sgn(b);

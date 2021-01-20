@@ -32,7 +32,7 @@ namespace mfront {
                                          const std::string& id,
                                          const DataMap& d) {
       using namespace tfel::glossary;
-      constexpr const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+      constexpr auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
       InelasticFlowBase::initialize(bd, dsl, id, d);
       // checking options
       mfront::bbrick::check(d, this->getOptions());
@@ -55,7 +55,7 @@ namespace mfront {
         const StressPotential& sp,
         const std::string& id,
         const bool b) const {
-      constexpr const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+      constexpr auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
       auto c = std::string{};
       if (b) {
         if (!this->ihrs.empty()) {

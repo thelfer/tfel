@@ -22,7 +22,7 @@ namespace calculix
 		    const CalculiXReal* const p)
   {
     using namespace tfel::math;
-    constexpr const CalculiXReal eps = CalculiXReal(1.e-10);
+    constexpr CalculiXReal eps = CalculiXReal(1.e-10);
     tmatrix<3u,3u,CalculiXReal> r;
     tvector<3u,CalculiXReal> e1,e2,e3;
     if(c[6]>=0){

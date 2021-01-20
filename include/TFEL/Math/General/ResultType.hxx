@@ -21,7 +21,7 @@
 namespace tfel::math {
 
   /*
-   * \class ResultType_
+   * \class ComputeBinaryOperationResult
    * \brief A helper class for ResultType.
    * This default version returns InvalidType both for
    * Result and Handle.
@@ -39,12 +39,10 @@ namespace tfel::math {
    * \see ComputeObjectTag.
    */
   template <typename TagA, typename TagB, typename A, typename B, typename Op>
-  struct ResultType_ {
-    /*!
-     * \brief result of the binary operation.
-     */
+  struct ComputeBinaryOperationResult {
+    //! \brief result of the binary operation.
     using type = tfel::meta::InvalidType;
-  };  // end of ResultType_
+  };  // end of ComputeBinaryOperationResult
 
   /*
    * \class ResultType
@@ -52,7 +50,7 @@ namespace tfel::math {
    * This class is meant to be specialised on a per objet basis.
    * (in comparison, ComputeBinaryResult is meant to be specialised
    * on a per concept basis)
-   * The helper class ResultType_ is only convenient to declare
+   * The helper class ComputeBinaryOperationResult is only convenient to declare
    * scalar to objet operations.
    * \param typename A, type of the first argument of the
    * operation.
@@ -71,8 +69,10 @@ namespace tfel::math {
     using TagA = typename ComputeObjectTag<TypeA>::type;
     //! Tag of the object B
     using TagB = typename ComputeObjectTag<TypeB>::type;
-    //! Result
-    using type = typename ResultType_<TagA, TagB, TypeA, TypeB, Op>::type;
+    //! \brief result
+    using type =
+        typename ComputeBinaryOperationResult<TagA, TagB, TypeA, TypeB, Op>::
+            type;
   };
 
   //! \brief a simple alias

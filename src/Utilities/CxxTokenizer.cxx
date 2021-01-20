@@ -166,7 +166,7 @@ namespace tfel {
             grave_accent_as_separator(ba) {}  // end of is_separator
       bool operator()(const std::string::value_type &c) const {
         using ctype = std::string::value_type;
-        constexpr const std::array<ctype, 24> s = {
+        constexpr std::array<ctype, 24> s = {
             {'?', ';', '/', '!', '&',  '*',  '|', '{',
              '}', '[', ']', '(', ')',  '%',  '=', '^',
              ',', ':', '<', '>', '\'', '\"', '+', '\\'}};

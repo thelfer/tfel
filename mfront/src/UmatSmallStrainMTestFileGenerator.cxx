@@ -59,8 +59,8 @@ namespace mfront
   void UmatSmallStrainMTestFileGenerator::writeGradients(
       std::ostream& os) const {
     using namespace tfel::material;
-    constexpr const auto cste  = tfel::math::Cste<real>::sqrt2;
-    constexpr const auto icste = tfel::math::Cste<real>::isqrt2;
+    constexpr auto cste  = tfel::math::Cste<real>::sqrt2;
+    constexpr auto icste = tfel::math::Cste<real>::isqrt2;
     const auto& n = this->getStrainComponentsNames();
     unsigned short i;
     tfel::raise_if(this->times.size()!=2,

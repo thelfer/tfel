@@ -23,9 +23,6 @@
 #include "TFEL/Math/tensor.hxx"
 #include "TFEL/Math/t2tost2.hxx"
 #include "TFEL/Math/st2tost2.hxx"
-#include "TFEL/Math/Tensor/TensorView.hxx"
-#include "TFEL/Math/Stensor/StensorView.hxx"
-#include "TFEL/Math/ST2toST2/ST2toST2View.hxx"
 #include "TFEL/Material/FiniteStrainBehaviourTangentOperator.hxx"
 #include "TFEL/System/ExternalLibraryManager.hxx"
 #include "MFront/MFrontLogStream.hxx"
@@ -129,14 +126,16 @@ namespace mtest {
           l, f + "_rotateGradients");
       if (this->btype == 2u) {
         // finite strain behaviour
-        this->rtf_fct = elm.getGenericBehaviourRotateThermodynamicForcesFunction(
-            l, f + "_rotateThermodynamicForces_CauchyStress");
+        this->rtf_fct =
+            elm.getGenericBehaviourRotateThermodynamicForcesFunction(
+                l, f + "_rotateThermodynamicForces_CauchyStress");
         this->rto_fct =
             elm.getGenericBehaviourRotateTangentOperatorBlocksFunction(
                 l, f + "_rotateTangentOperatorBlocks_dsig_dF");
       } else {
-        this->rtf_fct = elm.getGenericBehaviourRotateThermodynamicForcesFunction(
-            l, f + "_rotateThermodynamicForces");
+        this->rtf_fct =
+            elm.getGenericBehaviourRotateThermodynamicForcesFunction(
+                l, f + "_rotateThermodynamicForces");
         this->rto_fct =
             elm.getGenericBehaviourRotateTangentOperatorBlocksFunction(
                 l, f + "_rotateTangentOperatorBlocks");

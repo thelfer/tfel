@@ -17,6 +17,8 @@
 #include <type_traits>
 #include "TFEL/TypeTraits/IsAssignableTo.hxx"
 #include "TFEL/Math/General/MathObjectTraits.hxx"
+#include "TFEL/Math/General/ConceptRebind.hxx"
+#include "TFEL/Math/ExpressionTemplates/Expr.hxx"
 #include "TFEL/Math/Array/MutableFixedSizeArrayBase.hxx"
 #include "TFEL/Math/Array/MutableRuntimeArrayBase.hxx"
 
@@ -34,7 +36,9 @@ namespace tfel::math {
                               typename MappedType::array_policy>>;
 
   template <typename MappedType>
-  struct View : selectViewArrayBase<MappedType> {
+  struct View : ConceptRebind<typename ComputeObjectTag<MappedType>::type,
+                              View<MappedType>>::type,
+                selectViewArrayBase<MappedType> {
     //
     using ArrayPolicy = typename MappedType::array_policy;
     //
@@ -58,20 +62,22 @@ namespace tfel::math {
     constexpr View(View&&) noexcept = default;
     //! \brief assignement operator
     constexpr View& operator=(const View& src) noexcept {
-      checkIndexingPoliciesRuntimeCompatiblity(this->getIndexingPolicy(),
-                                               src.getIndexingPolicy());
+      //       checkIndexingPoliciesRuntimeCompatiblity(this->getIndexingPolicy(),
+      //                                                src.getIndexingPolicy());
       this->assign(src);
       return *this;
     };
     //! \brief move assigment
     constexpr View& operator=(View&& src) noexcept {
-      checkIndexingPoliciesRuntimeCompatiblity(this->getIndexingPolicy(),
-                                               src.getIndexingPolicy());
+      //       checkIndexingPoliciesRuntimeCompatiblity(this->getIndexingPolicy(),
+      //                                                src.getIndexingPolicy());
       this->assign(src);
       return *this;
     }
     // exposing MutableFixedSizeArrayBase' assignement operators
     using selectViewArrayBase<MappedType>::operator=;
+    using selectViewArrayBase<MappedType>::operator[];
+    using selectViewArrayBase<MappedType>::operator();
     //! \return a pointer to the underlying array serving as element storage.
     constexpr typename View::pointer data() noexcept {
       return this->data_values;
@@ -89,8 +95,8 @@ namespace tfel::math {
     template <typename OtherArray>
     std::enable_if_t<isAssignableTo<OtherArray, MappedType>(), View&> operator=(
         const OtherArray& src) {
-      checkIndexingPoliciesRuntimeCompatiblity(this->getIndexingPolicy(),
-                                               src.getIndexingPolicy());
+      //       checkIndexingPoliciesRuntimeCompatiblity(this->getIndexingPolicy(),
+      //                                                src.getIndexingPolicy());
       this->assign(src);
       return *this;
     }
@@ -98,8 +104,8 @@ namespace tfel::math {
     template <typename OtherArray>
     std::enable_if_t<isAssignableTo<OtherArray, MappedType>(), View&>
     operator+=(const OtherArray& src) {
-      checkIndexingPoliciesRuntimeCompatiblity(this->getIndexingPolicy(),
-                                               src.getIndexingPolicy());
+      //       checkIndexingPoliciesRuntimeCompatiblity(this->getIndexingPolicy(),
+      //                                                src.getIndexingPolicy());
       this->addAndAssign(src);
       return *this;
     }
@@ -107,8 +113,8 @@ namespace tfel::math {
     template <typename OtherArray>
     std::enable_if_t<isAssignableTo<OtherArray, MappedType>(), View&>
     operator-=(const OtherArray& src) {
-      checkIndexingPoliciesRuntimeCompatiblity(this->getIndexingPolicy(),
-                                               src.getIndexingPolicy());
+      //       checkIndexingPoliciesRuntimeCompatiblity(this->getIndexingPolicy(),
+      //                                                src.getIndexingPolicy());
       this->substractAndAssign(src);
       return *this;
     }
@@ -118,6 +124,26 @@ namespace tfel::math {
    protected:
     typename MappedType::value_type* const data_values;
   };  // end of struct View
+
+  /*!
+   * \brief partial specialisation of the `MathObjectTraits` for const views
+   * \tparam MappedType: mapped type
+   */
+  template <typename MappedType>
+  struct MathObjectTraits<View<MappedType>>
+      : public MathObjectTraits<MappedType> {
+  };  // end of struct MathObjectTraits<Expr<MappedType, Operation>>
+
+  /*!
+   * \brief partial specialisation of the `ResultOfEvaluation` class for
+   * views.
+   * \tparam MappedType: mapped type
+   */
+  template <typename MappedType>
+  struct ResultOfEvaluation<View<MappedType>> {
+    //! \brief result of the metafunction
+    using type = MappedType;
+  };  // end of struct ResultOfEvaluation
 
   template <typename MappedType>
   constexpr std::enable_if_t<MappedType::indexing_policy::hasFixedSizes,
@@ -131,7 +157,7 @@ namespace tfel::math {
     using value_type = typename MappedType::value_type;
     using last_type = select_last<Args...>;
     return (std::is_convertible_v<last_type, value_type* const>);
-  };
+  }
 
   template <typename MappedType, typename... Args>
   constexpr std::enable_if_t<

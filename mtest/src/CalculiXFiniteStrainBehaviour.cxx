@@ -55,7 +55,7 @@ namespace mtest {
     using namespace calculix;
     using tfel::math::vector;
     using FSTOBase = FiniteStrainBehaviourTangentOperatorBase;
-    constexpr const auto sqrt2 = Cste<real>::sqrt2;
+    constexpr auto sqrt2 = Cste<real>::sqrt2;
     const auto h = this->getHypothesis();
     auto throw_if = [](const bool c, const std::string& m) {
       tfel::raise_if(c, "CalculiXFiniteStrainBehaviour::call_behaviour: " + m);

@@ -16,9 +16,9 @@
 
 #include "TFEL/Config/TFELConfig.hxx"
 #include "TFEL/Math/ExpressionTemplates/Expr.hxx"
-
 #include "TFEL/Math/General/EmptyRunTimeProperties.hxx"
 #include "TFEL/Math/Stensor/StensorConcept.hxx"
+#include "TFEL/Math/fsarray.hxx"
 
 namespace tfel::math {
 

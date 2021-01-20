@@ -16,11 +16,8 @@
 
 #include"TFEL/Math/stensor.hxx"
 #include"TFEL/Math/tensor.hxx"
-#include"TFEL/Math/Stensor/StensorView.hxx"
-#include"TFEL/Math/Stensor/ConstStensorView.hxx"
-#include"TFEL/Math/T2toST2/T2toST2View.hxx"
-#include"TFEL/Math/ST2toST2/ST2toST2View.hxx"
-#include"TFEL/Math/ST2toST2/ConstST2toST2View.hxx"
+#include"TFEL/Math/t2tost2.hxx"
+#include"TFEL/Math/st2tost2.hxx"
 #include"MFront/Europlexus/EuroplexusFiniteStrain.hxx"
 
 namespace epx{

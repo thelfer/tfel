@@ -44,6 +44,8 @@ namespace mfront {
      * \note code block name begins with an upper case
      */
     //! \brief standard code name
+    static const char* const UserDefinedInitializeCodeBlock;
+    //! \brief standard code name
     static const char* const FlowRule;
     //! \brief standard code name
     static const char* const BeforeInitializeLocalVariables;
@@ -96,6 +98,8 @@ namespace mfront {
     static const char* const ComputeDissipatedEnergy;
     //! \brief standard code name
     static const char* const AdditionalConvergenceChecks;
+    //! \brief standard code name
+    static const char* const PostProcessings;
     /*
      * normalised attribute names
      * \note properties name begins with a lower case
@@ -137,7 +141,8 @@ namespace mfront {
      * variables.
      */
     static const char* const allowsNewUserDefinedVariables;
-    //! \brief a boolean attribute telling if profiling information shall be collected
+    //! \brief a boolean attribute telling if profiling information shall be
+    //! collected
     static const char* const profiling;
     //! \brief algorithm used
     static const char* const algorithm;
@@ -181,45 +186,45 @@ namespace mfront {
     struct VolumeSwellingStressFreeExpansion {
       //! \brief o volumetric stress free expansion
       StressFreeExpansionHandler sfe;
-    };  // end of struct VolumeSwellingStressFreeExpansion
-        /*!
-         * \brief a simple wrapper around a model describing an axial
-         * growth.
-         * \f[
-         * s = \left(0,0,dlz_lz\,0\,0\,0\right)
-         * \f]
-         */
+    };
+    /*!
+     * \brief a simple wrapper around a model describing an axial
+     * growth.
+     * \f[
+     * s = \left(0,0,dlz_lz\,0\,0\,0\right)
+     * \f]
+     */
     struct AxialGrowth {
       //! \brief description of the axial growth
       StressFreeExpansionHandler sfe;
-    };  // end of struct AxialGrowth
-        /*!
-         * \brief a simple wrapper around a model describing fuel
-         * relocation.
-         * \f[
-         * s = \left(0,0,dlz_lz\,0\,0\,0\right)
-         * \f]
-         */
+    };
+    /*!
+     * \brief a simple wrapper around a model describing fuel
+     * relocation.
+     * \f[
+     * s = \left(0,0,dlz_lz\,0\,0\,0\right)
+     * \f]
+     */
     struct Relocation {
       //! \brief description of the axial growth
       StressFreeExpansionHandler sfe;
-    };  // end of struct Relocation
-        /*!
-         * \brief a brief structure describing a stress free expansion du
-         * to an isotropic swelling given by a linear change in each
-         * material geometry:
-         * \f[
-         * s = \left(dl_l,dl_l,dl_l\,0\,0\,0\right)
-         * \f]
-         */
+    };
+    /*!
+     * \brief a brief structure describing a stress free expansion du
+     * to an isotropic swelling given by a linear change in each
+     * material geometry:
+     * \f[
+     * s = \left(dl_l,dl_l,dl_l\,0\,0\,0\right)
+     * \f]
+     */
     struct IsotropicStressFreeExpansion {
       //! \brief stress free expansion in each direction
       StressFreeExpansionHandler sfe;
-    };  // end of struct IsotropicStressFreeExpansion
-        /*!
-         * \brief a brief structure describing a stress free expansion du
-         * to an orthotropic swelling
-         */
+    };
+    /*!
+     * \brief a brief structure describing a stress free expansion du
+     * to an orthotropic swelling
+     */
     struct OrthotropicStressFreeExpansion {
       //! \brief stress free expansion in the first material direction
       StressFreeExpansionHandler sfe0;
@@ -227,19 +232,19 @@ namespace mfront {
       StressFreeExpansionHandler sfe1;
       //! \brief stress free expansion in the third material direction
       StressFreeExpansionHandler sfe2;
-    };  // end of struct OrthotropicStressFreeExpansion
-        /*!
-         * \brief a brief structure describing a stress free expansion du
-         * to an orthotropic swelling described by an array of external
-         * state variables
-         */
+    };
+    /*!
+     * \brief a brief structure describing a stress free expansion du
+     * to an orthotropic swelling described by an array of external
+     * state variables
+     */
     struct OrthotropicStressFreeExpansionII {
       //! \brief stress free expansions
       SFED_ESV esv;
-    };  // end of struct OrthotropicStressFreeExpansion
-        /*!
-         * \brief list of a stress free expansion descriptions
-         */
+    };
+    /*!
+     * \brief list of a stress free expansion descriptions
+     */
     using StressFreeExpansionDescriptionTypes =
         typename tfel::meta::GenerateTypeList<
             VolumeSwellingStressFreeExpansion,
@@ -353,41 +358,28 @@ namespace mfront {
      * - `IntegrationVariables`
      * - `StateVariables`
      * - `AuxiliaryStateVariables`
+     * - `PostProcessingVariables`
      * - `ExternalStateVariables`
      * - `Parameters`
      */
     const VariableDescriptionContainer& getVariables(const std::string&) const;
-    /*!
-     * \return all material properties
-     */
+    //! \return all material properties
     const VariableDescriptionContainer& getMaterialProperties() const;
-    /*!
-     * \return all persistent variables
-     */
+    //! \return all persistent variables
     const VariableDescriptionContainer& getPersistentVariables() const;
-    /*!
-     * \return all integration variables
-     */
+    //! \return all integration variables
     const VariableDescriptionContainer& getIntegrationVariables() const;
-    /*!
-     * \return all state variables
-     */
+    //! \return all state variables
     const VariableDescriptionContainer& getStateVariables() const;
-    /*!
-     * \return all auxiliary state variables
-     */
+    //! \return all auxiliary state variables
     const VariableDescriptionContainer& getAuxiliaryStateVariables() const;
-    /*!
-     * \return all external state variables
-     */
+    //! \return all post-processing variables
+    const VariableDescriptionContainer& getPostProcessingVariables() const;
+    //! \return all external state variables
     const VariableDescriptionContainer& getExternalStateVariables() const;
-    /*!
-     * \return all local variables
-     */
+    //! \return all local variables
     const VariableDescriptionContainer& getLocalVariables() const;
-    /*!
-     * \return all parameter variables
-     */
+    //! \return all parameter variables
     const VariableDescriptionContainer& getParameters() const;
     /*!
      * \return a variable description with the given name.
@@ -428,10 +420,16 @@ namespace mfront {
     const VariableDescription& getStateVariableDescriptionByExternalName(
         const std::string&) const;
     /*!
-     * \return the state variable associated with the given name
+     * \return the auxiliary state variable associated with the given name
      * \param[in] n: name
      */
     const VariableDescription& getAuxiliaryStateVariableDescription(
+        const std::string&) const;
+    /*!
+     * \return the post-processing variable associated with the given name
+     * \param[in] n: name
+     */
+    const VariableDescription& getPostProcessingVariableDescription(
         const std::string&) const;
     /*!
      * \param[in] n: name
@@ -458,6 +456,12 @@ namespace mfront {
      */
     const VariableDescription&
     getAuxiliaryStateVariableDescriptionByExternalName(
+        const std::string&) const;
+    /*!
+     * \param[in] n: external name
+     */
+    const VariableDescription&
+    getPostProcessingVariableDescriptionByExternalName(
         const std::string&) const;
     /*!
      * \return a variable description with the given name.
@@ -516,6 +520,8 @@ namespace mfront {
 
     bool isAuxiliaryStateVariableName(const std::string&) const;
 
+    bool isPostProcessingVariableName(const std::string&) const;
+
     bool isExternalStateVariableName(const std::string&) const;
 
     bool isExternalStateVariableIncrementName(const std::string&) const;
@@ -556,6 +562,11 @@ namespace mfront {
      */
     void addAuxiliaryStateVariable(const VariableDescription&,
                                    const RegistrationStatus);
+    /*!
+     * \brief add a post-processing variable
+     * \param[in] v : variable description
+     */
+    void addPostProcessingVariable(const VariableDescription&);
     /*!
      * \brief add an external state variable
      * \param[in] v : variable description
@@ -918,6 +929,10 @@ namespace mfront {
      * \param[out] symbols: map between symbols and replacement strings
      */
     void getSymbols(std::map<std::string, std::string>&) const;
+    //! \return the list of user defined initialize blocks
+    std::vector<std::string> getUserDefinedInitializeCodeBlocksNames() const;
+    //! \return the list of user defined initialize blocks
+    const CodeBlock& getUserDefinedInitializeCodeBlock(const std::string&) const;
     //! \brief destructor
     ~BehaviourData() override;
 
@@ -978,99 +993,99 @@ namespace mfront {
       CodeBlock cblock;
       //! \brief get already called
       mutable bool is_mutable = true;
-    };
-    /*!
-     * \brief throw an exception saying that no attribute with the given name
-     * exists
-     */
-    TFEL_NORETURN static void throwUndefinedAttribute(const std::string&);
-    /*!
-     * check that the given name has been registred as a variable name
-     * \param[in] n : variable name
-     * \note an exception is thrown is the given name is not found
-     */
-    void checkVariableName(const std::string&) const;
-    /*!
-     * \brief return the variable description associated to the given name
-     * \param[in] n: name
-     */
-    VariableDescription& getVariableDescription(const std::string&);
-    /*!
-     * \brief add a variable to a container
-     * \param[in] c: container
-     * \param[in] v: variable to be added
-     * \param[in] s: registration status
-     * \param[in] bi: if true, register variable increment name
-     * \param[in] b: if true, allow the variable to be added even if
-     * the allowsNewUserDefinedVariables has been set to false. This
-     * shall be true only for local variables which have a specific
-     * status.
-     */
-    void addVariable(VariableDescriptionContainer&,
-                     const VariableDescription&,
-                     const RegistrationStatus,
-                     const bool,
-                     const bool = false);
-    /*!
-     * variables flagged as probably unusable in purely implicit
-     * resolutions
-     */
-    std::set<std::string> pupirv;
-    //! \brief registred code blocks
-    std::map<std::string, CodeBlocksAggregator> cblocks;
-    //! \brief registred material properties
-    VariableDescriptionContainer materialProperties;
-    //! \brief registred persistent variables
-    VariableDescriptionContainer persistentVariables;
-    //! \brief registred integration variables
-    VariableDescriptionContainer integrationVariables;
-    //! \brief registred state variables
-    VariableDescriptionContainer stateVariables;
-    //! \brief registred auxiliary state variables
-    VariableDescriptionContainer auxiliaryStateVariables;
-    //! \brief registred external state variables
-    VariableDescriptionContainer externalStateVariables;
-    //! \brief registred local variables
-    VariableDescriptionContainer localVariables;
-    //! \brief parameters of the behaviour
-    VariableDescriptionContainer parameters;
-    //! \brief default value for floatting point paramerters
-    std::map<std::string, double> parametersDefaultValues;
-    //! \brief default value for signed integer paramerters
-    std::map<std::string, int> iParametersDefaultValues;
-    //! \brief default value for short unsigned integer paramerters
-    std::map<std::string, unsigned short> uParametersDefaultValues;
-    //! \brief static variables
-    StaticVariableDescriptionContainer staticVariables;
-    /*!
-     * \brief registred stress fress expansion descriptions
-     */
-    std::vector<StressFreeExpansionDescription> sfeds;
-    //! \brief overriding parameters
-    std::map<std::string, double> overriding_parameters;
-    //! \brief behaviour attributes
-    std::map<std::string, BehaviourAttribute> attributes;
-    //! \brief private code
-    std::string privateCode;
-    //! \brief class members
-    std::string members;
-    //! \brief list of glossary names used by the behaviour
-    std::map<std::string, std::string> glossaryNames;
-    //! \brief list of entry names used by the behaviour
-    std::map<std::string, std::string> entryNames;
-    //! \brief list of reserved names
-    std::set<std::string> reservedNames;
-    //! \brief list of variables names
-    std::set<std::string> membersNames;
-    //! \brief list of variables names
-    std::set<std::string> staticMembersNames;
-    /*!
-     * boolean stating if this behaviour can be used in a purely
-     * implicit resolution.
-     * \see isUsableInPurelyImplicitResolution for details about
-     * purely implicit resolution.
-     */
-    bool usableInPurelyImplicitResolution = false;
+      };
+      /*!
+       * \brief throw an exception saying that no attribute with the given name
+       * exists
+       */
+      TFEL_NORETURN static void throwUndefinedAttribute(const std::string&);
+      /*!
+       * check that the given name has been registred as a variable name
+       * \param[in] n : variable name
+       * \note an exception is thrown is the given name is not found
+       */
+      void checkVariableName(const std::string&) const;
+      /*!
+       * \brief return the variable description associated to the given name
+       * \param[in] n: name
+       */
+      VariableDescription& getVariableDescription(const std::string&);
+      /*!
+       * \brief add a variable to a container
+       * \param[in] c: container
+       * \param[in] v: variable to be added
+       * \param[in] s: registration status
+       * \param[in] bi: if true, register variable increment name
+       * \param[in] b: if true, allow the variable to be added even if
+       * the allowsNewUserDefinedVariables has been set to false. This
+       * shall be true only for local variables which have a specific
+       * status.
+       */
+      void addVariable(VariableDescriptionContainer&,
+                       const VariableDescription&, const RegistrationStatus,
+                       const bool, const bool = false);
+      /*!
+       * variables flagged as probably unusable in purely implicit
+       * resolutions
+       */
+      std::set<std::string> pupirv;
+      //! \brief registred code blocks
+      std::map<std::string, CodeBlocksAggregator> cblocks;
+      //! \brief registred material properties
+      VariableDescriptionContainer materialProperties;
+      //! \brief registred persistent variables
+      VariableDescriptionContainer persistentVariables;
+      //! \brief registred integration variables
+      VariableDescriptionContainer integrationVariables;
+      //! \brief registred state variables
+      VariableDescriptionContainer stateVariables;
+      //! \brief registred auxiliary state variables
+      VariableDescriptionContainer auxiliaryStateVariables;
+      //! \brief registred external state variables
+      VariableDescriptionContainer externalStateVariables;
+      //! \brief registred local variables
+      VariableDescriptionContainer localVariables;
+      //! \brief parameters of the behaviour
+      VariableDescriptionContainer parameters;
+      //! \brief registred post-processing variables
+      VariableDescriptionContainer postProcessingVariables;
+      //! \brief default value for floatting point paramerters
+      std::map<std::string, double> parametersDefaultValues;
+      //! \brief default value for signed integer paramerters
+      std::map<std::string, int> iParametersDefaultValues;
+      //! \brief default value for short unsigned integer paramerters
+      std::map<std::string, unsigned short> uParametersDefaultValues;
+      //! \brief static variables
+      StaticVariableDescriptionContainer staticVariables;
+      /*!
+       * \brief registred stress fress expansion descriptions
+       */
+      std::vector<StressFreeExpansionDescription> sfeds;
+      //! \brief overriding parameters
+      std::map<std::string, double> overriding_parameters;
+      //! \brief behaviour attributes
+      std::map<std::string, BehaviourAttribute> attributes;
+      //! \brief private code
+      std::string privateCode;
+      //! \brief class members
+      std::string members;
+      //! \brief list of glossary names used by the behaviour
+      std::map<std::string, std::string> glossaryNames;
+      //! \brief list of entry names used by the behaviour
+      std::map<std::string, std::string> entryNames;
+      //! \brief list of reserved names
+      std::set<std::string> reservedNames;
+      //! \brief list of variables names
+      std::set<std::string> membersNames;
+      //! \brief list of variables names
+      std::set<std::string> staticMembersNames;
+      /*!
+       * boolean stating if this behaviour can be used in a purely
+       * implicit resolution.
+       * \see isUsableInPurelyImplicitResolution for details about
+       * purely implicit resolution.
+       */
+      bool usableInPurelyImplicitResolution = false;
   };  // end of struct BehaviourData
 
 }  // end of namespace mfront

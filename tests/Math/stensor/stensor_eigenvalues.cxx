@@ -55,8 +55,8 @@ private:
   {
     using namespace tfel::math;
     TFEL_CONSTEXPR const auto eps = std::numeric_limits<T>::epsilon();
-    constexpr const auto icste = Cste<T>::isqrt2;
-    constexpr const auto zero  = T(0);
+    constexpr auto icste = Cste<T>::isqrt2;
+    constexpr auto zero  = T(0);
     const stensor<3u,T> s(zero);
     const auto vp = s.computeEigenValues();
     auto vp2 = tvector<3u,T>{};

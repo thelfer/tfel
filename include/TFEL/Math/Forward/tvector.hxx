@@ -40,7 +40,7 @@ namespace tfel::math {
   struct TFEL_VISIBILITY_LOCAL MathObjectTraits<tvector<N, T>>
       : MathObjectTraitsBase<T, unsigned short> {
     //! brief a `tvector` is not related to the space dimension
-    static constexpr const unsigned short dime = 0;
+    static constexpr unsigned short dime = 0;
   };
 
 }  // end of namespace tfel::math

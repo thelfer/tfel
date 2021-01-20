@@ -61,7 +61,7 @@ namespace tfel{
     {
       using NumType = decltype(a[0]*b[0]*a[0]);
       using real = base_type<NumType>;
-      constexpr const auto cste = Cste<real>::sqrt2;
+      constexpr auto cste = Cste<real>::sqrt2;
       return {(cste*a[3]*a[4]*b[5]+2*a[0]*a[4]*b[4]+2*a[0]*a[3]*b[3]+a[4]*a[4]*b[2]+a[3]*a[3]*b[1]+2*a[0]*a[0]*b[0])/2,
 	  // second line
 	  (2*a[1]*a[5]*b[5]+cste*a[3]*a[5]*b[4]+2*a[1]*a[3]*b[3]+a[5]*a[5]*b[2]+2*a[1]*a[1]*b[1]+a[3]*a[3]*b[0])/2,

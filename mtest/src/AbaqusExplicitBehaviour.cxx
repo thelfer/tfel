@@ -406,7 +406,7 @@ namespace mtest {
       const StiffnessMatrixType ktype) const {
     using namespace tfel::math;
     using abaqus::AbaqusInt;
-    constexpr const auto sqrt2 = Cste<real>::sqrt2;
+    constexpr auto sqrt2 = Cste<real>::sqrt2;
     auto throw_if = [](const bool c, const std::string& m) {
       tfel::raise_if(c, "AbaqusExplicitBehaviour::ointegrate:" + m);
     };

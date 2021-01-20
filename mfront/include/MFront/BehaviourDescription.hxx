@@ -148,19 +148,19 @@ namespace mfront {
     //! a simple alias
     using IntegrationScheme = mfront::IntegrationScheme;
     //! a simple alias for backward compatibility
-    static constexpr const IntegrationScheme IMPLICITSCHEME =
+    static constexpr IntegrationScheme IMPLICITSCHEME =
         IntegrationScheme::IMPLICITSCHEME;
     //! a simple alias for backward compatibility
-    static constexpr const IntegrationScheme EXPLICITSCHEME =
+    static constexpr IntegrationScheme EXPLICITSCHEME =
         IntegrationScheme::EXPLICITSCHEME;
     //! a simple alias for backward compatibility
-    static constexpr const IntegrationScheme SPECIFICSCHEME =
+    static constexpr IntegrationScheme SPECIFICSCHEME =
         IntegrationScheme::SPECIFICSCHEME;
     //! a simple alias for backward compatibility
-    static constexpr const IntegrationScheme USERDEFINEDSCHEME =
+    static constexpr IntegrationScheme USERDEFINEDSCHEME =
         IntegrationScheme::USERDEFINEDSCHEME;
     //! a simple alias for backward compatibility
-    static constexpr const IntegrationScheme UNDEFINEDINTEGRATIONSCHEME =
+    static constexpr IntegrationScheme UNDEFINEDINTEGRATIONSCHEME =
         IntegrationScheme::UNDEFINEDINTEGRATIONSCHEME;
     /*!
      * \brief a simple structure used to compte the value of a material
@@ -805,6 +805,29 @@ namespace mfront {
         const VariableDescription&,
         const BehaviourData::RegistrationStatus = BehaviourData::UNREGISTRED);
     /*!
+     * \brief add post-processing variables
+     * \param[in] h: modelling hypothesis
+     * \param[in] v: post-processing variables added
+     * \param[in] s: registration status
+     *
+     * \note if h is UNDEFINEDHYPOTHESIS, add the post-processing
+     * variables to the default data and to all the specialisations
+     */
+    void addPostProcessingVariables(
+        const Hypothesis,
+        const VariableDescriptionContainer&);
+    /*!
+     * \brief add an post-processing variable
+     * \param[in] h: modelling hypothesis
+     * \param[in] v: auxiliary state variable added
+     * \param[in] s: registration status
+     *
+     * \note if h is UNDEFINEDHYPOTHESIS, add the auxiliary state
+     * variables to the default data and to all the specialisations
+     */
+    void addPostProcessingVariable(const Hypothesis,
+                                   const VariableDescription&);
+    /*!
      * \brief add a local variable
      * \param[in] h: modelling hypothesis
      * \param[in] v: local variable added
@@ -970,6 +993,14 @@ namespace mfront {
      */
     bool isExternalStateVariableIncrementName(const Hypothesis,
                                               const std::string&) const;
+    /*!
+     * \return true if the given name is the one of a post-processing
+     * variable.
+     * \param[in] h: modelling hypothesis
+     * \param[in] n: name
+     */
+    bool isPostProcessingVariableName(const Hypothesis,
+                                      const std::string&) const;
     /*!
      * \return true if the given name is the one of a static variable
      * \param[in] h: modelling hypothesis

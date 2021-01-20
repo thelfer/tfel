@@ -41,7 +41,7 @@ namespace numodis
     RingType gcd_euclidean(RingType a,
 			   RingType b)
     {
-      constexpr const auto zero = static_cast<RingType>( 0 );
+      constexpr auto zero = static_cast<RingType>( 0 );
       // Reduce by GCD-remainder property [GCD(a,b) == GCD(b,a MOD b)]
       while ( true ) {
 	if ( a == zero )
@@ -70,7 +70,7 @@ namespace numodis
 			   const IntegerType&  b)
     {
       // Avoid repeated construction
-      constexpr const auto zero = static_cast<IntegerType>( 0 );
+      constexpr auto zero = static_cast<IntegerType>( 0 );
       const auto result = gcd_euclidean( a, b );
       return ( result < zero ) ? static_cast<IntegerType>(-result) : result;
     }

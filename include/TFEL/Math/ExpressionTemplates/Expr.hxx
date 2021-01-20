@@ -23,54 +23,10 @@
 #include "TFEL/Math/General/ConceptRebind.hxx"
 #include "TFEL/Math/General/ComputeUnaryResult.hxx"
 #include "TFEL/Math/General/ComputeBinaryResult.hxx"
+#include "TFEL/Math/Forward/Expr.hxx"
 
 namespace tfel::math {
 
-  /*!
-   * an helper structure used for the partial specialisation of the
-   * Expr class.
-   * \tparam T  : type of unary operation argument
-   * \tparam Op : the unary operation
-   */
-  template <typename T1, typename Op>
-  struct UnaryOperation;
-  /*!
-   * an helper structure used for the partial specialisation of the
-   * Expr class.
-   * \tparam T1 : type of the left  argument of the binary operation
-   * \tparam T2 : type of the right argument of the binary operation
-   * \tparam Op : the binary operation
-   */
-  template <typename T1, typename T2, typename Op>
-  struct BinaryOperation;
-  /*!
-   * an helper structure used for the partial specialisation of the
-   * Expr class.
-   * \tparam T1 : type of the left  argument of the binary operation
-   * \tparam T2 : type of the right argument of the binary operation
-   * \tparam Op : the binary operation
-   * \pre T1 must be a scalar
-   */
-  template <typename T1, typename T2, typename Op>
-  struct ScalarObjectOperation;
-  /*!
-   * an helper structure used for the partial specialisation of the
-   * Expr class.
-   * \tparam T1 : type of the left  argument of the binary operation
-   * \tparam T2 : type of the right argument of the binary operation
-   * \tparam Op : the binary operation
-   * \pre T1 must be a scalar
-   */
-  template <typename T1, typename T2, typename Op>
-  struct ObjectScalarOperation;
-  /*!
-   * an helper structure used for the partial specialisation of the
-   * Expr class.
-   * \tparam T1 : type of the left  argument of the diadic product
-   * \tparam T2 : type of the right argument of the diadic product
-   */
-  template <typename T1, typename T2>
-  struct DiadicProductOperation;
 
   /*!
    * \brief an helper class
@@ -87,43 +43,6 @@ namespace tfel::math {
                                                const std::decay_t<T>&>;
   };  // end of strut ExprBase
 
-  /*!
-   * \brief An helper class which defines array-like access operator
-   * by relying on the operator() of the derived class.
-   * \tparam Child : child class
-   */
-  template <typename Child>
-  struct ExprWithArrayAccessOperator {
-    // /*!
-    //  * \brief array like access operator
-    //  * \param[in] i : index
-    //  */
-    // auto operator[](const typename Child::size_type i) const
-    // 	-> decltype(std::declval<const Child>()(i))
-    // {
-    // 	return static_cast<const Child&>(this).operator()(i);
-    // }
-    // /*!
-    //  * \brief array like access operator
-    //  * \param[in] i : index
-    //  */
-    // auto operator[](const size_type i)
-    // 	-> decltype(std::declval<Child>()(i))
-    // {
-    // 	return static_cast<const Child&>(this).operator()(i);
-    // }
-  };  // end of struct ExprWithArrayAccessOperator
-
-  /*!
-   * \brief an Expr object allows the lazy evaluation of a mathematical
-   * operation.
-   * \tparam ResultType : the type of the result of the operation
-   * \tparam Operation  : Operation to be performed
-   *
-   * Partial specialisation are provided for:
-   * - unary operations (negation, function call)
-   * - binary operations
-   */
   template <typename ResultType, typename Operation>
   struct Expr
       : public ConceptRebind<typename ComputeObjectTag<ResultType>::type,
@@ -513,33 +432,6 @@ namespace tfel::math {
   struct MathObjectTraits<Expr<ResultType, Operation>>
       : public MathObjectTraits<ResultType> {
   };  // end of struct MathObjectTraits<Expr<ResultType, Operation>>
-
-  /*!
-   * \brief a metafunction giving the result of a the evaluation of an object.
-   * \tparam ObjectType: type of the object evaluated
-   */
-  template <typename ObjectType>
-  struct ResultOfEvaluation {
-    //! \brief result of the metafunction
-    using type = ObjectType;
-  };  // end of struct ResultOfEvaluation
-
-  /*!
-   * \brief partial specialisation of the `ResultOfEvaluation` class for
-   * objects representing a lazy expression. \tparam ResultType: result of the
-   * evaluation of the lazy expression \tparam Operation: operation performed by
-   * the lazy expression
-   */
-  template <typename ResultType, typename Operation>
-  struct ResultOfEvaluation<Expr<ResultType, Operation>> {
-    //! \brief result of the metafunction
-    using type = ResultType;
-  };  // end of struct ResultOfEvaluation
-
-  //! \brief a simple alias
-  template <typename ObjectType>
-  using EvaluationResult =
-      typename ResultOfEvaluation<std::decay_t<ObjectType>>::type;
 
   /*!
    * \brief evaluate an expression

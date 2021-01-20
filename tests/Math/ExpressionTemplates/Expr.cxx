@@ -56,7 +56,7 @@ namespace tfel{
     };
 
     template<typename A,typename B>
-    struct ComputeBinaryResult_<MyVectorTag,MyVectorTag,
+    struct ComputeBinaryOperationHandler<MyVectorTag,MyVectorTag,
 				A,B,OpPlus>
     {
       using AType = typename std::decay<A>::type;
@@ -66,7 +66,7 @@ namespace tfel{
     };
 
     template<typename A,typename B>
-    struct ResultType_<MyVectorTag,MyVectorTag,A,B,OpPlus>
+    struct ComputeBinaryOperationResult<MyVectorTag,MyVectorTag,A,B,OpPlus>
     {
       using type = MyVector;
     };

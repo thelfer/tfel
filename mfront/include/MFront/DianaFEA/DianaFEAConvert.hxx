@@ -41,7 +41,7 @@ namespace dianafea {
   template <tfel::material::ModellingHypothesis::Hypothesis H>
   struct ImportGradients {
     //! space dimension
-    static constexpr const unsigned short N =
+    static constexpr unsigned short N =
         tfel::material::ModellingHypothesisToSpaceDimension<H>::value;
     /*!
      * \tparam T: type of the thermodynamique forces
@@ -73,7 +73,7 @@ namespace dianafea {
   template <tfel::material::ModellingHypothesis::Hypothesis H>
   struct ImportThermodynamicForces {
     //! space dimension
-    static constexpr const unsigned short N =
+    static constexpr unsigned short N =
         tfel::material::ModellingHypothesisToSpaceDimension<H>::value;
     /*!
      * \tparam T: type of the thermodynamique forces
@@ -95,7 +95,7 @@ namespace dianafea {
   template <tfel::material::ModellingHypothesis::Hypothesis H>
   struct ExportThermodynamicForces {
     //! space dimension
-    static constexpr const unsigned short N =
+    static constexpr unsigned short N =
         tfel::material::ModellingHypothesisToSpaceDimension<H>::value;
     /*!
      * \tparam T: type of the thermodynamique forces
@@ -140,7 +140,7 @@ namespace dianafea {
     template <typename T>
     static inline void exe(tfel::math::stensor<2u, T>& e,
                            const DianaFEAReal* const v) {
-      constexpr const auto icste = tfel::math::Cste<T>::isqrt2;
+      constexpr auto icste = tfel::math::Cste<T>::isqrt2;
       e[0] = v[0];
       e[1] = v[1];
       e[2] = v[2];
@@ -160,7 +160,7 @@ namespace dianafea {
     template <typename T>
     static inline void exe(tfel::math::stensor<3u, T>& e,
                            const DianaFEAReal* const v) {
-      constexpr const auto icste = tfel::math::Cste<T>::isqrt2;
+      constexpr auto icste = tfel::math::Cste<T>::isqrt2;
       e[0] = v[0];
       e[1] = v[1];
       e[2] = v[2];
@@ -200,7 +200,7 @@ namespace dianafea {
     template <typename T>
     static inline void exe(DianaFEAReal* const v,
                            const tfel::math::stensor<2u, T>& e) {
-      constexpr const auto icste = tfel::math::Cste<T>::isqrt2;
+      constexpr auto icste = tfel::math::Cste<T>::isqrt2;
       v[0] = e[0];
       v[1] = e[1];
       v[2] = e[2];
@@ -220,7 +220,7 @@ namespace dianafea {
     template <typename T>
     static inline void exe(DianaFEAReal* const v,
                            const tfel::math::stensor<3u, T>& e) {
-      constexpr const auto icste = tfel::math::Cste<T>::isqrt2;
+      constexpr auto icste = tfel::math::Cste<T>::isqrt2;
       v[0] = e[0];
       v[1] = e[1];
       v[2] = e[2];

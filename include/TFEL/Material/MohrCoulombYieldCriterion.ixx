@@ -67,7 +67,7 @@ namespace tfel {
         const MohrCoulombBaseType<StressStensor> lodeT,
         const MohrCoulombStressType<StressStensor> a) {
       using real = MohrCoulombBaseType<StressStensor>;
-      constexpr const real pi = real(3.14159265358979323846);
+      constexpr real pi = real(3.14159265358979323846);
       if (u == MohrCoulombParameters<StressStensor>::DEGREE) {
         const auto angle_c = angle * pi / 180;
         const auto lodeT_c = lodeT * pi / 180;
@@ -81,9 +81,9 @@ namespace tfel {
         const MohrCoulombParameters<StressStensor>& p,
         const StressStensor& sig) {
       using real = MohrCoulombBaseType<StressStensor>;
-      constexpr const auto local_zero_tolerance = real(1e-14);
-      constexpr const auto sqrt3 = tfel::math::Cste<real>::sqrt3;
-      constexpr const auto isqrt3 = tfel::math::Cste<real>::isqrt3;
+      constexpr auto local_zero_tolerance = real(1e-14);
+      constexpr auto sqrt3 = tfel::math::Cste<real>::sqrt3;
+      constexpr auto isqrt3 = tfel::math::Cste<real>::isqrt3;
       const auto s = tfel::math::deviator(sig);
       const auto det_s = tfel::math::det(s);
       const auto I1 = tfel::math::trace(sig);
@@ -127,10 +127,10 @@ namespace tfel {
     computeMohrCoulombStressCriterionNormal(
         const MohrCoulombParameters<StressStensor>& p,
         const StressStensor& sig) {
-      constexpr const auto N = tfel::math::getSpaceDimension<StressStensor>();
+      constexpr auto N = tfel::math::getSpaceDimension<StressStensor>();
       using real = MohrCoulombBaseType<StressStensor>;
       using Stensor = tfel::math::stensor<N, real>;
-      constexpr const auto local_zero_tolerance = real(1e-14);
+      constexpr auto local_zero_tolerance = real(1e-14);
       constexpr auto sqrt3 = tfel::math::Cste<real>::sqrt3;
       constexpr auto isqrt3 = tfel::math::Cste<real>::isqrt3;
       constexpr auto id = Stensor::Id();
@@ -191,11 +191,11 @@ namespace tfel {
     computeMohrCoulombStressCriterionSecondDerivative(
         const MohrCoulombParameters<StressStensor>& p,
         const StressStensor& sig) {
-      constexpr const auto N = tfel::math::getSpaceDimension<StressStensor>();
+      constexpr auto N = tfel::math::getSpaceDimension<StressStensor>();
       using real = MohrCoulombBaseType<StressStensor>;
       using Stensor = tfel::math::stensor<N, real>;
       using Stensor4 = tfel::math::st2tost2<N, real>;
-      constexpr const auto local_zero_tolerance = real(1e-14);
+      constexpr auto local_zero_tolerance = real(1e-14);
       constexpr auto sqrt3 = tfel::math::Cste<real>::sqrt3;
       constexpr auto isqrt3 = tfel::math::Cste<real>::isqrt3;
       constexpr auto id = Stensor::Id();

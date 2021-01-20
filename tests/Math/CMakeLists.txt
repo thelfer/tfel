@@ -58,6 +58,7 @@ macro(tests_math4 test_arg)
   target_link_libraries(${test_arg} TFELMathCubicSpline TFELMath TFELUtilities TFELException TFELTests)
 endmacro(tests_math4)
 
+tests_math(IndexingPoliciesTest)
 tests_math(power)
 tests_math(CubicRoots)
 tests_math(promote)
@@ -107,6 +108,7 @@ tests_math(DifferenceRandomAccessIteratorTest)
 tests_math(IEEE754Test)
 tests_math(ScalarNewtonRaphsonTest)
 tests_math(BissectionAlgorithmTest)
+tests_math(FixedSizeArrayDerivativeTest)
 
 tests_math3(levenberg-marquardt4)
 

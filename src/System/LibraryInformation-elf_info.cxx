@@ -96,18 +96,18 @@ namespace details {
     typedef details::Elf_Shdr_template<AddressOffsetT>  section_t;
     typedef details::Elf_Sym_template<AddressOffsetT>   symbol_t;
 
-    static constexpr const std::uint32_t SHT_SYMTAB_ = 2;
-    static constexpr const std::uint32_t SHT_STRTAB_ = 3;
+    static constexpr std::uint32_t SHT_SYMTAB_ = 2;
+    static constexpr std::uint32_t SHT_STRTAB_ = 3;
 
-    static constexpr const unsigned char STB_LOCAL_  = 0;  /* Local symbol */
-    static constexpr const unsigned char STB_GLOBAL_ = 1;  /* Global symbol */
-    static constexpr const unsigned char STB_WEAK_   = 2;  /* Weak symbol */
+    static constexpr unsigned char STB_LOCAL_  = 0;  /* Local symbol */
+    static constexpr unsigned char STB_GLOBAL_ = 1;  /* Global symbol */
+    static constexpr unsigned char STB_WEAK_   = 2;  /* Weak symbol */
 
     /* Symbol visibility specification encoded in the st_other field.  */
-    static constexpr const unsigned char STV_DEFAULT_   = 0;   /* Default symbol visibility rules */
-    static constexpr const unsigned char STV_INTERNAL_  = 1;  /* Processor specific hidden class */
-    static constexpr const unsigned char STV_HIDDEN_    = 2;  /* Sym unavailable in other modules */
-    static constexpr const unsigned char STV_PROTECTED_ = 3;  /* Not preemptible, not exported */
+    static constexpr unsigned char STV_DEFAULT_   = 0;   /* Default symbol visibility rules */
+    static constexpr unsigned char STV_INTERNAL_  = 1;  /* Processor specific hidden class */
+    static constexpr unsigned char STV_HIDDEN_    = 2;  /* Sym unavailable in other modules */
+    static constexpr unsigned char STV_PROTECTED_ = 3;  /* Not preemptible, not exported */
 
   public:
     

@@ -47,7 +47,7 @@ namespace mfront {
                                                     AbstractBehaviourDSL& dsl,
                                                     const std::string& id,
                                                     const DataMap& d) {
-      constexpr const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+      constexpr auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
       auto get_mp = [&dsl, &bd, &id, &d](
           const std::string& mpn, const std::string& t, const std::string& vn) {
         if (d.count(mpn) == 0) {
@@ -93,7 +93,7 @@ namespace mfront {
         const AbstractBehaviourDSL& dsl,
         const StressPotential& sp,
         const std::string& id) const {
-      constexpr const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+      constexpr auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
       ViscoplasticFlowBase::endTreatment(bd, dsl, sp, id);
       if ((!this->A.is<BehaviourDescription::ConstantMaterialProperty>()) ||
           (!this->K.is<BehaviourDescription::ConstantMaterialProperty>()) ||

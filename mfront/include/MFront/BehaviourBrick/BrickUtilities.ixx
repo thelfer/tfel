@@ -70,7 +70,7 @@ namespace mfront {
         const std::string& t,
         const std::string& n) {
       static_assert(N != 0, "invalid array size");
-      constexpr const auto h =
+      constexpr auto h =
           tfel::material::ModellingHypothesis::UNDEFINEDHYPOTHESIS;
       if (areAllConstantMaterialProperties(mps)) {
         for (auto& mp : mps) {
@@ -110,7 +110,7 @@ namespace mfront {
         const std::string& n,
         const std::string& en) {
       static_assert(N != 0, "invalid array size");
-      constexpr const auto h =
+      constexpr auto h =
           tfel::material::ModellingHypothesis::UNDEFINEDHYPOTHESIS;
       declareParameterOrLocalVariable(bd, mps, t, n);
       if (areAllConstantMaterialProperties(mps)){
@@ -125,7 +125,7 @@ namespace mfront {
         const std::string& t,
         const std::string& n,
         const tfel::glossary::GlossaryEntry& g) {
-      constexpr const auto h =
+      constexpr auto h =
           tfel::material::ModellingHypothesis::UNDEFINEDHYPOTHESIS;
       declareParameterOrLocalVariable(bd, mps, t, n);
       if (areAllConstantMaterialProperties(mps)){

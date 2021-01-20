@@ -15,8 +15,7 @@
 #define LIB_TFEL_MATH_UMATNORMALISETANGENTOPERATORIXX
 
 #include <cmath>
-#include "TFEL/Math/ST2toST2/ST2toST2View.hxx"
-#include "TFEL/Math/ST2toST2/ConstST2toST2View.hxx"
+#include "TFEL/Math/st2tost2.hxx"
 #include "TFEL/Math/General/MathConstants.hxx"
 #include "TFEL/Math/General/ConstExprMathFunctions.hxx"
 
@@ -40,7 +39,7 @@ namespace tfel {
     template <typename stress>
     void UmatNormaliseTangentOperatorBase<2u, stress>::exe(
         stress* const K, const stress* const D) {
-      constexpr const auto cste = Cste<stress>::sqrt2;
+      constexpr auto cste = Cste<stress>::sqrt2;
       ST2toST2View<2u, stress> k(K);
       ConstST2toST2View<2u, stress> d(D);
       // transpose
@@ -61,7 +60,7 @@ namespace tfel {
     template <typename stress>
     void UmatNormaliseTangentOperatorBase<3u, stress>::exe(
         stress* const K, const stress* const D) {
-      constexpr const auto cste = Cste<stress>::sqrt2;
+      constexpr auto cste = Cste<stress>::sqrt2;
       ST2toST2View<3u, stress> k(K);
       ConstST2toST2View<3u, stress> d(D);
       // transpose

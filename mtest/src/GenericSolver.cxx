@@ -152,7 +152,7 @@ namespace mtest {
       // std::fill(nK.begin(),nK.end(),real(0));
       // std::fill(nr.begin(),nr.end(),real(0));
       // for(size_type i=0;i!=wk.K.getNbRows();++i){
-      // 	constexpr const real eps = 1.e-6;
+      // 	constexpr real eps = 1.e-6;
       // 	scs.revert();
       // 	scs.u1[i] += eps;
       // 	s.computeStiffnessMatrixAndResidual(scs,nK,nr,t,dt,

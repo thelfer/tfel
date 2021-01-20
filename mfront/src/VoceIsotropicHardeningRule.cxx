@@ -21,7 +21,7 @@ namespace mfront{
                                                   const std::string& id,
                                                   const DataMap& d) {
       using namespace tfel::glossary;
-      constexpr const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+      constexpr auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
       // this shall be captured in gcc 4.7.2
       auto get_mp = [&dsl, &bd, &fid, &id, &d, this](const std::string& t,
                                                      const std::string& n) {
@@ -111,7 +111,7 @@ namespace mfront{
       if ((!this->R0.is<BehaviourDescription::ConstantMaterialProperty>()) ||
           (!this->Rinf.is<BehaviourDescription::ConstantMaterialProperty>()) ||
           (!this->b.is<BehaviourDescription::ConstantMaterialProperty>())) {
-        constexpr const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+        constexpr auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
         CodeBlock i;
         std::ostringstream mps;
         if (!this->R0.is<BehaviourDescription::ConstantMaterialProperty>()) {

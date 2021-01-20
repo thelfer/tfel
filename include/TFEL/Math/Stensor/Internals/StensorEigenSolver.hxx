@@ -105,7 +105,7 @@ namespace tfel::math::internals {
                                                     const NumType* const v,
                                                     const bool b) {
       using namespace tfel::typetraits;
-      constexpr const auto icste = tfel::math::Cste<base>::isqrt2;
+      constexpr auto icste = tfel::math::Cste<base>::isqrt2;
       static_assert(IsFundamentalNumericType<base>::cond);
       static_assert(IsReal<base>::cond);
       static_assert(IsSafelyReinterpretCastableTo<NumType, base>::cond);
@@ -130,7 +130,7 @@ namespace tfel::math::internals {
         const NumType* const v,
         const bool b) {
       using namespace tfel::typetraits;
-      constexpr const auto icste = tfel::math::Cste<base>::isqrt2;
+      constexpr auto icste = tfel::math::Cste<base>::isqrt2;
       static_assert(IsFundamentalNumericType<base>::cond);
       static_assert(IsReal<base>::cond);
       static_assert(IsSafelyReinterpretCastableTo<NumType, base>::cond);
@@ -167,7 +167,7 @@ namespace tfel::math::internals {
                                                     const NumType* const v,
                                                     const bool) {
       using namespace tfel::typetraits;
-      constexpr const auto icste = tfel::math::Cste<base>::isqrt2;
+      constexpr auto icste = tfel::math::Cste<base>::isqrt2;
       static_assert(IsFundamentalNumericType<base>::cond);
       static_assert(IsReal<base>::cond);
       static_assert(IsSafelyReinterpretCastableTo<NumType, base>::cond);
@@ -191,7 +191,7 @@ namespace tfel::math::internals {
         const NumType* const v,
         const bool) {
       using namespace tfel::typetraits;
-      constexpr const auto icste = tfel::math::Cste<base>::isqrt2;
+      constexpr auto icste = tfel::math::Cste<base>::isqrt2;
       static_assert(IsFundamentalNumericType<base>::cond);
       static_assert(IsReal<base>::cond);
       static_assert(IsSafelyReinterpretCastableTo<NumType, base>::cond);
@@ -232,7 +232,7 @@ namespace tfel::math::internals {
                                                     const NumType* const v,
                                                     const bool) {
       using namespace tfel::typetraits;
-      constexpr const auto icste = tfel::math::Cste<base>::isqrt2;
+      constexpr auto icste = tfel::math::Cste<base>::isqrt2;
       static_assert(IsFundamentalNumericType<base>::cond);
       static_assert(IsReal<base>::cond);
       static_assert(IsSafelyReinterpretCastableTo<NumType, base>::cond);
@@ -258,7 +258,7 @@ namespace tfel::math::internals {
         const NumType* const v,
         const bool) {
       using namespace tfel::typetraits;
-      constexpr const auto icste = tfel::math::Cste<base>::isqrt2;
+      constexpr auto icste = tfel::math::Cste<base>::isqrt2;
       static_assert(IsFundamentalNumericType<base>::cond);
       static_assert(IsReal<base>::cond);
       static_assert(IsSafelyReinterpretCastableTo<NumType, base>::cond);
@@ -310,7 +310,7 @@ namespace tfel::math::internals {
                                                     const NumType* const v,
                                                     const bool) {
       using namespace tfel::typetraits;
-      constexpr const auto icste = tfel::math::Cste<base>::isqrt2;
+      constexpr auto icste = tfel::math::Cste<base>::isqrt2;
       static_assert(IsFundamentalNumericType<base>::cond);
       static_assert(IsReal<base>::cond);
       static_assert(IsSafelyReinterpretCastableTo<NumType, base>::cond);
@@ -337,7 +337,7 @@ namespace tfel::math::internals {
         const NumType* const v,
         const bool) {
       using namespace tfel::typetraits;
-      constexpr const auto icste = tfel::math::Cste<base>::isqrt2;
+      constexpr auto icste = tfel::math::Cste<base>::isqrt2;
       static_assert(IsFundamentalNumericType<base>::cond);
       static_assert(IsReal<base>::cond);
       static_assert(IsSafelyReinterpretCastableTo<NumType, base>::cond);
@@ -385,7 +385,7 @@ namespace tfel::math::internals {
                                                     const NumType* const v,
                                                     const bool) {
       using namespace tfel::typetraits;
-      constexpr const auto icste = tfel::math::Cste<base>::isqrt2;
+      constexpr auto icste = tfel::math::Cste<base>::isqrt2;
       static_assert(IsFundamentalNumericType<base>::cond);
       static_assert(IsReal<base>::cond);
       static_assert((IsSafelyReinterpretCastableTo<NumType, base>::cond));
@@ -412,7 +412,7 @@ namespace tfel::math::internals {
         const NumType* const v,
         const bool) {
       using namespace tfel::typetraits;
-      constexpr const auto icste = tfel::math::Cste<base>::isqrt2;
+      constexpr auto icste = tfel::math::Cste<base>::isqrt2;
       static_assert(IsFundamentalNumericType<base>::cond);
       static_assert(IsReal<base>::cond);
       static_assert((IsSafelyReinterpretCastableTo<NumType, base>::cond));
@@ -463,7 +463,7 @@ namespace tfel::math::internals {
                                                     const NumType* const v,
                                                     const bool) {
       using namespace tfel::typetraits;
-      constexpr const auto icste = tfel::math::Cste<base>::isqrt2;
+      constexpr auto icste = tfel::math::Cste<base>::isqrt2;
       static_assert(IsFundamentalNumericType<base>::cond);
       static_assert(IsReal<base>::cond);
       static_assert((IsSafelyReinterpretCastableTo<NumType, base>::cond));
@@ -490,7 +490,7 @@ namespace tfel::math::internals {
         const NumType* const v,
         const bool) {
       using namespace tfel::typetraits;
-      constexpr const auto icste = tfel::math::Cste<base>::isqrt2;
+      constexpr auto icste = tfel::math::Cste<base>::isqrt2;
       static_assert(IsFundamentalNumericType<base>::cond);
       static_assert(IsReal<base>::cond);
       static_assert((IsSafelyReinterpretCastableTo<NumType, base>::cond));
@@ -541,7 +541,7 @@ namespace tfel::math::internals {
                                                     const NumType* const v,
                                                     const bool) {
       using namespace tfel::typetraits;
-      constexpr const auto icste = tfel::math::Cste<base>::isqrt2;
+      constexpr auto icste = tfel::math::Cste<base>::isqrt2;
       static_assert(IsFundamentalNumericType<base>::cond);
       static_assert(IsReal<base>::cond);
       static_assert((IsSafelyReinterpretCastableTo<NumType, base>::cond));
@@ -567,7 +567,7 @@ namespace tfel::math::internals {
         const NumType* const v,
         const bool) {
       using namespace tfel::typetraits;
-      constexpr const auto icste = tfel::math::Cste<base>::isqrt2;
+      constexpr auto icste = tfel::math::Cste<base>::isqrt2;
       static_assert(IsFundamentalNumericType<base>::cond);
       static_assert(IsReal<base>::cond);
       static_assert((IsSafelyReinterpretCastableTo<NumType, base>::cond));

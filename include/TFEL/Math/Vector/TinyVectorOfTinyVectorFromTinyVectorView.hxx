@@ -19,8 +19,6 @@
 #include "TFEL/Math/Vector/VectorUtilities.hxx"
 #include "TFEL/Math/Vector/VectorConcept.hxx"
 #include "TFEL/Math/tvector.hxx"
-#include "TFEL/Math/Vector/TVectorView.hxx"
-#include "TFEL/Math/Vector/ConstTVectorView.hxx"
 
 namespace tfel::math {
 

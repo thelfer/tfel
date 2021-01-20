@@ -36,7 +36,7 @@ namespace tfel::math {
   struct MathObjectTraits<vector<T>>
       : MathObjectTraitsBase<T, typename std::vector<T>::size_type> {
     //! brief a `vector` is not related to the space dimension
-    static constexpr const unsigned short dime = 0;
+    static constexpr unsigned short dime = 0;
   };
 
 }  // end of namespace tfel::math

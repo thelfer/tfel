@@ -46,12 +46,12 @@ namespace mfront {
 
     template <>
     struct ThermalExpansionCoefficientPropertiesNumber<true> {
-      static constexpr const unsigned short value = 1u;
+      static constexpr unsigned short value = 1u;
     };  // end of struct ThermalExpansionCoefficientPropertiesNumber<true>
 
     template <>
     struct ThermalExpansionCoefficientPropertiesNumber<false> {
-      static constexpr const unsigned short value = 3u;
+      static constexpr unsigned short value = 3u;
     };  // end of struct ThermalExpansionCoefficientPropertiesNumber<false>
 
     template <unsigned short N>
@@ -59,23 +59,23 @@ namespace mfront {
 
     template <>
     struct OrthotropicElasticMaterialPropertiesNumber<1u> {
-      static constexpr const unsigned short value = 6u;
+      static constexpr unsigned short value = 6u;
     };  // end of OrthotropicElasticMaterialPropertiesNumber<1u>
 
     template <>
     struct OrthotropicElasticMaterialPropertiesNumber<2u> {
-      static constexpr const unsigned short value = 7u;
+      static constexpr unsigned short value = 7u;
     };  // end of struct OrthotropicElasticMaterialPropertiesNumber<2u>
 
     template <>
     struct OrthotropicElasticMaterialPropertiesNumber<3u> {
-      static constexpr const unsigned short value = 9u;
+      static constexpr unsigned short value = 9u;
     };  // end of OrthotropicElasticMaterialPropertiesNumber<3u>
 
     //! \brief partial specialisation for elastic isotropic behaviour
     template <tfel::material::ModellingHypothesis::Hypothesis H>
     struct ElasticMaterialPropertiesNumber<H, true> {
-      static constexpr const unsigned short value = 2u;
+      static constexpr unsigned short value = 2u;
     };  // end of ElasticMaterialPropertiesNumber<H,true>
 
     //! \brief partial specialisation for elastic isotropic behaviour
@@ -96,14 +96,14 @@ namespace mfront {
               const bool es,
               const bool bs>
     struct ThermoElasticMaterialPropertiesNumber<H, false, es, false, bs> {
-      static constexpr const unsigned short value = 0u;
+      static constexpr unsigned short value = 0u;
     };
 
     template <tfel::material::ModellingHypothesis::Hypothesis H,
               const bool es,
               const bool bs>
     struct ThermoElasticMaterialPropertiesNumber<H, true, es, false, bs> {
-      static constexpr const unsigned short value =
+      static constexpr unsigned short value =
           ElasticMaterialPropertiesNumber<H, es>::value;
     };
 
@@ -111,7 +111,7 @@ namespace mfront {
               const bool es,
               const bool bs>
     struct ThermoElasticMaterialPropertiesNumber<H, false, es, true, bs> {
-      static constexpr const unsigned short value =
+      static constexpr unsigned short value =
           ThermalExpansionCoefficientPropertiesNumber<bs>::value;
     };
 
@@ -119,7 +119,7 @@ namespace mfront {
               const bool es,
               const bool bs>
     struct ThermoElasticMaterialPropertiesNumber<H, true, es, true, bs> {
-      static constexpr const unsigned short value =
+      static constexpr unsigned short value =
           ElasticMaterialPropertiesNumber<H, es>::value +
           ThermalExpansionCoefficientPropertiesNumber<bs>::value;
     };

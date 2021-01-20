@@ -24,36 +24,36 @@
 #include "TFEL/Math/General/ComputeBinaryResult.hxx"
 #include "TFEL/Math/General/ComputeUnaryResult.hxx"
 
-#define TFEL_MATH_RESULT_TYPE_(X, Y)                        \
-  /*!                                                       \
-   * \brief Partial specialisation for X and Y              \
-   */                                                       \
-  template <>                                               \
-  struct ResultType_<ScalarTag, ScalarTag, X, Y, OpPlus> {  \
-    typedef tfel::typetraits::Promote<X, Y>::type type;     \
-  };                                                        \
-  /*!                                                       \
-   * \brief Partial specialisation for X and Y              \
-   */                                                       \
-  template <>                                               \
-  struct ResultType_<ScalarTag, ScalarTag, X, Y, OpMinus> { \
-    typedef tfel::typetraits::Promote<X, Y>::type type;     \
-  };                                                        \
-                                                            \
-  /*!                                                       \
-   * \brief Partial specialisation for X and Y              \
-   */                                                       \
-  template <>                                               \
-  struct ResultType_<ScalarTag, ScalarTag, X, Y, OpMult> {  \
-    typedef tfel::typetraits::Promote<X, Y>::type type;     \
-  };                                                        \
-                                                            \
-  /*!                                                       \
-   * \brief Partial specialisation for X and Y              \
-   */                                                       \
-  template <>                                               \
-  struct ResultType_<ScalarTag, ScalarTag, X, Y, OpDiv> {   \
-    typedef tfel::typetraits::Promote<X, Y>::type type;     \
+#define TFEL_MATH_RESULT_TYPE_(X, Y)                                         \
+  /*!                                                                        \
+   * \brief Partial specialisation for X and Y                               \
+   */                                                                        \
+  template <>                                                                \
+  struct ComputeBinaryOperationResult<ScalarTag, ScalarTag, X, Y, OpPlus> {  \
+    typedef tfel::typetraits::Promote<X, Y>::type type;                      \
+  };                                                                         \
+  /*!                                                                        \
+   * \brief Partial specialisation for X and Y                               \
+   */                                                                        \
+  template <>                                                                \
+  struct ComputeBinaryOperationResult<ScalarTag, ScalarTag, X, Y, OpMinus> { \
+    typedef tfel::typetraits::Promote<X, Y>::type type;                      \
+  };                                                                         \
+                                                                             \
+  /*!                                                                        \
+   * \brief Partial specialisation for X and Y                               \
+   */                                                                        \
+  template <>                                                                \
+  struct ComputeBinaryOperationResult<ScalarTag, ScalarTag, X, Y, OpMult> {  \
+    typedef tfel::typetraits::Promote<X, Y>::type type;                      \
+  };                                                                         \
+                                                                             \
+  /*!                                                                        \
+   * \brief Partial specialisation for X and Y                               \
+   */                                                                        \
+  template <>                                                                \
+  struct ComputeBinaryOperationResult<ScalarTag, ScalarTag, X, Y, OpDiv> {   \
+    typedef tfel::typetraits::Promote<X, Y>::type type;                      \
   }
 
 #define TFEL_MATH_RESULT_TYPE(X)                                              \
@@ -71,7 +71,8 @@
    * \see   UnaryResultType                                                   \
    */                                                                         \
   template <>                                                                 \
-  struct UnaryResultType_<ScalarTag, UnaryOperatorTag, X, OpNeg> {            \
+  struct UnaryComputeBinaryOperationResult<ScalarTag, UnaryOperatorTag, X,    \
+                                           OpNeg> {                           \
     typedef tfel::typetraits::Promote<X, short>::type type;                   \
   };                                                                          \
   /*!                                                                         \
@@ -79,29 +80,30 @@
    * \see   UnaryResultType                                                   \
    */                                                                         \
   template <>                                                                 \
-  struct UnaryResultType_<ScalarTag, UnaryOperatorTag, Complex<X>, OpNeg> {   \
+  struct UnaryComputeBinaryOperationResult<ScalarTag, UnaryOperatorTag,       \
+                                           Complex<X>, OpNeg> {               \
     typedef tfel::typetraits::Promote<Complex<X>, Complex<short>>::type type; \
   }
 
-#define TFEL_MATH_RESULT_TYPE_COMPLEX_(X, Y)                \
-  template <>                                               \
-  struct ResultType_<ScalarTag, ScalarTag, X, Y, OpPlus> {  \
-    typedef tfel::typetraits::Promote<X, Y>::type type;     \
-  };                                                        \
-                                                            \
-  template <>                                               \
-  struct ResultType_<ScalarTag, ScalarTag, X, Y, OpMinus> { \
-    typedef tfel::typetraits::Promote<X, Y>::type type;     \
-  };                                                        \
-                                                            \
-  template <>                                               \
-  struct ResultType_<ScalarTag, ScalarTag, X, Y, OpMult> {  \
-    typedef tfel::typetraits::Promote<X, Y>::type type;     \
-  };                                                        \
-                                                            \
-  template <>                                               \
-  struct ResultType_<ScalarTag, ScalarTag, X, Y, OpDiv> {   \
-    typedef tfel::typetraits::Promote<X, Y>::type type;     \
+#define TFEL_MATH_RESULT_TYPE_COMPLEX_(X, Y)                                 \
+  template <>                                                                \
+  struct ComputeBinaryOperationResult<ScalarTag, ScalarTag, X, Y, OpPlus> {  \
+    typedef tfel::typetraits::Promote<X, Y>::type type;                      \
+  };                                                                         \
+                                                                             \
+  template <>                                                                \
+  struct ComputeBinaryOperationResult<ScalarTag, ScalarTag, X, Y, OpMinus> { \
+    typedef tfel::typetraits::Promote<X, Y>::type type;                      \
+  };                                                                         \
+                                                                             \
+  template <>                                                                \
+  struct ComputeBinaryOperationResult<ScalarTag, ScalarTag, X, Y, OpMult> {  \
+    typedef tfel::typetraits::Promote<X, Y>::type type;                      \
+  };                                                                         \
+                                                                             \
+  template <>                                                                \
+  struct ComputeBinaryOperationResult<ScalarTag, ScalarTag, X, Y, OpDiv> {   \
+    typedef tfel::typetraits::Promote<X, Y>::type type;                      \
   }
 
 #define TFEL_MATH_RESULT_TYPE_COMPLEX(X) \

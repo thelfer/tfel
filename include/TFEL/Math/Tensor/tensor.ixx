@@ -156,7 +156,7 @@ namespace tfel::math {
   //   }
   //
   //   template <unsigned short N, typename T>
-  //   constexpr const T& tensor<N, T>::operator()(const unsigned short i) const
+  //   constexpr T& tensor<N, T>::operator()(const unsigned short i) const
   //   {
   //     return this->v[i];
   //   }
@@ -277,8 +277,8 @@ namespace tfel::math {
                                           OpDiv>::Result>>
   invert(const TensorType& t) noexcept {
     using real = base_type<numeric_type<TensorType>>;
-    constexpr const auto one = real(1);
-    constexpr const auto N = getSpaceDimension<TensorType>();
+    constexpr auto one = real(1);
+    constexpr auto N = getSpaceDimension<TensorType>();
     static_assert((N == 1) || (N == 2) || (N == 3), "invalid space dimension");
     if constexpr (N == 1) {
       return {one / t[0], one / t[1], one / t[2]};
@@ -316,7 +316,7 @@ namespace tfel::math {
       tensor<getSpaceDimension<TensorType>(), numeric_type<TensorType>>>
   change_basis(const TensorType& t,
                const rotation_matrix<numeric_type<TensorType>>& r) noexcept {
-    constexpr const auto N = getSpaceDimension<TensorType>();
+    constexpr auto N = getSpaceDimension<TensorType>();
     static_assert((N == 1) || (N == 2) || (N == 3), "invalid space dimension");
     if constexpr (N == 1) {
       return t;
@@ -374,16 +374,16 @@ namespace tfel::math {
       implementsStensorConcept<StensorType>(),
       tensor<getSpaceDimension<StensorType>(), numeric_type<StensorType>>>
   unsyme(const StensorType& s) {
-    constexpr const auto N = getSpaceDimension<StensorType>();
+    constexpr auto N = getSpaceDimension<StensorType>();
     static_assert((N == 1) || (N == 2) || (N == 3), "invalid space dimension");
     if constexpr (N == 1) {
       return {s[0], s[1], s[2]};
     } else if constexpr (N == 2) {
-      constexpr const auto cste = Cste<numeric_type<StensorType>>::isqrt2;
+      constexpr auto cste = Cste<numeric_type<StensorType>>::isqrt2;
       const auto s01 = s[3] * cste;
       return {s[0], s[1], s[2], s01, s01};
     } else {
-      constexpr const auto cste = Cste<numeric_type<StensorType>>::isqrt2;
+      constexpr auto cste = Cste<numeric_type<StensorType>>::isqrt2;
       const auto s01 = s[3] * cste;
       const auto s02 = s[4] * cste;
       const auto s12 = s[5] * cste;
@@ -400,21 +400,21 @@ namespace tfel::math {
                                       OpMult>>>
   convertCauchyStressToFirstPiolaKirchhoffStress(const StensorType& s,
                                                  const TensorType& F) {
-    constexpr const auto N = getSpaceDimension<StensorType>();
+    constexpr auto N = getSpaceDimension<StensorType>();
     static_assert((N == 1) || (N == 2) || (N == 3), "invalid space dimension");
     static_assert(getSpaceDimension<TensorType>() == N);
     if constexpr (N == 1) {
       return {s[0] * F[1] * F[2], F[0] * s[1] * F[2], F[0] * s[2] * F[1]};
     } else if constexpr (N == 2) {
-      constexpr const auto cste = Cste<numeric_type<StensorType>>::sqrt2;
-      constexpr const auto icste = Cste<numeric_type<StensorType>>::isqrt2;
+      constexpr auto cste = Cste<numeric_type<StensorType>>::sqrt2;
+      constexpr auto icste = Cste<numeric_type<StensorType>>::isqrt2;
       return {-(s[3] * F[2] * F[3] - cste * s[0] * F[1] * F[2]) * icste,
               -(s[3] * F[2] * F[4] - cste * F[0] * s[1] * F[2]) * icste,
               F[0] * s[2] * F[1] - s[2] * F[3] * F[4],
               -(cste * s[0] * F[2] * F[4] - F[0] * s[3] * F[2]) * icste,
               -(cste * s[1] * F[2] * F[3] - s[3] * F[1] * F[2]) * icste};
     } else {
-      constexpr const auto cste = Cste<numeric_type<StensorType>>::sqrt2;
+      constexpr auto cste = Cste<numeric_type<StensorType>>::sqrt2;
       return {-((2 * s[0] * F[7] - cste * s[3] * F[5]) * F[8] -
                 cste * s[4] * F[3] * F[7] + cste * s[4] * F[1] * F[5] +
                 cste * s[3] * F[2] * F[3] - 2 * s[0] * F[1] * F[2]) /
@@ -463,19 +463,19 @@ namespace tfel::math {
                                        OpMult>>>
   convertFirstPiolaKirchhoffStressToCauchyStress(const TensorType& P,
                                                  const TensorType2& F) {
-    constexpr const auto N = getSpaceDimension<TensorType>();
+    constexpr auto N = getSpaceDimension<TensorType>();
     static_assert((N == 1) || (N == 2) || (N == 3), "invalid space dimension");
     static_assert(getSpaceDimension<TensorType2>() == N);
     if constexpr (N == 1) {
       return {P[0] / (F[1] * F[2]), P[1] / (F[0] * F[2]), P[2] / (F[0] * F[1])};
     } else if constexpr (N == 2) {
-      constexpr const auto cste = Cste<numeric_type<TensorType2>>::sqrt2;
+      constexpr auto cste = Cste<numeric_type<TensorType2>>::sqrt2;
       const auto iJ = 1 / det(F);
       return {(P[3] * F[3] + F[0] * P[0]) * iJ,
               (P[4] * F[4] + P[1] * F[1]) * iJ, P[2] * F[2] * iJ,
               cste * (P[1] * F[3] + F[0] * P[4]) * iJ};
     } else {
-      constexpr const auto cste = Cste<numeric_type<TensorType2>>::sqrt2;
+      constexpr auto cste = Cste<numeric_type<TensorType2>>::sqrt2;
       const auto iJ = 1 / det(F);
       return {(P[5] * F[5] + P[3] * F[3] + F[0] * P[0]) * iJ,
               (P[7] * F[7] + P[4] * F[4] + P[1] * F[1]) * iJ,

@@ -44,8 +44,8 @@ struct IEEE754Test final
   void test(){
     namespace ieee754 = tfel::math::ieee754;
     using limits  = std::numeric_limits<T>;
-    constexpr const auto zero = T(0);
-    constexpr const auto one  = T(1);
+    constexpr auto zero = T(0);
+    constexpr auto one  = T(1);
     TFEL_CONSTEXPR const auto dn  = limits::min()/2;
     if(limits::has_quiet_NaN){
       TFEL_TESTS_ASSERT(ieee754::fpclassify(limits::quiet_NaN()) ==FP_NAN);

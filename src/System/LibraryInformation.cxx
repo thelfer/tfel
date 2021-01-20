@@ -41,7 +41,7 @@ namespace tfel{
 	raise_if(c,"LibraryInformation::LibraryInformation: "+m);
       };
       auto throw_if_in_32bits = [throw_if]{
-	constexpr const auto c = sizeof(void*) == 4;
+	constexpr auto c = sizeof(void*) == 4;
         throw_if(c,"not native format (64bit binary)");
       };
 #if (defined(_WIN32) || defined(_WIN64))

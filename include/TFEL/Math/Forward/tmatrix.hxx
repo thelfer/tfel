@@ -37,7 +37,7 @@ namespace tfel::math {
   struct TFEL_VISIBILITY_LOCAL MathObjectTraits<tmatrix<N, M, T>>
       : MathObjectTraitsBase<T, unsigned short> {
     //! brief a `tmatrix` is not related to the space dimension
-    static constexpr const unsigned short dime = 0;
+    static constexpr unsigned short dime = 0;
   };
 
   //! a simple alias

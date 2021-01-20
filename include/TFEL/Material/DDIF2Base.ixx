@@ -212,8 +212,8 @@ namespace tfel {
     void DDIF2Base::cart2cyl(tfel::math::stensor<2u, real>& s,
                              const real theta) {
       using namespace std;
-      constexpr const auto cste = tfel::math::Cste<real>::sqrt2;
-      constexpr const auto icste = tfel::math::Cste<real>::isqrt2;
+      constexpr auto cste = tfel::math::Cste<real>::sqrt2;
+      constexpr auto icste = tfel::math::Cste<real>::isqrt2;
       const real a[4] = {s(0), s(1), s(2), s(3) * icste};
       const real cost = cos(theta);
       const real sint = sin(theta);
@@ -230,8 +230,8 @@ namespace tfel {
     void DDIF2Base::cart2cyl(tfel::math::stensor<3u, real>& s,
                              const real theta) {
       using namespace std;
-      constexpr const auto cste = tfel::math::Cste<real>::sqrt2;
-      constexpr const auto icste = tfel::math::Cste<real>::isqrt2;
+      constexpr auto cste = tfel::math::Cste<real>::sqrt2;
+      constexpr auto icste = tfel::math::Cste<real>::isqrt2;
       const real a[6] = {s(0),         s(1),         s(2),
                          s(3) * icste, s(4) * icste, s(5) * icste};
       const real cost = cos(theta);
@@ -255,8 +255,8 @@ namespace tfel {
     void DDIF2Base::cyl2cart(tfel::math::stensor<2u, real>& s,
                              const real theta) {
       using namespace std;
-      constexpr const auto cste = tfel::math::Cste<real>::sqrt2;
-      constexpr const auto icste = tfel::math::Cste<real>::isqrt2;
+      constexpr auto cste = tfel::math::Cste<real>::sqrt2;
+      constexpr auto icste = tfel::math::Cste<real>::isqrt2;
       const real a[4] = {s(0), s(1), s(2), s(3) * icste};
       const real cost = cos(theta);
       const real sint = sin(theta);
@@ -273,8 +273,8 @@ namespace tfel {
     void DDIF2Base::cyl2cart(tfel::math::stensor<3u, real>& s,
                              const real theta) {
       using namespace std;
-      constexpr const auto cste = tfel::math::Cste<real>::sqrt2;
-      constexpr const auto icste = tfel::math::Cste<real>::isqrt2;
+      constexpr auto cste = tfel::math::Cste<real>::sqrt2;
+      constexpr auto icste = tfel::math::Cste<real>::isqrt2;
       const real a[6] = {s(0),         s(1),         s(2),
                          s(3) * icste, s(4) * icste, s(5) * icste};
       const real cost = cos(theta);

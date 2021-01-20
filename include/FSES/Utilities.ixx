@@ -211,7 +211,7 @@ namespace fses{
   template<typename real>
   inline bool is_negligible(const real& x,const real& y)
   {
-    static constexpr const real e = std::numeric_limits<real>::epsilon();
+    static constexpr real e = std::numeric_limits<real>::epsilon();
     // y+x==y;
     return std::abs(x)<std::abs(y)*e;    
   }
@@ -220,9 +220,9 @@ namespace fses{
   void sort(MatrixType& m,VectorType& v,const EigenValuesOrdering o){
     using size_type = unsigned short;
     using real = GetVectorNumericType_t<VectorType>;
-    constexpr const auto zero = size_type{0};
-    constexpr const auto one  = size_type{1};
-    constexpr const auto two  = size_type{2};
+    constexpr auto zero = size_type{0};
+    constexpr auto one  = size_type{1};
+    constexpr auto two  = size_type{2};
     std::array<size_type,3u> idx = {zero,one,two};
     const std::array<real,3u> v2 = {at(v,0),at(v,1),at(v,2)};
     const std::array<std::array<real,3u>,3u> m2 = {at(m,0,0),at(m,0,1),at(m,0,2),

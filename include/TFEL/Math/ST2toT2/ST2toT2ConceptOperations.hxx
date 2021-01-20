@@ -31,29 +31,11 @@
 
 namespace tfel::math {
 
-  /*
-   * Partial Specialisation of ComputeBinaryResult_ for st2tot2's operation
-   */
-  template <typename A, typename B, typename Op>
-  class ComputeBinaryResult_<ST2toT2Tag, ST2toT2Tag, A, B, Op> {
-    struct DummyHandle {};
-    //! \brief a simple alias
-    using ST2toT2TypeA = EvaluationResult<A>;
-    //! \brief a simple alias
-    using ST2toT2TypeB = EvaluationResult<B>;
-
-   public:
-    using Result = result_type<ST2toT2TypeA, ST2toT2TypeB, Op>;
-    using Handle = std::conditional_t<isInvalid<Result>(),
-                                      DummyHandle,
-                                      Expr<Result, BinaryOperation<A, B, Op>>>;
-  };
-
   /*!
-   * Partial Specialisation of ComputeBinaryResult_ for stensor's operation
+   * Partial Specialisation of ComputeBinaryOperationHandler for stensor's operation
    */
   template <typename A, typename B>
-  class ComputeBinaryResult_<TensorTag, StensorTag, A, B, OpDiadicProduct> {
+  class ComputeBinaryOperationHandler<TensorTag, StensorTag, A, B, OpDiadicProduct> {
     struct DummyHandle {};
     using TensorTypeA = EvaluationResult<A>;
     //! \brief a simple alias
@@ -67,47 +49,12 @@ namespace tfel::math {
                            Expr<Result, DiadicProductOperation<A, B>>>;
   };
 
-  /*
-   * Partial Specialisation of ComputeBinaryResult_ for scalar-st2tot2
-   * operations
-   */
-  template <typename A, typename B, typename Op>
-  class ComputeBinaryResult_<ScalarTag, ST2toT2Tag, A, B, Op> {
-    struct DummyHandle {};
-    using ST2toT2TypeB = EvaluationResult<B>;
-
-   public:
-    using Result = result_type<A, ST2toT2TypeB, Op>;
-    using Handle =
-        std::conditional_t<isInvalid<Result>(),
-                           DummyHandle,
-                           Expr<Result, ScalarObjectOperation<A, B, Op>>>;
-  };
-
-  /*
-   * Partial Specialisation of ComputeBinaryResult_ for st2tot2-scalar
-   * operations
-   */
-  template <typename A, typename B, typename Op>
-  class ComputeBinaryResult_<ST2toT2Tag, ScalarTag, A, B, Op> {
-    struct DummyHandle {};
-    //! \brief a simple alias
-    using ST2toT2TypeA = EvaluationResult<A>;
-
-   public:
-    using Result = result_type<ST2toT2TypeA, B, Op>;
-    using Handle =
-        std::conditional_t<isInvalid<Result>(),
-                           DummyHandle,
-                           Expr<Result, ObjectScalarOperation<A, B, Op>>>;
-  };
-
   /*!
-   * Partial Specialisation of ComputeBinaryResult_ for T2toT2-ST2toT2
+   * Partial Specialisation of ComputeBinaryOperationHandler for T2toT2-ST2toT2
    * operations
    */
   template <typename A, typename B>
-  class ComputeBinaryResult_<T2toT2Tag, ST2toT2Tag, A, B, OpMult> {
+  class ComputeBinaryOperationHandler<T2toT2Tag, ST2toT2Tag, A, B, OpMult> {
     struct DummyHandle {};
     using T2toT2TypeA = EvaluationResult<A>;
     using ST2toT2TypeB = EvaluationResult<B>;
@@ -121,11 +68,11 @@ namespace tfel::math {
   };
 
   /*
-   * Partial Specialisation of ComputeBinaryResult_ for st2tot2-t2tost2
+   * Partial Specialisation of ComputeBinaryOperationHandler for st2tot2-t2tost2
    * operations
    */
   template <typename A, typename B>
-  class ComputeBinaryResult_<ST2toT2Tag, T2toST2Tag, A, B, OpMult> {
+  class ComputeBinaryOperationHandler<ST2toT2Tag, T2toST2Tag, A, B, OpMult> {
     struct DummyHandle {};
     using ST2toT2TypeA = EvaluationResult<A>;
     using T2toST2TypeB = EvaluationResult<B>;
@@ -139,11 +86,11 @@ namespace tfel::math {
   };
 
   /*
-   * Partial Specialisation of ComputeBinaryResult_ for st2tot2-st2tost2
+   * Partial Specialisation of ComputeBinaryOperationHandler for st2tot2-st2tost2
    * operations
    */
   template <typename A, typename B>
-  class ComputeBinaryResult_<ST2toT2Tag, ST2toST2Tag, A, B, OpMult> {
+  class ComputeBinaryOperationHandler<ST2toT2Tag, ST2toST2Tag, A, B, OpMult> {
     struct DummyHandle {};
     using ST2toT2TypeA = EvaluationResult<A>;
     using ST2toST2TypeB = EvaluationResult<B>;
@@ -157,11 +104,11 @@ namespace tfel::math {
   };
 
   /*
-   * Partial Specialisation of ComputeBinaryResult_ for t2tost2-st2tot2
+   * Partial Specialisation of ComputeBinaryOperationHandler for t2tost2-st2tot2
    * operations
    */
   template <typename A, typename B>
-  class ComputeBinaryResult_<T2toST2Tag, ST2toT2Tag, A, B, OpMult> {
+  class ComputeBinaryOperationHandler<T2toST2Tag, ST2toT2Tag, A, B, OpMult> {
     struct DummyHandle {};
     using T2toST2TypeA = EvaluationResult<A>;
     using ST2toT2TypeB = EvaluationResult<B>;
@@ -175,11 +122,11 @@ namespace tfel::math {
   };
 
   /*
-   * Partial Specialisation of ComputeBinaryResult_ for st2tot2-stensor
+   * Partial Specialisation of ComputeBinaryOperationHandler for st2tot2-stensor
    * operations
    */
   template <typename A, typename B>
-  class ComputeBinaryResult_<ST2toT2Tag, StensorTag, A, B, OpMult> {
+  class ComputeBinaryOperationHandler<ST2toT2Tag, StensorTag, A, B, OpMult> {
     struct DummyHandle {};
     using ST2toT2TypeA = EvaluationResult<A>;
     using StensorTypeB = EvaluationResult<B>;
@@ -193,11 +140,11 @@ namespace tfel::math {
   };
 
   /*
-   * Partial Specialisation of ComputeBinaryResult_ for tensor-st2tot2
+   * Partial Specialisation of ComputeBinaryOperationHandler for tensor-st2tot2
    * operations
    */
   template <typename A, typename B>
-  class ComputeBinaryResult_<TensorTag, ST2toT2Tag, A, B, OpMult> {
+  class ComputeBinaryOperationHandler<TensorTag, ST2toT2Tag, A, B, OpMult> {
     struct DummyHandle {};
     using TensorTypeA = EvaluationResult<A>;
     using ST2toT2TypeB = EvaluationResult<B>;

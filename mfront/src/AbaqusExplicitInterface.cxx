@@ -738,12 +738,12 @@ namespace mfront{
 	<< "using BV = " << mb.getClassName()
 	<< "<ModellingHypothesis::"<< ModellingHypothesis::toUpperCaseString(h) << "," << t << ",false>;\n"
 	<< "using Traits = tfel::material::MechanicalBehaviourTraits<BV>;\n"
-	<< "constexpr const unsigned short offset  = (AbaqusTraits<BV>::elasticPropertiesOffset+\n"
+	<< "constexpr unsigned short offset  = (AbaqusTraits<BV>::elasticPropertiesOffset+\n"
 	<< "                                          AbaqusTraits<BV>::thermalExpansionPropertiesOffset);\n"
-	<< "constexpr const unsigned short nprops_  = AbaqusTraits<BV>::material_properties_nb;\n"
-	<< "constexpr const unsigned short NPROPS_  = offset+nprops_;\n"
-	<< "constexpr const unsigned short nstatev_ = Traits::internal_variables_nb;\n"
-	<< "constexpr const unsigned short nfieldv_ = Traits::external_variables_nb2;\n";
+	<< "constexpr unsigned short nprops_  = AbaqusTraits<BV>::material_properties_nb;\n"
+	<< "constexpr unsigned short NPROPS_  = offset+nprops_;\n"
+	<< "constexpr unsigned short nstatev_ = Traits::internal_variables_nb;\n"
+	<< "constexpr unsigned short nfieldv_ = Traits::external_variables_nb2;\n";
     if((h==ModellingHypothesis::AXISYMMETRICAL)||
        (h==ModellingHypothesis::PLANESTRAIN)||
        (h==ModellingHypothesis::PLANESTRESS)){

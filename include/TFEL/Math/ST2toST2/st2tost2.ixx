@@ -180,8 +180,8 @@ namespace tfel::math {
 
   template <unsigned short N, typename T>
   constexpr st2tost2<N, T> st2tost2<N, T>::Id() {
-    constexpr const auto c0 = T{0};
-    constexpr const auto c1 = T{1};
+    constexpr auto c0 = T{0};
+    constexpr auto c1 = T{1};
     static_assert((N == 1) || (N == 2) || (N == 3));
     if constexpr (N == 1) {
       return {c1, c0, c0,  //
@@ -204,20 +204,20 @@ namespace tfel::math {
 
   template <unsigned short N, typename T>
   constexpr st2tost2<N, T> st2tost2<N, T>::IxI() {
-    constexpr const auto c1 = T{1};
+    constexpr auto c1 = T{1};
     static_assert((N == 1) || (N == 2) || (N == 3));
     if constexpr (N == 1) {
       return {c1, c1, c1,  //
               c1, c1, c1,  //
               c1, c1, c1};
     } else if constexpr (N == 2) {
-      constexpr const auto c0 = T{0};
+      constexpr auto c0 = T{0};
       return {c1, c1, c1, c0,  //
               c1, c1, c1, c0,  //
               c1, c1, c1, c0,  //
               c0, c0, c0, c0};
     } else {
-      constexpr const auto c0 = T{0};
+      constexpr auto c0 = T{0};
       return {c1, c1, c1, c0, c0, c0,  //
               c1, c1, c1, c0, c0, c0,  //
               c1, c1, c1, c0, c0, c0,  //
@@ -229,23 +229,23 @@ namespace tfel::math {
 
   template <unsigned short N, typename T>
   constexpr st2tost2<N, T> st2tost2<N, T>::K() {
-    constexpr const auto c2_3 = T{2} / T{3};
-    constexpr const auto mc1_3 = -T{1} / T{3};
+    constexpr auto c2_3 = T{2} / T{3};
+    constexpr auto mc1_3 = -T{1} / T{3};
     static_assert((N == 1) || (N == 2) || (N == 3));
     if constexpr (N == 1) {
       return {c2_3,  mc1_3, mc1_3,  //
               mc1_3, c2_3,  mc1_3,  //
               mc1_3, mc1_3, c2_3};
     } else if constexpr (N == 2) {
-      constexpr const auto c0 = T{0};
-      constexpr const auto c1 = T{1};
+      constexpr auto c0 = T{0};
+      constexpr auto c1 = T{1};
       return {c2_3,  mc1_3, mc1_3, c0,  //
               mc1_3, c2_3,  mc1_3, c0,  //
               mc1_3, mc1_3, c2_3,  c0,  //
               c0,    c0,    c0,    c1};
     } else {
-      constexpr const auto c0 = T{0};
-      constexpr const auto c1 = T{1};
+      constexpr auto c0 = T{0};
+      constexpr auto c1 = T{1};
       return {c2_3,  mc1_3, mc1_3, c0, c0, c0,  //
               mc1_3, c2_3,  mc1_3, c0, c0, c0,  //
               mc1_3, mc1_3, c2_3,  c0, c0, c0,  //
@@ -257,23 +257,23 @@ namespace tfel::math {
 
   template <unsigned short N, typename T>
   constexpr st2tost2<N, T> st2tost2<N, T>::M() {
-    constexpr const auto c1 = T{1};
-    constexpr const auto mc1_2 = -T{1} / T{2};
+    constexpr auto c1 = T{1};
+    constexpr auto mc1_2 = -T{1} / T{2};
     static_assert((N == 1) || (N == 2) || (N == 3));
     if constexpr (N == 1) {
       return {c1,    mc1_2, mc1_2,  //
               mc1_2, c1,    mc1_2,  //
               mc1_2, mc1_2, c1};
     } else if constexpr (N == 2) {
-      constexpr const auto c0 = T{0};
-      constexpr const auto c3_2 = T{3} / T{2};
+      constexpr auto c0 = T{0};
+      constexpr auto c3_2 = T{3} / T{2};
       return {c1,    mc1_2, mc1_2, c0,  //
               mc1_2, c1,    mc1_2, c0,  //
               mc1_2, mc1_2, c1,    c0,  //
               c0,    c0,    c0,    c3_2};
     } else {
-      constexpr const auto c0 = T{0};
-      constexpr const auto c3_2 = T{3} / T{2};
+      constexpr auto c0 = T{0};
+      constexpr auto c3_2 = T{3} / T{2};
       return {c1,    mc1_2, mc1_2, c0,   c0,   c0,  //
               mc1_2, c1,    mc1_2, c0,   c0,   c0,  //
               mc1_2, mc1_2, c1,    c0,   c0,   c0,  //
@@ -285,20 +285,20 @@ namespace tfel::math {
 
   template <unsigned short N, typename T>
   constexpr st2tost2<N, T> st2tost2<N, T>::J() {
-    constexpr const auto c1_3 = T{1} / T{3};
+    constexpr auto c1_3 = T{1} / T{3};
     static_assert((N == 1) || (N == 2) || (N == 3));
     if constexpr (N == 1) {
       return {c1_3, c1_3, c1_3,  //
               c1_3, c1_3, c1_3,  //
               c1_3, c1_3, c1_3};
     } else if constexpr (N == 2) {
-      constexpr const auto c0 = T{0};
+      constexpr auto c0 = T{0};
       return {c1_3, c1_3, c1_3, c0,  //
               c1_3, c1_3, c1_3, c0,  //
               c1_3, c1_3, c1_3, c0,  //
               c0,   c0,   c0,   c0};
     } else {
-      constexpr const auto c0 = T{0};
+      constexpr auto c0 = T{0};
       return {c1_3, c1_3, c1_3, c0, c0, c0,  //
               c1_3, c1_3, c1_3, c0, c0, c0,  //
               c1_3, c1_3, c1_3, c0, c0, c0,  //
@@ -393,8 +393,8 @@ namespace tfel::math {
       st2tost2<getSpaceDimension<StensorType>(), numeric_type<StensorType>>>
   computeDeterminantSecondDerivative(const StensorType& s) {
     using NumType = numeric_type<StensorType>;
-    constexpr const auto N = getSpaceDimension<StensorType>();
-    constexpr const auto zero = NumType{0};
+    constexpr auto N = getSpaceDimension<StensorType>();
+    constexpr auto zero = NumType{0};
     static_assert((N == 1) || (N == 2) || (N == 3));
     if constexpr (N == 1) {
       return {zero, s[2], s[1], s[2], zero, s[0], s[1], s[0], zero};
@@ -402,7 +402,7 @@ namespace tfel::math {
       return {zero, s[2], s[1], zero,  s[2], zero, s[0],  zero,
               s[1], s[0], zero, -s[3], zero, zero, -s[3], -s[2]};
     } else {
-      constexpr const auto icste = Cste<NumType>::isqrt2;
+      constexpr auto icste = Cste<NumType>::isqrt2;
       return {zero,  s[2],  s[1],  zero,         zero,         -s[5],
               s[2],  zero,  s[0],  zero,         -s[4],        zero,
               s[1],  s[0],  zero,  -s[3],        zero,         zero,
@@ -418,7 +418,7 @@ namespace tfel::math {
           isScalar<numeric_type<StensorType>>(),
       st2tost2<getSpaceDimension<StensorType>(), numeric_type<StensorType>>>
   computeDeviatorDeterminantSecondDerivative(const StensorType& s) {
-    constexpr const auto N = getSpaceDimension<StensorType>();
+    constexpr auto N = getSpaceDimension<StensorType>();
     static_assert((N == 1) || (N == 2) || (N == 3));
     if constexpr (N == 1) {
       return {-(2 * s[2] + 2 * s[1] - 4 * s[0]) / 9,
@@ -449,7 +449,7 @@ namespace tfel::math {
               -(2 * s[2] - s[1] - s[0]) / 3};
     } else {
       using NumType = numeric_type<StensorType>;
-      constexpr const auto icste = Cste<NumType>::isqrt2;
+      constexpr auto icste = Cste<NumType>::isqrt2;
       return {-(2 * s[2] + 2 * s[1] - 4 * s[0]) / 9,
               (4 * s[2] - 2 * s[1] - 2 * s[0]) / 9,
               -(2 * s[2] - 4 * s[1] + 2 * s[0]) / 9,

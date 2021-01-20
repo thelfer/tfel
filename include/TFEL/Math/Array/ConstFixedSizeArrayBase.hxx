@@ -31,7 +31,7 @@ namespace tfel::math {
     //!
     static_assert(std::is_empty_v<typename ArrayPolicy::IndexingPolicy>);
     //! \return the current indexing policy
-    constexpr const typename ArrayPolicy::IndexingPolicy& getIndexingPolicy()
+    constexpr typename ArrayPolicy::IndexingPolicy& getIndexingPolicy()
         const;
     /*!
      * \brief apply a multi-indices functor

@@ -165,7 +165,7 @@ namespace mfront {
       //
       HookeStressPotential::initialize(bd, dsl, d);
       // undefined hypothesis
-      constexpr const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+      constexpr auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
       throw_if(bd.getElasticSymmetryType() != mfront::ISOTROPIC,
                "the DDIF2 brick is only usable for isotropic behaviours");
       // reserve some specific variables
@@ -236,7 +236,7 @@ namespace mfront {
 
     void DDIF2StressPotential::completeVariableDeclaration(
         BehaviourDescription& bd, const AbstractBehaviourDSL& dsl) const {
-      constexpr const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+      constexpr auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
       if (getVerboseMode() >= VERBOSE_DEBUG) {
         getLogStream()
             << "DDIF2StressPotential::completeVariableDeclaration: begin\n";
@@ -306,7 +306,7 @@ namespace mfront {
         BehaviourDescription& bd, const AbstractBehaviourDSL& dsl) const {
       using tfel::glossary::Glossary;
       using MaterialPropertyInput = BehaviourDescription::MaterialPropertyInput;
-      constexpr const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+      constexpr auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
       if (getVerboseMode() >= VERBOSE_DEBUG) {
         getLogStream() << "DDIF2StressPotential::endTreatment: begin\n";
       }

@@ -41,10 +41,10 @@ namespace tfel::math {
   /*!
    * \brief Partial specialisation for tvector and
    * scalars operations
-   * \see   ResultType_
+   * \see   ComputeBinaryOperationResult
    */
   template <typename T, typename Scal>
-  class ResultType_<VectorTag, ScalarTag, vector<T>, Scal, OpMult> {
+  class ComputeBinaryOperationResult<VectorTag, ScalarTag, vector<T>, Scal, OpMult> {
     typedef result_type<T, Scal, OpMult> ResBase_;
 
    public:
@@ -56,10 +56,10 @@ namespace tfel::math {
   /*!
    * \brief Partial specialisation for tvector and
    * scalars operations
-   * \see   ResultType_
+   * \see   ComputeBinaryOperationResult
    */
   template <typename Scal, typename T>
-  class ResultType_<ScalarTag, VectorTag, Scal, vector<T>, OpMult> {
+  class ComputeBinaryOperationResult<ScalarTag, VectorTag, Scal, vector<T>, OpMult> {
     typedef result_type<Scal, T, OpMult> ResBase_;
 
    public:
@@ -84,10 +84,10 @@ namespace tfel::math {
   /*!
    * \brief Partial specialisation for vector and
    * scalars operations
-   * \see   ResultType_
+   * \see   ComputeBinaryOperationResult
    */
   template <typename T, typename Scal>
-  class ResultType_<VectorTag, ScalarTag, vector<T>, Scal, OpDiv> {
+  class ComputeBinaryOperationResult<VectorTag, ScalarTag, vector<T>, Scal, OpDiv> {
     typedef result_type<T, Scal, OpDiv> ResBase_;
 
    public:

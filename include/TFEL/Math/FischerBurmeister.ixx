@@ -36,7 +36,7 @@ namespace tfel{
     template <typename real>
     std::tuple<real,real> squaredFischerBurmeisterFunctionFirstDerivatives(const real& x, const real& y) {
       const auto df_dx = [&x, &y] {
-        constexpr const auto zero = real{0};
+        constexpr auto zero = real{0};
         if (tfel::math::ieee754::fpclassify(x) == FP_ZERO) {
           return (y > zero) ? 4 * y : zero;
         }
@@ -44,7 +44,7 @@ namespace tfel{
         return 2 * (1 - x / s) * (x + y - s);
       }();
       const auto df_dy = [&x, &y] {
-        constexpr const auto zero = real{0};
+        constexpr auto zero = real{0};
         if (tfel::math::ieee754::fpclassify(y) == FP_ZERO) {
           return (x > zero) ? 4 * x : zero;
         }

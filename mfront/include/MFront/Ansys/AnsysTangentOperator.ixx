@@ -28,7 +28,7 @@ namespace ansys
   void
   AnsysTangentOperator<real>::normalize(tfel::math::ST2toST2View<2u,real>& Dt)
   {
-    constexpr const auto icste = tfel::math::Cste<real>::isqrt2;
+    constexpr auto icste = tfel::math::Cste<real>::isqrt2;
     Dt(0,3) *= icste;
     Dt(1,3) *= icste;
     Dt(2,3) *= icste;

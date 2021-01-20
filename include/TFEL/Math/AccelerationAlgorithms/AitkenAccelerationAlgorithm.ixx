@@ -30,7 +30,7 @@ namespace tfel::math {
   void AitkenAccelerationAlgorithm<NumericType, IndexType>::accelerate(
       NumericType& x) {
     using real = base_type<NumericType>;
-    constexpr const auto one = real{1};
+    constexpr auto one = real{1};
     if (!this->i) {
       this->x1 = x;
     } else {

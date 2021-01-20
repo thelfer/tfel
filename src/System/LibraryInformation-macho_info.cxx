@@ -42,29 +42,29 @@ namespace details {
   };
 
   struct load_command_types {
-    static constexpr const std::uint32_t LC_SEGMENT_          = 0x1;   /* segment of this file to be mapped */
-    static constexpr const std::uint32_t LC_SYMTAB_           = 0x2;   /* link-edit stab symbol table info */
-    static constexpr const std::uint32_t LC_SYMSEG_           = 0x3;   /* link-edit gdb symbol table info (obsolete) */
-    static constexpr const std::uint32_t LC_THREAD_           = 0x4;   /* thread */
-    static constexpr const std::uint32_t LC_UNIXTHREAD_       = 0x5;   /* unix thread (includes a stack) */
-    static constexpr const std::uint32_t LC_LOADFVMLIB_       = 0x6;   /* load a specified fixed VM shared library */
-    static constexpr const std::uint32_t LC_IDFVMLIB_         = 0x7;   /* fixed VM shared library identification */
-    static constexpr const std::uint32_t LC_IDENT_            = 0x8;   /* object identification info (obsolete) */
-    static constexpr const std::uint32_t LC_FVMFILE_          = 0x9;   /* fixed VM file inclusion (internal use) */
-    static constexpr const std::uint32_t LC_PREPAGE_          = 0xa;   /* prepage command (internal use) */
-    static constexpr const std::uint32_t LC_DYSYMTAB_         = 0xb;   /* dynamic link-edit symbol table info */
-    static constexpr const std::uint32_t LC_LOAD_DYLIB_       = 0xc;   /* load a dynamically linked shared library */
-    static constexpr const std::uint32_t LC_ID_DYLIB_         = 0xd;   /* dynamically linked shared lib ident */
-    static constexpr const std::uint32_t LC_LOAD_DYLINKER_    = 0xe;   /* load a dynamic linker */
-    static constexpr const std::uint32_t LC_ID_DYLINKER_      = 0xf;   /* dynamic linker identification */
-    static constexpr const std::uint32_t LC_PREBOUND_DYLIB_   = 0x10;  /* modules prebound for a dynamically linked shared library */
-    static constexpr const std::uint32_t LC_ROUTINES_         = 0x11;  /* image routines */
-    static constexpr const std::uint32_t LC_SUB_FRAMEWORK_    = 0x12;  /* sub framework */
-    static constexpr const std::uint32_t LC_SUB_UMBRELLA_     = 0x13;  /* sub umbrella */
-    static constexpr const std::uint32_t LC_SUB_CLIENT_       = 0x14;  /* sub client */
-    static constexpr const std::uint32_t LC_SUB_LIBRARY_      = 0x15;  /* sub library */
-    static constexpr const std::uint32_t LC_TWOLEVEL_HINTS_   = 0x16;  /* two-level namespace lookup hints */
-    static constexpr const std::uint32_t LC_PREBIND_CKSUM_    = 0x17;  /* prebind checksum */
+    static constexpr std::uint32_t LC_SEGMENT_          = 0x1;   /* segment of this file to be mapped */
+    static constexpr std::uint32_t LC_SYMTAB_           = 0x2;   /* link-edit stab symbol table info */
+    static constexpr std::uint32_t LC_SYMSEG_           = 0x3;   /* link-edit gdb symbol table info (obsolete) */
+    static constexpr std::uint32_t LC_THREAD_           = 0x4;   /* thread */
+    static constexpr std::uint32_t LC_UNIXTHREAD_       = 0x5;   /* unix thread (includes a stack) */
+    static constexpr std::uint32_t LC_LOADFVMLIB_       = 0x6;   /* load a specified fixed VM shared library */
+    static constexpr std::uint32_t LC_IDFVMLIB_         = 0x7;   /* fixed VM shared library identification */
+    static constexpr std::uint32_t LC_IDENT_            = 0x8;   /* object identification info (obsolete) */
+    static constexpr std::uint32_t LC_FVMFILE_          = 0x9;   /* fixed VM file inclusion (internal use) */
+    static constexpr std::uint32_t LC_PREPAGE_          = 0xa;   /* prepage command (internal use) */
+    static constexpr std::uint32_t LC_DYSYMTAB_         = 0xb;   /* dynamic link-edit symbol table info */
+    static constexpr std::uint32_t LC_LOAD_DYLIB_       = 0xc;   /* load a dynamically linked shared library */
+    static constexpr std::uint32_t LC_ID_DYLIB_         = 0xd;   /* dynamically linked shared lib ident */
+    static constexpr std::uint32_t LC_LOAD_DYLINKER_    = 0xe;   /* load a dynamic linker */
+    static constexpr std::uint32_t LC_ID_DYLINKER_      = 0xf;   /* dynamic linker identification */
+    static constexpr std::uint32_t LC_PREBOUND_DYLIB_   = 0x10;  /* modules prebound for a dynamically linked shared library */
+    static constexpr std::uint32_t LC_ROUTINES_         = 0x11;  /* image routines */
+    static constexpr std::uint32_t LC_SUB_FRAMEWORK_    = 0x12;  /* sub framework */
+    static constexpr std::uint32_t LC_SUB_UMBRELLA_     = 0x13;  /* sub umbrella */
+    static constexpr std::uint32_t LC_SUB_CLIENT_       = 0x14;  /* sub client */
+    static constexpr std::uint32_t LC_SUB_LIBRARY_      = 0x15;  /* sub library */
+    static constexpr std::uint32_t LC_TWOLEVEL_HINTS_   = 0x16;  /* two-level namespace lookup hints */
+    static constexpr std::uint32_t LC_PREBIND_CKSUM_    = 0x17;  /* prebind checksum */
     /*
      * After MacOS X 10.1 when a new load command is added that is required to be
      * understood by the dynamic linker for the image to execute properly the
@@ -74,25 +74,25 @@ namespace details {
      * image.  Other load commands without this bit that are not understood will
      * simply be ignored.
      */
-    static constexpr const std::uint32_t LC_REQ_DYLD_         = 0x80000000;
+    static constexpr std::uint32_t LC_REQ_DYLD_         = 0x80000000;
 
     /*
      * load a dynamically linked shared library that is allowed to be missing
      * (all symbols are weak imported).
      */
-    static constexpr const std::uint32_t LC_LOAD_WEAK_DYLIB_  = (0x18 | LC_REQ_DYLD_);
+    static constexpr std::uint32_t LC_LOAD_WEAK_DYLIB_  = (0x18 | LC_REQ_DYLD_);
 
-    static constexpr const std::uint32_t LC_SEGMENT_64_       = 0x19;                    /* 64-bit segment of this file to be mapped */
-    static constexpr const std::uint32_t LC_ROUTINES_64_      = 0x1a;                    /* 64-bit image routines */
-    static constexpr const std::uint32_t LC_UUID_             = 0x1b;                    /* the uuid */
-    static constexpr const std::uint32_t LC_RPATH_            = (0x1c | LC_REQ_DYLD_);   /* runpath additions */
-    static constexpr const std::uint32_t LC_CODE_SIGNATURE_   = 0x1d;                    /* local of code signature */
-    static constexpr const std::uint32_t LC_SEGMENT_SPLIT_INFO_= 0x1e;                   /* local of info to split segments */
-    static constexpr const std::uint32_t LC_REEXPORT_DYLIB_   = (0x1f | LC_REQ_DYLD_);   /* load and re-export dylib */
-    static constexpr const std::uint32_t LC_LAZY_LOAD_DYLIB_  = 0x20;                    /* delay load of dylib until first use */
-    static constexpr const std::uint32_t LC_ENCRYPTION_INFO_  = 0x21;                    /* encrypted segment information */
-    static constexpr const std::uint32_t LC_DYLD_INFO_        = 0x22;                    /* compressed dyld information */
-    static constexpr const std::uint32_t LC_DYLD_INFO_ONLY_   = (0x22|LC_REQ_DYLD_);     /* compressed dyld information only */
+    static constexpr std::uint32_t LC_SEGMENT_64_       = 0x19;                    /* 64-bit segment of this file to be mapped */
+    static constexpr std::uint32_t LC_ROUTINES_64_      = 0x1a;                    /* 64-bit image routines */
+    static constexpr std::uint32_t LC_UUID_             = 0x1b;                    /* the uuid */
+    static constexpr std::uint32_t LC_RPATH_            = (0x1c | LC_REQ_DYLD_);   /* runpath additions */
+    static constexpr std::uint32_t LC_CODE_SIGNATURE_   = 0x1d;                    /* local of code signature */
+    static constexpr std::uint32_t LC_SEGMENT_SPLIT_INFO_= 0x1e;                   /* local of info to split segments */
+    static constexpr std::uint32_t LC_REEXPORT_DYLIB_   = (0x1f | LC_REQ_DYLD_);   /* load and re-export dylib */
+    static constexpr std::uint32_t LC_LAZY_LOAD_DYLIB_  = 0x20;                    /* delay load of dylib until first use */
+    static constexpr std::uint32_t LC_ENCRYPTION_INFO_  = 0x21;                    /* encrypted segment information */
+    static constexpr std::uint32_t LC_DYLD_INFO_        = 0x22;                    /* compressed dyld information */
+    static constexpr std::uint32_t LC_DYLD_INFO_ONLY_   = (0x22|LC_REQ_DYLD_);     /* compressed dyld information only */
   };
 
   template <class AddressOffsetT>
@@ -164,13 +164,13 @@ namespace details {
     typedef details::symtab_command_                             symbol_header_t;
     typedef details::nlist_template<AddressOffsetT>              nlist_t;
 
-    static constexpr const std::uint32_t SEGMENT_CMD_NUMBER = (sizeof(AddressOffsetT) > 4 ?
+    static constexpr std::uint32_t SEGMENT_CMD_NUMBER = (sizeof(AddressOffsetT) > 4 ?
 							       load_command_types::LC_SEGMENT_64_ :
 							       load_command_types::LC_SEGMENT_);
 
   public:
     static bool parsing_supported(std::ifstream& f) {
-      static constexpr const uint32_t magic_bytes = (sizeof(AddressOffsetT) <= sizeof(uint32_t) ?
+      static constexpr uint32_t magic_bytes = (sizeof(AddressOffsetT) <= sizeof(uint32_t) ?
 						     0xfeedface : 0xfeedfacf);
 
       uint32_t magic;

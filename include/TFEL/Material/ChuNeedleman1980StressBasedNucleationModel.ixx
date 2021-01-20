@@ -38,7 +38,7 @@ namespace tfel {
       using real =
           ChuNeedleman1980StressBasedNucleationModelRealType<StressStensorType>;
       // 1 / sqrt(2*pi)
-      constexpr const auto cste = real(0.398942280401433);
+      constexpr auto cste = real(0.398942280401433);
       auto vp =  sig.computeEigenValues();
       const auto s1 = *(tfel::fsalgo::max_element<3u>::exe(vp.begin()));
       const auto x = (s1 - params.sigm) / (params.sn);
@@ -61,11 +61,11 @@ namespace tfel {
           ChuNeedleman1980StressBasedNucleationModelRealType<StressStensorType>;
       using stress = ChuNeedleman1980StressBasedNucleationModelStressType<
           StressStensorType>;
-      constexpr const auto N =
+      constexpr auto N =
           tfel::math::getSpaceDimension<StressStensorType>();
       using Stensor = tfel::math::stensor<N, real>;
       // 1 / sqrt(2*pi)
-      constexpr const auto cste = real(0.398942280401433);
+      constexpr auto cste = real(0.398942280401433);
       //
       auto vp = tfel::math::tvector<3u, stress>{};
       auto m = tfel::math::tmatrix<3u, 3u, real>{};

@@ -96,8 +96,8 @@ namespace tfel::math {
                     getSpaceDimension<T2toST2Type>());
       static_assert(isAssignableTo<numeric_type<T2toST2Type>,
                                    numeric_type<ST2toST2ResultType>>());
-      constexpr const auto icste = Cste<value_type>::sqrt2;
-      constexpr const auto icste2 = Cste<value_type>::isqrt2;
+      constexpr auto icste = Cste<value_type>::sqrt2;
+      constexpr auto icste2 = Cste<value_type>::isqrt2;
       this->v[0] = A(0, 0);
       this->v[1] = A(0, 1);
       this->v[2] = A(0, 2);
@@ -158,8 +158,8 @@ namespace tfel::math {
                     getSpaceDimension<T2toST2Type>());
       static_assert(isAssignableTo<numeric_type<T2toST2Type>,
                                    numeric_type<ST2toST2ResultType>>());
-      constexpr const auto icste = Cste<value_type>::sqrt2;
-      constexpr const auto icste2 = Cste<value_type>::isqrt2;
+      constexpr auto icste = Cste<value_type>::sqrt2;
+      constexpr auto icste2 = Cste<value_type>::isqrt2;
       this->v[0] = A(0, 0);
       this->v[1] = A(0, 1);
       this->v[2] = A(0, 2);

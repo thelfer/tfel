@@ -33,14 +33,8 @@ int main(){
   typedef tvector<3,double> vector1;
   typedef tvector<3,int> vector2;
 
-  vector1 v1;
-  vector2 v2;
-
-  v2(0)=2;
-  v2(1)=1;
-  v2(2)=5;
-
-  v1=v2*v2;
+  vector1 v1 = {4,1,25}; 
+  vector2 v2 = {2,1,5};
 
   function(v1               , 4.,1., 25.,prec,1);
   function(2*v1             , 8.,2., 50.,prec,2);

@@ -811,16 +811,16 @@ namespace mfront {
   //         << "," << t << ",false>;\n"
   //         << "using Traits =
   //         tfel::material::MechanicalBehaviourTraits<BV>;\n"
-  //         << "constexpr const unsigned short offset  = "
+  //         << "constexpr unsigned short offset  = "
   //            "(LSDYNATraits<BV>::elasticPropertiesOffset+\n"
   //         << "                                          "
   //            "LSDYNATraits<BV>::thermalExpansionPropertiesOffset);\n"
-  //         << "constexpr const unsigned short nprops_  = "
+  //         << "constexpr unsigned short nprops_  = "
   //            "LSDYNATraits<BV>::material_properties_nb;\n"
-  //         << "constexpr const unsigned short NPROPS_  = offset+nprops_;\n"
-  //         << "constexpr const unsigned short nstatev_ = "
+  //         << "constexpr unsigned short NPROPS_  = offset+nprops_;\n"
+  //         << "constexpr unsigned short nstatev_ = "
   //            "Traits::internal_variables_nb;\n"
-  //         << "constexpr const unsigned short nfieldv_ = "
+  //         << "constexpr unsigned short nfieldv_ = "
   //            "Traits::external_variables_nb2;\n";
   //     if ((h == ModellingHypothesis::AXISYMMETRICAL) ||
   //         (h == ModellingHypothesis::PLANESTRAIN) ||

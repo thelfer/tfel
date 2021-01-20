@@ -26,7 +26,7 @@ namespace castem {
       const CastemReal *const s0,
       const CastemReal *const s1,
       const CastemInt d) {
-    constexpr const auto cste = tfel::math::Cste<CastemReal>::sqrt2;
+    constexpr auto cste = tfel::math::Cste<CastemReal>::sqrt2;
     e[0] -= s0[0];
     e[1] -= s0[1];
     e[2] -= s0[2];
@@ -53,7 +53,7 @@ namespace castem {
       const CastemReal *const s0,
       const CastemReal *const s1,
       const CastemInt d) {
-    constexpr const auto cste = tfel::math::Cste<CastemReal>::sqrt2;
+    constexpr auto cste = tfel::math::Cste<CastemReal>::sqrt2;
     CastemReal log_s0[6];
     CastemReal log_s1[6];
     if (d == 1) {

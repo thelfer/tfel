@@ -24,9 +24,9 @@
 namespace mtest{
 
 #ifndef _MSC_VER
-  constexpr const real PipeQuadraticElement::abs_pg;
-  constexpr const real PipeQuadraticElement::wg[3];
-  constexpr const real PipeQuadraticElement::pg_radii[3];
+  constexpr real PipeQuadraticElement::abs_pg;
+  constexpr real PipeQuadraticElement::wg[3];
+  constexpr real PipeQuadraticElement::pg_radii[3];
 #else  /* _MSC_VER */
   // value of the Gauss points position in the reference element
   const real PipeQuadraticElement::pg_radii[3] = {-std::sqrt(real(3)/real(5)),real(0),
@@ -133,7 +133,7 @@ namespace mtest{
 							    const StiffnessMatrixType mt,
 							    const size_t i){
     //! a simple alias
-    constexpr const real pi = 3.14159265358979323846;
+    constexpr real pi = 3.14159265358979323846;
     // number of elements
     const auto ne = size_t(m.number_of_elements);
     // number of nodes

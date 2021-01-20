@@ -47,15 +47,15 @@ namespace fses{
   void slvsec3(MatrixType& R, VectorType& w,
 	       const real d[3], const real z[3], int i0, int i1, int i2)
   {
-    constexpr const auto c_sqrt3  = real(1.73205080756887729352744634151);
-    constexpr const auto zero     = real(0);
-    constexpr const auto one      = real(1);
-    constexpr const auto two      = real(2);
-    constexpr const auto three    = real(3);
-    constexpr const auto four     = real(4);
-    constexpr const auto eight    = real(8);
-    constexpr const auto c27      = real(27);
-    constexpr const auto one_half = one/two;
+    constexpr auto c_sqrt3  = real(1.73205080756887729352744634151);
+    constexpr auto zero     = real(0);
+    constexpr auto one      = real(1);
+    constexpr auto two      = real(2);
+    constexpr auto three    = real(3);
+    constexpr auto four     = real(4);
+    constexpr auto eight    = real(8);
+    constexpr auto c27      = real(27);
+    constexpr auto one_half = one/two;
     
     real a[4];            // Bounds of the intervals bracketing the roots
     real delta;           // Shift of the d_i which ensures better accuracy

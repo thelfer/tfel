@@ -20,6 +20,64 @@
 #include "TFEL/Math/General/MathObjectTraits.hxx"
 #include "TFEL/Math/Array/MutableRuntimeArrayBase.hxx"
 
+#define TFEL_MATH_RUNTIME_ARRAY_DEFAULT_METHODS(X, Y)                     \
+  /*! \brief default constructor */                                       \
+  X() noexcept = default;                                                 \
+  /*! \brief move constructor */                                          \
+  X(X&&) noexcept = default;                                              \
+  /*! \brief copy constructor */                                          \
+  X(const X&) noexcept = default;                                         \
+  /*! \brief move assignement */                                          \
+  X& operator=(X&&) noexcept = default;                                   \
+  /*! \brief standard assignement */                                      \
+  X& operator=(const X&) noexcept = default;                              \
+  /*!                                                                     \
+   * \brief constructor from a value                                      \
+   * \param[in] value: value used to initialize the array                 \
+   */                                                                     \
+  template <typename ValueType2,                                          \
+            typename std::enable_if<                                      \
+                isAssignableTo<ValueType2, typename X::value_type>(),     \
+                bool>::type = true>                                       \
+  explicit X(const ValueType2& value) noexcept : Y(value) {}              \
+  /*!                                                                     \
+   * \brief constructor from an initializer list                          \
+   * \param[in] values: values                                            \
+   */                                                                     \
+  template <typename ValueType2,                                          \
+            typename std::enable_if<                                      \
+                isAssignableTo<ValueType2, typename X::value_type>(),     \
+                bool>::type = true>                                       \
+  X(const std::initializer_list<ValueType2>& values)                      \
+  noexcept : Y(values) {}                                                 \
+  /*!                                                                     \
+   * \brief copy constructor from an object assignable the X class.       \
+   * \param[in] src: source                                               \
+   *                                                                      \
+   * This is mostly used by expression objects and views.                 \
+   */                                                                     \
+  template <typename OtherArray,                                          \
+            typename std::enable_if<((isAssignableTo<OtherArray, X>()) && \
+                                     (!std::is_same_v<OtherArray, X>)),   \
+                                    bool>::type = true>                   \
+  X(const OtherArray& src)                                                \
+  noexcept : Y(src) {}                                                    \
+  /*!                                                                     \
+   * \brief Default Constructor.                                          \
+   * \param const base_type<T>*                                           \
+   * const, pointer to a tabular used to initialise the components        \
+   * of the stensor. This tabular is left unchanged.                      \
+   */                                                                     \
+  template <                                                              \
+      typename InputIterator,                                             \
+      std::enable_if_t<std::is_same_v<typename std::iterator_traits<      \
+                                          InputIterator>::value_type,     \
+                                      base_type<typename X::value_type>>, \
+                       bool> = true>                                      \
+  explicit X(const InputIterator p) : Y(p) {}                             \
+  /* inheriting GenericFixedSizeArray' assignement operators */           \
+  using Y::operator=
+
 namespace tfel::math {
 
   /*!
@@ -31,6 +89,8 @@ namespace tfel::math {
   struct GenericRuntimeArray
       : MutableRuntimeArrayBase<GenericRuntimeArray<Child, ArrayPolicy>,
                                 ArrayPolicy> {
+    //! \brief default constructor
+    GenericRuntimeArray() = default;
     //! \brief default constructor
     GenericRuntimeArray(const typename ArrayPolicy::IndexingPolicy&);
     //! \brief copy constructor
@@ -82,23 +142,25 @@ namespace tfel::math {
      *
      * This is mostly used by expression objects and views.
      */
-    //     template <typename OtherArray,
-    //               typename std::enable_if<((isAssignableTo<OtherArray,
-    //               Child>()) &&
-    //                                        (!std::is_same_v<OtherArray,
-    //                                        Child>)),
-    //                                       bool>::type = true>
-    //      explicit GenericRuntimeArray(const OtherArray&);
+    template <typename OtherArray,
+              typename std::enable_if<((isAssignableTo<OtherArray, Child>()) &&
+                                       (!std::is_same_v<OtherArray, Child>)),
+                                      bool>::type = true>
+    explicit GenericRuntimeArray(const OtherArray&);
     //! \return a pointer to the underlying array serving as element storage.
     typename GenericRuntimeArray::pointer data() noexcept;
     //! \return a pointer to the underlying array serving as element storage.
     typename GenericRuntimeArray::const_pointer data() const noexcept;
     /*!
+     * \brief resize the array
+     */
+    void resize(const typename ArrayPolicy::IndexingPolicy&);
+    /*!
      * \return the physical size used by the underlying array. This size must
      * be greater than than the logical number of elements contained in the
      * array which is returned by `IndexingPolicy::size`.
      */
-    typename GenericRuntimeArray::size_type getContainer() const noexcept;
+    typename GenericRuntimeArray::size_type getContainerSize() const noexcept;
     // inheriting MutableRuntimeArrayBase' assignement operator
     using MutableRuntimeArrayBase<GenericRuntimeArray<Child, ArrayPolicy>,
                                   ArrayPolicy>::operator=;

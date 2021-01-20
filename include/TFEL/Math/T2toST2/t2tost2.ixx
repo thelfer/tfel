@@ -22,104 +22,12 @@
 #include "TFEL/FSAlgorithm/FSAlgorithm.hxx"
 #include "TFEL/TypeTraits/IsSafelyReinterpretCastableTo.hxx"
 #include "TFEL/Math/General/ConstExprMathFunctions.hxx"
-#include "TFEL/Math/Vector/VectorUtilities.hxx"
-#include "TFEL/Math/Matrix/MatrixUtilities.hxx"
+// #include "TFEL/Math/Vector/VectorUtilities.hxx"
+// #include "TFEL/Math/Matrix/MatrixUtilities.hxx"
 #include "TFEL/Math/T2toST2/LeftCauchyGreenTensorDerivativeExpr.hxx"
 #include "TFEL/Math/T2toST2/RightCauchyGreenTensorDerivativeExpr.hxx"
 
 namespace tfel::math {
-
-  // Assignement operator
-  template <typename Child>
-  template <typename T2toST2Type>
-  std::enable_if_t<implementsT2toST2Concept<T2toST2Type>() &&
-                       getSpaceDimension<Child>() ==
-                           getSpaceDimension<T2toST2Type>() &&
-                       isAssignableTo<
-                           numeric_type<T2toST2Type>,
-                           numeric_type<Child>>(),
-                   Child&>
-  t2tost2_base<Child>::operator=(const T2toST2Type& src) {
-    auto& child = static_cast<Child&>(*this);
-    matrix_utilities<
-        StensorDimeToSize<getSpaceDimension<Child>()>::value,
-        TensorDimeToSize<getSpaceDimension<Child>()>::value,
-        TensorDimeToSize<getSpaceDimension<Child>()>::value>::copy(src, child);
-    return child;
-  }
-
-  template <typename Child>
-  template <typename T2toST2Type>
-  std::enable_if_t<implementsT2toST2Concept<T2toST2Type>() &&
-                       getSpaceDimension<Child>() ==
-                           getSpaceDimension<T2toST2Type>() &&
-                       isAssignableTo<
-                           numeric_type<T2toST2Type>,
-                           numeric_type<Child>>(),
-                   Child&>
-  t2tost2_base<Child>::operator+=(const T2toST2Type& src) {
-    auto& child = static_cast<Child&>(*this);
-    matrix_utilities<
-        StensorDimeToSize<getSpaceDimension<Child>()>::value,
-        TensorDimeToSize<getSpaceDimension<Child>()>::value,
-        TensorDimeToSize<getSpaceDimension<Child>()>::value>::plusEqual(child,
-                                                                        src);
-    return child;
-  }
-
-  // Assignement operator
-  template <typename Child>
-  template <typename T2toST2Type>
-  std::enable_if_t<implementsT2toST2Concept<T2toST2Type>() &&
-                       getSpaceDimension<Child>() ==
-                           getSpaceDimension<T2toST2Type>() &&
-                       isAssignableTo<
-                           numeric_type<T2toST2Type>,
-                           numeric_type<Child>>(),
-                   Child&>
-  t2tost2_base<Child>::operator-=(const T2toST2Type& src) {
-    auto& child = static_cast<Child&>(*this);
-    matrix_utilities<
-        StensorDimeToSize<getSpaceDimension<Child>()>::value,
-        TensorDimeToSize<getSpaceDimension<Child>()>::value,
-        TensorDimeToSize<getSpaceDimension<Child>()>::value>::minusEqual(child,
-                                                                         src);
-    return child;
-  }
-
-  // *= operator
-  template <typename Child>
-  template <typename T2>
-  std::enable_if_t<
-      isScalar<T2>() &&
-          std::is_same<result_type<numeric_type<Child>, T2, OpMult>,
-                       numeric_type<Child>>::value,
-      Child&>
-  t2tost2_base<Child>::operator*=(const T2 s) {
-    auto& child = static_cast<Child&>(*this);
-    matrix_utilities<StensorDimeToSize<getSpaceDimension<Child>()>::value,
-                     TensorDimeToSize<getSpaceDimension<Child>()>::value,
-                     TensorDimeToSize<getSpaceDimension<Child>()>::value>::
-        multByScalar(child, s);
-    return child;
-  }
-
-  // /= operator
-  template <typename Child>
-  template <typename T2>
-  std::enable_if_t<isScalar<T2>() &&
-                       std::is_same<result_type<numeric_type<Child>, T2, OpDiv>,
-                                    numeric_type<Child>>::value,
-                   Child&>
-  t2tost2_base<Child>::operator/=(const T2 s) {
-    auto& child = static_cast<Child&>(*this);
-    matrix_utilities<
-        StensorDimeToSize<getSpaceDimension<Child>()>::value,
-        TensorDimeToSize<getSpaceDimension<Child>()>::value,
-        TensorDimeToSize<getSpaceDimension<Child>()>::value>::divByScalar(child,
-                                                                          s);
-    return child;
-  }
 
   template <unsigned short N, typename T>
   template <typename TensorType>
@@ -178,7 +86,7 @@ namespace tfel::math {
       t2tost2<2u, numeric_type<T2toT2Type>>>
   convertToT2toST2(const T2toT2Type& t) {
     using value_type = numeric_type<T2toT2Type>;
-    constexpr const auto icste = Cste<value_type>::isqrt2;
+    constexpr auto icste = Cste<value_type>::isqrt2;
     t2tost2<2u, value_type> r;
     r(0, 0) = t(0, 0);
     r(0, 3) = t(0, 3);
@@ -210,7 +118,7 @@ namespace tfel::math {
       t2tost2<3u, numeric_type<T2toT2Type>>>
   convertToT2toST2(const T2toT2Type& t) {
     using value_type = numeric_type<T2toT2Type>;
-    constexpr const auto icste = Cste<value_type>::isqrt2;
+    constexpr auto icste = Cste<value_type>::isqrt2;
     t2tost2<3u, value_type> r;
     r(0, 0) = t(0, 0);
     r(0, 3) = t(0, 3);
@@ -276,7 +184,7 @@ namespace tfel::math {
   computeRateOfDeformationDerivative(const TensorType& F) {
     using value_type = numeric_type<TensorType>;
     const auto iF = invert(F);
-    constexpr const auto zero = value_type(0);
+    constexpr auto zero = value_type(0);
     return {iF[0], zero, zero, zero, iF[1], zero, zero, zero, iF[2]};
   }
 
@@ -287,8 +195,8 @@ namespace tfel::math {
       t2tost2<2u, numeric_type<TensorType>>>
   computeRateOfDeformationDerivative(const TensorType& F) {
     using value_type = numeric_type<TensorType>;
-    constexpr const auto icste = Cste<value_type>::isqrt2;
-    constexpr const auto zero = value_type(0);
+    constexpr auto icste = Cste<value_type>::isqrt2;
+    constexpr auto zero = value_type(0);
     const auto iF = invert(F);
     return {iF[0],         zero,          zero,  iF[4],         zero,
             zero,          iF[1],         zero,  zero,          iF[3],
@@ -303,8 +211,8 @@ namespace tfel::math {
       t2tost2<3u, numeric_type<TensorType>>>
   computeRateOfDeformationDerivative(const TensorType& F) {
     using value_type = numeric_type<TensorType>;
-    constexpr const auto icste = Cste<value_type>::isqrt2;
-    constexpr const auto zero = value_type(0);
+    constexpr auto icste = Cste<value_type>::isqrt2;
+    constexpr auto zero = value_type(0);
     const auto iF = invert(F);
     return {iF[0],         zero,          zero,          iF[4],
             zero,          iF[6],         zero,          zero,
@@ -415,7 +323,7 @@ namespace tfel::math {
       t2tost2<getSpaceDimension<T2toST2Type>(), numeric_type<T2toST2Type>>>
   change_basis(const T2toST2Type& s,
                const rotation_matrix<numeric_type<T2toST2Type>>& r) {
-    constexpr const auto N = getSpaceDimension<T2toST2Type>();
+    constexpr auto N = getSpaceDimension<T2toST2Type>();
     using t2tot2 = tfel::math::t2tot2<N, numeric_type<T2toST2Type>>;
     using st2tost2 = tfel::math::st2tost2<N, numeric_type<T2toST2Type>>;
     const auto sr = st2tost2::fromRotationMatrix(r);

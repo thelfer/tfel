@@ -448,7 +448,7 @@ namespace mtest {
     }
     if (this->rl == TIGHTPIPE) {
       if (this->gseq != nullptr) {
-        constexpr const real pi = 3.14159265358979323846;
+        constexpr real pi = 3.14159265358979323846;
         const auto Ri = this->mesh.inner_radius;
         const auto V = pi * Ri * Ri;
         this->n0 = this->gseq->computeNumberOfMoles(this->P0, V, this->T0);
@@ -784,7 +784,7 @@ namespace mtest {
     using LE = PipeLinearElement;
     using QE = PipeQuadraticElement;
     using CE = PipeCubicElement;
-    constexpr const real pi = 3.14159265358979323846;
+    constexpr real pi = 3.14159265358979323846;
     // reset r and k
     std::fill(r.begin(), r.end(), real(0));
     if (mt != StiffnessMatrixType::NOSTIFFNESS) {
@@ -1001,7 +1001,7 @@ namespace mtest {
     auto report = [&iter](std::ostream& os, const real ne, const real nr) {
       os << "iteration " << iter << " : " << ne << " " << nr << '\n';
     };
-    constexpr const real pi = 3.14159265358979323846;
+    constexpr real pi = 3.14159265358979323846;
     const auto Re = this->mesh.outer_radius;
     auto nu = PipeTest_getErrorNorm(du, this->getNumberOfUnknowns());
     auto nr = PipeTest_getErrorNorm(r, this->getNumberOfUnknowns()) / (2 * pi * Re);
@@ -1039,7 +1039,7 @@ namespace mtest {
                                                                  const SolverOptions& o,
                                                                  const real t,
                                                                  const real dt) const {
-    constexpr const real pi = 3.14159265358979323846;
+    constexpr real pi = 3.14159265358979323846;
     auto cd = std::vector<std::string>{};
     const auto Re = this->mesh.outer_radius;
     auto nu = PipeTest_getErrorNorm(du, this->getNumberOfUnknowns());
@@ -1099,7 +1099,7 @@ namespace mtest {
                                           const SolverOptions&,
                                           const real t,
                                           const real dt) const {
-    constexpr const real pi = 3.14159265358979323846;
+    constexpr real pi = 3.14159265358979323846;
     if ((this->rl != IMPOSEDOUTERRADIUS) && (this->al != IMPOSEDAXIALGROWTH)) {
       return;
     }

@@ -95,7 +95,7 @@ namespace tfel::math {
                     getSpaceDimension<TensorType>());
       static_assert(isAssignableTo<numeric_type<TensorType>,
                                    numeric_type<T2toST2Type>>());
-      constexpr const auto cste = Cste<value_type>::sqrt2;
+      constexpr auto cste = Cste<value_type>::sqrt2;
       constexpr value_type zero{0};
       this->v[0] = 2 * F[0];
       this->v[1] = this->v[2] = zero;
@@ -148,7 +148,7 @@ namespace tfel::math {
                     getSpaceDimension<TensorType>());
       static_assert(isAssignableTo<numeric_type<TensorType>,
                                    numeric_type<T2toST2Type>>());
-      constexpr const auto cste = Cste<value_type>::sqrt2;
+      constexpr auto cste = Cste<value_type>::sqrt2;
       constexpr value_type zero{0};
       this->v[0] = 2 * F[0];
       this->v[1] = this->v[2] = zero;

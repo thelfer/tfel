@@ -14,10 +14,18 @@
 #ifndef LIB_TFEL_MATH_ARRAY_FIXEDSIZEINDEXINGPOLICIES_HXX
 #define LIB_TFEL_MATH_ARRAY_FIXEDSIZEINDEXINGPOLICIES_HXX
 
+#include <type_traits>
 #include "TFEL/ContractViolation.hxx"
+#include "TFEL/Metaprogramming/MakeIntegerRange.hxx"
 #include "TFEL/Math/Array/IndexingPolicies.hxx"
 
 namespace tfel::math {
+
+  template <typename IndexingPolicy>
+  constexpr auto getUnderlyingArrayMinimalSize() {
+    IndexingPolicy p;
+    return p.getUnderlyingArrayMinimalSize();
+  }  // end of getUnderlyingArrayMinimalSize
 
   /*!
    * \brief an indexing policy suitable for fixed sized vectors
@@ -29,17 +37,17 @@ namespace tfel::math {
   struct FixedSizeVectorIndexingPolicy {
     static_assert(std::is_integral_v<SizeType>);
     //!
-    static constexpr const auto hasFixedSizes = true;
+    static constexpr auto hasFixedSizes = true;
     //!
     using size_type = SizeType;
     //!
     using RowMajorIndexingPolicy = FixedSizeVectorIndexingPolicy<SizeType, N>;
     //!
-    static constexpr const size_type arity = 1;
+    static constexpr size_type arity = 1;
     //!
-    static constexpr const auto areDataContiguous = (Stride == 1);
+    static constexpr auto areDataContiguous = (Stride == 1);
     //!
-    static constexpr const auto unRollLoop = N < 100;
+    static constexpr auto unRollLoop = N < 100;
     //! \return the minimal data size
     constexpr size_type getUnderlyingArrayMinimalSize() const noexcept {
       if constexpr (Stride == 1) {
@@ -72,11 +80,11 @@ namespace tfel::math {
       }
       return N;
     }
-    //! 
+    //!
     constexpr FixedSizeVectorIndexingPolicy<SizeType, N>
     getRowMajorIndexingPolicy() {
       return FixedSizeVectorIndexingPolicy<SizeType, N>();
-    }  // end of getRowMajorIndexingPolicy
+    }  // end of getFixedSizeVectorIndexingPolicy
   };
 
   /*!
@@ -107,15 +115,15 @@ namespace tfel::math {
     static_assert(std::is_integral_v<SizeType>);
     static_assert(Stride >= M, "invalid stride value");
     //!
-    static constexpr const auto hasFixedSizes = true;
+    static constexpr auto hasFixedSizes = true;
     //!
-    static constexpr const auto areDataContiguous = (Stride == M);
+    static constexpr auto areDataContiguous = (Stride == M);
     //!
-    static constexpr const auto unRollLoop = true;
+    static constexpr auto unRollLoop = true;
     //!
     using size_type = SizeType;
     //!
-    static constexpr const size_type arity = 2;
+    static constexpr size_type arity = 2;
     //!
     using RowMajorIndexingPolicy =
         FixedSizeRowMajorMatrixIndexingPolicy<SizeType, N, M>;
@@ -129,7 +137,7 @@ namespace tfel::math {
       if constexpr (Stride == M) {
         return this->size();
       } else {
-        return (N - 1) * Stride + M * N;
+        return (N - 1) * Stride + N;
       }
     }
     //!
@@ -172,6 +180,111 @@ namespace tfel::math {
       return Stride1 == Stride2;
     }  // end of haveTheSameMemoryLayout
   };   // end of struct IndexingPoliciesCompatiblityCheck
+
+  /*!
+   * \brief an indexing policy build as the cartesian product of the two
+   * fixed size indexing policies.
+   *
+   * The memory position associed with the index (i0, ..., iN, j0, ..., jM) is
+   * given by:
+   * 
+   * \f[
+   *   p1(i0, ..., iN) * Stride + p2(j0, ..., jM)
+   * \f]
+   *
+   * \tparam IndexingPolicy1: first indexing policy
+   * \tparam IndexingPolicy2: second indexing policy
+   * \tparam Stride: stride parameter
+   */
+  template <typename IndexingPolicy1,
+            typename IndexingPolicy2,
+            typename IndexingPolicy2::size_type Stride =
+                getUnderlyingArrayMinimalSize<IndexingPolicy2>()>
+  struct FixedSizeIndexingPoliciesCartesianProduct {
+    static_assert(IndexingPolicy1::hasFixedSizes);
+    static_assert(IndexingPolicy2::hasFixedSizes);
+    static_assert(Stride >= getUnderlyingArrayMinimalSize<IndexingPolicy2>(),
+                  "invalid stride value");
+    //!
+    static constexpr auto hasFixedSizes = true;
+    //!
+    static constexpr auto areDataContiguous =
+        ((Stride == getUnderlyingArrayMinimalSize<IndexingPolicy2>()) &&
+         (IndexingPolicy1::areDataContiguous) &&
+         (IndexingPolicy2::areDataContiguous));
+    //!
+    static constexpr auto unRollLoop = true;
+    //!
+    using size_type = std::common_type_t<typename IndexingPolicy1::size_type,
+                                         typename IndexingPolicy2::size_type>;
+    //!
+    static constexpr size_type arity =
+        IndexingPolicy1::arity + IndexingPolicy2::arity;
+    //!
+    using RowMajorIndexingPolicy = FixedSizeIndexingPoliciesCartesianProduct<
+        typename IndexingPolicy1::RowMajorIndexingPolicy,
+        typename IndexingPolicy2::RowMajorIndexingPolicy>;
+    //!
+    template <typename... SizeType>
+    constexpr size_type getIndex(const SizeType... i) const noexcept {
+      static_assert(sizeof...(SizeType) == arity,
+                    "invalid number of arguments");
+      checkIndicesValiditity<FixedSizeIndexingPoliciesCartesianProduct,
+                             SizeType...>();
+      constexpr auto a1 = IndexingPolicy1::arity;
+      const std::array<size_type, arity> indexes{static_cast<size_type>(i)...};
+      const tfel::meta::make_integer_range<size_type, 0, a1> r1;
+      const tfel::meta::make_integer_range<size_type, a1, arity> r2;
+      const auto i1 = getIndexPolicyIndex<IndexingPolicy1>(indexes, r1);
+      const auto i2 = getIndexPolicyIndex<IndexingPolicy2>(indexes, r2);
+      return i1 * Stride + i2;
+    }
+    //! \return the minimal data size
+    constexpr size_type getUnderlyingArrayMinimalSize() const noexcept {
+      const auto s1 =
+          tfel::math::getUnderlyingArrayMinimalSize<IndexingPolicy1>();
+      const auto s2 =
+          tfel::math::getUnderlyingArrayMinimalSize<IndexingPolicy2>();
+      return (s1 - 1) * Stride + s2;
+    }
+    //!
+    constexpr RowMajorIndexingPolicy getRowMajorIndexingPolicy() {
+      return RowMajorIndexingPolicy();
+    }  // end of getRowMajorIndexingPolicy
+    //!
+    constexpr size_type size() const noexcept {
+      IndexingPolicy1 p1;
+      IndexingPolicy2 p2;
+      return p1.size() * p2.size();
+    }
+    /*!
+     * \return the logical size of the array for the given dimension
+     * \param[in] i: dimension
+     */
+    constexpr size_type size(const size_type i) const noexcept {
+      if (i > FixedSizeIndexingPoliciesCartesianProduct::arity - 1) {
+        tfel::reportContractViolation(
+            "FixedSizeMatrixIndexingPolicy: "
+            "invalid dimension");
+      }
+      if (i < IndexingPolicy1::arity) {
+        IndexingPolicy1 p1;
+        return p1.size(i);
+      }
+      IndexingPolicy2 p2;
+      return p2.size(i - IndexingPolicy1::arity);
+    }
+
+   private:
+    //
+    template <typename IndexingPolicy, size_type... Indexes>
+    static constexpr size_type getIndexPolicyIndex(
+        const std::array<size_type, arity>& values,
+        std::integer_sequence<size_type, Indexes...>) {
+      const IndexingPolicy p;
+      return p.getIndex(values[Indexes]...);
+    }  // end of getIndexPolicyIndex
+  };
 
 }  // end of namespace tfel::math
 

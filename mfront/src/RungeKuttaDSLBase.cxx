@@ -257,7 +257,7 @@ namespace mfront{
 
   std::string RungeKuttaDSLBase::getCodeBlockTemplate(
       const std::string& c, const MFrontTemplateGenerationOptions& o) const {
-    constexpr const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+    constexpr auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     if (c == BehaviourData::ComputePredictionOperator) {
       return "@PredictionOperator{}\n";
     } else if (c == BehaviourData::ComputeThermodynamicForces) {
@@ -285,12 +285,12 @@ namespace mfront{
   }  // end of RungeKuttaDSLBase::getCodeBlockTemplate
 
   void RungeKuttaDSLBase::treatUpdateAuxiliaryStateVariables() {
-    this->readCodeBlock(*this, BehaviourData::UpdateAuxiliaryStateVariables,
+    this->treatCodeBlock(*this, BehaviourData::UpdateAuxiliaryStateVariables,
                         &RungeKuttaDSLBase::standardModifier, true, true);
   } // end of RungeKuttaDSLBase::treatUpdateAuxiliaryStateVarBase
 
   void RungeKuttaDSLBase::treatComputeFinalThermodynamicForces() {
-    this->readCodeBlock(*this,BehaviourData::ComputeFinalThermodynamicForces,
+    this->treatCodeBlock(*this,BehaviourData::ComputeFinalThermodynamicForces,
 			&RungeKuttaDSLBase::standardModifier,true,true);
   } // end of RungeKuttaDSLBase::treatUpdateAuxiliaryStateVarBase
 
@@ -370,7 +370,7 @@ namespace mfront{
   }  // end of RungeKuttaDSLBase::computeThermodynamicForcesVariableModifier2
 
   void RungeKuttaDSLBase::treatComputeThermodynamicForces() {
-    this->readCodeBlock(
+    this->treatCodeBlock(
         *this, BehaviourData::ComputeThermodynamicForces, BehaviourData::ComputeFinalThermodynamicForces,
         &RungeKuttaDSLBase::computeThermodynamicForcesVariableModifier1,
         &RungeKuttaDSLBase::computeThermodynamicForcesVariableModifier2, true, true);
@@ -425,7 +425,7 @@ namespace mfront{
 
   void RungeKuttaDSLBase::treatDerivative()
   {
-    this->readCodeBlock(*this,BehaviourData::ComputeDerivative,
+    this->treatCodeBlock(*this,BehaviourData::ComputeDerivative,
 			&RungeKuttaDSLBase::computeThermodynamicForcesVariableModifier1,true,true);
   } // end of RungeKuttaDSLBase::treatDerivative
 

@@ -81,7 +81,7 @@ namespace mfront {
         const AbstractBehaviourDSL& dsl,
         const std::string& id,
         const Role r) {
-      constexpr const auto uh =
+      constexpr auto uh =
           tfel::material::ModellingHypothesis::UNDEFINEDHYPOTHESIS;
       StressCriterionBase::endTreatment(bd, dsl, id, r);
       const auto params =
@@ -108,7 +108,7 @@ namespace mfront {
         const std::string& id,
         const BehaviourDescription& bd,
         const StressPotential& sp) const {
-      constexpr const auto uh =
+      constexpr auto uh =
           tfel::material::ModellingHypothesis::UNDEFINEDHYPOTHESIS;
       const auto params = StressCriterion::getVariableId(
           "sscb_parameters", id, StressCriterion::STRESSCRITERION);
@@ -126,7 +126,7 @@ namespace mfront {
         const StressPotential& sp) const {
       const auto params = StressCriterion::getVariableId(
           "sscb_parameters", id, StressCriterion::STRESSCRITERION);
-      constexpr const auto uh =
+      constexpr auto uh =
           tfel::material::ModellingHypothesis::UNDEFINEDHYPOTHESIS;
       const auto& f =
           bd.getBehaviourData(uh).getStateVariableDescriptionByExternalName(
@@ -141,7 +141,7 @@ namespace mfront {
         const BehaviourDescription& bd,
         const StressPotential& sp,
         const Role r) const {
-      constexpr const auto uh =
+      constexpr auto uh =
           tfel::material::ModellingHypothesis::UNDEFINEDHYPOTHESIS;
       const auto params =
           StressCriterion::getVariableId("sscb_parameters", id, r);
@@ -199,7 +199,7 @@ namespace mfront {
         const BehaviourDescription& bd,
         const StressPotential& sp,
         const Role r) const {
-      constexpr const auto uh =
+      constexpr auto uh =
           tfel::material::ModellingHypothesis::UNDEFINEDHYPOTHESIS;
       const auto params =
           StressCriterion::getVariableId("sscb_parameters", id, r);

@@ -142,11 +142,11 @@ static void generate_cxx(const std::vector<Constant>& cs)
      << "  struct PhysicalConstants{\n";
   for(const auto& c : cs){
     write_comments(os,c);
-    os << "static constexpr const real " << c.name
+    os << "static constexpr real " << c.name
        << " = real(" << c.value << ");\n";
     if(!c.short_name.empty()){
       write_comments(os,c);
-      os << "static constexpr const real " << c.short_name
+      os << "static constexpr real " << c.short_name
 	 << "= real(" << c.value << ");\n";
     }
   }
@@ -156,12 +156,12 @@ static void generate_cxx(const std::vector<Constant>& cs)
   for(const auto& c : cs){
     write_comments(os,c);
     os << "template<typename real>\n"
-       << "inline constexpr const real " << c.name
+       << "inline constexpr real " << c.name
        << " = real(" << c.value << ");\n";
     if(!c.short_name.empty()){
       write_comments(os,c);
       os << "template<typename real = double>\n"
-	 << "inline constexpr const real " << c.short_name
+	 << "inline constexpr real " << c.short_name
 	 << " = real(" << c.value << ");\n";
     }
   }

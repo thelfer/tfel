@@ -20,7 +20,6 @@
 
 #include <algorithm>
 #include "TFEL/Math/st2tost2.hxx"
-#include "TFEL/Math/ST2toST2/ST2toST2View.hxx"
 #include "TFEL/Material/MechanicalBehaviour.hxx"
 #include "MFront/Cyrano/CyranoComputeStiffnessTensor.hxx"
 
@@ -31,10 +30,12 @@ namespace cyrano {
    * This structure handles two cases wether or not we shall handle
    * local substepping.
    */
-  template <tfel::material::ModellingHypothesis::Hypothesis H,
-            template <tfel::material::ModellingHypothesis::Hypothesis, typename, bool>
-            class Behaviour>
-  struct TFEL_VISIBILITY_LOCAL CyranoBehaviourHandler : public CyranoInterfaceExceptions {
+  template <
+      tfel::material::ModellingHypothesis::Hypothesis H,
+      template <tfel::material::ModellingHypothesis::Hypothesis, typename, bool>
+      class Behaviour>
+  struct TFEL_VISIBILITY_LOCAL CyranoBehaviourHandler
+      : public CyranoInterfaceExceptions {
     /*!
      * An helper structure used to initialise the driving variables
      */
@@ -50,7 +51,8 @@ namespace cyrano {
       typedef tfel::material::ModellingHypothesisToSpaceDimension<H>
           ModellingHypothesisToSpaceDimension;
       // spatial dimension
-      static constexpr unsigned short N = ModellingHypothesisToSpaceDimension::value;
+      static constexpr unsigned short N =
+          ModellingHypothesisToSpaceDimension::value;
       /*!
        * \param[out] bData  : behaviour data
        * \param[out] iData  : integration data
@@ -61,11 +63,12 @@ namespace cyrano {
        *                      time step or driving variable increment
        * \param[in]  sfeh   : function handling the stress-free expansion
        */
-      TFEL_CYRANO_INLINE static void exe(BData &bData,
-                                         IData &iData,
-                                         const CyranoReal *const STRAN,
-                                         const CyranoReal *const DSTRAN,
-                                         const StressFreeExpansionHandler sfeh) {
+      TFEL_CYRANO_INLINE static void exe(
+          BData &bData,
+          IData &iData,
+          const CyranoReal *const STRAN,
+          const CyranoReal *const DSTRAN,
+          const StressFreeExpansionHandler sfeh) {
         using tfel::fsalgo::copy;
         typedef typename BV::StressFreeExpansionType StressFreeExpansionType;
         CyranoReal eto[3];
@@ -89,10 +92,11 @@ namespace cyrano {
        *                      time step or driving variable increment
        * \param[in]  sfeh   : function handling the stress-free expansion
        */
-      TFEL_CYRANO_INLINE static void exe(BV &b,
-                                         const CyranoReal *const STRAN,
-                                         const CyranoReal *const DSTRAN,
-                                         const StressFreeExpansionHandler sfeh) {
+      TFEL_CYRANO_INLINE static void exe(
+          BV &b,
+          const CyranoReal *const STRAN,
+          const CyranoReal *const DSTRAN,
+          const StressFreeExpansionHandler sfeh) {
         using tfel::fsalgo::copy;
         typedef typename BV::StressFreeExpansionType StressFreeExpansionType;
         CyranoReal eto[3];
@@ -175,9 +179,11 @@ namespace cyrano {
     struct TFEL_VISIBILITY_LOCAL StiffnessOperatorInitializer {
       typedef Behaviour<H, CyranoReal, false> BV;
       typedef typename BV::BehaviourData BData;
-      TFEL_CYRANO_INLINE static void exe(BData &data, const CyranoReal *const props) {
+      TFEL_CYRANO_INLINE static void exe(BData &data,
+                                         const CyranoReal *const props) {
         typedef CyranoTraits<BV> Traits;
-        CyranoComputeStiffnessTensor<Traits::stype>::exe(data.getStiffnessTensor(), props);
+        CyranoComputeStiffnessTensor<Traits::stype>::exe(
+            data.getStiffnessTensor(), props);
       }  // end of exe
     };   // end of struct StiffnessOperatorInitializer
 
@@ -188,7 +194,8 @@ namespace cyrano {
     struct TFEL_VISIBILITY_LOCAL ThermalExpansionCoefficientTensorInitializer {
       typedef Behaviour<H, CyranoReal, false> BV;
       typedef typename BV::BehaviourData BData;
-      TFEL_CYRANO_INLINE static void exe(BData &data, const CyranoReal *const props) {
+      TFEL_CYRANO_INLINE static void exe(BData &data,
+                                         const CyranoReal *const props) {
         typedef CyranoTraits<BV> Traits;
         const unsigned short o = CyranoTraits<BV>::elasticPropertiesOffset;
         CyranoComputeThermalExpansionCoefficientTensor<H, Traits::stype>::exe(
@@ -223,11 +230,16 @@ namespace cyrano {
                                const CyranoReal *const,
                                const CyranoReal *const,
                                const CyranoReal *const,
-			       const StressFreeExpansionHandler,
-			       const tfel::material::OutOfBoundsPolicy) {}  // end of Error
+                               const StressFreeExpansionHandler,
+                               const tfel::material::OutOfBoundsPolicy) {
+      }  // end of Error
 
-      TFEL_NORETURN void exe(CyranoReal *const, CyranoReal *const, CyranoReal *const) {
-        typedef tfel::material::MechanicalBehaviourTraits<Behaviour<H, CyranoReal, false>> Traits;
+      TFEL_NORETURN void exe(CyranoReal *const,
+                             CyranoReal *const,
+                             CyranoReal *const) {
+        typedef tfel::material::MechanicalBehaviourTraits<
+            Behaviour<H, CyranoReal, false>>
+            Traits;
         throw(CyranoInvalidDimension(Traits::getName(), 1u));
       }  // end of Error::exe
 
@@ -238,12 +250,14 @@ namespace cyrano {
     struct TFEL_VISIBILITY_LOCAL IntegratorWithTimeStepping {
       //! A simple alias
       typedef
-          typename std::conditional<bs, StiffnessOperatorInitializer, DoNothingInitializer>::type
-              SInitializer;
+          typename std::conditional<bs,
+                                    StiffnessOperatorInitializer,
+                                    DoNothingInitializer>::type SInitializer;
       //! A simple alias
-      typedef typename std::conditional<ba,
-                                        ThermalExpansionCoefficientTensorInitializer,
-                                        DoNothingInitializer>::type AInitializer;
+      typedef typename std::conditional<
+          ba,
+          ThermalExpansionCoefficientTensorInitializer,
+          DoNothingInitializer>::type AInitializer;
 
       TFEL_CYRANO_INLINE
       IntegratorWithTimeStepping(const CyranoReal *const DTIME,
@@ -258,14 +272,18 @@ namespace cyrano {
                                  CyranoReal *const STRESS,
                                  const StressFreeExpansionHandler sfeh,
                                  const tfel::material::OutOfBoundsPolicy op)
-          : bData(TEMP, PROPS + CyranoTraits<BV>::propertiesOffset, STATEV, PREDEF),
+          : bData(TEMP,
+                  PROPS + CyranoTraits<BV>::propertiesOffset,
+                  STATEV,
+                  PREDEF),
             iData(DTIME, DTEMP, DPRED),
             dt(*DTIME),
             policy(op) {
         using namespace tfel::material;
         typedef MechanicalBehaviourTraits<BV> Traits;
         typedef typename std::conditional<
-            Traits::hasStressFreeExpansion, GradientInitialiserWithStressFreeExpansion,
+            Traits::hasStressFreeExpansion,
+            GradientInitialiserWithStressFreeExpansion,
             GradientInitialiserWithoutStressFreeExpansion>::type DVInitializer;
         SInitializer::exe(this->bData, PROPS);
         AInitializer::exe(this->bData, PROPS);
@@ -286,10 +304,12 @@ namespace cyrano {
         typedef MechanicalBehaviourTraits<BV> Traits;
         typedef typename std::conditional<
             Traits::hasConsistentTangentOperator,
-            typename std::conditional<Traits::isConsistentTangentOperatorSymmetric,
-                                      SymmetricConsistentTangentOperatorComputer,
-                                      GeneralConsistentTangentOperatorComputer>::type,
-            ConsistentTangentOperatorIsNotAvalaible>::type ConsistentTangentOperatorHandler;
+            typename std::conditional<
+                Traits::isConsistentTangentOperatorSymmetric,
+                SymmetricConsistentTangentOperatorComputer,
+                GeneralConsistentTangentOperatorComputer>::type,
+            ConsistentTangentOperatorIsNotAvalaible>::type
+            ConsistentTangentOperatorHandler;
         typedef typename std::conditional<
             Traits::hasPredictionOperator, StandardPredictionOperatorComputer,
             PredictionOperatorIsNotAvalaible>::type PredictionOperatorComputer;
@@ -299,21 +319,25 @@ namespace cyrano {
         if (this->dt < 0.) {
           throwNegativeTimeStepException(Traits::getName());
         }
-        while ((iterations != 0) && (subSteps != CyranoTraits<BV>::maximumSubStepping)) {
+        while ((iterations != 0) &&
+               (subSteps != CyranoTraits<BV>::maximumSubStepping)) {
           auto r = BV::SUCCESS;
           BV behaviour(this->bData, this->iData);
           try {
             behaviour.initialize();
             behaviour.setOutOfBoundsPolicy(this->policy);
             behaviour.checkBounds();
-            const auto smflag =
-                TangentOperatorTraits<BV::STANDARDSTRAINBASEDBEHAVIOUR>::STANDARDTANGENTOPERATOR;
+            const auto smflag = TangentOperatorTraits<
+                BV::STANDARDSTRAINBASEDBEHAVIOUR>::STANDARDTANGENTOPERATOR;
             if ((-3.25 < *DDSOE) && (*DDSOE < -2.75)) {
-              r = PredictionOperatorComputer::exe(behaviour, smflag, BV::TANGENTOPERATOR);
+              r = PredictionOperatorComputer::exe(behaviour, smflag,
+                                                  BV::TANGENTOPERATOR);
             } else if ((-2.25 < *DDSOE) && (*DDSOE < -1.75)) {
-              r = PredictionOperatorComputer::exe(behaviour, smflag, BV::SECANTOPERATOR);
+              r = PredictionOperatorComputer::exe(behaviour, smflag,
+                                                  BV::SECANTOPERATOR);
             } else if ((-1.25 < *DDSOE) && (*DDSOE < -0.75)) {
-              r = PredictionOperatorComputer::exe(behaviour, smflag, BV::ELASTIC);
+              r = PredictionOperatorComputer::exe(behaviour, smflag,
+                                                  BV::ELASTIC);
             } else if ((-0.25 < *DDSOE) && (*DDSOE < 0.25)) {
               r = behaviour.integrate(smflag, BV::NOSTIFFNESSREQUESTED);
             } else if ((0.75 < *DDSOE) && (*DDSOE < 1.25)) {
@@ -338,8 +362,9 @@ namespace cyrano {
 #endif /* LIB_MFRONT_CYRANO_CYRANOBEHAVIOURHANDLER_HXX */
             r = BV::FAILURE;
           }
-          if ((r == BV::SUCCESS) || ((r == BV::UNRELIABLE_RESULTS) &&
-                                     (!CyranoTraits<BV>::doSubSteppingOnInvalidResults))) {
+          if ((r == BV::SUCCESS) ||
+              ((r == BV::UNRELIABLE_RESULTS) &&
+               (!CyranoTraits<BV>::doSubSteppingOnInvalidResults))) {
             --(iterations);
             behaviour.checkBounds();
             this->iData.updateDrivingVariables(this->bData);
@@ -360,7 +385,8 @@ namespace cyrano {
             this->iData.scale(this->bData, 0.5);
           }
         }
-        if ((subSteps == CyranoTraits<BV>::maximumSubStepping) && (iterations != 0)) {
+        if ((subSteps == CyranoTraits<BV>::maximumSubStepping) &&
+            (iterations != 0)) {
           throwMaximumNumberOfSubSteppingReachedException(Traits::getName());
         }
         this->bData.CYRANOexportStateData(sig, STATEV);
@@ -387,12 +413,14 @@ namespace cyrano {
               const bool ba>  // requires ThermalExpansionCoefficientTensor
     struct TFEL_VISIBILITY_LOCAL Integrator {
       typedef
-          typename std::conditional<bs, StiffnessOperatorInitializer, DoNothingInitializer>::type
-              SInitializer;
+          typename std::conditional<bs,
+                                    StiffnessOperatorInitializer,
+                                    DoNothingInitializer>::type SInitializer;
 
-      typedef typename std::conditional<ba,
-                                        ThermalExpansionCoefficientTensorInitializer,
-                                        DoNothingInitializer>::type AInitializer;
+      typedef typename std::conditional<
+          ba,
+          ThermalExpansionCoefficientTensorInitializer,
+          DoNothingInitializer>::type AInitializer;
 
       TFEL_CYRANO_INLINE Integrator(const CyranoReal *const DTIME,
                                     const CyranoReal *const STRAN,
@@ -416,10 +444,10 @@ namespace cyrano {
             dt(*DTIME) {
         using namespace tfel::material;
         typedef MechanicalBehaviourTraits<BV> Traits;
-        using DVInitializer =
-            typename std::conditional<Traits::hasStressFreeExpansion,
-                                      GradientInitialiserWithStressFreeExpansion,
-                                      GradientInitialiserWithoutStressFreeExpansion>::type;
+        using DVInitializer = typename std::conditional<
+            Traits::hasStressFreeExpansion,
+            GradientInitialiserWithStressFreeExpansion,
+            GradientInitialiserWithoutStressFreeExpansion>::type;
         this->behaviour.setOutOfBoundsPolicy(op);
         // elastic tensor
         SInitializer::exe(this->behaviour, PROPS);
@@ -439,15 +467,19 @@ namespace cyrano {
       }  // end of Integrator::Integrator
 
       TFEL_CYRANO_INLINE2
-      void exe(CyranoReal *const DDSOE, CyranoReal *const STRESS, CyranoReal *const STATEV) {
+      void exe(CyranoReal *const DDSOE,
+               CyranoReal *const STRESS,
+               CyranoReal *const STATEV) {
         using namespace tfel::material;
         typedef MechanicalBehaviourTraits<BV> Traits;
         typedef typename std::conditional<
             Traits::hasConsistentTangentOperator,
-            typename std::conditional<Traits::isConsistentTangentOperatorSymmetric,
-                                      SymmetricConsistentTangentOperatorComputer,
-                                      GeneralConsistentTangentOperatorComputer>::type,
-            ConsistentTangentOperatorIsNotAvalaible>::type ConsistentTangentOperatorHandler;
+            typename std::conditional<
+                Traits::isConsistentTangentOperatorSymmetric,
+                SymmetricConsistentTangentOperatorComputer,
+                GeneralConsistentTangentOperatorComputer>::type,
+            ConsistentTangentOperatorIsNotAvalaible>::type
+            ConsistentTangentOperatorHandler;
         typedef typename std::conditional<
             Traits::hasPredictionOperator, StandardPredictionOperatorComputer,
             PredictionOperatorIsNotAvalaible>::type PredictionOperatorComputer;
@@ -457,14 +489,17 @@ namespace cyrano {
         }
         behaviour.checkBounds();
         auto r = BV::SUCCESS;
-        const auto smflag =
-            TangentOperatorTraits<BV::STANDARDSTRAINBASEDBEHAVIOUR>::STANDARDTANGENTOPERATOR;
+        const auto smflag = TangentOperatorTraits<
+            BV::STANDARDSTRAINBASEDBEHAVIOUR>::STANDARDTANGENTOPERATOR;
         if ((-3.25 < *DDSOE) && (*DDSOE < -2.75)) {
-          r = PredictionOperatorComputer::exe(this->behaviour, smflag, BV::TANGENTOPERATOR);
+          r = PredictionOperatorComputer::exe(this->behaviour, smflag,
+                                              BV::TANGENTOPERATOR);
         } else if ((-2.25 < *DDSOE) && (*DDSOE < -1.75)) {
-          r = PredictionOperatorComputer::exe(this->behaviour, smflag, BV::SECANTOPERATOR);
+          r = PredictionOperatorComputer::exe(this->behaviour, smflag,
+                                              BV::SECANTOPERATOR);
         } else if ((-1.25 < *DDSOE) && (*DDSOE < -0.75)) {
-          r = PredictionOperatorComputer::exe(this->behaviour, smflag, BV::ELASTIC);
+          r = PredictionOperatorComputer::exe(this->behaviour, smflag,
+                                              BV::ELASTIC);
         } else if ((-0.25 < *DDSOE) && (*DDSOE < 0.25)) {
           r = this->behaviour.integrate(smflag, BV::NOSTIFFNESSREQUESTED);
         } else if ((0.75 < *DDSOE) && (*DDSOE < 1.25)) {
@@ -582,11 +617,13 @@ namespace cyrano {
       typedef MechanicalBehaviourTraits<BV> Traits;
       const unsigned short offset = CyranoTraits<BV>::propertiesOffset;
       const unsigned short nprops = CyranoTraits<BV>::material_properties_nb;
-      const unsigned short NPROPS_ = offset + nprops == 0 ? 1u : offset + nprops;
+      const unsigned short NPROPS_ =
+          offset + nprops == 0 ? 1u : offset + nprops;
       const bool is_defined_ = Traits::is_defined;
       // Test if the nb of properties matches Behaviour requirements
       if ((NPROPS != NPROPS_) && is_defined_) {
-        throwUnMatchedNumberOfMaterialProperties(Traits::getName(), NPROPS_, NPROPS);
+        throwUnMatchedNumberOfMaterialProperties(Traits::getName(), NPROPS_,
+                                                 NPROPS);
       }
     }  // end of checkNPROPS
 
@@ -598,7 +635,8 @@ namespace cyrano {
       const bool is_defined_ = Traits::is_defined;
       // Test if the nb of state variables matches Behaviour requirements
       if ((NSTATV_ != NSTATV) && is_defined_) {
-        throwUnMatchedNumberOfStateVariables(Traits::getName(), NSTATV_, NSTATV);
+        throwUnMatchedNumberOfStateVariables(Traits::getName(), NSTATV_,
+                                             NSTATV);
       }
     }  // end of checkNSTATV
 

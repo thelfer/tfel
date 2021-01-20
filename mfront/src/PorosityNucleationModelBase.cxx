@@ -48,7 +48,7 @@ namespace mfront {
                                                  AbstractBehaviourDSL& dsl,
                                                  const std::string& id,
                                                  const DataMap& d) {
-      constexpr const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+      constexpr auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
       auto raise = [](const std::string& m) {
         tfel::raise("PorosityNucleationModelBase::initialize: " + m);
       };  // end of raise
@@ -114,7 +114,7 @@ namespace mfront {
         const std::map<std::string, std::shared_ptr<bbrick::InelasticFlow>>&
             iflows,
         const std::string& id) const {
-      constexpr const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+      constexpr auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
       // a simple check
       if (iflows.empty()) {
         tfel::raise(

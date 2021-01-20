@@ -45,7 +45,7 @@ namespace tfel::math{
         }
       };
       if constexpr (UnrollLoop && (CurrentIndex + 1 == Arity)) {
-        constexpr const auto s = g(CurrentIndex);
+        constexpr auto s = g(CurrentIndex);
         LoopUnRoller<TypeSize, 0, s>::exe(iter);
       } else {
         for (TypeSize i = 0; i != g(CurrentIndex); ++i) {

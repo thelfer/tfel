@@ -80,7 +80,7 @@ namespace tfel {
       //! a simple alias
       using size_type = unsigned short;
       //! numerical parameter used to distinguish egal eigenvalues.
-      static constexpr const real eps = 1.e-14;
+      static constexpr real eps = 1.e-14;
       /*!
        * \brief constructor
        * \param[in] c:  setting
@@ -214,7 +214,7 @@ namespace tfel {
       //! a simple alias
       using size_type = unsigned short;
       //! criterion used to check if eigenvalues are equal.
-      static constexpr const real eps = 1.e-14;
+      static constexpr real eps = 1.e-14;
       /*!
        * \brief constructor
        * \param[in] c:  setting
@@ -441,7 +441,7 @@ namespace tfel {
       //! a simple alias
       using size_type = unsigned short;
       //! numerical parameter used to distinguish egal eigenvalues.
-      static constexpr const real eps = 1.e-14;
+      static constexpr real eps = 1.e-14;
       /*!
        * \brief constructor
        * \param[in] c:  setting

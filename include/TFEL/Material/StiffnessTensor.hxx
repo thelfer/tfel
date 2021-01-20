@@ -36,21 +36,21 @@ namespace tfel {
      */
     template <ModellingHypothesis::Hypothesis H>
     struct GetDefaultStiffnessTensorAlterationCharacteristic {
-      static constexpr const auto value =
+      static constexpr auto value =
           StiffnessTensorAlterationCharacteristic::UNALTERED;
     };
 
     template <>
     struct GetDefaultStiffnessTensorAlterationCharacteristic<
         ModellingHypothesis::PLANESTRESS> {
-      static constexpr const auto value =
+      static constexpr auto value =
           StiffnessTensorAlterationCharacteristic::ALTERED;
     };
 
     template <>
     struct GetDefaultStiffnessTensorAlterationCharacteristic<
         ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS> {
-      static constexpr const auto value =
+      static constexpr auto value =
           StiffnessTensorAlterationCharacteristic::ALTERED;
     };
 

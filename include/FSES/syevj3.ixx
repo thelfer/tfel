@@ -47,9 +47,9 @@ namespace fses{
   {
     using real = GetMatrixNumericType_t<MatrixType2>;
       
-    constexpr const auto zero = real(0);
-    constexpr const auto one  = real(1);
-    constexpr const auto c100 = real(100);
+    constexpr auto zero = real(0);
+    constexpr auto one  = real(1);
+    constexpr auto c100 = real(100);
     TFEL_CONSTEXPR const auto one_half = one/2;
     TFEL_CONSTEXPR const auto c1_5     = one/5;
     

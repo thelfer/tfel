@@ -58,7 +58,7 @@ namespace calculix
     : protected CalculiXInterfaceExceptions
   {
     //! the only supported modelling hypothesis
-    static constexpr const auto H =
+    static constexpr auto H =
       tfel::material::ModellingHypothesis::TRIDIMENSIONAL;
     
     TFEL_CALCULIX_INLINE2 static

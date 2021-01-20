@@ -145,7 +145,7 @@ struct HosfordSecondDerivativeTest final
     using tfel::math::st2tost2;
     using tfel::material::computeHosfordStressNormal;
     using tfel::material::computeHosfordStressSecondDerivative;
-    constexpr const auto a  = double(8);
+    constexpr auto a  = double(8);
     using size_type = typename stensor<N,double>::size_type;
     const auto seps = 1.e-10;
     const auto eps1 = 2.e-6;

@@ -20,8 +20,6 @@
 #include "TFEL/Math/Vector/VectorConcept.hxx"
 #include "TFEL/Math/tvector.hxx"
 #include "TFEL/Math/stensor.hxx"
-#include "TFEL/Math/Stensor/StensorView.hxx"
-#include "TFEL/Math/Stensor/ConstStensorView.hxx"
 
 namespace tfel::math {
 

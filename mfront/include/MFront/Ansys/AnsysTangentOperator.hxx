@@ -15,12 +15,10 @@
 #define LIB_MFRONT_ANSYS_ANSYSTANGENTOPERATOR_HXX 
 
 #include<type_traits>
-
-#include"TFEL/Math/ST2toST2/ST2toST2View.hxx"
+#include"TFEL/Math/st2tost2.hxx"
 #include"TFEL/Math/General/MathConstants.hxx"
 #include"TFEL/Material/ModellingHypothesis.hxx"
 #include"TFEL/Material/MechanicalBehaviourTraits.hxx"
-
 #include"MFront/Ansys/Ansys.hxx"
 #include"MFront/Ansys/AnsysTraits.hxx"
 #include"MFront/Ansys/AnsysConfig.hxx"
@@ -210,8 +208,8 @@ namespace ansys
       {
 	using  TangentOperatorType =
 	  typename AnsysTangentOperatorType<AnsysTraits<Behaviour>::btype,real,2u>::type;
-	constexpr const auto cste = tfel::math::Cste<real>::sqrt2;
-	// constexpr const auto icste = tfel::math::Cste<real>::isqrt2;
+	constexpr auto cste = tfel::math::Cste<real>::sqrt2;
+	// constexpr auto icste = tfel::math::Cste<real>::isqrt2;
 	// TFEL_CONSTEXPR const auto one_half = real(1)/real(2);
 	auto Dt = static_cast<const TangentOperatorType&>(bv.getTangentOperator());
 	// DDSDDE[0] = Dt(0,0);

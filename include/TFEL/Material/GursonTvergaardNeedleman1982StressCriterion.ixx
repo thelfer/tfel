@@ -200,7 +200,7 @@ namespace tfel {
           GursonTvergaardNeedleman1982StressSecondDerivativeType<StressStensor>,
           GursonTvergaardNeedleman1982NormalDerivativeWithRespectToPorosityType<
               StressStensor>>;
-      constexpr const auto N = tfel::math::getSpaceDimension<StressStensor>();
+      constexpr auto N = tfel::math::getSpaceDimension<StressStensor>();
       const auto M = tfel::math::st2tost2<N, double>::M();
       const auto id = normal::Id();
       const auto s = deviator(sig);

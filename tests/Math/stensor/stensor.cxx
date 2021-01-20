@@ -43,11 +43,11 @@ int main(){
   // const auto v5 = v1-v2;
   // static_assert(std::is_same<UnaryResultType<double,OpNeg>::type,double>::value,
   // 		"unary operation result is not valid");
-  // static_assert(std::is_same<UnaryResultType_<StensorTag,UnaryOperatorTag,
+  // static_assert(std::is_same<UnaryComputeBinaryOperationResult<StensorTag,UnaryOperatorTag,
   // 		stensor<1u,double>,OpNeg>::type,
   // 		stensor<1u,double>>::value,
   // 		"unary operation result is not valid");
-  // static_assert(std::is_same<UnaryResultType_<StensorTag,UnaryOperatorTag,
+  // static_assert(std::is_same<UnaryComputeBinaryOperationResult<StensorTag,UnaryOperatorTag,
   // 		stensor1,OpNeg>::type,stensor1>::value,
   // 		"unary operation result is not valid");
   // static_assert(std::is_same<UnaryResultType<std::decay<decltype(v5)>::type,OpNeg>::type,stensor1>::value,

@@ -84,7 +84,7 @@ namespace tfel{
       {
 	using namespace tfel::math;
 	using base = tfel::material::CazacuBaseType<StressStensor>;
-	constexpr const auto icste = Cste<base>::isqrt2;
+	constexpr auto icste = Cste<base>::isqrt2;
 	const tvector<3u,base> v0 = m.template column_view<0u>();
 	const tvector<3u,base> v1 = m.template column_view<1u>();
 	const stensor<2u,base> n01 = stensor<2u,base>::buildFromVectorsSymmetricDiadicProduct(v0,v1)*icste;
@@ -126,7 +126,7 @@ namespace tfel{
       {
 	using namespace tfel::math;
 	using base = tfel::material::CazacuBaseType<StressStensor>;
-	constexpr const auto cste = Cste<base>::isqrt2;
+	constexpr auto cste = Cste<base>::isqrt2;
 	const tvector<3u,base> v0 = m.template column_view<0u>();
 	const tvector<3u,base> v1 = m.template column_view<1u>();
 	const tvector<3u,base> v2 = m.template column_view<2u>();
@@ -195,7 +195,7 @@ namespace tfel{
 					   const CazacuBaseType<StressTensor> k,
 					   const CazacuStressType<StressStensor> e)
     {
-      constexpr const auto N = tfel::math::getSpaceDimension<StressStensor>();
+      constexpr auto N = tfel::math::getSpaceDimension<StressStensor>();
       using stress  = CazacuStressType<StressStensor>;
       using real    = CazacuBaseType<StressStensor>;
       using normal  = CazacuStressNormalType<StressStensor>;
@@ -224,7 +224,7 @@ namespace tfel{
       // Cazacu equivalent stress
       const real Psi      = seq*std::pow(rPsi_a,1/real(a));
       
-      constexpr const auto K = tfel::math::st2tost2<N,real>::K();
+      constexpr auto K = tfel::math::st2tost2<N,real>::K();
       const auto dPsi_ds = ...;
       return std::make_tuple(Psi,eval(dPsi_ds*K));
     } // end of computeCazacu2006IsotropicStressNormal
@@ -240,7 +240,7 @@ namespace tfel{
 						     const CazacuBaseType<StressTensor> k,
 						     const CazacuStressType<StressStensor> e)
     {
-      constexpr const auto N = tfel::math::getSpaceDimension<StressStensor>();
+      constexpr auto N = tfel::math::getSpaceDimension<StressStensor>();
       using stress  = CazacuStressType<StressStensor>;
       using real    = CazacuBaseType<StressStensor>;
       using istress = tfel::math::result_type<real,stress,tfel::math::OpDiv>;
@@ -298,7 +298,7 @@ namespace tfel{
       internals::computeCazacu2006IsotropicStressSecondDerivative<StressStensor>(d2Psi_ds2,dPsi_dsvp,d2Psi_dsvp2,
 										 std::get<0>(n),std::get<1>(n),
 										 std::get<2>(n),vp,m,e);
-      constexpr const auto K = tfel::math::st2tost2<N,real>::K();
+      constexpr auto K = tfel::math::st2tost2<N,real>::K();
       // K is symmetric, so we can write K*d2Psi_ds2*K rather than transpose(K)*d2Psi_ds2*K
       return std::make_tuple(Psi,eval(dPsi_ds*K),eval(K*d2Psi_ds2*K));
     } // end of computeCazacu2006IsotropicSecondDerivative

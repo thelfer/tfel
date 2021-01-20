@@ -120,13 +120,13 @@ namespace tfel::math {
       ptr[1] = p[1];
       ptr[2] = p[2];
     } else if constexpr (N == 2) {
-      constexpr const auto icste = Cste<T>::isqrt2;
+      constexpr auto icste = Cste<T>::isqrt2;
       ptr[0] = p[0];
       ptr[1] = p[1];
       ptr[2] = p[2];
       ptr[3] = p[3] * icste;
     } else {
-      constexpr const auto icste = Cste<T>::isqrt2;
+      constexpr auto icste = Cste<T>::isqrt2;
       ptr[0] = p[0];
       ptr[1] = p[1];
       ptr[2] = p[2];
@@ -150,13 +150,13 @@ namespace tfel::math {
       ptr[1] = p[1];
       ptr[2] = p[2];
     } else if constexpr (N == 2) {
-      constexpr const auto cste = Cste<T>::sqrt2;
+      constexpr auto cste = Cste<T>::sqrt2;
       ptr[0] = p[0];
       ptr[1] = p[1];
       ptr[2] = p[2];
       ptr[3] = p[3] * cste;
     } else {
-      constexpr const auto cste = Cste<T>::sqrt2;
+      constexpr auto cste = Cste<T>::sqrt2;
       ptr[0] = p[0];
       ptr[1] = p[1];
       ptr[2] = p[2];
@@ -191,13 +191,13 @@ namespace tfel::math {
       p[1] = ptr[1];
       p[2] = ptr[2];
     } else if constexpr (N == 2) {
-      constexpr const auto icste = Cste<T>::isqrt2;
+      constexpr auto icste = Cste<T>::isqrt2;
       p[0] = ptr[0];
       p[1] = ptr[1];
       p[2] = ptr[2];
       p[3] = ptr[3] * icste;
     } else {
-      constexpr const auto icste = Cste<T>::isqrt2;
+      constexpr auto icste = Cste<T>::isqrt2;
       p[0] = ptr[0];
       p[1] = ptr[1];
       p[2] = ptr[2];
@@ -612,14 +612,14 @@ namespace tfel::math {
       implementsStensorConcept<StensorType>(),
       typename ComputeUnaryResult<numeric_type<StensorType>, Power<3>>::Result>
   det(const StensorType& s) {
-    constexpr const auto N = getSpaceDimension<StensorType>();
+    constexpr auto N = getSpaceDimension<StensorType>();
     static_assert((N == 1) || (N == 2) || (N == 3), "invalid space dimension");
     if constexpr (N == 1) {
       return s(0) * s(1) * s(2);
     } else if constexpr (N == 2) {
       return s(2) * (s(0) * s(1) - s(3) * s(3) / 2);
     } else {
-      constexpr const auto cste = Cste<numeric_type<StensorType>>::sqrt2;
+      constexpr auto cste = Cste<numeric_type<StensorType>>::sqrt2;
       return (2 * s(0) * s(1) * s(2) + cste * s(3) * s(4) * s(5) -
               s(2) * s(3) * s(3) - s(1) * s(4) * s(4) - s(0) * s(5) * s(5)) /
              2;
@@ -634,7 +634,7 @@ namespace tfel::math {
                                     numeric_type<StensorType>,
                                     OpDiv>>>
   invert(const StensorType& s) {
-    constexpr const auto N = getSpaceDimension<StensorType>();
+    constexpr auto N = getSpaceDimension<StensorType>();
     static_assert((N == 1) || (N == 2) || (N == 3), "invalid space dimension");
     if constexpr (N == 1) {
       return {1 / s(0), 1 / s(1), 1 / s(2)};
@@ -644,9 +644,9 @@ namespace tfel::math {
               -s(2) * s(3) * idet};
     } else {
       using real = base_type<numeric_type<StensorType>>;
-      constexpr const auto two = real(2);
-      constexpr const auto one_half = real(1) / two;
-      constexpr const auto icste = Cste<real>::isqrt2;
+      constexpr auto two = real(2);
+      constexpr auto one_half = real(1) / two;
+      constexpr auto icste = Cste<real>::isqrt2;
       const auto iJ = 1 / det(s);
       return {(s(1) * s(2) - s(5) * s(5) * one_half) * iJ,
               (s(0) * s(2) - s(4) * s(4) * one_half) * iJ,
@@ -664,10 +664,10 @@ namespace tfel::math {
     if constexpr (N == 1) {
       return {m(0, 0), m(1, 1), m(2, 2)};
     } else if constexpr (N == 2) {
-      constexpr const auto cste = Cste<T>::isqrt2;
+      constexpr auto cste = Cste<T>::isqrt2;
       return {m(0, 0), m(1, 1), m(2, 2), (m(0, 1) + m(1, 0)) * cste};
     } else {
-      constexpr const auto cste = Cste<T>::isqrt2;
+      constexpr auto cste = Cste<T>::isqrt2;
       return {m(0, 0),
               m(1, 1),
               m(2, 2),
@@ -688,10 +688,10 @@ namespace tfel::math {
     if constexpr (N == 1) {
       return {v(0) * v(0), v(1) * v(1), v(2) * v(2)};
     } else if constexpr (N == 2) {
-      constexpr const auto cste = Cste<T>::sqrt2;
+      constexpr auto cste = Cste<T>::sqrt2;
       return {v(0) * v(0), v(1) * v(1), v(2) * v(2), v(0) * v(1) * cste};
     } else {
-      constexpr const auto cste = Cste<T>::sqrt2;
+      constexpr auto cste = Cste<T>::sqrt2;
       return {v(0) * v(0),        v(1) * v(1),        v(2) * v(2),
               v(0) * v(1) * cste, v(0) * v(2) * cste, v(1) * v(2) * cste};
     }
@@ -710,11 +710,11 @@ namespace tfel::math {
     if constexpr (N == 1) {
       return {2 * v1(0) * v2(0), 2 * v1(1) * v2(1), 2 * v1(2) * v2(2)};
     } else if constexpr (N == 2) {
-      constexpr const auto cste = Cste<T>::sqrt2;
+      constexpr auto cste = Cste<T>::sqrt2;
       return {2 * v1(0) * v2(0), 2 * v1(1) * v2(1), 2 * v1(2) * v2(2),
               cste * (v1(0) * v2(1) + v2(0) * v1(1))};
     } else {
-      constexpr const auto cste = Cste<T>::sqrt2;
+      constexpr auto cste = Cste<T>::sqrt2;
       return {2 * v1(0) * v2(0),
               2 * v1(1) * v2(1),
               2 * v1(2) * v2(2),
@@ -733,12 +733,12 @@ namespace tfel::math {
     if constexpr (N == 1) {
       return {v1, v2, v3};
     } else if constexpr (N == 2) {
-      constexpr const auto cste = Cste<T>::sqrt2;
+      constexpr auto cste = Cste<T>::sqrt2;
       return {v1 * m(0, 0) * m(0, 0) + v2 * m(0, 1) * m(0, 1),
               v1 * m(1, 0) * m(1, 0) + v2 * m(1, 1) * m(1, 1), v3,
               (v1 * m(0, 0) * m(1, 0) + v2 * m(0, 1) * m(1, 1)) * cste};
     } else {
-      constexpr const auto cste = Cste<T>::sqrt2;
+      constexpr auto cste = Cste<T>::sqrt2;
       return {v1 * m(0, 0) * m(0, 0) + v2 * m(0, 1) * m(0, 1) +
                   v3 * m(0, 2) * m(0, 2),
               v1 * m(1, 0) * m(1, 0) + v2 * m(1, 1) * m(1, 1) +
@@ -987,7 +987,7 @@ namespace tfel::math {
     using T2 = BinaryOperationResult<T, T, OpMult>;
     using base = base_type<T>;
     typedef numeric_type<StensorType> T;
-    constexpr const base cste = Cste<base>::sqrt2;
+    constexpr base cste = Cste<base>::sqrt2;
     TFEL_CONSTEXPR const base one_half = 1 / (base(2));
     return stensor<3u, T2>{
         (s(4) * s(4) + s(3) * s(3) + 2 * s(0) * s(0)) * one_half,
@@ -1191,7 +1191,7 @@ namespace tfel::math {
   convertSecondPiolaKirchhoffStressToCorotationnalCauchyStress(const T& S,
                                                                const T2& U) {
     using real = base_type<numeric_type<T>>;
-    constexpr const auto cste = Cste<real>::sqrt2;
+    constexpr auto cste = Cste<real>::sqrt2;
     const auto iJ = 1 / det(U);
     return {
         iJ *
@@ -1254,7 +1254,7 @@ namespace tfel::math {
     } else {
       using res = result_type<numeric_type<StensorType1>,
                               numeric_type<StensorType2>, OpMult>;
-      constexpr const auto icste = Cste<res>::isqrt2;
+      constexpr auto icste = Cste<res>::isqrt2;
       return {s1[4] * s2[4] + s1[3] * s2[3] + 2 * s1[0] * s2[0],
               s1[5] * s2[5] + s1[3] * s2[3] + 2 * s1[1] * s2[1],
               s1[5] * s2[5] + s1[4] * s2[4] + 2 * s1[2] * s2[2],

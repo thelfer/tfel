@@ -83,7 +83,7 @@ namespace tfel {
                         const tfel::math::t2tot2<2u, stress>& dP,
                         const tfel::math::tensor<2u, real>& F,
                         const tfel::math::stensor<2u, stress>& s) {
-          constexpr const auto cste = tfel::math::Cste<real>::sqrt2;
+          constexpr auto cste = tfel::math::Cste<real>::sqrt2;
 	  const auto P = convertCauchyStressToFirstPiolaKirchhoffStress(s, F);
 	  // f90(diff(tau[1],F[0]));
 	  dtau(0,0) = dP(3,0)*F[3]+F[0]*dP(0,0)+P[0];
@@ -133,7 +133,7 @@ namespace tfel {
                         const tfel::math::t2tot2<3u, stress>& dP,
                         const tfel::math::tensor<3u, real>& F,
                         const tfel::math::stensor<3u, stress>& s) {
-          constexpr const auto cste = tfel::math::Cste<real>::sqrt2;
+          constexpr auto cste = tfel::math::Cste<real>::sqrt2;
 	  const auto P = convertCauchyStressToFirstPiolaKirchhoffStress(s, F);
 	  // f90(diff(tau[1],F[0]));
 	  dtau(0,0) = dP(5,0)*F[5]+dP(3,0)*F[3]+F[0]*dP(0,0)+P[0];

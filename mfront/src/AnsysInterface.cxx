@@ -1189,7 +1189,7 @@ namespace mfront {
           << "BehaviourProfiler::TOTALTIME);\n";
     }
     if (this->shallGenerateMTestFileOnFailure(mb)) {
-      out << "constexpr const auto h = "
+      out << "constexpr auto h = "
           << "tfel::material::ModellingHypothesis::"
           << ModellingHypothesis::toUpperCaseString(h) << ";\n";
     }

@@ -26,17 +26,17 @@ namespace tfel::math {
    */
   struct RuntimeVectorIndexingPolicy {
     //!
-    static constexpr const auto hasFixedSizes = false;
+    static constexpr auto hasFixedSizes = false;
     //!
     using size_type = std::size_t;
     //!
     using RowMajorIndexingPolicy = RuntimeVectorIndexingPolicy;
     //!
-    static constexpr const size_type arity = 1;
+    static constexpr size_type arity = 1;
     //!
-    static constexpr const auto areDataContiguous = true;
+    static constexpr auto areDataContiguous = true;
     //!
-    static constexpr const auto unRollLoop = false;
+    static constexpr auto unRollLoop = false;
     //! \brief constructor
     constexpr RuntimeVectorIndexingPolicy(const size_type s) : data_size(s) {}
     //! \brief move constructor

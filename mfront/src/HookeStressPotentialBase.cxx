@@ -289,7 +289,7 @@ namespace mfront {
                                               AbstractBehaviourDSL& dsl,
                                               const DataMap& d) {
       using tfel::glossary::Glossary;
-      constexpr const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+      constexpr auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
       auto throw_if = [](const bool b, const std::string& m) {
         tfel::raise_if(
             b, "HookeStressPotentialBase::HookeStressPotentialBase: " + m);
@@ -638,7 +638,7 @@ namespace mfront {
     void HookeStressPotentialBase::endTreatment(
         BehaviourDescription& bd, const AbstractBehaviourDSL& dsl) const {
       // modelling hypotheses supported by the behaviour
-      constexpr const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+      constexpr auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
       const auto bmh = bd.getModellingHypotheses();
       if (getVerboseMode() >= VERBOSE_DEBUG) {
         getLogStream() << "HookeStressPotentialBase::endTreatment: begin\n";

@@ -27,7 +27,7 @@ namespace calculix
 							    const real *const s1,
 							    const CalculiXInt d)
   {
-    constexpr const auto cste = tfel::math::Cste<real>::sqrt2;
+    constexpr auto cste = tfel::math::Cste<real>::sqrt2;
     e[0]  -= s0[0];
     e[1]  -= s0[1];
     e[2]  -= s0[2];
@@ -65,7 +65,7 @@ namespace calculix
 							  const real *const s1,
 							  const CalculiXInt d)
   {
-    constexpr const auto cste = tfel::math::Cste<real>::sqrt2;
+    constexpr auto cste = tfel::math::Cste<real>::sqrt2;
     if(d==2){
       // s0 and s1 are given using TFEL conventions
       tfel::math::stensor<2u,real> e0(s0);

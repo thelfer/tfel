@@ -55,7 +55,7 @@ namespace mfront {
   buildMaterialPropertiesList(
       const BehaviourDescription& bd,
       const std::set<tfel::material::ModellingHypothesis::Hypothesis>& mh) {
-    constexpr const auto h =
+    constexpr auto h =
         BehaviourMaterialProperty::ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     std::set<BehaviourMaterialProperty::Hypothesis> uh;
     for (const auto& lh : mh) {

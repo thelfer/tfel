@@ -74,7 +74,7 @@ struct Expr3Test final : public tfel::tests::TestCase {
         (is_same_v<tvector,
                    ResultType<const tvector&, const tvector&, OpPlus>::TypeB>));
     TFEL_TESTS_STATIC_ASSERT(
-        (is_same_v<tvector, ComputeBinaryResult_<VectorTag, VectorTag, tvector,
+        (is_same_v<tvector, ComputeBinaryOperationHandler<VectorTag, VectorTag, tvector,
                                                  tvector, OpPlus>::Result>));
     TFEL_TESTS_STATIC_ASSERT(
         (isBinaryOperationResultTypeValid<tvector, tvector, OpPlus>::value));

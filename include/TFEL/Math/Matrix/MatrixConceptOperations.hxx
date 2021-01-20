@@ -38,59 +38,11 @@ namespace tfel::math {
   };
 
   /*
-   * Partial Specialisation of ComputeBinaryResult_ for matrix's operation
-   */
-  template <typename A, typename B, typename Op>
-  class ComputeBinaryResult_<MatrixTag, MatrixTag, A, B, Op> {
-    struct DummyHandle {};
-    using MatrixTypeA = EvaluationResult<A>;
-    using MatrixTypeB = EvaluationResult<B>;
-
-   public:
-    using Result = result_type<MatrixTypeA, MatrixTypeB, Op>;
-    using Handle = std::conditional_t<isInvalid<Result>(),
-                                      DummyHandle,
-                                      Expr<Result, BinaryOperation<A, B, Op>>>;
-  };
-
-  /*
-   * Partial Specialisation of ComputeBinaryResult_ for scalar-matrix operations
-   */
-  template <typename A, typename B, typename Op>
-  class ComputeBinaryResult_<ScalarTag, MatrixTag, A, B, Op> {
-    struct DummyHandle {};
-    using MatrixTypeB = EvaluationResult<B>;
-
-   public:
-    using Result = result_type<A, MatrixTypeB, Op>;
-    using Handle =
-        std::conditional_t<isInvalid<Result>(),
-                           DummyHandle,
-                           Expr<Result, ScalarObjectOperation<A, B, Op>>>;
-  };
-
-  /*
-   * Partial Specialisation of ComputeBinaryResult_ for matrix-scalar operations
-   */
-  template <typename A, typename B, typename Op>
-  struct ComputeBinaryResult_<MatrixTag, ScalarTag, A, B, Op> {
-    struct DummyHandle {};
-    using MatrixTypeA = EvaluationResult<A>;
-
-   public:
-    using Result = result_type<MatrixTypeA, B, Op>;
-    using Handle =
-        std::conditional_t<isInvalid<Result>(),
-                           DummyHandle,
-                           Expr<Result, ObjectScalarOperation<A, B, Op>>>;
-  };
-
-  /*
-   * Partial Specialisation of ComputeBinaryResult_ for matrix-vector
+   * Partial Specialisation of ComputeBinaryOperationHandler for matrix-vector
    * multiplication
    */
   template <typename A, typename B>
-  struct ComputeBinaryResult_<MatrixTag, VectorTag, A, B, OpMult> {
+  struct ComputeBinaryOperationHandler<MatrixTag, VectorTag, A, B, OpMult> {
     struct DummyHandle {};
     using MatrixTypeA = EvaluationResult<A>;
     using VectorTypeB = EvaluationResult<B>;
@@ -104,11 +56,11 @@ namespace tfel::math {
   };
 
   /*
-   * Partial Specialisation of ComputeBinaryResult_ for vector-matrix
+   * Partial Specialisation of ComputeBinaryOperationHandler for vector-matrix
    * multiplication
    */
   template <typename A, typename B>
-  struct ComputeBinaryResult_<VectorTag, MatrixTag, A, B, OpMult> {
+  struct ComputeBinaryOperationHandler<VectorTag, MatrixTag, A, B, OpMult> {
     struct DummyHandle {};
     using VectorTypeA = EvaluationResult<A>;
     using MatrixTypeB = EvaluationResult<B>;

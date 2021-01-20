@@ -30,7 +30,7 @@ namespace mfront {
                                          const std::string& id,
                                          const DataMap& d,
                                          const Role r) {
-      constexpr const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+      constexpr auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
       // checking options
       mfront::bbrick::check(d, this->getOptions());
       // declare the porosity if required

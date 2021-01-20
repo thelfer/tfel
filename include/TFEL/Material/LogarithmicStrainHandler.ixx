@@ -15,7 +15,7 @@
 #define LIB_TFEL_MATH_LOGARITHMICSTRAINHANDLER_IXX
 
 #include <cmath>
-#include "TFEL/Math/ST2toST2/ST2toST2View.hxx"
+#include "TFEL/Math/st2tost2.hxx"
 #include "TFEL/Material/FiniteStrainBehaviourTangentOperator.hxx"
 
 namespace tfel {
@@ -264,7 +264,7 @@ namespace tfel {
     template <typename StressType>
     void LogarithmicStrainHandler<2u, StressType>::getHenckyLogarithmicStrain(
         real* const elog) const {
-      constexpr const auto cste = tfel::math::Cste<real>::sqrt2;
+      constexpr auto cste = tfel::math::Cste<real>::sqrt2;
       const auto el = StrainStensor::computeIsotropicFunction(this->e, this->m);
       elog[0] = el[0];
       elog[1] = el[1];
@@ -431,7 +431,7 @@ namespace tfel {
         const DeformationGradient& F) {
       using tvector = tfel::math::tvector<3u, real>;
       using stensor = tfel::math::stensor<2u, real>;
-      constexpr const auto zero = real{};
+      constexpr auto zero = real{};
       const tvector v[2] = {m.template column_view<0u>(),
                             m.template column_view<1u>()};
       tfel::math::tvector<3u, real> n[2];
@@ -639,7 +639,7 @@ namespace tfel {
             this->e, d, this->vp, this->m, eps);
       } else {
         const auto theta = [this, &d] {
-          constexpr const auto zero = real{0};
+          constexpr auto zero = real{0};
           if (areEigenValuesEqual(vp)) {
             const auto rv = (d[0] + d[1] + d[2]) / 3;
             return tmatrix<3u, 3u, real>{zero, rv, rv, rv,  zero,
@@ -710,7 +710,7 @@ namespace tfel {
     template <typename StressType>
     void LogarithmicStrainHandler<3u, StressType>::getHenckyLogarithmicStrain(
         real* const elog) const {
-      constexpr const auto cste = tfel::math::Cste<real>::sqrt2;
+      constexpr auto cste = tfel::math::Cste<real>::sqrt2;
       const auto el = StrainStensor::computeIsotropicFunction(this->e, this->m);
       elog[0] = el[0];
       elog[1] = el[1];
@@ -910,7 +910,7 @@ namespace tfel {
       const auto f = map([](const real x) { return -2 / (x * x); }, this->vp);
       const auto xsi = [this, &d, &f]() -> tmatrix<3u, 3u, real> {
         if (areEigenValuesEqual(this->vp)) {
-          constexpr const auto zero = real{0};
+          constexpr auto zero = real{0};
           const auto rv = (f[0] + f[1] + f[2]) / 24;
           return {zero, rv, rv, rv, zero, rv, rv, rv, zero};
         }

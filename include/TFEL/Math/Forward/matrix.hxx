@@ -35,7 +35,7 @@ namespace tfel::math {
   struct MathObjectTraits<matrix<T>>
       : MathObjectTraitsBase<T, typename tfel::math::vector<T>::size_type> {
     //! brief a `matrix` is not related to the space dimension
-    static constexpr const unsigned short dime = 0;
+    static constexpr unsigned short dime = 0;
   };
 
 }  // end of namespace tfel::math

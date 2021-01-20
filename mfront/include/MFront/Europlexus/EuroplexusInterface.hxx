@@ -143,8 +143,8 @@ namespace epx
     {
       static void backward(const EPXData& d){
 	using namespace tfel::math;
-	constexpr const auto N = tfel::material::ModellingHypothesisToSpaceDimension<H>::value;
-	constexpr const auto S = tfel::math::StensorDimeToSize<N>::value;
+	constexpr auto N = tfel::material::ModellingHypothesisToSpaceDimension<H>::value;
+	constexpr auto S = tfel::math::StensorDimeToSize<N>::value;
 	const tmatrix<3u,3u,EuroplexusReal> r = {d.R[0],d.R[3],d.R[6],
 						 d.R[1],d.R[4],d.R[7],
 						 d.R[2],d.R[5],d.R[8]};
@@ -160,8 +160,8 @@ namespace epx
       static std::pair<const EuroplexusReal*,const EuroplexusReal*>
       forward(const EPXData& d,EuroplexusReal *const dv0,EuroplexusReal *const dv1){
 	using namespace tfel::math;
-	constexpr const auto N = tfel::material::ModellingHypothesisToSpaceDimension<H>::value;
-	constexpr const auto S = tfel::math::StensorDimeToSize<N>::value;
+	constexpr auto N = tfel::material::ModellingHypothesisToSpaceDimension<H>::value;
+	constexpr auto S = tfel::math::StensorDimeToSize<N>::value;
 	const tmatrix<3u,3u,EuroplexusReal> r = {d.R[0],d.R[1],d.R[2],
 						 d.R[3],d.R[4],d.R[5],
 						 d.R[6],d.R[7],d.R[8]};
@@ -181,8 +181,8 @@ namespace epx
       static std::pair<const EuroplexusReal*,const EuroplexusReal*>
       forward(const EPXData& d,EuroplexusReal *const dv0,EuroplexusReal *const dv1){
 	using namespace tfel::math;
-	constexpr const auto N = tfel::material::ModellingHypothesisToSpaceDimension<H>::value;
-	constexpr const auto S = tfel::math::TensorDimeToSize<N>::value;
+	constexpr auto N = tfel::material::ModellingHypothesisToSpaceDimension<H>::value;
+	constexpr auto S = tfel::math::TensorDimeToSize<N>::value;
 	const tmatrix<3u,3u,EuroplexusReal> r = {d.R[0],d.R[1],d.R[2],
 						 d.R[3],d.R[4],d.R[5],
 						 d.R[6],d.R[7],d.R[8]};
@@ -214,10 +214,10 @@ namespace epx
       {
 	typedef EuroplexusBehaviourHandler<H,Behaviour> AHandler;
 	using BV = Behaviour<H,EuroplexusReal,false>;
-	constexpr const bool bs = EuroplexusTraits<BV>::requiresStiffnessTensor;
-	constexpr const bool ba = EuroplexusTraits<BV>::requiresThermalExpansionCoefficientTensor;
-	constexpr const auto type  = EuroplexusTraits<BV>::type;
-	constexpr const auto btype = EuroplexusTraits<BV>::btype;
+	constexpr bool bs = EuroplexusTraits<BV>::requiresStiffnessTensor;
+	constexpr bool ba = EuroplexusTraits<BV>::requiresThermalExpansionCoefficientTensor;
+	constexpr auto type  = EuroplexusTraits<BV>::type;
+	constexpr auto btype = EuroplexusTraits<BV>::btype;
 	using Integrator = typename AHandler::template Integrator<bs,ba>;
 	AHandler::checkNPROPS(d.NPROPS);
 	AHandler::checkNSTATV(d.NSTATV);

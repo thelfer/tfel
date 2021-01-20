@@ -97,7 +97,7 @@ namespace tfel {
           const tfel::material::HosfordStressType<StressStensor> e) {
         using namespace tfel::math;
         using base = tfel::material::HosfordBaseType<StressStensor>;
-        constexpr const auto icste = Cste<base>::isqrt2;
+        constexpr auto icste = Cste<base>::isqrt2;
         const tvector<3u, base> v0 = m.template column_view<0u>();
         const tvector<3u, base> v1 = m.template column_view<1u>();
         const stensor<2u, base> n01 =
@@ -155,7 +155,7 @@ namespace tfel {
           const tfel::material::HosfordStressType<StressStensor> e) {
         using namespace tfel::math;
         using base = tfel::material::HosfordBaseType<StressStensor>;
-        constexpr const auto cste = Cste<base>::isqrt2;
+        constexpr auto cste = Cste<base>::isqrt2;
         const tvector<3u, base> v0 = m.template column_view<0u>();
         const tvector<3u, base> v1 = m.template column_view<1u>();
         const tvector<3u, base> v2 = m.template column_view<2u>();
@@ -246,7 +246,7 @@ namespace tfel {
     computeHosfordStressNormal(const StressStensor& s,
                                const HosfordExponentType a,
                                const HosfordStressType<StressStensor> e) {
-      constexpr const auto N = tfel::math::getSpaceDimension<StressStensor>();
+      constexpr auto N = tfel::math::getSpaceDimension<StressStensor>();
       using stress = HosfordStressType<StressStensor>;
       using real = HosfordBaseType<StressStensor>;
       using normal = HosfordStressNormalType<StressStensor>;
@@ -301,7 +301,7 @@ namespace tfel {
         const StressStensor& s,
         const HosfordExponentType a,
         const HosfordStressType<StressStensor> e) {
-      constexpr const auto N = tfel::math::getSpaceDimension<StressStensor>();
+      constexpr auto N = tfel::math::getSpaceDimension<StressStensor>();
       using stress = HosfordStressType<StressStensor>;
       using real = HosfordBaseType<StressStensor>;
       using istress = tfel::math::result_type<real, stress, tfel::math::OpDiv>;

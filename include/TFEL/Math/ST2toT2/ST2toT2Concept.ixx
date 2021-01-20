@@ -33,9 +33,9 @@ namespace tfel::math {
   abs(const ST2toT2Type& v) {
     using NumType = numeric_type<ST2toT2Type>;
     using AbsNumType = typename tfel::typetraits::AbsType<NumType>::type;
-    constexpr const auto tsize =
+    constexpr auto tsize =
         TensorDimeToSize<getSpaceDimension<ST2toT2Type>()>::value;
-    constexpr const auto ssize =
+    constexpr auto ssize =
         StensorDimeToSize<getSpaceDimension<ST2toT2Type>()>::value;
     AbsNumType a(0);
     for (unsigned short i = 0; i < tsize; ++i) {

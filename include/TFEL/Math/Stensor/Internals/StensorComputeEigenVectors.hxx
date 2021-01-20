@@ -50,8 +50,8 @@ namespace tfel::math::internals {
       static_assert(std::is_same_v<numeric_type<VectorType>, T>);
       static_assert(tfel::typetraits::IsFundamentalNumericType<T>::cond);
       static_assert(tfel::typetraits::IsReal<T>::cond);
-      constexpr const auto zero = T{0};
-      constexpr const auto one = T{1};
+      constexpr auto zero = T{0};
+      constexpr auto one = T{1};
       TFEL_CONSTEXPR const auto e = 10 * std::numeric_limits<T>::min();
       if (std::abs(s[0] - vp) < e) {
         v = {one, zero, zero};
@@ -90,7 +90,7 @@ namespace tfel::math::internals {
       static_assert(tfel::typetraits::IsFundamentalNumericType<T>::cond);
       static_assert(tfel::typetraits::IsReal<T>::cond);
       using tfel::math::constexpr_fct::sqrt;
-      constexpr const auto icste = Cste<T>::isqrt2;
+      constexpr auto icste = Cste<T>::isqrt2;
       // first eigenvalue
       auto y0 = s[0] * m(0, 0) + s[3] * icste * m(1, 0) - vp(0) * m(0, 0);
       auto y1 = s[1] * m(1, 0) + s[3] * icste * m(0, 0) - vp(0) * m(1, 0);
@@ -117,8 +117,8 @@ namespace tfel::math::internals {
       static_assert(std::is_same_v<numeric_type<VectorType>, T>);
       static_assert(IsFundamentalNumericType<T>::cond);
       static_assert(IsReal<T>::cond);
-      constexpr const auto zero = T{0};
-      constexpr const auto one = T{1};
+      constexpr auto zero = T{0};
+      constexpr auto one = T{1};
       if (std::abs(s[2] - vp) < 10 * std::numeric_limits<T>::min()) {
         v(0) = zero;
         v(1) = zero;
@@ -178,9 +178,9 @@ namespace tfel::math::internals {
         const T s_0, const T s_1, const T s3, const T& vp, T& x, T& y) {
       static_assert(tfel::typetraits::IsFundamentalNumericType<T>::cond);
       static_assert(tfel::typetraits::IsReal<T>::cond);
-      constexpr const auto zero = T{0};
-      constexpr const auto one = T{1};
-      constexpr const auto cste = Cste<T>::sqrt2;
+      constexpr auto zero = T{0};
+      constexpr auto one = T{1};
+      constexpr auto cste = Cste<T>::sqrt2;
       auto s0 = s_0 - vp;
       auto s1 = s_1 - vp;
       if (std::abs(s3) <
@@ -227,7 +227,7 @@ namespace tfel::math::internals {
                      const tfel::math::rotation_matrix<T>& m) {
       static_assert(tfel::typetraits::IsFundamentalNumericType<T>::cond);
       static_assert(tfel::typetraits::IsReal<T>::cond);
-      constexpr const auto icste = Cste<T>::isqrt2;
+      constexpr auto icste = Cste<T>::isqrt2;
       // first eigenvalue
       auto y0 = s[0] * m(0, 0) + s[3] * icste * m(1, 0) +
                 s[4] * icste * m(2, 0) - vp(0) * m(0, 0);
@@ -460,8 +460,8 @@ namespace tfel::math::internals {
         T& y0, T& y1, T& y2, const T x0, const T x1, const T x2) {
       static_assert(tfel::typetraits::IsFundamentalNumericType<T>::cond);
       static_assert(tfel::typetraits::IsReal<T>::cond);
-      constexpr const auto zero = T{0};
-      constexpr const auto one = T{1};
+      constexpr auto zero = T{0};
+      constexpr auto one = T{1};
       const auto norm2_x = norm2(x0, x1, x2);
       if (norm2_x < 100 * std::numeric_limits<T>::min()) {
         // x is null
@@ -506,7 +506,7 @@ namespace tfel::math::internals {
       static_assert(tfel::typetraits::IsFundamentalNumericType<T>::cond);
       static_assert(tfel::typetraits::IsReal<T>::cond);
       // Assume that vp is a single eigenvalue
-      constexpr const auto icste = Cste<T>::isqrt2;
+      constexpr auto icste = Cste<T>::isqrt2;
       const auto a = src[0] - vp;
       const auto b = src[3] * icste;
       const auto c = src[4] * icste;

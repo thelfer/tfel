@@ -115,7 +115,7 @@ namespace mfront {
         const AbstractBehaviourDSL& dsl,
         const std::string& id,
         const Role r) {
-      constexpr const auto uh =
+      constexpr auto uh =
           tfel::material::ModellingHypothesis::UNDEFINEDHYPOTHESIS;
       const auto an = StressCriterion::getVariableId("a", id, r);
       const auto l1n = StressCriterion::getVariableId("l1", id, r);

@@ -79,8 +79,8 @@ namespace tfel {
                         const tfel::math::t2tost2<2u, stress>& ds,
                         const tfel::math::tensor<2u, real>& F,
                         const tfel::math::stensor<2u, stress>& s) {
-          constexpr const auto cste = tfel::math::Cste<real>::sqrt2;
-          constexpr const auto icste = tfel::math::Cste<real>::isqrt2;
+          constexpr auto cste = tfel::math::Cste<real>::sqrt2;
+          constexpr auto icste = tfel::math::Cste<real>::isqrt2;
           //-->  f90(diff(P[1],F[0]));
           dP(0, 0) =
               -(ds(3, 0) * F[2] * F[3] - cste * ds(0, 0) * F[1] * F[2]) * icste;
@@ -170,7 +170,7 @@ namespace tfel {
                         const tfel::math::t2tost2<3u, stress>& ds,
                         const tfel::math::tensor<3u, real>& F,
                         const tfel::math::stensor<3u, stress>& s) {
-          constexpr const auto cste = tfel::math::Cste<real>::sqrt2;
+          constexpr auto cste = tfel::math::Cste<real>::sqrt2;
           // -->  f90(diff(P[1],F_0));
           dP(0, 0) =
               -((2 * ds(0, 0) * F[7] - cste * ds(3, 0) * F[5]) * F[8] -

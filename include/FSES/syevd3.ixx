@@ -53,10 +53,10 @@ namespace fses{
 	     const MatrixType2& A)
   {
     using real = typename std::decay<decltype(at(A,0,0))>::type;
-    constexpr const auto zero  = real(0);
-    constexpr const auto one   = real(1);
-    constexpr const auto eight = real(8);
-    constexpr const auto ulp = std::numeric_limits<real>::epsilon();
+    constexpr auto zero  = real(0);
+    constexpr auto one   = real(1);
+    constexpr auto eight = real(8);
+    constexpr auto ulp = std::numeric_limits<real>::epsilon();
 
     const int n = 3;
     real R[3][3];                // Householder transformation matrix

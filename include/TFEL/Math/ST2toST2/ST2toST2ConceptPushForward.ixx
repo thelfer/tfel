@@ -51,8 +51,8 @@ namespace tfel::math {
                           void>::type
   push_forward(ST2toST2Type& Ct, const ST2toST2Type2& C, const TensorType& F) {
     using NumType = numeric_type<ST2toST2Type>;
-    constexpr const auto cste = Cste<NumType>::sqrt2;
-    constexpr const auto icste = Cste<NumType>::isqrt2;
+    constexpr auto cste = Cste<NumType>::sqrt2;
+    constexpr auto icste = Cste<NumType>::isqrt2;
     Ct(0, 0) = F[0] * F[0] * F[0] * F[0] * C(0, 0) +
                F[0] * F[0] * F[0] * F[3] * C(0, 3) * icste +
                F[0] * F[0] * F[3] * F[0] * C(0, 3) * icste +
@@ -270,7 +270,7 @@ namespace tfel::math {
       return 8;
     };
     auto set = [&Ct](const size_type i, const size_type j, const NumType v) {
-      constexpr const auto cste = Cste<NumType>::sqrt2;
+      constexpr auto cste = Cste<NumType>::sqrt2;
       if (((i > 2) && (j <= 2)) || ((j > 2) && (i <= 2))) {
         Ct(i, j) = v * cste;
       } else if ((i > 2) && (j > 2)) {
@@ -280,7 +280,7 @@ namespace tfel::math {
       }
     };
     auto get = [&C](const size_type i, const size_type j) {
-      constexpr const auto icste = Cste<NumType>::isqrt2;
+      constexpr auto icste = Cste<NumType>::isqrt2;
       if (((i > 2) && (j <= 2)) || ((j > 2) && (i <= 2))) {
         return C(i, j) * icste;
       } else if ((i > 2) && (j > 2)) {

@@ -46,7 +46,7 @@ namespace tfel::math {
     TFEL_MATH_INLINE Expr& operator=(Expr&&) = default;
 
     ValueType operator()(const unsigned short i) const {
-      constexpr const auto icste = Cste<ValueType>::isqrt2;
+      constexpr auto icste = Cste<ValueType>::isqrt2;
       switch (i) {
         case 0:
           return this->s(0);

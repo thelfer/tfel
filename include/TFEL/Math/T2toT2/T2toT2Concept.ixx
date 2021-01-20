@@ -69,7 +69,7 @@ namespace tfel::math {
       return a * (e * i - f * h) + b * (f * g - d * i) + c * (d * h - e * g);
     } else {
       using real = numeric_type<T2toT2Type>;
-      constexpr const auto ts = TensorDimeToSize<N>::value;
+      constexpr auto ts = TensorDimeToSize<N>::value;
       tmatrix<ts, ts, real> m;
       TinyPermutation<ts> p;
       tfel::fsalgo::copy<ts * ts>::exe(s.begin(), m.begin());

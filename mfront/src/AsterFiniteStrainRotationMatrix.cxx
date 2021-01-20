@@ -274,7 +274,7 @@ namespace aster
     // note sur le rangement fortran :
     // on récupère Dm(k,i,j)=dtau[k]_dF[ij] à l'adresse Dm[k+n1*(i+3*j)]
     using namespace std;
-    constexpr const auto cste = tfel::math::Cste<AsterReal>::sqrt2;
+    constexpr auto cste = tfel::math::Cste<AsterReal>::sqrt2;
     const unsigned short n1 = 6u; // stensor size
     AsterReal Dm[54];
     copy(Dg,Dg+54,Dm);

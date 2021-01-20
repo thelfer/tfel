@@ -54,8 +54,8 @@ namespace tfel{
       FSESAnalyticalSymmetricEigensolver2x2<real>::computeEigenValues(tvector<3u,real>& vp,
 								      const real A,const real B,
 								      const real C){
-	constexpr const auto zero     = real{0};
-	constexpr const auto one      = real{1};
+	constexpr auto zero     = real{0};
+	constexpr auto one      = real{1};
 	TFEL_CONSTEXPR const auto one_half = one/2;
 	const auto sm = A + C;
 	const auto df = A - C;
@@ -82,9 +82,9 @@ namespace tfel{
 								       tmatrix<3u,3u,real>& m,
 								       const real A,const real B,
 								       const real C){
-	constexpr const auto rmin          = std::numeric_limits<real>::min();
-	constexpr const auto zero          = real{0};
-	constexpr const auto one           = real{1};
+	constexpr auto rmin          = std::numeric_limits<real>::min();
+	constexpr auto zero          = real{0};
+	constexpr auto one           = real{1};
 	TFEL_CONSTEXPR const auto one_half = one/2;
 	// computing eigen values
 	FSESAnalyticalSymmetricEigensolver2x2::computeEigenValues(vp,A,B,C);

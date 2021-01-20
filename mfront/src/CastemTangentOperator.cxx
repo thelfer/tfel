@@ -26,7 +26,7 @@ namespace castem {
 
   void CastemTangentOperator::normalize(
       tfel::math::ST2toST2View<2u, CastemReal>& Dt) {
-    constexpr const auto icste = tfel::math::Cste<CastemReal>::isqrt2;
+    constexpr auto icste = tfel::math::Cste<CastemReal>::isqrt2;
     Dt(0, 3) *= icste;
     Dt(1, 3) *= icste;
     Dt(2, 3) *= icste;
@@ -41,7 +41,7 @@ namespace castem {
    */
   void CastemTangentOperator::normalize(
       tfel::math::ST2toST2View<3u, CastemReal>& Dt) {
-    constexpr const auto icste = tfel::math::Cste<CastemReal>::isqrt2;
+    constexpr auto icste = tfel::math::Cste<CastemReal>::isqrt2;
     Dt(0, 3) *= icste;
     Dt(1, 3) *= icste;
     Dt(2, 3) *= icste;

@@ -1746,6 +1746,7 @@ include/TFEL/Math/Array/ConstFixedSizeArrayBase.ixx -text
 include/TFEL/Math/Array/ConstRuntimeArrayBase.hxx -text
 include/TFEL/Math/Array/ConstRuntimeArrayBase.ixx -text
 include/TFEL/Math/Array/ConstView.hxx -text
+include/TFEL/Math/Array/FixedSizeArrayDerivative.hxx -text
 include/TFEL/Math/Array/FixedSizeArrayPolicies.hxx -text
 include/TFEL/Math/Array/FixedSizeIndexingPolicies.hxx -text
 include/TFEL/Math/Array/GenericFixedSizeArray.hxx -text
@@ -1784,6 +1785,7 @@ include/TFEL/Math/FactorizedKriging1D3D.hxx -text
 include/TFEL/Math/FischerBurmeister.hxx -text
 include/TFEL/Math/FischerBurmeister.ixx -text
 include/TFEL/Math/Forward/Complex.hxx -text
+include/TFEL/Math/Forward/Expr.hxx -text
 include/TFEL/Math/Forward/TinyNewtonRaphson.hxx -text
 include/TFEL/Math/Forward/matrix.hxx -text
 include/TFEL/Math/Forward/qt.hxx -text
@@ -1865,14 +1867,12 @@ include/TFEL/Math/LevenbergMarquardt/LevenbergMarquardtExternalFunctionWrapper.h
 include/TFEL/Math/LevenbergMarquardt/LevenbergMarquardtFunctionWrapper.hxx -text
 include/TFEL/Math/LevenbergMarquardt/LevenbergMarquardtFunctionWrapper.ixx -text
 include/TFEL/Math/MathException.hxx -text
-include/TFEL/Math/Matrix/ConstTMatrixView.hxx -text
 include/TFEL/Math/Matrix/MatrixConcept.hxx -text
 include/TFEL/Math/Matrix/MatrixConcept.ixx -text
 include/TFEL/Math/Matrix/MatrixConceptOperations.hxx -text
 include/TFEL/Math/Matrix/MatrixUtilities.hxx -text
 include/TFEL/Math/Matrix/MatrixUtilities.ixx -text
 include/TFEL/Math/Matrix/TMatrixTVectorExpr.hxx -text
-include/TFEL/Math/Matrix/TMatrixView.hxx -text
 include/TFEL/Math/Matrix/TVectorTMatrixExpr.hxx -text
 include/TFEL/Math/Matrix/TinyMatrixInvert.ixx -text
 include/TFEL/Math/Matrix/matrix.ixx -text
@@ -1952,7 +1952,6 @@ include/TFEL/Math/RungeKutta42.hxx -text
 include/TFEL/Math/RungeKutta54.hxx -text
 include/TFEL/Math/ST2toST2/BuildFromRotationMatrix.hxx -text
 include/TFEL/Math/ST2toST2/ChangeBasis.hxx -text
-include/TFEL/Math/ST2toST2/ConstST2toST2View.hxx -text
 include/TFEL/Math/ST2toST2/ConvertKirchhoffStressDerivativeToSpatialModuli.hxx -text
 include/TFEL/Math/ST2toST2/ConvertLogarithmicStrainTangentOperator.hxx -text
 include/TFEL/Math/ST2toST2/ConvertSpatialModuliToKirchhoffJaumanRateModuli.hxx -text
@@ -1968,7 +1967,6 @@ include/TFEL/Math/ST2toST2/ST2toST2FromTinyMatrixView2.hxx -text
 include/TFEL/Math/ST2toST2/ST2toST2ST2toST2ProductExpr.hxx -text
 include/TFEL/Math/ST2toST2/ST2toST2StensorProductExpr.hxx -text
 include/TFEL/Math/ST2toST2/ST2toST2TransposeExpr.hxx -text
-include/TFEL/Math/ST2toST2/ST2toST2View.hxx -text
 include/TFEL/Math/ST2toST2/StensorST2toST2ProductExpr.hxx -text
 include/TFEL/Math/ST2toST2/StensorSquareDerivative.hxx -text
 include/TFEL/Math/ST2toST2/StensorSymmetricProductDerivative.hxx -text
@@ -1985,7 +1983,6 @@ include/TFEL/Math/ST2toT2/ST2toT2ConceptOperations.hxx -text
 include/TFEL/Math/ST2toT2/ST2toT2ST2toST2ProductExpr.hxx -text
 include/TFEL/Math/ST2toT2/ST2toT2StensorProductExpr.hxx -text
 include/TFEL/Math/ST2toT2/ST2toT2T2toST2ProductExpr.hxx -text
-include/TFEL/Math/ST2toT2/ST2toT2View.hxx -text
 include/TFEL/Math/ST2toT2/StensorProductLeftDerivativeExpr.hxx -text
 include/TFEL/Math/ST2toT2/StensorProductRightDerivativeExpr.hxx -text
 include/TFEL/Math/ST2toT2/T2toST2ST2toT2ProductExpr.hxx -text
@@ -1994,7 +1991,6 @@ include/TFEL/Math/ST2toT2/TensorST2toT2ProductExpr.hxx -text
 include/TFEL/Math/ST2toT2/st2tot2.ixx -text
 include/TFEL/Math/ST2toT2/st2tot2ResultType.hxx -text
 include/TFEL/Math/ScalarNewtonRaphson.hxx -text
-include/TFEL/Math/Stensor/ConstStensorView.hxx -text
 include/TFEL/Math/Stensor/DecompositionInPositiveAndNegativeParts.hxx -text
 include/TFEL/Math/Stensor/DecompositionInPositiveAndNegativeParts.ixx -text
 include/TFEL/Math/Stensor/Internals/FSESSymmetricEigenSolver.hxx -text
@@ -2022,12 +2018,10 @@ include/TFEL/Math/Stensor/StensorFromTinyMatrixRowView2.hxx -text
 include/TFEL/Math/Stensor/StensorFromTinyVectorView.hxx -text
 include/TFEL/Math/Stensor/StensorProduct.hxx -text
 include/TFEL/Math/Stensor/StensorSizeToDime.hxx -text
-include/TFEL/Math/Stensor/StensorView.hxx -text
 include/TFEL/Math/Stensor/SymmetricStensorProduct.hxx -text
 include/TFEL/Math/Stensor/SymmetricStensorProduct.ixx -text
 include/TFEL/Math/Stensor/stensor.ixx -text
 include/TFEL/Math/Stensor/stensorResultType.hxx -text
-include/TFEL/Math/T2toST2/ConstT2toST2View.hxx -text
 include/TFEL/Math/T2toST2/ConvertKirchhoffStressJaumanRateModuliToKirchhoffStressDerivative.hxx -text
 include/TFEL/Math/T2toST2/LeftCauchyGreenTensorDerivativeExpr.hxx -text
 include/TFEL/Math/T2toST2/RightCauchyGreenTensorDerivativeExpr.hxx -text
@@ -2039,7 +2033,6 @@ include/TFEL/Math/T2toST2/T2toST2ConceptIO.hxx -text
 include/TFEL/Math/T2toST2/T2toST2ConceptOperations.hxx -text
 include/TFEL/Math/T2toST2/T2toST2T2toT2ProductExpr.hxx -text
 include/TFEL/Math/T2toST2/T2toST2TensorProductExpr.hxx -text
-include/TFEL/Math/T2toST2/T2toST2View.hxx -text
 include/TFEL/Math/T2toST2/t2tost2.ixx -text
 include/TFEL/Math/T2toST2/t2tost2ResultType.hxx -text
 include/TFEL/Math/T2toT2/ConvertFromPK1Derivative.hxx -text
@@ -2052,7 +2045,6 @@ include/TFEL/Math/T2toT2/T2toT2ConceptIO.hxx -text
 include/TFEL/Math/T2toT2/T2toT2ConceptOperations.hxx -text
 include/TFEL/Math/T2toT2/T2toT2T2toT2ProductExpr.hxx -text
 include/TFEL/Math/T2toT2/T2toT2TensorProductExpr.hxx -text
-include/TFEL/Math/T2toT2/T2toT2View.hxx -text
 include/TFEL/Math/T2toT2/TensorProductLeftDerivativeExpr.hxx -text
 include/TFEL/Math/T2toT2/TensorProductRightDerivativeExpr.hxx -text
 include/TFEL/Math/T2toT2/TensorT2toT2ProductExpr.hxx -text
@@ -2072,20 +2064,17 @@ include/TFEL/Math/Tensor/TensorFromTinyVectorView.hxx -text
 include/TFEL/Math/Tensor/TensorProduct.hxx -text
 include/TFEL/Math/Tensor/TensorSizeToDime.hxx -text
 include/TFEL/Math/Tensor/TensorTransposeExpr.hxx -text
-include/TFEL/Math/Tensor/TensorView.hxx -text
 include/TFEL/Math/Tensor/TensorViewFromStensor.hxx -text
 include/TFEL/Math/Tensor/tensor.ixx -text
 include/TFEL/Math/Tensor/tensorResultType.hxx -text
 include/TFEL/Math/TinyMatrixInvert.hxx -text
 include/TFEL/Math/TinyMatrixSolve.hxx -text
 include/TFEL/Math/TinyNewtonRaphson.hxx -text
-include/TFEL/Math/Vector/ConstTVectorView.hxx -text
 include/TFEL/Math/Vector/TVectorFromTinyMatrixColumnView.hxx -text
 include/TFEL/Math/Vector/TVectorFromTinyMatrixColumnView2.hxx -text
 include/TFEL/Math/Vector/TVectorFromTinyMatrixRowView.hxx -text
 include/TFEL/Math/Vector/TVectorFromTinyMatrixRowView2.hxx -text
 include/TFEL/Math/Vector/TVectorFromTinyVectorView.hxx -text
-include/TFEL/Math/Vector/TVectorView.hxx -text
 include/TFEL/Math/Vector/TinyVectorFromTinyVectorView.hxx -text
 include/TFEL/Math/Vector/TinyVectorFromTinyVectorViewIO.hxx -text
 include/TFEL/Math/Vector/TinyVectorOfStensorFromTinyVectorView.hxx -text
@@ -2130,6 +2119,7 @@ include/TFEL/Metaprogramming/HasRandomAccessIterator.hxx -text
 include/TFEL/Metaprogramming/Implements.hxx -text
 include/TFEL/Metaprogramming/InvalidType.hxx -text
 include/TFEL/Metaprogramming/IsConstCallable.hxx -text
+include/TFEL/Metaprogramming/MakeIntegerRange.hxx -text
 include/TFEL/Metaprogramming/ResultOf.hxx -text
 include/TFEL/Metaprogramming/TypeList.hxx -text
 include/TFEL/Metaprogramming/TypeList.ixx -text
@@ -6909,7 +6899,9 @@ tests/Math/ExpressionTemplates/test_expr2.cxx -text
 tests/Math/ExpressionTemplates/test_expr6.cxx -text
 tests/Math/ExpressionTemplates/test_expr7.cxx -text
 tests/Math/ExpressionTemplates/test_expr9.cxx -text
+tests/Math/FixedSizeArrayDerivativeTest.cxx -text
 tests/Math/IEEE754Test.cxx -text
+tests/Math/IndexingPoliciesTest.cxx -text
 tests/Math/Makefile.am -text
 tests/Math/RungeKutta/CMakeLists.txt -text
 tests/Math/RungeKutta/Makefile.am -text

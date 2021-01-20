@@ -45,7 +45,7 @@ private:
   void test1(){
     using namespace mfront;
     using tfel::material::ModellingHypothesis;
-    constexpr const auto h =
+    constexpr auto h =
       ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     BehaviourDescription bd;
     bd.addLocalVariable(h,VariableDescription("real","A",1u,0u));
@@ -94,7 +94,7 @@ private:
   void test2(){
     using namespace mfront;
     using tfel::material::ModellingHypothesis;
-    constexpr const auto h =
+    constexpr auto h =
       ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     BehaviourDescription bd;
     bd.addLocalVariable(h,VariableDescription("real","A",1u,0u));
@@ -145,7 +145,7 @@ private:
   void test3(){
     using namespace mfront;
     using tfel::material::ModellingHypothesis;
-    constexpr const auto h =
+    constexpr auto h =
       ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     BehaviourDescription bd;
     bd.addLocalVariable(h,VariableDescription("real","A",1u,0u));

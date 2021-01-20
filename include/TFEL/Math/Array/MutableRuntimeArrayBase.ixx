@@ -24,7 +24,7 @@ namespace tfel::math {
       : ArrayPolicy::IndexingPolicy(p) {}  // end of MutableRuntimeArrayBase
 
   template <typename Child, typename ArrayPolicy>
-  constexpr const typename ArrayPolicy::IndexingPolicy&
+  constexpr typename ArrayPolicy::IndexingPolicy&
   MutableRuntimeArrayBase<Child, ArrayPolicy>::getIndexingPolicy() const
       noexcept {
     return *this;

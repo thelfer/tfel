@@ -59,9 +59,9 @@ namespace tfel {
         static TFEL_MATH_INLINE2 tfel::math::st2tost2<2u, T> exe(
             const rotation_matrix<T>& r) {
           tfel::math::st2tost2<2u, T> s;
-          constexpr const auto cste = Cste<T>::sqrt2;
-          constexpr const T zero = T{0};
-          constexpr const T one = T{1};
+          constexpr auto cste = Cste<T>::sqrt2;
+          constexpr T zero = T{0};
+          constexpr T one = T{1};
           // tmp[0]  =
           // cste*r(0,0)*r(1,0)*s[3]+r(1,0)*r(1,0)*s[1]+r(0,0)*r(0,0)*s[0];
           s(0, 0) = r(0, 0) * r(0, 0);
@@ -100,7 +100,7 @@ namespace tfel {
          */
         static TFEL_MATH_INLINE2 tfel::math::st2tost2<3u, T> exe(
             const rotation_matrix<T>& r) {
-          constexpr const auto cste = Cste<T>::sqrt2;
+          constexpr auto cste = Cste<T>::sqrt2;
           tfel::math::st2tost2<3u, T> s;
           const T a = r(0, 0);
           const T b = r(0, 1);

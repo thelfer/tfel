@@ -25,7 +25,7 @@ namespace tfel::math {
               BinaryOperationResult<TensorType1, TensorType2, OpDotProduct>>(),
       BinaryOperationResult<TensorType1, TensorType2, OpDotProduct>>
   operator|(const TensorType1& a, const TensorType2& b) {
-    constexpr const auto N = getSpaceDimension<TensorType1>();
+    constexpr auto N = getSpaceDimension<TensorType1>();
     static_assert((N == 1u) || (N == 2u) || (N == 3u));
     static_assert(N == getSpaceDimension<TensorType2>());
     if constexpr (N == 1u) {

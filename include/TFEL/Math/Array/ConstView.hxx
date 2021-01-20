@@ -17,6 +17,8 @@
 #include <type_traits>
 #include "TFEL/TypeTraits/IsAssignableTo.hxx"
 #include "TFEL/Math/General/MathObjectTraits.hxx"
+#include "TFEL/Math/General/ConceptRebind.hxx"
+#include "TFEL/Math/ExpressionTemplates/Expr.hxx"
 #include "TFEL/Math/Array/ConstFixedSizeArrayBase.hxx"
 #include "TFEL/Math/Array/ConstRuntimeArrayBase.hxx"
 
@@ -31,10 +33,12 @@ namespace tfel::math {
                             typename MappedType::array_policy>>;
 
   /*!
-   * \brief a const view
+   * \brief a const view allowing to map a memory region into an object
    */
   template <typename MappedType>
-  struct ConstView : selectConstViewArrayBase<MappedType> {
+  struct ConstView : ConceptRebind<typename ComputeObjectTag<MappedType>::type,
+                                   ConstView<MappedType>>::type,
+                     selectConstViewArrayBase<MappedType> {
     //
     using IndexingPolicy = typename MappedType::indexing_policy;
     //
@@ -54,7 +58,9 @@ namespace tfel::math {
     constexpr ConstView(const ConstView&) noexcept = default;
     //! \brief move constructor
     constexpr ConstView(ConstView&&) noexcept = default;
-
+    //
+    using selectConstViewArrayBase<MappedType>::operator[];
+    using selectConstViewArrayBase<MappedType>::operator();
     //! \return a pointer to the underlying array serving as element storage.
     constexpr typename ConstView::const_pointer data() const noexcept {
       return this->data_values;
@@ -79,7 +85,7 @@ namespace tfel::math {
     using value_type = typename MappedType::value_type;
     using last_type = select_last<Args...>;
     return std::is_convertible_v<const last_type, const value_type* const>;
-  };
+  }
 
   template <typename MappedType, typename... Args>
   constexpr std::enable_if_t<
@@ -93,6 +99,26 @@ namespace tfel::math {
         buildIndexingPolicyAndExtractPointerToData<IndexingPolicy>(args...);
     return ConstView<MappedType>{std::get<0>(r), std::get<1>(r)};
   }  // end of map
+
+  /*!
+   * \brief partial specialisation of the `MathObjectTraits` for const views
+   * \tparam MappedType: mapped type
+   */
+  template <typename MappedType>
+  struct MathObjectTraits<ConstView<MappedType>>
+      : public MathObjectTraits<MappedType> {
+  };  // end of struct MathObjectTraits<Expr<MappedType, Operation>>
+
+  /*!
+   * \brief partial specialisation of the `ResultOfEvaluation` class for
+   * views.
+   * \tparam MappedType: mapped type
+   */
+  template <typename MappedType>
+  struct ResultOfEvaluation<ConstView<MappedType>> {
+    //! \brief result of the metafunction
+    using type = MappedType;
+  };  // end of struct ResultOfEvaluation
 
 }  // end of namespace tfel::math
 

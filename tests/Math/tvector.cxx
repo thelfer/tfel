@@ -24,7 +24,7 @@
 /* coverity [root_function]*/
 int main() {
   using namespace tfel::math;
-  constexpr const auto eps = 1.e-14;
+  constexpr auto eps = 1.e-14;
   using force = qt<Force>;
   using avector = tvector<5, acceleration>;
   using fvector = tvector<5, force>;

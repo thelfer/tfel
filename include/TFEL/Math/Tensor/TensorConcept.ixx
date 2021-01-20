@@ -116,7 +116,7 @@ namespace tfel::math {
       implementsTensorConcept<TensorType>(),
       typename tfel::typetraits::AbsType<numeric_type<TensorType>>::type>
   abs(const TensorType& s) {
-    constexpr const auto N = getSpaceDimension<TensorType>();
+    constexpr auto N = getSpaceDimension<TensorType>();
     static_assert((N == 1) || (N == 2) || (N == 3), "invalid space dimension");
     if constexpr (N == 1u) {
       return tfel::math::abs(s(0)) + tfel::math::abs(s(1)) +
@@ -139,15 +139,15 @@ namespace tfel::math {
       implementsTensorConcept<TensorType>(),
       stensor<getSpaceDimension<TensorType>(), numeric_type<TensorType>>>
   syme(const TensorType& t) {
-    constexpr const auto N = getSpaceDimension<TensorType>();
+    constexpr auto N = getSpaceDimension<TensorType>();
     static_assert((N == 1) || (N == 2) || (N == 3), "invalid space dimension");
     if constexpr (N == 1u) {
       return {t[0], t[1], t[2]};
     } else if constexpr (N == 2u) {
-      constexpr const auto icste = Cste<numeric_type<TensorType>>::isqrt2;
+      constexpr auto icste = Cste<numeric_type<TensorType>>::isqrt2;
       return {t[0], t[1], t[2], icste * (t[3] + t[4])};
     } else if constexpr (N == 3u) {
-      constexpr const auto icste = Cste<numeric_type<TensorType>>::isqrt2;
+      constexpr auto icste = Cste<numeric_type<TensorType>>::isqrt2;
       return {t[0],
               t[1],
               t[2],
@@ -165,16 +165,16 @@ namespace tfel::math {
       stensor<getSpaceDimension<TensorType>(), numeric_type<TensorType>>>
   computeRightCauchyGreenTensor(const TensorType& t) {
     using real = numeric_type<TensorType>;
-    constexpr const auto N = getSpaceDimension<TensorType>();
+    constexpr auto N = getSpaceDimension<TensorType>();
     static_assert((N == 1) || (N == 2) || (N == 3), "invalid space dimension");
     if constexpr (N == 1u) {
       return {t[0] * t[0], t[1] * t[1], t[2] * t[2]};
     } else if constexpr (N == 2u) {
-      constexpr const auto cste = Cste<real>::sqrt2;
+      constexpr auto cste = Cste<real>::sqrt2;
       return {t[0] * t[0] + t[4] * t[4], t[1] * t[1] + t[3] * t[3], t[2] * t[2],
               cste * (t[1] * t[4] + t[0] * t[3])};
     } else if constexpr (N == 3u) {
-      constexpr const auto cste = Cste<real>::sqrt2;
+      constexpr auto cste = Cste<real>::sqrt2;
       return {t[0] * t[0] + t[4] * t[4] + t[6] * t[6],
               t[1] * t[1] + t[3] * t[3] + t[8] * t[8],
               t[2] * t[2] + t[5] * t[5] + t[7] * t[7],
@@ -192,16 +192,16 @@ namespace tfel::math {
       stensor<getSpaceDimension<TensorType>(), numeric_type<TensorType>>>
   computeLeftCauchyGreenTensor(const TensorType& t) {
     using real = numeric_type<TensorType>;
-    constexpr const auto N = getSpaceDimension<TensorType>();
+    constexpr auto N = getSpaceDimension<TensorType>();
     static_assert((N == 1) || (N == 2) || (N == 3), "invalid space dimension");
     if constexpr (N == 1u) {
       return {t[0] * t[0], t[1] * t[1], t[2] * t[2]};
     } else if constexpr (N == 2u) {
-      constexpr const auto cste = Cste<real>::sqrt2;
+      constexpr auto cste = Cste<real>::sqrt2;
       return {t[0] * t[0] + t[3] * t[3], t[1] * t[1] + t[4] * t[4], t[2] * t[2],
               cste * (t[0] * t[4] + t[1] * t[3])};
     } else if constexpr (N == 3u) {
-      constexpr const auto cste = Cste<real>::sqrt2;
+      constexpr auto cste = Cste<real>::sqrt2;
       return {t[0] * t[0] + t[3] * t[3] + t[5] * t[5],
               t[1] * t[1] + t[4] * t[4] + t[7] * t[7],
               t[2] * t[2] + t[6] * t[6] + t[8] * t[8],
@@ -218,18 +218,18 @@ namespace tfel::math {
            numeric_type<TensorType>>::cond)),
       stensor<getSpaceDimension<TensorType>(), numeric_type<TensorType>>>
   computeGreenLagrangeTensor(const TensorType& t) {
-    constexpr const auto N = getSpaceDimension<TensorType>();
+    constexpr auto N = getSpaceDimension<TensorType>();
     static_assert((N == 1) || (N == 2) || (N == 3), "invalid space dimension");
     if constexpr (N == 1u) {
       return {(t[0] * t[0] - 1) / 2, (t[1] * t[1] - 1) / 2,
               (t[2] * t[2] - 1) / 2};
     } else if constexpr (N == 2u) {
-      constexpr const auto icste = Cste<numeric_type<TensorType>>::isqrt2;
+      constexpr auto icste = Cste<numeric_type<TensorType>>::isqrt2;
       return {(t[0] * t[0] + t[4] * t[4] - 1) / 2,
               (t[1] * t[1] + t[3] * t[3] - 1) / 2, (t[2] * t[2] - 1) / 2,
               icste * (t[0] * t[3] + t[1] * t[4])};
     } else if constexpr (N == 3u) {
-      constexpr const auto icste = Cste<numeric_type<TensorType>>::isqrt2;
+      constexpr auto icste = Cste<numeric_type<TensorType>>::isqrt2;
       return {(t[0] * t[0] + t[4] * t[4] + t[6] * t[6] - 1) / 2,
               (t[1] * t[1] + t[3] * t[3] + t[8] * t[8] - 1) / 2,
               (t[2] * t[2] + t[5] * t[5] + t[7] * t[7] - 1) / 2,
@@ -261,14 +261,14 @@ namespace tfel::math {
            numeric_type<StensorType>>::cond)),
       stensor<getSpaceDimension<StensorType>(), numeric_type<StensorType>>>
   push_forward(const StensorType& p, const TensorType& F) {
-    constexpr const auto N = getSpaceDimension<StensorType>();
+    constexpr auto N = getSpaceDimension<StensorType>();
     static_assert((N == 1) || (N == 2) || (N == 3), "invalid space dimension");
     static_assert(N == getSpaceDimension<TensorType>(),
                   "arguments must have the same space dimension");
     if constexpr (N == 1u) {
       return {p[0] * F[0] * F[0], p[1] * F[1] * F[1], p[2] * F[2] * F[2]};
     } else if constexpr (N == 2u) {
-      constexpr const auto cste = Cste<numeric_type<StensorType>>::sqrt2;
+      constexpr auto cste = Cste<numeric_type<StensorType>>::sqrt2;
       return {
           p[1] * F[3] * F[3] + cste * p[3] * F[0] * F[3] + p[0] * F[0] * F[0],
           p[0] * F[4] * F[4] + cste * p[3] * F[1] * F[4] + p[1] * F[1] * F[1],
@@ -276,7 +276,7 @@ namespace tfel::math {
           (p[3] * F[3] + cste * p[0] * F[0]) * F[4] +
               cste * p[1] * F[1] * F[3] + p[3] * F[0] * F[1]};
     } else if constexpr (N == 3u) {
-      constexpr const auto cste = Cste<numeric_type<StensorType>>::sqrt2;
+      constexpr auto cste = Cste<numeric_type<StensorType>>::sqrt2;
       return {p[2] * F[5] * F[5] +
                   (cste * p[5] * F[3] + cste * p[4] * F[0]) * F[5] +
                   p[1] * F[3] * F[3] + cste * p[3] * F[0] * F[3] +
@@ -313,7 +313,7 @@ namespace tfel::math {
       stensor<getSpaceDimension<StensorType>(), numeric_type<StensorType>>>
   convertCauchyStressToSecondPiolaKirchhoffStress(const StensorType& s,
                                                   const TensorType& F) {
-    constexpr const auto N = getSpaceDimension<StensorType>();
+    constexpr auto N = getSpaceDimension<StensorType>();
     static_assert((N == 1) || (N == 2) || (N == 3), "invalid space dimension");
     static_assert(N == getSpaceDimension<TensorType>(),
                   "arguments must have the same space dimension");
@@ -321,7 +321,7 @@ namespace tfel::math {
       return {s[0] * F[1] * F[2] / (F[0]), s[1] * F[0] * F[2] / (F[1]),
               s[2] * F[0] * F[1] / (F[2])};
     } else if constexpr (N == 2u) {
-      constexpr const auto cste = Cste<numeric_type<StensorType>>::sqrt2;
+      constexpr auto cste = Cste<numeric_type<StensorType>>::sqrt2;
       const auto iF = invert(F);
       const auto J = det(F);
       return {(s[1] * iF[3] * iF[3] + cste * s[3] * iF[0] * iF[3] +
@@ -335,7 +335,7 @@ namespace tfel::math {
                cste * s[1] * iF[1] * iF[3] + s[3] * iF[0] * iF[1]) *
                   J};
     } else {
-      constexpr const auto cste = Cste<numeric_type<StensorType>>::sqrt2;
+      constexpr auto cste = Cste<numeric_type<StensorType>>::sqrt2;
       const auto iF = invert(F);
       const auto J = det(F);
       return {(s[2] * iF[5] * iF[5] +
@@ -380,7 +380,7 @@ namespace tfel::math {
       stensor<getSpaceDimension<StensorType>(), numeric_type<StensorType>>>
   convertSecondPiolaKirchhoffStressToCauchyStress(const StensorType& p,
                                                   const TensorType& F) {
-    constexpr const auto N = getSpaceDimension<StensorType>();
+    constexpr auto N = getSpaceDimension<StensorType>();
     static_assert((N == 1) || (N == 2) || (N == 3), "invalid space dimension");
     static_assert(N == getSpaceDimension<TensorType>(),
                   "arguments must have the same space dimension");
@@ -389,7 +389,7 @@ namespace tfel::math {
       return {p[0] * F[0] * F[0] * iJ, p[1] * F[1] * F[1] * iJ,
               p[2] * F[2] * F[2] * iJ};
     } else if constexpr (N == 2u) {
-      constexpr const auto cste = Cste<numeric_type<StensorType>>::sqrt2;
+      constexpr auto cste = Cste<numeric_type<StensorType>>::sqrt2;
       const auto iJ = 1 / det(F);
       return {(p[1] * F[3] * F[3] + cste * p[3] * F[0] * F[3] +
                p[0] * F[0] * F[0]) *
@@ -402,7 +402,7 @@ namespace tfel::math {
                cste * p[1] * F[1] * F[3] + p[3] * F[0] * F[1]) *
                   iJ};
     } else {
-      constexpr const auto cste = Cste<numeric_type<StensorType>>::sqrt2;
+      constexpr auto cste = Cste<numeric_type<StensorType>>::sqrt2;
       const auto iJ = 1 / det(F);
       return {(p[2] * F[5] * F[5] +
                (cste * p[5] * F[3] + cste * p[4] * F[0]) * F[5] +
@@ -442,7 +442,7 @@ namespace tfel::math {
       implementsTensorConcept<TensorType>(),
       typename ComputeUnaryResult<numeric_type<TensorType>, Power<3>>::Result>
   det(const TensorType& t) {
-    constexpr const auto N = getSpaceDimension<TensorType>();
+    constexpr auto N = getSpaceDimension<TensorType>();
     static_assert((N == 1) || (N == 2) || (N == 3), "invalid space dimension");
     if constexpr (N == 1u) {
       return t(0) * t(1) * t(2);
@@ -471,7 +471,7 @@ namespace tfel::math {
                       numeric_type<TensorResultType>>()),
       void>
   computeDeterminantDerivative(TensorResultType& dJ, const TensorType& F) {
-    constexpr const auto N = getSpaceDimension<TensorType>();
+    constexpr auto N = getSpaceDimension<TensorType>();
     static_assert((N == 1) || (N == 2) || (N == 3), "invalid space dimension");
     static_assert(N == getSpaceDimension<TensorResultType>(),
                   "arguments must have the same space dimension");

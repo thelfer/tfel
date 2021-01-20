@@ -107,7 +107,7 @@ namespace mfront {
         const StressPotential& sp,
         const std::string& id,
         const bool b) const {
-      constexpr const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+      constexpr auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
       tfel::raise_if(this->ihrs.empty(),
                      "PlasticInelasticFlow::buildFlowImplicitEquations :"
                      "no isotropic hardening rule defined");

@@ -26,7 +26,7 @@ namespace tfel::math {
                               st2tost2<1u, decltype(a[0] * b[0])>>::type {
     using NumType = decltype(a[0] * b[0]);
     using real = base_type<NumType>;
-    constexpr const auto zero = real(0);
+    constexpr auto zero = real(0);
     return {2 * a[0] * b[0], zero, zero, zero,
             2 * a[1] * b[1], zero, zero, zero,
             2 * a[2] * b[2]};
@@ -42,7 +42,7 @@ namespace tfel::math {
                               st2tost2<2u, decltype(a[0] * b[0])>>::type {
     using NumType = decltype(a[0] * b[0]);
     using real = base_type<NumType>;
-    constexpr const auto zero = real(0);
+    constexpr auto zero = real(0);
     return {a[3] * b[3] + 2 * a[0] * b[0],
             zero,
             zero,
@@ -71,8 +71,8 @@ namespace tfel::math {
                               st2tost2<3u, decltype(a[0] * b[0])>>::type {
     using NumType = decltype(a[0] * b[0]);
     using real = base_type<NumType>;
-    constexpr const auto zero = real(0);
-    constexpr const auto cste = Cste<real>::sqrt2;
+    constexpr auto zero = real(0);
+    constexpr auto cste = Cste<real>::sqrt2;
     return {a[4] * b[4] + a[3] * b[3] + 2 * a[0] * b[0], zero, zero,
             (cste * a[4] * b[5] + 2 * a[0] * b[3] + 2 * a[3] * b[1]) / 2,
             (cste * a[3] * b[5] + 2 * a[0] * b[4] + 2 * a[4] * b[2]) / 2, zero,
@@ -117,7 +117,7 @@ namespace tfel::math {
                               st2tost2<1u, decltype(a[0] * a[0])>>::type {
     using NumType = decltype(a[0] * a[0]);
     using real = base_type<NumType>;
-    constexpr const auto zero = real(0);
+    constexpr auto zero = real(0);
     return {a[0] * a[0], zero,        zero,  //
             zero,        a[1] * a[1], zero,  //
             zero,        zero,        a[2] * a[2]};
@@ -130,7 +130,7 @@ namespace tfel::math {
                               st2tost2<2u, decltype(a[0] * a[0])>>::type {
     using NumType = decltype(a[0] * a[0]);
     using real = base_type<NumType>;
-    constexpr const auto zero = real(0);
+    constexpr auto zero = real(0);
     return {a[0] * a[0],
             a[3] * a[3] / 2,
             zero,
@@ -156,9 +156,9 @@ namespace tfel::math {
                               st2tost2<3u, decltype(a[0] * a[0])>>::type {
     using NumType = decltype(a[0] * a[0]);
     using real = base_type<NumType>;
-    constexpr const auto cste = Cste<real>::sqrt2;
-    constexpr const auto icste = Cste<real>::isqrt2;
-    constexpr const auto cste2 = 2 * Cste<real>::sqrt2;
+    constexpr auto cste = Cste<real>::sqrt2;
+    constexpr auto icste = Cste<real>::isqrt2;
+    constexpr auto cste2 = 2 * Cste<real>::sqrt2;
     return {a[0] * a[0],
             a[3] * a[3] / 2,
             a[4] * a[4] / 2,

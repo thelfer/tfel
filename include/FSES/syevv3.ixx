@@ -48,12 +48,12 @@ namespace fses {
   {
     using real = GetMatrixNumericType_t<MatrixType2>;
 
-    constexpr const auto zero  = real(0);
-    constexpr const auto one   = real(1);
-    constexpr const auto eight = real(8);
-    constexpr const auto c64   = real(64);
-    constexpr const auto c256  = real(256);
-    constexpr const auto ulp   = std::numeric_limits<real>::epsilon();
+    constexpr auto zero  = real(0);
+    constexpr auto one   = real(1);
+    constexpr auto eight = real(8);
+    constexpr auto c64   = real(64);
+    constexpr auto c256  = real(256);
+    constexpr auto ulp   = std::numeric_limits<real>::epsilon();
     
 #ifndef FSES_EVALS_ONLY
     real norm;          // Squared norm or inverse norm of current eigenvector

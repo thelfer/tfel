@@ -87,7 +87,7 @@ private:
 			      const tfel::math::tvector<3u,T>& vp,
 			      const tfel::math::tmatrix<3u,3u,T>& m)
   {
-    constexpr const auto icste = tfel::math::Cste<T>::isqrt2;
+    constexpr auto icste = tfel::math::Cste<T>::isqrt2;
     // first eigenvalue
     auto y0 = s[0]*m(0,0)+s[3]*icste*m(1,0)-vp(0)*m(0,0);
     auto y1 = s[1]*m(1,0)+s[3]*icste*m(0,0)-vp(0)*m(1,0);
@@ -104,7 +104,7 @@ private:
 			      const tfel::math::tvector<3u,T>& vp,
 			      const tfel::math::tmatrix<3u,3u,T>& m)
   {
-    constexpr const auto icste = tfel::math::Cste<T>::isqrt2;
+    constexpr auto icste = tfel::math::Cste<T>::isqrt2;
     // first eigenvalue
     auto y0 = s[0]*m(0,0)+s[3]*icste*m(1,0)+s[4]*icste*m(2,0)-vp(0)*m(0,0);
     auto y1 = s[1]*m(1,0)+s[3]*icste*m(0,0)+s[5]*icste*m(2,0)-vp(0)*m(1,0);

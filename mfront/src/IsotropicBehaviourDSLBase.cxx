@@ -182,7 +182,7 @@ namespace mfront{
   } // end of IsotropicBehaviourDSLBase::flowRuleVariableModifier
 
   void IsotropicBehaviourDSLBase::treatFlowRule() {
-    this->readCodeBlock(*this,BehaviourData::FlowRule,
+    this->treatCodeBlock(*this,BehaviourData::FlowRule,
 			&IsotropicBehaviourDSLBase::flowRuleVariableModifier,true,false);
   } // end of IsotropicBehaviourDSLBase::treatFlowRule
 

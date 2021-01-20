@@ -43,6 +43,15 @@ if(HAVE_FENV_H)
   add_definitions("-DHAVE_FENV")
 endif(HAVE_FENV_H)
 
+option(enable-include-what-you-use
+  "enable include-what-you-use diagnostics" OFF)
+if(enable-include-what-you-use)
+  find_program(TFEL_IWYU_PATH NAMES include-what-you-use iwyu)
+  if(NOT TFEL_IWYU_PATH)
+    message(FATAL_ERROR "could not find the program include-what-you-use")
+  endif()
+endif(enable-include-what-you-use)
+
 find_package(Threads)
 
 if(UNIX)

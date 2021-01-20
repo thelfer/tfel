@@ -23,9 +23,9 @@ namespace tfel {
         const tfel::math::tvector<3u, stress>& s) {
       using namespace tfel::math;
       using real = tfel::typetraits::base_type<stress>;
-      constexpr const auto zero = stress{0};
-      constexpr const auto isqrt2 = Cste<stress>::isqrt2;
-      constexpr const auto isqrt3 = Cste<stress>::isqrt3;
+      constexpr auto zero = stress{0};
+      constexpr auto isqrt2 = Cste<stress>::isqrt2;
+      constexpr auto isqrt3 = Cste<stress>::isqrt3;
       TFEL_CONSTEXPR const auto isqrt6 = isqrt2 * isqrt3;
       const auto n0 = tvector<3u, real>{{isqrt2, -isqrt2, zero}};
       const auto n1 = tvector<3u, real>{{-isqrt6, -isqrt6, 2 * isqrt6}};
@@ -54,9 +54,9 @@ namespace tfel {
                                                         const stress s1) {
       using namespace tfel::math;
       using real = tfel::typetraits::base_type<stress>;
-      constexpr const auto zero = stress{0};
-      constexpr const auto isqrt2 = Cste<stress>::isqrt2;
-      constexpr const auto isqrt3 = Cste<stress>::isqrt3;
+      constexpr auto zero = stress{0};
+      constexpr auto isqrt2 = Cste<stress>::isqrt2;
+      constexpr auto isqrt3 = Cste<stress>::isqrt3;
       TFEL_CONSTEXPR const auto isqrt6 = isqrt2 * isqrt3;
       const auto n0 = tvector<3u, real>{{isqrt2, -isqrt2, zero}};
       const auto n1 = tvector<3u, real>{{-isqrt6, -isqrt6, 2 * isqrt6}};

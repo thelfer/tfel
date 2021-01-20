@@ -99,7 +99,7 @@ namespace tfel::math {
                           OpMult>
     operator()(const size_type i) const {
       typedef typename StensorProductExprBase<A, B>::NumType T;
-      constexpr const auto icste = Cste<T>::isqrt2;
+      constexpr auto icste = Cste<T>::isqrt2;
       switch (i) {
         case 0:
           return (this->a(3) * this->b(3)) / 2 + this->a(0) * this->b(0);
@@ -136,7 +136,7 @@ namespace tfel::math {
                           OpMult>
     operator()(const size_type i) const {
       typedef typename StensorProductExprBase<A, B>::NumType T;
-      constexpr const auto icste = Cste<T>::isqrt2;
+      constexpr auto icste = Cste<T>::isqrt2;
       switch (i) {
         case 0:
           return (this->a(4) * this->b(4)) / 2 + (this->a(3) * this->b(3)) / 2 +

@@ -36,7 +36,7 @@ namespace tfel::math {
     using NumType = numeric_type<ST2toST2Type>;
     using IndexType = index_type<ST2toST2Type>;
     using AbsNumType = typename tfel::typetraits::AbsType<NumType>::type;
-    constexpr const auto ssize =
+    constexpr auto ssize =
         StensorDimeToSize<getSpaceDimension<ST2toST2Type>()>::value;
     AbsNumType a(0);
     for (IndexType i = 0; i < ssize; ++i) {
@@ -88,8 +88,8 @@ namespace tfel::math {
           Power<getSpaceDimension<ST2toST2Type>()>>::Result>
   det(const ST2toST2Type& s) {
     using real = numeric_type<ST2toST2Type>;
-    constexpr const auto N = getSpaceDimension<ST2toST2Type>();
-    constexpr const auto ts = StensorDimeToSize<N>::value;
+    constexpr auto N = getSpaceDimension<ST2toST2Type>();
+    constexpr auto ts = StensorDimeToSize<N>::value;
     tmatrix<ts, ts, real> m;
     TinyPermutation<ts> p;
     tfel::fsalgo::copy<ts * ts>::exe(s.begin(), m.begin());

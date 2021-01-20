@@ -61,7 +61,7 @@ namespace mfront {
         const AbstractBehaviourDSL& dsl,
         const std::string& id,
         const Role r) {
-      constexpr const auto uh =
+      constexpr auto uh =
           tfel::material::ModellingHypothesis::UNDEFINEDHYPOTHESIS;
       const auto an = StressCriterion::getVariableId("a", id, r);
       auto c = generateMaterialPropertyInitializationCode(dsl, bd, an, this->a);

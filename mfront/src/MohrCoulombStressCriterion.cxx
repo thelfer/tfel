@@ -45,7 +45,7 @@ namespace mfront {
                                                 const std::string& id,
                                                 const DataMap& d,
                                                 const Role r) {
-      constexpr const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+      constexpr auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
       StressCriterionBase::initialize(bd, dsl, id, d, r);
       bd.appendToIncludes(
           "#include\"TFEL/Material/MohrCoulombYieldCriterion.hxx\"");
@@ -86,7 +86,7 @@ namespace mfront {
         const AbstractBehaviourDSL& dsl,
         const std::string& id,
         const Role r) {
-      constexpr const auto uh =
+      constexpr auto uh =
           tfel::material::ModellingHypothesis::UNDEFINEDHYPOTHESIS;
       const auto cn = StressCriterion::getVariableId("c", id, r);
       auto ic =

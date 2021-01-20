@@ -52,7 +52,7 @@ namespace tfel::math {
 
     NumType operator()(const unsigned short i, const unsigned short j) const {
       using tfel::math::internals::TensorConceptMatrixAccessOperator;
-      constexpr const auto N = getSpaceDimension<TensorType>();
+      constexpr auto N = getSpaceDimension<TensorType>();
       return TensorConceptMatrixAccessOperator<N>::exe(this->t, i, j);
     }  // end of operator() const
 

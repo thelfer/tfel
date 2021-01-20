@@ -44,7 +44,7 @@ struct DifferenceRandomAccessIteratorTest final
   } // end of execute
  private:
   void test1(){
-    constexpr const double eps = std::numeric_limits<double>::epsilon();
+    constexpr double eps = std::numeric_limits<double>::epsilon();
     using array    = std::array<double,12>;
     using iterator = tfel::math::DifferenceRandomAccessIterator<array::const_iterator>;
     const array values = {{0,1,2,3,4,5,
@@ -57,7 +57,7 @@ struct DifferenceRandomAccessIteratorTest final
     }
   }
   void test2(){
-    constexpr const double eps = std::numeric_limits<double>::epsilon();
+    constexpr double eps = std::numeric_limits<double>::epsilon();
     using array    = std::array<double,12>;
     using iterator = tfel::math::DifferenceRandomAccessIterator<array::const_iterator>;
     const array v  = {{0,1,2,3,4,5,6,7,8,9,10,11}};

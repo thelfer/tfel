@@ -110,7 +110,7 @@ namespace mfront {
     MaterialPropertyInterfaceProxy<ExcelMaterialPropertyInterface> excelLawProxy(ExcelMaterialPropertyInterface::getName(),
 										 ExcelMaterialPropertyInternalInterface::getName());
 
-    constexpr const char * cppLawNames [6] = {"c++","C++",
+    constexpr char * cppLawNames [6] = {"c++","C++",
 					      "cxx","Cxx",
 					      "cpp","Cpp"};
     MaterialPropertyInterfaceProxy<CppMaterialPropertyInterface> cppLawProxy(cppLawNames,cppLawNames+6);
@@ -126,26 +126,26 @@ namespace mfront {
     MaterialPropertyInterfaceProxy<OctaveMaterialPropertyInterface> octaveLawProxy;
 
 #ifdef HAVE_PYTHON
-    constexpr const char * pythonNames[2] = {"python","Python"};
+    constexpr char * pythonNames[2] = {"python","Python"};
     MaterialPropertyInterfaceProxy<PythonMaterialPropertyInterface> pythonLawProxy(pythonNames,pythonNames+2);
 #endif /* HAVE_PYTHON */
 
 #ifdef HAVE_JAVA
-    constexpr const char * javaNames[2] = {"java","Java"};
+    constexpr char * javaNames[2] = {"java","Java"};
     MaterialPropertyInterfaceProxy<JavaMaterialPropertyInterface> javaLawProxy(javaNames,javaNames+2);
 #endif /* HAVE_JAVA */
 
 #ifdef HAVE_CASTEM
-    constexpr const char* castemINames[3] = {"castem", "Castem", "Cast3M"};
+    constexpr char* castemINames[3] = {"castem", "Castem", "Cast3M"};
     MaterialPropertyInterfaceProxy<CastemMaterialPropertyInterface>
         castemLawProxy(castemINames, castemINames + 3);
-    constexpr const char* castemBNames[3] = {"umat", "Castem", "Cast3M"};
+    constexpr char* castemBNames[3] = {"umat", "Castem", "Cast3M"};
     BehaviourInterfaceProxy<CastemInterface> umatProxy(castemBNames,
                                                        castemBNames + 3);
 #endif /* HAVE_CASTEM */
 
 #ifdef HAVE_CYRANO
-    constexpr const char * cyranoINames[3] = {"cyrano","Cyrano"};
+    constexpr char * cyranoINames[3] = {"cyrano","Cyrano"};
     MaterialPropertyInterfaceProxy<CyranoMaterialPropertyInterface>
         cyranoLawProxy(cyranoINames, cyranoINames + 2);
     BehaviourInterfaceProxy<CyranoInterface> cyranoProxy;

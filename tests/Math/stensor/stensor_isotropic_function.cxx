@@ -58,8 +58,8 @@ struct StensorIsotropicFunctionDerivativeTest final
 	    const FunctionDerivative df)
   {
     using size_type = typename tfel::math::stensor<N,double>::size_type;
-    constexpr const double eps  = 1.e-7;
-    constexpr const double prec = 5.e-8;
+    constexpr double eps  = 1.e-7;
+    constexpr double prec = 5.e-8;
     const auto fdf = v.computeIsotropicFunctionAndDerivative(f,df,1.e-12);
     const auto& d = fdf.second;
     decltype(fdf.second) nd;

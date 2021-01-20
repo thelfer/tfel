@@ -26,7 +26,7 @@ namespace mfront{
     computeOrthotropicUnAlteredElasticStiffnessTensor(tfel::math::st2tost2<1u,stress>& C,
 						      const real* const mps){
       using namespace tfel::material;
-      constexpr const StiffnessTensorAlterationCharacteristic stac =
+      constexpr StiffnessTensorAlterationCharacteristic stac =
 	StiffnessTensorAlterationCharacteristic::UNALTERED;
       // last three parameters are unused
       computeOrthotropicStiffnessTensor<H,stac,stress,real>(C,stress(mps[0]),stress(mps[1]),stress(mps[2]),
@@ -40,7 +40,7 @@ namespace mfront{
     computeOrthotropicUnAlteredElasticStiffnessTensor(tfel::math::st2tost2<2u,stress>& C,
 							   const real* const mps){
       using namespace tfel::material;
-      constexpr const StiffnessTensorAlterationCharacteristic stac =
+      constexpr StiffnessTensorAlterationCharacteristic stac =
 	StiffnessTensorAlterationCharacteristic::UNALTERED;
       // last two parameters are unused
       computeOrthotropicStiffnessTensor<H,stac,stress,real>(C,stress(mps[0]),stress(mps[1]),stress(mps[2]),
@@ -54,7 +54,7 @@ namespace mfront{
     computeOrthotropicUnAlteredElasticStiffnessTensor(tfel::math::st2tost2<3u,stress>& C,
 					       	   const real* const mps){
       using namespace tfel::material;
-      constexpr const StiffnessTensorAlterationCharacteristic stac =
+      constexpr StiffnessTensorAlterationCharacteristic stac =
 	StiffnessTensorAlterationCharacteristic::UNALTERED;
       computeOrthotropicStiffnessTensor<H,stac,stress,real>(C,stress(mps[0]),stress(mps[1]),stress(mps[2]),
 							    mps[3],mps[4],mps[5],
@@ -67,7 +67,7 @@ namespace mfront{
     computeOrthotropicAlteredElasticStiffnessTensor(tfel::math::st2tost2<1u,stress>& C,
 						    const real* const mps){
       using namespace tfel::material;
-      constexpr const StiffnessTensorAlterationCharacteristic stac =
+      constexpr StiffnessTensorAlterationCharacteristic stac =
 	StiffnessTensorAlterationCharacteristic::ALTERED;
       // last three parameters are unused
       computeOrthotropicStiffnessTensor<H,stac,stress,real>(C,stress(mps[0]),stress(mps[1]),stress(mps[2]),
@@ -81,7 +81,7 @@ namespace mfront{
     computeOrthotropicAlteredElasticStiffnessTensor(tfel::math::st2tost2<2u,stress>& C,
 							   const real* const mps){
       using namespace tfel::material;
-      constexpr const StiffnessTensorAlterationCharacteristic stac =
+      constexpr StiffnessTensorAlterationCharacteristic stac =
 	StiffnessTensorAlterationCharacteristic::ALTERED;
       // last two parameters are unused
       computeOrthotropicStiffnessTensor<H,stac,stress,real>(C,stress(mps[0]),stress(mps[1]),stress(mps[2]),
@@ -95,7 +95,7 @@ namespace mfront{
     computeOrthotropicAlteredElasticStiffnessTensor(tfel::math::st2tost2<3u,stress>& C,
 						    const real* const mps){
       using namespace tfel::material;
-      constexpr const StiffnessTensorAlterationCharacteristic stac =
+      constexpr StiffnessTensorAlterationCharacteristic stac =
 	StiffnessTensorAlterationCharacteristic::ALTERED;
       computeOrthotropicStiffnessTensor<H,stac,stress,real>(C,stress(mps[0]),stress(mps[1]),stress(mps[2]),
 							    mps[3],mps[4],mps[5],

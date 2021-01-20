@@ -557,7 +557,7 @@ namespace mfront {
     }
     ostringstream cname;
     cname << BehaviourData::FlowRule << flows.size() << '\n';
-    this->readCodeBlock(
+    this->treatCodeBlock(
         *this, cname.str(),
         &MultipleIsotropicMisesFlowsDSL::flowRuleVariableModifier, true, false);
     flow.flowRule =

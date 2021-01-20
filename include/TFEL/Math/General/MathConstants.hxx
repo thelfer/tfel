@@ -33,11 +33,11 @@ namespace tfel::math {
     static constexpr real sqrt3 = constexpr_fct::sqrt(real{3});
     static constexpr real isqrt3 = 1 / constexpr_fct::sqrt(real{3});
 #else
-    static constexpr const real sqrt2 = 1.41421356237309504880;
-    static constexpr const real isqrt2 = 0.70710678118654752440;
-    static constexpr const real sqrt3 =
+    static constexpr real sqrt2 = 1.41421356237309504880;
+    static constexpr real isqrt2 = 0.70710678118654752440;
+    static constexpr real sqrt3 =
         1.7320508075688772935274463415058723669428052538103806280;
-    static constexpr const real isqrt3 = 0.57735026919;
+    static constexpr real isqrt3 = 0.57735026919;
 #endif
   };
 

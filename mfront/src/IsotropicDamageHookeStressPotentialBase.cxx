@@ -46,7 +46,7 @@ namespace mfront {
     void IsotropicDamageHookeStressPotentialBase::initialize(
         BehaviourDescription& bd, AbstractBehaviourDSL& dsl, const DataMap& d) {
       using tfel::glossary::Glossary;
-      constexpr const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+      constexpr auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
       HookeStressPotentialBase::initialize(bd, dsl, d);
       // damage
       VariableDescription vd("real", "d", 1u, 0u);
@@ -56,7 +56,7 @@ namespace mfront {
       // damage thresold
       const auto dc_n = "damage_thresold";
       const auto dc_v = [&d, dc_n]() -> double {
-        constexpr const double dmin = 0.999999;
+        constexpr double dmin = 0.999999;
         if (d.count(dc_n) != 0) {
           const auto dc_d = d.at(dc_n);
           if (dc_d.is<int>()) {

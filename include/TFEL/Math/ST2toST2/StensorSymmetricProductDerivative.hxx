@@ -33,7 +33,7 @@ namespace tfel::math {
                          tfel::math::st2tost2<1u, T>>
         exe(const StensorType& s) {
       using real = base_type<T>;
-      constexpr const real zero = real(0);
+      constexpr real zero = real(0);
       return {2 * s[0], zero, zero, zero, 2 * s[1], zero, zero, zero, 2 * s[2]};
     }
   };  // end of struct StensorSymmetricProductDerivative<1u,T>
@@ -48,7 +48,7 @@ namespace tfel::math {
                          tfel::math::st2tost2<2u, T>>
         exe(const StensorType& s) {
       using real = base_type<T>;
-      constexpr const real zero = real(0);
+      constexpr real zero = real(0);
       return {2 * s[0], zero, zero, s[3],       zero,     2 * s[1],
               zero,     s[3], zero, zero,       2 * s[2], zero,
               s[3],     s[3], zero, s[1] + s[0]};
@@ -65,8 +65,8 @@ namespace tfel::math {
                          tfel::math::st2tost2<3u, T>>
         exe(const StensorType& s) {
       using real = base_type<T>;
-      constexpr const auto icste = Cste<T>::isqrt2;
-      constexpr const auto zero = real(0);
+      constexpr auto icste = Cste<T>::isqrt2;
+      constexpr auto zero = real(0);
       return {2 * s[0],   zero,        zero,         s[3],         s[4],
               zero,       zero,        2 * s[1],     zero,         s[3],
               zero,       s[5],        zero,         zero,         2 * s[2],

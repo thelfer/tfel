@@ -17,10 +17,12 @@
 #include <type_traits>
 #include "TFEL/Config/TFELConfig.hxx"
 #include "TFEL/TypeTraits/IsAssignableTo.hxx"
-#include "TFEL/Math/fsarray.hxx"
 #include "TFEL/Math/General/MathObjectTraits.hxx"
 #include "TFEL/Math/General/BasicOperations.hxx"
 #include "TFEL/Math/General/EmptyRunTimeProperties.hxx"
+#include "TFEL/Math/Array/GenericFixedSizeArray.hxx"
+#include "TFEL/Math/Array/View.hxx"
+#include "TFEL/Math/Array/ConstView.hxx"
 #include "TFEL/Math/Matrix/MatrixConcept.hxx"
 #include "TFEL/Math/Matrix/MatrixConceptOperations.hxx"
 #include "TFEL/Math/tvector.hxx"
@@ -133,20 +135,18 @@ namespace tfel::math {
      * operator*=
      */
     template <typename T2>
-    TFEL_MATH_INLINE
-        std::enable_if_t<isScalar<T2>() &&
-                             std::is_same<result_type<T, T2, OpMult>, T>::value,
-                         Child&>
-        operator*=(const T2);
+    TFEL_MATH_INLINE std::enable_if_t<
+        isScalar<T2>() && std::is_same<result_type<T, T2, OpMult>, T>::value,
+        Child&>
+    operator*=(const T2);
     /*!
      * operator/=
      */
     template <typename T2>
-    TFEL_MATH_INLINE
-        std::enable_if_t<isScalar<T2>() &&
-                             std::is_same<result_type<T, T2, OpMult>, T>::value,
-                         Child&>
-        operator/=(const T2);
+    TFEL_MATH_INLINE std::enable_if_t<
+        isScalar<T2>() && std::is_same<result_type<T, T2, OpMult>, T>::value,
+        Child&>
+    operator/=(const T2);
   };
 
   template <unsigned short N, unsigned short M, typename ValueType = double>
@@ -250,7 +250,8 @@ namespace tfel::math {
               unsigned short J,
               unsigned short R,
               unsigned short C>
-    tmatrix_const_submatrix_view<N, M, I, J, R, C, ValueType> submatrix_view() const;
+    tmatrix_const_submatrix_view<N, M, I, J, R, C, ValueType> submatrix_view()
+        const;
 
     TFEL_MATH_INLINE2
     ValueType max() const;
@@ -269,6 +270,23 @@ namespace tfel::math {
     template <typename InputIterator>
     TFEL_MATH_INLINE2 void copy(const InputIterator);
   };
+
+  /*!
+   * \brief a simple alias for backward compatibility
+   * \tparam N: number of rows
+   * \tparam M: number of columns
+   * \tparam T: value type
+   */
+  template <unsigned short N, unsigned short M, typename T>
+  using TMatrixView = View<tmatrix<N, M, T>>;
+  /*!
+   * \brief a simple alias for backward compatibility
+   * \tparam N: number of rows
+   * \tparam M: number of columns
+   * \tparam T: value type
+   */
+  template <unsigned short N, unsigned short M, typename T>
+  using ConstTMatrixView = ConstView<tmatrix<N, M, T>>;
 
   /*!
    * \return the row of the matrix with the given number;
@@ -305,17 +323,17 @@ namespace tfel::math {
   TFEL_MATH_INLINE typename ComputeUnaryResult<T, Power<3>>::Result det(
       const tmatrix<3, 3, T>&);
 
-  }  // end of namespace tfel::math
+}  // end of namespace tfel::math
 
-  namespace tfel::typetraits {
-    template <unsigned short N, unsigned short M, typename T2, typename T>
-    struct IsAssignableTo<tfel::math::tmatrix<N, M, T2>,
-                          tfel::math::tmatrix<N, M, T>> {
-      //! \brief result
-      static constexpr bool cond = isAssignableTo<T2, T>();
-    };
+namespace tfel::typetraits {
+  template <unsigned short N, unsigned short M, typename T2, typename T>
+  struct IsAssignableTo<tfel::math::tmatrix<N, M, T2>,
+                        tfel::math::tmatrix<N, M, T>> {
+    //! \brief result
+    static constexpr bool cond = isAssignableTo<T2, T>();
+  };
 
-  }  // end of namespace tfel::typetraits
+}  // end of namespace tfel::typetraits
 
 #include "TFEL/Math/Matrix/tmatrix_row_view.hxx"
 #include "TFEL/Math/Matrix/tmatrix_const_row_view.hxx"

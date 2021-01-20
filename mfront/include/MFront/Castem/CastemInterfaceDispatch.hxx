@@ -139,7 +139,7 @@ namespace castem{
       using BV    = Behaviour<MH::PLANESTRESS,CastemReal,false>;
       using GPSBV = Behaviour<MH::GENERALISEDPLANESTRAIN,CastemReal,false>;
       typedef CastemTraits<BV> Traits;
-      constexpr const bool usesGenericPlaneStressHandler = 
+      constexpr bool usesGenericPlaneStressHandler = 
 	(!tfel::material::MechanicalBehaviourTraits<BV>::is_defined)&&
 	(tfel::material::MechanicalBehaviourTraits<GPSBV>::is_defined);
       using Handler = typename

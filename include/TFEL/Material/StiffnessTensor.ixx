@@ -60,7 +60,7 @@ namespace tfel {
             const RealType n)
 
         {
-          constexpr const StressType zero = StressType(0);
+          constexpr StressType zero = StressType(0);
           const StressType C1 = E / (1 - n * n);
           const StressType C2 = n * C1;
           C(0, 0) = C1;
@@ -82,7 +82,7 @@ namespace tfel {
             tfel::math::st2tost2<2u, StressType>& C,
             const StressType E,
             const RealType n) {
-          constexpr const StressType zero = StressType(0);
+          constexpr StressType zero = StressType(0);
           const StressType l = E * n / ((1 - 2 * n) * (1 + n));
           const StressType G = E / (1 + n);
           const StressType C11 = l + G;
@@ -114,7 +114,7 @@ namespace tfel {
             const RealType n)
 
         {
-          constexpr const StressType zero = StressType(0);
+          constexpr StressType zero = StressType(0);
           const StressType C1 = E / (1 - n * n);
           const StressType C2 = n * C1;
           const StressType C3 = (1 - n) * C1;
@@ -139,7 +139,7 @@ namespace tfel {
             tfel::math::st2tost2<3u, StressType>& C,
             const StressType E,
             const RealType n) {
-          constexpr const StressType zero = StressType(0);
+          constexpr StressType zero = StressType(0);
           const StressType l = E * n / ((1 - 2 * n) * (1 + n));
           const StressType G = E / (1 + n);
           const StressType C11 = l + G;

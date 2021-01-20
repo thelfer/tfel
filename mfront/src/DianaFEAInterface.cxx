@@ -139,7 +139,7 @@ namespace mfront {
              "finite strain behaviours");
     checkFiniteStrainStrategyDefinitionConsistency(bd);
     // the only supported modelling hypothesis
-    constexpr const auto h = ModellingHypothesis::TRIDIMENSIONAL;
+    constexpr auto h = ModellingHypothesis::TRIDIMENSIONAL;
     const auto& d = bd.getBehaviourData(h);
     throw_if(d.getExternalStateVariables().size() != 1u,
              "external state variables are not supported "
@@ -410,7 +410,7 @@ namespace mfront {
 
   void DianaFEAInterface::writeBehaviourTraits(
       std::ostream& out, const BehaviourDescription& bd) const {
-    constexpr const auto h = ModellingHypothesis::TRIDIMENSIONAL;
+    constexpr auto h = ModellingHypothesis::TRIDIMENSIONAL;
     const auto mvs = bd.getMainVariablesSize();
     const auto mprops = this->buildMaterialPropertiesList(bd, h);
     out << "template<typename Type";

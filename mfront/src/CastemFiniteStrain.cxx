@@ -20,10 +20,6 @@
 #include"TFEL/Math/tmatrix.hxx"
 #include"TFEL/Math/stensor.hxx"
 #include"TFEL/Math/st2tost2.hxx"
-#include"TFEL/Math/Stensor/StensorView.hxx"
-#include"TFEL/Math/Stensor/ConstStensorView.hxx"
-#include"TFEL/Math/ST2toST2/ST2toST2View.hxx"
-#include"TFEL/Math/ST2toST2/ConstST2toST2View.hxx"
 #include"TFEL/Math/ST2toST2/UmatNormaliseTangentOperator.hxx"
 #include"TFEL/Math/General/MathConstants.hxx"
 #include"TFEL/Material/FiniteStrainBehaviourTangentOperator.hxx"
@@ -271,12 +267,12 @@ namespace castem
 							      const CastemInt NTENS)
   {
     if(NTENS==3){
-      constexpr const auto s = LogarithmicStrainHandler<1u>::EULERIAN;
+      constexpr auto s = LogarithmicStrainHandler<1u>::EULERIAN;
       using tensor = tfel::math::tensor<1u,CastemReal>;
       const auto F = tensor::buildFromFortranMatrix(Fv);
       h.emplace<LogarithmicStrainHandler<1u>>(s,F);
     } else if(NTENS==4){
-      constexpr const auto s = LogarithmicStrainHandler<2u>::EULERIAN;
+      constexpr auto s = LogarithmicStrainHandler<2u>::EULERIAN;
       using tensor = tfel::math::tensor<2u,CastemReal>;
       const auto F = tensor::buildFromFortranMatrix(Fv);
       h.emplace<LogarithmicStrainHandler<2u>>(s,F);
@@ -284,7 +280,7 @@ namespace castem
     tfel::raise_if(NTENS!=6,
 		   "CastemFiniteStrain::initializeLogarithmicStrainHandler: "
 		   "invalid NTENS value ("+std::to_string(NTENS)+")");
-    constexpr const auto s = LogarithmicStrainHandler<3u>::EULERIAN;
+    constexpr auto s = LogarithmicStrainHandler<3u>::EULERIAN;
     using tensor = tfel::math::tensor<3u,CastemReal>;
     const auto F = tensor::buildFromFortranMatrix(Fv);
     h.emplace<LogarithmicStrainHandler<3u>>(s,F);
@@ -313,8 +309,8 @@ namespace castem
   {
     using namespace tfel::math;
     using std::log;
-    constexpr const auto eps  = CastemReal(1.e-15);
-    constexpr const auto cste = Cste<CastemReal>::sqrt2;
+    constexpr auto eps  = CastemReal(1.e-15);
+    constexpr auto cste = Cste<CastemReal>::sqrt2;
     CastemCheckNDIValue(NDI);
     tvector<3u,CastemReal>    vp;
     tvector<3u,CastemReal>    log_vp;
@@ -362,8 +358,8 @@ namespace castem
   {
     using namespace tfel::math;
     using std::log;
-    constexpr const auto eps  = CastemReal(1.e-15);
-    constexpr const auto cste = Cste<CastemReal>::sqrt2;
+    constexpr auto eps  = CastemReal(1.e-15);
+    constexpr auto cste = Cste<CastemReal>::sqrt2;
     tvector<3u,CastemReal>    vp,log_vp;
     stensor<3u,CastemReal>    n0,n1,n2;
     tmatrix<3u,3u,CastemReal> m;
@@ -449,8 +445,8 @@ namespace castem
 									  const CastemReal Fzz)
    {
      using namespace tfel::math;
-     constexpr const auto cste  = Cste<CastemReal>::sqrt2;
-     constexpr const auto icste = Cste<CastemReal>::isqrt2;
+     constexpr auto cste  = Cste<CastemReal>::sqrt2;
+     constexpr auto icste = Cste<CastemReal>::isqrt2;
      // now, we compute the second Piolay Kirchhoff stress
      CastemReal sk2[6u];
      // first we compute the second Piola-Kirchhoff stress
@@ -488,7 +484,7 @@ namespace castem
    {
      using namespace tfel::math;
      using std::sqrt;
-     constexpr const auto icste = Cste<CastemReal>::isqrt2;
+     constexpr auto icste = Cste<CastemReal>::isqrt2;
      // first we compute the second Piola-Kirchhoff stress
      if(NTENS==3u){
        STRESS[0] = s[0] * P[0];

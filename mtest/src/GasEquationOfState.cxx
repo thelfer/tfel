@@ -70,8 +70,8 @@ namespace mtest {
             << "GasEquationOfState::computeNumberOfMoles: begin ("
             << "P=" << P << ", T=" << T << ", V=" << V << ")\n";
       }
-      constexpr const double R = 8.3144598;
-      constexpr const unsigned short imax = 100;
+      constexpr double R = 8.3144598;
+      constexpr unsigned short imax = 100;
       auto iter = [this, P, V, T](double& n, double& dn) {
         dn = -eval(this->s, P, V, n, T) / eval(*(this->ds_dn), P, V, n, T);
         n += dn;
@@ -103,8 +103,8 @@ namespace mtest {
      * \param[in] T: temperature
      */
     double computePressure(const double V, const double n, const double T) {
-      constexpr const double R = 8.3144598;
-      constexpr const unsigned short imax = 100;
+      constexpr double R = 8.3144598;
+      constexpr unsigned short imax = 100;
       if (mfront::getVerboseMode() >= mfront::VERBOSE_DEBUG) {
         mfront::getLogStream() << "GasEquationOfState::computePressure: begin ("
                                << "V=" << V << ", n=" << n << ", T=" << T

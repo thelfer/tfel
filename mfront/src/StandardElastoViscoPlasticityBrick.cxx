@@ -40,7 +40,7 @@ namespace mfront {
 
   static void declarePorosityUpperBoundSafetyFactorParameter(
       BehaviourDescription& bd, const double v) {
-    constexpr const auto uh =
+    constexpr auto uh =
         tfel::material::ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     const auto n =
         StandardElastoViscoPlasticityBrick::porosityUpperBoundSafetyFactor;
@@ -53,7 +53,7 @@ namespace mfront {
   static void
   declarePorosityUpperBoundSafetyFactorForFractureDetectionParameter(
       BehaviourDescription& bd, const double v) {
-    constexpr const auto uh =
+    constexpr auto uh =
         tfel::material::ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     const auto n = StandardElastoViscoPlasticityBrick::
         porosityUpperBoundSafetyFactorForFractureDetection;
@@ -519,7 +519,7 @@ namespace mfront {
   }  // end of StandardElastoViscoPlasticityBrick::buildInelasticFlowsMap()
 
   void StandardElastoViscoPlasticityBrick::completeVariableDeclaration() const {
-    constexpr const auto uh =
+    constexpr auto uh =
         tfel::material::ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     if (this->isCoupledWithPorosityEvolution()) {
       mfront::bbrick::addStateVariableIfNotDefined(
@@ -599,7 +599,7 @@ namespace mfront {
   }  // end of StandardElastoViscoPlasticityBrick::completeVariableDeclaration
 
   void StandardElastoViscoPlasticityBrick::endTreatment() const {
-    constexpr const auto uh =
+    constexpr auto uh =
         tfel::material::ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     //
     if (this->isCoupledWithPorosityEvolution()) {
@@ -1020,7 +1020,7 @@ namespace mfront {
   void StandardElastoViscoPlasticityBrick::
       addElasticContributionToTheImplicitEquationAssociatedWithPorosityEvolution(
           CodeBlock& ib) const {
-    constexpr const auto uh =
+    constexpr auto uh =
         tfel::material::ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     const auto& f =
         bd.getBehaviourData(uh).getStateVariableDescriptionByExternalName(

@@ -180,7 +180,7 @@ namespace tfel {
         typedef typename tfel::config::Types<3u, T, false>::stress stress;
         const stress G = 2 * mu;
         const stress tmp = lambda + G;
-        constexpr const auto zero = stress(0);
+        constexpr auto zero = stress(0);
         D(0, 0) = D(1, 1) = D(2, 2) = tmp;
         D(0, 1) = D(0, 2) = D(1, 2) = lambda;
         D(1, 0) = D(2, 0) = D(2, 1) = lambda;

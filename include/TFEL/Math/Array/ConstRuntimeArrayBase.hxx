@@ -45,7 +45,7 @@ namespace tfel::math {
     constexpr ConstRuntimeArrayBase& operator=(const ConstRuntimeArrayBase&) =
         default;
     //! \return the current indexing policy
-    constexpr const typename ArrayPolicy::IndexingPolicy& getIndexingPolicy()
+    constexpr typename ArrayPolicy::IndexingPolicy& getIndexingPolicy()
         const noexcept;
     /*!
      * \brief apply a multi-indices functor

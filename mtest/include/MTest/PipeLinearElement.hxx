@@ -38,12 +38,12 @@ namespace mtest{
 #ifndef _MSC_VER
     // absolute value of the Gauss points position in the reference
     // element
-    static constexpr const real abs_pg =
+    static constexpr real abs_pg =
       real(1)/tfel::math::constexpr_fct::sqrt(real(3));
     // value of the Gauss points position in the reference element
-    static constexpr const real pg_radii[2] = {-abs_pg,abs_pg};
+    static constexpr real pg_radii[2] = {-abs_pg,abs_pg};
     // Gauss point weight
-    static constexpr const real wg = real(1);
+    static constexpr real wg = real(1);
 #else /* _MSC_VER */
     // absolute value of the Gauss points position in the reference
     // element

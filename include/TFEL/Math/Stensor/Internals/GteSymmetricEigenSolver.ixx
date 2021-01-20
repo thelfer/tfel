@@ -242,8 +242,8 @@ namespace tfel{
       void GteSymmetricEigensolver3x3<real>::getCosSin(real u, real v, real& cs,
 						       real& sn)
       {
-	constexpr const real zero  = real(0);
-	constexpr const real one   = real(1);
+	constexpr real zero  = real(0);
+	constexpr real one   = real(1);
 	const real maxAbsComp = std::max(std::abs(u), std::abs(v));
 	if (maxAbsComp > zero){
 	  u /= maxAbsComp;  // in [-1,1]

@@ -217,7 +217,7 @@ namespace tfel::utilities::internals {
         std::is_trivial<T>::value,
         GenTypeTrivialDestroy<T>,
         GenTypeGenericDestroy<T>>::type;  //! size of the typelise
-    static constexpr const auto Ntypes = sizeof...(Types);
+    static constexpr auto Ntypes = sizeof...(Types);
     //! a simple alias.
     using DestructorPtr = void (*)(void *const);
     //! a simple alias.
@@ -231,7 +231,7 @@ namespace tfel::utilities::internals {
      * \return a pointer to a specific destructor
      */
     DestructorPtr get_destructor(const unsigned short i) {
-      constexpr const DestructorPtr m[Ntypes] = {
+      constexpr DestructorPtr m[Ntypes] = {
           &GenTypeDestroy<Types>::exe...};
       return (i >= Ntypes) ? nullptr : m[i];
     }
@@ -240,7 +240,7 @@ namespace tfel::utilities::internals {
      * \return a pointer to a copy constructor
      */
     CopyConstructorPtr get_copy_constructor(const unsigned short i) {
-      constexpr const CopyConstructorPtr m[Ntypes] = {
+      constexpr CopyConstructorPtr m[Ntypes] = {
           &GenTypeCopy<Types>::exe...};
       return (i >= Ntypes) ? nullptr : m[i];
     }
@@ -249,7 +249,7 @@ namespace tfel::utilities::internals {
      * \return a pointer to an assignement operator
      */
     AssignOperatorPtr get_assignement_operator(const unsigned short i) {
-      constexpr const AssignOperatorPtr m[Ntypes] = {
+      constexpr AssignOperatorPtr m[Ntypes] = {
           &GenTypeAssign<Types>::exe...};
       return (i >= Ntypes) ? nullptr : m[i];
     }

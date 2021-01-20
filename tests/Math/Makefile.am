@@ -8,7 +8,8 @@ AM_CPPFLAGS = -I$(top_srcdir)/include -I$(srcdir)/include
 if WITH_TESTS
 
 testdir = $(pkgdatadir)/tests/Math
-test_PROGRAMS = hill                                     \
+test_PROGRAMS = IndexingPoliciesTest             \
+        hill                                     \
 		promote                                  \
 		derivative_type                          \
 		power                                    \
@@ -69,12 +70,13 @@ test_PROGRAMS = hill                                     \
 		levenberg-marquardt4                     \
 		discretization1D                         \
 		TensorProductCheck                       \
-                CorotationnalCauchyStressToSecondPioloKirchhoffStressTest \
+        CorotationnalCauchyStressToSecondPioloKirchhoffStressTest \
 		StridedRandomAccessIteratorTest          \
 		DifferenceRandomAccessIteratorTest       \
 	        IEEE754Test                          \
         ScalarNewtonRaphsonTest                  \
-        BissectionAlgorithmTest
+        BissectionAlgorithmTest                  \
+        FixedSizeArrayDerivativeTest
 
 LDADD = -L$(top_builddir)/src/Math      \
 	-L$(top_builddir)/src/Utilities \
@@ -83,6 +85,7 @@ LDADD = -L$(top_builddir)/src/Math      \
 	-lTFELMath -lTFELUtilities      \
 	-lTFELException -lTFELTests
 
+IndexingPoliciesTest_SOURCES  = IndexingPoliciesTest.cxx
 power_SOURCES                 = power.cxx
 promote_SOURCES               = promote.cxx
 derivative_type_SOURCES       = derivative_type.cxx
@@ -128,6 +131,7 @@ DifferenceRandomAccessIteratorTest_SOURCES = DifferenceRandomAccessIteratorTest.
 IEEE754Test_SOURCES = IEEE754Test.cxx
 ScalarNewtonRaphsonTest_SOURCES = ScalarNewtonRaphsonTest.cxx
 BissectionAlgorithmTest_SOURCES = BissectionAlgorithmTest.cxx
+FixedSizeArrayDerivativeTest_SOURCES = FixedSizeArrayDerivativeTest.cxx
 
 discretization1D_SOURCES = discretization1D.cxx
 discretization1D_LDADD   = -L$(top_builddir)/src/Math      \

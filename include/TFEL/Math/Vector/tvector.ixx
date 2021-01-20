@@ -88,7 +88,7 @@ namespace tfel::math {
   template <typename T2>
   std::enable_if_t<IsTVectorScalarOperationValid<T, T2, OpDiv>::cond, Child&>
   tvector_base<Child, N, T>::operator/=(const T2 s) {
-    constexpr const auto one = base_type<T2>(1);
+    constexpr auto one = base_type<T2>(1);
     VectorUtilities<N>::scale(static_cast<Child&>(*this), one / s);
     return static_cast<Child&>(*this);
   }
@@ -195,7 +195,7 @@ namespace tfel::math {
   template <typename T>
   tvector<3u, T> cross_product(const tvector<2u, T>& v1,
                                const tvector<2u, T>& v2) {
-    constexpr const auto zero = T(0);
+    constexpr auto zero = T(0);
     return {zero, zero, v1[0] * v2[1] - v1[1] * v2[0]};
   }  // end of cross_product
 
@@ -209,8 +209,8 @@ namespace tfel::math {
   template <typename T>
   void find_perpendicular_vector(tvector<3u, T>& y, const tvector<3u, T>& x) {
     using real = base_type<T>;
-    constexpr const auto zero = T(0);
-    constexpr const auto one = T(1);
+    constexpr auto zero = T(0);
+    constexpr auto one = T(1);
     const auto nx = (x | x);
     if (nx < 100 * std::numeric_limits<decltype(nx)>::min()) {
       // x is null

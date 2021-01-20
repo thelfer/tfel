@@ -46,16 +46,16 @@ namespace fses {
   {
     using real = GetMatrixNumericType_t<MatrixType>;
 
-    constexpr const auto c_sqrt3   = real(1.73205080756887729352744634151);
-    constexpr const auto one       = real(1);
-    constexpr const auto two       = real(2);
-    constexpr const auto three     = real(3);
-    constexpr const auto one_third = real(1)/real(3);
-    constexpr const auto c1_4      = real(1)/real(4);
-    constexpr const auto c3_2      = three/real(2);
-    constexpr const auto c27       = real(27);
-    constexpr const auto c27_2     = real(27)/real(2);
-    constexpr const auto c27_4     = real(27)/real(4);
+    constexpr auto c_sqrt3   = real(1.73205080756887729352744634151);
+    constexpr auto one       = real(1);
+    constexpr auto two       = real(2);
+    constexpr auto three     = real(3);
+    constexpr auto one_third = real(1)/real(3);
+    constexpr auto c1_4      = real(1)/real(4);
+    constexpr auto c3_2      = three/real(2);
+    constexpr auto c27       = real(27);
+    constexpr auto c27_2     = real(27)/real(2);
+    constexpr auto c27_4     = real(27)/real(4);
     
     // Determine coefficients of characteristic poynomial. We write
     //       | a   d   f  |

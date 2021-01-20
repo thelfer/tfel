@@ -38,7 +38,7 @@ namespace tfel {
         const tfel::typetraits::base_type<stress> e) {
       using real = tfel::typetraits::base_type<stress>;
       using index_type = unsigned short;
-      constexpr const auto iter_max = index_type(5);
+      constexpr auto iter_max = index_type(5);
       const auto Tzz = D10 * eel(0) + D11 * eel(1) + D12 * eel(2);
       const auto a = Pzz / D11;
       const auto b = (Tzz + t * (D10 * deto(0) + D12 * deto(2))) / D11;

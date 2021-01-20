@@ -22,10 +22,12 @@
 #include "TFEL/TypeTraits/RealPartType.hxx"
 #include "TFEL/TypeTraits/IsSafelyReinterpretCastableTo.hxx"
 #include "TFEL/FSAlgorithm/copy.hxx"
-#include "TFEL/Math/fsarray.hxx"
 #include "TFEL/Math/General/Abs.hxx"
 #include "TFEL/Math/General/BasicOperations.hxx"
 #include "TFEL/Math/General/EmptyRunTimeProperties.hxx"
+#include "TFEL/Math/Array/GenericFixedSizeArray.hxx"
+#include "TFEL/Math/Array/View.hxx"
+#include "TFEL/Math/Array/ConstView.hxx"
 #include "TFEL/Math/Vector/VectorConcept.hxx"
 #include "TFEL/Math/Vector/VectorConceptOperations.hxx"
 #include "TFEL/Math/Vector/TinyVectorFromTinyVectorView.hxx"
@@ -164,6 +166,22 @@ namespace tfel::math {
          TinyVectorFromTinyVectorViewExpr<J - I, N, I, ValueType, true>>
     slice() const;
   };  // end of tvector
+
+
+  /*!
+   * \brief a simple alias for backward compatibility
+   * \tparam N: number of values
+   * \tparam T: value type
+   */
+  template <unsigned short N, typename T>
+  using TVectorView = View<tvector<N, T>>;
+  /*!
+   * \brief a simple alias for backward compatibility
+   * \tparam N: number of values
+   * \tparam T: value type
+   */
+  template <unsigned short N, typename T>
+  using ConstTVectorView = ConstView<tvector<N, T>>;
 
   /*!
    * \brief create a new tvector by applying a functor

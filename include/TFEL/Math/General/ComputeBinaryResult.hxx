@@ -1,27 +1,34 @@
-/*!pe 
+/*!pe
  * \file   include/TFEL/Math/General/ComputeBinaryResult.hxx
  * \brief  This file declares the ComputeBinaryResult metafunction
  * \author Thomas Helfer
  * \date   13 Oct 2006
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_TFEL_COMPUTEBINARYRESULT_HXX
-#define LIB_TFEL_COMPUTEBINARYRESULT_HXX 
+#define LIB_TFEL_COMPUTEBINARYRESULT_HXX
 
-#include<type_traits>
-#include"TFEL/Math/General/ResultType.hxx"
-#include"TFEL/Math/General/ComputeObjectTag.hxx"
+#include <type_traits>
+#include "TFEL/TypeTraits/IsInvalid.hxx"
+#include "TFEL/Math/Forward/Expr.hxx"
+#include "TFEL/Math/General/ResultType.hxx"
+#include "TFEL/Math/General/ComputeObjectTag.hxx"
 
 namespace tfel::math {
 
+  struct OpPlus;
+  struct OpMinus;
+  struct OpMult;
+  struct OpDiv;
+
   /*!
-   * \class ComputeBinaryResult_
+   * \class ComputeBinaryOperationHandler
    * \brief A helper class for ComputeBinaryResult.
    * This default version returns InvalidType both for
    * Result and Handle.
@@ -41,16 +48,148 @@ namespace tfel::math {
    * \see ComputeObjectTag.
    */
   template <typename TagA, typename TagB, typename A, typename B, typename Op>
-  struct ComputeBinaryResult_ {
-    /*!
-     * Result of the binary operation.
-     */
-    typedef tfel::meta::InvalidType Result;
-    /*!
-     * Type that will handle the operation.
-     */
-    typedef tfel::meta::InvalidType Handle;
-  };  // end of ComputeBinaryResult_
+  struct ComputeBinaryOperationHandler {
+    //! \brief result of the binary operation.
+    using Result = tfel::meta::InvalidType;
+    //! \brief type that will handle the operation.
+    using Handle = tfel::meta::InvalidType;
+  };  // end of ComputeBinaryOperationHandler
+
+  /*!
+   * Partial Specialisation of ComputeBinaryOperationHandler for scalars.
+   * In that case, Result.
+   * \tparam A, type of the first argument of the
+   * operation.
+   * \tparam B, type of the second argument of the
+   * operation.
+   * \tparam Op, operation.
+   */
+  template <typename A, typename B>
+  struct ComputeBinaryOperationHandler<ScalarTag, ScalarTag, A, B, OpPlus> {
+    //! \brief the result.
+    using Result = result_type<std::decay_t<A>, std::decay_t<B>, OpPlus>;
+    //! \brief the handle.
+    using Handle = Result;
+  };  // end of ComputeBinaryOperationHandler.
+
+  template <typename A, typename B>
+  struct ComputeBinaryOperationHandler<ScalarTag, ScalarTag, A, B, OpMinus> {
+    //! \brief the result.
+    using Result = result_type<std::decay_t<A>, std::decay_t<B>, OpMinus>;
+    //! \brief the handle.
+    using Handle = Result;
+  };  // end of ComputeBinaryOperationHandler.
+
+  template <typename A, typename B>
+  struct ComputeBinaryOperationHandler<ScalarTag, ScalarTag, A, B, OpMult> {
+    //! \brief the result.
+    using Result = result_type<std::decay_t<A>, std::decay_t<B>, OpMult>;
+    //! \brief the handle.
+    using Handle = Result;
+  };  // end of ComputeBinaryOperationHandler.
+
+  template <typename A, typename B>
+  struct ComputeBinaryOperationHandler<ScalarTag, ScalarTag, A, B, OpDiv> {
+    //! \brief the result.
+    using Result = result_type<std::decay_t<A>, std::decay_t<B>, OpDiv>;
+    //! \brief the handle.
+    using Handle = Result;
+  };  // end of ComputeBinaryOperationHandler.
+
+  /*!
+   * \brief Partial Specialisation of ComputeBinaryOperationHandler for
+   * scalar-vector operations
+   */
+  template <typename MathObjectTag, typename A, typename B>
+  struct ComputeBinaryOperationHandler<ScalarTag, MathObjectTag, A, B, OpMult> {
+    struct DummyHandle {};
+    using MathObjectTagTypeB = EvaluationResult<B>;
+
+   public:
+    using Result = result_type<std::decay_t<A>, MathObjectTagTypeB, OpMult>;
+    using Handle =
+        std::conditional_t<tfel::typetraits::isInvalid<Result>(),
+                           DummyHandle,
+                           Expr<Result, ScalarObjectOperation<A, B, OpMult>>>;
+  };
+
+  /*!
+   * Partial Specialisation of ComputeBinaryOperationHandler for vector-scalar
+   * operations
+   */
+  template <typename MathObjectTag, typename A, typename B>
+  class ComputeBinaryOperationHandler<MathObjectTag, ScalarTag, A, B, OpMult> {
+    struct DummyHandle {};
+    using MathObjectTagTypeA = EvaluationResult<A>;
+
+   public:
+    using Result = result_type<MathObjectTagTypeA, B, OpMult>;
+    using Handle =
+        std::conditional_t<tfel::typetraits::isInvalid<Result>(),
+                           DummyHandle,
+                           Expr<Result, ObjectScalarOperation<A, B, OpMult>>>;
+  };
+
+  /*!
+   * Partial Specialisation of ComputeBinaryOperationHandler for vector-scalar
+   * operations
+   */
+  template <typename MathObjectTag, typename A, typename B>
+  class ComputeBinaryOperationHandler<MathObjectTag, ScalarTag, A, B, OpDiv> {
+    struct DummyHandle {};
+    using MathObjectTagTypeA = EvaluationResult<A>;
+
+   public:
+    using Result = result_type<MathObjectTagTypeA, B, OpDiv>;
+    using Handle =
+        std::conditional_t<tfel::typetraits::isInvalid<Result>(),
+                           DummyHandle,
+                           Expr<Result, ObjectScalarOperation<A, B, OpDiv>>>;
+  };
+
+  /*
+   * Partial Specialisation of ComputeBinaryOperationHandler for vector's
+   * operation
+   */
+  template <typename MathObjectTag, typename A, typename B>
+  class ComputeBinaryOperationHandler<MathObjectTag,
+                                      MathObjectTag,
+                                      A,
+                                      B,
+                                      OpPlus> {
+    struct DummyHandle {};
+    using MathObjectTagTypeA = EvaluationResult<A>;
+    using MathObjectTagTypeB = EvaluationResult<B>;
+
+   public:
+    using Result = result_type<MathObjectTagTypeA, MathObjectTagTypeB, OpPlus>;
+    using Handle =
+        std::conditional_t<tfel::typetraits::isInvalid<Result>(),
+                           DummyHandle,
+                           Expr<Result, BinaryOperation<A, B, OpPlus>>>;
+  };
+
+  /*
+   * Partial Specialisation of ComputeBinaryOperationHandler for vector's
+   * operation
+   */
+  template <typename MathObjectTag, typename A, typename B>
+  class ComputeBinaryOperationHandler<MathObjectTag,
+                                      MathObjectTag,
+                                      A,
+                                      B,
+                                      OpMinus> {
+    struct DummyHandle {};
+    using MathObjectTagTypeA = EvaluationResult<A>;
+    using MathObjectTagTypeB = EvaluationResult<B>;
+
+   public:
+    using Result = result_type<MathObjectTagTypeA, MathObjectTagTypeB, OpMinus>;
+    using Handle =
+        std::conditional_t<tfel::typetraits::isInvalid<Result>(),
+                           DummyHandle,
+                           Expr<Result, BinaryOperation<A, B, OpMinus>>>;
+  };
 
   /*!
    * \class ComputeBinaryResult
@@ -67,7 +206,7 @@ namespace tfel::math {
    * This is not true for scalars where the result and the handle
    * are the same are the same.
    * The computation of the Result and Handle types is normally be
-   * delegated to ComputeBinaryResult_ metafunction which is called
+   * delegated to ComputeBinaryOperationHandler metafunction which is called
    * by ComputeBinaryResult class after having computed the tag
    * associated with each arguments of the binary operations thanks
    * to the ComputeObjectTag.
@@ -93,35 +232,13 @@ namespace tfel::math {
     typedef typename ComputeObjectTag<B_>::type TagB;
 
    public:
-    //! call to ComputeBinaryResult_ to get the Result type.
-    typedef typename ComputeBinaryResult_<TagA, TagB, A, B, Op>::Result Result;
-    //! call to ComputeBinaryResult_ to get the Handle type.
-    typedef typename ComputeBinaryResult_<TagA, TagB, A, B, Op>::Handle Handle;
+    //! call to ComputeBinaryOperationHandler to get the Result type.
+    typedef typename ComputeBinaryOperationHandler<TagA, TagB, A, B, Op>::Result
+        Result;
+    //! call to ComputeBinaryOperationHandler to get the Handle type.
+    typedef typename ComputeBinaryOperationHandler<TagA, TagB, A, B, Op>::Handle
+        Handle;
   };  // end of ComputeBinaryResult.
-
-  /*!
-   * Partial Specialisation of ComputeBinaryResult_ for scalars.
-   * In that case, Result.
-   * \tparam A, type of the first argument of the
-   * operation.
-   * \tparam B, type of the second argument of the
-   * operation.
-   * \tparam Op, operation.
-   */
-  template <typename A, typename B, typename Op>
-  class ComputeBinaryResult_<ScalarTag, ScalarTag, A, B, Op> {
-   private:
-    //! bare type
-    typedef std::decay_t<A> A_;
-    //! bare type
-    typedef std::decay_t<B> B_;
-
-   public:
-    //! the result.
-    typedef result_type<A_, B_, Op> Result;
-    //! the handle.
-    typedef result_type<A_, B_, Op> Handle;
-  };  // end of ComputeBinaryResult_.
 
   //! an alias for the result of an binary operation
   template <typename T1, typename T2, typename Op>
@@ -138,7 +255,6 @@ namespace tfel::math {
   using BinaryOperationHandler =
       typename ComputeBinaryResult<T1, T2, Op>::Handle;
 
-}  // namespace end of tfel::math
+}  // namespace tfel::math
 
 #endif /* LIB_TFEL_COMPUTEBINARYRESULT_HXX */
-

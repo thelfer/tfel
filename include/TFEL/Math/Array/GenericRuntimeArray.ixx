@@ -38,17 +38,16 @@ namespace tfel::math {
     this->fill(value);
   }  // end of GenericRuntimeArray
 
-  //   template <typename Child, typename ArrayPolicy>
-  //   template <typename OtherArray,
-  //             typename std::enable_if<((isAssignableTo<OtherArray, Child>())
-  //             &&
-  //                                      (!std::is_same_v<OtherArray, Child>)),
-  //                                     bool>::type>
-  //   GenericRuntimeArray<Child, ArrayPolicy>::GenericRuntimeArray(
-  //       const OtherArray& src)
-  //       : GenericRuntimeArray(src.getIndexingPolicy()) {
-  //     this->operator=(src);
-  //   }  // end of GenericRuntimeArray
+  template <typename Child, typename ArrayPolicy>
+  template <typename OtherArray,
+            typename std::enable_if<((isAssignableTo<OtherArray, Child>()) &&
+                                     (!std::is_same_v<OtherArray, Child>)),
+                                    bool>::type>
+  GenericRuntimeArray<Child, ArrayPolicy>::GenericRuntimeArray(
+      const OtherArray& src)
+      : GenericRuntimeArray(src.getIndexingPolicy()) {
+    this->operator=(src);
+  }  // end of GenericRuntimeArray
 
   //   template <typename Child, typename ArrayPolicy>
   //   template <
@@ -88,8 +87,8 @@ namespace tfel::math {
   GenericRuntimeArray<Child, ArrayPolicy>&
   GenericRuntimeArray<Child, ArrayPolicy>::operator=(
       const GenericRuntimeArray& src) {
-    checkIndexingPoliciesRuntimeCompatiblity(this->getIndexingPolicy(),
-                                             src.getIndexingPolicy());
+    //     checkIndexingPoliciesRuntimeCompatiblity(this->getIndexingPolicy(),
+    //                                              src.getIndexingPolicy());
     const auto f = makeMultiIndicesBinaryOperatorFunctor(
         [](auto& a, const auto& b) { a = b; }, *this, src);
     this->iterate(f);
@@ -100,8 +99,8 @@ namespace tfel::math {
   GenericRuntimeArray<Child, ArrayPolicy>&
   GenericRuntimeArray<Child, ArrayPolicy>::operator=(
       GenericRuntimeArray&& src) {
-    checkIndexingPoliciesRuntimeCompatiblity(this->getIndexingPolicy(),
-                                             src.getIndexingPolicy());
+    //     checkIndexingPoliciesRuntimeCompatiblity(this->getIndexingPolicy(),
+    //                                              src.getIndexingPolicy());
     if constexpr (ArrayPolicy::IndexingPolicy::areDataContiguous) {
       if (this->getContainerSize() == src.getContainerSize()) {
         this->data_values.operator=(std::move(src.data_values));
@@ -123,8 +122,8 @@ namespace tfel::math {
   std::enable_if_t<isAssignableTo<OtherArray, Child>(), Child&>
   GenericRuntimeArray<Child, ArrayPolicy>::operator=(const OtherArray& src) {
     auto& child = static_cast<Child&>(*this);
-    checkIndexingPoliciesRuntimeCompatiblity(child.getIndexingPolicy(),
-                                             src.getIndexingPolicy());
+    //     checkIndexingPoliciesRuntimeCompatiblity(child.getIndexingPolicy(),
+    //                                              src.getIndexingPolicy());
     child.assign(src);
     return child;
   }
@@ -134,8 +133,8 @@ namespace tfel::math {
   std::enable_if_t<isAssignableTo<OtherArray, Child>(), Child&>
   GenericRuntimeArray<Child, ArrayPolicy>::operator+=(const OtherArray& src) {
     auto& child = static_cast<Child&>(*this);
-    checkIndexingPoliciesRuntimeCompatiblity(child.getIndexingPolicy(),
-                                             src.getIndexingPolicy());
+    //     checkIndexingPoliciesRuntimeCompatiblity(child.getIndexingPolicy(),
+    //                                              src.getIndexingPolicy());
     child.addAndAssign(src);
     return child;
   }  // end of GenericRuntimeArray<Child, ArrayPolicy>
@@ -145,8 +144,8 @@ namespace tfel::math {
   std::enable_if_t<isAssignableTo<OtherArray, Child>(), Child&>
   GenericRuntimeArray<Child, ArrayPolicy>::operator-=(const OtherArray& src) {
     auto& child = static_cast<Child&>(*this);
-    checkIndexingPoliciesRuntimeCompatiblity(child.getIndexingPolicy(),
-                                             src.getIndexingPolicy());
+    //     checkIndexingPoliciesRuntimeCompatiblity(child.getIndexingPolicy(),
+    //                                              src.getIndexingPolicy());
     child.SubstractAndAssign(src);
     return child;
   }  // end of GenericRuntimeArray<Child, ArrayPolicy>
@@ -165,9 +164,16 @@ namespace tfel::math {
 
   template <typename Child, typename ArrayPolicy>
   typename GenericRuntimeArray<Child, ArrayPolicy>::size_type
-  GenericRuntimeArray<Child, ArrayPolicy>::getContainer() const noexcept {
+  GenericRuntimeArray<Child, ArrayPolicy>::getContainerSize() const noexcept {
     return this->data_values.size();
-  }  // end of data
+  }  // end of getContainerSize
+
+  template <typename Child, typename ArrayPolicy>
+  void GenericRuntimeArray<Child, ArrayPolicy>::resize(
+      const typename ArrayPolicy::IndexingPolicy& p) {
+    static_cast<typename ArrayPolicy::IndexingPolicy&>(*this) = p;
+    this->data_values.resize(this->getUnderlyingArrayMinimalSize());
+  }
 
 }  // end of namespace tfel::math
 

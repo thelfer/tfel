@@ -46,7 +46,7 @@ namespace tfel::math::internals {
              const rotation_matrix<T>&,
              const T) {
       using real = numeric_type<ST2toST2Type>;
-      constexpr const auto zero = real(0);
+      constexpr auto zero = real(0);
       d(0, 0) = df(vp[0]);
       d(0, 1) = d(0, 2) = zero;
       d(1, 1) = df(vp[1]);
@@ -76,7 +76,7 @@ namespace tfel::math::internals {
             const tmatrix<3u, 3u, base_type<T3>>&,
             const T3) {
       using real = numeric_type<ST2toST2Type>;
-      constexpr const auto zero = real(0);
+      constexpr auto zero = real(0);
       d(0, 0) = df[0];
       d(0, 1) = d(0, 2) = zero;
       d(1, 1) = df[1];
@@ -113,7 +113,7 @@ namespace tfel::math::internals {
       using base = base_type<real>;
       using tvector = tfel::math::tvector<3u, real>;
       using stensor = tfel::math::stensor<2u, real>;
-      constexpr const base cste = Cste<base>::sqrt2;
+      constexpr base cste = Cste<base>::sqrt2;
       stensor n0, n1, n2;
       stensor::computeEigenTensors(n0, n1, n2, m);
       const tvector v0 = m.template column_view<0u>();
@@ -186,7 +186,7 @@ namespace tfel::math::internals {
       using tvector = tfel::math::tvector<3u, real>;
       using stensor = tfel::math::stensor<3u, real>;
       using st2tost2 = tfel::math::st2tost2<3u, real>;
-      constexpr const base cste = Cste<base>::sqrt2;
+      constexpr base cste = Cste<base>::sqrt2;
       if ((std::abs(vp(0) - vp(1)) < eps) && (std::abs(vp(0) - vp(2)) < eps)) {
         const auto dfm = (df[0] + df[1] + df[2]) / 3;
         d = st2tost2::Id() * dfm;

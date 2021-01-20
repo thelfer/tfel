@@ -1010,7 +1010,7 @@ namespace tfel
             const DeformationGradientTensor<N, stress>&,
             const DeformationGradientTensor<N, stress>& F1,
             const StressStensor<N, stress>& s){
-            constexpr const auto ls =
+            constexpr auto ls =
                 LogarithmicStrainHandler<N, stress>::LAGRANGIAN;
     LogarithmicStrainHandler<N, stress> l(ls, F1);
     const auto T = l.convertFromCauchyStress(s);
@@ -1036,7 +1036,7 @@ namespace tfel
             const DeformationGradientTensor<N, stress>&,
             const DeformationGradientTensor<N, stress>& F1,
             const StressStensor<N, stress>& s){
-            constexpr const auto ls =
+            constexpr auto ls =
                 LogarithmicStrainHandler<N, stress>::LAGRANGIAN;
     LogarithmicStrainHandler<N, stress> l(ls, F1);
     const auto T = l.convertFromCauchyStress(s);
@@ -1062,7 +1062,7 @@ namespace tfel
             const DeformationGradientTensor<N, stress>&,
             const DeformationGradientTensor<N, stress>& F1,
             const StressStensor<N, stress>& s){
-            constexpr const auto ls =
+            constexpr auto ls =
                 LogarithmicStrainHandler<N, stress>::EULERIAN;
     LogarithmicStrainHandler<N, stress> l(ls, F1);
     const auto T = l.convertFromCauchyStress(s);
@@ -1088,7 +1088,7 @@ namespace tfel
             const DeformationGradientTensor<N, stress>&,
             const DeformationGradientTensor<N, stress>& F1,
             const StressStensor<N, stress>& s){
-            constexpr const auto ls =
+            constexpr auto ls =
                 LogarithmicStrainHandler<N, stress>::EULERIAN;
     LogarithmicStrainHandler<N, stress> l(ls, F1);
     const auto T = l.convertFromCauchyStress(s);

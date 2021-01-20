@@ -111,8 +111,8 @@ namespace tfel::math {
     template <typename T>
     static TFEL_MATH_INLINE T exe(const T& x) {
       static_assert(N < 0, "invalid exponent");
-      constexpr const auto opposite = static_cast<unsigned int>(-N);
-      constexpr const auto one = T{1};
+      constexpr auto opposite = static_cast<unsigned int>(-N);
+      constexpr auto one = T{1};
       return PowerPos<opposite>::exe(one / x);
     }
   };
@@ -122,8 +122,8 @@ namespace tfel::math {
     template <typename T>
     static TFEL_MATH_INLINE T exe(const T& x) {
       static_assert(N < 0, "invalid exponent");
-      constexpr const auto opposite = static_cast<unsigned int>(-N);
-      constexpr const auto one = T{1};
+      constexpr auto opposite = static_cast<unsigned int>(-N);
+      constexpr auto one = T{1};
       return std::sqrt(PowerPos<opposite>::exe(one / x));
     }
   };
@@ -174,8 +174,8 @@ namespace tfel::math {
   class TFEL_VISIBILITY_LOCAL PowerImplSelector {
     static_assert(D != 0);
 
-    static constexpr const auto N_ = std::ratio<N, D>::num;
-    static constexpr const auto D_ =
+    static constexpr auto N_ = std::ratio<N, D>::num;
+    static constexpr auto D_ =
         static_cast<unsigned int>(std::ratio<N, D>::den);
 
    public:

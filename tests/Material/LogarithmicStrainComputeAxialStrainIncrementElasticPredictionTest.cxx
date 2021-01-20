@@ -50,7 +50,7 @@ struct LogarithmicStrainComputeAxialStrainIncrementElasticPredictionTest final
     using namespace tfel::math;
     using namespace tfel::material;
     using real = double;
-    constexpr const auto eps = real(1.e-4);
+    constexpr auto eps = real(1.e-4);
     const auto l = computeLambda(150e9, 0.3);
     const auto m = computeMu(150e9, 0.3);
     auto eel = stensor<1u, real>{0.453e-3, -0.32e-3, 0.55e-3};
@@ -67,8 +67,8 @@ struct LogarithmicStrainComputeAxialStrainIncrementElasticPredictionTest final
    using namespace tfel::math;
    using namespace tfel::material;
    using real = double;
-   constexpr const auto eps = real(1.e-4);
-   constexpr const auto theta = real(0.64);
+   constexpr auto eps = real(1.e-4);
+   constexpr auto theta = real(0.64);
    const auto l = computeLambda(150e9, 0.3);
    const auto m = computeMu(150e9, 0.3);
    auto eel = stensor<1u, real>{0.453e-3, -0.32e-3, 0.55e-3};

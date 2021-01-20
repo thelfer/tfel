@@ -1080,14 +1080,8 @@ namespace mfront {
     out << "#include<iostream>\n"
         << "#include<cstdlib>\n"
         << "#include\"TFEL/Material/OutOfBoundsPolicy.hxx\"\n"
-        << "#include\"TFEL/Math/Tensor/TensorView.hxx\"\n"
-        << "#include\"TFEL/Math/Stensor/StensorView.hxx\"\n";
-    out << "#include\"TFEL/Math/Stensor/StensorView.hxx\"\n"
-        << "#include\"TFEL/Math/Tensor/TensorView.hxx\"\n"
         << "#include\"TFEL/Math/t2tot2.hxx\"\n"
-        << "#include\"TFEL/Math/T2toT2/T2toT2View.hxx\"\n"
-        << "#include\"TFEL/Math/t2tost2.hxx\"\n"
-        << "#include\"TFEL/Math/T2toST2/T2toST2View.hxx\"\n";
+        << "#include\"TFEL/Math/t2tost2.hxx\"\n";
     if (is_finite_strain_through_strain_measure) {
       out << "#include\"TFEL/Material/"
              "FiniteStrainBehaviourTangentOperator.hxx\"\n";
@@ -1165,7 +1159,7 @@ namespace mfront {
                "FiniteStrainBehaviourTangentOperatorBase;\n";
       }
       out << "using real = mfront::gb::real;\n"
-          << "constexpr const auto h = ModellingHypothesis::"
+          << "constexpr auto h = ModellingHypothesis::"
           << ModellingHypothesis::toUpperCaseString(h) << ";\n"
           << "using Behaviour = " << bd.getClassName() << "<h,real,false>;\n";
       if (bd.getAttribute(BehaviourData::profiling, false)) {
@@ -1905,7 +1899,7 @@ namespace mfront {
       if (bd.getAttribute(BehaviourDescription::requiresStiffnessTensor,
                           false)) {
         eoffset = "mgb_eoffset";
-        os << "constexpr const auto mgb_eoffset = " << emps_offset << ";\n";
+        os << "constexpr auto mgb_eoffset = " << emps_offset << ";\n";
       }
       if (bd.getSymmetryType() == mfront::ISOTROPIC) {
         if (eoffset.empty()) {

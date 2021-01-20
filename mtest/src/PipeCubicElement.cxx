@@ -24,11 +24,11 @@
 namespace mtest{
 
 #ifndef _MSC_VER
-  constexpr const real PipeCubicElement::one_third;
-  constexpr const real PipeCubicElement::cste;
-  constexpr const real PipeCubicElement::cste2;
-  constexpr const real PipeCubicElement::wg[4];
-  constexpr const real PipeCubicElement::pg_radii[4];
+  constexpr real PipeCubicElement::one_third;
+  constexpr real PipeCubicElement::cste;
+  constexpr real PipeCubicElement::cste2;
+  constexpr real PipeCubicElement::wg[4];
+  constexpr real PipeCubicElement::pg_radii[4];
 #else /* _MSC_VER */
   const real PipeCubicElement::one_third = real{1}/real{3};
   const real PipeCubicElement::cste      = real{ 9}/real{16};
@@ -186,7 +186,7 @@ namespace mtest{
 							const StiffnessMatrixType mt,
 							const size_t i){
     //! a simple alias
-    constexpr const real pi = 3.14159265358979323846;
+    constexpr real pi = 3.14159265358979323846;
     // number of elements
     const auto ne = size_t(m.number_of_elements);
     // number of nodes

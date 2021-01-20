@@ -49,9 +49,9 @@ namespace fses{
   int syevh3(MatrixType& Q,VectorType& w,const MatrixType2& A)
   {
     using real = GetMatrixNumericType_t<MatrixType2>;
-    constexpr const auto one  = real(1);
-    constexpr const auto c256 = real(256);
-    constexpr const auto ulp  = std::numeric_limits<real>::epsilon();
+    constexpr auto one  = real(1);
+    constexpr auto c256 = real(256);
+    constexpr auto ulp  = std::numeric_limits<real>::epsilon();
 
 #ifndef FSES_EVALS_ONLY
     real norm;          // Squared norm or inverse norm of current eigenvector

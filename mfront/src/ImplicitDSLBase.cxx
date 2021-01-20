@@ -36,7 +36,7 @@
 namespace mfront {
 
   ImplicitDSLBase::ImplicitDSLBase() {
-    constexpr const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+    constexpr auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     // dynamically allocated vectors are not yet allowed in implicit
     // parsers
     this->mb.areDynamicallyAllocatedVectorsAllowed(false);
@@ -146,7 +146,7 @@ namespace mfront {
 
   std::string ImplicitDSLBase::getCodeBlockTemplate(
       const std::string& c, const MFrontTemplateGenerationOptions& o) const {
-    constexpr const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+    constexpr auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     if (c == BehaviourData::ComputePredictionOperator) {
       return "@PredictionOperator{}\n";
     } else if (c == BehaviourData::ComputeThermodynamicForces) {
@@ -288,7 +288,7 @@ namespace mfront {
                               "@InitJacobian can not be used with "
                               "the current algorithm.");
     }
-    this->readCodeBlock(*this, BehaviourData::InitializeJacobian,
+    this->treatCodeBlock(*this, BehaviourData::InitializeJacobian,
                         &ImplicitDSLBase::standardModifier, true, true);
   }  // end of ImplicitDSLBase::treatInitJacobian
 
@@ -304,7 +304,7 @@ namespace mfront {
                               "@InitJacobianInvert can not be used with "
                               "the current algorithm.");
     }
-    this->readCodeBlock(*this, BehaviourData::InitializeJacobianInvert,
+    this->treatCodeBlock(*this, BehaviourData::InitializeJacobianInvert,
                         &ImplicitDSLBase::standardModifier, true, true);
   }  // end of ImplicitDSLBase::treatInitJacobianInvert
 
@@ -498,7 +498,7 @@ namespace mfront {
   }  // ImplicitDSLBase::treatEpsilon
 
   void ImplicitDSLBase::treatAdditionalConvergenceChecks() {
-    this->readCodeBlock(*this, BehaviourData::AdditionalConvergenceChecks,
+    this->treatCodeBlock(*this, BehaviourData::AdditionalConvergenceChecks,
                         &ImplicitDSLBase::standardModifier, true, true);
   }  // end of ImplicitDSLBase::treatAdditionalConvergenceChecks()
 
@@ -713,13 +713,13 @@ namespace mfront {
   }  // end of ImplicitDSLBase::predictorAnalyser
 
   void ImplicitDSLBase::treatIntegrator() {
-    this->readCodeBlock(*this, BehaviourData::Integrator,
+    this->treatCodeBlock(*this, BehaviourData::Integrator,
                         &ImplicitDSLBase::integratorVariableModifier,
                         &ImplicitDSLBase::integratorAnalyser, true);
   }  // end of ImplicitDSLBase::treatIntegrator
 
   void ImplicitDSLBase::treatPredictor() {
-    this->readCodeBlock(*this, BehaviourData::ComputePredictor,
+    this->treatCodeBlock(*this, BehaviourData::ComputePredictor,
                         &ImplicitDSLBase::standardModifier,
                         &ImplicitDSLBase::predictorAnalyser, true);
   }  // end of ImplicitDSLBase::treatPredictor
@@ -735,7 +735,7 @@ namespace mfront {
      * the user does not provide an alternative through the
      * @ComputeFinalStress
      */
-    this->readCodeBlock(
+    this->treatCodeBlock(
         *this, BehaviourData::ComputeThermodynamicForces,
         BehaviourData::ComputeFinalThermodynamicForcesCandidate,
         &ImplicitDSLBase::computeThermodynamicForcesVariableModifier1,
@@ -744,7 +744,7 @@ namespace mfront {
   }  // end of ImplicitDSLBase::treatComputeThermodynamicForces
 
   void ImplicitDSLBase::treatComputeFinalThermodynamicForces() {
-    this->readCodeBlock(
+    this->treatCodeBlock(
         *this, BehaviourData::ComputeFinalThermodynamicForces,
         &ImplicitDSLBase::computeThermodynamicForcesVariableModifier2, true,
         true);
@@ -928,7 +928,7 @@ namespace mfront {
             add_derivative_in_attribute(iJn, piJ->second);
           }
         };
-    this->readCodeBlock(o, n, m, a, true);
+    this->treatCodeBlock(o, n, m, a, true);
   }  // end of ImplicitDSLBase::readTangentOperatorCodeBlock
 
   void ImplicitDSLBase::treatMaximumIncrementValuePerIteration() {
@@ -2949,7 +2949,7 @@ namespace mfront {
        << "static_cast<void>(perturbatedSystemEvaluation); \n";
     n = SupportedTypes::TypeSize();
     for (const auto& v : d.getIntegrationVariables()) {
-      os << "constexpr const auto " << v.name << "_offset = " << n << ";\n";
+      os << "constexpr auto " << v.name << "_offset = " << n << ";\n";
       os << "static_cast<void>(" << v.name << "_offset);\n";
       if (SupportedTypes::getTypeFlag(v.type) == SupportedTypes::SCALAR) {
         if (v.arraySize == 1u) {
