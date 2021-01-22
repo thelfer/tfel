@@ -90,15 +90,17 @@ where
 K(\theta) = \begin{cases}
 	\cos \theta - \frac{1}{\sqrt{3}} \sin \phi \sin \theta & |\theta| < \theta_\mathrm{T}
 	\\ 
-	A - B \sin 3\theta &  |\theta| \geq \theta_\mathrm{T}
+	A + B \sin 3\theta  + C \sin^2 3 \theta &  |\theta| \geq \theta_\mathrm{T}
 \end{cases}
 \]{#eq:K_abbo}
 
 \[
 \begin{aligned}
-	A &= \frac{1}{3} \cos \theta_\mathrm{T} \left[ 3 + \tan \theta_\mathrm{T} \tan 3\theta_\mathrm{T} + \frac{1}{\sqrt{3}} \mathrm{sign \theta} \, (\tan 3\theta_\mathrm{T} - 3\tan \theta_\mathrm{T}) \sin \phi \right] \\
+	A &= - \frac{1}{\sqrt{3}} \sin \phi \mathrm{sign \theta} \sin \theta_\mathrm{T} - B \mathrm{sign \theta} \sin \theta_\mathrm{T} - C \sin^2 3\theta_\mathrm{T} + \cos \theta_\mathrm{T}\\
 	%
-	B &= \frac{1}{3} \frac{1}{\cos 3\theta_\mathrm{T}} \left[ \mathrm{sign \theta} \, \sin \theta_\mathrm{T} + \frac{1}{\sqrt{3}} \sin \phi \cos \theta_\mathrm{T} \right]
+	B &= \frac{\mathrm{sign \theta} \sin 6\theta_\mathrm{T} \left( \cos \theta_\mathrm{T} - \frac{1}{\sqrt{3} \sin \phi \mathrm{sign \theta} \sin \theta_\mathrm{T}} \right) - 6 \cos 6\theta_\mathrm{T} \left( \mathrm{sign \theta}  \sin \theta_\mathrm{T} + \frac{1}{\sqrt{3} \sin \phi \cos \theta_\mathrm{T}} \right) }{18 \cos^3 3 \theta_\mathrm{T}}\\
+  %
+  C &= \frac{-\cos 3 \theta_\mathrm{T} \left( \cos \theta_\mathrm{T} - \frac{1}{\sqrt{3} \sin \phi \mathrm{sign \theta} \sin \theta_\mathrm{T}} \right) - 3 \mathrm{sign \theta} \sin 3 \theta_\mathrm{T} \left( \mathrm{sign \theta}  \sin \theta_\mathrm{T} + \frac{1}{\sqrt{3} \sin \phi \cos \theta_\mathrm{T}} \right) }{18 \cos^3 3 \theta_\mathrm{T}}
 \end{aligned}
 \]{#eq:Sloan}
 
@@ -138,15 +140,17 @@ with the dilatancy angle :
 K_G(\theta) = \begin{cases}
 	\cos \theta - \frac{1}{\sqrt{3}} \sin \psi \sin \theta & |\theta| < \theta_\mathrm{T}
 	\\ 
-	A_G - B_G \sin 3\theta &  |\theta| \geq \theta_\mathrm{T}
+	A_G + B_G \sin 3\theta  + C_G \sin^2 3 \theta &  |\theta| \geq \theta_\mathrm{T}
 \end{cases}
 \]
 
 \[
 \begin{aligned}
-	A_G &= \frac{1}{3} \cos \theta_\mathrm{T} \left[ 3 + \tan \theta_\mathrm{T} \tan 3\theta_\mathrm{T} + \frac{1}{\sqrt{3}} \mathrm{sign \theta} \, (\tan 3\theta_\mathrm{T} - 3\tan \theta_\mathrm{T}) \sin \psi \right] \\
+	A_G &= - \frac{1}{\sqrt{3}} \sin \psi \mathrm{sign \theta} \sin \theta_\mathrm{T} - B \mathrm{sign \theta} \sin \theta_\mathrm{T} - C \sin^2 3\theta_\mathrm{T} + \cos \theta_\mathrm{T}\\
 	%
-	B_G &= \frac{1}{3} \frac{1}{\cos 3\theta_\mathrm{T}} \left[ \mathrm{sign \theta} \sin \theta_\mathrm{T} + \frac{1}{\sqrt{3}} \sin \psi \cos \theta_\mathrm{T} \right]
+	B_G &= \frac{\mathrm{sign \theta} \sin 6\theta_\mathrm{T} \left( \cos \theta_\mathrm{T} - \frac{1}{\sqrt{3} \sin \psi \mathrm{sign \theta} \sin \theta_\mathrm{T}} \right) - 6 \cos 6\theta_\mathrm{T} \left( \mathrm{sign \theta}  \sin \theta_\mathrm{T} + \frac{1}{\sqrt{3} \sin \psi \cos \theta_\mathrm{T}} \right) }{18 \cos^3 3 \theta_\mathrm{T}}\\
+  %
+  C_G &= \frac{-\cos 3 \theta_\mathrm{T} \left( \cos \theta_\mathrm{T} - \frac{1}{\sqrt{3} \sin \psi \mathrm{sign \theta} \sin \theta_\mathrm{T}} \right) - 3 \mathrm{sign \theta} \sin 3 \theta_\mathrm{T} \left( \mathrm{sign \theta}  \sin \theta_\mathrm{T} + \frac{1}{\sqrt{3} \sin \psi \cos \theta_\mathrm{T}} \right) }{18 \cos^3 3 \theta_\mathrm{T}}
 \end{aligned}
 \]
 
@@ -402,6 +406,8 @@ if true, plastic loading
 @LocalVariable real tan_lodeT;
 @LocalVariable real cos_3_lodeT;
 @LocalVariable real sin_3_lodeT;
+@LocalVariable real cos_6_lodeT;
+@LocalVariable real sin_6_lodeT;
 @LocalVariable real tan_3_lodeT;
 @LocalVariable real a_G;
 ~~~~
@@ -434,6 +440,8 @@ First, we define some variables :
   tan_lodeT = tan(lodeT);
   cos_3_lodeT = cos(3. * lodeT);
   sin_3_lodeT = sin(3. * lodeT);
+  cos_6_lodeT = cos(6. * lodeT);
+  sin_6_lodeT = sin(6. * lodeT);
   tan_3_lodeT = tan(3. * lodeT);
   a_G = (a * tan(phi)) / tan(psi)
 ~~~~
@@ -476,12 +484,18 @@ K is initiliazed as \(K^{el}\) value:
   } else {
     const auto sign =
         min(max(lode_el / max(abs(lode_el), local_zero_tolerance), -1.), 1.);
-    const auto A = 1. / 3. * cos_lodeT *
-                   (3. + tan_lodeT * tan_3_lodeT +
-                    isqrt3 * sign * (tan_3_lodeT - 3. * tan_lodeT) * sin_phi);
-    const auto B = 1 / (3. * cos_3_lodeT) *
-                   (sign * sin_lodeT + isqrt3 * sin_phi * cos_lodeT);
-    K = A - B * arg;
+    const auto term1 = cos_lodeT - isqrt3 * sin_phi * sin_lodeT;
+    const auto term2 = sign * sin_lodeT + isqrt3 * sin_phi * cos_lodeT;
+    const auto term3 = 18. * cos_3_lodeT * cos_3_lodeT * cos_3_lodeT;
+        
+    const auto B = ( sign * sin_6_lodeT * term1 - 
+      6. * cos_6_lodeT * term2 ) / term3; 
+    const auto C = (- cos_3_lodeT * term1 - 3. * sign * sin_3_lodeT * term2) / term3; 
+    
+    const auto A =          
+        -isqrt3 * sin_phi * sign * sin_lodeT - B * sign * sin_3_lodeT - 
+        C * sin_3_lodeT*sin_3_lodeT + cos_lodeT;
+    K = A + B * arg + C * arg*arg;
   }
 ~~~~
 
@@ -536,6 +550,8 @@ if (F) {
     const auto cos_lode = cos(lode);
     const auto sin_lode = sin(lode);
     const auto cos_3_lode = cos(3. * lode);
+    const auto sin_6_lode = sin(6. * lode);
+    const auto cos_6_lode = cos(6. * lode);
     const auto sin_3_lode = arg;
     const auto tan_3_lode = tan(3. * lode);
     auto K = 0.;
@@ -546,13 +562,19 @@ if (F) {
     } else {
       const auto sign =
           min(max(lode / max(abs(lode), local_zero_tolerance), -1.), 1.);
-      const auto A = 1. / 3. * cos_lodeT *
-                     (3. + tan_lodeT * tan_3_lodeT +
-                      isqrt3 * sign * (tan_3_lodeT - 3. * tan_lodeT) * sin_phi);
-      const auto B = 1. / (3. * cos_3_lodeT) *
-                     (sign * sin_lodeT + isqrt3 * sin_phi * cos_lodeT);
-      K = A - B * sin_3_lode;
-      dK_dlode = -3. * B * cos_3_lode;
+      const auto term1 = cos_lodeT - isqrt3 * sin_phi * sin_lodeT;
+      const auto term2 = sign * sin_lodeT + isqrt3 * sin_phi * cos_lodeT;
+      const auto term3 = 18. * cos_3_lodeT * cos_3_lodeT * cos_3_lodeT;
+          
+      const auto B = ( sign * sin_6_lodeT * term1 - 
+        6. * cos_6_lodeT * term2 ) / term3; 
+      const auto C = (- cos_3_lodeT * term1 - 3. * sign * sin_3_lodeT * term2) / term3; 
+      
+      const auto A =          
+          -isqrt3 * sin_phi * sign * sin_lodeT - B * sign * sin_3_lodeT - 
+          C * sin_3_lodeT*sin_3_lodeT + cos_lodeT;
+      K = A + B * sin_3_lode + C * sin_3_lode*sin_3_lode;
+          dK_dlode = 3. * B * cos_3_lode + 3. * C * sin_6_lode;
     }
 ~~~~
 
@@ -573,14 +595,20 @@ if (F) {
     {
       const auto sign =
           min(max(lode / max(abs(lode), local_zero_tolerance), -1.), 1.);
-      const auto A = 1. / 3. * cos_lodeT *
-                     (3. + tan_lodeT * tan_3_lodeT +
-                      isqrt3 * sign * (tan_3_lodeT - 3. * tan_lodeT) * sin_psi);
-      const auto B = 1. / (3. * cos_3_lodeT) *
-                     (sign * sin_lodeT + isqrt3 * sin_psi * cos_lodeT);
-      KG = A - B * sin_3_lode;
-      dKG_dlode = -3. * B * cos_3_lode;
-      dKG_ddlode = 9. * B * sin_3_lode;
+      const auto term1 = cos_lodeT - isqrt3 * sin_psi * sin_lodeT;
+      const auto term2 = sign * sin_lodeT + isqrt3 * sin_psi * cos_lodeT;
+      const auto term3 = 18. * cos_3_lodeT * cos_3_lodeT * cos_3_lodeT;
+          
+      const auto B = ( sign * sin_6_lodeT * term1 - 
+        6. * cos_6_lodeT * term2 ) / term3; 
+      const auto C = (- cos_3_lodeT * term1 - 3. * sign * sin_3_lodeT * term2) / term3; 
+      
+      const auto A =          
+          -isqrt3 * sin_psi * sign * sin_lodeT - B * sign * sin_3_lodeT - 
+          C * sin_3_lodeT*sin_3_lodeT + cos_lodeT;
+          KG = A + B * sin_3_lode + C * sin_3_lode * sin_3_lode;
+          dKG_dlode = 3. * B * cos_3_lode + 3. * C * sin_6_lode;
+          dKG_ddlode = -9. * B * sin_3_lode + 18. * C * cos_6_lode;
     }
 ~~~~
  
