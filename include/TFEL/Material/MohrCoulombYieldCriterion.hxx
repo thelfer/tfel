@@ -102,6 +102,10 @@ namespace tfel {
       //! \brief sine of 3*lodeT
       real sin_3_lodeT;
       //! \brief tangent of 3*lodeT
+      real cos_6_lodeT;
+      //! \brief sine of 3*lodeT
+      real sin_6_lodeT;
+      //! \brief tangent of 3*lodeT
       real tan_3_lodeT;
     };  // end of struct MohrCoulombParameters
 

@@ -37,6 +37,8 @@ namespace tfel {
           tan_lodeT(std::tan(lodeT_c)),
           cos_3_lodeT(std::cos(3 * lodeT_c)),
           sin_3_lodeT(std::sin(3 * lodeT_c)),
+          cos_6_lodeT(std::cos(6 * lodeT_c)),
+          sin_6_lodeT(std::sin(6 * lodeT_c)),
           tan_3_lodeT(std::tan(3 * lodeT_c)) {
     }  // end of MohrCoulombParameters<StressStensor>::MohrCoulombParameters
 
@@ -52,12 +54,14 @@ namespace tfel {
         const MohrCoulombParameters&) = default;
 
     template <typename StressStensor>
-    MohrCoulombParameters<StressStensor>& MohrCoulombParameters<StressStensor>::
-    operator=(MohrCoulombParameters&&) = default;
+    MohrCoulombParameters<StressStensor>&
+    MohrCoulombParameters<StressStensor>::operator=(MohrCoulombParameters&&) =
+        default;
 
     template <typename StressStensor>
-    MohrCoulombParameters<StressStensor>& MohrCoulombParameters<StressStensor>::
-    operator=(const MohrCoulombParameters&) = default;
+    MohrCoulombParameters<StressStensor>&
+    MohrCoulombParameters<StressStensor>::operator=(
+        const MohrCoulombParameters&) = default;
 
     template <typename StressStensor,
               typename MohrCoulombParameters<StressStensor>::AngleUnit u>
@@ -106,17 +110,25 @@ namespace tfel {
             std::max(lode / std::max(std::abs(lode), local_zero_tolerance),
                      -real(1)),
             real(1));
-        const auto A =
-            (p.cos_lodeT / 3) *
-            (3 + p.tan_lodeT * p.tan_3_lodeT +
-             isqrt3 * sign * (p.tan_3_lodeT - 3 * p.tan_lodeT) * p.sin_angle);
-        const auto B = 1 / (3 * p.cos_3_lodeT) *
-                       (sign * p.sin_lodeT + isqrt3 * p.sin_angle * p.cos_lodeT);
-        return A - B * sin_3_lode;
+        const auto term1 = p.cos_lodeT - isqrt3 * p.sin_angle * p.sin_lodeT;
+        const auto term2 =
+            sign * p.sin_lodeT + isqrt3 * sin_angle * p.cos_lodeT;
+        const auto term3 = 18. * p.cos_3_lodeT * p.cos_3_lodeT * p.cos_3_lodeT;
+
+        const auto B =
+            (sign * p.sin_6_lodeT * term1 - 6. * p.cos_6_lodeT * term2) / term3;
+        const auto C =
+            (-p.cos_3_lodeT * term1 - 3. * sign * p.sin_3_lodeT * term2) /
+            term3;
+
+        const auto A = -isqrt3 * sin_angle * sign * p.sin_lodeT -
+                       B * sign * p.sin_3_lodeT -
+                       C * p.sin_3_lodeT * p.sin_3_lodeT + p.cos_lodeT;
+        return A + B * sin_3_lode + C * sin_3_lode * sin_3_lode;
       }();
-      const auto rootF =
-          std::max(std::sqrt(J2 * K * K + p.a * p.a * p.sin_angle * p.sin_angle),
-                   local_zero_tolerance);
+      const auto rootF = std::max(
+          std::sqrt(J2 * K * K + p.a * p.a * p.sin_angle * p.sin_angle),
+          local_zero_tolerance);
       const auto Fy1 = I1 * p.sin_angle / 3 + rootF;
       return Fy1 - p.c * p.cos_angle;
     }  // end of computeMohrCoulombStressCriterion
@@ -161,21 +173,30 @@ namespace tfel {
             std::max(lode / std::max(std::abs(lode), local_zero_tolerance),
                      -real(1)),
             real(1));
-        const auto A =
-            (p.cos_lodeT / 3) *
-            (3 + p.tan_lodeT * p.tan_3_lodeT +
-             isqrt3 * sign * (p.tan_3_lodeT - 3 * p.tan_lodeT) * p.sin_angle);
-        const auto B = 1 / (3 * p.cos_3_lodeT) *
-                       (sign * p.sin_lodeT + isqrt3 * p.sin_angle * p.cos_lodeT);
-        return {A - B * sin_3_lode, -3 * B * cos_3_lode};
+        const auto term1 = p.cos_lodeT - isqrt3 * p.sin_angle * p.sin_lodeT;
+        const auto term2 =
+            sign * p.sin_lodeT + isqrt3 * sin_angle * p.cos_lodeT;
+        const auto term3 = 18. * p.cos_3_lodeT * p.cos_3_lodeT * p.cos_3_lodeT;
+
+        const auto B =
+            (sign * p.sin_6_lodeT * term1 - 6. * p.cos_6_lodeT * term2) / term3;
+        const auto C =
+            (-p.cos_3_lodeT * term1 - 3. * sign * p.sin_3_lodeT * term2) /
+            term3;
+
+        const auto A = -isqrt3 * sin_angle * sign * p.sin_lodeT -
+                       B * sign * p.sin_3_lodeT -
+                       C * p.sin_3_lodeT * p.sin_3_lodeT + p.cos_lodeT;
+        return {A + B * sin_3_lode + C * sin_3_lode * sin_3_lode,
+                3. * B * cos_3_lode + 3. * C * sin_6_lode};
       }();
       // flow direction
       const auto dev_s_squared =
           tfel::math::computeDeviatorDeterminantDerivative(sig);
       const auto dG_dI1 = p.sin_angle / 3;
-      const auto root =
-          std::max(std::sqrt(J2 * K * K + p.a * p.a * p.sin_angle * p.sin_angle),
-                   local_zero_tolerance);
+      const auto root = std::max(
+          std::sqrt(J2 * K * K + p.a * p.a * p.sin_angle * p.sin_angle),
+          local_zero_tolerance);
       const auto dG_dJ2 = K / (2 * root) * (K - tan_3_lode * dK_dlode);
       const auto dG_dJ3 = J2 * K * tan_3_lode / (3 * J3 * root) * dK_dlode;
       const auto n =
@@ -230,29 +251,39 @@ namespace tfel {
             std::max(lode / std::max(std::abs(lode), local_zero_tolerance),
                      -real(1)),
             real(1));
-        const auto A =
-            (p.cos_lodeT / 3) *
-            (3 + p.tan_lodeT * p.tan_3_lodeT +
-             isqrt3 * sign * (p.tan_3_lodeT - 3 * p.tan_lodeT) * p.sin_angle);
-        const auto B = 1 / (3 * p.cos_3_lodeT) *
-                       (sign * p.sin_lodeT + isqrt3 * p.sin_angle * p.cos_lodeT);
-        return {A - B * sin_3_lode, -3 * B * cos_3_lode, 9. * B * sin_3_lode};
+        const auto term1 = p.cos_lodeT - isqrt3 * p.sin_angle * p.sin_lodeT;
+        const auto term2 =
+            sign * p.sin_lodeT + isqrt3 * sin_angle * p.cos_lodeT;
+        const auto term3 = 18. * p.cos_3_lodeT * p.cos_3_lodeT * p.cos_3_lodeT;
+
+        const auto B =
+            (sign * p.sin_6_lodeT * term1 - 6. * p.cos_6_lodeT * term2) / term3;
+        const auto C =
+            (-p.cos_3_lodeT * term1 - 3. * sign * p.sin_3_lodeT * term2) /
+            term3;
+
+        const auto A = -isqrt3 * sin_angle * sign * p.sin_lodeT -
+                       B * sign * p.sin_3_lodeT -
+                       C * p.sin_3_lodeT * p.sin_3_lodeT + p.cos_lodeT;
+        return {A + B * sin_3_lode + C * sin_3_lode * sin_3_lode,
+                3. * B * cos_3_lode + 3. * C * sin_6_lode};
       }();
       // flow direction
       const auto dJ3 = tfel::math::computeDeviatorDeterminantDerivative(sig);
       const auto d2J3 =
           tfel::math::computeDeviatorDeterminantSecondDerivative(sig);
       const auto dG_dI1 = p.sin_angle / 3;
-      const auto root =
-          std::max(std::sqrt(J2 * K * K + p.a * p.a * p.sin_angle * p.sin_angle),
-                   local_zero_tolerance);
+      const auto root = std::max(
+          std::sqrt(J2 * K * K + p.a * p.a * p.sin_angle * p.sin_angle),
+          local_zero_tolerance);
       const auto dG_dJ2 = K / (2 * root) * (K - tan_3_lode * dK_dlode);
       const auto dG_dJ3 = J2 * K * tan_3_lode / (3 * J3 * root) * dK_dlode;
       const auto Pdev = id4 - (id ^ id) / 3;
       const auto dG_dlode = K * J2 / (root)*dK_dlode;
       const auto d2G_d2lode =
-          J2 / root * (dK_dlode * dK_dlode * (1. - J2 * K * K / (root * root)) +
-                       K * d2K_d2lode);
+          J2 / root *
+          (dK_dlode * dK_dlode * (1. - J2 * K * K / (root * root)) +
+           K * d2K_d2lode);
       const auto d2G_dlodedJ2 =
           K / root * dK_dlode * (1. - J2 * K * K / (2 * root * root));
       const auto dG_d2J2 =
@@ -283,7 +314,8 @@ namespace tfel {
                              const MohrCoulombParameters<StressStensor>& p) {
       os << "c (cohesion): " << p.c << '\n';
       os << "angle (friction angle or dilatancy angle): " << p.angle << '\n';
-      os << "lodeT (transition angle as defined by Abbo and Sloan): " << p.lodeT<< '\n';
+      os << "lodeT (transition angle as defined by Abbo and Sloan): " << p.lodeT
+         << '\n';
       os << "a (tension cuff-off parameter): " << p.a << '\n';
       return os;
     }  // end of operator <<
