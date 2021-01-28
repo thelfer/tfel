@@ -19,32 +19,146 @@
 namespace tfel::math {
 
   template <typename T>
+  vector<T>::vector(const typename vector<T>::size_type s)
+      : std::vector<T>(s) {}
+
+  template <typename T>
+  vector<T>::vector(const std::initializer_list<T>& v) : std::vector<T>(v) {}
+
+  template <typename T>
+  vector<T>::vector(const typename vector<T>::size_type s, const T& v)
+      : std::vector<T>(s, v) {}
+
+  template <typename T>
+  template <typename InputIterator>
+  vector<T>::vector(const InputIterator b, const InputIterator e)
+      : std::vector<T>(b, e) {}
+
+  template <typename T>
+  vector<T>& vector<T>::operator=(const vector<T>& src) {
+#ifndef NO_RUNTIME_CHECK_BOUNDS
+    RunTimeCheck<RunTimeProperties>::exe(this->size(), src.size());
+#endif /* LIB_TFEL_VECTORIXX */
+    std::vector<T>::operator=(src);
+    return *this;
+  }
+
+  template <typename T>
+  vector<T>& vector<T>::operator+=(const vector<T>& src) {
+    size_type i;
+#ifndef NO_RUNTIME_CHECK_BOUNDS
+    RunTimeCheck<RunTimeProperties>::exe(this->size(), src.size());
+#endif /* LIB_TFEL_VECTORIXX */
+    for (i = 0; i < this->size(); ++i) {
+      std::vector<T>::operator[](i) += src(i);
+    }
+    return *this;
+  }
+
+  template <typename T>
+  vector<T>& vector<T>::operator-=(const vector<T>& src) {
+    size_type i;
+#ifndef NO_RUNTIME_CHECK_BOUNDS
+    RunTimeCheck<RunTimeProperties>::exe(this->size(), src.size());
+#endif /* LIB_TFEL_VECTORIXX */
+    for (i = 0; i < this->size(); ++i) {
+      std::vector<T>::operator[](i) -= src(i);
+    }
+    return *this;
+  }
+
+  template <typename T>
+  const typename vector<T>::RunTimeProperties vector<T>::getRunTimeProperties()
+      const {
+    return std::vector<T>::size();
+  }
+
+  template <typename T>
+  T& vector<T>::operator()(const typename vector<T>::size_type i) noexcept {
+#ifndef NO_RUNTIME_CHECK_BOUNDS
+    assert(i < this->size());
+#endif /* LIB_TFEL_VECTORIXX */
+    return std::vector<T>::operator[](i);
+  }
+
+  template <typename T>
+  const T& vector<T>::operator()(const typename vector<T>::size_type i) const
+      noexcept {
+    return std::vector<T>::operator[](i);
+  }
+
+  template <typename T>
+  template <typename T2, typename Operation>
+  std::enable_if_t<isAssignableTo<T2, T>(), vector<T>&> vector<T>::operator=(
+      const Expr<vector<T2>, Operation>& expr) {
+#ifndef NO_RUNTIME_CHECK_BOUNDS
+//      RunTimeCheck<RunTimeProperties>::exe(this->getRunTimeProperties(),expr.getRunTimeProperties());
+#endif /* LIB_TFEL_VECTORIXX */
+    size_type s = this->size();
+    for (size_type i = 0; i != s; ++i) {
+      std::vector<T>::operator[](i) = expr(i);
+    }
+    return *this;
+  }
+
+  template <typename T>
+  template <typename T2, typename Operation>
+  std::enable_if_t<isAssignableTo<T2, T>(), vector<T>&> vector<T>::operator+=(
+      const Expr<vector<T2>, Operation>& expr) {
+#ifndef NO_RUNTIME_CHECK_BOUNDS
+//      RunTimeCheck<RunTimeProperties>::exe(this->getRunTimeProperties(),expr.getRunTimeProperties());
+#endif /* LIB_TFEL_VECTORIXX */
+    size_type s = this->size();
+    for (size_type i = 0; i != s; ++i) {
+      std::vector<T>::operator[](i) += expr(i);
+    }
+    return *this;
+  }
+
+  template <typename T>
+  template <typename T2, typename Operation>
+  std::enable_if_t<isAssignableTo<T2, T>(), vector<T>&> vector<T>::operator-=(
+      const Expr<vector<T2>, Operation>& expr) {
+#ifndef NO_RUNTIME_CHECK_BOUNDS
+//      RunTimeCheck<RunTimeProperties>::exe(this->getRunTimeProperties(),expr.getRunTimeProperties());
+#endif /* LIB_TFEL_VECTORIXX */
+    size_type s = this->size();
+    for (size_type i = 0; i != s; ++i) {
+      std::vector<T>::operator[](i) -= expr(i);
+    }
+    return *this;
+  }
+
+  template <typename T>
   template <typename InputIterator>
   void vector<T>::copy(const InputIterator b, const InputIterator e) {
     std::copy(b, e, this->v);
   }
 
-  //   template <typename T>
-  //   void vector<T>::swap(vector<T>& a) {
-  // #ifndef NO_RUNTIME_CHECK_BOUNDS
-  //     RunTimeCheck<RunTimeProperties>::exe(this->size(), a.size());
-  // #endif /* LIB_TFEL_VECTORIXX */
-  //     std::vector<T>::swap(a);
-  //   }
+  template <typename T>
+  void vector<T>::swap(vector<T>& a) {
+#ifndef NO_RUNTIME_CHECK_BOUNDS
+    RunTimeCheck<RunTimeProperties>::exe(this->size(), a.size());
+#endif /* LIB_TFEL_VECTORIXX */
+    std::vector<T>::swap(a);
+  }
 
   template <typename T>
-  vector<T>::~vector() noexcept = default;
+  vector<T>::~vector() noexcept {}
 
   template <typename T>
-  std::enable_if_t<isScalar<T>(),
-                   typename tfel::typetraits::RealPartType<T>::type>
-  norm(const vector<T>& vec) {
-    auto n = T{} * T{};
-    for (const auto& v : vec) {
+  TFEL_MATH_INLINE2
+      std::enable_if_t<isScalar<T>(),
+                       typename tfel::typetraits::RealPartType<T>::type>
+      norm(const vector<T>& vec) {
+    T n(0);
+    typename vector<T>::size_type i;
+    for (i = 0; i != vec.size(); ++i) {
+      const T v = vec(i);
       n += v * v;
     }
     return std::sqrt(real(n));
-  }  // end of norm
+  }
 
 }  // end of namespace tfel::math
 

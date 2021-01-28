@@ -97,8 +97,8 @@ namespace tfel::math {
   };  // end of ComputeBinaryOperationHandler.
 
   /*!
-   * \brief Partial Specialisation of ComputeBinaryOperationHandler for
-   * scalar-vector operations
+   * \brief partial specialisation of ComputeBinaryOperationHandler for
+   * scalar-vector operations.
    */
   template <typename MathObjectTag, typename A, typename B>
   struct ComputeBinaryOperationHandler<ScalarTag, MathObjectTag, A, B, OpMult> {
@@ -114,8 +114,8 @@ namespace tfel::math {
   };
 
   /*!
-   * Partial Specialisation of ComputeBinaryOperationHandler for vector-scalar
-   * operations
+   * \brief partial specialisation of ComputeBinaryOperationHandler for
+   * vector-scalar operations.
    */
   template <typename MathObjectTag, typename A, typename B>
   class ComputeBinaryOperationHandler<MathObjectTag, ScalarTag, A, B, OpMult> {
@@ -131,8 +131,8 @@ namespace tfel::math {
   };
 
   /*!
-   * Partial Specialisation of ComputeBinaryOperationHandler for vector-scalar
-   * operations
+   * \brief partial specialisation of ComputeBinaryOperationHandler for
+   * vector-scalar operations
    */
   template <typename MathObjectTag, typename A, typename B>
   class ComputeBinaryOperationHandler<MathObjectTag, ScalarTag, A, B, OpDiv> {
@@ -147,8 +147,8 @@ namespace tfel::math {
                            Expr<Result, ObjectScalarOperation<A, B, OpDiv>>>;
   };
 
-  /*
-   * Partial Specialisation of ComputeBinaryOperationHandler for vector's
+  /*!
+   * \brief partial specialisation of ComputeBinaryOperationHandler for vector's
    * operation
    */
   template <typename MathObjectTag, typename A, typename B>
@@ -169,8 +169,8 @@ namespace tfel::math {
                            Expr<Result, BinaryOperation<A, B, OpPlus>>>;
   };
 
-  /*
-   * Partial Specialisation of ComputeBinaryOperationHandler for vector's
+  /*!
+   * \brief partial specialisation of ComputeBinaryOperationHandler for vector's
    * operation
    */
   template <typename MathObjectTag, typename A, typename B>

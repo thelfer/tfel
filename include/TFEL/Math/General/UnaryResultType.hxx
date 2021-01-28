@@ -39,6 +39,7 @@ namespace tfel::math {
     //! result of the binary operation.
     typedef tfel::meta::InvalidType type;
   };  // end of UnaryComputeBinaryOperationResult
+
   /*!
    * \class UnaryResultType
    * This metafunction returns the type of the result of
@@ -56,12 +57,17 @@ namespace tfel::math {
     using A_ = std::decay_t<A>;
     //! Tag of the object A
     typedef typename ComputeObjectTag<A_>::type TagA;
+    //! Tag of the operator
     typedef typename ComputeObjectTag<Op>::type TagOp;
 
    public:
     //! result
     typedef typename UnaryComputeBinaryOperationResult<TagA, TagOp, A_, Op>::type type;
   };  // end of UnaryResultType
+
+  //! \brief a simple alias
+  template <typename A, typename Op>
+  using unary_result_type = typename UnaryResultType<A, Op>::type;
 
 }  // end of namespace tfel::math
 

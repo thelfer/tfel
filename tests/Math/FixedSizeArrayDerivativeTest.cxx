@@ -27,23 +27,6 @@
 #include "TFEL/Math/stensor.hxx"
 #include "TFEL/Math/Array/FixedSizeArrayDerivative.hxx"
 
-struct MyStensor4
-    : tfel::math::FixedSizeArrayDerivative<tfel::math::stensor<2u, double>,
-                                           tfel::math::stensor<2u, double>> {
-  //! a simple alias
-  using DerivativeArrayBase =
-      tfel::math::FixedSizeArrayDerivative<tfel::math::stensor<2u, double>,
-                                           tfel::math::stensor<2u, double>>;
-  // inheriting constructors
-  using FixedSizeArrayDerivative<
-      tfel::math::stensor<2u, double>,
-      tfel::math::stensor<2u, double>>::FixedSizeArrayDerivative;
-  // inherting access operator
-  using DerivativeArrayBase::operator();
-  using DerivativeArrayBase::operator[];
-  // inherting assignement operator
-  using DerivativeArrayBase::operator=;
-};
 
 struct FSDerivativeArrayTest final : public tfel::tests::TestCase {
   FSDerivativeArrayTest()
@@ -52,6 +35,8 @@ struct FSDerivativeArrayTest final : public tfel::tests::TestCase {
   tfel::tests::TestResult execute() override {
     this->test1();
     this->test2();
+    this->test3();
+    this->test4();
     return this->result;
   }  // end of execute
 private:
@@ -69,6 +54,9 @@ private:
     TFEL_TESTS_STATIC_ASSERT(std::abs(d(0, 0, 0) - 1) < eps);
  }
  void test2() {
+   using MyStensor4 =
+       tfel::math::FixedSizeArrayDerivative<tfel::math::stensor<2u, double>,
+                                            tfel::math::stensor<2u, double>>;
    constexpr auto eps = double{1e-14};
    constexpr MyStensor4 d(2);
    TFEL_TESTS_STATIC_ASSERT(MyStensor4::arity == 2);
@@ -76,6 +64,76 @@ private:
    TFEL_TESTS_STATIC_ASSERT(d.size(0) == 4);
    TFEL_TESTS_STATIC_ASSERT(d.size(1) == 4);
    TFEL_TESTS_ASSERT(std::abs(d(0, 0) - 2) < eps);
+ }
+ void test3() {
+   using MyStensor4 =
+       tfel::math::FixedSizeArrayDerivative<tfel::math::stensor<2u, double>,
+                                            tfel::math::stensor<2u, double>>;
+   constexpr auto eps = double{1e-14};
+   MyStensor4 d(2);
+   TFEL_TESTS_STATIC_ASSERT(MyStensor4::arity == 2);
+   TFEL_TESTS_STATIC_ASSERT(d.size() == 16);
+   TFEL_TESTS_STATIC_ASSERT(d.size(0) == 4);
+   TFEL_TESTS_STATIC_ASSERT(d.size(1) == 4);
+   d *= 4;
+   for (const auto& v : d) {
+     TFEL_TESTS_ASSERT(std::abs(v - 8) < eps);
+   }
+   MyStensor4 d2(0);
+   for (MyStensor4::size_type i = 0; i != d2.size(0); ++i) {
+     d2(i, i) = 1;
+   }
+   TFEL_TESTS_STATIC_ASSERT(
+       (std::is_same_v<tfel::math::ComputeObjectTag<MyStensor4>::type,
+                       tfel::math::FixedSizeArrayDerivativeTag<
+                           tfel::math::StensorTag, tfel::math::StensorTag>>));
+   TFEL_TESTS_STATIC_ASSERT(
+       (std::is_same_v<
+           tfel::math::result_type<int, MyStensor4, tfel::math::OpMult>,
+           MyStensor4>));
+   d += 2 * d2;
+   for (MyStensor4::size_type i = 0; i != d.size(0); ++i) {
+     for (MyStensor4::size_type j = 0; j != d.size(1); ++j) {
+       if (i == j) {
+         TFEL_TESTS_ASSERT(std::abs(d(i, j) - 10) < eps);
+       } else {
+         TFEL_TESTS_ASSERT(std::abs(d(i, j) - 8) < eps);
+       }
+     }
+   }
+   const auto d3 = eval(d - 5 * d2);
+   for (MyStensor4::size_type i = 0; i != d3.size(0); ++i) {
+     for (MyStensor4::size_type j = 0; j != d3.size(1); ++j) {
+       if (i == j) {
+         TFEL_TESTS_ASSERT(std::abs(d3(i, j) - 5) < eps);
+       } else {
+         TFEL_TESTS_ASSERT(std::abs(d3(i, j) - 8) < eps);
+       }
+     }
+   }
+ }
+ // test of the product of two derivative array
+ void test4() {
+   using MyStensor4 =
+       tfel::math::FixedSizeArrayDerivative<tfel::math::stensor<1u, double>,
+                                            tfel::math::stensor<1u, double>>;
+   using size_type = MyStensor4::size_type;
+   constexpr auto eps = double{1e-14};
+   const auto a = MyStensor4{1,  2,  3,   //
+                             0,  3,  -2,  //
+                             -3, -1, -5};
+   const auto b = MyStensor4{1,  2,  4,   //
+                             -2, 3,  -2,  //
+                             -7, -1, -2};
+   const auto ab = MyStensor4{-24, 5,  -6,  //
+                              8,   11, -2,  //
+                              34,  -4, 0};
+   const auto c = a * b;
+   for (size_type i = 0; i != c.size(0); ++i) {
+     for (size_type j = 0; j != c.size(1); ++j) {
+       TFEL_TESTS_ASSERT(std::abs(ab(i, j) - c(i, j)) < eps);
+     }
+   }
  }
 };
 
