@@ -898,7 +898,7 @@ namespace mfront {
       os << "for(mfront_gb_size_type idx=0; idx != s; ++idx){\n";
       writeRotationMatrixDefinition(os, true);
       writeTangentOperatorRotationFunctionsImplementationBody(
-          os, f + "_rotateArrayOfTangentOperatorBlocks", bd, h);
+          os, f + "_rotateArrayOfTangentOperatorBlocks", bd, h, tob_offset);
       os << "}\n";
       os << "}\n\n";
     }
