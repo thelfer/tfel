@@ -93,6 +93,7 @@ namespace tfel::utilities::internals {
      */
     [[noreturn]] static void exe(void *const, const void *const) {
       tfel::raise("GenTypeAssign: type is not assignable");
+      while(1); // Avoid the warning of g++ : 'noreturn' function does return
     }
   };
   //! an helper function to call the assignement operator of T.
