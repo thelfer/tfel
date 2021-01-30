@@ -36,7 +36,7 @@ namespace epx{
     /*!
      * \brief throw an exception
      */
-    TFEL_NORETURN static void
+    [[noreturn]] static void
     exe(const EuroplexusReal *const,
 	const EuroplexusReal *const,
 	const EuroplexusReal *const,
@@ -70,7 +70,7 @@ namespace epx{
      * \param[in] n1 : number of material properties declared by the behaviour
      * \param[in] n2 : number of material properties declared by the interface
      */
-    TFEL_NORETURN static void
+    [[noreturn]] static void
     throwUnMatchedNumberOfMaterialProperties(const std::string&,
 					     const unsigned short n1,
 					     const EuroplexusInt n2);
@@ -83,7 +83,7 @@ namespace epx{
      * \param[in] n1 : number of state variables declared by the behaviour
      * \param[in] n2 : number of state variables declared by the interface
      */
-    TFEL_NORETURN static void
+    [[noreturn]] static void
     throwUnMatchedNumberOfStateVariables(const std::string&,
 					 const unsigned short n1,
 					 const EuroplexusInt n2);
@@ -96,7 +96,7 @@ namespace epx{
      * \param[in] n1 : number of external state variables declared by the behaviour
      * \param[in] n2 : number of external state variables declared by the interface
      */
-    TFEL_NORETURN static void
+    [[noreturn]] static void
     throwUnMatchedNumberOfExternalStateVariables(const std::string&,
 						 const unsigned short n1,
 						 const EuroplexusInt n2);
@@ -146,21 +146,21 @@ namespace epx{
      * \brief throw an EuroplexusException if the time step is negative
      * \param[in] b : behaviour name
      */
-    TFEL_NORETURN static void
+    [[noreturn]] static void
     throwNegativeTimeStepException(const std::string&);
     /*!
      * \brief throw an AbaqusException if the prediction computation
      * failed
      * \param[in] b : behaviour name
      */
-    TFEL_NORETURN static void
+    [[noreturn]] static void
     throwPredictionComputationFailedException(const std::string&);
     /*!
      * \brief throw an EuroplexusException if the DDSDDE parameter is invalid
      * \param[in] b : behaviour name
      * \param[in] v : DDSDDE value
      */
-    TFEL_NORETURN static void
+    [[noreturn]] static void
     throwInvalidDDSDDEValueException(const std::string&,
 				     const EuroplexusReal);
     /*!
@@ -169,14 +169,14 @@ namespace epx{
      * provide one.
      * \param[in] b : behaviour name
      */
-    TFEL_NORETURN static void
+    [[noreturn]] static void
     throwConsistentTangentOperatorIsNotAvalaible(const std::string&);
     /*!
      * \brief throw an AbaqusException if the a prediction operator has
      * to been requested and that the behaviour does not provide one.
      * \param[in] b : behaviour name
      */
-    TFEL_NORETURN static void
+    [[noreturn]] static void
     throwPredictionOperatorIsNotAvalaible(const std::string&);
     /*!
      * \brief throw an EuroplexusException if the time step scaling factor
@@ -184,7 +184,7 @@ namespace epx{
      * \param[in] b: behaviour name
      * \param[in] v: time step scaling factor value
      */
-    TFEL_NORETURN static void
+    [[noreturn]] static void
     throwInvalidTimeStepScalingFactorOnFailure(const std::string&,
 					       const EuroplexusReal);
     /*!
@@ -192,7 +192,7 @@ namespace epx{
      * stress free expansion and that the umat interface can't
      * \param[in] b : behaviour name
      */
-    TFEL_NORETURN static void
+    [[noreturn]] static void
     throwUnsupportedStressFreeExpansionException(const std::string&);
     /*!
      * \brief display an error message if the value of the NTENS

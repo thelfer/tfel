@@ -234,7 +234,7 @@ namespace cyrano {
                                const tfel::material::OutOfBoundsPolicy) {
       }  // end of Error
 
-      TFEL_NORETURN void exe(CyranoReal *const,
+      [[noreturn]] void exe(CyranoReal *const,
                              CyranoReal *const,
                              CyranoReal *const) {
         typedef tfel::material::MechanicalBehaviourTraits<

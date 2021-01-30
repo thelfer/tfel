@@ -1,12 +1,26 @@
-% Installing TFEL/MFront
-% Helfer Thomas
-% October 3, 2014
+---
+title: Installing `TFEL/MFront`
+author: Thomas Helfer
+date: 29/20/2021
+lang: en-EN
+numbersections: true
+link-citations: true
+colorlinks: true
+figPrefixTemplate: "$$i$$"
+tblPrefixTemplate: "$$i$$"
+secPrefixTemplate: "$$i$$"
+eqnPrefixTemplate: "($$i$$)"
+---
 
 The latest version of this document is always available at
 <http://tfel.sourceforge.net/install.html>.
 
+> **Note** `TFEL` can be installed along with 
+> [`Cast3M`](http://www-cast3m.cea.fr/) (>2019). *No extra
+> installation is required*.
+
 > **Note** `TFEL` is a part of the
-> [`Code-Aster`](http://www.code-aster.org/) (>12.03) and
+> [`code-aster`](http://www.code-aster.org/) (>12.03) and
 > [`Salome-Meca`](www.code-aster.org/) (> 2015.1) packages: no extra
 > installation is required if you use one of these products*
 
@@ -20,6 +34,7 @@ The latest version of this document is always available at
 > $ . spack/share/spack/setup-env.sh
 > $ spack install tfel@master
 > ~~~~
+>
 > The `TFEL` package can then be loaded as follows:
 >
 > ~~~~{.bash}
@@ -62,7 +77,7 @@ simple commands:
 $ cmake [options]
 $ make 
 $ make install
-~~~~~~~~~~~~~~~~~~~~~~
+~~~~
 
 If you do not have `cmake`, you can use the standard procedure
 
@@ -70,7 +85,7 @@ If you do not have `cmake`, you can use the standard procedure
 $ configure [options]
 $ make 
 $ make install
-~~~~~~~~~~~~~~~~~~~~~~
+~~~~
 
 The optional parameters of `cmake` and `configure` allows you to:
 
@@ -175,13 +190,13 @@ please check the version available on your system:
 
 ~~~~ {#cmake-version .bash}
 $ cmake --version
-~~~~~~~~~~~~~~~~~~~~~~
+~~~~
 
 A typical usage of `cmake` is the following:
 
 ~~~~ {#building .bash}
 $ cmake $srcdir -DCMAKE_BUILD_TYPE=Release -Dlocal-castem-header=ON -Denable-fortran=ON -Denable-aster=ON -DCMAKE_INSTALL_PREFIX=$prefix
-~~~~~~~~~~~~~~~~~~~~~~
+~~~~
 
 This will build `TFEL` with the support of interfaces for the
 [Cast3M](http://www-cast3m.cea.fr/) and
@@ -217,7 +232,7 @@ For example, we can use the following command to select the
 
 ~~~~ {#building-icpc .bash}
 $ CXX=icpc CC=icc FC=ifort F77=ifort cmake $srcdir -DCMAKE_BUILD_TYPE=Release -Dlocal-castem-header=ON -Denable-fortran=ON -Denable-aster=ON -DCMAKE_INSTALL_PREFIX=$prefix
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~
 
 ### Controlling the generation of the documentation
 
@@ -238,7 +253,7 @@ architectures and in `lib`. This can be changed by defining a
 
 ~~~~ {#lib-dir .bash}
 $ cmake -DLIB_SUFFIX=64 ....
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~
 
 ### Appending the version number
 
@@ -290,7 +305,7 @@ cmake ../trunk/ -Denable-python-bindings=ON -DPython_ADDITIONAL_VERSIONS=2.7 ...
 
 ~~~~ {#building-configure .bash}
 $ $srcdir/configure --enable-fortran --enable-aster --enable-tests --enable-local-castem-header --prefix=${prefix}
-~~~~~~~~~~~~~~~~~~~~~~
+~~~~
 
 This will build `TFEL` with the support of interfaces for the
 [Cast3M](http://www-cast3m.cea.fr/) and
@@ -326,7 +341,7 @@ For example, we can use the following command to select the
 
 ~~~~ {#building-configure-icpc .bash}
 $ CXX=icpc CC=icc FC=ifort F77=ifort $srcdir/configure --enable-fortran --enable-aster --enable-tests --enable-local-castem-header --prefix=${prefix}
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~
 
 # Building
 
@@ -337,14 +352,14 @@ To build `TFEL` libraries and binaries, just type:
 
 ~~~~ {#building-make .bash}
 $ make
-~~~~~~~~~~~~~~~~~~~~~~
+~~~~
 
 To reduce compilation times, one may want to build `TFEL` libraries
 and binaries in parallel. In this case, just type:
 
 ~~~~ {#building-make-j .bash}
 $ make -j X
-~~~~~~~~~~~~~~~~~~~~~~
+~~~~
 
 `X` being the number of processors available.
 
@@ -356,7 +371,7 @@ build them and execute them, just type:
 
 ~~~~ {#building-check .bash}
 $ make check
-~~~~~~~~~~~~~~~~~~~~~~
+~~~~
 
 Again, compilation time can be reduced using the `-j` option of the
 `make` command.
@@ -368,14 +383,14 @@ available, reference manuals can be build through:
 
 ~~~~ {#building-pdf .bash}
 $ make doc-pdf
-~~~~~~~~~~~~~~~~~~~~~~
+~~~~
 
 If the [doxygen](http://www.stack.nl/~dimitri/doxygen/) tool is
 available, code source documentation can be build through:
 
 ~~~~ {#building-html .bash}
 $ make doc-html
-~~~~~~~~~~~~~~~~~~~~~~
+~~~~
 
 If [`pandoc`](http://johnmacfarlane.net/pandoc/index.html) is build
 and if you are using the `cmake` build system, the previous command
@@ -383,13 +398,13 @@ will also install a local version of the `TFEL` web site.
 
 ~~~~ {#building-website .bash}
 $ make website
-~~~~~~~~~~~~~~~~~~~~~~
+~~~~
 
 All the documentation will be build with the following command:
 
 ~~~~ {#building-html .bash}
 $ make doc
-~~~~~~~~~~~~~~~~~~~~~~
+~~~~
 
 # Final install
 
@@ -398,7 +413,7 @@ To install `TFEL` binaries and libraries in the directory pointed by
 
 ~~~~ {#building-install .bash}
 $ make install
-~~~~~~~~~~~~~~~~~~~~~~
+~~~~
 
 Using `cmake`, the previous command will install the documentation if
 build.
@@ -414,12 +429,82 @@ $ # install the doxygen manual
 $ make doc-html-install
 $ # install all the available documentation
 $ make doc-install
-~~~~~~~~~~~~~~~~~~~~~~
+~~~~
 
 Note that you can not build the `TFEL` website using the `autotools`
 build system.
 
+# A Quick installation procedure on `Ubuntu`
+
+The following steps show a quick way of installing `TFEL` on `Ubuntu`
+systems. The configuration described in this section only compiles the
+`generic` interface, which makes suitable for use with solvers using the
+[`MFrontGenericInterfaceSupport`
+project](https://github.com/thelfer/MFrontGenericInterfaceSupport/issues),
+e.g. with `OpenGeoSys`, `FEniCS`, `MoFEM`, etc...
+
+The compilation requires that `gcc`, `git` and `python3` are installed,
+as well as the python module `numpy` and the `libboost` library to build
+the `python` bindings. Those packages can be installed using:
+
+~~~~{.sh}
+$ sudo apt install python3 python3-numpy libboost-all-dev cmake g++ gfortran
+~~~~
+
+The next step is to get the `TFEL` source code:
+
+~~~~{.sh}
+$ cd <where_you_want_to_download_the_source>
+$ mkdir -p TFEL && cd TFEL
+$ git clone https://github.com/thelfer/tfel.git
+~~~~
+
+This will download the current development version of `TFEL`.
+
+Then we create a `build` directory and call `ccmake`.
+
+~~~~{.sh}
+$ mkdir build && cd build
+$ ccmake ../tfel
+~~~~
+
+`ccmake` allows to select various options. In this tutorial, we choose
+the following options:
+
+~~~~{.sh}
+  CMAKE_INSTALL_PREFIX    ~/.local
+  TFEL_APPEND_VERSION           ON
+  enable-numpy-support          ON
+  enable-python                 ON
+  enable-python-bindings        ON
+~~~~
+
+The `TFEL_APPEND_VERSION` allows to install different versions of `TFEL`
+at the same location.
+
+Then configure twice `[c]`,`[c]` and generate `[g]`. Once done, just
+type:
+
+~~~~{.sh}
+$ make
+$ make install
+~~~~
+
+Finally, add the paths in your local `.bashrc` file:
+
+~~~~{.sh}
+export PATH=$PATH:~.local/bin
+export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:~/.local/lib
+export PYTHONPATH=${PYTHONPATH}:~/.local/lib/python3.8/site-packages
+~~~~
+
+Now you can use the local `TFEL` binaries such as `mfront-X.Y.Z-dev` and
+`mtest-X.Y.Z-dev` or define some
+global alias names for them.
+
+<!-- 
 # Windows MINGW
+-- >
 
 <!-- Local IspellDict: english -->
 

@@ -274,7 +274,7 @@ namespace calculix {
          * \brief a function whose only purpose is to throw
          * an exception
          */
-        TFEL_NORETURN static void exe(BV&, CalculiXReal* const) {
+        [[noreturn]] static void exe(BV&, CalculiXReal* const) {
           typedef tfel::material::MechanicalBehaviourTraits<BV> Traits;
           throwConsistentTangentOperatorIsNotAvalaible(Traits::getName());
         }  // end of exe

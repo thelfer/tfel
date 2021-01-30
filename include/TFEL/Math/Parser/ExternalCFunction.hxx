@@ -32,11 +32,11 @@ namespace tfel
 
       struct TFELMATHPARSER_VISIBILITY_EXPORT ExternalCFunctionException
       {
-	TFEL_NORETURN static void
+	[[noreturn]] static void
 	throwUnimplementedDifferentiateFunctionException();
-	TFEL_NORETURN static void
+	[[noreturn]] static void
 	throwInvalidCreateFunctionByChangingParametersIntoVariables();
-	TFEL_NORETURN static void
+	[[noreturn]] static void
 	throwInvalidVariableIndex(const std::vector<double>::size_type,
 				  const unsigned short);
       }; // end of struct ExternalCFunctionException

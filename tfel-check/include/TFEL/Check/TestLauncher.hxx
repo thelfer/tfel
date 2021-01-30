@@ -109,7 +109,7 @@ namespace tfel {
        * \param[in] m:   calling method
        * \param[in] msg: error message
        */
-      TFEL_NORETURN void throwRuntimeError(const std::string&,
+      [[noreturn]] void throwRuntimeError(const std::string&,
                                            const std::string&);
       /*!
        * \brief check that there is still something to read

@@ -54,7 +54,7 @@ namespace mfront {
      * given name exists
      * \param[in] n: name of the attribute
      */
-    TFEL_NORETURN static void throwUndefinedAttribute(const std::string&);
+    [[noreturn]] static void throwUndefinedAttribute(const std::string&);
     /*!
      * Constructor
      * \param[in] t: variable type

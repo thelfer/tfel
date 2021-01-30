@@ -36,7 +36,7 @@ namespace ansys{
     /*!
      * \brief throw an exception
      */
-    TFEL_NORETURN static void
+    [[noreturn]] static void
     exe(const AnsysReal *const,
 	const AnsysReal *const,
 	AnsysReal *const,
@@ -72,7 +72,7 @@ namespace ansys{
      * \param[in] n1 : number of material properties declared by the behaviour
      * \param[in] n2 : number of material properties declared by the interface
      */
-    TFEL_NORETURN static void
+    [[noreturn]] static void
     throwUnMatchedNumberOfMaterialProperties(const std::string&,
 					     const unsigned short n1,
 					     const AnsysInt n2);
@@ -86,7 +86,7 @@ namespace ansys{
      * \param[in] n1 : number of state variables declared by the behaviour
      * \param[in] n2 : number of state variables declared by the interface
      */
-    TFEL_NORETURN static void
+    [[noreturn]] static void
     throwUnMatchedNumberOfStateVariables(const std::string&,
 					 const unsigned short n1,
 					 const AnsysInt n2);
@@ -137,14 +137,14 @@ namespace ansys{
      * \brief throw an AnsysException if the time step is negative
      * \param[in] b : behaviour name
      */
-    TFEL_NORETURN static void
+    [[noreturn]] static void
     throwNegativeTimeStepException(const std::string&);
     /*!
      * \brief throw an AnsysException if the prediction computation
      * failed
      * \param[in] b : behaviour name
      */
-    TFEL_NORETURN static void
+    [[noreturn]] static void
     throwPredictionComputationFailedException(const std::string&);
     /*!
      * \brief throw an AnsysException if the a consistent tangent
@@ -152,21 +152,21 @@ namespace ansys{
      * provide one.
      * \param[in] b : behaviour name
      */
-    TFEL_NORETURN static void
+    [[noreturn]] static void
     throwConsistentTangentOperatorIsNotAvalaible(const std::string&);
     /*!
      * \brief throw an AnsysException if the a prediction operator has
      * to been requested and that the behaviour does not provide one.
      * \param[in] b : behaviour name
      */
-    TFEL_NORETURN static void
+    [[noreturn]] static void
     throwPredictionOperatorIsNotAvalaible(const std::string&);
     /*!
      * \brief display an error message if the behaviour shall handle
      * stress free expansion and that the umat interface can't
      * \param[in] b : behaviour name
      */
-    TFEL_NORETURN static void
+    [[noreturn]] static void
     throwUnsupportedStressFreeExpansionException(const std::string&);
     /*!
      * \brief display an error message if the value of the NTENS

@@ -53,12 +53,12 @@ namespace mfront {
      * \brief raise an exception stating that an attribute has not the expected type
      * \param[in] n: name of the attribute
      */
-    TFEL_NORETURN static void throwUnmatchedAttributeType(const std::string&);
+    [[noreturn]] static void throwUnmatchedAttributeType(const std::string&);
     /*!
      * \brief raise an exception stating that an attribute does not exist
      * \param[in] n: name of the attribute
      */
-    TFEL_NORETURN static void throwUndeclaredAttribute(const std::string&);
+    [[noreturn]] static void throwUndeclaredAttribute(const std::string&);
     //! \brief default contructor
     CodeBlock();
     //! \brief move contructor

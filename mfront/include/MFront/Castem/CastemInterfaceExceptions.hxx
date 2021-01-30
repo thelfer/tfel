@@ -37,7 +37,7 @@ namespace castem{
     /*!
      * \brief throw an exception
      */
-    TFEL_NORETURN static void
+    [[noreturn]] static void
     exe(const CastemReal *const,
 	const CastemReal *const,
 	CastemReal *const,
@@ -72,7 +72,7 @@ namespace castem{
      * \param[in] n1 : number of material properties declared by the behaviour
      * \param[in] n2 : number of material properties declared by the interface
      */
-    TFEL_NORETURN static void
+    [[noreturn]] static void
     throwUnMatchedNumberOfMaterialProperties(const std::string&,
 					     const unsigned short n1,
 					     const CastemInt n2);
@@ -86,7 +86,7 @@ namespace castem{
      * \param[in] n1 : number of state variables declared by the behaviour
      * \param[in] n2 : number of state variables declared by the interface
      */
-    TFEL_NORETURN static void
+    [[noreturn]] static void
     throwUnMatchedNumberOfStateVariables(const std::string&,
 					 const unsigned short n1,
 					 const CastemInt n2);
@@ -142,7 +142,7 @@ namespace castem{
      * \brief throw an CastemException if the time step is negative
      * \param[in] b : behaviour name
      */
-    TFEL_NORETURN static void
+    [[noreturn]] static void
     throwNegativeTimeStepException(const std::string&);
 
     /*!
@@ -150,7 +150,7 @@ namespace castem{
      * failed
      * \param[in] b : behaviour name
      */
-    TFEL_NORETURN static void
+    [[noreturn]] static void
     throwBehaviourIntegrationFailedException(const std::string&);
 
     /*!
@@ -158,7 +158,7 @@ namespace castem{
      * stepping has been reached
      * \param[in] b : behaviour name
      */
-    TFEL_NORETURN static void
+    [[noreturn]] static void
     throwMaximumNumberOfSubSteppingReachedException(const std::string&);
 
     /*!
@@ -166,14 +166,14 @@ namespace castem{
      * stepping has been reached
      * \param[in] b : behaviour name
      */
-    TFEL_NORETURN static void
+    [[noreturn]] static void
     throwPlaneStressMaximumNumberOfIterationsReachedException(const std::string&);
     /*!
      * \brief throw an CastemException if the DDSDDE parameter is invalid
      * \param[in] b : behaviour name
      * \param[in] v : DDSDDE value
      */
-    TFEL_NORETURN static void
+    [[noreturn]] static void
     throwInvalidDDSDDEException(const std::string&,
 				const CastemReal);
     /*!
@@ -181,14 +181,14 @@ namespace castem{
      * requested in the generic plane stress handler
      * \param[in] b : behaviour name
      */
-    TFEL_NORETURN static void
+    [[noreturn]] static void
     throwTangentOperatorNotAvailableThroughGenericPlaneStressHandler(const std::string&);
     /*!
      * \brief throw an AsterException if the prediction computation
      * failed
      * \param[in] b : behaviour name
      */
-    TFEL_NORETURN static void
+    [[noreturn]] static void
     throwPredictionComputationFailedException(const std::string&);
     /*!
      * \brief throw an AsterException if the a consistent tangent
@@ -196,14 +196,14 @@ namespace castem{
      * provide one.
      * \param[in] b : behaviour name
      */
-    TFEL_NORETURN static void
+    [[noreturn]] static void
     throwConsistentTangentOperatorIsNotAvalaible(const std::string&);
     /*!
      * \brief throw an AsterException if the a prediction operator has
      * to been requested and that the behaviour does not provide one.
      * \param[in] b : behaviour name
      */
-    TFEL_NORETURN static void
+    [[noreturn]] static void
     throwPredictionOperatorIsNotAvalaible(const std::string&);
     /*!
      * \brief throw an error message if the value of the NTENS
@@ -218,7 +218,7 @@ namespace castem{
      * \param[in] type : behaviour type
      * \param[in] H    : hypothesis
      */
-    TFEL_NORETURN static void
+    [[noreturn]] static void
     throwInvalidBehaviourTypeAndModellingHypothesis(const CastemBehaviourType,
 						    const std::string&);
     /*!
@@ -226,14 +226,14 @@ namespace castem{
      * stress free expansion and that the castem interface can't
      * \param[in] b : behaviour name
      */
-    TFEL_NORETURN static void
+    [[noreturn]] static void
     throwUnsupportedStressFreeExpansionException(const std::string&);
     /*!
      * \brief display an error message if the thermal expansion is not
      * null
      * \param[in] b : behaviour name
      */
-    TFEL_NORETURN static void
+    [[noreturn]] static void
     throwThermalExpansionCoefficientShallBeNull(const std::string&);
     /*!
      * \brief display an error message if the value of the NDI

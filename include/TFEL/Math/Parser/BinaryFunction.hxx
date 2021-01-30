@@ -29,9 +29,9 @@ namespace tfel {
       };
 
       struct StandardBinaryFunctionBase {
-        TFEL_NORETURN static void
+        [[noreturn]] static void
         throwUnimplementedDifferentiateFunctionException();
-        TFEL_NORETURN static void throwInvalidCallException(const int);
+        [[noreturn]] static void throwInvalidCallException(const int);
         /*!
          * \brief build the C++ formula resulting from the evolution
          * of a binary function.

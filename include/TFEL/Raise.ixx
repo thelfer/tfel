@@ -17,13 +17,13 @@
 namespace tfel {
 
   template <typename Exception>
-  TFEL_NORETURN void raise() {
+  [[noreturn]] void raise() {
     Exception e;
     throw(std::move(e));
   }  // end of raise
 
   template <typename Exception, typename... Args>
-  TFEL_NORETURN void raise(Args&&... a) {
+  [[noreturn]] void raise(Args&&... a) {
     Exception e(std::forward<Args...>(a...));
     throw(std::move(e));
   }  // end of raise

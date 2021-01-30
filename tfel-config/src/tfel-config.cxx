@@ -77,11 +77,11 @@ static void registerCallBack(const std::string&,
 
 static void listOptions(std::ostream&);
 
-TFEL_NORETURN static void treatUnknownOption(const std::string&);
+[[noreturn]] static void treatUnknownOption(const std::string&);
 
-TFEL_NORETURN static void treatHelp();
+[[noreturn]] static void treatHelp();
 
-TFEL_NORETURN static void treatLicences();
+[[noreturn]] static void treatLicences();
 
 static CallBacksContainer callBacksContainer;
 static bool compilerflags = false;
@@ -228,25 +228,25 @@ static void listOptions(std::ostream& os) {
   }
 }  // end of listOptions
 
-TFEL_NORETURN static void treatVersion() {
+[[noreturn]] static void treatVersion() {
   std::cout << "tfel-config " << VERSION
             << " (svn revision : " << TFEL_SVN_REVISION << ")" << std::endl;
   std::exit(EXIT_SUCCESS);
 }  // end of treatHelp
 
-TFEL_NORETURN static void treatHelp() {
+[[noreturn]] static void treatHelp() {
   std::cout << "usage : tfel-config [options]" << std::endl;
   listOptions(std::cout);
   std::exit(EXIT_SUCCESS);
 }  // end of treatHelp
 
-TFEL_NORETURN static void treatUnknownOption(const std::string& o) {
+[[noreturn]] static void treatUnknownOption(const std::string& o) {
   std::cerr << "unknown option " << o << std::endl;
   listOptions(std::cerr);
   std::exit(EXIT_FAILURE);
 }  // end of treatUnknownOption
 
-TFEL_NORETURN static void treatLicences() {
+[[noreturn]] static void treatLicences() {
   std::cout
       << "Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights reserved.\n";
   std::cout << "This project is publicly released under either the GNU GPL "

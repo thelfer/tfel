@@ -36,7 +36,7 @@ namespace abaqus{
     /*!
      * \brief throw an exception
      */
-    TFEL_NORETURN static void
+    [[noreturn]] static void
     exe(const AbaqusReal *const,
 	const AbaqusReal *const,
 	AbaqusReal *const,
@@ -71,7 +71,7 @@ namespace abaqus{
      * \param[in] n1 : size of symmetric tensors for the current hypothesis
      * \param[in] n2 : size of symmetric tensors declared by the `Abaqus/Standard`
      */
-    TFEL_NORETURN static void
+    [[noreturn]] static void
     throwInvalidTensorSize(const std::string&,
 			   const unsigned short n1,
 			   const AbaqusInt n2);
@@ -84,7 +84,7 @@ namespace abaqus{
      * \param[in] n1 : number of material properties declared by the behaviour
      * \param[in] n2 : number of material properties declared by the interface
      */
-    TFEL_NORETURN static void
+    [[noreturn]] static void
     throwUnMatchedNumberOfMaterialProperties(const std::string&,
 					     const unsigned short n1,
 					     const AbaqusInt n2);
@@ -97,7 +97,7 @@ namespace abaqus{
      * \param[in] n1 : number of state variables declared by the behaviour
      * \param[in] n2 : number of state variables declared by the interface
      */
-    TFEL_NORETURN static void
+    [[noreturn]] static void
     throwUnMatchedNumberOfStateVariables(const std::string&,
 					 const unsigned short n1,
 					 const AbaqusInt n2);
@@ -148,14 +148,14 @@ namespace abaqus{
      * \brief throw an AbaqusException if the time step is negative
      * \param[in] b : behaviour name
      */
-    TFEL_NORETURN static void
+    [[noreturn]] static void
     throwNegativeTimeStepException(const std::string&);
     /*!
      * \brief throw an AbaqusException if the prediction computation
      * failed
      * \param[in] b : behaviour name
      */
-    TFEL_NORETURN static void
+    [[noreturn]] static void
     throwPredictionComputationFailedException(const std::string&);
     /*!
      * \brief throw an AbaqusException if the a consistent tangent
@@ -163,21 +163,21 @@ namespace abaqus{
      * provide one.
      * \param[in] b : behaviour name
      */
-    TFEL_NORETURN static void
+    [[noreturn]] static void
     throwConsistentTangentOperatorIsNotAvalaible(const std::string&);
     /*!
      * \brief throw an AbaqusException if the a prediction operator has
      * to been requested and that the behaviour does not provide one.
      * \param[in] b : behaviour name
      */
-    TFEL_NORETURN static void
+    [[noreturn]] static void
     throwPredictionOperatorIsNotAvalaible(const std::string&);
     /*!
      * \brief display an error message if the behaviour shall handle
      * stress free expansion and that the umat interface can't
      * \param[in] b : behaviour name
      */
-    TFEL_NORETURN static void
+    [[noreturn]] static void
     throwUnsupportedStressFreeExpansionException(const std::string&);
     /*!
      * \brief display an error message if the value of the NTENS

@@ -55,7 +55,7 @@ namespace castem
   CastemComputeThermalExpansionCoefficientTensor<castem::STANDARDSTRAINBASEDBEHAVIOUR,
 					       tfel::material::ModellingHypothesis::PLANESTRESS,ISOTROPIC>
   {
-    TFEL_NORETURN static void
+    [[noreturn]] static void
     exe(const CastemReal* const,
 	tfel::config::Types<2u,CastemReal,false>::ThermalExpansionCoefficientTensor&);
   }; // end of struct CastemComputeThermalExpansionCoefficientTensor
@@ -116,7 +116,7 @@ namespace castem
   CastemComputeThermalExpansionCoefficientTensor<castem::STANDARDSTRAINBASEDBEHAVIOUR,
 					       tfel::material::ModellingHypothesis::PLANESTRESS,ORTHOTROPIC>
   {
-    TFEL_NORETURN static void
+    [[noreturn]] static void
       exe(const CastemReal* const,
 	  tfel::config::Types<2u,CastemReal,false>::ThermalExpansionCoefficientTensor&);
   }; // end of struct CastemComputeThermalExpansionCoefficientTensor

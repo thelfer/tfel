@@ -75,9 +75,9 @@ namespace mtest
     void treatXMLOutput();
     void treatResultFileOutput();
     void treatResidualFileOutput();
-    TFEL_NORETURN void treatHelpCommandsList();
-    TFEL_NORETURN void treatHelpCommands();
-    TFEL_NORETURN void treatHelpCommand();
+    [[noreturn]] void treatHelpCommandsList();
+    [[noreturn]] void treatHelpCommands();
+    [[noreturn]] void treatHelpCommand();
     //! treat the `--floating-point-exceptions` option
     void treatEnableFloatingPointExceptions();
     //! treat the `--rounding-direction-mode` option

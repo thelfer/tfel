@@ -32,9 +32,9 @@ namespace tfel {
       typedef double (*StandardFunctionPtr)(double);
 
       struct StandardFunctionBase {
-        TFEL_NORETURN static void
+        [[noreturn]] static void
         throwUnimplementedDifferentiateFunctionException();
-        TFEL_NORETURN static void throwInvalidCallException(const double,
+        [[noreturn]] static void throwInvalidCallException(const double,
                                                             const int);
         /*!
          * \brief build the C++ formula resulting from the evolution

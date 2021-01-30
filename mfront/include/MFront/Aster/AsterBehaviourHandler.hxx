@@ -379,7 +379,7 @@ namespace aster {
 
       struct PredictionOperatorIsNotAvalaible {
         typedef Behaviour<H, AsterReal, false> BV;
-        TFEL_NORETURN static typename BV::IntegrationResult exe(
+        [[noreturn]] static typename BV::IntegrationResult exe(
             BV &, const typename BV::SMFlag, const typename BV::SMType) {
           typedef tfel::material::MechanicalBehaviourTraits<BV> Traits;
           throwPredictionOperatorIsNotAvalaible(Traits::getName());

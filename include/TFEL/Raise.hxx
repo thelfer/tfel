@@ -29,7 +29,7 @@ namespace tfel{
    * \tparam Exception: type of the exception to be thrown.
    */
   template<typename Exception = std::runtime_error>
-  TFEL_NORETURN TFEL_VISIBILITY_LOCAL TFEL_INLINE
+  [[noreturn]] TFEL_VISIBILITY_LOCAL TFEL_INLINE
   void raise();
   
   /*!
@@ -45,7 +45,7 @@ namespace tfel{
    */
   template<typename Exception = std::runtime_error,
 	   typename... Args>
-  TFEL_NORETURN TFEL_VISIBILITY_LOCAL TFEL_INLINE
+  [[noreturn]] TFEL_VISIBILITY_LOCAL TFEL_INLINE
   void raise(Args&&...);
 
   /*!

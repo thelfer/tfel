@@ -181,7 +181,7 @@ namespace mfmtg {
    * name is not the one that what was requested.
    * \param[in] n: name of the missing parameter
    */
-  TFEL_NORETURN MFMTG_VISIBILITY_EXPORT void throwInvalidParameterTypeException(
+  [[noreturn]] MFMTG_VISIBILITY_EXPORT void throwInvalidParameterTypeException(
       const std::string&);
 
 }  // end of namespace mfmtg

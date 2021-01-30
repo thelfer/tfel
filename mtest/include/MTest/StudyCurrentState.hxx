@@ -166,14 +166,14 @@ namespace mtest{
      * given name has been found
      * \param[in] n: parameter name
      */
-    TFEL_NORETURN static void
+    [[noreturn]] static void
     throwUnknownParameterException(const std::string&);
     /*!
      * \brief throw an exception stating that a parameter with the
      * given name has been found
      * \param[in] n: parameter name
      */
-    TFEL_NORETURN static void
+    [[noreturn]] static void
     throwAlreadyDeclaredParameterException(const std::string&);
     /*!
      * study parameters

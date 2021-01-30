@@ -32,23 +32,23 @@ namespace tfel{
 
 	struct EndRecursion
 	{
-	  TFEL_NORETURN static return_type
+	  [[noreturn]] static return_type
 	  apply(const GenTypeBase<List>&)
 	  {
 	    throw(GenTypeCastError());
 	  }
-	  TFEL_NORETURN static return_type
+	  [[noreturn]] static return_type
 	  apply(T&,
 		const GenTypeBase<List>&)
 	  {
 	    throw(GenTypeCastError());
 	  }
-	  TFEL_NORETURN static return_type
+	  [[noreturn]] static return_type
 	  apply(GenTypeBase<List>&)
 	  {
 	    throw(GenTypeCastError());
 	  }
-	  TFEL_NORETURN static return_type
+	  [[noreturn]] static return_type
 	  apply(T&,GenTypeBase<List>&)
 	  {
 	    throw(GenTypeCastError());
@@ -57,23 +57,23 @@ namespace tfel{
       
 	struct EndRecursionII
 	{
-	  TFEL_NORETURN static void
+	  [[noreturn]] static void
 	  apply(const GenTypeBase<List>&)
 	  {
 	    throw(GenTypeCastError());
 	  }
-	  TFEL_NORETURN static void
+	  [[noreturn]] static void
 	  apply(T&,
 		const GenTypeBase<List>&)
 	  {
 	    throw(GenTypeCastError());
 	  }
-	  TFEL_NORETURN static void
+	  [[noreturn]] static void
 	  apply(GenTypeBase<List>&)
 	  {
 	    throw(GenTypeCastError());
 	  }
-	  TFEL_NORETURN static void
+	  [[noreturn]] static void
 	  apply(T&,GenTypeBase<List>&)
 	  {
 	    throw(GenTypeCastError());

@@ -32,7 +32,7 @@
 #include "MFront/MFront.hxx"
 
 #if !(defined _WIN32 || defined _WIN64 || defined __CYGWIN__)
-TFEL_NORETURN static void mfront_terminate_handler() {
+[[noreturn]] static void mfront_terminate_handler() {
   if (auto pe = std::current_exception()) {
     // we have an exception
     try {

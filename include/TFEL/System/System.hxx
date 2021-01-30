@@ -56,7 +56,7 @@ namespace tfel {
        * \param const std::string&, a description of the error.
        * \param const int, value of errno.
        */
-      TFEL_NORETURN static void throwSystemError(const std::string&, const int);
+      [[noreturn]] static void throwSystemError(const std::string&, const int);
 
 /*
  * create one or more directories.

@@ -273,7 +273,7 @@ namespace mfront {
      * \param[in] m: calling method name
      * \param[in] e: error message
      */
-    TFEL_NORETURN void throwRuntimeError(const std::string&,
+    [[noreturn]] void throwRuntimeError(const std::string&,
                                          const std::string&) const;
     /*!
      * \return concatenate all the tokens from the current position up

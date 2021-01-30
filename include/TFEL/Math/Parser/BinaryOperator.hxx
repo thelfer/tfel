@@ -114,7 +114,7 @@ namespace tfel
 
       struct BinaryOperationBase
       {
-	TFEL_NORETURN static void TFEL_VISIBILITY_LOCAL
+	[[noreturn]] static void TFEL_VISIBILITY_LOCAL
 	throwUnimplementedDifferentiateFunctionException();
       }; // end of struct BinaryOperationBase
 

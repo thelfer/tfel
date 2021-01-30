@@ -332,12 +332,6 @@
 #  define TFELMATERIAL_VISIBILITY_EXPORT TFEL_VISIBILITY_EXPORT
 #endif /* LIB_TFEL_CONFIG_HXX */
 
-#ifdef TFEL_HAVE_NORETURN_ATTRIBUTE
-#define TFEL_NORETURN [[ noreturn ]]
-#else
-#define TFEL_NORETURN
-#endif /* TFEL_HAVE_NORETURN_ATTRIBUTE */
-
 // mitigate infamous windows macros effects
 #ifndef NOMINMAX
 #define NOMINMAX

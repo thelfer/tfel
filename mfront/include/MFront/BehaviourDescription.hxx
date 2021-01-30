@@ -1585,7 +1585,7 @@ namespace mfront {
      * \brief throw an exception saying that no attribute with the
      * given name exists
      */
-    TFEL_NORETURN static void throwUndefinedAttribute(const std::string&);
+    [[noreturn]] static void throwUndefinedAttribute(const std::string&);
     /*!
      * \return the driving variable with the associated name
      * \param[in] n: name
