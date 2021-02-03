@@ -11,44 +11,40 @@
  * project under specific licensing conditions.
  */
 
-#ifndef LIB_TFEL_ISOTROPICLINEARFOURIERLAW_HXX
-#define LIB_TFEL_ISOTROPICLINEARFOURIERLAW_HXX
+#ifndef LIB_TFEL_MATERIAL_ISOTROPICLINEARFOURIERLAW_HXX
+#define LIB_TFEL_MATERIAL_ISOTROPICLINEARFOURIERLAW_HXX
 
 #include "TFEL/Material/ThermalBehaviour.hxx"
 #include "TFEL/Material/ThermalBehaviourData.hxx"
 
-namespace tfel {
+namespace tfel::material {
 
-  namespace material {
+  /*!
+   * \class IsotropicLinearFourierLaw
+   * \brief This class implements the fourier thermal behaviour.
+   * \param N, space dimension.
+   * \param T, numerical type.
+   * \author Thomas Helfer
+   * \date   28 Jul 2006
+   */
+  template <unsigned short N, typename T, bool use_qt>
+  class IsotropicLinearFourierLaw : public ThermalBehaviour<N, T, use_qt> {
+    static_assert(N == 1 || N == 2 || N == 3);
+    typedef tfel::config::Types<N, T, use_qt> Types;
+    typedef typename Types::real real;
+    typedef typename Types::temperature temperature;
 
+   public:
+    //! \brief default constructor
+    IsotropicLinearFourierLaw(){};
     /*!
-     * \class IsotropicLinearFourierLaw
-     * \brief This class implements the fourier thermal behaviour.
-     * \param N, space dimension.
-     * \param T, numerical type.
-     * \author Thomas Helfer
-     * \date   28 Jul 2006
+     * Law integration
      */
-    template <unsigned short N, typename T, bool use_qt>
-    class IsotropicLinearFourierLaw : public ThermalBehaviour<N, T, use_qt> {
-      static_assert(N == 1 || N == 2 || N == 3);
-      typedef tfel::config::Types<N, T, use_qt> Types;
-      typedef typename Types::real real;
-      typedef typename Types::temperature temperature;
+    void doThermalIntegration(ThermalBehaviourData<N, T, use_qt>& data) {
+      CheckThermalDataValidity<IsotropicLinearFourierLaw>::exe(data);
+    }
+  };
 
-     public:
-      //! \brief default constructor
-      IsotropicLinearFourierLaw(){};
-      /*!
-       * Law integration
-       */
-      void doThermalIntegration(ThermalBehaviourData<N, T, use_qt>& data) {
-        CheckThermalDataValidity<IsotropicLinearFourierLaw>::exe(data);
-      }
-    };
+}  // end of namespace tfel::material
 
-  }  // end of namespace material
-
-}  // end of namespace  tfel
-
-#endif /* LIB_TFEL_ISOTROPICLINEARFOURIERLAW_HXX */
+#endif /* LIB_TFEL_MATERIAL_ISOTROPICLINEARFOURIERLAW_HXX */

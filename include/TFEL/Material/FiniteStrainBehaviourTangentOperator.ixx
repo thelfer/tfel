@@ -40,11 +40,7 @@
             FiniteStrainBehaviourTangentOperatorBase::OP1,                    \
             FiniteStrainBehaviourTangentOperatorBase::OP2>
 
-namespace tfel
-{
-
-  namespace material
-  {
+namespace tfel::material{
 
     /*!
      * \brief An helper class used to introduce some convenient aliases
@@ -1259,10 +1255,8 @@ namespace tfel
         const tfel::math::stensor<N, StressType>& s) {
       FiniteStrainBehaviourTangentOperatorConverter<ResultFlag,SourceFlag>::exe(Kr,Ks,F0,F1,s);
     } // end of convert
-    
-  } // end of namespace material
 
-  }  // end of namespace tfel
+}  // end of namespace tfel::material
   
 
 #endif /* LIB_TFEL_MATERIAL_FINITESTRAINBEHAVIOURTANGENTOPERATOR_IXX */

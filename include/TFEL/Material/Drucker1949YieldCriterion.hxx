@@ -17,85 +17,80 @@
 #include "TFEL/Math/stensor.hxx"
 #include "TFEL/Math/st2tost2.hxx"
 
-namespace tfel {
+namespace tfel::material {
 
-  namespace material {
+  //! a simple alias
+  template <typename StressStensor>
+  using Drucker1949StressType = tfel::math::numeric_type<StressStensor>;
+  //! a simple alias
+  template <typename StressStensor>
+  using Drucker1949BaseType =
+      tfel::typetraits::base_type<tfel::math::numeric_type<StressStensor>>;
+  //! a simple alias
+  template <typename StressStensor>
+  using Drucker1949InvertStressType =
+      tfel::math::result_type<Drucker1949BaseType<StressStensor>,
+                              Drucker1949StressType<StressStensor>,
+                              tfel::math::OpDiv>;
+  //! a simple alias
+  template <typename StressStensor>
+  using Drucker1949StressNormalType =
+      tfel::math::stensor<tfel::math::getSpaceDimension<StressStensor>(),
+                          Drucker1949BaseType<StressStensor>>;
+  //! a simple alias
+  template <typename StressStensor>
+  using Drucker1949StressSecondDerivativeType =
+      tfel::math::st2tost2<tfel::math::getSpaceDimension<StressStensor>(),
+                           Drucker1949InvertStressType<StressStensor>>;
+  /*!
+   * \brief compute the Drucker1949 yield stress defined by:
+   * \f[
+   * \sigma_{\mathrm{eq}}^{D}=
+   * \sqrt{3}\,\sqrt[6]{J_{2}^{3} - c\,J_{3}^{2}}
+   * \f]
+   * where \(J_{2}\) and \(J_{3}\) are the first and second invariants
+   * of the deviatoric part of the stress tensor
+   * \tparam StressStensor: type of the stress tensor
+   * \param[in] sig: stress tensor
+   * \param[in] c: c coefficient
+   */
+  template <typename StressStensor>
+  Drucker1949StressType<StressStensor> computeDrucker1949StressCriterion(
+      const StressStensor&, const Drucker1949BaseType<StressStensor>);
+  /*!
+   * \brief compute the Drucker1949 yield stress and the its first derivative
+   * \tparam StressStensor: type of the stress tensor
+   * \param[in] sig: stress tensor
+   * \param[in] c: c coefficient
+   * \param[in] seps: small stress value. This value is used to regularize the
+   *                  computation of the stress normal.
+   */
+  template <typename StressStensor>
+  std::tuple<Drucker1949StressType<StressStensor>,
+             Drucker1949StressNormalType<StressStensor>>
+  computeDrucker1949StressCriterionNormal(
+      const StressStensor&,
+      const Drucker1949BaseType<StressStensor>,
+      const Drucker1949StressType<StressStensor>);
+  /*!
+   * \brief compute the Drucker1949 yield stress and its first and second
+   * derivatives
+   * \tparam StressStensor: type of the stress tensor
+   * \param[in] sig: stress tensor
+   * \param[in] c: c coefficient
+   * \param[in] seps: small stress value. This value is used to regularize the
+   *                  computation of the stress normal.
+   */
+  template <typename StressStensor>
+  std::tuple<Drucker1949StressType<StressStensor>,
+             Drucker1949StressNormalType<StressStensor>,
+             Drucker1949StressSecondDerivativeType<StressStensor>>
+  computeDrucker1949StressCriterionSecondDerivative(
+      const StressStensor&,
+      const Drucker1949BaseType<StressStensor>,
+      const Drucker1949StressType<StressStensor>);
 
-    //! a simple alias
-    template <typename StressStensor>
-    using Drucker1949StressType = tfel::math::numeric_type<StressStensor>;
-    //! a simple alias
-    template <typename StressStensor>
-    using Drucker1949BaseType =
-        tfel::typetraits::base_type<tfel::math::numeric_type<StressStensor>>;
-    //! a simple alias
-    template <typename StressStensor>
-    using Drucker1949InvertStressType =
-        tfel::math::result_type<Drucker1949BaseType<StressStensor>,
-                                Drucker1949StressType<StressStensor>,
-                                tfel::math::OpDiv>;
-    //! a simple alias
-    template <typename StressStensor>
-    using Drucker1949StressNormalType =
-        tfel::math::stensor<tfel::math::getSpaceDimension<StressStensor>(),
-                            Drucker1949BaseType<StressStensor>>;
-    //! a simple alias
-    template <typename StressStensor>
-    using Drucker1949StressSecondDerivativeType =
-        tfel::math::st2tost2<tfel::math::getSpaceDimension<StressStensor>(),
-                             Drucker1949InvertStressType<StressStensor>>;
-    /*!
-     * \brief compute the Drucker1949 yield stress defined by:
-     * \f[
-     * \sigma_{\mathrm{eq}}^{D}=
-     * \sqrt{3}\,\sqrt[6]{J_{2}^{3} - c\,J_{3}^{2}}
-     * \f]
-     * where \(J_{2}\) and \(J_{3}\) are the first and second invariants
-     * of the deviatoric part of the stress tensor
-     * \tparam StressStensor: type of the stress tensor
-     * \param[in] sig: stress tensor
-     * \param[in] c: c coefficient
-     */
-    template <typename StressStensor>
-    Drucker1949StressType<StressStensor>
-    computeDrucker1949StressCriterion(
-        const StressStensor&, const Drucker1949BaseType<StressStensor>);
-    /*!
-     * \brief compute the Drucker1949 yield stress and the its first derivative
-     * \tparam StressStensor: type of the stress tensor
-     * \param[in] sig: stress tensor
-     * \param[in] c: c coefficient
-     * \param[in] seps: small stress value. This value is used to regularize the
-     *                  computation of the stress normal.
-     */
-    template <typename StressStensor>
-    std::tuple<Drucker1949StressType<StressStensor>,
-               Drucker1949StressNormalType<StressStensor>>
-    computeDrucker1949StressCriterionNormal(
-        const StressStensor&,
-        const Drucker1949BaseType<StressStensor>,
-        const Drucker1949StressType<StressStensor>);
-    /*!
-     * \brief compute the Drucker1949 yield stress and its first and second
-     * derivatives
-     * \tparam StressStensor: type of the stress tensor
-     * \param[in] sig: stress tensor
-     * \param[in] c: c coefficient
-     * \param[in] seps: small stress value. This value is used to regularize the
-     *                  computation of the stress normal.
-     */
-    template <typename StressStensor>
-    std::tuple<Drucker1949StressType<StressStensor>,
-               Drucker1949StressNormalType<StressStensor>,
-               Drucker1949StressSecondDerivativeType<StressStensor>>
-    computeDrucker1949StressCriterionSecondDerivative(
-        const StressStensor&,
-        const Drucker1949BaseType<StressStensor>,
-        const Drucker1949StressType<StressStensor>);
-
-  }  // end of namespace material
-
-}  // end of namespace tfel
+}  // end of namespace tfel::material
 
 #include "TFEL/Material/Drucker1949YieldCriterion.ixx"
 

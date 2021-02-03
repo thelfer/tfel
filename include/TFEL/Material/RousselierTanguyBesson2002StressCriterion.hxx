@@ -19,145 +19,138 @@
 #include "TFEL/Math/stensor.hxx"
 #include "TFEL/Math/st2tost2.hxx"
 
-namespace tfel {
+namespace tfel::material {
 
-  namespace material {
+  //! a simple alias
+  template <typename StressStensor>
+  using RousselierTanguyBesson2002StressType =
+      tfel::math::numeric_type<StressStensor>;
+  //! a simple alias
+  template <typename StressStensor>
+  using RousselierTanguyBesson2002BaseType =
+      tfel::typetraits::base_type<tfel::math::numeric_type<StressStensor>>;
+  //! a simple alias
+  template <typename StressStensor>
+  using RousselierTanguyBesson2002PorosityType =
+      RousselierTanguyBesson2002BaseType<StressStensor>;
+  //! a simple alias
+  template <typename StressStensor>
+  using RousselierTanguyBesson2002InvertStressType = tfel::math::result_type<
+      RousselierTanguyBesson2002BaseType<StressStensor>,
+      RousselierTanguyBesson2002StressType<StressStensor>,
+      tfel::math::OpDiv>;
+  //! a simple alias
+  template <typename StressStensor>
+  using RousselierTanguyBesson2002StressNormalType =
+      tfel::math::stensor<tfel::math::getSpaceDimension<StressStensor>(),
+                          RousselierTanguyBesson2002BaseType<StressStensor>>;
+  //! a simple alias
+  template <typename StressStensor>
+  using RousselierTanguyBesson2002StressDerivativeWithRespectToPorosityType =
+      RousselierTanguyBesson2002StressType<StressStensor>;
+  //! a simple alias
+  template <typename StressStensor>
+  using RousselierTanguyBesson2002StressEigenTensorType =
+      tfel::math::stensor<tfel::math::getSpaceDimension<StressStensor>(),
+                          RousselierTanguyBesson2002BaseType<StressStensor>>;
+  //! a simple alias
+  template <typename StressStensor>
+  using RousselierTanguyBesson2002StressSecondDerivativeType =
+      tfel::math::st2tost2<
+          tfel::math::getSpaceDimension<StressStensor>(),
+          RousselierTanguyBesson2002InvertStressType<StressStensor>>;
+  //! a simple alias
+  template <typename StressStensor>
+  using RousselierTanguyBesson2002NormalDerivativeWithRespectToPorosityType =
+      RousselierTanguyBesson2002StressNormalType<StressStensor>;
 
+  /*!
+   * \brief parameters of the RousselierTanguyBesson2002 criterion
+   */
+  template <typename StressStensor>
+  struct RousselierTanguyBesson2002StressCriterionParameters {
     //! a simple alias
-    template <typename StressStensor>
-    using RousselierTanguyBesson2002StressType =
-        tfel::math::numeric_type<StressStensor>;
+    using stress = RousselierTanguyBesson2002StressType<StressStensor>;
     //! a simple alias
-    template <typename StressStensor>
-    using RousselierTanguyBesson2002BaseType =
-        tfel::typetraits::base_type<tfel::math::numeric_type<StressStensor>>;
-    //! a simple alias
-    template <typename StressStensor>
-    using RousselierTanguyBesson2002PorosityType =
-        RousselierTanguyBesson2002BaseType<StressStensor>;
-    //! a simple alias
-    template <typename StressStensor>
-    using RousselierTanguyBesson2002InvertStressType = tfel::math::result_type<
-        RousselierTanguyBesson2002BaseType<StressStensor>,
-        RousselierTanguyBesson2002StressType<StressStensor>,
-        tfel::math::OpDiv>;
-    //! a simple alias
-    template <typename StressStensor>
-    using RousselierTanguyBesson2002StressNormalType =
-        tfel::math::stensor<tfel::math::getSpaceDimension<StressStensor>(),
-                            RousselierTanguyBesson2002BaseType<StressStensor>>;
-    //! a simple alias
-    template <typename StressStensor>
-    using RousselierTanguyBesson2002StressDerivativeWithRespectToPorosityType =
-        RousselierTanguyBesson2002StressType<StressStensor>;
-    //! a simple alias
-    template <typename StressStensor>
-    using RousselierTanguyBesson2002StressEigenTensorType =
-        tfel::math::stensor<tfel::math::getSpaceDimension<StressStensor>(),
-                            RousselierTanguyBesson2002BaseType<StressStensor>>;
-    //! a simple alias
-    template <typename StressStensor>
-    using RousselierTanguyBesson2002StressSecondDerivativeType =
-        tfel::math::st2tost2<
-            tfel::math::getSpaceDimension<StressStensor>(),
-            RousselierTanguyBesson2002InvertStressType<StressStensor>>;
-    //! a simple alias
-    template <typename StressStensor>
-    using RousselierTanguyBesson2002NormalDerivativeWithRespectToPorosityType =
-        RousselierTanguyBesson2002StressNormalType<StressStensor>;
+    using real = RousselierTanguyBesson2002BaseType<StressStensor>;
+    //! \brief \f$Dr\f$ material property
+    real DR;
+    //! \brief \f$qr\f$ material property
+    real qR;
+  };  // end of struct RousselierTanguyBesson2002StressCriterionParameters
 
-    /*!
-     * \brief parameters of the RousselierTanguyBesson2002 criterion
-     */
-    template <typename StressStensor>
-    struct RousselierTanguyBesson2002StressCriterionParameters {
-      //! a simple alias
-      using stress = RousselierTanguyBesson2002StressType<StressStensor>;
-      //! a simple alias
-      using real = RousselierTanguyBesson2002BaseType<StressStensor>;
-      //! \brief \f$Dr\f$ material property
-      real DR;
-      //! \brief \f$qr\f$ material property
-      real qR;
-    };  // end of struct RousselierTanguyBesson2002StressCriterionParameters
+  /*!
+   * \brief output operator
+   * \param[out] os: output stream
+   * \param[in] p: parameters
+   */
+  template <typename StressStensor>
+  std::ostream& operator<<(
+      std::ostream&,
+      const RousselierTanguyBesson2002StressCriterionParameters<
+          StressStensor>&);
 
-    /*!
-     * \brief output operator
-     * \param[out] os: output stream
-     * \param[in] p: parameters
-     */
-    template <typename StressStensor>
-    std::ostream& operator<<(
-        std::ostream&,
-        const RousselierTanguyBesson2002StressCriterionParameters<
-            StressStensor>&);
+  /*!
+   * \brief compute the RousselierTanguyBesson2002 yield stress
+   * \tparam StressStensor: type of the stress tensor
+   * \param[in] sig: stress tensor
+   * \param[in] f: porosity
+   * \param[in] p: parameters
+   * \param[in] seps: threshold for the equivalent stress.
+   */
+  template <typename StressStensor>
+  RousselierTanguyBesson2002StressType<StressStensor>
+  computeRousselierTanguyBesson2002Stress(
+      const StressStensor&,
+      const RousselierTanguyBesson2002PorosityType<StressStensor>,
+      const RousselierTanguyBesson2002StressCriterionParameters<StressStensor>&,
+      const RousselierTanguyBesson2002StressType<StressStensor>);
+  /*!
+   * \brief compute the RousselierTanguyBesson2002 yield stress and the its
+   * first derivative
+   * \tparam StressStensor: type of the stress tensor
+   * \param[in] sig: stress tensor
+   * \param[in] f: porosity
+   * \param[in] p: parameters
+   * \param[in] seps: threshold for the equivalent stress.
+   */
+  template <typename StressStensor>
+  std::tuple<
+      RousselierTanguyBesson2002StressType<StressStensor>,
+      RousselierTanguyBesson2002StressNormalType<StressStensor>,
+      RousselierTanguyBesson2002StressDerivativeWithRespectToPorosityType<
+          StressStensor>>
+  computeRousselierTanguyBesson2002StressNormal(
+      const StressStensor&,
+      const RousselierTanguyBesson2002PorosityType<StressStensor>,
+      const RousselierTanguyBesson2002StressCriterionParameters<StressStensor>&,
+      const RousselierTanguyBesson2002StressType<StressStensor>);
+  /*!
+   * \brief compute the RousselierTanguyBesson2002 yield stress and its first
+   * and second
+   * derivatives
+   * \tparam StressStensor: type of the stress tensor
+   * \param[in] sig: stress tensor
+   * \param[in] f: porosity
+   * \param[in] p: parameters
+   * \param[in] seps: threshold for the equivalent stress.
+   */
+  template <typename StressStensor>
+  std::tuple<
+      RousselierTanguyBesson2002StressType<StressStensor>,
+      RousselierTanguyBesson2002StressNormalType<StressStensor>,
+      RousselierTanguyBesson2002StressDerivativeWithRespectToPorosityType<
+          StressStensor>,
+      RousselierTanguyBesson2002StressSecondDerivativeType<StressStensor>,
+      RousselierTanguyBesson2002NormalDerivativeWithRespectToPorosityType<
+          StressStensor>>
+  computeRousselierTanguyBesson2002StressSecondDerivative(
+      const StressStensor&,
+      const RousselierTanguyBesson2002PorosityType<StressStensor>,
+      const RousselierTanguyBesson2002StressCriterionParameters<StressStensor>&,
+      const RousselierTanguyBesson2002StressType<StressStensor>);
 
-    /*!
-     * \brief compute the RousselierTanguyBesson2002 yield stress
-     * \tparam StressStensor: type of the stress tensor
-     * \param[in] sig: stress tensor
-     * \param[in] f: porosity
-     * \param[in] p: parameters
-     * \param[in] seps: threshold for the equivalent stress.
-     */
-    template <typename StressStensor>
-    RousselierTanguyBesson2002StressType<StressStensor>
-    computeRousselierTanguyBesson2002Stress(
-        const StressStensor&,
-        const RousselierTanguyBesson2002PorosityType<StressStensor>,
-        const RousselierTanguyBesson2002StressCriterionParameters<
-            StressStensor>&,
-        const RousselierTanguyBesson2002StressType<StressStensor>);
-    /*!
-     * \brief compute the RousselierTanguyBesson2002 yield stress and the its
-     * first derivative
-     * \tparam StressStensor: type of the stress tensor
-     * \param[in] sig: stress tensor
-     * \param[in] f: porosity
-     * \param[in] p: parameters
-     * \param[in] seps: threshold for the equivalent stress.
-     */
-    template <typename StressStensor>
-    std::tuple<
-        RousselierTanguyBesson2002StressType<StressStensor>,
-        RousselierTanguyBesson2002StressNormalType<StressStensor>,
-        RousselierTanguyBesson2002StressDerivativeWithRespectToPorosityType<
-            StressStensor>>
-    computeRousselierTanguyBesson2002StressNormal(
-        const StressStensor&,
-        const RousselierTanguyBesson2002PorosityType<StressStensor>,
-        const RousselierTanguyBesson2002StressCriterionParameters<
-            StressStensor>&,
-        const RousselierTanguyBesson2002StressType<StressStensor>);
-    /*!
-     * \brief compute the RousselierTanguyBesson2002 yield stress and its first
-     * and second
-     * derivatives
-     * \tparam StressStensor: type of the stress tensor
-     * \param[in] sig: stress tensor
-     * \param[in] f: porosity
-     * \param[in] p: parameters
-     * \param[in] seps: threshold for the equivalent stress.
-     */
-    template <typename StressStensor>
-    std::tuple<
-        RousselierTanguyBesson2002StressType<StressStensor>,
-        RousselierTanguyBesson2002StressNormalType<StressStensor>,
-        RousselierTanguyBesson2002StressDerivativeWithRespectToPorosityType<
-            StressStensor>,
-        RousselierTanguyBesson2002StressSecondDerivativeType<StressStensor>,
-        RousselierTanguyBesson2002NormalDerivativeWithRespectToPorosityType<
-            StressStensor>>
-    computeRousselierTanguyBesson2002StressSecondDerivative(
-        const StressStensor&,
-        const RousselierTanguyBesson2002PorosityType<StressStensor>,
-        const RousselierTanguyBesson2002StressCriterionParameters<
-            StressStensor>&,
-        const RousselierTanguyBesson2002StressType<StressStensor>);
-
-  }  // end of namespace material
-
-}  // end of namespace tfel
+}  // end of namespace tfel::material
 
 #include "TFEL/Material/RousselierTanguyBesson2002StressCriterion.ixx"
 

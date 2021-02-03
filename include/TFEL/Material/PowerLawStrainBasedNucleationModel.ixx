@@ -16,80 +16,77 @@
 
 #include <cmath>
 
-namespace tfel {
+namespace tfel::material {
 
-  namespace material {
+  template <typename real>
+  std::ostream& operator<<(
+      std::ostream& os,
+      const PowerLawStrainBasedNucleationModelParameters<real>& p) {
+    os << '{' << p.fn << ", " << p.en << ", " << p.m << '}';
+    return os;
+  }  // end of operator<<
 
-    template <typename real>
-    std::ostream& operator<<(
-        std::ostream& os,
-        const PowerLawStrainBasedNucleationModelParameters<real>& p) {
-      os << '{' << p.fn << ", " << p.en << ", " << p.m << '}';
-      return os;
-    }  // end of operator<<
-
-    template <typename real>
-    real computePowerLawStrainBasedNucleationModelPorosityRateFactor(
-        const PowerLawStrainBasedNucleationModelParameters<real>& params,
-        const real p) {
-      if (p < params.en) {
-        return 0;
-      }
-      return (params.fn) * (std::pow(p / params.en - 1, params.m));
-    }  // end of computePowerLawStrainBasedNucleationModelPorosityRate
-
-    template <typename real>
-    std::tuple<real, real>
-    computePowerLawStrainBasedNucleationModelPorosityRateFactorAndDerivative(
-        const PowerLawStrainBasedNucleationModelParameters<real>& params,
-        const real p) {
-      if (p < params.en) {
-        return {real(0), real(0)};
-      }
-      const auto rp = p / params.en - 1;
-      const auto irp = std::max(rp, 1e-12);
-      const auto An = (params.fn) * std::pow(rp, params.m);
-      const auto dAn_dp = (params.m / params.en) * An * irp;
-      return std::make_tuple(An, dAn_dp);
-    }  // end of computePowerLawStrainBasedNucleationModelPorosityRate
-
-    template <typename real>
-    real computePowerLawStrainBasedNucleationModelPorosityIncrement(
-        const PowerLawStrainBasedNucleationModelParameters<real>& params,
-        const real p,
-        const real dp,
-        const real) {
-      if ((dp < 0) || (p + dp < params.en)) {
-        return 0;
-      }
-      const auto pa = std::max(p, params.en);
-      auto F = [&params](const real v) {
-        return (params.fn) * (params.en) / (params.m + 1) * pow(v / (params.en) - 1, params.m + 1);
-      };
-      return F(p + dp) - F(pa);
+  template <typename real>
+  real computePowerLawStrainBasedNucleationModelPorosityRateFactor(
+      const PowerLawStrainBasedNucleationModelParameters<real>& params,
+      const real p) {
+    if (p < params.en) {
+      return 0;
     }
+    return (params.fn) * (std::pow(p / params.en - 1, params.m));
+  }  // end of computePowerLawStrainBasedNucleationModelPorosityRate
 
-    template <typename real>
-    std::tuple<real, real>
-    computePowerLawStrainBasedNucleationModelPorosityIncrementAndDerivative(
-        const PowerLawStrainBasedNucleationModelParameters<real>& params,
-        const real p,
-        const real dp,
-        const real) {
-      if ((dp < 0) || (p + dp < params.en)) {
-        return std::make_tuple(real(0), real(0));
-      }
-      const auto pa = std::max(p, params.en);
-      auto Fa =
-          (params.fn) * (params.en) / (params.m + 1) * pow((pa / (params.en) - 1), params.m + 1);
-      const auto rp = (p + dp) / (params.en) - 1;
-      const auto rp_m = pow(rp, params.m);
-      auto Fb = (params.fn) * (params.en) / (params.m + 1) * rp_m * rp;
-      return std::make_tuple(Fb - Fa, (params.fn) * rp_m);
+  template <typename real>
+  std::tuple<real, real>
+  computePowerLawStrainBasedNucleationModelPorosityRateFactorAndDerivative(
+      const PowerLawStrainBasedNucleationModelParameters<real>& params,
+      const real p) {
+    if (p < params.en) {
+      return {real(0), real(0)};
     }
+    const auto rp = p / params.en - 1;
+    const auto irp = std::max(rp, 1e-12);
+    const auto An = (params.fn) * std::pow(rp, params.m);
+    const auto dAn_dp = (params.m / params.en) * An * irp;
+    return std::make_tuple(An, dAn_dp);
+  }  // end of computePowerLawStrainBasedNucleationModelPorosityRate
 
-  }  // end of namespace material
+  template <typename real>
+  real computePowerLawStrainBasedNucleationModelPorosityIncrement(
+      const PowerLawStrainBasedNucleationModelParameters<real>& params,
+      const real p,
+      const real dp,
+      const real) {
+    if ((dp < 0) || (p + dp < params.en)) {
+      return 0;
+    }
+    const auto pa = std::max(p, params.en);
+    auto F = [&params](const real v) {
+      return (params.fn) * (params.en) / (params.m + 1) *
+             pow(v / (params.en) - 1, params.m + 1);
+    };
+    return F(p + dp) - F(pa);
+  }
 
-}  // end of namespace tfel
+  template <typename real>
+  std::tuple<real, real>
+  computePowerLawStrainBasedNucleationModelPorosityIncrementAndDerivative(
+      const PowerLawStrainBasedNucleationModelParameters<real>& params,
+      const real p,
+      const real dp,
+      const real) {
+    if ((dp < 0) || (p + dp < params.en)) {
+      return std::make_tuple(real(0), real(0));
+    }
+    const auto pa = std::max(p, params.en);
+    auto Fa = (params.fn) * (params.en) / (params.m + 1) *
+              pow((pa / (params.en) - 1), params.m + 1);
+    const auto rp = (p + dp) / (params.en) - 1;
+    const auto rp_m = pow(rp, params.m);
+    auto Fb = (params.fn) * (params.en) / (params.m + 1) * rp_m * rp;
+    return std::make_tuple(Fb - Fa, (params.fn) * rp_m);
+  }
+
+}  // end of namespace tfel::material
 
 #endif /* LIB_TFEL_MATERIAL_POWERLAWSTRAINBASEDNUCLEATIONMODEL_IXX */

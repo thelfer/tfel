@@ -20,49 +20,45 @@
 #include "TFEL/Math/stensor.hxx"
 #include "TFEL/Math/General/RandomRotationMatrix.hxx"
 
-namespace tfel {
+namespace tfel::material {
 
-  namespace material {
+  /*!
+   * \param[in] Np      : number of phases
+   * \param[in] GS      : class describing the sliding system of one phase
+   * \param[in] NumType : numeric type used
+   */
+  template <unsigned short Ng, typename GS, typename NumType>
+  struct PolyCrystalsSlidingSystems {
+    //! number of sliding systems of the mono crystal
+    static constexpr unsigned short Nss = GS::Nss;
+    //! a simple alias
+    typedef NumType real;
+    //! a simple alias
+    typedef tfel::math::stensor<3u> StrainStensor;
+    //! return the uniq instance of the class
+    static const PolyCrystalsSlidingSystems& getPolyCrystalsSlidingSystems(
+        const std::string& = "");
+    //! tensor of directional senses, sorted by phases
+    tfel::math::vector<tfel::math::vector<StrainStensor>> mus;
 
+   private:
     /*!
-     * \param[in] Np      : number of phases
-     * \param[in] GS      : class describing the sliding system of one phase
-     * \param[in] NumType : numeric type used
+     * default constructor (declared private~: it can only be used
+     * by the getPolyCrystalsSlidingSystems method)
+     * \param[in] f : file where the angles are declared
      */
-    template <unsigned short Ng, typename GS, typename NumType>
-    struct PolyCrystalsSlidingSystems {
-      //! number of sliding systems of the mono crystal
-      static constexpr unsigned short Nss = GS::Nss;
-      //! a simple alias
-      typedef NumType real;
-      //! a simple alias
-      typedef tfel::math::stensor<3u> StrainStensor;
-      //! return the uniq instance of the class
-      static const PolyCrystalsSlidingSystems& getPolyCrystalsSlidingSystems(
-          const std::string& = "");
-      //! tensor of directional senses, sorted by phases
-      tfel::math::vector<tfel::math::vector<StrainStensor>> mus;
+    PolyCrystalsSlidingSystems(const std::string&);
+    /*!
+     * copy constructor (declared private to disable it)
+     */
+    PolyCrystalsSlidingSystems(const PolyCrystalsSlidingSystems&);
+    /*!
+     * assignement operatore (declared private to disable it)
+     */
+    PolyCrystalsSlidingSystems& operator=(const PolyCrystalsSlidingSystems&);
+  };
 
-     private:
-      /*!
-       * default constructor (declared private~: it can only be used
-       * by the getPolyCrystalsSlidingSystems method)
-       * \param[in] f : file where the angles are declared
-       */
-      PolyCrystalsSlidingSystems(const std::string&);
-      /*!
-       * copy constructor (declared private to disable it)
-       */
-      PolyCrystalsSlidingSystems(const PolyCrystalsSlidingSystems&);
-      /*!
-       * assignement operatore (declared private to disable it)
-       */
-      PolyCrystalsSlidingSystems& operator=(const PolyCrystalsSlidingSystems&);
-    };
-
-  }  // end of namespace material
-
-}  // end of namespace tfel
+}  // end of namespace tfel::material
 
 #include "TFEL/Material/PolyCrystalsSlidingSystems.ixx"
 

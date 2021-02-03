@@ -17,36 +17,32 @@
 #include "TFEL/Math/stensor.hxx"
 #include "TFEL/Math/st2tost2.hxx"
 
-namespace tfel {
+namespace tfel::material {
 
-  namespace material {
+  //! a simple alias
+  template <typename StressStensor>
+  using Cazacu2004StressType = tfel::math::numeric_type<StressStensor>;
+  //! a simple alias
+  template <typename StressStensor>
+  using Cazacu2004BaseType =
+      tfel::typetraits::base_type<tfel::math::numeric_type<StressStensor>>;
+  //! a simple alias
+  template <typename StressStensor>
+  using Cazacu2004InvertStressType =
+      tfel::math::result_type<Cazacu2004BaseType<StressStensor>,
+                              Cazacu2004StressType<StressStensor>,
+                              tfel::math::OpDiv>;
+  //! a simple alias
+  template <typename StressStensor>
+  using Cazacu2004StressNormalType =
+      tfel::math::stensor<tfel::math::getSpaceDimension<StressStensor>(),
+                          Cazacu2004BaseType<StressStensor>>;
+  //! a simple alias
+  template <typename StressStensor>
+  using Cazacu2004StressSecondDerivativeType =
+      tfel::math::st2tost2<tfel::math::getSpaceDimension<StressStensor>(),
+                           Cazacu2004InvertStressType<StressStensor>>;
 
-    //! a simple alias
-    template <typename StressStensor>
-    using Cazacu2004StressType = tfel::math::numeric_type<StressStensor>;
-    //! a simple alias
-    template <typename StressStensor>
-    using Cazacu2004BaseType =
-        tfel::typetraits::base_type<tfel::math::numeric_type<StressStensor>>;
-    //! a simple alias
-    template <typename StressStensor>
-    using Cazacu2004InvertStressType =
-        tfel::math::result_type<Cazacu2004BaseType<StressStensor>,
-                                Cazacu2004StressType<StressStensor>,
-                                tfel::math::OpDiv>;
-    //! a simple alias
-    template <typename StressStensor>
-    using Cazacu2004StressNormalType =
-        tfel::math::stensor<tfel::math::getSpaceDimension<StressStensor>(),
-                            Cazacu2004BaseType<StressStensor>>;
-    //! a simple alias
-    template <typename StressStensor>
-    using Cazacu2004StressSecondDerivativeType =
-        tfel::math::st2tost2<tfel::math::getSpaceDimension<StressStensor>(),
-                             Cazacu2004InvertStressType<StressStensor>>;
-
-  }  // end of namespace material
-
-}  // end of namespace tfel
+}  // end of namespace tfel::material
 
 #endif /* LIB_TFEL_MATERIAL_CAZACU2004YIELDCRITERIONTYPES_HXX */
