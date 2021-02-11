@@ -64,6 +64,9 @@ is described in the following pages:
 
 The creation of binary packages are detailled [here](packages.html). 
 
+A quick way of installing `TFEL` on `Ubuntu` systems is given in Section
+@sec:QuickUbuntu.
+
 `TFEL` is known to work on standard architectures implemented by the
 Intel and AMD processors, either 32 or 64 bits. As no specific
 instructions relative to the underlying architecture is used in the
@@ -434,7 +437,7 @@ $ make doc-install
 Note that you can not build the `TFEL` website using the `autotools`
 build system.
 
-# A Quick installation procedure on `Ubuntu`
+# A Quick installation procedure on `Ubuntu` {#sec:QuickUbuntu}
 
 The following steps show a quick way of installing `TFEL` on `Ubuntu`
 systems. The configuration described in this section only compiles the

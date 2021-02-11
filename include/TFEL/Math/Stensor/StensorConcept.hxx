@@ -60,6 +60,13 @@ namespace tfel::math {
     return tfel::meta::implements<StensorType, StensorConcept>();
   }  // end of implementsStensorConcept
 
+  //! \brief a simple alias for backward compatibility with versions prior to 4.0
+  template <typename StensorType>
+  using StensorTraits =
+      std::conditional_t<implementsStensorConcept<StensorType>(),
+                         MathObjectTraits<StensorType>,
+                         MathObjectTraits<tfel::meta::InvalidType>>;
+
   //! partial specialisation for symmetric tensors
   template <typename Type>
   struct ConceptRebind<StensorTag, Type> {
