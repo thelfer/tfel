@@ -58,7 +58,7 @@ namespace mfront{
     }
   } // end of DefaultDSLBase::endsInputFileProcessing()
   
-  void DefaultDSLBase::writeBehaviourLocalVariablesInitialisation(const Hypothesis)
+  void DefaultDSLBase::writeBehaviourLocalVariablesInitialisation(const Hypothesis h)
   {
     using Modifier = std::function<std::string(const MaterialPropertyInput&)>;
     Modifier ets = [](const MaterialPropertyInput& i) -> std::string {
@@ -78,6 +78,7 @@ namespace mfront{
       this->behaviourFile << "// stiffness tensor at the end of the time step\n";
       this->writeStiffnessTensorComputation(this->behaviourFile,"this->D",ets);
     }
+    BehaviourDSLCommon::writeBehaviourLocalVariablesInitialisation(h);
   }
   
   void
