@@ -92,9 +92,8 @@ namespace mfront{
     BehaviourDSLCommon::writeBehaviourParserSpecificIncludes(os);
   } // end of DefaultDSLBase::writeBehaviourParserSpecificIncludes
 
-  void DefaultDSLBase::writeBehaviourLocalVariablesInitialisation(std::ostream& os,
-								  const Hypothesis) const
-  {
+  void DefaultDSLBase::writeBehaviourLocalVariablesInitialisation(
+      std::ostream& os, const Hypothesis h) const {
     using Modifier = std::function<std::string(const MaterialPropertyInput&)>;
     Modifier ets = [](const MaterialPropertyInput& i) -> std::string {
       if((i.type==MaterialPropertyInput::TEMPERATURE)||
@@ -113,6 +112,7 @@ namespace mfront{
       os << "// stiffness tensor at the end of the time step\n";
       this->writeStiffnessTensorComputation(os,"this->D",ets);
     }
+    BehaviourDSLCommon::writeBehaviourLocalVariablesInitialisation(os, h);
   }
 
   DefaultDSLBase::~DefaultDSLBase() = default;
