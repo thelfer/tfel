@@ -66,7 +66,7 @@ namespace tfel::math {
       //                                                src.getIndexingPolicy());
       this->assign(src);
       return *this;
-    };
+    }
     //! \brief move assigment
     constexpr View& operator=(View&& src) noexcept {
       //       checkIndexingPoliciesRuntimeCompatiblity(this->getIndexingPolicy(),

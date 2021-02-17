@@ -3,7 +3,7 @@
  * \brief
  *
  * \author Thomas Helfer
- * \date   02 oct 2007
+ * \date   02/10/2007
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence
@@ -12,96 +12,86 @@
  * project under specific licensing conditions.
  */
 
-#ifndef LIB_TFEL_BINARYFUNCTION_HXX
-#define LIB_TFEL_BINARYFUNCTION_HXX
+#ifndef LIB_TFEL_MATH_PARSER_BINARYFUNCTION_HXX
+#define LIB_TFEL_MATH_PARSER_BINARYFUNCTION_HXX
 
 #include <memory>
 #include "TFEL/Config/TFELConfig.hxx"
 #include "TFEL/Math/Parser/Expr.hxx"
 
-namespace tfel {
-  namespace math {
+namespace tfel::math::parser {
 
-    namespace parser {
+  struct BinaryFunction : public Expr {
+    ~BinaryFunction() override;
+  };
 
-      struct BinaryFunction : public Expr {
-        ~BinaryFunction() override;
-      };
+  struct StandardBinaryFunctionBase {
+    [[noreturn]] static void throwUnimplementedDifferentiateFunctionException();
+    [[noreturn]] static void throwInvalidCallException(const int);
+    /*!
+     * \brief build the C++ formula resulting from the evolution
+     * of a binary function.
+     * \param[in] n: name
+     * \param[in] e1: first  argument
+     * \param[in] e2: second argument
+     */
+    static std::string getCxxFormula(const char* const,
+                                     const std::string&,
+                                     const std::string&);
 
-      struct StandardBinaryFunctionBase {
-        [[noreturn]] static void
-        throwUnimplementedDifferentiateFunctionException();
-        [[noreturn]] static void throwInvalidCallException(const int);
-        /*!
-         * \brief build the C++ formula resulting from the evolution
-         * of a binary function.
-         * \param[in] n: name
-         * \param[in] e1: first  argument
-         * \param[in] e2: second argument
-         */
-        static std::string getCxxFormula(const char* const,
-                                         const std::string&,
-                                         const std::string&);
+  };  // end of struct StandardBinaryFunctionBase
 
-      };  // end of struct StandardBinaryFunctionBase
+  template <double (*f)(const double, const double)>
+  struct TFEL_VISIBILITY_LOCAL StandardBinaryFunction final
+      : public BinaryFunction,
+        protected StandardBinaryFunctionBase {
+    /*!
+     * \param[in] n: name of the function
+     * \param[in] e1: first argument
+     * \param[in] e2: second argument
+     */
+    StandardBinaryFunction(const char* const,
+                           const std::shared_ptr<Expr>,
+                           const std::shared_ptr<Expr>);
+    /*!
+     *\return the value resulting for the evaluation of the
+     * function and its arguments
+     */
+    double getValue() const override;
+    /*!
+     * \return a string representation of the evaluator suitable to
+     * be integrated in a C++ code.
+     * \param[in] m: a map used to change the names of the variables
+     */
+    std::string getCxxFormula(const std::vector<std::string>&) const override;
+    void checkCyclicDependency(std::vector<std::string>&) const override;
+    std::shared_ptr<Expr> resolveDependencies(
+        const std::vector<double>&) const override;
+    std::shared_ptr<Expr> differentiate(
+        const std::vector<double>::size_type,
+        const std::vector<double>&) const override;
+    std::shared_ptr<Expr> clone(const std::vector<double>&) const override;
+    std::shared_ptr<Expr> createFunctionByChangingParametersIntoVariables(
+        const std::vector<double>&,
+        const std::vector<std::string>&,
+        const std::map<std::string, std::vector<double>::size_type>&)
+        const override;
+    void getParametersNames(std::set<std::string>&) const override;
+    ~StandardBinaryFunction() override;
 
-      template <double (*f)(const double, const double)>
-      struct TFEL_VISIBILITY_LOCAL StandardBinaryFunction final
-          : public BinaryFunction,
-            protected StandardBinaryFunctionBase {
-        /*!
-         * \param[in] n: name of the function
-         * \param[in] e1: first argument
-         * \param[in] e2: second argument
-         */
-        StandardBinaryFunction(const char* const,
-                               const std::shared_ptr<Expr>,
-                               const std::shared_ptr<Expr>);
-        /*!
-         *\return the value resulting for the evaluation of the
-         * function and its arguments
-         */
-        double getValue() const override;
-        /*!
-         * \return a string representation of the evaluator suitable to
-         * be integrated in a C++ code.
-         * \param[in] m: a map used to change the names of the variables
-         */
-        std::string getCxxFormula(
-            const std::vector<std::string>&) const override;
-        void checkCyclicDependency(std::vector<std::string>&) const override;
-        std::shared_ptr<Expr> resolveDependencies(
-            const std::vector<double>&) const override;
-        std::shared_ptr<Expr> differentiate(
-            const std::vector<double>::size_type,
-            const std::vector<double>&) const override;
-        std::shared_ptr<Expr> clone(const std::vector<double>&) const override;
-        std::shared_ptr<Expr> createFunctionByChangingParametersIntoVariables(
-            const std::vector<double>&,
-            const std::vector<std::string>&,
-            const std::map<std::string, std::vector<double>::size_type>&)
-            const override;
-        void getParametersNames(std::set<std::string>&) const override;
-        ~StandardBinaryFunction() override;
+   private:
+    StandardBinaryFunction& operator=(const StandardBinaryFunction&) = delete;
+    StandardBinaryFunction& operator=(StandardBinaryFunction&&) = delete;
+    //! function name
+    const char* const name;
+    //! first argument
+    const std::shared_ptr<Expr> expr1;
+    //! second argument
+    const std::shared_ptr<Expr> expr2;
+  };  // end of struct StandardBinaryFunction
 
-       private:
-        StandardBinaryFunction& operator=(const StandardBinaryFunction&) =
-            delete;
-        StandardBinaryFunction& operator=(StandardBinaryFunction&&) = delete;
-        //! function name
-        const char* const name;
-        //! first argument
-        const std::shared_ptr<Expr> expr1;
-        //! second argument
-        const std::shared_ptr<Expr> expr2;
-      };  // end of struct StandardBinaryFunction
-
-    }  // end of namespace parser
-
-  }  // end of namespace math
-
-}  // end of namespace tfel
+}  // end of namespace tfel::math::parser
 
 #include "TFEL/Math/Parser/BinaryFunction.ixx"
 
-#endif /* LIB_TFEL_BINARYFUNCTION_HXX */
+#endif /* LIB_TFEL_MATH_PARSER_BINARYFUNCTION_HXX */

@@ -3,7 +3,7 @@
  * \brief
  *
  * \author Thomas Helfer
- * \date   02 oct 2007
+ * \date   02/11/2007
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence
@@ -21,28 +21,19 @@
 
 #include "TFEL/Math/Parser/ExternalFunction.hxx"
 
-namespace tfel {
+namespace tfel::math::parser {
 
-  namespace math {
+  /*!
+   * \brief a simple structure in charge of storing external
+   * functions by name.
+   */
+  struct ExternalFunctionManager
+      : public std::map<std::string, std::shared_ptr<ExternalFunction>> {
+  };  // end of struct ExternalFunctionManager
 
-    namespace parser {
+  //! \brief a simple alias
+  using ExternalFunctionManagerPtr = std::shared_ptr<ExternalFunctionManager>;
 
-      /*!
-       * \brief a simple structure in charge of storing external
-       * functions by name.
-       */
-      struct ExternalFunctionManager
-          : public std::map<std::string, std::shared_ptr<ExternalFunction>> {
-      };  // end of struct ExternalFunctionManager
-
-      //! \brief a simple alias
-      using ExternalFunctionManagerPtr =
-          std::shared_ptr<ExternalFunctionManager>;
-
-    }  // end of namespace parser
-
-  }  // end of namespace math
-
-}  // end of namespace tfel
+}  // end of namespace tfel::math::parser
 
 #endif /* LIB_TFEL_MATH_PARSER_EXTERNALFUNCTIONMANAGER_HXX */
