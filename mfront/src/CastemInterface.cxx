@@ -1405,7 +1405,7 @@ namespace mfront {
     out.close();
     if ((mb.getBehaviourType() == BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) ||
         (mb.getBehaviourType() == BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR)) {
-      this->generateGibianeDeclaration(mb, fd);
+      this->generateInputFileExample(mb, fd);
     }
   }  // end of CastemInterface::endTreatment
 
@@ -2262,11 +2262,11 @@ namespace mfront {
     out << buffer << '\n';
   }  // end of CastemInterface::writeGibianeInstruction
 
-  void CastemInterface::generateGibianeDeclarationForHypothesis(
+  void CastemInterface::generateInputFileExampleForHypothesis(
       std::ostream& out, const BehaviourDescription& bd, const Hypothesis h) const {
     auto throw_if = [](const bool b, const std::string& m) {
       tfel::raise_if(
-          b, "CastemInterface::generateGibianeDeclarationForHypothesis: " + m);
+          b, "CastemInterface::generateInputFileExampleForHypothesis: " + m);
     };
     const std::map<ModellingHypothesis::Hypothesis, std::string> mo = {
         {ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN,
@@ -2421,9 +2421,9 @@ namespace mfront {
     mi << ";";
     writeGibianeInstruction(out, mi.str());
     out << '\n';
-  }  // end of CastemInterface::generateGibianeDeclarationForHypothesis
+  }  // end of CastemInterface::generateInputFileExampleForHypothesis
 
-  void CastemInterface::generateGibianeDeclaration(
+  void CastemInterface::generateInputFileExample(
       const BehaviourDescription& bd, const FileDescription& fd) const {
     const auto name((!bd.getLibrary().empty())
                         ? bd.getLibrary() + bd.getClassName()
@@ -2434,7 +2434,7 @@ namespace mfront {
     std::ofstream out;
     out.open(fileName);
     tfel::raise_if(!out,
-                   "CastemInterface::generateGibianeDeclaration: "
+                   "CastemInterface::generateInputFileExample: "
                    "could not open file '" +
                        fileName + "'");
     // header
@@ -2487,14 +2487,14 @@ namespace mfront {
         gen_emp(emps[8], empds[8], "g13");
       } else {
         tfel::raise(
-            "CastemInterface::generateGibianeDeclaration: "
+            "CastemInterface::generateInputFileExample: "
             "invalid number of elastic material properties");
       }
     }
 
     // loop over hypothesis
     for (const auto& h : this->getModellingHypothesesToBeTreated(bd)) {
-      this->generateGibianeDeclarationForHypothesis(out, bd, h);
+      this->generateInputFileExampleForHypothesis(out, bd, h);
     }
     if (this->usesGenericPlaneStressAlgorithm(bd)) {
       out << "* The behaviour does not support the plane stress hypothesis\n"
@@ -2506,11 +2506,11 @@ namespace mfront {
           << "* inefficient. Use it with care and consider adding proper\n"
           << "* plane stress support to your behaviour.\n"
           << "*\n";
-      this->generateGibianeDeclarationForHypothesis(
+      this->generateInputFileExampleForHypothesis(
           out, bd, ModellingHypothesis::PLANESTRESS);
     }
     out.close();
-  }  // end of CastemInterface::generateGibianeDeclaration
+  }  // end of CastemInterface::generateInputFileExample
 
   void CastemInterface::writeUMATBehaviourTraits(std::ostream& out,
                                                  const BehaviourDescription& mb,

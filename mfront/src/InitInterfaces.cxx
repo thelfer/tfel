@@ -46,6 +46,7 @@
 #ifdef HAVE_CASTEM
 #include"MFront/CastemMaterialPropertyInterface.hxx"
 #include"MFront/CastemInterface.hxx"
+#include"MFront/AmitexInterface.hxx"
 #endif
 
 #ifdef HAVE_CYRANO
@@ -142,6 +143,7 @@ namespace mfront {
     constexpr const char* castemBNames[3] = {"umat", "Castem", "Cast3M"};
     BehaviourInterfaceProxy<CastemInterface> umatProxy(castemBNames,
                                                        castemBNames + 3);
+    BehaviourInterfaceProxy<AmitexInterface> amitexProxy;
 #endif /* HAVE_CASTEM */
 
 #ifdef HAVE_CYRANO
