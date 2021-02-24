@@ -228,9 +228,10 @@ nobase_noinst_HEADERS += MFront/CMaterialPropertyInterfaceBase.hxx          \
 nobase_include_HEADERS += MFront/BehaviourProfiler.hxx
 
 if HAVE_CASTEM
-nobase_include_HEADERS += MFront/CastemMaterialPropertyInterface.hxx   \
-	 	                 MFront/CastemInterface.hxx                   \
-	 	                 MFront/CastemSymbolsGenerator.hxx
+nobase_include_HEADERS += MFront/CastemMaterialPropertyInterface.hxx \
+	 	                  MFront/CastemInterface.hxx                 \
+	 	                  MFront/AmitexInterface.hxx                 \
+	 	                  MFront/CastemSymbolsGenerator.hxx
 if LOCAL_CASTEM_HEADER
 nobase_include_HEADERS += castem.h
 endif 

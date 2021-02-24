@@ -137,18 +137,22 @@ namespace mfront {
      */
     virtual void writeSetOutOfBoundsPolicyFunctionImplementation2(
         std::ostream &, const std::string &, const std::string &) const;
-
-    virtual void generateGibianeDeclaration(const BehaviourDescription &,
-                                            const FileDescription &) const;
+    /*!
+     * \brief generate an example of an input file
+     * \param[in] bd: behaviour description
+     * \param[in] h: modelling hypothesis
+     */
+    virtual void generateInputFileExample(const BehaviourDescription &,
+                                          const FileDescription &) const;
     /*!
      * \brief generate an example of how to use the behaviour for the given
      * hypothesis. This method is called internally by the
-     * `generateGibianeDeclaration` method.
+     * `generateInputFileExample` method.
      * \param[out] out: output stream
      * \param[in] bd: behaviour description
      * \param[in] h: modelling hypothesis
      */
-    virtual void generateGibianeDeclarationForHypothesis(
+    virtual void generateInputFileExampleForHypothesis(
         std::ostream &, const BehaviourDescription &, const Hypothesis) const;
 
     virtual void writeVariableDescriptionContainerToGibiane(

@@ -241,6 +241,7 @@ if(HAVE_CASTEM)
 	CastemInterface.cxx
 	CastemSymbolsGenerator.cxx
 	CastemMaterialPropertyInterface.cxx
+	AmitexInterface.cxx
 	${TFELMFront_SOURCES})
     set(CastemInterface_SOURCES
 	CastemInterfaceExceptions.cxx
