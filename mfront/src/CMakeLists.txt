@@ -239,6 +239,7 @@ endif(HAVE_FORTRAN)
 if(HAVE_CASTEM)
     set(TFELMFront_SOURCES
 	CastemInterface.cxx
+	Castem21Interface.cxx
 	CastemSymbolsGenerator.cxx
 	CastemMaterialPropertyInterface.cxx
 	AmitexInterface.cxx

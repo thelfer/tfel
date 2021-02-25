@@ -230,6 +230,7 @@ nobase_include_HEADERS += MFront/BehaviourProfiler.hxx
 if HAVE_CASTEM
 nobase_include_HEADERS += MFront/CastemMaterialPropertyInterface.hxx \
 	 	                  MFront/CastemInterface.hxx                 \
+	 	                  MFront/Castem21Interface.hxx               \
 	 	                  MFront/AmitexInterface.hxx                 \
 	 	                  MFront/CastemSymbolsGenerator.hxx
 if LOCAL_CASTEM_HEADER

@@ -207,6 +207,7 @@ endif
 
 if HAVE_CASTEM
 libTFELMFront_la_SOURCES += CastemInterface.cxx                 \
+                            Castem21Interface.cxx               \
                             CastemSymbolsGenerator.cxx          \
                             CastemMaterialPropertyInterface.cxx \
                             AmitexInterface.cxx

@@ -264,14 +264,21 @@ namespace castem {
         constexpr auto offset = CastemTraits<BV>::propertiesOffset;
         constexpr auto nprops =
             MechanicalBehaviourTraits<BV>::material_properties_nb;
-        static_assert(offset == 4u, "invalid offset value");
+        static_assert((offset == 4u) || (offset == 6u), "invalid offset value");
         CastemReal nPROPS[offset + nprops];
         nPROPS[0] = PROPS[0];
         nPROPS[1] = PROPS[1];
         nPROPS[2] = PROPS[2];
         nPROPS[3] = PROPS[3];
         // skipping the plate width
-        tfel::fsalgo::copy<nprops>::exe(PROPS + 5, nPROPS + 4);
+        if constexpr (offset == 6u) {
+          nPROPS[4] = PROPS[5];
+          nPROPS[5] = PROPS[6];
+          // Cast3M 21
+          tfel::fsalgo::copy<nprops>::exe(PROPS + 7, nPROPS + 6);
+        } else {
+          tfel::fsalgo::copy<nprops>::exe(PROPS + 5, nPROPS + 4);
+        }
         const CastemReal y = PROPS[0];  // Young Modulus
         const CastemReal n = PROPS[1];  // Poisson ratio
         const CastemReal c1 = -n / (1 - n);
@@ -313,7 +320,8 @@ namespace castem {
         constexpr auto offset = CastemTraits<BV>::propertiesOffset;
         constexpr auto nprops =
             MechanicalBehaviourTraits<BV>::material_properties_nb;
-        static_assert(offset == 13u, "invalid offset value");
+        static_assert((offset == 13u) || (offset == 15u),
+                      "invalid offset value");
         CastemReal nPROPS[offset + nprops];
         nPROPS[0] = PROPS[0];
         nPROPS[1] = PROPS[1];
@@ -330,7 +338,13 @@ namespace castem {
         // thermal expansion in the third direction
         nPROPS[12] = CastemReal(0);
         // skipping the plate width
-        tfel::fsalgo::copy<nprops>::exe(PROPS + 13, nPROPS + 13);
+        if constexpr (offset == 15u) {
+          nPROPS[13] = PROPS[13];
+          nPROPS[14] = PROPS[14];
+          tfel::fsalgo::copy<nprops>::exe(PROPS + 15, nPROPS + 15);
+        } else {
+          tfel::fsalgo::copy<nprops>::exe(PROPS + 13, nPROPS + 13);
+        }
         // S11 = 1/E1
         const CastemReal S11 = 1 / nPROPS[0];
         // S22 = 1/E2
