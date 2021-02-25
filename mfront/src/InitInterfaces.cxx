@@ -46,6 +46,7 @@
 #ifdef HAVE_CASTEM
 #include"MFront/CastemMaterialPropertyInterface.hxx"
 #include"MFront/CastemInterface.hxx"
+#include"MFront/Castem21Interface.hxx"
 #include"MFront/AmitexInterface.hxx"
 #endif
 
@@ -140,9 +141,15 @@ namespace mfront {
     constexpr const char* castemINames[3] = {"castem", "Castem", "Cast3M"};
     MaterialPropertyInterfaceProxy<CastemMaterialPropertyInterface>
         castemLawProxy(castemINames, castemINames + 3);
+    //
     constexpr const char* castemBNames[3] = {"umat", "Castem", "Cast3M"};
     BehaviourInterfaceProxy<CastemInterface> umatProxy(castemBNames,
                                                        castemBNames + 3);
+    //
+    constexpr const char* castem21BNames[2] = {"Castem21", "Cast3M21"};
+    BehaviourInterfaceProxy<Castem21Interface> castem21Proxy(
+        castem21BNames, castem21BNames + 2);
+    //
     BehaviourInterfaceProxy<AmitexInterface> amitexProxy;
 #endif /* HAVE_CASTEM */
 

@@ -120,6 +120,16 @@ namespace mfront {
 
     virtual std::string getUmatFunctionName(const BehaviourDescription &) const;
 
+    /*!
+     * \return the list of material properties required by the `Cast3M` finite
+     * element solver.
+     * \param[in] mb: mechanical behaviour description
+     * \param[in] h: modelling hypothesis
+     */
+    virtual std::vector<BehaviourMaterialProperty>
+    getDefaultMaterialPropertiesList(const BehaviourDescription &,
+                                     const Hypothesis) const;
+
     std::pair<std::vector<BehaviourMaterialProperty>, SupportedTypes::TypeSize>
     buildMaterialPropertiesList(const BehaviourDescription &,
                                 const Hypothesis) const override;
@@ -235,7 +245,7 @@ namespace mfront {
      * \param[in]  name    : name of law
      * \param[in]  fname   : function name
      * \param[in]  suffix  : suffix library
-     * \param[in]  mb      : mechanical behaviourd description
+     * \param[in]  mb      : mechanical behaviour description
      */
     virtual void writeStandardCastemFunction(
         std::ostream &,
@@ -244,14 +254,21 @@ namespace mfront {
         const std::string &,
         const BehaviourDescription &) const;
     /*!
-     * \brief write a  specialisation of the CyranoTraits class
+     * \brief return a string used to initialize the offset of the material
+     * properties when declaring the `CastemTraits` class.
+     * \param[in]  mb: mechanical behaviour description
+     */
+    virtual std::string getMaterialPropertiesOffsetForBehaviourTraits(
+        const BehaviourDescription &) const;
+    /*!
+     * \brief write a  specialisation of the `CastemTraits` class
      * \param[in] out : ouptut file
      * \param[in] mb  : behaviour description
      * \param[in] h   : modelling hypothesis
      */
-    virtual void writeUMATBehaviourTraits(std::ostream &,
-                                          const BehaviourDescription &,
-                                          const Hypothesis) const;
+    virtual void writeCastemBehaviourTraits(std::ostream &,
+                                            const BehaviourDescription &,
+                                            const Hypothesis) const;
     /*!
      * \brief plane stress handling requires to have access to the
      * axial strain, but it is not obvious nor always possible to get it...
