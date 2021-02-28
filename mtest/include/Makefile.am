@@ -31,7 +31,8 @@ nobase_include_HEADERS = MTest/Config.hxx	                         \
 			 MTest/StandardBehaviourBase.hxx                 \
 			 MTest/GenericBehaviour.hxx                      \
 			 MTest/UmatNormaliseTangentOperator.hxx          \
-                         MTest/CastemStandardBehaviour.hxx               \
+             MTest/CastemInterfaceVersion.hxx                \
+             MTest/CastemStandardBehaviour.hxx               \
 			 MTest/CastemSmallStrainBehaviour.hxx            \
 			 MTest/CastemFiniteStrainBehaviour.hxx           \
 			 MTest/CastemFiniteStrainBehaviour2.hxx          \

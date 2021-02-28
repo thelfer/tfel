@@ -7,7 +7,7 @@
 
 @UseCastemAccelerationAlgorithm true;
 
-@Behaviour<umat> '@MFrontCastemBehavioursBuildPath@' 'umatchaboche';
+@Behaviour<umat> @library@ 'umatchaboche';
 @MaterialProperty<constant> 'YoungModulus' 145200. ; 
 @MaterialProperty<constant> 'PoissonRatio'  0.3 ;    
 @MaterialProperty<constant> 'ThermalExpansion' 0. ; 

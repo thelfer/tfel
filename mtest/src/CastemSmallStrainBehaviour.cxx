@@ -328,4 +328,11 @@ namespace mtest {
 
   CastemSmallStrainBehaviour::~CastemSmallStrainBehaviour() = default;
 
+  CastemInterfaceVersion
+  Castem21SmallStrainBehaviour::getCastemInterfaceVersion() const {
+    return CastemInterfaceVersion::CASTEM_INTERFACE_VERSION_2021;
+  }  // end of getCastemInterfaceVersion
+
+  Castem21SmallStrainBehaviour::~Castem21SmallStrainBehaviour() = default;
+
 }  // end of namespace mtest

@@ -14,7 +14,7 @@
 
 @PredictionPolicy 'LinearPrediction';
 @AccelerationAlgorithm 'Cast3M';
-@Behaviour<castem> '@MFrontCastemBehavioursBuildPath@' 'umatnorton2';
+@Behaviour<castem> @library@ 'umatnorton2';
 @MaterialProperty<constant> 'YoungModulus'     150.e9;
 @MaterialProperty<constant> 'PoissonRatio'       0.3;
 

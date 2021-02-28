@@ -22,8 +22,11 @@ namespace mfront {
     return "castem21";
   }  // end of getName
 
-  Castem21Interface::Castem21Interface() {
-  }  // end of Castem21Interface::Castem21Interface
+  Castem21Interface::Castem21Interface() {}  // end of Castem21Interface
+
+  std::string Castem21Interface::getInterfaceVersion() const {
+    return "21";
+  }  // end of getInterfaceVersion
 
   std::vector<BehaviourMaterialProperty>
   Castem21Interface::getDefaultMaterialPropertiesList(
@@ -40,13 +43,12 @@ namespace mfront {
     auto mprops = CastemInterface::getDefaultMaterialPropertiesList(mb, h);
     appendToMaterialPropertiesList(
         mprops, "temperature",
-        "ReferenceTemperatureForTheThermalExpansionCoefficients", "TALP",
-        false);
+        "ReferenceTemperatureForThermalExpansionCoefficient", "TALP", false);
     appendToMaterialPropertiesList(mprops, "temperature",
-                                   "ReferenceTemperatureForTheThermalExpansion",
+                                   "ReferenceTemperatureForThermalExpansion",
                                    "TREF", false);
     return mprops;
-  }  // end of Castem21Interface::getDefaultMaterialPropertiesList
+  }  // end of getDefaultMaterialPropertiesList
 
   std::string Castem21Interface::getMaterialPropertiesOffsetForBehaviourTraits(
       const BehaviourDescription& md) const {

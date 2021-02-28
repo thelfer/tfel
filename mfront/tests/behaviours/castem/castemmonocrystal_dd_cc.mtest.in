@@ -8,7 +8,7 @@
 @UseCastemAccelerationAlgorithm true;
 
 @ModellingHypothesis 'Tridimensional';
-@Behaviour<umat> '@MFrontCastemBehavioursBuildPath@' 'umatmonocrystal_dd_cc';
+@Behaviour<umat> @library@ 'umatmonocrystal_dd_cc';
 
 // Material properties
 @MaterialProperty<constant> 'PoissonRatio12' 0.35;

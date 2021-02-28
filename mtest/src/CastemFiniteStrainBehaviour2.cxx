@@ -21,4 +21,11 @@ namespace mtest {
 
   CastemFiniteStrainBehaviour2::~CastemFiniteStrainBehaviour2() = default;
 
+  CastemInterfaceVersion
+  Castem21FiniteStrainBehaviour2::getCastemInterfaceVersion() const {
+    return CastemInterfaceVersion::CASTEM_INTERFACE_VERSION_2021;
+  }  // end of getCastemInterfaceVersion
+
+  Castem21FiniteStrainBehaviour2::~Castem21FiniteStrainBehaviour2() = default;
+
 }  // end of namespace mtest

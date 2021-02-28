@@ -20,12 +20,14 @@
 namespace mtest {
 
   /*!
-   * A class to handle mechanical beheaviours written using the umat
-   * interface
+   * \brief A class to handle mechanical beheaviours written using the umat
+   * interface of the `Cast3M` finite element solver. This class is based on
+   * the legacy version of the `Cast3M` interface.
    */
   struct TFEL_VISIBILITY_LOCAL CastemSmallStrainBehaviour
       : public CastemStandardBehaviour {
     /*!
+     * \brief constructor
      * \param[in] h : modelling hypothesis
      * \param[in] l : library name
      * \param[in] b : behaviour name
@@ -48,7 +50,7 @@ namespace mtest {
                                     const real,
                                     const StiffnessMatrixType) const override;
     const char* getBehaviourNameForUMATFunctionCall() const override;
-    //! destructor
+    //! \brief destructor
     ~CastemSmallStrainBehaviour() override;
 
    protected:
@@ -83,6 +85,23 @@ namespace mtest {
         const tfel::math::tmatrix<3u, 3u, real>&) const;
 
   };  // end of struct Behaviour
+
+  /*!
+   * \brief a class to handle mechanical beheaviours written using the umat
+   * interface of the `Cast3M` finite element solver  for `Cast3M` versions
+   * greater than 2021.
+   */
+  struct TFEL_VISIBILITY_LOCAL Castem21SmallStrainBehaviour
+      : public CastemSmallStrainBehaviour {
+    // inheriting constructors
+    using CastemSmallStrainBehaviour::CastemSmallStrainBehaviour;
+    //! \brief destructor
+    ~Castem21SmallStrainBehaviour();
+
+   protected:
+    //! \return the version of the `Cast3M` interface
+    CastemInterfaceVersion getCastemInterfaceVersion() const override;
+  };  // end of struct Castem21SmallStrainBehaviour
 
 }  // end of namespace mtest
 

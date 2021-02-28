@@ -3,7 +3,7 @@
 
 @UseCastemAccelerationAlgorithm true;
 @MaximumNumberOfSubSteps 1 ;
-@Behaviour<umat> '@MFrontCastemBehavioursBuildPath@' 'umatviscoplasisocin';
+@Behaviour<umat> @library@ 'umatviscoplasisocin';
 
 @MaterialProperty<constant> 'YoungModulus' 200000.;
 @MaterialProperty<constant> 'PoissonRatio' 0.3;

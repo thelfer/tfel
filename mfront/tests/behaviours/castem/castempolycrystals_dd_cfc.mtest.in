@@ -9,7 +9,7 @@
 @Real 'nu'    0.3;
 @Real 'young' 'G*2.6';
 
-@Behaviour<umat> '@MFrontCastemBehavioursBuildPath@' 'umatpolycrystals_dd_cfc';
+@Behaviour<umat> @library@ 'umatpolycrystals_dd_cfc';
 @Parameter 'epsilon' 1.e-8;
 @StrainEpsilon 1.e-10;
 @StressEpsilon 1.e-3;

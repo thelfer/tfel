@@ -5,7 +5,7 @@
  * \brief  23 mai 2013
  */
 
-@Behaviour<umat> '@MFrontCastemBehavioursBuildPath@' 'umatburger';
+@Behaviour<umat> @library@ 'umatburger';
 @MaterialProperty<constant> 'YoungModulus' 31000. ; 
 @MaterialProperty<constant> 'PoissonRatio'     0.3 ;    
 @MaterialProperty<constant> 'ThermalExpansion' 0.;    

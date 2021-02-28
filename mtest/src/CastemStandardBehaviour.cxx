@@ -25,13 +25,14 @@ namespace mtest {
 
   static void setMaterialProperties(
       StandardBehaviourDescription& umb,
-      const tfel::material::ModellingHypothesis::Hypothesis h) {
+      const tfel::material::ModellingHypothesis::Hypothesis h,
+      const CastemInterfaceVersion v) {
     using tfel::material::ModellingHypothesis;
     auto& elm =
         tfel::system::ExternalLibraryManager::getExternalLibraryManager();
     umb.mpnames = elm.getUMATMaterialPropertiesNames(
         umb.library, umb.behaviour, ModellingHypothesis::toString(h));
-    if (umb.stype == 0) {
+    if (umb.stype == 0) { // isotropic case
       if (h == ModellingHypothesis::PLANESTRESS) {
         umb.mpnames.insert(umb.mpnames.begin(),
                            {"YoungModulus", "PoissonRatio", "MassDensity",
@@ -41,7 +42,7 @@ namespace mtest {
                            {"YoungModulus", "PoissonRatio", "MassDensity",
                             "ThermalExpansion"});
       }
-    } else {
+    } else { // orthotropic case
       if (h == ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN) {
         umb.mpnames.insert(
             umb.mpnames.begin(),
@@ -77,6 +78,12 @@ namespace mtest {
         tfel::raise("setMaterialProperties: unsupported hypothesis");
       }
     }
+    if (v == CastemInterfaceVersion::CASTEM_INTERFACE_VERSION_2021) {
+      umb.mpnames.insert(
+          umb.mpnames.begin(),
+          {"ReferenceTemperatureForThermalExpansionCoefficient",
+           "ReferenceTemperatureForThermalExpansion"});
+    }
   }  // end of setMaterialProperties
 
   CastemStandardBehaviour::CastemStandardBehaviour(const Hypothesis h,
@@ -85,12 +92,13 @@ namespace mtest {
       : StandardBehaviourBase(h, l, b) {
     auto& elm =
         tfel::system::ExternalLibraryManager::getExternalLibraryManager();
-    tfel::raise_if(elm.getInterface(l, b) != "Castem",
+    const auto i = elm.getInterface(l, b);
+    tfel::raise_if((i != "Castem") && (i != "Castem21"),
                    "CastemStandardBehaviour::CastemStandardBehaviour: "
                    "invalid interface '" +
                        elm.getInterface(l, b) + "'");
     this->fct = elm.getCastemExternalBehaviourFunction(l, b);
-    setMaterialProperties(*this, h);
+    setMaterialProperties(*this, h, this->getCastemInterfaceVersion());
   }  // end of CastemStandardBehaviour::CastemStandardBehaviour
 
   CastemStandardBehaviour::CastemStandardBehaviour(
@@ -224,6 +232,11 @@ namespace mtest {
     if(h == ModellingHypothesis::PLANESTRESS){
       omps.push_back("PlateWidth");
     }
+    if (this->getCastemInterfaceVersion() ==
+        CastemInterfaceVersion::CASTEM_INTERFACE_VERSION_2021) {
+      omps.push_back("ReferenceTemperatureForThermalExpansionCoefficient");
+      omps.push_back("ReferenceTemperatureForThermalExpansion");
+    }
     return omps;
   }  // end of CastemStandardBehaviour::getOptionalMaterialProperties
 
@@ -352,8 +365,14 @@ namespace mtest {
       Behaviour::setOptionalMaterialPropertyDefaultValue(mp, evm, "PlateWidth",
                                                          1.);
     }
-  }  // end of
-     // CastemStandardBehaviour::setOptionalMaterialPropertiesDefaultValues
+    if (this->getCastemInterfaceVersion() ==
+        CastemInterfaceVersion::CASTEM_INTERFACE_VERSION_2021) {
+      Behaviour::setOptionalMaterialPropertyDefaultValue(
+          mp, evm, "ReferenceTemperatureForThermalExpansionCoefficient", 0.);
+      Behaviour::setOptionalMaterialPropertyDefaultValue(
+          mp, evm, "ReferenceTemperatureForThermalExpansion", 0.);
+    }
+  }  // end of setOptionalMaterialPropertiesDefaultValues
 
   void CastemStandardBehaviour::buildMaterialProperties(
       BehaviourWorkSpace& wk, const CurrentState& s) const {
@@ -362,24 +381,44 @@ namespace mtest {
           c, "CastemSmallStrainBehaviour::buildMaterialProperties: " + m);
     };
     if (this->usesGenericPlaneStressAlgorithm) {
+      const auto v = this->getCastemInterfaceVersion();
       if (this->stype == 0u) {
         throw_if(
             wk.mps.size() != s.mprops1.size() + 1,
             "temporary material properties vector was not allocated properly");
-        throw_if(s.mprops1.size() < 3, "invalid number of material properties");
+        if (v == CastemInterfaceVersion::CASTEM_INTERFACE_VERSION_2021) {
+          throw_if(s.mprops1.size() < 6,
+                   "invalid number of material properties");
+        } else {
+          throw_if(s.mprops1.size() < 4,
+                   "invalid number of material properties");
+        }
         wk.mps[0] = s.mprops1[0];
         wk.mps[1] = s.mprops1[1];
         wk.mps[2] = s.mprops1[2];
         wk.mps[3] = s.mprops1[3];
         // plate width
         wk.mps[4] = castem::CastemReal(1);
-        std::copy(s.mprops1.begin() + 4u, s.mprops1.end(), wk.mps.begin() + 5u);
+        if (v == CastemInterfaceVersion::CASTEM_INTERFACE_VERSION_2021) {
+          wk.mps[5] = s.mprops1[4];
+          wk.mps[6] = s.mprops1[5];
+          std::copy(s.mprops1.begin() + 6u, s.mprops1.end(),
+                    wk.mps.begin() + 7u);
+        } else {
+          std::copy(s.mprops1.begin() + 4u, s.mprops1.end(),
+                    wk.mps.begin() + 5u);
+        }
       } else if (this->stype == 1u) {
         throw_if(
             wk.mps.size() != s.mprops1.size(),
             "temporary material properties vector was not allocated properly");
-        throw_if(s.mprops1.size() < 13,
-                 "invalid number of material properties");
+        if (v == CastemInterfaceVersion::CASTEM_INTERFACE_VERSION_2021) {
+          throw_if(s.mprops1.size() < 15,
+                   "invalid number of material properties");
+        } else {
+          throw_if(s.mprops1.size() < 13,
+                   "invalid number of material properties");
+        }
         // YoungModulus1
         wk.mps[0] = s.mprops1[0];
         // YoungModulus2
@@ -407,8 +446,15 @@ namespace mtest {
         // ThermalExpansion3 (does not exists in mps)
         // plate width
         wk.mps[12] = castem::CastemReal(1);
-        std::copy(s.mprops1.begin() + 13u, s.mprops1.end(),
-                  wk.mps.begin() + 13u);
+        if (v == CastemInterfaceVersion::CASTEM_INTERFACE_VERSION_2021) {
+          wk.mps[13] = s.mprops1[13];
+          wk.mps[14] = s.mprops1[14];
+          std::copy(s.mprops1.begin() + 15u, s.mprops1.end(),
+                    wk.mps.begin() + 15u);
+        } else {
+          std::copy(s.mprops1.begin() + 13u, s.mprops1.end(),
+                    wk.mps.begin() + 13u);
+        }
       } else {
         throw_if(true, "unsupported symmetry type");
       }
@@ -420,5 +466,11 @@ namespace mtest {
     }
   }  // end of CastemStandardBehaviour::buildMaterialProperties
 
+  CastemInterfaceVersion CastemStandardBehaviour::getCastemInterfaceVersion()
+      const {
+    return CastemInterfaceVersion::LEGACY_CASTEM_INTERFACE_VERSION;
+  }  // end of getCastemInterfaceVersion
+
   CastemStandardBehaviour::~CastemStandardBehaviour() = default;
+
 }

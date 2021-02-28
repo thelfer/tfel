@@ -9,7 +9,7 @@
 @UseCastemAccelerationAlgorithm true;
 @MaximumNumberOfSubSteps 1;
 
-@Behaviour<castem,LogarithmicStrain1D> '@MFrontCastemBehavioursBuildPath@' 'umatnorton';
+@Behaviour<castem,LogarithmicStrain1D> @library@ 'umatnorton';
 @StrainEpsilon 1.e-10;
 @StressEpsilon 2.e3;
 

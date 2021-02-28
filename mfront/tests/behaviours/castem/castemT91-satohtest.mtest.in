@@ -6,7 +6,7 @@
 
 @UseCastemAccelerationAlgorithm true;
 @MaximumNumberOfSubSteps 1 ;
-@Behaviour<umat> '@MFrontCastemBehavioursBuildPath@' 'umatt91viscoplasticbehaviour';
+@Behaviour<umat> @library@ 'umatt91viscoplasticbehaviour';
 
 @MaterialProperty<constant> 'YoungModulus' 2.e+11;
 @MaterialProperty<constant>  'PoissonRatio' 0.3;

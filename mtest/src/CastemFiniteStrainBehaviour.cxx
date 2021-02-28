@@ -76,8 +76,8 @@ namespace mtest {
   struct MTestCastemComputeFiniteStrainStiffnessTensor<H, mfront::ISOTROPIC> {
     static constexpr unsigned short N =
         tfel::material::ModellingHypothesisToSpaceDimension<H>::value;
-    static constexpr tfel::material::
-        StiffnessTensorAlterationCharacteristic STAC =
+    static constexpr tfel::material::StiffnessTensorAlterationCharacteristic
+        STAC =
             tfel::material::GetDefaultStiffnessTensorAlterationCharacteristic<
                 H>::value;
     static void exe(tfel::math::T2toST2View<N, real>& C,
@@ -152,8 +152,8 @@ namespace mtest {
         MTestCastemComputeFiniteStrainOrhtotropicStiffnessTensorBaseII<H>;
     static constexpr unsigned short N =
         tfel::material::ModellingHypothesisToSpaceDimension<H>::value;
-    static constexpr tfel::material::
-        StiffnessTensorAlterationCharacteristic STAC =
+    static constexpr tfel::material::StiffnessTensorAlterationCharacteristic
+        STAC =
             tfel::material::GetDefaultStiffnessTensorAlterationCharacteristic<
                 H>::value;
     static void exe(tfel::math::T2toST2View<N, real>& C,
@@ -487,5 +487,12 @@ namespace mtest {
   }  // end of CastemFiniteStrainBehaviour::getBehaviourNameForUMATFunctionCall
 
   CastemFiniteStrainBehaviour::~CastemFiniteStrainBehaviour() = default;
+
+  CastemInterfaceVersion
+  Castem21FiniteStrainBehaviour::getCastemInterfaceVersion() const {
+    return CastemInterfaceVersion::CASTEM_INTERFACE_VERSION_2021;
+  }  // end of getCastemInterfaceVersion
+
+  Castem21FiniteStrainBehaviour::~Castem21FiniteStrainBehaviour() = default;
 
 }  // end of namespace mtest
