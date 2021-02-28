@@ -182,10 +182,12 @@ if(WIN32)
 endif(WIN32)
 
 macro(test_castem test_arg)
-  set(_ADDITIONAL_ENVIRONMENT )
   set(_NO_XML_OUTPUT )
   set(_WILL_FAIL )
   set(_EXPECT_ADDITIONAL_ENVIRONMENT )
+  set(_ADDITIONAL_ENVIRONMENT )
+  set(_EXPECT_REFERENCE_FILE)
+  set(_REFERENCE_FILE )
   foreach(_ARG ${ARGN})
     if(_EXPECT_ADDITIONAL_ENVIRONMENT)
       if(_ADDITIONAL_ENVIRONMENT)
@@ -193,6 +195,12 @@ macro(test_castem test_arg)
       endif(_ADDITIONAL_ENVIRONMENT)
       set(_ADDITIONAL_ENVIRONMENT "${_ARG}")
       set(_EXPECT_ADDITIONAL_ENVIRONMENT )
+    elseif(_EXPECT_REFERENCE_FILE)
+      if(_REFERENCE_FILE)
+	message(FATAL_ERROR "test_castem: reference file already set")
+      endif(_REFERENCE_FILE)
+      set(_REFERENCE_FILE "${_ARG}")
+      set(_EXPECT_REFERENCE_FILE )
     else()
       if ( ${_ARG} MATCHES NO_XML_OUTPUT )
 	set ( _NO_XML_OUTPUT ON)
@@ -200,6 +208,8 @@ macro(test_castem test_arg)
 	set ( _WILL_FAIL ON)
       elseif ( ${_ARG} MATCHES ENVIRONMENT)
 	set(_EXPECT_ADDITIONAL_ENVIRONMENT ON)
+      elseif ( ${_ARG} MATCHES REFERENCE_FILE)
+	set(_EXPECT_REFERENCE_FILE ON)
       else()
 	message(FATAL_ERROR "test_castem: unsupported option '${_ARG}'")
       endif()
@@ -208,22 +218,38 @@ macro(test_castem test_arg)
   if(_EXPECT_ADDITIONAL_ENVIRONMENT)
     message(FATAL_ERROR "test_castem: expected environment variable")
   endif()
+  if(_EXPECT_REFERENCE_FILE)
+    message(FATAL_ERROR "test_castem: expected reference file")
+  endif()
+  if(_REFERENCE_FILE)
+    set(_REFERENCE_FILE "${PROJECT_SOURCE_DIR}/mfront/tests/behaviours/references/${_REFERENCE_FILE}")
+  endif(_REFERENCE_FILE)
   foreach(rm ${IEEE754_ROUNDING_MODES})
     if(CMAKE_CONFIGURATION_TYPES)
       foreach(conf ${CMAKE_CONFIGURATION_TYPES})
 	set(test "castem${test_arg}_${rm}_${conf}_mtest")
-	set(file "castem${test_arg}-${rm}-${conf}.mtest")
-	get_property(MFrontCastemBehavioursBuildPath TARGET MFrontCastemBehaviours PROPERTY LOCATION_${conf})
-	get_property(MFrontMaterialPropertiesCastemBuildPath TARGET MFrontMaterialProperties-castem PROPERTY LOCATION_${conf})
-	configure_file(castem${test_arg}.mtest.in
-	  ${file} @ONLY)
+        set(file "${CMAKE_CURRENT_SOURCE_DIR}/castem${test_arg}.mtest")
 	if(_NO_XML_OUTPUT)
 	  add_test(NAME ${test}
-	    COMMAND mtest --rounding-direction-mode=${rm} --verbose=level0 --xml-output=false --result-file-output=false ${file}
+	    COMMAND mtest --rounding-direction-mode=${rm}
+	    --verbose=level0
+	    --xml-output=false
+	    --result-file-output=false
+            --@library@="$<TARGET_FILE:MFrontCastemBehaviours>"
+	    --@mplibrary@="$<TARGET_FILE:MFrontMaterialProperties-castem>"
+	    --@reference_file@="${_REFERENCE_FILE}"
+	    ${file}
 	    CONFIGURATIONS ${conf})
 	else(_NO_XML_OUTPUT)
 	  add_test(NAME ${test}
-	    COMMAND mtest --rounding-direction-mode=${rm} --verbose=level0 --xml-output=true --result-file-output=false ${file}
+	    COMMAND mtest
+	    --rounding-direction-mode=${rm}
+	    --verbose=level0
+	    --xml-output=true
+	    --result-file-output=false ${file}
+            --@library@="$<TARGET_FILE:MFrontCastemBehaviours>"
+	    --@mplibrary@="$<TARGET_FILE:MFrontMaterialProperties-castem>"
+	    --@reference_file@="${_REFERENCE_FILE}"
 	    CONFIGURATIONS ${conf})
 	endif(_NO_XML_OUTPUT)
 	if(_WILL_FAIL)
@@ -245,30 +271,42 @@ macro(test_castem test_arg)
             PROPERTY DEPENDS "MFrontCastemBehaviours MFrontMaterialProperties-castem mtest")
 	endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
 	if(TFEL_APPEND_SUFFIX)
-	  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${file}
+	  install(FILES ${file}
 	    DESTINATION "share/doc/mfront-${TFEL_SUFFIX}/tests/behaviours/castem"
 	    CONFIGURATIONS ${conf}
 	    COMPONENT mtest)
 	else(TFEL_APPEND_SUFFIX)
-	  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${file}
+	  install(FILES ${file}
 	    DESTINATION "share/doc/mfront/tests/behaviours/castem"
 	    CONFIGURATIONS ${conf}
 	    COMPONENT mtest)
 	endif(TFEL_APPEND_SUFFIX)
       endforeach(conf ${CMAKE_CONFIGURATION_TYPES})
     else(CMAKE_CONFIGURATION_TYPES)
-      get_property(MFrontCastemBehavioursBuildPath TARGET MFrontCastemBehaviours PROPERTY LOCATION_${conf})
-      get_property(MFrontMaterialPropertiesCastemBuildPath TARGET MFrontMaterialProperties-castem PROPERTY LOCATION_${conf})
       set(test "castem${test_arg}_${rm}_mtest")
-      set(file "castem${test_arg}-${rm}.mtest")
-      configure_file(castem${test_arg}.mtest.in
-	${file} @ONLY)
+      set(file "${CMAKE_CURRENT_SOURCE_DIR}/castem${test_arg}.mtest")
       if(_NO_XML_OUTPUT)
 	add_test(NAME ${test}
-	  COMMAND mtest --rounding-direction-mode=${rm} --verbose=level0 --xml-output=false --result-file-output=false ${file})
+	  COMMAND mtest
+	  --rounding-direction-mode=${rm}
+	  --verbose=level0
+	  --xml-output=false
+	  --result-file-output=false
+          --@library@="$<TARGET_FILE:MFrontCastemBehaviours>"
+	  --@mplibrary@="$<TARGET_FILE:MFrontMaterialProperties-castem>"
+	  --@reference_file@="${_REFERENCE_FILE}"
+	  ${file})
       else(_NO_XML_OUTPUT)
 	add_test(NAME ${test}
-	  COMMAND mtest --rounding-direction-mode=${rm} --verbose=level0 --xml-output=true --result-file-output=false ${file})
+	  COMMAND mtest
+	  --rounding-direction-mode=${rm}
+	  --verbose=level0
+	  --xml-output=true
+	  --result-file-output=false
+          --@library@="$<TARGET_FILE:MFrontCastemBehaviours>"
+	  --@mplibrary@="$<TARGET_FILE:MFrontMaterialProperties-castem>"
+          --@reference_file@="${_REFERENCE_FILE}"
+	  ${file})
       endif(_NO_XML_OUTPUT)
       if(_WILL_FAIL)
 	set_tests_properties(${test} PROPERTIES WILL_FAIL true)
@@ -282,11 +320,11 @@ macro(test_castem test_arg)
          set_property(TEST ${test} PROPERTY ENVIRONMENT "${_ADDITIONAL_ENVIRONMENT_VARIABLES}")
       endif(_ADDITIONAL_ENVIRONMENT_VARIABLES)
       if(TFEL_APPEND_SUFFIX)
-	install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${file}
+	install(FILES ${file}
 	  DESTINATION "share/doc/mfront-${TFEL_SUFFIX}/tests/behaviours/castem"
 	  COMPONENT mtest)
       else(TFEL_APPEND_SUFFIX)
-	install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${file}
+	install(FILES ${file}
 	  DESTINATION "share/doc/mfront/tests/behaviours/castem"
 	  COMPONENT mtest)
       endif(TFEL_APPEND_SUFFIX)
@@ -333,7 +371,7 @@ test_castem(elasticity11)
 test_castem(elasticity12)
 test_castem(elasticity13)
 test_castem(elasticity14)
-test_castem(elasticity15)
+test_castem(elasticity15 REFERENCE_FILE elasticity15-aster.ref)
 test_castem(elasticity16)
 test_castem(elasticity17)
 test_castem(elasticity18)
@@ -360,17 +398,17 @@ test_castem(elasticity5-1)
 test_castem(elasticity5-2)
 test_castem(elasticity6-1)
 test_castem(elasticity6-2)
-test_castem(generalizedmaxwell)
-test_castem(ddif2)
-test_castem(ddif2-2)
-test_castem(ddif2-3)
-test_castem(ddif2-4)
+test_castem(generalizedmaxwell REFERENCE_FILE generalizedmaxwell.ref)
+test_castem(ddif2 REFERENCE_FILE ddif2-uniaxialtesting.ref)
+test_castem(ddif2-2 REFERENCE_FILE ddif2-uniaxialtesting.ref)
+test_castem(ddif2-3 REFERENCE_FILE ddif2-uniaxialtesting.ref)
+test_castem(ddif2-4 REFERENCE_FILE ddif2-biaxialtesting.ref)
 test_castem(lorentz)
 test_castem(lorentz2)
-test_castem(mazars)
-test_castem(mazars2)
-test_castem(druckerprager)
-test_castem(druckerprager2)
+test_castem(mazars REFERENCE_FILE mazars-aster.ref)
+test_castem(mazars2 REFERENCE_FILE mazars-aster.ref)
+test_castem(druckerprager REFERENCE_FILE druckerprager.ref)
+test_castem(druckerprager2 REFERENCE_FILE druckerprager2.ref)
 test_castem(norton)
 test_castem(norton2)
 test_castem(nortonrk2)
@@ -446,35 +484,45 @@ test_castem(orthotropiccreep-rkCastem)
 test_castem(strainhardeningcreep)
 test_castem(strainhardeningcreep2)
 test_castem(strainhardeningcreep3)
-test_castem(plasticity)
-test_castem(plasisocin)
-test_castem(viscoplasisocin)
-test_castem(chaboche)
-test_castem(chaboche2)
-test_castem(viscochaboche)
-test_castem(monocrystal)
+test_castem(plasticity REFERENCE_FILE plasticity.ref)
+test_castem(plasisocin REFERENCE_FILE plasisocin.ref)
+test_castem(viscoplasisocin REFERENCE_FILE viscoplasisocin.ref)
+test_castem(chaboche REFERENCE_FILE chaboche-aster.ref)
+test_castem(chaboche2 REFERENCE_FILE chaboche2-aster.ref)
+test_castem(viscochaboche REFERENCE_FILE ViscoChaboche.ref)
+test_castem(monocrystal REFERENCE_FILE monocrystal.ref)
 test_castem(monocrystal-2)
-test_castem(implicitmonocrystal)
+test_castem(implicitmonocrystal REFERENCE_FILE monocrystal.ref)
 test_castem(implicitmonocrystal-2)
-test_castem(monocrystal_dd_cfc)
-test_castem(monocrystal_dd_cfc_numericaljacobian)
-test_castem(monocrystal_dd_cfc_irradiation)
-test_castem(monocrystal_dd_cc)
-test_castem(monocrystal_dd_cc_numericaljacobian)
-test_castem(monocrystal_dd_cc_irradiation)
-test_castem(monocrystal_dd_cc_irradiation_numericaljacobian)
-test_castem(polycrystals)
-test_castem(polycrystals_dd_cc)
-test_castem(polycrystals_dd_cfc)
-test_castem(hayhurst)
+test_castem(monocrystal_dd_cfc
+  REFERENCE_FILE monocrystal_dd_cfc.ref)
+test_castem(monocrystal_dd_cfc_numericaljacobian
+  REFERENCE_FILE monocrystal_dd_cfc.ref)
+test_castem(monocrystal_dd_cfc_irradiation 
+  REFERENCE_FILE monocrystal_dd_cfc_irradiation.ref)
+test_castem(monocrystal_dd_cc
+  REFERENCE_FILE monocrystal_dd_cc_numericaljacobian.ref)
+test_castem(monocrystal_dd_cc_numericaljacobian
+  REFERENCE_FILE monocrystal_dd_cc_numericaljacobian.ref)
+test_castem(monocrystal_dd_cc_irradiation
+  REFERENCE_FILE monocrystal_dd_cc_irradiation_numericaljacobian.ref)
+test_castem(monocrystal_dd_cc_irradiation_numericaljacobian
+  REFERENCE_FILE monocrystal_dd_cc_irradiation_numericaljacobian.ref)
+test_castem(polycrystals
+  REFERENCE_FILE polycrystals.ref)
+test_castem(polycrystals_dd_cc
+  REFERENCE_FILE polycrystals_dd_cc.ref)
+test_castem(polycrystals_dd_cfc
+  REFERENCE_FILE polycrystals_dd_cfc.ref)
+test_castem(hayhurst REFERENCE_FILE hayhurst.ref)
 test_castem(implicithayhurst)
 test_castem(gurson)
 test_castem(gursontvergaardneedlemanplasticflow)
 test_castem(gursontvergaardneedlemanviscoplasticflow)
 test_castem(ellipticcreep)
-test_castem(burger)
-test_castem(ageingburger)
-test_castem(tvergaard)
+test_castem(burger REFERENCE_FILE burger.ref)
+test_castem(ageingburger REFERENCE_FILE ageingburger.ref)
+test_castem(tvergaard REFERENCE_FILE tvergaard.ref)
 test_castem(saintvenantkirchhoffelasticity-uniaxialloading-sig11-1D)
 test_castem(saintvenantkirchhoffelasticity-uniaxialloading-sig22-1D)
 test_castem(saintvenantkirchhoffelasticity-uniaxialloading-sig33-1D)
@@ -573,27 +621,40 @@ test_castem(mieheapellambrechtlogarithmicstrainelasticity2-uniaxialloading-2-3D)
 test_castem(mieheapellambrechtlogarithmicstrainelasticity2-uniaxialloading-3-1D)
 test_castem(mieheapellambrechtlogarithmicstrainelasticity2-uniaxialloading-3-2D)
 test_castem(mieheapellambrechtlogarithmicstrainelasticity2-uniaxialloading-3-3D)
-test_castem(mieheapellambrechtlogarithmicstrainelasticity-shear-2D)
-test_castem(mieheapellambrechtlogarithmicstrainelasticity-shear-FXY-3D)
-test_castem(mieheapellambrechtlogarithmicstrainelasticity-shear-FXZ-3D)
-test_castem(mieheapellambrechtlogarithmicstrainelasticity-shear-FYX-3D)
-test_castem(mieheapellambrechtlogarithmicstrainelasticity-shear-FYZ-3D)
-test_castem(mieheapellambrechtlogarithmicstrainelasticity-shear-FZX-3D)
-test_castem(mieheapellambrechtlogarithmicstrainelasticity-shear-FZY-3D)
+test_castem(mieheapellambrechtlogarithmicstrainelasticity-shear-2D
+  REFERENCE_FILE logarithmicstrainelasticity-shear.ref)
+test_castem(mieheapellambrechtlogarithmicstrainelasticity-shear-FXY-3D
+  REFERENCE_FILE logarithmicstrainelasticity-shear.ref)
+test_castem(mieheapellambrechtlogarithmicstrainelasticity-shear-FXZ-3D
+  REFERENCE_FILE logarithmicstrainelasticity-shear.ref)
+test_castem(mieheapellambrechtlogarithmicstrainelasticity-shear-FYX-3D
+  REFERENCE_FILE logarithmicstrainelasticity-shear.ref)
+test_castem(mieheapellambrechtlogarithmicstrainelasticity-shear-FYZ-3D
+  REFERENCE_FILE logarithmicstrainelasticity-shear.ref)
+test_castem(mieheapellambrechtlogarithmicstrainelasticity-shear-FZX-3D
+  REFERENCE_FILE logarithmicstrainelasticity-shear.ref)
+test_castem(mieheapellambrechtlogarithmicstrainelasticity-shear-FZY-3D
+  REFERENCE_FILE logarithmicstrainelasticity-shear.ref)
 test_castem(elasticity_log1D-uniaxialloading-1-1D)
 test_castem(elasticity_log1D-uniaxialloading-2-1D)
 test_castem(elasticity_log1D-uniaxialloading-3-1D)
-test_castem(norton_log1D-uniaxialloading-1-1D)
-test_castem(norton_log1D-uniaxialloading-2-1D)
-test_castem(norton_log1D-uniaxialloading-3-1D)
+test_castem(norton_log1D-uniaxialloading-1-1D
+  REFERENCE_FILE norton_log1D-uniaxialtesting.ref)
+test_castem(norton_log1D-uniaxialloading-2-1D
+  REFERENCE_FILE norton_log1D-uniaxialtesting.ref)
+test_castem(norton_log1D-uniaxialloading-3-1D
+  REFERENCE_FILE norton_log1D-uniaxialtesting.ref)
 test_castem(elasticity_LogarithmicStrain1DWrapper-uniaxialloading-1-1D)
 test_castem(elasticity_LogarithmicStrain1DWrapper-uniaxialloading-2-1D)
 test_castem(elasticity_LogarithmicStrain1DWrapper-uniaxialloading-3-1D)
 test_castem(elasticity_LogarithmicStrain1DWrapper-thermalstrain)
 test_castem(elasticity_LogarithmicStrain1DWrapper-thermalstrain2)
-test_castem(norton_LogarithmicStrain1DWrapper-uniaxialloading-1-1D)
-test_castem(norton_LogarithmicStrain1DWrapper-uniaxialloading-2-1D)
-test_castem(norton_LogarithmicStrain1DWrapper-uniaxialloading-3-1D)
+test_castem(norton_LogarithmicStrain1DWrapper-uniaxialloading-1-1D
+  REFERENCE_FILE norton_log1D-uniaxialtesting.ref)
+test_castem(norton_LogarithmicStrain1DWrapper-uniaxialloading-2-1D
+  REFERENCE_FILE norton_log1D-uniaxialtesting.ref)
+test_castem(norton_LogarithmicStrain1DWrapper-uniaxialloading-3-1D
+  REFERENCE_FILE norton_log1D-uniaxialtesting.ref)
 test_castem(elasticity_malls-uniaxialloading-1-1D)
 test_castem(elasticity_malls-uniaxialloading-1-2D)
 test_castem(elasticity_malls-uniaxialloading-1-3D)
@@ -603,23 +664,32 @@ test_castem(elasticity_malls-uniaxialloading-2-3D)
 test_castem(elasticity_malls-uniaxialloading-3-1D)
 test_castem(elasticity_malls-uniaxialloading-3-2D)
 test_castem(elasticity_malls-uniaxialloading-3-3D)
-test_castem(mieheapellambrechtlogarithmicstrainnortoncreep-uniaxialloading-1-1D)
-test_castem(mieheapellambrechtlogarithmicstrainnortoncreep-uniaxialloading-2-1D)
-test_castem(mieheapellambrechtlogarithmicstrainnortoncreep-uniaxialloading-3-1D)
-test_castem(mieheapellambrechtlogarithmicstrainnortoncreep-uniaxialloading-1-2D)
-test_castem(mieheapellambrechtlogarithmicstrainnortoncreep-uniaxialloading-2-2D)
-test_castem(mieheapellambrechtlogarithmicstrainnortoncreep-uniaxialloading-3-2D)
-test_castem(mieheapellambrechtlogarithmicstrainnortoncreep-uniaxialloading-1-3D)
-test_castem(mieheapellambrechtlogarithmicstrainnortoncreep-uniaxialloading-2-3D)
-test_castem(mieheapellambrechtlogarithmicstrainnortoncreep-uniaxialloading-3-3D)
+test_castem(mieheapellambrechtlogarithmicstrainnortoncreep-uniaxialloading-1-1D
+  REFERENCE_FILE logarithmicstrainnortoncreepuniaxialtesting.ref)
+test_castem(mieheapellambrechtlogarithmicstrainnortoncreep-uniaxialloading-2-1D
+  REFERENCE_FILE logarithmicstrainnortoncreepuniaxialtesting.ref)
+test_castem(mieheapellambrechtlogarithmicstrainnortoncreep-uniaxialloading-3-1D
+  REFERENCE_FILE logarithmicstrainnortoncreepuniaxialtesting.ref)
+test_castem(mieheapellambrechtlogarithmicstrainnortoncreep-uniaxialloading-1-2D
+  REFERENCE_FILE logarithmicstrainnortoncreepuniaxialtesting.ref)
+test_castem(mieheapellambrechtlogarithmicstrainnortoncreep-uniaxialloading-2-2D
+  REFERENCE_FILE logarithmicstrainnortoncreepuniaxialtesting.ref)
+test_castem(mieheapellambrechtlogarithmicstrainnortoncreep-uniaxialloading-3-2D
+  REFERENCE_FILE logarithmicstrainnortoncreepuniaxialtesting.ref)
+test_castem(mieheapellambrechtlogarithmicstrainnortoncreep-uniaxialloading-1-3D
+  REFERENCE_FILE logarithmicstrainnortoncreepuniaxialtesting.ref)
+test_castem(mieheapellambrechtlogarithmicstrainnortoncreep-uniaxialloading-2-3D
+  REFERENCE_FILE logarithmicstrainnortoncreepuniaxialtesting.ref)
+test_castem(mieheapellambrechtlogarithmicstrainnortoncreep-uniaxialloading-3-3D
+  REFERENCE_FILE logarithmicstrainnortoncreepuniaxialtesting.ref)
 test_castem(incompressiblemooneyrivlinbehaviour)
 test_castem(incompressibleplanestressgornetdesmoratbehavioursheartesting)
 test_castem(incompressibleplanestressgornetdesmoratbehaviouruniaxialtesting)
 test_castem(compressibleneohookeanbehaviour)
 test_castem(incompressibleplanestressmooneyrivlinbehaviouruniaxialtesting)
 test_castem(incompressibleplanestressgornetdesmoratbehaviourbiaxialtesting)
-test_castem(implicitsimomieheelastoplasticity)
-test_castem(T91-satohtest)
+test_castem(implicitsimomieheelastoplasticity REFERENCE_FILE implicitsimomieheelastoplasticity.ref)
+test_castem(T91-satohtest REFERENCE_FILE T91-satohtest.ref)
 test_castem(T91-viscositytest)
 test_castem(finitestrainsinglecrystal-001)
 test_castem(finitestrainsinglecrystal-012)
@@ -630,8 +700,9 @@ test_castem(finitestrainsinglecrystal_numericaljacobian-012)
 test_castem(finitestrainsinglecrystal_numericaljacobian-012-2)
 test_castem(finitestrainsinglecrystal_numericaljacobian-159)
 test_castem(finitestrainsinglecrystal2-001)
-test_castem(anistropiclemaitreviscoplasticbehaviour)
-test_castem(tssf)
+test_castem(anistropiclemaitreviscoplasticbehaviour
+  REFERENCE_FILE AnistropicLemaitreViscoplasticBehaviour.ref) 
+test_castem(tssf REFERENCE_FILE tssf.ref)
 test_castem(computestressfreeexpansion)
 test_castem(isotropiclinearswelling)
 test_castem(isotropiclinearswelling2)

@@ -114,9 +114,13 @@ namespace mtest {
         i = "Generic";
       }
 #ifdef HAVE_CASTEM
-      if ((p->value == "umat") || (p->value == "castem") || (p->value == "Castem") ||
-          (p->value == "Cast3M")) {
+      if ((p->value == "umat") || (p->value == "castem") ||
+          (p->value == "Castem") || (p->value == "Cast3M")) {
         i = "castem";
+      }
+      if ((p->value == "castem21") || (p->value == "Castem21") ||
+          (p->value == "Cast3M21")) {
+        i = "castem21";
       }
       if (p->value == "mistral") {
         i = "mistral";

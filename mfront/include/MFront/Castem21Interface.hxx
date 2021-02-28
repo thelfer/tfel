@@ -27,13 +27,15 @@ namespace mfront {
     static std::string getName();
     //! \brief default constructor
     Castem21Interface();
+    //
+    std::string getInterfaceVersion() const override;
     //! \brief destructor
     ~Castem21Interface() override;
 
    protected:
     //
     std::vector<BehaviourMaterialProperty> getDefaultMaterialPropertiesList(
-        const BehaviourDescription&, const Hypothesis) const override;
+        const BehaviourDescription &, const Hypothesis) const override;
     //
     std::string getMaterialPropertiesOffsetForBehaviourTraits(
         const BehaviourDescription &) const override;

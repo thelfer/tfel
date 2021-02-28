@@ -767,8 +767,8 @@ namespace mfront {
       const mfront::FileDescription&,
       const std::string& name) const {
     writeInterfaceSymbol(out, i.getFunctionNameBasis(name),
-                         i.getInterfaceName());
-  }
+                         i.getInterfaceName() + i.getInterfaceVersion());
+  }  // end of writeInterfaceNameSymbols
 
   void SymbolsGenerator::writeExternalNames(std::ostream& f,
                                             const StandardBehaviourInterface& i,

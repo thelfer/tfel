@@ -42,13 +42,19 @@ namespace mtest {
     this->mpnames = elm.getUMATMaterialPropertiesNames(l, b, nh);
     throw_if(this->btype != 3u, "invalid behaviour type");
     if (this->stype == 0) {
-      this->mpnames.insert(this->mpnames.begin(), "NormalThermalExpansion");
-      this->mpnames.insert(this->mpnames.begin(), "MassDensity");
       // Those are the conventions used by Cast3M. The UMATInterface
       // exchanges the 'NormalStiffness' and the 'TangentialStiffness'
       // material properties to match MFront conventions
-      this->mpnames.insert(this->mpnames.begin(), "NormalStiffness");
-      this->mpnames.insert(this->mpnames.begin(), "TangentialStiffness");
+      this->mpnames.insert(this->mpnames.begin(),
+                           {"TangentialStiffness", "NormalStiffness",
+                            "MassDensity", "NormalThermalExpansion"});
+      if (this->getCastemInterfaceVersion() ==
+          CastemInterfaceVersion::CASTEM_INTERFACE_VERSION_2021) {
+        this->mpnames.insert(
+            this->mpnames.end(),
+            {"ReferenceTemperatureForThermalExpansionCoefficient",
+             "ReferenceTemperatureForThermalExpansion"});
+      }
     } else {
       throw_if(true, "unsupported symmetry type");
     }
@@ -253,7 +259,13 @@ namespace mtest {
 
   std::vector<std::string>
   CastemCohesiveZoneModel::getOptionalMaterialProperties() const {
-    return {"MassDensity","NormalThermalExpansion"};
+    const auto v = this->getCastemInterfaceVersion();
+    if (v == CastemInterfaceVersion::CASTEM_INTERFACE_VERSION_2021) {
+      return {"MassDensity", "NormalThermalExpansion",
+              "ReferenceTemperatureForThermalExpansionCoefficient",
+              "ReferenceTemperatureForThermalExpansion"};
+    }
+    return {"MassDensity", "NormalThermalExpansion"};
   }  // end of CastemCohesiveZoneModel::getOptionalMaterialProperties
 
   void CastemCohesiveZoneModel::setOptionalMaterialPropertiesDefaultValues(
@@ -263,13 +275,21 @@ namespace mtest {
     if (this->stype == 0) {
       Behaviour::setOptionalMaterialPropertyDefaultValue(
           mp, evm, "NormalThermalExpansion", 0.);
+      Behaviour::setOptionalMaterialPropertyDefaultValue(
+          mp, evm, "ReferenceTemperatureForThermalExpansionCoefficient", 0.);
+      Behaviour::setOptionalMaterialPropertyDefaultValue(
+          mp, evm, "ReferenceTemperatureForThermalExpansion", 0.);
     } else {
       tfel::raise(
           "CastemCohesiveZoneModel::CastemCohesiveZoneModel : "
           "unsupported symmetry type");
     }
-  }  // end of
-     // CastemCohesiveZoneModel::setOptionalMaterialPropertiesDefaultValues
+  }  // end of setOptionalMaterialPropertiesDefaultValues
+
+  CastemInterfaceVersion CastemCohesiveZoneModel::getCastemInterfaceVersion()
+      const {
+    return CastemInterfaceVersion::LEGACY_CASTEM_INTERFACE_VERSION;
+  }  // end of getCastemInterfaceVersion
 
   CastemCohesiveZoneModel::~CastemCohesiveZoneModel() = default;
 
