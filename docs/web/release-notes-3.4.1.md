@@ -17,6 +17,84 @@ secPrefixTemplate: "$$i$$"
 eqnPrefixTemplate: "($$i$$)"
 ---
 
+The page describes the new functionalities of Version 3.4.1 of the
+`TFEL` project.
+
+# Overview
+
+This version notably adds:
+
+- Support for `Cast3M 21`.
+- An interface dedicated to the [`AMITEX_FFTP`
+  solver](http://www.maisondelasimulation.fr/projects/amitex/general/_build/html/map-site.html).
+
+# New features of `MFront`
+
+## Support for `Cast3M 21`
+
+While the `umat` interface of this solver is unchanged, two additional
+material properties are now required to solve mechanical problem where
+thermal exansion are taken into account:
+
+- `TREF`: the reference temperature for the computation of the thermal
+  expansion.
+- `TALP`: the reference temperature for the thermal expansion
+  coefficient.
+
+Those material properties are automatically added by the `castem21`
+interface in the list of the material properties required by the
+behaviour.
+
+The `castem` interface is left unchanged and shall be used for versions
+prior to Version `21`.
+
+## The `amitex` interface
+
+The `amitex` interface is mostly an alias for the `castem` interface,
+i.e. the interface for the `Cast3M` interface prior to Version `21` and
+also generates an input file template which is meant to be copy-pasted
+into the `material.xml` file of the user.
+
+Here is an example of such a template:
+
+~~~~{.xml}
+<!--
+    Simple template for use in AMITEX_FFTP.
+    
+    You may copy-paste those lines in your material.xml file
+    and adjust:
+
+- the material number I,
+- the path to the library (currently UmatBehaviour),
+- the coefficients and initial internal variables values
+which are currently replaced by three dots.
+-->
+
+<Material numM="I" Lib="UmatBehaviour" Law="umatplasticity">
+  <!-- material property YoungModulus -->
+  <Coeff Index = "1" Type = "Constant" Value = "..." />
+  <!-- material property PoissonRatio -->
+  <Coeff Index = "2" Type = "Constant" Value = "..." />
+  <!-- material property MassDensity -->
+  <Coeff Index = "3" Type = "Constant" Value = "..." />
+  <!-- material property ThermalExpansion -->
+  <Coeff Index = "4" Type = "Constant" Value = "..." />
+  <!-- material property H -->
+  <Coeff Index = "5" Type = "Constant" Value = "..." />
+  <!-- material property s0 -->
+  <Coeff Index = "6" Type = "Constant" Value = "..." />
+  <!-- internal state variable ElasticStrain -->
+  <IntVar Index = "1" Type = "Constant" Value = "..." />
+  <IntVar Index = "2" Type = "Constant" Value = "..." />
+  <IntVar Index = "3" Type = "Constant" Value = "..." />
+  <IntVar Index = "4" Type = "Constant" Value = "..." />
+  <IntVar Index = "5" Type = "Constant" Value = "..." />
+  <IntVar Index = "6" Type = "Constant" Value = "..." />
+  <!-- internal state variable EquivalentPlasticStrain -->
+  <IntVar Index = "7" Type = "Constant" Value = "..." />
+</Material>
+~~~~
+
 # Tickets fixed
 
 ## Ticket #263: `GenericBehaviourInterface`: `rotateArrayOfTangentOperatorBlocks` is not correctly implemented

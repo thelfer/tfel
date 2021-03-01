@@ -1,6 +1,15 @@
-% Gallery
-% Helfer Thomas
-% December 1, 2016
+---
+title: The `MFront` gallery
+author: Thomas Helfer
+date: 1/12/2016
+lang: en-EN
+link-citations: true
+colorlinks: true
+figPrefixTemplate: "$$i$$"
+tabPrefixTemplate: "$$i$$"
+secPrefixTemplate: "$$i$$"
+eqnPrefixTemplate: "($$i$$)"
+---
 
 # Mechanical behaviours
 

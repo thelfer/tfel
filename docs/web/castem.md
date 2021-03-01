@@ -1,14 +1,9 @@
 ---
-title: `MFront` interface for Cast3M
+title: MFront interface for Cast3M
 author: Thomas Helfer
 date: October 13, 2014
 lang: en-EN
 numbersections: true
-documentclass: article
-from: markdown+tex_math_single_backslash
-geometry:
-  - margin=2cm
-papersize: a4
 link-citations: true
 colorlinks: true
 figPrefixTemplate: "$$i$$"
@@ -56,12 +51,24 @@ bibliography: bibliography.bib
 
 # Mechanical behaviours
 
-The `castem` interface has been developed for the CEA
+The `castem` and `castem21` interfaces have been developed for the CEA
 [`Cast3M`](http://www-cast3m.cea.fr/) finite element solver using the
 [`UMAT`](http://www-cast3m.cea.fr/index.php?page=sources&source=umat)
 subroutine which is meant to be overridden by the user, loosely
-following the `Abaqus` standard. For historical reasons, it has also
-an alias named `umat`.
+following the `Abaqus` standard.
+
+The `castem` interface shall be used for versions prior to Version `21`
+and the `castem21` interface shall be used for versions greater than
+`21`.
+
+For historical reasons, the `castem` interface also has an alias named
+`umat`.
+
+> **Warning**
+>
+
+> For technical reasons, the interfaces `castem` and `castem21` can't be
+> used in the same directory.
 
 A french version of this document is available [here](castem-fr.html).
 

@@ -1,14 +1,8 @@
 ---
-title: `MFront` interface for `code_aster`
+title: MFront interface for code_aster
 author: Thomas Helfer
 date: 2020
 lang: en-EN
-numbersections: true
-documentclass: article
-from: markdown+tex_math_single_backslash
-geometry:
-  - margin=2cm
-papersize: a4
 link-citations: true
 colorlinks: true
 figPrefixTemplate: "$$i$$"

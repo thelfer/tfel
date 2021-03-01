@@ -45,6 +45,13 @@ L'utilisation de lois générées par `MFront` dans
 générique
 [`UMAT`](http://www-cast3m.cea.fr/index.php?page=sources&source=umat).
 
+`MFront` propose deux interfaces pour ce solveur:
+
+- `castem` pour les versions strictement antérieures à la version 2021.
+  Pour des raisons historiques, cette interface est un synonyme de
+  l'interface `umat`.
+- `castem21` pour les versions supérieures ou égales à la version 2021.
+
 Dans la suite de ce document, nous supposons travailler dans un
 environnement `POSIX`. Le shell utilisé est `bash`. Une page dédiée à
 l'utilisation de `MFront` sous `Windows` sera ajoutée à terme.
