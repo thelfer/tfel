@@ -9,7 +9,7 @@
 @MaximumNumberOfSubSteps 1;
 @ModellingHypothesis 'Axisymmetrical';
 
-@Behaviour<umat> @library@ 'umatimplicitnorton3';
+@Behaviour<@interface@> @library@ 'umatimplicitnorton3';
 @MaterialProperty<constant> 'YoungModulus'     150.e9;
 @MaterialProperty<constant> 'PoissonRatio'       0.3;
 

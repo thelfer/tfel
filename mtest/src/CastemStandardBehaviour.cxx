@@ -30,8 +30,7 @@ namespace mtest {
     using tfel::material::ModellingHypothesis;
     auto& elm =
         tfel::system::ExternalLibraryManager::getExternalLibraryManager();
-    umb.mpnames = elm.getUMATMaterialPropertiesNames(
-        umb.library, umb.behaviour, ModellingHypothesis::toString(h));
+    umb.mpnames.clear();
     if (umb.stype == 0) { // isotropic case
       if (h == ModellingHypothesis::PLANESTRESS) {
         umb.mpnames.insert(umb.mpnames.begin(),
@@ -80,10 +79,13 @@ namespace mtest {
     }
     if (v == CastemInterfaceVersion::CASTEM_INTERFACE_VERSION_2021) {
       umb.mpnames.insert(
-          umb.mpnames.begin(),
+          umb.mpnames.end(),
           {"ReferenceTemperatureForThermalExpansionCoefficient",
            "ReferenceTemperatureForThermalExpansion"});
     }
+    const auto mps = elm.getUMATMaterialPropertiesNames(
+        umb.library, umb.behaviour, ModellingHypothesis::toString(h));
+    umb.mpnames.insert(umb.mpnames.end(), mps.begin(), mps.end());
   }  // end of setMaterialProperties
 
   CastemStandardBehaviour::CastemStandardBehaviour(const Hypothesis h,
@@ -98,7 +100,13 @@ namespace mtest {
                    "invalid interface '" +
                        elm.getInterface(l, b) + "'");
     this->fct = elm.getCastemExternalBehaviourFunction(l, b);
-    setMaterialProperties(*this, h, this->getCastemInterfaceVersion());
+    if (i == "Castem21") {
+      setMaterialProperties(
+          *this, h, CastemInterfaceVersion::CASTEM_INTERFACE_VERSION_2021);
+    } else {
+      setMaterialProperties(
+          *this, h, CastemInterfaceVersion::LEGACY_CASTEM_INTERFACE_VERSION);
+    }
   }  // end of CastemStandardBehaviour::CastemStandardBehaviour
 
   CastemStandardBehaviour::CastemStandardBehaviour(

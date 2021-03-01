@@ -92,7 +92,7 @@ namespace mtest {
                    "(neither isotropic nor orthotropic)");
   }  // end of StandardBehaviourBase::StandardBehaviourBase
 
-  std::string StandardBehaviourBase::getBehaviourName() const{
+  std::string StandardBehaviourBase::getBehaviourName() const {
     return this->behaviour;
   }  // end of StandardBehaviourBase::getBehaviourName
 
@@ -524,22 +524,23 @@ namespace mtest {
 
   size_t StandardBehaviourBase::getTangentOperatorArraySize() const {
     auto r = size_t{};
-    auto getVariableSize = [this](const std::string& n) {
-      auto find = [&n](const std::vector<std::string>& variables) {
-        return std::find(variables.cbegin(), variables.cend(), n);
-      };
-      const auto h = this->getHypothesis();
-      auto pg = find(this->gnames);
-      if (pg != this->gnames.cend()) {
-        return mtest::getVariableSize(this->gtypes[pg - this->gnames.cbegin()],
-                                      h);
-      }
-      auto pth = find(this->thnames);
-      if (pth != this->thnames.cend()) {
-        return mtest::getVariableSize(
-            this->thtypes[pth - this->thnames.cbegin()], h);
-      }
-    };
+    //     auto getVariableSize = [this](const std::string& n) {
+    //       auto find = [&n](const std::vector<std::string>& variables) {
+    //         return std::find(variables.cbegin(), variables.cend(), n);
+    //       };
+    //       const auto h = this->getHypothesis();
+    //       auto pg = find(this->gnames);
+    //       if (pg != this->gnames.cend()) {
+    //         return mtest::getVariableSize(this->gtypes[pg -
+    //         this->gnames.cbegin()],
+    //                                       h);
+    //       }
+    //       auto pth = find(this->thnames);
+    //       if (pth != this->thnames.cend()) {
+    //         return mtest::getVariableSize(
+    //             this->thtypes[pth - this->thnames.cbegin()], h);
+    //       }
+    //     };
     return r;
   }  // end of StandardBehaviourBase::getTangentOperatorSize
 

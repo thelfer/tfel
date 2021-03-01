@@ -3,7 +3,7 @@
 
 @UseCastemAccelerationAlgorithm true;
 @MaximumNumberOfSubSteps 1 ;
-@Behaviour<umat> @library@ 'umatviscoplasisocin';
+@Behaviour<@interface@> @library@ 'umatviscoplasisocin';
 
 @MaterialProperty<constant> 'YoungModulus' 200000.;
 @MaterialProperty<constant> 'PoissonRatio' 0.3;

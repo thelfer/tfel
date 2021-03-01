@@ -7,7 +7,7 @@
 
 @UseCastemAccelerationAlgorithm true;
 
-@Behaviour<umat> @library@ 'umathayhurst';
+@Behaviour<@interface@> @library@ 'umathayhurst';
 @MaterialProperty<constant> 'YoungModulus'      1.45000E5;
 @MaterialProperty<constant> 'PoissonRatio'         0.3;
 @MaterialProperty<constant> 'K'          9.691              ;

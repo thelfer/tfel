@@ -140,14 +140,11 @@ namespace mtest {
     }
     auto bp = Behaviour::getBehaviour(i, l, f, d, this->hypothesis);
     if (w == "LogarithmicStrain1D") {
-      auto wp = std::shared_ptr<Behaviour>(
-          new LogarithmicStrain1DBehaviourWrapper(bp));
+      auto wp = std::make_shared<LogarithmicStrain1DBehaviourWrapper>(bp);
       this->setBehaviour(wp);
     } else {
-      tfel::raise(
-          "SingleStructureScheme::setBehaviour: "
-          "unknown wrapper '" +
-          w + "'");
+      tfel::raise("SingleStructureScheme::setBehaviour: unknown wrapper '" + w +
+                  "'");
     }
   }
 

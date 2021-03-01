@@ -6,7 +6,7 @@
   "Rotation is given through material properties";
 };
 
-@Behaviour<umat> @library@ 'umatorthotropicelastic';
+@Behaviour<@interface@> @library@ 'umatorthotropicelastic';
 
 @Real 'E1'   '7.8e+10';
 @Real 'E2'   '2.64233e+11';

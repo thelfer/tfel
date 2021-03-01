@@ -6,7 +6,7 @@
  */
 
 @UseCastemAccelerationAlgorithm true;
-@Behaviour<umat> @library@ 'umatincompressiblemooneyrivlinbehaviour';
+@Behaviour<@interface@> @library@ 'umatincompressiblemooneyrivlinbehaviour';
 
 @Real 'C_1' '0.183';
 @Real 'C_2' '0.0034';

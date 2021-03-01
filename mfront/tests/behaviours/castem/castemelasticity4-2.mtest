@@ -9,7 +9,7 @@
 
 @ModellingHypothesis 'PlaneStress';
 @AccelerationAlgorithm 'Cast3M';
-@Behaviour<castem> @library@ 'umatelasticity4';
+@Behaviour<@interface@> @library@ 'umatelasticity4';
 
 // those material properties are required by the catem interface but
 // are not used by the behaviour

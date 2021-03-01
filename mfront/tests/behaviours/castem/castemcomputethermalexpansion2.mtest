@@ -1,7 +1,7 @@
 @Author Helfer Thomas;
 @Date  32/12/2017;
 
-@Behaviour<umat> @library@ 'umatcomputethermalexpansion2';
+@Behaviour<@interface@> @library@ 'umatcomputethermalexpansion2';
 
 @Real 'E'  150.e9;
 @Real 'nu'   0.3333;

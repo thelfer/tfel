@@ -6,7 +6,7 @@
 };
 
 @MaximumNumberOfSubSteps 1;
-@Behaviour<umat> @library@ 'umattemperatureupdateonsubsteppingcheck';
+@Behaviour<@interface@> @library@ 'umattemperatureupdateonsubsteppingcheck';
 @MaterialProperty<constant> 'YoungModulus'     150.e9;
 @MaterialProperty<constant> 'PoissonRatio'       0.3;
 

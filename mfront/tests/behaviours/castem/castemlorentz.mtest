@@ -8,7 +8,7 @@
 @UseCastemAccelerationAlgorithm true;
 @StiffnessMatrixType 'Elastic';
 
-@Behaviour<umat> @library@ 'umatlorentz';
+@Behaviour<@interface@> @library@ 'umatlorentz';
 
 @StrainEpsilon 1.e-11;
 @StressEpsilon 1.e-1;

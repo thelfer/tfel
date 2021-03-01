@@ -13,7 +13,7 @@
 @ModellingHypothesis 'Axisymmetrical';
 @UseCastemAccelerationAlgorithm true;
 
-@Behaviour<umat> @library@ 'umatstrainhardeningcreep2';
+@Behaviour<@interface@> @library@ 'umatstrainhardeningcreep2';
 @MaterialProperty<constant> 'YoungModulus'     150.e9;
 @MaterialProperty<constant> 'PoissonRatio'       0.3;
 @MaterialProperty<constant> 'A'  8.e-40;

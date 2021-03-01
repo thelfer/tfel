@@ -6,7 +6,7 @@
  */
 
 @ModellingHypothesis 'PlaneStress';
-@Behaviour<umat> @library@ 'umatmazars';
+@Behaviour<@interface@> @library@ 'umatmazars';
 @MaterialProperty<constant> 'YoungModulus'     3.2e10; 
 @MaterialProperty<constant> 'PoissonRatio'     0.2;    
 @MaterialProperty<constant> 'Ac' 1.15;

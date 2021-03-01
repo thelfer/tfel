@@ -7,7 +7,7 @@
 };
 
 @MaximumNumberOfSubSteps 1;
-@Behaviour<umat> @library@ 'umatmaterialpropertiesboundscheck';
+@Behaviour<@interface@> @library@ 'umatmaterialpropertiesboundscheck';
 @OutOfBoundsPolicy 'Warning';
 @MaterialProperty<constant> 'YoungModulus'   50.e9;
 @MaterialProperty<constant> 'PoissonRatio'    0.3;

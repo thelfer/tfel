@@ -7,7 +7,7 @@
 
 @UseCastemAccelerationAlgorithm true;
 @ModellingHypothesis 'Axisymmetrical';
-@Behaviour<umat> @library@ 'umatelasticity_malls';
+@Behaviour<@interface@> @library@ 'umatelasticity_malls';
 @MaterialProperty<constant> 'YoungModulus'     215.e9;
 @MaterialProperty<constant> 'PoissonRatio'       0.3;
 

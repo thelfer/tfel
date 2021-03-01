@@ -7,7 +7,7 @@
 
 @Real 'tmax' '3600*24*365';
 
-@Behaviour<umat> @library@ 'umatisotropicvolumeswelling2';
+@Behaviour<@interface@> @library@ 'umatisotropicvolumeswelling2';
 @MaterialProperty<constant> 'YoungModulus' 150.e9;
 @MaterialProperty<constant> 'PoissonRatio'   0.3;
 

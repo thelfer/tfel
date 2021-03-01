@@ -14,7 +14,7 @@
  };
 
 @ModellingHypothesis 'PlaneStress';
-@Behaviour<umat> @library@ 'umatimplicitnorton2';
+@Behaviour<@interface@> @library@ 'umatimplicitnorton2';
 
 @MaximumNumberOfSubSteps   1;
 @UseCastemAccelerationAlgorithm true;

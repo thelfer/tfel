@@ -6,7 +6,7 @@
 };
 
 @ModellingHypothesis 'PlaneStrain';
-@Behaviour<umat> @library@ 'umataxialgrowth';
+@Behaviour<@interface@> @library@ 'umataxialgrowth';
 
 @Real 'E1'   '7.8e+10';
 @Real 'E2'   '2.64233e+11';

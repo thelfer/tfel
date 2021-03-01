@@ -235,7 +235,8 @@ macro(test_castem test_arg)
 	    --verbose=level0
 	    --xml-output=false
 	    --result-file-output=false
-            --@library@="$<TARGET_FILE:MFrontCastemBehaviours>"
+        --@interface@=umat
+        --@library@="$<TARGET_FILE:MFrontCastemBehaviours>"
 	    --@mplibrary@="$<TARGET_FILE:MFrontMaterialProperties-castem>"
 	    --@reference_file@="${_REFERENCE_FILE}"
 	    ${file}
@@ -247,7 +248,8 @@ macro(test_castem test_arg)
 	    --verbose=level0
 	    --xml-output=true
 	    --result-file-output=false ${file}
-            --@library@="$<TARGET_FILE:MFrontCastemBehaviours>"
+        --@interface@=umat
+        --@library@="$<TARGET_FILE:MFrontCastemBehaviours>"
 	    --@mplibrary@="$<TARGET_FILE:MFrontMaterialProperties-castem>"
 	    --@reference_file@="${_REFERENCE_FILE}"
 	    CONFIGURATIONS ${conf})
@@ -292,7 +294,8 @@ macro(test_castem test_arg)
 	  --verbose=level0
 	  --xml-output=false
 	  --result-file-output=false
-          --@library@="$<TARGET_FILE:MFrontCastemBehaviours>"
+      --@interface@=umat
+      --@library@="$<TARGET_FILE:MFrontCastemBehaviours>"
 	  --@mplibrary@="$<TARGET_FILE:MFrontMaterialProperties-castem>"
 	  --@reference_file@="${_REFERENCE_FILE}"
 	  ${file})
@@ -303,9 +306,10 @@ macro(test_castem test_arg)
 	  --verbose=level0
 	  --xml-output=true
 	  --result-file-output=false
-          --@library@="$<TARGET_FILE:MFrontCastemBehaviours>"
+      --@interface@=umat
+      --@library@="$<TARGET_FILE:MFrontCastemBehaviours>"
 	  --@mplibrary@="$<TARGET_FILE:MFrontMaterialProperties-castem>"
-          --@reference_file@="${_REFERENCE_FILE}"
+      --@reference_file@="${_REFERENCE_FILE}"
 	  ${file})
       endif(_NO_XML_OUTPUT)
       if(_WILL_FAIL)

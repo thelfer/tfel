@@ -9,7 +9,7 @@
 @PredictionPolicy 'LinearPrediction';
 @AccelerationAlgorithm 'Cast3M';
 @ModellingHypothesis 'PlaneStress';
-@Behaviour<umat> @library@ 'umatimplicitnorton4';
+@Behaviour<@interface@> @library@ 'umatimplicitnorton4';
 @MaterialProperty<constant> 'YoungModulus'     150.e9;
 @MaterialProperty<constant> 'PoissonRatio'       0.3;
 

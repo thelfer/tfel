@@ -11,7 +11,7 @@
 };
 
 @ModellingHypothesis 'PlaneStress';
-@Behaviour<umat> @library@ 'umatorthotropicelastic6';
+@Behaviour<@interface@> @library@ 'umatorthotropicelastic6';
 
 // Material properties for the three dimensional cases
 @Real 'E1'   '7.8e+10';

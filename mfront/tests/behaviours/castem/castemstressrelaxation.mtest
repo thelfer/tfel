@@ -10,7 +10,7 @@
 
 @Real 'Y'  150.e9;
 @Real 'nu' 0.3;
-@Behaviour<umat> @library@ 'umatnorton';
+@Behaviour<@interface@> @library@ 'umatnorton';
 @MaterialProperty<constant> 'YoungModulus'      'Y';
 @MaterialProperty<constant> 'PoissonRatio'      'nu';
 @Real 'A' 8.e-67;

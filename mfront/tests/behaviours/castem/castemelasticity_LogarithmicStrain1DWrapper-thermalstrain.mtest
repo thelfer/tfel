@@ -6,7 +6,7 @@
  */
 
 @ModellingHypothesis 'AxisymmetricalGeneralisedPlaneStrain';
-@Behaviour<castem,LogarithmicStrain1D> @library@ 'umatelasticity';
+@Behaviour<@interface@, LogarithmicStrain1D> @library@ 'umatelasticity';
 
 @Real 'E'  150.e9;
 @Real 'nu'   0.3333;

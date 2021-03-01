@@ -5,7 +5,7 @@
   "taken into account."
 };
 
-@Behaviour<umat> @library@ 'umatisotropiclinearswelling';
+@Behaviour<@interface@> @library@ 'umatisotropiclinearswelling';
 
 @MaterialProperty<constant> 'YoungModulus' 150.e9;
 @MaterialProperty<constant> 'PoissonRatio'   0.3;

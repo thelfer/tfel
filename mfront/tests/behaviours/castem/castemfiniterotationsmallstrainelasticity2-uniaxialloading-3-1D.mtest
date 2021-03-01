@@ -6,7 +6,7 @@
  */
 
 @ModellingHypothesis 'AxisymmetricalGeneralisedPlaneStrain';
-@Behaviour<umat> @library@ 'umatfiniterotationsmallstrainelasticity2';
+@Behaviour<@interface@> @library@ 'umatfiniterotationsmallstrainelasticity2';
 @MaterialProperty<constant> 'YoungModulus'     215.e9;
 @MaterialProperty<constant> 'PoissonRatio'       0.3;
 

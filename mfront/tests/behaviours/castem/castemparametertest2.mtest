@@ -1,7 +1,7 @@
 @Author  Thomas Helfer;
 @Date    1/01/2018;
 
-@Behaviour<umat> @library@ 'umatparametertest2';
+@Behaviour<@interface@> @library@ 'umatparametertest2';
 @ExternalStateVariable 'Temperature' {0:293.15,3600.:800};
 @MaterialProperty<constant> 'YoungModulus' 150e9;
 @MaterialProperty<constant> 'PoissonRatio' 0.3;
