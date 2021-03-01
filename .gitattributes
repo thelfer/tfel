@@ -5218,6 +5218,8 @@ mfront/tests/behaviours/castem2/castem2strainhardeningcreep.mtest.in -text
 mfront/tests/behaviours/castem2/castem2stressrelaxation.mtest.in -text
 mfront/tests/behaviours/castem2/castem2tssf.mtest.in -text
 mfront/tests/behaviours/castem2/castem2viscoplasisocin.mtest.in -text
+mfront/tests/behaviours/castem21/CMakeLists.txt -text
+mfront/tests/behaviours/castem21/Makefile.am -text
 mfront/tests/behaviours/crossed2delta/CMakeLists.txt -text
 mfront/tests/behaviours/crossed2delta/Makefile.am -text
 mfront/tests/behaviours/crossed2delta/crossed2deltaT91-satohtest.mtest.in -text
