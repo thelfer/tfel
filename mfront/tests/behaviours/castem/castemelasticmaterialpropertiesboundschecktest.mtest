@@ -8,7 +8,7 @@
 };
 
 @MaximumNumberOfSubSteps 1;
-@Behaviour<umat> @library@ 'umatelasticmaterialpropertiesboundschecktest';
+@Behaviour<@interface@> @library@ 'umatelasticmaterialpropertiesboundschecktest';
 @MaterialProperty<constant> 'YoungModulus'     150.e9;
 @MaterialProperty<constant> 'PoissonRatio'       0.3;
 

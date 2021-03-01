@@ -1487,6 +1487,7 @@ AC_OUTPUT([debug.sh Makefile Doxyfile docs/Makefile docs/tfel/Makefile
 	   mfront/tests/behaviours/castem2/castem2mieheapellambrechtlogarithmicstrainnortoncreep-uniaxialloading-3-1D.mtest
 	   mfront/tests/behaviours/castem2/castem2mieheapellambrechtlogarithmicstrainnortoncreep-uniaxialloading-3-2D.mtest
 	   mfront/tests/behaviours/castem2/castem2mieheapellambrechtlogarithmicstrainnortoncreep-uniaxialloading-3-3D.mtest
+	   mfront/tests/behaviours/castem21/Makefile	   
 	   mfront/tests/behaviours/secant/Makefile
 	   mfront/tests/behaviours/secant/secantchaboche2.mtest
 	   mfront/tests/behaviours/secant/secantchaboche.mtest

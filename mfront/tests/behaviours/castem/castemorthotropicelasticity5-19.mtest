@@ -11,7 +11,7 @@
 };
 
 @ModellingHypothesis 'Axisymmetrical';
-@Behaviour<umat> @library@ 'umatorthotropicelastic5';
+@Behaviour<@interface@> @library@ 'umatorthotropicelastic5';
 
 // Material properties for the three dimensional cases
 @Real 'E1'   '7.8e+10';

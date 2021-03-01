@@ -10,7 +10,7 @@
 @Real 'young' 'G*2.6';
 
 @UseCastemAccelerationAlgorithm true;
-@Behaviour<umat> @library@ 'umatmonocrystal_dd_cfc_irradiation';
+@Behaviour<@interface@> @library@ 'umatmonocrystal_dd_cfc_irradiation';
 
 @MaterialProperty<constant> 'YoungModulus1'     'young';
 @MaterialProperty<constant> 'YoungModulus2'     'young';

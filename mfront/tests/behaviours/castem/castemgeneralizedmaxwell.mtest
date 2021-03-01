@@ -1,5 +1,5 @@
 @AccelerationAlgorithm 'Cast3M';
-@Behaviour<umat> @library@ 'umatgeneralizedmaxwell';
+@Behaviour<@interface@> @library@ 'umatgeneralizedmaxwell';
 
 @MaterialProperty<constant> 'YoungModulus' 5.e9;
 @MaterialProperty<constant> 'PoissonRatio'  0.25;

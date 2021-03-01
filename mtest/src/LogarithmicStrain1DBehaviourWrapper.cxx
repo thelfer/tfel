@@ -59,184 +59,170 @@ namespace mtest {
 
   std::string LogarithmicStrain1DBehaviourWrapper::getBehaviourName() const {
     return this->b->getBehaviourName();
-  }  // end of LogarithmicStrain1DBehaviourWrapper::getBehaviourName()
+  }  // end of getBehaviourName()
 
   LogarithmicStrain1DBehaviourWrapper::Hypothesis
   LogarithmicStrain1DBehaviourWrapper::getHypothesis() const {
     return this->b->getHypothesis();
-  }  // end of LogarithmicStrain1DBehaviourWrapper::getHypothesis
+  }  // end of getHypothesis
 
   tfel::material::MechanicalBehaviourBase::BehaviourType
   LogarithmicStrain1DBehaviourWrapper::getBehaviourType() const {
     using tfel::material::MechanicalBehaviourBase;
     return MechanicalBehaviourBase::STANDARDFINITESTRAINBEHAVIOUR;
-  }  // end of LogarithmicStrain1DBehaviourWrapper::getBehaviourType
+  }  // end of getBehaviourType
 
   tfel::material::MechanicalBehaviourBase::Kinematic
   LogarithmicStrain1DBehaviourWrapper::getBehaviourKinematic() const {
     using tfel::material::MechanicalBehaviourBase;
     return MechanicalBehaviourBase::FINITESTRAINKINEMATIC_ETO_PK1;
-  }  // end of LogarithmicStrain1DBehaviourWrapper::getBehaviourKinematic
+  }  // end of getBehaviourKinematic
 
   unsigned short LogarithmicStrain1DBehaviourWrapper::getGradientsSize() const {
     return this->b->getGradientsSize();
-  }  // end of LogarithmicStrain1DBehaviourWrapper::getGradientsSize
+  }  // end of getGradientsSize
 
   void LogarithmicStrain1DBehaviourWrapper::getGradientsDefaultInitialValues(
       tfel::math::vector<real>& v) const {
     return this->b->getGradientsDefaultInitialValues(v);
-  }  // end of
-     // LogarithmicStrain1DBehaviourWrapper::getGradientsDefaultInitialValues
+  }  // end of getGradientsDefaultInitialValues
 
   unsigned short
   LogarithmicStrain1DBehaviourWrapper::getThermodynamicForcesSize() const {
     return this->b->getThermodynamicForcesSize();
-  }  // end of LogarithmicStrain1DBehaviourWrapper::getThermodynamicForcesSize
+  }  // end of getThermodynamicForcesSize
 
   std::vector<std::string>
   LogarithmicStrain1DBehaviourWrapper::getStensorComponentsSuffixes() const {
     return this->b->getStensorComponentsSuffixes();
-  }  // end of LogarithmicStrain1DBehaviourWrapper::getStensorComponentsSuffixes
+  }  // end of getStensorComponentsSuffixes
 
   std::vector<std::string>
   LogarithmicStrain1DBehaviourWrapper::getVectorComponentsSuffixes() const {
     return this->b->getVectorComponentsSuffixes();
-  }  // end of LogarithmicStrain1DBehaviourWrapper::getVectorComponentsSuffixes
+  }  // end of getVectorComponentsSuffixes
 
   std::vector<std::string>
   LogarithmicStrain1DBehaviourWrapper::getTensorComponentsSuffixes() const {
     return this->b->getTensorComponentsSuffixes();
-  }  // end of LogarithmicStrain1DBehaviourWrapper::getTensorComponentsSuffixes
+  }  // end of getTensorComponentsSuffixes
 
   std::vector<std::string>
   LogarithmicStrain1DBehaviourWrapper::getGradientsComponents() const {
     return this->b->getGradientsComponents();
-  }  // end of LogarithmicStrain1DBehaviourWrapper::getGradientsComponents
+  }  // end of getGradientsComponents
 
   std::vector<std::string>
   LogarithmicStrain1DBehaviourWrapper::getThermodynamicForcesComponents()
       const {
     return this->b->getThermodynamicForcesComponents();
-  }  // end of
-     // LogarithmicStrain1DBehaviourWrapper::getThermodynamicForcesComponents
+  }  // end of getThermodynamicForcesComponents
 
   unsigned short
   LogarithmicStrain1DBehaviourWrapper::getGradientComponentPosition(
       const std::string& c) const {
     return this->b->getGradientComponentPosition(c);
-  }  // end of LogarithmicStrain1DBehaviourWrapper::getGradientComponentPosition
+  }  // end of getGradientComponentPosition
 
   unsigned short
   LogarithmicStrain1DBehaviourWrapper::getThermodynamicForceComponentPosition(
       const std::string& c) const {
     return this->b->getThermodynamicForceComponentPosition(c);
-  }  // end of
-  // LogarithmicStrain1DBehaviourWrapper::getThermodynamicForceComponentPosition
+  }  // end of getThermodynamicForceComponentPosition
 
   size_t LogarithmicStrain1DBehaviourWrapper::getTangentOperatorArraySize()
       const {
     return this->b->getTangentOperatorArraySize();
-  }  // end of LogarithmicStrain1DBehaviourWrapper::getTangentOperatorArraySize
+  }  // end of getTangentOperatorArraySize
 
   std::vector<std::pair<std::string, std::string>>
   LogarithmicStrain1DBehaviourWrapper::getTangentOperatorBlocks() const {
     return this->b->getTangentOperatorBlocks();
-  }  // end of LogarithmicStrain1DBehaviourWrapper::getTangentOperatorBlocks()
+  }  // end of getTangentOperatorBlocks()
 
   unsigned short LogarithmicStrain1DBehaviourWrapper::getSymmetryType() const {
     return this->b->getSymmetryType();
-  }  // end of LogarithmicStrain1DBehaviourWrapper::getSymmetryType
+  }  // end of getSymmetryType
 
   size_t LogarithmicStrain1DBehaviourWrapper::getMaterialPropertiesSize()
       const {
     return this->b->getMaterialPropertiesSize();
-  }  // end of LogarithmicStrain1DBehaviourWrapper::getMaterialPropertiesSize
+  }  // end of getMaterialPropertiesSize
 
   std::vector<std::string>
   LogarithmicStrain1DBehaviourWrapper::getMaterialPropertiesNames() const {
     return this->b->getMaterialPropertiesNames();
-  }  // end of LogarithmicStrain1DBehaviourWrapper::getMaterialPropertiesNames
+  }  // end of getMaterialPropertiesNames
 
   std::vector<std::string>
   LogarithmicStrain1DBehaviourWrapper::getOptionalMaterialProperties() const {
     return {};
-  }  // end of
-     // LogarithmicStrain1DBehaviourWrapper::getOptionalMaterialProperties()
+  }  // end of getOptionalMaterialProperties()
 
   void LogarithmicStrain1DBehaviourWrapper::
       setOptionalMaterialPropertiesDefaultValues(
           EvolutionManager& mp, const EvolutionManager& evm) const {
     return this->b->setOptionalMaterialPropertiesDefaultValues(mp, evm);
-  }  // end of
-     // LogarithmicStrain1DBehaviourWrapper::setOptionalMaterialPropertiesDefaultValues
+  }  // end of setOptionalMaterialPropertiesDefaultValues
 
   std::vector<std::string>
   LogarithmicStrain1DBehaviourWrapper::getInternalStateVariablesNames() const {
     return this->b->getInternalStateVariablesNames();
-  }  // end of
-     // LogarithmicStrain1DBehaviourWrapper::getInternalStateVariablesNames
+  }  // end of getInternalStateVariablesNames
 
   std::vector<std::string>
   LogarithmicStrain1DBehaviourWrapper::expandInternalStateVariablesNames()
       const {
     return this->b->expandInternalStateVariablesNames();
-  }  // end of
-     // LogarithmicStrain1DBehaviourWrapper::expandInternalStateVariablesNames
+  }  // end of expandInternalStateVariablesNames
 
   size_t LogarithmicStrain1DBehaviourWrapper::getInternalStateVariablesSize()
       const {
     return this->b->getInternalStateVariablesSize();
-  }  // end of
-     // LogarithmicStrain1DBehaviourWrapper::getInternalStateVariablesSize
+  }  // end of getInternalStateVariablesSize
 
   std::vector<std::string>
   LogarithmicStrain1DBehaviourWrapper::getInternalStateVariablesDescriptions()
       const {
     return this->b->getInternalStateVariablesDescriptions();
-  }  // end of
-  // LogarithmicStrain1DBehaviourWrapper::getInternalStateVariablesDescriptions
+  }  // end of getInternalStateVariablesDescriptions
 
   unsigned short
   LogarithmicStrain1DBehaviourWrapper::getInternalStateVariableType(
       const std::string& n) const {
     return this->b->getInternalStateVariableType(n);
-  }  // end of
-     // LogarithmicStrain1DBehaviourWrapper::getInternalStateVariableType
+  }  // end of getInternalStateVariableType
 
   unsigned short
   LogarithmicStrain1DBehaviourWrapper::getInternalStateVariablePosition(
       const std::string& n) const {
     return this->b->getInternalStateVariablePosition(n);
-  }  // end of
-     // LogarithmicStrain1DBehaviourWrapper::getInternalStateVariablePosition
+  }  // end of getInternalStateVariablePosition
 
   std::vector<std::string>
   LogarithmicStrain1DBehaviourWrapper::getExternalStateVariablesNames() const {
     return this->b->getExternalStateVariablesNames();
-  }  // end of
-     // LogarithmicStrain1DBehaviourWrapper::getExternalStateVariablesNames
+  }  // end of getExternalStateVariablesNames
 
   size_t LogarithmicStrain1DBehaviourWrapper::getExternalStateVariablesSize()
       const {
     return this->b->getExternalStateVariablesSize();
-  }  // end of
-     // LogarithmicStrain1DBehaviourWrapper::getExternalStateVariablesSize
+  }  // end of getExternalStateVariablesSize
 
   std::vector<std::string>
   LogarithmicStrain1DBehaviourWrapper::getParametersNames() const {
     return this->b->getParametersNames();
-  }  // end of LogarithmicStrain1DBehaviourWrapper::getParametersNames
+  }  // end of getParametersNames
 
   std::vector<std::string>
   LogarithmicStrain1DBehaviourWrapper::getIntegerParametersNames() const {
     return this->b->getIntegerParametersNames();
-  }  // end of LogarithmicStrain1DBehaviourWrapper::getIntegerParametersNames
+  }  // end of getIntegerParametersNames
 
   std::vector<std::string>
   LogarithmicStrain1DBehaviourWrapper::getUnsignedShortParametersNames() const {
     return this->b->getUnsignedShortParametersNames();
-  }  // end of
-     // LogarithmicStrain1DBehaviourWrapper::getUnsignedShortParametersNames
+  }  // end of getUnsignedShortParametersNames
 
   double LogarithmicStrain1DBehaviourWrapper::getRealParameterDefaultValue(
       const std::string& p) const {
@@ -257,96 +243,94 @@ namespace mtest {
   void LogarithmicStrain1DBehaviourWrapper::setOutOfBoundsPolicy(
       const tfel::material::OutOfBoundsPolicy p) const {
     return this->b->setOutOfBoundsPolicy(p);
-  }  // end of LogarithmicStrain1DBehaviourWrapper::setOutOfBoundsPolicy
+  }  // end of setOutOfBoundsPolicy
 
   bool LogarithmicStrain1DBehaviourWrapper::hasBounds(
       const std::string& v) const {
     return this->b->hasBounds(v);
-  }  // end of LogarithmicStrain1DBehaviourWrapper::hasBounds
+  }  // end of hasBounds
 
   bool LogarithmicStrain1DBehaviourWrapper::hasLowerBound(
       const std::string& v) const {
     return this->b->hasLowerBound(v);
-  }  // end of LogarithmicStrain1DBehaviourWrapper::hasLowerBound
+  }  // end of hasLowerBound
 
   bool LogarithmicStrain1DBehaviourWrapper::hasUpperBound(
       const std::string& v) const {
     return this->b->hasUpperBound(v);
-  }  // end of LogarithmicStrain1DBehaviourWrapper::hasUpperBound
+  }  // end of hasUpperBound
 
   long double LogarithmicStrain1DBehaviourWrapper::getLowerBound(
       const std::string& v) const {
     return this->b->getLowerBound(v);
-  }  // end of LogarithmicStrain1DBehaviourWrapper::getLowerBound
+  }  // end of getLowerBound
 
   long double LogarithmicStrain1DBehaviourWrapper::getUpperBound(
       const std::string& v) const {
     return this->b->getUpperBound(v);
-  }  // end of LogarithmicStrain1DBehaviourWrapper::getUpperBound
+  }  // end of getUpperBound
 
   bool LogarithmicStrain1DBehaviourWrapper::hasPhysicalBounds(
       const std::string& v) const {
     return this->b->hasPhysicalBounds(v);
-  }  // end of LogarithmicStrain1DBehaviourWrapper::hasPhysicalBounds
+  }  // end of hasPhysicalBounds
 
   bool LogarithmicStrain1DBehaviourWrapper::hasLowerPhysicalBound(
       const std::string& v) const {
     return this->b->hasLowerPhysicalBound(v);
-  }  // end of LogarithmicStrain1DBehaviourWrapper::hasLowerPhysicalBound
+  }  // end of hasLowerPhysicalBound
 
   bool LogarithmicStrain1DBehaviourWrapper::hasUpperPhysicalBound(
       const std::string& v) const {
     return this->b->hasUpperPhysicalBound(v);
-  }  // end of LogarithmicStrain1DBehaviourWrapper::hasUpperPhysicalBound
+  }  // end of hasUpperPhysicalBound
 
   long double LogarithmicStrain1DBehaviourWrapper::getLowerPhysicalBound(
       const std::string& v) const {
     return this->b->getLowerPhysicalBound(v);
-  }  // end of LogarithmicStrain1DBehaviourWrapper::getLowerPhysicalBound
+  }  // end of getLowerPhysicalBound
 
   long double LogarithmicStrain1DBehaviourWrapper::getUpperPhysicalBound(
       const std::string& v) const {
     return this->b->getUpperPhysicalBound(v);
-  }  // end of LogarithmicStrain1DBehaviourWrapper::getUpperPhysicalBound
+  }  // end of getUpperPhysicalBound
 
   void LogarithmicStrain1DBehaviourWrapper::setParameter(const std::string& n,
                                                          const real v) const {
     this->b->setParameter(n, v);
-  }  // end of LogarithmicStrain1DBehaviourWrapper::setParameter
+  }  // end of setParameter
 
   void LogarithmicStrain1DBehaviourWrapper::setIntegerParameter(
       const std::string& n, const int v) const {
     this->b->setIntegerParameter(n, v);
-  }  // end of LogarithmicStrain1DBehaviourWrapper::setIntegerParameter
+  }  // end of setIntegerParameter
 
   void LogarithmicStrain1DBehaviourWrapper::setUnsignedIntegerParameter(
       const std::string& n, const unsigned short v) const {
     this->b->setUnsignedIntegerParameter(n, v);
-  }  // end of
-     // LogarithmicStrain1DBehaviourWrapper::setUnsignedIntegerParameter
+  }  // end of setUnsignedIntegerParameter
 
   void LogarithmicStrain1DBehaviourWrapper::allocate(
       BehaviourWorkSpace& wk) const {
     this->b->allocate(wk);
-  }  // end of LogarithmicStrain1DBehaviourWrapper::allocate
+  }  // end of allocate
 
   StiffnessMatrixType
   LogarithmicStrain1DBehaviourWrapper::getDefaultStiffnessMatrixType() const {
     return this->b->getDefaultStiffnessMatrixType();
-  }  // end of
-     // LogarithmicStrain1DBehaviourWrapper::getDefaultStiffnessMatrixType
+  }  // end of getDefaultStiffnessMatrixType
 
   tfel::math::tmatrix<3u, 3u, real>
   LogarithmicStrain1DBehaviourWrapper::getRotationMatrix(
       const tfel::math::vector<real>& mp,
       const tfel::math::tmatrix<3u, 3u, real>& r) const {
     return this->b->getRotationMatrix(mp, r);
-  }  // end of LogarithmicStrain1DBehaviourWrapper::getRotationMatrix
+  }  // end of getRotationMatrix
 
   bool LogarithmicStrain1DBehaviourWrapper::doPackagingStep(
       CurrentState& s, BehaviourWorkSpace& wk) const {
     return this->b->doPackagingStep(s, wk);
-  }  // end of LogarithmicStrain1DBehaviourWrapper::doPackagingStep
+  }  // end of doPackagingStep
 
   std::pair<bool, real>
   LogarithmicStrain1DBehaviourWrapper::computePredictionOperator(
@@ -393,7 +377,7 @@ namespace mtest {
       convertStiffness(wk.kt, s.e0, s.s0);
     }
     return r;
-  }  // end of LogarithmicStrain1DBehaviourWrapper::computePredictionOperator
+  }  // end of computePredictionOperator
 
   std::pair<bool, real> LogarithmicStrain1DBehaviourWrapper::integrate(
       CurrentState& s,
@@ -460,7 +444,7 @@ namespace mtest {
       convertStiffness(wk.k, s.e1, s.s1);
     }
     return r;
-  }  // end of LogarithmicStrain1DBehaviourWrapper::integrate
+  }  // end of integrate
 
   LogarithmicStrain1DBehaviourWrapper::~LogarithmicStrain1DBehaviourWrapper() =
       default;

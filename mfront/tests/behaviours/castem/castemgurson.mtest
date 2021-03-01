@@ -1,5 +1,5 @@
 @MaximumNumberOfSubSteps 1;
-@Behaviour<umat> @library@ 'umatgurson';
+@Behaviour<@interface@> @library@ 'umatgurson';
 @UseCastemAccelerationAlgorithm true;
 
 // Material properties

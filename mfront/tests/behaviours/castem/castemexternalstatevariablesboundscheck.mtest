@@ -7,7 +7,7 @@
 };
 
 @MaximumNumberOfSubSteps 1;
-@Behaviour<umat> @library@ 'umatexternalstatevariablesboundscheck';
+@Behaviour<@interface@> @library@ 'umatexternalstatevariablesboundscheck';
 @OutOfBoundsPolicy 'None';
 @MaterialProperty<constant> 'YoungModulus'  150.e9;
 @MaterialProperty<constant> 'PoissonRatio'   -2;

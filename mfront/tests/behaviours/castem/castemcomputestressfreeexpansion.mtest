@@ -5,7 +5,7 @@
   "the ComputeFreeStressExpansion keyword"
 };
 
-@Behaviour<umat> @library@ 'umatcomputestressfreeexpansion';
+@Behaviour<@interface@> @library@ 'umatcomputestressfreeexpansion';
 
 @Real 'E'  150.e9;
 @Real 'nu'   0.3333;

@@ -7,7 +7,7 @@
 
 @UseCastemAccelerationAlgorithm true;
 
-@Behaviour<umat> @library@ 'umatchaboche';
+@Behaviour<@interface@> @library@ 'umatchaboche';
 @MaterialProperty<constant> 'YoungModulus' 145200. ; 
 @MaterialProperty<constant> 'PoissonRatio'  0.3 ;    
 @MaterialProperty<constant> 'ThermalExpansion' 0. ; 

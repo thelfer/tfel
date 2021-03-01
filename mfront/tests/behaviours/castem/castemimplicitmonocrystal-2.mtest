@@ -9,7 +9,7 @@
  */
 
 @ModellingHypothesis 'Tridimensional';
-@Behaviour<umat> @library@ 'umatimplicitmonocrystal';
+@Behaviour<@interface@> @library@ 'umatimplicitmonocrystal';
 @MaximumNumberOfSubSteps 1;
 
 // Material properties

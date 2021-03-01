@@ -1,9 +1,9 @@
-SUBDIRS = unit-tests bricks generic                      \
-	  aster epx castem castem2 cyrano secant         \
-	  steffensen ironstuck  alternatesecant          \
-	  alternatedelta2 alternate2delta crossedsecant  \
-	  crosseddelta2 crossed2delta crossed2deltabis   \
-	  abaqus abaqus-explicit uanderson fanderson     \
+SUBDIRS = unit-tests bricks generic                       \
+	  aster epx castem castem2 castem21 cyrano secant \
+	  steffensen ironstuck  alternatesecant           \
+	  alternatedelta2 alternate2delta crossedsecant   \
+	  crosseddelta2 crossed2delta crossed2deltabis    \
+	  abaqus abaqus-explicit uanderson fanderson      \
           ansys calculix dianafea
 
 MFRONTS= DDIF2.mfront                                                      \

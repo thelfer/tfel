@@ -10,7 +10,7 @@
   "The results are compared to analytical solutions."
 };
 
-@Behaviour<umat> @library@ 'umatsaintvenantkirchhoffelasticity';
+@Behaviour<@interface@> @library@ 'umatsaintvenantkirchhoffelasticity';
 @MaterialProperty<constant> 'YoungModulus'     215.e9;
 @MaterialProperty<constant> 'PoissonRatio'       0.3;
 

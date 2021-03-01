@@ -35,12 +35,13 @@ namespace mtest {
     };
     auto& elm =
         tfel::system::ExternalLibraryManager::getExternalLibraryManager();
-    throw_if(elm.getInterface(l, b) != "Castem",
+    const auto i = elm.getInterface(l, b);
+    throw_if((i != "Castem") && (i != "Castem21"),
              "invalid interface '" + elm.getInterface(l, b) + "'");
     const auto& nh = ModellingHypothesis::toString(h);
     this->fct = elm.getCastemExternalBehaviourFunction(l, b);
-    this->mpnames = elm.getUMATMaterialPropertiesNames(l, b, nh);
     throw_if(this->btype != 3u, "invalid behaviour type");
+    this->mpnames.clear();
     if (this->stype == 0) {
       // Those are the conventions used by Cast3M. The UMATInterface
       // exchanges the 'NormalStiffness' and the 'TangentialStiffness'
@@ -48,8 +49,7 @@ namespace mtest {
       this->mpnames.insert(this->mpnames.begin(),
                            {"TangentialStiffness", "NormalStiffness",
                             "MassDensity", "NormalThermalExpansion"});
-      if (this->getCastemInterfaceVersion() ==
-          CastemInterfaceVersion::CASTEM_INTERFACE_VERSION_2021) {
+      if (i == "Castem21") {
         this->mpnames.insert(
             this->mpnames.end(),
             {"ReferenceTemperatureForThermalExpansionCoefficient",
@@ -58,6 +58,8 @@ namespace mtest {
     } else {
       throw_if(true, "unsupported symmetry type");
     }
+    const auto mps = elm.getUMATMaterialPropertiesNames(l, b, nh);
+    this->mpnames.insert(this->mpnames.end(), mps.begin(), mps.end());
   }
 
   tfel::math::tmatrix<3u, 3u, real> CastemCohesiveZoneModel::getRotationMatrix(

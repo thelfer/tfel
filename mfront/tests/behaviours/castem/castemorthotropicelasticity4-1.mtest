@@ -6,7 +6,7 @@
   "orthotropic material."
 };
 
-@Behaviour<umat> @library@ 'umatorthotropicelastic4';
+@Behaviour<@interface@> @library@ 'umatorthotropicelastic4';
 
 @Real 'E1'   '7.8e+10';
 @Real 'E2'   '2.64233e+11';

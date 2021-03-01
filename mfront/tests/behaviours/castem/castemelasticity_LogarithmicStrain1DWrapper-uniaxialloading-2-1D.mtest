@@ -7,7 +7,7 @@
 
 @UseCastemAccelerationAlgorithm true;
 @ModellingHypothesis 'AxisymmetricalGeneralisedPlaneStrain';
-@Behaviour<castem,LogarithmicStrain1D> @library@ 'umatelasticity';
+@Behaviour<@interface@, LogarithmicStrain1D> @library@ 'umatelasticity';
 @MaterialProperty<constant> 'YoungModulus'     215.e9;
 @MaterialProperty<constant> 'PoissonRatio'       0.3;
 

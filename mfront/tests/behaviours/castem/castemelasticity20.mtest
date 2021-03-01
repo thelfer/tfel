@@ -1,7 +1,7 @@
 @Author Helfer Thomas;
 @Date  06 mars 2014;
 
-@Behaviour<umat> @library@ 'umatelasticity3';
+@Behaviour<@interface@> @library@ 'umatelasticity3';
 
 @Real 'E'  150.e9;
 @Real 'nu'   0.3333;

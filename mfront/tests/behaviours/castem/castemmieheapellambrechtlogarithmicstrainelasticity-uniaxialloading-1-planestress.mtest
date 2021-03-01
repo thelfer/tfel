@@ -7,7 +7,7 @@
 
 @UseCastemAccelerationAlgorithm true;
 @ModellingHypothesis 'PlaneStress';
-@Behaviour<umat> @library@ 'umatlogarithmicstrainelasticity';
+@Behaviour<@interface@> @library@ 'umatlogarithmicstrainelasticity';
 @MaterialProperty<constant> 'YoungModulus'     215.e9;
 @MaterialProperty<constant> 'PoissonRatio'       0.3;
 

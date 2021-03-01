@@ -9,7 +9,7 @@
 @Real 'nu'    0.3;
 @Real 'G'     'young/2.6';
 
-@Behaviour<umat> @library@ 'umatpolycrystals';
+@Behaviour<@interface@> @library@ 'umatpolycrystals';
 
 @StiffnessMatrixType 'Elastic' ;
 

@@ -8,7 +8,7 @@
 };
 
 @ModellingHypothesis 'Axisymmetrical';
-@Behaviour<umat> @library@ 'umatorthotropicelastic3';
+@Behaviour<@interface@> @library@ 'umatorthotropicelastic3';
 
 @Real 'E1'   '7.8e+10';
 @Real 'E2'   '2.64233e+11';

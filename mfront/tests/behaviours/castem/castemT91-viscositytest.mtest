@@ -6,7 +6,7 @@
 
 @UseCastemAccelerationAlgorithm true;
 @MaximumNumberOfSubSteps 1 ;
-@Behaviour<umat> @library@ 'umatt91viscoplasticbehaviour';
+@Behaviour<@interface@> @library@ 'umatt91viscoplasticbehaviour';
 
 @Real 'ThermalExpansionReferenceTemperature' 0.;
 

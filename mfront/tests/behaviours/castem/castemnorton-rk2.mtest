@@ -10,7 +10,7 @@
 @PredictionPolicy 'ElasticPrediction';
 @UseCastemAccelerationAlgorithm true;
 
-@Behaviour<umat> @library@ 'umatnorton_rk2';
+@Behaviour<@interface@> @library@ 'umatnorton_rk2';
 @MaterialProperty<constant> 'YoungModulus'     150.e9;
 @MaterialProperty<constant> 'PoissonRatio'       0.3;
 @MaterialProperty<constant> 'A' 8.e-67;

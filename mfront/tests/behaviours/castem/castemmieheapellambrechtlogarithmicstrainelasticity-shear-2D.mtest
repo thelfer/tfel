@@ -7,7 +7,7 @@
 
 @ModellingHypothesis 'Axisymmetrical';
 @UseCastemAccelerationAlgorithm true;
-@Behaviour<umat> @library@ 'umatlogarithmicstrainelasticity_malls';
+@Behaviour<@interface@> @library@ 'umatlogarithmicstrainelasticity_malls';
 @MaterialProperty<constant> 'YoungModulus'     215.e9;
 @MaterialProperty<constant> 'PoissonRatio'       0.3;
 

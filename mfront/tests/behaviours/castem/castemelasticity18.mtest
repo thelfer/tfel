@@ -5,7 +5,7 @@
  * \brief  09 avril 2013
  */
 
-@Behaviour<umat> @library@ 'umatelasticity2';
+@Behaviour<@interface@> @library@ 'umatelasticity2';
 
 @Real 'E'  150.e9;
 @Real 'nu'   0.3333;

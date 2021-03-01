@@ -5,7 +5,7 @@
  * \brief  09 avril 2013
  */
 
-@Behaviour<umat> @library@ 'umatelasticity';
+@Behaviour<@interface@> @library@ 'umatelasticity';
 @MaterialProperty<castem>   'YoungModulus' @mplibrary@ 'Inconel600_YoungModulus';
 @MaterialProperty<constant> 'PoissonRatio'       0.3;
 

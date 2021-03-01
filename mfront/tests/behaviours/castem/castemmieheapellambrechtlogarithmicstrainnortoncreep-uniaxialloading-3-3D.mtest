@@ -8,7 +8,7 @@
 @UseCastemAccelerationAlgorithm true;
 @MaximumNumberOfSubSteps 1;
 
-@Behaviour<umat> @library@ 'umatlogarithmicstrainnortoncreep';
+@Behaviour<@interface@> @library@ 'umatlogarithmicstrainnortoncreep';
 @DrivingVariableEpsilon 4.e-8;
 @StressEpsilon          3.5e3;
 

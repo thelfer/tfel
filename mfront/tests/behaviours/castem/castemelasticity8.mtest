@@ -7,7 +7,7 @@
 
 @PredictionPolicy 'ElasticPrediction';
 
-@Behaviour<umat> @library@ 'umatorthotropicelastic';
+@Behaviour<@interface@> @library@ 'umatorthotropicelastic';
 @Real 'E'  100.e9;
 @Real 'nu'   0.3;
 @Real 'a'    2.e-5;
