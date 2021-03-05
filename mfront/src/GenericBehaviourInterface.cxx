@@ -895,8 +895,8 @@ namespace mfront {
          << "const mfront_gb_real* const src, "
             "const mfront_gb_real* const rv, "
          << "const mfront_gb_size_type s){\n";
-      os << "for(mfront_gb_size_type idx=0; idx != s; ++idx){\n";
       writeRotationMatrixDefinition(os, true);
+      os << "for(mfront_gb_size_type idx=0; idx != s; ++idx){\n";
       writeTangentOperatorRotationFunctionsImplementationBody(
           os, f + "_rotateArrayOfTangentOperatorBlocks", bd, h, tob_offset);
       os << "}\n";

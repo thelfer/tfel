@@ -2,7 +2,7 @@
  * \file  mtest/src/MTest.cxx
  * \brief
  * \author Thomas Helfer
- * \brief 12 avril 2013
+ * \brief 12/04/2013
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence
