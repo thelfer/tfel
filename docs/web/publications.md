@@ -6,7 +6,7 @@ lang: en-EN
 link-citations: true
 colorlinks: true
 figPrefixTemplate: "$$i$$"
-tabPrefixTemplate: "$$i$$"
+tblPrefixTemplate: "$$i$$"
 secPrefixTemplate: "$$i$$"
 eqnPrefixTemplate: "($$i$$)"
 ---

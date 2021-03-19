@@ -78,6 +78,14 @@ The brick decomposes the behaviour into two components:
   corresponding to the stress potential.
 - a list of inelastic flows.
 
+
+> **Porous viscoplasticity**
+>
+> This page only introduces stress criteria which are not coupled with
+> the evolution of the porosity. Stress criteria coupled with the
+> evolution of porosity is described on a [dedicated
+> page](StandardElastoViscoPlasticityBrick-PorousPlasticity.html).
+
 ## A detailled Example
 
 ~~~~{.cpp}

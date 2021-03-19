@@ -8,6 +8,7 @@ EXTRA_DIST=CMakeLists.txt					      \
 	   ./svn.md					              \
 	   ./faq.md					              \
 	   ./interfaces.md					      \
+	   ./associated-projects.md					  \
 	   ./devel.md					              \
 	   ./index.md					              \
 	   ./material-properties.md				      \
@@ -104,6 +105,7 @@ EXTRA_DIST=CMakeLists.txt					      \
 	   ./BehaviourBricks.md				                      \
 	   ./DDIF2Brick.md                                            \
 	   ./StandardElastoViscoPlasticityBrick.md     				        \
+	   ./StandardElastoViscoPlasticityBrick-PorousPlasticity.md     				        \
        ./ExtendingStandardElastoViscoPlasticityBrick-StressCriterion.md       \
        ./ExtendingStandardElastoViscoPlasticityBrick-PorousStressCriterion.md \
 	   ./HookeStressPotential.md				     \
@@ -334,6 +336,12 @@ EXTRA_DIST=CMakeLists.txt					      \
        ./img/MericCailletaudFiniteStrainResidualTopography.png                              \
        ./img/Highlights-3.4.png                              \
        ./img/PorousPlasticity-3.4.png                              \
+       ./img/PorousPlasticity/CharpyResults.svg  \
+       ./img/PorousPlasticity/ImplicitScheme.svg \
+       ./img/PorousPlasticity/mesh_ST_NT.png     \
+       ./img/PorousPlasticity/NT10_porosity.png  \
+       ./img/PorousPlasticity/NT_FS0_DD0.svg     \
+       ./img/PorousPlasticity/Verifications.svg  \
 	   ./media/epx1.mp4                                               \
 	   ./media/epx2.mp4                                           \
 	   ./media/abaqus-explicit.mp4                                \

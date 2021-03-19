@@ -1,6 +1,15 @@
-% MFront: a code generation tool dedicated to material knowledge
-% Helfer Thomas; Jean-Michel Proix
-% August 15, 2014
+---
+title: MFront, a code generation tool dedicated to material knowledge
+author: Helfer Thomas, Jean-Michel Proix
+date: 15/08/2014
+lang: en-EN
+link-citations: true
+colorlinks: true
+figPrefixTemplate: "$$i$$"
+tblPrefixTemplate: "$$i$$"
+secPrefixTemplate: "$$i$$"
+eqnPrefixTemplate: "($$i$$)"
+---
 
 <div id="slideshow">
   <ul class="slides">

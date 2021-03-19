@@ -1,7 +1,7 @@
 figureTitle: "Figure"
 tableTitle: "Table"
 figPrefixTemplate: "$$i$$"
-tabPrefixTemplate: "$$i$$"
+tblPrefixTemplate: "$$i$$"
 secPrefixTemplate: "$$i$$"
 eqnPrefixTemplate: "($$i$$)"
 loftitle: "# List of figures"

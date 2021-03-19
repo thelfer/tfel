@@ -1188,6 +1188,7 @@ docs/web/Norton-web.md -text
 docs/web/README.md -text
 docs/web/RambergOsgoodNonLinearElasticity.md -text
 docs/web/RungeKutta-keywords.md -text
+docs/web/StandardElastoViscoPlasticityBrick-PorousPlasticity.md -text
 docs/web/StandardElastoViscoPlasticityBrick.md -text
 docs/web/TFELSystem.md -text
 docs/web/TODO.md -text
@@ -1196,6 +1197,7 @@ docs/web/about.md -text
 docs/web/amitex.md -text
 docs/web/ansys.md -text
 docs/web/apple-touch-icon-precomposed.png -text
+docs/web/associated-projects.md -text
 docs/web/aster.md -text
 docs/web/barlat-yld2004.md -text
 docs/web/behaviours.md -text
@@ -1346,6 +1348,12 @@ docs/web/img/PSACylinderHeadDesign.xcf -text
 docs/web/img/Polar_decomposition_of_F.png -text
 docs/web/img/PolycrystalHCP_BZ.svg -text
 docs/web/img/PorousPlasticity-3.4.png -text
+docs/web/img/PorousPlasticity/CharpyResults.svg -text
+docs/web/img/PorousPlasticity/ImplicitScheme.svg -text
+docs/web/img/PorousPlasticity/NT10_porosity.png -text
+docs/web/img/PorousPlasticity/NT_FS0_DD0.svg -text
+docs/web/img/PorousPlasticity/Verifications.svg -text
+docs/web/img/PorousPlasticity/mesh_ST_NT.png -text
 docs/web/img/RambergOsgoodNonLinearElasticity-UniaxialTensileTest.png -text
 docs/web/img/SalomeMeca2015.png -text
 docs/web/img/Scherzinger/Hosford100/LevenbergMarquardt.png -text
