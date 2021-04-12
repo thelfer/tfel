@@ -137,6 +137,7 @@ EXTRA_DIST=CMakeLists.txt					      \
 	   ./RambergOsgoodNonLinearElasticity.md                      \
 	   ./MericCailletaudSingleCrystalPlasticity.md                \
            ./ExplicitBerveillerZaouiPolyCrystals.md                   \
+       ./Burger_EDF_CIWAP_2021.md                                 \
 	   ./MohrCoulomb.md                                           \
 	   ./FichantLaBorderieDamageBehaviour.md                            \
            ./LoadInducedThermalStrainBehaviourTorelli2018.md                \
@@ -342,6 +343,18 @@ EXTRA_DIST=CMakeLists.txt					      \
        ./img/PorousPlasticity/NT10_porosity.png  \
        ./img/PorousPlasticity/NT_FS0_DD0.svg     \
        ./img/PorousPlasticity/Verifications.svg  \
+       ./img/Burger_EDF_CIWAP_2021/img6a.png     \
+       ./img/Burger_EDF_CIWAP_2021/img6b.png     \
+       ./img/Burger_EDF_CIWAP_2021/test1.png     \
+       ./img/Burger_EDF_CIWAP_2021/test2.png     \
+       ./img/Burger_EDF_CIWAP_2021/test3.png     \
+       ./img/Burger_EDF_CIWAP_2021/test4.png     \
+       ./img/Burger_EDF_CIWAP_2021/test5.png     \
+       ./img/Burger_EDF_CIWAP_2021/test6a.png    \
+       ./img/Burger_EDF_CIWAP_2021/test6-boundary-conditions.png      \
+       ./img/Burger_EDF_CIWAP_2021/test6b.png                         \
+       ./img/Burger_EDF_CIWAP_2021/test6c.png                         \
+       ./img/Burger_EDF_CIWAP_2021/test6-water-content-evolution.png  \
 	   ./media/epx1.mp4                                               \
 	   ./media/epx2.mp4                                           \
 	   ./media/abaqus-explicit.mp4                                \

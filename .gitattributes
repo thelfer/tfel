@@ -1151,6 +1151,7 @@ docs/tutorial/resume.tex.in -text
 docs/tutorial/tutoriel.tex.in -text
 docs/web/404.html -text
 docs/web/BehaviourBricks.md -text
+docs/web/Burger_EDF_CIWAP_2021.md -text
 docs/web/CHANGELOG.md -text
 docs/web/CMakeLists.txt -text
 docs/web/CONTRIBUTING.md -text
@@ -1284,6 +1285,18 @@ docs/web/img/Behaviour-img8.png -text
 docs/web/img/Behaviour-img9.eps -text
 docs/web/img/Behaviour-img9.png -text
 docs/web/img/BrittleFracturePhaseField.png -text
+docs/web/img/Burger_EDF_CIWAP_2021/img6a.png -text
+docs/web/img/Burger_EDF_CIWAP_2021/img6b.png -text
+docs/web/img/Burger_EDF_CIWAP_2021/test1.png -text
+docs/web/img/Burger_EDF_CIWAP_2021/test2.png -text
+docs/web/img/Burger_EDF_CIWAP_2021/test3.png -text
+docs/web/img/Burger_EDF_CIWAP_2021/test4.png -text
+docs/web/img/Burger_EDF_CIWAP_2021/test5.png -text
+docs/web/img/Burger_EDF_CIWAP_2021/test6-boundary-conditions.png -text
+docs/web/img/Burger_EDF_CIWAP_2021/test6-water-content-evolution.png -text
+docs/web/img/Burger_EDF_CIWAP_2021/test6a.png -text
+docs/web/img/Burger_EDF_CIWAP_2021/test6b.png -text
+docs/web/img/Burger_EDF_CIWAP_2021/test6c.png -text
 docs/web/img/CalculiXBenchmarkSmallStrain.png -text
 docs/web/img/CalculiX_MFRONT_WSL.png -text
 docs/web/img/CalculiX_MFRONT_WSL.xcf -text

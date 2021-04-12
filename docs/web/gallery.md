@@ -33,6 +33,13 @@ behaviour. This framework is described
 - [This page](LoadInducedThermalStrainBehaviourTorelli2018.html)
   describes how to implement Torelli' behaviour describing the load
   induced thermal strain in concrete.
+- [This page](Burger_EDF_CIWAP_2021.html) describes the implementation
+  of the `̀Burger_EDF_CIWAP_2021` which aims at modelling the following
+  phenomena in concrete:
+    - Elasticity
+    - Drying shrinkage
+    - Basic creep
+    - Drying creep
 
 ## Non linear elasticity
 
@@ -66,6 +73,8 @@ behaviour. This framework is described
 - The implementation of a multi-surface, compressible and perfect
   plastic behaviour using the Drucker-Prager yield criterion and a cap
   is described [here](drucker-prager-cap.html)
+- An invariant-based implementation of the Mohr-Coulomb elasto-plastic
+  model is described [here](MohrCoulomb.html)
 
 ## Viscoplasticity
 

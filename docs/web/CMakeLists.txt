@@ -154,6 +154,7 @@ pandoc_html(ExtendingStandardElastoViscoPlasticityBrick-PorousStressCriterion "-
 pandoc_html(HookeStressPotential "--toc" "--toc-depth=2")
 pandoc_html(DDIF2StressPotential "--toc" "--toc-depth=2")
 pandoc_html(ExplicitBerveillerZaouiPolyCrystals "--toc" "--toc-depth=2")
+pandoc_html(Burger_EDF_CIWAP_2021 "--toc" "--toc-depth=2")
 
 # mfront keywords
 
