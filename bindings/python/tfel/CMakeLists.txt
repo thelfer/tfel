@@ -48,26 +48,9 @@ set(TFEL_PYTHON_MATH_MODULE_SOURCES
 
 
 tfel_python_module(math ${TFEL_PYTHON_MATH_MODULE_SOURCES})
-if(TFEL_NUMPY_SUPPORT)
-  target_compile_options(py_tfel_math PRIVATE "-DTFEL_NUMPY_SUPPORT")
-  if(TFEL_USES_CONAN)
-    target_link_libraries(py_tfel_math
-      PRIVATE
-	  TFELNumpySupport TFELMath TFELMathParser
-      TFELException ${TFEL_PYTHON_MODULES_PRIVATE_LINK_LIBRARIES})
-  else(TFEL_USES_CONAN)
-    target_link_libraries(py_tfel_math
-     PRIVATE
-     TFELNumpySupport TFELMath TFELMathParser
-     TFELException ${Boost_NUMPY_LIBRARY}
-     ${TFEL_PYTHON_MODULES_PRIVATE_LINK_LIBRARIES})
-  endif(TFEL_USES_CONAN)
-else(TFEL_NUMPY_SUPPORT)
-  target_link_libraries(py_tfel_math
-   PRIVATE
-	 TFELMath TFELMathParser TFELException
+target_link_libraries(py_tfel_math
+   PRIVATE TFELMath TFELMathParser TFELException
    ${TFEL_PYTHON_MODULES_PRIVATE_LINK_LIBRARIES})
-endif(TFEL_NUMPY_SUPPORT)
 
 tfel_python_module(material
   material.cxx
