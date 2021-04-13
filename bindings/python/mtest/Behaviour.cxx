@@ -68,6 +68,40 @@ static std::shared_ptr<mtest::Behaviour> getBehaviour6(const std::string& l,
                                  Behaviour::ModellingHypothesis::fromString(h));
 }  // end of std::shared_ptr<Behaviour> getBehaviour1
 
+static int Behaviour_getBehaviourType(const mtest::Behaviour& b){
+  using tfel::material::MechanicalBehaviourBase;
+  const auto bt = b.getBehaviourType();
+  if(bt == MechanicalBehaviourBase::GENERALBEHAVIOUR){
+    return 0;
+  } else if(bt == MechanicalBehaviourBase::STANDARDSTRAINBASEDBEHAVIOUR){
+    return 1;
+  } else if(bt == MechanicalBehaviourBase::STANDARDFINITESTRAINBEHAVIOUR){
+    return 2;
+  }
+  if(bt != MechanicalBehaviourBase::COHESIVEZONEMODEL){
+    tfel::raise("Behaviour_getBehaviourType: unsupported behaviour type");
+  }
+  return  3;
+}  // end of Behaviour_getBehaviourType
+
+static int Behaviour_getBehaviourKinematic(const mtest::Behaviour& b){
+  using tfel::material::MechanicalBehaviourBase;
+  const auto bk = b.getBehaviourKinematic();
+  if(bk == MechanicalBehaviourBase::UNDEFINEDKINEMATIC){
+    return 0;
+  } else if(bk == MechanicalBehaviourBase::SMALLSTRAINKINEMATIC){
+    return 1;
+  } else if(bk == MechanicalBehaviourBase::COHESIVEZONEKINEMATIC){
+    return 2;
+  } else if(bk == MechanicalBehaviourBase::FINITESTRAINKINEMATIC_F_CAUCHY){
+    return 3;
+  }
+  if(bk != MechanicalBehaviourBase::FINITESTRAINKINEMATIC_ETO_PK1){
+    tfel::raise("Behaviour_getBehaviourKinematic: unsupported behaviour kinematic");
+  }
+  return  4;
+} // end of Behaviour_getBehaviourKinematic
+
 void declareBehaviour() {
   using boost::python::class_;
   using mtest::Behaviour;
@@ -116,14 +150,14 @@ void declareBehaviour() {
            "- f(std::string): function\n"
            "- d(tfel::utilities::Data): parameter\n"
            "- h(std::string): modelling hypothesis\n")
-      .def("getBehaviourType", &Behaviour::getBehaviourType,
+      .def("getBehaviourType", &Behaviour_getBehaviourType,
            "Return the behaviour type.\n"
            "The value returned has the following meaning:\n"
            "- 0: general behaviour\n"
            "- 1: small strain behaviour\n"
            "- 2: finite strain behaviour\n"
            "- 3: cohesive zone model\n")
-      .def("getBehaviourKinematic", &Behaviour::getBehaviourKinematic,
+      .def("getBehaviourKinematic", &Behaviour_getBehaviourKinematic,
            "Return the behaviour kinematic.\n"
            "The value returned has the following meaning:\n"
            "- 0: undefined kinematic\n"

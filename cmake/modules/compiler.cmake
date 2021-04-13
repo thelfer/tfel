@@ -117,12 +117,22 @@ MACRO(tfel_enable_cxx_compiler_flag out)
 ENDMACRO(tfel_enable_cxx_compiler_flag)
 
 #compiler specific options
+
 set(VISIBILITY_FLAGS   "")
 set(OPTIMISATION_FLAGS "")
 set(COMPILER_WARNINGS  "")
 
 option(enable-fast-math "enable -ffast-math compiler flag" OFF)
 option(PATHSCALE_COMPILER "set true if using the PathScale compiler" OFF)
+
+if(NOT USE_EXTERNAL_COMPILER_FLAGS)
+  set(CMAKE_C_FLAGS           "")
+  set(CMAKE_C_FLAGS_RELEASE "")
+  set(CMAKE_C_FLAGS_DEBUG   "")
+  set(CMAKE_CXX_FLAGS         "")
+  set(CMAKE_CXX_FLAGS_RELEASE "")
+  set(CMAKE_CXX_FLAGS_DEBUG   "")
+endif(NOT USE_EXTERNAL_COMPILER_FLAGS)
 
 if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
   include(cmake/modules/gcc.cmake)
@@ -180,9 +190,6 @@ add_definitions("-DCOMPILER_CXXFLAGS=\\\"\"${COMPILER_CXXFLAGS}\"\\\"")
 # See https://github.com/thelfer/staged-recipes/tree/master/recipes/tfel for a recipe
 # showing how to build `TFEL` with `conda`.
 if(NOT USE_EXTERNAL_COMPILER_FLAGS)
-  set(CMAKE_CXX_FLAGS         "")
-  set(CMAKE_CXX_FLAGS_RELEASE "")
-  set(CMAKE_CXX_FLAGS_DEBUG   "")
   set(CMAKE_C_FLAGS "${COMPILER_FLAGS} ${COMPILER_CFLAGS}")
   set(CMAKE_CXX_FLAGS "${VISIBILITY_FLAGS} ${COMPILER_WARNINGS} ${COMPILER_FLAGS} ${COMPILER_CXXFLAGS}")
   if(CMAKE_BUILD_TYPE STREQUAL "Profiling")

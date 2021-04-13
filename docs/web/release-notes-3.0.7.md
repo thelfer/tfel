@@ -19,6 +19,10 @@ eqnPrefixTemplate: "($$i$$)"
 
 # Tickets fixed
 
+## Ticket #266 [python bindings]: The `getBehaviourType` and `getBehaviourKinematic` of the `SingleStructureScheme` object methods returns unbinded objects
+
+For more details, see: <https://sourceforge.net/p/tfel/tickets/266/>
+
 ## Ticket #264: Dynamically allocated local variables are not correctly handled in the `Default` DSLs
 
 For more details, see: <https://sourceforge.net/p/tfel/tickets/264/>
