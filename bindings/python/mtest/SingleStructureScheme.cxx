@@ -1,7 +1,7 @@
 /*!
  * \file   SingleStructureScheme.cxx
  * \brief    
- * \author THOMAS HELFER
+ * \author Thomas Helfer
  * \date   09 déc. 2015
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
  * reserved. 
@@ -12,6 +12,7 @@
  */
 
 #include<tuple>
+#include<stdexcept>
 #include<boost/python.hpp>
 #include"MTest/Behaviour.hxx"
 #include"MTest/Evolution.hxx"
@@ -170,6 +171,44 @@ SingleStructureScheme_setBehaviour2(mtest::SingleStructureScheme& s,
   s.setBehaviour(w,i,l,f);
 }
 
+static int SingleStructureScheme_getBehaviourType(const mtest::SingleStructureScheme& s){
+  using tfel::material::MechanicalBehaviourBase;
+  const auto bt = s.getBehaviourType();
+  if(bt == MechanicalBehaviourBase::GENERALBEHAVIOUR){
+    return 0;
+  } else if(bt == MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR){
+    return 1;
+  } else if(bt == MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR){
+    return 2;
+  }
+  if(bt != MechanicalBehaviourBase::COHESIVEZONEMODEL){
+    throw(std::runtime_error("SingleStructureScheme_getBehaviourType: unsupported behaviour type"));
+  }
+  return  3;
+}  // end of SingleStructureScheme_getBehaviourType
+
+static int SingleStructureScheme_getBehaviourKinematic(const mtest::SingleStructureScheme& s){
+  using tfel::material::MechanicalBehaviourBase;
+  const auto bk = s.getBehaviourKinematic();
+  if(bk == MechanicalBehaviourBase::UNDEFINEDKINEMATIC){
+    return 0;
+  } else if(bk == MechanicalBehaviourBase::SMALLSTRAINKINEMATIC){
+    return 1;
+  } else if(bk == MechanicalBehaviourBase::COHESIVEZONEKINEMATIC){
+    return 2;
+  } else if(bk == MechanicalBehaviourBase::FINITESTRAINKINEMATIC_F_CAUCHY){
+    return 3;
+  }
+  if(bk != MechanicalBehaviourBase::FINITESTRAINKINEMATIC_ETO_PK1){
+    throw(std::runtime_error("SingleStructureScheme_getBehaviourKinematic: unsupported behaviour kinematic"));
+  }
+  return  4;
+} // end of SingleStructureScheme_getBehaviourKinematic
+
+static mtest::Behaviour& SingleStructureScheme_getBehaviour(mtest::SingleStructureScheme& s){
+  return *(s.getBehaviour());
+}
+
 void declareSingleStructureScheme();
 
 void declareSingleStructureScheme()
@@ -190,6 +229,8 @@ void declareSingleStructureScheme()
   boost::python::class_<SingleStructureScheme,boost::noncopyable,
 			boost::python::bases<SchemeBase>>("SingleStructureScheme",
 							  boost::python::no_init)
+    .def("getBehaviourType", &SingleStructureScheme_getBehaviourType)
+    .def("getBehaviourKinematic", &SingleStructureScheme_getBehaviourKinematic)
     .def("setBehaviour",ptr1)
     .def("setBehaviour",ptr2)
     .def("setBehaviour",SingleStructureScheme_setBehaviour,
