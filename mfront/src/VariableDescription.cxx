@@ -203,7 +203,7 @@ namespace mfront {
   }  // end of checkBoundsCompatibility
 
   bool VariableDescription::hasBounds() const {
-    return this->bounds.is<VariableBoundsDescription>();
+    return std::holds_alternative<VariableBoundsDescription>(this->bounds);
   }  // end of VariableDescription::hasBounds
 
   bool VariableDescription::hasBounds(const unsigned short i) const {
@@ -211,20 +211,21 @@ namespace mfront {
                    "VariableDescription::hasBounds: "
                    "invalid call on scalar variable '" +
                        this->name + "'");
-    if (this->bounds.is<VariableBoundsDescription>()) {
+    if (std::holds_alternative<VariableBoundsDescription>(this->bounds)) {
       return true;
-    } else if (this->bounds
-                   .is<std::map<unsigned short, VariableBoundsDescription>>()) {
+    } else if (std::holds_alternative<
+                   std::map<unsigned short, VariableBoundsDescription>>(
+                   this->bounds)) {
       const auto& m =
-          this->bounds
-              .get<std::map<unsigned short, VariableBoundsDescription>>();
+          std::get<std::map<unsigned short, VariableBoundsDescription>>(
+              this->bounds);
       return m.count(i) != 0;
     }
     return false;
   }  // end of VariableDescription::hasBounds
 
   void VariableDescription::setBounds(const VariableBoundsDescription& b) {
-    tfel::raise_if(!this->bounds.empty(),
+    tfel::raise_if(!std::holds_alternative<std::monostate>(this->bounds),
                    "VariableDescription::setBounds: "
                    "bounds have already been set on variable "
                    "'" +
@@ -253,11 +254,11 @@ namespace mfront {
     };
     throw_if(this->arraySize == 1u, "invalid call on scalar variable");
     throw_if(i > this->arraySize, "invalid index");
-    throw_if(this->bounds.is<VariableBoundsDescription>(),
+    throw_if(this->hasBounds(),
              "bounds have already been set on variable "
              "'" +
                  this->name + "'");
-    if (!this->bounds.empty()) {
+    if (this->hasBounds(i)) {
       tfel::raise_if(this->hasBounds(i),
                      "VariableDescription::setBounds: "
                      "bounds have already been set on variable "
@@ -270,7 +271,7 @@ namespace mfront {
                                          this->name);
       }
     }
-    if (this->bounds.empty()) {
+    if (std::holds_alternative<std::monostate>(this->bounds)) {
       this->bounds = std::map<unsigned short, VariableBoundsDescription>();
     }
     mfront::checkBoundsCompatibility(*this, b);
@@ -278,8 +279,8 @@ namespace mfront {
       mfront::checkBoundsCompatibility(b, this->getPhysicalBounds(i),
                                        this->name);
     }
-    auto& m =
-        this->bounds.get<std::map<unsigned short, VariableBoundsDescription>>();
+    auto& m = std::get<std::map<unsigned short, VariableBoundsDescription>>(
+        this->bounds);
     m.insert({i, b});
   }  // end of VariableDescription::setBounds
 
@@ -289,7 +290,7 @@ namespace mfront {
                    "no bounds set on variable "
                    "'" +
                        this->name + "'");
-    return this->bounds.get<VariableBoundsDescription>();
+    return std::get<VariableBoundsDescription>(this->bounds);
   }  // end of VariableDescription::getBounds
 
   const VariableBoundsDescription& VariableDescription::getBounds(
@@ -299,16 +300,18 @@ namespace mfront {
                    "no bounds set on variable "
                    "'" +
                        this->name + "'");
-    if (this->bounds.is<VariableBoundsDescription>()) {
-      return this->bounds.get<VariableBoundsDescription>();
+    if (std::holds_alternative<VariableBoundsDescription>(this->bounds)) {
+      return std::get<VariableBoundsDescription>(this->bounds);
     }
     const auto& m =
-        this->bounds.get<std::map<unsigned short, VariableBoundsDescription>>();
+        std::get<std::map<unsigned short, VariableBoundsDescription>>(
+            this->bounds);
     return m.at(i);
   }  // end of VariableDescription::getBounds
 
   bool VariableDescription::hasPhysicalBounds() const {
-    return this->physicalBounds.is<VariableBoundsDescription>();
+    return std::holds_alternative<VariableBoundsDescription>(
+        this->physicalBounds);
   }  // end of VariableDescription::hasPhysicalBounds
 
   bool VariableDescription::hasPhysicalBounds(const unsigned short i) const {
@@ -316,13 +319,15 @@ namespace mfront {
                    "VariableDescription::hasPhysicalBounds: "
                    "invalid call on scalar variable '" +
                        this->name + "'");
-    if (this->physicalBounds.is<VariableBoundsDescription>()) {
+    if (std::holds_alternative<VariableBoundsDescription>(
+            this->physicalBounds)) {
       return true;
-    } else if (this->physicalBounds
-                   .is<std::map<unsigned short, VariableBoundsDescription>>()) {
+    } else if (std::holds_alternative<
+                   std::map<unsigned short, VariableBoundsDescription>>(
+                   this->physicalBounds)) {
       const auto& m =
-          this->physicalBounds
-              .get<std::map<unsigned short, VariableBoundsDescription>>();
+          std::get<std::map<unsigned short, VariableBoundsDescription>>(
+              this->physicalBounds);
       return m.count(i) != 0;
     }
     return false;
@@ -330,11 +335,12 @@ namespace mfront {
 
   void VariableDescription::setPhysicalBounds(
       const VariableBoundsDescription& b) {
-    tfel::raise_if(!this->physicalBounds.empty(),
-                   "VariableDescription::setPhysicalBounds: "
-                   "bounds have already been set on variable "
-                   "'" +
-                       this->name + "'");
+    tfel::raise_if(
+        !std::holds_alternative<std::monostate>(this->physicalBounds),
+        "VariableDescription::setPhysicalBounds: "
+        "bounds have already been set on variable "
+        "'" +
+            this->name + "'");
     mfront::checkBoundsCompatibility(*this, b);
     if (this->arraySize == 1u) {
       if (this->hasBounds()) {
@@ -359,10 +365,11 @@ namespace mfront {
     };
     throw_if(this->arraySize == 1u, "invalid call on scalar variable");
     throw_if(i > this->arraySize, "invalid index");
-    throw_if(this->physicalBounds.is<VariableBoundsDescription>(),
-             "physical bounds have already been set on variable "
-             "'" +
-                 this->name + "'");
+    throw_if(
+        std::holds_alternative<VariableBoundsDescription>(this->physicalBounds),
+        "physical bounds have already been set on variable "
+        "'" +
+            this->name + "'");
     tfel::raise_if(this->hasPhysicalBounds(i),
                    "VariableDescription::setPhysicalBounds: "
                    "bounds have already been set on variable "
@@ -374,12 +381,12 @@ namespace mfront {
         mfront::checkBoundsCompatibility(this->getBounds(j), b, this->name);
       }
     }
-    if (this->physicalBounds.empty()) {
+    if (std::holds_alternative<std::monostate>(this->physicalBounds)) {
       this->physicalBounds =
           std::map<unsigned short, VariableBoundsDescription>();
     }
-    auto& m = this->physicalBounds
-                  .get<std::map<unsigned short, VariableBoundsDescription>>();
+    auto& m = std::get<std::map<unsigned short, VariableBoundsDescription>>(
+        this->physicalBounds);
     m.insert({i, b});
   }  // end of VariableDescription::setPhysicalBounds
 
@@ -390,7 +397,7 @@ namespace mfront {
                    "no bounds set on variable "
                    "'" +
                        this->name + "'");
-    return this->physicalBounds.get<VariableBoundsDescription>();
+    return std::get<VariableBoundsDescription>(this->physicalBounds);
   }  // end of VariableDescription::getPhysicalBounds
 
   const VariableBoundsDescription& VariableDescription::getPhysicalBounds(
@@ -400,12 +407,13 @@ namespace mfront {
                    "no bounds set on variable "
                    "'" +
                        this->name + "'");
-    if (this->physicalBounds.is<VariableBoundsDescription>()) {
-      return this->physicalBounds.get<VariableBoundsDescription>();
+    if (std::holds_alternative<VariableBoundsDescription>(
+            this->physicalBounds)) {
+      return std::get<VariableBoundsDescription>(this->physicalBounds);
     }
     const auto& m =
-        this->physicalBounds
-            .get<std::map<unsigned short, VariableBoundsDescription>>();
+        std::get<std::map<unsigned short, VariableBoundsDescription>>(
+            this->physicalBounds);
     return m.at(i);
   }  // end of VariableDescription::getBounds
 

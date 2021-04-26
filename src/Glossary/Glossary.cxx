@@ -22,7 +22,7 @@ namespace tfel
 namespace glossary
 {
 
-const char* Glossary::names[104] = {
+const char* Glossary::names[106] = {
 "AxialDeformationGradient",
 "AxialGrowth",
 "AxialStrain",
@@ -39,6 +39,7 @@ const char* Glossary::names[104] = {
 "Damage",
 "DeformationGradient",
 "Displacement",
+"DualStress",
 "ElasticStrain",
 "Emissivity",
 "EquivalentPlasticStrain",
@@ -101,6 +102,7 @@ const char* Glossary::names[104] = {
 "SpecificHeat",
 "SphericalStress",
 "Strain",
+"StrainMeasure",
 "Stress",
 "Swelling",
 "TangentialStiffness",
@@ -220,6 +222,12 @@ const GlossaryEntry Glossary::DeformationGradient("DeformationGradient","Deforma
 const GlossaryEntry Glossary::Displacement("Displacement","Displacement",
 "m","vector",
 "le déplacement",
+"" /* no 'description' defined */,
+"" /* no 'notes' defined */);
+
+const GlossaryEntry Glossary::DualStress("DualStress","DualStress",
+"stress","tensor",
+"dual stress of the strain measure",
 "" /* no 'description' defined */,
 "" /* no 'notes' defined */);
 
@@ -608,6 +616,12 @@ const GlossaryEntry Glossary::Strain("Strain","Strain",
 "" /* no 'description' defined */,
 "" /* no 'notes' defined */);
 
+const GlossaryEntry Glossary::StrainMeasure("StrainMeasure","StrainMeasure",
+"none","tensor",
+"strain measure",
+"" /* no 'description' defined */,
+"" /* no 'notes' defined */);
+
 const GlossaryEntry Glossary::Stress("Stress","Stress",
 "Pa","tensor",
 "les contraintes",
@@ -698,7 +712,7 @@ const GlossaryEntry Glossary::TrescaStress("TrescaStress","TrescaStress",
 "" /* no 'description' defined */,
 "" /* no 'notes' defined */);
 
-const GlossaryEntry Glossary::UltimateTensileStrength("UltimateTensileStrength",Glossary::names+93,Glossary::names+95,
+const GlossaryEntry Glossary::UltimateTensileStrength("UltimateTensileStrength",Glossary::names+95,Glossary::names+97,
 "Pa","scalar",
 "la valeur maximale de la contrainte qu'un materiau peut supporter",
 "" /* no 'description' defined */,
@@ -722,7 +736,7 @@ const GlossaryEntry Glossary::VonMisesStress("VonMisesStress","VonMisesStress",
 "" /* no 'description' defined */,
 "" /* no 'notes' defined */);
 
-const GlossaryEntry Glossary::YieldStrength("YieldStrength",Glossary::names+98,Glossary::names+100,
+const GlossaryEntry Glossary::YieldStrength("YieldStrength",Glossary::names+100,Glossary::names+102,
 "Pa","scalar",
 "la limite d'élasticité",
 "" /* no 'description' defined */,
@@ -760,7 +774,7 @@ return glossary;
 } // end of Glossary::getGlossary
 
 Glossary::Glossary(){
-this->keys.reserve(102);
+this->keys.reserve(104);
 this->insert(Glossary::AxialDeformationGradient);
 this->insert(Glossary::AxialGrowth);
 this->insert(Glossary::AxialStrain);
@@ -777,6 +791,7 @@ this->insert(Glossary::CylindricalStress);
 this->insert(Glossary::Damage);
 this->insert(Glossary::DeformationGradient);
 this->insert(Glossary::Displacement);
+this->insert(Glossary::DualStress);
 this->insert(Glossary::ElasticStrain);
 this->insert(Glossary::Emissivity);
 this->insert(Glossary::EquivalentPlasticStrain);
@@ -839,6 +854,7 @@ this->insert(Glossary::SolidSwelling);
 this->insert(Glossary::SpecificHeat);
 this->insert(Glossary::SphericalStress);
 this->insert(Glossary::Strain);
+this->insert(Glossary::StrainMeasure);
 this->insert(Glossary::Stress);
 this->insert(Glossary::Swelling);
 this->insert(Glossary::TangentialStiffness);

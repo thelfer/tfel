@@ -17,6 +17,7 @@
 #include <map>
 #include <vector>
 #include <string>
+#include <variant>
 #include <optional>
 #include <initializer_list>
 #include "TFEL/Utilities/GenTypeBase.hxx"
@@ -39,15 +40,15 @@ namespace mfront {
     static const char* const defaultValue;
     //! error normalisation factor
     static const char* const errorNormalisationFactor;
-    //! default constructor
+    //! \brief default constructor
     VariableDescription();
-    //! copy constructor
+    //! \brief copy constructor
     VariableDescription(const VariableDescription&);
-    //! move constructor
+    //! \brief move constructor
     VariableDescription(VariableDescription&&);
-    //! move operator
+    //! \brief move operator
     VariableDescription& operator=(VariableDescription&&);
-    //! assignement operator
+    //! \brief assignement operator
     VariableDescription& operator=(const VariableDescription&);
     /*!
      * \brief throw an exception saying that no attribute with the
@@ -200,25 +201,26 @@ namespace mfront {
     bool hasEntryName() const;
     //! \return the external name of the variable
     const std::string& getExternalName() const;
-    //! destructor
+    //! \brief destructor
     ~VariableDescription();
 
    private:
-    //! a simple alias
-    using OptionalVariableBoundsDescription = tfel::utilities::GenType<
-        VariableBoundsDescription,
-        std::map<unsigned short, VariableBoundsDescription>>;
-    //! a simple alias
-    using OptionalString = tfel::utilities::GenType<std::string>;
-    //! standard bounds
+    //! \brief a simple alias
+    using OptionalVariableBoundsDescription =
+        std::variant<std::monostate,
+                     VariableBoundsDescription,
+                     std::map<unsigned short, VariableBoundsDescription>>;
+    //! \brief a simple alias
+    using OptionalString = std::optional<std::string>;
+    //! \brief standard bounds
     OptionalVariableBoundsDescription bounds;
-    //! standard bounds
+    //! \brief standard bounds
     OptionalVariableBoundsDescription physicalBounds;
-    //! glossary name
+    //! \brief glossary name
     std::optional<std::string> glossaryName;
-    //! entry name
+    //! \brief entry name
     std::optional<std::string> entryName;
-    //! variable attributes
+    //! \brief variable attributes
     std::map<std::string, VariableAttribute> attributes;
   };  // end of struct VariableDescription
 
@@ -283,10 +285,10 @@ namespace mfront {
   MFRONT_VISIBILITY_EXPORT void getTimeDerivativeSymbol(
       std::map<std::string, std::string>&, const VariableDescription&);
 
-  //! a simple alias for backward compatibility
+  //! \brief a simple alias for backward compatibility
   typedef VariableDescription VarHandler;
 
-  //! a simple wrapper around the std::vector class
+  //! \brief a simple wrapper around the std::vector class
   struct MFRONT_VISIBILITY_EXPORT VariableDescriptionContainer
       : private std::vector<VariableDescription> {
     VariableDescriptionContainer();

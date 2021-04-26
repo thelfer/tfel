@@ -2147,11 +2147,35 @@ namespace mfront {
   }  // end of BehaviourDSLCommon::tangentOperatorVariableModifier
 
   void BehaviourDSLCommon::treatStrainMeasure() {
-    this->checkNotEndOfFile("BehaviourDSLCommon::treatStrainMeasure",
-                            "Expected strain measure name.");
+    this->checkNotEndOfFile("BehaviourDSLCommon::treatStrainMeasure", "Expected strain measure name.");
     const auto fs = this->current->value;
+    if ((fs != "Hencky") && (fs != "GreenLagrange") && (fs != "Linearised") &&
+        (fs != "Linearized")) {
+      this->throwRuntimeError("BehaviourDSLCommon::treatStrainMeasure",
+                              "unsupported strain measure '" + fs + "'");
+    }
     ++(this->current);
+    this->checkNotEndOfFile("BehaviourDSLCommon::treatStrainMeasure",
+                            "Expected ';' or options.");
+    const auto opts = [this] {
+      if (this->current->value == "{") {
+        return tfel::utilities::Data::read(this->current, this->tokens.end())
+            .get<std::map<std::string, tfel::utilities::Data>>();
+      }
+      return std::map<std::string, tfel::utilities::Data>{};
+    }();
     this->readSpecifiedToken("BehaviourDSLCommon::treatStrainMeasure", ";");
+    for (const auto& o : opts) {
+      if ((o.first != "save_strain") && (o.first != "save_stress")) {
+        this->throwRuntimeError("BehaviourDSLCommon::treatStrainMeasure",
+                                "invalid option '" + o.first + "'");
+      }
+      if (!o.second.is<bool>()) {
+        this->throwRuntimeError("BehaviourDSLCommon::treatStrainMeasure",
+                                "invalid type for option '" + o.first +
+                                    "', expected a boolean value");
+      }
+    }
     if (fs == "Hencky") {
       this->mb.setStrainMeasure(BehaviourDescription::HENCKY);
     } else if (fs == "GreenLagrange") {
@@ -2161,6 +2185,14 @@ namespace mfront {
     } else {
       this->throwRuntimeError("BehaviourDSLCommon::treatStrainMeasure",
                               "unsupported strain measure '" + fs + "'");
+    }
+    if (opts.count("save_strain") != 0) {
+      this->mb.setSaveStrainMeasure(
+          opts.find("save_strain")->second.get<bool>());
+    }
+    if (opts.count("save_stress") != 0) {
+      this->mb.setSaveDualStress(
+          opts.find("save_stress")->second.get<bool>());
     }
   }  // end of BehaviourDSLCommon::treatStrainMeasure
 

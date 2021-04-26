@@ -578,7 +578,7 @@ namespace mfront {
       const auto& d =
           mb.getBehaviourData(ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS);
       // this must be added for gcc 4.7.2
-      const auto astress = [this,&d, throw_if]() -> std::pair<bool, SupportedTypes::TypeSize> {
+      const auto astress = [&d, throw_if]() -> std::pair<bool, SupportedTypes::TypeSize> {
         SupportedTypes::TypeSize o;
         // skipping the temperature
         auto pev = std::next(d.getExternalStateVariables().begin());

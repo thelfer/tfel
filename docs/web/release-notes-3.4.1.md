@@ -28,13 +28,21 @@ This version notably adds:
 - An interface dedicated to the [`AMITEX_FFTP`
   solver](http://www.maisondelasimulation.fr/projects/amitex/general/_build/html/map-site.html).
 
+# New features of the `TFEL/Glossary` library
+
+Two new entries have been added in the glossary:
+
+- `StrainMeasure`: glossary name associated with the strain measure.
+- `DualStress`: glossary name associated with the dual stress of the
+  strain measure.
+
 # New features of `MFront`
 
 ## Support for `Cast3M 21`
 
-While the `umat` interface of this solver is unchanged, two additional
-material properties are now required to solve mechanical problem where
-thermal exansion are taken into account:
+While the so-called `umat` interface of this solver is unchanged, two
+additional material properties are now required to solve mechanical
+problem where thermal exansion are taken into account:
 
 - `TREF`: the reference temperature for the computation of the thermal
   expansion.
@@ -45,8 +53,9 @@ Those material properties are automatically added by the `castem21`
 interface in the list of the material properties required by the
 behaviour.
 
-The `castem` interface is left unchanged and shall be used for versions
-prior to Version `21`.
+The `castem` interface, and its alias called `umat` for historical
+reasons, are left unchanged and shall be used for versions prior to
+Version `21`.
 
 ## The `amitex` interface
 
@@ -95,7 +104,27 @@ which are currently replaced by three dots.
 </Material>
 ~~~~
 
-# Tickets fixed
+## Save the strain measure and the dual stress
+
+The strain measure and the dual stress can now be saved in auxiliary
+state variables using the following syntax:
+
+~~~~{.cxx}
+@StrainMeasure{
+  save_strain: true,
+  save_stress: true
+};
+~~~~
+
+If requested, the strain measure will be saved in an auxiliary state
+variable internally called `saved_strain_measure` and whose glossary
+name is `StrainMeasure`.
+
+If requested, the dual stress will be saved in an auxiliary state
+variable internally called `saved_dual_stress` and whose glossary name
+is `DualStress`.
+
+# Issues fixed
 
 ## Ticket #263: `GenericBehaviourInterface`: `rotateArrayOfTangentOperatorBlocks` is not correctly implemented
 
@@ -125,3 +154,7 @@ coefficients can be retrieved by:
   `ExternalBehaviourData` class.
 
 For more details, see: <https://sourceforge.net/p/tfel/tickets/240/>
+
+## Tickets #236: Save stress and/or strain measures as state variables
+
+For more details, see: <https://sourceforge.net/p/tfel/tickets/236/>

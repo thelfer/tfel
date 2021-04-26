@@ -44,7 +44,7 @@ namespace mfront {
   void DianaFEASymbolsGenerator::writeBehaviourKinematicSymbols(
       std::ostream& out,
       const StandardBehaviourInterface& i,
-      const BehaviourDescription& mb,
+      const BehaviourDescription&,
       const std::string& name) const {
     out << "MFRONT_SHAREDOBJ unsigned short " << i.getFunctionNameBasis(name)
         << "_BehaviourKinematic = 1u;\n\n";

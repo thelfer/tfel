@@ -1,70 +1,60 @@
 /*!
  * \file   include/TFEL/System/SignalHandler.hxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   09 Nov 2007
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_TFEL_SIGNALHANDLER_HXX
-#define LIB_TFEL_SIGNALHANDLER_HXX 
+#define LIB_TFEL_SIGNALHANDLER_HXX
 
-#include"TFEL/Config/TFELConfig.hxx"
+#include "TFEL/Config/TFELConfig.hxx"
 
-namespace tfel
-{
+namespace tfel::system {
 
-  namespace system
-  {
-    
-    struct TFELSYSTEM_VISIBILITY_EXPORT SignalHandler
-    {
-      virtual void execute(const int) = 0;
-      virtual ~SignalHandler();
-    }; // end of struct SignalHandler
-    
-    struct TFELSYSTEM_VISIBILITY_EXPORT FctSignalHandler final
-      : public SignalHandler
-    {
-      typedef void (*Fct)(const int);
-      FctSignalHandler(const Fct);
-      void execute(const int) override final;
-      ~FctSignalHandler() override;
-    private:
-      const Fct f;
-    }; // end of struct FctSignalHandler
+  struct TFELSYSTEM_VISIBILITY_EXPORT SignalHandler {
+    virtual void execute(const int) = 0;
+    virtual ~SignalHandler();
+  };  // end of struct SignalHandler
 
-    template<typename Class>
-    struct MemberSignalHandler final
-      : public SignalHandler
-    {
-      typedef void (Class:: *Fct)(const int);
-      MemberSignalHandler(Class&,const Fct);
-      void execute(const int) override final;
-      ~MemberSignalHandler() override;
-    private:
-      Class &c;
-      const Fct f;
-    }; // end of struct MemberSignalHandler
-    
-    TFELSYSTEM_VISIBILITY_EXPORT
-    FctSignalHandler *
-    sigPtrFun(const FctSignalHandler::Fct);
+  struct TFELSYSTEM_VISIBILITY_EXPORT FctSignalHandler final
+      : public SignalHandler {
+    typedef void (*Fct)(const int);
+    FctSignalHandler(const Fct);
+    void execute(const int) override final;
+    ~FctSignalHandler() override;
 
-    template<typename Class>
-    MemberSignalHandler<Class> *
-    sigMemFun(Class&,const typename MemberSignalHandler<Class>::Fct);
+   private:
+    const Fct f;
+  };  // end of struct FctSignalHandler
 
-  } // end of system
-  
-} // end of tfel
+  template <typename Class>
+  struct MemberSignalHandler final : public SignalHandler {
+    typedef void (Class::*Fct)(const int);
+    MemberSignalHandler(Class &, const Fct);
+    void execute(const int) override final;
+    ~MemberSignalHandler() override;
 
-#include"TFEL/System/SignalHandler.ixx"
+   private:
+    Class &c;
+    const Fct f;
+  };  // end of struct MemberSignalHandler
+
+  TFELSYSTEM_VISIBILITY_EXPORT
+  FctSignalHandler *sigPtrFun(const FctSignalHandler::Fct);
+
+  template <typename Class>
+  MemberSignalHandler<Class> *sigMemFun(
+      Class &, const typename MemberSignalHandler<Class>::Fct);
+
+}  // namespace tfel::system
+
+#include "TFEL/System/SignalHandler.ixx"
 
 #endif /* LIB_TFEL_SIGNALHANDLER_HXX */
-

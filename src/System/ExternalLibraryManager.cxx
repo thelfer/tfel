@@ -201,8 +201,8 @@ namespace tfel::system {
   }  // end of try_open
 
   std::string ExternalLibraryManager::getLibraryPath(const std::string& l) {
-    auto throw_if = [](const bool c, const std::string& m) {
-      raise_if(c, "ExternalLibraryManager::getLibraryPath: " + m);
+    auto raise = [](const std::string& m) {
+      tfel::raise("ExternalLibraryManager::getLibraryPath: " + m);
     };
 #if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__)
     auto lib = this->loadLibrary(l);
@@ -227,21 +227,25 @@ namespace tfel::system {
       return static_cast<bool>(file);
     };
     auto lib = try_open(l);
-    throw_if(lib.first == nullptr, "can't load library '" + l + "'");
+    if (lib.first == nullptr) {
+      raise("can't load library '" + l + "'");
+    }
     // check if file exists
     if (exists(lib.second)) {
       return lib.second;
     }
     // look in LD_LIBRARY_PATH
     const auto ld = std::getenv("LD_LIBRARY_PATH");
-    throw_if(ld == nullptr, "can't find library '" + l + "'");
+    if(ld==nullptr){
+      raise("can't find library '" + l + "'");
+    }
     for (const auto& p : tokenize(ld, ':')) {
       const auto lp = p + '/' + lib.second;
       if (exists(lp)) {
         return lp;
       }
     }
-    throw_if(true, "can't find library '" + l + "'");
+    raise("can't find library '" + l + "'");
 #endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
   }    // end of ExternalLibraryManager::getLibraryPath
 

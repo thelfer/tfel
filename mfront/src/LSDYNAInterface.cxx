@@ -250,11 +250,11 @@ namespace mfront {
   std::string LSDYNAInterface::getName() { return "lsdyna"; }
 
   std::pair<bool, LSDYNAInterface::tokens_iterator>
-  LSDYNAInterface::treatKeyword(BehaviourDescription& bd,
+  LSDYNAInterface::treatKeyword(BehaviourDescription&,
                                 const std::string& key,
                                 const std::vector<std::string>& i,
                                 tokens_iterator current,
-                                const tokens_iterator end) {
+                                const tokens_iterator) {
     if (!i.empty()) {
       if (std::find(i.begin(), i.end(), this->getName()) == i.end()) {
         return {false, current};

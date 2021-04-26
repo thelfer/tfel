@@ -69,7 +69,7 @@ namespace mfront {
     }
     const auto fn = i.getFunctionNameBasis(name);
     // elastic material properties
-    auto emps = [&bd, &i, &name] {
+    auto emps = [&bd] {
       auto names = std::vector<std::string>{};
       if (bd.areElasticMaterialPropertiesDefined()) {
         for (const auto& e : bd.getElasticMaterialPropertiesDescriptions()) {
@@ -83,7 +83,7 @@ namespace mfront {
        << "_nElasticMaterialPropertiesEntryPoints = " << emps.size() << "u;\n";
     this->writeArrayOfStringsSymbol(os, fn + "_ElasticMaterialPropertiesEntryPoints", emps);
     // material properties associated with the thermal expansion coefficients
-    auto themps = [&bd, &i, &name] {
+    auto themps = [&bd] {
       auto names = std::vector<std::string>{};
       if (bd.areThermalExpansionCoefficientsDefined()) {
         for (const auto& e : bd.getThermalExpansionCoefficientsDescriptions()) {

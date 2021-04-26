@@ -35,12 +35,6 @@
 #include "MFront/MaterialPropertyParametersHandler.hxx"
 #include "MFront/CyranoMaterialPropertyInterface.hxx"
 
-#ifndef _MSC_VER
-static const char* const constexpr_c = "constexpr";
-#else
-static const char* const constexpr_c = "const";
-#endif
-
 namespace mfront {
 
   std::string CyranoMaterialPropertyInterface::getName() { return "cyrano"; }

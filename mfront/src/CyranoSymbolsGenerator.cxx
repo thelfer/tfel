@@ -29,7 +29,7 @@ namespace mfront {
       const BehaviourDescription& bd,
       const FileDescription&,
       const std::string& name) const {
-    auto emps = [&bd, &i, &name] {
+    auto emps = [&bd] {
       auto names = std::vector<std::string>{};
       if (bd.areElasticMaterialPropertiesDefined()) {
         for (const auto& e : bd.getElasticMaterialPropertiesDescriptions()) {
@@ -43,7 +43,7 @@ namespace mfront {
     os << "MFRONT_SHAREDOBJ unsigned short " << fn
        << "_nElasticMaterialPropertiesEntryPoints = " << emps.size() << "u;\n";
     this->writeArrayOfStringsSymbol(os, fn + "_ElasticMaterialPropertiesEntryPoints", emps);
-    auto themps = [&bd, &i, &name] {
+    auto themps = [&bd] {
       auto names = std::vector<std::string>{};
       if (bd.areThermalExpansionCoefficientsDefined()) {
         for (const auto& e : bd.getThermalExpansionCoefficientsDescriptions()) {

@@ -426,10 +426,24 @@ namespace mfront {
      * \param[in] m: measure
      */
     void setStrainMeasure(const StrainMeasure);
+    /*!
+     * \brief set if the strain measure shall be save
+     * \param[in] b: boolean
+     */
+    void setSaveStrainMeasure(const bool);
+    /*!
+     * \brief set if the dual stress shall be save
+     * \param[in] b: boolean
+     */
+    void setSaveDualStress(const bool);
     //! \return the strain measure associated with the behaviour
     StrainMeasure getStrainMeasure() const;
     //! \return if the strain measure has been set
     bool isStrainMeasureDefined() const;
+    //! \return if the strain measure shall be saved
+    bool saveStrainMeasure() const;
+    //! \return if the stress measure shall be saved
+    bool saveDualStress() const;
     //! \return true if the behaviour defines a tangent operator
     bool hasTangentOperator() const;
     /*!
@@ -1805,7 +1819,7 @@ namespace mfront {
      * thermodynamic force
      */
     std::vector<std::pair<Gradient, ThermodynamicForce>> mvariables;
-    //! list of additional tangent operator blocks
+    //! \brief list of additional tangent operator blocks
     std::vector<std::pair<VariableDescription, VariableDescription>>
         additionalTangentOperatorBlocks;
     /*!
@@ -1838,21 +1852,25 @@ namespace mfront {
     std::vector<HillTensor> hillTensors;
     //! strain measure
     std::optional<StrainMeasure> strainMeasure;
-    //! use units
+    //! \brief an optional boolean stating if the strain measure shall be saved
+    std::optional<bool> saveStrainMeasureValue;
+    //! \brief an optional boolean stating if the dual stress stress shall be saved
+    std::optional<bool> saveDualStressValue;
+    //! \brief use units
     bool use_qt = false;
-    //! type of behaviour
+    //! \brief type of behaviour
     tfel::utilities::GenType<BehaviourType> type;
-    //! symmetry of behaviour (isotropic or orthotropic)
+    //! \brief symmetry of behaviour (isotropic or orthotropic)
     mutable BehaviourSymmetryType stype = mfront::ISOTROPIC;
-    //! orthotropic axes convention
+    //! \brief orthotropic axes convention
     OrthotropicAxesConvention oac = OrthotropicAxesConvention::DEFAULT;
-    //! flag telling if the orthotropic axes convention has been defined
+    //! \brief flag telling if the orthotropic axes convention has been defined
     mutable bool oacIsDefined = false;
-    //! flag telling the behaviour symmetry has been defined
+    //! \brief flag telling the behaviour symmetry has been defined
     mutable bool stypeIsDefined = false;
-    //! symmetry of elastic behaviour (isotropic or orthotropic)
+    //! \brief symmetry of elastic behaviour (isotropic or orthotropic)
     mutable BehaviourSymmetryType estype = mfront::ISOTROPIC;
-    //! flag telling the elastic symmetry has been defined
+    //! \brief flag telling the elastic symmetry has been defined
     mutable bool estypeIsDefined = false;
     /*!
      * \brief flag stating if the default blocks of the tangent operator must
