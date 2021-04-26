@@ -1,3 +1,15 @@
+"StrainMeasure" {
+ unit: "none";
+ type: "tensor";
+ short_description: "strain measure";
+};
+
+"DualStress" {
+ unit: "stress";
+ type: "tensor";
+ short_description: "dual stress of the strain measure";
+};
+
 "Broken" {
  unit: "none";
  type: "scalar";

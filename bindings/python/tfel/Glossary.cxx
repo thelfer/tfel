@@ -58,6 +58,8 @@ return_value_policy<reference_existing_object>())
 "gradient of the transformation")
 .def_readonly("Displacement",&Glossary::Displacement,
 "le déplacement")
+.def_readonly("DualStress",&Glossary::DualStress,
+"dual stress of the strain measure")
 .def_readonly("ElasticStrain",&Glossary::ElasticStrain,
 "The elastic strain")
 .def_readonly("Emissivity",&Glossary::Emissivity,
@@ -182,6 +184,8 @@ return_value_policy<reference_existing_object>())
 "les contraintes exprimées dans le repère sphérique")
 .def_readonly("Strain",&Glossary::Strain,
 "la déformation")
+.def_readonly("StrainMeasure",&Glossary::StrainMeasure,
+"strain measure")
 .def_readonly("Stress",&Glossary::Stress,
 "les contraintes")
 .def_readonly("Swelling",&Glossary::Swelling,

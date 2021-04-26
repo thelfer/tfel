@@ -143,6 +143,14 @@ Cette entrée décrit le déplacement.
 * unité: \(m\)
 * type: vecteur 
 
+# L'entrée DualStress
+
+Cette entrée décrit dual stress of the strain measure.
+
+* noms : DualStress
+* unité: \(stress\)
+* type: tenseur symétrique
+
 # L'entrée ElasticStrain
 
 Cette entrée décrit The elastic strain.
@@ -734,6 +742,14 @@ Cette entrée décrit la déformation.
 
 * noms : Strain
 * unité: sans unité
+* type: tenseur symétrique
+
+# L'entrée StrainMeasure
+
+Cette entrée décrit strain measure.
+
+* noms : StrainMeasure
+* unité: \(none\)
 * type: tenseur symétrique
 
 # L'entrée Stress

@@ -53,6 +53,7 @@ static const GlossaryEntry CylindricalStress;
 static const GlossaryEntry Damage;
 static const GlossaryEntry DeformationGradient;
 static const GlossaryEntry Displacement;
+static const GlossaryEntry DualStress;
 static const GlossaryEntry ElasticStrain;
 static const GlossaryEntry Emissivity;
 static const GlossaryEntry EquivalentPlasticStrain;
@@ -115,6 +116,7 @@ static const GlossaryEntry SolidSwelling;
 static const GlossaryEntry SpecificHeat;
 static const GlossaryEntry SphericalStress;
 static const GlossaryEntry Strain;
+static const GlossaryEntry StrainMeasure;
 static const GlossaryEntry Stress;
 static const GlossaryEntry Swelling;
 static const GlossaryEntry TangentialStiffness;
@@ -160,7 +162,7 @@ getKeys() const;
 
 protected :
 //! all glossary names (to initialise glossary entries)
-static const char * names[104];
+static const char * names[106];
 /*!
  * \brief insert a new entry
  */

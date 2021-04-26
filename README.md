@@ -67,6 +67,16 @@ paper:
 }
 ~~~~~~~~~
 
+# Current versions
+
+The current official version is `TFEL-3.4.0`. 
+
+The stable development branch is called `rliv-3.4`. It is the
+recommended branch for most users.
+
+The current `master` branch will become `TFEL-4.0.0`. It consists in a
+major rewrite of the core libraries to `C++-17`.
+
 # Timeline
 
 12/2016 TFEL-3.0.0/
@@ -89,3 +99,10 @@ paper:
 12/2019 TFEL-3.1.5/
 12/2019 TFEL-3.2.2/
 12/2019 TFEL-3.3.0/
+
+11/2020 TFEL-3.0.6/
+11/2020 TFEL-3.1.6/
+11/2020 TFEL-3.2.3/
+11/2020 TFEL-3.3.1/
+11/2020 TFEL-3.4.0/
+
