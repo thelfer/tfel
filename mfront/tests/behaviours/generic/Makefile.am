@@ -239,4 +239,5 @@ EXTRA_DIST = CMakeLists.txt                                                     
              externalstatevariablesboundscheck4.mtest				       \
              externalstatevariablesboundscheck5.mtest				       \
              externalstatevariablesboundscheck6.mtest                                  \
+             LogarithmicStrainPlasticity2.mtest                                        \
              ThermoElasticity.mtest

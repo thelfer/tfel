@@ -42,6 +42,7 @@ set(mfront_tests_SOURCES
   Plasticity2
   Plasticity3
   LogarithmicStrainPlasticity
+  LogarithmicStrainPlasticity2
   DruckerPrager
   DruckerPragerEcroLin
   DruckerPragerEcroLinDefault
@@ -728,6 +729,8 @@ test_generic(computethermalexpansion3)
 # test_generic(elasticmaterialpropertiesboundschecktest
 #   NO_XML_OUTPUT WILL_FAIL)
 # test_generic(temperatureupdateonsubsteppingcheck)
+
+test_generic(LogarithmicStrainPlasticity2)
 
 test_generic(ThermoElasticity)
 

@@ -1,0 +1,34 @@
+@Author HELFER Thomas 202608;
+@Date   27/04/2021;
+@Description{
+
+};
+
+
+@MaximumNumberOfSubSteps 1;
+@XMLOutputFile @xml_output@;
+@ModellingHypothesis 'Tridimensional';
+@Behaviour<generic> @library@ 'LogarithmicStrainPlasticity2';
+
+// material properties
+@MaterialProperty<constant> 's0' 1.5e+08;
+@MaterialProperty<constant> 'Et' 1.5e+10;
+@MaterialProperty<constant> 'YoungModulus' 200e9;
+@MaterialProperty<constant> 'PoissonRatio' 0.3;
+
+// external state variable
+@ExternalStateVariable 'Temperature' 293.15 ;
+
+@ImposedDeformationGradient 'FXX' {0 : 1, 1 : 1.2};
+@ImposedDeformationGradient 'FXY' 0.;
+@ImposedDeformationGradient 'FYX' 0.;
+@ImposedDeformationGradient 'FXZ' 0.;
+@ImposedDeformationGradient 'FZX' 0.;
+@ImposedDeformationGradient 'FYZ' 0.;
+@ImposedDeformationGradient 'FZY' 0.;
+
+@Times{0, 1 in 20};
+
+@Test<function> 'StrainMeasureXX' 'log(FXX)'  1.e-12;
+@Test<function> {'DualStressYY': '0', 'DualStressZZ': '0'}  1.e-3;
+
