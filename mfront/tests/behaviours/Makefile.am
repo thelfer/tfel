@@ -121,6 +121,7 @@ MFRONTS= DDIF2.mfront                                                      \
 	 LogarithmicStrainStandardElasticity3.mfront                       \
 	 LogarithmicStrainStandardElasticity4.mfront                       \
 	 LogarithmicStrainPlasticity.mfront                                \
+	 LogarithmicStrainPlasticity2.mfront                               \
 	 LogarithmicStrainNortonCreep.mfront                               \
 	 LogarithmicStrainNortonCreep2.mfront                              \
 	 LogarithmicStrainAxialGrowth.mfront                               \

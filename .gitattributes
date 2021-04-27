@@ -3108,6 +3108,7 @@ mfront/tests/behaviours/LogarithmicStrainNortonCreep.mfront -text
 mfront/tests/behaviours/LogarithmicStrainNortonCreep2.mfront -text
 mfront/tests/behaviours/LogarithmicStrainOrthotropicElasticity.mfront -text
 mfront/tests/behaviours/LogarithmicStrainPlasticity.mfront -text
+mfront/tests/behaviours/LogarithmicStrainPlasticity2.mfront -text
 mfront/tests/behaviours/LogarithmicStrainStandardElasticity.mfront -text
 mfront/tests/behaviours/LogarithmicStrainStandardElasticity2.mfront -text
 mfront/tests/behaviours/LogarithmicStrainStandardElasticity3.mfront -text
@@ -5889,6 +5890,7 @@ mfront/tests/behaviours/fanderson/fandersontvergaard.mtest.in -text
 mfront/tests/behaviours/fanderson/fandersonviscochaboche.mtest.in -text
 mfront/tests/behaviours/fanderson/fandersonviscoplasisocin.mtest.in -text
 mfront/tests/behaviours/generic/CMakeLists.txt -text
+mfront/tests/behaviours/generic/LogarithmicStrainPlasticity2.mtest -text
 mfront/tests/behaviours/generic/Makefile.am -text
 mfront/tests/behaviours/generic/ThermoElasticity.mtest -text
 mfront/tests/behaviours/generic/axialgrowth.mtest -text
