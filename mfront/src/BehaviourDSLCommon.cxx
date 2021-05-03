@@ -123,6 +123,10 @@ namespace mfront {
     this->reserveName("minimal_time_step_scaling_factor");
     this->reserveName("maximal_time_step_scaling_factor");
     this->reserveName("current_time_step_scaling_factor");
+    this->reserveName("v_sound");
+    this->reserveName(tfel::unicode::getMangledString("vₛ"));
+    this->reserveName("rho_m0");
+    this->reserveName(tfel::unicode::getMangledString("ρₘ₀"));
     // default call backs
     auto add = [this](const std::string& k, const MemberFunc f) {
       this->callBacks.insert({k, [this, f] { (this->*f)(); }});
@@ -216,6 +220,7 @@ namespace mfront {
     add("@GlidingSystems", &BehaviourDSLCommon::treatSlipSystems);
     add("@SlidingSystems", &BehaviourDSLCommon::treatSlipSystems);
     add("@InteractionMatrix", &BehaviourDSLCommon::treatInteractionMatrix);
+    add("@SpeedOfSound", &BehaviourDSLCommon::treatSpeedOfSound);
     add("@DislocationsMeanFreePathInteractionMatrix",
         &BehaviourDSLCommon::treatDislocationsMeanFreePathInteractionMatrix);
   }  // end of BehaviourDSLCommon::BehaviourDSLCommon
@@ -924,6 +929,11 @@ namespace mfront {
                   });
     this->declareMainVariables();
   }  // end of BehaviourDSLCommon::treatThermodynamicForce
+
+  void BehaviourDSLCommon::treatSpeedOfSound() {
+    this->readCodeBlock(*this, BehaviourData::ComputeSpeedOfSound,
+                        &BehaviourDSLCommon::standardModifier, true, true);
+  }  // end of treatSpeedOfSound
 
   void BehaviourDSLCommon::treatTangentOperatorBlock() {
     const char* const m =
@@ -3293,6 +3303,7 @@ namespace mfront {
          << "using time                = typename Types::time;\n"
          << "using length              = typename Types::length;\n"
          << "using frequency           = typename Types::frequency;\n"
+         << "using speed               = typename Types::speed;\n"
          << "using stress              = typename Types::stress;\n"
          << "using strain              = typename Types::strain;\n"
          << "using strainrate          = typename Types::strainrate;\n"
@@ -4331,6 +4342,33 @@ namespace mfront {
       os << "\n{\nPsi_d=0;\n}\n\n";
     }
   }  // end of BehaviourDSLCommon::writeBehaviourComputeDissipatedEnergy
+
+  void BehaviourDSLCommon::writeBehaviourComputeSpeedOfSound(std::ostream& os, const Hypothesis h) const {
+    os << "/*!\n"
+       << "* \\brief compute the sound velocity\n"
+       << "* \\param[in] rho_m0: mass density in the reference configuration\n"
+       << "*/\n";
+    if (this->mb.hasCode(h, BehaviourData::ComputeSpeedOfSound)) {
+      const auto vs = tfel::unicode::getMangledString("vₛ");
+      const auto rho_m0 = tfel::unicode::getMangledString("ρₘ₀");
+      os << "real computeSpeedOfSound(const massdensity& rho_m0) const {\n"
+         << "using namespace std;\n"
+         << "using namespace tfel::math;\n";
+      writeMaterialLaws(os, this->mb.getMaterialLaws());
+      os << "const auto " << rho_m0 << " = rho_m0;\n"
+         << "auto v_sound = real{};\n"
+         << "auto& " << vs << " = v_sound;\n"
+         << this->mb.getCode(h, BehaviourData::ComputeSpeedOfSound)
+         << "static_cast<void>(" << rho_m0 << ");\n"
+         << "static_cast<void>(" << vs << ");\n"
+         << "return v_sound;\n"
+         << "}\n\n";
+    } else {
+      os << "real computeSpeedOfSound(const massdensity&) const {\n"
+         << "return 0;\n"
+         << "\n}\n\n";
+    }
+  }  // end of BehaviourDSLCommon::writeBehaviourComputeSpeedOfSound
 
   bool BehaviourDSLCommon::hasUserDefinedTangentOperatorCode(const Hypothesis h) const {
     using tfel::material::getFiniteStrainBehaviourTangentOperatorFlags;
@@ -6236,6 +6274,7 @@ namespace mfront {
     this->writeBehaviourComputeAPosterioriTimeStepScalingFactor(os);
     this->writeBehaviourComputeInternalEnergy(os, h);
     this->writeBehaviourComputeDissipatedEnergy(os, h);
+    this->writeBehaviourComputeSpeedOfSound(os, h);
     this->writeBehaviourComputeTangentOperator(os, h);
     this->writeBehaviourGetTangentOperator(os);
     this->writeBehaviourUpdateExternalStateVariables(os, h);

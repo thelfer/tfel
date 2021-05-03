@@ -55,6 +55,7 @@ namespace tfel {
       typedef tfel::math::qt<tfel::math::InvTemperature, T> thermalexpansion;
       typedef tfel::math::qt<tfel::math::Density, T> massdensity;
       typedef tfel::math::qt<tfel::math::EnergyDensity, T> energydensity;
+      typedef tfel::math::qt<tfel::math::Speed, T> speed;
       typedef tfel::math::tvector<N, real> TVector;
       typedef tfel::math::stensor<N, real> Stensor;
       typedef tfel::math::stensor<N, frequency> FrequencyStensor;
@@ -107,8 +108,8 @@ namespace tfel {
               ThermalConductivityMatrix;
     };
 
-    /*
-     * Partial specialisation
+    /*!
+     * \brief partial specialisation when qt are not used
      */
     template <unsigned short N, typename T>
     struct Types<N, T, false> {
@@ -127,6 +128,7 @@ namespace tfel {
       typedef T thermalexpansion;
       typedef T massdensity;
       typedef T energydensity;
+      typedef T speed;
       typedef tfel::math::tvector<N, T> TVector;
       typedef tfel::math::stensor<N, T> Stensor;
       typedef tfel::math::stensor<N, T> FrequencyStensor;

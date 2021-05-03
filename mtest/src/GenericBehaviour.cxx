@@ -364,6 +364,7 @@ namespace mtest {
     throw_if(wk.evs.size() != s.esv0.size(),
              "temporary external state variable vector was not allocated "
              "properly");
+    auto rdt = real{1};
     const auto ir = tfel::math::transpose(s.r);
     if (this->btype == 2u) {
       if (this->fsto == DSIG_DF) {
@@ -444,7 +445,7 @@ namespace mtest {
       d.s1.external_state_variables = nullptr;
     }
     d.dt = dt;
-    d.rdt = 1;
+    d.rdt = &rdt;
     // type of integration to be performed
     StandardBehaviourBase::initializeTangentOperator(wk.D, ktype, b);
     d.K = &(wk.D(0, 0));
@@ -460,7 +461,7 @@ namespace mtest {
     // calling the behaviour
     const auto r = (this->fct)(&d);
     if (r != 1) {
-      return {false, d.rdt};
+      return {false, rdt};
     }
     if (mfront::getVerboseMode() >= mfront::VERBOSE_DEBUG) {
       auto& log = mfront::getLogStream();
@@ -577,7 +578,7 @@ namespace mtest {
         this->rtf_fct(&s.s1[0], &s.s1[0], s.r.begin());
       }
     }
-    return {true, d.rdt};
+    return {true, rdt};
   }  // end of GenericBehaviour::call_behaviour
 
   void GenericBehaviour::executeFiniteStrainBehaviourStressPreProcessing(

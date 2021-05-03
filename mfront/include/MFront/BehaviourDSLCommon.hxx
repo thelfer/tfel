@@ -581,6 +581,8 @@ namespace mfront {
     virtual void treatThermodynamicForce();
     //!\brief treat the `@TangentOperatorBlock` keyword.
     virtual void treatTangentOperatorBlock();
+    //!\brief treat the `@SpeedOfSound` keyword.
+    virtual void treatSpeedOfSound();
     //!\brief treat the `@TangentOperatorBlocks` keyword.
     virtual void treatTangentOperatorBlocks();
     //!\brief treat the `@AdditionalTangentOperatorBlock` keyword.
@@ -1119,11 +1121,17 @@ namespace mfront {
     virtual void writeBehaviourComputeInternalEnergy(std::ostream&,
                                                      const Hypothesis) const;
     /*!
-     * \brief write the computeInternalEnergy method
+     * \brief write the computeDissipatedEnergy method
      * \param[in] h: modelling hypothesis
      */
     virtual void writeBehaviourComputeDissipatedEnergy(std::ostream&,
                                                        const Hypothesis) const;
+    /*!
+     * \brief write the computeSpeedOfSound method
+     * \param[in] h: modelling hypothesis
+     */
+    virtual void writeBehaviourComputeSpeedOfSound(std::ostream&,
+                                                   const Hypothesis) const;
     //! \brief write the getTimeStepScalingFactor method
     virtual void writeBehaviourGetTimeStepScalingFactor(std::ostream&) const;
     //! \brief write the integrate method

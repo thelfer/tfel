@@ -65,25 +65,26 @@ MFRONT_DOCS = AdditionalConvergenceChecks.md                            \
 	      PhysicalBounds.md                                         \
 	      Private.md                                                \
 	      Profiling.md                                              \
-	      Relocation.md			                        \
+	      Relocation.md			                                   \
 	      RequireStiffnessOperator.md                               \
 	      RequireStiffnessTensor.md                                 \
 	      RequireThermalExpansionCoefficientTensor.md               \
 	      SlidingSystem.md                                          \
 	      SlidingSystems.md                                         \
-	      SlipSystem.md				                \
-	      SlipSystems.md				                \
-	      Sources.md				                \
-	      StateVar.md			                        \
-	      StateVariable.md			                        \
-	      StaticVar.md			                        \
-	      StaticVariable.md		                                \
-	      StrainMeasure.md		                                \
-	      Swelling.md		                                \
-	      TangentOperator.md		                        \
-	      TangentOperatorBlock.md		                        \
-	      TangentOperatorBlocks.md		                        \
-	      Theta.md		                                        \
+	      SlipSystem.md				                               \
+	      SlipSystems.md				                               \
+	      Sources.md				                                   \
+	      SpeedOfSound.md				                           \
+	      StateVar.md			                                   \
+	      StateVariable.md			                               \
+	      StaticVar.md			                                   \
+	      StaticVariable.md		                                   \
+	      StrainMeasure.md		                                   \
+	      Swelling.md		                                       \
+	      TangentOperator.md		                                   \
+	      TangentOperatorBlock.md		                               \
+	      TangentOperatorBlocks.md		                           \
+	      Theta.md		                                           \
 	      UpdateAuxiliaryStateVars.md                               \
 	      UpdateAuxiliaryStateVariables.md                          \
 	      UsableInPurelyImplicitResolution.md                       \

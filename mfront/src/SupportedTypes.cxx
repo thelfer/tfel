@@ -36,6 +36,7 @@ namespace mfront {
         {"stress", SupportedTypes::SCALAR},
         {"length", SupportedTypes::SCALAR},
         {"time", SupportedTypes::SCALAR},
+        {"speed", SupportedTypes::SCALAR},
         //    {"stressrate",SupportedTypes::SCALAR},
         {"strain", SupportedTypes::SCALAR},
         {"strainrate", SupportedTypes::SCALAR},

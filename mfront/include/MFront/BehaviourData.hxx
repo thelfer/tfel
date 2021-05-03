@@ -95,6 +95,8 @@ namespace mfront {
     //! \brief standard code name
     static const char* const ComputeDissipatedEnergy;
     //! \brief standard code name
+    static const char* const ComputeSpeedOfSound;
+    //! \brief standard code name
     static const char* const AdditionalConvergenceChecks;
     /*
      * normalised attribute names
@@ -357,37 +359,23 @@ namespace mfront {
      * - `Parameters`
      */
     const VariableDescriptionContainer& getVariables(const std::string&) const;
-    /*!
-     * \return all material properties
-     */
+    //! \return all material properties
     const VariableDescriptionContainer& getMaterialProperties() const;
-    /*!
-     * \return all persistent variables
-     */
+    //! \return all persistent variables
     const VariableDescriptionContainer& getPersistentVariables() const;
-    /*!
-     * \return all integration variables
-     */
+    //! \return all integration variables
     const VariableDescriptionContainer& getIntegrationVariables() const;
-    /*!
-     * \return all state variables
-     */
+    //! \return all state variables
     const VariableDescriptionContainer& getStateVariables() const;
-    /*!
-     * \return all auxiliary state variables
-     */
+    //! \return all auxiliary state variables
     const VariableDescriptionContainer& getAuxiliaryStateVariables() const;
-    /*!
-     * \return all external state variables
-     */
+    //! \return all post-processing variables
+    const VariableDescriptionContainer& getPostProcessingVariables() const;
+    //! \return all external state variables
     const VariableDescriptionContainer& getExternalStateVariables() const;
-    /*!
-     * \return all local variables
-     */
+    //! \return all local variables
     const VariableDescriptionContainer& getLocalVariables() const;
-    /*!
-     * \return all parameter variables
-     */
+    //! \return all parameter variables
     const VariableDescriptionContainer& getParameters() const;
     /*!
      * \return a variable description with the given name.
