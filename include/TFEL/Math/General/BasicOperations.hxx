@@ -111,127 +111,121 @@
   TFEL_MATH_RESULT_TYPE_(Complex<X>, X); \
   TFEL_MATH_RESULT_TYPE_(Complex<X>, Complex<X>)
 
-namespace tfel {
+namespace tfel ::math {
 
-  namespace math {
-
-    struct OpPlus {
-      /*
-       * Add its two arguments.
-       * \see ComputeBinaryResult.
-       */
-      template <typename T1, typename T2>
-      static TFEL_MATH_INLINE auto apply(T1&& a, T2&& b)
-          -> BinaryOperationHandler<decltype(a), decltype(b), OpPlus> {
-        return std::forward<T1>(a) + std::forward<T2>(b);
-      }
-    };
-
-    struct OpMinus {
-      /*
-       * Substract its two arguments.
-       * \see ComputeBinaryResult.
-       */
-      template <typename T1, typename T2>
-      static TFEL_MATH_INLINE auto apply(T1&& a, T2&& b)
-          -> BinaryOperationHandler<decltype(a), decltype(b), OpMinus> {
-        return std::forward<T1>(a) - std::forward<T2>(b);
-      }
-
-    };  // end of OpMinus
-
-    struct OpMult {
-      /*
-       * Multiply its two arguments.
-       * \see ComputeBinaryResult
-       */
-      template <typename T1, typename T2>
-      static TFEL_MATH_INLINE auto apply(T1&& a, T2&& b)
-          -> BinaryOperationHandler<decltype(a), decltype(b), OpMult> {
-        return std::forward<T1>(a) * std::forward<T2>(b);
-      }
-    };  // end of OpMult
-
-    struct OpDiv {
-      /*!
-       * Divide the two arguments
-       * \see ComputeBinaryResult.
-       */
-      template <typename T1, typename T2>
-      static TFEL_MATH_INLINE auto apply(T1&& a, T2&& b)
-          -> BinaryOperationHandler<decltype(a), decltype(b), OpDiv> {
-        return std::forward<T1>(a) / std::forward<T2>(b);
-      }
-    };  // end of OpDiv
-
-    struct OpNeg {
-      template <typename T1>
-      static TFEL_MATH_INLINE auto apply(T1&& a)
-          -> UnaryOperationHandler<decltype(a), OpNeg> {
-        return -std::forward<T1>(a);
-      }
-    };
-
-    struct OpDotProduct {};  // end of struct OpDotProduct
-
-    struct OpDiadicProduct {};
-
-  }  // end of namespace math
-
-  namespace typetraits {
-
+  struct OpPlus {
     /*
-     * Partial Specialisation for OpNeg
+     * Add its two arguments.
+     * \see ComputeBinaryResult.
      */
-    template <>
-    struct IsUnaryOperator<tfel::math::OpNeg> {
-      static constexpr bool cond = true;
-    };
+    template <typename T1, typename T2>
+    static TFEL_MATH_INLINE auto apply(T1&& a, T2&& b)
+        -> BinaryOperationHandler<decltype(a), decltype(b), OpPlus> {
+      return std::forward<T1>(a) + std::forward<T2>(b);
+    }
+  };
 
-  }  // end of namespace typetraits
-
-  namespace math {
-
-    TFEL_MATH_RESULT_TYPE(unsigned short);
-    TFEL_MATH_RESULT_TYPE(unsigned int);
-    TFEL_MATH_RESULT_TYPE(long unsigned int);
-    TFEL_MATH_RESULT_TYPE(short);
-    TFEL_MATH_RESULT_TYPE(int);
-    TFEL_MATH_RESULT_TYPE(long int);
-    TFEL_MATH_RESULT_TYPE(float);
-    TFEL_MATH_RESULT_TYPE(double);
-    TFEL_MATH_RESULT_TYPE(long double);
-
-    template <typename T>
-    TFEL_MATH_INLINE
-        std::enable_if_t<tfel::typetraits::isScalar<T>() &&
-                             (!tfel::typetraits::IsComplex<T>::cond),
-                         T>
-        conj(const T src) {
-      return src;
+  struct OpMinus {
+    /*
+     * Substract its two arguments.
+     * \see ComputeBinaryResult.
+     */
+    template <typename T1, typename T2>
+    static TFEL_MATH_INLINE auto apply(T1&& a, T2&& b)
+        -> BinaryOperationHandler<decltype(a), decltype(b), OpMinus> {
+      return std::forward<T1>(a) - std::forward<T2>(b);
     }
 
-    template <typename T>
-    TFEL_MATH_INLINE
-        std::enable_if_t<tfel::typetraits::isScalar<T>() &&
-                             (!tfel::typetraits::IsComplex<T>::cond),
-                         T>
-        real(const T src) {
-      return src;
+  };  // end of OpMinus
+
+  struct OpMult {
+    /*
+     * Multiply its two arguments.
+     * \see ComputeBinaryResult
+     */
+    template <typename T1, typename T2>
+    static TFEL_MATH_INLINE auto apply(T1&& a, T2&& b)
+        -> BinaryOperationHandler<decltype(a), decltype(b), OpMult> {
+      return std::forward<T1>(a) * std::forward<T2>(b);
     }
+  };  // end of OpMult
 
-    TFEL_MATH_RESULT_TYPE_COMPLEX(unsigned short);
-    TFEL_MATH_RESULT_TYPE_COMPLEX(unsigned int);
-    TFEL_MATH_RESULT_TYPE_COMPLEX(long unsigned int);
-    TFEL_MATH_RESULT_TYPE_COMPLEX(short);
-    TFEL_MATH_RESULT_TYPE_COMPLEX(int);
-    TFEL_MATH_RESULT_TYPE_COMPLEX(long int);
-    TFEL_MATH_RESULT_TYPE_COMPLEX(float);
-    TFEL_MATH_RESULT_TYPE_COMPLEX(double);
-    TFEL_MATH_RESULT_TYPE_COMPLEX(long double);
+  struct OpDiv {
+    /*!
+     * Divide the two arguments
+     * \see ComputeBinaryResult.
+     */
+    template <typename T1, typename T2>
+    static TFEL_MATH_INLINE auto apply(T1&& a, T2&& b)
+        -> BinaryOperationHandler<decltype(a), decltype(b), OpDiv> {
+      return std::forward<T1>(a) / std::forward<T2>(b);
+    }
+  };  // end of OpDiv
 
-  }  // end of namespace math
+  struct OpNeg {
+    template <typename T1>
+    static TFEL_MATH_INLINE auto apply(T1&& a)
+        -> UnaryOperationHandler<decltype(a), OpNeg> {
+      return -std::forward<T1>(a);
+    }
+  };
 
-}  // end of namespace tfel
+  struct OpDotProduct {};  // end of struct OpDotProduct
+
+  struct OpDiadicProduct {};
+
+}  // end of namespace tfel::math
+
+namespace tfel::typetraits {
+
+  /*
+   * Partial Specialisation for OpNeg
+   */
+  template <>
+  struct IsUnaryOperator<tfel::math::OpNeg> {
+    static constexpr bool cond = true;
+  };
+
+}  // end of namespace typetraits
+
+namespace tfel::math {
+
+  TFEL_MATH_RESULT_TYPE(unsigned short);
+  TFEL_MATH_RESULT_TYPE(unsigned int);
+  TFEL_MATH_RESULT_TYPE(long unsigned int);
+  TFEL_MATH_RESULT_TYPE(short);
+  TFEL_MATH_RESULT_TYPE(int);
+  TFEL_MATH_RESULT_TYPE(long int);
+  TFEL_MATH_RESULT_TYPE(float);
+  TFEL_MATH_RESULT_TYPE(double);
+  TFEL_MATH_RESULT_TYPE(long double);
+
+  template <typename T>
+  TFEL_MATH_INLINE std::enable_if_t<tfel::typetraits::isScalar<T>() &&
+                                        (!tfel::typetraits::IsComplex<T>::cond),
+                                    T>
+  conj(const T src) {
+    return src;
+  }
+
+  template <typename T>
+  TFEL_MATH_INLINE std::enable_if_t<tfel::typetraits::isScalar<T>() &&
+                                        (!tfel::typetraits::IsComplex<T>::cond),
+                                    T>
+  real(const T src) {
+    return src;
+  }
+
+  TFEL_MATH_RESULT_TYPE_COMPLEX(unsigned short);
+  TFEL_MATH_RESULT_TYPE_COMPLEX(unsigned int);
+  TFEL_MATH_RESULT_TYPE_COMPLEX(long unsigned int);
+  TFEL_MATH_RESULT_TYPE_COMPLEX(short);
+  TFEL_MATH_RESULT_TYPE_COMPLEX(int);
+  TFEL_MATH_RESULT_TYPE_COMPLEX(long int);
+  TFEL_MATH_RESULT_TYPE_COMPLEX(float);
+  TFEL_MATH_RESULT_TYPE_COMPLEX(double);
+  TFEL_MATH_RESULT_TYPE_COMPLEX(long double);
+
+}  // end of namespace tfel::math
 
 #endif /* LIB_TFEL_MATH_BASICOPERATIONS_HXX */

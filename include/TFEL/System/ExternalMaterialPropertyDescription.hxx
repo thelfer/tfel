@@ -16,73 +16,70 @@
 
 #include <string>
 #include <vector>
-
 #include "TFEL/Config/TFELConfig.hxx"
 
-namespace tfel {
+namespace tfel::system {
 
-  namespace system {
+  /*!
+   * \brief a structure containing the information  a given behaviour.
+   */
+  struct TFELSYSTEM_VISIBILITY_EXPORT ExternalMaterialPropertyData {
+    //! \brief default constructor
+    ExternalMaterialPropertyData();
+    //! \brief move constructor
+    ExternalMaterialPropertyData(ExternalMaterialPropertyData&&);
+    //! \brief move constructor
+    ExternalMaterialPropertyData(const ExternalMaterialPropertyData&);
+    //! \brief move assignement
+    ExternalMaterialPropertyData& operator=(ExternalMaterialPropertyData&&);
+    //! \brief standard assignement
+    ExternalMaterialPropertyData& operator=(
+        const ExternalMaterialPropertyData&);
+    //! \brief version of TFEL used to generate the behaviour
+    std::string tfel_version;
+    //! \brief build identifier
+    std::string build_id;
+    //! \brief MFront source file
+    std::string source;
+    //! \brief name of the interface used to generate the material property
+    std::string mfront_interface;
+    //! name of the library
+    std::string library;
+    //! name of the material property
+    std::string material_property;
+    //! list of arguments
+    std::vector<std::string> arguments;
+  };  // end of struct ExternalMaterialPropertyData
 
+  /*!
+   * A structure containing the information that could be retrieved
+   * by the `ExternalLibraryManger` class about a material property
+   */
+  struct TFELSYSTEM_VISIBILITY_EXPORT ExternalMaterialPropertyDescription
+      : public ExternalMaterialPropertyData {
     /*!
-     * \brief a structure containing the information  a given behaviour.
+     * \param[in] l: library
+     * \param[in] m: material property
      */
-    struct TFELSYSTEM_VISIBILITY_EXPORT ExternalMaterialPropertyData {
-      //! \brief default constructor
-      ExternalMaterialPropertyData();
-      //! \brief move constructor
-      ExternalMaterialPropertyData(ExternalMaterialPropertyData&&);
-      //! \brief move constructor
-      ExternalMaterialPropertyData(const ExternalMaterialPropertyData&);
-      //! \brief move assignement
-      ExternalMaterialPropertyData& operator=(ExternalMaterialPropertyData&&);
-      //! \brief standard assignement
-      ExternalMaterialPropertyData& operator=(const ExternalMaterialPropertyData&);
-      //! \brief version of TFEL used to generate the behaviour
-      std::string tfel_version;
-      //! \brief build identifier
-      std::string build_id;
-      //! \brief MFront source file
-      std::string source;
-      //! \brief name of the interface used to generate the material property
-      std::string mfront_interface;
-      //! name of the library
-      std::string library;
-      //! name of the material property
-      std::string material_property;
-      //! list of arguments
-      std::vector<std::string> arguments;
-    }; // end of struct ExternalMaterialPropertyData
+    ExternalMaterialPropertyDescription(const std::string&, const std::string&);
+    //! \brief default constructor
+    ExternalMaterialPropertyDescription();
+    //! \brief copy constructor
+    ExternalMaterialPropertyDescription(
+        const ExternalMaterialPropertyDescription&);
+    //! \brief move constructor
+    ExternalMaterialPropertyDescription(ExternalMaterialPropertyDescription&&);
+    //! \brief assignement
+    ExternalMaterialPropertyDescription& operator=(
+        const ExternalMaterialPropertyDescription&);
+    //! \brief move assignement
+    ExternalMaterialPropertyDescription& operator=(
+        ExternalMaterialPropertyDescription&&);
+    //! \brief destructor
+    ~ExternalMaterialPropertyDescription();
+  };  // end of ExternalMaterialPropertyDescription
 
-    /*!
-     * A structure containing the information that could be retrieved
-     * by the `ExternalLibraryManger` class about a material property
-     */
-    struct TFELSYSTEM_VISIBILITY_EXPORT ExternalMaterialPropertyDescription
-        : public ExternalMaterialPropertyData {
-      /*!
-       * \param[in] l: library
-       * \param[in] m: material property
-       */
-      ExternalMaterialPropertyDescription(const std::string&,
-                                          const std::string&);
-      //! \brief default constructor
-      ExternalMaterialPropertyDescription();
-      //! \brief copy constructor
-      ExternalMaterialPropertyDescription(const ExternalMaterialPropertyDescription&);
-      //! \brief move constructor
-      ExternalMaterialPropertyDescription(ExternalMaterialPropertyDescription&&);
-      //! \brief assignement
-      ExternalMaterialPropertyDescription& operator=(
-          const ExternalMaterialPropertyDescription&);
-      //! \brief move assignement
-      ExternalMaterialPropertyDescription& operator=(ExternalMaterialPropertyDescription&&);
-      //! \brief destructor
-      ~ExternalMaterialPropertyDescription();
-    }; // end of ExternalMaterialPropertyDescription
-
-  }  // end of namespace system
-
-}  // end of namespace tfel
+}  // end of namespace tfel::system
 
 extern "C" {
 

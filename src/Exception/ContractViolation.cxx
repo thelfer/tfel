@@ -13,7 +13,6 @@
 
 #include <iostream>
 #include <cstdlib>
-
 #include "TFEL/ContractViolation.hxx"
 
 namespace tfel {

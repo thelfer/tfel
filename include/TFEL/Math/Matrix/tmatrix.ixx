@@ -12,8 +12,8 @@
  * project under specific licensing conditions.
  */
 
-#ifndef LIB_TFEL_TINY_MATRIXIXX
-#define LIB_TFEL_TINY_MATRIXIXX
+#ifndef LIB_TFEL_MATH_TINY_MATRIX_IXX
+#define LIB_TFEL_MATH_TINY_MATRIX_IXX
 
 #include "TFEL/FSAlgorithm/FSAlgorithm.hxx"
 #include "TFEL/Math/General/AbsCompare.hxx"
@@ -301,4 +301,4 @@ namespace tfel::math {
 
 }  // end of namespace tfel::math
 
-#endif /* LIB_TFEL_TINY_MATRIXIXX */
+#endif /* LIB_TFEL_MATH_TINY_MATRIX_IXX */

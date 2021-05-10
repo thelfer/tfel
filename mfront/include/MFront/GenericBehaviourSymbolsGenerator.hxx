@@ -1,6 +1,6 @@
 /*!
  * \file   GenericBehaviourSymbolsGenerator.hxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   19/07/2018
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
@@ -24,12 +24,18 @@ namespace mfront {
    */
   struct MFRONT_VISIBILITY_EXPORT GenericBehaviourSymbolsGenerator
       : public SymbolsGenerator {
-    //! constructor
+    //! \brief constructor
     GenericBehaviourSymbolsGenerator();
-    void writeBehaviourTypeSymbols(std::ostream&,
-					 const StandardBehaviourInterface&,
-                                         const BehaviourDescription&,
-                                         const std::string&) const override;
+    //
+    void writeSpecificSymbols(std::ostream &,
+                              const StandardBehaviourInterface &,
+                              const BehaviourDescription &,
+                              const FileDescription &,
+                              const std::string &) const override;
+    void writeBehaviourTypeSymbols(std::ostream &,
+                                   const StandardBehaviourInterface &,
+                                   const BehaviourDescription &,
+                                   const std::string &) const override;
     void writeBehaviourKinematicSymbols(std::ostream &,
                                         const StandardBehaviourInterface &,
                                         const BehaviourDescription &,
@@ -38,12 +44,12 @@ namespace mfront {
                                      const StandardBehaviourInterface &,
                                      const BehaviourDescription &,
                                      const std::string &) const override;
-    void writeAdditionalSymbols(std::ostream&,
-				      const StandardBehaviourInterface&,
-                                      const BehaviourDescription&,
-                                      const FileDescription&,
-                                      const std::string&,
-                                      const Hypothesis) const override;
+    void writeAdditionalSymbols(std::ostream &,
+                                const StandardBehaviourInterface &,
+                                const BehaviourDescription &,
+                                const FileDescription &,
+                                const std::string &,
+                                const Hypothesis) const override;
     bool handleStrainMeasure() const override;
     //! destructor
     ~GenericBehaviourSymbolsGenerator() override;

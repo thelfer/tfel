@@ -1,5 +1,5 @@
 ## Makefile.am -- Process this file with automake to produce a Makefile.in file.
-SUBDIRS = Config PhysicalConstants UnicodeSupport \
+SUBDIRS = Config UnicodeSupport \
        Tests Exception Utilities Glossary System  \
        Math NUMODIS Material
 

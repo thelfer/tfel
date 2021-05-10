@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_TFEL_COMPUTEUNARYRESULT_HXX
-#define LIB_TFEL_COMPUTEUNARYRESULT_HXX 
+#ifndef LIB_TFEL_MATH_COMPUTEUNARYRESULT_HXX
+#define LIB_TFEL_MATH_COMPUTEUNARYRESULT_HXX 
 
 #include<type_traits>
 
@@ -61,5 +61,5 @@ namespace tfel::math {
 
 }  // end of namespace tfel::math
 
-#endif /* LIB_TFEL_COMPUTEUNARYRESULT_HXX */
+#endif /* LIB_TFEL_MATH_COMPUTEUNARYRESULT_HXX */
 

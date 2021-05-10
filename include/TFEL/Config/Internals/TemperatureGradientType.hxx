@@ -1,6 +1,6 @@
 /*!
  * \file   TemperatureGradientType.hxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   13/02/2019
  */
@@ -12,29 +12,20 @@
 #include "TFEL/Math/Forward/qt.hxx"
 #include "TFEL/Math/Quantity/Unit.hxx"
 
-namespace tfel {
+namespace tfel::config::internals {
 
-  namespace config {
+  template <unsigned short N, typename T, bool use_qt>
+  struct TemperatureGradientType {
+    typedef tfel::math::
+        tvector<N, tfel::math::qt<tfel::math::TemperatureGradient, T>>
+            type;
+  };  // end of struct TemperatureGradientVectorType
 
-    namespace internals {
+  template <unsigned short N, typename T>
+  struct TemperatureGradientType<N, T, false> {
+    typedef tfel::math::tvector<N, T> type;
+  };  // end of struct TemperatureGradientVectorType
 
-      template <unsigned short N, typename T, bool use_qt>
-      struct TemperatureGradientType {
-        typedef tfel::math::
-            tvector<N, tfel::math::qt<tfel::math::TemperatureGradient, T>>
-                type;
-      }; // end of struct TemperatureGradientVectorType
-
-      template <unsigned short N, typename T>
-      struct TemperatureGradientType<N, T, false> {
-        typedef tfel::math::tvector<N, T> type;
-      }; // end of struct TemperatureGradientVectorType
-
-    }  // end of namespace internals
-
-  }  // end of namespace config
-
-}  // end of namespace tfel
-
+}  // end of namespace tfel::config::internals
 
 #endif /* LIB_TFEL_CONFIG_INTERNALS_TEMPERATUREGRADIENTTYPE_HXX */

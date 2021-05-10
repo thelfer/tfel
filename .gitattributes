@@ -512,6 +512,7 @@ docs/mfront/SlidingSystems.md -text
 docs/mfront/SlipSystem.md -text
 docs/mfront/SlipSystems.md -text
 docs/mfront/Sources.md -text
+docs/mfront/SpeedOfSound.md -text
 docs/mfront/StateVar.md -text
 docs/mfront/StateVariable.md -text
 docs/mfront/StaticVar.md -text
@@ -2225,7 +2226,6 @@ include/TFEL/Utilities/FCString.hxx -text
 include/TFEL/Utilities/FCString.ixx -text
 include/TFEL/Utilities/GenTypeBase.hxx -text
 include/TFEL/Utilities/GenTypeBase.ixx -text
-include/TFEL/Utilities/GenTypeBase_MSC.hxx -text
 include/TFEL/Utilities/GenTypeCastError.hxx -text
 include/TFEL/Utilities/GenTypeSpecialisation.ixx -text
 include/TFEL/Utilities/StringAlgorithms.hxx -text
@@ -7144,9 +7144,6 @@ src/NUMODIS/Makefile.am -text
 src/NUMODIS/TripleNode.cxx -text
 src/NUMODIS/Utilities.cxx -text
 src/NUMODIS/Vect3.cxx -text
-src/PhysicalConstants/CMakeLists.txt -text
-src/PhysicalConstants/Makefile.am -text
-src/PhysicalConstants/PhysicalConstants.cxx -text
 src/System/BinaryRead.cxx -text
 src/System/BinaryWrite.cxx -text
 src/System/CMakeLists.txt -text

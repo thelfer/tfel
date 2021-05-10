@@ -19,44 +19,38 @@
 #include "TFEL/TypeTraits/IsScalar.hxx"
 #include "TFEL/Math/General/ComputeObjectTag.hxx"
 
-namespace tfel {
+namespace tfel::math {
 
-  namespace math {
+  /*!
+   * \brief an helper metafunction meant to be specialised
+   */
+  template <typename TagA, typename TagB, typename A, typename B>
+  struct DerivativeTypeDispatcher {
+    //! \brief result
+    using type = tfel::meta::InvalidType;
+  };  // end of struct DerivativeTypeDispatcher
 
-    /*!
-     * \brief an helper metafunction meant to be specialised
-     */
-    template <typename TagA, typename TagB, typename A, typename B>
-    struct DerivativeTypeDispatcher {
-      //! \brief result
-      using type = tfel::meta::InvalidType;
-    };  // end of struct DerivativeTypeDispatcher
+  /*!
+   * \brief a meta function returning the type of the derivative of
+   * a variable of type T1 with respect to a variable of type T2
+   * \tparam T1: type
+   * \tparam T2: type
+   */
+  template <typename T1, typename T2>
+  struct DerivativeType {
+    //! boolean stating if both variables are scalar
+    static constexpr auto are_scalars = isScalar<T1>() && isScalar<T2>();
+    //! the result
+    using type =
+        typename std::conditional<are_scalars,
+                                  BinaryOperationResult<T1, T2, OpDiv>,
+                                  typename tfel::math::DerivativeTypeDispatcher<
+                                      typename ComputeObjectTag<T1>::type,
+                                      typename ComputeObjectTag<T2>::type,
+                                      T1,
+                                      T2>::type>::type;
+  };  // end of DerivativeType
 
-    /*!
-     * \brief a meta function returning the type of the derivative of
-     * a variable of type T1 with respect to a variable of type T2
-     * \tparam T1: type
-     * \tparam T2: type
-     */
-    template <typename T1, typename T2>
-    struct DerivativeType {
-      //! boolean stating if both variables are scalar
-      static constexpr auto are_scalars =
-          isScalar<T1>() &&
-          isScalar<T2>();
-      //! the result
-      using type = typename std::conditional<
-          are_scalars,
-          BinaryOperationResult<T1, T2, OpDiv>,
-          typename tfel::math::DerivativeTypeDispatcher<
-              typename ComputeObjectTag<T1>::type,
-              typename ComputeObjectTag<T2>::type,
-              T1,
-              T2>::type>::type;
-    }; // end of DerivativeType
-
-  }  // end of namespace math
-
-}  // end of namespace tfel
+}  // end of namespace tfel::math
 
 #endif /* LIB_TFEL_MATH_DERIVATIVETYPE_IXX */

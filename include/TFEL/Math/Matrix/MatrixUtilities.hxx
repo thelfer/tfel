@@ -11,8 +11,8 @@
  * project under specific licensing conditions.
  */
 
-#ifndef LIB_TFEL_MATRIX_UTILITIES_HXX
-#define LIB_TFEL_MATRIX_UTILITIES_HXX
+#ifndef LIB_TFEL_MATH_MATRIX_UTILITIES_HXX
+#define LIB_TFEL_MATH_MATRIX_UTILITIES_HXX
 
 #include "TFEL/Config/TFELConfig.hxx"
 
@@ -125,4 +125,4 @@ namespace tfel::math {
 
 #include "TFEL/Math/Matrix/MatrixUtilities.ixx"
 
-#endif /* LIB_TFEL_MATRIX_UTILITIES_HXX */
+#endif /* LIB_TFEL_MATH_MATRIX_UTILITIES_HXX */

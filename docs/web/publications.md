@@ -13,9 +13,13 @@ eqnPrefixTemplate: "($$i$$)"
 
 ---
 nocite: |
+    @liang_micromechanical_2021
     @gelebart_grain_2021
     @seidlhofer_compressible_2021
     @hure_yield_2021
+    @jacquet_elasto-visco-plastic_2020
+    @dambrosi_homogenization_2020
+    @dambrosi_detection_2020
     @parisio_model_2020
     @garcia_effect_2020
     @deng_slope_2020
@@ -35,6 +39,7 @@ nocite: |
     @lu_efficient_2020
     @marano_non-linear_2020
     @boustani_extending_2020
+    @socie_modelisation_2019
     @barrioz_effect_2019
     @draup_development_2019
     @manso_settlement_2019
@@ -51,6 +56,8 @@ nocite: |
     @dorfler_numerical_2019
     @bernachy-barbe_effect_2019
     @bejaoui_description_2019
+	@lemerle_mesure_2018
+    @bouhjiti_analyse_2018
     @hure_coalescence_2018
     @barrioz_void_shape_2018
 	@portelette_crystal_2018

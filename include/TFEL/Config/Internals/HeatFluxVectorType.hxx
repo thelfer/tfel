@@ -18,28 +18,20 @@
 #include "TFEL/Math/Forward/qt.hxx"
 #include "TFEL/Math/Quantity/Unit.hxx"
 
-namespace tfel {
+namespace tfel::config::internals {
 
-  namespace config {
+  template <unsigned short N, typename T, bool use_qt>
+  struct HeatFluxVectorType {
+    typedef tfel::math::tvector<N,
+                                tfel::math::qt<tfel::math::HeatFluxDensity, T>>
+        type;
+  };
 
-    namespace internals {
+  template <unsigned short N, typename T>
+  struct HeatFluxVectorType<N, T, false> {
+    typedef tfel::math::tvector<N, T> type;
+  };
 
-      template <unsigned short N, typename T, bool use_qt>
-      struct HeatFluxVectorType {
-        typedef tfel::math::
-            tvector<N, tfel::math::qt<tfel::math::HeatFluxDensity, T>>
-                type;
-      };
-
-      template <unsigned short N, typename T>
-      struct HeatFluxVectorType<N, T, false> {
-        typedef tfel::math::tvector<N, T> type;
-      };
-
-    }  // end of namespace internals
-
-  }  // end of namespace config
-
-}  // end of namespace tfel
+}  // end of namespace tfel::config::internals
 
 #endif /* LIB_TFEL_HEATFLUXVECTORTYPE_HXX */

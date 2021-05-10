@@ -11,8 +11,8 @@
  * project under specific licensing conditions.
  */
 
-#ifndef LIB_TFEL_STENSORCOMPUTEEIGENVECTORS_HXX
-#define LIB_TFEL_STENSORCOMPUTEEIGENVECTORS_HXX
+#ifndef LIB_TFEL_MATH_STENSORCOMPUTEEIGENVECTORS_HXX
+#define LIB_TFEL_MATH_STENSORCOMPUTEEIGENVECTORS_HXX
 
 #include <cmath>
 #include <cassert>
@@ -46,13 +46,13 @@ namespace tfel::math::internals {
                                    const T* const s,
                                    const T vp) {
       static_assert(tfel::typetraits::IsFundamentalNumericType<
-                         numeric_type<VectorType>>::cond);
+                    numeric_type<VectorType>>::cond);
       static_assert(std::is_same_v<numeric_type<VectorType>, T>);
       static_assert(tfel::typetraits::IsFundamentalNumericType<T>::cond);
       static_assert(tfel::typetraits::IsReal<T>::cond);
       constexpr auto zero = T{0};
       constexpr auto one = T{1};
-      TFEL_CONSTEXPR const auto e = 10 * std::numeric_limits<T>::min();
+      constexpr const auto e = 10 * std::numeric_limits<T>::min();
       if (std::abs(s[0] - vp) < e) {
         v = {one, zero, zero};
         return true;
@@ -156,7 +156,7 @@ namespace tfel::math::internals {
                                                                          vec);
 #else
       return true;
-#endif /* LIB_TFEL_STENSORCOMPUTEEIGENVECTORS_HXX */
+#endif
     }
 
    private:
@@ -269,8 +269,7 @@ namespace tfel::math::internals {
                                    const T* const src,
                                    const T vp) {
       using namespace tfel::typetraits;
-      static_assert(
-          IsFundamentalNumericType<numeric_type<VectorType>>::cond);
+      static_assert(IsFundamentalNumericType<numeric_type<VectorType>>::cond);
       static_assert(std::is_same_v<numeric_type<VectorType>, T>);
       static_assert(IsFundamentalNumericType<T>::cond);
       static_assert(IsReal<T>::cond);
@@ -571,4 +570,4 @@ namespace tfel::math::internals {
 
 }  // end of namespace tfel::math::internals
 
-#endif /* LIB_TFEL_STENSORCOMPUTEEIGENVECTORS_HXX */
+#endif /* LIB_TFEL_MATH_STENSORCOMPUTEEIGENVECTORS_HXX */

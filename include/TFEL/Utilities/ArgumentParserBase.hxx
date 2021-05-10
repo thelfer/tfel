@@ -20,79 +20,75 @@
 
 #include "TFEL/Utilities/ArgumentParser.hxx"
 
-namespace tfel {
+namespace tfel::utilities {
 
-  namespace utilities {
+  /*!
+   * \brief an helper class used for command line argument parsing.
+   *
+   * The CRTP pattern is used to enable ArgumentParserBase to used
+   * the method of its derivate class. Such a design was extremly
+   * usefull before std::function was introduced.
+   *
+   * The class maps the command line arguments to method of the
+   * derivate class.
+   *
+   * \param Child
+   */
+  template <typename Child>
+  struct ArgumentParserBase : public ArgumentParser {
+    //! a simple alias
+    using MemberFuncPtr = void (Child::*)();
+    //! default constructor
+    ArgumentParserBase();
+    /*!
+     * \brief constructor
+     * \param argc : number of arguments given at command line
+     * \param argv : arguments list
+     */
+    ArgumentParserBase(const int, const char* const* const);
+    /*!
+     * \brief register a new callback
+     * \param key         : command line argument name
+     * \param f           : callback
+     * \param description : description of the command line argument
+     *                      (used for the --help) options
+     * \param b           : This command line argument can have an option
+     */
+    void registerNewCallBack(const std::string&,
+                             const MemberFuncPtr&,
+                             const std::string& = "",
+                             const bool = false);
 
     /*!
-     * \brief an helper class used for command line argument parsing.
-     *
-     * The CRTP pattern is used to enable ArgumentParserBase to used
-     * the method of its derivate class. Such a design was extremly
-     * usefull before std::function was introduced.
-     *
-     * The class maps the command line arguments to method of the
-     * derivate class.
-     *
-     * \param Child
+     * \brief register a new callback
+     * \param key         : command line argument name
+     * \param aliasName   : command line argument alias
+     * \param f           : callback
+     * \param description : description of the command line argument
+     *                      (used for the --help) options
+     * \param b           : This command line argument can have an option
      */
-    template <typename Child>
-    struct ArgumentParserBase : public ArgumentParser {
-      //! a simple alias
-      using MemberFuncPtr = void (Child::*)();
-      //! default constructor
-      ArgumentParserBase();
-      /*!
-       * \brief constructor
-       * \param argc : number of arguments given at command line
-       * \param argv : arguments list
-       */
-      ArgumentParserBase(const int, const char* const* const);
-      /*!
-       * \brief register a new callback
-       * \param key         : command line argument name
-       * \param f           : callback
-       * \param description : description of the command line argument
-       *                      (used for the --help) options
-       * \param b           : This command line argument can have an option
-       */
-      void registerNewCallBack(const std::string&,
-                               const MemberFuncPtr&,
-                               const std::string& = "",
-                               const bool = false);
+    void registerNewCallBack(const std::string&,
+                             const std::string&,
+                             const MemberFuncPtr&,
+                             const std::string& = "",
+                             const bool = false);
+    //! destructor
+    ~ArgumentParserBase() override;
 
-      /*!
-       * \brief register a new callback
-       * \param key         : command line argument name
-       * \param aliasName   : command line argument alias
-       * \param f           : callback
-       * \param description : description of the command line argument
-       *                      (used for the --help) options
-       * \param b           : This command line argument can have an option
-       */
-      void registerNewCallBack(const std::string&,
-                               const std::string&,
-                               const MemberFuncPtr&,
-                               const std::string& = "",
-                               const bool = false);
-      //! destructor
-      ~ArgumentParserBase() override;
+   private:
+    //! copy constructor
+    ArgumentParserBase(const ArgumentParserBase&) = delete;
+    //! move constructor
+    ArgumentParserBase(ArgumentParserBase&&) = delete;
+    //! assignement
+    ArgumentParserBase& operator=(const ArgumentParserBase&) = delete;
+    //! move assignement
+    ArgumentParserBase& operator=(ArgumentParserBase&&) = delete;
 
-     private:
-      //! copy constructor
-      ArgumentParserBase(const ArgumentParserBase&) = delete;
-      //! move constructor
-      ArgumentParserBase(ArgumentParserBase&&) = delete;
-      //! assignement
-      ArgumentParserBase& operator=(const ArgumentParserBase&) = delete;
-      //! move assignement
-      ArgumentParserBase& operator=(ArgumentParserBase&&) = delete;
+  };  // end of ArgumentParserBase<Child>
 
-    };  // end of ArgumentParserBase<Child>
-
-  }  // end of namespace utilities
-
-}  // end of namespace tfel
+}  // end of namespace tfel::utilities
 
 #include "TFEL/Utilities/ArgumentParserBase.ixx"
 

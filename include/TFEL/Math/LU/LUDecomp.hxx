@@ -23,39 +23,34 @@
 #include "TFEL/Math/Matrix/MatrixConcept.hxx"
 #include "TFEL/Math/LU/LUException.hxx"
 
-namespace tfel {
+namespace tfel::math {
 
-  namespace math {
-
+  /*!
+   * structure in charge of computing the LU decomposition of a
+   * matrix. Line permutation is performed.
+   */
+  struct LUDecomp {
     /*!
-     * structure in charge of computing the LU decomposition of a
-     * matrix. Line permutation is performed.
+     * Compute the LU decomposition of a matrix. Line permutation is
+     * performed.
+     *
+     * \param[in,out] m   : the matrix to be decomposed
+     * \param[in,out] p   : the permutation vector
+     * \param[in] eps : numerical parameter used to detect null pivot
+     * \return the number of permutation made
+     *
+     * \note The decomposition is done in-place
      */
-    struct LUDecomp {
-      /*!
-       * Compute the LU decomposition of a matrix. Line permutation is
-       * performed.
-       *
-       * \param[in,out] m   : the matrix to be decomposed
-       * \param[in,out] p   : the permutation vector
-       * \param[in] eps : numerical parameter used to detect null pivot
-       * \return the number of permutation made
-       *
-       * \note The decomposition is done in-place
-       */
-      template <typename MatrixType, typename PermutationType>
-      static TFEL_MATH_INLINE2 int exe(
-          MatrixType&,
-          PermutationType&,
-          const numeric_type<MatrixType> =
-              100 * std::numeric_limits<
-                        numeric_type<MatrixType>>::min());
-                        
-    };  // end of struct LUDecomp
+    template <typename MatrixType, typename PermutationType>
+    static TFEL_MATH_INLINE2 int exe(
+        MatrixType&,
+        PermutationType&,
+        const numeric_type<MatrixType> =
+            100 * std::numeric_limits<numeric_type<MatrixType>>::min());
 
-  }  // end of namespace math
+  };  // end of struct LUDecomp
 
-}  // end of namespace tfel
+}  // end of namespace tfel::math
 
 #include "TFEL/Math/LU/LUDecomp.ixx"
 

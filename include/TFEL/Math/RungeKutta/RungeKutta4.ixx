@@ -1,107 +1,84 @@
 /*!
- * \file   include/TFEL/Math/RungeKutta/RungeKutta4.ixx  
+ * \file   include/TFEL/Math/RungeKutta/RungeKutta4.ixx
  * \brief  This file implements the RungeKutta4 class.
  * \author Thomas Helfer
  * \date   01 Sep 2006
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef TFEL_MATH_RUNGE_KUTTA4_IXX
 #define TFEL_MATH_RUNGE_KUTTA4_IXX 1
 
-#include"TFEL/Config/TFELConfig.hxx"
+#include "TFEL/Config/TFELConfig.hxx"
+#include "TFEL/Math/tvector.hxx"
 
-#include"TFEL/Math/tvector.hxx"
+namespace tfel::math {
 
-namespace tfel{
-  
-  namespace math{
+  template <unsigned int N, typename T, typename Func>
+  class RungeKutta4 {
+    T h;
+    T t;
+    tvector<N, T> y;
+    tvector<N, T> k1;
+    tvector<N, T> k2;
+    tvector<N, T> k3;
+    tvector<N, T> k4;
+    tvector<N, T> tmp;
 
-    template<unsigned int N,typename T, typename Func>
-    class RungeKutta4
-    {
+    RungeKutta4(const RungeKutta4&);
+    RungeKutta4& operator=(const RungeKutta4&);
 
-      T h;
-      T t;
-      tvector<N,T> y;
-      tvector<N,T> k1;
-      tvector<N,T> k2;
-      tvector<N,T> k3;
-      tvector<N,T> k4;
-      tvector<N,T> tmp;
+   protected:
+    tvector<N, T> f;
 
-      RungeKutta4(const RungeKutta4&);
-      RungeKutta4& operator=(const RungeKutta4&);
+   public:
+    RungeKutta4() {}
 
-    protected:
+    TFEL_MATH_INLINE2 void set_y(const tvector<N, T>& y_) { this->y = y_; }
 
-      tvector<N,T> f;
+    TFEL_MATH_INLINE2 void set_t(const T t_) { this->t = t_; }
 
-    public:
+    TFEL_MATH_INLINE2 void set_h(const T h_) { this->h = h_; }
 
-      RungeKutta4()
-      {}
-      
-      TFEL_MATH_INLINE2 void set_y(const tvector<N,T>& y_){
-	this->y = y_;
+    void increm() {
+      TFEL_CONSTEXPR const auto Cste_1_2 = T{1} / T{2};
+      TFEL_CONSTEXPR const auto Cste_1_3 = T{1} / T{3};
+      TFEL_CONSTEXPR const auto Cste_1_6 = T{1} / T{6};
+      static_cast<Func&>(*this).computeF(t, y);
+      k1 = h * f;
+      tmp = y + Cste_1_2 * k1;
+      t += Cste_1_2 * h;
+      static_cast<Func&>(*this).computeF(t, tmp);
+      k2 = h * f;
+      tmp = y + Cste_1_2 * k2;
+      static_cast<Func&>(*this).computeF(t, tmp);
+      k3 = h * f;
+      tmp = y + k3;
+      t += Cste_1_2 * h;
+      static_cast<Func&>(*this).computeF(t, tmp);
+      k4 = h * f;
+      y += Cste_1_6 * (k1 + k4) + Cste_1_3 * (k2 + k3);
+    }
+
+    TFEL_MATH_INLINE2 void exe(const T begin, const T end) {
+      this->t = begin;
+      while (this->t < end) {
+        this->increm();
       }
+    }
 
-      TFEL_MATH_INLINE2 void set_t(const T t_){
-	this->t = t_;
-      }
+    TFEL_MATH_INLINE2 const tvector<N, T>& get_y() const { return this->y; }
 
-      TFEL_MATH_INLINE2 void set_h(const T h_){
-	this->h = h_;
-      }
+    TFEL_MATH_INLINE2 T get_t() const { return this->t; }
 
-      void increm(){
-	TFEL_CONSTEXPR const auto Cste_1_2 = T{1}/T{2};
-	TFEL_CONSTEXPR const auto Cste_1_3 = T{1}/T{3};
-	TFEL_CONSTEXPR const auto Cste_1_6 = T{1}/T{6};
-	static_cast<Func&>(*this).computeF(t,y);
-	k1  = h*f;
-	tmp = y+Cste_1_2*k1;
-	t  += Cste_1_2*h;
-	static_cast<Func&>(*this).computeF(t,tmp);
-	k2  = h*f;
-	tmp = y+Cste_1_2*k2;
-	static_cast<Func&>(*this).computeF(t,tmp);
-	k3  = h*f;
-	tmp = y+k3;
-	t  += Cste_1_2*h;
-	static_cast<Func&>(*this).computeF(t,tmp);
-	k4  = h*f;
-	y+=Cste_1_6*(k1+k4)+Cste_1_3*(k2+k3);
-     }
-	
-      TFEL_MATH_INLINE2 void exe(const T begin,const T end){
-	this->t = begin;
-	while(this->t<end){
-	  this->increm();
-	}
-      }
+    TFEL_MATH_INLINE2 T get_h() const { return this->h; }
+  };
 
-      TFEL_MATH_INLINE2 const tvector<N,T>& get_y() const{
-	return this->y;
-      }
-
-      TFEL_MATH_INLINE2 T get_t() const {
-	return this->t;
-      }
-
-      TFEL_MATH_INLINE2 T get_h() const {
-	return this->h;
-      }
-
-    };
-    
-  } // end of namespace math
-
-} // end of namespace tfel
+}  // end of namespace tfel::math
 
 #endif /* TFEL_MATH_RUNGE_KUTTA4_IXX */

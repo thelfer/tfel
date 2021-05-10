@@ -637,7 +637,7 @@ AC_OUTPUT([debug.sh Makefile Doxyfile docs/Makefile docs/tfel/Makefile
 	   docs/doxygen/Makefile cmake/Makefile cmake/modules/Makefile
 	   include/Makefile
 	   include/TFEL/Config/GetInstallPath-defines.hxx src/Makefile
-	   src/PhysicalConstants/Makefile src/Config/Makefile
+	   src/Config/Makefile
 	   src/Config/GetTFELVersion.c src/Tests/Makefile
 	   src/Exception/Makefile src/Utilities/Makefile
 	   src/Glossary/Makefile src/Math/Makefile

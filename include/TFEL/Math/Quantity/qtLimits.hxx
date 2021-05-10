@@ -11,8 +11,8 @@
  * project under specific licensing conditions. 
  */
 
-#ifndef LIB_TFEL_QTLIMITS_HXX
-#define LIB_TFEL_QTLIMITS_HXX 
+#ifndef LIB_TFEL_MATH_QTLIMITS_HXX
+#define LIB_TFEL_MATH_QTLIMITS_HXX 
 
 #include<limits>
 
@@ -84,5 +84,5 @@ namespace std{
 
 } // end of namespace std
 
-#endif /* LIB_TFEL_QTLIMITS_HXX */
+#endif /* LIB_TFEL_MATH_QTLIMITS_HXX */
 

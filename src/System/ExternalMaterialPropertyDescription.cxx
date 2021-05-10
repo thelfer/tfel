@@ -19,52 +19,52 @@
 #include "TFEL/System/ExternalLibraryManager.hxx"
 #include "TFEL/System/ExternalMaterialPropertyDescription.hxx"
 
-namespace tfel {
+namespace tfel::system {
 
-  namespace system {
+  ExternalMaterialPropertyData::ExternalMaterialPropertyData() = default;
+  ExternalMaterialPropertyData::ExternalMaterialPropertyData(
+      ExternalMaterialPropertyData&&) = default;
+  ExternalMaterialPropertyData::ExternalMaterialPropertyData(
+      const ExternalMaterialPropertyData&) = default;
+  ExternalMaterialPropertyData& ExternalMaterialPropertyData::operator=(
+      ExternalMaterialPropertyData&&) = default;
+  ExternalMaterialPropertyData& ExternalMaterialPropertyData::operator=(
+      const ExternalMaterialPropertyData&) = default;
 
-    ExternalMaterialPropertyData::ExternalMaterialPropertyData() = default;
-    ExternalMaterialPropertyData::ExternalMaterialPropertyData(ExternalMaterialPropertyData&&) =
-        default;
-    ExternalMaterialPropertyData::ExternalMaterialPropertyData(const ExternalMaterialPropertyData&) =
-        default;
-    ExternalMaterialPropertyData& ExternalMaterialPropertyData::operator=(
-        ExternalMaterialPropertyData&&) = default;
-    ExternalMaterialPropertyData& ExternalMaterialPropertyData::operator=(
-        const ExternalMaterialPropertyData&) = default;
+  ExternalMaterialPropertyDescription::ExternalMaterialPropertyDescription(
+      const std::string& l, const std::string& f) {
+    auto& elm = ExternalLibraryManager::getExternalLibraryManager();
+    this->library = l;
+    this->material_property = f;
+    this->tfel_version = elm.getTFELVersion(l, f);
+    this->build_id = elm.getBuildId(l, f);
+    this->source = elm.getSource(l, f);
+    this->mfront_interface = elm.getInterface(l, f);
+    this->arguments = elm.getMaterialPropertyVariables(l, f);
+  }  // end of
+     // ExternalMaterialPropertyDescription::ExternalMaterialPropertyDescription
 
-    ExternalMaterialPropertyDescription::ExternalMaterialPropertyDescription(
-        const std::string& l, const std::string& f) {
-      auto& elm = ExternalLibraryManager::getExternalLibraryManager();
-      this->library = l;
-      this->material_property = f;
-      this->tfel_version = elm.getTFELVersion(l, f);
-      this->build_id = elm.getBuildId(l, f);
-      this->source = elm.getSource(l, f);
-      this->mfront_interface = elm.getInterface(l, f);
-      this->arguments = elm.getMaterialPropertyVariables(l, f);
-    } // end of ExternalMaterialPropertyDescription::ExternalMaterialPropertyDescription
+  ExternalMaterialPropertyDescription::ExternalMaterialPropertyDescription() =
+      default;
+  ExternalMaterialPropertyDescription::ExternalMaterialPropertyDescription(
+      ExternalMaterialPropertyDescription&&) = default;
+  ExternalMaterialPropertyDescription::ExternalMaterialPropertyDescription(
+      const ExternalMaterialPropertyDescription&) = default;
+  ExternalMaterialPropertyDescription& ExternalMaterialPropertyDescription::
+  operator=(const ExternalMaterialPropertyDescription&) = default;
+  ExternalMaterialPropertyDescription& ExternalMaterialPropertyDescription::
+  operator=(ExternalMaterialPropertyDescription&&) = default;
+  ExternalMaterialPropertyDescription::~ExternalMaterialPropertyDescription() =
+      default;
 
-    ExternalMaterialPropertyDescription::ExternalMaterialPropertyDescription() = default;
-    ExternalMaterialPropertyDescription::ExternalMaterialPropertyDescription(
-        ExternalMaterialPropertyDescription&&) = default;
-    ExternalMaterialPropertyDescription::ExternalMaterialPropertyDescription(
-        const ExternalMaterialPropertyDescription&) = default;
-    ExternalMaterialPropertyDescription& ExternalMaterialPropertyDescription::operator=(
-        const ExternalMaterialPropertyDescription&) = default;
-    ExternalMaterialPropertyDescription& ExternalMaterialPropertyDescription::operator=(
-        ExternalMaterialPropertyDescription&&) = default;
-    ExternalMaterialPropertyDescription::~ExternalMaterialPropertyDescription() = default;
-
-  }  // end of namespace system
-
-}  // end of namespace tfel
+}  // end of namespace tfel::system
 
 extern "C" {
 
-char* getExternalMaterialPropertyData(tfel::system::ExternalMaterialPropertyData* const d,
-                               const char* const l,
-                               const char* const f) {
+char* getExternalMaterialPropertyData(
+    tfel::system::ExternalMaterialPropertyData* const d,
+    const char* const l,
+    const char* const f) {
   auto report = [](const char* e) {
     auto strndup = [](const char* s, size_t n) -> char* {
       if (s == nullptr) {
@@ -105,7 +105,8 @@ tfel::system::ExternalMaterialPropertyData* newExternalMaterialPropertyData() {
   return new tfel::system::ExternalMaterialPropertyData;
 }
 
-void freeExternalMaterialPropertyData(tfel::system::ExternalMaterialPropertyData* ptr) {
+void freeExternalMaterialPropertyData(
+    tfel::system::ExternalMaterialPropertyData* ptr) {
   delete ptr;
 }
 

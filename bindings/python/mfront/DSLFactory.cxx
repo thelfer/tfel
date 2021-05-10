@@ -14,9 +14,7 @@
 #include<boost/python.hpp>
 #include"MFront/DSLFactory.hxx"
 
-void
-declareDSLFactory()
-{
+void declareDSLFactory() {
   using namespace boost::python;
   using namespace mfront;
   class_<DSLFactory,boost::noncopyable>("DSLFactory",no_init)

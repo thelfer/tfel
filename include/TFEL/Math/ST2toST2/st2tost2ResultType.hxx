@@ -39,7 +39,11 @@ namespace tfel::math {
    * \see   ComputeBinaryOperationResult
    */
   template <unsigned short N, typename T, typename Scal>
-  class ComputeBinaryOperationResult<ST2toST2Tag, ScalarTag, st2tost2<N, T>, Scal, OpMult> {
+  class ComputeBinaryOperationResult<ST2toST2Tag,
+                                     ScalarTag,
+                                     st2tost2<N, T>,
+                                     Scal,
+                                     OpMult> {
     typedef result_type<T, Scal, OpMult> ResBase_;
 
    public:
@@ -54,7 +58,11 @@ namespace tfel::math {
    * \see   ComputeBinaryOperationResult
    */
   template <unsigned short N, typename T, typename Scal>
-  class ComputeBinaryOperationResult<ST2toST2Tag, ScalarTag, st2tost2<N, T>, Scal, OpDiv> {
+  class ComputeBinaryOperationResult<ST2toST2Tag,
+                                     ScalarTag,
+                                     st2tost2<N, T>,
+                                     Scal,
+                                     OpDiv> {
     typedef result_type<T, Scal, OpDiv> ResBase_;
 
    public:
@@ -69,7 +77,11 @@ namespace tfel::math {
    * \see   ComputeBinaryOperationResult
    */
   template <typename Scal, unsigned short N, typename T>
-  class ComputeBinaryOperationResult<ScalarTag, ST2toST2Tag, Scal, st2tost2<N, T>, OpMult> {
+  class ComputeBinaryOperationResult<ScalarTag,
+                                     ST2toST2Tag,
+                                     Scal,
+                                     st2tost2<N, T>,
+                                     OpMult> {
     typedef result_type<Scal, T, OpMult> ResBase_;
 
    public:

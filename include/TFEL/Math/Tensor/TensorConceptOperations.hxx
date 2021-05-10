@@ -11,8 +11,8 @@
  * project under specific licensing conditions.
  */
 
-#ifndef LIB_TFEL_TENSOR_CONCEPT_OPERATIONS_HXX
-#define LIB_TFEL_TENSOR_CONCEPT_OPERATIONS_HXX
+#ifndef LIB_TFEL_MATH_TENSOR_CONCEPT_OPERATIONS_HXX
+#define LIB_TFEL_MATH_TENSOR_CONCEPT_OPERATIONS_HXX
 
 #include <cmath>
 #include <type_traits>
@@ -213,4 +213,4 @@ namespace tfel::math {
 
 #include "TFEL/Math/Tensor/TensorConceptOperations.ixx"
 
-#endif /* LIB_TFEL_TENSOR_CONCEPT_OPERATIONS_HXX */
+#endif /* LIB_TFEL_MATH_TENSOR_CONCEPT_OPERATIONS_HXX */

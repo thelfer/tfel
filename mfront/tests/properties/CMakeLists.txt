@@ -47,8 +47,6 @@ macro(add_mfront_generated_source lib interface ext file)
       COMMAND "set"
       ARGS "PATH=$<TARGET_FILE_DIR:TFELConfig>;%PATH%"
       COMMAND "set"
-      ARGS "PATH=$<TARGET_FILE_DIR:TFELPhysicalConstants>;%PATH%"
-      COMMAND "set"
       ARGS "PATH=$<TARGET_FILE_DIR:TFELUnicodeSupport>;%PATH%"
       COMMAND "${mfront_executable}"
       ARGS    "--search-path=${PROJECT_SOURCE_DIR}/mfront/tests/properties"

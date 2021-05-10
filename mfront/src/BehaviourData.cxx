@@ -54,6 +54,7 @@ namespace mfront {
       "ComputeInternalEnergy";
   const char* const BehaviourData::ComputeDissipatedEnergy =
       "ComputeDissipatedEnergy";
+  const char* const BehaviourData::ComputeSpeedOfSound = "ComputeSpeedOfSound";
   const char* const BehaviourData::APrioriTimeStepScalingFactor =
       "APrioriTimeStepScalingFactor";
   const char* const BehaviourData::Integrator = "Integrator";

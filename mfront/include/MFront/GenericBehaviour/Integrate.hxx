@@ -14,8 +14,10 @@
 #ifndef LIB_MFRONT_GENERICBEHAVIOUR_INTEGRATE_HXX
 #define LIB_MFRONT_GENERICBEHAVIOUR_INTEGRATE_HXX
 
+#include <cstring>
 #include <algorithm>
 #include "TFEL/Raise.hxx"
+#include "TFEL/Math/General/IEEE754.hxx"
 #include "TFEL/Math/t2tot2.hxx"
 #include "TFEL/Math/t2tost2.hxx"
 #include "TFEL/Math/st2tost2.hxx"
@@ -36,50 +38,50 @@ namespace mfront::gb {
   void exportTangentOperator(real* const v, const real K) {
     *v = K;
   }  // end of exportTangentOperator
-     /*!
-      * \brief export the tangent operator used by some generic behaviours.
-      * \tparam real: numeric type used
-      * \tparam N: size of the array containing the tangent operator
-      * \param[out] v: exported values
-      * \param[in] K: computed tangent operator
-      */
+  /*!
+   * \brief export the tangent operator used by some generic behaviours.
+   * \tparam real: numeric type used
+   * \tparam N: size of the array containing the tangent operator
+   * \param[out] v: exported values
+   * \param[in] K: computed tangent operator
+   */
   template <typename real, unsigned short N>
   void exportTangentOperator(real* const v,
                              const tfel::math::tvector<N, real>& K) {
     std::copy(K.begin(), K.end(), v);
   }  // end of exportTangentOperator
-     /*!
-      * \brief export the tangent operator used by some generic behaviours.
-      * \tparam real: numeric type used
-      * \tparam N: space dimension
-      * \param[out] v: exported values
-      * \param[in] K: computed tangent operator
-      */
+  /*!
+   * \brief export the tangent operator used by some generic behaviours.
+   * \tparam real: numeric type used
+   * \tparam N: space dimension
+   * \param[out] v: exported values
+   * \param[in] K: computed tangent operator
+   */
   template <typename real, unsigned short N>
   void exportTangentOperator(real* const v,
                              const tfel::math::t2tost2<N, real>& K) {
     std::copy(K.begin(), K.end(), v);
   }  // end of exportTangentOperator
-     /*!
-      * \brief export the tangent operator used by some generic behaviours.
-      * \tparam real: numeric type used
-      * \tparam N: space dimension
-      * \param[out] v: exported values
-      * \param[in] K: computed tangent operator
-      */
+  /*!
+   * \brief export the tangent operator used by some generic behaviours.
+   * \tparam real: numeric type used
+   * \tparam N: space dimension
+   * \param[out] v: exported values
+   * \param[in] K: computed tangent operator
+   */
   template <typename real, unsigned short N>
   void exportTangentOperator(real* const v,
                              const tfel::math::t2tot2<N, real>& K) {
     std::copy(K.begin(), K.end(), v);
   }  // end of exportTangentOperator
-     /*!
-      * \brief export the tangent operator used by standard small
-      * strain behaviours.
-      * \tparam real: numeric type used
-      * \tparam N: space dimension
-      * \param[out] v: exported values
-      * \param[in] K: computed tangent operator
-      */
+  /*!
+   * \brief export the tangent operator used by standard small
+   * strain behaviours.
+   * \tparam real: numeric type used
+   * \tparam N: space dimension
+   * \param[out] v: exported values
+   * \param[in] K: computed tangent operator
+   */
   template <typename real, unsigned short N>
   void exportTangentOperator(real* const v,
                              const tfel::math::st2tost2<N, real>& K) {
@@ -194,6 +196,26 @@ namespace mfront::gb {
   };  // end of struct DoNothingEnergyComputer
 
   /*!
+   * \brief a simple function to report integration failure when
+   * an exception is thrown.
+   */
+  inline void reportIntegrationFailure(mfront_gb_BehaviourData& d) {
+    constexpr std::size_t bsize = 511;
+    if (d.error_message == nullptr) {
+      return;
+    }
+    try {
+      throw;
+    } catch (std::exception& e) {
+      std::strncpy(d.error_message, e.what(), bsize);
+    } catch (...) {
+      const char* error = "unknown exception";
+      std::strncpy(d.error_message, error, bsize);
+    }
+    d.error_message[bsize] = '\0';
+  }  // end of reportIntegrationFailure
+
+  /*!
    * \brief integrate the behaviour over a time step
    * \tparam Behaviour: class implementing the behaviour
    * \param[in,out] d: behaviour data
@@ -204,64 +226,71 @@ namespace mfront::gb {
   int integrate(mfront_gb_BehaviourData& d,
                 const typename Behaviour::SMFlag f,
                 const tfel::material::OutOfBoundsPolicy p) {
-    //! a simple alias
     using MTraits = tfel::material::MechanicalBehaviourTraits<Behaviour>;
-    //! a simple alias
     using IEnergyComputer =
         typename std::conditional<MTraits::hasComputeInternalEnergy,
                                   InternalEnergyComputer,
                                   DoNothingEnergyComputer>::type;
-    //! a simple alias
     using DEnergyComputer =
         typename std::conditional<MTraits::hasComputeDissipatedEnergy,
                                   DissipatedEnergyComputer,
                                   DoNothingEnergyComputer>::type;
     Behaviour b(d);
     b.setOutOfBoundsPolicy(p);
+    auto& rdt = *(d.rdt);
     try {
       b.initialize();
       b.checkBounds();
-      if (d.K[0] < -0.25) {
-        return computePredictionOperator(b, d, f);
+      const auto bs = d.K[0] > 50;
+      const auto Ke = bs ? d.K[0] - 100 : d.K[0];
+      if (Ke < -0.25) {
+        computePredictionOperator(b, d, f);
+        if (bs) {
+          *(d.speed_of_sound) = b.computeSpeedOfSound(*(d.s0.mass_density));
+        }
       }
-      const auto smt = [&d] {
-        if (d.K[0] < 0.5) {
+      const auto smt = [&Ke] {
+        if (Ke < 0.5) {
           return Behaviour::NOSTIFFNESSREQUESTED;
-        } else if ((0.5 < d.K[0]) && (d.K[0] < 1.5)) {
+        } else if ((0.5 < Ke) && (Ke < 1.5)) {
           return Behaviour::ELASTIC;
-        } else if ((1.5 < d.K[0]) && (d.K[0] < 2.5)) {
+        } else if ((1.5 < Ke) && (Ke < 2.5)) {
           return Behaviour::SECANTOPERATOR;
-        } else if ((2.5 < d.K[0]) && (d.K[0] < 3.5)) {
+        } else if ((2.5 < Ke) && (Ke < 3.5)) {
           return Behaviour::TANGENTOPERATOR;
         }
         return Behaviour::CONSISTENTTANGENTOPERATOR;
       }();
-      auto tsf = b.computeAPrioriTimeStepScalingFactor(d.rdt);
-      d.rdt = tsf.second;
+      auto tsf = b.computeAPrioriTimeStepScalingFactor(rdt);
+      rdt = tsf.second;
       if (!tsf.first) {
         return -1;
       }
       const auto r = b.integrate(f, smt);
       if (r == Behaviour::FAILURE) {
-        d.rdt = b.getMinimalTimeStepScalingFactor();
+        rdt = b.getMinimalTimeStepScalingFactor();
         return -1;
       }
-      const auto atsf = b.computeAPosterioriTimeStepScalingFactor(d.rdt);
-      d.rdt = std::min(atsf.second, d.rdt);
+      const auto atsf = b.computeAPosterioriTimeStepScalingFactor(rdt);
+      rdt = std::min(atsf.second, rdt);
       if (!atsf.first) {
         return -1;
       }
       b.exportStateData(d.s1);
-      if (d.K[0] > 0.5) {
+      if (Ke > 0.5) {
         exportTangentOperator(d.K, b.getTangentOperator());
       }
       IEnergyComputer::exe(d, b);
       DEnergyComputer::exe(d, b);
+      if (bs) {
+        *(d.speed_of_sound) = b.computeSpeedOfSound(*(d.s1.mass_density));
+      }
     } catch (...) {
-      d.rdt = b.getMinimalTimeStepScalingFactor();
+      reportIntegrationFailure(d);
+      rdt = b.getMinimalTimeStepScalingFactor();
       return -1;
     }
-    return d.rdt < 0.99 ? 0 : 1;
+    return rdt < 0.99 ? 0 : 1;
   }  // end of integrate
 
 }  // end of namespace mfront::gb

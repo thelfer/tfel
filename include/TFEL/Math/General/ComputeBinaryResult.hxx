@@ -11,8 +11,8 @@
  * project under specific licensing conditions.
  */
 
-#ifndef LIB_TFEL_COMPUTEBINARYRESULT_HXX
-#define LIB_TFEL_COMPUTEBINARYRESULT_HXX
+#ifndef LIB_TFEL_MATH_COMPUTEBINARYRESULT_HXX
+#define LIB_TFEL_MATH_COMPUTEBINARYRESULT_HXX
 
 #include <type_traits>
 #include "TFEL/TypeTraits/IsInvalid.hxx"
@@ -257,4 +257,4 @@ namespace tfel::math {
 
 }  // namespace tfel::math
 
-#endif /* LIB_TFEL_COMPUTEBINARYRESULT_HXX */
+#endif /* LIB_TFEL_MATH_COMPUTEBINARYRESULT_HXX */

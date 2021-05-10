@@ -124,6 +124,10 @@ namespace mfront {
     this->reserveName("minimal_time_step_scaling_factor");
     this->reserveName("maximal_time_step_scaling_factor");
     this->reserveName("current_time_step_scaling_factor");
+    this->reserveName("v_sound");
+    this->reserveName(tfel::unicode::getMangledString("vₛ"));
+    this->reserveName("rho_m0");
+    this->reserveName(tfel::unicode::getMangledString("ρₘ₀"));
     // default call backs
     auto add = [this](const std::string& k, const MemberFunc f) {
       this->callBacks.insert({k, [this, f] { (this->*f)(); }});
@@ -218,20 +222,21 @@ namespace mfront {
     add("@GlidingSystems", &BehaviourDSLCommon::treatSlipSystems);
     add("@SlidingSystems", &BehaviourDSLCommon::treatSlipSystems);
     add("@InteractionMatrix", &BehaviourDSLCommon::treatInteractionMatrix);
+    add("@SpeedOfSound", &BehaviourDSLCommon::treatSpeedOfSound);
     add("@DislocationsMeanFreePathInteractionMatrix",
         &BehaviourDSLCommon::treatDislocationsMeanFreePathInteractionMatrix);
-  }  // end of BehaviourDSLCommon::BehaviourDSLCommon
+  }  // end of BehaviourDSLCommon
 
   std::string BehaviourDSLCommon::getMaterialKnowledgeIdentifier() const {
     if (this->mb.isBehaviourNameDefined()) {
       return this->mb.getBehaviourName();
     }
     return {};
-  }  // end of BehaviourDSLCommon::getMaterialKnowledgeIdentifier
+  }  // end of getMaterialKnowledgeIdentifier
 
   std::string BehaviourDSLCommon::getMaterialName() const {
     return this->mb.getMaterialName();
-  }  // end of BehaviourDSLCommon::getMaterialName(
+  }  // end of getMaterialName(
 
   void BehaviourDSLCommon::analyse() {
     const auto& mh = ModellingHypothesis::getModellingHypotheses();
@@ -335,7 +340,7 @@ namespace mfront {
         }
       }
     }
-  }  // end of BehaviourDSLCommon::analyse
+  }  // end of analyse
 
   void BehaviourDSLCommon::importFile(
       const std::string& fn,
@@ -344,24 +349,24 @@ namespace mfront {
     this->fd.fileName = fn;
     this->openFile(this->fd.fileName, ecmds, s);
     this->analyse();
-  }  // end of BehaviourDSLCommon::importFile
+  }  // end of importFile
 
   void BehaviourDSLCommon::analyseString(const std::string& s) {
     this->fd.fileName = "user defined string";
     this->parseString(s);
     this->analyse();
-  }  // end of BehaviourDSLCommon::analyseString
+  }  // end of analyseString
 
   void BehaviourDSLCommon::getKeywordsList(std::vector<std::string>& k) const {
     for (const auto& c : this->callBacks) {
       k.push_back(c.first);
     }
-  }  // end of BehaviourDSLCommon::getKeywordsList
+  }  // end of getKeywordsList
 
   void BehaviourDSLCommon::addCallBack(const std::string& k, const CallBack c) {
     this->callBacks.insert({k, c});
     this->registredKeyWords.insert(k);
-  }  // end of BehaviourDSLCommon::addCallBack
+  }  // end of addCallBack
 
   void BehaviourDSLCommon::addHook(const std::string& k, const Hook h) {
     if (this->callBacks.find(k) == this->callBacks.end()) {
@@ -369,7 +374,7 @@ namespace mfront {
                               "no callback called '" + k + "'");
     }
     this->hooks[k].push_back(h);
-  }  // end of BehaviourDSLCommon::addHook
+  }  // end of addHook
 
   void BehaviourDSLCommon::setMaterial(const std::string& m) {
     if (!isValidMaterialName(m)) {
@@ -382,7 +387,7 @@ namespace mfront {
                               "resulting class name is not valid (read '" +
                                   this->mb.getClassName() + "')");
     }
-  }  // end of BehaviourDSLCommon::setMaterial
+  }  // end of setMaterial
 
   void BehaviourDSLCommon::treatDisabledCallBack() {
     --(this->current);
@@ -426,7 +431,7 @@ namespace mfront {
     this->treatUnsupportedCodeBlockOptions(o);
     this->treatCodeBlock(o, n, m, a, b);
     return o;
-  }  // end of BehaviourDSLCommon::treatCodeBlock
+  }  // end of treatCodeBlock
 
   void BehaviourDSLCommon::treatCodeBlock(
       const BehaviourDSLCommon::CodeBlockOptions& o,
@@ -441,7 +446,7 @@ namespace mfront {
       const auto c = this->readNextBlock(h, n, m, a, b);
       this->mb.setCode(h, n, c, o.m, o.p);
     }
-  }  // end of BehaviourDSLCommon::treatCodeBlock
+  }  // end of treatCodeBlock
 
   void BehaviourDSLCommon::treatCodeBlock(
       const BehaviourDSLCommon::CodeBlockOptions& o,
@@ -456,7 +461,7 @@ namespace mfront {
       const auto c = this->readNextBlock(h, n, m, b);
       this->mb.setCode(h, n, c, o.m, o.p);
     }
-  }  // end of BehaviourDSLCommon::treatCodeBlock
+  }  // end of treatCodeBlock
 
   CodeBlock BehaviourDSLCommon::readNextBlock(
       const Hypothesis h,
@@ -479,7 +484,7 @@ namespace mfront {
     this->getSymbols(option.symbols, h, n);
     const auto& c = this->readNextBlock(option);
     return c;
-  }  // end of BehaviourDSLCommon::readNextBlock
+  }  // end of readNextBlock
 
   CodeBlock BehaviourDSLCommon::readNextBlock(
       const Hypothesis h,
@@ -499,7 +504,7 @@ namespace mfront {
     this->getSymbols(option.symbols, h, n);
     const auto c = this->readNextBlock(option);
     return c;
-  }  // end of BehaviourDSLCommon::readNextBlock
+  }  // end of readNextBlock
 
   BehaviourDSLCommon::CodeBlockOptions BehaviourDSLCommon::treatCodeBlock(
       const std::string& n1,
@@ -516,7 +521,7 @@ namespace mfront {
     this->treatUnsupportedCodeBlockOptions(o);
     this->treatCodeBlock(o, n1, n2, m1, m2, b);
     return o;
-  }  // end of BehaviourDSLCommon::treatCodeBlock
+  }  // end of treatCodeBlock
 
   void BehaviourDSLCommon::treatCodeBlock(
       const BehaviourDSLCommon::CodeBlockOptions& o,
@@ -552,7 +557,7 @@ namespace mfront {
       this->mb.setCode(h, n1, c1, o.m, o.p);
       this->mb.setCode(h, n2, c2, o.m, o.p);
     }
-  }  // end of BehaviourDSLCommon::treatCodeBlock
+  }  // end of treatCodeBlock
 
   void BehaviourDSLCommon::addMaterialProperties(
       const VariableDescriptionContainer& mps) {
@@ -562,7 +567,7 @@ namespace mfront {
                    "BehaviourDSLCommon::addMaterialProperties: "
                    "adding material properties is not allowed");
     this->mb.addMaterialProperties(h, mps);
-  }  // end of BehaviourDSLCommon::addMaterialProperties
+  }  // end of addMaterialProperties
 
   void BehaviourDSLCommon::addParameters(
       const VariableDescriptionContainer& params) {
@@ -572,7 +577,7 @@ namespace mfront {
                    "BehaviourDSLCommon::addParameters: "
                    "adding parameters is not allowed");
     this->mb.addParameters(h, params);
-  }  // end of BehaviourDSLCommon::addParameters
+  }  // end of addParameters
 
   void BehaviourDSLCommon::addStateVariables(
       const VariableDescriptionContainer& isvs) {
@@ -582,7 +587,7 @@ namespace mfront {
                    "BehaviourDSLCommon::addStateVariables: "
                    "adding state variables is not allowed");
     this->mb.addStateVariables(h, isvs);
-  }  // end of BehaviourDSLCommon::addStateVariables
+  }  // end of addStateVariables
 
   void BehaviourDSLCommon::addAuxiliaryStateVariables(
       const VariableDescriptionContainer& isvs) {
@@ -592,7 +597,7 @@ namespace mfront {
                    "BehaviourDSLCommon::addAuxiliaryStateVariables: "
                    "adding auxiliary state variables is not allowed");
     this->mb.addAuxiliaryStateVariables(h, isvs);
-  }  // end of BehaviourDSLCommon::addAuxiliaryStateVariables
+  }  // end of addAuxiliaryStateVariables
 
   void BehaviourDSLCommon::addExternalStateVariables(
       const VariableDescriptionContainer& esvs) {
@@ -602,7 +607,7 @@ namespace mfront {
                    "BehaviourDSLCommon::addExternalStateVariables: "
                    "adding external state variables is not allowed");
     this->mb.addExternalStateVariables(h, esvs);
-  }  // end of BehaviourDSLCommon::addExternalStateVariables
+  }  // end of addExternalStateVariables
 
   void BehaviourDSLCommon::addLocalVariables(
       const VariableDescriptionContainer& lvs) {
@@ -612,7 +617,7 @@ namespace mfront {
                    "BehaviourDSLCommon::addLocalVariables: "
                    "adding local variables is not allowed");
     this->mb.addLocalVariables(h, lvs);
-  }  // end of BehaviourDSLCommon::addLocalVariables
+  }  // end of addLocalVariables
 
   void BehaviourDSLCommon::addIntegrationVariables(
       const VariableDescriptionContainer& ivs) {
@@ -622,7 +627,7 @@ namespace mfront {
                    "BehaviourDSLCommon::addIntegrationVariables: "
                    "adding integration variables is not allowed");
     this->mb.addIntegrationVariables(h, ivs);
-  }  // end of BehaviourDSLCommon::addIntegrationVariables
+  }  // end of addIntegrationVariables
 
   void BehaviourDSLCommon::writeModelCall(std::ostream& out,
                                           std::vector<std::string>& tmpnames,
@@ -717,39 +722,39 @@ namespace mfront {
   BehaviourDSLCommon::CodeBlockOptions::CodeBlockOptions()
       : p(BehaviourData::BODY), m(BehaviourData::CREATE) {
     this->hypotheses.insert(ModellingHypothesis::UNDEFINEDHYPOTHESIS);
-  }  // end of BehaviourDSLCommon::CodeBlockOptions::CodeBlockOptions
+  }  // end of CodeBlockOptions::CodeBlockOptions
 
   BehaviourDSLCommon::CodeBlockOptions::~CodeBlockOptions() = default;
 
   const BehaviourDescription& BehaviourDSLCommon::getBehaviourDescription()
       const {
     return this->mb;
-  }  // end of BehaviourDSLCommon::getBehaviourDescription
+  }  // end of getBehaviourDescription
 
   std::string BehaviourDSLCommon::getClassName() const {
     return this->mb.getClassName();
-  }  // end of BehaviourDSLCommon::getClassName
+  }  // end of getClassName
 
   void BehaviourDSLCommon::addMaterialLaw(const std::string& m) {
     this->mb.addMaterialLaw(m);
-  }  // end of BehaviourDSLCommon::addMaterialLaw
+  }  // end of addMaterialLaw
 
   void BehaviourDSLCommon::appendToIncludes(const std::string& c) {
     this->mb.appendToIncludes(c);
-  }  // end of BehaviourDSLCommon::appendToIncludes
+  }  // end of appendToIncludes
 
   void BehaviourDSLCommon::appendToMembers(const std::string& c) {
     this->mb.appendToMembers(ModellingHypothesis::UNDEFINEDHYPOTHESIS, c, true);
-  }  // end of BehaviourDSLCommon::appendToMembers
+  }  // end of appendToMembers
 
   void BehaviourDSLCommon::appendToPrivateCode(const std::string& c) {
     this->mb.appendToPrivateCode(ModellingHypothesis::UNDEFINEDHYPOTHESIS, c,
                                  true);
-  }  // end of BehaviourDSLCommon::appendToPrivateCode
+  }  // end of appendToPrivateCode
 
   void BehaviourDSLCommon::appendToSources(const std::string& c) {
     this->mb.appendToSources(c);
-  }  // end of BehaviourDSLCommon::appendToSources
+  }  // end of appendToSources
 
   void BehaviourDSLCommon::appendToHypothesesList(std::set<Hypothesis>& h,
                                                   const std::string& v) const {
@@ -782,7 +787,7 @@ namespace mfront {
                                 "hypothesis '" + v + "' multiply defined");
       }
     }
-  }  // end of BehaviourDSLCommon::appendToHypothesesList
+  }  // end of appendToHypothesesList
 
   void BehaviourDSLCommon::getSymbols(
       std::map<std::string, std::string>& symbols,
@@ -793,7 +798,7 @@ namespace mfront {
     addSymbol(symbols, "\u2297", "^");
     addSymbol(symbols, "\u22C5", "*");
     this->mb.getSymbols(symbols, h);
-  }  // end of BehaviourDSLCommon::getSymbols
+  }  // end of getSymbols
 
   void BehaviourDSLCommon::readCodeBlockOptions(CodeBlockOptions& o,
                                                 const bool s) {
@@ -889,12 +894,12 @@ namespace mfront {
                                 "specialisation is not allowed");
       }
     }
-  }  // end of BehaviourDSLCommon::readCodeBlockOptions
+  }  // end of readCodeBlockOptions
 
   std::shared_ptr<MaterialPropertyDescription>
   BehaviourDSLCommon::handleMaterialPropertyDescription(const std::string& f) {
     return DSLBase::handleMaterialPropertyDescription(f);
-  }  // end of BehaviourDSLCommon::handleMaterialPropertyDescription
+  }  // end of handleMaterialPropertyDescription
 
   ModelDescription BehaviourDSLCommon::getModelDescription(
       const std::string& f) {
@@ -935,7 +940,7 @@ namespace mfront {
                      << "end of file '" << f << "' treatment\n";
     }
     return md;
-  }  // end of BehaviourDSLCommon::getModelDescription
+  }  // end of getModelDescription
 
   void BehaviourDSLCommon::declareMainVariables() {
     decltype(this->gradients.size()) n =
@@ -947,7 +952,7 @@ namespace mfront {
       this->thermodynamic_forces.erase(this->thermodynamic_forces.begin());
       --n;
     }
-  }  // end of BehaviourDSLCommon::declareMainVariables
+  }  // end of declareMainVariables
 
   void BehaviourDSLCommon::treatGradient() {
     VariableDescriptionContainer ngradients;
@@ -959,7 +964,7 @@ namespace mfront {
                     this->gradients.emplace_back(std::move(g));
                   });
     this->declareMainVariables();
-  }  // end of BehaviourDSLCommon::treatGradient
+  }  // end of treatGradient
 
   void BehaviourDSLCommon::treatThermodynamicForce() {
     VariableDescriptionContainer ntfs;
@@ -969,7 +974,12 @@ namespace mfront {
                     this->thermodynamic_forces.emplace_back(f);
                   });
     this->declareMainVariables();
-  }  // end of BehaviourDSLCommon::treatThermodynamicForce
+  }  // end of treatThermodynamicForce
+
+  void BehaviourDSLCommon::treatSpeedOfSound() {
+    this->treatCodeBlock(*this, BehaviourData::ComputeSpeedOfSound,
+                         &BehaviourDSLCommon::standardModifier, true, true);
+  }  // end of treatSpeedOfSound
 
   void BehaviourDSLCommon::treatTangentOperatorBlock() {
     const char* const m = "BehaviourDSLCommon::treatTangentOperatorBlock";
@@ -979,7 +989,7 @@ namespace mfront {
     this->checkNotEndOfFile(m);
     this->readSpecifiedToken(m, ";");
     this->mb.setTangentOperatorBlocks(std::vector<std::string>(1u, b));
-  }  // end of BehaviourDSLCommon::treatTangentOperatorBlock
+  }  // end of treatTangentOperatorBlock
 
   void BehaviourDSLCommon::treatTangentOperatorBlocks() {
     const char* const m = "BehaviourDSLCommon::treatTangentOperatorBlocks";
@@ -994,7 +1004,7 @@ namespace mfront {
       blocks.push_back(v.value);
     }
     this->mb.setTangentOperatorBlocks(blocks);
-  }  // end of BehaviourDSLCommon::treatTangentOperatorBlocks
+  }  // end of treatTangentOperatorBlocks
 
   void BehaviourDSLCommon::treatAdditionalTangentOperatorBlock() {
     const char* const m =
@@ -1005,7 +1015,7 @@ namespace mfront {
     this->checkNotEndOfFile(m);
     this->readSpecifiedToken(m, ";");
     this->mb.addTangentOperatorBlock(b);
-  }  // end of BehaviourDSLCommon::treatAdditionalTangentOperatorBlock
+  }  // end of treatAdditionalTangentOperatorBlock
 
   void BehaviourDSLCommon::treatAdditionalTangentOperatorBlocks() {
     const char* const m =
@@ -1019,7 +1029,7 @@ namespace mfront {
     for (const auto& v : values) {
       this->mb.addTangentOperatorBlock(v.value);
     }
-  }  // end of BehaviourDSLCommon::treatAdditionalTangentOperatorBlock
+  }  // end of treatAdditionalTangentOperatorBlock
 
   void BehaviourDSLCommon::treatModel() {
     if (getVerboseMode() >= VERBOSE_DEBUG) {
@@ -1032,7 +1042,7 @@ namespace mfront {
       getLogStream() << "BehaviourDSLCommon::treatModel: end\n";
     }
     this->readSpecifiedToken("BehaviourDSLCommon::treatModel", ";");
-  }  // end of BehaviourDSLCommon::treatModel
+  }  // end of treatModel
 
   void BehaviourDSLCommon::treatUnsupportedCodeBlockOptions(
       const CodeBlockOptions& o) {
@@ -1053,17 +1063,17 @@ namespace mfront {
         "BehaviourDSLCommon::"
         "treatUnsupportedCodeBlockOptions",
         msg.str());
-  }  // end of BehaviourDSLCommon::treatUnsupportedCodeBlockOptions
+  }  // end of treatUnsupportedCodeBlockOptions
 
   void BehaviourDSLCommon::addStaticVariableDescription(
       const StaticVariableDescription& v) {
     this->mb.addStaticVariable(ModellingHypothesis::UNDEFINEDHYPOTHESIS, v);
-  }  // end of BehaviourDSLCommon::addStaticVariableDescription
+  }  // end of addStaticVariableDescription
 
   int BehaviourDSLCommon::getIntegerConstant(const std::string& n) const {
     return this->mb.getIntegerConstant(ModellingHypothesis::UNDEFINEDHYPOTHESIS,
                                        n);
-  }  // end of BehaviourDSLCommon::getIntegerConstant
+  }  // end of getIntegerConstant
 
   std::set<BehaviourDSLCommon::Hypothesis>
   BehaviourDSLCommon::getDefaultModellingHypotheses() const {
@@ -1073,30 +1083,30 @@ namespace mfront {
             ModellingHypothesis::PLANESTRAIN,
             ModellingHypothesis::GENERALISEDPLANESTRAIN,
             ModellingHypothesis::TRIDIMENSIONAL};
-  }  // end of BehaviourDSLCommon::getDefaultModellingHypotheses
+  }  // end of getDefaultModellingHypotheses
 
   bool BehaviourDSLCommon::isModellingHypothesisSupported(
       const Hypothesis h) const {
     const auto mhs =
         this->getBehaviourDSLDescription().supportedModellingHypotheses;
     return std::find(mhs.cbegin(), mhs.cend(), h) != mhs.end();
-  }  // end of BehaviourDSLCommon::isModellingHypothesesSupported
+  }  // end of isModellingHypothesesSupported
 
   std::string BehaviourDSLCommon::getBehaviourFileName() const {
     return "TFEL/Material/" + this->mb.getClassName() + ".hxx";
-  }  // end of BehaviourDSLCommon::getBehaviourFileName
+  }  // end of getBehaviourFileName
 
   std::string BehaviourDSLCommon::getBehaviourDataFileName() const {
     return "TFEL/Material/" + this->mb.getClassName() + "BehaviourData.hxx";
-  }  // end of BehaviourDSLCommon::getBehaviourDataFileName
+  }  // end of getBehaviourDataFileName
 
   std::string BehaviourDSLCommon::getIntegrationDataFileName() const {
     return "TFEL/Material/" + this->mb.getClassName() + "IntegrationData.hxx";
-  }  // end of BehaviourDSLCommon::getIntegrationDataFileName
+  }  // end of getIntegrationDataFileName
 
   std::string BehaviourDSLCommon::getSrcFileName() const {
     return this->mb.getClassName() + ".cxx";
-  }  // end of BehaviourDSLCommon::getSrcFileName
+  }  // end of getSrcFileName
 
   void BehaviourDSLCommon::analyseFile(
       const std::string& fileName_,
@@ -1124,7 +1134,7 @@ namespace mfront {
       this->completeVariableDeclaration();
       this->mb.disallowNewUserDefinedVariables();
     }
-  }  // end of BehaviourDSLCommon::disableVariableDeclaration
+  }  // end of disableVariableDeclaration
 
   void BehaviourDSLCommon::completeVariableDeclaration() {
     using namespace mfront::bbrick;
@@ -1321,7 +1331,7 @@ namespace mfront {
       getLogStream()
           << "BehaviourDSLCommon::completeVariableDeclaration: end\n";
     }
-  }  // end of BehaviourDSLCommon::completeVariableDeclaration
+  }  // end of completeVariableDeclaration
 
   void BehaviourDSLCommon::endsInputFileProcessing() {
     if (getVerboseMode() >= VERBOSE_DEBUG) {
@@ -1376,7 +1386,7 @@ namespace mfront {
     if (getVerboseMode() >= VERBOSE_DEBUG) {
       getLogStream() << "BehaviourDSLCommon::endsInputFileProcessing: end\n";
     }
-  }  // end of BehaviourDSLCommon::endsInputFileProcessing
+  }  // end of endsInputFileProcessing
 
   /*!
    * \return the "true" integration variables (state variables are excluded)
@@ -1528,7 +1538,7 @@ namespace mfront {
       performPedanticChecks(md.getStaticVariables(), smembers);
     }
     log << "\n# End of pedantic checks\n";
-  }  // end of BehaviourDSLCommon::pedanticChecks
+  }  // end of pedanticChecks
 
   std::set<BehaviourDSLCommon::Hypothesis>
   BehaviourDSLCommon::getModellingHypothesesToBeTreated() const {
@@ -1546,7 +1556,7 @@ namespace mfront {
       }
     }
     return mhs;
-  }  // end of BehaviourDSLCommon::getModellingHypothesesToBeTreated
+  }  // end of getModellingHypothesesToBeTreated
 
   void BehaviourDSLCommon::generateOutputFiles() {
     tfel::system::systemCall::mkdir("src");
@@ -2125,7 +2135,7 @@ namespace mfront {
         .declareExternalStateVariableProbablyUnusableInPurelyImplicitResolution(
             h, n);
   }  // end of
-     // BehaviourDSLCommon::declareExternalStateVariableProbablyUnusableInPurelyImplicitResolution
+     // declareExternalStateVariableProbablyUnusableInPurelyImplicitResolution
 
   std::string BehaviourDSLCommon::standardModifier(const Hypothesis h,
                                                    const std::string& var,
@@ -2139,15 +2149,16 @@ namespace mfront {
       return "this->" + var;
     }
     return var;
-  }  // end of BehaviourDSLCommon::standardModifier
+  }  // end of standardModifier
 
   std::string BehaviourDSLCommon::tangentOperatorVariableModifier(
       const Hypothesis h, const std::string& var, const bool addThisPtr) {
     return this->standardModifier(h, var, addThisPtr);
-  }  // end of BehaviourDSLCommon::tangentOperatorVariableModifier
+  }  // end of tangentOperatorVariableModifier
 
   void BehaviourDSLCommon::treatStrainMeasure() {
-    this->checkNotEndOfFile("BehaviourDSLCommon::treatStrainMeasure", "Expected strain measure name.");
+    this->checkNotEndOfFile("BehaviourDSLCommon::treatStrainMeasure",
+                            "Expected strain measure name.");
     const auto fs = this->current->value;
     if ((fs != "Hencky") && (fs != "GreenLagrange") && (fs != "Linearised") &&
         (fs != "Linearized")) {
@@ -2191,10 +2202,9 @@ namespace mfront {
           opts.find("save_strain")->second.get<bool>());
     }
     if (opts.count("save_stress") != 0) {
-      this->mb.setSaveDualStress(
-          opts.find("save_stress")->second.get<bool>());
+      this->mb.setSaveDualStress(opts.find("save_stress")->second.get<bool>());
     }
-  }  // end of BehaviourDSLCommon::treatStrainMeasure
+  }  // end of treatStrainMeasure
 
   void BehaviourDSLCommon::treatPrivate() {
     auto hs = std::set<Hypothesis>{};
@@ -2234,7 +2244,7 @@ namespace mfront {
           });
       this->mb.appendToMembers(h, this->readNextBlock(o).code, true);
     }
-  }  // end of BehaviourDSLCommon::treatMembers
+  }  // end of treatMembers
 
   void BehaviourDSLCommon::treatBrick() {
     using Parameters = AbstractBehaviourBrick::Parameters;
@@ -2293,7 +2303,7 @@ namespace mfront {
     br->initialize(parameters, d);
     this->readSpecifiedToken("BehaviourDSLCommon::treatBehaviourBrick", ";");
     this->bricks.push_back(std::move(br));
-  }  // end of BehaviourDSLCommon::treatBrick
+  }  // end of treatBrick
 
   void BehaviourDSLCommon::treatTangentOperator() {
     using namespace std;
@@ -2354,7 +2364,7 @@ namespace mfront {
                               true);
       }
     }
-  }  // end of BehaviourDSLCommon::treatTangentOperator
+  }  // end of treatTangentOperator
 
   void BehaviourDSLCommon::readTangentOperatorCodeBlock(
       const CodeBlockOptions& o, const std::string& n) {
@@ -2362,7 +2372,7 @@ namespace mfront {
     this->treatCodeBlock(*this, o, n,
                          &BehaviourDSLCommon::tangentOperatorVariableModifier,
                          true);
-  }  // end of BehaviourDSLCommon::readTangentOperatorCodeBlock
+  }  // end of readTangentOperatorCodeBlock
 
   void BehaviourDSLCommon::treatIsTangentOperatorSymmetric() {
     auto hs = std::set<Hypothesis>{};
@@ -2378,7 +2388,7 @@ namespace mfront {
       this->mb.setAttribute(
           h, BehaviourData::isConsistentTangentOperatorSymmetric, b);
     }
-  }  // end of BehaviourDSLCommon::treatTangentOperator
+  }  // end of treatTangentOperator
 
   void BehaviourDSLCommon::treatLibrary() {
     const auto& l = this->readOnlyOneToken();
@@ -2387,7 +2397,7 @@ namespace mfront {
                               "invalid library name '" + l + "'");
     }
     this->mb.setLibrary(l);
-  }  // end of BehaviourDSLCommon::treatLibrary
+  }  // end of treatLibrary
 
   void BehaviourDSLCommon::treatComputeThermalExpansion() {
     using namespace tfel::utilities;
@@ -2489,7 +2499,7 @@ namespace mfront {
     if (!this->mb.hasParameter(h, "initial_geometry_reference_temperature")) {
       addTi(293.15);
     }
-  }  // end of BehaviourDSLCommon::treatComputeThermalExpansion
+  }  // end of treatComputeThermalExpansion
 
   void BehaviourDSLCommon::treatElasticMaterialProperties() {
     if (this->mb.getAttribute<bool>(
@@ -2587,7 +2597,7 @@ namespace mfront {
     this->readElasticMaterialProperties();
     this->mb.setAttribute(BehaviourDescription::computesStiffnessTensor, true,
                           false);
-  }  // end of BehaviourDSLCommon::treatComputeStiffnessTensor
+  }  // end of treatComputeStiffnessTensor
 
   void BehaviourDSLCommon::treatHillTensor() {
     if (this->mb.getSymmetryType() != mfront::ORTHOTROPIC) {
@@ -2617,7 +2627,7 @@ namespace mfront {
                               "invalid number of hill coefficients");
     }
     this->mb.addHillTensor(v, hcs);
-  }  // end of BehaviourDSLCommon::treatHillTensor
+  }  // end of treatHillTensor
 
   void BehaviourDSLCommon::treatModellingHypothesis() {
     this->checkNotEndOfFile("BehaviourDSLCommon::treatModellingHypothesis");
@@ -2634,7 +2644,7 @@ namespace mfront {
     std::set<Hypothesis> hypotheses;
     hypotheses.insert(h);
     this->mb.setModellingHypotheses(hypotheses);
-  }  // end of BehaviourDSLCommon::treatModellingHypothesis
+  }  // end of treatModellingHypothesis
 
   void BehaviourDSLCommon::treatModellingHypotheses() {
     using namespace tfel::utilities;
@@ -2659,7 +2669,7 @@ namespace mfront {
                               "no hypothesis declared");
     }
     this->mb.setModellingHypotheses(hypotheses);
-  }  // end of BehaviourDSLCommon::treatModellingHypotheses
+  }  // end of treatModellingHypotheses
 
   void BehaviourDSLCommon::treatUsableInPurelyImplicitResolution() {
     const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
@@ -2672,7 +2682,7 @@ namespace mfront {
     }
     this->explicitlyDeclaredUsableInPurelyImplicitResolution = true;
     this->mb.setUsableInPurelyImplicitResolution(h, true);
-  }  // end of BehaviourDSLCommon::treatUsableInPurelyImplicitResolution
+  }  // end of treatUsableInPurelyImplicitResolution
 
   void BehaviourDSLCommon::treatParameterMethod(const Hypothesis h) {
     using namespace std;
@@ -2699,7 +2709,7 @@ namespace mfront {
       --(this->current);
       this->treatVariableMethod(h);
     }
-  }  // end of BehaviourDSLCommon::treatParameterMethod
+  }  // end of treatParameterMethod
 
   bool BehaviourDSLCommon::isCallableVariable(const Hypothesis h,
                                               const std::string& n) const {
@@ -2726,7 +2736,7 @@ namespace mfront {
             (this->mb.isStaticVariableName(h, n)) ||
             (this->mb.isParameterName(h, n)) ||
             (this->mb.isIntegrationVariableName(h, n)));
-  }  // end of BehaviourDSLCommon::isCallableVariable
+  }  // end of isCallableVariable
 
   std::string BehaviourDSLCommon::treatSetGlossaryNameMethod() {
     using namespace tfel::utilities;
@@ -2827,7 +2837,7 @@ namespace mfront {
     }
     this->checkNotEndOfFile("BehaviourDSLCommon::treatGradientMethod");
     this->readSpecifiedToken("BehaviourDSLCommon::treatGradientMethod", ";");
-  }  // end of BehaviourDSLCommon::treatGradientMethod
+  }  // end of treatGradientMethod
 
   void BehaviourDSLCommon::treatThermodynamicForceMethod() {
     const auto n = tfel::unicode::getMangledString(this->current->value);
@@ -2885,7 +2895,7 @@ namespace mfront {
         "BehaviourDSLCommon::treatThermodynamicForceMethod");
     this->readSpecifiedToken(
         "BehaviourDSLCommon::treatThermodynamicForceMethod", ";");
-  }  // end of BehaviourDSLCommon::treatThermodynamicForceMethod
+  }  // end of treatThermodynamicForceMethod
 
   void BehaviourDSLCommon::treatVariableMethod(const Hypothesis h) {
     const auto n = tfel::unicode::getMangledString(this->current->value);
@@ -2902,7 +2912,7 @@ namespace mfront {
     }
     this->checkNotEndOfFile("BehaviourDSLCommon::treatVariableMethod");
     this->readSpecifiedToken("BehaviourDSLCommon::treatVariableMethod", ";");
-  }  // end of BehaviourDSLCommon::treatVariableMethod
+  }  // end of treatVariableMethod
 
   void BehaviourDSLCommon::treatUnknownVariableMethod(const Hypothesis,
                                                       const std::string& n) {
@@ -2911,7 +2921,7 @@ namespace mfront {
         "unknown method '" + this->current->value + "' for variable '" + n +
             "', "
             "valid methods are 'setGlossaryName' or 'setEntryName'");
-  }  // end of BehaviourDSLCommon::treatUnknownVariableMethod
+  }  // end of treatUnknownVariableMethod
 
   void BehaviourDSLCommon::treatUnknownKeyword() {
     TokensContainer::const_iterator p2;
@@ -3013,7 +3023,7 @@ namespace mfront {
       DSLBase::treatUnknownKeyword();
     }
     this->current = p2;
-  }  // end of BehaviourDSLCommon::treatUnknownKeyword
+  }  // end of treatUnknownKeyword
 
   void BehaviourDSLCommon::treatUseQt() {
     this->checkNotEndOfFile("BehaviourDSLCommon::treatUseQt : ",
@@ -3030,7 +3040,7 @@ namespace mfront {
     }
     ++(this->current);
     this->readSpecifiedToken("BehaviourDSLCommon::treatUseQt", ";");
-  }  // end of BehaviourDSLCommon::treatUseQt
+  }  // end of treatUseQt
 
   void BehaviourDSLCommon::treatIsotropicBehaviour() {
     if (this->mb.getSymmetryType() != mfront::ISOTROPIC) {
@@ -3039,7 +3049,7 @@ namespace mfront {
     }
     this->readSpecifiedToken("BehaviourDSLCommon::treatIsotropicBehaviour",
                              ";");
-  }  // end of BehaviourDSLCommon::treatIsotropicBehaviour
+  }  // end of treatIsotropicBehaviour
 
   void BehaviourDSLCommon::treatOrthotropicBehaviour() {
     using namespace tfel::material;
@@ -3068,7 +3078,7 @@ namespace mfront {
                              ";");
     this->mb.setSymmetryType(mfront::ORTHOTROPIC);
     this->mb.setOrthotropicAxesConvention(c);
-  }  // end of BehaviourDSLCommon::treatOrthotropicBehaviour
+  }  // end of treatOrthotropicBehaviour
 
   void BehaviourDSLCommon::treatIsotropicElasticBehaviour() {
     this->readSpecifiedToken(
@@ -3079,7 +3089,7 @@ namespace mfront {
           "this behaviour has not been declared orthotropic");
     }
     this->mb.setElasticSymmetryType(mfront::ISOTROPIC);
-  }  // end of BehaviourDSLCommon::treatIsotropicElasticBehaviour
+  }  // end of treatIsotropicElasticBehaviour
 
   void BehaviourDSLCommon::treatRequireStiffnessOperator() {
     if (getVerboseMode() >= VERBOSE_LEVEL2) {
@@ -3088,7 +3098,7 @@ namespace mfront {
                      << "You shall use @RequireStiffnessTensor instead\n";
     }
     this->treatRequireStiffnessTensor();
-  }  // end of BehaviourDSLCommon::treatRequireStiffnessOperator
+  }  // end of treatRequireStiffnessOperator
 
   void BehaviourDSLCommon::treatStiffnessTensorOption() {
     this->readSpecifiedToken("BehaviourDSLCommon::treatStiffnessTensorOption",
@@ -3126,7 +3136,7 @@ namespace mfront {
                              ";");
     this->mb.setAttribute(BehaviourDescription::requiresStiffnessTensor, true,
                           false);
-  }  // end of BehaviourDSLCommon::treatRequireStiffnessTensor
+  }  // end of treatRequireStiffnessTensor
 
   void BehaviourDSLCommon::treatRequireThermalExpansionCoefficientTensor() {
     this->readSpecifiedToken(
@@ -3135,7 +3145,7 @@ namespace mfront {
     this->mb.setAttribute(
         BehaviourDescription::requiresThermalExpansionCoefficientTensor, true,
         false);
-  }  // end of BehaviourDSLCommon::treatRequireThermalExpansionCoefficientTensor
+  }  // end of treatRequireThermalExpansionCoefficientTensor
 
   void BehaviourDSLCommon::setMaterialKnowledgeIdentifier(
       const std::string& i) {
@@ -3151,7 +3161,7 @@ namespace mfront {
           "resulting class name is not valid (read '" +
               this->mb.getClassName() + "')");
     }
-  }  // end of BehaviourDSLCommon::setMaterialKnowledgeIdentifier
+  }  // end of setMaterialKnowledgeIdentifier
 
   void BehaviourDSLCommon::treatBehaviour() {
     const auto& b = this->readOnlyOneToken();
@@ -3162,7 +3172,7 @@ namespace mfront {
     if (this->overriden_implementation_name.empty()) {
       this->setMaterialKnowledgeIdentifier(b);
     }
-  }  // end of BehaviourDSLCommon::treatBehaviour
+  }  // end of treatBehaviour
 
   void BehaviourDSLCommon::readStringList(std::vector<std::string>& cont) {
     this->checkNotEndOfFile("BehaviourDSLCommon::readStringList",
@@ -3205,7 +3215,7 @@ namespace mfront {
     std::set<Hypothesis> mh;
     this->readHypothesesList(mh);
     return mh;
-  }  // end of BehaviourDSLCommon::readHypothesesList
+  }  // end of readHypothesesList
 
   void BehaviourDSLCommon::readHypothesesList(std::set<Hypothesis>& h) {
     h.clear();
@@ -3230,7 +3240,7 @@ namespace mfront {
     if (h.empty()) {
       h.insert(ModellingHypothesis::UNDEFINEDHYPOTHESIS);
     }
-  }  // end of BehaviourDSLCommon::readHypothesesList
+  }  // end of readHypothesesList
 
   void BehaviourDSLCommon::readVariableList(
       VariableDescriptionContainer& v,
@@ -3244,7 +3254,7 @@ namespace mfront {
     this->readHypothesesList(h);
     this->readVarList(v, b1);
     this->addVariableList(h, v, m);
-  }  // end of BehaviourDSLCommon::readVariableList
+  }  // end of readVariableList
 
   void BehaviourDSLCommon::addVariableList(
       const std::set<Hypothesis>& hypotheses,
@@ -3256,21 +3266,21 @@ namespace mfront {
     for (const auto& h : hypotheses) {
       (this->mb.*m)(h, v, BehaviourData::UNREGISTRED);
     }
-  }  // end of BehaviourDSLCommon::addVariableList
+  }  // end of addVariableList
 
   void BehaviourDSLCommon::treatCoef() {
     VarContainer v;
     auto h = std::set<Hypothesis>{};
     this->readVariableList(v, h, &BehaviourDescription::addMaterialProperties,
                            true);
-  }  // end of BehaviourDSLCommon::treatCoef
+  }  // end of treatCoef
 
   void BehaviourDSLCommon::treatLocalVar() {
     VarContainer v;
     auto h = std::set<Hypothesis>{};
     this->readVariableList(v, h, &BehaviourDescription::addLocalVariables,
                            true);
-  }  // end of BehaviourDSLCommon::treatLocalVar
+  }  // end of treatLocalVar
 
   void BehaviourDSLCommon::treatInterface() {
     auto& mbif = BehaviourInterfaceFactory::getBehaviourInterfaceFactory();
@@ -3281,7 +3291,7 @@ namespace mfront {
         this->interfaces.insert({i, mbif.getInterface(i)});
       }
     }
-  }  // end of BehaviourDSLCommon::treatInterface
+  }  // end of treatInterface
 
   void BehaviourDSLCommon::setInterfaces(const std::set<std::string>& inames) {
     auto& mbif = BehaviourInterfaceFactory::getBehaviourInterfaceFactory();
@@ -3290,7 +3300,7 @@ namespace mfront {
         this->interfaces.insert({i, mbif.getInterface(i)});
       }
     }
-  }  // end of BehaviourDSLCommon::setInterfaces
+  }  // end of setInterfaces
 
   void BehaviourDSLCommon::treatAPrioriTimeStepScalingFactor() {
     this->treatCodeBlock(*this, BehaviourData::APrioriTimeStepScalingFactor,
@@ -3300,7 +3310,7 @@ namespace mfront {
   void BehaviourDSLCommon::treatIntegrator() {
     this->treatCodeBlock(*this, BehaviourData::Integrator,
                          &BehaviourDSLCommon::standardModifier, true, true);
-  }  // end of BehaviourDSLCommon::treatIntegrator
+  }  // end of treatIntegrator
 
   void BehaviourDSLCommon::treatAPosterioriTimeStepScalingFactor() {
     this->treatCodeBlock(*this, BehaviourData::APosterioriTimeStepScalingFactor,
@@ -3312,21 +3322,21 @@ namespace mfront {
     auto h = std::set<Hypothesis>{};
     this->readVariableList(v, h, &BehaviourDescription::addStateVariables,
                            true);
-  }  // end of BehaviourDSLCommon::treatStateVariable
+  }  // end of treatStateVariable
 
   void BehaviourDSLCommon::treatAuxiliaryStateVariable() {
     VarContainer v;
     auto h = std::set<Hypothesis>{};
     this->readVariableList(
         v, h, &BehaviourDescription::addAuxiliaryStateVariables, true);
-  }  // end of BehaviourDSLCommon::treatAuxiliaryStateVariable
+  }  // end of treatAuxiliaryStateVariable
 
   void BehaviourDSLCommon::treatExternalStateVariable() {
     VarContainer v;
     auto h = std::set<Hypothesis>{};
     this->readVariableList(
         v, h, &BehaviourDescription::addExternalStateVariables, true);
-  }  // end of BehaviourDSLCommon::treatExternalStateVariable()
+  }  // end of treatExternalStateVariable()
 
   void BehaviourDSLCommon::treatBounds() {
     auto hs = std::set<Hypothesis>{};
@@ -3343,7 +3353,7 @@ namespace mfront {
       }
     }
     this->readSpecifiedToken("BehaviourDSLCommon::treatBounds", ";");
-  }  // end of BehaviourDSLCommon::treatBounds
+  }  // end of treatBounds
 
   void BehaviourDSLCommon::treatPhysicalBounds() {
     auto hs = std::set<Hypothesis>{};
@@ -3355,7 +3365,7 @@ namespace mfront {
       this->mb.setPhysicalBounds(h, bounds.first, bounds.second);
     }
     this->readSpecifiedToken("BehaviourDSLCommon::treatBounds", ";");
-  }  // end of BehaviourDSLCommon::treatPhysicalBounds
+  }  // end of treatPhysicalBounds
 
   void BehaviourDSLCommon::registerDefaultVarNames() {
     const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
@@ -3433,7 +3443,7 @@ namespace mfront {
     this->reserveName("behaviourData");
     this->reserveName("time_scaling_factor");
     this->reserveName("mp_bounds_check_status");
-  }  // end of BehaviourDSLCommon::registerDefaultVarNames
+  }  // end of registerDefaultVarNames
 
   void BehaviourDSLCommon::reserveName(const std::string& n) {
     this->mb.reserveName(ModellingHypothesis::UNDEFINEDHYPOTHESIS, n);
@@ -3454,7 +3464,7 @@ namespace mfront {
       this->writeVariableDeclaration(f, e, prefix, suffix, fileName,
                                      useTimeDerivative);
     }
-  }  // end of BehaviourDSLCommon::writeVariablesDeclarations
+  }  // end of writeVariablesDeclarations
 
   void BehaviourDSLCommon::writeVariableDeclaration(
       std::ostream& f,
@@ -3479,7 +3489,7 @@ namespace mfront {
           << ";\n";
       }
     }
-  }  // end of BehaviourDSLCommon::writeVariableDeclaration
+  }  // end of writeVariableDeclaration
 
   void BehaviourDSLCommon::writeIncludes(std::ostream& file) const {
     if ((!file) || (!file.good())) {
@@ -3525,6 +3535,7 @@ namespace mfront {
          << "using time                = typename Types::time;\n"
          << "using length              = typename Types::length;\n"
          << "using frequency           = typename Types::frequency;\n"
+         << "using speed               = typename Types::speed;\n"
          << "using stress              = typename Types::stress;\n"
          << "using strain              = typename Types::strain;\n"
          << "using strainrate          = typename Types::strainrate;\n"
@@ -3563,7 +3574,7 @@ namespace mfront {
     }
     // physical constants
     file << "using PhysicalConstants = tfel::PhysicalConstants<real>;\n";
-  }  // end of BehaviourDSLCommon::writeStandardTFELTypedefs
+  }  // end of writeStandardTFELTypedefs
 
   std::string BehaviourDSLCommon::getIntegrationVariablesIncrementsInitializers(
       const Hypothesis h) const {
@@ -3708,7 +3719,7 @@ namespace mfront {
             "FiniteStrainBehaviourTangentOperator.hxx\"\n";
     }
     os << "#include\"TFEL/Material/ModellingHypothesis.hxx\"\n\n";
-  }  // end of BehaviourDSLCommon::writeBehaviourDataStandardTFELIncludes
+  }  // end of writeBehaviourDataStandardTFELIncludes
 
   void BehaviourDSLCommon::writeBehaviourDataDefaultMembers(
       std::ostream& os) const {
@@ -3817,7 +3828,7 @@ namespace mfront {
         i.second->writeBehaviourDataConstructor(os, h, this->mb);
       }
     }
-  }  // end of BehaviourDSLCommon::WriteBehaviourDataConstructors
+  }  // end of WriteBehaviourDataConstructors
 
   void BehaviourDSLCommon::writeBehaviourDataAssignementOperator(
       std::ostream& os, const Hypothesis h) const {
@@ -3852,7 +3863,7 @@ namespace mfront {
     }
     os << "return *this;\n"
        << "}\n\n";
-  }  // end of BehaviourDSLCommon::writeBehaviourAssignementOperator
+  }  // end of writeBehaviourAssignementOperator
 
   void BehaviourDSLCommon::writeBehaviourDataExport(std::ostream& os,
                                                     const Hypothesis h) const {
@@ -3898,7 +3909,7 @@ namespace mfront {
          << "getThermalExpansionCoefficientTensor() const\n"
          << "{\nreturn this->A;\n}\n\n";
     }
-  }  // end of BehaviourDSLCommon::writeBehaviourDataPublicMembers
+  }  // end of writeBehaviourDataPublicMembers
 
   void BehaviourDSLCommon::writeBehaviourDataClassHeader(
       std::ostream& os) const {
@@ -4138,7 +4149,7 @@ namespace mfront {
     }
     this->writeNamespaceBegin(os);
     this->writeBehaviourDataForwardDeclarations(os);
-  }  // end of BehaviourDSLCommon::writeBehaviourDataFile
+  }  // end of writeBehaviourDataFile
 
   void BehaviourDSLCommon::writeBehaviourDataClass(std::ostream& os,
                                                    const Hypothesis h) const {
@@ -4164,7 +4175,7 @@ namespace mfront {
   void BehaviourDSLCommon::writeBehaviourDataFileEnd(std::ostream& os) const {
     this->writeNamespaceEnd(os);
     this->writeBehaviourDataFileHeaderEnd(os);
-  }  // end of BehaviourDSLCommon::writeBehaviourDataFileEnd
+  }  // end of writeBehaviourDataFileEnd
 
   void BehaviourDSLCommon::checkBehaviourFile(std::ostream& os) const {
     if ((!os) || (!os.good())) {
@@ -4217,7 +4228,7 @@ namespace mfront {
         }
       }
     }
-  }  // end of BehaviourDSLCommon::writeBehaviourClassForwardDeclarations
+  }  // end of writeBehaviourClassForwardDeclarations
 
   void BehaviourDSLCommon::writeBehaviourClassBegin(std::ostream& os,
                                                     const Hypothesis h) const {
@@ -4372,12 +4383,12 @@ namespace mfront {
   void BehaviourDSLCommon::treatUpdateAuxiliaryStateVariables() {
     this->treatCodeBlock(*this, BehaviourData::UpdateAuxiliaryStateVariables,
                          &BehaviourDSLCommon::standardModifier, true, true);
-  }  // end of BehaviourDSLCommon::treatUpdateAuxiliaryStateVarBase
+  }  // end of treatUpdateAuxiliaryStateVarBase
 
   void BehaviourDSLCommon::treatComputeStressFreeExpansion() {
     this->treatCodeBlock(*this, BehaviourData::ComputeStressFreeExpansion,
                          &BehaviourDSLCommon::standardModifier, true, true);
-  }  // end of BehaviourDSLCommon::treatComputeStressFreeExpansion
+  }  // end of treatComputeStressFreeExpansion
 
   void BehaviourDSLCommon::treatSwelling() {
     using VolumeSwelling = BehaviourData::VolumeSwellingStressFreeExpansion;
@@ -4462,7 +4473,7 @@ namespace mfront {
       throw_if(true, "invalid number of swelling handler (shall be 1 or 3, " +
                          std::to_string(sd.size()) + " given)");
     }
-  }  // end of BehaviourDSLCommon::treatSwelling
+  }  // end of treatSwelling
 
   BehaviourData::StressFreeExpansionHandler
   BehaviourDSLCommon::readStressFreeExpansionHandler(
@@ -4500,7 +4511,7 @@ namespace mfront {
                    "has been declared");
     }
     return {BehaviourData::SFED_ESV{t.value}};
-  }  // end of BehaviourDSLCommon::readStressFreeExpansionHandler
+  }  // end of readStressFreeExpansionHandler
 
   std::vector<BehaviourData::StressFreeExpansionHandler>
   BehaviourDSLCommon::readStressFreeExpansionHandler() {
@@ -4535,7 +4546,7 @@ namespace mfront {
                "(expected one or three descriptions)");
     }
     return sd;
-  }  // end of BehaviourDSLCommon::readStressFreeExpansionHandler
+  }  // end of readStressFreeExpansionHandler
 
   void BehaviourDSLCommon::treatAxialGrowth() {
     using AxialGrowth = BehaviourData::AxialGrowth;
@@ -4558,7 +4569,7 @@ namespace mfront {
     ++(this->current);
     this->readSpecifiedToken("BehaviourDSLCommon::treatAxialGrowth", ";");
     this->mb.addStressFreeExpansion(uh, AxialGrowth{s});
-  }  // end of BehaviourDSLCommon::treatAxialGrowth
+  }  // end of treatAxialGrowth
 
   void BehaviourDSLCommon::treatRelocation() {
     using Relocation = BehaviourData::Relocation;
@@ -4602,7 +4613,7 @@ namespace mfront {
     add(ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS);
     add(ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN);
     add(ModellingHypothesis::GENERALISEDPLANESTRAIN);
-  }  // end of BehaviourDSLCommon::treatRelocation
+  }  // end of treatRelocation
 
   void BehaviourDSLCommon::writeBehaviourUpdateIntegrationVariables(
       std::ostream& os, const Hypothesis h) const {
@@ -4626,7 +4637,7 @@ namespace mfront {
     } else {
       os << "\n{}\n\n";
     }
-  }  // end of BehaviourDSLCommon::writeBehaviourUpdateIntegrationVariables
+  }  // end of writeBehaviourUpdateIntegrationVariables
 
   void BehaviourDSLCommon::writeBehaviourUpdateStateVariables(
       std::ostream& os, const Hypothesis h) const {
@@ -4646,7 +4657,7 @@ namespace mfront {
     } else {
       os << "\n{}\n\n";
     }
-  }  // end of BehaviourDSLCommon::writeBehaviourUpdateStateVariables
+  }  // end of writeBehaviourUpdateStateVariables
 
   void BehaviourDSLCommon::writeBehaviourUpdateAuxiliaryStateVariables(
       std::ostream& os, const Hypothesis h) const {
@@ -4698,7 +4709,7 @@ namespace mfront {
     } else {
       os << "\n{\nPsi_s=0;\n}\n\n";
     }
-  }  // end of BehaviourDSLCommon::writeBehaviourComputeInternalEnergy
+  }  // end of writeBehaviourComputeInternalEnergy
 
   void BehaviourDSLCommon::writeBehaviourComputeDissipatedEnergy(
       std::ostream& os, const Hypothesis h) const {
@@ -4717,7 +4728,35 @@ namespace mfront {
     } else {
       os << "\n{\nPsi_d=0;\n}\n\n";
     }
-  }  // end of BehaviourDSLCommon::writeBehaviourComputeDissipatedEnergy
+  }  // end of writeBehaviourComputeDissipatedEnergy
+
+  void BehaviourDSLCommon::writeBehaviourComputeSpeedOfSound(
+      std::ostream& os, const Hypothesis h) const {
+    os << "/*!\n"
+       << "* \\brief compute the sound velocity\n"
+       << "* \\param[in] rho_m0: mass density in the reference configuration\n"
+       << "*/\n";
+    if (this->mb.hasCode(h, BehaviourData::ComputeSpeedOfSound)) {
+      const auto vs = tfel::unicode::getMangledString("vₛ");
+      const auto rho_m0 = tfel::unicode::getMangledString("ρₘ₀");
+      os << "real computeSpeedOfSound(const massdensity& rho_m0) const {\n"
+         << "using namespace std;\n"
+         << "using namespace tfel::math;\n";
+      writeMaterialLaws(os, this->mb.getMaterialLaws());
+      os << "const auto " << rho_m0 << " = rho_m0;\n"
+         << "auto v_sound = real{};\n"
+         << "auto& " << vs << " = v_sound;\n"
+         << this->mb.getCode(h, BehaviourData::ComputeSpeedOfSound)
+         << "static_cast<void>(" << rho_m0 << ");\n"
+         << "static_cast<void>(" << vs << ");\n"
+         << "return v_sound;\n"
+         << "}\n\n";
+    } else {
+      os << "real computeSpeedOfSound(const massdensity&) const {\n"
+         << "return 0;\n"
+         << "\n}\n\n";
+    }
+  }  // end of writeBehaviourComputeSpeedOfSound
 
   bool BehaviourDSLCommon::hasUserDefinedTangentOperatorCode(
       const Hypothesis h) const {
@@ -4742,7 +4781,7 @@ namespace mfront {
       }
     }
     return false;
-  }  // end of BehaviourDSLCommon::hasUserDefinedTangentOperatorCode
+  }  // end of hasUserDefinedTangentOperatorCode
 
   void BehaviourDSLCommon::writeBehaviourIntegrator(std::ostream& os,
                                                     const Hypothesis h) const {
@@ -4840,7 +4879,7 @@ namespace mfront {
        << "void\nsetOutOfBoundsPolicy(const OutOfBoundsPolicy policy_value){\n"
        << "this->policy = policy_value;\n"
        << "} // end of setOutOfBoundsPolicy\n\n";
-  }  // end of BehaviourDSLCommon::writeBehaviourSetOutOfBoundsPolicy
+  }  // end of writeBehaviourSetOutOfBoundsPolicy
 
   static void writeBoundsChecks(std::ostream& os,
                                 const VariableDescription& v,
@@ -4895,7 +4934,7 @@ namespace mfront {
                                   b);
       }
     }
-  }  // end of BehaviourDSLCommon::writeBoundsChecks
+  }  // end of writeBoundsChecks
 
   static void writePhysicalBoundsChecks(std::ostream& os,
                                         const VariableDescription& v,
@@ -4949,7 +4988,7 @@ namespace mfront {
             os, v, v.name + '[' + std::to_string(i) + ']', b);
       }
     }
-  }  // end of BehaviourDSLCommon::writePhysicalBoundsChecks
+  }  // end of writePhysicalBoundsChecks
 
   void BehaviourDSLCommon::writeBehaviourCheckBounds(std::ostream& os,
                                                      const Hypothesis h) const {
@@ -4980,7 +5019,7 @@ namespace mfront {
     write_bounds(md.getExternalStateVariables(), true);
     write_bounds(md.getLocalVariables(), false);
     os << "} // end of checkBounds\n\n";
-  }  // end of BehaviourDSLCommon::writeBehaviourCheckBounds
+  }  // end of writeBehaviourCheckBounds
 
   std::string BehaviourDSLCommon::getBehaviourConstructorsInitializers(
       const Hypothesis h) const {
@@ -5138,12 +5177,12 @@ namespace mfront {
       }
     }
     return init;
-  }  // end of BehaviourDSLCommon::getBehaviourConstructorsInitializers
+  }  // end of getBehaviourConstructorsInitializers
 
   std::string BehaviourDSLCommon::getLocalVariablesInitializers(
       const Hypothesis) const {
     return {};
-  }  // end of BehaviourDSLCommon::getLocalVariablesInitializers
+  }  // end of getLocalVariablesInitializers
 
   void BehaviourDSLCommon::writeBehaviourConstructors(
       std::ostream& os, const Hypothesis h) const {
@@ -5249,7 +5288,7 @@ namespace mfront {
       }
     }
     out << ");\n";
-  }  // end of BehaviourDSLCommon::writeHillTensorComputation
+  }  // end of writeHillTensorComputation
 
   void BehaviourDSLCommon::writeStiffnessTensorComputation(
       std::ostream& out,
@@ -5359,7 +5398,7 @@ namespace mfront {
           "BehaviourDSLCommon::writeStiffnessTensorComputation",
           "unsupported elastic symmetry type");
     }
-  }  // end of BehaviourDSLCommon::writeStiffnessTensorComputation
+  }  // end of writeStiffnessTensorComputation
 
   void BehaviourDSLCommon::writeExternalMFrontMaterialPropertyArguments(
       std::ostream& out,
@@ -5427,7 +5466,7 @@ namespace mfront {
           "BehaviourDSLCommon::writeMaterialPropertyEvaluation",
           "unsupported material property type");
     }
-  }  // end of BehaviourDSLCommon::writeMaterialPropertyEvaluation
+  }  // end of writeMaterialPropertyEvaluation
 
   void BehaviourDSLCommon::writeMaterialPropertyEvaluation(
       std::ostream& out,
@@ -5464,7 +5503,7 @@ namespace mfront {
           "BehaviourDSLCommon::writeMaterialPropertyEvaluation",
           "unsupported material property type");
     }
-  }  // end of BehaviourDSLCommon::writeMaterialPropertyEvaluation
+  }  // end of writeMaterialPropertyEvaluation
 
   void BehaviourDSLCommon::writeThermalExpansionCoefficientComputation(
       std::ostream& out,
@@ -5546,7 +5585,7 @@ namespace mfront {
     } else {
       throw_if(true, "unsupported material property type");
     }
-  }  // end of BehaviourDSLCommon::writeThermalExpansionCoefficientComputation
+  }  // end of writeThermalExpansionCoefficientComputation
 
   void BehaviourDSLCommon::writeThermalExpansionCoefficientsComputations(
       std::ostream& out,
@@ -5580,7 +5619,7 @@ namespace mfront {
         << "alpha" << suffix
         << "_Ti * (this->initial_geometry_reference_temperature-" << Tref
         << "));\n";
-  }  // end of BehaviourDSLCommon::writeThermalExpansionComputation
+  }  // end of writeThermalExpansionComputation
 
   void BehaviourDSLCommon::writeBehaviourComputeStressFreeExpansion(
       std::ostream& os, const Hypothesis h) const {
@@ -5957,7 +5996,7 @@ namespace mfront {
       }
     }
     os << "}\n\n";
-  }  // end of BehaviourDSLCommon::writeBehaviourComputeStressFreeExpansion
+  }  // end of writeBehaviourComputeStressFreeExpansion
 
   void BehaviourDSLCommon::writeBehaviourInitializeMethod(
       std::ostream& os, const Hypothesis h) const {
@@ -6054,7 +6093,7 @@ namespace mfront {
         }
       }
     }
-  }  // end of BehaviourDSLCommon::writeBehaviourParameterInitialisation
+  }  // end of writeBehaviourParameterInitialisation
 
   void BehaviourDSLCommon::writeBehaviourDataMainVariablesSetters(
       std::ostream& os) const {
@@ -6063,7 +6102,7 @@ namespace mfront {
       i.second->writeBehaviourDataMainVariablesSetters(os, this->mb);
       os << '\n';
     }
-  }  // end of BehaviourDSLCommon::writeBehaviourDataMainVariablesSetters
+  }  // end of writeBehaviourDataMainVariablesSetters
 
   void BehaviourDSLCommon::writeIntegrationDataMainVariablesSetters(
       std::ostream& os) const {
@@ -6072,7 +6111,7 @@ namespace mfront {
       i.second->writeIntegrationDataMainVariablesSetters(os, this->mb);
       os << '\n';
     }
-  }  // end of BehaviourDSLCommon::writeIntegrationDataMainVariablesSetters
+  }  // end of writeIntegrationDataMainVariablesSetters
 
   void BehaviourDSLCommon::writeBehaviourGetModellingHypothesis(
       std::ostream& os) const {
@@ -6084,7 +6123,7 @@ namespace mfront {
           "const{\n"
        << "return hypothesis;\n"
        << "} // end of getModellingHypothesis\n\n";
-  }  // end of BehaviourDSLCommon::writeBehaviourGetModellingHypothesis();
+  }  // end of writeBehaviourGetModellingHypothesis();
 
   void BehaviourDSLCommon::writeBehaviourLocalVariables(
       std::ostream& os, const Hypothesis h) const {
@@ -6136,7 +6175,7 @@ namespace mfront {
     this->checkBehaviourFile(os);
     os << "//! policy for treating out of bounds conditions\n"
        << "OutOfBoundsPolicy policy = None;\n";
-  }  // end of BehaviourDSLCommon::writeBehaviourPolicyVariable
+  }  // end of writeBehaviourPolicyVariable
 
   void BehaviourDSLCommon::writeBehaviourStaticVariables(
       std::ostream& os, const Hypothesis h) const {
@@ -6440,7 +6479,7 @@ namespace mfront {
       os << "using StressFreeExpansionType = "
          << this->mb.getStressFreeExpansionType() << ";\n\n";
     }
-  }  // end of BehaviourDSLCommon::writeBehaviourStandardTFELTypedefs
+  }  // end of writeBehaviourStandardTFELTypedefs
 
   void BehaviourDSLCommon::writeBehaviourTraits(std::ostream& os) const {
     constexpr auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
@@ -6711,7 +6750,7 @@ namespace mfront {
         this->writeBehaviourParametersInitializer(os, h);
       }
     }
-  }  // end of BehaviourDSLCommon::writeBehaviourParametersInitializers
+  }  // end of writeBehaviourParametersInitializers
 
   void BehaviourDSLCommon::writeBehaviourParametersInitializer(
       std::ostream& os, const Hypothesis h) const {
@@ -6823,7 +6862,7 @@ namespace mfront {
        << " */\n"
        << "static void readParameters(" << cname << "&,const char* const);\n"
        << "};\n\n";
-  }  // end of BehaviourDSLCommon::writeBehaviourParametersInitializer
+  }  // end of writeBehaviourParametersInitializer
 
   void BehaviourDSLCommon::writeBehaviourParserSpecificInitializeMethodPart(
       std::ostream&, const Hypothesis) const {
@@ -6845,7 +6884,7 @@ namespace mfront {
     this->writeBehaviourParametersInitializers(os);
     this->writeBehaviourForwardDeclarations(os);
     this->writeBehaviourProfiler(os);
-  }  // end of BehaviourDSLCommon::writeBehaviourFileBegin
+  }  // end of writeBehaviourFileBegin
 
   void BehaviourDSLCommon::writeBehaviourProfiler(std::ostream& os) const {
     if (this->mb.getAttribute(BehaviourData::profiling, false)) {
@@ -6859,7 +6898,7 @@ namespace mfront {
          << "static mfront::BehaviourProfiler& getProfiler();\n"
          << "}; // end of struct " << this->mb.getClassName() << "Profiler\n\n";
     }
-  }  // end of BehaviourDSLCommon::writeBehaviourProfiler
+  }  // end of writeBehaviourProfiler
 
   void BehaviourDSLCommon::writeBehaviourClass(std::ostream& os,
                                                const Hypothesis h) const {
@@ -6897,6 +6936,7 @@ namespace mfront {
     this->writeBehaviourComputeInternalEnergy(os, h);
     this->writeBehaviourComputeDissipatedEnergy(os, h);
     this->writeBehaviourComputeTangentOperator(os, h);
+    this->writeBehaviourComputeSpeedOfSound(os, h);
     this->writeBehaviourGetTangentOperator(os);
     this->writeBehaviourUpdateExternalStateVariables(os, h);
     this->writeBehaviourDestructor(os);
@@ -6914,7 +6954,7 @@ namespace mfront {
     this->writeBehaviourTraits(os);
     this->writeNamespaceEnd(os);
     this->writeBehaviourFileHeaderEnd(os);
-  }  // end of BehaviourDSLCommon::writeBehaviourFileBegin
+  }  // end of writeBehaviourFileBegin
 
   static bool hasUserDefinedPredictionOperatorCode(
       const BehaviourDescription& mb,
@@ -6940,7 +6980,7 @@ namespace mfront {
       }
     }
     return false;
-  }  // end of BehaviourDSLCommon::hasUserDefinedTangentOperatorCode
+  }  // end of hasUserDefinedTangentOperatorCode
 
   void BehaviourDSLCommon::writeBehaviourComputePredictionOperator(
       std::ostream& os, const Hypothesis h) const {
@@ -7113,7 +7153,7 @@ namespace mfront {
          << "return SUCCESS;\n"
          << "}\n\n";
     }
-  }  // end of BehaviourDSLCommon::writeBehaviourComputePredictionOperator
+  }  // end of writeBehaviourComputePredictionOperator
 
   void BehaviourDSLCommon::writeBehaviourComputeTangentOperator(
       std::ostream& os, const Hypothesis h) const {
@@ -7250,12 +7290,12 @@ namespace mfront {
         os << "}\n\n";
       }
     }
-  }  // end of BehaviourDSLCommon::writeBehaviourComputeTangentOperator
+  }  // end of writeBehaviourComputeTangentOperator
 
   void BehaviourDSLCommon::writeBehaviourComputeTangentOperatorBody(
       std::ostream& os, const Hypothesis h, const std::string& n) const {
     os << this->mb.getCode(h, n) << '\n' << "return true;\n";
-  }  // end of BehaviourDSLCommon::writeBehaviourComputeTangentOperatorBody
+  }  // end of writeBehaviourComputeTangentOperatorBody
 
   void BehaviourDSLCommon::writeBehaviourGetTangentOperator(
       std::ostream& os) const {
@@ -7263,12 +7303,12 @@ namespace mfront {
     os << "const TangentOperator& getTangentOperator() const{\n"
        << "return this->Dt;\n"
        << "}\n\n";
-  }  // end of BehaviourDSLCommon::writeBehaviourComputeTangentOperator()
+  }  // end of writeBehaviourComputeTangentOperator()
 
   void BehaviourDSLCommon::writeBehaviourGetTimeStepScalingFactor(
       std::ostream& os) const {
     this->checkBehaviourFile(os);
-    os << "real getMinimalTimeStepScalingFactor() const override{\n"
+    os << "real getMinimalTimeStepScalingFactor() const noexcept override{\n"
           "  return this->minimal_time_step_scaling_factor;\n"
           "}\n\n";
   }
@@ -7289,7 +7329,7 @@ namespace mfront {
           "                  current_time_step_scaling_factor)};\n"
           "}\n\n";
   }  // end of
-     // BehaviourDSLCommon::writeBehaviourComputeAPrioriTimeStepScalingFactor
+     // writeBehaviourComputeAPrioriTimeStepScalingFactor
 
   void BehaviourDSLCommon::writeBehaviourComputeAPrioriTimeStepScalingFactorII(
       std::ostream& os, const Hypothesis h) const {
@@ -7325,7 +7365,7 @@ namespace mfront {
           "                 current_time_step_scaling_factor)};\n"
           "}\n\n";
   }  // end of
-     // BehaviourDSLCommon::writeBehaviourComputeAPosterioriTimeStepScalingFactor
+     // writeBehaviourComputeAPosterioriTimeStepScalingFactor
 
   void
   BehaviourDSLCommon::writeBehaviourComputeAPosterioriTimeStepScalingFactorII(
@@ -7344,7 +7384,7 @@ namespace mfront {
     os << "return {true,this->maximal_time_step_scaling_factor};\n"
        << "}\n\n";
   }  // end of
-     // BehaviourDSLCommon::writeBehaviourComputeAPosterioriTimeStepScalingFactor
+     // writeBehaviourComputeAPosterioriTimeStepScalingFactor
 
   void BehaviourDSLCommon::writeBehaviourTangentOperator(
       std::ostream& os) const {
@@ -7427,7 +7467,7 @@ namespace mfront {
         throw_unsupported_block();
       }
     }
-  }  // end of BehaviourDSLCommon::writeBehaviourTangentOperator()
+  }  // end of writeBehaviourTangentOperator()
 
   void BehaviourDSLCommon::checkIntegrationDataFile(std::ostream& os) const {
     if ((!os) || (!os.good())) {
@@ -7648,7 +7688,7 @@ namespace mfront {
     }
     os << "return *this;\n"
        << "}\n\n";
-  }  // end of BehaviourDSLCommon::writeIntegrationDataScaleOpeartors
+  }  // end of writeIntegrationDataScaleOpeartors
 
   void BehaviourDSLCommon::writeIntegrationDataUpdateDrivingVariablesMethod(
       std::ostream& os) const {
@@ -7687,7 +7727,7 @@ namespace mfront {
     }
     os << "return *this;\n"
        << "}\n\n";
-  }  // end of BehaviourDSLCommon::writeIntegrationUpdateDrivingVariablesMethod
+  }  // end of writeIntegrationUpdateDrivingVariablesMethod
 
   void BehaviourDSLCommon::writeIntegrationDataClassHeader(
       std::ostream& os) const {
@@ -7877,7 +7917,7 @@ namespace mfront {
     }
     os << "return os;\n";
     os << "}\n\n";
-  }  // end of BehaviourDSLCommon::writeIntegrationDataOutputOperator
+  }  // end of writeIntegrationDataOutputOperator
 
   void BehaviourDSLCommon::writeIntegrationDataClassEnd(
       std::ostream& os) const {
@@ -7907,7 +7947,7 @@ namespace mfront {
     }
     this->writeNamespaceBegin(os);
     this->writeIntegrationDataForwardDeclarations(os);
-  }  // end of BehaviourDSLCommon::writeIntegrationDataFile
+  }  // end of writeIntegrationDataFile
 
   void BehaviourDSLCommon::writeIntegrationDataClass(std::ostream& os,
                                                      const Hypothesis h) const {
@@ -7930,7 +7970,7 @@ namespace mfront {
     this->checkIntegrationDataFile(os);
     this->writeNamespaceEnd(os);
     this->writeIntegrationDataFileHeaderEnd(os);
-  }  // end of BehaviourDSLCommon::writeIntegrationDataFileEnd
+  }  // end of writeIntegrationDataFileEnd
 
   void BehaviourDSLCommon::checkSrcFile(std::ostream& os) const {
     if ((!os) || (!os.good())) {
@@ -7967,7 +8007,7 @@ namespace mfront {
        << "#include\"" << this->getBehaviourDataFileName() << "\"\n"
        << "#include\"" << this->getIntegrationDataFileName() << "\"\n"
        << "#include\"" << this->getBehaviourFileName() << "\"\n\n";
-  }  // end of BehaviourDSLCommon::writeSrcFileHeader()
+  }  // end of writeSrcFileHeader()
 
   void BehaviourDSLCommon::writeSrcFileStaticVariables(
       std::ostream& os, const Hypothesis h) const {
@@ -8030,7 +8070,7 @@ namespace mfront {
          << ",long double,false>::" << v.type << "(static_cast<long double>("
          << v.value << "));\n\n";
     }
-  }  // end of BehaviourDSLCommon::writeSrcFileStaticVariables
+  }  // end of writeSrcFileStaticVariables
 
   void BehaviourDSLCommon::writeSrcFileUserDefinedCode(std::ostream& os) const {
     this->checkSrcFile(os);
@@ -8038,7 +8078,7 @@ namespace mfront {
     if (!s.empty()) {
       os << s << "\n\n";
     }
-  }  // end of BehaviourDSLCommon::writeSrcFileUserDefinedCode
+  }  // end of writeSrcFileUserDefinedCode
 
   void BehaviourDSLCommon::writeSrcFileParametersInitializers(
       std::ostream& os) const {
@@ -8052,7 +8092,7 @@ namespace mfront {
         this->writeSrcFileParametersInitializer(os, h);
       }
     }
-  }  // end of BehaviourDSLCommon::writeSrcFileParametersInitializer
+  }  // end of writeSrcFileParametersInitializer
 
   static void BehaviourDSLCommon_writeConverter(std::ostream& f,
                                                 const std::string& cname,
@@ -8386,7 +8426,7 @@ namespace mfront {
        << "}\n"
        << "}\n"
        << "}\n\n";
-  }  // end of BehaviourDSLCommon::writeSrcFileParametersInitializer
+  }  // end of writeSrcFileParametersInitializer
 
   void BehaviourDSLCommon::writeSrcFileBehaviourProfiler(
       std::ostream& os) const {
@@ -8400,7 +8440,7 @@ namespace mfront {
          << "return profiler;\n"
          << "}\n\n";
     }
-  }  // end of BehaviourDSLCommon::writeSrcFileBehaviourProfiler
+  }  // end of writeSrcFileBehaviourProfiler
 
   void BehaviourDSLCommon::writeSrcFile(std::ostream& os) const {
     this->writeSrcFileHeader(os);
@@ -8414,7 +8454,7 @@ namespace mfront {
       this->writeSrcFileStaticVariables(os, h);
     }
     this->writeNamespaceEnd(os);
-  }  // end of BehaviourDSLCommon::writeSrcFile
+  }  // end of writeSrcFile
 
   std::string BehaviourDSLCommon::predictionOperatorVariableModifier(
       const Hypothesis h, const std::string& var, const bool addThisPtr) {
@@ -8428,13 +8468,13 @@ namespace mfront {
       return "(this->" + var + ")";
     }
     return var;
-  }  // end of BehaviourDSLCommon::predictionOperatorVariableModifier
+  }  // end of predictionOperatorVariableModifier
 
   void BehaviourDSLCommon::treatProfiling() {
     const auto b = this->readBooleanValue("BehaviourDSLCommon::treatProfiling");
     this->readSpecifiedToken("BehaviourDSLCommon::treatProfiling", ";");
     this->mb.setAttribute(BehaviourData::profiling, b, false);
-  }  // end of BehaviourDSLCommon::treatProfiling
+  }  // end of treatProfiling
 
   void BehaviourDSLCommon::treatPredictionOperator() {
     using namespace std;
@@ -8503,7 +8543,7 @@ namespace mfront {
         this->mb.setAttribute(h, BehaviourData::hasPredictionOperator, true);
       }
     }
-  }  // end of BehaviourDSLCommon::treatPredictionOperator
+  }  // end of treatPredictionOperator
 
   void BehaviourDSLCommon::treatParameter() {
     auto throw_if = [this](const bool b, const std::string& m) {
@@ -8637,7 +8677,7 @@ namespace mfront {
       --(this->current);
       throw_if(true, "expected ';' before end of file");
     }
-  }  // end of BehaviourDSLCommon::treatParameter
+  }  // end of treatParameter
 
   void BehaviourDSLCommon::treatInitLocalVariables() {
     this->treatCodeBlock(*this, BehaviourData::InitializeLocalVariables,
@@ -8673,7 +8713,7 @@ namespace mfront {
                                       r_dt);
     this->mb.setEntryName(h, "minimal_time_step_scaling_factor",
                           "minimal_time_step_scaling_factor");
-  }  // end of BehaviourDSLCommon::treatMinimalTimeStepScalingFactor
+  }  // end of treatMinimalTimeStepScalingFactor
 
   void BehaviourDSLCommon::treatMaximalTimeStepScalingFactor() {
     const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
@@ -8704,7 +8744,7 @@ namespace mfront {
                                       r_dt);
     this->mb.setEntryName(h, "maximal_time_step_scaling_factor",
                           "maximal_time_step_scaling_factor");
-  }  // end of BehaviourDSLCommon::treatMaximalTimeStepScalingFactor
+  }  // end of treatMaximalTimeStepScalingFactor
 
   void BehaviourDSLCommon::setMinimalTangentOperator() {
     if (this->mb.getBehaviourType() !=
@@ -8745,7 +8785,7 @@ namespace mfront {
         }
       }
     }
-  }  // end of BehaviourDSLCommon::setMinimalTangentOperator
+  }  // end of setMinimalTangentOperator
 
   void BehaviourDSLCommon::treatInitialize() {
     CodeBlockOptions o;
@@ -8791,17 +8831,17 @@ namespace mfront {
       }
       this->mb.setCode(h, n, c, o.m, o.p);
     }
-  }  // end of BehaviourDSLCommon::treatInitialize
+  }  // end of treatInitialize
 
   void BehaviourDSLCommon::treatInternalEnergy() {
     this->treatCodeBlock(*this, BehaviourData::ComputeInternalEnergy,
                          &BehaviourDSLCommon::standardModifier, true, true);
-  }  // end of BehaviourDSLCommon::treatInternalEnergy
+  }  // end of treatInternalEnergy
 
   void BehaviourDSLCommon::treatDissipatedEnergy() {
     this->treatCodeBlock(*this, BehaviourData::ComputeDissipatedEnergy,
                          &BehaviourDSLCommon::standardModifier, true, true);
-  }  // end of BehaviourDSLCommon::treatDissipatedEnergy
+  }  // end of treatDissipatedEnergy
 
   static BehaviourDescription::SlipSystem readSlipSystem(
       BehaviourDSLCommon::CxxTokenizer::const_iterator& p,
@@ -8841,7 +8881,7 @@ namespace mfront {
     const auto s = readSlipSystem(this->current, this->tokens.end());
     this->mb.setSlipSystems({1u, s});
     this->readSpecifiedToken("BehaviourDSLCommon::treatSlipSystem", ";");
-  }  // end of BehaviourDescription::treatSlipSystem()
+  }  // end of treatSlipSystem()
 
   void BehaviourDSLCommon::treatSlipSystems() {
     const std::string m = "BehaviourDSLCommon::treatSlipSystems";
@@ -8863,7 +8903,7 @@ namespace mfront {
     this->readSpecifiedToken(m, "}");
     this->readSpecifiedToken(m, ";");
     this->mb.setSlipSystems(ss);
-  }  // end of BehaviourDSLCommon::treatSlipSystems
+  }  // end of treatSlipSystems
 
   void BehaviourDSLCommon::treatCrystalStructure() {
     using tfel::material::CrystalStructure;
@@ -8885,7 +8925,7 @@ namespace mfront {
     }
     ++(this->current);
     this->readSpecifiedToken("BehaviourDSLCommon::treatCrystalStructure", ";");
-  }  // end of BehaviourDSLCommon::treatCrystalStructure
+  }  // end of treatCrystalStructure
 
   void BehaviourDSLCommon::treatInteractionMatrix() {
     auto throw_if = [this](const bool b, const std::string& m) {
@@ -8912,7 +8952,7 @@ namespace mfront {
       imv.push_back(tfel::utilities::convert<long double>(v));
     }
     this->mb.setInteractionMatrix(imv);
-  }  // end of BehaviourDSLCommon::treatInteractionMatrix
+  }  // end of treatInteractionMatrix
 
   void BehaviourDSLCommon::treatDislocationsMeanFreePathInteractionMatrix() {
     auto throw_if = [this](const bool b, const std::string& m) {
@@ -8945,8 +8985,7 @@ namespace mfront {
       imv.push_back(tfel::utilities::convert<long double>(v));
     }
     this->mb.setDislocationsMeanFreePathInteractionMatrix(imv);
-  }  // end of
-     // BehaviourDSLCommon::treatDislocationsMeanFreePathInteractionMatrix
+  }  // end of treatDislocationsMeanFreePathInteractionMatrix
 
   void BehaviourDSLCommon::
       setComputeFinalThermodynamicForcesFromComputeFinalThermodynamicForcesCandidateIfNecessary() {
@@ -8982,7 +9021,7 @@ namespace mfront {
       }
     }
   }  // end of
-     // BehaviourDSLCommon::setComputeFinalThermodynamicForcesFromComputeFinalThermodynamicForcesCandidateIfNecessary
+     // setComputeFinalThermodynamicForcesFromComputeFinalThermodynamicForcesCandidateIfNecessary
 
   std::string BehaviourDSLCommon::getOverridableVariableNameByExternalName(
       const std::string& en) const {
@@ -9000,12 +9039,12 @@ namespace mfront {
           en + "'");
     }
     return pmp->name;
-  }  // end of BehaviourDSLCommon::getOverridableVariableNameByExternalName
+  }  // end of getOverridableVariableNameByExternalName
 
   void BehaviourDSLCommon::overrideByAParameter(const std::string& n,
                                                 const double v) {
     this->mb.overrideByAParameter(n, v);
-  }  // end of BehaviourDSLCommon::overrideByAParameter
+  }  // end of overrideByAParameter
 
   BehaviourDSLCommon::~BehaviourDSLCommon() = default;
 

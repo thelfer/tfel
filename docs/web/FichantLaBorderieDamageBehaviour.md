@@ -1,6 +1,18 @@
-% How to implement the Fichant-La Borderie damage behaviour
-% Thomas Helfer, Alexandre Gagnant
-% 12/2019
+---
+title: How to implement the Fichant-La Borderie damage behaviour
+author: Thomas Helfer, Alexandre Gagnant
+date: 12/2019
+lang: en-EN
+geometry:
+  - margin=2cm
+papersize: a4
+link-citations: true
+colorlinks: true
+figPrefixTemplate: "$$i$$"
+tblPrefixTemplate: "$$i$$"
+secPrefixTemplate: "$$i$$"
+eqnPrefixTemplate: "($$i$$)"
+---
 
 \newcommand{\absvalue}[1]{{\left|#1\right|}}
 \newcommand{\ppos}[1]{{\left<#1\right>_{+}}}

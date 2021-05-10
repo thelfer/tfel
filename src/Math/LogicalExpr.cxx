@@ -16,126 +16,115 @@
 #include "TFEL/Math/General/IEEE754.hxx"
 #include "TFEL/Math/Parser/LogicalExpr.hxx"
 
-namespace tfel {
+namespace tfel::math::parser {
 
-  namespace math {
+  bool OpEqual::apply(const double a, const double b) {
+    return tfel::math::ieee754::fpclassify(std::abs(a - b)) == FP_ZERO;
+  }  // end of OpEqual::apply
 
-    namespace parser {
+  std::string OpEqual::getCxxFormula(const std::string& a,
+                                     const std::string& b) {
+    return '(' + a + ")==(" + b + ')';
+  }  // end of OpEqual::getCxxFormula
 
-      bool OpEqual::apply(const double a, const double b) {
-        return tfel::math::ieee754::fpclassify(std::abs(a - b)) == FP_ZERO;
-      }  // end of OpEqual::apply
+  bool OpGreater::apply(const double a, const double b) {
+    return a > b;
+  }  // end of OpGreater::apply
 
-      std::string OpEqual::getCxxFormula(const std::string& a,
-                                         const std::string& b) {
-        return '(' + a + ")==(" + b + ')';
-      }  // end of OpEqual::getCxxFormula
-
-      bool OpGreater::apply(const double a, const double b) {
-        return a > b;
-      }  // end of OpGreater::apply
-
-      std::string OpGreater::getCxxFormula(const std::string& a,
-                                           const std::string& b) {
-        return '(' + a + ")>(" + b + ')';
-      }  // end of OpGreater::getCxxFormula
-
-      bool OpGreaterOrEqual::apply(const double a, const double b) {
-        return a >= b;
-      }  // end of OpGreaterOrEqual::apply
-
-      std::string OpGreaterOrEqual::getCxxFormula(const std::string& a,
-                                                  const std::string& b) {
-        return '(' + a + ")>=(" + b + ')';
-      }  // end of OpGreaterOrEqual::getCxxFormula
-
-      bool OpLesser::apply(const double a, const double b) {
-        return a < b;
-      }  // end of OpLesser::apply
-
-      std::string OpLesser::getCxxFormula(const std::string& a,
-                                          const std::string& b) {
-        return '(' + a + ")<(" + b + ')';
-      }  // end of OpLesser::getCxxFormula
-
-      bool OpLesserOrEqual::apply(const double a, const double b) {
-        return a <= b;
-      }  // end of OpLesserOrEqual::apply
-
-      std::string OpLesserOrEqual::getCxxFormula(const std::string& a,
-                                                 const std::string& b) {
-        return '(' + a + ")<=(" + b + ')';
-      }  // end of OpLesserOrEqual::getCxxFormula
-
-      bool OpAnd::apply(const bool a, const bool b) {
-        return a && b;
-      }  // end of OpAnd::apply
-
-      std::string OpAnd::getCxxFormula(const std::string& a,
+  std::string OpGreater::getCxxFormula(const std::string& a,
                                        const std::string& b) {
-        return '(' + a + ")&&(" + b + ')';
-      }  // end of OpAnd::getCxxFormula
+    return '(' + a + ")>(" + b + ')';
+  }  // end of OpGreater::getCxxFormula
 
-      bool OpOr::apply(const bool a, const bool b) {
-        return a || b;
-      }  // end of OpAnd::apply
+  bool OpGreaterOrEqual::apply(const double a, const double b) {
+    return a >= b;
+  }  // end of OpGreaterOrEqual::apply
 
-      std::string OpOr::getCxxFormula(const std::string& a,
+  std::string OpGreaterOrEqual::getCxxFormula(const std::string& a,
+                                              const std::string& b) {
+    return '(' + a + ")>=(" + b + ')';
+  }  // end of OpGreaterOrEqual::getCxxFormula
+
+  bool OpLesser::apply(const double a, const double b) {
+    return a < b;
+  }  // end of OpLesser::apply
+
+  std::string OpLesser::getCxxFormula(const std::string& a,
                                       const std::string& b) {
-        return '(' + a + ")||(" + b + ')';
-      }  // end of OpOr::getCxxFormula
+    return '(' + a + ")<(" + b + ')';
+  }  // end of OpLesser::getCxxFormula
 
-      LogicalExpr::~LogicalExpr() = default;
+  bool OpLesserOrEqual::apply(const double a, const double b) {
+    return a <= b;
+  }  // end of OpLesserOrEqual::apply
 
-      NegLogicalExpression::NegLogicalExpression(
-          const std::shared_ptr<LogicalExpr> a_)
-          : a(a_) {}  // end of NegLogicalExpression::NegLogicalOperation
+  std::string OpLesserOrEqual::getCxxFormula(const std::string& a,
+                                             const std::string& b) {
+    return '(' + a + ")<=(" + b + ')';
+  }  // end of OpLesserOrEqual::getCxxFormula
 
-      bool NegLogicalExpression::getValue() const {
-        return !this->a->getValue();
-      }  // end of NegLogicalExpression::getValue() const
+  bool OpAnd::apply(const bool a, const bool b) {
+    return a && b;
+  }  // end of OpAnd::apply
 
-      std::string NegLogicalExpression::getCxxFormula(
-          const std::vector<std::string>& m) const {
-        return "!(" + this->a->getCxxFormula(m) + ")";
-      }  // end of NegLogicalExpression::getCxxFormula
+  std::string OpAnd::getCxxFormula(const std::string& a, const std::string& b) {
+    return '(' + a + ")&&(" + b + ')';
+  }  // end of OpAnd::getCxxFormula
 
-      void NegLogicalExpression::checkCyclicDependency(
-          std::vector<std::string>& names) const {
-        this->a->checkCyclicDependency(names);
-      }  // end of NegLogicalExpression::checkCyclicDependency
+  bool OpOr::apply(const bool a, const bool b) {
+    return a || b;
+  }  // end of OpAnd::apply
 
-      std::shared_ptr<LogicalExpr> NegLogicalExpression::resolveDependencies(
-          const std::vector<double>& v) const {
-        return std::shared_ptr<LogicalExpr>(
-            new NegLogicalExpression(this->a->resolveDependencies(v)));
-      }  // end of NegLogicalExpression::resolveDependencies() const
+  std::string OpOr::getCxxFormula(const std::string& a, const std::string& b) {
+    return '(' + a + ")||(" + b + ')';
+  }  // end of OpOr::getCxxFormula
 
-      std::shared_ptr<LogicalExpr> NegLogicalExpression::clone(
-          const std::vector<double>& v) const {
-        return std::make_shared<NegLogicalExpression>(this->a->clone(v));
-      }
+  LogicalExpr::~LogicalExpr() = default;
 
-      std::shared_ptr<LogicalExpr>
-      NegLogicalExpression::createFunctionByChangingParametersIntoVariables(
-          const std::vector<double>& v,
-          const std::vector<std::string>& p,
-          const std::map<std::string, std::vector<double>::size_type>& pos)
-          const {
-        auto na =
-            this->a->createFunctionByChangingParametersIntoVariables(v, p, pos);
-        return std::make_shared<NegLogicalExpression>(na);
-      }
+  NegLogicalExpression::NegLogicalExpression(
+      const std::shared_ptr<LogicalExpr> a_)
+      : a(a_) {}  // end of NegLogicalExpression::NegLogicalOperation
 
-      void NegLogicalExpression::getParametersNames(
-          std::set<std::string>& p) const {
-        this->a->getParametersNames(p);
-      }  // end of NegLogicalExpression::getParametersNames
+  bool NegLogicalExpression::getValue() const {
+    return !this->a->getValue();
+  }  // end of NegLogicalExpression::getValue() const
 
-      NegLogicalExpression::~NegLogicalExpression() = default;
+  std::string NegLogicalExpression::getCxxFormula(
+      const std::vector<std::string>& m) const {
+    return "!(" + this->a->getCxxFormula(m) + ")";
+  }  // end of NegLogicalExpression::getCxxFormula
 
-    }  // end of namespace parser
+  void NegLogicalExpression::checkCyclicDependency(
+      std::vector<std::string>& names) const {
+    this->a->checkCyclicDependency(names);
+  }  // end of NegLogicalExpression::checkCyclicDependency
 
-  }  // end of namespace math
+  std::shared_ptr<LogicalExpr> NegLogicalExpression::resolveDependencies(
+      const std::vector<double>& v) const {
+    return std::shared_ptr<LogicalExpr>(
+        new NegLogicalExpression(this->a->resolveDependencies(v)));
+  }  // end of NegLogicalExpression::resolveDependencies() const
 
-}  // end of namespace tfel
+  std::shared_ptr<LogicalExpr> NegLogicalExpression::clone(
+      const std::vector<double>& v) const {
+    return std::make_shared<NegLogicalExpression>(this->a->clone(v));
+  }
+
+  std::shared_ptr<LogicalExpr>
+  NegLogicalExpression::createFunctionByChangingParametersIntoVariables(
+      const std::vector<double>& v,
+      const std::vector<std::string>& p,
+      const std::map<std::string, std::vector<double>::size_type>& pos) const {
+    auto na =
+        this->a->createFunctionByChangingParametersIntoVariables(v, p, pos);
+    return std::make_shared<NegLogicalExpression>(na);
+  }
+
+  void NegLogicalExpression::getParametersNames(
+      std::set<std::string>& p) const {
+    this->a->getParametersNames(p);
+  }  // end of NegLogicalExpression::getParametersNames
+
+  NegLogicalExpression::~NegLogicalExpression() = default;
+
+}  // end of namespace tfel::math::parser

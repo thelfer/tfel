@@ -20,14 +20,14 @@
 extern "C" {
 #endif /* __cplusplus */
 
-/*!
- * \brief state of the material at the end of the time step
- */
+//! \brief state of the material at the end of the time step
 typedef struct {
   //! \brief value of the gradients
   const mfront_gb_real* gradients;
   //! \brief values of the thermodynamic_forces
   mfront_gb_real* thermodynamic_forces;
+  //! \brief volumetric mass density in the reference configuration
+  const mfront_gb_real* mass_density;
   //! \brief values of the material properties
   const mfront_gb_real* material_properties;
   //! \brief values of the internal state variables
@@ -46,14 +46,14 @@ typedef struct {
   const mfront_gb_real* external_state_variables;
 } mfront_gb_State;
 
-/*!
- * \brief state of the material at the beginning of the time step
- */
+//! \brief state of the material at the beginning of the time step
 typedef struct {
   //! \brief value of the gradients
   const mfront_gb_real* gradients;
   //! \brief values of the thermodynamic_forces
   mfront_gb_real* thermodynamic_forces;
+  //! \brief volumetric mass density in the reference configuration
+  const mfront_gb_real* mass_density;
   //! \brief values of the material properties
   const mfront_gb_real* material_properties;
   //! \brief values of the internal state variables

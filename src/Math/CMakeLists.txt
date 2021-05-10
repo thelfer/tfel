@@ -87,5 +87,4 @@ target_link_libraries(TFELMathParser
 	PUBLIC TFELMathKriging
     PUBLIC TFELMath
 	PUBLIC TFELException
-	PUBLIC TFELUnicodeSupport
-	PUBLIC TFELPhysicalConstants)
+	PUBLIC TFELUnicodeSupport)

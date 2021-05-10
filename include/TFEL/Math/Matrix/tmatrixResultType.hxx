@@ -10,8 +10,8 @@
  * project under specific licensing conditions.
  */
 
-#ifndef LIB_TFEL_TINY_MATRIX_RESULT_TYPE_HXX
-#define LIB_TFEL_TINY_MATRIX_RESULT_TYPE_HXX
+#ifndef LIB_TFEL_MATH_TINY_MATRIX_RESULT_TYPE_HXX
+#define LIB_TFEL_MATH_TINY_MATRIX_RESULT_TYPE_HXX
 
 #include "TFEL/Math/tvector.hxx"
 #include "TFEL/Math/tmatrix.hxx"
@@ -39,7 +39,11 @@ namespace tfel::math {
    * \see   ComputeBinaryOperationResult
    */
   template <unsigned short N, unsigned short M, typename T, typename Scal>
-  class ComputeBinaryOperationResult<MatrixTag, ScalarTag, tmatrix<N, M, T>, Scal, OpMult> {
+  class ComputeBinaryOperationResult<MatrixTag,
+                                     ScalarTag,
+                                     tmatrix<N, M, T>,
+                                     Scal,
+                                     OpMult> {
     typedef result_type<T, Scal, OpMult> ResBase_;
 
    public:
@@ -54,7 +58,11 @@ namespace tfel::math {
    * \see   ComputeBinaryOperationResult
    */
   template <unsigned short N, unsigned short M, typename T, typename Scal>
-  class ComputeBinaryOperationResult<MatrixTag, ScalarTag, tmatrix<N, M, T>, Scal, OpDiv> {
+  class ComputeBinaryOperationResult<MatrixTag,
+                                     ScalarTag,
+                                     tmatrix<N, M, T>,
+                                     Scal,
+                                     OpDiv> {
     typedef result_type<T, Scal, OpDiv> ResBase_;
 
    public:
@@ -69,7 +77,11 @@ namespace tfel::math {
    * \see   ComputeBinaryOperationResult
    */
   template <typename Scal, unsigned short N, unsigned short M, typename T>
-  class ComputeBinaryOperationResult<ScalarTag, MatrixTag, Scal, tmatrix<N, M, T>, OpMult> {
+  class ComputeBinaryOperationResult<ScalarTag,
+                                     MatrixTag,
+                                     Scal,
+                                     tmatrix<N, M, T>,
+                                     OpMult> {
     typedef result_type<Scal, T, OpMult> ResBase_;
 
    public:
@@ -156,4 +168,4 @@ namespace tfel::math {
 
 }  // end of namespace tfel::math
 
-#endif /* LIB_TFEL_TINY_MATRIX_RESULT_TYPE_HXX */
+#endif /* LIB_TFEL_MATH_TINY_MATRIX_RESULT_TYPE_HXX */

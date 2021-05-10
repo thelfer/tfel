@@ -1,5 +1,6 @@
 /*!
- * \file   include/TFEL/Math/AccelerationAlgorithms/AitkenAccelerationAlgorithm.hxx
+ * \file
+ * include/TFEL/Math/AccelerationAlgorithms/AitkenAccelerationAlgorithm.hxx
  * \brief
  * \author Thomas Helfer
  * \date   28/05/2020
@@ -16,52 +17,49 @@
 
 #include <ostream>
 
-namespace tfel {
+namespace tfel::math {
 
-  namespace math {
-
+  /*!
+   * \brief an implementation of the Aitken \f$\Delta^{2}\f$ algorithm
+   * \tparam NumericType: numeric type used
+   * \tparam IndexType: integer used to store the iteration number
+   */
+  template <typename NumericType, typename IndexType = unsigned int>
+  struct AitkenAccelerationAlgorithm {
     /*!
-     * \brief an implementation of the Aitken \f$\Delta^{2}\f$ algorithm
-     * \tparam NumericType: numeric type used
-     * \tparam IndexType: integer used to store the iteration number
+     * \brief this method shall be called before starting a new resolution
+     * \param[in] x0: initial guess
      */
-    template <typename NumericType, typename IndexType = unsigned int>
-    struct AitkenAccelerationAlgorithm {
-      /*!
-       * \brief this method shall be called before starting a new resolution
-       * \param[in] x0: initial guess
-       */
-      void initialize(const NumericType);
-      /*!
-       * \brief perform the acceleration
-       * \param[in,out] x: on input, the result of the Picard iteration. On
-       * output, an accelerated estimate.
-       */
-      void accelerate(NumericType&);
-
-     private:
-      //! \brief previous iterate
-      NumericType x0;
-      //! \brief previous iterate
-      NumericType x1;
-      //! \brief iteration number
-      IndexType i = 0;
-    };  // end of struct AitkenAccelerationAlgorithm
-
+    void initialize(const NumericType);
     /*!
-     * \brief output stream operator
-     * \param[in] os: output operator
-     * \param[in] a: algorithm
+     * \brief perform the acceleration
+     * \param[in,out] x: on input, the result of the Picard iteration. On
+     * output, an accelerated estimate.
      */
-    template <typename NumericType, typename IndexType>
-    std::ostream& operator<<(
-        std::ostream&,
-        const AitkenAccelerationAlgorithm<NumericType, IndexType>&);
+    void accelerate(NumericType&);
 
-  }  // end of namespace math
+   private:
+    //! \brief previous iterate
+    NumericType x0;
+    //! \brief previous iterate
+    NumericType x1;
+    //! \brief iteration number
+    IndexType i = 0;
+  };  // end of struct AitkenAccelerationAlgorithm
 
-}  // end of namespace tfel
+  /*!
+   * \brief output stream operator
+   * \param[in] os: output operator
+   * \param[in] a: algorithm
+   */
+  template <typename NumericType, typename IndexType>
+  std::ostream& operator<<(
+      std::ostream&,
+      const AitkenAccelerationAlgorithm<NumericType, IndexType>&);
+
+}  // end of namespace tfel::math
 
 #include "TFEL/Math/AccelerationAlgorithms/AitkenAccelerationAlgorithm.ixx"
 
-#endif /* LIB_TFEL_MATH_ACCELERATIONALGORITHMS_AITKENACCELERATIONALGORITHM_HXX */
+#endif /* LIB_TFEL_MATH_ACCELERATIONALGORITHMS_AITKENACCELERATIONALGORITHM_HXX \
+        */

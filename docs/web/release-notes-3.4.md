@@ -102,10 +102,10 @@ being considered.
 
 ## Simultaneous releases This version has been released along with:
 
-- [Version 3.0.6](http://tfel.sourceforge.net/release-notes-3.0.6.md)
-- [Version 3.1.6](http://tfel.sourceforge.net/release-notes-3.1.6.md)
-- [Version 3.2.3](http://tfel.sourceforge.net/release-notes-3.2.3.md)
-- [Version 3.3.1](http://tfel.sourceforge.net/release-notes-3.3.1.md)
+- [Version 3.0.6](http://tfel.sourceforge.net/release-notes-3.0.6.html)
+- [Version 3.1.6](http://tfel.sourceforge.net/release-notes-3.1.6.html)
+- [Version 3.2.3](http://tfel.sourceforge.net/release-notes-3.2.3.html)
+- [Version 3.3.1](http://tfel.sourceforge.net/release-notes-3.3.1.html)
 
 Those releases are mainly related to bug-fixes. Version 3.4 inherits
 from all the fixes detailed in the associated release notes.

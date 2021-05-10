@@ -28,11 +28,10 @@ namespace tfel::utilities {
   }  // end of ends_with
 
   std::vector<std::string> tokenize(const std::string& s, const char c) {
-    using namespace std;
-    vector<string> res;
-    string::size_type b = 0u;
-    string::size_type e = s.find_first_of(c, b);
-    while (string::npos != e || string::npos != b) {
+    std::vector<std::string> res;
+    auto b = std::string::size_type{};
+    auto e = s.find_first_of(c, b);
+    while (std::string::npos != e || std::string::npos != b) {
       // Found a token, add it to the vector.
       res.push_back(s.substr(b, e - b));
       b = s.find_first_not_of(c, e);
@@ -43,14 +42,12 @@ namespace tfel::utilities {
 
   std::vector<std::string> tokenize(const std::string& s,
                                     const std::string& d) {
-    using namespace std;
-    vector<string> res;
-    const string::size_type sl = s.length();
-    const string::size_type dl = d.length();
-    string::size_type b = 0u;
-    string::size_type e;
-    e = s.find(d, b);
-    while (e != string::npos) {
+    std::vector<std::string> res;
+    const auto sl = s.length();
+    const auto dl = d.length();
+    auto b = std::string::size_type{};
+    auto e = s.find(d, b);
+    while (e != std::string::npos) {
       res.push_back(s.substr(b, e - b));
       b = e + dl;
       e = s.find(d, b);

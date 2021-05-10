@@ -12,12 +12,11 @@
  * project under specific licensing conditions.
  */
 
-#ifndef LIB_TFEL_CONDITIONALEXPR_HXX
-#define LIB_TFEL_CONDITIONALEXPR_HXX
+#ifndef LIB_TFEL_MATH_CONDITIONALEXPR_HXX
+#define LIB_TFEL_MATH_CONDITIONALEXPR_HXX
 
 #include <vector>
 #include <string>
-
 #include "TFEL/Math/Parser/Expr.hxx"
 #include "TFEL/Math/Parser/LogicalExpr.hxx"
 
@@ -60,4 +59,4 @@ namespace tfel::math::parser {
 
 }  // end of namespace tfel::math::parser
 
-#endif /* LIB_TFEL_CONDITIONALEXPR_HXX */
+#endif /* LIB_TFEL_MATH_CONDITIONALEXPR_HXX */

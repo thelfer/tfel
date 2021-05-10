@@ -27,6 +27,10 @@
 #include "TFEL/Math/stensor.hxx"
 #include "TFEL/Math/Array/FixedSizeArrayDerivative.hxx"
 
+// on OpenSolaris and gcc10, std::abs is not constexpr
+static constexpr double my_abs(const double x) {
+  return x > 0 ? x : -x;
+}  // end of my_abs
 
 struct FSDerivativeArrayTest final : public tfel::tests::TestCase {
   FSDerivativeArrayTest()
@@ -46,12 +50,13 @@ private:
     using Stensor6 =
         FixedSizeArrayDerivative<st2tost2<2u, double>, stensor<2u, double>>;
     constexpr Stensor6 d(1);
-    TFEL_TESTS_STATIC_ASSERT(Stensor6::arity == 3);
+  
+  TFEL_TESTS_STATIC_ASSERT(Stensor6::arity == 3);
     TFEL_TESTS_STATIC_ASSERT(d.size() == 64);
     TFEL_TESTS_STATIC_ASSERT(d.size(0) == 4);
     TFEL_TESTS_STATIC_ASSERT(d.size(1) == 4);
     TFEL_TESTS_STATIC_ASSERT(d.size(2) == 4);
-    TFEL_TESTS_STATIC_ASSERT(std::abs(d(0, 0, 0) - 1) < eps);
+    TFEL_TESTS_STATIC_ASSERT(my_abs(d(0, 0, 0) - 1) < eps);
  }
  void test2() {
    using MyStensor4 =

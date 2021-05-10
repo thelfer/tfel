@@ -16,29 +16,24 @@
 #define LIB_TFEL_GENTYPECASTERROR_HXX
 
 #include <stdexcept>
-
 #include "TFEL/Config/TFELConfig.hxx"
 
-namespace tfel {
+namespace tfel::utilities {
 
-  namespace utilities {
+  /*!
+   * exception thrown when requesting a bad type out of a
+   * GenTypeBase class
+   */
+  struct TFELUTILITIES_VISIBILITY_EXPORT GenTypeCastError
+      : public std::runtime_error {
+    //! \brief default consutructor
+    GenTypeCastError();
+    GenTypeCastError(const GenTypeCastError&) = default;
+    GenTypeCastError(GenTypeCastError&&) = default;
+    //! \brief destructor
+    ~GenTypeCastError() noexcept override;
+  };  // end of struct GenTypeCastErrro
 
-    /*!
-     * exception thrown when requesting a bad type out of a
-     * GenTypeBase class
-     */
-    struct TFELUTILITIES_VISIBILITY_EXPORT GenTypeCastError
-        : public std::runtime_error {
-      //! \brief default consutructor
-      GenTypeCastError();
-      GenTypeCastError(const GenTypeCastError&) = default;
-      GenTypeCastError(GenTypeCastError&&) = default;
-      //! \brief destructor
-      ~GenTypeCastError() noexcept override;
-    };  // end of struct GenTypeCastErrro
-
-  }  // end of namespace utilities
-
-}  // end of namespace tfel
+}  // end of namespace tfel::utilities
 
 #endif /* LIB_TFEL_GENTYPECASTERROR_HXX */

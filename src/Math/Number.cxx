@@ -14,53 +14,44 @@
 
 #include "TFEL/Math/Parser/Number.hxx"
 
-namespace tfel {
-  namespace math {
+namespace tfel::math::parser {
 
-    namespace parser {
+  Number::Number(const std::string& s, const double v)
+      : str(s), value(v) {}  // end of Number::Number
 
-      Number::Number(const std::string& s, const double v)
-          : str(s), value(v) {}  // end of Number::Number
+  std::string Number::getCxxFormula(const std::vector<std::string>&) const {
+    return this->str;
+  }  // end of Number::getCxxFormula
 
-      std::string Number::getCxxFormula(const std::vector<std::string>&) const {
-        return this->str;
-      }  // end of Number::getCxxFormula
+  double Number::getValue() const {
+    return this->value;
+  }  // end of Number::getValue
 
-      double Number::getValue() const {
-        return this->value;
-      }  // end of Number::getValue
+  void Number::getParametersNames(std::set<std::string>&) const {
+  }  // end of Number::getParametersNames
 
-      void Number::getParametersNames(std::set<std::string>&) const {
-      }  // end of Number::getParametersNames
+  void Number::checkCyclicDependency(std::vector<std::string>&) const {
+  }  // end of Number::checkCyclicDependency
 
-      void Number::checkCyclicDependency(std::vector<std::string>&) const {
-      }  // end of Number::checkCyclicDependency
+  std::shared_ptr<Expr> Number::differentiate(
+      const std::vector<double>::size_type, const std::vector<double>&) const {
+    return std::shared_ptr<Expr>(new Number("0", 0.));
+  }  // end of Number::differentiate
 
-      std::shared_ptr<Expr> Number::differentiate(
-          const std::vector<double>::size_type,
-          const std::vector<double>&) const {
-        return std::shared_ptr<Expr>(new Number("0", 0.));
-      }  // end of Number::differentiate
+  std::shared_ptr<Expr> Number::clone(const std::vector<double>&) const {
+    return std::shared_ptr<Expr>(new Number(this->str, this->value));
+  }  // end of Number::clone
 
-      std::shared_ptr<Expr> Number::clone(const std::vector<double>&) const {
-        return std::shared_ptr<Expr>(new Number(this->str, this->value));
-      }  // end of Number::clone
+  std::shared_ptr<Expr> Number::createFunctionByChangingParametersIntoVariables(
+      const std::vector<double>& v,
+      const std::vector<std::string>&,
+      const std::map<std::string, std::vector<double>::size_type>&) const {
+    return this->clone(v);
+  }  // end of Number::createFunctionByChangingParametersIntoVariables
 
-      std::shared_ptr<Expr>
-      Number::createFunctionByChangingParametersIntoVariables(
-          const std::vector<double>& v,
-          const std::vector<std::string>&,
-          const std::map<std::string, std::vector<double>::size_type>&) const {
-        return this->clone(v);
-      }  // end of Number::createFunctionByChangingParametersIntoVariables
+  std::shared_ptr<Expr> Number::resolveDependencies(
+      const std::vector<double>& v) const {
+    return this->clone(v);
+  }  // end of Number::resolveDependencies
 
-      std::shared_ptr<Expr> Number::resolveDependencies(
-          const std::vector<double>& v) const {
-        return this->clone(v);
-      }  // end of Number::resolveDependencies
-
-    }  // end of namespace parser
-
-  }  // end of namespace math
-
-}  // end of namespace tfel
+}  // end of namespace tfel::math::parser

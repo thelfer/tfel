@@ -20,151 +20,150 @@
 #include "TFEL/Config/TFELConfig.hxx"
 #include "TFEL/Utilities/Argument.hxx"
 
-namespace tfel {
+namespace tfel::utilities {
 
-  namespace utilities {
-
+  /*!
+   * class used to parser command line arguments
+   */
+  struct TFELUTILITIES_VISIBILITY_EXPORT ArgumentParser {
     /*!
-     * class used to parser command line arguments
+     * \brief structure describing an action to be performed when a
+     * argument is treated
      */
-    struct TFELUTILITIES_VISIBILITY_EXPORT ArgumentParser {
-      /*!
-       * \brief structure describing an action to be performed when a
-       * argument is treated
-       */
-      struct TFELUTILITIES_VISIBILITY_EXPORT CallBack {
-        //! default constructor (deleted)
-        CallBack() = delete;
-        /*!
-         * \brief constructor
-         * \param[in] d_: description
-         * \param[in] c_: action
-         * \param[in] b : true if the callback requires an option
-         */
-        CallBack(const std::string&, const std::function<void()>&, const bool);
-        //! move constructor
-        CallBack(CallBack&&);
-        //! copy constructor (deleted)
-        CallBack(const CallBack&);
-        //! move assignement
-        CallBack& operator=(CallBack&&) = delete;
-        //! assignement
-        CallBack& operator=(const CallBack&) = delete;
-        //! description
-        const std::string d;
-        //! action performed
-        std::function<void()> c;
-        //! flag, true if the callback has an option
-        const bool hasOption = false;
-      };
-      //! default constructor
-      ArgumentParser();
+    struct TFELUTILITIES_VISIBILITY_EXPORT CallBack {
+      //! default constructor (deleted)
+      CallBack() = delete;
       /*!
        * \brief constructor
-       * \param argc : number of arguments given at command line
-       * \param argv : arguments list
+       * \param[in] d_: description
+       * \param[in] c_: action
+       * \param[in] b : true if the callback requires an option
        */
-      ArgumentParser(const int, const char* const* const);
-      /*!
-       * \brief set the arguments to be parsed
-       * \param argc : number of arguments given at command line
-       * \param argv : arguments list
-       */
-      virtual void setArguments(const int, const char* const* const);
-      /*!
-       * \brief register a new callback
-       * \param key         : command line argument name
-       * \param f           : callback
-       */
-      virtual void registerCallBack(const std::string&, const CallBack&);
-      /*!
-       * \brief register a new callback
-       * \param key         : command line argument name
-       * \param aliasName   : command line argument alias
-       * \param f           : callback
-       */
-      virtual void registerCallBack(const std::string&, const std::string&, const CallBack&);
-      //! \brief parse arguments using registred methods.
-      virtual void parseArguments();
-      //! destructor
-      virtual ~ArgumentParser();
-
-     protected:
-      //! a simple alias
-      using CallBacksContainer = std::map<std::string, CallBack>;
-      //! a simple alias
-      using AliasContainer = std::map<std::string, std::string>;
-      //! a simple alias
-      using ArgsContainer = std::vector<Argument>;
-      /*!
-       * \brief register a default callbacks
-       *
-       * The default callbacks are :
-       * - '--help', '-h' which displays the list of the command line
-       *    arguments (if the treatHelp method is not overriden if the
-       *    derivate class)
-       * - '--version', '-v' which displays the current code version
-       *    using the getVersionDescription() method of the derivate
-       *    class (if the 'treatVersion' method is not overriden if the
-       *    derivate class)
-       */
-      virtual void registerDefaultCallBacks();
-      /*!
-       * \brief method called while parsing unregistred command line
-       * arguments.
-       *
-       * \throw runtime_error
-       */
-      virtual void treatUnknownArgument();
-      /*!
-       * \brief method associated with the '--help' command line
-       * argument.
-       *
-       * This method uses the getUsageDescription() method to get a
-       * more helpfull message.
-       *
-       * This method stops the execution by calling the exit
-       * method.
-       */
-      virtual void treatHelp();
-      /*!
-       * \brief method associated with the '--version' command line
-       * argument
-       */
-      virtual void treatVersion();
-      //! container of all the call-backs
-      CallBacksContainer callBacksContainer;
-      //! container of all the alias
-      AliasContainer alias;
-      //! container of all the command line arguments
-      ArgsContainer args;
-      //! an iterator to the argument being treated
-      ArgsContainer::iterator currentArgument;
-      //! program name
-      std::string programName;
-
-     private:
-      //! copy constructor
-      ArgumentParser(const ArgumentParser&) = delete;
+      CallBack(const std::string&, const std::function<void()>&, const bool);
       //! move constructor
-      ArgumentParser(ArgumentParser&&) = delete;
-      //! standard assignement
-      ArgumentParser& operator=(const ArgumentParser&) = delete;
+      CallBack(CallBack&&);
+      //! copy constructor (deleted)
+      CallBack(const CallBack&);
       //! move assignement
-      ArgumentParser& operator=(ArgumentParser&&) = delete;
-      //! \brief replaces aliases by their usual names
-      virtual void replaceAliases();
-      //! \brief slip arguments and options
-      virtual void stripArguments();
-
-     protected:
-      //! \return the version of the program being used
-      virtual std::string getVersionDescription() const = 0;
-      //! \return the usage of the program being used
-      virtual std::string getUsageDescription() const = 0;
+      CallBack& operator=(CallBack&&) = delete;
+      //! assignement
+      CallBack& operator=(const CallBack&) = delete;
+      //! description
+      const std::string d;
+      //! action performed
+      std::function<void()> c;
+      //! flag, true if the callback has an option
+      const bool hasOption = false;
     };
-  }  // end of namespace utilities
+    //! default constructor
+    ArgumentParser();
+    /*!
+     * \brief constructor
+     * \param argc : number of arguments given at command line
+     * \param argv : arguments list
+     */
+    ArgumentParser(const int, const char* const* const);
+    /*!
+     * \brief set the arguments to be parsed
+     * \param argc : number of arguments given at command line
+     * \param argv : arguments list
+     */
+    virtual void setArguments(const int, const char* const* const);
+    /*!
+     * \brief register a new callback
+     * \param key         : command line argument name
+     * \param f           : callback
+     */
+    virtual void registerCallBack(const std::string&, const CallBack&);
+    /*!
+     * \brief register a new callback
+     * \param key         : command line argument name
+     * \param aliasName   : command line argument alias
+     * \param f           : callback
+     */
+    virtual void registerCallBack(const std::string&,
+                                  const std::string&,
+                                  const CallBack&);
+    //! \brief parse arguments using registred methods.
+    virtual void parseArguments();
+    //! destructor
+    virtual ~ArgumentParser();
 
-}  // end of namespace tfel
+   protected:
+    //! a simple alias
+    using CallBacksContainer = std::map<std::string, CallBack>;
+    //! a simple alias
+    using AliasContainer = std::map<std::string, std::string>;
+    //! a simple alias
+    using ArgsContainer = std::vector<Argument>;
+    /*!
+     * \brief register a default callbacks
+     *
+     * The default callbacks are :
+     * - '--help', '-h' which displays the list of the command line
+     *    arguments (if the treatHelp method is not overriden if the
+     *    derivate class)
+     * - '--version', '-v' which displays the current code version
+     *    using the getVersionDescription() method of the derivate
+     *    class (if the 'treatVersion' method is not overriden if the
+     *    derivate class)
+     */
+    virtual void registerDefaultCallBacks();
+    /*!
+     * \brief method called while parsing unregistred command line
+     * arguments.
+     *
+     * \throw runtime_error
+     */
+    virtual void treatUnknownArgument();
+    /*!
+     * \brief method associated with the '--help' command line
+     * argument.
+     *
+     * This method uses the getUsageDescription() method to get a
+     * more helpfull message.
+     *
+     * This method stops the execution by calling the exit
+     * method.
+     */
+    virtual void treatHelp();
+    /*!
+     * \brief method associated with the '--version' command line
+     * argument
+     */
+    virtual void treatVersion();
+    //! container of all the call-backs
+    CallBacksContainer callBacksContainer;
+    //! container of all the alias
+    AliasContainer alias;
+    //! container of all the command line arguments
+    ArgsContainer args;
+    //! an iterator to the argument being treated
+    ArgsContainer::iterator currentArgument;
+    //! program name
+    std::string programName;
+
+   private:
+    //! copy constructor
+    ArgumentParser(const ArgumentParser&) = delete;
+    //! move constructor
+    ArgumentParser(ArgumentParser&&) = delete;
+    //! standard assignement
+    ArgumentParser& operator=(const ArgumentParser&) = delete;
+    //! move assignement
+    ArgumentParser& operator=(ArgumentParser&&) = delete;
+    //! \brief replaces aliases by their usual names
+    virtual void replaceAliases();
+    //! \brief slip arguments and options
+    virtual void stripArguments();
+
+   protected:
+    //! \return the version of the program being used
+    virtual std::string getVersionDescription() const = 0;
+    //! \return the usage of the program being used
+    virtual std::string getUsageDescription() const = 0;
+  };
+
+}  // end of namespace tfel::utilities
 
 #endif /* LIB_TFEL_UTILITIES_ARGUMENTPARSER_HXX */

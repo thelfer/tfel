@@ -11,8 +11,8 @@
  * project under specific licensing conditions.
  */
 
-#ifndef LIB_TFEL_T2TOT2_CONCEPT_OPERATIONS_HXX
-#define LIB_TFEL_T2TOT2_CONCEPT_OPERATIONS_HXX
+#ifndef LIB_TFEL_MATH_T2TOT2_CONCEPT_OPERATIONS_HXX
+#define LIB_TFEL_MATH_T2TOT2_CONCEPT_OPERATIONS_HXX
 
 #include <cmath>
 #include "TFEL/Config/TFELConfig.hxx"
@@ -107,4 +107,4 @@ namespace tfel::math {
 
 }  // end of namespace tfel::math
 
-#endif /* LIB_TFEL_T2TOT2_CONCEPT_OPERATIONS_HXX */
+#endif /* LIB_TFEL_MATH_T2TOT2_CONCEPT_OPERATIONS_HXX */

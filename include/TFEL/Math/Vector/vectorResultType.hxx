@@ -11,8 +11,8 @@
  * project under specific licensing conditions.
  */
 
-#ifndef LIB_TFEL_VECTORRESULTTYPE_HXX
-#define LIB_TFEL_VECTORRESULTTYPE_HXX
+#ifndef LIB_TFEL_MATH_VECTORRESULTTYPE_HXX
+#define LIB_TFEL_MATH_VECTORRESULTTYPE_HXX
 
 #include <type_traits>
 #include "TFEL/Metaprogramming/InvalidType.hxx"
@@ -44,7 +44,11 @@ namespace tfel::math {
    * \see   ComputeBinaryOperationResult
    */
   template <typename T, typename Scal>
-  class ComputeBinaryOperationResult<VectorTag, ScalarTag, vector<T>, Scal, OpMult> {
+  class ComputeBinaryOperationResult<VectorTag,
+                                     ScalarTag,
+                                     vector<T>,
+                                     Scal,
+                                     OpMult> {
     typedef result_type<T, Scal, OpMult> ResBase_;
 
    public:
@@ -59,7 +63,11 @@ namespace tfel::math {
    * \see   ComputeBinaryOperationResult
    */
   template <typename Scal, typename T>
-  class ComputeBinaryOperationResult<ScalarTag, VectorTag, Scal, vector<T>, OpMult> {
+  class ComputeBinaryOperationResult<ScalarTag,
+                                     VectorTag,
+                                     Scal,
+                                     vector<T>,
+                                     OpMult> {
     typedef result_type<Scal, T, OpMult> ResBase_;
 
    public:
@@ -87,7 +95,11 @@ namespace tfel::math {
    * \see   ComputeBinaryOperationResult
    */
   template <typename T, typename Scal>
-  class ComputeBinaryOperationResult<VectorTag, ScalarTag, vector<T>, Scal, OpDiv> {
+  class ComputeBinaryOperationResult<VectorTag,
+                                     ScalarTag,
+                                     vector<T>,
+                                     Scal,
+                                     OpDiv> {
     typedef result_type<T, Scal, OpDiv> ResBase_;
 
    public:
@@ -154,4 +166,4 @@ namespace tfel::math {
 
 }  // end of namespace tfel::math
 
-#endif /* LIB_TFEL_VECTORRESULTTYPE_HXX */
+#endif /* LIB_TFEL_MATH_VECTORRESULTTYPE_HXX */

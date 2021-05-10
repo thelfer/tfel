@@ -11,8 +11,8 @@
  * project under specific licensing conditions.
  */
 
-#ifndef LIB_TFEL_UNARYRESULTTYPE_HXX
-#define LIB_TFEL_UNARYRESULTTYPE_HXX
+#ifndef LIB_TFEL_MATH_UNARYRESULTTYPE_HXX
+#define LIB_TFEL_MATH_UNARYRESULTTYPE_HXX
 
 #include "TFEL/Metaprogramming/InvalidType.hxx"
 #include "TFEL/TypeTraits/IsInvalid.hxx"
@@ -62,7 +62,9 @@ namespace tfel::math {
 
    public:
     //! result
-    typedef typename UnaryComputeBinaryOperationResult<TagA, TagOp, A_, Op>::type type;
+    typedef
+        typename UnaryComputeBinaryOperationResult<TagA, TagOp, A_, Op>::type
+            type;
   };  // end of UnaryResultType
 
   //! \brief a simple alias
@@ -71,4 +73,4 @@ namespace tfel::math {
 
 }  // end of namespace tfel::math
 
-#endif /* LIB_TFEL_UNARYRESULTTYPE_HXX */
+#endif /* LIB_TFEL_MATH_UNARYRESULTTYPE_HXX */

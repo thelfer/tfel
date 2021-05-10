@@ -12,8 +12,8 @@
  * project under specific licensing conditions.
  */
 
-#ifndef LIB_TFEL_BASECAST_HXX
-#define LIB_TFEL_BASECAST_HXX
+#ifndef LIB_TFEL_MATH_BASECAST_HXX
+#define LIB_TFEL_MATH_BASECAST_HXX
 
 #include "TFEL/Config/TFELConfig.hxx"
 #include"TFEL/TypeTraits/BaseType.hxx"
@@ -34,4 +34,4 @@ namespace tfel::math {
 
 }  // end of namespace tfel::math
 
-#endif /* LIB_TFEL_BASECAST_HXX */
+#endif /* LIB_TFEL_MATH_BASECAST_HXX */

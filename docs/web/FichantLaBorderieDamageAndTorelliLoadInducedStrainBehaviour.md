@@ -1,6 +1,18 @@
-% Coupling the Fichant-La Borderie damage behaviour and Torelli' load induced strain behaviour
-% Thomas Helfer
-% 16/12/2020
+---
+title: Coupling the Fichant-La Borderie damage behaviour and Torelli' load induced strain behaviour
+author: Thomas Helfer
+date: 16/12/2019
+lang: en-EN
+geometry:
+  - margin=2cm
+papersize: a4
+link-citations: true
+colorlinks: true
+figPrefixTemplate: "$$i$$"
+tblPrefixTemplate: "$$i$$"
+secPrefixTemplate: "$$i$$"
+eqnPrefixTemplate: "($$i$$)"
+---
 
 \newcommand{\absvalue}[1]{{\left|#1\right|}}
 \newcommand{\ppos}[1]{{\left<#1\right>_{+}}}

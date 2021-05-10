@@ -14,36 +14,31 @@
 
 #include "TFEL/Math/MathException.hxx"
 
-namespace tfel {
+namespace tfel::math {
 
-  namespace math {
+  MathException::~MathException() noexcept = default;
 
-    MathException::~MathException() noexcept = default;
+  MathRunTimeException::~MathRunTimeException() noexcept = default;
 
-    MathRunTimeException::~MathRunTimeException() noexcept = default;
+  const char* InvalidTimeStepException::what() const noexcept {
+    return "invalid time step";
+  }  // end of InvalidTimeStepException::what
 
-    const char* InvalidTimeStepException::what() const noexcept {
-      return "invalid time step";
-    }  // end of InvalidTimeStepException::what
+  InvalidTimeStepException::~InvalidTimeStepException() noexcept = default;
 
-    InvalidTimeStepException::~InvalidTimeStepException() noexcept = default;
+  MathDivergenceException::~MathDivergenceException() noexcept = default;
 
-    MathDivergenceException::~MathDivergenceException() noexcept = default;
+  const char* MaximumNumberOfIterationsReachedException::what() const noexcept {
+    return "maximum number of iterations reached";
+  }  // end of MaximumNumberOfIterationsReachedException::what
 
-    const char* MaximumNumberOfIterationsReachedException::what() const
-        noexcept {
-      return "maximum number of iterations reached";
-    }  // end of MaximumNumberOfIterationsReachedException::what
+  MaximumNumberOfIterationsReachedException::
+      ~MaximumNumberOfIterationsReachedException() noexcept = default;
 
-    MaximumNumberOfIterationsReachedException::
-        ~MaximumNumberOfIterationsReachedException() noexcept = default;
+  const char* SingularJacobianException::what() const noexcept {
+    return "jacobian is not invertible";
+  }  // end of SingularJacobianException::what
 
-    const char* SingularJacobianException::what() const noexcept {
-      return "jacobian is not invertible";
-    }  // end of SingularJacobianException::what
+  SingularJacobianException::~SingularJacobianException() noexcept = default;
 
-    SingularJacobianException::~SingularJacobianException() noexcept = default;
-
-  }  // end of namespace math
-
-}  // end of namespace tfel
+}  // end of namespace tfel::math

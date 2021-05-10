@@ -568,7 +568,6 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Utilities/GenTypeCastError.hxx	                                                     \
 			TFEL/Utilities/GenTypeBase.hxx	                                                             \
 			TFEL/Utilities/GenTypeBase.ixx	                                                             \
-			TFEL/Utilities/GenTypeBase_MSC.hxx	                                                     \
 			TFEL/Utilities/GenTypeSpecialisation.ixx                                                     \
 			TFEL/Utilities/TextData.hxx                                                                  \
 			TFEL/Utilities/StringAlgorithms.hxx                                                          \

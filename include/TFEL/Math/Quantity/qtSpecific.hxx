@@ -11,8 +11,8 @@
  * project under specific licensing conditions.
  */
 
-#ifndef LIB_TFEL_QTSPECIFIC_HXX
-#define LIB_TFEL_QTSPECIFIC_HXX
+#ifndef LIB_TFEL_MATH_QTSPECIFIC_HXX
+#define LIB_TFEL_MATH_QTSPECIFIC_HXX
 
 #include "TFEL/TypeTraits/BaseType.hxx"
 
@@ -291,4 +291,4 @@ namespace tfel::typetraits {
 
 }  // end of namespace tfel::typetraits
 
-#endif /* LIB_TFEL_QTSPECIFIC_HXX */
+#endif /* LIB_TFEL_MATH_QTSPECIFIC_HXX */

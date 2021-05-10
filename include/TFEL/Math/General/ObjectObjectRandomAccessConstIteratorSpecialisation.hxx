@@ -12,8 +12,8 @@
  * project under specific licensing conditions.
  */
 
-#ifndef LIB_TFEL_OBJECTOBJECTRANDOMACCESSCONSTITERATORSPECIALISATION_HXX
-#define LIB_TFEL_OBJECTOBJECTRANDOMACCESSCONSTITERATORSPECIALISATION_HXX
+#ifndef LIB_TFEL_MATH_OBJECTOBJECTRANDOMACCESSCONSTITERATORSPECIALISATION_HXX
+#define LIB_TFEL_MATH_OBJECTOBJECTRANDOMACCESSCONSTITERATORSPECIALISATION_HXX
 
 #include "TFEL/Math/General/BasicOperations.hxx"
 #include "TFEL/Math/General/ObjectObjectRandomAccessConstIterator.hxx"
@@ -260,8 +260,7 @@ namespace tfel::math {
 
    public:
     typedef std::random_access_iterator_tag iterator_category;
-    typedef BinaryOperationHandler<NumTypeA,NumTypeB,OpMult>
-        NumType;
+    typedef BinaryOperationHandler<NumTypeA, NumTypeB, OpMult> NumType;
     typedef const NumType value_type;
     typedef Distance difference_type;
     typedef const NumType* pointer;
@@ -367,8 +366,7 @@ namespace tfel::math {
 
    public:
     typedef std::random_access_iterator_tag iterator_category;
-    typedef
-        BinaryOperationHandler<NumTypeA,NumTypeB,OpDiv> NumType;
+    typedef BinaryOperationHandler<NumTypeA, NumTypeB, OpDiv> NumType;
     typedef const NumType value_type;
     typedef Distance difference_type;
     typedef const NumType* pointer;
@@ -452,4 +450,5 @@ namespace tfel::math {
 
 }  // end of namespace tfel::math
 
-#endif /* LIB_TFEL_OBJECTOBJECTRANDOMACCESSCONSTITERATORSPECIALISATION_HXX */
+#endif /* LIB_TFEL_MATH_OBJECTOBJECTRANDOMACCESSCONSTITERATORSPECIALISATION_HXX \
+        */

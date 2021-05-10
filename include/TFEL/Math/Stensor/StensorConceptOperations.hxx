@@ -11,8 +11,8 @@
  * project under specific licensing conditions.
  */
 
-#ifndef LIB_TFEL_STENSOR_CONCEPT_OPERATIONS_HXX
-#define LIB_TFEL_STENSOR_CONCEPT_OPERATIONS_HXX
+#ifndef LIB_TFEL_MATH_STENSOR_CONCEPT_OPERATIONS_HXX
+#define LIB_TFEL_MATH_STENSOR_CONCEPT_OPERATIONS_HXX
 
 #include <cmath>
 #include "TFEL/Config/TFELConfig.hxx"
@@ -149,4 +149,4 @@ namespace tfel::math {
 
 #include "TFEL/Math/Stensor/StensorConceptOperations.ixx"
 
-#endif /* LIB_TFEL_STENSOR_CONCEPT_OPERATIONS_HXX */
+#endif /* LIB_TFEL_MATH_STENSOR_CONCEPT_OPERATIONS_HXX */

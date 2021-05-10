@@ -20,60 +20,56 @@
 #include "TFEL/Math/t2tost2.hxx"
 #include "TFEL/Math/t2tot2.hxx"
 
-namespace tfel {
+namespace tfel ::math {
 
-  namespace math {
+  /*!
+   * \brief convert the derivative of the first Piola-Kirchhoff stress with
+   * first Piola-Kirchhoff deformation gradient to the derivative of the
+   * Kirchhoff stress with respect to the deformation gradient.
+   *
+   * \tparam N: spatial dimension
+   * \tparam stress: stress type
+   * \tparam real: numeric type
+   *
+   * \param[in] dP: derivative of first Piola-Kirchhoff stress the with
+   *                respect to the deformation gradient
+   * \param[in] F: deformation gradient
+   * \param[in] s: Cauchy stress
+   *
+   * \return the derivative of the Kirchhoff stress with respect to
+   * the deformation gradient.
+   */
+  template <unsigned short N, typename stress, typename real>
+  t2tost2<N, stress>
+  convertFirstPiolaKirchoffStressDerivativeToKirchhoffStressDerivative(
+      const t2tot2<N, stress>&,
+      const tensor<N, real>&,
+      const stensor<N, stress>&);
 
-    /*!
-     * \brief convert the derivative of the first Piola-Kirchhoff stress with 
-     * first Piola-Kirchhoff deformation gradient to the derivative of the 
-     * Kirchhoff stress with respect to the deformation gradient.
-     *
-     * \tparam N: spatial dimension
-     * \tparam stress: stress type
-     * \tparam real: numeric type
-     *
-     * \param[in] dP: derivative of first Piola-Kirchhoff stress the with 
-     *                respect to the deformation gradient
-     * \param[in] F: deformation gradient
-     * \param[in] s: Cauchy stress
-     *
-     * \return the derivative of the Kirchhoff stress with respect to
-     * the deformation gradient.
-     */
-    template <unsigned short N, typename stress, typename real>
-    t2tost2<N, stress>
-    convertFirstPiolaKirchoffStressDerivativeToKirchhoffStressDerivative(
-        const t2tot2<N, stress>&,
-        const tensor<N, real>&,
-        const stensor<N, stress>&);
+  /*!
+   * \brief convert the derivative of the first Piola-Kirchhoff stress with
+   * first Piola-Kirchhoff deformation gradient to the derivative of the
+   * Kirchhoff stress with respect to the deformation gradient.
+   *
+   * \tparam N: spatial dimension
+   * \tparam stress: stress type
+   * \tparam real: numeric type
+   *
+   * \param[out] ds: derivative of the Kirchhoff stress with respect to the
+   *                 deformation gradient
+   * \param[in] dP: derivative of first Piola-Kirchhoff stress the with
+   *                respect to the deformation gradient
+   * \param[in] F: deformation gradient
+   * \param[in] s: Cauchy stress
+   */
+  template <unsigned short N, typename stress, typename real>
+  void convertFirstPiolaKirchoffStressDerivativeToKirchhoffStressDerivative(
+      t2tost2<N, stress>&,
+      const t2tot2<N, stress>&,
+      const tensor<N, real>&,
+      const stensor<N, stress>&);
 
-    /*!
-     * \brief convert the derivative of the first Piola-Kirchhoff stress with 
-     * first Piola-Kirchhoff deformation gradient to the derivative of the 
-     * Kirchhoff stress with respect to the deformation gradient.
-     *
-     * \tparam N: spatial dimension
-     * \tparam stress: stress type
-     * \tparam real: numeric type
-     *
-     * \param[out] ds: derivative of the Kirchhoff stress with respect to the
-     *                 deformation gradient
-     * \param[in] dP: derivative of first Piola-Kirchhoff stress the with 
-     *                respect to the deformation gradient
-     * \param[in] F: deformation gradient
-     * \param[in] s: Cauchy stress
-     */
-    template <unsigned short N, typename stress, typename real>
-    void convertFirstPiolaKirchoffStressDerivativeToKirchhoffStressDerivative(
-        t2tost2<N, stress>&,
-        const t2tot2<N, stress>&,
-        const tensor<N, real>&,
-        const stensor<N, stress>&);
-
-  }  // end of namespace math
-
-}  // end of namespace tfel
+}  // end of namespace tfel::math
 
 #include "TFEL/Math/T2toT2/ConvertFromPK1Derivative.ixx"
 

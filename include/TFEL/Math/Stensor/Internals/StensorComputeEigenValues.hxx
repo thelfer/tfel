@@ -11,8 +11,8 @@
  * project under specific licensing conditions.
  */
 
-#ifndef LIB_TFEL_STENSORCOMPUTEEIGENVALUES_HXX
-#define LIB_TFEL_STENSORCOMPUTEEIGENVALUES_HXX
+#ifndef LIB_TFEL_MATH_STENSORCOMPUTEEIGENVALUES_HXX
+#define LIB_TFEL_MATH_STENSORCOMPUTEEIGENVALUES_HXX
 
 #include <cmath>
 #include "TFEL/Config/TFELConfig.hxx"
@@ -132,4 +132,4 @@ namespace tfel::math::internals {
 
 }  // end of namespace tfel::math::internals
 
-#endif /* LIB_TFEL_STENSORCOMPUTEEIGENVALUES_HXX */
+#endif /* LIB_TFEL_MATH_STENSORCOMPUTEEIGENVALUES_HXX */

@@ -16,25 +16,21 @@
 
 #include "TFEL/Math/AccelerationAlgorithms/AndersonBase.hxx"
 
-namespace tfel {
+namespace tfel::math {
 
-  namespace math {
+  template <typename Field, typename real>
+  struct UAnderson : public AndersonBase<Field, real> {
+    //! constructor
+    UAnderson(const typename AndersonBase<Field, real>::Allocator);
+    //! Displacement fields for a new iteration
+    //! \param uO,uN Old and new displacement field
+    void newIter(Field*& uO, Field*& uN);
+    //! First Iteration of a new time step
+    //! \param uO,uN Old and new displacement field
+    void restart(Field*& uO, Field*& uN);
+  };  // end of struct UAnderson
 
-    template <typename Field, typename real>
-    struct UAnderson : public AndersonBase<Field, real> {
-      //! constructor
-      UAnderson(const typename AndersonBase<Field, real>::Allocator);
-      //! Displacement fields for a new iteration
-      //! \param uO,uN Old and new displacement field
-      void newIter(Field*& uO, Field*& uN);
-      //! First Iteration of a new time step
-      //! \param uO,uN Old and new displacement field
-      void restart(Field*& uO, Field*& uN);
-    };  // end of struct UAnderson
-
-  }  // end of namespace math
-
-}  // end of namespace tfel
+}  // end of namespace tfel::math
 
 #include "TFEL/Math/AccelerationAlgorithms/UAnderson.ixx"
 

@@ -30,56 +30,52 @@
 #include "TFEL/Config/TFELConfig.hxx"
 #include "TFEL/System/ThreadedTaskResult.hxx"
 
-namespace tfel {
+namespace tfel::system {
 
-  namespace system {
-
+  /*!
+   * \brief structure handling a fixed-size pool of threads
+   */
+  struct TFELSYSTEM_VISIBILITY_EXPORT ThreadPool {
+    //! a simple alias
+    using size_type = std::vector<std::thread>::size_type;
     /*!
-     * \brief structure handling a fixed-size pool of threads
+     * \brief constructor
+     * \param[in] n: number of thread to be created
      */
-    struct TFELSYSTEM_VISIBILITY_EXPORT ThreadPool {
-      //! a simple alias
-      using size_type = std::vector<std::thread>::size_type;
-      /*!
-       * \brief constructor
-       * \param[in] n: number of thread to be created
-       */
-      ThreadPool(const size_type);
-      /*!
-       * \brief add a new task
-       * \param[in] f: task
-       * \param[in] a: arguments passed to the the task
-       */
-      template <typename F, typename... Args>
-      std::future<ThreadedTaskResult<typename std::result_of<F(Args...)>::type>>
-      addTask(F&&, Args&&...);
-      //! \return the number of threads managed by the ppol
-      size_type getNumberOfThreads() const;
-      //! \brief wait for all tasks to be finished
-      void wait();
-      //! destructor
-      ~ThreadPool();
+    ThreadPool(const size_type);
+    /*!
+     * \brief add a new task
+     * \param[in] f: task
+     * \param[in] a: arguments passed to the the task
+     */
+    template <typename F, typename... Args>
+    std::future<ThreadedTaskResult<typename std::result_of<F(Args...)>::type>>
+    addTask(F&&, Args&&...);
+    //! \return the number of threads managed by the ppol
+    size_type getNumberOfThreads() const;
+    //! \brief wait for all tasks to be finished
+    void wait();
+    //! destructor
+    ~ThreadPool();
 
-     private:
-      //! wrapper around the given task
-      template <typename F>
-      struct Wrapper;
-      //! enum describing the status of workers
-      enum Status { WORKING, IDLE };  // end of enum Status
-      std::vector<Status> statuses;
-      //! list of available threads
-      std::vector<std::thread> workers;
-      // the task queue
-      std::queue<std::function<void()>> tasks;
-      // synchronization
-      std::mutex m;
-      std::condition_variable c;
-      bool stop = false;
-    };
+   private:
+    //! wrapper around the given task
+    template <typename F>
+    struct Wrapper;
+    //! enum describing the status of workers
+    enum Status { WORKING, IDLE };  // end of enum Status
+    std::vector<Status> statuses;
+    //! list of available threads
+    std::vector<std::thread> workers;
+    // the task queue
+    std::queue<std::function<void()>> tasks;
+    // synchronization
+    std::mutex m;
+    std::condition_variable c;
+    bool stop = false;
+  };
 
-  }  // end of namespace system
-
-}  // end of namespace tfel
+}  // end of namespace tfel::system
 
 #include "TFEL/System/ThreadPool.ixx"
 

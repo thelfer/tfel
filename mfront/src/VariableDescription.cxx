@@ -644,7 +644,6 @@ namespace mfront {
       o += getTypeSize(v);
     }
     tfel::raise("mfront::getOffset: no variable name '" + n + "'");
-    return o;
   } // end of getOffset
 
 }  // end of namespace mfront

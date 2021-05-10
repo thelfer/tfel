@@ -16,45 +16,41 @@
 #include <utility>
 #include "TFEL/Material/MaterialException.hxx"
 
-namespace tfel {
+namespace tfel::material {
 
-  namespace material {
+  MaterialException::~MaterialException() noexcept = default;
 
-    MaterialException::~MaterialException() noexcept = default;
+  MaterialException::MaterialException(const char* const msg) {
+    std::cerr << "MaterialException::MaterialException: " << msg << std::endl;
+  }
 
-    MaterialException::MaterialException(const char* const msg) {
-      std::cerr << "MaterialException::MaterialException: " << msg << std::endl;
-    }
+  MaterialException::MaterialException(const std::string& msg) {
+    std::cerr << "MaterialException::MaterialException: " << msg << std::endl;
+  }
 
-    MaterialException::MaterialException(const std::string& msg) {
-      std::cerr << "MaterialException::MaterialException: " << msg << std::endl;
-    }
+  DivergenceException::DivergenceException(const char* const msg) {
+    std::cerr << "DivergenceException::DivergenceException: " << msg
+              << std::endl;
+  }
 
-    DivergenceException::DivergenceException(const char* const msg) {
-      std::cerr << "DivergenceException::DivergenceException: " << msg
-                << std::endl;
-    }
+  DivergenceException::DivergenceException(const std::string& msg) {
+    std::cerr << "DivergenceException::DivergenceException: " << msg
+              << std::endl;
+  }
 
-    DivergenceException::DivergenceException(const std::string& msg) {
-      std::cerr << "DivergenceException::DivergenceException: " << msg
-                << std::endl;
-    }
+  const char* DivergenceException::what() const noexcept {
+    return "DivergenceException";
+  }  // end of DivergenceException::what
 
-    const char* DivergenceException::what() const noexcept {
-      return "DivergenceException";
-    }  // end of DivergenceException::what
+  DivergenceException::~DivergenceException() noexcept = default;
 
-    DivergenceException::~DivergenceException() noexcept = default;
+  OutOfBoundsException::OutOfBoundsException(std::string m)
+      : msg(std::forward<std::string>(m)) {}
 
-    OutOfBoundsException::OutOfBoundsException(std::string m)
-        : msg(std::forward<std::string>(m)) {}
+  const char* OutOfBoundsException::what() const noexcept {
+    return this->msg.c_str();
+  }  // end of DivergenceException::~DivergenceException
 
-    const char* OutOfBoundsException::what() const noexcept {
-      return this->msg.c_str();
-    }  // end of DivergenceException::~DivergenceException
+  OutOfBoundsException::~OutOfBoundsException() noexcept = default;
 
-    OutOfBoundsException::~OutOfBoundsException() noexcept = default;
-
-  }  // end of namespace material
-
-}  // end of namespace tfel
+}  // end of namespace tfel::material

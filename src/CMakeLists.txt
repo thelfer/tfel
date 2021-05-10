@@ -1,5 +1,4 @@
 add_subdirectory(Config)
-add_subdirectory(PhysicalConstants)
 add_subdirectory(UnicodeSupport)
 add_subdirectory(Tests)
 add_subdirectory(Exception)

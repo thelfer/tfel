@@ -2,106 +2,86 @@
  * \file   src/Tests/TestResult.cxx
  * \author Thomas Helfer
  * \date   10 Apr 10
- * \brief  
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \brief
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
-#include<iostream>
+#include <iostream>
 
-#include"TFEL/Tests/TestResult.hxx"
+#include "TFEL/Tests/TestResult.hxx"
 
-namespace tfel
-{
+namespace tfel::tests {
 
-  namespace tests
-  {
+  TestResult::TestResult() = default;
 
-    TestResult::TestResult() = default;
+  TestResult::TestResult(const bool b)
+      : s(b) {}  // end of TestResult::TestResult
 
-    TestResult::TestResult(const bool b)
-      : s(b)
-    {} // end of TestResult::TestResult
+  TestResult::TestResult(const bool b, const char* const c)
+      : d(c), s(b) {}  // end of TestResult::TestResult
 
-    TestResult::TestResult(const bool b,
-			   const char * const c)
-      : d(c),s(b)
-    {} // end of TestResult::TestResult
-    
-    TestResult::TestResult(const bool b,
-			   const std::string& c)
-      : d(c),s(b)
-    {} // end of TestResult::TestResult
-    
-    TestResult::TestResult(const TestResult&) = default;
-    TestResult::TestResult(TestResult&&) noexcept = default;
-    TestResult& TestResult::operator= (const TestResult&) = default;
-    TestResult& TestResult::operator= (TestResult&&) = default;
+  TestResult::TestResult(const bool b, const std::string& c)
+      : d(c), s(b) {}  // end of TestResult::TestResult
 
-    bool TestResult::success() const
-    {
-     return this->s;
-    } // end of TestResult::succees
+  TestResult::TestResult(const TestResult&) = default;
+  TestResult::TestResult(TestResult&&) noexcept = default;
+  TestResult& TestResult::operator=(const TestResult&) = default;
+  TestResult& TestResult::operator=(TestResult&&) = default;
 
-    const std::string& TestResult::details() const
-    {
-     return this->d;
-    } // end of TestResult::succees
+  bool TestResult::success() const {
+    return this->s;
+  }  // end of TestResult::succees
 
-    TestResult::const_iterator TestResult::begin() const
-    {
-      return std::vector<TestResult>::begin();
-    } // end of TestResult::begin()
+  const std::string& TestResult::details() const {
+    return this->d;
+  }  // end of TestResult::succees
 
-    TestResult::const_iterator TestResult::end() const
-    {
-      return std::vector<TestResult>::end();
-    } // end of TestResult::end()
+  TestResult::const_iterator TestResult::begin() const {
+    return std::vector<TestResult>::begin();
+  }  // end of TestResult::begin()
 
-    void TestResult::append(const TestResult& r)
-    {
-      if(!r.success()){
-	this->s = false;
-      }
-      std::vector<TestResult>::push_back(r);
-    } // end of TestResult::end()
+  TestResult::const_iterator TestResult::end() const {
+    return std::vector<TestResult>::end();
+  }  // end of TestResult::end()
 
-    void TestResult::setTestDuration(const double td)
-    {
-      this->test_duration = td;
+  void TestResult::append(const TestResult& r) {
+    if (!r.success()) {
+      this->s = false;
     }
+    std::vector<TestResult>::push_back(r);
+  }  // end of TestResult::end()
 
-    double TestResult::duration() const
-    {
-      auto  r = this->test_duration;
-      for(const auto& t:*this){
-	r += t.duration();
-      }
-      return r;
+  void TestResult::setTestDuration(const double td) {
+    this->test_duration = td;
+  }
+
+  double TestResult::duration() const {
+    auto r = this->test_duration;
+    for (const auto& t : *this) {
+      r += t.duration();
     }
-  
-    TestResult::~TestResult() = default;
+    return r;
+  }
 
-    std::ostream& operator << (std::ostream& os,
-			       const TestResult& r)
-    {
-      os << "Result : ";
-      if(r.success()){
-	os << "SUCCESS\n";
-      } else {
-	os << "FAILED\n";
-      }
-      os << "\nDetails : " << r.details() << '\n';
-      for(const auto& t : r){
-	os << t << '\n';
-      }
-      return os;
-    } // end of operator <<  
+  TestResult::~TestResult() = default;
 
-  } // end of namespace tests
+  std::ostream& operator<<(std::ostream& os, const TestResult& r) {
+    os << "Result : ";
+    if (r.success()) {
+      os << "SUCCESS\n";
+    } else {
+      os << "FAILED\n";
+    }
+    os << "\nDetails : " << r.details() << '\n';
+    for (const auto& t : r) {
+      os << t << '\n';
+    }
+    return os;
+  }  // end of operator <<
 
-} // end of namespace tfel
+}  // end of namespace tfel::tests

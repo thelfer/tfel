@@ -1,6 +1,6 @@
 /*!
  * \file   ndarray.cxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   23/03/2020
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
@@ -16,32 +16,28 @@
 #include "TFEL/Raise.hxx"
 #include "TFEL/Numpy/ndarray.hxx"
 
-namespace tfel{
+namespace tfel::numpy {
 
-  namespace numpy {
+  size_t get_size(const boost::python::numpy::ndarray& a) {
+    const auto nd = a.get_nd();
+    if (nd != 1) {
+      tfel::raise("get_size: one dimensional array expected");
+    }
+    return static_cast<size_t>(a.shape(0));
+  }  // end of get_size
 
-    size_t get_size(const boost::python::numpy::ndarray& a) {
-      const auto nd = a.get_nd();
-      if (nd != 1) {
-        tfel::raise("get_size: one dimensional array expected");
-      }
-      return static_cast<size_t>(a.shape(0));
-    }  // end of get_size
+  const double* get_data(const boost::python::numpy::ndarray& a) {
+    if (a.get_dtype() != boost::python::numpy::dtype::get_builtin<double>()) {
+      tfel::raise("get_data: invalid data type");
+    }
+    return reinterpret_cast<const double*>(a.get_data());
+  }  // end of get_data
 
-    const double* get_data(const boost::python::numpy::ndarray& a) {
-      if (a.get_dtype() != boost::python::numpy::dtype::get_builtin<double>()) {
-        tfel::raise("get_data: invalid data type");
-      }
-      return reinterpret_cast<const double*>(a.get_data());
-    }  // end of get_data
+  double* get_data(boost::python::numpy::ndarray& a) {
+    if (a.get_dtype() != boost::python::numpy::dtype::get_builtin<double>()) {
+      tfel::raise("get_data: invalid data type");
+    }
+    return reinterpret_cast<double*>(a.get_data());
+  }  // end of get_data
 
-    double* get_data(boost::python::numpy::ndarray& a) {
-      if (a.get_dtype() != boost::python::numpy::dtype::get_builtin<double>()) {
-        tfel::raise("get_data: invalid data type");
-      }
-      return reinterpret_cast<double*>(a.get_data());
-    }  // end of get_data
-
-  }  // end of namespace numpy
-
-}  // end of namespace tfel
+}  // end of namespace tfel::numpy

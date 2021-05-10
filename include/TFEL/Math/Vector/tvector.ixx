@@ -12,8 +12,8 @@
  * project under specific licensing conditions.
  */
 
-#ifndef LIB_TFEL_TINY_VECTOR_IXX
-#define LIB_TFEL_TINY_VECTOR_IXX
+#ifndef LIB_TFEL_MATH_TINY_VECTOR_IXX
+#define LIB_TFEL_MATH_TINY_VECTOR_IXX
 
 #include <iterator>
 #include "TFEL/FSAlgorithm/FSAlgorithm.hxx"
@@ -23,8 +23,6 @@
 #include "TFEL/Math/Vector/VectorUtilities.hxx"
 
 namespace tfel::math {
-
-#ifndef DOXYGENSPECIFIC
 
   template <typename Child, unsigned short N, typename T>
   template <typename T2, typename Operation>
@@ -136,8 +134,8 @@ namespace tfel::math {
   }  // end of tvector<N,T>::slice
 
   template <unsigned short N, typename T, typename OutputIterator>
-  std::enable_if_t<isScalar<T>(), void>
-  exportToBaseTypeArray(const tvector<N, T>& v, OutputIterator p) {
+  std::enable_if_t<isScalar<T>(), void> exportToBaseTypeArray(
+      const tvector<N, T>& v, OutputIterator p) {
     typedef tfel::fsalgo::copy<N> Copy;
     typedef base_type<T> base;
     static_assert(
@@ -161,8 +159,6 @@ namespace tfel::math {
     tfel::fsalgo::for_each<N>::exe(v.begin(), a);
     return a.result;
   }
-
-#endif /* LIB_TFEL_TINY_VECTORIXX */
 
   template <typename T>
   tvector<1u, T> makeTVector1D(const T v) {
@@ -272,6 +268,6 @@ namespace tfel::math {
     return v.template slice<I, J>();
   }  // end of slice
 
-}  // end of namespace tfel::math
+} // end of namespace tfel::math
 
-#endif /* LIB_TFEL_TINY_VECTOR_IXX */
+#endif /* LIB_TFEL_MATH_TINY_VECTOR_IXX */

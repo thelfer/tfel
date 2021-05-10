@@ -46,7 +46,7 @@ namespace tfel::math {
     //
     static constexpr auto hasFixedSizes = IndexingPolicy::hasFixedSizes;
     //! \brief default constructor
-    constexpr View(typename View::value_type* const p) noexcept
+    explicit constexpr View(typename View::value_type* const p) noexcept
         : data_values(p) {
       static_assert(hasFixedSizes, "invalid constructor call");
     }  // end of View

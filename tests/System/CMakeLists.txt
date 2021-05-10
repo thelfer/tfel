@@ -5,7 +5,7 @@ macro(tests_system test_arg)
   add_dependencies(check ${test_arg})
   if((CMAKE_HOST_WIN32) AND (NOT MSYS))
     set_property(TEST ${test_arg}
-  	         PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:TFELSystem>\;$<TARGET_FILE_DIR:TFELException>\;$<TARGET_FILE_DIR:TFELTests>\;$<TARGET_FILE_DIR:TFELPhysicalConstants>\;$ENV{PATH}")
+  	         PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:TFELSystem>\;$<TARGET_FILE_DIR:TFELException>\;$<TARGET_FILE_DIR:TFELTests>\;$ENV{PATH}")
   endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
   target_link_libraries(${test_arg} TFELSystem TFELException TFELTests)
 endmacro(tests_system)

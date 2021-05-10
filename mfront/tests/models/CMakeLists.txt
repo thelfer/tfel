@@ -46,8 +46,6 @@ macro(mfront_model)
 	COMMAND "set"
 	ARGS "PATH=$<TARGET_FILE_DIR:TFELConfig>;%PATH%"
 	COMMAND "set"
-	ARGS "PATH=$<TARGET_FILE_DIR:TFELPhysicalConstants>;%PATH%"
-	COMMAND "set"
 	ARGS "PATH=$<TARGET_FILE_DIR:TFELUnicodeSupport>;%PATH%"
 	COMMAND "${mfront_executable}"
 	ARGS    "${mfront_flags}" "--interface=mfront" "${mfront_source}"
@@ -96,7 +94,7 @@ macro(tests_model test_arg)
   target_include_directories(${test_arg}
     PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/include")
   target_link_libraries(${test_arg}
-    TFELMaterial TFELMath TFELTests TFELPhysicalConstants)
+    TFELMaterial TFELMath TFELTests)
 endmacro(tests_model)
 
 tests_model(test_model)

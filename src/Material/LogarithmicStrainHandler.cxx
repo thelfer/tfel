@@ -1,38 +1,34 @@
 /*!
  * \file   LogarithmicStrainHandler.cxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   27 juin 2017
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
-#include<stdexcept>
-#include"TFEL/Raise.hxx"
-#include"TFEL/Material/LogarithmicStrainHandler.hxx"
+#include <stdexcept>
+#include "TFEL/Raise.hxx"
+#include "TFEL/Material/LogarithmicStrainHandler.hxx"
 
-namespace tfel{
+namespace tfel::material {
 
-  namespace material{
+  void LogarithmicStrainHandlerBase::checkLagrangianSetting() const {
+    raise_if(this->s != LAGRANGIAN,
+             "LogarithmicStrainHandlerBase::"
+             "checkLagrangianSetting: "
+             "setting is not set to LAGRANGIAN");
+  }  // end of LogarithmicStrainHandlerBase::checkLagrangianSetting
 
-    void LogarithmicStrainHandlerBase::checkLagrangianSetting() const
-    {
-      raise_if(this->s!=LAGRANGIAN,"LogarithmicStrainHandlerBase::"
-	       "checkLagrangianSetting: "
-	       "setting is not set to LAGRANGIAN");
-    } // end of LogarithmicStrainHandlerBase::checkLagrangianSetting
+  void LogarithmicStrainHandlerBase::checkEulerianSetting() const {
+    raise_if(this->s != EULERIAN,
+             "LogarithmicStrainHandlerBase::"
+             "checkEulerianSetting: "
+             "setting is not set to EULERIAN");
+  }  // end of LogarithmicStrainHandlerBase::checkEulerianSetting
 
-    void LogarithmicStrainHandlerBase::checkEulerianSetting() const
-    {
-      raise_if(this->s!=EULERIAN,"LogarithmicStrainHandlerBase::"
-	       "checkEulerianSetting: "
-	       "setting is not set to EULERIAN");
-    } // end of LogarithmicStrainHandlerBase::checkEulerianSetting
-    
-  } // end of namespace material
-
-} // end of namespace tfel
+}  // end of namespace tfel::material

@@ -11,8 +11,8 @@
  * project under specific licensing conditions.
  */
 
-#ifndef LIB_TFEL_TINY_FSARRAY_IXX
-#define LIB_TFEL_TINY_FSARRAY_IXX
+#ifndef LIB_TFEL_MATH_TINY_FSARRAY_IXX
+#define LIB_TFEL_MATH_TINY_FSARRAY_IXX
 
 namespace tfel::math {
 
@@ -201,4 +201,4 @@ namespace tfel::math {
 
 }  // end of namespace tfel::math
 
-#endif /* LIB_TFEL_TINY_FSARRAY_IXX */
+#endif /* LIB_TFEL_MATH_TINY_FSARRAY_IXX */

@@ -97,6 +97,8 @@ namespace mfront {
     //! \brief standard code name
     static const char* const ComputeDissipatedEnergy;
     //! \brief standard code name
+    static const char* const ComputeSpeedOfSound;
+    //! \brief standard code name
     static const char* const AdditionalConvergenceChecks;
     //! \brief standard code name
     static const char* const PostProcessings;

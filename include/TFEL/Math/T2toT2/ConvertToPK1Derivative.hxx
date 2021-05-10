@@ -20,108 +20,104 @@
 #include "TFEL/Math/t2tost2.hxx"
 #include "TFEL/Math/t2tot2.hxx"
 
-namespace tfel {
+namespace tfel::math {
 
-  namespace math {
+  /*!
+   * \brief convert the derivative of the Cauchy stress with respect to the
+   * deformation gradient to the derivative of the first Piola-Kirchhoff
+   * stress with respect to the deformation gradient.
+   *
+   * \tparam N: spatial dimension
+   * \tparam stress: stress type
+   * \tparam real: numeric type
+   *
+   * \param[in] ds: derivative of the Cauchy stress with respect to the
+   *                deformation gradient
+   * \param[in] F: deformation gradient
+   * \param[in] s: Cauchy stress
+   *
+   * \return the derivative of the first Piola-Kirchhoff
+   * stress with respect to the deformation gradient.
+   */
+  template <unsigned short N, typename stress, typename real>
+  t2tot2<N, stress>
+  convertCauchyStressDerivativeToFirstPiolaKirchoffStressDerivative(
+      const t2tost2<N, stress>&,
+      const tensor<N, real>&,
+      const stensor<N, stress>&);
 
-    /*!
-     * \brief convert the derivative of the Cauchy stress with respect to the
-     * deformation gradient to the derivative of the first Piola-Kirchhoff
-     * stress with respect to the deformation gradient.
-     *
-     * \tparam N: spatial dimension
-     * \tparam stress: stress type
-     * \tparam real: numeric type
-     *
-     * \param[in] ds: derivative of the Cauchy stress with respect to the
-     *                deformation gradient
-     * \param[in] F: deformation gradient
-     * \param[in] s: Cauchy stress
-     *
-     * \return the derivative of the first Piola-Kirchhoff
-     * stress with respect to the deformation gradient.
-     */
-    template <unsigned short N, typename stress, typename real>
-    t2tot2<N, stress>
-    convertCauchyStressDerivativeToFirstPiolaKirchoffStressDerivative(
-        const t2tost2<N, stress>&,
-        const tensor<N, real>&,
-        const stensor<N, stress>&);
+  /*!
+   * \brief convert the derivative of the Cauchy stress with respect to the
+   * deformation gradient to the derivative of the first Piola-Kirchhoff
+   * stress with respect to the deformation gradient.
+   *
+   * \tparam N: spatial dimension
+   * \tparam stress: stress type
+   * \tparam real: numeric type
+   *
+   * \param[out] dP: derivative of the first Piola-Kirchhoff stress with
+   *                 respect to the deformation gradient
+   * \param[in] ds: derivative of the Cauchy stress with respect to the
+   *                deformation gradient
+   * \param[in] F: deformation gradient
+   * \param[in] s: Cauchy stress
+   */
+  template <unsigned short N, typename stress, typename real>
+  void convertCauchyStressDerivativeToFirstPiolaKirchoffStressDerivative(
+      t2tot2<N, stress>&,
+      const t2tost2<N, stress>&,
+      const tensor<N, real>&,
+      const stensor<N, stress>&);
 
-    /*!
-     * \brief convert the derivative of the Cauchy stress with respect to the
-     * deformation gradient to the derivative of the first Piola-Kirchhoff
-     * stress with respect to the deformation gradient.
-     *
-     * \tparam N: spatial dimension
-     * \tparam stress: stress type
-     * \tparam real: numeric type
-     *
-     * \param[out] dP: derivative of the first Piola-Kirchhoff stress with
-     *                 respect to the deformation gradient
-     * \param[in] ds: derivative of the Cauchy stress with respect to the
-     *                deformation gradient
-     * \param[in] F: deformation gradient
-     * \param[in] s: Cauchy stress
-     */
-    template <unsigned short N, typename stress, typename real>
-    void convertCauchyStressDerivativeToFirstPiolaKirchoffStressDerivative(
-        t2tot2<N, stress>&,
-        const t2tost2<N, stress>&,
-        const tensor<N, real>&,
-        const stensor<N, stress>&);
+  /*!
+   * \brief convert the derivative of the second Piola-Kirchoff stress with
+   * respect to the Green-Lagrange strain to the derivative of the
+   * first Piola-Kirchhoff stress with respect to the deformation gradient.
+   *
+   * \tparam N: spatial dimension
+   * \tparam stress: stress type
+   * \tparam real: numeric type
+   *
+   * \param[in] dS: derivative of the second Piola-Kirchoff stress with
+   *                respect to the Green-Lagrange strain
+   * \param[in] F: deformation gradient
+   * \param[in] s: Cauchy stress
+   *
+   * \return the derivative of the first Piola-Kirchhoff
+   * stress with respect to the deformation gradient.
+   */
+  template <unsigned short N, typename stress, typename real>
+  t2tot2<N, stress>
+  convertSecondPiolaKirchhoffStressDerivativeToFirstPiolaKirchoffStressDerivative(
+      const st2tost2<N, stress>&,
+      const tensor<N, real>&,
+      const stensor<N, stress>&);
 
-    /*!
-     * \brief convert the derivative of the second Piola-Kirchoff stress with
-     * respect to the Green-Lagrange strain to the derivative of the
-     * first Piola-Kirchhoff stress with respect to the deformation gradient.
-     *
-     * \tparam N: spatial dimension
-     * \tparam stress: stress type
-     * \tparam real: numeric type
-     *
-     * \param[in] dS: derivative of the second Piola-Kirchoff stress with
-     *                respect to the Green-Lagrange strain
-     * \param[in] F: deformation gradient
-     * \param[in] s: Cauchy stress
-     *
-     * \return the derivative of the first Piola-Kirchhoff
-     * stress with respect to the deformation gradient.
-     */
-    template <unsigned short N, typename stress, typename real>
-    t2tot2<N, stress>
-    convertSecondPiolaKirchhoffStressDerivativeToFirstPiolaKirchoffStressDerivative(
-        const st2tost2<N, stress>&,
-        const tensor<N, real>&,
-        const stensor<N, stress>&);
+  /*!
+   * \brief convert the derivative of the second Piola-Kirchoff stress with
+   * respect to the Green-Lagrange strain to the derivative of the
+   * first Piola-Kirchhoff stress with respect to the deformation gradient.
+   *
+   * \tparam N: spatial dimension
+   * \tparam stress: stress type
+   * \tparam real: numeric type
+   *
+   * \param[out] dP: derivative of the first Piola-Kirchhoff stress with
+   *                 respect to the deformation gradient
+   * \param[in] dS: derivative of the second Piola-Kirchoff stress with
+   *                respect to the Green-Lagrange strain
+   * \param[in] F: deformation gradient
+   * \param[in] s: Cauchy stress
+   */
+  template <unsigned short N, typename stress, typename real>
+  void
+  convertSecondPiolaKirchhoffStressDerivativeToFirstPiolaKirchoffStressDerivative(
+      t2tot2<N, stress>&,
+      const st2tost2<N, stress>&,
+      const tensor<N, real>&,
+      const stensor<N, stress>&);
 
-    /*!
-     * \brief convert the derivative of the second Piola-Kirchoff stress with
-     * respect to the Green-Lagrange strain to the derivative of the
-     * first Piola-Kirchhoff stress with respect to the deformation gradient.
-     *
-     * \tparam N: spatial dimension
-     * \tparam stress: stress type
-     * \tparam real: numeric type
-     *
-     * \param[out] dP: derivative of the first Piola-Kirchhoff stress with
-     *                 respect to the deformation gradient
-     * \param[in] dS: derivative of the second Piola-Kirchoff stress with
-     *                respect to the Green-Lagrange strain
-     * \param[in] F: deformation gradient
-     * \param[in] s: Cauchy stress
-     */
-    template <unsigned short N, typename stress, typename real>
-    void
-    convertSecondPiolaKirchhoffStressDerivativeToFirstPiolaKirchoffStressDerivative(
-        t2tot2<N, stress>&,
-        const st2tost2<N, stress>&,
-        const tensor<N, real>&,
-        const stensor<N, stress>&);
-
-  }  // end of namespace math
-
-}  // end of namespace tfel
+}  // end of namespace tfel::math
 
 #include "TFEL/Math/T2toT2/ConvertToPK1Derivative.ixx"
 

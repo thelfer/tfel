@@ -107,7 +107,6 @@ static bool glossary = false;
 static bool numodis = false;
 static bool material = false;
 static bool tests = false;
-static bool physicalConstants = false;
 static bool mfront_profiling = false;
 #ifdef HAVE_CASTEM
 static bool castem = false;
@@ -290,8 +289,7 @@ static void listLibraries(const char* p) {
   display_if(exceptions, "TFELException");
   display_if(numodis, "TFELNUMODIS");
   display_if(tests, "TFELTests");
-  display_if(physicalConstants, "TFELPhysicalConstants");
-}
+ }
 
 /* coverity [UNCAUGHT_EXCEPT]*/
 int main(const int argc, const char* const* const argv) {
@@ -348,9 +346,6 @@ int main(const int argc, const char* const* const argv) {
                      "request flags for TFELMathCubicSpline.");
     registerCallBack("--math-parser",
                      [] {
-#if __cplusplus < 201703L
-                       physicalConstants = true;
-#endif /* __cplusplus > 201703L */
                        math = exceptions = true;
                        unicodeSupport = true;
                        mathParser = mathKriging = true;
@@ -358,8 +353,6 @@ int main(const int argc, const char* const* const argv) {
                      "request flags for TFELMathParser.");
     registerCallBack("--tests", [] { tests = true; },
                      "request flags for TFELTests.");
-    registerCallBack("--physical-constants", [] { physicalConstants = true; },
-                     "request flags for TFELPhysicalConstants.");
     registerCallBack("--system", [] { lsystem = exceptions = true; },
                      "request flags for TFELSystem.");
     registerCallBack("--utilities", [] { utilities = true; },

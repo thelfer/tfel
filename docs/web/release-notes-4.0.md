@@ -17,10 +17,17 @@ secPrefixTemplate: "$$i$$"
 eqnPrefixTemplate: "($$i$$)"
 ---
 
+# Known incompatibilities
+
+- The `TFELPhysicalConstants` library has been removed.
+- The `TFEL_NORETURN` macro has been removed.
+
 # Tickets fixed
 
 # Changes to existing models
 
 ## Mohr Coulomb Abbo Sloan
 
-- The corner smoothing of the Mohr Coulomb surface in the deviatoric plane is changed from the C1-continuous version (Abbo and Sloan, 1995) to the C2-continuous version from Abbo et al., 2011.
+- The corner smoothing of the Mohr Coulomb surface in the deviatoric
+  plane is changed from the C1-continuous version (Abbo and Sloan, 1995)
+  to the C2-continuous version from Abbo et al., 2011.

@@ -14,13 +14,9 @@
 
 #include"TFEL/Exception/TFELException.hxx"
 
-namespace tfel{
+namespace tfel::exception{
 
-  namespace exception{
-    
-    TFELException::~TFELException() noexcept = default;
+  TFELException::~TFELException() noexcept = default;
 
-  } // end of namespace exception
-
-} // end of namespace tfel
+}  // end of namespace tfel::exception
 

@@ -16,46 +16,41 @@
 #include "TFEL/Raise.hxx"
 #include "TFEL/System/ThreadedTaskResult.hxx"
 
-namespace tfel {
+namespace tfel::system {
 
-  namespace system {
+  void ThreadedTaskResultBase::throwBadCastException() {
+    throw(std::bad_cast());
+  }  // end of ThreadPool::ResultBase::throwBadCastException
 
-    void ThreadedTaskResultBase::throwBadCastException() {
-      throw(std::bad_cast());
-    }  // end of ThreadPool::ResultBase::throwBadCastException
+  void ThreadedTaskResultBase::throwNullException() {
+    raise<std::runtime_error>(
+        "ThreadPool::Result::rethrow: "
+        "no exception defined");
+  }  // end of ThreadPool::ResultBase::throwNullException
 
-    void ThreadedTaskResultBase::throwNullException() {
-      raise<std::runtime_error>(
-          "ThreadPool::Result::rethrow: "
-          "no exception defined");
-    }  // end of ThreadPool::ResultBase::throwNullException
+  ThreadedTaskResult<void>::ThreadedTaskResult() = default;
+  ThreadedTaskResult<void>::ThreadedTaskResult(ThreadedTaskResult&&) = default;
+  ThreadedTaskResult<void>::ThreadedTaskResult(const ThreadedTaskResult&) =
+      default;
+  ThreadedTaskResult<void>& ThreadedTaskResult<void>::operator=(
+      ThreadedTaskResult&&) = default;
+  ThreadedTaskResult<void>& ThreadedTaskResult<void>::operator=(
+      const ThreadedTaskResult&) = default;
+  ThreadedTaskResult<void>::~ThreadedTaskResult() = default;
 
-    ThreadedTaskResult<void>::ThreadedTaskResult() = default;
-    ThreadedTaskResult<void>::ThreadedTaskResult(ThreadedTaskResult&&) =
-        default;
-    ThreadedTaskResult<void>::ThreadedTaskResult(const ThreadedTaskResult&) =
-        default;
-    ThreadedTaskResult<void>& ThreadedTaskResult<void>::operator=(
-        ThreadedTaskResult&&) = default;
-    ThreadedTaskResult<void>& ThreadedTaskResult<void>::operator=(
-        const ThreadedTaskResult&) = default;
-    ThreadedTaskResult<void>::~ThreadedTaskResult() = default;
+  ThreadedTaskResult<void>::operator bool() const {
+    return this->eptr == nullptr;
+  }
 
-    ThreadedTaskResult<void>::operator bool() const {
-      return this->eptr == nullptr;
+  void ThreadedTaskResult<void>::setException(const std::exception_ptr& e) {
+    this->eptr = e;
+  }  // end of ThreadedTaskResult<void>::setException
+
+  void ThreadedTaskResult<void>::rethrow() {
+    if (this->eptr == nullptr) {
+      ThreadedTaskResultBase::throwNullException();
     }
+    std::rethrow_exception(eptr);
+  }  // end of ThreadedTaskResult<void>::setException
 
-    void ThreadedTaskResult<void>::setException(const std::exception_ptr& e) {
-      this->eptr = e;
-    }  // end of ThreadedTaskResult<void>::setException
-
-    void ThreadedTaskResult<void>::rethrow() {
-      if (this->eptr == nullptr) {
-        ThreadedTaskResultBase::throwNullException();
-      }
-      std::rethrow_exception(eptr);
-    }  // end of ThreadedTaskResult<void>::setException
-
-  }  // end of namespace system
-
-}  // end of namespace tfel
+}  // end of namespace tfel::system

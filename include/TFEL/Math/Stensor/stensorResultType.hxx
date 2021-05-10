@@ -12,8 +12,8 @@
  * project under specific licensing conditions.
  */
 
-#ifndef LIB_TFEL_STENSOR_RESULT_TYPE_HXX
-#define LIB_TFEL_STENSOR_RESULT_TYPE_HXX
+#ifndef LIB_TFEL_MATH_STENSOR_RESULT_TYPE_HXX
+#define LIB_TFEL_MATH_STENSOR_RESULT_TYPE_HXX
 
 #include <type_traits>
 #include "TFEL/Metaprogramming/InvalidType.hxx"
@@ -154,4 +154,4 @@ namespace tfel::math {
 
 }  // end of namespace tfel::math
 
-#endif /* LIB_TFEL_STENSOR_RESULT_TYPE_HXX */
+#endif /* LIB_TFEL_MATH_STENSOR_RESULT_TYPE_HXX */

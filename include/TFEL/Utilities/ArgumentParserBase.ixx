@@ -14,41 +14,41 @@
 #ifndef LIB_TFEL_UTILITIES_ARGUMENTPARSERBASE_IXX
 #define LIB_TFEL_UTILITIES_ARGUMENTPARSERBASE_IXX
 
-namespace tfel {
+namespace tfel::utilities {
 
-  namespace utilities {
+  template <typename Child>
+  ArgumentParserBase<Child>::ArgumentParserBase() = default;
 
-    template <typename Child>
-    ArgumentParserBase<Child>::ArgumentParserBase() = default;
+  template <typename Child>
+  ArgumentParserBase<Child>::ArgumentParserBase(const int argc,
+                                                const char* const* const argv)
+      : ArgumentParser(argc, argv) {
+  }  // end of ArgumentParserBase<Child>::ArgumentParserBase
 
-    template <typename Child>
-    ArgumentParserBase<Child>::ArgumentParserBase(const int argc, const char* const* const argv)
-        : ArgumentParser(argc, argv) {}  // end of ArgumentParserBase<Child>::ArgumentParserBase
+  template <typename Child>
+  void ArgumentParserBase<Child>::registerNewCallBack(const std::string& k,
+                                                      const MemberFuncPtr& f,
+                                                      const std::string& d,
+                                                      const bool b) {
+    const CallBack c{d, std::bind(std::mem_fn(f), static_cast<Child*>(this)),
+                     b};
+    this->registerCallBack(k, c);
+  }
 
-    template <typename Child>
-    void ArgumentParserBase<Child>::registerNewCallBack(const std::string& k,
-                                                        const MemberFuncPtr& f,
-                                                        const std::string& d,
-                                                        const bool b) {
-      const CallBack c{d, std::bind(std::mem_fn(f), static_cast<Child*>(this)), b};
-      this->registerCallBack(k, c);
-    }
+  template <typename Child>
+  void ArgumentParserBase<Child>::registerNewCallBack(const std::string& k,
+                                                      const std::string& a,
+                                                      const MemberFuncPtr& f,
+                                                      const std::string& d,
+                                                      const bool b) {
+    const CallBack c{d, std::bind(std::mem_fn(f), static_cast<Child*>(this)),
+                     b};
+    this->registerCallBack(k, a, c);
+  }
 
-    template <typename Child>
-    void ArgumentParserBase<Child>::registerNewCallBack(const std::string& k,
-                                                        const std::string& a,
-                                                        const MemberFuncPtr& f,
-                                                        const std::string& d,
-                                                        const bool b) {
-      const CallBack c{d, std::bind(std::mem_fn(f), static_cast<Child*>(this)), b};
-      this->registerCallBack(k, a, c);
-    }
+  template <typename Child>
+  ArgumentParserBase<Child>::~ArgumentParserBase() = default;
 
-    template <typename Child>
-    ArgumentParserBase<Child>::~ArgumentParserBase() = default;
-
-  }  // end of namespace utilities
-
-}  // end of namespace tfel
+}  // end of namespace tfel::utilities
 
 #endif /* LIB_TFEL_UTILITIES_ARGUMENTPARSERBASE_IXX */
