@@ -29,6 +29,8 @@ namespace tfel::math {
       : public ArrayPolicy::IndexingPolicy,
         public MutableArrayCommonMethods<Child, ArrayPolicy>,
         public MutableArraySTLCompatibilityLayer<Child, ArrayPolicy> {
+    //! \brief default constructor
+    MutableRuntimeArrayBase() = default;
     //! \brief constructor from an indexing policy
     MutableRuntimeArrayBase(const typename ArrayPolicy::IndexingPolicy&);
     //! \brief copy constructor

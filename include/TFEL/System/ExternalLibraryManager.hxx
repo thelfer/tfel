@@ -11,8 +11,8 @@
  * project under specific licensing conditions.
  */
 
-#ifndef LIB_EXTERNALLIBRARYMANAGER_HXX
-#define LIB_EXTERNALLIBRARYMANAGER_HXX
+#ifndef LIB_TFEL_SYSTEM_EXTERNALLIBRARYMANAGER_HXX
+#define LIB_TFEL_SYSTEM_EXTERNALLIBRARYMANAGER_HXX
 
 #include <map>
 #include <vector>
@@ -1251,4 +1251,4 @@ namespace tfel::system {
 
 }  // end of namespace tfel::system
 
-#endif /* LIB_EXTERNALLIBRARYMANAGER_HXX */
+#endif /* LIB_TFEL_SYSTEM_EXTERNALLIBRARYMANAGER_HXX */

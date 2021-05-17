@@ -3682,7 +3682,8 @@ namespace mfront {
        << "#include\"TFEL/Config/TFELTypes.hxx\"\n"
        << "#include\"TFEL/TypeTraits/IsFundamentalNumericType.hxx\"\n"
        << "#include\"TFEL/TypeTraits/IsReal.hxx\"\n"
-       << "#include\"TFEL/Math/General/IEEE754.hxx\"\n";
+       << "#include\"TFEL/Math/General/IEEE754.hxx\"\n"
+       << "#include\"TFEL/Math/runtime_array.hxx\"\n";
     if (this->mb.useQt()) {
       os << "#include\"TFEL/Math/General/BaseCast.hxx\"\n";
     }

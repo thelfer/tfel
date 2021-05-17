@@ -26,28 +26,28 @@
 #define TFEL_ADDCALL_PTR __cdecl *
 #else
 #define TFEL_ADDCALL_PTR *
-#endif /* LIB_TFEL_SYSTEM_EXTERNALFUNCTIONSPROTOTYPES_HXX */
+#endif /* defined _WIN32 || defined _WIN64 || defined __CYGWIN__ */
 
 #include "Cyrano/MaterialProperty.hxx"
 #include "Cyrano/Behaviour.hxx"
 
 #ifdef __cplusplus
 extern "C" {
-#endif /* LIB_TFEL_SYSTEM_EXTERNALFUNCTIONSPROTOTYPES_HXX */
+#endif /* __cplusplus */
 
 #ifdef TFEL_ARCH32
 typedef int CastemIntegerType;
 typedef int AsterIntegerType;
-#endif /* LIB_TFEL_SYSTEM_EXTERNALFUNCTIONSPROTOTYPES_HXX */
+#endif /* TFEL_ARCH32 */
 #ifdef TFEL_ARCH64
 #ifdef _WIN64
 typedef long long CastemIntegerType;
 typedef long long AsterIntegerType;
-#else
+#else  /* TFEL_ARCH64 */
 typedef long CastemIntegerType;
 typedef long AsterIntegerType;
-#endif /* LIB_TFEL_SYSTEM_EXTERNALFUNCTIONSPROTOTYPES_HXX */
-#endif /* LIB_TFEL_SYSTEM_EXTERNALFUNCTIONSPROTOTYPES_HXX */
+#endif /* _WIN64 */
+#endif /* TFEL_ARCH64 */
 
 typedef int AbaqusIntegerType;
 typedef int AnsysIntegerType;
@@ -73,7 +73,7 @@ typedef size_t mfront_gb_size_type;
 
 #ifdef __cplusplus
 }
-#endif /* LIB_TFEL_SYSTEM_EXTERNALFUNCTIONSPROTOTYPES_HXX */
+#endif /* __cplusplus */
 
 #ifdef __cplusplus
 
@@ -693,6 +693,6 @@ namespace tfel::system {
 
 }  // end of namespace tfel::system
 
-#endif /* LIB_TFEL_SYSTEM_EXTERNALFUNCTIONSPROTOTYPES_HXX */
+#endif /* __cplusplus */
 
 #endif /* LIB_TFEL_SYSTEM_EXTERNALFUNCTIONSPROTOTYPES_HXX */

@@ -27,7 +27,6 @@
 
 namespace tfel::math {
 
-
   /*!
    * \brief an helper class
    */
@@ -57,7 +56,7 @@ namespace tfel::math {
      * \param[in] args : arguments of Operation constructor
      */
     template <typename... Args>
-    explicit TFEL_MATH_INLINE Expr(Args&&... args)
+    constexpr explicit TFEL_MATH_INLINE Expr(Args&&... args)
         : Operation(std::forward<Args>(args)...) {}
     /*!
      * \brief array like access operator
@@ -65,7 +64,7 @@ namespace tfel::math {
      * \note This operator is always defined, even tough it might not be
      * valid
      */
-    value_type operator[](const size_type i) const {
+    constexpr value_type operator[](const size_type i) const {
       // may not be defined
       static_assert(tfel::meta::IsConstCallable<Expr, size_type>::cond,
                     "Expr is not callable");
@@ -77,7 +76,7 @@ namespace tfel::math {
      * \note This operator is always defined, even tough it might not be
      * valid
      */
-    value_type& operator[](const size_type i) {
+    constexpr value_type& operator[](const size_type i) {
       // may not be defined
       static_assert(
           std::is_same_v<decltype(Operation::operator()(i)), value_type&>,
@@ -101,10 +100,10 @@ namespace tfel::math {
         public ConceptRebind<typename ComputeObjectTag<ResultType>::type,
                              Expr<ResultType, UnaryOperation<T1, Op>>>::type {
     Expr() = delete;
-    Expr(const Expr&) = default;
-    Expr(Expr&&) = default;
-    Expr& operator=(const Expr&) = delete;
-    Expr& operator=(Expr&&) = delete;
+    constexpr Expr(const Expr&) = default;
+    constexpr Expr(Expr&&) = default;
+    constexpr Expr& operator=(const Expr&) = delete;
+    constexpr Expr& operator=(Expr&&) = delete;
     //! type return by the access operator(s)
     using value_type = typename ResultType::value_type;
     //! type used by access operator(s)
@@ -116,15 +115,14 @@ namespace tfel::math {
     //! storage type of the argument
     using argument_storage_type = ArgumentStorage<T1>;
     /*!
-     * \param l : left argument of the binary operation
-     * \param r : right argument of the binary operation
+     * \param l : left argument of the unary operation
      */
-    TFEL_MATH_INLINE Expr(T1 l) : a(l) {}  // end of Expr
+    constexpr Expr(T1 l) : a(l) {}  // end of Expr
     /*!
-     * multidimensional access operator
+     * \brief multidimensional access operator
      */
     template <typename... Indexes>
-    TFEL_MATH_INLINE auto operator()(const Indexes... i) const
+    constexpr auto operator()(const Indexes... i) const
         -> UnaryOperationHandler<
             std::conditional_t<
                 std::is_lvalue_reference_v<
@@ -158,10 +156,10 @@ namespace tfel::math {
             typename ComputeObjectTag<ResultType>::type,
             Expr<ResultType, BinaryOperation<T1, T2, Op>>>::type {
     Expr() = delete;
-    Expr(const Expr&) = default;
-    Expr(Expr&&) = default;
-    Expr& operator=(const Expr&) = delete;
-    Expr& operator=(Expr&&) = delete;
+    constexpr Expr(const Expr&) = default;
+    constexpr Expr(Expr&&) = default;
+    constexpr Expr& operator=(const Expr&) = delete;
+    constexpr Expr& operator=(Expr&&) = delete;
     //! type return by the access operator(s)
     using value_type = typename ResultType::value_type;
     //! type used by access operator(s)
@@ -180,11 +178,11 @@ namespace tfel::math {
      * \param l : left argument of the binary operation
      * \param r : right argument of the binary operation
      */
-    TFEL_MATH_INLINE Expr(T1 l, T2 r) : a(l), b(r) {}  // end of Expr
+    constexpr Expr(T1 l, T2 r) : a(l), b(r) {}  // end of Expr
     /*!
      * array-like access operator
      */
-    TFEL_MATH_INLINE value_type operator[](const size_type i) const {
+    constexpr value_type operator[](const size_type i) const {
       static_assert(
           isBinaryOperationResultTypeValid<
               tfel::meta::result_of<lhs_storage_type, size_type>,
@@ -196,7 +194,7 @@ namespace tfel::math {
      * multi-dimensional operator acces
      */
     template <typename... Indexes>
-    TFEL_MATH_INLINE BinaryOperationHandler<
+    constexpr BinaryOperationHandler<
         std::conditional_t<
             std::is_lvalue_reference_v<
                 tfel::meta::result_of<lhs_storage_type, Indexes...>>,
@@ -236,10 +234,10 @@ namespace tfel::math {
             typename ComputeObjectTag<ResultType>::type,
             Expr<ResultType, ScalarObjectOperation<T1, T2, Op>>>::type {
     Expr() = delete;
-    Expr(const Expr&) = default;
-    Expr(Expr&&) = default;
-    Expr& operator=(const Expr&) = delete;
-    Expr& operator=(Expr&&) = delete;
+    constexpr Expr(const Expr&) = default;
+    constexpr Expr(Expr&&) = default;
+    constexpr Expr& operator=(const Expr&) = delete;
+    constexpr Expr& operator=(Expr&&) = delete;
     //! type return by the access operator(s)
     using value_type = typename ResultType::value_type;
     //! type used by access operator(s)
@@ -258,11 +256,11 @@ namespace tfel::math {
      * \param l : left argument of the binary operation
      * \param r : right argument of the binary operation
      */
-    TFEL_MATH_INLINE Expr(T1 l, T2 r) : a(l), b(r) {}  // end of Expr
+    constexpr Expr(T1 l, T2 r) : a(l), b(r) {}  // end of Expr
     /*!
      * \brief array-like access operator
      */
-    TFEL_MATH_INLINE value_type operator[](const size_type i) const {
+    constexpr value_type operator[](const size_type i) const {
       static_assert(
           isBinaryOperationResultTypeValid<
               std::add_lvalue_reference_t<lhs_storage_type>,
@@ -274,7 +272,7 @@ namespace tfel::math {
      * \brief multi-dimensional operator acces
      */
     template <typename... Indexes>
-    TFEL_MATH_INLINE BinaryOperationHandler<
+    constexpr BinaryOperationHandler<
         std::add_lvalue_reference_t<lhs_storage_type>,
         std::conditional_t<
             std::is_lvalue_reference_v<
@@ -310,10 +308,10 @@ namespace tfel::math {
             typename ComputeObjectTag<ResultType>::type,
             Expr<ResultType, ObjectScalarOperation<T1, T2, Op>>>::type {
     Expr() = delete;
-    Expr(const Expr&) = default;
-    Expr(Expr&&) = default;
-    Expr& operator=(const Expr&) = delete;
-    Expr& operator=(Expr&&) = delete;
+    constexpr Expr(const Expr&) = default;
+    constexpr Expr(Expr&&) = default;
+    constexpr Expr& operator=(const Expr&) = delete;
+    constexpr Expr& operator=(Expr&&) = delete;
     //! type return by the access operator(s)
     using value_type = typename ResultType::value_type;
     //! type used by access operator(s)
@@ -332,11 +330,11 @@ namespace tfel::math {
      * \param l : left argument of the binary operation
      * \param r : right argument of the binary operation
      */
-    TFEL_MATH_INLINE Expr(T1 l, T2 r) : a(l), b(r) {}  // end of Expr
+    constexpr Expr(T1 l, T2 r) : a(l), b(r) {}  // end of Expr
     /*!
      * array-like access operator
      */
-    TFEL_MATH_INLINE value_type operator[](const size_type i) const {
+    constexpr value_type operator[](const size_type i) const {
       static_assert(
           isBinaryOperationResultTypeValid<
               tfel::meta::result_of<lhs_storage_type, size_type>,
@@ -348,7 +346,7 @@ namespace tfel::math {
      * multi-dimensional operator acces
      */
     template <typename... Indexes>
-    TFEL_MATH_INLINE BinaryOperationHandler<
+    constexpr BinaryOperationHandler<
         std::conditional_t<
             std::is_lvalue_reference_v<
                 tfel::meta::result_of<lhs_storage_type, Indexes...>>,
@@ -382,10 +380,10 @@ namespace tfel::math {
             typename ComputeObjectTag<ResultType>::type,
             Expr<ResultType, DiadicProductOperation<T1, T2>>>::type {
     Expr() = delete;
-    Expr(const Expr&) = default;
-    Expr(Expr&&) = default;
-    Expr& operator=(const Expr&) = delete;
-    Expr& operator=(Expr&&) = delete;
+    constexpr Expr(const Expr&) = default;
+    constexpr Expr(Expr&&) = default;
+    constexpr Expr& operator=(const Expr&) = delete;
+    constexpr Expr& operator=(Expr&&) = delete;
     //! type return by the access operator(s)
     using value_type = typename ResultType::value_type;
     //! type used by access operator(s)
@@ -404,16 +402,16 @@ namespace tfel::math {
      * \param l : left argument of the binary operation
      * \param r : right argument of the binary operation
      */
-    TFEL_MATH_INLINE Expr(T1 l, T2 r) : a(l), b(r) {}  // end of Expr
+    constexpr Expr(T1 l, T2 r) : a(l), b(r) {}  // end of Expr
     /*!
      * access operator
      * \param[in] i : row index
      * \param[in] i : column index
      */
-    TFEL_MATH_INLINE
-    BinaryOperationHandler<tfel::meta::result_of<lhs_storage_type, size_type>,
-                           tfel::meta::result_of<rhs_storage_type, size_type>,
-                           OpMult>
+    constexpr BinaryOperationHandler<
+        tfel::meta::result_of<lhs_storage_type, size_type>,
+        tfel::meta::result_of<rhs_storage_type, size_type>,
+        OpMult>
     operator()(const size_type i, const size_type j) const {
       return (this->a(i)) * (this->b(j));
     }
@@ -445,7 +443,7 @@ namespace tfel::math {
 
 }  // end of namespace tfel::math
 
-namespace tfel::typetraits{
+namespace tfel::typetraits {
 
   /*!
    * \brief generic partial specialisation for an expression
@@ -474,6 +472,5 @@ namespace tfel::typetraits{
   };  // end of struct IsAssignableTo
 
 }  // end of namespace tfel::typetraits
-
 
 #endif /* LIB_TFEL_MATH_EXPRESSION_EXPR_HXX */

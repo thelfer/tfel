@@ -39,6 +39,14 @@ namespace tfel::math {
   template <typename T>
   struct ComputeObjectTag;
 
+  /*!
+   * \brief metafunction returning of the given type defines a type called
+   * `ConceptTag`.
+   * \param[in] T: type checked
+   */
+  template <typename T>
+  constexpr bool hasConceptTag();
+
 }  // end of namespace tfel::math
 
 #include "TFEL/Math/General/ComputeObjectTag.ixx"

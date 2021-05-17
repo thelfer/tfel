@@ -59,6 +59,7 @@ macro(tests_math4 test_arg)
 endmacro(tests_math4)
 
 tests_math(IndexingPoliciesTest)
+tests_math(view)
 tests_math(power)
 tests_math(CubicRoots)
 tests_math(promote)

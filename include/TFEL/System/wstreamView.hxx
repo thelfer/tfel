@@ -19,41 +19,30 @@
 #include"TFEL/System/stream_traits.hxx"
 #include"TFEL/System/basic_wstream.hxx"
 
-namespace tfel
-{
-  
-  namespace system
-  {
-    
-    template<bool isBlocking>
-    struct wstreamView;
+namespace tfel::system {
 
-    template<bool is>
-    struct stream_traits<wstreamView<is> >
-    {
-      static constexpr bool isBlocking = is;
-    }; // end of struct stream_traits<wstreamView<isBlocking> >
+  template <bool isBlocking>
+  struct wstreamView;
 
-    template<bool isBlocking>
-    struct wstreamView
+  template <bool is>
+  struct stream_traits<wstreamView<is>> {
+    static constexpr bool isBlocking = is;
+  };  // end of struct stream_traits<wstreamView<isBlocking> >
+
+  template <bool isBlocking>
+  struct wstreamView
       : public basic_wstream<wstreamView<isBlocking>,
-			     stream_traits<wstreamView<isBlocking> > >
-    {
+                             stream_traits<wstreamView<isBlocking>>> {
+    wstreamView(const int);
 
-      wstreamView(const int);
-      
-      int
-      getFileDescriptor() const;
+    int getFileDescriptor() const;
 
-    private:
+   private:
+    const int fd;
 
-      const int fd;
+  };  // end of struct wstreamView
 
-    }; // end of struct wstreamView
-
-  } // end of namespace system  
-
-} // end of namespace tfel  
+}  // end of namespace tfel::system
 
 #include"TFEL/System/wstreamView.ixx"
 

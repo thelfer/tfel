@@ -27,10 +27,9 @@
 #include "TFEL/Math/General/EmptyRunTimeProperties.hxx"
 #include "TFEL/Math/Array/GenericFixedSizeArray.hxx"
 #include "TFEL/Math/Array/View.hxx"
-#include "TFEL/Math/Array/ConstView.hxx"
+#include "TFEL/Math/Array/FixedSizeMathObjectArrayView.hxx"
 #include "TFEL/Math/Vector/VectorConcept.hxx"
 #include "TFEL/Math/Vector/VectorConceptOperations.hxx"
-#include "TFEL/Math/Vector/TinyVectorFromTinyVectorView.hxx"
 #include "TFEL/Math/Forward/tmatrix.hxx"
 #include "TFEL/Math/Forward/tvector.hxx"
 
@@ -130,9 +129,7 @@ namespace tfel::math {
      * \param[in] I : the starting index
      */
     template <unsigned short I>
-    Expr<tvector<N - I, ValueType>,
-         TinyVectorFromTinyVectorViewExpr<N - I, N, I, ValueType, false>>
-    slice();
+    auto slice();
     /*!
      * \brief create a slice
      * \param[in] I : the starting index
@@ -141,9 +138,7 @@ namespace tfel::math {
      * vector, so this vector shall not be destroyed before the slice
      */
     template <unsigned short I, unsigned short J>
-    Expr<tvector<J - I, ValueType>,
-         TinyVectorFromTinyVectorViewExpr<J - I, N, I, ValueType, false>>
-    slice();
+    auto slice();
     /*!
      * \brief create a slice (const version)
      * \param[in] I : the starting index
@@ -151,9 +146,7 @@ namespace tfel::math {
      * vector, so this vector shall not be destroyed before the slice
      */
     template <unsigned short I>
-    Expr<tvector<N - I, ValueType>,
-         TinyVectorFromTinyVectorViewExpr<N - I, N, I, ValueType, true>>
-    slice() const;
+    auto slice() const;
     /*!
      * \brief create a slice (const version)
      * \param[in] I : the starting index
@@ -162,11 +155,8 @@ namespace tfel::math {
      * vector, so this vector shall not be destroyed before the slice
      */
     template <unsigned short I, unsigned short J>
-    Expr<tvector<J - I, ValueType>,
-         TinyVectorFromTinyVectorViewExpr<J - I, N, I, ValueType, true>>
-    slice() const;
+    auto slice() const;
   };  // end of tvector
-
 
   /*!
    * \brief a simple alias for backward compatibility
@@ -229,9 +219,7 @@ namespace tfel::math {
    * vector, so this vector shall not be destroyed before the slice
    */
   template <unsigned short I, unsigned short N, typename T>
-  Expr<tvector<N - I, T>,
-       TinyVectorFromTinyVectorViewExpr<N - I, N, I, T, false>>
-  slice(tvector<N, T>&);
+  auto slice(tvector<N, T>&);
   /*!
    * \brief create a slice from a tiny vector
    * \param[in] v : vector
@@ -239,9 +227,7 @@ namespace tfel::math {
    * vector, so this vector shall not be destroyed before the slice
    */
   template <unsigned short I, unsigned short J, unsigned short N, typename T>
-  Expr<tvector<J - I, T>,
-       TinyVectorFromTinyVectorViewExpr<J - I, N, I, T, false>>
-  slice(tvector<N, T>&);
+  auto slice(tvector<N, T>&);
   /*!
    * \brief create a slice from a tiny vector
    * \param[in] v : vector
@@ -249,9 +235,7 @@ namespace tfel::math {
    * vector, so this vector shall not be destroyed before the slice
    */
   template <unsigned short I, unsigned short N, typename T>
-  Expr<tvector<N - I, T>,
-       TinyVectorFromTinyVectorViewExpr<N - I, N, I, T, true>>
-  slice(const tvector<N, T>&);
+  auto slice(const tvector<N, T>&);
   /*!
    * \brief create a slice from a tiny vector (const version)
    * \param[in] v : vector
@@ -259,19 +243,101 @@ namespace tfel::math {
    * vector, so this vector shall not be destroyed before the slice
    */
   template <unsigned short I, unsigned short J, unsigned short N, typename T>
-  Expr<tvector<J - I, T>,
-       TinyVectorFromTinyVectorViewExpr<J - I, N, I, T, true>>
-  slice(const tvector<N, T>&);
+  auto slice(const tvector<N, T>&);
+
+  /*!
+   * \brief create a view of a math object from a tiny vector
+   * \tparam MappedType : type of mapped object
+   * \tparam offset: offset in the tiny vector
+   * \tparam N: size of the tiny vector
+   * \tparam T: type hold by the tiny vector
+   */
+  template <typename MappedType,
+            unsigned short offset = 0u,
+            unsigned short N,
+            typename real>
+  constexpr std::enable_if_t<((!std::is_const_v<MappedType>)&&(
+                                 MappedType::indexing_policy::hasFixedSizes)),
+                             View<MappedType>>
+  map(tvector<N, real>&);
+
+  /*!
+   * \brief create a constant view of a math object from a tiny vector
+   * \tparam MappedType : type of mapped object
+   * \tparam offset: offset in the tiny vector
+   * \tparam N: size of the tiny vector
+   * \tparam T: type hold by the tiny vector
+   */
+  template <typename MappedType,
+            unsigned short offset = 0u,
+            unsigned short N,
+            typename real>
+  constexpr std::enable_if_t<MappedType::indexing_policy::hasFixedSizes,
+                             View<const MappedType>>
+  map(const tvector<N, real>&);
+
+  /*!
+   * \brief create a view on an array of fixed sized math objects from a tiny
+   * vector
+   * \tparam M: number of objects mapped
+   * \tparam MappedType : type of mapped object
+   * \tparam offset: offset from the start of the tiny vector
+   * \tparam N: size of the tiny vector
+   * \tparam T: type hold by the tiny vector
+   */
+  template <unsigned short M,
+            typename MappedType,
+            unsigned short offset = 0u,
+            unsigned short stride =
+                getFixedSizeMathObjectArrayViewMinimalStride<MappedType>(),
+            unsigned short N,
+            typename real>
+  constexpr std::enable_if_t<
+      ((!std::is_const_v<MappedType>)&&(
+          isMappableInAFixedSizeMathObjectArray<MappedType>())),
+      FixedSizeMathObjectArrayView<M, MappedType, stride>>
+  map(tvector<N, real>&);
+
+  /*!
+   * \brief create a const view on an array of fixed sized math objects from a
+   * tiny vector
+   * \tparam M: number of objects mapped
+   * \tparam MappedType : type of mapped object
+   * \tparam offset: offset from the start of the tiny vector
+   * \tparam N: size of the tiny vector
+   * \tparam T: type hold by the tiny vector
+   */
+  template <unsigned short M,
+            typename MappedType,
+            unsigned short offset = 0u,
+            unsigned short stride =
+                getFixedSizeMathObjectArrayViewMinimalStride<MappedType>(),
+            unsigned short N,
+            typename real>
+  constexpr std::enable_if_t<
+      isMappableInAFixedSizeMathObjectArray<MappedType>(),
+      FixedSizeMathObjectArrayView<M, const MappedType, stride>>
+  map(const tvector<N, real>&);
 
 }  // namespace tfel::math
 
 namespace tfel::typetraits {
 
-  /*!
-   * \brief Partial specialisation for tvectors
-   */
+  //! \brief partial specialisation for tvectors
   template <unsigned short N, typename T2, typename T>
   struct IsAssignableTo<tfel::math::tvector<N, T2>, tfel::math::tvector<N, T>> {
+    //! \brief result
+    static constexpr bool cond = isAssignableTo<T2, T>();
+  };
+
+}  // end of namespace tfel::typetraits
+
+namespace tfel::typetraits {
+
+  //! \brief specialisation of IsAssignableTo for `tvector`'s
+  template <unsigned short N, typename T2, unsigned short stride, typename T>
+  struct IsAssignableTo<tfel::math::FixedSizeMathObjectArrayView<N, T2, stride>,
+                        tfel::math::tvector<N, T>> {
     //! \brief result
     static constexpr bool cond = isAssignableTo<T2, T>();
   };

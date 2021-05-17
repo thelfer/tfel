@@ -31,7 +31,7 @@
 #include"TFEL/Math/tmatrix.hxx"
 #include"TFEL/Math/tvector.hxx"
 #include"TFEL/Math/TinyMatrixSolve.hxx"
-#include"TFEL/Math/Vector/TinyVectorFromTinyVectorView.hxx"
+
 #include"TFEL/Math/Stensor/StensorFromTinyVectorView.hxx"
 #include"TFEL/Math/ST2toST2/ST2toST2FromTinyMatrixView.hxx"
 

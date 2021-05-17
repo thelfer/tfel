@@ -34,49 +34,49 @@ namespace tfel::system {
   template <typename T>
   struct ThreadedTaskResult : public ThreadedTaskResultBase {
     //! \brief default constructor
-    TFEL_INLINE ThreadedTaskResult();
+    ThreadedTaskResult();
     /*!
      * \brief constructor of T
      * \param[in] args: arguments to T constructor
      */
     template <typename... Args>
-    TFEL_INLINE ThreadedTaskResult(Args&&...);
+    ThreadedTaskResult(Args&&...);
     /*!
      * \brief constructor of T
      */
-    TFEL_INLINE ThreadedTaskResult(const T&);
+    ThreadedTaskResult(const T&);
     //! \brief move constructor
-    TFEL_INLINE ThreadedTaskResult(ThreadedTaskResult&&);
+    ThreadedTaskResult(ThreadedTaskResult&&);
     //! \brief copy constructor
-    TFEL_INLINE ThreadedTaskResult(const ThreadedTaskResult&);
+    ThreadedTaskResult(const ThreadedTaskResult&);
     //! \brief assignement
-    TFEL_INLINE ThreadedTaskResult& operator=(const ThreadedTaskResult&);
+    ThreadedTaskResult& operator=(const ThreadedTaskResult&);
     //! \brief move assignement
-    TFEL_INLINE ThreadedTaskResult& operator=(ThreadedTaskResult&&);
+    ThreadedTaskResult& operator=(ThreadedTaskResult&&);
     //! \brief assignement
-    TFEL_INLINE ThreadedTaskResult& operator=(const T&);
+    ThreadedTaskResult& operator=(const T&);
     //! \brief move assignement
-    TFEL_INLINE ThreadedTaskResult& operator=(T&&);
+    ThreadedTaskResult& operator=(T&&);
     //! \brief set current exception
-    TFEL_INLINE void setException(const std::exception_ptr&);
+    void setException(const std::exception_ptr&);
     //! \brief throw the catched exception
 #ifndef _MSC_VER
-    [[noreturn]] TFEL_INLINE void rethrow();
+    [[noreturn]] void rethrow();
 #else  /* _MSC_VER */
-    TFEL_INLINE void rethrow();
+    void rethrow();
 #endif /* _MSC_VER */
        //! \brief conversion to bool
-    TFEL_INLINE operator bool() const;
+    operator bool() const;
     //! \brief conversion to underlying type
-    TFEL_INLINE T& operator*();
+    T& operator*();
     //! \brief conversion to underlying type
-    TFEL_INLINE const T& operator*() const;
+    const T& operator*() const;
     //! \brief conversion to underlying type
-    TFEL_INLINE T* operator->();
+    T* operator->();
     //! \brief conversion to underlying type
-    TFEL_INLINE const T* operator->() const;
+    const T* operator->() const;
     //! \brief destructor
-    TFEL_INLINE ~ThreadedTaskResult();
+    ~ThreadedTaskResult();
 
    private:
     //! \brief result of the ThreadedTaskResult

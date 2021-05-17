@@ -22,7 +22,16 @@
 namespace tfel::math {
 
   /*!
-   * \brief an helper metafunction meant to be specialised
+   * \brief an helper metafunction used to determine the type representing
+   * the derivative of an object of type A with respect to an object
+   * of type B.
+   *
+   * \tparam TagA: Tag object associated with the object of type A
+   * \tparam Tagb: Tag object associated with the object of type B
+   * \tparam A: type of the first object
+   * \tparam B: type of the second object
+   *
+   * This helper metafunction must be specialised by every code.  
    */
   template <typename TagA, typename TagB, typename A, typename B>
   struct DerivativeTypeDispatcher {
@@ -38,7 +47,7 @@ namespace tfel::math {
    */
   template <typename T1, typename T2>
   struct DerivativeType {
-    //! boolean stating if both variables are scalar
+    //! \brief boolean stating if both variables are scalar
     static constexpr auto are_scalars = isScalar<T1>() && isScalar<T2>();
     //! \brief the result of the derivative type dispatcher
     using derivative_type_dispatcher_result =
@@ -53,7 +62,12 @@ namespace tfel::math {
                                     derivative_type_dispatcher_result>;
   };  // end of DerivativeType
 
-  //! a simple alias
+  /*!
+   * \brief a simple alias giving the type representing the derivative of an
+   * object of type T1 with respect to an object of type T2.
+   * \param[in] T1: type of the first object
+   * \param[in] T2: type of the second object
+   */
   template <typename T1, typename T2>
   using derivative_type = typename DerivativeType<T1, T2>::type;
 

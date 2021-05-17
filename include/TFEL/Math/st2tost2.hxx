@@ -26,7 +26,6 @@
 #include "TFEL/Math/General/EmptyRunTimeProperties.hxx"
 #include "TFEL/Math/Array/GenericFixedSizeArray.hxx"
 #include "TFEL/Math/Array/View.hxx"
-#include "TFEL/Math/Array/ConstView.hxx"
 #include "TFEL/Math/Forward/st2tost2.hxx"
 #include "TFEL/Math/T2toST2/T2toST2Concept.hxx"
 #include "TFEL/Math/Stensor/StensorSizeToDime.hxx"

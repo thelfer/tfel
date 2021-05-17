@@ -17,10 +17,11 @@
 #include "TFEL/TypeTraits/IsAssignableTo.hxx"
 #include "TFEL/Math/General/MathObjectTraits.hxx"
 #include "TFEL/Math/Array/GenericRuntimeArray.hxx"
+#include "TFEL/Math/Forward/runtime_array.hxx"
 
 namespace tfel::math {
 
-  template <typename ValueType = double>
+  template <typename ValueType>
   struct runtime_array
       : GenericRuntimeArray<runtime_array<ValueType>,
                             RuntimeVectorArrayPolicy<ValueType>> {
@@ -29,7 +30,7 @@ namespace tfel::math {
         GenericRuntimeArray<runtime_array<ValueType>,
                             RuntimeVectorArrayPolicy<ValueType>>;
     //! \brief default constructor
-    runtime_array() = delete;
+    runtime_array() = default;
     //! \brief move constructor
     runtime_array(runtime_array&&) = default;
     //! \brief copy constructor
@@ -45,6 +46,8 @@ namespace tfel::math {
     // inheriting GenericRuntimeArray' assignement operators
     using GenericRuntimeArray<runtime_array<ValueType>,
                               RuntimeVectorArrayPolicy<ValueType>>::operator=;
+    // \brief destructor
+    ~runtime_array() noexcept = default;
   };  // end of runtime_array
 
 }  // end of namespace tfel::math

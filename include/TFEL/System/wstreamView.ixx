@@ -13,31 +13,20 @@
  */
 
 #ifndef LIB_TFEL_WSTREAMVIEWIXX
-#define LIB_TFEL_WSTREAMVIEWIXX 
+#define LIB_TFEL_WSTREAMVIEWIXX
 
-namespace tfel
-{
-  
-  namespace system
-  {
-    
-    template<bool isBlocking>
-    TFEL_INLINE2
-    wstreamView<isBlocking>::wstreamView(const int id)
-      : fd(id)
-    {} // end of wstreamView<isBlocking>::wstreamView
-      
-    template<bool isBlocking>
-    TFEL_INLINE2
-    int
-    wstreamView<isBlocking>::getFileDescriptor() const
-    {
-      return this->fd;
-    } // end of wstreamView<isBlocking>::getFileDescriptor
+namespace tfel::system {
 
-  } // end of namespace system  
+  template <bool isBlocking>
+  wstreamView<isBlocking>::wstreamView(const int id)
+      : fd(id) {}  // end of wstreamView<isBlocking>::wstreamView
 
-} // end of namespace tfel  
+  template <bool isBlocking>
+  int wstreamView<isBlocking>::getFileDescriptor() const {
+    return this->fd;
+  }  // end of wstreamView<isBlocking>::getFileDescriptor
+
+}  // end of namespace tfel::system
 
 #endif /* LIB_TFEL_WSTREAMVIEWIXX */
 

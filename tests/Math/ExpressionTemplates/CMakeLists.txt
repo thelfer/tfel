@@ -23,7 +23,5 @@ tests_expr(Expr9)
 tests_expr(test_expr1)
 tests_expr(test_expr2)
 tests_expr(test_expr6)
-tests_expr(test_expr7)
-tests_expr(test_expr9)
 tests_expr(test_expr12)
 

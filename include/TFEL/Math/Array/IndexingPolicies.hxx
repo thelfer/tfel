@@ -166,6 +166,14 @@ namespace tfel::math {
   template <typename IndexingPolicy, typename... Args>
   constexpr auto buildIndexingPolicyAndExtractPointerToData(Args&... args);
 
+  /*!
+   * \brief a simple metafunction which looks if the given type provides an
+   * internal type called `indexing_policy`
+   * \param[in] T: type checked
+   */
+  template <typename T>
+  constexpr bool hasIndexingPolicy();
+
 }  // end of namespace tfel::math
 
 #include "TFEL/Math/Array/IndexingPolicies.ixx"

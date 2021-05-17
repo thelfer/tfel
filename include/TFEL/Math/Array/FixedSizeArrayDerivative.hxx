@@ -23,7 +23,6 @@
 #include "TFEL/Math/Array/FixedSizeArrayPolicies.hxx"
 #include "TFEL/Math/Array/GenericFixedSizeArray.hxx"
 #include "TFEL/Math/Array/View.hxx"
-#include "TFEL/Math/Array/ConstView.hxx"
 #include "TFEL/Math/ExpressionTemplates/Expr.hxx"
 
 namespace tfel::math {
@@ -121,7 +120,7 @@ namespace tfel::math {
     using GenericFixedSizeArrayBase::operator();
   };  // end of struct DerivativeArray
   /*!
-   * \brief paratial specialisation of the `FixedSizeArrayDerivativeTraits`
+   * \brief partial specialisation of the `FixedSizeArrayDerivativeTraits`
    * class
    * \tparam Array1: type of the first array
    * \tparam Array2: type of the second array
@@ -135,7 +134,7 @@ namespace tfel::math {
     using type2 = Array1;
   };  // end of struct FixedSizeArrayDerivativeTraits
   /*!
-   * \brief paratial specialisation of the `FixedSizeArrayDerivativeTraits`
+   * \brief partial specialisation of the `FixedSizeArrayDerivativeTraits`
    * class for expression
    * \tparam Array1: type of the first array
    * \tparam Array2: type of the second array
@@ -151,7 +150,7 @@ namespace tfel::math {
   };  // end of struct FixedSizeArrayDerivativeTraits
 
   /*!
-   * \brief paratial specialisation of the `FixedSizeArrayDerivativeTraits`
+   * \brief partial specialisation of the `FixedSizeArrayDerivativeTraits`
    * class for a view
    * \tparam Array1: type of the first array
    * \tparam Array2: type of the second array
@@ -159,20 +158,6 @@ namespace tfel::math {
   template <typename Array1, typename Array2>
   struct FixedSizeArrayDerivativeTraits<
       View<FixedSizeArrayDerivative<Array1, Array2>>> {
-    //! \brief derivatived array
-    using type1 = Array1;
-    //! \brief array used to derivate the first array
-    using type2 = Array1;
-  };  // end of struct FixedSizeArrayDerivativeTraits
-  /*!
-   * \brief paratial specialisation of the `FixedSizeArrayDerivativeTraits`
-   * class for a const view
-   * \tparam Array1: type of the first array
-   * \tparam Array2: type of the second array
-   */
-  template <typename Array1, typename Array2>
-  struct FixedSizeArrayDerivativeTraits<
-      ConstView<FixedSizeArrayDerivative<Array1, Array2>>> {
     //! \brief derivatived array
     using type1 = Array1;
     //! \brief array used to derivate the first array

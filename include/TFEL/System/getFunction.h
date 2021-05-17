@@ -1,13 +1,13 @@
 /*!
- * \file   getFunction.h
+ * \file   include/TFEL/System/getFunction.h
  * \brief  this file declares some C wrappers around the dlsym
  * system call.
  * \author Helfer Thomas
  * \date   13 déc 2008
  */
 
-#ifndef LIB_TFEL_GETFUNCTION_H
-#define LIB_TFEL_GETFUNCTION_H
+#ifndef LIB_TFEL_SYSTEM_GETFUNCTION_H
+#define LIB_TFEL_SYSTEM_GETFUNCTION_H
 
 #if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__)
 #ifndef NOMINMAX
@@ -1341,4 +1341,4 @@ double(TFEL_ADDCALL_PTR tfel_getFortranFunction15(
 }
 #endif /* __cplusplus */
 
-#endif /* LIB_TFEL_GETFUNCTION_H */
+#endif /* LIB_TFEL_SYSTEM_GETFUNCTION_H */

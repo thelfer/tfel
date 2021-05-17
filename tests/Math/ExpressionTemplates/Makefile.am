@@ -15,8 +15,6 @@ test_PROGRAMS = Expr         \
 		test_expr1   \
 		test_expr2   \
 		test_expr6   \
-		test_expr7   \
-		test_expr9   \
 		test_expr12
 
 LDADD = -L$(top_builddir)/src/Math                 \
@@ -38,8 +36,6 @@ Expr9_SOURCES        = Expr9.cxx
 test_expr1_SOURCES   = test_expr1.cxx    
 test_expr2_SOURCES   = test_expr2.cxx   
 test_expr6_SOURCES   = test_expr6.cxx   
-test_expr7_SOURCES   = test_expr7.cxx   
-test_expr9_SOURCES   = test_expr9.cxx   
 test_expr12_SOURCES  = test_expr12.cxx  
 
 TESTS=$(test_PROGRAMS)

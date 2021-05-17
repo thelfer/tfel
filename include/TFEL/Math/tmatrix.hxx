@@ -22,7 +22,6 @@
 #include "TFEL/Math/General/EmptyRunTimeProperties.hxx"
 #include "TFEL/Math/Array/GenericFixedSizeArray.hxx"
 #include "TFEL/Math/Array/View.hxx"
-#include "TFEL/Math/Array/ConstView.hxx"
 #include "TFEL/Math/Matrix/MatrixConcept.hxx"
 #include "TFEL/Math/Matrix/MatrixConceptOperations.hxx"
 #include "TFEL/Math/tvector.hxx"
@@ -30,42 +29,6 @@
 #include "TFEL/Math/Forward/tmatrix.hxx"
 
 namespace tfel::math {
-
-  // forward declaration
-  template <unsigned short N,
-            unsigned short M,
-            unsigned short I,
-            unsigned short J,
-            unsigned short K,
-            typename T>
-  struct tmatrix_row_view;
-
-  // forward declaration
-  template <unsigned short N,
-            unsigned short M,
-            unsigned short I,
-            unsigned short J,
-            unsigned short K,
-            typename T>
-  struct tmatrix_const_row_view;
-
-  // forward declaration
-  template <unsigned short N,
-            unsigned short M,
-            unsigned short I,
-            unsigned short J,
-            unsigned short K,
-            typename T>
-  struct tmatrix_column_view;
-
-  // forward declaration
-  template <unsigned short N,
-            unsigned short M,
-            unsigned short I,
-            unsigned short J,
-            unsigned short K,
-            typename T>
-  struct tmatrix_const_column_view;
 
   // forward declaration
   template <unsigned short N,
@@ -176,7 +139,7 @@ namespace tfel::math {
      * \param[in] I : row index
      */
     template <unsigned short I>
-    tmatrix_row_view<N, M, I, 0, M, ValueType> row_view();
+    constexpr auto row_view();
     /*!
      * \return a view of a slice of row of this matrix
      * \param[in] I : row index
@@ -184,13 +147,13 @@ namespace tfel::math {
      * \param[in] K : size of the slice
      */
     template <unsigned short I, unsigned short J, unsigned short K>
-    tmatrix_row_view<N, M, I, J, K, ValueType> row_view();
+    constexpr auto row_view();
     /*!
      * \return a view of a row of this matrix
      * \param[in] I : row index
      */
     template <unsigned short I>
-    tmatrix_const_row_view<N, M, I, 0, M, ValueType> row_view() const;
+    constexpr auto row_view() const;
     /*!
      * \return a view of a slice of row of this matrix
      * \param[in] I : row index
@@ -198,13 +161,13 @@ namespace tfel::math {
      * \param[in] K : size of the slice
      */
     template <unsigned short I, unsigned short J, unsigned short K>
-    tmatrix_const_row_view<N, M, I, J, K, ValueType> row_view() const;
+    constexpr auto row_view() const;
     /*!
      * \return a view of a column of this matrix
      * \param[in] I : column index
      */
     template <unsigned short I>
-    tmatrix_column_view<N, M, I, 0, N, ValueType> column_view();
+    constexpr auto column_view();
     /*!
      * \return a view of a slice of column of this matrix
      * \param[in] I : column index
@@ -212,7 +175,7 @@ namespace tfel::math {
      * \param[in] K : size of the slice
      */
     template <unsigned short I, unsigned short J, unsigned short K>
-    tmatrix_column_view<N, M, I, J, K, ValueType> column_view();
+    constexpr auto column_view();
     /*!
      * \return a view of a slice of column of this matrix
      * \param[in] I : column index
@@ -220,13 +183,13 @@ namespace tfel::math {
      * \param[in] K : size of the slice
      */
     template <unsigned short I, unsigned short J, unsigned short K>
-    tmatrix_const_column_view<N, M, I, J, K, ValueType> column_view() const;
+    constexpr auto column_view() const;
     /*!
      * \return a view of a column of this matrix
      * \param[in] I : column index
      */
     template <unsigned short I>
-    tmatrix_const_column_view<N, M, I, 0, N, ValueType> column_view() const;
+    constexpr auto column_view() const;
     /*!
      * \return a view of a sub matrix of this matrix
      * \param[in] I : submatrix row    starting index

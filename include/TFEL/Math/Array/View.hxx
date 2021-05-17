@@ -21,39 +21,68 @@
 #include "TFEL/Math/ExpressionTemplates/Expr.hxx"
 #include "TFEL/Math/Array/MutableFixedSizeArrayBase.hxx"
 #include "TFEL/Math/Array/MutableRuntimeArrayBase.hxx"
+#include "TFEL/Math/Array/ConstFixedSizeArrayBase.hxx"
+#include "TFEL/Math/Array/ConstRuntimeArrayBase.hxx"
 
 namespace tfel::math {
 
+  // forward declaration
   template <typename MappedType>
   struct View;
 
+  //! \brief a simple alias
   template <typename MappedType>
   using selectViewArrayBase = std::conditional_t<
-      MappedType::indexing_policy::hasFixedSizes,
-      MutableFixedSizeArrayBase<View<MappedType>,
-                                typename MappedType::array_policy>,
-      MutableRuntimeArrayBase<View<MappedType>,
-                              typename MappedType::array_policy>>;
+      std::is_const_v<MappedType>,
+      std::conditional_t<MappedType::indexing_policy::hasFixedSizes,
+                         ConstFixedSizeArrayBase<View<MappedType>,
+                                                 typename std::remove_cv_t<
+                                                     MappedType>::array_policy>,
+                         ConstRuntimeArrayBase<View<MappedType>,
+                                               typename std::remove_cv_t<
+                                                   MappedType>::array_policy>>,
+      std::conditional_t<
+          MappedType::indexing_policy::hasFixedSizes,
+          MutableFixedSizeArrayBase<
+              View<MappedType>,
+              typename std::remove_cv_t<MappedType>::array_policy>,
+          MutableRuntimeArrayBase<
+              View<MappedType>,
+              typename std::remove_cv_t<MappedType>::array_policy>>>;
 
+  /*!
+   * \brief view of an object from a continuous memory area
+   * \tparam MappedType: type of the object mapped to the memory area
+   */
   template <typename MappedType>
   struct View : ConceptRebind<typename ComputeObjectTag<MappedType>::type,
                               View<MappedType>>::type,
                 selectViewArrayBase<MappedType> {
     //
-    using ArrayPolicy = typename MappedType::array_policy;
+    static constexpr bool is_const = std::is_const_v<MappedType>;
+    //! \brief a simple alias
+    using RawMappedType = std::remove_cv_t<MappedType>;
+    //! \brief a simple alias
+    using IndexingPolicy = typename RawMappedType::indexing_policy;
     //
-    using IndexingPolicy = typename MappedType::indexing_policy;
+    using data_pointer_type =
+        std::conditional_t<is_const,
+                           const numeric_type<MappedType>*,
+                           numeric_type<MappedType>*>;
+    //
+    using const_data_pointer_type = const numeric_type<MappedType>*;
     //
     static constexpr auto hasFixedSizes = IndexingPolicy::hasFixedSizes;
+    //
+
     //! \brief default constructor
-    explicit constexpr View(typename View::value_type* const p) noexcept
-        : data_values(p) {
+    explicit constexpr View(const data_pointer_type p) noexcept
+        : data_pointer(p) {
       static_assert(hasFixedSizes, "invalid constructor call");
     }  // end of View
     //! \brief default constructor
-    constexpr View(const IndexingPolicy& i,
-                   typename View::value_type* const p) noexcept
-        : selectViewArrayBase<MappedType>(i), data_values(p) {
+    constexpr View(const IndexingPolicy& i, const data_pointer_type p) noexcept
+        : selectViewArrayBase<MappedType>(i), data_pointer(p) {
       static_assert(!hasFixedSizes, "invalid constructor call");
     }  // end of View
     //! \brief copy constructor
@@ -62,6 +91,7 @@ namespace tfel::math {
     constexpr View(View&&) noexcept = default;
     //! \brief assignement operator
     constexpr View& operator=(const View& src) noexcept {
+      static_assert(!is_const, "invalid constructor call");
       //       checkIndexingPoliciesRuntimeCompatiblity(this->getIndexingPolicy(),
       //                                                src.getIndexingPolicy());
       this->assign(src);
@@ -69,6 +99,7 @@ namespace tfel::math {
     }
     //! \brief move assigment
     constexpr View& operator=(View&& src) noexcept {
+      static_assert(!is_const, "invalid constructor call");
       //       checkIndexingPoliciesRuntimeCompatiblity(this->getIndexingPolicy(),
       //                                                src.getIndexingPolicy());
       this->assign(src);
@@ -79,13 +110,14 @@ namespace tfel::math {
     using selectViewArrayBase<MappedType>::operator[];
     using selectViewArrayBase<MappedType>::operator();
     //! \return a pointer to the underlying array serving as element storage.
-    constexpr typename View::pointer data() noexcept {
-      return this->data_values;
+    constexpr data_pointer_type data() noexcept {
+      static_assert(!is_const, "invalid call");
+      return this->data_pointer;
     }  // end of data
 
     //! \return a pointer to the underlying array serving as element storage.
-    constexpr typename View::const_pointer data() const noexcept {
-      return this->data_values;
+    constexpr const_data_pointer_type data() const noexcept {
+      return this->data_pointer;
     }  // end of data
 
     /*!
@@ -93,8 +125,9 @@ namespace tfel::math {
      * \param[in] src: array to be assigned
      */
     template <typename OtherArray>
-    std::enable_if_t<isAssignableTo<OtherArray, MappedType>(), View&> operator=(
-        const OtherArray& src) {
+    constexpr std::enable_if_t<isAssignableTo<OtherArray, MappedType>(), View&>
+    operator=(const OtherArray& src) {
+      static_assert(!is_const, "invalid call");
       //       checkIndexingPoliciesRuntimeCompatiblity(this->getIndexingPolicy(),
       //                                                src.getIndexingPolicy());
       this->assign(src);
@@ -102,8 +135,9 @@ namespace tfel::math {
     }
     //
     template <typename OtherArray>
-    std::enable_if_t<isAssignableTo<OtherArray, MappedType>(), View&>
+    constexpr std::enable_if_t<isAssignableTo<OtherArray, MappedType>(), View&>
     operator+=(const OtherArray& src) {
+      static_assert(!is_const, "invalid call");
       //       checkIndexingPoliciesRuntimeCompatiblity(this->getIndexingPolicy(),
       //                                                src.getIndexingPolicy());
       this->addAndAssign(src);
@@ -111,18 +145,45 @@ namespace tfel::math {
     }
     //
     template <typename OtherArray>
-    std::enable_if_t<isAssignableTo<OtherArray, MappedType>(), View&>
+    constexpr std::enable_if_t<isAssignableTo<OtherArray, MappedType>(), View&>
     operator-=(const OtherArray& src) {
+      static_assert(!is_const, "invalid call");
       //       checkIndexingPoliciesRuntimeCompatiblity(this->getIndexingPolicy(),
       //                                                src.getIndexingPolicy());
       this->substractAndAssign(src);
       return *this;
     }
+    //
+    template <typename ValueType2>
+    constexpr std::enable_if_t<
+        isAssignableTo<
+            BinaryOperationResult<ValueType2, numeric_type<MappedType>, OpMult>,
+            numeric_type<MappedType>>(),
+        View&>
+    operator*=(const ValueType2& s) noexcept {
+      static_assert(!is_const, "invalid call");
+      selectViewArrayBase<MappedType>::multiplyByScalar(s);
+      return *this;
+    }  // end of operator*=
+       //
+    template <typename ValueType2>
+    constexpr std::enable_if_t<
+        isAssignableTo<
+            BinaryOperationResult<numeric_type<MappedType>,ValueType2, OpDiv>,
+            numeric_type<MappedType>>(),
+        View&>
+    operator/=(const ValueType2& s) noexcept {
+      static_assert(!is_const, "invalid call");
+      selectViewArrayBase<MappedType>::multiplyByScalar(1 / s);
+      return *this;
+    }  // end of operator/=
+
     //! \brief destructor
     ~View() noexcept = default;
 
    protected:
-    typename MappedType::value_type* const data_values;
+    //! \brief pointer to the memory buffer
+    const data_pointer_type data_pointer;
   };  // end of struct View
 
   /*!
@@ -131,7 +192,7 @@ namespace tfel::math {
    */
   template <typename MappedType>
   struct MathObjectTraits<View<MappedType>>
-      : public MathObjectTraits<MappedType> {
+      : public MathObjectTraits<std::remove_cv_t<MappedType>> {
   };  // end of struct MathObjectTraits<Expr<MappedType, Operation>>
 
   /*!
@@ -142,26 +203,61 @@ namespace tfel::math {
   template <typename MappedType>
   struct ResultOfEvaluation<View<MappedType>> {
     //! \brief result of the metafunction
-    using type = MappedType;
+    using type = std::remove_cv_t<MappedType>;
   };  // end of struct ResultOfEvaluation
 
+  /*!
+   * \brief return a view from a memory area
+   * \tparam MappedType: object mapped
+   * \param[in] p: pointer to the mapped memory area
+   */
   template <typename MappedType>
-  constexpr std::enable_if_t<MappedType::indexing_policy::hasFixedSizes,
+  constexpr std::enable_if_t<((!std::is_const_v<MappedType>)&&(
+                                 MappedType::indexing_policy::hasFixedSizes)),
                              View<MappedType>>
-  map(typename MappedType::value_type* const p) {
+  map(numeric_type<MappedType>* const p) {
     return View<MappedType>{p};
   }  // end of map
 
+  template <typename MappedType>
+  constexpr std::enable_if_t<
+      std::remove_cv_t<MappedType>::indexing_policy::hasFixedSizes,
+      View<const MappedType>>
+  map(const numeric_type<MappedType>* const p) {
+    return View<const MappedType>{p};
+  }  // end of map
+
+  /*!
+   * \brief an helper metafunction which check of the last type of the type list
+   * is convertible to a pointer to a memory area that can be used to create a
+   * view.
+   */
   template <typename MappedType, typename... Args>
-  constexpr auto canMakeViewFromLastArgument(){
-    using value_type = typename MappedType::value_type;
-    using last_type = select_last<Args...>;
+  constexpr auto canMakeViewFromLastArgument() {
+    using value_type = numeric_type<MappedType>;
+    using last_type = tfel::math::internals::select_last<Args...>;
     return (std::is_convertible_v<last_type, value_type* const>);
+  }  // end of canMakeViewFromLastArgument
+
+  /*!
+   * \brief an helper metafunction which check of the last type of the type list
+   * is convertible to a const pointer to a memory area that can be used to
+   * create a view.
+   */
+  template <typename MappedType, typename... Args>
+  constexpr auto canMakeConstViewFromLastArgument() {
+    using value_type = numeric_type<MappedType>;
+    using last_type = tfel::math::internals::select_last<Args...>;
+    return std::is_convertible_v<const last_type, const value_type* const>;
   }
 
+  /*!
+   * \brief return a view from a memory area
+   */
   template <typename MappedType, typename... Args>
   constexpr std::enable_if_t<
-      ((!MappedType::indexing_policy::hasFixedSizes) &&
+      ((!std::is_const_v<MappedType>)&&(
+           !MappedType::indexing_policy::hasFixedSizes) &&
        (canMakeViewFromLastArgument<MappedType, Args...>())),
       View<MappedType>>
   map(Args&&... args) {
@@ -171,6 +267,23 @@ namespace tfel::math {
         buildIndexingPolicyAndExtractPointerToData<IndexingPolicy>(args...);
     return View<MappedType>{std::get<0>(r), std::get<1>(r)};
   }  // end of map
+
+  template <typename MappedType, typename... Args>
+  constexpr std::enable_if_t<
+      ((!std::remove_cv_t<MappedType>::indexing_policy::hasFixedSizes) &&
+       (canMakeConstViewFromLastArgument<std::remove_cv_t<MappedType>,
+                                         Args...>())),
+      View<const MappedType>>
+  map(const Args&... args) {
+    static_assert(sizeof...(Args) >= 2, "invalid call");
+    using IndexingPolicy = typename MappedType::indexing_policy;
+    const auto r =
+        buildIndexingPolicyAndExtractPointerToData<IndexingPolicy>(args...);
+    return View<const MappedType>{std::get<0>(r), std::get<1>(r)};
+  }  // end of map
+
+  template <typename MappedType>
+  using ConstView = View<const std::remove_cv_t<MappedType>>;
 
 }  // end of namespace tfel::math
 
@@ -184,7 +297,8 @@ namespace tfel::typetraits {
   template <typename MathObject, typename MathObject2>
   struct IsAssignableTo<tfel::math::View<MathObject>, MathObject2> {
     //! \brief result
-    static constexpr bool cond = isAssignableTo<MathObject, MathObject2>();
+    static constexpr bool cond =
+        isAssignableTo<std::remove_cv_t<MathObject>, MathObject2>();
   };  // end of struct IsAssignableTo
 
   /*!
@@ -195,8 +309,12 @@ namespace tfel::typetraits {
    */
   template <typename MathObject, typename MathObject2>
   struct IsAssignableTo<MathObject, tfel::math::View<MathObject2>> {
+    //!
+    static constexpr bool is_const = std::is_const_v<MathObject2>;
     //! \brief result
-    static constexpr bool cond = isAssignableTo<MathObject, MathObject2>();
+    static constexpr bool cond =
+        (!is_const) &&
+        isAssignableTo<MathObject, std::remove_cv_t<MathObject2>>();
   };  // end of struct IsAssignableTo
 
 }  // end of namespace tfel::typetraits

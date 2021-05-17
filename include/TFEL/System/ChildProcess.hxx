@@ -17,10 +17,8 @@
 #include <cstdlib>
 #include <cstring>
 #include <memory>
-
-#include <sys/types.h>
 #include <unistd.h>
-
+#include <sys/types.h>
 #include "TFEL/Config/TFELConfig.hxx"
 #include "TFEL/System/SystemError.hxx"
 

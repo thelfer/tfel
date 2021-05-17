@@ -23,7 +23,6 @@
 #include "TFEL/Math/General/ResultType.hxx"
 #include "TFEL/Math/General/BasicOperations.hxx"
 #include "TFEL/Math/General/RunTimeCheck.hxx"
-#include "TFEL/Math/General/ObjectObjectRandomAccessConstIterator.hxx"
 #include "TFEL/Math/Vector/VectorConcept.hxx"
 #include "TFEL/Math/tvector.hxx"
 #include "TFEL/Math/tmatrix.hxx"

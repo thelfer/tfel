@@ -23,41 +23,12 @@ namespace tfel::math {
 
   namespace internals {
 
-    template <typename A>
-    class HasConceptTag {
-      /*!
-       * \brief A first type.
-       */
-      typedef char Small;
-      /*!
-       * \brief A Second type which size is higher than Small
-       */
-      class Big {
-        Small dummy[2];
-      };
-      /*
-       * \brief a substitute for classes that have only protected constructors
-       */
-      template <typename B>
-      struct Subs {};
+    template <typename T, typename = void>
+    struct HasConceptTag : std::false_type {};
 
-     protected:
-      template <typename B>
-      static std::enable_if_t<sizeof(typename B::ConceptTag) != 0, Small> Test(
-          const Subs<B>);
-
-      static Big Test(...);
-
-      /*!
-       * \brief A function returning a T.
-       * A small trick for classes that are not default constructible.
-       */
-      static Subs<A> MakeSubsA();
-
-     public:
-      static constexpr bool cond = sizeof(Test(MakeSubsA())) == sizeof(Small);
-
-    };  // end of class HasConceptTag
+    template <typename T>
+    struct HasConceptTag<T, std::void_t<typename T::ConceptTag>>
+        : std::true_type {};
 
   }  // end of namespace internals
 
@@ -122,7 +93,7 @@ namespace tfel::math {
         tfel::typetraits::IsUnaryOperator<T>::cond;
     //! \brief tells if T has a ConceptTag typedef.
     static constexpr bool HasConceptTag =
-        tfel::math::internals::HasConceptTag<T>::cond;
+        tfel::math::internals::HasConceptTag<T>::value;
 
    public:
     /*!
@@ -134,6 +105,11 @@ namespace tfel::math {
                                             IsTUnaryOperator,
                                             HasConceptTag>::type;
   };  // end of ComputeObjectTag
+
+  template <typename T>
+  constexpr bool hasConceptTag() {
+    return tfel::math::internals::HasConceptTag<std::remove_cv_t<T>>::value;
+  }  // end of hasConceptTag
 
 }  // end of namespace tfel::math
 

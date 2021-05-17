@@ -20,7 +20,6 @@
 #include "TFEL/TypeTraits/IsSafelyReinterpretCastableTo.hxx"
 #include "TFEL/Math/Array/GenericFixedSizeArray.hxx"
 #include "TFEL/Math/Array/View.hxx"
-#include "TFEL/Math/Array/ConstView.hxx"
 #include "TFEL/Math/tensor.hxx"
 #include "TFEL/Math/stensor.hxx"
 #include "TFEL/Math/General/MathObjectTraits.hxx"

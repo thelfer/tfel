@@ -136,6 +136,8 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Math/Forward/vector.hxx                                                                 \
 			TFEL/Math/Forward/matrix.hxx                                                                 \
 			TFEL/Math/Forward/Complex.hxx                                                                \
+			TFEL/Math/Forward/fsarray.hxx                                                                \
+			TFEL/Math/Forward/runtime_array.hxx                                                                \
 			TFEL/Math/Forward/tvector.hxx                                                                \
 			TFEL/Math/Forward/tmatrix.hxx                                                                \
 			TFEL/Math/Forward/tensor.hxx                                                                 \
@@ -145,7 +147,6 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Math/Forward/t2tost2.hxx                                                                \
 			TFEL/Math/Forward/st2tot2.hxx                                                                \
 			TFEL/Math/Forward/TinyNewtonRaphson.hxx                                                      \
-			TFEL/Math/General/Forward/General.hxx                                                        \
 			TFEL/Math/Forward/Expr.hxx                                                      \
 			TFEL/Math/Bindings/atlas.hxx                                                                 \
 			TFEL/Math/Array/StandardTemplateLibraryCompatibilityLayers.hxx				     \
@@ -159,7 +160,8 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Math/Array/ConstRuntimeArrayBase.hxx						     \
 			TFEL/Math/Array/ConstRuntimeArrayBase.ixx						     \
 			TFEL/Math/Array/View.hxx								     \
-			TFEL/Math/Array/ConstView.hxx								     \
+			TFEL/Math/Array/FixedSizeMathObjectArrayView.hxx                                             \
+			TFEL/Math/Array/FixedSizeMathObjectArrayViewIO.hxx                                           \
 			TFEL/Math/Array/FixedSizeArrayPolicies.hxx						     \
 			TFEL/Math/Array/FixedSizeIndexingPolicies.hxx						     \
 			TFEL/Math/Array/GenericFixedSizeArray.hxx						     \
@@ -262,7 +264,6 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Math/Tensor/TensorTransposeExpr.hxx						     \
 			TFEL/Math/Tensor/TensorViewFromStensor.hxx						     \
 			TFEL/Math/Tensor/MatrixViewFromTensor.hxx						     \
-			TFEL/Math/Tensor/TensorFromTinyVectorView.hxx						     \
 			TFEL/Math/Tensor/TensorFromTinyMatrixRowView.hxx					     \
 			TFEL/Math/Tensor/TensorFromTinyMatrixRowView2.hxx					     \
 			TFEL/Math/Tensor/TensorFromTinyMatrixColumnView.hxx					     \
@@ -293,7 +294,6 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Math/Stensor/StensorFromTinyMatrixColumnView2.hxx                                       \
 			TFEL/Math/Stensor/StensorFromTinyMatrixRowView.hxx                                           \
 			TFEL/Math/Stensor/StensorFromTinyMatrixRowView2.hxx                                          \
-			TFEL/Math/Stensor/StensorFromTinyVectorView.hxx                                              \
 			TFEL/Math/Stensor/DecompositionInPositiveAndNegativeParts.hxx                                \
 			TFEL/Math/Stensor/DecompositionInPositiveAndNegativeParts.ixx                                \
 			TFEL/Math/Stensor/SymmetricStensorProduct.hxx						     \
@@ -309,13 +309,6 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Math/Vector/VectorConceptOperations.ixx	                                             \
 			TFEL/Math/Vector/vectorResultType.hxx	                                                     \
 			TFEL/Math/Vector/VectorVectorDotProduct.hxx                                                  \
-			TFEL/Math/Vector/TinyVectorFromTinyVectorView.hxx                                            \
-			TFEL/Math/Vector/TinyVectorFromTinyVectorViewIO.hxx                                          \
-			TFEL/Math/Vector/TinyVectorOfTinyVectorFromTinyVectorView.hxx                                \
-			TFEL/Math/Vector/TinyVectorOfTinyVectorFromTinyVectorViewIO.hxx                              \
-			TFEL/Math/Vector/TinyVectorOfStensorFromTinyVectorView.hxx                                   \
-			TFEL/Math/Vector/TinyVectorOfStensorFromTinyVectorViewIO.hxx                                 \
-			TFEL/Math/Vector/TVectorFromTinyVectorView.hxx						     \
 			TFEL/Math/Vector/TVectorFromTinyMatrixRowView.hxx					     \
 			TFEL/Math/Vector/TVectorFromTinyMatrixRowView2.hxx					     \
 			TFEL/Math/Vector/TVectorFromTinyMatrixColumnView.hxx					     \
@@ -368,11 +361,6 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Math/General/ComputeObjectTag.hxx	                                                     \
 			TFEL/Math/General/DerivativeType.hxx	                                                     \
 			TFEL/Math/General/Complex.hxx		                                                     \
-			TFEL/Math/General/ObjectObjectRandomAccessConstIterator.hxx                                  \
-			TFEL/Math/General/NegObjectRandomAccessConstIterator.hxx                                     \
-			TFEL/Math/General/ScalarObjectRandomAccessConstIterator.hxx	                             \
-			TFEL/Math/General/ScalarObjectRandomAccessConstIteratorSpecialisation.hxx                    \
-			TFEL/Math/General/ObjectObjectRandomAccessConstIteratorSpecialisation.hxx                    \
 			TFEL/Math/General/RandomRotationMatrix.hxx                                                   \
 			TFEL/Math/General/StridedRandomAccessIterator.hxx                                            \
 			TFEL/Math/General/DifferenceRandomAccessIterator.hxx                                         \

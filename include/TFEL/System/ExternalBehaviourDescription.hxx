@@ -14,9 +14,8 @@
 #ifndef LIB_TFEL_SYSTEM_EXTERNALBEHAVIOURDESCRIPTION_HXX
 #define LIB_TFEL_SYSTEM_EXTERNALBEHAVIOURDESCRIPTION_HXX
 
-#include <string>
 #include <vector>
-
+#include <string>
 #include "TFEL/Config/TFELConfig.hxx"
 
 namespace tfel::system {

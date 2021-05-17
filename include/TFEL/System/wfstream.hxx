@@ -25,56 +25,44 @@
 #include"TFEL/System/stream_traits.hxx"
 #include"TFEL/System/basic_wstream.hxx"
 
-namespace tfel
-{
+namespace tfel::system {
 
-  namespace system
-  {
-    struct wfstream;
+  struct wfstream;
 
-    template<>
-    struct stream_traits<wfstream>
-    {
-      static constexpr bool isBlocking = false;
-    }; // end of stream_traits<wfstream>
-    
-    struct TFELSYSTEM_VISIBILITY_EXPORT wfstream
-      : public basic_wstream<wfstream,stream_traits<wfstream> >,
-	protected std::shared_ptr<int>
-    {
+  template <>
+  struct stream_traits<wfstream> {
+    static constexpr bool isBlocking = false;
+  };  // end of stream_traits<wfstream>
 
-      // default constructor
-      wfstream();
+  struct TFELSYSTEM_VISIBILITY_EXPORT wfstream
+      : public basic_wstream<wfstream, stream_traits<wfstream>>,
+        protected std::shared_ptr<int> {
+    // default constructor
+    wfstream();
 
-      // copy constructor
-      wfstream(const wfstream&);
+    // copy constructor
+    wfstream(const wfstream&);
 
-      // assignement operator
-      wfstream &
-      operator=(const wfstream&);
+    // assignement operator
+    wfstream& operator=(const wfstream&);
 
-      wfstream(const std::string&,
-	       const int=O_CREAT|O_TRUNC|O_WRONLY,
-	       const mode_t=S_IRUSR|S_IWUSR|S_IRGRP|S_IROTH);
+    wfstream(const std::string&,
+             const int = O_CREAT | O_TRUNC | O_WRONLY,
+             const mode_t = S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
 
-      void
-      open(const std::string&,
-	   const int=O_CREAT|O_TRUNC|O_WRONLY,
-	   const mode_t=S_IRUSR|S_IWUSR|S_IRGRP|S_IROTH);
+    void open(const std::string&,
+              const int = O_CREAT | O_TRUNC | O_WRONLY,
+              const mode_t = S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
 
-      void
-      close();
+    void close();
 
-      int
-      getFileDescriptor() const;
+    int getFileDescriptor() const;
 
-      // destructor
-      ~wfstream();
+    // destructor
+    ~wfstream();
 
-    }; // end of struct basic_wstream
-    
-  } // end of namespace system  
-  
-} // end of namespace tfel  
+  };  // end of struct basic_wstream
+
+}  // end of namespace tfel::system
   
 #endif /* LIB_TFEL_WFSTREAM_HXX */

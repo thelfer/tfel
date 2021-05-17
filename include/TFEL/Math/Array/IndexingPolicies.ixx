@@ -18,6 +18,36 @@
 
 namespace tfel::math {
 
+  namespace internals {
+
+    template <typename T>
+    struct tag {
+      using type = T;
+    };
+
+    template <typename... Ts>
+    using select_last = typename decltype((tag<Ts>{}, ...))::type;
+
+    template <typename T, typename... Args>
+    constexpr bool isLastArgumentConvertibleTo() {
+      constexpr auto n = sizeof...(Args);
+      if constexpr (n == 0) {
+        return false;
+      } else {
+        using last_type = select_last<Args...>;
+        return std::is_convertible_v<last_type, T>;
+      }
+    }  // end of isLastArgumentOfType
+
+    template <typename T, typename = void>
+    struct HasIndexingPolicyTraits : std::false_type {};
+
+    template <typename T>
+    struct HasIndexingPolicyTraits<T, std::void_t<typename T::indexing_policy>>
+        : std::true_type {};
+
+  }  // end of namespace internals
+
   template <typename IndexingPolicy1, typename IndexingPolicy2>
   constexpr bool IndexingPoliciesCompatiblityCheckBase<
       IndexingPolicy1,
@@ -107,25 +137,6 @@ namespace tfel::math {
     }
   }  // end of checkIndexingPoliciesRuntimeCompatiblity
 
-  template <typename T>
-  struct tag {
-    using type = T;
-  };
-
-  template <typename... Ts>
-  using select_last = typename decltype((tag<Ts>{}, ...))::type;
-
-  template <typename T, typename... Args>
-  constexpr bool isLastArgumentConvertibleTo() {
-    constexpr auto n = sizeof...(Args);
-    if constexpr (n == 0) {
-      return false;
-    } else {
-      using last_type = select_last<Args...>;
-      return std::is_convertible_v<last_type, T>;
-    }
-  }  // end of isLastArgumentOfType
-
   template <typename IndexingPolicy, typename... T, std::size_t... I>
   constexpr auto buildIndexingPolicyFromTuple(
       const std::tuple<T...>& t, const std::index_sequence<I...>&) {
@@ -142,6 +153,12 @@ namespace tfel::math {
     const auto data_values = std::get<n - 1>(args_tuple);
     return std::make_tuple(p, data_values);
   }
+
+  template <typename T>
+  constexpr bool hasIndexingPolicy() {
+    return tfel::math::internals::HasIndexingPolicyTraits<
+        std::remove_cv_t<T>>::value;
+  }  // end of hasIndexingPolicy
 
 }  // end of namespace tfel::math
 

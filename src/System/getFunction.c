@@ -1,9 +1,9 @@
 /*!
- * \file   getFunction.impl
- * \brief  ths file implements some C wrappers around the dlsym
+ * \file   src/System/getFunction.c
+ * \brief  this file implements some C wrappers around the dlsym
  * system call.
- * \author Helfer Thomas
- * \date   18 december 2008
+ * \author Thomas Helfer
+ * \date   18/12/2008
  */
 
 #include"getFunction.impl"

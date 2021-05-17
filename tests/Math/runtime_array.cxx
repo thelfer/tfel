@@ -24,7 +24,6 @@
 #include "TFEL/Tests/TestManager.hxx"
 #include "TFEL/Math/runtime_array.hxx"
 #include "TFEL/Math/Array/View.hxx"
-#include "TFEL/Math/Array/ConstView.hxx"
 
 struct RuntimeArrayTest final : public tfel::tests::TestCase {
   RuntimeArrayTest()
@@ -34,6 +33,7 @@ struct RuntimeArrayTest final : public tfel::tests::TestCase {
     using ushort = unsigned short;
     const tfel::math::runtime_array<int> a(3, 5);
     tfel::math::runtime_array<int> b(3);
+    tfel::math::runtime_array<int> abc;
     TFEL_TESTS_ASSERT(a.size() == 3);
     TFEL_TESTS_ASSERT(a[0] == 5);
     TFEL_TESTS_ASSERT(a[1] == 5);

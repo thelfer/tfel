@@ -38,6 +38,8 @@ namespace tfel::math {
     //!
     static constexpr auto unRollLoop = false;
     //! \brief constructor
+    constexpr RuntimeVectorIndexingPolicy() : data_size(0) {}
+    //! \brief constructor
     constexpr RuntimeVectorIndexingPolicy(const size_type s) : data_size(s) {}
     //! \brief move constructor
     constexpr RuntimeVectorIndexingPolicy(RuntimeVectorIndexingPolicy&&) =
@@ -72,6 +74,7 @@ namespace tfel::math {
       }
       return this->data_size;
     }
+
     //!
     constexpr RuntimeVectorIndexingPolicy getRowMajorIndexingPolicy() const {
       return RuntimeVectorIndexingPolicy(this->data_size);

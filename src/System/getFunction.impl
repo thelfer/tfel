@@ -1,10 +1,9 @@
-
 /*!
- * \file   getFunction.impl
+ * \file   src/System/getFunction.impl
  * \brief  ths file implements some C wrappers around the dlsym
  * system call.
- * \author Helfer Thomas
- * \date   18 december 2008
+ * \author Thomas Helfer
+ * \date   18/12/2008
  */
 
 #if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__)
@@ -186,22 +185,22 @@ double(TFEL_ADDCALL_PTR tfel_getCastemFunction(
 int(TFEL_ADDCALL_PTR tfel_getGenericBehaviourFunction(LibraryHandlerPtr l,
                                                       const char *const f))(
     struct mfront_gb_BehaviourData *const) {
-  return (int(TFEL_ADDCALL_PTR)(struct mfront_gb_BehaviourData * const))dlsym(
-      l, f);
+  return (int(TFEL_ADDCALL_PTR)(struct mfront_gb_BehaviourData *const))dlsym(l,
+                                                                             f);
 }  // end of tfel_getGenericBehaviourFunction
 
 int(TFEL_ADDCALL_PTR tfel_getGenericBehaviourInitializeFunction(
     LibraryHandlerPtr l,
     const char *const f))(struct mfront_gb_BehaviourData *const) {
-  return (int(TFEL_ADDCALL_PTR)(struct mfront_gb_BehaviourData * const))dlsym(
-      l, f);
+  return (int(TFEL_ADDCALL_PTR)(struct mfront_gb_BehaviourData *const))dlsym(l,
+                                                                             f);
 }  // end of tfel_getGenericBehaviourFunction
 
 void(TFEL_ADDCALL_PTR tfel_getGenericBehaviourRotateGradientsFunction(
     LibraryHandlerPtr l, const char *const f))(mfront_gb_real *const,
                                                const mfront_gb_real *const,
                                                const mfront_gb_real *const) {
-  return (void(TFEL_ADDCALL_PTR)(mfront_gb_real * const,
+  return (void(TFEL_ADDCALL_PTR)(mfront_gb_real *const,
                                  const mfront_gb_real *const,
                                  const mfront_gb_real *const))dlsym(l, f);
 }  // end of tfel_getGenericBehaviourRotateGradientsFunction
@@ -212,7 +211,7 @@ void(TFEL_ADDCALL_PTR tfel_getGenericBehaviourRotateArrayOfGradientsFunction(
                                                const mfront_gb_real *const,
                                                const mfront_gb_size_type) {
   return (void(TFEL_ADDCALL_PTR)(
-      mfront_gb_real * const, const mfront_gb_real *const,
+      mfront_gb_real *const, const mfront_gb_real *const,
       const mfront_gb_real *const, const mfront_gb_size_type))dlsym(l, f);
 }  // end of tfel_getGenericBehaviourRotateArrayOfGradientsFunction
 
@@ -220,7 +219,7 @@ void(TFEL_ADDCALL_PTR tfel_getGenericBehaviourRotateThermodynamicForcesFunction(
     LibraryHandlerPtr l, const char *const f))(mfront_gb_real *const,
                                                const mfront_gb_real *const,
                                                const mfront_gb_real *const) {
-  return (void(TFEL_ADDCALL_PTR)(mfront_gb_real * const,
+  return (void(TFEL_ADDCALL_PTR)(mfront_gb_real *const,
                                  const mfront_gb_real *const,
                                  const mfront_gb_real *const))dlsym(l, f);
 }  // end of tfel_getGenericBehaviourRotateThermodynamicForcesFunction
@@ -232,10 +231,9 @@ void(TFEL_ADDCALL_PTR
                                    const mfront_gb_real *const,
                                    const mfront_gb_real *const,
                                    const mfront_gb_size_type) {
-  return (void(TFEL_ADDCALL_PTR)(mfront_gb_real * const,
-                                 const mfront_gb_real *const,
-                                 const mfront_gb_real *const,
-                                 const mfront_gb_size_type))dlsym(l, f);
+  return (void(TFEL_ADDCALL_PTR)(
+      mfront_gb_real *const, const mfront_gb_real *const,
+      const mfront_gb_real *const, const mfront_gb_size_type))dlsym(l, f);
 }  // end of tfel_getGenericBehaviourRotateArrayOfThermodynamicForcesFunction
 
 void(TFEL_ADDCALL_PTR
@@ -244,7 +242,7 @@ void(TFEL_ADDCALL_PTR
              const char *const f))(mfront_gb_real *const,
                                    const mfront_gb_real *const,
                                    const mfront_gb_real *const) {
-  return (void(TFEL_ADDCALL_PTR)(mfront_gb_real * const,
+  return (void(TFEL_ADDCALL_PTR)(mfront_gb_real *const,
                                  const mfront_gb_real *const,
                                  const mfront_gb_real *const))dlsym(l, f);
 }  // end of tfel_getGenericBehaviourRotateTangentOperatorBlocksFunction
@@ -256,10 +254,9 @@ void(TFEL_ADDCALL_PTR
                                    const mfront_gb_real *const,
                                    const mfront_gb_real *const,
                                    const mfront_gb_size_type) {
-  return (void(TFEL_ADDCALL_PTR)(mfront_gb_real * const,
-                                 const mfront_gb_real *const,
-                                 const mfront_gb_real *const,
-                                 const mfront_gb_size_type))dlsym(l, f);
+  return (void(TFEL_ADDCALL_PTR)(
+      mfront_gb_real *const, const mfront_gb_real *const,
+      const mfront_gb_real *const, const mfront_gb_size_type))dlsym(l, f);
 }  // end of tfel_getGenericBehaviourRotateArrayOfTangentOperatorBlocksFunction
 
 int tfel_getMaterialPropertyNumberOfVariables(LibraryHandlerPtr lib,
@@ -313,7 +310,7 @@ double(TFEL_ADDCALL_PTR tfel_getCyranoMaterialProperty(LibraryHandlerPtr lib,
     const CyranoIntegerType,
     const CyranoOutOfBoundsPolicy) {
   return (double(TFEL_ADDCALL_PTR)(
-      CyranoOutputStatus * const, const CyranoRealType *const,
+      CyranoOutputStatus *const, const CyranoRealType *const,
       const CyranoIntegerType, const CyranoOutOfBoundsPolicy))dlsym(lib, name);
 }
 
@@ -507,7 +504,7 @@ void(TFEL_ADDCALL_PTR tfel_getAbaqusExternalBehaviourFunction(
                                                AbaqusIntegerType *const,
                                                const int) {
   return (void(TFEL_ADDCALL_PTR)(
-      AbaqusRealType * const, AbaqusRealType *const, AbaqusRealType *const,
+      AbaqusRealType *const, AbaqusRealType *const, AbaqusRealType *const,
       AbaqusRealType *const, AbaqusRealType *const, AbaqusRealType *const,
       AbaqusRealType *const, AbaqusRealType *const, AbaqusRealType *const,
       AbaqusRealType *const, const AbaqusRealType *const,
@@ -567,7 +564,7 @@ void(TFEL_ADDCALL_PTR tfel_getCastemExternalBehaviourFunction(
                                                CastemIntegerType *const,
                                                const int) {
   return (void(TFEL_ADDCALL_PTR)(
-      CastemRealType * const, CastemRealType *const, CastemRealType *const,
+      CastemRealType *const, CastemRealType *const, CastemRealType *const,
       CastemRealType *const, CastemRealType *const, CastemRealType *const,
       CastemRealType *const, CastemRealType *const, CastemRealType *const,
       CastemRealType *const, const CastemRealType *const,
@@ -607,7 +604,7 @@ void(TFEL_ADDCALL_PTR tfel_getAsterFunction(LibraryHandlerPtr lib,
     AsterRealType *const,
     const AsterIntegerType *const) {
   return (void(TFEL_ADDCALL_PTR)(
-      AsterRealType * const, AsterRealType *const, AsterRealType *const,
+      AsterRealType *const, AsterRealType *const, AsterRealType *const,
       const AsterRealType *const, const AsterRealType *const,
       const AsterRealType *const, const AsterRealType *const,
       const AsterRealType *const, const AsterRealType *const,
@@ -645,7 +642,7 @@ void(TFEL_ADDCALL_PTR tfel_getEuroplexusFunction(LibraryHandlerPtr l,
     const EuroplexusRealType *const,
     const EuroplexusIntegerType *const) {
   return (void(TFEL_ADDCALL_PTR)(
-      EuroplexusIntegerType * const, EuroplexusRealType *const,
+      EuroplexusIntegerType *const, EuroplexusRealType *const,
       EuroplexusRealType *const, EuroplexusRealType *const,
       EuroplexusRealType *const, EuroplexusIntegerType *const, char *const,
       const EuroplexusIntegerType *const, const EuroplexusIntegerType *const,
@@ -721,12 +718,12 @@ void(TFEL_ADDCALL_PTR tfel_getDianaFEAExternalBehaviourFunction(
                                                const DianaFEARealType *const,
                                                const DianaFEARealType *const) {
   typedef void(TFEL_ADDCALL_PTR FctPtr)(
-      DianaFEARealType * const, DianaFEARealType *const,
-      DianaFEARealType *const, const DianaFEAIntegerType *const,
+      DianaFEARealType *const, DianaFEARealType *const, DianaFEARealType *const,
       const DianaFEAIntegerType *const, const DianaFEAIntegerType *const,
+      const DianaFEAIntegerType *const, const DianaFEARealType *const,
       const DianaFEARealType *const, const DianaFEARealType *const,
       const DianaFEARealType *const, const DianaFEARealType *const,
-      const DianaFEARealType *const, const DianaFEARealType *const);
+      const DianaFEARealType *const);
   return (FctPtr)dlsym(l, n);
 }  // end of tfel_getDianaFEAExternalBehaviourFunction
 

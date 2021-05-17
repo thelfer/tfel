@@ -1,83 +1,70 @@
 /*!
  * \file   include/TFEL/System/rfstream.hxx
- * \brief  
- * 
+ * \brief
+ *
  * \author Thomas Helfer
  * \date   14 nov 2007
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
-#ifndef LIB_TFEL_RFSTREAM_HXX
-#define LIB_TFEL_RFSTREAM_HXX 
+#ifndef LIB_TFEL_SYSTEM_RFSTREAM_HXX
+#define LIB_TFEL_SYSTEM_RFSTREAM_HXX
 
-#include<string>
-#include<sys/types.h>
-#include<sys/stat.h>
-#include<fcntl.h>
+#include <string>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
 
-#include"TFEL/Config/TFELConfig.hxx"
-#include<memory>
-#include"TFEL/System/stream_traits.hxx"
-#include"TFEL/System/basic_rstream.hxx"
+#include "TFEL/Config/TFELConfig.hxx"
+#include <memory>
+#include "TFEL/System/stream_traits.hxx"
+#include "TFEL/System/basic_rstream.hxx"
 
-namespace tfel
-{
+namespace tfel::system {
 
-  namespace system
-  {
+  // forward declaration
+  struct rfstream;
 
-    // forward declaration
-    struct rfstream;
+  /*!
+   * \brief partial specialisation of the `stream_traits` for the
+   * `rfstream` class.
+   */
+  template <>
+  struct stream_traits<rfstream> {
+    static constexpr bool isBlocking = false;
+  };  // end of stream_traits<rfstream>
 
-    /*!
-     * \brief partial specialisation of the `stream_traits` for the
-     * `rfstream` class.
-     */
-    template<>
-    struct stream_traits<rfstream>
-    {
-      static constexpr bool isBlocking = false;
-    }; // end of stream_traits<rfstream>
+  //! \brief a simple wrapper around stream
+  struct TFELSYSTEM_VISIBILITY_EXPORT rfstream
+      : public basic_rstream<rfstream, stream_traits<rfstream>>,
+        protected std::shared_ptr<int> {
+    //! default constructor
+    rfstream();
 
-    /*!
-     * \brief a simple wrapper around stream
-     */
-    struct TFELSYSTEM_VISIBILITY_EXPORT rfstream
-      : public basic_rstream<rfstream,stream_traits<rfstream>>,
-	protected std::shared_ptr<int>
-    {
+    //! copy constructor
+    rfstream(const rfstream&);
 
-      //! default constructor
-      rfstream();
+    // assignement operator
+    rfstream& operator=(const rfstream&);
 
-      //! copy constructor
-      rfstream(const rfstream&);
+    rfstream(const std::string&, const int = O_RDONLY);
 
-      // assignement operator
-      rfstream& operator=(const rfstream&);
+    void open(const std::string&, const int = O_RDONLY);
 
-      rfstream(const std::string&,
-	       const int=O_RDONLY);
+    void close();
 
-      void open(const std::string&,
-		const int=O_RDONLY);
+    int getFileDescriptor() const;
 
-      void close();
+    //! \brief destructor
+    ~rfstream();
 
-      int getFileDescriptor() const;
+  };  // end of struct basic_wstream
 
-      //! destructor
-      ~rfstream();
+}  // end of namespace tfel::system
 
-    }; // end of struct basic_wstream
-    
-  } // end of namespace system  
-  
-} // end of namespace tfel  
-  
-#endif /* LIB_TFEL_RFSTREAM_HXX */
+#endif /* LIB_TFEL_SYSTEM_RFSTREAM_HXX */

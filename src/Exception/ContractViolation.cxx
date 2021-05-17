@@ -11,8 +11,8 @@
  * project under specific licensing conditions.
  */
 
-#include <iostream>
 #include <cstdlib>
+#include <iostream>
 #include "TFEL/ContractViolation.hxx"
 
 namespace tfel {

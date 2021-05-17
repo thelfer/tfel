@@ -83,6 +83,14 @@ namespace tfel::math {
     static constexpr unsigned short value = 3u;
   };
 
+  /*!
+   * \brief a small helper function around `StensorDimeToSize`
+   */
+  template <unsigned short N>
+  constexpr unsigned short getStensorSize() {
+    return StensorDimeToSize<N>::value;
+  } // end of getStensorSize
+
 }  // end of namespace tfel::math
 
 #endif /* LIB_TFEL_MATH_STENSORSIZETODIME_HXX */

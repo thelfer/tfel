@@ -1,5 +1,5 @@
 /*!
- * \file  include/TFEL/Math/Forward/tvector.hxx
+ * \file  include/TFEL/Math/Forward/fsarray.hxx
  * \brief
  * \author Thomas Helfer
  * \brief 19 sept. 2011
@@ -11,33 +11,29 @@
  * project under specific licensing conditions.
  */
 
-#ifndef LIB_TFEL_MATH_FORWARD_TVECTOR_HXX
-#define LIB_TFEL_MATH_FORWARD_TVECTOR_HXX
+#ifndef LIB_TFEL_MATH_FORWARD_FSARRAY_HXX
+#define LIB_TFEL_MATH_FORWARD_FSARRAY_HXX
 
 #include "TFEL/Config/TFELConfig.hxx"
 #include "TFEL/Math/General/MathObjectTraits.hxx"
 
 namespace tfel::math {
 
-  //! \brief a base for tvector or classes acting like tvector.
-  template <typename Child, unsigned short N, typename T>
-  struct tvector_base;
-
   //! \brief a class representing tiny vectors of fixed size.
   template <unsigned short N, typename T>
-  struct tvector;
+  struct fsarray;
 
   /*!
-   * \brief partial specialisation for tvectors.
+   * \brief partial specialisation for fsarrays.
    * \see MathObjectTraits.
    */
   template <unsigned short N, typename T>
-  struct TFEL_VISIBILITY_LOCAL MathObjectTraits<tvector<N, T>>
+  struct TFEL_VISIBILITY_LOCAL MathObjectTraits<fsarray<N, T>>
       : MathObjectTraitsBase<T, unsigned short> {
-    //! brief a `tvector` is not related to the space dimension
+    //! brief a `fsarray` is not related to the space dimension
     static constexpr unsigned short dime = 0;
   };
 
 }  // end of namespace tfel::math
 
-#endif /* LIB_TFEL_MATH_FORWARD_TVECTOR_HXX */
+#endif /* LIB_TFEL_MATH_FORWARD_FSARRAY_HXX */

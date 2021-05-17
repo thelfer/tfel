@@ -9,6 +9,7 @@ if WITH_TESTS
 
 testdir = $(pkgdatadir)/tests/Math
 test_PROGRAMS = IndexingPoliciesTest             \
+        view                                     \
         hill                                     \
 		promote                                  \
 		derivative_type                          \
@@ -62,7 +63,7 @@ test_PROGRAMS = IndexingPoliciesTest             \
 		integerparser                            \
 		broyden                                  \
 		broyden2                                 \
-		TinyVectorOfTinyVectorFromTinyVectorView \
+        TinyVectorOfTinyVectorFromTinyVectorView \
 		TinyVectorOfStensorFromTinyVectorView    \
 		levenberg-marquardt                      \
 		levenberg-marquardt2                     \
@@ -85,6 +86,7 @@ LDADD = -L$(top_builddir)/src/Math      \
 	-lTFELMath -lTFELUtilities      \
 	-lTFELException -lTFELTests
 
+view_SOURCES  = view.cxx
 IndexingPoliciesTest_SOURCES  = IndexingPoliciesTest.cxx
 power_SOURCES                 = power.cxx
 promote_SOURCES               = promote.cxx

@@ -1648,11 +1648,8 @@ namespace mfront {
   void ImplicitDSLBase::writeBehaviourParserSpecificIncludes(
       std::ostream& os) const {
     bool has_scalar = false;
-    bool has_scalar_array = false;
     bool has_tvector = false;
-    bool has_tvector_array = false;
     bool has_stensor = false;
-    bool has_stensor_array = false;
     // checks
     const auto& mh = this->mb.getModellingHypotheses();
     for (const auto& h : mh) {
@@ -1661,38 +1658,24 @@ namespace mfront {
         const auto flag = SupportedTypes::getTypeFlag(v.type);
         if (flag == SupportedTypes::SCALAR) {
           has_scalar = true;
-          if (v.arraySize >= 1) {
-            has_scalar_array = true;
-          }
         }
         if (flag == SupportedTypes::STENSOR) {
           has_stensor = true;
-          if (v.arraySize >= 1) {
-            has_stensor_array = true;
-          }
         }
         if (flag == SupportedTypes::TVECTOR) {
           has_tvector = true;
-          if (v.arraySize >= 1) {
-            has_tvector_array = true;
-          }
         }
       }
     }
     // output
     this->checkBehaviourFile(os);
-    os << "#include\"TFEL/Math/st2tost2.hxx\"\n"
-       << "#include\"TFEL/Math/tmatrix.hxx\"\n"
+    os << "#include\"TFEL/Math/Array/FixedSizeMathObjectArrayViewIO.hxx\"\n"
        << "#include\"TFEL/Math/tvector.hxx\"\n"
-       << "#include\"TFEL/Math/Matrix/tmatrixIO.hxx\"\n"
        << "#include\"TFEL/Math/Vector/tvectorIO.hxx\"\n"
+       << "#include\"TFEL/Math/tmatrix.hxx\"\n"
+       << "#include\"TFEL/Math/Matrix/tmatrixIO.hxx\"\n"
+       << "#include\"TFEL/Math/st2tost2.hxx\"\n"
        << "#include\"TFEL/Math/ST2toST2/ST2toST2ConceptIO.hxx\"\n";
-    if (has_scalar_array) {
-      os << "#include\"TFEL/Math/Vector/"
-            "TinyVectorFromTinyVectorView.hxx\"\n"
-         << "#include\"TFEL/Math/Vector/"
-            "TinyVectorFromTinyVectorViewIO.hxx\"\n";
-    }
     // tiny vectors
     if (has_tvector) {
       os << "#include\"TFEL/Math/Matrix/tmatrix_submatrix_view.hxx\"\n\n"
@@ -1706,19 +1689,11 @@ namespace mfront {
          << "#include\"TFEL/Math/Vector/"
             "TVectorFromTinyMatrixColumnView2.hxx\"\n"
          << "#include\"TFEL/Math/Vector/"
-            "TVectorFromTinyMatrixRowView2.hxx\"\n"
-         << "#include\"TFEL/Math/Vector/TVectorFromTinyVectorView.hxx\"\n";
-    }
-    if (has_tvector_array) {
-      os << "#include\"TFEL/Math/Vector/"
-            "TinyVectorOfTinyVectorFromTinyVectorView.hxx\"\n"
-         << "#include\"TFEL/Math/Vector/"
-            "TinyVectorOfTinyVectorFromTinyVectorViewIO.hxx\"\n";
+            "TVectorFromTinyMatrixRowView2.hxx\"\n";
     }
     // symmetric tensors
     if (has_stensor) {
-      os << "#include\"TFEL/Math/Stensor/StensorFromTinyVectorView.hxx\"\n"
-         << "#include \"TFEL/Math/Stensor/StensorFromTinyMatrixRowView.hxx\"\n"
+      os << "#include \"TFEL/Math/Stensor/StensorFromTinyMatrixRowView.hxx\"\n"
          << "#include \"TFEL/Math/Stensor/StensorFromTinyMatrixRowView2.hxx\"\n"
          << "#include\"TFEL/Math/ST2toST2/"
             "ST2toST2FromTinyMatrixView.hxx\"\n\n"
@@ -1734,12 +1709,6 @@ namespace mfront {
             "StensorFromTinyMatrixColumnView2.hxx\"\n"
          << "#include\"TFEL/Math/Stensor/"
             "StensorFromTinyMatrixRowView2.hxx\"\n";
-    }
-    if (has_stensor_array) {
-      os << "#include\"TFEL/Math/Vector/"
-            "TinyVectorOfStensorFromTinyVectorView.hxx\"\n"
-         << "#include\"TFEL/Math/Vector/"
-            "TinyVectorOfStensorFromTinyVectorViewIO.hxx\"\n";
     }
   }  // end of ImplicitDSLBase::writeBehaviourParserSpecificIncludes()
 
@@ -2779,20 +2748,6 @@ namespace mfront {
        << "}\n\n";
   }  // end of ImplicitDSLBase::writeComputeNumericalJacobian
 
-  std::string ImplicitDSLBase::getVectorMappingClass(
-      const VariableDescription& v) const {
-    const auto f = SupportedTypes::getTypeFlag(v.type);
-    if (f == SupportedTypes::STENSOR) {
-      if (v.arraySize == 1u) {
-        return "StensorFromTinyVectorView";
-      } else {
-        return "TinyVectorOfStensorFromTinyVectorView";
-      }
-    }
-    this->throwRuntimeError("ImplicitDSLBase::getVectorMappingClass",
-                            "unsupported type for variable '" + v.name + "'");
-  }  // end of ImplicitDSLBase::getVectorMappingClass
-
   void ImplicitDSLBase::writeBehaviourIntegrator(std::ostream& os,
                                                  const Hypothesis h) const {
     const auto btype = this->mb.getBehaviourTypeFlag();
@@ -2951,24 +2906,16 @@ namespace mfront {
     for (const auto& v : d.getIntegrationVariables()) {
       os << "constexpr auto " << v.name << "_offset = " << n << ";\n";
       os << "static_cast<void>(" << v.name << "_offset);\n";
-      if (SupportedTypes::getTypeFlag(v.type) == SupportedTypes::SCALAR) {
-        if (v.arraySize == 1u) {
+      if (v.arraySize == 1u) {
+        if (SupportedTypes::getTypeFlag(v.type) == SupportedTypes::SCALAR) {
           os << "real& f" << v.name << "(this->fzeros(" << n << "));\n";
         } else {
-          os << "typename tfel::math::TinyVectorFromTinyVectorView<"
-             << v.arraySize << "," << n2 << "," << n << ",real,false>::type"
-             << " f" << v.name << "(this->fzeros);\n";
+          os << "auto f" << v.name << " = tfel::math::map<" << v.type << ", "
+             << n << ">(this->fzeros);\n";
         }
       } else {
-        if (v.arraySize == 1u) {
-          os << "typename tfel::math::" << this->getVectorMappingClass(v)
-             << "<N," << n2 << "," << n << ",real>::type"
-             << " f" << v.name << "(this->fzeros);\n";
-        } else {
-          os << "typename tfel::math::" << this->getVectorMappingClass(v)
-             << "<N," << n2 << "," << n << "," << v.arraySize << ",real>::type"
-             << " f" << v.name << "(this->fzeros);\n";
-        }
+        os << "auto f" << v.name << " = tfel::math::map<" << v.arraySize << ", "
+           << v.type << ", " << n << ">(this->fzeros);\n";
       }
       n += this->getTypeSize(v.type, v.arraySize);
     }
@@ -3141,10 +3088,16 @@ namespace mfront {
         this->throwRuntimeError("getIntegrationVariablesIncrementsInitializers",
                                 "internal error, tag unsupported");
       }
-      if ((flag == SupportedTypes::SCALAR) && (v.arraySize == 1u)) {
-        init << "d" << v.name << "(this->zeros(" << n << "))";
+      if (v.arraySize == 1u) {
+        if (flag == SupportedTypes::SCALAR) {
+          init << "d" << v.name << "(this->zeros(" << n << "))";
+        } else {
+          init << "d" << v.name << "(tfel::math::map<" << v.type << ", " << n
+               << ">(this->zeros))";
+        }
       } else {
-        init << "d" << v.name << "(this->zeros)";
+        init << "d" << v.name << "(tfel::math::map<" << v.arraySize << ", "
+             << v.type << ", " << n << ">(this->zeros))";
       }
       n += this->getTypeSize(v.type, v.arraySize);
       first = false;
@@ -3204,35 +3157,20 @@ namespace mfront {
       std::ostream& os, const Hypothesis h) const {
     const auto& d = this->mb.getBehaviourData(h);
     this->checkBehaviourFile(os);
-    SupportedTypes::TypeSize n;
-    SupportedTypes::TypeSize n2;
-    for (const auto& v : d.getIntegrationVariables()) {
-      n2 += this->getTypeSize(v.type, v.arraySize);
-    }
     for (const auto& v : d.getIntegrationVariables()) {
       if ((!getDebugMode()) && (v.lineNumber != 0u)) {
         os << "#line " << v.lineNumber << " \"" << this->fd.fileName << "\"\n";
       }
-      if (SupportedTypes::getTypeFlag(v.type) == SupportedTypes::SCALAR) {
-        if (v.arraySize == 1u) {
+      if (v.arraySize == 1u) {
+        if (SupportedTypes::getTypeFlag(v.type) == SupportedTypes::SCALAR) {
           os << "real& d" << v.name << ";\n";
         } else {
-          os << "typename tfel::math::TinyVectorFromTinyVectorView<"
-             << v.arraySize << "," << n2 << "," << n << ",real,false>::type"
-             << " d" << v.name << ";\n";
+          os << "tfel::math::View<" << v.type << "> d" << v.name << ";\n";
         }
       } else {
-        if (v.arraySize == 1u) {
-          os << "typename tfel::math::" << this->getVectorMappingClass(v)
-             << "<N," << n2 << "," << n << ",real>::type"
-             << " d" << v.name << ";\n";
-        } else {
-          os << "typename tfel::math::" << this->getVectorMappingClass(v)
-             << "<N," << n2 << "," << n << "," << v.arraySize << ",real>::type"
-             << " d" << v.name << ";\n";
-        }
+        os << "tfel::math::FixedSizeMathObjectArrayView<" << v.arraySize << ", "
+           << v.type << "> d" << v.name << ";\n";
       }
-      n += this->getTypeSize(v.type, v.arraySize);
     }
     os << '\n';
   }

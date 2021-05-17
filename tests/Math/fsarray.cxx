@@ -24,7 +24,6 @@
 #include "TFEL/Tests/TestManager.hxx"
 #include "TFEL/Math/fsarray.hxx"
 #include "TFEL/Math/Array/View.hxx"
-#include "TFEL/Math/Array/ConstView.hxx"
 
 template <int N>
 struct structify {

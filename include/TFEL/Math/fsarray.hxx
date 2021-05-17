@@ -15,10 +15,18 @@
 #define LIB_TFEL_MATH_FSARRAY_HXX
 
 #include "TFEL/TypeTraits/IsAssignableTo.hxx"
+#include "TFEL/Math/General/MathObjectTraits.hxx"
 #include "TFEL/Math/Array/GenericFixedSizeArray.hxx"
+#include "TFEL/Math/Array/FixedSizeMathObjectArrayView.hxx"
+#include "TFEL/Math/Forward/fsarray.hxx"
 
 namespace tfel::math {
 
+  /*!
+   * \brief a class representing a fixed sized array
+   * \tparam N: number of values hold
+   * \tparam ValueType: type of the values
+   */
   template <unsigned short N, typename ValueType = double>
   struct fsarray : GenericFixedSizeArray<fsarray<N, ValueType>,
                                          FixedSizeVectorPolicy<N, ValueType>> {
@@ -44,9 +52,7 @@ namespace tfel::math {
 
 namespace tfel::typetraits {
 
-  /*!
-   * \brief specialisation
-   */
+  //! \brief specialisation of IsAssignableTo for `fsarray`'s
   template <unsigned short N, typename ValueType, typename ValueType2>
   struct IsAssignableTo<tfel::math::fsarray<N, ValueType>,
                         tfel::math::fsarray<N, ValueType2>> {

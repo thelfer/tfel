@@ -12,22 +12,15 @@
  */
 
 #ifndef LIB_TFEL_SYSTEMERRORIXX
-#define LIB_TFEL_SYSTEMERRORIXX 
+#define LIB_TFEL_SYSTEMERRORIXX
 
-namespace tfel
-{
+namespace tfel::system {
 
-  namespace system
-  {
+  template <int N>
+  PosixError<N>::PosixError(const std::string& msg_)
+      : SystemError(msg_) {}  // end of PosixError::PosixError
 
-    template<int N>
-    PosixError<N>::PosixError(const std::string& msg_)
-      : SystemError(msg_)
-    {} // end of PosixError::PosixError
-
-  } // end of namespace system
-
-} // end of namespace tfel
+}  // end of namespace tfel::system
 
 #endif /* LIB_TFEL_SYSTEMERRORIXX */
 

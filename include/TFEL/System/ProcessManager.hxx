@@ -1,220 +1,193 @@
 /*!
  * \file   include/TFEL/System/ProcessManager.hxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   09 Nov 2007
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_TFEL_SYSTEM_PROCESSMANAGER_HXX
-#define LIB_TFEL_SYSTEM_PROCESSMANAGER_HXX 
+#define LIB_TFEL_SYSTEM_PROCESSMANAGER_HXX
 
-#include<map>
-#include<string>
-#include<vector>
+#include <map>
+#include <string>
+#include <vector>
+#include <signal.h>
+#include <sys/types.h>
+#include "TFEL/Config/TFELConfig.hxx"
+#include "TFEL/System/SystemError.hxx"
+#include "TFEL/System/rstreamView.hxx"
+#include "TFEL/System/wstreamView.hxx"
 
-#include<sys/types.h>
-#include<signal.h>
+namespace tfel::system {
 
-#include"TFEL/Config/TFELConfig.hxx"
-#include"TFEL/System/SystemError.hxx"
-#include"TFEL/System/rstreamView.hxx"
-#include"TFEL/System/wstreamView.hxx"
+  /*!
+   * \brief a class used to handle external processes
+   */
+  struct TFELSYSTEM_VISIBILITY_EXPORT ProcessManager {
+    //! a simple alias
+    typedef pid_t ProcessId;
+    //! a simple alias
+    typedef int StreamId;
+    //! a simple alias
+    typedef std::map<ProcessId, StreamId> StreamMap;
+    //! a simple alias
+    typedef rstreamView<true> rstream;
+    //! a simple alias
+    typedef wstreamView<true> wstream;
+    /*!
+     * \brief base class to pass commands to sub processes
+     */
+    struct TFELSYSTEM_VISIBILITY_EXPORT Command {
+      virtual bool execute(const StreamId, const StreamId) = 0;
+      //! destructor
+      virtual ~Command();
+    };  // end of struct Command
 
-namespace tfel
-{
+    enum RedirectionType { None, StdIn, StdOut, StdInAndOut };
 
-  namespace system
-  {
+    ProcessManager();
+
+    virtual void killProcess(const ProcessId);
+
+    virtual void sendSignal(const ProcessId, const int = SIGTERM);
 
     /*!
-     * \brief a class used to handle external processes
+     * create a new process
+     * \param const std::string&, command to be executed. The first word
+     * is the program name, the others options
+     * \param const RedirectionType, tells if standard file descriptors must be
+     * redirected.
+     * \return const ProcessId, the pid of the new process
      */
-    struct TFELSYSTEM_VISIBILITY_EXPORT ProcessManager
-    {
+    virtual ProcessId createProcess(const std::string&,
+                                    const RedirectionType = None);
+    /*!
+     * create a new process
+     * \param const std::string&, command to be executed. The first word
+     * is the program name, the others options
+     * \param const std::string&, name of a file to which the
+     * new process standard input is redirected. This option is ignored
+     * if this name is void.
+     * \param const std::string&, name of a file to which the
+     * new process standard output is redirected. This option is ignored
+     * if this name is void.
+     * \param[in] e : additionnal environment variables for the child process
+     * \return the pid of the new process
+     */
+    virtual ProcessId createProcess(
+        const std::string&,
+        const std::string&,
+        const std::string&,
+        const std::map<std::string, std::string>& = {});
+    /*!
+     * execute the command and wait until its end
+     * \param const std::string&, command to be executed. The first word
+     * is the program name, the others options
+     * \param const std::string&, name of a file to which the
+     * new process standard input is redirected. This option is ignored
+     * if this name is void.
+     * \param const std::string&, name of a file to which the
+     * new process standard output is redirected. This option is ignored
+     * if this name is void.
+     * \param[in] e : additionnal environment variables for the child process
+     */
+    virtual void execute(const std::string&,
+                         const std::string& = "",
+                         const std::string& = "",
+                         const std::map<std::string, std::string>& = {});
 
-      //! a simple alias
-      typedef pid_t ProcessId;
-      //! a simple alias
-      typedef int   StreamId;
-      //! a simple alias
-      typedef std::map<ProcessId,StreamId> StreamMap;
-      //! a simple alias
-      typedef rstreamView<true> rstream;
-      //! a simple alias
-      typedef wstreamView<true> wstream;
-      /*!
-       * \brief base class to pass commands to sub processes
-       */
-      struct TFELSYSTEM_VISIBILITY_EXPORT Command
-      {
-	virtual bool execute(const StreamId,const StreamId) = 0;
-	//! destructor
-	virtual ~Command();
-      }; // end of struct Command
+    virtual void stopOnSignals(const bool);
 
-      enum RedirectionType{None,StdIn,StdOut,StdInAndOut};
-      
-      ProcessManager();
+    virtual wstream getInputStream(const ProcessId) const;
 
-      virtual void
-      killProcess(const ProcessId);
-      
-      virtual void
-      sendSignal(const ProcessId,const int = SIGTERM);
+    virtual rstream getOutputStream(const ProcessId) const;
 
-      /*!
-       * create a new process
-       * \param const std::string&, command to be executed. The first word
-       * is the program name, the others options
-       * \param const RedirectionType, tells if standard file descriptors must be
-       * redirected.
-       * \return const ProcessId, the pid of the new process
-       */
-      virtual ProcessId
-      createProcess(const std::string&,
-		    const RedirectionType = None);
-      /*!
-       * create a new process
-       * \param const std::string&, command to be executed. The first word
-       * is the program name, the others options
-       * \param const std::string&, name of a file to which the
-       * new process standard input is redirected. This option is ignored
-       * if this name is void.
-       * \param const std::string&, name of a file to which the
-       * new process standard output is redirected. This option is ignored
-       * if this name is void.
-       * \param[in] e : additionnal environment variables for the child process
-       * \return the pid of the new process
-       */
-      virtual ProcessId
-      createProcess(const std::string&,
-		    const std::string&,
-		    const std::string&,
-		    const std::map<std::string, std::string>& = {});
-      /*!
-       * execute the command and wait until its end
-       * \param const std::string&, command to be executed. The first word
-       * is the program name, the others options
-       * \param const std::string&, name of a file to which the
-       * new process standard input is redirected. This option is ignored
-       * if this name is void.
-       * \param const std::string&, name of a file to which the
-       * new process standard output is redirected. This option is ignored
-       * if this name is void.
-       * \param[in] e : additionnal environment variables for the child process
-       */
-      virtual void
-      execute(const std::string&,
-	      const std::string& = "",
-	      const std::string& = "",
-	      const std::map<std::string, std::string>& = {});
-      
-      virtual void
-      stopOnSignals(const bool);
+    virtual ProcessId createProcess(ProcessManager::Command&);
 
-      virtual wstream
-      getInputStream(const ProcessId) const;
-      
-      virtual rstream
-      getOutputStream(const ProcessId) const;
+    virtual void wait(const ProcessId);
 
-      virtual ProcessId
-      createProcess(ProcessManager::Command&);
-      
-      virtual void
-      wait(const ProcessId);
+    /*!
+     * destructor.
+     * kills all registred process and close all input/output file descriptors.
+     */
+    virtual ~ProcessManager();
 
-      /*!
-       * destructor.
-       * kills all registred process and close all input/output file descriptors.
-       */
-      virtual ~ProcessManager();
+   protected:
+    virtual void cleanUp();
 
-    protected:
-      
-      virtual void cleanUp();
-      
-    private:
- 
-      struct TFEL_VISIBILITY_LOCAL  Process
-      {
-	ProcessId id;
-	bool isRunning;
-	bool exitStatus;
-	int exitValue;
-      }; // end of struct Process
+   private:
+    struct TFEL_VISIBILITY_LOCAL Process {
+      ProcessId id;
+      bool isRunning;
+      bool exitStatus;
+      int exitValue;
+    };  // end of struct Process
 
-      /*
-       * create a new process
-       * \param const std::string&, command to be executed. The first word
-       * is the program name, the others options
-       * \param file descriptor to which the new process standard input is
-       * redirected (ignored if -1)
-       * \param file descriptor to which the new process standard output is
-       * redirected (ignored if -1)
-       * \param StreamMap&, map to which the input file descriptor is
-       * registred (if any)
-       * \param StreamMap&, map to which the output file descriptor is
-       * registred (if any)
-       * \param[in] e : additionnal environment variables for the child process
-       * \return the pid of the new process
-       */
-      TFEL_VISIBILITY_LOCAL ProcessId
-      createProcess(const std::string&,
-		    const StreamId *const,
-		    const StreamId *const,
-		    StreamMap&,StreamMap&,
-		    const std::map<std::string,std::string>& = {});
+    /*
+     * create a new process
+     * \param const std::string&, command to be executed. The first word
+     * is the program name, the others options
+     * \param file descriptor to which the new process standard input is
+     * redirected (ignored if -1)
+     * \param file descriptor to which the new process standard output is
+     * redirected (ignored if -1)
+     * \param StreamMap&, map to which the input file descriptor is
+     * registred (if any)
+     * \param StreamMap&, map to which the output file descriptor is
+     * registred (if any)
+     * \param[in] e : additionnal environment variables for the child process
+     * \return the pid of the new process
+     */
+    TFEL_VISIBILITY_LOCAL ProcessId
+    createProcess(const std::string&,
+                  const StreamId* const,
+                  const StreamId* const,
+                  StreamMap&,
+                  StreamMap&,
+                  const std::map<std::string, std::string>& = {});
 
-      TFEL_VISIBILITY_LOCAL
-      void sigChildHandler(const int);
+    TFEL_VISIBILITY_LOCAL
+    void sigChildHandler(const int);
 
-      [[noreturn]] TFEL_VISIBILITY_LOCAL
-      void terminateHandler(const int) ;
+    [[noreturn]] TFEL_VISIBILITY_LOCAL void terminateHandler(const int);
 
-      TFEL_VISIBILITY_LOCAL void
-      setProcessExitStatus(Process&,
-			   const int);
-      
-      TFEL_VISIBILITY_LOCAL void
-      closeProcessFiles(const ProcessId);
-      
-      TFEL_VISIBILITY_LOCAL 
-      std::vector<Process>::reverse_iterator
-      findProcess(const ProcessId);
+    TFEL_VISIBILITY_LOCAL void setProcessExitStatus(Process&, const int);
 
-      TFEL_VISIBILITY_LOCAL 
-      std::vector<Process>::const_reverse_iterator
-      findProcess(const ProcessId) const;
+    TFEL_VISIBILITY_LOCAL void closeProcessFiles(const ProcessId);
 
-      std::vector<Process> processes;
+    TFEL_VISIBILITY_LOCAL
+    std::vector<Process>::reverse_iterator findProcess(const ProcessId);
 
-      StreamMap inputs;
-      StreamMap outputs;
-      StreamMap inputFiles;
-      StreamMap outputFiles;
-      unsigned short sHandler;
-      unsigned short sHandlerSIGBUS;
-      unsigned short sHandlerSIGSEGV;
-      unsigned short sHandlerSIGFPE;
-      unsigned short sHandlerSIGABRT;
-      unsigned short sHandlerSIGHUP;
-      unsigned short sHandlerSIGILL;
-      unsigned short sHandlerSIGINT;
-      unsigned short sHandlerSIGTERM;
-      unsigned short sHandlerSIGQUIT;
-      bool shallStopOnSignals;
+    TFEL_VISIBILITY_LOCAL
+    std::vector<Process>::const_reverse_iterator findProcess(
+        const ProcessId) const;
 
-    }; // end of struct ProcessManager
+    std::vector<Process> processes;
 
-  } // end of namespace system
+    StreamMap inputs;
+    StreamMap outputs;
+    StreamMap inputFiles;
+    StreamMap outputFiles;
+    unsigned short sHandler;
+    unsigned short sHandlerSIGBUS;
+    unsigned short sHandlerSIGSEGV;
+    unsigned short sHandlerSIGFPE;
+    unsigned short sHandlerSIGABRT;
+    unsigned short sHandlerSIGHUP;
+    unsigned short sHandlerSIGILL;
+    unsigned short sHandlerSIGINT;
+    unsigned short sHandlerSIGTERM;
+    unsigned short sHandlerSIGQUIT;
+    bool shallStopOnSignals;
 
-} // end of namespace tfel
+  };  // end of struct ProcessManager
+
+}  // end of namespace tfel::system
 
 #endif /* LIB_TFEL_SYSTEM_PROCESSMANAGER_HXX */

@@ -151,9 +151,7 @@ namespace tfel::math {
     typename GenericRuntimeArray::pointer data() noexcept;
     //! \return a pointer to the underlying array serving as element storage.
     typename GenericRuntimeArray::const_pointer data() const noexcept;
-    /*!
-     * \brief resize the array
-     */
+    //! \brief resize the array
     void resize(const typename ArrayPolicy::IndexingPolicy&);
     /*!
      * \return the physical size used by the underlying array. This size must

@@ -28,9 +28,9 @@ namespace mfront{
     this->mb.addLocalVariable(h,VariableDescription("real&","u_n",1u,0u));
     this->mb.addLocalVariable(h,VariableDescription("real&","du_n",1u,0u));
     this->mb.addLocalVariable(h,VariableDescription("real&","t_n",1u,0u));    
-    this->mb.addLocalVariable(h,VariableDescription("tfel::math::Expr<tfel::math::tvector<N-1,real>,tfel::math::TinyVectorFromTinyVectorViewExpr<N-1,N,1,real,false> >","u_t",1u,0u));
-    this->mb.addLocalVariable(h,VariableDescription("tfel::math::Expr<tfel::math::tvector<N-1,real>,tfel::math::TinyVectorFromTinyVectorViewExpr<N-1,N,1,real,false> >","du_t",1u,0u));
-    this->mb.addLocalVariable(h,VariableDescription("tfel::math::Expr<tfel::math::tvector<N-1,real>,tfel::math::TinyVectorFromTinyVectorViewExpr<N-1,N,1,real,false> >","t_t",1u,0u));
+    this->mb.addLocalVariable(h,VariableDescription("tfel::math::View<tfel::math::tvector<N-1,real>>","u_t",1u,0u));
+    this->mb.addLocalVariable(h,VariableDescription("tfel::math::View<tfel::math::tvector<N-1,real>>","du_t",1u,0u));
+    this->mb.addLocalVariable(h,VariableDescription("tfel::math::View<tfel::math::tvector<N-1,real>>","t_t",1u,0u));
     this->mb.addLocalVariable(h,VariableDescription("real&","Dt_nn",1u,0u));
     this->mb.addLocalVariable(h,VariableDescription("tfel::math::tmatrix_row_view<N,N,0,1,N-1,real>","Dt_nt",1u,0u));
     this->mb.addLocalVariable(h,VariableDescription("tfel::math::tmatrix_column_view<N,N,0,1,N-1,real>","Dt_tn",1u,0u));
@@ -69,7 +69,9 @@ namespace mfront{
 
   std::string DefaultCZMDSL::getLocalVariablesInitializers(const Hypothesis) const{
     return "u_n(this->u(0)),\ndu_n(this->du(0)),\nt_n(this->t(0)),\n"
-      "u_t(this->u),\ndu_t(this->du),\nt_t(this->t),\n"
+      "u_t(tfel::math::map<tfel::math::tvector<N-1,real>,1>(this->u)),\n"
+      "du_t(tfel::math::map<tfel::math::tvector<N-1,real>,1>(this->du)),\n"
+      "t_t(tfel::math::map<tfel::math::tvector<N-1,real>,1>(this->t)),\n"
       "Dt_nn(this->Dt(0,0)),\nDt_nt(this->Dt),\nDt_tn(this->Dt),\nDt_tt(this->Dt)";
   } // end of DefaultCZMDSL::getLocalVariablesInitializers
 

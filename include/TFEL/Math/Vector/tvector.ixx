@@ -99,39 +99,27 @@ namespace tfel::math {
 
   template <unsigned short N, typename T>
   template <unsigned short I>
-  Expr<tvector<N - I, T>,
-       TinyVectorFromTinyVectorViewExpr<N - I, N, I, T, false>>
-  tvector<N, T>::slice() {
-    return Expr<tvector<N - I, T>,
-                TinyVectorFromTinyVectorViewExpr<N - I, N, I, T, false>>(*this);
-  }  // end of tvector<N,T>::slice()
+  auto tvector<N, T>::slice() {
+    return tfel::math::slice<I>(*this);
+  }  // end of slice
 
   template <unsigned short N, typename T>
   template <unsigned short I, unsigned short J>
-  Expr<tvector<J - I, T>,
-       TinyVectorFromTinyVectorViewExpr<J - I, N, I, T, false>>
-  tvector<N, T>::slice() {
-    return Expr<tvector<J - I, T>,
-                TinyVectorFromTinyVectorViewExpr<J - I, N, I, T, false>>(*this);
-  }
+  auto tvector<N, T>::slice() {
+    return tfel::math::slice<I, J>(*this);
+  } // end of slice
 
   template <unsigned short N, typename T>
   template <unsigned short I>
-  Expr<tvector<N - I, T>,
-       TinyVectorFromTinyVectorViewExpr<N - I, N, I, T, true>>
-  tvector<N, T>::slice() const {
-    return Expr<tvector<N - I, T>,
-                TinyVectorFromTinyVectorViewExpr<N - I, N, I, T, true>>(*this);
-  }  // end of tvector<N,T>::slice
+  auto tvector<N, T>::slice() const {
+    return tfel::math::slice<I>(*this);
+  }  // end of slice
 
   template <unsigned short N, typename T>
   template <unsigned short I, unsigned short J>
-  Expr<tvector<J - I, T>,
-       TinyVectorFromTinyVectorViewExpr<J - I, N, I, T, true>>
-  tvector<N, T>::slice() const {
-    return Expr<tvector<J - I, T>,
-                TinyVectorFromTinyVectorViewExpr<J - I, N, I, T, true>>(*this);
-  }  // end of tvector<N,T>::slice
+  auto tvector<N, T>::slice() const {
+    return tfel::math::slice<I, J>(*this);
+  }  // end of slice
 
   template <unsigned short N, typename T, typename OutputIterator>
   std::enable_if_t<isScalar<T>(), void> exportToBaseTypeArray(
@@ -241,33 +229,92 @@ namespace tfel::math {
   }
 
   template <unsigned short I, unsigned short N, typename T>
-  Expr<tvector<N - I, T>,
-       TinyVectorFromTinyVectorViewExpr<N - I, N, I, T, false>>
-  slice(tvector<N, T>& v) {
-    return v.template slice<I>();
+  auto slice(tvector<N, T>& v) {
+    static_assert(N > I, "invalid index");
+    return map<tvector<N - I, T>, I>(v);
   }  // end of slice
 
   template <unsigned short I, unsigned short J, unsigned short N, typename T>
-  Expr<tvector<J - I, T>,
-       TinyVectorFromTinyVectorViewExpr<J - I, N, I, T, false>>
-  slice(tvector<N, T>& v) {
-    return v.template slice<I, J>();
+  auto slice(tvector<N, T>& v) {
+    static_assert(N > I, "invalid index");
+    static_assert(N >= J, "invalid index");
+    static_assert(J > I, "invalid index");
+    return map<tvector<J - I, T>, I>(v);
   }  // end of slice
 
   template <unsigned short I, unsigned short N, typename T>
-  Expr<tvector<N - I, T>,
-       TinyVectorFromTinyVectorViewExpr<N - I, N, I, T, true>>
-  slice(const tvector<N, T>& v) {
-    return v.template slice<I>();
+  auto slice(const tvector<N, T>& v) {
+    static_assert(N > I, "invalid index");
+    return map<tvector<N - I, T>, I>(v);
   }  // end of slice
 
   template <unsigned short I, unsigned short J, unsigned short N, typename T>
-  Expr<tvector<J - I, T>,
-       TinyVectorFromTinyVectorViewExpr<J - I, N, I, T, true>>
-  slice(const tvector<N, T>& v) {
-    return v.template slice<I, J>();
+  auto slice(const tvector<N, T>& v) {
+    return map<const tvector<J - I, T>, I>(v);
   }  // end of slice
 
-} // end of namespace tfel::math
+  template <typename MappedType,
+            unsigned short offset,
+            unsigned short N,
+            typename real>
+  constexpr std::enable_if_t<((!std::is_const_v<MappedType>)&&(
+                                 MappedType::indexing_policy::hasFixedSizes)),
+                             View<MappedType>>
+  map(tvector<N, real>& v) {
+    using IndexingPolicy = typename MappedType::indexing_policy;
+    static_assert(N >= offset + getUnderlyingArrayMinimalSize<IndexingPolicy>(),
+                  "invalid vector size");
+    return map<MappedType>(v.data() + offset);
+  }  // end of map
+
+  template <typename MappedType,
+            unsigned short offset,
+            unsigned short N,
+            typename real>
+  constexpr std::enable_if_t<MappedType::indexing_policy::hasFixedSizes,
+                             ConstView<MappedType>>
+  map(const tvector<N, real>& v) {
+    using IndexingPolicy = typename MappedType::indexing_policy;
+    static_assert(N >= offset + getUnderlyingArrayMinimalSize<IndexingPolicy>(),
+                  "invalid vector size");
+    return map<MappedType>(v.data() + offset);
+  }  // end of map
+
+  template <unsigned short M,
+            typename MappedType,
+            unsigned short offset,
+            unsigned short stride,
+            unsigned short N,
+            typename real>
+  constexpr std::enable_if_t<
+      ((!std::is_const_v<MappedType>)&&(
+          isMappableInAFixedSizeMathObjectArray<MappedType>())),
+      FixedSizeMathObjectArrayView<M, MappedType, stride>>
+  map(tvector<N, real>& v) {
+    constexpr auto mstride =
+        getFixedSizeMathObjectArrayViewMinimalStride<MappedType>();
+    static_assert(stride >= mstride, "invalid stride");
+    static_assert(N >= offset + M * mstride, "invalid vector size");
+    return map<M, MappedType, stride>(v.data() + offset);
+  }  // end of map
+
+  template <unsigned short M,
+            typename MappedType,
+            unsigned short offset,
+            unsigned short stride,
+            unsigned short N,
+            typename real>
+  constexpr std::enable_if_t<
+      isMappableInAFixedSizeMathObjectArray<MappedType>(),
+      FixedSizeMathObjectArrayView<M, const MappedType, stride>>
+  map(const tvector<N, real>& v) {
+    constexpr auto mstride =
+        getFixedSizeMathObjectArrayViewMinimalStride<MappedType>();
+    static_assert(stride >= mstride, "invalid stride");
+    static_assert(N >= offset + M * mstride, "invalid vector size");
+    return map<M, const MappedType, stride>(v.data() + offset);
+  }  // end of map
+
+}  // end of namespace tfel::math
 
 #endif /* LIB_TFEL_MATH_TINY_VECTOR_IXX */

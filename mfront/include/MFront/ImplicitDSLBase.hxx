@@ -205,12 +205,6 @@ namespace mfront {
      */
     bool isCallableVariable(const Hypothesis,
                             const std::string&) const override;
-    /*!
-     * \return a type able to do the mapping of a variable with the
-     * vector used by the root-finding algorithm.
-     * \param[in] v : variable
-     */
-    virtual std::string getVectorMappingClass(const VariableDescription&) const;
 
     // let the BehaviourDSLBase access specific keywords
     friend struct BehaviourDSLBase<ImplicitDSLBase>;
