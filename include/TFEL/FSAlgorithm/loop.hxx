@@ -14,8 +14,8 @@
 #ifndef LIB_TFEL_FSALGORITHM_LOOP_HXX
 #define LIB_TFEL_FSALGORITHM_LOOP_HXX
 
-#include "TFEL/Config/TFELConfig.hxx"
 #include <type_traits>
+#include "TFEL/Config/TFELConfig.hxx"
 #include "TFEL/TypeTraits/IsRandomAccessIterator.hxx"
 
 namespace tfel::fsalgo {

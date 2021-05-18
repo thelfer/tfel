@@ -122,8 +122,8 @@ namespace tfel::math {
 
   template <unsigned short N, unsigned short M, typename T>
   T tmatrix<N, M, T>::abs_max() const {
-    return std::abs(
-        *tfel::fsalgo::max_element<this->size()>::exe(this->v, absCompare<T>()));
+    return std::abs(*tfel::fsalgo::max_element<this->size()>::exe(
+        this->v, absCompare<T>()));
   }
 
   template <unsigned short N, unsigned short M, typename T>
@@ -152,50 +152,65 @@ namespace tfel::math {
   template <unsigned short N, unsigned short M, typename T>
   template <unsigned short I>
   constexpr auto tmatrix<N, M, T>::row_view() {
-    return tmatrix_row_view<N, M, I, 0, M, T>(*this);
+    static_assert(I < N, "invalid row index");
+    return map_array<tvector<M, T>>(&(this->operator()(I, 0)));
+  }
+
+  template <unsigned short N, unsigned short M, typename T>
+  template <unsigned short I>
+  constexpr auto tmatrix<N, M, T>::row_view() const {
+    static_assert(I < N, "invalid row index");
+    return map_array<const tvector<M, T>>(&(this->operator()(I, 0)));
   }
 
   template <unsigned short N, unsigned short M, typename T>
   template <unsigned short I, unsigned short J, unsigned short K>
   constexpr auto tmatrix<N, M, T>::row_view() {
-    return tmatrix_row_view<N, M, I, J, K, T>(*this);
-  }
-
-  template <unsigned short N, unsigned short M, typename T>
-  template <unsigned short I>
-  constexpr auto tmatrix<N, M, T>::row_view() const {
-    return tmatrix_const_row_view<N, M, I, 0, M, T>(*this);
+    static_assert(I < N, "invalid row index");
+    static_assert(J < M, "invalid column index");
+    static_assert(M >= J + K, "invalid view size");
+    return map_array<tvector<K, T>>(&(this->operator()(I, J)));
   }
 
   template <unsigned short N, unsigned short M, typename T>
   template <unsigned short I, unsigned short J, unsigned short K>
   constexpr auto tmatrix<N, M, T>::row_view() const {
-    return tmatrix_const_row_view<N, M, I, J, K, T>(*this);
+    static_assert(I < N, "invalid row index");
+    static_assert(J < M, "invalid column index");
+    static_assert(M >= J + K, "invalid view size");
+    return map_array<const tvector<K, T>>(&(this->operator()(I, J)));
   }
 
   template <unsigned short N, unsigned short M, typename T>
   template <unsigned short I>
   constexpr auto tmatrix<N, M, T>::column_view() {
-    return tmatrix_column_view<N, M, I, 0, N, T>(*this);
+    static_assert(I < M, "invalid column index");
+    return map_array<tvector<N, T>, 0, M>(&(this->operator()(0, I)));
+  }
+
+  template <unsigned short N, unsigned short M, typename T>
+  template <unsigned short I>
+  constexpr auto tmatrix<N, M, T>::column_view() const {
+    static_assert(I < M, "invalid column index");
+    return map_array<const tvector<N, T>, 0, M>(&(this->operator()(0, I)));
   }
 
   template <unsigned short N, unsigned short M, typename T>
   template <unsigned short I, unsigned short J, unsigned short K>
   constexpr auto tmatrix<N, M, T>::column_view() {
-    return tmatrix_column_view<N, M, I, J, K, T>(*this);
-  }
-
-  template <unsigned short N, unsigned short M, typename T>
-  template <unsigned short I>
-  constexpr auto tmatrix<N, M, T>::column_view()
-      const {
-    return tmatrix_const_column_view<N, M, I, 0, N, T>(*this);
+    static_assert(I < M, "invalid column index");
+    static_assert(J < N, "invalid row index");
+    static_assert(N >= J + K, "invalid view size");
+    return map_array<tvector<K, T>, 0, M>(&(this->operator()(J, I)));
   }
 
   template <unsigned short N, unsigned short M, typename T>
   template <unsigned short I, unsigned short J, unsigned short K>
   constexpr auto tmatrix<N, M, T>::column_view() const {
-    return tmatrix_const_column_view<N, M, I, J, K, T>(*this);
+    static_assert(I < M, "invalid column index");
+    static_assert(J < N, "invalid row index");
+    static_assert(N >= J + K, "invalid view size");
+    return map_array<const tvector<K, T>, 0, M>(&(this->operator()(J, I)));
   }
 
   template <unsigned short N, unsigned short M, typename T>

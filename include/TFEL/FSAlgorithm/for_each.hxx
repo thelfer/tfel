@@ -55,29 +55,15 @@ namespace tfel::fsalgo {
      * \date   30 Jun 2006
      */
     template <typename InputIterator, typename UnaryFunction>
-    static TFEL_FSALGORITHM_INLINE void exe(InputIterator p, UnaryFunction& f) {
-      f(*p);
-      for_each<N - 1>::exe(++p, f);
+    static void exe(InputIterator p, UnaryFunction& f) {
+      if constexpr (N>=1){
+        f(*p);
+        for_each<N - 1>::exe(++p, f);
+      } else {
+        static_cast<void>(p);
+        static_cast<void>(f);
+      }
     }
-  };
-
-  /*!
-   * \brief partial specialisation of struct for_each to end recursion.
-   *
-   * \author Thomas Helfer
-   * \date   30 Jun 2006
-   */
-  template <>
-  struct for_each<0u> {
-    /*!
-     * \return UnaryFunction
-     * \sa for_each<N>::exe() for details
-     *
-     * \author Thomas Helfer
-     * \date   30 Jun 2006
-     */
-    template <typename InputIterator, typename UnaryFunction>
-    static TFEL_FSALGORITHM_INLINE void exe(InputIterator, UnaryFunction&) {}
   };
 
 }  // end of namespace tfel::fsalgo

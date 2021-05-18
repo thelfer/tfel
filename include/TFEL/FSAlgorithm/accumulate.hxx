@@ -48,9 +48,14 @@ namespace tfel::fsalgo {
      * - The return type of x + y is convertible to T.
      */
     template <typename InputIterator, typename T>
-    static TFEL_FSALGORITHM_INLINE T exe(InputIterator p, T init) {
-      T result = *p + init;
-      return accumulate<N - 1>::exe(++p, result);
+    static T exe(InputIterator p, const T init) {
+      if constexpr (N >= 1) {
+        const auto result = *p + init;
+        return accumulate<N - 1>::exe(++p, result);
+      } else {
+        static_cast<void>(p);
+        return init;
+      }
     }
 
     /*!
@@ -73,46 +78,15 @@ namespace tfel::fsalgo {
      *
      */
     template <class InputIterator, class T, class BinaryFunction>
-    static TFEL_FSALGORITHM_INLINE T exe(InputIterator p,
-                                         T init,
-                                         BinaryFunction binary_op) {
-      T result = binary_op(*p, init);
-      return accumulate<N - 1>::exe(++p, result, binary_op);
-    }
-  };
-
-  /*!
-   * \brief partial specialisation of struct accumulate to end recursion.
-   *
-   * \author Thomas Helfer
-   * \date   30 Jun 2006
-   */
-  template <>
-  struct accumulate<0u> {
-    /*!
-     * \return the value of init
-     * \sa accumulate<N>::exe()
-     *
-     * \author Thomas Helfer
-     * \date   30 Jun 2006
-     */
-    template <typename InputIterator, typename T>
-    static TFEL_FSALGORITHM_INLINE T exe(InputIterator, T init) {
-      return init;
-    }
-
-    /*!
-     * \return the value of init
-     * \sa accumulate<N>::exe()
-     *
-     * \author Thomas Helfer
-     * \date   30 Jun 2006
-     */
-    template <class InputIterator, class T, class BinaryFunction>
-    static TFEL_FSALGORITHM_INLINE T exe(InputIterator,
-                                         T init,
-                                         BinaryFunction) {
-      return init;
+    static T exe(InputIterator p, const T init, BinaryFunction binary_op) {
+      if constexpr (N >= 1) {
+        const auto result = binary_op(*p, init);
+        return accumulate<N - 1>::exe(++p, result, binary_op);
+      } else {
+        static_cast<void>(p);
+        static_cast<void>(binary_op);
+        return init;
+      }
     }
   };
 

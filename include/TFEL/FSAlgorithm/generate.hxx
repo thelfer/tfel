@@ -35,19 +35,11 @@ namespace tfel::fsalgo {
   template <unsigned int N>
   struct generate {
     /*!
-     * \param ForwardIterator iterator to the elements
-     * \param Generator generator type used
-     *
-     * \return void
-     *
-     * \pre
-     * - ForwardIterator is a model of Forward Iterator. [2]
-     * - ForwardIterator is mutable.
-     * - Generator is a model of Generator.
-     * - Generator's result type is convertible to ForwardIterator's value type.
+     * \param p: iterator to the elements
+     * \param g: generator type used
      */
     template <typename ForwardIterator, typename Generator>
-    static TFEL_FSALGORITHM_INLINE void exe(ForwardIterator p, Generator gen) {
+    static void exe(ForwardIterator p, Generator gen) {
       *p = gen();
       if constexpr (N >= 1) {
         generate<N - 1>::exe(++p, gen);

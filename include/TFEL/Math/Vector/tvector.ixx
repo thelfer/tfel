@@ -284,35 +284,37 @@ namespace tfel::math {
             typename MappedType,
             unsigned short offset,
             unsigned short stride,
-            unsigned short N,
-            typename real>
+            unsigned short N>
   constexpr std::enable_if_t<
       ((!std::is_const_v<MappedType>)&&(
-          isMappableInAFixedSizeMathObjectArray<MappedType>())),
-      FixedSizeMathObjectArrayView<M, MappedType, stride>>
-  map(tvector<N, real>& v) {
+          isMappableInAFixedSizeArray<tvector<M, MappedType>>())),
+      FixedSizeArrayView<tvector<M, MappedType>, stride>>
+  map(tvector<N, FixedSizeArrayViewNumericType<tvector<M, MappedType>>>& v) {
     constexpr auto mstride =
-        getFixedSizeMathObjectArrayViewMinimalStride<MappedType>();
+        getFixedSizeArrayViewMinimalStride<tvector<M, MappedType>>();
     static_assert(stride >= mstride, "invalid stride");
     static_assert(N >= offset + M * mstride, "invalid vector size");
-    return map<M, MappedType, stride>(v.data() + offset);
+    return map_array<tvector<M, MappedType>, offset, stride>(v.data());
   }  // end of map
 
   template <unsigned short M,
             typename MappedType,
             unsigned short offset,
             unsigned short stride,
-            unsigned short N,
-            typename real>
+            unsigned short N>
   constexpr std::enable_if_t<
-      isMappableInAFixedSizeMathObjectArray<MappedType>(),
-      FixedSizeMathObjectArrayView<M, const MappedType, stride>>
-  map(const tvector<N, real>& v) {
-    constexpr auto mstride =
-        getFixedSizeMathObjectArrayViewMinimalStride<MappedType>();
+      isMappableInAFixedSizeArray<tvector<M, std::remove_cv_t<MappedType>>>(),
+      FixedSizeArrayView<const tvector<M, std::remove_cv_t<MappedType>>,
+                         stride>>
+  map(const tvector<N,
+                    FixedSizeArrayViewNumericType<
+                        tvector<M, std::remove_cv_t<MappedType>>>>& v) {
+    constexpr auto mstride = getFixedSizeArrayViewMinimalStride<
+        tvector<M, std::remove_cv_t<MappedType>>>();
     static_assert(stride >= mstride, "invalid stride");
     static_assert(N >= offset + M * mstride, "invalid vector size");
-    return map<M, const MappedType, stride>(v.data() + offset);
+    return map_array<const tvector<M, std::remove_cv_t<MappedType>>, offset,
+                     stride>(v.data());
   }  // end of map
 
 }  // end of namespace tfel::math

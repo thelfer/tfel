@@ -22,7 +22,7 @@
 #include "TFEL/Tests/TestManager.hxx"
 #include "TFEL/Math/stensor.hxx"
 #include "TFEL/Math/tvector.hxx"
-#include "TFEL/Math/Array/FixedSizeMathObjectArrayView.hxx"
+#include "TFEL/Math/Array/FixedSizeArrayView.hxx"
 
 struct TinyVectorOfStensorFromTinyVectorViewTest final
     : public tfel::tests::TestCase {
@@ -37,7 +37,7 @@ struct TinyVectorOfStensorFromTinyVectorViewTest final
     const tvector<10, double> values = {1.1, 10.1, 2.9, 9.2, 3.8,
                                         8.3, 4.7,  7.4, 5.6, 6.5};
     tvector<10, double> v(values);
-    auto tsftv = map<2, stensor<2u, double>, 2>(v);
+    auto tsftv = map_array<tvector<2u, stensor<2u, double>>, 2>(v.data());
     const auto& s1 = tsftv(0);
     auto s2 = tsftv(1);
     for (stensor<2, double>::size_type i = 0; i != 4u; ++i) {

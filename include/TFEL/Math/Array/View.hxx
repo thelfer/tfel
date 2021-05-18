@@ -193,7 +193,7 @@ namespace tfel::math {
   template <typename MappedType>
   struct MathObjectTraits<View<MappedType>>
       : public MathObjectTraits<std::remove_cv_t<MappedType>> {
-  };  // end of struct MathObjectTraits<Expr<MappedType, Operation>>
+  };  // end of struct MathObjectTraits
 
   /*!
    * \brief partial specialisation of the `ResultOfEvaluation` class for
@@ -315,6 +315,18 @@ namespace tfel::typetraits {
     static constexpr bool cond =
         (!is_const) &&
         isAssignableTo<MathObject, std::remove_cv_t<MathObject2>>();
+  };  // end of struct IsAssignableTo
+
+  //! \brief specialisation of IsAssignableTo
+  template <typename EvaluationResult, typename Operation, typename MathObject>
+  struct IsAssignableTo<tfel::math::Expr<EvaluationResult, Operation>,
+                        tfel::math::View<MathObject>> {
+    //!
+    static constexpr bool is_const = std::is_const_v<MathObject>;
+    //! \brief result
+    static constexpr bool cond =
+        (!is_const) &&
+        isAssignableTo<EvaluationResult, std::remove_cv_t<MathObject>>();
   };  // end of struct IsAssignableTo
 
 }  // end of namespace tfel::typetraits

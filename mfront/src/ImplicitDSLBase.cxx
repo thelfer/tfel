@@ -1669,7 +1669,7 @@ namespace mfront {
     }
     // output
     this->checkBehaviourFile(os);
-    os << "#include\"TFEL/Math/Array/FixedSizeMathObjectArrayViewIO.hxx\"\n"
+    os << "#include\"TFEL/Math/Array/FixedSizeArrayViewIO.hxx\"\n"
        << "#include\"TFEL/Math/tvector.hxx\"\n"
        << "#include\"TFEL/Math/Vector/tvectorIO.hxx\"\n"
        << "#include\"TFEL/Math/tmatrix.hxx\"\n"
@@ -3168,8 +3168,8 @@ namespace mfront {
           os << "tfel::math::View<" << v.type << "> d" << v.name << ";\n";
         }
       } else {
-        os << "tfel::math::FixedSizeMathObjectArrayView<" << v.arraySize << ", "
-           << v.type << "> d" << v.name << ";\n";
+        os << "tfel::math::FixedSizeArrayView<tfel::math::tvector<"
+           << v.arraySize << ", " << v.type << ">> d" << v.name << ";\n";
       }
     }
     os << '\n';

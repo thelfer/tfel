@@ -32,42 +32,21 @@ namespace tfel::fsalgo {
    */
   template <unsigned int N>
   struct fill {
-    /*
-     * \param  OutputIterator iterator to the elements being filled.
-     * \param  T type of the value.
-     * \return void
-     *
-     * \pre
-     * - ForwardIterator is a model of Forward Iterator.
-     * - ForwardIterator is mutable.
-     * - T is a model of Assignable.
-     * - T is convertible to Forward Iterator's value type.
-     */
-    template <typename OutputIterator, typename T>
-    static TFEL_FSALGORITHM_INLINE void exe(OutputIterator p, T q) {
-      *p = q;
-      fill<N - 1>::exe(++p, q);
-    }
-  };
-
-  /*!
-   * \brief partial specialisation of struct fill to end recursion.
-   *
-   * \author Thomas Helfer
-   * \date   30 Jun 2006
-   */
-  template <>
-  struct fill<0u> {
     /*!
-     * \return void
-     * \sa fill<N>::exe() for details
-     *
-     * \author Thomas Helfer
-     * \date   30 Jun 2006
+     * \param  p: iterator to the elements being filled.
+     * \param  q: value.
      */
     template <typename OutputIterator, typename T>
-    static TFEL_FSALGORITHM_INLINE void exe(OutputIterator, T) {}
-  };
+    static void exe(OutputIterator p, const T& q) {
+      if constexpr (N >= 1) {
+        *p = q;
+        fill<N - 1>::exe(++p, q);
+      } else {
+        static_cast<void>(p);
+        static_cast<void>(q);
+      }
+    }
+  };  // end of fill
 
 }  // end of namespace tfel::fsalgo
 

@@ -27,17 +27,17 @@
  * \author Thomas Helfer
  * \date   28 jun 2006
  */
-#define TFEL_MATH_IS_ASSIGNABLE_(X, Y)                                        \
-  /*!                                                                         \
-   * \brief Partial specialisation for X and Y                                \
-   * \see   IsAssignableTo                                                    \
-   */                                                                         \
-  template <>                                                                 \
-  struct IsAssignableTo<X, Y> {                                               \
-    /*!                                                                       \
-     *  Result                                                                \
-     */                                                                       \
-    static constexpr bool cond = std::is_same<Promote<X, Y>::type, Y>::value; \
+#define TFEL_MATH_IS_ASSIGNABLE_(X, Y)                                    \
+  /*!                                                                     \
+   * \brief Partial specialisation for X and Y                            \
+   * \see   IsAssignableTo                                                \
+   */                                                                     \
+  template <>                                                             \
+  struct IsAssignableTo<X, Y> {                                           \
+    /*! \brief result */                                                  \
+    static constexpr bool value = std::is_same_v<Promote<X, Y>::type, Y>; \
+    /*! \brief result */                                                  \
+    static constexpr bool cond = std::is_same_v<Promote<X, Y>::type, Y>;  \
   }
 
 /*!
@@ -85,6 +85,8 @@ namespace tfel::typetraits {
   template <typename A, typename B>
   struct IsAssignableTo {
     //! \brief result
+    static constexpr bool value = false;
+    //! \brief result
     static constexpr bool cond = false;
   };
 
@@ -114,7 +116,7 @@ namespace tfel::typetraits {
    */
   template <typename A, typename B>
   constexpr bool isAssignableTo() {
-    return IsAssignableTo<A, B>::cond;
+    return IsAssignableTo<std::remove_cv_t<A>, B>::cond;
   }  // end of isAssignableTo
 
 }  // end of namespace tfel::typetraits

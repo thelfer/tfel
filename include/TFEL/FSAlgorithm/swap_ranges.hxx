@@ -53,31 +53,13 @@ namespace tfel::fsalgo {
     template <typename ForwardIterator1, typename ForwardIterator2>
     static TFEL_FSALGORITHM_INLINE ForwardIterator2 exe(ForwardIterator1 p,
                                                         ForwardIterator2 q) {
-      std::swap(*q, *p);
-      return swap_ranges<N - 1>::exe(++p, ++q);
-    }
-  };
-
-  /*!
-   * \brief partial specialisation used to end recursion when using the
-   * transform algorithm.
-   *
-   * \author Thomas Helfer
-   * \date   30 Jun 2006
-   */
-  template <>
-  struct swap_ranges<0u> {
-    /*!
-     * \return  ForwardIterator2 to the end the recursion
-     * \sa swap_ranges<N>::exe()
-     *
-     * \author Thomas Helfer
-     * \date   30 Jun 2006
-     */
-    template <typename ForwardIterator1, typename ForwardIterator2>
-    static TFEL_FSALGORITHM_INLINE ForwardIterator2 exe(ForwardIterator1,
-                                                        ForwardIterator2 q) {
-      return q;
+      if constexpr (N >= 1) {
+        std::swap(*q, *p);
+        return swap_ranges<N - 1>::exe(++p, ++q);
+      } else {
+        static_cast<void>(p);
+        return q;
+      }
     }
   };
 

@@ -1,5 +1,5 @@
 /*!
- * \file  include/TFEL/Math/Array/FixedSizeMathObjectArrayViewIO.hxx
+ * \file  include/TFEL/Math/Array/FixedSizeArrayViewIO.hxx
  * \brief
  * \author Thomas Helfer
  * \date   12/05/2021
@@ -11,20 +11,19 @@
  * project under specific licensing conditions.
  */
 
-#ifndef LIB_TFEL_MATH_ARRAY_FIXEDSIZEMATHOBJECTARRAYVIEWIO_HXX
-#define LIB_TFEL_MATH_ARRAY_FIXEDSIZEMATHOBJECTARRAYVIEWIO_HXX
+#ifndef LIB_TFEL_MATH_ARRAY_FIXEDSIZEARRAYVIEWIO_HXX
+#define LIB_TFEL_MATH_ARRAY_FIXEDSIZEARRAYVIEWIO_HXX
 
 #include <ostream>
-#include "TFEL/Math/Array/FixedSizeMathObjectArrayView.hxx"
+#include "TFEL/Math/Array/FixedSizeArrayView.hxx"
 
 namespace tfel::math {
 
-  template <unsigned short N, typename MappedType, unsigned short stride>
+  template <typename MappedArrayType, index_type<MappedArrayType> stride>
   std::ostream& operator<<(
-      std::ostream& os,
-      const FixedSizeMathObjectArrayView<N, MappedType, stride>& v) {
+      std::ostream& os, const FixedSizeArrayView<MappedArrayType, stride>& v) {
     os << "[ ";
-    for (unsigned short i = 0; i < N; ++i) {
+    for (index_type<MappedArrayType> i = 0; i < v.size(); ++i) {
       os << v[i] << " ";
     }
     os << "]";
@@ -33,4 +32,4 @@ namespace tfel::math {
 
 }  // end of namespace tfel::math
 
-#endif /* LIB_TFEL_MATH_ARRAY_FIXEDSIZEMATHOBJECTARRAYVIEWIO_HXX */
+#endif /* LIB_TFEL_MATH_ARRAY_FIXEDSIZEARRAYVIEWIO_HXX */

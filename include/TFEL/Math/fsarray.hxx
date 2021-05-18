@@ -17,7 +17,6 @@
 #include "TFEL/TypeTraits/IsAssignableTo.hxx"
 #include "TFEL/Math/General/MathObjectTraits.hxx"
 #include "TFEL/Math/Array/GenericFixedSizeArray.hxx"
-#include "TFEL/Math/Array/FixedSizeMathObjectArrayView.hxx"
 #include "TFEL/Math/Forward/fsarray.hxx"
 
 namespace tfel::math {

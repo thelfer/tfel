@@ -160,8 +160,8 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Math/Array/ConstRuntimeArrayBase.hxx						     \
 			TFEL/Math/Array/ConstRuntimeArrayBase.ixx						     \
 			TFEL/Math/Array/View.hxx								     \
-			TFEL/Math/Array/FixedSizeMathObjectArrayView.hxx                                             \
-			TFEL/Math/Array/FixedSizeMathObjectArrayViewIO.hxx                                           \
+			TFEL/Math/Array/FixedSizeArrayView.hxx                                             \
+			TFEL/Math/Array/FixedSizeArrayViewIO.hxx                                           \
 			TFEL/Math/Array/FixedSizeArrayPolicies.hxx						     \
 			TFEL/Math/Array/FixedSizeIndexingPolicies.hxx						     \
 			TFEL/Math/Array/GenericFixedSizeArray.hxx						     \
@@ -318,14 +318,6 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Math/Matrix/tmatrixResultType.hxx	                                                     \
 			TFEL/Math/Matrix/tmatrix.ixx			                                             \
 			TFEL/Math/Matrix/tmatrixIO.hxx			                                             \
-			TFEL/Math/Matrix/tmatrix_column_view.hxx				                     \
-			TFEL/Math/Matrix/tmatrix_column_view.ixx				                     \
-			TFEL/Math/Matrix/tmatrix_const_column_view.hxx				                     \
-			TFEL/Math/Matrix/tmatrix_const_column_view.ixx				                     \
-			TFEL/Math/Matrix/tmatrix_const_row_view.hxx				                     \
-			TFEL/Math/Matrix/tmatrix_const_row_view.ixx				                     \
-			TFEL/Math/Matrix/tmatrix_row_view.hxx					                     \
-			TFEL/Math/Matrix/tmatrix_row_view.ixx					                     \
 			TFEL/Math/Matrix/tmatrix_submatrix_view.hxx				                     \
 			TFEL/Math/Matrix/tmatrix_submatrix_view.ixx				                     \
 			TFEL/Math/Matrix/tmatrix_const_submatrix_view.hxx				             \

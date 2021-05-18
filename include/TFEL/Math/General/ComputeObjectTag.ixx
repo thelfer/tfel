@@ -90,10 +90,7 @@ namespace tfel::math {
     static constexpr bool IsTScalar = tfel::typetraits::isScalar<T>();
     //! \brief tells if T is an unary operator.
     static constexpr bool IsTUnaryOperator =
-        tfel::typetraits::IsUnaryOperator<T>::cond;
-    //! \brief tells if T has a ConceptTag typedef.
-    static constexpr bool HasConceptTag =
-        tfel::math::internals::HasConceptTag<T>::value;
+        tfel::typetraits::isUnaryOperator<T>();
 
    public:
     /*!
@@ -103,7 +100,7 @@ namespace tfel::math {
     using type = typename ComputeObjectTag_<T,
                                             IsTScalar,
                                             IsTUnaryOperator,
-                                            HasConceptTag>::type;
+                                            hasConceptTag<T>()>::type;
   };  // end of ComputeObjectTag
 
   template <typename T>

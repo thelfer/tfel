@@ -14,13 +14,15 @@
 #ifndef LIB_TFEL_TYPETRAITS_ISUNARYOPERATOR_HXX
 #define LIB_TFEL_TYPETRAITS_ISUNARYOPERATOR_HXX
 
+#include <type_traits>
+
 namespace tfel::typetraits {
 
   /*!
    * \brief Traits class which says if its argument stands for a
    * unary operator
    *
-   * \param  T, type to be tested.
+   * \tparam  T: type to be tested.
    * \return bool cond, true if T stands for a unary operator, false
    * otherwise.
    *
@@ -32,6 +34,15 @@ namespace tfel::typetraits {
     //! \brief result
     static constexpr bool cond = false;
   };
+
+  /*!
+   * \brief a simple helper function
+   * \tparam  T: type to be tested.
+   */
+  template <typename T>
+  constexpr auto isUnaryOperator() {
+    return IsUnaryOperator<std::remove_cv_t<T>>::cond;
+  }  // end of isUnaryOperator
 
 }  // end of namespace tfel::typetraits
 

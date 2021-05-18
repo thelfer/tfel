@@ -298,10 +298,6 @@ namespace tfel::typetraits {
 
 }  // end of namespace tfel::typetraits
 
-#include "TFEL/Math/Matrix/tmatrix_row_view.hxx"
-#include "TFEL/Math/Matrix/tmatrix_const_row_view.hxx"
-#include "TFEL/Math/Matrix/tmatrix_column_view.hxx"
-#include "TFEL/Math/Matrix/tmatrix_const_column_view.hxx"
 #include "TFEL/Math/Matrix/tmatrix_submatrix_view.hxx"
 #include "TFEL/Math/Matrix/tmatrix_const_submatrix_view.hxx"
 #include "TFEL/Math/Matrix/tmatrix.ixx"

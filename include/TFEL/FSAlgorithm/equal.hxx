@@ -51,7 +51,13 @@ namespace tfel::fsalgo {
      */
     template <typename InputIterator, typename InputIterator2>
     static TFEL_FSALGORITHM_INLINE bool exe(InputIterator p, InputIterator2 q) {
-      return (*p == *q) && (equal<N - 1>::exe(++p, ++q));
+      if constexpr (N >= 1) {
+        return (*p == *q) && (equal<N - 1>::exe(++p, ++q));
+      } else {
+        static_cast<void>(p);
+        static_cast<void>(q);
+        return true;
+      }
     }
 
     /*!
@@ -76,37 +82,15 @@ namespace tfel::fsalgo {
     static TFEL_FSALGORITHM_INLINE bool exe(InputIterator p,
                                             InputIterator2 q,
                                             BinaryPredicate binary_pred) {
-      return (binary_pred(*p, *q)) &&
-             (equal<N - 1>::exe(++p, ++q, binary_pred));
-    }
-  };
-
-  /*!
-   * \brief partial specialisation of struct equal to end recursion.
-   *
-   * \author Thomas Helfer
-   * \date   30 Jun 2006
-   */
-  template <>
-  struct equal<0u> {
-    /*!
-     * \return True
-     */
-    template <typename InputIterator, typename InputIterator2>
-    static TFEL_FSALGORITHM_INLINE bool exe(InputIterator, InputIterator2) {
-      return true;
-    }
-
-    /*!
-     * \return True
-     */
-    template <typename InputIterator,
-              typename InputIterator2,
-              typename BinaryPredicate>
-    static TFEL_FSALGORITHM_INLINE bool exe(InputIterator,
-                                            InputIterator2,
-                                            BinaryPredicate) {
-      return true;
+      if constexpr (N >= 1) {
+        return (binary_pred(*p, *q)) &&
+               (equal<N - 1>::exe(++p, ++q, binary_pred));
+      } else {
+        static_cast<void>(p);
+        static_cast<void>(q);
+        static_cast<void>(binary_pred);
+        return true;
+      }
     }
   };
 

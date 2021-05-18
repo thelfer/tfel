@@ -47,13 +47,8 @@ namespace tfel::fsalgo {
     template <typename ForwardIterator>
     static TFEL_FSALGORITHM_INLINE ForwardIterator exe_(ForwardIterator p,
                                                         ForwardIterator q) {
-      ForwardIterator result;
-      if (*p > *q) {
-        result = p;
-      } else {
-        result = q;
-      }
-      return max_element<N - 1>::exe_(++p, result);
+      const auto r = (*p > *q) ? p : q;
+      return max_element<N - 1>::exe_(++p, r);
     }
 
     /*
@@ -77,13 +72,8 @@ namespace tfel::fsalgo {
     static TFEL_FSALGORITHM_INLINE ForwardIterator exe_(ForwardIterator p,
                                                         ForwardIterator q,
                                                         BinaryPredicate comp) {
-      ForwardIterator result;
-      if (comp(*p, *q)) {
-        result = p;
-      } else {
-        result = q;
-      }
-      return max_element<N - 1>::exe_(++p, result, comp);
+      const auto r = (comp(*p, *q)) ? p : q;
+      return max_element<N - 1>::exe_(++p, r, comp);
     }
 
    public:

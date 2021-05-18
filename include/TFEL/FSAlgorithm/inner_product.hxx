@@ -40,8 +40,8 @@ namespace tfel::fsalgo {
      * then computes:
      * \f[\displaystyle\mathrm{init}+\sum_{i=0}^{N-1}(*(p+i))*(*(q+i))\f]
      *
-     * \param InputIterator1 iterator to the first range
-     * \param InputIterator2 iterator to the second range
+     * \param q: iterator to the first range
+     * \param q: iterator to the second range
      * \param T initial value
      *
      * \return T, result of the inner product
@@ -56,11 +56,15 @@ namespace tfel::fsalgo {
      * - The type of x + y * z is convertible to T.
      */
     template <typename InputIterator1, typename InputIterator2, typename T>
-    static TFEL_FSALGORITHM_INLINE T exe(InputIterator1 p,
-                                         InputIterator2 q,
-                                         T init) {
-      T r = init + (*p) * (*q);
-      return inner_product<N - 1>::exe(++p, ++q, r);
+    static T exe(InputIterator1 p, InputIterator2 q, const T init) {
+      if constexpr (N >= 1) {
+        const auto r = init + (*p) * (*q);
+        return inner_product<N - 1>::exe(++p, ++q, r);
+      } else {
+        static_cast<void>(p);
+        static_cast<void>(q);
+        return init;
+      }
     }
 
     /*!
@@ -99,13 +103,21 @@ namespace tfel::fsalgo {
               typename T,
               typename BinaryFunction1,
               typename BinaryFunction2>
-    static TFEL_FSALGORITHM_INLINE T exe(InputIterator1 p,
-                                         InputIterator2 q,
-                                         T init,
-                                         BinaryFunction1 binary_op1,
-                                         BinaryFunction2 binary_op2) {
-      T r = binary_op1(init, binary_op2(*p, *q));
-      return inner_product<N - 1>::exe(++p, ++q, r, binary_op1, binary_op2);
+    static T exe(InputIterator1 p,
+                 InputIterator2 q,
+                 T init,
+                 BinaryFunction1 binary_op1,
+                 BinaryFunction2 binary_op2) {
+      if constexpr (N >= 1) {
+        const auto r = binary_op1(init, binary_op2(*p, *q));
+        return inner_product<N - 1>::exe(++p, ++q, r, binary_op1, binary_op2);
+      } else {
+        static_cast<void>(p);
+        static_cast<void>(q);
+        static_cast<void>(binary_op1);
+        static_cast<void>(binary_op2);
+        return init;
+      }
     }
 
     /*!
@@ -129,53 +141,13 @@ namespace tfel::fsalgo {
      * - The type of x + y * z is convertible to T.
      */
     template <typename T, typename InputIterator1, typename InputIterator2>
-    static TFEL_FSALGORITHM_INLINE T exe(InputIterator1 p, InputIterator2 q) {
-      T r = (*p) * (*q);
-      return inner_product<N - 1>::exe(++p, ++q, r);
-    }
-  };
-
-  /*!
-   * \brief partial specialisation used to end recursion when using the
-   * inner_product algorithm.
-   *
-   * \author Thomas Helfer
-   * \date   30 Jun 2006
-   */
-  template <>
-  struct inner_product<0u> {
-    /*!
-     * \return the result at the end the recursion.
-     * \sa inner_product<N>::exe() for details.
-     *
-     * \author Thomas Helfer
-     * \date   30 Jun 2006
-     */
-    template <typename InputIterator1, typename InputIterator2, typename T>
-    static TFEL_FSALGORITHM_INLINE T exe(InputIterator1,
-                                         InputIterator2,
-                                         T init) {
-      return init;
-    }
-
-    /*!
-     * \return the result at the end the recursion.
-     * \sa inner_product<N>::exe() for details.
-     *
-     * \author Thomas Helfer
-     * \date   30 Jun 2006
-     */
-    template <typename InputIterator1,
-              typename InputIterator2,
-              typename T,
-              typename BinaryFunction1,
-              typename BinaryFunction2>
-    static TFEL_FSALGORITHM_INLINE T exe(InputIterator1,
-                                         InputIterator2,
-                                         T init,
-                                         BinaryFunction1,
-                                         BinaryFunction2) {
-      return init;
+    static T exe(InputIterator1 p, InputIterator2 q) {
+      if constexpr (N == 0) {
+        return T{};
+      } else {
+        const auto r = (*p) * (*q);
+        return inner_product<N - 1>::exe(++p, ++q, r);
+      }
     }
   };
 
