@@ -34,42 +34,48 @@ namespace tfel::math {
     using const_reference = const value_type&;
   };  // end of struct StandardArrayPolicyAliases
 
+  //! \brief a standard array policy.
+  template <typename ValueType, typename IndexingPolicyType>
+  struct StandardArrayPolicy : StandardArrayPolicyAliases<ValueType> {
+    //! \brief the underlying indexing policy
+    using IndexingPolicy = IndexingPolicyType;
+  };
+
   /*!
-   * \brief an helper structure to define a math object traits from an array
-   * policy.
+   * \brief an helper structure to define a math
+   * object traits from an array policy.
    */
-  template <typename ArrayPolicy>
+  template <typename ArrayPolicyType>
   struct MathObjectTraitsFromArrayPolicy
-      : MathObjectTraitsBase<typename ArrayPolicy::value_type,
-                             typename ArrayPolicy::IndexingPolicy::size_type> {
+      : MathObjectTraitsBase<
+            typename ArrayPolicyType::value_type,
+            typename ArrayPolicyType::IndexingPolicy::size_type> {
   };  // end of struct MathObjectTraitsFromArrayPolicy
 
   /*!
    * \return if the given array policy has fixed sizes.
-   * \tparam ArrayPolicy: the array policy
+   * \tparam ArrayPolicyType: the array policy
    */
-  template <typename ArrayPolicy>
+  template <typename ArrayPolicyType>
   constexpr bool hasArrayPolicyFixedSizes();
 
   /*!
    * \return the logical size of the given array policy, i.e. the number of
    * values that can be accessed by the given policy.
    * \pre the array policy must have fixed sizes.
-   * \tparam ArrayPolicy: the array policy
+   * \tparam ArrayPolicyType: the array policy
    */
-  template <typename ArrayPolicy>
-  constexpr typename ArrayPolicy::IndexingPolicy::size_type
-  getArrayPolicySize();
+  template <typename ArrayPolicyType>
+  constexpr auto getArrayPolicySize();
 
   /*!
    * \return the minimal number of values required to stored the given array
    * policy
    * \pre the array policy must have fixed sizes.
-   * \tparam ArrayPolicy: the array policy
+   * \tparam ArrayPolicyType: the array policy
    */
-  template <typename ArrayPolicy>
-  constexpr typename ArrayPolicy::IndexingPolicy::size_type
-  getArrayPolicyMinimalDataSize();
+  template <typename ArrayPolicyType>
+  constexpr auto getArrayPolicyMinimalDataSize();
 
 }  // end of namespace tfel::math
 

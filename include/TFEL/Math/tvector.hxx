@@ -188,8 +188,7 @@ namespace tfel::math {
       const tvector<N, T>&, OutputIterator);
 
   template <unsigned short N, typename T>
-  TFEL_MATH_INLINE2 typename tfel::typetraits::AbsType<T>::type abs(
-      const tvector<N, T>& v);
+  auto abs(const tvector<N, T>& v);
 
   template <typename T>
   tvector<1u, T> makeTVector1D(const T);
@@ -248,32 +247,83 @@ namespace tfel::math {
   /*!
    * \brief create a view of a math object from a tiny vector
    * \tparam MappedType : type of mapped object
-   * \tparam offset: offset in the tiny vector
+   * \tparam IndexingPolicyType: index policy type used by the generated view
    * \tparam N: size of the tiny vector
    * \tparam T: type hold by the tiny vector
    */
   template <typename MappedType,
-            unsigned short offset = 0u,
+            typename IndexingPolicyType = typename MappedType::indexing_policy,
             unsigned short N,
             typename real>
-  constexpr std::enable_if_t<((!std::is_const_v<MappedType>)&&(
-                                 MappedType::indexing_policy::hasFixedSizes)),
-                             View<MappedType>>
+  constexpr std::enable_if_t<
+      ((!std::is_const_v<MappedType>)&&(IndexingPolicyType::hasFixedSizes) &&
+       (checkIndexingPoliciesCompatiblity<
+           IndexingPolicyType,
+           typename MappedType::indexing_policy>())),
+      View<MappedType, IndexingPolicyType>>
+  map(tvector<N, real>&);
+
+  /*!
+   * \brief create a constant view of a math object from a tiny vector
+   * \tparam MappedType : type of mapped object
+   * \tparam IndexingPolicyType: index policy type used by the generated view
+   * \tparam N: size of the tiny vector
+   * \tparam T: type hold by the tiny vector
+   */
+  template <typename MappedType,
+            typename IndexingPolicyType =
+                typename std::remove_cv_t<MappedType>::indexing_policy,
+            unsigned short N,
+            typename real>
+  constexpr std::enable_if_t<
+      ((IndexingPolicyType::hasFixedSizes) &&
+       (checkIndexingPoliciesCompatiblity<
+           IndexingPolicyType,
+           typename std::remove_cv_t<MappedType>::indexing_policy>())),
+      View<const MappedType, IndexingPolicyType>>
+  map(const tvector<N, real>&);
+
+  /*!
+   * \brief create a view of a math object from a tiny vector
+   * \tparam MappedType : type of mapped object
+   * \tparam offset: offset in the tiny vector
+   * \tparam IndexingPolicyType: index policy type used by the generated view
+   * \tparam N: size of the tiny vector
+   * \tparam T: type hold by the tiny vector
+   */
+  template <typename MappedType,
+            unsigned short offset,
+            typename IndexingPolicyType = typename MappedType::indexing_policy,
+            unsigned short N,
+            typename real>
+  constexpr std::enable_if_t<
+      ((!std::is_const_v<MappedType>)&&(IndexingPolicyType::hasFixedSizes) &&
+       (checkIndexingPoliciesCompatiblity<
+           IndexingPolicyType,
+           typename MappedType::indexing_policy>())),
+      View<MappedType, IndexingPolicyType>>
   map(tvector<N, real>&);
 
   /*!
    * \brief create a constant view of a math object from a tiny vector
    * \tparam MappedType : type of mapped object
    * \tparam offset: offset in the tiny vector
+   * \tparam IndexingPolicyType: index policy type used by the generated view
    * \tparam N: size of the tiny vector
    * \tparam T: type hold by the tiny vector
    */
   template <typename MappedType,
-            unsigned short offset = 0u,
+            unsigned short offset,
+            typename IndexingPolicyType =
+                typename std::remove_cv_t<MappedType>::indexing_policy,
             unsigned short N,
             typename real>
-  constexpr std::enable_if_t<MappedType::indexing_policy::hasFixedSizes,
-                             View<const MappedType>>
+  constexpr std::enable_if_t<
+      ((IndexingPolicyType::hasFixedSizes) &&
+       (checkIndexingPoliciesCompatiblity<
+           IndexingPolicyType,
+           typename std::remove_cv_t<MappedType>::indexing_policy>())),
+      View<const MappedType, IndexingPolicyType>>
   map(const tvector<N, real>&);
 
   /*!

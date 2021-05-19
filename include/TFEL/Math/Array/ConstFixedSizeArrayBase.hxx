@@ -23,16 +23,15 @@ namespace tfel::math {
   /*!
    * \brief a base class for fixed sized const arrays.
    */
-  template <typename Child, typename ArrayPolicy>
+  template <typename Child, typename ArrayPolicyType>
   struct ConstFixedSizeArrayBase
-      : public ArrayPolicy::IndexingPolicy,
-        public ConstArrayCommonMethods<Child, ArrayPolicy>,
-        public ConstArraySTLCompatibilityLayer<Child, ArrayPolicy> {
+      : public ArrayPolicyType::IndexingPolicy,
+        public ConstArrayCommonMethods<Child, ArrayPolicyType>,
+        public ConstArraySTLCompatibilityLayer<Child, ArrayPolicyType> {
     //!
-    static_assert(std::is_empty_v<typename ArrayPolicy::IndexingPolicy>);
+    static_assert(std::is_empty_v<typename ArrayPolicyType::IndexingPolicy>);
     //! \return the current indexing policy
-    constexpr typename ArrayPolicy::IndexingPolicy& getIndexingPolicy()
-        const;
+    constexpr auto& getIndexingPolicy() const;
     /*!
      * \brief apply a multi-indices functor
      * \param[in] f: functor

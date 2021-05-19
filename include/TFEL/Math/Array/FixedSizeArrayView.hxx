@@ -40,7 +40,6 @@ namespace tfel::math {
     }
   }  // end of getFixedSizeArrayViewMinimalStride
 
-
   template <typename MappedArrayType>
   constexpr auto getFixedSizeArrayViewMinimalStride() {
     if constexpr (isScalar<numeric_type<MappedArrayType>>()) {
@@ -50,25 +49,49 @@ namespace tfel::math {
     }
   }  // end of getFixedSizeArrayViewMinimalStride
 
-  template <bool isScalar, typename MappedArrayType>
-  struct FixedSizeArrayViewNumericTypeII {
-    using MappedType = numeric_type<MappedArrayType>;
-    using type = std::conditional_t<std::is_const_v<MappedArrayType>,
-                                    const MappedType,
-                                    MappedType>;
-  };
+  namespace internals {
 
-  template <typename MappedArrayType>
-  struct FixedSizeArrayViewNumericTypeII<false, MappedArrayType> {
-    using MappedType = numeric_type<MappedArrayType>;
-    using type = std::conditional_t<std::is_const_v<MappedArrayType>,
-                                    const numeric_type<MappedType>,
-                                    numeric_type<MappedType>>;
-  };
+    template <bool isScalar, typename MappedArrayType>
+    struct FixedSizeArrayViewNumericTypeII {
+      using MappedType = numeric_type<MappedArrayType>;
+      using type = std::conditional_t<std::is_const_v<MappedArrayType>,
+                                      const MappedType,
+                                      MappedType>;
+    };
+
+    template <typename MappedArrayType>
+    struct FixedSizeArrayViewNumericTypeII<false, MappedArrayType> {
+      using MappedType = numeric_type<MappedArrayType>;
+      using type = std::conditional_t<std::is_const_v<MappedArrayType>,
+                                      const numeric_type<MappedType>,
+                                      numeric_type<MappedType>>;
+    };
+
+    template <typename MappedType, bool is_scalar>
+    struct FixedSizeArrayView_ViewType {
+      using type = View<MappedType>;
+    };
+
+    template <typename MappedType>
+    struct FixedSizeArrayView_ViewType<MappedType, true> {
+      using type = MappedType&;
+    };
+
+    template <typename MappedType, bool is_scalar>
+    struct FixedSizeArrayView_ConstViewType {
+      using type = View<const MappedType>;
+    };
+
+    template <typename MappedType>
+    struct FixedSizeArrayView_ConstViewType<MappedType, true> {
+      using type = const MappedType&;
+    };
+
+  }  // end of namespace internals
 
   template <typename MappedArrayType>
   using FixedSizeArrayViewNumericType =
-      typename FixedSizeArrayViewNumericTypeII<
+      typename tfel::math::internals::FixedSizeArrayViewNumericTypeII<
           isScalar<typename MappedArrayType::value_type>(),
           MappedArrayType>::type;
 
@@ -91,8 +114,6 @@ namespace tfel::math {
       : ConceptRebind<typename ComputeObjectTag<MappedArrayType>::type,
                       FixedSizeArrayView<MappedArrayType, stride>>::type {
     //
-
-    //
     static_assert(stride >=
                       getFixedSizeArrayViewMinimalStride<MappedArrayType>(),
                   "invalid stride");
@@ -114,29 +135,24 @@ namespace tfel::math {
     using data_pointer_type =
         FixedSizeArrayViewDataPointerType<MappedArrayType>;
     //! \brief type returned by the access operator
-    using view_type = std::conditional_t<
-        is_scalar,
-        std::conditional_t<is_const, const MappedType&, MappedType&>,
-        View<MappedType>>;
+    using view_type = typename tfel::math::internals::
+        FixedSizeArrayView_ViewType<MappedType, is_scalar>::type;
     //! \brief type returned by the const access operator
-    using const_view_type = std::
-        conditional_t<is_scalar, const MappedType&, View<const MappedType>>;
+    using const_view_type = typename tfel::math::internals::
+        FixedSizeArrayView_ConstViewType<MappedType, is_scalar>::type;
     /*!
      * \brief default constructor
      * \param[in] p: pointer to the memory area
      */
-    explicit constexpr FixedSizeArrayView(
-        const data_pointer_type p) noexcept
+    explicit constexpr FixedSizeArrayView(const data_pointer_type p) noexcept
         : data_pointer(p) {}  // end of FixedSizeArrayView
 
     //! \brief constructor
     FixedSizeArrayView() = default;
     //! \brief copy constructor
-    constexpr FixedSizeArrayView(
-        const FixedSizeArrayView&) noexcept = default;
+    constexpr FixedSizeArrayView(const FixedSizeArrayView&) noexcept = default;
     //! \brief move constructor
-    constexpr FixedSizeArrayView(
-        FixedSizeArrayView&&) noexcept = default;
+    constexpr FixedSizeArrayView(FixedSizeArrayView&&) noexcept = default;
 
     constexpr size_type size() const {
       using IndexingPolicy =
@@ -301,10 +317,9 @@ namespace tfel::math {
   }  // end of map
 
   /*!
-   * \brief return a const view of an array of objects of type `MappedArrayType` from
-   * a memory area
-   * \tparam MappedArrayType: object mapped
-   * \param[in] p: pointer to the mapped memory area
+   * \brief return a const view of an array of objects of type `MappedArrayType`
+   * from a memory area \tparam MappedArrayType: object mapped \param[in] p:
+   * pointer to the mapped memory area
    */
   template <typename MappedArrayType,
             index_type<MappedArrayType> offset = 0,
@@ -383,7 +398,8 @@ namespace tfel::typetraits {
       tfel::math::Expr<EvaluationResult, Operation>,
       tfel::math::FixedSizeArrayView<MappedArrayType, stride>> {
     //! \brief result
-    static constexpr bool cond = isAssignableTo<EvaluationResult, MappedArrayType>();
+    static constexpr bool cond =
+        isAssignableTo<EvaluationResult, MappedArrayType>();
   };  // end of struct IsAssignableTo
 
 }  // end of namespace tfel::typetraits

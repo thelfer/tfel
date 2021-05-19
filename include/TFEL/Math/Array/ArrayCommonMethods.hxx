@@ -28,54 +28,55 @@ namespace tfel::math {
    * \tparam Child: child class
    * \tparam ArrayPolicy: array policy
    */
-  template <typename Child, typename ArrayPolicy>
+  template <typename Child, typename ArrayPolicyType>
   struct ConstArrayCommonMethods {
     //! \brief exposing the array policy
-    using array_policy = ArrayPolicy;
+    using array_policy = ArrayPolicyType;
     //! \brief exposing the indexing policy
-    using indexing_policy = typename ArrayPolicy::IndexingPolicy;
+    using indexing_policy = typename ArrayPolicyType::IndexingPolicy;
     /*!
      * \brief access operator
      * \return a reference to the data associated with the given index
      * \param[in] i: requested index
      */
-    constexpr typename ArrayPolicy::const_reference operator[](
-        const typename ArrayPolicy::IndexingPolicy::size_type i) const noexcept;
+    constexpr typename ArrayPolicyType::const_reference operator[](
+        const typename ArrayPolicyType::IndexingPolicy::size_type i) const
+        noexcept;
     /*!
      * \brief access operator
      * \return a reference to the data associated with the given indices
      * \param[in] i: requested indices
      */
     template <typename... Indices>
-    constexpr typename ArrayPolicy::const_reference operator()(
+    constexpr typename ArrayPolicyType::const_reference operator()(
         const Indices...) const noexcept;
   };  // end of ConstArrayCommonMethods
 
   /*!
    * \brief a structure gathering access methods and helper function for arrays.
    * \tparam Child: child class
-   * \tparam ArrayPolicy: array policy
+   * \tparam ArrayPolicyType: array policy
    */
-  template <typename Child, typename ArrayPolicy>
+  template <typename Child, typename ArrayPolicyType>
   struct MutableArrayCommonMethods
-      : ConstArrayCommonMethods<Child, ArrayPolicy> {
+      : ConstArrayCommonMethods<Child, ArrayPolicyType> {
     // exposing const access methods
-    using ConstArrayCommonMethods<Child, ArrayPolicy>::operator[];
-    using ConstArrayCommonMethods<Child, ArrayPolicy>::operator();
+    using ConstArrayCommonMethods<Child, ArrayPolicyType>::operator[];
+    using ConstArrayCommonMethods<Child, ArrayPolicyType>::operator();
     /*!
      * \brief access operator
      * \return a reference to the data associated with the given index
      * \param[in] i: requested index
      */
-    constexpr typename ArrayPolicy::reference operator[](
-        const typename ArrayPolicy::IndexingPolicy::size_type i) noexcept;
+    constexpr typename ArrayPolicyType::reference operator[](
+        const typename ArrayPolicyType::IndexingPolicy::size_type i) noexcept;
     /*!
      * \brief access operator
      * \return a reference to the data associated with the given indices
      * \param[in] i: requested indices
      */
     template <typename... Indices>
-    constexpr typename ArrayPolicy::reference operator()(
+    constexpr typename ArrayPolicyType::reference operator()(
         const Indices... i) noexcept;
     /*!
      * \brief assign values values from an initializer list
@@ -83,7 +84,7 @@ namespace tfel::math {
      */
     template <typename ValueType>
     constexpr std::enable_if_t<
-        isAssignableTo<ValueType, typename ArrayPolicy::value_type>(),
+        isAssignableTo<ValueType, typename ArrayPolicyType::value_type>(),
         Child&>
     operator=(const std::initializer_list<ValueType>&) noexcept;
     /*!
@@ -103,7 +104,7 @@ namespace tfel::math {
      */
     template <typename ValueType2>
     constexpr std::enable_if_t<
-        isAssignableTo<ValueType2, typename ArrayPolicy::value_type>(),
+        isAssignableTo<ValueType2, typename ArrayPolicyType::value_type>(),
         void>
     fill(const ValueType2&);
 
@@ -139,10 +140,11 @@ namespace tfel::math {
      */
     template <typename ValueType2>
     constexpr std::enable_if_t<
-        isAssignableTo<BinaryOperationResult<ValueType2,
-                                             typename ArrayPolicy::value_type,
-                                             OpMult>,
-                       typename ArrayPolicy::value_type>(),
+        isAssignableTo<
+            BinaryOperationResult<ValueType2,
+                                  typename ArrayPolicyType::value_type,
+                                  OpMult>,
+            typename ArrayPolicyType::value_type>(),
         void>
     multiplyByScalar(const ValueType2&);
   };

@@ -40,6 +40,7 @@ struct StensorViewTest final : public tfel::tests::TestCase {
     this->test7();
     this->test8();
     this->constexpr_test1();
+    this->constexpr_test2();
     return this->result;
   }  // end of execute
  private:
@@ -52,7 +53,8 @@ struct StensorViewTest final : public tfel::tests::TestCase {
     using namespace tfel::math;
     tvector<12, int> buffer{0};
     auto* const data = buffer.data();
-    static_assert(isMappableInAFixedSizeArray<tvector<2u, stensor<2u, int>>>(),
+    static_assert(isMappableInAFixedSizeArray<tvector<2u, stensor<2u,
+    int>>>(),
                   "not mappable");
     auto s = map_array<tvector<2u, stensor<2u, int>>>(data);
     s[0] = stensor<2u, int>::Id();
@@ -176,7 +178,8 @@ struct StensorViewTest final : public tfel::tests::TestCase {
     this->array = tvector<12, double>{0};
     this->check0();
     auto s1 =
-        map_array<tvector<2u, stensor<2u, double>>, 0, 6>(this->array.data());
+        map_array<tvector<2u, stensor<2u, double>>, 0,
+        6>(this->array.data());
     s1 = values;
     local_check();
     s1 -= values;
@@ -184,13 +187,22 @@ struct StensorViewTest final : public tfel::tests::TestCase {
     s1 += values;
     local_check();
   }
-
+  
   void constexpr_test1() {
     constexpr auto s = StensorViewTest::get();
     TFEL_TESTS_STATIC_ASSERT(s[0] == 2);
     TFEL_TESTS_STATIC_ASSERT(s[1] == 2);
     TFEL_TESTS_STATIC_ASSERT(s[2] == 2);
     TFEL_TESTS_STATIC_ASSERT(s[3] == 0);
+  }
+  void constexpr_test2() {
+    using namespace tfel::math;
+    using ipolicy = stensor<2u, double>::indexing_policy;
+    using base = selectViewArrayBase<stensor<2u, double>, ipolicy>;
+    TFEL_TESTS_STATIC_ASSERT(
+        (std::is_same_v<base, MutableFixedSizeArrayBase<
+                                  View<stensor<2u, double>, ipolicy>,  //
+                                  StandardArrayPolicy<double, ipolicy>>>));
   }
   //! \brief an helper method to check values
   void check0() {

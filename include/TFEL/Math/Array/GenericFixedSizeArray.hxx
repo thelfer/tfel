@@ -162,11 +162,11 @@ namespace tfel::math {
     using MutableFixedSizeArrayBase<
         GenericFixedSizeArray<Child, ArrayPolicy, N>,
         ArrayPolicy>::operator=;
-
-    // /*!
-    //  * \brief assign values values from an other array
-    //  * \param[in] src: array to be assigned
-    //  */
+    //
+    /*!
+     * \brief assign values values from an other array
+     * \param[in] src: array to be assigned
+     */
     template <typename OtherArray>
     constexpr std::enable_if_t<isAssignableTo<OtherArray, Child>(), Child&>
     operator=(const OtherArray&) noexcept;

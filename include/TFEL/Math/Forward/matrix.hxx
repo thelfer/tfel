@@ -32,8 +32,7 @@ namespace tfel::math {
    * \see MathObjectTraits.
    */
   template <typename T>
-  struct MathObjectTraits<matrix<T>>
-      : MathObjectTraitsBase<T, typename tfel::math::vector<T>::size_type> {
+  struct MathObjectTraits<matrix<T>> : MathObjectTraitsBase<T, std::size_t> {
     //! brief a `matrix` is not related to the space dimension
     static constexpr unsigned short dime = 0;
   };

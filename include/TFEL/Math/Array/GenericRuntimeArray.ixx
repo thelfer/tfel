@@ -146,7 +146,7 @@ namespace tfel::math {
     auto& child = static_cast<Child&>(*this);
     //     checkIndexingPoliciesRuntimeCompatiblity(child.getIndexingPolicy(),
     //                                              src.getIndexingPolicy());
-    child.SubstractAndAssign(src);
+    child.substractAndAssign(src);
     return child;
   }  // end of GenericRuntimeArray<Child, ArrayPolicy>
 
@@ -174,6 +174,23 @@ namespace tfel::math {
     static_cast<typename ArrayPolicy::IndexingPolicy&>(*this) = p;
     this->data_values.resize(this->getUnderlyingArrayMinimalSize());
   }
+
+  template <typename Child, typename ArrayPolicy>
+  bool GenericRuntimeArray<Child, ArrayPolicy>::empty() const {
+    return this->data_values.empty();
+  }  // end of empty
+
+  template <typename Child, typename ArrayPolicy>
+  void GenericRuntimeArray<Child, ArrayPolicy>::clear() {
+    this->data_values.clear();
+    static_cast<typename ArrayPolicy::IndexingPolicy&>(*this) =
+        typename ArrayPolicy::IndexingPolicy{};
+  }  // end of clear
+
+  template <typename Child, typename ArrayPolicy>
+  void GenericRuntimeArray<Child, ArrayPolicy>::shrink_to_fit() {
+    this->data_values.shrink_to_fit();
+  }  // end of shrink_to_fit
 
 }  // end of namespace tfel::math
 

@@ -18,21 +18,21 @@
 
 namespace tfel::math {
 
-  template <typename Child, typename ArrayPolicy>
-  constexpr typename ArrayPolicy::IndexingPolicy&
-  MutableFixedSizeArrayBase<Child, ArrayPolicy>::getIndexingPolicy() const {
-    return *this;
+  template <typename Child, typename ArrayPolicyType>
+  constexpr auto&
+  MutableFixedSizeArrayBase<Child, ArrayPolicyType>::getIndexingPolicy() const {
+    return static_cast<const typename ArrayPolicyType::IndexingPolicy&>(*this);
   }  // end of getIndexingPolicy
 
-  template <typename Child, typename ArrayPolicy>
+  template <typename Child, typename ArrayPolicyType>
   template <typename Functor>
-  constexpr void MutableFixedSizeArrayBase<Child, ArrayPolicy>::iterate(
+  constexpr void MutableFixedSizeArrayBase<Child, ArrayPolicyType>::iterate(
       const Functor& f) {
     constexpr auto g = [](const typename Child::size_type i) {
-      typename ArrayPolicy::IndexingPolicy p;
+      typename ArrayPolicyType::IndexingPolicy p;
       return p.size(i);
     };
-    if constexpr (ArrayPolicy::IndexingPolicy::unRollLoop) {
+    if constexpr (ArrayPolicyType::IndexingPolicy::unRollLoop) {
       IterateOverMultipleIndices<typename Child::size_type, 0, Child::arity,
                                  true>::exe(f, g);
     } else {

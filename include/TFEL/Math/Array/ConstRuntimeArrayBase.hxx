@@ -23,17 +23,17 @@ namespace tfel::math {
   /*!
    * \brief a base class for fixed sized const arrays.
    */
-  template <typename Child, typename ArrayPolicy>
+  template <typename Child, typename ArrayPolicyType>
   struct ConstRuntimeArrayBase
-      : public ArrayPolicy::IndexingPolicy,
-        public ConstArrayCommonMethods<Child, ArrayPolicy>,
-        public ConstArraySTLCompatibilityLayer<Child, ArrayPolicy> {
+      : public ArrayPolicyType::IndexingPolicy,
+        public ConstArrayCommonMethods<Child, ArrayPolicyType>,
+        public ConstArraySTLCompatibilityLayer<Child, ArrayPolicyType> {
     /*!
      * \brief contructor using the indexing policy
      * \param[in] i: indexing policy
      */
     constexpr ConstRuntimeArrayBase(
-        const typename ArrayPolicy::IndexingPolicy&);
+        const typename ArrayPolicyType::IndexingPolicy&);
     //! \brief move constructor
     constexpr ConstRuntimeArrayBase(ConstRuntimeArrayBase&&) = default;
     //! \brief copy constructor
@@ -45,8 +45,7 @@ namespace tfel::math {
     constexpr ConstRuntimeArrayBase& operator=(const ConstRuntimeArrayBase&) =
         default;
     //! \return the current indexing policy
-    constexpr typename ArrayPolicy::IndexingPolicy& getIndexingPolicy()
-        const noexcept;
+    constexpr auto& getIndexingPolicy() const noexcept;
     /*!
      * \brief apply a multi-indices functor
      * \param[in] f: functor

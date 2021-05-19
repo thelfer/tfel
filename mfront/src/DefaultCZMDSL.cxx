@@ -44,16 +44,18 @@ namespace mfront {
     this->mb.addLocalVariable(
         h,
         VariableDescription(
-            "tfel::math::FixedSizeArrayView<tfel::math::tvector<N-1,real>, 1>",
+            "tfel::math::View<tfel::math::tvector<N-1,real>>",
             "Dt_nt", 1u, 0u));
     this->mb.addLocalVariable(
-        h,
-        VariableDescription(
-            "tfel::math::FixedSizeArrayView<tfel::math::tvector<N-1,real>, N>",
-            "Dt_tn", 1u, 0u));
+        h, VariableDescription(
+               "tfel::math::View<tfel::math::tvector<N-1,real>,"
+               "tfel::math::FixedSizeVectorIndexingPolicy<unsigned short, N-1, N>>",
+               "Dt_tn", 1u, 0u));
     this->mb.addLocalVariable(
         h, VariableDescription(
-               "tfel::math::tmatrix_submatrix_view<N,N,1,1,N-1,N-1,real>",
+               "tfel::math::View<tfel::math::tmatrix<N-1, N-1, real>,"
+               "tfel::math::FixedSizeRowMajorMatrixIndexingPolicy<unsigned "
+               "short, N-1, N-1, N>>",
                "Dt_tt", 1u, 0u));
   }
 
@@ -92,13 +94,13 @@ namespace mfront {
     return "u_n(this->u(0)),\n"
            "du_n(this->du(0)),\n"
            "t_n(this->t(0)),\n"
-           "u_t(tfel::math::map<tfel::math::tvector<N-1,real>,1>(this->u)),\n"
-           "du_t(tfel::math::map<tfel::math::tvector<N-1,real>,1>(this->du)),\n"
-           "t_t(tfel::math::map<tfel::math::tvector<N-1,real>,1>(this->t)),\n"
+           "u_t(tfel::math::map<tfel::math::tvector<N-1,real>, 1>(this->u)),\n"
+           "du_t(tfel::math::map<tfel::math::tvector<N-1,real>, 1>(this->du)),\n"
+           "t_t(tfel::math::map<tfel::math::tvector<N-1,real>, 1>(this->t)),\n"
            "Dt_nn(this->Dt(0,0)),\n"
-           "Dt_nt(this->Dt.template row_view<0,1,N-1>()),\n"
-           "Dt_tn(this->Dt.template column_view<0,1, N-1>()),\n"
-           "Dt_tt(this->Dt)";
+           "Dt_nt(this->Dt.template row_view<0, 1, N-1>()),\n"
+           "Dt_tn(this->Dt.template column_view<0, 1, N-1>()),\n"
+           "Dt_tt(this->Dt.template submatrix_view<1, 1, N-1, N-1>())";
   }  // end of DefaultCZMDSL::getLocalVariablesInitializers
 
   DefaultCZMDSL::~DefaultCZMDSL() = default;

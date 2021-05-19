@@ -30,26 +30,6 @@
 
 namespace tfel::math {
 
-  // forward declaration
-  template <unsigned short N,
-            unsigned short M,
-            unsigned short I,
-            unsigned short J,
-            unsigned short R,
-            unsigned short C,
-            typename T>
-  struct tmatrix_submatrix_view;
-
-  // forward declaration
-  template <unsigned short N,
-            unsigned short M,
-            unsigned short I,
-            unsigned short J,
-            unsigned short R,
-            unsigned short C,
-            typename T>
-  struct tmatrix_const_submatrix_view;
-
   /*!
    * \brief a base for tmatrix or classes acting like tmatrix.
    */
@@ -201,7 +181,7 @@ namespace tfel::math {
               unsigned short J,
               unsigned short R,
               unsigned short C>
-    tmatrix_submatrix_view<N, M, I, J, R, C, ValueType> submatrix_view();
+    auto submatrix_view();
     /*!
      * \return a view of a sub matrix of this matrix
      * \param[in] I : submatrix row    starting index
@@ -213,8 +193,7 @@ namespace tfel::math {
               unsigned short J,
               unsigned short R,
               unsigned short C>
-    tmatrix_const_submatrix_view<N, M, I, J, R, C, ValueType> submatrix_view()
-        const;
+    auto submatrix_view() const;
 
     TFEL_MATH_INLINE2
     ValueType max() const;
@@ -251,44 +230,30 @@ namespace tfel::math {
   template <unsigned short N, unsigned short M, typename T>
   using ConstTMatrixView = ConstView<tmatrix<N, M, T>>;
 
-  /*!
-   * \return the row of the matrix with the given number;
-   * \param[in] m: matrix
-   * \param[in] c: row number
-   */
-  template <unsigned short N, unsigned short M, typename T>
-  tvector<M, T> getRow(const tmatrix<N, M, T>& m, const unsigned short);
-  /*!
-   * \return the column of the matrix with the given number;
-   * \param[in] m: matrix
-   * \param[in] c: column number
-   */
-  template <unsigned short N, unsigned short M, typename T>
-  tvector<N, T> getColumn(const tmatrix<N, M, T>& m, const unsigned short);
-
   // Transpose
   template <unsigned short N, unsigned short M, typename T>
   TFEL_MATH_INLINE2 tmatrix<M, N, T> transpose(const tmatrix<N, M, T>&);
 
   template <typename T, typename Operation>
-  TFEL_MATH_INLINE typename ComputeUnaryResult<T, Power<3>>::Result det(
+  TFEL_MATH_INLINE auto det(
       const Expr<tmatrix<2, 2, T>, Operation>&);
 
   template <typename T>
-  TFEL_MATH_INLINE typename ComputeUnaryResult<T, Power<3>>::Result det(
+  TFEL_MATH_INLINE auto det(
       const tmatrix<2, 2, T>&);
 
   template <typename T, typename Operation>
-  TFEL_MATH_INLINE typename ComputeUnaryResult<T, Power<3>>::Result det(
+  TFEL_MATH_INLINE auto det(
       const Expr<tmatrix<3, 3, T>, Operation>&);
 
   template <typename T>
-  TFEL_MATH_INLINE typename ComputeUnaryResult<T, Power<3>>::Result det(
-      const tmatrix<3, 3, T>&);
+  TFEL_MATH_INLINE auto det(const tmatrix<3, 3, T>&);
 
 }  // end of namespace tfel::math
 
 namespace tfel::typetraits {
+
+  //! \brief specialisation of `IsAssignableTo` for tiny matrices
   template <unsigned short N, unsigned short M, typename T2, typename T>
   struct IsAssignableTo<tfel::math::tmatrix<N, M, T2>,
                         tfel::math::tmatrix<N, M, T>> {
@@ -298,8 +263,6 @@ namespace tfel::typetraits {
 
 }  // end of namespace tfel::typetraits
 
-#include "TFEL/Math/Matrix/tmatrix_submatrix_view.hxx"
-#include "TFEL/Math/Matrix/tmatrix_const_submatrix_view.hxx"
 #include "TFEL/Math/Matrix/tmatrix.ixx"
 #include "TFEL/Math/Matrix/tmatrixResultType.hxx"
 

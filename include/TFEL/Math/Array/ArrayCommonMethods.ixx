@@ -18,86 +18,90 @@
 
 namespace tfel::math {
 
-  template <typename Child, typename ArrayPolicy>
-  constexpr typename ArrayPolicy::const_reference
-      ConstArrayCommonMethods<Child, ArrayPolicy>::operator[](
-          const typename ArrayPolicy::IndexingPolicy::size_type i) const
+  template <typename Child, typename ArrayPolicyType>
+  constexpr typename ArrayPolicyType::const_reference
+      ConstArrayCommonMethods<Child, ArrayPolicyType>::operator[](
+          const typename ArrayPolicyType::IndexingPolicy::size_type i) const
       noexcept {
-    static_assert(ArrayPolicy::IndexingPolicy::arity == 1u, "invalid call");
+    static_assert(ArrayPolicyType::IndexingPolicy::arity == 1u, "invalid call");
     const auto& child = static_cast<const Child&>(*this);
     const auto* const d = child.data();
     return d[child.getIndex(i)];
   }  // end of operator[]
 
-  template <typename Child, typename ArrayPolicy>
+  template <typename Child, typename ArrayPolicyType>
   template <typename... Indices>
-  constexpr typename ArrayPolicy::const_reference
-  ConstArrayCommonMethods<Child, ArrayPolicy>::operator()(
+  constexpr typename ArrayPolicyType::const_reference
+  ConstArrayCommonMethods<Child, ArrayPolicyType>::operator()(
       const Indices... i) const noexcept {
-    checkIndicesValiditity<typename ArrayPolicy::IndexingPolicy, Indices...>();
+    checkIndicesValiditity<typename ArrayPolicyType::IndexingPolicy,
+                           Indices...>();
     const auto& child = static_cast<const Child&>(*this);
     const auto* const d = child.data();
     return d[child.getIndex(i...)];
   }  // end of operator[]
 
-  template <typename Child, typename ArrayPolicy>
-  constexpr typename ArrayPolicy::reference
-      MutableArrayCommonMethods<Child, ArrayPolicy>::operator[](
-          const typename ArrayPolicy::IndexingPolicy::size_type i) noexcept {
-    static_assert(ArrayPolicy::IndexingPolicy::arity == 1u, "invalid call");
+  template <typename Child, typename ArrayPolicyType>
+  constexpr typename ArrayPolicyType::reference
+      MutableArrayCommonMethods<Child, ArrayPolicyType>::operator[](
+          const typename ArrayPolicyType::IndexingPolicy::size_type
+              i) noexcept {
+    static_assert(ArrayPolicyType::IndexingPolicy::arity == 1u, "invalid call");
     auto& child = static_cast<Child&>(*this);
     auto* const d = child.data();
     return d[child.getIndex(i)];
   }  // end of operator[]
 
-  template <typename Child, typename ArrayPolicy>
+  template <typename Child, typename ArrayPolicyType>
   template <typename... Indices>
-  constexpr typename ArrayPolicy::reference
-  MutableArrayCommonMethods<Child, ArrayPolicy>::operator()(
+  constexpr typename ArrayPolicyType::reference
+  MutableArrayCommonMethods<Child, ArrayPolicyType>::operator()(
       const Indices... i) noexcept {
-    checkIndicesValiditity<typename ArrayPolicy::IndexingPolicy, Indices...>();
+    checkIndicesValiditity<typename ArrayPolicyType::IndexingPolicy,
+                           Indices...>();
     auto& child = static_cast<Child&>(*this);
     auto* const d = child.data();
     return d[child.getIndex(i...)];
   }
 
-  template <typename Child, typename ArrayPolicy>
+  template <typename Child, typename ArrayPolicyType>
   template <typename OtherArray>
-  constexpr void MutableArrayCommonMethods<Child, ArrayPolicy>::assign(
+  constexpr void MutableArrayCommonMethods<Child, ArrayPolicyType>::assign(
       const OtherArray& src) noexcept {
     auto& child = static_cast<Child&>(*this);
     const auto f = makeMultiIndicesBinaryOperatorFunctor(
         [](auto& a, const auto& b) { a = b; }, child, src);
     child.iterate(f);
-  }  // end of MutableArrayCommonMethods<Child, ArrayPolicy>
+  }  // end of MutableArrayCommonMethods<Child, ArrayPolicyType>
 
-  template <typename Child, typename ArrayPolicy>
+  template <typename Child, typename ArrayPolicyType>
   template <typename OtherArray>
-  constexpr void MutableArrayCommonMethods<Child, ArrayPolicy>::addAndAssign(
+  constexpr void
+  MutableArrayCommonMethods<Child, ArrayPolicyType>::addAndAssign(
       const OtherArray& src) noexcept {
     auto& child = static_cast<Child&>(*this);
     const auto f = makeMultiIndicesBinaryOperatorFunctor(
         [](auto& a, const auto& b) { a += b; }, child, src);
     child.iterate(f);
-  }  // end of MutableArrayCommonMethods<Child, ArrayPolicy>
+  }  // end of MutableArrayCommonMethods<Child, ArrayPolicyType>
 
-  template <typename Child, typename ArrayPolicy>
+  template <typename Child, typename ArrayPolicyType>
   template <typename OtherArray>
   constexpr void
-  MutableArrayCommonMethods<Child, ArrayPolicy>::substractAndAssign(
+  MutableArrayCommonMethods<Child, ArrayPolicyType>::substractAndAssign(
       const OtherArray& src) noexcept {
     auto& child = static_cast<Child&>(*this);
     const auto f = makeMultiIndicesBinaryOperatorFunctor(
         [](auto& a, const auto& b) { a -= b; }, child, src);
     child.iterate(f);
-  }  // end of MutableArrayCommonMethods<Child, ArrayPolicy>
+  }  // end of MutableArrayCommonMethods<Child, ArrayPolicyType>
 
-  template <typename Child, typename ArrayPolicy>
+  template <typename Child, typename ArrayPolicyType>
   template <typename ValueType>
   constexpr std::enable_if_t<
-      isAssignableTo<ValueType, typename ArrayPolicy::value_type>(),
+      isAssignableTo<ValueType, typename ArrayPolicyType::value_type>(),
       Child&>
-  MutableArrayCommonMethods<Child, ArrayPolicy>::operator=(
+  MutableArrayCommonMethods<Child, ArrayPolicyType>::operator=(
       const std::initializer_list<ValueType>& values) noexcept {
     auto& child = static_cast<Child&>(*this);
     if (values.size() != child.size()) {
@@ -110,15 +114,16 @@ namespace tfel::math {
     return child;
   }  // end of operator=
 
-  template <typename Child, typename ArrayPolicy>
+  template <typename Child, typename ArrayPolicyType>
   template <typename ImportIndexingPolicy, typename InputIterator>
-  constexpr void MutableArrayCommonMethods<Child, ArrayPolicy>::import(
+  constexpr void MutableArrayCommonMethods<Child, ArrayPolicyType>::import(
       const ImportIndexingPolicy& policy,
       const InputIterator p,
       const InputIterator pe) {
     auto& child = static_cast<Child&>(*this);
     const auto rsize =
-        static_cast<typename ArrayPolicy::IndexingPolicy::size_type>(pe - p);
+        static_cast<typename ArrayPolicyType::IndexingPolicy::size_type>(pe -
+                                                                         p);
     if (child.size() != rsize) {
       tfel::reportContractViolation(
           "MutableArrayCommonMethods::import: invalid sequence size");
@@ -131,27 +136,27 @@ namespace tfel::math {
     child.iterate(f);
   }  // end of import
 
-  template <typename Child, typename ArrayPolicy>
+  template <typename Child, typename ArrayPolicyType>
   template <typename ValueType2>
   constexpr std::enable_if_t<
-      isAssignableTo<ValueType2, typename ArrayPolicy::value_type>(),
+      isAssignableTo<ValueType2, typename ArrayPolicyType::value_type>(),
       void>
-  MutableArrayCommonMethods<Child, ArrayPolicy>::fill(const ValueType2& v) {
+  MutableArrayCommonMethods<Child, ArrayPolicyType>::fill(const ValueType2& v) {
     const auto f =
         makeMultiIndicesUnaryOperatorFunctor([v](auto& a) { a = v; }, *this);
     auto& child = static_cast<Child&>(*this);
     child.iterate(f);
   }  // end of fill
 
-  template <typename Child, typename ArrayPolicy>
+  template <typename Child, typename ArrayPolicyType>
   template <typename ValueType2>
   constexpr std::enable_if_t<
       isAssignableTo<BinaryOperationResult<ValueType2,
-                                           typename ArrayPolicy::value_type,
+                                           typename ArrayPolicyType::value_type,
                                            OpMult>,
-                     typename ArrayPolicy::value_type>(),
+                     typename ArrayPolicyType::value_type>(),
       void>
-  MutableArrayCommonMethods<Child, ArrayPolicy>::multiplyByScalar(
+  MutableArrayCommonMethods<Child, ArrayPolicyType>::multiplyByScalar(
       const ValueType2& s) {
     const auto f =
         makeMultiIndicesUnaryOperatorFunctor([s](auto& a) { a *= s; }, *this);

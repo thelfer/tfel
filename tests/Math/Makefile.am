@@ -13,6 +13,7 @@ test_PROGRAMS = IndexingPoliciesTest             \
         hill                                     \
 		promote                                  \
 		derivative_type                          \
+		derivative_view                          \
 		power                                    \
 		qt                                       \
 		qt2                                      \
@@ -91,6 +92,7 @@ IndexingPoliciesTest_SOURCES  = IndexingPoliciesTest.cxx
 power_SOURCES                 = power.cxx
 promote_SOURCES               = promote.cxx
 derivative_type_SOURCES       = derivative_type.cxx
+derivative_view_SOURCES       = derivative_view.cxx
 qt_SOURCES                    = qt.cxx
 qt2_SOURCES                   = qt2.cxx
 qt3_SOURCES                   = qt3.cxx

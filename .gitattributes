@@ -1899,10 +1899,6 @@ include/TFEL/Math/Matrix/matrix.ixx -text
 include/TFEL/Math/Matrix/tmatrix.ixx -text
 include/TFEL/Math/Matrix/tmatrixIO.hxx -text
 include/TFEL/Math/Matrix/tmatrixResultType.hxx -text
-include/TFEL/Math/Matrix/tmatrix_const_submatrix_view.hxx -text
-include/TFEL/Math/Matrix/tmatrix_const_submatrix_view.ixx -text
-include/TFEL/Math/Matrix/tmatrix_submatrix_view.hxx -text
-include/TFEL/Math/Matrix/tmatrix_submatrix_view.ixx -text
 include/TFEL/Math/Newton-Raphson/ScalarNewtonRaphson.ixx -text
 include/TFEL/Math/Newton-Raphson/TinyNewtonRaphson.ixx -text
 include/TFEL/Math/Parser/BinaryFunction.hxx -text
@@ -7282,6 +7278,7 @@ tests/Math/cadna/cadna.cxx -text
 tests/Math/cadna/stensor_eigenvalues.cxx -text
 tests/Math/conj.cxx -text
 tests/Math/derivative_type.cxx -text
+tests/Math/derivative_view.cxx -text
 tests/Math/discretization1D.cxx -text
 tests/Math/fsarray.cxx -text
 tests/Math/hill.cxx -text

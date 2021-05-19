@@ -15,150 +15,89 @@
 #define LIB_TFEL_MATH_VECTOR_IXX
 
 #include <cassert>
+#include <algorithm>
 
 namespace tfel::math {
 
-  template <typename T>
-  vector<T>::vector(const typename vector<T>::size_type s)
-      : std::vector<T>(s) {}
+  //!
+  template <typename ValueType>
+  vector<ValueType>::vector(const typename vector::size_type s,
+                            const ValueType& v) {
+    this->resize(s, v);
+  } // end of vector
 
-  template <typename T>
-  vector<T>::vector(const std::initializer_list<T>& v) : std::vector<T>(v) {}
-
-  template <typename T>
-  vector<T>::vector(const typename vector<T>::size_type s, const T& v)
-      : std::vector<T>(s, v) {}
-
-  template <typename T>
+  template <typename ValueType>
   template <typename InputIterator>
-  vector<T>::vector(const InputIterator b, const InputIterator e)
-      : std::vector<T>(b, e) {}
-
-  template <typename T>
-  vector<T>& vector<T>::operator=(const vector<T>& src) {
-#ifndef NO_RUNTIME_CHECK_BOUNDS
-    RunTimeCheck<RunTimeProperties>::exe(this->size(), src.size());
-#endif /* LIB_TFEL_VECTORIXX */
-    std::vector<T>::operator=(src);
-    return *this;
+  vector<ValueType>::vector(const InputIterator b, const InputIterator e) {
+    this->insert(this->begin(), b, e);
   }
 
-  template <typename T>
-  vector<T>& vector<T>::operator+=(const vector<T>& src) {
-    size_type i;
-#ifndef NO_RUNTIME_CHECK_BOUNDS
-    RunTimeCheck<RunTimeProperties>::exe(this->size(), src.size());
-#endif /* LIB_TFEL_VECTORIXX */
-    for (i = 0; i < this->size(); ++i) {
-      std::vector<T>::operator[](i) += src(i);
-    }
-    return *this;
-  }
-
-  template <typename T>
-  vector<T>& vector<T>::operator-=(const vector<T>& src) {
-    size_type i;
-#ifndef NO_RUNTIME_CHECK_BOUNDS
-    RunTimeCheck<RunTimeProperties>::exe(this->size(), src.size());
-#endif /* LIB_TFEL_VECTORIXX */
-    for (i = 0; i < this->size(); ++i) {
-      std::vector<T>::operator[](i) -= src(i);
-    }
-    return *this;
-  }
-
-  template <typename T>
-  const typename vector<T>::RunTimeProperties vector<T>::getRunTimeProperties()
-      const {
-    return std::vector<T>::size();
-  }
-
-  template <typename T>
-  T& vector<T>::operator()(const typename vector<T>::size_type i) noexcept {
-#ifndef NO_RUNTIME_CHECK_BOUNDS
-    assert(i < this->size());
-#endif /* LIB_TFEL_VECTORIXX */
-    return std::vector<T>::operator[](i);
-  }
-
-  template <typename T>
-  const T& vector<T>::operator()(const typename vector<T>::size_type i) const
-      noexcept {
-    return std::vector<T>::operator[](i);
-  }
-
-  template <typename T>
-  template <typename T2, typename Operation>
-  std::enable_if_t<isAssignableTo<T2, T>(), vector<T>&> vector<T>::operator=(
-      const Expr<vector<T2>, Operation>& expr) {
-#ifndef NO_RUNTIME_CHECK_BOUNDS
-//      RunTimeCheck<RunTimeProperties>::exe(this->getRunTimeProperties(),expr.getRunTimeProperties());
-#endif /* LIB_TFEL_VECTORIXX */
-    size_type s = this->size();
-    for (size_type i = 0; i != s; ++i) {
-      std::vector<T>::operator[](i) = expr(i);
-    }
-    return *this;
-  }
-
-  template <typename T>
-  template <typename T2, typename Operation>
-  std::enable_if_t<isAssignableTo<T2, T>(), vector<T>&> vector<T>::operator+=(
-      const Expr<vector<T2>, Operation>& expr) {
-#ifndef NO_RUNTIME_CHECK_BOUNDS
-//      RunTimeCheck<RunTimeProperties>::exe(this->getRunTimeProperties(),expr.getRunTimeProperties());
-#endif /* LIB_TFEL_VECTORIXX */
-    size_type s = this->size();
-    for (size_type i = 0; i != s; ++i) {
-      std::vector<T>::operator[](i) += expr(i);
-    }
-    return *this;
-  }
-
-  template <typename T>
-  template <typename T2, typename Operation>
-  std::enable_if_t<isAssignableTo<T2, T>(), vector<T>&> vector<T>::operator-=(
-      const Expr<vector<T2>, Operation>& expr) {
-#ifndef NO_RUNTIME_CHECK_BOUNDS
-//      RunTimeCheck<RunTimeProperties>::exe(this->getRunTimeProperties(),expr.getRunTimeProperties());
-#endif /* LIB_TFEL_VECTORIXX */
-    size_type s = this->size();
-    for (size_type i = 0; i != s; ++i) {
-      std::vector<T>::operator[](i) -= expr(i);
-    }
-    return *this;
-  }
-
-  template <typename T>
+  template <typename ValueType>
   template <typename InputIterator>
-  void vector<T>::copy(const InputIterator b, const InputIterator e) {
+  void vector<ValueType>::copy(const InputIterator b, const InputIterator e) {
     std::copy(b, e, this->v);
   }
 
-  template <typename T>
-  void vector<T>::swap(vector<T>& a) {
-#ifndef NO_RUNTIME_CHECK_BOUNDS
-    RunTimeCheck<RunTimeProperties>::exe(this->size(), a.size());
-#endif /* LIB_TFEL_VECTORIXX */
-    std::vector<T>::swap(a);
+  //   template <typename T>
+  //   void vector<T>::swap(vector<T>& a) {
+  // #ifndef NO_RUNTIME_CHECK_BOUNDS
+  //     RunTimeCheck<RunTimeProperties>::exe(this->size(), a.size());
+  // #endif /* LIB_TFEL_VECTORIXX */
+  //     std::vector<T>::swap(a);
+  //   }
+
+  template <typename ValueType>
+  void vector<ValueType>::push_back(const ValueType& v) {
+    using IndexingPolicy = typename vector::indexing_policy;
+    this->data_values.push_back(v);
+    static_cast<IndexingPolicy&>(*this) =
+        IndexingPolicy{this->data_values.size()};
+  }  // end of push_back
+
+  template <typename ValueType>
+  void vector<ValueType>::resize(const typename vector::size_type s,
+                                 const ValueType& v) {
+    using IndexingPolicy = typename vector::indexing_policy;
+    this->data_values.resize(s, v);
+    static_cast<IndexingPolicy&>(*this) =
+        IndexingPolicy{this->data_values.size()};
+  }  // end of resize
+
+  template <typename ValueType>
+  template <typename InputIterator>
+  void vector<ValueType>::insert(
+      const typename vector::const_iterator p,
+      const InputIterator b,
+      const InputIterator e) {
+    using IndexingPolicy = typename vector::indexing_policy;
+    const auto pos = p - this->begin();
+    this->data_values.insert(this->data_values.begin() + pos, b, e);
+    static_cast<IndexingPolicy&>(*this) =
+        IndexingPolicy{this->data_values.size()};
   }
 
-  template <typename T>
-  vector<T>::~vector() noexcept {}
+  template <typename ValueType>
+  void vector<ValueType>::swap(vector<ValueType>& v) {
+    using IndexingPolicy = typename vector::indexing_policy;
+    this->data_values.swap(v.data_values);
+    static_cast<IndexingPolicy&>(*this) =
+        IndexingPolicy{this->data_values.size()};
+    static_cast<IndexingPolicy&>(v) = IndexingPolicy{v.data_values.size()};
+  } // end of swap
 
-  template <typename T>
-  TFEL_MATH_INLINE2
-      std::enable_if_t<isScalar<T>(),
-                       typename tfel::typetraits::RealPartType<T>::type>
-      norm(const vector<T>& vec) {
-    T n(0);
-    typename vector<T>::size_type i;
-    for (i = 0; i != vec.size(); ++i) {
-      const T v = vec(i);
+  template <typename ValueType>
+  vector<ValueType>::~vector() noexcept = default;
+
+  template <typename ValueType>
+  std::enable_if_t<isScalar<ValueType>(),
+                   typename tfel::typetraits::RealPartType<ValueType>::type>
+  norm(const vector<ValueType>& vec) {
+    auto n = ValueType{} * ValueType{};
+    for (const auto& v : vec) {
       n += v * v;
     }
     return std::sqrt(real(n));
-  }
+  }  // end of norm
 
 }  // end of namespace tfel::math
 

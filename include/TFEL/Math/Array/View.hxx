@@ -19,6 +19,7 @@
 #include "TFEL/Math/General/MathObjectTraits.hxx"
 #include "TFEL/Math/General/ConceptRebind.hxx"
 #include "TFEL/Math/ExpressionTemplates/Expr.hxx"
+#include "TFEL/Math/Array/IndexingPolicies.hxx"
 #include "TFEL/Math/Array/MutableFixedSizeArrayBase.hxx"
 #include "TFEL/Math/Array/MutableRuntimeArrayBase.hxx"
 #include "TFEL/Math/Array/ConstFixedSizeArrayBase.hxx"
@@ -27,43 +28,51 @@
 namespace tfel::math {
 
   // forward declaration
-  template <typename MappedType>
+  template <typename MappedType,
+            typename IndexingPolicyType =
+                typename std::remove_cv_t<MappedType>::indexing_policy>
   struct View;
 
   //! \brief a simple alias
-  template <typename MappedType>
+  template <typename MappedType, typename IndexingPolicyType>
   using selectViewArrayBase = std::conditional_t<
       std::is_const_v<MappedType>,
-      std::conditional_t<MappedType::indexing_policy::hasFixedSizes,
-                         ConstFixedSizeArrayBase<View<MappedType>,
-                                                 typename std::remove_cv_t<
-                                                     MappedType>::array_policy>,
-                         ConstRuntimeArrayBase<View<MappedType>,
-                                               typename std::remove_cv_t<
-                                                   MappedType>::array_policy>>,
       std::conditional_t<
-          MappedType::indexing_policy::hasFixedSizes,
+          IndexingPolicyType::hasFixedSizes,
+          ConstFixedSizeArrayBase<View<MappedType, IndexingPolicyType>,
+                                  StandardArrayPolicy<numeric_type<MappedType>,
+                                                      IndexingPolicyType>>,
+          ConstRuntimeArrayBase<View<MappedType, IndexingPolicyType>,
+                                StandardArrayPolicy<numeric_type<MappedType>,
+                                                    IndexingPolicyType>>>,
+      std::conditional_t<
+          IndexingPolicyType::hasFixedSizes,
           MutableFixedSizeArrayBase<
-              View<MappedType>,
-              typename std::remove_cv_t<MappedType>::array_policy>,
-          MutableRuntimeArrayBase<
-              View<MappedType>,
-              typename std::remove_cv_t<MappedType>::array_policy>>>;
+              View<MappedType, IndexingPolicyType>,
+              StandardArrayPolicy<numeric_type<MappedType>,
+                                  IndexingPolicyType>>,
+          MutableRuntimeArrayBase<View<MappedType, IndexingPolicyType>,
+                                  StandardArrayPolicy<numeric_type<MappedType>,
+                                                      IndexingPolicyType>>>>;
 
   /*!
    * \brief view of an object from a continuous memory area
    * \tparam MappedType: type of the object mapped to the memory area
    */
-  template <typename MappedType>
+  template <typename MappedType, typename IndexingPolicyType>
   struct View : ConceptRebind<typename ComputeObjectTag<MappedType>::type,
-                              View<MappedType>>::type,
-                selectViewArrayBase<MappedType> {
+                              View<MappedType, IndexingPolicyType>>::type,
+                selectViewArrayBase<MappedType, IndexingPolicyType> {
+    //
+    static_assert(
+        checkIndexingPoliciesCompatiblity<typename MappedType::indexing_policy,
+                                          IndexingPolicyType>(),
+        "the indexing policy of the view is not compatible with the "
+        "indexing policy of the mapped type");
     //
     static constexpr bool is_const = std::is_const_v<MappedType>;
     //! \brief a simple alias
     using RawMappedType = std::remove_cv_t<MappedType>;
-    //! \brief a simple alias
-    using IndexingPolicy = typename RawMappedType::indexing_policy;
     //
     using data_pointer_type =
         std::conditional_t<is_const,
@@ -72,7 +81,7 @@ namespace tfel::math {
     //
     using const_data_pointer_type = const numeric_type<MappedType>*;
     //
-    static constexpr auto hasFixedSizes = IndexingPolicy::hasFixedSizes;
+    static constexpr auto hasFixedSizes = IndexingPolicyType::hasFixedSizes;
     //
 
     //! \brief default constructor
@@ -81,8 +90,10 @@ namespace tfel::math {
       static_assert(hasFixedSizes, "invalid constructor call");
     }  // end of View
     //! \brief default constructor
-    constexpr View(const IndexingPolicy& i, const data_pointer_type p) noexcept
-        : selectViewArrayBase<MappedType>(i), data_pointer(p) {
+    constexpr View(const IndexingPolicyType& i,
+                   const data_pointer_type p) noexcept
+        : selectViewArrayBase<MappedType, IndexingPolicyType>(i),
+          data_pointer(p) {
       static_assert(!hasFixedSizes, "invalid constructor call");
     }  // end of View
     //! \brief copy constructor
@@ -106,9 +117,9 @@ namespace tfel::math {
       return *this;
     }
     // exposing MutableFixedSizeArrayBase' assignement operators
-    using selectViewArrayBase<MappedType>::operator=;
-    using selectViewArrayBase<MappedType>::operator[];
-    using selectViewArrayBase<MappedType>::operator();
+    using selectViewArrayBase<MappedType, IndexingPolicyType>::operator=;
+    using selectViewArrayBase<MappedType, IndexingPolicyType>::operator[];
+    using selectViewArrayBase<MappedType, IndexingPolicyType>::operator();
     //! \return a pointer to the underlying array serving as element storage.
     constexpr data_pointer_type data() noexcept {
       static_assert(!is_const, "invalid call");
@@ -162,19 +173,20 @@ namespace tfel::math {
         View&>
     operator*=(const ValueType2& s) noexcept {
       static_assert(!is_const, "invalid call");
-      selectViewArrayBase<MappedType>::multiplyByScalar(s);
+      selectViewArrayBase<MappedType, IndexingPolicyType>::multiplyByScalar(s);
       return *this;
     }  // end of operator*=
        //
     template <typename ValueType2>
     constexpr std::enable_if_t<
         isAssignableTo<
-            BinaryOperationResult<numeric_type<MappedType>,ValueType2, OpDiv>,
+            BinaryOperationResult<numeric_type<MappedType>, ValueType2, OpDiv>,
             numeric_type<MappedType>>(),
         View&>
     operator/=(const ValueType2& s) noexcept {
       static_assert(!is_const, "invalid call");
-      selectViewArrayBase<MappedType>::multiplyByScalar(1 / s);
+      selectViewArrayBase<MappedType, IndexingPolicyType>::multiplyByScalar(1 /
+                                                                            s);
       return *this;
     }  // end of operator/=
 
@@ -190,8 +202,8 @@ namespace tfel::math {
    * \brief partial specialisation of the `MathObjectTraits` for const views
    * \tparam MappedType: mapped type
    */
-  template <typename MappedType>
-  struct MathObjectTraits<View<MappedType>>
+  template <typename MappedType, typename ArrayPolicy>
+  struct MathObjectTraits<View<MappedType, ArrayPolicy>>
       : public MathObjectTraits<std::remove_cv_t<MappedType>> {
   };  // end of struct MathObjectTraits
 
@@ -200,8 +212,8 @@ namespace tfel::math {
    * views.
    * \tparam MappedType: mapped type
    */
-  template <typename MappedType>
-  struct ResultOfEvaluation<View<MappedType>> {
+  template <typename MappedType, typename ArrayPolicy>
+  struct ResultOfEvaluation<View<MappedType, ArrayPolicy>> {
     //! \brief result of the metafunction
     using type = std::remove_cv_t<MappedType>;
   };  // end of struct ResultOfEvaluation
@@ -211,20 +223,23 @@ namespace tfel::math {
    * \tparam MappedType: object mapped
    * \param[in] p: pointer to the mapped memory area
    */
-  template <typename MappedType>
-  constexpr std::enable_if_t<((!std::is_const_v<MappedType>)&&(
-                                 MappedType::indexing_policy::hasFixedSizes)),
-                             View<MappedType>>
+  template <typename MappedType,
+            typename IndexingPolicyType = typename MappedType::indexing_policy>
+  constexpr std::enable_if_t<
+      ((!std::is_const_v<MappedType>)&&(IndexingPolicyType::hasFixedSizes)),
+      View<MappedType, IndexingPolicyType>>
   map(numeric_type<MappedType>* const p) {
-    return View<MappedType>{p};
+    return View<MappedType, IndexingPolicyType>{p};
   }  // end of map
 
-  template <typename MappedType>
+  template <typename MappedType,
+            typename IndexingPolicyType =
+                typename std::remove_cv_t<MappedType>::indexing_policy>
   constexpr std::enable_if_t<
       std::remove_cv_t<MappedType>::indexing_policy::hasFixedSizes,
-      View<const MappedType>>
+      View<const MappedType, IndexingPolicyType>>
   map(const numeric_type<MappedType>* const p) {
-    return View<const MappedType>{p};
+    return View<const MappedType, IndexingPolicyType>{p};
   }  // end of map
 
   /*!
@@ -251,39 +266,50 @@ namespace tfel::math {
     return std::is_convertible_v<const last_type, const value_type* const>;
   }
 
-  /*!
-   * \brief return a view from a memory area
-   */
-  template <typename MappedType, typename... Args>
+  //! \brief return a view from a memory area
+  template <typename MappedType,
+            typename... Args,
+            typename IndexingPolicyType = typename MappedType::indexing_policy>
   constexpr std::enable_if_t<
-      ((!std::is_const_v<MappedType>)&&(
-           !MappedType::indexing_policy::hasFixedSizes) &&
+      ((!std::is_const_v<MappedType>)&&(!IndexingPolicyType::hasFixedSizes) &&
+       (checkIndexingPoliciesCompatiblity<
+           IndexingPolicyType,
+           typename MappedType::indexing_policy>()) &&
        (canMakeViewFromLastArgument<MappedType, Args...>())),
-      View<MappedType>>
+      View<MappedType, IndexingPolicyType>>
   map(Args&&... args) {
     static_assert(sizeof...(Args) >= 2, "invalid call");
-    using IndexingPolicy = typename MappedType::indexing_policy;
     const auto r =
-        buildIndexingPolicyAndExtractPointerToData<IndexingPolicy>(args...);
-    return View<MappedType>{std::get<0>(r), std::get<1>(r)};
+        buildIndexingPolicyAndExtractPointerToData<IndexingPolicyType>(args...);
+    return View<MappedType, IndexingPolicyType>{std::get<0>(r), std::get<1>(r)};
   }  // end of map
 
-  template <typename MappedType, typename... Args>
+  //! \brief return a view from a memory area
+  template <typename MappedType,
+            typename... Args,
+            typename IndexingPolicyType =
+                typename std::remove_cv_t<MappedType>::indexing_policy>
   constexpr std::enable_if_t<
       ((!std::remove_cv_t<MappedType>::indexing_policy::hasFixedSizes) &&
+       (checkIndexingPoliciesCompatiblity<
+           IndexingPolicyType,
+           typename std::remove_cv_t<MappedType>::indexing_policy>()) &&
        (canMakeConstViewFromLastArgument<std::remove_cv_t<MappedType>,
                                          Args...>())),
-      View<const MappedType>>
+      View<const MappedType, IndexingPolicyType>>
   map(const Args&... args) {
     static_assert(sizeof...(Args) >= 2, "invalid call");
-    using IndexingPolicy = typename MappedType::indexing_policy;
     const auto r =
-        buildIndexingPolicyAndExtractPointerToData<IndexingPolicy>(args...);
-    return View<const MappedType>{std::get<0>(r), std::get<1>(r)};
+        buildIndexingPolicyAndExtractPointerToData<IndexingPolicyType>(args...);
+    return View<const MappedType, IndexingPolicyType>{std::get<0>(r),
+                                                      std::get<1>(r)};
   }  // end of map
 
-  template <typename MappedType>
-  using ConstView = View<const std::remove_cv_t<MappedType>>;
+  template <typename MappedType,
+            typename IndexingPolicyType =
+                typename std::remove_cv_t<MappedType>::indexing_policy>
+  using ConstView =
+      View<const std::remove_cv_t<MappedType>, IndexingPolicyType>;
 
 }  // end of namespace tfel::math
 
@@ -294,8 +320,11 @@ namespace tfel::typetraits {
    * \tparam MathObject: object used to create the view to be assigned.
    * \tparam MathObject2: math object that will be assigned.
    */
-  template <typename MathObject, typename MathObject2>
-  struct IsAssignableTo<tfel::math::View<MathObject>, MathObject2> {
+  template <typename MathObject,
+            typename IndexingPolicyType,
+            typename MathObject2>
+  struct IsAssignableTo<tfel::math::View<MathObject, IndexingPolicyType>,
+                        MathObject2> {
     //! \brief result
     static constexpr bool cond =
         isAssignableTo<std::remove_cv_t<MathObject>, MathObject2>();
@@ -307,8 +336,11 @@ namespace tfel::typetraits {
    * \tparam MathObject2: math object used to create the view that will be
    * assigned.
    */
-  template <typename MathObject, typename MathObject2>
-  struct IsAssignableTo<MathObject, tfel::math::View<MathObject2>> {
+  template <typename MathObject,
+            typename MathObject2,
+            typename IndexingPolicyType2>
+  struct IsAssignableTo<MathObject,
+                        tfel::math::View<MathObject2, IndexingPolicyType2>> {
     //!
     static constexpr bool is_const = std::is_const_v<MathObject2>;
     //! \brief result
@@ -317,10 +349,36 @@ namespace tfel::typetraits {
         isAssignableTo<MathObject, std::remove_cv_t<MathObject2>>();
   };  // end of struct IsAssignableTo
 
+  /*!
+   * \brief generic partial specialisation for a view.
+   * \tparam MathObject: object to be assigned.
+   * \tparam MathObject2: math object used to create the view that will be
+   * assigned.
+   */
+  template <typename MathObject,
+            typename IndexingPolicyType,
+            typename MathObject2,
+            typename IndexingPolicyType2>
+  struct IsAssignableTo<tfel::math::View<MathObject, IndexingPolicyType>,
+                        tfel::math::View<MathObject2, IndexingPolicyType2>> {
+    //!
+    static constexpr bool is_const = std::is_const_v<MathObject2>;
+    //! \brief result
+    static constexpr bool cond =
+        ((!is_const) &&
+         (tfel::math::checkIndexingPoliciesCompatiblity<
+             IndexingPolicyType,
+             IndexingPolicyType2>()) &&
+         (isAssignableTo<MathObject, std::remove_cv_t<MathObject2>>()));
+  };  // end of struct IsAssignableTo
+
   //! \brief specialisation of IsAssignableTo
-  template <typename EvaluationResult, typename Operation, typename MathObject>
+  template <typename EvaluationResult,
+            typename Operation,
+            typename MathObject,
+            typename IndexingPolicyType>
   struct IsAssignableTo<tfel::math::Expr<EvaluationResult, Operation>,
-                        tfel::math::View<MathObject>> {
+                        tfel::math::View<MathObject, IndexingPolicyType>> {
     //!
     static constexpr bool is_const = std::is_const_v<MathObject>;
     //! \brief result

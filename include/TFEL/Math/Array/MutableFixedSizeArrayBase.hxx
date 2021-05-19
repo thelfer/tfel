@@ -24,22 +24,21 @@ namespace tfel::math {
   /*!
    * \brief a base class for mutable fixed size arrays.
    */
-  template <typename Child, typename ArrayPolicy>
+  template <typename Child, typename ArrayPolicyType>
   struct MutableFixedSizeArrayBase
-      : public ArrayPolicy::IndexingPolicy,
-        public MutableArrayCommonMethods<Child, ArrayPolicy>,
-        public MutableArraySTLCompatibilityLayer<Child, ArrayPolicy> {
+      : public ArrayPolicyType::IndexingPolicy,
+        public MutableArrayCommonMethods<Child, ArrayPolicyType>,
+        public MutableArraySTLCompatibilityLayer<Child, ArrayPolicyType> {
     // some checks
-    static_assert(std::is_empty_v<typename ArrayPolicy::IndexingPolicy>);
-    static_assert(hasArrayPolicyFixedSizes<ArrayPolicy>(),
+    static_assert(std::is_empty_v<typename ArrayPolicyType::IndexingPolicy>);
+    static_assert(hasArrayPolicyFixedSizes<ArrayPolicyType>(),
                   "array policy must have fixed sizes");
-    static_assert(getArrayPolicyMinimalDataSize<ArrayPolicy>() != 0,
+    static_assert(getArrayPolicyMinimalDataSize<ArrayPolicyType>() != 0,
                   "invalid minimal container size");
     // exposing MutableArrayCommonMethods assignement operators
-    using MutableArrayCommonMethods<Child, ArrayPolicy>::operator=;
+    using MutableArrayCommonMethods<Child, ArrayPolicyType>::operator=;
     //! \return the current indexing policy
-    constexpr typename ArrayPolicy::IndexingPolicy& getIndexingPolicy()
-        const;
+    constexpr auto& getIndexingPolicy() const;
     /*!
      * \brief apply a multi-indices functor
      * \param[in] f: functor

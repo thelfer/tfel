@@ -99,6 +99,83 @@ namespace tfel::math {
     }  // end of haveTheSameMemoryLayout
   };   // end of struct IndexingPolicyCompatiblityCheck
 
+  /*!
+   * \brief an indexing policy suitable for runtime matrices
+   */
+  struct RuntimeRowMajorMatrixIndexingPolicy {
+    //!
+    static constexpr auto hasFixedSizes = true;
+    //!
+    static constexpr auto areDataContiguous = true;
+    //!
+    static constexpr auto unRollLoop = false;
+    //!
+    using size_type = std::size_t;
+    //!
+    static constexpr size_type arity = 2;
+    //!
+    using RowMajorIndexingPolicy = RuntimeRowMajorMatrixIndexingPolicy;
+    //! \brief constructor
+    constexpr RuntimeRowMajorMatrixIndexingPolicy() : n_rows(0), n_columns(0) {}
+    //! \brief constructor
+    constexpr RuntimeRowMajorMatrixIndexingPolicy(const size_type r,
+                                                  const size_type c)
+        : n_rows(r), n_columns(c) {}
+    //! \brief move constructor
+    constexpr RuntimeRowMajorMatrixIndexingPolicy(RuntimeRowMajorMatrixIndexingPolicy&&) =
+        default;
+    //! \brief copy constructor
+    constexpr RuntimeRowMajorMatrixIndexingPolicy(const RuntimeRowMajorMatrixIndexingPolicy&) =
+        default;
+    //! \brief move constructor
+    constexpr RuntimeRowMajorMatrixIndexingPolicy& operator=(
+        RuntimeRowMajorMatrixIndexingPolicy&&) = default;
+    //! \brief copy constructor
+    constexpr RuntimeRowMajorMatrixIndexingPolicy& operator=(
+        const RuntimeRowMajorMatrixIndexingPolicy&) = default;
+    //!
+    constexpr size_type getIndex(const size_type i, const size_type j) const
+        noexcept {
+      return i * this->n_columns + j;
+    }
+    //! \return the minimal data size
+    constexpr size_type getUnderlyingArrayMinimalSize() const noexcept {
+      return this->size();
+    }
+    //!
+    constexpr RuntimeRowMajorMatrixIndexingPolicy getRowMajorIndexingPolicy() {
+      return RuntimeRowMajorMatrixIndexingPolicy(*this);
+    }  // end of getRowMajorIndexingPolicy
+    //!
+    constexpr size_type size() const noexcept {
+      return this->getNumberOfRows() * this->getNumberOfColumns();
+    }
+    /*!
+     * \return the logical size of the array for the given dimension
+     * \param[in] i: dimension
+     */
+    constexpr size_type size(const size_type i) const noexcept {
+      if (i > 1) {
+        tfel::reportContractViolation(
+            "FixedSizeMatrixIndexingPolicy: "
+            "invalid dimension");
+      }
+      return i == 0 ? this->getNumberOfRows() : this->getNumberOfColumns();
+    }
+    //! \return the number of rows
+    constexpr size_type getNumberOfRows() const noexcept { return this->n_rows; }
+    //! \return the number of cols
+    constexpr size_type getNumberOfColumns() const noexcept {
+      return this->n_columns;
+    }
+
+   private:
+    //! \brief number of rows
+    size_type n_rows;
+    //! \brief number of columns
+    size_type n_columns;
+  };
+
 }  // end of namespace tfel::math
 
 #endif /* LIB_TFEL_MATH_ARRAY_RUNTIMEINDEXINGPOLICIES_HXX */

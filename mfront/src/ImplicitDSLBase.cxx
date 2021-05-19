@@ -1676,11 +1676,6 @@ namespace mfront {
        << "#include\"TFEL/Math/Matrix/tmatrixIO.hxx\"\n"
        << "#include\"TFEL/Math/st2tost2.hxx\"\n"
        << "#include\"TFEL/Math/ST2toST2/ST2toST2ConceptIO.hxx\"\n";
-    // tiny vectors
-    if (has_tvector) {
-      os << "#include\"TFEL/Math/Matrix/tmatrix_submatrix_view.hxx\"\n\n"
-         << "#include\"TFEL/Math/Matrix/tmatrix_submatrix_view.hxx\"\n\n";
-    }
     if ((has_scalar) && (has_tvector)) {
       os << "#include\"TFEL/Math/Vector/"
             "TVectorFromTinyMatrixColumnView.hxx\"\n"

@@ -26,7 +26,7 @@ namespace tfel::math {
    * \date   04/04/2007
    */
   template <typename T>
-  class vector;
+  struct vector;
 
   /*!
    * \brief Partial specialisation for the vector class.
@@ -34,7 +34,7 @@ namespace tfel::math {
    */
   template <typename T>
   struct MathObjectTraits<vector<T>>
-      : MathObjectTraitsBase<T, typename std::vector<T>::size_type> {
+      : MathObjectTraitsBase<T, std::size_t> {
     //! brief a `vector` is not related to the space dimension
     static constexpr unsigned short dime = 0;
   };

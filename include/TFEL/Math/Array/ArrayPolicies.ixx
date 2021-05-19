@@ -16,31 +16,27 @@
 
 namespace tfel::math {
 
-  template <typename ArrayPolicy>
+  template <typename ArrayPolicyType>
   constexpr bool hasArrayPolicyFixedSizes() {
-    return ArrayPolicy::IndexingPolicy::hasFixedSizes;
+    return ArrayPolicyType::IndexingPolicy::hasFixedSizes;
   }  // end of hasArrayPolicyFixedSizes
 
-  template <typename ArrayPolicy>
-  constexpr typename ArrayPolicy::IndexingPolicy::size_type
-  getArrayPolicySize() {
-    static_assert(hasArrayPolicyFixedSizes<ArrayPolicy>(),
+  template <typename ArrayPolicyType>
+  constexpr auto getArrayPolicySize() {
+    static_assert(hasArrayPolicyFixedSizes<ArrayPolicyType>(),
                   "array policy must have fixed sizes");
-    const typename ArrayPolicy::IndexingPolicy p;
+    const typename ArrayPolicyType::IndexingPolicy p;
     return p.size();
   }  // end of getArrayPolicySize
 
-  template <typename ArrayPolicy>
-  constexpr typename ArrayPolicy::IndexingPolicy::size_type
-  getArrayPolicyMinimalDataSize() {
-    static_assert(hasArrayPolicyFixedSizes<ArrayPolicy>(),
+  template <typename ArrayPolicyType>
+  constexpr auto getArrayPolicyMinimalDataSize() {
+    static_assert(hasArrayPolicyFixedSizes<ArrayPolicyType>(),
                   "array policy must have fixed sizes");
-    const typename ArrayPolicy::IndexingPolicy p;
+    const typename ArrayPolicyType::IndexingPolicy p;
     return p.getUnderlyingArrayMinimalSize();
   }  // end of getArrayPolicyMinimalDataSize
 
 }  // end of namespace tfel::math
-
-#include "TFEL/Math/Array/ArrayPolicies.ixx"
 
 #endif /* LIB_TFEL_MATH_ARRAY_ARRAYPOLICIES_HXX */

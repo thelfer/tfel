@@ -21,12 +21,22 @@
 namespace tfel::math {
 
   /*!
-   * \brief a array policy based on the fixed size vector indexing policy
+   * \brief a array policy based on the runtime vector indexing policy
    */
   template <typename ValueType>
   struct RuntimeVectorArrayPolicy : StandardArrayPolicyAliases<ValueType> {
     //! \brief the underlying indexing policy
     using IndexingPolicy = RuntimeVectorIndexingPolicy;
+  };
+
+  /*!
+   * \brief a array policy based on the runtime row-major matrix indexing policy
+   */
+  template <typename ValueType>
+  struct RuntimeRowMajorMatrixArrayPolicy
+      : StandardArrayPolicyAliases<ValueType> {
+    //! \brief the underlying indexing policy
+    using IndexingPolicy = RuntimeRowMajorMatrixIndexingPolicy;
   };
 
 }  // end of namespace tfel::math

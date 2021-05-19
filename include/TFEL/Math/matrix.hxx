@@ -14,232 +14,75 @@
 #ifndef LIB_TFEL_MATH_MATRIX_HXX
 #define LIB_TFEL_MATH_MATRIX_HXX
 
-#include "TFEL/Math/vector.hxx"
-#include "TFEL/Math/Matrix/MatrixConcept.hxx"
+#include <type_traits>
+#include "TFEL/TypeTraits/IsAssignableTo.hxx"
 #include "TFEL/Math/Forward/matrix.hxx"
-
-#ifdef NO_RUNTIME_CHECK_BOUNDS
-#include "TFEL/Math/General/EmptyRunTimeProperties.hxx"
-#endif /* LIB_TFEL_MATH_MATRIX_HXX */
+#include "TFEL/Math/Array/GenericRuntimeArray.hxx"
+#include "TFEL/Math/Matrix/MatrixConcept.hxx"
+#include "TFEL/Math/Matrix/MatrixConceptOperations.hxx"
 
 namespace tfel::math {
 
-  template <typename T>
-  struct MatrixProperties;
-
-  template <typename T>
-  struct TFEL_VISIBILITY_LOCAL MatrixProperties {
-    //! a simple alias
-    using IndexType = index_type<matrix<T>>;
-
-    MatrixProperties(const IndexType, const IndexType);
-
-    MatrixProperties(const MatrixProperties&);
-
-    MatrixProperties& operator=(const MatrixProperties&);
-
-    bool operator==(const MatrixProperties&) const;
-
-    bool operator!=(const MatrixProperties&) const;
-
-   protected:
-    IndexType nb_rows;
-
-    IndexType nb_cols;
-
-  };  // end of MatrixProperties
-
-  template <typename T>
-  struct TFEL_VISIBILITY_LOCAL matrix : protected tfel::math::vector<T>,
-                                        protected MatrixProperties<T>,
-                                        public MatrixConcept<matrix<T>> {
-    //! a simple alias
-    using ConceptTag = typename MatrixConcept<matrix<T>>::ConceptTag;
-//! a simple alias
-#ifdef NO_RUNTIME_CHECK_BOUNDS
-    typedef EmptyRunTimeProperties RunTimeProperties;
-#else  /* NO_RUNTIME_CHECK_BOUNDS */
-    typedef MatrixProperties<T> RunTimeProperties;
-#endif /* LIB_TFEL_MATH_MATRIX_HXX */
-       /*!
-        * type of the matrix's values.
-        * (this i<s a stl requirement).
-        */
-    using typename tfel::math::vector<T>::value_type;
+  /*!
+   * \brief runtime row-major matrices
+   * \tparam ValueType: type of values hold by the matrix
+   */
+  template <typename ValueType>
+  struct matrix : VectorConcept<matrix<ValueType>>,
+                  GenericRuntimeArray<matrix<ValueType>,
+                                      RuntimeRowMajorMatrixArrayPolicy<ValueType>> {
+    //! \brief a simple alias
+    using GenericRuntimeArrayBase =
+        GenericRuntimeArray<matrix,
+                            RuntimeRowMajorMatrixArrayPolicy<ValueType>>;
+    // inheriting constructors
+    TFEL_MATH_RUNTIME_ARRAY_DEFAULT_METHODS(matrix, GenericRuntimeArrayBase);
+    //!
+    matrix(const typename matrix::size_type,
+           const typename matrix::size_type,
+           const ValueType& = ValueType{});
+    // inheriting GenericRuntimeArray' access operators
+    using GenericRuntimeArrayBase::operator();
+    //! \brief resize the matrix
+    void resize(const typename matrix::size_type,
+                const typename matrix::size_type,
+                const ValueType& = ValueType{});
+    //
+    typename matrix::size_type getNbRows() const;
+    //
+    typename matrix::size_type getNbCols() const;
     /*!
-     * type of a pointer to the value contained.
-     * (this is a stl requirement).
+     * \brief swap two matrixs
+     * \param[in,out] the other matrix
      */
-    using typename tfel::math::vector<T>::pointer;
-    /*!
-     * type of a const pointer to the value contained.
-     * (this is a stl requirement).
-     */
-    using typename tfel::math::vector<T>::const_pointer;
-    /*!
-     * type of the matrix's iterator.
-     * (provided for stl compatibility).
-     */
-    using typename tfel::math::vector<T>::iterator;
-    /*!
-     * type of the matrix's const iterator.
-     * (provided for stl compatibility).
-     */
-    using typename tfel::math::vector<T>::const_iterator;
-    /*!
-     * type of the matrix's reverse iterator.
-     * (provided for stl compatibility).
-     */
-    using typename tfel::math::vector<T>::const_reverse_iterator;
-    /*!
-     * type of the matrix's const reverse iterator.
-     * (provided for stl compatibility).
-     */
-    using typename tfel::math::vector<T>::reverse_iterator;
-    /*!
-     * type of a reference to the value contained.
-     * (this is a stl requirement).
-     */
-    using typename tfel::math::vector<T>::reference;
-    /*!
-     * type of a const reference to the value contained.
-     * (this is a stl requirement).
-     */
-    using typename tfel::math::vector<T>::const_reference;
-    /*!
-     * type of the size of the container.
-     * (this is a stl requirement).
-     */
-    typedef typename tfel::math::vector<T>::size_type size_type;
-    /*!
-     * type of the difference between two iterators.
-     * (this is a stl requirement).
-     */
-    using typename tfel::math::vector<T>::difference_type;
-
-    TFEL_MATH_INLINE2
-    matrix();
-
-    TFEL_MATH_INLINE2
-    matrix(const size_type, const size_type);
-
-    TFEL_MATH_INLINE2
-    matrix(const size_type, const size_type, const T&);
-
-    TFEL_MATH_INLINE2
-    matrix(const matrix&);
-
-    /*!
-     * resize the matrix
-     * \param[in] n : number of rows
-     * \param[in] m : number of columns
-     * \param[in] v : values of the newly inserted elements
-     */
-    void resize(const size_type, const size_type, const T& = T());
-
-    /*!
-     * clear the matrix
-     */
-    void clear();
-
-    TFEL_MATH_INLINE T& operator()(const size_type, const size_type);
-
-    TFEL_MATH_INLINE const T& operator()(size_type, size_type) const;
-
-#ifdef NO_RUNTIME_CHECK_BOUNDS
-    TFEL_MATH_INLINE const RunTimeProperties
-#else
-    TFEL_MATH_INLINE const RunTimeProperties&
-#endif /* LIB_TFEL_MATH_MATRIX_HXX */
-    getRunTimeProperties() const;
-
-    /*
-     * return an iterator to the first element of the matrix
-     * (provided for stl compatibility)
-     * \return iterator, an iterator to the first element
-     */
-    using tfel::math::vector<T>::begin;
-
-    /*
-     * return an iterator after the last element of the matrix
-     * (provided for stl compatibility)
-     * \return iterator, an iterator after the last element
-     */
-    using tfel::math::vector<T>::end;
-
-    /*
-     * return an reverse iterator to the last element of the matrix
-     * (provided for stl compatibility)
-     * \return reverse_iterator, a reverse iterator to the last element
-     */
-    using tfel::math::vector<T>::rbegin;
-
-    /*
-     * return an  reverse iterator before the first element of the matrix
-     * (provided for stl compatibility)
-     * \return reverse_iterator, a reverse iterator before the first element
-     */
-    using tfel::math::vector<T>::rend;
-
-    /*
-     * Assignement operator.
-     * \param  const matrix&, the matrix to be copied.
-     * \return matrix&, a reference to itself.
-     */
-    matrix& operator=(const matrix&);
-
-    /*
-     * Assignement operator.
-     * \param  const matrix&, the matrix to be copied.
-     * \return matrix&, a reference to itself.
-     */
-    matrix& operator+=(const matrix&);
-
-    /*
-     * Assignement operator.
-     * \param  const matrix&, the matrix to be copied.
-     * \return matrix&, a reference to itself.
-     */
-    matrix& operator-=(const matrix&);
-
-    /*
-     * Assignement operator
-     * \param const expr : a matrix
-     * expression based on matrix
-     * \return matrix&, a reference to itself.
-     */
-    template <typename T2, typename Operation>
-    TFEL_MATH_INLINE2 std::enable_if_t<isAssignableTo<T2, T>(), matrix<T>&>
-    operator=(const Expr<matrix<T2>, Operation>&);
-
-    /*
-     * Assignement operator
-     * \param const expr : a matrix
-     * expression based on matrix
-     * \return matrix&, a reference to itself.
-     */
-    template <typename T2, typename Operation>
-    TFEL_MATH_INLINE2 std::enable_if_t<isAssignableTo<T2, T>(), matrix<T>&>
-    operator+=(const Expr<matrix<T2>, Operation>&);
-
-    /*
-     * Assignement operator
-     * \param const expr : a matrix
-     * expression based on matrix
-     * \return matrix&, a reference to itself.
-     */
-    template <typename T2, typename Operation>
-    TFEL_MATH_INLINE2 std::enable_if_t<isAssignableTo<T2, T>(), matrix<T>&>
-    operator-=(const Expr<matrix<T2>, Operation>&);
-
     void swap(matrix&);
-
-    TFEL_MATH_INLINE size_type getNbRows() const;
-
-    TFEL_MATH_INLINE size_type getNbCols() const;
+    //     /*!
+    //      * copy all the elements between two iterators at the beginning
+    //      * of the matrix.
+    //      * \param const InputIterator, an iterator to the first element
+    //      * to be copied.
+    //      * \param const InputIterator, an iterator to the first element
+    //      * not to be copied.
+    //      */
+    //     template <typename InputIterator>
+    //     void copy(const InputIterator, const InputIterator);
+    //! \brief destructor
+    ~matrix() noexcept;
   };
 
 }  // end of namespace tfel::math
+
+namespace tfel::typetraits {
+
+  //! \brief partial specialisation for matrices
+  template <typename ValueType, typename ValueType2>
+  struct IsAssignableTo<tfel::math::matrix<ValueType>,
+                        tfel::math::matrix<ValueType2>> {
+    //! \brief result
+    static constexpr bool cond = isAssignableTo<ValueType, ValueType2>();
+  };
+
+}  // end of namespace tfel::typetraits
 
 #include "TFEL/Math/Matrix/matrix.ixx"
 

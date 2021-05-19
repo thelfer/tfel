@@ -16,201 +16,50 @@
 #ifndef LIB_TFEL_MATH_VECTOR_HXX
 #define LIB_TFEL_MATH_VECTOR_HXX
 
-#include <vector>
 #include <type_traits>
 #include "TFEL/TypeTraits/IsAssignableTo.hxx"
 #include "TFEL/Math/Forward/vector.hxx"
+#include "TFEL/Math/Array/GenericRuntimeArray.hxx"
 #include "TFEL/Math/Vector/VectorConcept.hxx"
 #include "TFEL/Math/Vector/VectorConceptOperations.hxx"
 
 namespace tfel::math {
 
-  template <typename T>
-  class TFEL_VISIBILITY_LOCAL vector : public VectorConcept<vector<T>>,
-                                       protected std::vector<T> {
-    //! typedef to the underlying container class.
-    typedef std::vector<T> Container;
-
-   public:
-    /*!
-     * type of the vector's values.
-     * (this i<s a stl requirement).
-     */
-    using typename Container::value_type;
-    /*!
-     * type of a pointer to the value contained.
-     * (this is a stl requirement).
-     */
-    using typename Container::pointer;
-    /*!
-     * type of a const pointer to the value contained.
-     * (this is a stl requirement).
-     */
-    using typename Container::const_pointer;
-    /*!
-     * type of the vector's iterator.
-     * (provided for stl compatibility).
-     */
-    using typename Container::iterator;
-    /*!
-     * type of the vector's const iterator.
-     * (provided for stl compatibility).
-     */
-    using typename Container::const_iterator;
-    /*!
-     * type of the vector's reverse iterator.
-     * (provided for stl compatibility).
-     */
-    using typename Container::const_reverse_iterator;
-    /*!
-     * type of the vector's const reverse iterator.
-     * (provided for stl compatibility).
-     */
-    using typename Container::reverse_iterator;
-    /*!
-     * type of a reference to the value contained.
-     * (this is a stl requirement).
-     */
-    using typename Container::reference;
-    /*!
-     * type of a const reference to the value contained.
-     * (this is a stl requirement).
-     */
-    using typename Container::const_reference;
-    /*!
-     * type of the size of the container.
-     * (this is a stl requirement).
-     */
-    typedef typename Container::size_type size_type;
-    /*!
-     * type of the difference between two iterators.
-     * (this is a stl requirement).
-     */
-    using typename Container::difference_type;
-    /*!
-     * type of the runtime properties of the vector.
-     * (this is a vector concept requirement).
-     */
-    typedef size_type RunTimeProperties;
-
-    //! default constructor
-    vector() = default;
-    //! copy constructor
-    vector(const vector&) = default;
-    //! move constructor
-    vector(vector&&) = default;
-    /*
-     * Constructor
-     * \param size_type size, size of vector
-     */
-    vector(const size_type);
-    /*
-     * Constructor
-     * \param size_type size, size of vector
-     * \param T value, initial value
-     */
-    vector(const size_type, const T&);
-    //! constructor from initializer list
-    vector(const std::initializer_list<T>&);
-    /*!
-     * Constructor from a sequence
-     * \param[in] b: beginning of the sequence
-     * \param[in] e: end of the sequence
-     */
+  template <typename ValueType>
+  struct vector : VectorConcept<vector<ValueType>>,
+                  GenericRuntimeArray<vector<ValueType>,
+                                      RuntimeVectorArrayPolicy<ValueType>> {
+    //! \brief a simple alias
+    using GenericRuntimeArrayBase =
+        GenericRuntimeArray<vector, RuntimeVectorArrayPolicy<ValueType>>;
+    // inheriting constructors
+    TFEL_MATH_RUNTIME_ARRAY_DEFAULT_METHODS(vector, GenericRuntimeArrayBase);
+    //!
+    vector(const typename vector::size_type, const ValueType& = ValueType{});
+    //!
     template <typename InputIterator>
     vector(const InputIterator, const InputIterator);
-
-    using Container::back;
-    using Container::begin;
-    using Container::cbegin;
-    using Container::cend;
-    using Container::clear;
-    using Container::data;
-    using Container::emplace_back;
-    using Container::empty;
-    using Container::end;
-    using Container::front;
-    using Container::insert;
-    using Container::push_back;
-    using Container::rbegin;
-    using Container::rend;
-    using Container::resize;
-    using Container::size;
-    using Container::operator[];
-    //! assignement operator
-    vector& operator=(const vector&);
+    // inheriting GenericRuntimeArray' access operators
+    using GenericRuntimeArrayBase::operator[];
+    using GenericRuntimeArrayBase::operator();
+    //!
+    void push_back(const ValueType&);
+    //
+    using GenericRuntimeArrayBase::resize;
+    //! \brief resize the array
+    void resize(const typename vector::size_type,
+                const ValueType& = ValueType{});
+    //!
+    template <typename InputIterator>
+    void insert(const typename vector::const_iterator,
+                const InputIterator,
+                const InputIterator);
     /*!
-     * Assignement operator.
-     * \param  const vector&, the vector to be copied.
-     * \return vector&, a reference to itself.
-     */
-    vector& operator+=(const vector&);
-    /*!
-     * Assignement operator.
-     * \param  const vector&, the vector to be copied.
-     * \return vector&, a reference to itself.
-     */
-    vector& operator-=(const vector&);
-    /*
-     * Assignement operator
-     * \param const Expr<vector<T2>,Expr>&, a vector
-     * expression based on vector
-     * \return vector&, a reference to itself.
-     */
-    template <typename T2, typename Operation>
-    TFEL_MATH_INLINE2
-        std::enable_if_t<isAssignableTo<T2, T>(),
-                         vector<T>&>
-        operator=(const Expr<vector<T2>, Operation>&);
-    /*
-     * Assignement operator
-     * \param const Expr<vector<T2>,Operation>&, a vector
-     * expression based on vector
-     * \return vector&, a reference to itself.
-     */
-    template <typename T2, typename Operation>
-    TFEL_MATH_INLINE2
-        std::enable_if_t<isAssignableTo<T2, T>(),
-                         vector<T>&>
-        operator+=(const Expr<vector<T2>, Operation>&);
-    /*
-     * Assignement operator
-     * \param const Expr<vector<T2>,Operation>&, a vector
-     * expression based on vector
-     * \return vector&, a reference to itself.
-     */
-    template <typename T2, typename Operation>
-    TFEL_MATH_INLINE2
-        std::enable_if_t<isAssignableTo<T2, T>(),
-                         vector<T>&>
-        operator-=(const Expr<vector<T2>, Operation>&);
-    /*
-     * index operator
-     * \param size_type, index
-     * \return T&, a reference to the vector ith element.
-     */
-    TFEL_MATH_INLINE T& operator()(const size_type) noexcept;
-    /*
-     * index operator
-     * this is a vector concept requirement
-     * \param size_type, index
-     * \return const T&, a reference to the vector ith element
-     */
-    TFEL_MATH_INLINE const T& operator()(const size_type) const noexcept;
-    /*
-     * Return the runtime property of the vector
-     * \return const RunTimeProperties, the runtime properties of the
-     * vector (its size here).
-     * (this is a vector concept requirement)
-     */
-    TFEL_MATH_INLINE2
-    const RunTimeProperties getRunTimeProperties() const;
-    /*
-     * swap two vectors
-     * \param vector&, the other vector
+     * \brief swap two vectors
+     * \param[in,out] the other vector
      */
     void swap(vector&);
-    /*
+    /*!
      * copy all the elements between two iterators at the beginning
      * of the vector.
      * \param const InputIterator, an iterator to the first element
@@ -219,15 +68,14 @@ namespace tfel::math {
      * not to be copied.
      */
     template <typename InputIterator>
-    TFEL_MATH_INLINE2 void copy(const InputIterator, const InputIterator);
-    //! destructor
+    void copy(const InputIterator, const InputIterator);
+    //! \brief destructor
     ~vector() noexcept;
   };
 
   /*!
-   * \brief return the euclidian norm of a vector
-   * \param const vector<T>&, the vector.
-   * \return const typename tfel::typetraits::RealPartType<T>::type, the result
+   * \return the euclidian norm of a vector
+   * \param v: the vector.
    */
   template <typename T>
   std::enable_if_t<isScalar<T>(),
@@ -235,6 +83,18 @@ namespace tfel::math {
   norm(const vector<T>&);
 
 }  // end of namespace tfel::math
+
+namespace tfel::typetraits {
+
+  //! \brief partial specialisation for vectors
+  template <typename ValueType, typename ValueType2>
+  struct IsAssignableTo<tfel::math::vector<ValueType>,
+                        tfel::math::vector<ValueType2>> {
+    //! \brief result
+    static constexpr bool cond = isAssignableTo<ValueType, ValueType2>();
+  };
+
+}  // end of namespace tfel::typetraits
 
 #include "TFEL/Math/Vector/vector.ixx"
 

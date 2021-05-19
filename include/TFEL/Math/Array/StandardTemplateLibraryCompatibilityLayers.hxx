@@ -61,6 +61,10 @@ namespace tfel::math {
      * template library (STL).
      */
     using const_reverse_iterator = std::reverse_iterator<const_iterator>;
+    //!
+    constexpr const_reference front() const noexcept;
+    //!
+    constexpr const_reference back() const noexcept;
     //! \return an const iterator to the first element of the array.
     constexpr const_iterator begin() const noexcept;
     //! \return an const iterator to the first element of the array.
@@ -149,6 +153,16 @@ namespace tfel::math {
      * template library (STL).
      */
     using reverse_iterator = std::reverse_iterator<iterator>;
+    //
+    using ConstArrayWithContiguousDataSTLCompatibilityLayer<Child,
+                                                            ArrayPolicy>::front;
+    //
+    constexpr reference front() noexcept;
+    //
+    using ConstArrayWithContiguousDataSTLCompatibilityLayer<Child,
+                                                            ArrayPolicy>::back;
+    //
+    constexpr reference back() noexcept;
     //
     using ConstArrayWithContiguousDataSTLCompatibilityLayer<Child,
                                                             ArrayPolicy>::begin;

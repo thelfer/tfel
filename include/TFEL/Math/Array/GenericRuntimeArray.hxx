@@ -22,15 +22,15 @@
 
 #define TFEL_MATH_RUNTIME_ARRAY_DEFAULT_METHODS(X, Y)                     \
   /*! \brief default constructor */                                       \
-  X() noexcept = default;                                                 \
+  X() = default;                                                          \
   /*! \brief move constructor */                                          \
-  X(X&&) noexcept = default;                                              \
+  X(X&&) = default;                                                       \
   /*! \brief copy constructor */                                          \
-  X(const X&) noexcept = default;                                         \
+  X(const X&) = default;                                                  \
   /*! \brief move assignement */                                          \
-  X& operator=(X&&) noexcept = default;                                   \
+  X& operator=(X&&) = default;                                            \
   /*! \brief standard assignement */                                      \
-  X& operator=(const X&) noexcept = default;                              \
+  X& operator=(const X&) = default;                                       \
   /*!                                                                     \
    * \brief constructor from a value                                      \
    * \param[in] value: value used to initialize the array                 \
@@ -39,7 +39,7 @@
             typename std::enable_if<                                      \
                 isAssignableTo<ValueType2, typename X::value_type>(),     \
                 bool>::type = true>                                       \
-  explicit X(const ValueType2& value) noexcept : Y(value) {}              \
+  explicit X(const ValueType2& value) : Y(value) {}                       \
   /*!                                                                     \
    * \brief constructor from an initializer list                          \
    * \param[in] values: values                                            \
@@ -48,8 +48,7 @@
             typename std::enable_if<                                      \
                 isAssignableTo<ValueType2, typename X::value_type>(),     \
                 bool>::type = true>                                       \
-  X(const std::initializer_list<ValueType2>& values)                      \
-  noexcept : Y(values) {}                                                 \
+  X(const std::initializer_list<ValueType2>& values) : Y(values) {}       \
   /*!                                                                     \
    * \brief copy constructor from an object assignable the X class.       \
    * \param[in] src: source                                               \
@@ -60,8 +59,7 @@
             typename std::enable_if<((isAssignableTo<OtherArray, X>()) && \
                                      (!std::is_same_v<OtherArray, X>)),   \
                                     bool>::type = true>                   \
-  X(const OtherArray& src)                                                \
-  noexcept : Y(src) {}                                                    \
+  X(const OtherArray& src) : Y(src) {}                                    \
   /*!                                                                     \
    * \brief Default Constructor.                                          \
    * \param const base_type<T>*                                           \
@@ -89,6 +87,8 @@ namespace tfel::math {
   struct GenericRuntimeArray
       : MutableRuntimeArrayBase<GenericRuntimeArray<Child, ArrayPolicy>,
                                 ArrayPolicy> {
+    //! \brief a simple alias
+    using Container = std::vector<typename ArrayPolicy::value_type>;
     //! \brief default constructor
     GenericRuntimeArray() = default;
     //! \brief default constructor
@@ -178,6 +178,12 @@ namespace tfel::math {
     template <typename OtherArray>
     std::enable_if_t<isAssignableTo<OtherArray, Child>(), Child&> operator-=(
         const OtherArray&);
+    //
+    bool empty() const;
+    //
+    void clear();
+    //
+    void shrink_to_fit();
 
    protected:
     //! \brief assignement operator
@@ -185,9 +191,9 @@ namespace tfel::math {
     //! \brief move assigment
     GenericRuntimeArray& operator=(GenericRuntimeArray&&);
 
-   private:
+   protected:
     //! \brief values holded
-    std::vector<typename ArrayPolicy::value_type> data_values;
+    Container data_values;
   };
 
 }  // end of namespace tfel::math

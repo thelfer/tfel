@@ -240,7 +240,7 @@ namespace mtest {
     const real dt = 0;
     // using a local copy of material properties to handle the
     // case where s.mprops1 is empty
-    copy(s.mprops1.begin() + 1, s.mprops1.end(), wk.mps.begin());
+    std::copy(s.mprops1.begin() + 1, s.mprops1.end(), wk.mps.begin());
     if (s.mprops1.size() == 1) {
       wk.mps[0] = real(0);
     }
@@ -442,7 +442,7 @@ namespace mtest {
     const real totalTime = 1;
     // using a local copy of material properties to handle the
     // case where s.mprops1 is empty
-    copy(s.mprops1.begin() + 1, s.mprops1.end(), wk.mps.begin());
+    std::copy(s.mprops1.begin() + 1, s.mprops1.end(), wk.mps.begin());
     if (s.mprops1.size() == 1) {
       wk.mps[0] = real(0);
     }

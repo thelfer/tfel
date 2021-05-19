@@ -21,8 +21,6 @@
 
 namespace tfel::math {
 
-#ifndef DOXYGENSPECIFIC
-
   template <typename Child, unsigned short N, unsigned short M, typename T>
   template <typename T2, typename Operation>
   std::enable_if_t<isAssignableTo<T2, T>(), Child&>
@@ -153,14 +151,14 @@ namespace tfel::math {
   template <unsigned short I>
   constexpr auto tmatrix<N, M, T>::row_view() {
     static_assert(I < N, "invalid row index");
-    return map_array<tvector<M, T>>(&(this->operator()(I, 0)));
+    return map<tvector<M, T>>(&(this->operator()(I, 0)));
   }
 
   template <unsigned short N, unsigned short M, typename T>
   template <unsigned short I>
   constexpr auto tmatrix<N, M, T>::row_view() const {
     static_assert(I < N, "invalid row index");
-    return map_array<const tvector<M, T>>(&(this->operator()(I, 0)));
+    return map<const tvector<M, T>>(&(this->operator()(I, 0)));
   }
 
   template <unsigned short N, unsigned short M, typename T>
@@ -169,7 +167,7 @@ namespace tfel::math {
     static_assert(I < N, "invalid row index");
     static_assert(J < M, "invalid column index");
     static_assert(M >= J + K, "invalid view size");
-    return map_array<tvector<K, T>>(&(this->operator()(I, J)));
+    return map<tvector<K, T>>(&(this->operator()(I, J)));
   }
 
   template <unsigned short N, unsigned short M, typename T>
@@ -178,21 +176,26 @@ namespace tfel::math {
     static_assert(I < N, "invalid row index");
     static_assert(J < M, "invalid column index");
     static_assert(M >= J + K, "invalid view size");
-    return map_array<const tvector<K, T>>(&(this->operator()(I, J)));
+    return map<const tvector<K, T>>(&(this->operator()(I, J)));
   }
 
   template <unsigned short N, unsigned short M, typename T>
   template <unsigned short I>
   constexpr auto tmatrix<N, M, T>::column_view() {
     static_assert(I < M, "invalid column index");
-    return map_array<tvector<N, T>, 0, M>(&(this->operator()(0, I)));
+    using ViewIndexingPolicy =
+        FixedSizeVectorIndexingPolicy<unsigned short, N, M>;
+    return map<tvector<N, T>, ViewIndexingPolicy>(&(this->operator()(0, I)));
   }
 
   template <unsigned short N, unsigned short M, typename T>
   template <unsigned short I>
   constexpr auto tmatrix<N, M, T>::column_view() const {
     static_assert(I < M, "invalid column index");
-    return map_array<const tvector<N, T>, 0, M>(&(this->operator()(0, I)));
+    using ViewIndexingPolicy =
+        FixedSizeVectorIndexingPolicy<unsigned short, N, M>;
+    return map<const tvector<N, T>, ViewIndexingPolicy>(
+        &(this->operator()(0, I)));
   }
 
   template <unsigned short N, unsigned short M, typename T>
@@ -201,7 +204,9 @@ namespace tfel::math {
     static_assert(I < M, "invalid column index");
     static_assert(J < N, "invalid row index");
     static_assert(N >= J + K, "invalid view size");
-    return map_array<tvector<K, T>, 0, M>(&(this->operator()(J, I)));
+    using ViewIndexingPolicy =
+        FixedSizeVectorIndexingPolicy<unsigned short, K, M>;
+    return map<tvector<K, T>, ViewIndexingPolicy>(&(this->operator()(J, I)));
   }
 
   template <unsigned short N, unsigned short M, typename T>
@@ -210,7 +215,10 @@ namespace tfel::math {
     static_assert(I < M, "invalid column index");
     static_assert(J < N, "invalid row index");
     static_assert(N >= J + K, "invalid view size");
-    return map_array<const tvector<K, T>, 0, M>(&(this->operator()(J, I)));
+    using ViewIndexingPolicy =
+        FixedSizeVectorIndexingPolicy<unsigned short, K, M>;
+    return map<const tvector<K, T>, ViewIndexingPolicy>(
+        &(this->operator()(J, I)));
   }
 
   template <unsigned short N, unsigned short M, typename T>
@@ -218,28 +226,38 @@ namespace tfel::math {
             unsigned short J,
             unsigned short R,
             unsigned short C>
-  tmatrix_submatrix_view<N, M, I, J, R, C, T>
-  tmatrix<N, M, T>::submatrix_view() {
-    return tmatrix_submatrix_view<N, M, I, J, R, C, T>(*this);
-  }
+  auto tmatrix<N, M, T>::submatrix_view() {
+    static_assert(I < N, "invalid row index");
+    static_assert(J < M, "invalid column index");
+    static_assert(N >= I + R, "invalid number of rows for the submatrix");
+    static_assert(M >= J + C, "invalid number of columns for the submatrix");
+    using ViewIndexingPolicy =
+        FixedSizeRowMajorMatrixIndexingPolicy<unsigned short, R, C, M>;
+    return map<tmatrix<R,C,T>,ViewIndexingPolicy>(&(this->operator()(I, J)));
+  } // end of submatrix_view
 
   template <unsigned short N, unsigned short M, typename T>
   template <unsigned short I,
             unsigned short J,
             unsigned short R,
             unsigned short C>
-  tmatrix_const_submatrix_view<N, M, I, J, R, C, T>
-  tmatrix<N, M, T>::submatrix_view() const {
-    return tmatrix_const_submatrix_view<N, M, I, J, R, C, T>(*this);
-  }
+  auto tmatrix<N, M, T>::submatrix_view() const {
+    static_assert(I < N, "invalid row index");
+    static_assert(J < M, "invalid column index");
+    static_assert(N >= I + R, "invalid number of rows for the submatrix");
+    static_assert(M >= J + C, "invalid number of columns for the submatrix");
+    using ViewIndexingPolicy =
+        FixedSizeRowMajorMatrixIndexingPolicy<unsigned short, R, C, M>;
+    return map<const tmatrix<R, C, T>, ViewIndexingPolicy>(
+        &(this->operator()(I, J)));
+  } // end of submatrix_view
 
   // template<unsigned short N,unsigned short M,typename T>
   template <unsigned short N, unsigned short M, typename T>
   TFEL_MATH_INLINE2 tmatrix<M, N, T> transpose(const tmatrix<N, M, T>& m) {
     tmatrix<M, N, T> tm;
-    unsigned short i, j;
-    for (i = 0; i < N; ++i) {
-      for (j = 0; j < M; ++j) {
+    for (typename tmatrix<N, M, T>::size_type i = 0; i < N; ++i) {
+      for (typename tmatrix<N, M, T>::size_type j = 0; j < M; ++j) {
         tm(j, i) = m(i, j);
       }
     }
@@ -276,42 +294,24 @@ namespace tfel::math {
   }  // namespace internals
 
   template <typename T, typename Operation>
-  typename ComputeUnaryResult<T, Power<3>>::Result det(
-      const Expr<tmatrix<2, 2, T>, Operation>& m) {
+  auto det(const Expr<tmatrix<2, 2, T>, Operation>& m) {
     return tfel::math::internals::det2(m);
   }
 
   template <typename T>
-  typename ComputeUnaryResult<T, Power<3>>::Result det(
-      const tmatrix<2, 2, T>& m) {
+  auto det(const tmatrix<2, 2, T>& m) {
     return tfel::math::internals::det2(m);
   }
 
   template <typename T, typename Operation>
-  typename ComputeUnaryResult<T, Power<3>>::Result det(
-      const Expr<tmatrix<3, 3, T>, Operation>& m) {
+  auto det(const Expr<tmatrix<3, 3, T>, Operation>& m) {
     return tfel::math::internals::det3(m);
   }
 
   template <typename T>
-  typename ComputeUnaryResult<T, Power<3>>::Result det(
-      const tmatrix<3, 3, T>& m) {
+  auto det(const tmatrix<3, 3, T>& m) {
     return tfel::math::internals::det3(m);
   }
-
-  template <unsigned short N, unsigned short M, typename T>
-  tvector<M, T> getRow(const tmatrix<N, M, T>& m, const unsigned short i) {
-    using size_type = typename tfel::fsalgo::loop<M>::size_type;
-    tvector<M, T> r;
-    tfel::fsalgo::loop<M>::exe(
-        [&r, &m, i](const size_type j) { r(j) = m(i, j); });
-    return r;
-  }
-
-  template <unsigned short N, unsigned short M, typename T>
-  tvector<N, T> getColumn(const tmatrix<N, M, T>& m, const unsigned short);
-
-#endif /* DOXYGENSPECIFIC */
 
 }  // end of namespace tfel::math
 
