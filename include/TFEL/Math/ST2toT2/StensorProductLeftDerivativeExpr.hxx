@@ -32,7 +32,7 @@ namespace tfel::math {
   struct Expr<ST2toT2ResultType, StensorProductLeftDerivativeExpr<1u>>
       : public ST2toT2Concept<
             Expr<ST2toT2ResultType, StensorProductLeftDerivativeExpr<1u>>>,
-        public fsarray<9u, numeric_type<ST2toT2ResultType>> {
+        public array_holder<9u, numeric_type<ST2toT2ResultType>> {
     static_assert(getSpaceDimension<ST2toT2ResultType>() == 1u);
     //! a simple alias
     typedef numeric_type<ST2toT2ResultType> value_type;
@@ -110,7 +110,7 @@ namespace tfel::math {
   struct Expr<ST2toT2ResultType, StensorProductLeftDerivativeExpr<2u>>
       : public ST2toT2Concept<
             Expr<ST2toT2ResultType, StensorProductLeftDerivativeExpr<2u>>>,
-        public fsarray<20u, numeric_type<ST2toT2ResultType>> {
+        public array_holder<20u, numeric_type<ST2toT2ResultType>> {
     static_assert(getSpaceDimension<ST2toT2ResultType>() == 2u);
     //! a simple alias
     typedef numeric_type<ST2toT2ResultType> value_type;
@@ -219,7 +219,7 @@ namespace tfel::math {
   struct Expr<ST2toT2ResultType, StensorProductLeftDerivativeExpr<3u>>
       : public ST2toT2Concept<
             Expr<ST2toT2ResultType, StensorProductLeftDerivativeExpr<3u>>>,
-        public fsarray<54u, numeric_type<ST2toT2ResultType>> {
+        public array_holder<54u, numeric_type<ST2toT2ResultType>> {
     static_assert(getSpaceDimension<ST2toT2ResultType>() == 3u);
     //! a simple alias
     typedef numeric_type<ST2toT2ResultType> value_type;

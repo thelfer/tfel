@@ -22,7 +22,7 @@ namespace tfel::math {
   struct VectorVectorDotProduct {
     template <typename Result, typename T1, typename T2>
     static Result exe(const T1& v1, const T2& v2) {
-#ifndef NO_RUNTIME_CHECK_BOUNDS
+#ifndef TFEL_NO_RUNTIME_CHECK_BOUNDS
 //	typedef typename T1::RunTimeProperties RunTimeProperties;
 //	RunTimeCheck<RunTimeProperties>::exe(v1.getRunTimeProperties(),
 //					     v2.getRunTimeProperties());

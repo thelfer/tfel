@@ -2,7 +2,7 @@ tfel_enable_cxx_compiler_flag(COMPILER_WARNINGS  "Wno-conversion")
 include(cmake/modules/common-compiler-flags.cmake)
 
 set(OPTIMISATION_FLAGS "-O2 -DNDEBUG ${OPTIMISATION_FLAGS}")
-set(OPTIMISATION_FLAGS "-DNO_RUNTIME_CHECK_BOUNDS ${OPTIMISATION_FLAGS}")
+set(OPTIMISATION_FLAGS "-DTFEL_NO_RUNTIME_CHECK_BOUNDS ${OPTIMISATION_FLAGS}")
 
 tfel_enable_cxx_compiler_flag(COMPILER_WARNINGS  "Wdisabled-optimization")
 if(NOT i586-mingw32msvc_COMPILER)

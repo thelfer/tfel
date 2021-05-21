@@ -1762,6 +1762,7 @@ include/TFEL/Math/AccelerationAlgorithms/UAnderson.hxx -text
 include/TFEL/Math/AccelerationAlgorithms/UAnderson.ixx -text
 include/TFEL/Math/Array/ArrayCommonMethods.hxx -text
 include/TFEL/Math/Array/ArrayCommonMethods.ixx -text
+include/TFEL/Math/Array/ArrayConcept.hxx -text
 include/TFEL/Math/Array/ArrayPolicies.hxx -text
 include/TFEL/Math/Array/ArrayPolicies.ixx -text
 include/TFEL/Math/Array/ConstFixedSizeArrayBase.hxx -text
@@ -1770,8 +1771,6 @@ include/TFEL/Math/Array/ConstRuntimeArrayBase.hxx -text
 include/TFEL/Math/Array/ConstRuntimeArrayBase.ixx -text
 include/TFEL/Math/Array/FixedSizeArrayDerivative.hxx -text
 include/TFEL/Math/Array/FixedSizeArrayPolicies.hxx -text
-include/TFEL/Math/Array/FixedSizeArrayView.hxx -text
-include/TFEL/Math/Array/FixedSizeArrayViewIO.hxx -text
 include/TFEL/Math/Array/FixedSizeIndexingPolicies.hxx -text
 include/TFEL/Math/Array/GenericFixedSizeArray.hxx -text
 include/TFEL/Math/Array/GenericFixedSizeArray.ixx -text
@@ -1791,6 +1790,10 @@ include/TFEL/Math/Array/RuntimeIndexingPolicies.hxx -text
 include/TFEL/Math/Array/StandardTemplateLibraryCompatibilityLayers.hxx -text
 include/TFEL/Math/Array/StandardTemplateLibraryCompatibilityLayers.ixx -text
 include/TFEL/Math/Array/View.hxx -text
+include/TFEL/Math/Array/ViewsArray.hxx -text
+include/TFEL/Math/Array/ViewsArrayIO.hxx -text
+include/TFEL/Math/Array/fsarrayIO.hxx -text
+include/TFEL/Math/Array/runtime_arrayIO.hxx -text
 include/TFEL/Math/Bindings/atlas.hxx -text
 include/TFEL/Math/Broyden.hxx -text
 include/TFEL/Math/Broyden2.hxx -text

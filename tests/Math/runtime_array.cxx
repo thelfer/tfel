@@ -30,7 +30,7 @@ struct RuntimeArrayTest final : public tfel::tests::TestCase {
       : tfel::tests::TestCase("TFEL/Math", "RuntimeArrayTest") {
   }  // end of RuntimeArrayTest
   tfel::tests::TestResult execute() override {
-    using ushort = unsigned short;
+    using usize_type = unsigned short;
     const tfel::math::runtime_array<int> a(3, 5);
     tfel::math::runtime_array<int> b(3);
     tfel::math::runtime_array<int> abc;
@@ -65,8 +65,8 @@ struct RuntimeArrayTest final : public tfel::tests::TestCase {
     TFEL_TESTS_ASSERT(d[1] == 2);
     TFEL_TESTS_ASSERT(d[2] == -3);
     // copy from another type
-    tfel::math::runtime_array<unsigned short> e(
-        {ushort{4}, ushort{5}, ushort{12}});
+    tfel::math::runtime_array<usize_type> e(
+        {usize_type{4}, usize_type{5}, usize_type{12}});
     d = e;
     TFEL_TESTS_ASSERT(d[0] == 4);
     TFEL_TESTS_ASSERT(d[1] == 5);

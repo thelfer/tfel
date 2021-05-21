@@ -34,7 +34,7 @@ namespace tfel::math {
   struct Expr<StensorResultType, T2toST2TensorProductExpr<1u>>
       : public StensorConcept<
             Expr<StensorResultType, T2toST2TensorProductExpr<1u>>>,
-        public fsarray<3u, numeric_type<StensorResultType>> {
+        public array_holder<3u, numeric_type<StensorResultType>> {
     static_assert(getSpaceDimension<StensorResultType>() == 1u);
     //! a simple alias
     typedef EmptyRunTimeProperties RunTimeProperties;
@@ -55,7 +55,7 @@ namespace tfel::math {
       this->v[2] = a(2, 0) * b(0) + a(2, 1) * b(1) + a(2, 2) * b(2);
     }  // end of Expr
     //! using operator []
-    using fsarray<3u, value_type>::operator[];
+    using array_holder<3u, value_type>::operator[];
     /*!
      * \brief access operator
      * \param[in] i : index
@@ -79,7 +79,7 @@ namespace tfel::math {
   struct Expr<StensorResultType, T2toST2TensorProductExpr<2u>>
       : public StensorConcept<
             Expr<StensorResultType, T2toST2TensorProductExpr<2u>>>,
-        public fsarray<4u, numeric_type<StensorResultType>> {
+        public array_holder<4u, numeric_type<StensorResultType>> {
     static_assert(getSpaceDimension<StensorResultType>() == 2u);
     //! a simple alias
     typedef EmptyRunTimeProperties RunTimeProperties;
@@ -105,7 +105,7 @@ namespace tfel::math {
                    a(3, 1) * b[1] + a(3, 0) * b[0];
     }  // end of Expr
     //! using operator []
-    using fsarray<4u, value_type>::operator[];
+    using array_holder<4u, value_type>::operator[];
     /*!
      * \brief access operator
      * \param[in] i : index
@@ -129,7 +129,7 @@ namespace tfel::math {
   struct Expr<StensorResultType, T2toST2TensorProductExpr<3u>>
       : public StensorConcept<
             Expr<StensorResultType, T2toST2TensorProductExpr<3u>>>,
-        public fsarray<6u, numeric_type<StensorResultType>> {
+        public array_holder<6u, numeric_type<StensorResultType>> {
     static_assert(getSpaceDimension<StensorResultType>() == 3u);
     //! a simple alias
     typedef EmptyRunTimeProperties RunTimeProperties;
@@ -165,7 +165,7 @@ namespace tfel::math {
                    a(5, 2) * b[2] + a(5, 1) * b[1] + a(5, 0) * b[0];
     }  // end of Expr
     //! using operator []
-    using fsarray<6u, value_type>::operator[];
+    using array_holder<6u, value_type>::operator[];
     /*!
      * \brief access operator
      * \param[in] i : index

@@ -71,31 +71,30 @@ namespace tfel::math {
         "indexing policy of the mapped type");
     //
     static constexpr bool is_const = std::is_const_v<MappedType>;
+    //
+    static constexpr auto hasFixedSizes = IndexingPolicyType::hasFixedSizes;
     //! \brief a simple alias
     using RawMappedType = std::remove_cv_t<MappedType>;
-    //
+    //! \brief a simple alias
     using data_pointer_type =
         std::conditional_t<is_const,
                            const numeric_type<MappedType>*,
                            numeric_type<MappedType>*>;
-    //
+    //! \brief a simple alias
     using const_data_pointer_type = const numeric_type<MappedType>*;
-    //
-    static constexpr auto hasFixedSizes = IndexingPolicyType::hasFixedSizes;
-    //
-
     //! \brief default constructor
     explicit constexpr View(const data_pointer_type p) noexcept
         : data_pointer(p) {
       static_assert(hasFixedSizes, "invalid constructor call");
     }  // end of View
     //! \brief default constructor
-    constexpr View(const IndexingPolicyType& i,
-                   const data_pointer_type p) noexcept
+    explicit constexpr View(const data_pointer_type p,
+                            const IndexingPolicyType& i) noexcept
         : selectViewArrayBase<MappedType, IndexingPolicyType>(i),
           data_pointer(p) {
       static_assert(!hasFixedSizes, "invalid constructor call");
     }  // end of View
+
     //! \brief copy constructor
     constexpr View(const View&) noexcept = default;
     //! \brief move constructor
@@ -281,7 +280,7 @@ namespace tfel::math {
     static_assert(sizeof...(Args) >= 2, "invalid call");
     const auto r =
         buildIndexingPolicyAndExtractPointerToData<IndexingPolicyType>(args...);
-    return View<MappedType, IndexingPolicyType>{std::get<0>(r), std::get<1>(r)};
+    return View<MappedType, IndexingPolicyType>{std::get<1>(r), std::get<0>(r)};
   }  // end of map
 
   //! \brief return a view from a memory area
@@ -301,8 +300,8 @@ namespace tfel::math {
     static_assert(sizeof...(Args) >= 2, "invalid call");
     const auto r =
         buildIndexingPolicyAndExtractPointerToData<IndexingPolicyType>(args...);
-    return View<const MappedType, IndexingPolicyType>{std::get<0>(r),
-                                                      std::get<1>(r)};
+    return View<const MappedType, IndexingPolicyType>{std::get<1>(r),
+                                                      std::get<0>(r)};
   }  // end of map
 
   template <typename MappedType,

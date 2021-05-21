@@ -17,9 +17,33 @@
 #include "TFEL/TypeTraits/IsAssignableTo.hxx"
 #include "TFEL/Math/General/MathObjectTraits.hxx"
 #include "TFEL/Math/Array/GenericFixedSizeArray.hxx"
+#include "TFEL/Math/Array/ViewsArray.hxx"
+#include "TFEL/Math/Array/ArrayConcept.hxx"
 #include "TFEL/Math/Forward/fsarray.hxx"
 
 namespace tfel::math {
+
+  template <unsigned short N, typename ValueType>
+  struct array_holder : MutableArrayWithContiguousDataSTLCompatibilityLayer<
+                            array_holder<N, ValueType>,
+                            FixedSizeVectorPolicy<N, ValueType>> {
+    //! \brief a simple alias
+    using size_type = unsigned short;
+    //
+    constexpr size_type size() const noexcept { return N; }
+    //
+    constexpr auto data() noexcept { return this->v; }
+    //
+    constexpr auto data() const noexcept { return this->v; }
+    //! \brief access operator
+    constexpr ValueType& operator[](const size_type i) noexcept { return v[i]; }
+    constexpr const ValueType& operator[](const size_type i) const noexcept {
+      return v[i]; }
+
+   protected:
+    //! \brief values
+    ValueType v[N];
+  };
 
   /*!
    * \brief a class representing a fixed sized array
@@ -28,7 +52,8 @@ namespace tfel::math {
    */
   template <unsigned short N, typename ValueType = double>
   struct fsarray : GenericFixedSizeArray<fsarray<N, ValueType>,
-                                         FixedSizeVectorPolicy<N, ValueType>> {
+                                         FixedSizeVectorPolicy<N, ValueType>>,
+                   ArrayConcept<fsarray<N, ValueType>> {
     //! \brief default constructor
     constexpr fsarray() noexcept = default;
     //! \brief move constructor
@@ -40,12 +65,112 @@ namespace tfel::math {
     //! \brief standard assignement
     constexpr fsarray& operator=(const fsarray&) noexcept = default;
     // inheriting GenericFixedSizeArray' constructors
-    using GenericFixedSizeArray<fsarray<N, ValueType>,
-				FixedSizeVectorPolicy<N, ValueType>>::GenericFixedSizeArray;
+    using GenericFixedSizeArray<
+        fsarray<N, ValueType>,
+        FixedSizeVectorPolicy<N, ValueType>>::GenericFixedSizeArray;
     // inheriting GenericFixedSizeArray' assignement operators
     using GenericFixedSizeArray<fsarray<N, ValueType>,
-				FixedSizeVectorPolicy<N, ValueType>>::operator=;
+                                FixedSizeVectorPolicy<N, ValueType>>::operator=;
   };  // end of fsarray
+
+  /*!
+   * \tparam N: arrray size
+   * \tparam T: numeric type used by the array
+   */
+  template <unsigned short N, typename T>
+  struct UnaryResultType<fsarray<N, T>, OpNeg> {
+    typedef typename UnaryResultType<T, OpNeg>::type ResultNumericType;
+
+   public:
+    using type = std::conditional_t<isInvalid<ResultNumericType>(),
+                                    tfel::meta::InvalidType,
+                                    fsarray<N, ResultNumericType>>;
+  };
+
+  /*!
+   * \brief partial specialisation for fsarray and
+   * scalars operations
+   * \see   ComputeBinaryOperationResult
+   */
+  template <unsigned short N, typename T, typename Scal>
+  class ComputeBinaryOperationResult<ArrayTag,
+                                     ScalarTag,
+                                     fsarray<N, T>,
+                                     Scal,
+                                     OpMult> {
+    typedef result_type<T, Scal, OpMult> ResultNumericType;
+
+   public:
+    using type = std::conditional_t<isInvalid<ResultNumericType>(),
+                                    tfel::meta::InvalidType,
+                                    fsarray<N, ResultNumericType>>;
+  };
+
+  /*!
+   * \brief partial specialisation for fsarray and
+   * scalars operations
+   * \see   ComputeBinaryOperationResult
+   */
+  template <unsigned short N, typename T, typename Scal>
+  class ComputeBinaryOperationResult<ArrayTag,
+                                     ScalarTag,
+                                     fsarray<N, T>,
+                                     Scal,
+                                     OpDiv> {
+    typedef result_type<T, Scal, OpDiv> ResultNumericType;
+
+   public:
+    using type = std::conditional_t<isInvalid<ResultNumericType>(),
+                                    tfel::meta::InvalidType,
+                                    fsarray<N, ResultNumericType>>;
+  };
+
+  /*!
+   * \brief partial specialisation for fsarray and
+   * scalars operations
+   * \see   ComputeBinaryOperationResult
+   */
+  template <typename Scal, unsigned short N, typename T>
+  class ComputeBinaryOperationResult<ScalarTag,
+                                     ArrayTag,
+                                     Scal,
+                                     fsarray<N, T>,
+                                     OpMult> {
+    typedef result_type<Scal, T, OpMult> ResultNumericType;
+
+   public:
+    using type = std::conditional_t<isInvalid<ResultNumericType>(),
+                                    tfel::meta::InvalidType,
+                                    fsarray<N, ResultNumericType>>;
+  };
+
+  /*!
+   * \brief partial specialisation for fsarray
+   * \see   ResultType
+   */
+  template <unsigned short N, typename T, typename T2>
+  class ResultType<fsarray<N, T>, fsarray<N, T2>, OpPlus> {
+    typedef result_type<T, T2, OpPlus> ResultNumericType;
+
+   public:
+    using type = std::conditional_t<isInvalid<ResultNumericType>(),
+                                    tfel::meta::InvalidType,
+                                    fsarray<N, ResultNumericType>>;
+  };
+
+  /*!
+   * \brief partial specialisation for fsarray
+   * \see   ResultType
+   */
+  template <unsigned short N, typename T, typename T2>
+  class ResultType<fsarray<N, T>, fsarray<N, T2>, OpMinus> {
+    typedef result_type<T, T2, OpMinus> ResultNumericType;
+
+   public:
+    using type = std::conditional_t<isInvalid<ResultNumericType>(),
+                                    tfel::meta::InvalidType,
+                                    fsarray<N, ResultNumericType>>;
+  };
 
 }  // end of namespace tfel::math
 
@@ -57,6 +182,36 @@ namespace tfel::typetraits {
                         tfel::math::fsarray<N, ValueType2>> {
     //! \brief result
     static constexpr auto cond = isAssignableTo<ValueType, ValueType2>();
+  };
+
+  /*!
+   * \brief partial specialisation allowing arrays of views to be assigned to a
+   * fixed size array
+   */
+  template <typename MappedType,
+            typename MemoryIndexingPolicyType,
+            typename ViewIndexingPolicyType,
+            typename ValueType,
+            unsigned short N>
+  struct IsAssignableTo<tfel::math::ViewsArray<MappedType,
+                                               MemoryIndexingPolicyType,
+                                               ViewIndexingPolicyType>,
+                        tfel::math::fsarray<N, ValueType>> {
+    //! \brief a simple alias
+    using FixedSizeArrayIndexingPolicy =
+        typename tfel::math::fsarray<N, ValueType>::indexing_policy;
+    //! \brief a simple alias
+    using View = std::decay_t<
+        typename tfel::math::ViewsArray<MappedType,
+                                        MemoryIndexingPolicyType,
+                                        ViewIndexingPolicyType>::view_type>;
+
+    //! \brief result
+    static constexpr auto cond =
+        ((tfel::math::checkIndexingPoliciesCompatiblity<
+             FixedSizeArrayIndexingPolicy,
+             MemoryIndexingPolicyType>()) &&
+         (isAssignableTo<View, ValueType>()));
   };
 
 }  // end of namespace tfel::typetraits

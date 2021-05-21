@@ -36,7 +36,7 @@ namespace tfel::math {
   struct Expr<T2toST2Type, RightCauchyGreenTensorDerivativeExpr<1u>>
       : public T2toST2Concept<
             Expr<T2toST2Type, RightCauchyGreenTensorDerivativeExpr<1u>>>,
-        public fsarray<9u, numeric_type<T2toST2Type>> {
+        public array_holder<9u, numeric_type<T2toST2Type>> {
     static_assert(getSpaceDimension<T2toST2Type>() == 1u);
     //! a simple alias
     typedef EmptyRunTimeProperties RunTimeProperties;
@@ -84,7 +84,7 @@ namespace tfel::math {
   struct Expr<T2toST2Type, RightCauchyGreenTensorDerivativeExpr<2u>>
       : public T2toST2Concept<
             Expr<T2toST2Type, RightCauchyGreenTensorDerivativeExpr<2u>>>,
-        public fsarray<20u, numeric_type<T2toST2Type>> {
+        public array_holder<20u, numeric_type<T2toST2Type>> {
     static_assert(getSpaceDimension<T2toST2Type>() == 2u);
     //! a simple alias
     typedef EmptyRunTimeProperties RunTimeProperties;
@@ -143,7 +143,7 @@ namespace tfel::math {
   struct Expr<T2toST2Type, RightCauchyGreenTensorDerivativeExpr<3u>>
       : public T2toST2Concept<
             Expr<T2toST2Type, RightCauchyGreenTensorDerivativeExpr<3u>>>,
-        public fsarray<54u, numeric_type<T2toST2Type>> {
+        public array_holder<54u, numeric_type<T2toST2Type>> {
     static_assert(getSpaceDimension<T2toST2Type>() == 3u);
     //! a simple alias
     typedef EmptyRunTimeProperties RunTimeProperties;

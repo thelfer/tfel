@@ -36,7 +36,7 @@ namespace tfel::math {
       Expr<T2toST2ResultType, T2toST2T2toT2ProductExpr<1u>>
       : public T2toST2Concept<
             Expr<T2toST2ResultType, T2toST2T2toT2ProductExpr<1u>>>,
-        public fsarray<
+        public array_holder<
             StensorDimeToSize<getSpaceDimension<T2toST2ResultType>()>::value *
                 TensorDimeToSize<getSpaceDimension<T2toST2ResultType>()>::value,
             numeric_type<T2toST2ResultType>> {
@@ -90,7 +90,7 @@ namespace tfel::math {
       Expr<T2toST2ResultType, T2toST2T2toT2ProductExpr<2u>>
       : public T2toST2Concept<
             Expr<T2toST2ResultType, T2toST2T2toT2ProductExpr<2u>>>,
-        public fsarray<
+        public array_holder<
             StensorDimeToSize<getSpaceDimension<T2toST2ResultType>()>::value *
                 TensorDimeToSize<getSpaceDimension<T2toST2ResultType>()>::value,
             numeric_type<T2toST2ResultType>> {
@@ -175,7 +175,7 @@ namespace tfel::math {
       Expr<T2toST2ResultType, T2toST2T2toT2ProductExpr<3u>>
       : public T2toST2Concept<
             Expr<T2toST2ResultType, T2toST2T2toT2ProductExpr<3u>>>,
-        public fsarray<
+        public array_holder<
             StensorDimeToSize<getSpaceDimension<T2toST2ResultType>()>::value *
                 TensorDimeToSize<getSpaceDimension<T2toST2ResultType>()>::value,
             numeric_type<T2toST2ResultType>> {

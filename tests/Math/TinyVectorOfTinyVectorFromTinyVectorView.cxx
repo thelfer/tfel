@@ -21,7 +21,7 @@
 #include "TFEL/Tests/TestProxy.hxx"
 #include "TFEL/Tests/TestManager.hxx"
 #include "TFEL/Math/tvector.hxx"
-#include "TFEL/Math/Array/FixedSizeArrayView.hxx"
+#include "TFEL/Math/Array/ViewsArray.hxx"
 
 struct TinyVectorOfTinyVectorFromTinyVectorViewTest final
     : public tfel::tests::TestCase {
@@ -36,7 +36,8 @@ struct TinyVectorOfTinyVectorFromTinyVectorViewTest final
     const tvector<10, double> values = {1.1, 10.1, 2.9, 9.2, 3.8,
                                         8.3, 4.7,  7.4, 5.6, 6.5};
     tvector<10, double> v(values);
-    auto view = tfel::math::map_array<tvector<2, tvector<2u, double>>, 2>(v.data());
+    auto view =
+        tfel::math::map_array<tvector<2, tvector<2u, double>>>(v.data() + 2u);
     const auto& s1 = view(0);
     auto s2 = view(1);
     tvector<2, double>::size_type i;

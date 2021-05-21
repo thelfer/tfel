@@ -30,6 +30,17 @@ namespace tfel::math {
   }  // end of operator[]
 
   template <typename Child, typename ArrayPolicyType>
+  constexpr typename ArrayPolicyType::const_reference
+      ConstArrayCommonMethods<Child, ArrayPolicyType>::operator[](
+          const std::array<typename ArrayPolicyType::IndexingPolicy::size_type,
+                           ArrayPolicyType::IndexingPolicy::arity>& i) const
+      noexcept {
+    const auto& child = static_cast<const Child&>(*this);
+    const auto* const d = child.data();
+    return d[child.getIndex(i)];
+  }  // end of operator[]
+
+  template <typename Child, typename ArrayPolicyType>
   template <typename... Indices>
   constexpr typename ArrayPolicyType::const_reference
   ConstArrayCommonMethods<Child, ArrayPolicyType>::operator()(
@@ -42,11 +53,33 @@ namespace tfel::math {
   }  // end of operator[]
 
   template <typename Child, typename ArrayPolicyType>
+  constexpr typename ArrayPolicyType::const_reference
+  ConstArrayCommonMethods<Child, ArrayPolicyType>::operator()(
+      const std::array<typename ArrayPolicyType::IndexingPolicy::size_type,
+                       ArrayPolicyType::IndexingPolicy::arity>& i) const
+      noexcept {
+    const auto& child = static_cast<const Child&>(*this);
+    const auto* const d = child.data();
+    return d[child.getIndex(i)];
+  }  // end of operator()
+
+  template <typename Child, typename ArrayPolicyType>
   constexpr typename ArrayPolicyType::reference
       MutableArrayCommonMethods<Child, ArrayPolicyType>::operator[](
           const typename ArrayPolicyType::IndexingPolicy::size_type
               i) noexcept {
     static_assert(ArrayPolicyType::IndexingPolicy::arity == 1u, "invalid call");
+    auto& child = static_cast<Child&>(*this);
+    auto* const d = child.data();
+    return d[child.getIndex(i)];
+  }  // end of operator[]
+
+  template <typename Child, typename ArrayPolicyType>
+  constexpr typename ArrayPolicyType::reference
+      MutableArrayCommonMethods<Child, ArrayPolicyType>::operator[](
+          const std::array<typename ArrayPolicyType::IndexingPolicy::size_type,
+                           ArrayPolicyType::IndexingPolicy::arity>&
+              i) noexcept {
     auto& child = static_cast<Child&>(*this);
     auto* const d = child.data();
     return d[child.getIndex(i)];
@@ -63,6 +96,16 @@ namespace tfel::math {
     auto* const d = child.data();
     return d[child.getIndex(i...)];
   }
+
+  template <typename Child, typename ArrayPolicyType>
+  constexpr typename ArrayPolicyType::reference
+  MutableArrayCommonMethods<Child, ArrayPolicyType>::operator()(
+      const std::array<typename ArrayPolicyType::IndexingPolicy::size_type,
+                       ArrayPolicyType::IndexingPolicy::arity>& i) noexcept {
+    auto& child = static_cast<Child&>(*this);
+    auto* const d = child.data();
+    return d[child.getIndex(i)];
+  }  // end of operator()
 
   template <typename Child, typename ArrayPolicyType>
   template <typename OtherArray>

@@ -17,6 +17,8 @@
 #include "TFEL/TypeTraits/IsAssignableTo.hxx"
 #include "TFEL/Math/General/MathObjectTraits.hxx"
 #include "TFEL/Math/Array/GenericRuntimeArray.hxx"
+#include "TFEL/Math/Array/ViewsArray.hxx"
+#include "TFEL/Math/Array/ArrayConcept.hxx"
 #include "TFEL/Math/Forward/runtime_array.hxx"
 
 namespace tfel::math {
@@ -24,7 +26,8 @@ namespace tfel::math {
   template <typename ValueType>
   struct runtime_array
       : GenericRuntimeArray<runtime_array<ValueType>,
-                            RuntimeVectorArrayPolicy<ValueType>> {
+                            RuntimeVectorArrayPolicy<ValueType>>,
+        ArrayConcept<runtime_array<ValueType>> {
     //! \brief a simple alias
     using GenericRuntimeArrayBase =
         GenericRuntimeArray<runtime_array<ValueType>,
@@ -50,18 +53,145 @@ namespace tfel::math {
     ~runtime_array() noexcept = default;
   };  // end of runtime_array
 
+  /*!
+   * \tparam T: numeric type used by the array
+   */
+  template <typename T>
+  struct UnaryResultType<runtime_array<T>, OpNeg> {
+    typedef typename UnaryResultType<T, OpNeg>::type ResultNumericType;
+
+   public:
+    using type = std::conditional_t<isInvalid<ResultNumericType>(),
+                                    tfel::meta::InvalidType,
+                                    runtime_array<ResultNumericType>>;
+  };
+
+  /*!
+   * \brief partial specialisation for runtime_array and
+   * scalars operations
+   * \see   ComputeBinaryOperationResult
+   */
+  template <typename T, typename Scal>
+  class ComputeBinaryOperationResult<ArrayTag,
+                                     ScalarTag,
+                                     runtime_array<T>,
+                                     Scal,
+                                     OpMult> {
+    typedef result_type<T, Scal, OpMult> ResultNumericType;
+
+   public:
+    using type = std::conditional_t<isInvalid<ResultNumericType>(),
+                                    tfel::meta::InvalidType,
+                                    runtime_array<ResultNumericType>>;
+  };
+
+  /*!
+   * \brief partial specialisation for runtime_array and
+   * scalars operations
+   * \see   ComputeBinaryOperationResult
+   */
+  template <typename T, typename Scal>
+  class ComputeBinaryOperationResult<ArrayTag,
+                                     ScalarTag,
+                                     runtime_array<T>,
+                                     Scal,
+                                     OpDiv> {
+    typedef result_type<T, Scal, OpDiv> ResultNumericType;
+
+   public:
+    using type = std::conditional_t<isInvalid<ResultNumericType>(),
+                                    tfel::meta::InvalidType,
+                                    runtime_array<ResultNumericType>>;
+  };
+
+  /*!
+   * \brief partial specialisation for runtime_array and
+   * scalars operations
+   * \see   ComputeBinaryOperationResult
+   */
+  template <typename Scal, typename T>
+  class ComputeBinaryOperationResult<ScalarTag,
+                                     ArrayTag,
+                                     Scal,
+                                     runtime_array<T>,
+                                     OpMult> {
+    typedef result_type<Scal, T, OpMult> ResultNumericType;
+
+   public:
+    using type = std::conditional_t<isInvalid<ResultNumericType>(),
+                                    tfel::meta::InvalidType,
+                                    runtime_array<ResultNumericType>>;
+  };
+
+  /*!
+   * \brief partial specialisation for runtime_array
+   * \see   ResultType
+   */
+  template <typename T, typename T2>
+  class ResultType<runtime_array<T>, runtime_array<T2>, OpPlus> {
+    typedef result_type<T, T2, OpPlus> ResultNumericType;
+
+   public:
+    using type = std::conditional_t<isInvalid<ResultNumericType>(),
+                                    tfel::meta::InvalidType,
+                                    runtime_array<ResultNumericType>>;
+  };
+
+  /*!
+   * \brief partial specialisation for runtime_array
+   * \see   ResultType
+   */
+  template <typename T, typename T2>
+  class ResultType<runtime_array<T>, runtime_array<T2>, OpMinus> {
+    typedef result_type<T, T2, OpMinus> ResultNumericType;
+
+   public:
+    using type = std::conditional_t<isInvalid<ResultNumericType>(),
+                                    tfel::meta::InvalidType,
+                                    runtime_array<ResultNumericType>>;
+  };
+
 }  // end of namespace tfel::math
 
 namespace tfel::typetraits {
 
   /*!
-   * \brief specialisation
+   * \brief partial specialisation for the assignement of runtime arrays
    */
   template <typename ValueType, typename ValueType2>
   struct IsAssignableTo<tfel::math::runtime_array<ValueType>,
                         tfel::math::runtime_array<ValueType2>> {
     //! \brief result
     static constexpr auto cond = isAssignableTo<ValueType, ValueType2>();
+  };
+
+  /*!
+   * \brief partial specialisation allowing arrays of views to be assigned to a
+   * runtime array
+   */
+  template <typename MappedType,
+            typename MemoryIndexingPolicyType,
+            typename ViewIndexingPolicyType,
+            typename ValueType>
+  struct IsAssignableTo<tfel::math::ViewsArray<MappedType,
+                                               MemoryIndexingPolicyType,
+                                               ViewIndexingPolicyType>,
+                        tfel::math::runtime_array<ValueType>> {
+    //! \brief a simple alias
+    using RuntimeArrayIndexingPolicy =
+        typename tfel::math::runtime_array<ValueType>::indexing_policy;
+    //! \brief a simple alias
+    using View =
+        typename tfel::math::ViewsArray<MappedType,
+                                        MemoryIndexingPolicyType,
+                                        ViewIndexingPolicyType>::view_type;
+
+    //! \brief result
+    static constexpr auto cond =
+        ((tfel::math::checkIndexingPoliciesCompatiblity<
+             RuntimeArrayIndexingPolicy,
+             MemoryIndexingPolicyType>()) &&
+         (isAssignableTo<View, ValueType>()));
   };
 
 }  // end of namespace tfel::typetraits

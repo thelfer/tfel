@@ -3483,9 +3483,9 @@ namespace mfront {
       f << t << " " << n << ";\n";
     } else {
       if (this->mb.useDynamicallyAllocatedVector(v.arraySize)) {
-        f << "tfel::math::vector<" << t << " > " << n << ";\n";
+        f << "tfel::math::runtime_array<" << t << " > " << n << ";\n";
       } else {
-        f << "tfel::math::tvector<" << v.arraySize << ", " << t << " > " << n
+        f << "tfel::math::fsarray<" << v.arraySize << ", " << t << " > " << n
           << ";\n";
       }
     }
@@ -3683,6 +3683,10 @@ namespace mfront {
        << "#include\"TFEL/TypeTraits/IsFundamentalNumericType.hxx\"\n"
        << "#include\"TFEL/TypeTraits/IsReal.hxx\"\n"
        << "#include\"TFEL/Math/General/IEEE754.hxx\"\n"
+       << "#include\"TFEL/Math/Array/ViewsArrayIO.hxx\"\n"
+       << "#include\"TFEL/Math/Array/fsarrayIO.hxx\"\n"
+       << "#include\"TFEL/Math/Array/runtime_arrayIO.hxx\"\n"
+       << "#include\"TFEL/Math/fsarray.hxx\"\n"
        << "#include\"TFEL/Math/runtime_array.hxx\"\n";
     if (this->mb.useQt()) {
       os << "#include\"TFEL/Math/General/BaseCast.hxx\"\n";

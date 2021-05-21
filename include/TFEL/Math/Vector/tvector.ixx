@@ -327,15 +327,14 @@ namespace tfel::math {
             unsigned short stride,
             unsigned short N>
   constexpr std::enable_if_t<
-      ((!std::is_const_v<MappedType>)&&(
-          isMappableInAFixedSizeArray<tvector<M, MappedType>>())),
-      FixedSizeArrayView<tvector<M, MappedType>, stride>>
-  map(tvector<N, FixedSizeArrayViewNumericType<tvector<M, MappedType>>>& v) {
-    constexpr auto mstride =
-        getFixedSizeArrayViewMinimalStride<tvector<M, MappedType>>();
+      !std::is_const_v<MappedType>,
+      ViewsFixedSizeVector<MappedType, unsigned short, M, stride>>
+  map(tvector<N, ViewsArrayNumericType<MappedType>>& v) {
+    constexpr auto mstride = getViewsArrayMinimalStride<MappedType>();
     static_assert(stride >= mstride, "invalid stride");
     static_assert(N >= offset + M * mstride, "invalid vector size");
-    return map_array<tvector<M, MappedType>, offset, stride>(v.data());
+    return ViewsFixedSizeVector<MappedType, unsigned short, M, stride>(
+        v.data() + offset);
   }  // end of map
 
   template <unsigned short M,
@@ -343,19 +342,12 @@ namespace tfel::math {
             unsigned short offset,
             unsigned short stride,
             unsigned short N>
-  constexpr std::enable_if_t<
-      isMappableInAFixedSizeArray<tvector<M, std::remove_cv_t<MappedType>>>(),
-      FixedSizeArrayView<const tvector<M, std::remove_cv_t<MappedType>>,
-                         stride>>
-  map(const tvector<N,
-                    FixedSizeArrayViewNumericType<
-                        tvector<M, std::remove_cv_t<MappedType>>>>& v) {
-    constexpr auto mstride = getFixedSizeArrayViewMinimalStride<
-        tvector<M, std::remove_cv_t<MappedType>>>();
+  constexpr auto map(const tvector<N, ViewsArrayNumericType<MappedType>>& v) {
+    constexpr auto mstride = getViewsArrayMinimalStride<MappedType>();
     static_assert(stride >= mstride, "invalid stride");
     static_assert(N >= offset + M * mstride, "invalid vector size");
-    return map_array<const tvector<M, std::remove_cv_t<MappedType>>, offset,
-                     stride>(v.data());
+    return ViewsFixedSizeVector<const MappedType, unsigned short, M, stride>(
+        v.data() + offset);
   }  // end of map
 
 }  // end of namespace tfel::math

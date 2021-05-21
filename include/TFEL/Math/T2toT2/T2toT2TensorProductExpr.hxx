@@ -33,7 +33,7 @@ namespace tfel::math {
   struct Expr<TensorResultType, T2toT2TensorProductExpr<1u>>
       : public TensorConcept<
             Expr<TensorResultType, T2toT2TensorProductExpr<1u>>>,
-        public fsarray<
+        public array_holder<
             TensorDimeToSize<getSpaceDimension<TensorResultType>()>::value,
             numeric_type<TensorResultType>> {
     static_assert(getSpaceDimension<TensorResultType>() == 1u);
@@ -79,7 +79,7 @@ namespace tfel::math {
   struct Expr<TensorResultType, T2toT2TensorProductExpr<2u>>
       : public TensorConcept<
             Expr<TensorResultType, T2toT2TensorProductExpr<2u>>>,
-        public fsarray<
+        public array_holder<
             TensorDimeToSize<getSpaceDimension<TensorResultType>()>::value,
             numeric_type<TensorResultType>> {
     static_assert(getSpaceDimension<TensorResultType>() == 2u);
@@ -132,7 +132,7 @@ namespace tfel::math {
   struct Expr<TensorResultType, T2toT2TensorProductExpr<3u>>
       : public TensorConcept<
             Expr<TensorResultType, T2toT2TensorProductExpr<3u>>>,
-        public fsarray<
+        public array_holder<
             TensorDimeToSize<getSpaceDimension<TensorResultType>()>::value,
             numeric_type<TensorResultType>> {
     static_assert(getSpaceDimension<TensorResultType>() == 3u);

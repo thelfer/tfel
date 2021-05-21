@@ -149,6 +149,7 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Math/Forward/TinyNewtonRaphson.hxx                                                      \
 			TFEL/Math/Forward/Expr.hxx                                                      \
 			TFEL/Math/Bindings/atlas.hxx                                                                 \
+			TFEL/Math/Array/ArrayConcept.hxx				                             \
 			TFEL/Math/Array/StandardTemplateLibraryCompatibilityLayers.hxx				     \
 			TFEL/Math/Array/StandardTemplateLibraryCompatibilityLayers.ixx				     \
 			TFEL/Math/Array/ArrayCommonMethods.hxx							     \
@@ -159,9 +160,9 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Math/Array/ConstFixedSizeArrayBase.ixx						     \
 			TFEL/Math/Array/ConstRuntimeArrayBase.hxx						     \
 			TFEL/Math/Array/ConstRuntimeArrayBase.ixx						     \
-			TFEL/Math/Array/View.hxx								     \
-			TFEL/Math/Array/FixedSizeArrayView.hxx                                             \
-			TFEL/Math/Array/FixedSizeArrayViewIO.hxx                                           \
+			TFEL/Math/Array/View.hxx								                 \
+			TFEL/Math/Array/ViewsArray.hxx	           						     \
+			TFEL/Math/Array/ViewsArrayIO.hxx	           						     \
 			TFEL/Math/Array/FixedSizeArrayPolicies.hxx						     \
 			TFEL/Math/Array/FixedSizeIndexingPolicies.hxx						     \
 			TFEL/Math/Array/GenericFixedSizeArray.hxx						     \
@@ -179,6 +180,8 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Math/Array/RuntimeArrayPolicies.hxx						     \
 			TFEL/Math/Array/RuntimeIndexingPolicies.hxx						     \
 			TFEL/Math/Array/FixedSizeArrayDerivative.hxx						     \
+			TFEL/Math/Array/fsarrayIO.hxx						     \
+			TFEL/Math/Array/runtime_arrayIO.hxx						     \
 			TFEL/Math/Parser/BinaryFunction.hxx					                     \
 			TFEL/Math/Parser/EvaluatorBase.hxx 					                     \
 			TFEL/Math/Parser/Negation.hxx					                             \

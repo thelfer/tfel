@@ -19,7 +19,7 @@ AC_DEFUN([AC_CHECK_INTEL],
 	    if test "x$enable_optimizations" != "xno"; then   	    
 		if test "x$enable_debug" != "xyes"; then
 		    dnl g++ debug options
-		    CXXFLAGS="-DNDEBUG -DNO_RUNTIME_CHECK_BOUNDS $CXXFLAGS"
+		    CXXFLAGS="-DNDEBUG -DTFEL_NO_RUNTIME_CHECK_BOUNDS $CXXFLAGS"
 		fi
 		dnl icpc optimization options
 		CXXFLAGS="-O2 -ipo $CXXFLAGS"

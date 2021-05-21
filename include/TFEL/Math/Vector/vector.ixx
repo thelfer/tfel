@@ -40,7 +40,7 @@ namespace tfel::math {
 
   //   template <typename T>
   //   void vector<T>::swap(vector<T>& a) {
-  // #ifndef NO_RUNTIME_CHECK_BOUNDS
+  // #ifndef TFEL_NO_RUNTIME_CHECK_BOUNDS
   //     RunTimeCheck<RunTimeProperties>::exe(this->size(), a.size());
   // #endif /* LIB_TFEL_VECTORIXX */
   //     std::vector<T>::swap(a);

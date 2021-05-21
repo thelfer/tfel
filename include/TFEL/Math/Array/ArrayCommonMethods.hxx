@@ -40,7 +40,16 @@ namespace tfel::math {
      * \param[in] i: requested index
      */
     constexpr typename ArrayPolicyType::const_reference operator[](
-        const typename ArrayPolicyType::IndexingPolicy::size_type i) const
+        const typename ArrayPolicyType::IndexingPolicy::size_type) const
+        noexcept;
+    /*!
+     * \brief access operator
+     * \return a reference to the data associated with the given indices
+     * \param[in] i: requested indices
+     */
+    constexpr typename ArrayPolicyType::const_reference operator[](
+        const std::array<typename ArrayPolicyType::IndexingPolicy::size_type,
+                         ArrayPolicyType::IndexingPolicy::arity>&) const
         noexcept;
     /*!
      * \brief access operator
@@ -50,6 +59,16 @@ namespace tfel::math {
     template <typename... Indices>
     constexpr typename ArrayPolicyType::const_reference operator()(
         const Indices...) const noexcept;
+    /*!
+     * \brief access operator
+     * \return a reference to the data associated with the given indices
+     * \param[in] i: requested indices
+     */
+    constexpr typename ArrayPolicyType::const_reference operator()(
+        const std::array<typename ArrayPolicyType::IndexingPolicy::size_type,
+                         ArrayPolicyType::IndexingPolicy::arity>&) const
+        noexcept;
+
   };  // end of ConstArrayCommonMethods
 
   /*!
@@ -75,9 +94,25 @@ namespace tfel::math {
      * \return a reference to the data associated with the given indices
      * \param[in] i: requested indices
      */
+    constexpr typename ArrayPolicyType::reference operator[](
+        const std::array<typename ArrayPolicyType::IndexingPolicy::size_type,
+                         ArrayPolicyType::IndexingPolicy::arity>&) noexcept;
+    /*!
+     * \brief access operator
+     * \return a reference to the data associated with the given indices
+     * \param[in] i: requested indices
+     */
     template <typename... Indices>
     constexpr typename ArrayPolicyType::reference operator()(
         const Indices... i) noexcept;
+    /*!
+     * \brief access operator
+     * \return a reference to the data associated with the given indices
+     * \param[in] i: requested indices
+     */
+    constexpr typename ArrayPolicyType::reference operator()(
+        const std::array<typename ArrayPolicyType::IndexingPolicy::size_type,
+                         ArrayPolicyType::IndexingPolicy::arity>&) noexcept;
     /*!
      * \brief assign values values from an initializer list
      * \param[in] values: values to be assigned

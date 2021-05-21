@@ -33,7 +33,7 @@ namespace tfel::math {
   struct Expr<T2toT2ResultType, TensorProductLeftDerivativeExpr<1u>>
       : public T2toT2Concept<
             Expr<T2toT2ResultType, TensorProductLeftDerivativeExpr<1u>>>,
-        public fsarray<9u, numeric_type<T2toT2ResultType>> {
+        public array_holder<9u, numeric_type<T2toT2ResultType>> {
     static_assert(getSpaceDimension<T2toT2ResultType>() == 1u);
     //! a simple alias
     typedef numeric_type<T2toT2ResultType> value_type;
@@ -111,7 +111,7 @@ namespace tfel::math {
   struct Expr<T2toT2ResultType, TensorProductLeftDerivativeExpr<2u>>
       : public T2toT2Concept<
             Expr<T2toT2ResultType, TensorProductLeftDerivativeExpr<2u>>>,
-        public fsarray<25u, numeric_type<T2toT2ResultType>> {
+        public array_holder<25u, numeric_type<T2toT2ResultType>> {
     static_assert(getSpaceDimension<T2toT2ResultType>() == 2u);
     //! a simple alias
     typedef numeric_type<T2toT2ResultType> value_type;
@@ -224,7 +224,7 @@ namespace tfel::math {
   struct Expr<T2toT2ResultType, TensorProductLeftDerivativeExpr<3u>>
       : public T2toT2Concept<
             Expr<T2toT2ResultType, TensorProductLeftDerivativeExpr<3u>>>,
-        public fsarray<81u, numeric_type<T2toT2ResultType>> {
+        public array_holder<81u, numeric_type<T2toT2ResultType>> {
     static_assert(getSpaceDimension<T2toT2ResultType>() == 3u);
     //! a simple alias
     typedef numeric_type<T2toT2ResultType> value_type;

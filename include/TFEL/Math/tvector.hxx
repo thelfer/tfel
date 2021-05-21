@@ -27,7 +27,7 @@
 #include "TFEL/Math/General/EmptyRunTimeProperties.hxx"
 #include "TFEL/Math/Array/GenericFixedSizeArray.hxx"
 #include "TFEL/Math/Array/View.hxx"
-#include "TFEL/Math/Array/FixedSizeArrayView.hxx"
+#include "TFEL/Math/Array/ViewsArray.hxx"
 #include "TFEL/Math/Vector/VectorConcept.hxx"
 #include "TFEL/Math/Vector/VectorConceptOperations.hxx"
 #include "TFEL/Math/Forward/tmatrix.hxx"
@@ -337,14 +337,12 @@ namespace tfel::math {
   template <unsigned short M,
             typename MappedType,
             unsigned short offset = 0u,
-            unsigned short stride =
-                getFixedSizeArrayViewMinimalStride<tvector<M, MappedType>>(),
+            unsigned short stride = getViewsArrayMinimalStride<MappedType>(),
             unsigned short N>
   constexpr std::enable_if_t<
-      ((!std::is_const_v<MappedType>)&&(
-          isMappableInAFixedSizeArray<tvector<M, MappedType>>())),
-      FixedSizeArrayView<tvector<M, MappedType>, stride>>
-  map(tvector<N, FixedSizeArrayViewNumericType<tvector<M, MappedType>>>&);
+      !std::is_const_v<MappedType>,
+      ViewsFixedSizeVector<MappedType, unsigned short, M, stride>>
+  map(tvector<N, ViewsArrayNumericType<MappedType>>&);
 
   /*!
    * \brief create a const view on an array of fixed sized math objects from a
@@ -357,16 +355,9 @@ namespace tfel::math {
   template <unsigned short M,
             typename MappedType,
             unsigned short offset = 0u,
-            unsigned short stride =
-                getFixedSizeArrayViewMinimalStride<tvector<M, MappedType>>(),
+            unsigned short stride = getViewsArrayMinimalStride<MappedType>(),
             unsigned short N>
-  constexpr std::enable_if_t<
-      isMappableInAFixedSizeArray<tvector<M, std::remove_cv_t<MappedType>>>(),
-      FixedSizeArrayView<const tvector<M, std::remove_cv_t<MappedType>>,
-                         stride>>
-  map(const tvector<N,
-                    FixedSizeArrayViewNumericType<
-                        tvector<M, std::remove_cv_t<MappedType>>>>&);
+  constexpr auto map(const tvector<N, ViewsArrayNumericType<MappedType>>&);
 
 }  // namespace tfel::math
 
