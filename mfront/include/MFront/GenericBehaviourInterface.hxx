@@ -22,9 +22,18 @@ namespace mfront {
    * \brief a generic behaviour interface
    * See https://github.com/thelfer/MFrontGenericInterfaceSupport
    */
-  struct GenericBehaviourInterface : public StandardBehaviourInterface {
+  struct MFRONT_VISIBILITY_EXPORT GenericBehaviourInterface
+      : public StandardBehaviourInterface {
     //! \return the interface name
     static std::string getName();
+    /*!
+     * \return the current API version
+     *
+     * This API version changes everytime the API of the generic interface
+     * changes.
+     */
+    static unsigned short getAPIVersion();
+    //
     std::string getInterfaceName() const override;
     std::pair<bool, tokens_iterator> treatKeyword(
         BehaviourDescription&,

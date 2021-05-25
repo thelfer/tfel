@@ -29,9 +29,18 @@ typedef struct mfront_gb_BehaviourData mfront_gb_BehaviourData;
 #endif
 
 /*!
- * \brief structure
+ * \brief structure passed to the behaviour integration
  */
 struct mfront_gb_BehaviourData {
+  /*!
+   * \brief pointer to a buffer used to store error message
+   *
+   * \note This pointer can be nullptr.  If not null, the pointer must
+   * point to a buffer which is at least 512 characters wide (longer
+   * error message are truncated).  This caller must ensure
+   * thread-safety (i.e. each thread shall have its own buffer).
+   */
+  char* error_message;
   //! \brief time increment
   mfront_gb_real dt;
   /*!

@@ -14,6 +14,7 @@
 #ifndef LIB_MFRONT_GENERICBEHAVIOUR_INTEGRATE_HXX
 #define LIB_MFRONT_GENERICBEHAVIOUR_INTEGRATE_HXX
 
+#include <cstring>
 #include <algorithm>
 #include "TFEL/Raise.hxx"
 #include "TFEL/Math/General/IEEE754.hxx"
@@ -195,6 +196,26 @@ namespace mfront::gb {
   };  // end of struct DoNothingEnergyComputer
 
   /*!
+   * \brief a simple function to report integration failure when
+   * an exception is thrown.
+   */
+  inline void reportIntegrationFailure(mfront_gb_BehaviourData& d) {
+    constexpr std::size_t bsize = 511;
+    if (d.error_message == nullptr) {
+      return;
+    }
+    try {
+      throw;
+    } catch (std::exception& e) {
+      std::strncpy(d.error_message, e.what(), bsize);
+    } catch (...) {
+      const char* error = "unknown exception";
+      std::strncpy(d.error_message, error, bsize);
+    }
+    d.error_message[bsize] = '\0';
+  }  // end of reportIntegrationFailure
+
+  /*!
    * \brief integrate the behaviour over a time step
    * \tparam Behaviour: class implementing the behaviour
    * \param[in,out] d: behaviour data
@@ -265,6 +286,7 @@ namespace mfront::gb {
         *(d.speed_of_sound) = b.computeSpeedOfSound(*(d.s1.mass_density));
       }
     } catch (...) {
+      reportIntegrationFailure(d);
       rdt = b.getMinimalTimeStepScalingFactor();
       return -1;
     }

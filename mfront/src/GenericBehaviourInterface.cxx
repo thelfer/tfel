@@ -922,6 +922,10 @@ namespace mfront {
     return "generic";
   }  // end of getName
 
+  unsigned short GenericBehaviourInterface::getAPIVersion() {
+    return 1;
+  }  // end of getAPIVersion
+
   std::string GenericBehaviourInterface::getInterfaceName() const {
     return "Generic";
   }  // end of GenericBehaviourInterface::getInterfaceName

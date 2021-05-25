@@ -340,6 +340,7 @@ namespace mtest {
     using namespace tfel::math;
     using tfel::math::vector;
     using size_type = tfel::math::matrix<real>::size_type;
+    char error_message[512];
     auto throw_if = [](const bool c, const std::string& m) {
       tfel::raise_if(c, "GenericBehaviour::call_behaviour: " + m);
     };
@@ -390,6 +391,7 @@ namespace mtest {
     }
     std::fill(wk.D.begin(), wk.D.end(), 0.);
     mfront::gb::BehaviourData d;
+    d.error_message = error_message;
     if (this->stype == 1u) {
       // orthotropic behaviour
       std::copy(s.e0.begin(), s.e0.end(), wk.e0.begin());
@@ -461,6 +463,7 @@ namespace mtest {
     // calling the behaviour
     const auto r = (this->fct)(&d);
     if (r != 1) {
+      mfront::getLogStream() << error_message << '\n';
       return {false, rdt};
     }
     if (mfront::getVerboseMode() >= mfront::VERBOSE_DEBUG) {

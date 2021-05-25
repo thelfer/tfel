@@ -15,12 +15,25 @@
 #include "TFEL/Raise.hxx"
 #include "MFront/BehaviourDescription.hxx"
 #include "MFront/StandardBehaviourInterface.hxx"
+#include "MFront/GenericBehaviourInterface.hxx"
 #include "MFront/GenericBehaviourSymbolsGenerator.hxx"
 
 namespace mfront {
 
   GenericBehaviourSymbolsGenerator::GenericBehaviourSymbolsGenerator() =
       default;
+
+  void GenericBehaviourSymbolsGenerator::writeSpecificSymbols(
+      std::ostream& os,
+      const StandardBehaviourInterface& i,
+      const BehaviourDescription&,
+      const FileDescription&,
+      const std::string& name) const {
+    const auto n = i.getFunctionNameBasis(name);
+    os << "MFRONT_SHAREDOBJ unsigned short " << n
+       << "_api_version = " << GenericBehaviourInterface::getAPIVersion()
+       << "u;\n\n";
+  }  // end of writeSpecificSymbols
 
   void GenericBehaviourSymbolsGenerator::writeBehaviourTypeSymbols(
       std::ostream& os,

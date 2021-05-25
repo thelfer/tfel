@@ -24,8 +24,14 @@ namespace mfront {
    */
   struct MFRONT_VISIBILITY_EXPORT GenericBehaviourSymbolsGenerator
       : public SymbolsGenerator {
-    //! constructor
+    //! \brief constructor
     GenericBehaviourSymbolsGenerator();
+    //
+    void writeSpecificSymbols(std::ostream &,
+                              const StandardBehaviourInterface &,
+                              const BehaviourDescription &,
+                              const FileDescription &,
+                              const std::string &) const override;
     void writeBehaviourTypeSymbols(std::ostream&,
 					 const StandardBehaviourInterface&,
                                          const BehaviourDescription&,
