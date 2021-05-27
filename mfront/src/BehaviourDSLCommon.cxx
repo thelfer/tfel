@@ -1632,6 +1632,7 @@ namespace mfront {
     };
     const auto& sss = this->mb.getSlipSystems();
     const auto nb = sss.getNumberOfSlipSystemsFamilies();
+    const auto ims = sss.getInteractionMatrixStructure();
     const auto cn = this->mb.getClassName() + "SlipSystems";
     tfel::system::systemCall::mkdir("include");
     tfel::system::systemCall::mkdir("include/TFEL/");
@@ -1756,6 +1757,13 @@ namespace mfront {
         << " */\n"
         << "bool areCoplanar(const unsigned short,\n"
         << "                 const unsigned short) const;\n"
+        << "/*!\n"
+        << " * \\return an interaction matrix\n"
+        << " * \\param[in] m: coefficients of the interaction matrix\n"
+        << " */\n"
+        << "tfel::math::tmatrix<Nss, Nss, real>\n"
+        << "buildInteractionMatrix("
+        << "const tfel::math::fsarray<" << ims.rank() << ", real>&) const;\n"
         << "//! return the unique instance of the class\n"
         << "static const " << cn << "&\n"
         << "getSlidingSystems();\n"
@@ -1862,9 +1870,7 @@ namespace mfront {
       gnss.insert(gnss.end(), nss2.begin(), nss2.end());
     }
     write_vector(out, "this->ns", gnss);
-
-    auto write_imatrix = [&out, &sss, &nb, &nss](const std::vector<long double>& m, const std::string& n) {
-      const auto ims = sss.getInteractionMatrixStructure();
+    auto write_imatrix = [&out, &sss, &nb, &nss,&ims](const std::vector<long double>& m, const std::string& n) {
       auto count = size_type{};  // number of terms of the matrix treated so far
       out << "this->" << n << " = {";
       for (size_type idx = 0; idx != nb; ++idx) {
@@ -2002,7 +2008,33 @@ namespace mfront {
         << "break;\n"
         << "}\n"
         << "return false;\n"
-        << "}\n\n"
+        << "}\n\n";
+    // buildInteractionMatrix
+    auto count = size_type{};  // number of terms of the matrix treated so far
+    out << "template<typename real>\n"
+        << "tfel::math::tmatrix<" << cn << "<real>::Nss," << cn
+        << "<real>::Nss,real>\n"
+        << cn << "<real>::buildInteractionMatrix("
+        << "const tfel::math::fsarray<" << ims.rank() << ", real>& m) const{\n"
+        << "return {";
+    for (size_type idx = 0; idx != nb; ++idx) {
+      const auto gsi = sss.getSlipSystems(idx);
+      for (size_type idx2 = 0; idx2 != gsi.size(); ++idx2) {
+        for (size_type jdx = 0; jdx != nb; ++jdx) {
+          const auto gsj = sss.getSlipSystems(jdx);
+          for (size_type jdx2 = 0; jdx2 != gsj.size(); ++jdx2) {
+            const auto r = ims.getRank(gsi[idx2], gsj[jdx2]);
+            out << "m[" << r << "]";
+            if (++count != nss * nss) {
+              out << ",";
+            }
+          }
+        }
+        out << '\n';
+      }
+    }
+    out << "};\n"
+        << "} // end of buildInteractionMatrix\n\n"
         << "} // end of namespace material\n\n"
         << "} // end of namespace tfel\n\n"
         << "#endif /* LIB_TFEL_MATERIAL_" << makeUpperCase(cn) << "_IXX */\n";
