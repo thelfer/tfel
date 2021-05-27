@@ -1763,7 +1763,7 @@ namespace mfront {
         << " */\n"
         << "tfel::math::tmatrix<Nss, Nss, real>\n"
         << "buildInteractionMatrix("
-        << "const tfel::math::fsarray<" << ims.rank() << ", real>&) const;\n"
+        << "const tfel::math::tvector<" << ims.rank() << ", real>&) const;\n"
         << "//! return the unique instance of the class\n"
         << "static const " << cn << "&\n"
         << "getSlidingSystems();\n"
@@ -2015,7 +2015,7 @@ namespace mfront {
         << "tfel::math::tmatrix<" << cn << "<real>::Nss," << cn
         << "<real>::Nss,real>\n"
         << cn << "<real>::buildInteractionMatrix("
-        << "const tfel::math::fsarray<" << ims.rank() << ", real>& m) const{\n"
+        << "const tfel::math::tvector<" << ims.rank() << ", real>& m) const{\n"
         << "return {";
     for (size_type idx = 0; idx != nb; ++idx) {
       const auto gsi = sss.getSlipSystems(idx);
