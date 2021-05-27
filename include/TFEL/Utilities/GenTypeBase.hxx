@@ -135,10 +135,25 @@ namespace tfel::utilities {
     //! \brief a simple alias
     using variant =
         typename tfel::utilities::internals::StdVariantFromTypeList<List>::type;
-    // \brief inheriting variant' constructor's
-    using variant::variant;
-    // \brief inheriting variant' assignement operator's
-    using variant::operator=;
+    //! \brief default constructor
+    GenTypeBase() = default;
+    //! \brief move constructor
+    GenTypeBase(GenTypeBase &&) = default;
+    //! \brief copy constructor
+    GenTypeBase(const GenTypeBase &) = default;
+    //! \brief constructor from a value
+    template <typename T1, typename = type_check<T1, void>>
+    GenTypeBase(T1 &&value) : variant(std::forward<T1>(value)) {}
+    // \brief assignement operator
+    GenTypeBase &operator=(GenTypeBase &&) = default;
+    // \brief assignement operator
+    GenTypeBase &operator=(const GenTypeBase &) = default;
+    // \brief assignement operator from a value
+    template <typename T1, typename = type_check<T1, void>>
+    GenTypeBase& operator=(T1 &&value){
+      variant::operator=(std::forward<T1>(value));
+      return *this;
+    }
     //! \return true if empty
     bool empty() const { return std::holds_alternative<std::monostate>(*this); }
     /*!
