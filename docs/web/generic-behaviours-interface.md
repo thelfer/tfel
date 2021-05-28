@@ -108,11 +108,11 @@ integration points to be treated.
 ### Finite strain behaviours
 
 As devised in Section
-@sec:sec:generic_behaviour_interface:finite_strain_behaviours, finite
-strain behaviours are a special case, because the returned stress
-measure and the returned tangent operator can be chosen at runtime time.
-A specific rotation function is generated for each supported stress
-measure and each supported tangent operator.
+@sec:generic_behaviour_interface:finite_strain_behaviours, finite strain
+behaviours are a special case, because the returned stress measure and
+the returned tangent operator can be chosen at runtime time. A specific
+rotation function is generated for each supported stress measure and
+each supported tangent operator.
 
 Here is the list of the generated functions:
 

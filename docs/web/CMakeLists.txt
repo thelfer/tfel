@@ -130,6 +130,7 @@ pandoc_html(release-notes-3.3.1   "--toc" "--toc-depth=2" "--number-sections" "-
 pandoc_html(release-notes-3.3.2   "--toc" "--toc-depth=2" "--number-sections" "-c css/slideshow.css")
 pandoc_html(release-notes-3.4   "--toc" "--toc-depth=2" "--number-sections")
 pandoc_html(release-notes-3.4.1   "--toc" "--toc-depth=2" "--number-sections")
+pandoc_html(release-notes-3.4.2   "--toc" "--toc-depth=2" "--number-sections")
 pandoc_html(release-notes-4.0   "--toc" "--toc-depth=2" "--number-sections")
 pandoc_html(theory  "--toc" "--toc-depth=2")
 pandoc_html(tensors "--toc" "--toc-depth=2" "--number-sections")

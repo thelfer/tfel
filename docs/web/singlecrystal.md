@@ -306,6 +306,27 @@ matrix) member.
 const auto& m = ss.dim;
 ~~~~
 
+## Building the interaction matrix manually
+
+The member function `buildInteractionMatrix` can be used to compute
+manually the interaction matrix.
+
+It allows to define the coefficients of the interaction matrix as
+parameters or as material properties:
+
+~~~~{.cxx}
+@Parameters real im_coefficients[7];
+im_coefficients.setEntryName("InteractionMatrixCoefficients");
+
+....
+
+@Integrator{
+  const auto& ss = FCCSingleCrystalSlipSystems<real>::getSlipSystems();
+  const auto m = ss.buildInteractionMatrix(im_coefficients);
+  ....
+}
+~~~~
+
 ## Knowing if two systems are coplanar
 
 To know if two systems are coplanar, the data structure described in
