@@ -48,7 +48,6 @@ namespace mtest {
       const real dt,
       const StiffnessMatrixType ktype,
       const bool b) const {
-    using namespace std;
     using namespace tfel::math;
     using namespace ansys;
     using tfel::math::vector;
@@ -100,7 +99,7 @@ namespace mtest {
     std::fill(wk.D.begin(), wk.D.end(), real(0));
     // using a local copy of material properties to handle the
     // case where s.mprops1 is empty
-    copy(s.mprops1.begin(), s.mprops1.end(), wk.mps.begin());
+    std::copy(s.mprops1.begin(), s.mprops1.end(), wk.mps.begin());
     if (s.mprops1.empty()) {
       wk.mps[0] = real(0);
     }
@@ -129,7 +128,7 @@ namespace mtest {
     }
     // using a local copy of internal state variables to handle the
     // case where s.iv0 is empty
-    copy(s.iv0.begin(), s.iv0.end(), wk.ivs.begin());
+    std::copy(s.iv0.begin(), s.iv0.end(), wk.ivs.begin());
     const auto nstatv = static_cast<AnsysInt>(wk.ivs.size());
     // infinitesimal rotation matrix, set to identity
     const tmatrix<3u, 3u, real> drot = {1, 0, 0, 0, 1, 0, 0, 0, 1};
@@ -177,7 +176,7 @@ namespace mtest {
           "AbaqusFiniteStrainBehaviour::integrate: "
           "unsupported hypothesis");
     }
-    copy(s.s0.begin(), s.s0.end(), us.begin());
+    std::copy(s.s0.begin(), s.s0.end(), us.begin());
     // ansys standard convention
     for (AnsysInt i = 3; i != static_cast<unsigned short>(ntens); ++i) {
       us(i) /= sqrt2;
@@ -215,7 +214,7 @@ namespace mtest {
     if (b) {
       // treating internal state variables
       if (!s.iv0.empty()) {
-        copy_n(wk.ivs.begin(), s.iv1.size(), s.iv1.begin());
+        std::copy_n(wk.ivs.begin(), s.iv1.size(), s.iv1.begin());
       }
       // treating stresses
       if (h == ModellingHypothesis::TRIDIMENSIONAL) {
@@ -224,7 +223,7 @@ namespace mtest {
       for (AnsysInt i = 3; i != static_cast<unsigned short>(ntens); ++i) {
         us[i] *= sqrt2;
       }
-      copy(us.begin(), us.begin() + s.s1.size(), s.s1.begin());
+      std::copy(us.begin(), us.begin() + s.s1.size(), s.s1.begin());
     }
     if (h == ModellingHypothesis::TRIDIMENSIONAL) {
       st2tost2<3u, AnsysReal> K;

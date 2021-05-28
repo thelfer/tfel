@@ -1,5 +1,5 @@
 /*!
- * \file   MathConstants.hxx
+ * \file   include/TFEL/Math/General/MathConstants.hxx
  * \brief
  * \author Thomas Helfer
  * \date   06/10/2016

@@ -1459,7 +1459,7 @@ namespace mfront{
       os << "this->updateAuxiliaryStateVariables(dt_);\n";
     }
     os << "t += dt_;\n"
-       << "if(abs(this->dt-t)<dtprec){\n"
+       << "if(std::abs(this->dt-t)<dtprec){\n"
        << "converged=true;\n"
        << "}\n"
        << "}\n"
@@ -1498,7 +1498,7 @@ namespace mfront{
        << "if(dt_<dtprec){\n"
        << "throw(tfel::material::DivergenceException());\n"
        << "}\n"
-       << "if((abs(this->dt-t-dt_)<2*dtprec)||(t+dt_>this->dt)){\n"
+       << "if((std::abs(this->dt-t-dt_)<2*dtprec)||(t+dt_>this->dt)){\n"
        << "dt_=this->dt-t;\n"
        << "}\n"
        << "}\n"
@@ -1847,11 +1847,11 @@ namespace mfront{
       os << "this->updateAuxiliaryStateVariables(dt_);\n";
     }
     os << "t += dt_;\n"
-       << "if(abs(this->dt-t)<dtprec){\n"
+       << "if(std::abs(this->dt-t)<dtprec){\n"
        << "converged=true;\n"
        << "}\n"
        << "if(!converged){\n"
-       << "if (("  << this->mb.getClassName() << "::rkcastem_fac)*sqra<1.){\n"
+       << "if ((" << this->mb.getClassName() << "::rkcastem_fac)*sqra<1.){\n"
        << "dt_ *= " << this->mb.getClassName() << "::rkcastem_fac;\n";
     if(getDebugMode()){
       os << "cout << \"" << this->mb.getClassName()
@@ -1880,7 +1880,7 @@ namespace mfront{
        << "throw(tfel::material::DivergenceException());\n"
        << "}\n"
        << "if(!converged){\n"
-       << "if((abs(this->dt-t-dt_)<2*dtprec)||(t+dt_>this->dt)){\n"
+       << "if((std::abs(this->dt-t-dt_)<2*dtprec)||(t+dt_>this->dt)){\n"
        << "dt_=this->dt-t;\n"
        << "}\n"
        << "}\n"
@@ -2237,7 +2237,7 @@ namespace mfront{
       os << "this->updateAuxiliaryStateVariables(dt_);\n";
     }
     os << "t += dt_;\n"
-       << "if(abs(this->dt-t)<dtprec){\n"
+       << "if(std::abs(this->dt-t)<dtprec){\n"
        << "converged=true;\n"
        << "}\n"
        << "}\n"
@@ -2276,7 +2276,7 @@ namespace mfront{
        << "if(dt_<dtprec){\n"
        << "throw(tfel::material::DivergenceException());\n"
        << "}\n"
-       << "if((abs(this->dt-t-dt_)<2*dtprec)||(t+dt_>this->dt)){\n"
+       << "if((std::abs(this->dt-t-dt_)<2*dtprec)||(t+dt_>this->dt)){\n"
        << "dt_=this->dt-t;\n"
        << "}\n"
        << "}\n"

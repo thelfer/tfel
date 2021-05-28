@@ -46,7 +46,6 @@ namespace mtest {
       const real dt,
       const StiffnessMatrixType ktype,
       const bool b) const {
-    using namespace std;
     using namespace tfel::math;
     using namespace abaqus;
     using tfel::math::vector;
@@ -107,8 +106,8 @@ namespace mtest {
     stensor<3u, real> ue0(real(0));
     stensor<3u, real> ude(real(0));
     stensor<3u, real> us(real(0));
-    copy(s.e0.begin(), s.e0.end(), ue0.begin());
-    copy(s.s0.begin(), s.s0.end(), us.begin());
+    std::copy(s.e0.begin(), s.e0.end(), ue0.begin());
+    std::copy(s.s0.begin(), s.s0.end(), us.begin());
     for (AbaqusInt i = 0; i != s.e1.size(); ++i) {
       ude(i) = s.e1(i) - s.e0(i);
     }
@@ -241,7 +240,7 @@ namespace mtest {
     if (b) {
       // treating internal state variables
       if (!s.iv0.empty()) {
-        copy_n(wk.ivs.begin(), s.iv1.size(), s.iv1.begin());
+        std::copy_n(wk.ivs.begin(), s.iv1.size(), s.iv1.begin());
       }
       // treating stresses
       if (h == ModellingHypothesis::PLANESTRESS) {
@@ -256,7 +255,7 @@ namespace mtest {
       if ((this->stype == 1u) && (this->omp != 2u)) {
         us.changeBasis(rb);
       }
-      copy(us.begin(), us.begin() + s.s1.size(), s.s1.begin());
+      std::copy(us.begin(), us.begin() + s.s1.size(), s.s1.begin());
     }
     return {true, ndt};
   }

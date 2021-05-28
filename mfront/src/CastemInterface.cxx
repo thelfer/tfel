@@ -658,7 +658,6 @@ namespace mfront {
 
   void CastemInterface::endTreatment(const BehaviourDescription& mb,
                                      const FileDescription& fd) const {
-    using namespace std;
     using namespace tfel::system;
     auto throw_if = [](const bool b, const std::string& m) {
       tfel::raise_if(b, "CastemInterface::endTreatment: " + m);
@@ -716,7 +715,7 @@ namespace mfront {
         << "* \\date   " << fd.date << '\n'
         << "*/\n\n";
 
-    const string header = this->getHeaderGuard(mb);
+    const auto header = this->getHeaderGuard(mb);
     out << "#ifndef " << header << "\n"
         << "#define " << header << "\n\n";
 
@@ -739,7 +738,6 @@ namespace mfront {
     this->writeVisibilityDefines(out);
 
     out << "#ifdef __cplusplus\n\n";
-
     out << "namespace castem{\n\n";
 
     if (!mb.areAllMechanicalDataSpecialised(mhs)) {
@@ -753,7 +751,6 @@ namespace mfront {
     }
 
     out << "} // end of namespace castem\n\n";
-
     out << "#endif /* __cplusplus */\n\n";
 
     out << "#ifdef __cplusplus\n"
@@ -1818,10 +1815,9 @@ namespace mfront {
   std::pair<std::vector<BehaviourMaterialProperty>, SupportedTypes::TypeSize>
   CastemInterface::buildMaterialPropertiesList(const BehaviourDescription& mb,
                                                const Hypothesis h) const {
-    using namespace std;
     if (h == ModellingHypothesis::UNDEFINEDHYPOTHESIS) {
       const auto ah = this->getModellingHypothesesToBeTreated(mb);
-      set<Hypothesis> uh;
+      std::set<Hypothesis> uh;
       for (const auto& lh : ah) {
         if (!mb.hasSpecialisedMechanicalData(lh)) {
           uh.insert(lh);
@@ -1833,8 +1829,9 @@ namespace mfront {
                      "says that not all handled mechanical data "
                      "are specialised, but we found none.");
       // material properties for all the selected hypothesis
-      auto mpositions = vector<
-          pair<vector<BehaviourMaterialProperty>, SupportedTypes::TypeSize>>{};
+      auto mpositions =
+          std::vector<std::pair<std::vector<BehaviourMaterialProperty>,
+                                SupportedTypes::TypeSize>>{};
       for (const auto& lh : uh) {
         mpositions.push_back(this->buildMaterialPropertiesList(mb, lh));
       }
@@ -1984,7 +1981,6 @@ namespace mfront {
       const std::string& fname,
       const std::string& suffix,
       const BehaviourDescription& mb) const {
-    using namespace std;
     tfel::raise_if(
         mb.getBehaviourType() !=
             BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR,
@@ -2236,7 +2232,6 @@ namespace mfront {
       const std::string& fname,
       const std::string& suffix,
       const BehaviourDescription& mb) const {
-    using namespace std;
     tfel::raise_if(
         mb.getBehaviourType() !=
             BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR,

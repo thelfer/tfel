@@ -143,6 +143,7 @@ namespace mtest {
   void MTest::setRotationMatrix(const tfel::math::tmatrix<3u, 3u, real>& r,
                                 const bool bo) {
     using namespace tfel::math;
+    constexpr auto eps = 100 * std::numeric_limits<real>::epsilon();
     tfel::raise_if(this->b == nullptr,
                    "MTest::setRotationMatrix: "
                    "no behaviour defined");
@@ -158,20 +159,15 @@ namespace mtest {
     const tvector<3u, real> c0 = r.column_view<0>();
     const tvector<3u, real> c1 = r.column_view<1>();
     const tvector<3u, real> c2 = r.column_view<2>();
-    tfel::raise_if((abs(norm(c0) - real(1)) >
-                    100 * std::numeric_limits<real>::epsilon()) ||
-                       (abs(norm(c1) - real(1)) >
-                        100 * std::numeric_limits<real>::epsilon()) ||
-                       (abs(norm(c2) - real(1)) >
-                        100 * std::numeric_limits<real>::epsilon()),
+    tfel::raise_if((std::abs(norm(c0) - real(1)) > eps) ||
+                       (std::abs(norm(c1) - real(1)) > eps) ||
+                       (std::abs(norm(c2) - real(1)) > eps),
                    "MTest::setRotationMatrix: "
                    "at least one column is not normalised");
-    tfel::raise_if(
-        (abs(c0 | c1) > 100 * std::numeric_limits<real>::epsilon()) ||
-            (abs(c0 | c2) > 100 * std::numeric_limits<real>::epsilon()) ||
-            (abs(c1 | c2) > 100 * std::numeric_limits<real>::epsilon()),
-        "MTest::setRotationMatrix : "
-        "at least two columns are not orthogonals");
+    tfel::raise_if((std::abs(c0 | c1) > eps) || (std::abs(c0 | c2) > eps) ||
+                       (std::abs(c1 | c2) > eps),
+                   "MTest::setRotationMatrix : "
+                   "at least two columns are not orthogonals");
     this->rm = r;
   }
 
@@ -226,7 +222,6 @@ namespace mtest {
   }  // end of MTest::setGaussPointPositionForEvolutionsEvaluation
 
   void MTest::completeInitialisation() {
-    using namespace std;
     using namespace tfel::material;
     // additional constraints
     // must be set *before* `SingleStructureScheme::completeInitialisation`
@@ -235,7 +230,7 @@ namespace mtest {
            MechanicalBehaviourBase::STANDARDSTRAINBASEDBEHAVIOUR) ||
           (this->b->getBehaviourType() ==
            MechanicalBehaviourBase::STANDARDFINITESTRAINBEHAVIOUR)) {
-        shared_ptr<Evolution> eev;
+        std::shared_ptr<Evolution> eev;
         if (this->b->getBehaviourType() ==
             MechanicalBehaviourBase::STANDARDFINITESTRAINBEHAVIOUR) {
           eev = make_evolution(1.);
@@ -253,7 +248,7 @@ namespace mtest {
            MechanicalBehaviourBase::STANDARDSTRAINBASEDBEHAVIOUR) ||
           (this->b->getBehaviourType() ==
            MechanicalBehaviourBase::STANDARDFINITESTRAINBEHAVIOUR)) {
-        shared_ptr<Evolution> eev;
+        std::shared_ptr<Evolution> eev;
         if (this->b->getBehaviourType() ==
             MechanicalBehaviourBase::STANDARDFINITESTRAINBEHAVIOUR) {
           eev = make_evolution(1.);
@@ -261,7 +256,7 @@ namespace mtest {
           eev = make_evolution(0.);
         }
         auto ec = std::make_shared<ImposedGradient>(1, eev);
-        shared_ptr<Evolution> sev;
+        std::shared_ptr<Evolution> sev;
         auto pev = this->evm->find("AxialStress");
         if (pev != this->evm->end()) {
           sev = pev->second;
@@ -279,7 +274,7 @@ namespace mtest {
            MechanicalBehaviourBase::STANDARDSTRAINBASEDBEHAVIOUR) ||
           (this->b->getBehaviourType() ==
            MechanicalBehaviourBase::STANDARDFINITESTRAINBEHAVIOUR)) {
-        shared_ptr<Evolution> eev;
+        std::shared_ptr<Evolution> eev;
         if (this->b->getBehaviourType() ==
             MechanicalBehaviourBase::STANDARDFINITESTRAINBEHAVIOUR) {
           eev = make_evolution(1.);
@@ -336,7 +331,7 @@ namespace mtest {
                      "(the number of descriptions given by "
                      "the mechanical behaviour don't match "
                      "the number of internal state variables)");
-      for (std::vector<string>::size_type i = 0; i != ivdes.size(); ++i) {
+      for (std::vector<std::string>::size_type i = 0; i != ivdes.size(); ++i) {
         this->out << "# " << cnbr << " column: " << ivdes[i] << '\n';
         ++cnbr;
       }

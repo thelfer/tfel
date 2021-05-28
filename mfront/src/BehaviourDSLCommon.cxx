@@ -1770,8 +1770,7 @@ namespace mfront {
         << "#include\"TFEL/Math/tvector.hxx\"\n"
         << "#include\"TFEL/Math/stensor.hxx\"\n"
         << "#include\"TFEL/Math/tensor.hxx\"\n\n"
-        << "namespace tfel{\n\n"
-        << "namespace material{\n\n"
+        << "namespace tfel::material{\n\n"
         << "template<typename real>\n"
         << "struct " << cn << '\n'
         << "{\n"
@@ -1864,7 +1863,7 @@ namespace mfront {
         << " * \\return an interaction matrix\n"
         << " * \\param[in] m: coefficients of the interaction matrix\n"
         << " */\n"
-        << "tfel::math::tmatrix<Nss, Nss, real>\n"
+        << "constexpr tfel::math::tmatrix<Nss, Nss, real>\n"
         << "buildInteractionMatrix("
         << "const tfel::math::fsarray<" << ims.rank() << ", real>&) const;\n"
         << "//! return the unique instance of the class\n"
@@ -1898,8 +1897,7 @@ namespace mfront {
         << "template<typename real>\n"
         << "using " << this->mb.getClassName() << "GlidingSystems "
         << "= " << cn << "<real>;\n\n"
-        << "} // end of namespace material\n\n"
-        << "} // end of namespace tfel\n\n"
+        << "} // end of namespace tfel::material\n\n"
         << "#include\"TFEL/Material/" << cn << ".ixx\"\n\n"
         << "#endif /* LIB_TFEL_MATERIAL_" << makeUpperCase(cn) << "_HXX */\n";
     out.close();
@@ -1925,8 +1923,7 @@ namespace mfront {
     out << "#ifndef LIB_TFEL_MATERIAL_" << makeUpperCase(cn) << "_IXX\n"
         << "#define LIB_TFEL_MATERIAL_" << makeUpperCase(cn) << "_IXX\n\n"
         << "#include\"TFEL/Math/General/MathConstants.hxx\"\n\n"
-        << "namespace tfel{\n\n"
-        << "namespace material{\n\n"
+        << "namespace tfel::material{\n\n"
         << "template<typename real>\n"
         << "const " << cn << "<real>&\n"
         << cn << "<real>::getSlidingSystems(){\n"
@@ -2130,6 +2127,7 @@ namespace mfront {
     // buildInteractionMatrix
     auto count = size_type{};  // number of terms of the matrix treated so far
     out << "template<typename real>\n"
+        << "constexpr "
         << "tfel::math::tmatrix<" << cn << "<real>::Nss," << cn
         << "<real>::Nss,real>\n"
         << cn << "<real>::buildInteractionMatrix("
@@ -2153,8 +2151,7 @@ namespace mfront {
     }
     out << "};\n"
         << "} // end of buildInteractionMatrix\n\n"
-        << "} // end of namespace material\n\n"
-        << "} // end of namespace tfel\n\n"
+        << "} // end of namespace tfel::material\n\n"
         << "#endif /* LIB_TFEL_MATERIAL_" << makeUpperCase(cn) << "_IXX */\n";
   }
 
@@ -2339,7 +2336,6 @@ namespace mfront {
   }  // end of treatBrick
 
   void BehaviourDSLCommon::treatTangentOperator() {
-    using namespace std;
     using namespace tfel::material;
     using namespace tfel::utilities;
     CodeBlockOptions o;
@@ -2368,7 +2364,7 @@ namespace mfront {
         ++po;
       }
       if (ktype.empty()) {
-        ostringstream msg;
+        std::ostringstream msg;
         msg << "Undefined tangent operator type '" + ktype +
                    "'. Valid tangent operator type are :\n";
         for (const auto& to : getFiniteStrainBehaviourTangentOperatorFlags()) {
@@ -2718,7 +2714,6 @@ namespace mfront {
   }  // end of treatUsableInPurelyImplicitResolution
 
   void BehaviourDSLCommon::treatParameterMethod(const Hypothesis h) {
-    using namespace std;
     using namespace tfel::utilities;
     const auto n = tfel::unicode::getMangledString(this->current->value);
     ++(this->current);
@@ -3540,8 +3535,7 @@ namespace mfront {
       this->throwRuntimeError("BehaviourDSLCommon::writeNamespaceBegin",
                               "output file is not valid");
     }
-    file << "namespace tfel{\n\n"
-         << "namespace material{\n\n";
+    file << "namespace tfel::material{\n\n";
   }
 
   void BehaviourDSLCommon::writeNamespaceEnd(std::ostream& file) const {
@@ -3549,8 +3543,7 @@ namespace mfront {
       this->throwRuntimeError("BehaviourDSLCommon::writeNamespaceEnd",
                               "output file is not valid");
     }
-    file << "} // end of namespace material\n\n"
-         << "} // end of namespace tfel\n\n";
+    file << "} // end of namespace tfel::material\n\n";
   }
 
   void BehaviourDSLCommon::writeStandardTFELTypedefs(std::ostream& file) const {
@@ -7022,7 +7015,6 @@ namespace mfront {
 
   void BehaviourDSLCommon::writeBehaviourComputePredictionOperator(
       std::ostream& os, const Hypothesis h) const {
-    using namespace std;
     using namespace tfel::material;
     const auto btype = this->mb.getBehaviourTypeFlag();
     if ((!this->mb.getAttribute<bool>(h, BehaviourData::hasPredictionOperator,
@@ -7050,7 +7042,7 @@ namespace mfront {
       const auto converters = FiniteStrainBehaviourTangentOperatorConversion::
           getAvailableFiniteStrainBehaviourTangentOperatorConversions();
       // tangent operators defined by the user
-      vector<FiniteStrainBehaviourTangentOperatorBase::Flag> ktos;
+      std::vector<FiniteStrainBehaviourTangentOperatorBase::Flag> ktos;
       for (const auto& t : tos) {
         const auto ktype =
             convertFiniteStrainBehaviourTangentOperatorFlagToString(t);
@@ -7062,7 +7054,7 @@ namespace mfront {
       }
       if (!ktos.empty()) {
         // computing all the conversion paths starting from user defined ones
-        vector<FiniteStrainBehaviourTangentOperatorConversionPath> paths;
+        std::vector<FiniteStrainBehaviourTangentOperatorConversionPath> paths;
         for (const auto& k : ktos) {
           const auto kpaths =
               FiniteStrainBehaviourTangentOperatorConversionPath::
@@ -8515,7 +8507,6 @@ namespace mfront {
   }  // end of treatProfiling
 
   void BehaviourDSLCommon::treatPredictionOperator() {
-    using namespace std;
     using namespace tfel::material;
     using namespace tfel::utilities;
     CodeBlockOptions o;
@@ -8524,7 +8515,7 @@ namespace mfront {
         BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR) {
       bool found = false;
       if (o.untreated.size() != 1u) {
-        ostringstream msg;
+        std::ostringstream msg;
         msg << "tangent operator type is undefined. Valid tanget operator type "
                "are :\n";
         for (const auto& to : getFiniteStrainBehaviourTangentOperatorFlags()) {
@@ -8550,7 +8541,7 @@ namespace mfront {
         }
       }
       if (!found) {
-        ostringstream msg;
+        std::ostringstream msg;
         msg << "invalid tangent operator type '" + ktype +
                    "'. Valid tanget operator type are :\n";
         for (const auto& to : getFiniteStrainBehaviourTangentOperatorFlags()) {

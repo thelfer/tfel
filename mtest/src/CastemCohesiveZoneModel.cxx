@@ -114,7 +114,6 @@ namespace mtest {
       BehaviourWorkSpace& wk,
       const real dt,
       const StiffnessMatrixType ktype) const {
-    using namespace std;
     using namespace tfel::math;
     using namespace castem;
     using tfel::math::vector;
@@ -204,11 +203,11 @@ namespace mtest {
       }
     }
     if (!s.iv1.empty()) {
-      copy_n(wk.ivs.begin(), s.iv1.size(), s.iv1.begin());
+      std::copy_n(wk.ivs.begin(), s.iv1.size(), s.iv1.begin());
     }
     // turning things in standard conventions
     if (ntens == 2) {
-      swap(s.s1[0], s.s1[1]);
+      std::swap(s.s1[0], s.s1[1]);
     }
     if (ntens == 3) {
       const real tmp = s.s1[0];

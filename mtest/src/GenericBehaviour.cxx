@@ -335,7 +335,6 @@ namespace mtest {
       const real dt,
       const StiffnessMatrixType ktype,
       const bool b) const {
-    using namespace std;
     using namespace tfel::math;
     using tfel::math::vector;
     using size_type = tfel::math::matrix<real>::size_type;

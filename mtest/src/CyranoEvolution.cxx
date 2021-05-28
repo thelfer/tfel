@@ -33,9 +33,8 @@ namespace mtest {
   }  // end of CyranoEvolution::CyranoEvolution
 
   real CyranoEvolution::operator()(const real t) const {
-    using namespace std;
-    vector<string>::size_type i;
-    for (i = 0; i != this->vnames.size(); ++i) {
+    for (std::vector<std::string>::size_type i = 0; i != this->vnames.size();
+         ++i) {
       auto pev = this->evm.find(vnames[i]);
       if (pev == this->evm.end()) {
         tfel::raise(

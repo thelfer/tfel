@@ -178,7 +178,6 @@ namespace mfront {
                         const GeneratorOptions& o,
                         const std::string& d,
                         const std::string& f) {
-    using namespace std;
     if (getVerboseMode() >= VERBOSE_LEVEL2) {
       getLogStream() << "generating Makefile\n";
     }
@@ -194,11 +193,11 @@ namespace mfront {
     const auto cc = (env_cc == nullptr) ? "$(CC)" : env_cc;
     const auto tfel_config = tfel::getTFELConfigExecutableName();
     auto mfile = d + tfel::system::dirStringSeparator() + f;
-    ofstream m(mfile);
-    m.exceptions(ios::badbit | ios::failbit);
+    std::ofstream m(mfile);
+    m.exceptions(std::ios::badbit | std::ios::failbit);
     tfel::raise_if(!m, "generateMakeFile : can't open file '" + mfile + "'");
-    auto cppSources = set<string>{};
-    auto cSources = set<string>{};
+    auto cppSources = std::set<std::string>{};
+    auto cSources = std::set<std::string>{};
     for (const auto& l : t.libraries) {
       for (const auto& src : l.sources) {
         if (src.size() > 4) {
@@ -234,7 +233,7 @@ namespace mfront {
     }
     m << "-I../include";
     // cpp flags
-    vector<string> cppflags;
+    std::vector<std::string> cppflags;
     for (const auto& l : t.libraries) {
       for (const auto& flags : l.cppflags) {
         insert_if(cppflags, flags);
@@ -393,8 +392,8 @@ namespace mfront {
     }
     auto p5 = t.specific_targets.find("all");
     if (p5 != t.specific_targets.end()) {
-      copy(p5->second.deps.begin(), p5->second.deps.end(),
-           ostream_iterator<string>(m, " "));
+      std::copy(p5->second.deps.begin(), p5->second.deps.end(),
+                std::ostream_iterator<std::string>(m, " "));
       m << "\n";
       for (const auto& cmd : p5->second.cmds) {
         m << "\t" << cmd << "\n";
@@ -496,7 +495,7 @@ namespace mfront {
     p5 = t.specific_targets.find("clean");
     if (p5 != t.specific_targets.end()) {
       std::copy(p5->second.deps.begin(), p5->second.deps.end(),
-                std::ostream_iterator<string>(m, " "));
+                std::ostream_iterator<std::string>(m, " "));
     }
     m << "\n";
     if ((o.sys == "win32") || (o.sys == "cygwin")) {

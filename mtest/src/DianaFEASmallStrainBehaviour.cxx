@@ -110,7 +110,6 @@ namespace mtest {
       const real dt,
       const StiffnessMatrixType ktype,
       const bool b) const {
-    using namespace std;
     using namespace tfel::math;
     using namespace dianafea;
     using tfel::material::getSpaceDimension;

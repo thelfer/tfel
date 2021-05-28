@@ -162,7 +162,6 @@ namespace mtest {
       const real dt,
       const StiffnessMatrixType ktype,
       const bool b) const {
-    using namespace std;
     using namespace tfel::math;
     using namespace tfel::material;
     using namespace aster;
@@ -199,18 +198,18 @@ namespace mtest {
     } else {
       throw_if(true, "unsupported hypothesis");
     }
-    fill(wk.D.begin(), wk.D.end(), 0.);
+    std::fill(wk.D.begin(), wk.D.end(), 0.);
     // choosing the type of stiffness matrix
     StandardBehaviourBase::initializeTangentOperator(wk.D, ktype, b);
     // using a local copy of material properties to handle the
     // case where s.mprops1 is empty
-    copy(s.mprops1.begin(), s.mprops1.end(), wk.mps.begin());
+    std::copy(s.mprops1.begin(), s.mprops1.end(), wk.mps.begin());
     if (s.mprops1.empty()) {
       wk.mps[0] = real(0);
     }
     // using a local copy of internal state variables to handle the
     // case where s.iv0 is empty
-    copy(s.iv0.begin(), s.iv0.end(), wk.ivs.begin());
+    std::copy(s.iv0.begin(), s.iv0.end(), wk.ivs.begin());
     if (s.iv0.empty()) {
       wk.ivs[0] = real(0);
     }
@@ -259,7 +258,7 @@ namespace mtest {
     } else {
       throw_if(true, "unsupported hypothesis");
     }
-    copy(s.s0.begin(), s.s0.end(), s.s1.begin());
+    std::copy(s.s0.begin(), s.s0.end(), s.s1.begin());
     for (unsigned short i = 3; i != static_cast<unsigned short>(ntens); ++i) {
       s.s1(i) /= sqrt2;
     }
@@ -278,7 +277,7 @@ namespace mtest {
     }
     if (b) {
       if (!s.iv0.empty()) {
-        copy_n(wk.ivs.begin(), s.iv1.size(), s.iv1.begin());
+        std::copy_n(wk.ivs.begin(), s.iv1.size(), s.iv1.begin());
       }
       // turning things in standard conventions
       for (unsigned short i = 3; i != static_cast<unsigned short>(ntens); ++i) {

@@ -49,7 +49,6 @@ namespace mtest {
       const real dt,
       const StiffnessMatrixType ktype,
       const bool b) const {
-    using namespace std;
     using namespace tfel::math;
     using namespace tfel::material;
     using namespace calculix;
@@ -67,10 +66,10 @@ namespace mtest {
              "unsupported modelling hypothesis");
     const CalculiXInt nprops =
         -100 - static_cast<CalculiXInt>(s.mprops1.size());
-    fill(wk.D.begin(), wk.D.end(), 0.);
+    std::fill(wk.D.begin(), wk.D.end(), 0.);
     // using a local copy of internal state variables to handle the
     // case where s.iv0 is empty
-    copy(s.iv0.begin(), s.iv0.end(), wk.ivs.begin());
+    std::copy(s.iv0.begin(), s.iv0.end(), wk.ivs.begin());
     const auto nstatv = static_cast<CalculiXInt>(wk.ivs.size());
     tmatrix<3u, 3u, real> uu0(real(0));
     tmatrix<3u, 3u, real> uu1(real(0));
@@ -156,9 +155,9 @@ namespace mtest {
     if (b) {
       // treating internal state variables
       if (!s.iv0.empty()) {
-        copy_n(wk.ivs.begin(), s.iv1.size(), s.iv1.begin());
+        std::copy_n(wk.ivs.begin(), s.iv1.size(), s.iv1.begin());
       }
-      copy(us.begin(), us.begin() + s.s1.size(), s.s1.begin());
+      std::copy(us.begin(), us.begin() + s.s1.size(), s.s1.begin());
     }
     return {true, (ndt > 0) ? ndt : 1};
   }

@@ -49,7 +49,7 @@ namespace mfront {
       tokens_iterator current,
       const tokens_iterator) {
     tfel::raise_if((std::find(i.begin(), i.end(), "cyrano") != i.end()) ||
-                   (std::find(i.begin(), i.end(), "Cyrano") != i.end()),
+                       (std::find(i.begin(), i.end(), "Cyrano") != i.end()),
                    "CyranoMaterialPropertyInterface::treatKeyword: "
                    "unsupported keyword '" +
                        k + "'");
@@ -125,8 +125,7 @@ namespace mfront {
           << "cyrano_output_status->status = -1;\n"
           << "cyrano_output_status->bounds_status = -" << i << ";\n"
           << "errno = cyrano_errno_old;\n"
-          << "return nan(\"" << v.name
-          << " is not physically valid.\");\n"
+          << "return nan(\"" << v.name << " is not physically valid.\");\n"
           << "}\n";
     } else {
       out << "if((" << v.name << " < " << b.lowerBound << ")||"
@@ -332,8 +331,8 @@ namespace mfront {
         << "extern \"C\"{\n"
         << "#endif /* __cplusplus */\n\n";
 
-    writeVariablesNamesSymbol(out,name,mpd);
-    writeVariablesBoundsSymbols(out,name,mpd);
+    writeVariablesNamesSymbol(out, name, mpd);
+    writeVariablesBoundsSymbols(out, name, mpd);
     writeEntryPointSymbol(out, name);
     writeTFELVersionSymbol(out, name);
     writeInterfaceSymbol(out, name, "Cyrano");
@@ -439,14 +438,14 @@ namespace mfront {
       }
     }
     out << "real " << mpd.output.name << ";\n";
-out << "try{\n";
+    out << "try{\n";
     if ((hasPhysicalBounds(mpd.inputs)) || (hasBounds(mpd.inputs))) {
       out << "#ifndef NO_CYRANO_BOUNDS_CHECK\n";
     }
     if (hasPhysicalBounds(mpd.inputs)) {
       out << "// treating physical bounds\n";
       for (decltype(mpd.inputs.size()) i = 0; i != mpd.inputs.size(); ++i) {
-        writePhysicalBounds(out, mpd.inputs[i], i+1);
+        writePhysicalBounds(out, mpd.inputs[i], i + 1);
       }
     }
     if (hasBounds(mpd.inputs)) {

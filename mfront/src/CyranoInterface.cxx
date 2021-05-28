@@ -191,7 +191,6 @@ namespace mfront {
 
   void CyranoInterface::endTreatment(const BehaviourDescription& mb,
                                      const FileDescription& fd) const {
-    using namespace std;
     using namespace tfel::system;
     using namespace tfel::utilities;
     auto throw_if = [](const bool b, const std::string& m) {
@@ -252,11 +251,11 @@ namespace mfront {
     throw_if(!out, "could not open file '" + fileName + "'");
 
     out << "/*!\n";
-    out << "* \\file   " << fileName << endl;
+    out << "* \\file   " << fileName << '\n';
     out << "* \\brief  This file declares the cyrano interface for the " << mb.getClassName()
         << " behaviour law\n";
-    out << "* \\author " << fd.authorName << endl;
-    out << "* \\date   " << fd.date << endl;
+    out << "* \\author " << fd.authorName << '\n';
+    out << "* \\date   " << fd.date << '\n';
     out << "*/\n\n";
 
     const auto header = this->getHeaderGuard(mb);
@@ -315,11 +314,11 @@ namespace mfront {
                        fileName + "'");
 
     out << "/*!\n";
-    out << "* \\file   " << fileName << endl;
+    out << "* \\file   " << fileName << '\n';
     out << "* \\brief  This file implements the cyrano interface for the " << mb.getClassName()
         << " behaviour law\n";
-    out << "* \\author " << fd.authorName << endl;
-    out << "* \\date   " << fd.date << endl;
+    out << "* \\author " << fd.authorName << '\n';
+    out << "* \\date   " << fd.date << '\n';
     out << "*/\n\n";
 
     this->getExtraSrcIncludes(out, mb);
@@ -434,7 +433,6 @@ namespace mfront {
 
   void CyranoInterface::writeCyranoFunctionDeclaration(std::ostream& out,
                                                        const std::string& name) const {
-    using namespace std;
     out << "MFRONT_SHAREDOBJ void\n"
         << name << "(const cyrano::CyranoInt *const,const cyrano::CyranoReal *const,\n"
         << "const cyrano::CyranoReal *const,      cyrano::CyranoReal *const,\n"

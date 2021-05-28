@@ -144,7 +144,6 @@ namespace aster {
     N[3][1] *= AsterReal(2.);
     N[3][2] *= AsterReal(2.);
     // matrice temporaire
-    using namespace std;
     AsterReal t[4][4];
     for (unsigned short i = 0; i != 4; ++i) {
       for (unsigned short j = 0; j != 4; ++j) {

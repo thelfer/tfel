@@ -140,17 +140,14 @@ namespace mfront {
 
   void MultipleIsotropicMisesFlowsDSL::writeBehaviourParserSpecificMembers(
       std::ostream& os, const Hypothesis) const {
-    using namespace std;
-    vector<FlowHandler>::const_iterator p;
-    vector<FlowHandler>::const_iterator p2;
-    unsigned short n;
     bool genericTheta;
     this->checkBehaviourFile(os);
     tfel::raise_if(this->flows.empty(),
                    "MultipleIsotropicMisesFlowsDSL::"
                    "writeBehaviourParserSpecificMembers : "
                    "no flow rule defined");
-    for (p = this->flows.begin(), n = 0; p != this->flows.end(); ++p, ++n) {
+    unsigned short n = 0;
+    for (auto p = this->flows.begin(); p != this->flows.end(); ++p, ++n) {
       if (p->flow == FlowHandler::PlasticFlow) {
         os << "void computeFlow" << n << "(stress& f,\n"
            << "real& df_dseq,\n"
@@ -168,7 +165,7 @@ namespace mfront {
       os << "using namespace tfel::material;\n";
       os << "using std::vector;\n";
       writeMaterialLaws(os, this->mb.getMaterialLaws());
-      os << p->flowRule << endl;
+      os << p->flowRule << '\n';
       os << "}\n\n";
     }
     os << "bool NewtonIntegration(){\n"
@@ -181,9 +178,10 @@ namespace mfront {
        << ",strain> newton_df;\n";
 
     genericTheta = false;
-    for (p = this->flows.begin(), n = 0; p != this->flows.end(); ++p, ++n) {
+    n = 0;
+    for (auto p = this->flows.begin(); p != this->flows.end(); ++p, ++n) {
       if (p->hasSpecificTheta) {
-        ostringstream otheta;
+        std::ostringstream otheta;
         otheta << "mu_3_theta" << n;
         os << "stress " + otheta.str() + " = 3*(real(";
         os << p->theta << "))*(this->mu);\n";
@@ -197,7 +195,7 @@ namespace mfront {
       os << this->mb.getClassName() << "::theta)*(this->mu);\n";
     }
     bool found = false;
-    for (p = this->flows.begin(); (p != this->flows.end()) && !(found); ++p) {
+    for (auto p = this->flows.begin(); (p != this->flows.end()) && !(found); ++p) {
       if (p->flow == FlowHandler::PlasticFlow) {
         os << "real surf;\n";
         os << "real newton_epsilon = "
@@ -209,7 +207,8 @@ namespace mfront {
        << "bool converge=false;\n"
        << "while((converge==false)&&\n"
        << "(iter<(" << this->mb.getClassName() << "::iterMax))){\n";
-    for (p = this->flows.begin(), n = 0; p != this->flows.end(); ++p, ++n) {
+    n = 0;
+    for (auto p = this->flows.begin(); p != this->flows.end(); ++p, ++n) {
       os << "this->p_  = this->p" << n << " + (";
       if (p->hasSpecificTheta) {
         os << "real(" << p->theta << ")";
@@ -218,7 +217,7 @@ namespace mfront {
       }
       os << ")*(vdp(" << n << "));\n";
       if (p->hasSpecificTheta) {
-        ostringstream otheta;
+        std::ostringstream otheta;
         os << "this->seq = std::max(this->seq_e" << n << "-";
         otheta << "mu_3_theta" << n << "*(";
         os << otheta.str();
@@ -226,7 +225,7 @@ namespace mfront {
         os << "this->seq = std::max(this->seq_e-";
         os << "mu_3_theta*(";
       }
-      p2 = this->flows.begin();
+      auto p2 = this->flows.begin();
       unsigned short n2 = 0u;
       while (p2 != this->flows.end()) {
         os << "vdp(" << n2 << ")";
@@ -341,7 +340,8 @@ namespace mfront {
       }
     }
     os << "real error=static_cast<real>(0.);\n";
-    for (p = this->flows.begin(), n = 0; p != this->flows.end(); ++p, ++n) {
+    n = 0;
+    for (auto p = this->flows.begin(); p != this->flows.end(); ++p, ++n) {
       os << "error+=std::abs(tfel::math::base_cast(newton_f(" << n << ")));\n";
     }
     os << "auto jacobian_inversion_succeeded = true;"
@@ -373,17 +373,20 @@ namespace mfront {
            << "<< iter << \" iterations\"<< endl << endl;\n";
         os << "cout << *this << endl;\n";
       }
-      os << "return false;" << endl << "}\n\n";
-      for (p = this->flows.begin(), n = 0; p != this->flows.end(); ++p, ++n) {
+      os << "return false;\n"
+         << "}\n\n";
+      n = 0;
+      for (auto p = this->flows.begin(); p != this->flows.end(); ++p, ++n) {
         os << "this->dp" << n << " = "
            << "vdp(" << n << ");\n";
-      }
+}
       if (getDebugMode()) {
         os << "cout << \"" << this->mb.getClassName()
            << "::NewtonIntegration() : convergence after \" "
            << "<< iter << \" iterations\"<< endl << endl;\n";
       }
-      os << "return true;" << endl << "\n}\n\n";
+      os << "return true;\n"
+         << "\n}\n\n";
   }  // end of writeBehaviourParserSpecificMembers
 
   void MultipleIsotropicMisesFlowsDSL::writeBehaviourIntegrator(
@@ -464,16 +467,15 @@ namespace mfront {
   }
 
   void MultipleIsotropicMisesFlowsDSL::treatFlowRule() {
-    using namespace std;
     const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     FlowHandler flow;
     this->checkNotEndOfFile("MultipleIsotropicMisesFlowsDSL::treatFlowRule",
                             "Expected flow rule name.");
     if (this->current->value == "Plasticity") {
-      ostringstream p;
-      ostringstream f;
-      ostringstream df_dseq;
-      ostringstream df_dp;
+      std::ostringstream p;
+      std::ostringstream f;
+      std::ostringstream df_dseq;
+      std::ostringstream df_dp;
       p << "p" << this->flows.size();
       f << "f" << this->flows.size();
       df_dseq << "df_dseq" << this->flows.size();
@@ -489,9 +491,9 @@ namespace mfront {
           h, VariableDescription("stress", df_dp.str(), 1u, 0u));
       flow.flow = FlowHandler::PlasticFlow;
     } else if (this->current->value == "Creep") {
-      ostringstream p;
-      ostringstream f;
-      ostringstream df_dseq;
+      std::ostringstream p;
+      std::ostringstream f;
+      std::ostringstream df_dseq;
       p << "p" << this->flows.size();
       f << "f" << this->flows.size();
       df_dseq << "df_dseq" << this->flows.size();
@@ -504,10 +506,10 @@ namespace mfront {
           h, VariableDescription("DF_DSEQ_TYPE", df_dseq.str(), 1u, 0u));
       flow.flow = FlowHandler::CreepFlow;
     } else if (this->current->value == "StrainHardeningCreep") {
-      ostringstream p;
-      ostringstream f;
-      ostringstream df_dseq;
-      ostringstream df_dp;
+      std::ostringstream p;
+      std::ostringstream f;
+      std::ostringstream df_dseq;
+      std::ostringstream df_dp;
       p << "p" << this->flows.size();
       f << "f" << this->flows.size();
       df_dseq << "df_dseq" << this->flows.size();
@@ -534,10 +536,10 @@ namespace mfront {
         "MultipleIsotropicMisesFlowsDSL::treatFlowRule",
         "Expected the beginning of a block or a specific theta value.");
     if (this->current->value != "{") {
-      istringstream converter(this->current->value);
-      ostringstream otheta;
-      ostringstream ose;
-      ostringstream oseq_e;
+      std::istringstream converter(this->current->value);
+      std::ostringstream otheta;
+      std::ostringstream ose;
+      std::ostringstream oseq_e;
       flow.hasSpecificTheta = true;
       converter >> flow.theta;
       if (!converter || (!converter.eof())) {
@@ -555,7 +557,7 @@ namespace mfront {
     } else {
       flow.hasSpecificTheta = false;
     }
-    ostringstream cname;
+    std::ostringstream cname;
     cname << BehaviourData::FlowRule << flows.size() << '\n';
     this->treatCodeBlock(
         *this, cname.str(),

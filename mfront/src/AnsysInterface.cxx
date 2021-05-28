@@ -398,7 +398,6 @@ namespace mfront {
   void AnsysInterface::writeAnsysBehaviourTraits(std::ostream& out,
                                                  const BehaviourDescription& mb,
                                                  const Hypothesis h) const {
-    using namespace std;
     const auto mvs = mb.getMainVariablesSize();
     const auto mprops = this->buildMaterialPropertiesList(mb, h);
     if (h == ModellingHypothesis::UNDEFINEDHYPOTHESIS) {

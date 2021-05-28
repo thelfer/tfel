@@ -53,7 +53,6 @@ namespace mtest {
       const real dt,
       const StiffnessMatrixType ktype,
       const bool b) const {
-    using namespace std;
     using namespace tfel::math;
     using namespace abaqus;
     using tfel::math::vector;
@@ -81,10 +80,10 @@ namespace mtest {
       }
       throw_if(true, "unsupported hypothesis");
     }();
-    fill(wk.D.begin(), wk.D.end(), 0.);
+    std::fill(wk.D.begin(), wk.D.end(), 0.);
     // using a local copy of material properties to handle the
     // case where s.mprops1 is empty
-    copy(s.mprops1.begin(), s.mprops1.end(), wk.mps.begin());
+    std::copy(s.mprops1.begin(), s.mprops1.end(), wk.mps.begin());
     if (s.mprops1.empty()) {
       wk.mps[0] = real(0);
     }
@@ -110,7 +109,7 @@ namespace mtest {
                            ModellingHypothesis::toString(h) + ")");
       }
     }
-    copy(s.iv0.begin(), s.iv0.end(), wk.ivs.begin());
+    std::copy(s.iv0.begin(), s.iv0.end(), wk.ivs.begin());
     const auto nstatv = static_cast<AbaqusInt>(wk.ivs.size());
     // rotation matrix, set to identity
     const tmatrix<3u, 3u, real> drot = {1, 0, 0, 0, 1, 0, 0, 0, 1};
@@ -158,7 +157,7 @@ namespace mtest {
           "AbaqusFiniteStrainBehaviour::integrate: "
           "unsupported hypothesis");
     }
-    copy(s.s0.begin(), s.s0.end(), us.begin());
+    std::copy(s.s0.begin(), s.s0.end(), us.begin());
     if (h == ModellingHypothesis::PLANESTRESS) {
       us[2] = us[3] / sqrt2;
       us[3] = 0;
@@ -198,7 +197,7 @@ namespace mtest {
           us[i] *= sqrt2;
         }
       }
-      copy(us.begin(), us.begin() + s.s1.size(), s.s1.begin());
+      std::copy(us.begin(), us.begin() + s.s1.size(), s.s1.begin());
     }
     if (h == ModellingHypothesis::TRIDIMENSIONAL) {
       st2tost2<3u, AbaqusReal> K;

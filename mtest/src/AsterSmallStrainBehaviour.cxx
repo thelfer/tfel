@@ -48,7 +48,6 @@ namespace mtest {
       const real dt,
       const StiffnessMatrixType ktype,
       const bool b) const {
-    using namespace std;
     using namespace tfel::math;
     using namespace aster;
     using tfel::math::vector;
@@ -81,18 +80,18 @@ namespace mtest {
           "AsterSmallStrainBehaviour::call_behaviour: "
           "unsupported hypothesis");
     }
-    fill(wk.D.begin(), wk.D.end(), 0.);
+    std::fill(wk.D.begin(), wk.D.end(), 0.);
     // choosing the type of stiffness matrix
     StandardBehaviourBase::initializeTangentOperator(wk.D, ktype, b);
     // using a local copy of material properties to handle the
     // case where s.mprops1 is empty
-    copy(s.mprops1.begin(), s.mprops1.end(), wk.mps.begin());
+    std::copy(s.mprops1.begin(), s.mprops1.end(), wk.mps.begin());
     if (s.mprops1.empty()) {
       wk.mps[0] = real(0);
     }
     // using a local copy of internal state variables to handle the
     // case where iv0 is empty
-    copy(s.iv0.begin(), s.iv0.end(), wk.ivs.begin());
+    std::copy(s.iv0.begin(), s.iv0.end(), wk.ivs.begin());
     if (s.iv0.empty()) {
       wk.ivs[0] = real(0);
     }
@@ -101,11 +100,11 @@ namespace mtest {
     tmatrix<3u, 3u, real> drot = transpose(s.r);
     stensor<3u, real> ue0(real(0));
     stensor<3u, real> ude(real(0));
-    copy(s.e0.begin(), s.e0.end(), ue0.begin());
+    std::copy(s.e0.begin(), s.e0.end(), ue0.begin());
     for (decltype(s.e1.size()) i = 0; i != s.e1.size(); ++i) {
       ude(i) = s.e1(i) - s.e0(i);
     }
-    copy(s.s0.begin(), s.s0.end(), s.s1.begin());
+    std::copy(s.s0.begin(), s.s0.end(), s.s1.begin());
     // thermal strain
     for (AsterInt i = 0; i != static_cast<unsigned short>(ntens); ++i) {
       ue0(i) -= s.e_th0(i);
@@ -135,7 +134,7 @@ namespace mtest {
     }
     if (b) {
       if (!s.iv0.empty()) {
-        copy_n(wk.ivs.begin(), s.iv1.size(), s.iv1.begin());
+        std::copy_n(wk.ivs.begin(), s.iv1.size(), s.iv1.begin());
       }
       // turning things in standard conventions
       for (AsterInt i = 3; i != static_cast<unsigned short>(ntens); ++i) {

@@ -190,7 +190,6 @@ namespace mfront {
 
   void AsterInterface::endTreatment(const BehaviourDescription& mb,
                                     const FileDescription& fd) const {
-    using namespace std;
     using namespace tfel::system;
     using namespace tfel::utilities;
     auto throw_if = [](const bool b, const std::string& m) {
@@ -224,7 +223,7 @@ namespace mfront {
 
     // header
     const auto header = "include/MFront/Aster/aster" + name + ".hxx";
-    ofstream out(header);
+    std::ofstream out(header);
     throw_if(!out, "could not open file '" + header + "'");
 
     out << "/*!\n";
@@ -235,7 +234,7 @@ namespace mfront {
     out << "* \\date   " << fd.date << '\n';
     out << "*/\n\n";
 
-    const string headerGuard = this->getHeaderGuard(mb);
+    const auto headerGuard = this->getHeaderGuard(mb);
     out << "#ifndef " << headerGuard << "\n";
     out << "#define " << headerGuard << "\n\n";
 
@@ -427,22 +426,22 @@ namespace mfront {
         << "return msg;\n"
         << "} // end of " << this->getFunctionNameBasis(name) << "_getIntegrationErrorMessage\n\n";
 
-    string dv0;
-    string dv1;
-    if (mb.getBehaviourType() == BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) {
-      dv0 = "STRAN";
-      dv1 = "DSTRAN";
-    } else if (mb.getBehaviourType() == BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR) {
-      dv0 = "F0";
-      dv1 = "F1";
-    } else if (mb.getBehaviourType() == BehaviourDescription::COHESIVEZONEMODEL) {
-      dv0 = "U0";
-      dv1 = "DU";
-    } else {
-      throw_if(true,
-               "the aster interface only supports small "
-               "and finite strain behaviours and cohesive zone models");
-    }
+    const auto [dv0, dv1] = [&throw_if,
+                             &mb]() -> std::tuple<std::string, std::string> {
+      if (mb.getBehaviourType() ==
+          BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) {
+        return {"STRAN", "DSTRAN"};
+      } else if (mb.getBehaviourType() ==
+                 BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR) {
+        return {"F0", "F1"};
+      } else if (mb.getBehaviourType() !=
+                 BehaviourDescription::COHESIVEZONEMODEL) {
+        throw_if(true,
+                 "the aster interface only supports small "
+                 "and finite strain behaviours and cohesive zone models");
+      }
+      return {"U0", "DU"};
+    }();
 
     out << "MFRONT_SHAREDOBJ void\n"
         << name << "("
@@ -742,7 +741,6 @@ namespace mfront {
   void AsterInterface::writeAsterBehaviourTraits(std::ostream& out,
                                                  const BehaviourDescription& mb,
                                                  const Hypothesis h) const {
-    using namespace std;
     const auto mvs = mb.getMainVariablesSize();
     const auto mprops = this->buildMaterialPropertiesList(mb, h);
     auto throw_if = [](const bool c, const std::string& m) {

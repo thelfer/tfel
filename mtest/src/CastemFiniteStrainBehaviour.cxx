@@ -239,7 +239,6 @@ namespace mtest {
       BehaviourWorkSpace& wk,
       const real dt,
       const StiffnessMatrixType ktype) const {
-    using namespace std;
     using namespace tfel::math;
     using namespace castem;
     using tfel::math::vector;
@@ -345,12 +344,12 @@ namespace mtest {
           "CastemFiniteStrainBehaviour::integrate: "
           "unsupported hypothesis");
     }
-    copy(s.s0.begin(), s.s0.end(), s.s1.begin());
+    std::copy(s.s0.begin(), s.s0.end(), s.s1.begin());
     for (tmatrix<3u, 3u, real>::size_type i = 3;
          i != static_cast<unsigned short>(ntens); ++i) {
       s.s1(i) /= sqrt2;
     }
-    fill(wk.D.begin(), wk.D.end(), CastemReal(0));
+    std::fill(wk.D.begin(), wk.D.end(), CastemReal(0));
     // choosing the type of stiffness matrix
     StandardBehaviourBase::initializeTangentOperator(wk.D, ktype, true);
     CastemReal ndt = std::numeric_limits<CastemReal>::max();
@@ -367,7 +366,7 @@ namespace mtest {
     }
     // saving state variables
     if (!s.iv1.empty()) {
-      copy_n(wk.ivs.begin(), s.iv1.size(), s.iv1.begin());
+      std::copy_n(wk.ivs.begin(), s.iv1.size(), s.iv1.begin());
     }
     // turning things in standard conventions
     for (vector<real>::size_type i = 3; i != static_cast<unsigned short>(ntens);

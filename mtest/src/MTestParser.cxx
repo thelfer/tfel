@@ -160,27 +160,26 @@ namespace mtest {
   }
 
   void MTestParser::displayKeyWordsList() const {
-    using namespace std;
     using namespace tfel::utilities;
     auto keys = this->getKeyWordsList();
-    string::size_type msize = 0;
+    std::string::size_type msize = 0;
     for (const auto& k : keys) {
-      msize = max(msize, k.size());
+      msize = std::max(msize, k.size());
     }
     for (const auto& k : keys) {
       const auto f = SchemeParserBase::getDocumentationFilePath("mtest", k);
-      string key = k;
+      std::string key = k;
       key.resize(msize, ' ');
-      cout << key << "  ";
+      std::cout << key << "  ";
       if (!f.empty()) {
-        cout.write(TerminalColors::Green, sizeof(TerminalColors::Green));
-        cout << "(documented)";
+        std::cout.write(TerminalColors::Green, sizeof(TerminalColors::Green));
+        std::cout << "(documented)";
       } else {
-        cout.write(TerminalColors::Red, sizeof(TerminalColors::Red));
-        cout << "(undocumented)";
+        std::cout.write(TerminalColors::Red, sizeof(TerminalColors::Red));
+        std::cout << "(undocumented)";
       }
-      cout.write(TerminalColors::Reset, sizeof(TerminalColors::Reset));
-      cout << endl;
+      std::cout.write(TerminalColors::Reset, sizeof(TerminalColors::Reset));
+      std::cout << '\n';
     }
   }  // end of MTestParser::displayKeywordsList
 
@@ -227,8 +226,8 @@ namespace mtest {
   void MTestParser::registerCallBacks() {
     SchemeParserBase::registerCallBacks();
     SingleStructureSchemeParser::registerCallBacks();
-    auto add = [this](const char* n,const CallBack& c){
-      this->registerCallBack(n,c);
+    auto add = [this](const char* n, const CallBack& c) {
+      this->registerCallBack(n, c);
     };
     add("@Event", &MTestParser::handleEvent);
     add("@Test", &MTestParser::handleTest);
@@ -281,16 +280,15 @@ namespace mtest {
   }
 
   void MTestParser::handleEvent(MTest& t, tokens_iterator& p) {
-    const auto n = this->readString(p,this->tokens.end());
+    const auto n = this->readString(p, this->tokens.end());
     std::vector<double> evt;
-    this->checkNotEndOfLine("MTestParser::handleEvent", p,
-                            this->tokens.end());
+    this->checkNotEndOfLine("MTestParser::handleEvent", p, this->tokens.end());
     if (p->value == "{") {
       evt = this->readTimesArray("MTest::handleEvent", t, p);
     } else {
       evt.push_back(this->readDouble(t, p));
     }
-    t.addEvent(n,evt);
+    t.addEvent(n, evt);
     this->readSpecifiedToken("MTestParser::handleEvent", ";", p,
                              this->tokens.end());
   }  // end of MTestParser::handleEvent
@@ -343,7 +341,6 @@ namespace mtest {
   }  // end of MTestParser::handleNumericalTangentOperatorPerturbationValue
 
   void MTestParser::handleTest(MTest& t, tokens_iterator& p) {
-    using namespace std;
     auto throw_if = [](const bool c, const std::string& m) {
       tfel::raise_if(c, "MTestParser::handleTest: " + m);
     };
@@ -358,7 +355,7 @@ namespace mtest {
                              this->tokens.end());
     if (type == "function") {
       this->checkNotEndOfLine("MTestParser::handleTest", p, this->tokens.end());
-      map<string, string> functions;
+      auto functions = std::map<std::string, std::string>{};
       if (p->flag == tfel::utilities::Token::String) {
         const auto& v = this->readString(p, this->tokens.end());
         const auto& f = this->readString(p, this->tokens.end());
@@ -399,7 +396,7 @@ namespace mtest {
       const auto& f = this->readString(p, this->tokens.end());
       this->checkNotEndOfLine("MTestParser::handleTest", p, this->tokens.end());
       using gentype = tfel::utilities::GenType<std::string, unsigned short>;
-      map<string, gentype> columns;
+      auto columns = std::map<std::string, gentype>{};
       if (p->flag == tfel::utilities::Token::String) {
         const auto& v = this->readString(p, this->tokens.end());
         const unsigned short c = this->readUnsignedInt(p, this->tokens.end());
@@ -595,8 +592,8 @@ namespace mtest {
 
   void MTestParser::handleGradientEpsilon(MTest& t, tokens_iterator& p) {
     t.setGradientEpsilon(this->readDouble(t, p));
-    this->readSpecifiedToken("MTestParser::handleGradientEpsilon", ";",
-                             p, this->tokens.end());
+    this->readSpecifiedToken("MTestParser::handleGradientEpsilon", ";", p,
+                             this->tokens.end());
   }  // end of MTestParser::handleGradientEpsilon
 
   void MTestParser::handleStressEpsilon(MTest& t, tokens_iterator& p) {
@@ -770,12 +767,11 @@ namespace mtest {
     this->checkNotEndOfLine("MTestParser::handleImposedGradient", p,
                             this->tokens.end());
     auto sev = this->parseEvolution(t, evt, p);
-    const auto opts = this->readConstraintOptions(
-        "MTestParser::handleImposedGradient", p);
-    this->readSpecifiedToken("MTestParser::handleImposedGradient", ";",
-                             p, this->tokens.end());
-    auto sc =
-        std::make_shared<ImposedGradient>(*(t.getBehaviour()), c, sev);
+    const auto opts =
+        this->readConstraintOptions("MTestParser::handleImposedGradient", p);
+    this->readSpecifiedToken("MTestParser::handleImposedGradient", ";", p,
+                             this->tokens.end());
+    auto sc = std::make_shared<ImposedGradient>(*(t.getBehaviour()), c, sev);
     applyConstraintOptions(*(sc.get()), opts);
     t.addEvolution(c, sev, false, true);
     t.addConstraint(sc);
@@ -860,7 +856,8 @@ namespace mtest {
     t.setThermodynamicForcesInitialValues(s_t0);
   }  // end of MTestParser::handleThermodynamicForce
 
-  void MTestParser::handleUserDefinedPostProcessing(MTest& t, tokens_iterator& p) {
+  void MTestParser::handleUserDefinedPostProcessing(MTest& t,
+                                                    tokens_iterator& p) {
     const std::string m = "MTestParser::handleUserDefinedPostProcessing";
     // output file
     const auto& f = this->readString(p, this->tokens.end());
@@ -889,16 +886,16 @@ namespace mtest {
   ConstraintOptions MTestParser::readConstraintOptions(const std::string& m,
                                                        tokens_iterator& p) {
     auto throw_if = [&m](const bool b, const char* msg) {
-      if(b){
+      if (b) {
         tfel::raise(m + ':' + msg);
       }
     };
     this->checkNotEndOfLine(m, p, this->tokens.end());
-    if(p->value==";"){
+    if (p->value == ";") {
       return {};
     }
     const auto d = tfel::utilities::Data::read_map(p, this->tokens.end())
-                       .get<std::map<std::string, tfel::utilities::Data>> ();
+                       .get<std::map<std::string, tfel::utilities::Data>>();
     ConstraintOptions opts;
     for (const auto& kv : d) {
       if (kv.first == "active") {
@@ -928,11 +925,11 @@ namespace mtest {
         opts.desactivating_events =
             tfel::utilities::convert<std::vector<std::string>>(kv.second);
       } else {
-        tfel::raise(m+": unknown constraint option '" + kv.first + "'");
+        tfel::raise(m + ": unknown constraint option '" + kv.first + "'");
       }
     }
     return opts;
-  } // end of MTestParser::readConstraintOptions
+  }  // end of MTestParser::readConstraintOptions
 
   MTestParser::~MTestParser() = default;
 

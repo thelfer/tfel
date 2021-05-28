@@ -36,7 +36,7 @@ namespace std {
     s << v;
     return s.str();
   }
-}
+}  // namespace std
 #endif /* defined __CYGWIN__ &&  (!defined _GLIBCXX_USE_C99) */
 
 namespace mfront {
@@ -178,7 +178,7 @@ namespace mfront {
   }  // end of ModelDSLCommon::setMaterialKnowledgeIdentifier
 
   void ModelDSLCommon::treatModel() {
-    const auto& m  = this->readOnlyOneToken();
+    const auto& m = this->readOnlyOneToken();
     if (!isValidModelName(m)) {
       this->throwRuntimeError("ModelDSLCommon::treatModel",
                               "invalid model name");
@@ -189,7 +189,6 @@ namespace mfront {
   }  // end of ModelDSLCommon::treatModel
 
   void ModelDSLCommon::setInterfaces(const std::set<std::string>& inames) {
-    using namespace std;
     auto& mbif = ModelInterfaceFactory::getModelInterfaceFactory();
     for (const auto& i : inames) {
       if (this->interfaces.count(i) == 0) {
@@ -422,8 +421,7 @@ namespace mfront {
         }
         const auto c = tfel::unicode::getMangledString(this->current->value);
         if (isStaticMemberName(this->md, c)) {
-          f.body +=
-              "(" + this->md.className + ":: " + c + ")";
+          f.body += "(" + this->md.className + ":: " + c + ")";
         } else if (isMemberName(this->md, c)) {
           bool treated = false;
           if (newInstruction) {
@@ -522,7 +520,7 @@ namespace mfront {
             }
           }
         } else {
-          if ((c == "dt")||(c=="\u0394t")) {
+          if ((c == "dt") || (c == "\u0394t")) {
             f.useTimeIncrement = true;
             f.body += "dt";
           } else {

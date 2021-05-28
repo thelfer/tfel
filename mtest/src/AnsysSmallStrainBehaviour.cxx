@@ -46,7 +46,6 @@ namespace mtest {
       const real dt,
       const StiffnessMatrixType ktype,
       const bool b) const {
-    using namespace std;
     using namespace tfel::math;
     using namespace ansys;
     using tfel::math::vector;
@@ -92,10 +91,10 @@ namespace mtest {
       }
       throw_if(true, "unsupported hypothesis");
     }();
-    fill(wk.D.begin(), wk.D.end(), 0.);
+    std::fill(wk.D.begin(), wk.D.end(), 0.);
     // using a local copy of material properties to handle the
     // case where s.mprops1 is empty
-    copy(s.mprops1.begin(), s.mprops1.end(), wk.mps.begin());
+    std::copy(s.mprops1.begin(), s.mprops1.end(), wk.mps.begin());
     if (s.mprops1.empty()) {
       wk.mps[0] = real(0);
     }
@@ -124,15 +123,15 @@ namespace mtest {
     }
     // using a local copy of internal state variables to handle the
     // case where s.iv0 is empty
-    copy(s.iv0.begin(), s.iv0.end(), wk.ivs.begin());
+    std::copy(s.iv0.begin(), s.iv0.end(), wk.ivs.begin());
     const auto nstatv = static_cast<AnsysInt>(wk.ivs.size());
     // infinitesimal rotation matrix, set to identity
     const tmatrix<3u, 3u, real> drot = {1, 0, 0, 0, 1, 0, 0, 0, 1};
     stensor<3u, real> ue0(real(0));
     stensor<3u, real> ude(real(0));
     stensor<3u, real> us(real(0));
-    copy(s.e0.begin(), s.e0.end(), ue0.begin());
-    copy(s.s0.begin(), s.s0.end(), us.begin());
+    std::copy(s.e0.begin(), s.e0.end(), ue0.begin());
+    std::copy(s.s0.begin(), s.s0.end(), us.begin());
     for (AnsysInt i = 0; i != s.e1.size(); ++i) {
       ude(i) = s.e1(i) - s.e0(i);
     }
@@ -228,7 +227,7 @@ namespace mtest {
     if (b) {
       // treating internal state variables
       if (!s.iv0.empty()) {
-        copy_n(wk.ivs.begin(), s.iv1.size(), s.iv1.begin());
+        std::copy_n(wk.ivs.begin(), s.iv1.size(), s.iv1.begin());
       }
       // turning stresses in TFEL conventions
       for (AnsysInt i = 3; i != static_cast<unsigned short>(ntens); ++i) {

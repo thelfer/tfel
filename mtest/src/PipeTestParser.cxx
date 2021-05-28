@@ -152,27 +152,26 @@ namespace mtest {
   }
 
   void PipeTestParser::displayKeyWordsList() const {
-    using namespace std;
     using namespace tfel::utilities;
     auto keys = this->getKeyWordsList();
-    string::size_type msize = 0;
+    std::string::size_type msize = 0;
     for (const auto& k : keys) {
-      msize = max(msize, k.size());
+      msize = std::max(msize, k.size());
     }
     for (const auto& k : keys) {
       const auto f = SchemeParserBase::getDocumentationFilePath("ptest", k);
       auto key = k;
       key.resize(msize, ' ');
-      cout << key << "  ";
+      std::cout << key << "  ";
       if (!f.empty()) {
-        cout.write(TerminalColors::Green, sizeof(TerminalColors::Green));
-        cout << "(documented)";
+        std::cout.write(TerminalColors::Green, sizeof(TerminalColors::Green));
+        std::cout << "(documented)";
       } else {
-        cout.write(TerminalColors::Red, sizeof(TerminalColors::Red));
-        cout << "(undocumented)";
+        std::cout.write(TerminalColors::Red, sizeof(TerminalColors::Red));
+        std::cout << "(undocumented)";
       }
-      cout.write(TerminalColors::Reset, sizeof(TerminalColors::Reset));
-      cout << endl;
+      std::cout.write(TerminalColors::Reset, sizeof(TerminalColors::Reset));
+      std::cout << '\n';
     }
   }  // end of PipeTestParser::displayKeywordsList
 

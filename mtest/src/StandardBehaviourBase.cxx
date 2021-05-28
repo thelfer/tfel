@@ -659,18 +659,16 @@ namespace mtest {
 
   std::vector<std::string>
   StandardBehaviourBase::getInternalStateVariablesDescriptions() const {
-    using namespace std;
     const auto h = this->getHypothesis();
-    vector<string> desc;
-    vector<int>::const_iterator p;
-    vector<string>::const_iterator pn;
+    std::vector<std::string> desc;
     tfel::raise_if(
         this->ivnames.size() != this->ivtypes.size(),
         "StandardBehaviourBase::getInternalStateVariablesDescriptions: "
         "internal error (the number of internal state variables names "
         "dont match the number of internal state variables types)");
-    for (p = this->ivtypes.begin(), pn = this->ivnames.begin();
-         p != this->ivtypes.end(); ++p, ++pn) {
+    auto p = this->ivtypes.begin();
+    auto pn = this->ivnames.begin();
+    for (; p != this->ivtypes.end(); ++p, ++pn) {
       if (*p == 0) {
         desc.push_back(*pn);
       } else if (*p == 1) {
@@ -742,7 +740,7 @@ namespace mtest {
             "StandardBehaviourBase::getInternalStateVariablesDescriptions: "
             "unsupported variable type");
       }
-    }
+}
     return desc;
   }  // end of StandardBehaviourBase::getInternalStateVariablesDescriptions
 
@@ -772,7 +770,6 @@ namespace mtest {
 
   unsigned short StandardBehaviourBase::getInternalStateVariablePosition(
       const std::string& n) const {
-    using namespace std;
     auto throw_if = [](const bool c, const std::string& m) {
       tfel::raise_if(
           c, "StandardBehaviourBase::getInternalStateVariablePosition: " + m);
@@ -784,8 +781,8 @@ namespace mtest {
     throw_if(this->ivnames.size() != this->ivtypes.size(),
              "the number of internal variables names and "
              "the number of internal variables types do not match");
-    vector<string>::size_type i = 0;
-    vector<string>::size_type ie = p - this->ivnames.begin();
+    std::vector<std::string>::size_type i = 0;
+    std::vector<std::string>::size_type ie = p - this->ivnames.begin();
     unsigned short s = 0;
     while (i != ie) {
       int t = this->ivtypes[i];

@@ -44,7 +44,6 @@ namespace mtest {
                                        const SolverOptions& o,
                                        const real t,
                                        const real dt) {
-    using namespace std;
     using namespace tfel::math;
     using namespace tfel::material;
     using size_type = matrix<real>::size_type;
@@ -60,9 +59,8 @@ namespace mtest {
       if (!s.doPackagingStep(scs)) {
         if (mfront::getVerboseMode() > mfront::VERBOSE_QUIET) {
           auto& log = mfront::getLogStream();
-          log << "GenericSolver::execute : behaviour compute prediction matrix "
-                 "failed"
-              << endl;
+          log << "GenericSolver::execute: "
+              << "behaviour compute prediction matrix failed\n";
         }
       }
     }
@@ -94,9 +92,8 @@ namespace mtest {
       } else {
         if (mfront::getVerboseMode() > mfront::VERBOSE_QUIET) {
           auto& log = mfront::getLogStream();
-          log << "GenericSolver::execute : behaviour compute prediction matrix "
-                 "failed"
-              << endl;
+          log << "GenericSolver::execute: "
+              << "behaviour compute prediction matrix failed\n";
         }
       }
     } else {
@@ -144,7 +141,7 @@ namespace mtest {
           }
           log << '\n';
         }
-        log << endl;
+        log << '\n';
       }
       // scs.revert();
       // tfel::math::matrix<real> nK(wk.K.getNbRows(),wk.K.getNbCols());
@@ -242,9 +239,9 @@ namespace mtest {
         log << "convergence, after one iteration \n\n";
       } else {
         auto& log = mfront::getLogStream();
-        if ((iter >= 3) && (ne > 100 * numeric_limits<real>::min()) &&
-            (nep > 100 * numeric_limits<real>::min()) &&
-            (nep2 > 100 * numeric_limits<real>::min())) {
+        if ((iter >= 3) && (ne > 100 * std::numeric_limits<real>::min()) &&
+            (nep > 100 * std::numeric_limits<real>::min()) &&
+            (nep2 > 100 * std::numeric_limits<real>::min())) {
           if (std::abs(std::log(nep / nep2)) >
               100 * std::numeric_limits<real>::min()) {
             log << "convergence, after " << iter << " iterations, "

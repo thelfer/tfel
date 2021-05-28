@@ -396,14 +396,13 @@ namespace mtest {
       PipeTestParser().execute(*t, f, e, s);
       return std::move(t);
     };
-    using namespace std;
     using namespace tfel::tests;
     auto& tm = TestManager::getTestManager();
     for (const auto& i : this->inputs) {
-      string tname;
-      string ext;
+      std::string tname;
+      std::string ext;
       const auto pos = i.rfind('.');
-      if (pos != string::npos) {
+      if (pos != std::string::npos) {
         tname = i.substr(0, pos);
         ext = i.substr(pos);
       } else {
@@ -414,7 +413,7 @@ namespace mtest {
                      "invalid input file name '" +
                          i + "'");
       const auto pos2 = tname.rfind('/');
-      if (pos2 != string::npos) {
+      if (pos2 != std::string::npos) {
         tname = tname.substr(pos2 + 1);
       }
       tfel::raise_if(tname.empty(),
@@ -453,7 +452,7 @@ namespace mtest {
         }
         tm.addTestOutput("MTest/" + tname, o);
       }
-      tm.addTestOutput("MTest/" + tname, cout);
+      tm.addTestOutput("MTest/" + tname, std::cout);
     }
     const auto r = tm.execute();
     return r.success() ? EXIT_SUCCESS : EXIT_FAILURE;

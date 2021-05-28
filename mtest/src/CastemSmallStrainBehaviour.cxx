@@ -103,7 +103,6 @@ namespace mtest {
       const real dt,
       const StiffnessMatrixType ktype,
       const bool b) const {
-    using namespace std;
     using namespace tfel::math;
     using namespace castem;
     using castem::CastemComputeStiffnessTensor;
@@ -157,7 +156,7 @@ namespace mtest {
     StandardBehaviourBase::initializeTangentOperator(wk.D, ktype, b);
     // state variable initial values
     if (s.iv0.size() != 0) {
-      copy(s.iv0.begin(), s.iv0.end(), wk.ivs.begin());
+      std::copy(s.iv0.begin(), s.iv0.end(), wk.ivs.begin());
     }
     nstatv = static_cast<CastemInt>(wk.ivs.size());
     // rotation matrix
@@ -166,11 +165,11 @@ namespace mtest {
     CastemInt kinc(1);
     stensor<3u, real> ue0(real(0));
     stensor<3u, real> ude(real(0));
-    copy(s.e0.begin(), s.e0.end(), ue0.begin());
+    std::copy(s.e0.begin(), s.e0.end(), ue0.begin());
     for (i = 0; i != s.e1.size(); ++i) {
       ude(i) = s.e1(i) - s.e0(i);
     }
-    copy(s.s0.begin(), s.s0.end(), s.s1.begin());
+    std::copy(s.s0.begin(), s.s0.end(), s.s1.begin());
     // thermal strain
     for (i = 0; i != s.e1.size(); ++i) {
       ue0(i) -= s.e_th0(i);
@@ -217,7 +216,6 @@ namespace mtest {
       tfel::math::matrix<real>& Kt,
       const tfel::math::vector<real>& mp,
       const tfel::math::tmatrix<3u, 3u, real>& drot) const {
-    using namespace std;
     using namespace tfel::math;
     using castem::CastemComputeStiffnessTensor;
     const auto h = this->getHypothesis();

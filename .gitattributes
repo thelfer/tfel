@@ -1856,7 +1856,6 @@ include/TFEL/Math/General/RunTimeCheck.hxx -text
 include/TFEL/Math/General/StridedRandomAccessIterator.hxx -text
 include/TFEL/Math/General/UnaryResultType.hxx -text
 include/TFEL/Math/General/floating_point_exceptions.hxx -text
-include/TFEL/Math/General/fsarray.ixx -text
 include/TFEL/Math/IntegerEvaluator.hxx -text
 include/TFEL/Math/Kriging.hxx -text
 include/TFEL/Math/Kriging/FactorizedKriging.ixx -text
