@@ -237,7 +237,6 @@ namespace mfront {
     const auto& inputs = mpd.inputs;
     const auto& materialLaws = mpd.materialLaws;
     const auto& staticVars = mpd.staticVars;
-    const auto& params = mpd.parameters;
     const auto& function = mpd.f;
     const auto name = (!material.empty()) ? material + "_" + law : law;
     const auto outName = "include/" + name + "-python.hxx";

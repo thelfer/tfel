@@ -19,11 +19,11 @@
 
 namespace tfel::math {
 
-  /*!
-   * \brief a base class defining some aliases for standard array policies
-   */
+  //! \brief a base class defining some aliases for standard array policies
   template <typename ValueType>
   struct StandardArrayPolicyAliases {
+    //! \brief type of the values hold by the array.
+    using storage_type = ValueType;
     //! \brief type of the values hold by the array.
     using value_type = ValueType;
     //! \brief const type of the values hold by the array.
@@ -37,6 +37,16 @@ namespace tfel::math {
   //! \brief a standard array policy.
   template <typename ValueType, typename IndexingPolicyType>
   struct StandardArrayPolicy : StandardArrayPolicyAliases<ValueType> {
+    //!
+    static constexpr typename StandardArrayPolicy::const_reference
+    make_const_reference(const ValueType& v) noexcept {
+      return v;
+    }
+    //!
+    static constexpr typename StandardArrayPolicy::reference make_reference(
+        ValueType& v) noexcept {
+      return v;
+    }
     //! \brief the underlying indexing policy
     using IndexingPolicy = IndexingPolicyType;
   };
@@ -62,8 +72,8 @@ namespace tfel::math {
   /*!
    * \return the logical size of the given array policy, i.e. the number of
    * values that can be accessed by the given policy.
-   * \pre the array policy must have fixed sizes.
    * \tparam ArrayPolicyType: the array policy
+   * \pre the array policy must have fixed sizes.
    */
   template <typename ArrayPolicyType>
   constexpr auto getArrayPolicySize();
@@ -71,8 +81,8 @@ namespace tfel::math {
   /*!
    * \return the minimal number of values required to stored the given array
    * policy
-   * \pre the array policy must have fixed sizes.
    * \tparam ArrayPolicyType: the array policy
+   * \pre the array policy must have fixed sizes.
    */
   template <typename ArrayPolicyType>
   constexpr auto getArrayPolicyMinimalDataSize();

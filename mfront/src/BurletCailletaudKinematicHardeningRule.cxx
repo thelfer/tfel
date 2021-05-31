@@ -41,8 +41,7 @@ namespace mfront {
         const std::string& fid,
         const std::string& kid,
         const DataMap& d) {
-      // `this` must be captured in gcc 4.7.2
-      auto get_mp = [&bd, &dsl, &d, &fid, &kid,this](
+      auto get_mp = [&bd, &dsl, &d, &fid, &kid](
           BehaviourDescription::MaterialProperty& mp, const std::string& n) {
         const auto nid = KinematicHardeningRule::getVariableId(n, fid, kid);
         if (d.count(n) == 0) {

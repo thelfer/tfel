@@ -228,7 +228,7 @@ namespace tfel::math {
    *
    * The memory position associed with the index (i0, ..., iN, j0, ..., jM) is
    * given by:
-   * 
+   *
    * \f[
    *   p1(i0, ..., iN) * Stride + p2(j0, ..., jM)
    * \f]
@@ -266,6 +266,88 @@ namespace tfel::math {
         typename IndexingPolicy1::RowMajorIndexingPolicy,
         typename IndexingPolicy2::RowMajorIndexingPolicy>;
     //!
+    constexpr size_type getIndex() const noexcept {
+      static_assert(arity == 0);
+      return size_type{};
+    }
+    //!
+    constexpr size_type getIndex(const size_type i) const noexcept {
+      static_assert(arity == 1);
+      constexpr auto a1 = IndexingPolicy1::arity;
+      if constexpr (a1 == 1) {
+        IndexingPolicy1 p1;
+        return p1.getIndex(i) * Stride;
+      } else {
+        IndexingPolicy2 p2;
+        return p2.getIndex(i);
+      }
+    }
+    //!
+    constexpr size_type getIndex(const size_type i, const size_type j) const noexcept {
+      static_assert(arity == 2);
+      constexpr auto a1 = IndexingPolicy1::arity;
+      if constexpr (a1 == 0) {
+        IndexingPolicy2 p2;
+        return p2.getIndex(i, j);
+      } else if constexpr (a1 == 1) {
+        IndexingPolicy1 p1;
+        IndexingPolicy2 p2;
+        return p1.getIndex(i) * Stride + p2.getIndex(j);
+      } else {
+        IndexingPolicy1 p1;
+        return p1.getIndex(i, j) * Stride;
+      }
+    }
+    //!
+    constexpr size_type getIndex(const size_type i,
+                                 const size_type j,
+                                 const size_type k) const noexcept {
+      static_assert(arity == 3);
+      constexpr auto a1 = IndexingPolicy1::arity;
+      if constexpr (a1 == 0) {
+        IndexingPolicy2 p2;
+        return p2.getIndex(i, j, k);
+      } else if constexpr (a1 == 1) {
+        IndexingPolicy1 p1;
+        IndexingPolicy2 p2;
+        return p1.getIndex(i) * Stride + p2.getIndex(j, k);
+      } else if constexpr (a1 == 2) {
+        IndexingPolicy1 p1;
+        IndexingPolicy2 p2;
+        return p1.getIndex(i, j) * Stride + p2.getIndex(k);
+      } else {
+        IndexingPolicy1 p1;
+        return p1.getIndex(i, j, k) * Stride;
+      }
+    }
+    //!
+    constexpr size_type getIndex(const size_type i,
+                                 const size_type j,
+                                 const size_type k,
+                                 const size_type l) const noexcept {
+      static_assert(arity == 4);
+      constexpr auto a1 = IndexingPolicy1::arity;
+      if constexpr (a1 == 0) {
+        IndexingPolicy2 p2;
+        return p2.getIndex(i, j, k, l);
+      } else if constexpr (a1 == 1) {
+        IndexingPolicy1 p1;
+        IndexingPolicy2 p2;
+        return p1.getIndex(i) * Stride + p2.getIndex(j, k, l);
+      } else if constexpr (a1 == 2) {
+        IndexingPolicy1 p1;
+        IndexingPolicy2 p2;
+        return p1.getIndex(i, j) * Stride + p2.getIndex(k, l);
+      } else if constexpr (a1 == 3) {
+        IndexingPolicy1 p1;
+        IndexingPolicy2 p2;
+        return p1.getIndex(i, j, k) * Stride + p2.getIndex(l);
+      } else {
+        IndexingPolicy1 p1;
+        return p1.getIndex(i, j, k, l) * Stride;
+      }
+    }
+    //!
     template <typename... SizeType>
     constexpr size_type getIndex(const SizeType... i) const noexcept {
       static_assert(sizeof...(SizeType) == arity,
@@ -273,31 +355,57 @@ namespace tfel::math {
       checkIndicesValiditity<FixedSizeIndexingPoliciesCartesianProduct,
                              SizeType...>();
       constexpr auto a1 = IndexingPolicy1::arity;
-      const std::array<size_type, arity> indices{static_cast<size_type>(i)...};
-      const tfel::meta::make_integer_range<size_type, 0, a1> r1;
-      const tfel::meta::make_integer_range<size_type, a1, arity> r2;
-      const auto i1 = getIndexPolicyIndex<IndexingPolicy1>(indices, r1);
-      const auto i2 = getIndexPolicyIndex<IndexingPolicy2>(indices, r2);
-      return i1 * Stride + i2;
+      constexpr auto a2 = IndexingPolicy2::arity;
+      if constexpr (a1 == 0) {
+        IndexingPolicy2 p2;
+        return p2.getIndex(i...);
+      } else if constexpr (a2 == 0) {
+        IndexingPolicy1 p1;
+        return p1.getIndex(i...) * Stride;
+      } else {
+        const auto indices =
+            std::array<size_type, arity>{static_cast<size_type>(i)...};
+        const tfel::meta::make_integer_range<size_type, 0, a1> r1;
+        const tfel::meta::make_integer_range<size_type, a1, arity> r2;
+        const auto i1 = getIndexPolicyIndex<IndexingPolicy1>(indices, r1);
+        const auto i2 = getIndexPolicyIndex<IndexingPolicy2>(indices, r2);
+        return i1 * Stride + i2;
+      }
     }
     //!
     constexpr size_type getIndex(
         const std::array<size_type, arity>& indices) const noexcept {
       constexpr auto a1 = IndexingPolicy1::arity;
-      const tfel::meta::make_integer_range<size_type, 0, a1> r1;
-      const tfel::meta::make_integer_range<size_type, a1, arity> r2;
-      const auto i1 = getIndexPolicyIndex<IndexingPolicy1>(indices, r1);
-      const auto i2 = getIndexPolicyIndex<IndexingPolicy2>(indices, r2);
-      return i1 * Stride + i2;
+      if constexpr (a1 == 0) {
+        const tfel::meta::make_integer_range<size_type, a1, arity> r2;
+        return getIndexPolicyIndex<IndexingPolicy2>(indices, r2);
+      } else if constexpr (IndexingPolicy2::arity == 0) {
+        const tfel::meta::make_integer_range<size_type, 0, arity> r1;
+        return getIndexPolicyIndex<IndexingPolicy1>(indices, r1);
+      } else {
+        const tfel::meta::make_integer_range<size_type, 0, a1> r1;
+        const tfel::meta::make_integer_range<size_type, a1, arity> r2;
+        const auto i1 = getIndexPolicyIndex<IndexingPolicy1>(indices, r1);
+        const auto i2 = getIndexPolicyIndex<IndexingPolicy2>(indices, r2);
+        return i1 * Stride + i2;
+      }
     }
-
     //! \return the minimal data size
     constexpr size_type getUnderlyingArrayMinimalSize() const noexcept {
-      const auto s1 =
-          tfel::math::getUnderlyingArrayMinimalSize<IndexingPolicy1>();
-      const auto s2 =
-          tfel::math::getUnderlyingArrayMinimalSize<IndexingPolicy2>();
-      return (s1 - 1) * Stride + s2;
+      constexpr auto a1 = IndexingPolicy1::arity;
+      if constexpr (a1 == 0) {
+        return tfel::math::getUnderlyingArrayMinimalSize<IndexingPolicy2>();
+      } else if constexpr (IndexingPolicy2::arity == 0) {
+        const auto s1 =
+            tfel::math::getUnderlyingArrayMinimalSize<IndexingPolicy1>();
+        return (s1 - 1) * Stride + 1;
+      } else {
+        const auto s1 =
+            tfel::math::getUnderlyingArrayMinimalSize<IndexingPolicy1>();
+        const auto s2 =
+            tfel::math::getUnderlyingArrayMinimalSize<IndexingPolicy2>();
+        return (s1 - 1) * Stride + s2;
+      }
     }
     //!
     constexpr auto getRowMajorIndexingPolicy() {
@@ -319,12 +427,20 @@ namespace tfel::math {
             "FixedSizeMatrixIndexingPolicy: "
             "invalid dimension");
       }
-      if (i < IndexingPolicy1::arity) {
+      if constexpr (IndexingPolicy1::arity == 0) {
+        IndexingPolicy2 p2;
+        return p2.size(i);
+      } else if constexpr (IndexingPolicy2::arity == 0) {
         IndexingPolicy1 p1;
         return p1.size(i);
+      } else {
+        if (i < IndexingPolicy1::arity) {
+          IndexingPolicy1 p1;
+          return p1.size(i);
+        }
+        IndexingPolicy2 p2;
+        return p2.size(i - IndexingPolicy1::arity);
       }
-      IndexingPolicy2 p2;
-      return p2.size(i - IndexingPolicy1::arity);
     }
 
    private:

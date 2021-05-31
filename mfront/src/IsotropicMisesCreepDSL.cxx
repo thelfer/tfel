@@ -161,13 +161,13 @@ namespace mfront {
       os << "cout << \"" << this->mb.getClassName()
          << "::NewtonIntegration() : iteration \" "
          << "<< iter << \": invalid jacobian\\n\";\n";
-    };
+    }
     os << "if(iter==0u){\n";
     if (getDebugMode()) {
       os << "cout << \"" << this->mb.getClassName()
          << "::NewtonIntegration() : iteration \" "
          << "<< iter << \": invalid jacobian on the first iteration\\n\";\n";
-    };
+    }
     os << "// probably an elastic prediction\n"
        << "newton_ddp = (this->seq_e / mu_3_theta) / 2;\n"
        << "} // end of if(iter==0u)\n"

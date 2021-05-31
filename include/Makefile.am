@@ -267,10 +267,6 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Math/Tensor/TensorTransposeExpr.hxx						     \
 			TFEL/Math/Tensor/TensorViewFromStensor.hxx						     \
 			TFEL/Math/Tensor/MatrixViewFromTensor.hxx						     \
-			TFEL/Math/Tensor/TensorFromTinyMatrixRowView.hxx					     \
-			TFEL/Math/Tensor/TensorFromTinyMatrixRowView2.hxx					     \
-			TFEL/Math/Tensor/TensorFromTinyMatrixColumnView.hxx					     \
-			TFEL/Math/Tensor/TensorFromTinyMatrixColumnView2.hxx					     \
 			TFEL/Math/Stensor/Internals/StensorChangeBasis.hxx                                           \
 			TFEL/Math/Stensor/Internals/StensorEigenSolver.hxx                                           \
 			TFEL/Math/Stensor/Internals/StensorComputeEigenValues.hxx                                    \
@@ -293,10 +289,6 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Math/Stensor/StensorProduct.hxx                                                         \
 			TFEL/Math/Stensor/StensorSizeToDime.hxx	                                                     \
 			TFEL/Math/Stensor/stensorResultType.hxx	                                                     \
-			TFEL/Math/Stensor/StensorFromTinyMatrixColumnView.hxx                                        \
-			TFEL/Math/Stensor/StensorFromTinyMatrixColumnView2.hxx                                       \
-			TFEL/Math/Stensor/StensorFromTinyMatrixRowView.hxx                                           \
-			TFEL/Math/Stensor/StensorFromTinyMatrixRowView2.hxx                                          \
 			TFEL/Math/Stensor/DecompositionInPositiveAndNegativeParts.hxx                                \
 			TFEL/Math/Stensor/DecompositionInPositiveAndNegativeParts.ixx                                \
 			TFEL/Math/Stensor/SymmetricStensorProduct.hxx						     \
@@ -304,7 +296,6 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Math/Vector/tvectorResultType.hxx	                                                     \
 			TFEL/Math/Vector/tvector.ixx			                                             \
 			TFEL/Math/Vector/tvectorIO.hxx			                                             \
-			TFEL/Math/Vector/VectorUtilities.hxx		                                             \
 			TFEL/Math/Vector/VectorConcept.hxx		                                             \
 			TFEL/Math/Vector/VectorConcept.ixx		                                             \
 			TFEL/Math/Vector/vector.ixx			                                             \
@@ -312,10 +303,6 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Math/Vector/VectorConceptOperations.ixx	                                             \
 			TFEL/Math/Vector/vectorResultType.hxx	                                                     \
 			TFEL/Math/Vector/VectorVectorDotProduct.hxx                                                  \
-			TFEL/Math/Vector/TVectorFromTinyMatrixRowView.hxx					     \
-			TFEL/Math/Vector/TVectorFromTinyMatrixRowView2.hxx					     \
-			TFEL/Math/Vector/TVectorFromTinyMatrixColumnView.hxx					     \
-			TFEL/Math/Vector/TVectorFromTinyMatrixColumnView2.hxx					     \
 			TFEL/Math/matrix.hxx                 	                                                     \
 			TFEL/Math/Matrix/TinyMatrixInvert.ixx	                                                     \
 			TFEL/Math/Matrix/tmatrixResultType.hxx	                                                     \
@@ -323,8 +310,6 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Math/Matrix/tmatrixIO.hxx			                                             \
 			TFEL/Math/Matrix/matrix.ixx			                                             \
 			TFEL/Math/Matrix/MatrixConcept.hxx		                                             \
-			TFEL/Math/Matrix/MatrixUtilities.hxx		                                             \
-			TFEL/Math/Matrix/MatrixUtilities.ixx		                                             \
 			TFEL/Math/Matrix/MatrixConcept.ixx		                                             \
 			TFEL/Math/Matrix/MatrixConceptOperations.hxx                                                 \
 			TFEL/Math/Matrix/TMatrixTVectorExpr.hxx                                                      \
@@ -407,8 +392,6 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Math/ST2toST2/ST2toST2ConceptOperations.hxx                                             \
 			TFEL/Math/ST2toST2/ST2toST2TransposeExpr.hxx                                                 \
 			TFEL/Math/ST2toST2/st2tost2ResultType.hxx                                                    \
-			TFEL/Math/ST2toST2/ST2toST2FromTinyMatrixView.hxx                                            \
-			TFEL/Math/ST2toST2/ST2toST2FromTinyMatrixView2.hxx                                           \
 			TFEL/Math/ST2toST2/ST2toST2StensorProductExpr.hxx					     \
 			TFEL/Math/ST2toST2/StensorST2toST2ProductExpr.hxx					     \
 			TFEL/Math/ST2toST2/ST2toST2ST2toST2ProductExpr.hxx					     \

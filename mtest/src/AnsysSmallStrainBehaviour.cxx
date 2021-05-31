@@ -61,7 +61,7 @@ namespace mtest {
              "ansys behaviours only provide the "
              "consistent tangent operator");
     const AnsysInt nprops = s.mprops1.size();
-    const AnsysInt ndirect = [&h, &throw_if] {
+    const AnsysInt ndirect = [&h] {
       if ((h == ModellingHypothesis::AXISYMMETRICAL) ||
           (h == ModellingHypothesis::PLANESTRAIN) ||
           (h == ModellingHypothesis::PLANESTRESS)) {
@@ -69,9 +69,9 @@ namespace mtest {
       } else if (h == ModellingHypothesis::TRIDIMENSIONAL) {
         return 3;
       }
-      throw_if(true, "unsupported hypothesis");
+      tfel::raise("unsupported hypothesis");
     }();
-    const AnsysInt nshear = [&h, &throw_if] {
+    const AnsysInt nshear = [&h] {
       if ((h == ModellingHypothesis::AXISYMMETRICAL) ||
           (h == ModellingHypothesis::PLANESTRAIN) ||
           (h == ModellingHypothesis::PLANESTRESS)) {
@@ -79,9 +79,9 @@ namespace mtest {
       } else if (h == ModellingHypothesis::TRIDIMENSIONAL) {
         return 3;
       }
-      throw_if(true, "unsupported hypothesis");
+      tfel::raise("unsupported hypothesis");
     }();
-    const AnsysInt ntens = [&h, &throw_if] {
+    const AnsysInt ntens = [&h] {
       if ((h == ModellingHypothesis::AXISYMMETRICAL) ||
           (h == ModellingHypothesis::PLANESTRAIN) ||
           (h == ModellingHypothesis::PLANESTRESS)) {
@@ -89,7 +89,7 @@ namespace mtest {
       } else if (h == ModellingHypothesis::TRIDIMENSIONAL) {
         return 6;
       }
-      throw_if(true, "unsupported hypothesis");
+      tfel::raise("unsupported hypothesis");
     }();
     std::fill(wk.D.begin(), wk.D.end(), 0.);
     // using a local copy of material properties to handle the
@@ -117,7 +117,7 @@ namespace mtest {
         wk.mps[o + 4] = s.r(1, 1);
         wk.mps[o + 5] = s.r(2, 1);
       } else {
-        throw_if(true, "unsupported hypothesis (" +
+        tfel::raise("unsupported hypothesis (" +
                            ModellingHypothesis::toString(h) + ")");
       }
     }
@@ -222,7 +222,7 @@ namespace mtest {
       // normalise it (transpose and TFEL storage conventions !)
       AnsysNormaliseTangentOperator::exe(&Kt(0, 0), wk.D, 2u);
     } else {
-      throw_if(true, "unsupported modelling hypothesis");
+      tfel::raise("unsupported modelling hypothesis");
     }
     if (b) {
       // treating internal state variables

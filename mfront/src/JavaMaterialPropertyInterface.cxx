@@ -268,8 +268,6 @@ namespace mfront
     const auto cname = (!mpd.material.empty()) ? mpd.material : "UnknowMaterial";
     const auto name  = (!mpd.material.empty()) ? mpd.material+"_"+mpd.law : mpd.law;
     const auto srcFileName     = "src/" + name + "-java.cxx";
-    const auto& params = mpd.parameters;
-    const auto& file=fd.fileName;
     std::ofstream srcFile{srcFileName};
     throw_if(!srcFile,"unable to open '"+ srcFileName+"' for writing output file.");
     srcFile.exceptions(std::ios::badbit|std::ios::failbit);

@@ -19,25 +19,23 @@
 
 namespace tfel::math {
 
-  /*!
-   * \brief a array policy based on the fixed size vector indexing policy
-   */
+  //! \brief an array policy based on the fixed size vector indexing policy
   template <unsigned short N, typename ValueType>
-  struct FixedSizeVectorPolicy : StandardArrayPolicyAliases<ValueType> {
-    //! \brief the underlying indexing policy
-    using IndexingPolicy = FixedSizeVectorIndexingPolicy<unsigned short, N>;
-  };
+  struct FixedSizeVectorPolicy
+      : StandardArrayPolicy<ValueType,
+                            FixedSizeVectorIndexingPolicy<unsigned short, N>> {
+  }; // end of struct FixedSizeVectorPolicy
 
   /*!
-   * \brief a array policy describing a fixed size matrix stored in row major
+   * \brief an array policy describing a fixed size matrix stored in row major
    * format based on the fixed size matrix indexing policy.
    */
   template <unsigned short N, unsigned short M, typename ValueType>
-  struct FixedSizeRowMajorMatrixPolicy : StandardArrayPolicyAliases<ValueType> {
-    //! \brief the underlying indexing policy
-    using IndexingPolicy =
-        FixedSizeRowMajorMatrixIndexingPolicy<unsigned short, N, M>;
-  };
+  struct FixedSizeRowMajorMatrixPolicy
+      : StandardArrayPolicy<
+            ValueType,
+            FixedSizeRowMajorMatrixIndexingPolicy<unsigned short, N, M>> {
+  };  // end of struct FixedSizeRowMajorMatrixPolicy
 
 }  // end of namespace tfel::math
 

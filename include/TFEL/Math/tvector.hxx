@@ -44,65 +44,6 @@ namespace tfel::math {
         isScalar<T2>() && std::is_same<result_type<T, T2, OpMult>, T>::value;
   };  // end of struct IsTVectorScalarOperationValid
 
-  /*!
-   * \brief a base for tvector or classes acting like tvector.
-   */
-  template <typename Child, unsigned short N, typename T>
-  struct tvector_base {
-    //! Assignement operator
-    /*!
-     * \param src: a vector expression.
-     * \return a reference to this.
-     * \pre T2 must be assignable to a T.
-     */
-    template <typename T2, typename Operation>
-    TFEL_MATH_INLINE std::enable_if_t<isAssignableTo<T2, T>(), Child&>
-    operator=(const Expr<tvector<N, T2>, Operation>&);
-
-    // Assignement operator
-    template <typename T2>
-    TFEL_MATH_INLINE std::enable_if_t<isAssignableTo<T2, T>(), Child&>
-    operator=(const tvector<N, T2>&);
-
-    // Assignement operator
-    template <typename T2, typename Operation>
-    TFEL_MATH_INLINE std::enable_if_t<isAssignableTo<T2, T>(), Child&>
-    operator+=(const Expr<tvector<N, T2>, Operation>&);
-
-    // Assignement operator
-    template <typename T2>
-    TFEL_MATH_INLINE std::enable_if_t<isAssignableTo<T2, T>(), Child&>
-    operator+=(const tvector<N, T2>&);
-
-    // Assignement operator
-    template <typename T2, typename Operation>
-    TFEL_MATH_INLINE std::enable_if_t<isAssignableTo<T2, T>(), Child&>
-    operator-=(const Expr<tvector<N, T2>, Operation>&);
-
-    // Assignement operator
-    template <typename T2>
-    TFEL_MATH_INLINE std::enable_if_t<isAssignableTo<T2, T>(), Child&>
-    operator-=(const tvector<N, T2>&);
-
-    /*!
-     * operator*=
-     */
-    template <typename T2>
-    TFEL_MATH_INLINE
-        std::enable_if_t<IsTVectorScalarOperationValid<T, T2, OpMult>::cond,
-                         Child&>
-        operator*=(const T2);
-
-    /*!
-     * operator/=
-     */
-    template <typename T2>
-    TFEL_MATH_INLINE
-        std::enable_if_t<IsTVectorScalarOperationValid<T, T2, OpDiv>::cond,
-                         Child&>
-        operator/=(const T2);
-  };
-
   template <unsigned short N, typename ValueType = double>
   struct tvector : VectorConcept<tvector<N, ValueType>>,
                    GenericFixedSizeArray<tvector<N, ValueType>,
@@ -129,7 +70,7 @@ namespace tfel::math {
      * \param[in] I : the starting index
      */
     template <unsigned short I>
-    auto slice();
+    constexpr auto slice();
     /*!
      * \brief create a slice
      * \param[in] I : the starting index
@@ -138,7 +79,7 @@ namespace tfel::math {
      * vector, so this vector shall not be destroyed before the slice
      */
     template <unsigned short I, unsigned short J>
-    auto slice();
+    constexpr auto slice();
     /*!
      * \brief create a slice (const version)
      * \param[in] I : the starting index
@@ -146,7 +87,7 @@ namespace tfel::math {
      * vector, so this vector shall not be destroyed before the slice
      */
     template <unsigned short I>
-    auto slice() const;
+    constexpr auto slice() const;
     /*!
      * \brief create a slice (const version)
      * \param[in] I : the starting index
@@ -155,7 +96,7 @@ namespace tfel::math {
      * vector, so this vector shall not be destroyed before the slice
      */
     template <unsigned short I, unsigned short J>
-    auto slice() const;
+    constexpr auto slice() const;
   };  // end of tvector
 
   /*!
@@ -191,19 +132,21 @@ namespace tfel::math {
   auto abs(const tvector<N, T>& v);
 
   template <typename T>
-  tvector<1u, T> makeTVector1D(const T);
+  constexpr tvector<1u, T> makeTVector1D(const T);
 
   template <typename T>
-  tvector<2u, T> makeTVector2D(const T, const T);
+  constexpr tvector<2u, T> makeTVector2D(const T, const T);
 
   template <typename T>
-  tvector<3u, T> makeTVector3D(const T, const T, const T);
+  constexpr tvector<3u, T> makeTVector3D(const T, const T, const T);
 
   template <typename T>
-  tvector<3u, T> cross_product(const tvector<2u, T>&, const tvector<2u, T>&);
+  constexpr tvector<3u, T> cross_product(const tvector<2u, T>&,
+                                         const tvector<2u, T>&);
 
   template <typename T>
-  tvector<3u, T> cross_product(const tvector<3u, T>&, const tvector<3u, T>&);
+  constexpr tvector<3u, T> cross_product(const tvector<3u, T>&,
+                                         const tvector<3u, T>&);
 
   /*!
    * find a vector perpendicular to the second one
@@ -218,7 +161,7 @@ namespace tfel::math {
    * vector, so this vector shall not be destroyed before the slice
    */
   template <unsigned short I, unsigned short N, typename T>
-  auto slice(tvector<N, T>&);
+  constexpr auto slice(tvector<N, T>&);
   /*!
    * \brief create a slice from a tiny vector
    * \param[in] v : vector
@@ -226,7 +169,7 @@ namespace tfel::math {
    * vector, so this vector shall not be destroyed before the slice
    */
   template <unsigned short I, unsigned short J, unsigned short N, typename T>
-  auto slice(tvector<N, T>&);
+  constexpr auto slice(tvector<N, T>&);
   /*!
    * \brief create a slice from a tiny vector
    * \param[in] v : vector
@@ -234,7 +177,7 @@ namespace tfel::math {
    * vector, so this vector shall not be destroyed before the slice
    */
   template <unsigned short I, unsigned short N, typename T>
-  auto slice(const tvector<N, T>&);
+  constexpr auto slice(const tvector<N, T>&);
   /*!
    * \brief create a slice from a tiny vector (const version)
    * \param[in] v : vector
@@ -242,7 +185,7 @@ namespace tfel::math {
    * vector, so this vector shall not be destroyed before the slice
    */
   template <unsigned short I, unsigned short J, unsigned short N, typename T>
-  auto slice(const tvector<N, T>&);
+  constexpr auto slice(const tvector<N, T>&);
 
   /*!
    * \brief create a view of a math object from a tiny vector

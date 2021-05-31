@@ -28,7 +28,6 @@
 #include "TFEL/Math/General/DerivativeType.hxx"
 #include "TFEL/Math/Array/GenericFixedSizeArray.hxx"
 #include "TFEL/Math/Array/View.hxx"
-#include "TFEL/Math/Vector/VectorUtilities.hxx"
 #include "TFEL/Math/Vector/VectorConcept.hxx"
 #include "TFEL/Math/Matrix/MatrixConcept.hxx"
 #include "TFEL/Math/ST2toST2/ST2toST2Concept.hxx"
@@ -77,62 +76,6 @@ namespace tfel::math {
         stensor<getSpaceDimension<StensorType>(),
                 derivative_type<ScalarType, numeric_type<StensorType>>>;
   };  // end of struct DerivativeTypeDispatcher
-
-  /*!
-   * \brief a base for stensor or classes acting like stensor.
-   * \param Child : child class
-   * \param N     : spatial dimension
-   * \param T     : numerical type
-   */
-  template <typename Child>
-  struct stensor_base {
-    /*!
-     * Assignement operator
-     */
-    template <typename StensorType>
-    TFEL_MATH_INLINE std::enable_if_t<
-        (implementsStensorConcept<StensorType>() &&
-         getSpaceDimension<Child>() == getSpaceDimension<StensorType>() &&
-         isAssignableTo<numeric_type<StensorType>, numeric_type<Child>>()),
-        Child&>
-    operator=(const StensorType&);
-    //! Assignement operator
-    template <typename StensorType>
-    TFEL_MATH_INLINE std::enable_if_t<
-        (implementsStensorConcept<StensorType>() &&
-         getSpaceDimension<Child>() == getSpaceDimension<StensorType>() &&
-         isAssignableTo<numeric_type<StensorType>, numeric_type<Child>>()),
-        Child&>
-    operator+=(const StensorType&);
-    //! Assignement operator
-    template <typename StensorType>
-    TFEL_MATH_INLINE std::enable_if_t<
-        (implementsStensorConcept<StensorType>() &&
-         getSpaceDimension<Child>() == getSpaceDimension<StensorType>() &&
-         isAssignableTo<numeric_type<StensorType>, numeric_type<Child>>()),
-        Child&>
-    operator-=(const StensorType&);
-    /*!
-     * operator*=
-     */
-    template <typename T2>
-    TFEL_MATH_INLINE std::enable_if_t<
-        isScalar<T2>() &&
-            std::is_same<result_type<numeric_type<Child>, T2, OpMult>,
-                         numeric_type<Child>>::value,
-        Child&>
-    operator*=(const T2);
-    /*!
-     * operator/=
-     */
-    template <typename T2>
-    TFEL_MATH_INLINE std::enable_if_t<
-        isScalar<T2>() &&
-            std::is_same<result_type<numeric_type<Child>, T2, OpDiv>,
-                         numeric_type<Child>>::value,
-        Child&>
-    operator/=(const T2);
-  };  // end of struct stensor_base
 
   //! \brief an helper structure inherited by the `stensor` class
   struct stensor_common {

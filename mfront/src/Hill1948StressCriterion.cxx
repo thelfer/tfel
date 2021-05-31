@@ -49,7 +49,7 @@ namespace mfront{
                                              const std::string& id,
                                              const DataMap& d,
                                              const Role r) {
-      auto get_mp = [&dsl, &bd, &d](const char* const n) {
+      auto get_mp = [&dsl, &d](const char* const n) {
         if (d.count(n) == 0) {
           tfel::raise("Hill1948StressCriterion::initialize: entry '" +
                       std::string(n) + "' is not defined");

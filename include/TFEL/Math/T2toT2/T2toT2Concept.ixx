@@ -14,7 +14,6 @@
 #ifndef LIB_TFEL_MATH_T2TOT2_CONCEPT_IXX
 #define LIB_TFEL_MATH_T2TOT2_CONCEPT_IXX 1
 
-#include "TFEL/Math/Matrix/MatrixUtilities.hxx"
 #include "TFEL/Math/LU/LUDecomp.hxx"
 #include "TFEL/Math/LU/TinyPermutation.hxx"
 #include "TFEL/Math/Tensor/TensorSizeToDime.hxx"
@@ -79,7 +78,10 @@ namespace tfel::math {
       } catch (...) {
         return {};
       }
-      const auto v = DiagonalTermProduct<ts, real>::exe(m);
+      auto v = base_type<real>{1};
+      for (const index_type<T2toT2Type> i = 0; i != ts; ++i) {
+        v *= m(i, i);
+      }
       return r == 1 ? v : -v;
     }
   }  // end of det

@@ -1598,7 +1598,7 @@ namespace mfront {
      * - the finite strain strategy is either undefined or `Native`
      * note: this is included to comply with gcc 4.7.2
      */
-    const auto c = [&mb, this] {
+    const auto c = [&mb] {
       if (mb.getBehaviourType() ==
           BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) {
         if ((AnsysInterface::hasFiniteStrainStrategy(mb)) &&

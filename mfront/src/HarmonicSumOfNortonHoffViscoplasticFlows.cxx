@@ -48,7 +48,7 @@ namespace mfront {
         AbstractBehaviourDSL& dsl,
         const std::string& id,
         const DataMap& d) {
-      auto get_mps = [&dsl, &bd, &id, &d](const std::string& mpn) {
+      auto get_mps = [&dsl, &d](const std::string& mpn) {
         if (d.count(mpn) == 0) {
           tfel::raise(
               "HarmonicSumOfNortonHoffViscoplasticFlows::initialize: "

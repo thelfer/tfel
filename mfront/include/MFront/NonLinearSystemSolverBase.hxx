@@ -39,15 +39,11 @@ namespace mfront {
      * \return the part of the jacobian where the partial derivative
      * of the first variable with respect to the second variable is
      * stored
-     * \param[in] mb  : mechanical behaviour description
      * \param[in] v1  : first  variable description
      * \param[in] v2  : second variable description
-
      */
-    static std::string getJacobianPart(const BehaviourDescription&,
+    static std::string getJacobianPart(const VariableDescription&,
                                        const VariableDescription&,
-                                       const VariableDescription&,
-                                       const SupportedTypes::TypeSize&,
                                        const SupportedTypes::TypeSize&,
                                        const SupportedTypes::TypeSize&,
                                        const std::string& = "this->jacobian",

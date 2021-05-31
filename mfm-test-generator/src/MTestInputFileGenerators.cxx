@@ -81,20 +81,6 @@ namespace mfmtg {
       os << ";\n";
     }  // end of writeTimes
 
-    static void writeEvolution(std::ostream& os,
-                               const std::map<double, double>& e) {
-      os << "{";
-      auto p = e.begin();
-      const auto pe = e.end();
-      while (p != pe) {
-        os << p->first << " : " << p->second;
-        if (++p != pe) {
-          os << ", ";
-        }
-      }
-      os << "}";
-    }  // end of writeEvolution
-
     static void writeEvolution(std::ostream& os, const Evolution& e) {
       if (e.is<double>()) {
         os << e.get<double>();

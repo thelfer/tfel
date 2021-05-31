@@ -20,99 +20,8 @@
 #include "TFEL/TypeTraits/IsSafelyReinterpretCastableTo.hxx"
 #include "TFEL/Math/General/Abs.hxx"
 #include "TFEL/Math/General/MathConstants.hxx"
-#include "TFEL/Math/Vector/VectorUtilities.hxx"
 
 namespace tfel::math {
-
-  template <typename Child>
-  template <typename TensorType>
-  std::enable_if_t<
-      implementsTensorConcept<TensorType>() &&
-          getSpaceDimension<Child>() == getSpaceDimension<TensorType>() &&
-          isAssignableTo<numeric_type<TensorType>, numeric_type<Child>>(),
-      Child&>
-  tensor_base<Child>::operator=(const TensorType& src) {
-    auto& child = static_cast<Child&>(*this);
-    vectorToTab<TensorDimeToSize<getSpaceDimension<Child>()>::value>::exe(
-        src, child);
-    return child;
-  }
-
-  template <typename Child>
-  template <typename T>
-  std::enable_if_t<isAssignableTo<T, numeric_type<Child>>(), Child&>
-  tensor_base<Child>::operator=(const std::initializer_list<T>& src) {
-    using Copy =
-        tfel::fsalgo::copy<TensorDimeToSize<getSpaceDimension<Child>()>::value>;
-    if (src.size() != TensorDimeToSize<getSpaceDimension<Child>()>::value) {
-      throw(TensorInvalidInitializerListSizeException());
-    }
-    auto& child = static_cast<Child&>(*this);
-    Copy::exe(src.begin(), child.begin());
-    return child;
-  }
-
-  template <typename Child>
-  template <typename TensorType>
-  std::enable_if_t<
-      implementsTensorConcept<TensorType>() &&
-          getSpaceDimension<Child>() == getSpaceDimension<TensorType>() &&
-          isAssignableTo<numeric_type<TensorType>, numeric_type<Child>>(),
-      Child&>
-  tensor_base<Child>::operator+=(const TensorType& src) {
-    auto& child = static_cast<Child&>(*this);
-    VectorUtilities<
-        TensorDimeToSize<getSpaceDimension<Child>()>::value>::PlusEqual(child,
-                                                                        src);
-    return child;
-  }
-
-  template <typename Child>
-  template <typename TensorType>
-  std::enable_if_t<
-      implementsTensorConcept<TensorType>() &&
-          getSpaceDimension<Child>() == getSpaceDimension<TensorType>() &&
-          isAssignableTo<numeric_type<TensorType>, numeric_type<Child>>(),
-      Child&>
-  tensor_base<Child>::operator-=(const TensorType& src) {
-    auto& child = static_cast<Child&>(*this);
-    VectorUtilities<
-        TensorDimeToSize<getSpaceDimension<Child>()>::value>::MinusEqual(child,
-                                                                         src);
-    return child;
-  }
-
-  // *= operator
-  template <typename Child>
-  template <typename T2>
-  std::enable_if_t<
-      isScalar<T2>() &&
-          std::is_same<
-              result_type<numeric_type<Child>, T2, OpMult>,
-              numeric_type<Child>>::value,
-      Child&>
-  tensor_base<Child>::operator*=(const T2 s) {
-    auto& child = static_cast<Child&>(*this);
-    VectorUtilities<TensorDimeToSize<getSpaceDimension<Child>()>::value>::scale(
-        child, s);
-    return child;
-  }
-
-  // /= operator
-  template <typename Child>
-  template <typename T2>
-  std::enable_if_t<
-      isScalar<T2>() &&
-          std::is_same<
-              result_type<numeric_type<Child>, T2, OpDiv>,
-              numeric_type<Child>>::value,
-      Child&>
-  tensor_base<Child>::operator/=(const T2 s) {
-    auto& child = static_cast<Child&>(*this);
-    VectorUtilities<TensorDimeToSize<getSpaceDimension<Child>()>::value>::scale(
-        child, (static_cast<base_type<T2>>(1u)) / s);
-    return child;
-  }
 
   template <unsigned short N, typename T>
   void tensor<N, T>::buildFromFortranMatrix(tensor<N, T>& t,
@@ -139,27 +48,6 @@ namespace tfel::math {
     tensor<N, T>::buildFromFortranMatrix(t, v);
     return t;
   }  // end of void tensor<N,T>::buildFromFortranMatrix
-
-  //   template <unsigned short N, typename T>
-  //   template <typename T2, std::enable_if_t<isAssignableTo<T2, T>(), bool>>
-  //   constexpr tensor<N, T>::tensor(const T2& init)
-  //       : fsarray<TensorDimeToSize<N>::value, T>(init) {}
-  //
-  //   template <unsigned short N, typename T>
-  //   template <typename T2, std::enable_if_t<isAssignableTo<T2, T>(), bool>>
-  //   constexpr tensor<N, T>::tensor(const std::initializer_list<T2>& init)
-  //       : fsarray<TensorDimeToSize<N>::value, T>(init) {}
-  //
-  //   template <unsigned short N, typename T>
-  //   T& tensor<N, T>::operator()(const unsigned short i) {
-  //     return this->v[i];
-  //   }
-  //
-  //   template <unsigned short N, typename T>
-  //   constexpr T& tensor<N, T>::operator()(const unsigned short i) const
-  //   {
-  //     return this->v[i];
-  //   }
 
   template <unsigned short N, typename ValueType>
   constexpr ValueType tensor<N, ValueType>::operator()(

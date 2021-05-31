@@ -86,11 +86,10 @@ namespace mfront {
     tfel::raise(
         "ModelDSLCommon::getOverridableVariableNameByExternalName: "
         "unimplemented feature");
-    return "";
   }  // end of ModelDSLCommon::getOverridableVariableNameByExternalName
 
-  void ModelDSLCommon::overrideByAParameter(const std::string& n,
-                                            const double v) {
+  void ModelDSLCommon::overrideByAParameter(const std::string&,
+                                            const double) {
 #pragma message("unimplemented")
   }  // end of ModelDSLCommon::overrideByAParameter
 

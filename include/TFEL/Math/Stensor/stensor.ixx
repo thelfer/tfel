@@ -21,7 +21,6 @@
 #include "TFEL/Math/General/Abs.hxx"
 #include "TFEL/Math/General/MathConstants.hxx"
 #include "TFEL/Math/General/ConstExprMathFunctions.hxx"
-#include "TFEL/Math/Vector/VectorUtilities.hxx"
 #include "TFEL/Math/Stensor/SymmetricStensorProduct.hxx"
 #include "TFEL/Math/Stensor/Internals/StensorChangeBasis.hxx"
 #include "TFEL/Math/Stensor/Internals/StensorEigenSolver.hxx"
@@ -32,79 +31,6 @@
 #include "TFEL/Math/Stensor/Internals/StensorComputeIsotropicFunctionDerivative.hxx"
 
 namespace tfel::math {
-
-  template <typename Child>
-  template <typename StensorType>
-  std::enable_if_t<
-      (implementsStensorConcept<StensorType>() &&
-       getSpaceDimension<Child>() == getSpaceDimension<StensorType>() &&
-       isAssignableTo<numeric_type<StensorType>, numeric_type<Child>>()),
-      Child&>
-  stensor_base<Child>::operator=(const StensorType& src) {
-    auto& child = static_cast<Child&>(*this);
-    vectorToTab<StensorDimeToSize<getSpaceDimension<Child>()>::value>::exe(
-        src, child);
-    return child;
-  }
-
-  template <typename Child>
-  template <typename StensorType>
-  std::enable_if_t<
-      (implementsStensorConcept<StensorType>() &&
-       getSpaceDimension<Child>() == getSpaceDimension<StensorType>() &&
-       isAssignableTo<numeric_type<StensorType>, numeric_type<Child>>()),
-      Child&>
-  stensor_base<Child>::operator+=(const StensorType& src) {
-    auto& child = static_cast<Child&>(*this);
-    VectorUtilities<
-        StensorDimeToSize<getSpaceDimension<Child>()>::value>::PlusEqual(child,
-                                                                         src);
-    return child;
-  }
-
-  template <typename Child>
-  template <typename StensorType>
-  std::enable_if_t<
-      (implementsStensorConcept<StensorType>() &&
-       getSpaceDimension<Child>() == getSpaceDimension<StensorType>() &&
-       isAssignableTo<numeric_type<StensorType>, numeric_type<Child>>()),
-      Child&>
-  stensor_base<Child>::operator-=(const StensorType& src) {
-    auto& child = static_cast<Child&>(*this);
-    VectorUtilities<
-        StensorDimeToSize<getSpaceDimension<Child>()>::value>::MinusEqual(child,
-                                                                          src);
-    return child;
-  }
-
-  // *= operator
-  template <typename Child>
-  template <typename T2>
-  std::enable_if_t<
-      isScalar<T2>() &&
-          std::is_same<result_type<numeric_type<Child>, T2, OpMult>,
-                       numeric_type<Child>>::value,
-      Child&>
-  stensor_base<Child>::operator*=(const T2 s) {
-    auto& child = static_cast<Child&>(*this);
-    VectorUtilities<
-        StensorDimeToSize<getSpaceDimension<Child>()>::value>::scale(child, s);
-    return child;
-  }
-
-  // /= operator
-  template <typename Child>
-  template <typename T2>
-  std::enable_if_t<isScalar<T2>() &&
-                       std::is_same<result_type<numeric_type<Child>, T2, OpDiv>,
-                                    numeric_type<Child>>::value,
-                   Child&>
-  stensor_base<Child>::operator/=(const T2 s) {
-    auto& child = static_cast<Child&>(*this);
-    VectorUtilities<StensorDimeToSize<getSpaceDimension<Child>()>::value>::
-        scale(child, (static_cast<base_type<T2>>(1u)) / s);
-    return child;
-  }
 
   template <unsigned short N, typename T>
   template <typename InputIterator>

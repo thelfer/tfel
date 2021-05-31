@@ -42,7 +42,7 @@ namespace tfel::math {
      * \note this alias is defined for compatibility with the standard
      * template library (STL).
      */
-    using const_pointer = const_value_type*;
+    using const_pointer = const typename ArrayPolicy::storage_type*;
     /*!
      * \brief type of the difference between two iterators.
      * \note this alias is defined for compatibility with the standard
@@ -140,7 +140,7 @@ namespace tfel::math {
      * \note this alias is defined for compatibility with the standard
      * template library (STL).
      */
-    using pointer = value_type*;
+    using pointer = typename ArrayPolicy::storage_type*;
     /*!
      * \brief type of the iterator.
      * \note this alias is defined for compatibility with the standard

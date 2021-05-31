@@ -837,7 +837,7 @@ namespace mtest {
       const auto T = (*(pT->second))(t + dt);
       if (this->hpp) {
         // pi capture is required for Visual Studio 2015
-        const auto Pi = [this, T, Ri_, pi] {
+        const auto Pi = [this, T, Ri_] {
           if (this->gseq == nullptr) {
             return this->P0 * (T / this->T0);
           }

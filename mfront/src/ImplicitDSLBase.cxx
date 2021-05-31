@@ -135,7 +135,7 @@ namespace mfront {
     this->disableCallBack("@ComputedVar");
     this->disableCallBack("@UseQt");
     this->mb.setIntegrationScheme(BehaviourDescription::IMPLICITSCHEME);
-  }  // end of ImplicitDSLBase::ImplicitDSLBase
+  }  // end of ImplicitDSLBase
 
   const NonLinearSystemSolver& ImplicitDSLBase::getSolver() const {
     if (this->solver == nullptr) {
@@ -154,7 +154,7 @@ namespace mfront {
     } else if (c == BehaviourData::Integrator) {
       // implicit system
       auto ivs = this->mb.getBehaviourData(h).getIntegrationVariables();
-      const auto mivs = [this, h] {
+      const auto mivs = [this] {
         auto livs = this->mb.getBehaviourData(h).getIntegrationVariables();
         // remove managed integration variables
         const auto mivs_names = [this] {
@@ -204,8 +204,9 @@ namespace mfront {
             }
           }
         } else {
-          i += "for(unsigned short i = 0; i != " +
-               std::to_string(v1.arraySize) + ";++i){\n";
+          i +=
+              "for(unsigned short i = 0; i != " + std::to_string(v1.arraySize) +
+              ";++i){\n";
           i += "f" + v1n + "(i) += ;\n";
           i += "// jacobian blocks\n";
           if ((this->solver != nullptr) && (this->solver->usesJacobian())) {
@@ -234,7 +235,7 @@ namespace mfront {
       return "@TangentOperator{}\n";
     }
     return "";
-  }  // end of ImplicitDSLBase::getCodeBlockTemplate
+  }  // end of getCodeBlockTemplate
 
   void ImplicitDSLBase::treatUnknownKeyword() {
     --(this->current);
@@ -249,7 +250,7 @@ namespace mfront {
       }
     }
     BehaviourDSLCommon::treatUnknownKeyword();
-  }  // end of ImplicitDSLBase::treatUnknownKeyword
+  }  // end of treatUnknownKeyword
 
   void ImplicitDSLBase::treatStateVariable() {
     VariableDescriptionContainer v;
@@ -289,8 +290,8 @@ namespace mfront {
                               "the current algorithm.");
     }
     this->treatCodeBlock(*this, BehaviourData::InitializeJacobian,
-                        &ImplicitDSLBase::standardModifier, true, true);
-  }  // end of ImplicitDSLBase::treatInitJacobian
+                         &ImplicitDSLBase::standardModifier, true, true);
+  }  // end of treatInitJacobian
 
   void ImplicitDSLBase::treatInitJacobianInvert() {
     if (this->solver == nullptr) {
@@ -305,8 +306,8 @@ namespace mfront {
                               "the current algorithm.");
     }
     this->treatCodeBlock(*this, BehaviourData::InitializeJacobianInvert,
-                        &ImplicitDSLBase::standardModifier, true, true);
-  }  // end of ImplicitDSLBase::treatInitJacobianInvert
+                         &ImplicitDSLBase::standardModifier, true, true);
+  }  // end of treatInitJacobianInvert
 
   void ImplicitDSLBase::treatUnknownVariableMethod(const Hypothesis h,
                                                    const std::string& n) {
@@ -382,7 +383,7 @@ namespace mfront {
       }
     }
     BehaviourDSLCommon::treatUnknownVariableMethod(h, n);
-  }  // end of ImplicitDSLBase::treatUnknowVariableMethod
+  }  // end of treatUnknowVariableMethod
 
   bool ImplicitDSLBase::isCallableVariable(const Hypothesis h,
                                            const std::string& n) const {
@@ -394,7 +395,7 @@ namespace mfront {
       return true;
     }
     return BehaviourDSLCommon::isCallableVariable(h, n);
-  }  // end of ImplicitDSLBase::isCallableVariable
+  }  // end of isCallableVariable
 
   void ImplicitDSLBase::treatCompareToNumericalJacobian() {
     const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
@@ -415,7 +416,7 @@ namespace mfront {
     ++(this->current);
     this->readSpecifiedToken("ImplicitDSLBase::treatCompareToNumericalJacobian",
                              ";");
-  }  // end of ImplicitDSLBase::treatCompareToNumericalJacobian
+  }  // end of treatCompareToNumericalJacobian
 
   void ImplicitDSLBase::treatJacobianComparisonCriterion() {
     const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
@@ -459,7 +460,7 @@ namespace mfront {
       this->reserveName(n);
     }
     this->mb.setAttribute(BehaviourData::algorithm, s, false);
-  }  // end of ImplicitDSLBase::treatAlgorithm
+  }  // end of treatAlgorithm
 
   void ImplicitDSLBase::treatTheta() {
     const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
@@ -477,7 +478,7 @@ namespace mfront {
     this->mb.addParameter(h, tv, BehaviourData::ALREADYREGISTRED);
     this->mb.setParameterDefaultValue(h, "theta", theta);
     this->mb.setEntryName(h, "theta", "theta");
-  }  // end of ImplicitDSLBase::treatTheta
+  }  // end of treatTheta
 
   void ImplicitDSLBase::treatEpsilon() {
     const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
@@ -499,8 +500,8 @@ namespace mfront {
 
   void ImplicitDSLBase::treatAdditionalConvergenceChecks() {
     this->treatCodeBlock(*this, BehaviourData::AdditionalConvergenceChecks,
-                        &ImplicitDSLBase::standardModifier, true, true);
-  }  // end of ImplicitDSLBase::treatAdditionalConvergenceChecks()
+                         &ImplicitDSLBase::standardModifier, true, true);
+  }  // end of treatAdditionalConvergenceChecks()
 
   void
   ImplicitDSLBase::treatPerturbationValueForNumericalJacobianComputation() {
@@ -540,7 +541,7 @@ namespace mfront {
     this->mb.addParameter(h, VariableDescription("ushort", "iterMax", 1u, 0u),
                           BehaviourData::ALREADYREGISTRED);
     this->mb.setParameterDefaultValue(h, "iterMax", iterMax);
-  }  // end of ImplicitDSLBase::treatIterMax
+  }  // end of treatIterMax
 
   std::string ImplicitDSLBase::tangentOperatorVariableModifier(
       const Hypothesis h, const std::string& var, const bool addThisPtr) {
@@ -571,7 +572,7 @@ namespace mfront {
     } else {
       return var;
     }
-  }  // end of ImplicitDSLBase::tangentOperatorVariableModifier
+  }  // end of tangentOperatorVariableModifier
 
   std::string ImplicitDSLBase::integratorVariableModifier(
       const Hypothesis h, const std::string& var, const bool addThisPtr) {
@@ -601,7 +602,7 @@ namespace mfront {
     } else {
       return var;
     }
-  }  // end of ImplicitDSLBase::integratorVariableModifier
+  }  // end of integratorVariableModifier
 
   std::string ImplicitDSLBase::computeThermodynamicForcesVariableModifier1(
       const Hypothesis h, const std::string& var, const bool addThisPtr) {
@@ -640,7 +641,7 @@ namespace mfront {
       return "this->" + var;
     }
     return var;
-  }  // end of ImplicitDSLBase::computeThermodynamicForcesVariableModifier1
+  }  // end of computeThermodynamicForcesVariableModifier1
 
   std::string ImplicitDSLBase::computeThermodynamicForcesVariableModifier2(
       const Hypothesis h, const std::string& var, const bool addThisPtr) {
@@ -662,7 +663,7 @@ namespace mfront {
       return "this->" + var;
     }
     return var;
-  }  // end of ImplicitDSLBase::computeThermodynamicForcesVariableModifier2
+  }  // end of computeThermodynamicForcesVariableModifier2
 
   void ImplicitDSLBase::integratorAnalyser(const Hypothesis h,
                                            const std::string& w) {
@@ -702,7 +703,7 @@ namespace mfront {
     if (is_jacobian_part) {
       this->jacobianPartsUsedInIntegrator.insert(w);
     }
-  }  // end of ImplicitDSLBase::integratorAnalyser
+  }  // end of integratorAnalyser
 
   void ImplicitDSLBase::predictorAnalyser(const Hypothesis h,
                                           const std::string& w) {
@@ -710,19 +711,19 @@ namespace mfront {
     if (d.isIntegrationVariableIncrementName(w)) {
       this->integrationVariablesIncrementsUsedInPredictor.insert(w);
     }
-  }  // end of ImplicitDSLBase::predictorAnalyser
+  }  // end of predictorAnalyser
 
   void ImplicitDSLBase::treatIntegrator() {
     this->treatCodeBlock(*this, BehaviourData::Integrator,
-                        &ImplicitDSLBase::integratorVariableModifier,
-                        &ImplicitDSLBase::integratorAnalyser, true);
-  }  // end of ImplicitDSLBase::treatIntegrator
+                         &ImplicitDSLBase::integratorVariableModifier,
+                         &ImplicitDSLBase::integratorAnalyser, true);
+  }  // end of treatIntegrator
 
   void ImplicitDSLBase::treatPredictor() {
     this->treatCodeBlock(*this, BehaviourData::ComputePredictor,
-                        &ImplicitDSLBase::standardModifier,
-                        &ImplicitDSLBase::predictorAnalyser, true);
-  }  // end of ImplicitDSLBase::treatPredictor
+                         &ImplicitDSLBase::standardModifier,
+                         &ImplicitDSLBase::predictorAnalyser, true);
+  }  // end of treatPredictor
 
   void ImplicitDSLBase::treatComputeThermodynamicForces() {
     /*
@@ -741,14 +742,14 @@ namespace mfront {
         &ImplicitDSLBase::computeThermodynamicForcesVariableModifier1,
         &ImplicitDSLBase::computeThermodynamicForcesVariableModifier2, true,
         true);
-  }  // end of ImplicitDSLBase::treatComputeThermodynamicForces
+  }  // end of treatComputeThermodynamicForces
 
   void ImplicitDSLBase::treatComputeFinalThermodynamicForces() {
     this->treatCodeBlock(
         *this, BehaviourData::ComputeFinalThermodynamicForces,
         &ImplicitDSLBase::computeThermodynamicForcesVariableModifier2, true,
         true);
-  }  // end of ImplicitDSLBase::treatComputeFinalThermodynamicForces
+  }  // end of treatComputeFinalThermodynamicForces
 
   void ImplicitDSLBase::readTangentOperatorCodeBlock(const CodeBlockOptions& o,
                                                      const std::string& n) {
@@ -897,14 +898,17 @@ namespace mfront {
             }
           }
           auto add_derivative_in_attribute = [this, &cb](
-              const char* const attribute, const Derivative& derivative) {
+                                                 const char* const attribute,
+                                                 const Derivative& derivative) {
             if (cb.attributes.count(attribute) == 0) {
-              cb.attributes[attribute] = std::vector<Derivative>(1u, derivative);
+              cb.attributes[attribute] =
+                  std::vector<Derivative>(1u, derivative);
             } else {
               if (!cb.attributes[attribute].is<std::vector<Derivative>>()) {
                 this->throwRuntimeError(
                     "ImplicitDSLBase::readTangentOperatorCodeBlock",
-                    "invalid type for attribute '" + std::string(attribute) + "'");
+                    "invalid type for attribute '" + std::string(attribute) +
+                        "'");
               }
               auto& derivatives =
                   cb.attributes[attribute].get<std::vector<Derivative>>();
@@ -929,7 +933,7 @@ namespace mfront {
           }
         };
     this->treatCodeBlock(o, n, m, a, true);
-  }  // end of ImplicitDSLBase::readTangentOperatorCodeBlock
+  }  // end of readTangentOperatorCodeBlock
 
   void ImplicitDSLBase::treatMaximumIncrementValuePerIteration() {
     const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
@@ -946,12 +950,13 @@ namespace mfront {
     this->readSpecifiedToken(
         "ImplicitDSLBase::MaximumIncrementValuePerIteration", ";");
     this->mb.addParameter(
-        h, VariableDescription("real", "maximum_increment_value_per_iteration",
-                               1u, 0u),
+        h,
+        VariableDescription("real", "maximum_increment_value_per_iteration", 1u,
+                            0u),
         BehaviourData::ALREADYREGISTRED);
     this->mb.setParameterDefaultValue(
         h, "maximum_increment_value_per_iteration", value);
-  }  // end of ImplicitDSLBase::treatMaximumIncrementValuePerIteration
+  }  // end of treatMaximumIncrementValuePerIteration
 
   void ImplicitDSLBase::treatNumericallyComputedJacobianBlocks() {
     const std::string m =
@@ -1037,9 +1042,9 @@ namespace mfront {
                                 false)) &&
         (this->mb.getElasticSymmetryType() == ISOTROPIC) &&
         (this->mb.areElasticMaterialPropertiesDefined())) {
-      auto add_lv = [this, uh](BehaviourDescription& bd, const std::string& t,
-                               const std::string& sn, const std::string& n,
-                               const std::string& g, const std::string d) {
+      auto add_lv = [this](BehaviourDescription& bd, const std::string& t,
+			   const std::string& sn, const std::string& n,
+			   const std::string& g, const std::string d) {
         auto r = bd.checkVariableExistence(n, "Parameter", false);
         if (!r.first) {
           auto v = (!sn.empty()) ? VariableDescription(t, sn, n, 1u, 0u)
@@ -1131,9 +1136,8 @@ namespace mfront {
         (this->solver->usesJacobian())) {
       const std::string nje = "numerical_jacobian_epsilon";
       if (!this->mb.hasParameter(uh, nje)) {
-        const auto eps =
-            0.1 *
-            this->mb.getFloattingPointParameterDefaultValue(uh, "epsilon");
+        const auto eps = 0.1 * this->mb.getFloattingPointParameterDefaultValue(
+                                   uh, "epsilon");
         VariableDescription v("real", nje, 1u, 0u);
         v.description =
             "perturbation value used to compute a numerical "
@@ -1217,7 +1221,7 @@ namespace mfront {
     for (const auto& iJb : jacobian_invert_blocks) {
       this->mb.reserveName(uh, iJb);
     }
-  }  // end of ImplicitDSLBase::completeVariableDeclaration()
+  }  // end of completeVariableDeclaration()
 
   void ImplicitDSLBase::endsInputFileProcessing() {
     using namespace tfel::glossary;
@@ -1248,8 +1252,9 @@ namespace mfront {
                  "numerically computed jacobian blocks can only be "
                  "used with solver using an analytical jacobian "
                  "(or an approximation of it");
-        auto decompose = [throw_if](
-            const std::string& jb) -> std::pair<std::string, std::string> {
+        auto decompose =
+            [throw_if](
+                const std::string& jb) -> std::pair<std::string, std::string> {
           throw_if(jb.empty(), "empty jacobian block");
           throw_if(jb.size() < 6, "invalid jacobian block '" + jb + "'");
           throw_if(jb[0] != 'd', "invalid jacobian block '" + jb + "'");
@@ -1321,209 +1326,42 @@ namespace mfront {
     }
     // minimal tangent operator
     this->setMinimalTangentOperator();
-  }  // end of ImplicitDSLBase::endsInputFileProcessing()
+  }  // end of endsInputFileProcessing()
 
   void ImplicitDSLBase::writeDerivativeView(
       std::ostream& os, const DerivativeViewDescription& d) const {
     const auto v1 = d.first_variable;
     const auto v2 = d.second_variable;
-    const auto flag1 = SupportedTypes::getTypeFlag(v1.type);
-    const auto flag2 = SupportedTypes::getTypeFlag(v2.type);
-    const auto nr = d.matrix_number_of_rows;
-    const auto nc = d.matrix_number_of_columns;
     const auto dr = d.derivative_row_position;
     const auto dc = d.derivative_column_position;
     if ((v1.arraySize == 1u) && (v2.arraySize == 1u)) {
-      if (flag1 == SupportedTypes::STENSOR) {
-        if (flag2 == SupportedTypes::STENSOR) {
-          os << "typename tfel::math::ST2toST2FromTinyMatrixView "  //
-             << "<N, " << nr << ", " << nc << ", " << dr << ", " << dc
-             << ", real>::type " << d.derivative_name << "(" << d.matrix_name
-             << ");\n";
-        } else if (flag2 == SupportedTypes::SCALAR) {
-          os << "typename tfel::math::StensorFromTinyMatrixColumnView"
-             << "<N, " << nr << ", " << nc << ", " << dr << ", " << dc
-             << ", real>::type " << d.derivative_name  //
-             << "(" << d.matrix_name << ");\n";
-        } else {
-          this->throwRuntimeError(
-              "ImplicitDSLBase::writeDerivativeView",
-              "unsupported type for integration variable '" + v2.name + "'");
-        }
-      } else if (flag1 == SupportedTypes::SCALAR) {
-        if (flag2 == SupportedTypes::STENSOR) {
-          os << "typename tfel::math::StensorFromTinyMatrixRowView"  //
-             << "<N," << nr << "," << nc << ", " << dr << ", " << dc
-             << ", real>::type " << d.derivative_name  //
-             << "(" << d.matrix_name << ");\n";
-        } else if (flag2 == SupportedTypes::SCALAR) {
-          os << "real& " << d.derivative_name << " = "  //
-             << d.matrix_name << "(" << dr << "," << dc << ");\n";
-        } else {
-          this->throwRuntimeError(
-              "ImplicitDSLBase::writeDerivativeView",
-              "unsupported type for integration variable '" + v2.name + "'");
-        }
-      } else {
-        this->throwRuntimeError(
-            "ImplicitDSLBase::writeDerivativeView",
-            "unsupported type for integration variable '" + v1.name + "'");
-      }
+      os << "auto " << d.derivative_name << " = tfel::math::map_derivative<"
+         << dr << ", " << dc << ", " << v1.type << ", " << v2.type << ">("
+         << d.matrix_name << ");\n";
     } else if ((v1.arraySize != 1u) && (v2.arraySize == 1u)) {
-      if (flag1 == SupportedTypes::SCALAR) {
-        if (flag2 == SupportedTypes::SCALAR) {
-          os << "auto " << d.derivative_name << "= [&" << d.matrix_name
-             << "](const unsigned short idx) "
-             << "-> tfel::math::derivative_type"
-             << "<" << v1.type << ", " << v2.type << ">&{\n"
-             << "return " << d.matrix_name << "(" << dr << "+idx, " << dc
-             << ");\n"
-             << "};\n";
-        } else if (flag2 == SupportedTypes::TVECTOR) {
-          // Le résultat est un vecteur, une ligne dans la matrice
-          // jacobienne
-          os << "auto " << d.derivative_name << "= [&" << d.matrix_name
-             << "](const unsigned short idx){\n"
-             << "return typename tfel::math::TVectorFromTinyMatrixRowView2<N,"
-             << nr << "," << nc << "," << dr << "," << dc << ",real>::type("
-             << d.matrix_name << ",idx,0);\n"
-             << "};\n";
-        } else {
-          // Le résultat est un tenseur, une ligne dans la matrice
-          // jacobienne
-          os << "auto " << d.derivative_name << "= [&" << d.matrix_name
-             << "](const unsigned short idx){\n"
-             << "return typename tfel::math::StensorFromTinyMatrixRowView2<N,"
-             << nr << "," << nc << "," << dr << "," << dc << ",real>::type("
-             << d.matrix_name << ",idx,0);\n"
-             << "};\n";
-        }
-      } else if (flag1 == SupportedTypes::TVECTOR) {
-        if (flag2 == SupportedTypes::SCALAR) {
-          // Le résultat est un tenseur, une colonne dans la matrice
-          // jacobienne
-          os << "auto " << d.derivative_name << "= [&" << d.matrix_name
-             << "](const unsigned short idx){\n"
-             << "return typename "
-             << "tfel::math::StensorFromTinyMatrixColumnView2<N," << nr << ","
-             << nc << "," << dr << "," << dc << ",real>::type(" << d.matrix_name
-             << ",idx,0);\n"
-             << "};\n";
-        } else if (flag2 == SupportedTypes::TVECTOR) {
-          os << "auto " << d.derivative_name << "= [&" << d.matrix_name
-             << "](const unsigned short idx){\n"
-             << "return typename tfel::math::TMatrixFromTinyMatrixView2<N,"
-             << nr << "," << nc << "," << dr << "," << dc << ",real>::type("
-             << d.matrix_name << ",idx,0u);\n"
-             << "};\n";
-        } else {
-          this->throwRuntimeError(
-              "ImplicitDSLBase::writeDerivativeView",
-              "derivation of a vector by a tensor is not defined");
-        }
-      } else {
-        if (flag2 == SupportedTypes::SCALAR) {
-          // Le résultat est un tenseur, une colonne dans la matrice
-          // jacobienne
-          os << "auto " << d.derivative_name << "= [&" << d.matrix_name
-             << "](const unsigned short idx){\n"
-             << "return typename "
-                "tfel::math::StensorFromTinyMatrixColumnView2<N,"
-             << nr << "," << nc << "," << dr << "," << dc << ",real>::type("
-             << d.matrix_name << ",idx,0);\n"
-             << "}\n\n";
-        } else if (flag2 == SupportedTypes::STENSOR) {
-          // Le résultat est un tenseur d'ordre 4
-          os << "auto " << d.derivative_name << "= [&" << d.matrix_name
-             << "](const unsigned short idx){\n"
-             << "return typename tfel::math::ST2toST2FromTinyMatrixView2<N,"
-             << nr << "," << nc << "," << dr << "," << dc << ",real>::type("
-             << d.matrix_name << ",idx,0u);\n"
-             << "}\n\n";
-        } else {
-          this->throwRuntimeError(
-              "ImplicitDSLBase::writeDerivativeView",
-              "derivation of a tensor by a vector is not defined");
-        }
-      }
+      os << "auto " << d.derivative_name << " = [&" << d.matrix_name
+         << "](const unsigned short idx){\n"
+         << "tfel::math::map_derivative" << v1.type << ", " << v2.type << ">("
+         << d.matrix_name << ", " << dr << " + idx * "
+         << this->getTypeSize(v1.type, 1u) << ", " << dc << ");\n"
+         << "};\n";
     } else if ((v1.arraySize == 1u) && (v2.arraySize != 1u)) {
-      if (flag1 == SupportedTypes::SCALAR) {
-        if (flag2 == SupportedTypes::SCALAR) {
-          os << "auto " << d.derivative_name << "= [&" << d.matrix_name
-             << "](const unsigned short idx){\n"
-             << "return " << d.matrix_name << "(" << dr << ", " << dc
-             << "+idx);\n"
-             << "}\n\n";
-        } else {
-          // Le résultat est un tenseur, une ligne dans la matrice
-          // jacobienne
-          os << "auto " << d.derivative_name << "= [&" << d.matrix_name
-             << "](const unsigned short idx){\n"
-             << "return typename tfel::math::StensorFromTinyMatrixRowView2<N,"
-             << nr << "," << nc << "," << dr << "," << dc << ",real>::type("
-             << d.matrix_name << ",0,idx);\n"
-             << "}\n\n";
-        }
-      } else {
-        if (flag2 == SupportedTypes::SCALAR) {
-          // Le résultat est un tenseur, une colonne dans la matrice
-          // jacobienne
-          os << "auto " << d.derivative_name << "= [&" << d.matrix_name
-             << "](const unsigned short idx){\n"
-             << "return typename "
-             << "tfel::math::StensorFromTinyMatrixColumnView2<N," << nr << ","
-             << nc << "," << dr << "," << dc << ",real>::type(" << d.matrix_name
-             << ",0,idx);\n"
-             << "}\n\n";
-        } else {
-          os << "auto " << d.derivative_name << "= [&" << d.matrix_name
-             << "](const unsigned short idx){\n"
-             << "return typename tfel::math::ST2toST2FromTinyMatrixView2<N,"
-             << nr << "," << nc << "," << dr << "," << dc << ",real>::type("
-             << d.matrix_name << ",0,idx);\n"
-             << "}\n\n";
-        }
-      }
-    } else if ((v1.arraySize != 1u) && (v2.arraySize != 1u)) {
-      if (flag1 == SupportedTypes::SCALAR) {
-        if (flag2 == SupportedTypes::SCALAR) {
-          os << "auto " << d.derivative_name << "= [&" << d.matrix_name
-             << "](const unsigned short idx, const unsigned short idx2){\n"
-             << "return " << d.matrix_name << "(" << dr << "+idx, " << dc
-             << "+idx2);\n"
-             << "}\n\n";
-        } else {
-          // Le résultat est un tenseur, une ligne dans la matrice
-          // jacobienne
-          os << "auto " << d.derivative_name << "= [&" << d.matrix_name
-             << "](const unsigned short idx, const unsigned short idx2){\n"
-             << "return typename tfel::math::StensorFromTinyMatrixRowView2<N,"
-             << nr << "," << nc << "," << dr << "," << dc << ",real>::type("
-             << d.matrix_name << ",idx,idx2);\n"
-             << "}\n\n";
-        }
-      } else {
-        if (flag2 == SupportedTypes::SCALAR) {
-          // Le résultat est un tenseur, une colonne dans la matrice
-          // jacobienne
-          os << "auto " << d.derivative_name << "= [&" << d.matrix_name
-             << "](const unsigned short idx, const unsigned short idx2){\n"
-             << "return typename "
-             << "tfel::math::StensorFromTinyMatrixColumnView2<N," << nr << ","
-             << nc << "," << dr << "," << dc << ",real>::type(" << d.matrix_name
-             << ",idx,idx2);\n"
-             << "}\n\n";
-        } else {
-          os << "auto " << d.derivative_name << "= [&" << d.matrix_name
-             << "](const unsigned short idx, const unsigned short idx2){\n"
-             << "return typename tfel::math::ST2toST2FromTinyMatrixView2<N,"
-             << nr << "," << nc << "," << dr << "," << dc << ",real>::type("
-             << d.matrix_name << ",idx,idx2);\n"
-             << "}\n\n";
-        }
-      }
+      os << "auto " << d.derivative_name << " = [&" << d.matrix_name
+         << "](const unsigned short idx){\n"
+         << "tfel::math::map_derivative" << v1.type << ", " << v2.type << ">("
+         << d.matrix_name << ", " << dr << ", " << dc << " + idx * "
+         << this->getTypeSize(v2.type, 1u) << ");\n"
+         << "};\n";
+    } else {
+      os << "auto " << d.derivative_name << " = [&" << d.matrix_name
+         << "](const unsigned short idx, const unsigned short idx2){\n"
+         << "tfel::math::map_derivative" << v1.type << ", " << v2.type << ">("
+         << d.matrix_name << ", " << dr << " + idx * "
+         << this->getTypeSize(v1.type, 1u) << ", " << dc << " + idx2 * "
+         << this->getTypeSize(v2.type, 1u) << ");\n"
+         << "};\n";
     }
-  }  // end of ImplicitDSLBase::writeDerivativeView
+  }  // end of writeDerivativeView
 
   void ImplicitDSLBase::writeBehaviourLocalVariablesInitialisation(
       std::ostream& os, const Hypothesis h) const {
@@ -1647,27 +1485,6 @@ namespace mfront {
 
   void ImplicitDSLBase::writeBehaviourParserSpecificIncludes(
       std::ostream& os) const {
-    bool has_scalar = false;
-    bool has_tvector = false;
-    bool has_stensor = false;
-    // checks
-    const auto& mh = this->mb.getModellingHypotheses();
-    for (const auto& h : mh) {
-      const auto& d = this->mb.getBehaviourData(h);
-      for (const auto& v : d.getIntegrationVariables()) {
-        const auto flag = SupportedTypes::getTypeFlag(v.type);
-        if (flag == SupportedTypes::SCALAR) {
-          has_scalar = true;
-        }
-        if (flag == SupportedTypes::STENSOR) {
-          has_stensor = true;
-        }
-        if (flag == SupportedTypes::TVECTOR) {
-          has_tvector = true;
-        }
-      }
-    }
-    // output
     this->checkBehaviourFile(os);
     os << "#include\"TFEL/Math/Array/ViewsArray.hxx\"\n"
        << "#include\"TFEL/Math/tvector.hxx\"\n"
@@ -1676,42 +1493,13 @@ namespace mfront {
        << "#include\"TFEL/Math/Matrix/tmatrixIO.hxx\"\n"
        << "#include\"TFEL/Math/st2tost2.hxx\"\n"
        << "#include\"TFEL/Math/ST2toST2/ST2toST2ConceptIO.hxx\"\n";
-    if ((has_scalar) && (has_tvector)) {
-      os << "#include\"TFEL/Math/Vector/"
-            "TVectorFromTinyMatrixColumnView.hxx\"\n"
-         << "#include\"TFEL/Math/Vector/"
-            "TVectorFromTinyMatrixRowView.hxx\"\n"
-         << "#include\"TFEL/Math/Vector/"
-            "TVectorFromTinyMatrixColumnView2.hxx\"\n"
-         << "#include\"TFEL/Math/Vector/"
-            "TVectorFromTinyMatrixRowView2.hxx\"\n";
-    }
-    // symmetric tensors
-    if (has_stensor) {
-      os << "#include \"TFEL/Math/Stensor/StensorFromTinyMatrixRowView.hxx\"\n"
-         << "#include \"TFEL/Math/Stensor/StensorFromTinyMatrixRowView2.hxx\"\n"
-         << "#include\"TFEL/Math/ST2toST2/"
-            "ST2toST2FromTinyMatrixView.hxx\"\n\n"
-         << "#include\"TFEL/Math/ST2toST2/"
-            "ST2toST2FromTinyMatrixView2.hxx\"\n\n";
-    }
-    if ((has_scalar) && (has_stensor)) {
-      os << "#include\"TFEL/Math/Stensor/"
-            "StensorFromTinyMatrixColumnView.hxx\"\n"
-         << "#include\"TFEL/Math/Stensor/"
-            "StensorFromTinyMatrixRowView.hxx\"\n"
-         << "#include\"TFEL/Math/Stensor/"
-            "StensorFromTinyMatrixColumnView2.hxx\"\n"
-         << "#include\"TFEL/Math/Stensor/"
-            "StensorFromTinyMatrixRowView2.hxx\"\n";
-    }
-  }  // end of ImplicitDSLBase::writeBehaviourParserSpecificIncludes()
+  }  // end of writeBehaviourParserSpecificIncludes()
 
   void ImplicitDSLBase::writeBehaviourParserSpecificTypedefs(
       std::ostream& os) const {
     this->checkBehaviourFile(os);
     BehaviourDSLCommon::writeBehaviourParserSpecificTypedefs(os);
-  }  // end of ImplicitDSLBase::writeBehaviourParserSpecificTypedefs()
+  }  // end of writeBehaviourParserSpecificTypedefs()
 
   void ImplicitDSLBase::writeBehaviourParserSpecificMembers(
       std::ostream& os, const Hypothesis h) const {
@@ -1835,399 +1623,73 @@ namespace mfront {
       for (const auto& v : d.getIntegrationVariables()) {
         SupportedTypes::TypeSize n2;
         for (const auto& v2 : d.getIntegrationVariables()) {
-          const auto flag = SupportedTypes::getTypeFlag(v.type);
-          const auto flag2 = SupportedTypes::getTypeFlag(v2.type);
-          if ((v.arraySize != 1u) || (v2.arraySize != 1u)) {
-            os << "/*!\n"
-               << " * \\return the part of the jacobian matrix "
-               << "corresponding to the derivative "
-               << "of variable " << v.name << " by variable " << v2.name << "\n"
-               << " */\n";
+          if ((v.arraySize == 1u) && (v2.arraySize == 1u)) {
+            n2 += this->getTypeSize(v2.type, v2.arraySize);
+            continue;
           }
+          os << "/*!\n"
+             << " * \\return the part of the jacobian matrix "
+             << "corresponding to the derivative "
+             << "of variable " << v.name << " by variable " << v2.name << "\n"
+             << " */\n";
           if ((v.arraySize != 1u) && (v2.arraySize == 1u)) {
-            if (flag == SupportedTypes::SCALAR) {
-              if (flag2 == SupportedTypes::SCALAR) {
-                os << "real&\n"
-                   << "df" << v.name << "_dd" << v2.name
-                   << "(tfel::math::tmatrix<" << n3 << "," << n3
-                   << ",real>& tjacobian,\n"
-                   << "const unsigned short idx){\n"
-                   << "return tjacobian(" << n << "+idx, " << n2 << ");\n"
-                   << "}\n\n";
-                os << "real&\n"
-                   << "df" << v.name << "_dd" << v2.name
-                   << "(const unsigned short idx){\n"
-                   << "return this->jacobian(" << n << "+idx, " << n2 << ");\n"
-                   << "}\n\n";
-              } else if (flag2 == SupportedTypes::TVECTOR) {
-                // Le résultat est un tenseur, une ligne dans la matrice
-                // jacobienne
-                os << "typename "
-                      "tfel::math::TVectorFromTinyMatrixRowView2<N,"
-                   << n3 << "," << n3 << "," << n << "," << n2
-                   << ",real>::type\n"
-                   << "df" << v.name << "_dd" << v2.name
-                   << "(tfel::math::tmatrix<" << n3 << "," << n3
-                   << ",real>& tjacobian,\n"
-                   << "const unsigned short idx){\n"
-                   << "using namespace tfel::math;\n"
-                   << "return typename TVectorFromTinyMatrixRowView2<N," << n3
-                   << "," << n3 << "," << n << "," << n2
-                   << ",real>::type(tjacobian,idx,0);\n"
-                   << "}\n\n";
-                os << "typename "
-                      "tfel::math::TVectorFromTinyMatrixRowView2<N,"
-                   << n3 << "," << n3 << "," << n << "," << n2
-                   << ",real>::type\n"
-                   << "df" << v.name << "_dd" << v2.name
-                   << "(const unsigned short idx){\n"
-                   << "using namespace tfel::math;\n"
-                   << "return typename TVectorFromTinyMatrixRowView2<N," << n3
-                   << "," << n3 << "," << n << "," << n2
-                   << ",real>::type(this->jacobian,idx,0);\n"
-                   << "}\n\n";
-              } else {
-                // Le résultat est un tenseur, une ligne dans la matrice
-                // jacobienne
-                os << "typename "
-                      "tfel::math::StensorFromTinyMatrixRowView2<N,"
-                   << n3 << "," << n3 << "," << n << "," << n2
-                   << ",real>::type\n"
-                   << "df" << v.name << "_dd" << v2.name
-                   << "(tfel::math::tmatrix<" << n3 << "," << n3
-                   << ",real>& tjacobian,\n"
-                   << "const unsigned short idx){\n"
-                   << "using namespace tfel::math;\n"
-                   << "return typename StensorFromTinyMatrixRowView2<N," << n3
-                   << "," << n3 << "," << n << "," << n2
-                   << ",real>::type(tjacobian,idx,0);\n"
-                   << "}\n\n";
-                os << "typename "
-                      "tfel::math::StensorFromTinyMatrixRowView2<N,"
-                   << n3 << "," << n3 << "," << n << "," << n2
-                   << ",real>::type\n"
-                   << "df" << v.name << "_dd" << v2.name
-                   << "(const unsigned short idx){\n"
-                   << "using namespace tfel::math;\n"
-                   << "return typename StensorFromTinyMatrixRowView2<N," << n3
-                   << "," << n3 << "," << n << "," << n2
-                   << ",real>::type(this->jacobian,idx,0);\n"
-                   << "}\n\n";
-              }
-            } else if (flag == SupportedTypes::TVECTOR) {
-              if (flag2 == SupportedTypes::SCALAR) {
-                // Le résultat est un tenseur, une colonne dans la matrice
-                // jacobienne
-                os << "typename "
-                      "tfel::math::StensorFromTinyMatrixColumnView2<N,"
-                   << n3 << "," << n3 << "," << n << "," << n2
-                   << ",real>::type\n"
-                   << "df" << v.name << "_dd" << v2.name
-                   << "(tfel::math::tmatrix<" << n3 << "," << n3
-                   << ",real>& tjacobian,\n"
-                   << "const unsigned short idx){\n"
-                   << "using namespace tfel::math;\n"
-                   << "return typename StensorFromTinyMatrixColumnView2<N,"
-                   << n3 << "," << n3 << "," << n << "," << n2
-                   << ",real>::type(tjacobian,idx,0);\n"
-                   << "}\n\n";
-                os << "typename "
-                      "tfel::math::StensorFromTinyMatrixColumnView2<N,"
-                   << n3 << "," << n3 << "," << n << "," << n2
-                   << ",real>::type\n"
-                   << "df" << v.name << "_dd" << v2.name
-                   << "(const unsigned short idx){\n"
-                   << "using namespace tfel::math;\n"
-                   << "return typename StensorFromTinyMatrixColumnView2<N,"
-                   << n3 << "," << n3 << "," << n << "," << n2
-                   << ",real>::type(this->jacobian,idx,0);\n"
-                   << "}\n\n";
-              } else if (flag2 == SupportedTypes::TVECTOR) {
-                // Le résultat est une sous-matrice
-                os << "typename tfel::math::TMatrixFromTinyMatrixView2<N," << n3
-                   << "," << n3 << "," << n << "," << n2 << ",real>::type\n"
-                   << "df" << v.name << "_dd" << v2.name
-                   << "(tfel::math::tmatrix<" << n3 << "," << n3
-                   << ",real>& tjacobian,\n"
-                   << "const unsigned short idx){\n"
-                   << "using namespace tfel::math;\n"
-                   << "return typename TMatrixFromTinyMatrixView2<N," << n3
-                   << "," << n3 << "," << n << "," << n2
-                   << ",real>::type(tjacobian,idx,0u);\n"
-                   << "}\n\n";
-                os << "typename tfel::math::TMatrixFromTinyMatrixView2<N," << n3
-                   << "," << n3 << "," << n << "," << n2 << ",real>::type\n"
-                   << "df" << v.name << "_dd" << v2.name
-                   << "(const unsigned short idx){\n"
-                   << "using namespace tfel::math;\n"
-                   << "return typename TMatrixFromTinyMatrixView2<N," << n3
-                   << "," << n3 << "," << n << "," << n2
-                   << ",real>::type(this->jacobian,idx,0u);\n"
-                   << "}\n\n";
-              } else {
-                this->throwRuntimeError(
-                    "ImplicitDSLBase::writeBehaviourParserSpecificMembers",
-                    "derivation of a vector by a tensor is not defined");
-              }
-            } else {
-              if (flag2 == SupportedTypes::SCALAR) {
-                // Le résultat est un tenseur, une colonne dans la matrice
-                // jacobienne
-                os << "typename "
-                      "tfel::math::StensorFromTinyMatrixColumnView2<N,"
-                   << n3 << "," << n3 << "," << n << "," << n2
-                   << ",real>::type\n"
-                   << "df" << v.name << "_dd" << v2.name
-                   << "(tfel::math::tmatrix<" << n3 << "," << n3
-                   << ",real>& tjacobian,\n"
-                   << "const unsigned short idx){\n"
-                   << "using namespace tfel::math;\n"
-                   << "return typename StensorFromTinyMatrixColumnView2<N,"
-                   << n3 << "," << n3 << "," << n << "," << n2
-                   << ",real>::type(tjacobian,idx,0);\n"
-                   << "}\n\n";
-                os << "typename "
-                      "tfel::math::StensorFromTinyMatrixColumnView2<N,"
-                   << n3 << "," << n3 << "," << n << "," << n2
-                   << ",real>::type\n"
-                   << "df" << v.name << "_dd" << v2.name
-                   << "(const unsigned short idx){\n"
-                   << "using namespace tfel::math;\n"
-                   << "return typename StensorFromTinyMatrixColumnView2<N,"
-                   << n3 << "," << n3 << "," << n << "," << n2
-                   << ",real>::type(this->jacobian,idx,0);\n"
-                   << "}\n\n";
-              } else if (flag2 == SupportedTypes::STENSOR) {
-                // Le résultat est un tenseur d'ordre 4
-                os << "typename tfel::math::ST2toST2FromTinyMatrixView2<N,"
-                   << n3 << "," << n3 << "," << n << "," << n2
-                   << ",real>::type\n"
-                   << "df" << v.name << "_dd" << v2.name
-                   << "(tfel::math::tmatrix<" << n3 << "," << n3
-                   << ",real>& tjacobian,\n"
-                   << "const unsigned short idx){\n"
-                   << "using namespace tfel::math;\n"
-                   << "return typename ST2toST2FromTinyMatrixView2<N," << n3
-                   << "," << n3 << "," << n << "," << n2
-                   << ",real>::type(tjacobian,idx,0u);\n"
-                   << "}\n\n";
-                os << "typename tfel::math::ST2toST2FromTinyMatrixView2<N,"
-                   << n3 << "," << n3 << "," << n << "," << n2
-                   << ",real>::type\n"
-                   << "df" << v.name << "_dd" << v2.name
-                   << "(const unsigned short idx){\n"
-                   << "using namespace tfel::math;\n"
-                   << "return typename ST2toST2FromTinyMatrixView2<N," << n3
-                   << "," << n3 << "," << n << "," << n2
-                   << ",real>::type(this->jacobian,idx,0u);\n"
-                   << "}\n\n";
-              } else {
-                this->throwRuntimeError(
-                    "ImplicitDSLBase::writeBehaviourParserSpecificMembers",
-                    "derivation of a tensor by a vector is not defined");
-              }
-            }
+            os << "tfel::math::derivative_view_from_tiny_matrix<" << n3 << ", "
+               << v.type << "," << v2.type << "> "
+               << "df" << v.name << "_dd" << v2.name << "(tfel::math::tmatrix<"
+               << n3 << "," << n3 << ",real>& tjacobian,"
+               << "const unsigned short idx){\n"
+               << "return tfel::math::map_derivative<" << v.type << ","
+               << v2.type << ">(tjacobian, " << n << " + idx * ("
+               << this->getTypeSize(v.type, 1u) << "), " << n2 << ");\n"
+               << "}\n\n";
+            os << "tfel::math::derivative_view_from_tiny_matrix<" << n3 << ", "
+               << v.type << "," << v2.type << "> "
+               << "df" << v.name << "_dd" << v2.name
+               << "(const unsigned short idx){\n"
+               << "return tfel::math::map_derivative<" << v.type << ","
+               << v2.type << ">(this->jacobian, " << n << " + idx * ("
+               << this->getTypeSize(v.type, 1u) << "), " << n2 << ");\n"
+               << "}\n\n";
           } else if ((v.arraySize == 1u) && (v2.arraySize != 1u)) {
-            if (flag == SupportedTypes::SCALAR) {
-              if (flag2 == SupportedTypes::SCALAR) {
-                os << "real&\n"
-                   << "df" << v.name << "_dd" << v2.name
-                   << "(tfel::math::tmatrix<" << n3 << "," << n3
-                   << ",real>& tjacobian,\n"
-                   << "const unsigned short idx){\n"
-                   << "return tjacobian(" << n << ", " << n2 << "+idx);\n"
-                   << "}\n\n";
-                os << "real&\n"
-                   << "df" << v.name << "_dd" << v2.name
-                   << "(const unsigned short idx){\n"
-                   << "return this->jacobian(" << n << ", " << n2 << "+idx);\n"
-                   << "}\n\n";
-              } else {
-                // Le résultat est un tenseur, une ligne dans la matrice
-                // jacobienne
-                os << "typename "
-                      "tfel::math::StensorFromTinyMatrixRowView2<N,"
-                   << n3 << "," << n3 << "," << n << "," << n2
-                   << ",real>::type\n"
-                   << "df" << v.name << "_dd" << v2.name
-                   << "(tfel::math::tmatrix<" << n3 << "," << n3
-                   << ",real>& tjacobian,\n"
-                   << "const unsigned short idx){\n"
-                   << "using namespace tfel::math;\n"
-                   << "return typename StensorFromTinyMatrixRowView2<N," << n3
-                   << "," << n3 << "," << n << "," << n2
-                   << ",real>::type(tjacobian,0,idx);\n"
-                   << "}\n\n";
-                os << "typename "
-                      "tfel::math::StensorFromTinyMatrixRowView2<N,"
-                   << n3 << "," << n3 << "," << n << "," << n2
-                   << ",real>::type\n"
-                   << "df" << v.name << "_dd" << v2.name
-                   << "(const unsigned short idx){\n"
-                   << "using namespace tfel::math;\n"
-                   << "return typename StensorFromTinyMatrixRowView2<N," << n3
-                   << "," << n3 << "," << n << "," << n2
-                   << ",real>::type(this->jacobian,0,idx);\n"
-                   << "}\n\n";
-              }
-            } else {
-              if (flag2 == SupportedTypes::SCALAR) {
-                // Le résultat est un tenseur, une colonne dans la matrice
-                // jacobienne
-                os << "typename "
-                      "tfel::math::StensorFromTinyMatrixColumnView2<N,"
-                   << n3 << "," << n3 << "," << n << "," << n2
-                   << ",real>::type\n"
-                   << "df" << v.name << "_dd" << v2.name
-                   << "(tfel::math::tmatrix<" << n3 << "," << n3
-                   << ",real>& tjacobian,\n"
-                   << "const unsigned short idx){\n"
-                   << "using namespace tfel::math;\n"
-                   << "return typename StensorFromTinyMatrixColumnView2<N,"
-                   << n3 << "," << n3 << "," << n << "," << n2
-                   << ",real>::type(tjacobian,0,idx);\n"
-                   << "}\n\n";
-                os << "typename "
-                      "tfel::math::StensorFromTinyMatrixColumnView2<N,"
-                   << n3 << "," << n3 << "," << n << "," << n2
-                   << ",real>::type\n"
-                   << "df" << v.name << "_dd" << v2.name
-                   << "(const unsigned short idx){\n"
-                   << "using namespace tfel::math;\n"
-                   << "return typename StensorFromTinyMatrixColumnView2<N,"
-                   << n3 << "," << n3 << "," << n << "," << n2
-                   << ",real>::type(this->jacobian,0,idx);\n"
-                   << "}\n\n";
-              } else {
-                os << "typename tfel::math::ST2toST2FromTinyMatrixView2<N,"
-                   << n3 << "," << n3 << "," << n << "," << n2
-                   << ",real>::type\n"
-                   << "df" << v.name << "_dd" << v2.name
-                   << "(tfel::math::tmatrix<" << n3 << "," << n3
-                   << ",real>& tjacobian,\n"
-                   << "const unsigned short idx){\n"
-                   << "using namespace tfel::math;\n"
-                   << "return typename ST2toST2FromTinyMatrixView2<N," << n3
-                   << "," << n3 << "," << n << "," << n2
-                   << ",real>::type(tjacobian,0,idx);\n"
-                   << "}\n\n";
-                os << "typename tfel::math::ST2toST2FromTinyMatrixView2<N,"
-                   << n3 << "," << n3 << "," << n << "," << n2
-                   << ",real>::type\n"
-                   << "df" << v.name << "_dd" << v2.name
-                   << "(const unsigned short idx){\n"
-                   << "using namespace tfel::math;\n"
-                   << "return typename ST2toST2FromTinyMatrixView2<N," << n3
-                   << "," << n3 << "," << n << "," << n2
-                   << ",real>::type(this->jacobian,0,idx);\n"
-                   << "}\n\n";
-              }
-            }
-          } else if ((v.arraySize != 1u) && (v2.arraySize != 1u)) {
-            if (flag == SupportedTypes::SCALAR) {
-              if (flag2 == SupportedTypes::SCALAR) {
-                os << "real&\n"
-                   << "df" << v.name << "_dd" << v2.name
-                   << "(tfel::math::tmatrix<" << n3 << "," << n3
-                   << ",real>& tjacobian,\n"
-                   << "const unsigned short idx,"
-                   << " const unsigned short idx2){\n"
-                   << "return tjacobian(" << n << "+idx, " << n2 << "+idx2);\n"
-                   << "}\n\n";
-                os << "real&\n"
-                   << "df" << v.name << "_dd" << v2.name
-                   << "(const unsigned short idx,"
-                   << " const unsigned short idx2){\n"
-                   << "return this->jacobian(" << n << "+idx, " << n2
-                   << "+idx2);\n"
-                   << "}\n\n";
-              } else {
-                // Le résultat est un tenseur, une ligne dans la matrice
-                // jacobienne
-                os << "typename "
-                      "tfel::math::StensorFromTinyMatrixRowView2<N,"
-                   << n3 << "," << n3 << "," << n << "," << n2
-                   << ",real>::type\n"
-                   << "df" << v.name << "_dd" << v2.name
-                   << "(tfel::math::tmatrix<" << n3 << "," << n3
-                   << ",real>& tjacobian,\n"
-                   << "const unsigned short idx,"
-                   << " const unsigned short idx2){\n"
-                   << "using namespace tfel::math;\n"
-                   << "return typename StensorFromTinyMatrixRowView2<N," << n3
-                   << "," << n3 << "," << n << "," << n2
-                   << ",real>::type(tjacobian,idx,idx2);\n"
-                   << "}\n\n";
-                os << "typename "
-                      "tfel::math::StensorFromTinyMatrixRowView2<N,"
-                   << n3 << "," << n3 << "," << n << "," << n2
-                   << ",real>::type\n"
-                   << "df" << v.name << "_dd" << v2.name
-                   << "(const unsigned short idx,"
-                   << " const unsigned short idx2){\n"
-                   << "using namespace tfel::math;\n"
-                   << "return typename StensorFromTinyMatrixRowView2<N," << n3
-                   << "," << n3 << "," << n << "," << n2
-                   << ",real>::type(this->jacobian,idx,idx2);\n"
-                   << "}\n\n";
-              }
-            } else {
-              if (flag2 == SupportedTypes::SCALAR) {
-                // Le résultat est un tenseur, une colonne dans la matrice
-                // jacobienne
-                os << "typename "
-                      "tfel::math::StensorFromTinyMatrixColumnView2<N,"
-                   << n3 << "," << n3 << "," << n << "," << n2
-                   << ",real>::type\n"
-                   << "df" << v.name << "_dd" << v2.name
-                   << "(tfel::math::tmatrix<" << n3 << "," << n3
-                   << ",real>& tjacobian,\n"
-                   << "const unsigned short idx,"
-                   << " const unsigned short idx2){\n"
-                   << "using namespace tfel::math;\n"
-                   << "return typename StensorFromTinyMatrixColumnView2<N,"
-                   << n3 << "," << n3 << "," << n << "," << n2
-                   << ",real>::type(tjacobian,idx,idx2);\n"
-                   << "}\n\n";
-                os << "typename "
-                      "tfel::math::StensorFromTinyMatrixColumnView2<N,"
-                   << n3 << "," << n3 << "," << n << "," << n2
-                   << ",real>::type\n"
-                   << "df" << v.name << "_dd" << v2.name
-                   << "(const unsigned short idx,"
-                   << " const unsigned short idx2){\n"
-                   << "using namespace tfel::math;\n"
-                   << "return typename StensorFromTinyMatrixColumnView2<N,"
-                   << n3 << "," << n3 << "," << n << "," << n2
-                   << ",real>::type(this->jacobian,idx,idx2);\n"
-                   << "}\n\n";
-              } else {
-                os << "typename tfel::math::ST2toST2FromTinyMatrixView2<N,"
-                   << n3 << "," << n3 << "," << n << "," << n2
-                   << ",real>::type\n"
-                   << "df" << v.name << "_dd" << v2.name
-                   << "(tfel::math::tmatrix<" << n3 << "," << n3
-                   << ",real>& tjacobian,\n"
-                   << "const unsigned short idx,"
-                   << " const unsigned short idx2){\n"
-                   << "using namespace tfel::math;\n"
-                   << "return typename ST2toST2FromTinyMatrixView2<N," << n3
-                   << "," << n3 << "," << n << "," << n2
-                   << ",real>::type(tjacobian,idx,idx2);\n"
-                   << "}\n\n";
-                os << "typename tfel::math::ST2toST2FromTinyMatrixView2<N,"
-                   << n3 << "," << n3 << "," << n << "," << n2
-                   << ",real>::type\n"
-                   << "df" << v.name << "_dd" << v2.name
-                   << "(const unsigned short idx,"
-                   << " const unsigned short idx2){\n"
-                   << "using namespace tfel::math;\n"
-                   << "return typename ST2toST2FromTinyMatrixView2<N," << n3
-                   << "," << n3 << "," << n << "," << n2
-                   << ",real>::type(this->jacobian,idx,idx2);\n"
-                   << "}\n\n";
-              }
-            }
+            os << "tfel::math::derivative_view_from_tiny_matrix<" << n3 << ", "
+               << v.type << "," << v2.type << "> "
+               << "df" << v.name << "_dd" << v2.name << "(tfel::math::tmatrix<"
+               << n3 << "," << n3 << ",real>& tjacobian,"
+               << "const unsigned short idx){\n"
+               << "return tfel::math::map_derivative<" << v.type << ","
+               << v2.type << ">(tjacobian, " << n << ", " << n2 << " + idx * ("
+               << this->getTypeSize(v2.type, 1u) << "));\n"
+               << "}\n\n";
+            os << "tfel::math::derivative_view_from_tiny_matrix<" << n3 << ", "
+               << v.type << "," << v2.type << "> "
+               << "df" << v.name << "_dd" << v2.name
+               << "(const unsigned short idx){\n"
+               << "return tfel::math::map_derivative<" << v.type << ","
+               << v2.type << ">(this->jacobian, " << n << ", " << n2
+               << " + idx * (" << this->getTypeSize(v2.type, 1u) << "));\n"
+               << "}\n\n";
+          } else {
+            os << "tfel::math::derivative_view_from_tiny_matrix<" << n3 << ", "
+               << v.type << "," << v2.type << "> "
+               << "df" << v.name << "_dd" << v2.name << "(tfel::math::tmatrix<"
+               << n3 << "," << n3 << ",real>& tjacobian,"
+               << "const unsigned short idx, "
+               << "const unsigned short idx2){\n"
+               << "return tfel::math::map_derivative<" << v.type << ","
+               << v2.type << ">(tjacobian, " << n << " + idx * ("
+               << this->getTypeSize(v.type, 1u) << "), " << n2 << " + idx2 * ("
+               << this->getTypeSize(v2.type, 1u) << "));\n"
+               << "}\n\n";
+            os << "tfel::math::derivative_view_from_tiny_matrix<" << n3 << ", "
+               << v.type << "," << v2.type << "> "
+               << "df" << v.name << "_dd" << v2.name
+               << "(const unsigned short idx, "
+               << "const unsigned short idx2){\n"
+               << "return tfel::math::map_derivative<" << v.type << ","
+               << v2.type << ">(this->jacobian, " << n << " + idx * ("
+               << this->getTypeSize(v.type, 1u) << "), " << n2 << " + idx2 * ("
+               << this->getTypeSize(v2.type, 1u) << "));\n"
+               << "}\n\n";
           }
           n2 += this->getTypeSize(v2.type, v2.arraySize);
         }
@@ -2283,7 +1745,8 @@ namespace mfront {
          << "static_cast<void>(smt);\n"
          << "} // end of additionalConvergenceChecks\n\n";
     } else {
-      os << "void additionalConvergenceChecks(bool&,real&,const SMType) const{\n"
+      os << "void additionalConvergenceChecks(bool&,real&,const SMType) "
+            "const{\n"
          << "} // end of additionalConvergenceChecks\n\n";
     }
     // compute stress
@@ -2307,7 +1770,7 @@ namespace mfront {
          << "\n} // end of " << this->mb.getClassName()
          << "::computeFinalThermodynamicForces\n\n";
     }
-  }  // end of ImplicitDSLBase::writeBehaviourParserSpecificMembers
+  }  // end of writeBehaviourParserSpecificMembers
 
   static std::string getDerivativeTypeHolder(const VariableDescription& v1,
                                              const VariableDescription& v2) {
@@ -2451,7 +1914,7 @@ namespace mfront {
         } else {
           p->second.push_back(derivative.first);
         }
-      } // 
+      }  //
       for (const auto& derivatives : implicit_equations_derivatives) {
         auto nc = mfront::getTypeSize(derivatives.first);
         const auto rhs_type = [&nivs, &nc] {
@@ -2488,119 +1951,119 @@ namespace mfront {
           cr += mfront::getTypeSize(iv);
         }
       }
-     }
-     // treating getIntegrationDerivatives
-     if (hasAttribute<std::vector<VariableDescription>>(
-             cb, CodeBlock::used_get_integration_variables_derivatives)) {
-       const auto& get_integration_variables_derivatives =
-           getAttribute<std::vector<VariableDescription>>(
-               cb, CodeBlock::used_get_integration_variables_derivatives);
-       if (!hasAttribute<std::vector<Derivative>>(cb, attr)) {
-         this->throwRuntimeError(
-             "ImplicitDSLBase::writeBehaviourComputeTangentOperatorBody",
-             "internal error, no implicit equation derivative with respect "
-             "to "
-             "a gradient or and external state variable detected");
-       }
-       const auto& implicit_equations_derivatives =
-           getAttribute<std::vector<Derivative>>(cb, attr);
-       for (const auto& givd : get_integration_variables_derivatives) {
-         std::vector<Derivative> derivatives;
-         std::copy_if(implicit_equations_derivatives.begin(),
-                      implicit_equations_derivatives.end(),
-                      std::back_inserter(derivatives),
-                      [&givd](const Derivative& v) {
-                        return givd.name == v.second.name;
-                      });
-         if (derivatives.empty()) {
-           this->throwRuntimeError(
-               "ImplicitDSLBase::writeBehaviourComputeTangentOperatorBody",
-               "internal error, no implicit equation derivative with "
-               "respect to "
-               "'" +
-                   displayName(givd) + "' defined");
-         }
-         auto nc = mfront::getTypeSize(givd);
-         const auto rhs_type = [&nivs, &nc] {
-           std::ostringstream rhs_os;
-           rhs_os << "tfel::math::tmatrix<" << nivs << ", " << nc << ", real>";
-           return rhs_os.str();
-         }();
-         const auto m = "dfzeros_dd" + givd.name;
-         os << "struct TFEL_VISIBILITY_LOCAL GetIntegrationVariablesDerivatives_" << givd.name
-            << "{\n"
-            << "GetIntegrationVariablesDerivatives_" << givd.name << "("
-            << this->mb.getClassName() << "& b,\n"
-            << "const tfel::math::TinyPermutation<" << nivs << ">& p,\n"
-            << rhs_type << "& v)\n"
-            << ": behaviour(b),\n"
-            << "permutation(p)\n,"
-            << "rhs(v)\n"
-            << "{}\n";
-         for (size_type i = 0; i != isvs.size(); ++i) {
-           os << "void operator()(";
-           for (size_type i2 = 0; i2 <= i;) {
-             const auto& v = isvs[i2];
-             os << getDerivativeTypeHolder(v, givd) << "& "
-                << "integration_variable_derivative_d" << v.name << "_dd"
-                << givd.name;
-             if (++i2 <= i) {
-               os << ",\n";
-             }
-           }
-           os << "){\n"
-              << rhs_type << " lhs(-(this->rhs));\n"
-              << "tfel::math::TinyMatrixSolve<" << nivs
-              << ", real>::back_substitute(this->behaviour."
-                 "jacobian, this->permutation, lhs);\n";
-           auto cr = SupportedTypes::TypeSize{};  // current row
-           for (size_type i2 = 0; i2 <= i; ++i2) {
-             const auto& v = isvs[i2];
-             auto derivative_view = DerivativeViewDescription{};
-             derivative_view.derivative_name =
-                 "integration_variable_derivative_d" + v.name + "_dd" +
-                 givd.name + "_view";
-             derivative_view.matrix_name = "lhs";
-             derivative_view.first_variable = v;
-             derivative_view.second_variable = givd;
-             derivative_view.matrix_number_of_rows = nivs;
-             derivative_view.matrix_number_of_columns = nc;
-             derivative_view.derivative_row_position = cr;
-             derivative_view.derivative_column_position =
-                 SupportedTypes::TypeSize{};
-             this->writeDerivativeView(os, derivative_view);
-             // update the row position
-             cr += mfront::getTypeSize(v);
-             // assign the view to the ouptut derivatives
-             if (v.arraySize == 1u) {
-               os << "integration_variable_derivative_d" << v.name << "_dd"
-                  << givd.name << " = integration_variable_derivative_d"
-                  << v.name << "_dd" << givd.name << "_view;\n";
-             } else {
-               os << "for(typename " << rhs_type
-                  << "::size_type idx; idx!=" << v.arraySize << "; ++idx){\n"
-                  << "integration_variable_derivative_d" << v.name << "_dd"
-                  << givd.name << "(idx) = integration_variable_derivative_d"
-                  << v.name << "_dd" << givd.name << "_view(idx);"
-                  << "}\n";
-             }
-           }
-           os << "}\n";
-         }
-         os << "private:\n"
-            << this->mb.getClassName() << "& behaviour;\n"
-            << "const tfel::math::TinyPermutation<" << nivs
-            << ">& permutation;\n"
-            << rhs_type << "& rhs;\n"
-            << "};\n"
-            << "GetIntegrationVariablesDerivatives_" << givd.name << " "
-            << "getIntegrationVariablesDerivatives_" << givd.name
-            << "(*this, jacobian_permutation," << m << ");\n";
-       }
+    }
+    // treating getIntegrationDerivatives
+    if (hasAttribute<std::vector<VariableDescription>>(
+            cb, CodeBlock::used_get_integration_variables_derivatives)) {
+      const auto& get_integration_variables_derivatives =
+          getAttribute<std::vector<VariableDescription>>(
+              cb, CodeBlock::used_get_integration_variables_derivatives);
+      if (!hasAttribute<std::vector<Derivative>>(cb, attr)) {
+        this->throwRuntimeError(
+            "ImplicitDSLBase::writeBehaviourComputeTangentOperatorBody",
+            "internal error, no implicit equation derivative with respect "
+            "to "
+            "a gradient or and external state variable detected");
+      }
+      const auto& implicit_equations_derivatives =
+          getAttribute<std::vector<Derivative>>(cb, attr);
+      for (const auto& givd : get_integration_variables_derivatives) {
+        std::vector<Derivative> derivatives;
+        std::copy_if(implicit_equations_derivatives.begin(),
+                     implicit_equations_derivatives.end(),
+                     std::back_inserter(derivatives),
+                     [&givd](const Derivative& v) {
+                       return givd.name == v.second.name;
+                     });
+        if (derivatives.empty()) {
+          this->throwRuntimeError(
+              "ImplicitDSLBase::writeBehaviourComputeTangentOperatorBody",
+              "internal error, no implicit equation derivative with "
+              "respect to "
+              "'" +
+                  displayName(givd) + "' defined");
+        }
+        auto nc = mfront::getTypeSize(givd);
+        const auto rhs_type = [&nivs, &nc] {
+          std::ostringstream rhs_os;
+          rhs_os << "tfel::math::tmatrix<" << nivs << ", " << nc << ", real>";
+          return rhs_os.str();
+        }();
+        const auto m = "dfzeros_dd" + givd.name;
+        os << "struct TFEL_VISIBILITY_LOCAL GetIntegrationVariablesDerivatives_"
+           << givd.name << "{\n"
+           << "GetIntegrationVariablesDerivatives_" << givd.name << "("
+           << this->mb.getClassName() << "& b,\n"
+           << "const tfel::math::TinyPermutation<" << nivs << ">& p,\n"
+           << rhs_type << "& v)\n"
+           << ": behaviour(b),\n"
+           << "permutation(p)\n,"
+           << "rhs(v)\n"
+           << "{}\n";
+        for (size_type i = 0; i != isvs.size(); ++i) {
+          os << "void operator()(";
+          for (size_type i2 = 0; i2 <= i;) {
+            const auto& v = isvs[i2];
+            os << getDerivativeTypeHolder(v, givd) << "& "
+               << "integration_variable_derivative_d" << v.name << "_dd"
+               << givd.name;
+            if (++i2 <= i) {
+              os << ",\n";
+            }
+          }
+          os << "){\n"
+             << rhs_type << " lhs(-(this->rhs));\n"
+             << "tfel::math::TinyMatrixSolve<" << nivs
+             << ", real>::back_substitute(this->behaviour."
+                "jacobian, this->permutation, lhs);\n";
+          auto cr = SupportedTypes::TypeSize{};  // current row
+          for (size_type i2 = 0; i2 <= i; ++i2) {
+            const auto& v = isvs[i2];
+            auto derivative_view = DerivativeViewDescription{};
+            derivative_view.derivative_name =
+                "integration_variable_derivative_d" + v.name + "_dd" +
+                givd.name + "_view";
+            derivative_view.matrix_name = "lhs";
+            derivative_view.first_variable = v;
+            derivative_view.second_variable = givd;
+            derivative_view.matrix_number_of_rows = nivs;
+            derivative_view.matrix_number_of_columns = nc;
+            derivative_view.derivative_row_position = cr;
+            derivative_view.derivative_column_position =
+                SupportedTypes::TypeSize{};
+            this->writeDerivativeView(os, derivative_view);
+            // update the row position
+            cr += mfront::getTypeSize(v);
+            // assign the view to the ouptut derivatives
+            if (v.arraySize == 1u) {
+              os << "integration_variable_derivative_d" << v.name << "_dd"
+                 << givd.name << " = integration_variable_derivative_d"
+                 << v.name << "_dd" << givd.name << "_view;\n";
+            } else {
+              os << "for(typename " << rhs_type
+                 << "::size_type idx; idx!=" << v.arraySize << "; ++idx){\n"
+                 << "integration_variable_derivative_d" << v.name << "_dd"
+                 << givd.name << "(idx) = integration_variable_derivative_d"
+                 << v.name << "_dd" << givd.name << "_view(idx);"
+                 << "}\n";
+            }
+          }
+          os << "}\n";
+        }
+        os << "private:\n"
+           << this->mb.getClassName() << "& behaviour;\n"
+           << "const tfel::math::TinyPermutation<" << nivs
+           << ">& permutation;\n"
+           << rhs_type << "& rhs;\n"
+           << "};\n"
+           << "GetIntegrationVariablesDerivatives_" << givd.name << " "
+           << "getIntegrationVariablesDerivatives_" << givd.name
+           << "(*this, jacobian_permutation," << m << ");\n";
+      }
     }
     //
     BehaviourDSLCommon::writeBehaviourComputeTangentOperatorBody(os, h, n);
-  }  // end of ImplicitDSLBase::writeBehaviourComputeTangentOperatorBody
+  }  // end of writeBehaviourComputeTangentOperatorBody
 
   void ImplicitDSLBase::writeComputePartialJacobianInvert(
       std::ostream& os, const Hypothesis h) const {
@@ -2700,7 +2163,7 @@ namespace mfront {
       }
       os << "}\n\n";
     }
-  }  // end of ImplicitDSLBase::writeComputePartialJacobianInvert
+  }  // end of writeComputePartialJacobianInvert
 
   void ImplicitDSLBase::writeComputeNumericalJacobian(
       std::ostream& os, const Hypothesis h) const {
@@ -2741,7 +2204,7 @@ namespace mfront {
        << "this->jacobian = tjacobian;\n"
        << "}\n"
        << "}\n\n";
-  }  // end of ImplicitDSLBase::writeComputeNumericalJacobian
+  }  // end of writeComputeNumericalJacobian
 
   void ImplicitDSLBase::writeBehaviourIntegrator(std::ostream& os,
                                                  const Hypothesis h) const {
@@ -2874,9 +2337,6 @@ namespace mfront {
   void ImplicitDSLBase::writeComputeFdF(std::ostream& os,
                                         const Hypothesis h) const {
     const auto& d = this->mb.getBehaviourData(h);
-    SupportedTypes::TypeSize n;
-    SupportedTypes::TypeSize n3;
-    const auto n2 = mfront::getTypeSize(d.getIntegrationVariables());
     auto jp(this->jacobianPartsUsedInIntegrator);
     if (this->solver
             ->requiresJacobianToBeReinitialisedToIdentityAtEachIterations()) {
@@ -2897,7 +2357,7 @@ namespace mfront {
     writeMaterialLaws(os, this->mb.getMaterialLaws());
     os << "// silent compiler warning\n"
        << "static_cast<void>(perturbatedSystemEvaluation); \n";
-    n = SupportedTypes::TypeSize();
+    auto n = SupportedTypes::TypeSize();
     for (const auto& v : d.getIntegrationVariables()) {
       os << "constexpr auto " << v.name << "_offset = " << n << ";\n";
       os << "static_cast<void>(" << v.name << "_offset);\n";
@@ -2918,15 +2378,14 @@ namespace mfront {
         (!(this->solver->requiresNumericalJacobian()))) {
       n = SupportedTypes::TypeSize();
       for (const auto& v : d.getIntegrationVariables()) {
-        n3 = SupportedTypes::TypeSize();
+        auto n2 = SupportedTypes::TypeSize();
         for (const auto& v2 : d.getIntegrationVariables()) {
           if ((v.arraySize == 1u) && (v2.arraySize == 1u)) {
-            os << "// derivative of variable f" << v.name << " by variable "
-               << v2.name << "\n"
-               << NonLinearSystemSolverBase::getJacobianPart(this->mb, v, v2, n,
-                                                             n2, n3);
+            os << "// derivative of residual f" << v.name
+               << " with respect to variable " << v2.name << "\n"
+               << NonLinearSystemSolverBase::getJacobianPart(v, v2, n, n2);
           }
-          n3 += this->getTypeSize(v2.type, v2.arraySize);
+          n2 += this->getTypeSize(v2.type, v2.arraySize);
         }
         n += this->getTypeSize(v.type, v.arraySize);
       }
@@ -2936,8 +2395,8 @@ namespace mfront {
       os << "// setting jacobian to identity\n"
          << "std::fill(this->jacobian.begin(),this->jacobian.end(),real(0))"
             ";\n"
-         << "for(unsigned short idx = 0; idx!=" << n << ";++idx){\n"
-         << "this->jacobian(idx,idx)= real(1);\n"
+         << "for(unsigned short idx = 0; idx != " << n << "; ++idx){\n"
+         << "this->jacobian(idx, idx) = real(1);\n"
          << "}\n";
     }
     os << "// setting f values to zeros\n"
@@ -3065,7 +2524,7 @@ namespace mfront {
     }
     os << "return true;\n"
        << "}\n\n";
-  }  // end of ImplicitDSLBase::writeBehaviourIntegrator
+  }  // end of writeBehaviourIntegrator
 
   std::string ImplicitDSLBase::getIntegrationVariablesIncrementsInitializers(
       const Hypothesis h) const {
@@ -3098,7 +2557,7 @@ namespace mfront {
       first = false;
     }
     return init.str();
-  }  // end of ImplicitDSLBase::getIntegrationVariableIncrementsInitializers
+  }  // end of getIntegrationVariableIncrementsInitializers
 
   std::string ImplicitDSLBase::getLocalVariablesInitializers(
       const Hypothesis) const {
@@ -3133,7 +2592,7 @@ namespace mfront {
       }
     }
     return init;
-  }  // end of ImplicitDSLBase::getLocalVariablesInitializers
+  }  // end of getLocalVariablesInitializers
 
   std::string ImplicitDSLBase::getBehaviourConstructorsInitializers(
       const Hypothesis h) const {
@@ -3255,7 +2714,7 @@ namespace mfront {
         }
       }
     }
-  }  // end of ImplicitDSLBase::getSymbols
+  }  // end of getSymbols
 
   ImplicitDSLBase::~ImplicitDSLBase() = default;
 

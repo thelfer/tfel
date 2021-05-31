@@ -312,7 +312,7 @@ namespace mfront {
         check(n);
         return getBehaviourDescriptionMaterialProperty(dsl, n, d.at(n));
       };
-      auto addTi = [&bd, &d, uh]() {
+      auto addTi = [&bd, &d]() {
         const auto n = "initial_geometry_reference_temperature";
         const auto v = [&d, &n] {
           if (d.count(n) != 0) {
@@ -328,7 +328,7 @@ namespace mfront {
         bd.setParameterDefaultValue(uh, n, v);
         bd.setEntryName(uh, n, "ReferenceTemperatureForInitialGeometry");
       };  // end of addTi
-      auto addTref = [&bd, &d, uh]() {
+      auto addTref = [&bd, &d]() {
         const auto n = "thermal_expansion_reference_temperature";
         const auto v = [&d, &n] {
           if (d.count(n) != 0) {
@@ -607,7 +607,7 @@ namespace mfront {
       }
       bd.addLocalDataStructure(d, BehaviourData::ALREADYREGISTRED);
       // look if the broken variable has defined
-      const auto has_broken = [&bd, &uh] {
+      const auto has_broken = [&bd] {
         const auto& bdata = bd.getBehaviourData(uh);
         const auto& asvs = bdata.getAuxiliaryStateVariables();
         const auto& esvs = bdata.getExternalStateVariables();

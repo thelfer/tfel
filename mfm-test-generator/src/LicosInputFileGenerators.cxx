@@ -35,7 +35,7 @@ namespace mfmtg {
     static void writeMaterial(std::ostream& os,
                               const BehaviourData& c,
                               const std::string& m) {
-      auto write_mp = [&os, &c](const Evolution& mp, const std::string& n) {
+      auto write_mp = [&os](const Evolution& mp, const std::string& n) {
         if (!mp.template is<double>()) {
           tfel::raise(
               "writeMaterial: "

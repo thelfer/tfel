@@ -13,7 +13,6 @@
 
 #include "TFEL/Math/General/EmptyRunTimeProperties.hxx"
 #include "TFEL/Math/General/ConstExprMathFunctions.hxx"
-#include "TFEL/Math/Vector/VectorUtilities.hxx"
 #include "TFEL/Math/Tensor/TensorConcept.hxx"
 #include "TFEL/Math/Stensor/StensorConcept.hxx"
 #include "TFEL/Math/Forward/tensor.hxx"

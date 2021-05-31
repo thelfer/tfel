@@ -89,8 +89,8 @@ namespace mfront {
     return "";
   }
 
-  static void displayList(const std::string& d,
-                          const std::vector<std::string>& names) {
+  [[noreturn]] static void displayList(const std::string& d,
+				       const std::vector<std::string>& names) {
     using tfel::utilities::TerminalColors;
     auto msize = std::string::size_type{};
     for (const auto& n : names) {
@@ -114,16 +114,16 @@ namespace mfront {
     std::exit(EXIT_SUCCESS);
   }  // end of displayList
 
-  static void displayList(const std::vector<std::string>& names) {
+  [[noreturn]] static void displayList(const std::vector<std::string>& names) {
     for (const auto& n : names) {
       std::cout << "- " << n << "\n";
     }
     std::exit(EXIT_SUCCESS);
   }  // end of displayList
 
-  static void displayHelpFile(const std::string& f,
-                              const std::string& t,
-                              const std::string& n) {
+  [[noreturn]] static void displayHelpFile(const std::string& f,
+					   const std::string& t,
+					   const std::string& n) {
     if (f.empty()) {
       std::cout << "no description available for " << t << " '" << n << "'\n";
     } else {

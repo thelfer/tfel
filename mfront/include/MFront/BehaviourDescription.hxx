@@ -1877,8 +1877,6 @@ namespace mfront {
      * be used.
      */
     bool useDefaultTangentOperatorBlocks = true;
-    //! flag stating if the tangent operator blocks
-    mutable bool haveTangentOperatorBlocksAlreadyBeenRequested = false;
     //! integration schemes
     IntegrationScheme ischeme = UNDEFINEDINTEGRATIONSCHEME;
     //! list of material laws used

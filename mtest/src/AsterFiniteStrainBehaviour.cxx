@@ -13,7 +13,6 @@
 
 #include <cmath>
 #include <algorithm>
-
 #include "TFEL/Raise.hxx"
 #include "TFEL/Math/tmatrix.hxx"
 #include "TFEL/Math/tensor.hxx"
@@ -25,7 +24,6 @@
 #include "MFront/MFrontLogStream.hxx"
 #include "MFront/Aster/Aster.hxx"
 #include "MFront/Aster/AsterComputeStiffnessTensor.hxx"
-
 #include "MTest/CurrentState.hxx"
 #include "MTest/BehaviourWorkSpace.hxx"
 #include "MTest/UmatNormaliseTangentOperator.hxx"
@@ -172,35 +170,21 @@ namespace mtest {
       tfel::raise_if(c, "AsterFiniteStrainBehaviour::call_behaviour: " + m);
     };
     constexpr auto sqrt2 = Cste<real>::sqrt2;
-    AsterInt ntens;
-    AsterInt dimension;
-    AsterInt nprops =
-        s.mprops1.size() == 0 ? 1 : static_cast<AsterInt>(s.mprops1.size());
-    AsterInt nstatv;
-    AsterInt nummod;
     const auto h = this->getHypothesis();
-    if (h == ModellingHypothesis::AXISYMMETRICAL) {
-      ntens = 4;
-      dimension = 2u;
-      nummod = 4u;
-    } else if (h == ModellingHypothesis::PLANESTRESS) {
-      ntens = 4;
-      dimension = 2u;
-      nummod = 5u;
-    } else if (h == ModellingHypothesis::PLANESTRAIN) {
-      ntens = 4;
-      dimension = 2u;
-      nummod = 6u;
-    } else if (h == ModellingHypothesis::TRIDIMENSIONAL) {
-      ntens = 6;
-      dimension = 3u;
-      nummod = 3u;
-    } else {
-      throw_if(true, "unsupported hypothesis");
-    }
-    std::fill(wk.D.begin(), wk.D.end(), 0.);
-    // choosing the type of stiffness matrix
-    StandardBehaviourBase::initializeTangentOperator(wk.D, ktype, b);
+    const auto [ntens, dimension, nummod] = [h]() -> std::tuple<AsterInt,AsterInt,AsterInt> {
+      if (h == ModellingHypothesis::AXISYMMETRICAL) {
+        return {4, 2, 4};
+      } else if (h == ModellingHypothesis::PLANESTRESS) {
+        return {4, 2, 5};
+      } else if (h == ModellingHypothesis::PLANESTRAIN) {
+        return {4, 2, 6};
+      } else if (h == ModellingHypothesis::TRIDIMENSIONAL) {
+        return {6, 3, 3};
+      }
+      tfel::raise("unsupported hypothesis");
+    }();
+    const auto nprops =
+        s.mprops1.size() == 0 ? 1 : static_cast<AsterInt>(s.mprops1.size());
     // using a local copy of material properties to handle the
     // case where s.mprops1 is empty
     std::copy(s.mprops1.begin(), s.mprops1.end(), wk.mps.begin());
@@ -213,7 +197,11 @@ namespace mtest {
     if (s.iv0.empty()) {
       wk.ivs[0] = real(0);
     }
-    nstatv = static_cast<AsterInt>(wk.ivs.size());
+    const auto nstatv = static_cast<AsterInt>(wk.ivs.size());
+    //
+    std::fill(wk.D.begin(), wk.D.end(), 0.);
+    // choosing the type of stiffness matrix
+    StandardBehaviourBase::initializeTangentOperator(wk.D, ktype, b);
     // rotation matrix
     tmatrix<3u, 3u, real> drot = transpose(s.r);
     tmatrix<3u, 3u, real> uu0(real(0));

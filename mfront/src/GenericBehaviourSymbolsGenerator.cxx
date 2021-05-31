@@ -58,7 +58,6 @@ namespace mfront {
           tfel::raise(
               "GenericBehaviourSymbolsGenerator::writeBehaviourTypeSymbols: "
               "unsupported strain measure");
-          os << "0u";
         }
       } else {
         os << "1u";

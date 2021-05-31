@@ -26,18 +26,20 @@
  * \param X : code to be evaluated
  */
 #define TFEL_TESTS_STATIC_ASSERT(X)                               \
-  {                                                               \
+  do {                                                            \
     static_assert((X), "static assertion : '" #X "'");            \
     TestCase::registerResult("static assertion : '" #X "'", (X)); \
-  }
+  } while (0)
 
 /*!
  * \def TFEL_TESTS_ASSERT
  * \brief an helper macro to ease the use of TestCase::registerResult
  * \param X : code to be evaluated
  */
-#define TFEL_TESTS_ASSERT(X) \
-  { TestCase::registerResult("assertion : '" #X "'", (X)); }
+#define TFEL_TESTS_ASSERT(X)                               \
+  do {                                                     \
+    TestCase::registerResult("assertion : '" #X "'", (X)); \
+  } while (0)
 
 /*!
  * \def TFEL_TESTS_CHECK_THROW
@@ -47,7 +49,7 @@
  */
 //-V:TFEL_TESTS_CHECK_THROW:565
 #define TFEL_TESTS_CHECK_THROW(X, Y)                               \
-  {                                                                \
+  do {                                                             \
     bool hasThrown = false;                                        \
     try {                                                          \
       X;                                                           \
@@ -56,15 +58,17 @@
     } catch (...) {                                                \
     }                                                              \
     TestCase::registerResult("check throw : '" #X "'", hasThrown); \
-  }
+  } while (0)
 
 /*!
  * \def TFEL_TESTS_CALLMETHOD
  * \brief an helper macro to ease the use of TestCase::registerResult
  * \param X : method to be called
  */
-#define TFEL_TESTS_CALLMETHOD(X) \
-  { TestCase::registerResult(#X "()", this->X()); }
+#define TFEL_TESTS_CALLMETHOD(X)                  \
+  do {                                            \
+    TestCase::registerResult(#X "()", this->X()); \
+  } while (0)
 
 /*!
  * \def TFEL_TESTS_CHECK_EQUAL
@@ -72,8 +76,10 @@
  * \param X : value to be tested
  * \param Y : expected value
  */
-#define TFEL_TESTS_CHECK_EQUAL(X, Y) \
-  { TestCase::registerResult("egal : '" #X "==" #Y "'", X == Y); }
+#define TFEL_TESTS_CHECK_EQUAL(X, Y)                             \
+  do {                                                           \
+    TestCase::registerResult("egal : '" #X "==" #Y "'", X == Y); \
+  } while (0)
 
 /*!
  * \def TFEL_TESTS_CHECK_GT
@@ -81,8 +87,10 @@
  * \param X : value to be tested
  * \param Y : expected value
  */
-#define TFEL_TESTS_CHECK_GT(X, Y) \
-  { TestCase::registerResult("greater : '" #X ">" #Y "'", X > Y); }
+#define TFEL_TESTS_CHECK_GT(X, Y)                                 \
+  do {                                                            \
+    TestCase::registerResult("greater : '" #X ">" #Y "'", X > Y); \
+  } while (0)
 
 /*!
  * \def TFEL_TESTS_CHECK_GE
@@ -90,8 +98,10 @@
  * \param X : value to be tested
  * \param Y : expected value
  */
-#define TFEL_TESTS_CHECK_GE(X, Y) \
-  { TestCase::registerResult("greater or equal : '" #X ">=" #Y "'", X >= Y); }
+#define TFEL_TESTS_CHECK_GE(X, Y)                                            \
+  do {                                                                       \
+    TestCase::registerResult("greater or equal : '" #X ">=" #Y "'", X >= Y); \
+  } while (0)
 
 /*!
  * \def TFEL_TESTS_CHECK_LT
@@ -99,8 +109,10 @@
  * \param X : value to be tested
  * \param Y : expected value
  */
-#define TFEL_TESTS_CHECK_LT(X, Y) \
-  { TestCase::registerResult("lesser : '" #X "<" #Y "'", X < Y); }
+#define TFEL_TESTS_CHECK_LT(X, Y)                                \
+  do {                                                           \
+    TestCase::registerResult("lesser : '" #X "<" #Y "'", X < Y); \
+  } while (0)
 
 /*!
  * \def TFEL_TESTS_CHECK_LE
@@ -108,8 +120,10 @@
  * \param X : value to be tested
  * \param Y : expected value
  */
-#define TFEL_TESTS_CHECK_LE(X, Y) \
-  { TestCase::registerResult("lesser or equal : '" #X "<=" #Y "'", X <= Y); }
+#define TFEL_TESTS_CHECK_LE(X, Y)                                           \
+  do {                                                                      \
+    TestCase::registerResult("lesser or equal : '" #X "<=" #Y "'", X <= Y); \
+  } while (0)
 
 namespace tfel::tests {
 

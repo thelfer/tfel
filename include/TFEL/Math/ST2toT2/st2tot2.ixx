@@ -21,8 +21,6 @@
 
 #include "TFEL/FSAlgorithm/FSAlgorithm.hxx"
 #include "TFEL/TypeTraits/IsSafelyReinterpretCastableTo.hxx"
-#include "TFEL/Math/Vector/VectorUtilities.hxx"
-#include "TFEL/Math/Matrix/MatrixUtilities.hxx"
 #include "TFEL/Math/ST2toT2/StensorProductLeftDerivativeExpr.hxx"
 #include "TFEL/Math/ST2toT2/StensorProductRightDerivativeExpr.hxx"
 

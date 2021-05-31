@@ -2456,7 +2456,7 @@ namespace mfront {
         this->mb.setEntryName(h, n, "ThermalExpansionReferenceTemperature");
       }
     };
-    auto addTi = [this, h](const double v) {
+    auto addTi = [this](const double v) {
       VariableDescription Ti("temperature",
                              "initial_geometry_reference_temperature", 1u, 0u);
       Ti.description =

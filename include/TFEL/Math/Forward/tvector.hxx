@@ -19,11 +19,11 @@
 
 namespace tfel::math {
 
-  //! \brief a base for tvector or classes acting like tvector.
-  template <typename Child, unsigned short N, typename T>
-  struct tvector_base;
-
-  //! \brief a class representing tiny vectors of fixed size.
+  /*!
+   * \brief a class representing tiny vectors of fixed size.
+   * \tparam N: size of the tiny vector
+   * \tparam T: value hold
+   */
   template <unsigned short N, typename T>
   struct tvector;
 

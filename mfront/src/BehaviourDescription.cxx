@@ -435,7 +435,7 @@ namespace mfront {
     auto p = this->sd.find(h);
     if (p == this->sd.end()) {
       // copy of the default description
-      this->sd.insert({h, std::make_shared<BehaviourData>(this->d)}).first;
+      this->sd.insert({h, std::make_shared<BehaviourData>(this->d)});
     }
   }  // end of specialize
 

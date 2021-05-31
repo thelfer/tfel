@@ -28,8 +28,7 @@ namespace mfront {
                                                   const DataMap& d) {
       using namespace tfel::glossary;
       constexpr auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
-      // this shall be captured in gcc 4.7.2
-      auto get_mp = [&dsl, &bd, &fid, &id, &d,this](const std::string& n) {
+      auto get_mp = [&dsl, &bd, &fid, &id, &d](const std::string& n) {
         const auto ni = IsotropicHardeningRule::getVariableId(n, fid, id);
         auto mp = getBehaviourDescriptionMaterialProperty(dsl, n, d.at(n));
         declareParameterOrLocalVariable(bd, mp, "stress", ni);

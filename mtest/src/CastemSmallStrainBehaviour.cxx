@@ -114,51 +114,40 @@ namespace mtest {
     const auto h = this->usesGenericPlaneStressAlgorithm
                        ? ModellingHypothesis::PLANESTRESS
                        : this->getHypothesis();
+    const auto [ndi, ntens, dimension] = [h]() -> std::tuple<CastemInt,CastemInt,CastemInt> {
+      if (h == ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN) {
+        return {14, 3, 1};
+      } else if (h == ModellingHypothesis::AXISYMMETRICAL) {
+        return {0, 4, 2};
+      } else if (h == ModellingHypothesis::PLANESTRESS) {
+        return {-2, 4, 2};
+      } else if (h == ModellingHypothesis::PLANESTRAIN) {
+        return {-1, 4, 2};
+      } else if (h == ModellingHypothesis::GENERALISEDPLANESTRAIN) {
+        return {-3, 4, 2};
+      } else if (h == ModellingHypothesis::TRIDIMENSIONAL) {
+        return {2, 6, 3};
+      }
+      tfel::raise("unsupported hypothesis");
+    }();
+    //
     this->buildMaterialProperties(wk, s);
     const auto nprops = static_cast<CastemInt>(wk.mps.size());
-    CastemInt ntens, ndi, nstatv;
-    unsigned short dimension;
-    if (h == ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN) {
-      ndi = 14;
-      ntens = 3;
-      dimension = 1u;
-    } else if (h == ModellingHypothesis::AXISYMMETRICAL) {
-      ndi = 0;
-      ntens = 4;
-      dimension = 2u;
-    } else if (h == ModellingHypothesis::PLANESTRESS) {
-      ndi = -2;
-      ntens = 4;
-      dimension = 2u;
-    } else if (h == ModellingHypothesis::PLANESTRAIN) {
-      ndi = -1;
-      ntens = 4;
-      dimension = 2u;
-    } else if (h == ModellingHypothesis::GENERALISEDPLANESTRAIN) {
-      ndi = -3;
-      ntens = 4;
-      dimension = 2u;
-    } else if (h == ModellingHypothesis::TRIDIMENSIONAL) {
-      ndi = 2;
-      ntens = 6;
-      dimension = 3u;
-    } else {
-      throw_if(true, "unsupported hypothesis");
-    }
-    throw_if((wk.D.getNbRows() != Kt.getNbRows()) ||
-                 (wk.D.getNbCols() != Kt.getNbCols()),
-             "the memory has not been allocated correctly");
+    // state variable initial values
     throw_if(((s.iv0.size() == 0) && (wk.ivs.size() != 1u)) ||
                  ((s.iv0.size() != 0) && (s.iv0.size() != wk.ivs.size())),
              "the memory has not been allocated correctly (2)");
-    std::fill(wk.D.begin(), wk.D.end(), 0.);
-    // choosing the type of stiffness matrix
-    StandardBehaviourBase::initializeTangentOperator(wk.D, ktype, b);
-    // state variable initial values
     if (s.iv0.size() != 0) {
       std::copy(s.iv0.begin(), s.iv0.end(), wk.ivs.begin());
     }
-    nstatv = static_cast<CastemInt>(wk.ivs.size());
+    const auto nstatv = static_cast<CastemInt>(wk.ivs.size());
+    //
+    throw_if((wk.D.getNbRows() != Kt.getNbRows()) ||
+                 (wk.D.getNbCols() != Kt.getNbCols()),
+             "the memory has not been allocated correctly");
+    std::fill(wk.D.begin(), wk.D.end(), 0.);
+    // choosing the type of stiffness matrix
+    StandardBehaviourBase::initializeTangentOperator(wk.D, ktype, b);
     // rotation matrix
     tmatrix<3u, 3u, real> drot = transpose(s.r);
     tmatrix<3u, 3u, real>::size_type i;

@@ -73,62 +73,6 @@ namespace tfel::math {
                                           numeric_type<StensorType2>>>;
   };  // end of struct DerivativeTypeDispatcher
 
-  /*!
-   * \brief a base for stensor or classes acting like stensor.
-   * \param Child : child class
-   * \param N     : spatial dimension
-   * \param T     : numerical type
-   */
-  template <typename Child>
-  struct st2tost2_base {
-    /*!
-     * Assignement operator
-     */
-    template <typename ST2toST2Type>
-    TFEL_MATH_INLINE std::enable_if_t<
-        implementsST2toST2Concept<ST2toST2Type>() &&
-            getSpaceDimension<Child>() == getSpaceDimension<ST2toST2Type>() &&
-            isAssignableTo<numeric_type<ST2toST2Type>, numeric_type<Child>>(),
-        Child&>
-    operator=(const ST2toST2Type&);
-    //! Assignement operator
-    template <typename ST2toST2Type>
-    TFEL_MATH_INLINE std::enable_if_t<
-        implementsST2toST2Concept<ST2toST2Type>() &&
-            getSpaceDimension<Child>() == getSpaceDimension<ST2toST2Type>() &&
-            isAssignableTo<numeric_type<ST2toST2Type>, numeric_type<Child>>(),
-        Child&>
-    operator+=(const ST2toST2Type&);
-    //! Assignement operator
-    template <typename ST2toST2Type>
-    TFEL_MATH_INLINE std::enable_if_t<
-        implementsST2toST2Concept<ST2toST2Type>() &&
-            getSpaceDimension<Child>() == getSpaceDimension<ST2toST2Type>() &&
-            isAssignableTo<numeric_type<ST2toST2Type>, numeric_type<Child>>(),
-        Child&>
-    operator-=(const ST2toST2Type&);
-    /*!
-     * operator*=
-     */
-    template <typename T2>
-    TFEL_MATH_INLINE std::enable_if_t<
-        isScalar<T2>() &&
-            std::is_same<result_type<numeric_type<Child>, T2, OpMult>,
-                         numeric_type<Child>>::value,
-        Child&>
-    operator*=(const T2);
-    /*!
-     * operator/=
-     */
-    template <typename T2>
-    TFEL_MATH_INLINE std::enable_if_t<
-        isScalar<T2>() &&
-            std::is_same<result_type<numeric_type<Child>, T2, OpDiv>,
-                         numeric_type<Child>>::value,
-        Child&>
-    operator/=(const T2);
-  };  // end of struct st2tost2_base
-
   template <unsigned short N, typename ValueType>
   struct st2tost2
       : ST2toST2Concept<st2tost2<N, ValueType>>,

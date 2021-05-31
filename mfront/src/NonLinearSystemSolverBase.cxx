@@ -25,47 +25,16 @@ namespace mfront {
   }  // end of NonLinearSystemSolverBase::getReservedNames
 
   std::string NonLinearSystemSolverBase::getJacobianPart(
-      const BehaviourDescription& mb,
       const VariableDescription& v1,
       const VariableDescription& v2,
       const SupportedTypes::TypeSize& n,
       const SupportedTypes::TypeSize& n2,
-      const SupportedTypes::TypeSize& n3,
       const std::string& j,
       const std::string& p) {
-    auto lthrow = [](const std::string& m) {
-      tfel::raise("NonLinearSystemSolverBase::getJacobianPart: " + m);
-    };
     std::ostringstream d;
-    if (mb.getTypeFlag(v1.type) == SupportedTypes::STENSOR) {
-      if (mb.getTypeFlag(v2.type) == SupportedTypes::STENSOR) {
-        d << "typename tfel::math::ST2toST2FromTinyMatrixView<N," << n2 << ","
-          << n2 << ",\n"
-          << n << "," << n3 << ",real>::type " + p + "df" << v1.name << "_dd"
-          << v2.name << "(" + j + ");\n";
-      } else if (mb.getTypeFlag(v2.type) == SupportedTypes::SCALAR) {
-        d << "typename tfel::math::StensorFromTinyMatrixColumnView<N," << n2
-          << "," << n2 << ",\n"
-          << n << "," << n3 << ",real>::type " + p + "df" << v1.name << "_dd"
-          << v2.name << "(" + j + ");\n";
-      } else {
-        lthrow("unsupported type for integration variable '" + v2.name + "'");
-      }
-    } else if (mb.getTypeFlag(v1.type) == SupportedTypes::SCALAR) {
-      if (mb.getTypeFlag(v2.type) == SupportedTypes::STENSOR) {
-        d << "typename tfel::math::StensorFromTinyMatrixRowView<N," << n2 << ","
-          << n2 << ",\n"
-          << n << "," << n3 << ",real>::type " + p + "df" << v1.name << "_dd"
-          << v2.name << "(" + j + ");\n";
-      } else if (mb.getTypeFlag(v2.type) == SupportedTypes::SCALAR) {
-        d << "real& " + p + "df" << v1.name << "_dd" << v2.name
-          << " = " + j + "(" << n << "," << n3 << ");\n";
-      } else {
-        lthrow("unsupported type for integration variable '" + v2.name + "'");
-      }
-    } else {
-      lthrow("unsupported type for integration variable '" + v2.name + "'");
-    }
+    d << "auto&& " << p << "df" << v1.name << "_dd" << v2.name << " = "
+      << "tfel::math::map_derivative<" << n << ", " << n2 << ", " << v1.type
+      << ", " << v2.type << ">(" << j << ");\n";
     return d.str();
   }  // end of NonLinearSystemSolverBase::getJacobianPart
 
@@ -125,7 +94,7 @@ namespace mfront {
         << "tvector<" << n << ",real> tfzeros(this->fzeros);\n";
     bool first = true;
     for (const auto& b : blocs) {
-      auto getPositionAndSize = [&ivs, throw_if](const std::string& v)
+      auto getPositionAndSize = [&ivs](const std::string& v)
           -> std::pair<SupportedTypes::TypeSize, SupportedTypes::TypeSize> {
             auto ns = SupportedTypes::TypeSize{};
             for (const auto& iv : ivs) {
@@ -135,7 +104,7 @@ namespace mfront {
               }
               ns += s;
             }
-            throw_if(true, "no integration variable named '" + v + "'");
+            tfel::raise("no integration variable named '" + v + "'");
           };
       const auto pd = getPositionAndSize(b.first);
       auto update_jacobian = [&out, &b,
@@ -218,26 +187,21 @@ namespace mfront {
       return;
     }
     const auto& d = mb.getBehaviourData(h);
-    SupportedTypes::TypeSize n;
-    SupportedTypes::TypeSize n3;
-    const auto n2 = d.getIntegrationVariables().getTypeSize();
     out << "auto jacobian_error = real{};"
         << "this->computeNumericalJacobian(" << nj << ");\n";
-    n = SupportedTypes::TypeSize();
+    auto n = SupportedTypes::TypeSize();
     for (const auto& v : d.getIntegrationVariables()) {
       if (v.arraySize == 1) {
-        n3 = SupportedTypes::TypeSize();
+        auto n2 = SupportedTypes::TypeSize();
         for (const auto& v2 : d.getIntegrationVariables()) {
           if ((v.arraySize == 1) && (v2.arraySize == 1)) {
-            out << "// derivative of variable f" << v.name << " by variable "
-                << v2.name << "\n"
-                << NonLinearSystemSolverBase::getJacobianPart(mb, v, v2, n, n2,
-                                                              n3)
+            out << "// derivative of variable f" << v.name
+                << " with respect to variable " << v2.name << "\n"
+                << getJacobianPart(v, v2, n, n2)
                 << "// numerical derivative of variable f" << v.name
-                << " by variable " << v2.name << "\n"
-                << NonLinearSystemSolverBase::getJacobianPart(mb, v, v2, n, n2,
-                                                              n3, nj, "n");
-            n3 += mb.getTypeSize(v2.type, v2.arraySize);
+                << " with respect to variable " << v2.name << "\n"
+                << getJacobianPart(v, v2, n, n2, nj, "n");
+            n2 += mb.getTypeSize(v2.type, v2.arraySize);
           }
         }
       }

@@ -1893,8 +1893,6 @@ include/TFEL/Math/MathException.hxx -text
 include/TFEL/Math/Matrix/MatrixConcept.hxx -text
 include/TFEL/Math/Matrix/MatrixConcept.ixx -text
 include/TFEL/Math/Matrix/MatrixConceptOperations.hxx -text
-include/TFEL/Math/Matrix/MatrixUtilities.hxx -text
-include/TFEL/Math/Matrix/MatrixUtilities.ixx -text
 include/TFEL/Math/Matrix/TMatrixTVectorExpr.hxx -text
 include/TFEL/Math/Matrix/TVectorTMatrixExpr.hxx -text
 include/TFEL/Math/Matrix/TinyMatrixInvert.ixx -text
@@ -1973,8 +1971,6 @@ include/TFEL/Math/ST2toST2/ST2toST2Concept.ixx -text
 include/TFEL/Math/ST2toST2/ST2toST2ConceptIO.hxx -text
 include/TFEL/Math/ST2toST2/ST2toST2ConceptOperations.hxx -text
 include/TFEL/Math/ST2toST2/ST2toST2ConceptPushForward.ixx -text
-include/TFEL/Math/ST2toST2/ST2toST2FromTinyMatrixView.hxx -text
-include/TFEL/Math/ST2toST2/ST2toST2FromTinyMatrixView2.hxx -text
 include/TFEL/Math/ST2toST2/ST2toST2ST2toST2ProductExpr.hxx -text
 include/TFEL/Math/ST2toST2/ST2toST2StensorProductExpr.hxx -text
 include/TFEL/Math/ST2toST2/ST2toST2TransposeExpr.hxx -text
@@ -2022,10 +2018,6 @@ include/TFEL/Math/Stensor/StensorConcept.ixx -text
 include/TFEL/Math/Stensor/StensorConceptIO.hxx -text
 include/TFEL/Math/Stensor/StensorConceptOperations.hxx -text
 include/TFEL/Math/Stensor/StensorConceptOperations.ixx -text
-include/TFEL/Math/Stensor/StensorFromTinyMatrixColumnView.hxx -text
-include/TFEL/Math/Stensor/StensorFromTinyMatrixColumnView2.hxx -text
-include/TFEL/Math/Stensor/StensorFromTinyMatrixRowView.hxx -text
-include/TFEL/Math/Stensor/StensorFromTinyMatrixRowView2.hxx -text
 include/TFEL/Math/Stensor/StensorProduct.hxx -text
 include/TFEL/Math/Stensor/StensorSizeToDime.hxx -text
 include/TFEL/Math/Stensor/SymmetricStensorProduct.hxx -text
@@ -2066,10 +2058,6 @@ include/TFEL/Math/Tensor/TensorConcept.ixx -text
 include/TFEL/Math/Tensor/TensorConceptIO.hxx -text
 include/TFEL/Math/Tensor/TensorConceptOperations.hxx -text
 include/TFEL/Math/Tensor/TensorConceptOperations.ixx -text
-include/TFEL/Math/Tensor/TensorFromTinyMatrixColumnView.hxx -text
-include/TFEL/Math/Tensor/TensorFromTinyMatrixColumnView2.hxx -text
-include/TFEL/Math/Tensor/TensorFromTinyMatrixRowView.hxx -text
-include/TFEL/Math/Tensor/TensorFromTinyMatrixRowView2.hxx -text
 include/TFEL/Math/Tensor/TensorProduct.hxx -text
 include/TFEL/Math/Tensor/TensorSizeToDime.hxx -text
 include/TFEL/Math/Tensor/TensorTransposeExpr.hxx -text
@@ -2079,15 +2067,10 @@ include/TFEL/Math/Tensor/tensorResultType.hxx -text
 include/TFEL/Math/TinyMatrixInvert.hxx -text
 include/TFEL/Math/TinyMatrixSolve.hxx -text
 include/TFEL/Math/TinyNewtonRaphson.hxx -text
-include/TFEL/Math/Vector/TVectorFromTinyMatrixColumnView.hxx -text
-include/TFEL/Math/Vector/TVectorFromTinyMatrixColumnView2.hxx -text
-include/TFEL/Math/Vector/TVectorFromTinyMatrixRowView.hxx -text
-include/TFEL/Math/Vector/TVectorFromTinyMatrixRowView2.hxx -text
 include/TFEL/Math/Vector/VectorConcept.hxx -text
 include/TFEL/Math/Vector/VectorConcept.ixx -text
 include/TFEL/Math/Vector/VectorConceptOperations.hxx -text
 include/TFEL/Math/Vector/VectorConceptOperations.ixx -text
-include/TFEL/Math/Vector/VectorUtilities.hxx -text
 include/TFEL/Math/Vector/VectorVectorDotProduct.hxx -text
 include/TFEL/Math/Vector/tvector.ixx -text
 include/TFEL/Math/Vector/tvectorIO.hxx -text

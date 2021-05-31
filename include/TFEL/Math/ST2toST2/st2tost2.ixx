@@ -22,8 +22,6 @@
 #include "TFEL/FSAlgorithm/FSAlgorithm.hxx"
 #include "TFEL/TypeTraits/IsSafelyReinterpretCastableTo.hxx"
 #include "TFEL/Math/General/BaseCast.hxx"
-#include "TFEL/Math/Vector/VectorUtilities.hxx"
-#include "TFEL/Math/Matrix/MatrixUtilities.hxx"
 #include "TFEL/Math/tmatrix.hxx"
 #include "TFEL/Math/TinyMatrixInvert.hxx"
 #include "TFEL/Math/ST2toST2/ConvertT2toST2ToST2toST2Expr.hxx"
@@ -33,94 +31,6 @@
 #include "TFEL/Math/ST2toST2/ChangeBasis.hxx"
 
 namespace tfel::math {
-
-  // Assignement operator
-  template <typename Child>
-  template <typename ST2toST2Type>
-  std::enable_if_t<
-      implementsST2toST2Concept<ST2toST2Type>() &&
-          getSpaceDimension<Child>() == getSpaceDimension<ST2toST2Type>() &&
-          isAssignableTo<numeric_type<ST2toST2Type>,
-                                           numeric_type<Child>>(),
-      Child&>
-  st2tost2_base<Child>::operator=(const ST2toST2Type& src) {
-    auto& child = static_cast<Child&>(*this);
-    matrix_utilities<
-        StensorDimeToSize<getSpaceDimension<Child>()>::value,
-        StensorDimeToSize<getSpaceDimension<Child>()>::value,
-        StensorDimeToSize<getSpaceDimension<Child>()>::value>::copy(src,
-                                                                     child);
-    return child;
-  }
-
-  template <typename Child>
-  template <typename ST2toST2Type>
-  std::enable_if_t<
-      implementsST2toST2Concept<ST2toST2Type>() &&
-          getSpaceDimension<Child>() == getSpaceDimension<ST2toST2Type>() &&
-          isAssignableTo<numeric_type<ST2toST2Type>,
-                                           numeric_type<Child>>(),
-      Child&>
-  st2tost2_base<Child>::operator+=(const ST2toST2Type& src) {
-    auto& child = static_cast<Child&>(*this);
-    matrix_utilities<
-        StensorDimeToSize<getSpaceDimension<Child>()>::value,
-        StensorDimeToSize<getSpaceDimension<Child>()>::value,
-        StensorDimeToSize<getSpaceDimension<Child>()>::value>::plusEqual(child,
-                                                                          src);
-    return child;
-  }
-
-  // Assignement operator
-  template <typename Child>
-  template <typename ST2toST2Type>
-  std::enable_if_t<
-      implementsST2toST2Concept<ST2toST2Type>() &&
-          getSpaceDimension<Child>() == getSpaceDimension<ST2toST2Type>() &&
-          isAssignableTo<numeric_type<ST2toST2Type>,
-                                           numeric_type<Child>>(),
-      Child&>
-  st2tost2_base<Child>::operator-=(const ST2toST2Type& src) {
-    auto& child = static_cast<Child&>(*this);
-    matrix_utilities<StensorDimeToSize<getSpaceDimension<Child>()>::value,
-                     StensorDimeToSize<getSpaceDimension<Child>()>::value,
-                     StensorDimeToSize<getSpaceDimension<Child>()>::value>::
-        minusEqual(child, src);
-    return child;
-  }
-
-  // *= operator
-  template <typename Child>
-  template <typename T2>
-  std::enable_if_t<
-      isScalar<T2>() &&
-          std::is_same<result_type<numeric_type<Child>, T2, OpMult>,
-                       numeric_type<Child>>::value,
-      Child&>
-  st2tost2_base<Child>::operator*=(const T2 s) {
-    auto& child = static_cast<Child&>(*this);
-    matrix_utilities<StensorDimeToSize<getSpaceDimension<Child>()>::value,
-                     StensorDimeToSize<getSpaceDimension<Child>()>::value,
-                     StensorDimeToSize<getSpaceDimension<Child>()>::value>::
-        multByScalar(child, s);
-    return child;
-  }
-
-  // /= operator
-  template <typename Child>
-  template <typename T2>
-  std::enable_if_t<isScalar<T2>() &&
-                       std::is_same<result_type<numeric_type<Child>, T2, OpDiv>,
-                                    numeric_type<Child>>::value,
-                   Child&>
-  st2tost2_base<Child>::operator/=(const T2 s) {
-    auto& child = static_cast<Child&>(*this);
-    matrix_utilities<StensorDimeToSize<getSpaceDimension<Child>()>::value,
-                     StensorDimeToSize<getSpaceDimension<Child>()>::value,
-                     StensorDimeToSize<getSpaceDimension<Child>()>::value>::
-        divByScalar(child, s);
-    return child;
-  }
 
   template <unsigned short N, typename T>
   template <typename StensorType>

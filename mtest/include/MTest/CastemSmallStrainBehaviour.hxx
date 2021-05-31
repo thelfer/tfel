@@ -96,7 +96,7 @@ namespace mtest {
     // inheriting constructors
     using CastemSmallStrainBehaviour::CastemSmallStrainBehaviour;
     //! \brief destructor
-    ~Castem21SmallStrainBehaviour();
+    ~Castem21SmallStrainBehaviour() override;
 
    protected:
     //! \return the version of the `Cast3M` interface

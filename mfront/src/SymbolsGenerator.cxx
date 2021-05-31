@@ -31,16 +31,12 @@ namespace mfront {
     switch (SupportedTypes::getTypeFlag(v.type)) {
       case SupportedTypes::SCALAR:
         return 0;
-        break;
       case SupportedTypes::STENSOR:
         return 1;
-        break;
       case SupportedTypes::TVECTOR:
         return 2;
-        break;
       case SupportedTypes::TENSOR:
         return 3;
-        break;
       default:
         tfel::raise(
             "getVariableTypeId: "
@@ -227,7 +223,7 @@ namespace mfront {
           << "_nTangentOperatorBlocks = " << bns.size() << ";\n\n";
       this->writeArrayOfStringsSymbol(out, fn + "_TangentOperatorBlocks", bns);
     };
-    auto default_impl = [this, &bd, &write_impl] {
+    auto default_impl = [&bd, &write_impl] {
       std::vector<std::string> bns;
       for (const auto& b : bd.getTangentOperatorBlocks()) {
         bns.push_back(b.first.getExternalName());

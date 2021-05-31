@@ -103,7 +103,7 @@ namespace mfront {
       const auto dfn_ddp =
           PorosityNucleationModel::getVariableId("dfn_ddp", id);
       // sum of the equivalent plastic strains
-      const auto p = [&iflows, &bd] {
+      const auto p = [&iflows] {
         auto first = true;
         auto v = std::string{};
         for (const auto& flow : iflows) {
@@ -116,7 +116,7 @@ namespace mfront {
         return v;
       }();
       // sum of the increments of the equivalent plastic strains
-      const auto dp = [&iflows, &bd] {
+      const auto dp = [&iflows] {
         auto first = true;
         auto v = std::string{};
         for (const auto& flow : iflows) {
@@ -201,7 +201,7 @@ namespace mfront {
       const auto parameters =
           PorosityNucleationModel::getVariableId("parameters", id);
       // sum of the equivalent plastic strains
-      const auto p = [&iflows, &bd] {
+      const auto p = [&iflows] {
         auto first = true;
         auto v = std::string{};
         for (const auto& flow : iflows) {
@@ -214,7 +214,7 @@ namespace mfront {
         return v;
       }();
       // sum of the increments of the equivalent plastic strains
-      const auto dp = [&iflows, &bd] {
+      const auto dp = [&iflows] {
         auto first = true;
         auto v = std::string{};
         for (const auto& flow : iflows) {

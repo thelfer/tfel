@@ -22,9 +22,8 @@ namespace mfront{
                                                   const DataMap& d) {
       using namespace tfel::glossary;
       constexpr auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
-      // this shall be captured in gcc 4.7.2
-      auto get_mp = [&dsl, &bd, &fid, &id, &d, this](const std::string& t,
-                                                     const std::string& n) {
+      auto get_mp = [&dsl, &bd, &fid, &id, &d](const std::string& t,
+					       const std::string& n) {
         const auto ni = IsotropicHardeningRule::getVariableId(n, fid, id);
         if (d.count(n) == 0) {
           tfel::raise(

@@ -48,7 +48,7 @@ namespace mtest {
     // inheriting constructors
     using CastemFiniteStrainBehaviour2::CastemFiniteStrainBehaviour2;
     //! \brief destructor
-    ~Castem21FiniteStrainBehaviour2();
+    ~Castem21FiniteStrainBehaviour2() override;
 
    protected:
     //! \return the version of the `Cast3M` interface

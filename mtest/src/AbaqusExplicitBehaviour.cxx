@@ -98,7 +98,7 @@ namespace mtest {
               "FirstOrthotropicDirection_3",  "SecondOrthotropicDirection_1",
               "SecondOrthotropicDirection_2", "SecondOrthotropicDirection_3"};
         } else {
-          throw_if(true, "unsupported modelling hypothesis");
+          tfel::raise("unsupported modelling hypothesis");
         }
         for (const auto& iv : aivs) {
           throw_if(std::find(this->ivnames.begin(), this->ivnames.end(), iv) !=
@@ -203,11 +203,11 @@ namespace mtest {
     } else if (h == ModellingHypothesis::TRIDIMENSIONAL) {
       K.resize(6u, 6u, 0);
     } else {
-      throw_if(true, "unsupported hypothesis (" +
+      tfel::raise("unsupported hypothesis (" +
                          ModellingHypothesis::toString(h) + ")");
     }
     const AbaqusInt nblock = 1;
-    const AbaqusInt ndir = [&h, &throw_if] {
+    const AbaqusInt ndir = [&h] {
       switch (h) {
         case ModellingHypothesis::PLANESTRESS:
           return 2;
@@ -216,10 +216,10 @@ namespace mtest {
         case ModellingHypothesis::TRIDIMENSIONAL:
           return 3;
       }
-      throw_if(true, "unsupported hypothesis (" +
-                         ModellingHypothesis::toString(h) + ")");
+      tfel::raise("unsupported hypothesis (" +
+		  ModellingHypothesis::toString(h) + ")");
     }();
-    const AbaqusInt nshr = [&h, &throw_if] {
+    const AbaqusInt nshr = [&h] {
       switch (h) {
         case ModellingHypothesis::PLANESTRESS:
         case ModellingHypothesis::AXISYMMETRICAL:
@@ -228,8 +228,8 @@ namespace mtest {
         case ModellingHypothesis::TRIDIMENSIONAL:
           return 3;
       }
-      throw_if(true, "unsupported hypothesis (" +
-                         ModellingHypothesis::toString(h) + ")");
+      tfel::raise("unsupported hypothesis (" +
+		  ModellingHypothesis::toString(h) + ")");
     }();
     const auto nprops = static_cast<AbaqusInt>(s.mprops1.size()) - 1;
     const auto nstatv = static_cast<AbaqusInt>(s.iv1.size());
@@ -263,7 +263,7 @@ namespace mtest {
         s.iv0[4] = s.r(1, 1);
         s.iv0[5] = s.r(2, 1);
       } else {
-        throw_if(true, "unsupported hypothesis (" +
+        tfel::raise("unsupported hypothesis (" +
                            ModellingHypothesis::toString(h) + ")");
       }
     }
@@ -305,7 +305,7 @@ namespace mtest {
         K(4, i) = stressNew[5];
         K(5, i) = stressNew[4];
       } else {
-        throw_if(true, "unsupported hypothesis (" +
+        tfel::raise("unsupported hypothesis (" +
                            ModellingHypothesis::toString(h) + ")");
       }
     }
@@ -341,10 +341,9 @@ namespace mtest {
         K(i, 5) /= 2 * cste;
       }
     } else {
-      throw_if(true,
-               "computePredictionOperator: "
-               "no 'InitialElasticStiffness' found. "
-               "Was the packaging step done ?");
+      tfel::raise("computePredictionOperator: "
+		  "no 'InitialElasticStiffness' found. "
+		  "Was the packaging step done ?");
     }
     if ((h == ModellingHypothesis::PLANESTRESS) ||
         (h == ModellingHypothesis::AXISYMMETRICAL) ||
@@ -417,12 +416,12 @@ namespace mtest {
                "Was the packaging step done ?");
       wk.k = p->second.get<tfel::math::matrix<real>>();
     } else {
-      throw_if(true, "unsupported stiffness matrix type");
+      tfel::raise("unsupported stiffness matrix type");
     }
     const AbaqusInt nblock = 1;
     const auto h = this->getHypothesis();
     const AbaqusInt ndir = 3;
-    const AbaqusInt nshr = [&h, &throw_if] {
+    const AbaqusInt nshr = [&h] {
       switch (h) {
         case ModellingHypothesis::PLANESTRESS:
         case ModellingHypothesis::AXISYMMETRICAL:
@@ -431,8 +430,8 @@ namespace mtest {
         case ModellingHypothesis::TRIDIMENSIONAL:
           return 3;
       }
-      throw_if(true, "unsupported hypothesis (" +
-                         ModellingHypothesis::toString(h) + ")");
+      tfel::raise("unsupported hypothesis (" +
+		  ModellingHypothesis::toString(h) + ")");
     }();
     const auto nprops = static_cast<AbaqusInt>(s.mprops1.size()) - 1;
     const auto nstatv = static_cast<AbaqusInt>(s.iv0.size());
@@ -465,7 +464,7 @@ namespace mtest {
         s.iv0[4] = s.r(1, 1);
         s.iv0[5] = s.r(2, 1);
       } else {
-        throw_if(true, "unsupported hypothesis (" +
+        tfel::raise("unsupported hypothesis (" +
                            ModellingHypothesis::toString(h) + ")");
       }
     }
@@ -543,10 +542,8 @@ namespace mtest {
       std::swap(stressOld[5], stressOld[4]);
       std::swap(stressNew[5], stressNew[4]);
     } else {
-      throw_if(true,
-               "unsupported hypothesis "
-               "(" +
-                   ModellingHypothesis::toString(h) + ")");
+      tfel::raise("unsupported hypothesis (" +
+		  ModellingHypothesis::toString(h) + ")");
     }
     (this->fct)(
         &nblock, &ndir, &nshr, &nstatv, &nfieldv, &nprops, nullptr, &stepTime,
@@ -586,10 +583,8 @@ namespace mtest {
       }
       tfel::fsalgo::copy<6u>::exe(sig.begin(), s.s1.begin());
     } else {
-      throw_if(true,
-               "unsupported hypothesis "
-               "(" +
-                   ModellingHypothesis::toString(h) + ")");
+      tfel::raise("unsupported hypothesis (" +
+		  ModellingHypothesis::toString(h) + ")");
     }
     return {true, real(1)};
   }  // end of AbaqusExplicitBehaviour::integrate

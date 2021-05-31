@@ -20,76 +20,8 @@
 #include "TFEL/Math/General/Abs.hxx"
 #include "TFEL/Math/General/BasicOperations.hxx"
 #include "TFEL/Math/General/DotProduct.hxx"
-#include "TFEL/Math/Vector/VectorUtilities.hxx"
 
 namespace tfel::math {
-
-  template <typename Child, unsigned short N, typename T>
-  template <typename T2, typename Operation>
-  std::enable_if_t<isAssignableTo<T2, T>(), Child&> tvector_base<Child, N, T>::
-  operator=(const Expr<tvector<N, T2>, Operation>& src) {
-    vectorToTab<N>::exe(src, static_cast<Child&>(*this));
-    return static_cast<Child&>(*this);
-  }
-
-  template <typename Child, unsigned short N, typename T>
-  template <typename T2>
-  std::enable_if_t<isAssignableTo<T2, T>(), Child&> tvector_base<Child, N, T>::
-  operator=(const tvector<N, T2>& src) {
-    vectorToTab<N>::exe(src, static_cast<Child&>(*this));
-    return static_cast<Child&>(*this);
-  }
-
-  template <typename Child, unsigned short N, typename T>
-  template <typename T2, typename Operation>
-  std::enable_if_t<isAssignableTo<T2, T>(), Child&> tvector_base<Child, N, T>::
-  operator+=(const Expr<tvector<N, T2>, Operation>& src) {
-    VectorUtilities<N>::PlusEqual(static_cast<Child&>(*this), src);
-    return static_cast<Child&>(*this);
-  }
-
-  template <typename Child, unsigned short N, typename T>
-  template <typename T2, typename Operation>
-  std::enable_if_t<isAssignableTo<T2, T>(), Child&> tvector_base<Child, N, T>::
-  operator-=(const Expr<tvector<N, T2>, Operation>& src) {
-    VectorUtilities<N>::MinusEqual(static_cast<Child&>(*this), src);
-    return static_cast<Child&>(*this);
-  }
-
-  template <typename Child, unsigned short N, typename T>
-  template <typename T2>
-  std::enable_if_t<isAssignableTo<T2, T>(), Child&> tvector_base<Child, N, T>::
-  operator+=(const tvector<N, T2>& src) {
-    VectorUtilities<N>::PlusEqual(static_cast<Child&>(*this), src);
-    return static_cast<Child&>(*this);
-  }
-
-  template <typename Child, unsigned short N, typename T>
-  template <typename T2>
-  std::enable_if_t<isAssignableTo<T2, T>(), Child&> tvector_base<Child, N, T>::
-  operator-=(const tvector<N, T2>& src) {
-    VectorUtilities<N>::MinusEqual(static_cast<Child&>(*this), src);
-    return static_cast<Child&>(*this);
-  }
-
-  // *= operator
-  template <typename Child, unsigned short N, typename T>
-  template <typename T2>
-  std::enable_if_t<IsTVectorScalarOperationValid<T, T2, OpMult>::cond, Child&>
-  tvector_base<Child, N, T>::operator*=(const T2 s) {
-    VectorUtilities<N>::scale(static_cast<Child&>(*this), s);
-    return static_cast<Child&>(*this);
-  }
-
-  // /= operator
-  template <typename Child, unsigned short N, typename T>
-  template <typename T2>
-  std::enable_if_t<IsTVectorScalarOperationValid<T, T2, OpDiv>::cond, Child&>
-  tvector_base<Child, N, T>::operator/=(const T2 s) {
-    constexpr auto one = base_type<T2>(1);
-    VectorUtilities<N>::scale(static_cast<Child&>(*this), one / s);
-    return static_cast<Child&>(*this);
-  }
 
   template <unsigned short N, typename T>
   template <typename InputIterator>
@@ -99,25 +31,25 @@ namespace tfel::math {
 
   template <unsigned short N, typename T>
   template <unsigned short I>
-  auto tvector<N, T>::slice() {
+  constexpr auto tvector<N, T>::slice() {
     return tfel::math::slice<I>(*this);
   }  // end of slice
 
   template <unsigned short N, typename T>
   template <unsigned short I, unsigned short J>
-  auto tvector<N, T>::slice() {
+  constexpr auto tvector<N, T>::slice() {
     return tfel::math::slice<I, J>(*this);
-  } // end of slice
+  }  // end of slice
 
   template <unsigned short N, typename T>
   template <unsigned short I>
-  auto tvector<N, T>::slice() const {
+  constexpr auto tvector<N, T>::slice() const {
     return tfel::math::slice<I>(*this);
   }  // end of slice
 
   template <unsigned short N, typename T>
   template <unsigned short I, unsigned short J>
-  auto tvector<N, T>::slice() const {
+  constexpr auto tvector<N, T>::slice() const {
     return tfel::math::slice<I, J>(*this);
   }  // end of slice
 
@@ -149,17 +81,17 @@ namespace tfel::math {
   }
 
   template <typename T>
-  tvector<1u, T> makeTVector1D(const T v) {
+  constexpr tvector<1u, T> makeTVector1D(const T v) {
     return {v};
   }  // end of makeTVector1D
 
   template <typename T>
-  tvector<2u, T> makeTVector2D(const T v1, const T v2) {
+  constexpr tvector<2u, T> makeTVector2D(const T v1, const T v2) {
     return {v1, v2};
   }  // end of makeTVector2D
 
   template <typename T>
-  tvector<3u, T> makeTVector3D(const T v1, const T v2, const T v3) {
+  constexpr tvector<3u, T> makeTVector3D(const T v1, const T v2, const T v3) {
     return {v1, v2, v3};
   }  // end of makeTVector3D
 
@@ -177,15 +109,15 @@ namespace tfel::math {
   }  // end of map
 
   template <typename T>
-  tvector<3u, T> cross_product(const tvector<2u, T>& v1,
-                               const tvector<2u, T>& v2) {
+  constexpr tvector<3u, T> cross_product(const tvector<2u, T>& v1,
+                                         const tvector<2u, T>& v2) {
     constexpr auto zero = T(0);
     return {zero, zero, v1[0] * v2[1] - v1[1] * v2[0]};
   }  // end of cross_product
 
   template <typename T>
-  tvector<3u, T> cross_product(const tvector<3u, T>& v1,
-                               const tvector<3u, T>& v2) {
+  constexpr tvector<3u, T> cross_product(const tvector<3u, T>& v1,
+                                         const tvector<3u, T>& v2) {
     return {v1[1] * v2[2] - v1[2] * v2[1], v1[2] * v2[0] - v1[0] * v2[2],
             v1[0] * v2[1] - v1[1] * v2[0]};
   }  // end of cross_product
@@ -229,13 +161,13 @@ namespace tfel::math {
   }
 
   template <unsigned short I, unsigned short N, typename T>
-  auto slice(tvector<N, T>& v) {
+  constexpr auto slice(tvector<N, T>& v) {
     static_assert(N > I, "invalid index");
     return map<tvector<N - I, T>, I>(v);
   }  // end of slice
 
   template <unsigned short I, unsigned short J, unsigned short N, typename T>
-  auto slice(tvector<N, T>& v) {
+  constexpr auto slice(tvector<N, T>& v) {
     static_assert(N > I, "invalid index");
     static_assert(N >= J, "invalid index");
     static_assert(J > I, "invalid index");
@@ -243,13 +175,13 @@ namespace tfel::math {
   }  // end of slice
 
   template <unsigned short I, unsigned short N, typename T>
-  auto slice(const tvector<N, T>& v) {
+  constexpr auto slice(const tvector<N, T>& v) {
     static_assert(N > I, "invalid index");
     return map<tvector<N - I, T>, I>(v);
   }  // end of slice
 
   template <unsigned short I, unsigned short J, unsigned short N, typename T>
-  auto slice(const tvector<N, T>& v) {
+  constexpr auto slice(const tvector<N, T>& v) {
     return map<const tvector<J - I, T>, I>(v);
   }  // end of slice
 

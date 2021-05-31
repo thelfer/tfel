@@ -35,16 +35,14 @@ namespace tfel::math {
    */
   template <typename ArrayPolicy1, typename ArrayPolicy2>
   struct FixedSizeArrayDerivativePolicy
-      : StandardArrayPolicyAliases<
-            result_type<typename ArrayPolicy1::value_type,
-                        typename ArrayPolicy2::value_type,
-                        OpDiv>> {
+      : StandardArrayPolicy<result_type<typename ArrayPolicy1::value_type,
+                                        typename ArrayPolicy2::value_type,
+                                        OpDiv>,
+                            FixedSizeIndexingPoliciesCartesianProduct<
+                                typename ArrayPolicy1::IndexingPolicy,
+                                typename ArrayPolicy2::IndexingPolicy>> {
     static_assert(ArrayPolicy1::IndexingPolicy::hasFixedSizes);
     static_assert(ArrayPolicy2::IndexingPolicy::hasFixedSizes);
-    //! \brief indexing policy
-    using IndexingPolicy = FixedSizeIndexingPoliciesCartesianProduct<
-        typename ArrayPolicy1::IndexingPolicy,
-        typename ArrayPolicy2::IndexingPolicy>;
   };  // end of struct FixedSizeArrayDerivativePolicy
 
   /*!

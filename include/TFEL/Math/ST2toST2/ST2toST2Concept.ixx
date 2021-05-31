@@ -14,7 +14,6 @@
 #define LIB_TFEL_MATH_ST2TOST2_CONCEPT_IXX 1
 
 #include "TFEL/Math/General/Abs.hxx"
-#include "TFEL/Math/Matrix/MatrixUtilities.hxx"
 #include "TFEL/Math/Stensor/StensorSizeToDime.hxx"
 #include "TFEL/Math/LU/LUDecomp.hxx"
 #include "TFEL/Math/LU/TinyPermutation.hxx"
@@ -99,7 +98,10 @@ namespace tfel::math {
     } catch (...) {
       return {};
     }
-    const auto v = DiagonalTermProduct<ts, real>::exe(m);
+    auto v = base_type<real>{1};
+    for (const index_type<ST2toST2Type> i = 0; i != ts; ++i) {
+      v *= m(i, i);
+    }
     return r == 1 ? v : -v;
   }  // end of det
 

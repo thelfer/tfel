@@ -13,7 +13,6 @@
 
 #include "TFEL/Math/General/EmptyRunTimeProperties.hxx"
 #include "TFEL/Math/ExpressionTemplates/Expr.hxx"
-#include "TFEL/Math/Vector/VectorUtilities.hxx"
 #include "TFEL/Math/Forward/tmatrix.hxx"
 #include "TFEL/Math/Forward/tensor.hxx"
 #include "TFEL/Math/Matrix/MatrixConcept.hxx"

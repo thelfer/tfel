@@ -263,7 +263,7 @@ namespace mfront {
                                       const bool bo) {
       constexpr auto uh =
           tfel::material::ModellingHypothesis::UNDEFINEDHYPOTHESIS;
-      const auto b = [bd, &n, &g, &bo, uh] {
+      const auto b = [bd, &n, &g, &bo] {
         for (const auto& v : bd.getBehaviourData(uh).getStateVariables()) {
           if (v.getExternalName() == g) {
             if ((!bo) && (v.name != n)) {
@@ -291,7 +291,7 @@ namespace mfront {
                                       const bool bo) {
       constexpr auto uh =
           tfel::material::ModellingHypothesis::UNDEFINEDHYPOTHESIS;
-      const auto b = [bd, &n, &e, &bo, uh] {
+      const auto b = [bd, &n, &e, &bo] {
         for (const auto& v : bd.getBehaviourData(uh).getStateVariables()) {
           if (v.getExternalName() == e) {
             if ((!bo) && (v.name != n)) {
@@ -319,7 +319,7 @@ namespace mfront {
                                       const bool bo) {
       constexpr auto uh =
           tfel::material::ModellingHypothesis::UNDEFINEDHYPOTHESIS;
-      const auto b = [bd, &n, &g, &bo, uh] {
+      const auto b = [bd, &n, &g, &bo] {
         for (const auto& v : bd.getBehaviourData(uh).getAuxiliaryStateVariables()) {
           if (v.getExternalName() == g) {
             if ((!bo) && (v.name != n)) {
@@ -348,7 +348,7 @@ namespace mfront {
                                       const bool bo) {
       constexpr auto uh =
           tfel::material::ModellingHypothesis::UNDEFINEDHYPOTHESIS;
-      const auto b = [bd, &n, &e, &bo, uh] {
+      const auto b = [bd, &n, &e, &bo] {
         for (const auto& v : bd.getBehaviourData(uh).getAuxiliaryStateVariables()) {
           if (v.getExternalName() == e) {
             if ((!bo) && (v.name != n)) {

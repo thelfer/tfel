@@ -70,8 +70,10 @@ namespace tfel::math {
 
   //! \brief a simple alias
   template <typename MathObjectType>
-  using numeric_type =
-      typename MathObjectTraits<std::decay_t<MathObjectType>>::value_type;
+  using numeric_type = std::conditional_t<
+      tfel::typetraits::isScalar<std::decay_t<MathObjectType>>(),
+      std::decay_t<MathObjectType>,
+      typename MathObjectTraits<std::decay_t<MathObjectType>>::value_type>;
   //! \brief a simple alias
   template <typename MathObjectType>
   using index_type =

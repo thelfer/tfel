@@ -317,4 +317,3 @@ int main(const int argc, const char* const* const argv) {
 #endif /* not defined(__GLIBCXX__) */
   return EXIT_SUCCESS;
 }
- 

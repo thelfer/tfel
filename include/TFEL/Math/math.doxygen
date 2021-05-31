@@ -36,7 +36,7 @@
  * The `C99` standard defines the `fpclassify`, `isnan`, `isfinite`
  * functions to query some information about double precision
  * floatting-point numbers (`double`):
- * 
+ *
  * - Following the `IEEE754` standard, the `fpclassify` categorizes a
  *   floating point number into one of the following categories: zero,
  *   subnormal, normal, infinite, NaN (Not a Number). The return value
@@ -46,10 +46,10 @@
  *   not-a-number (NaN) value.
  * - The `isfinite` function returns true if its argument falls into one
  *   of the following categories: zero, subnormal or normal.
- * 
+ *
  * The `C++11` provides a set of overload for single precision (`float`)
  * and extended precision (`long double`) floatting-point numbers.
- * 
+ *
  * Those functions are very handy to check the validity of a
  * computation. However, those functions are not compatible with the use
  * of the `-ffast-math` option of the `GNU` compiler which also implies
@@ -59,11 +59,87 @@
  * enabled, the previous functions does not behave as expected. For
  * example, `isnan` always returns false, whatever the value of its
  * argument.
- * 
+ *
  * To overcome this issue, we have introduced in `TFEL/Math` the
  * implementation of these functions provided by the `musl`
  * library. Those implementations are compatible with the `-ffast-math`
  * option of the `GNU` compiler. Those implementations are defined in the
  * `TFEL/Math/General/IEEE754.hxx` header file in the
  * `tfel::math::ieee754` namespace.
+ */
+
+/*!
+ * \page TFELMathConcepts Main concepts of the TFEL/Math library
+ *
+ * \tableofcontents
+ *
+ * \section Arrays
+ *
+ *
+ * \subsection ArrayPolicy Description of the ArrayPolicy concept
+ *
+ * A class matching the `ArrayPolicy` concept must provide:
+ *
+ * - An alias to a type called `value_type` which corresponds to the logical
+ *   type hold by the array.
+ * - An alias to a type called `const_value_type`  which corresponds to a
+ *   constant value to a an object of the logical type hold by the array.
+ * - An alias to a type called `storage_type` which is the type stored by arrays.
+ * - An alias to a type called `reference` which is the type returned by
+ *   the non-constant access operators of the array. A object of the `reference`
+ *   type must be convertible and assignable to a `value_type` object and
+ *   provide the classical assignement operators:
+ *     - `operator=(const other_type&)`
+ *     - `operator+=(const other_type&)`
+ *     - `operator-=(const other_type&)`
+ *     - `operator*=(const other_type&)`
+ *     - `operator/=(const other_type&)`
+ *
+ *   where `other_type` denotes for each operator a type for which the
+ *   considered operator in the `value_type` class is valid.
+ * - An alias to a type calle `const_reference` which is the type returned by
+ *   the constant access operators of the array. A object of the
+ *   `const_reference` type must be convertible and assignable to a `value_type`
+ *   object.
+ * - A static function called `make_const_reference` which turns a
+ *   a constant reference to a `storage_type` object into a `const_reference`
+ *   object.
+ * - A static function called `make_reference` which turns a reference to a
+ *   `storage_type` object into a `reference` object.
+ * - An alias type a type called `IndexingPolicy` which refers an indexing
+ *   policy.
+ *
+ * \subsubsection StandardArrayPolicies Standard array policies
+ *
+ * Most mathematical objects manipulated directly by the user of the library,
+ * such as `tfel::math::stensor`, `tfel::math::t2tot2`, etc..., the following
+ * statements holds:
+ *
+ * - `storage_type` is the same as `value_type`.
+ * - `reference` is the same as as `value_type&`.
+ * - `const_reference` is the same as as `const value_type&`.
+ *
+ * See the `tfel::math::StandardArrayPolicy` class for more details.
+ *
+ * \subsection IndexingPolicy Description of the IndexingPolicy concept
+ *
+ * A class matching the `IndexingPolicy` concept must provide:
+ *
+ * - An alias to a type called `size_type` to the type used to index data.
+ * - An alias to a type called `RowMajorIndexingPolicy` which can be used to
+ *   import data from raw `C` pointers.
+ * - A static member data called `arity` of type `size_type`.
+ * - A static boolean data member called `hasFixedSizes`. If this data
+ *   member is `true`, the class must be stateless, i.e. empty.
+ * - A static boolean data member called `areDataContiguous` which states if
+ *   the data are continous
+ * - A member function called `size` which takes no argument returning the
+ *   number of data values accessible by the indexing policy.  This member
+ *   function must be `constexpr` if `hasFixedSizes` is true.
+ * - A member function called `size` which takes a `size_type` argument
+ *   returning range in the given dimension. This member function must
+ *   be `constexpr` if `hasFixedSizes` is true.
+ * - A member function called `getUnderlyingArrayMinimalSize` which returns
+ *   the minimal size of an array required by the indexing policy. This member
+ *   function must be `constexpr` if `hasFixedSizes` is true.
  */

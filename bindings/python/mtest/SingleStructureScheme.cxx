@@ -205,10 +205,6 @@ static int SingleStructureScheme_getBehaviourKinematic(const mtest::SingleStruct
   return  4;
 } // end of SingleStructureScheme_getBehaviourKinematic
 
-static mtest::Behaviour& SingleStructureScheme_getBehaviour(mtest::SingleStructureScheme& s){
-  return *(s.getBehaviour());
-}
-
 void declareSingleStructureScheme();
 
 void declareSingleStructureScheme()

@@ -1,59 +1,63 @@
 /*!
  * \file   tests/Math/st2tost2/ST2toST2FromTinyMatrixView.cxx
- * \brief  
- * 
+ * \brief
+ *
  * \author Thomas Helfer
  * \date   17 oct 2008
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifdef NDEBUG
 #undef NDEBUG
 #endif /* NDEBUG */
 
-#include<cassert>
-#include<cstdlib>
-#include<iostream>
-#include"TFEL/Math/ST2toST2/ST2toST2FromTinyMatrixView.hxx"
+#include <cassert>
+#include <cstdlib>
+#include <iostream>
+#include "TFEL/Tests/Test.hxx"
+#include "TFEL/Tests/TestCase.hxx"
+#include "TFEL/Tests/TestProxy.hxx"
+#include "TFEL/Tests/TestManager.hxx"
+#include "TFEL/Math/tensor.hxx"
+#include "TFEL/Math/st2tost2.hxx"
 
-/* coverity [UNCAUGHT_EXCEPT]*/
-int main()
-{
-  using namespace std;
-  using namespace tfel::math;
-  tmatrix<6,6> m(0.);
-  ST2toST2FromTinyMatrixView<1,6,6,0,0>::type ms(m);
-  ST2toST2FromTinyMatrixView<1,6,6,3,3>::type ms2(m);
-  unsigned short i;
-  unsigned short j;
-  for(i=0;i!=6;++i){
-    m(i,i) = 1.;
-  }
+struct ST2toST2FromTinyMatrixViewTest final : public tfel::tests::TestCase {
+  ST2toST2FromTinyMatrixViewTest()
+      : tfel::tests::TestCase("TFEL/Math", "ST2toST2FromTinyMatrixView") {
+  }  // end of ST2toST2FromTinyMatrixViewTest
 
-  for(i=0;i!=3;++i){
-    for(j=0;j!=3;++j){
-      if(i==j){
-	assert(abs(ms(i,i)-1.)<1.e-14);
-      } else {
-	assert(abs(ms(i,j))<1.e-14);
+  tfel::tests::TestResult execute() override {
+    using namespace tfel::math;
+    using size_type = unsigned short;
+    auto m = tmatrix<6, 6, int>::Id();
+    auto ms = map_derivative<0, 0, stensor<1, int>, stensor<1, int>>(m);
+    auto ms2 = map_derivative<3, 3, stensor<1, int>, stensor<1, int>>(m);
+    for (size_type i = 0; i != 3; ++i) {
+      for (size_type j = 0; j != 3; ++j) {
+        if (i == j) {
+          TFEL_TESTS_ASSERT(ms(i, i) == 1);
+          TFEL_TESTS_ASSERT(ms2(i, i) == 1);
+        } else {
+          TFEL_TESTS_ASSERT(ms(i, j) == 0);
+          TFEL_TESTS_ASSERT(ms2(i, i) == 1);
+        }
       }
     }
-  }
+    return this->result;
+  }  // end of execute
+};   // end of ST2toST2FromTinyMatrixViewTest
 
-  for(i=0;i!=3;++i){
-    for(j=0;j!=3;++j){
-      if(i==j){
-	assert(abs(ms2(i,i)-1.)<1.e-14);
-      } else {
-	assert(abs(ms2(i,j))<1.e-14);
-      }
-    }
-  }
+TFEL_TESTS_GENERATE_PROXY(ST2toST2FromTinyMatrixViewTest,
+                          "ST2toST2FromTinyMatrixViewTest");
 
-  return EXIT_SUCCESS;
+int main() {
+  auto& m = tfel::tests::TestManager::getTestManager();
+  m.addTestOutput(std::cout);
+  m.addXMLTestOutput("ST2toST2FromTinyMatrixView.xml");
+  return m.execute().success() ? EXIT_SUCCESS : EXIT_FAILURE;
 }

@@ -18,58 +18,147 @@
 #include "TFEL/Metaprogramming/InvalidType.hxx"
 #include "TFEL/Math/General/ComputeObjectTag.hxx"
 #include "TFEL/Math/General/MathObjectTraits.hxx"
+#include "TFEL/Math/Array/FixedSizeArrayDerivative.hxx"
 
 namespace tfel::math {
 
   /*!
    * \brief an helper metafunction used to determine the type representing
-   * the derivative of an object of type A with respect to an object
-   * of type B.
+   * the derivative of an object of type `FunctionType` with respect to an
+   * object of type `VariableType`.
    *
-   * \tparam TagA: Tag object associated with the object of type A
-   * \tparam Tagb: Tag object associated with the object of type B
-   * \tparam A: type of the first object
-   * \tparam B: type of the second object
+   * \tparam FunctionTag: tag associated with the function type
+   * \tparam VariableTag: tag associated with the variable type
+   * \tparam FunctionType: function type
+   * \tparam VariableType: variable type
    *
-   * This helper metafunction must be specialised by every code.  
+   * This helper metafunction must be specialised by every code.
    */
-  template <typename TagA, typename TagB, typename A, typename B>
+  template <typename FunctionTag,
+            typename VariableTag,
+            typename FunctionType,
+            typename VariableType>
   struct DerivativeTypeDispatcher {
+    //! \brief a simple alias
+    using FunctionArrayPolicy = typename FunctionType::array_policy;
+    //! \brief a simple alias
+    using VariableArrayPolicy = typename VariableType::array_policy;
+    //! \brief a boolean stating if both objects have fixed sizes
+    static constexpr auto haveFixedSizes =
+        (hasArrayPolicyFixedSizes<FunctionArrayPolicy>() &&
+         hasArrayPolicyFixedSizes<VariableArrayPolicy>());
+    //! \brief result
+    using type =
+        std::conditional_t<haveFixedSizes,
+                           FixedSizeArrayDerivative<FunctionType, VariableType>,
+                           tfel::meta::InvalidType>;
+  };  // end of struct DerivativeTypeDispatcher
+
+  /*!
+   * \brief partial specialisation if the first object does not have a tag.
+   * \tparam VariableTag: tag associated with the variable type
+   * \tparam FunctionType: function type
+   * \tparam VariableType: variable type
+   */
+  template <typename VariableTag, typename FunctionType, typename VariableType>
+  struct DerivativeTypeDispatcher<tfel::meta::InvalidType,
+                                  VariableTag,
+                                  FunctionType,
+                                  VariableType> {
+    //! \brief result
+    using type = tfel::meta::InvalidType;
+  };  // end of struct DerivativeTypeDispatcher
+
+  /*!
+   * \brief partial specialisation if the second object does not have a tag.
+   * \tparam FunctionTag: tag associated with the function type
+   * \tparam FunctionType: function type
+   * \tparam VariableType: variable type
+   */
+  template <typename FunctionTag, typename FunctionType, typename VariableType>
+  struct DerivativeTypeDispatcher<FunctionTag,
+                                  tfel::meta::InvalidType,
+                                  FunctionType,
+                                  VariableType> {
+    //! \brief result
+    using type = tfel::meta::InvalidType;
+  };  // end of struct DerivativeTypeDispatcher
+
+  /*!
+   * \brief partial specialisation if none o the two objects have a tag.
+   * \tparam FunctionType: function type
+   * \tparam VariableType: variable type
+   */
+  template <typename FunctionType, typename VariableType>
+  struct DerivativeTypeDispatcher<tfel::meta::InvalidType,
+                                  tfel::meta::InvalidType,
+                                  FunctionType,
+                                  VariableType> {
     //! \brief result
     using type = tfel::meta::InvalidType;
   };  // end of struct DerivativeTypeDispatcher
 
   /*!
    * \brief a meta function returning the type of the derivative of
-   * a variable of type T1 with respect to a variable of type T2
-   * \tparam T1: type
-   * \tparam T2: type
+   * a variable of type `FunctionType` with respect to a variable of type
+   * `VariableType`.
+   * \tparam is_function_type_scalar: boolean stating if `FunctionType` is a
+   * scalar
+   * \tparam is_variable_type_scalar: boolean stating if `VariableType` is a
+   * scalar
+   * \tparam FunctionType: function type
+   * \tparam VariableType: variable type
    */
-  template <typename T1, typename T2>
+  template <bool is_function_type_scalar,
+            bool is_variable_type_scalar,
+            typename FunctionType,
+            typename VariableType>
+  struct DerivativeTypeImplementation {
+    //! \brief in none is scalar, use the derivative type dispatcher
+    using type = typename tfel::math::DerivativeTypeDispatcher<
+        typename ComputeObjectTag<FunctionType>::type,
+        typename ComputeObjectTag<VariableType>::type,
+        FunctionType,
+        VariableType>::type;
+  };  // end of DerivativeTypeImplementation
+
+  /*!
+   * \brief partial specialisation of both types are scalar
+   * \tparam FunctionType: function type
+   * \tparam VariableType: variable type
+   */
+  template <typename FunctionType, typename VariableType>
+  struct DerivativeTypeImplementation<true, true, FunctionType, VariableType> {
+    //! \brief the result
+    using type = result_type<FunctionType, VariableType, OpDiv>;
+  };
+
+  /*!
+   * \brief a meta function returning the type of the derivative of
+   * a variable of type `FunctionType` with respect to a variable of type
+   * `VariableType`.
+   * \tparam FunctionType: function type
+   * \tparam VariableType: variable type
+   */
+  template <typename FunctionType, typename VariableType>
   struct DerivativeType {
-    //! \brief boolean stating if both variables are scalar
-    static constexpr auto are_scalars = isScalar<T1>() && isScalar<T2>();
-    //! \brief the result of the derivative type dispatcher
-    using derivative_type_dispatcher_result =
-        typename tfel::math::DerivativeTypeDispatcher<
-            typename ComputeObjectTag<T1>::type,
-            typename ComputeObjectTag<T2>::type,
-            T1,
-            T2>::type;
-    //! the result
-    using type = std::conditional_t<are_scalars,
-                                    result_type<T1, T2, OpDiv>,
-                                    derivative_type_dispatcher_result>;
+    //! \brief the result
+    using type = typename DerivativeTypeImplementation<isScalar<FunctionType>(),
+                                                       isScalar<VariableType>(),
+                                                       FunctionType,
+                                                       VariableType>::type;
   };  // end of DerivativeType
 
   /*!
    * \brief a simple alias giving the type representing the derivative of an
-   * object of type T1 with respect to an object of type T2.
-   * \param[in] T1: type of the first object
-   * \param[in] T2: type of the second object
+   * object of type `FunctionType` with respect to an object of type
+   * `VariableType`.
+   * \param[in] FunctionType: function type
+   * \param[in] VariableType: variable type
    */
-  template <typename T1, typename T2>
-  using derivative_type = typename DerivativeType<T1, T2>::type;
+  template <typename FunctionType, typename VariableType>
+  using derivative_type =
+      typename DerivativeType<FunctionType, VariableType>::type;
 
 }  // end of namespace tfel::math
 

@@ -26,7 +26,6 @@
 #include "TFEL/Math/General/EmptyRunTimeProperties.hxx"
 #include "TFEL/Math/Array/GenericFixedSizeArray.hxx"
 #include "TFEL/Math/Array/View.hxx"
-#include "TFEL/Math/Vector/VectorUtilities.hxx"
 #include "TFEL/Math/Tensor/TensorSizeToDime.hxx"
 #include "TFEL/Math/Tensor/TensorConcept.hxx"
 #include "TFEL/Math/Tensor/TensorConceptOperations.hxx"
@@ -75,69 +74,6 @@ namespace tfel::math {
     using type = tensor<getSpaceDimension<TensorType>(),
                         derivative_type<ScalarType, numeric_type<TensorType>>>;
   };  // end of struct DerivativeTypeDispatcher
-
-  /*!
-   * \brief a base for tensor or classes acting like tensor.
-   * \param Child : child class
-   * \param N     : spatial dimension
-   * \param T     : numerical type
-   */
-  template <typename Child>
-  struct tensor_base {
-    /*!
-     * Assignement operator
-     */
-    template <typename TensorType>
-    TFEL_MATH_INLINE std::enable_if_t<
-        implementsTensorConcept<TensorType>() &&
-            getSpaceDimension<Child>() == getSpaceDimension<TensorType>() &&
-            isAssignableTo<numeric_type<TensorType>, numeric_type<Child>>(),
-        Child&>
-    operator=(const TensorType&);
-    /*!
-     * Assignement operator
-     */
-    template <typename T>
-    TFEL_MATH_INLINE
-        std::enable_if_t<isAssignableTo<T, numeric_type<Child>>(), Child&>
-        operator=(const std::initializer_list<T>&);
-    //! Assignement operator
-    template <typename TensorType>
-    TFEL_MATH_INLINE std::enable_if_t<
-        implementsTensorConcept<TensorType>() &&
-            getSpaceDimension<Child>() == getSpaceDimension<TensorType>() &&
-            isAssignableTo<numeric_type<TensorType>, numeric_type<Child>>(),
-        Child&>
-    operator+=(const TensorType&);
-    //! Assignement operator
-    template <typename TensorType>
-    TFEL_MATH_INLINE std::enable_if_t<
-        implementsTensorConcept<TensorType>() &&
-            getSpaceDimension<Child>() == getSpaceDimension<TensorType>() &&
-            isAssignableTo<numeric_type<TensorType>, numeric_type<Child>>(),
-        Child&>
-    operator-=(const TensorType&);
-    /*!
-     * operator*=
-     */
-    template <typename T2>
-    TFEL_MATH_INLINE std::enable_if_t<
-        isScalar<T2>() &&
-            std::is_same<result_type<numeric_type<Child>, T2, OpMult>,
-                         numeric_type<Child>>::value,
-        Child&>
-    operator*=(const T2);
-    /*!
-     * operator/=
-     */
-    template <typename T2>
-    TFEL_MATH_INLINE std::enable_if_t<
-        isScalar<T2>() &&
-            std::is_same<result_type<numeric_type<Child>, T2, OpDiv>,
-                         numeric_type<Child>>::value,
-        Child&>
-    operator/=(const T2);
-  };  // end of struct tensor_base
 
   template <unsigned short N, typename ValueType>
   struct tensor

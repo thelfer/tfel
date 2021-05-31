@@ -21,30 +21,6 @@
 namespace tfel::math {
 
   /*!
-   * `IndexingPolicy` concept
-   *
-   * A class matching the `IndexingPolicy` concept must provide:
-   *
-   * - An alias called `size_type` to the type used to index data.
-   * - An alias called `RowMajorIndexingPolicy` which can be used to import data
-   *   from raw `C` pointers.
-   * - A static member data called `arity` of type `size_type`.
-   * - A static boolean data member called `hasFixedSizes`. If this data
-   *   member is `true`, the class must be stateless, i.e. empty.
-   * - A static boolean data member called `areDataContiguous` which states if
-   *   the data are continous
-   * - A member function called `size` which takes no argument returning the
-   *   number of data values accessible by the indexing policy.  This member
-   *   function must be `constexpr` if `hasFixedSizes` is true.
-   * - A member function called `size` which takes a `size_type` argument
-   *   returning range in the given dimension. This member function must
-   *   be `constexpr` if `hasFixedSizes` is true.
-   * - A member function called `getUnderlyingArrayMinimalSize` which returns
-   *   the minimal size of an array required by the indexing policy. This member
-   *   function must be `constexpr` if `hasFixedSizes` is true.
-   */
-
-  /*!
    * \brief a simple function to check that the type of the indices are
    * compatible with the given indexing policy
    * \tparam IndexingPolicy: the indexing policy

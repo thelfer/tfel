@@ -66,7 +66,7 @@ namespace mtest {
              "ansys behaviours only provide the "
              "consistent tangent operator");
     const AnsysInt nprops = s.mprops1.size();
-    const AnsysInt ndirect = [&h, &throw_if] {
+    const AnsysInt ndirect = [&h] {
       if ((h == ModellingHypothesis::AXISYMMETRICAL) ||
           (h == ModellingHypothesis::PLANESTRAIN) ||
           (h == ModellingHypothesis::PLANESTRESS)) {
@@ -74,9 +74,9 @@ namespace mtest {
       } else if (h == ModellingHypothesis::TRIDIMENSIONAL) {
         return 3;
       }
-      throw_if(true, "unsupported hypothesis");
+      tfel::raise("unsupported hypothesis");
     }();
-    const AnsysInt nshear = [&h, &throw_if] {
+    const AnsysInt nshear = [&h] {
       if ((h == ModellingHypothesis::AXISYMMETRICAL) ||
           (h == ModellingHypothesis::PLANESTRAIN) ||
           (h == ModellingHypothesis::PLANESTRESS)) {
@@ -84,9 +84,9 @@ namespace mtest {
       } else if (h == ModellingHypothesis::TRIDIMENSIONAL) {
         return 3;
       }
-      throw_if(true, "unsupported hypothesis");
+      tfel::raise("unsupported hypothesis");
     }();
-    const AnsysInt ntens = [&h, &throw_if] {
+    const AnsysInt ntens = [&h] {
       if ((h == ModellingHypothesis::AXISYMMETRICAL) ||
           (h == ModellingHypothesis::PLANESTRAIN) ||
           (h == ModellingHypothesis::PLANESTRESS)) {
@@ -94,7 +94,7 @@ namespace mtest {
       } else if (h == ModellingHypothesis::TRIDIMENSIONAL) {
         return 6;
       }
-      throw_if(true, "unsupported hypothesis");
+      tfel::raise("unsupported hypothesis");
     }();
     std::fill(wk.D.begin(), wk.D.end(), real(0));
     // using a local copy of material properties to handle the
@@ -122,7 +122,7 @@ namespace mtest {
         wk.mps[o + 4] = s.r(1, 1);
         wk.mps[o + 5] = s.r(2, 1);
       } else {
-        throw_if(true, "unsupported hypothesis (" +
+        tfel::raise("unsupported hypothesis (" +
                            ModellingHypothesis::toString(h) + ")");
       }
     }
@@ -276,7 +276,7 @@ namespace mtest {
               stensor<2u, double>(&s.s1[0]));
       std::copy(ds.begin(), ds.end(), Kt.begin());
     } else {
-      throw_if(true, "unsupported modelling hypothesis");
+      tfel::raise("unsupported modelling hypothesis");
     }
     return {true, 1};
   }

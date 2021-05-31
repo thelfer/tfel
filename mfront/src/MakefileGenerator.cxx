@@ -171,7 +171,6 @@ namespace mfront {
       }
     }
     tfel::raise("getTargetName: no target associated with '" + n + "'");
-    return "";
   }  // end of getTargetName
 
   void generateMakeFile(const TargetsDescription& t,

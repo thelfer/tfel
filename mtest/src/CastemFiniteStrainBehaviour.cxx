@@ -246,36 +246,29 @@ namespace mtest {
     const auto h = this->usesGenericPlaneStressAlgorithm
                        ? ModellingHypothesis::PLANESTRESS
                        : this->getHypothesis();
-    CastemInt ntens, ndi;
+    const auto [ndi, ntens] = [h]() -> std::tuple<CastemInt, CastemInt> {
+      if (h == ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN) {
+        return {14, 3};
+      } else if (h == ModellingHypothesis::AXISYMMETRICAL) {
+        return {0, 4};
+      } else if (h == ModellingHypothesis::PLANESTRESS) {
+        return {-2, 4};
+      } else if (h == ModellingHypothesis::PLANESTRAIN) {
+        return {-1, 4};
+      } else if (h == ModellingHypothesis::GENERALISEDPLANESTRAIN) {
+        return {-3, 4};
+      } else if (h == ModellingHypothesis::TRIDIMENSIONAL) {
+        return {2, 6};
+      } else {
+        tfel::raise(
+            "CastemFiniteStrainBehaviour::integrate: "
+            "unsupported hypothesis");
+      }
+    }();
+    //
     this->buildMaterialProperties(wk, s);
     const auto nprops = static_cast<CastemInt>(wk.mps.size());
-    CastemInt nstatv;
-    if (h == ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN) {
-      ndi = 14;
-      ntens = 3;
-    } else if (h == ModellingHypothesis::AXISYMMETRICAL) {
-      ndi = 0;
-      ntens = 4;
-    } else if (h == ModellingHypothesis::PLANESTRESS) {
-      ndi = -2;
-      ntens = 4;
-    } else if (h == ModellingHypothesis::PLANESTRAIN) {
-      ndi = -1;
-      ntens = 4;
-    } else if (h == ModellingHypothesis::GENERALISEDPLANESTRAIN) {
-      ndi = -3;
-      ntens = 4;
-    } else if (h == ModellingHypothesis::TRIDIMENSIONAL) {
-      ndi = 2;
-      ntens = 6;
-    } else {
-      tfel::raise(
-          "CastemFiniteStrainBehaviour::integrate: "
-          "unsupported hypothesis");
-    }
-    tfel::raise_if((wk.D.getNbRows() != ntens) || (wk.D.getNbCols() != ntens),
-                   "CastemFiniteStrainBehaviour::integrate: "
-                   "the memory has not been allocated correctly");
+    //
     tfel::raise_if(((s.iv0.size() == 0) && (wk.ivs.size() != 1u)) ||
                        ((s.iv0.size() != 0) && (s.iv0.size() != wk.ivs.size())),
                    "CastemFiniteStrainBehaviour::integrate: "
@@ -283,7 +276,14 @@ namespace mtest {
     if (s.iv0.size() != 0) {
       std::copy(s.iv0.begin(), s.iv0.end(), wk.ivs.begin());
     }
-    nstatv = static_cast<CastemInt>(wk.ivs.size());
+    const auto nstatv = static_cast<CastemInt>(wk.ivs.size());
+    //
+    tfel::raise_if((wk.D.getNbRows() != ntens) || (wk.D.getNbCols() != ntens),
+                   "CastemFiniteStrainBehaviour::integrate: "
+                   "the memory has not been allocated correctly");
+    std::fill(wk.D.begin(), wk.D.end(), CastemReal(0));
+    // choosing the type of stiffness matrix
+    StandardBehaviourBase::initializeTangentOperator(wk.D, ktype, true);
     // rotation matrix
     tmatrix<3u, 3u, real> drot = transpose(s.r);
     CastemInt kinc(1);
@@ -349,9 +349,6 @@ namespace mtest {
          i != static_cast<unsigned short>(ntens); ++i) {
       s.s1(i) /= sqrt2;
     }
-    std::fill(wk.D.begin(), wk.D.end(), CastemReal(0));
-    // choosing the type of stiffness matrix
-    StandardBehaviourBase::initializeTangentOperator(wk.D, ktype, true);
     CastemReal ndt = std::numeric_limits<CastemReal>::max();
     const auto name = this->getBehaviourNameForUMATFunctionCall();
     (this->fct)(&(s.s1(0)), &(wk.ivs(0)), &(wk.D(0, 0)), nullptr, nullptr,

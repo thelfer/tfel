@@ -17,91 +17,257 @@
 
 #include "TFEL/FSAlgorithm/FSAlgorithm.hxx"
 #include "TFEL/Math/General/AbsCompare.hxx"
-#include "TFEL/Math/Matrix/MatrixUtilities.hxx"
 
 namespace tfel::math {
 
-  template <typename Child, unsigned short N, unsigned short M, typename T>
-  template <typename T2, typename Operation>
-  std::enable_if_t<isAssignableTo<T2, T>(), Child&>
-  tmatrix_base<Child, N, M, T>::operator=(
-      const Expr<tmatrix<N, M, T2>, Operation>& src) {
-    auto& child = static_cast<Child&>(*this);
-    matrix_utilities<N, M, M>::copy(src, child);
-    return child;
-  }
+  namespace internals {
 
-  template <typename Child, unsigned short N, unsigned short M, typename T>
-  template <typename T2>
-  std::enable_if_t<isAssignableTo<T2, T>(), Child&>
-  tmatrix_base<Child, N, M, T>::operator=(const tmatrix<N, M, T2>& src) {
-    auto& child = static_cast<Child&>(*this);
-    matrix_utilities<N, M, M>::copy(src, child);
-    return child;
-  }
+    /*!
+     * \brief an helper structure to build a view on derivative from a tiny
+     * matrix.
+     * \tparam is_function_type_scalar: boolean stating if `FunctionType` is a
+     * scalar.
+     * \tparam is_variable_type_scalar: boolean stating if `VariableType` is a
+     * scalar.
+     * \tparam FunctionType: function type.
+     * \tparam VariableType: variable type.
+     */
+    template <bool is_function_type_scalar,
+              bool is_variable_type_scalar,
+              typename FunctionType,
+              typename VariableType>
+    struct DerivativeViewFromTinyMatrixImplementation {
+      static_assert(
+          hasArrayPolicyFixedSizes<typename FunctionType::array_policy>(),
+          "invalid function type");
+      static_assert(
+          hasArrayPolicyFixedSizes<typename VariableType::array_policy>(),
+          "invalid variable type");
+      //! \brief a simple alias
+      using derivative_numeric_type = tfel::math::numeric_type<
+          tfel::math::derivative_type<FunctionType, VariableType>>;
+      //! \brief a simple alias
+      using size_type = unsigned short;
+      /*!
+       * \tparam I: row index.
+       * \tparam J: column index.
+       * \tparam N: number of rows of the matrix.
+       * \tparam M: number of columns of the matrix.
+       */
+      template <size_type I, size_type J, size_type N, size_type M>
+      static constexpr derivative_view_from_tiny_matrix<M,
+                                                        FunctionType,
+                                                        VariableType>
+      exe(tfel::math::tmatrix<N, M, derivative_numeric_type>& m) {
+        constexpr auto fsize =
+            getArrayPolicySize<typename FunctionType::array_policy>();
+        constexpr auto vsize =
+            getArrayPolicySize<typename VariableType::array_policy>();
+        static_assert(N >= I + fsize, "invalid row index");
+        static_assert(M >= J + vsize, "invalid column index");
+        return derivative_view_from_tiny_matrix<M, FunctionType, VariableType>{
+            &m(I, J)};
+      }  // end of exe
+      /*!
+       * \tparam N: number of rows of the matrix.
+       * \tparam M: number of columns of the matrix.
+       * \param[in] i: row index.
+       * \param[in] j: column index.
+       */
+      template <size_type N, size_type M>
+      static constexpr derivative_view_from_tiny_matrix<M,
+                                                        FunctionType,
+                                                        VariableType>
+      exe(tfel::math::tmatrix<N, M, derivative_numeric_type>& m,
+          const size_type i,
+          const size_type j) {
+        return derivative_view_from_tiny_matrix<M, FunctionType, VariableType>{
+            &m(i, j)};
+      }  // end of exe
+    };   // end of struct DerivativeViewFromTinyMatrixImplementation
 
-  template <typename Child, unsigned short N, unsigned short M, typename T>
-  template <typename T2, typename Operation>
-  std::enable_if_t<isAssignableTo<T2, T>(), Child&>
-  tmatrix_base<Child, N, M, T>::operator+=(
-      const Expr<tmatrix<N, M, T2>, Operation>& src) {
-    auto& child = static_cast<Child&>(*this);
-    matrix_utilities<N, M, M>::plusEqual(child, src);
-    return child;
-  }
+    /*!
+     * \brief partial specialization if the function type is a scalar.
+     * \tparam FunctionType: function type.
+     * \tparam VariableType: variable type.
+     */
+    template <typename FunctionType, typename VariableType>
+    struct DerivativeViewFromTinyMatrixImplementation<true,
+                                                      false,
+                                                      FunctionType,
+                                                      VariableType> {
+      static_assert(
+          hasArrayPolicyFixedSizes<typename VariableType::array_policy>(),
+          "invalid variable type");
+      //! \brief a simple alias
+      using derivative_numeric_type = tfel::math::numeric_type<
+          tfel::math::derivative_type<FunctionType, VariableType>>;
+      //! \brief a simple alias
+      using size_type = unsigned short;
+      /*!
+       * \tparam I: row index.
+       * \tparam J: column index.
+       * \tparam N: number of rows of the matrix.
+       * \tparam M: number of columns of the matrix.
+       */
+      template <size_type I, size_type J, size_type N, size_type M>
+      static constexpr derivative_view_from_tiny_matrix<M,
+                                                        FunctionType,
+                                                        VariableType>
+      exe(tfel::math::tmatrix<N, M, derivative_numeric_type>& m) {
+        constexpr auto vsize =
+            getArrayPolicySize<typename VariableType::array_policy>();
+        static_assert(N > I, "invalid row index");
+        static_assert(M >= J + vsize, "invalid column index");
+        return derivative_view_from_tiny_matrix<M, FunctionType, VariableType>{
+            &m(I, J)};
+      }  // end of exe
+      /*!
+       * \tparam N: number of rows of the matrix.
+       * \tparam M: number of columns of the matrix.
+       * \param[in] i: row index.
+       * \param[in] j: column index.
+       */
+      template <size_type N, size_type M>
+      static constexpr derivative_view_from_tiny_matrix<M,
+                                                        FunctionType,
+                                                        VariableType>
+      exe(tfel::math::tmatrix<N, M, derivative_numeric_type>& m,
+          const size_type i,
+          const size_type j) {
+        return derivative_view_from_tiny_matrix<M, FunctionType, VariableType>{
+            &m(i, j)};
+      }  // end of exe
+    };   // end of struct DerivativeViewFromTinyMatrixImplementation
 
-  template <typename Child, unsigned short N, unsigned short M, typename T>
-  template <typename T2>
-  std::enable_if_t<isAssignableTo<T2, T>(), Child&>
-  tmatrix_base<Child, N, M, T>::operator+=(const tmatrix<N, M, T2>& src) {
-    auto& child = static_cast<Child&>(*this);
-    matrix_utilities<N, M, M>::plusEqual(child, src);
-    return child;
-  }
+    /*!
+     * \brief partial specialization if the variable type is a scalar.
+     * \tparam FunctionType: function type.
+     * \tparam VariableType: variable type.
+     */
+    template <typename FunctionType, typename VariableType>
+    struct DerivativeViewFromTinyMatrixImplementation<false,
+                                                      true,
+                                                      FunctionType,
+                                                      VariableType> {
+      static_assert(
+          hasArrayPolicyFixedSizes<typename FunctionType::array_policy>(),
+          "invalid function type");
+      //! \brief a simple alias
+      using derivative_numeric_type = tfel::math::numeric_type<
+          tfel::math::derivative_type<FunctionType, VariableType>>;
+      //! \brief a simple alias
+      using size_type = unsigned short;
+      /*!
+       * \tparam I: row index.
+       * \tparam J: column index.
+       * \tparam N: number of rows of the matrix.
+       * \tparam M: number of columns of the matrix.
+       */
+      template <size_type I, size_type J, size_type N, size_type M>
+      static constexpr derivative_view_from_tiny_matrix<M,
+                                                        FunctionType,
+                                                        VariableType>
+      exe(tfel::math::tmatrix<N, M, derivative_numeric_type>& m) {
+        constexpr auto fsize =
+            getArrayPolicySize<typename FunctionType::array_policy>();
+        static_assert(N >= I + fsize, "invalid row index");
+        static_assert(M > J, "invalid column index");
+        return derivative_view_from_tiny_matrix<M, FunctionType, VariableType>{
+            &m(I, J)};
+      }  // end of exe
+      /*!
+       * \tparam N: number of rows of the matrix.
+       * \tparam M: number of columns of the matrix.
+       * \param[in] i: row index.
+       * \param[in] j: column index.
+       */
+      template <size_type N, size_type M>
+      static constexpr derivative_view_from_tiny_matrix<M,
+                                                        FunctionType,
+                                                        VariableType>
+      exe(tfel::math::tmatrix<N, M, derivative_numeric_type>& m,
+          const size_type i,
+          const size_type j) {
+        return derivative_view_from_tiny_matrix<M, FunctionType, VariableType>{
+            &m(i, j)};
+      }  // end of exe
+    };   // end of struct DerivativeViewFromTinyMatrixImplementation
 
-  template <typename Child, unsigned short N, unsigned short M, typename T>
-  template <typename T2, typename Operation>
-  std::enable_if_t<isAssignableTo<T2, T>(), Child&>
-  tmatrix_base<Child, N, M, T>::operator-=(
-      const Expr<tmatrix<N, M, T2>, Operation>& src) {
-    auto& child = static_cast<Child&>(*this);
-    matrix_utilities<N, M, M>::minusEqual(child, src);
-    return child;
-  }
+    /*!
+     * \brief partial specialization if the function type and the variable type
+     * are scalars.
+     * \tparam FunctionType: function type.
+     * \tparam VariableType: variable type.
+     */
+    template <typename FunctionType, typename VariableType>
+    struct DerivativeViewFromTinyMatrixImplementation<true,
+                                                      true,
+                                                      FunctionType,
+                                                      VariableType> {
+      //! \brief a simple alias
+      using derivative_numeric_type = tfel::math::numeric_type<
+          tfel::math::derivative_type<FunctionType, VariableType>>;
+      //! \brief a simple alias
+      using size_type = unsigned short;
+      /*!
+       * \tparam I: row index.
+       * \tparam J: column index.
+       * \tparam N: number of rows of the matrix.
+       * \tparam M: number of columns of the matrix.
+       */
+      template <size_type I, size_type J, size_type N, size_type M>
+      static constexpr derivative_view_from_tiny_matrix<M,
+                                                        FunctionType,
+                                                        VariableType>
+      exe(tfel::math::tmatrix<N, M, derivative_numeric_type>& m) {
+        static_assert(I < N, "invalid row index");
+        static_assert(J < M, "invalid column index");
+        return m(I, J);
+      }  // end of exe
+      /*!
+       * \tparam N: number of rows of the matrix.
+       * \tparam M: number of columns of the matrix.
+       * \param[in] i: row index.
+       * \param[in] j: column index.
+       */
+      template <size_type N, size_type M>
+      static constexpr derivative_view_from_tiny_matrix<M,
+                                                        FunctionType,
+                                                        VariableType>
+      exe(tfel::math::tmatrix<N, M, derivative_numeric_type>& m,
+          const size_type i,
+          const size_type j) {
+        return m(i, j);
+      }  // end of exe
+    };   // end of struct DerivativeViewFromTinyMatrixImplementation
 
-  template <typename Child, unsigned short N, unsigned short M, typename T>
-  template <typename T2>
-  std::enable_if_t<isAssignableTo<T2, T>(), Child&>
-  tmatrix_base<Child, N, M, T>::operator-=(const tmatrix<N, M, T2>& src) {
-    auto& child = static_cast<Child&>(*this);
-    matrix_utilities<N, M, M>::minusEqual(child, src);
-    return child;
-  }
+    template <typename Matrix>
+    constexpr std::enable_if_t<
+        implementsMatrixConcept<Matrix>(),
+        typename ComputeUnaryResult<numeric_type<Matrix>, Power<3>>::Result>
+    det2(const Matrix& m) {
+      return m(0, 0) * m(1, 1) - m(1, 0) * m(0, 1);
+    }
 
-  // *= operator
-  template <typename Child, unsigned short N, unsigned short M, typename T>
-  template <typename T2>
-  std::enable_if_t<isScalar<T2>() &&
-                       std::is_same<result_type<T, T2, OpMult>, T>::value,
-                   Child&>
-  tmatrix_base<Child, N, M, T>::operator*=(const T2 s) {
-    auto& child = static_cast<Child&>(*this);
-    matrix_utilities<N, M, M>::multByScalar(child, s);
-    return child;
-  }
+    template <typename Matrix>
+    constexpr std::enable_if_t<
+        implementsMatrixConcept<Matrix>(),
+        typename ComputeUnaryResult<numeric_type<Matrix>, Power<3>>::Result>
+    det3(const Matrix& m) {
+      const auto a = m(0, 0);
+      const auto b = m(0, 1);
+      const auto c = m(0, 2);
+      const auto d = m(1, 0);
+      const auto e = m(1, 1);
+      const auto f = m(1, 2);
+      const auto g = m(2, 0);
+      const auto h = m(2, 1);
+      const auto i = m(2, 2);
+      return a * (e * i - f * h) + b * (f * g - d * i) + c * (d * h - e * g);
+    }
 
-  // /= operator
-  template <typename Child, unsigned short N, unsigned short M, typename T>
-  template <typename T2>
-  std::enable_if_t<isScalar<T2>() &&
-                       std::is_same<result_type<T, T2, OpMult>, T>::value,
-                   Child&>
-  tmatrix_base<Child, N, M, T>::operator/=(const T2 s) {
-    auto& child = static_cast<Child&>(*this);
-    matrix_utilities<N, M, M>::multByScalar(
-        child, (static_cast<base_type<T2>>(1u)) / s);
-    return child;
-  }
+  }  // namespace internals
 
   template <unsigned short N, unsigned short M, typename T>
   constexpr unsigned short tmatrix<N, M, T>::getNbCols() const {
@@ -114,12 +280,12 @@ namespace tfel::math {
   }
 
   template <unsigned short N, unsigned short M, typename T>
-  T tmatrix<N, M, T>::max() const {
+  constexpr auto tmatrix<N, M, T>::max() const {
     return *tfel::fsalgo::max_element<this->size()>::exe(this->v);
   }
 
   template <unsigned short N, unsigned short M, typename T>
-  T tmatrix<N, M, T>::abs_max() const {
+  constexpr auto tmatrix<N, M, T>::abs_max() const {
     return std::abs(*tfel::fsalgo::max_element<this->size()>::exe(
         this->v, absCompare<T>()));
   }
@@ -131,14 +297,13 @@ namespace tfel::math {
   }
 
   template <unsigned short N, unsigned short M, typename T>
-  tmatrix<N, N, T> tmatrix<N, M, T>::Id() {
+  constexpr auto tmatrix<N, M, T>::Id() {
     static_assert(N == M);
-    tmatrix<N, N, T> m2(static_cast<T>(0.));
-    unsigned short i;
-    for (i = 0; i < N; ++i) {
-      m2(i, i) = static_cast<T>(1.);
+    tmatrix<N, N, T> id(static_cast<T>(0.));
+    for (typename tmatrix<N, N, T>::size_type i = 0; i < N; ++i) {
+      id(i, i) = static_cast<T>(1.);
     }
-    return m2;
+    return id;
   }
 
   template <unsigned short N, unsigned short M, typename T>
@@ -233,8 +398,8 @@ namespace tfel::math {
     static_assert(M >= J + C, "invalid number of columns for the submatrix");
     using ViewIndexingPolicy =
         FixedSizeRowMajorMatrixIndexingPolicy<unsigned short, R, C, M>;
-    return map<tmatrix<R,C,T>,ViewIndexingPolicy>(&(this->operator()(I, J)));
-  } // end of submatrix_view
+    return map<tmatrix<R, C, T>, ViewIndexingPolicy>(&(this->operator()(I, J)));
+  }  // end of submatrix_view
 
   template <unsigned short N, unsigned short M, typename T>
   template <unsigned short I,
@@ -250,7 +415,7 @@ namespace tfel::math {
         FixedSizeRowMajorMatrixIndexingPolicy<unsigned short, R, C, M>;
     return map<const tmatrix<R, C, T>, ViewIndexingPolicy>(
         &(this->operator()(I, J)));
-  } // end of submatrix_view
+  }  // end of submatrix_view
 
   // template<unsigned short N,unsigned short M,typename T>
   template <unsigned short N, unsigned short M, typename T>
@@ -264,55 +429,67 @@ namespace tfel::math {
     return tm;
   }
 
-  namespace internals {
-
-    template <typename Matrix>
-    TFEL_MATH_INLINE std::enable_if_t<
-        implementsMatrixConcept<Matrix>(),
-        typename ComputeUnaryResult<numeric_type<Matrix>, Power<3>>::Result>
-    det2(const Matrix& m) {
-      return m(0, 0) * m(1, 1) - m(1, 0) * m(0, 1);
-    }
-
-    template <typename Matrix>
-    TFEL_MATH_INLINE std::enable_if_t<
-        implementsMatrixConcept<Matrix>(),
-        typename ComputeUnaryResult<numeric_type<Matrix>, Power<3>>::Result>
-    det3(const Matrix& m) {
-      const auto a = m(0, 0);
-      const auto b = m(0, 1);
-      const auto c = m(0, 2);
-      const auto d = m(1, 0);
-      const auto e = m(1, 1);
-      const auto f = m(1, 2);
-      const auto g = m(2, 0);
-      const auto h = m(2, 1);
-      const auto i = m(2, 2);
-      return a * (e * i - f * h) + b * (f * g - d * i) + c * (d * h - e * g);
-    }
-
-  }  // namespace internals
-
   template <typename T, typename Operation>
-  auto det(const Expr<tmatrix<2, 2, T>, Operation>& m) {
+  constexpr auto det(const Expr<tmatrix<2, 2, T>, Operation>& m) {
     return tfel::math::internals::det2(m);
   }
 
   template <typename T>
-  auto det(const tmatrix<2, 2, T>& m) {
+  constexpr auto det(const tmatrix<2, 2, T>& m) {
     return tfel::math::internals::det2(m);
   }
 
   template <typename T, typename Operation>
-  auto det(const Expr<tmatrix<3, 3, T>, Operation>& m) {
+  constexpr auto det(const Expr<tmatrix<3, 3, T>, Operation>& m) {
     return tfel::math::internals::det3(m);
   }
 
   template <typename T>
-  auto det(const tmatrix<3, 3, T>& m) {
+  constexpr auto det(const tmatrix<3, 3, T>& m) {
     return tfel::math::internals::det3(m);
   }
 
-}  // end of namespace tfel::math
+  template <unsigned short I,
+            unsigned short J,
+            typename FunctionType,
+            typename VariableType,
+            unsigned short N,
+            unsigned short M>
+  constexpr derivative_view_from_tiny_matrix<M, FunctionType, VariableType>
+  map_derivative(
+      tmatrix<N, M, numeric_type<derivative_type<FunctionType, VariableType>>>&
+          m) {
+    using Implementation =
+        tfel::math::internals::DerivativeViewFromTinyMatrixImplementation<
+            isScalar<FunctionType>(), isScalar<VariableType>(), FunctionType,
+            VariableType>;
+    return Implementation::template exe<I, J>(m);
+  }  // end of map_derivative
+
+  template <typename FunctionType,
+            typename VariableType,
+            unsigned short N,
+            unsigned short M>
+  constexpr derivative_view_from_tiny_matrix<M, FunctionType, VariableType>
+  map_derivative(
+      tmatrix<N, M, numeric_type<derivative_type<FunctionType, VariableType>>>&
+          m,
+      const index_type<
+          tmatrix<N,
+                  M,
+                  numeric_type<derivative_type<FunctionType, VariableType>>>> i,
+      const index_type<
+          tmatrix<N,
+                  M,
+                  numeric_type<derivative_type<FunctionType, VariableType>>>>
+          j) {
+    using Implementation =
+        tfel::math::internals::DerivativeViewFromTinyMatrixImplementation<
+            isScalar<FunctionType>(), isScalar<VariableType>(), FunctionType,
+            VariableType>;
+    return Implementation::template exe(m, i, j);
+  }  // end of map_derivative
+
+}  // namespace tfel::math
 
 #endif /* LIB_TFEL_MATH_TINY_MATRIX_IXX */

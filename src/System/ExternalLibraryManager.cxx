@@ -245,7 +245,8 @@ namespace tfel::system {
         return lp;
       }
     }
-    raise("can't find library '" + l + "'");
+    tfel::raise("ExternalLibraryManager::getLibraryPath: "
+		"can't find library '" + l + "'");
 #endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
   }    // end of ExternalLibraryManager::getLibraryPath
 

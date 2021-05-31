@@ -28,8 +28,7 @@ namespace mfront {
                                                   const DataMap& d) {
       using namespace tfel::glossary;
       constexpr auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
-      // this shall be captured in gcc 4.7.2
-      auto get_mp = [&dsl, &bd, &fid, &id, &d, this](
+      auto get_mp = [&dsl, &bd, &fid, &id, &d](
           const std::string& mpn, const std::string& t, const std::string& vn) {
         if (d.count(mpn) == 0) {
           tfel::raise(
