@@ -110,7 +110,6 @@ namespace tfel::material{
           return {2 * idx - 3, 2 * idx - 2};
         }();
         // i,j are valid for the space dimension considered
-        tfel::math::tensor<N, real> dF;
         tfel::math::tensor<N, real> ekel(real(0));
         const auto v =
             ((idx > 2) ? tfel::math::Cste<real>::sqrt2 : real(1)) / 2;

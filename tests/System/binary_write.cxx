@@ -58,7 +58,7 @@ struct BinaryReadWriteTest final
     // floatting point numbers
     this->test2<float>(fd,1.23f);
     this->test2<double>(fd,1.23);
-    this->test2<long double>(fd,1.23);
+    this->test2<long double>(fd,1.23L);
     // stl containers
     this->test(fd,std::string{"my string"});
     this->test3<std::vector<std::string>>(fd,{"Lena","Bettie"});

@@ -2110,7 +2110,9 @@ namespace mfront {
                << "}\n";
           }
           n2 += this->getTypeSize(v.type, v.arraySize);
-        } else if (flag == SupportedTypes::TVECTOR) {
+        } else if ((flag == SupportedTypes::TVECTOR) ||
+                   (flag == SupportedTypes::STENSOR) ||
+                   (flag == SupportedTypes::TENSOR)){
           if (v.arraySize == 1u) {
             os << "for(unsigned short idx2=" << n2;
             os << ";idx2!=";
@@ -2119,31 +2121,14 @@ namespace mfront {
             os << "partial_jacobian_" << v.name << "(idx2,idx)=vect_e(idx2);\n";
             os << "}\n";
           } else {
-            os << "for(unsigned short idx2=0;idx2!=" << v.arraySize
-               << ";++idx2){\n";
-            os << "for(unsigned short idx3=0;idx3!=TVectorSize;++idx3){\n";
-            os << "partial_jacobian_" << v.name << "(idx2)(idx3,idx)=vect_e("
-               << n2 << "+idx3+idx2*TVectorSize);\n";
-            os << "}\n";
-            os << "}\n";
-            n2 += this->getTypeSize(v.type, v.arraySize);
-          }
-        } else if (flag == SupportedTypes::STENSOR) {
-          if (v.arraySize == 1u) {
-            os << "for(unsigned short idx2=" << n2;
-            os << ";idx2!=";
-            n2 += this->getTypeSize(v.type, v.arraySize);
-            os << n2 << ";++idx2){\n";
-            os << "partial_jacobian_" << v.name << "(idx2,idx)=vect_e(idx2);\n";
-            os << "}\n";
-          } else {
-            os << "for(unsigned short idx2=0;idx2!=" << v.arraySize
-               << ";++idx2){\n";
-            os << "for(unsigned short idx3=0;idx3!=StensorSize;++idx3){\n";
-            os << "partial_jacobian_" << v.name << "(idx2)(idx3,idx)=vect_e("
-               << n2 << "+idx3+idx2*StensorSize);\n";
-            os << "}\n";
-            os << "}\n";
+            const auto size = this->getTypeSize(v.type, 1u);
+            os << "for(unsigned short idx2=0; idx2!=" << v.arraySize
+               << ";++idx2){\n"
+               << "for(unsigned short idx3=0;idx3!= " << size << ";++idx3){\n"
+               << "partial_jacobian_" << v.name << "(idx2)(idx3,idx) = "
+               << "vect_e(" << n2 << "+ idx3 + idx2 * " << size << ");\n"
+               << "}\n"
+               << "}\n";
             n2 += this->getTypeSize(v.type, v.arraySize);
           }
         } else {
@@ -2536,11 +2521,6 @@ namespace mfront {
       const auto flag = getTypeFlag(v.type);
       if (!first) {
         init << ",\n";
-      }
-      if ((flag != SupportedTypes::SCALAR) &&
-          (flag != SupportedTypes::STENSOR)) {
-        this->throwRuntimeError("getIntegrationVariablesIncrementsInitializers",
-                                "internal error, tag unsupported");
       }
       if (v.arraySize == 1u) {
         if (flag == SupportedTypes::SCALAR) {

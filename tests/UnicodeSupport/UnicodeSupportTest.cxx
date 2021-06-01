@@ -51,7 +51,7 @@ private:
                       "tum_03B5__tum_1D57__tum_1D52__");
     TFEL_TESTS_ASSERT(getMangledString("εᵉˡ") ==
                       "tum_03B5__tum_1D49__tum_02E1__");
-  };
+  }
 };
 
 TFEL_TESTS_GENERATE_PROXY(UnicodeSupportTest,"UnicodeSupport");

@@ -136,7 +136,7 @@ private:
       const auto id = stensor::Id();
       return square(v)-I1(v)*v+I2(v)*id;
     };
-    auto diJb = [&I3,&dI3,&iJb](const stensor& v) -> stensor{
+    auto diJb = [&dI3,&iJb](const stensor& v) -> stensor{
       const auto iJb4       =  tfel::math::power<4>(iJb(v));
       const auto diJb_dI3   = -iJb4/3;
       return diJb_dI3*dI3(v);

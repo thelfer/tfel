@@ -13,7 +13,6 @@
 
 #include <vector>
 #include <ostream>
-
 #include "NUMODIS/Crystallo.hxx"
 #include "NUMODIS/GSystem.hxx"
 #include "NUMODIS/Hardening.hxx"

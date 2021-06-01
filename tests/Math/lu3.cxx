@@ -32,75 +32,55 @@
 
 template <typename T>
 bool TinyMatrixSolveTest() {
-  tfel::math::tmatrix<3, 3, T> m;
-  tfel::math::tmatrix<3, 2, T> b;
-
-  m(0, 0) = 0.;
-  m(0, 1) = 2.;
-  m(0, 2) = 1.;
-  m(1, 0) = 1.;
-  m(1, 1) = 0.;
-  m(1, 2) = 0.;
-  m(2, 0) = 3.;
-  m(2, 1) = 0.;
-  m(2, 2) = 1.;
-
-  b(0, 0) = 5;
-  b(1, 0) = -1;
-  b(2, 0) = -2;
-  b(0, 1) = 5;
-  b(1, 1) = -1;
-  b(2, 1) = -2;
-
+  constexpr auto eps = 10 * std::numeric_limits<T>::epsilon();
+  auto m = tfel::math::tmatrix<3, 3, T>{0, 2, 1,  //
+                                        1, 0, 0,  //
+                                        3, 0, 1};
+  auto b = tfel::math::tmatrix<3, 2, T>{5,  5,   //
+                                        -1, -1,  //
+                                        -2, -2};
   tfel::math::TinyMatrixSolve<3u, T>::exe(m, b);
-  return ((std::abs(b(0, 0) + 1) < 10 * std::numeric_limits<T>::epsilon()) &&
-          (std::abs(b(1, 0) - 2) < 10 * std::numeric_limits<T>::epsilon()) &&
-          (std::abs(b(2, 0) - 1) < 10 * std::numeric_limits<T>::epsilon()) &&
-          (std::abs(b(0, 1) + 1) < 10 * std::numeric_limits<T>::epsilon()) &&
-          (std::abs(b(1, 1) - 2) < 10 * std::numeric_limits<T>::epsilon()) &&
-          (std::abs(b(2, 1) - 1) < 10 * std::numeric_limits<T>::epsilon()));
-
+  return ((std::abs(b(0, 0) + 1) < eps) &&  //
+          (std::abs(b(1, 0) - 2) < eps) &&  //
+          (std::abs(b(2, 0) - 1) < eps) &&  //
+          (std::abs(b(0, 1) + 1) < eps) &&  //
+          (std::abs(b(1, 1) - 2) < eps) &&  //
+          (std::abs(b(2, 1) - 1) < eps));
 }  // end of TinyMatrixSolveTest
 
 template <typename T>
 bool TinyMatrixSolveTest2() {
-  tfel::math::tmatrix<4, 4, T> m = {0, 2,  0,  1,  //
-                                    2, 2,  3,  2,  //
-                                    4, -3, 0,  1,  //
-                                    6, 1,  -6, -5};
-  tfel::math::tmatrix<4, 2, T> b = {0,  0,    //
-                                    -2, -12,  //
-                                    -7, -42,  //
-                                    6,  36};
-
+  constexpr auto eps = 100 * std::numeric_limits<T>::epsilon();
+  auto m = tfel::math::tmatrix<4, 4, T>{0, 2,  0,  1,  //
+                                        2, 2,  3,  2,  //
+                                        4, -3, 0,  1,  //
+                                        6, 1,  -6, -5};
+  auto b = tfel::math::tmatrix<4, 2, T>{0,  0,    //
+                                        -2, -12,  //
+                                        -7, -42,  //
+                                        6,  36};
   tfel::math::TinyMatrixSolve<4u, T>::exe(m, b);
-
-  return (
-      (std::abs(b(0, 0) + T(0.5)) < 10 * std::numeric_limits<T>::epsilon()) &&
-      (std::abs(b(1, 0) - 1) < 10 * std::numeric_limits<T>::epsilon()) &&
-      (std::abs(b(2, 0) - T(1) / 3) < 10 * std::numeric_limits<T>::epsilon()) &&
-      (std::abs(b(3, 0) + 2) < 10 * std::numeric_limits<T>::epsilon()) &&
-      (std::abs(b(0, 1) + 3) < 100 * std::numeric_limits<T>::epsilon()) &&
-      (std::abs(b(1, 1) - 6) < 100 * std::numeric_limits<T>::epsilon()) &&
-      (std::abs(b(2, 1) - 2) < 100 * std::numeric_limits<T>::epsilon()) &&
-      (std::abs(b(3, 1) + 12) < 100 * std::numeric_limits<T>::epsilon()));
+  return ((std::abs(b(0, 0) + T(0.5)) < eps) &&    //
+          (std::abs(b(1, 0) - 1) < eps) &&         //
+          (std::abs(b(2, 0) - T(1) / 3) < eps) &&  //
+          (std::abs(b(3, 0) + 2) < eps) &&         //
+          (std::abs(b(0, 1) + 3) < eps) &&         //
+          (std::abs(b(1, 1) - 6) < eps) &&         //
+          (std::abs(b(2, 1) - 2) < eps) &&         //
+          (std::abs(b(3, 1) + 12) < eps));
 }  // end of TinyMatrixSolveTest
-
 
 /* coverity [UNCAUGHT_EXCEPT]*/
 int main() {
-  using Wrapper1 =
-      tfel::tests::TestFunctionWrapper<TinyMatrixSolveTest<long double>>;
-  using Wrapper2 =
-      tfel::tests::TestFunctionWrapper<TinyMatrixSolveTest<double>>;
-  using Wrapper3 = tfel::tests::TestFunctionWrapper<TinyMatrixSolveTest<float>>;
-  using Wrapper4 =
-      tfel::tests::TestFunctionWrapper<TinyMatrixSolveTest2<long double>>;
-  using Wrapper5 =
-      tfel::tests::TestFunctionWrapper<TinyMatrixSolveTest2<double>>;
-  using Wrapper6 = tfel::tests::TestFunctionWrapper<TinyMatrixSolveTest2<float>>;
+  using namespace tfel::tests;
+  using Wrapper1 = TestFunctionWrapper<TinyMatrixSolveTest<long double>>;
+  using Wrapper2 = TestFunctionWrapper<TinyMatrixSolveTest<double>>;
+  using Wrapper3 = TestFunctionWrapper<TinyMatrixSolveTest<float>>;
+  using Wrapper4 = TestFunctionWrapper<TinyMatrixSolveTest2<long double>>;
+  using Wrapper5 = TestFunctionWrapper<TinyMatrixSolveTest2<double>>;
+  using Wrapper6 = TestFunctionWrapper<TinyMatrixSolveTest2<float>>;
   //  typedef TestFunctionWrapper<test2> Wrapper2;
-  auto& m = tfel::tests::TestManager::getTestManager();
+  auto& m = TestManager::getTestManager();
   m.addTestOutput(std::cout);
   m.addXMLTestOutput("lu3.xml");
   m.addTest("TinyMatrixSolve",

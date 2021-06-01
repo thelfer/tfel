@@ -1,116 +1,86 @@
-/*! 
+/*!
  * \file   tests/Math/lu2.cxx
  * \brief
  * \author Thomas Helfer
  * \brief  14 avr 2009
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifdef NDEBUG
 #undef NDEBUG
 #endif /* NDEBUG */
 
-#include<cmath>
-#include<limits>
-#include<cassert>
-#include<cstdlib>
-#include<iostream>
+#include <cmath>
+#include <limits>
+#include <cassert>
+#include <cstdlib>
+#include <iostream>
+#include "TFEL/Tests/Test.hxx"
+#include "TFEL/Tests/TestManager.hxx"
+#include "TFEL/Tests/TestFunctionWrapper.hxx"
+#include "TFEL/Math/tvector.hxx"
+#include "TFEL/Math/Vector/tvectorIO.hxx"
+#include "TFEL/Math/tmatrix.hxx"
+#include "TFEL/Math/Matrix/tmatrixIO.hxx"
+#include "TFEL/Math/TinyMatrixSolve.hxx"
 
-#include"TFEL/Tests/Test.hxx"
-#include"TFEL/Tests/TestManager.hxx"
-#include"TFEL/Tests/TestFunctionWrapper.hxx"
-
-#include"TFEL/Math/tvector.hxx"
-#include"TFEL/Math/tmatrix.hxx"
-#include"TFEL/Math/TinyMatrixSolve.hxx"
-
-template<typename T>
-bool TinyMatrixSolveTest()
-{
-  using namespace std;
+template <typename T>
+bool TinyMatrixSolveTest() {
   using namespace tfel::math;
-  tmatrix<3,3,T> m;
-  tvector<3,T> b;
+  constexpr auto eps = 10 * std::numeric_limits<T>::epsilon();
+  auto m = tmatrix<3, 3, T>{0, 2, 1,  //
+                            1, 0, 0,  //
+                            3, 0, 1};
+  auto b = tvector<3, T>{5, -1, -2};
+  TinyMatrixSolve<3u, T>::exe(m, b);
+  return ((std::abs(b(0) + 1) < eps) &&  //
+          (std::abs(b(1) - 2) < eps) &&  //
+          (std::abs(b(2) - 1) < eps));
+}  // end of TinyMatrixSolveTest
 
-  m(0,0)=0.;
-  m(0,1)=2.;
-  m(0,2)=1.;
-  m(1,0)=1.;
-  m(1,1)=0.;
-  m(1,2)=0.;
-  m(2,0)=3.;
-  m(2,1)=0.;
-  m(2,2)=1.;
-
-  b(0) = 5;
-  b(1) = -1;
-  b(2) = -2;
-
-  TinyMatrixSolve<3u,T>::exe(m,b);
-  return ((abs(b(0)+1)<10*numeric_limits<T>::epsilon())&&
-	  (abs(b(1)-2)<10*numeric_limits<T>::epsilon())&&
-	  (abs(b(2)-1)<10*numeric_limits<T>::epsilon()));
-
-} // end of TinyMatrixSolveTest
-
-template<typename T>
-bool TinyMatrixSolveTest2()
-{
-  using namespace std;
+template <typename T>
+bool TinyMatrixSolveTest2() {
   using namespace tfel::math;
-  tmatrix<3,3,T> m;
-  tvector<3,T> b;
-
-  m(0,0)=3.;
-  m(0,1)=-1.;
-  m(0,2)=2.;
-  m(1,0)=1.;
-  m(1,1)=2.;
-  m(1,2)=3.;
-  m(2,0)=2.;
-  m(2,1)=-2.;
-  m(2,2)=-1.;
-
-  b(0) = 12;
-  b(1) = 11;
-  b(2) = 2;
-
-  TinyMatrixSolve<3u,T>::exe(m,b);
-  return ((abs(b(0)-3)<10*numeric_limits<T>::epsilon())&&
-	  (abs(b(1)-1)<10*numeric_limits<T>::epsilon())&&
-	  (abs(b(2)-2)<10*numeric_limits<T>::epsilon()));
-
+  constexpr auto eps = 10 * std::numeric_limits<T>::epsilon();
+  auto m = tmatrix<3, 3, T>{1, 2, 3,  //
+                            0, 1, 4,  //
+                            5, 6, 0};
+  auto b = tvector<3, T>{5, -1, -2};
+  TinyMatrixSolve<3u, T>::exe(m, b);
+  return ((std::abs(b(0) + 148) < eps) &&  //
+          (std::abs(b(1) - 123) < eps) &&  //
+          (std::abs(b(2) + 31) < eps));
 }
 
 /* coverity [UNCAUGHT_EXCEPT]*/
-int main()
-{
-  using namespace std;
+int main() {
   using namespace tfel::tests;
-  using Wrapper1 = TestFunctionWrapper<TinyMatrixSolveTest<long double> >;
-  using Wrapper2 = TestFunctionWrapper<TinyMatrixSolveTest<double> >;
-  using Wrapper3 = TestFunctionWrapper<TinyMatrixSolveTest<float> >;
-  using Wrapper4 = TestFunctionWrapper<TinyMatrixSolveTest2<long double> >;
-  using Wrapper5 = TestFunctionWrapper<TinyMatrixSolveTest2<double> >;
-  using Wrapper6 = TestFunctionWrapper<TinyMatrixSolveTest2<float> >;
+  using Wrapper1 = TestFunctionWrapper<TinyMatrixSolveTest<long double>>;
+  using Wrapper2 = TestFunctionWrapper<TinyMatrixSolveTest<double>>;
+  using Wrapper3 = TestFunctionWrapper<TinyMatrixSolveTest<float>>;
+  using Wrapper4 = TestFunctionWrapper<TinyMatrixSolveTest2<long double>>;
+  using Wrapper5 = TestFunctionWrapper<TinyMatrixSolveTest2<double>>;
+  using Wrapper6 = TestFunctionWrapper<TinyMatrixSolveTest2<float>>;
   //  typedef TestFunctionWrapper<test2> Wrapper2;
-  auto& manager = TestManager::getTestManager();
-  manager.addTestOutput(cout);
-  manager.addXMLTestOutput("lu2.xml");
-  manager.addTest("TinyMatrixSolve",shared_ptr<Test>(new Wrapper1("TinyMatrixSolveTest<long double>")));
-  manager.addTest("TinyMatrixSolve",shared_ptr<Test>(new Wrapper2("TinyMatrixSolveTest<double>")));
-  manager.addTest("TinyMatrixSolve",shared_ptr<Test>(new Wrapper3("TinyMatrixSolveTest<float>")));
-  manager.addTest("TinyMatrixSolve - 2",shared_ptr<Test>(new Wrapper4("TinyMatrixSolveTest2<long double>")));
-  manager.addTest("TinyMatrixSolve - 2",shared_ptr<Test>(new Wrapper5("TinyMatrixSolveTest2<double>")));
-  manager.addTest("TinyMatrixSolve - 2",shared_ptr<Test>(new Wrapper6("TinyMatrixSolveTest2<float>")));
-  TestResult r = manager.execute();
-  if(!r.success()){
-    return EXIT_FAILURE;
-  }
-  return EXIT_SUCCESS;
-} // end of main
+  auto& m = TestManager::getTestManager();
+  m.addTestOutput(std::cout);
+  m.addXMLTestOutput("lu2.xml");
+  m.addTest("TinyMatrixSolve",
+            std::make_shared<Wrapper1>("TinyMatrixSolveTest<long double>"));
+  m.addTest("TinyMatrixSolve",
+            std::make_shared<Wrapper2>("TinyMatrixSolveTest<double>"));
+  m.addTest("TinyMatrixSolve",
+            std::make_shared<Wrapper3>("TinyMatrixSolveTest<float>"));
+  m.addTest("TinyMatrixSolve - 2",
+            std::make_shared<Wrapper4>("TinyMatrixSolveTest2<long double>"));
+  m.addTest("TinyMatrixSolve - 2",
+            std::make_shared<Wrapper5>("TinyMatrixSolveTest2<double>"));
+  m.addTest("TinyMatrixSolve - 2",
+            std::make_shared<Wrapper6>("TinyMatrixSolveTest2<float>"));
+  return m.execute().success() ? EXIT_SUCCESS : EXIT_FAILURE;
+}  // end of main

@@ -102,7 +102,7 @@ struct LibraryInformationCastemTest final
 	  "umatmonocrystal_dd_cc_numericaljacobian","umatelasticity6","umatplasticity",
 	  "umatimplicitnorton_levenbergmarquardt","umatcompressibleneohookeanbehaviour"}){
       TFEL_TESTS_ASSERT(std::find(b.begin(),b.end(),n)!=b.end());
-    };
+    }
     return this->result;
   } // end of execute
 };

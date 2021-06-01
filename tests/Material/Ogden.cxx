@@ -103,7 +103,7 @@ struct Ogden final : public tfel::tests::TestCase {
     const auto f = [&a](const real x) { return pow(x, a); };
     auto df = [&a](const real x) { return a * pow(x, a - 1); };
     auto d2f = [&a](const real x) { return a * (a - 1) * pow(x, a - 2); };
-    auto sif = [&alpha, &mu, &a, &f, &df](const Stensor& C) -> Stensor {
+    auto sif = [&mu, &a, &f, &df](const Stensor& C) -> Stensor {
       const auto id = Stensor::Id();
       const auto J = sqrt(det(C));
       /* invariants and derivatives */

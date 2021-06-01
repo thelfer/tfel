@@ -106,7 +106,7 @@ private:
     constexpr double c    = -1.058;
     constexpr double e    = 1.e-7;
     constexpr double prec = 1.e-8;
-    auto normal = [c](const stensor& sig)
+    auto normal = [](const stensor& sig)
       -> stensor{
       const auto s    = deviator(sig);
       const auto J2   = (s|s)/2;
