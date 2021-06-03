@@ -1,14 +1,14 @@
 /*!
  * \file   include/FSES/syev2.ixx
- * \brief    
+ * \brief
  * \author Joachim Kopp/Thomas Helfer
  * \date   02 janv. 2017
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  *
  * ----------------------------------------------------------------------------
  * This file has been introduced in TFEL with the courtesy of Joachim Kopp.
@@ -17,7 +17,7 @@
  *
  * Numerical diagonalization of 3x3 matrcies
  * Copyright (C) 2006  Joachim Kopp
- * 
+ *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
@@ -37,34 +37,37 @@
 #define LIB_FSES_SYEV2_IXX
 
 #include <cmath>
-#include"FSES/Utilities.hxx"
+#include "FSES/Utilities.hxx"
 
 namespace fses {
 
-  template<typename real>
-  void syev2(real& rt1, real& rt2,
-	     real& cs, real& sn,
-	     const real A, const real B, const real C)
-  {
+  template <typename real>
+  void syev2(real& rt1,
+             real& rt2,
+             real& cs,
+             real& sn,
+             const real A,
+             const real B,
+             const real C) {
     constexpr auto zero = real(0);
-    constexpr auto one  = real(1);
-    constexpr auto two  = real(2);
+    constexpr auto one = real(1);
+    constexpr auto two = real(2);
     constexpr auto four = real(4);
-    constexpr auto one_half = one/two;
-    
+    constexpr auto one_half = one / two;
+
     real sm = A + C;
     real df = A - C;
-    real rt = std::sqrt(square(df) + four*B*B);
+    real rt = std::sqrt(square(df) + four * B * B);
     real t;
 
     if (sm > zero) {
       rt1 = one_half * (sm + rt);
-      t = one/rt1;
-      rt2 = (A*t)*C - (B*t)*B;
+      t = one / rt1;
+      rt2 = (A * t) * C - (B * t) * B;
     } else if (sm < zero) {
       rt2 = one_half * (sm - rt);
-      t = one/rt2;
-      rt1 = (A*t)*C - (B*t)*B;
+      t = one / rt2;
+      rt1 = (A * t) * C - (B * t) * B;
     } else {
       // This case needs to be treated separately to avoid div by 0
       rt1 = one_half * rt;
@@ -72,32 +75,32 @@ namespace fses {
     }
 
     // Calculate eigenvectors
-    if (df > zero){
+    if (df > zero) {
       cs = df + rt;
     } else {
       cs = df - rt;
     }
-    
-    if (std::abs(cs) > two*std::abs(B)) {
-      t   = -two * B / cs;
+
+    if (std::abs(cs) > two * std::abs(B)) {
+      t = -two * B / cs;
       sn = one / std::sqrt(one + square(t));
       cs = t * (sn);
     } else if (std::fpclassify(B) == FP_ZERO) {
       cs = one;
       sn = zero;
     } else {
-      t   = -one_half * (cs) / B;
+      t = -one_half * (cs) / B;
       cs = one / std::sqrt(one + square(t));
       sn = t * (cs);
     }
 
     if (df > zero) {
-      t   = cs;
+      t = cs;
       cs = -(sn);
       sn = t;
     }
   }
 
-} // end of namespace fses
+}  // end of namespace fses
 
 #endif /* LIB_FSES_SYEV2_IXX */

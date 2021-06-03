@@ -24,7 +24,8 @@ namespace mfront {
     //! \brief abstract factory for inelastic Flows.
     struct MFRONT_VISIBILITY_EXPORT PorosityNucleationModelFactory {
       //! a simple alias
-      using Generator = std::function<std::shared_ptr<PorosityNucleationModel>()>;
+      using Generator =
+          std::function<std::shared_ptr<PorosityNucleationModel>()>;
       //! \return the uniq instance of the class
       static PorosityNucleationModelFactory& getFactory();
       /*!
@@ -48,13 +49,14 @@ namespace mfront {
       //! move constructor (deleted)
       PorosityNucleationModelFactory(PorosityNucleationModelFactory&&) = delete;
       //! copy constructor (deleted)
-      PorosityNucleationModelFactory(const PorosityNucleationModelFactory&) = delete;
+      PorosityNucleationModelFactory(const PorosityNucleationModelFactory&) =
+          delete;
       //! move assignement (deleted)
-      PorosityNucleationModelFactory& operator=(PorosityNucleationModelFactory&&) =
-          delete;
+      PorosityNucleationModelFactory& operator=(
+          PorosityNucleationModelFactory&&) = delete;
       //! standard assignement(deleted)
-      PorosityNucleationModelFactory& operator=(const PorosityNucleationModelFactory&) =
-          delete;
+      PorosityNucleationModelFactory& operator=(
+          const PorosityNucleationModelFactory&) = delete;
       //! \brief destructor
       ~PorosityNucleationModelFactory();
       //! \brief generators

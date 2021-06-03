@@ -1,22 +1,22 @@
-/*! 
+/*!
  * \file   mfront/include/MFront/PedanticMode.hxx
  * \brief
  * \author Thomas Helfer
  * \brief  20/05/2014
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_MFRONT_MFRONTPEDANTICMODE_HXX
-#define LIB_MFRONT_MFRONTPEDANTICMODE_HXX 
+#define LIB_MFRONT_MFRONTPEDANTICMODE_HXX
 
-#include"MFront/MFrontConfig.hxx"
+#include "MFront/MFrontConfig.hxx"
 
-namespace mfront{
+namespace mfront {
 
   /*!
    * \return true if the pedantic mode is enabled
@@ -29,7 +29,6 @@ namespace mfront{
    */
   MFRONT_VISIBILITY_EXPORT void setPedanticMode(const bool);
 
-}
+}  // namespace mfront
 
 #endif /* LIB_MFRONT_MFRONTPEDANTICMODE_HXX */
-

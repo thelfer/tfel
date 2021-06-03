@@ -50,8 +50,8 @@ static void convert_python_object_to_data(tfel::utilities::Data& d,
                                           const boost::python::object& o) {
   using namespace boost::python;
   using namespace tfel::utilities;
-  using boost::python::list;
   using boost::python::dict;
+  using boost::python::list;
   if (is<int>(o)) {
     d = Data(boost::python::extract<int>(o)());
   } else if (is<double>(o)) {

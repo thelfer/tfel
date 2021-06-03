@@ -44,7 +44,8 @@ namespace mtest {
         this->f.setVariableValue("t", t + dt);
       } else {
         auto pev = this->evm.find(vn);
-        throw_if(pev == this->evm.end(), "no evolution named '" + vn + "' defined");
+        throw_if(pev == this->evm.end(),
+                 "no evolution named '" + vn + "' defined");
         const auto& ev = *(pev->second);
         this->f.setVariableValue(vn, ev(t + dt));
       }

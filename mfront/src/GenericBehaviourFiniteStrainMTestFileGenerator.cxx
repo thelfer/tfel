@@ -35,8 +35,8 @@ namespace mfront {
   GenericBehaviourFiniteStrainMTestFileGenerator::writeBehaviourDeclaration(
       std::ostream& os) const {
 #if defined _WIN32 || defined _WIN64 || defined __CYGWIN__
-    os << "@Behaviour<generic> '" << this->library
-       << ".dll' '" << this->behaviour << "';" << std::endl;
+    os << "@Behaviour<generic> '" << this->library << ".dll' '"
+       << this->behaviour << "';" << std::endl;
 #else
     os << "@Behaviour<generic> '" << this->library << ".so' '"
        << this->behaviour << "';" << std::endl;
@@ -60,7 +60,8 @@ namespace mfront {
         this->F0[8] = F[8];
       }
     }
-  }  // end of GenericBehaviourFiniteStrainMTestFileGenerator::setDeformationGradientTensorAtTheBeginningOfTheTimeStep
+  }  // end of
+     // GenericBehaviourFiniteStrainMTestFileGenerator::setDeformationGradientTensorAtTheBeginningOfTheTimeStep
 
   void GenericBehaviourFiniteStrainMTestFileGenerator::
       setDeformationGradientTensorAtTheEndOfTheTimeStep(const double* const F) {

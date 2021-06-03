@@ -47,7 +47,7 @@ namespace tfel::meta {
   template <typename T, template <typename> class Concept>
   constexpr bool implements() {
     return Implements<T, Concept>::cond;
-  } // end of implements
+  }  // end of implements
 
 }  // end of namespace tfel::meta
 

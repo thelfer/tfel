@@ -50,8 +50,8 @@ namespace mfront {
     //! standard attribute name
     static const char* const used_jacobian_invert_blocks;
     /*!
-     * \brief raise an exception stating that an attribute has not the expected type
-     * \param[in] n: name of the attribute
+     * \brief raise an exception stating that an attribute has not the expected
+     * type \param[in] n: name of the attribute
      */
     [[noreturn]] static void throwUnmatchedAttributeType(const std::string&);
     /*!

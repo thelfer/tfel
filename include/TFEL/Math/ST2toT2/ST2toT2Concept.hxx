@@ -34,8 +34,8 @@ namespace tfel::math {
   struct ST2toT2Concept {
     typedef ST2toT2Tag ConceptTag;
 
-    numeric_type<T> operator()(
-        const unsigned short, const unsigned short) const;
+    numeric_type<T> operator()(const unsigned short,
+                               const unsigned short) const;
 
    protected:
     ST2toT2Concept() = default;
@@ -64,8 +64,7 @@ namespace tfel::math {
   template <typename ST2toT2Type>
   typename std::enable_if<
       implementsST2toT2Concept<ST2toT2Type>(),
-      typename tfel::typetraits::AbsType<
-          numeric_type<ST2toT2Type>>::type>::type
+      typename tfel::typetraits::AbsType<numeric_type<ST2toT2Type>>::type>::type
   abs(const ST2toT2Type&);
 
 }  // end of namespace tfel::math

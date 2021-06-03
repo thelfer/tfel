@@ -95,7 +95,7 @@ namespace tfel::math {
 
   template <typename T>
   numeric_type<T> TensorConcept<T>::operator()(const unsigned short i,
-                                                const unsigned short j) const {
+                                               const unsigned short j) const {
     using tfel::math::internals::TensorConceptMatrixAccessOperator;
     if ((i > 2) || (j > 2)) {
       throw(TensorInvalidIndexesException());
@@ -499,19 +499,19 @@ namespace tfel::math {
   }  // end of computeDeterminantDerivative
 
   template <typename TensorType, typename StensorType, typename TensorType2>
-  std::enable_if_t<
-      implementsTensorConcept<TensorType>() &&
-          implementsTensorConcept<TensorType2>() &&
-          implementsStensorConcept<StensorType>() &&
-          std::is_same<numeric_type<StensorType>,
-                       numeric_type<TensorType2>>::value &&
-          std::is_same<base_type<numeric_type<TensorType2>>,
-                       numeric_type<TensorType>>::value &&
-          (getSpaceDimension<TensorType>() == getSpaceDimension<TensorType2>()) &&
-          (getSpaceDimension<TensorType>() ==
-           getSpaceDimension<StensorType>()) &&
-          (getSpaceDimension<TensorType>() == 1u),
-      void>
+  std::enable_if_t<implementsTensorConcept<TensorType>() &&
+                       implementsTensorConcept<TensorType2>() &&
+                       implementsStensorConcept<StensorType>() &&
+                       std::is_same<numeric_type<StensorType>,
+                                    numeric_type<TensorType2>>::value &&
+                       std::is_same<base_type<numeric_type<TensorType2>>,
+                                    numeric_type<TensorType>>::value &&
+                       (getSpaceDimension<TensorType>() ==
+                        getSpaceDimension<TensorType2>()) &&
+                       (getSpaceDimension<TensorType>() ==
+                        getSpaceDimension<StensorType>()) &&
+                       (getSpaceDimension<TensorType>() == 1u),
+                   void>
   polar_decomposition(TensorType& R, StensorType& U, const TensorType2& F) {
     using tfel::fsalgo::copy;
     typedef numeric_type<TensorType2> T;
@@ -521,25 +521,25 @@ namespace tfel::math {
   }  // end of polar_decomposition
 
   template <typename TensorType, typename StensorType, typename TensorType2>
-  std::enable_if_t<
-      implementsTensorConcept<TensorType>() &&
-          implementsTensorConcept<TensorType2>() &&
-          implementsStensorConcept<StensorType>() &&
-          std::is_same<numeric_type<StensorType>,
-                       numeric_type<TensorType2>>::value &&
-          std::is_same<base_type<numeric_type<TensorType2>>,
-                       numeric_type<TensorType>>::value &&
-          (getSpaceDimension<TensorType>() == getSpaceDimension<TensorType2>()) &&
-          (getSpaceDimension<TensorType>() ==
-           getSpaceDimension<StensorType>()) &&
-          ((getSpaceDimension<TensorType>() == 2u) ||
-           (getSpaceDimension<TensorType>() == 3u)),
-      void>
+  std::enable_if_t<implementsTensorConcept<TensorType>() &&
+                       implementsTensorConcept<TensorType2>() &&
+                       implementsStensorConcept<StensorType>() &&
+                       std::is_same<numeric_type<StensorType>,
+                                    numeric_type<TensorType2>>::value &&
+                       std::is_same<base_type<numeric_type<TensorType2>>,
+                                    numeric_type<TensorType>>::value &&
+                       (getSpaceDimension<TensorType>() ==
+                        getSpaceDimension<TensorType2>()) &&
+                       (getSpaceDimension<TensorType>() ==
+                        getSpaceDimension<StensorType>()) &&
+                       ((getSpaceDimension<TensorType>() == 2u) ||
+                        (getSpaceDimension<TensorType>() == 3u)),
+                   void>
   polar_decomposition(TensorType& R, StensorType& U, const TensorType2& F) {
     using tfel::fsalgo::transform;
     using T = numeric_type<TensorType2>;
     using base = base_type<T>;
-    using T2 = BinaryOperationResult<T,T,OpMult>;
+    using T2 = BinaryOperationResult<T, T, OpMult>;
     constexpr auto dime = getSpaceDimension<TensorType>();
     const auto id = stensor<dime, base>::Id();
     tvector<3u, T2> vp_C;
@@ -569,33 +569,33 @@ namespace tfel::math {
   }  // end of matrix_view
 
   template <typename TensorType>
-  TFEL_MATH_INLINE auto transpose(TensorType&& t) -> typename std::enable_if<
-      implementsTensorConcept<TensorType>() &&
-          (getSpaceDimension<TensorType>() == 1u),
-      Expr<tensor<1u, numeric_type<decltype(t)>>,
-           TensorTransposeExpr1D<decltype(t)>>>::type {
+  TFEL_MATH_INLINE auto transpose(TensorType&& t) ->
+      typename std::enable_if<implementsTensorConcept<TensorType>() &&
+                                  (getSpaceDimension<TensorType>() == 1u),
+                              Expr<tensor<1u, numeric_type<decltype(t)>>,
+                                   TensorTransposeExpr1D<decltype(t)>>>::type {
     return Expr<tensor<1u, numeric_type<decltype(t)>>,
                 TensorTransposeExpr1D<decltype(t)>>(
         std::forward<TensorType>(t));
   }  // end of transpose
 
   template <typename TensorType>
-  TFEL_MATH_INLINE auto transpose(TensorType&& t) -> typename std::enable_if<
-      implementsTensorConcept<TensorType>() &&
-          (getSpaceDimension<TensorType>() == 2u),
-      Expr<tensor<2u, numeric_type<decltype(t)>>,
-           TensorTransposeExpr2D<decltype(t)>>>::type {
+  TFEL_MATH_INLINE auto transpose(TensorType&& t) ->
+      typename std::enable_if<implementsTensorConcept<TensorType>() &&
+                                  (getSpaceDimension<TensorType>() == 2u),
+                              Expr<tensor<2u, numeric_type<decltype(t)>>,
+                                   TensorTransposeExpr2D<decltype(t)>>>::type {
     return Expr<tensor<2u, numeric_type<decltype(t)>>,
                 TensorTransposeExpr2D<decltype(t)>>(
         std::forward<TensorType>(t));
   }  // end of transpose
 
   template <typename TensorType>
-  TFEL_MATH_INLINE auto transpose(TensorType&& t) -> std::enable_if_t<
-      implementsTensorConcept<TensorType>() &&
-          (getSpaceDimension<TensorType>() == 3u),
-      Expr<tensor<3u, numeric_type<decltype(t)>>,
-           TensorTransposeExpr3D<decltype(t)>>> {
+  TFEL_MATH_INLINE auto transpose(TensorType&& t)
+      -> std::enable_if_t<implementsTensorConcept<TensorType>() &&
+                              (getSpaceDimension<TensorType>() == 3u),
+                          Expr<tensor<3u, numeric_type<decltype(t)>>,
+                               TensorTransposeExpr3D<decltype(t)>>> {
     return Expr<tensor<3u, numeric_type<decltype(t)>>,
                 TensorTransposeExpr3D<decltype(t)>>(
         std::forward<TensorType>(t));

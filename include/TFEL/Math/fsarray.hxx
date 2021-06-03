@@ -38,7 +38,8 @@ namespace tfel::math {
     //! \brief access operator
     constexpr ValueType& operator[](const size_type i) noexcept { return v[i]; }
     constexpr const ValueType& operator[](const size_type i) const noexcept {
-      return v[i]; }
+      return v[i];
+    }
 
    protected:
     //! \brief values

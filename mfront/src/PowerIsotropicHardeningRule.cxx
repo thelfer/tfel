@@ -22,14 +22,15 @@ namespace mfront {
   namespace bbrick {
 
     void PowerIsotropicHardeningRule::initialize(BehaviourDescription& bd,
-                                                  AbstractBehaviourDSL& dsl,
-                                                  const std::string& fid,
-                                                  const std::string& id,
-                                                  const DataMap& d) {
+                                                 AbstractBehaviourDSL& dsl,
+                                                 const std::string& fid,
+                                                 const std::string& id,
+                                                 const DataMap& d) {
       using namespace tfel::glossary;
       constexpr auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
-      auto get_mp = [&dsl, &bd, &fid, &id, &d](
-          const std::string& mpn, const std::string& t, const std::string& vn) {
+      auto get_mp = [&dsl, &bd, &fid, &id, &d](const std::string& mpn,
+                                               const std::string& t,
+                                               const std::string& vn) {
         if (d.count(mpn) == 0) {
           tfel::raise(
               "PowerIsotropicHardeningRule::initialize: "

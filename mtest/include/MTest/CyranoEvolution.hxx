@@ -25,7 +25,7 @@
 
 namespace mtest {
 
-  //! \brief an evolution defined by a cyrano material property 
+  //! \brief an evolution defined by a cyrano material property
   struct MTEST_VISIBILITY_EXPORT CyranoEvolution : public Evolution {
     /*!
      * \brief constructor

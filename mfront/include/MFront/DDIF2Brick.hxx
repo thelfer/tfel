@@ -23,7 +23,7 @@ namespace mfront {
   namespace bbrick {
     // forward declaration
     struct StressPotential;
-  } // end of namespace bbrick
+  }  // end of namespace bbrick
 
   /*!
    * This brick provides the DDIF2 damage behaviour as a basis to build complex
@@ -35,8 +35,7 @@ namespace mfront {
      * \param[in] dsl_ : calling domain specific language
      * \param[in] bd_  : mechanical behaviour description
      */
-    DDIF2Brick(AbstractBehaviourDSL&,
-               BehaviourDescription&);
+    DDIF2Brick(AbstractBehaviourDSL&, BehaviourDescription&);
     std::string getName() const override;
     BehaviourBrickDescription getDescription() const override;
     std::vector<bbrick::OptionDescription> getOptions(

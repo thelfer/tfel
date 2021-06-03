@@ -1,6 +1,6 @@
 /*!
  * \file   AbstractTestCase.hxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   17/09/2019
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
@@ -34,7 +34,7 @@ namespace mfmtg {
     virtual void generate() const = 0;
     //! destructor
     virtual ~AbstractTestCase();
-  }; // end of struct AbstractTestCase 
+  };  // end of struct AbstractTestCase
 
 }  // end of namespace mfmtg
 

@@ -322,7 +322,8 @@ namespace mtest {
      * \param[in] f: filename
      * \param[in] p: list of PostProcessings
      */
-    void addUserDefinedPostProcessing(const std::string&, const std::vector<std::string>&);
+    void addUserDefinedPostProcessing(const std::string&,
+                                      const std::vector<std::string>&);
     //! destructor
     ~MTest() override;
 

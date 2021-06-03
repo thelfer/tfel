@@ -37,10 +37,10 @@ namespace mfront {
      */
     static const char* getDefaultExecutablePrefix(const TargetSystem) noexcept;
     /*!
-      * \return the default executable suffix for the given target system
-      * and executable type
-      * \param[in] s : target system
-      */
+     * \return the default executable suffix for the given target system
+     * and executable type
+     * \param[in] s : target system
+     */
     static const char* getDefaultExecutableSuffix(const TargetSystem) noexcept;
     /*!
      * Constructor

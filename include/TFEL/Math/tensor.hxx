@@ -145,7 +145,8 @@ namespace tfel::math {
         void>
     import(const T2* const);
     //! change basis
-    TFEL_MATH_INLINE2 void changeBasis(const rotation_matrix<ValueType>&) noexcept;
+    TFEL_MATH_INLINE2 void changeBasis(
+        const rotation_matrix<ValueType>&) noexcept;
 
     template <typename InputIterator>
     TFEL_MATH_INLINE2 void copy(const InputIterator src);
@@ -167,8 +168,8 @@ namespace tfel::math {
   using ConstTensorView = ConstView<tensor<N, T>>;
 
   template <unsigned short N, typename T, typename OutputIterator>
-  TFEL_MATH_INLINE2 std::enable_if_t<isScalar<T>(), void>
-  exportToBaseTypeArray(const tensor<N, T>&, OutputIterator);
+  TFEL_MATH_INLINE2 std::enable_if_t<isScalar<T>(), void> exportToBaseTypeArray(
+      const tensor<N, T>&, OutputIterator);
   /*!
    * \return the invert of a tensor
    * \param[in] t : tensor to be inverted

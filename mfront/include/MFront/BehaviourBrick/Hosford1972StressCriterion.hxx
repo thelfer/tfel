@@ -62,7 +62,8 @@ namespace mfront {
                                           const Role) const override;
       bool isCoupledWithPorosityEvolution() const override;
       bool isNormalDeviatoric() const override;
-      PorosityEffectOnFlowRule getPorosityEffectOnEquivalentPlasticStrain() const override;
+      PorosityEffectOnFlowRule getPorosityEffectOnEquivalentPlasticStrain()
+          const override;
       //! destructor
       ~Hosford1972StressCriterion() override;
 

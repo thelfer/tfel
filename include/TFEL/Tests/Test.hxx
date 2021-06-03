@@ -2,21 +2,21 @@
  * \file   include/TFEL/Tests/Test.hxx
  * \author Thomas Helfer
  * \date   10 Apr 10
- * \brief  
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \brief
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_TFEL_TESTS_TEST_HXX
 #define LIB_TFEL_TESTS_TEST_HXX 1
 
-#include<string>
-#include"TFEL/Config/TFELConfig.hxx"
-#include"TFEL/Tests/TestResult.hxx"
+#include <string>
+#include "TFEL/Config/TFELConfig.hxx"
+#include "TFEL/Tests/TestResult.hxx"
 
 namespace tfel::tests {
 

@@ -38,7 +38,7 @@ namespace tfel::math {
     typedef T2toST2Tag ConceptTag;
 
     numeric_type<T> operator()(const unsigned short,
-                                                  const unsigned short) const;
+                               const unsigned short) const;
 
    protected:
     T2toST2Concept() = default;
@@ -67,8 +67,7 @@ namespace tfel::math {
   template <typename T2toST2Type>
   typename std::enable_if<
       implementsT2toST2Concept<T2toST2Type>(),
-      typename tfel::typetraits::AbsType<
-          numeric_type<T2toST2Type>>::type>::type
+      typename tfel::typetraits::AbsType<numeric_type<T2toST2Type>>::type>::type
   abs(const T2toST2Type&);
 
   /*!
@@ -139,13 +138,11 @@ namespace tfel::math {
           getSpaceDimension<StensorType>() == 2u &&
           getSpaceDimension<TensorType>() == 2u &&
           tfel::typetraits::IsFundamentalNumericType<
-              numeric_type<TensorType>>()&&
-          isAssignableTo<
-              typename ComputeBinaryResult<
-                  numeric_type<T2toST2Type>,
-                  numeric_type<StensorType>,
-                  OpPlus>::Result,
-              numeric_type<T2toST2ResultType>>(),
+              numeric_type<TensorType>>() &&
+          isAssignableTo<typename ComputeBinaryResult<numeric_type<T2toST2Type>,
+                                                      numeric_type<StensorType>,
+                                                      OpPlus>::Result,
+                         numeric_type<T2toST2ResultType>>(),
       void>::type
   computePushForwardDerivative(T2toST2ResultType&,
                                const T2toST2Type&,

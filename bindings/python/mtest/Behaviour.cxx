@@ -17,13 +17,15 @@
 #include "TFEL/Material/ModellingHypothesis.hxx"
 #include "MTest/Behaviour.hxx"
 
-static std::shared_ptr<mtest::Behaviour> getBehaviour1(const std::string& i,
-                                                       const std::string& l,
-                                                       const std::string& f,
-                                                       const mtest::Behaviour::Parameters& p,
-                                                       const std::string& h) {
+static std::shared_ptr<mtest::Behaviour> getBehaviour1(
+    const std::string& i,
+    const std::string& l,
+    const std::string& f,
+    const mtest::Behaviour::Parameters& p,
+    const std::string& h) {
   using mtest::Behaviour;
-  return Behaviour::getBehaviour(i, l, f, p, Behaviour::ModellingHypothesis::fromString(h));
+  return Behaviour::getBehaviour(i, l, f, p,
+                                 Behaviour::ModellingHypothesis::fromString(h));
 }  // end of std::shared_ptr<Behaviour> getBehaviour1
 
 static std::shared_ptr<mtest::Behaviour> getBehaviour2(
@@ -44,12 +46,14 @@ static std::shared_ptr<mtest::Behaviour> getBehaviour3(const std::string& i,
                                  Behaviour::ModellingHypothesis::fromString(h));
 }  // end of std::shared_ptr<Behaviour> getBehaviour1
 
-static std::shared_ptr<mtest::Behaviour> getBehaviour4(const std::string& l,
-                                                       const std::string& f,
-                                                       const mtest::Behaviour::Parameters& p,
-                                                       const std::string& h) {
+static std::shared_ptr<mtest::Behaviour> getBehaviour4(
+    const std::string& l,
+    const std::string& f,
+    const mtest::Behaviour::Parameters& p,
+    const std::string& h) {
   using mtest::Behaviour;
-  return Behaviour::getBehaviour("", l, f, p, Behaviour::ModellingHypothesis::fromString(h));
+  return Behaviour::getBehaviour("", l, f, p,
+                                 Behaviour::ModellingHypothesis::fromString(h));
 }  // end of std::shared_ptr<Behaviour> getBehaviour1
 
 static std::shared_ptr<mtest::Behaviour> getBehaviour5(
@@ -68,39 +72,40 @@ static std::shared_ptr<mtest::Behaviour> getBehaviour6(const std::string& l,
                                  Behaviour::ModellingHypothesis::fromString(h));
 }  // end of std::shared_ptr<Behaviour> getBehaviour1
 
-static int Behaviour_getBehaviourType(const mtest::Behaviour& b){
+static int Behaviour_getBehaviourType(const mtest::Behaviour& b) {
   using tfel::material::MechanicalBehaviourBase;
   const auto bt = b.getBehaviourType();
-  if(bt == MechanicalBehaviourBase::GENERALBEHAVIOUR){
+  if (bt == MechanicalBehaviourBase::GENERALBEHAVIOUR) {
     return 0;
-  } else if(bt == MechanicalBehaviourBase::STANDARDSTRAINBASEDBEHAVIOUR){
+  } else if (bt == MechanicalBehaviourBase::STANDARDSTRAINBASEDBEHAVIOUR) {
     return 1;
-  } else if(bt == MechanicalBehaviourBase::STANDARDFINITESTRAINBEHAVIOUR){
+  } else if (bt == MechanicalBehaviourBase::STANDARDFINITESTRAINBEHAVIOUR) {
     return 2;
   }
-  if(bt != MechanicalBehaviourBase::COHESIVEZONEMODEL){
+  if (bt != MechanicalBehaviourBase::COHESIVEZONEMODEL) {
     tfel::raise("Behaviour_getBehaviourType: unsupported behaviour type");
   }
-  return  3;
+  return 3;
 }  // end of Behaviour_getBehaviourType
 
-static int Behaviour_getBehaviourKinematic(const mtest::Behaviour& b){
+static int Behaviour_getBehaviourKinematic(const mtest::Behaviour& b) {
   using tfel::material::MechanicalBehaviourBase;
   const auto bk = b.getBehaviourKinematic();
-  if(bk == MechanicalBehaviourBase::UNDEFINEDKINEMATIC){
+  if (bk == MechanicalBehaviourBase::UNDEFINEDKINEMATIC) {
     return 0;
-  } else if(bk == MechanicalBehaviourBase::SMALLSTRAINKINEMATIC){
+  } else if (bk == MechanicalBehaviourBase::SMALLSTRAINKINEMATIC) {
     return 1;
-  } else if(bk == MechanicalBehaviourBase::COHESIVEZONEKINEMATIC){
+  } else if (bk == MechanicalBehaviourBase::COHESIVEZONEKINEMATIC) {
     return 2;
-  } else if(bk == MechanicalBehaviourBase::FINITESTRAINKINEMATIC_F_CAUCHY){
+  } else if (bk == MechanicalBehaviourBase::FINITESTRAINKINEMATIC_F_CAUCHY) {
     return 3;
   }
-  if(bk != MechanicalBehaviourBase::FINITESTRAINKINEMATIC_ETO_PK1){
-    tfel::raise("Behaviour_getBehaviourKinematic: unsupported behaviour kinematic");
+  if (bk != MechanicalBehaviourBase::FINITESTRAINKINEMATIC_ETO_PK1) {
+    tfel::raise(
+        "Behaviour_getBehaviourKinematic: unsupported behaviour kinematic");
   }
-  return  4;
-} // end of Behaviour_getBehaviourKinematic
+  return 4;
+}  // end of Behaviour_getBehaviourKinematic
 
 void declareBehaviour() {
   using boost::python::class_;

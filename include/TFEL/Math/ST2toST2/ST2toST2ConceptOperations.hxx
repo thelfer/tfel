@@ -26,8 +26,8 @@
 namespace tfel::math {
 
   /*
-   * Partial Specialisation of ComputeBinaryOperationHandler for st2tost2-st2tost2
-   * operations
+   * Partial Specialisation of ComputeBinaryOperationHandler for
+   * st2tost2-st2tost2 operations
    */
   template <typename A, typename B>
   class ComputeBinaryOperationHandler<ST2toST2Tag, ST2toST2Tag, A, B, OpMult> {
@@ -44,8 +44,8 @@ namespace tfel::math {
   };
 
   /*
-   * Partial Specialisation of ComputeBinaryOperationHandler for st2tost2-stensor
-   * operations
+   * Partial Specialisation of ComputeBinaryOperationHandler for
+   * st2tost2-stensor operations
    */
   template <typename A, typename B>
   class ComputeBinaryOperationHandler<ST2toST2Tag, StensorTag, A, B, OpMult> {
@@ -63,8 +63,8 @@ namespace tfel::math {
   };
 
   /*
-   * Partial Specialisation of ComputeBinaryOperationHandler for stensor-st2tost2
-   * operations
+   * Partial Specialisation of ComputeBinaryOperationHandler for
+   * stensor-st2tost2 operations
    */
   template <typename A, typename B>
   class ComputeBinaryOperationHandler<StensorTag, ST2toST2Tag, A, B, OpMult> {

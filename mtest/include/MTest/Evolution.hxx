@@ -21,8 +21,7 @@
 #include "MTest/Config.hxx"
 #include "MTest/Types.hxx"
 
-
-namespace tfel{
+namespace tfel {
 
   namespace math {
 

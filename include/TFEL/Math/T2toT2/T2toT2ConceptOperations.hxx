@@ -25,9 +25,9 @@
 namespace tfel::math {
 
   /*!
-   * \brief partial specialisation of ComputeBinaryOperationHandler for T2toT2-T2toT2
-   * operations \tparam A:  left hand side \tparam B:  right hand side \tparam
-   * Op: operation
+   * \brief partial specialisation of ComputeBinaryOperationHandler for
+   * T2toT2-T2toT2 operations \tparam A:  left hand side \tparam B:  right hand
+   * side \tparam Op: operation
    */
   template <typename A, typename B>
   class ComputeBinaryOperationHandler<T2toT2Tag, T2toT2Tag, A, B, OpMult> {
@@ -43,9 +43,9 @@ namespace tfel::math {
         Expr<Result, T2toT2T2toT2ProductExpr<getSpaceDimension<Result>()>>>;
   };
   /*!
-   * \brief partial specialisation of ComputeBinaryOperationHandler for T2toT2-Tensor
-   * operations \tparam A:  left hand side \tparam B:  right hand side \tparam
-   * Op: operation
+   * \brief partial specialisation of ComputeBinaryOperationHandler for
+   * T2toT2-Tensor operations \tparam A:  left hand side \tparam B:  right hand
+   * side \tparam Op: operation
    */
   template <typename A, typename B>
   class ComputeBinaryOperationHandler<T2toT2Tag, TensorTag, A, B, OpMult> {
@@ -62,8 +62,8 @@ namespace tfel::math {
   };
 
   /*
-   * \brief partial specialisation of ComputeBinaryOperationHandler for Tensor-T2toT2
-   * operations
+   * \brief partial specialisation of ComputeBinaryOperationHandler for
+   * Tensor-T2toT2 operations
    */
   template <typename A, typename B>
   class ComputeBinaryOperationHandler<TensorTag, T2toT2Tag, A, B, OpMult> {

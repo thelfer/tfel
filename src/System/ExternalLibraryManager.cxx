@@ -236,7 +236,7 @@ namespace tfel::system {
     }
     // look in LD_LIBRARY_PATH
     const auto ld = std::getenv("LD_LIBRARY_PATH");
-    if(ld==nullptr){
+    if (ld == nullptr) {
       raise("can't find library '" + l + "'");
     }
     for (const auto& p : tokenize(ld, ':')) {
@@ -245,8 +245,10 @@ namespace tfel::system {
         return lp;
       }
     }
-    tfel::raise("ExternalLibraryManager::getLibraryPath: "
-		"can't find library '" + l + "'");
+    tfel::raise(
+        "ExternalLibraryManager::getLibraryPath: "
+        "can't find library '" +
+        l + "'");
 #endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
   }    // end of ExternalLibraryManager::getLibraryPath
 

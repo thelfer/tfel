@@ -45,7 +45,7 @@ namespace tfel::typetraits {
   template <typename T>
   constexpr bool isRandomAccessIterator() {
     return IsRandomAccessIterator<std::decay_t<T>>::cond;
-  } // end of isRandomAccessIterator
+  }  // end of isRandomAccessIterator
 
 }  // end of namespace tfel::typetraits
 

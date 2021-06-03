@@ -283,7 +283,8 @@ namespace tfel::math {
       }
     }
     //!
-    constexpr size_type getIndex(const size_type i, const size_type j) const noexcept {
+    constexpr size_type getIndex(const size_type i, const size_type j) const
+        noexcept {
       static_assert(arity == 2);
       constexpr auto a1 = IndexingPolicy1::arity;
       if constexpr (a1 == 0) {

@@ -1043,8 +1043,8 @@ namespace mfront {
         (this->mb.getElasticSymmetryType() == ISOTROPIC) &&
         (this->mb.areElasticMaterialPropertiesDefined())) {
       auto add_lv = [this](BehaviourDescription& bd, const std::string& t,
-			   const std::string& sn, const std::string& n,
-			   const std::string& g, const std::string d) {
+                           const std::string& sn, const std::string& n,
+                           const std::string& g, const std::string d) {
         auto r = bd.checkVariableExistence(n, "Parameter", false);
         if (!r.first) {
           auto v = (!sn.empty()) ? VariableDescription(t, sn, n, 1u, 0u)
@@ -1341,21 +1341,21 @@ namespace mfront {
     } else if ((v1.arraySize != 1u) && (v2.arraySize == 1u)) {
       os << "auto " << d.derivative_name << " = [&" << d.matrix_name
          << "](const unsigned short idx){\n"
-         << "tfel::math::map_derivative" << v1.type << ", " << v2.type << ">("
+         << "tfel::math::map_derivative<" << v1.type << ", " << v2.type << ">("
          << d.matrix_name << ", " << dr << " + idx * "
          << this->getTypeSize(v1.type, 1u) << ", " << dc << ");\n"
          << "};\n";
     } else if ((v1.arraySize == 1u) && (v2.arraySize != 1u)) {
       os << "auto " << d.derivative_name << " = [&" << d.matrix_name
          << "](const unsigned short idx){\n"
-         << "tfel::math::map_derivative" << v1.type << ", " << v2.type << ">("
+         << "tfel::math::map_derivative<" << v1.type << ", " << v2.type << ">("
          << d.matrix_name << ", " << dr << ", " << dc << " + idx * "
          << this->getTypeSize(v2.type, 1u) << ");\n"
          << "};\n";
     } else {
       os << "auto " << d.derivative_name << " = [&" << d.matrix_name
          << "](const unsigned short idx, const unsigned short idx2){\n"
-         << "tfel::math::map_derivative" << v1.type << ", " << v2.type << ">("
+         << "tfel::math::map_derivative<" << v1.type << ", " << v2.type << ">("
          << d.matrix_name << ", " << dr << " + idx * "
          << this->getTypeSize(v1.type, 1u) << ", " << dc << " + idx2 * "
          << this->getTypeSize(v2.type, 1u) << ");\n"
@@ -2112,7 +2112,7 @@ namespace mfront {
           n2 += this->getTypeSize(v.type, v.arraySize);
         } else if ((flag == SupportedTypes::TVECTOR) ||
                    (flag == SupportedTypes::STENSOR) ||
-                   (flag == SupportedTypes::TENSOR)){
+                   (flag == SupportedTypes::TENSOR)) {
           if (v.arraySize == 1u) {
             os << "for(unsigned short idx2=" << n2;
             os << ";idx2!=";

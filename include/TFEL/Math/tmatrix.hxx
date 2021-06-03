@@ -149,13 +149,12 @@ namespace tfel::math {
     template <unsigned short M, typename FunctionType, typename VariableType>
     struct BuildDerivativeViewFromTinyMatrix {
       //! \brief result
-      using type =
-          typename BuildDerivativeViewFromTinyMatrixImplementation<
-              tfel::math::isScalar<FunctionType>(),
-              tfel::math::isScalar<VariableType>(),
-              M,
-              FunctionType,
-              VariableType>::type;
+      using type = typename BuildDerivativeViewFromTinyMatrixImplementation<
+          tfel::math::isScalar<FunctionType>(),
+          tfel::math::isScalar<VariableType>(),
+          M,
+          FunctionType,
+          VariableType>::type;
     };  // end of struct BuildDerivativeViewFromTinyMatrix
 
   }  // end of namespace internals
@@ -344,7 +343,6 @@ namespace tfel::math {
       tmatrix<N,
               M,
               numeric_type<derivative_type<FunctionType, VariableType>>>&);
-
 
   /*!
    * \brief an helper function to create a derivative view from a tiny matrix

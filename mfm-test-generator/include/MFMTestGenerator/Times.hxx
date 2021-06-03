@@ -1,6 +1,6 @@
 /*!
  * \file   Times.hxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   11/10/2019
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
@@ -33,11 +33,11 @@ namespace mfmtg {
     std::string file;
     //! \brief description of times in file
     Values times;
-  }; // end of struct TimesFromFile
+  };  // end of struct TimesFromFile
 
   //! \brief types used to describe a set of times
-  using TimesTypes = tfel::meta::GenerateTypeList<std::vector<double>,
-                                                      TimesFromFile>::type;
+  using TimesTypes =
+      tfel::meta::GenerateTypeList<std::vector<double>, TimesFromFile>::type;
 
   //! \brief various ways of storing an evolution
   struct Times : tfel::utilities::GenTypeBase<TimesTypes> {
@@ -49,6 +49,6 @@ namespace mfmtg {
     using GenTypBase::operator=;
   };  // end of struct Times
 
-} // end of namespace mfmtg
+}  // end of namespace mfmtg
 
 #endif /* LIB_MFM_TEST_GENERATOR_TIMES_HXX */

@@ -229,7 +229,8 @@ namespace mfront {
                                false)) ||
               (bd.getAttribute(BehaviourDescription::computesStiffnessTensor,
                                false))) {
-            m += "return (this->D) * (this->eel + (this->theta) * (this->deto));\n";
+            m += "return (this->D) * (this->eel + (this->theta) * "
+                 "(this->deto));\n";
           } else {
             if (bd.getElasticSymmetryType() == mfront::ISOTROPIC) {
               auto b = bd.getAttribute(
@@ -353,8 +354,7 @@ namespace mfront {
                             false)
                 ? "this->D"
                 : "this->D_tdt";
-        to.code +=
-            "if((smt==ELASTIC)||(smt==SECANTOPERATOR)){\n";
+        to.code += "if((smt==ELASTIC)||(smt==SECANTOPERATOR)){\n";
         to.code += "this->Dt = " + D + ";\n";
         if (idsl.getSolver().usesJacobian()) {
           to.code +=
@@ -543,9 +543,10 @@ namespace mfront {
         return "(this->theta) *(this->D)";
       }();
       // working around old gcc versions
-      auto r = std::vector<
-	std::tuple<std::string, std::string, mfront::SupportedTypes::TypeFlag>>{};
-      r.push_back(std::make_tuple(d, std::string("eel"), SupportedTypes::STENSOR));
+      auto r = std::vector<std::tuple<std::string, std::string,
+                                      mfront::SupportedTypes::TypeFlag>>{};
+      r.push_back(
+          std::make_tuple(d, std::string("eel"), SupportedTypes::STENSOR));
       return r;
     }  // end of HookeStressPotential::getStressDerivatives
 

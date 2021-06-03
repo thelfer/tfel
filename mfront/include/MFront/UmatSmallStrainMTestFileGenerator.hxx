@@ -1,28 +1,26 @@
-/*! 
+/*!
  * \file  mfront/include/MFront/UmatSmallStrainMTestFileGenerator.hxx
  * \brief
  * \author Thomas Helfer
  * \brief 10 juil. 2013
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_MFRONT_UMATSMALLSTRAINMTESTFILEGENERATOR_HXX
-#define LIB_MFRONT_UMATSMALLSTRAINMTESTFILEGENERATOR_HXX 
+#define LIB_MFRONT_UMATSMALLSTRAINMTESTFILEGENERATOR_HXX
 
-#include"MFront/MFrontConfig.hxx"
-#include"MFront/MTestFileGeneratorBase.hxx"
+#include "MFront/MFrontConfig.hxx"
+#include "MFront/MTestFileGeneratorBase.hxx"
 
-namespace mfront
-{
+namespace mfront {
 
-  struct MTESTFILEGENERATOR_VISIBILITY_EXPORT UmatSmallStrainMTestFileGenerator final
-    : public mfront::MTestFileGeneratorBase
-  {
+  struct MTESTFILEGENERATOR_VISIBILITY_EXPORT UmatSmallStrainMTestFileGenerator
+      final : public mfront::MTestFileGeneratorBase {
     /*!
      * constructor
      * \param[in] i : interface
@@ -51,32 +49,32 @@ namespace mfront
      * destructor
      */
     ~UmatSmallStrainMTestFileGenerator() override;
-  protected:
+
+   protected:
     /*!
      * write behaviour declaration
      * \param[in] os : output stream
      */
-   void writeBehaviourDeclaration(std::ostream&) const override;
-   /*!
-    * write driving variables
-    * \param[in] os : output stream
-    */
-   void writeGradients(std::ostream&) const override;
-   //! interface name
-   std::string interface;
-   //! library name
-   std::string library;
-   //! behaviour name
-   std::string behaviour;
-   //! strain
-   double eto[6];
-   //! strain increment
-   double deto[6];
-   //! stress increment
-   double stress[6];
-  }; // end of struct UmatSmallStrainMTestFileGenerator
+    void writeBehaviourDeclaration(std::ostream&) const override;
+    /*!
+     * write driving variables
+     * \param[in] os : output stream
+     */
+    void writeGradients(std::ostream&) const override;
+    //! interface name
+    std::string interface;
+    //! library name
+    std::string library;
+    //! behaviour name
+    std::string behaviour;
+    //! strain
+    double eto[6];
+    //! strain increment
+    double deto[6];
+    //! stress increment
+    double stress[6];
+  };  // end of struct UmatSmallStrainMTestFileGenerator
 
-} // end of namespace mfront
+}  // end of namespace mfront
 
 #endif /* LIB_MFRONT_UMATSMALLSTRAINMTESTFILEGENERATOR_HXX */
-

@@ -1,491 +1,495 @@
 /*!
  * \file   mfront/src/CppMaterialPropertyInterface.cxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   06 mai 2008
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
-#include<sstream>
-#include<fstream>
-#include<algorithm>
-#include<stdexcept>
+#include <sstream>
+#include <fstream>
+#include <algorithm>
+#include <stdexcept>
 
-#include"TFEL/Raise.hxx"
-#include"TFEL/Config/GetInstallPath.hxx"
-#include"TFEL/System/System.hxx"
+#include "TFEL/Raise.hxx"
+#include "TFEL/Config/GetInstallPath.hxx"
+#include "TFEL/System/System.hxx"
 
-#include"MFront/DSLUtilities.hxx"
-#include"MFront/MFrontUtilities.hxx"
-#include"MFront/MFrontHeader.hxx"
-#include"MFront/FileDescription.hxx"
-#include"MFront/TargetsDescription.hxx"
-#include"MFront/MaterialPropertyDescription.hxx"
-#include"MFront/CppMaterialPropertyInterface.hxx"
+#include "MFront/DSLUtilities.hxx"
+#include "MFront/MFrontUtilities.hxx"
+#include "MFront/MFrontHeader.hxx"
+#include "MFront/FileDescription.hxx"
+#include "MFront/TargetsDescription.hxx"
+#include "MFront/MaterialPropertyDescription.hxx"
+#include "MFront/CppMaterialPropertyInterface.hxx"
 
-namespace mfront
-{
+namespace mfront {
 
-  static std::string getHeaderFileName(const std::string& n){
-    return "include/"+n+"-cxx.hxx";
+  static std::string getHeaderFileName(const std::string& n) {
+    return "include/" + n + "-cxx.hxx";
   }
-  
-  std::string CppMaterialPropertyInterface::getName()
-  {
-    return "c++";
-  }
+
+  std::string CppMaterialPropertyInterface::getName() { return "c++"; }
 
   CppMaterialPropertyInterface::CppMaterialPropertyInterface() = default;
 
-  std::pair<bool,tfel::utilities::CxxTokenizer::TokensContainer::const_iterator>
+  std::pair<bool,
+            tfel::utilities::CxxTokenizer::TokensContainer::const_iterator>
   CppMaterialPropertyInterface::treatKeyword(const std::string& k,
-					     const std::vector<std::string>& i,
-					     tokens_iterator current,
-					     const tokens_iterator)
-  {
-    tfel::raise_if((std::find(i.begin(),i.end(),"c++")!=i.end())||
-		   (std::find(i.begin(),i.end(),"C++")!=i.end())||
-		   (std::find(i.begin(),i.end(),"cxx")!=i.end())||
-		   (std::find(i.begin(),i.end(),"Cxx")!=i.end())||
-		   (std::find(i.begin(),i.end(),"cpp")!=i.end())||
-		   (std::find(i.begin(),i.end(),"Cpp")!=i.end()),
-		   "CppMaterialPropertyInterface::treatKeyword: "
-		   "unsupported keyword '"+k+"'");
-    return {false,current};
-  } // end of treatKeyword
+                                             const std::vector<std::string>& i,
+                                             tokens_iterator current,
+                                             const tokens_iterator) {
+    tfel::raise_if((std::find(i.begin(), i.end(), "c++") != i.end()) ||
+                       (std::find(i.begin(), i.end(), "C++") != i.end()) ||
+                       (std::find(i.begin(), i.end(), "cxx") != i.end()) ||
+                       (std::find(i.begin(), i.end(), "Cxx") != i.end()) ||
+                       (std::find(i.begin(), i.end(), "cpp") != i.end()) ||
+                       (std::find(i.begin(), i.end(), "Cpp") != i.end()),
+                   "CppMaterialPropertyInterface::treatKeyword: "
+                   "unsupported keyword '" +
+                       k + "'");
+    return {false, current};
+  }  // end of treatKeyword
 
-    void
-    CppMaterialPropertyInterface::getTargetsDescription(TargetsDescription& d,
-							const MaterialPropertyDescription& mpd) const
-    {
-      const auto lib  = "Cpp"+getMaterialLawLibraryNameBase(mpd);
-      const auto name = mpd.material.empty() ? mpd.className : mpd.material+"_"+mpd.className;
-      const auto tfel_config = tfel::getTFELConfigExecutableName();
-      auto& l = d.getLibrary(lib);
-      insert_if(l.cppflags,
-		"$(shell "+tfel_config+" --cppflags --compiler-flags)");
-      insert_if(l.include_directories,
-	      "$(shell "+tfel_config+" --include-path)");
-      insert_if(l.sources,name+"-cxx.cxx");
-      insert_if(d.headers,getHeaderFileName(name));
-#if  !((defined _WIN32) && (defined _MSC_VER))
-      insert_if(l.link_libraries,"m");
+  void CppMaterialPropertyInterface::getTargetsDescription(
+      TargetsDescription& d, const MaterialPropertyDescription& mpd) const {
+    const auto lib = "Cpp" + getMaterialLawLibraryNameBase(mpd);
+    const auto name = mpd.material.empty() ? mpd.className
+                                           : mpd.material + "_" + mpd.className;
+    const auto tfel_config = tfel::getTFELConfigExecutableName();
+    auto& l = d.getLibrary(lib);
+    insert_if(l.cppflags,
+              "$(shell " + tfel_config + " --cppflags --compiler-flags)");
+    insert_if(l.include_directories,
+              "$(shell " + tfel_config + " --include-path)");
+    insert_if(l.sources, name + "-cxx.cxx");
+    insert_if(d.headers, getHeaderFileName(name));
+#if !((defined _WIN32) && (defined _MSC_VER))
+    insert_if(l.link_libraries, "m");
 #endif /* !((defined _WIN32) && (defined _MSC_VER)) */
-      auto cn = std::string{};
+    auto cn = std::string{};
 #pragma message("handle namespace")
-      // for(const auto& ns : this->namespaces){
-      //   cc += ns + "::"
-      // }
-      cn += name;    
-      insert_if(l.epts,cn);
-    } // end of CMaterialPropertyInterface::getTargetsDescription
+    // for(const auto& ns : this->namespaces){
+    //   cc += ns + "::"
+    // }
+    cn += name;
+    insert_if(l.epts, cn);
+  }  // end of CMaterialPropertyInterface::getTargetsDescription
 
-  void CppMaterialPropertyInterface::writeOutputFiles(const MaterialPropertyDescription& mpd,
-						      const FileDescription& fd) const
-  {
-    this->writeHeaderFile(mpd,fd);
-    this->writeSrcFile(mpd,fd);
-  } // end of CppMaterialPropertyInterface::writeOutputFiles
+  void CppMaterialPropertyInterface::writeOutputFiles(
+      const MaterialPropertyDescription& mpd, const FileDescription& fd) const {
+    this->writeHeaderFile(mpd, fd);
+    this->writeSrcFile(mpd, fd);
+  }  // end of CppMaterialPropertyInterface::writeOutputFiles
 
-  void CppMaterialPropertyInterface::writeHeaderFile(const MaterialPropertyDescription& mpd,
-						     const FileDescription& fd) const
-  {
-    const auto name = mpd.material.empty() ? mpd.className : mpd.material+"_"+mpd.className;
+  void CppMaterialPropertyInterface::writeHeaderFile(
+      const MaterialPropertyDescription& mpd, const FileDescription& fd) const {
+    const auto name = mpd.material.empty() ? mpd.className
+                                           : mpd.material + "_" + mpd.className;
     std::ofstream header(getHeaderFileName(name));
-    tfel::raise_if(!header,"CppMaterialPropertyInterface::writeHeaderFile: "
-		   "unable to open '"+getHeaderFileName(name)+"' "
-		   "for writing output file.");
-    header.exceptions(std::ios::badbit|std::ios::failbit);
+    tfel::raise_if(!header,
+                   "CppMaterialPropertyInterface::writeHeaderFile: "
+                   "unable to open '" +
+                       getHeaderFileName(name) +
+                       "' "
+                       "for writing output file.");
+    header.exceptions(std::ios::badbit | std::ios::failbit);
     header << "/*!\n"
-	   << "* \\file   " << getHeaderFileName(name)  << '\n'
-	   << "* \\brief  " << "this file declares the " 
-	   << name << " MaterialLaw.\n"
-	   << "*         File generated by "
-	   << MFrontHeader::getVersionName() << " "
-	   << "version " << MFrontHeader::getVersionNumber() << '\n';
-    if(!fd.authorName.empty()){
+           << "* \\file   " << getHeaderFileName(name) << '\n'
+           << "* \\brief  "
+           << "this file declares the " << name << " MaterialLaw.\n"
+           << "*         File generated by " << MFrontHeader::getVersionName()
+           << " "
+           << "version " << MFrontHeader::getVersionNumber() << '\n';
+    if (!fd.authorName.empty()) {
       header << "* \\author " << fd.authorName << '\n';
     }
-    if(!fd.date.empty()){
+    if (!fd.date.empty()) {
       header << "* \\date   " << fd.date << '\n';
     }
-    if(!fd.description.empty()){
+    if (!fd.description.empty()) {
       header << fd.description << '\n';
     }
     header << " */\n\n";
 
     header << "#ifndef LIB_MFRONT_" << makeUpperCase(name) << "_HXX\n"
-	   << "#define LIB_MFRONT_" << makeUpperCase(name) << "_HXX\n\n"
-	   << "#include<ostream>\n"
-	   << "#include<cmath>\n"
-	   << "#include<algorithm>\n"
-	   << "#include<stdexcept>\n\n"
-	   << "#include<functional>\n\n";
-    if(!mpd.includes.empty()){
+           << "#define LIB_MFRONT_" << makeUpperCase(name) << "_HXX\n\n"
+           << "#include<ostream>\n"
+           << "#include<cmath>\n"
+           << "#include<algorithm>\n"
+           << "#include<stdexcept>\n\n"
+           << "#include<functional>\n\n";
+    if (!mpd.includes.empty()) {
       header << mpd.includes << '\n';
     }
-    writeExportDirectives(header);    
+    writeExportDirectives(header);
     header << "namespace mfront\n{\n\n"
-	   << "struct MFRONT_SHAREDOBJ " << name << '\n';
-    if(!mpd.inputs.empty()){
-      if(mpd.inputs.size()==1){
-	header << ": std::unary_function<double,double>\n";
-      } else if(mpd.inputs.size()==2){
-	header << ": std::binary_function<double,double,double>\n";
+           << "struct MFRONT_SHAREDOBJ " << name << '\n';
+    if (!mpd.inputs.empty()) {
+      if (mpd.inputs.size() == 1) {
+        header << ": std::unary_function<double,double>\n";
+      } else if (mpd.inputs.size() == 2) {
+        header << ": std::binary_function<double,double,double>\n";
       }
     }
     header << "{\n\n";
-    if(mpd.inputs.empty()){
+    if (mpd.inputs.empty()) {
       header << "//! nested typedef to make " << name
-	     << " model an adaptable generator (STL compliance)\n\n";
+             << " model an adaptable generator (STL compliance)\n\n";
       header << "typedef double result_type;\n\n";
-    } 
+    }
     header << "//! default constructor\n"
-	   << name << "() noexcept;\n\n"
-	   << "//! move constructor\n"
-	   << name << "(" << name << "&&) noexcept = default;\n"
-	   << "//! copy constructor\n"
-	   << name << "(const " << name << "&) noexcept = default;\n"
-	   << "//! move assignement operator\n"
-	   << name << "& operator=(" << name << "&&) noexcept = default;\n"
-	   << "//! assignement operator\n"
-	   << name << "& operator=(const " << name << "&) noexcept = default;\n\n"
-	   << "double\noperator()(";
-    for(auto p4=mpd.inputs.begin();p4!=mpd.inputs.end();){
+           << name << "() noexcept;\n\n"
+           << "//! move constructor\n"
+           << name << "(" << name << "&&) noexcept = default;\n"
+           << "//! copy constructor\n"
+           << name << "(const " << name << "&) noexcept = default;\n"
+           << "//! move assignement operator\n"
+           << name << "& operator=(" << name << "&&) noexcept = default;\n"
+           << "//! assignement operator\n"
+           << name << "& operator=(const " << name
+           << "&) noexcept = default;\n\n"
+           << "double\noperator()(";
+    for (auto p4 = mpd.inputs.begin(); p4 != mpd.inputs.end();) {
       header << "const double";
-      if((++p4)!=mpd.inputs.end()){
-	header << ",";
+      if ((++p4) != mpd.inputs.end()) {
+        header << ",";
       }
     }
     header << ") const;\n\n";
-    if((hasBounds(mpd.inputs))||(hasPhysicalBounds(mpd.inputs))){
+    if ((hasBounds(mpd.inputs)) || (hasPhysicalBounds(mpd.inputs))) {
       header << "static void\ncheckBounds(";
-      for(auto p4=mpd.inputs.begin();p4!=mpd.inputs.end();){
-	header << "const double";
-	if((++p4)!=mpd.inputs.end()){
-	  header << ",";
-	}
+      for (auto p4 = mpd.inputs.begin(); p4 != mpd.inputs.end();) {
+        header << "const double";
+        if ((++p4) != mpd.inputs.end()) {
+          header << ",";
+        }
       }
       header << ");\n\n";
     }
-    for(const auto& p : mpd.parameters){
+    for (const auto& p : mpd.parameters) {
       header << "const double& get" << p.name << "() const;\n";
     }
-    for(const auto& p : mpd.parameters){
+    for (const auto& p : mpd.parameters) {
       header << "double& get" << p.name << "();\n";
     }
-    for(const auto& p : mpd.parameters){
+    for (const auto& p : mpd.parameters) {
       header << "void set" << p.name << "(const double);\n";
     }
-    if(!mpd.parameters.empty()){
+    if (!mpd.parameters.empty()) {
       header << "private:\n";
-      for(const auto& p : mpd.parameters){
-	header << "double " << p.name << ";\n";
+      for (const auto& p : mpd.parameters) {
+        header << "double " << p.name << ";\n";
       }
     }
     header << "}; // end of class " << name << "\n\n"
-	   << "std::ostream& operator<<(std::ostream&,const " << name << "&);\n\n"
-	   << "} // end of namespace mfront\n\n"
-	   << "#endif /* LIB_MFRONT_" << makeUpperCase(name) << "_HXX */\n";
+           << "std::ostream& operator<<(std::ostream&,const " << name
+           << "&);\n\n"
+           << "} // end of namespace mfront\n\n"
+           << "#endif /* LIB_MFRONT_" << makeUpperCase(name) << "_HXX */\n";
     header.close();
-  } // end of CppMaterialPropertyInterface::writeHeaderFile()
+  }  // end of CppMaterialPropertyInterface::writeHeaderFile()
 
-  void CppMaterialPropertyInterface::writeSrcFile(const MaterialPropertyDescription& mpd,
-						  const FileDescription& fd) const
-  {
-    auto throw_if = [](const bool b,const std::string& m){
-      tfel::raise_if(b,"CppMaterialPropertyInterface::writeSrcFile: "+m);
+  void CppMaterialPropertyInterface::writeSrcFile(
+      const MaterialPropertyDescription& mpd, const FileDescription& fd) const {
+    auto throw_if = [](const bool b, const std::string& m) {
+      tfel::raise_if(b, "CppMaterialPropertyInterface::writeSrcFile: " + m);
     };
-    const auto name = mpd.material.empty() ?
-      mpd.className : mpd.material+"_"+mpd.className;
-    const auto src_name  = "src/" +name+"-cxx.cxx";
+    const auto name = mpd.material.empty() ? mpd.className
+                                           : mpd.material + "_" + mpd.className;
+    const auto src_name = "src/" + name + "-cxx.cxx";
     std::ofstream src(src_name);
-    throw_if(!src,"unable to open '"+src_name+"'");
-    src.exceptions(std::ios::badbit|std::ios::failbit);
+    throw_if(!src, "unable to open '" + src_name + "'");
+    src.exceptions(std::ios::badbit | std::ios::failbit);
     src << "/*!\n"
-	<< "* \\file   " << src_name  << '\n'
-	<< "* \\brief  " << "this file implements the " 
-	<< name << " MaterialLaw.\n"
-	<< "*         File generated by "
-	<< MFrontHeader::getVersionName() << " "
-	<< "version " << MFrontHeader::getVersionNumber()
-	<< '\n';
-    if(!fd.authorName.empty()){
+        << "* \\file   " << src_name << '\n'
+        << "* \\brief  "
+        << "this file implements the " << name << " MaterialLaw.\n"
+        << "*         File generated by " << MFrontHeader::getVersionName()
+        << " "
+        << "version " << MFrontHeader::getVersionNumber() << '\n';
+    if (!fd.authorName.empty()) {
       src << "* \\author " << fd.authorName << '\n';
     }
-    if(!fd.date.empty()){
+    if (!fd.date.empty()) {
       src << "* \\date   " << fd.date << '\n';
     }
     src << " */\n\n"
-	<< "#include<stdexcept>\n"
-	<< "#include<iostream>\n"
-	<< "#include<cstdlib>\n"
-	<< "#include<sstream>\n"
-	<< "#include<cstring>\n"
-      	<< "#include<vector>\n"
-      	<< "#include<string>\n"
-	<< "#include\"TFEL/Raise.hxx\"\n"
-	<< "#include\"TFEL/Math/General/IEEE754.hxx\"\n"
-	<< "#include\"" << name << "-cxx.hxx\"\n\n";
+        << "#include<stdexcept>\n"
+        << "#include<iostream>\n"
+        << "#include<cstdlib>\n"
+        << "#include<sstream>\n"
+        << "#include<cstring>\n"
+        << "#include<vector>\n"
+        << "#include<string>\n"
+        << "#include\"TFEL/Raise.hxx\"\n"
+        << "#include\"TFEL/Math/General/IEEE754.hxx\"\n"
+        << "#include\"" << name << "-cxx.hxx\"\n\n";
     writeExportDirectives(src);
     src << "#ifdef __cplusplus\n"
-	    << "extern \"C\"{\n"
-	    << "#endif /* __cplusplus */\n\n";
-    // mfront metadata 
-    writeVariablesNamesSymbol(src,name,mpd);
-    writeVariablesBoundsSymbols(src,name,mpd);
+        << "extern \"C\"{\n"
+        << "#endif /* __cplusplus */\n\n";
+    // mfront metadata
+    writeVariablesNamesSymbol(src, name, mpd);
+    writeVariablesBoundsSymbols(src, name, mpd);
 
-    writeEntryPointSymbol(src,name);
-    writeTFELVersionSymbol(src,name);
-    writeInterfaceSymbol(src,name,"C++");
-    writeMaterialSymbol(src,name,mpd.material);
-    writeMaterialKnowledgeTypeSymbol(src,name,MATERIALPROPERTY);
+    writeEntryPointSymbol(src, name);
+    writeTFELVersionSymbol(src, name);
+    writeInterfaceSymbol(src, name, "C++");
+    writeMaterialSymbol(src, name, mpd.material);
+    writeMaterialKnowledgeTypeSymbol(src, name, MATERIALPROPERTY);
     src << "#ifdef __cplusplus\n"
-	<< "} // end of extern \"C\"\n"
-	<< "#endif /* __cplusplus */\n\n";
-    src	<< "namespace mfront\n{\n\n"
-	<< name << "::" << name << "() noexcept\n";
-    if(!mpd.parameters.empty()){
+        << "} // end of extern \"C\"\n"
+        << "#endif /* __cplusplus */\n\n";
+    src << "namespace mfront\n{\n\n" << name << "::" << name << "() noexcept\n";
+    if (!mpd.parameters.empty()) {
       src << ": ";
     }
-    for(auto p=mpd.parameters.begin();p!=mpd.parameters.end();){
+    for (auto p = mpd.parameters.begin(); p != mpd.parameters.end();) {
       throw_if(!p->hasAttribute(VariableDescription::defaultValue),
-	       "internal error (can't find value of "
-	       "parameter '" + p->name + "')");
+               "internal error (can't find value of "
+               "parameter '" +
+                   p->name + "')");
       src << p->name << "("
-	  << p->getAttribute<double>(VariableDescription::defaultValue) << ")";
-      if(++p!=mpd.parameters.end()){
-	src << ",";
+          << p->getAttribute<double>(VariableDescription::defaultValue) << ")";
+      if (++p != mpd.parameters.end()) {
+        src << ",";
       }
       src << "\n";
     }
     src << "{} // end of " << name << "::" << name << "\n\n";
-    for(const auto& p : mpd.parameters){
+    for (const auto& p : mpd.parameters) {
       src << "const double& ";
       src << name;
-      src << "::get"
-	  << p.name << "() const{\n"
-	  << "return this->" << p.name << ";\n"
-	  << "} // end of " << name << "::get\n\n";
+      src << "::get" << p.name << "() const{\n"
+          << "return this->" << p.name << ";\n"
+          << "} // end of " << name << "::get\n\n";
       src << "double& " << name << "::get" << p.name << "(){\n"
-	  << "return " << p.name << ";\n"
-	  << "} // end of " << name << "::get\n\n";
+          << "return " << p.name << ";\n"
+          << "} // end of " << name << "::get\n\n";
       src << "void " << name;
-      src  << "::set" << p.name;
+      src << "::set" << p.name;
       src << "(const double " << name << "_value_)";
       src << "{\n"
-	  << "this->" << p.name << " = " << name << "_value_;\n"
-	  << "} // end of " << name << "::set\n\n";
+          << "this->" << p.name << " = " << name << "_value_;\n"
+          << "} // end of " << name << "::set\n\n";
     }
     src << "double " << name << "::operator()(";
-    for(auto pi=mpd.inputs.begin();pi!=mpd.inputs.end();){
+    for (auto pi = mpd.inputs.begin(); pi != mpd.inputs.end();) {
       src << "const double " << pi->name;
-      if(++pi!=mpd.inputs.end()){
-	src << ",";
+      if (++pi != mpd.inputs.end()) {
+        src << ",";
       }
     }
     src << ") const\n{\n"
-	<< "using namespace std;\n"
-	<< "using real = double;\n";
+        << "using namespace std;\n"
+        << "using real = double;\n";
     // material laws
-    writeMaterialLaws(src,mpd.materialLaws);
+    writeMaterialLaws(src, mpd.materialLaws);
     // static variables
-    writeStaticVariables(src,mpd.staticVars,fd.fileName);
+    writeStaticVariables(src, mpd.staticVars, fd.fileName);
     // body
     src << "real " << mpd.output.name << ";\n";
-    if((hasBounds(mpd.inputs))||(hasPhysicalBounds(mpd.inputs))){
-      src << "#ifndef MFRONT_NO_BOUNDS_CHECK\n";	
+    if ((hasBounds(mpd.inputs)) || (hasPhysicalBounds(mpd.inputs))) {
+      src << "#ifndef MFRONT_NO_BOUNDS_CHECK\n";
       src << name << "::checkBounds(";
-      for(auto pi=mpd.inputs.begin();pi!=mpd.inputs.end();){
-	src << pi->name;
-	if((++pi)!=mpd.inputs.end()){
-	  src << ",";
-	}
+      for (auto pi = mpd.inputs.begin(); pi != mpd.inputs.end();) {
+        src << pi->name;
+        if ((++pi) != mpd.inputs.end()) {
+          src << ",";
+        }
       }
       src << ");\n";
-      src << "#endif /* MFRONT_NO_BOUNDS_CHECK */\n";	
+      src << "#endif /* MFRONT_NO_BOUNDS_CHECK */\n";
     }
-    if(!mpd.inputs.empty()){
+    if (!mpd.inputs.empty()) {
       src << "#ifndef MFRONT_NOERRNO_HANDLING\n"
-	  << "const auto mfront_errno_old = errno;\n"
-	  << "errno=0;\n"
-	  << "#endif /* MFRONT_NOERRNO_HANDLING */\n";
+          << "const auto mfront_errno_old = errno;\n"
+          << "errno=0;\n"
+          << "#endif /* MFRONT_NOERRNO_HANDLING */\n";
     }
     src << mpd.f.body;
-    if(!mpd.inputs.empty()){
+    if (!mpd.inputs.empty()) {
       src << "#ifndef MFRONT_NOERRNO_HANDLING\n"
-	// can't use std::swap here as errno might be a macro
-	  << "const auto mfront_errno = errno;\n"
-	  << "errno = mfront_errno_old;\n"
-	  << "tfel::raise_if((mfront_errno!=0)||"
-	  << "(!tfel::math::ieee754::isfinite(" << mpd.output.name << ")),\n"
-	  << "\""<< name << ": errno has been set \"\n"
-	  << "\"(\"+std::string(::strerror(errno))+\")\");\n"
-	  << "#endif /* MFRONT_NOERRNO_HANDLING */\n";
+          // can't use std::swap here as errno might be a macro
+          << "const auto mfront_errno = errno;\n"
+          << "errno = mfront_errno_old;\n"
+          << "tfel::raise_if((mfront_errno!=0)||"
+          << "(!tfel::math::ieee754::isfinite(" << mpd.output.name << ")),\n"
+          << "\"" << name << ": errno has been set \"\n"
+          << "\"(\"+std::string(::strerror(errno))+\")\");\n"
+          << "#endif /* MFRONT_NOERRNO_HANDLING */\n";
     }
     src << "return " << mpd.output.name << ";\n"
-	<< "} // end of " << name << "::operator()\n\n";
-    if((hasBounds(mpd.inputs))||(hasPhysicalBounds(mpd.inputs))){
+        << "} // end of " << name << "::operator()\n\n";
+    if ((hasBounds(mpd.inputs)) || (hasPhysicalBounds(mpd.inputs))) {
       src << "void\n";
       src << name;
       src << "::checkBounds(";
-      if(!mpd.inputs.empty()){
-	for(auto pi=mpd.inputs.begin();pi!=mpd.inputs.end();){
-	  src << "const double " << pi->name;
-	  if((++pi)!=mpd.inputs.end()){
-	    src << ",";
-	  }
-	}
+      if (!mpd.inputs.empty()) {
+        for (auto pi = mpd.inputs.begin(); pi != mpd.inputs.end();) {
+          src << "const double " << pi->name;
+          if ((++pi) != mpd.inputs.end()) {
+            src << ",";
+          }
+        }
       } else {
-	src << "void";
+        src << "void";
       }
       src << ")\n{\n";
-      if(hasPhysicalBounds(mpd.inputs)){
-	src << "using namespace std;\n"
-	    << "// treating physical bounds\n";
-	for(const auto& i : mpd.inputs){
-	  if(!i.hasPhysicalBounds()){
-	    continue;
-	  }
-	  const auto& b = i.getPhysicalBounds();
-	  if(b.boundsType==VariableBoundsDescription::LOWER){
-	    src << "if(" << i.name<< " < "<< b.lowerBound << "){\n"
-		<< "ostringstream msg;\n"
-		<< "msg << \"" << name << " : "  << i.name << " is below its physical lower bound \";\n"
-		<< "msg << \"(\" << " << i.name 
-		<< " << \" < " << b.lowerBound << ")\";\n"
-		<< "tfel::raise<range_error>(msg.str());\n"
-		<< "}\n";
-	  } else if(b.boundsType==VariableBoundsDescription::UPPER){
-	    src << "if(" << i.name<< " > "<< b.upperBound << "){\n"
-		<< "ostringstream msg;\n"
-		<< "msg << \"" << name << " : "  << i.name << " is beyond its physical upper bound \";\n"
-		<< "msg << \"(\" << " << i.name 
-		<< " << \" > " << b.upperBound << ")\";\n"
-		<< "tfel::raise<range_error>(msg.str());\n"
-		<< "}\n";
-	  } else {
-	    src << "if(" << i.name<< " < "<< b.lowerBound << "){\n"
-		<< "ostringstream msg;\n"
-		<< "msg << \"" << name << " : "  << i.name << " is below its physical lower bound \";\n"
-		<< "msg << \"(\" << " << i.name 
-		<< " << \" < " << b.lowerBound << ")\";\n"
-		<< "tfel::raise<range_error>(msg.str());\n"
-		<< "}\n"
-		<< "if(" << i.name<< " > "<< b.upperBound << "){\n"
-		<< "ostringstream msg;\n"
-		<< "msg << \"" << name << " : "  << i.name << " is beyond its physical upper bound \";\n"
-		<< "msg << \"(\" << " << i.name 
-		<< " << \" > " << b.upperBound << ")\";\n"
-		<< "tfel::raise<range_error>(msg.str());\n"
-		<< "}\n";
-	  }
-	}
+      if (hasPhysicalBounds(mpd.inputs)) {
+        src << "using namespace std;\n"
+            << "// treating physical bounds\n";
+        for (const auto& i : mpd.inputs) {
+          if (!i.hasPhysicalBounds()) {
+            continue;
+          }
+          const auto& b = i.getPhysicalBounds();
+          if (b.boundsType == VariableBoundsDescription::LOWER) {
+            src << "if(" << i.name << " < " << b.lowerBound << "){\n"
+                << "ostringstream msg;\n"
+                << "msg << \"" << name << " : " << i.name
+                << " is below its physical lower bound \";\n"
+                << "msg << \"(\" << " << i.name << " << \" < " << b.lowerBound
+                << ")\";\n"
+                << "tfel::raise<range_error>(msg.str());\n"
+                << "}\n";
+          } else if (b.boundsType == VariableBoundsDescription::UPPER) {
+            src << "if(" << i.name << " > " << b.upperBound << "){\n"
+                << "ostringstream msg;\n"
+                << "msg << \"" << name << " : " << i.name
+                << " is beyond its physical upper bound \";\n"
+                << "msg << \"(\" << " << i.name << " << \" > " << b.upperBound
+                << ")\";\n"
+                << "tfel::raise<range_error>(msg.str());\n"
+                << "}\n";
+          } else {
+            src << "if(" << i.name << " < " << b.lowerBound << "){\n"
+                << "ostringstream msg;\n"
+                << "msg << \"" << name << " : " << i.name
+                << " is below its physical lower bound \";\n"
+                << "msg << \"(\" << " << i.name << " << \" < " << b.lowerBound
+                << ")\";\n"
+                << "tfel::raise<range_error>(msg.str());\n"
+                << "}\n"
+                << "if(" << i.name << " > " << b.upperBound << "){\n"
+                << "ostringstream msg;\n"
+                << "msg << \"" << name << " : " << i.name
+                << " is beyond its physical upper bound \";\n"
+                << "msg << \"(\" << " << i.name << " << \" > " << b.upperBound
+                << ")\";\n"
+                << "tfel::raise<range_error>(msg.str());\n"
+                << "}\n";
+          }
+        }
       }
-      if(hasBounds(mpd.inputs)){
-	src << "// treating standard bounds\n";
-	for(const auto& i : mpd.inputs){
-	  if(!i.hasBounds()){
-	    continue;
-	  }
-	  const auto& b = i.getBounds();
-	  if(b.boundsType==VariableBoundsDescription::LOWER){
-	    src << "if(" << i.name<< " < "<< b.lowerBound << "){\n"
-		<< "const char * const policy = "
-		<< "::getenv(\"OUT_OF_BOUNDS_POLICY\");\n"
-		<< "if(policy!=nullptr){\n"
-		<< "if(strcmp(policy,\"STRICT\")==0){\n"
-		<< "ostringstream msg;\n"
-		<< "msg << \"" << name << " : "  << i.name << " is below its lower bound \";\n"
-		<< "msg << \"(\" << " << i.name 
-		<< " << \" < " << b.lowerBound << ")\";\n"
-		<< "tfel::raise<range_error>(msg.str());\n"
-		<< "} else if(strcmp(policy,\"WARNING\")==0){\n"
-		<< "cerr << \"" << i.name << " is below its lower bound \";\n"
-		<< "cerr << \"(\" << " << i.name 
-		<< " << \" < " << b.lowerBound << ")\\n\";\n"
-		<< "}\n"
-		<< "}\n"
-		<< "}\n";
-	  } else if(b.boundsType==VariableBoundsDescription::UPPER){
-	    src << "if(" << i.name<< " > "<< b.upperBound << "){\n"
-		<< "const char * const policy = "
-		<< "::getenv(\"OUT_OF_BOUNDS_POLICY\");\n"
-		<< "if(policy!=nullptr){\n"
-		<< "if(strcmp(policy,\"STRICT\")==0){\n"
-		<< "ostringstream msg;\n"
-		<< "msg << \"" << name << " : "  << i.name << " is beyond its upper bound \";\n"
-		<< "msg << \"(\" << " << i.name 
-		<< " << \" > " << b.upperBound << ")\";\n"
-		<< "tfel::raise<range_error>(msg.str());\n"
-		<< "} else if(strcmp(policy,\"WARNING\")==0){\n"
-		<< "cerr << \"" << i.name << " is beyond its upper bound \";\n"
-		<< "cerr << \"(\" << " << i.name 
-		<< " << \" > " << b.upperBound << ")\\n\";\n"
-		<< "}\n"
-		<< "}\n"
-		<< "}\n";
-	  } else {
-	    src << "if(" << i.name<< " < "<< b.lowerBound << "){\n"
-		<< "const char * const policy = "
-		<< "::getenv(\"OUT_OF_BOUNDS_POLICY\");\n"
-		<< "if(policy!=nullptr){\n"
-		<< "if(strcmp(policy,\"STRICT\")==0){\n"
-		<< "ostringstream msg;\n"
-		<< "msg << \"" << name << " : "  << i.name << " is below its lower bound \";\n"
-		<< "msg << \"(\" << " << i.name 
-		<< " << \" < " << b.lowerBound << ")\";\n"
-		<< "tfel::raise<range_error>(msg.str());\n"
-		<< "} else if(strcmp(policy,\"WARNING\")==0){\n"
-		<< "cerr << \"" << i.name << " is below its lower bound \";\n"
-		<< "cerr << \"(\" << " << i.name 
-		<< " << \" < " << b.lowerBound << ")\\n\";\n"
-		<< "}\n"
-		<< "}\n"
-		<< "}\n"
-		<< "if(" << i.name<< " > "<< b.upperBound << "){\n"
-		<< "const char * const policy = "
-		<< "::getenv(\"OUT_OF_BOUNDS_POLICY\");\n"
-		<< "if(policy!=nullptr){\n"
-		<< "if(strcmp(policy,\"STRICT\")==0){\n"
-		<< "ostringstream msg;\n"
-		<< "msg << \"" << name << " : "  << i.name << " is beyond its upper bound \";\n"
-		<< "msg << \"(\" << " << i.name 
-		<< " << \" > " << b.upperBound << ")\";\n"
-		<< "tfel::raise<range_error>(msg.str());\n"
-		<< "} else if(strcmp(policy,\"WARNING\")==0){\n"
-		<< "cerr << \"" << i.name << " is beyond its upper bound \";\n"
-		<< "cerr << \"(\" << " << i.name 
-		<< " << \" > " << b.upperBound << ")\\n\";\n"
-		<< "}\n"
-		<< "}\n"
-		<< "}\n";
-	  }
-	}
+      if (hasBounds(mpd.inputs)) {
+        src << "// treating standard bounds\n";
+        for (const auto& i : mpd.inputs) {
+          if (!i.hasBounds()) {
+            continue;
+          }
+          const auto& b = i.getBounds();
+          if (b.boundsType == VariableBoundsDescription::LOWER) {
+            src << "if(" << i.name << " < " << b.lowerBound << "){\n"
+                << "const char * const policy = "
+                << "::getenv(\"OUT_OF_BOUNDS_POLICY\");\n"
+                << "if(policy!=nullptr){\n"
+                << "if(strcmp(policy,\"STRICT\")==0){\n"
+                << "ostringstream msg;\n"
+                << "msg << \"" << name << " : " << i.name
+                << " is below its lower bound \";\n"
+                << "msg << \"(\" << " << i.name << " << \" < " << b.lowerBound
+                << ")\";\n"
+                << "tfel::raise<range_error>(msg.str());\n"
+                << "} else if(strcmp(policy,\"WARNING\")==0){\n"
+                << "cerr << \"" << i.name << " is below its lower bound \";\n"
+                << "cerr << \"(\" << " << i.name << " << \" < " << b.lowerBound
+                << ")\\n\";\n"
+                << "}\n"
+                << "}\n"
+                << "}\n";
+          } else if (b.boundsType == VariableBoundsDescription::UPPER) {
+            src << "if(" << i.name << " > " << b.upperBound << "){\n"
+                << "const char * const policy = "
+                << "::getenv(\"OUT_OF_BOUNDS_POLICY\");\n"
+                << "if(policy!=nullptr){\n"
+                << "if(strcmp(policy,\"STRICT\")==0){\n"
+                << "ostringstream msg;\n"
+                << "msg << \"" << name << " : " << i.name
+                << " is beyond its upper bound \";\n"
+                << "msg << \"(\" << " << i.name << " << \" > " << b.upperBound
+                << ")\";\n"
+                << "tfel::raise<range_error>(msg.str());\n"
+                << "} else if(strcmp(policy,\"WARNING\")==0){\n"
+                << "cerr << \"" << i.name << " is beyond its upper bound \";\n"
+                << "cerr << \"(\" << " << i.name << " << \" > " << b.upperBound
+                << ")\\n\";\n"
+                << "}\n"
+                << "}\n"
+                << "}\n";
+          } else {
+            src << "if(" << i.name << " < " << b.lowerBound << "){\n"
+                << "const char * const policy = "
+                << "::getenv(\"OUT_OF_BOUNDS_POLICY\");\n"
+                << "if(policy!=nullptr){\n"
+                << "if(strcmp(policy,\"STRICT\")==0){\n"
+                << "ostringstream msg;\n"
+                << "msg << \"" << name << " : " << i.name
+                << " is below its lower bound \";\n"
+                << "msg << \"(\" << " << i.name << " << \" < " << b.lowerBound
+                << ")\";\n"
+                << "tfel::raise<range_error>(msg.str());\n"
+                << "} else if(strcmp(policy,\"WARNING\")==0){\n"
+                << "cerr << \"" << i.name << " is below its lower bound \";\n"
+                << "cerr << \"(\" << " << i.name << " << \" < " << b.lowerBound
+                << ")\\n\";\n"
+                << "}\n"
+                << "}\n"
+                << "}\n"
+                << "if(" << i.name << " > " << b.upperBound << "){\n"
+                << "const char * const policy = "
+                << "::getenv(\"OUT_OF_BOUNDS_POLICY\");\n"
+                << "if(policy!=nullptr){\n"
+                << "if(strcmp(policy,\"STRICT\")==0){\n"
+                << "ostringstream msg;\n"
+                << "msg << \"" << name << " : " << i.name
+                << " is beyond its upper bound \";\n"
+                << "msg << \"(\" << " << i.name << " << \" > " << b.upperBound
+                << ")\";\n"
+                << "tfel::raise<range_error>(msg.str());\n"
+                << "} else if(strcmp(policy,\"WARNING\")==0){\n"
+                << "cerr << \"" << i.name << " is beyond its upper bound \";\n"
+                << "cerr << \"(\" << " << i.name << " << \" > " << b.upperBound
+                << ")\\n\";\n"
+                << "}\n"
+                << "}\n"
+                << "}\n";
+          }
+        }
       }
       src << "} // end of " << name << "::checkBounds\n\n";
     }
     src << "std::ostream& operator<<(std::ostream& os,const " << name;
-    if(!mpd.parameters.empty()){
+    if (!mpd.parameters.empty()) {
       src << "& src){\n";
     } else {
       src << "&){\n";
     }
-    for(const auto& p : mpd.parameters){
-      src << "os << \"" << p.name
-	  << " : \" << src.get" << p.name << "() << std::endl;\n";
+    for (const auto& p : mpd.parameters) {
+      src << "os << \"" << p.name << " : \" << src.get" << p.name
+          << "() << std::endl;\n";
     }
-    src << "return os;\n}// end of operator(std::ostream& os," 
-	<< name << "\n\n"
-	<< "} // end of namespace mfront\n\n";
+    src << "return os;\n}// end of operator(std::ostream& os," << name << "\n\n"
+        << "} // end of namespace mfront\n\n";
     src.close();
-  } // end of CppMaterialPropertyInterface::writeSrcFile()
+  }  // end of CppMaterialPropertyInterface::writeSrcFile()
 
   CppMaterialPropertyInterface::~CppMaterialPropertyInterface() = default;
-  
-} // end of namespace mfront
+
+}  // end of namespace mfront

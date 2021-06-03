@@ -24,7 +24,8 @@
 namespace tfel::math {
 
   /*
-   * Partial Specialisation of ComputeBinaryOperationHandler for stensor's multiplication
+   * Partial Specialisation of ComputeBinaryOperationHandler for stensor's
+   * multiplication
    */
   template <typename A, typename B>
   class ComputeBinaryOperationHandler<StensorTag, StensorTag, A, B, OpMult> {
@@ -49,10 +50,15 @@ namespace tfel::math {
   };
 
   /*
-   * Partial Specialisation of ComputeBinaryOperationHandler for stensor's operation
+   * Partial Specialisation of ComputeBinaryOperationHandler for stensor's
+   * operation
    */
   template <typename A, typename B>
-  class ComputeBinaryOperationHandler<StensorTag, StensorTag, A, B, OpDiadicProduct> {
+  class ComputeBinaryOperationHandler<StensorTag,
+                                      StensorTag,
+                                      A,
+                                      B,
+                                      OpDiadicProduct> {
     struct DummyHandle {};
     //! \brief a simple alias
     using StensA = EvaluationResult<A>;
@@ -84,7 +90,11 @@ namespace tfel::math {
   };
 
   template <typename A, typename B>
-  class ComputeBinaryOperationHandler<StensorTag, StensorTag, A, B, OpDotProduct> {
+  class ComputeBinaryOperationHandler<StensorTag,
+                                      StensorTag,
+                                      A,
+                                      B,
+                                      OpDotProduct> {
     struct DummyHandle {};
     //! \brief a simple alias
     using StensorA = EvaluationResult<A>;

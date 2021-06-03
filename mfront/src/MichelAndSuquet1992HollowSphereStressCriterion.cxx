@@ -21,18 +21,21 @@ namespace mfront {
 
   namespace bbrick {
 
-    MichelAndSuquet1992HollowSphereStressCriterion::MichelAndSuquet1992HollowSphereStressCriterion()
-        : StandardPorousStressCriterionBase("MichelAndSuquet1992HollowSphere") {}  // end of
+    MichelAndSuquet1992HollowSphereStressCriterion::
+        MichelAndSuquet1992HollowSphereStressCriterion()
+        : StandardPorousStressCriterionBase("MichelAndSuquet1992HollowSphere") {
+    }  // end of
     // MichelAndSuquet1992HollowSphereStressCriterion::MichelAndSuquet1992HollowSphereStressCriterion
 
     std::vector<mfront::BehaviourSymmetryType>
-    MichelAndSuquet1992HollowSphereStressCriterion::getSupportedBehaviourSymmetries() const {
+    MichelAndSuquet1992HollowSphereStressCriterion::
+        getSupportedBehaviourSymmetries() const {
       return {mfront::ISOTROPIC, mfront::ORTHOTROPIC};
     }  // end of
     // MichelAndSuquet1992HollowSphereStressCriterion::getSupportedBehaviourSymmetries()
 
-    std::vector<OptionDescription> MichelAndSuquet1992HollowSphereStressCriterion::getOptions()
-        const {
+    std::vector<OptionDescription>
+    MichelAndSuquet1992HollowSphereStressCriterion::getOptions() const {
       auto opts = StressCriterionBase::getOptions();
       opts.emplace_back("n", "Norton exponent of the matrix",
                         OptionDescription::MATERIALPROPERTY);
@@ -40,9 +43,11 @@ namespace mfront {
     }  // end of MichelAndSuquet1992HollowSphereStressCriterion::getOptions()
 
     StressCriterion::PorosityEffectOnFlowRule
-    MichelAndSuquet1992HollowSphereStressCriterion::getPorosityEffectOnEquivalentPlasticStrain() const {
+    MichelAndSuquet1992HollowSphereStressCriterion::
+        getPorosityEffectOnEquivalentPlasticStrain() const {
       return StressCriterion::NO_POROSITY_EFFECT_ON_EQUIVALENT_PLASTIC_STRAIN;
-    }  // end of MichelAndSuquet1992HollowSphereStressCriterion::getPorosityEffectOnEquivalentPlasticStrain()
+    }  // end of
+       // MichelAndSuquet1992HollowSphereStressCriterion::getPorosityEffectOnEquivalentPlasticStrain()
 
     MichelAndSuquet1992HollowSphereStressCriterion::
         ~MichelAndSuquet1992HollowSphereStressCriterion() = default;

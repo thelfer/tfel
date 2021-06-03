@@ -31,9 +31,7 @@ namespace tfel::math {
   template <typename TensorType>
   std::enable_if_t<implementsTensorConcept<TensorType>() &&
                        getSpaceDimension<TensorType>() == N &&
-                       isAssignableTo<
-                           numeric_type<TensorType>,
-                           T>(),
+                       isAssignableTo<numeric_type<TensorType>, T>(),
                    Expr<t2tost2<N, T>, RightCauchyGreenTensorDerivativeExpr<N>>>
   t2tost2<N, T>::dCdF(const TensorType& F) {
     return Expr<t2tost2<N, T>, RightCauchyGreenTensorDerivativeExpr<N>>(F);
@@ -43,9 +41,7 @@ namespace tfel::math {
   template <typename TensorType>
   std::enable_if_t<implementsTensorConcept<TensorType>() &&
                        getSpaceDimension<TensorType>() == N &&
-                       isAssignableTo<
-                           numeric_type<TensorType>,
-                           T>(),
+                       isAssignableTo<numeric_type<TensorType>, T>(),
                    Expr<t2tost2<N, T>, LeftCauchyGreenTensorDerivativeExpr<N>>>
   t2tost2<N, T>::dBdF(const TensorType& F) {
     return Expr<t2tost2<N, T>, LeftCauchyGreenTensorDerivativeExpr<N>>(F);
@@ -78,10 +74,9 @@ namespace tfel::math {
   }
 
   template <typename T2toT2Type>
-  std::enable_if_t<
-      ((getSpaceDimension<T2toT2Type>() == 2u) &&
-       implementsT2toT2Concept<T2toT2Type>()),
-      t2tost2<2u, numeric_type<T2toT2Type>>>
+  std::enable_if_t<((getSpaceDimension<T2toT2Type>() == 2u) &&
+                    implementsT2toT2Concept<T2toT2Type>()),
+                   t2tost2<2u, numeric_type<T2toT2Type>>>
   convertToT2toST2(const T2toT2Type& t) {
     using value_type = numeric_type<T2toT2Type>;
     constexpr auto icste = Cste<value_type>::isqrt2;
@@ -110,10 +105,9 @@ namespace tfel::math {
   }
 
   template <typename T2toT2Type>
-  std::enable_if_t<
-      ((getSpaceDimension<T2toT2Type>() == 3u) &&
-       implementsT2toT2Concept<T2toT2Type>()),
-      t2tost2<3u, numeric_type<T2toT2Type>>>
+  std::enable_if_t<((getSpaceDimension<T2toT2Type>() == 3u) &&
+                    implementsT2toT2Concept<T2toT2Type>()),
+                   t2tost2<3u, numeric_type<T2toT2Type>>>
   convertToT2toST2(const T2toT2Type& t) {
     using value_type = numeric_type<T2toT2Type>;
     constexpr auto icste = Cste<value_type>::isqrt2;
@@ -187,11 +181,11 @@ namespace tfel::math {
   }
 
   template <typename TensorType>
-  TFEL_MATH_INLINE2 std::enable_if_t<
-      (implementsTensorConcept<TensorType>()) &&
-          (getSpaceDimension<TensorType>() == 2u),
-      t2tost2<2u, numeric_type<TensorType>>>
-  computeRateOfDeformationDerivative(const TensorType& F) {
+  TFEL_MATH_INLINE2
+      std::enable_if_t<(implementsTensorConcept<TensorType>()) &&
+                           (getSpaceDimension<TensorType>() == 2u),
+                       t2tost2<2u, numeric_type<TensorType>>>
+      computeRateOfDeformationDerivative(const TensorType& F) {
     using value_type = numeric_type<TensorType>;
     constexpr auto icste = Cste<value_type>::isqrt2;
     constexpr auto zero = value_type(0);
@@ -203,11 +197,11 @@ namespace tfel::math {
   }
 
   template <typename TensorType>
-  TFEL_MATH_INLINE2 std::enable_if_t<
-      (implementsTensorConcept<TensorType>()) &&
-          (getSpaceDimension<TensorType>() == 3u),
-      t2tost2<3u, numeric_type<TensorType>>>
-  computeRateOfDeformationDerivative(const TensorType& F) {
+  TFEL_MATH_INLINE2
+      std::enable_if_t<(implementsTensorConcept<TensorType>()) &&
+                           (getSpaceDimension<TensorType>() == 3u),
+                       t2tost2<3u, numeric_type<TensorType>>>
+      computeRateOfDeformationDerivative(const TensorType& F) {
     using value_type = numeric_type<TensorType>;
     constexpr auto icste = Cste<value_type>::isqrt2;
     constexpr auto zero = value_type(0);
@@ -239,15 +233,14 @@ namespace tfel::math {
           tfel::typetraits::IsFundamentalNumericType<
               numeric_type<TensorType>>::cond,
       t2tost2<getSpaceDimension<T2toST2Type>(),
-              typename ComputeBinaryResult<
-                  numeric_type<T2toST2Type>,
-                  numeric_type<StensorType>,
-                  OpPlus>::Result>>
+              typename ComputeBinaryResult<numeric_type<T2toST2Type>,
+                                           numeric_type<StensorType>,
+                                           OpPlus>::Result>>
   computeCauchyStressDerivativeFromKirchhoffStressDerivative(
       const T2toST2Type& dt, const StensorType& s, const TensorType& F) {
-    using stress = typename ComputeBinaryResult<
-        numeric_type<T2toST2Type>,
-        numeric_type<StensorType>, OpPlus>::Result;
+    using stress =
+        typename ComputeBinaryResult<numeric_type<T2toST2Type>,
+                                     numeric_type<StensorType>, OpPlus>::Result;
     t2tost2<getSpaceDimension<T2toST2Type>(), stress> r;
     computeCauchyStressDerivativeFromKirchhoffStressDerivative(r, dt, s, F);
     return r;
@@ -264,15 +257,14 @@ namespace tfel::math {
           tfel::typetraits::IsFundamentalNumericType<
               numeric_type<TensorType>>::cond,
       t2tost2<getSpaceDimension<T2toST2Type>(),
-              typename ComputeBinaryResult<
-                  numeric_type<T2toST2Type>,
-                  numeric_type<StensorType>,
-                  OpPlus>::Result>>
+              typename ComputeBinaryResult<numeric_type<T2toST2Type>,
+                                           numeric_type<StensorType>,
+                                           OpPlus>::Result>>
   computeKirchhoffStressDerivativeFromCauchyStressDerivative(
       const T2toST2Type& ds, const StensorType& s, const TensorType& F) {
-    using stress = typename ComputeBinaryResult<
-        numeric_type<T2toST2Type>,
-        numeric_type<StensorType>, OpPlus>::Result;
+    using stress =
+        typename ComputeBinaryResult<numeric_type<T2toST2Type>,
+                                     numeric_type<StensorType>, OpPlus>::Result;
     t2tost2<getSpaceDimension<T2toST2Type>(), stress> r;
     computeKirchhoffStressDerivativeFromCauchyStressDerivative(r, ds, s, F);
     return r;
@@ -289,26 +281,24 @@ namespace tfel::math {
           tfel::typetraits::IsFundamentalNumericType<
               numeric_type<TensorType>>::cond,
       t2tost2<getSpaceDimension<T2toST2Type>(),
-              typename ComputeBinaryResult<
-                  numeric_type<T2toST2Type>,
-                  numeric_type<StensorType>,
-                  OpPlus>::Result>>
+              typename ComputeBinaryResult<numeric_type<T2toST2Type>,
+                                           numeric_type<StensorType>,
+                                           OpPlus>::Result>>
   computePushForwardDerivative(const T2toST2Type& K,
                                const StensorType& S,
                                const TensorType& F) {
-    using stress = typename ComputeBinaryResult<
-        numeric_type<T2toST2Type>,
-        numeric_type<StensorType>, OpPlus>::Result;
+    using stress =
+        typename ComputeBinaryResult<numeric_type<T2toST2Type>,
+                                     numeric_type<StensorType>, OpPlus>::Result;
     t2tost2<getSpaceDimension<T2toST2Type>(), stress> r;
     computePushForwardDerivative(r, K, S, F);
     return r;
   }
 
   template <typename T2toST2Type>
-  std::enable_if_t<
-      ((implementsT2toST2Concept<T2toST2Type>()) &&
-       (getSpaceDimension<T2toST2Type>() == 1u)),
-      t2tost2<1u, numeric_type<T2toST2Type>>>
+  std::enable_if_t<((implementsT2toST2Concept<T2toST2Type>()) &&
+                    (getSpaceDimension<T2toST2Type>() == 1u)),
+                   t2tost2<1u, numeric_type<T2toST2Type>>>
   change_basis(const T2toST2Type& s,
                const rotation_matrix<numeric_type<T2toST2Type>>&) {
     return s;

@@ -63,8 +63,7 @@ namespace tfel::math {
     template <typename TensorType, typename T2toT2Type>
     Expr(const TensorType& B, const T2toT2Type& C) {
       static_assert(implementsTensorConcept<TensorType>());
-      static_assert(
-          implementsT2toT2Concept<T2toT2Type>());
+      static_assert(implementsT2toT2Concept<T2toT2Type>());
       static_assert(getSpaceDimension<T2toT2ResultType>() ==
                     getSpaceDimension<TensorType>());
       static_assert(getSpaceDimension<T2toT2Type>() ==
@@ -160,8 +159,7 @@ namespace tfel::math {
     template <typename TensorType, typename T2toT2Type>
     Expr(const TensorType& B, const T2toT2Type& C) {
       static_assert(implementsTensorConcept<TensorType>());
-      static_assert(
-          implementsT2toT2Concept<T2toT2Type>());
+      static_assert(implementsT2toT2Concept<T2toT2Type>());
       static_assert(getSpaceDimension<T2toT2ResultType>() ==
                     getSpaceDimension<TensorType>());
       static_assert(getSpaceDimension<T2toT2Type>() ==
@@ -293,8 +291,7 @@ namespace tfel::math {
     template <typename TensorType, typename T2toT2Type>
     Expr(const TensorType& B, const T2toT2Type& C) {
       static_assert(implementsTensorConcept<TensorType>());
-      static_assert(
-          implementsT2toT2Concept<T2toT2Type>());
+      static_assert(implementsT2toT2Concept<T2toT2Type>());
       static_assert(getSpaceDimension<T2toT2ResultType>() ==
                     getSpaceDimension<TensorType>());
       static_assert(getSpaceDimension<T2toT2Type>() ==

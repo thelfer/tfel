@@ -24,7 +24,8 @@ namespace tfel::meta {
   struct HasConstIterator : std::false_type {};
 
   template <typename T>
-  struct HasConstIterator<T, std::void_t<typename T::const_iterator>> : std::true_type {};
+  struct HasConstIterator<T, std::void_t<typename T::const_iterator>>
+      : std::true_type {};
 
 }  // end of namespace tfel::meta
 

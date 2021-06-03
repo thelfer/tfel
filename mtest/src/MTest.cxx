@@ -239,7 +239,7 @@ namespace mtest {
         }
         auto ec = std::make_shared<ImposedGradient>(2, eev);
         this->constraints.push_back(ec);
-      } 
+      }
     }
     if (this->hypothesis ==
         ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS) {
@@ -336,47 +336,47 @@ namespace mtest {
         ++cnbr;
       }
       this->out << "# " << cnbr << " column: stored energy\n";
-      this->out << "# " << cnbr+1 << " column: disspated energy\n";
+      this->out << "# " << cnbr + 1 << " column: disspated energy\n";
       ++cnbr;
     }
     // convergence criterion value for driving variables
     if (this->options.eeps < 0) {
       this->options.eeps = 1.e-12;
+    }
+    // convergence criterion value for thermodynamic forces
+    if (this->options.seps < 0) {
+      this->options.seps = 1.e-3;
+    }
+    // tangent operator comparison criterion
+    if (this->toeps < 0) {
+      this->toeps = (this->options.seps / 1e-3) * 1.e7;
+    }
+    // perturbation value
+    if (this->pv < 0) {
+      this->pv = 10 * this->options.eeps;
+    }
+    if (!this->isRmDefined) {
+      for (unsigned short i = 0; i != 3; ++i) {
+        rm(i, i) = real(1);
       }
-      // convergence criterion value for thermodynamic forces
-      if (this->options.seps < 0) {
-        this->options.seps = 1.e-3;
-      }
-      // tangent operator comparison criterion
-      if (this->toeps < 0) {
-        this->toeps = (this->options.seps / 1e-3) * 1.e7;
-      }
-      // perturbation value
-      if (this->pv < 0) {
-        this->pv = 10 * this->options.eeps;
-      }
-      if (!this->isRmDefined) {
-        for (unsigned short i = 0; i != 3; ++i) {
-          rm(i, i) = real(1);
-        }
-      }
-      // thermal expansion reference temperature
-      auto pev = this->evm->find("ThermalExpansionReferenceTemperature");
-      if (pev != this->evm->end()) {
-        const auto& ev = *(pev->second);
-        tfel::raise_if(!ev.isConstant(),
-                       "MTest::completeInitialisation: "
-                       "'ThermalExpansionReferenceTemperature' "
-                       "must be a constant evolution");
-      }
-      // residual file
-      if (this->residual) {
-        this->residual << "#first  column: iteration number\n"
-                       << "#second column: driving variable residual\n"
-                       << "#third  column: thermodynamic force residual\n"
-                       << "#The following columns are the components of the "
-                          "driving variable\n";
-      }
+    }
+    // thermal expansion reference temperature
+    auto pev = this->evm->find("ThermalExpansionReferenceTemperature");
+    if (pev != this->evm->end()) {
+      const auto& ev = *(pev->second);
+      tfel::raise_if(!ev.isConstant(),
+                     "MTest::completeInitialisation: "
+                     "'ThermalExpansionReferenceTemperature' "
+                     "must be a constant evolution");
+    }
+    // residual file
+    if (this->residual) {
+      this->residual << "#first  column: iteration number\n"
+                     << "#second column: driving variable residual\n"
+                     << "#third  column: thermodynamic force residual\n"
+                     << "#The following columns are the components of the "
+                        "driving variable\n";
+    }
   }
 
   void MTest::initializeCurrentState(StudyCurrentState& s) const {
@@ -466,17 +466,17 @@ namespace mtest {
 
   tfel::tests::TestResult MTest::execute() {
     return this->execute(true);
-  } // end of MTest::execute()
-  
+  }  // end of MTest::execute()
+
   tfel::tests::TestResult MTest::execute(const bool bInit) {
     auto report = [](const char* msg, const StudyCurrentState& s,
                      const bool bs) {
       if (mfront::getVerboseMode() >= mfront::VERBOSE_LEVEL1) {
         auto& log = mfront::getLogStream();
         log << "Execution " << (bs ? "succeeded" : "failed");
-        if(msg){
+        if (msg) {
           log << " (" << msg << ")";
-        } else if(!bs){
+        } else if (!bs) {
           log << " (unknown reason)";
         }
         log << '\n'
@@ -495,9 +495,10 @@ namespace mtest {
     try {
       // some checks
       tfel::raise_if(times.empty(), "MTest::execute: no times defined");
-      tfel::raise_if(times.size() < 2, "MTest::execute: invalid number of times defined");
+      tfel::raise_if(times.size() < 2,
+                     "MTest::execute: invalid number of times defined");
       // finish initialization
-      if(bInit){
+      if (bInit) {
         this->completeInitialisation();
       }
       this->initializeCurrentState(state);
@@ -516,15 +517,15 @@ namespace mtest {
       }
     } catch (std::exception& e) {
       this->out.flush();
-      report(e.what(),state, false);
+      report(e.what(), state, false);
       throw;
     } catch (...) {
       this->out.flush();
-      report(nullptr,state, false);
+      report(nullptr, state, false);
       throw;
     }
     this->out.flush();
-    report(nullptr,state, true);
+    report(nullptr, state, true);
     tfel::tests::TestResult tr;
     for (const auto& t : this->tests) {
       tr.append(t->getResults());
@@ -752,7 +753,7 @@ namespace mtest {
       }
     }
     //! update the stiffness matrix and the residual
-    std::fill(k.begin(),k.end(),real(0));
+    std::fill(k.begin(), k.end(), real(0));
     updateStiffnessAndResidual(k, r, *(this->b), bwk.k, s.s1);
     if (!state.containsParameter("LagrangeMultipliersNormalisationFactor")) {
       state.setParameter(
@@ -834,7 +835,7 @@ namespace mtest {
       return false;
     }
     for (const auto& c : this->constraints) {
-      if(c->isActive()){
+      if (c->isActive()) {
         if (!c->checkConvergence(state.u1, s.s1, o.eeps, o.seps, t, dt)) {
           return false;
         }
@@ -899,7 +900,7 @@ namespace mtest {
     for (const auto& test : this->tests) {
       test->check(s, t, dt, p);
     }
-    for (const auto& up: this->upostprocessings) {
+    for (const auto& up : this->upostprocessings) {
       up->exe(s, t, dt);
     }
   }  // end of MTest::postConvergence
@@ -910,9 +911,9 @@ namespace mtest {
                       const real te) {
     GenericSolver().execute(state, wk, *this, this->options, ti, te);
     auto p = this->events.begin();
-    while(p!=this->events.end()){
-      if(!(p->first>te)){
-        for(const auto& e : p->second){
+    while (p != this->events.end()) {
+      if (!(p->first > te)) {
+        for (const auto& e : p->second) {
           for (const auto& c : this->constraints) {
             c->treatEvent(e);
           }
@@ -922,7 +923,7 @@ namespace mtest {
         break;
       }
     }
-  } // end of MTest::execute
+  }  // end of MTest::execute
 
   void MTest::printOutput(const real t,
                           const StudyCurrentState& s,
@@ -949,18 +950,20 @@ namespace mtest {
       // stored and dissipated energies
       this->out << cs.se0 << " " << cs.de0 << '\n';
     }
-  } // end of MTest::printOutput
+  }  // end of MTest::printOutput
 
-  void MTest::addEvent(const std::string& e, const std::vector<double>& evtimes) {
-    for(const auto t:evtimes){
+  void MTest::addEvent(const std::string& e,
+                       const std::vector<double>& evtimes) {
+    for (const auto t : evtimes) {
       this->events[t].push_back(e);
     }
   }  // end of MTest::addEvent
 
   void MTest::addUserDefinedPostProcessing(const std::string& f,
                                            const std::vector<std::string>& p) {
-    this->upostprocessings.push_back(std::make_shared<UserDefinedPostProcessing>(
-        *(this->getBehaviour()), this->getEvolutions(), f, p));
+    this->upostprocessings.push_back(
+        std::make_shared<UserDefinedPostProcessing>(
+            *(this->getBehaviour()), this->getEvolutions(), f, p));
   }  // end of MTest::addUserDefinedPostProcessing
 
   MTest::~MTest() = default;

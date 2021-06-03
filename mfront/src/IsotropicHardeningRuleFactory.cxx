@@ -31,10 +31,11 @@ namespace mfront {
     std::vector<std::string>
     IsotropicHardeningRuleFactory::getRegistredIsotropicHardeningRules() const {
       return getKeys(this->generators);
-    }  // end of IsotropicHardeningRuleFactory::getRegistredIsotropicHardeningRules
+    }  // end of
+       // IsotropicHardeningRuleFactory::getRegistredIsotropicHardeningRules
 
     void IsotropicHardeningRuleFactory::addGenerator(const std::string& n,
-                                                 const Generator& g) {
+                                                     const Generator& g) {
       if (!this->generators.insert({n, g}).second) {
         tfel::raise(
             "IsotropicHardeningRuleFactory::addGenerator: "
@@ -43,8 +44,8 @@ namespace mfront {
       }
     }  // end of IsotropicHardeningRuleFactory::addGenerator
 
-    std::shared_ptr<IsotropicHardeningRule> IsotropicHardeningRuleFactory::generate(
-        const std::string& n) const {
+    std::shared_ptr<IsotropicHardeningRule>
+    IsotropicHardeningRuleFactory::generate(const std::string& n) const {
       const auto p = this->generators.find(n);
       if (p == this->generators.end()) {
         tfel::raise(

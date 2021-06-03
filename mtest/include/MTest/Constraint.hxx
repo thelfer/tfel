@@ -29,7 +29,7 @@ namespace mtest {
   /*!
    * \brief a structure containing constraint' options
    */
-  struct  MTEST_VISIBILITY_EXPORT ConstraintOptions {
+  struct MTEST_VISIBILITY_EXPORT ConstraintOptions {
     //! default constructor
     ConstraintOptions();
     //! move constructor
@@ -46,7 +46,7 @@ namespace mtest {
     std::vector<std::string> activating_events;
     //! desactivating events
     std::vector<std::string> desactivating_events;
-  }; // end of struct ConstraintsOptions
+  };  // end of struct ConstraintsOptions
 
   /*!
    * \brief Abstract class for all the constraints

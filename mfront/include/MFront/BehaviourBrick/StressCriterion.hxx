@@ -204,9 +204,10 @@ namespace mfront {
       virtual bool isNormalDeviatoric() const = 0;
       /*!
        * \return if using this stress criterion generally implies a
-       * correction of the flow rule 
+       * correction of the flow rule
        */
-      virtual PorosityEffectOnFlowRule getPorosityEffectOnEquivalentPlasticStrain() const = 0;
+      virtual PorosityEffectOnFlowRule
+      getPorosityEffectOnEquivalentPlasticStrain() const = 0;
       /*!
        * \return the code updating the upper bound of the porosity.
        * If this stress criterion is not coupled with porosity, the returned

@@ -17,18 +17,18 @@
 #include "MFront/GenericBehaviour/Types.hxx"
 #include "MFront/GenericBehaviour/State.h"
 
-namespace mfront{
-  
-  namespace gb{
-    
+namespace mfront {
+
+  namespace gb {
+
     //! a simple alias
     using InitialState = ::mfront_gb_InitialState;
 
     //! a simple alias
     using State = ::mfront_gb_State;
-    
-  } // end of namespace gb
-  
-} // end of namespace mfront
+
+  }  // end of namespace gb
+
+}  // end of namespace mfront
 
 #endif /* LIB_MFRONT_GENERICBEHAVIOUR_STATE_HXX */

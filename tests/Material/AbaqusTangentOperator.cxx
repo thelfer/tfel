@@ -69,7 +69,7 @@ struct AbaqusTangentOperator final : public tfel::tests::TestCase {
     const real m0 = 5.6391e+10;
     const real eps = 1.e-10 * m0;
     const real values1[] = {1.03, 0.98,   1.09,   0.03, -0.012,
-                           0.04, -0.028, -0.015, 0.005};
+                            0.04, -0.028, -0.015, 0.005};
     const real values2[] = {0.70, 1.125, 1.32,  -0.24, -0.32,
                             0.15, -0.14, -0.05, 0.08};
     auto nhb = [&l0, &m0](const tfel::math::tensor<N, real>& F) -> stensor {

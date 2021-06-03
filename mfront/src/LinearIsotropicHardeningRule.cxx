@@ -132,7 +132,7 @@ namespace mfront {
         c += ";\n";
         c += "const auto " + dR + " = stress(0);\n";
       }
-      return c;       
+      return c;
     }  // end of LinearIsotropicHardeningRule::computeElasticLimitAndDerivative
 
     void LinearIsotropicHardeningRule::endTreatment(

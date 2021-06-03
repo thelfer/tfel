@@ -1,242 +1,233 @@
 /*!
  * \file   AnsysConvert.hxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   22 mars 2016
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_MFRONT_ANSYS_ANSYSCONVERT_HXX
 #define LIB_MFRONT_ANSYS_ANSYSCONVERT_HXX
 
-#include"TFEL/Math/General/MathConstants.hxx"
+#include "TFEL/Math/General/MathConstants.hxx"
 
-namespace ansys{
+namespace ansys {
 
   /*!
    * \brief class defining the convertion from ansys to mfront for
    * symmetric tensors. This class is specialised in 1D, 2D and 3D.
    * \tparam N: space dimension
    */
-  template<unsigned short N>
+  template <unsigned short N>
   struct ImportSymmetricTensor;
   /*!
    * \brief class defining the convertion from mfront to ansys for
    * symmetric tensors. This class is specialised in 1D, 2D and 3D.
    * \tparam N: space dimension
    */
-  template<unsigned short N>
+  template <unsigned short N>
   struct ExportSymmetricTensor;
-  
+
   /*!
    * \brief class defining the convertion from ansys to mfront for
    * driving variables
    * \tparam H: modelling hypothesis
    */
-  template<tfel::material::ModellingHypothesis::Hypothesis H>
-  struct ImportGradients
-  {
+  template <tfel::material::ModellingHypothesis::Hypothesis H>
+  struct ImportGradients {
     //! space dimension
     static constexpr unsigned short N =
-      tfel::material::ModellingHypothesisToSpaceDimension<H>::value;
+        tfel::material::ModellingHypothesisToSpaceDimension<H>::value;
     /*!
      * \tparam T: type of the thermodynamique forces
      * \param[out] s: symmetric tensor to be filled
      * \param[in]  v: values
      */
-    template<typename T>
-    static inline void
-    exe(tfel::math::stensor<N,T>& e,const AnsysReal* const v){
-      ImportSymmetricTensor<N>::exe(e,v);
-    } // end of exe
+    template <typename T>
+    static inline void exe(tfel::math::stensor<N, T>& e,
+                           const AnsysReal* const v) {
+      ImportSymmetricTensor<N>::exe(e, v);
+    }  // end of exe
     /*!
      * \tparam T: type of the thermodynamique forces
      * \param[out] s: symmetric tensor to be filled
      * \param[in]  v: values
      */
-    template<typename T>
-    static inline void
-    exe(tfel::math::tensor<N,T>& F,const AnsysReal* const v){
-      tfel::math::tensor<N,T>::buildFromFortranMatrix(F,v);
-    } // end of exe
-  }; // end of struct ImportGradients
+    template <typename T>
+    static inline void exe(tfel::math::tensor<N, T>& F,
+                           const AnsysReal* const v) {
+      tfel::math::tensor<N, T>::buildFromFortranMatrix(F, v);
+    }  // end of exe
+  };   // end of struct ImportGradients
   /*!
    * \brief class defining the convertion from ansys to mfront for
    * thermodynamic forces
    * \tparam H: modelling hypothesis
    */
-  template<tfel::material::ModellingHypothesis::Hypothesis H>
-  struct ImportThermodynamicForces
-  {
+  template <tfel::material::ModellingHypothesis::Hypothesis H>
+  struct ImportThermodynamicForces {
     //! space dimension
     static constexpr unsigned short N =
-      tfel::material::ModellingHypothesisToSpaceDimension<H>::value;
+        tfel::material::ModellingHypothesisToSpaceDimension<H>::value;
     /*!
      * \tparam T: type of the thermodynamique forces
      * \param[out] s: symmetric tensor to be filled
      * \param[in]  v: values
      */
-    template<typename T>
-    static inline void
-    exe(tfel::math::stensor<N,T>& s,const AnsysReal* const v){
-      ImportSymmetricTensor<N>::exe(s,v);
-    } // end of exe
-  }; // end of struct ImportThermodynamicForces
+    template <typename T>
+    static inline void exe(tfel::math::stensor<N, T>& s,
+                           const AnsysReal* const v) {
+      ImportSymmetricTensor<N>::exe(s, v);
+    }  // end of exe
+  };   // end of struct ImportThermodynamicForces
   /*!
    * \brief class defining the convertion from mfront to ansys for
    * thermodynamic forces
    * \tparam H: modelling hypothesis
    */
-  template<tfel::material::ModellingHypothesis::Hypothesis H>
-  struct ExportThermodynamicForces
-  {
+  template <tfel::material::ModellingHypothesis::Hypothesis H>
+  struct ExportThermodynamicForces {
     //! space dimension
     static constexpr unsigned short N =
-      tfel::material::ModellingHypothesisToSpaceDimension<H>::value;
+        tfel::material::ModellingHypothesisToSpaceDimension<H>::value;
     /*!
      * \tparam T: type of the thermodynamique forces
      * \param[out] v: values
      * \param[in]  s: symmetric tensor to be exported
      */
-    template<typename T>
-    static inline void
-    exe(AnsysReal* const v,const tfel::math::stensor<N,T>& s){
-      ExportSymmetricTensor<N>::exe(v,s);
-    } // end of exe
-  }; // end of struct ExportThermodynamicForces
+    template <typename T>
+    static inline void exe(AnsysReal* const v,
+                           const tfel::math::stensor<N, T>& s) {
+      ExportSymmetricTensor<N>::exe(v, s);
+    }  // end of exe
+  };   // end of struct ExportThermodynamicForces
 
   /*!
    * \brief partial specialisation of the ImportSymmetricTensor in 1D.
    */
-  template<>
-  struct ImportSymmetricTensor<1u>
-  {
+  template <>
+  struct ImportSymmetricTensor<1u> {
     /*!
      * \tparam T: type of the thermodynamique forces
      * \param[out] s: symmetric tensor to be filled
      * \param[in]  v: values
      */
-    template<typename T>
-    static inline void
-    exe(tfel::math::stensor<1u,T>& e,const AnsysReal* const v){
+    template <typename T>
+    static inline void exe(tfel::math::stensor<1u, T>& e,
+                           const AnsysReal* const v) {
       e[0] = v[0];
       e[1] = v[1];
       e[2] = v[2];
-    } // end of exe
+    }  // end of exe
   };
   /*!
    * \brief partial specialisation of the ImportSymmetricTensor in 2D.
    */
-  template<>
-  struct ImportSymmetricTensor<2u>
-  {
+  template <>
+  struct ImportSymmetricTensor<2u> {
     /*!
      * \tparam T: type of the thermodynamique forces
      * \param[out] s: symmetric tensor to be filled
      * \param[in]  v: values
      */
-    template<typename T>
-    static inline void
-    exe(tfel::math::stensor<2u,T>& e,const AnsysReal* const v){
+    template <typename T>
+    static inline void exe(tfel::math::stensor<2u, T>& e,
+                           const AnsysReal* const v) {
       constexpr auto icste = tfel::math::Cste<T>::isqrt2;
       e[0] = v[0];
       e[1] = v[1];
       e[2] = v[2];
-      e[3] = v[3]*icste;
-    } // end of exe
+      e[3] = v[3] * icste;
+    }  // end of exe
   };
   /*!
    * \brief partial specialisation of the ImportSymmetricTensor in 3D.
    */
-  template<>
-  struct ImportSymmetricTensor<3u>
-  {
+  template <>
+  struct ImportSymmetricTensor<3u> {
     /*!
      * \tparam T: type of the thermodynamique forces
      * \param[out] s: symmetric tensor to be filled
      * \param[in]  v: values
      */
-    template<typename T>
-    static inline void
-    exe(tfel::math::stensor<3u,T>& e,const AnsysReal* const v){
+    template <typename T>
+    static inline void exe(tfel::math::stensor<3u, T>& e,
+                           const AnsysReal* const v) {
       constexpr auto icste = tfel::math::Cste<T>::isqrt2;
       e[0] = v[0];
       e[1] = v[1];
       e[2] = v[2];
-      e[3] = v[3]*icste;
-      e[4] = v[5]*icste;
-      e[5] = v[4]*icste;
-    } // end of exe
+      e[3] = v[3] * icste;
+      e[4] = v[5] * icste;
+      e[5] = v[4] * icste;
+    }  // end of exe
   };
   /*!
    * \brief partial specialisation of the ExportSymmetricTensor in 1D.
    */
-  template<>
-  struct ExportSymmetricTensor<1u>
-  {
+  template <>
+  struct ExportSymmetricTensor<1u> {
     /*!
      * \tparam T: type of the thermodynamique forces
      * \param[out] s: symmetric tensor to be filled
      * \param[in]  v: values
      */
-    template<typename T>
-    static inline void
-    exe(AnsysReal* const v,const tfel::math::stensor<1u,T>& e){
+    template <typename T>
+    static inline void exe(AnsysReal* const v,
+                           const tfel::math::stensor<1u, T>& e) {
       v[0] = e[0];
       v[1] = e[1];
       v[2] = e[2];
-    } // end of exe
+    }  // end of exe
   };
   /*!
    * \brief partial specialisation of the ExportSymmetricTensor in 2D.
    */
-  template<>
-  struct ExportSymmetricTensor<2u>
-  {
+  template <>
+  struct ExportSymmetricTensor<2u> {
     /*!
      * \tparam T: type of the thermodynamique forces
      * \param[out] s: symmetric tensor to be filled
      * \param[in]  v: values
      */
-    template<typename T>
-    static inline void
-    exe(AnsysReal* const v,const tfel::math::stensor<2u,T>& e){
+    template <typename T>
+    static inline void exe(AnsysReal* const v,
+                           const tfel::math::stensor<2u, T>& e) {
       constexpr auto icste = tfel::math::Cste<T>::isqrt2;
       v[0] = e[0];
       v[1] = e[1];
       v[2] = e[2];
-      v[3] = e[3]*icste;
-    } // end of exe
+      v[3] = e[3] * icste;
+    }  // end of exe
   };
   /*!
    * \brief partial specialisation of the ExportSymmetricTensor in 3D.
    */
-  template<>
-  struct ExportSymmetricTensor<3u>
-  {
+  template <>
+  struct ExportSymmetricTensor<3u> {
     /*!
      * \tparam T: type of the thermodynamique forces
      * \param[out] s: symmetric tensor to be filled
      * \param[in]  v: values
      */
-    template<typename T>
-    static inline void
-    exe(AnsysReal* const v,const tfel::math::stensor<3u,T>& e){
+    template <typename T>
+    static inline void exe(AnsysReal* const v,
+                           const tfel::math::stensor<3u, T>& e) {
       constexpr auto icste = tfel::math::Cste<T>::isqrt2;
       v[0] = e[0];
       v[1] = e[1];
       v[2] = e[2];
-      v[3] = e[3]*icste;
-      v[5] = e[4]*icste;
-      v[4] = e[5]*icste;
-    } // end of exe
+      v[3] = e[3] * icste;
+      v[5] = e[4] * icste;
+      v[4] = e[5] * icste;
+    }  // end of exe
   };
-  
-} // end of namespace ansys
+
+}  // end of namespace ansys
 
 #endif /* LIB_MFRONT_ANSYS_ANSYSCONVERT_HXX */

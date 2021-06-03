@@ -7,12 +7,12 @@
  *  \class AbsoluteComparison
  *
  *  \brief class that does an absolute comparison between two columns
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_TFELCHECK_ABSOLUTECOMPARISON_HXX
@@ -21,20 +21,18 @@
 #include "TFEL/Check/TFELCheckConfig.hxx"
 #include "TFEL/Check/Comparison.hxx"
 
-namespace tfel{
+namespace tfel {
 
-  namespace check{
+  namespace check {
 
-    struct TFELCHECK_VISIBILITY_EXPORT AbsoluteComparison
-      : public Comparison
-    {
+    struct TFELCHECK_VISIBILITY_EXPORT AbsoluteComparison : public Comparison {
       AbsoluteComparison();
       void compare() override;
-       ~AbsoluteComparison() override;
+      ~AbsoluteComparison() override;
     };
 
-  } // end of namespace check
+  }  // end of namespace check
 
-} // end of namespace tfel
+}  // end of namespace tfel
 
 #endif /* LIB_TFELCHECK_ABSOLUTECOMPARISON_HXX */

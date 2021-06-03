@@ -1,37 +1,36 @@
 /*!
  * \file   LSDYNAExplicitData.hxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   29 mars 2016
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_MFRONT_LSDYNA_LSDYNAEXPLICITDATA_HXX
 #define LIB_MFRONT_LSDYNA_LSDYNAEXPLICITDATA_HXX
 
-#include"TFEL/Math/General/StridedRandomAccessIterator.hxx"
-#include"TFEL/Math/General/DifferenceRandomAccessIterator.hxx"
-#include"TFEL/Material/OutOfBoundsPolicy.hxx"
+#include "TFEL/Math/General/StridedRandomAccessIterator.hxx"
+#include "TFEL/Math/General/DifferenceRandomAccessIterator.hxx"
+#include "TFEL/Material/OutOfBoundsPolicy.hxx"
 
-namespace lsdyna{
+namespace lsdyna {
 
-  template<typename T>
-  struct LSDYNAExplicitData{
+  template <typename T>
+  struct LSDYNAExplicitData {
     //! a simple alias
     using const_iterator = const T*;
     //! a simple alias
-    using strided_iterator =
-      tfel::math::StridedRandomAccessIterator<T*>;
+    using strided_iterator = tfel::math::StridedRandomAccessIterator<T*>;
     //! a simple alias
     using strided_const_iterator =
-      tfel::math::StridedRandomAccessIterator< const T*>;
+        tfel::math::StridedRandomAccessIterator<const T*>;
     using diff_strided_const_iterator =
-      tfel::math::DifferenceRandomAccessIterator<strided_const_iterator>;
+        tfel::math::DifferenceRandomAccessIterator<strided_const_iterator>;
     //! time increment
     const T dt;
     //! material properties
@@ -56,8 +55,8 @@ namespace lsdyna{
     T& enerInelasNew;
     //! out of bounds policy
     const tfel::material::OutOfBoundsPolicy policy;
-  }; // end of struct LSDYNAExplicitData
-  
-} // end of namespace lsdyna
+  };  // end of struct LSDYNAExplicitData
+
+}  // end of namespace lsdyna
 
 #endif /* LIB_MFRONT_LSDYNA_LSDYNAEXPLICITDATA_HXX */

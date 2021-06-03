@@ -47,8 +47,9 @@ namespace mfront {
                                                 AbstractBehaviourDSL& dsl,
                                                 const std::string& id,
                                                 const DataMap& d) {
-      auto get_mp = [&dsl, &bd, &id, &d](
-          const std::string& mpn, const std::string& t, const std::string& vn) {
+      auto get_mp = [&dsl, &bd, &id, &d](const std::string& mpn,
+                                         const std::string& t,
+                                         const std::string& vn) {
         if (d.count(mpn) == 0) {
           tfel::raise(
               "NortonHoffViscoplasticFlow::"

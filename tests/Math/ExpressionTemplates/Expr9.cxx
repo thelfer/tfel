@@ -23,7 +23,6 @@
 #undef NDEBUG
 #endif /* NDEBUG */
 
-
 struct Expr9Test final : public tfel::tests::TestCase {
   Expr9Test()
       : tfel::tests::TestCase("TFEL/Math", "Expr9Test") {

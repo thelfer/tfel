@@ -22,15 +22,15 @@
 namespace tfel::math {
 
   template <class T>
-  TFEL_MATH_INLINE numeric_type<T> ST2toST2Concept<T>::
-  operator()(const unsigned short i, const unsigned short j) const {
+  TFEL_MATH_INLINE numeric_type<T> ST2toST2Concept<T>::operator()(
+      const unsigned short i, const unsigned short j) const {
     return static_cast<const T&>(*this).operator()(i, j);
   }  // end of ST2toST2Concept<T>::operator()
 
   template <typename ST2toST2Type>
-  std::enable_if_t<implementsST2toST2Concept<ST2toST2Type>(),
-                   typename tfel::typetraits::AbsType<
-                       numeric_type<ST2toST2Type>>::type>
+  std::enable_if_t<
+      implementsST2toST2Concept<ST2toST2Type>(),
+      typename tfel::typetraits::AbsType<numeric_type<ST2toST2Type>>::type>
   abs(const ST2toST2Type& v) {
     using NumType = numeric_type<ST2toST2Type>;
     using IndexType = index_type<ST2toST2Type>;
@@ -61,8 +61,7 @@ namespace tfel::math {
       implementsST2toST2Concept<ST2toST2Type>() &&
           (getSpaceDimension<ST2toST2Type>() == 1u) &&
           isScalar<numeric_type<ST2toST2Type>>(),
-      typename ComputeUnaryResult<numeric_type<ST2toST2Type>,
-                                  Power<3>>::Result>
+      typename ComputeUnaryResult<numeric_type<ST2toST2Type>, Power<3>>::Result>
   det(const ST2toST2Type& s) {
     const auto a = s(0, 0);
     const auto b = s(0, 1);
@@ -77,14 +76,13 @@ namespace tfel::math {
   }  // end of det
 
   template <typename ST2toST2Type>
-  std::enable_if_t<
-      implementsST2toST2Concept<ST2toST2Type>() &&
-          ((getSpaceDimension<ST2toST2Type>() == 2u) ||
-           (getSpaceDimension<ST2toST2Type>() == 3u)) &&
-          isScalar<numeric_type<ST2toST2Type>>(),
-      typename ComputeUnaryResult<
-          numeric_type<ST2toST2Type>,
-          Power<getSpaceDimension<ST2toST2Type>()>>::Result>
+  std::enable_if_t<implementsST2toST2Concept<ST2toST2Type>() &&
+                       ((getSpaceDimension<ST2toST2Type>() == 2u) ||
+                        (getSpaceDimension<ST2toST2Type>() == 3u)) &&
+                       isScalar<numeric_type<ST2toST2Type>>(),
+                   typename ComputeUnaryResult<
+                       numeric_type<ST2toST2Type>,
+                       Power<getSpaceDimension<ST2toST2Type>()>>::Result>
   det(const ST2toST2Type& s) {
     using real = numeric_type<ST2toST2Type>;
     constexpr auto N = getSpaceDimension<ST2toST2Type>();

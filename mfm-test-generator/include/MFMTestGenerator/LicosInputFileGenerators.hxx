@@ -1,6 +1,6 @@
 /*!
  * \file   mfm-test-generator/include/MFMTestGenerator/LicosFileGenerators.hxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   02/10/2019
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights

@@ -28,9 +28,9 @@ namespace mfront {
   namespace bbrick {
 
     void ViscoplasticFlowBase::initialize(BehaviourDescription& bd,
-                                         AbstractBehaviourDSL& dsl,
-                                         const std::string& id,
-                                         const DataMap& d) {
+                                          AbstractBehaviourDSL& dsl,
+                                          const std::string& id,
+                                          const DataMap& d) {
       using namespace tfel::glossary;
       constexpr auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
       InelasticFlowBase::initialize(bd, dsl, id, d);
@@ -65,17 +65,19 @@ namespace mfront {
         c += "fp" + id + " -= (this->dt) * vp" + id + ";\n";
         c += sp.generateImplicitEquationDerivatives(
             bd, "strain", "p" + id,
-            "-(this->dt) * dvp" + id + "_dseqe" + id + " * dseq" + id + "_ds" + id,
+            "-(this->dt) * dvp" + id + "_dseqe" + id + " * dseq" + id + "_ds" +
+                id,
             this->sc->isNormalDeviatoric());
         if (!this->ihrs.empty()) {
-          c += "dfp" + id + "_ddp" + id + " += (this->dt) * dvp" + id + "_dseqe" +
-               id + "*dR" + id + "_ddp" + id + ";\n";
+          c += "dfp" + id + "_ddp" + id + " += (this->dt) * dvp" + id +
+               "_dseqe" + id + "*dR" + id + "_ddp" + id + ";\n";
         }
         auto kid = decltype(khrs.size()){};
         for (const auto& khr : khrs) {
           c += khr->generateImplicitEquationDerivatives(
-              "p", "(this->dt) * dvp" + id + "_dseqe " + id + " * dseq" + id +
-                       "_ds" + id,
+              "p",
+              "(this->dt) * dvp" + id + "_dseqe " + id + " * dseq" + id +
+                  "_ds" + id,
               id, std::to_string(kid));
           ++kid;
         }

@@ -49,7 +49,11 @@ namespace tfel::math {
   };
 
   template <typename A, typename B>
-  class ComputeBinaryOperationHandler<TensorTag, TensorTag, A, B, OpDotProduct> {
+  class ComputeBinaryOperationHandler<TensorTag,
+                                      TensorTag,
+                                      A,
+                                      B,
+                                      OpDotProduct> {
     struct DummyHandle {};
     //! \brief a simple alias
     using TensorA = EvaluationResult<A>;
@@ -62,8 +66,8 @@ namespace tfel::math {
   };
 
   /*
-   * Partial Specialisation of ComputeBinaryOperationHandler for tensor vs stensor
-   * operations
+   * Partial Specialisation of ComputeBinaryOperationHandler for tensor vs
+   * stensor operations
    */
   template <typename A, typename B, typename Op>
   class ComputeBinaryOperationHandler<TensorTag, StensorTag, A, B, Op> {
@@ -84,8 +88,8 @@ namespace tfel::math {
   };
 
   /*
-   * Partial Specialisation of ComputeBinaryOperationHandler for stensor vs tensor
-   * operations
+   * Partial Specialisation of ComputeBinaryOperationHandler for stensor vs
+   * tensor operations
    */
   template <typename A, typename B, typename Op>
   class ComputeBinaryOperationHandler<StensorTag, TensorTag, A, B, Op> {
@@ -160,10 +164,15 @@ namespace tfel::math {
   };
 
   /*
-   * Partial Specialisation of ComputeBinaryOperationHandler for tensor's operation
+   * Partial Specialisation of ComputeBinaryOperationHandler for tensor's
+   * operation
    */
   template <typename A, typename B>
-  class ComputeBinaryOperationHandler<TensorTag, TensorTag, A, B, OpDiadicProduct> {
+  class ComputeBinaryOperationHandler<TensorTag,
+                                      TensorTag,
+                                      A,
+                                      B,
+                                      OpDiadicProduct> {
     struct DummyHandle {};
     using TensorTypeA = EvaluationResult<A>;
     using TensorTypeB = EvaluationResult<B>;

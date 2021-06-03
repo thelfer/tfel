@@ -30,7 +30,8 @@ namespace mfront {
 
   CompiledTargetDescriptionBase::CompiledTargetDescriptionBase(
       const CompiledTargetDescriptionBase&) = default;
-  CompiledTargetDescriptionBase::CompiledTargetDescriptionBase(CompiledTargetDescriptionBase&&) = default;
+  CompiledTargetDescriptionBase::CompiledTargetDescriptionBase(
+      CompiledTargetDescriptionBase&&) = default;
   CompiledTargetDescriptionBase::~CompiledTargetDescriptionBase() = default;
 
 }  // end of namespace mfront

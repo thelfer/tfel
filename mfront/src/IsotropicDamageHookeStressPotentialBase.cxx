@@ -119,7 +119,7 @@ namespace mfront {
                   m += "this->sigzz+this->dsigzz,";
                   m += "real(1),this->epsilon);\n";
                   m += "const StressStensor prediction_stress = ";
-                  m += de+" * (this->D) * prediction_strain;\n";
+                  m += de + " * (this->D) * prediction_strain;\n";
                   m += "return prediction_stress;\n";
                 } else {
                   m += "StressStensor prediction_stress;\n";
@@ -183,8 +183,8 @@ namespace mfront {
                 m += "StressStensor prediction_stress;\n";
                 m += "StrainStensor prediction_strain = "
                      "this->eel+(this->theta)*this->deto;\n";
-                m += "prediction_stress(0) = " + de + " * (2 * (" + mu + ") * ((" +
-                     lambda + ")/(" + lambda + "+2*(" + mu +
+                m += "prediction_stress(0) = " + de + " * (2 * (" + mu +
+                     ") * ((" + lambda + ")/(" + lambda + "+2*(" + mu +
                      "))*(prediction_strain(0)+prediction_strain(2))+"
                      "prediction_"
                      "strain(0))+\n";
@@ -601,7 +601,8 @@ namespace mfront {
 
     std::vector<
         std::tuple<std::string, std::string, mfront::SupportedTypes::TypeFlag>>
-    IsotropicDamageHookeStressPotentialBase::getStressDerivatives(const BehaviourDescription& bd) const {
+    IsotropicDamageHookeStressPotentialBase::getStressDerivatives(
+        const BehaviourDescription& bd) const {
       const auto d = [&bd]() -> std::string {
         if ((bd.getAttribute(BehaviourDescription::requiresStiffnessTensor,
                              false)) ||
@@ -615,8 +616,8 @@ namespace mfront {
           const std::string lambda =
               bl ? "this->sebdata.lambda" : "this->lambda";
           const std::string mu = bl ? "this->sebdata.mu" : "this->mu";
-          return "(2 * (" + mu + ") * Stensor4::Id()+(" +
-                 lambda + ") * Stensor4::IxI())";
+          return "(2 * (" + mu + ") * Stensor4::Id()+(" + lambda +
+                 ") * Stensor4::IxI())";
         }
         if (bd.getElasticSymmetryType() != mfront::ORTHOTROPIC) {
           tfel::raise(
@@ -631,23 +632,24 @@ namespace mfront {
         }
         return "(this->D)";
       }();
-      auto r = std::vector<
-        std::tuple<std::string, std::string, mfront::SupportedTypes::TypeFlag>>{};
+      auto r = std::vector<std::tuple<std::string, std::string,
+                                      mfront::SupportedTypes::TypeFlag>>{};
       r.push_back(std::make_tuple(
           "((this->theta) * (1-this->d-(this->theta)*(this->dd))" + d + ")",
           std::string("eel"), SupportedTypes::STENSOR));
-      r.push_back(std::make_tuple(
-         "(-(this->theta) * (" + d + ") * (this->eel + (this->theta) * (this->deel)))",
-         std::string("d"), SupportedTypes::SCALAR));
+      r.push_back(
+          std::make_tuple("(-(this->theta) * (" + d +
+                              ") * (this->eel + (this->theta) * (this->deel)))",
+                          std::string("d"), SupportedTypes::SCALAR));
       return r;
     }  // end of IsotropicDamageHookeStressPotentialBase::getStressDerivatives
 
-    std::string IsotropicDamageHookeStressPotentialBase::generateImplicitEquationDerivatives(
-        const BehaviourDescription& bd,
-        const std::string& t,
-        const std::string& v,
-        const std::string& dfv_ds,
-        const bool b) const {
+    std::string IsotropicDamageHookeStressPotentialBase::
+        generateImplicitEquationDerivatives(const BehaviourDescription& bd,
+                                            const std::string& t,
+                                            const std::string& v,
+                                            const std::string& dfv_ds,
+                                            const bool b) const {
       auto c = std::string{};
       const auto vf = SupportedTypes::getTypeFlag(t);
       if ((bd.getAttribute(BehaviourDescription::requiresStiffnessTensor,
@@ -670,7 +672,8 @@ namespace mfront {
           c += "(this->eel + (this->theta) * (this->deel));\n";
         } else {
           tfel::raise(
-              "IsotropicDamageHookeStressPotentialBase::generateImplicitEquationDerivatives: "
+              "IsotropicDamageHookeStressPotentialBase::"
+              "generateImplicitEquationDerivatives: "
               "unsupported type for variable '" +
               t + "'");
         }
@@ -692,14 +695,17 @@ namespace mfront {
               c += "deviator(this->eel + (this->theta) * (this->deel));\n";
             } else if (vf == SupportedTypes::STENSOR) {
               c = "df" + v + "_ddeel += ";
-              c += "2 * (" + mu + ") * (this->theta) * (1-this->d-(this->theta)*(this->dd)) * ";
+              c +=
+                  "2 * (" + mu +
+                  ") * (this->theta) * (1-this->d-(this->theta)*(this->dd)) * ";
               c += "(" + dfv_ds + ");\n";
               c += "df" + v + "_ddd -= ";
               c += "2 * (" + mu + ") *(this->theta) * (" + dfv_ds + ") * ";
               c += "deviator(this->eel + (this->theta) * (this->deel));\n";
             } else {
               tfel::raise(
-                  "IsotropicDamageHookeStressPotentialBase::generateImplicitEquationDerivatives:"
+                  "IsotropicDamageHookeStressPotentialBase::"
+                  "generateImplicitEquationDerivatives:"
                   " unsupported type for variable '" +
                   t + "'");
             }
@@ -730,7 +736,8 @@ namespace mfront {
                    "Stensor::Id());\n";
             } else {
               tfel::raise(
-                  "IsotropicDamageHookeStressPotentialBase::generateImplicitEquationDerivatives:"
+                  "IsotropicDamageHookeStressPotentialBase::"
+                  "generateImplicitEquationDerivatives:"
                   " "
                   "unsupported type for variable '" +
                   t + "'");
@@ -740,7 +747,8 @@ namespace mfront {
           if (!bd.getAttribute<bool>(
                   BehaviourDescription::computesStiffnessTensor, false)) {
             tfel::raise(
-                "IsotropicDamageHookeStressPotentialBase::generateImplicitEquationDerivatives: "
+                "IsotropicDamageHookeStressPotentialBase::"
+                "generateImplicitEquationDerivatives: "
                 "orthotropic behaviour shall require the stiffness tensor");
           }
           if (vf == SupportedTypes::SCALAR) {
@@ -759,18 +767,21 @@ namespace mfront {
             c += "(this->eel + (this->theta) * (this->deel));\n";
           } else {
             tfel::raise(
-                "IsotropicDamageHookeStressPotentialBase::generateImplicitEquationDerivatives: "
+                "IsotropicDamageHookeStressPotentialBase::"
+                "generateImplicitEquationDerivatives: "
                 "unsupported type for variable '" +
                 t + "'");
           }
         } else {
           tfel::raise(
-              "IsotropicDamageHookeStressPotentialBase::generateImplicitEquationDerivatives: "
+              "IsotropicDamageHookeStressPotentialBase::"
+              "generateImplicitEquationDerivatives: "
               "unsupported elastic symmetry type");
         }
       }
       return c;
-    }  // end of IsotropicDamageHookeStressPotentialBase::generateImplicitEquationDerivatives
+    }  // end of
+       // IsotropicDamageHookeStressPotentialBase::generateImplicitEquationDerivatives
 
     IsotropicDamageHookeStressPotentialBase::
         ~IsotropicDamageHookeStressPotentialBase() = default;

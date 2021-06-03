@@ -195,7 +195,8 @@ namespace mfront {
       os << this->mb.getClassName() << "::theta)*(this->mu);\n";
     }
     bool found = false;
-    for (auto p = this->flows.begin(); (p != this->flows.end()) && !(found); ++p) {
+    for (auto p = this->flows.begin(); (p != this->flows.end()) && !(found);
+         ++p) {
       if (p->flow == FlowHandler::PlasticFlow) {
         os << "real surf;\n";
         os << "real newton_epsilon = "
@@ -362,31 +363,31 @@ namespace mfront {
          << "::NewtonIntegration() : iteration \" "
          << "<< iter << \" : \" << (error/(real(" << this->flows.size()
          << "))) << endl;\n";
-      }
-      os << "converge = ((error)/(real(" << this->flows.size() << "))<"
-         << "(" << this->mb.getClassName() << "::epsilon));\n"
-         << "}\n\n"
-         << "if(iter==" << this->mb.getClassName() << "::iterMax){\n";
-      if (getDebugMode()) {
-        os << "cout << \"" << this->mb.getClassName()
-           << "::NewtonIntegration() : no convergence after \" "
-           << "<< iter << \" iterations\"<< endl << endl;\n";
-        os << "cout << *this << endl;\n";
-      }
-      os << "return false;\n"
-         << "}\n\n";
-      n = 0;
-      for (auto p = this->flows.begin(); p != this->flows.end(); ++p, ++n) {
-        os << "this->dp" << n << " = "
-           << "vdp(" << n << ");\n";
-}
-      if (getDebugMode()) {
-        os << "cout << \"" << this->mb.getClassName()
-           << "::NewtonIntegration() : convergence after \" "
-           << "<< iter << \" iterations\"<< endl << endl;\n";
-      }
-      os << "return true;\n"
-         << "\n}\n\n";
+    }
+    os << "converge = ((error)/(real(" << this->flows.size() << "))<"
+       << "(" << this->mb.getClassName() << "::epsilon));\n"
+       << "}\n\n"
+       << "if(iter==" << this->mb.getClassName() << "::iterMax){\n";
+    if (getDebugMode()) {
+      os << "cout << \"" << this->mb.getClassName()
+         << "::NewtonIntegration() : no convergence after \" "
+         << "<< iter << \" iterations\"<< endl << endl;\n";
+      os << "cout << *this << endl;\n";
+    }
+    os << "return false;\n"
+       << "}\n\n";
+    n = 0;
+    for (auto p = this->flows.begin(); p != this->flows.end(); ++p, ++n) {
+      os << "this->dp" << n << " = "
+         << "vdp(" << n << ");\n";
+    }
+    if (getDebugMode()) {
+      os << "cout << \"" << this->mb.getClassName()
+         << "::NewtonIntegration() : convergence after \" "
+         << "<< iter << \" iterations\"<< endl << endl;\n";
+    }
+    os << "return true;\n"
+       << "\n}\n\n";
   }  // end of writeBehaviourParserSpecificMembers
 
   void MultipleIsotropicMisesFlowsDSL::writeBehaviourIntegrator(

@@ -22,11 +22,9 @@ namespace mfront {
 
     /*!
      * \brief This class describes one modification of the Amstrong-Frederick
-     * kinematic hardening rule proposed by J.L. Chaboche, P. Kanouté and F. Azzouz
-     * in 2012 defined by the following evolution of the back-strain variable
-     * \f$\underline{a}\f$:
-     * \f[
-     * \underline{\dot{a}}
+     * kinematic hardening rule proposed by J.L. Chaboche, P. Kanouté and F.
+     * Azzouz in 2012 defined by the following evolution of the back-strain
+     * variable \f$\underline{a}\f$: \f[ \underline{\dot{a}}
      * =\underline{\dot{\varepsilon}}^{p}-\frac{3\,D}{2\,C}\,\Phi\left(p\right)\,
      * \Psi^{\left(\underline{X}\right)}\left(\underline{X}\right)\underline{X}
      * =\underline{\dot{\varepsilon}}^{p}-

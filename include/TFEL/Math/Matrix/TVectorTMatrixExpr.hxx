@@ -37,7 +37,7 @@ namespace tfel::math {
     typedef EmptyRunTimeProperties RunTimeProperties;
 
    protected:
-    typedef BinaryOperationResult<A,B,OpMult> Result;
+    typedef BinaryOperationResult<A, B, OpMult> Result;
 
     ArgumentStorage<A> a;
     ArgumentStorage<B> b;

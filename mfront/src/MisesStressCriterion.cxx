@@ -1,6 +1,6 @@
 /*!
  * \file   mfront/src/MisesStressCriterion.cxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   15/03/2018
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
@@ -16,7 +16,7 @@
 #include "MFront/BehaviourBrick/OptionDescription.hxx"
 #include "MFront/BehaviourBrick/MisesStressCriterion.hxx"
 
-namespace mfront{
+namespace mfront {
 
   namespace bbrick {
 
@@ -120,7 +120,8 @@ namespace mfront{
     StressCriterion::PorosityEffectOnFlowRule
     MisesStressCriterion::getPorosityEffectOnEquivalentPlasticStrain() const {
       return StressCriterion::NO_POROSITY_EFFECT_ON_EQUIVALENT_PLASTIC_STRAIN;
-    }  // end of MisesStressCriterion::getPorosityEffectOnEquivalentPlasticStrain()
+    }  // end of
+       // MisesStressCriterion::getPorosityEffectOnEquivalentPlasticStrain()
 
     MisesStressCriterion::~MisesStressCriterion() = default;
 

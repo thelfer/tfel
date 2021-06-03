@@ -34,7 +34,7 @@ namespace tfel::math {
     }
 
    protected:
-    typedef BinaryOperationResult<A,B,OpMult> Result;
+    typedef BinaryOperationResult<A, B, OpMult> Result;
     typedef numeric_type<Result> NumType;
     typedef index_type<Result> IndexType;
 

@@ -49,10 +49,8 @@ namespace tfel::math {
      */
     template <typename T2toT2Type, typename T2toT2Type2>
     TFEL_MATH_INLINE Expr(const T2toT2Type& a, const T2toT2Type2& b) {
-      static_assert(
-          implementsT2toT2Concept<T2toT2Type>());
-      static_assert(
-          implementsT2toT2Concept<T2toT2Type2>());
+      static_assert(implementsT2toT2Concept<T2toT2Type>());
+      static_assert(implementsT2toT2Concept<T2toT2Type2>());
       static_assert(getSpaceDimension<T2toT2Type>() == 1u);
       static_assert(getSpaceDimension<T2toT2Type2>() == 1u);
       this->v[0] = a(0, 0) * b(0, 0) + a(0, 1) * b(1, 0) + a(0, 2) * b(2, 0);
@@ -105,10 +103,8 @@ namespace tfel::math {
      */
     template <typename T2toT2Type, typename T2toT2Type2>
     TFEL_MATH_INLINE Expr(const T2toT2Type& a, const T2toT2Type2& b) {
-      static_assert(
-          implementsT2toT2Concept<T2toT2Type>());
-      static_assert(
-          implementsT2toT2Concept<T2toT2Type2>());
+      static_assert(implementsT2toT2Concept<T2toT2Type>());
+      static_assert(implementsT2toT2Concept<T2toT2Type2>());
       static_assert(getSpaceDimension<T2toT2Type>() == 2u);
       static_assert(getSpaceDimension<T2toT2Type2>() == 2u);
       this->v[0] = a(0, 0) * b(0, 0) + a(0, 1) * b(1, 0) + a(0, 2) * b(2, 0) +
@@ -202,10 +198,8 @@ namespace tfel::math {
      */
     template <typename T2toT2Type, typename T2toT2Type2>
     TFEL_MATH_INLINE Expr(const T2toT2Type& a, const T2toT2Type2& b) {
-      static_assert(
-          implementsT2toT2Concept<T2toT2Type>());
-      static_assert(
-          implementsT2toT2Concept<T2toT2Type2>());
+      static_assert(implementsT2toT2Concept<T2toT2Type>());
+      static_assert(implementsT2toT2Concept<T2toT2Type2>());
       static_assert(getSpaceDimension<T2toT2Type>() == 3u);
       static_assert(getSpaceDimension<T2toT2Type2>() == 3u);
       this->v[0] = a(0, 0) * b(0, 0) + a(0, 1) * b(1, 0) + a(0, 2) * b(2, 0) +

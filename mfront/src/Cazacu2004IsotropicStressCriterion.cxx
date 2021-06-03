@@ -21,11 +21,10 @@ namespace mfront {
 
   namespace bbrick {
 
-    std::vector<OptionDescription> Cazacu2004IsotropicStressCriterion::getOptions()
-        const {
+    std::vector<OptionDescription>
+    Cazacu2004IsotropicStressCriterion::getOptions() const {
       auto opts = StressCriterionBase::getOptions();
-      opts.emplace_back("c", "",
-                        OptionDescription::MATERIALPROPERTY);
+      opts.emplace_back("c", "", OptionDescription::MATERIALPROPERTY);
       return opts;
     }  // end of Cazacu2004IsotropicStressCriterion::getOptions()
 
@@ -36,11 +35,12 @@ namespace mfront {
     }  // end of
        // Cazacu2004IsotropicStressCriterion::getSupportedBehaviourSymmetries()
 
-    void Cazacu2004IsotropicStressCriterion::initialize(BehaviourDescription& bd,
-                                                AbstractBehaviourDSL& dsl,
-                                                const std::string& id,
-                                                const DataMap& d,
-                                                const Role r) {
+    void Cazacu2004IsotropicStressCriterion::initialize(
+        BehaviourDescription& bd,
+        AbstractBehaviourDSL& dsl,
+        const std::string& id,
+        const DataMap& d,
+        const Role r) {
       StressCriterionBase::initialize(bd, dsl, id, d, r);
       const auto cn = StressCriterion::getVariableId("c", id, r);
       tfel::raise_if(d.count("c") == 0,
@@ -60,7 +60,8 @@ namespace mfront {
       constexpr auto uh =
           tfel::material::ModellingHypothesis::UNDEFINEDHYPOTHESIS;
       const auto cn = StressCriterion::getVariableId("c", id, r);
-      auto c = generateMaterialPropertyInitializationCode(dsl, bd, cn, this->cp);
+      auto c =
+          generateMaterialPropertyInitializationCode(dsl, bd, cn, this->cp);
       if (!c.empty()) {
         CodeBlock i;
         i.code = c;
@@ -185,20 +186,25 @@ namespace mfront {
       return c;
     }  // end of Cazacu2004IsotropicStressCriterion::computeNormalDerivative
 
-    bool Cazacu2004IsotropicStressCriterion::isCoupledWithPorosityEvolution() const {
+    bool Cazacu2004IsotropicStressCriterion::isCoupledWithPorosityEvolution()
+        const {
       return false;
-    }  // end of Cazacu2004IsotropicStressCriterion::isCoupledWithPorosityEvolution
+    }  // end of
+       // Cazacu2004IsotropicStressCriterion::isCoupledWithPorosityEvolution
 
     bool Cazacu2004IsotropicStressCriterion::isNormalDeviatoric() const {
       return true;
     }  // end of Cazacu2004IsotropicStressCriterion::isNormalDeviatoric
 
     StressCriterion::PorosityEffectOnFlowRule
-    Cazacu2004IsotropicStressCriterion::getPorosityEffectOnEquivalentPlasticStrain() const {
+    Cazacu2004IsotropicStressCriterion::
+        getPorosityEffectOnEquivalentPlasticStrain() const {
       return StressCriterion::NO_POROSITY_EFFECT_ON_EQUIVALENT_PLASTIC_STRAIN;
-    }  // end of Cazacu2004IsotropicStressCriterion::getPorosityEffectOnEquivalentPlasticStrain()
+    }  // end of
+       // Cazacu2004IsotropicStressCriterion::getPorosityEffectOnEquivalentPlasticStrain()
 
-    Cazacu2004IsotropicStressCriterion::~Cazacu2004IsotropicStressCriterion() = default;
+    Cazacu2004IsotropicStressCriterion::~Cazacu2004IsotropicStressCriterion() =
+        default;
 
   }  // end of namespace bbrick
 

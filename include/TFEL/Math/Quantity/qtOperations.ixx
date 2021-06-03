@@ -16,43 +16,43 @@
 
 namespace tfel::math {
 
-    template <typename unit, typename T1, typename T2>
-    TFEL_MATH_INLINE constexpr qt<
-        unit,
-        typename tfel::typetraits::Promote<T1, T2>::type>
-    operator+(const qt<unit, T1> a, const qt<unit, T2> b) {
-      using result = result_type<qt<unit, T1>, qt<unit, T2>, OpPlus>;
-      return static_cast<result>(a.getValue() + b.getValue());
-    }
+  template <typename unit, typename T1, typename T2>
+  TFEL_MATH_INLINE constexpr qt<
+      unit,
+      typename tfel::typetraits::Promote<T1, T2>::type>
+  operator+(const qt<unit, T1> a, const qt<unit, T2> b) {
+    using result = result_type<qt<unit, T1>, qt<unit, T2>, OpPlus>;
+    return static_cast<result>(a.getValue() + b.getValue());
+  }
 
-    template <typename unit, typename T1, typename T2>
-    TFEL_MATH_INLINE constexpr qt<
-        unit,
-        typename tfel::typetraits::Promote<T1, T2>::type>
-    operator-(const qt<unit, T1> a, const qt<unit, T2> b) {
-      using result = result_type<qt<unit, T1>, qt<unit, T2>, OpMinus>;
-      return result((a.getValue()) - b.getValue());
-    }
+  template <typename unit, typename T1, typename T2>
+  TFEL_MATH_INLINE constexpr qt<
+      unit,
+      typename tfel::typetraits::Promote<T1, T2>::type>
+  operator-(const qt<unit, T1> a, const qt<unit, T2> b) {
+    using result = result_type<qt<unit, T1>, qt<unit, T2>, OpMinus>;
+    return result((a.getValue()) - b.getValue());
+  }
 
-    template <typename unit, typename T1, typename unit2, typename T2>
-    TFEL_MATH_INLINE constexpr qt<
-        typename AddUnit_<unit, unit2>::type,
-        typename tfel::typetraits::Promote<T1, T2>::type>
-    operator*(const qt<unit, T1> a, const qt<unit2, T2> b) {
-      using result = result_type<qt<unit, T1>, qt<unit2, T2>, OpMult>;
-      return result((a.getValue()) * (b.getValue()));
-    }
+  template <typename unit, typename T1, typename unit2, typename T2>
+  TFEL_MATH_INLINE constexpr qt<
+      typename AddUnit_<unit, unit2>::type,
+      typename tfel::typetraits::Promote<T1, T2>::type>
+  operator*(const qt<unit, T1> a, const qt<unit2, T2> b) {
+    using result = result_type<qt<unit, T1>, qt<unit2, T2>, OpMult>;
+    return result((a.getValue()) * (b.getValue()));
+  }
 
-    template <typename unit, typename T1, typename unit2, typename T2>
-    TFEL_MATH_INLINE constexpr qt<
-        typename SubUnit_<unit, unit2>::type,
-        typename tfel::typetraits::Promote<T1, T2>::type>
-    operator/(const qt<unit, T1> a, const qt<unit2, T2> b) {
-      using result = result_type<qt<unit, T1>, qt<unit2, T2>, OpDiv>;
-      return result((a.getValue()) / (b.getValue()));
-    }
+  template <typename unit, typename T1, typename unit2, typename T2>
+  TFEL_MATH_INLINE constexpr qt<
+      typename SubUnit_<unit, unit2>::type,
+      typename tfel::typetraits::Promote<T1, T2>::type>
+  operator/(const qt<unit, T1> a, const qt<unit2, T2> b) {
+    using result = result_type<qt<unit, T1>, qt<unit2, T2>, OpDiv>;
+    return result((a.getValue()) / (b.getValue()));
+  }
 
-    // Multiplication by a scalar
+  // Multiplication by a scalar
 #define TFEL_MATH_QT_RESULT_TYPE_IMPL(X)                                      \
   template <typename unit, typename T1>                                       \
   TFEL_MATH_INLINE constexpr qt<                                              \
@@ -89,15 +89,15 @@ namespace tfel::math {
     return result(b / (a.getValue()));                                        \
   }
 
-    TFEL_MATH_QT_RESULT_TYPE_IMPL(unsigned short)
-    TFEL_MATH_QT_RESULT_TYPE_IMPL(unsigned int)
-    TFEL_MATH_QT_RESULT_TYPE_IMPL(long unsigned int)
-    TFEL_MATH_QT_RESULT_TYPE_IMPL(short)
-    TFEL_MATH_QT_RESULT_TYPE_IMPL(int)
-    TFEL_MATH_QT_RESULT_TYPE_IMPL(long int)
-    TFEL_MATH_QT_RESULT_TYPE_IMPL(float)
-    TFEL_MATH_QT_RESULT_TYPE_IMPL(double)
-    TFEL_MATH_QT_RESULT_TYPE_IMPL(long double)
+  TFEL_MATH_QT_RESULT_TYPE_IMPL(unsigned short)
+  TFEL_MATH_QT_RESULT_TYPE_IMPL(unsigned int)
+  TFEL_MATH_QT_RESULT_TYPE_IMPL(long unsigned int)
+  TFEL_MATH_QT_RESULT_TYPE_IMPL(short)
+  TFEL_MATH_QT_RESULT_TYPE_IMPL(int)
+  TFEL_MATH_QT_RESULT_TYPE_IMPL(long int)
+  TFEL_MATH_QT_RESULT_TYPE_IMPL(float)
+  TFEL_MATH_QT_RESULT_TYPE_IMPL(double)
+  TFEL_MATH_QT_RESULT_TYPE_IMPL(long double)
 
 }  // namespace tfel::math
 

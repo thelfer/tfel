@@ -44,8 +44,8 @@ namespace tfel::math {
       const T);
 
   template <int N, unsigned int D, typename T>
-  TFEL_MATH_INLINE std::enable_if_t<tfel::typetraits::isScalar<T>(), T>
-  power(const T);
+  TFEL_MATH_INLINE std::enable_if_t<tfel::typetraits::isScalar<T>(), T> power(
+      const T);
 
 }  // end of namespace tfel::math
 

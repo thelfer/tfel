@@ -54,7 +54,7 @@ struct StensorIsotropicFunctionDerivativeTest2 final
     TFEL_CONSTEXPR const auto n = 0.3;
     TFEL_CONSTEXPR const auto m = E / (2 * (1 + n));
     TFEL_CONSTEXPR const auto rm = 0.6;
-    TFEL_CONSTEXPR const double prec = 4.e-9*E;
+    TFEL_CONSTEXPR const double prec = 4.e-9 * E;
     auto f = [](const double x) -> double { return x > 0 ? x : 0; };
     auto df = [](const double x) -> double {
       return std::abs(x) < 1.e-12 ? 0.5 : ((x < 0) ? 0 : 1);
@@ -85,8 +85,8 @@ struct StensorIsotropicFunctionDerivativeTest2 final
         if (std::abs(d(i, j) - nd(i, j)) > prec) {
           std::cout << i << " " << j << " " << d(i, j) << " " << nd(i, j) << " "
                     << std::abs(d(i, j) - nd(i, j)) << std::endl;
-         }
-         TFEL_TESTS_ASSERT(std::abs(d(i, j) - nd(i, j)) < prec);
+        }
+        TFEL_TESTS_ASSERT(std::abs(d(i, j) - nd(i, j)) < prec);
       }
     }
   }

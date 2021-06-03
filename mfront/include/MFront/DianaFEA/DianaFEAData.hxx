@@ -1,22 +1,22 @@
 /*!
  * \file   DianaFEAData.hxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   22/03/2016
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_MFRONT_DIANAFEA_DIANAFEADATA_HXX
 #define LIB_MFRONT_DIANAFEA_DIANAFEADATA_HXX
 
-#include"MFront/DianaFEA/DianaFEA.hxx"
+#include "MFront/DianaFEA/DianaFEA.hxx"
 
-namespace dianafea{
+namespace dianafea {
 
   /*!
    * \brief a structure used to collect the parameters passed through
@@ -30,11 +30,11 @@ namespace dianafea{
     //! state variables
     DianaFEAReal *const STATEV;
     //! number of components of symmetric tensors
-    const DianaFEAInt  NTENS;
+    const DianaFEAInt NTENS;
     //! number of material properties
-    const DianaFEAInt  NPROPS;
+    const DianaFEAInt NPROPS;
     //! number of state variables
-    const DianaFEAInt  NSTATV;
+    const DianaFEAInt NSTATV;
     //! time increment
     const DianaFEAReal DTIME;
     //! strain
@@ -51,8 +51,8 @@ namespace dianafea{
     const tfel::material::OutOfBoundsPolicy op;
     //! stress free expansion handler
     const StressFreeExpansionHandler<DianaFEAReal> sfeh;
-  }; // end of struct DianaFEAData
-  
-} // end of namespace dianafea
+  };  // end of struct DianaFEAData
+
+}  // end of namespace dianafea
 
 #endif /* LIB_MFRONT_DIANAFEA_DIANAFEADATA_HXX */

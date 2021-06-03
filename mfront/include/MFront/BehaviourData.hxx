@@ -934,7 +934,8 @@ namespace mfront {
     //! \return the list of user defined initialize blocks
     std::vector<std::string> getUserDefinedInitializeCodeBlocksNames() const;
     //! \return the list of user defined initialize blocks
-    const CodeBlock& getUserDefinedInitializeCodeBlock(const std::string&) const;
+    const CodeBlock& getUserDefinedInitializeCodeBlock(
+        const std::string&) const;
     //! \brief destructor
     ~BehaviourData() override;
 
@@ -995,99 +996,101 @@ namespace mfront {
       CodeBlock cblock;
       //! \brief get already called
       mutable bool is_mutable = true;
-      };
-      /*!
-       * \brief throw an exception saying that no attribute with the given name
-       * exists
-       */
-      [[noreturn]] static void throwUndefinedAttribute(const std::string&);
-      /*!
-       * check that the given name has been registred as a variable name
-       * \param[in] n : variable name
-       * \note an exception is thrown is the given name is not found
-       */
-      void checkVariableName(const std::string&) const;
-      /*!
-       * \brief return the variable description associated to the given name
-       * \param[in] n: name
-       */
-      VariableDescription& getVariableDescription(const std::string&);
-      /*!
-       * \brief add a variable to a container
-       * \param[in] c: container
-       * \param[in] v: variable to be added
-       * \param[in] s: registration status
-       * \param[in] bi: if true, register variable increment name
-       * \param[in] b: if true, allow the variable to be added even if
-       * the allowsNewUserDefinedVariables has been set to false. This
-       * shall be true only for local variables which have a specific
-       * status.
-       */
-      void addVariable(VariableDescriptionContainer&,
-                       const VariableDescription&, const RegistrationStatus,
-                       const bool, const bool = false);
-      /*!
-       * variables flagged as probably unusable in purely implicit
-       * resolutions
-       */
-      std::set<std::string> pupirv;
-      //! \brief registred code blocks
-      std::map<std::string, CodeBlocksAggregator> cblocks;
-      //! \brief registred material properties
-      VariableDescriptionContainer materialProperties;
-      //! \brief registred persistent variables
-      VariableDescriptionContainer persistentVariables;
-      //! \brief registred integration variables
-      VariableDescriptionContainer integrationVariables;
-      //! \brief registred state variables
-      VariableDescriptionContainer stateVariables;
-      //! \brief registred auxiliary state variables
-      VariableDescriptionContainer auxiliaryStateVariables;
-      //! \brief registred external state variables
-      VariableDescriptionContainer externalStateVariables;
-      //! \brief registred local variables
-      VariableDescriptionContainer localVariables;
-      //! \brief parameters of the behaviour
-      VariableDescriptionContainer parameters;
-      //! \brief registred post-processing variables
-      VariableDescriptionContainer postProcessingVariables;
-      //! \brief default value for floatting point paramerters
-      std::map<std::string, double> parametersDefaultValues;
-      //! \brief default value for signed integer paramerters
-      std::map<std::string, int> iParametersDefaultValues;
-      //! \brief default value for short unsigned integer paramerters
-      std::map<std::string, unsigned short> uParametersDefaultValues;
-      //! \brief static variables
-      StaticVariableDescriptionContainer staticVariables;
-      /*!
-       * \brief registred stress fress expansion descriptions
-       */
-      std::vector<StressFreeExpansionDescription> sfeds;
-      //! \brief overriding parameters
-      std::map<std::string, double> overriding_parameters;
-      //! \brief behaviour attributes
-      std::map<std::string, BehaviourAttribute> attributes;
-      //! \brief private code
-      std::string privateCode;
-      //! \brief class members
-      std::string members;
-      //! \brief list of glossary names used by the behaviour
-      std::map<std::string, std::string> glossaryNames;
-      //! \brief list of entry names used by the behaviour
-      std::map<std::string, std::string> entryNames;
-      //! \brief list of reserved names
-      std::set<std::string> reservedNames;
-      //! \brief list of variables names
-      std::set<std::string> membersNames;
-      //! \brief list of variables names
-      std::set<std::string> staticMembersNames;
-      /*!
-       * boolean stating if this behaviour can be used in a purely
-       * implicit resolution.
-       * \see isUsableInPurelyImplicitResolution for details about
-       * purely implicit resolution.
-       */
-      bool usableInPurelyImplicitResolution = false;
+    };
+    /*!
+     * \brief throw an exception saying that no attribute with the given name
+     * exists
+     */
+    [[noreturn]] static void throwUndefinedAttribute(const std::string&);
+    /*!
+     * check that the given name has been registred as a variable name
+     * \param[in] n : variable name
+     * \note an exception is thrown is the given name is not found
+     */
+    void checkVariableName(const std::string&) const;
+    /*!
+     * \brief return the variable description associated to the given name
+     * \param[in] n: name
+     */
+    VariableDescription& getVariableDescription(const std::string&);
+    /*!
+     * \brief add a variable to a container
+     * \param[in] c: container
+     * \param[in] v: variable to be added
+     * \param[in] s: registration status
+     * \param[in] bi: if true, register variable increment name
+     * \param[in] b: if true, allow the variable to be added even if
+     * the allowsNewUserDefinedVariables has been set to false. This
+     * shall be true only for local variables which have a specific
+     * status.
+     */
+    void addVariable(VariableDescriptionContainer&,
+                     const VariableDescription&,
+                     const RegistrationStatus,
+                     const bool,
+                     const bool = false);
+    /*!
+     * variables flagged as probably unusable in purely implicit
+     * resolutions
+     */
+    std::set<std::string> pupirv;
+    //! \brief registred code blocks
+    std::map<std::string, CodeBlocksAggregator> cblocks;
+    //! \brief registred material properties
+    VariableDescriptionContainer materialProperties;
+    //! \brief registred persistent variables
+    VariableDescriptionContainer persistentVariables;
+    //! \brief registred integration variables
+    VariableDescriptionContainer integrationVariables;
+    //! \brief registred state variables
+    VariableDescriptionContainer stateVariables;
+    //! \brief registred auxiliary state variables
+    VariableDescriptionContainer auxiliaryStateVariables;
+    //! \brief registred external state variables
+    VariableDescriptionContainer externalStateVariables;
+    //! \brief registred local variables
+    VariableDescriptionContainer localVariables;
+    //! \brief parameters of the behaviour
+    VariableDescriptionContainer parameters;
+    //! \brief registred post-processing variables
+    VariableDescriptionContainer postProcessingVariables;
+    //! \brief default value for floatting point paramerters
+    std::map<std::string, double> parametersDefaultValues;
+    //! \brief default value for signed integer paramerters
+    std::map<std::string, int> iParametersDefaultValues;
+    //! \brief default value for short unsigned integer paramerters
+    std::map<std::string, unsigned short> uParametersDefaultValues;
+    //! \brief static variables
+    StaticVariableDescriptionContainer staticVariables;
+    /*!
+     * \brief registred stress fress expansion descriptions
+     */
+    std::vector<StressFreeExpansionDescription> sfeds;
+    //! \brief overriding parameters
+    std::map<std::string, double> overriding_parameters;
+    //! \brief behaviour attributes
+    std::map<std::string, BehaviourAttribute> attributes;
+    //! \brief private code
+    std::string privateCode;
+    //! \brief class members
+    std::string members;
+    //! \brief list of glossary names used by the behaviour
+    std::map<std::string, std::string> glossaryNames;
+    //! \brief list of entry names used by the behaviour
+    std::map<std::string, std::string> entryNames;
+    //! \brief list of reserved names
+    std::set<std::string> reservedNames;
+    //! \brief list of variables names
+    std::set<std::string> membersNames;
+    //! \brief list of variables names
+    std::set<std::string> staticMembersNames;
+    /*!
+     * boolean stating if this behaviour can be used in a purely
+     * implicit resolution.
+     * \see isUsableInPurelyImplicitResolution for details about
+     * purely implicit resolution.
+     */
+    bool usableInPurelyImplicitResolution = false;
   };  // end of struct BehaviourData
 
 }  // end of namespace mfront

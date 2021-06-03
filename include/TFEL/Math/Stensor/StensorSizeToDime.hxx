@@ -89,7 +89,7 @@ namespace tfel::math {
   template <unsigned short N>
   constexpr unsigned short getStensorSize() {
     return StensorDimeToSize<N>::value;
-  } // end of getStensorSize
+  }  // end of getStensorSize
 
 }  // end of namespace tfel::math
 

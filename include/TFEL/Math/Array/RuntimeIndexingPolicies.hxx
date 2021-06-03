@@ -135,11 +135,11 @@ namespace tfel::math {
         const std::array<size_type, 2u>& sizes)
         : n_rows(sizes[0]), n_columns(sizes[1]) {}
     //! \brief move constructor
-    constexpr RuntimeRowMajorMatrixIndexingPolicy(RuntimeRowMajorMatrixIndexingPolicy&&) =
-        default;
+    constexpr RuntimeRowMajorMatrixIndexingPolicy(
+        RuntimeRowMajorMatrixIndexingPolicy&&) = default;
     //! \brief copy constructor
-    constexpr RuntimeRowMajorMatrixIndexingPolicy(const RuntimeRowMajorMatrixIndexingPolicy&) =
-        default;
+    constexpr RuntimeRowMajorMatrixIndexingPolicy(
+        const RuntimeRowMajorMatrixIndexingPolicy&) = default;
     //! \brief move constructor
     constexpr RuntimeRowMajorMatrixIndexingPolicy& operator=(
         RuntimeRowMajorMatrixIndexingPolicy&&) = default;
@@ -181,7 +181,9 @@ namespace tfel::math {
       return i == 0 ? this->getNumberOfRows() : this->getNumberOfColumns();
     }
     //! \return the number of rows
-    constexpr size_type getNumberOfRows() const noexcept { return this->n_rows; }
+    constexpr size_type getNumberOfRows() const noexcept {
+      return this->n_rows;
+    }
     //! \return the number of cols
     constexpr size_type getNumberOfColumns() const noexcept {
       return this->n_columns;

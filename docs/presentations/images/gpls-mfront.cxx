@@ -1,12 +1,12 @@
-@Parser    RungeKutta;
+@Parser RungeKutta;
 @Behaviour GPLS;
-@Author    Helfer Thomas;
+@Author Helfer Thomas;
 @Algorithm rk54;
-@Date 27/03/09;
+@Date 27 / 03 / 09;
 
-@Includes{
-#include<TFEL/Material/Lame.hxx>
-#include<TFEL/Material/Hill.hxx>
+@Includes {
+#include <TFEL/Material/Lame.hxx>
+#include <TFEL/Material/Hill.hxx>
 }
 
 @Epsilon 1.e-6;

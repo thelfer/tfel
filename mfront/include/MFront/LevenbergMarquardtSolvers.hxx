@@ -1,31 +1,29 @@
-/*! 
+/*!
  * \file  mfront/include/MFront/LevenbergMarquardtSolvers.hxx
  * \brief
  * \author Thomas Helfer
  * \brief 22 août 2014
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_MFRONT_LEVENBERGMARQUARTSOLVERS_HXX
-#define LIB_MFRONT_LEVENBERGMARQUARTSOLVERS_HXX 
+#define LIB_MFRONT_LEVENBERGMARQUARTSOLVERS_HXX
 
 #include "MFront/NonLinearSystemSolverBase.hxx"
 
-namespace mfront{
+namespace mfront {
 
   /*!
    * base class for non linear system solver based on the
    * Newton-Raphson algorithm coupled with the Levenberg-Marquart
    * algorithm for increased robustness.
    */
-  struct LevenbergMarquardtSolverBase
-    : public NonLinearSystemSolverBase
-  {
+  struct LevenbergMarquardtSolverBase : public NonLinearSystemSolverBase {
     /*!
      * \return the reserved names
      */
@@ -59,7 +57,8 @@ namespace mfront{
      * initialized to the identity matrix at the beginning of the
      * computeFdF method.
      */
-    bool requiresJacobianToBeReinitialisedToIdentityAtEachIterations() const override;
+    bool requiresJacobianToBeReinitialisedToIdentityAtEachIterations()
+        const override;
     /*!
      * \brief write the algorithm specific members
      * \param[in,out] md  : mechanical description
@@ -67,11 +66,11 @@ namespace mfront{
      * \param[in] p       : current position in file (after keyword)
      * \param[in] pe      : end of file
      */
-    std::pair<bool,tokens_iterator>
-    treatSpecificKeywords(BehaviourDescription&,
-			  const std::string&,
-			  const tokens_iterator,
-			  const tokens_iterator) override;
+    std::pair<bool, tokens_iterator> treatSpecificKeywords(
+        BehaviourDescription&,
+        const std::string&,
+        const tokens_iterator,
+        const tokens_iterator) override;
     /*!
      * \brief method called when all the user defined variables have been set.
      * \param[in,out] md  : mechanical description
@@ -87,8 +86,8 @@ namespace mfront{
      * \param[in] h   : modelling hypotheis
      */
     void writeSpecificInitializeMethodPart(std::ostream&,
-					   const BehaviourDescription&,
-					   const Hypothesis) const override;
+                                           const BehaviourDescription&,
+                                           const Hypothesis) const override;
     /*!
      * \brief write the algorithm specific members
      * \param[in] out : output file
@@ -96,8 +95,8 @@ namespace mfront{
      * \param[in] h   : modelling hypotheis
      */
     void writeSpecificMembers(std::ostream&,
-			      const BehaviourDescription&,
-			      const Hypothesis) const override;
+                              const BehaviourDescription&,
+                              const Hypothesis) const override;
     /*!
      * \brief write the resolution algorithm
      * \param[in] out : output file
@@ -105,20 +104,19 @@ namespace mfront{
      * \param[in] h   : modelling hypotheis
      */
     void writeResolutionAlgorithm(std::ostream&,
-				  const BehaviourDescription&,
-				  const Hypothesis) const override;
-  protected:
+                                  const BehaviourDescription&,
+                                  const Hypothesis) const override;
+
+   protected:
     //! destructor
     ~LevenbergMarquardtSolverBase() override;
-  }; // end of struct LevenbergMarquardtSolverBase
+  };  // end of struct LevenbergMarquardtSolverBase
 
   /*!
    * the standard Newton-Raphson solver coupled with the
    * Levenberg-Marquart algorithm for increased robustness
    */
-  struct LevenbergMarquardtSolver
-    : public LevenbergMarquardtSolverBase
-  {
+  struct LevenbergMarquardtSolver : public LevenbergMarquardtSolverBase {
     /*!
      * \return true if the solver requires a numerical jacobian
      */
@@ -133,8 +131,7 @@ namespace mfront{
    * increased robustness
    */
   struct LevenbergMarquardtNumericalJacobianSolver
-    : public LevenbergMarquardtSolverBase
-  {
+      : public LevenbergMarquardtSolverBase {
     /*!
      * \return true if the solver requires a numerical jacobian
      */
@@ -143,7 +140,6 @@ namespace mfront{
     ~LevenbergMarquardtNumericalJacobianSolver() override;
   };
 
-} // end of namespace mfront
+}  // end of namespace mfront
 
 #endif /* LIB_MFRONT_LEVENBERGMARQUARTSOLVERS_HXX */
-

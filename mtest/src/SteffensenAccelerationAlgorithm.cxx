@@ -73,7 +73,8 @@ namespace mtest {
       }
       this->sta_du2 = this->sta_u2 - this->sta_u1;
       this->sta_du1 = this->sta_u1 - this->sta_u0;
-      for (std::vector<real>::size_type id = 0; id != this->sta_du1.size(); ++id) {
+      for (std::vector<real>::size_type id = 0; id != this->sta_du1.size();
+           ++id) {
         if ((std::abs(this->sta_du2[id]) > it_eps) &&
             (std::abs(this->sta_du1[id]) > it_eps)) {
           const auto i1 = 1 / (this->sta_du2[id]);

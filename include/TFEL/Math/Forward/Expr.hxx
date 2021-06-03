@@ -1,6 +1,6 @@
 /*!
  * \file   include/TFEL/Math/Forward/Expr.hxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   18/01/2021
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
@@ -14,7 +14,7 @@
 #ifndef LIB_TFEL_MATH_FORWARD_EXPR_HXX
 #define LIB_TFEL_MATH_FORWARD_EXPR_HXX
 
-namespace tfel::math{
+namespace tfel::math {
 
   /*!
    * an helper structure used for the partial specialisation of the
@@ -99,6 +99,6 @@ namespace tfel::math{
   using EvaluationResult =
       typename ResultOfEvaluation<std::decay_t<ObjectType>>::type;
 
-} // end of namespace tfel::math
+}  // end of namespace tfel::math
 
 #endif /* LIB_TFEL_MATH_FORWARD_EXPR_HXX */

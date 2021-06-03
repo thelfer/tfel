@@ -45,8 +45,8 @@ namespace tfel::math {
     // exposing MutableArrayCommonMethods assignement operators
     using MutableArrayCommonMethods<Child, ArrayPolicy>::operator=;
     //! \return the current indexing policy
-    constexpr typename ArrayPolicy::IndexingPolicy& getIndexingPolicy()
-        const noexcept;
+    constexpr typename ArrayPolicy::IndexingPolicy& getIndexingPolicy() const
+        noexcept;
     /*!
      * \brief apply a multi-indices functor
      * \param[in] f: functor

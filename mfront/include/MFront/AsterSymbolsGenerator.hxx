@@ -1,6 +1,6 @@
 /*!
  * \file   AsterSymbolsGenerator.hxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   19/07/2018
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
@@ -27,25 +27,24 @@ namespace mfront {
     //! constructor
     AsterSymbolsGenerator();
     void writeSpecificSymbols(std::ostream&,
-                                    const StandardBehaviourInterface&,
-                                    const BehaviourDescription&,
-                                    const FileDescription&,
-                                    const std::string&) const override;
+                              const StandardBehaviourInterface&,
+                              const BehaviourDescription&,
+                              const FileDescription&,
+                              const std::string&) const override;
     void writeBehaviourTypeSymbols(std::ostream&,
-                                         const StandardBehaviourInterface&,
-                                         const BehaviourDescription&,
-                                         const std::string&) const override;
-    void writeBehaviourKinematicSymbols(
-        std::ostream&,
-        const StandardBehaviourInterface&,
-        const BehaviourDescription&,
-        const std::string&) const override;
+                                   const StandardBehaviourInterface&,
+                                   const BehaviourDescription&,
+                                   const std::string&) const override;
+    void writeBehaviourKinematicSymbols(std::ostream&,
+                                        const StandardBehaviourInterface&,
+                                        const BehaviourDescription&,
+                                        const std::string&) const override;
     void writeAdditionalSymbols(std::ostream&,
-				      const StandardBehaviourInterface&,
-                                      const BehaviourDescription&,
-                                      const FileDescription&,
-                                      const std::string&,
-                                      const Hypothesis) const override;
+                                const StandardBehaviourInterface&,
+                                const BehaviourDescription&,
+                                const FileDescription&,
+                                const std::string&,
+                                const Hypothesis) const override;
     bool handleStrainMeasure() const override;
     //! destructor
     ~AsterSymbolsGenerator() override;

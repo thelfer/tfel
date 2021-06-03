@@ -1,14 +1,14 @@
 /*!
  * \file   include/FSES/syevc3.hxx
- * \brief    
+ * \brief
  * \author Joachim Kopp/Thomas Helfer
  * \date   02 janv. 2017
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  *
  * ----------------------------------------------------------------------------
  * This file has been introduced in TFEL with the courtesy of Joachim Kopp.
@@ -17,7 +17,7 @@
  *
  * Numerical diagonalization of 3x3 matrcies
  * Copyright (C) 2006  Joachim Kopp
- * 
+ *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
@@ -36,7 +36,7 @@
 #ifndef LIB_FSES_SYEVC3_HXX
 #define LIB_FSES_SYEVC3_HXX
 
-namespace fses{
+namespace fses {
 
   // ----------------------------------------------------------------------------
   // Calculates the eigenvalues of a symmetric 3x3 matrix A using Cardano's
@@ -52,11 +52,11 @@ namespace fses{
   //   0: Success
   //  -1: Error
   // ----------------------------------------------------------------------------
-  template<typename MatrixType,typename VectorType>
-  int syevc3(VectorType&,const MatrixType&);
+  template <typename MatrixType, typename VectorType>
+  int syevc3(VectorType&, const MatrixType&);
 
-} // end of namespace fses
+}  // end of namespace fses
 
-#include"FSES/syevc3.ixx"
+#include "FSES/syevc3.ixx"
 
 #endif /* LIB_FSES_SYEVC3_HXX */

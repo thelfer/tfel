@@ -14,7 +14,7 @@
 #ifndef LIB_TFEL_CONTRACTVIOLATION_HXX
 #define LIB_TFEL_CONTRACTVIOLATION_HXX
 
-#include<iostream>
+#include <iostream>
 #include "TFEL/Config/TFELConfig.hxx"
 
 namespace tfel {

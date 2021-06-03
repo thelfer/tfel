@@ -182,9 +182,8 @@ namespace tfel::typetraits {
   };
   template <typename T1, typename T2>
   struct IsAssignableTo<T1, cadna::numeric_type<T2>> {
-    static constexpr bool b =
-        (cadna::is_cxx_fundamental_type<T1>::value &&
-         std::is_floating_point<T2>::value);
+    static constexpr bool b = (cadna::is_cxx_fundamental_type<T1>::value &&
+                               std::is_floating_point<T2>::value);
     using dispatch =
         typename std::conditional<b,
                                   internals::IsAssignableTo<T1, T2>,
@@ -194,7 +193,7 @@ namespace tfel::typetraits {
   template <typename T1, typename T2>
   struct IsAssignableTo<cadna::numeric_type<T1>, cadna::numeric_type<T2>> {
     static constexpr bool b = (std::is_floating_point<T1>::value &&
-                                     std::is_floating_point<T2>::value);
+                               std::is_floating_point<T2>::value);
     using dispatch =
         typename std::conditional<b,
                                   internals::IsAssignableTo<T1, T2>,

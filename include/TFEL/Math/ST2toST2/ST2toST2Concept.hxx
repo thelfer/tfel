@@ -42,7 +42,7 @@ namespace tfel::math {
     typedef ST2toST2Tag ConceptTag;
 
     numeric_type<T> operator()(const unsigned short,
-                                                   const unsigned short) const;
+                               const unsigned short) const;
 
    protected:
     ST2toST2Concept() = default;
@@ -68,9 +68,9 @@ namespace tfel::math {
   };
 
   template <typename ST2toST2Type>
-  std::enable_if_t<implementsST2toST2Concept<ST2toST2Type>(),
-                   typename tfel::typetraits::AbsType<
-                       numeric_type<ST2toST2Type>>::type>
+  std::enable_if_t<
+      implementsST2toST2Concept<ST2toST2Type>(),
+      typename tfel::typetraits::AbsType<numeric_type<ST2toST2Type>>::type>
   abs(const ST2toST2Type&);
 
   /*!
@@ -150,14 +150,13 @@ namespace tfel::math {
    * \param[in] s: fourth order tensor
    */
   template <typename ST2toST2Type>
-  std::enable_if_t<
-      implementsST2toST2Concept<ST2toST2Type>() &&
-          ((getSpaceDimension<ST2toST2Type>() == 2u) ||
-           (getSpaceDimension<ST2toST2Type>() == 3u)) &&
-          isScalar<numeric_type<ST2toST2Type>>(),
-      typename ComputeUnaryResult<
-          numeric_type<ST2toST2Type>,
-          Power<getSpaceDimension<ST2toST2Type>()>>::Result>
+  std::enable_if_t<implementsST2toST2Concept<ST2toST2Type>() &&
+                       ((getSpaceDimension<ST2toST2Type>() == 2u) ||
+                        (getSpaceDimension<ST2toST2Type>() == 3u)) &&
+                       isScalar<numeric_type<ST2toST2Type>>(),
+                   typename ComputeUnaryResult<
+                       numeric_type<ST2toST2Type>,
+                       Power<getSpaceDimension<ST2toST2Type>()>>::Result>
   det(const ST2toST2Type&);
 
 }  // end of namespace tfel::math

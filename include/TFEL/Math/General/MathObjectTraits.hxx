@@ -50,7 +50,7 @@ namespace tfel::math {
      * compatibility with previous versions of `TFEL`. Use `size_type` instead.
      */
     using IndexType = size_type;
-  }; // end of struct MathObjectTraitsBase
+  };  // end of struct MathObjectTraitsBase
 
   /*!
    * \brief a traits class describing a mathematical object

@@ -89,7 +89,7 @@ namespace tfel::math {
     typedef TensorTag ConceptTag;
 
     numeric_type<T> operator()(const unsigned short,
-                                const unsigned short) const;
+                               const unsigned short) const;
 
     numeric_type<T> operator()(const unsigned short) const;
 
@@ -242,19 +242,19 @@ namespace tfel::math {
    * \param[in]  F
    */
   template <typename TensorType, typename StensorType, typename TensorType2>
-  std::enable_if_t<
-      implementsTensorConcept<TensorType>() &&
-          implementsTensorConcept<TensorType2>() &&
-          implementsStensorConcept<StensorType>() &&
-          std::is_same<numeric_type<StensorType>,
-                       numeric_type<TensorType2>>::value &&
-          std::is_same<base_type<numeric_type<TensorType2>>,
-                       numeric_type<TensorType>>::value &&
-          (getSpaceDimension<TensorType>() == getSpaceDimension<TensorType2>()) &&
-          (getSpaceDimension<TensorType>() ==
-           getSpaceDimension<StensorType>()) &&
-          (getSpaceDimension<TensorType>() == 1u),
-      void>
+  std::enable_if_t<implementsTensorConcept<TensorType>() &&
+                       implementsTensorConcept<TensorType2>() &&
+                       implementsStensorConcept<StensorType>() &&
+                       std::is_same<numeric_type<StensorType>,
+                                    numeric_type<TensorType2>>::value &&
+                       std::is_same<base_type<numeric_type<TensorType2>>,
+                                    numeric_type<TensorType>>::value &&
+                       (getSpaceDimension<TensorType>() ==
+                        getSpaceDimension<TensorType2>()) &&
+                       (getSpaceDimension<TensorType>() ==
+                        getSpaceDimension<StensorType>()) &&
+                       (getSpaceDimension<TensorType>() == 1u),
+                   void>
   polar_decomposition(TensorType&, StensorType&, const TensorType2&);
 
   /*!
@@ -264,20 +264,20 @@ namespace tfel::math {
    * \param[in]  F
    */
   template <typename TensorType, typename StensorType, typename TensorType2>
-  std::enable_if_t<
-      implementsTensorConcept<TensorType>() &&
-          implementsTensorConcept<TensorType2>() &&
-          implementsStensorConcept<StensorType>() &&
-          std::is_same<numeric_type<StensorType>,
-                       numeric_type<TensorType2>>::value &&
-          std::is_same<base_type<numeric_type<TensorType2>>,
-                       numeric_type<TensorType>>::value &&
-          (getSpaceDimension<TensorType>() == getSpaceDimension<TensorType2>()) &&
-          (getSpaceDimension<TensorType>() ==
-           getSpaceDimension<StensorType>()) &&
-          ((getSpaceDimension<TensorType>() == 2u) ||
-           (getSpaceDimension<TensorType>() == 3u)),
-      void>
+  std::enable_if_t<implementsTensorConcept<TensorType>() &&
+                       implementsTensorConcept<TensorType2>() &&
+                       implementsStensorConcept<StensorType>() &&
+                       std::is_same<numeric_type<StensorType>,
+                                    numeric_type<TensorType2>>::value &&
+                       std::is_same<base_type<numeric_type<TensorType2>>,
+                                    numeric_type<TensorType>>::value &&
+                       (getSpaceDimension<TensorType>() ==
+                        getSpaceDimension<TensorType2>()) &&
+                       (getSpaceDimension<TensorType>() ==
+                        getSpaceDimension<StensorType>()) &&
+                       ((getSpaceDimension<TensorType>() == 2u) ||
+                        (getSpaceDimension<TensorType>() == 3u)),
+                   void>
   polar_decomposition(TensorType&, StensorType&, const TensorType2&);
 
 }  // end of namespace tfel::math

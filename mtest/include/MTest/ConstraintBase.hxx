@@ -33,14 +33,12 @@ namespace mtest {
      * \brief set the activating events
      * \param[in] evs: list of events
      */
-    void setActivatingEvents(
-        const std::vector<std::string>&) override;
+    void setActivatingEvents(const std::vector<std::string>&) override;
     /*!
      * \brief set the desactivating events
      * \param[in] evs: list of events
      */
-    void setDesactivatingEvents(
-        const std::vector<std::string>&) override;
+    void setDesactivatingEvents(const std::vector<std::string>&) override;
     /*!
      * \brief activate or desactivate the constraint
      * \param[in] b: state

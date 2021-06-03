@@ -94,12 +94,12 @@ namespace tfel::math {
      * \return the left part of the derivative of a tensor product
      */
     template <typename TensorType>
-    static TFEL_MATH_INLINE
-        std::enable_if_t<implementsTensorConcept<TensorType>() &&
-                             getSpaceDimension<TensorType>() == N &&
-                             isAssignableTo<numeric_type<TensorType>, ValueType>(),
-                         Expr<t2tot2<N, ValueType>, TensorProductLeftDerivativeExpr<N>>>
-        tpld(const TensorType&);
+    static TFEL_MATH_INLINE std::enable_if_t<
+        implementsTensorConcept<TensorType>() &&
+            getSpaceDimension<TensorType>() == N &&
+            isAssignableTo<numeric_type<TensorType>, ValueType>(),
+        Expr<t2tot2<N, ValueType>, TensorProductLeftDerivativeExpr<N>>>
+    tpld(const TensorType&);
     /*!
      * \param[in] B : second tensor of the product
      * \param[in] C : derivative of the first tensor
@@ -151,8 +151,7 @@ namespace tfel::math {
      * \return the derivative of the transpose of a tensor with respect of
      * this tensor
      */
-    static constexpr t2tot2<N, base_type<ValueType>>
-    transpose_derivative();
+    static constexpr t2tot2<N, base_type<ValueType>> transpose_derivative();
     //! \return the identity
     static constexpr t2tot2<N, base_type<ValueType>> Id();
     //! \return Id2^Id2, where Id2 is the identity tensor

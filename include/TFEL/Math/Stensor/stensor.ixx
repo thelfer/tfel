@@ -482,8 +482,8 @@ namespace tfel::math {
   }
 
   template <unsigned short N, typename T, typename OutputIterator>
-  TFEL_MATH_INLINE2 std::enable_if_t<isScalar<T>(), void>
-  exportToBaseTypeArray(const stensor<N, T>& s, OutputIterator p) {
+  TFEL_MATH_INLINE2 std::enable_if_t<isScalar<T>(), void> exportToBaseTypeArray(
+      const stensor<N, T>& s, OutputIterator p) {
     using base = base_type<T>;
     typedef tfel::fsalgo::copy<StensorDimeToSize<N>::value> Copy;
     static_assert(

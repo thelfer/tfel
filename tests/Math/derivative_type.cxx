@@ -1,6 +1,6 @@
 /*!
  * \file   tests/Math/derivative_type.cxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   25/06/2020
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
@@ -50,7 +50,7 @@ struct DerivativeTypeTest final : public tfel::tests::TestCase {
         (std::is_same_v<
             derivative_type<Types::StressStensor, Types::StrainStensor>,
             Types::StiffnessTensor>));
-  } // end of test1
+  }  // end of test1
 
 };  // end of struct DerivativeTypeTest
 

@@ -44,9 +44,7 @@ namespace tfel::math {
      * \param  j: the column index
      * \return m(i,j)
      */
-    numeric_type<T> operator()(
-        const index_type<T>,
-        const index_type<T>) const;
+    numeric_type<T> operator()(const index_type<T>, const index_type<T>) const;
 
    protected:
     MatrixConcept() = default;

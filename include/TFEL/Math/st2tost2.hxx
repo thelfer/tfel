@@ -290,17 +290,17 @@ namespace tfel::math {
       st2tost2<getSpaceDimension<StensorType>(), numeric_type<StensorType>>>
   computeDeviatorDeterminantSecondDerivative(const StensorType&);
 
-  }  // end of namespace tfel::math
+}  // end of namespace tfel::math
 
-  namespace tfel::typetraits {
-    template <unsigned short N, typename T2, typename T>
-    struct IsAssignableTo<tfel::math::st2tost2<N, T2>,
-                          tfel::math::st2tost2<N, T>> {
-      //! \brief result
-      static constexpr bool cond = isAssignableTo<T2, T>();
-    };
+namespace tfel::typetraits {
+  template <unsigned short N, typename T2, typename T>
+  struct IsAssignableTo<tfel::math::st2tost2<N, T2>,
+                        tfel::math::st2tost2<N, T>> {
+    //! \brief result
+    static constexpr bool cond = isAssignableTo<T2, T>();
+  };
 
-  }  // end of namespace tfel::typetraits
+}  // end of namespace tfel::typetraits
 
 #include "TFEL/Math/ST2toST2/st2tost2.ixx"
 #include "TFEL/Math/ST2toST2/st2tost2ResultType.hxx"

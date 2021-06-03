@@ -127,10 +127,8 @@ namespace abaqus {
         typename std::conditional<ba,
                                   ThermalExpansionCoefficientTensorInitializer,
                                   DoNothingInitializer>::type;
-    using IEnergyComputer =
-        typename std::conditional<bi,
-                                  InternalEnergyComputer,
-                                  DoNothingEnergyComputer>::type;
+    using IEnergyComputer = typename std::
+        conditional<bi, InternalEnergyComputer, DoNothingEnergyComputer>::type;
     using DEnergyComputer =
         typename std::conditional<bd,
                                   DissipatedEnergyComputer,

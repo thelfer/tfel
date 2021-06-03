@@ -1,15 +1,15 @@
 /*!
  * \file   tests/Math/stensor4.cxx
- * 
- * \brief    
+ *
+ * \brief
  * \author Thomas Helfer
  * \date   01/02/2010
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifdef NDEBUG
@@ -21,16 +21,16 @@
 #include <cassert>
 #include <cstdlib>
 
-#include"TFEL/Math/stensor.hxx"
-#include"TFEL/Math/Stensor/StensorConceptIO.hxx"
-#include"TFEL/Math/st2tost2.hxx"
-#include"TFEL/Math/ST2toST2/ST2toST2ConceptIO.hxx"
+#include "TFEL/Math/stensor.hxx"
+#include "TFEL/Math/Stensor/StensorConceptIO.hxx"
+#include "TFEL/Math/st2tost2.hxx"
+#include "TFEL/Math/ST2toST2/ST2toST2ConceptIO.hxx"
 
 /* coverity [UNCAUGHT_EXCEPT]*/
-int main(){
+int main() {
   using namespace std;
   using namespace tfel::math;
-  constexpr stensor<1>  Id  = stensor<1>::Id();
+  constexpr stensor<1> Id = stensor<1>::Id();
   constexpr st2tost2<1> IxI = st2tost2<1>::IxI();
   stensor<1> a;
   a(0) = 1.;

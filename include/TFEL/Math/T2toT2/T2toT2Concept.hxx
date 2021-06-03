@@ -35,8 +35,8 @@ namespace tfel::math {
   struct T2toT2Concept {
     typedef T2toT2Tag ConceptTag;
 
-    numeric_type<T> operator()(
-        const unsigned short, const unsigned short) const;
+    numeric_type<T> operator()(const unsigned short,
+                               const unsigned short) const;
 
    protected:
     T2toT2Concept() = default;
@@ -63,9 +63,9 @@ namespace tfel::math {
   };
 
   template <typename T2toT2Type>
-  std::enable_if_t<implementsT2toT2Concept<T2toT2Type>(),
-                   typename tfel::typetraits::AbsType<
-                       numeric_type<T2toT2Type>>::type>
+  std::enable_if_t<
+      implementsT2toT2Concept<T2toT2Type>(),
+      typename tfel::typetraits::AbsType<numeric_type<T2toT2Type>>::type>
   abs(const T2toT2Type&);
   /*!
    * \return the determinant of a `st2tost2`

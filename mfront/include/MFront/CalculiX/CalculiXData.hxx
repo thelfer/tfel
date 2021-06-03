@@ -1,29 +1,28 @@
 /*!
  * \file   CalculiXData.hxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   22/03/2016
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_MFRONT_CALCULIX_CALCULIXDATA_HXX
 #define LIB_MFRONT_CALCULIX_CALCULIXDATA_HXX
 
-#include"MFront/CalculiX/CalculiX.hxx"
+#include "MFront/CalculiX/CalculiX.hxx"
 
-namespace calculix{
+namespace calculix {
 
   /*!
    * \brief a structure used to collect the parameters passed through
    * the umat interface
    */
-  struct CalculiXData
-  {
+  struct CalculiXData {
     CalculiXReal *const STRESS;
     CalculiXReal *const PNEWDT;
     CalculiXReal *const DDSDDE;
@@ -38,8 +37,8 @@ namespace calculix{
     const CalculiXReal *const MPROPS;
     const tfel::material::OutOfBoundsPolicy op;
     const StressFreeExpansionHandler sfeh;
-  }; // end of struct CalculiXData
-  
-} // end of namespace calculix
+  };  // end of struct CalculiXData
+
+}  // end of namespace calculix
 
 #endif /* LIB_MFRONT_CALCULIX_CALCULIXDATA_HXX */

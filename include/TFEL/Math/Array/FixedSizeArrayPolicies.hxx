@@ -24,7 +24,7 @@ namespace tfel::math {
   struct FixedSizeVectorPolicy
       : StandardArrayPolicy<ValueType,
                             FixedSizeVectorIndexingPolicy<unsigned short, N>> {
-  }; // end of struct FixedSizeVectorPolicy
+  };  // end of struct FixedSizeVectorPolicy
 
   /*!
    * \brief an array policy describing a fixed size matrix stored in row major

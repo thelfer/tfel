@@ -9,25 +9,25 @@
  * \author sb152252
  * \date 31 août 2009
  *
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_TFELCHECK_PCILOGDRIVER_HXX
 #define LIB_TFELCHECK_PCILOGDRIVER_HXX
 
-#include<string>
-#include<memory>
-#include<iosfwd>
+#include <string>
+#include <memory>
+#include <iosfwd>
 #include "TFEL/Check/TFELCheckConfig.hxx"
 
-namespace tfel{
+namespace tfel {
 
-  namespace check{
+  namespace check {
 
     struct TFELCHECK_VISIBILITY_EXPORT PCILogDriver {
       //! constructor
@@ -66,24 +66,29 @@ namespace tfel{
        * \param message a string message explaining the test result
        */
       virtual void addTestResult(const std::string& testname,
-				 const std::string& step,
-				 const std::string& command, float time,
-				 bool success, const std::string& message = "") = 0;
+                                 const std::string& step,
+                                 const std::string& command,
+                                 float time,
+                                 bool success,
+                                 const std::string& message = "") = 0;
 
       /*!
        * \brief terminate driver use.
        *
-       * declare end of use of driver to properly close driver (to be overloaded by inherited class if necessary).
+       * declare end of use of driver to properly close driver (to be overloaded
+       * by inherited class if necessary).
        *
        */
       virtual void terminate();
       //! destructor
       virtual ~PCILogDriver();
-    protected:
+
+     protected:
       /*!
        * \brief get current ostream
        *
-       * Method to be used by inherited class to obtain an ostream ref that as been redirected to file if necessary.
+       * Method to be used by inherited class to obtain an ostream ref that as
+       * been redirected to file if necessary.
        *
        * Exemple (for inherited class):
        * this->getStream() << "This is an important message" << endl;
@@ -93,12 +98,12 @@ namespace tfel{
        */
       std::ostream& getStream();
 
-    private:
+     private:
       std::shared_ptr<std::ostream> log;
     };
 
-  } // end of namespace check
+  }  // end of namespace check
 
-} // end of namespace tfel
+}  // end of namespace tfel
 
 #endif /* LIB_TFELCHECK_PCILOGDRIVER_HXX */

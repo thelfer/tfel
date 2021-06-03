@@ -1,6 +1,6 @@
 /*!
  * \file   include/MFront/OverridableImplementation.ixx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   01/10/2020
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
@@ -31,7 +31,6 @@ namespace mfront {
     return this->overriden_value;
   }  // end of OverridableStringInformation<Tag>::setOverridenValue
 
-
   template <OverridableImplementation::Tags Tag>
   void OverridableImplementation::setOverridenValue(const std::string& v) {
     static_cast<OverridableStringInformation<Tag>&>(*this).setOverridenValue(v);
@@ -43,6 +42,6 @@ namespace mfront {
         .getOverridenValue();
   }  // end of OverridableImplementation::getOverridenValue
 
-} // end of namespace mfront
+}  // end of namespace mfront
 
 #endif /* LIB_MFRONT_OVERRIDABLEIMPLEMENTATION_IXX */

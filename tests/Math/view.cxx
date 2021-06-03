@@ -1,6 +1,6 @@
 /*!
  * \file   view.cxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   12/05/2021
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
@@ -207,9 +207,9 @@ struct StensorViewTest final : public tfel::tests::TestCase {
   }
   //! \brief an helper method to check values
   void check1() {
-    TFEL_TESTS_ASSERT(std::abs(array[0]-1) < this->eps);
-    TFEL_TESTS_ASSERT(std::abs(array[1]-1) < this->eps);
-    TFEL_TESTS_ASSERT(std::abs(array[2]-1) < this->eps);
+    TFEL_TESTS_ASSERT(std::abs(array[0] - 1) < this->eps);
+    TFEL_TESTS_ASSERT(std::abs(array[1] - 1) < this->eps);
+    TFEL_TESTS_ASSERT(std::abs(array[2] - 1) < this->eps);
     for (tfel::math::tvector<10, double>::size_type i = 3;  //
          i != array.size(); ++i) {
       TFEL_TESTS_ASSERT(std::abs(array[i]) < this->eps);
@@ -217,18 +217,17 @@ struct StensorViewTest final : public tfel::tests::TestCase {
   }
   //! \brief an helper method to check values
   void check2() {
-    TFEL_TESTS_ASSERT(std::abs(array[0]-1) < this->eps);
-    TFEL_TESTS_ASSERT(std::abs(array[1]-1) < this->eps);
-    TFEL_TESTS_ASSERT(std::abs(array[2]-1) < this->eps);
-    TFEL_TESTS_ASSERT(std::abs(array[3]-0) < this->eps);
-    TFEL_TESTS_ASSERT(std::abs(array[4]-2) < this->eps);
-    TFEL_TESTS_ASSERT(std::abs(array[5]-2) < this->eps);
-    TFEL_TESTS_ASSERT(std::abs(array[6]-2) < this->eps);
-    TFEL_TESTS_ASSERT(std::abs(array[7]-0) < this->eps);
-    TFEL_TESTS_ASSERT(std::abs(array[8]-0) < this->eps);
-    TFEL_TESTS_ASSERT(std::abs(array[9]-0) < this->eps);
+    TFEL_TESTS_ASSERT(std::abs(array[0] - 1) < this->eps);
+    TFEL_TESTS_ASSERT(std::abs(array[1] - 1) < this->eps);
+    TFEL_TESTS_ASSERT(std::abs(array[2] - 1) < this->eps);
+    TFEL_TESTS_ASSERT(std::abs(array[3] - 0) < this->eps);
+    TFEL_TESTS_ASSERT(std::abs(array[4] - 2) < this->eps);
+    TFEL_TESTS_ASSERT(std::abs(array[5] - 2) < this->eps);
+    TFEL_TESTS_ASSERT(std::abs(array[6] - 2) < this->eps);
+    TFEL_TESTS_ASSERT(std::abs(array[7] - 0) < this->eps);
+    TFEL_TESTS_ASSERT(std::abs(array[8] - 0) < this->eps);
+    TFEL_TESTS_ASSERT(std::abs(array[9] - 0) < this->eps);
   }
-
 };
 
 TFEL_TESTS_GENERATE_PROXY(StensorViewTest, "StensorViewTest");

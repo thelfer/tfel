@@ -189,8 +189,8 @@ namespace mtest {
 
   bool AbaqusExplicitBehaviour::doPackagingStep(CurrentState& s,
                                                 BehaviourWorkSpace& wk) const {
-    using tfel::math::matrix;
     using abaqus::AbaqusInt;
+    using tfel::math::matrix;
     auto throw_if = [](const bool c, const std::string& m) {
       tfel::raise_if(c, "AbaqusExplicitBehaviour::doPackagingStep:" + m);
     };
@@ -204,7 +204,7 @@ namespace mtest {
       K.resize(6u, 6u, 0);
     } else {
       tfel::raise("unsupported hypothesis (" +
-                         ModellingHypothesis::toString(h) + ")");
+                  ModellingHypothesis::toString(h) + ")");
     }
     const AbaqusInt nblock = 1;
     const AbaqusInt ndir = [&h] {
@@ -217,7 +217,7 @@ namespace mtest {
           return 3;
       }
       tfel::raise("unsupported hypothesis (" +
-		  ModellingHypothesis::toString(h) + ")");
+                  ModellingHypothesis::toString(h) + ")");
     }();
     const AbaqusInt nshr = [&h] {
       switch (h) {
@@ -229,7 +229,7 @@ namespace mtest {
           return 3;
       }
       tfel::raise("unsupported hypothesis (" +
-		  ModellingHypothesis::toString(h) + ")");
+                  ModellingHypothesis::toString(h) + ")");
     }();
     const auto nprops = static_cast<AbaqusInt>(s.mprops1.size()) - 1;
     const auto nstatv = static_cast<AbaqusInt>(s.iv1.size());
@@ -264,7 +264,7 @@ namespace mtest {
         s.iv0[5] = s.r(2, 1);
       } else {
         tfel::raise("unsupported hypothesis (" +
-                           ModellingHypothesis::toString(h) + ")");
+                    ModellingHypothesis::toString(h) + ")");
       }
     }
     const real stressOld[6u] = {0, 0, 0, 0, 0, 0};
@@ -306,7 +306,7 @@ namespace mtest {
         K(5, i) = stressNew[4];
       } else {
         tfel::raise("unsupported hypothesis (" +
-                           ModellingHypothesis::toString(h) + ")");
+                    ModellingHypothesis::toString(h) + ")");
       }
     }
     if (mfront::getVerboseMode() >= mfront::VERBOSE_LEVEL1) {
@@ -341,9 +341,10 @@ namespace mtest {
         K(i, 5) /= 2 * cste;
       }
     } else {
-      tfel::raise("computePredictionOperator: "
-		  "no 'InitialElasticStiffness' found. "
-		  "Was the packaging step done ?");
+      tfel::raise(
+          "computePredictionOperator: "
+          "no 'InitialElasticStiffness' found. "
+          "Was the packaging step done ?");
     }
     if ((h == ModellingHypothesis::PLANESTRESS) ||
         (h == ModellingHypothesis::AXISYMMETRICAL) ||
@@ -431,7 +432,7 @@ namespace mtest {
           return 3;
       }
       tfel::raise("unsupported hypothesis (" +
-		  ModellingHypothesis::toString(h) + ")");
+                  ModellingHypothesis::toString(h) + ")");
     }();
     const auto nprops = static_cast<AbaqusInt>(s.mprops1.size()) - 1;
     const auto nstatv = static_cast<AbaqusInt>(s.iv0.size());
@@ -465,7 +466,7 @@ namespace mtest {
         s.iv0[5] = s.r(2, 1);
       } else {
         tfel::raise("unsupported hypothesis (" +
-                           ModellingHypothesis::toString(h) + ")");
+                    ModellingHypothesis::toString(h) + ")");
       }
     }
     std::copy(s.iv0.begin(), s.iv0.end(), s.iv1.begin());
@@ -543,7 +544,7 @@ namespace mtest {
       std::swap(stressNew[5], stressNew[4]);
     } else {
       tfel::raise("unsupported hypothesis (" +
-		  ModellingHypothesis::toString(h) + ")");
+                  ModellingHypothesis::toString(h) + ")");
     }
     (this->fct)(
         &nblock, &ndir, &nshr, &nstatv, &nfieldv, &nprops, nullptr, &stepTime,
@@ -584,7 +585,7 @@ namespace mtest {
       tfel::fsalgo::copy<6u>::exe(sig.begin(), s.s1.begin());
     } else {
       tfel::raise("unsupported hypothesis (" +
-		  ModellingHypothesis::toString(h) + ")");
+                  ModellingHypothesis::toString(h) + ")");
     }
     return {true, real(1)};
   }  // end of AbaqusExplicitBehaviour::integrate

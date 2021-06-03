@@ -1,6 +1,6 @@
 #include "usermat.cpp"
 
-int main(){
+int main() {
   ansys::UserMaterialManager m;
-  return m.getBehaviour(2)!=nullptr;
+  return m.getBehaviour(2) != nullptr;
 }

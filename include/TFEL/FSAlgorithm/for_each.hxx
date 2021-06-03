@@ -56,7 +56,7 @@ namespace tfel::fsalgo {
      */
     template <typename InputIterator, typename UnaryFunction>
     static void exe(InputIterator p, UnaryFunction& f) {
-      if constexpr (N>=1){
+      if constexpr (N >= 1) {
         f(*p);
         for_each<N - 1>::exe(++p, f);
       } else {

@@ -118,7 +118,7 @@ namespace mtest {
         wk.mps[o + 5] = s.r(2, 1);
       } else {
         tfel::raise("unsupported hypothesis (" +
-                           ModellingHypothesis::toString(h) + ")");
+                    ModellingHypothesis::toString(h) + ")");
       }
     }
     // using a local copy of internal state variables to handle the

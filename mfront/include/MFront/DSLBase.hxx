@@ -211,13 +211,13 @@ namespace mfront {
      */
     virtual void overrideByAParameter(const std::string&, const double) = 0;
     /*!
-      * \return a temporary name which has not been reserved. This
-      * method shall be used to get a temporary name at a
-      * code block scope.
-      * \param[in,out] tmpnames: list of already used temporary names
-      * in the treated code block.
-      * \param[in]     p: prefix
-      */
+     * \return a temporary name which has not been reserved. This
+     * method shall be used to get a temporary name at a
+     * code block scope.
+     * \param[in,out] tmpnames: list of already used temporary names
+     * in the treated code block.
+     * \param[in]     p: prefix
+     */
     virtual std::string getTemporaryVariableName(std::vector<std::string>&,
                                                  const std::string&) const;
     /*!
@@ -274,7 +274,7 @@ namespace mfront {
      * \param[in] e: error message
      */
     [[noreturn]] void throwRuntimeError(const std::string&,
-                                         const std::string&) const;
+                                        const std::string&) const;
     /*!
      * \return concatenate all the tokens from the current position up
      * to the first ';' token

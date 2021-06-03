@@ -14,7 +14,7 @@
 #ifndef LIB_TFEL_MATH_ARRAY_ITERATEOVERMULTIPLEINDICES_HXX
 #define LIB_TFEL_MATH_ARRAY_ITERATEOVERMULTIPLEINDICES_HXX
 
-namespace tfel::math{
+namespace tfel::math {
 
   template <typename TypeSize, TypeSize CurrentIndex, TypeSize FinalIndex>
   struct LoopUnRoller {
@@ -55,6 +55,6 @@ namespace tfel::math{
     }  // end of exe
   };   // end of struct
 
-} // end of namespace tfel::math
+}  // end of namespace tfel::math
 
 #endif /* LIB_TFEL_MATH_ARRAY_ITERATEOVERMULTIPLEINDICES_HXX */

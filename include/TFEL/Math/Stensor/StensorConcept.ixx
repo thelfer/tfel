@@ -18,14 +18,12 @@
 namespace tfel::math {
 
   template <class T>
-  numeric_type<T> StensorConcept<T>::operator()(
-      const unsigned short i) const {
+  numeric_type<T> StensorConcept<T>::operator()(const unsigned short i) const {
     return static_cast<const T&>(*this).operator()(i);
   }
 
   template <class T>
-  numeric_type<T> StensorConcept<T>::operator[](
-      const unsigned short i) const {
+  numeric_type<T> StensorConcept<T>::operator[](const unsigned short i) const {
     return static_cast<const T&>(*this).operator()(i);
   }
 
@@ -54,7 +52,7 @@ namespace tfel::math {
              tfel::math::abs(s(2)) + tfel::math::abs(s(3)) +
              tfel::math::abs(s(4)) + tfel::math::abs(s(5));
     }
-  } // end of abs
+  }  // end of abs
 
   template <typename StensorType>
   std::enable_if_t<implementsStensorConcept<StensorType>(),

@@ -1,19 +1,19 @@
-/*! 
+/*!
  * \file  mfront/src/ImplicitDSL.cxx
  * \brief
  * \author Thomas Helfer
  * \brief 18 févr. 2013
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
-#include"MFront/ImplicitDSL.hxx"
+#include "MFront/ImplicitDSL.hxx"
 
-namespace mfront{
+namespace mfront {
 
   ImplicitDSL::ImplicitDSL() {
     const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
@@ -30,15 +30,15 @@ namespace mfront{
     this->registerNewCallBack(
         "@ComputeFinalStress",
         &ImplicitDSL::treatComputeFinalThermodynamicForces);
-  } // end of ImplicitDSL::ImplicitDSL
+  }  // end of ImplicitDSL::ImplicitDSL
 
   std::string ImplicitDSL::getName() {
     return "Implicit";
-  } // end of ImplicitDSL::getName
+  }  // end of ImplicitDSL::getName
 
   std::string ImplicitDSL::getDescription() {
     return "this parser provides a generic integrator based on a theta method.";
-  } // end of ImplicitDSL::getDescription
+  }  // end of ImplicitDSL::getDescription
 
   std::string ImplicitDSL::getCodeBlockTemplate(
       const std::string& c, const MFrontTemplateGenerationOptions& o) const {
@@ -62,5 +62,4 @@ namespace mfront{
 
   ImplicitDSL::~ImplicitDSL() = default;
 
-} // end of namespace mfront  
-
+}  // end of namespace mfront

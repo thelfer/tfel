@@ -1,6 +1,6 @@
 /*!
  * \file   mfront/src/StrainBasedPorosityNucleationModelBase.cxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   05/04/2020
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
@@ -25,8 +25,9 @@ namespace mfront {
 
   namespace bbrick {
 
-    bool StrainBasedPorosityNucleationModelBase::
-        requiresSavingNucleatedPorosity() const {
+    bool
+    StrainBasedPorosityNucleationModelBase::requiresSavingNucleatedPorosity()
+        const {
       return this->requiresLimitOnNucleationPorosity();
     }  // end of
        // StrainBasedPorosityNucleationModelBase::requiresSavingNucleatedPorosity()
@@ -89,7 +90,8 @@ namespace mfront {
       CodeBlock init;
       for (const auto& mc : this->getMaterialCoefficientDescriptions()) {
         const auto mc_n = PorosityNucleationModel::getVariableId(mc.name, id);
-        init.code += "this->" + parameters + "." + mc.name + " = this->" + mc_n + ";\n";
+        init.code +=
+            "this->" + parameters + "." + mc.name + " = this->" + mc_n + ";\n";
       }
       if (this->requiresLimitOnNucleationPorosity()) {
         const auto fmax_n = PorosityNucleationModel::getVariableId("fmax", id);
@@ -140,54 +142,53 @@ namespace mfront {
         i.code += StandardElastoViscoPlasticityBrick::
             computeStandardSystemOfImplicitEquations;
         i.code += "){\n";
-        }
-        auto call = "compute" + mn + "PorosityIncrementAndDerivative" +  //
-                    "(this->" + parameters + "," + p + ", " + dp + ", " +
-                    bd.getClassName() + "::theta)";
-        i.code += "#if __cplusplus >= 201703L\n";
-        i.code += "const auto [" + dfn_n + ", " + dfn_ddp + "]  = ";
-        i.code += call + ";\n";
-        if (!requiresAnalyticalJacobian) {
-          i.code += "static_cast<void>(" + dfn_ddp + ");\n";
-        }
-        i.code += "#else  /* __cplusplus >= 201703L */\n";
-        i.code += "auto " + dfn_n + " = real{};\n";
-        if (requiresAnalyticalJacobian) {
-          i.code += "auto " + dfn_ddp + " = real{};\n";
-          i.code += "std::tie(" + dfn_n + ", " + dfn_ddp + ")  = ";
-        } else {
-          i.code += "std::tie(" + dfn_n + ", std::ignore)  = ";
-        }
-        i.code += call + ";\n";
-        i.code += "#endif /* __cplusplus >= 201703L */\n";
-        i.code += "this->dfn" + id + " = " + dfn_n + ";\n";
-        if (this->requiresLimitOnNucleationPorosity()) {
-          const auto fmax_n =
-              PorosityNucleationModel::getVariableId("fmax", id);
-          i.code += "if(this->fn" + id + " + this->dfn" + id + " >= this->" +
-                    fmax_n + "){\n";
-          i.code += "this->dfn" + id + " = this->" + fmax_n + " - this->fn;\n";
-          i.code += "f" + f.name + " -= this->dfn" + id + ";\n";
-          i.code += "} else {\n";
-        }
+      }
+      auto call = "compute" + mn + "PorosityIncrementAndDerivative" +  //
+                  "(this->" + parameters + "," + p + ", " + dp + ", " +
+                  bd.getClassName() + "::theta)";
+      i.code += "#if __cplusplus >= 201703L\n";
+      i.code += "const auto [" + dfn_n + ", " + dfn_ddp + "]  = ";
+      i.code += call + ";\n";
+      if (!requiresAnalyticalJacobian) {
+        i.code += "static_cast<void>(" + dfn_ddp + ");\n";
+      }
+      i.code += "#else  /* __cplusplus >= 201703L */\n";
+      i.code += "auto " + dfn_n + " = real{};\n";
+      if (requiresAnalyticalJacobian) {
+        i.code += "auto " + dfn_ddp + " = real{};\n";
+        i.code += "std::tie(" + dfn_n + ", " + dfn_ddp + ")  = ";
+      } else {
+        i.code += "std::tie(" + dfn_n + ", std::ignore)  = ";
+      }
+      i.code += call + ";\n";
+      i.code += "#endif /* __cplusplus >= 201703L */\n";
+      i.code += "this->dfn" + id + " = " + dfn_n + ";\n";
+      if (this->requiresLimitOnNucleationPorosity()) {
+        const auto fmax_n = PorosityNucleationModel::getVariableId("fmax", id);
+        i.code += "if(this->fn" + id + " + this->dfn" + id + " >= this->" +
+                  fmax_n + "){\n";
+        i.code += "this->dfn" + id + " = this->" + fmax_n + " - this->fn;\n";
         i.code += "f" + f.name + " -= this->dfn" + id + ";\n";
-        if (requiresAnalyticalJacobian) {
-          for (const auto& flow : iflows) {
-            i.code += "if(this->dp" + flow.first + " > real(0)){\n";
-            i.code += "df" + f.name + "_ddp" + flow.first +  //
-                      " -= " + dfn_ddp + ";\n";
-            i.code += "}\n";
-          }
-        }
-        if (this->requiresLimitOnNucleationPorosity()) {
+        i.code += "} else {\n";
+      }
+      i.code += "f" + f.name + " -= this->dfn" + id + ";\n";
+      if (requiresAnalyticalJacobian) {
+        for (const auto& flow : iflows) {
+          i.code += "if(this->dp" + flow.first + " > real(0)){\n";
+          i.code += "df" + f.name + "_ddp" + flow.first +  //
+                    " -= " + dfn_ddp + ";\n";
           i.code += "}\n";
         }
-        if (this->porosity_evolution_algorithm ==
-            PorosityEvolutionAlgorithm::STAGGERED_SCHEME) {
-          i.code += "}\n";
-        }
-        bd.setCode(uh, BehaviourData::Integrator, i,
-                   BehaviourData::CREATEORAPPEND, BehaviourData::AT_BEGINNING);
+      }
+      if (this->requiresLimitOnNucleationPorosity()) {
+        i.code += "}\n";
+      }
+      if (this->porosity_evolution_algorithm ==
+          PorosityEvolutionAlgorithm::STAGGERED_SCHEME) {
+        i.code += "}\n";
+      }
+      bd.setCode(uh, BehaviourData::Integrator, i,
+                 BehaviourData::CREATEORAPPEND, BehaviourData::AT_BEGINNING);
     }  // end of
     // StrainBasedPorosityNucleationModelBase::endTreatment
 
@@ -255,4 +256,3 @@ namespace mfront {
   }  // end of namespace bbrick
 
 }  // end of namespace mfront
-

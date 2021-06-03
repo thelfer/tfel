@@ -16,7 +16,7 @@
 #define LIB_TFEL_MATH_BASECAST_HXX
 
 #include "TFEL/Config/TFELConfig.hxx"
-#include"TFEL/TypeTraits/BaseType.hxx"
+#include "TFEL/TypeTraits/BaseType.hxx"
 #include "TFEL/Math/Forward/qt.hxx"
 
 namespace tfel::math {

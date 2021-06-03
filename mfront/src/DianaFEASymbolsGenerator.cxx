@@ -28,7 +28,8 @@ namespace mfront {
       const BehaviourDescription& mb,
       const std::string& name) const {
     auto throw_if = [](const bool b, const std::string& m) {
-      tfel::raise_if(b, "DianaFEASymbolsGenerator::writexxBehaviourTypeSymbols: " + m);
+      tfel::raise_if(
+          b, "DianaFEASymbolsGenerator::writexxBehaviourTypeSymbols: " + m);
     };
     throw_if(mb.getBehaviourType() !=
                  BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR,
@@ -59,7 +60,7 @@ namespace mfront {
       const Hypothesis) const {
   }  // end of DianaFEASymbolsGenerator::writeAdditionalSymbols
 
-  bool DianaFEASymbolsGenerator::handleStrainMeasure() const{
+  bool DianaFEASymbolsGenerator::handleStrainMeasure() const {
     return true;
   }  // end of DianaFEASymbolsGenerator::handleStrainMeasure
 

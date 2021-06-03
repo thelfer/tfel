@@ -430,14 +430,16 @@ namespace mfront {
     out << "//! behaviour type\n";
     if (mb.getBehaviourType() ==
         BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) {
-      out << "static " << constexpr_c << " AnsysBehaviourType btype = "
-                                         "ansys::STANDARDSTRAINBASEDBEHAVIOUR;"
-                                         "\n";
+      out << "static " << constexpr_c
+          << " AnsysBehaviourType btype = "
+             "ansys::STANDARDSTRAINBASEDBEHAVIOUR;"
+             "\n";
     } else if (mb.getBehaviourType() ==
                BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR) {
-      out << "static " << constexpr_c << " AnsysBehaviourType btype = "
-                                         "ansys::STANDARDFINITESTRAINBEHAVIOUR;"
-                                         "\n";
+      out << "static " << constexpr_c
+          << " AnsysBehaviourType btype = "
+             "ansys::STANDARDFINITESTRAINBEHAVIOUR;"
+             "\n";
     } else {
       tfel::raise(
           "AnsysInterface::writeAnsysBehaviourTraits : "
@@ -458,13 +460,15 @@ namespace mfront {
     out << "// tiny vector size\n";
     out << "static " << constexpr_c << " unsigned short TVectorSize = N;\n";
     out << "// symmetric tensor size\n";
-    out << "static " << constexpr_c << " unsigned short StensorSize = "
-                                       "tfel::math::StensorDimeToSize<N>::"
-                                       "value;\n";
+    out << "static " << constexpr_c
+        << " unsigned short StensorSize = "
+           "tfel::math::StensorDimeToSize<N>::"
+           "value;\n";
     out << "// tensor size\n";
-    out << "static " << constexpr_c << " unsigned short TensorSize  = "
-                                       "tfel::math::TensorDimeToSize<N>::value;"
-                                       "\n";
+    out << "static " << constexpr_c
+        << " unsigned short TensorSize  = "
+           "tfel::math::TensorDimeToSize<N>::value;"
+           "\n";
     out << "// size of the driving variable array\n";
     out << "static " << constexpr_c
         << " unsigned short GradientSize = " << mvs.first << ";\n";
@@ -1691,16 +1695,15 @@ namespace mfront {
     d.headers.push_back("MFront/Ansys/ansys" + name + ".hxx");
     insert_if(l.link_directories,
               "$(shell " + tfel_config + " --library-path)");
-    insert_if(l.link_libraries,
-              tfel::getLibraryInstallName("AnsysInterface"));
+    insert_if(l.link_libraries, tfel::getLibraryInstallName("AnsysInterface"));
     if (this->shallGenerateMTestFileOnFailure(bd)) {
       insert_if(l.link_libraries,
                 tfel::getLibraryInstallName("MTestFileGenerator"));
     }
 #if __cplusplus >= 201703L
     insert_if(l.link_libraries, "$(shell " + tfel_config +
-                                         " --library-dependency "
-                                         "--material --mfront-profiling)");
+                                    " --library-dependency "
+                                    "--material --mfront-profiling)");
 #else  /* __cplusplus < 201703L */
     insert_if(l.link_libraries,
               "$(shell " + tfel_config +

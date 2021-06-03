@@ -38,7 +38,8 @@ namespace mfront {
       const auto an = KinematicHardeningRule::getVariableId("a", fid, kid);
       const auto Xn = KinematicHardeningRule::getVariableId("X", fid, kid);
       const auto Cn = KinematicHardeningRule::getVariableId("C", fid, kid);
-      const auto en = KinematicHardeningRule::getVariableId("BackStrain", fid, kid);
+      const auto en =
+          KinematicHardeningRule::getVariableId("BackStrain", fid, kid);
       addStateVariable(bd, "StrainStensor", an, en);
       // kinematic moduli
       tfel::raise_if(d.count("C") == 0,
@@ -62,7 +63,8 @@ namespace mfront {
     std::string KinematicHardeningRuleBase::getBackStressDerivative(
         const std::string& fid, const std::string& kid) const {
       const auto Cn = KinematicHardeningRule::getVariableId("C", fid, kid);
-      return "((2 * (this->theta) * ((this->" + Cn + ")/3)) * (Stensor4::Id()))";
+      return "((2 * (this->theta) * ((this->" + Cn +
+             ")/3)) * (Stensor4::Id()))";
     }  // end of KinematicHardeningRuleBase::getBackStressDerivative
 
     std::string KinematicHardeningRuleBase::generateImplicitEquationDerivatives(

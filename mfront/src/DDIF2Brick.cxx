@@ -30,7 +30,8 @@ namespace mfront {
 
   BehaviourBrickDescription DDIF2Brick::getDescription() const {
     auto d = BehaviourBrickDescription{};
-    d.behaviourType = tfel::material::MechanicalBehaviourBase::STANDARDSTRAINBASEDBEHAVIOUR;
+    d.behaviourType =
+        tfel::material::MechanicalBehaviourBase::STANDARDSTRAINBASEDBEHAVIOUR;
     d.integrationScheme = IntegrationScheme::IMPLICITSCHEME;
     d.supportedModellingHypotheses = {
         ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN,
@@ -39,7 +40,7 @@ namespace mfront {
         ModellingHypothesis::TRIDIMENSIONAL};
     d.supportedBehaviourSymmetries = {mfront::ISOTROPIC};
     return d;
-  } // end of DDIF2Brick::getDescription
+  }  // end of DDIF2Brick::getDescription
 
   std::vector<bbrick::OptionDescription> DDIF2Brick::getOptions(
       const bool b) const {

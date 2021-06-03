@@ -49,7 +49,7 @@ namespace tfel::math {
     const auto old = static_cast<IndexingPolicy&>(m);
     static_cast<IndexingPolicy&>(m) = static_cast<IndexingPolicy&>(*this);
     static_cast<IndexingPolicy&>(*this) = old;
-  } // end of swap
+  }  // end of swap
 
   template <typename ValueType>
   matrix<ValueType>::~matrix() noexcept = default;

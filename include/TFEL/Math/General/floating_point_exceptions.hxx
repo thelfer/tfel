@@ -44,7 +44,7 @@ namespace tfel::math {
 #ifdef __GLIBC__
     feenableexcept(FE_DIVBYZERO);  //	division by zero
     feenableexcept(FE_UNDERFLOW);  //	result not representable due to
-                                   //underflow
+                                   // underflow
     feenableexcept(FE_OVERFLOW);   //	result not representable due to overflow
     feenableexcept(FE_INVALID);    //	invalid operation
     fedisableexcept(FE_INEXACT);   // The Inexact exception occurs when the

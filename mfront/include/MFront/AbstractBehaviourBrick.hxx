@@ -27,8 +27,8 @@ namespace tfel {
   namespace utilities {
     // forward declaration
     struct Data;
-  }
-}
+  }  // namespace utilities
+}  // namespace tfel
 
 namespace mfront {
 

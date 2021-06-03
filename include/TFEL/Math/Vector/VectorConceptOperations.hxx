@@ -30,7 +30,11 @@ namespace tfel::math {
   };
 
   template <typename A, typename B>
-  class ComputeBinaryOperationHandler<VectorTag, VectorTag, A, B, OpDotProduct> {
+  class ComputeBinaryOperationHandler<VectorTag,
+                                      VectorTag,
+                                      A,
+                                      B,
+                                      OpDotProduct> {
     struct DummyHandle {};
     using VectorTypeA = EvaluationResult<A>;
     using VectorTypeB = EvaluationResult<B>;
@@ -42,10 +46,15 @@ namespace tfel::math {
   };
 
   /*
-   * Partial Specialisation of ComputeBinaryOperationHandler for vector's operation
+   * Partial Specialisation of ComputeBinaryOperationHandler for vector's
+   * operation
    */
   template <typename A, typename B>
-  class ComputeBinaryOperationHandler<VectorTag, VectorTag, A, B, OpDiadicProduct> {
+  class ComputeBinaryOperationHandler<VectorTag,
+                                      VectorTag,
+                                      A,
+                                      B,
+                                      OpDiadicProduct> {
     struct DummyHandle {};
     using VectorTypeA = EvaluationResult<A>;
     using VectorTypeB = EvaluationResult<B>;
@@ -83,8 +92,7 @@ namespace tfel::math {
   template <typename T1, typename T2, typename Op>
   struct IsScalarVectorOperationValid {
     static constexpr bool cond =
-        (isScalar<T1>() &&
-         implementsVectorConcept<T2>() &&
+        (isScalar<T1>() && implementsVectorConcept<T2>() &&
          (!isInvalid<BinaryOperationResult<T1, T2, Op>>()));
   };
 

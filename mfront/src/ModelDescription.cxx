@@ -34,22 +34,21 @@ namespace mfront {
   ModelDescription::decomposeVariableName(const std::string& n) const {
     auto get = [&n](const VariableDescriptionContainer& vc)
         -> std::pair<std::string, unsigned short> {
-          using size_type = unsigned short;
-          for (const auto& v : vc) {
-            if (v.name == n) {
-              return {v.name, 0u};
-            }
-            const auto d =
-                v.getAttribute<size_type>(VariableDescription::depth, 0);
-            for (size_type j = 1; j <= d; ++j) {
-              auto fn = v.name + "_" + std::to_string(j);
-              if (fn == n) {
-                return {v.name, j};
-              }
-            }
+      using size_type = unsigned short;
+      for (const auto& v : vc) {
+        if (v.name == n) {
+          return {v.name, 0u};
+        }
+        const auto d = v.getAttribute<size_type>(VariableDescription::depth, 0);
+        for (size_type j = 1; j <= d; ++j) {
+          auto fn = v.name + "_" + std::to_string(j);
+          if (fn == n) {
+            return {v.name, j};
           }
-          return {};
-        };
+        }
+      }
+      return {};
+    };
     auto r = get(this->outputs);
     if (!r.first.empty()) {
       return r;

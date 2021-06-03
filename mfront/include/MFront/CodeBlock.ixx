@@ -17,7 +17,7 @@
 namespace mfront {
 
   template <typename T>
-  bool hasAttribute(const CodeBlock& cb, const std::string& n){
+  bool hasAttribute(const CodeBlock& cb, const std::string& n) {
     const auto p = cb.attributes.find(n);
     if (p != cb.attributes.end()) {
       if (!p->second.template is<T>()) {
@@ -38,10 +38,10 @@ namespace mfront {
       CodeBlock::throwUnmatchedAttributeType(n);
     }
     return p->second.template get<T>();
-  } // end of getAttribute
+  }  // end of getAttribute
 
   template <typename T>
-  T getAttribute(const CodeBlock& cb, const std::string& n, const T& v){
+  T getAttribute(const CodeBlock& cb, const std::string& n, const T& v) {
     const auto p = cb.attributes.find(n);
     if (p != cb.attributes.end()) {
       if (!p->second.template is<T>()) {
@@ -50,7 +50,7 @@ namespace mfront {
       return p->second.template get<T>();
     }
     return v;
-  } // end of getAttribute
+  }  // end of getAttribute
 
 }  // end of namespace mfront
 

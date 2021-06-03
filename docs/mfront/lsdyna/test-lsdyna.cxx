@@ -1,6 +1,6 @@
 /*!
  * \file   test-lsdyna.cxx
- * \brief    
+ * \brief
  * \author th202608
  * \date   14/06/2018
  */

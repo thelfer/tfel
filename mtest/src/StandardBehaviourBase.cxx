@@ -740,7 +740,7 @@ namespace mtest {
             "StandardBehaviourBase::getInternalStateVariablesDescriptions: "
             "unsupported variable type");
       }
-}
+    }
     return desc;
   }  // end of StandardBehaviourBase::getInternalStateVariablesDescriptions
 

@@ -31,7 +31,8 @@ namespace mfront {
     std::vector<std::string>
     KinematicHardeningRuleFactory::getRegistredKinematicHardeningRules() const {
       return getKeys(this->generators);
-    }  // end of KinematicHardeningRuleFactory::getRegistredKinematicHardeningRules
+    }  // end of
+       // KinematicHardeningRuleFactory::getRegistredKinematicHardeningRules
 
     void KinematicHardeningRuleFactory::addGenerator(const std::string& n,
                                                      const Generator& g) {
@@ -43,8 +44,8 @@ namespace mfront {
       }
     }  // end of KinematicHardeningRuleFactory::addGenerator
 
-    std::shared_ptr<KinematicHardeningRule> KinematicHardeningRuleFactory::generate(
-        const std::string& n) const {
+    std::shared_ptr<KinematicHardeningRule>
+    KinematicHardeningRuleFactory::generate(const std::string& n) const {
       const auto p = this->generators.find(n);
       if (p == this->generators.end()) {
         tfel::raise(
@@ -84,12 +85,10 @@ namespace mfront {
             bbrick::BurletCailletaudKinematicHardeningRule>();
       });
       this->addGenerator("Chaboche2012", []() {
-        return std::make_shared<
-            bbrick::Chaboche2012KinematicHardeningRule>();
+        return std::make_shared<bbrick::Chaboche2012KinematicHardeningRule>();
       });
       this->addGenerator("Chaboche 2012", []() {
-        return std::make_shared<
-            bbrick::Chaboche2012KinematicHardeningRule>();
+        return std::make_shared<bbrick::Chaboche2012KinematicHardeningRule>();
       });
     }  // end of KinematicHardeningRuleFactory::KinematicHardeningRuleFactory
 

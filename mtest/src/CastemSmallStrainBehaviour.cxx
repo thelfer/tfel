@@ -114,7 +114,8 @@ namespace mtest {
     const auto h = this->usesGenericPlaneStressAlgorithm
                        ? ModellingHypothesis::PLANESTRESS
                        : this->getHypothesis();
-    const auto [ndi, ntens, dimension] = [h]() -> std::tuple<CastemInt,CastemInt,CastemInt> {
+    const auto [ndi, ntens, dimension] =
+        [h]() -> std::tuple<CastemInt, CastemInt, CastemInt> {
       if (h == ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN) {
         return {14, 3, 1};
       } else if (h == ModellingHypothesis::AXISYMMETRICAL) {

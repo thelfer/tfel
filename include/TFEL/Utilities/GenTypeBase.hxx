@@ -89,8 +89,8 @@ namespace tfel::utilities::internals {
   struct StdVariantFromTypeList {
     //! \brief a simple alias
     using type = typename StdVariantFromTypeList<typename List::Next,
-						 Types...,
-						 typename List::Current>::type;
+                                                 Types...,
+                                                 typename List::Current>::type;
   };
 
   template <typename... Types>
@@ -150,7 +150,7 @@ namespace tfel::utilities {
     GenTypeBase &operator=(const GenTypeBase &) = default;
     // \brief assignement operator from a value
     template <typename T1, typename = type_check<T1, void>>
-    GenTypeBase& operator=(T1 &&value){
+    GenTypeBase &operator=(T1 &&value) {
       variant::operator=(std::forward<T1>(value));
       return *this;
     }

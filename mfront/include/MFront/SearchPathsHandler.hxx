@@ -1,24 +1,24 @@
-/*! 
+/*!
  * \file  mfront/include/MFront/SearchPathsHandler.hxx
  * \brief
  * \author Thomas Helfer
  * \brief 21 mai 2013
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_MFRONT_MFRONTSEARCHPATHSHANDLER_HXX
-#define LIB_MFRONT_MFRONTSEARCHPATHSHANDLER_HXX 
+#define LIB_MFRONT_MFRONTSEARCHPATHSHANDLER_HXX
 
-#include<set>
-#include<string>
-#include<vector>
+#include <set>
+#include <string>
+#include <vector>
 
-#include"MFront/MFrontConfig.hxx"
+#include "MFront/MFrontConfig.hxx"
 
 namespace mfront {
 
@@ -67,16 +67,15 @@ namespace mfront {
      * The MFRONT_INCLUDE_PATH environnement variable
      * is used to fill the search paths.
      */
-	SearchPathsHandler();
-	SearchPathsHandler(const SearchPathsHandler&) = delete;
+    SearchPathsHandler();
+    SearchPathsHandler(const SearchPathsHandler&) = delete;
     SearchPathsHandler(SearchPathsHandler&&) = delete;
     SearchPathsHandler& operator=(const SearchPathsHandler&) = delete;
     SearchPathsHandler& operator=(SearchPathsHandler&&) = delete;
     //! list of search paths
     std::vector<std::string> paths;
-  }; // end of struct SearchPathsHandler
+  };  // end of struct SearchPathsHandler
 
-} // end of SearchPathsHandler
+}  // namespace mfront
 
 #endif /* LIB_MFRONT_MFRONTSEARCHPATHSHANDLER_HXX */
-

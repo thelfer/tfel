@@ -85,8 +85,7 @@ namespace tfel::math::internals {
         const tfel::math::rotation_matrix<NumType>& m,
         const NumType eps) {
       typedef base_type<NumType> base;
-      typedef
-          BinaryOperationResult<base,NumType,OpDiv> InvNumType;
+      typedef BinaryOperationResult<base, NumType, OpDiv> InvNumType;
       constexpr auto icste = Cste<base>::isqrt2;
       const tvector<3u, base> v0 = m.template column_view<0u>();
       const tvector<3u, base> v1 = m.template column_view<1u>();

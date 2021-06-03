@@ -30,7 +30,7 @@ namespace mfront {
       : public AbstractBehaviourInterface,
         public SupportedTypes {
     //! attribute used to store if an MTest file shall be generated
-    static const char* const generateMTestFileAttribute;
+    static const char *const generateMTestFileAttribute;
     //! a simple alias
     using ModellingHypothesis = tfel::material::ModellingHypothesis;
     //! a simple alias
@@ -38,7 +38,7 @@ namespace mfront {
     // constructor
     StandardBehaviourInterface();
     bool isBehaviourConstructorRequired(
-        const Hypothesis, const BehaviourDescription&) const override;
+        const Hypothesis, const BehaviourDescription &) const override;
     std::string getInterfaceVersion() const override;
     /*!
      * \return the basis for the function(s)' names implementing the

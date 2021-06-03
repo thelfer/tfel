@@ -321,9 +321,10 @@ namespace tfel::material {
     // const auto cste = (a-1)/Psi;
     // const tfel::math::tvector<6u,istress> d2Psi_dsvp2 =
     // 	{cste*( (drvp2_am2[0]+drvp2_am2[1])/2-dPsi_dsvp[0]*dPsi_dsvp[0]), //
-    // s1s1 	 cste*( (drvp2_am2[0]+drvp2_am2[2])/2-dPsi_dsvp[1]*dPsi_dsvp[1]), //
-    // s2s2 	 cste*( (drvp2_am2[1]+drvp2_am2[2])/2-dPsi_dsvp[2]*dPsi_dsvp[2]), //
-    // s3s3 	 cste*(-(drvp2_am2[0])/2-dPsi_dsvp[0]*dPsi_dsvp[1]), // s1s2
+    // s1s1 	 cste*( (drvp2_am2[0]+drvp2_am2[2])/2-dPsi_dsvp[1]*dPsi_dsvp[1]),
+    // // s2s2 	 cste*(
+    // (drvp2_am2[1]+drvp2_am2[2])/2-dPsi_dsvp[2]*dPsi_dsvp[2]), // s3s3
+    // cste*(-(drvp2_am2[0])/2-dPsi_dsvp[0]*dPsi_dsvp[1]), // s1s2
     // 	 cste*(-(drvp2_am2[1])/2-dPsi_dsvp[0]*dPsi_dsvp[2]), // s1s3
     // 	 cste*(-(drvp2_am2[2])/2-dPsi_dsvp[1]*dPsi_dsvp[2])}; // s2s3
     tfel::math::st2tost2<N, istress> d2Psi_ds2;

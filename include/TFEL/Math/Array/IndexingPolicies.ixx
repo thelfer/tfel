@@ -116,7 +116,7 @@ namespace tfel::math {
     return IndexingPoliciesCompatiblityCheck<
         IndexingPolicy1, IndexingPolicy2>::haveTheSameMemoryLayout();
   }  // end of haveIndexingPoliciesTheSameMemoryLayout
-  
+
   template <typename IndexingPolicy1, typename IndexingPolicy2>
   constexpr bool areIndexingPoliciesCompatibleAtRunTime(
       const IndexingPolicy1& p1, const IndexingPolicy2& p2) {

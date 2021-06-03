@@ -1822,8 +1822,8 @@ namespace mfront {
   std::vector<std::string>
   BehaviourData::getUserDefinedInitializeCodeBlocksNames() const {
     const auto pos = std::strlen(BehaviourData::UserDefinedInitializeCodeBlock);
-    auto initialize_methods = std::vector<std::string> {};
-    for(const auto &n : this->getCodeBlockNames()){
+    auto initialize_methods = std::vector<std::string>{};
+    for (const auto& n : this->getCodeBlockNames()) {
       if (tfel::utilities::starts_with(
               n, BehaviourData::UserDefinedInitializeCodeBlock)) {
         initialize_methods.push_back(n.substr(pos));

@@ -153,7 +153,8 @@ namespace tfel::meta {
   struct TFEL_VISIBILITY_LOCAL TLRemoveNthFirstElt {
     static_assert(std::is_base_of_v<TL, TList>);
     //! \brief result of the metafunction
-    typedef typename TLRemoveNthFirstElt<typename TList::Next, N - 1>::type type;
+    typedef
+        typename TLRemoveNthFirstElt<typename TList::Next, N - 1>::type type;
   };
 
   /*!

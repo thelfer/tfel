@@ -27,8 +27,7 @@ namespace mfront {
 
   template <typename T>
   static std::shared_ptr<AbstractBehaviourBrick> buildBehaviourBrickConstructor(
-      AbstractBehaviourDSL& dsl,
-      BehaviourDescription& mb) {
+      AbstractBehaviourDSL& dsl, BehaviourDescription& mb) {
     return std::make_shared<T>(dsl, mb);
   }  // end of buildAlgoritmConstructor
 
@@ -63,7 +62,7 @@ namespace mfront {
     add("DDIF2", BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR,
         BehaviourDescription::IMPLICITSCHEME,
         buildBehaviourBrickConstructor<DDIF2Brick>);
-    add("StandardElasticity", 
+    add("StandardElasticity",
         BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR,
         BehaviourDescription::IMPLICITSCHEME,
         buildBehaviourBrickConstructor<StandardElasticityBrick>);

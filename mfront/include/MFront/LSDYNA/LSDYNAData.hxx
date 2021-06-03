@@ -1,36 +1,35 @@
 /*!
  * \file   LSDYNAData.hxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   22/03/2016
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_MFRONT_LSDYNA_LSDYNADATA_HXX
 #define LIB_MFRONT_LSDYNA_LSDYNADATA_HXX
 
-#include"MFront/LSDYNA/LSDYNA.hxx"
+#include "MFront/LSDYNA/LSDYNA.hxx"
 
-namespace lsdyna{
+namespace lsdyna {
 
   /*!
    * \brief a structure used to collect the parameters passed through
    * the umat interface
    */
-  struct LSDYNAData
-  {
+  struct LSDYNAData {
     LSDYNAReal *const STRESS;
     LSDYNAReal *const PNEWDT;
     LSDYNAReal *const DDSDDE;
     LSDYNAReal *const STATEV;
-    const LSDYNAInt  NTENS;
-    const LSDYNAInt  NPROPS;
-    const LSDYNAInt  NSTATV;
+    const LSDYNAInt NTENS;
+    const LSDYNAInt NPROPS;
+    const LSDYNAInt NSTATV;
     const LSDYNAReal DTIME;
     const LSDYNAReal *const DROT;
     const LSDYNAReal *const STRAN;
@@ -42,8 +41,8 @@ namespace lsdyna{
     const LSDYNAReal *const DPRED;
     const tfel::material::OutOfBoundsPolicy op;
     const StressFreeExpansionHandler<LSDYNAReal> sfeh;
-  }; // end of struct LSDYNAData
-  
-} // end of namespace lsdyna
+  };  // end of struct LSDYNAData
+
+}  // end of namespace lsdyna
 
 #endif /* LIB_MFRONT_LSDYNA_LSDYNADATA_HXX */

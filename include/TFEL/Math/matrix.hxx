@@ -28,9 +28,10 @@ namespace tfel::math {
    * \tparam ValueType: type of values hold by the matrix
    */
   template <typename ValueType>
-  struct matrix : VectorConcept<matrix<ValueType>>,
-                  GenericRuntimeArray<matrix<ValueType>,
-                                      RuntimeRowMajorMatrixArrayPolicy<ValueType>> {
+  struct matrix
+      : VectorConcept<matrix<ValueType>>,
+        GenericRuntimeArray<matrix<ValueType>,
+                            RuntimeRowMajorMatrixArrayPolicy<ValueType>> {
     //! \brief a simple alias
     using GenericRuntimeArrayBase =
         GenericRuntimeArray<matrix,

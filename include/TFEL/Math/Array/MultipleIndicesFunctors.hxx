@@ -133,6 +133,6 @@ namespace tfel::math {
     const RandomAccessIterator iterator;
   };
 
-} // end of namepace tfel::math
+}  // namespace tfel::math
 
 #endif /* LIB_TFEL_MATH_ARRAY_MULTIPLEINDICESFUNCTORS_HXX */

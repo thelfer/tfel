@@ -32,6 +32,6 @@ namespace mfront {
    */
   MFRONT_VISIBILITY_EXPORT std::string getInstallPath();
 
-}  // end of InstallPrefix
+}  // namespace mfront
 
 #endif /* LIB_MFRONT_INSTALLPATH_HXX */

@@ -53,7 +53,8 @@ namespace mtest {
     using tfel::math::vector;
     constexpr auto sqrt2 = Cste<real>::sqrt2;
     const auto h = this->getHypothesis();
-    const auto [ntens, dimension, nummod] = [h]() -> std::tuple<AsterInt,AsterInt,AsterInt> {
+    const auto [ntens, dimension,
+                nummod] = [h]() -> std::tuple<AsterInt, AsterInt, AsterInt> {
       if (h == ModellingHypothesis::AXISYMMETRICAL) {
         return {4, 2, 4};
       } else if (h == ModellingHypothesis::PLANESTRESS) {

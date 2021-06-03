@@ -42,9 +42,10 @@ namespace mtest {
     tfel::raise(
         "AbaqusStandardBehaviour::getHypothesisSuffix: "
         "invalid hypothesis.");
-  } // end of AbaqusStandardBehaviour::getHypothesisSuffix
+  }  // end of AbaqusStandardBehaviour::getHypothesisSuffix
 
-  std::string AbaqusStandardBehaviour::extractBehaviourName(const std::string& b, const Hypothesis h) {
+  std::string AbaqusStandardBehaviour::extractBehaviourName(
+      const std::string& b, const Hypothesis h) {
     auto ends = [&b](const std::string& s) {
       if (b.length() >= s.length()) {
         return b.compare(b.length() - s.length(), s.length(), s) == 0;
@@ -61,14 +62,16 @@ namespace mtest {
   AbaqusStandardBehaviour::AbaqusStandardBehaviour(const Hypothesis h,
                                                    const std::string& l,
                                                    const std::string& b)
-      : StandardBehaviourBase(h, l, AbaqusStandardBehaviour::extractBehaviourName(b, h)) {
+      : StandardBehaviourBase(
+            h, l, AbaqusStandardBehaviour::extractBehaviourName(b, h)) {
     auto throw_if = [](const bool c, const std::string& m) {
       tfel::raise_if(c,
                      "AbaqusStandardBehaviour::"
                      "AbaqusStandardBehaviour: " +
                          m);
     };
-    auto& elm = tfel::system::ExternalLibraryManager::getExternalLibraryManager();
+    auto& elm =
+        tfel::system::ExternalLibraryManager::getExternalLibraryManager();
     const auto bn = AbaqusStandardBehaviour::extractBehaviourName(b, h);
     throw_if(elm.getInterface(l, bn) != "Abaqus",
              "invalid interface '" + elm.getInterface(l, bn) + "'");
@@ -77,19 +80,22 @@ namespace mtest {
       this->omp = elm.getAbaqusOrthotropyManagementPolicy(l, bn);
       if (this->omp == 2u) {
         auto aivs = std::vector<std::string>{};
-        if ((h == ModellingHypothesis::PLANESTRESS) || (h == ModellingHypothesis::PLANESTRAIN) ||
+        if ((h == ModellingHypothesis::PLANESTRESS) ||
+            (h == ModellingHypothesis::PLANESTRAIN) ||
             (h == ModellingHypothesis::AXISYMMETRICAL) ||
             (h == ModellingHypothesis::GENERALISEDPLANESTRAIN)) {
           aivs = {"FirstOrthotropicDirection_1", "FirstOrthotropicDirection_2"};
         } else if (h == ModellingHypothesis::TRIDIMENSIONAL) {
-          aivs = {"FirstOrthotropicDirection_1",  "FirstOrthotropicDirection_2",
-                  "FirstOrthotropicDirection_3",  "SecondOrthotropicDirection_1",
-                  "SecondOrthotropicDirection_2", "SecondOrthotropicDirection_3"};
+          aivs = {
+              "FirstOrthotropicDirection_1",  "FirstOrthotropicDirection_2",
+              "FirstOrthotropicDirection_3",  "SecondOrthotropicDirection_1",
+              "SecondOrthotropicDirection_2", "SecondOrthotropicDirection_3"};
         } else {
           throw_if(true, "unsupported modelling hypothesis");
         }
         for (const auto& iv : aivs) {
-          throw_if(std::find(this->ivnames.begin(), this->ivnames.end(), iv) != this->ivnames.end(),
+          throw_if(std::find(this->ivnames.begin(), this->ivnames.end(), iv) !=
+                       this->ivnames.end(),
                    iv + " is a reserved name");
           this->ivtypes.insert(this->ivtypes.begin(), 0);
         }
@@ -105,24 +111,29 @@ namespace mtest {
         tmp.push_back("ThermalExpansion");
       }
     } else if (this->etype == 1u) {
-      if ((h == ModellingHypothesis::PLANESTRESS) || (h == ModellingHypothesis::PLANESTRAIN) ||
+      if ((h == ModellingHypothesis::PLANESTRESS) ||
+          (h == ModellingHypothesis::PLANESTRAIN) ||
           (h == ModellingHypothesis::AXISYMMETRICAL)) {
         if (this->requiresStiffnessTensor) {
           tmp.insert(tmp.end(),
-                     {"YoungModulus1", "YoungModulus2", "YoungModulus3", "PoissonRatio12",
-                      "PoissonRatio23", "PoissonRatio13", "ShearModulus12"});
+                     {"YoungModulus1", "YoungModulus2", "YoungModulus3",
+                      "PoissonRatio12", "PoissonRatio23", "PoissonRatio13",
+                      "ShearModulus12"});
         }
         if (this->requiresThermalExpansionCoefficientTensor) {
-          tmp.insert(tmp.end(), {"ThermalExpansion1", "ThermalExpansion2", "ThermalExpansion3"});
+          tmp.insert(tmp.end(), {"ThermalExpansion1", "ThermalExpansion2",
+                                 "ThermalExpansion3"});
         }
       } else if (h == ModellingHypothesis::TRIDIMENSIONAL) {
         if (this->requiresStiffnessTensor) {
-          tmp.insert(tmp.end(), {"YoungModulus1", "YoungModulus2", "YoungModulus3",
-                                 "PoissonRatio12", "PoissonRatio23", "PoissonRatio13",
-                                 "ShearModulus12", "ShearModulus23", "ShearModulus13"});
+          tmp.insert(tmp.end(),
+                     {"YoungModulus1", "YoungModulus2", "YoungModulus3",
+                      "PoissonRatio12", "PoissonRatio23", "PoissonRatio13",
+                      "ShearModulus12", "ShearModulus23", "ShearModulus13"});
         }
         if (this->requiresThermalExpansionCoefficientTensor) {
-          tmp.insert(tmp.end(), {"ThermalExpansion1", "ThermalExpansion2", "ThermalExpansion3"});
+          tmp.insert(tmp.end(), {"ThermalExpansion1", "ThermalExpansion2",
+                                 "ThermalExpansion3"});
         }
       } else {
         throw_if(true, "unsupported modelling hypothesis");
@@ -136,7 +147,8 @@ namespace mtest {
   }
 
   tfel::math::tmatrix<3u, 3u, real> AbaqusStandardBehaviour::getRotationMatrix(
-      const tfel::math::vector<real>&, const tfel::math::tmatrix<3u, 3u, real>& r) const {
+      const tfel::math::vector<real>&,
+      const tfel::math::tmatrix<3u, 3u, real>& r) const {
     return r;
   }  // end of AbaqusStandardBehaviour::getRotationMatrix
 
@@ -147,7 +159,8 @@ namespace mtest {
     wk.D.resize(nth, nth);
     wk.kt.resize(nth, ndv);
     wk.k.resize(nth, ndv);
-    wk.mps.resize(this->mpnames.size() == 0 ? 1u : this->mpnames.size(), real(0));
+    wk.mps.resize(this->mpnames.size() == 0 ? 1u : this->mpnames.size(),
+                  real(0));
     wk.ivs.resize(nstatev);
     wk.nk.resize(nth, ndv);
     wk.ne.resize(ndv);
@@ -156,7 +169,8 @@ namespace mtest {
     mtest::allocate(wk.cs, this->shared_from_this());
   }  // end of AbaqusStandardBehaviour::allocate
 
-  StiffnessMatrixType AbaqusStandardBehaviour::getDefaultStiffnessMatrixType() const {
+  StiffnessMatrixType AbaqusStandardBehaviour::getDefaultStiffnessMatrixType()
+      const {
     return StiffnessMatrixType::CONSISTENTTANGENTOPERATOR;
   }
 

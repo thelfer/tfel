@@ -23,8 +23,8 @@ namespace mfront {
 
   namespace bbrick {
 
-    std::vector<OptionDescription> ArmstrongFrederickKinematicHardeningRule::getOptions()
-        const {
+    std::vector<OptionDescription>
+    ArmstrongFrederickKinematicHardeningRule::getOptions() const {
       auto opts = KinematicHardeningRuleBase::getOptions();
       opts.emplace_back("D", "back-strain callback coefficient",
                         OptionDescription::MATERIALPROPERTY);
@@ -86,8 +86,8 @@ namespace mfront {
              ")*" + an + "_);\n";
         // opposite of the derivative of fa with respect to s
         const auto mdf_ds = "(this->dp" + fid + ")*dn" + fid + "_ds" + fid;
-        c += sp.generateImplicitEquationDerivatives(bd, "StrainStensor", an, "-" + mdf_ds,
-                                   fc.isNormalDeviatoric());
+        c += sp.generateImplicitEquationDerivatives(
+            bd, "StrainStensor", an, "-" + mdf_ds, fc.isNormalDeviatoric());
         // term specific to this back strain
         c += "df" + an + "_dd" + an + " += ";
         c += "(this->theta)*(this->dp" + fid + ")*((this->" + Dn +
@@ -95,7 +95,8 @@ namespace mfront {
         // terms in common for all back strains
         auto kid2 = decltype(khrs.size()){};
         for (const auto& khr : khrs) {
-          c += khr->generateImplicitEquationDerivatives(an, mdf_ds, fid, std::to_string(kid2));
+          c += khr->generateImplicitEquationDerivatives(an, mdf_ds, fid,
+                                                        std::to_string(kid2));
           ++kid2;
         }
       }

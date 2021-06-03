@@ -1,25 +1,25 @@
 /*!
  * \file   mfront/include/MFront/SpecificTargetDescription.hxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   13/06/2019
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_MFRONT_SPECIFICTARGETDESCRIPTION_HXX
 #define LIB_MFRONT_SPECIFICTARGETDESCRIPTION_HXX
 
-#include<string>
-#include<vector>
+#include <string>
+#include <vector>
 
-#include"MFront/MFrontConfig.hxx"
+#include "MFront/MFrontConfig.hxx"
 
-namespace mfront{
+namespace mfront {
 
   /*!
    * A specific target will define the following Makefile rule:
@@ -29,7 +29,7 @@ namespace mfront{
    *    cmd2
    *    ....
    * \endcode
-    */
+   */
   struct MFRONT_VISIBILITY_EXPORT SpecificTargetDescription {
     //! \brief default constructor
     SpecificTargetDescription();
@@ -51,7 +51,7 @@ namespace mfront{
     std::vector<std::string> deps;
     //! \brief commands
     std::vector<std::string> cmds;
-  }; // end of struct SpecificTargetDescription
+  };  // end of struct SpecificTargetDescription
 
   /*!
    * \brief write a library description to a stream
@@ -74,6 +74,6 @@ namespace mfront{
   read(tfel::utilities::CxxTokenizer::const_iterator&,
        const tfel::utilities::CxxTokenizer::const_iterator);
 
-} // end of namespace mfront
+}  // end of namespace mfront
 
 #endif /* LIB_MFRONT_SPECIFICTARGETDESCRIPTION_HXX */

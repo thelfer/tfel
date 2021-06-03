@@ -47,7 +47,8 @@ namespace mfront {
         const DataMap& d) {
       constexpr auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
       auto get_mp = [&bd, &dsl, &d, &fid, &kid](
-          BehaviourDescription::MaterialProperty& mp, const std::string& n) {
+                        BehaviourDescription::MaterialProperty& mp,
+                        const std::string& n) {
         const auto nid = KinematicHardeningRule::getVariableId(n, fid, kid);
         if (d.count(n) == 0) {
           tfel::raise(

@@ -50,16 +50,18 @@ namespace mfront {
      * \param[in] t : type   of the executable
      */
     CompiledTargetDescriptionBase(const std::string&,
-                          const std::string&,
-                          const std::string&);
+                                  const std::string&,
+                                  const std::string&);
     //! \brief copy constructor
     CompiledTargetDescriptionBase(const CompiledTargetDescriptionBase&);
     //! \brief move constructor
     CompiledTargetDescriptionBase(CompiledTargetDescriptionBase&&);
     //! \brief standard assignement (deleted)
-    CompiledTargetDescriptionBase& operator=(const CompiledTargetDescriptionBase&) = delete;
+    CompiledTargetDescriptionBase& operator=(
+        const CompiledTargetDescriptionBase&) = delete;
     //! \brief move assignement (deleted)
-    CompiledTargetDescriptionBase& operator=(CompiledTargetDescriptionBase&&) = delete;
+    CompiledTargetDescriptionBase& operator=(CompiledTargetDescriptionBase&&) =
+        delete;
     //! \brief destructor
     ~CompiledTargetDescriptionBase();
     //! \brief name

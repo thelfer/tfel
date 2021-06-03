@@ -71,10 +71,15 @@ namespace tfel::math {
   };
 
   /*!
-   * Partial Specialisation of ComputeBinaryOperationHandler for stensor's operation
+   * Partial Specialisation of ComputeBinaryOperationHandler for stensor's
+   * operation
    */
   template <typename A, typename B>
-  class ComputeBinaryOperationHandler<StensorTag, TensorTag, A, B, OpDiadicProduct> {
+  class ComputeBinaryOperationHandler<StensorTag,
+                                      TensorTag,
+                                      A,
+                                      B,
+                                      OpDiadicProduct> {
     struct DummyHandle {};
     //! \brief a simple alias
     using StensorTypeA = EvaluationResult<A>;

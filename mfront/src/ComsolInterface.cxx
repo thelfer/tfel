@@ -1,6 +1,6 @@
 /*!
  * \file   mfront/src/ComsolInterface.cxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   30/07/2019
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
@@ -22,9 +22,7 @@
 
 namespace mfront {
 
-  std::string ComsolInterface::getName() {
-    return "comsol";
-  }  // end of getName
+  std::string ComsolInterface::getName() { return "comsol"; }  // end of getName
 
   std::string ComsolInterface::getInterfaceName() const {
     return "Comsol";
@@ -32,10 +30,10 @@ namespace mfront {
 
   std::pair<bool, ComsolInterface::tokens_iterator>
   ComsolInterface::treatKeyword(BehaviourDescription&,
-                                          const std::string&,
-                                          const std::vector<std::string>&,
-                                          tokens_iterator current,
-                                          const tokens_iterator) {
+                                const std::string&,
+                                const std::vector<std::string>&,
+                                tokens_iterator current,
+                                const tokens_iterator) {
     return {false, current};
   }  // end of ComsolInterface::treatKeyword
 
@@ -49,8 +47,8 @@ namespace mfront {
       std::ostream&, const BehaviourDescription&) const {
   }  // end of ComsolInterface::writeInterfaceSpecificIncludes
 
-  void ComsolInterface::getTargetsDescription(
-      TargetsDescription& d, const BehaviourDescription& bd) {
+  void ComsolInterface::getTargetsDescription(TargetsDescription& d,
+                                              const BehaviourDescription& bd) {
     const auto lib = this->getLibraryName(bd);
     const auto name = bd.getLibrary() + bd.getClassName();
     const auto tfel_config = tfel::getTFELConfigExecutableName();
@@ -69,8 +67,8 @@ namespace mfront {
     }
 #if __cplusplus >= 201703L
     insert_if(l.link_libraries, "$(shell " + tfel_config +
-                                         " --library-dependency "
-                                         "--material --mfront-profiling)");
+                                    " --library-dependency "
+                                    "--material --mfront-profiling)");
 #else  /* __cplusplus < 201703L */
     insert_if(l.link_libraries,
               "$(shell " + tfel_config +

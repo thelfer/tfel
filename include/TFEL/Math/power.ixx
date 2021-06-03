@@ -175,8 +175,7 @@ namespace tfel::math {
     static_assert(D != 0);
 
     static constexpr auto N_ = std::ratio<N, D>::num;
-    static constexpr auto D_ =
-        static_cast<unsigned int>(std::ratio<N, D>::den);
+    static constexpr auto D_ = static_cast<unsigned int>(std::ratio<N, D>::den);
 
    public:
     // On fait un choix sur les valeurs de D

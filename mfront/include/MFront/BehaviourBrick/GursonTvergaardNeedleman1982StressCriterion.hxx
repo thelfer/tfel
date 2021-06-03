@@ -22,19 +22,23 @@ namespace mfront {
   namespace bbrick {
 
     /*!
-     * \brief implementation of the MichelAndSuquet1992HollowSphere stress criterion
+     * \brief implementation of the MichelAndSuquet1992HollowSphere stress
+     * criterion
      */
-    struct GursonTvergaardNeedleman1982StressCriterion : StandardPorousStressCriterionBase {
+    struct GursonTvergaardNeedleman1982StressCriterion
+        : StandardPorousStressCriterionBase {
       /*!
        * \brief constructor
        */
       GursonTvergaardNeedleman1982StressCriterion();
 
-      std::vector<BehaviourSymmetry> getSupportedBehaviourSymmetries() const override;
+      std::vector<BehaviourSymmetry> getSupportedBehaviourSymmetries()
+          const override;
 
       std::vector<OptionDescription> getOptions() const override;
 
-      PorosityEffectOnFlowRule getPorosityEffectOnEquivalentPlasticStrain() const override;
+      PorosityEffectOnFlowRule getPorosityEffectOnEquivalentPlasticStrain()
+          const override;
 
       std::string updatePorosityUpperBound(const BehaviourDescription&,
                                            const std::string&,
@@ -48,4 +52,5 @@ namespace mfront {
 
 }  // end of namespace mfront
 
-#endif /* LIB__MFRONT_BEHAVIOURBRICK_GURSON_TVERGAARD_NEEDLEMAN_1982_STRESSCRITERION_HXX */
+#endif /* LIB__MFRONT_BEHAVIOURBRICK_GURSON_TVERGAARD_NEEDLEMAN_1982_STRESSCRITERION_HXX \
+        */

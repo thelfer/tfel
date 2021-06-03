@@ -234,13 +234,13 @@ namespace mfront {
         const std::string &,
         const std::array<BehaviourDescription::MaterialProperty, N> &);
     /*!
-    *\brief add a new material property
-    *\param[in] bd: behaviour description
-    *\param[in] t: type of the material property
-    *\param[in] n: name of the variable
-    *\param[in] g: glossary name
-    *\param[in] s: array size
-    */
+     *\brief add a new material property
+     *\param[in] bd: behaviour description
+     *\param[in] t: type of the material property
+     *\param[in] n: name of the variable
+     *\param[in] g: glossary name
+     *\param[in] s: array size
+     */
     MFRONT_VISIBILITY_EXPORT void addMaterialPropertyIfNotDefined(
         BehaviourDescription &,
         const std::string &,
@@ -347,7 +347,7 @@ namespace mfront {
      * variable
      * with the given glossary name but a different name has already been
      * defined.
-    */
+     */
     MFRONT_VISIBILITY_EXPORT void addAuxiliaryStateVariableIfNotDefined(
         BehaviourDescription &,
         const std::string &,

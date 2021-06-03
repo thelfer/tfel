@@ -208,7 +208,8 @@ namespace mfront {
       srcFile << "  }\n";
     }
 
-    srcFile << "  return 0;\n" << "}\n";
+    srcFile << "  return 0;\n"
+            << "}\n";
     srcFile.close();
   }  // end of CppTestMaterialPropertyInterface::writeSrcFile
 

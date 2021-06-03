@@ -1,6 +1,6 @@
 /*!
  * \file   mfront/src/Hill1948StressCriterion.cxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   15/03/2018
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
@@ -17,12 +17,11 @@
 #include "MFront/BehaviourBrick/OptionDescription.hxx"
 #include "MFront/BehaviourBrick/Hill1948StressCriterion.hxx"
 
-namespace mfront{
+namespace mfront {
 
   namespace bbrick {
 
-
-    std::vector<OptionDescription> Hill1948StressCriterion::getOptions() const{
+    std::vector<OptionDescription> Hill1948StressCriterion::getOptions() const {
       std::vector<OptionDescription> opts;
       opts.emplace_back("F", "First Hill parameter",
                         OptionDescription::MATERIALPROPERTY);
@@ -116,7 +115,8 @@ namespace mfront{
            " = sqrt(" + s + "|((this->" + Hn + ")*" + s + "));\n";
       c += "const auto i" + seq + " = 1/max(" + seq + "," +
            sp.getEquivalentStressLowerBound(bd) + ");\n";
-      c += "const auto " + n + " = (this->" + Hn + ")*" + s + "*i" + seq + ";\n";
+      c +=
+          "const auto " + n + " = (this->" + Hn + ")*" + s + "*i" + seq + ";\n";
       if (r == STRESSANDFLOWCRITERION) {
         c += "const auto& n" + id + " = dseq" + id + "_ds" + id + ";\n";
       }
@@ -174,9 +174,11 @@ namespace mfront{
     }  // end of Hill1948StressCriterion::isNormalDeviatoric
 
     StressCriterion::PorosityEffectOnFlowRule
-    Hill1948StressCriterion::getPorosityEffectOnEquivalentPlasticStrain() const {
+    Hill1948StressCriterion::getPorosityEffectOnEquivalentPlasticStrain()
+        const {
       return StressCriterion::NO_POROSITY_EFFECT_ON_EQUIVALENT_PLASTIC_STRAIN;
-    }  // end of Hill1948StressCriterion::getPorosityEffectOnEquivalentPlasticStrain()
+    }  // end of
+       // Hill1948StressCriterion::getPorosityEffectOnEquivalentPlasticStrain()
 
     Hill1948StressCriterion::~Hill1948StressCriterion() = default;
 

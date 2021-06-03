@@ -1,6 +1,6 @@
 /*!
  * \file   include/MTest/CastemInterfaceVersion.hxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   26/02/2021
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
@@ -14,7 +14,7 @@
 #ifndef LIB_MTEST_CASTEMINTERFACEVERSION_HXX
 #define LIB_MTEST_CASTEMINTERFACEVERSION_HXX
 
-namespace mtest{
+namespace mtest {
 
   //! \brief describe the version of the interface used
   enum struct CastemInterfaceVersion {
@@ -24,6 +24,6 @@ namespace mtest{
     CASTEM_INTERFACE_VERSION_2021
   };
 
-} // end of namespace mtest
+}  // end of namespace mtest
 
 #endif /* LIB_MTEST_CASTEMINTERFACEVERSION_HXX */

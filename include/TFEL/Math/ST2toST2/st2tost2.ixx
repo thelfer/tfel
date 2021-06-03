@@ -60,12 +60,10 @@ namespace tfel::math {
 
   template <unsigned short N, typename T>
   template <typename StensorType>
-  std::enable_if_t<
-      implementsStensorConcept<StensorType>() &&
-          getSpaceDimension<StensorType>() == N &&
-          isAssignableTo<numeric_type<StensorType>,
-                                           T>(),
-      tfel::math::st2tost2<N, T>>
+  std::enable_if_t<implementsStensorConcept<StensorType>() &&
+                       getSpaceDimension<StensorType>() == N &&
+                       isAssignableTo<numeric_type<StensorType>, T>(),
+                   tfel::math::st2tost2<N, T>>
   st2tost2<N, T>::stpd(const StensorType& s) {
     return StensorSymmetricProductDerivative<N, T>::exe(s);
   }
@@ -74,17 +72,15 @@ namespace tfel::math {
   template <typename T2toST2Type>
   std::enable_if_t<implementsT2toST2Concept<T2toST2Type>() &&
                        getSpaceDimension<T2toST2Type>() == N &&
-                       isAssignableTo<
-                           numeric_type<T2toST2Type>,
-                           T>(),
+                       isAssignableTo<numeric_type<T2toST2Type>, T>(),
                    Expr<st2tost2<N, T>, ConvertT2toST2ToST2toST2Expr<N>>>
   st2tost2<N, T>::convert(const T2toST2Type& src) {
     return Expr<st2tost2<N, T>, ConvertT2toST2ToST2toST2Expr<N>>(src);
   }
 
   template <unsigned short N, typename T>
-  st2tost2<N, base_type<T>>
-  st2tost2<N, T>::fromRotationMatrix(const rotation_matrix<T>& r) {
+  st2tost2<N, base_type<T>> st2tost2<N, T>::fromRotationMatrix(
+      const rotation_matrix<T>& r) {
     return st2tost2_internals::BuildFromRotationMatrix<N, T>::exe(r);
   }  // end of st2tost2<N,T>::fromRotationMatrix
 
@@ -237,7 +233,7 @@ namespace tfel::math {
     static constexpr unsigned short StensorSize = StensorDimeToSize<N>::value;
     using NumType = numeric_type<ST2toST2Type>;
     using real = base_type<ST2toST2Type>;
-    using iNumType = BinaryOperationResult<real,NumType,OpDiv>;
+    using iNumType = BinaryOperationResult<real, NumType, OpDiv>;
     st2tost2<N, iNumType> is;
     tmatrix<StensorSize, StensorSize, real> m;
     for (unsigned short i = 0; i != StensorSize; ++i) {
@@ -255,9 +251,9 @@ namespace tfel::math {
   }  // end of invert
 
   template <typename ST2toST2Type>
-  std::enable_if_t<implementsST2toST2Concept<ST2toST2Type>(),
-                   st2tost2<getSpaceDimension<ST2toST2Type>(),
-                            numeric_type<ST2toST2Type>>>
+  std::enable_if_t<
+      implementsST2toST2Concept<ST2toST2Type>(),
+      st2tost2<getSpaceDimension<ST2toST2Type>(), numeric_type<ST2toST2Type>>>
   change_basis(const ST2toST2Type& s,
                const rotation_matrix<numeric_type<ST2toST2Type>>& r) {
     return st2tost2_internals::ChangeBasis<

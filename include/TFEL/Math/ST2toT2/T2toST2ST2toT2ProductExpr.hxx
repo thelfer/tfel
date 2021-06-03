@@ -55,11 +55,9 @@ namespace tfel::math {
     template <typename T2toST2Type, typename ST2toT2Type2>
     TFEL_MATH_INLINE Expr(const T2toST2Type& a, const ST2toT2Type2& b) {
       //! a simple check
-      static_assert(
-          (implementsT2toST2Concept<T2toST2Type>()));
+      static_assert((implementsT2toST2Concept<T2toST2Type>()));
       //! a simple check
-      static_assert(
-          (implementsST2toT2Concept<ST2toT2Type2>()));
+      static_assert((implementsST2toT2Concept<ST2toT2Type2>()));
       //! a simple check
       static_assert((getSpaceDimension<T2toST2Type>() == 1u));
       //! a simple check
@@ -117,11 +115,9 @@ namespace tfel::math {
     template <typename T2toST2Type, typename ST2toT2Type2>
     TFEL_MATH_INLINE Expr(const T2toST2Type& a, const ST2toT2Type2& b) {
       //! a simple check
-      static_assert(
-          (implementsT2toST2Concept<T2toST2Type>()));
+      static_assert((implementsT2toST2Concept<T2toST2Type>()));
       //! a simple check
-      static_assert(
-          (implementsST2toT2Concept<ST2toT2Type2>()));
+      static_assert((implementsST2toT2Concept<ST2toT2Type2>()));
       //! a simple check
       static_assert((getSpaceDimension<T2toST2Type>() == 2u));
       //! a simple check
@@ -202,11 +198,9 @@ namespace tfel::math {
     template <typename T2toST2Type, typename ST2toT2Type2>
     TFEL_MATH_INLINE Expr(const T2toST2Type& a, const ST2toT2Type2& b) {
       //! a simple check
-      static_assert(
-          (implementsT2toST2Concept<T2toST2Type>()));
+      static_assert((implementsT2toST2Concept<T2toST2Type>()));
       //! a simple check
-      static_assert(
-          (implementsST2toT2Concept<ST2toT2Type2>()));
+      static_assert((implementsST2toT2Concept<ST2toT2Type2>()));
       //! a simple check
       static_assert((getSpaceDimension<T2toST2Type>() == 3u));
       //! a simple check

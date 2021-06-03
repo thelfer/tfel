@@ -41,9 +41,10 @@ namespace mfront {
      * \f[
      * \left\{
      * \begin{aligned}
-     *  \underline{\bf s}'  &= \underline{\underline{L}}' \,\colon\,\underline{\bf s} \\
-     *  \underline{\bf s}'' &= \underline{\underline{L}}''\,\colon\,\underline{\bf s} \\
-     * \end{aligned}
+     *  \underline{\bf s}'  &= \underline{\underline{L}}'
+     * \,\colon\,\underline{\bf s} \\
+     *  \underline{\bf s}'' &=
+     * \underline{\underline{L}}''\,\colon\,\underline{\bf s} \\ \end{aligned}
      * \right.
      * \f]
      *
@@ -55,8 +56,10 @@ namespace mfront {
      *
      * \f[
      * \begin{aligned}
-     * \underline{L}'  &=\underline{\underline{C}}'\,\colon\,\underline{\underline{M}} \\
-     * \underline{L}'' &=\underline{\underline{C}}'\,\colon\,\underline{\underline{M}} \\
+     * \underline{L}'
+     * &=\underline{\underline{C}}'\,\colon\,\underline{\underline{M}} \\
+     * \underline{L}''
+     * &=\underline{\underline{C}}'\,\colon\,\underline{\underline{M}} \\
      * \end{aligned}
      * \f]
      * where \f$\underline{\underline{M}}\f$ is the transformation of
@@ -64,12 +67,12 @@ namespace mfront {
      * \f[
      * \underline{\underline{M}}=\underline{\underline{I}}-\frac{1}{3}\underline{I}\,\otimes\,\underline{I}
      * \f]
-     * 
+     *
      * The linear transformations \f$\underline{\underline{C}}'\f$ and
      * \f$\underline{\underline{C}}''\f$ are defined by \f$9\f$
      * coefficients (each) which describe the material orthotropy, as
      * follows:
-     * 
+     *
      * \f[
      * \underline{\underline{C}}'=
      * \begin{pmatrix}
@@ -124,7 +127,8 @@ namespace mfront {
                                           const Role) const override;
       bool isCoupledWithPorosityEvolution() const override;
       bool isNormalDeviatoric() const override;
-      PorosityEffectOnFlowRule getPorosityEffectOnEquivalentPlasticStrain() const override;
+      PorosityEffectOnFlowRule getPorosityEffectOnEquivalentPlasticStrain()
+          const override;
       //! destructor
       ~Barlat2004StressCriterion() override;
 

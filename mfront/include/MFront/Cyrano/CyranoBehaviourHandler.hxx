@@ -235,8 +235,8 @@ namespace cyrano {
       }  // end of Error
 
       [[noreturn]] void exe(CyranoReal *const,
-                             CyranoReal *const,
-                             CyranoReal *const) {
+                            CyranoReal *const,
+                            CyranoReal *const) {
         typedef tfel::material::MechanicalBehaviourTraits<
             Behaviour<H, CyranoReal, false>>
             Traits;

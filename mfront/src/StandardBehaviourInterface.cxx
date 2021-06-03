@@ -187,9 +187,8 @@ namespace mfront {
         }
         if (up) {
           out << "MFRONT_SHAREDOBJ int\n"
-              << fctName
-              << "_setUnsignedShortParameter(const char "
-              <<   "*const,const unsigned short);\n\n";
+              << fctName << "_setUnsignedShortParameter(const char "
+              << "*const,const unsigned short);\n\n";
         }
       }
     }
@@ -248,8 +247,7 @@ namespace mfront {
         }
         if (up) {
           out << "MFRONT_SHAREDOBJ int\n"
-              << fctName
-              << "_setUnsignedShortParameter(const char *const "
+              << fctName << "_setUnsignedShortParameter(const char *const "
               << "key,const unsigned short value){\n"
               << "using tfel::material::" << cname << ";\n"
               << "auto& i = " << cname << "::get();\n"

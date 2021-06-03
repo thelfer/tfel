@@ -38,8 +38,7 @@ namespace tfel::math {
   template <typename T, typename T2>
   struct IsQtScalarOperationValid {
     static constexpr bool cond =
-        tfel::typetraits::IsFundamentalNumericType<T2>::cond &&
-        isScalar<T>() &&
+        tfel::typetraits::IsFundamentalNumericType<T2>::cond && isScalar<T>() &&
         std::is_same<typename tfel::typetraits::Promote<T, T2>::type, T>::value;
   };
 
@@ -162,8 +161,7 @@ namespace tfel::math {
     static constexpr bool cond =
         std::is_same<typename tfel::typetraits::Promote<T, T2>::type,
                      T>::value &&
-        tfel::typetraits::IsFundamentalNumericType<T2>::cond &&
-        isScalar<T2>();
+        tfel::typetraits::IsFundamentalNumericType<T2>::cond && isScalar<T2>();
   };
 
   /*!

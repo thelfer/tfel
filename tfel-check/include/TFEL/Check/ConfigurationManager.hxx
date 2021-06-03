@@ -103,8 +103,8 @@ namespace tfel {
     TFELCHECK_VISIBILITY_EXPORT void parse(ConfigurationManager&,
                                            const std::string&);
 
-    }  // end of namespace check
-
   }  // end of namespace check
+
+}  // namespace tfel
 
 #endif /* LIB_TFEL_CHECK_CONFIGURATIONMANAGER_HXX */

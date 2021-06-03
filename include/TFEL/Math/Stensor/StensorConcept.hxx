@@ -60,14 +60,16 @@ namespace tfel::math {
     return tfel::meta::implements<StensorType, StensorConcept>();
   }  // end of implementsStensorConcept
 
-  //! \brief a simple alias for backward compatibility with versions prior to 4.0
+  //! \brief a simple alias for backward compatibility with versions prior
+  //! to 4.0
   template <typename StensorType>
   using StensorTraits =
       std::conditional_t<implementsStensorConcept<StensorType>(),
                          MathObjectTraits<StensorType>,
                          MathObjectTraits<tfel::meta::InvalidType>>;
 
-  //! \brief a simple alias for backward compatibility with versions prior to 4.0
+  //! \brief a simple alias for backward compatibility with versions prior
+  //! to 4.0
   template <typename StensorType>
   using StensorNumType =
       std::conditional_t<implementsStensorConcept<StensorType>(),

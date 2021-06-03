@@ -43,6 +43,6 @@ namespace tfel::math {
     static constexpr unsigned short dime = N;
   };
 
-  }  // end of namespace tfel::math
+}  // end of namespace tfel::math
 
 #endif /* LIB_TFEL_MATH_FORWARD_ST2TOT2_HXX */

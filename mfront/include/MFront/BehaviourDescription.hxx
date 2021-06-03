@@ -827,9 +827,8 @@ namespace mfront {
      * \note if h is UNDEFINEDHYPOTHESIS, add the post-processing
      * variables to the default data and to all the specialisations
      */
-    void addPostProcessingVariables(
-        const Hypothesis,
-        const VariableDescriptionContainer&);
+    void addPostProcessingVariables(const Hypothesis,
+                                    const VariableDescriptionContainer&);
     /*!
      * \brief add an post-processing variable
      * \param[in] h: modelling hypothesis
@@ -1854,7 +1853,8 @@ namespace mfront {
     std::optional<StrainMeasure> strainMeasure;
     //! \brief an optional boolean stating if the strain measure shall be saved
     std::optional<bool> saveStrainMeasureValue;
-    //! \brief an optional boolean stating if the dual stress stress shall be saved
+    //! \brief an optional boolean stating if the dual stress stress shall be
+    //! saved
     std::optional<bool> saveDualStressValue;
     //! \brief use units
     bool use_qt = false;

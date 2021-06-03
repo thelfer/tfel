@@ -33,7 +33,7 @@ namespace tfel::math {
   template <typename ValueType>
   struct RuntimeRowMajorMatrixArrayPolicy
       : StandardArrayPolicy<ValueType, RuntimeRowMajorMatrixIndexingPolicy> {
-  }; // end of struct RuntimeRowMajorMatrixArrayPolicy
+  };  // end of struct RuntimeRowMajorMatrixArrayPolicy
 
 }  // end of namespace tfel::math
 

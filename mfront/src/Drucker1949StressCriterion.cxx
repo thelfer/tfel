@@ -24,8 +24,7 @@ namespace mfront {
     std::vector<OptionDescription> Drucker1949StressCriterion::getOptions()
         const {
       auto opts = StressCriterionBase::getOptions();
-      opts.emplace_back("c", "",
-                        OptionDescription::MATERIALPROPERTY);
+      opts.emplace_back("c", "", OptionDescription::MATERIALPROPERTY);
       return opts;
     }  // end of Drucker1949StressCriterion::getOptions()
 
@@ -58,7 +57,8 @@ namespace mfront {
       constexpr auto uh =
           tfel::material::ModellingHypothesis::UNDEFINEDHYPOTHESIS;
       const auto cn = StressCriterion::getVariableId("c", id, r);
-      auto c = generateMaterialPropertyInitializationCode(dsl, bd, cn, this->cp);
+      auto c =
+          generateMaterialPropertyInitializationCode(dsl, bd, cn, this->cp);
       if (!c.empty()) {
         CodeBlock i;
         i.code = c;
@@ -74,8 +74,8 @@ namespace mfront {
       const auto cn = StressCriterion::getVariableId(
           "c", id, StressCriterion::STRESSCRITERION);
       return "const auto seqel" + id +
-             " = computeDrucker1949StressCriterion(sel" + id +
-             ",this->" + cn + ");\n";
+             " = computeDrucker1949StressCriterion(sel" + id + ",this->" + cn +
+             ");\n";
     }  // end of Drucker1949StressCriterion::computeElasticPrediction
 
     std::string Drucker1949StressCriterion::computeCriterion(
@@ -84,9 +84,8 @@ namespace mfront {
         const StressPotential&) const {
       const auto cn = StressCriterion::getVariableId(
           "c", id, StressCriterion::STRESSCRITERION);
-      return "const auto seq" + id +
-             " = computeDrucker1949StressCriterion(s" + id + ",this->" +
-             cn + ");\n";
+      return "const auto seq" + id + " = computeDrucker1949StressCriterion(s" +
+             id + ",this->" + cn + ");\n";
     }  // end of Drucker1949StressCriterion::computeCriterion
 
     std::string Drucker1949StressCriterion::computeNormal(
@@ -99,16 +98,14 @@ namespace mfront {
       if ((r == STRESSCRITERION) || (r == STRESSANDFLOWCRITERION)) {
 #if __cplusplus >= 201703L
         c += "const auto [seq" + id + ",dseq" + id + "_ds" + id + "] = ";
-        c += "computeDrucker1949StressCriterionNormal(s" + id +
-             ", this->" + cn + "," + sp.getEquivalentStressLowerBound(bd) +
-             ");\n";
+        c += "computeDrucker1949StressCriterionNormal(s" + id + ", this->" +
+             cn + "," + sp.getEquivalentStressLowerBound(bd) + ");\n";
 #else  /* __cplusplus >= 201703L */
         c += "stress seq" + id + ";\n";
         c += "Stensor dseq" + id + "_ds" + id + ";\n";
         c += "std::tie(seq" + id + ",dseq" + id + "_ds" + id + ") = ";
-        c += "computeDrucker1949StressCriterionNormal(s" + id +
-             ", this->" + cn + "," + sp.getEquivalentStressLowerBound(bd) +
-             ");\n";
+        c += "computeDrucker1949StressCriterionNormal(s" + id + ", this->" +
+             cn + "," + sp.getEquivalentStressLowerBound(bd) + ");\n";
 #endif /* __cplusplus >= 201703L */
       }
       if (r == STRESSANDFLOWCRITERION) {
@@ -117,16 +114,14 @@ namespace mfront {
       if (r == FLOWCRITERION) {
 #if __cplusplus >= 201703L
         c += "const auto [seqf" + id + ", n" + id + "] = ";
-        c += "computeDrucker1949StressCriterionNormal(s" + id +
-             ", this->" + cn + "," + sp.getEquivalentStressLowerBound(bd) +
-             ");\n";
+        c += "computeDrucker1949StressCriterionNormal(s" + id + ", this->" +
+             cn + "," + sp.getEquivalentStressLowerBound(bd) + ");\n";
 #else  /* __cplusplus >= 201703L */
         c += "stress seqf" + id + ";\n";
         c += "Stensor n" + id + ";\n";
         c += "std::tie(seqf" + id + ",n" + id + ") = ";
-        c += "computeDrucker1949StressCriterionNormal(s" + id +
-             ", this->" + cn + "," + sp.getEquivalentStressLowerBound(bd) +
-             ");\n";
+        c += "computeDrucker1949StressCriterionNormal(s" + id + ", this->" +
+             cn + "," + sp.getEquivalentStressLowerBound(bd) + ");\n";
 #endif /* __cplusplus >= 201703L */
       }
       return c;
@@ -143,8 +138,8 @@ namespace mfront {
 #if __cplusplus >= 201703L
         c += "const auto [seq" + id + ",dseq" + id + "_ds" + id + ",d2seq" +
              id + "_ds" + id + "ds" + id + "] = ";
-        c += "computeDrucker1949StressCriterionSecondDerivative(s" +
-             id + ", this->" + cn + "," + sp.getEquivalentStressLowerBound(bd) +
+        c += "computeDrucker1949StressCriterionSecondDerivative(s" + id +
+             ", this->" + cn + "," + sp.getEquivalentStressLowerBound(bd) +
              ");\n";
 #else  /* __cplusplus >= 201703L */
         c += "stress seq" + id + ";\n";
@@ -152,8 +147,8 @@ namespace mfront {
         c += "Stensor4 d2seq" + id + "_ds" + id + "ds" + id + ";\n";
         c += "std::tie(seq" + id + ",dseq" + id + "_ds" + id + ",d2seq" + id +
              "_ds" + id + "ds" + id + ") = ";
-        c += "computeDrucker1949StressCriterionSecondDerivative(s" +
-             id + ", this->" + cn + "," + sp.getEquivalentStressLowerBound(bd) +
+        c += "computeDrucker1949StressCriterionSecondDerivative(s" + id +
+             ", this->" + cn + "," + sp.getEquivalentStressLowerBound(bd) +
              ");\n";
 #endif /* __cplusplus >= 201703L */
       }
@@ -166,8 +161,8 @@ namespace mfront {
 #if __cplusplus >= 201703L
         c += "const auto [seqf" + id + ", n" + id + ", dn" + id + "_ds" + id +
              "] = ";
-        c += "computeDrucker1949StressCriterionSecondDerivative(s" +
-             id + ",this->" + cn + "," + sp.getEquivalentStressLowerBound(bd) +
+        c += "computeDrucker1949StressCriterionSecondDerivative(s" + id +
+             ",this->" + cn + "," + sp.getEquivalentStressLowerBound(bd) +
              ");\n";
 #else  /* __cplusplus >= 201703L */
         c += "stress seqf" + id + ";\n";
@@ -175,8 +170,8 @@ namespace mfront {
         c += "Stensor4 dn" + id + "_ds" + id + ";\n";
         c +=
             "std::tie(seqf" + id + ",n" + id + ",dn" + id + "_ds" + id + ") = ";
-        c += "computeDrucker1949StressCriterionSecondDerivative(s" +
-             id + ",this->" + cn + "," + sp.getEquivalentStressLowerBound(bd) +
+        c += "computeDrucker1949StressCriterionSecondDerivative(s" + id +
+             ",this->" + cn + "," + sp.getEquivalentStressLowerBound(bd) +
              ");\n";
 #endif /* __cplusplus >= 201703L */
       }
@@ -192,9 +187,11 @@ namespace mfront {
     }  // end of Drucker1949StressCriterion::isNormalDeviatoric
 
     StressCriterion::PorosityEffectOnFlowRule
-    Drucker1949StressCriterion::getPorosityEffectOnEquivalentPlasticStrain() const {
+    Drucker1949StressCriterion::getPorosityEffectOnEquivalentPlasticStrain()
+        const {
       return StressCriterion::NO_POROSITY_EFFECT_ON_EQUIVALENT_PLASTIC_STRAIN;
-    }  // end of Drucker1949StressCriterion::getPorosityEffectOnEquivalentPlasticStrain()
+    }  // end of
+       // Drucker1949StressCriterion::getPorosityEffectOnEquivalentPlasticStrain()
 
     Drucker1949StressCriterion::~Drucker1949StressCriterion() = default;
 

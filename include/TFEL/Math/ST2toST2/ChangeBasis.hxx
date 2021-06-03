@@ -55,8 +55,7 @@ namespace tfel::math::st2tost2_internals {
     static TFEL_MATH_INLINE2 typename std::enable_if<
         (tfel::math::implementsST2toST2Concept<ST2toST2Type>() &&
          tfel::math::getSpaceDimension<ST2toST2Type>() == 2u),
-        tfel::math::st2tost2<2u,
-                             tfel::math::numeric_type<ST2toST2Type>>>::type
+        tfel::math::st2tost2<2u, tfel::math::numeric_type<ST2toST2Type>>>::type
     exe(const ST2toST2Type& s,
         const tfel::math::rotation_matrix<
             tfel::math::numeric_type<ST2toST2Type>>& r) {
@@ -81,8 +80,7 @@ namespace tfel::math::st2tost2_internals {
     static TFEL_MATH_INLINE2 typename std::enable_if<
         (tfel::math::implementsST2toST2Concept<ST2toST2Type>() &&
          tfel::math::getSpaceDimension<ST2toST2Type>() == 3u),
-        tfel::math::st2tost2<3u,
-                             tfel::math::numeric_type<ST2toST2Type>>>::type
+        tfel::math::st2tost2<3u, tfel::math::numeric_type<ST2toST2Type>>>::type
     exe(const ST2toST2Type& s,
         const tfel::math::rotation_matrix<
             tfel::math::numeric_type<ST2toST2Type>>& r) {

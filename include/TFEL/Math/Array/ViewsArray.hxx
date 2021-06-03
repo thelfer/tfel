@@ -68,8 +68,7 @@ namespace tfel::math {
       static_assert(!tfel::math::isScalar<MappedType>());
       //! \brief default indexing type
       using type = typename MappedType::indexing_policy;
-    }; // end of ViewsArrayDefaultViewIndexingPolicy
-
+    };  // end of ViewsArrayDefaultViewIndexingPolicy
 
     /*!
      * \brief a metafunction returning the default indexing policy for the given
@@ -81,17 +80,15 @@ namespace tfel::math {
       static_assert(tfel::math::isScalar<MappedType>());
       //! \brief default indexing type
       using type = tfel::math::ScalarIndexingPolicy<unsigned short>;
-    }; // end of ViewsArrayDefaultViewIndexingPolicy
-
+    };  // end of ViewsArrayDefaultViewIndexingPolicy
 
   }  // end of namespace internals
 
   //! \brief the numeric type used by the mapped type
   template <typename MappedType>
-  using ViewsArrayNumericType =
-      std::conditional_t<isScalar<MappedType>(),
-                         std::remove_cv_t<MappedType>,
-                         numeric_type<MappedType>>;
+  using ViewsArrayNumericType = std::conditional_t<isScalar<MappedType>(),
+                                                   std::remove_cv_t<MappedType>,
+                                                   numeric_type<MappedType>>;
 
   //! \brief the pointer type used to build the view
   template <typename MappedType>
@@ -368,7 +365,7 @@ namespace tfel::math {
       : FixedSizeVectorIndexingPolicy<SizeType, N, Stride> {
     static_assert(Stride >= getViewsArrayMinimalStride<MappedType>(),
                   "invalid stride");
-  }; // end of struct ViewsFixedSizeVectorIndexingPolicy
+  };  // end of struct ViewsFixedSizeVectorIndexingPolicy
 
   template <typename MappedType,
             typename SizeType,
@@ -390,7 +387,7 @@ namespace tfel::math {
     if constexpr (std::is_const_v<ArrayType>) {
       return ViewsFixedSizeVector<const MappedType, size_type, N>(p);
     } else {
-      return ViewsFixedSizeVector<MappedType, size_type, N> (p);
+      return ViewsFixedSizeVector<MappedType, size_type, N>(p);
     }
   }
 

@@ -1,7 +1,7 @@
 /*!
- * \file include/NUMODIS/Math/Utilities.hxx  
+ * \file include/NUMODIS/Math/Utilities.hxx
  * \brief Contains basic mathematical functions and routines
- * 
+ *
  * Note that:
  * - Some functions are declared as INLINE functions for maximum
  * efficiency. As a consequence, they are declared AND defined
@@ -12,12 +12,12 @@
  * should prefer the following functions for 3D calculations.
  * \author Laurent Dupuy
  * \date   9/06/2017
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef NUMEODIS_UTILITIES_HXX
@@ -30,30 +30,24 @@
 #include "NUMODIS/Config.hxx"
 #include "NUMODIS/Vect3.hxx"
 
-namespace numodis
-{
+namespace numodis {
 
-  namespace math
-  {
+  namespace math {
 
     // Greatest common divisor for rings (including unsigned integers)
-    template < typename RingType >
-    RingType gcd_euclidean(RingType a,
-			   RingType b)
-    {
-      constexpr auto zero = static_cast<RingType>( 0 );
+    template <typename RingType>
+    RingType gcd_euclidean(RingType a, RingType b) {
+      constexpr auto zero = static_cast<RingType>(0);
       // Reduce by GCD-remainder property [GCD(a,b) == GCD(b,a MOD b)]
-      while ( true ) {
-	if ( a == zero )
-	  return b;
-	b %= a;
+      while (true) {
+        if (a == zero) return b;
+        b %= a;
 
-	if ( b == zero )
-	  return a;
-	a %= b;
+        if (b == zero) return a;
+        a %= b;
       }
-    } // end of gcd_euclidean
-    
+    }  // end of gcd_euclidean
+
     //===============================================================
     // GCD
     //---------------------------------------------------------------
@@ -65,18 +59,16 @@ namespace numodis
      * \return greatest common divisor
      */
     //===============================================================
-    template < typename IntegerType >
-    inline IntegerType GCD(const IntegerType&  a,
-			   const IntegerType&  b)
-    {
+    template <typename IntegerType>
+    inline IntegerType GCD(const IntegerType& a, const IntegerType& b) {
       // Avoid repeated construction
-      constexpr auto zero = static_cast<IntegerType>( 0 );
-      const auto result = gcd_euclidean( a, b );
-      return ( result < zero ) ? static_cast<IntegerType>(-result) : result;
+      constexpr auto zero = static_cast<IntegerType>(0);
+      const auto result = gcd_euclidean(a, b);
+      return (result < zero) ? static_cast<IntegerType>(-result) : result;
     }
-    
+
     TFELNUMODIS_VISIBILITY_EXPORT int GCD(const std::vector<int>& u);
-    
+
     //===============================================================
     // iCrossProduct
     //---------------------------------------------------------------
@@ -89,14 +81,12 @@ namespace numodis
     */
     //===============================================================
     inline void iCrossProduct(const std::vector<int>& U,
-			      const std::vector<int>& V,
-			      std::vector<int>& W)
-    {
-      W[0]=U[1]*V[2]-U[2]*V[1];
-      W[1]=U[2]*V[0]-U[0]*V[2];
-      W[2]=U[0]*V[1]-U[1]*V[0];
+                              const std::vector<int>& V,
+                              std::vector<int>& W) {
+      W[0] = U[1] * V[2] - U[2] * V[1];
+      W[1] = U[2] * V[0] - U[0] * V[2];
+      W[2] = U[0] * V[1] - U[1] * V[0];
     }
-
 
     //===============================================================
     // iCrossProduct
@@ -109,13 +99,10 @@ namespace numodis
       \param W cross-product
     */
     //===============================================================
-    inline void iCrossProduct(const int U[],
-			      const int V[],
-			      int W[])
-    {
-      W[0]=U[1]*V[2]-U[2]*V[1];
-      W[1]=U[2]*V[0]-U[0]*V[2];
-      W[2]=U[0]*V[1]-U[1]*V[0];
+    inline void iCrossProduct(const int U[], const int V[], int W[]) {
+      W[0] = U[1] * V[2] - U[2] * V[1];
+      W[1] = U[2] * V[0] - U[0] * V[2];
+      W[2] = U[0] * V[1] - U[1] * V[0];
     }
 
     //===============================================================
@@ -129,11 +116,9 @@ namespace numodis
     */
     //===============================================================
     inline int iScalProduct(const std::vector<int>& U,
-			    const std::vector<int>& V)
-    {
-      int sum=0;
-      for(unsigned i=0; i!= U.size(); i++)
-	sum+=U[i]*V[i];
+                            const std::vector<int>& V) {
+      int sum = 0;
+      for (unsigned i = 0; i != U.size(); i++) sum += U[i] * V[i];
       return sum;
     }
 
@@ -147,15 +132,11 @@ namespace numodis
       \param V second vector
     */
     //===============================================================
-    inline std::vector<int> abs(const std::vector<int>& U)
-    {
-
+    inline std::vector<int> abs(const std::vector<int>& U) {
       std::vector<int> V(U);
-      for(unsigned i=0; i!=V.size(); i++)
-	V[i]=std::abs(V[i]);
+      for (unsigned i = 0; i != V.size(); i++) V[i] = std::abs(V[i]);
 
       return V;
-
     }
 
     //===============================================================
@@ -171,13 +152,11 @@ namespace numodis
     */
     //===============================================================
     inline double dTripleProduct(const Vect3& U,
-				 const Vect3& V,
-				 const Vect3& W)
-    {
-      return
-	(U[1]*V[2]-U[2]*V[1])*W[0]+
-	(U[2]*V[0]-U[0]*V[2])*W[1]+
-	(U[0]*V[1]-U[1]*V[0])*W[2];
+                                 const Vect3& V,
+                                 const Vect3& W) {
+      return (U[1] * V[2] - U[2] * V[1]) * W[0] +
+             (U[2] * V[0] - U[0] * V[2]) * W[1] +
+             (U[0] * V[1] - U[1] * V[0]) * W[2];
     }
 
     //===============================================================
@@ -187,8 +166,7 @@ namespace numodis
     //---------------------------------------------------------------
     /*! \param X a vector                                          */
     //===============================================================
-    inline double dNorm(const Vect3& X)
-    { return X.Norm(); }
+    inline double dNorm(const Vect3& X) { return X.Norm(); }
 
     //===============================================================
     // dNorm2
@@ -197,8 +175,7 @@ namespace numodis
     //---------------------------------------------------------------
     /*! \param X a vector                                          */
     //===============================================================
-    inline double dNorm2(const Vect3& X)
-    { return X.SquareLength(); }
+    inline double dNorm2(const Vect3& X) { return X.SquareLength(); }
 
     //===============================================================
     // dDistance
@@ -211,10 +188,8 @@ namespace numodis
       \return distance between X1 and X2
     */
     //===============================================================
-    inline double dDistance(const Vect3& X1,
-			    const Vect3& X2)
-    {
-      Vect3 X(X1-X2);
+    inline double dDistance(const Vect3& X1, const Vect3& X2) {
+      Vect3 X(X1 - X2);
       return X.Norm();
     }
 
@@ -229,8 +204,9 @@ namespace numodis
       \return Cube root of x
     */
     //===============================================================
-    inline double dCubeRoot(const double x)
-    { return (x >= 0.0 ? pow(x,1./3.) : -pow(-x,1./3.)); }
+    inline double dCubeRoot(const double x) {
+      return (x >= 0.0 ? pow(x, 1. / 3.) : -pow(-x, 1. / 3.));
+    }
 
     //===============================================================
     // dRound
@@ -249,8 +225,7 @@ namespace numodis
       \return the integer value closest to x
     */
     //===============================================================
-    inline int dRound(const double x)
-    {
+    inline int dRound(const double x) {
       return static_cast<int>(x > 0.0 ? x + 0.5 : x - 0.5);
     }
 
@@ -271,10 +246,9 @@ namespace numodis
       \return the smallest integer value less than x
     */
     //===============================================================
-    inline int dInt(const double x)
-    {
+    inline int dInt(const double x) {
       const auto ix = static_cast<int>(x);
-      return x >= 0.0 ? ix : -1+ix;
+      return x >= 0.0 ? ix : -1 + ix;
     }
 
     //===============================================================
@@ -288,23 +262,20 @@ namespace numodis
       \return 1 if (i=j), 0 otherwise
     */
     //===============================================================
-    inline int Kronecker(const unsigned i,const unsigned j)
-    { return (i==j); }
+    inline int Kronecker(const unsigned i, const unsigned j) {
+      return (i == j);
+    }
 
     //===============================================================
     // Abs<...>
     //---------------------------------------------------------------
     //! Calculate the absolute value
     //===============================================================
-    template<class TYPE>
-    struct Abs: public std::unary_function<TYPE,void>
-    {
-
+    template <class TYPE>
+    struct Abs : public std::unary_function<TYPE, void> {
       //! defines the absolute value function of x
       /*! \param x input value */
-      void operator()(TYPE& x)
-      { x = (x>=0 ? x : -x); }
-
+      void operator()(TYPE& x) { x = (x >= 0 ? x : -x); }
     };
 
     //===============================================================
@@ -317,46 +288,39 @@ namespace numodis
       \return -1, 0 or 1
     */
     //===============================================================
-    template<typename T> int Sgn(const T val)
-    { return (T(0) < val) - (val < T(0)); }
+    template <typename T>
+    int Sgn(const T val) {
+      return (T(0) < val) - (val < T(0));
+    }
 
     //===============================================================
     //                 NON-INLINE FUNCTIONS
     //===============================================================
 
-    double dUnitVector(const Vect3& U,
-		       Vect3& V);
+    double dUnitVector(const Vect3& U, Vect3& V);
 
     double dUnitVector(Vect3& U);
 
-    bool dCollinear(const Vect3& U,
-		    const Vect3& V);
+    bool dCollinear(const Vect3& U, const Vect3& V);
 
-    bool dCollinear(const Vect3& U,
-		    const Vect3& V,
-		    Vect3& W);
+    bool dCollinear(const Vect3& U, const Vect3& V, Vect3& W);
 
-    bool dOrthogonal(const Vect3& U,
-		     const Vect3& V,
-		     double* res);
+    bool dOrthogonal(const Vect3& U, const Vect3& V, double* res);
+
+    bool iCollinear(const std::vector<int>& U, const std::vector<int>& V);
 
     bool iCollinear(const std::vector<int>& U,
-		    const std::vector<int>& V);
-
-    bool iCollinear(const std::vector<int>& U,
-		    const std::vector<int>& V,
-		    int* pdirection);
+                    const std::vector<int>& V,
+                    int* pdirection);
 
     void iSortVector(std::vector<int>& U);
 
     void iSortVector3FirstValue(std::vector<int>& U);
 
-    int Epsilon(const unsigned i,
-		const unsigned j,
-		const unsigned k);
+    int Epsilon(const unsigned i, const unsigned j, const unsigned k);
 
-  } // end namespace math
+  }  // end namespace math
 
-} // end of namespace numodis
-  
-#endif // NUMEODIS_UTILITIES_HXX
+}  // end of namespace numodis
+
+#endif  // NUMEODIS_UTILITIES_HXX

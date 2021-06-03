@@ -421,7 +421,7 @@ namespace mfront {
 
   SupportedTypes::TypeSize getTypeSize(const VariableDescription& v) {
     return v.getTypeSize();
-  } // end of getTypeSize
+  }  // end of getTypeSize
 
   bool hasBounds(const VariableDescription& v) {
     return v.hasBounds();
@@ -455,7 +455,8 @@ namespace mfront {
                                const VariableDescription& v) {
     addSymbol(symbols, "d\u209C" + displayName(v), "d" + v.name);
     addSymbol(symbols, "\u2202\u209C" + displayName(v), "d" + v.name);
-    addSymbol(symbols, "\u2202" + displayName(v) + "\u2215\u2202t", "d" + v.name);
+    addSymbol(symbols, "\u2202" + displayName(v) + "\u2215\u2202t",
+              "d" + v.name);
   }  // end of getIncrementSymbol
 
   VariableDescriptionContainer::VariableDescriptionContainer() = default;
@@ -577,7 +578,7 @@ namespace mfront {
 
   SupportedTypes::TypeSize getTypeSize(const VariableDescriptionContainer& c) {
     return c.getTypeSize();
-  } // end of getTypeSize
+  }  // end of getTypeSize
 
   bool hasBounds(const VariableDescriptionContainer& c) {
     for (const auto& v : c) {
@@ -644,6 +645,6 @@ namespace mfront {
       o += getTypeSize(v);
     }
     tfel::raise("mfront::getOffset: no variable name '" + n + "'");
-  } // end of getOffset
+  }  // end of getOffset
 
 }  // end of namespace mfront

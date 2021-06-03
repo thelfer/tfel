@@ -23,8 +23,8 @@ namespace mfront {
 
   namespace bbrick {
 
-    std::vector<OptionDescription> BurletCailletaudKinematicHardeningRule::getOptions()
-        const {
+    std::vector<OptionDescription>
+    BurletCailletaudKinematicHardeningRule::getOptions() const {
       auto opts = KinematicHardeningRuleBase::getOptions();
       opts.emplace_back("D", "back-strain callback coefficient",
                         OptionDescription::MATERIALPROPERTY);
@@ -42,7 +42,8 @@ namespace mfront {
         const std::string& kid,
         const DataMap& d) {
       auto get_mp = [&bd, &dsl, &d, &fid, &kid](
-          BehaviourDescription::MaterialProperty& mp, const std::string& n) {
+                        BehaviourDescription::MaterialProperty& mp,
+                        const std::string& n) {
         const auto nid = KinematicHardeningRule::getVariableId(n, fid, kid);
         if (d.count(n) == 0) {
           tfel::raise(
@@ -87,13 +88,15 @@ namespace mfront {
         const std::string& kid,
         const bool b) const {
       const auto an = KinematicHardeningRule::getVariableId("a", fid, kid);
-      const auto Xn = KinematicHardeningRule::getVariableId("X", fid, kid)+"_";
+      const auto Xn =
+          KinematicHardeningRule::getVariableId("X", fid, kid) + "_";
       const auto Cn = KinematicHardeningRule::getVariableId("C", fid, kid);
       const auto Dn = KinematicHardeningRule::getVariableId("D", fid, kid);
       const auto en = KinematicHardeningRule::getVariableId("eta", fid, kid);
       const auto n = "n" + fid;
       auto df_ddp = "-" + n + "+(this->" + Dn + ")*((this->" + en + ")*" + an +
-                    "_+(1-this->" + en + ")*2*(" + an + "_|" + n + ")/3*" + n + ")";
+                    "_+(1-this->" + en + ")*2*(" + an + "_|" + n + ")/3*" + n +
+                    ")";
       auto c = std::string{};
       if (b) {
         c += "df" + an + "_ddp" + fid + " = " + df_ddp + ";\n";
@@ -104,13 +107,13 @@ namespace mfront {
       c += "(this->dp" + fid + ")*(df" + an + "_ddp" + fid + ");\n";
       if (b) {
         // opposite of the derivative of fa with respect to s
-        auto mdf_ds = "(this->dp" + fid +")*(";
+        auto mdf_ds = "(this->dp" + fid + ")*(";
         mdf_ds += "d" + n + "_ds" + fid;
         mdf_ds += "-(this->" + Dn + ")*(1-this->" + en + ")*2*(";
         mdf_ds += "(" + an + "_|" + n + ")*d" + n + "_ds" + fid + "+";
         mdf_ds += "(" + n + "^(" + an + "_|d" + n + "_ds" + fid + ")))/3)";
-        c += sp.generateImplicitEquationDerivatives(bd, "StrainStensor", an, "-" + mdf_ds,
-                                   fc.isNormalDeviatoric());
+        c += sp.generateImplicitEquationDerivatives(
+            bd, "StrainStensor", an, "-" + mdf_ds, fc.isNormalDeviatoric());
         // term specific to this back strain
         c += "df" + an + "_dd" + an + " += ";
         c += "(this->theta)*(this->dp" + fid + ")*(this->" + Dn + ")*(";
@@ -128,7 +131,8 @@ namespace mfront {
     }  // end of
     // BurletCailletaudKinematicHardeningRule::buildBackStrainImplicitEquations
 
-    BurletCailletaudKinematicHardeningRule::~BurletCailletaudKinematicHardeningRule() = default;
+    BurletCailletaudKinematicHardeningRule::
+        ~BurletCailletaudKinematicHardeningRule() = default;
 
   }  // end of namespace bbrick
 

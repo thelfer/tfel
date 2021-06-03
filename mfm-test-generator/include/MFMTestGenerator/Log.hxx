@@ -35,6 +35,6 @@ namespace mfmtg {
    */
   MFMTG_VISIBILITY_EXPORT void message(const std::string&);
 
-} // end of namespace mfmtg
+}  // end of namespace mfmtg
 
 #endif /* LIB_MFMTESTGENERATOR_LOG_HXX */

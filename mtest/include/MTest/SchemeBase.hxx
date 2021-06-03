@@ -155,9 +155,9 @@ namespace mtest {
      */
     virtual void setDynamicTimeStepScaling(const bool);
     /*!
-      * \brief set the maximal time step
-      * \param[in] v : value
-      */
+     * \brief set the maximal time step
+     * \param[in] v : value
+     */
     virtual void setMaximalTimeStep(const real);
     /*!
      * \brief set the minimal time step

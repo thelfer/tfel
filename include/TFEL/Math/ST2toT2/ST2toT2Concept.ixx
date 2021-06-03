@@ -20,16 +20,15 @@
 namespace tfel::math {
 
   template <class T>
-  TFEL_MATH_INLINE numeric_type<T> ST2toT2Concept<T>::
-  operator()(const unsigned short i, const unsigned short j) const {
+  TFEL_MATH_INLINE numeric_type<T> ST2toT2Concept<T>::operator()(
+      const unsigned short i, const unsigned short j) const {
     return static_cast<const T&>(*this).operator()(i, j);
   }  // end of ST2toT2Concept<T>::operator()
 
   template <typename ST2toT2Type>
   typename std::enable_if<
       implementsST2toT2Concept<ST2toT2Type>(),
-      typename tfel::typetraits::AbsType<
-          numeric_type<ST2toT2Type>>::type>::type
+      typename tfel::typetraits::AbsType<numeric_type<ST2toT2Type>>::type>::type
   abs(const ST2toT2Type& v) {
     using NumType = numeric_type<ST2toT2Type>;
     using AbsNumType = typename tfel::typetraits::AbsType<NumType>::type;

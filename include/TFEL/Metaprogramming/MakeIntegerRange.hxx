@@ -34,8 +34,8 @@ namespace tfel::meta {
    */
   template <typename IntegerType, IntegerType Value, IntegerType... Ints>
   struct ShiftIntegerSequence<IntegerType,
-                          Value,
-                          std::integer_sequence<IntegerType, Ints...>> {
+                              Value,
+                              std::integer_sequence<IntegerType, Ints...>> {
     //! \brief the resulting integer sequence
     using type = std::integer_sequence<IntegerType, Value + Ints...>;
   };

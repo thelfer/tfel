@@ -71,8 +71,7 @@ namespace mfront {
       const BehaviourDescription& bd, const std::string& fs) {
     auto throw_if = [](const bool c, const std::string& msg) {
       tfel::raise_if(c,
-                     "checkFiniteStrainStrategyDefinitionConsistency: " +
-                         msg);
+                     "checkFiniteStrainStrategyDefinitionConsistency: " + msg);
     };
     checkFiniteStrainStrategy(fs);
     if (bd.isStrainMeasureDefined()) {
@@ -137,7 +136,7 @@ namespace mfront {
         tfel::raise("getFiniteStrainStrategy: unsupported strain measure");
       }
     }
-    if(!bd.hasAttribute(LSDYNAInterface::finiteStrainStrategy)){
+    if (!bd.hasAttribute(LSDYNAInterface::finiteStrainStrategy)) {
       tfel::raise("getFiniteStrainStrategy: no finite strain strategy defined");
     }
     return bd.getAttribute<std::string>(LSDYNAInterface::finiteStrainStrategy);
@@ -149,20 +148,19 @@ namespace mfront {
 
   static std::string getOrthotropyManagementPolicy(
       const BehaviourDescription& mb) {
-      return mb.getAttribute<std::string>(
-          LSDYNAInterface::orthotropyManagementPolicy);
+    return mb.getAttribute<std::string>(
+        LSDYNAInterface::orthotropyManagementPolicy);
   }  // end of getOrthotropyManagementPolicy
 
   static bool usesMFrontOrthotropyManagementPolicy(
       const BehaviourDescription& mb) {
-      if (hasOrthotropyManagementPolicy(mb)) {
-        return getOrthotropyManagementPolicy(mb) == "MFront";
+    if (hasOrthotropyManagementPolicy(mb)) {
+      return getOrthotropyManagementPolicy(mb) == "MFront";
     }
     return false;
   }  // end of usesMFrontOrthotropyManagementPolicy
 
-  static void writeLSDYNAArguments(std::ostream& out,
-                                   const bool f) {
+  static void writeLSDYNAArguments(std::ostream& out, const bool f) {
     if (f) {
       out << "(const lsdyna::LSDYNAInt *const nblock,\n"
           << "const lsdyna::LSDYNAInt *const ndir,\n"
@@ -185,8 +183,8 @@ namespace mfront {
         << "const int)";
   }  // end of writeLSDYNAArguments
 
-  const char* const
-  LSDYNAInterface::finiteStrainStrategy = "lsdyna::finiteStrainStrategy";
+  const char* const LSDYNAInterface::finiteStrainStrategy =
+      "lsdyna::finiteStrainStrategy";
 
   const char* const LSDYNAInterface::orthotropyManagementPolicy =
       "lsdyna::orthotropyManagementPolicy";
@@ -230,7 +228,7 @@ namespace mfront {
   std::string LSDYNAInterface::getFunctionNameBasis(
       const std::string& name) const {
     return name;
-  } // end of LSDYNAInterface::getFunctionName
+  }  // end of LSDYNAInterface::getFunctionName
 
   std::string LSDYNAInterface::getFunctionNameForHypothesis(
       const std::string& name, const Hypothesis h) const {
@@ -281,12 +279,11 @@ namespace mfront {
     d.headers.push_back("MFront/LSDYNA/lsdyna" + name + ".hxx");
     insert_if(l.link_directories,
               "$(shell " + tfel_config + " --library-path)");
-    insert_if(l.link_libraries,
-              tfel::getLibraryInstallName("LSDYNAInterface"));
+    insert_if(l.link_libraries, tfel::getLibraryInstallName("LSDYNAInterface"));
 #if __cplusplus >= 201703L
     insert_if(l.link_libraries, "$(shell " + tfel_config +
-                                         " --library-dependency "
-                                         "--material --mfront-profiling)");
+                                    " --library-dependency "
+                                    "--material --mfront-profiling)");
 #else  /* __cplusplus < 201703L */
     insert_if(l.link_libraries,
               "$(shell " + tfel_config +
@@ -308,7 +305,7 @@ namespace mfront {
     auto throw_if = [](const bool b, const std::string& m) {
       tfel::raise_if(b, "LSDYNAInterface::endTreatment: " + m);
     };
-//    checkOrthotropyManagementPolicyConsistency(mb);
+    //    checkOrthotropyManagementPolicyConsistency(mb);
     throw_if(!((mb.getBehaviourType() ==
                 BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) ||
                (mb.getBehaviourType() ==
@@ -336,7 +333,7 @@ namespace mfront {
     //
     //     out << "/*!\n"
     //         << "* \\file   " << fname << '\n'
-    //         << "* \\brief  This file declares the lsdyna 
+    //         << "* \\brief  This file declares the lsdyna
     //         interface
     //         for "
     //            "the "
@@ -409,7 +406,7 @@ namespace mfront {
     //
     //     out << "/*!\n"
     //         << "* \\file   " << fname << '\n'
-    //         << "* \\brief  This file implements the lsdyna 
+    //         << "* \\brief  This file implements the lsdyna
     //         interface
     //         for "
     //            "the "
@@ -724,9 +721,7 @@ namespace mfront {
   }  // end of LSDYNAInterface::writeBehaviourDataMainVariablesSetters
 
   void LSDYNAInterface::writeBehaviourDataGradientSetter(
-      std::ostream&,
-      const Gradient&,
-      const SupportedTypes::TypeSize) const {
+      std::ostream&, const Gradient&, const SupportedTypes::TypeSize) const {
   }  // end of LSDYNAInterface::writeBehaviourDataGradientSetter
 
   void LSDYNAInterface::writeBehaviourDataThermodynamicForceSetter(
@@ -769,9 +764,7 @@ namespace mfront {
   }  // end of writeIntegrationDataMainVariablesSetters
 
   void LSDYNAInterface::writeIntegrationDataGradientSetter(
-      std::ostream&,
-      const Gradient&,
-      const SupportedTypes::TypeSize) const {
+      std::ostream&, const Gradient&, const SupportedTypes::TypeSize) const {
   }  // end of LSDYNAInterface::writeIntegrationDataGradientSetter
 
   void LSDYNAInterface::exportMechanicalData(
@@ -882,7 +875,7 @@ namespace mfront {
   std::string LSDYNAInterface::getModellingHypothesisTest(
       const Hypothesis) const {
     return {};
-  } // end of LSDYNAInterface::getModellingHypothesisTest
+  }  // end of LSDYNAInterface::getModellingHypothesisTest
 
   void LSDYNAInterface::writeMTestFileGeneratorSetModellingHypothesis(
       std::ostream&) const {

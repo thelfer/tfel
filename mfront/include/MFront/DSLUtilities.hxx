@@ -41,7 +41,8 @@ namespace mfront {
    * \param[out] os: output stream
    * \param[in]  n:  name of the law
    * \param[in]  mpd:  material property description
-   */ MFRONT_VISIBILITY_EXPORT void writeVariablesNamesSymbol(
+   */
+  MFRONT_VISIBILITY_EXPORT void writeVariablesNamesSymbol(
       std::ostream&,
       const std::string&,
       const mfront::MaterialPropertyDescription&);
@@ -52,8 +53,9 @@ namespace mfront {
    * \param[in]  n:  name of the law
    * \param[in]  vn:  name of the variable
    * \param[in]  bt:  type of bounds (physical or not)
-   * \param[in]  b:  bound description 
-   */ MFRONT_VISIBILITY_EXPORT void writeBoundsSymbol(
+   * \param[in]  b:  bound description
+   */
+  MFRONT_VISIBILITY_EXPORT void writeBoundsSymbol(
       std::ostream&,
       const std::string&,
       const std::string&,
@@ -65,7 +67,8 @@ namespace mfront {
    * \param[out] os: output stream
    * \param[in]  n:  name of the law
    * \param[in]  mpd:  material property description
-   */ MFRONT_VISIBILITY_EXPORT void writeVariablesBoundsSymbols(
+   */
+  MFRONT_VISIBILITY_EXPORT void writeVariablesBoundsSymbols(
       std::ostream&,
       const std::string&,
       const mfront::MaterialPropertyDescription&);

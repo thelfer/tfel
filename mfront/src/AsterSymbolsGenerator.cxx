@@ -22,12 +22,13 @@ namespace mfront {
 
   AsterSymbolsGenerator::AsterSymbolsGenerator() = default;
 
-  void AsterSymbolsGenerator::writeAdditionalSymbols(std::ostream&,
-							   const StandardBehaviourInterface&,
-							   const BehaviourDescription&,
-							   const FileDescription&,
-							   const std::string&,
-							   const Hypothesis) const {
+  void AsterSymbolsGenerator::writeAdditionalSymbols(
+      std::ostream&,
+      const StandardBehaviourInterface&,
+      const BehaviourDescription&,
+      const FileDescription&,
+      const std::string&,
+      const Hypothesis) const {
   }  // end of AsterSymbolsGenerator::writeAdditionalSymbols
 
   void AsterSymbolsGenerator::writeBehaviourTypeSymbols(
@@ -36,15 +37,19 @@ namespace mfront {
       const BehaviourDescription& mb,
       const std::string& name) const {
     auto throw_if = [](const bool b, const std::string& m) {
-      tfel::raise_if(b, "AsterSymbolsGenerator::writeBehaviourTypeSymbols: " + m);
+      tfel::raise_if(b,
+                     "AsterSymbolsGenerator::writeBehaviourTypeSymbols: " + m);
     };
-    out << "MFRONT_SHAREDOBJ unsigned short "
-        << i.getFunctionNameBasis(name) << "_BehaviourType = ";
-    if (mb.getBehaviourType() == BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) {
+    out << "MFRONT_SHAREDOBJ unsigned short " << i.getFunctionNameBasis(name)
+        << "_BehaviourType = ";
+    if (mb.getBehaviourType() ==
+        BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) {
       out << "1u;\n\n";
-    } else if (mb.getBehaviourType() == BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR) {
+    } else if (mb.getBehaviourType() ==
+               BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR) {
       out << "2u;\n\n";
-    } else if (mb.getBehaviourType() == BehaviourDescription::COHESIVEZONEMODEL) {
+    } else if (mb.getBehaviourType() ==
+               BehaviourDescription::COHESIVEZONEMODEL) {
       out << "3u;\n\n";
     } else {
       throw_if(true, "unsupported behaviour type");
@@ -57,7 +62,8 @@ namespace mfront {
       const BehaviourDescription& mb,
       const std::string& name) const {
     auto throw_if = [](const bool b, const std::string& m) {
-      tfel::raise_if(b, "AsterSymbolsGenerator::writeBehaviourKinematicSymbols: " + m);
+      tfel::raise_if(
+          b, "AsterSymbolsGenerator::writeBehaviourKinematicSymbols: " + m);
     };
     out << "MFRONT_SHAREDOBJ unsigned short " << i.getFunctionNameBasis(name)
         << "_BehaviourKinematic = ";
@@ -77,9 +83,11 @@ namespace mfront {
       } else {
         out << "0u;\n\n";
       }
-    } else if (mb.getBehaviourType() == BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR) {
+    } else if (mb.getBehaviourType() ==
+               BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR) {
       out << "3u;\n\n";
-    } else if (mb.getBehaviourType() == BehaviourDescription::COHESIVEZONEMODEL) {
+    } else if (mb.getBehaviourType() ==
+               BehaviourDescription::COHESIVEZONEMODEL) {
       out << "2u;\n\n";
     } else {
       throw_if(true, "unsupported behaviour type");
@@ -95,17 +103,18 @@ namespace mfront {
     auto throw_if = [](const bool c, const std::string& m) {
       tfel::raise_if(c, "AsterSymbolsGenerator::writeSpecificSymbols: " + m);
     };
-    out << "MFRONT_SHAREDOBJ unsigned short "
-        << i.getFunctionNameBasis(name) << "_savesTangentOperator = ";
+    out << "MFRONT_SHAREDOBJ unsigned short " << i.getFunctionNameBasis(name)
+        << "_savesTangentOperator = ";
     if (bd.getAttribute<bool>(AsterInterface::saveTangentOperator, false)) {
       out << "1";
     } else {
       out << "0";
     }
     out << ";\n";
-    if (bd.getBehaviourType() == BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR) {
-      out << "MFRONT_SHAREDOBJ unsigned short "
-          << i.getFunctionNameBasis(name) << "_FiniteStrainFormulation = ";
+    if (bd.getBehaviourType() ==
+        BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR) {
+      out << "MFRONT_SHAREDOBJ unsigned short " << i.getFunctionNameBasis(name)
+          << "_FiniteStrainFormulation = ";
       if (!bd.hasAttribute(AsterInterface::finiteStrainFormulation)) {
         out << "1u;\n";
       } else {
@@ -123,7 +132,7 @@ namespace mfront {
     }
   }  // end of AsterSymbolsGenerator::writeSpecificSymbols
 
-  bool AsterSymbolsGenerator::handleStrainMeasure() const{
+  bool AsterSymbolsGenerator::handleStrainMeasure() const {
     return false;
   }  // end of AsterSymbolsGenerator::handleStrainMeasure
 

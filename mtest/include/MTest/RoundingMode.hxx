@@ -1,23 +1,23 @@
 /*!
  * \file   RoundingMode.hxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   09 mai 2017
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_MTEST_ROUNDINGMODE_HXX
 #define LIB_MTEST_ROUNDINGMODE_HXX
 
-#include<string>
-#include"MTest/Config.hxx"
+#include <string>
+#include "MTest/Config.hxx"
 
-namespace mtest{
+namespace mtest {
 
   /*!
    * \brief set the rounding mode to the specified mode
@@ -35,7 +35,7 @@ namespace mtest{
    * \param[in] m: rounding mode
    */
   MTEST_VISIBILITY_EXPORT void setRoundingMode();
-  
-} // end of namespace mtest
+
+}  // end of namespace mtest
 
 #endif /* LIB_MTEST_ROUNDINGMODE_HXX */

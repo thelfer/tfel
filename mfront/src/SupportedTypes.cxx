@@ -180,12 +180,14 @@ namespace mfront {
     return flags.find(t) != flags.end();
   }  // end of SupportedTypes::isSupportedType
 
-  SupportedTypes::TypeFlag SupportedTypes::getTypeFlag(const std::string& name) {
+  SupportedTypes::TypeFlag SupportedTypes::getTypeFlag(
+      const std::string& name) {
     const auto& flags = SupportedTypes_getFlags();
     const auto p = flags.find(name);
     tfel::raise_if(p == flags.end(),
                    "SupportedTypes::getTypeTag: "
-                   "'" + name + "' is not a supported type.");
+                   "'" +
+                       name + "' is not a supported type.");
     return p->second;
   }
 

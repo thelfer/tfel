@@ -54,7 +54,7 @@ namespace mfront {
                      "the behaviour must be orthotropic");
       // this is captured for gcc 4.7.2
       auto get_l = [&dsl, &bd, &d, &r, &id](const std::string& n,
-					    const char* const en) {
+                                            const char* const en) {
         if (d.count(n) == 0) {
           tfel::raise("Barlat2004StressCriterion::initialize: entry '" +
                       std::string(n) + "' is not defined");
@@ -320,9 +320,11 @@ namespace mfront {
     }  // end of Barlat2004StressCriterion::isNormalDeviatoric
 
     StressCriterion::PorosityEffectOnFlowRule
-    Barlat2004StressCriterion::getPorosityEffectOnEquivalentPlasticStrain() const {
+    Barlat2004StressCriterion::getPorosityEffectOnEquivalentPlasticStrain()
+        const {
       return StressCriterion::NO_POROSITY_EFFECT_ON_EQUIVALENT_PLASTIC_STRAIN;
-    }  // end of Barlat2004StressCriterion::getPorosityEffectOnEquivalentPlasticStrain()
+    }  // end of
+       // Barlat2004StressCriterion::getPorosityEffectOnEquivalentPlasticStrain()
 
     std::string Barlat2004StressCriterion::getTemplateParameters() const {
       if (this->eigen_solver.empty()) {

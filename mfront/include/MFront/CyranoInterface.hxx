@@ -36,14 +36,15 @@ namespace mfront {
 
     CyranoInterface();
 
-    void writeGetOutOfBoundsPolicyFunctionImplementation(std::ostream&,
-                                                         const std::string&) const override;
+    void writeGetOutOfBoundsPolicyFunctionImplementation(
+        std::ostream&, const std::string&) const override;
     /*!
      * write interface specific includes
      * \param[in] out : output file
      * \param[in] mb  : mechanical behaviour description
      */
-    void writeInterfaceSpecificIncludes(std::ostream&, const BehaviourDescription&) const override;
+    void writeInterfaceSpecificIncludes(
+        std::ostream&, const BehaviourDescription&) const override;
     /*!
      * \param[in,out] bd: behaviour description
      * \param[in] k:  keyword treated
@@ -54,22 +55,25 @@ namespace mfront {
      * treated by the interface. The second entry is an iterator after
      * the last token treated.
      */
-    std::pair<bool, tokens_iterator> treatKeyword(BehaviourDescription&,
-                                                  const std::string&,
-                                                  const std::vector<std::string>&,
-                                                  tokens_iterator,
-                                                  const tokens_iterator) override;
+    std::pair<bool, tokens_iterator> treatKeyword(
+        BehaviourDescription&,
+        const std::string&,
+        const std::vector<std::string>&,
+        tokens_iterator,
+        const tokens_iterator) override;
     /*!
      * \brief write output files
      * \param[in] mb        : mechanical behaviour description
      * \param[in] fd        : mfront file description
      */
-    void endTreatment(const BehaviourDescription&, const FileDescription&) const override;
+    void endTreatment(const BehaviourDescription&,
+                      const FileDescription&) const override;
     /*!
      * \param[out] d  : target description
      * \param[out] bd : behaviour description
      */
-    void getTargetsDescription(TargetsDescription&, const BehaviourDescription&) override;
+    void getTargetsDescription(TargetsDescription&,
+                               const BehaviourDescription&) override;
     //! destructor
     ~CyranoInterface() override;
 
@@ -84,11 +88,14 @@ namespace mfront {
 
     std::string getBehaviourName(const std::string&, const std::string&) const;
 
-    virtual std::string getUmatFunctionName(const std::string&, const std::string&) const;
+    virtual std::string getUmatFunctionName(const std::string&,
+                                            const std::string&) const;
 
-    void writeMTestFileGeneratorSetModellingHypothesis(std::ostream&) const override;
+    void writeMTestFileGeneratorSetModellingHypothesis(
+        std::ostream&) const override;
 
-    virtual void writeCyranoFunctionDeclaration(std::ostream&, const std::string&) const;
+    virtual void writeCyranoFunctionDeclaration(std::ostream&,
+                                                const std::string&) const;
 
     /*!
      * \brief write the standard cyrano function
@@ -103,18 +110,16 @@ namespace mfront {
                                              const BehaviourDescription&) const;
 
     /*!
-     * \brief write the cyrano function for behaviour based on the Hencky strain measure.
-     * The kinematic choosen is the ptest finite strain kinematic (eto-pk1), which is also used by
-     * `Cyrano`.
-     * \param[in] out : ouptut file
+     * \brief write the cyrano function for behaviour based on the Hencky strain
+     * measure. The kinematic choosen is the ptest finite strain kinematic
+     * (eto-pk1), which is also used by `Cyrano`. \param[in] out : ouptut file
      * \param[in] n   : name of the behaviour as defined by interface
      *                  (generally taking into account the material
      *                   and the behaviour name)
      * \param[in] mb  : behaviour description
      */
-    virtual void writeLogarithmicStrainCyranoFunction(std::ostream&,
-                                                      const std::string&,
-                                                      const BehaviourDescription&) const;
+    virtual void writeLogarithmicStrainCyranoFunction(
+        std::ostream&, const std::string&, const BehaviourDescription&) const;
 
     /*!
      * \brief write a  specialisation of the CyranoTraits class

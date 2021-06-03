@@ -24,7 +24,7 @@ namespace tfel::math {
   vector<ValueType>::vector(const typename vector::size_type s,
                             const ValueType& v) {
     this->resize(s, v);
-  } // end of vector
+  }  // end of vector
 
   template <typename ValueType>
   template <typename InputIterator>
@@ -65,10 +65,9 @@ namespace tfel::math {
 
   template <typename ValueType>
   template <typename InputIterator>
-  void vector<ValueType>::insert(
-      const typename vector::const_iterator p,
-      const InputIterator b,
-      const InputIterator e) {
+  void vector<ValueType>::insert(const typename vector::const_iterator p,
+                                 const InputIterator b,
+                                 const InputIterator e) {
     using IndexingPolicy = typename vector::indexing_policy;
     const auto pos = p - this->begin();
     this->data_values.insert(this->data_values.begin() + pos, b, e);
@@ -83,7 +82,7 @@ namespace tfel::math {
     static_cast<IndexingPolicy&>(*this) =
         IndexingPolicy{this->data_values.size()};
     static_cast<IndexingPolicy&>(v) = IndexingPolicy{v.data_values.size()};
-  } // end of swap
+  }  // end of swap
 
   template <typename ValueType>
   vector<ValueType>::~vector() noexcept = default;

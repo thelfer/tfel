@@ -1,14 +1,14 @@
-/*! 
+/*!
  * \file   mfront/include/MFront/BehaviourSymmetryType.hxx
  * \brief
  * \author Thomas Helfer
  * \brief  10 avril 2014
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_MFRONT_BEHAVIOURSYMMETRYTYPE_HXX
@@ -19,12 +19,11 @@ namespace mfront {
   /*!
    * \brief symmetry of a behaviour
    */
-  enum BehaviourSymmetryType{
+  enum BehaviourSymmetryType {
     ISOTROPIC,
     ORTHOTROPIC
-  }; // end of enum BehaviourSymmetryType
+  };  // end of enum BehaviourSymmetryType
 
-} // end of namespace mfront
+}  // end of namespace mfront
 
 #endif /* LIB_MFRONT_BEHAVIOURSYMMETRYTYPE_HXX */
-

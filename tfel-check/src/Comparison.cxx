@@ -3,12 +3,12 @@
  *
  * \date 12 juin 2013
  * \author Remy Petkantchin
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #include <string>
@@ -16,72 +16,64 @@
 
 #include "TFEL/Check/Comparison.hxx"
 
-namespace tfel{
+namespace tfel {
 
-  namespace check{
+  namespace check {
 
     Comparison::Comparison()
-      : success(true),
-	prec(0.),
-	precision2(0.),
-	interpolationIsConform(false) {
-    }
+        : success(true),
+          prec(0.),
+          precision2(0.),
+          interpolationIsConform(false) {}
 
     Comparison::Comparison(const std::shared_ptr<Column> c1_,
-			   const std::shared_ptr<Column> c2_,
-			   const double prec_,
-			   const double precision2_,
-			   const std::shared_ptr<Column> ci_,
-			   const std::string it_,
-			   const bool ic_,
-			   const std::shared_ptr<Column> cii_,
-			   const std::shared_ptr<Interpolation> ii_)
-      : success(true),
-	c1(c1_),
-	c2(c2_),
-	prec(prec_),
-	precision2(precision2_),
-	ci(ci_),
-	interpolationType(it_),
-	interpolationIsConform(ic_),
-	colIntegralInterpolated(cii_),
-	integralInterpolation(ii_) {
-    }
+                           const std::shared_ptr<Column> c2_,
+                           const double prec_,
+                           const double precision2_,
+                           const std::shared_ptr<Column> ci_,
+                           const std::string it_,
+                           const bool ic_,
+                           const std::shared_ptr<Column> cii_,
+                           const std::shared_ptr<Interpolation> ii_)
+        : success(true),
+          c1(c1_),
+          c2(c2_),
+          prec(prec_),
+          precision2(precision2_),
+          ci(ci_),
+          interpolationType(it_),
+          interpolationIsConform(ic_),
+          colIntegralInterpolated(cii_),
+          integralInterpolation(ii_) {}
 
-    bool Comparison::hasSucceed() const {
-      return this->success;
-    }
+    bool Comparison::hasSucceed() const { return this->success; }
 
-    std::string Comparison::getMsgLog() const {
-      return this->msgLog;
-    }
+    std::string Comparison::getMsgLog() const { return this->msgLog; }
 
     void Comparison::setParameters(const std::shared_ptr<Column> c1_,
-				   const std::shared_ptr<Column> c2_,
-				   const double prec_,
-				   const double precision2_,
-				   const std::shared_ptr<Column> ci_,
-				   const std::string it_,
-				   const bool ic_,
-				   const std::shared_ptr<Column> cii_,
-				   const std::shared_ptr<Interpolation> ii_) {
+                                   const std::shared_ptr<Column> c2_,
+                                   const double prec_,
+                                   const double precision2_,
+                                   const std::shared_ptr<Column> ci_,
+                                   const std::string it_,
+                                   const bool ic_,
+                                   const std::shared_ptr<Column> cii_,
+                                   const std::shared_ptr<Interpolation> ii_) {
       this->c1 = c1_;
       this->c2 = c2_;
       this->prec = prec_;
       this->precision2 = precision2_;
       this->ci = ci_;
-      this->interpolationType       = it_;
-      this->interpolationIsConform  = ic_;
+      this->interpolationType = it_;
+      this->interpolationIsConform = ic_;
       this->colIntegralInterpolated = cii_;
-      this->integralInterpolation   = ii_;
+      this->integralInterpolation = ii_;
     }
 
-    const std::string& Comparison::getName() const {
-      return this->name;
-    }
+    const std::string& Comparison::getName() const { return this->name; }
 
     Comparison::~Comparison() = default;
-  
-  } // end of namespace check
 
-} // end of namespace tfel
+  }  // end of namespace check
+
+}  // end of namespace tfel

@@ -205,9 +205,11 @@ namespace mfront {
     }  // end of Hosford1972StressCriterion::isNormalDeviatoric
 
     StressCriterion::PorosityEffectOnFlowRule
-    Hosford1972StressCriterion::getPorosityEffectOnEquivalentPlasticStrain() const {
+    Hosford1972StressCriterion::getPorosityEffectOnEquivalentPlasticStrain()
+        const {
       return StressCriterion::NO_POROSITY_EFFECT_ON_EQUIVALENT_PLASTIC_STRAIN;
-    }  // end of Hosford1972StressCriterion::getPorosityEffectOnEquivalentPlasticStrain()
+    }  // end of
+       // Hosford1972StressCriterion::getPorosityEffectOnEquivalentPlasticStrain()
 
     Hosford1972StressCriterion::~Hosford1972StressCriterion() = default;
 

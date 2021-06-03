@@ -43,7 +43,11 @@ namespace tfel::math {
    * \see   ComputeBinaryOperationResult
    */
   template <unsigned short N, typename T, typename Scal>
-  class ComputeBinaryOperationResult<TensorTag, ScalarTag, tensor<N, T>, Scal, OpMult> {
+  class ComputeBinaryOperationResult<TensorTag,
+                                     ScalarTag,
+                                     tensor<N, T>,
+                                     Scal,
+                                     OpMult> {
     typedef result_type<T, Scal, OpMult> ResBase_;
 
    public:
@@ -58,7 +62,11 @@ namespace tfel::math {
    * \see   ComputeBinaryOperationResult
    */
   template <unsigned short N, typename T, typename Scal>
-  class ComputeBinaryOperationResult<TensorTag, ScalarTag, tensor<N, T>, Scal, OpDiv> {
+  class ComputeBinaryOperationResult<TensorTag,
+                                     ScalarTag,
+                                     tensor<N, T>,
+                                     Scal,
+                                     OpDiv> {
     typedef result_type<T, Scal, OpDiv> ResBase_;
 
    public:
@@ -73,7 +81,11 @@ namespace tfel::math {
    * \see   ComputeBinaryOperationResult
    */
   template <typename Scal, unsigned short N, typename T>
-  class ComputeBinaryOperationResult<ScalarTag, TensorTag, Scal, tensor<N, T>, OpMult> {
+  class ComputeBinaryOperationResult<ScalarTag,
+                                     TensorTag,
+                                     Scal,
+                                     tensor<N, T>,
+                                     OpMult> {
     typedef result_type<Scal, T, OpMult> ResBase_;
 
    public:
@@ -229,9 +241,8 @@ namespace tfel::math {
   template <unsigned short N, typename T, typename T2>
   class ResultType<tensor<N, T>, tensor<N, T2>, OpDotProduct> {
     typedef result_type<T, T2, OpMult> ResBase_;
-    static const bool isValid = isScalar<T>() &&
-                                isScalar<T2>() &&
-                                isInvalid<ResBase_>();
+    static const bool isValid =
+        isScalar<T>() && isScalar<T2>() && isInvalid<ResBase_>();
 
    public:
     using type = std::conditional_t<isValid, tfel::meta::InvalidType, ResBase_>;

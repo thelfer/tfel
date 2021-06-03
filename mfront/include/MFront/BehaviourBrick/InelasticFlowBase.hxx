@@ -71,7 +71,8 @@ namespace mfront {
         /*!
          * \brief default choice. The effect of the porosity depends
          * on the stress criterion (see the
-         * `StressCriterion::getPorosityEffectOnEquivalentPlasticStrain` method).
+         * `StressCriterion::getPorosityEffectOnEquivalentPlasticStrain`
+         * method).
          */
         UNDEFINED_POROSITY_EFFECT_ON_EQUIVALENT_PLASTIC_STRAIN,
         /*!
@@ -86,7 +87,8 @@ namespace mfront {
         STANDARD_POROSITY_CORRECTION_ON_EQUIVALENT_PLASTIC_STRAIN
       };
       //! \return the effect of the porosity on the flow rule.
-      virtual PorosityEffectOnFlowRule getPorosityEffectOnEquivalentPlasticStrain() const;
+      virtual PorosityEffectOnFlowRule
+      getPorosityEffectOnEquivalentPlasticStrain() const;
       //! \return if this flow contributes to porosity growth
       virtual bool contributesToPorosityGrowth() const;
       /*!

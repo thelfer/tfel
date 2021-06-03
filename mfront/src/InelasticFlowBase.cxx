@@ -193,7 +193,9 @@ namespace mfront {
           }
         } else if (e.first == "porosity_effect_on_equivalent_plastic_strain") {
           if (!e.second.is<std::string>()) {
-            raise("'porosity_effect_on_equivalent_plastic_strain' is not a string");
+            raise(
+                "'porosity_effect_on_equivalent_plastic_strain' is not a "
+                "string");
           }
           const auto& pe = e.second.get<std::string>();
           if ((pe == "StandardPorosityEffect") ||
@@ -205,7 +207,8 @@ namespace mfront {
                 NO_POROSITY_EFFECT_ON_EQUIVALENT_PLASTIC_STRAIN;
           } else if (pe != "Undefined") {
             raise(
-                "invalid value of 'porosity_effect_on_equivalent_plastic_strain'. Expected "
+                "invalid value of "
+                "'porosity_effect_on_equivalent_plastic_strain'. Expected "
                 "'StandardPorosityEffect' (or equivalently "
                 "'standard_porosity_effect') or 'None' (or equivalently 'none' "
                 "or 'false'), but got '" +
@@ -269,8 +272,7 @@ namespace mfront {
       if (this->cosine_threshold < 1.5) {
         addLocalVariable(bd, "Stensor", "np" + id);
         CodeBlock init;
-        init.code = "this->np" + id +
-                    " = Stensor(real(0));\n";
+        init.code = "this->np" + id + " = Stensor(real(0));\n";
         bd.setCode(uh, BehaviourData::BeforeInitializeLocalVariables, init,
                    BehaviourData::CREATEORAPPEND, BehaviourData::AT_BEGINNING);
       }
@@ -540,8 +542,9 @@ namespace mfront {
           kid = decltype(khrs.size()){};
           for (const auto& khr : khrs) {
             ib.code += khr->generateImplicitEquationDerivatives(
-                "eel", "- (1 - " + f_ + ") * (this->dp" + id + ") * dn" + id +
-                           "_ds" + id,
+                "eel",
+                "- (1 - " + f_ + ") * (this->dp" + id + ") * dn" + id + "_ds" +
+                    id,
                 id, std::to_string(kid));
             ++kid;
           }
@@ -858,32 +861,41 @@ namespace mfront {
               "InelasticFlowBase::getPorosityEffectOnEquivalentPlasticStrain:"
               "uninitialised flow");
         }
-        const auto scpe = this->sc->getPorosityEffectOnEquivalentPlasticStrain();
-        if ((scpe != StressCriterion::NO_POROSITY_EFFECT_ON_EQUIVALENT_PLASTIC_STRAIN) &&
+        const auto scpe =
+            this->sc->getPorosityEffectOnEquivalentPlasticStrain();
+        if ((scpe != StressCriterion::
+                         NO_POROSITY_EFFECT_ON_EQUIVALENT_PLASTIC_STRAIN) &&
             (scpe !=
-             StressCriterion::STANDARD_POROSITY_CORRECTION_ON_EQUIVALENT_PLASTIC_STRAIN)) {
+             StressCriterion::
+                 STANDARD_POROSITY_CORRECTION_ON_EQUIVALENT_PLASTIC_STRAIN)) {
           tfel::raise(
               "InelasticFlowBase::getPorosityEffectOnEquivalentPlasticStrain:"
               "unsupported porosity effect defined by the stress criterion");
         }
         if (this->fc != nullptr) {
-          const auto fcpe = this->fc->getPorosityEffectOnEquivalentPlasticStrain();
-          if ((fcpe != StressCriterion::NO_POROSITY_EFFECT_ON_EQUIVALENT_PLASTIC_STRAIN) &&
+          const auto fcpe =
+              this->fc->getPorosityEffectOnEquivalentPlasticStrain();
+          if ((fcpe != StressCriterion::
+                           NO_POROSITY_EFFECT_ON_EQUIVALENT_PLASTIC_STRAIN) &&
               (fcpe !=
-               StressCriterion::STANDARD_POROSITY_CORRECTION_ON_EQUIVALENT_PLASTIC_STRAIN)) {
+               StressCriterion::
+                   STANDARD_POROSITY_CORRECTION_ON_EQUIVALENT_PLASTIC_STRAIN)) {
             tfel::raise(
                 "InelasticFlowBase::getPorosityEffectOnEquivalentPlasticStrain:"
                 "unsupported porosity effect defined by the flow criterion");
           }
           if ((scpe ==
-               StressCriterion::STANDARD_POROSITY_CORRECTION_ON_EQUIVALENT_PLASTIC_STRAIN) ||
+               StressCriterion::
+                   STANDARD_POROSITY_CORRECTION_ON_EQUIVALENT_PLASTIC_STRAIN) ||
               (fcpe ==
-               StressCriterion::STANDARD_POROSITY_CORRECTION_ON_EQUIVALENT_PLASTIC_STRAIN)) {
+               StressCriterion::
+                   STANDARD_POROSITY_CORRECTION_ON_EQUIVALENT_PLASTIC_STRAIN)) {
             return STANDARD_POROSITY_CORRECTION_ON_EQUIVALENT_PLASTIC_STRAIN;
           }
           return NO_POROSITY_EFFECT_ON_EQUIVALENT_PLASTIC_STRAIN;
         } else {
-          if (scpe == StressCriterion::NO_POROSITY_EFFECT_ON_EQUIVALENT_PLASTIC_STRAIN) {
+          if (scpe == StressCriterion::
+                          NO_POROSITY_EFFECT_ON_EQUIVALENT_PLASTIC_STRAIN) {
             return NO_POROSITY_EFFECT_ON_EQUIVALENT_PLASTIC_STRAIN;
           }
           return STANDARD_POROSITY_CORRECTION_ON_EQUIVALENT_PLASTIC_STRAIN;

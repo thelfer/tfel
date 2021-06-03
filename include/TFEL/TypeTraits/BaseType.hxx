@@ -51,7 +51,7 @@ namespace tfel::typetraits {
    * \date   26/07/2006
    */
   template <typename T>
-  struct BaseType{
+  struct BaseType {
     //! \brief result of the metafunction
     using type = tfel::meta::InvalidType;
   };

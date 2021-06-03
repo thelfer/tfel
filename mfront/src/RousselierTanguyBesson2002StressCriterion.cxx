@@ -70,11 +70,11 @@ namespace mfront {
       return "this->" + bound + " = " +   //
              "std::min(this->" + bound +  //
              ", 3 / (2 * this->" + params + ".DR));\n";
-      }  // end of
-         // RousselierTanguyBesson2002StressCriterion::updatePorosityUpperBound()
+    }  // end of
+       // RousselierTanguyBesson2002StressCriterion::updatePorosityUpperBound()
 
-      RousselierTanguyBesson2002StressCriterion::
-          ~RousselierTanguyBesson2002StressCriterion() = default;
+    RousselierTanguyBesson2002StressCriterion::
+        ~RousselierTanguyBesson2002StressCriterion() = default;
 
   }  // end of namespace bbrick
 
