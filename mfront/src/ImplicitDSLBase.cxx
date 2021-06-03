@@ -1341,21 +1341,21 @@ namespace mfront {
     } else if ((v1.arraySize != 1u) && (v2.arraySize == 1u)) {
       os << "auto " << d.derivative_name << " = [&" << d.matrix_name
          << "](const unsigned short idx){\n"
-         << "tfel::math::map_derivative<" << v1.type << ", " << v2.type << ">("
+         << "return tfel::math::map_derivative<" << v1.type << ", " << v2.type << ">("
          << d.matrix_name << ", " << dr << " + idx * "
          << this->getTypeSize(v1.type, 1u) << ", " << dc << ");\n"
          << "};\n";
     } else if ((v1.arraySize == 1u) && (v2.arraySize != 1u)) {
       os << "auto " << d.derivative_name << " = [&" << d.matrix_name
          << "](const unsigned short idx){\n"
-         << "tfel::math::map_derivative<" << v1.type << ", " << v2.type << ">("
+         << "return tfel::math::map_derivative<" << v1.type << ", " << v2.type << ">("
          << d.matrix_name << ", " << dr << ", " << dc << " + idx * "
          << this->getTypeSize(v2.type, 1u) << ");\n"
          << "};\n";
     } else {
       os << "auto " << d.derivative_name << " = [&" << d.matrix_name
          << "](const unsigned short idx, const unsigned short idx2){\n"
-         << "tfel::math::map_derivative<" << v1.type << ", " << v2.type << ">("
+         << "return tfel::math::map_derivative<" << v1.type << ", " << v2.type << ">("
          << d.matrix_name << ", " << dr << " + idx * "
          << this->getTypeSize(v1.type, 1u) << ", " << dc << " + idx2 * "
          << this->getTypeSize(v2.type, 1u) << ");\n"
