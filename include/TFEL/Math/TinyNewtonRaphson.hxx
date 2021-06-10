@@ -29,6 +29,6 @@ namespace tfel::math {
 
 }  // end of namespace tfel::math
 
-#include "TFEL/Math/Newton-Raphson/TinyNewtonRaphson.ixx"
+#include "TFEL/Math/NewtonRaphson/TinyNewtonRaphson.ixx"
 
 #endif /* LIB_TFEL_MATH_TINYNEWTONRAPHSON_HXX */

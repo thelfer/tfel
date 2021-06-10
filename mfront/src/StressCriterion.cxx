@@ -13,21 +13,17 @@
 
 #include "MFront/BehaviourBrick/StressCriterion.hxx"
 
-namespace mfront {
+namespace mfront::bbrick {
 
-  namespace bbrick {
+  std::string StressCriterion::getVariableId(const std::string& n,
+                                             const std::string& fid,
+                                             const Role r) {
+    if (r == StressCriterion::FLOWCRITERION) {
+      return "scf_" + n + fid;
+    }
+    return "sc_" + n + fid;
+  }  // end of StressCriterion::getVariableId
 
-    std::string StressCriterion::getVariableId(const std::string& n,
-                                               const std::string& fid,
-                                               const Role r) {
-      if (r == StressCriterion::FLOWCRITERION) {
-        return "scf_" + n + fid;
-      }
-      return "sc_" + n + fid;
-    }  // end of StressCriterion::getVariableId
+  StressCriterion::~StressCriterion() = default;
 
-    StressCriterion::~StressCriterion() = default;
-
-  }  // end of namespace bbrick
-
-}  // end of namespace mfront
+}  // end of namespace mfront::bbrick

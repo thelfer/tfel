@@ -1723,16 +1723,9 @@ namespace mfront {
     insert_if(l.epts, bd.getClassName());
     insert_if(l.link_directories,
               "$(shell " + tfel_config + " --library-path)");
-#if __cplusplus >= 201703L
     insert_if(l.link_libraries, "$(shell " + tfel_config +
                                     " --library-dependency "
                                     "--material --mfront-profiling)");
-#else  /* __cplusplus < 201703L */
-    insert_if(l.link_libraries,
-              "$(shell " + tfel_config +
-                  " --library-dependency "
-                  "--material --mfront-profiling --physical-constants)");
-#endif /* __cplusplus < 201703L */
     // The installation path can have already been set while treating a
     // previous file or retrieved from a previous MFront call (the
     // installation path was stored in `target.lst`).

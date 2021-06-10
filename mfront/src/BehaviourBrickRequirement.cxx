@@ -16,27 +16,23 @@
 #include "TFEL/Raise.hxx"
 #include "MFront/BehaviourBrick/Requirement.hxx"
 
-namespace mfront {
+namespace mfront::bbrick {
 
-  namespace bbrick {
+  Requirement::Requirement(Requirement&&) = default;
+  Requirement::Requirement(const Requirement&) = default;
 
-    Requirement::Requirement(Requirement&&) = default;
-    Requirement::Requirement(const Requirement&) = default;
+  Requirement::Requirement(const std::string& t,
+                           const std::string& n,
+                           const unsigned short s,
+                           const std::vector<ProviderIdentifier>& a)
+      : type(t), name(n), asize(s), aproviders(a) {
+    tfel::raise_if(this->aproviders.empty(),
+                   "Requirement::Requirement : "
+                   "empty list of providers specified for "
+                   "requirement '" +
+                       this->name + "'");
+  }  // end of Requirement::Requirement
 
-    Requirement::Requirement(const std::string& t,
-                             const std::string& n,
-                             const unsigned short s,
-                             const std::vector<ProviderIdentifier>& a)
-        : type(t), name(n), asize(s), aproviders(a) {
-      tfel::raise_if(this->aproviders.empty(),
-                     "Requirement::Requirement : "
-                     "empty list of providers specified for "
-                     "requirement '" +
-                         this->name + "'");
-    }  // end of Requirement::Requirement
+  Requirement::~Requirement() = default;
 
-    Requirement::~Requirement() = default;
-
-  }  // end of namespace bbrick
-
-}  // end of namespace mfront
+}  // end of namespace mfront::bbrick

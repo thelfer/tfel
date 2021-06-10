@@ -14,16 +14,12 @@
 
 #include "MFront/BehaviourBrick/IsotropicDamageHookeStressPotential.hxx"
 
-namespace mfront {
+namespace mfront::bbrick {
 
-  namespace bbrick {
+  IsotropicDamageHookeStressPotential::IsotropicDamageHookeStressPotential() =
+      default;
 
-    IsotropicDamageHookeStressPotential::IsotropicDamageHookeStressPotential() =
-        default;
+  IsotropicDamageHookeStressPotential::~IsotropicDamageHookeStressPotential() =
+      default;
 
-    IsotropicDamageHookeStressPotential::
-        ~IsotropicDamageHookeStressPotential() = default;
-
-  }  // end of namespace bbrick
-
-}  // end of namespace mfront
+}  // end of namespace mfront::bbrick

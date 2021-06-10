@@ -19,60 +19,56 @@
 #include "MFront/BehaviourBrick/LinearIsotropicHardeningRule.hxx"
 #include "MFront/BehaviourBrick/IsotropicHardeningRuleFactory.hxx"
 
-namespace mfront {
+namespace mfront::bbrick {
 
-  namespace bbrick {
+  IsotropicHardeningRuleFactory& IsotropicHardeningRuleFactory::getFactory() {
+    static IsotropicHardeningRuleFactory i;
+    return i;
+  }  // end of getFactory
 
-    IsotropicHardeningRuleFactory& IsotropicHardeningRuleFactory::getFactory() {
-      static IsotropicHardeningRuleFactory i;
-      return i;
-    }  // end of IsotropicHardeningRuleFactory::getFactory
+  std::vector<std::string>
+  IsotropicHardeningRuleFactory::getRegistredIsotropicHardeningRules() const {
+    return getKeys(this->generators);
+  }  // end of
+     // IsotropicHardeningRuleFactory::getRegistredIsotropicHardeningRules
 
-    std::vector<std::string>
-    IsotropicHardeningRuleFactory::getRegistredIsotropicHardeningRules() const {
-      return getKeys(this->generators);
-    }  // end of
-       // IsotropicHardeningRuleFactory::getRegistredIsotropicHardeningRules
+  void IsotropicHardeningRuleFactory::addGenerator(const std::string& n,
+                                                   const Generator& g) {
+    if (!this->generators.insert({n, g}).second) {
+      tfel::raise(
+          "IsotropicHardeningRuleFactory::addGenerator: "
+          "generator '" +
+          n + "' already registred");
+    }
+  }  // end of addGenerator
 
-    void IsotropicHardeningRuleFactory::addGenerator(const std::string& n,
-                                                     const Generator& g) {
-      if (!this->generators.insert({n, g}).second) {
-        tfel::raise(
-            "IsotropicHardeningRuleFactory::addGenerator: "
-            "generator '" +
-            n + "' already registred");
-      }
-    }  // end of IsotropicHardeningRuleFactory::addGenerator
+  std::shared_ptr<IsotropicHardeningRule>
+  IsotropicHardeningRuleFactory::generate(const std::string& n) const {
+    const auto p = this->generators.find(n);
+    if (p == this->generators.end()) {
+      tfel::raise(
+          "IsotropicHardeningRuleFactory::generate: "
+          "no generator named '" +
+          n + "'");
+    }
+    return p->second();
+  }  // end of generate
 
-    std::shared_ptr<IsotropicHardeningRule>
-    IsotropicHardeningRuleFactory::generate(const std::string& n) const {
-      const auto p = this->generators.find(n);
-      if (p == this->generators.end()) {
-        tfel::raise(
-            "IsotropicHardeningRuleFactory::generate: "
-            "no generator named '" +
-            n + "'");
-      }
-      return p->second();
-    }  // end of IsotropicHardeningRuleFactory::generate
+  IsotropicHardeningRuleFactory::IsotropicHardeningRuleFactory() {
+    this->addGenerator("Linear", []() {
+      return std::make_shared<bbrick::LinearIsotropicHardeningRule>();
+    });
+    this->addGenerator("Swift", []() {
+      return std::make_shared<bbrick::SwiftIsotropicHardeningRule>();
+    });
+    this->addGenerator("Power", []() {
+      return std::make_shared<bbrick::PowerIsotropicHardeningRule>();
+    });
+    this->addGenerator("Voce", []() {
+      return std::make_shared<bbrick::VoceIsotropicHardeningRule>();
+    });
+  }  // end of IsotropicHardeningRuleFactory
 
-    IsotropicHardeningRuleFactory::IsotropicHardeningRuleFactory() {
-      this->addGenerator("Linear", []() {
-        return std::make_shared<bbrick::LinearIsotropicHardeningRule>();
-      });
-      this->addGenerator("Swift", []() {
-        return std::make_shared<bbrick::SwiftIsotropicHardeningRule>();
-      });
-      this->addGenerator("Power", []() {
-        return std::make_shared<bbrick::PowerIsotropicHardeningRule>();
-      });
-      this->addGenerator("Voce", []() {
-        return std::make_shared<bbrick::VoceIsotropicHardeningRule>();
-      });
-    }  // end of IsotropicHardeningRuleFactory::IsotropicHardeningRuleFactory
+  IsotropicHardeningRuleFactory::~IsotropicHardeningRuleFactory() = default;
 
-    IsotropicHardeningRuleFactory::~IsotropicHardeningRuleFactory() = default;
-
-  }  // end of namespace bbrick
-
-}  // end of namespace mfront
+}  // end of namespace mfront::bbrick

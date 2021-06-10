@@ -7,12 +7,8 @@
 
 #include "MFront/BehaviourBrick/InelasticFlow.hxx"
 
-namespace mfront {
+namespace mfront::bbrick {
 
-  namespace bbrick {
+  InelasticFlow::~InelasticFlow() = default;
 
-    InelasticFlow::~InelasticFlow() = default;
-
-  }  // end of namespace bbrick
-
-}  // end of namespace mfront
+}  // end of namespace mfront::bbrick

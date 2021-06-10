@@ -17,29 +17,20 @@
 
 #include <type_traits>
 #include "TFEL/Math/tvector.hxx"
+#include "TFEL/Math/RungeKutta/TinyRungeKuttaSolverBase.hxx"
 
 namespace tfel::math {
 
-  template <unsigned short N, typename Child, typename Scalar = double>
-  struct RungeKutta42 {
-    typedef typename std::conditional<N == 1, Scalar, tvector<N, Scalar>>::type
-        VariableType;
-    void setInitialValue(const VariableType&);
-    void setInitialTime(const Scalar);
-    void setFinalTime(const Scalar);
-    void setInitialTimeIncrement(const Scalar);
-    void setCriterium(const Scalar);
+  /*!
+   * \brief a simple solver for ordinary differential equations
+   */
+  template <unsigned short N, typename Child, typename ScalarType = double>
+  struct RungeKutta42 : TinyRungeKuttaSolverBase<N, ScalarType> {
+    /*!
+     * \brief solve the ordinary differential equation for the prescribed
+     * time range
+     */
     void iterate();
-    const VariableType& getValue() const;
-    const Scalar& getTimeIncrement() const;
-
-   private:
-    struct AbsoluteSommation;
-    VariableType y;
-    Scalar ti;
-    Scalar tf;
-    Scalar dt;
-    Scalar epsilon;
   };  // end of struct RungeKutta42
 
 }  // end of namespace tfel::math

@@ -22,285 +22,277 @@
 #include "MFront/BehaviourBrick/Requirement.hxx"
 #include "MFront/BehaviourBrick/RequirementManager.hxx"
 
-namespace mfront {
+namespace mfront::bbrick {
 
-  namespace bbrick {
+  static void throwIfRequirementIsAlreadyDefined(
+      const std::vector<std::shared_ptr<Requirement>>& rqs,
+      const Requirement& r) {
+    auto test = [&r](const std::shared_ptr<Requirement>& rr) {
+      return rr->name == r.name;
+    };
+    tfel::raise_if(std::find_if(rqs.begin(), rqs.end(), test) != rqs.end(),
+                   "RequirementManager::addRequirement : "
+                   "requirement '" +
+                       r.name + "' already registred");
+  }
 
-    static void throwIfRequirementIsAlreadyDefined(
-        const std::vector<std::shared_ptr<Requirement>>& rqs,
-        const Requirement& r) {
-      auto test = [&r](const std::shared_ptr<Requirement>& rr) {
-        return rr->name == r.name;
-      };
-      tfel::raise_if(std::find_if(rqs.begin(), rqs.end(), test) != rqs.end(),
-                     "RequirementManager::addRequirement : "
-                     "requirement '" +
-                         r.name + "' already registred");
-    }
-
-    static void throwIfRequirementHasAnIncompatibleProvider(
-        const std::vector<std::shared_ptr<Provider>>& ps,
-        const Requirement& r,
-        const bool b) {
-      for (const auto& p : ps) {
-        if (p->handleRequirement(r, b)) {
-          return;
-        }
+  static void throwIfRequirementHasAnIncompatibleProvider(
+      const std::vector<std::shared_ptr<Provider>>& ps,
+      const Requirement& r,
+      const bool b) {
+    for (const auto& p : ps) {
+      if (p->handleRequirement(r, b)) {
+        return;
       }
     }
+  }
 
-    RequirementManager::RequirementManager(const bool b)
-        : checkUnits(b) {}  // end of RequirementManager::RequirementManager
+  RequirementManager::RequirementManager(const bool b)
+      : checkUnits(b) {}  // end of RequirementManager::RequirementManager
 
-    RequirementManager::RequirementManager(const mfront::BehaviourData& bd,
-                                           const bool b)
-        : checkUnits(b) {
-      for (const auto& v : bd.getMaterialProperties()) {
-        this->addMaterialPropertyProvider(v, bd.getExternalName(v.name));
-      }
-      for (const auto& v : bd.getIntegrationVariables()) {
-        this->addIntegrationVariableProvider(v, bd.getExternalName(v.name));
-      }
-      for (const auto& v : bd.getAuxiliaryStateVariables()) {
-        this->addAuxiliaryStateVariableProvider(v, bd.getExternalName(v.name));
-      }
-      for (const auto& v : bd.getExternalStateVariables()) {
-        this->addExternalStateVariableProvider(v, bd.getExternalName(v.name));
-      }
-      for (const auto& v : bd.getLocalVariables()) {
-        this->addLocalVariableProvider(v, bd.getExternalName(v.name));
-      }
-      for (const auto& v : bd.getStaticVariables()) {
-        this->addStaticVariableProvider(v, bd.getExternalName(v.name));
-      }
-      for (const auto& v : bd.getParameters()) {
-        if (v.type == "real") {
-          this->addParameterProvider(v, bd.getExternalName(v.name));
-        }
-      }
-    }  // end of RequirementManager::RequirementManager
-
-    std::vector<std::string> RequirementManager::getUnresolvedRequirements()
-        const {
-      auto rn = std::vector<std::string>{};
-      for (const auto& r : this->requirements) {
-        if (!this->hasProvider(*r)) {
-          rn.push_back(r->name);
-        }
-      }
-      return rn;
-    }  // end of Provider::getUnresolvedRequirements
-
-    bool RequirementManager::hasProvider(const std::string& n) const {
-      return this->hasProvider(this->getRequirement(n));
+  RequirementManager::RequirementManager(const mfront::BehaviourData& bd,
+                                         const bool b)
+      : checkUnits(b) {
+    for (const auto& v : bd.getMaterialProperties()) {
+      this->addMaterialPropertyProvider(v, bd.getExternalName(v.name));
     }
-
-    bool RequirementManager::hasProvider(const Requirement& r) const {
-      bool found = false;
-      for (auto p = this->providers.begin();
-           (p != this->providers.end() && (!found)); ++p) {
-        found = (*p)->handleRequirement(r, this->checkUnits);
+    for (const auto& v : bd.getIntegrationVariables()) {
+      this->addIntegrationVariableProvider(v, bd.getExternalName(v.name));
+    }
+    for (const auto& v : bd.getAuxiliaryStateVariables()) {
+      this->addAuxiliaryStateVariableProvider(v, bd.getExternalName(v.name));
+    }
+    for (const auto& v : bd.getExternalStateVariables()) {
+      this->addExternalStateVariableProvider(v, bd.getExternalName(v.name));
+    }
+    for (const auto& v : bd.getLocalVariables()) {
+      this->addLocalVariableProvider(v, bd.getExternalName(v.name));
+    }
+    for (const auto& v : bd.getStaticVariables()) {
+      this->addStaticVariableProvider(v, bd.getExternalName(v.name));
+    }
+    for (const auto& v : bd.getParameters()) {
+      if (v.type == "real") {
+        this->addParameterProvider(v, bd.getExternalName(v.name));
       }
-      return found;
     }
+  }  // end of RequirementManager::RequirementManager
 
-    const Requirement& RequirementManager::getRequirement(
-        const std::string& n) const {
-      auto pr = this->requirements.begin();
-      while (pr != this->requirements.end()) {
-        if ((*pr)->name == n) {
-          break;
-        }
-        ++pr;
+  std::vector<std::string> RequirementManager::getUnresolvedRequirements()
+      const {
+    auto rn = std::vector<std::string>{};
+    for (const auto& r : this->requirements) {
+      if (!this->hasProvider(*r)) {
+        rn.push_back(r->name);
       }
-      tfel::raise_if(pr == this->requirements.end(),
-                     "RequirementManager::getRequirement : "
-                     "no requirement named '" +
-                         n + "'");
-      return *(*pr);
     }
+    return rn;
+  }  // end of Provider::getUnresolvedRequirements
 
-    void RequirementManager::addRequirement(
-        const std::shared_ptr<Requirement>& r) {
-      throwIfRequirementIsAlreadyDefined(this->requirements, *r);
-      // check if this requirement has a provider and that this
-      // provider is compatible with it
-      throwIfRequirementHasAnIncompatibleProvider(this->providers, *r,
-                                                  this->checkUnits);
-      this->requirements.push_back(r);
-    }  // end of void RequirementManager::addRequirement
+  bool RequirementManager::hasProvider(const std::string& n) const {
+    return this->hasProvider(this->getRequirement(n));
+  }
 
-    void RequirementManager::addRequirement(const Requirement& r) {
-      throwIfRequirementIsAlreadyDefined(this->requirements, r);
-      this->addRequirement(std::make_shared<Requirement>(r));
+  bool RequirementManager::hasProvider(const Requirement& r) const {
+    bool found = false;
+    for (auto p = this->providers.begin();
+         (p != this->providers.end() && (!found)); ++p) {
+      found = (*p)->handleRequirement(r, this->checkUnits);
     }
+    return found;
+  }
 
-    void RequirementManager::addRequirement(Requirement&& r) {
-      throwIfRequirementIsAlreadyDefined(this->requirements, r);
-      this->addRequirement(std::make_shared<Requirement>(std::move(r)));
-    }
-
-    std::vector<std::shared_ptr<Provider>>::const_iterator
-    RequirementManager::getProviderIterator(const std::string& e) const {
-      return std::find_if(this->providers.begin(), this->providers.end(),
-                          [&e](const std::shared_ptr<Provider> p) {
-                            return p->getExternalName() == e;
-                          });
-    }
-
-    std::vector<std::shared_ptr<Provider>>::iterator
-    RequirementManager::getProviderIterator(const std::string& e) {
-      return std::find_if(this->providers.begin(), this->providers.end(),
-                          [&e](const std::shared_ptr<Provider> p) {
-                            return p->getExternalName() == e;
-                          });
-    }
-
-    const Provider& RequirementManager::getProvider(
-        const std::string& e) const {
-      const auto p = this->getProviderIterator(e);
-      tfel::raise_if(p == this->providers.end(),
-                     "RequirementManager::getProvider : "
-                     "a provider for quantity '" +
-                         e +
-                         "' "
-                         "declared");
-      return *(*p);
-    }
-
-    void RequirementManager::check(const Provider& p) const {
-      const auto& e = p.getExternalName();
-      tfel::raise_if(this->getProviderIterator(e) != this->providers.end(),
-                     "RequirementManager::check : "
-                     "a provider for quantity '" +
-                         e +
-                         "' "
-                         "has already been declared");
-      for (const auto& r : this->requirements) {
-        if (p.handleRequirement(*r, this->checkUnits)) {
-          return;
-        }
+  const Requirement& RequirementManager::getRequirement(
+      const std::string& n) const {
+    auto pr = this->requirements.begin();
+    while (pr != this->requirements.end()) {
+      if ((*pr)->name == n) {
+        break;
       }
-    }  // end of RequirementManager::check
-
-    void RequirementManager::addMaterialPropertyProvider(
-        const mfront::VariableDescription& v, const std::string& e) {
-      const auto p = std::make_shared<MaterialPropertyProvider>(v, e);
-      this->check(*p);
-      this->providers.push_back(p);
+      ++pr;
     }
+    tfel::raise_if(pr == this->requirements.end(),
+                   "RequirementManager::getRequirement : "
+                   "no requirement named '" +
+                       n + "'");
+    return *(*pr);
+  }
 
-    void RequirementManager::addMaterialPropertyProvider(
-        const std::string& t,
-        const std::string& n,
-        const std::string& e,
-        const unsigned short s) {
-      const auto p = std::make_shared<MaterialPropertyProvider>(t, n, e, s);
-      this->check(*p);
-      this->providers.push_back(p);
-    }  // end of RequirementManager::addMaterialPropertyProvider
+  void RequirementManager::addRequirement(
+      const std::shared_ptr<Requirement>& r) {
+    throwIfRequirementIsAlreadyDefined(this->requirements, *r);
+    // check if this requirement has a provider and that this
+    // provider is compatible with it
+    throwIfRequirementHasAnIncompatibleProvider(this->providers, *r,
+                                                this->checkUnits);
+    this->requirements.push_back(r);
+  }  // end of void RequirementManager::addRequirement
 
-    void RequirementManager::addAuxiliaryStateVariableProvider(
-        const VariableDescription& v, const std::string& e) {
-      const auto p = std::make_shared<AuxiliaryStateVariableProvider>(v, e);
-      this->check(*p);
-      this->providers.push_back(p);
-    }  // end of RequirementManager::addAuxiliaryStateVariableProvider
+  void RequirementManager::addRequirement(const Requirement& r) {
+    throwIfRequirementIsAlreadyDefined(this->requirements, r);
+    this->addRequirement(std::make_shared<Requirement>(r));
+  }
 
-    void RequirementManager::addAuxiliaryStateVariableProvider(
-        const std::string& t,
-        const std::string& n,
-        const std::string& e,
-        const unsigned short s) {
-      const auto p =
-          std::make_shared<AuxiliaryStateVariableProvider>(t, n, e, s);
-      this->check(*p);
-      this->providers.push_back(p);
-    }  // end of RequirementManager::addAuxiliaryStateVariableProvider
+  void RequirementManager::addRequirement(Requirement&& r) {
+    throwIfRequirementIsAlreadyDefined(this->requirements, r);
+    this->addRequirement(std::make_shared<Requirement>(std::move(r)));
+  }
 
-    void RequirementManager::addExternalStateVariableProvider(
-        const mfront::VariableDescription& v, const std::string& e) {
-      const auto p = std::make_shared<ExternalStateVariableProvider>(v, e);
-      this->check(*p);
-      this->providers.push_back(p);
-    }  // end of RequirementManager::addExternalStateVariableProvider
+  std::vector<std::shared_ptr<Provider>>::const_iterator
+  RequirementManager::getProviderIterator(const std::string& e) const {
+    return std::find_if(this->providers.begin(), this->providers.end(),
+                        [&e](const std::shared_ptr<Provider> p) {
+                          return p->getExternalName() == e;
+                        });
+  }
 
-    void RequirementManager::addExternalStateVariableProvider(
-        const std::string& t,
-        const std::string& n,
-        const std::string& e,
-        const unsigned short s) {
-      const auto p =
-          std::make_shared<ExternalStateVariableProvider>(t, n, e, s);
-      this->check(*p);
-      this->providers.push_back(p);
-    }  // end of RequirementManager::addExternalStateVariableProvider
+  std::vector<std::shared_ptr<Provider>>::iterator
+  RequirementManager::getProviderIterator(const std::string& e) {
+    return std::find_if(this->providers.begin(), this->providers.end(),
+                        [&e](const std::shared_ptr<Provider> p) {
+                          return p->getExternalName() == e;
+                        });
+  }
 
-    void RequirementManager::addIntegrationVariableProvider(
-        const mfront::VariableDescription& v, const std::string& e) {
-      const auto p = std::make_shared<IntegrationVariableProvider>(v, e);
-      this->check(*p);
-      this->providers.push_back(p);
-    }  // end of RequirementManager::addIntegrationVariableProvider
+  const Provider& RequirementManager::getProvider(const std::string& e) const {
+    const auto p = this->getProviderIterator(e);
+    tfel::raise_if(p == this->providers.end(),
+                   "RequirementManager::getProvider : "
+                   "a provider for quantity '" +
+                       e +
+                       "' "
+                       "declared");
+    return *(*p);
+  }
 
-    void RequirementManager::addIntegrationVariableProvider(
-        const std::string& t,
-        const std::string& n,
-        const std::string& e,
-        const unsigned short s) {
-      const auto p = std::make_shared<IntegrationVariableProvider>(t, n, e, s);
-      this->check(*p);
-      this->providers.push_back(p);
-    }  // end of RequirementManager::addIntegrationVariableProvider
+  void RequirementManager::check(const Provider& p) const {
+    const auto& e = p.getExternalName();
+    tfel::raise_if(this->getProviderIterator(e) != this->providers.end(),
+                   "RequirementManager::check : "
+                   "a provider for quantity '" +
+                       e +
+                       "' "
+                       "has already been declared");
+    for (const auto& r : this->requirements) {
+      if (p.handleRequirement(*r, this->checkUnits)) {
+        return;
+      }
+    }
+  }  // end of RequirementManager::check
 
-    void RequirementManager::addStaticVariableProvider(
-        const mfront::StaticVariableDescription& v, const std::string& e) {
-      const auto p = std::make_shared<StaticVariableProvider>(v, e);
-      this->check(*p);
-      this->providers.push_back(p);
-    }  // end of RequirementManager::addStaticVariableProvider
+  void RequirementManager::addMaterialPropertyProvider(
+      const mfront::VariableDescription& v, const std::string& e) {
+    const auto p = std::make_shared<MaterialPropertyProvider>(v, e);
+    this->check(*p);
+    this->providers.push_back(p);
+  }
 
-    void RequirementManager::addStaticVariableProvider(const std::string& t,
+  void RequirementManager::addMaterialPropertyProvider(const std::string& t,
                                                        const std::string& n,
-                                                       const std::string& e) {
-      const auto p = std::make_shared<StaticVariableProvider>(t, n, e);
-      this->check(*p);
-      this->providers.push_back(p);
-    }  // end of RequirementManager::addStaticVariableProvider
+                                                       const std::string& e,
+                                                       const unsigned short s) {
+    const auto p = std::make_shared<MaterialPropertyProvider>(t, n, e, s);
+    this->check(*p);
+    this->providers.push_back(p);
+  }  // end of RequirementManager::addMaterialPropertyProvider
 
-    void RequirementManager::addParameterProvider(
-        const mfront::VariableDescription& v, const std::string& e) {
-      const auto p = std::make_shared<ParameterProvider>(v, e);
-      this->check(*p);
-      this->providers.push_back(p);
-    }  // end of RequirementManager::addParameterProvider
+  void RequirementManager::addAuxiliaryStateVariableProvider(
+      const VariableDescription& v, const std::string& e) {
+    const auto p = std::make_shared<AuxiliaryStateVariableProvider>(v, e);
+    this->check(*p);
+    this->providers.push_back(p);
+  }  // end of RequirementManager::addAuxiliaryStateVariableProvider
 
-    void RequirementManager::addParameterProvider(const std::string& t,
-                                                  const std::string& n,
-                                                  const std::string& e) {
-      const auto p = std::make_shared<ParameterProvider>(t, n, e);
-      this->check(*p);
-      this->providers.push_back(p);
-    }  // end of RequirementManager::addParameterProvider
+  void RequirementManager::addAuxiliaryStateVariableProvider(
+      const std::string& t,
+      const std::string& n,
+      const std::string& e,
+      const unsigned short s) {
+    const auto p = std::make_shared<AuxiliaryStateVariableProvider>(t, n, e, s);
+    this->check(*p);
+    this->providers.push_back(p);
+  }  // end of RequirementManager::addAuxiliaryStateVariableProvider
 
-    void RequirementManager::addLocalVariableProvider(
-        const mfront::VariableDescription& v, const std::string& e) {
-      const auto p = std::make_shared<LocalVariableProvider>(v, e);
-      this->check(*p);
-      this->providers.push_back(p);
-    }  // end of RequirementManager::addLocalVariableProvider
+  void RequirementManager::addExternalStateVariableProvider(
+      const mfront::VariableDescription& v, const std::string& e) {
+    const auto p = std::make_shared<ExternalStateVariableProvider>(v, e);
+    this->check(*p);
+    this->providers.push_back(p);
+  }  // end of RequirementManager::addExternalStateVariableProvider
 
-    void RequirementManager::addLocalVariableProvider(const std::string& t,
-                                                      const std::string& n,
-                                                      const std::string& e,
-                                                      const unsigned short s) {
-      const auto p = std::make_shared<LocalVariableProvider>(t, n, e, s);
-      this->check(*p);
-      this->providers.push_back(p);
-    }  // end of RequirementManager::addLocalVariableProvider
+  void RequirementManager::addExternalStateVariableProvider(
+      const std::string& t,
+      const std::string& n,
+      const std::string& e,
+      const unsigned short s) {
+    const auto p = std::make_shared<ExternalStateVariableProvider>(t, n, e, s);
+    this->check(*p);
+    this->providers.push_back(p);
+  }  // end of RequirementManager::addExternalStateVariableProvider
 
-    RequirementManager::~RequirementManager() = default;
+  void RequirementManager::addIntegrationVariableProvider(
+      const mfront::VariableDescription& v, const std::string& e) {
+    const auto p = std::make_shared<IntegrationVariableProvider>(v, e);
+    this->check(*p);
+    this->providers.push_back(p);
+  }  // end of RequirementManager::addIntegrationVariableProvider
 
-  }  // end of namespace bbrick
+  void RequirementManager::addIntegrationVariableProvider(
+      const std::string& t,
+      const std::string& n,
+      const std::string& e,
+      const unsigned short s) {
+    const auto p = std::make_shared<IntegrationVariableProvider>(t, n, e, s);
+    this->check(*p);
+    this->providers.push_back(p);
+  }  // end of RequirementManager::addIntegrationVariableProvider
 
-}  // end of namespace mfront
+  void RequirementManager::addStaticVariableProvider(
+      const mfront::StaticVariableDescription& v, const std::string& e) {
+    const auto p = std::make_shared<StaticVariableProvider>(v, e);
+    this->check(*p);
+    this->providers.push_back(p);
+  }  // end of RequirementManager::addStaticVariableProvider
+
+  void RequirementManager::addStaticVariableProvider(const std::string& t,
+                                                     const std::string& n,
+                                                     const std::string& e) {
+    const auto p = std::make_shared<StaticVariableProvider>(t, n, e);
+    this->check(*p);
+    this->providers.push_back(p);
+  }  // end of RequirementManager::addStaticVariableProvider
+
+  void RequirementManager::addParameterProvider(
+      const mfront::VariableDescription& v, const std::string& e) {
+    const auto p = std::make_shared<ParameterProvider>(v, e);
+    this->check(*p);
+    this->providers.push_back(p);
+  }  // end of RequirementManager::addParameterProvider
+
+  void RequirementManager::addParameterProvider(const std::string& t,
+                                                const std::string& n,
+                                                const std::string& e) {
+    const auto p = std::make_shared<ParameterProvider>(t, n, e);
+    this->check(*p);
+    this->providers.push_back(p);
+  }  // end of RequirementManager::addParameterProvider
+
+  void RequirementManager::addLocalVariableProvider(
+      const mfront::VariableDescription& v, const std::string& e) {
+    const auto p = std::make_shared<LocalVariableProvider>(v, e);
+    this->check(*p);
+    this->providers.push_back(p);
+  }  // end of RequirementManager::addLocalVariableProvider
+
+  void RequirementManager::addLocalVariableProvider(const std::string& t,
+                                                    const std::string& n,
+                                                    const std::string& e,
+                                                    const unsigned short s) {
+    const auto p = std::make_shared<LocalVariableProvider>(t, n, e, s);
+    this->check(*p);
+    this->providers.push_back(p);
+  }  // end of RequirementManager::addLocalVariableProvider
+
+  RequirementManager::~RequirementManager() = default;
+
+}  // end of namespace mfront::bbrick

@@ -280,16 +280,9 @@ namespace mfront {
     insert_if(l.link_directories,
               "$(shell " + tfel_config + " --library-path)");
     insert_if(l.link_libraries, tfel::getLibraryInstallName("LSDYNAInterface"));
-#if __cplusplus >= 201703L
     insert_if(l.link_libraries, "$(shell " + tfel_config +
                                     " --library-dependency "
                                     "--material --mfront-profiling)");
-#else  /* __cplusplus < 201703L */
-    insert_if(l.link_libraries,
-              "$(shell " + tfel_config +
-                  " --library-dependency "
-                  "--material --mfront-profiling --physical-constants)");
-#endif /* __cplusplus < 201703L */
     for (const auto h : this->getModellingHypothesesToBeTreated(bd)) {
       insert_if(l.epts, this->getFunctionNameForHypothesis(name, h));
     }

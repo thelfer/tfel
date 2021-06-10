@@ -1592,6 +1592,7 @@ docs/wxmaxima/J3Derivative2D.wxmx -text
 docs/wxmaxima/J3Derivative3D.wxmx -text
 /env-win32.bat.in -text
 /env-win32.sh.in -text
+/format.sh -text
 include/CMakeLists.txt -text
 include/Cyrano/Behaviour.hxx -text
 include/Cyrano/MaterialProperty.hxx -text
@@ -1900,8 +1901,8 @@ include/TFEL/Math/Matrix/matrix.ixx -text
 include/TFEL/Math/Matrix/tmatrix.ixx -text
 include/TFEL/Math/Matrix/tmatrixIO.hxx -text
 include/TFEL/Math/Matrix/tmatrixResultType.hxx -text
-include/TFEL/Math/Newton-Raphson/ScalarNewtonRaphson.ixx -text
-include/TFEL/Math/Newton-Raphson/TinyNewtonRaphson.ixx -text
+include/TFEL/Math/NewtonRaphson/ScalarNewtonRaphson.ixx -text
+include/TFEL/Math/NewtonRaphson/TinyNewtonRaphson.ixx -text
 include/TFEL/Math/Parser/BinaryFunction.hxx -text
 include/TFEL/Math/Parser/BinaryFunction.ixx -text
 include/TFEL/Math/Parser/BinaryOperator.hxx -text
@@ -1955,6 +1956,7 @@ include/TFEL/Math/RungeKutta/RungeKutta2.ixx -text
 include/TFEL/Math/RungeKutta/RungeKutta4.ixx -text
 include/TFEL/Math/RungeKutta/RungeKutta42.ixx -text
 include/TFEL/Math/RungeKutta/RungeKutta54.ixx -text
+include/TFEL/Math/RungeKutta/TinyRungeKuttaSolverBase.hxx -text
 include/TFEL/Math/RungeKutta2.hxx -text
 include/TFEL/Math/RungeKutta4.hxx -text
 include/TFEL/Math/RungeKutta42.hxx -text

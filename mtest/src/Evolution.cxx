@@ -73,7 +73,6 @@ namespace mtest {
     tfel::raise_if(this->values.empty(),
                    "LPILoadingEvolution::getValue: "
                    "no values specified");
-    real x0, x1, y0, y1;
     if (this->values.size() == 1u) {
       return this->values.begin()->second;
     }
@@ -83,13 +82,12 @@ namespace mtest {
     } else if (p == this->values.end()) {
       --p;
       return p->second;
-    } else {
-      x1 = p->first;
-      y1 = p->second;
-      --p;
-      x0 = p->first;
-      y0 = p->second;
     }
+    const auto pp = std::prev(p);
+    const auto x0 = pp->first;
+    const auto y0 = pp->second;
+    const auto x1 = p->first;
+    const auto y1 = p->second;
     return (y1 - y0) / (x1 - x0) * (t - x0) + y0;
   }
 

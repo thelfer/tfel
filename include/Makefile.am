@@ -249,8 +249,9 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Math/QR/QRDecomp.hxx			                                             \
 			TFEL/Math/QR/QRDecomp.ixx			                                             \
 			TFEL/Math/QR/QRException.hxx			                                             \
-			TFEL/Math/Newton-Raphson/ScalarNewtonRaphson.ixx                                               \
-			TFEL/Math/Newton-Raphson/TinyNewtonRaphson.ixx                                               \
+			TFEL/Math/NewtonRaphson/ScalarNewtonRaphson.ixx                                               \
+			TFEL/Math/NewtonRaphson/TinyNewtonRaphson.ixx                                               \
+			TFEL/Math/RungeKutta/TinyRungeKuttaSolverBase.hxx                                      \
 			TFEL/Math/RungeKutta/RungeKutta2.ixx		                                             \
 			TFEL/Math/RungeKutta/RungeKutta4.ixx		                                             \
 			TFEL/Math/RungeKutta/RungeKutta42.ixx		                                             \

@@ -84,6 +84,6 @@ namespace tfel::math {
 
 }  // end of namespace tfel::math
 
-#include "TFEL/Math/Newton-Raphson/ScalarNewtonRaphson.ixx"
+#include "TFEL/Math/NewtonRaphson/ScalarNewtonRaphson.ixx"
 
 #endif /* LIB_TFEL_MATH_SCALARNEWTONRAPHSON_HXX */

@@ -53,7 +53,7 @@ int main() {
   y(1) = 0.0;
 
   rk.setInitialValue(y);
-  rk.setCriterium(1.e-9);
+  rk.setCriterionValue(1.e-9);
   rk.setMu(10.);
 
   double t = 0.;

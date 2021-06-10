@@ -419,16 +419,9 @@ namespace mfront {
       insert_if(l.link_libraries,
                 tfel::getLibraryInstallName("MTestFileGenerator"));
     }
-#if __cplusplus >= 201703L
     insert_if(l.link_libraries, "$(shell " + tfel_config +
                                     " --library-dependency "
                                     "--material --mfront-profiling)");
-#else  /* __cplusplus < 201703L */
-    insert_if(l.link_libraries,
-              "$(shell " + tfel_config +
-                  " --library-dependency "
-                  "--material --mfront-profiling --physical-constants)");
-#endif /* __cplusplus < 201703L */
     if (bd.areElasticMaterialPropertiesDefined()) {
       for (const auto& emp : bd.getElasticMaterialPropertiesDescriptions()) {
         CyranoMaterialPropertyInterface i;

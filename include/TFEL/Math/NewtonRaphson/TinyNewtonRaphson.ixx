@@ -19,23 +19,6 @@
 
 namespace tfel::math {
 
-  /*!
-   * \class TinyNewtonRaphson
-   * \brief Implements the Newton-Raphson algorithm when the size N of the
-   * problem is known at compile-time. One wish to solve the problem:
-   * \f[\vec{f}\left(\vec{x}\right)=\vec{0}\f]
-   * where \f$\displaystyle\vec{f}:R^{N}\rightarrow R^{N}\f$.
-   * if \f$\displaystyle\vec{x}^{n}\f$ is an estimation of the solution,
-   * \f$\displaystyle\vec{x}^{n+1}\f$ will be given by:
-   * \f[\displaystyle\vec{x}^{n+1}=\vec{x}^{n}-J^{-1}\vec{f}\left(\vec{x}^{n}\right)\f]
-   * where \f$ J \f$ is the jacobien matrix of \f$ f \f$ at
-   * \f$\left(\displaystyle\vec{x}^{n}\right)\f$ defined by
-   * \f$ J_{ij} = \displaystyle\frac{\displaystyle\partial
-   * f_{i}}{\displaystyle\partial x_{j}}\f$ \param unsigned short N, dimension
-   * of the problem. \param typename T, numerical type. \param typename F, class
-   * to which the newton raphson is applied. \pre   F must have a computeFdF
-   * method.
-   */
   template <unsigned short N, typename T, typename F>
   class TinyNewtonRaphson {
     T epsilon;

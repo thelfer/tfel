@@ -12,56 +12,52 @@
 #include "MFront/BehaviourBrick/IsotropicDamageHookeStressPotential.hxx"
 #include "MFront/BehaviourBrick/StressPotentialFactory.hxx"
 
-namespace mfront {
+namespace mfront::bbrick {
 
-  namespace bbrick {
+  StressPotentialFactory& StressPotentialFactory::getFactory() {
+    static StressPotentialFactory i;
+    return i;
+  }  // end of getFactory
 
-    StressPotentialFactory& StressPotentialFactory::getFactory() {
-      static StressPotentialFactory i;
-      return i;
-    }  // end of StressPotentialFactory::getFactory
+  void StressPotentialFactory::addGenerator(const std::string& n,
+                                            const Generator& g) {
+    if (!this->generators.insert({n, g}).second) {
+      tfel::raise(
+          "StressPotentialFactory::addGenerator: "
+          "generator '" +
+          n + "' already registred");
+    }
+  }  // end of addGenerator
 
-    void StressPotentialFactory::addGenerator(const std::string& n,
-                                              const Generator& g) {
-      if (!this->generators.insert({n, g}).second) {
-        tfel::raise(
-            "StressPotentialFactory::addGenerator: "
-            "generator '" +
-            n + "' already registred");
-      }
-    }  // end of StressPotentialFactory::addGenerator
+  std::vector<std::string>
+  StressPotentialFactory::getRegistredStressPotentials() const {
+    return getKeys(this->generators);
+  }  // end of getRegistredStressPotentials
 
-    std::vector<std::string>
-    StressPotentialFactory::getRegistredStressPotentials() const {
-      return getKeys(this->generators);
-    }  // end of StressPotentialFactory::getRegistredStressPotentials
+  std::shared_ptr<StressPotential> StressPotentialFactory::generate(
+      const std::string& n) const {
+    const auto p = this->generators.find(n);
+    if (p == this->generators.end()) {
+      tfel::raise(
+          "StressPotentialFactory::generate: "
+          "no generator named '" +
+          n + "'");
+    }
+    return p->second();
+  }  // end of generate
 
-    std::shared_ptr<StressPotential> StressPotentialFactory::generate(
-        const std::string& n) const {
-      const auto p = this->generators.find(n);
-      if (p == this->generators.end()) {
-        tfel::raise(
-            "StressPotentialFactory::generate: "
-            "no generator named '" +
-            n + "'");
-      }
-      return p->second();
-    }  // end of StressPotentialFactory::generate
+  StressPotentialFactory::StressPotentialFactory() {
+    this->addGenerator("Hooke", []() {
+      return std::make_shared<bbrick::HookeStressPotential>();
+    });
+    this->addGenerator("DDIF2", [] {
+      return std::make_shared<bbrick::DDIF2StressPotential>();
+    });
+    this->addGenerator("IsotropicDamage", [] {
+      return std::make_shared<bbrick::IsotropicDamageHookeStressPotential>();
+    });
+  }  // end of StressPotentialFactory
 
-    StressPotentialFactory::StressPotentialFactory() {
-      this->addGenerator("Hooke", []() {
-        return std::make_shared<bbrick::HookeStressPotential>();
-      });
-      this->addGenerator("DDIF2", [] {
-        return std::make_shared<bbrick::DDIF2StressPotential>();
-      });
-      this->addGenerator("IsotropicDamage", [] {
-        return std::make_shared<bbrick::IsotropicDamageHookeStressPotential>();
-      });
-    }  // end of StressPotentialFactory::StressPotentialFactory
+  StressPotentialFactory::~StressPotentialFactory() = default;
 
-    StressPotentialFactory::~StressPotentialFactory() = default;
-
-  }  // end of namespace bbrick
-
-}  // end of namespace mfront
+}  // end of namespace mfront::bbrick

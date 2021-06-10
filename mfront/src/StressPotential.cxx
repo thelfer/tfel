@@ -14,12 +14,8 @@
 
 #include "MFront/BehaviourBrick/StressPotential.hxx"
 
-namespace mfront {
+namespace mfront::bbrick {
 
-  namespace bbrick {
+  StressPotential::~StressPotential() = default;
 
-    StressPotential::~StressPotential() = default;
-
-  }  // end of namespace bbrick
-
-}  // end of namespace mfront
+}  // end of namespace mfront::bbrick

@@ -17,121 +17,115 @@
 #include "MFront/BehaviourBrick/OptionDescription.hxx"
 #include "MFront/BehaviourBrick/KinematicHardeningRuleBase.hxx"
 
-namespace mfront {
+namespace mfront::bbrick {
 
-  namespace bbrick {
+  std::vector<OptionDescription> KinematicHardeningRuleBase::getOptions()
+      const {
+    auto opts = std::vector<OptionDescription>{};
+    opts.emplace_back("C", "kinematic moduli",
+                      OptionDescription::MATERIALPROPERTY);
+    return opts;
+  }  // end of getOptions
 
-    std::vector<OptionDescription> KinematicHardeningRuleBase::getOptions()
-        const {
-      auto opts = std::vector<OptionDescription>{};
-      opts.emplace_back("C", "kinematic moduli",
-                        OptionDescription::MATERIALPROPERTY);
-      return opts;
-    }  // end of KinematicHardeningRuleBase::getOptions()
+  void KinematicHardeningRuleBase::initialize(BehaviourDescription& bd,
+                                              AbstractBehaviourDSL& dsl,
+                                              const std::string& fid,
+                                              const std::string& kid,
+                                              const DataMap& d) {
+    constexpr auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+    const auto an = KinematicHardeningRule::getVariableId("a", fid, kid);
+    const auto Xn = KinematicHardeningRule::getVariableId("X", fid, kid);
+    const auto Cn = KinematicHardeningRule::getVariableId("C", fid, kid);
+    const auto en =
+        KinematicHardeningRule::getVariableId("BackStrain", fid, kid);
+    addStateVariable(bd, "StrainStensor", an, en);
+    // kinematic moduli
+    tfel::raise_if(d.count("C") == 0,
+                   "KinematicHardeningRuleBase::initialize: "
+                   "material property 'C' is not defined");
+    this->C = getBehaviourDescriptionMaterialProperty(dsl, "C", d.at("C"));
+    declareParameterOrLocalVariable(bd, this->C, "stress", Cn);
+    // kinematic hardening at the beginning of the time step
+    bd.reserveName(uh, Xn);
+    // kinematic hardening at the middle of the time step
+    bd.reserveName(uh, Xn + '_');
+    // back strain at the middle of the time step
+    bd.reserveName(uh, an + '_');
+  }  // end of initialize
 
-    void KinematicHardeningRuleBase::initialize(BehaviourDescription& bd,
-                                                AbstractBehaviourDSL& dsl,
+  std::string KinematicHardeningRuleBase::getBackStrainVariable(
+      const std::string& fid, const std::string& kid) const {
+    return KinematicHardeningRule::getVariableId("a", fid, kid);
+  }  // end of getBackStrainVariable
+
+  std::string KinematicHardeningRuleBase::getBackStressDerivative(
+      const std::string& fid, const std::string& kid) const {
+    const auto Cn = KinematicHardeningRule::getVariableId("C", fid, kid);
+    return "((2 * (this->theta) * ((this->" + Cn + ")/3)) * (Stensor4::Id()))";
+  }  // end of getBackStressDerivative
+
+  std::string KinematicHardeningRuleBase::generateImplicitEquationDerivatives(
+      const std::string& v,
+      const std::string& mdfv_ds,
+      const std::string& fid,
+      const std::string& kid) const {
+    const auto an = KinematicHardeningRule::getVariableId("a", fid, kid);
+    const auto Cn = KinematicHardeningRule::getVariableId("C", fid, kid);
+    auto c = std::string{};
+    c += "df" + v + "_dd" + an + " += ";
+    c += "(2*(this->theta)*((this->" + Cn + ")/3))*(" + mdfv_ds + ");\n";
+    return c;
+  }
+
+  void KinematicHardeningRuleBase::endTreatment(BehaviourDescription& bd,
+                                                const AbstractBehaviourDSL& dsl,
                                                 const std::string& fid,
-                                                const std::string& kid,
-                                                const DataMap& d) {
-      constexpr auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
-      const auto an = KinematicHardeningRule::getVariableId("a", fid, kid);
-      const auto Xn = KinematicHardeningRule::getVariableId("X", fid, kid);
+                                                const std::string& kid) const {
+    constexpr auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+    auto mts = getMiddleOfTimeStepModifier(bd);
+    if (!this->C.is<BehaviourDescription::ConstantMaterialProperty>()) {
       const auto Cn = KinematicHardeningRule::getVariableId("C", fid, kid);
-      const auto en =
-          KinematicHardeningRule::getVariableId("BackStrain", fid, kid);
-      addStateVariable(bd, "StrainStensor", an, en);
-      // kinematic moduli
-      tfel::raise_if(d.count("C") == 0,
-                     "KinematicHardeningRuleBase::initialize: "
-                     "material property 'C' is not defined");
-      this->C = getBehaviourDescriptionMaterialProperty(dsl, "C", d.at("C"));
-      declareParameterOrLocalVariable(bd, this->C, "stress", Cn);
-      // kinematic hardening at the beginning of the time step
-      bd.reserveName(uh, Xn);
-      // kinematic hardening at the middle of the time step
-      bd.reserveName(uh, Xn + '_');
-      // back strain at the middle of the time step
-      bd.reserveName(uh, an + '_');
-    }  // end of KinematicHardeningRuleBase::initialize
-
-    std::string KinematicHardeningRuleBase::getBackStrainVariable(
-        const std::string& fid, const std::string& kid) const {
-      return KinematicHardeningRule::getVariableId("a", fid, kid);
-    }  // end of KinematicHardeningRuleBase::getBackStrainVariable
-
-    std::string KinematicHardeningRuleBase::getBackStressDerivative(
-        const std::string& fid, const std::string& kid) const {
-      const auto Cn = KinematicHardeningRule::getVariableId("C", fid, kid);
-      return "((2 * (this->theta) * ((this->" + Cn +
-             ")/3)) * (Stensor4::Id()))";
-    }  // end of KinematicHardeningRuleBase::getBackStressDerivative
-
-    std::string KinematicHardeningRuleBase::generateImplicitEquationDerivatives(
-        const std::string& v,
-        const std::string& mdfv_ds,
-        const std::string& fid,
-        const std::string& kid) const {
-      const auto an = KinematicHardeningRule::getVariableId("a", fid, kid);
-      const auto Cn = KinematicHardeningRule::getVariableId("C", fid, kid);
-      auto c = std::string{};
-      c += "df" + v + "_dd" + an + " += ";
-      c += "(2*(this->theta)*((this->" + Cn + ")/3))*(" + mdfv_ds + ");\n";
-      return c;
+      CodeBlock i;
+      std::ostringstream mps;
+      mps << "this->" + Cn + " = ";
+      dsl.writeMaterialPropertyEvaluation(mps, this->C, mts);
+      mps << ";\n";
+      i.code += mps.str();
+      bd.setCode(uh, BehaviourData::BeforeInitializeLocalVariables, i,
+                 BehaviourData::CREATEORAPPEND, BehaviourData::AT_BEGINNING);
     }
+  }  // end of endTreatment
 
-    void KinematicHardeningRuleBase::endTreatment(
-        BehaviourDescription& bd,
-        const AbstractBehaviourDSL& dsl,
-        const std::string& fid,
-        const std::string& kid) const {
-      constexpr auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
-      auto mts = getMiddleOfTimeStepModifier(bd);
-      if (!this->C.is<BehaviourDescription::ConstantMaterialProperty>()) {
-        const auto Cn = KinematicHardeningRule::getVariableId("C", fid, kid);
-        CodeBlock i;
-        std::ostringstream mps;
-        mps << "this->" + Cn + " = ";
-        dsl.writeMaterialPropertyEvaluation(mps, this->C, mts);
-        mps << ";\n";
-        i.code += mps.str();
-        bd.setCode(uh, BehaviourData::BeforeInitializeLocalVariables, i,
-                   BehaviourData::CREATEORAPPEND, BehaviourData::AT_BEGINNING);
-      }
-    }  // end of KinematicHardeningRuleBase::endTreatment
+  std::vector<std::string>
+  KinematicHardeningRuleBase::getKinematicHardeningsVariables(
+      const std::string& fid, const std::string& kid) const {
+    return {KinematicHardeningRule::getVariableId("X", fid, kid)};
+  }  // end of getKinematicHardeningsVariables
 
-    std::vector<std::string>
-    KinematicHardeningRuleBase::getKinematicHardeningsVariables(
-        const std::string& fid, const std::string& kid) const {
-      return {KinematicHardeningRule::getVariableId("X", fid, kid)};
-    }  // end of KinematicHardeningRuleBase::getKinematicHardeningsVariables
+  std::string
+  KinematicHardeningRuleBase::computeKinematicHardeningsInitialValues(
+      const std::string& fid, const std::string& kid) const {
+    const auto an = KinematicHardeningRule::getVariableId("a", fid, kid);
+    const auto Xn = KinematicHardeningRule::getVariableId("X", fid, kid);
+    const auto Cn = KinematicHardeningRule::getVariableId("C", fid, kid);
+    return "const auto " + Xn + "  = eval(2*(this->" + Cn + ")*(this->" + an +
+           ")/3);\n";
+  }  // end of
+     // KinematicHardeningRuleBase::computeKinematicHardeningsInitialValues
 
-    std::string
-    KinematicHardeningRuleBase::computeKinematicHardeningsInitialValues(
-        const std::string& fid, const std::string& kid) const {
-      const auto an = KinematicHardeningRule::getVariableId("a", fid, kid);
-      const auto Xn = KinematicHardeningRule::getVariableId("X", fid, kid);
-      const auto Cn = KinematicHardeningRule::getVariableId("C", fid, kid);
-      return "const auto " + Xn + "  = eval(2*(this->" + Cn + ")*(this->" + an +
-             ")/3);\n";
-    }  // end of
-       // KinematicHardeningRuleBase::computeKinematicHardeningsInitialValues
+  std::string KinematicHardeningRuleBase::computeKinematicHardenings(
+      const std::string& fid, const std::string& kid) const {
+    const auto an = KinematicHardeningRule::getVariableId("a", fid, kid);
+    const auto Xn = KinematicHardeningRule::getVariableId("X", fid, kid);
+    const auto Cn = KinematicHardeningRule::getVariableId("C", fid, kid);
+    auto c = std::string{};
+    c += "const auto " + an + "_  = eval(this->" + an +
+         "+(this->theta)*(this->d" + an + "));\n";
+    c +=
+        "const auto " + Xn + "_  = eval(2*(this->" + Cn + ")*" + an + "_/3);\n";
+    return c;
+  }  // end of computeKinematicHardenings
 
-    std::string KinematicHardeningRuleBase::computeKinematicHardenings(
-        const std::string& fid, const std::string& kid) const {
-      const auto an = KinematicHardeningRule::getVariableId("a", fid, kid);
-      const auto Xn = KinematicHardeningRule::getVariableId("X", fid, kid);
-      const auto Cn = KinematicHardeningRule::getVariableId("C", fid, kid);
-      auto c = std::string{};
-      c += "const auto " + an + "_  = eval(this->" + an +
-           "+(this->theta)*(this->d" + an + "));\n";
-      c += "const auto " + Xn + "_  = eval(2*(this->" + Cn + ")*" + an +
-           "_/3);\n";
-      return c;
-    }  // end of KinematicHardeningRuleBase::computeKinematicHardenings
+  KinematicHardeningRuleBase::~KinematicHardeningRuleBase() = default;
 
-    KinematicHardeningRuleBase::~KinematicHardeningRuleBase() = default;
-
-  }  // end of namespace bbrick
-
-}  // end of namespace mfront
+}  // end of namespace mfront::bbrick

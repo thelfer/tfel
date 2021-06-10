@@ -13,21 +13,17 @@
 
 #include "MFront/BehaviourBrick/KinematicHardeningRule.hxx"
 
-namespace mfront {
+namespace mfront::bbrick {
 
-  namespace bbrick {
+  std::string KinematicHardeningRule::getVariableId(const std::string& n,
+                                                    const std::string& fid,
+                                                    const std::string& kid) {
+    if (kid.empty()) {
+      return "khr_" + n + fid;
+    }
+    return "khr_" + n + fid + '_' + kid;
+  }  // end of getVariableId
 
-    std::string KinematicHardeningRule::getVariableId(const std::string& n,
-                                                      const std::string& fid,
-                                                      const std::string& kid) {
-      if (kid.empty()) {
-        return "khr_" + n + fid;
-      }
-      return "khr_" + n + fid + '_' + kid;
-    }  // end of KinematicHardeningRule::getVariableId
+  KinematicHardeningRule::~KinematicHardeningRule() = default;
 
-    KinematicHardeningRule::~KinematicHardeningRule() = default;
-
-  }  // end of namespace bbrick
-
-}  // end of namespace mfront
+}  // end of namespace mfront::bbrick

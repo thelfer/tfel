@@ -49,13 +49,7 @@ namespace tfel::math {
     if (i >= p.im) {
       return std::make_tuple(false, p.x0, i);
     }
-#if __cplusplus >= 201703L
     auto [fv, dfv] = f(p.x0);
-#else
-    auto fdf = f(p.x0);
-    auto fv = std::get<0>(fdf);
-    auto dfv = std::get<1>(fdf);
-#endif
     if (tfel::math::ieee754::isfinite(p.xmin0)) {
       b.updateBounds(p.xmin0, std::get<0>(f(p.xmin0)));
     }

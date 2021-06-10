@@ -16,35 +16,29 @@
 #include "MFront/BehaviourBrick/OptionDescription.hxx"
 #include "MFront/BehaviourBrick/PowerLawStrainBasedPorosityNucleationModel.hxx"
 
-namespace mfront {
+namespace mfront::bbrick {
 
-  namespace bbrick {
+  std::string PowerLawStrainBasedPorosityNucleationModel::getModelName() const {
+    return "PowerLawStrainBasedNucleationModel";
+  }  // end of getModelName
 
-    std::string PowerLawStrainBasedPorosityNucleationModel::getModelName()
-        const {
-      return "PowerLawStrainBasedNucleationModel";
-    }  // end of getModelName
+  bool PowerLawStrainBasedPorosityNucleationModel::
+      requiresLimitOnNucleationPorosity() const {
+    return true;
+  }  // end of requiresMaximumNucleationPorosity
 
-    bool PowerLawStrainBasedPorosityNucleationModel::
-        requiresLimitOnNucleationPorosity() const {
-      return true;
-    }  // end of requiresMaximumNucleationPorosity
+  std::vector<PorosityNucleationModelBase::MaterialCoefficientDescription>
+  PowerLawStrainBasedPorosityNucleationModel::
+      getMaterialCoefficientDescriptions() const {
+    auto mcs = StrainBasedPorosityNucleationModelBase::
+        getMaterialCoefficientDescriptions();
+    mcs.push_back({"real", "fn", "law coefficient"});
+    mcs.push_back({"strain", "en", "minimal value of equivalent pastic srain"});
+    mcs.push_back({"real", "m", "exponent of the power law"});
+    return mcs;
+  }  // end of getMaterialCoefficientDescriptions
 
-    std::vector<PorosityNucleationModelBase::MaterialCoefficientDescription>
-    PowerLawStrainBasedPorosityNucleationModel::
-        getMaterialCoefficientDescriptions() const {
-      auto mcs = StrainBasedPorosityNucleationModelBase::
-          getMaterialCoefficientDescriptions();
-      mcs.push_back({"real", "fn", "law coefficient"});
-      mcs.push_back(
-          {"strain", "en", "minimal value of equivalent pastic srain"});
-      mcs.push_back({"real", "m", "exponent of the power law"});
-      return mcs;
-    }  // end of getMaterialCoefficientDescriptions
+  PowerLawStrainBasedPorosityNucleationModel::
+      ~PowerLawStrainBasedPorosityNucleationModel() = default;
 
-    PowerLawStrainBasedPorosityNucleationModel::
-        ~PowerLawStrainBasedPorosityNucleationModel() = default;
-
-  }  // end of namespace bbrick
-
-}  // end of namespace mfront
+}  // end of namespace mfront::bbrick

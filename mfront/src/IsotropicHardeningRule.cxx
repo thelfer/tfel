@@ -13,21 +13,17 @@
 
 #include "MFront/BehaviourBrick/IsotropicHardeningRule.hxx"
 
-namespace mfront {
+namespace mfront::bbrick {
 
-  namespace bbrick {
+  std::string IsotropicHardeningRule::getVariableId(const std::string& n,
+                                                    const std::string& fid,
+                                                    const std::string& id) {
+    if (fid.empty()) {
+      return "ihr_" + n + "_" + id;
+    }
+    return "ihr_" + n + fid + "_" + id;
+  }  // end of getVariableId
 
-    std::string IsotropicHardeningRule::getVariableId(const std::string& n,
-                                                      const std::string& fid,
-                                                      const std::string& id) {
-      if (fid.empty()) {
-        return "ihr_" + n + "_" + id;
-      }
-      return "ihr_" + n + fid + "_" + id;
-    }  // end of IsotropicHardeningRule::getVariableId
+  IsotropicHardeningRule::~IsotropicHardeningRule() = default;
 
-    IsotropicHardeningRule::~IsotropicHardeningRule() = default;
-
-  }  // end of namespace bbrick
-
-}  // end of namespace mfront
+}  // end of namespace mfront::bbrick

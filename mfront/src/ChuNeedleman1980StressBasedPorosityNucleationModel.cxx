@@ -16,32 +16,27 @@
 #include "MFront/BehaviourBrick/OptionDescription.hxx"
 #include "MFront/BehaviourBrick/ChuNeedleman1980StressBasedPorosityNucleationModel.hxx"
 
-namespace mfront {
+namespace mfront::bbrick {
 
-  namespace bbrick {
+  std::string ChuNeedleman1980StressBasedPorosityNucleationModel::getModelName()
+      const {
+    return "ChuNeedleman1980StressBasedNucleationModel";
+  }  // end of getModelName
 
-    std::string
-    ChuNeedleman1980StressBasedPorosityNucleationModel::getModelName() const {
-      return "ChuNeedleman1980StressBasedNucleationModel";
-    }  // end of
-       // ChuNeedleman1980StressBasedPorosityNucleationModel::getModelName
+  std::vector<PorosityNucleationModelBase::MaterialCoefficientDescription>
+  ChuNeedleman1980StressBasedPorosityNucleationModel::
+      getMaterialCoefficientDescriptions() const {
+    auto mcs = StressBasedPorosityNucleationModelBase::
+        getMaterialCoefficientDescriptions();
+    mcs.push_back({"real", "fn", "porosity rate coefficient"});
+    mcs.push_back(
+        {"stress", "sigm", "mean value of the gaussian distribution"});
+    mcs.push_back(
+        {"stress", "sn", "standard deviation of the gaussian distribution"});
+    return mcs;
+  }  // end of getMaterialCoefficientDescriptions
 
-    std::vector<PorosityNucleationModelBase::MaterialCoefficientDescription>
-    ChuNeedleman1980StressBasedPorosityNucleationModel::
-        getMaterialCoefficientDescriptions() const {
-      auto mcs = StressBasedPorosityNucleationModelBase::
-          getMaterialCoefficientDescriptions();
-      mcs.push_back({"real", "fn", "porosity rate coefficient"});
-      mcs.push_back(
-          {"stress", "sigm", "mean value of the gaussian distribution"});
-      mcs.push_back(
-          {"stress", "sn", "standard deviation of the gaussian distribution"});
-      return mcs;
-    }  // end of getMaterialCoefficientDescriptions
+  ChuNeedleman1980StressBasedPorosityNucleationModel::
+      ~ChuNeedleman1980StressBasedPorosityNucleationModel() = default;
 
-    ChuNeedleman1980StressBasedPorosityNucleationModel::
-        ~ChuNeedleman1980StressBasedPorosityNucleationModel() = default;
-
-  }  // end of namespace bbrick
-
-}  // end of namespace mfront
+}  // end of namespace mfront::bbrick

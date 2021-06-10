@@ -17,41 +17,34 @@
 #include "MFront/BehaviourBrick/StressPotential.hxx"
 #include "MFront/BehaviourBrick/MichelAndSuquet1992HollowSphereStressCriterion.hxx"
 
-namespace mfront {
+namespace mfront::bbrick {
 
-  namespace bbrick {
+  MichelAndSuquet1992HollowSphereStressCriterion::
+      MichelAndSuquet1992HollowSphereStressCriterion()
+      : StandardPorousStressCriterionBase("MichelAndSuquet1992HollowSphere") {
+  }  // end of MichelAndSuquet1992HollowSphereStressCriterion
 
-    MichelAndSuquet1992HollowSphereStressCriterion::
-        MichelAndSuquet1992HollowSphereStressCriterion()
-        : StandardPorousStressCriterionBase("MichelAndSuquet1992HollowSphere") {
-    }  // end of
-    // MichelAndSuquet1992HollowSphereStressCriterion::MichelAndSuquet1992HollowSphereStressCriterion
+  std::vector<mfront::BehaviourSymmetryType>
+  MichelAndSuquet1992HollowSphereStressCriterion::
+      getSupportedBehaviourSymmetries() const {
+    return {mfront::ISOTROPIC, mfront::ORTHOTROPIC};
+  }  // end of getSupportedBehaviourSymmetries
 
-    std::vector<mfront::BehaviourSymmetryType>
-    MichelAndSuquet1992HollowSphereStressCriterion::
-        getSupportedBehaviourSymmetries() const {
-      return {mfront::ISOTROPIC, mfront::ORTHOTROPIC};
-    }  // end of
-    // MichelAndSuquet1992HollowSphereStressCriterion::getSupportedBehaviourSymmetries()
+  std::vector<OptionDescription>
+  MichelAndSuquet1992HollowSphereStressCriterion::getOptions() const {
+    auto opts = StressCriterionBase::getOptions();
+    opts.emplace_back("n", "Norton exponent of the matrix",
+                      OptionDescription::MATERIALPROPERTY);
+    return opts;
+  }  // end of getOptions
 
-    std::vector<OptionDescription>
-    MichelAndSuquet1992HollowSphereStressCriterion::getOptions() const {
-      auto opts = StressCriterionBase::getOptions();
-      opts.emplace_back("n", "Norton exponent of the matrix",
-                        OptionDescription::MATERIALPROPERTY);
-      return opts;
-    }  // end of MichelAndSuquet1992HollowSphereStressCriterion::getOptions()
+  StressCriterion::PorosityEffectOnFlowRule
+  MichelAndSuquet1992HollowSphereStressCriterion::
+      getPorosityEffectOnEquivalentPlasticStrain() const {
+    return StressCriterion::NO_POROSITY_EFFECT_ON_EQUIVALENT_PLASTIC_STRAIN;
+  }  // end of getPorosityEffectOnEquivalentPlasticStrain
 
-    StressCriterion::PorosityEffectOnFlowRule
-    MichelAndSuquet1992HollowSphereStressCriterion::
-        getPorosityEffectOnEquivalentPlasticStrain() const {
-      return StressCriterion::NO_POROSITY_EFFECT_ON_EQUIVALENT_PLASTIC_STRAIN;
-    }  // end of
-       // MichelAndSuquet1992HollowSphereStressCriterion::getPorosityEffectOnEquivalentPlasticStrain()
+  MichelAndSuquet1992HollowSphereStressCriterion::
+      ~MichelAndSuquet1992HollowSphereStressCriterion() = default;
 
-    MichelAndSuquet1992HollowSphereStressCriterion::
-        ~MichelAndSuquet1992HollowSphereStressCriterion() = default;
-
-  }  // end of namespace bbrick
-
-}  // end of namespace mfront
+}  // end of namespace mfront::bbrick

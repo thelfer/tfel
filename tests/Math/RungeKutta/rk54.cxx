@@ -38,33 +38,27 @@ struct VanDerPol : public tfel::math::RungeKutta54<2, VanDerPol> {
 
 /* coverity [UNCAUGHT_EXCEPT]*/
 int main() {
-  using namespace std;
   using namespace tfel::math;
-
-  ofstream out("rk54.txt");
-
+  std::ofstream out("rk54.txt");
   VanDerPol rk;
   tvector<2> y;
   const double end = 100.;
-
   y(0) = 1.0;
   y(1) = 0.0;
-
   rk.setInitialValue(y);
-  rk.setCriterium(1.e-9);
+  rk.setCriterionValue(1.e-9);
   rk.setMu(10.);
-
   double t = 0.;
   double h = 1.;
   rk.setInitialTimeIncrement(h);
-  out << t << " " << rk.getValue() << endl;
+  out << t << " " << rk.getValue() << '\n';
   for (; t < end - 0.5 * h; t += h) {
     h = std::min(end - t, rk.getTimeIncrement());
     rk.setInitialTime(t);
     rk.setFinalTime(t + h);
     rk.iterate();
-    out << t + h << " " << rk.getValue() << endl;
+    const auto& v = rk.getValue();
+    out << t + h << " " << v[0] << " " << v[1] << '\n';
   }
-
   return EXIT_SUCCESS;
 }
