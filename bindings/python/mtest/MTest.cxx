@@ -1280,8 +1280,8 @@ void declareMTest() {
            "    - the behaviour' internal state variables\n"
            "    - the behaviour' external state variables\n"
            "    - any evolution defined in the input file\n")
-    .def("setCompareToNumericalTangentOperator", MTest::setCompareToNumericalTangentOperator,"")
-    .def("setTangentOperatorComparisonCriterion", MTest::setTangentOperatorComparisonCriterion,"")
-    .def("setNumericalTangentOperatorPerturbationValue", MTest::setNumericalTangentOperatorPerturbationValue,"");
+    .def("setCompareToNumericalTangentOperator", &MTest::setCompareToNumericalTangentOperator,"")
+    .def("setTangentOperatorComparisonCriterion", &MTest::setTangentOperatorComparisonCriterion,"")
+    .def("setNumericalTangentOperatorPerturbationValue", &MTest::setNumericalTangentOperatorPerturbationValue,"");
 
 }  // end of declareExternalLibraryManager

@@ -322,7 +322,7 @@ namespace mtest {
       MTest& t, tokens_iterator& p) {
     this->checkNotEndOfLine("handleTangentOperatorComparisonCriterion", p,
                             this->tokens.end());
-    t.setTangentOperatorComparisonCriterium(this->readDouble(t, p));
+    t.setTangentOperatorComparisonCriterion(this->readDouble(t, p));
     this->checkNotEndOfLine("handleTangentOperatorComparisonCriterion", p,
                             this->tokens.end());
     this->readSpecifiedToken(
