@@ -1280,8 +1280,18 @@ void declareMTest() {
            "    - the behaviour' internal state variables\n"
            "    - the behaviour' external state variables\n"
            "    - any evolution defined in the input file\n")
-    .def("setCompareToNumericalTangentOperator", &MTest::setCompareToNumericalTangentOperator,"")
-    .def("setTangentOperatorComparisonCriterion", &MTest::setTangentOperatorComparisonCriterion,"")
-    .def("setNumericalTangentOperatorPerturbationValue", &MTest::setNumericalTangentOperatorPerturbationValue,"");
+      .def("setCompareToNumericalTangentOperator",
+           &MTest::setCompareToNumericalTangentOperator,
+           "set if a comparison of the tangent operator returned by the "
+           "behaviour "
+           "to a numerical approximation")
+      .def("setTangentOperatorComparisonCriterion",
+           &MTest::setTangentOperatorComparisonCriterion,
+           "set the criterion used to compare the tangent operator returned "
+           "by the behaviour and its numerical approximation")
+      .def("setNumericalTangentOperatorPerturbationValue",
+           &MTest::setNumericalTangentOperatorPerturbationValue,
+           "set the perburtation of the gradient used to compute a numerical "
+           "approximation of the tangent operator");
 
 }  // end of declareExternalLibraryManager
