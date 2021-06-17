@@ -65,15 +65,6 @@ namespace tfel::math {
               std::integral_constant<unsigned int, D6>,
               std::integral_constant<unsigned int, D7>> {};
 
-  template <typename A, typename B>
-  struct AddUnit_;
-
-  template <typename A, typename B>
-  struct SubUnit_;
-
-  template <int N, unsigned int D, typename A>
-  struct PowUnit_;
-
 }  // end of namespace tfel::math
 
 #include "TFEL/Math/Quantity/Unit.ixx"

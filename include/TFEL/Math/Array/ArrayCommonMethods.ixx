@@ -26,7 +26,11 @@ namespace tfel::math {
     static_assert(ArrayPolicyType::IndexingPolicy::arity == 1u, "invalid call");
     const auto& child = static_cast<const Child&>(*this);
     const auto* const d = child.data();
-    return ArrayPolicyType::make_const_reference(d[child.getIndex(i)]);
+    if constexpr (ArrayPolicyType::isMakeConstReferenceTrivial) {
+      return d[child.getIndex(i)];
+    } else {
+      return ArrayPolicyType::make_const_reference(d[child.getIndex(i)]);
+    }
   }  // end of operator[]
 
   template <typename Child, typename ArrayPolicyType>
@@ -37,7 +41,11 @@ namespace tfel::math {
       noexcept {
     const auto& child = static_cast<const Child&>(*this);
     const auto* const d = child.data();
-    return ArrayPolicyType::make_const_reference(d[child.getIndex(i)]);
+    if constexpr (ArrayPolicyType::isMakeConstReferenceTrivial) {
+      return d[child.getIndex(i)];
+    } else {
+      return ArrayPolicyType::make_const_reference(d[child.getIndex(i)]);
+    }
   }  // end of operator[]
 
   template <typename Child, typename ArrayPolicyType>
@@ -50,8 +58,12 @@ namespace tfel::math {
     using size_type = typename ArrayPolicyType::IndexingPolicy::size_type;
     const auto& child = static_cast<const Child&>(*this);
     const auto* const d = child.data();
-    return ArrayPolicyType::make_const_reference(
-        d[child.getIndex(static_cast<const size_type>(i)...)]);
+    if constexpr (ArrayPolicyType::isMakeConstReferenceTrivial) {
+      return d[child.getIndex(static_cast<const size_type>(i)...)];
+    } else {
+      return ArrayPolicyType::make_const_reference(
+          d[child.getIndex(static_cast<const size_type>(i)...)]);
+    }
   }  // end of operator[]
 
   template <typename Child, typename ArrayPolicyType>
@@ -62,7 +74,11 @@ namespace tfel::math {
       noexcept {
     const auto& child = static_cast<const Child&>(*this);
     const auto* const d = child.data();
-    return ArrayPolicyType::make_const_reference(d[child.getIndex(i)]);
+    if constexpr (ArrayPolicyType::isMakeConstReferenceTrivial) {
+      return d[child.getIndex(i)];
+    } else {
+      return ArrayPolicyType::make_const_reference(d[child.getIndex(i)]);
+    }
   }  // end of operator()
 
   template <typename Child, typename ArrayPolicyType>
@@ -73,7 +89,11 @@ namespace tfel::math {
     static_assert(ArrayPolicyType::IndexingPolicy::arity == 1u, "invalid call");
     auto& child = static_cast<Child&>(*this);
     auto* const d = child.data();
-    return ArrayPolicyType::make_reference(d[child.getIndex(i)]);
+    if constexpr (ArrayPolicyType::isMakeReferenceTrivial) {
+      return d[child.getIndex(i)];
+    } else {
+      return ArrayPolicyType::make_reference(d[child.getIndex(i)]);
+    }
   }  // end of operator[]
 
   template <typename Child, typename ArrayPolicyType>
@@ -84,7 +104,11 @@ namespace tfel::math {
               i) noexcept {
     auto& child = static_cast<Child&>(*this);
     auto* const d = child.data();
-    return ArrayPolicyType::make_reference(d[child.getIndex(i)]);
+    if constexpr (ArrayPolicyType::isMakeReferenceTrivial) {
+      return d[child.getIndex(i)];
+    } else {
+      return ArrayPolicyType::make_reference(d[child.getIndex(i)]);
+    }
   }  // end of operator[]
 
   template <typename Child, typename ArrayPolicyType>
@@ -97,9 +121,13 @@ namespace tfel::math {
                            Indices...>();
     auto& child = static_cast<Child&>(*this);
     auto* const d = child.data();
-    return ArrayPolicyType::make_reference(
-        d[child.getIndex(static_cast<const size_type>(i)...)]);
-  }
+    if constexpr (ArrayPolicyType::isMakeReferenceTrivial) {
+      return d[child.getIndex(static_cast<const size_type>(i)...)];
+    } else {
+      return ArrayPolicyType::make_reference(
+          d[child.getIndex(static_cast<const size_type>(i)...)]);
+    }
+  } // end of operator()
 
   template <typename Child, typename ArrayPolicyType>
   constexpr typename ArrayPolicyType::reference
@@ -108,7 +136,11 @@ namespace tfel::math {
                        ArrayPolicyType::IndexingPolicy::arity>& i) noexcept {
     auto& child = static_cast<Child&>(*this);
     auto* const d = child.data();
-    return ArrayPolicyType::make_reference(d[child.getIndex(i)]);
+    if constexpr (ArrayPolicyType::isMakeReferenceTrivial) {
+      return d[child.getIndex(i)];
+    } else {
+      return ArrayPolicyType::make_reference(d[child.getIndex(i)]);
+    }
   }  // end of operator()
 
   template <typename Child, typename ArrayPolicyType>

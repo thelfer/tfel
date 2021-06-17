@@ -24,8 +24,8 @@ namespace tfel {
   namespace math {
 
     static bool compareFloatingPointValues(const double a, const double b) {
-      TFEL_CONSTEXPR const auto emin = std::numeric_limits<double>::min();
-      TFEL_CONSTEXPR const auto eps = std::numeric_limits<double>::epsilon();
+      constexpr const auto emin = std::numeric_limits<double>::min();
+      constexpr const auto eps = std::numeric_limits<double>::epsilon();
       const auto aa = std::abs(a);
       const auto ab = std::abs(b);
       const auto d = std::abs(a - b);

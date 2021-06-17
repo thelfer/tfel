@@ -97,7 +97,7 @@ namespace tfel::material {
                                                 const real c44,
                                                 const real,
                                                 const real) {
-        TFEL_CONSTEXPR const auto zero = real{0};
+        constexpr const auto zero = real{0};
         return {(c13 + c12) / 3,
                 (c13 - 2 * c12) / 3,
                 (c12 - 2 * c13) / 3,
@@ -145,7 +145,7 @@ namespace tfel::material {
                                                 const real c44,
                                                 const real c55,
                                                 const real c66) {
-        TFEL_CONSTEXPR const auto zero = real{0};
+        constexpr const auto zero = real{0};
         return {(c13 + c12) / 3,
                 (c13 - 2 * c12) / 3,
                 (c12 - 2 * c13) / 3,

@@ -895,7 +895,7 @@ namespace tfel::math {
     using T = numeric_type<StensorType>;
     using T2 = BinaryOperationResult<T, T, OpMult>;
     using base = base_type<T>;
-    TFEL_CONSTEXPR const base one_half = 1 / base(2);
+    constexpr const base one_half = 1 / base(2);
     return stensor<2u, T2>{(s(3) * s(3) + 2 * s(0) * s(0)) * one_half,
                            (s(3) * s(3) + 2 * s(1) * s(1)) * one_half,
                            s(2) * s(2), (s(1) + s(0)) * s(3)};
@@ -914,7 +914,7 @@ namespace tfel::math {
     using base = base_type<T>;
     typedef numeric_type<StensorType> T;
     constexpr base cste = Cste<base>::sqrt2;
-    TFEL_CONSTEXPR const base one_half = 1 / (base(2));
+    constexpr const base one_half = 1 / (base(2));
     return stensor<3u, T2>{
         (s(4) * s(4) + s(3) * s(3) + 2 * s(0) * s(0)) * one_half,
         (s(5) * s(5) + s(3) * s(3) + 2 * s(1) * s(1)) * one_half,

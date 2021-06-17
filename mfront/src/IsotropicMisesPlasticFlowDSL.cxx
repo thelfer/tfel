@@ -300,7 +300,7 @@ namespace mfront {
        << "using namespace std;\n"
        << "using tfel::material::computeElasticStiffness;\n"
        << "using tfel::math::st2tost2;\n"
-       << "TFEL_CONSTEXPR real prec = "
+       << "constexpr real prec = "
           "std::numeric_limits<strain>::epsilon()/100;\n"
        << "if(smt==CONSISTENTTANGENTOPERATOR){\n"
        << "computeElasticStiffness<N,Type>::exe(this->Dt,this->lambda_tdt,this-"

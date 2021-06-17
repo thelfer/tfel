@@ -128,7 +128,7 @@ namespace tfel::math {
                                  const MatrixType& a,
                                  const VectorType& d) {
     using real = numeric_type<MatrixType>;
-    TFEL_CONSTEXPR const auto eps = 100 * std::numeric_limits<real>::min();
+    constexpr const auto eps = 100 * std::numeric_limits<real>::min();
     QRDecomp::back_substitute(v, a, d, eps);
   }
 

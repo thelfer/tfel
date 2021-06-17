@@ -430,7 +430,7 @@ namespace mfront {
             << "using tfel::material::" << mb.getClassName() << ";\n"
             << "using AbaqusExplicitData = abaqus::AbaqusExplicitData<" << t
             << ">;\n"
-            << "TFEL_CONSTEXPR const auto cste = Cste<" << t << ">::sqrt2;\n"
+            << "constexpr const auto cste = Cste<" << t << ">::sqrt2;\n"
             << "auto view = [&nblock](" << t << "* v){\n"
             << "  return AbaqusExplicitData::strided_iterator(v,*nblock);\n"
             << "};\n"
@@ -1091,7 +1091,7 @@ namespace mfront {
     out << "auto integrate = [&](const int i){\n";
     writeAbaqusExplicitDataInitialisation(out, this->getFunctionNameBasis(name),
                                           ivoffset);
-    out << "TFEL_CONSTEXPR const " << t << " zero = " << t << "(0);\n";
+    out << "constexpr const " << t << " zero = " << t << "(0);\n";
     if (h == ModellingHypothesis::PLANESTRESS) {
       // axial strain !
       const auto v = this->checkIfAxialStrainIsDefinedAndGetItsOffset(mb, h);
@@ -1261,7 +1261,7 @@ namespace mfront {
                                           ivoffset);
     if (h == ModellingHypothesis::PLANESTRESS) {
       const auto v = this->checkIfAxialStrainIsDefinedAndGetItsOffset(mb, h);
-      out << "TFEL_CONSTEXPR const " << t << " zero = " << t << "(0);\n"
+      out << "constexpr const " << t << " zero = " << t << "(0);\n"
           << "const " << t << " ezz_old = "
           << "stateOld[i+" << v.second.getValueForDimension(2)
           << "*(*nblock)];\n"
@@ -1481,8 +1481,8 @@ namespace mfront {
                                           ivoffset);
     auto dime = (h == ModellingHypothesis::TRIDIMENSIONAL) ? "3u" : "2u";
     if (h == ModellingHypothesis::PLANESTRESS) {
-      out << "TFEL_CONSTEXPR const " << t << " zero = " << t << "(0);\n"
-          << "TFEL_CONSTEXPR const " << t << " one  = " << t << "(1);\n"
+      out << "constexpr const " << t << " zero = " << t << "(0);\n"
+          << "constexpr const " << t << " one  = " << t << "(1);\n"
           << "stensor<2u," << t
           << "> U0 = {*(stretchOld+i),*(stretchOld+i+*nblock),\n"
           << "                              "

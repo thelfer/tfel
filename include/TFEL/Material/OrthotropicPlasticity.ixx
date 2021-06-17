@@ -321,7 +321,7 @@ namespace tfel::material {
              const tfel::math::base_type<StensorType> b10,
              const tfel::math::base_type<StensorType> b11) {
     using real = tfel::math::base_type<StensorType>;
-    TFEL_CONSTEXPR const auto icste = tfel::math::Cste<real>::isqrt2;
+    constexpr const auto icste = tfel::math::Cste<real>::isqrt2;
     return ((2 * (b4 + b1) - b3 - b2) * s[2] * s[2] * s[2]) / 27 +
            ((b4 + b3) * s[1] * s[1] * s[1]) / 27 +
            ((b2 + b1) * s[0] * s[0] * s[0]) / 27 +
@@ -458,7 +458,7 @@ namespace tfel::material {
                        const tfel::math::base_type<StensorType> b11) {
     using namespace tfel::math;
     using real = base_type<StensorType>;
-    TFEL_CONSTEXPR const auto icste = Cste<real>::isqrt2;
+    constexpr const auto icste = Cste<real>::isqrt2;
     auto dJ3O =
         stensor<3u,
                 UnaryOperationResult<numeric_type<StensorType>, Power<2>>>{};
@@ -610,7 +610,7 @@ namespace tfel::material {
                              const tfel::math::base_type<StensorType> b11) {
     using namespace tfel::math;
     using real = base_type<StensorType>;
-    TFEL_CONSTEXPR const auto icste = Cste<real>::isqrt2;
+    constexpr const auto icste = Cste<real>::isqrt2;
     auto d2J3O = st2tost2<3u, numeric_type<StensorType>>{};
     d2J3O(0, 0) =
         (-2 * (b2 * s[2] + b1 * s[1])) / 9 + (2 * (b2 + b1) * s[0]) / 9;

@@ -35,7 +35,7 @@ struct Expr8Test final : public tfel::tests::TestCase {
     using namespace std;
     using namespace tfel::meta;
     using namespace tfel::math;
-    TFEL_CONSTEXPR const auto eps = 10 * numeric_limits<double>::epsilon();
+    constexpr const auto eps = 10 * numeric_limits<double>::epsilon();
     using stensor = stensor<2u, double>;
     const stensor s1{3., 4., 5., 0.};
     const stensor id = stensor::Id();

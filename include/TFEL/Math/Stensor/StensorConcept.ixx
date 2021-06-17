@@ -60,8 +60,8 @@ namespace tfel::math {
   sigmaeq(const StensorType& s) {
     using real = base_type<numeric_type<StensorType>>;
     constexpr auto N = getSpaceDimension<StensorType>();
-    TFEL_CONSTEXPR const auto one_third = real(1) / real(3);
-    TFEL_CONSTEXPR const auto cste = real(3) / real(2);
+    constexpr const auto one_third = real(1) / real(3);
+    constexpr const auto cste = real(3) / real(2);
     static_assert((N == 1) || (N == 2) || (N == 3), "invalid space dimension");
     auto square = [](const auto x) { return x * x; };
     const auto tr = one_third * trace(s);
@@ -89,7 +89,7 @@ namespace tfel::math {
     using real = base_type<numeric_type<StensorType>>;
     constexpr auto N = getSpaceDimension<StensorType>();
     static_assert((N == 1) || (N == 2) || (N == 3), "invalid space dimension");
-    TFEL_CONSTEXPR const auto one_third = real{1} / real{3};
+    constexpr const auto one_third = real{1} / real{3};
     const auto tr = one_third * trace(s);
     if constexpr (N == 1u) {
       return Result{s(0) - tr, s(1) - tr, s(2) - tr};
@@ -125,8 +125,8 @@ namespace tfel::math {
     } else if constexpr (N == 3u) {
       using NumType = numeric_type<StensorType>;
       using real = base_type<NumType>;
-      TFEL_CONSTEXPR const auto one_half = real(1) / real(2);
-      TFEL_CONSTEXPR const auto icste = Cste<real>::isqrt2;
+      constexpr const auto one_half = real(1) / real(2);
+      constexpr const auto icste = Cste<real>::isqrt2;
       dJ[0] = s[1] * s[2] - s[5] * s[5] * one_half;
       dJ[1] = s[0] * s[2] - s[4] * s[4] * one_half;
       dJ[2] = s[0] * s[1] - s[3] * s[3] * one_half;
@@ -177,7 +177,7 @@ namespace tfel::math {
     } else if constexpr (N == 3u) {
       using NumType = numeric_type<StensorType>;
       using real = base_type<NumType>;
-      TFEL_CONSTEXPR const auto cste = Cste<real>::sqrt2;
+      constexpr const auto cste = Cste<real>::sqrt2;
       dJ[0] = -(6 * s[5] * s[5] - 3 * s[4] * s[4] - 3 * s[3] * s[3] +
                 2 * s[2] * s[2] + (4 * s[0] - 8 * s[1]) * s[2] +
                 2 * s[1] * s[1] + 4 * s[0] * s[1] - 4 * s[0] * s[0]) /

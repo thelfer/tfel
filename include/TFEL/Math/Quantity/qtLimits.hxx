@@ -15,70 +15,85 @@
 #define LIB_TFEL_MATH_QTLIMITS_HXX
 
 #include <limits>
-
 #include "TFEL/Math/qt.hxx"
 
 namespace std {
 
-  /*
-   * Partial specialisation for quantities
+  /*!
+   * \brief partial specialisation for quantities
    */
-  template <typename unit, typename T>
-  struct numeric_limits<tfel::math::qt<unit, T>> {
-    static constexpr bool is_specialized = numeric_limits<T>::is_specialized;
+  template <typename UnitType, typename ValueType, typename OwnershipPolicy>
+  struct numeric_limits<tfel::math::Quantity<UnitType, ValueType, OwnershipPolicy>> {
+    static constexpr bool is_specialized =
+        numeric_limits<ValueType>::is_specialized;
 
-    static constexpr int digits = numeric_limits<T>::digits;
-    static constexpr int digits10 = numeric_limits<T>::digits10;
-    static constexpr bool is_signed = numeric_limits<T>::is_signed;
-    static constexpr bool is_integer = numeric_limits<T>::is_integer;
-    static constexpr bool is_exact = numeric_limits<T>::is_exact;
-    static constexpr int radix = numeric_limits<T>::radix;
+    static constexpr int digits = numeric_limits<ValueType>::digits;
+    static constexpr int digits10 = numeric_limits<ValueType>::digits10;
+    static constexpr bool is_signed = numeric_limits<ValueType>::is_signed;
+    static constexpr bool is_integer = numeric_limits<ValueType>::is_integer;
+    static constexpr bool is_exact = numeric_limits<ValueType>::is_exact;
+    static constexpr int radix = numeric_limits<ValueType>::radix;
 
-    static constexpr int min_exponent = numeric_limits<T>::min_exponent;
-    static constexpr int min_exponent10 = numeric_limits<T>::min_exponent10;
-    static constexpr int max_exponent = numeric_limits<T>::max_exponent;
-    static constexpr int max_exponent10 = numeric_limits<T>::max_exponent10;
+    static constexpr int min_exponent = numeric_limits<ValueType>::min_exponent;
+    static constexpr int min_exponent10 =
+        numeric_limits<ValueType>::min_exponent10;
+    static constexpr int max_exponent = numeric_limits<ValueType>::max_exponent;
+    static constexpr int max_exponent10 =
+        numeric_limits<ValueType>::max_exponent10;
 
-    static constexpr bool has_infinity = numeric_limits<T>::has_infinity;
-    static constexpr bool has_quiet_NaN = numeric_limits<T>::has_quiet_NaN;
+    static constexpr bool has_infinity =
+        numeric_limits<ValueType>::has_infinity;
+    static constexpr bool has_quiet_NaN =
+        numeric_limits<ValueType>::has_quiet_NaN;
     static constexpr bool has_signaling_NaN =
-        numeric_limits<T>::has_signaling_NaN;
+        numeric_limits<ValueType>::has_signaling_NaN;
     static constexpr float_denorm_style has_denorm =
-        numeric_limits<T>::has_denorm;
-    static constexpr bool has_denorm_loss = numeric_limits<T>::has_denorm_loss;
+        numeric_limits<ValueType>::has_denorm;
+    static constexpr bool has_denorm_loss =
+        numeric_limits<ValueType>::has_denorm_loss;
 
-    static constexpr bool is_iec559 = numeric_limits<T>::is_iec559;
-    static constexpr bool is_bounded = numeric_limits<T>::is_bounded;
-    static constexpr bool is_modulo = numeric_limits<T>::is_modulo;
+    static constexpr bool is_iec559 = numeric_limits<ValueType>::is_iec559;
+    static constexpr bool is_bounded = numeric_limits<ValueType>::is_bounded;
+    static constexpr bool is_modulo = numeric_limits<ValueType>::is_modulo;
 
-    static constexpr bool traps = numeric_limits<T>::traps;
-    static constexpr bool tinyness_before = numeric_limits<T>::tinyness_before;
+    static constexpr bool traps = numeric_limits<ValueType>::traps;
+    static constexpr bool tinyness_before =
+        numeric_limits<ValueType>::tinyness_before;
     static constexpr float_round_style round_style =
-        numeric_limits<T>::round_style;
+        numeric_limits<ValueType>::round_style;
 
-    static tfel::math::qt<unit, T> min() noexcept {
-      return tfel::math::qt<unit, T>(numeric_limits<T>::min());
+    static constexpr tfel::math::qt<UnitType, ValueType> min() noexcept {
+      return tfel::math::qt<UnitType, ValueType>(
+          numeric_limits<ValueType>::min());
     }
-    static tfel::math::qt<unit, T> max() noexcept {
-      return tfel::math::qt<unit, T>(numeric_limits<T>::max());
+    static constexpr tfel::math::qt<UnitType, ValueType> max() noexcept {
+      return tfel::math::qt<UnitType, ValueType>(
+          numeric_limits<ValueType>::max());
     }
-    static tfel::math::qt<unit, T> epsilon() noexcept {
-      return tfel::math::qt<unit, T>(numeric_limits<T>::epsilon());
+    static constexpr tfel::math::qt<UnitType, ValueType> epsilon() noexcept {
+      return tfel::math::qt<UnitType, ValueType>(
+          numeric_limits<ValueType>::epsilon());
     }
-    static tfel::math::qt<unit, T> round_error() noexcept {
-      return tfel::math::qt<unit, T>(numeric_limits<T>::round_error());
+    static constexpr tfel::math::qt<UnitType, ValueType> round_error() noexcept {
+      return tfel::math::qt<UnitType, ValueType>(
+          numeric_limits<ValueType>::round_error());
     }
-    static tfel::math::qt<unit, T> infinity() noexcept {
-      return tfel::math::qt<unit, T>(numeric_limits<T>::infinity());
+    static constexpr tfel::math::qt<UnitType, ValueType> infinity() noexcept {
+      return tfel::math::qt<UnitType, ValueType>(
+          numeric_limits<ValueType>::infinity());
     }
-    static tfel::math::qt<unit, T> quiet_NaN() noexcept {
-      return tfel::math::qt<unit, T>(numeric_limits<T>::quiet_NaN());
+    static constexpr tfel::math::qt<UnitType, ValueType> quiet_NaN() noexcept {
+      return tfel::math::qt<UnitType, ValueType>(
+          numeric_limits<ValueType>::quiet_NaN());
     }
-    static tfel::math::qt<unit, T> signaling_NaN() noexcept {
-      return tfel::math::qt<unit, T>(numeric_limits<T>::signaling_NaN());
+    static constexpr tfel::math::qt<UnitType, ValueType>
+    signaling_NaN() noexcept {
+      return tfel::math::qt<UnitType, ValueType>(
+          numeric_limits<ValueType>::signaling_NaN());
     }
-    static tfel::math::qt<unit, T> denorm_min() noexcept {
-      return tfel::math::qt<unit, T>(numeric_limits<T>::denorm_min());
+    static constexpr tfel::math::qt<UnitType, ValueType> denorm_min() noexcept {
+      return tfel::math::qt<UnitType, ValueType>(
+          numeric_limits<ValueType>::denorm_min());
     }
   };
 

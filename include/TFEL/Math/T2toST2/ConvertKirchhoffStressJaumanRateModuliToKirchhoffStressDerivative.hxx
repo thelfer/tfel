@@ -104,7 +104,7 @@ namespace tfel::math {
                               const StensorType& t) {
       constexpr auto cste = Cste<T>::sqrt2;
       constexpr auto icste = Cste<T>::isqrt2;
-      TFEL_CONSTEXPR const auto icste2 = icste / 2;
+      constexpr const auto icste2 = icste / 2;
       const auto iF = invert(F);
       return {
           (cste * t[4] * iF[5] + cste * t[3] * iF[3]) / 2 +

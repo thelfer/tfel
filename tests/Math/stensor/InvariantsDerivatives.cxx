@@ -102,10 +102,10 @@ struct InvariantsDerivatives final : public tfel::tests::TestCase {
   void check(const tfel::math::stensor<N, double>& s1) {
     using stensor = tfel::math::stensor<N, double>;
     using st2tost2 = tfel::math::st2tost2<N, double>;
-    TFEL_CONSTEXPR const auto eps = 1e-2;
-    TFEL_CONSTEXPR const auto prec = 1e-13;
-    TFEL_CONSTEXPR const auto eps2 = 5e-6;
-    TFEL_CONSTEXPR const auto prec2 = 1e-10;
+    constexpr const auto eps = 1e-2;
+    constexpr const auto prec = 1e-13;
+    constexpr const auto eps2 = 5e-6;
+    constexpr const auto prec2 = 1e-10;
     auto I1 = [](const stensor& v) { return trace(v); };
     auto I2 = [](const stensor& v) {
       const auto I1v = trace(v);

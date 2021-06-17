@@ -278,7 +278,7 @@ namespace mtest {
                    "GenericSolver::execute: "
                    "negative time step");
     // almost bone
-    TFEL_CONSTEXPR real aone = 1 - 10 * std::numeric_limits<real>::epsilon();
+    constexpr real aone = 1 - 10 * std::numeric_limits<real>::epsilon();
     bool end = false;
     if (o.dynamic_time_step_scaling) {
       if (mfront::getVerboseMode() >= mfront::VERBOSE_LEVEL1) {

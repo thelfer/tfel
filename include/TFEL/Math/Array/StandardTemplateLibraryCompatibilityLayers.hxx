@@ -22,7 +22,8 @@ namespace tfel::math {
 
   /*!
    * \brief partial specialisation of the `ArraySTLCompatibilityLayer`
-   * class when the memoy layout is contiguous. \tparam Child: child class
+   * class when the memoy layout is contiguous.
+   * \tparam Child: child class
    * \tparam ValueType: value hold by the array
    */
   template <typename Child, typename ArrayPolicy>

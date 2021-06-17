@@ -21,7 +21,7 @@ struct test_LinearInterpolation final : public tfel::tests::TestCase {
   test_LinearInterpolation()
       : tfel::tests::TestCase("TFEL/Check", "LinearInterpolation") {}
   tfel::tests::TestResult execute() override {
-    TFEL_CONSTEXPR const double eps = 1.e-14;
+    constexpr const double eps = 1.e-14;
     tfel::check::LinearInterpolation i;
     i.interpolate({1., 2.}, {2., 4.});
     TFEL_TESTS_ASSERT(std::abs(3. - i.getValue(1.5)) < eps);

@@ -50,7 +50,7 @@ namespace tfel::math::internals {
       tvector<3u, real>& vp, const real A, const real B, const real C) {
     constexpr auto zero = real{0};
     constexpr auto one = real{1};
-    TFEL_CONSTEXPR const auto one_half = one / 2;
+    constexpr const auto one_half = one / 2;
     const auto sm = A + C;
     const auto df = A - C;
     const auto rt = std::sqrt(df * df + 4 * B * B);
@@ -80,7 +80,7 @@ namespace tfel::math::internals {
     constexpr auto rmin = std::numeric_limits<real>::min();
     constexpr auto zero = real{0};
     constexpr auto one = real{1};
-    TFEL_CONSTEXPR const auto one_half = one / 2;
+    constexpr const auto one_half = one / 2;
     // computing eigen values
     FSESAnalyticalSymmetricEigensolver2x2::computeEigenValues(vp, A, B, C);
     // nullify unused terms

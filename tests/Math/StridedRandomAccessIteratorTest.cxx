@@ -40,7 +40,7 @@ struct StridedRandomAccessIteratorTest final : public tfel::tests::TestCase {
   }  // end of execute
  private:
   void test1() {
-    TFEL_CONSTEXPR const double eps = std::numeric_limits<double>::epsilon();
+    constexpr const double eps = std::numeric_limits<double>::epsilon();
     using array = std::array<double, 12>;
     using iterator =
         tfel::math::StridedRandomAccessIterator<array::const_iterator>;
@@ -64,7 +64,7 @@ struct StridedRandomAccessIteratorTest final : public tfel::tests::TestCase {
     TFEL_TESTS_ASSERT(std::abs(v[3] - 9) < eps);
   }
   void test2() {
-    TFEL_CONSTEXPR const double eps = std::numeric_limits<double>::epsilon();
+    constexpr const double eps = std::numeric_limits<double>::epsilon();
     using array = std::array<double, 12>;
     using iterator = tfel::math::StridedRandomAccessIterator<array::iterator>;
     array values = {{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11}};

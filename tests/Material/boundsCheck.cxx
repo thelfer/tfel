@@ -27,7 +27,7 @@ int main() {
   using namespace std;
   using namespace tfel::math;
   using namespace tfel::material;
-
+  using mass = qt<Mass>;
   stensor<3, mass> s(mass(12.));
   stensor<3, float> s2(12.f);
   long double d = 12.L;

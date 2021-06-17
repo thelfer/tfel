@@ -42,8 +42,8 @@ namespace calculix {
   struct ConvertSymmetricTangentOperator {
     template <typename real>
     static void exe(real *const DDSDDE, const real *const D) {
-      TFEL_CONSTEXPR const auto one_half = real(1) / real(2);
-      TFEL_CONSTEXPR const auto icste = tfel::math::Cste<real>::isqrt2;
+      constexpr const auto one_half = real(1) / real(2);
+      constexpr const auto icste = tfel::math::Cste<real>::isqrt2;
       tfel::math::ConstST2toST2View<3u, real> Dt(D);
       DDSDDE[0] = Dt(0, 0);
       DDSDDE[1] = Dt(0, 1);
@@ -77,9 +77,9 @@ namespace calculix {
       // (sxx ... sxy ... ) = D. (exx ... 2exy ...)
       // This is *not* consistent with the representation of tensors
       // This can be very misleading
-      TFEL_CONSTEXPR const auto one_half = real(1) / real(2);
-      TFEL_CONSTEXPR const auto one_fourth = real(1) / real(4);
-      TFEL_CONSTEXPR const auto hicste = tfel::math::Cste<real>::isqrt2 / 2;
+      constexpr const auto one_half = real(1) / real(2);
+      constexpr const auto one_fourth = real(1) / real(4);
+      constexpr const auto hicste = tfel::math::Cste<real>::isqrt2 / 2;
       tfel::math::ConstST2toST2View<3u, real> Dt(D);
       DDSDDE[0] = Dt(0, 0);
       DDSDDE[1] = (Dt(0, 1) + Dt(1, 0)) * one_half;

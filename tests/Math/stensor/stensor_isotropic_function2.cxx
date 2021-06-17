@@ -48,13 +48,13 @@ struct StensorIsotropicFunctionDerivativeTest2 final
 #if (defined __INTEL_COMPILER)
     const auto K = tfel::math::st2tost2<N, double>::K();
 #else
-    TFEL_CONSTEXPR const auto K = tfel::math::st2tost2<N, double>::K();
+    constexpr const auto K = tfel::math::st2tost2<N, double>::K();
 #endif
-    TFEL_CONSTEXPR const auto E = 150e9;
-    TFEL_CONSTEXPR const auto n = 0.3;
-    TFEL_CONSTEXPR const auto m = E / (2 * (1 + n));
-    TFEL_CONSTEXPR const auto rm = 0.6;
-    TFEL_CONSTEXPR const double prec = 4.e-9 * E;
+    constexpr const auto E = 150e9;
+    constexpr const auto n = 0.3;
+    constexpr const auto m = E / (2 * (1 + n));
+    constexpr const auto rm = 0.6;
+    constexpr const double prec = 4.e-9 * E;
     auto f = [](const double x) -> double { return x > 0 ? x : 0; };
     auto df = [](const double x) -> double {
       return std::abs(x) < 1.e-12 ? 0.5 : ((x < 0) ? 0 : 1);

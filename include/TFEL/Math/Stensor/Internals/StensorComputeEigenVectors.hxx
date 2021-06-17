@@ -165,7 +165,7 @@ namespace tfel::math::internals {
         const T s0, const T s1, const T s3, T& vp1, T& vp2) {
       static_assert(tfel::typetraits::IsFundamentalNumericType<T>::cond);
       static_assert(tfel::typetraits::IsReal<T>::cond);
-      TFEL_CONSTEXPR const auto one_half = T{1} / T{2};
+      constexpr const auto one_half = T{1} / T{2};
       const T tr = one_half * (s0 + s1);
       const T tmp = s0 - s1;
       const T tmp2 = std::sqrt(one_half * (tmp * tmp * one_half + s3 * s3));
@@ -285,7 +285,7 @@ namespace tfel::math::internals {
       using tfel::math::tvector;
       static_assert(tfel::typetraits::IsFundamentalNumericType<T>::cond);
       static_assert(tfel::typetraits::IsReal<T>::cond);
-      TFEL_CONSTEXPR const auto rel_prec =
+      constexpr const auto rel_prec =
           100 * std::numeric_limits<T>::epsilon();
       StensorComputeEigenValues<3u>::exe(s, vp(0), vp(1), vp(2), b);
       const auto tr = (s[0] + s[1] + s[2]) / 3;

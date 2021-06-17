@@ -951,7 +951,7 @@ namespace mfront {
           d.getCodeBlock(BehaviourData::ComputeThermodynamicForces).members;
       uvs.insert(uvs2.begin(), uvs2.end());
     }
-    os << "TFEL_CONSTEXPR const auto cste1_2 = real{1}/real{2};\n"
+    os << "constexpr const auto cste1_2 = real{1}/real{2};\n"
        << "// Compute K1's values\n";
     if (this->mb.hasCode(h, BehaviourData::ComputeThermodynamicForces)) {
       os << "this->computeThermodynamicForces();\n";
@@ -1065,43 +1065,43 @@ namespace mfront {
       eev = ERRORSUMMATIONEVALUATION;
     }
     if (shallUpdateExternalStateValues) {
-      os << "TFEL_CONSTEXPR const auto cste1_2         = real{1}/real{2};\n"
-         << "TFEL_CONSTEXPR const auto cste3_8         = real{3}/real{8};\n"
-         << "TFEL_CONSTEXPR const auto cste12_13       = Type(12)/Type(13);\n";
+      os << "constexpr const auto cste1_2         = real{1}/real{2};\n"
+         << "constexpr const auto cste3_8         = real{3}/real{8};\n"
+         << "constexpr const auto cste12_13       = Type(12)/Type(13);\n";
     }
     if (shallUpdateInternalStateValues) {
-      os << "TFEL_CONSTEXPR const auto cste3544_2565   = "
+      os << "constexpr const auto cste3544_2565   = "
             "Type(3544)/Type(2565);\n"
-         << "TFEL_CONSTEXPR const auto cste11_40       = Type(11)/Type(40);\n"
-         << "TFEL_CONSTEXPR const auto cste1859_4104   = "
+         << "constexpr const auto cste11_40       = Type(11)/Type(40);\n"
+         << "constexpr const auto cste1859_4104   = "
             "Type(1859)/Type(4104);\n"
-         << "TFEL_CONSTEXPR const auto cste8_27        = Type(8)/Type(27);\n"
-         << "TFEL_CONSTEXPR const auto cste845_4104    = "
+         << "constexpr const auto cste8_27        = Type(8)/Type(27);\n"
+         << "constexpr const auto cste845_4104    = "
             "Type(845)/Type(4104);\n"
-         << "TFEL_CONSTEXPR const auto cste3680_513    = "
+         << "constexpr const auto cste3680_513    = "
             "Type(3680)/Type(513);\n"
-         << "TFEL_CONSTEXPR const auto cste439_216     = Type(439)/Type(216);\n"
-         << "TFEL_CONSTEXPR const auto cste7296_2197   = "
+         << "constexpr const auto cste439_216     = Type(439)/Type(216);\n"
+         << "constexpr const auto cste7296_2197   = "
             "Type(7296)/Type(2197);\n"
-         << "TFEL_CONSTEXPR const auto cste7200_2197   = "
+         << "constexpr const auto cste7200_2197   = "
             "Type(7200)/Type(2197);\n"
-         << "TFEL_CONSTEXPR const auto cste3_32        = real{3}/real{32};\n"
-         << "TFEL_CONSTEXPR const auto cste1932_2197   = "
+         << "constexpr const auto cste3_32        = real{3}/real{32};\n"
+         << "constexpr const auto cste1932_2197   = "
             "Type(1932)/Type(2197);\n";
     }
-    os << "TFEL_CONSTEXPR const auto cste1_4         = real{1}/real{4};\n"
-       << "TFEL_CONSTEXPR const auto cste16_135      = Type(16)/Type(135);\n"
-       << "TFEL_CONSTEXPR const auto cste6656_12825  = "
+    os << "constexpr const auto cste1_4         = real{1}/real{4};\n"
+       << "constexpr const auto cste16_135      = Type(16)/Type(135);\n"
+       << "constexpr const auto cste6656_12825  = "
           "Type(6656)/Type(12825);\n"
-       << "TFEL_CONSTEXPR const auto cste28561_56430 = "
+       << "constexpr const auto cste28561_56430 = "
           "Type(28561)/Type(56430);\n"
-       << "TFEL_CONSTEXPR const auto cste9_50        = Type(9)/Type(50);\n"
-       << "TFEL_CONSTEXPR const auto cste2_55        = Type(2)/Type(55);\n"
-       << "TFEL_CONSTEXPR const auto cste1_360       = Type(1)/Type(360);\n"
-       << "TFEL_CONSTEXPR const auto cste128_4275    = Type(128)/Type(4275);\n"
-       << "TFEL_CONSTEXPR const auto cste2197_75240  = "
+       << "constexpr const auto cste9_50        = Type(9)/Type(50);\n"
+       << "constexpr const auto cste2_55        = Type(2)/Type(55);\n"
+       << "constexpr const auto cste1_360       = Type(1)/Type(360);\n"
+       << "constexpr const auto cste128_4275    = Type(128)/Type(4275);\n"
+       << "constexpr const auto cste2197_75240  = "
           "Type(2197)/Type(75240);\n"
-       << "TFEL_CONSTEXPR const auto cste1_50        = Type(1)/Type(50);\n"
+       << "constexpr const auto cste1_50        = Type(1)/Type(50);\n"
        << "time t      = time(0);\n"
        << "time dt_    = this->dt;\n"
        << "time dtprec = 100*this->dt*numeric_limits<time>::epsilon();\n"
@@ -1635,9 +1635,9 @@ namespace mfront {
     for (const auto& v : d.getStateVariables()) {
       stateVarsSize += this->getTypeSize(v.type, v.arraySize);
     }
-    os << "TFEL_CONSTEXPR const auto cste1_2 = real{1}/real{2};\n"
-       << "TFEL_CONSTEXPR const auto cste1_4 = real{1}/real{4};\n"
-       << "TFEL_CONSTEXPR const auto cste1_6 = Type(1)/Type(6);\n"
+    os << "constexpr const auto cste1_2 = real{1}/real{2};\n"
+       << "constexpr const auto cste1_4 = real{1}/real{4};\n"
+       << "constexpr const auto cste1_6 = Type(1)/Type(6);\n"
        << "time t   = time(0);\n"
        << "time dt_ = this->dt;\n"
        << "StressStensor sigf;\n"
@@ -2038,9 +2038,9 @@ namespace mfront {
     for (const auto& v : d.getStateVariables()) {
       stateVarsSize += this->getTypeSize(v.type, v.arraySize);
     }
-    os << "TFEL_CONSTEXPR const auto cste1_2 = real{1}/real{2};\n"
-       << "TFEL_CONSTEXPR const auto cste1_6  = Type(1)/Type(6);\n"
-       << "TFEL_CONSTEXPR const auto cste1_3  = Type(1)/Type(3);\n"
+    os << "constexpr const auto cste1_2 = real{1}/real{2};\n"
+       << "constexpr const auto cste1_6  = Type(1)/Type(6);\n"
+       << "constexpr const auto cste1_3  = Type(1)/Type(3);\n"
        << "time t   = time(0);\n"
        << "time dt_ = this->dt;\n"
        << "time dtprec = 100*this->dt*numeric_limits<time>::epsilon();\n"
@@ -2439,7 +2439,7 @@ namespace mfront {
           d.getCodeBlock(BehaviourData::ComputeThermodynamicForces).members;
       uvs.insert(uvs2.begin(), uvs2.end());
     }
-    os << "TFEL_CONSTEXPR const auto cste1_2 = real{1}/real{2};\n"
+    os << "constexpr const auto cste1_2 = real{1}/real{2};\n"
        << "// Compute K1's values\n";
     if (this->mb.hasCode(h, BehaviourData::ComputeThermodynamicForces)) {
       os << "this->computeThermodynamicForces();\n";

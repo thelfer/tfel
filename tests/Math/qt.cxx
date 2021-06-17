@@ -27,34 +27,61 @@
 #include "TFEL/Tests/TestProxy.hxx"
 #include "TFEL/Tests/TestManager.hxx"
 
+template <typename T>
+static constexpr bool my_abs(const T& v) noexcept {
+  return v < 0 ? -v : v;
+}
+
 struct qtTest final : public tfel::tests::TestCase {
   qtTest() : tfel::tests::TestCase("TFEL/Math", "qt") {}  // end of qtTest
   tfel::tests::TestResult execute() override {
-    using namespace tfel::math;
-    TFEL_CONSTEXPR qt<Mass> m1(100.);
-    TFEL_CONSTEXPR qt<Mass> m2(100.);
-    TFEL_CONSTEXPR qt<Mass> m3 = m1 + 0.5 * m2;
-    TFEL_CONSTEXPR qt<Acceleration, unsigned short> a(2);
-    TFEL_CONSTEXPR qt<Force> f = m1 * a;
-    TFEL_TESTS_ASSERT(std::abs(m3.getValue() - 150.) < 1.e-14);
-    TFEL_TESTS_ASSERT(std::abs(f.getValue() - 200.) < 1.e-14);
-    TFEL_TESTS_ASSERT(
-        (std::abs(std::cos(qt<NoUnit>(12.)) - std::cos(12.)) < 1.e-14));
+    this->test1();
+    this->test2();
+    this->test3();
     return this->result;
   }  // end of execute
+ private:
+  void test1() {
+    using namespace tfel::math;
+    constexpr qt<Mass> m1(100.);
+    constexpr qt<Mass> m2(100.);
+    constexpr qt<Mass> m3 = m1 + 0.5 * m2;
+    constexpr qt<Acceleration, unsigned short> a(2);
+    constexpr qt<Force> f = m1 * a;
+    TFEL_TESTS_STATIC_ASSERT(!isQuantity<double>());
+    TFEL_TESTS_STATIC_ASSERT(isQuantity<qt<Mass>>());
+    TFEL_TESTS_STATIC_ASSERT(my_abs(m3.getValue() - 150.) < 1.e-14);
+    TFEL_TESTS_STATIC_ASSERT(my_abs(f.getValue() - 200.) < 1.e-14);
+    TFEL_TESTS_ASSERT(
+        (my_abs(std::cos(qt<NoUnit>(12.)) - std::cos(12.)) < 1.e-14));
+  }  // end of test1
+  void test2() {
+    using namespace tfel::math;
+    using RootSquareMass = UnaryResultType<qt<Mass>, Power<1, 2>>::type;
+    constexpr RootSquareMass v1(1.5);
+    constexpr qt<Mass> v2 = v1 * v1;
+    TFEL_TESTS_STATIC_ASSERT(my_abs(v2.getValue() - 2.25) < 1.e-14);
+  }  // end of test2
+  void test3() {
+    using namespace tfel::math;
+    constexpr qt<Mass, int> a(-12);
+    constexpr qt<Mass, int> b(14);
+    TFEL_TESTS_STATIC_ASSERT(a <= b);
+    TFEL_TESTS_STATIC_ASSERT(a < b);
+    TFEL_TESTS_STATIC_ASSERT(b > a);
+    TFEL_TESTS_STATIC_ASSERT(b >= a);
+    TFEL_TESTS_STATIC_ASSERT(b != a);
+    TFEL_TESTS_STATIC_ASSERT(!(b == a));
+    TFEL_TESTS_STATIC_ASSERT(abs(a).getValue() == 12);
+  }  // end of test3
 };
 
 TFEL_TESTS_GENERATE_PROXY(qtTest, "qtTest");
 
 /* coverity [UNCAUGHT_EXCEPT]*/
 int main() {
-  using namespace tfel::tests;
-  auto& manager = TestManager::getTestManager();
-  manager.addTestOutput(std::cout);
-  manager.addXMLTestOutput("qt.xml");
-  TestResult r = manager.execute();
-  if (!r.success()) {
-    return EXIT_FAILURE;
-  }
-  return EXIT_SUCCESS;
+  auto& m = tfel::tests::TestManager::getTestManager();
+  m.addTestOutput(std::cout);
+  m.addXMLTestOutput("qt.xml");
+  return m.execute().success() ? EXIT_SUCCESS : EXIT_FAILURE;
 }  // end of main

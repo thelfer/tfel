@@ -318,8 +318,8 @@ namespace abaqus {
 
     TFEL_ABAQUS_INLINE2 static void checkNTENS(const AbaqusInt ntens) {
       typedef tfel::material::MechanicalBehaviourTraits<BV> Traits;
-      TFEL_CONSTEXPR const auto size = AbaqusStensorSize<H>::value;
-      TFEL_CONSTEXPR const bool is_defined_ = MTraits::is_defined;
+      constexpr const auto size = AbaqusStensorSize<H>::value;
+      constexpr const bool is_defined_ = MTraits::is_defined;
       // Test if the nb of state variables matches Behaviour requirements
       if ((ntens != size) && is_defined_) {
         throwInvalidTensorSize(Traits::getName(), ntens, size);

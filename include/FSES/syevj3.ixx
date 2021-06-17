@@ -48,8 +48,8 @@ namespace fses {
     constexpr auto zero = real(0);
     constexpr auto one = real(1);
     constexpr auto c100 = real(100);
-    TFEL_CONSTEXPR const auto one_half = one / 2;
-    TFEL_CONSTEXPR const auto c1_5 = one / 5;
+    constexpr const auto one_half = one / 2;
+    constexpr const auto c1_5 = one / 5;
 
     const int n = 3;
     real sd, so;  // Sums of diagonal resp. off-diagonal elements

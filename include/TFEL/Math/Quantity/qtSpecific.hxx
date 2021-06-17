@@ -22,53 +22,44 @@
  * \author Thomas Helfer
  * \date   26 Jul 2006
  */
-#define TFEL_MATH_QT_BASE_TYPE(X)                          \
-  /*!                                                      \
-   * \brief Partial specialisation for X                   \
-   * \see   BaseType                                       \
-   */                                                      \
-  template <typename unit>                                 \
-  struct BaseType<tfel::math::qt<unit, X>> {               \
-    /*!                                                    \
-     * \brief result of the metafunction                   \
-     */                                                    \
-    typedef tfel::math::qt<tfel::math::NoUnit, X> type;    \
-  };                                                       \
-  /*!                                                      \
-   * \brief Partial specialisation for NoUnit              \
-   * \see   BaseType                                       \
-   */                                                      \
-  template <>                                              \
-  struct BaseType<tfel::math::qt<tfel::math::NoUnit, X>> { \
-    /*!                                                    \
-     * \brief result of the metafunction                   \
-     */                                                    \
-    typedef tfel::math::qt<tfel::math::NoUnit, X> type;    \
+#define TFEL_MATH_QT_BASE_TYPE(X)                                       \
+  /*!                                                                   \
+   * \brief Partial specialisation for X                                \
+   * \see   BaseType                                                    \
+   */                                                                   \
+  template <typename UnitType, typename OwnershipPolicy>                \
+  struct BaseType<tfel::math::Quantity<UnitType, X, OwnershipPolicy>> { \
+    /*!                                                                 \
+     * \brief result of the metafunction                                \
+     */                                                                 \
+    using type = X;                                                     \
   }
 
-#define TFEL_MATH_QTNOUNIT_ISASSIGNABLETO(X)                        \
-  /*!                                                               \
-   * \brief Partial specialisation for qt                           \
-   * \see   IsAssignableTo                                          \
-   */                                                               \
-  template <typename T>                                             \
-  struct IsAssignableTo<tfel::math::qt<tfel::math::NoUnit, T>, X> { \
-    /*!                                                             \
-     * \brief result of the metafunction                            \
-     */                                                             \
-    static constexpr bool cond = IsAssignableTo<T, X>::cond;        \
-  };                                                                \
-                                                                    \
-  /*!                                                               \
-   * \brief Partial specialisation for qt                           \
-   * \see   IsAssignableTo                                          \
-   */                                                               \
-  template <typename T>                                             \
-  struct IsAssignableTo<X, tfel::math::qt<tfel::math::NoUnit, T>> { \
-    /*!                                                             \
-     * \brief result of the metafunction                            \
-     */                                                             \
-    static constexpr bool cond = IsAssignableTo<X, T>::cond;        \
+#define TFEL_MATH_QTNOUNIT_ISASSIGNABLETO(X)                             \
+  /*!                                                                    \
+   * \brief Partial specialisation for quantity                          \
+   * \see   IsAssignableTo                                               \
+   */                                                                    \
+  template <typename T, typename OwnershipPolicy>                        \
+  struct IsAssignableTo<                                                 \
+      tfel::math::Quantity<tfel::math::NoUnit, T, OwnershipPolicy>, X> { \
+    /*!                                                                  \
+     * \brief result of the metafunction                                 \
+     */                                                                  \
+    static constexpr bool cond = IsAssignableTo<T, X>::cond;             \
+  };                                                                     \
+                                                                         \
+  /*!                                                                    \
+   * \brief Partial specialisation for quantity                          \
+   * \see   IsAssignableTo                                               \
+   */                                                                    \
+  template <typename T, typename OwnershipPolicy>                        \
+  struct IsAssignableTo<                                                 \
+      X, tfel::math::Quantity<tfel::math::NoUnit, T, OwnershipPolicy>> { \
+    /*!                                                                  \
+     * \brief result of the metafunction                                 \
+     */                                                                  \
+    static constexpr bool cond = IsAssignableTo<X, T>::cond;             \
   }
 
 #include "TFEL/TypeTraits/IsScalar.hxx"
@@ -84,8 +75,8 @@ namespace tfel::typetraits {
    * \brief Partial specialisation for qt
    * \see   IsScalar
    */
-  template <typename unit, typename T>
-  struct IsScalar<tfel::math::qt<unit, T>> {
+  template <typename UnitType, typename ValueType, typename OwnershipPolicy>
+  struct IsScalar<tfel::math::Quantity<UnitType, ValueType, OwnershipPolicy>> {
     //! \brief result of the metafunction
     static constexpr bool cond = true;
   };
@@ -94,8 +85,9 @@ namespace tfel::typetraits {
    * \brief Partial specialisation for qt
    * \see   IsScalar
    */
-  template <typename unit, typename T>
-  struct IsScalar<const tfel::math::qt<unit, T>> {
+  template <typename UnitType, typename ValueType, typename OwnershipPolicy>
+  struct IsScalar<
+      const tfel::math::Quantity<UnitType, ValueType, OwnershipPolicy>> {
     //! \brief result of the metafunction
     static constexpr bool cond = true;
   };
@@ -104,40 +96,42 @@ namespace tfel::typetraits {
    * \brief Partial specialisation for qt
    * \see   IsReal
    */
-  template <typename unit, typename T>
-  struct IsReal<tfel::math::qt<unit, T>> {
+  template <typename UnitType, typename ValueType, typename OwnershipPolicy>
+  struct IsReal<tfel::math::Quantity<UnitType, ValueType, OwnershipPolicy>> {
     //! \brief result of the metafunction
-    static constexpr bool cond = IsReal<T>::cond;
+    static constexpr bool cond = IsReal<ValueType>::cond;
   };
 
   /*!
    * \brief Partial specialisation for qt
    * \see   IsReal
    */
-  template <typename unit, typename T>
-  struct IsReal<const tfel::math::qt<unit, T>> {
+  template <typename UnitType, typename ValueType, typename OwnershipPolicy>
+  struct IsReal<
+      const tfel::math::Quantity<UnitType, ValueType, OwnershipPolicy>> {
     //! \brief result of the metafunction
-    static constexpr bool cond = IsReal<T>::cond;
+    static constexpr bool cond = IsReal<ValueType>::cond;
   };
 
   /*!
    * \brief Partial specialisation for qt
    * \see   IsComplex
    */
-  template <typename unit, typename T>
-  struct IsComplex<tfel::math::qt<unit, T>> {
+  template <typename UnitType, typename ValueType, typename OwnershipPolicy>
+  struct IsComplex<tfel::math::Quantity<UnitType, ValueType, OwnershipPolicy>> {
     //! \brief result of the metafunction
-    static constexpr bool cond = IsComplex<T>::cond;
+    static constexpr bool cond = IsComplex<ValueType>::cond;
   };
 
   /*!
    * \brief Partial specialisation for qt
    * \see   IsComplex
    */
-  template <typename unit, typename T>
-  struct IsComplex<const tfel::math::qt<unit, T>> {
+  template <typename UnitType, typename ValueType, typename OwnershipPolicy>
+  struct IsComplex<
+      const tfel::math::Quantity<UnitType, ValueType, OwnershipPolicy>> {
     //! \brief result of the metafunction
-    static constexpr bool cond = IsComplex<T>::cond;
+    static constexpr bool cond = IsComplex<ValueType>::cond;
   };
 
   /*!
@@ -164,32 +158,43 @@ namespace tfel::typetraits {
    * \brief Partial specialisation for qt
    * \see   RealPartType
    */
-  template <typename unit, typename T>
-  struct RealPartType<tfel::math::qt<unit, T>> {
+  template <typename UnitType, typename ValueType, typename OwnershipPolicy>
+  struct RealPartType<
+      tfel::math::Quantity<UnitType, ValueType, OwnershipPolicy>> {
     //! \brief result of the metafunction
-    typedef tfel::math::qt<unit, typename RealPartType<T>::type> type;
+    typedef tfel::math::qt<UnitType, typename RealPartType<ValueType>::type>
+        type;
   };
 
   /*!
    * \brief Partial specialisation for qt
    * \see   RealPartType
    */
-  template <typename unit, typename T>
-  struct RealPartType<const tfel::math::qt<unit, T>> {
+  template <typename UnitType, typename ValueType, typename OwnershipPolicy>
+  struct RealPartType<
+      const tfel::math::Quantity<UnitType, ValueType, OwnershipPolicy>> {
     //! \brief result of the metafunction
-    typedef const tfel::math::qt<unit, typename RealPartType<T>::type> type;
+    typedef const tfel::math::qt<UnitType,
+                                 typename RealPartType<ValueType>::type>
+        type;
   };
 
   /*!
    * \brief Partial specialisation for qt
    * \see   IsAssignableTo
    */
-  template <typename unit, typename T, typename T2>
-  struct IsAssignableTo<tfel::math::qt<unit, T>, tfel::math::qt<unit, T2>> {
+  template <typename UnitType,
+            typename ValueType,
+            typename OwnershipPolicy,
+            typename ValueType2,
+            typename OwnershipPolicy2>
+  struct IsAssignableTo<
+      tfel::math::Quantity<UnitType, ValueType, OwnershipPolicy>,
+      tfel::math::Quantity<UnitType, ValueType2, OwnershipPolicy2>> {
     //! \brief result of the metafunction
-    static constexpr bool cond =
-        std::is_same<typename tfel::typetraits::Promote<T, T2>::type,
-                     T2>::value;
+    static constexpr bool cond = std::is_same_v<
+        typename tfel::typetraits::Promote<ValueType, ValueType2>::type,
+        ValueType2>;
   };
 
   TFEL_MATH_QTNOUNIT_ISASSIGNABLETO(unsigned short);
@@ -215,9 +220,11 @@ namespace tfel::typetraits {
    * \brief Partial specialisation for qt
    * \see   IsSafelyReinterpretCastableTo
    */
-  template <typename unit, typename T>
-  struct IsSafelyReinterpretCastableTo<tfel::math::qt<unit, T>, T> {
-    static_assert(sizeof(tfel::math::qt<unit, T>) == sizeof(T));
+  template <typename UnitType, typename ValueType>
+  struct IsSafelyReinterpretCastableTo<tfel::math::qt<UnitType, ValueType>,
+                                       ValueType> {
+    static_assert(sizeof(tfel::math::qt<UnitType, ValueType>) ==
+                  sizeof(ValueType));
     //! \brief result of the metafunction
     static constexpr bool cond = true;
   };
@@ -226,9 +233,11 @@ namespace tfel::typetraits {
    * \brief Partial specialisation for qt
    * \see   IsSafelyReinterpretCastableTo
    */
-  template <typename unit, typename T>
-  struct IsSafelyReinterpretCastableTo<T, tfel::math::qt<unit, T>> {
-    static_assert(sizeof(tfel::math::qt<unit, T>) == sizeof(T));
+  template <typename UnitType, typename ValueType>
+  struct IsSafelyReinterpretCastableTo<ValueType,
+                                       tfel::math::qt<UnitType, ValueType>> {
+    static_assert(sizeof(tfel::math::qt<UnitType, ValueType>) ==
+                  sizeof(ValueType));
     //! \brief result of the metafunction
     static constexpr bool cond = true;
   };
@@ -237,11 +246,12 @@ namespace tfel::typetraits {
    * \brief Partial specialisation for qt
    * \see   IsSafelyReinterpretCastableTo
    */
-  template <typename unit, typename T>
-  struct IsSafelyReinterpretCastableTo<tfel::math::qt<unit, T>,
-                                       tfel::math::qt<tfel::math::NoUnit, T>> {
-    static_assert(sizeof(tfel::math::qt<unit, T>) ==
-                  sizeof(tfel::math::qt<tfel::math::NoUnit, T>));
+  template <typename UnitType, typename ValueType>
+  struct IsSafelyReinterpretCastableTo<
+      tfel::math::qt<UnitType, ValueType>,
+      tfel::math::qt<tfel::math::NoUnit, ValueType>> {
+    static_assert(sizeof(tfel::math::qt<UnitType, ValueType>) ==
+                  sizeof(tfel::math::qt<tfel::math::NoUnit, ValueType>));
     //! \brief result of the metafunction
     static constexpr bool cond = true;
   };
@@ -250,11 +260,11 @@ namespace tfel::typetraits {
    * \brief Partial specialisation for qt
    * \see   IsSafelyReinterpretCastableTo
    */
-  template <typename unit, typename T>
-  struct IsSafelyReinterpretCastableTo<tfel::math::qt<tfel::math::NoUnit, T>,
-                                       tfel::math::qt<unit, T>> {
-    static_assert(sizeof(tfel::math::qt<unit, T>) ==
-                  sizeof(tfel::math::qt<tfel::math::NoUnit, T>));
+  template <typename UnitType, typename ValueType>
+  struct IsSafelyReinterpretCastableTo<tfel::math::qt<tfel::math::NoUnit, ValueType>,
+                                       tfel::math::qt<UnitType, ValueType>> {
+    static_assert(sizeof(tfel::math::qt<UnitType, ValueType>) ==
+                  sizeof(tfel::math::qt<tfel::math::NoUnit, ValueType>));
     //! \brief result of the metafunction
     static constexpr bool cond = true;
   };
@@ -263,9 +273,10 @@ namespace tfel::typetraits {
    * \brief Partial specialisation for qt
    * \see   IsSafelyReinterpretCastableTo
    */
-  template <typename T>
-  struct IsSafelyReinterpretCastableTo<tfel::math::qt<tfel::math::NoUnit, T>,
-                                       tfel::math::qt<tfel::math::NoUnit, T>> {
+  template <typename ValueType>
+  struct IsSafelyReinterpretCastableTo<
+      tfel::math::qt<tfel::math::NoUnit, ValueType>,
+      tfel::math::qt<tfel::math::NoUnit, ValueType>> {
     //! \brief result of the metafunction
     static constexpr bool cond = true;
   };

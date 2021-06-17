@@ -40,7 +40,7 @@ namespace ansys {
   void AnsysTangentOperator<real>::normalize(
       tfel::math::ST2toST2View<3u, real>& Dt) {
     constexpr const auto icste = tfel::math::Cste<real>::isqrt2;
-    TFEL_CONSTEXPR const auto one_half = real(1) / real(2);
+    constexpr const auto one_half = real(1) / real(2);
     Dt(0, 3) *= icste;
     Dt(1, 3) *= icste;
     Dt(2, 3) *= icste;
@@ -128,7 +128,7 @@ namespace ansys {
   tfel::math::st2tost2<2u, real> AnsysTangentOperator<real>::convert2D(
       const real* const D) {
     tfel::math::st2tost2<2u, real> r;
-    TFEL_CONSTEXPR const real cste = tfel::math::Cste<real>::sqrt2;
+    constexpr const real cste = tfel::math::Cste<real>::sqrt2;
     using size_type = typename tfel::math::st2tost2<2u, real>::size_type;
     for (size_type i = 0; i != 4; ++i) {
       for (size_type j = 0; j != 4; ++j) {
@@ -149,7 +149,7 @@ namespace ansys {
   tfel::math::st2tost2<3u, real> AnsysTangentOperator<real>::convert3D(
       const real* const D) {
     tfel::math::st2tost2<3u, real> r;
-    TFEL_CONSTEXPR const real cste = tfel::math::Cste<real>::sqrt2;
+    constexpr const real cste = tfel::math::Cste<real>::sqrt2;
     using size_type = typename tfel::math::st2tost2<3u, real>::size_type;
     for (size_type i = 0; i != 6; ++i) {
       for (size_type j = 0; j != 6; ++j) {

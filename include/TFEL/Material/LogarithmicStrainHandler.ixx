@@ -512,7 +512,7 @@ namespace tfel::material {
       std::swap(k(2, 3), k(3, 2));
     };
     auto to_tfel = [&k, transpose] {
-      TFEL_CONSTEXPR const auto cste = tfel::math::Cste<real>::sqrt2;
+      constexpr const auto cste = tfel::math::Cste<real>::sqrt2;
       k(0, 3) *= cste;
       k(1, 3) *= cste;
       k(2, 3) *= cste;
@@ -523,7 +523,7 @@ namespace tfel::material {
       transpose();
     };
     auto to_abaqus = [&k, &transpose] {
-      TFEL_CONSTEXPR const auto icste = tfel::math::Cste<real>::isqrt2;
+      constexpr const auto icste = tfel::math::Cste<real>::isqrt2;
       k(0, 3) *= icste;
       k(1, 3) *= icste;
       k(2, 3) *= icste;
@@ -577,7 +577,7 @@ namespace tfel::material {
       std::swap(k(2, 3), k(3, 2));
     };
     auto to_tfel = [&k, transpose] {
-      TFEL_CONSTEXPR const auto cste = tfel::math::Cste<real>::sqrt2;
+      constexpr const auto cste = tfel::math::Cste<real>::sqrt2;
       k(0, 3) *= cste;
       k(1, 3) *= cste;
       k(2, 3) *= cste;
@@ -588,7 +588,7 @@ namespace tfel::material {
       transpose();
     };
     auto to_abaqus = [&k, &transpose] {
-      TFEL_CONSTEXPR const auto icste = tfel::math::Cste<real>::isqrt2;
+      constexpr const auto icste = tfel::math::Cste<real>::isqrt2;
       k(0, 3) *= icste;
       k(1, 3) *= icste;
       k(2, 3) *= icste;
@@ -1069,7 +1069,7 @@ namespace tfel::material {
       std::swap(k(4, 5), k(5, 4));
     };
     auto to_tfel = [&k, &transpose] {
-      TFEL_CONSTEXPR const auto cste = tfel::math::Cste<real>::sqrt2;
+      constexpr const auto cste = tfel::math::Cste<real>::sqrt2;
       k(0, 3) *= cste;
       k(1, 3) *= cste;
       k(2, 3) *= cste;
@@ -1100,7 +1100,7 @@ namespace tfel::material {
       transpose();
     };
     auto to_abaqus = [&k, &transpose] {
-      TFEL_CONSTEXPR const auto icste = tfel::math::Cste<real>::isqrt2;
+      constexpr const auto icste = tfel::math::Cste<real>::isqrt2;
       k(0, 3) *= icste;
       k(1, 3) *= icste;
       k(2, 3) *= icste;
@@ -1182,7 +1182,7 @@ namespace tfel::material {
       std::swap(k(4, 5), k(5, 4));
     };
     auto to_tfel = [&k, &transpose] {
-      TFEL_CONSTEXPR const auto cste = tfel::math::Cste<real>::sqrt2;
+      constexpr const auto cste = tfel::math::Cste<real>::sqrt2;
       k(0, 3) *= cste;
       k(1, 3) *= cste;
       k(2, 3) *= cste;
@@ -1213,7 +1213,7 @@ namespace tfel::material {
       transpose();
     };
     auto to_abaqus = [&k, &transpose] {
-      TFEL_CONSTEXPR const auto icste = tfel::math::Cste<real>::isqrt2;
+      constexpr const auto icste = tfel::math::Cste<real>::isqrt2;
       k(0, 3) *= icste;
       k(1, 3) *= icste;
       k(2, 3) *= icste;

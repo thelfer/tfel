@@ -39,9 +39,9 @@ struct BissectionAlgorithmTest final : public tfel::tests::TestCase {
   }  // end of execute
  private:
   void test1() {
-    TFEL_CONSTEXPR const auto eps = double(1.e-14);
-    TFEL_CONSTEXPR const auto x1 = double(7) / 5;
-    TFEL_CONSTEXPR const auto x2 = double(1.2);
+    constexpr const auto eps = double(1.e-14);
+    constexpr const auto x1 = double(7) / 5;
+    constexpr const auto x2 = double(1.2);
     auto a = tfel::math::BissectionAlgorithmBase<double>();
     const auto& d = a.getData();
     TFEL_TESTS_ASSERT(tfel::math::ieee754::isnan(d.xmin));
@@ -71,9 +71,9 @@ struct BissectionAlgorithmTest final : public tfel::tests::TestCase {
     TFEL_TESTS_ASSERT(std::abs(x - x2) < eps);
   }  // end of execute
   void test2() {
-    TFEL_CONSTEXPR const auto eps = double(1.e-14);
-    TFEL_CONSTEXPR const auto x1 = double(7) / 5;
-    TFEL_CONSTEXPR const auto x2 = double(1.2);
+    constexpr const auto eps = double(1.e-14);
+    constexpr const auto x1 = double(7) / 5;
+    constexpr const auto x2 = double(1.2);
     auto a = tfel::math::BissectionAlgorithmBase<double>();
     const auto& d = a.getData();
     TFEL_TESTS_ASSERT(tfel::math::ieee754::isnan(d.xmin));
@@ -103,9 +103,9 @@ struct BissectionAlgorithmTest final : public tfel::tests::TestCase {
     TFEL_TESTS_ASSERT(std::abs(x - x2) < eps);
   }  // end of execute
   void test3() {
-    TFEL_CONSTEXPR const auto eps = double(1.e-14);
-    TFEL_CONSTEXPR const auto x1 = double(7) / 5;
-    TFEL_CONSTEXPR const auto x2 = double(1.2);
+    constexpr const auto eps = double(1.e-14);
+    constexpr const auto x1 = double(7) / 5;
+    constexpr const auto x2 = double(1.2);
     auto a = tfel::math::BissectionAlgorithmBase<double>();
     const auto& d = a.getData();
     TFEL_TESTS_ASSERT(tfel::math::ieee754::isnan(d.xmin));

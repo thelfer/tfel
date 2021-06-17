@@ -1941,12 +1941,10 @@ include/TFEL/Math/QR/QRException.hxx -text
 include/TFEL/Math/Quantity/Unit.hxx -text
 include/TFEL/Math/Quantity/Unit.ixx -text
 include/TFEL/Math/Quantity/qt.ixx -text
-include/TFEL/Math/Quantity/qtComplexOperations.hxx -text
 include/TFEL/Math/Quantity/qtIO.hxx -text
 include/TFEL/Math/Quantity/qtLimits.hxx -text
 include/TFEL/Math/Quantity/qtOperations.hxx -text
 include/TFEL/Math/Quantity/qtOperations.ixx -text
-include/TFEL/Math/Quantity/qtSamples.hxx -text
 include/TFEL/Math/Quantity/qtSpecific.hxx -text
 include/TFEL/Math/RootFinding/BissectionAlgorithmBase.hxx -text
 include/TFEL/Math/RootFinding/BissectionAlgorithmBase.ixx -text

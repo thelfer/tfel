@@ -82,8 +82,8 @@ struct TensorComputeJacobianDerivativeTest final
   template <unsigned short N>
   void check(const tfel::math::tensor<N, double>& s) {
     auto J = [](const tfel::math::tensor<N, double>& v) { return det(v); };
-    TFEL_CONSTEXPR const auto eps = 1e-2;
-    TFEL_CONSTEXPR const auto prec = 1e-13;
+    constexpr const auto eps = 1e-2;
+    constexpr const auto prec = 1e-13;
     auto ndJ = getNumericalApproximation(J, s, eps);
     auto dJ = computeDeterminantDerivative(s);
     for (unsigned short i = 0; i != s.size(); ++i) {

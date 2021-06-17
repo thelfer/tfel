@@ -102,8 +102,8 @@ namespace mtest {
   }
 
   void SchemeBase::setMaximalTimeStep(const real v) {
-    TFEL_CONSTEXPR const auto emin = 100 * std::numeric_limits<real>::min();
-    TFEL_CONSTEXPR const auto eps = 100 * std::numeric_limits<real>::epsilon();
+    constexpr const auto emin = 100 * std::numeric_limits<real>::min();
+    constexpr const auto eps = 100 * std::numeric_limits<real>::epsilon();
     tfel::raise_if(this->options.maximal_time_step > 0,
                    "SchemeBase::setMaximalTimeStep: "
                    "the maximal time step "
@@ -125,8 +125,8 @@ namespace mtest {
   }
 
   void SchemeBase::setMinimalTimeStep(const real v) {
-    TFEL_CONSTEXPR const auto emin = 100 * std::numeric_limits<real>::min();
-    TFEL_CONSTEXPR const auto eps = 100 * std::numeric_limits<real>::epsilon();
+    constexpr const auto emin = 100 * std::numeric_limits<real>::min();
+    constexpr const auto eps = 100 * std::numeric_limits<real>::epsilon();
     tfel::raise_if(this->options.minimal_time_step > 0,
                    "SchemeBase::setMinimalTimeStep: "
                    "the minimal time step "

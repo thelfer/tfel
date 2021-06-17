@@ -35,7 +35,7 @@ namespace tfel::math::internals {
     // compute the Householder reflection H and B = H*A*H, where b02 = 0.
     constexpr const real zero = real(0);
     constexpr const real one = real(1);
-    TFEL_CONSTEXPR const real one_half = one / 2;
+    constexpr const real one_half = one / 2;
     bool isRotation = false;
     real c, s;
     getCosSin(a12, -a02, c, s);
@@ -262,8 +262,8 @@ namespace tfel::math::internals {
                                                    real bDiag0,
                                                    real bDiag1,
                                                    real bSuper) {
-    TFEL_CONSTEXPR const auto rmin = std::numeric_limits<real>::min();
-    TFEL_CONSTEXPR const auto re = std::numeric_limits<real>::epsilon();
+    constexpr const auto rmin = std::numeric_limits<real>::min();
+    constexpr const auto re = std::numeric_limits<real>::epsilon();
     if (aggressive) {
       return std::abs(bSuper) < rmin;
     } else {

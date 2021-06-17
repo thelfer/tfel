@@ -23,7 +23,7 @@ namespace tfel::math {
     using namespace std;
     using size_type = index_type<MatrixType>;
     using real = numeric_type<MatrixType>;
-    TFEL_CONSTEXPR const auto c = real(1) / 10;
+    constexpr const auto c = real(1) / 10;
     if (m.getNbRows() != m.getNbCols()) {
       throw(LUMatrixNotSquare());
     }

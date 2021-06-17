@@ -61,7 +61,7 @@ namespace tfel::math {
      */
     template <typename T>
     static TFEL_MATH_INLINE T cbrt(const T x) {
-      TFEL_CONSTEXPR const auto one_third = T(1) / T(3);
+      constexpr const auto one_third = T(1) / T(3);
       if (x < 0) {
         return -std::pow(-x, one_third);
       }
@@ -93,14 +93,14 @@ namespace tfel::math {
         unsigned short>
     find_roots(
         T& x1, T& x2, T& x3, const T a3, const T a2, const T a1, const T a0) {
-      TFEL_CONSTEXPR const auto C_1_2 = T{1} / T{2};
-      TFEL_CONSTEXPR const auto C_1_3 = T{1} / T{3};
-      TFEL_CONSTEXPR const auto C_2_3 = T{2} * C_1_3;
-      TFEL_CONSTEXPR const auto C_m1_27 = T{-1} / T{27};
-      TFEL_CONSTEXPR const auto C_2_27 = T{2} / T{27};
-      TFEL_CONSTEXPR const auto C_27_2 = T{27} / T{2};
-      TFEL_CONSTEXPR const auto C_3SQRT3_2 = Cste<T>::sqrt3 * T(3) / T(2);
-      TFEL_CONSTEXPR const auto C_SQRT3_3 = Cste<T>::sqrt3 * C_1_3;
+      constexpr const auto C_1_2 = T{1} / T{2};
+      constexpr const auto C_1_3 = T{1} / T{3};
+      constexpr const auto C_2_3 = T{2} * C_1_3;
+      constexpr const auto C_m1_27 = T{-1} / T{27};
+      constexpr const auto C_2_27 = T{2} / T{27};
+      constexpr const auto C_27_2 = T{27} / T{2};
+      constexpr const auto C_3SQRT3_2 = Cste<T>::sqrt3 * T(3) / T(2);
+      constexpr const auto C_SQRT3_3 = Cste<T>::sqrt3 * C_1_3;
       const T prec = 100 * std::numeric_limits<T>::min();
       if (std::abs(a3) <= prec) {
         return 0u;
@@ -235,8 +235,8 @@ namespace tfel::math {
       auto df = [&a3, &a2, &a1](const T x) {
         return (3 * a3 * x + 2 * a2) * x + a1;
       };
-      TFEL_CONSTEXPR const auto emin = std::numeric_limits<T>::min();
-      TFEL_CONSTEXPR const auto eps = std::numeric_limits<T>::epsilon();
+      constexpr const auto emin = std::numeric_limits<T>::min();
+      constexpr const auto eps = std::numeric_limits<T>::epsilon();
       const auto prec = 10 * std::max(emin, std::abs(vp) * eps);
       auto x = vp;
       auto dfv = df(x);

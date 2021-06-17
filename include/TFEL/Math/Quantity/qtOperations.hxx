@@ -19,65 +19,73 @@
 #include "TFEL/Math/Quantity/Unit.hxx"
 #include "TFEL/Math/qt.hxx"
 
-#define QT_RESULT_TYPE(X)                                                   \
-  /*!                                                                       \
-   * \brief Partial specialisation for qt by scalar product                 \
-   * \see   ResultType                                                      \
-   */                                                                       \
-  template <typename unit, typename T1>                                     \
-  struct ResultType<qt<unit, T1>, X, OpMult> {                              \
-    typedef qt<unit, typename tfel::typetraits::Promote<T1, X>::type> type; \
-  };                                                                        \
-                                                                            \
-  /*!                                                                       \
-   * \brief Partial specialisation for scalar by qt product                 \
-   * \see   ResultType                                                      \
-   */                                                                       \
-  template <typename unit, typename T1>                                     \
-  struct ResultType<X, qt<unit, T1>, OpMult> {                              \
-    typedef qt<unit, typename tfel::typetraits::Promote<T1, X>::type> type; \
-  };                                                                        \
-                                                                            \
-  template <typename unit, typename T1>                                     \
-  TFEL_MATH_INLINE constexpr qt<                                            \
-      unit, typename tfel::typetraits::Promote<T1, X>::type>                \
-  operator*(const qt<unit, T1>, const X);                                   \
-                                                                            \
-  template <typename unit, typename T1>                                     \
-  TFEL_MATH_INLINE constexpr qt<                                            \
-      unit, typename tfel::typetraits::Promote<T1, X>::type>                \
-  operator*(const X, const qt<unit, T1>);                                   \
-                                                                            \
-  /*!                                                                       \
-   * \brief Partial specialisation for qt by scalar division                \
-   * \see   ResultType                                                      \
-   */                                                                       \
-  template <typename unit, typename T1>                                     \
-  struct ResultType<qt<unit, T1>, X, OpDiv> {                               \
-    typedef qt<unit, typename tfel::typetraits::Promote<T1, X>::type> type; \
-  };                                                                        \
-                                                                            \
-  /*!                                                                       \
-   * \brief Partial specialisation for scalar by qt division                \
-   * \see   ResultType                                                      \
-   */                                                                       \
-  template <typename unit, typename T1>                                     \
-  struct ResultType<X, qt<unit, T1>, OpDiv> {                               \
-    typedef qt<typename SubUnit_<NoUnit, unit>::type,                       \
-               typename tfel::typetraits::Promote<T1, X>::type>             \
-        type;                                                               \
-  };                                                                        \
-                                                                            \
-  template <typename unit, typename T1>                                     \
-  TFEL_MATH_INLINE constexpr qt<                                            \
-      unit, typename tfel::typetraits::Promote<T1, X>::type>                \
-  operator/(const qt<unit, T1>, const X);                                   \
-                                                                            \
-  template <typename T1, typename unit>                                     \
-  TFEL_MATH_INLINE constexpr qt<                                            \
-      typename SubUnit_<NoUnit, unit>::type,                                \
-      typename tfel::typetraits::Promote<T1, X>::type>                      \
-  operator/(const X, const qt<unit, T1>)
+#define QT_RESULT_TYPE(X)                                                      \
+  /*!                                                                          \
+   * \brief Partial specialisation for qt by scalar product                    \
+   * \see   ResultType                                                         \
+   */                                                                          \
+  template <typename UnitType, typename ValueType, typename OwnershipPolicy>   \
+  struct ResultType<Quantity<UnitType, ValueType, OwnershipPolicy>, X,         \
+                    OpMult> {                                                  \
+    using type =                                                               \
+        qt<UnitType, typename tfel::typetraits::Promote<ValueType, X>::type>;  \
+  };                                                                           \
+                                                                               \
+  /*!                                                                          \
+   * \brief Partial specialisation for scalar by qt product                    \
+   * \see   ResultType                                                         \
+   */                                                                          \
+  template <typename UnitType, typename ValueType, typename OwnershipPolicy>   \
+  struct ResultType<X, Quantity<UnitType, ValueType, OwnershipPolicy>,         \
+                    OpMult> {                                                  \
+    using type =                                                               \
+        qt<UnitType, typename tfel::typetraits::Promote<ValueType, X>::type>;  \
+  };                                                                           \
+                                                                               \
+  template <typename UnitType, typename ValueType, typename OwnershipPolicy>   \
+  constexpr qt<UnitType,                                                       \
+               typename tfel::typetraits::Promote<ValueType, X>::type>         \
+  operator*(const Quantity<UnitType, ValueType, OwnershipPolicy>&, const X);   \
+                                                                               \
+  template <typename UnitType, typename ValueType, typename OwnershipPolicy>   \
+  constexpr qt<UnitType,                                                       \
+               typename tfel::typetraits::Promote<ValueType, X>::type>         \
+  operator*(const X, const Quantity<UnitType, ValueType, OwnershipPolicy>&);   \
+                                                                               \
+  /*!                                                                          \
+   * \brief Partial specialisation for qt by scalar division                   \
+   * \see   ResultType                                                         \
+   */                                                                          \
+  template <typename UnitType, typename ValueType, typename OwnershipPolicy>   \
+  struct ResultType<Quantity<UnitType, ValueType, OwnershipPolicy>, X,         \
+                    OpDiv> {                                                   \
+    using type =                                                               \
+        qt<UnitType, typename tfel::typetraits::Promote<ValueType, X>::type>;  \
+  };                                                                           \
+                                                                               \
+  /*!                                                                          \
+   * \brief Partial specialisation for scalar by qt division                   \
+   * \see   ResultType                                                         \
+   */                                                                          \
+  template <typename UnitType, typename ValueType, typename OwnershipPolicy>   \
+  struct ResultType<X, Quantity<UnitType, ValueType, OwnershipPolicy>,         \
+                    OpDiv> {                                                   \
+    using type = qt<                                                           \
+        typename tfel::math::internals::SubstractUnit<NoUnit, UnitType>::type, \
+        typename tfel::typetraits::Promote<ValueType, X>::type>;               \
+  };                                                                           \
+                                                                               \
+  template <typename UnitType, typename ValueType, typename OwnershipPolicy>   \
+  constexpr Quantity<UnitType,                                                 \
+                     typename tfel::typetraits::Promote<ValueType, X>::type,   \
+                     OwnershipPolicy>                                          \
+  operator/(const Quantity<UnitType, ValueType, OwnershipPolicy>&, const X);   \
+                                                                               \
+  template <typename ValueType, typename UnitType, typename OwnershipPolicy>   \
+  constexpr Quantity<                                                          \
+      typename tfel::math::internals::SubstractUnit<NoUnit, UnitType>::type,   \
+      typename tfel::typetraits::Promote<ValueType, X>::type, OwnershipPolicy> \
+  operator/(const X, const Quantity<UnitType, ValueType, OwnershipPolicy>&)
 
 namespace tfel::math {
 
@@ -85,65 +93,130 @@ namespace tfel::math {
    * \brief Partial specialisation for addition of two qt having the same unit
    * \see   ResultType
    */
-  template <typename unit, typename T1, typename T2>
-  struct ResultType<qt<unit, T1>, qt<unit, T2>, OpPlus> {
-    typedef qt<unit, typename tfel::typetraits::Promote<T1, T2>::type> type;
+  template <typename UnitType,
+            typename ValueType,
+            typename OwnershipPolicy,
+            typename ValueType2,
+            typename OwnershipPolicy2>
+  struct ResultType<Quantity<UnitType, ValueType, OwnershipPolicy>,
+                    Quantity<UnitType, ValueType2, OwnershipPolicy2>,
+                    OpPlus> {
+    using type =
+        qt<UnitType,
+           typename tfel::typetraits::Promote<ValueType, ValueType2>::type>;
   };
 
-  template <typename unit, typename T1, typename T2>
-  TFEL_MATH_INLINE constexpr qt<
-      unit,
-      typename tfel::typetraits::Promote<T1, T2>::type>
-  operator+(const qt<unit, T1>, const qt<unit, T2>);
+  template <typename UnitType,
+            typename ValueType,
+            typename OwnershipPolicy,
+            typename ValueType2,
+            typename OwnershipPolicy2>
+  constexpr qt<UnitType,
+               typename tfel::typetraits::Promote<ValueType, ValueType2>::type>
+  operator+(const Quantity<UnitType, ValueType, OwnershipPolicy>& a,
+            const Quantity<UnitType, ValueType2, OwnershipPolicy2>& b) {
+    return qt<UnitType,
+              typename tfel::typetraits::Promote<ValueType, ValueType2>::type>{
+        a.getValue() + b.getValue()};
+  }
 
   /*!
    * \brief Partial specialisation for substraction of two qt having the same
    * unit \see   ResultType
    */
-  template <typename unit, typename T1, typename T2>
-  struct ResultType<qt<unit, T1>, qt<unit, T2>, OpMinus> {
-    typedef qt<unit, typename tfel::typetraits::Promote<T1, T2>::type> type;
+  template <typename UnitType,
+            typename ValueType,
+            typename OwnershipPolicy,
+            typename ValueType2,
+            typename OwnershipPolicy2>
+  struct ResultType<Quantity<UnitType, ValueType, OwnershipPolicy>,
+                    Quantity<UnitType, ValueType2, OwnershipPolicy2>,
+                    OpMinus> {
+    using type =
+        qt<UnitType,
+           typename tfel::typetraits::Promote<ValueType, ValueType2>::type>;
   };
 
-  template <typename unit, typename T1, typename T2>
-  TFEL_MATH_INLINE constexpr qt<
-      unit,
-      typename tfel::typetraits::Promote<T1, T2>::type>
-  operator-(const qt<unit, T1>, const qt<unit, T2>);
+  template <typename UnitType,
+            typename ValueType,
+            typename OwnershipPolicy,
+            typename ValueType2,
+            typename OwnershipPolicy2>
+  constexpr qt<UnitType,
+               typename tfel::typetraits::Promote<ValueType, ValueType2>::type>
+  operator-(const Quantity<UnitType, ValueType, OwnershipPolicy>& a,
+            const Quantity<UnitType, ValueType, OwnershipPolicy2>& b) {
+    return qt<UnitType,
+              typename tfel::typetraits::Promote<ValueType, ValueType2>::type>{
+        a.getValue() - b.getValue()};
+  }
 
   /*!
    * \brief Partial specialisation for multiplication of two qt
    * \see   ResultType
    */
-  template <typename unit, typename T1, typename unit2, typename T2>
-  struct ResultType<qt<unit, T1>, qt<unit2, T2>, OpMult> {
-    typedef qt<typename AddUnit_<unit, unit2>::type,
-               typename tfel::typetraits::Promote<T1, T2>::type>
-        type;
+  template <typename UnitType,
+            typename ValueType,
+            typename OwnershipPolicy,
+            typename UnitType2,
+            typename ValueType2,
+            typename OwnershipPolicy2>
+  struct ResultType<Quantity<UnitType, ValueType, OwnershipPolicy>,
+                    Quantity<UnitType2, ValueType2, OwnershipPolicy2>,
+                    OpMult> {
+    using type =
+        qt<typename tfel::math::internals::AddUnit<UnitType, UnitType2>::type,
+           typename tfel::typetraits::Promote<ValueType, ValueType2>::type>;
   };
 
-  template <typename unit, typename T1, typename unit2, typename T2>
-  TFEL_MATH_INLINE constexpr qt<
-      typename AddUnit_<unit, unit2>::type,
-      typename tfel::typetraits::Promote<T1, T2>::type>
-  operator*(const qt<unit, T1>, const qt<unit2, T2>);
+  template <typename UnitType,
+            typename ValueType,
+            typename OwnershipPolicy,
+            typename UnitType2,
+            typename ValueType2,
+            typename OwnershipPolicy2>
+  constexpr auto operator*(
+      const Quantity<UnitType, ValueType, OwnershipPolicy>& a,
+      const Quantity<UnitType2, ValueType2, OwnershipPolicy2>& b) {
+    return qt<
+        typename tfel::math::internals::AddUnit<UnitType, UnitType2>::type,
+        typename tfel::typetraits::Promote<ValueType, ValueType2>::type>{
+        a.getValue() * b.getValue()};
+  }
 
   /*!
    * \brief Partial specialisation for division of two qt
    * \see   ResultType
    */
-  template <typename unit, typename T1, typename unit2, typename T2>
-  struct ResultType<qt<unit, T1>, qt<unit2, T2>, OpDiv> {
-    typedef qt<typename SubUnit_<unit, unit2>::type,
-               typename tfel::typetraits::Promote<T1, T2>::type>
-        type;
+  template <typename UnitType,
+            typename ValueType,
+            typename OwnershipPolicy,
+            typename UnitType2,
+            typename ValueType2,
+            typename OwnershipPolicy2>
+  struct ResultType<Quantity<UnitType, ValueType, OwnershipPolicy>,
+                    Quantity<UnitType2, ValueType2, OwnershipPolicy2>,
+                    OpDiv> {
+    using type =
+        qt<typename tfel::math::internals::SubstractUnit<UnitType,
+                                                         UnitType2>::type,
+           typename tfel::typetraits::Promote<ValueType, ValueType2>::type>;
   };
 
-  template <typename unit, typename T1, typename unit2, typename T2>
-  TFEL_MATH_INLINE constexpr qt<
-      typename SubUnit_<unit, unit2>::type,
-      typename tfel::typetraits::Promote<T1, T2>::type>
-  operator/(const qt<unit, T1>, const qt<unit2, T2>);
+  template <typename UnitType,
+            typename ValueType,
+            typename OwnershipPolicy,
+            typename UnitType2,
+            typename ValueType2,
+            typename OwnershipPolicy2>
+  constexpr auto operator/(
+      const Quantity<UnitType, ValueType, OwnershipPolicy>& a,
+      const Quantity<UnitType2, ValueType2, OwnershipPolicy2>& b) {
+    return qt<typename tfel::math::internals::SubstractUnit<UnitType,
+                                                            UnitType2>::type,
+              typename tfel::typetraits::Promote<ValueType, ValueType2>::type>{
+        a.getValue() / b.getValue()};
+  }
 
   QT_RESULT_TYPE(unsigned short);
   QT_RESULT_TYPE(unsigned int);

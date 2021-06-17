@@ -31,10 +31,8 @@
    */                                    \
   template <>                            \
   struct BaseType<X> {                   \
-    /*!                                  \
-     *  Result                           \
-     */                                  \
-    typedef X type;                      \
+    /*! \brief result */                 \
+    using type = X;                      \
   }
 
 namespace tfel::typetraits {

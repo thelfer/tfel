@@ -48,7 +48,7 @@ struct StensorComputeEigenValues final : public tfel::tests::TestCase {
   template <typename T>
   void test1() {
     using namespace tfel::math;
-    TFEL_CONSTEXPR const auto eps = std::numeric_limits<T>::epsilon();
+    constexpr const auto eps = std::numeric_limits<T>::epsilon();
     constexpr auto icste = Cste<T>::isqrt2;
     constexpr auto zero = T(0);
     const stensor<3u, T> s(zero);
@@ -68,7 +68,7 @@ struct StensorComputeEigenValues final : public tfel::tests::TestCase {
   template <typename T, tfel::math::stensor_common::EigenSolver es>
   void test2() {
     using stensor = tfel::math::stensor<3, T>;
-    TFEL_CONSTEXPR const auto prec = 20 * std::numeric_limits<T>::epsilon();
+    constexpr const auto prec = 20 * std::numeric_limits<T>::epsilon();
     stensor s = {T(1.232),  T(2.5198), T(0.234),
                  T(1.5634), T(3.3425), T(0.9765)};
     const auto vp = s.template computeEigenValues<es>(stensor::DESCENDING);

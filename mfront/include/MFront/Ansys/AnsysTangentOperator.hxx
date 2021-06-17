@@ -160,7 +160,7 @@ namespace ansys {
                                               real, 2u>::type;
         constexpr const auto cste = tfel::math::Cste<real>::sqrt2;
         // constexpr      const auto icste = tfel::math::Cste<real>::isqrt2;
-        // TFEL_CONSTEXPR const auto one_half = real(1)/real(2);
+        // constexpr const auto one_half = real(1)/real(2);
         auto Dt =
             static_cast<const TangentOperatorType&>(bv.getTangentOperator());
         // DDSDDE[0] = Dt(0,0);
@@ -191,7 +191,7 @@ namespace ansys {
                                               real, 2u>::type;
         constexpr auto cste = tfel::math::Cste<real>::sqrt2;
         // constexpr auto icste = tfel::math::Cste<real>::isqrt2;
-        // TFEL_CONSTEXPR const auto one_half = real(1)/real(2);
+        // constexpr const auto one_half = real(1)/real(2);
         auto Dt =
             static_cast<const TangentOperatorType&>(bv.getTangentOperator());
         // DDSDDE[0] = Dt(0,0);

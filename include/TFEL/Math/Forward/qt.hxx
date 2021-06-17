@@ -16,24 +16,27 @@
 
 #include <type_traits>
 
-namespace tfel::math {
-
-  /*
-   * \class qt
-   * \brief This class describes numbers with unit.
-   * qt must be has efficient and simple to use that standard numerical types.
-   * \param unit, the unit of the qt.
-   * \param T, the underlying numerical type.
-   * \pre T must be a fundamental numerical type.
-   * \see unit_samples.hxx, IsFundamentalNumericType
-   * \author Thomas Helfer
-   * \date   06 Jun 2006
-   */
-  template <typename unit, typename T>
-  class qt;
+namespace tfel::math::internals {
 
   /*!
-   * structure describing an unit
+   * \brief an helper structure which holds the value internally.
+   * \param ValueType: the underlying numerical type.
+   */
+  template <typename ValueType, bool AllowImplicitConversion>
+  struct QuantityValueOwnershipPolicy;
+  /*!
+   * \brief an helper structure which wraps a reference to an external value.
+   * \param ValueType: the underlying numerical type.
+   */
+  template <typename ValueType, bool AllowImplicitConversion>
+  struct QuantityReferenceOwnershipPolicy;
+
+}  // end of namespace tfel::math::internals
+
+namespace tfel::math {
+
+  /*!
+   * \brief structure describing an unit
    */
   template <typename N1,
             typename N2,
@@ -66,39 +69,38 @@ namespace tfel::math {
             unsigned int D6 = 1,
             unsigned int D7 = 1>
   struct GenerateUnit {
-    typedef Unit<std::integral_constant<int, N1>,
-                 std::integral_constant<int, N2>,
-                 std::integral_constant<int, N3>,
-                 std::integral_constant<int, N4>,
-                 std::integral_constant<int, N5>,
-                 std::integral_constant<int, N6>,
-                 std::integral_constant<int, N7>,
-                 std::integral_constant<unsigned int, D1>,
-                 std::integral_constant<unsigned int, D2>,
-                 std::integral_constant<unsigned int, D3>,
-                 std::integral_constant<unsigned int, D4>,
-                 std::integral_constant<unsigned int, D5>,
-                 std::integral_constant<unsigned int, D6>,
-                 std::integral_constant<unsigned int, D7>>
-        type;
+    //! \brief result of the metafunction
+    using type = Unit<std::integral_constant<int, N1>,
+                      std::integral_constant<int, N2>,
+                      std::integral_constant<int, N3>,
+                      std::integral_constant<int, N4>,
+                      std::integral_constant<int, N5>,
+                      std::integral_constant<int, N6>,
+                      std::integral_constant<int, N7>,
+                      std::integral_constant<unsigned int, D1>,
+                      std::integral_constant<unsigned int, D2>,
+                      std::integral_constant<unsigned int, D3>,
+                      std::integral_constant<unsigned int, D4>,
+                      std::integral_constant<unsigned int, D5>,
+                      std::integral_constant<unsigned int, D6>,
+                      std::integral_constant<unsigned int, D7>>;
   };
 
-  // A simple alias
-  typedef Unit<std::integral_constant<int, 0>,
-               std::integral_constant<int, 0>,
-               std::integral_constant<int, 0>,
-               std::integral_constant<int, 0>,
-               std::integral_constant<int, 0>,
-               std::integral_constant<int, 0>,
-               std::integral_constant<int, 0>,
-               std::integral_constant<unsigned int, 1u>,
-               std::integral_constant<unsigned int, 1u>,
-               std::integral_constant<unsigned int, 1u>,
-               std::integral_constant<unsigned int, 1u>,
-               std::integral_constant<unsigned int, 1u>,
-               std::integral_constant<unsigned int, 1u>,
-               std::integral_constant<unsigned int, 1u>>
-      NoUnit;
+  //! \brief a simple alias
+  using NoUnit = Unit<std::integral_constant<int, 0>,
+                      std::integral_constant<int, 0>,
+                      std::integral_constant<int, 0>,
+                      std::integral_constant<int, 0>,
+                      std::integral_constant<int, 0>,
+                      std::integral_constant<int, 0>,
+                      std::integral_constant<int, 0>,
+                      std::integral_constant<unsigned int, 1u>,
+                      std::integral_constant<unsigned int, 1u>,
+                      std::integral_constant<unsigned int, 1u>,
+                      std::integral_constant<unsigned int, 1u>,
+                      std::integral_constant<unsigned int, 1u>,
+                      std::integral_constant<unsigned int, 1u>,
+                      std::integral_constant<unsigned int, 1u>>;
 
   /*!
    * \brief Declares the Mass unit
@@ -243,6 +245,62 @@ namespace tfel::math {
    * \brief Declares the HeatFluxDensity unit
    */
   typedef GenerateUnit<1, 0, -3, 0, 0, 0, 0>::type HeatFluxDensity;  // kg.s-3
+
+  /*
+   * \class Quantity
+   * \brief This class describes numbers with unit.
+   * qt must be has efficient and simple to use that standard numerical types.
+   * \param UnitType: the unit of the qt.
+   * \param ValueType: the underlying numerical type.
+   * \param OwnershipPolicy: policy which tells if the .
+   * \pre ValueType must be a fundamental numerical type (float, double, long
+   * double).
+   * \see unit_samples.hxx, IsFundamentalNumericType
+   * \author Thomas Helfer
+   * \date   06 Jun 2006
+   */
+  template <typename UnitType, typename ValueType, typename OwnershipPolicy>
+  struct Quantity;
+
+  //! \brief a simple alias
+  template <typename UnitType, typename ValueType = double>
+  using qt = Quantity<UnitType,
+                      ValueType,
+                      tfel::math::internals::QuantityValueOwnershipPolicy<
+                          ValueType,
+                          std::is_same_v<UnitType, NoUnit>>>;
+  //! \brief a simple alias
+  template <typename UnitType, typename ValueType = double>
+  using qt_ref =
+      Quantity<UnitType,
+               ValueType,
+               tfel::math::internals::QuantityReferenceOwnershipPolicy<
+                   ValueType,
+                   std::is_same_v<UnitType, NoUnit>>>;
+
+  template <typename UnitType, typename ValueType = double>
+  using const_qt_ref =
+      Quantity<UnitType,
+               ValueType,
+               tfel::math::internals::QuantityReferenceOwnershipPolicy<
+                   const ValueType,
+                   std::is_same_v<UnitType, NoUnit>>>;
+
+  namespace internals {
+
+    template <typename T>
+    struct IsQuantity : std::false_type {};
+
+    template <typename UnitType, typename ValueType, typename OwnershipPolicy>
+    struct IsQuantity<Quantity<UnitType, ValueType, OwnershipPolicy>>
+        : std::true_type {};
+
+  }  // end of namespace internals
+
+  template <typename T>
+  constexpr auto isQuantity() {
+    return tfel::math::internals::IsQuantity<T>::value;
+  }
 
 }  // end of namespace tfel::math
 

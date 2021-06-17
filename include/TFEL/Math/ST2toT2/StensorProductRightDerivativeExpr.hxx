@@ -130,7 +130,7 @@ namespace tfel::math {
       using real = base_type<ST2toT2ResultType>;
       constexpr auto icste = Cste<real>::isqrt2;
       constexpr auto zero = value_type(0);
-      TFEL_CONSTEXPR const auto one_half = real(1) / 2;
+      constexpr const auto one_half = real(1) / 2;
       this->v[0u] = a(0);
       this->v[1u] = zero;
       this->v[2u] = zero;
@@ -171,7 +171,7 @@ namespace tfel::math {
                          numeric_type<ST2toT2ResultType>>());
       using real = base_type<ST2toT2ResultType>;
       constexpr auto icste = Cste<real>::isqrt2;
-      TFEL_CONSTEXPR const auto one_half = real(1) / 2;
+      constexpr const auto one_half = real(1) / 2;
       this->v[0u] = C(3, 0) * a(3) * one_half + C(0, 0) * a(0);
       this->v[1u] = C(3, 1) * a(3) * one_half + C(0, 1) * a(0);
       this->v[2u] = C(3, 2) * a(3) * one_half + C(0, 2) * a(0);
@@ -239,7 +239,7 @@ namespace tfel::math {
       using real = base_type<ST2toT2ResultType>;
       constexpr auto icste = Cste<real>::isqrt2;
       constexpr auto zero = value_type(0);
-      TFEL_CONSTEXPR const auto one_half = real(1) / 2;
+      constexpr const auto one_half = real(1) / 2;
       this->v[0u] = a(0);
       this->v[1u] = zero;
       this->v[2u] = zero;
@@ -314,7 +314,7 @@ namespace tfel::math {
                          numeric_type<ST2toT2ResultType>>());
       using real = base_type<ST2toT2ResultType>;
       constexpr auto icste = Cste<real>::isqrt2;
-      TFEL_CONSTEXPR const auto one_half = real(1) / 2;
+      constexpr const auto one_half = real(1) / 2;
       this->v[0u] =
           (C(4, 0) * a(4) + C(3, 0) * a(3)) * one_half + C(0, 0) * a(0);
       this->v[1u] =

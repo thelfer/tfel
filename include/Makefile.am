@@ -345,12 +345,9 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Math/General/IEEE754.ixx                                                                \
 			TFEL/Math/Quantity/qtOperations.hxx                                                          \
 			TFEL/Math/Quantity/qtOperations.ixx		                                             \
-			TFEL/Math/Quantity/qtComplexOperations.hxx		                                     \
-			TFEL/Math/Quantity/qtSamples.hxx		                                             \
 			TFEL/Math/Quantity/qtSpecific.hxx		                                             \
 			TFEL/Math/Quantity/Unit.hxx			                                             \
 			TFEL/Math/Quantity/Unit.ixx			                                             \
-			TFEL/Math/Quantity/qt.ixx			                                             \
 			TFEL/Math/Quantity/qtIO.hxx			                                             \
 			TFEL/Math/Quantity/qtLimits.hxx                                                              \
 			TFEL/Math/qt.hxx				                                             \

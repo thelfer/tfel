@@ -479,7 +479,7 @@ namespace mfront {
     //             ";\n"
     //             << "using LSDYNAData = lsdyna::LSDYNAData<" << t <<
     //             ">;\n"
-    //             << "TFEL_CONSTEXPR const auto cste = Cste<" << t <<
+    //             << "constexpr const auto cste = Cste<" << t <<
     //             ">::sqrt2;\n"
     //             << "auto view = [&nblock](" << t << "* v){\n"
     //             << "  return LSDYNAData::strided_iterator(v,*nblock);\n"

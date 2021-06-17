@@ -2,7 +2,7 @@
  * \file  qtIO.hxx
  * \brief
  * \author Thomas Helfer
- * \date   24 janv. 2015
+ * \date   24/01/2015
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence
@@ -19,11 +19,9 @@
 
 namespace tfel::math {
 
-  template <typename unit, typename T>
-  TFEL_MATH_INLINE2 std::ostream& operator<<(std::ostream&, const qt<unit, T>&);
-
-  template <typename unit, typename T>
-  std::ostream& operator<<(std::ostream& os, const qt<unit, T>& q) {
+  template <typename UnitType, typename ValueType, typename OwnershipPolicy>
+  std::ostream& operator<<(
+      std::ostream&, const Quantity<UnitType, ValueType, OwnershipPolicy>& q) {
     os << q.getValue();
     return os;
   }

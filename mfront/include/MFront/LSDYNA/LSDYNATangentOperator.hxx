@@ -149,7 +149,7 @@ namespace lsdyna {
             typename LSDYNATangentOperatorType<LSDYNATraits<Behaviour>::btype,
                                                real, 2u>::type;
         constexpr auto icste = tfel::math::Cste<real>::isqrt2;
-        TFEL_CONSTEXPR const auto one_half = real(1) / real(2);
+        constexpr const auto one_half = real(1) / real(2);
         auto Dt =
             static_cast<const TangentOperatorType&>(bv.getTangentOperator());
         DDSDDE[0] = Dt(0, 0);
@@ -170,7 +170,7 @@ namespace lsdyna {
             typename LSDYNATangentOperatorType<LSDYNATraits<Behaviour>::btype,
                                                real, 2u>::type;
         constexpr auto icste = tfel::math::Cste<real>::isqrt2;
-        TFEL_CONSTEXPR const auto one_half = real(1) / real(2);
+        constexpr const auto one_half = real(1) / real(2);
         auto Dt =
             static_cast<const TangentOperatorType&>(bv.getTangentOperator());
         DDSDDE[0] = Dt(0, 0);

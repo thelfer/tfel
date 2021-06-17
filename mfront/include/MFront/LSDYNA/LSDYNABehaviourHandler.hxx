@@ -307,8 +307,8 @@ namespace lsdyna {
     TFEL_LSDYNA_INLINE2 static void checkNTENS(const LSDYNAInt ntens) {
       typedef Behaviour<H, LSDYNAReal, false> BV;
       typedef tfel::material::MechanicalBehaviourTraits<BV> Traits;
-      TFEL_CONSTEXPR const auto size = LSDYNAStensorSize<H>::value;
-      TFEL_CONSTEXPR const bool is_defined_ = Traits::is_defined;
+      constexpr const auto size = LSDYNAStensorSize<H>::value;
+      constexpr const bool is_defined_ = Traits::is_defined;
       // Test if the nb of state variables matches Behaviour requirements
       if ((ntens != size) && is_defined_) {
         throwInvalidTensorSize(Traits::getName(), ntens, size);

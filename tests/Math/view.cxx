@@ -197,7 +197,7 @@ struct StensorViewTest final : public tfel::tests::TestCase {
     TFEL_TESTS_STATIC_ASSERT(
         (std::is_same_v<base, MutableFixedSizeArrayBase<
                                   View<stensor<2u, double>, ipolicy>,  //
-                                  StandardArrayPolicy<double, ipolicy>>>));
+                                  ViewArrayPolicy<double, ipolicy>>>));
   }
   //! \brief an helper method to check values
   void check0() {

@@ -23,8 +23,6 @@ namespace tfel::math {
   template <typename ValueType>
   struct StandardArrayPolicyAliases {
     //! \brief type of the values hold by the array.
-    using storage_type = ValueType;
-    //! \brief type of the values hold by the array.
     using value_type = ValueType;
     //! \brief const type of the values hold by the array.
     using const_value_type = const value_type;
@@ -37,14 +35,20 @@ namespace tfel::math {
   //! \brief a standard array policy.
   template <typename ValueType, typename IndexingPolicyType>
   struct StandardArrayPolicy : StandardArrayPolicyAliases<ValueType> {
+    //! \brief type of the values hold by the array.
+    using storage_type = ValueType;
     //!
+    static constexpr auto isMakeConstReferenceTrivial = true;
+    //! \brief make a const_reference from a const reference to a base type
     static constexpr typename StandardArrayPolicy::const_reference
-    make_const_reference(const ValueType& v) noexcept {
+    make_const_reference(const typename StandardArrayPolicy::storage_type& v) noexcept {
       return v;
     }
     //!
+    static constexpr auto isMakeReferenceTrivial = true;
+    //! \brief make a reference from a reference to a base type
     static constexpr typename StandardArrayPolicy::reference make_reference(
-        ValueType& v) noexcept {
+        typename StandardArrayPolicy::storage_type& v) noexcept {
       return v;
     }
     //! \brief the underlying indexing policy

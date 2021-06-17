@@ -19,12 +19,12 @@
 #include <type_traits>
 #include "TFEL/Config/TFELConfig.hxx"
 
-namespace tfel::math {
+namespace tfel::math::internals {
 
   template <int N, unsigned int D>
   struct TFEL_VISIBILITY_LOCAL PowerGenerator {
     template <typename T>
-    static TFEL_MATH_INLINE T exe(const T& x) {
+    static constexpr T exe(const T& x) {
       return std::pow(x, static_cast<T>(N) / static_cast<T>(D));
     }
   };
@@ -38,7 +38,7 @@ namespace tfel::math {
   template <unsigned int N, unsigned int M>
   struct TFEL_VISIBILITY_LOCAL PowerPosImpl {
     template <typename T>
-    static TFEL_MATH_INLINE T exe(const T& x) {
+    static constexpr T exe(const T& x) {
       const auto tmp = PowerPos<N>::exe(x);
       const auto tmp2 = PowerPos<M>::exe(x);
       return tmp * tmp * tmp * tmp * tmp2;
@@ -48,7 +48,7 @@ namespace tfel::math {
   template <unsigned int N>
   struct TFEL_VISIBILITY_LOCAL PowerPosImpl<N, 0u> {
     template <typename T>
-    static TFEL_MATH_INLINE T exe(const T& x) {
+    static constexpr T exe(const T& x) {
       const auto tmp = PowerPos<N>::exe(x);
       return tmp * tmp * tmp * tmp;
     }
@@ -57,7 +57,7 @@ namespace tfel::math {
   template <unsigned int M>
   struct TFEL_VISIBILITY_LOCAL PowerPosImpl<0u, M> {
     template <typename T>
-    static TFEL_MATH_INLINE T exe(const T& x) {
+    static constexpr T exe(const T& x) {
       return PowerPos<M>::exe(x);
     }
   };
@@ -65,7 +65,7 @@ namespace tfel::math {
   template <>
   struct TFEL_VISIBILITY_LOCAL PowerPosImpl<0u, 0u> {
     template <typename T>
-    static TFEL_MATH_INLINE T exe(const T&) {
+    static constexpr T exe(const T&) {
       return {1};
     }
   };
@@ -73,7 +73,7 @@ namespace tfel::math {
   template <>
   struct TFEL_VISIBILITY_LOCAL PowerPos<0u> {
     template <typename T>
-    static TFEL_MATH_INLINE T exe(const T&) {
+    static constexpr T exe(const T&) {
       return {1};
     }
   };
@@ -81,7 +81,7 @@ namespace tfel::math {
   template <>
   struct TFEL_VISIBILITY_LOCAL PowerPos<1u> {
     template <typename T>
-    static TFEL_MATH_INLINE T exe(const T& x) {
+    static constexpr T exe(const T& x) {
       return x;
     }
   };
@@ -89,7 +89,7 @@ namespace tfel::math {
   template <>
   struct TFEL_VISIBILITY_LOCAL PowerPos<2u> {
     template <typename T>
-    static TFEL_MATH_INLINE T exe(const T& x) {
+    static constexpr T exe(const T& x) {
       return x * x;
     }
   };
@@ -97,7 +97,7 @@ namespace tfel::math {
   template <>
   struct TFEL_VISIBILITY_LOCAL PowerPos<3u> {
     template <typename T>
-    static TFEL_MATH_INLINE T exe(const T& x) {
+    static constexpr T exe(const T& x) {
       return x * x * x;
     }
   };
@@ -109,7 +109,7 @@ namespace tfel::math {
   template <int N>
   struct TFEL_VISIBILITY_LOCAL PowerNeg {
     template <typename T>
-    static TFEL_MATH_INLINE T exe(const T& x) {
+    static constexpr T exe(const T& x) {
       static_assert(N < 0, "invalid exponent");
       constexpr auto opposite = static_cast<unsigned int>(-N);
       constexpr auto one = T{1};
@@ -120,7 +120,7 @@ namespace tfel::math {
   template <int N>
   struct TFEL_VISIBILITY_LOCAL PowerSqrtNeg {
     template <typename T>
-    static TFEL_MATH_INLINE T exe(const T& x) {
+    static constexpr T exe(const T& x) {
       static_assert(N < 0, "invalid exponent");
       constexpr auto opposite = static_cast<unsigned int>(-N);
       constexpr auto one = T{1};
@@ -134,7 +134,7 @@ namespace tfel::math {
 
    public:
     template <typename T>
-    static TFEL_MATH_INLINE T exe(const T& x) {
+    static constexpr T exe(const T& x) {
       return std::sqrt(PowerPos<N>::exe(x));
     }
   };
@@ -187,16 +187,20 @@ namespace tfel::math {
                            PowerGenerator<N_, D_>>>;
   };
 
+}  // namespace tfel::math::internals
+
+namespace tfel::math {
+
   template <int N, typename T>
-  std::enable_if_t<tfel::typetraits::isScalar<T>(), T> power(const T x) {
-    typedef typename tfel::math::PowerImplSelector<N, 1u>::type Implementation;
-    return Implementation::exe(x);
+  constexpr std::enable_if_t<std::is_floating_point_v<T>, T> power(
+      const T x) {
+    return tfel::math::internals::PowerImplSelector<N, 1u>::type::exe(x);
   }
 
   template <int N, unsigned int D, typename T>
-  std::enable_if_t<tfel::typetraits::isScalar<T>(), T> power(const T x) {
-    typedef typename tfel::math::PowerImplSelector<N, D>::type Implementation;
-    return Implementation::exe(x);
+  constexpr std::enable_if_t<std::is_floating_point_v<T>, T> power(
+      const T x) {
+    return tfel::math::internals::PowerImplSelector<N, D>::type::exe(x);
   }
 
   namespace stdfunctions {

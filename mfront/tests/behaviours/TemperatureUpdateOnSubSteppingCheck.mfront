@@ -34,8 +34,8 @@
 @Integrator{
   constexpr const stress young = 150e9;
   constexpr const real nu = 0.3;
-  TFEL_CONSTEXPR const auto lambda = computeLambda(young,nu);
-  TFEL_CONSTEXPR const auto mu     = computeMu(young,nu);
+  constexpr const auto lambda = computeLambda(young,nu);
+  constexpr const auto mu     = computeMu(young,nu);
   sig = lambda*trace(eto+deto)*StrainStensor::Id()+2*mu*(eto+deto);
   ct += dt;
   if(computeTangentOperator_){

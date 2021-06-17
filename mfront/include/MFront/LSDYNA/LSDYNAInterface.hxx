@@ -109,8 +109,8 @@ namespace lsdyna {
         typedef LSDYNABehaviourHandler<H, Behaviour> AHandler;
         using BV = Behaviour<H, LSDYNAReal, false>;
         using ATraits = LSDYNATraits<BV>;
-        TFEL_CONSTEXPR const auto bs = ATraits::requiresStiffnessTensor;
-        TFEL_CONSTEXPR const auto ba =
+        constexpr const auto bs = ATraits::requiresStiffnessTensor;
+        constexpr const auto ba =
             ATraits::requiresThermalExpansionCoefficientTensor;
         using Integrator = typename AHandler::template Integrator<bs, ba>;
 #ifndef MFRONT_LSDYNA_NORUNTIMECHECKS

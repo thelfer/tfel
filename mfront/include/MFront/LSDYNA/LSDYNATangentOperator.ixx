@@ -40,7 +40,7 @@ namespace lsdyna {
   void LSDYNATangentOperator<real>::normalize(
       tfel::math::ST2toST2View<3u, real>& Dt) {
     constexpr const auto icste = tfel::math::Cste<real>::isqrt2;
-    TFEL_CONSTEXPR const auto one_half = real(1) / real(2);
+    constexpr const auto one_half = real(1) / real(2);
     Dt(0, 3) *= icste;
     Dt(1, 3) *= icste;
     Dt(2, 3) *= icste;

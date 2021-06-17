@@ -123,7 +123,7 @@ namespace epx {
       tfel::math::StensorView<N, EuroplexusReal>& e,
       tfel::math::ST2toST2View<N, EuroplexusReal>& p,
       const EuroplexusReal* const F) {
-    TFEL_CONSTEXPR const EuroplexusReal eps =
+    constexpr const EuroplexusReal eps =
         100 * std::numeric_limits<EuroplexusReal>::epsilon();
     using tensor = tfel::math::tensor<N, EuroplexusReal>;
     using stensor = tfel::math::stensor<N, EuroplexusReal>;

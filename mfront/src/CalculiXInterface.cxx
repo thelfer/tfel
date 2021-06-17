@@ -623,7 +623,7 @@ namespace mfront {
     out << "{\n"
         << "using namespace tfel::math;\n"
         << "using real = calculix::CalculiXReal;\n"
-        << "TFEL_CONSTEXPR const real sqrt2  = Cste<real>::sqrt2;\n";
+        << "constexpr const real sqrt2  = Cste<real>::sqrt2;\n";
     if (mb.getAttribute(BehaviourData::profiling, false)) {
       out << "using mfront::BehaviourProfiler;\n"
           << "using tfel::material::" << mb.getClassName() << "Profiler;\n"

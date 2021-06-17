@@ -330,18 +330,10 @@
 #undef max
 #endif
 
-#if defined(__GNUG__) && (!defined(__CLANG__)) && (!defined(__INTEL_COMPILER))
-#if ((__GNUC__ > 4) ||                            \
-     ((__GNUC__ == 4) && ((__GNUC_MINOR__ > 9) || \
-                          (__GNUC_MINOR__ == 9 && __GNUC_PATCHLEVEL__ > 0))))
+/*!
+ * \brief a macro
+ * \deprecated This macro is only kept for backward compatibility
+ */
 #define TFEL_CONSTEXPR constexpr
-#else
-#define TFEL_CONSTEXPR
-#endif
-#elif defined(_MSC_VER)
-#define TFEL_CONSTEXPR
-#else
-#define TFEL_CONSTEXPR constexpr
-#endif
 
 #endif /* LIB_TFEL_CONFIG_HXX */

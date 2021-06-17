@@ -66,8 +66,8 @@ struct ComputeDeterminantDerivativeTest final : public tfel::tests::TestCase {
  private:
   template <unsigned short N>
   void check(const tfel::math::stensor<N, double>& s) {
-    TFEL_CONSTEXPR const auto eps = 1e-2;
-    TFEL_CONSTEXPR const auto prec = 1e-13;
+    constexpr const auto eps = 1e-2;
+    constexpr const auto prec = 1e-13;
     const auto ndJ = getNumericalApproximation(s, eps);
     const auto dJ = tfel::math::computeDeterminantDerivative(s);
     for (unsigned short i = 0; i != s.size(); ++i) {

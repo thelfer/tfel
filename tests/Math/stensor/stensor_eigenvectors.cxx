@@ -128,7 +128,7 @@ struct StensorComputeEigenvectors final : public tfel::tests::TestCase {
   void test() {
     using tvector = tfel::math::tvector<3, T>;
     using stensor = tfel::math::stensor<3, T>;
-    TFEL_CONSTEXPR const auto prec = 20 * std::numeric_limits<T>::epsilon();
+    constexpr const auto prec = 20 * std::numeric_limits<T>::epsilon();
     stensor s = {T(1.232),  T(2.5198), T(0.234),
                  T(1.5634), T(3.3425), T(0.9765)};
     const tvector v0 = {-T(0.6378665158240716), T(0.0413740968617118),
@@ -201,7 +201,7 @@ struct StensorComputeEigenvectors final : public tfel::tests::TestCase {
                         T(0.4202251266738716)};
     const tvector v2 = {T(0.6208263966073649), T(0.6185290894233862),
                         T(0.4816599950303030)};
-    TFEL_CONSTEXPR const auto prec = 20 * std::numeric_limits<T>::epsilon();
+    constexpr const auto prec = 20 * std::numeric_limits<T>::epsilon();
     tfel::math::tmatrix<3u, 3u, T> m;
     tfel::math::tvector<3u, T> vp;
     s.template computeEigenVectors<stensor::GTESYMMETRICQREIGENSOLVER>(
@@ -218,8 +218,8 @@ struct StensorComputeEigenvectors final : public tfel::tests::TestCase {
   void test2() {
     using namespace std::chrono;
     const unsigned int nb_boucles = 1000000;
-    TFEL_CONSTEXPR const auto one_half = 1 / T(2);
-    TFEL_CONSTEXPR const auto prec = 10 * std::numeric_limits<T>::epsilon();
+    constexpr const auto one_half = 1 / T(2);
+    constexpr const auto prec = 10 * std::numeric_limits<T>::epsilon();
     tfel::math::stensor<3, T> s(T(0));
     tfel::math::tmatrix<3u, 3u, T> m(T(0));
     tfel::math::tvector<3u, T> vp(T(0));
@@ -264,8 +264,8 @@ struct StensorComputeEigenvectors final : public tfel::tests::TestCase {
   template <typename T, EigenSolver es>
   void test3() {
     const unsigned int nb_boucles = 1000000;
-    TFEL_CONSTEXPR const auto one_half = T(1) / T(2);
-    TFEL_CONSTEXPR const auto prec = 10 * std::numeric_limits<T>::epsilon();
+    constexpr const auto one_half = T(1) / T(2);
+    constexpr const auto prec = 10 * std::numeric_limits<T>::epsilon();
     tfel::math::stensor<2u, T> s(T(0));
     tfel::math::tmatrix<3u, 3u, T> m(T(0));
     tfel::math::tvector<3u, T> vp(T(0));

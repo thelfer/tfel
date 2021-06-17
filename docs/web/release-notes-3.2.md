@@ -764,12 +764,12 @@ nstante [C:\Codes\tfel\sources\build-vs-2015\bindings\python\tfel\py_tfel_materi
 ~~~~
 
 The problem is that `constexpr` variables are poorly handled by `Visual
-Studio 2015`. The `TFEL_CONSTEXPR` macro was introduced to handle this
+Studio 2015`. The `constexpr` macro was introduced to handle this
 compiler (it boils down to `constexpr` for others compilers). The issue
 can be solved by changing the faulty line as as follows:
 
 ~~~~
-TFEL_CONSTEXPR const auto isqrt6 = isqrt2 * isqrt3;
+constexpr const auto isqrt6 = isqrt2 * isqrt3;
 ~~~~
 
 For more details, see: <https://sourceforge.net/p/tfel/tickets/137/>

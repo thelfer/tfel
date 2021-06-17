@@ -46,9 +46,9 @@ namespace tfel::math {
     TFEL_MATH_INLINE2 void set_h(const T h_) { this->h = h_; }
 
     void increm() {
-      TFEL_CONSTEXPR const auto Cste_1_2 = T{1} / T{2};
-      TFEL_CONSTEXPR const auto Cste_1_3 = T{1} / T{3};
-      TFEL_CONSTEXPR const auto Cste_1_6 = T{1} / T{6};
+      constexpr const auto Cste_1_2 = T{1} / T{2};
+      constexpr const auto Cste_1_3 = T{1} / T{3};
+      constexpr const auto Cste_1_6 = T{1} / T{6};
       static_cast<Func&>(*this).computeF(t, y);
       k1 = h * f;
       tmp = y + Cste_1_2 * k1;

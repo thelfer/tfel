@@ -122,7 +122,7 @@ namespace tfel::math::anderson {
       }
 
       // Degeneration
-      TFEL_CONSTEXPR const real eps =
+      constexpr const real eps =
           100 * std::numeric_limits<real>::epsilon();
       if (ne[i] < C[0] * eps * eps) {
         ne[i] = 0;
