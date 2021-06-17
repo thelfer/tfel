@@ -537,12 +537,12 @@ namespace mtest {
     this->cto = bo;
   }  // end of MTest::setCompareToNumericalTangentOperator
 
-  void MTest::setTangentOperatorComparisonCriterium(const real v) {
+  void MTest::setTangentOperatorComparisonCriterion(const real v) {
     tfel::raise_if(v < 100 * std::numeric_limits<real>::min(),
-                   "MTest::setTangentOperatorComparisonCriterium: "
+                   "MTest::setTangentOperatorComparisonCriterion: "
                    "invalid comparison criterium");
     this->toeps = v;
-  }  // end of MTest::handleTangentOperatorComparisonCriterium
+  }  // end of MTest::setTangentOperatorComparisonCriterion
 
   void MTest::setNumericalTangentOperatorPerturbationValue(const real v) {
     tfel::raise_if(v < 100 * std::numeric_limits<real>::min(),

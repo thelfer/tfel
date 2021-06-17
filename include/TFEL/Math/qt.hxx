@@ -322,7 +322,10 @@ namespace tfel::math {
   template <typename UnitType, typename ValueType, typename OwnershipPolicy>
   constexpr qt<UnitType, ValueType> abs(
       const Quantity<UnitType, ValueType, OwnershipPolicy>& v) {
-    return qt<UnitType, ValueType>{std::abs(v.getValue())};
+    if(v.getValue()<0){
+      return qt<UnitType, ValueType>{-v.getValue()};
+    }
+    return qt<UnitType, ValueType>{v.getValue()};
   }
 
   template <typename Unit,

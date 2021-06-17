@@ -267,7 +267,9 @@ namespace mtest {
     add("@CompareToNumericalTangentOperator",
         &MTestParser::handleCompareToNumericalTangentOperator);
     add("@TangentOperatorComparisonCriterium",
-        &MTestParser::handleTangentOperatorComparisonCriterium);
+        &MTestParser::handleTangentOperatorComparisonCriterion);
+    add("@TangentOperatorComparisonCriterion",
+        &MTestParser::handleTangentOperatorComparisonCriterion);
     add("@NumericalTangentOperatorPerturbationValue",
         &MTestParser::handleNumericalTangentOperatorPerturbationValue);
     add("@UserDefinedPostProcessing",
@@ -316,17 +318,17 @@ namespace mtest {
         this->tokens.end());
   }  // end of MTestParser::handleCompareToNumericalTangentOperator
 
-  void MTestParser::handleTangentOperatorComparisonCriterium(
+  void MTestParser::handleTangentOperatorComparisonCriterion(
       MTest& t, tokens_iterator& p) {
-    this->checkNotEndOfLine("handleTangentOperatorComparisonCriterium", p,
+    this->checkNotEndOfLine("handleTangentOperatorComparisonCriterion", p,
                             this->tokens.end());
     t.setTangentOperatorComparisonCriterium(this->readDouble(t, p));
-    this->checkNotEndOfLine("handleTangentOperatorComparisonCriterium", p,
+    this->checkNotEndOfLine("handleTangentOperatorComparisonCriterion", p,
                             this->tokens.end());
     this->readSpecifiedToken(
-        "MTestParser::handleTangentOperatorComparisonCriterium", ";", p,
+        "MTestParser::handleTangentOperatorComparisonCriterion", ";", p,
         this->tokens.end());
-  }  // end of MTestParser::handleTangentOperatorComparisonCriterium
+  }  // end of MTestParser::handleTangentOperatorComparisonCriterion
 
   void MTestParser::handleNumericalTangentOperatorPerturbationValue(
       MTest& t, tokens_iterator& p) {

@@ -256,7 +256,7 @@ namespace mtest {
      * by the behaviour to the numerical tangent operator
      * \param[in] v : value
      */
-    virtual void setTangentOperatorComparisonCriterium(const real);
+    virtual void setTangentOperatorComparisonCriterion(const real);
     /*!
      * \brief set the value used to build the numerical tangent operator
      * \param[in] v : perturbation value

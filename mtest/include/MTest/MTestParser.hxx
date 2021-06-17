@@ -95,7 +95,7 @@ namespace mtest {
      * \param[in,out] t: `MTest` object to be configured
      * \param[in,out] p: position in the input file
      */
-    virtual void handleTangentOperatorComparisonCriterium(MTest&,
+    virtual void handleTangentOperatorComparisonCriterion(MTest&,
                                                           tokens_iterator&);
     /*!
      * \brief handle the `@NumericalTangentOperatorPerturbationValue`
