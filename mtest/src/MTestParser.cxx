@@ -227,8 +227,8 @@ namespace mtest {
   void MTestParser::registerCallBacks() {
     SchemeParserBase::registerCallBacks();
     SingleStructureSchemeParser::registerCallBacks();
-    auto add = [this](const char* n,const CallBack& c){
-      this->registerCallBack(n,c);
+    auto add = [this](const char* n, const CallBack& c) {
+      this->registerCallBack(n, c);
     };
     add("@Event", &MTestParser::handleEvent);
     add("@Test", &MTestParser::handleTest);
@@ -268,7 +268,9 @@ namespace mtest {
     add("@CompareToNumericalTangentOperator",
         &MTestParser::handleCompareToNumericalTangentOperator);
     add("@TangentOperatorComparisonCriterium",
-        &MTestParser::handleTangentOperatorComparisonCriterium);
+        &MTestParser::handleTangentOperatorComparisonCriterion);
+    add("@TangentOperatorComparisonCriterion",
+        &MTestParser::handleTangentOperatorComparisonCriterion);
     add("@NumericalTangentOperatorPerturbationValue",
         &MTestParser::handleNumericalTangentOperatorPerturbationValue);
     add("@UserDefinedPostProcessing",
@@ -281,16 +283,15 @@ namespace mtest {
   }
 
   void MTestParser::handleEvent(MTest& t, tokens_iterator& p) {
-    const auto n = this->readString(p,this->tokens.end());
+    const auto n = this->readString(p, this->tokens.end());
     std::vector<double> evt;
-    this->checkNotEndOfLine("MTestParser::handleEvent", p,
-                            this->tokens.end());
+    this->checkNotEndOfLine("MTestParser::handleEvent", p, this->tokens.end());
     if (p->value == "{") {
       evt = this->readTimesArray("MTest::handleEvent", t, p);
     } else {
       evt.push_back(this->readDouble(t, p));
     }
-    t.addEvent(n,evt);
+    t.addEvent(n, evt);
     this->readSpecifiedToken("MTestParser::handleEvent", ";", p,
                              this->tokens.end());
   }  // end of MTestParser::handleEvent
@@ -318,17 +319,17 @@ namespace mtest {
         this->tokens.end());
   }  // end of MTestParser::handleCompareToNumericalTangentOperator
 
-  void MTestParser::handleTangentOperatorComparisonCriterium(
+  void MTestParser::handleTangentOperatorComparisonCriterion(
       MTest& t, tokens_iterator& p) {
-    this->checkNotEndOfLine("handleTangentOperatorComparisonCriterium", p,
+    this->checkNotEndOfLine("handleTangentOperatorComparisonCriterion", p,
                             this->tokens.end());
-    t.setTangentOperatorComparisonCriterium(this->readDouble(t, p));
-    this->checkNotEndOfLine("handleTangentOperatorComparisonCriterium", p,
+    t.setTangentOperatorComparisonCriterion(this->readDouble(t, p));
+    this->checkNotEndOfLine("handleTangentOperatorComparisonCriterion", p,
                             this->tokens.end());
     this->readSpecifiedToken(
-        "MTestParser::handleTangentOperatorComparisonCriterium", ";", p,
+        "MTestParser::handleTangentOperatorComparisonCriterion", ";", p,
         this->tokens.end());
-  }  // end of MTestParser::handleTangentOperatorComparisonCriterium
+  }  // end of MTestParser::handleTangentOperatorComparisonCriterion
 
   void MTestParser::handleNumericalTangentOperatorPerturbationValue(
       MTest& t, tokens_iterator& p) {
@@ -595,8 +596,8 @@ namespace mtest {
 
   void MTestParser::handleGradientEpsilon(MTest& t, tokens_iterator& p) {
     t.setGradientEpsilon(this->readDouble(t, p));
-    this->readSpecifiedToken("MTestParser::handleGradientEpsilon", ";",
-                             p, this->tokens.end());
+    this->readSpecifiedToken("MTestParser::handleGradientEpsilon", ";", p,
+                             this->tokens.end());
   }  // end of MTestParser::handleGradientEpsilon
 
   void MTestParser::handleStressEpsilon(MTest& t, tokens_iterator& p) {
@@ -770,12 +771,11 @@ namespace mtest {
     this->checkNotEndOfLine("MTestParser::handleImposedGradient", p,
                             this->tokens.end());
     auto sev = this->parseEvolution(t, evt, p);
-    const auto opts = this->readConstraintOptions(
-        "MTestParser::handleImposedGradient", p);
-    this->readSpecifiedToken("MTestParser::handleImposedGradient", ";",
-                             p, this->tokens.end());
-    auto sc =
-        std::make_shared<ImposedGradient>(*(t.getBehaviour()), c, sev);
+    const auto opts =
+        this->readConstraintOptions("MTestParser::handleImposedGradient", p);
+    this->readSpecifiedToken("MTestParser::handleImposedGradient", ";", p,
+                             this->tokens.end());
+    auto sc = std::make_shared<ImposedGradient>(*(t.getBehaviour()), c, sev);
     applyConstraintOptions(*(sc.get()), opts);
     t.addEvolution(c, sev, false, true);
     t.addConstraint(sc);
@@ -860,7 +860,8 @@ namespace mtest {
     t.setThermodynamicForcesInitialValues(s_t0);
   }  // end of MTestParser::handleThermodynamicForce
 
-  void MTestParser::handleUserDefinedPostProcessing(MTest& t, tokens_iterator& p) {
+  void MTestParser::handleUserDefinedPostProcessing(MTest& t,
+                                                    tokens_iterator& p) {
     const std::string m = "MTestParser::handleUserDefinedPostProcessing";
     // output file
     const auto& f = this->readString(p, this->tokens.end());
@@ -889,16 +890,16 @@ namespace mtest {
   ConstraintOptions MTestParser::readConstraintOptions(const std::string& m,
                                                        tokens_iterator& p) {
     auto throw_if = [&m](const bool b, const char* msg) {
-      if(b){
+      if (b) {
         tfel::raise(m + ':' + msg);
       }
     };
     this->checkNotEndOfLine(m, p, this->tokens.end());
-    if(p->value==";"){
+    if (p->value == ";") {
       return {};
     }
     const auto d = tfel::utilities::Data::read_map(p, this->tokens.end())
-                       .get<std::map<std::string, tfel::utilities::Data>> ();
+                       .get<std::map<std::string, tfel::utilities::Data>>();
     ConstraintOptions opts;
     for (const auto& kv : d) {
       if (kv.first == "active") {
@@ -928,11 +929,11 @@ namespace mtest {
         opts.desactivating_events =
             tfel::utilities::convert<std::vector<std::string>>(kv.second);
       } else {
-        tfel::raise(m+": unknown constraint option '" + kv.first + "'");
+        tfel::raise(m + ": unknown constraint option '" + kv.first + "'");
       }
     }
     return opts;
-  } // end of MTestParser::readConstraintOptions
+  }  // end of MTestParser::readConstraintOptions
 
   MTestParser::~MTestParser() = default;
 

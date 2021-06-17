@@ -11,8 +11,8 @@
  * project under specific licensing conditions.
  */
 
-#ifndef LIB_MTEST_MTEST_H
-#define LIB_MTEST_MTEST_H
+#ifndef LIB_MTEST_MTEST_HXX
+#define LIB_MTEST_MTEST_HXX
 
 #include <map>
 #include <string>
@@ -256,7 +256,7 @@ namespace mtest {
      * by the behaviour to the numerical tangent operator
      * \param[in] v : value
      */
-    virtual void setTangentOperatorComparisonCriterium(const real);
+    virtual void setTangentOperatorComparisonCriterion(const real);
     /*!
      * \brief set the value used to build the numerical tangent operator
      * \param[in] v : perturbation value
@@ -322,7 +322,8 @@ namespace mtest {
      * \param[in] f: filename
      * \param[in] p: list of PostProcessings
      */
-    void addUserDefinedPostProcessing(const std::string&, const std::vector<std::string>&);
+    void addUserDefinedPostProcessing(const std::string&,
+                                      const std::vector<std::string>&);
     //! destructor
     ~MTest() override;
 
@@ -367,4 +368,4 @@ namespace mtest {
 
 }  // end of namespace mtest
 
-#endif /* LIB_MTEST_MTEST_H */
+#endif /* LIB_MTEST_MTEST_HXX */
