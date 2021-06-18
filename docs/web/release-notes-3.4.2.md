@@ -48,6 +48,22 @@ This development was made to solve Issue #267 (see Section @sec:tfel:3.4.1:issue
 
 # Issues fixed
 
-## Ticket #267 InteractionMatrix coefficients as parameters / material properties {#sec:tfel:3.4.1:issue:267}
+## Ticket #268: Missing methods in mtest.MTest for the comparison of the tangent operator to a numerical approximation
+
+The `MTest` executable allows to compare the tangent operator returned
+by the behaviour to a numerical approximation. To be able to do the same
+using the `python` interface, the following methods have been added:
+
+- `setCompareToNumericalTangentOperator`: set if a comparison of the
+  tangent operator returned by the behaviour to a numerical
+  approximation.
+- `setTangentOperatorComparisonCriterion`: set the criterion used to
+  compare the tangent operator returned by the behaviour and its
+  numerical approximation.
+- `setNumericalTangentOperatorPerturbationValue`: set the perburtation
+  of the gradient used to compute a numerical approximation of the
+  tangent operator.
+
+## Ticket #267: InteractionMatrix coefficients as parameters / material properties {#sec:tfel:3.4.1:issue:267}
 
 For more details, see: <https://sourceforge.net/p/tfel/tickets/267/>
