@@ -1832,7 +1832,6 @@ include/TFEL/Math/Forward/vector.hxx -text
 include/TFEL/Math/General/Abs.hxx -text
 include/TFEL/Math/General/Abs.ixx -text
 include/TFEL/Math/General/AbsCompare.hxx -text
-include/TFEL/Math/General/BaseCast.hxx -text
 include/TFEL/Math/General/BasicOperations.hxx -text
 include/TFEL/Math/General/Complex.hxx -text
 include/TFEL/Math/General/ComputeBinaryResult.hxx -text
@@ -2167,7 +2166,6 @@ include/TFEL/TypeTraits/IsFundamentalNumericType.hxx -text
 include/TFEL/TypeTraits/IsInvalid.hxx -text
 include/TFEL/TypeTraits/IsRandomAccessIterator.hxx -text
 include/TFEL/TypeTraits/IsReal.hxx -text
-include/TFEL/TypeTraits/IsSafelyReinterpretCastableTo.hxx -text
 include/TFEL/TypeTraits/IsScalar.hxx -text
 include/TFEL/TypeTraits/IsUnaryOperator.hxx -text
 include/TFEL/TypeTraits/Promote.hxx -text
@@ -7084,7 +7082,6 @@ src/Math/Negation.cxx -text
 src/Math/Number.cxx -text
 src/Math/QRException.cxx -text
 src/Math/RunTimeCheck.cxx -text
-src/Math/StensorComputeEigenValues.cxx -text
 src/Math/StensorConcept.cxx -text
 src/Math/StridedRandomAccessIterator.cxx -text
 src/Math/TensorConcept.cxx -text

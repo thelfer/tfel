@@ -22,7 +22,6 @@
 #include "TFEL/TypeTraits/IsReal.hxx"
 #include "TFEL/TypeTraits/IsComplex.hxx"
 #include "TFEL/TypeTraits/IsFundamentalNumericType.hxx"
-#include "TFEL/TypeTraits/IsSafelyReinterpretCastableTo.hxx"
 #include "TFEL/TypeTraits/IsAssignableTo.hxx"
 #include "TFEL/TypeTraits/Promote.hxx"
 #include "TFEL/Math/Forward/Complex.hxx"

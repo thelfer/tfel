@@ -25,45 +25,22 @@ namespace tfel::math {
   struct Power;
 
   template <int N, unsigned int D>
-  class TFEL_VISIBILITY_LOCAL UnaryResultType<Complex<float>, Power<N, D>> {
+  class UnaryResultType<Complex<float>, Power<N, D>> {
    public:
     typedef Complex<float> type;
   };
 
   template <int N, unsigned int D>
-  class TFEL_VISIBILITY_LOCAL UnaryResultType<Complex<double>, Power<N, D>> {
+  class UnaryResultType<Complex<double>, Power<N, D>> {
    public:
     typedef Complex<double> type;
   };
 
   template <int N, unsigned int D>
-  class TFEL_VISIBILITY_LOCAL
-      UnaryResultType<Complex<long double>, Power<N, D>> {
+  class UnaryResultType<Complex<long double>, Power<N, D>> {
    public:
     typedef Complex<long double> type;
   };
-
-  // /*
-  //  * \brief return the conjugated Complex.
-  //  * \param ValueType, base type of the Complex.
-  //  * \param const Complex<ValueType>&, object to be conjugated.
-  //  * \return const Complex<ValueType>.
-  //  */
-  // template<typename ValueType>
-  // TFEL_MATH_INLINE constexpr
-  // Complex<ValueType>
-  // conj(const Complex<ValueType>&);
-
-  // /*
-  //  * \brief return the real part of a Complex.
-  //  * \param ValueType, base type of the Complex.
-  //  * \param const Complex<ValueType>&, source object.
-  //  * \return const ValueType.
-  //  */
-  // template<typename ValueType>
-  // TFEL_MATH_INLINE constexpr
-  // ValueType
-  // real(const Complex<ValueType>&);
 
 }  // end of namespace tfel::math
 

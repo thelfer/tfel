@@ -56,11 +56,8 @@ namespace tfel::math {
   template <unsigned short N, typename T, typename OutputIterator>
   std::enable_if_t<isScalar<T>(), void> exportToBaseTypeArray(
       const tvector<N, T>& v, OutputIterator p) {
-    typedef tfel::fsalgo::copy<N> Copy;
-    typedef base_type<T> base;
-    static_assert(
-        tfel::typetraits::IsSafelyReinterpretCastableTo<T, base>::cond);
-    Copy::exe(reinterpret_cast<const base*>(&v[0]), p);
+    tfel::fsalgo::transform<N>::exe(
+        v.begin(), p, [](const auto& value) { return base_type_cast(value); });
   }  // end of exportToBaseTypePointer
 
   // Norm2

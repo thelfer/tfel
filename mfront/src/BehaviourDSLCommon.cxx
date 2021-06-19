@@ -3714,9 +3714,6 @@ namespace mfront {
        << "#include\"TFEL/Math/Array/runtime_arrayIO.hxx\"\n"
        << "#include\"TFEL/Math/fsarray.hxx\"\n"
        << "#include\"TFEL/Math/runtime_array.hxx\"\n";
-    if (this->mb.useQt()) {
-      os << "#include\"TFEL/Math/General/BaseCast.hxx\"\n";
-    }
     this->mb.requiresTVectorOrVectorIncludes(b1, b2);
     if (b1) {
       os << "#include\"TFEL/Math/tvector.hxx\"\n"

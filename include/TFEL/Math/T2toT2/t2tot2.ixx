@@ -19,7 +19,6 @@
 #include <algorithm>
 #include <type_traits>
 #include "TFEL/FSAlgorithm/FSAlgorithm.hxx"
-#include "TFEL/TypeTraits/IsSafelyReinterpretCastableTo.hxx"
 #include "TFEL/Math/T2toT2/TensorProductLeftDerivativeExpr.hxx"
 #include "TFEL/Math/T2toT2/TensorProductRightDerivativeExpr.hxx"
 

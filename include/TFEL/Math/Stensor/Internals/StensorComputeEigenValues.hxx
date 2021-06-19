@@ -15,24 +15,13 @@
 #define LIB_TFEL_MATH_STENSORCOMPUTEEIGENVALUES_HXX
 
 #include <cmath>
+#include "TFEL/ContractViolation.hxx"
 #include "TFEL/Config/TFELConfig.hxx"
 #include "TFEL/Math/MathException.hxx"
 #include "TFEL/Math/General/CubicRoots.hxx"
 #include "TFEL/Exception/TFELException.hxx"
 
 namespace tfel::math::internals {
-
-  struct TFELMATH_VISIBILITY_EXPORT
-      StensorEigenValuesComputationFailureException
-      : tfel::math::MathException {
-    StensorEigenValuesComputationFailureException() = default;
-    StensorEigenValuesComputationFailureException(
-        StensorEigenValuesComputationFailureException&&) = default;
-    StensorEigenValuesComputationFailureException(
-        const StensorEigenValuesComputationFailureException&) = default;
-    const char* what() const noexcept override final;
-    ~StensorEigenValuesComputationFailureException() noexcept override;
-  };  // end of struct StensorEigenValuesComputationFailureException
 
   // computeEigenValues
   template <unsigned short N>
@@ -79,7 +68,6 @@ namespace tfel::math::internals {
         const T* const v, T& vp1, T& vp2, T& vp3, const bool b) {
       static_assert(tfel::typetraits::IsFundamentalNumericType<T>::cond);
       static_assert(tfel::typetraits::IsReal<T>::cond);
-      using tfel::math::constexpr_fct::sqrt;
       constexpr auto icste = Cste<T>::isqrt2;
       constexpr const auto one_half = 1 / T{2};
       constexpr const auto one_third = 1 / T{3};
@@ -103,7 +91,7 @@ namespace tfel::math::internals {
                    icste * (s2[3] * s2[4] * s2[5]) + s2[0] * s2[1] * s2[2];
       const auto nb = CubicRoots::exe(vp1, vp2, vp3, p3, p2, p1, p0, b);
       if (nb == 0u) {
-        throw(StensorEigenValuesComputationFailureException());
+        reportContractViolation("invalid return value");
       } else if (nb == 1u) {
         if (std::abs(vp1 - vp2) < std::numeric_limits<T>::epsilon()) {
           const auto vm = (vp1 + vp2) * one_half;

@@ -36,20 +36,16 @@ namespace std {
 }  // end of namespace std
 #endif /* defined _LIBCPP_VERSION */
 
-namespace tfel {
+namespace tfel::math {
 
-  namespace math {
+  /*!
+   * \brief an alias std::complex.
+   * \param ValueType, underlying type.
+   * \see std::complex.
+   */
+  template <typename ValueType>
+  using Complex = std::complex<ValueType>;
 
-    /*!
-     * \brief an alias std::complex.
-     * \param ValueType, underlying type.
-     * \see std::complex.
-     */
-    template <typename ValueType>
-    using Complex = std::complex<ValueType>;
-
-  }  // end of namespace math
-
-}  // end of namespace tfel
+}  // end of namespace tfel::math
 
 #endif /* LIB_TFEL_MATH_FORWARD_COMPLEX_HXX */

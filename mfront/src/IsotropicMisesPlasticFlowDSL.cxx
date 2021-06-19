@@ -177,7 +177,7 @@ namespace mfront {
        << "newton_f  =(this->dp);\n"
        << "newton_df = real(1.);\n"
        << "}\n"
-       << "if(std::abs(base_cast(newton_df))"
+       << "if(std::abs(base_type_cast(newton_df))"
        << ">newton_epsilon){\n"
        << "newton_ddp = -newton_f/newton_df;\n"
        << "this->dp += newton_ddp;\n"
@@ -186,10 +186,10 @@ namespace mfront {
     if (getDebugMode()) {
       os << "cout << \"" << this->mb.getClassName()
          << "::NewtonIntegration() : iteration \" "
-         << "<< iter << \": \" << std::abs(tfel::math::base_cast(newton_f)) "
+         << "<< iter << \": \" << std::abs(tfel::math::base_type_cast(newton_f)) "
             "<< '\\n';\n";
     }
-    os << "converge = (std::abs(tfel::math::base_cast(newton_f))<"
+    os << "converge = (std::abs(tfel::math::base_type_cast(newton_f))<"
        << "this->epsilon);\n"
        << "} else {\n";
     if (getDebugMode()) {

@@ -134,8 +134,7 @@ namespace mfront {
   void MultipleIsotropicMisesFlowsDSL::writeBehaviourParserSpecificIncludes(
       std::ostream& os) const {
     this->checkBehaviourFile(os);
-    os << "#include\"TFEL/Math/General/BaseCast.hxx\"\n"
-       << "#include\"TFEL/Math/TinyMatrixSolve.hxx\"\n\n";
+    os << "#include\"TFEL/Math/TinyMatrixSolve.hxx\"\n\n";
   }
 
   void MultipleIsotropicMisesFlowsDSL::writeBehaviourParserSpecificMembers(
@@ -343,7 +342,7 @@ namespace mfront {
     os << "real error=static_cast<real>(0.);\n";
     n = 0;
     for (auto p = this->flows.begin(); p != this->flows.end(); ++p, ++n) {
-      os << "error+=std::abs(tfel::math::base_cast(newton_f(" << n << ")));\n";
+      os << "error+=std::abs(tfel::math::base_type_cast(newton_f(" << n << ")));\n";
     }
     os << "auto jacobian_inversion_succeeded = true;"
        << "try{\n"

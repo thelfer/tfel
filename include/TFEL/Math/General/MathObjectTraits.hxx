@@ -19,6 +19,7 @@
 #include "TFEL/TypeTraits/BaseType.hxx"
 #include "TFEL/TypeTraits/IsScalar.hxx"
 #include "TFEL/TypeTraits/IsInvalid.hxx"
+#include "TFEL/TypeTraits/IsFundamentalNumericType.hxx"
 #include "TFEL/TypeTraits/IsAssignableTo.hxx"
 
 namespace tfel::math {
@@ -84,6 +85,20 @@ namespace tfel::math {
       std::conditional_t<tfel::typetraits::isScalar<T>(),
                          tfel::typetraits::base_type<T>,
                          tfel::typetraits::base_type<numeric_type<T>>>;
+  //! \brief cast the value to the base type
+  template <typename T>
+  constexpr std::
+      enable_if_t<tfel::typetraits::IsFundamentalNumericType<T>::cond, T&>
+      base_type_cast(T& v) noexcept {
+    return v;
+  }
+  //! \brief cast the value to the base type
+  template <typename T>
+  constexpr std::
+      enable_if_t<tfel::typetraits::IsFundamentalNumericType<T>::cond, const T&>
+      base_type_cast(const T& v) noexcept {
+    return v;
+  }
   /*!
    * \brief an helper function to retrieve the space dimension associated
    * with a math object.

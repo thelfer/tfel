@@ -285,6 +285,18 @@ namespace tfel::math {
                tfel::math::internals::QuantityReferenceOwnershipPolicy<
                    const ValueType,
                    std::is_same_v<UnitType, NoUnit>>>;
+  //! \brief cast the value to the base type
+  template <typename UnitType, typename ValueType, typename OwnershipPolicy>
+  constexpr ValueType& base_type_cast(
+      Quantity<UnitType, ValueType, OwnershipPolicy>& v) noexcept {
+    return v.getValue();
+  }
+  //! \brief cast the value to the base type
+  template <typename UnitType, typename ValueType, typename OwnershipPolicy>
+  constexpr const ValueType& base_type_cast(
+      const Quantity<UnitType, ValueType, OwnershipPolicy>& v) noexcept {
+    return v.getValue();
+  }
 
   namespace internals {
 

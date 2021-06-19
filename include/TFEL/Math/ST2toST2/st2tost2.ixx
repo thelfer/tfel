@@ -20,8 +20,6 @@
 #include <type_traits>
 
 #include "TFEL/FSAlgorithm/FSAlgorithm.hxx"
-#include "TFEL/TypeTraits/IsSafelyReinterpretCastableTo.hxx"
-#include "TFEL/Math/General/BaseCast.hxx"
 #include "TFEL/Math/tmatrix.hxx"
 #include "TFEL/Math/TinyMatrixInvert.hxx"
 #include "TFEL/Math/ST2toST2/ConvertT2toST2ToST2toST2Expr.hxx"
@@ -238,7 +236,7 @@ namespace tfel::math {
     tmatrix<StensorSize, StensorSize, real> m;
     for (unsigned short i = 0; i != StensorSize; ++i) {
       for (unsigned short j = 0; j != StensorSize; ++j) {
-        m(i, j) = base_cast(s(i, j));
+        m(i, j) = base_type_cast(s(i, j));
       }
     }
     TinyMatrixInvert<StensorSize, real>::exe(m);

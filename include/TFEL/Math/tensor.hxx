@@ -19,7 +19,6 @@
 #include <type_traits>
 #include "TFEL/Config/TFELConfig.hxx"
 #include "TFEL/TypeTraits/IsAssignableTo.hxx"
-#include "TFEL/TypeTraits/IsSafelyReinterpretCastableTo.hxx"
 #include "TFEL/FSAlgorithm/FSAlgorithm.hxx"
 #include "TFEL/Math/General/MathObjectTraits.hxx"
 #include "TFEL/Math/General/BasicOperations.hxx"
@@ -131,19 +130,10 @@ namespace tfel::math {
      */
     ValueType operator()(const typename tensor::size_type,
                          const typename tensor::size_type) const;
-    /*!
-     * \brief write to an array
-     */
+    //! \brief write to an external memory location
     TFEL_MATH_INLINE2 void write(base_type<ValueType>* const) const;
-    /*!
-     * Import values
-     */
-    template <typename T2>
-    TFEL_MATH_INLINE2 std::enable_if_t<
-        tfel::typetraits::
-            IsSafelyReinterpretCastableTo<T2, base_type<ValueType>>::cond,
-        void>
-    import(const T2* const);
+    //! \brief import values from an external memory location
+    void import(const base_type<ValueType>* const);
     //! change basis
     TFEL_MATH_INLINE2 void changeBasis(
         const rotation_matrix<ValueType>&) noexcept;

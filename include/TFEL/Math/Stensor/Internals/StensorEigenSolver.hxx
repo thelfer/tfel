@@ -26,6 +26,32 @@
 namespace tfel::math::internals {
 
   /*!
+   * A base class for interfacing various eigen solvers.
+   * \tparam N:       space dimension
+   * \tparam NumType: numeric type
+   */
+  template <unsigned short N, typename NumType>
+  struct StensorEigenSolverBase;
+
+  template <typename NumType>
+  struct StensorEigenSolverBase<3u, NumType> {
+    static_assert(
+        tfel::typetraits::IsFundamentalNumericType<base_type<NumType>>::cond);
+    static_assert(tfel::typetraits::IsReal<base_type<NumType>>::cond);
+    //! build a matrix of the base type
+    static constexpr auto as_base_matrix(const NumType* const v) noexcept {
+      constexpr auto icste = Cste<NumType>::isqrt2;
+      return tmatrix<3u, 3u, base_type<NumType>>{
+          base_type_cast(v[0]),         base_type_cast(v[3]) * icste,
+          base_type_cast(v[4]) * icste,  //
+          base_type_cast(v[3]) * icste, base_type_cast(v[1]),
+          base_type_cast(v[5]) * icste,  //
+          base_type_cast(v[4]) * icste, base_type_cast(v[5]) * icste,
+          base_type_cast(v[2])};
+    }  // end of as_base_matrix
+  };   // end of StensorEigenSolverBase<3u, NumType>
+
+  /*!
    * A class for interfacing various eigen solvers. By default,
    * the TFELEIGENSOLVER solver is used
    * \tparam es:      eigen solver
@@ -38,7 +64,7 @@ namespace tfel::math::internals {
   template <stensor_common::EigenSolver, unsigned short N, typename NumType>
   struct StensorEigenSolver {
     //! base type
-    using base = base_type<NumType>;
+    using real = base_type<NumType>;
     /*!
      * \param[out] vp0: first  eigen value
      * \param[out] vp1: second eigen value
@@ -51,13 +77,15 @@ namespace tfel::math::internals {
                                                     NumType& vp2,
                                                     const NumType* const v,
                                                     const bool b) {
-      using namespace tfel::typetraits;
-      static_assert(IsFundamentalNumericType<base>::cond);
-      static_assert(IsReal<base>::cond);
-      static_assert(IsSafelyReinterpretCastableTo<NumType, base>::cond);
-      StensorComputeEigenValues<N>::exe(
-          reinterpret_cast<const base* const>(v), reinterpret_cast<base&>(vp0),
-          reinterpret_cast<base&>(vp1), reinterpret_cast<base&>(vp2), b);
+      real values[StensorDimeToSize<N>::value];
+      real eigen_values[3];
+      tfel::fsalgo::transform<StensorDimeToSize<N>::value>::exe(
+          v, values, [](const auto& value) { return base_type_cast(value); });
+      StensorComputeEigenValues<N>::exe(values, eigen_values[0],
+                                        eigen_values[1], eigen_values[2], b);
+      vp0 = NumType(eigen_values[0]);
+      vp1 = NumType(eigen_values[1]);
+      vp2 = NumType(eigen_values[2]);
     }  // end of computeEigenValues
     /*!
      * \param[out] vp: eigen values
@@ -65,18 +93,18 @@ namespace tfel::math::internals {
      * \param[in]  v:  stensor values
      * \param[in]  b:  refine eigenvalues
      */
-    TFEL_MATH_INLINE static void computeEigenVectors(
-        tfel::math::tvector<3u, NumType>& vp,
-        tfel::math::tmatrix<3u, 3u, base>& vec,
-        const NumType* const v,
-        const bool b) {
-      using namespace tfel::typetraits;
-      static_assert(IsFundamentalNumericType<base>::cond);
-      static_assert(IsReal<base>::cond);
-      static_assert(IsSafelyReinterpretCastableTo<NumType, base>::cond);
-      StensorComputeEigenVectors<N>::exe(
-          reinterpret_cast<const base*>(v),
-          reinterpret_cast<tvector<3u, base>&>(vp), vec, b);
+    TFEL_MATH_INLINE static void computeEigenVectors(tvector<3u, NumType>& vp,
+                                                     tmatrix<3u, 3u, real>& vec,
+                                                     const NumType* const v,
+                                                     const bool b) {
+      real values[StensorDimeToSize<N>::value];
+      tvector<3u, real> eigen_values;
+      tfel::fsalgo::transform<StensorDimeToSize<N>::value>::exe(
+          v, values, [](const auto& value) { return base_type_cast(value); });
+      StensorComputeEigenVectors<N>::exe(values, eigen_values, vec, b);
+      tfel::fsalgo::transform<3u>::exe(
+          eigen_values.cbegin(), vp.begin(),
+          [](const auto& value) { return NumType(value); });
     }  // end of computeEigenVectors
   };
 
@@ -91,7 +119,7 @@ namespace tfel::math::internals {
                             3u,
                             NumType> {
     //! base type
-    using base = base_type<NumType>;
+    using real = base_type<NumType>;
     /*!
      * \param[out] vp0: first  eigen value
      * \param[out] vp1: second eigen value
@@ -104,16 +132,13 @@ namespace tfel::math::internals {
                                                     NumType& vp2,
                                                     const NumType* const v,
                                                     const bool b) {
-      using namespace tfel::typetraits;
-      constexpr auto icste = tfel::math::Cste<base>::isqrt2;
-      static_assert(IsFundamentalNumericType<base>::cond);
-      static_assert(IsReal<base>::cond);
-      static_assert(IsSafelyReinterpretCastableTo<NumType, base>::cond);
-      auto vp = tfel::math::tvector<3u, base>{};
-      auto m = tfel::math::tmatrix<3u, 3u, base>{};
-      const auto s = reinterpret_cast<const base*>(v);
-      GteSymmetricEigensolver3x3<base>::exe(
-          vp, m, s[0], s[3] * icste, s[4] * icste, s[1], s[5] * icste, s[2], b);
+      constexpr auto icste = Cste<real>::isqrt2;
+      auto vp = tvector<3u, real>{};
+      auto m = tmatrix<3u, 3u, real>{};
+      GteSymmetricEigensolver3x3<real>::exe(
+          vp, m, base_type_cast(v[0]), base_type_cast(v[3]) * icste,
+          base_type_cast(v[4]) * icste, base_type_cast(v[1]),
+          base_type_cast(v[5]) * icste, base_type_cast(v[2]), b);
       vp0 = NumType(vp[0]);
       vp1 = NumType(vp[1]);
       vp2 = NumType(vp[2]);
@@ -124,21 +149,16 @@ namespace tfel::math::internals {
      * \param[in]  v:  stensor values
      * \param[in]  b:  refine eigenvalues
      */
-    TFEL_MATH_INLINE static void computeEigenVectors(
-        tfel::math::tvector<3u, NumType>& vp,
-        tfel::math::tmatrix<3u, 3u, base>& m,
-        const NumType* const v,
-        const bool b) {
-      using namespace tfel::typetraits;
-      constexpr auto icste = tfel::math::Cste<base>::isqrt2;
-      static_assert(IsFundamentalNumericType<base>::cond);
-      static_assert(IsReal<base>::cond);
-      static_assert(IsSafelyReinterpretCastableTo<NumType, base>::cond);
-      auto vp2 = tfel::math::tvector<3u, base>{};
-      const auto s = reinterpret_cast<const base*>(v);
-      GteSymmetricEigensolver3x3<base>::exe(vp2, m, s[0], s[3] * icste,
-                                            s[4] * icste, s[1], s[5] * icste,
-                                            s[2], b);
+    TFEL_MATH_INLINE static void computeEigenVectors(tvector<3u, NumType>& vp,
+                                                     tmatrix<3u, 3u, real>& m,
+                                                     const NumType* const v,
+                                                     const bool b) {
+      constexpr auto icste = Cste<real>::isqrt2;
+      auto vp2 = tvector<3u, real>{};
+      GteSymmetricEigensolver3x3<real>::exe(
+          vp2, m, base_type_cast(v[0]), base_type_cast(v[3]) * icste,
+          base_type_cast(v[4]) * icste, base_type_cast(v[1]),
+          base_type_cast(v[5]) * icste, base_type_cast(v[2]), b);
       vp = {NumType(vp2(0)), NumType(vp2(1)), NumType(vp2(2))};
     }  // end of computeEigenVectors
   };   // end of struct StensorEigenSolver
@@ -153,7 +173,7 @@ namespace tfel::math::internals {
                             2u,
                             NumType> {
     //! base type
-    using base = base_type<NumType>;
+    using real = base_type<NumType>;
     /*!
      * \param[out] vp0: first  eigen value
      * \param[out] vp1: second eigen value
@@ -166,15 +186,11 @@ namespace tfel::math::internals {
                                                     NumType& vp2,
                                                     const NumType* const v,
                                                     const bool) {
-      using namespace tfel::typetraits;
-      constexpr auto icste = tfel::math::Cste<base>::isqrt2;
-      static_assert(IsFundamentalNumericType<base>::cond);
-      static_assert(IsReal<base>::cond);
-      static_assert(IsSafelyReinterpretCastableTo<NumType, base>::cond);
-      auto vp = tfel::math::tvector<3u, base>{};
-      const auto s = reinterpret_cast<const base*>(v);
-      FSESAnalyticalSymmetricEigensolver2x2<base>::computeEigenValues(
-          vp, s[0], s[3] * icste, s[1]);
+      constexpr auto icste = Cste<real>::isqrt2;
+      auto vp = tvector<3u, real>{};
+      FSESAnalyticalSymmetricEigensolver2x2<real>::computeEigenValues(
+          vp, base_type_cast(v[0]), base_type_cast(v[3]) * icste,
+          base_type_cast(v[1]));
       vp0 = NumType(vp[0]);
       vp1 = NumType(vp[1]);
       vp2 = NumType(v[2]);
@@ -185,26 +201,21 @@ namespace tfel::math::internals {
      * \param[in]  v:  stensor values
      * \param[in]  b:  refine eigenvalues
      */
-    TFEL_MATH_INLINE static void computeEigenVectors(
-        tfel::math::tvector<3u, NumType>& vp,
-        tfel::math::tmatrix<3u, 3u, base>& m,
-        const NumType* const v,
-        const bool) {
-      using namespace tfel::typetraits;
-      constexpr auto icste = tfel::math::Cste<base>::isqrt2;
-      static_assert(IsFundamentalNumericType<base>::cond);
-      static_assert(IsReal<base>::cond);
-      static_assert(IsSafelyReinterpretCastableTo<NumType, base>::cond);
-      auto vp2 = tfel::math::tvector<3u, base>{};
-      const auto s = reinterpret_cast<const base*>(v);
-      FSESAnalyticalSymmetricEigensolver2x2<base>::computeEigenVectors(
-          vp2, m, s[0], s[3] * icste, s[1]);
+    TFEL_MATH_INLINE static void computeEigenVectors(tvector<3u, NumType>& vp,
+                                                     tmatrix<3u, 3u, real>& m,
+                                                     const NumType* const v,
+                                                     const bool) {
+      constexpr auto icste = Cste<real>::isqrt2;
+      auto vp2 = tvector<3u, real>{};
+      FSESAnalyticalSymmetricEigensolver2x2<real>::computeEigenVectors(
+          vp2, m, base_type_cast(v[0]), base_type_cast(v[3]) * icste,
+          base_type_cast(v[1]));
       vp = {NumType(vp2(0)), NumType(vp2(1)), v[2]};
-      m(2, 0) = base(0);
-      m(2, 1) = base(0);
-      m(0, 2) = base(0);
-      m(1, 2) = base(0);
-      m(2, 2) = base(1);
+      m(2, 0) = real(0);
+      m(2, 1) = real(0);
+      m(0, 2) = real(0);
+      m(1, 2) = real(0);
+      m(2, 2) = real(1);
     }  // end of computeEigenVectors
   };   // end of struct StensorEigenSolver
 
@@ -216,9 +227,9 @@ namespace tfel::math::internals {
   template <typename NumType>
   struct StensorEigenSolver<stensor_common::FSESANALYTICALEIGENSOLVER,
                             3u,
-                            NumType> {
+                            NumType> : StensorEigenSolverBase<3u, NumType> {
     //! base type
-    using base = base_type<NumType>;
+    using real = base_type<NumType>;
     /*!
      * \param[out] vp0: first  eigen value
      * \param[out] vp1: second eigen value
@@ -231,17 +242,10 @@ namespace tfel::math::internals {
                                                     NumType& vp2,
                                                     const NumType* const v,
                                                     const bool) {
-      using namespace tfel::typetraits;
-      constexpr auto icste = tfel::math::Cste<base>::isqrt2;
-      static_assert(IsFundamentalNumericType<base>::cond);
-      static_assert(IsReal<base>::cond);
-      static_assert(IsSafelyReinterpretCastableTo<NumType, base>::cond);
-      auto vp = tfel::math::tvector<3u, base>{};
-      const auto s = reinterpret_cast<const base*>(v);
-      const auto sm = tmatrix<3u, 3u, base>{
-          s[0],         s[3] * icste, s[4] * icste, s[3] * icste, s[1],
-          s[5] * icste, s[4] * icste, s[5] * icste, s[2]};
-      FSESAnalyticalSymmetricEigensolver3x3<base>::computeEigenValues(vp, sm);
+      constexpr auto icste = Cste<real>::isqrt2;
+      auto sm = StensorEigenSolverBase<3u, NumType>::as_base_matrix(v);
+      auto vp = tvector<3u, real>{};
+      FSESAnalyticalSymmetricEigensolver3x3<real>::computeEigenValues(vp, sm);
       vp0 = NumType(vp[0]);
       vp1 = NumType(vp[1]);
       vp2 = NumType(vp[2]);
@@ -252,22 +256,14 @@ namespace tfel::math::internals {
      * \param[in]  v:  stensor values
      * \param[in]  b:  refine eigenvalues
      */
-    TFEL_MATH_INLINE static void computeEigenVectors(
-        tfel::math::tvector<3u, NumType>& vp,
-        tfel::math::tmatrix<3u, 3u, base>& m,
-        const NumType* const v,
-        const bool) {
-      using namespace tfel::typetraits;
-      constexpr auto icste = tfel::math::Cste<base>::isqrt2;
-      static_assert(IsFundamentalNumericType<base>::cond);
-      static_assert(IsReal<base>::cond);
-      static_assert(IsSafelyReinterpretCastableTo<NumType, base>::cond);
-      auto vp2 = tfel::math::tvector<3u, base>{};
-      const auto s = reinterpret_cast<const base*>(v);
-      auto sm = tmatrix<3u, 3u, base>{s[0],         s[3] * icste, s[4] * icste,
-                                      s[3] * icste, s[1],         s[5] * icste,
-                                      s[4] * icste, s[5] * icste, s[2]};
-      FSESAnalyticalSymmetricEigensolver3x3<base>::computeEigenVectors(vp2, m,
+    TFEL_MATH_INLINE static void computeEigenVectors(tvector<3u, NumType>& vp,
+                                                     tmatrix<3u, 3u, real>& m,
+                                                     const NumType* const v,
+                                                     const bool) {
+      constexpr auto icste = Cste<real>::isqrt2;
+      auto sm = StensorEigenSolverBase<3u, NumType>::as_base_matrix(v);
+      auto vp2 = tvector<3u, real>{};
+      FSESAnalyticalSymmetricEigensolver3x3<real>::computeEigenVectors(vp2, m,
                                                                        sm);
       vp = {NumType(vp2(0)), NumType(vp2(1)), NumType(vp2(2))};
     }  // end of computeEigenVectors
@@ -292,11 +288,10 @@ namespace tfel::math::internals {
    * \tparam NumType: numeric type
    */
   template <typename NumType>
-  struct StensorEigenSolver<stensor_common::FSESJACOBIEIGENSOLVER,
-                            3u,
-                            NumType> {
+  struct StensorEigenSolver<stensor_common::FSESJACOBIEIGENSOLVER, 3u, NumType>
+      : StensorEigenSolverBase<3u, NumType> {
     //! base type
-    using base = base_type<NumType>;
+    using real = base_type<NumType>;
     /*!
      * \param[out] vp0: first  eigen value
      * \param[out] vp1: second eigen value
@@ -309,16 +304,9 @@ namespace tfel::math::internals {
                                                     NumType& vp2,
                                                     const NumType* const v,
                                                     const bool) {
-      using namespace tfel::typetraits;
-      constexpr auto icste = tfel::math::Cste<base>::isqrt2;
-      static_assert(IsFundamentalNumericType<base>::cond);
-      static_assert(IsReal<base>::cond);
-      static_assert(IsSafelyReinterpretCastableTo<NumType, base>::cond);
-      auto vp = tfel::math::tvector<3u, base>{};
-      const auto s = reinterpret_cast<const base*>(v);
-      auto sm = tmatrix<3u, 3u, base>{s[0],         s[3] * icste, s[4] * icste,
-                                      s[3] * icste, s[1],         s[5] * icste,
-                                      s[4] * icste, s[5] * icste, s[2]};
+      constexpr auto icste = Cste<real>::isqrt2;
+      auto sm = StensorEigenSolverBase<3u, NumType>::as_base_matrix(v);
+      auto vp = tvector<3u, real>{};
       auto m = tmatrix<3u, 3u>{};
       fses::syevj3(m, vp, sm);
       vp0 = NumType(vp[0]);
@@ -331,21 +319,12 @@ namespace tfel::math::internals {
      * \param[in]  v:  stensor values
      * \param[in]  b:  refine eigenvalues
      */
-    TFEL_MATH_INLINE static void computeEigenVectors(
-        tfel::math::tvector<3u, NumType>& vp,
-        tfel::math::tmatrix<3u, 3u, base>& m,
-        const NumType* const v,
-        const bool) {
-      using namespace tfel::typetraits;
-      constexpr auto icste = tfel::math::Cste<base>::isqrt2;
-      static_assert(IsFundamentalNumericType<base>::cond);
-      static_assert(IsReal<base>::cond);
-      static_assert(IsSafelyReinterpretCastableTo<NumType, base>::cond);
-      auto vp2 = tfel::math::tvector<3u, base>{};
-      const auto s = reinterpret_cast<const base*>(v);
-      auto sm = tmatrix<3u, 3u, base>{s[0],         s[3] * icste, s[4] * icste,
-                                      s[3] * icste, s[1],         s[5] * icste,
-                                      s[4] * icste, s[5] * icste, s[2]};
+    TFEL_MATH_INLINE static void computeEigenVectors(tvector<3u, NumType>& vp,
+                                                     tmatrix<3u, 3u, real>& m,
+                                                     const NumType* const v,
+                                                     const bool) {
+      auto sm = StensorEigenSolverBase<3u, NumType>::as_base_matrix(v);
+      auto vp2 = tvector<3u, real>{};
       fses::syevj3(m, vp2, sm);
       vp = {NumType(vp2(0)), NumType(vp2(1)), NumType(vp2(2))};
     }  // end of computeEigenVectors
@@ -369,9 +348,10 @@ namespace tfel::math::internals {
    * \tparam NumType: numeric type
    */
   template <typename NumType>
-  struct StensorEigenSolver<stensor_common::FSESQLEIGENSOLVER, 3u, NumType> {
+  struct StensorEigenSolver<stensor_common::FSESQLEIGENSOLVER, 3u, NumType>
+      : StensorEigenSolverBase<3u, NumType> {
     //! base type
-    using base = base_type<NumType>;
+    using real = base_type<NumType>;
     /*!
      * \param[out] vp0: first  eigen value
      * \param[out] vp1: second eigen value
@@ -384,16 +364,9 @@ namespace tfel::math::internals {
                                                     NumType& vp2,
                                                     const NumType* const v,
                                                     const bool) {
-      using namespace tfel::typetraits;
-      constexpr auto icste = tfel::math::Cste<base>::isqrt2;
-      static_assert(IsFundamentalNumericType<base>::cond);
-      static_assert(IsReal<base>::cond);
-      static_assert((IsSafelyReinterpretCastableTo<NumType, base>::cond));
-      auto vp = tfel::math::tvector<3u, base>{};
-      const auto s = reinterpret_cast<const base*>(v);
-      const auto sm = tmatrix<3u, 3u, base>{
-          s[0],         s[3] * icste, s[4] * icste, s[3] * icste, s[1],
-          s[5] * icste, s[4] * icste, s[5] * icste, s[2]};
+      constexpr auto icste = Cste<real>::isqrt2;
+      auto sm = StensorEigenSolverBase<3u, NumType>::as_base_matrix(v);
+      auto vp = tvector<3u, real>{};
       auto m = tmatrix<3u, 3u>{};
       fses::syevq3(m, vp, sm);
       vp0 = NumType(vp[0]);
@@ -406,21 +379,12 @@ namespace tfel::math::internals {
      * \param[in]  v:  stensor values
      * \param[in]  b:  refine eigenvalues
      */
-    TFEL_MATH_INLINE static void computeEigenVectors(
-        tfel::math::tvector<3u, NumType>& vp,
-        tfel::math::tmatrix<3u, 3u, base>& m,
-        const NumType* const v,
-        const bool) {
-      using namespace tfel::typetraits;
-      constexpr auto icste = tfel::math::Cste<base>::isqrt2;
-      static_assert(IsFundamentalNumericType<base>::cond);
-      static_assert(IsReal<base>::cond);
-      static_assert((IsSafelyReinterpretCastableTo<NumType, base>::cond));
-      auto vp2 = tfel::math::tvector<3u, base>{};
-      const auto s = reinterpret_cast<const base*>(v);
-      auto sm = tmatrix<3u, 3u, base>{s[0],         s[3] * icste, s[4] * icste,
-                                      s[3] * icste, s[1],         s[5] * icste,
-                                      s[4] * icste, s[5] * icste, s[2]};
+    TFEL_MATH_INLINE static void computeEigenVectors(tvector<3u, NumType>& vp,
+                                                     tmatrix<3u, 3u, real>& m,
+                                                     const NumType* const v,
+                                                     const bool) {
+      auto sm = StensorEigenSolverBase<3u, NumType>::as_base_matrix(v);
+      auto vp2 = tvector<3u, real>{};
       fses::syevq3(m, vp2, sm);
       vp = {NumType(vp2(0)), NumType(vp2(1)), NumType(vp2(2))};
     }  // end of computeEigenVectors
@@ -436,8 +400,7 @@ namespace tfel::math::internals {
       : public StensorEigenSolver<stensor_common::FSESANALYTICALEIGENSOLVER,
                                   2u,
                                   NumType> {
-  };  // end of
-      // StensorEigenSolver<stensor_common::FSESCUPPENEIGENSOLVER,2u,NumType>
+  };  // end of StensorEigenSolver<FSESCUPPENEIGENSOLVER,2u,NumType>
 
   /*!
    * \brief Partial specialisation of the `StensorEigenSolver`
@@ -445,11 +408,10 @@ namespace tfel::math::internals {
    * \tparam NumType: numeric type
    */
   template <typename NumType>
-  struct StensorEigenSolver<stensor_common::FSESCUPPENEIGENSOLVER,
-                            3u,
-                            NumType> {
+  struct StensorEigenSolver<stensor_common::FSESCUPPENEIGENSOLVER, 3u, NumType>
+      : StensorEigenSolverBase<3u, NumType> {
     //! base type
-    using base = base_type<NumType>;
+    using real = base_type<NumType>;
     /*!
      * \param[out] vp0: first  eigen value
      * \param[out] vp1: second eigen value
@@ -462,16 +424,9 @@ namespace tfel::math::internals {
                                                     NumType& vp2,
                                                     const NumType* const v,
                                                     const bool) {
-      using namespace tfel::typetraits;
-      constexpr auto icste = tfel::math::Cste<base>::isqrt2;
-      static_assert(IsFundamentalNumericType<base>::cond);
-      static_assert(IsReal<base>::cond);
-      static_assert((IsSafelyReinterpretCastableTo<NumType, base>::cond));
-      auto vp = tfel::math::tvector<3u, base>{};
-      const auto s = reinterpret_cast<const base*>(v);
-      const auto sm = tmatrix<3u, 3u, base>{
-          s[0],         s[3] * icste, s[4] * icste, s[3] * icste, s[1],
-          s[5] * icste, s[4] * icste, s[5] * icste, s[2]};
+      constexpr auto icste = Cste<real>::isqrt2;
+      auto vp = tvector<3u, real>{};
+      auto sm = StensorEigenSolverBase<3u, NumType>::as_base_matrix(v);
       auto m = tmatrix<3u, 3u>{};
       fses::syevd3(m, vp, sm);
       vp0 = NumType(vp[0]);
@@ -484,21 +439,13 @@ namespace tfel::math::internals {
      * \param[in]  v:  stensor values
      * \param[in]  b:  refine eigenvalues
      */
-    TFEL_MATH_INLINE static void computeEigenVectors(
-        tfel::math::tvector<3u, NumType>& vp,
-        tfel::math::tmatrix<3u, 3u, base>& m,
-        const NumType* const v,
-        const bool) {
-      using namespace tfel::typetraits;
-      constexpr auto icste = tfel::math::Cste<base>::isqrt2;
-      static_assert(IsFundamentalNumericType<base>::cond);
-      static_assert(IsReal<base>::cond);
-      static_assert((IsSafelyReinterpretCastableTo<NumType, base>::cond));
-      auto vp2 = tfel::math::tvector<3u, base>{};
-      const auto s = reinterpret_cast<const base*>(v);
-      auto sm = tmatrix<3u, 3u, base>{s[0],         s[3] * icste, s[4] * icste,
-                                      s[3] * icste, s[1],         s[5] * icste,
-                                      s[4] * icste, s[5] * icste, s[2]};
+    TFEL_MATH_INLINE static void computeEigenVectors(tvector<3u, NumType>& vp,
+                                                     tmatrix<3u, 3u, real>& m,
+                                                     const NumType* const v,
+                                                     const bool) {
+      constexpr auto icste = Cste<real>::isqrt2;
+      auto vp2 = tvector<3u, real>{};
+      auto sm = StensorEigenSolverBase<3u, NumType>::as_base_matrix(v);
       fses::syevd3(m, vp2, sm);
       vp = {NumType(vp2(0)), NumType(vp2(1)), NumType(vp2(2))};
     }  // end of computeEigenVectors
@@ -523,11 +470,10 @@ namespace tfel::math::internals {
    * \tparam NumType: numeric type
    */
   template <typename NumType>
-  struct StensorEigenSolver<stensor_common::FSESHYBRIDEIGENSOLVER,
-                            3u,
-                            NumType> {
+  struct StensorEigenSolver<stensor_common::FSESHYBRIDEIGENSOLVER, 3u, NumType>
+      : StensorEigenSolverBase<3u, NumType> {
     //! base type
-    using base = base_type<NumType>;
+    using real = base_type<NumType>;
     /*!
      * \param[out] vp0: first  eigen value
      * \param[out] vp1: second eigen value
@@ -540,16 +486,9 @@ namespace tfel::math::internals {
                                                     NumType& vp2,
                                                     const NumType* const v,
                                                     const bool) {
-      using namespace tfel::typetraits;
-      constexpr auto icste = tfel::math::Cste<base>::isqrt2;
-      static_assert(IsFundamentalNumericType<base>::cond);
-      static_assert(IsReal<base>::cond);
-      static_assert((IsSafelyReinterpretCastableTo<NumType, base>::cond));
-      auto vp = tfel::math::tvector<3u, base>{};
-      const auto s = reinterpret_cast<const base*>(v);
-      const auto sm = tmatrix<3u, 3u, base>{
-          s[0],         s[3] * icste, s[4] * icste, s[3] * icste, s[1],
-          s[5] * icste, s[4] * icste, s[5] * icste, s[2]};
+      constexpr auto icste = Cste<real>::isqrt2;
+      auto sm = StensorEigenSolverBase<3u, NumType>::as_base_matrix(v);
+      auto vp = tvector<3u, real>{};
       fses::syevc3(vp, sm);
       vp0 = NumType(vp[0]);
       vp1 = NumType(vp[1]);
@@ -561,26 +500,18 @@ namespace tfel::math::internals {
      * \param[in]  v:  stensor values
      * \param[in]  b:  refine eigenvalues
      */
-    TFEL_MATH_INLINE static void computeEigenVectors(
-        tfel::math::tvector<3u, NumType>& vp,
-        tfel::math::tmatrix<3u, 3u, base>& m,
-        const NumType* const v,
-        const bool) {
-      using namespace tfel::typetraits;
-      constexpr auto icste = tfel::math::Cste<base>::isqrt2;
-      static_assert(IsFundamentalNumericType<base>::cond);
-      static_assert(IsReal<base>::cond);
-      static_assert((IsSafelyReinterpretCastableTo<NumType, base>::cond));
-      auto vp2 = tfel::math::tvector<3u, base>{};
-      const auto s = reinterpret_cast<const base*>(v);
-      auto sm = tmatrix<3u, 3u, base>{s[0],         s[3] * icste, s[4] * icste,
-                                      s[3] * icste, s[1],         s[5] * icste,
-                                      s[4] * icste, s[5] * icste, s[2]};
+    TFEL_MATH_INLINE static void computeEigenVectors(tvector<3u, NumType>& vp,
+                                                     tmatrix<3u, 3u, real>& m,
+                                                     const NumType* const v,
+                                                     const bool) {
+      constexpr auto icste = Cste<real>::isqrt2;
+      auto sm = StensorEigenSolverBase<3u, NumType>::as_base_matrix(v);
+      auto vp2 = tvector<3u, real>{};
       fses::syevh3(m, vp2, sm);
       vp = {NumType(vp2(0)), NumType(vp2(1)), NumType(vp2(2))};
     }  // end of computeEigenVectors
   };   // end of struct StensorEigenSolver
 
-}  // end of namespace tfel::math::internals
+}  // namespace tfel::math::internals
 
 #endif /* LIB_TFEL_MATH_INTERNALS_STENSOREIGENSOLVER_HXX */

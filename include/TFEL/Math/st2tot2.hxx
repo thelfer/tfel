@@ -19,7 +19,6 @@
 
 #include "TFEL/Config/TFELConfig.hxx"
 #include "TFEL/TypeTraits/IsAssignableTo.hxx"
-#include "TFEL/TypeTraits/IsSafelyReinterpretCastableTo.hxx"
 #include "TFEL/Math/tensor.hxx"
 #include "TFEL/Math/stensor.hxx"
 #include "TFEL/Math/General/BasicOperations.hxx"
@@ -139,16 +138,9 @@ namespace tfel::math {
     // inheriting GenericFixedSizeArray' access operators
     using GenericFixedSizeArrayBase::operator[];
     using GenericFixedSizeArrayBase::operator();
-    /*!
-     * Import values
-     */
-    template <typename T2>
-    TFEL_MATH_INLINE2 std::enable_if_t<
-        tfel::typetraits::
-            IsSafelyReinterpretCastableTo<T2, base_type<ValueType>>::cond,
-        void>
-    import(const T2* const);
-
+    //! \brief import values from an external memory location
+    void import(const base_type<ValueType>* const);
+    //
     template <typename InputIterator>
     TFEL_MATH_INLINE2 void copy(const InputIterator src);
   };

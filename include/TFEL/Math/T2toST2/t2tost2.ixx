@@ -20,7 +20,6 @@
 #include <type_traits>
 
 #include "TFEL/FSAlgorithm/FSAlgorithm.hxx"
-#include "TFEL/TypeTraits/IsSafelyReinterpretCastableTo.hxx"
 #include "TFEL/Math/General/ConstExprMathFunctions.hxx"
 #include "TFEL/Math/T2toST2/LeftCauchyGreenTensorDerivativeExpr.hxx"
 #include "TFEL/Math/T2toST2/RightCauchyGreenTensorDerivativeExpr.hxx"

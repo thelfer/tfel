@@ -123,7 +123,6 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/TypeTraits/Promote.hxx			                                             \
 			TFEL/TypeTraits/IsAssignableTo.hxx		                                             \
 			TFEL/TypeTraits/IsUnaryOperator.hxx		                                             \
-			TFEL/TypeTraits/IsSafelyReinterpretCastableTo.hxx                                            \
 			TFEL/TypeTraits/IsInvalid.hxx		                                                     \
 			TFEL/TypeTraits/IsRandomAccessIterator.hxx	                                             \
 			TFEL/Math/fsarray.hxx                                                                        \
@@ -323,7 +322,6 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Math/General/AbsCompare.hxx	                                                     \
 			TFEL/Math/General/Abs.hxx      	                                                             \
 			TFEL/Math/General/Abs.ixx      	                                                             \
-			TFEL/Math/General/BaseCast.hxx                                                               \
 			TFEL/Math/General/CubicRoots.hxx                                                             \
 			TFEL/Math/General/floating_point_exceptions.hxx                                              \
 			TFEL/Math/General/ResultType.hxx		                                             \

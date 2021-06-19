@@ -273,7 +273,7 @@ namespace mfront {
       if (p->arraySize == 1u) {
         if (flag == SupportedTypes::SCALAR) {
           if (mb.useQt()) {
-            f << dest << "[" << currentOffset << "] = base_cast(this->"
+            f << dest << "[" << currentOffset << "] = base_type_cast(this->"
               << p->name << ");\n";
           } else {
             f << dest << "[" << currentOffset << "] = this->" << p->name

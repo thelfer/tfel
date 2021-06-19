@@ -20,7 +20,6 @@
 #include <type_traits>
 #include "TFEL/Config/TFELConfig.hxx"
 #include "TFEL/TypeTraits/IsAssignableTo.hxx"
-#include "TFEL/TypeTraits/IsSafelyReinterpretCastableTo.hxx"
 #include "TFEL/Math/power.hxx"
 #include "TFEL/Math/General/MathObjectTraits.hxx"
 #include "TFEL/Math/General/BasicOperations.hxx"
@@ -125,51 +124,31 @@ namespace tfel::math {
     // inheriting GenericFixedSizeArray' access operators
     using GenericFixedSizeArrayBase::operator[];
     using GenericFixedSizeArrayBase::operator();
-    /*!
-     * \brief Import from Voigt
-     */
+    //! \brief import from external memory location which uses Voigt notations for strains
     template <typename InputIterator>
     TFEL_MATH_INLINE2 std::enable_if_t<
         std::is_same<typename std::iterator_traits<InputIterator>::value_type,
                      base_type<ValueType>>::value,
         void>
     importVoigt(const InputIterator);
-    /*!
-     * Import from Tab (Voigt notations for stresses)
-     */
+    //! \brief import from external memory location which uses Voigt notations for stresses
     template <typename InputIterator>
     TFEL_MATH_INLINE2 std::enable_if_t<
         std::is_same<typename std::iterator_traits<InputIterator>::value_type,
                      base_type<ValueType>>::value,
         void>
     importTab(const InputIterator);
-    /*!
-     * Import values
-     */
+    //! \brief import values from external memory location
     template <typename InputIterator>
     TFEL_MATH_INLINE2 std::enable_if_t<
         std::is_same<typename std::iterator_traits<InputIterator>::value_type,
                      base_type<ValueType>>::value,
         void>
     import(const InputIterator);
-    /*!
-     * Export to Tab (Voigt notations for stresses)
-     */
-    template <typename T2>
-    TFEL_MATH_INLINE2 std::enable_if_t<
-        tfel::typetraits::
-            IsSafelyReinterpretCastableTo<T2, base_type<ValueType>>::cond,
-        void>
-    exportTab(T2* const) const;
-    /*!
-     * Write to Tab
-     */
-    template <typename T2>
-    TFEL_MATH_INLINE2 std::enable_if_t<
-        tfel::typetraits::
-            IsSafelyReinterpretCastableTo<T2, base_type<ValueType>>::cond,
-        void>
-    write(T2* const) const;
+    //! \brief export to external memory location using Voigt notations for stresses
+    void exportTab(base_type<ValueType>* const) const;
+    //! \brief write to external memory location
+    void write(base_type<ValueType>* const) const;
     /*!
      * compute eigenvalues
      * \tparam     es:  eigen solver

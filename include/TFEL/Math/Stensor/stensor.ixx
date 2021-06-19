@@ -17,7 +17,6 @@
 #include <cmath>
 #include <iterator>
 #include "TFEL/FSAlgorithm/FSAlgorithm.hxx"
-#include "TFEL/TypeTraits/IsSafelyReinterpretCastableTo.hxx"
 #include "TFEL/Math/General/Abs.hxx"
 #include "TFEL/Math/General/MathConstants.hxx"
 #include "TFEL/Math/General/ConstExprMathFunctions.hxx"
@@ -39,26 +38,17 @@ namespace tfel::math {
                    base_type<T>>::value,
       void>
   stensor<N, T>::importVoigt(const InputIterator p) {
-    using base = base_type<T>;
-    auto* const ptr = static_cast<base*>(this->v);
-    if constexpr (N == 1) {
-      ptr[0] = p[0];
-      ptr[1] = p[1];
-      ptr[2] = p[2];
-    } else if constexpr (N == 2) {
+    tfel::fsalgo::transform<3u>::exe(p, this->begin(),
+                                     [](const auto& value) { return T(value); });
+    if constexpr (N == 2) {
       constexpr auto icste = Cste<T>::isqrt2;
-      ptr[0] = p[0];
-      ptr[1] = p[1];
-      ptr[2] = p[2];
-      ptr[3] = p[3] * icste;
-    } else {
+      this->v[3] = T(p[3]) * icste;
+    }
+    if constexpr (N == 3) {
       constexpr auto icste = Cste<T>::isqrt2;
-      ptr[0] = p[0];
-      ptr[1] = p[1];
-      ptr[2] = p[2];
-      ptr[3] = p[3] * icste;
-      ptr[4] = p[4] * icste;
-      ptr[5] = p[5] * icste;
+      this->v[3] = T(p[3]) * icste;
+      this->v[4] = T(p[4]) * icste;
+      this->v[5] = T(p[5]) * icste;
     }
   }  // end of importVoigt
 
@@ -69,26 +59,17 @@ namespace tfel::math {
                    base_type<T>>::value,
       void>
   stensor<N, T>::importTab(const InputIterator p) {
-    using base = base_type<T>;
-    auto* const ptr = static_cast<base*>(this->v);
-    if constexpr (N == 1) {
-      ptr[0] = p[0];
-      ptr[1] = p[1];
-      ptr[2] = p[2];
-    } else if constexpr (N == 2) {
+    tfel::fsalgo::transform<3>::exe(p, this->begin(),
+                                    [](const auto& value) { return T(value); });
+    if constexpr (N == 2) {
       constexpr auto cste = Cste<T>::sqrt2;
-      ptr[0] = p[0];
-      ptr[1] = p[1];
-      ptr[2] = p[2];
-      ptr[3] = p[3] * cste;
-    } else {
+      this->v[3] = T(p[3]) * cste;
+    }
+    if constexpr (N == 3) {
       constexpr auto cste = Cste<T>::sqrt2;
-      ptr[0] = p[0];
-      ptr[1] = p[1];
-      ptr[2] = p[2];
-      ptr[3] = p[3] * cste;
-      ptr[4] = p[4] * cste;
-      ptr[5] = p[5] * cste;
+      this->v[3] = T(p[3]) * cste;
+      this->v[4] = T(p[4]) * cste;
+      this->v[5] = T(p[5]) * cste;
     }
   }  // end of importTab
 
@@ -99,51 +80,32 @@ namespace tfel::math {
                    base_type<T>>::value,
       void>
   stensor<N, T>::import(const InputIterator p) {
-    using base = base_type<T>;
-    tfel::fsalgo::copy<StensorDimeToSize<N>::value>::exe(
-        p, reinterpret_cast<base*>(this->v));
-  }
+    tfel::fsalgo::transform<StensorDimeToSize<N>::value>::exe(
+        p, this->begin(), [](const auto& value) { return T(value); });
+  }  // end of import
 
   template <unsigned short N, typename T>
-  template <typename T2>
-  std::enable_if_t<
-      tfel::typetraits::IsSafelyReinterpretCastableTo<T2, base_type<T>>::cond,
-      void>
-  stensor<N, T>::exportTab(T2* const p) const {
-    using base = base_type<T>;
-    const auto* const ptr = static_cast<const base* const>(this->v);
-    if constexpr (N == 1) {
-      p[0] = ptr[0];
-      p[1] = ptr[1];
-      p[2] = ptr[2];
-    } else if constexpr (N == 2) {
+  void stensor<N, T>::exportTab(base_type<T>* const p) const {
+    tfel::fsalgo::transform<3u>::exe(
+        this->cbegin(), p,
+        [](const auto& value) { return base_type_cast(value); });
+    if constexpr (N == 2) {
       constexpr auto icste = Cste<T>::isqrt2;
-      p[0] = ptr[0];
-      p[1] = ptr[1];
-      p[2] = ptr[2];
-      p[3] = ptr[3] * icste;
-    } else {
+      p[3] = base_type_cast(this->v[3]) * icste;
+    }
+    if constexpr (N == 3) {
       constexpr auto icste = Cste<T>::isqrt2;
-      p[0] = ptr[0];
-      p[1] = ptr[1];
-      p[2] = ptr[2];
-      p[3] = ptr[3] * icste;
-      p[4] = ptr[4] * icste;
-      p[5] = ptr[5] * icste;
+      p[3] = base_type_cast(this->v[3]) * icste;
+      p[4] = base_type_cast(this->v[4]) * icste;
+      p[5] = base_type_cast(this->v[5]) * icste;
     }
   }  // end of exportTab
 
   template <unsigned short N, typename T>
-  template <typename T2>
-  std::enable_if_t<
-      tfel::typetraits::IsSafelyReinterpretCastableTo<T2, base_type<T>>::cond,
-      void>
-  stensor<N, T>::write(T2* const t) const {
-    using base = base_type<T>;
-    typedef tfel::fsalgo::copy<StensorDimeToSize<N>::value> Copy;
-    static_assert(
-        tfel::typetraits::IsSafelyReinterpretCastableTo<T, base>::cond);
-    Copy::exe(reinterpret_cast<const base*>(this->v), t);
+  void stensor<N, T>::write(base_type<T>* const t) const {
+    tfel::fsalgo::transform<StensorDimeToSize<N>::value>::exe(
+        this->cbegin(), t,
+        [](const auto& value) { return base_type_cast(value); });
   }
 
   template <unsigned short N, typename T>
@@ -245,10 +207,9 @@ namespace tfel::math {
     typedef tfel::math::internals::StensorComputeEigenVectors<N> SCEV;
     static_assert(tfel::typetraits::IsFundamentalNumericType<real>::cond);
     static_assert(tfel::typetraits::IsReal<real>::cond);
-    static_assert(
-        tfel::typetraits::IsSafelyReinterpretCastableTo<T, real>::cond);
-    return SCEV::computeEigenVector(ev, reinterpret_cast<const real*>(this->v),
-                                    *(reinterpret_cast<const real*>(&vp)));
+    T values[StensorDimeToSize<N>::value];
+    this->write(values);
+    return SCEV::computeEigenVector(ev, values, base_type_cast(vp));
   }
 
   template <unsigned short N, typename T>
@@ -484,11 +445,8 @@ namespace tfel::math {
   template <unsigned short N, typename T, typename OutputIterator>
   TFEL_MATH_INLINE2 std::enable_if_t<isScalar<T>(), void> exportToBaseTypeArray(
       const stensor<N, T>& s, OutputIterator p) {
-    using base = base_type<T>;
-    typedef tfel::fsalgo::copy<StensorDimeToSize<N>::value> Copy;
-    static_assert(
-        tfel::typetraits::IsSafelyReinterpretCastableTo<T, base>::cond);
-    Copy::exe(reinterpret_cast<const base*>(&s[0]), p);
+    tfel::fsalgo::transform<StensorDimeToSize<N>::value>::exe(
+        s.cbegin(), p, [](const auto& v) { return base_type_cast(v); });
   }
 
   template <typename T>

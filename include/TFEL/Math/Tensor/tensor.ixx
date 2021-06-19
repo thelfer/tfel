@@ -17,7 +17,6 @@
 #include <cmath>
 #include <iterator>
 #include "TFEL/FSAlgorithm/FSAlgorithm.hxx"
-#include "TFEL/TypeTraits/IsSafelyReinterpretCastableTo.hxx"
 #include "TFEL/Math/General/Abs.hxx"
 #include "TFEL/Math/General/MathConstants.hxx"
 
@@ -97,28 +96,16 @@ namespace tfel::math {
     }
   }  // end of operator()
 
-  // Import from values
   template <unsigned short N, typename T>
-  template <typename T2>
-  std::enable_if_t<
-      tfel::typetraits::IsSafelyReinterpretCastableTo<T2, base_type<T>>::cond,
-      void>
-  tensor<N, T>::import(const T2* const src) {
-    typedef base_type<T> base;
-    typedef tfel::fsalgo::copy<TensorDimeToSize<N>::value> Copy;
-    static_assert(
-        tfel::typetraits::IsSafelyReinterpretCastableTo<T, base>::cond);
-    Copy::exe(src, reinterpret_cast<base*>(this->v));
+  void tensor<N, T>::import(const base_type<T>* const src) {
+    tfel::fsalgo::transform<TensorDimeToSize<N>::value>::exe(
+        src, this->begin(), [](const auto& v) { return T(v); });
   }
 
-  // Write to Tab
   template <unsigned short N, typename T>
   void tensor<N, T>::write(base_type<T>* const t) const {
-    typedef base_type<T> base;
-    typedef tfel::fsalgo::copy<TensorDimeToSize<N>::value> Copy;
-    static_assert(
-        tfel::typetraits::IsSafelyReinterpretCastableTo<T, base>::cond);
-    Copy::exe(reinterpret_cast<const base*>(this->v), t);
+    tfel::fsalgo::transform<TensorDimeToSize<N>::value>::exe(
+        this->cbegin(), t, [](const auto& v) { return base_type_cast(v); });
   }
 
   template <unsigned short N, typename T>
@@ -149,11 +136,8 @@ namespace tfel::math {
   template <unsigned short N, typename T, typename OutputIterator>
   TFEL_MATH_INLINE2 std::enable_if_t<isScalar<T>(), void> exportToBaseTypeArray(
       const tensor<N, T>& t, OutputIterator p) {
-    typedef base_type<T> base;
-    typedef tfel::fsalgo::copy<TensorDimeToSize<N>::value> Copy;
-    static_assert(
-        tfel::typetraits::IsSafelyReinterpretCastableTo<T, base>::cond);
-    Copy::exe(reinterpret_cast<const base*>(&t[0]), p);
+    tfel::fsalgo::transform<TensorDimeToSize<N>::value>::exe(
+        t.cbegin(), p, [](const auto& v) { return base_type_cast(v); });
   }
 
   template <typename TensorType>

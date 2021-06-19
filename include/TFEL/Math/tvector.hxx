@@ -20,7 +20,6 @@
 #include "TFEL/Config/TFELConfig.hxx"
 #include "TFEL/TypeTraits/IsAssignableTo.hxx"
 #include "TFEL/TypeTraits/RealPartType.hxx"
-#include "TFEL/TypeTraits/IsSafelyReinterpretCastableTo.hxx"
 #include "TFEL/FSAlgorithm/copy.hxx"
 #include "TFEL/Math/General/Abs.hxx"
 #include "TFEL/Math/General/BasicOperations.hxx"

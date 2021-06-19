@@ -16,8 +16,7 @@ libTFELMath_la_SOURCES = MathException.cxx                  \
 		         TensorConcept.cxx                  \
 			 StensorConcept.cxx                 \
 		         StridedRandomAccessIterator.cxx    \
-		         DifferenceRandomAccessIterator.cxx \
-			 StensorComputeEigenValues.cxx
+		         DifferenceRandomAccessIterator.cxx
 
 libTFELMath_la_CPPFLAGS  = -I$(top_srcdir)/include
 if TFEL_WIN

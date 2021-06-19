@@ -7,8 +7,7 @@ set(TFELMath_SOURCES
     TensorConcept.cxx
     RunTimeCheck.cxx
     StridedRandomAccessIterator.cxx
-    DifferenceRandomAccessIterator.cxx
-    StensorComputeEigenValues.cxx)
+    DifferenceRandomAccessIterator.cxx)
 
 set(TFELMathCubicSpline_SOURCES
     CubicSpline.cxx)

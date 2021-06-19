@@ -60,9 +60,9 @@ namespace tfel::fsalgo {
     template <typename InputIterator,
               typename OutputIterator,
               typename UnaryFunction>
-    static TFEL_FSALGORITHM_INLINE OutputIterator exe(InputIterator p,
-                                                      OutputIterator q,
-                                                      UnaryFunction op) {
+    static constexpr OutputIterator exe(InputIterator p,
+                                        OutputIterator q,
+                                        UnaryFunction op) {
       *q = op(*p);
       return transform<N - 1>::exe(++p, ++q, op);
     }
@@ -99,10 +99,10 @@ namespace tfel::fsalgo {
               typename InputIterator2,
               typename OutputIterator,
               typename BinaryFunction>
-    static TFEL_FSALGORITHM_INLINE OutputIterator exe(InputIterator1 p,
-                                                      InputIterator2 q,
-                                                      OutputIterator r,
-                                                      BinaryFunction op) {
+    static constexpr OutputIterator exe(InputIterator1 p,
+                                        InputIterator2 q,
+                                        OutputIterator r,
+                                        BinaryFunction op) {
       *r = op(*p, *q);
       return transform<N - 1>::exe(++p, ++q, ++r, op);
     }
@@ -127,9 +127,9 @@ namespace tfel::fsalgo {
     template <typename InputIterator,
               typename OutputIterator,
               typename UnaryFunction>
-    static TFEL_FSALGORITHM_INLINE OutputIterator exe(InputIterator,
-                                                      OutputIterator q,
-                                                      UnaryFunction) {
+    static constexpr OutputIterator exe(InputIterator,
+                                        OutputIterator q,
+                                        UnaryFunction) {
       return q;
     }
 
@@ -144,8 +144,10 @@ namespace tfel::fsalgo {
               typename InputIterator2,
               typename OutputIterator,
               typename BinaryFunction>
-    static TFEL_FSALGORITHM_INLINE OutputIterator
-    exe(InputIterator, InputIterator2, OutputIterator r, BinaryFunction) {
+    static constexpr OutputIterator exe(InputIterator,
+                                        InputIterator2,
+                                        OutputIterator r,
+                                        BinaryFunction) {
       return r;
     }
   };

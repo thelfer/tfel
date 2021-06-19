@@ -229,7 +229,7 @@ namespace mfront {
           if (flag == SupportedTypes::SCALAR) {
             if (mb.useQt()) {
               out << "ZMATstatev"
-                  << "[" << currentOffset << "] = base_cast(this->" << v.name
+                  << "[" << currentOffset << "] = base_type_cast(this->" << v.name
                   << ");\n";
             } else {
               out << "ZMATstatev"
