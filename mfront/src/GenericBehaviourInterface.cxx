@@ -1157,8 +1157,13 @@ namespace mfront {
       }
       out << "using real = mfront::gb::real;\n"
           << "constexpr auto h = ModellingHypothesis::"
-          << ModellingHypothesis::toUpperCaseString(h) << ";\n"
-          << "using Behaviour = " << bd.getClassName() << "<h,real,false>;\n";
+          << ModellingHypothesis::toUpperCaseString(h) << ";\n";
+      //       if (bd.useQt()) {
+      //         out << "using Behaviour = " << bd.getClassName() <<
+      //         "<h,real,true>;\n";
+      //       } else {
+      out << "using Behaviour = " << bd.getClassName() << "<h,real,false>;\n";
+      //      }
       if (bd.getAttribute(BehaviourData::profiling, false)) {
         out << "using mfront::BehaviourProfiler;\n"
             << "using tfel::material::" << bd.getClassName() << "Profiler;\n"

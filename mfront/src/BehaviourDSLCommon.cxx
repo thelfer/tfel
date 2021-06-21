@@ -1234,7 +1234,7 @@ namespace mfront {
     // time step scaling factors
     if (!this->mb.hasParameter(ModellingHypothesis::UNDEFINEDHYPOTHESIS,
                                "minimal_time_step_scaling_factor")) {
-      VariableDescription e("real", "minimal_time_step_scaling_factor", 1u, 0u);
+      VariableDescription e("time", "minimal_time_step_scaling_factor", 1u, 0u);
       e.description = "minimal value for the time step scaling factor";
       this->mb.addParameter(ModellingHypothesis::UNDEFINEDHYPOTHESIS, e,
                             BehaviourData::ALREADYREGISTRED);
@@ -1247,7 +1247,7 @@ namespace mfront {
     }
     if (!this->mb.hasParameter(ModellingHypothesis::UNDEFINEDHYPOTHESIS,
                                "maximal_time_step_scaling_factor")) {
-      VariableDescription e("real", "maximal_time_step_scaling_factor", 1u, 0u);
+      VariableDescription e("time", "maximal_time_step_scaling_factor", 1u, 0u);
       e.description = "maximal value for the time step scaling factor";
       this->mb.addParameter(ModellingHypothesis::UNDEFINEDHYPOTHESIS, e,
                             BehaviourData::ALREADYREGISTRED);
@@ -4286,7 +4286,7 @@ namespace mfront {
       if (this->mb.useQt()) {
         os << "template<ModellingHypothesis::Hypothesis hypothesis,typename "
               "Type,bool use_qt>\n";
-        os << "class " << this->mb.getClassName() << " final\n";
+        os << "struct " << this->mb.getClassName() << " final\n";
         os << ": public MechanicalBehaviour<" << btype
            << ",hypothesis,Type,use_qt>,\n";
         if (this->mb.getAttribute(BehaviourData::profiling, false)) {
@@ -4300,7 +4300,7 @@ namespace mfront {
       } else {
         os << "template<ModellingHypothesis::Hypothesis hypothesis,typename "
               "Type>\n";
-        os << "class " << this->mb.getClassName()
+        os << "struct " << this->mb.getClassName()
            << "<hypothesis,Type,false> final\n";
         os << ": public MechanicalBehaviour<" << btype
            << ",hypothesis,Type,false>,\n";
@@ -4316,7 +4316,7 @@ namespace mfront {
     } else {
       if (this->mb.useQt()) {
         os << "template<typename Type,bool use_qt>\n";
-        os << "class " << this->mb.getClassName() << "<ModellingHypothesis::"
+        os << "struct " << this->mb.getClassName() << "<ModellingHypothesis::"
            << ModellingHypothesis::toUpperCaseString(h)
            << ",Type,use_qt> final\n";
         os << ": public MechanicalBehaviour<" << btype
@@ -4334,7 +4334,7 @@ namespace mfront {
         this->writeBehaviourParserSpecificInheritanceRelationship(os);
       } else {
         os << "template<typename Type>\n";
-        os << "class " << this->mb.getClassName() << "<ModellingHypothesis::"
+        os << "struct " << this->mb.getClassName() << "<ModellingHypothesis::"
            << ModellingHypothesis::toUpperCaseString(h)
            << ",Type,false> final\n";
         os << ": public MechanicalBehaviour<" << btype
@@ -7335,7 +7335,7 @@ namespace mfront {
   void BehaviourDSLCommon::writeBehaviourGetTimeStepScalingFactor(
       std::ostream& os) const {
     this->checkBehaviourFile(os);
-    os << "real getMinimalTimeStepScalingFactor() const noexcept override{\n"
+    os << "time getMinimalTimeStepScalingFactor() const noexcept override{\n"
           "  return this->minimal_time_step_scaling_factor;\n"
           "}\n\n";
   }
@@ -7343,8 +7343,8 @@ namespace mfront {
   void BehaviourDSLCommon::writeBehaviourComputeAPrioriTimeStepScalingFactor(
       std::ostream& os) const {
     this->checkBehaviourFile(os);
-    os << "std::pair<bool,real>\n"
-          "computeAPrioriTimeStepScalingFactor(const real "
+    os << "std::pair<bool, time>\n"
+          "computeAPrioriTimeStepScalingFactor(const time "
           "current_time_step_scaling_factor) const override{\n"
           "const auto time_scaling_factor = "
           "this->computeAPrioriTimeStepScalingFactorII();\n"
@@ -7361,7 +7361,7 @@ namespace mfront {
   void BehaviourDSLCommon::writeBehaviourComputeAPrioriTimeStepScalingFactorII(
       std::ostream& os, const Hypothesis h) const {
     this->checkBehaviourFile(os);
-    os << "std::pair<bool,real> computeAPrioriTimeStepScalingFactorII() "
+    os << "std::pair<bool, time> computeAPrioriTimeStepScalingFactorII() "
           "const{\n";
     if (this->mb.hasCode(h, BehaviourData::APrioriTimeStepScalingFactor)) {
       os << "using namespace std;\n"
@@ -7371,7 +7371,7 @@ namespace mfront {
       os << this->mb.getCode(h, BehaviourData::APrioriTimeStepScalingFactor)
          << '\n';
     }
-    os << "return {true,this->maximal_time_step_scaling_factor};\n"
+    os << "return {true, this->maximal_time_step_scaling_factor};\n"
        << "}\n\n";
   }
 
@@ -7379,8 +7379,8 @@ namespace mfront {
   BehaviourDSLCommon::writeBehaviourComputeAPosterioriTimeStepScalingFactor(
       std::ostream& os) const {
     this->checkBehaviourFile(os);
-    os << "std::pair<bool,real>\n"
-          "computeAPosterioriTimeStepScalingFactor(const real "
+    os << "std::pair<bool, time>\n"
+          "computeAPosterioriTimeStepScalingFactor(const time "
           "current_time_step_scaling_factor) const override{\n"
           "const auto time_scaling_factor = "
           "this->computeAPosterioriTimeStepScalingFactorII();\n"
@@ -7398,7 +7398,7 @@ namespace mfront {
   BehaviourDSLCommon::writeBehaviourComputeAPosterioriTimeStepScalingFactorII(
       std::ostream& os, const Hypothesis h) const {
     this->checkBehaviourFile(os);
-    os << "std::pair<bool,real> computeAPosterioriTimeStepScalingFactorII() "
+    os << "std::pair<bool, time> computeAPosterioriTimeStepScalingFactorII() "
           "const{\n";
     if (this->mb.hasCode(h, BehaviourData::APosterioriTimeStepScalingFactor)) {
       os << "using namespace std;\n"

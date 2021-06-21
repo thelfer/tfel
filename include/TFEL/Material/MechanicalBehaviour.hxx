@@ -15,6 +15,7 @@
 #define LIB_TFEL_MATERIAL_MECHANICALBEHAVIOUR_HXX
 
 #include <utility>
+#include "TFEL/Config/TFELTypes.hxx"
 #include "TFEL/Material/ModellingHypothesis.hxx"
 #include "TFEL/Material/FiniteStrainBehaviourTangentOperatorBase.hxx"
 
@@ -117,15 +118,15 @@ namespace tfel::material {
             bool use_qt>
   struct MechanicalBehaviour : public TangentOperatorTraits<btype>,
                                public MechanicalBehaviourBase {
-    /*!
-     * available tangent operator
-     */
+    //! \brief available tangent operator
     using SMFlag = typename TangentOperatorTraits<btype>::SMFlag;
     /*!
-     * dimension of the space for the the given modelling hypothesis
+     * \brief dimension of the space for the the given modelling hypothesis
      */
     static constexpr unsigned short N =
         ModellingHypothesisToSpaceDimension<H>::value;
+    //! \brief a simple alias
+    using TFELTypes = tfel::config::Types<N, NumType, use_qt>;
     /*!
      * \brief only compute a prediction stiffness matrix.
      * The result shall be retrieved through the
@@ -141,7 +142,8 @@ namespace tfel::material {
      * factor is used to decrease the time step if the integration
      * failed.
      */
-    virtual NumType getMinimalTimeStepScalingFactor() const = 0;
+    virtual typename TFELTypes::time getMinimalTimeStepScalingFactor()
+        const = 0;
     /*!
      * \param[in] dt: time step scaling factor proposed by the calling code
      * \return a pair containing:
@@ -158,8 +160,9 @@ namespace tfel::material {
      * give such a time step scaling factor. If not, behaviours
      * may return the NumType(1) value.
      */
-    virtual std::pair<bool, NumType> computeAPrioriTimeStepScalingFactor(
-        const NumType) const = 0;
+    virtual std::pair<bool, typename TFELTypes::time>
+    computeAPrioriTimeStepScalingFactor(
+        const typename TFELTypes::time) const = 0;
     /*!
      * \brief determine the value of the internal state variables at
      * the end of the time step
@@ -184,12 +187,11 @@ namespace tfel::material {
      * give such a time step scaling factor. If not, behaviours
      * may return the NumType(1) value.
      */
-    virtual std::pair<bool, NumType> computeAPosterioriTimeStepScalingFactor(
-        const NumType) const = 0;
-    /*!
-     * destructor
-     */
-    virtual ~MechanicalBehaviour() {}
+    virtual std::pair<bool, typename TFELTypes::time>
+    computeAPosterioriTimeStepScalingFactor(
+        const typename TFELTypes::time) const = 0;
+    //! destructor
+    virtual ~MechanicalBehaviour() noexcept = default;
   };
 
 }  // end of namespace tfel::material

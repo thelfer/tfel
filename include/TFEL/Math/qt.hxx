@@ -185,7 +185,7 @@ namespace tfel::math {
               std::enable_if_t<
                   std::is_same_v<promote<ValueType, ValueType2>, ValueType>,
                   bool> = true>
-    Quantity(
+    constexpr Quantity(
         const Quantity<UnitType, ValueType2, OwnershipPolicy2>& src) noexcept
         : OwnershipPolicy(src.getValue()) {}  // end of Quantity
     //
