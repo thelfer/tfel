@@ -15,6 +15,7 @@
 #define LIB_TFEL_MATH_ARRAY_VIEW_HXX
 
 #include <type_traits>
+#include "TFEL/Metaprogramming/InvalidType.hxx"
 #include "TFEL/TypeTraits/IsAssignableTo.hxx"
 #include "TFEL/Math/Forward/qt.hxx"
 #include "TFEL/Math/General/MathObjectTraits.hxx"
@@ -309,6 +310,48 @@ namespace tfel::math {
     using type = std::remove_cv_t<MappedType>;
   };  // end of struct ResultOfEvaluation
 
+  //! \brief view to a scalar
+  template <typename ScalarType>
+  using scalar_view = std::conditional_t<
+      isScalar<ScalarType>(),
+      std::conditional_t<
+          std::is_const_v<ScalarType>,
+          std::conditional_t<
+              isQuantity<ScalarType>(),
+              const qt_ref<typename QuantityTraits<ScalarType>::UnitType,
+                           typename QuantityTraits<ScalarType>::ValueType>,
+              const ScalarType&>,
+          std::conditional_t<
+              isQuantity<ScalarType>(),
+              qt_ref<typename QuantityTraits<ScalarType>::UnitType,
+                     typename QuantityTraits<ScalarType>::ValueType>,
+              ScalarType&>>,
+      tfel::meta::InvalidType>;
+
+  template <typename ScalarType>
+  std::enable_if_t<isScalar<ScalarType>(), scalar_view<ScalarType>> map(
+      base_type<ScalarType>* const p) {
+    return scalar_view<ScalarType>(*p);
+  }  // end of map
+
+  template <typename ScalarType>
+  std::enable_if_t<isScalar<ScalarType>(), scalar_view<ScalarType>> map(
+      base_type<ScalarType>& v) {
+    return scalar_view<ScalarType>(v);
+  }  // end of map
+
+  template <typename ScalarType>
+  std::enable_if_t<isScalar<ScalarType>(), scalar_view<const ScalarType>>  //
+  map(const base_type<ScalarType>* const p) {
+    return scalar_view<ScalarType>(*p);
+  }  // end of map
+
+  template <typename ScalarType>
+  std::enable_if_t<isScalar<ScalarType>(), scalar_view<const ScalarType>>  //
+  map(const base_type<ScalarType>& v) {
+    return scalar_view<ScalarType>(v);
+  }  // end of map
+
   /*!
    * \brief return a view from a memory area
    * \tparam MappedType: object mapped
@@ -317,7 +360,8 @@ namespace tfel::math {
   template <typename MappedType,
             typename IndexingPolicyType = typename MappedType::indexing_policy>
   constexpr std::enable_if_t<
-      ((!std::is_const_v<MappedType>)&&(IndexingPolicyType::hasFixedSizes)),
+      ((!std::is_const_v<MappedType>)&&(!isScalar<MappedType>()) &&
+       (std::remove_cv_t<MappedType>::hasFixedSizes)),
       View<MappedType, IndexingPolicyType>>
   map(const ViewDataPointerType<MappedType> p) {
     return View<MappedType, IndexingPolicyType>{p};
@@ -327,7 +371,8 @@ namespace tfel::math {
             typename IndexingPolicyType =
                 typename std::remove_cv_t<MappedType>::indexing_policy>
   constexpr std::enable_if_t<
-      std::remove_cv_t<MappedType>::indexing_policy::hasFixedSizes,
+      ((!isScalar<MappedType>()) &&
+       (std::remove_cv_t<MappedType>::indexing_policy::hasFixedSizes)),
       View<const MappedType, IndexingPolicyType>>
   map(const ViewConstDataPointerType<MappedType> p) {
     return View<const MappedType, IndexingPolicyType>{p};

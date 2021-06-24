@@ -32,9 +32,12 @@ MFRONTS= DDIF2.mfront                                                      \
 	 Plasticity.mfront                                                 \
 	 Plasticity2.mfront                                                 \
 	 Plasticity3.mfront                                                 \
+	 Plasticity4.mfront                                                 \
 	 DruckerPrager.mfront                                              \
          Norton.mfront                                                     \
          Norton2.mfront                                                    \
+         Norton3.mfront                                                    \
+         Norton4.mfront                                                    \
          ImplicitNorton.mfront                                             \
          ImplicitNorton2.mfront                                            \
          ImplicitNorton3.mfront                                            \
@@ -68,6 +71,8 @@ MFRONTS= DDIF2.mfront                                                      \
          StrainHardeningCreep.mfront                                       \
          StrainHardeningCreep2.mfront                                      \
          StrainHardeningCreep3.mfront                                      \
+         StrainHardeningCreep4.mfront                                      \
+         StrainHardeningCreep5.mfront                                      \
          Mazars.mfront                                                     \
          UnilateralMazars.mfront                                           \
          Lorentz.mfront                                                    \

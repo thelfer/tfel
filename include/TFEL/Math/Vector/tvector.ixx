@@ -182,33 +182,27 @@ namespace tfel::math {
     return map<const tvector<J - I, T>, I>(v);
   }  // end of slice
 
-  template <typename MappedType,
-            typename IndexingPolicyType,
-            unsigned short N,
-            typename real>
+  template <typename MappedType, typename IndexingPolicyType, unsigned short N>
   constexpr std::enable_if_t<
-      ((!std::is_const_v<MappedType>)&&(IndexingPolicyType::hasFixedSizes) &&
+      ((!isScalar<MappedType>()) && (IndexingPolicyType::hasFixedSizes) &&
        (checkIndexingPoliciesCompatiblity<
            IndexingPolicyType,
-           typename MappedType::indexing_policy>())),
+           typename std::remove_cv_t<MappedType>::indexing_policy>())),
       View<MappedType, IndexingPolicyType>>
-  map(tvector<N, real>& v) {
+  map(tvector<N, base_type<numeric_type<MappedType>>>& v) {
     static_assert(N >= getUnderlyingArrayMinimalSize<IndexingPolicyType>(),
                   "invalid vector size");
     return map<MappedType, IndexingPolicyType>(v.data());
   }  // end of map
 
-  template <typename MappedType,
-            typename IndexingPolicyType,
-            unsigned short N,
-            typename real>
+  template <typename MappedType, typename IndexingPolicyType, unsigned short N>
   constexpr std::enable_if_t<
-      ((IndexingPolicyType::hasFixedSizes) &&
+      ((!isScalar<MappedType>()) && (IndexingPolicyType::hasFixedSizes) &&
        (checkIndexingPoliciesCompatiblity<
            IndexingPolicyType,
            typename std::remove_cv_t<MappedType>::indexing_policy>())),
       View<const MappedType, IndexingPolicyType>>
-  map(const tvector<N, real>& v) {
+  map(const tvector<N, base_type<numeric_type<MappedType>>>& v) {
     static_assert(N >= getUnderlyingArrayMinimalSize<IndexingPolicyType>(),
                   "invalid vector size");
     return map<const MappedType, IndexingPolicyType>(v.data());

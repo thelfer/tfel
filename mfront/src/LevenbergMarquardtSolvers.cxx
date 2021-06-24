@@ -126,10 +126,10 @@ namespace mfront {
     }
     if (mb.useQt()) {
       out << "return MechanicalBehaviour<" << btype
-          << ",hypothesis,Type,use_qt>::FAILURE;\n";
+          << ",hypothesis, NumericType,use_qt>::FAILURE;\n";
     } else {
       out << "return MechanicalBehaviour<" << btype
-          << ",hypothesis,Type,false>::FAILURE;\n";
+          << ",hypothesis, NumericType,false>::FAILURE;\n";
     }
     out << "}\n";
     if (this->requiresNumericalJacobian()) {
@@ -178,8 +178,8 @@ namespace mfront {
       writeStandardPerformanceProfilingBegin(out, mb.getClassName(),
                                              "TinyMatrixSolve", "lu");
     }
-    out << "TinyMatrixSolve<" << n2 << ","
-        << "real>::exe(levmar_tJJ,levmar_sm);\n";
+    out << "TinyMatrixSolve<" << n2 << ", NumericType>"
+        << "::exe(levmar_tJJ,levmar_sm);\n";
     if (mb.getAttribute(BehaviourData::profiling, false)) {
       writeStandardPerformanceProfilingEnd(out);
     }
@@ -187,10 +187,10 @@ namespace mfront {
         << "catch(LUException&){\n";
     if (mb.useQt()) {
       out << "return MechanicalBehaviour<" << btype
-          << ",hypothesis,Type,use_qt>::FAILURE;\n";
+          << ",hypothesis, NumericType,use_qt>::FAILURE;\n";
     } else {
       out << "return MechanicalBehaviour<" << btype
-          << ",hypothesis,Type,false>::FAILURE;\n";
+          << ",hypothesis, NumericType,false>::FAILURE;\n";
     }
     out << "}\n";
     NonLinearSystemSolverBase::writeLimitsOnIncrementValues(out, mb, h,

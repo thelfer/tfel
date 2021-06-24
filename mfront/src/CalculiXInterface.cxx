@@ -1017,14 +1017,14 @@ namespace mfront {
     constexpr auto h = ModellingHypothesis::TRIDIMENSIONAL;
     const auto mvs = mb.getMainVariablesSize();
     const auto mprops = this->buildMaterialPropertiesList(mb, h);
-    out << "template<typename Type";
+    out << "template<typename NumericType";
     if (mb.useQt()) {
-      out << ",bool use_qt";
+      out << ", bool use_qt";
     }
     out << ">\n"
         << "struct CalculiXTraits<tfel::material::" << mb.getClassName()
-        << "<tfel::material::ModellingHypothesis::TRIDIMENSIONAL,";
-    out << "Type,";
+        << "<tfel::material::ModellingHypothesis::TRIDIMENSIONAL, ";
+    out << "NumericType,";
     if (mb.useQt()) {
       out << "use_qt";
     } else {

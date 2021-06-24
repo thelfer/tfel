@@ -123,10 +123,10 @@ namespace mfront {
     }
     if (mb.useQt()) {
       out << "return MechanicalBehaviour<" << btype
-          << ",hypothesis,Type,use_qt>::FAILURE;\n";
+          << ",hypothesis, NumericType,use_qt>::FAILURE;\n";
     } else {
       out << "return MechanicalBehaviour<" << btype
-          << ",hypothesis,Type,false>::FAILURE;\n";
+          << ",hypothesis, NumericType,false>::FAILURE;\n";
     }
     out << "} else {\n";
     if (getDebugMode()) {
@@ -134,13 +134,13 @@ namespace mfront {
           << "::integrate() : computFdF returned false, dividing increment by "
              "two...\" << endl;\n";
     }
-    out << "const real integrate_one_half = real(1)/real(2);\n"
+    out << "constexpr auto integrate_one_half = NumericType(1)/2;\n"
         << "this->zeros -= (this->zeros-this->zeros_1)*integrate_one_half;\n"
         << "this->updateMaterialPropertiesDependantOnStateVariables();\n"
         << "}\n"
         << "} else {\n"
         << "this->zeros_1  = this->zeros;\n"
-        << "error=norm(this->fzeros)/(real(" << n2 << "));\n"
+        << "error=norm(this->fzeros)/(NumericType(" << n2 << "));\n"
         << "converged = error<this->epsilon;\n"
         << "this->additionalConvergenceChecks(converged, error, smt);\n";
     if (getDebugMode()) {

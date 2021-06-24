@@ -916,10 +916,10 @@ namespace mfront {
     os << "if(!this->computeDerivative()){\n";
     if (this->mb.useQt()) {
       os << "return MechanicalBehaviour<" << btype
-         << ",hypothesis,Type,use_qt>::FAILURE;\n";
+         << ",hypothesis, NumericType,use_qt>::FAILURE;\n";
     } else {
       os << "return MechanicalBehaviour<" << btype
-         << ",hypothesis,Type,false>::FAILURE;\n";
+         << ",hypothesis, NumericType,false>::FAILURE;\n";
     }
     os << "}\n";
     for (const auto& v : d.getStateVariables()) {
@@ -951,7 +951,7 @@ namespace mfront {
           d.getCodeBlock(BehaviourData::ComputeThermodynamicForces).members;
       uvs.insert(uvs2.begin(), uvs2.end());
     }
-    os << "constexpr const auto cste1_2 = real{1}/real{2};\n"
+    os << "constexpr const auto cste1_2 = NumericType{1}/NumericType{2};\n"
        << "// Compute K1's values\n";
     if (this->mb.hasCode(h, BehaviourData::ComputeThermodynamicForces)) {
       os << "this->computeThermodynamicForces();\n";
@@ -959,10 +959,10 @@ namespace mfront {
     os << "if(!this->computeDerivative()){\n";
     if (this->mb.useQt()) {
       os << "return MechanicalBehaviour<" << btype
-         << ",hypothesis,Type,use_qt>::FAILURE;\n";
+         << ",hypothesis, NumericType,use_qt>::FAILURE;\n";
     } else {
       os << "return MechanicalBehaviour<" << btype
-         << ",hypothesis,Type,false>::FAILURE;\n";
+         << ",hypothesis, NumericType,false>::FAILURE;\n";
     }
     os << "}\n";
     for (const auto& v : d.getStateVariables()) {
@@ -990,10 +990,10 @@ namespace mfront {
     os << "if(!this->computeDerivative()){\n";
     if (this->mb.useQt()) {
       os << "return MechanicalBehaviour<" << btype
-         << ",hypothesis,Type,use_qt>::FAILURE;\n";
+         << ",hypothesis, NumericType,use_qt>::FAILURE;\n";
     } else {
       os << "return MechanicalBehaviour<" << btype
-         << ",hypothesis,Type,false>::FAILURE;\n";
+         << ",hypothesis, NumericType,false>::FAILURE;\n";
     }
     os << "}\n";
     os << "// Final Step\n";
@@ -1065,47 +1065,47 @@ namespace mfront {
       eev = ERRORSUMMATIONEVALUATION;
     }
     if (shallUpdateExternalStateValues) {
-      os << "constexpr const auto cste1_2         = real{1}/real{2};\n"
-         << "constexpr const auto cste3_8         = real{3}/real{8};\n"
-         << "constexpr const auto cste12_13       = Type(12)/Type(13);\n";
+      os << "constexpr const auto cste1_2         = NumericType{1}/NumericType{2};\n"
+         << "constexpr const auto cste3_8         = NumericType{3}/NumericType{8};\n"
+         << "constexpr const auto cste12_13       = NumericType(12)/NumericType(13);\n";
     }
     if (shallUpdateInternalStateValues) {
       os << "constexpr const auto cste3544_2565   = "
-            "Type(3544)/Type(2565);\n"
-         << "constexpr const auto cste11_40       = Type(11)/Type(40);\n"
+            "NumericType(3544)/NumericType(2565);\n"
+         << "constexpr const auto cste11_40       = NumericType(11)/NumericType(40);\n"
          << "constexpr const auto cste1859_4104   = "
-            "Type(1859)/Type(4104);\n"
-         << "constexpr const auto cste8_27        = Type(8)/Type(27);\n"
+            "NumericType(1859)/NumericType(4104);\n"
+         << "constexpr const auto cste8_27        = NumericType(8)/NumericType(27);\n"
          << "constexpr const auto cste845_4104    = "
-            "Type(845)/Type(4104);\n"
+            "NumericType(845)/NumericType(4104);\n"
          << "constexpr const auto cste3680_513    = "
-            "Type(3680)/Type(513);\n"
-         << "constexpr const auto cste439_216     = Type(439)/Type(216);\n"
+            "NumericType(3680)/NumericType(513);\n"
+         << "constexpr const auto cste439_216     = NumericType(439)/NumericType(216);\n"
          << "constexpr const auto cste7296_2197   = "
-            "Type(7296)/Type(2197);\n"
+            "NumericType(7296)/NumericType(2197);\n"
          << "constexpr const auto cste7200_2197   = "
-            "Type(7200)/Type(2197);\n"
-         << "constexpr const auto cste3_32        = real{3}/real{32};\n"
+            "NumericType(7200)/NumericType(2197);\n"
+         << "constexpr const auto cste3_32        = NumericType{3}/NumericType{32};\n"
          << "constexpr const auto cste1932_2197   = "
-            "Type(1932)/Type(2197);\n";
+            "NumericType(1932)/NumericType(2197);\n";
     }
-    os << "constexpr const auto cste1_4         = real{1}/real{4};\n"
-       << "constexpr const auto cste16_135      = Type(16)/Type(135);\n"
+    os << "constexpr const auto cste1_4         = NumericType{1}/NumericType{4};\n"
+       << "constexpr const auto cste16_135      = NumericType(16)/NumericType(135);\n"
        << "constexpr const auto cste6656_12825  = "
-          "Type(6656)/Type(12825);\n"
+          "NumericType(6656)/NumericType(12825);\n"
        << "constexpr const auto cste28561_56430 = "
-          "Type(28561)/Type(56430);\n"
-       << "constexpr const auto cste9_50        = Type(9)/Type(50);\n"
-       << "constexpr const auto cste2_55        = Type(2)/Type(55);\n"
-       << "constexpr const auto cste1_360       = Type(1)/Type(360);\n"
-       << "constexpr const auto cste128_4275    = Type(128)/Type(4275);\n"
+          "NumericType(28561)/NumericType(56430);\n"
+       << "constexpr const auto cste9_50        = NumericType(9)/NumericType(50);\n"
+       << "constexpr const auto cste2_55        = NumericType(2)/NumericType(55);\n"
+       << "constexpr const auto cste1_360       = NumericType(1)/NumericType(360);\n"
+       << "constexpr const auto cste128_4275    = NumericType(128)/NumericType(4275);\n"
        << "constexpr const auto cste2197_75240  = "
-          "Type(2197)/Type(75240);\n"
-       << "constexpr const auto cste1_50        = Type(1)/Type(50);\n"
+          "NumericType(2197)/NumericType(75240);\n"
+       << "constexpr const auto cste1_50        = NumericType(1)/NumericType(50);\n"
        << "time t      = time(0);\n"
        << "time dt_    = this->dt;\n"
        << "time dtprec = 100*this->dt*numeric_limits<time>::epsilon();\n"
-       << "auto error = Type{};\n"
+       << "auto error = NumericType{};\n"
        << "bool converged = false;\n";
     if (getDebugMode()) {
       os << "cout << endl << \"" << this->mb.getClassName()
@@ -1411,7 +1411,7 @@ namespace mfront {
         } else {
           if (this->mb.useDynamicallyAllocatedVector(v.arraySize)) {
             if (p == d.getStateVariables().begin()) {
-              os << "error  = Type(0);\n";
+              os << "error  = NumericType(0);\n";
             }
             os << "for(unsigned short idx=0;idx!=" << v.arraySize
                << ";++idx){\n";
@@ -1458,7 +1458,7 @@ namespace mfront {
       }
       os << "error/=" << svsize << ";\n";
     } else if (eev == MAXIMUMVALUEERROREVALUATION) {
-      os << "error  = Type(0);\n"
+      os << "error  = NumericType(0);\n"
          << "auto rk_update_error = [&error](const real rk_error){\n"
          << "if(!ieee754::isfinite(error)){return;}\n"
          << "if(!ieee754::isfinite(rk_error)){\n"
@@ -1635,9 +1635,9 @@ namespace mfront {
     for (const auto& v : d.getStateVariables()) {
       stateVarsSize += this->getTypeSize(v.type, v.arraySize);
     }
-    os << "constexpr const auto cste1_2 = real{1}/real{2};\n"
-       << "constexpr const auto cste1_4 = real{1}/real{4};\n"
-       << "constexpr const auto cste1_6 = Type(1)/Type(6);\n"
+    os << "constexpr const auto cste1_2 = NumericType{1}/NumericType{2};\n"
+       << "constexpr const auto cste1_4 = NumericType{1}/NumericType{4};\n"
+       << "constexpr const auto cste1_6 = NumericType(1)/NumericType(6);\n"
        << "time t   = time(0);\n"
        << "time dt_ = this->dt;\n"
        << "StressStensor sigf;\n"
@@ -1657,8 +1657,8 @@ namespace mfront {
        << "throw(tfel::material::DivergenceException());\n"
        << "}\n"
        << "asig = sqrt((this->sig)|(this->sig));\n"
-       << "if ((this->young)*Type(1.e-3)>asig){\n"
-       << "  errabs = (this->young)*Type(1.e-3)*(this->epsilon);\n"
+       << "if ((this->young)*NumericType(1.e-3)>asig){\n"
+       << "  errabs = (this->young)*NumericType(1.e-3)*(this->epsilon);\n"
        << "}else{\n"
        << "  errabs = (this->epsilon)*asig;\n}\n\n"
        << "time dtprec = 100*this->dt*numeric_limits<time>::epsilon();\n"
@@ -1905,7 +1905,7 @@ namespace mfront {
     for (const auto& v : d.getStateVariables()) {
       if (uvs.find(v.name) != uvs.end()) {
         os << "this->" << v.name << "_ = this->" << v.name
-           << "+cste1_6*(this->d" << v.name << "_K1 + Type(4)*this->d" << v.name
+           << "+cste1_6*(this->d" << v.name << "_K1 + NumericType(4)*this->d" << v.name
            << "_K3 + this->d" << v.name << "_K5);\n";
       }
     }
@@ -2038,13 +2038,13 @@ namespace mfront {
     for (const auto& v : d.getStateVariables()) {
       stateVarsSize += this->getTypeSize(v.type, v.arraySize);
     }
-    os << "constexpr const auto cste1_2 = real{1}/real{2};\n"
-       << "constexpr const auto cste1_6  = Type(1)/Type(6);\n"
-       << "constexpr const auto cste1_3  = Type(1)/Type(3);\n"
+    os << "constexpr const auto cste1_2 = NumericType{1}/NumericType{2};\n"
+       << "constexpr const auto cste1_6  = NumericType(1)/NumericType(6);\n"
+       << "constexpr const auto cste1_3  = NumericType(1)/NumericType(3);\n"
        << "time t   = time(0);\n"
        << "time dt_ = this->dt;\n"
        << "time dtprec = 100*this->dt*numeric_limits<time>::epsilon();\n"
-       << "auto error = Type{};\n"
+       << "auto error = NumericType{};\n"
        << "bool converged = false;\n";
     if (getDebugMode()) {
       os << "cout << endl << \"" << this->mb.getClassName()
@@ -2243,7 +2243,7 @@ namespace mfront {
         } else {
           if (this->mb.useDynamicallyAllocatedVector(v.arraySize)) {
             if (first) {
-              os << "error  = Type(0);\n";
+              os << "error  = NumericType(0);\n";
               first = false;
             }
             os << "for(unsigned short idx=0;idx!=" << v.arraySize
@@ -2289,7 +2289,7 @@ namespace mfront {
       }
       os << "error/=" << stateVarsSize << ";\n";
     } else if (eev == MAXIMUMVALUEERROREVALUATION) {
-      os << "error  = Type(0);\n"
+      os << "error  = NumericType(0);\n"
          << "auto rk_update_error = [&error](const real rk_error){\n"
          << "if(!ieee754::isfinite(error)){return;}\n"
          << "if(!ieee754::isfinite(rk_error)){\n"
@@ -2439,7 +2439,7 @@ namespace mfront {
           d.getCodeBlock(BehaviourData::ComputeThermodynamicForces).members;
       uvs.insert(uvs2.begin(), uvs2.end());
     }
-    os << "constexpr const auto cste1_2 = real{1}/real{2};\n"
+    os << "constexpr const auto cste1_2 = NumericType{1}/NumericType{2};\n"
        << "// Compute K1's values\n";
     if (this->mb.hasCode(h, BehaviourData::ComputeThermodynamicForces)) {
       os << "this->computeThermodynamicForces();\n";
@@ -2447,10 +2447,10 @@ namespace mfront {
     os << "if(!this->computeDerivative()){\n";
     if (this->mb.useQt()) {
       os << "return MechanicalBehaviour<" << btype
-         << ",hypothesis,Type,use_qt>::FAILURE;\n";
+         << ",hypothesis, NumericType,use_qt>::FAILURE;\n";
     } else {
       os << "return MechanicalBehaviour<" << btype
-         << ",hypothesis,Type,false>::FAILURE;\n";
+         << ",hypothesis, NumericType,false>::FAILURE;\n";
     }
     os << "}\n";
     for (const auto& v : d.getStateVariables()) {
@@ -2480,10 +2480,10 @@ namespace mfront {
        << "if(!this->computeDerivative()){\n";
     if (this->mb.useQt()) {
       os << "return MechanicalBehaviour<" << btype
-         << ",hypothesis,Type,use_qt>::FAILURE;\n";
+         << ",hypothesis, NumericType,use_qt>::FAILURE;\n";
     } else {
       os << "return MechanicalBehaviour<" << btype
-         << ",hypothesis,Type,false>::FAILURE;\n";
+         << ",hypothesis, NumericType,false>::FAILURE;\n";
     }
     os << "}\n";
     for (const auto& v : d.getStateVariables()) {
@@ -2505,10 +2505,10 @@ namespace mfront {
        << "if(!this->computeDerivative()){\n";
     if (this->mb.useQt()) {
       os << "return MechanicalBehaviour<" << btype
-         << ",hypothesis,Type,use_qt>::FAILURE;\n";
+         << ",hypothesis, NumericType,use_qt>::FAILURE;\n";
     } else {
       os << "return MechanicalBehaviour<" << btype
-         << ",hypothesis,Type,false>::FAILURE;\n";
+         << ",hypothesis, NumericType,false>::FAILURE;\n";
     }
     os << "}\n";
     for (const auto& v : d.getStateVariables()) {
@@ -2529,10 +2529,10 @@ namespace mfront {
        << "if(!this->computeDerivative()){\n";
     if (this->mb.useQt()) {
       os << "return MechanicalBehaviour<" << btype
-         << ",hypothesis,Type,use_qt>::FAILURE;\n";
+         << ",hypothesis, NumericType,use_qt>::FAILURE;\n";
     } else {
       os << "return MechanicalBehaviour<" << btype
-         << ",hypothesis,Type,false>::FAILURE;\n";
+         << ",hypothesis, NumericType,false>::FAILURE;\n";
     }
     os << "}\n";
     for (const auto& v : d.getStateVariables()) {
@@ -2583,12 +2583,12 @@ namespace mfront {
          BehaviourDescription::COHESIVEZONEMODEL)) {
       if (this->mb.useQt()) {
         os << "if(smflag!=MechanicalBehaviour<" << btype
-           << ",hypothesis,Type,use_qt>::STANDARDTANGENTOPERATOR){\n"
+           << ",hypothesis, NumericType,use_qt>::STANDARDTANGENTOPERATOR){\n"
            << "throw(runtime_error(\"invalid tangent operator flag\"));\n"
            << "}\n";
       } else {
         os << "if(smflag!=MechanicalBehaviour<" << btype
-           << ",hypothesis,Type,false>::STANDARDTANGENTOPERATOR){\n"
+           << ",hypothesis, NumericType,false>::STANDARDTANGENTOPERATOR){\n"
            << "throw(runtime_error(\"invalid tangent operator flag\"));\n"
            << "}\n";
       }
@@ -2636,10 +2636,10 @@ namespace mfront {
       }
       if (this->mb.useQt()) {
         os << "return MechanicalBehaviour<" << btype
-           << ",hypothesis,Type,use_qt>::FAILURE;\n";
+           << ",hypothesis, NumericType,use_qt>::FAILURE;\n";
       } else {
         os << "return MechanicalBehaviour<" << btype
-           << ",hypothesis,Type,false>::FAILURE;\n";
+           << ",hypothesis, NumericType,false>::FAILURE;\n";
       }
       os << "}\n";
     } else {
@@ -2650,10 +2650,10 @@ namespace mfront {
     os << "}\n";
     if (this->mb.useQt()) {
       os << "return MechanicalBehaviour<" << btype
-         << ",hypothesis,Type,use_qt>::SUCCESS;\n";
+         << ",hypothesis, NumericType,use_qt>::SUCCESS;\n";
     } else {
       os << "return MechanicalBehaviour<" << btype
-         << ",hypothesis,Type,false>::SUCCESS;\n";
+         << ",hypothesis, NumericType,false>::SUCCESS;\n";
     }
     os << "} // end of " << this->mb.getClassName() << "::integrate\n\n";
   }  // end of void RungeKuttaDSLBase::writeBehaviourIntegrator()

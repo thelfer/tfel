@@ -671,7 +671,7 @@ namespace mfront {
              "no used variable for function '" + f.name + "'");
     const auto sm = this->getTemporaryVariableName(tmpnames, bn);
     out << "// updating " << vs << "\n"
-        << "mfront::" << md.className << "<Type> " << sm << ";\n"
+        << "mfront::" << md.className << "<NumericType> " << sm << ";\n"
         << "" << sm << ".setOutOfBoundsPolicy(this->policy);\n"
         << "this->" << vo << " = " << sm << "." << f.name << "(";
     const auto args = [&f] {
@@ -3408,6 +3408,7 @@ namespace mfront {
     this->mb.registerMemberName(h, "Dt");
     this->reserveName("N");
     this->reserveName("Type");
+    this->reserveName("NumericType");
     this->reserveName("use_qt");
     this->reserveName("src1");
     this->reserveName("src2");
@@ -3553,11 +3554,12 @@ namespace mfront {
     }
     file << "using ushort =  unsigned short;\n";
     if (this->mb.useQt()) {
-      file << "using Types = tfel::config::Types<N,Type,use_qt>;\n";
+      file << "using Types = tfel::config::Types<N, NumericType, use_qt>;\n";
     } else {
-      file << "using Types = tfel::config::Types<N,Type,false>;\n";
+      file << "using Types = tfel::config::Types<N, NumericType, false>;\n";
     }
-    file << "using real                = typename Types::real;\n"
+    file << "using Type                = NumericType;\n"
+         << "using real                = typename Types::real;\n"
          << "using time                = typename Types::time;\n"
          << "using length              = typename Types::length;\n"
          << "using frequency           = typename Types::frequency;\n"
@@ -3708,12 +3710,17 @@ namespace mfront {
        << "#include\"TFEL/Config/TFELTypes.hxx\"\n"
        << "#include\"TFEL/TypeTraits/IsFundamentalNumericType.hxx\"\n"
        << "#include\"TFEL/TypeTraits/IsReal.hxx\"\n"
+       << "#include\"TFEL/Math/General/Abs.hxx\"\n"
        << "#include\"TFEL/Math/General/IEEE754.hxx\"\n"
        << "#include\"TFEL/Math/Array/ViewsArrayIO.hxx\"\n"
        << "#include\"TFEL/Math/Array/fsarrayIO.hxx\"\n"
        << "#include\"TFEL/Math/Array/runtime_arrayIO.hxx\"\n"
        << "#include\"TFEL/Math/fsarray.hxx\"\n"
        << "#include\"TFEL/Math/runtime_array.hxx\"\n";
+    if (this->mb.useQt()) {
+      os << "#include\"TFEL/Math/qt.hxx\"\n";
+      os << "#include\"TFEL/Math/Quantity/qtIO.hxx\"\n";
+    }
     this->mb.requiresTVectorOrVectorIncludes(b1, b2);
     if (b1) {
       os << "#include\"TFEL/Math/tvector.hxx\"\n"
@@ -3947,9 +3954,9 @@ namespace mfront {
        << "* \\brief This class implements the " << this->mb.getClassName()
        << "BehaviourData"
        << " .\n"
-       << "* \\param H, modelling hypothesis.\n"
-       << "* \\param typename Type, numerical type.\n"
-       << "* \\param bool use_qt, conditional saying if quantities are use.\n";
+       << "* \\tparam H: modelling hypothesis.\n"
+       << "* \\tparam NumericType: numerical type.\n"
+       << "* \\tparam use_qt: conditional saying if quantities are use.\n";
     if (!this->fd.authorName.empty()) {
       os << "* \\author " << this->fd.authorName << '\n';
     }
@@ -3966,43 +3973,43 @@ namespace mfront {
        << "template<ModellingHypothesis::Hypothesis hypothesis,typename,bool>\n"
        << "class " << this->mb.getClassName() << "BehaviourData;\n\n"
        << "//! \\brief forward declaration\n"
-       << "template<ModellingHypothesis::Hypothesis hypothesis,typename "
-          "Type,bool use_qt>\n"
+       << "template<ModellingHypothesis::Hypothesis hypothesis, "
+       << "typename NumericType,bool use_qt>\n"
        << "class " << this->mb.getClassName() << "IntegrationData;\n\n";
     if (this->mb.useQt()) {
       os << "//! \\brief forward declaration\n";
-      os << "template<ModellingHypothesis::Hypothesis hypothesis,typename "
-            "Type,bool use_qt>\n";
+      os << "template<ModellingHypothesis::Hypothesis hypothesis, "
+         << "typename NumericType, bool use_qt>\n";
       os << "std::ostream&\n operator <<(std::ostream&,";
       os << "const " << this->mb.getClassName()
-         << "BehaviourData<hypothesis,Type,use_qt>&);\n\n";
+         << "BehaviourData<hypothesis, NumericType, use_qt>&);\n\n";
     } else {
       os << "//! \\brief forward declaration\n";
-      os << "template<ModellingHypothesis::Hypothesis hypothesis,typename "
-            "Type>\n";
+      os << "template<ModellingHypothesis::Hypothesis hypothesis,"
+         << "typename NumericType>\n";
       os << "std::ostream&\n operator <<(std::ostream&,";
       os << "const " << this->mb.getClassName()
-         << "BehaviourData<hypothesis,Type,false>&);\n\n";
+         << "BehaviourData<hypothesis, NumericType,false>&);\n\n";
     }
     // maintenant, il faut déclarer toutes les spécialisations partielles...
     for (const auto& h : this->mb.getModellingHypotheses()) {
       if (this->mb.hasSpecialisedMechanicalData(h)) {
         if (this->mb.useQt()) {
           os << "//! \\brief forward declaration\n"
-             << "template<typename Type,bool use_qt>\n"
+             << "template<typename NumericType,bool use_qt>\n"
              << "std::ostream&\n operator <<(std::ostream&,"
              << "const " << this->mb.getClassName()
              << "BehaviourData<ModellingHypothesis::"
              << ModellingHypothesis::toUpperCaseString(h)
-             << ",Type,use_qt>&);\n\n";
+             << ", NumericType, use_qt>&);\n\n";
         } else {
           os << "//! \\brief forward declaration\n"
-             << "template<typename Type>\n"
+             << "template<typename NumericType>\n"
              << "std::ostream&\n operator <<(std::ostream&,"
              << "const " << this->mb.getClassName()
              << "BehaviourData<ModellingHypothesis::"
              << ModellingHypothesis::toUpperCaseString(h)
-             << ",Type,false>&);\n\n";
+             << ", NumericType, false>&);\n\n";
         }
       }
     }
@@ -4013,26 +4020,28 @@ namespace mfront {
     this->checkBehaviourDataFile(os);
     if (h == ModellingHypothesis::UNDEFINEDHYPOTHESIS) {
       if (this->mb.useQt()) {
-        os << "template<ModellingHypothesis::Hypothesis hypothesis,typename "
-              "Type,bool use_qt>\n";
+        os << "template<ModellingHypothesis::Hypothesis hypothesis,"
+           << "typename NumericType,bool use_qt>\n";
         os << "class " << this->mb.getClassName() << "BehaviourData\n";
       } else {
-        os << "template<ModellingHypothesis::Hypothesis hypothesis,typename "
-              "Type>\n";
+        os << "template<ModellingHypothesis::Hypothesis hypothesis, "
+           << "typename NumericType>\n";
         os << "class " << this->mb.getClassName()
-           << "BehaviourData<hypothesis,Type,false>\n";
+           << "BehaviourData<hypothesis, NumericType,false>\n";
       }
     } else {
       if (this->mb.useQt()) {
-        os << "template<typename Type,bool use_qt>\n";
+        os << "template<typename NumericType,bool use_qt>\n";
         os << "class " << this->mb.getClassName()
            << "BehaviourData<ModellingHypothesis::"
-           << ModellingHypothesis::toUpperCaseString(h) << ",Type,use_qt>\n";
+           << ModellingHypothesis::toUpperCaseString(h)
+           << ", NumericType, use_qt>\n";
       } else {
-        os << "template<typename Type>\n";
+        os << "template<typename NumericType>\n";
         os << "class " << this->mb.getClassName()
            << "BehaviourData<ModellingHypothesis::"
-           << ModellingHypothesis::toUpperCaseString(h) << ",Type,false>\n";
+           << ModellingHypothesis::toUpperCaseString(h)
+           << ", NumericType, false>\n";
       }
     }
     os << "{\n\n";
@@ -4047,18 +4056,18 @@ namespace mfront {
           "ModellingHypothesisToSpaceDimension<hypothesis>::value;\n"
        << "static_assert(N==1||N==2||N==3);\n"
        << "static_assert(tfel::typetraits::"
-       << "IsFundamentalNumericType<Type>::cond);\n"
-       << "static_assert(tfel::typetraits::IsReal<Type>::cond);\n\n"
+       << "IsFundamentalNumericType<NumericType>::cond);\n"
+       << "static_assert(tfel::typetraits::IsReal<NumericType>::cond);\n\n"
        << "friend std::ostream& operator<< <>(std::ostream&,const "
        << this->mb.getClassName() << "BehaviourData&);\n\n"
        << "/* integration data is declared friend to access"
        << "   driving variables at the beginning of the time step */\n";
     if (this->mb.useQt()) {
       os << "friend class " << this->mb.getClassName()
-         << "IntegrationData<hypothesis,Type,use_qt>;\n\n";
+         << "IntegrationData<hypothesis, NumericType, use_qt>;\n\n";
     } else {
       os << "friend class " << this->mb.getClassName()
-         << "IntegrationData<hypothesis,Type,false>;\n\n";
+         << "IntegrationData<hypothesis, NumericType, false>;\n\n";
     }
   }
 
@@ -4096,36 +4105,37 @@ namespace mfront {
     const auto& d = this->mb.getBehaviourData(h);
     if (h == ModellingHypothesis::UNDEFINEDHYPOTHESIS) {
       if (this->mb.useQt()) {
-        os << "template<ModellingHypothesis::Hypothesis hypothesis,typename "
-              "Type,bool use_qt>\n";
+        os << "template<ModellingHypothesis::Hypothesis hypothesis,"
+           << "typename NumericType, bool use_qt>\n";
         os << "std::ostream&\n";
         os << "operator <<(std::ostream& os,";
         os << "const " << this->mb.getClassName()
-           << "BehaviourData<hypothesis,Type,use_qt>& b)\n";
+           << "BehaviourData<hypothesis, NumericType, use_qt>& b)\n";
       } else {
-        os << "template<ModellingHypothesis::Hypothesis hypothesis,typename "
-              "Type>\n";
+        os << "template<ModellingHypothesis::Hypothesis hypothesis, "
+           << "typename NumericType>\n";
         os << "std::ostream&\n";
         os << "operator <<(std::ostream& os,";
         os << "const " << this->mb.getClassName()
-           << "BehaviourData<hypothesis,Type,false>& b)\n";
+           << "BehaviourData<hypothesis, NumericType, false>& b)\n";
       }
     } else {
       if (this->mb.useQt()) {
-        os << "template<typename Type,bool use_qt>\n";
+        os << "template<typename NumericType, bool use_qt>\n";
         os << "std::ostream&\n";
         os << "operator <<(std::ostream& os,";
         os << "const " << this->mb.getClassName()
            << "BehaviourData<ModellingHypothesis::"
            << ModellingHypothesis::toUpperCaseString(h)
-           << ",Type,use_qt>& b)\n";
+           << ", NumericType, use_qt>& b)\n";
       } else {
-        os << "template<typename Type>\n";
+        os << "template<typename NumericType>\n";
         os << "std::ostream&\n";
         os << "operator <<(std::ostream& os,";
         os << "const " << this->mb.getClassName()
            << "BehaviourData<ModellingHypothesis::"
-           << ModellingHypothesis::toUpperCaseString(h) << ",Type,false>& b)\n";
+           << ModellingHypothesis::toUpperCaseString(h)
+           << ", NumericType, false>& b)\n";
       }
     }
     os << "{\n";
@@ -4217,23 +4227,23 @@ namespace mfront {
       std::ostream& os) const {
     this->checkBehaviourFile(os);
     os << "//! \\brief forward declaration\n"
-       << "template<ModellingHypothesis::Hypothesis,typename Type,bool "
-          "use_qt>\n"
+       << "template<ModellingHypothesis::Hypothesis, "
+       << "typename NumericType, bool use_qt>\n"
        << "class " << this->mb.getClassName() << ";\n\n";
     if (this->mb.useQt()) {
       os << "//! \\brief forward declaration\n"
-         << "template<ModellingHypothesis::Hypothesis hypothesis,typename "
-            "Type,bool use_qt>\n"
+         << "template<ModellingHypothesis::Hypothesis hypothesis, "
+         << "typename NumericType, bool use_qt>\n"
          << "std::ostream&\n operator <<(std::ostream&,"
          << "const " << this->mb.getClassName()
-         << "<hypothesis,Type,use_qt>&);\n\n";
+         << "<hypothesis, NumericType, use_qt>&);\n\n";
     } else {
       os << "//! \\brief forward declaration\n"
-         << "template<ModellingHypothesis::Hypothesis hypothesis,typename "
-            "Type>\n"
+         << "template<ModellingHypothesis::Hypothesis hypothesis, "
+         << "typename NumericType>\n"
          << "std::ostream&\n operator <<(std::ostream&,"
          << "const " << this->mb.getClassName()
-         << "<hypothesis,Type,false>&);\n\n";
+         << "<hypothesis, NumericType, false>&);\n\n";
     }
     // maintenant, il faut déclarer toutes les spécialisations partielles...
     const auto& mh = this->mb.getModellingHypotheses();
@@ -4241,18 +4251,18 @@ namespace mfront {
       if (this->mb.hasSpecialisedMechanicalData(h)) {
         if (this->mb.useQt()) {
           os << "//! \\brief forward declaration\n"
-             << "template<typename Type,bool use_qt>\n"
+             << "template<typename NumericType,bool use_qt>\n"
              << "std::ostream&\n operator <<(std::ostream&,"
              << "const " << this->mb.getClassName() << "<ModellingHypothesis::"
              << ModellingHypothesis::toUpperCaseString(h)
-             << ",Type,use_qt>&);\n\n";
+             << ", NumericType, use_qt>&);\n\n";
         } else {
           os << "//! \\brief forward declaration\n"
-             << "template<typename Type>\n"
+             << "template<typename NumericType>\n"
              << "std::ostream&\n operator <<(std::ostream&,"
              << "const " << this->mb.getClassName() << "<ModellingHypothesis::"
              << ModellingHypothesis::toUpperCaseString(h)
-             << ",Type,false>&);\n\n";
+             << ", NumericType, false>&);\n\n";
         }
       }
     }
@@ -4265,11 +4275,10 @@ namespace mfront {
     os << "* \\class " << this->mb.getClassName() << '\n';
     os << "* \\brief This class implements the " << this->mb.getClassName()
        << " behaviour.\n";
-    os << "* \\param hypothesis, modelling hypothesis.\n";
-    os << "* \\param Type, numerical type.\n";
+    os << "* \\tparam hypothesis: modelling hypothesis.\n";
+    os << "* \\tparam NumericType: numerical type.\n";
     if (this->mb.useQt()) {
-      os << "* \\param use_qt, conditional "
-         << "saying if quantities are use.\n";
+      os << "* \\tparam use_qt: conditional saying if quantities are use.\n";
     }
     if (!this->fd.authorName.empty()) {
       os << "* \\author " << this->fd.authorName << '\n';
@@ -4284,71 +4293,77 @@ namespace mfront {
     const auto btype = this->mb.getBehaviourTypeFlag();
     if (h == ModellingHypothesis::UNDEFINEDHYPOTHESIS) {
       if (this->mb.useQt()) {
-        os << "template<ModellingHypothesis::Hypothesis hypothesis,typename "
-              "Type,bool use_qt>\n";
-        os << "struct " << this->mb.getClassName() << " final\n";
-        os << ": public MechanicalBehaviour<" << btype
-           << ",hypothesis,Type,use_qt>,\n";
+        os << "template<ModellingHypothesis::Hypothesis hypothesis, "
+           << "typename NumericType, bool use_qt>\n"
+           << "struct " << this->mb.getClassName() << " final\n"
+           << ": public MechanicalBehaviour<" << btype
+           << ",hypothesis, NumericType, use_qt>,\n";
         if (this->mb.getAttribute(BehaviourData::profiling, false)) {
           os << "public " << this->mb.getClassName() << "Profiler,\n";
         }
         os << "public " << this->mb.getClassName()
-           << "BehaviourData<hypothesis,Type,use_qt>,\n";
+           << "BehaviourData<hypothesis, NumericType, use_qt>,\n";
         os << "public " << this->mb.getClassName()
-           << "IntegrationData<hypothesis,Type,use_qt>";
+           << "IntegrationData<hypothesis, NumericType, use_qt>";
         this->writeBehaviourParserSpecificInheritanceRelationship(os);
       } else {
-        os << "template<ModellingHypothesis::Hypothesis hypothesis,typename "
-              "Type>\n";
+        os << "template<ModellingHypothesis::Hypothesis hypothesis,"
+           << "typename NumericType>\n";
         os << "struct " << this->mb.getClassName()
-           << "<hypothesis,Type,false> final\n";
+           << "<hypothesis, NumericType, false> final\n";
         os << ": public MechanicalBehaviour<" << btype
-           << ",hypothesis,Type,false>,\n";
+           << ",hypothesis, NumericType, false>,\n";
         if (this->mb.getAttribute(BehaviourData::profiling, false)) {
           os << "public " << this->mb.getClassName() << "Profiler,\n";
         }
         os << "public " << this->mb.getClassName()
-           << "BehaviourData<hypothesis,Type,false>,\n";
+           << "BehaviourData<hypothesis, NumericType, false>,\n";
         os << "public " << this->mb.getClassName()
-           << "IntegrationData<hypothesis,Type,false>";
+           << "IntegrationData<hypothesis, NumericType, false>";
         this->writeBehaviourParserSpecificInheritanceRelationship(os);
       }
     } else {
       if (this->mb.useQt()) {
-        os << "template<typename Type,bool use_qt>\n";
+        os << "template<typename NumericType,bool use_qt>\n";
         os << "struct " << this->mb.getClassName() << "<ModellingHypothesis::"
            << ModellingHypothesis::toUpperCaseString(h)
-           << ",Type,use_qt> final\n";
+           << ", NumericType, use_qt> final\n";
         os << ": public MechanicalBehaviour<" << btype
            << ",ModellingHypothesis::"
-           << ModellingHypothesis::toUpperCaseString(h) << ",Type,use_qt>,\n";
+           << ModellingHypothesis::toUpperCaseString(h)
+           << ", NumericType, use_qt>,\n";
         if (this->mb.getAttribute(BehaviourData::profiling, false)) {
           os << "public " << this->mb.getClassName() << "Profiler,\n";
         }
         os << "public " << this->mb.getClassName()
            << "BehaviourData<ModellingHypothesis::"
-           << ModellingHypothesis::toUpperCaseString(h) << ",Type,use_qt>,\n";
+           << ModellingHypothesis::toUpperCaseString(h)
+           << ", NumericType, use_qt>,\n";
         os << "public " << this->mb.getClassName()
            << "IntegrationData<ModellingHypothesis::"
-           << ModellingHypothesis::toUpperCaseString(h) << ",Type,use_qt>";
+           << ModellingHypothesis::toUpperCaseString(h)
+           << ", NumericType, use_qt>";
         this->writeBehaviourParserSpecificInheritanceRelationship(os);
       } else {
-        os << "template<typename Type>\n";
+        os << "template<typename NumericType>\n";
         os << "struct " << this->mb.getClassName() << "<ModellingHypothesis::"
            << ModellingHypothesis::toUpperCaseString(h)
-           << ",Type,false> final\n";
+           << ", NumericType, false> final\n";
         os << ": public MechanicalBehaviour<" << btype
            << ",ModellingHypothesis::"
-           << ModellingHypothesis::toUpperCaseString(h) << ",Type,false>,\n";
+           << ModellingHypothesis::toUpperCaseString(h)
+           << ", NumericType, false>,\n";
         if (this->mb.getAttribute(BehaviourData::profiling, false)) {
           os << "public " << this->mb.getClassName() << "Profiler,\n";
         }
         os << "public " << this->mb.getClassName()
            << "BehaviourData<ModellingHypothesis::"
-           << ModellingHypothesis::toUpperCaseString(h) << ",Type,false>,\n";
+           << ModellingHypothesis::toUpperCaseString(h)
+           << ", NumericType, false>,\n";
         os << "public " << this->mb.getClassName()
            << "IntegrationData<ModellingHypothesis::"
-           << ModellingHypothesis::toUpperCaseString(h) << ",Type,false>";
+           << ModellingHypothesis::toUpperCaseString(h)
+           << ", NumericType, false>";
       }
     }
     os << "{\n\n";
@@ -4363,8 +4378,8 @@ namespace mfront {
           "ModellingHypothesisToSpaceDimension<hypothesis>::value;\n\n";
     os << "static_assert(N==1||N==2||N==3);\n";
     os << "static_assert(tfel::typetraits::"
-       << "IsFundamentalNumericType<Type>::cond);\n";
-    os << "static_assert(tfel::typetraits::IsReal<Type>::cond);\n\n";
+       << "IsFundamentalNumericType<NumericType>::cond);\n";
+    os << "static_assert(tfel::typetraits::IsReal<NumericType>::cond);\n\n";
     os << "friend std::ostream& operator<< <>(std::ostream&,const ";
     os << this->mb.getClassName() << "&);\n\n";
   }
@@ -4767,12 +4782,12 @@ namespace mfront {
     if (this->mb.hasCode(h, BehaviourData::ComputeSpeedOfSound)) {
       const auto vs = tfel::unicode::getMangledString("vₛ");
       const auto rho_m0 = tfel::unicode::getMangledString("ρₘ₀");
-      os << "real computeSpeedOfSound(const massdensity& rho_m0) const {\n"
+      os << "speed computeSpeedOfSound(const massdensity& rho_m0) const {\n"
          << "using namespace std;\n"
          << "using namespace tfel::math;\n";
       writeMaterialLaws(os, this->mb.getMaterialLaws());
       os << "const auto " << rho_m0 << " = rho_m0;\n"
-         << "auto v_sound = real{};\n"
+         << "auto v_sound = speed{};\n"
          << "auto& " << vs << " = v_sound;\n"
          << this->mb.getCode(h, BehaviourData::ComputeSpeedOfSound)
          << "static_cast<void>(" << rho_m0 << ");\n"
@@ -4780,8 +4795,8 @@ namespace mfront {
          << "return v_sound;\n"
          << "}\n\n";
     } else {
-      os << "real computeSpeedOfSound(const massdensity&) const {\n"
-         << "return 0;\n"
+      os << "speed computeSpeedOfSound(const massdensity&) const {\n"
+         << "return speed(0);\n"
          << "\n}\n\n";
     }
   }  // end of writeBehaviourComputeSpeedOfSound
@@ -4831,11 +4846,11 @@ namespace mfront {
          BehaviourDescription::GENERALBEHAVIOUR)) {
       if (this->mb.useQt()) {
         os << "raise_if(smflag!=MechanicalBehaviour<" << btype
-           << ",hypothesis,Type,use_qt>::STANDARDTANGENTOPERATOR,\n"
+           << ",hypothesis, NumericType, use_qt>::STANDARDTANGENTOPERATOR,\n"
            << "\"invalid tangent operator flag\");\n";
       } else {
         os << "raise_if(smflag!=MechanicalBehaviour<" << btype
-           << ",hypothesis,Type,false>::STANDARDTANGENTOPERATOR,\n"
+           << ",hypothesis, NumericType, false>::STANDARDTANGENTOPERATOR,\n"
            << "\"invalid tangent operator flag\");\n";
       }
     }
@@ -4867,20 +4882,20 @@ namespace mfront {
       }
       if (this->mb.useQt()) {
         os << "return MechanicalBehaviour<" << btype
-           << ",hypothesis,Type,use_qt>::FAILURE;\n";
+           << ",hypothesis, NumericType, use_qt>::FAILURE;\n";
       } else {
         os << "return MechanicalBehaviour<" << btype
-           << ",hypothesis,Type,false>::FAILURE;\n";
+           << ",hypothesis, NumericType, false>::FAILURE;\n";
       }
       os << "}\n";
       os << "}\n";
     }
     if (this->mb.useQt()) {
       os << "return MechanicalBehaviour<" << btype
-         << ",hypothesis,Type,use_qt>::SUCCESS;\n";
+         << ",hypothesis, NumericType, use_qt>::SUCCESS;\n";
     } else {
       os << "return MechanicalBehaviour<" << btype
-         << ",hypothesis,Type,false>::SUCCESS;\n";
+         << ",hypothesis, NumericType, false>::SUCCESS;\n";
     }
     os << "}\n\n";
   }
@@ -5245,23 +5260,23 @@ namespace mfront {
     if (this->mb.useQt()) {
       os << this->mb.getClassName() << "("
          << "const " << this->mb.getClassName()
-         << "BehaviourData<hypothesis,Type,use_qt>& src1,\n"
+         << "BehaviourData<hypothesis, NumericType, use_qt>& src1,\n"
          << "const " << this->mb.getClassName()
-         << "IntegrationData<hypothesis,Type,use_qt>& src2)\n"
+         << "IntegrationData<hypothesis, NumericType, use_qt>& src2)\n"
          << ": " << this->mb.getClassName()
-         << "BehaviourData<hypothesis,Type,use_qt>(src1),\n"
+         << "BehaviourData<hypothesis, NumericType, use_qt>(src1),\n"
          << this->mb.getClassName()
-         << "IntegrationData<hypothesis,Type,use_qt>(src2)";
+         << "IntegrationData<hypothesis, NumericType, use_qt>(src2)";
     } else {
       os << this->mb.getClassName() << "("
          << "const " << this->mb.getClassName()
-         << "BehaviourData<hypothesis,Type,false>& src1,\n"
+         << "BehaviourData<hypothesis, NumericType, false>& src1,\n"
          << "const " << this->mb.getClassName()
-         << "IntegrationData<hypothesis,Type,false>& src2)\n"
+         << "IntegrationData<hypothesis, NumericType, false>& src2)\n"
          << ": " << this->mb.getClassName()
-         << "BehaviourData<hypothesis,Type,false>(src1),\n"
+         << "BehaviourData<hypothesis, NumericType, false>(src1),\n"
          << this->mb.getClassName()
-         << "IntegrationData<hypothesis,Type,false>(src2)";
+         << "IntegrationData<hypothesis, NumericType, false>(src2)";
     }
     if (!init.empty()) {
       os << ",\n" << init;
@@ -5563,6 +5578,9 @@ namespace mfront {
       const auto& mpd =
           *(a.get<BehaviourDescription::ExternalMFrontMaterialProperty>().mpd);
       const auto inputs = this->mb.getMaterialPropertyInputs(mpd);
+      if (this->mb.useQt()) {
+        out << "thermalexpansion(";
+      }
       out << MFrontMaterialPropertyInterface().getFunctionName(mpd) << '(';
       for (auto pi = inputs.begin(); pi != inputs.end();) {
         const auto c = pi->category;
@@ -5585,7 +5603,11 @@ namespace mfront {
           out << ",";
         }
       }
-      out << ");\n";
+      if (this->mb.useQt()) {
+        out << "));\n";
+      } else {
+        out << ");\n";
+      }
     } else if (a.is<BehaviourDescription::AnalyticMaterialProperty>()) {
       const auto& amp = a.get<BehaviourDescription::AnalyticMaterialProperty>();
       auto m = std::map<std::string, std::string>{};
@@ -6099,26 +6121,37 @@ namespace mfront {
     this->checkBehaviourFile(os);
     const auto& d = this->mb.getBehaviourData(h);
     for (const auto& p : d.getParameters()) {
-      if ((h == uh) || (this->mb.hasParameter(uh, p.name))) {
-        if (p.arraySize == 1u) {
-          os << "this->" << p.name << " = " << this->mb.getClassName()
-             << "ParametersInitializer::get()." << p.name << ";\n";
+      const auto getter = [this, h, &p] {
+        if ((h == uh) || (this->mb.hasParameter(uh, p.name))) {
+          return this->mb.getClassName() + "ParametersInitializer::get()";
+        }
+        return this->mb.getClassName() + ModellingHypothesis::toString(h) +
+               "ParametersInitializer::get()";
+      }();
+      if (p.arraySize == 1u) {
+        os << "this->" << p.name << " = ";
+        if (this->mb.useQt()) {
+          os << p.type << "(" << getter << "." << p.name << ");\n";
         } else {
-          os << "tfel::fsalgo::copy<" << p.arraySize << ">::exe("
-             << this->mb.getClassName() << "ParametersInitializer::get()."
-             << p.name << ".begin(),this->" << p.name << ".begin());\n";
+          os << getter << "." << p.name << ";\n";
         }
       } else {
-        if (p.arraySize == 1u) {
-          os << "this->" << p.name << " = " << this->mb.getClassName()
-             << ModellingHypothesis::toString(h)
-             << "ParametersInitializer::get()." << p.name << ";\n";
-        } else {
-          os << "tfel::fsalgo::copy<" << p.arraySize << ">::exe("
-             << this->mb.getClassName() << ModellingHypothesis::toString(h)
-             << "ParametersInitializer::get()." << p.name << ".begin(),this->"
-             << p.name << ".begin());\n";
-        }
+        os << "this->" << p.name << " = "
+           << "tfel::math::map<tfel::math::tvector<" << p.arraySize << ", "
+           << p.type << ">>(" << getter << "." << p.name << ".data());\n";
+        //         if (this->mb.useQt()) {
+        //           os << "tfel::fsalgo::transform<" << p.arraySize <<
+        //           ">::exe("  //
+        //              << getter << "." << p.name << ".begin(), "    //
+        //              << "this->" << p.name << ".begin(), " //
+        //              << "[](const auto& parameter_value){"
+        //              << "return " << p.type << "(parameter_value);\n"
+        //              << "});\n";
+        //         } else {
+        //           os << "tfel::fsalgo::copy<" << p.arraySize << ">::exe("
+        //              << getter << "." << p.name << ".begin(),this->"
+        //              << p.name << ".begin());\n";
+        //         }
       }
     }
   }  // end of writeBehaviourParameterInitialisation
@@ -6242,34 +6275,35 @@ namespace mfront {
     this->checkBehaviourFile(os);
     if (h == ModellingHypothesis::UNDEFINEDHYPOTHESIS) {
       if (this->mb.useQt()) {
-        os << "template<ModellingHypothesis::Hypothesis hypothesis,typename "
-              "Type,bool use_qt>\n"
+        os << "template<ModellingHypothesis::Hypothesis hypothesis, "
+           << "typename NumericType, bool use_qt>\n"
            << "std::ostream&\n"
            << "operator <<(std::ostream& os,"
            << "const " << this->mb.getClassName()
-           << "<hypothesis,Type,use_qt>& b)\n";
+           << "<hypothesis, NumericType, use_qt>& b)\n";
       } else {
-        os << "template<ModellingHypothesis::Hypothesis hypothesis,typename "
-              "Type>\n"
+        os << "template<ModellingHypothesis::Hypothesis hypothesis, "
+           << "typename NumericType>\n"
            << "std::ostream&\n"
            << "operator <<(std::ostream& os,"
            << "const " << this->mb.getClassName()
-           << "<hypothesis,Type,false>& b)\n";
+           << "<hypothesis, NumericType, false>& b)\n";
       }
     } else {
       if (this->mb.useQt()) {
-        os << "template<typename Type,bool use_qt>\n"
+        os << "template<typename NumericType,bool use_qt>\n"
            << "std::ostream&\n"
            << "operator <<(std::ostream& os,"
            << "const " << this->mb.getClassName() << "<ModellingHypothesis::"
            << ModellingHypothesis::toUpperCaseString(h)
-           << ",Type,use_qt>& b)\n";
+           << ", NumericType, use_qt>& b)\n";
       } else {
-        os << "template<typename Type>\n"
+        os << "template<typename NumericType>\n"
            << "std::ostream&\n"
            << "operator <<(std::ostream& os,"
            << "const " << this->mb.getClassName() << "<ModellingHypothesis::"
-           << ModellingHypothesis::toUpperCaseString(h) << ",Type,false>& b)\n";
+           << ModellingHypothesis::toUpperCaseString(h)
+           << ", NumericType, false>& b)\n";
       }
     }
     os << "{\n";
@@ -6459,47 +6493,50 @@ namespace mfront {
     os << '\n' << "public :\n\n";
     const auto qt = this->mb.useQt() ? "use_qt" : "false";
     os << "typedef " << this->mb.getClassName()
-       << "BehaviourData<hypothesis,Type," << qt << "> BehaviourData;\n"
+       << "BehaviourData<hypothesis, NumericType, " << qt
+       << "> BehaviourData;\n"
        << "typedef " << this->mb.getClassName()
-       << "IntegrationData<hypothesis,Type," << qt << "> IntegrationData;\n"
+       << "IntegrationData<hypothesis, NumericType, " << qt
+       << "> IntegrationData;\n"
        << "typedef typename MechanicalBehaviour<" << btype
-       << ",hypothesis,Type," << qt << ">::SMFlag SMFlag;\n"
+       << ",hypothesis, NumericType, " << qt << ">::SMFlag SMFlag;\n"
        << "typedef typename MechanicalBehaviour<" << btype
-       << ",hypothesis,Type," << qt << ">::SMType SMType;\n"
-       << "using MechanicalBehaviour<" << btype << ",hypothesis,Type," << qt
-       << ">::ELASTIC;\n"
-       << "using MechanicalBehaviour<" << btype << ",hypothesis,Type," << qt
-       << ">::SECANTOPERATOR;\n"
-       << "using MechanicalBehaviour<" << btype << ",hypothesis,Type," << qt
-       << ">::TANGENTOPERATOR;\n"
-       << "using MechanicalBehaviour<" << btype << ",hypothesis,Type," << qt
-       << ">::CONSISTENTTANGENTOPERATOR;\n"
-       << "using MechanicalBehaviour<" << btype << ",hypothesis,Type," << qt
-       << ">::NOSTIFFNESSREQUESTED;\n";
+       << ",hypothesis, NumericType, " << qt << ">::SMType SMType;\n"
+       << "using MechanicalBehaviour<" << btype << ",hypothesis, NumericType, "
+       << qt << ">::ELASTIC;\n"
+       << "using MechanicalBehaviour<" << btype << ",hypothesis, NumericType, "
+       << qt << ">::SECANTOPERATOR;\n"
+       << "using MechanicalBehaviour<" << btype << ",hypothesis, NumericType, "
+       << qt << ">::TANGENTOPERATOR;\n"
+       << "using MechanicalBehaviour<" << btype << ",hypothesis, NumericType, "
+       << qt << ">::CONSISTENTTANGENTOPERATOR;\n"
+       << "using MechanicalBehaviour<" << btype << ",hypothesis, NumericType, "
+       << qt << ">::NOSTIFFNESSREQUESTED;\n";
     if ((this->mb.getBehaviourType() ==
          BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) ||
         (this->mb.getBehaviourType() ==
          BehaviourDescription::COHESIVEZONEMODEL)) {
-      os << "using MechanicalBehaviour<" << btype << ",hypothesis,Type," << qt
+      os << "using MechanicalBehaviour<" << btype
+         << ",hypothesis, NumericType, " << qt
          << ">::STANDARDTANGENTOPERATOR;\n";
     } else if (this->mb.getBehaviourType() ==
                BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR) {
       for (const auto& toflag :
            getFiniteStrainBehaviourTangentOperatorFlags()) {
-        os << "using MechanicalBehaviour<" << btype << ",hypothesis,Type," << qt
-           << ">::"
+        os << "using MechanicalBehaviour<" << btype
+           << ",hypothesis, NumericType, " << qt << ">::"
            << convertFiniteStrainBehaviourTangentOperatorFlagToString(toflag)
            << ";\n";
       }
     }
     os << "using IntegrationResult = typename MechanicalBehaviour<" << btype
-       << ",hypothesis,Type," << qt << ">::IntegrationResult;\n\n"
-       << "using MechanicalBehaviour<" << btype << ",hypothesis,Type," << qt
-       << ">::SUCCESS;\n"
-       << "using MechanicalBehaviour<" << btype << ",hypothesis,Type," << qt
-       << ">::FAILURE;\n"
-       << "using MechanicalBehaviour<" << btype << ",hypothesis,Type," << qt
-       << ">::UNRELIABLE_RESULTS;\n\n";
+       << ",hypothesis, NumericType, " << qt << ">::IntegrationResult;\n\n"
+       << "using MechanicalBehaviour<" << btype << ",hypothesis, NumericType, "
+       << qt << ">::SUCCESS;\n"
+       << "using MechanicalBehaviour<" << btype << ",hypothesis, NumericType, "
+       << qt << ">::FAILURE;\n"
+       << "using MechanicalBehaviour<" << btype << ",hypothesis, NumericType, "
+       << qt << ">::UNRELIABLE_RESULTS;\n\n";
     if ((this->mb.getBehaviourType() ==
          BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) ||
         (this->mb.getBehaviourType() ==
@@ -6562,27 +6599,29 @@ namespace mfront {
        << "*/\n";
     if (h == ModellingHypothesis::UNDEFINEDHYPOTHESIS) {
       if (this->mb.useQt()) {
-        os << "template<ModellingHypothesis::Hypothesis hypothesis,typename "
-              "Type,bool use_qt>\n"
+        os << "template<ModellingHypothesis::Hypothesis hypothesis, "
+           << "typename NumericType,bool use_qt>\n"
            << "class MechanicalBehaviourTraits<" << this->mb.getClassName()
-           << "<hypothesis,Type,use_qt> >\n";
+           << "<hypothesis, NumericType, use_qt> >\n";
       } else {
-        os << "template<ModellingHypothesis::Hypothesis hypothesis,typename "
-              "Type>\n"
+        os << "template<ModellingHypothesis::Hypothesis hypothesis, "
+           << "typename NumericType>\n"
            << "class MechanicalBehaviourTraits<" << this->mb.getClassName()
-           << "<hypothesis,Type,false> >\n";
+           << "<hypothesis, NumericType, false> >\n";
       }
     } else {
       if (this->mb.useQt()) {
-        os << "template<typename Type,bool use_qt>\n"
+        os << "template<typename NumericType,bool use_qt>\n"
            << "class MechanicalBehaviourTraits<" << this->mb.getClassName()
            << "<ModellingHypothesis::"
-           << ModellingHypothesis::toUpperCaseString(h) << ",Type,use_qt> >\n";
+           << ModellingHypothesis::toUpperCaseString(h)
+           << ", NumericType, use_qt> >\n";
       } else {
-        os << "template<typename Type>\n"
+        os << "template<typename NumericType>\n"
            << "class MechanicalBehaviourTraits<" << this->mb.getClassName()
            << "<ModellingHypothesis::"
-           << ModellingHypothesis::toUpperCaseString(h) << ",Type,false> >\n";
+           << ModellingHypothesis::toUpperCaseString(h)
+           << ", NumericType, false> >\n";
       }
     }
     os << "{\n";
@@ -6657,8 +6696,7 @@ namespace mfront {
     } else {
       os << "static " << constexpr_c << " unsigned short dimension = 0u;\n";
     }
-    os << "typedef Type NumType;\n"
-       << "static " << constexpr_c
+    os << "static " << constexpr_c
        << " unsigned short material_properties_nb = " << coefSize << ";\n"
        << "static " << constexpr_c
        << " unsigned short internal_variables_nb  = " << stateVarsSize << ";\n"
@@ -7168,11 +7206,11 @@ namespace mfront {
            BehaviourDescription::GENERALBEHAVIOUR)) {
         if (mb.useQt()) {
           os << "tfel::raise_if(smflag!=MechanicalBehaviour<" << btype
-             << ",hypothesis,Type,use_qt>::STANDARDTANGENTOPERATOR,\n"
+             << ",hypothesis, NumericType, use_qt>::STANDARDTANGENTOPERATOR,\n"
              << "\"invalid prediction operator flag\");\n";
         } else {
           os << "tfel::raise_if(smflag!=MechanicalBehaviour<" << btype
-             << ",hypothesis,Type,false>::STANDARDTANGENTOPERATOR,\n"
+             << ",hypothesis, NumericType, false>::STANDARDTANGENTOPERATOR,\n"
              << "\"invalid prediction operator flag\");\n";
         }
       }
@@ -7674,29 +7712,31 @@ namespace mfront {
        << "tfel::typetraits::IsFundamentalNumericType<Scal>::cond&&\n"
        << "tfel::typetraits::IsScalar<Scal>::cond&&\n"
        << "tfel::typetraits::IsReal<Scal>::cond&&\n"
-       << "std::is_same<Type,"
+       << "std::is_same<NumericType,"
        << "typename tfel::typetraits::Promote"
-       << "<Type,Scal>::type>::value,\n"
+       << "<NumericType,Scal>::type>::value,\n"
        << this->mb.getClassName() << "IntegrationData&\n"
        << ">::type\n";
     if (!iknown) {
       if (this->mb.useQt()) {
         os << "scale(const " << this->mb.getClassName()
-           << "BehaviourData<hypothesis,Type,use_qt>& behaviourData, const "
+           << "BehaviourData<hypothesis, NumericType, use_qt>& behaviourData, "
+              "const "
               "Scal time_scaling_factor){\n";
       } else {
         os << "scale(const " << this->mb.getClassName()
-           << "BehaviourData<hypothesis,Type,false>& behaviourData, const Scal "
+           << "BehaviourData<hypothesis, NumericType, false>& behaviourData, "
+              "const Scal "
               "time_scaling_factor){\n";
       }
     } else {
       if (this->mb.useQt()) {
         os << "scale(const " << this->mb.getClassName()
-           << "BehaviourData<hypothesis,Type,use_qt>&, const Scal "
+           << "BehaviourData<hypothesis, NumericType, use_qt>&, const Scal "
               "time_scaling_factor){\n";
       } else {
         os << "scale(const " << this->mb.getClassName()
-           << "BehaviourData<hypothesis,Type,false>&, const Scal "
+           << "BehaviourData<hypothesis, NumericType, false>&, const Scal "
               "time_scaling_factor){\n";
       }
     }
@@ -7731,18 +7771,20 @@ namespace mfront {
     if (!iknown) {
       if (this->mb.useQt()) {
         os << "updateDrivingVariables(const " << this->mb.getClassName()
-           << "BehaviourData<hypothesis,Type,use_qt>& behaviourData){\n";
+           << "BehaviourData<hypothesis, NumericType, use_qt>& "
+              "behaviourData){\n";
       } else {
         os << "updateDrivingVariables(const " << this->mb.getClassName()
-           << "BehaviourData<hypothesis,Type,false>& behaviourData){\n";
+           << "BehaviourData<hypothesis, NumericType, false>& "
+              "behaviourData){\n";
       }
     } else {
       if (this->mb.useQt()) {
         os << "updateDrivingVariables(const " << this->mb.getClassName()
-           << "BehaviourData<hypothesis,Type,use_qt>&){\n";
+           << "BehaviourData<hypothesis, NumericType, use_qt>&){\n";
       } else {
         os << "updateDrivingVariables(const " << this->mb.getClassName()
-           << "BehaviourData<hypothesis,Type,false>&){\n";
+           << "BehaviourData<hypothesis, NumericType, false>&){\n";
       }
     }
     for (const auto& v : this->mb.getMainVariables()) {
@@ -7764,9 +7806,9 @@ namespace mfront {
        << "* \\brief This class implements the " << this->mb.getClassName()
        << "IntegrationData"
        << " behaviour.\n"
-       << "* \\param unsigned short N, space dimension.\n"
-       << "* \\param typename Type, numerical type.\n"
-       << "* \\param bool use_qt, conditional saying if quantities are use.\n";
+       << "* \\tparam N: space dimension.\n"
+       << "* \\tparam NumericType: numerical type.\n"
+       << "* \\tparam use_qt: conditional saying if quantities are use.\n";
     if (!this->fd.authorName.empty()) {
       os << "* \\author " << this->fd.authorName << '\n';
     }
@@ -7780,23 +7822,23 @@ namespace mfront {
       std::ostream& os) const {
     this->checkIntegrationDataFile(os);
     os << "//! \\brief forward declaration\n"
-       << "template<ModellingHypothesis::Hypothesis hypothesis,typename "
-          "Type,bool use_qt>\n"
+       << "template<ModellingHypothesis::Hypothesis hypothesis, "
+       << "typename NumericType, bool use_qt>\n"
        << "class " << this->mb.getClassName() << "IntegrationData;\n\n";
     if (this->mb.useQt()) {
       os << "//! \\brief forward declaration\n"
-         << "template<ModellingHypothesis::Hypothesis hypothesis,typename "
-            "Type,bool use_qt>\n"
+         << "template<ModellingHypothesis::Hypothesis hypothesis, "
+         << "typename NumericType, bool use_qt>\n"
          << "std::ostream&\n operator <<(std::ostream&,"
          << "const " << this->mb.getClassName()
-         << "IntegrationData<hypothesis,Type,use_qt>&);\n\n";
+         << "IntegrationData<hypothesis, NumericType, use_qt>&);\n\n";
     } else {
       os << "//! \\brief forward declaration\n"
-         << "template<ModellingHypothesis::Hypothesis hypothesis,typename "
-            "Type>\n"
+         << "template<ModellingHypothesis::Hypothesis hypothesis, "
+         << "typename NumericType>\n"
          << "std::ostream&\n operator <<(std::ostream&,"
          << "const " << this->mb.getClassName()
-         << "IntegrationData<hypothesis,Type,false>&);\n\n";
+         << "IntegrationData<hypothesis, NumericType, false>&);\n\n";
     }
     // maintenant, il faut déclarer toutes les spécialisations partielles...
     const auto& mh = this->mb.getModellingHypotheses();
@@ -7804,20 +7846,20 @@ namespace mfront {
       if (this->mb.hasSpecialisedMechanicalData(h)) {
         if (this->mb.useQt()) {
           os << "//! \\brief forward declaration\n"
-             << "template<typename Type,bool use_qt>\n"
+             << "template<typename NumericType,bool use_qt>\n"
              << "std::ostream&\n operator <<(std::ostream&,"
              << "const " << this->mb.getClassName()
              << "IntegrationData<ModellingHypothesis::"
              << ModellingHypothesis::toUpperCaseString(h)
-             << ",Type,use_qt>&);\n\n";
+             << ", NumericType, use_qt>&);\n\n";
         } else {
           os << "//! \\brief forward declaration\n"
-             << "template<typename Type>\n"
+             << "template<typename NumericType>\n"
              << "std::ostream&\n operator <<(std::ostream&,"
              << "const " << this->mb.getClassName()
              << "IntegrationData<ModellingHypothesis::"
              << ModellingHypothesis::toUpperCaseString(h)
-             << ",Type,false>&);\n\n";
+             << ", NumericType, false>&);\n\n";
         }
       }
     }
@@ -7828,26 +7870,28 @@ namespace mfront {
     this->checkIntegrationDataFile(os);
     if (h == ModellingHypothesis::UNDEFINEDHYPOTHESIS) {
       if (this->mb.useQt()) {
-        os << "template<ModellingHypothesis::Hypothesis hypothesis,typename "
-              "Type,bool use_qt>\n";
+        os << "template<ModellingHypothesis::Hypothesis hypothesis, "
+           << "typename NumericType, bool use_qt>\n";
         os << "class " << this->mb.getClassName() << "IntegrationData\n";
       } else {
-        os << "template<ModellingHypothesis::Hypothesis hypothesis,typename "
-              "Type>\n";
+        os << "template<ModellingHypothesis::Hypothesis hypothesis, "
+           << "typename NumericType>\n";
         os << "class " << this->mb.getClassName()
-           << "IntegrationData<hypothesis,Type,false>\n";
+           << "IntegrationData<hypothesis, NumericType, false>\n";
       }
     } else {
       if (this->mb.useQt()) {
-        os << "template<typename Type,bool use_qt>\n";
+        os << "template<typename NumericType,bool use_qt>\n";
         os << "class " << this->mb.getClassName()
            << "IntegrationData<ModellingHypothesis::"
-           << ModellingHypothesis::toUpperCaseString(h) << ",Type,use_qt>\n";
+           << ModellingHypothesis::toUpperCaseString(h)
+           << ", NumericType, use_qt>\n";
       } else {
-        os << "template<typename Type>\n";
+        os << "template<typename NumericType>\n";
         os << "class " << this->mb.getClassName()
            << "IntegrationData<ModellingHypothesis::"
-           << ModellingHypothesis::toUpperCaseString(h) << ",Type,false>\n";
+           << ModellingHypothesis::toUpperCaseString(h)
+           << ", NumericType, false>\n";
       }
     }
     os << "{\n\n";
@@ -7862,8 +7906,8 @@ namespace mfront {
           "ModellingHypothesisToSpaceDimension<hypothesis>::value;\n";
     os << "static_assert(N==1||N==2||N==3);\n";
     os << "static_assert(tfel::typetraits::"
-       << "IsFundamentalNumericType<Type>::cond);\n";
-    os << "static_assert(tfel::typetraits::IsReal<Type>::cond);\n\n";
+       << "IsFundamentalNumericType<NumericType>::cond);\n";
+    os << "static_assert(tfel::typetraits::IsReal<NumericType>::cond);\n\n";
     os << "friend std::ostream& operator<< <>(std::ostream&,const ";
     os << this->mb.getClassName() << "IntegrationData&);\n\n";
   }
@@ -7874,36 +7918,37 @@ namespace mfront {
     this->checkBehaviourFile(os);
     if (h == ModellingHypothesis::UNDEFINEDHYPOTHESIS) {
       if (this->mb.useQt()) {
-        os << "template<ModellingHypothesis::Hypothesis hypothesis,typename "
-              "Type,bool use_qt>\n";
-        os << "std::ostream&\n";
-        os << "operator <<(std::ostream& os,";
-        os << "const " << this->mb.getClassName()
-           << "IntegrationData<hypothesis,Type,use_qt>& b)\n";
+        os << "template<ModellingHypothesis::Hypothesis hypothesis, "
+           << "typename NumericType,bool use_qt>\n"
+           << "std::ostream&\n"
+           << "operator <<(std::ostream& os,"
+           << "const " << this->mb.getClassName()
+           << "IntegrationData<hypothesis, NumericType, use_qt>& b)\n";
       } else {
-        os << "template<ModellingHypothesis::Hypothesis hypothesis,typename "
-              "Type>\n";
-        os << "std::ostream&\n";
-        os << "operator <<(std::ostream& os,";
-        os << "const " << this->mb.getClassName()
-           << "IntegrationData<hypothesis,Type,false>& b)\n";
+        os << "template<ModellingHypothesis::Hypothesis hypothesis, "
+           << "typename NumericType>\n"
+           << "std::ostream&\n"
+           << "operator <<(std::ostream& os,"
+           << "const " << this->mb.getClassName()
+           << "IntegrationData<hypothesis, NumericType, false>& b)\n";
       }
     } else {
       if (this->mb.useQt()) {
-        os << "template<typename Type,bool use_qt>\n";
-        os << "std::ostream&\n";
-        os << "operator <<(std::ostream& os,";
-        os << "const " << this->mb.getClassName()
+        os << "template<typename NumericType,bool use_qt>\n"
+           << "std::ostream&\n"
+           << "operator <<(std::ostream& os,"
+           << "const " << this->mb.getClassName()
            << "IntegrationData<ModellingHypothesis::"
            << ModellingHypothesis::toUpperCaseString(h)
-           << ",Type,use_qt>& b)\n";
+           << ", NumericType, use_qt>& b)\n";
       } else {
-        os << "template<typename Type>\n";
-        os << "std::ostream&\n";
-        os << "operator <<(std::ostream& os,";
-        os << "const " << this->mb.getClassName()
+        os << "template<typename NumericType>\n"
+           << "std::ostream&\n"
+           << "operator <<(std::ostream& os,"
+           << "const " << this->mb.getClassName()
            << "IntegrationData<ModellingHypothesis::"
-           << ModellingHypothesis::toUpperCaseString(h) << ",Type,false>& b)\n";
+           << ModellingHypothesis::toUpperCaseString(h)
+           << ", NumericType, false>& b)\n";
       }
     }
     os << "{\n";

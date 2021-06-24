@@ -1158,12 +1158,11 @@ namespace mfront {
       out << "using real = mfront::gb::real;\n"
           << "constexpr auto h = ModellingHypothesis::"
           << ModellingHypothesis::toUpperCaseString(h) << ";\n";
-      //       if (bd.useQt()) {
-      //         out << "using Behaviour = " << bd.getClassName() <<
-      //         "<h,real,true>;\n";
-      //       } else {
-      out << "using Behaviour = " << bd.getClassName() << "<h,real,false>;\n";
-      //      }
+      if (bd.useQt()) {
+        out << "using Behaviour = " << bd.getClassName() << "<h,real,true>;\n";
+      } else {
+        out << "using Behaviour = " << bd.getClassName() << "<h,real,false>;\n";
+      }
       if (bd.getAttribute(BehaviourData::profiling, false)) {
         out << "using mfront::BehaviourProfiler;\n"
             << "using tfel::material::" << bd.getClassName() << "Profiler;\n"
@@ -1513,14 +1512,14 @@ namespace mfront {
        << bd.getClassName() << "(const mfront::gb::BehaviourData& mgb_d)\n";
     if (bd.useQt()) {
       os << ": " << bd.getClassName()
-         << "BehaviourData<hypothesis,Type,use_qt>(mgb_d),\n"
+         << "BehaviourData<hypothesis, NumericType, use_qt>(mgb_d),\n"
          << bd.getClassName()
-         << "IntegrationData<hypothesis,Type,use_qt>(mgb_d)";
+         << "IntegrationData<hypothesis, NumericType, use_qt>(mgb_d)";
     } else {
       os << ": " << bd.getClassName()
-         << "BehaviourData<hypothesis,Type,false>(mgb_d),\n"
+         << "BehaviourData<hypothesis, NumericType, false>(mgb_d),\n"
          << bd.getClassName()
-         << "IntegrationData<hypothesis,Type,false>(mgb_d)";
+         << "IntegrationData<hypothesis, NumericType, false>(mgb_d)";
     }
     if (!initStateVarsIncrements.empty()) {
       os << ",\n" << initStateVarsIncrements;
@@ -1556,15 +1555,13 @@ namespace mfront {
       if (f == SupportedTypes::SCALAR) {
         os << "this->" << n << " = mgb_d." << src << "[" << o << "];\n";
       } else {
-        const auto s = vsize(f);
+        os << "this-> " << n << " = tfel::math::map<" << v.type << ">(";
         if (!o.isNull()) {
-          os << "tfel::fsalgo::copy<" << s << ">::exe(mgb_d." << src << "+" << o
-             << ","
-             << "this->" << n << ".begin());\n";
+          os << "mgb_d." << src << "+" << o;
         } else {
-          os << "tfel::fsalgo::copy<" << s << " >::exe(mgb_d." << src
-             << ",this->" << n << ".begin());\n";
+          os << "mgb_d." << src;
         }
+        os << ");\n";
       }
     };  // end of init
     auto odv = SupportedTypes::TypeSize{};
@@ -1582,8 +1579,13 @@ namespace mfront {
       if (!Gradient::isIncrementKnown(dv)) {
         const auto f = this->getTypeFlag(dv.type);
         if (f == SupportedTypes::SCALAR) {
-          os << "this->" << dv.name << "1 = mgb_d.s1.gradients[" << odv
-             << "];\n";
+          if (bd.useQt()) {
+            os << "this->" << dv.name << "1 = " << dv.type
+               << "(mgb_d.s1.gradients[" << odv << "]);\n";
+          } else {
+            os << "this->" << dv.name << "1 = mgb_d.s1.gradients[" << odv
+               << "];\n";
+          }
         } else {
           const auto s = vsize(f);
           if (!odv.isNull()) {
@@ -2025,45 +2027,37 @@ namespace mfront {
       }
       return "TensorSize";
     };
-    auto export_variable = [this, &os, &vsize](
+    auto export_variable = [this, &bd, &os, &vsize](
                                const VariableDescription& v,
                                const char* const dest,
                                const SupportedTypes::TypeSize o) {
-      const auto f = this->getTypeFlag(v.type);
-      if (v.arraySize == 1u) {
+      auto do_export = [this, &bd, &v, &os, &dest](
+                           const SupportedTypes::TypeSize offset,
+                           const auto& n) {
+        const auto f = this->getTypeFlag(v.type);
         if (f == SupportedTypes::SCALAR) {
-          os << "mbg_s1." << dest << "[" << o << "] "
-             << "= this->" << v.name << ";\n";
-        } else {
-          const auto s = vsize(f);
-          if (o.isNull()) {
-            os << "tfel::fsalgo::copy<" << s << ">::exe("
-               << "this->" << v.name << ".begin(), "
-               << "mbg_s1." << dest << ");\n";
+          if (bd.useQt()) {
+            os << "mbg_s1." << dest << "[" << offset << "] = "
+               << "tfel::math::base_type_cast(" << n << ");\n";
           } else {
-            os << "tfel::fsalgo::copy<" << s << ">::exe("
-               << "this->" << v.name << ".begin(), "
-               << "mbg_s1." << dest << " + " << o << ");\n";
+            os << "mbg_s1." << dest << "[" << offset << "] = " << n << ";\n";
+          }
+        } else {
+          if (offset.isNull()) {
+            os << "tfel::math::map<" << v.type << ">(mbg_s1." << dest
+               << ") = " << n << ";\n";
+          } else {
+            os << "tfel::math::map<" << v.type << ">(mbg_s1." << dest << " + "
+               << offset << ") = " << n << ";\n";
           }
         }
+      };
+      if (v.arraySize == 1u) {
+        do_export(o, "this->" + v.name);
       } else {
         auto c = o;
         for (unsigned short idx = 0; idx != v.arraySize; ++idx) {
-          if (f == SupportedTypes::SCALAR) {
-            os << "mbg_s1." << dest << "[" << c << "] "
-               << "= this->" << v.name << "[" << idx << "];\n";
-          } else {
-            const auto s = vsize(f);
-            if (c.isNull()) {
-              os << "tfel::fsalgo::copy<" << s << ">::exe("
-                 << "this->" << v.name << "[" << idx << "].begin(), "
-                 << "mbg_s1." << dest << ");\n";
-            } else {
-              os << "tfel::fsalgo::copy<" << s << ">::exe("
-                 << "this->" << v.name << "[" << idx << "].begin(), "
-                 << "mbg_s1." << dest << " + " << c << ");\n";
-            }
-          }
+          do_export(c, "this->" + v.name + "[" + std::to_string(idx) + "]");
           c += this->getTypeSize(v.type, 1u);
         }
       }

@@ -30,41 +30,43 @@ namespace tfel::material {
   /*
    * \brief compute the first Lame's coefficient
    */
-  template <typename T>
-  constexpr T computeLambda(const T young, const T nu) {
+  template <typename NumericType>
+  constexpr NumericType computeLambda(const NumericType& young,
+                                      const NumericType& nu) noexcept {
     return nu * young / ((1 + nu) * (1 - 2 * nu));
   }
 
   /*
    * \brief compute the first Lame's coefficient
    */
-  template <typename T>
-  constexpr tfel::math::qt<tfel::math::Stress, T> computeLambda(
-      const tfel::math::qt<tfel::math::Stress, T> young,
-      const tfel::math::qt<tfel::math::NoUnit, T> nu) {
+  template <typename NumericType>
+  constexpr tfel::math::qt<tfel::math::Stress, NumericType> computeLambda(
+      const tfel::math::qt<tfel::math::Stress, NumericType>& young,
+      const tfel::math::qt<tfel::math::NoUnit, NumericType>& nu) noexcept {
     return nu * young / ((1 + nu) * (1 - 2 * nu));
   }
 
   /*
    * \brief compute the second Lame's coefficient
    */
-  template <typename T>
-  constexpr T computeMu(const T young, const T nu) {
+  template <typename NumericType>
+  constexpr NumericType computeMu(const NumericType& young,
+                                  const NumericType& nu) noexcept {
     return young / (2 * (1 + nu));
   }
 
   /*
    * \brief compute the second Lame's coefficient
    */
-  template <typename T>
-  constexpr tfel::math::qt<tfel::math::Stress, T> computeMu(
-      const tfel::math::qt<tfel::math::Stress, T> young,
-      const tfel::math::qt<tfel::math::NoUnit, T> nu) {
+  template <typename NumericType>
+  constexpr tfel::math::qt<tfel::math::Stress, NumericType> computeMu(
+      const tfel::math::qt<tfel::math::Stress, NumericType>& young,
+      const tfel::math::qt<tfel::math::NoUnit, NumericType>& nu) {
     return young / (2 * (1 + nu));
   }
 
   /*!
-   * \class computeElasticStiffness
+   * \class ComputeElasticStiffnessBase
    * \brief compute the elastic stiffness given Lame's coefficients
    * \param N : space dimension
    * \param T : numerical type
@@ -72,13 +74,13 @@ namespace tfel::material {
    * \date   12 Sep 2006
    */
   template <unsigned short, typename>
-  struct computeElasticStiffness;
+  struct ComputeElasticStiffnessBase;
 
   /*
    * Partial specialisation in 1D
    */
   template <typename T>
-  struct computeElasticStiffness<1u, T> {
+  struct ComputeElasticStiffnessBase<1u, T> {
     static void exe(
         typename tfel::config::Types<1u, T, true>::StiffnessTensor& D,
         const typename tfel::config::Types<1u, T, true>::stress lambda,
@@ -107,7 +109,7 @@ namespace tfel::material {
    * Partial specialisation in 2D
    */
   template <typename T>
-  struct computeElasticStiffness<2u, T> {
+  struct ComputeElasticStiffnessBase<2u, T> {
     static void exe(
         typename tfel::config::Types<2u, T, true>::StiffnessTensor& D,
         const typename tfel::config::Types<2u, T, true>::stress lambda,
@@ -147,7 +149,7 @@ namespace tfel::material {
    * Partial specialisation in 3D
    */
   template <typename T>
-  struct computeElasticStiffness<3u, T> {
+  struct ComputeElasticStiffnessBase<3u, T> {
     static void exe(
         typename tfel::config::Types<3u, T, true>::StiffnessTensor& D,
         const typename tfel::config::Types<3u, T, true>::stress lambda,
@@ -198,6 +200,19 @@ namespace tfel::material {
   };
 
   /*!
+   * \class computeElasticStiffness
+   * \brief compute the elastic stiffness given Lame's coefficients
+   * \param N : space dimension
+   * \param T : numerical type
+   * \author Thomas Helfer
+   * \date   12 Sep 2006
+   */
+  template <unsigned short N, typename T>
+  struct computeElasticStiffness
+      : ComputeElasticStiffnessBase<N, tfel::math::base_type<T>> {
+  };  // end of struct computeElasticStiffness
+
+  /*!
    * \class computeUnalteredElasticStiffness
    * \brief compute the elastic stiffness given Lame's coefficients
    * \param N : space dimension
@@ -206,23 +221,11 @@ namespace tfel::material {
    * \date   12 Sep 2006
    */
   template <unsigned short N, typename T>
-  struct computeUnalteredElasticStiffness {
-    static void exe(
-        typename tfel::config::Types<N, T, true>::StiffnessTensor& D,
-        const typename tfel::config::Types<N, T, true>::stress lambda,
-        const typename tfel::config::Types<N, T, true>::stress mu) {
-      computeElasticStiffness<N, T>::exe(D, lambda, mu);
-    }
-    static void exe(
-        typename tfel::config::Types<N, T, false>::StiffnessTensor& D,
-        const typename tfel::config::Types<N, T, false>::stress lambda,
-        const typename tfel::config::Types<N, T, false>::stress mu) {
-      computeElasticStiffness<N, T>::exe(D, lambda, mu);
-    }
-  };
+  struct computeUnalteredElasticStiffness : computeElasticStiffness<N, T> {
+  };  // end of struct computeUnalteredElasticStiffness;
 
   /*!
-   * \class computeUnalteredElasticStiffness
+   * \class ComputeAlteredElasticStiffnessBase
    * \brief compute the elastic stiffness given Lame's coefficients
    * \param H : modelling hypothesis
    * \param T : numerical type
@@ -230,25 +233,13 @@ namespace tfel::material {
    * \date   12 Sep 2006
    */
   template <ModellingHypothesis::Hypothesis H, typename T>
-  struct computeAlteredElasticStiffness {
-    static constexpr unsigned short N =
-        ModellingHypothesisToSpaceDimension<H>::value;
-    static void exe(
-        typename tfel::config::Types<N, T, true>::StiffnessTensor& D,
-        const typename tfel::config::Types<N, T, true>::stress lambda,
-        const typename tfel::config::Types<N, T, true>::stress mu) {
-      computeElasticStiffness<N, T>::exe(D, lambda, mu);
-    }
-    static void exe(
-        typename tfel::config::Types<N, T, false>::StiffnessTensor& D,
-        const typename tfel::config::Types<N, T, false>::stress lambda,
-        const typename tfel::config::Types<N, T, false>::stress mu) {
-      computeElasticStiffness<N, T>::exe(D, lambda, mu);
-    }
-  };  // end of struct computeAlteredElasticStiffness
+  struct ComputeAlteredElasticStiffnessBase
+      : computeElasticStiffness<ModellingHypothesisToSpaceDimension<H>::value,
+                                T> {
+  };  // end of struct ComputeAlteredElasticStiffnessBase
 
   template <typename T>
-  struct computeAlteredElasticStiffness<
+  struct ComputeAlteredElasticStiffnessBase<
       ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS,
       T> {
     static void exe(
@@ -277,10 +268,10 @@ namespace tfel::material {
       D(1, 1) = D1;
       D(2, 2) = D(0, 2) = D(1, 2) = D(2, 0) = D(2, 1) = stress(T(0));
     }
-  };  // end of struct computeAlteredElasticStiffness
+  };  // end of struct ComputeAlteredElasticStiffnessBase
 
   template <typename T>
-  struct computeAlteredElasticStiffness<ModellingHypothesis::PLANESTRESS, T> {
+  struct ComputeAlteredElasticStiffnessBase<ModellingHypothesis::PLANESTRESS, T> {
     static void exe(
         typename tfel::config::Types<2u, T, true>::StiffnessTensor& D,
         const typename tfel::config::Types<2u, T, true>::stress lambda,
@@ -311,6 +302,19 @@ namespace tfel::material {
       D(0, 2) = D(0, 3) = D(1, 2) = D(1, 3) = D(2, 0) = D(2, 1) = stress(T(0));
       D(2, 2) = D(2, 3) = D(3, 0) = D(3, 1) = D(3, 2) = stress(T(0));
     }
+  };  // end of struct ComputeAlteredElasticStiffnessBase
+
+  /*!
+   * \class computeUnalteredElasticStiffness
+   * \brief compute the elastic stiffness given Lame's coefficients
+   * \param H : modelling hypothesis
+   * \param T : numerical type
+   * \author Thomas Helfer
+   * \date   12 Sep 2006
+   */
+  template <ModellingHypothesis::Hypothesis H, typename T>
+  struct computeAlteredElasticStiffness
+      : ComputeAlteredElasticStiffnessBase<H,tfel::math::base_type<T>> {
   };  // end of struct computeAlteredElasticStiffness
 
 }  // end of namespace tfel::material

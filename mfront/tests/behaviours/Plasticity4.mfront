@@ -1,14 +1,16 @@
-@DSL IsotropicPlasticMisesFlow;
-@Behaviour Plasticity;
+@DSL MultipleIsotropicMisesFlows;
+@Behaviour Plasticity4;
+@UseQt true;
 @Author Helfer Thomas;
 @Date 23 / 11 / 06;
 
-@UseQt true;
+@Epsilon 1e-14;
+@Theta 1;
 
 @MaterialProperty stress H;
 @MaterialProperty stress s0;
 
-@FlowRule {
+@FlowRule Plasticity {
   f = seq - H * p - s0;
   df_dseq = 1;
   df_dp = -H;

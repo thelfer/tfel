@@ -150,10 +150,10 @@ namespace mfront {
     }
     if (mb.useQt()) {
       out << "return MechanicalBehaviour<" << btype
-          << ",hypothesis,Type,use_qt>::FAILURE;\n";
+          << ",hypothesis, NumericType,use_qt>::FAILURE;\n";
     } else {
       out << "return MechanicalBehaviour<" << btype
-          << ",hypothesis,Type,false>::FAILURE;\n";
+          << ",hypothesis, NumericType,false>::FAILURE;\n";
     }
     out << "} else {\n";
     if (getDebugMode()) {
@@ -161,7 +161,7 @@ namespace mfront {
           << "::integrate() : computFdF returned false, dividing increment by "
              "two...\" << endl;\n";
     }
-    out << "const real integrate_one_half = real(1)/real(2);\n"
+    out << "constexpr NumericType integrate_one_half = NumericType(1) / 2;\n"
         << "this->zeros -= "
            "(this->zeros-this->zeros_1)*integrate_one_half;\n"
         << "this->updateMaterialPropertiesDependantOnStateVariables();\n"
@@ -221,31 +221,31 @@ namespace mfront {
         (this->jacobianUpdatePeriod != -1) &&
         (n2.getValueForDimension(1u) > 3)) {
       out << "if(this->iter%" << jacobianUpdatePeriod << "){\n"
-          << "TinyMatrixSolve<" << n2 << ","
-          << "real>::decomp(this->jacobian,permutation_vector);\n"
+          << "TinyMatrixSolve<" << n2 << ", NumericType>"
+          << "::decomp(this->jacobian,permutation_vector);\n"
           << "}\n"
-          << "TinyMatrixSolve<" << n2 << ","
-          << "real>::back_substitute(this->jacobian,permutation_vector,this->"
-             "fzeros);\n";
+          << "TinyMatrixSolve<" << n2 << ", NumericType>"
+          << "::back_substitute(this->jacobian,permutation_vector, "
+          << "this->fzeros);\n";
     } else {
-      out << "TinyMatrixSolve<" << n2 << ","
-          << "real>::exe(this->jacobian,this->fzeros);\n";
+      out << "TinyMatrixSolve<" << n2 << ", NumericType>"
+          << "::exe(this->jacobian,this->fzeros);\n";
     }
     if (mb.getAttribute(BehaviourData::profiling, false)) {
       writeStandardPerformanceProfilingEnd(out);
     }
     out << "}\n"
-        << "catch(LUException&){\n";
+        << "catch(tfel::math::LUException&){\n";
     if (getDebugMode()) {
       out << "cout << \"" << mb.getClassName()
           << "::integrate(): jacobian inversion failed\" << endl << endl;\n";
     }
     if (mb.useQt()) {
       out << "return MechanicalBehaviour<" << btype
-          << ",hypothesis,Type,use_qt>::FAILURE;\n";
+          << ",hypothesis, NumericType, use_qt>::FAILURE;\n";
     } else {
       out << "return MechanicalBehaviour<" << btype
-          << ",hypothesis,Type,false>::FAILURE;\n";
+          << ",hypothesis, NumericType, false>::FAILURE;\n";
     }
     out << "}\n";
     if (this->usesPowellDogLegAlgorithm()) {

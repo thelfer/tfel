@@ -304,7 +304,6 @@ namespace tfel::math::internals {
                                                     NumType& vp2,
                                                     const NumType* const v,
                                                     const bool) {
-      constexpr auto icste = Cste<real>::isqrt2;
       auto sm = StensorEigenSolverBase<3u, NumType>::as_base_matrix(v);
       auto vp = tvector<3u, real>{};
       auto m = tmatrix<3u, 3u>{};

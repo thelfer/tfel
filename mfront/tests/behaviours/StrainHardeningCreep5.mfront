@@ -1,0 +1,21 @@
+@DSL MultipleIsotropicMisesFlows;
+@Behaviour StrainHardeningCreep5;
+@UseQt true;
+@Author Helfer Thomas;
+@Date 23 / 11 / 06;
+
+@MaterialProperty strainrate ∂ₜε₀;
+∂ₜε₀.setEntryName("ReferenceViscoplasticStrainRate");
+@MaterialProperty stress σ₀;
+σ₀.setEntryName("ReferenceEquivalentStress");
+@MaterialProperty real Ns;
+@MaterialProperty real Np;
+
+@FlowRule StrainHardeningCreep {
+  constexpr auto p0_min  = strain{1.e-6};
+  const auto rseq = seq / σ₀;
+  const auto tmp = ∂ₜε₀ * pow(rseq, Ns - 1) * pow(p + p0_min, -Np - 1);
+  f = tmp * rseq * (p + p0_min);
+  df_dseq = Ns * tmp * (p + p0_min) / σ₀;
+  df_dp = -Np * tmp * rseq;
+}

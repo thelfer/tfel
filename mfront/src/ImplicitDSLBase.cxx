@@ -133,7 +133,7 @@ namespace mfront {
         &ImplicitDSLBase::treatNumericallyComputedJacobianBlocks);
     this->registerNewCallBack("@HillTensor", &ImplicitDSLBase::treatHillTensor);
     this->disableCallBack("@ComputedVar");
-    this->disableCallBack("@UseQt");
+    //    this->disableCallBack("@UseQt");
     this->mb.setIntegrationScheme(BehaviourDescription::IMPLICITSCHEME);
   }  // end of ImplicitDSLBase
 
@@ -1636,7 +1636,7 @@ namespace mfront {
             os << "tfel::math::derivative_view_from_tiny_matrix<" << n3 << ", "
                << v.type << "," << v2.type << "> "
                << "df" << v.name << "_dd" << v2.name << "(tfel::math::tmatrix<"
-               << n3 << "," << n3 << ",real>& tjacobian,"
+               << n3 << "," << n3 << ", NumericType>& tjacobian,"
                << "const unsigned short idx){\n"
                << "return tfel::math::map_derivative<" << v.type << ","
                << v2.type << ">(tjacobian, " << n << " + idx * ("
@@ -1654,7 +1654,7 @@ namespace mfront {
             os << "tfel::math::derivative_view_from_tiny_matrix<" << n3 << ", "
                << v.type << "," << v2.type << "> "
                << "df" << v.name << "_dd" << v2.name << "(tfel::math::tmatrix<"
-               << n3 << "," << n3 << ",real>& tjacobian,"
+               << n3 << "," << n3 << ", NumericType>& tjacobian,"
                << "const unsigned short idx){\n"
                << "return tfel::math::map_derivative<" << v.type << ","
                << v2.type << ">(tjacobian, " << n << ", " << n2 << " + idx * ("
@@ -1672,7 +1672,7 @@ namespace mfront {
             os << "tfel::math::derivative_view_from_tiny_matrix<" << n3 << ", "
                << v.type << "," << v2.type << "> "
                << "df" << v.name << "_dd" << v2.name << "(tfel::math::tmatrix<"
-               << n3 << "," << n3 << ",real>& tjacobian,"
+               << n3 << "," << n3 << ", NumericType>& tjacobian,"
                << "const unsigned short idx, "
                << "const unsigned short idx2){\n"
                << "return tfel::math::map_derivative<" << v.type << ","
@@ -1700,19 +1700,19 @@ namespace mfront {
     n = n3;
     if (this->solver->usesJacobian()) {
       os << "// Jacobian\n";
-      os << "tfel::math::tmatrix<" << n << "," << n << ",real> jacobian;\n";
+      os << "tfel::math::tmatrix<" << n << "," << n << ", NumericType> jacobian;\n";
     }
     if (this->solver->usesJacobianInvert()) {
       os << "// Jacobian\n";
-      os << "tfel::math::tmatrix<" << n << "," << n << ",real> inv_jacobian;\n";
+      os << "tfel::math::tmatrix<" << n << "," << n << ", NumericType> inv_jacobian;\n";
     }
     this->solver->writeSpecificMembers(os, this->mb, h);
     os << "// zeros\n";
-    os << "tfel::math::tvector<" << n << ",real> zeros;\n\n";
+    os << "tfel::math::tvector<" << n << ", NumericType> zeros;\n\n";
     os << "// previous zeros\n";
-    os << "tfel::math::tvector<" << n << ",real> zeros_1;\n\n";
+    os << "tfel::math::tvector<" << n << ", NumericType> zeros_1;\n\n";
     os << "// function\n";
-    os << "tfel::math::tvector<" << n << ",real> fzeros;\n\n";
+    os << "tfel::math::tvector<" << n << ", NumericType> fzeros;\n\n";
     os << "// number of iterations\n";
     os << "unsigned int iter = 0u;\n\n";
     //
@@ -1732,8 +1732,8 @@ namespace mfront {
     }
     // additional convergence checks
     if (this->mb.hasCode(h, BehaviourData::AdditionalConvergenceChecks)) {
-      os << "void additionalConvergenceChecks(bool& converged,real& "
-            "error, const SMType smt){\n"
+      os << "void additionalConvergenceChecks(bool& converged, "
+         << "NumericType& error, const SMType smt){\n"
          << "using namespace std;\n"
          << "using namespace tfel::math;\n"
          << "using std::vector;\n";
@@ -1745,7 +1745,7 @@ namespace mfront {
          << "static_cast<void>(smt);\n"
          << "} // end of additionalConvergenceChecks\n\n";
     } else {
-      os << "void additionalConvergenceChecks(bool&,real&,const SMType) "
+      os << "void additionalConvergenceChecks(bool&, NumericType&,const SMType) "
             "const{\n"
          << "} // end of additionalConvergenceChecks\n\n";
     }
@@ -1795,23 +1795,24 @@ namespace mfront {
     const auto& cb = this->mb.getCodeBlock(h, n);
     if (getAttribute(cb, CodeBlock::requires_jacobian_decomposition, false)) {
       os << "TinyPermutation<" << nivs << "> jacobian_permutation;\n"
-         << "TinyMatrixSolve<" << nivs
-         << ",real>::decomp(this->jacobian,jacobian_permutation);\n";
+         << "TinyMatrixSolve<" << nivs << ", NumericType>"
+         << "::decomp(this->jacobian,jacobian_permutation);\n";
     }
     if (hasAttribute<std::vector<Derivative>>(
             cb, CodeBlock::used_jacobian_invert_blocks)) {
       const auto& invert_jacobian_blocks =
           getAttribute<std::vector<Derivative>>(
               cb, CodeBlock::used_jacobian_invert_blocks);
-      os << "auto jacobian_invert = tfel::math::tmatrix<" << nivs << ", "
-         << nivs << ", real>{};\n"
+      os << "auto jacobian_invert = "
+         << "tfel::math::tmatrix<" << nivs << ", " << nivs
+         << ", NumericType>{};\n"
          << "std::fill(jacobian_invert.begin(), jacobian_invert.end(), "
-            "real(0));\n"
+            "NumericType(0));\n"
          << "for(typename tfel::math::tmatrix<" << nivs << ", " << nivs
-         << ", real>::size_type idx=0;idx != " << nivs << "; ++idx){\n"
-         << "jacobian_invert(idx, idx) = real(1);\n"
+         << ", NumericType>::size_type idx=0;idx != " << nivs << "; ++idx){\n"
+         << "jacobian_invert(idx, idx) = NumericType(1);\n"
          << "}\n"
-         << "TinyMatrixSolve<" << nivs << ",real>::back_substitute("
+         << "TinyMatrixSolve<" << nivs << ", NumericType>::back_substitute("
          << "this->jacobian, jacobian_permutation, jacobian_invert);\n";
       auto cr = SupportedTypes::TypeSize{};  // current row
       auto cc = SupportedTypes::TypeSize{};  // current column
@@ -1919,12 +1920,13 @@ namespace mfront {
         auto nc = mfront::getTypeSize(derivatives.first);
         const auto rhs_type = [&nivs, &nc] {
           std::ostringstream rhs_os;
-          rhs_os << "tfel::math::tmatrix<" << nivs << ", " << nc << ", real>";
+          rhs_os << "tfel::math::tmatrix<" << nivs << ", " << nc << ", NumericType>";
           return rhs_os.str();
         }();
         const auto m = "dfzeros_dd" + derivatives.first.name;
         os << rhs_type << m << ";\n"
-           << "std::fill(" << m << ".begin(), " << m << ".end(), real(0));\n";
+           << "std::fill(" << m << ".begin(), " << m
+           << ".end(), NumericType(0));\n";
         // creating the view for the derivatives
         auto cr = SupportedTypes::TypeSize{};  // current row
         for (const auto& iv : isvs) {
@@ -1986,7 +1988,8 @@ namespace mfront {
         auto nc = mfront::getTypeSize(givd);
         const auto rhs_type = [&nivs, &nc] {
           std::ostringstream rhs_os;
-          rhs_os << "tfel::math::tmatrix<" << nivs << ", " << nc << ", real>";
+          rhs_os << "tfel::math::tmatrix<" << nivs << ", " << nc
+                 << ", NumericType>";
           return rhs_os.str();
         }();
         const auto m = "dfzeros_dd" + givd.name;
@@ -2013,9 +2016,9 @@ namespace mfront {
           }
           os << "){\n"
              << rhs_type << " lhs(-(this->rhs));\n"
-             << "tfel::math::TinyMatrixSolve<" << nivs
-             << ", real>::back_substitute(this->behaviour."
-                "jacobian, this->permutation, lhs);\n";
+             << "tfel::math::TinyMatrixSolve<" << nivs << ", NumericType>"
+             << "::back_substitute(this->behaviour.jacobian, "
+             << "this->permutation, lhs);\n";
           auto cr = SupportedTypes::TypeSize{};  // current row
           for (size_type i2 = 0; i2 <= i; ++i2) {
             const auto& v = isvs[i2];
@@ -2089,10 +2092,10 @@ namespace mfront {
          << "{\n"
          << "using namespace tfel::math;\n"
          << "for(unsigned short idx=0;idx!=StensorSize;++idx){\n"
-         << "tvector<" << n << ",real> vect_e(real(0));\n"
-         << "vect_e(idx) = real(1);\n"
-         << "TinyMatrixSolve<" << n
-         << ",real>::back_substitute(this->jacobian,jacobian_permutation,"
+         << "tvector<" << n << ", NumericType> vect_e(NumericType(0));\n"
+         << "vect_e(idx) = NumericType(1);\n"
+         << "TinyMatrixSolve<" << n << ", NumericType>"
+         << "::back_substitute(this->jacobian,jacobian_permutation,"
             "vect_e);\n";
       SupportedTypes::TypeSize n2;
       for (size_type i2 = 0; i2 <= i; ++i2) {
@@ -2155,14 +2158,15 @@ namespace mfront {
     const auto& d = this->mb.getBehaviourData(h);
     const auto n = d.getIntegrationVariables().getTypeSize();
     this->checkBehaviourFile(os);
-    os << "void computeNumericalJacobian(tfel::math::tmatrix<" << n << "," << n
-       << ",real>& njacobian)\n"
+    os << "void computeNumericalJacobian("
+       << "tfel::math::tmatrix<" << n << "," << n
+       << ", NumericType>& njacobian)\n"
        << "{\n"
        << "using namespace std;\n"
        << "using namespace tfel::math;\n"
-       << "tvector<" << n << ",real> tzeros(this->zeros);\n"
-       << "tvector<" << n << ",real> tfzeros(this->fzeros);\n"
-       << "tmatrix<" << n << "," << n << ",real> tjacobian(this->jacobian);\n"
+       << "tvector<" << n << ", NumericType> tzeros(this->zeros);\n"
+       << "tvector<" << n << ", NumericType> tfzeros(this->fzeros);\n"
+       << "tmatrix<" << n << "," << n << ", NumericType> tjacobian(this->jacobian);\n"
        << "for(unsigned short idx = 0; idx!= " << n << ";++idx){\n"
        << "this->zeros(idx) -= this->numerical_jacobian_epsilon;\n";
     if (this->mb.hasCode(h, BehaviourData::ComputeThermodynamicForces)) {
@@ -2170,15 +2174,14 @@ namespace mfront {
     }
     os << "this->computeFdF(true);\n"
        << "this->zeros = tzeros;\n"
-       << "tvector<" << n << ",real> tfzeros2(this->fzeros);\n"
+       << "tvector<" << n << ", NumericType> tfzeros2(this->fzeros);\n"
        << "this->zeros(idx) += this->numerical_jacobian_epsilon;\n";
     if (this->mb.hasCode(h, BehaviourData::ComputeThermodynamicForces)) {
       os << "this->computeThermodynamicForces();\n";
     }
     os << "this->computeFdF(true);\n"
        << "this->fzeros = "
-          "(this->fzeros-tfzeros2)/"
-          "(2*(this->numerical_jacobian_epsilon));\n"
+          "(this->fzeros-tfzeros2) / (2 * (this->numerical_jacobian_epsilon));\n"
        << "for(unsigned short idx2 = 0; idx2!= " << n << ";++idx2){\n"
        << "njacobian(idx2,idx) = this->fzeros(idx2);\n"
        << "}\n"
@@ -2227,11 +2230,11 @@ namespace mfront {
          BehaviourDescription::COHESIVEZONEMODEL)) {
       if (this->mb.useQt()) {
         os << "tfel::raise_if(smflag!=MechanicalBehaviour<" << btype
-           << ",hypothesis,Type,use_qt>::STANDARDTANGENTOPERATOR,\n"
+           << ",hypothesis, NumericType, use_qt>::STANDARDTANGENTOPERATOR,\n"
            << "\"invalid tangent operator flag\");\n";
       } else {
         os << "tfel::raise_if(smflag!=MechanicalBehaviour<" << btype
-           << ",hypothesis,Type,false>::STANDARDTANGENTOPERATOR,\n"
+           << ",hypothesis, NumericType, false>::STANDARDTANGENTOPERATOR,\n"
            << "\"invalid tangent operator flag\");\n";
       }
     }
@@ -2252,10 +2255,10 @@ namespace mfront {
     }
     if (this->mb.useQt()) {
       os << "return MechanicalBehaviour<" << btype
-         << ",hypothesis,Type,use_qt>::FAILURE;\n";
+         << ",hypothesis, NumericType, use_qt>::FAILURE;\n";
     } else {
       os << "return MechanicalBehaviour<" << btype
-         << ",hypothesis,Type,false>::FAILURE;\n";
+         << ",hypothesis, NumericType, false>::FAILURE;\n";
     }
     os << "}\n";
     if (getDebugMode()) {
@@ -2295,10 +2298,10 @@ namespace mfront {
       }
       if (this->mb.useQt()) {
         os << "return MechanicalBehaviour<" << btype
-           << ",hypothesis,Type,use_qt>::FAILURE;\n";
+           << ",hypothesis, NumericType, use_qt>::FAILURE;\n";
       } else {
         os << "return MechanicalBehaviour<" << btype
-           << ",hypothesis,Type,false>::FAILURE;\n";
+           << ",hypothesis, NumericType, false>::FAILURE;\n";
       }
       os << "}\n";
     } else {
@@ -2310,10 +2313,10 @@ namespace mfront {
     os << "}\n";
     if (this->mb.useQt()) {
       os << "return MechanicalBehaviour<" << btype
-         << ",hypothesis,Type,use_qt>::SUCCESS;\n";
+         << ",hypothesis, NumericType, use_qt>::SUCCESS;\n";
     } else {
       os << "return MechanicalBehaviour<" << btype
-         << ",hypothesis,Type,false>::SUCCESS;\n";
+         << ",hypothesis, NumericType, false>::SUCCESS;\n";
     }
     os << "} // end of " << this->mb.getClassName() << "::integrate\n\n";
     this->writeComputeFdF(os, h);
@@ -2348,7 +2351,12 @@ namespace mfront {
       os << "static_cast<void>(" << v.name << "_offset);\n";
       if (v.arraySize == 1u) {
         if (SupportedTypes::getTypeFlag(v.type) == SupportedTypes::SCALAR) {
-          os << "real& f" << v.name << "(this->fzeros(" << n << "));\n";
+          if (this->mb.useQt()) {
+            os << "tfel::math::scalar_view<" << v.type << "> f" << v.name
+               << "(this->fzeros(" << n << "));\n";
+          } else {
+            os << "real& f" << v.name << "(this->fzeros(" << n << "));\n";
+          }
         } else {
           os << "auto f" << v.name << " = tfel::math::map<" << v.type << ", "
              << n << ">(this->fzeros);\n";
@@ -2378,10 +2386,10 @@ namespace mfront {
     if (this->solver
             ->requiresJacobianToBeReinitialisedToIdentityAtEachIterations()) {
       os << "// setting jacobian to identity\n"
-         << "std::fill(this->jacobian.begin(),this->jacobian.end(),real(0))"
+         << "std::fill(this->jacobian.begin(),this->jacobian.end(), NumericType(0))"
             ";\n"
          << "for(unsigned short idx = 0; idx != " << n << "; ++idx){\n"
-         << "this->jacobian(idx, idx) = real(1);\n"
+         << "this->jacobian(idx, idx) = NumericType(1);\n"
          << "}\n";
     }
     os << "// setting f values to zeros\n"
@@ -2398,7 +2406,7 @@ namespace mfront {
       if (this->mb.hasAttribute(h, 'f' + v.name + "_normalisation_factor")) {
         const auto& nf = this->mb.getAttribute<std::string>(
             h, 'f' + v.name + "_normalisation_factor");
-        os << "f" << v.name << "*= real(1)/(" << nf << ");\n";
+        os << "f" << v.name << "*= NumericType(1)/(" << nf << ");\n";
       }
     }
     if ((this->solver->usesJacobian()) &&
@@ -2452,24 +2460,24 @@ namespace mfront {
                   os << "for(unsigned short idx2=0;idx2!=" << v2.arraySize
                      << ";++idx2){\n";
                   os << "df" << v.name << "_dd" << v2.name << "(idx,idx2) *= "
-                     << "real(1)/(" << fnf << ");\n";
+                     << "NumericType(1)/(" << fnf << ");\n";
                   os << "}\n";
                   os << "}\n";
                 } else if ((v.arraySize != 1u) && (v2.arraySize == 1u)) {
                   os << "for(unsigned short idx=0;idx!=" << v.arraySize
                      << ";++idx){\n";
                   os << "df" << v.name << "_dd" << v2.name << "(idx) *= "
-                     << "real(1)/(" << fnf << ");\n";
+                     << "NumericType(1)/(" << fnf << ");\n";
                   os << "}\n";
                 } else if ((v.arraySize == 1u) && (v2.arraySize != 1u)) {
                   os << "for(unsigned short idx=0;idx!=" << v2.arraySize
                      << ";++idx){\n";
                   os << "df" << v.name << "_dd" << v2.name << "(idx) *= "
-                     << "real(1)/(" << fnf << ");\n";
+                     << "NumericType(1)/(" << fnf << ");\n";
                   os << "}\n";
                 } else if ((v.arraySize == 1u) && (v2.arraySize == 1u)) {
                   os << "df" << v.name << "_dd" << v2.name << " *= "
-                     << "real(1)/(" << fnf << ");\n";
+                     << "NumericType(1)/(" << fnf << ");\n";
                 }
               }
             } else {
@@ -2578,7 +2586,8 @@ namespace mfront {
       const Hypothesis h) const {
     auto init = BehaviourDSLCommon::getBehaviourConstructorsInitializers(h);
     init += (!init.empty()) ? ",\n" : "";
-    init += "zeros(real(0)),\nfzeros(real(0))";
+    init += "zeros(NumericType(0)),\n";
+    init += "fzeros(NumericType(0))";
     return init;
   }
 
@@ -2597,7 +2606,12 @@ namespace mfront {
       }
       if (v.arraySize == 1u) {
         if (SupportedTypes::getTypeFlag(v.type) == SupportedTypes::SCALAR) {
-          os << "real& d" << v.name << ";\n";
+          if (this->mb.useQt()) {
+            os << "tfel::math::scalar_view<" << v.type << "> "
+               << "d" << v.name << ";\n";
+          } else {
+            os << "real& d" << v.name << ";\n";
+          }
         } else {
           os << "tfel::math::View<" << v.type << "> d" << v.name << ";\n";
         }

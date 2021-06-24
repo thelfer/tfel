@@ -2748,24 +2748,23 @@ namespace mfront {
     const auto mprops = this->buildMaterialPropertiesList(mb, h);
     if (h == ModellingHypothesis::UNDEFINEDHYPOTHESIS) {
       if (mb.useQt()) {
-        out << "template<tfel::material::ModellingHypothesis::Hypothesis "
-               "H,typename Type,bool "
-               "use_qt>\n";
+        out << "template<tfel::material::ModellingHypothesis::Hypothesis H, "
+            << "typename NumericType, bool use_qt>\n";
       } else {
-        out << "template<tfel::material::ModellingHypothesis::Hypothesis "
-               "H,typename Type>\n";
+        out << "template<tfel::material::ModellingHypothesis::Hypothesis H, "
+            << "typename NumericType>\n";
       }
       out << "struct CastemTraits<tfel::material::" << mb.getClassName()
-          << "<H,Type,";
+          << "<H, NumericType,";
     } else {
       if (mb.useQt()) {
-        out << "template<typename Type,bool use_qt>\n";
+        out << "template<typename NumericType, bool use_qt>\n";
       } else {
-        out << "template<typename Type>\n";
+        out << "template<typename NumericType>\n";
       }
       out << "struct CastemTraits<tfel::material::" << mb.getClassName()
           << "<tfel::material::ModellingHypothesis::"
-          << ModellingHypothesis::toUpperCaseString(h) << ",Type,";
+          << ModellingHypothesis::toUpperCaseString(h) << ", NumericType, ";
     }
     if (mb.useQt()) {
       out << "use_qt";

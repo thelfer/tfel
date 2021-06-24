@@ -27,8 +27,8 @@
 #include "TFEL/Tests/TestManager.hxx"
 
 template <typename T>
-static constexpr bool my_abs(const T& v) noexcept {
-  return v < 0 ? -v : v;
+static constexpr T my_abs(const T& v) noexcept {
+  return v < T(0) ? -v : v;
 }
 
 struct QtRefTest final : public tfel::tests::TestCase {
@@ -36,6 +36,7 @@ struct QtRefTest final : public tfel::tests::TestCase {
   tfel::tests::TestResult execute() override {
     this->test1();
     this->test2();
+    this->test3();
     return this->result;
   } // end of execute
   void test1() {
@@ -53,7 +54,7 @@ struct QtRefTest final : public tfel::tests::TestCase {
   }
    void test2() {
      using namespace tfel::math;
-     static constexpr auto eps = double{1e-14};
+     constexpr auto eps = double{1e-14};
      constexpr auto s = []() constexpr->stensor<3, qt<Stress, double>> {
        double stress_values[6] = {0, 1, 2, 3, 4, 5};
        return map<stensor<3, qt<Stress>>>(stress_values);
@@ -66,6 +67,21 @@ struct QtRefTest final : public tfel::tests::TestCase {
      TFEL_TESTS_STATIC_ASSERT(my_abs(s[4].getValue() - 4) < eps);
      TFEL_TESTS_STATIC_ASSERT(my_abs(s[5].getValue() - 5) < eps);
    }  // end of test2
+   void test3() {
+     using namespace tfel::math;
+     using stress = qt<Stress, double>;
+     constexpr auto eps = double{1e-14};
+     auto sig = stensor<3u, stress>{stress{0}, stress{1}, stress{2},
+				    stress{3}, stress{4}, stress{5}};
+     double stress_values[6];
+     map<stensor<3u, qt<Stress, double>>>(stress_values) = sig;
+     TFEL_TESTS_ASSERT(my_abs(stress_values[0]) < eps);
+     TFEL_TESTS_ASSERT(my_abs(stress_values[1] - 1) < eps);
+     TFEL_TESTS_ASSERT(my_abs(stress_values[2] - 2) < eps);
+     TFEL_TESTS_ASSERT(my_abs(stress_values[3] - 3) < eps);
+     TFEL_TESTS_ASSERT(my_abs(stress_values[4] - 4) < eps);
+     TFEL_TESTS_ASSERT(my_abs(stress_values[5] - 5) < eps);
+   }  // end of test3
 };
 
 TFEL_TESTS_GENERATE_PROXY(QtRefTest, "QtRefTest");

@@ -19,7 +19,177 @@
 #include "TFEL/Math/Quantity/Unit.hxx"
 #include "TFEL/Math/qt.hxx"
 
-#define QT_RESULT_TYPE(X)                                                      \
+#define TFEL_MATH_QT_SCALAR_OPERATIONS(X)                                      \
+                                                                               \
+  template <typename UnitType, typename ValueType, typename OwnershipPolicy>   \
+  constexpr bool operator<(                                                    \
+      const Quantity<UnitType, ValueType, OwnershipPolicy>& a,                 \
+      const X& b) noexcept {                                                   \
+    static_assert(std::is_same_v<UnitType, NoUnit>,                            \
+                  "invalid operation (unmatched unit)");                       \
+    return a.getValue() < b;                                                   \
+  }                                                                            \
+                                                                               \
+  template <typename UnitType, typename ValueType, typename OwnershipPolicy>   \
+  constexpr bool operator<(                                                    \
+      const X& a,                                                              \
+      const Quantity<UnitType, ValueType, OwnershipPolicy>& b) noexcept {      \
+    static_assert(std::is_same_v<UnitType, NoUnit>,                            \
+                  "invalid operation (unmatched unit)");                       \
+    return a < b.getValue();                                                   \
+  }                                                                            \
+                                                                               \
+  template <typename UnitType, typename ValueType, typename OwnershipPolicy>   \
+  constexpr bool operator<=(                                                   \
+      const Quantity<UnitType, ValueType, OwnershipPolicy>& a,                 \
+      const X& b) noexcept {                                                   \
+    static_assert(std::is_same_v<UnitType, NoUnit>,                            \
+                  "invalid operation (unmatched unit)");                       \
+    return a.getValue() <= b;                                                  \
+  }                                                                            \
+                                                                               \
+  template <typename UnitType, typename ValueType, typename OwnershipPolicy>   \
+  constexpr bool operator<=(                                                   \
+      const X& a,                                                              \
+      const Quantity<UnitType, ValueType, OwnershipPolicy>& b) noexcept {      \
+    static_assert(std::is_same_v<UnitType, NoUnit>,                            \
+                  "invalid operation (unmatched unit)");                       \
+    return a <= b.getValue();                                                  \
+  }                                                                            \
+                                                                               \
+  template <typename UnitType, typename ValueType, typename OwnershipPolicy>   \
+  constexpr bool operator>(                                                    \
+      const Quantity<UnitType, ValueType, OwnershipPolicy>& a,                 \
+      const X& b) noexcept {                                                   \
+    static_assert(std::is_same_v<UnitType, NoUnit>,                            \
+                  "invalid operation (unmatched unit)");                       \
+    return a.getValue() > b;                                                   \
+  }                                                                            \
+                                                                               \
+  template <typename UnitType, typename ValueType, typename OwnershipPolicy>   \
+  constexpr bool operator>(                                                    \
+      const X& a,                                                              \
+      const Quantity<UnitType, ValueType, OwnershipPolicy>& b) noexcept {      \
+    static_assert(std::is_same_v<UnitType, NoUnit>,                            \
+                  "invalid operation (unmatched unit)");                       \
+    return a > b.getValue();                                                   \
+  }                                                                            \
+                                                                               \
+  template <typename UnitType, typename ValueType, typename OwnershipPolicy>   \
+  constexpr bool operator>=(                                                   \
+      const Quantity<UnitType, ValueType, OwnershipPolicy>& a,                 \
+      const X& b) noexcept {                                                   \
+    static_assert(std::is_same_v<UnitType, NoUnit>,                            \
+                  "invalid operation (unmatched unit)");                       \
+    return a.getValue() >= b;                                                  \
+  }                                                                            \
+                                                                               \
+  template <typename UnitType, typename ValueType, typename OwnershipPolicy>   \
+  constexpr bool operator>=(                                                   \
+      const X& a,                                                              \
+      const Quantity<UnitType, ValueType, OwnershipPolicy>& b) noexcept {      \
+    static_assert(std::is_same_v<UnitType, NoUnit>,                            \
+                  "invalid operation (unmatched unit)");                       \
+    return a >= b.getValue();                                                  \
+  }                                                                            \
+                                                                               \
+  template <typename UnitType, typename ValueType, typename OwnershipPolicy>   \
+  constexpr bool operator==(                                                   \
+      const Quantity<UnitType, ValueType, OwnershipPolicy>& a,                 \
+      const X& b) noexcept {                                                   \
+    static_assert(std::is_same_v<UnitType, NoUnit>,                            \
+                  "invalid operation (unmatched unit)");                       \
+    return a.getValue() == b;                                                  \
+  }                                                                            \
+                                                                               \
+  template <typename UnitType, typename ValueType, typename OwnershipPolicy>   \
+  constexpr bool operator==(                                                   \
+      const X& a,                                                              \
+      const Quantity<UnitType, ValueType, OwnershipPolicy>& b) noexcept {      \
+    static_assert(std::is_same_v<UnitType, NoUnit>,                            \
+                  "invalid operation (unmatched unit)");                       \
+    return a == b.getValue();                                                  \
+  }                                                                            \
+                                                                               \
+  template <typename UnitType, typename ValueType, typename OwnershipPolicy>   \
+  constexpr bool operator!=(                                                   \
+      const X& a,                                                              \
+      const Quantity<UnitType, ValueType, OwnershipPolicy>& b) noexcept {      \
+    static_assert(std::is_same_v<UnitType, NoUnit>,                            \
+                  "invalid operation (unmatched unit)");                       \
+    return a != b.getValue();                                                  \
+  }                                                                            \
+                                                                               \
+  template <typename UnitType, typename ValueType, typename OwnershipPolicy>   \
+  constexpr bool operator!=(                                                   \
+      const Quantity<UnitType, ValueType, OwnershipPolicy>& a,                 \
+      const X& b) noexcept {                                                   \
+    static_assert(std::is_same_v<UnitType, NoUnit>,                            \
+                  "invalid operation (unmatched unit)");                       \
+    return a.getValue() != b;                                                  \
+  }                                                                            \
+  /*!                                                                          \
+   * \brief Partial specialisation for qt with no unit and a scalar            \
+   * \see   ResultType                                                         \
+   */                                                                          \
+  template <typename ValueType, typename OwnershipPolicy>                      \
+  struct ResultType<Quantity<NoUnit, ValueType, OwnershipPolicy>, X, OpPlus> { \
+    using type =                                                               \
+        qt<NoUnit, typename tfel::typetraits::Promote<ValueType, X>::type>;    \
+  };                                                                           \
+                                                                               \
+  /*!                                                                          \
+   * \brief Partial specialisation for qt with no unit and a scalar            \
+   * \see   ResultType                                                         \
+   */                                                                          \
+  template <typename ValueType, typename OwnershipPolicy>                      \
+  struct ResultType<X, Quantity<NoUnit, ValueType, OwnershipPolicy>, OpPlus> { \
+    using type =                                                               \
+        qt<NoUnit, typename tfel::typetraits::Promote<ValueType, X>::type>;    \
+  };                                                                           \
+                                                                               \
+  template <typename UnitType, typename ValueType, typename OwnershipPolicy>   \
+  constexpr qt<NoUnit, typename tfel::typetraits::Promote<ValueType, X>::type> \
+  operator+(const Quantity<NoUnit, ValueType, OwnershipPolicy>&,               \
+            const X&) noexcept;                                                \
+                                                                               \
+  template <typename UnitType, typename ValueType, typename OwnershipPolicy>   \
+  constexpr qt<NoUnit, typename tfel::typetraits::Promote<ValueType, X>::type> \
+  operator+(const X&,                                                          \
+            const Quantity<NoUnit, ValueType, OwnershipPolicy>&) noexcept;     \
+                                                                               \
+  /*!                                                                          \
+   * \brief Partial specialisation for qt with no unit and a scalar            \
+   * \see   ResultType                                                         \
+   */                                                                          \
+  template <typename ValueType, typename OwnershipPolicy>                      \
+  struct ResultType<Quantity<NoUnit, ValueType, OwnershipPolicy>, X,           \
+                    OpMinus> {                                                 \
+    using type =                                                               \
+        qt<NoUnit, typename tfel::typetraits::Promote<ValueType, X>::type>;    \
+  };                                                                           \
+                                                                               \
+  /*!                                                                          \
+   * \brief Partial specialisation for qt with no unit and a scalar            \
+   * \see   ResultType                                                         \
+   */                                                                          \
+  template <typename ValueType, typename OwnershipPolicy>                      \
+  struct ResultType<X, Quantity<NoUnit, ValueType, OwnershipPolicy>,           \
+                    OpMinus> {                                                 \
+    using type =                                                               \
+        qt<NoUnit, typename tfel::typetraits::Promote<ValueType, X>::type>;    \
+  };                                                                           \
+                                                                               \
+  template <typename UnitType, typename ValueType, typename OwnershipPolicy>   \
+  constexpr qt<NoUnit, typename tfel::typetraits::Promote<ValueType, X>::type> \
+  operator-(const Quantity<NoUnit, ValueType, OwnershipPolicy>&,               \
+            const X&) noexcept;                                                \
+                                                                               \
+  template <typename UnitType, typename ValueType, typename OwnershipPolicy>   \
+  constexpr qt<NoUnit, typename tfel::typetraits::Promote<ValueType, X>::type> \
+  operator-(const X&,                                                          \
+            const Quantity<NoUnit, ValueType, OwnershipPolicy>&) noexcept;     \
+                                                                               \
   /*!                                                                          \
    * \brief Partial specialisation for qt by scalar product                    \
    * \see   ResultType                                                         \
@@ -45,12 +215,14 @@
   template <typename UnitType, typename ValueType, typename OwnershipPolicy>   \
   constexpr qt<UnitType,                                                       \
                typename tfel::typetraits::Promote<ValueType, X>::type>         \
-  operator*(const Quantity<UnitType, ValueType, OwnershipPolicy>&, const X);   \
+  operator*(const Quantity<UnitType, ValueType, OwnershipPolicy>&,             \
+            const X&)noexcept;                                                 \
                                                                                \
   template <typename UnitType, typename ValueType, typename OwnershipPolicy>   \
   constexpr qt<UnitType,                                                       \
                typename tfel::typetraits::Promote<ValueType, X>::type>         \
-  operator*(const X, const Quantity<UnitType, ValueType, OwnershipPolicy>&);   \
+  operator*(const X&,                                                          \
+            const Quantity<UnitType, ValueType, OwnershipPolicy>&)noexcept;    \
                                                                                \
   /*!                                                                          \
    * \brief Partial specialisation for qt by scalar division                   \
@@ -76,19 +248,19 @@
   };                                                                           \
                                                                                \
   template <typename UnitType, typename ValueType, typename OwnershipPolicy>   \
-  constexpr Quantity<UnitType,                                                 \
-                     typename tfel::typetraits::Promote<ValueType, X>::type,   \
-                     OwnershipPolicy>                                          \
-  operator/(const Quantity<UnitType, ValueType, OwnershipPolicy>&, const X);   \
+  constexpr qt<UnitType,                                                       \
+               typename tfel::typetraits::Promote<ValueType, X>::type>         \
+  operator/(const Quantity<UnitType, ValueType, OwnershipPolicy>&,             \
+            const X&) noexcept;                                                \
                                                                                \
   template <typename ValueType, typename UnitType, typename OwnershipPolicy>   \
-  constexpr Quantity<                                                          \
+  constexpr qt<                                                                \
       typename tfel::math::internals::SubstractUnit<NoUnit, UnitType>::type,   \
-      typename tfel::typetraits::Promote<ValueType, X>::type, OwnershipPolicy> \
-  operator/(const X, const Quantity<UnitType, ValueType, OwnershipPolicy>&)
+      typename tfel::typetraits::Promote<ValueType, X>::type>                  \
+  operator/(const X&,                                                          \
+            const Quantity<UnitType, ValueType, OwnershipPolicy>&) noexcept
 
 namespace tfel::math {
-
   /*!
    * \brief Partial specialisation for addition of two qt having the same unit
    * \see   ResultType
@@ -109,12 +281,14 @@ namespace tfel::math {
   template <typename UnitType,
             typename ValueType,
             typename OwnershipPolicy,
+            typename UnitType2,
             typename ValueType2,
             typename OwnershipPolicy2>
   constexpr qt<UnitType,
                typename tfel::typetraits::Promote<ValueType, ValueType2>::type>
   operator+(const Quantity<UnitType, ValueType, OwnershipPolicy>& a,
-            const Quantity<UnitType, ValueType2, OwnershipPolicy2>& b) {
+            const Quantity<UnitType2, ValueType2, OwnershipPolicy2>& b) {
+    static_assert(std::is_same_v<UnitType, UnitType2>, "invalid operation");
     return qt<UnitType,
               typename tfel::typetraits::Promote<ValueType, ValueType2>::type>{
         a.getValue() + b.getValue()};
@@ -140,12 +314,14 @@ namespace tfel::math {
   template <typename UnitType,
             typename ValueType,
             typename OwnershipPolicy,
+            typename UnitType2,
             typename ValueType2,
             typename OwnershipPolicy2>
   constexpr qt<UnitType,
                typename tfel::typetraits::Promote<ValueType, ValueType2>::type>
   operator-(const Quantity<UnitType, ValueType, OwnershipPolicy>& a,
-            const Quantity<UnitType, ValueType, OwnershipPolicy2>& b) {
+            const Quantity<UnitType2, ValueType2, OwnershipPolicy2>& b) {
+    static_assert(std::is_same_v<UnitType, UnitType2>, "invalid operation");
     return qt<UnitType,
               typename tfel::typetraits::Promote<ValueType, ValueType2>::type>{
         a.getValue() - b.getValue()};
@@ -218,24 +394,24 @@ namespace tfel::math {
         a.getValue() / b.getValue()};
   }
 
-  QT_RESULT_TYPE(unsigned short);
-  QT_RESULT_TYPE(unsigned int);
-  QT_RESULT_TYPE(long unsigned int);
-  QT_RESULT_TYPE(short);
-  QT_RESULT_TYPE(int);
-  QT_RESULT_TYPE(long int);
-  QT_RESULT_TYPE(float);
-  QT_RESULT_TYPE(double);
-  QT_RESULT_TYPE(long double);
-  QT_RESULT_TYPE(Complex<unsigned short>);
-  QT_RESULT_TYPE(Complex<unsigned int>);
-  QT_RESULT_TYPE(Complex<long unsigned int>);
-  QT_RESULT_TYPE(Complex<short>);
-  QT_RESULT_TYPE(Complex<int>);
-  QT_RESULT_TYPE(Complex<long int>);
-  QT_RESULT_TYPE(Complex<float>);
-  QT_RESULT_TYPE(Complex<double>);
-  QT_RESULT_TYPE(Complex<long double>);
+  TFEL_MATH_QT_SCALAR_OPERATIONS(unsigned short);
+  TFEL_MATH_QT_SCALAR_OPERATIONS(unsigned int);
+  TFEL_MATH_QT_SCALAR_OPERATIONS(long unsigned int);
+  TFEL_MATH_QT_SCALAR_OPERATIONS(short);
+  TFEL_MATH_QT_SCALAR_OPERATIONS(int);
+  TFEL_MATH_QT_SCALAR_OPERATIONS(long int);
+  TFEL_MATH_QT_SCALAR_OPERATIONS(float);
+  TFEL_MATH_QT_SCALAR_OPERATIONS(double);
+  TFEL_MATH_QT_SCALAR_OPERATIONS(long double);
+  TFEL_MATH_QT_SCALAR_OPERATIONS(Complex<unsigned short>);
+  TFEL_MATH_QT_SCALAR_OPERATIONS(Complex<unsigned int>);
+  TFEL_MATH_QT_SCALAR_OPERATIONS(Complex<long unsigned int>);
+  TFEL_MATH_QT_SCALAR_OPERATIONS(Complex<short>);
+  TFEL_MATH_QT_SCALAR_OPERATIONS(Complex<int>);
+  TFEL_MATH_QT_SCALAR_OPERATIONS(Complex<long int>);
+  TFEL_MATH_QT_SCALAR_OPERATIONS(Complex<float>);
+  TFEL_MATH_QT_SCALAR_OPERATIONS(Complex<double>);
+  TFEL_MATH_QT_SCALAR_OPERATIONS(Complex<long double>);
 
 }  // namespace tfel::math
 

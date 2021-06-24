@@ -16,20 +16,18 @@
 #undef NDEBUG
 #endif
 
-#include <iostream>
-#include <cstdlib>
 #include <cmath>
+#include <cstdlib>
 #include <cassert>
-
+#include <iostream>
 #include "TFEL/Math/qt.hxx"
-
 #include "TFEL/Tests/TestCase.hxx"
 #include "TFEL/Tests/TestProxy.hxx"
 #include "TFEL/Tests/TestManager.hxx"
 
 template <typename T>
-static constexpr bool my_abs(const T& v) noexcept {
-  return v < 0 ? -v : v;
+static constexpr T my_abs(const T& v) noexcept {
+  return v < T(0) ? -v : v;
 }
 
 struct qtTest final : public tfel::tests::TestCase {
@@ -38,6 +36,8 @@ struct qtTest final : public tfel::tests::TestCase {
     this->test1();
     this->test2();
     this->test3();
+    this->test4();
+    this->test5();
     return this->result;
   }  // end of execute
  private:
@@ -48,12 +48,14 @@ struct qtTest final : public tfel::tests::TestCase {
     constexpr qt<Mass> m3 = m1 + 0.5 * m2;
     constexpr qt<Acceleration, unsigned short> a(2);
     constexpr qt<Force> f = m1 * a;
+    const auto value = qt<NoUnit>(3);
     TFEL_TESTS_STATIC_ASSERT(!isQuantity<double>());
     TFEL_TESTS_STATIC_ASSERT(isQuantity<qt<Mass>>());
     TFEL_TESTS_STATIC_ASSERT(my_abs(m3.getValue() - 150.) < 1.e-14);
     TFEL_TESTS_STATIC_ASSERT(my_abs(f.getValue() - 200.) < 1.e-14);
     TFEL_TESTS_ASSERT(
         (my_abs(std::cos(qt<NoUnit>(12.)) - std::cos(12.)) < 1.e-14));
+    TFEL_TESTS_ASSERT((my_abs(pow(value, 3.) - 27) < 1.e-14));
   }  // end of test1
   void test2() {
     using namespace tfel::math;
@@ -74,6 +76,24 @@ struct qtTest final : public tfel::tests::TestCase {
     TFEL_TESTS_STATIC_ASSERT(!(b == a));
     TFEL_TESTS_STATIC_ASSERT(abs(a).getValue() == 12);
   }  // end of test3
+  void test4() {
+    using namespace tfel::math;
+    using time = qt<Time, double>;
+    auto time_value = double(1);
+    auto getTime = [&time_value] () -> double & {
+		     return time_value;
+		   };
+    auto t = time(getTime());
+    TFEL_TESTS_ASSERT(my_abs(t.getValue() - 1) < 1.e-14);
+  }
+  //! Test if implicit conversion works as expected
+  void test5() {
+    using namespace tfel::math;
+    auto d = [](const qt<NoUnit, double>& v) constexpr {
+      return 2 * v.getValue();
+    };
+    TFEL_TESTS_STATIC_ASSERT(my_abs(d(12) - 24) < 1.e-14);
+  }
 };
 
 TFEL_TESTS_GENERATE_PROXY(qtTest, "qtTest");

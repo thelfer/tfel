@@ -22,7 +22,7 @@
 
 namespace tfel::math::ieee754 {
 
-  int fpclassify(const float x) {
+  constexpr int fpclassify(const float x) noexcept {
     union {
       float f;
       uint32_t i;
@@ -33,7 +33,7 @@ namespace tfel::math::ieee754 {
     return FP_NORMAL;
   }
 
-  int fpclassify(const double x) {
+  constexpr int fpclassify(const double x) noexcept {
     union {
       double f;
       uint64_t i;
@@ -45,7 +45,7 @@ namespace tfel::math::ieee754 {
   }
 
 #if LDBL_MANT_DIG == 53 && LDBL_MAX_EXP == 1024
-  int fpclassify(const long double x) {
+  constexpr int fpclassify(const long double x) noexcept {
     union {
       long double f;
       uint64_t i;
@@ -56,7 +56,7 @@ namespace tfel::math::ieee754 {
     return FP_NORMAL;
   }
 #elif LDBL_MANT_DIG == 64 && LDBL_MAX_EXP == 16384
-  int fpclassify(const long double x) {
+  constexpr int fpclassify(const long double x) noexcept {
 #ifdef __BYTE_ORDER
 #if __BYTE_ORDER == __LITTLE_ENDIAN
 #else
@@ -84,14 +84,17 @@ namespace tfel::math::ieee754 {
       if (!msb) return FP_NAN;
       if (e == 0x7fff) return u.i.m << 1 ? FP_NAN : FP_INFINITE;
     } else {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wterminate"
       throw(
           std::logic_error("tfel::math::ieee754::fpclassify: "
                            "unsupported long double representation"));
+#pragma GCC diagnostic pop
     }
     return FP_NORMAL;
   }
 #elif LDBL_MANT_DIG == 113 && LDBL_MAX_EXP == 16384
-  int fpclassify(const long double x) {
+  constexpr int fpclassify(const long double x) noexcept {
 #ifdef __BYTE_ORDER
 #if __BYTE_ORDER == __LITTLE_ENDIAN
 #elif __BYTE_ORDER == __BIG_ENDIAN
@@ -147,23 +150,29 @@ namespace tfel::math::ieee754 {
   }
 #endif
 
-  bool isnan(const float x) { return fpclassify(x) == FP_NAN; }
+  constexpr bool isnan(const float x) noexcept {
+    return fpclassify(x) == FP_NAN;
+  }
 
-  bool isnan(const double x) { return fpclassify(x) == FP_NAN; }
+  constexpr bool isnan(const double x) noexcept {
+    return fpclassify(x) == FP_NAN;
+  }
 
-  bool isnan(const long double x) { return fpclassify(x) == FP_NAN; }
+  constexpr bool isnan(const long double x) noexcept {
+    return fpclassify(x) == FP_NAN;
+  }
 
-  bool isfinite(const float x) {
+  constexpr bool isfinite(const float x) noexcept {
     const auto c = fpclassify(x);
     return (c == FP_NORMAL) || (c == FP_ZERO) || (c == FP_SUBNORMAL);
   }
 
-  bool isfinite(const double x) {
+  constexpr bool isfinite(const double x) noexcept {
     const auto c = fpclassify(x);
     return (c == FP_NORMAL) || (c == FP_ZERO) || (c == FP_SUBNORMAL);
   }
 
-  bool isfinite(const long double x) {
+  constexpr bool isfinite(const long double x) noexcept {
     const auto c = fpclassify(x);
     return (c == FP_NORMAL) || (c == FP_ZERO) || (c == FP_SUBNORMAL);
   }

@@ -1,9 +1,8 @@
 @Behaviour Elasticity2;
 @Author Helfer Thomas;
-@Date 23/11/06;
-@Description{
- A very first test 
- (the most simple one in fact).
+@Date 23 / 11 / 06;
+@Description {
+  A very first test(the most simple one in fact).
 }
 
 @UseQt true;
@@ -18,22 +17,25 @@ nu.setGlossaryName("PoissonRatio");
 
 @ComputeThermalExpansion "ThermalExpansionCoefficientTest.mfront";
 
-@InitLocalVariables{
-  lambda = computeLambda(young,nu);
-  mu = computeMu(young,nu);
+@InitLocalVariables {
+  lambda = computeLambda(young, nu);
+  mu = computeMu(young, nu);
 }
 
-@PredictionOperator{
-  if(!((smt==ELASTIC)||(smt==SECANTOPERATOR)||(smt==TANGENTOPERATOR))){
+@PredictionOperator {
+  if (!((smt == ELASTIC) || (smt == SECANTOPERATOR) ||
+        (smt == TANGENTOPERATOR))) {
     return FAILURE;
   }
-  Dt=lambda*Stensor4::IxI()+2*mu*Stensor4::Id();
+  Dt = lambda * Stensor4::IxI() + 2 * mu * Stensor4::Id();
 }
 
-@Integrator{
-  sig = lambda*trace(eto+deto)*StrainStensor::Id()+2*mu*(eto+deto);
+@Integrator {
+  sig =
+      lambda * trace(eto + deto) * StrainStensor::Id() + 2 * mu * (eto + deto);
 }
 
 @TangentOperator {
-  Dt=lambda*Stensor4::IxI()+2*mu*Stensor4::Id();
+  static_cast<void>(smt);
+  Dt = lambda * Stensor4::IxI() + 2 * mu * Stensor4::Id();
 }

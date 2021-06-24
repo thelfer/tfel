@@ -402,12 +402,12 @@ namespace mfront {
     const auto mprops = this->buildMaterialPropertiesList(mb, h);
     if (h == ModellingHypothesis::UNDEFINEDHYPOTHESIS) {
       out << "template<tfel::material::ModellingHypothesis::Hypothesis "
-             "H,typename Type";
+             "H,typename NumericType";
       if (mb.useQt()) {
         out << ",bool use_qt";
       }
     } else {
-      out << "template<typename Type";
+      out << "template<typename NumericType";
       if (mb.useQt()) {
         out << ",bool use_qt";
       }
@@ -420,7 +420,7 @@ namespace mfront {
       out << "tfel::material::ModellingHypothesis::"
           << ModellingHypothesis::toUpperCaseString(h);
     }
-    out << ",Type,";
+    out << ", NumericType, ";
     if (mb.useQt()) {
       out << "use_qt";
     } else {
@@ -1510,7 +1510,7 @@ namespace mfront {
       std::ostream& os, const BehaviourDescription& mb) const {
     const auto iprefix = makeUpperCase(this->getInterfaceName());
     SupportedTypes::TypeSize ov, of;
-    os << "void set" << iprefix << "BehaviourDataGradients(const Type* const "
+    os << "void set" << iprefix << "BehaviourDataGradients(const NumericType* const "
        << iprefix << "stran)\n"
        << "{\n";
     for (const auto& v : mb.getMainVariables()) {
@@ -1519,10 +1519,9 @@ namespace mfront {
     }
     os << "}\n\n";
     os << "void set" << iprefix
-       << "BehaviourDataThermodynamicForces(const Type* const " << iprefix
-       << "stress_,\n"
-       << "                                                        const Type* "
-          "const )\n"
+       << "BehaviourDataThermodynamicForces(const NumericType* const "
+       << iprefix << "stress_,\n"
+       << "const NumericType* const )\n"
        << "{\n";
     for (const auto& v : mb.getMainVariables()) {
       this->writeBehaviourDataThermodynamicForceSetter(os, v.second, of);

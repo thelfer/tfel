@@ -127,7 +127,7 @@ namespace tfel::math {
       return ArrayPolicyType::make_reference(
           d[child.getIndex(static_cast<const size_type>(i)...)]);
     }
-  } // end of operator()
+  }  // end of operator()
 
   template <typename Child, typename ArrayPolicyType>
   constexpr typename ArrayPolicyType::reference
@@ -149,7 +149,8 @@ namespace tfel::math {
       const OtherArray& src) noexcept {
     auto& child = static_cast<Child&>(*this);
     const auto f = makeMultiIndicesBinaryOperatorFunctor(
-        [](auto& a, const auto& b) { a = b; }, child, src);
+        [](typename ArrayPolicyType::reference a, const auto& b) { a = b; },
+        child, src);
     child.iterate(f);
   }  // end of MutableArrayCommonMethods<Child, ArrayPolicyType>
 
@@ -160,7 +161,8 @@ namespace tfel::math {
       const OtherArray& src) noexcept {
     auto& child = static_cast<Child&>(*this);
     const auto f = makeMultiIndicesBinaryOperatorFunctor(
-        [](auto& a, const auto& b) { a += b; }, child, src);
+        [](typename ArrayPolicyType::reference a, const auto& b) { a += b; },
+        child, src);
     child.iterate(f);
   }  // end of MutableArrayCommonMethods<Child, ArrayPolicyType>
 
@@ -171,7 +173,8 @@ namespace tfel::math {
       const OtherArray& src) noexcept {
     auto& child = static_cast<Child&>(*this);
     const auto f = makeMultiIndicesBinaryOperatorFunctor(
-        [](auto& a, const auto& b) { a -= b; }, child, src);
+        [](typename ArrayPolicyType::reference a, const auto& b) { a -= b; },
+        child, src);
     child.iterate(f);
   }  // end of MutableArrayCommonMethods<Child, ArrayPolicyType>
 
@@ -211,7 +214,8 @@ namespace tfel::math {
         MultiIndicesRandomAccessInteratorWrapper<ImportIndexingPolicy,
                                                  InputIterator>{policy, p};
     const auto f = makeMultiIndicesBinaryOperatorFunctor(
-        [](auto& a, const auto& b) { a = b; }, child, src);
+        [](typename ArrayPolicyType::reference a, const auto& b) { a = b; },
+        child, src);
     child.iterate(f);
   }  // end of import
 
@@ -221,8 +225,8 @@ namespace tfel::math {
       isAssignableTo<ValueType2, typename ArrayPolicyType::value_type>(),
       void>
   MutableArrayCommonMethods<Child, ArrayPolicyType>::fill(const ValueType2& v) {
-    const auto f =
-        makeMultiIndicesUnaryOperatorFunctor([v](auto& a) { a = v; }, *this);
+    const auto f = makeMultiIndicesUnaryOperatorFunctor(
+        [v](typename ArrayPolicyType::reference a) { a = v; }, *this);
     auto& child = static_cast<Child&>(*this);
     child.iterate(f);
   }  // end of fill
@@ -237,8 +241,8 @@ namespace tfel::math {
       void>
   MutableArrayCommonMethods<Child, ArrayPolicyType>::multiplyByScalar(
       const ValueType2& s) {
-    const auto f =
-        makeMultiIndicesUnaryOperatorFunctor([s](auto& a) { a *= s; }, *this);
+    const auto f = makeMultiIndicesUnaryOperatorFunctor(
+        [s](typename ArrayPolicyType::reference a) { a *= s; }, *this);
     auto& child = static_cast<Child&>(*this);
     child.iterate(f);
   }  // end of multiplyByScalar

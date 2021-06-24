@@ -132,29 +132,26 @@ namespace mfront {
     os << this->mb.getCode(h, BehaviourData::FlowRule) << "return true;\n}\n\n";
 
     os << "bool NewtonIntegration(){\n"
-       << "using namespace std;\n"
-       << "using namespace tfel::math;\n"
+       << "constexpr auto newton_epsilon = 100*std::numeric_limits<strain>::epsilon();\n"
+       << "const auto mu_3_theta = 3*(" << this->mb.getClassName()
+       << "::theta)*(this->mu);\n"
        << "bool converge=false;\n"
        << "strain newton_f;\n"
        << "strain newton_df;\n"
        << "auto newton_ddp = strain{}\n; // previous correction of the Newton "
           "algorithm\n"
-       << "real newton_epsilon = 100*std::numeric_limits<real>::epsilon();\n"
-       << "stress mu_3_theta = 3*(" << this->mb.getClassName()
-       << "::theta)*(this->mu);\n"
        << "real surf;\n"
        << "unsigned int iter = 0u;\n"
        << "this->p_=this->p+this->dp;\n"
-       << "while((converge==false)&&\n"
-       << "(iter<this->iterMax)){\n"
-       << "this->seq = std::max(this->seq_e-mu_3_theta*(this->dp),real(0.f));\n"
+       << "while((converge==false) && (iter<this->iterMax)){\n"
+       << "this->seq = std::max(this->seq_e-mu_3_theta*(this->dp), stress(0));\n"
        << "const auto compute_flow_r = this->computeFlow();\n"
        << "if(!((compute_flow_r)&&\n"
        << "(tfel::math::ieee754::isfinite(this->f))&&\n"
        << "(tfel::math::ieee754::isfinite(this->df_dp))&&\n"
        << "(tfel::math::ieee754::isfinite(this->df_dseq)))){\n";
     if (getDebugMode()) {
-      os << "cout << \"" << this->mb.getClassName()
+      os << "std::cout << \"" << this->mb.getClassName()
          << "::NewtonIntegration() : iteration \" "
          << "<< iter << \": invalid evaluation of the yield surface or one of "
          << "its derivatives\\n\";\n";
@@ -168,8 +165,8 @@ namespace mfront {
        << "iter+=1;\n"
        << "} else {\n"
        << "surf = (this->f)/(this->young);\n"
-       << "if(((surf>newton_epsilon)&&((this->dp)>=0))||"
-       << "((this->dp)>newton_epsilon)){\n"
+       << "if(((surf>newton_epsilon)&&((this->dp)>=strain(0)))||"
+       << "   ((this->dp)>newton_epsilon)){\n"
        << "newton_f  = surf;\n"
        << "newton_df = ((this->theta)*(this->df_dp)"
        << "-mu_3_theta*(this->df_dseq))/(this->young);\n"
@@ -177,29 +174,26 @@ namespace mfront {
        << "newton_f  =(this->dp);\n"
        << "newton_df = real(1.);\n"
        << "}\n"
-       << "if(std::abs(base_type_cast(newton_df))"
-       << ">newton_epsilon){\n"
+       << "if(tfel::math::abs(newton_df) > newton_epsilon){\n"
        << "newton_ddp = -newton_f/newton_df;\n"
        << "this->dp += newton_ddp;\n"
        << "this->p_  = this->p + (this->theta)*(this->dp);\n"
        << "iter+=1;\n";
     if (getDebugMode()) {
-      os << "cout << \"" << this->mb.getClassName()
+      os << "std::cout << \"" << this->mb.getClassName()
          << "::NewtonIntegration() : iteration \" "
-         << "<< iter << \": \" << std::abs(tfel::math::base_type_cast(newton_f)) "
-            "<< '\\n';\n";
+         << "<< iter << \": \" << tfel::math::abs(newton_f) << '\\n';\n";
     }
-    os << "converge = (std::abs(tfel::math::base_type_cast(newton_f))<"
-       << "this->epsilon);\n"
+    os << "converge = tfel::math::abs(newton_f) < this->epsilon;\n"
        << "} else {\n";
     if (getDebugMode()) {
-      os << "cout << \"" << this->mb.getClassName()
+      os << "std::cout << \"" << this->mb.getClassName()
          << "::NewtonIntegration() : iteration \" "
          << "<< iter << \": jacobian is singular\\n\";\n";
     }
     os << "if(iter==0u){\n";
     if (getDebugMode()) {
-      os << "cout << \"" << this->mb.getClassName()
+      os << "std::cout << \"" << this->mb.getClassName()
          << "::NewtonIntegration() : iteration \" "
          << "<< iter << \": invalid jacobian on the first iteration\\n\";\n";
     }
@@ -214,17 +208,17 @@ namespace mfront {
        << "}\n\n"
        << "if(iter==this->iterMax){\n";
     if (getDebugMode()) {
-      os << "cout << \"" << this->mb.getClassName()
+      os << "std::cout << \"" << this->mb.getClassName()
          << "::NewtonIntegration() : no convergence after \" "
-         << "<< iter << \" iterations\"<< endl << endl;\n"
-         << "cout << *this << endl;\n";
+         << "<< iter << \" iterations\\n\\n\";\n"
+         << "std::cout << *this << std::endl;\n";
     }
     os << "return false;\n"
        << "}\n\n";
     if (getDebugMode()) {
-      os << "cout << \"" << this->mb.getClassName()
+      os << "std::cout << \"" << this->mb.getClassName()
          << "::NewtonIntegration() : convergence after \" "
-         << "<< iter << \" iterations\"<< endl << endl;\n";
+         << "<< iter << \" iterations\\n\\n\";\n";
     }
     os << "return true;\n"
        << "}\n\n";
@@ -243,32 +237,32 @@ namespace mfront {
        << "using namespace std;\n";
     if (this->mb.useQt()) {
       os << "if(smflag!=MechanicalBehaviour<" << btype
-         << ",hypothesis,Type,use_qt>::STANDARDTANGENTOPERATOR){\n"
+         << ",hypothesis, NumericType,use_qt>::STANDARDTANGENTOPERATOR){\n"
          << "throw(runtime_error(\"invalid tangent operator flag\"));\n"
          << "}\n";
     } else {
       os << "if(smflag!=MechanicalBehaviour<" << btype
-         << ",hypothesis,Type,false>::STANDARDTANGENTOPERATOR){\n"
+         << ",hypothesis, NumericType,false>::STANDARDTANGENTOPERATOR){\n"
          << "throw(runtime_error(\"invalid tangent operator flag\"));\n"
          << "}\n";
     }
     os << "if(!this->NewtonIntegration()){\n";
     if (this->mb.useQt()) {
       os << "return MechanicalBehaviour<" << btype
-         << ",hypothesis,Type,use_qt>::FAILURE;\n";
+         << ",hypothesis, NumericType,use_qt>::FAILURE;\n";
     } else {
       os << "return MechanicalBehaviour<" << btype
-         << ",hypothesis,Type,false>::FAILURE;\n";
+         << ",hypothesis, NumericType,false>::FAILURE;\n";
     }
     os << "}\n"
        << "if(smt!=NOSTIFFNESSREQUESTED){\n"
        << "if(!this->computeConsistentTangentOperator(smt)){\n";
     if (this->mb.useQt()) {
       os << "return MechanicalBehaviour<" << btype
-         << ",hypothesis,Type,use_qt>::FAILURE;\n";
+         << ",hypothesis, NumericType,use_qt>::FAILURE;\n";
     } else {
       os << "return MechanicalBehaviour<" << btype
-         << ",hypothesis,Type,false>::FAILURE;\n";
+         << ",hypothesis, NumericType,false>::FAILURE;\n";
     }
     os << "}\n"
        << "}\n"
@@ -286,10 +280,10 @@ namespace mfront {
     }
     if (this->mb.useQt()) {
       os << "return MechanicalBehaviour<" << btype
-         << ",hypothesis,Type,use_qt>::SUCCESS;\n";
+         << ",hypothesis, NumericType,use_qt>::SUCCESS;\n";
     } else {
       os << "return MechanicalBehaviour<" << btype
-         << ",hypothesis,Type,false>::SUCCESS;\n";
+         << ",hypothesis, NumericType,false>::SUCCESS;\n";
     }
     os << "}\n\n";
   }
@@ -303,11 +297,11 @@ namespace mfront {
        << "constexpr real prec = "
           "std::numeric_limits<strain>::epsilon()/100;\n"
        << "if(smt==CONSISTENTTANGENTOPERATOR){\n"
-       << "computeElasticStiffness<N,Type>::exe(this->Dt,this->lambda_tdt,this-"
+       << "computeElasticStiffness<N, NumericType>::exe(this->Dt,this->lambda_tdt,this-"
           ">mu_tdt);\n"
        << "if(this->dp>prec){\n"
-       << "const real ccto_tmp_1 =  this->dp/this->seq_e;\n"
-       << "const auto& M = st2tost2<N,Type>::M();\n"
+       << "const auto ccto_tmp_1 =  this->dp/this->seq_e;\n"
+       << "const auto& M = st2tost2<N, NumericType>::M();\n"
        << "this->Dt += "
           "-4*(this->mu_tdt)*(this->mu)*(this->theta)*(ccto_tmp_1*M-(ccto_tmp_"
           "1-this->df_dseq/"
@@ -315,7 +309,7 @@ namespace mfront {
           "this->n)^(this->n)));\n"
        << "}\n"
        << "} else if((smt==ELASTIC)||(smt==SECANTOPERATOR)){\n"
-       << "computeElasticStiffness<N,Type>::exe(this->Dt,this->lambda_tdt,this-"
+       << "computeElasticStiffness<N, NumericType>::exe(this->Dt,this->lambda_tdt,this-"
           ">mu_tdt);\n"
        << "} else {\n"
        << "return false;\n"

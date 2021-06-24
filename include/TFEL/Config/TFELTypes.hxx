@@ -38,7 +38,7 @@ namespace tfel::config {
    */
   template <unsigned short N, typename T = double, bool use_quantities = true>
   struct Types {
-    typedef tfel::math::qt<tfel::math::NoUnit, T> real;
+    using real = tfel::math::qt<tfel::math::NoUnit, T>;
     typedef tfel::math::qt<tfel::math::Time, T> time;
     typedef tfel::math::qt<tfel::math::Frequency, T> frequency;
     typedef tfel::math::qt<tfel::math::Length, T> length;

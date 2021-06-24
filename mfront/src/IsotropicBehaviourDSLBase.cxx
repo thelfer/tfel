@@ -434,10 +434,10 @@ namespace mfront {
       os << "using namespace std;\n";
       if (this->mb.useQt()) {
         os << "if(smflag!=MechanicalBehaviour<" << btype
-           << ",hypothesis,Type,use_qt>::STANDARDTANGENTOPERATOR){\n";
+           << ",hypothesis, NumericType, use_qt>::STANDARDTANGENTOPERATOR){\n";
       } else {
         os << "if(smflag!=MechanicalBehaviour<" << btype
-           << ",hypothesis,Type,false>::STANDARDTANGENTOPERATOR){\n";
+           << ",hypothesis, NumericType, false>::STANDARDTANGENTOPERATOR){\n";
       }
       os << "throw(runtime_error(\"" << this->mb.getClassName()
          << "::computePredictionOperator : "

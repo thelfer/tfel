@@ -110,15 +110,12 @@ namespace mfront {
           "(use the @FlowRule directive)");
     }
     os << "bool computeFlow(){\n"
-       << "using namespace std;\n"
        << "using namespace tfel::math;\n"
        << "using namespace tfel::material;\n"
        << "using std::vector;\n";
     writeMaterialLaws(os, this->mb.getMaterialLaws());
     os << this->mb.getCode(h, BehaviourData::FlowRule) << "return true;\n}\n\n"
        << "bool NewtonIntegration(){\n"
-       << "using namespace std;\n"
-       << "using namespace tfel::math;\n"
        << "bool converge=false;\n"
        << "strain newton_f;\n"
        << "strain newton_df;\n"
@@ -139,7 +136,7 @@ namespace mfront {
        << "(tfel::math::ieee754::isfinite(this->df_dp))&&\n"
        << "(tfel::math::ieee754::isfinite(this->df_dseq)))){\n";
     if (getDebugMode()) {
-      os << "cout << \"" << this->mb.getClassName()
+      os << "std::cout << \"" << this->mb.getClassName()
          << "::NewtonIntegration() : iteration \" "
          << "<< iter << \": invalid evaluation of the yield surface or one of "
          << "its derivatives\\n\";\n";
@@ -155,30 +152,27 @@ namespace mfront {
        << "newton_f  = this->dp - (this->f)*(this->dt);\n"
        << "newton_df = "
           "1-(this->theta)*(this->dt)*((this->df_dp)-mu_3*(this->df_dseq));\n"
-       << "if(std::abs(base_type_cast(newton_df))"
+       << "if(tfel::math::abs(newton_df)"
        << ">newton_epsilon){\n"
        << "newton_ddp = -newton_f/newton_df;\n"
        << "this->dp += newton_ddp;\n"
        << "this->p_=this->p + (this->theta)*(this->dp);\n"
        << "iter+=1;\n";
     if (getDebugMode()) {
-      os << "cout << \"" << this->mb.getClassName()
+      os << "std::cout << \"" << this->mb.getClassName()
          << "::NewtonIntegration() : iteration \" "
-         << "<< iter << \" : \" << "
-            "std::abs(tfel::math::base_type_cast(newton_f)) "
-            "<< endl;\n";
+         << "<< iter << \" : \" << tfel::math::abs(newton_f) << std::endl;\n";
     }
-    os << "converge = (std::abs(tfel::math::base_type_cast(newton_f))<"
-       << "(this->epsilon));\n"
+    os << "converge = tfel::math::abs(newton_f) < this->epsilon;\n"
        << "} else {\n";
     if (getDebugMode()) {
-      os << "cout << \"" << this->mb.getClassName()
+      os << "std::cout << \"" << this->mb.getClassName()
          << "::NewtonIntegration() : iteration \" "
          << "<< iter << \": jacobian is singular\\n\";\n";
     }
     os << "if(iter==0u){\n";
     if (getDebugMode()) {
-      os << "cout << \"" << this->mb.getClassName()
+      os << "std::cout << \"" << this->mb.getClassName()
          << "::NewtonIntegration() : iteration \" "
          << "<< iter << \": invalid jacobian on the first iteration\\n\";\n";
     }
@@ -193,17 +187,17 @@ namespace mfront {
        << "}\n"
        << "if(iter==this->iterMax){\n";
     if (getDebugMode()) {
-      os << "cout << \"" << this->mb.getClassName()
+      os << "std::cout << \"" << this->mb.getClassName()
          << "::NewtonIntegration() : no convergence after \" "
-         << "<< iter << \" iterations\"<< endl << endl;\n";
-      os << "cout << *this << endl;\n";
+         << "<< iter << \" iterations\\n\\n\";\n";
+      os << "std::cout << *this << std::endl;\n";
     }
     os << "return false;\n"
        << "}\n\n";
     if (getDebugMode()) {
-      os << "cout << \"" << this->mb.getClassName()
+      os << "std::cout << \"" << this->mb.getClassName()
          << "::NewtonIntegration() : convergence after \" "
-         << "<< iter << \" iterations\"<< endl << endl;\n";
+         << "<< iter << \" iterations\\n\\n\";\n";
     }
     os << "return true;\n"
        << "}\n\n";
@@ -222,32 +216,32 @@ namespace mfront {
        << "using namespace std;\n";
     if (this->mb.useQt()) {
       os << "if(smflag!=MechanicalBehaviour<" << btype
-         << ",hypothesis,Type,use_qt>::STANDARDTANGENTOPERATOR){\n"
+         << ",hypothesis, NumericType,use_qt>::STANDARDTANGENTOPERATOR){\n"
          << "throw(runtime_error(\"invalid tangent operator flag\"));\n"
          << "}\n";
     } else {
       os << "if(smflag!=MechanicalBehaviour<" << btype
-         << ",hypothesis,Type,false>::STANDARDTANGENTOPERATOR){\n"
+         << ",hypothesis, NumericType,false>::STANDARDTANGENTOPERATOR){\n"
          << "throw(runtime_error(\"invalid tangent operator flag\"));\n"
          << "}\n";
     }
     os << "if(!this->NewtonIntegration()){\n";
     if (this->mb.useQt()) {
       os << "return MechanicalBehaviour<" << btype
-         << ",hypothesis,Type,use_qt>::FAILURE;\n";
+         << ",hypothesis, NumericType,use_qt>::FAILURE;\n";
     } else {
       os << "return MechanicalBehaviour<" << btype
-         << ",hypothesis,Type,false>::FAILURE;\n";
+         << ",hypothesis, NumericType,false>::FAILURE;\n";
     }
     os << "}\n"
        << "if(smt!=NOSTIFFNESSREQUESTED){\n"
        << "if(!this->computeConsistentTangentOperator(smt)){\n";
     if (this->mb.useQt()) {
       os << "return MechanicalBehaviour<" << btype
-         << ",hypothesis,Type,use_qt>::FAILURE;\n";
+         << ",hypothesis, NumericType,use_qt>::FAILURE;\n";
     } else {
       os << "return MechanicalBehaviour<" << btype
-         << ",hypothesis,Type,false>::FAILURE;\n";
+         << ",hypothesis, NumericType,false>::FAILURE;\n";
     }
     os << "}\n"
        << "}\n"
@@ -265,10 +259,10 @@ namespace mfront {
     }
     if (this->mb.useQt()) {
       os << "return MechanicalBehaviour<" << btype
-         << ",hypothesis,Type,use_qt>::SUCCESS;\n";
+         << ",hypothesis, NumericType,use_qt>::SUCCESS;\n";
     } else {
       os << "return MechanicalBehaviour<" << btype
-         << ",hypothesis,Type,false>::SUCCESS;\n";
+         << ",hypothesis, NumericType,false>::SUCCESS;\n";
     }
     os << "}\n\n";
   }
@@ -280,20 +274,20 @@ namespace mfront {
        << "using tfel::material::computeElasticStiffness;\n"
        << "using tfel::math::st2tost2;\n"
        << "if(smt==CONSISTENTTANGENTOPERATOR){\n"
-       << "computeElasticStiffness<N,Type>::exe(this->Dt,this->lambda_tdt,this-"
+       << "computeElasticStiffness<N, NumericType>::exe(this->Dt,this->lambda_tdt,this-"
           ">mu_tdt);\n"
        << "if(this->seq_e>(0.01*(this->young))*std::numeric_limits<stress>::"
           "epsilon()){\n"
        << "const real ccto_tmp_1 =  this->dp/this->seq_e;\n"
-       << "const auto& M = st2tost2<N,Type>::M();\n"
+       << "const auto& M = st2tost2<N, NumericType>::M();\n"
        << "this->Dt += "
           "-4*(this->mu_tdt)*(this->mu)*(this->theta)*(ccto_tmp_1*M-(ccto_tmp_"
           "1-this->df_dseq*(this->dt)/"
-          "(Type(1)+(this->theta)*(this->dt)*(Type(3)*(this->mu)*this->df_dseq-"
+          "(1+(this->theta)*(this->dt)*(3*(this->mu)*this->df_dseq-"
           "(this->df_dp))))*((this->n)^(this->n)));\n"
        << "}\n"
        << "} else if((smt==ELASTIC)||(smt==SECANTOPERATOR)){\n"
-       << "computeElasticStiffness<N,Type>::exe(this->Dt,this->lambda_tdt,this-"
+       << "computeElasticStiffness<N, stress>::exe(this->Dt,this->lambda_tdt,this-"
           ">mu_tdt);\n"
        << "} else {\n"
        << "return false;"
@@ -309,9 +303,9 @@ namespace mfront {
     os << "this->se=2*(this->mu)*(tfel::math::deviator(this->eel+("
        << this->mb.getClassName() << "::theta)*(this->deto)));\n"
        << "this->seq_e = sigmaeq(this->se);\n"
-       << "if(this->seq_e>(0.01*(this->young))*std::numeric_limits<stress>::"
+       << "if(this->seq_e> 0.01 * (this->young) * std::numeric_limits<stress>::"
           "epsilon()){\n"
-       << "this->n = 1.5f*(this->se)/(this->seq_e);\n"
+       << "this->n = 3 * (this->se)/(2 * this->seq_e);\n"
        << "} else {\n"
        << "this->n = StrainStensor(strain(0));\n"
        << "}\n";

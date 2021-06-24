@@ -136,10 +136,10 @@ namespace mfront {
     }
     if (mb.useQt()) {
       out << "return MechanicalBehaviour<" << btype
-          << ",hypothesis,Type,use_qt>::FAILURE;\n";
+          << ", hypothesis, NumericType, use_qt>::FAILURE;\n";
     } else {
       out << "return MechanicalBehaviour<" << btype
-          << ",hypothesis,Type,false>::FAILURE;\n";
+          << ", hypothesis, NumericType, false>::FAILURE;\n";
     }
     out << "} else {\n";
     if (getDebugMode()) {
@@ -147,7 +147,7 @@ namespace mfront {
           << "::integrate() : computFdF returned false, dividing increment by "
              "two...\" << endl;\n";
     }
-    out << "const real integrate_one_half = real(1)/real(2);\n"
+    out << "constexpr NumericType integrate_one_half = NumericType(1) / 2;\n"
         << "this->zeros -= (this->zeros-this->zeros_1)*integrate_one_half;\n"
         << "this->updateMaterialPropertiesDependantOnStateVariables();\n"
         << "}\n"
@@ -166,16 +166,16 @@ namespace mfront {
         << "Dzeros = this->fzeros;\n"
         << "jacobian2 = this->jacobian;\n"
         << "try{\n"
-        << "TinyMatrixSolve<" << n2 << ","
-        << "real>::exe(jacobian2,Dzeros);\n"
+        << "TinyMatrixSolve<" << n2 << ", NumericType>"
+        << "::exe(jacobian2,Dzeros);\n"
         << "}\n"
-        << "catch(LUException&){\n";
+        << "catch(tfel::math::LUException&){\n";
     if (mb.useQt()) {
       out << "return MechanicalBehaviour<" << btype
-          << ",hypothesis,Type,use_qt>::FAILURE;\n";
+          << ", hypothesis, NumericType, use_qt>::FAILURE;\n";
     } else {
       out << "return MechanicalBehaviour<" << btype
-          << ",hypothesis,Type,false>::FAILURE;\n";
+          << ", hypothesis, NumericType, false>::FAILURE;\n";
     }
     out << "}\n"
         << "jacobian2 = this->jacobian;\n";

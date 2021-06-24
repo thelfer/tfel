@@ -579,22 +579,22 @@ namespace mfront {
     //         << " * \\brief constructor for the LS-DYNA interface\n"
     //         << " * \\param[in] " << iprefix << "d : data\n"
     //         << " */\n"
-    //         << mb.getClassName() << "(const lsdyna::LSDYNAData<Type>& " <<
+    //         << mb.getClassName() << "(const lsdyna::LSDYNAData<NumericType>& " <<
     //         iprefix
     //         << "d)\n";
     //     if (mb.useQt()) {
     //       out << ": " << mb.getClassName()
-    //           << "BehaviourData<hypothesis,Type,use_qt>(" << iprefix <<
+    //           << "BehaviourData<hypothesis, NumericType,use_qt>(" << iprefix <<
     //           "d),\n"
     //           << mb.getClassName() <<
-    //           "IntegrationData<hypothesis,Type,use_qt>("
+    //           "IntegrationData<hypothesis, NumericType,use_qt>("
     //           << iprefix << "d)\n";
     //     } else {
     //       out << ": " << mb.getClassName()
-    //           << "BehaviourData<hypothesis,Type,false>(" << iprefix <<
+    //           << "BehaviourData<hypothesis, NumericType,false>(" << iprefix <<
     //           "d),\n"
     //           << mb.getClassName() <<
-    //           "IntegrationData<hypothesis,Type,false>("
+    //           "IntegrationData<hypothesis, NumericType,false>("
     //           << iprefix << "d)\n";
     //     }
     //     if (!initStateVarsIncrements.empty()) {
@@ -616,7 +616,7 @@ namespace mfront {
     //         << " * \\param[in] " << iprefix << "d : data\n"
     //         << " */\n"
     //         << mb.getClassName() << "BehaviourData"
-    //         << "(const lsdyna::LSDYNAData<Type>& " << iprefix << "d)\n: ";
+    //         << "(const lsdyna::LSDYNAData<NumericType>& " << iprefix << "d)\n: ";
     //     bool first = true;
     //     this->writeMaterialPropertiesInitializersInBehaviourDataConstructorI(
     //         out, first, h, mb, mprops.first, mprops.second, iprefix +
@@ -661,7 +661,7 @@ namespace mfront {
     //         << " * \\param[in] " << iprefix << "d : data"
     //         << " */\n"
     //         << mb.getClassName() << "IntegrationData"
-    //         << "(const lsdyna::LSDYNAData<Type>& " << iprefix << "d)"
+    //         << "(const lsdyna::LSDYNAData<NumericType>& " << iprefix << "d)"
     //         << ": dt(" << iprefix << "d.dt),\n"
     //         << "  dT(" << iprefix << "d.tempNew-" << iprefix << "d.tempOld)";
     //     bool first = false;
@@ -769,12 +769,12 @@ namespace mfront {
     const auto iprefix = makeUpperCase(this->getInterfaceName());
     if (!ivs.empty()) {
       out << "void exportStateData("
-          << "Stensor& " << iprefix + "s, const lsdyna::LSDYNAData<Type>& "
+          << "Stensor& " << iprefix + "s, const lsdyna::LSDYNAData<NumericType>& "
           << iprefix + "d) const\n";
     } else {
       out << "void exportStateData("
           << "Stensor& "
-          << iprefix + "s, const lsdyna::LSDYNAData<Type>&) const\n";
+          << iprefix + "s, const lsdyna::LSDYNAData<NumericType>&) const\n";
     }
     out << "{\n"
         << "using namespace tfel::math;\n"

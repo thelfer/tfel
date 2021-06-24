@@ -1149,7 +1149,7 @@ namespace mfront {
       std::ostream& os, const BehaviourDescription& mb) const {
     const auto iprefix = makeUpperCase(this->getInterfaceName());
     SupportedTypes::TypeSize ov, of;
-    os << "void set" << iprefix << "BehaviourDataGradients(const Type* const "
+    os << "void set" << iprefix << "BehaviourDataGradients(const NumericType* const "
        << iprefix << "stran)\n"
        << "{\n";
     for (const auto& v : mb.getMainVariables()) {
@@ -1158,10 +1158,9 @@ namespace mfront {
     }
     os << "}\n\n";
     os << "void set" << iprefix
-       << "BehaviourDataThermodynamicForces(const Type* const " << iprefix
-       << "stress_,\n"
-       << "                                                        const Type* "
-          "const )\n"
+       << "BehaviourDataThermodynamicForces(const NumericType* const "
+       << iprefix << "stress_,\n"
+       << "const NumericType* const )\n"
        << "{\n";
     for (const auto& v : mb.getMainVariables()) {
       this->writeBehaviourDataThermodynamicForceSetter(os, v.second, of);

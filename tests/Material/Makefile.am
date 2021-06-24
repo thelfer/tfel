@@ -3,7 +3,8 @@ if WITH_TESTS
 AM_CPPFLAGS = -I$(top_srcdir)/include
 
 testdir = $(pkgdatadir)/tests/Material
-test_PROGRAMS = boundsCheck                                                       \
+test_PROGRAMS = Lame                                                              \
+                boundsCheck                                                       \
                 OrthotropicAxesConventionTest                                     \
                 AbaqusTangentOperator                                             \
                 AbaqusTangentOperator2                                            \
@@ -42,6 +43,7 @@ LDADD = -lTFELMaterial -lTFELMath       \
 	-L$(top_builddir)/src/Tests     \
 	-L$(top_builddir)/src/Exception
 
+Lame_SOURCES = Lame.cxx
 boundsCheck_SOURCES = boundsCheck.cxx               
 OrthotropicAxesConventionTest_SOURCES          = OrthotropicAxesConventionTest.cxx
 AbaqusTangentOperator_SOURCES                  = AbaqusTangentOperator.cxx

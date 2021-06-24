@@ -23,45 +23,42 @@
 
 namespace tfel::math {
 
-  template <typename Scal>
-  TFEL_MATH_INLINE
-      std::enable_if_t<tfel::typetraits::IsFundamentalNumericType<Scal>::cond,
-                       Scal>
-      abs(const Scal& s) {
-    return std::abs(s);
+  /*!
+   * \return the absolute value of a scalar
+   * \param[in] s: value
+   */
+  template <typename NumericType>
+  constexpr std::enable_if_t<
+      tfel::typetraits::isFundamentalNumericType<NumericType>(),
+      NumericType>
+  abs(const NumericType& s) noexcept {
+    return (s < NumericType(0)) ? -s : s;
   }
 
-  template <typename Scal>
-  TFEL_MATH_INLINE
-      std::enable_if_t<tfel::typetraits::IsFundamentalNumericType<Scal>::cond,
-                       Scal>
-      abs(const Complex<Scal>& s) {
+  template <typename NumericType>
+  TFEL_MATH_INLINE std::enable_if_t<
+      tfel::typetraits::IsFundamentalNumericType<NumericType>::cond,
+      NumericType>
+  abs(const Complex<NumericType>& s) {
     return s.norm();
   }
 
   /*!
-   * a basic functor accumulating the absolute value of a container
+   * \brief a basic functor accumulating the absolute value of a container
    */
   template <typename T>
   struct AbsSum : public std::unary_function<T, void> {
+    //! \param [in] v : initial value
+    AbsSum(const T& v = T()) : result(v) {}  // end of AbsSum
     /*!
-     * \param [in] v : initial value
+     * \brief add the absolute value of the argument to the result member
      */
-    AbsSum(const T& = T());
+    constexpr void operator()(const T& v) noexcept { result += abs(v); }
 
-    /*!
-     * add the absolute value of the result to the res member
-     */
-    void operator()(const T&);
-
-    /*!
-     * result
-     */
+    //! \brief result
     T result;
   };  // end of struct AbsSum
 
 }  // end of namespace tfel::math
-
-#include "TFEL/Math/General/Abs.ixx"
 
 #endif /* LIB_TFEL_MATH_ABS_HXX */

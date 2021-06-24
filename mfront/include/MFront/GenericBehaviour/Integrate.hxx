@@ -30,112 +30,117 @@ namespace mfront::gb {
 
   /*!
    * \brief export the tangent operator used by some generic behaviours.
-   * \tparam real: numeric type used
+   * \tparam StressType: numeric type used
    * \param[out] v: exported values
    * \param[in] K: computed tangent operator
    */
-  template <typename real>
-  void exportTangentOperator(real* const v, const real K) {
-    *v = K;
+  template <typename StressType>
+  void exportTangentOperator(tfel::math::base_type<StressType>* const v,
+                             const real K) {
+    tfel::math::map<StressType>(v) = K;
   }  // end of exportTangentOperator
+
   /*!
    * \brief export the tangent operator used by some generic behaviours.
-   * \tparam real: numeric type used
+   * \tparam StressType: numeric type used
    * \tparam N: size of the array containing the tangent operator
    * \param[out] v: exported values
    * \param[in] K: computed tangent operator
    */
-  template <typename real, unsigned short N>
-  void exportTangentOperator(real* const v,
-                             const tfel::math::tvector<N, real>& K) {
-    std::copy(K.begin(), K.end(), v);
+  template <typename StressType, unsigned short N>
+  void exportTangentOperator(tfel::math::base_type<StressType>* const v,
+                             const tfel::math::tvector<N, StressType>& K) {
+    tfel::math::map<tfel::math::tvector<N, StressType>>(v) = K;
   }  // end of exportTangentOperator
+
   /*!
-   * \brief export the tangent operator used by some generic behaviours.
-   * \tparam real: numeric type used
+   * \brief export the tangent operator used by cohesive zone models.
+   * \tparam StressType: numeric type used
    * \tparam N: space dimension
    * \param[out] v: exported values
    * \param[in] K: computed tangent operator
    */
-  template <typename real, unsigned short N>
-  void exportTangentOperator(real* const v,
-                             const tfel::math::t2tost2<N, real>& K) {
-    std::copy(K.begin(), K.end(), v);
+  template <typename StressType, unsigned short N>
+  void exportTangentOperator(tfel::math::base_type<StressType>* const v,
+                             const tfel::math::tmatrix<N, N, StressType>& K) {
+    tfel::math::map<tfel::math::tmatrix<N, N, StressType>>(v) = K;
   }  // end of exportTangentOperator
+
   /*!
    * \brief export the tangent operator used by some generic behaviours.
-   * \tparam real: numeric type used
+   * \tparam StressType: numeric type used
    * \tparam N: space dimension
    * \param[out] v: exported values
    * \param[in] K: computed tangent operator
    */
-  template <typename real, unsigned short N>
-  void exportTangentOperator(real* const v,
-                             const tfel::math::t2tot2<N, real>& K) {
-    std::copy(K.begin(), K.end(), v);
+  template <typename StressType, unsigned short N>
+  void exportTangentOperator(tfel::math::base_type<StressType>* const v,
+                             const tfel::math::t2tost2<N, StressType>& K) {
+    tfel::math::map<tfel::math::t2tost2<N, StressType>>(v) = K;
+  }  // end of exportTangentOperator
+
+  /*!
+   * \brief export the tangent operator used by some generic behaviours.
+   * \tparam StressType: numeric type used
+   * \tparam N: space dimension
+   * \param[out] v: exported values
+   * \param[in] K: computed tangent operator
+   */
+  template <typename StressType, unsigned short N>
+  void exportTangentOperator(tfel::math::base_type<StressType>* const v,
+                             const tfel::math::t2tot2<N, StressType>& K) {
+    tfel::math::map<tfel::math::t2tot2<N, StressType>>(v) = K;
   }  // end of exportTangentOperator
   /*!
    * \brief export the tangent operator used by standard small
    * strain behaviours.
-   * \tparam real: numeric type used
+   * \tparam StressType: numeric type used
    * \tparam N: space dimension
    * \param[out] v: exported values
    * \param[in] K: computed tangent operator
    */
-  template <typename real, unsigned short N>
-  void exportTangentOperator(real* const v,
-                             const tfel::math::st2tost2<N, real>& K) {
-    std::copy(K.begin(), K.end(), v);
+  template <typename StressType, unsigned short N>
+  void exportTangentOperator(tfel::math::base_type<StressType>* const v,
+                             const tfel::math::st2tost2<N, StressType>& K) {
+    tfel::math::map<tfel::math::st2tost2<N, StressType>>(v) = K;
   }  // end of exportTangentOperator
 
   /*!
    * \brief export the tangent operator used by finite strain
    * strain behaviours.
-   * \tparam real: numeric type used
+   * \tparam StressType: numeric type used
    * \tparam N: space dimension
    * \param[out] v: exported values
    * \param[in] K: computed tangent operator
    */
-  template <typename real, unsigned short N>
+  template <typename StressType, unsigned short N>
   void exportTangentOperator(
-      real* const v,
-      const tfel::material::FiniteStrainBehaviourTangentOperator<N, real>& K) {
-    if (K.template is<tfel::math::t2tot2<N, real>>()) {
-      const auto& k = K.template get<tfel::math::t2tot2<N, real>>();
-      std::copy(k.begin(), k.end(), v);
-    } else if (K.template is<tfel::math::t2tot2<N, real>*>()) {
-      const auto& k = *(K.template get<tfel::math::t2tot2<N, real>*>());
-      std::copy(k.begin(), k.end(), v);
-    } else if (K.template is<tfel::math::t2tost2<N, real>>()) {
-      const auto& k = K.template get<tfel::math::t2tost2<N, real>>();
-      std::copy(k.begin(), k.end(), v);
-    } else if (K.template is<tfel::math::t2tost2<N, real>*>()) {
-      const auto& k = *(K.template get<tfel::math::t2tost2<N, real>*>());
-      std::copy(k.begin(), k.end(), v);
-    } else if (K.template is<tfel::math::st2tost2<N, real>>()) {
-      const auto& k = K.template get<tfel::math::st2tost2<N, real>>();
-      std::copy(k.begin(), k.end(), v);
-    } else if (K.template is<tfel::math::st2tost2<N, real>*>()) {
-      const auto& k = *(K.template get<tfel::math::st2tost2<N, real>*>());
-      std::copy(k.begin(), k.end(), v);
+      tfel::math::base_type<StressType>* const v,
+      const tfel::material::FiniteStrainBehaviourTangentOperator<N, StressType>&
+          K) {
+    if (K.template is<tfel::math::t2tot2<N, StressType>>()) {
+      const auto& k = K.template get<tfel::math::t2tot2<N, StressType>>();
+      tfel::math::map<tfel::math::t2tot2<N, StressType>>(v) = k;
+    } else if (K.template is<tfel::math::t2tot2<N, StressType>*>()) {
+      const auto& k = *(K.template get<tfel::math::t2tot2<N, StressType>*>());
+      tfel::math::map<tfel::math::t2tot2<N, StressType>>(v) = k;
+    } else if (K.template is<tfel::math::t2tost2<N, StressType>>()) {
+      const auto& k = K.template get<tfel::math::t2tost2<N, StressType>>();
+      tfel::math::map<tfel::math::t2tost2<N, StressType>>(v) = k;
+    } else if (K.template is<tfel::math::t2tost2<N, StressType>*>()) {
+      const auto& k = *(K.template get<tfel::math::t2tost2<N, StressType>*>());
+      tfel::math::map<tfel::math::t2tost2<N, StressType>>(v) = k;
+    } else if (K.template is<tfel::math::st2tost2<N, StressType>>()) {
+      const auto& k = K.template get<tfel::math::st2tost2<N, StressType>>();
+      tfel::math::map<tfel::math::st2tost2<N, StressType>>(v) = k;
+    } else if (K.template is<tfel::math::st2tost2<N, StressType>*>()) {
+      const auto& k = *(K.template get<tfel::math::st2tost2<N, StressType>*>());
+      tfel::math::map<tfel::math::st2tost2<N, StressType>>(v) = k;
     } else {
       tfel::raise(
           "mfront::gb::exportTangentOperator: "
           "unsupported tangent operator type");
     }
-  }  // end of exportTangentOperator
-
-  /*!
-   * \brief export the tangent operator used by cohesive zone models.
-   * \tparam real: numeric type used
-   * \tparam N: space dimension
-   * \param[out] v: exported values
-   * \param[in] K: computed tangent operator
-   */
-  template <typename real, unsigned short N>
-  void exportTangentOperator(real* const v,
-                             const tfel::math::tmatrix<N, N, real>& K) {
-    std::copy(K.begin(), K.end(), v);
   }  // end of exportTangentOperator
 
   /*!
@@ -235,9 +240,12 @@ namespace mfront::gb {
         typename std::conditional<MTraits::hasComputeDissipatedEnergy,
                                   DissipatedEnergyComputer,
                                   DoNothingEnergyComputer>::type;
+    using speed = typename Behaviour::speed;
+    using massdensity = typename Behaviour::massdensity;
+    using time = typename Behaviour::time;
     Behaviour b(d);
     b.setOutOfBoundsPolicy(p);
-    auto& rdt = *(d.rdt);
+    auto&& rdt = tfel::math::map<time>(d.rdt);
     try {
       b.initialize();
       b.checkBounds();
@@ -246,7 +254,8 @@ namespace mfront::gb {
       if (Ke < -0.25) {
         computePredictionOperator(b, d, f);
         if (bs) {
-          *(d.speed_of_sound) = b.computeSpeedOfSound(*(d.s0.mass_density));
+          tfel::math::map<speed>(d.speed_of_sound) =
+              b.computeSpeedOfSound(massdensity(*(d.s0.mass_density)));
         }
       }
       const auto smt = [&Ke] {
@@ -272,7 +281,9 @@ namespace mfront::gb {
         return -1;
       }
       const auto atsf = b.computeAPosterioriTimeStepScalingFactor(rdt);
-      rdt = std::min(atsf.second, rdt);
+      if (rdt > atsf.second) {
+        rdt = atsf.second;
+      }
       if (!atsf.first) {
         return -1;
       }
@@ -283,14 +294,15 @@ namespace mfront::gb {
       IEnergyComputer::exe(d, b);
       DEnergyComputer::exe(d, b);
       if (bs) {
-        *(d.speed_of_sound) = b.computeSpeedOfSound(*(d.s1.mass_density));
+        tfel::math::map<speed>(d.speed_of_sound) =
+            b.computeSpeedOfSound(massdensity(*(d.s1.mass_density)));
       }
     } catch (...) {
       reportIntegrationFailure(d);
       rdt = b.getMinimalTimeStepScalingFactor();
       return -1;
     }
-    return rdt < 0.99 ? 0 : 1;
+    return rdt < time(0.99) ? 0 : 1;
   }  // end of integrate
 
 }  // end of namespace mfront::gb

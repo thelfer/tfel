@@ -321,7 +321,6 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Math/General/LogicalOperations.hxx                                                      \
 			TFEL/Math/General/AbsCompare.hxx	                                                     \
 			TFEL/Math/General/Abs.hxx      	                                                             \
-			TFEL/Math/General/Abs.ixx      	                                                             \
 			TFEL/Math/General/CubicRoots.hxx                                                             \
 			TFEL/Math/General/floating_point_exceptions.hxx                                              \
 			TFEL/Math/General/ResultType.hxx		                                             \

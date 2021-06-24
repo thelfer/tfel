@@ -440,20 +440,20 @@ namespace mfront::bbrick {
         const std::string mu = b ? "this->sebdata.mu" : "this->mu_tdt";
         to.code += "if(smt==ELASTIC){\n";
         to.code +=
-            "  computeAlteredElasticStiffness<hypothesis,Type>::exe(Dt," +
+            "  computeAlteredElasticStiffness<hypothesis, stress>::exe(Dt," +
             lambda + "," + mu + ");\n";
         to.code += "} else if(smt==SECANTOPERATOR){\n";
-        to.code += "  computeAlteredElasticStiffness<hypothesis,Type>::exe(Dt,";
+        to.code += "  computeAlteredElasticStiffness<hypothesis, stress>::exe(Dt,";
         to.code += "(1-min(this->d,this->damage_thresold)) * (" + lambda + "),";
         to.code += "(1-min(this->d,this->damage_thresold)) * (" + mu + "));\n";
         if (idsl.getSolver().usesJacobian()) {
           to.code += "} else if (smt==CONSISTENTTANGENTOPERATOR){\n";
-          to.code += "  StiffnessTensor IsotropicDamageHooke;\n";
-          to.code += "  Stensor4 Je;\n";
-          to.code += "  Stensor  Jd;\n";
-          to.code += "  getPartialJacobianInvert(Je,Jd);\n";
+          to.code += "StiffnessTensor IsotropicDamageHooke;\n";
+          to.code += "Stensor4 Je;\n";
+          to.code += "Stensor  Jd;\n";
+          to.code += "getPartialJacobianInvert(Je,Jd);\n";
           to.code +=
-              "  computeElasticStiffness<N,Type>::exe(IsotropicDamageHooke," +
+              "  computeElasticStiffness<N, stress>::exe(IsotropicDamageHooke," +
               lambda + "," + mu + ");\n";
           to.code +=
               "  Dt = (1-min(this->d,this->damage_thresold)) * "
@@ -556,10 +556,12 @@ namespace mfront::bbrick {
         const std::string mu = b ? "this->sebdata.mu" : "this->mu_tdt";
         to.code += "if(smt==ELASTIC){\n";
         to.code +=
-            "  computeAlteredElasticStiffness<hypothesis,Type>::exe(Dt," +
+            "computeAlteredElasticStiffness<hypothesis, NumericType>::exe(Dt," +
             lambda + "," + mu + ");\n";
         to.code += "} else if(smt==SECANTOPERATOR){\n";
-        to.code += "  computeAlteredElasticStiffness<hypothesis,Type>::exe(Dt,";
+        to.code +=
+            "computeAlteredElasticStiffness<hypothesis, "
+            "NumericType>::exe(Dt,";
         to.code += "(1-min(this->d,this->damage_thresold)) * (" + lambda + "),";
         to.code += "(1-min(this->d,this->damage_thresold)) * (" + mu + "));\n";
         to.code += "} else {\n";

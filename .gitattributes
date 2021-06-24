@@ -1830,7 +1830,6 @@ include/TFEL/Math/Forward/tmatrix.hxx -text
 include/TFEL/Math/Forward/tvector.hxx -text
 include/TFEL/Math/Forward/vector.hxx -text
 include/TFEL/Math/General/Abs.hxx -text
-include/TFEL/Math/General/Abs.ixx -text
 include/TFEL/Math/General/AbsCompare.hxx -text
 include/TFEL/Math/General/BasicOperations.hxx -text
 include/TFEL/Math/General/Complex.hxx -text
@@ -3094,6 +3093,8 @@ mfront/tests/behaviours/MonoCrystal_DD_CFC_Irradiation.mfront -text
 mfront/tests/behaviours/MonoCrystal_DD_CFC_NumericalJacobian.mfront -text
 mfront/tests/behaviours/Norton.mfront -text
 mfront/tests/behaviours/Norton2.mfront -text
+mfront/tests/behaviours/Norton3.mfront -text
+mfront/tests/behaviours/Norton4.mfront -text
 mfront/tests/behaviours/NortonRK.mfront -text
 mfront/tests/behaviours/NortonRK2.mfront -text
 mfront/tests/behaviours/NortonRK3.mfront -text
@@ -3122,6 +3123,7 @@ mfront/tests/behaviours/PlasIsoCin.mfront -text
 mfront/tests/behaviours/Plasticity.mfront -text
 mfront/tests/behaviours/Plasticity2.mfront -text
 mfront/tests/behaviours/Plasticity3.mfront -text
+mfront/tests/behaviours/Plasticity4.mfront -text
 mfront/tests/behaviours/PolyCrystals.mfront -text
 mfront/tests/behaviours/PolyCrystals_DD_CC.mfront -text
 mfront/tests/behaviours/PolyCrystals_DD_CFC.mfront -text
@@ -3140,6 +3142,8 @@ mfront/tests/behaviours/StationaryHeatTransfer2.mfront -text
 mfront/tests/behaviours/StrainHardeningCreep.mfront -text
 mfront/tests/behaviours/StrainHardeningCreep2.mfront -text
 mfront/tests/behaviours/StrainHardeningCreep3.mfront -text
+mfront/tests/behaviours/StrainHardeningCreep4.mfront -text
+mfront/tests/behaviours/StrainHardeningCreep5.mfront -text
 mfront/tests/behaviours/T91ViscoplasticBehaviour.mfront -text
 mfront/tests/behaviours/TemperatureUpdateOnSubSteppingCheck.mfront -text
 mfront/tests/behaviours/ThermalNorton.mfront -text
@@ -7205,6 +7209,7 @@ tests/Material/HosfordSecondDerivativeTest.cxx -text
 tests/Material/Hyperelasticity.cxx -text
 tests/Material/IsotropicCazacuYieldTest.cxx -text
 tests/Material/IsotropicPlasticityTest.cxx -text
+tests/Material/Lame.cxx -text
 tests/Material/LogarithmicStrainComputeAxialStrainIncrementElasticPredictionTest.cxx -text
 tests/Material/LogarithmicStrainHandlerTest.cxx -text
 tests/Material/Makefile.am -text

@@ -1,0 +1,37 @@
+@DSL MultipleIsotropicMisesFlows;
+@Behaviour Norton4;
+@UseQt true;
+@Author Helfer Thomas;
+@Date 23/11/06;
+@Description{
+  This viscoplastic behaviour is fully determined by the evolution
+  of the equivalent viscoplastic strain "\(p\)" as a function "\(f\)"
+  of the Von Mises stress "\(\sigmaeq\)":
+  "\["
+  "\dot{p}=f\paren{\sigmaeq}=\dot{\epsilon}_{0}\,\paren{\frac{\sigmaeq}{\sigma_0}}^{E}"
+  "\]"
+  where:
+
+  - "\(\dot{\epsilon}_{0}\)" is equivalent viscoplastic strain rate for the reference equivalent stress.
+  - "\(\sigma_{0}\)" is a reference equivalent stress.
+  - "\(E\)" is the Norton exponent.
+
+  "\(\dot{\epsilon}_{0}\)", "\(\sigma_{0}\)" and "\(E\)" are declared as material properties.
+}
+
+
+@MaterialProperty strainrate ∂ₜε₀;
+∂ₜε₀.setEntryName("ReferenceViscoplasticStrainRate");
+@MaterialProperty stress σ₀;
+σ₀.setEntryName("ReferenceEquivalentStress");
+
+//! The Norton coefficient
+@MaterialProperty real E;
+E.setEntryName("NortonExponent");
+
+@FlowRule Creep {
+  const auto rσₑ = σₑ / σ₀;
+  const auto tmp = ∂ₜε₀ * pow(rσₑ, E - 1);
+  f = tmp * rσₑ;
+  ∂f∕∂σₑ = E * tmp / σ₀;
+}

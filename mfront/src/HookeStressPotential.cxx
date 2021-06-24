@@ -374,18 +374,19 @@ namespace mfront::bbrick {
         const std::string mu = b ? "this->sebdata.mu" : "this->mu_tdt";
         to.code =
             "if((smt==ELASTIC)||(smt==SECANTOPERATOR)){\n"
-            "  computeAlteredElasticStiffness<hypothesis,Type>::exe(Dt," +
+            "computeAlteredElasticStiffness<hypothesis, "
+            "stress>::exe(Dt," +
             lambda + "," + mu + ");\n";
         if (idsl.getSolver().usesJacobian()) {
           to.code +=
               "} else if (smt==CONSISTENTTANGENTOPERATOR){\n"
-              "  StiffnessTensor Hooke;\n"
-              "  Stensor4 Je;\n"
-              "  computeElasticStiffness<N,Type>::exe(Hooke," +
+              "StiffnessTensor Hooke;\n"
+              "Stensor4 Je;\n"
+              "computeElasticStiffness<N, stress>::exe(Hooke," +
               lambda + "," + mu +
               ");\n"
-              "  getPartialJacobianInvert(Je);\n"
-              "  Dt = Hooke*Je;\n";
+              "getPartialJacobianInvert(Je);\n"
+              "Dt = Hooke*Je;\n";
         }
         to.code +=
             "} else {\n"
@@ -476,7 +477,7 @@ namespace mfront::bbrick {
         to.code =
             "if((smt==ELASTIC)||(smt==SECANTOPERATOR)){\n"
             "  "
-            "computeAlteredElasticStiffness<hypothesis,Type>::exe(Dt," +
+            "computeAlteredElasticStiffness<hypothesis, stress>::exe(Dt," +
             lambda + "," + mu +
             ");\n"
             "} else {\n"

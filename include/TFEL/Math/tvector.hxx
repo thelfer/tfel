@@ -194,16 +194,16 @@ namespace tfel::math {
    * \tparam T: type hold by the tiny vector
    */
   template <typename MappedType,
-            typename IndexingPolicyType = typename MappedType::indexing_policy,
-            unsigned short N,
-            typename real>
+            typename IndexingPolicyType =
+                typename std::remove_cv_t<MappedType>::indexing_policy,
+            unsigned short N>
   constexpr std::enable_if_t<
-      ((!std::is_const_v<MappedType>)&&(IndexingPolicyType::hasFixedSizes) &&
+      ((!isScalar<MappedType>()) && (IndexingPolicyType::hasFixedSizes) &&
        (checkIndexingPoliciesCompatiblity<
            IndexingPolicyType,
-           typename MappedType::indexing_policy>())),
+           typename std::remove_cv_t<MappedType>::indexing_policy>())),
       View<MappedType, IndexingPolicyType>>
-  map(tvector<N, real>&);
+  map(tvector<N, base_type<numeric_type<MappedType>>>&);
 
   /*!
    * \brief create a constant view of a math object from a tiny vector
@@ -215,15 +215,14 @@ namespace tfel::math {
   template <typename MappedType,
             typename IndexingPolicyType =
                 typename std::remove_cv_t<MappedType>::indexing_policy,
-            unsigned short N,
-            typename real>
+            unsigned short N>
   constexpr std::enable_if_t<
-      ((IndexingPolicyType::hasFixedSizes) &&
+      ((!isScalar<MappedType>()) && (IndexingPolicyType::hasFixedSizes) &&
        (checkIndexingPoliciesCompatiblity<
            IndexingPolicyType,
            typename std::remove_cv_t<MappedType>::indexing_policy>())),
       View<const MappedType, IndexingPolicyType>>
-  map(const tvector<N, real>&);
+  map(const tvector<N, base_type<numeric_type<MappedType>>>&);
 
   /*!
    * \brief create a view of a math object from a tiny vector

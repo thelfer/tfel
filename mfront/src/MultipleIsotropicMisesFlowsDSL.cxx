@@ -36,7 +36,7 @@ namespace mfront {
            "'StrainHardeningCreep' (dp/dt=f(s,p)) and 'Plasticity' (f(p,s)=0) "
            "where p is the equivalent plastic strain and s the equivalent "
            "mises stress";
-  }  // end of MultipleIsotropicMisesFlowsDSL::getDescription
+  }  // end of getDescription
 
   MultipleIsotropicMisesFlowsDSL::MultipleIsotropicMisesFlowsDSL() {
     const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
@@ -67,7 +67,7 @@ namespace mfront {
     auto d = IsotropicBehaviourDSLBase::getBehaviourDSLDescription();
     d.minimalMFrontFileBody = "@FlowRule Plasticity {}\n\n";
     return d;
-  }  // end of MultipleIsotropicMisesFlowsDSL::getBehaviourDSLDescription
+  }  // end of getBehaviourDSLDescription
 
   void MultipleIsotropicMisesFlowsDSL::getSymbols(
       std::map<std::string, std::string>& symbols,
@@ -76,7 +76,7 @@ namespace mfront {
     IsotropicBehaviourDSLBase::getSymbols(symbols, h, n);
     mfront::addSymbol(symbols, "\u2202f\u2215\u2202\u03C3\u2091", "df_dseq");
     mfront::addSymbol(symbols, "\u2202f\u2215\u2202p", "df_dp");
-  }  // end of MultipleIsotropicMisesFlowsDSL::getSymbols
+  }  // end of getSymbols
 
   std::string MultipleIsotropicMisesFlowsDSL::getCodeBlockTemplate(
       const std::string& c, const MFrontTemplateGenerationOptions& o) const {
@@ -129,7 +129,7 @@ namespace mfront {
       }
     }
     return "";
-  }  // end of MultipleIsotropicMisesFlowsDSL::getCodeBlockTemplate
+  }  // end of getCodeBlockTemplate
 
   void MultipleIsotropicMisesFlowsDSL::writeBehaviourParserSpecificIncludes(
       std::ostream& os) const {
@@ -139,6 +139,14 @@ namespace mfront {
 
   void MultipleIsotropicMisesFlowsDSL::writeBehaviourParserSpecificMembers(
       std::ostream& os, const Hypothesis) const {
+    const auto has_plastic_flow = [this] {
+      for (auto p = this->flows.begin(); p != this->flows.end(); ++p) {
+        if (p->flow == FlowHandler::PlasticFlow) {
+          return true;
+        }
+      }
+      return false;
+    }();
     bool genericTheta;
     this->checkBehaviourFile(os);
     tfel::raise_if(this->flows.empty(),
@@ -167,14 +175,17 @@ namespace mfront {
       os << p->flowRule << '\n';
       os << "}\n\n";
     }
-    os << "bool NewtonIntegration(){\n"
-       << "using namespace std;\n"
-       << "using namespace tfel::math;\n"
-       << "tvector<" << this->flows.size()
-       << ",strain> vdp(strain(real(0.)));\n"
-       << "tvector<" << this->flows.size() << ",strain> newton_f;\n"
-       << "tmatrix<" << this->flows.size() << "," << this->flows.size()
-       << ",strain> newton_df;\n";
+    os << "bool NewtonIntegration(){\n";
+    if (has_plastic_flow) {
+      os << "constexpr auto newton_epsilon = "
+            "100 * std::numeric_limits<NumericType>::epsilon();\n";
+    }
+    os << "tfel::math::tvector<" << this->flows.size()
+       << ", NumericType> vdp(NumericType(0));\n"
+       << "tfel::math::tvector<" << this->flows.size()
+       << ", NumericType> newton_f;\n"
+       << "tfel::math::tmatrix<" << this->flows.size() << ","
+       << this->flows.size() << ", NumericType> newton_df;\n";
 
     genericTheta = false;
     n = 0;
@@ -193,16 +204,6 @@ namespace mfront {
       os << "stress mu_3_theta = 3*(";
       os << this->mb.getClassName() << "::theta)*(this->mu);\n";
     }
-    bool found = false;
-    for (auto p = this->flows.begin(); (p != this->flows.end()) && !(found);
-         ++p) {
-      if (p->flow == FlowHandler::PlasticFlow) {
-        os << "real surf;\n";
-        os << "real newton_epsilon = "
-              "100*std::numeric_limits<real>::epsilon();\n";
-        found = true;
-      }
-    }
     os << "unsigned int iter=0u;\n"
        << "bool converge=false;\n"
        << "while((converge==false)&&\n"
@@ -215,7 +216,7 @@ namespace mfront {
       } else {
         os << this->mb.getClassName() << "::theta";
       }
-      os << ")*(vdp(" << n << "));\n";
+      os << ") * strain(vdp(" << n << "));\n";
       if (p->hasSpecificTheta) {
         std::ostringstream otheta;
         os << "this->seq = std::max(this->seq_e" << n << "-";
@@ -228,22 +229,22 @@ namespace mfront {
       auto p2 = this->flows.begin();
       unsigned short n2 = 0u;
       while (p2 != this->flows.end()) {
-        os << "vdp(" << n2 << ")";
+        os << "strain(vdp(" << n2 << "))";
         ++p2;
         ++n2;
         if (p2 != this->flows.end()) {
           os << "+";
         }
       }
-      os << "),real(0.f));\n";
+      os << "), stress(0.f));\n";
       if (p->flow == FlowHandler::PlasticFlow) {
         os << "this->computeFlow" << n << "("
            << "this->f" << n << ","
            << "this->df_dseq" << n << ","
            << "this->df_dp" << n << ");\n";
-        os << "surf = (this->f" << n << ")/(this->young);\n";
-        os << "if(((surf>newton_epsilon)&&((vdp(" << n << "))>=0))||"
-           << "((vdp(" << n << "))>newton_epsilon)){";
+        os << "const auto surf = (this->f" << n << ")/(this->young);\n";
+        os << "if(((surf > strain(newton_epsilon)) && ((vdp(" << n << "))>=NumericType(0)))||"
+           << "((vdp(" << n << ")) > newton_epsilon)){";
         os << "newton_f(" << n << ")  = surf;\n";
         for (p2 = this->flows.begin(), n2 = 0; p2 != this->flows.end();
              ++p2, ++n2) {
@@ -311,7 +312,7 @@ namespace mfront {
            << "this->df_dseq" << n << ","
            << "this->df_dp" << n << ");\n";
         os << "newton_f(" << n << ")  = vdp(" << n << ") - (this->f" << n
-           << ")*(this->dt);\n";
+           << ") * (this->dt);\n";
         os << "newton_df(" << n << "," << n << ") = 1-(this->dt)*(";
         if (p->hasSpecificTheta) {
           os << "(real(" << p->theta << "))";
@@ -339,16 +340,16 @@ namespace mfront {
         }
       }
     }
-    os << "real error=static_cast<real>(0.);\n";
+    os << "auto error = NumericType(0);\n";
     n = 0;
     for (auto p = this->flows.begin(); p != this->flows.end(); ++p, ++n) {
-      os << "error+=std::abs(tfel::math::base_type_cast(newton_f(" << n << ")));\n";
+      os << "error += tfel::math::abs(newton_f(" << n << "));\n";
     }
     os << "auto jacobian_inversion_succeeded = true;"
        << "try{\n"
-       << "TinyMatrixSolve<" << this->flows.size() << ","
-       << "real>::exe(newton_df,newton_f);\n"
-       << "} catch(LUException&){\n"
+       << "tfel::math::TinyMatrixSolve<" << this->flows.size()
+       << ", NumericType>::exe(newton_df,newton_f);\n"
+       << "} catch(tfel::math::LUException&){\n"
        << "jacobian_inversion_succeeded = false;\n"
        << "}\n"
        << "if(jacobian_inversion_succeeded){\n"
@@ -358,20 +359,20 @@ namespace mfront {
        << "}\n"
        << "iter+=1;\n";
     if (getDebugMode()) {
-      os << "cout << \"" << this->mb.getClassName()
+      os << "std::cout << \"" << this->mb.getClassName()
          << "::NewtonIntegration() : iteration \" "
          << "<< iter << \" : \" << (error/(real(" << this->flows.size()
-         << "))) << endl;\n";
+         << "))) << std::endl;\n";
     }
     os << "converge = ((error)/(real(" << this->flows.size() << "))<"
        << "(" << this->mb.getClassName() << "::epsilon));\n"
        << "}\n\n"
        << "if(iter==" << this->mb.getClassName() << "::iterMax){\n";
     if (getDebugMode()) {
-      os << "cout << \"" << this->mb.getClassName()
+      os << "std::cout << \"" << this->mb.getClassName()
          << "::NewtonIntegration() : no convergence after \" "
-         << "<< iter << \" iterations\"<< endl << endl;\n";
-      os << "cout << *this << endl;\n";
+         << "<< iter << \" iterations\\n\\n\";\n";
+      os << "std::cout << *this << std::endl;\n";
     }
     os << "return false;\n"
        << "}\n\n";
@@ -381,9 +382,9 @@ namespace mfront {
          << "vdp(" << n << ");\n";
     }
     if (getDebugMode()) {
-      os << "cout << \"" << this->mb.getClassName()
+      os << "std::cout << \"" << this->mb.getClassName()
          << "::NewtonIntegration() : convergence after \" "
-         << "<< iter << \" iterations\"<< endl << endl;\n";
+         << "<< iter << \" iterations\\n\\n\";\n";
     }
     os << "return true;\n"
        << "\n}\n\n";
@@ -403,22 +404,22 @@ namespace mfront {
        << "using namespace std;\n";
     if (this->mb.useQt()) {
       os << "if(smflag!=MechanicalBehaviour<" << btype
-         << ",hypothesis,Type,use_qt>::STANDARDTANGENTOPERATOR){\n"
+         << ",hypothesis, NumericType,use_qt>::STANDARDTANGENTOPERATOR){\n"
          << "throw(runtime_error(\"invalid tangent operator flag\"));\n"
          << "}\n";
     } else {
       os << "if(smflag!=MechanicalBehaviour<" << btype
-         << ",hypothesis,Type,false>::STANDARDTANGENTOPERATOR){\n"
+         << ",hypothesis, NumericType,false>::STANDARDTANGENTOPERATOR){\n"
          << "throw(runtime_error(\"invalid tangent operator flag\"));\n"
          << "}\n";
     }
     os << "if(!this->NewtonIntegration()){\n";
     if (this->mb.useQt()) {
       os << "return MechanicalBehaviour<" << btype
-         << ",hypothesis,Type,use_qt>::FAILURE;\n";
+         << ",hypothesis, NumericType,use_qt>::FAILURE;\n";
     } else {
       os << "return MechanicalBehaviour<" << btype
-         << ",hypothesis,Type,false>::FAILURE;\n";
+         << ",hypothesis, NumericType,false>::FAILURE;\n";
     }
     os << "}\n"
        << "this->dp = ";
@@ -437,10 +438,10 @@ namespace mfront {
        << "if(!this->computeConsistentTangentOperator(smt)){\n";
     if (this->mb.useQt()) {
       os << "return MechanicalBehaviour<" << btype
-         << ",hypothesis,Type,use_qt>::FAILURE;\n";
+         << ",hypothesis, NumericType,use_qt>::FAILURE;\n";
     } else {
       os << "return MechanicalBehaviour<" << btype
-         << ",hypothesis,Type,false>::FAILURE;\n";
+         << ",hypothesis, NumericType,false>::FAILURE;\n";
     }
     os << "}\n"
        << "}\n"
@@ -458,10 +459,10 @@ namespace mfront {
     }
     if (this->mb.useQt()) {
       os << "return MechanicalBehaviour<" << btype
-         << ",hypothesis,Type,use_qt>::SUCCESS;\n";
+         << ",hypothesis, NumericType,use_qt>::SUCCESS;\n";
     } else {
       os << "return MechanicalBehaviour<" << btype
-         << ",hypothesis,Type,false>::SUCCESS;\n";
+         << ",hypothesis, NumericType,false>::SUCCESS;\n";
     }
     os << "}\n\n";
   }
@@ -565,7 +566,7 @@ namespace mfront {
     flow.flowRule =
         this->mb.getCode(ModellingHypothesis::UNDEFINEDHYPOTHESIS, cname.str());
     this->flows.push_back(flow);
-  }  // end of MultipleIsotropicMisesFlowsDSL::treatFlowRule
+  }  // end of treatFlowRule
 
   void MultipleIsotropicMisesFlowsDSL::
       writeBehaviourParserSpecificInitializeMethodPart(std::ostream& os,
@@ -585,12 +586,11 @@ namespace mfront {
       ++n;
     }
     os << "if(this->seq_e>100*std::numeric_limits<stress>::epsilon()){\n"
-       << "this->n = 1.5f*(this->se)/(this->seq_e);\n"
+       << "this->n = 3 * (this->se) / (2 * this->seq_e);\n"
        << "} else {\n"
        << "this->n = StrainStensor(strain(0));\n"
        << "}\n";
-  }  // end of
-     // MultipleIsotropicMisesFlowsDSL::writeBehaviourParserSpecificInitializeMethodPart
+  }  // end of writeBehaviourParserSpecificInitializeMethodPart
 
   void MultipleIsotropicMisesFlowsDSL::writeBehaviourComputeTangentOperator(
       std::ostream& os, const Hypothesis) const {
@@ -598,7 +598,7 @@ namespace mfront {
        << "using namespace std;\n"
        << "using tfel::material::computeElasticStiffness;\n"
        << "if((smt==ELASTIC)||(smt==SECANTOPERATOR)){\n"
-       << "computeElasticStiffness<N,Type>::exe(this->Dt,this->lambda,this->mu)"
+       << "computeElasticStiffness<N, NumericType>::exe(this->Dt,this->lambda,this->mu)"
           ";\n"
        << "return true;\n"
        << "}\n"

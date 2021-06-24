@@ -25,6 +25,8 @@
 #include "TFEL/TypeTraits/IsAssignableTo.hxx"
 #include "TFEL/TypeTraits/Promote.hxx"
 #include "TFEL/Math/Forward/Complex.hxx"
+#include "TFEL/Math/General/Abs.hxx"
+#include "TFEL/Math/General/IEEE754.hxx"
 #include "TFEL/Math/General/BasicOperations.hxx"
 #include "TFEL/Math/General/MathObjectTraits.hxx"
 #include "TFEL/Math/General/UnaryResultType.hxx"
@@ -55,8 +57,8 @@ namespace tfel::math::internals {
                                 (std::is_convertible_v<ValueType, T>)&&    //
                                 (!AllowImplicitConversion)),
                                bool> = false>
-    constexpr explicit QuantityValueOwnershipPolicy(T&& src) noexcept
-        : value(std::forward<T>(src)) {}
+    constexpr explicit QuantityValueOwnershipPolicy(const T& src) noexcept
+        : value(src) {}
     /*!
      * \brief constructor from a value
      * \param src: the src.
@@ -66,8 +68,8 @@ namespace tfel::math::internals {
                                 (std::is_convertible_v<ValueType, T>)&&    //
                                 (AllowImplicitConversion)),
                                bool> = false>
-    constexpr QuantityValueOwnershipPolicy(T&& src) noexcept
-        : value(std::forward<T>(src)) {}
+    constexpr QuantityValueOwnershipPolicy(const T& src) noexcept
+        : value(src) {}
     //! \brief return the value
     constexpr ValueType& getValue() noexcept { return this->value; }
     //! \brief return the value
@@ -78,6 +80,19 @@ namespace tfel::math::internals {
     //! \brief move assignement operator
     constexpr QuantityValueOwnershipPolicy& operator=(
         QuantityValueOwnershipPolicy&&) noexcept = default;
+    /*!
+     * \brief constructor from a value
+     * \param src: the src.
+     */
+    template <typename T>
+    constexpr std::enable_if_t<((std::is_constructible_v<ValueType, T>)&&  //
+                                (std::is_convertible_v<ValueType, T>)&&    //
+                                (AllowImplicitConversion)),
+                               QuantityValueOwnershipPolicy&>
+    operator=(const T& src) noexcept {
+      this->value = src;
+      return *this;
+    }
     //! \brief conversion operator
     template <typename T,
               std::enable_if_t<((std::is_same_v<ValueType, T>)&&  //
@@ -91,7 +106,7 @@ namespace tfel::math::internals {
               std::enable_if_t<((std::is_same_v<ValueType, T>)&&  //
                                 (AllowImplicitConversion)),
                                bool> = false>
-    constexpr operator const T&() const noexcept {
+    constexpr operator T() const noexcept {
       return this->value;
     }
     //! \brief destructor
@@ -128,6 +143,19 @@ namespace tfel::math::internals {
     //! \brief move assignement operator
     constexpr QuantityReferenceOwnershipPolicy& operator=(
         QuantityReferenceOwnershipPolicy&&) noexcept = default;
+    /*!
+     * \brief constructor from a value
+     * \param src: the src.
+     */
+    template <typename T>
+    constexpr std::enable_if_t<((std::is_constructible_v<ValueType, T>)&&  //
+                                (std::is_convertible_v<ValueType, T>)&&    //
+                                (AllowImplicitConversion)),
+                               QuantityReferenceOwnershipPolicy&>
+    operator=(const T& src) noexcept {
+      this->value = src;
+      return *this;
+    }
     //! \brief conversion operator
     template <typename T,
               std::enable_if_t<((std::is_same_v<ValueType, T>)&&  //
@@ -247,84 +275,100 @@ namespace tfel::math {
       return *this;
     }
     //! \brief negation operator
-    constexpr qt<NoUnit, ValueType> operator-() const noexcept {
-      return qt<NoUnit, ValueType>(-(this->getValue()));
+    constexpr qt<UnitType, ValueType> operator-() const noexcept {
+      return qt<UnitType, ValueType>(-(this->getValue()));
     }
   };  // end of struct Quantity
 
   template <typename UnitType,
             typename ValueType,
             typename OwnershipPolicy,
+            typename UnitType2,
             typename ValueType2,
             typename OwnershipPolicy2>
   constexpr bool operator<(
       const Quantity<UnitType, ValueType, OwnershipPolicy>& a,
-      const Quantity<UnitType, ValueType2, OwnershipPolicy2>& b) {
+      const Quantity<UnitType2, ValueType2, OwnershipPolicy2>& b) noexcept {
+    static_assert(std::is_same_v<UnitType, UnitType2>,
+                  "invalid operation (unmatched unit)");
     return a.getValue() < b.getValue();
   }
 
   template <typename UnitType,
             typename ValueType,
             typename OwnershipPolicy,
+            typename UnitType2,
             typename ValueType2,
             typename OwnershipPolicy2>
   constexpr bool operator<=(
       const Quantity<UnitType, ValueType, OwnershipPolicy>& a,
-      const Quantity<UnitType, ValueType2, OwnershipPolicy2>& b) {
+      const Quantity<UnitType2, ValueType2, OwnershipPolicy2>& b) noexcept {
+    static_assert(std::is_same_v<UnitType, UnitType2>,
+                  "invalid operation (unmatched unit)");
     return a.getValue() <= b.getValue();
   }
 
   template <typename UnitType,
             typename ValueType,
             typename OwnershipPolicy,
+            typename UnitType2,
             typename ValueType2,
             typename OwnershipPolicy2>
   constexpr bool operator>(
       const Quantity<UnitType, ValueType, OwnershipPolicy>& a,
-      const Quantity<UnitType, ValueType2, OwnershipPolicy2>& b) {
+      const Quantity<UnitType2, ValueType2, OwnershipPolicy2>& b) noexcept {
+    static_assert(std::is_same_v<UnitType, UnitType2>,
+                  "invalid operation (unmatched unit)");
     return a.getValue() > b.getValue();
   }
 
   template <typename UnitType,
             typename ValueType,
             typename OwnershipPolicy,
+            typename UnitType2,
             typename ValueType2,
             typename OwnershipPolicy2>
   constexpr bool operator>=(
       const Quantity<UnitType, ValueType, OwnershipPolicy>& a,
-      const Quantity<UnitType, ValueType2, OwnershipPolicy2>& b) {
+      const Quantity<UnitType2, ValueType2, OwnershipPolicy2>& b) noexcept {
+    static_assert(std::is_same_v<UnitType, UnitType2>,
+                  "invalid operation (unmatched unit)");
     return a.getValue() >= b.getValue();
   }
 
   template <typename UnitType,
             typename ValueType,
             typename OwnershipPolicy,
+            typename UnitType2,
             typename ValueType2,
             typename OwnershipPolicy2>
   constexpr bool operator==(
       const Quantity<UnitType, ValueType, OwnershipPolicy>& a,
-      const Quantity<UnitType, ValueType2, OwnershipPolicy2>& b) {
+      const Quantity<UnitType2, ValueType2, OwnershipPolicy2>& b) noexcept {
+    static_assert(std::is_same_v<UnitType, UnitType2>,
+                  "invalid operation (unmatched unit)");
     return a.getValue() == b.getValue();
   }
 
   template <typename UnitType,
             typename ValueType,
             typename OwnershipPolicy,
+            typename UnitType2,
             typename ValueType2,
             typename OwnershipPolicy2>
   constexpr bool operator!=(
       const Quantity<UnitType, ValueType, OwnershipPolicy>& a,
-      const Quantity<UnitType, ValueType2, OwnershipPolicy2>& b) {
+      const Quantity<UnitType2, ValueType2, OwnershipPolicy2>& b) noexcept {
+    static_assert(std::is_same_v<UnitType, UnitType2>,
+                  "invalid operation (unmatched unit)");
     return a.getValue() != b.getValue();
   }
 
   template <typename UnitType, typename ValueType, typename OwnershipPolicy>
   constexpr qt<UnitType, ValueType> abs(
-      const Quantity<UnitType, ValueType, OwnershipPolicy>& v) {
-    if(v.getValue()<0){
-      return qt<UnitType, ValueType>{-v.getValue()};
-    }
-    return qt<UnitType, ValueType>{v.getValue()};
+      const Quantity<UnitType, ValueType, OwnershipPolicy>& v) noexcept {
+    return v.getValue() < 0 ? qt<UnitType, ValueType>{-v.getValue()}
+                            : qt<UnitType, ValueType>{v.getValue()};
   }
 
   template <typename Unit,
@@ -356,7 +400,75 @@ namespace tfel::math {
     return Result{power<N>(x.getValue())};
   }
 
+  template <int N,
+            unsigned int D,
+            typename Unit,
+            typename ValueType,
+            typename OwnershipPolicy>
+  constexpr std::enable_if_t<
+      std::is_floating_point_v<ValueType>,
+      typename UnaryResultType<Quantity<Unit, ValueType, OwnershipPolicy>,
+                               Power<N, D>>::type>
+  power(const Quantity<Unit, ValueType, OwnershipPolicy>& x) {
+    using Result =
+        typename UnaryResultType<Quantity<Unit, ValueType, OwnershipPolicy>,
+                                 Power<N, D>>::type;
+    return Result{power<N, D>(x.getValue())};
+  }
+
+  template <typename UnitType, typename ValueType, typename OwnershipPolicy>
+  constexpr auto square_root(
+      const Quantity<UnitType, ValueType, OwnershipPolicy>& q) noexcept {
+    return power<1, 2>(q.getValue());
+  }
+
 }  // namespace tfel::math
+
+namespace tfel::math::ieee754 {
+
+  /*!
+   * \return the class of the floating point value according to the
+   * IEEE754 standard.
+   * Possible return values are:
+   * - FP_NORMAL: standard floating point value
+   * - FP_SUBNORMAL: subnormal floating point value
+   * - FP_NAN: NaN value
+   * - FP_INFINITE: +Inf or -Inf value
+   * \param[in] q: value to be tested
+   */
+  template <typename UnitType, typename ValueType, typename OwnershipPolicy>
+  constexpr int fpclassify(
+      const Quantity<UnitType, ValueType, OwnershipPolicy>& q) noexcept {
+    static_assert(std::is_floating_point_v<ValueType>,
+                  "ValueType must a floating point value");
+    return fpclassify(q.getValue());
+  }  // end of fpclassify
+
+  /*!
+   * \return true if the given quantity is a not-a-number (NaN) value.
+   * \param[in] q: value to be tested
+   */
+  template <typename UnitType, typename ValueType, typename OwnershipPolicy>
+  constexpr bool isnan(
+      const Quantity<UnitType, ValueType, OwnershipPolicy>& q) noexcept {
+    static_assert(std::is_floating_point_v<ValueType>,
+                  "ValueType must a floating point value");
+    return isnan(q.getValue());
+  }
+
+  /*!
+   * \return true if the given quantity is finite.
+   * \param[in] q: value to be tested
+   */
+  template <typename UnitType, typename ValueType, typename OwnershipPolicy>
+  constexpr bool isfinite(
+      const Quantity<UnitType, ValueType, OwnershipPolicy>& q) noexcept {
+    static_assert(std::is_floating_point_v<ValueType>,
+                  "ValueType must a floating point value");
+    return isfinite(q.getValue());
+  }
+
+}  // end of namespace tfel::math::ieee754
 
 #include "TFEL/Math/Quantity/qtLimits.hxx"
 #include "TFEL/Math/Quantity/qtSpecific.hxx"

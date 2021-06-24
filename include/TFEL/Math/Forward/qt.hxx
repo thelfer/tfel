@@ -15,6 +15,7 @@
 #define LIB_TFEL_MATH_FORWARD_QT_HXX
 
 #include <type_traits>
+#include "TFEL/Metaprogramming/InvalidType.hxx"
 
 namespace tfel::math::internals {
 
@@ -262,6 +263,30 @@ namespace tfel::math {
   template <typename UnitType, typename ValueType, typename OwnershipPolicy>
   struct Quantity;
 
+  /*!
+   * \brief an helper structure to retrieve the underlying numeric type and
+   * unit from a type when this is meaningful.
+   */
+  template <typename>
+  struct QuantityTraits {
+    //! \brief unit of the given type
+    using UnitType = tfel::meta::InvalidType;
+    //! \brief underlying numeric type
+    using ValueType = tfel::meta::InvalidType;
+  };
+
+  //! \brief partial specialisation for quantities.
+  template <typename QuantityUnitType,
+            typename QuantityValueType,
+            typename QuantityOwnershipPolicy>
+  struct QuantityTraits<
+      Quantity<QuantityUnitType, QuantityValueType, QuantityOwnershipPolicy>> {
+    //! \brief unit of the given type
+    using UnitType = QuantityUnitType;
+    //! \brief underlying numeric type
+    using ValueType = QuantityValueType;
+  };
+
   //! \brief a simple alias
   template <typename UnitType, typename ValueType = double>
   using qt = Quantity<UnitType,
@@ -277,7 +302,7 @@ namespace tfel::math {
                tfel::math::internals::QuantityReferenceOwnershipPolicy<
                    ValueType,
                    std::is_same_v<UnitType, NoUnit>>>;
-
+  //! \brief a simple alias
   template <typename UnitType, typename ValueType = double>
   using const_qt_ref =
       Quantity<UnitType,
@@ -311,7 +336,7 @@ namespace tfel::math {
 
   template <typename T>
   constexpr auto isQuantity() {
-    return tfel::math::internals::IsQuantity<T>::value;
+    return tfel::math::internals::IsQuantity<std::decay_t<T>>::value;
   }
 
 }  // end of namespace tfel::math

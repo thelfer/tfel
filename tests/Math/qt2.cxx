@@ -16,22 +16,19 @@
 #undef NDEBUG
 #endif
 
-#ifdef NDEBUG
-#undef NDEBUG
-#endif
-
 #include <cmath>
 #include <cassert>
 #include <iostream>
 #include <cstdlib>
 #include "TFEL/Math/qt.hxx"
+#include "TFEL/Math/stensor.hxx"
 #include "TFEL/Tests/TestCase.hxx"
 #include "TFEL/Tests/TestProxy.hxx"
 #include "TFEL/Tests/TestManager.hxx"
 
 template <typename T>
-static constexpr bool my_abs(const T& v) noexcept {
-  return v < 0 ? -v : v;
+static constexpr T my_abs(const T& v) noexcept {
+  return v < T(0) ? -v : v;
 }
 
 struct QtRefTest final : public tfel::tests::TestCase {
@@ -42,6 +39,7 @@ struct QtRefTest final : public tfel::tests::TestCase {
     this->test3();
     this->test4();
     this->test5();
+    this->test6();
     return this->result;
   } // end of execute
   void test1() {
@@ -103,6 +101,21 @@ struct QtRefTest final : public tfel::tests::TestCase {
     ();
     TFEL_TESTS_STATIC_ASSERT(my_abs(m3.getValue() - 100.) < 1.e-14);
   }  // end of test5
+  void test6() {
+    using namespace tfel::math;
+    using strain = qt<NoUnit>;
+    constexpr auto eeps = strain{1e-14};
+    constexpr auto dp = strain(1e-3);
+    constexpr auto n = stensor<3u, strain>{
+        strain{1}, strain{-0.5}, strain{-0.5}, strain{0}, strain{0}, strain{0}};
+    const auto devp = dp * n;
+    TFEL_TESTS_ASSERT(my_abs(devp(0) - dp) < eeps);
+    TFEL_TESTS_ASSERT(my_abs(2 * devp(1) + dp) < eeps);
+    TFEL_TESTS_ASSERT(my_abs(2 * devp(2) + dp) < eeps);
+    TFEL_TESTS_ASSERT(my_abs(devp(3)) < eeps);
+    TFEL_TESTS_ASSERT(my_abs(devp(4)) < eeps);
+    TFEL_TESTS_ASSERT(my_abs(devp(5)) < eeps);
+  }
 };
 
 TFEL_TESTS_GENERATE_PROXY(QtRefTest, "QtRefTest");

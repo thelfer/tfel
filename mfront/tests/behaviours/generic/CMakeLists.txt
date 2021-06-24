@@ -41,6 +41,7 @@ set(mfront_tests_SOURCES
   Plasticity
   Plasticity2
   Plasticity3
+  Plasticity4
   LogarithmicStrainPlasticity
   LogarithmicStrainPlasticity2
   DruckerPrager
@@ -48,6 +49,8 @@ set(mfront_tests_SOURCES
   DruckerPragerEcroLinDefault
   Norton
   Norton2
+  Norton3
+  Norton4
   DDIF2
   Norton_Euler Norton_rk2
   Norton_rk4   Norton_rk42
@@ -82,6 +85,8 @@ set(mfront_tests_SOURCES
   StrainHardeningCreep
   StrainHardeningCreep2
   StrainHardeningCreep3
+  StrainHardeningCreep4
+  StrainHardeningCreep5
   Lorentz
   Lorentz2
   Mazars

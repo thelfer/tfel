@@ -23,7 +23,7 @@ namespace tfel::math::ieee754 {
    * \brief a portable implementation of the std::fpclassify
    * function based on the MUSL library (https://www.musl-libc.org).
    * \return the class of the floatting point value according to the
-   * IEEE754 standard?
+   * IEEE754 standard.
    * Possible return values are:
    * - FP_NORMAL: standard floatting point value
    * - FP_SUBNORMAL: subnormal floatting point value
@@ -31,7 +31,7 @@ namespace tfel::math::ieee754 {
    * - FP_INFINITE: +Inf or -Inf value
    * \param[in] x: value to be tested
    */
-  TFEL_VISIBILITY_LOCAL inline int fpclassify(const float);
+  constexpr int fpclassify(const float) noexcept;
   /*!
    * \brief a portable implementation of the std::fpclassify
    * function based on the MUSL library (https://www.musl-libc.org)
@@ -44,7 +44,7 @@ namespace tfel::math::ieee754 {
    * - FP_INFINITE: +Inf or -Inf value
    * \param[in] x: value to be tested
    */
-  TFEL_VISIBILITY_LOCAL inline int fpclassify(const double);
+  constexpr int fpclassify(const double) noexcept;
   /*!
    * \brief a portable implementation of the std::fpclassify
    * function based on the MUSL library (https://www.musl-libc.org)
@@ -57,7 +57,7 @@ namespace tfel::math::ieee754 {
    * - FP_INFINITE: +Inf or -Inf value
    * \param[in] x: value to be tested
    */
-  TFEL_VISIBILITY_LOCAL inline int fpclassify(const long double);
+  constexpr int fpclassify(const long double) noexcept;
   /*!
    * \brief Determines if the given floating point number arg is a
    * not-a-number (NaN) value.
@@ -65,7 +65,7 @@ namespace tfel::math::ieee754 {
    * \return true if the given floating point number arg is a
    * not-a-number (NaN) value.
    */
-  TFEL_VISIBILITY_LOCAL inline bool isnan(const float);
+  constexpr bool isnan(const float) noexcept;
   /*!
    * \brief Determines if the given floating point number arg is a
    * not-a-number (NaN) value.
@@ -73,7 +73,7 @@ namespace tfel::math::ieee754 {
    * \return true if the given floating point number arg is a
    * not-a-number (NaN) value.
    */
-  TFEL_VISIBILITY_LOCAL inline bool isnan(const double);
+  constexpr bool isnan(const double) noexcept;
   /*!
    * \brief Determines if the given floating point number arg is a
    * not-a-number (NaN) value.
@@ -81,7 +81,7 @@ namespace tfel::math::ieee754 {
    * \return true if the given floating point number arg is a
    * not-a-number (NaN) value.
    */
-  TFEL_VISIBILITY_LOCAL inline bool isnan(const long double);
+  constexpr bool isnan(const long double) noexcept;
   /*!
    * \brief Determines if the given floating point number arg has
    * finite value i.e. it is normal, subnormal or zero, but not
@@ -91,7 +91,7 @@ namespace tfel::math::ieee754 {
    * finite value i.e. it is normal, subnormal or zero, but not
    * infinite or NaN.
    */
-  TFEL_VISIBILITY_LOCAL inline bool isfinite(const float);
+  constexpr bool isfinite(const float) noexcept;
   /*!
    * \brief Determines if the given floating point number arg has
    * finite value i.e. it is normal, subnormal or zero, but not
@@ -101,7 +101,7 @@ namespace tfel::math::ieee754 {
    * finite value i.e. it is normal, subnormal or zero, but not
    * infinite or NaN.
    */
-  TFEL_VISIBILITY_LOCAL inline bool isfinite(const double);
+  constexpr bool isfinite(const double) noexcept;
   /*!
    * \brief Determines if the given floating point number arg has
    * finite value i.e. it is normal, subnormal or zero, but not
@@ -111,7 +111,7 @@ namespace tfel::math::ieee754 {
    * finite value i.e. it is normal, subnormal or zero, but not
    * infinite or NaN.
    */
-  TFEL_VISIBILITY_LOCAL inline bool isfinite(const long double);
+  constexpr bool isfinite(const long double) noexcept;
 
 }  // end of namespace tfel::math::ieee754
 

@@ -11,6 +11,7 @@ macro(tests_material test_arg)
     TFELUtilities TFELException TFELTests)
 endmacro(tests_material)
 
+tests_material(Lame)
 tests_material(boundsCheck)
 tests_material(OrthotropicAxesConventionTest)
 tests_material(AbaqusTangentOperator)

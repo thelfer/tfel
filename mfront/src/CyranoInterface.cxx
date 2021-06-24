@@ -795,13 +795,13 @@ namespace mfront {
     const auto mvs = mb.getMainVariablesSize();
     const auto mprops = this->buildMaterialPropertiesList(mb, h);
     if (h == ModellingHypothesis::UNDEFINEDHYPOTHESIS) {
-      out << "template<tfel::material::ModellingHypothesis::Hypothesis "
-             "H,typename Type";
+      out << "template<tfel::material::ModellingHypothesis::Hypothesis H, "
+          << "typename NumericType";
       if (mb.useQt()) {
         out << ",bool use_qt";
       }
     } else {
-      out << "template<typename Type";
+      out << "template<typename NumericType";
       if (mb.useQt()) {
         out << ",bool use_qt";
       }
@@ -809,11 +809,11 @@ namespace mfront {
     out << ">\n";
     if (h == ModellingHypothesis::UNDEFINEDHYPOTHESIS) {
       out << "struct CyranoTraits<tfel::material::" << mb.getClassName()
-          << "<H,Type,";
+          << "<H, NumericType,";
     } else {
       out << "struct CyranoTraits<tfel::material::" << mb.getClassName()
           << "<tfel::material::ModellingHypothesis::"
-          << ModellingHypothesis::toUpperCaseString(h) << ",Type,";
+          << ModellingHypothesis::toUpperCaseString(h) << ", NumericType,";
     }
     if (mb.useQt()) {
       out << "use_qt";

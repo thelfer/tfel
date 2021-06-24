@@ -41,12 +41,13 @@ namespace mfront {
     if (!persistentVarsHolder.empty()) {
       out << "void\n"
           << iprefix + "exportStateData("
-          << "Type * const " << iprefix + "stress_,Type * const "
-          << iprefix + "statev) const\n";
+          << "NumericType * const " << iprefix + "stress_, "
+          << "NumericType * const " << iprefix + "statev) const\n";
     } else {
       out << "void\n"
           << iprefix + "exportStateData("
-          << "Type * const " << iprefix << "stress_,Type * const) const\n";
+          << "NumericType * const " << iprefix << "stress_, "
+          << "NumericType * const) const\n";
     }
     out << "{\n";
     out << "using namespace tfel::math;\n";
@@ -378,30 +379,30 @@ namespace mfront {
           << "\n";
     }
     out << " */\n"
-        << mb.getClassName() << "(const Type* const " << iprefix << "dt_"
-        << ",\nconst Type* const " << iprefix << "T_";
+        << mb.getClassName() << "(const NumericType* const " << iprefix << "dt_"
+        << ",\nconst NumericType* const " << iprefix << "T_";
     if (this->isTemperatureIncrementSupported()) {
-      out << ",\nconst Type* const " << iprefix << "dT_";
+      out << ",\nconst NumericType* const " << iprefix << "dT_";
     }
-    out << ",\nconst Type* const " << iprefix << "mat"
-        << ",\nconst Type* const " << iprefix << "int_vars";
+    out << ",\nconst NumericType* const " << iprefix << "mat"
+        << ",\nconst NumericType* const " << iprefix << "int_vars";
     if (this->areExternalStateVariablesSupported()) {
-      out << ",\nconst Type* const " << iprefix << "ext_vars"
-          << ",\nconst Type* const " << iprefix << "dext_vars";
+      out << ",\nconst NumericType* const " << iprefix << "ext_vars"
+          << ",\nconst NumericType* const " << iprefix << "dext_vars";
     }
     for (const auto& v : abdv) {
-      out << ",\nconst Type* const " << iprefix << v.first;
+      out << ",\nconst NumericType* const " << iprefix << v.first;
     }
     for (const auto& v : aidv) {
-      out << ",\nconst Type* const " << iprefix << v.first;
+      out << ",\nconst NumericType* const " << iprefix << v.first;
     }
     for (const auto& v : av) {
-      out << ",\nconst Type* const " << iprefix << v.first;
+      out << ",\nconst NumericType* const " << iprefix << v.first;
     }
     out << ")\n";
     if (mb.useQt()) {
       out << ": " << mb.getClassName()
-          << "BehaviourData<hypothesis,Type,use_qt>(" << iprefix << "T_,"
+          << "BehaviourData<hypothesis, NumericType,use_qt>(" << iprefix << "T_,"
           << iprefix << "mat,\n"
           << iprefix + "int_vars";
       if (this->areExternalStateVariablesSupported()) {
@@ -414,7 +415,7 @@ namespace mfront {
         out << "," << iprefix << v.first;
       }
       out << "),\n"
-          << mb.getClassName() << "IntegrationData<hypothesis,Type,use_qt>("
+          << mb.getClassName() << "IntegrationData<hypothesis, NumericType,use_qt>("
           << iprefix << "dt_";
       if (this->isTemperatureIncrementSupported()) {
         out << "," << iprefix << "dT_";
@@ -431,7 +432,7 @@ namespace mfront {
       out << ")";
     } else {
       out << ": " << mb.getClassName()
-          << "BehaviourData<hypothesis,Type,false>(" << iprefix << "T_,"
+          << "BehaviourData<hypothesis, NumericType,false>(" << iprefix << "T_,"
           << iprefix << "mat,\n"
           << iprefix + "int_vars";
       if (this->areExternalStateVariablesSupported()) {
@@ -444,7 +445,7 @@ namespace mfront {
         out << "," << iprefix << v.first;
       }
       out << "),\n"
-          << mb.getClassName() << "IntegrationData<hypothesis,Type,false>("
+          << mb.getClassName() << "IntegrationData<hypothesis, NumericType,false>("
           << iprefix << "dt_";
       if (this->isTemperatureIncrementSupported()) {
         out << "," << iprefix << "dT_";
@@ -618,29 +619,29 @@ namespace mfront {
     }
     out << " */\n"
         << mb.getClassName() << "BehaviourData"
-        << "(const Type* const " << iprefix << "T_,const Type* const";
+        << "(const NumericType* const " << iprefix << "T_,const NumericType* const";
     if (!mp.empty()) {
       out << " " << iprefix << "mat,\n";
     } else {
       out << ",\n";
     }
-    out << "const Type* const";
+    out << "const NumericType* const";
     if (!persistentVarsHolder.empty()) {
       out << " " << iprefix << "int_vars\n";
     } else {
       out << "\n";
     }
     if (this->areExternalStateVariablesSupported()) {
-      out << ",const Type* const";
+      out << ",const NumericType* const";
       if (externalStateVarsHolder.size() != 1) {
         out << " " << iprefix << "ext_vars";
       }
     }
     for (const auto& v : abdv) {
-      out << ",const Type* const " << iprefix << v.first;
+      out << ",const NumericType* const " << iprefix << v.first;
     }
     for (const auto& v : av) {
-      out << ",const Type* const " << iprefix << v.first;
+      out << ",const NumericType* const " << iprefix << v.first;
     }
     out << ")\n: ";
     bool first = true;
@@ -703,22 +704,22 @@ namespace mfront {
     }
     out << " */\n"
         << mb.getClassName() << "IntegrationData"
-        << "(const Type* const " << iprefix << "dt_";
+        << "(const NumericType* const " << iprefix << "dt_";
     if (this->isTemperatureIncrementSupported()) {
-      out << ",\nconst Type* const " << iprefix << "dT_";
+      out << ",\nconst NumericType* const " << iprefix << "dT_";
     }
     if (this->areExternalStateVariablesSupported()) {
       if (externalStateVarsHolder.size() != 1) {
-        out << ",const Type* const " << iprefix << "dext_vars";
+        out << ",const NumericType* const " << iprefix << "dext_vars";
       } else {
-        out << ",const Type* const";
+        out << ",const NumericType* const";
       }
     }
     for (const auto& v : aidv) {
-      out << ",const Type* const " << iprefix << v.first;
+      out << ",const NumericType* const " << iprefix << v.first;
     }
     for (const auto& v : av) {
-      out << ",const Type* const " << iprefix << v.first;
+      out << ",const NumericType* const " << iprefix << v.first;
     }
     out << ")\n"
         << ": dt(*" << iprefix << "dt_)";
@@ -742,7 +743,7 @@ namespace mfront {
       std::ostream& os, const BehaviourDescription& mb) const {
     const auto iprefix = makeUpperCase(this->getInterfaceName());
     SupportedTypes::TypeSize ov, of;
-    os << "void set" << iprefix << "BehaviourDataGradients(const Type* const "
+    os << "void set" << iprefix << "BehaviourDataGradients(const NumericType* const "
        << iprefix << "stran)\n"
        << "{\n";
     for (const auto& v : mb.getMainVariables()) {
@@ -751,7 +752,7 @@ namespace mfront {
     }
     os << "}\n\n";
     os << "void set" << iprefix
-       << "BehaviourDataThermodynamicForces(const Type* const " << iprefix
+       << "BehaviourDataThermodynamicForces(const NumericType* const " << iprefix
        << "stress_)\n"
        << "{\n";
     for (const auto& v : mb.getMainVariables()) {
@@ -871,7 +872,7 @@ namespace mfront {
       std::ostream& os, const BehaviourDescription& mb) const {
     const auto iprefix = makeUpperCase(this->getInterfaceName());
     SupportedTypes::TypeSize ov;
-    os << "void set" << iprefix << "IntegrationDataGradients(const Type* const "
+    os << "void set" << iprefix << "IntegrationDataGradients(const NumericType* const "
        << iprefix << "dstran)\n"
        << "{\n";
     for (const auto& v : mb.getMainVariables()) {

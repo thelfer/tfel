@@ -302,12 +302,12 @@ namespace mfront {
     const auto mprops = this->buildMaterialPropertiesList(mb, h);
     if (h == ModellingHypothesis::UNDEFINEDHYPOTHESIS) {
       out << "template<tfel::material::ModellingHypothesis::Hypothesis "
-             "H,typename Type";
+             "H,typename NumericType";
       if (mb.useQt()) {
         out << ",bool use_qt";
       }
     } else {
-      out << "template<typename Type";
+      out << "template<typename NumericType";
       if (mb.useQt()) {
         out << ",bool use_qt";
       }
@@ -320,7 +320,7 @@ namespace mfront {
       out << "tfel::material::ModellingHypothesis::"
           << ModellingHypothesis::toUpperCaseString(h);
     }
-    out << ",Type,";
+    out << ", NumericType,";
     if (mb.useQt()) {
       out << "use_qt";
     } else {
