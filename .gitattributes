@@ -3100,10 +3100,16 @@ mfront/tests/behaviours/NortonRK2.mfront -text
 mfront/tests/behaviours/NortonRK3.mfront -text
 mfront/tests/behaviours/NortonRK4.mfront -text
 mfront/tests/behaviours/Norton_Euler.mfront -text
+mfront/tests/behaviours/Norton_euler_qt.mfront -text
 mfront/tests/behaviours/Norton_rk2.mfront -text
+mfront/tests/behaviours/Norton_rk2_qt.mfront -text
 mfront/tests/behaviours/Norton_rk4.mfront -text
 mfront/tests/behaviours/Norton_rk42.mfront -text
+mfront/tests/behaviours/Norton_rk42_qt.mfront -text
+mfront/tests/behaviours/Norton_rk4_qt.mfront -text
+mfront/tests/behaviours/Norton_rk54_qt.mfront -text
 mfront/tests/behaviours/Norton_rkCastem.mfront -text
+mfront/tests/behaviours/Norton_rkCastem_qt.mfront -text
 mfront/tests/behaviours/OrthotropicCreep.mfront -text
 mfront/tests/behaviours/OrthotropicCreep_rk42.mfront -text
 mfront/tests/behaviours/OrthotropicCreep_rkCastem.mfront -text

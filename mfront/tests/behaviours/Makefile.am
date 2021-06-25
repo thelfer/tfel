@@ -61,6 +61,12 @@ MFRONTS= DDIF2.mfront                                                      \
          Norton_rk4.mfront                                                 \
          Norton_rk42.mfront                                                \
          Norton_rkCastem.mfront                                            \
+         Norton_euler_qt.mfront                                            \
+         Norton_rk2_qt.mfront                                              \
+         Norton_rk42_qt.mfront                                             \
+         Norton_rk4_qt.mfront                                              \
+         Norton_rk54_qt.mfront                                             \
+         Norton_rkCastem_qt.mfront                                         \
          Burger.mfront                                                     \
          AgeingBurger.mfront                                               \
          OrthotropicCreep.mfront                                           \

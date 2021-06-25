@@ -1,0 +1,61 @@
+@DSL RungeKutta;
+@Behaviour Norton_euler_qt;
+@UseQt true;
+@Author Thomas Helfer;
+@Algorithm euler;
+@Date 23/11/06;
+
+@Epsilon 1.e-8;
+
+@MaterialProperty stress young;
+young.setGlossaryName("YoungModulus");
+@MaterialProperty real nu;
+nu.setGlossaryName("PoissonRatio");
+
+@LocalVar stress lambda; /* first  Lame coefficient  */
+@LocalVar stress mu;     /* second Lame coefficient */
+
+@StateVar strain p;      /* Equivalent viscoplastic strain */
+@StateVar StrainStensor evp; /* Viscoplastic strain            */
+
+/* Initialize Lame coefficients */
+@InitLocalVars{
+  lambda = computeLambda(young,nu);
+  mu = computeMu(young,nu);
+}
+
+@PredictionOperator{
+  if(!((smt==ELASTIC)||(smt==SECANTOPERATOR)||(smt==TANGENTOPERATOR))){
+    return FAILURE;
+  }
+  Dt=lambda*Stensor4::IxI()+2*mu*Stensor4::Id();
+}
+
+@ComputeStress{
+  sig = lambda*trace(eel)*StrainStensor::Id()+2*mu*eel;
+}
+
+@Derivative{
+  constexpr auto s0 = stress(100e6);
+  constexpr auto de0 = strainrate(0.31848573644279365);
+  constexpr auto E = real(8.2);
+  const auto seps = real(1.e-12) * young;
+  const auto seq = sigmaeq(sig);
+  if (seq > stress(1.e9)) {
+    return false;
+  }
+  const auto iseq = 1 / max(seq, seps);
+  const auto n = 3 * deviator(sig) * (iseq / 2);
+  dp = de0 * pow(seq / s0, E);
+  devp = dp * n;
+  deel = deto - devp;
+}	
+
+@IsTangentOperatorSymmetric true;
+@TangentOperator{
+  if(!((smt==ELASTIC)||(smt==SECANTOPERATOR)||(smt==TANGENTOPERATOR))){
+    return FAILURE;
+  }
+  Dt=lambda*Stensor4::IxI()+2*mu*Stensor4::Id();
+}
+
