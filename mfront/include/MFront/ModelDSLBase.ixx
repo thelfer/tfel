@@ -26,8 +26,8 @@ namespace mfront {
   template <typename Child>
   void ModelDSLBase<Child>::registerDefaultCallBacks() {
     this->registerNewCallBack(";", &Child::treatLonelySeparator);
-    this->registerNewCallBack("@DSL", &Child::treatParser);
-    this->registerNewCallBack("@Parser", &Child::treatParser);
+    this->registerNewCallBack("@DSL", &Child::treatDSL);
+    this->registerNewCallBack("@Parser", &Child::treatDSL);
     this->registerNewCallBack("@Model", &Child::treatModel);
     this->registerNewCallBack("@Material", &Child::treatMaterial);
     this->registerNewCallBack("@Author", &Child::treatAuthor);

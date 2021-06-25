@@ -767,11 +767,11 @@ namespace mfront {
     this->setComputeFinalThermodynamicForcesFromComputeFinalThermodynamicForcesCandidateIfNecessary();
     // minimal time step
     if (this->mb.hasParameter(uh, "dtmin")) {
-      ib.code += "if(this->dt<" + this->mb.getClassName() + "::dtmin){\n";
-      ib.code += "this->dt=" + this->mb.getClassName() + "::dtmin;\n";
+      ib.code += "if(this->dt < " + this->mb.getClassName() + "::dtmin){\n";
+      ib.code += "this->dt = " + this->mb.getClassName() + "::dtmin;\n";
       ib.code += "}\n";
     } else {
-      ib.code += "if(this->dt<100*numeric_limits<time>::min()){\n";
+      ib.code += "if(this->dt < 100 * std::numeric_limits<time>::min()){\n";
       ib.code += "string msg(\"" + this->mb.getClassName() +
                  "::" + this->mb.getClassName() + "\");\n";
       ib.code += "msg += \"time step too small.\";\n";
@@ -786,7 +786,7 @@ namespace mfront {
       const auto& dv = vm.first;
       if (Gradient::isIncrementKnown(dv)) {
         ie.code +=
-            "this->d" + dv.name + "_ = (this->d" + dv.name + ")/(this->dt);\n";
+            "this->d" + dv.name + "_ = (this->d" + dv.name + ") / (this->dt);\n";
       } else {
         ie.code += "this->d" + dv.name + "_ = (this->" + dv.name + "1-this->" +
                    dv.name + "0)/(this->dt);\n";
@@ -1104,7 +1104,7 @@ namespace mfront {
        << "constexpr const auto cste1_50        = NumericType(1)/NumericType(50);\n"
        << "time t      = time(0);\n"
        << "time dt_    = this->dt;\n"
-       << "time dtprec = 100*this->dt*numeric_limits<time>::epsilon();\n"
+       << "time dtprec = 100* (this->dt) * std::numeric_limits<NumericType>::epsilon();\n"
        << "auto error = NumericType{};\n"
        << "bool converged = false;\n";
     if (getDebugMode()) {
@@ -1398,14 +1398,14 @@ namespace mfront {
           if (v.hasAttribute(VariableDescription::errorNormalisationFactor)) {
             os << "(";
           }
-          os << "tfel::math::abs(";
-          os << "cste1_360*(this->d" << v.name << "_K1)"
+          os << "tfel::math::base_type_cast(tfel::math::abs("
+             << "cste1_360*(this->d" << v.name << "_K1)"
              << "-cste128_4275*(this->d" << v.name << "_K3)"
              << "-cste2197_75240*(this->d" << v.name << "_K4)"
              << "+cste1_50*(this->d" << v.name << "_K5)"
-             << "+cste2_55*(this->d" << v.name << "_K6))";
+             << "+cste2_55*(this->d" << v.name << "_K6)))";
           if (v.hasAttribute(VariableDescription::errorNormalisationFactor)) {
-            os << ")/(" << get_enf(v) << ")";
+            os << "))/(" << get_enf(v) << ")";
           }
           os << ";\n";
         } else {
@@ -1419,12 +1419,12 @@ namespace mfront {
             if (v.hasAttribute(VariableDescription::errorNormalisationFactor)) {
               os << "(";
             }
-            os << "tfel::math::abs(";
+            os << "tfel::math::base_type_cast(tfel::math::abs(";
             os << "cste1_360*(this->d" << v.name << "_K1[idx])"
                << "-cste128_4275*(this->d" << v.name << "_K3[idx])"
                << "-cste2197_75240*(this->d" << v.name << "_K4[idx])"
                << "+cste1_50*(this->d" << v.name << "_K5[idx])"
-               << "+cste2_55*(this->d" << v.name << "_K6[idx]))";
+               << "+cste2_55*(this->d" << v.name << "_K6[idx])))";
             if (v.hasAttribute(VariableDescription::errorNormalisationFactor)) {
               os << ")/(" << get_enf(v) << ")";
             }
@@ -1441,12 +1441,12 @@ namespace mfront {
                       VariableDescription::errorNormalisationFactor)) {
                 os << "(";
               }
-              os << "tfel::math::abs("
+              os << "tfel::math::base_type_case(tfel::math::abs("
                  << "cste1_360*(this->d" << v.name << "_K1[" << i << "])"
                  << "-cste128_4275*(this->d" << v.name << "_K3[" << i << "])"
                  << "-cste2197_75240*(this->d" << v.name << "_K4[" << i << "])"
                  << "+cste1_50*(this->d" << v.name << "_K5[" << i << "])"
-                 << "+cste2_55*(this->d" << v.name << "_K6[" << i << "]))";
+                 << "+cste2_55*(this->d" << v.name << "_K6[" << i << "])))";
               if (v.hasAttribute(
                       VariableDescription::errorNormalisationFactor)) {
                 os << ")/(" << get_enf(v) << ")";
@@ -1459,13 +1459,13 @@ namespace mfront {
       os << "error/=" << svsize << ";\n";
     } else if (eev == MAXIMUMVALUEERROREVALUATION) {
       os << "error  = NumericType(0);\n"
-         << "auto rk_update_error = [&error](const real rk_error){\n"
+         << "auto rk_update_error = [&error](const auto rk_error){\n"
          << "if(!ieee754::isfinite(error)){return;}\n"
          << "if(!ieee754::isfinite(rk_error)){\n"
-         << "error = rk_error;\n"
+         << "error = tfel::math::base_type_cast(rk_error);\n"
          << "return;\n"
          << "}\n"
-         << "error = std::max(error, rk_error);\n"
+         << "error = std::max(error, tfel::math::base_type_cast(rk_error));\n"
          << "};\n";
       for (const auto& v : d.getStateVariables()) {
         if (v.arraySize == 1u) {
@@ -1559,14 +1559,14 @@ namespace mfront {
       os << "this->updateAuxiliaryStateVariables(dt_);\n";
     }
     os << "t += dt_;\n"
-       << "if(std::abs(this->dt-t)<dtprec){\n"
+       << "if(tfel::math::abs(this->dt-t)<dtprec){\n"
        << "converged=true;\n"
        << "}\n"
        << "}\n"
        << "if(!converged){\n"
        << "// time multiplier\n"
        << "real corrector;\n"
-       << "if(error<100*std::numeric_limits<real>::min()){\n"
+       << "if(error < 100*std::numeric_limits<real>::min()){\n"
        << "corrector=real(10);\n"
        << "} else {\n"
        << "corrector = 0.8*pow(this->epsilon/error,0.2);\n"
@@ -1600,7 +1600,7 @@ namespace mfront {
        << "if(dt_<dtprec){\n"
        << "throw(tfel::material::DivergenceException());\n"
        << "}\n"
-       << "if((std::abs(this->dt-t-dt_)<2*dtprec)||(t+dt_>this->dt)){\n"
+       << "if((tfel::math::abs(this->dt-t-dt_)<2*dtprec)||(t+dt_>this->dt)){\n"
        << "dt_=this->dt-t;\n"
        << "}\n"
        << "}\n"
@@ -1641,8 +1641,7 @@ namespace mfront {
        << "time t   = time(0);\n"
        << "time dt_ = this->dt;\n"
        << "StressStensor sigf;\n"
-       << "real errabs;\n"
-       << "real asig;\n"
+       << "stress errabs;\n"
        << "bool failed = false\n;";
     if (this->mb.hasCode(h, BehaviourData::ComputeThermodynamicForces)) {
       os << "failed=!this->computeThermodynamicForces();\n";
@@ -1656,12 +1655,15 @@ namespace mfront {
     os << "if(failed){\n"
        << "throw(tfel::material::DivergenceException());\n"
        << "}\n"
-       << "asig = sqrt((this->sig)|(this->sig));\n"
+       << "const auto asig = tfel::math::power<1, 2>((this->sig) | "
+          "(this->sig));\n"
        << "if ((this->young)*NumericType(1.e-3)>asig){\n"
-       << "  errabs = (this->young)*NumericType(1.e-3)*(this->epsilon);\n"
+       << "  errabs = (this->young) * NumericType(1.e-3) * (this->epsilon);\n"
        << "}else{\n"
-       << "  errabs = (this->epsilon)*asig;\n}\n\n"
-       << "time dtprec = 100*this->dt*numeric_limits<time>::epsilon();\n"
+       << "  errabs = (this->epsilon) * asig;\n"
+       << "}\n\n"
+       << "time dtprec = 100 * (this->dt) * "
+          "std::numeric_limits<NumericType>::epsilon();\n"
        << "bool converged = false;\n";
     if (getDebugMode()) {
       os << "cout << endl << \"" << this->mb.getClassName()
@@ -1930,12 +1932,11 @@ namespace mfront {
     }
     os << "}\n\n"
        << "if(!failed){\n"
-       << "real ra;\n"
-       << "real sqra;\n"
        << "// Computing the error\n"
-
-       << "ra = sqrt(((sigf)-(this->sig))|((sigf)-(this->sig)))/errabs;\n"
-       << "sqra = sqrt(ra);\n"
+       << "const auto ra = "
+       << "tfel::math::power<1, "
+       << "2>(((sigf)-(this->sig))|((sigf)-(this->sig))) / errabs;\n"
+       << "const auto sqra = tfel::math::power<1, 2>(ra);\n"
        << "// test for convergence\n"
        << "if ((sqra>" << this->mb.getClassName()
        << "::rkcastem_div)||(!ieee754::isfinite(ra))){\n"
@@ -1971,11 +1972,11 @@ namespace mfront {
       os << "this->updateAuxiliaryStateVariables(dt_);\n";
     }
     os << "t += dt_;\n"
-       << "if(std::abs(this->dt-t)<dtprec){\n"
+       << "if(tfel::math::abs(this->dt-t)<dtprec){\n"
        << "converged=true;\n"
        << "}\n"
        << "if(!converged){\n"
-       << "if ((" << this->mb.getClassName() << "::rkcastem_fac)*sqra<1.){\n"
+       << "if ((" << this->mb.getClassName() << "::rkcastem_fac)*sqra < 1){\n"
        << "dt_ *= " << this->mb.getClassName() << "::rkcastem_fac;\n";
     if (getDebugMode()) {
       os << "cout << \"" << this->mb.getClassName()
@@ -2005,7 +2006,7 @@ namespace mfront {
        << "throw(tfel::material::DivergenceException());\n"
        << "}\n"
        << "if(!converged){\n"
-       << "if((std::abs(this->dt-t-dt_)<2*dtprec)||(t+dt_>this->dt)){\n"
+       << "if((tfel::math::abs(this->dt-t-dt_)<2*dtprec) || (t+dt_>this->dt)){\n"
        << "dt_=this->dt-t;\n"
        << "}\n"
        << "}\n"
@@ -2043,7 +2044,7 @@ namespace mfront {
        << "constexpr const auto cste1_3  = NumericType(1)/NumericType(3);\n"
        << "time t   = time(0);\n"
        << "time dt_ = this->dt;\n"
-       << "time dtprec = 100*this->dt*numeric_limits<time>::epsilon();\n"
+       << "time dtprec = 100 * (this->dt) * std::numeric_limits<NumericType>::epsilon();\n"
        << "auto error = NumericType{};\n"
        << "bool converged = false;\n";
     if (getDebugMode()) {
@@ -2228,14 +2229,14 @@ namespace mfront {
           } else {
             os << "error += ";
           }
-          os << "tfel::math::abs(";
+          os << "tfel::math::base_type_cast(tfel::math::abs(";
           if (v.hasAttribute(VariableDescription::errorNormalisationFactor)) {
             os << "(";
           }
           os << "cste1_6*(this->d" << v.name << "_K1+"
              << "this->d" << v.name << "_K4-"
              << "this->d" << v.name << "_K2-"
-             << "this->d" << v.name << "_K3))";
+             << "this->d" << v.name << "_K3)))";
           if (v.hasAttribute(VariableDescription::errorNormalisationFactor)) {
             os << ")/(" << get_enf(v) << ")";
           }
@@ -2248,14 +2249,14 @@ namespace mfront {
             }
             os << "for(unsigned short idx=0;idx!=" << v.arraySize
                << ";++idx){\n"
-               << "error += tfel::math::abs(";
+               << "error += tfel::math::base_type_cast(tfel::math::abs(";
             if (v.hasAttribute(VariableDescription::errorNormalisationFactor)) {
               os << "(";
             }
             os << "cste1_6*(this->d" << v.name << "_K1[idx]+"
                << "this->d" << v.name << "_K4[idx]-"
                << "this->d" << v.name << "_K2[idx]-"
-               << "this->d" << v.name << "_K3[idx]))";
+               << "this->d" << v.name << "_K3[idx])))";
             if (v.hasAttribute(VariableDescription::errorNormalisationFactor)) {
               os << ")/(" << get_enf(v) << ")";
             }
@@ -2269,7 +2270,7 @@ namespace mfront {
               } else {
                 os << "error += ";
               }
-              os << "tfel::math::abs(";
+              os << "tfel::math::base_type_cast(tfel::math::abs(";
               if (v.hasAttribute(
                       VariableDescription::errorNormalisationFactor)) {
                 os << "(";
@@ -2277,7 +2278,7 @@ namespace mfront {
               os << "cste1_6*(this->d" << v.name << "_K1[" << i << "]+"
                  << "this->d" << v.name << "_K4[" << i << "]-"
                  << "this->d" << v.name << "_K2[" << i << "]-"
-                 << "this->d" << v.name << "_K3[" << i << "]))";
+                 << "this->d" << v.name << "_K3[" << i << "])))";
               if (v.hasAttribute(
                       VariableDescription::errorNormalisationFactor)) {
                 os << ")/(" << get_enf(v) << ")";
@@ -2290,13 +2291,13 @@ namespace mfront {
       os << "error/=" << stateVarsSize << ";\n";
     } else if (eev == MAXIMUMVALUEERROREVALUATION) {
       os << "error  = NumericType(0);\n"
-         << "auto rk_update_error = [&error](const real rk_error){\n"
+         << "auto rk_update_error = [&error](const auto rk_error){\n"
          << "if(!ieee754::isfinite(error)){return;}\n"
          << "if(!ieee754::isfinite(rk_error)){\n"
          << "error = rk_error;\n"
          << "return;\n"
          << "}\n"
-         << "error = std::max(error, rk_error);\n"
+         << "error = std::max(error, tfel::math::base_type_cast(rk_error));\n"
          << "};\n";
       for (const auto& v : d.getStateVariables()) {
         if (v.arraySize == 1u) {
@@ -2374,7 +2375,7 @@ namespace mfront {
       os << "this->updateAuxiliaryStateVariables(dt_);\n";
     }
     os << "t += dt_;\n"
-       << "if(std::abs(this->dt-t)<dtprec){\n"
+       << "if(tfel::math::abs(this->dt-t) < dtprec){\n"
        << "converged=true;\n"
        << "}\n"
        << "}\n"
@@ -2415,7 +2416,7 @@ namespace mfront {
        << "if(dt_<dtprec){\n"
        << "throw(tfel::material::DivergenceException());\n"
        << "}\n"
-       << "if((std::abs(this->dt-t-dt_)<2*dtprec)||(t+dt_>this->dt)){\n"
+       << "if((tfel::math::abs(this->dt-t-dt_)<2*dtprec)||(t+dt_>this->dt)){\n"
        << "dt_=this->dt-t;\n"
        << "}\n"
        << "}\n"

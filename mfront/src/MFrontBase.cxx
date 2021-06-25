@@ -21,6 +21,7 @@
 #endif /* MFRONT_HAVE_MADNEX */
 
 #include "TFEL/Raise.hxx"
+#include "TFEL/Utilities/Data.hxx"
 #include "TFEL/Utilities/CxxTokenizer.hxx"
 #include "TFEL/Utilities/StringAlgorithms.hxx"
 #include "TFEL/System/ExternalLibraryManager.hxx"
@@ -40,14 +41,15 @@
 namespace mfront {
 
   std::shared_ptr<AbstractDSL> MFrontBase::getDSL(const std::string& f) {
+    using namespace tfel::system;
     auto throw_if = [](const bool b, const std::string& m) {
       tfel::raise_if(b, "MFrontBase::getDSL: " + m);
     };
-    using namespace tfel::system;
     auto& dslFactory = DSLFactory::getDSLFactory();
     std::shared_ptr<AbstractDSL> dsl;
     std::string library, dslName;
     tfel::utilities::CxxTokenizer file;
+    auto dsl_options = std::map<std::string, tfel::utilities::Data> {};
     if (tfel::utilities::starts_with(f, "madnex:")) {
 #ifdef MFRONT_HAVE_MADNEX
       const auto path = decomposeImplementationPathInMadnexFile(f);
@@ -83,6 +85,12 @@ namespace mfront {
         dslName = pt->value;
         ++pt;
         throw_if(pt == pte, "unexpected end of file (exepected dsl name)");
+        if (pt->value == "{") {
+          const auto o = tfel::utilities::DataParsingOptions{};
+          dsl_options =
+              tfel::utilities::Data::read(pt, pte, o)
+                  .get<std::map<std::string, tfel::utilities::Data>>();
+        }
         if (pt->value != ";") {
           library = pt->value;
           ++pt;

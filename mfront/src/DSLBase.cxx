@@ -25,6 +25,7 @@
 #include "TFEL/Raise.hxx"
 #include "TFEL/Math/IntegerEvaluator.hxx"
 #include "TFEL/UnicodeSupport/UnicodeSupport.hxx"
+#include "TFEL/Utilities/Data.hxx"
 #include "TFEL/Utilities/StringAlgorithms.hxx"
 
 #include "MFront/MFront.hxx"
@@ -1171,9 +1172,16 @@ namespace mfront {
     this->appendToPrivateCode(this->readNextBlock(options).code);
   }  // end of DSLBase::treatPrivate
 
-  void DSLBase::treatParser() {
-    this->readUntilEndOfInstruction();
-  }  // end of DSLBase::treatParser
+  void DSLBase::treatDSL() {
+    this->checkNotEndOfFile("DSLBase::treatDSL", "expected DSL' name");
+    ++(this->current);
+    this->checkNotEndOfFile("DSLBase::treatDSL", "expected ';'");
+    if (this->current->value == "{") {
+      const auto o = tfel::utilities::DataParsingOptions{};
+      tfel::utilities::Data::read(this->current, this->tokens.end(), o);
+    }
+    this->readSpecifiedToken("DSLBase::treatDSL", ";");
+  }  // end of DSLBase::treatDSL
 
   void DSLBase::treatStaticVar() {
     this->checkNotEndOfFile("DSLBase::treatStaticVar",

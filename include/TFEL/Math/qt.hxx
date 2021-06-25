@@ -262,6 +262,20 @@ namespace tfel::math {
       return *this;
     }
     /*!
+     * \brief multiplication by a scalar
+     * \tparam ValueType2: another numeric type
+     * \param[in] a: a scalar
+     */
+    template <typename ValueType2, typename OwnershipPolicy2>
+    constexpr std::enable_if_t<
+        IsQtScalarOperationValid<ValueType, ValueType2>::cond,
+        Quantity&>
+    operator*=(
+        const Quantity<NoUnit, ValueType2, OwnershipPolicy2>& a) noexcept {
+      this->getValue() *= a.getValue();
+      return *this;
+    }
+    /*!
      * \brief division by a scalar
      * \tparam ValueType2: another numeric type
      * \param[in] a: a scalar
@@ -272,6 +286,20 @@ namespace tfel::math {
         Quantity&>
     operator/=(const ValueType2& a) noexcept {
       this->getValue() /= a;
+      return *this;
+    }
+    /*!
+     * \brief division by a scalar
+     * \tparam ValueType2: another numeric type
+     * \param[in] a: a scalar
+     */
+    template <typename ValueType2, typename OwnershipPolicy2>
+    constexpr std::enable_if_t<
+        IsQtScalarOperationValid<ValueType, ValueType2>::cond,
+        Quantity&>
+    operator/=(
+        const Quantity<NoUnit, ValueType2, OwnershipPolicy2>& a) noexcept {
+      this->getValue() /= a.getValue();
       return *this;
     }
     //! \brief negation operator

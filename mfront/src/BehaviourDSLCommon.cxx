@@ -134,8 +134,8 @@ namespace mfront {
       this->registredKeyWords.insert(k);
     };
     add(";", &BehaviourDSLCommon::treatLonelySeparator);
-    add("@DSL", &BehaviourDSLCommon::treatParser);
-    add("@Parser", &BehaviourDSLCommon::treatParser);
+    add("@DSL", &BehaviourDSLCommon::treatDSL);
+    add("@Parser", &BehaviourDSLCommon::treatDSL);
     add("@Model", &BehaviourDSLCommon::treatModel);
     add("@Brick", &BehaviourDSLCommon::treatBrick);
     add("@ModellingHypothesis", &BehaviourDSLCommon::treatModellingHypothesis);

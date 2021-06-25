@@ -65,8 +65,8 @@ namespace mfront {
     this->registerNewCallBack("@MFront", &MaterialPropertyDSL::treatMFront);
     this->registerNewCallBack("@Material", &MaterialPropertyDSL::treatMaterial);
     this->registerNewCallBack("@Library", &MaterialPropertyDSL::treatLibrary);
-    this->registerNewCallBack("@DSL", &MaterialPropertyDSL::treatParser);
-    this->registerNewCallBack("@Parser", &MaterialPropertyDSL::treatParser);
+    this->registerNewCallBack("@DSL", &MaterialPropertyDSL::treatDSL);
+    this->registerNewCallBack("@Parser", &MaterialPropertyDSL::treatDSL);
     this->registerNewCallBack("@Law", &MaterialPropertyDSL::treatLaw);
     this->registerNewCallBack("@Author", &MaterialPropertyDSL::treatAuthor);
     this->registerNewCallBack("@Date", &MaterialPropertyDSL::treatDate);

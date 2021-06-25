@@ -14,6 +14,7 @@
 #ifndef LIB_TFEL_MATH_QTSPECIFIC_HXX
 #define LIB_TFEL_MATH_QTSPECIFIC_HXX
 
+#include "TFEL/TypeTraits/AbsType.hxx"
 #include "TFEL/TypeTraits/BaseType.hxx"
 
 /*!
@@ -234,6 +235,11 @@ namespace tfel::typetraits {
   TFEL_MATH_QT_BASE_TYPE(tfel::math::Complex<float>);
   TFEL_MATH_QT_BASE_TYPE(tfel::math::Complex<double>);
   TFEL_MATH_QT_BASE_TYPE(tfel::math::Complex<long double>);
+
+  template <typename UnitType, typename ValueType, typename OwnershipPolicy>
+  struct AbsType<tfel::math::Quantity<UnitType, ValueType, OwnershipPolicy>> {
+    using type = tfel::math::qt<UnitType, typename AbsType<ValueType>::type>;
+  };  // end of struct AbsType
 
 }  // end of namespace tfel::typetraits
 

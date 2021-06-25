@@ -476,8 +476,8 @@ namespace mfront {
     virtual void treatPrivate();
     //! \brief handle the `@Members` keyword
     virtual void treatMembers();
-    //! \brief handle the `@Parser` keyword
-    virtual void treatParser();
+    //! \brief handle the `@DSL` or `@Parser` keyword
+    virtual void treatDSL();
     //! \brief handle the `@StaticVar` keyword
     virtual void treatStaticVar();
     //! \brief handle the `@IntegerConstant` keyword
