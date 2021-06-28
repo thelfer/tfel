@@ -22,6 +22,7 @@
 #include "TFEL/Config/TFELConfig.hxx"
 #include "TFEL/TypeTraits/IsReal.hxx"
 #include "TFEL/TypeTraits/IsFundamentalNumericType.hxx"
+#include "TFEL/Math/General/Abs.hxx"
 #include "TFEL/Math/General/CubicRoots.hxx"
 #include "TFEL/Math/tvector.hxx"
 #include "TFEL/Math/tmatrix.hxx"
@@ -53,15 +54,15 @@ namespace tfel::math::internals {
       constexpr auto zero = T{0};
       constexpr auto one = T{1};
       constexpr const auto e = 10 * std::numeric_limits<T>::min();
-      if (std::abs(s[0] - vp) < e) {
+      if (tfel::math::abs(s[0] - vp) < e) {
         v = {one, zero, zero};
         return true;
       }
-      if (std::abs(s[1] - vp) < e) {
+      if (tfel::math::abs(s[1] - vp) < e) {
         v = {zero, one, zero};
         return true;
       }
-      if (std::abs(s[2] - vp) < e) {
+      if (tfel::math::abs(s[2] - vp) < e) {
         v = {zero, zero, one};
         return true;
       }
@@ -119,7 +120,7 @@ namespace tfel::math::internals {
       static_assert(IsReal<T>::cond);
       constexpr auto zero = T{0};
       constexpr auto one = T{1};
-      if (std::abs(s[2] - vp) < 10 * std::numeric_limits<T>::min()) {
+      if (tfel::math::abs(s[2] - vp) < 10 * std::numeric_limits<T>::min()) {
         v(0) = zero;
         v(1) = zero;
         v(2) = one;
@@ -142,7 +143,7 @@ namespace tfel::math::internals {
                                                          vp(0), vp(1));
       const auto prec =
           10 * std::max(vp(0), vp(1)) * std::numeric_limits<T>::epsilon();
-      if (std::abs(vp(0) - vp(1)) <= prec) {
+      if (tfel::math::abs(vp(0) - vp(1)) <= prec) {
         return true;
       }
       if (StensorComputeEigenVectors<2u>::computeEigenVector(
@@ -183,10 +184,10 @@ namespace tfel::math::internals {
       constexpr auto cste = Cste<T>::sqrt2;
       auto s0 = s_0 - vp;
       auto s1 = s_1 - vp;
-      if (std::abs(s3) <
+      if (tfel::math::abs(s3) <
           std::max(std::min(s_0, s_1) * std::numeric_limits<T>::epsilon(),
                    10 * std::numeric_limits<T>::min())) {
-        if (std::abs(s0) > std::abs(s1)) {
+        if (tfel::math::abs(s0) > tfel::math::abs(s1)) {
           x = zero;
           y = one;
           return true;
@@ -196,14 +197,14 @@ namespace tfel::math::internals {
           return true;
         }
       }
-      if (std::abs(s0) > std::abs(s1)) {
-        if (std::abs(s0) < 100 * std::numeric_limits<T>::min()) {
+      if (tfel::math::abs(s0) > tfel::math::abs(s1)) {
+        if (tfel::math::abs(s0) < 100 * std::numeric_limits<T>::min()) {
           return false;
         }
         y = one;
         x = -s3 / (cste * s0);
       } else {
-        if (std::abs(s1) < 100 * std::numeric_limits<T>::min()) {
+        if (tfel::math::abs(s1) < 100 * std::numeric_limits<T>::min()) {
           return false;
         }
         x = one;
@@ -291,7 +292,7 @@ namespace tfel::math::internals {
       const auto tr = (s[0] + s[1] + s[2]) / 3;
       auto ms = T(0);
       for (unsigned short i = 0; i != 6; ++i) {
-        ms = std::max(ms, std::abs(s[i]));
+        ms = std::max(ms, tfel::math::abs(s[i]));
       }
       const bool bsmall = ((ms < 100 * std::numeric_limits<T>::min()) ||
                            (ms * std::numeric_limits<T>::epsilon() <
@@ -318,12 +319,12 @@ namespace tfel::math::internals {
       s2(2) -= tr * ims;
       const auto prec =
           10 * std::max(rel_prec, 100 * std::numeric_limits<T>::min());
-      if (((std::abs(vp2(0) - vp2(1)) <= prec) &&
-           (std::abs(vp2(0) - vp2(2)) <= prec)) ||
-          ((std::abs(vp2(1) - vp2(0)) <= prec) &&
-           (std::abs(vp2(1) - vp2(2)) <= prec)) ||
-          ((std::abs(vp2(2) - vp2(0)) <= prec) &&
-           (std::abs(vp2(2) - vp2(1)) <= prec))) {
+      if (((tfel::math::abs(vp2(0) - vp2(1)) <= prec) &&
+           (tfel::math::abs(vp2(0) - vp2(2)) <= prec)) ||
+          ((tfel::math::abs(vp2(1) - vp2(0)) <= prec) &&
+           (tfel::math::abs(vp2(1) - vp2(2)) <= prec)) ||
+          ((tfel::math::abs(vp2(2) - vp2(0)) <= prec) &&
+           (tfel::math::abs(vp2(2) - vp2(1)) <= prec))) {
         // all eigenvalues are equal
         vec = tmatrix<3u, 3u, T>::Id();
 #ifdef TFEL_PARANOIC_CHECK
@@ -333,14 +334,14 @@ namespace tfel::math::internals {
         return true;
 #endif /* LIB_TFEL_STENSORCOMPUTEEIGENVECTORS_HXX */
       }
-      if ((std::abs(vp2(0) - vp2(1)) > prec) &&
-          (std::abs(vp2(0) - vp2(2)) > prec)) {
+      if ((tfel::math::abs(vp2(0) - vp2(1)) > prec) &&
+          (tfel::math::abs(vp2(0) - vp2(2)) > prec)) {
         // vp0 is single
         if (computeEigenVector(s2.begin(), vp2(0), vec(0, 0), vec(1, 0),
                                vec(2, 0)) == false) {
           return false;
         }
-        if (std::abs(vp2(1) - vp2(2)) > prec) {
+        if (tfel::math::abs(vp2(1) - vp2(2)) > prec) {
           // vp1 is single
           if (computeEigenVector(s2.begin(), vp2(1), vec(0, 1), vec(1, 1),
                                  vec(2, 1)) == false) {
@@ -361,10 +362,10 @@ namespace tfel::math::internals {
 #else
         return true;
 #endif /* LIB_TFEL_STENSORCOMPUTEEIGENVECTORS_HXX */
-      } else if ((std::abs(vp2(1) - vp2(0)) > prec) &&
-                 (std::abs(vp2(1) - vp2(2)) > prec)) {
+      } else if ((tfel::math::abs(vp2(1) - vp2(0)) > prec) &&
+                 (tfel::math::abs(vp2(1) - vp2(2)) > prec)) {
         // vp1 is single, vp0 and vp2 are equal
-        assert(std::abs(vp2(0) - vp2(2)) < prec);
+        assert(tfel::math::abs(vp2(0) - vp2(2)) < prec);
         if (computeEigenVector(s2.begin(), vp2(1), vec(0, 1), vec(1, 1),
                                vec(2, 1)) == false) {
           return false;
@@ -380,9 +381,9 @@ namespace tfel::math::internals {
         return true;
 #endif /* LIB_TFEL_STENSORCOMPUTEEIGENVECTORS_HXX */
       }
-      assert((std::abs(vp2(2) - vp2(0)) > prec) &&
-             (std::abs(vp2(2) - vp2(1)) > prec));
-      assert(std::abs(vp2(0) - vp2(1)) < prec);
+      assert((tfel::math::abs(vp2(2) - vp2(0)) > prec) &&
+             (tfel::math::abs(vp2(2) - vp2(1)) > prec));
+      assert(tfel::math::abs(vp2(0) - vp2(1)) < prec);
       if (computeEigenVector(s2.begin(), vp2(2), vec(0, 2), vec(1, 2),
                              vec(2, 2)) == false) {
         return false;
@@ -408,8 +409,8 @@ namespace tfel::math::internals {
       auto tmp2 = a - b;
       const auto X = tmp / 2;
       const auto Y = std::sqrt(tmp2 * tmp2 + 2 * c * c) / 2;
-      tmp = std::abs(X + Y);
-      tmp2 = std::abs(X - Y);
+      tmp = tfel::math::abs(X + Y);
+      tmp2 = tfel::math::abs(X - Y);
       if (tmp > tmp2) {
         if (tmp2 < 100 * std::numeric_limits<T>::min()) {
           return std::numeric_limits<T>::max();
@@ -469,8 +470,8 @@ namespace tfel::math::internals {
         y2 = zero;
         return;
       }
-      if (std::abs(x0) < std::abs(x1)) {
-        if (std::abs(x0) < std::abs(x2)) {
+      if (tfel::math::abs(x0) < tfel::math::abs(x1)) {
+        if (tfel::math::abs(x0) < tfel::math::abs(x2)) {
           //|x0| is min, (1 0 0) is a good choice
           y0 = one - x0 * x0 / norm2_x;
           y1 = -x0 * x1 / norm2_x;
@@ -481,7 +482,7 @@ namespace tfel::math::internals {
           y1 = -x2 * x1 / norm2_x;
           y2 = one - x2 * x2 / norm2_x;
         }
-      } else if (std::abs(x1) < std::abs(x2)) {
+      } else if (tfel::math::abs(x1) < tfel::math::abs(x2)) {
         // |x1| is min, (0 0 1) is a good choice
         y0 = -x1 * x0 / norm2_x;
         y1 = one - x1 * x1 / norm2_x;
@@ -516,19 +517,19 @@ namespace tfel::math::internals {
       const auto det2 = a * f - c * c;
       const auto det1 = d * f - e * e;
       const auto prec =
-          std::max(std::abs(vp) * std::numeric_limits<T>::epsilon(),
+          std::max(tfel::math::abs(vp) * std::numeric_limits<T>::epsilon(),
                    10 * std::numeric_limits<T>::min());
-      if ((std::abs(det1) < prec) && (std::abs(det2) < prec) &&
-          (std::abs(det3) < prec)) {
+      if ((tfel::math::abs(det1) < prec) && (tfel::math::abs(det2) < prec) &&
+          (tfel::math::abs(det3) < prec)) {
         tvector<3u, T> v;
         tmatrix<3u, 3u, T> m;
         if (!StensorComputeEigenVectors<3u>::exe(src, v, m, true)) {
           v0 = v1 = v2 = T(0);
           return false;
         }
-        const auto d0 = std::abs(v[0] - vp);
-        const auto d1 = std::abs(v[1] - vp);
-        const auto d2 = std::abs(v[2] - vp);
+        const auto d0 = tfel::math::abs(v[0] - vp);
+        const auto d1 = tfel::math::abs(v[1] - vp);
+        const auto d2 = tfel::math::abs(v[2] - vp);
         if ((d0 < d1) && (d0 < d2)) {
           v0 = m(0, 0);
           v1 = m(1, 0);
@@ -545,13 +546,13 @@ namespace tfel::math::internals {
         v2 = m(2, 2);
         return true;
       }
-      if ((std::abs(det3) >= std::abs(det1)) &&
-          (std::abs(det3) >= std::abs(det2))) {
+      if ((tfel::math::abs(det3) >= tfel::math::abs(det1)) &&
+          (tfel::math::abs(det3) >= tfel::math::abs(det2))) {
         v0 = (b * e - c * d) / det3;
         v1 = (b * c - a * e) / det3;
         v2 = T(1);
-      } else if ((std::abs(det1) >= std::abs(det2)) &&
-                 (std::abs(det1) >= std::abs(det3))) {
+      } else if ((tfel::math::abs(det1) >= tfel::math::abs(det2)) &&
+                 (tfel::math::abs(det1) >= tfel::math::abs(det3))) {
         v0 = T(1);
         v1 = (c * e - b * f) / det1;
         v2 = (b * e - c * d) / det1;

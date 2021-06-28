@@ -3041,12 +3041,14 @@ mfront/tests/behaviours/ImplicitNorton3.mfront -text
 mfront/tests/behaviours/ImplicitNorton4.mfront -text
 mfront/tests/behaviours/ImplicitNorton5.mfront -text
 mfront/tests/behaviours/ImplicitNorton6.mfront -text
+mfront/tests/behaviours/ImplicitNorton7.mfront -text
 mfront/tests/behaviours/ImplicitNorton_Broyden.mfront -text
 mfront/tests/behaviours/ImplicitNorton_Broyden2.mfront -text
 mfront/tests/behaviours/ImplicitNorton_LevenbergMarquardt.mfront -text
 mfront/tests/behaviours/ImplicitNorton_NumericallyComputedJacobianBlocks.mfront -text
 mfront/tests/behaviours/ImplicitOrthotropicCreep.mfront -text
 mfront/tests/behaviours/ImplicitOrthotropicCreep2.mfront -text
+mfront/tests/behaviours/ImplicitOrthotropicCreep3.mfront -text
 mfront/tests/behaviours/ImplicitSimoMieheElastoPlasticity.mfront -text
 mfront/tests/behaviours/IncompressibleMooneyRivlinBehaviour.mfront -text
 mfront/tests/behaviours/IncompressiblePlaneStressGornetDesmoratBehaviour.mfront -text

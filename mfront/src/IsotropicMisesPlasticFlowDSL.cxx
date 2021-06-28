@@ -325,8 +325,9 @@ namespace mfront {
     os << "this->se=(real{2})*(this->mu)*(tfel::math::deviator(this->eel+("
        << this->mb.getClassName() << "::theta)*(this->deto)));\n"
        << "this->seq_e = sigmaeq(this->se);\n"
-       << "if(this->seq_e>100*std::numeric_limits<stress>::epsilon()){\n"
-       << "this->n = (real{3}/real{2})*(this->se)/(this->seq_e);\n"
+       << "if(this->seq_e > 100 * (this->young) * "
+       << "std::numeric_limits<NumericType>::epsilon()){\n"
+       << "this->n = 3 * (this->se)/(2 * (this->seq_e));\n"
        << "} else {\n"
        << "this->n = StrainStensor(strain(0));\n"
        << "}\n";

@@ -16,6 +16,7 @@
 
 #include <cmath>
 #include <limits>
+#include "TFEL/Math/General/Abs.hxx"
 
 namespace tfel::math {
 
@@ -112,10 +113,10 @@ namespace tfel::math {
       iter = 0;
       while ((iter < iter_max) && (convergence == false)) {
         static_cast<F&>(*this).computeFdF();
-        if (std::abs(f) <= epsilon) {
+        if (tfel::math::abs(f) <= epsilon) {
           convergence = true;
         } else {
-          if (std::abs(J) < 100 * std::numeric_limits<T>::min()) {
+          if (tfel::math::abs(J) < 100 * std::numeric_limits<T>::min()) {
             throw(SingularJacobianException());
           }
           f /= J;

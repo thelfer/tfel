@@ -94,11 +94,11 @@ namespace tfel::math::internals {
     } else {
       m(0, 0) = df - rt;
     }
-    if (std::abs(m(0, 0)) > 2 * std::abs(B)) {
+    if (tfel::math::abs(m(0, 0)) > 2 * tfel::math::abs(B)) {
       const auto t = -2 * B / m(0, 0);
       m(1, 0) = one / std::sqrt(one + t * t);
       m(0, 0) = t * (m(1, 0));
-    } else if (std::abs(B) < rmin) {
+    } else if (tfel::math::abs(B) < rmin) {
       m(0, 0) = one;
       m(1, 0) = zero;
     } else {

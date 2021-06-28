@@ -15,6 +15,7 @@
 #define LIB_TFEL_MATERIAL_MOHRCOULOMBYIELDCRITERION_IXX
 
 #include <cmath>
+#include "TFEL/Math/General/Abs.hxx"
 
 namespace tfel::material {
 
@@ -98,11 +99,11 @@ namespace tfel::material {
     const auto sin_lode = std::sin(lode);
     const auto sin_3_lode = arg;
     const auto K = [&]() {
-      if (std::abs(lode) < p.lodeT) {
+      if (tfel::math::abs(lode) < p.lodeT) {
         return cos_lode - isqrt3 * p.sin_angle * sin_lode;
       }
       const auto sign = std::min(
-          std::max(lode / std::max(std::abs(lode), local_zero_tolerance),
+          std::max(lode / std::max(tfel::math::abs(lode), local_zero_tolerance),
                    -real(1)),
           real(1));
       const auto term1 = p.cos_lodeT - isqrt3 * p.sin_angle * p.sin_lodeT;
@@ -157,12 +158,12 @@ namespace tfel::material {
     auto K = real{0};
     auto dK_dlode = real{1};
     std::tie(K, dK_dlode) = [&]() -> std::pair<real, real> {
-      if (std::abs(lode) < p.lodeT) {
+      if (tfel::math::abs(lode) < p.lodeT) {
         return {cos_lode - isqrt3 * p.sin_angle * sin_lode,
                 -sin_lode - isqrt3 * p.sin_angle * cos_lode};
       }
       const auto sign = std::min(
-          std::max(lode / std::max(std::abs(lode), local_zero_tolerance),
+          std::max(lode / std::max(tfel::math::abs(lode), local_zero_tolerance),
                    -real(1)),
           real(1));
       const auto term1 = p.cos_lodeT - isqrt3 * p.sin_angle * p.sin_lodeT;
@@ -230,13 +231,13 @@ namespace tfel::material {
     auto dK_dlode = real{};
     auto d2K_d2lode = real{};
     std::tie(K, dK_dlode, d2K_d2lode) = [&]() -> std::tuple<real, real, real> {
-      if (std::abs(lode) < p.lodeT) {
+      if (tfel::math::abs(lode) < p.lodeT) {
         return {cos_lode - isqrt3 * p.sin_angle * sin_lode,
                 -sin_lode - isqrt3 * p.sin_angle * cos_lode,
                 -cos_lode + isqrt3 * p.sin_angle * sin_lode};
       }
       const auto sign = std::min(
-          std::max(lode / std::max(std::abs(lode), local_zero_tolerance),
+          std::max(lode / std::max(tfel::math::abs(lode), local_zero_tolerance),
                    -real(1)),
           real(1));
       const auto term1 = p.cos_lodeT - isqrt3 * p.sin_angle * p.sin_lodeT;

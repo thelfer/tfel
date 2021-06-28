@@ -35,7 +35,7 @@ namespace tfel::math {
         for (size_type j = 0; j != i; ++j) {
           v += m(i, j) * x(j);
         }
-        if (std::abs(m(i, i)) < eps) {
+        if (tfel::math::abs(m(i, i)) < eps) {
           tfel::raise<LUNullPivot>();
         }
         auto& xv = x(i);
@@ -57,7 +57,7 @@ namespace tfel::math {
         for (size_type j = 0; j != i; ++j) {
           v += m(pi, j) * x(p(j));
         }
-        if (std::abs(m(pi, i)) < eps) {
+        if (tfel::math::abs(m(pi, i)) < eps) {
           tfel::raise<LUNullPivot>();
         }
         auto& xv = x(pi);
@@ -93,7 +93,7 @@ namespace tfel::math {
             v(k) += m(i, j) * x(j, k);
           }
         }
-        if (std::abs(m(i, i)) < eps) {
+        if (tfel::math::abs(m(i, i)) < eps) {
           tfel::raise<LUNullPivot>();
         }
         for (size_type k = 0; k != M; ++k) {
@@ -126,7 +126,7 @@ namespace tfel::math {
             v(k) += m(pi, j) * x(pj, k);
           }
         }
-        if (std::abs(m(pi, i)) < eps) {
+        if (tfel::math::abs(m(pi, i)) < eps) {
           tfel::raise<LUNullPivot>();
         }
         for (size_type k = 0; k != M; ++k) {
@@ -185,7 +185,7 @@ namespace tfel::math {
   void TinyMatrixSolve<1u, T>::exe(const tmatrix<1u, 1u, T>& m,
                                    tvector<1u, T>& b,
                                    const T eps) {
-    if (std::abs(m(0, 0)) < eps) {
+    if (tfel::math::abs(m(0, 0)) < eps) {
       tfel::raise<LUNullDeterminant>();
     }
     b(0) /= m(0, 0);
@@ -196,7 +196,7 @@ namespace tfel::math {
   void TinyMatrixSolve<1u, T>::exe(const tmatrix<1u, 1u, T>& m,
                                    tmatrix<1u, M, T>& b,
                                    const T eps) {
-    if (std::abs(m(0, 0)) < eps) {
+    if (tfel::math::abs(m(0, 0)) < eps) {
       tfel::raise<LUNullDeterminant>();
     }
     b /= m(0, 0);
@@ -208,7 +208,7 @@ namespace tfel::math {
                                    tvector<2u, T>& b,
                                    const T eps) {
     const auto det = m(0, 0) * m(1, 1) - m(0, 1) * m(1, 0);
-    if (std::abs(det) < eps) {
+    if (tfel::math::abs(det) < eps) {
       tfel::raise<LUNullDeterminant>();
     }
     const auto b0 = b(0);
@@ -223,7 +223,7 @@ namespace tfel::math {
                                    tmatrix<2u, M, T>& b,
                                    const T eps) {
     const auto det = m(0, 0) * m(1, 1) - m(0, 1) * m(1, 0);
-    if (std::abs(det) < eps) {
+    if (tfel::math::abs(det) < eps) {
       tfel::raise<LUNullDeterminant>();
     }
     for (unsigned short k = 0; k != M; ++k) {
@@ -242,7 +242,7 @@ namespace tfel::math {
     const auto det = m(0, 0) * (m(1, 1) * m(2, 2) - m(1, 2) * m(2, 1)) -
                      m(0, 1) * (m(1, 0) * m(2, 2) - m(1, 2) * m(2, 0)) +
                      m(0, 2) * (m(1, 0) * m(2, 1) - m(1, 1) * m(2, 0));
-    if (std::abs(det) < eps) {
+    if (tfel::math::abs(det) < eps) {
       tfel::raise<LUNullDeterminant>();
     }
     const auto b0 = b(0);
@@ -270,7 +270,7 @@ namespace tfel::math {
     const auto det = m(0, 0) * (m(1, 1) * m(2, 2) - m(1, 2) * m(2, 1)) -
                      m(0, 1) * (m(1, 0) * m(2, 2) - m(1, 2) * m(2, 0)) +
                      m(0, 2) * (m(1, 0) * m(2, 1) - m(1, 1) * m(2, 0));
-    if (std::abs(det) < eps) {
+    if (tfel::math::abs(det) < eps) {
       tfel::raise<LUNullDeterminant>();
     }
     for (unsigned short k = 0; k != M; ++k) {

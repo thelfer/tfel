@@ -15,6 +15,7 @@
 #define LIB_TFEL_MATH_ABS_COMPARE_HXX
 
 #include <functional>
+#include "TFEL/Math/General/Abs.hxx"
 
 namespace tfel::math {
 
@@ -27,7 +28,7 @@ namespace tfel::math {
   template <typename T>
   struct absCompare : public std::binary_function<T, T, bool> {
     bool operator()(const T& a, const T& b) {
-      if (std::abs(a) > std::abs(b)) {
+      if (tfel::math::abs(a) > tfel::math::abs(b)) {
         return true;
       } else {
         return false;

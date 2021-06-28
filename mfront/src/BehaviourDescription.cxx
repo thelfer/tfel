@@ -222,13 +222,14 @@ namespace mfront {
   static void declareParameter(BehaviourDescription& bd,
                                BehaviourDescription::MaterialProperty& mp,
                                const tfel::glossary::GlossaryEntry& e,
+                               const std::string& t,
                                const std::string& n) {
     const auto h = tfel::material::ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     if (mp.is<BehaviourDescription::ConstantMaterialProperty>()) {
       auto& cmp = mp.get<BehaviourDescription::ConstantMaterialProperty>();
       cmp.name = n;
       // declare associated parameter
-      VariableDescription m("real", n, 1u, 0u);
+      VariableDescription m(t, n, 1u, 0u);
       bd.addParameter(h, m);
       bd.setParameterDefaultValue(h, n, cmp.value);
       bd.setGlossaryName(h, n, e.getKey());
@@ -239,7 +240,8 @@ namespace mfront {
       BehaviourDescription& bd,
       BehaviourDescription::MaterialProperty& emp,
       const tfel::glossary::GlossaryEntry& e,
-      const std::string& n2) {
+      const std::string& t,
+      const std::string& n) {
     if (emp.is<BehaviourDescription::ExternalMFrontMaterialProperty>()) {
       const auto& mpd = *(
           emp.get<BehaviourDescription::ExternalMFrontMaterialProperty>().mpd);
@@ -252,7 +254,7 @@ namespace mfront {
             << "output  is '" << ename << "'\n";
       }
     }
-    declareParameter(bd, emp, e, n2);
+    declareParameter(bd, emp, e, t, n);
   }
 
   static void checkThermalExpansionCoefficientArgument(
@@ -263,7 +265,7 @@ namespace mfront {
     auto throw_if = [](const bool c, const std::string& m) {
       tfel::raise_if(c, "checkThermalExpansionCoefficientArgument: " + m);
     };
-    declareParameter(bd, a, e, n);
+    declareParameter(bd, a, e, "thermalexpansion", n);
     if (a.is<BehaviourDescription::ConstantMaterialProperty>()) {
       return;
     }
@@ -901,10 +903,12 @@ namespace mfront {
       } else {
         this->setElasticSymmetryType(mfront::ISOTROPIC);
       }
-      checkElasticMaterialProperty(
-          *this, lemps[0], tfel::glossary::Glossary::YoungModulus, "young");
-      checkElasticMaterialProperty(
-          *this, lemps[1], tfel::glossary::Glossary::PoissonRatio, "nu");
+      checkElasticMaterialProperty(*this, lemps[0],
+                                   tfel::glossary::Glossary::YoungModulus,
+                                   "stress", "young");
+      checkElasticMaterialProperty(*this, lemps[1],
+                                   tfel::glossary::Glossary::PoissonRatio,
+                                   "real", "nu");
     } else if (emps.size() == 9u) {
       throw_if(this->getSymmetryType() != mfront::ORTHOTROPIC,
                "the behaviour is not orthotropic.");
@@ -914,24 +918,33 @@ namespace mfront {
       } else {
         this->setElasticSymmetryType(mfront::ORTHOTROPIC);
       }
-      checkElasticMaterialProperty(
-          *this, lemps[0], tfel::glossary::Glossary::YoungModulus1, "young1");
-      checkElasticMaterialProperty(
-          *this, lemps[1], tfel::glossary::Glossary::YoungModulus2, "young2");
-      checkElasticMaterialProperty(
-          *this, lemps[2], tfel::glossary::Glossary::YoungModulus3, "young3");
-      checkElasticMaterialProperty(
-          *this, lemps[3], tfel::glossary::Glossary::PoissonRatio12, "nu12");
-      checkElasticMaterialProperty(
-          *this, lemps[4], tfel::glossary::Glossary::PoissonRatio23, "nu23");
-      checkElasticMaterialProperty(
-          *this, lemps[5], tfel::glossary::Glossary::PoissonRatio13, "nu13");
-      checkElasticMaterialProperty(
-          *this, lemps[6], tfel::glossary::Glossary::ShearModulus12, "mu12");
-      checkElasticMaterialProperty(
-          *this, lemps[7], tfel::glossary::Glossary::ShearModulus23, "mu23");
-      checkElasticMaterialProperty(
-          *this, lemps[8], tfel::glossary::Glossary::ShearModulus13, "mu13");
+      checkElasticMaterialProperty(*this, lemps[0],
+                                   tfel::glossary::Glossary::YoungModulus1,
+                                   "stress", "young1");
+      checkElasticMaterialProperty(*this, lemps[1],
+                                   tfel::glossary::Glossary::YoungModulus2,
+                                   "stress", "young2");
+      checkElasticMaterialProperty(*this, lemps[2],
+                                   tfel::glossary::Glossary::YoungModulus3,
+                                   "stress", "young3");
+      checkElasticMaterialProperty(*this, lemps[3],
+                                   tfel::glossary::Glossary::PoissonRatio12,
+                                   "real", "nu12");
+      checkElasticMaterialProperty(*this, lemps[4],
+                                   tfel::glossary::Glossary::PoissonRatio23,
+                                   "real", "nu23");
+      checkElasticMaterialProperty(*this, lemps[5],
+                                   tfel::glossary::Glossary::PoissonRatio13,
+                                   "real", "nu13");
+      checkElasticMaterialProperty(*this, lemps[6],
+                                   tfel::glossary::Glossary::ShearModulus12,
+                                   "stress", "mu12");
+      checkElasticMaterialProperty(*this, lemps[7],
+                                   tfel::glossary::Glossary::ShearModulus23,
+                                   "stress", "mu23");
+      checkElasticMaterialProperty(*this, lemps[8],
+                                   tfel::glossary::Glossary::ShearModulus13,
+                                   "stress", "mu13");
     } else {
       throw_if(true, "unsupported behaviour type");
     }
@@ -1018,7 +1031,7 @@ namespace mfront {
              "the behaviour is not orthotropic.");
     throw_if(hcs.size() != 6u, "invalid number of Hill coefficients");
     throw_if(v.arraySize != 1u, "invalid array size");
-    throw_if(v.type != "tfel::math::st2tost2<N,stress>", "invalid type");
+    throw_if(v.type != "tfel::math::st2tost2<N,real>", "invalid type");
     this->addLocalVariable(ModellingHypothesis::UNDEFINEDHYPOTHESIS, v);
     HillTensor h;
     h.name = v.name;

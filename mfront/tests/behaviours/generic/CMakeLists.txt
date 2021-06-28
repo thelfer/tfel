@@ -55,12 +55,6 @@ set(mfront_tests_SOURCES
   Norton_Euler Norton_rk2
   Norton_rk4   Norton_rk42
   Norton_rkCastem
-  Norton_euler_qt
-  Norton_rk2_qt
-  Norton_rk42_qt
-  Norton_rk4_qt
-  Norton_rk54_qt
-  Norton_rkCastem_qt
   NortonRK
   NortonRK2
   NortonRK3
@@ -206,6 +200,16 @@ mfront_dependencies(MFrontGenericBehaviours
   
 mfront_behaviour_check_library(MFrontGenericBehaviours generic
   ${mfront_tests_SOURCES})
+
+mfront_behaviour_check_library(MFrontGenericBehaviours2 generic
+  Norton_euler_qt
+  Norton_rk2_qt
+  Norton_rk42_qt
+  Norton_rk4_qt
+  Norton_rk54_qt
+  Norton_rkCastem_qt
+  ImplicitNorton7
+  ImplicitOrthotropicCreep3)
 
 if(WIN32)
   if(${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU")

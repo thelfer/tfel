@@ -16,6 +16,7 @@
 
 #include <cmath>
 #include "TFEL/Math/st2tost2.hxx"
+#include "TFEL/Math/General/Abs.hxx"
 #include "TFEL/Material/FiniteStrainBehaviourTangentOperator.hxx"
 
 namespace tfel::material {
@@ -226,7 +227,7 @@ namespace tfel::material {
           this->e, d, this->vp, this->m, eps);
     } else {
       const auto theta = [this, &d] {
-        if (std::abs(this->vp[0] - this->vp[1]) < eps) {
+        if (tfel::math::abs(this->vp[0] - this->vp[1]) < eps) {
           return (d[0] + d[1]) / 2;
         }
         return (this->e[0] - this->e[1]) / (this->vp[0] - this->vp[1]);
@@ -364,7 +365,7 @@ namespace tfel::material {
     // compute the derivative of the Hencky strain with respect to C
     const auto f = map([](const real x) { return -2 / (x * x); }, this->vp);
     const auto xsi = [this, &d, &f]() -> tvector<2u, real> {
-      if (std::abs(this->vp[0] - this->vp[1]) < eps) {
+      if (tfel::math::abs(this->vp[0] - this->vp[1]) < eps) {
         const auto rv = (f[0] + f[1]) / 16;
         return {rv, rv};
       }
@@ -846,8 +847,8 @@ namespace tfel::material {
   template <typename StressType>
   bool LogarithmicStrainHandler<3u, StressType>::areEigenValuesEqual(
       const tfel::math::tvector<3u, real>& vp) {
-    return ((std::abs(vp(1) - vp(0)) < eps) &&
-            (std::abs(vp(1) - vp(2)) < eps) && (std::abs(vp(2) - vp(0)) < eps));
+    return ((tfel::math::abs(vp(1) - vp(0)) < eps) &&
+            (tfel::math::abs(vp(1) - vp(2)) < eps) && (tfel::math::abs(vp(2) - vp(0)) < eps));
   }  // end of areEigenValuesEqual
 
   template <typename StressType>
@@ -861,15 +862,15 @@ namespace tfel::material {
                              "this method shall not be called if all "
                              "eigen values are equal."));
     }
-    if ((std::abs(vp(1) - vp(0)) > eps) && (std::abs(vp(1) - vp(2)) > eps) &&
-        (std::abs(vp(2) - vp(0)) > eps)) {
+    if ((tfel::math::abs(vp(1) - vp(0)) > eps) && (tfel::math::abs(vp(1) - vp(2)) > eps) &&
+        (tfel::math::abs(vp(2) - vp(0)) > eps)) {
       // all eigenvalues are different
       return 3;
     }
-    if ((std::abs(vp(1) - vp(0)) < eps)) {
+    if ((tfel::math::abs(vp(1) - vp(0)) < eps)) {
       return 2;
     }
-    if ((std::abs(vp(2) - vp(0)) < eps)) {
+    if ((tfel::math::abs(vp(2) - vp(0)) < eps)) {
       return 1;
     }
     return 0;

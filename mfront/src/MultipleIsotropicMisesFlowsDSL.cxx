@@ -160,12 +160,12 @@ namespace mfront {
            << "real& df_dseq,\n"
            << "stress& df_dp){\n";
       } else if (p->flow == FlowHandler::CreepFlow) {
-        os << "void computeFlow" << n << "(DstrainDt& f,\n"
-           << "DF_DSEQ_TYPE& df_dseq){\n";
+        os << "void computeFlow" << n << "(strainrate& f,\n"
+           << "tfel::math::derivative_type<strainrate,stress>& df_dseq){\n";
       } else if (p->flow == FlowHandler::StrainHardeningCreepFlow) {
-        os << "void computeFlow" << n << "(DstrainDt& f,\n"
-           << "DF_DSEQ_TYPE& df_dseq,\n"
-           << "DstrainDt& df_dp){\n";
+        os << "void computeFlow" << n << "(strainrate& f,\n"
+           << "tfel::math::derivative_type<strainrate,stress>& df_dseq,\n"
+           << "strainrate& df_dp){\n";
       }
       os << "using namespace std;\n";
       os << "using namespace tfel::math;\n";
@@ -502,9 +502,9 @@ namespace mfront {
                                 VariableDescription("strain", p.str(), 1u, 0u),
                                 BehaviourData::FORCEREGISTRATION);
       this->mb.addLocalVariable(
-          h, VariableDescription("DstrainDt", f.str(), 1u, 0u));
+          h, VariableDescription("strainrate", f.str(), 1u, 0u));
       this->mb.addLocalVariable(
-          h, VariableDescription("DF_DSEQ_TYPE", df_dseq.str(), 1u, 0u));
+          h, VariableDescription("tfel::math::derivative_type<strainrate,stress>", df_dseq.str(), 1u, 0u));
       flow.flow = FlowHandler::CreepFlow;
     } else if (this->current->value == "StrainHardeningCreep") {
       std::ostringstream p;
@@ -519,11 +519,13 @@ namespace mfront {
                                 VariableDescription("strain", p.str(), 1u, 0u),
                                 BehaviourData::FORCEREGISTRATION);
       this->mb.addLocalVariable(
-          h, VariableDescription("DstrainDt", f.str(), 1u, 0u));
+          h, VariableDescription("strainrate", f.str(), 1u, 0u));
       this->mb.addLocalVariable(
-          h, VariableDescription("DF_DSEQ_TYPE", df_dseq.str(), 1u, 0u));
+          h,
+          VariableDescription("tfel::math::derivative_type<strainrate,stress>",
+                              df_dseq.str(), 1u, 0u));
       this->mb.addLocalVariable(
-          h, VariableDescription("DstrainDt", df_dp.str(), 1u, 0u));
+          h, VariableDescription("strainrate", df_dp.str(), 1u, 0u));
       flow.flow = FlowHandler::StrainHardeningCreepFlow;
     } else {
       this->throwRuntimeError("MultipleIsotropicMisesFlowsDSL::treatFlowRule",
@@ -585,7 +587,8 @@ namespace mfront {
       }
       ++n;
     }
-    os << "if(this->seq_e>100*std::numeric_limits<stress>::epsilon()){\n"
+    os << "if(this->seq_e > 100 * (this->young) * "
+       << "std::numeric_limits<NumericType>::epsilon()){\n"
        << "this->n = 3 * (this->se) / (2 * this->seq_e);\n"
        << "} else {\n"
        << "this->n = StrainStensor(strain(0));\n"

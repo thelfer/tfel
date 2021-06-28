@@ -365,30 +365,30 @@ namespace mfront {
         this->writeMaterialPropertyCheckBoundsEvaluation(os, emps[1], mts);
       }
       if (!emps[0].is<BehaviourDescription::ConstantMaterialProperty>()) {
-        os << "this->young=";
+        os << "this->young = stress(";
         this->writeMaterialPropertyEvaluation(os, emps[0], mts);
-        os << ";\n";
+        os << ");\n";
       }
       if (!emps[1].is<BehaviourDescription::ConstantMaterialProperty>()) {
-        os << "this->nu=";
+        os << "this->nu = real(";
         this->writeMaterialPropertyEvaluation(os, emps[1], mts);
-        os << ";\n";
+        os << ");\n";
       }
-      os << "this->lambda=computeLambda(young,nu);\n";
-      os << "this->mu=computeMu(young,nu);\n";
+      os << "this->lambda = computeLambda(young,nu);\n";
+      os << "this->mu = computeMu(young,nu);\n";
       if (!this->mb.isMaterialPropertyConstantDuringTheTimeStep(emps[0])) {
         this->writeMaterialPropertyCheckBoundsEvaluation(os, emps[0], ets);
-        os << "this->young_tdt=";
+        os << "this->young_tdt = stress(";
         this->writeMaterialPropertyEvaluation(os, emps[0], ets);
-        os << ";\n";
+        os << ");\n";
       } else {
         os << "this->young_tdt  = this->young;\n";
       }
       if (!this->mb.isMaterialPropertyConstantDuringTheTimeStep(emps[1])) {
         this->writeMaterialPropertyCheckBoundsEvaluation(os, emps[1], ets);
-        os << "this->nu_tdt=";
+        os << "this->nu_tdt = real(";
         this->writeMaterialPropertyEvaluation(os, emps[1], ets);
-        os << ";\n";
+        os << ");\n";
       } else {
         os << "this->nu_tdt     = this->nu;\n";
       }
@@ -400,8 +400,8 @@ namespace mfront {
            << "this->mu_tdt     = this->mu;\n";
       }
     } else {
-      os << "this->lambda=tfel::material::computeLambda(this->young,this->nu);"
-            "\n"
+      os << "this->lambda = "
+         << "tfel::material::computeLambda(this->young,this->nu);\n"
          << "this->mu=tfel::material::computeMu(this->young,this->nu);\n"
          << "this->lambda_tdt = this->lambda;\n"
          << "this->mu_tdt     = this->mu;\n";
@@ -418,10 +418,6 @@ namespace mfront {
   void IsotropicBehaviourDSLBase::writeBehaviourParserSpecificTypedefs(
       std::ostream& os) const {
     this->checkBehaviourFile(os);
-    os << "typedef typename tfel::math::ComputeBinaryResult<"
-       << "strain,time,tfel::math::OpDiv>::Result DstrainDt;\n"
-       << "typedef typename tfel::math::ComputeBinaryResult<"
-       << "DstrainDt,stress,tfel::math::OpDiv>::Result DF_DSEQ_TYPE;\n\n";
   }  // end of IsotropicBehaviourDSLBase::writeBehaviourParserSpecificTypedefs
 
   void IsotropicBehaviourDSLBase::writeBehaviourComputePredictionOperator(

@@ -23,16 +23,16 @@ MFRONTS= DDIF2.mfront                                                      \
          OrthotropicElastic5.mfront                                        \
          OrthotropicElastic6.mfront                                        \
          GeneralizedMaxwell.mfront                                         \
-	 PerfectPlasticity.mfront                                   \
+	 PerfectPlasticity.mfront                                          \
 	 HosfordPerfectPlasticity.mfront                                   \
 	 HosfordPerfectPlasticity2.mfront                                  \
 	 HosfordPerfectPlasticity3.mfront                                  \
          FiniteRotationSmallStrainElasticity.mfront                        \
          FiniteRotationSmallStrainElasticity2.mfront                       \
 	 Plasticity.mfront                                                 \
-	 Plasticity2.mfront                                                 \
-	 Plasticity3.mfront                                                 \
-	 Plasticity4.mfront                                                 \
+	 Plasticity2.mfront                                                \
+	 Plasticity3.mfront                                                \
+	 Plasticity4.mfront                                                \
 	 DruckerPrager.mfront                                              \
          Norton.mfront                                                     \
          Norton2.mfront                                                    \
@@ -44,8 +44,9 @@ MFRONTS= DDIF2.mfront                                                      \
          ImplicitNorton4.mfront                                            \
          ImplicitNorton5.mfront                                            \
          ImplicitNorton6.mfront                                            \
-         ThermalNorton.mfront                                            \
-         ThermalNorton2.mfront                                            \
+         ImplicitNorton7.mfront                                            \
+         ThermalNorton.mfront                                              \
+         ThermalNorton2.mfront                                             \
          ImplicitFiniteStrainNorton.mfront                                 \
          ImplicitNorton_Broyden.mfront                                     \
          ImplicitNorton_Broyden2.mfront                                    \
@@ -74,6 +75,7 @@ MFRONTS= DDIF2.mfront                                                      \
          OrthotropicCreep_rkCastem.mfront                                  \
          ImplicitOrthotropicCreep.mfront                                   \
          ImplicitOrthotropicCreep2.mfront                                  \
+         ImplicitOrthotropicCreep3.mfront                                  \
          StrainHardeningCreep.mfront                                       \
          StrainHardeningCreep2.mfront                                      \
          StrainHardeningCreep3.mfront                                      \

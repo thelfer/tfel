@@ -43,14 +43,14 @@ namespace mfront {
     this->mb.setGlossaryName(h, "p", "EquivalentViscoplasticStrain");
     // default local vars
     this->reserveName("mu_3");
-    this->mb.addLocalVariable(h, VariableDescription("DstrainDt", "f", 1u, 0u));
+    this->mb.addLocalVariable(h, VariableDescription("strainrate", "f", 1u, 0u));
+    this->mb.addLocalVariable(
+        h, VariableDescription("tfel::math::derivative_type<strainrate,stress>",
+                               "\u2202f\u2215\u2202\u03C3\u2091", "df_dseq", 1u,
+                               0u));
     this->mb.addLocalVariable(
         h,
-        VariableDescription("DF_DSEQ_TYPE", "\u2202f\u2215\u2202\u03C3\u2091",
-                            "df_dseq", 1u, 0u));
-    this->mb.addLocalVariable(
-        h, VariableDescription("DstrainDt", "\u2202f\u2215\u2202p", "df_dp", 1u,
-                               0u));
+        VariableDescription("strainrate", "\u2202f\u2215\u2202p", "df_dp", 1u, 0u));
     this->mb.addLocalVariable(
         h, VariableDescription("StressStensor", "se", 1u, 0u));
     this->mb.addLocalVariable(
@@ -128,7 +128,7 @@ namespace mfront {
        << "this->p_=this->p+this->dp;\n"
        << "while((converge==false)&&\n"
        << "(iter<(this->iterMax))){\n"
-       << "this->seq=std::max(this->seq_e-mu_3*(this->theta)*(this->dp),real(0."
+       << "this->seq=std::max(this->seq_e-mu_3*(this->theta)*(this->dp), stress(0."
           "f));\n"
        << "const auto compute_flow_r = this->computeFlow();\n"
        << "if(!((compute_flow_r)&&\n"
@@ -231,17 +231,17 @@ namespace mfront {
          << ",hypothesis, NumericType,use_qt>::FAILURE;\n";
     } else {
       os << "return MechanicalBehaviour<" << btype
-         << ",hypothesis, NumericType,false>::FAILURE;\n";
+         << ",hypothesis, NumericType, false>::FAILURE;\n";
     }
     os << "}\n"
        << "if(smt!=NOSTIFFNESSREQUESTED){\n"
        << "if(!this->computeConsistentTangentOperator(smt)){\n";
     if (this->mb.useQt()) {
       os << "return MechanicalBehaviour<" << btype
-         << ",hypothesis, NumericType,use_qt>::FAILURE;\n";
+         << ",hypothesis, NumericType, use_qt>::FAILURE;\n";
     } else {
       os << "return MechanicalBehaviour<" << btype
-         << ",hypothesis, NumericType,false>::FAILURE;\n";
+         << ",hypothesis, NumericType, false>::FAILURE;\n";
     }
     os << "}\n"
        << "}\n"
@@ -276,9 +276,9 @@ namespace mfront {
        << "if(smt==CONSISTENTTANGENTOPERATOR){\n"
        << "computeElasticStiffness<N, NumericType>::exe(this->Dt,this->lambda_tdt,this-"
           ">mu_tdt);\n"
-       << "if(this->seq_e>(0.01*(this->young))*std::numeric_limits<stress>::"
+       << "if(this->seq_e>(0.01*(this->young))*std::numeric_limits<NumericType>::"
           "epsilon()){\n"
-       << "const real ccto_tmp_1 =  this->dp/this->seq_e;\n"
+       << "const auto ccto_tmp_1 =  this->dp/this->seq_e;\n"
        << "const auto& M = st2tost2<N, NumericType>::M();\n"
        << "this->Dt += "
           "-4*(this->mu_tdt)*(this->mu)*(this->theta)*(ccto_tmp_1*M-(ccto_tmp_"
@@ -303,8 +303,8 @@ namespace mfront {
     os << "this->se=2*(this->mu)*(tfel::math::deviator(this->eel+("
        << this->mb.getClassName() << "::theta)*(this->deto)));\n"
        << "this->seq_e = sigmaeq(this->se);\n"
-       << "if(this->seq_e> 0.01 * (this->young) * std::numeric_limits<stress>::"
-          "epsilon()){\n"
+       << "if(this->seq_e> 0.01 * (this->young) * "
+       << "std::numeric_limits<NumericType>::epsilon()){\n"
        << "this->n = 3 * (this->se)/(2 * this->seq_e);\n"
        << "} else {\n"
        << "this->n = StrainStensor(strain(0));\n"

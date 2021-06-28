@@ -120,7 +120,7 @@ namespace tfel::math::internals {
       const tvector v1 = m.template column_view<1u>();
       const auto n01 =
           stensor::buildFromVectorsSymmetricDiadicProduct(v0, v1) / cste;
-      if (std::abs(vp(0) - vp(1)) > eps) {
+      if (tfel::math::abs(vp(0) - vp(1)) > eps) {
         d = (n0 ^ n0) * df[0] + (n1 ^ n1) * df[1] + (n2 ^ n2) * df[2] +
             (f[0] - f[1]) / (vp(0) - vp(1)) * (n01 ^ n01);
       } else {
@@ -187,10 +187,10 @@ namespace tfel::math::internals {
       using stensor = tfel::math::stensor<3u, real>;
       using st2tost2 = tfel::math::st2tost2<3u, real>;
       constexpr base cste = Cste<base>::sqrt2;
-      if ((std::abs(vp(0) - vp(1)) < eps) && (std::abs(vp(0) - vp(2)) < eps)) {
+      if ((tfel::math::abs(vp(0) - vp(1)) < eps) && (tfel::math::abs(vp(0) - vp(2)) < eps)) {
         const auto dfm = (df[0] + df[1] + df[2]) / 3;
         d = st2tost2::Id() * dfm;
-      } else if (std::abs(vp(0) - vp(1)) < eps) {
+      } else if (tfel::math::abs(vp(0) - vp(1)) < eps) {
         const tvector v0 = m.template column_view<0u>();
         const tvector v1 = m.template column_view<1u>();
         const tvector v2 = m.template column_view<2u>();
@@ -206,7 +206,7 @@ namespace tfel::math::internals {
         const auto dfm = (df[0] + df[1]) / 2;
         d = (((n0 ^ n0) + (n1 ^ n1) + (n01 ^ n01)) * dfm + (n2 ^ n2) * df[2] +
              (f[0] - f[2]) / (vpm - vp(2)) * ((n02 ^ n02) + (n12 ^ n12)));
-      } else if (std::abs(vp(0) - vp(2)) < eps) {
+      } else if (tfel::math::abs(vp(0) - vp(2)) < eps) {
         const tvector v0 = m.template column_view<0u>();
         const tvector v1 = m.template column_view<1u>();
         const tvector v2 = m.template column_view<2u>();
@@ -222,7 +222,7 @@ namespace tfel::math::internals {
         const auto dfm = (df[0] + df[2]) / 2;
         d = (((n0 ^ n0) + (n2 ^ n2) + (n02 ^ n02)) * dfm + (n1 ^ n1) * df[1] +
              (f[0] - f[1]) / (vpm - vp(1)) * ((n01 ^ n01) + (n12 ^ n12)));
-      } else if (std::abs(vp(1) - vp(2)) < eps) {
+      } else if (tfel::math::abs(vp(1) - vp(2)) < eps) {
         const tvector v0 = m.template column_view<0u>();
         const tvector v1 = m.template column_view<1u>();
         const tvector v2 = m.template column_view<2u>();

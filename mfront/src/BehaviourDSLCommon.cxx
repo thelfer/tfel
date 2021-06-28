@@ -2643,7 +2643,7 @@ namespace mfront {
                               "(read '" +
                                   this->current->value + "').");
     }
-    auto v = VariableDescription{"tfel::math::st2tost2<N,stress>",
+    auto v = VariableDescription{"tfel::math::st2tost2<N,real>",
                                  this->current->value, 1u, this->current->line};
     v.description = "Hill tensor";
     ++(this->current);
@@ -5315,14 +5315,14 @@ namespace mfront {
     if (this->mb.getOrthotropicAxesConvention() ==
         OrthotropicAxesConvention::PIPE) {
       out << H << " = tfel::material::computeHillTensor<hypothesis,"
-          << "OrthotropicAxesConvention::PIPE,stress>(";
+          << "OrthotropicAxesConvention::PIPE, real>(";
     } else if (this->mb.getOrthotropicAxesConvention() ==
                OrthotropicAxesConvention::PLATE) {
       out << H << " = tfel::material::computeHillTensor<hypothesis,"
-          << "OrthotropicAxesConvention::PLATE,stress>(";
+          << "OrthotropicAxesConvention::PLATE, real>(";
     } else {
       out << H << " = tfel::material::computeHillTensor<hypothesis,"
-          << "OrthotropicAxesConvention::DEFAULT,stress>(";
+          << "OrthotropicAxesConvention::DEFAULT, real>(";
     }
     for (decltype(h.c.size()) i = 0; i != h.c.size();) {
       this->writeMaterialPropertyEvaluation(out, h.c[i], f);
@@ -5451,12 +5451,17 @@ namespace mfront {
         m.get<BehaviourDescription::ExternalMFrontMaterialProperty>();
     const auto& mpd = *(cmp.mpd);
     out << '(';
+    const auto use_qt = this->mb.useQt();
     if (!mpd.inputs.empty()) {
       const auto& inputs = this->mb.getMaterialPropertyInputs(mpd);
       auto pi = std::begin(inputs);
       const auto pie = std::end(inputs);
       while (pi != pie) {
-        out << f(*pi);
+        if (use_qt) {
+          out << "tfel::math::base_type_cast(" << f(*pi) << ")";
+        } else {
+          out << f(*pi);
+        }
         if (++pi != pie) {
           out << ",";
         }
@@ -5585,15 +5590,16 @@ namespace mfront {
       for (auto pi = inputs.begin(); pi != inputs.end();) {
         const auto c = pi->category;
         if (c == BehaviourDescription::MaterialPropertyInput::TEMPERATURE) {
-          out << T;
+          out << "tfel::math::base_type_cast(" << T << ")";
         } else if ((c == BehaviourDescription::MaterialPropertyInput::
                              MATERIALPROPERTY) ||
                    (c ==
                     BehaviourDescription::MaterialPropertyInput::PARAMETER)) {
-          out << "this->" << pi->name;
+          out << "tfel::math::base_type_cast(this->" << pi->name << ")";
         } else if (c == BehaviourDescription::MaterialPropertyInput::
                             STATICVARIABLE) {
-          out << this->mb.getClassName() << "::" << pi->name;
+          out << "tfel::math::base_type_cast(" << this->mb.getClassName()
+              << "::" << pi->name << ")";
         } else {
           throw_if(true,
                    "thermal expansion coefficients must depend "
@@ -5604,10 +5610,9 @@ namespace mfront {
         }
       }
       if (this->mb.useQt()) {
-        out << "));\n";
-      } else {
-        out << ");\n";
+        out << ")";
       }
+      out << ");\n";
     } else if (a.is<BehaviourDescription::AnalyticMaterialProperty>()) {
       const auto& amp = a.get<BehaviourDescription::AnalyticMaterialProperty>();
       auto m = std::map<std::string, std::string>{};
@@ -5615,15 +5620,17 @@ namespace mfront {
            this->mb.getMaterialPropertyInputs(amp.getVariablesNames())) {
         const auto c = i.category;
         if (c == BehaviourDescription::MaterialPropertyInput::TEMPERATURE) {
-          m.insert({"T", T});
+          m.insert({"T", "tfel::math::base_type_cast(" + T + ")"});
         } else if ((c == BehaviourDescription::MaterialPropertyInput::
                              MATERIALPROPERTY) ||
                    (c ==
                     BehaviourDescription::MaterialPropertyInput::PARAMETER)) {
-          m.insert({i.name, "this->" + i.name});
+          m.insert({i.name,
+                    "tfel::math::base_type_cast(this->" + i.name + ")"});
         } else if (c == BehaviourDescription::MaterialPropertyInput::
                             STATICVARIABLE) {
-          m.insert({i.name, this->mb.getClassName() + "::" + i.name});
+          m.insert({i.name, "tfel::math::base_type_cast(" +
+                                this->mb.getClassName() + "::" + i.name + ")"});
         } else {
           throw_if(true,
                    "thermal expansion coefficients must depend "
@@ -5631,7 +5638,14 @@ namespace mfront {
         }
       }
       tfel::math::Evaluator ev(amp.f);
-      out << ev.getCxxFormula(m) << ";\n";
+      if (this->mb.useQt()) {
+        out << "thermalexpansion(";
+      }
+      out << ev.getCxxFormula(m);
+      if (this->mb.useQt()) {
+        out << ")";
+      }
+      out << ";\n";
     } else {
       throw_if(true, "unsupported material property type");
     }

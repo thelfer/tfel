@@ -451,9 +451,9 @@ namespace tfel::math {
 
   template <typename T>
   T tresca(const stensor<1u, T>& s, const bool) {
-    const auto sd1 = std::abs(s[0] - s[1]);
-    const auto sd2 = std::abs(s[0] - s[2]);
-    const auto sd3 = std::abs(s[2] - s[1]);
+    const auto sd1 = tfel::math::abs(s[0] - s[1]);
+    const auto sd2 = tfel::math::abs(s[0] - s[2]);
+    const auto sd3 = tfel::math::abs(s[2] - s[1]);
     const auto tmp = sd1 > sd2 ? sd1 : sd2;
     const auto tmp2 = sd3 > tmp ? sd3 : tmp;
     return tmp2;
@@ -463,9 +463,9 @@ namespace tfel::math {
   T tresca(const stensor<N, T>& s, const bool b) {
     T s1, s2, s3;
     s.computeEigenValues(s1, s2, s3, b);
-    const auto sd1 = std::abs(s1 - s2);
-    const auto sd2 = std::abs(s1 - s3);
-    const auto sd3 = std::abs(s3 - s2);
+    const auto sd1 = tfel::math::abs(s1 - s2);
+    const auto sd2 = tfel::math::abs(s1 - s3);
+    const auto sd3 = tfel::math::abs(s3 - s2);
     const auto tmp = sd1 > sd2 ? sd1 : sd2;
     const auto tmp2 = sd3 > tmp ? sd3 : tmp;
     return tmp2;
@@ -740,7 +740,7 @@ namespace tfel::math {
                         numeric_type<StensorType>>::cond)),
                    stensor<1u, numeric_type<StensorType>>>
   absolute_value(const StensorType& s, const bool) {
-    return {std::abs(s(0)), std::abs(s(1)), std::abs(s(2))};
+    return {tfel::math::abs(s(0)), tfel::math::abs(s(1)), tfel::math::abs(s(2))};
   }
 
   template <typename StensorType>
@@ -760,7 +760,7 @@ namespace tfel::math {
     stensor<getSpaceDimension<StensorType>(), NumType> s(s_);
     s.computeEigenVectors(vp, m, b);
     return Stensor::buildFromEigenValuesAndVectors(
-        std::abs(vp(0)), std::abs(vp(1)), std::abs(vp(2)), m);
+        tfel::math::abs(vp(0)), tfel::math::abs(vp(1)), tfel::math::abs(vp(2)), m);
   }
 
   template <typename StensorType>

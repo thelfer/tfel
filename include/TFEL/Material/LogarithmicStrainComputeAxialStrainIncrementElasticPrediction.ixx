@@ -18,6 +18,7 @@
 #include <cmath>
 #include <iostream>
 #include "TFEL/Raise.hxx"
+#include "TFEL/Math/General/Abs.hxx"
 #include "TFEL/Material/MaterialException.hxx"
 
 namespace tfel::material {
@@ -49,7 +50,7 @@ namespace tfel::material {
     const auto& f = fdfv.first;
     const auto& df = fdfv.second;
     auto iter = index_type{};
-    while ((std::abs(f) > e) || (std::abs(f) > e * df)) {
+    while ((tfel::math::abs(f) > e) || (tfel::math::abs(f) > e * df)) {
       if (iter == iter_max) {
         tfel::raise<DivergenceException>(
             "computeAxialStrainIncrementElasticPrediction: "

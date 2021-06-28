@@ -16,6 +16,7 @@
 #define LIB_TFEL_MATH_TINY_MATRIX_IXX
 
 #include "TFEL/FSAlgorithm/FSAlgorithm.hxx"
+#include "TFEL/Math/General/Abs.hxx"
 #include "TFEL/Math/General/AbsCompare.hxx"
 
 namespace tfel::math::internals {
@@ -288,7 +289,7 @@ namespace tfel::math {
 
   template <unsigned short N, unsigned short M, typename T>
   constexpr auto tmatrix<N, M, T>::abs_max() const {
-    return std::abs(*tfel::fsalgo::max_element<this->size()>::exe(
+    return tfel::math::abs(*tfel::fsalgo::max_element<this->size()>::exe(
         this->v, absCompare<T>()));
   }
 

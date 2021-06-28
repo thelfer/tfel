@@ -112,7 +112,7 @@ namespace tfel::math {
     }
     for (index_type<MatrixType> i = m; i != 0; --i) {
       const index_type<MatrixType> l = i - 1;
-      if (std::abs(d(l)) < e) {
+      if (tfel::math::abs(d(l)) < e) {
         throw(QRNullPivot());
       }
       auto t = v(l);

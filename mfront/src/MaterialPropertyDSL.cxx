@@ -627,7 +627,7 @@ namespace mfront {
   }  // end of MaterialPropertyDSL::generateOutputFiles
 
   void MaterialPropertyDSL::treatInput() {
-    VariableDescriptionContainer ninputs;
+    auto ninputs = VariableDescriptionContainer{};
     this->readVarList(ninputs, "real", false);
     for (const auto& i : ninputs) {
       this->reserveName(i.name);

@@ -23,6 +23,7 @@
 #include "TFEL/Config/TFELConfig.hxx"
 #include "TFEL/TypeTraits/IsReal.hxx"
 #include "TFEL/TypeTraits/IsFundamentalNumericType.hxx"
+#include "TFEL/Math/General/Abs.hxx"
 #include "TFEL/Math/General/MathConstants.hxx"
 
 namespace tfel::math {
@@ -102,7 +103,7 @@ namespace tfel::math {
       constexpr const auto C_3SQRT3_2 = Cste<T>::sqrt3 * T(3) / T(2);
       constexpr const auto C_SQRT3_3 = Cste<T>::sqrt3 * C_1_3;
       const T prec = 100 * std::numeric_limits<T>::min();
-      if (std::abs(a3) <= prec) {
+      if (tfel::math::abs(a3) <= prec) {
         return 0u;
       }
       // normalisation des coefficients pour se ramener à une équation de la
@@ -115,9 +116,9 @@ namespace tfel::math {
       const T p = tmp * (a1 - tmp3 * a2);
       const T q = tmp * (a0 - tmp3 * a1 + C_2_27 * tmp2 * tmp2 * a2);
       // traitement des cas particuliers
-      if (std::abs(p) < prec) {
+      if (tfel::math::abs(p) < prec) {
         const T cbrt_q = CubicRoots::cbrt(q);
-        if (std::abs(cbrt_q) < prec) {
+        if (tfel::math::abs(cbrt_q) < prec) {
           x1 = x2 = x3 = -tmp3;
           return 3u;
         } else if (q > 0) {
@@ -132,7 +133,7 @@ namespace tfel::math {
           return 1u;
         }
       }
-      if (std::abs(q) < prec) {
+      if (tfel::math::abs(q) < prec) {
         if (p > 0) {
           x1 = -tmp3;
           x2 = -tmp3;
@@ -155,15 +156,15 @@ namespace tfel::math {
         x1 = upv - tmp3;
         x2 = -upv / 2 - tmp3;
         x3 = x2;
-        if (std::abs(u - v) <
-            100 * std::abs(upv) * std::numeric_limits<T>::epsilon()) {
+        if (tfel::math::abs(u - v) <
+            100 * tfel::math::abs(upv) * std::numeric_limits<T>::epsilon()) {
           return 3u;
         } else {
           return 1u;
         }
       }
-      if (std::abs(delta) < prec) {
-        if (std::abs(p) > prec) {
+      if (tfel::math::abs(delta) < prec) {
+        if (tfel::math::abs(p) > prec) {
           const T tmp5 = 3 * q / p;
           x1 = tmp5 - tmp3;
           x2 = -tmp5 / 2 - tmp3;
@@ -237,25 +238,25 @@ namespace tfel::math {
       };
       constexpr const auto emin = std::numeric_limits<T>::min();
       constexpr const auto eps = std::numeric_limits<T>::epsilon();
-      const auto prec = 10 * std::max(emin, std::abs(vp) * eps);
+      const auto prec = 10 * std::max(emin, tfel::math::abs(vp) * eps);
       auto x = vp;
       auto dfv = df(x);
       constexpr integer iter_max = 50;
-      if (std::abs(dfv) < 100 * emin) {
+      if (tfel::math::abs(dfv) < 100 * emin) {
         return;
       }
       auto x1 = x - f(x) / dfv;
       auto iter = integer(0);
-      while ((std::abs(x1 - x) > prec) && (iter < iter_max)) {
+      while ((tfel::math::abs(x1 - x) > prec) && (iter < iter_max)) {
         x = x1;
         dfv = df(x);
-        if (std::abs(dfv) < 100 * emin) {
+        if (tfel::math::abs(dfv) < 100 * emin) {
           return;
         }
         x1 = x - f(x) / dfv;
         ++iter;
       }
-      if (std::abs(f(x)) < std::abs(f(vp))) {
+      if (tfel::math::abs(f(x)) < tfel::math::abs(f(vp))) {
         vp = x;
       }
     }

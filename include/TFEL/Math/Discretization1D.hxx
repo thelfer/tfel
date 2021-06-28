@@ -17,86 +17,82 @@
 #include "TFEL/Config/TFELConfig.hxx"
 #include "TFEL/Math/MathException.hxx"
 
-namespace tfel {
+namespace tfel::math {
 
-  namespace math {
+  /*!
+   * Exception thrown when the density given to the
+   * geometricDiscretization function is invalid
+   */
+  struct TFELMATH_VISIBILITY_EXPORT GeometricDiscretizationInvalidDensity final
+      : public MathRunTimeException {
+    GeometricDiscretizationInvalidDensity() = default;
+    GeometricDiscretizationInvalidDensity(
+        GeometricDiscretizationInvalidDensity&&) = default;
+    GeometricDiscretizationInvalidDensity(
+        const GeometricDiscretizationInvalidDensity&) = default;
+    //! \return a string describing the error
+    const char* what() const noexcept override final;
+    //! destructor
+    ~GeometricDiscretizationInvalidDensity() noexcept override;
+  };  // end of struct GeometricDiscretizationInvalidDensity
 
-    /*!
-     * Exception thrown when the density given to the
-     * geometricDiscretization function is invalid
-     */
-    struct TFELMATH_VISIBILITY_EXPORT GeometricDiscretizationInvalidDensity
-        final : public MathRunTimeException {
-      GeometricDiscretizationInvalidDensity() = default;
-      GeometricDiscretizationInvalidDensity(
-          GeometricDiscretizationInvalidDensity&&) = default;
-      GeometricDiscretizationInvalidDensity(
-          const GeometricDiscretizationInvalidDensity&) = default;
-      //! \return a string describing the error
-      const char* what() const noexcept override final;
-      //! destructor
-      ~GeometricDiscretizationInvalidDensity() noexcept override;
-    };  // end of struct GeometricDiscretizationInvalidDensity
+  /*!
+   * Exception thrown when the length given to the
+   * geometricDiscretization function is invalid
+   */
+  struct TFELMATH_VISIBILITY_EXPORT GeometricDiscretizationInvalidLength final
+      : public MathRunTimeException {
+    GeometricDiscretizationInvalidLength() = default;
+    GeometricDiscretizationInvalidLength(
+        GeometricDiscretizationInvalidLength&&) = default;
+    GeometricDiscretizationInvalidLength(
+        const GeometricDiscretizationInvalidLength&) = default;
+    //! \return a string describing the error
+    const char* what() const noexcept override final;
+    //! destructor
+    ~GeometricDiscretizationInvalidLength() noexcept override;
+  };  // end of struct GeometricDiscretizationInvalidLength
 
-    /*!
-     * Exception thrown when the length given to the
-     * geometricDiscretization function is invalid
-     */
-    struct TFELMATH_VISIBILITY_EXPORT GeometricDiscretizationInvalidLength final
-        : public MathRunTimeException {
-      GeometricDiscretizationInvalidLength() = default;
-      GeometricDiscretizationInvalidLength(
-          GeometricDiscretizationInvalidLength&&) = default;
-      GeometricDiscretizationInvalidLength(
-          const GeometricDiscretizationInvalidLength&) = default;
-      //! \return a string describing the error
-      const char* what() const noexcept override final;
-      //! destructor
-      ~GeometricDiscretizationInvalidLength() noexcept override;
-    };  // end of struct GeometricDiscretizationInvalidLength
+  /*!
+   * Exception thrown when the number of elements given to the
+   * geometricDiscretization function is invalid
+   */
+  struct TFELMATH_VISIBILITY_EXPORT
+      GeometricDiscretizationInvalidNumberOfElements final
+      : public MathRunTimeException {
+    GeometricDiscretizationInvalidNumberOfElements() = default;
+    GeometricDiscretizationInvalidNumberOfElements(
+        GeometricDiscretizationInvalidNumberOfElements&&) = default;
+    GeometricDiscretizationInvalidNumberOfElements(
+        const GeometricDiscretizationInvalidNumberOfElements&) = default;
+    //! \return a string describing the error
+    const char* what() const noexcept override final;
+    //! destructor
+    ~GeometricDiscretizationInvalidNumberOfElements() noexcept override;
+  };  // end of struct GeometricDiscretizationInvalidNumberOfElements
 
-    /*!
-     * Exception thrown when the number of elements given to the
-     * geometricDiscretization function is invalid
-     */
-    struct TFELMATH_VISIBILITY_EXPORT
-        GeometricDiscretizationInvalidNumberOfElements final
-        : public MathRunTimeException {
-      GeometricDiscretizationInvalidNumberOfElements() = default;
-      GeometricDiscretizationInvalidNumberOfElements(
-          GeometricDiscretizationInvalidNumberOfElements&&) = default;
-      GeometricDiscretizationInvalidNumberOfElements(
-          const GeometricDiscretizationInvalidNumberOfElements&) = default;
-      //! \return a string describing the error
-      const char* what() const noexcept override final;
-      //! destructor
-      ~GeometricDiscretizationInvalidNumberOfElements() noexcept override;
-    };  // end of struct GeometricDiscretizationInvalidNumberOfElements
+  /*!
+   * \brief discretize a segment into a fixed number of elements
+   * trying to satisfy as much as possible given discretization
+   * densities at the beginning and the end of the segment. Elements
+   * size grows according to a geometric progression.
+   *
+   * \param T  : a "stl vector like" container
+   * \param xb : starting point
+   * \param xe : last point
+   * \param db : density of the discretization at the starting point
+   * \param db : density of the discretization at the last point
+   * \param n  : number of elements
+   */
+  template <typename T>
+  void geometricDiscretization(T& v,
+                               const typename T::value_type,
+                               const typename T::value_type,
+                               const typename T::value_type,
+                               const typename T::value_type,
+                               const typename T::size_type);
 
-    /*!
-     * \brief discretize a segment into a fixed number of elements
-     * trying to satisfy as much as possible given discretization
-     * densities at the beginning and the end of the segment. Elements
-     * size grows according to a geometric progression.
-     *
-     * \param T  : a "stl vector like" container
-     * \param xb : starting point
-     * \param xe : last point
-     * \param db : density of the discretization at the starting point
-     * \param db : density of the discretization at the last point
-     * \param n  : number of elements
-     */
-    template <typename T>
-    void geometricDiscretization(T& v,
-                                 const typename T::value_type,
-                                 const typename T::value_type,
-                                 const typename T::value_type,
-                                 const typename T::value_type,
-                                 const typename T::size_type);
-
-  }  // end of namespace math
-
-}  // end of namespace tfel
+}  // end of namespace tfel::math
 
 #include "TFEL/Math/Discretization1D.ixx"
 

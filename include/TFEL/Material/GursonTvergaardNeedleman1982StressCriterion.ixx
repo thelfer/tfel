@@ -19,6 +19,7 @@
 #include <ostream>
 #include <algorithm>
 #include "TFEL/Math/power.hxx"
+#include "TFEL/Math/General/Abs.hxx"
 #include "TFEL/Math/General/IEEE754.hxx"
 #include "TFEL/Math/ScalarNewtonRaphson.hxx"
 #include "TFEL/Material/MaterialException.hxx"
@@ -75,7 +76,7 @@ namespace tfel::material {
     const auto seq2 = seq * seq;
     const auto pr2 = pr * pr;
     // special cases
-    if (std::abs(pr) < seps) {
+    if (tfel::math::abs(pr) < seps) {
       const auto iomf =
           1 /
           std::max(1 - 2 * p.q_1 * fstar + p.q_3 * fstar * fstar, real(1.e-12));
@@ -107,7 +108,7 @@ namespace tfel::material {
       // d(1/y) = -dy/(y*y) => y*y*d(1/y) = -dy
       // so if I want |dy|<eps, |y*y*d(1/y)| must be lower than eps
       // Here, x is the inverse of the equivalent stress, so
-      return 10 * std::abs(dx) < seps * std::abs(x * x);
+      return 10 * tfel::math::abs(dx) < seps * tfel::math::abs(x * x);
     };
     const auto r = tfel::math::scalarNewtonRaphson(SdS, c, x0, size_type{100});
     if (!std::get<0>(r)) {
@@ -154,7 +155,7 @@ namespace tfel::material {
     const auto idS_dss =
         sgn * ((tfel::math::ieee754::fpclassify(dS_dss) == FP_ZERO)
                    ? 1 / seps
-                   : 1 / std::abs(dS_dss));
+                   : 1 / tfel::math::abs(dS_dss));
     const auto dS_dsig = 3 * power<2>(iss) * deviator(sig) +  //
                          q1q2 * fstar * iss * sh * id;
     const auto n = eval(-dS_dsig * idS_dss);
@@ -214,7 +215,7 @@ namespace tfel::material {
     const auto idS_dss =
         sgn * ((tfel::math::ieee754::fpclassify(dS_dss) == FP_ZERO)
                    ? 1 / seps
-                   : 1 / std::abs(dS_dss));
+                   : 1 / tfel::math::abs(dS_dss));
     const auto dS_dsig = 3 * power<2>(iss) * deviator(sig) +  //
                          q1q2 * fstar * iss * sh * id;
     const auto n = eval(-dS_dsig * idS_dss);

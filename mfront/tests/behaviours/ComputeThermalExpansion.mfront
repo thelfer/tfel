@@ -1,5 +1,6 @@
 @Behaviour ComputeThermalExpansion;
 @Author Helfer Thomas;
+@UseQt true;
 @Date 32/12/17;
 @Description{
  Test of the `@ComputeThermalExpansion` keyword.

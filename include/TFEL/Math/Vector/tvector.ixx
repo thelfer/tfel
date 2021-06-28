@@ -131,8 +131,8 @@ namespace tfel::math {
       return;
     }
     const auto inx = real(1) / nx;
-    if (std::abs(x(0)) < std::abs(x(1))) {
-      if (std::abs(x(0)) < std::abs(x(2))) {
+    if (tfel::math::abs(x(0)) < tfel::math::abs(x(1))) {
+      if (tfel::math::abs(x(0)) < tfel::math::abs(x(2))) {
         //|x0| is min, (1 0 0) is a good choice
         y(0) = one - x(0) * x(0) * inx;
         y(1) = -x(0) * x(1) * inx;
@@ -143,7 +143,7 @@ namespace tfel::math {
         y(1) = -x(2) * x(1) * inx;
         y(2) = one - x(2) * x(2) * inx;
       }
-    } else if (std::abs(x(1)) < std::abs(x(2))) {
+    } else if (tfel::math::abs(x(1)) < tfel::math::abs(x(2))) {
       // |x1| is min, (0 0 1) is a good choice
       y(0) = -x(1) * x(0) * inx;
       y(1) = one - x(1) * x(1) * inx;

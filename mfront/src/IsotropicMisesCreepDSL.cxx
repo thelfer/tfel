@@ -44,11 +44,11 @@ namespace mfront {
     this->mb.setGlossaryName(h, "eel", "ElasticStrain");
     this->mb.setGlossaryName(h, "p", "EquivalentViscoplasticStrain");
     // default local vars
-    this->mb.addLocalVariable(h, VariableDescription("DstrainDt", "f", 1u, 0u));
+    this->mb.addLocalVariable(h, VariableDescription("strainrate", "f", 1u, 0u));
     this->mb.addLocalVariable(
-        h,
-        VariableDescription("DF_DSEQ_TYPE", "\u2202f\u2215\u2202\u03C3\u2091",
-                            "df_dseq", 1u, 0u));
+        h, VariableDescription("tfel::math::derivative_type<strainrate, stress>",
+                               "\u2202f\u2215\u2202\u03C3\u2091", "df_dseq", 1u,
+                               0u));
     this->mb.addLocalVariable(
         h, VariableDescription("StressStensor", "se", 1u, 0u));
     this->mb.addLocalVariable(

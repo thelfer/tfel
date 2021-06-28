@@ -14,6 +14,7 @@
 #ifndef LIB_TFEL_MATH_BISSECTIONALGORITHMBASE_IXX
 #define LIB_TFEL_MATH_BISSECTIONALGORITHMBASE_IXX
 
+#include "TFEL/Math/General/Abs.hxx"
 #include "TFEL/Math/General/IEEE754.hxx"
 
 namespace tfel::math {
@@ -61,7 +62,7 @@ namespace tfel::math {
         }
       } else {
         // an interval has been found, now we choose the closest point
-        if (std::abs(x - this->xmin) < std::abs(x - this->xmax)) {
+        if (tfel::math::abs(x - this->xmin) < tfel::math::abs(x - this->xmax)) {
           update_range(this->xmin, this->fmin, x, f);
         } else {
           update_range(this->xmax, this->fmax, x, f);

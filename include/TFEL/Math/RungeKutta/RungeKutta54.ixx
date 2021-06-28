@@ -18,6 +18,7 @@
 #include <cassert>
 #include "TFEL/Raise.hxx"
 #include "TFEL/FSAlgorithm/accumulate.hxx"
+#include "TFEL/Math/General/Abs.hxx"
 
 namespace tfel::math {
 
@@ -75,11 +76,11 @@ namespace tfel::math {
       // error norm
       auto e = [&ve] {
         if constexpr (N == 1) {
-          return std::abs(ve);
+          return tfel::math::abs(ve);
         } else {
           return tfel::fsalgo::accumulate<N>::exe(
               eval(ve).begin(), Scalar(0),
-              [](const auto& a, const auto& b) { return std::abs(a) + b; });
+              [](const auto& a, const auto& b) { return tfel::math::abs(a) + b; });
         }
       }();
       assert(e >= 0.);

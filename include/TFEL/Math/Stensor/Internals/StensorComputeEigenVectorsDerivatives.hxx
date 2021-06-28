@@ -24,7 +24,7 @@ namespace tfel::math::internals {
     TFEL_MATH_INLINE static
         typename ComputeBinaryResult<base_type<NumType>, NumType, OpDiv>::Result
         regularized_inverse(const NumType x, const NumType eps) {
-      if (std::abs(x) < 100 * std::numeric_limits<NumType>::min()) {
+      if (tfel::math::abs(x) < 100 * std::numeric_limits<NumType>::min()) {
         return NumType(0);
       }
       return regularization_function(x / eps) / x;
@@ -32,7 +32,7 @@ namespace tfel::math::internals {
    protected:
     template <typename NumType>
     TFEL_MATH_INLINE static NumType regularization_function(const NumType x) {
-      if (std::abs(x) > 1) {
+      if (tfel::math::abs(x) > 1) {
         return NumType(1);
       }
       return x * x * (4 - x * x) / 3;

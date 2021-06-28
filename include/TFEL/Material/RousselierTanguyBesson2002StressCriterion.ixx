@@ -18,6 +18,7 @@
 #include <ostream>
 #include <algorithm>
 #include "TFEL/Math/power.hxx"
+#include "TFEL/Math/General/Abs.hxx"
 #include "TFEL/Math/General/IEEE754.hxx"
 #include "TFEL/Math/ScalarNewtonRaphson.hxx"
 #include "TFEL/Material/MaterialException.hxx"
@@ -72,7 +73,7 @@ namespace tfel::material {
     const auto iomfd = 1 / std::max(omfd, real(1.e-12));
     const auto iomf = 1 / std::max((1 - f), real(1.e-12));
     // special cases
-    if (std::abs(pr) < seps) {
+    if (tfel::math::abs(pr) < seps) {
       return seq * iomfd;
     }
     if (seq < seps) {
@@ -102,8 +103,8 @@ namespace tfel::material {
     const auto x0 = x01;
     // const auto d = sqrt(b * b - 4) auto x0 = c / b;  // iseq * omfd;
     const auto SdS = [seq, pr, f, iomf, p](const istress x) {
-      const auto e = std::exp(3 * p.qR * pr * iomf * std::abs(x) / 2);
-      const auto S = seq * iomf * std::abs(x) + 2 * f * (p.DR / 3) * e - 1;
+      const auto e = std::exp(3 * p.qR * pr * iomf * tfel::math::abs(x) / 2);
+      const auto S = seq * iomf * tfel::math::abs(x) + 2 * f * (p.DR / 3) * e - 1;
       const auto dS = seq * iomf + f * p.qR * p.DR * iomf * pr * e;
       return std::make_tuple(S, dS);
     };
@@ -112,7 +113,7 @@ namespace tfel::material {
       // d(1/y) = -dy/(y*y) => y*y*d(1/y) = -dy
       // so if I want |dy|<eps, |y*y*d(1/y)| must be lower than eps
       // Here, x is the inverse of the equivalent stress, so
-      return 10 * std::abs(dx) < seps * std::abs(x * x);
+      return 10 * tfel::math::abs(dx) < seps * tfel::math::abs(x * x);
     };
     const auto r =
         tfel::math::scalarNewtonRaphson(SdS, criterion, x0, size_type{100});
@@ -166,7 +167,7 @@ namespace tfel::material {
     const auto idS_dss =
         sgn_dS_dss * ((tfel::math::ieee754::fpclassify(dS_dss) == FP_ZERO)
                           ? 1 / seps
-                          : 1 / std::abs(dS_dss));
+                          : 1 / tfel::math::abs(dS_dss));
     const auto dss_dsig = -dS_dsig * idS_dss;
     const auto dss_df = -dS_df * idS_dss;
 
@@ -230,7 +231,7 @@ namespace tfel::material {
     const auto idS_dss =
         sgn_dS_dss * ((tfel::math::ieee754::fpclassify(dS_dss) == FP_ZERO)
                           ? 1 / seps
-                          : 1 / std::abs(dS_dss));
+                          : 1 / tfel::math::abs(dS_dss));
     const auto n = -dS_dsig * idS_dss;
     const auto dss_df = -dS_df * idS_dss;
 

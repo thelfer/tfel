@@ -1093,9 +1093,9 @@ namespace mfront {
         const auto hn = ht.name + "_tdt";
         auto H_tdt =
             this->mb.areMaterialPropertiesConstantDuringTheTimeStep(ht.c)
-                ? VariableDescription("tfel::math::st2tost2<N,stress>&", hn, 1u,
+                ? VariableDescription("tfel::math::st2tost2<N,real>&", hn, 1u,
                                       0u)
-                : VariableDescription("tfel::math::st2tost2<N,stress>", hn, 1u,
+                : VariableDescription("tfel::math::st2tost2<N,real>", hn, 1u,
                                       0u);
         H_tdt.description =
             "Hill tensor '" + ht.name + "' at the end of the time step";
@@ -1105,9 +1105,9 @@ namespace mfront {
         const auto hn = ht.name + "_tdt";
         auto H_tdt =
             this->mb.areMaterialPropertiesConstantDuringTheTimeStep(ht.c)
-                ? VariableDescription("tfel::math::st2tost2<N,stress>&", hsn,
-                                      hn, 1u, 0u)
-                : VariableDescription("tfel::math::st2tost2<N,stress>", hsn, hn,
+                ? VariableDescription("tfel::math::st2tost2<N,real>&", hsn, hn,
+                                      1u, 0u)
+                : VariableDescription("tfel::math::st2tost2<N,real>", hsn, hn,
                                       1u, 0u);
         H_tdt.description =
             "Hill tensor '" + hsn + "' at the end of the time step";
@@ -1445,12 +1445,12 @@ namespace mfront {
         this->writeMaterialPropertyCheckBoundsEvaluation(os, emps[1], mts);
       }
       if (!emps[0].is<BehaviourDescription::ConstantMaterialProperty>()) {
-        os << "this->young=";
+        os << "this->young = ";
         this->writeMaterialPropertyEvaluation(os, emps[0], mts);
         os << ";\n";
       }
       if (!emps[1].is<BehaviourDescription::ConstantMaterialProperty>()) {
-        os << "this->nu=";
+        os << "this->nu = ";
         this->writeMaterialPropertyEvaluation(os, emps[1], mts);
         os << ";\n";
       }

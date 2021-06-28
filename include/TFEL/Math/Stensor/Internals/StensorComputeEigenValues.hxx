@@ -18,6 +18,7 @@
 #include "TFEL/ContractViolation.hxx"
 #include "TFEL/Config/TFELConfig.hxx"
 #include "TFEL/Math/MathException.hxx"
+#include "TFEL/Math/General/Abs.hxx"
 #include "TFEL/Math/General/CubicRoots.hxx"
 #include "TFEL/Exception/TFELException.hxx"
 
@@ -75,9 +76,9 @@ namespace tfel::math::internals {
       stensor<3u, T> s2(deviator(s));
       const auto vmax =
           *(fsalgo::max_element<6u>::exe(s2.begin(), [](const T x, const T y) {
-            return std::abs(x) > std::abs(y);
+            return tfel::math::abs(x) > tfel::math::abs(y);
           }));
-      const bool n = std::abs(vmax) * std::numeric_limits<T>::epsilon() >
+      const bool n = tfel::math::abs(vmax) * std::numeric_limits<T>::epsilon() >
                      10 * std::numeric_limits<T>::min();
       if (n) {
         s2 *= T(1) / vmax;
@@ -93,15 +94,15 @@ namespace tfel::math::internals {
       if (nb == 0u) {
         reportContractViolation("invalid return value");
       } else if (nb == 1u) {
-        if (std::abs(vp1 - vp2) < std::numeric_limits<T>::epsilon()) {
+        if (tfel::math::abs(vp1 - vp2) < std::numeric_limits<T>::epsilon()) {
           const auto vm = (vp1 + vp2) * one_half;
           vp1 = vp2 = vm;
         }
-        if (std::abs(vp1 - vp3) < std::numeric_limits<T>::epsilon()) {
+        if (tfel::math::abs(vp1 - vp3) < std::numeric_limits<T>::epsilon()) {
           const auto vm = (vp1 + vp3) * one_half;
           vp1 = vp3 = vm;
         }
-        if (std::abs(vp2 - vp3) < std::numeric_limits<T>::epsilon()) {
+        if (tfel::math::abs(vp2 - vp3) < std::numeric_limits<T>::epsilon()) {
           const auto vm = (vp2 + vp3) * one_half;
           vp2 = vp3 = vm;
         }

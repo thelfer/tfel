@@ -14,6 +14,7 @@
 #ifndef LIB_TFEL_MATERIAL_BARLAT_IXX
 #define LIB_TFEL_MATERIAL_BARLAT_IXX
 
+#include "TFEL/Math/General/Abs.hxx"
 #include "TFEL/Material/OrthotropicStressLinearTransformation.hxx"
 
 namespace tfel::material {
@@ -80,7 +81,7 @@ namespace tfel::material {
       const stensor<2u, base> n01 =
           stensor<2u, base>::buildFromVectorsSymmetricDiadicProduct(v0, v1) *
           icste;
-      if (std::abs(vp[0] - vp[1]) < e) {
+      if (tfel::math::abs(vp[0] - vp[1]) < e) {
         d2Phi_ds2 += ((d2Phi_dvp2[0] + d2Phi_dvp2[1] - 2 * d2Phi_dvp2[3]) / 2) *
                      (n01 ^ n01);
       } else {
@@ -130,21 +131,21 @@ namespace tfel::material {
       const stensor<3u, base> n12 =
           stensor<3u, base>::buildFromVectorsSymmetricDiadicProduct(v1, v2) *
           cste;
-      if (std::abs(vp[0] - vp[1]) < e) {
+      if (tfel::math::abs(vp[0] - vp[1]) < e) {
         d2Phi_ds2 += ((d2Phi_dvp2[0] + d2Phi_dvp2[1] - 2 * d2Phi_dvp2[3]) / 2) *
                      (n01 ^ n01);
       } else {
         d2Phi_ds2 +=
             (dPhi_dvp[0] - dPhi_dvp[1]) / (vp[0] - vp[1]) * (n01 ^ n01);
       }
-      if (std::abs(vp[0] - vp[2]) < e) {
+      if (tfel::math::abs(vp[0] - vp[2]) < e) {
         d2Phi_ds2 += ((d2Phi_dvp2[0] + d2Phi_dvp2[2] - 2 * d2Phi_dvp2[4]) / 2) *
                      (n02 ^ n02);
       } else {
         d2Phi_ds2 +=
             (dPhi_dvp[0] - dPhi_dvp[2]) / (vp[0] - vp[2]) * (n02 ^ n02);
       }
-      if (std::abs(vp[1] - vp[2]) < e) {
+      if (tfel::math::abs(vp[1] - vp[2]) < e) {
         d2Phi_ds2 += ((d2Phi_dvp2[1] + d2Phi_dvp2[2] - 2 * d2Phi_dvp2[5]) / 2) *
                      (n12 ^ n12);
       } else {
@@ -219,15 +220,15 @@ namespace tfel::material {
     const auto s2 = eval(l2 * s);
     const auto vp1 = s1.template computeEigenValues<es>() * iseq;
     const auto vp2 = s2.template computeEigenValues<es>() * iseq;
-    return seq * std::pow((std::pow(std::abs(vp1[0] - vp2[0]), a) +
-                           std::pow(std::abs(vp1[0] - vp2[1]), a) +
-                           std::pow(std::abs(vp1[0] - vp2[2]), a) +
-                           std::pow(std::abs(vp1[1] - vp2[0]), a) +
-                           std::pow(std::abs(vp1[1] - vp2[1]), a) +
-                           std::pow(std::abs(vp1[1] - vp2[2]), a) +
-                           std::pow(std::abs(vp1[2] - vp2[0]), a) +
-                           std::pow(std::abs(vp1[2] - vp2[1]), a) +
-                           std::pow(std::abs(vp1[2] - vp2[2]), a)) /
+    return seq * std::pow((std::pow(tfel::math::abs(vp1[0] - vp2[0]), a) +
+                           std::pow(tfel::math::abs(vp1[0] - vp2[1]), a) +
+                           std::pow(tfel::math::abs(vp1[0] - vp2[2]), a) +
+                           std::pow(tfel::math::abs(vp1[1] - vp2[0]), a) +
+                           std::pow(tfel::math::abs(vp1[1] - vp2[1]), a) +
+                           std::pow(tfel::math::abs(vp1[1] - vp2[2]), a) +
+                           std::pow(tfel::math::abs(vp1[2] - vp2[0]), a) +
+                           std::pow(tfel::math::abs(vp1[2] - vp2[1]), a) +
+                           std::pow(tfel::math::abs(vp1[2] - vp2[2]), a)) /
                               4,
                           1 / real(a));
   }  // end of computeBarlatStress
@@ -268,15 +269,15 @@ namespace tfel::material {
     // Barlat stress
     const auto rvp1 = vp1 * iseq;
     const auto rvp2 = vp2 * iseq;
-    const auto Phi_a = (std::pow(std::abs(rvp1[0] - rvp2[0]), a) +
-                        std::pow(std::abs(rvp1[0] - rvp2[1]), a) +
-                        std::pow(std::abs(rvp1[0] - rvp2[2]), a) +
-                        std::pow(std::abs(rvp1[1] - rvp2[0]), a) +
-                        std::pow(std::abs(rvp1[1] - rvp2[1]), a) +
-                        std::pow(std::abs(rvp1[1] - rvp2[2]), a) +
-                        std::pow(std::abs(rvp1[2] - rvp2[0]), a) +
-                        std::pow(std::abs(rvp1[2] - rvp2[1]), a) +
-                        std::pow(std::abs(rvp1[2] - rvp2[2]), a)) /
+    const auto Phi_a = (std::pow(tfel::math::abs(rvp1[0] - rvp2[0]), a) +
+                        std::pow(tfel::math::abs(rvp1[0] - rvp2[1]), a) +
+                        std::pow(tfel::math::abs(rvp1[0] - rvp2[2]), a) +
+                        std::pow(tfel::math::abs(rvp1[1] - rvp2[0]), a) +
+                        std::pow(tfel::math::abs(rvp1[1] - rvp2[1]), a) +
+                        std::pow(tfel::math::abs(rvp1[1] - rvp2[2]), a) +
+                        std::pow(tfel::math::abs(rvp1[2] - rvp2[0]), a) +
+                        std::pow(tfel::math::abs(rvp1[2] - rvp2[1]), a) +
+                        std::pow(tfel::math::abs(rvp1[2] - rvp2[2]), a)) /
                        4;
     // Barlat equivalent stress
     const auto Phi = seq * std::pow(Phi_a, 1 / real(a));
@@ -285,15 +286,15 @@ namespace tfel::material {
     const auto rvp1b = tfel::math::eval(vp1 / Phi);
     const auto rvp2b = tfel::math::eval(vp2 / Phi);
     const tfel::math::tvector<9u, real> drvpb_am2 = {
-        real(std::pow(std::abs(rvp1b[0] - rvp2b[0]), a - 2)),
-        real(std::pow(std::abs(rvp1b[0] - rvp2b[1]), a - 2)),
-        real(std::pow(std::abs(rvp1b[0] - rvp2b[2]), a - 2)),
-        real(std::pow(std::abs(rvp1b[1] - rvp2b[0]), a - 2)),
-        real(std::pow(std::abs(rvp1b[1] - rvp2b[1]), a - 2)),
-        real(std::pow(std::abs(rvp1b[1] - rvp2b[2]), a - 2)),
-        real(std::pow(std::abs(rvp1b[2] - rvp2b[0]), a - 2)),
-        real(std::pow(std::abs(rvp1b[2] - rvp2b[1]), a - 2)),
-        real(std::pow(std::abs(rvp1b[2] - rvp2b[2]), a - 2))};
+        real(std::pow(tfel::math::abs(rvp1b[0] - rvp2b[0]), a - 2)),
+        real(std::pow(tfel::math::abs(rvp1b[0] - rvp2b[1]), a - 2)),
+        real(std::pow(tfel::math::abs(rvp1b[0] - rvp2b[2]), a - 2)),
+        real(std::pow(tfel::math::abs(rvp1b[1] - rvp2b[0]), a - 2)),
+        real(std::pow(tfel::math::abs(rvp1b[1] - rvp2b[1]), a - 2)),
+        real(std::pow(tfel::math::abs(rvp1b[1] - rvp2b[2]), a - 2)),
+        real(std::pow(tfel::math::abs(rvp1b[2] - rvp2b[0]), a - 2)),
+        real(std::pow(tfel::math::abs(rvp1b[2] - rvp2b[1]), a - 2)),
+        real(std::pow(tfel::math::abs(rvp1b[2] - rvp2b[2]), a - 2))};
     const tfel::math::tvector<3u, real> dPhi_dsvp1 = {
         ((rvp1b[0] - rvp2b[0]) * drvpb_am2[0] +
          (rvp1b[0] - rvp2b[1]) * drvpb_am2[1] +
@@ -342,15 +343,15 @@ namespace tfel::material {
     const auto iseq = 1 / seq;
     const auto rvp1 = vp1 * iseq;
     const auto rvp2 = vp2 * iseq;
-    const auto Phi_a = (std::pow(std::abs(rvp1[0] - rvp2[0]), a) +
-                        std::pow(std::abs(rvp1[0] - rvp2[1]), a) +
-                        std::pow(std::abs(rvp1[0] - rvp2[2]), a) +
-                        std::pow(std::abs(rvp1[1] - rvp2[0]), a) +
-                        std::pow(std::abs(rvp1[1] - rvp2[1]), a) +
-                        std::pow(std::abs(rvp1[1] - rvp2[2]), a) +
-                        std::pow(std::abs(rvp1[2] - rvp2[0]), a) +
-                        std::pow(std::abs(rvp1[2] - rvp2[1]), a) +
-                        std::pow(std::abs(rvp1[2] - rvp2[2]), a)) /
+    const auto Phi_a = (std::pow(tfel::math::abs(rvp1[0] - rvp2[0]), a) +
+                        std::pow(tfel::math::abs(rvp1[0] - rvp2[1]), a) +
+                        std::pow(tfel::math::abs(rvp1[0] - rvp2[2]), a) +
+                        std::pow(tfel::math::abs(rvp1[1] - rvp2[0]), a) +
+                        std::pow(tfel::math::abs(rvp1[1] - rvp2[1]), a) +
+                        std::pow(tfel::math::abs(rvp1[1] - rvp2[2]), a) +
+                        std::pow(tfel::math::abs(rvp1[2] - rvp2[0]), a) +
+                        std::pow(tfel::math::abs(rvp1[2] - rvp2[1]), a) +
+                        std::pow(tfel::math::abs(rvp1[2] - rvp2[2]), a)) /
                        4;
     d.Phi = seq * std::pow(Phi_a, 1 / real(a));
     // For the derivatives, the stress eigenvalues are normalised by
@@ -358,15 +359,15 @@ namespace tfel::material {
     const auto rvp1b = tfel::math::eval(vp1 / d.Phi);
     const auto rvp2b = tfel::math::eval(vp2 / d.Phi);
     const tfel::math::tvector<9u, real> drvpb_am2 = {
-        real(std::pow(std::abs(rvp1b[0] - rvp2b[0]), a - 2)),   // s'1-s''1
-        real(std::pow(std::abs(rvp1b[0] - rvp2b[1]), a - 2)),   // s'1-s''2
-        real(std::pow(std::abs(rvp1b[0] - rvp2b[2]), a - 2)),   // s'1-s''3
-        real(std::pow(std::abs(rvp1b[1] - rvp2b[0]), a - 2)),   // s'2-s''1
-        real(std::pow(std::abs(rvp1b[1] - rvp2b[1]), a - 2)),   // s'2-s''2
-        real(std::pow(std::abs(rvp1b[1] - rvp2b[2]), a - 2)),   // s'2-s''3
-        real(std::pow(std::abs(rvp1b[2] - rvp2b[0]), a - 2)),   // s'3-s''1
-        real(std::pow(std::abs(rvp1b[2] - rvp2b[1]), a - 2)),   // s'3-s''2
-        real(std::pow(std::abs(rvp1b[2] - rvp2b[2]), a - 2))};  // s'3-s''3
+        real(std::pow(tfel::math::abs(rvp1b[0] - rvp2b[0]), a - 2)),   // s'1-s''1
+        real(std::pow(tfel::math::abs(rvp1b[0] - rvp2b[1]), a - 2)),   // s'1-s''2
+        real(std::pow(tfel::math::abs(rvp1b[0] - rvp2b[2]), a - 2)),   // s'1-s''3
+        real(std::pow(tfel::math::abs(rvp1b[1] - rvp2b[0]), a - 2)),   // s'2-s''1
+        real(std::pow(tfel::math::abs(rvp1b[1] - rvp2b[1]), a - 2)),   // s'2-s''2
+        real(std::pow(tfel::math::abs(rvp1b[1] - rvp2b[2]), a - 2)),   // s'2-s''3
+        real(std::pow(tfel::math::abs(rvp1b[2] - rvp2b[0]), a - 2)),   // s'3-s''1
+        real(std::pow(tfel::math::abs(rvp1b[2] - rvp2b[1]), a - 2)),   // s'3-s''2
+        real(std::pow(tfel::math::abs(rvp1b[2] - rvp2b[2]), a - 2))};  // s'3-s''3
     d.dPhi_dsvp1 = {((rvp1b[0] - rvp2b[0]) * drvpb_am2[0] +
                      (rvp1b[0] - rvp2b[1]) * drvpb_am2[1] +
                      (rvp1b[0] - rvp2b[2]) * drvpb_am2[2]) /

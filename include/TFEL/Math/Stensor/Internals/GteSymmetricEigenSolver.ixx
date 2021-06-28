@@ -56,7 +56,7 @@ namespace tfel::math::internals {
     int iteration;
     real c2, s2;
 
-    if (std::abs(b12) <= std::abs(b01)) {
+    if (tfel::math::abs(b12) <= tfel::math::abs(b01)) {
       real saveB00, saveB01, saveB11;
       for (iteration = 0; iteration < maxIteration; ++iteration) {
         // compute the Givens reflection.
@@ -240,7 +240,7 @@ namespace tfel::math::internals {
                                                    real& sn) {
     constexpr real zero = real(0);
     constexpr real one = real(1);
-    const real maxAbsComp = std::max(std::abs(u), std::abs(v));
+    const real maxAbsComp = std::max(tfel::math::abs(u), tfel::math::abs(v));
     if (maxAbsComp > zero) {
       u /= maxAbsComp;  // in [-1,1]
       v /= maxAbsComp;  // in [-1,1]
@@ -265,10 +265,10 @@ namespace tfel::math::internals {
     constexpr const auto rmin = std::numeric_limits<real>::min();
     constexpr const auto re = std::numeric_limits<real>::epsilon();
     if (aggressive) {
-      return std::abs(bSuper) < rmin;
+      return tfel::math::abs(bSuper) < rmin;
     } else {
-      const auto sum = std::abs(bDiag0) + std::abs(bDiag1);
-      return std::abs(bSuper) < rmin + sum * re;
+      const auto sum = tfel::math::abs(bDiag0) + tfel::math::abs(bDiag1);
+      return tfel::math::abs(bSuper) < rmin + sum * re;
     }
   }
 

@@ -15,6 +15,8 @@
 #ifndef LIB_TFEL_MATH_RUNGEKUTTA42_IXX
 #define LIB_TFEL_MATH_RUNGEKUTTA42_IXX
 
+#include "TFEL/Math/General/Abs.hxx"
+
 namespace tfel::math {
 
   template <unsigned short N, typename Child, typename Scalar>
@@ -44,11 +46,11 @@ namespace tfel::math {
       // error norm
       auto e = [&ve] {
         if constexpr (N == 1) {
-          return std::abs(ve);
+          return tfel::math::abs(ve);
         } else {
           return tfel::fsalgo::accumulate<N>::exe(
               eval(ve).begin(), Scalar(0),
-              [](const auto& a, const auto& b) { return std::abs(a) + b; });
+              [](const auto& a, const auto& b) { return tfel::math::abs(a) + b; });
         }
       }();
       if (e < 0.01 * (this->epsilon)) {

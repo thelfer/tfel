@@ -58,7 +58,7 @@ namespace mfront::bbrick {
                    "the behaviour must be orthotropic");
     StressCriterionBase::initialize(bd, dsl, id, d, r);
     const auto Hn = StressCriterion::getVariableId("H", id, r);
-    auto v = VariableDescription{"tfel::math::st2tost2<N,stress>", Hn, 1u, 0u};
+    auto v = VariableDescription{"tfel::math::st2tost2<N,real>", Hn, 1u, 0u};
     v.description = "Hill tensor";
     std::vector<BehaviourDescription::MaterialProperty> Hmps = {
         get_mp("F"), get_mp("G"), get_mp("H"),
@@ -74,7 +74,8 @@ namespace mfront::bbrick {
         "H", id, StressCriterion::STRESSCRITERION);
     const auto sel = "sel" + id;
     return "const auto seqel" + id +  //
-           " = sqrt(" + sel + "|((this->" + Hn + ")*" + sel + "));\n";
+           " = power<1,2>(max(" + sel + "|((this->" + Hn + ")*" + sel + "), " +
+           "stress(0) * stress(0)));\n";
   }  // end of computeElasticPrediction
 
   std::string Hill1948StressCriterion::computeCriterion(
@@ -85,7 +86,8 @@ namespace mfront::bbrick {
     const auto Hn = StressCriterion::getVariableId(
         "H", id, StressCriterion::STRESSCRITERION);
     return "const auto seq" + id +  //
-           " = sqrt(" + s + "|((this->" + Hn + ")*" + s + "));\n";
+           " = power<1,2>(max(" + s + "|((this->" + Hn + ")*" + s + "), " +
+           "stress(0) * stress(0)));\n";
   }  // end of computeNormal
 
   std::string Hill1948StressCriterion::computeNormal(
@@ -109,7 +111,8 @@ namespace mfront::bbrick {
     }();
     auto c = std::string{};
     c += "const auto " + seq +  //
-         " = sqrt(" + s + "|((this->" + Hn + ")*" + s + "));\n";
+         " = power<1,2>(max(" + s + "|((this->" + Hn + ")*" + s + "), " +
+         "stress(0) * stress(0)));\n";
     c += "const auto i" + seq + " = 1/max(" + seq + "," +
          sp.getEquivalentStressLowerBound(bd) + ");\n";
     c += "const auto " + n + " = (this->" + Hn + ")*" + s + "*i" + seq + ";\n";
@@ -145,8 +148,9 @@ namespace mfront::bbrick {
       return "dn" + id + "_ds" + id;
     }();
     auto c = std::string{};
-    c += "const auto " + seq +  //
-         " = sqrt(" + s + "|((this->" + Hn + ")*" + s + "));\n";
+    c += "const auto " + seq;
+    c += " = power<1,2>(max(" + s + "|((this->" + Hn + ")*" + s + "), ";
+    c += "stress(0) * stress(0)));\n";
     c += "const auto i" + seq + " = 1/max(" + seq + "," +
          sp.getEquivalentStressLowerBound(bd) + ");\n";
     c += "const auto " + n + " = (this->" + Hn + ")*" + s + "*i" + seq + ";\n";

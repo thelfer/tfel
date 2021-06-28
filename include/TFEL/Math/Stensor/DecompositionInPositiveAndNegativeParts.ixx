@@ -17,21 +17,21 @@
 
 #include "TFEL/Math/General/MathConstants.hxx"
 
+namespace tfel::math::internals {
+
+  template <typename NumType>
+  constexpr auto stensor_ppos(const NumType x) {
+    return x >= NumType(0) ? x : NumType(0);
+  }
+
+  template <typename NumType>
+  constexpr auto stensor_pneg(const NumType x) {
+    return x <= NumType(0) ? x : NumType(0);
+  }
+
+}  // end of namespace tfel::math::internals
+
 namespace tfel::math {
-
-  namespace internals {
-
-    template <typename NumType>
-    TFEL_MATH_INLINE NumType stensor_ppos(const NumType x) {
-      return x >= NumType(0) ? x : NumType(0);
-    }
-
-    template <typename NumType>
-    TFEL_MATH_INLINE NumType stensor_pneg(const NumType x) {
-      return x <= NumType(0) ? x : NumType(0);
-    }
-
-  }  // namespace internals
 
   template <typename DPPType, typename PPType, typename StensorType>
   std::enable_if_t<
@@ -49,7 +49,7 @@ namespace tfel::math {
                                           PPType& pp,
                                           const StensorType& s,
                                           const numeric_type<StensorType> eps) {
-    using std::abs;
+    using tfel::math::abs;
     typedef numeric_type<StensorType> NumType;
     typedef base_type<NumType> real;
     constexpr const auto one_half = real(1) / (real(2));
@@ -103,7 +103,7 @@ namespace tfel::math {
                                           PPType& pp,
                                           const StensorType& s,
                                           const numeric_type<StensorType> eps) {
-    using std::abs;
+    using tfel::math::abs;
     using tfel::math::internals::stensor_pneg;
     using tfel::math::internals::stensor_ppos;
     typedef numeric_type<StensorType> NumType;
@@ -345,7 +345,7 @@ namespace tfel::math {
       NPType& np,
       const StensorType& s,
       const numeric_type<StensorType> eps) {
-    using std::abs;
+    using tfel::math::abs;
     typedef numeric_type<StensorType> NumType;
     typedef base_type<NumType> real;
     const real one_half = real(1) / (real(2));
@@ -430,7 +430,7 @@ namespace tfel::math {
       NPType& np,
       const StensorType& s,
       const numeric_type<StensorType> eps) {
-    using std::abs;
+    using tfel::math::abs;
     using tfel::math::internals::stensor_pneg;
     using tfel::math::internals::stensor_ppos;
     typedef numeric_type<StensorType> NumType;

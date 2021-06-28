@@ -17,6 +17,7 @@
 #include <cmath>
 #include <tuple>
 #include <algorithm>
+#include "TFEL/Math/General/Abs.hxx"
 
 namespace tfel::material {
 
@@ -106,7 +107,7 @@ namespace tfel::material {
                    d2Psi_dvp2[3] * (n1 ^ n0) + d2Psi_dvp2[5] * (n1 ^ n2) +
                    d2Psi_dvp2[2] * (n2 ^ n2) + d2Psi_dvp2[4] * (n2 ^ n0) +
                    d2Psi_dvp2[5] * (n2 ^ n1));
-      if (std::abs(vp(0) - vp(1)) < e) {
+      if (tfel::math::abs(vp(0) - vp(1)) < e) {
         d2Psi_ds2 += ((d2Psi_dvp2[0] + d2Psi_dvp2[1] - 2 * d2Psi_dvp2[3]) / 2) *
                      (n01 ^ n01);
       } else {
@@ -170,7 +171,7 @@ namespace tfel::material {
                   d2Psi_dvp2[3] * (n1 ^ n0) + d2Psi_dvp2[5] * (n1 ^ n2) +
                   d2Psi_dvp2[2] * (n2 ^ n2) + d2Psi_dvp2[4] * (n2 ^ n0) +
                   d2Psi_dvp2[5] * (n2 ^ n1);
-      if ((std::abs(vp(0) - vp(1)) < e) && (std::abs(vp(0) - vp(2)) < e)) {
+      if ((tfel::math::abs(vp(0) - vp(1)) < e) && (tfel::math::abs(vp(0) - vp(2)) < e)) {
         d2Psi_ds2 +=
             (((d2Psi_dvp2[0] + d2Psi_dvp2[1] - 2 * d2Psi_dvp2[3]) / 2) *
                  (n01 ^ n01) +
@@ -178,7 +179,7 @@ namespace tfel::material {
                  (n02 ^ n02) +
              ((d2Psi_dvp2[1] + d2Psi_dvp2[2] - 2 * d2Psi_dvp2[5]) / 2) *
                  (n12 ^ n12));
-      } else if (std::abs(vp(0) - vp(1)) < e) {
+      } else if (tfel::math::abs(vp(0) - vp(1)) < e) {
         d2Psi_ds2 +=
             (((d2Psi_dvp2[0] + d2Psi_dvp2[1] - 2 * d2Psi_dvp2[3]) / 2) *
                  (n01 ^ n01) +
@@ -186,7 +187,7 @@ namespace tfel::material {
              dPsi_dvp[1] * (n12 ^ n12) / (vp[1] - vp[2]) +
              dPsi_dvp[2] * ((n12 ^ n12) / (vp[2] - vp[1]) +
                             (n02 ^ n02) / (vp[2] - vp[0])));
-      } else if (std::abs(vp(0) - vp(2)) < e) {
+      } else if (tfel::math::abs(vp(0) - vp(2)) < e) {
         d2Psi_ds2 +=
             (((d2Psi_dvp2[0] + d2Psi_dvp2[2] - 2 * d2Psi_dvp2[4]) / 2) *
                  (n02 ^ n02) +
@@ -194,7 +195,7 @@ namespace tfel::material {
                             (n12 ^ n12) / (vp[1] - vp[2])) +
              dPsi_dvp[0] * (n01 ^ n01) / (vp[0] - vp[1]) +
              dPsi_dvp[2] * (n12 ^ n12) / (vp[2] - vp[1]));
-      } else if (std::abs(vp(1) - vp(2)) < e) {
+      } else if (tfel::math::abs(vp(1) - vp(2)) < e) {
         d2Psi_ds2 +=
             (((d2Psi_dvp2[1] + d2Psi_dvp2[2] - 2 * d2Psi_dvp2[5]) / 2) *
                  (n12 ^ n12) +
@@ -228,9 +229,9 @@ namespace tfel::material {
     }
     const auto iseq = 1 / seq;
     const auto vp = s.template computeEigenValues<es>() * iseq;
-    return seq * std::pow((std::pow(std::abs(vp[0] - vp[1]), a) +
-                           std::pow(std::abs(vp[0] - vp[2]), a) +
-                           std::pow(std::abs(vp[1] - vp[2]), a)) /
+    return seq * std::pow((std::pow(tfel::math::abs(vp[0] - vp[1]), a) +
+                           std::pow(tfel::math::abs(vp[0] - vp[2]), a) +
+                           std::pow(tfel::math::abs(vp[1] - vp[2]), a)) /
                               2,
                           1 / real(a));
   }  // end of computeHosfordYieldStress
@@ -261,9 +262,9 @@ namespace tfel::material {
     // eigenvalues are normalised by the Von Mises stress to avoid
     // overflow
     const auto rvp = vp * iseq;
-    const real rPsi_a = (std::pow(std::abs(rvp[0] - rvp[1]), a) +
-                         std::pow(std::abs(rvp[0] - rvp[2]), a) +
-                         std::pow(std::abs(rvp[1] - rvp[2]), a)) /
+    const real rPsi_a = (std::pow(tfel::math::abs(rvp[0] - rvp[1]), a) +
+                         std::pow(tfel::math::abs(rvp[0] - rvp[2]), a) +
+                         std::pow(tfel::math::abs(rvp[1] - rvp[2]), a)) /
                         2;
     // Hosford equivalent stress
     const real Psi = seq * std::pow(rPsi_a, 1 / real(a));
@@ -275,9 +276,9 @@ namespace tfel::material {
     const tfel::math::tvector<3u, real> drvp2 = {
         rvp2[0] - rvp2[1], rvp2[0] - rvp2[2], rvp2[1] - rvp2[2]};
     const tfel::math::tvector<3u, real> drvp2_am2 = {
-        real(std::pow(std::abs(drvp2[0]), a - 2)),
-        real(std::pow(std::abs(drvp2[1]), a - 2)),
-        real(std::pow(std::abs(drvp2[2]), a - 2))};
+        real(std::pow(tfel::math::abs(drvp2[0]), a - 2)),
+        real(std::pow(tfel::math::abs(drvp2[1]), a - 2)),
+        real(std::pow(tfel::math::abs(drvp2[2]), a - 2))};
     const tfel::math::tvector<3u, real> dPsi_ds = {
         (drvp2[0] * drvp2_am2[0] + drvp2[1] * drvp2_am2[1]) / 2,
         (-drvp2[0] * drvp2_am2[0] + drvp2[2] * drvp2_am2[2]) / 2,
@@ -318,9 +319,9 @@ namespace tfel::material {
     // eigenvalues are normalised by the Von Mises stress to avoid
     // overflow
     const auto rvp = vp * iseq;
-    const real rPsi_a = (std::pow(std::abs(rvp[0] - rvp[1]), a) +
-                         std::pow(std::abs(rvp[0] - rvp[2]), a) +
-                         std::pow(std::abs(rvp[1] - rvp[2]), a)) /
+    const real rPsi_a = (std::pow(tfel::math::abs(rvp[0] - rvp[1]), a) +
+                         std::pow(tfel::math::abs(rvp[0] - rvp[2]), a) +
+                         std::pow(tfel::math::abs(rvp[1] - rvp[2]), a)) /
                         2;
     // Hosford equivalent stress
     const real Psi = seq * std::pow(rPsi_a, 1 / real(a));
@@ -331,9 +332,9 @@ namespace tfel::material {
     const tfel::math::tvector<3u, real> drvp2 = {
         rvp2[0] - rvp2[1], rvp2[0] - rvp2[2], rvp2[1] - rvp2[2]};
     const tfel::math::tvector<3u, real> drvp2_am2 = {
-        real(std::pow(std::abs(drvp2[0]), a - 2)),
-        real(std::pow(std::abs(drvp2[1]), a - 2)),
-        real(std::pow(std::abs(drvp2[2]), a - 2))};
+        real(std::pow(tfel::math::abs(drvp2[0]), a - 2)),
+        real(std::pow(tfel::math::abs(drvp2[1]), a - 2)),
+        real(std::pow(tfel::math::abs(drvp2[2]), a - 2))};
     const tfel::math::tvector<3u, real> dPsi_dsvp = {
         (drvp2[0] * drvp2_am2[0] + drvp2[1] * drvp2_am2[1]) / 2,
         (-drvp2[0] * drvp2_am2[0] + drvp2[2] * drvp2_am2[2]) / 2,

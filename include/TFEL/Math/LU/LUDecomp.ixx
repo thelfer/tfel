@@ -58,37 +58,37 @@ namespace tfel::math {
       // search for pivot
       size_type piv = i;
       if (p.isIdentity()) {
-        auto cmax = std::abs(m(i, i));
+        auto cmax = tfel::math::abs(m(i, i));
         for (size_type j = static_cast<size_type>(i + 1u); j != n; ++j) {
-          if (std::abs(m(j, i)) > cmax) {
-            cmax = std::abs(m(j, i));
+          if (tfel::math::abs(m(j, i)) > cmax) {
+            cmax = tfel::math::abs(m(j, i));
             piv = j;
           }
         }
         if (piv != i) {
-          if (!((std::abs(m(i, i)) > c * cmax) && (std::abs(m(i, i)) > eps))) {
+          if (!((tfel::math::abs(m(i, i)) > c * cmax) && (tfel::math::abs(m(i, i)) > eps))) {
             d *= -1;
             p.swap(piv, i);
           }
         }
       } else {
-        auto cmax = std::abs(m(p(i), i));
+        auto cmax = tfel::math::abs(m(p(i), i));
         for (size_type j = static_cast<size_type>(i + 1u); j != n; ++j) {
           size_type pj = p(j);
-          if (std::abs(m(pj, i)) > cmax) {
-            cmax = std::abs(m(pj, i));
+          if (tfel::math::abs(m(pj, i)) > cmax) {
+            cmax = tfel::math::abs(m(pj, i));
             piv = j;
           }
         }
         if (piv != i) {
-          if (!((std::abs(m(p(i), i)) > c * cmax) &&
-                (std::abs(m(p(i), i)) > eps))) {
+          if (!((tfel::math::abs(m(p(i), i)) > c * cmax) &&
+                (tfel::math::abs(m(p(i), i)) > eps))) {
             d *= -1;
             p.swap(piv, i);
           }
         }
       }
-      if (std::abs(m(p(i), i)) < eps) {
+      if (tfel::math::abs(m(p(i), i)) < eps) {
         throw(LUNullPivot());
       }
       if (p.isIdentity()) {
