@@ -55,14 +55,9 @@ namespace tfel::math {
       converged = child.checkConvergence(error);
       if (!converged) {
         child.updateOrCheckJacobian();
-        const auto linear_solver_success = [this] {
-          try {
-            TinyMatrixSolve<N, NumericType>::exe(this->jacobian, this->fzeros);
-          } catch (tfel::math::LUException&) {
-            return false;
-          }
-          return true;
-        }();
+        const auto linear_solver_success =
+            TinyMatrixSolve<N, NumericType, false>::exe(this->jacobian,
+                                                        this->fzeros);
         if (!linear_solver_success) {
           treat_invalid_residual();
           continue;
