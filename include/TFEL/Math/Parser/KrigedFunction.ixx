@@ -22,10 +22,8 @@ namespace tfel::math::parser {
       const std::vector<typename KrigedFunction<N>::Point>& points,
       const double n)
       : k(new Kriging<N>()) {
-    using namespace std;
-    typename vector<Point>::const_iterator p;
-    for (p = points.begin(); p != points.end(); ++p) {
-      this->k->addValue(p->first, p->second);
+    for (const auto& p : points) {
+      this->k->addValue(p.first, p.second);
     }
     this->k->setNuggetEffect(n);
     this->k->buildInterpolation();
