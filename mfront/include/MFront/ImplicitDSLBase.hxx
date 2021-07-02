@@ -126,6 +126,8 @@ namespace mfront {
     virtual void writeDerivativeView(std::ostream&,
                                      const DerivativeViewDescription&) const;
 
+    void writeBehaviourFriends(std::ostream&, const Hypothesis) const override;
+
     void writeBehaviourLocalVariablesInitialisation(
         std::ostream&, const Hypothesis) const override;
 
@@ -133,6 +135,9 @@ namespace mfront {
                                   const Hypothesis) const override;
 
     virtual void writeComputeFdF(std::ostream&, const Hypothesis) const;
+
+    void writeBehaviourParserSpecificInheritanceRelationship(
+        std::ostream&, const Hypothesis) const override;
 
     void writeBehaviourParserSpecificIncludes(std::ostream&) const override;
 
@@ -145,9 +150,6 @@ namespace mfront {
         std::ostream&, const Hypothesis) const override;
 
     std::string getLocalVariablesInitializers(const Hypothesis) const override;
-
-    std::string getBehaviourConstructorsInitializers(
-        const Hypothesis) const override;
 
     std::string getIntegrationVariablesIncrementsInitializers(
         const Hypothesis) const override;

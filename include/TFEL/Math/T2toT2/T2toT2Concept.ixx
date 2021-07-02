@@ -72,17 +72,15 @@ namespace tfel::math {
       tmatrix<ts, ts, real> m;
       TinyPermutation<ts> p;
       tfel::fsalgo::copy<ts * ts>::exe(s.begin(), m.begin());
-      int r = 1;
-      try {
-        r = LUDecomp::exe(m, p);
-      } catch (...) {
+      const auto r = LUDecomp<false>::exe(m, p);
+      if (!r.first) {
         return {};
       }
       auto v = base_type<real>{1};
       for (const index_type<T2toT2Type> i = 0; i != ts; ++i) {
         v *= m(i, i);
       }
-      return r == 1 ? v : -v;
+      return r.second == 1 ? v : -v;
     }
   }  // end of det
 

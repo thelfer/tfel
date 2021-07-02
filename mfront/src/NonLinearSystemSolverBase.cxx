@@ -20,9 +20,27 @@
 
 namespace mfront {
 
+  std::vector<std::string> NonLinearSystemSolverBase::getSpecificHeaders()
+      const {
+    return {};
+  }  // end of getSpecificHeaders
+
+  bool NonLinearSystemSolverBase::usesExternalAlgorithm() const {
+    return false;
+  }  // end of usesExternalAlgorithm
+
+  std::string NonLinearSystemSolverBase::getExternalAlgorithmClassName(
+      const BehaviourDescription&, const Hypothesis) const {
+    return "";
+  }  // end of getExternalAlgorithmClassName
+
   std::vector<std::string> NonLinearSystemSolverBase::getReservedNames() const {
     return {"jacobian_error", "error", "iter", "iterMax", "converged"};
   }  // end of NonLinearSystemSolverBase::getReservedNames
+
+  int NonLinearSystemSolverBase::getJacobianUpdatePeriod() const {
+    return this->jacobianUpdatePeriod;
+  }
 
   std::string NonLinearSystemSolverBase::getJacobianPart(
       const VariableDescription& v1,
@@ -90,8 +108,9 @@ namespace mfront {
     }();
     const auto& ivs = d.getIntegrationVariables();
     const auto n = ivs.getTypeSize();
-    out << "tmatrix<" << n << "," << n << ",real> tjacobian(this->jacobian);\n"
-        << "tvector<" << n << ",real> tfzeros(this->fzeros);\n";
+    out << "tfel::math::tmatrix<" << n << "," << n << ",real> tjacobian(this->jacobian);\n"
+        << "tfel::math::tvector<" << n << ",real> tfzeros(this->fzeros);\n"
+        << "tfel::math::tvector<" << n << ",real> zeros_safe(this->zeros);\n";
     bool first = true;
     for (const auto& b : blocs) {
       auto getPositionAndSize = [&ivs](const std::string& v)
@@ -138,15 +157,15 @@ namespace mfront {
           out << "this->computeThermodynamicForces();\n";
         }
         out << "this->computeFdF(true);\n"
-            << "this->zeros = this->zeros_1;\n"
-            << "tvector<" << n << ",real> tfzeros2(this->fzeros);\n"
+            << "this->zeros = zeros_safe;\n"
+            << "tfel::math::tvector<" << n << ",real> tfzeros2(this->fzeros);\n"
             << "this->zeros(" << j
             << ") += this->numerical_jacobian_epsilon;\n";
         if (d.hasCode(BehaviourData::ComputeThermodynamicForces)) {
           out << "this->computeThermodynamicForces();\n";
         }
         out << "this->computeFdF(true);\n"
-            << "this->zeros  = this->zeros_1;\n"
+            << "this->zeros  = zeros_safe;\n"
             << "this->fzeros = "
                "(this->fzeros-tfzeros2)/"
                "(2*(this->numerical_jacobian_epsilon));\n"
@@ -215,50 +234,50 @@ namespace mfront {
             << "(this->jacobianComparisonCriterion)"
             << ";\n";
         if ((v1.arraySize == 1u) && (v2.arraySize == 1u)) {
-          out << "if(abs("
+          out << "if(tfel::math::abs("
               << "df" << v1.name << "_dd" << v2.name << "-"
               << "ndf" << v1.name << "_dd" << v2.name << ") > jacobian_error)\n"
               << "{\n"
-              << "cout << abs("
+              << "std::cout << tfel::math::abs("
               << "df" << v1.name << "_dd" << v2.name << "-"
               << "ndf" << v1.name << "_dd" << v2.name
-              << ") << \" \" << jacobian_error << endl;\n"
-              << "cout << \"df" << v1.name << "_dd" << v2.name << " :\\n\" << "
-              << "df" << v1.name << "_dd" << v2.name << " << endl;\n"
-              << "cout << \"ndf" << v1.name << "_dd" << v2.name << " :\\n\" << "
-              << "ndf" << v1.name << "_dd" << v2.name << " << endl;\n"
-              << "cout << \"df" << v1.name << "_dd" << v2.name << " - ndf"
+              << ") << \" \" << jacobian_error << '\\n';\n"
+              << "std::cout << \"df" << v1.name << "_dd" << v2.name << " :\\n\" << "
+              << "df" << v1.name << "_dd" << v2.name << " << '\\n';\n"
+              << "std::cout << \"ndf" << v1.name << "_dd" << v2.name << " :\\n\" << "
+              << "ndf" << v1.name << "_dd" << v2.name << " << '\\n';\n"
+              << "std::cout << \"df" << v1.name << "_dd" << v2.name << " - ndf"
               << v1.name << "_dd" << v2.name << " :\\n\" << "
               << "df" << v1.name << "_dd" << v2.name << "-"
-              << "ndf" << v1.name << "_dd" << v2.name << " << endl;\n"
-              << "cout << endl;\n"
+              << "ndf" << v1.name << "_dd" << v2.name << " << '\\n';\n"
+              << "std::cout << '\\n';\n"
               << "}\n";
         } else if (((v1.arraySize != 1u) && (v2.arraySize == 1u)) ||
                    ((v2.arraySize != 1u) && (v1.arraySize == 1u))) {
           const auto asize = (v1.arraySize != 1u) ? v1.arraySize : v2.arraySize;
           out << "for(unsigned short idx=0;idx!=" << asize << ";++idx){\n"
-              << "if(abs("
+              << "if(tfel::math::abs("
               << "df" << v1.name << "_dd" << v2.name << "(idx)-"
               << "df" << v1.name << "_dd" << v2.name << "(" << nj
               << ",idx)) > jacobian_error)\n"
               << "{\n"
-              << "cout << abs("
+              << "std::cout << tfel::math::abs("
               << "df" << v1.name << "_dd" << v2.name << "(idx)-"
               << "df" << v1.name << "_dd" << v2.name << "(" << nj
-              << ",idx)) << \" \" << jacobian_error << endl;\n"
-              << "cout << \"df" << v1.name << "_dd" << v2.name
+              << ",idx)) << \" \" << jacobian_error << '\\n';\n"
+              << "std::cout << \"df" << v1.name << "_dd" << v2.name
               << "(\" << idx << \") :\\n\" << "
-              << "df" << v1.name << "_dd" << v2.name << "(idx) << endl;\n"
-              << "cout << \"ndf" << v1.name << "_dd" << v2.name
+              << "df" << v1.name << "_dd" << v2.name << "(idx) << '\\n';\n"
+              << "std::cout << \"ndf" << v1.name << "_dd" << v2.name
               << "(\" << idx << \") :\\n\" << "
               << "df" << v1.name << "_dd" << v2.name << "(" << nj
-              << ",idx) << endl;\n"
-              << "cout << \"df" << v1.name << "_dd" << v2.name << " - ndf"
+              << ",idx) << '\\n';\n"
+              << "std::cout << \"df" << v1.name << "_dd" << v2.name << " - ndf"
               << v1.name << "_dd" << v2.name << "(\" << idx << \") :\\n\" << "
               << "df" << v1.name << "_dd" << v2.name << "(idx) -"
               << "df" << v1.name << "_dd" << v2.name << "(" << nj
-              << ",idx) << endl;\n"
-              << "cout << endl;\n"
+              << ",idx) << '\\n';\n"
+              << "std::cout << '\\n';\n"
               << "}\n"
               << "}\n";
         } else {
@@ -266,37 +285,36 @@ namespace mfront {
               << ";++idx){\n"
               << "for(unsigned short idx2=0;idx2!=" << v2.arraySize
               << ";++idx2){\n"
-              << "if(abs("
+              << "if(tfel::math::abs("
               << "df" << v1.name << "_dd" << v2.name << "(idx,idx2)-"
               << "df" << v1.name << "_dd" << v2.name << "(" << nj
               << ",idx,idx2)) > jacobian_error)\n"
               << "{\n"
-              << "cout << abs("
+              << "std::cout << tfel::math::abs("
               << "df" << v1.name << "_dd" << v2.name << "(idx,idx2)-"
               << "df" << v1.name << "_dd" << v2.name << "(" << nj
-              << ",idx,idx2)) << \" \" << jacobian_error << endl;\n"
-              << "cout << \"df" << v1.name << "_dd" << v2.name
+              << ",idx,idx2)) << \" \" << jacobian_error << '\\n';\n"
+              << "std::cout << \"df" << v1.name << "_dd" << v2.name
               << "(\" << idx << \",\" << idx2 << \") :\\n\" << "
-              << "df" << v1.name << "_dd" << v2.name << "(idx,idx2) << endl;\n"
-              << "cout << \"ndf" << v1.name << "_dd" << v2.name
+              << "df" << v1.name << "_dd" << v2.name << "(idx,idx2) << '\\n';\n"
+              << "std::cout << \"ndf" << v1.name << "_dd" << v2.name
               << "(\" << idx << \",\" << idx2 << \") :\\n\" << "
               << "df" << v1.name << "_dd" << v2.name << "(" << nj
-              << ",idx,idx2) << endl;\n"
-              << "cout << \"df" << v1.name << "_dd" << v2.name << " - ndf"
+              << ",idx,idx2) << '\\n';\n"
+              << "std::cout << \"df" << v1.name << "_dd" << v2.name << " - ndf"
               << v1.name << "_dd" << v2.name
               << "(\" << idx << \",\" << idx2 << \") :\\n\" << "
               << "df" << v1.name << "_dd" << v2.name << "(idx,idx2) -"
               << "df" << v1.name << "_dd" << v2.name << "(" << nj
-              << ",idx,idx2) << endl;\n"
-              << "cout << endl;\n"
+              << ",idx,idx2) << '\\n';\n"
+              << "std::cout << '\\n';\n"
               << "}\n"
               << "}\n"
               << "}\n";
         }
       }
     }
-  }  // end of
-     // NonLinearSystemSolverBase::writeComparisonToNumericalJacobian
+  }  // end of writeComparisonToNumericalJacobian
 
   void NonLinearSystemSolverBase::writeLimitsOnIncrementValues(
       std::ostream& out,

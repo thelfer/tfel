@@ -37,9 +37,18 @@ namespace mfront {
     using CxxTokenizer = tfel::utilities::CxxTokenizer;
     //! a simple alias
     using tokens_iterator = CxxTokenizer::TokensContainer::const_iterator;
+    //! \return true if the algorithm is based on an external algorithm
+    virtual bool usesExternalAlgorithm() const = 0;
     /*!
-     * \return the reserved names
+     * \return the name of the class implementing the external algorithm
+     * \param[in] bd: behaviour description
+     * \param[in] h: modelling hypothesis
      */
+    virtual std::string getExternalAlgorithmClassName(
+        const BehaviourDescription&, const Hypothesis) const = 0;
+    //! \return the header to be included
+    virtual std::vector<std::string> getSpecificHeaders() const = 0;
+    //! \return the reserved names
     virtual std::vector<std::string> getReservedNames() const = 0;
     /*!
      * \return true if the solver uses the jacobian of the system
@@ -126,6 +135,11 @@ namespace mfront {
     virtual void writeResolutionAlgorithm(std::ostream&,
                                           const BehaviourDescription&,
                                           const Hypothesis) const = 0;
+    /*!
+     * \brief return the period at which the jacobian must be updated, when
+     * meaningful.
+     */
+    virtual int getJacobianUpdatePeriod() const = 0;
     //! \brief destructor
     virtual ~NonLinearSystemSolver();
 

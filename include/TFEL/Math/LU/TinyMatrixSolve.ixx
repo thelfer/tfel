@@ -22,11 +22,12 @@
 
 namespace tfel::math {
 
-  template <unsigned short N, typename T>
-  void TinyMatrixSolveBase<N, T>::back_substitute(const tmatrix<N, N, T>& m,
-                                                  const TinyPermutation<N>& p,
-                                                  tvector<N, T>& b,
-                                                  const T eps) {
+  template <unsigned short N, typename T, bool use_exceptions>
+  bool TinyMatrixSolveBase<N, T, use_exceptions>::back_substitute(
+      const tmatrix<N, N, T>& m,
+      const TinyPermutation<N>& p,
+      tvector<N, T>& b,
+      const T eps) {
     using size_type = index_type<tmatrix<N, N, T>>;
     auto x = b;
     if (p.isIdentity()) {
@@ -36,7 +37,11 @@ namespace tfel::math {
           v += m(i, j) * x(j);
         }
         if (tfel::math::abs(m(i, i)) < eps) {
-          tfel::raise<LUNullPivot>();
+          if constexpr (use_exceptions) {
+            tfel::raise<LUNullPivot>();
+          } else {
+            return false;
+          }
         }
         auto& xv = x(i);
         xv -= v;
@@ -58,7 +63,11 @@ namespace tfel::math {
           v += m(pi, j) * x(p(j));
         }
         if (tfel::math::abs(m(pi, i)) < eps) {
-          tfel::raise<LUNullPivot>();
+          if constexpr (use_exceptions) {
+            tfel::raise<LUNullPivot>();
+          } else {
+            return false;
+          }
         }
         auto& xv = x(pi);
         xv -= v;
@@ -74,11 +83,12 @@ namespace tfel::math {
         b(pi2) = x(pi) - v;
       }
     }
+    return true;
   }  // end of TinyMatrixSolve<N,T>::exe
 
-  template <unsigned short N, typename T>
+  template <unsigned short N, typename T, bool use_exceptions>
   template <unsigned short M>
-  void TinyMatrixSolveBase<N, T>::back_substitute(
+  bool TinyMatrixSolveBase<N, T, use_exceptions>::back_substitute(
       const tmatrix<N, N, T>& m,
       const TinyPermutation<N>& p,
       tfel::math::tmatrix<N, M, T>& b,
@@ -94,7 +104,11 @@ namespace tfel::math {
           }
         }
         if (tfel::math::abs(m(i, i)) < eps) {
-          tfel::raise<LUNullPivot>();
+          if constexpr (use_exceptions) {
+            tfel::raise<LUNullPivot>();
+          } else {
+            return false;
+          }
         }
         for (size_type k = 0; k != M; ++k) {
           auto& xv = x(i, k);
@@ -127,7 +141,11 @@ namespace tfel::math {
           }
         }
         if (tfel::math::abs(m(pi, i)) < eps) {
-          tfel::raise<LUNullPivot>();
+          if constexpr (use_exceptions) {
+            tfel::raise<LUNullPivot>();
+          } else {
+            return false;
+          }
         }
         for (size_type k = 0; k != M; ++k) {
           auto& xv = x(pi, k);
@@ -152,79 +170,103 @@ namespace tfel::math {
         }
       }
     }
+    return true;
   }  // end of TinyMatrixSolve<N,T>::exe
 
-  template <unsigned short N, typename T>
-  void TinyMatrixSolveBase<N, T>::decomp(tmatrix<N, N, T>& m,
-                                         TinyPermutation<N>& p,
-                                         const T eps) {
-    LUDecomp::exe(m, p, eps);
+  template <unsigned short N, typename T, bool use_exceptions>
+  bool TinyMatrixSolveBase<N, T, use_exceptions>::decomp(tmatrix<N, N, T>& m,
+                                                         TinyPermutation<N>& p,
+                                                         const T eps) {
+    return LUDecomp<false>::exe(m, p, eps).first;
   }  // end of TinyMatrixSolve<N,T>::exe
 
-  template <unsigned short N, typename T>
-  void TinyMatrixSolve<N, T>::exe(tmatrix<N, N, T>& m,
-                                  tvector<N, T>& b,
-                                  const T eps) {
+  template <unsigned short N, typename T, bool use_exceptions>
+  bool TinyMatrixSolve<N, T, use_exceptions>::exe(tmatrix<N, N, T>& m,
+                                                  tvector<N, T>& b,
+                                                  const T eps) {
     TinyPermutation<N> p;
-    TinyMatrixSolve<N, T>::decomp(m, p, eps);
-    TinyMatrixSolve<N, T>::back_substitute(m, p, b, eps);
+    if (!TinyMatrixSolve<N, T, use_exceptions>::decomp(m, p, eps)) {
+      return false;
+    }
+    return TinyMatrixSolve<N, T, use_exceptions>::back_substitute(m, p, b, eps);
   }  // end of TinyMatrixSolve<N,T>::exe
 
-  template <unsigned short N, typename T>
+  template <unsigned short N, typename T, bool use_exceptions>
   template <unsigned short M>
-  void TinyMatrixSolve<N, T>::exe(tmatrix<N, N, T>& m,
-                                  tmatrix<N, M, T>& b,
-                                  const T eps) {
+  bool TinyMatrixSolve<N, T, use_exceptions>::exe(tmatrix<N, N, T>& m,
+                                                  tmatrix<N, M, T>& b,
+                                                  const T eps) {
     TinyPermutation<N> p;
-    TinyMatrixSolve<N, T>::decomp(m, p, eps);
-    TinyMatrixSolve<N, T>::back_substitute(m, p, b, eps);
+    if (!TinyMatrixSolve<N, T, use_exceptions>::decomp(m, p, eps)) {
+      return false;
+    }
+    return TinyMatrixSolve<N, T, use_exceptions>::back_substitute(m, p, b, eps);
   }  // end of TinyMatrixSolve<N,T>::exe
 
   // Partial specialisation for 1*1 matrix
-  template <typename T>
-  void TinyMatrixSolve<1u, T>::exe(const tmatrix<1u, 1u, T>& m,
-                                   tvector<1u, T>& b,
-                                   const T eps) {
+  template <typename T, bool use_exceptions>
+  bool TinyMatrixSolve<1u, T, use_exceptions>::exe(const tmatrix<1u, 1u, T>& m,
+                                                   tvector<1u, T>& b,
+                                                   const T eps) {
     if (tfel::math::abs(m(0, 0)) < eps) {
-      tfel::raise<LUNullDeterminant>();
+      if constexpr (use_exceptions) {
+        tfel::raise<LUNullDeterminant>();
+      } else {
+        return false;
+      }
     }
     b(0) /= m(0, 0);
+    return true;
   }  // end of TinyMatrixSolve<2u,T>::exe
 
-  template <typename T>
+  template <typename T, bool use_exceptions>
   template <unsigned short M>
-  void TinyMatrixSolve<1u, T>::exe(const tmatrix<1u, 1u, T>& m,
-                                   tmatrix<1u, M, T>& b,
-                                   const T eps) {
+  bool TinyMatrixSolve<1u, T, use_exceptions>::exe(const tmatrix<1u, 1u, T>& m,
+                                                   tmatrix<1u, M, T>& b,
+                                                   const T eps) {
     if (tfel::math::abs(m(0, 0)) < eps) {
-      tfel::raise<LUNullDeterminant>();
+      if constexpr (use_exceptions) {
+        tfel::raise<LUNullDeterminant>();
+      } else {
+        return false;
+      }
     }
     b /= m(0, 0);
+    return true;
   }  // end of TinyMatrixSolve<2u,T>::exe
 
   // Partial specialisation for 2*2 matrix
-  template <typename T>
-  void TinyMatrixSolve<2u, T>::exe(const tmatrix<2u, 2u, T>& m,
-                                   tvector<2u, T>& b,
-                                   const T eps) {
+  template <typename T, bool use_exceptions>
+  bool TinyMatrixSolve<2u, T, use_exceptions>::exe(const tmatrix<2u, 2u, T>& m,
+                                                   tvector<2u, T>& b,
+                                                   const T eps) {
     const auto det = m(0, 0) * m(1, 1) - m(0, 1) * m(1, 0);
     if (tfel::math::abs(det) < eps) {
-      tfel::raise<LUNullDeterminant>();
+      if constexpr (use_exceptions) {
+        tfel::raise<LUNullDeterminant>();
+      } else {
+        return false;
+      }
     }
     const auto b0 = b(0);
     const auto b1 = b(1);
     b(0) = (m(1, 1) * b0 - m(0, 1) * b1) / det;
     b(1) = (-m(1, 0) * b0 + m(0, 0) * b1) / det;
+    return true;
   }  // end of TinyMatrixSolve<2u,T>::exe
 
-  template <typename T>
+  template <typename T, bool use_exceptions>
   template <unsigned short M>
-  void TinyMatrixSolve<2u, T>::exe(const tmatrix<2u, 2u, T>& m,
-                                   tmatrix<2u, M, T>& b,
-                                   const T eps) {
+  bool TinyMatrixSolve<2u, T, use_exceptions>::exe(const tmatrix<2u, 2u, T>& m,
+                                                   tmatrix<2u, M, T>& b,
+                                                   const T eps) {
     const auto det = m(0, 0) * m(1, 1) - m(0, 1) * m(1, 0);
     if (tfel::math::abs(det) < eps) {
-      tfel::raise<LUNullDeterminant>();
+      if constexpr (use_exceptions) {
+        tfel::raise<LUNullDeterminant>();
+      } else {
+        return false;
+      }
     }
     for (unsigned short k = 0; k != M; ++k) {
       const auto b0 = b(0, k);
@@ -232,18 +274,23 @@ namespace tfel::math {
       b(0, k) = (m(1, 1) * b0 - m(0, 1) * b1) / det;
       b(1, k) = (-m(1, 0) * b0 + m(0, 0) * b1) / det;
     }
+    return true;
   }  // end of TinyMatrixSolve<2u,T>::exe
 
   // Partial specialisation for 3*3 matrix
-  template <typename T>
-  void TinyMatrixSolve<3u, T>::exe(const tmatrix<3u, 3u, T>& m,
-                                   tvector<3u, T>& b,
-                                   const T eps) {
+  template <typename T, bool use_exceptions>
+  bool TinyMatrixSolve<3u, T, use_exceptions>::exe(const tmatrix<3u, 3u, T>& m,
+                                                   tvector<3u, T>& b,
+                                                   const T eps) {
     const auto det = m(0, 0) * (m(1, 1) * m(2, 2) - m(1, 2) * m(2, 1)) -
                      m(0, 1) * (m(1, 0) * m(2, 2) - m(1, 2) * m(2, 0)) +
                      m(0, 2) * (m(1, 0) * m(2, 1) - m(1, 1) * m(2, 0));
     if (tfel::math::abs(det) < eps) {
-      tfel::raise<LUNullDeterminant>();
+      if constexpr (use_exceptions) {
+        tfel::raise<LUNullDeterminant>();
+      } else {
+        return false;
+      }
     }
     const auto b0 = b(0);
     const auto b1 = b(1);
@@ -260,18 +307,23 @@ namespace tfel::math {
             (m(0, 0) * m(2, 1) - m(0, 1) * m(2, 0)) * b1 +
             (m(0, 0) * m(1, 1) - m(0, 1) * m(1, 0)) * b2) /
            det;
+    return true;
   }  // end of TinyMatrixSolve<2u,T>::exe
 
-  template <typename T>
+  template <typename T, bool use_exceptions>
   template <unsigned short M>
-  void TinyMatrixSolve<3u, T>::exe(const tmatrix<3u, 3u, T>& m,
-                                   tmatrix<3u, M, T>& b,
-                                   const T eps) {
+  bool TinyMatrixSolve<3u, T, use_exceptions>::exe(const tmatrix<3u, 3u, T>& m,
+                                                   tmatrix<3u, M, T>& b,
+                                                   const T eps) {
     const auto det = m(0, 0) * (m(1, 1) * m(2, 2) - m(1, 2) * m(2, 1)) -
                      m(0, 1) * (m(1, 0) * m(2, 2) - m(1, 2) * m(2, 0)) +
                      m(0, 2) * (m(1, 0) * m(2, 1) - m(1, 1) * m(2, 0));
     if (tfel::math::abs(det) < eps) {
-      tfel::raise<LUNullDeterminant>();
+      if constexpr (use_exceptions) {
+        tfel::raise<LUNullDeterminant>();
+      } else {
+        return false;
+      }
     }
     for (unsigned short k = 0; k != M; ++k) {
       const auto b0 = b(0, k);
@@ -290,7 +342,8 @@ namespace tfel::math {
                  (m(0, 0) * m(1, 1) - m(0, 1) * m(1, 0)) * b2) /
                 det;
     }
-  }  // end of TinyMatrixSolve<2u,T>::exe
+    return true;
+  }  // end of exe
 
 }  // end of namespace tfel::math
 

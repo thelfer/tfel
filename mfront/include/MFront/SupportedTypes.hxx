@@ -15,6 +15,7 @@
 #define LIB_MFRONT_SUPPORTEDTYPES_HXX
 
 #include <map>
+#include <array>
 #include <string>
 #include <vector>
 
@@ -38,7 +39,9 @@ namespace mfront {
      * a function of the variables' type and the modelling hypothesis
      */
     struct MFRONT_VISIBILITY_EXPORT TypeSize {
-      //! a simple alias
+      //! \brief a simple alias
+      using ModellingHypothesis = tfel::material::ModellingHypothesis;
+      //! \brief a simple alias
       using Hypothesis = tfel::material::ModellingHypothesis::Hypothesis;
       //! constructor
       TypeSize();
@@ -80,7 +83,17 @@ namespace mfront {
       int getStensorSize() const;
       //! return the (un)symmetric tensor part of the size
       int getTensorSize() const;
-
+      /*!
+       * \brief return a string representation of the type size given
+       * the string representation of a tiny vector, a symmetric tensor and a
+       * non symmetric tensor.
+       * \param[in] values: string representations of a tiny vector, a symmetric
+       * tensor and a non symmetric tensor
+       */
+      std::string getValue(const std::array<std::string, 3u>&) const;
+      /*!
+       *
+       */
       int getValueForDimension(const unsigned short) const;
 
       int getValueForModellingHypothesis(const Hypothesis) const;

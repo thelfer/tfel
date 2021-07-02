@@ -19,6 +19,7 @@
 #include <cfloat>
 #include <cstdint>
 #include <stdexcept>
+#include "TFEL/ContractViolation.hxx"
 
 namespace tfel::math::ieee754 {
 
@@ -70,27 +71,22 @@ namespace tfel::math::ieee754 {
       } bint = {0x01020304};
       return bint.c[0] != 1;
     }();
-    if (le) {
-      union {
-        long double f;
-        struct {
-          uint64_t m;
-          uint16_t se;
-        } i;
-      } u = {x};
-      int e = u.i.se & 0x7fff;
-      int msb = u.i.m >> 63;
-      if (!e && !msb) return u.i.m ? FP_SUBNORMAL : FP_ZERO;
-      if (!msb) return FP_NAN;
-      if (e == 0x7fff) return u.i.m << 1 ? FP_NAN : FP_INFINITE;
-    } else {
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wterminate"
-      throw(
-          std::logic_error("tfel::math::ieee754::fpclassify: "
-                           "unsupported long double representation"));
-#pragma GCC diagnostic pop
+    if (!le) {
+      tfel::reportContractViolation("tfel::math::ieee754::fpclassify: "
+				    "unsupported long double representation");
     }
+    union {
+      long double f;
+      struct {
+	uint64_t m;
+	uint16_t se;
+      } i;
+    } u = {x};
+    int e = u.i.se & 0x7fff;
+    int msb = u.i.m >> 63;
+    if (!e && !msb) return u.i.m ? FP_SUBNORMAL : FP_ZERO;
+    if (!msb) return FP_NAN;
+    if (e == 0x7fff) return u.i.m << 1 ? FP_NAN : FP_INFINITE;
     return FP_NORMAL;
   }
 #elif LDBL_MANT_DIG == 113 && LDBL_MAX_EXP == 16384

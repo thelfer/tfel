@@ -32,7 +32,7 @@ namespace tfel::math {
    * \param N : dimension of the system
    * \param T : numerical type
    */
-  template <unsigned short N, typename T>
+  template <unsigned short N, typename T, bool use_exceptions>
   struct TinyMatrixSolveBase {
     /*!
      * \brief LU decompose the given matrix
@@ -40,7 +40,7 @@ namespace tfel::math {
      * \param p   : permutation vector
      * \param eps : numerical parameter to detect null pivot
      */
-    static void decomp(tmatrix<N, N, T>&,
+    static bool decomp(tmatrix<N, N, T>&,
                        TinyPermutation<N>&,
                        const T = 100 * std::numeric_limits<T>::min());
 
@@ -52,7 +52,7 @@ namespace tfel::math {
      * \param b   : right member
      * \param eps : numerical parameter to detect null pivot
      */
-    static void back_substitute(const tmatrix<N, N, T>&,
+    static bool back_substitute(const tmatrix<N, N, T>&,
                                 const TinyPermutation<N>&,
                                 tvector<N, T>&,
                                 const T = 100 * std::numeric_limits<T>::min());
@@ -65,7 +65,7 @@ namespace tfel::math {
      * \param eps : numerical parameter to detect null pivot
      */
     template <unsigned short M>
-    static void back_substitute(const tmatrix<N, N, T>&,
+    static bool back_substitute(const tmatrix<N, N, T>&,
                                 const TinyPermutation<N>&,
                                 tmatrix<N, M, T>&,
                                 const T = 100 * std::numeric_limits<T>::min());
@@ -76,8 +76,8 @@ namespace tfel::math {
    * \param N : dimension of the system
    * \param T : numerical type
    */
-  template <unsigned short N, typename T>
-  struct TinyMatrixSolve : public TinyMatrixSolveBase<N, T> {
+  template <unsigned short N, typename T, bool use_exceptions = true>
+  struct TinyMatrixSolve : public TinyMatrixSolveBase<N, T, use_exceptions> {
     /*!
      * solve the linear system m.x = b
      * \param m   : matrix to be inverted
@@ -86,7 +86,7 @@ namespace tfel::math {
      * \note the matrix m is overwritten during computations
      * \note the right member is overwritten by the solution
      */
-    static void exe(tmatrix<N, N, T>& m,
+    static bool exe(tmatrix<N, N, T>& m,
                     tvector<N, T>&,
                     const T = 100 * std::numeric_limits<T>::min());
     /*!
@@ -98,7 +98,7 @@ namespace tfel::math {
      * \note the right member is overwritten by the solution
      */
     template <unsigned short M>
-    static void exe(tmatrix<N, N, T>& m,
+    static bool exe(tmatrix<N, N, T>& m,
                     tmatrix<N, M, T>&,
                     const T = 100 * std::numeric_limits<T>::min());
   };
@@ -107,8 +107,9 @@ namespace tfel::math {
    * solve a linear problem by direct invertion
    * \param T : numerical type
    */
-  template <typename T>
-  struct TinyMatrixSolve<1u, T> : public TinyMatrixSolveBase<1u, T> {
+  template <typename T, bool use_exceptions>
+  struct TinyMatrixSolve<1u, T, use_exceptions>
+      : public TinyMatrixSolveBase<1u, T, use_exceptions> {
     /*!
      * solve the linear system m.x = b
      * \param m   : matrix to be inverted
@@ -116,7 +117,7 @@ namespace tfel::math {
      * \param eps : numerical paramater to detect null pivot
      * \note the right member is overwritten by the solution
      */
-    static TFEL_MATH_INLINE2 void exe(const tmatrix<1u, 1u, T>& m,
+    static TFEL_MATH_INLINE2 bool exe(const tmatrix<1u, 1u, T>& m,
                                       tvector<1u, T>&,
                                       const T = 100 *
                                                 std::numeric_limits<T>::min());
@@ -128,7 +129,7 @@ namespace tfel::math {
      * \note the right member is overwritten by the solution
      */
     template <unsigned short M>
-    static TFEL_MATH_INLINE2 void exe(const tmatrix<1u, 1u, T>& m,
+    static TFEL_MATH_INLINE2 bool exe(const tmatrix<1u, 1u, T>& m,
                                       tmatrix<1u, M, T>&,
                                       const T = 100 *
                                                 std::numeric_limits<T>::min());
@@ -138,8 +139,9 @@ namespace tfel::math {
    * solve a linear problem by direct invertion
    * \param T : numerical type
    */
-  template <typename T>
-  struct TinyMatrixSolve<2u, T> : public TinyMatrixSolveBase<2u, T> {
+  template <typename T, bool use_exceptions>
+  struct TinyMatrixSolve<2u, T, use_exceptions>
+      : public TinyMatrixSolveBase<2u, T, use_exceptions> {
     /*!
      * solve the linear system m.x = b
      * \param m   : matrix to be inverted
@@ -147,7 +149,7 @@ namespace tfel::math {
      * \param eps : numerical paramater to detect null pivot
      * \note the right member is overwritten by the solution
      */
-    static TFEL_MATH_INLINE2 void exe(const tmatrix<2u, 2u, T>& m,
+    static TFEL_MATH_INLINE2 bool exe(const tmatrix<2u, 2u, T>& m,
                                       tvector<2u, T>&,
                                       const T = 100 *
                                                 std::numeric_limits<T>::min());
@@ -159,7 +161,7 @@ namespace tfel::math {
      * \note the right member is overwritten by the solution
      */
     template <unsigned short M>
-    static TFEL_MATH_INLINE2 void exe(const tmatrix<2u, 2u, T>& m,
+    static TFEL_MATH_INLINE2 bool exe(const tmatrix<2u, 2u, T>& m,
                                       tmatrix<2u, M, T>&,
                                       const T = 100 *
                                                 std::numeric_limits<T>::min());
@@ -169,8 +171,9 @@ namespace tfel::math {
    * solve a linear problem by direct invertion
    * \param T : numerical type
    */
-  template <typename T>
-  struct TinyMatrixSolve<3u, T> : public TinyMatrixSolveBase<3u, T> {
+  template <typename T, bool use_exceptions>
+  struct TinyMatrixSolve<3u, T, use_exceptions>
+      : public TinyMatrixSolveBase<3u, T, use_exceptions> {
     /*!
      * \brief solve the linear system m.x = b
      * \param m   : matrix to be inverted
@@ -179,7 +182,7 @@ namespace tfel::math {
      * \note the right member is overwritten by the solution
      * \note the matrix is destroyed
      */
-    static TFEL_MATH_INLINE2 void exe(const tmatrix<3u, 3u, T>& m,
+    static TFEL_MATH_INLINE2 bool exe(const tmatrix<3u, 3u, T>& m,
                                       tvector<3u, T>&,
                                       const T = 100 *
                                                 std::numeric_limits<T>::min());
@@ -192,7 +195,7 @@ namespace tfel::math {
      * \note the matrix is destroyed
      */
     template <unsigned short M>
-    static TFEL_MATH_INLINE2 void exe(const tmatrix<3u, 3u, T>& m,
+    static TFEL_MATH_INLINE2 bool exe(const tmatrix<3u, 3u, T>& m,
                                       tmatrix<3u, M, T>&,
                                       const T = 100 *
                                                 std::numeric_limits<T>::min());

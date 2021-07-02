@@ -23,13 +23,13 @@ namespace tfel::math {
     constexpr auto one = T(1);
     tmatrix<N, N, T> t(m);
     TinyPermutation<N> p;
-    TinyMatrixSolve<N, T>::decomp(t, p, eps);
+    TinyMatrixSolve<N, T, true>::decomp(t, p, eps);
     typename tmatrix<N, N, T>::size_type i;
     typename tmatrix<N, N, T>::size_type j;
     for (i = 0; i != N; ++i) {
       tvector<N, T> e(zero);
       e(i) = one;
-      TinyMatrixSolve<N, T>::back_substitute(t, p, e);
+      TinyMatrixSolve<N, T, true>::back_substitute(t, p, e);
       for (j = 0; j != N; ++j) {
         m(j, i) = e(j);
       }

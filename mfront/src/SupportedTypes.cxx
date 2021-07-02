@@ -15,7 +15,6 @@
 #include <utility>
 #include <sstream>
 #include <stdexcept>
-
 #include "TFEL/Raise.hxx"
 #include "MFront/MFrontDebugMode.hxx"
 #include "MFront/VariableDescription.hxx"
@@ -127,49 +126,40 @@ namespace mfront {
     return this->getValueForDimension(tfel::material::getSpaceDimension(h));
   }
 
-  std::ostream& operator<<(std::ostream& os,
-                           const SupportedTypes::TypeSize& size) {
-    bool first = true;
-    if (size.scalarSize != 0) {
-      os << size.scalarSize;
+  std::string SupportedTypes::TypeSize::getValue(
+      const std::array<std::string, 3u>& values) const {
+    std::ostringstream os;
+    auto first = true;
+    if (this->scalarSize != 0) {
+      os << this->scalarSize;
       first = false;
     }
-    if (size.tvectorSize != 0) {
-      if ((!first) && (size.tvectorSize >= 0)) {
-        os << "+";
+    auto add = [&os, &first](const int s, const std::string& v) {
+      if (s == 0) {
+        return;
       }
-      if (size.tvectorSize == 1) {
-        os << "TVectorSize";
+      if (!first) {
+        os << " + ";
+      }
+      if (s == 1) {
+        os << v;
       } else {
-        os << size.tvectorSize << "*TVectorSize";
+        os << s << " * " << v;
       }
       first = false;
-    }
-    if (size.stensorSize != 0) {
-      if ((!first) && (size.stensorSize >= 0)) {
-        os << "+";
-      }
-      if (size.stensorSize == 1) {
-        os << "StensorSize";
-      } else {
-        os << size.stensorSize << "*StensorSize";
-      }
-      first = false;
-    }
-    if (size.tensorSize != 0) {
-      if ((!first) && (size.tensorSize >= 0)) {
-        os << "+";
-      }
-      if (size.tensorSize == 1) {
-        os << "TensorSize";
-      } else {
-        os << size.tensorSize << "*TensorSize";
-      }
-      first = false;
-    }
+    };
+    add(this->tvectorSize, values[0]);
+    add(this->stensorSize, values[1]);
+    add(this->tensorSize, values[2]);
     if (first) {
-      os << "0";
+      return "0";
     }
+    return os.str();
+  }  // end of getValue
+
+  std::ostream& operator<<(std::ostream& os,
+                           const SupportedTypes::TypeSize& s) {
+    os << s.getValue({"TVectorSize", "StensorSize", "TensorSize"});
     return os;
   }
 

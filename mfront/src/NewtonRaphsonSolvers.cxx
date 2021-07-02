@@ -20,8 +20,12 @@
 
 namespace mfront {
 
-  MFrontNewtonRaphsonSolverBase::MFrontNewtonRaphsonSolverBase()
-      : jacobianUpdatePeriod(-1) {}  // end of MFrontNewtonRaphsonSolverBase()
+  MFrontNewtonRaphsonSolverBase::MFrontNewtonRaphsonSolverBase() = default;
+
+  std::vector<std::string> MFrontNewtonRaphsonSolverBase::getSpecificHeaders()
+      const {
+    return {"TFEL/Math/TinyNewtonRaphson.hxx"};
+  }  // end of MFrontNewtonRaphsonSolverBase::getSpecificHeaders
 
   std::vector<std::string> MFrontNewtonRaphsonSolverBase::getReservedNames()
       const {
@@ -115,9 +119,6 @@ namespace mfront {
     const auto btype = mb.getBehaviourTypeFlag();
     const auto& d = mb.getBehaviourData(h);
     const auto n2 = d.getIntegrationVariables().getTypeSize();
-    if (mb.hasAttribute(h, BehaviourData::compareToNumericalJacobian)) {
-      out << "tmatrix<" << n2 << "," << n2 << ",real> njacobian;\n";
-    }
     if ((this->requiresNumericalJacobian()) &&
         (this->jacobianUpdatePeriod != -1) &&
         (n2.getValueForDimension(1u) > 3)) {
@@ -169,7 +170,7 @@ namespace mfront {
         << "} else {\n"
         << "this->zeros_1  = this->zeros;\n";
     out << "converged = error<this->epsilon;\n"
-        << "this->additionalConvergenceChecks(converged, error, smt);\n";
+        << "this->additionalConvergenceChecks(converged, error);\n";
     if (this->requiresNumericalJacobian()) {
       // We compute the numerical jacobian even if we converged since
       // most of the time, this tangent operator will be computed
@@ -197,6 +198,9 @@ namespace mfront {
       out << "if((!converged)||(smt!=NOSTIFFNESSREQUESTED)){\n";
       NonLinearSystemSolverBase::writeEvaluateNumericallyComputedBlocks(out, mb,
                                                                         h);
+      if (mb.hasAttribute(h, BehaviourData::compareToNumericalJacobian)) {
+        out << "tmatrix<" << n2 << "," << n2 << ",real> njacobian;\n";
+      }
       NonLinearSystemSolverBase::writeComparisonToNumericalJacobian(
           out, mb, h, "njacobian");
       out << "}\n";
@@ -269,6 +273,32 @@ namespace mfront {
 
   MFrontNewtonRaphsonSolverBase::~MFrontNewtonRaphsonSolverBase() = default;
 
+  bool MFrontNewtonRaphsonSolver::usesExternalAlgorithm() const {
+    return true;
+  }  // end of usesExternalAlgorithm
+
+  std::string MFrontNewtonRaphsonSolver::getExternalAlgorithmClassName(
+      const BehaviourDescription& bd, const Hypothesis h) const {
+    const auto hn = [&h]() -> std::string {
+      if (h == tfel::material::ModellingHypothesis::UNDEFINEDHYPOTHESIS) {
+        return "hypothesis";
+      }
+      return "ModellingHypothesis::" +
+             tfel::material::ModellingHypothesis::toUpperCaseString(h);
+    }();
+    const auto n =
+        mfront::getTypeSize(bd.getBehaviourData(h).getIntegrationVariables())
+            .getValue({"ModellingHypothesisToSpaceDimension<" + hn + ">::value",
+                       "ModellingHypothesisToStensorSize<" + hn + ">::value",
+                       "ModellingHypothesisToTensorSize<" + hn + ">::value"});
+    const auto cn =
+        bd.useQt()
+            ? bd.getClassName() + "<" + hn + ", NumericType, true>"
+            : bd.getClassName() + "<" + hn + ", NumericType, false>";
+    return "tfel::math::TinyNewtonRaphson<" +  //
+           n + ", NumericType, " + cn + ">";
+  }  // end of getExternalAlgorithmClassName
+
   bool MFrontNewtonRaphsonSolver::requiresNumericalJacobian() const {
     return false;
   }
@@ -278,6 +308,33 @@ namespace mfront {
   }
 
   MFrontNewtonRaphsonSolver::~MFrontNewtonRaphsonSolver() = default;
+
+  std::string
+  MFrontNewtonRaphsonNumericalJacobianSolver::getExternalAlgorithmClassName(
+      const BehaviourDescription& bd, const Hypothesis h) const {
+    const auto hn = [&h]() -> std::string {
+      if (h == tfel::material::ModellingHypothesis::UNDEFINEDHYPOTHESIS) {
+        return "hypothesis";
+      }
+      return "ModellingHypothesis::" +
+             tfel::material::ModellingHypothesis::toUpperCaseString(h);
+    }();
+    const auto n =
+        mfront::getTypeSize(bd.getBehaviourData(h).getIntegrationVariables())
+            .getValue({"ModellingHypothesisToSpaceDimension<" + hn + ">::value",
+                       "ModellingHypothesisToStensorSize<" + hn + ">::value",
+                       "ModellingHypothesisToTensorSize<" + hn + ">::value"});
+    const auto cn =
+        bd.useQt()
+            ? bd.getClassName() + "<" + hn + ", NumericType, true>"
+            : bd.getClassName() + "<" + hn + ", NumericType, false>";
+    return "tfel::math::TinyNewtonRaphson<" +  //
+           n + ", NumericType, " + cn + ">";
+  }  // end of getExternalAlgorithmClassName
+
+  bool MFrontNewtonRaphsonNumericalJacobianSolver::usesExternalAlgorithm() const {
+    return true;
+  }  // end of usesExternalAlgorithm
 
   bool MFrontNewtonRaphsonNumericalJacobianSolver::requiresNumericalJacobian()
       const {

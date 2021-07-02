@@ -16,6 +16,7 @@
 
 #include <cmath>
 #include <limits>
+#include <utility>
 #include <algorithm>
 
 #include "TFEL/Config/TFELConfig.hxx"
@@ -29,6 +30,7 @@ namespace tfel::math {
    * structure in charge of computing the LU decomposition of a
    * matrix. Line permutation is performed.
    */
+  template <bool use_exceptions = true>
   struct LUDecomp {
     /*!
      * Compute the LU decomposition of a matrix. Line permutation is
@@ -42,7 +44,7 @@ namespace tfel::math {
      * \note The decomposition is done in-place
      */
     template <typename MatrixType, typename PermutationType>
-    static TFEL_MATH_INLINE2 int exe(
+    static TFEL_MATH_INLINE2 std::pair<bool, int> exe(
         MatrixType&,
         PermutationType&,
         const numeric_type<MatrixType> =

@@ -154,7 +154,7 @@ namespace mfront {
         << "} else {\n"
         << "this->zeros_1  = this->zeros;\n"
         << "converged = error<this->epsilon;\n"
-        << "this->additionalConvergenceChecks(converged, error, smt);\n";
+        << "this->additionalConvergenceChecks(converged, error);\n";
     if (d.hasCode(BehaviourData::AdditionalConvergenceChecks)) {
     }
     if (getDebugMode()) {

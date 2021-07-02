@@ -4305,7 +4305,7 @@ namespace mfront {
            << "BehaviourData<hypothesis, NumericType, use_qt>,\n";
         os << "public " << this->mb.getClassName()
            << "IntegrationData<hypothesis, NumericType, use_qt>";
-        this->writeBehaviourParserSpecificInheritanceRelationship(os);
+        this->writeBehaviourParserSpecificInheritanceRelationship(os, h);
       } else {
         os << "template<ModellingHypothesis::Hypothesis hypothesis,"
            << "typename NumericType>\n";
@@ -4320,7 +4320,7 @@ namespace mfront {
            << "BehaviourData<hypothesis, NumericType, false>,\n";
         os << "public " << this->mb.getClassName()
            << "IntegrationData<hypothesis, NumericType, false>";
-        this->writeBehaviourParserSpecificInheritanceRelationship(os);
+        this->writeBehaviourParserSpecificInheritanceRelationship(os, h);
       }
     } else {
       if (this->mb.useQt()) {
@@ -4343,7 +4343,7 @@ namespace mfront {
            << "IntegrationData<ModellingHypothesis::"
            << ModellingHypothesis::toUpperCaseString(h)
            << ", NumericType, use_qt>";
-        this->writeBehaviourParserSpecificInheritanceRelationship(os);
+        this->writeBehaviourParserSpecificInheritanceRelationship(os, h);
       } else {
         os << "template<typename NumericType>\n";
         os << "struct " << this->mb.getClassName() << "<ModellingHypothesis::"
@@ -4364,6 +4364,7 @@ namespace mfront {
            << "IntegrationData<ModellingHypothesis::"
            << ModellingHypothesis::toUpperCaseString(h)
            << ", NumericType, false>";
+        this->writeBehaviourParserSpecificInheritanceRelationship(os, h);
       }
     }
     os << "{\n\n";
@@ -4380,9 +4381,13 @@ namespace mfront {
     os << "static_assert(tfel::typetraits::"
        << "IsFundamentalNumericType<NumericType>::cond);\n";
     os << "static_assert(tfel::typetraits::IsReal<NumericType>::cond);\n\n";
-    os << "friend std::ostream& operator<< <>(std::ostream&,const ";
-    os << this->mb.getClassName() << "&);\n\n";
   }
+
+  void BehaviourDSLCommon::writeBehaviourFriends(std::ostream& os,
+                                                 const Hypothesis) const {
+    os << "friend std::ostream& operator<< <>(std::ostream&,const "
+       << this->mb.getClassName() << "&);\n\n";
+  }  // end of writeBehaviourFriends
 
   void BehaviourDSLCommon::writeBehaviourFileHeader(std::ostream& os) const {
     this->checkBehaviourFile(os);
@@ -6799,7 +6804,7 @@ namespace mfront {
   }
 
   void BehaviourDSLCommon::writeBehaviourParserSpecificInheritanceRelationship(
-      std::ostream& os) const {
+      std::ostream& os, const Hypothesis) const {
     os << '\n';
   }
 
@@ -6984,6 +6989,7 @@ namespace mfront {
                                                const Hypothesis h) const {
     this->checkBehaviourFile(os);
     this->writeBehaviourClassBegin(os, h);
+    this->writeBehaviourFriends(os, h);
     this->writeBehaviourStandardTFELTypedefs(os);
     os << "private :\n\n";
     this->writeBehaviourParserSpecificTypedefs(os);

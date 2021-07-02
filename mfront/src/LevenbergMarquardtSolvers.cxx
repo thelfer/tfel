@@ -146,7 +146,7 @@ namespace mfront {
     NonLinearSystemSolverBase::writeComparisonToNumericalJacobian(out, mb, h,
                                                                   "jacobian");
     out << "converged = error<this->epsilon;\n"
-        << "this->additionalConvergenceChecks(converged, error, smt);\n";
+        << "this->additionalConvergenceChecks(converged, error);\n";
     if (getDebugMode()) {
       out << "cout << \"" << mb.getClassName()
           << "::integrate() : iteration \" "

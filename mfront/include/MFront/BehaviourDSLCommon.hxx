@@ -950,7 +950,7 @@ namespace mfront {
     virtual void writeBehaviourProfiler(std::ostream&) const;
 
     virtual void writeBehaviourParserSpecificInheritanceRelationship(
-        std::ostream&) const;
+        std::ostream&, const Hypothesis) const;
 
     virtual void writeBehaviourParserSpecificTypedefs(std::ostream&) const;
 
@@ -961,6 +961,8 @@ namespace mfront {
 
     virtual void writeBehaviourClassBegin(std::ostream&,
                                           const Hypothesis) const;
+
+    virtual void writeBehaviourFriends(std::ostream&, const Hypothesis) const;
 
     virtual void writeBehaviourGetModellingHypothesis(std::ostream&) const;
 

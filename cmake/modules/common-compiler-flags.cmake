@@ -61,8 +61,6 @@ else(enable-developer-warnings)
   tfel_enable_cxx_compiler_flag(COMPILER_WARNINGS "Wno-missing-declarations")
   tfel_enable_cxx_compiler_flag(COMPILER_WARNINGS "Wno-weak-vtables")
   tfel_enable_cxx_compiler_flag(COMPILER_WARNINGS "Wno-unused-macros")
-  tfel_enable_cxx_compiler_flag(COMPILER_WARNINGS
-    "Wno-missing-variable-declarations")
 endif(enable-developer-warnings)
 
 

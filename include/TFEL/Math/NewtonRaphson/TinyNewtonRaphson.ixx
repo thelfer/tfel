@@ -17,122 +17,70 @@
 #include <cmath>
 #include <limits>
 #include "TFEL/Math/General/Abs.hxx"
+#include "TFEL/Math/General/IEEE754.hxx"
+#include "TFEL/Math/TinyMatrixSolve.hxx"
 
 namespace tfel::math {
 
-  template <unsigned short N, typename T, typename F>
-  class TinyNewtonRaphson {
-    T epsilon;
-    unsigned short iter_max;
-    unsigned short iter;
-    bool convergence;
-
-    TinyNewtonRaphson(const TinyNewtonRaphson&);
-    TinyNewtonRaphson& operator=(const TinyNewtonRaphson&);
-
-   protected:
-    /*
-     * Jacobian matrix
-     */
-    tmatrix<N, N, T> J;
-    /*
-     * Residual vector
-     */
-    tvector<N, T> f;
-    /*
-     *
-     */
-    tvector<N, T> x;
-
-   public:
-    TinyNewtonRaphson() : convergence(false) {}
-
-    void setInitialGuess(const T* const init) {
-      tfel::fsalgo::copy<N>::exe(init, x.begin());
-    }
-
-    void setInitialGuess(const tvector<N, T>& init) { x = init; }
-
-    void setPrecision(const T e) { this->epsilon = e; }
-
-    void setMaximumIteration(const unsigned short n) { this->iter_max = n; }
-
-    void exe() {
-      iter = 0;
-      while ((iter < iter_max) && (convergence == false)) {
-        static_cast<F&>(*this).computeFdF();
-        if (norm(f) <= epsilon) {
-          convergence = true;
-        } else {
-          TinyMatrixSolve<N, T>::exe(J, f);
-          x -= f;
-          ++(iter);
+  template <unsigned short N, typename NumericType, typename Child>
+  bool TinyNewtonRaphson<N, NumericType, Child>::solveNonLinearSystem() {
+    auto& child = static_cast<Child&>(*this);
+    // newton correction
+    auto converged = false;
+    this->iter = size_type{};
+    child.reportBeginningOfResolution();
+    child.processNewEstimate();
+    auto treat_invalid_residual = [this, &child] {
+      constexpr auto one_half = NumericType(1) / 2;
+      child.reportInvalidResidualEvaluation();
+      this->delta_zeros *= one_half;
+      this->zeros -= this->delta_zeros;
+      child.processNewEstimate();
+      ++(this->iter);
+    };
+    while ((!converged) && (this->iter != this->iterMax)) {
+      const auto successful_evaluation = child.computeResidualAndJacobian();
+      const auto error = [&successful_evaluation, &child] {
+        if (successful_evaluation) {
+          return child.computeResidualNorm();
         }
-        if (iter == iter_max) {
-          throw(MaximumNumberOfIterationsReachedException());
-        }
+        return NumericType{};
+      }();
+      const auto finite_error = ieee754::isfinite(error);
+      if ((!successful_evaluation) || (!finite_error)) {
+        treat_invalid_residual();
+        continue;
       }
-    }
-
-    tvector<N, T> getX() const { return this->x; }
-
-    unsigned short getIter() const { return this->iter; }
-  };
-
-  /*
-   * \brief Partial Specialisation in 1D
-   * \param typename T, numerical type
-   * \param typename F, class to which the newton raphson is applied.
-   * \pre   F must have a computeFdF method.
-   */
-  template <typename T, typename F>
-  class TinyNewtonRaphson<1u, T, F> {
-    unsigned short iter_max;
-    unsigned short iter;
-    bool convergence;
-
-    TinyNewtonRaphson(const TinyNewtonRaphson&);
-    TinyNewtonRaphson& operator=(const TinyNewtonRaphson&);
-
-   protected:
-    T J;
-    T f;
-    T x;
-    T epsilon;
-
-   public:
-    TinyNewtonRaphson() : convergence(false) {}
-
-    void setInitialGuess(const T init) { this->x = init; }
-
-    void setPrecision(const T e) { this->epsilon = e; }
-
-    void setMaximumIteration(const unsigned short n) { this->iter_max = n; }
-
-    void exe() {
-      iter = 0;
-      while ((iter < iter_max) && (convergence == false)) {
-        static_cast<F&>(*this).computeFdF();
-        if (tfel::math::abs(f) <= epsilon) {
-          convergence = true;
-        } else {
-          if (tfel::math::abs(J) < 100 * std::numeric_limits<T>::min()) {
-            throw(SingularJacobianException());
+      child.reportStandardNewtonIteration(error);
+      converged = child.checkConvergence(error);
+      if (!converged) {
+        child.updateOrCheckJacobian();
+        const auto linear_solver_success = [this] {
+          try {
+            TinyMatrixSolve<N, NumericType>::exe(this->jacobian, this->fzeros);
+          } catch (tfel::math::LUException&) {
+            return false;
           }
-          f /= J;
-          x -= f;
-          ++(iter);
+          return true;
+        }();
+        if (!linear_solver_success) {
+          treat_invalid_residual();
+          continue;
         }
-        if (iter == iter_max) {
-          throw(MaximumNumberOfIterationsReachedException());
-        }
+        delta_zeros = -(this->fzeros);
+        child.processNewCorrection();
+        this->zeros += delta_zeros;
+        child.processNewEstimate();
+        ++(this->iter);
       }
     }
-
-    T getX() const { return this->x; }
-
-    unsigned short getIter() const { return this->iter; }
-  };
+    if (converged) {
+      child.reportSuccess();
+    } else {
+      child.reportFailure();
+    }
+    return converged;
+  }  // end of solve
 
 }  // end of namespace tfel::math
 

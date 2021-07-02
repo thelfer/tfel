@@ -14,24 +14,37 @@
 #ifndef LIB_TFEL_MATH_LUDECOMP_IXX
 #define LIB_TFEL_MATH_LUDECOMP_IXX
 
+#include "TFEL/Raise.hxx"
+
 namespace tfel::math {
 
+  template <bool use_exceptions>
   template <typename MatrixType, typename PermutationType>
-  int LUDecomp::exe(MatrixType& m,
-                    PermutationType& p,
-                    const numeric_type<MatrixType> eps) {
-    using namespace std;
+  std::pair<bool, int> LUDecomp<use_exceptions>::exe(
+      MatrixType& m, PermutationType& p, const numeric_type<MatrixType> eps) {
     using size_type = index_type<MatrixType>;
     using real = numeric_type<MatrixType>;
     constexpr const auto c = real(1) / 10;
     if (m.getNbRows() != m.getNbCols()) {
-      throw(LUMatrixNotSquare());
+      if constexpr (use_exceptions) {
+        tfel::raise<LUMatrixNotSquare>();
+      } else {
+        return {false, 0};
+      }
     }
     if (m.getNbRows() != p.size()) {
-      throw(LUUnmatchedSize());
+      if constexpr (use_exceptions) {
+        tfel::raise<LUUnmatchedSize>();
+      } else {
+        return {false, 0};
+      }
     }
     if (m.getNbRows() == 0) {
-      throw(LUInvalidMatrixSize());
+      if constexpr (use_exceptions) {
+        tfel::raise<LUInvalidMatrixSize>();
+      } else {
+        return {false, 0};
+      }
     }
     const size_type n = m.getNbRows();
     int d = 1;
@@ -113,7 +126,7 @@ namespace tfel::math {
         }
       }
     }
-    return d;
+    return {true, d};
   }  // end of LUDecomp::exe
 
 }  // end of namespace tfel::math

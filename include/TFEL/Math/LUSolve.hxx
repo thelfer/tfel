@@ -52,7 +52,7 @@ namespace tfel::math {
         throw(LUInvalidMatrixSize());
       }
       p.reset();
-      LUDecomp::exe(m, p);
+      LUDecomp<true>::exe(m, p);
       LUSolve::back_substitute(m, b, x, p);
     }  // end of LUSolve::exe
 

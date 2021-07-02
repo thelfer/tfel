@@ -159,14 +159,14 @@ namespace tfel::material {
   };
 
   /*!
-   * a metafunction returning the space dimension of a modelling
-   * hypothesis.
+   * \brief a metafunction returning the size of a symmetric tensor for the
+   * given modelling hypothesis.
    */
   template <ModellingHypothesis::Hypothesis>
   struct ModellingHypothesisToStensorSize;
 
   /*!
-   * partial specialisation for
+   * \brief partial specialisation for
    * ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN
    */
   template <>
@@ -177,7 +177,7 @@ namespace tfel::material {
   };
 
   /*!
-   * partial specialisation for
+   * \brief partial specialisation for
    * ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS
    */
   template <>
@@ -188,7 +188,7 @@ namespace tfel::material {
   };
 
   /*!
-   * partial specialisation for
+   * \brief partial specialisation for
    * ModellingHypothesis::AXISYMETRICAL
    */
   template <>
@@ -198,7 +198,7 @@ namespace tfel::material {
   };
 
   /*!
-   * partial specialisation for
+   * \brief partial specialisation for
    * ModellingHypothesis::PLANESTRESS
    */
   template <>
@@ -208,7 +208,7 @@ namespace tfel::material {
   };
 
   /*!
-   * partial specialisation for
+   * \brief partial specialisation for
    * ModellingHypothesis::PLANESTRAIN
    */
   template <>
@@ -218,7 +218,7 @@ namespace tfel::material {
   };
 
   /*!
-   * partial specialisation for
+   * \brief partial specialisation for
    * ModellingHypothesis::GENERALISEDPLANESTRAIN
    */
   template <>
@@ -229,13 +229,93 @@ namespace tfel::material {
   };
 
   /*!
-   * partial specialisation for
+   * \brief partial specialisation for
    * ModellingHypothesis::TRIDIMENSIONAL
    */
   template <>
   struct ModellingHypothesisToStensorSize<ModellingHypothesis::TRIDIMENSIONAL> {
     //! the return of the metafunction
     static constexpr unsigned short value = 6u;
+  };
+
+  /*!
+   * \brief a metafunction returning the size of a non-symmetric tensor for the
+   * given modelling hypothesis.
+   */
+  template <ModellingHypothesis::Hypothesis>
+  struct ModellingHypothesisToTensorSize;
+
+  /*!
+   * \brief partial specialisation for
+   * ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN
+   */
+  template <>
+  struct ModellingHypothesisToTensorSize<
+      ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN> {
+    //! the return of the metafunction
+    static constexpr unsigned short value = 3u;
+  };
+
+  /*!
+   * \brief partial specialisation for
+   * ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS
+   */
+  template <>
+  struct ModellingHypothesisToTensorSize<
+      ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS> {
+    //! the return of the metafunction
+    static constexpr unsigned short value = 3u;
+  };
+
+  /*!
+   * \brief partial specialisation for
+   * ModellingHypothesis::AXISYMETRICAL
+   */
+  template <>
+  struct ModellingHypothesisToTensorSize<ModellingHypothesis::AXISYMMETRICAL> {
+    //! the return of the metafunction
+    static constexpr unsigned short value = 5u;
+  };
+
+  /*!
+   * \brief partial specialisation for
+   * ModellingHypothesis::PLANESTRESS
+   */
+  template <>
+  struct ModellingHypothesisToTensorSize<ModellingHypothesis::PLANESTRESS> {
+    //! the return of the metafunction
+    static constexpr unsigned short value = 5u;
+  };
+
+  /*!
+   * \brief partial specialisation for
+   * ModellingHypothesis::PLANESTRAIN
+   */
+  template <>
+  struct ModellingHypothesisToTensorSize<ModellingHypothesis::PLANESTRAIN> {
+    //! the return of the metafunction
+    static constexpr unsigned short value = 5u;
+  };
+
+  /*!
+   * \brief partial specialisation for
+   * ModellingHypothesis::GENERALISEDPLANESTRAIN
+   */
+  template <>
+  struct ModellingHypothesisToTensorSize<
+      ModellingHypothesis::GENERALISEDPLANESTRAIN> {
+    //! the return of the metafunction
+    static constexpr unsigned short value = 5u;
+  };
+
+  /*!
+   * \brief partial specialisation for
+   * ModellingHypothesis::TRIDIMENSIONAL
+   */
+  template <>
+  struct ModellingHypothesisToTensorSize<ModellingHypothesis::TRIDIMENSIONAL> {
+    //! the return of the metafunction
+    static constexpr unsigned short value = 9u;
   };
 
   /*!
