@@ -1,9 +1,8 @@
 /*!
- * \file   include/TFEL/Math/TinyNewtonRaphson.hxx
- *
+ * \file   include/TFEL/Math/NonLinearSolvers/TinyNonLinearSolverBase.hxx
  * \brief
  * \author Thomas Helfer
- * \date   02 Aug 2006
+ * \date   02/07/2021
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence
@@ -12,18 +11,17 @@
  * project under specific licensing conditions.
  */
 
-#ifndef LIB_TFEL_MATH_TINYNEWTONRAPHSON_HXX
-#define LIB_TFEL_MATH_TINYNEWTONRAPHSON_HXX
+#ifndef LIB_TFEL_MATH_NONLINEARSOLVERS_TINYNONLINEARSOLVERBASE_HXX
+#define LIB_TFEL_MATH_NONLINEARSOLVERS_TINYNONLINEARSOLVERBASE_HXX
 
-#include <type_traits>
 #include "TFEL/Math/tvector.hxx"
 #include "TFEL/Math/tmatrix.hxx"
 
 namespace tfel::math {
 
   /*!
-   * \brief A class based on the curiously recurring template pattern (CRTP)
-   * to solve system of non linear equations using the Newton-Raphson algorithm.
+   * \brief A base class for algorithms dedicated to solve finite sized system
+   * of non linear equations.
    * \tparam N: size of the system of non linear equations.
    * \tparam NumericType: numeric type.
    * \tparam Child: base class.
@@ -36,21 +34,13 @@ namespace tfel::math {
    * 2. Provide a method called `computeResidualAndJacobian` which must computes
    * the residual, i.e. the data member `fzeros` and the jacobian matrix, i.e.
    * the data member `jacobian` using the current estimate of the solution, i.e.
-   * the data member `zeros`. This behaviour can be changed by overloading the
-   * `computeResidualAndJacobian` method.
+   * the data member `zeros`.
    *
    * This class has numerous customisation points:
-   * - `computeResidualNorm`: computes the norm of the residual, i.e. the norm
-   * of the `fzeros` member. By default, the returned value is compared to the
-   * value of the `epsilon` data member to check for convergence. This can be
-   * changed by overloading the `checkConvergence` method.
    * - `checkConvergence`: checks if convergence is achieved.
    * - `processNewEstimate`: this method is called at the beginning of the
    * `resolution and each time the estimate of the solution is updated. The
    * default implementation does nothing.
-   * `performLineSearch`: this method can be overloaded to implement a
-   * line-search algorithm in the `Child` class.  The default implementation
-   * does nothing.
    * - `reportBeginningOfResolution`: this method is meant to be overloaded by
    * the `Child` class to trace the beginning of the resolution. The default
    * implementation does nothing.
@@ -65,7 +55,7 @@ namespace tfel::math {
    * failed. The default implementation does nothing.
    */
   template <unsigned short N, typename NumericType, typename Child>
-  struct TinyNewtonRaphson {
+  struct TinyNonLinearSolverBase {
     //
     static_assert(N != 0, "invalid size");
     static_assert(std::is_floating_point_v<NumericType>,
@@ -73,17 +63,19 @@ namespace tfel::math {
     //! \brief a simple alias
     using size_type = unsigned short;
     //! \brief default constructor
-    TinyNewtonRaphson() = default;
+    TinyNonLinearSolverBase() = default;
     //! \brief default constructor
-    TinyNewtonRaphson(TinyNewtonRaphson&) noexcept = default;
+    TinyNonLinearSolverBase(TinyNonLinearSolverBase&) noexcept = default;
     //! \brief default constructor
-    TinyNewtonRaphson(TinyNewtonRaphson&&) noexcept = default;
+    TinyNonLinearSolverBase(TinyNonLinearSolverBase&&) noexcept = default;
     //! \brief default constructor
-    TinyNewtonRaphson& operator=(TinyNewtonRaphson&&) noexcept = default;
+    TinyNonLinearSolverBase& operator=(TinyNonLinearSolverBase&&) noexcept =
+        default;
     //! \brief default constructor
-    TinyNewtonRaphson& operator=(const TinyNewtonRaphson&) noexcept = default;
+    TinyNonLinearSolverBase& operator=(
+        const TinyNonLinearSolverBase&) noexcept = default;
     //! \brief destructor
-    ~TinyNewtonRaphson() noexcept = default;
+    ~TinyNonLinearSolverBase() noexcept = default;
 
    protected:
     /*!
@@ -92,9 +84,7 @@ namespace tfel::math {
      */
     bool solveNonLinearSystem();
     //! \return the norm of the residual
-    NumericType computeResidualNorm() {
-      return norm(this->fzeros);
-    }
+    NumericType computeResidualNorm() { return norm(this->fzeros); }
     /*!
      * \brief check the convergence of the method
      * \param[in] e: current error
@@ -108,19 +98,19 @@ namespace tfel::math {
      * `computeResidualAndJacobian`, this method can be used to compare it to a
      * numerical approximation.
      */
-    void updateOrCheckJacobian(){}
+    void updateOrCheckJacobian() {}
     /*!
      * \brief method meant to set bounds on some components of the current
      * correction or to implement a line search.
      * \param[in] c: current Newton correction
      */
-    void processNewCorrection(){}
+    void processNewCorrection() {}
     /*!
      * \brief method meant to process the new estimate.
      *
      * This method may be called to apply bounds on the estimate.
      */
-    void processNewEstimate(){}
+    void processNewEstimate() {}
     //! \brief method called when the resolution begins
     void reportBeginningOfResolution() const {}
     //! \brief method called when the resolution succeeds
@@ -134,7 +124,7 @@ namespace tfel::math {
      * \param[in] e: error
      */
     void reportStandardNewtonIteration(const NumericType) const {}
-    //! \brief jacobianacobian matrix
+    //! \brief jacobian matrix
     tmatrix<N, N, NumericType> jacobian;
     //! \brief residual vector
     tvector<N, NumericType> fzeros;
@@ -152,6 +142,6 @@ namespace tfel::math {
 
 }  // end of namespace tfel::math
 
-#include "TFEL/Math/NewtonRaphson/TinyNewtonRaphson.ixx"
+#include "TFEL/Math/NonLinearSolvers/TinyNonLinearSolverBase.ixx"
 
-#endif /* LIB_TFEL_MATH_TINYNEWTONRAPHSON_HXX */
+#endif /* LIB_TFEL_MATH_NONLINEARSOLVERS_TINYNONLINEARSOLVERBASE_HXX */

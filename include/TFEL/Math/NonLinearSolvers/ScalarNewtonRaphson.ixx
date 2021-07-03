@@ -15,7 +15,7 @@
 #define LIB_TFEL_MATH_SCALARNEWTONRAPHSON_IXX
 
 #include "TFEL/Math/General/IEEE754.hxx"
-#include "TFEL/Math/RootFinding/BissectionAlgorithmBase.hxx"
+#include "TFEL/Math/NonLinearSolvers/BissectionAlgorithmBase.hxx"
 
 namespace tfel::math {
 

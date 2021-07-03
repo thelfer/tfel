@@ -17,19 +17,15 @@
 #include <boost/python/numpy.hpp>
 #include "TFEL/Numpy/Config.hxx"
 
-namespace tfel {
+namespace tfel::numpy {
 
-  namespace numpy {
+  TFEL_NUMPY_EXPORT size_t get_size(const boost::python::numpy::ndarray&);
 
-    TFEL_NUMPY_EXPORT size_t get_size(const boost::python::numpy::ndarray&);
+  TFEL_NUMPY_EXPORT const double* get_data(
+      const boost::python::numpy::ndarray&);
 
-    TFEL_NUMPY_EXPORT const double* get_data(
-        const boost::python::numpy::ndarray&);
+  TFEL_NUMPY_EXPORT double* get_data(boost::python::numpy::ndarray&);
 
-    TFEL_NUMPY_EXPORT double* get_data(boost::python::numpy::ndarray&);
-
-  }  // end of namespace numpy
-
-}  // end of namespace tfel
+}  // end of namespace tfel::numpy
 
 #endif /* LIB_TFEL_NUMPY_NDARRAY_HXX */

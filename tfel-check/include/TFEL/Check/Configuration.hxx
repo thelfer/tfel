@@ -20,9 +20,7 @@
 #include "TFEL/Check/TFELCheckConfig.hxx"
 #include "TFEL/Check/PCLogger.hxx"
 
-namespace tfel {
-
-  namespace check {
+namespace tfel::check {
 
     /*!
      * \brief a data structure used to define a test environment.
@@ -51,8 +49,6 @@ namespace tfel {
       PCLogger log;
     };  // end of struct Configuration
 
-  }  // end of namespace check
-
-}  // namespace tfel
+  }  // end of namespace tfel::check
 
 #endif /* LIB_TFEL_CHECK_CONFIGURATION_HXX */

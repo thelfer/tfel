@@ -13,40 +13,34 @@
 
 #include "TFEL/Utilities/ArgumentParserBase.hxx"
 
-namespace tfel {
+namespace tfel::utilities {
 
-  namespace utilities {
+  Argument::Argument(std::string s) : name(std::forward<std::string>(s)) {}
 
-    Argument::Argument(std::string s) : name(std::forward<std::string>(s)) {}
+  Argument::Argument(const char* const s) : name(s) {}
 
-    Argument::Argument(const char* const s) : name(s) {}
+  Argument::Argument(Argument&&) = default;
+  Argument::Argument(const Argument&) = default;
+  Argument& Argument::operator=(Argument&&) = default;
+  Argument& Argument::operator=(const Argument&) = default;
 
-    Argument::Argument(Argument&&) = default;
-    Argument::Argument(const Argument&) = default;
-    Argument& Argument::operator=(Argument&&) = default;
-    Argument& Argument::operator=(const Argument&) = default;
+  std::string& Argument::as_string() noexcept { return this->name; }
 
-    std::string& Argument::as_string() noexcept { return this->name; }
+  const std::string& Argument::as_string() const noexcept { return this->name; }
 
-    const std::string& Argument::as_string() const noexcept {
-      return this->name;
-    }
+  Argument::operator const std::string&() const noexcept {
+    return this->as_string();
+  }
 
-    Argument::operator const std::string&() const noexcept {
-      return this->as_string();
-    }
+  bool Argument::hasOption() const noexcept { return this->isOptionSet; }
 
-    bool Argument::hasOption() const noexcept { return this->isOptionSet; }
+  void Argument::setOption(const std::string& o) {
+    this->isOptionSet = true;
+    this->option = o;
+  }
 
-    void Argument::setOption(const std::string& o) {
-      this->isOptionSet = true;
-      this->option = o;
-    }
+  const std::string& Argument::getOption() const noexcept { return option; }
 
-    const std::string& Argument::getOption() const noexcept { return option; }
+  Argument::~Argument() noexcept {}
 
-    Argument::~Argument() noexcept {}
-
-  }  // end of namespace utilities
-
-}  // end of namespace tfel
+}  // end of namespace tfel::utilities

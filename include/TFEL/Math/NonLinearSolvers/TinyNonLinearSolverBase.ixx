@@ -1,8 +1,8 @@
 /*!
- * \file   include/TFEL/Math/Newton-Raphson/TinyNewtonRaphson.ixx
- * \brief  This file implements the TinyNewtonMatrix
+ * \file   include/TFEL/Math/NonLinearSolvers/TinyNonLinearSolverBase.ixx
+ * \brief    
  * \author Thomas Helfer
- * \date   09 Aug 2006
+ * \date   02/07/2021
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence
@@ -11,23 +11,20 @@
  * project under specific licensing conditions.
  */
 
-#ifndef LIB_TFEL_MATH_TINYNEWTONRAPHSON_IXX
-#define LIB_TFEL_MATH_TINYNEWTONRAPHSON_IXX
+#ifndef LIB_TFEL_MATH_NONLINEARSOLVERS_TINYNONLINEARSOLVERBASE_IXX
+#define LIB_TFEL_MATH_NONLINEARSOLVERS_TINYNONLINEARSOLVERBASE_IXX
 
-#include <cmath>
-#include <limits>
-#include "TFEL/Math/General/Abs.hxx"
 #include "TFEL/Math/General/IEEE754.hxx"
-#include "TFEL/Math/TinyMatrixSolve.hxx"
 
 namespace tfel::math {
 
   template <unsigned short N, typename NumericType, typename Child>
-  bool TinyNewtonRaphson<N, NumericType, Child>::solveNonLinearSystem() {
+  bool TinyNonLinearSolverBase<N, NumericType, Child>::solveNonLinearSystem() {
     auto& child = static_cast<Child&>(*this);
     // newton correction
     auto converged = false;
-    this->iter = size_type{};
+    this->iter =
+      typename TinyNonLinearSolverBase<N, NumericType,Child>::size_type{};
     child.reportBeginningOfResolution();
     child.processNewEstimate();
     auto treat_invalid_residual = [this, &child] {
@@ -55,16 +52,12 @@ namespace tfel::math {
       converged = child.checkConvergence(error);
       if (!converged) {
         child.updateOrCheckJacobian();
-        const auto linear_solver_success =
-            TinyMatrixSolve<N, NumericType, false>::exe(this->jacobian,
-                                                        this->fzeros);
-        if (!linear_solver_success) {
+        if (!child.computeNewCorrection()) {
           treat_invalid_residual();
           continue;
         }
-        delta_zeros = -(this->fzeros);
         child.processNewCorrection();
-        this->zeros += delta_zeros;
+        this->zeros += this->delta_zeros;
         child.processNewEstimate();
         ++(this->iter);
       }
@@ -79,4 +72,5 @@ namespace tfel::math {
 
 }  // end of namespace tfel::math
 
-#endif /* LIB_TFEL_MATH_TINYNEWTONRAPHSON_IXX */
+
+#endif /* LIB_TFEL_MATH_NONLINEARSOLVERS_TINYNONLINEARSOLVERBASE_IXX */

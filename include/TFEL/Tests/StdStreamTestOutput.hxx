@@ -22,9 +22,7 @@
 #include "TFEL/Tests/TestOutput.hxx"
 #include "TFEL/Tests/TestResult.hxx"
 
-namespace tfel {
-
-  namespace tests {
+namespace tfel::tests {
 
     /*!
      * \brief Instances of this class redirects the output of a
@@ -91,8 +89,6 @@ namespace tfel {
       const bool colorOutput;
     };  // end of struct StdStreamTestOutput
 
-  }  // namespace tests
-
-}  // end of namespace tfel
+}  // end of namespace tfel::tests
 
 #endif /* LIB_TFEL_TESTS_STDSTREAMTESTOUTPUT_HXX */

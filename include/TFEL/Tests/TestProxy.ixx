@@ -17,9 +17,7 @@
 #include <memory>
 #include "TFEL/Tests/TestManager.hxx"
 
-namespace tfel {
-
-  namespace tests {
+namespace tfel::tests {
 
     template <typename TestType>
     template <typename... Arguments>
@@ -28,8 +26,6 @@ namespace tfel {
       tm.addTest(n, std::make_shared<TestType>(std::forward<Arguments>(a)...));
     }  // end of TestProxy<T>::TestProxy
 
-  }  // namespace tests
-
-}  // end of namespace tfel
+}  // end of namespace tfel::tests
 
 #endif /* LIB_TFEL_TESTS_TESTPROXY_IXX */

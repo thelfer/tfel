@@ -19,47 +19,43 @@
 #include "TFEL/Math/General/Abs.hxx"
 #include "TFEL/Math/Kriging/KrigingUtilities.hxx"
 
-namespace tfel {
+namespace tfel::math {
 
-  namespace math {
-
-    static bool compareFloatingPointValues(const double a, const double b) {
-      constexpr const auto emin = std::numeric_limits<double>::min();
-      constexpr const auto eps = std::numeric_limits<double>::epsilon();
-      const auto aa = std::abs(a);
-      const auto ab = std::abs(b);
-      const auto d = std::abs(a - b);
-      if ((aa < 10 * emin) && (ab < 10 * emin)) {
-        // a and b are almost 0
-        return true;
-      }
-      return ((d < aa * 10 * eps) || (d < ab * 10 * eps));
-    }  // end of compareFloatingPointValues
-
-    std::pair<double, double> KrigingUtilities::normalize(
-        const std::vector<double>& v) {
-      const auto max = *(max_element(v.begin(), v.end()));
-      const auto min = *(min_element(v.begin(), v.end()));
-      raise_if(compareFloatingPointValues(max - min, 0.),
-               "KrigingUtilities::normalize: "
-               "values '" +
-                   std::to_string(min) + "' and '" + std::to_string(max) +
-                   "' are almost identical");
-      return {1 / (max - min), -min / (max - min)};
+  static bool compareFloatingPointValues(const double a, const double b) {
+    constexpr const auto emin = std::numeric_limits<double>::min();
+    constexpr const auto eps = std::numeric_limits<double>::epsilon();
+    const auto aa = std::abs(a);
+    const auto ab = std::abs(b);
+    const auto d = std::abs(a - b);
+    if ((aa < 10 * emin) && (ab < 10 * emin)) {
+      // a and b are almost 0
+      return true;
     }
+    return ((d < aa * 10 * eps) || (d < ab * 10 * eps));
+  }  // end of compareFloatingPointValues
 
-    std::pair<double, double> KrigingUtilities::normalize(
-        const tfel::math::vector<double>& v) {
-      const auto max = *(std::max_element(v.begin(), v.end()));
-      const auto min = *(std::min_element(v.begin(), v.end()));
-      raise_if(compareFloatingPointValues(max - min, 0.),
-               "KrigingUtilities::normalize: "
-               "values '" +
-                   std::to_string(min) + "' and '" + std::to_string(max) +
-                   "' are almost identical");
-      return {1 / (max - min), -min / (max - min)};
-    }  // end of KrigingUtilities::normalize
+  std::pair<double, double> KrigingUtilities::normalize(
+      const std::vector<double>& v) {
+    const auto max = *(max_element(v.begin(), v.end()));
+    const auto min = *(min_element(v.begin(), v.end()));
+    raise_if(compareFloatingPointValues(max - min, 0.),
+             "KrigingUtilities::normalize: "
+             "values '" +
+                 std::to_string(min) + "' and '" + std::to_string(max) +
+                 "' are almost identical");
+    return {1 / (max - min), -min / (max - min)};
+  }
 
-  }  // end of namespace math
+  std::pair<double, double> KrigingUtilities::normalize(
+      const tfel::math::vector<double>& v) {
+    const auto max = *(std::max_element(v.begin(), v.end()));
+    const auto min = *(std::min_element(v.begin(), v.end()));
+    raise_if(compareFloatingPointValues(max - min, 0.),
+             "KrigingUtilities::normalize: "
+             "values '" +
+                 std::to_string(min) + "' and '" + std::to_string(max) +
+                 "' are almost identical");
+    return {1 / (max - min), -min / (max - min)};
+  }  // end of KrigingUtilities::normalize
 
-}  // end of namespace tfel
+}  // end of namespace tfel::math

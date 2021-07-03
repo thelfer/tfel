@@ -20,20 +20,16 @@
 #include "TFEL/Config/TFELConfig.hxx"
 #include "TFEL/Math/vector.hxx"
 
-namespace tfel {
+namespace tfel::math {
 
-  namespace math {
+  struct TFELMATHKRIGING_VISIBILITY_EXPORT KrigingUtilities {
+    static std::pair<double, double> normalize(const std::vector<double>&);
 
-    struct TFELMATHKRIGING_VISIBILITY_EXPORT KrigingUtilities {
-      static std::pair<double, double> normalize(const std::vector<double>&);
+    static std::pair<double, double> normalize(
+        const tfel::math::vector<double>&);
 
-      static std::pair<double, double> normalize(
-          const tfel::math::vector<double>&);
+  };  // end of struct KrigingUtilities
 
-    };  // end of struct KrigingUtilities
-
-  }  // end of namespace math
-
-}  // end of namespace tfel
+}  // end of namespace tfel::math
 
 #endif /* LIB_TFEL_MATH_KRIGINGUTILITIES_HXX */

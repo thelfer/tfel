@@ -32,9 +32,7 @@
 #include "TFEL/Check/Comparison.hxx"
 #include "TFEL/Check/Test.hxx"
 
-namespace tfel {
-
-  namespace check {
+namespace tfel::check {
 
     struct TFELCHECK_VISIBILITY_EXPORT TestLauncherV1
         : public tfel::utilities::CxxTokenizer {
@@ -101,8 +99,6 @@ namespace tfel {
     };
     // end of struct TestLauncherV1
 
-  }  // end of namespace check
-
-}  // end of namespace tfel
+  }  // end of namespace tfel::check
 
 #endif /* LIB_TFEL_CHECK_TESTLAUNCHERV1_HXX */

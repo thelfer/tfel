@@ -18,23 +18,19 @@
 
 #include "TFEL/Utilities/ParserBase.hxx"
 
-namespace tfel {
+namespace tfel::utilities {
 
-  namespace utilities {
+  struct ConfigParser : public ParserBase {
+    /*!
+     * \param m : configuration to be read
+     * \param f : file name
+     */
+    void execute(std::map<std::string, std::map<std::string, std::string>>&,
+                 const std::string&);
+    //! desctructor
+    ~ConfigParser() noexcept override;
+  };  // end of struct ConfigParser
 
-    struct ConfigParser : public ParserBase {
-      /*!
-       * \param m : configuration to be read
-       * \param f : file name
-       */
-      void execute(std::map<std::string, std::map<std::string, std::string>>&,
-                   const std::string&);
-      //! desctructor
-      ~ConfigParser() noexcept override;
-    };  // end of struct ConfigParser
-
-  }  // end of namespace utilities
-
-}  // end of namespace tfel
+}  // end of namespace tfel::utilities
 
 #endif /* LIB_TFEL_UTILITIES_CONFIGPARSER_H */

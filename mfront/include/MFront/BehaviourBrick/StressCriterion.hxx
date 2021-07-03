@@ -21,12 +21,10 @@
 #include "MFront/BehaviourSymmetryType.hxx"
 #include "MFront/BehaviourDescription.hxx"
 
-namespace tfel {
-  namespace utilities {
-    // forward declaration
-    struct Data;
-  }  // end of namespace utilities
-}  // end of namespace tfel
+namespace tfel::utilities {
+  // forward declaration
+  struct Data;
+}  // end of namespace tfel::utilities
 
 namespace mfront {
 

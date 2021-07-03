@@ -19,25 +19,21 @@
 #include <string>
 #include <iosfwd>
 
-namespace tfel {
+namespace tfel::utilities {
 
-  namespace utilities {
+  // forward declaration
+  struct GeneratorOptions;
+  // forward declaration
+  struct TestDocumentation;
 
-    // forward declaration
-    struct GeneratorOptions;
-    // forward declaration
-    struct TestDocumentation;
+  /*!
+   * generate a Markdown documentation
+   */
+  void writeMarkdownFile(
+      std::ostream&,
+      const std::map<std::string, std::vector<TestDocumentation>>&,
+      const GeneratorOptions&);
 
-    /*!
-     * generate a Markdown documentation
-     */
-    void writeMarkdownFile(
-        std::ostream&,
-        const std::map<std::string, std::vector<TestDocumentation>>&,
-        const GeneratorOptions&);
-
-  }  // end of namespace utilities
-
-}  // end of namespace tfel
+}  // end of namespace tfel::utilities
 
 #endif /* LIB_TFEL_UTILITIES_MARKDOWNCONVERTION_H */

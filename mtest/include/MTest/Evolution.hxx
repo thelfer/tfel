@@ -21,26 +21,16 @@
 #include "MTest/Config.hxx"
 #include "MTest/Types.hxx"
 
-namespace tfel {
+namespace tfel::math::parser {
 
-  namespace math {
+  // forward declaration
+  struct ExternalFunctionManager;
 
-    namespace parser {
-
-      // forward declaration
-      struct ExternalFunctionManager;
-
-    }  // end of namespace parser
-
-  }  // end of namespace math
-
-}  // end of namespace tfel
+}  // end of namespace tfel::math::parser
 
 namespace mtest {
 
-  /*!
-   * Base class for evolutions of external variables
-   */
+  //! \brief base class for evolutions of external variables
   struct MTEST_VISIBILITY_EXPORT Evolution {
     /*!
      * \return the value of the evolution

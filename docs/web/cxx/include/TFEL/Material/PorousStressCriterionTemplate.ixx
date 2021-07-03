@@ -18,76 +18,69 @@
 #include <ostream>
 #include <algorithm>
 
-namespace tfel {
+namespace tfel::material {
 
-  namespace material {
+  template <typename StressStensor>
+  std::ostream& operator<<(
+      std::ostream& os,
+      const __StressCriterionName__StressCriterionParameters<StressStensor>&
+          p) {
+    return os;
+  }  // end of operator <<
 
-    template <typename StressStensor>
-    std::ostream& operator<<(
-        std::ostream& os,
-        const __StressCriterionName__StressCriterionParameters<StressStensor>&
-            p) {
-      return os;
-    }  // end of operator <<
+  template <typename StressStensor>
+  __StressCriterionName__StressType<StressStensor>
+  compute__StressCriterionName__Stress(
+      const StressStensor& sig,
+      const __StressCriterionName__PorosityType<StressStensor> f,
+      const __StressCriterionName__StressCriterionParameters<StressStensor>& p,
+      const __StressCriterionName__StressType<StressStensor> seps) {
+    using stress = __StressCriterionName__StressType<StressStensor>;
+    using real = __StressCriterionName__BaseType<StressStensor>;
+    return stress{};
+  }  // end of compute__StressCriterionName__YieldStress
 
-    template <typename StressStensor>
-    __StressCriterionName__StressType<StressStensor>
-    compute__StressCriterionName__Stress(
-        const StressStensor& sig,
-        const __StressCriterionName__PorosityType<StressStensor> f,
-        const __StressCriterionName__StressCriterionParameters<StressStensor>&
-            p,
-        const __StressCriterionName__StressType<StressStensor> seps) {
-      using stress = __StressCriterionName__StressType<StressStensor>;
-      using real = __StressCriterionName__BaseType<StressStensor>;
-      return stress{};
-    }  // end of compute__StressCriterionName__YieldStress
+  template <typename StressStensor>
+  std::tuple<__StressCriterionName__StressType<StressStensor>,
+             __StressCriterionName__StressNormalType<StressStensor>,
+             __StressCriterionName__StressDerivativeWithRespectToPorosityType<
+                 StressStensor>>
+  compute__StressCriterionName__StressNormal(
+      const StressStensor& sig,
+      const __StressCriterionName__PorosityType<StressStensor> f,
+      const __StressCriterionName__StressCriterionParameters<StressStensor>& p,
+      const __StressCriterionName__StressType<StressStensor> seps) {
+    constexpr auto N = tfel::math::getSpaceDimension<StressStensor>();
+    using stress = __StressCriterionName__StressType<StressStensor>;
+    using real = __StressCriterionName__BaseType<StressStensor>;
+    using istress = tfel::math::result_type<real, stress, tfel::math::OpDiv>;
+    using normal = __StressCriterionName__StressNormalType<StressStensor>;
+    return {stress{}, normal{}, stress{}};
+  }  // end of compute__StressCriterionName__StressNormal
 
-    template <typename StressStensor>
-    std::tuple<__StressCriterionName__StressType<StressStensor>,
-               __StressCriterionName__StressNormalType<StressStensor>,
-               __StressCriterionName__StressDerivativeWithRespectToPorosityType<
-                   StressStensor>>
-    compute__StressCriterionName__StressNormal(
-        const StressStensor& sig,
-        const __StressCriterionName__PorosityType<StressStensor> f,
-        const __StressCriterionName__StressCriterionParameters<StressStensor>&
-            p,
-        const __StressCriterionName__StressType<StressStensor> seps) {
-      constexpr auto N = tfel::math::getSpaceDimension<StressStensor>();
-      using stress = __StressCriterionName__StressType<StressStensor>;
-      using real = __StressCriterionName__BaseType<StressStensor>;
-      using istress = tfel::math::result_type<real, stress, tfel::math::OpDiv>;
-      using normal = __StressCriterionName__StressNormalType<StressStensor>;
-      return {stress{}, normal{}, stress{}};
-    }  // end of compute__StressCriterionName__StressNormal
+  template <typename StressStensor>
+  std::tuple<__StressCriterionName__StressType<StressStensor>,
+             __StressCriterionName__StressNormalType<StressStensor>,
+             __StressCriterionName__StressDerivativeWithRespectToPorosityType<
+                 StressStensor>,
+             __StressCriterionName__StressSecondDerivativeType<StressStensor>,
+             __StressCriterionName__NormalDerivativeWithRespectToPorosityType<
+                 StressStensor>>
+  compute__StressCriterionName__StressSecondDerivative(
+      const StressStensor& sig,
+      const __StressCriterionName__PorosityType<StressStensor> f,
+      const __StressCriterionName__StressCriterionParameters<StressStensor>& p,
+      const __StressCriterionName__StressType<StressStensor> seps) {
+    constexpr auto N = tfel::math::getSpaceDimension<StressStensor>();
+    using stress = __StressCriterionName__StressType<StressStensor>;
+    using real = __StressCriterionName__BaseType<StressStensor>;
+    using istress = tfel::math::result_type<real, stress, tfel::math::OpDiv>;
+    using normal = __StressCriterionName__StressNormalType<StressStensor>;
+    using normal_derivative =
+        __StressCriterionName__StressSecondDerivativeType<StressStensor>;
+    return {stress{}, normal{}, stress{}, normal_derivative{}, normal{}};
+  }  // end of compute__StressCriterionName__SecondDerivative
 
-    template <typename StressStensor>
-    std::tuple<__StressCriterionName__StressType<StressStensor>,
-               __StressCriterionName__StressNormalType<StressStensor>,
-               __StressCriterionName__StressDerivativeWithRespectToPorosityType<
-                   StressStensor>,
-               __StressCriterionName__StressSecondDerivativeType<StressStensor>,
-               __StressCriterionName__NormalDerivativeWithRespectToPorosityType<
-                   StressStensor>>
-    compute__StressCriterionName__StressSecondDerivative(
-        const StressStensor& sig,
-        const __StressCriterionName__PorosityType<StressStensor> f,
-        const __StressCriterionName__StressCriterionParameters<StressStensor>&
-            p,
-        const __StressCriterionName__StressType<StressStensor> seps) {
-      constexpr auto N = tfel::math::getSpaceDimension<StressStensor>();
-      using stress = __StressCriterionName__StressType<StressStensor>;
-      using real = __StressCriterionName__BaseType<StressStensor>;
-      using istress = tfel::math::result_type<real, stress, tfel::math::OpDiv>;
-      using normal = __StressCriterionName__StressNormalType<StressStensor>;
-      using normal_derivative =
-          __StressCriterionName__StressSecondDerivativeType<StressStensor>;
-      return {stress{}, normal{}, stress{}, normal_derivative{}, normal{}};
-    }  // end of compute__StressCriterionName__SecondDerivative
-
-  }  // end of namespace material
-
-}  // end of namespace tfel
+}  // end of namespace tfel::material
 
 #endif /* LIB_TFEL_MATERIAL___STRESS_CRITERION_NAME___IXX */

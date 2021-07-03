@@ -1,5 +1,5 @@
 /*!
- * \file   include/TFEL/Math/RootFinding/BissectionAlgorithmBase.hxx
+ * \file   include/TFEL/Math/NonLinearSolvers/BissectionAlgorithmBase.hxx
  * \brief
  * \author Thomas Helfer
  * \date   10/10/2020
@@ -107,6 +107,6 @@ namespace tfel::math {
 
 }  // end of namespace tfel::math
 
-#include "TFEL/Math/RootFinding/BissectionAlgorithmBase.ixx"
+#include "TFEL/Math/NonLinearSolvers/BissectionAlgorithmBase.ixx"
 
 #endif /* LIB_TFEL_MATH_BISSECTIONALGORITHMBASE_HXX */

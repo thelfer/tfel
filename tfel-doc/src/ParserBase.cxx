@@ -15,9 +15,7 @@
 #include "TFEL/Raise.hxx"
 #include "TFEL/Utilities/ParserBase.hxx"
 
-namespace tfel {
-
-  namespace utilities {
+namespace tfel::utilities {
 
     void ParserBase::checkNotEndOfFile(const_iterator p) {
       raise_if(p == this->end(),
@@ -55,6 +53,4 @@ namespace tfel {
 
     ParserBase::~ParserBase() noexcept = default;
 
-  }  // end of namespace utilities
-
-}  // end of namespace tfel
+  }  // end of namespace tfel::utilities

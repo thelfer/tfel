@@ -44,9 +44,7 @@
 #include "TFEL/Utilities/ConfigParser.hxx"
 #include "TFEL/Utilities/TestDocMain.hxx"
 
-namespace tfel {
-
-  namespace utilities {
+namespace tfel::utilities {
 
     template <typename Parser>
     static void parse_files(
@@ -311,6 +309,5 @@ namespace tfel {
 
     TestDocMain::~TestDocMain() = default;
 
-  }  // end of namespace utilities
+  }  // end of namespace tfel::utilities
 
-}  // end of namespace tfel

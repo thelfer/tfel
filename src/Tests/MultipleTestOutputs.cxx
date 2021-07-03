@@ -16,38 +16,34 @@
 
 #include "TFEL/Tests/MultipleTestOutputs.hxx"
 
-namespace tfel {
+namespace tfel::tests {
 
-  namespace tests {
+  MultipleTestOutputs::MultipleTestOutputs() = default;
 
-    MultipleTestOutputs::MultipleTestOutputs() = default;
+  void MultipleTestOutputs::addTestOutput(const TestOutputPtr& o) {
+    this->outputs.push_back(o);
+  }  // end of MultipleTestOutputs::addTestOutput
 
-    void MultipleTestOutputs::addTestOutput(const TestOutputPtr& o) {
-      this->outputs.push_back(o);
-    }  // end of MultipleTestOutputs::addTestOutput
+  void MultipleTestOutputs::beginTestSuite(const std::string& n) {
+    for (auto& o : this->outputs) {
+      o->beginTestSuite(n);
+    }
+  }  // end of MultipleTestOutputs::beginTestSuite
 
-    void MultipleTestOutputs::beginTestSuite(const std::string& n) {
-      for (auto& o : this->outputs) {
-        o->beginTestSuite(n);
-      }
-    }  // end of MultipleTestOutputs::beginTestSuite
+  void MultipleTestOutputs::addTest(const std::string& g,
+                                    const std::string& n,
+                                    const TestResult& r) {
+    for (auto& o : this->outputs) {
+      o->addTest(g, n, r);
+    }
+  }  // end of MultipleTestOutputs::addTest
 
-    void MultipleTestOutputs::addTest(const std::string& g,
-                                      const std::string& n,
-                                      const TestResult& r) {
-      for (auto& o : this->outputs) {
-        o->addTest(g, n, r);
-      }
-    }  // end of MultipleTestOutputs::addTest
+  void MultipleTestOutputs::endTestSuite(const TestResult& r) {
+    for (auto& o : this->outputs) {
+      o->endTestSuite(r);
+    }
+  }  // end of MultipleTestOutputs::endTestSuite
 
-    void MultipleTestOutputs::endTestSuite(const TestResult& r) {
-      for (auto& o : this->outputs) {
-        o->endTestSuite(r);
-      }
-    }  // end of MultipleTestOutputs::endTestSuite
+  MultipleTestOutputs::~MultipleTestOutputs() = default;
 
-    MultipleTestOutputs::~MultipleTestOutputs() = default;
-
-  }  // end of namespace tests
-
-}  // end of namespace tfel
+}  // end of namespace tfel::tests

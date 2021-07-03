@@ -17,27 +17,23 @@
 #include <ostream>
 #include "TFEL/Math/Stensor/StensorConcept.hxx"
 
-namespace tfel {
+namespace tfel::math {
 
-  namespace math {
+  //! Serialisation operator
+  template <typename T>
+  std::ostream& operator<<(std::ostream&, const StensorConcept<T>&);
 
-    //! Serialisation operator
-    template <typename T>
-    std::ostream& operator<<(std::ostream&, const StensorConcept<T>&);
+  template <typename T>
+  std::ostream& operator<<(std::ostream& os, const StensorConcept<T>& s) {
+    unsigned short i;
+    os << "[ ";
+    for (i = 0; i != StensorDimeToSize<getSpaceDimension<T>()>::value; ++i) {
+      os << s(i) << " ";
+    }
+    os << "]";
+    return os;
+  }  // end of operator <<
 
-    template <typename T>
-    std::ostream& operator<<(std::ostream& os, const StensorConcept<T>& s) {
-      unsigned short i;
-      os << "[ ";
-      for (i = 0; i != StensorDimeToSize<getSpaceDimension<T>()>::value; ++i) {
-        os << s(i) << " ";
-      }
-      os << "]";
-      return os;
-    }  // end of operator <<
-
-  }  // end of namespace math
-
-}  // end of namespace tfel
+}  // end of namespace tfel::math
 
 #endif /* LIB_TFEL_MATH_STENSORCONCEPTIO_HXX */

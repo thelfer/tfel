@@ -15,18 +15,14 @@
 #ifndef LIB_TFEL_GLOSSARY_FORWARD_GLOSSARY_HXX
 #define LIB_TFEL_GLOSSARY_FORWARD_GLOSSARY_HXX
 
-namespace tfel {
+namespace tfel::glossary {
 
-  namespace glossary {
+  // forward declaration
+  struct Glossary;
 
-    // forward declaration
-    struct Glossary;
+  // forward declaration
+  struct GlossaryEntry;
 
-    // forward declaration
-    struct GlossaryEntry;
-
-  }  // end of namespace glossary
-
-}  // end of namespace tfel
+}  // end of namespace tfel::glossary
 
 #endif /* LIB_TFEL_GLOSSARY_FORWARD_GLOSSARY_HXX */

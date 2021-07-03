@@ -107,9 +107,7 @@
                              TFEL_PP_JOIN(X, FunctionWrapper), G, Y); \
   bool X()
 
-namespace tfel {
-
-  namespace tests {
+namespace tfel::tests {
 
     /*!
      * \brief proxy class for automatic registration of tests
@@ -126,9 +124,7 @@ namespace tfel {
       TestProxy(const std::string&, Arguments&&...);
     };  // end of struct Test
 
-  }  // namespace tests
-
-}  // end of namespace tfel
+}  // end of namespace tfel::tests
 
 #include "TFEL/Tests/TestProxy.ixx"
 

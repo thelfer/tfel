@@ -25,9 +25,7 @@
 #include "TFEL/Utilities/TestDocumentation.hxx"
 #include "TFEL/Utilities/MarkdownGenerator.hxx"
 
-namespace tfel {
-
-  namespace utilities {
+namespace tfel::utilities {
 
     static void writeMarkdownHeader(
         std::ostream& log,
@@ -160,6 +158,4 @@ namespace tfel {
       }
     }
 
-  }  // end of namespace utilities
-
-}  // end of namespace tfel
+  }  // end of namespace tfel::utilities

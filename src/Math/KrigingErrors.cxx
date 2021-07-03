@@ -14,31 +14,27 @@
 #include <string>
 #include "TFEL/Math/Kriging/KrigingErrors.hxx"
 
-namespace tfel {
+namespace tfel::math {
 
-  namespace math {
+  KrigingErrorInvalidLength::KrigingErrorInvalidLength()
+      : std::runtime_error(std::string(
+            "number of locations is different from number of values")) {
+  }  // end of KrigingErrorInvalidLength::KrigingErrorInvalidLength()
 
-    KrigingErrorInvalidLength::KrigingErrorInvalidLength()
-        : std::runtime_error(std::string(
-              "number of locations is different from number of values")) {
-    }  // end of KrigingErrorInvalidLength::KrigingErrorInvalidLength()
+  KrigingErrorInvalidLength::~KrigingErrorInvalidLength() noexcept = default;
 
-    KrigingErrorInvalidLength::~KrigingErrorInvalidLength() noexcept = default;
+  KrigingErrorNoDataSpecified::KrigingErrorNoDataSpecified()
+      : std::runtime_error(std::string("no data specified")) {
+  }  // end of KrigingErrorNoDataSpecified::KrigingErrorNoDataSpecified()
 
-    KrigingErrorNoDataSpecified::KrigingErrorNoDataSpecified()
-        : std::runtime_error(std::string("no data specified")) {
-    }  // end of KrigingErrorNoDataSpecified::KrigingErrorNoDataSpecified()
+  KrigingErrorNoDataSpecified::~KrigingErrorNoDataSpecified() noexcept =
+      default;
 
-    KrigingErrorNoDataSpecified::~KrigingErrorNoDataSpecified() noexcept =
-        default;
+  KrigingErrorInsufficientData::KrigingErrorInsufficientData()
+      : std::runtime_error(std::string("insufficient data")) {
+  }  // end of KrigingErrorInsufficientData::KrigingErrorInsufficientData()
 
-    KrigingErrorInsufficientData::KrigingErrorInsufficientData()
-        : std::runtime_error(std::string("insufficient data")) {
-    }  // end of KrigingErrorInsufficientData::KrigingErrorInsufficientData()
+  KrigingErrorInsufficientData::~KrigingErrorInsufficientData() noexcept =
+      default;
 
-    KrigingErrorInsufficientData::~KrigingErrorInsufficientData() noexcept =
-        default;
-
-  }  // end of namespace math
-
-}  // end of namespace tfel
+}  // end of namespace tfel::math

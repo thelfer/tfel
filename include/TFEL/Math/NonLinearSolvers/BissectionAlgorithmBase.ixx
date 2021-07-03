@@ -1,5 +1,5 @@
 /*!
- * \file   include/TFEL/Math/RootFinding/BissectionAlgorithmBase.ixx
+ * \file   include/TFEL/Math/NonLinearSolvers/BissectionAlgorithmBase.ixx
  * \brief
  * \author Thomas Helfer
  * \date   10/10/2020

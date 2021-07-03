@@ -26,9 +26,7 @@
 #include "TFEL/Utilities/TextData.hxx"
 #include "TFEL/Check/PCLogger.hxx"
 
-namespace tfel {
-
-  namespace check {
+namespace tfel::check {
 
     struct TFELCHECK_VISIBILITY_EXPORT Column {
       Column(int);
@@ -92,8 +90,6 @@ namespace tfel {
       bool byName;
     };
 
-  }  // end of namespace check
-
-}  // end of namespace tfel
+  }  // end of namespace tfel::check
 
 #endif /* LIB_TFELCHECK_COLUMN_HXX */

@@ -17,9 +17,7 @@
 #include "TFEL/Utilities/StringAlgorithms.hxx"
 #include "TFEL/Glossary/GlossaryEntry.hxx"
 
-namespace tfel {
-
-  namespace glossary {
+namespace tfel::glossary {
 
     static std::string nothrow(const char* c) noexcept {
       std::string r;
@@ -296,6 +294,4 @@ namespace tfel {
       return e1.key == e2;
     }
 
-  }  // end of namespace glossary
-
-}  // end of namespace tfel
+  }  // end of namespace tfel::glossary

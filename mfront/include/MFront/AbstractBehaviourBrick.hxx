@@ -23,12 +23,10 @@
 #include "TFEL/Material/ModellingHypothesis.hxx"
 #include "MFront/BehaviourBrickDescription.hxx"
 
-namespace tfel {
-  namespace utilities {
-    // forward declaration
-    struct Data;
-  }  // namespace utilities
-}  // namespace tfel
+namespace tfel::utilities {
+  // forward declaration
+  struct Data;
+}  // end of namespace tfel::utilities
 
 namespace mfront {
 

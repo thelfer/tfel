@@ -23,9 +23,7 @@
 #include "TFEL/Utilities/TestDocumentation.hxx"
 #include "TFEL/Utilities/LaTeXGenerator.hxx"
 
-namespace tfel {
-
-  namespace utilities {
+namespace tfel::utilities {
 
     static std::string getSectionHeaderTranslation(const std::string& s,
                                                    const std::string& l) {
@@ -269,6 +267,4 @@ namespace tfel {
       }
     }
 
-  }  // end of namespace utilities
-
-}  // end of namespace tfel
+  }  // end of namespace tfel::utilities

@@ -14,9 +14,7 @@
 #ifndef LIB_TFEL_TESTS_TESTFUNCTIONWRAPPER_IXX
 #define LIB_TFEL_TESTS_TESTFUNCTIONWRAPPER_IXX 1
 
-namespace tfel {
-
-  namespace tests {
+namespace tfel::tests {
 
     template <bool (*f)()>
     TestFunctionWrapper<f>::TestFunctionWrapper(const std::string& g,
@@ -48,8 +46,6 @@ namespace tfel {
     TestFunctionWrapper<f>::~TestFunctionWrapper() {
     }  // end of TestFunctionWrapper<f>::~TestFunctionWrapper
 
-  }  // end of namespace tests
-
-}  // end of namespace tfel
+  }  // end of namespace tfel::tests
 
 #endif /* LIB_TFEL_TESTS_TESTFUNCTIONWRAPPER_IXX */

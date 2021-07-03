@@ -24,7 +24,7 @@ namespace mfront {
 
   std::vector<std::string> MFrontNewtonRaphsonSolverBase::getSpecificHeaders()
       const {
-    return {"TFEL/Math/TinyNewtonRaphson.hxx"};
+    return {"TFEL/Math/TinyNewtonRaphsonSolver.hxx"};
   }  // end of MFrontNewtonRaphsonSolverBase::getSpecificHeaders
 
   std::vector<std::string> MFrontNewtonRaphsonSolverBase::getReservedNames()
@@ -292,10 +292,9 @@ namespace mfront {
                        "ModellingHypothesisToStensorSize<" + hn + ">::value",
                        "ModellingHypothesisToTensorSize<" + hn + ">::value"});
     const auto cn =
-        bd.useQt()
-            ? bd.getClassName() + "<" + hn + ", NumericType, true>"
-            : bd.getClassName() + "<" + hn + ", NumericType, false>";
-    return "tfel::math::TinyNewtonRaphson<" +  //
+        bd.useQt() ? bd.getClassName() + "<" + hn + ", NumericType, true>"
+                   : bd.getClassName() + "<" + hn + ", NumericType, false>";
+    return "tfel::math::TinyNewtonRaphsonSolver<" +  //
            n + ", NumericType, " + cn + ">";
   }  // end of getExternalAlgorithmClassName
 
@@ -325,14 +324,14 @@ namespace mfront {
                        "ModellingHypothesisToStensorSize<" + hn + ">::value",
                        "ModellingHypothesisToTensorSize<" + hn + ">::value"});
     const auto cn =
-        bd.useQt()
-            ? bd.getClassName() + "<" + hn + ", NumericType, true>"
-            : bd.getClassName() + "<" + hn + ", NumericType, false>";
-    return "tfel::math::TinyNewtonRaphson<" +  //
+        bd.useQt() ? bd.getClassName() + "<" + hn + ", NumericType, true>"
+                   : bd.getClassName() + "<" + hn + ", NumericType, false>";
+    return "tfel::math::TinyNewtonRaphsonSolver<" +  //
            n + ", NumericType, " + cn + ">";
   }  // end of getExternalAlgorithmClassName
 
-  bool MFrontNewtonRaphsonNumericalJacobianSolver::usesExternalAlgorithm() const {
+  bool MFrontNewtonRaphsonNumericalJacobianSolver::usesExternalAlgorithm()
+      const {
     return true;
   }  // end of usesExternalAlgorithm
 

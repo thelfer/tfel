@@ -16,31 +16,27 @@
 #include "MTest/MTestParser.hxx"
 #include "TFEL/Utilities/MTestDocParser.hxx"
 
-namespace tfel {
+namespace tfel::utilities {
 
-  namespace utilities {
+  MTestDocParser::MTestDocParser(const std::string& f) : file(f) {
+    this->readInputFile(f, {}, {});
+  }  // end of MTestDocParser::MTestDocParser
 
-    MTestDocParser::MTestDocParser(const std::string& f) : file(f) {
-      this->readInputFile(f, {}, {});
-    }  // end of MTestDocParser::MTestDocParser
+  void MTestDocParser::addDocumentation(
+      std::map<std::string, std::vector<TestDocumentation>>& r) {
+    const auto c = "Mechanical behaviour unary testing";
+    auto ptest = r.find(c);
+    if (r.find(c) == r.end()) {
+      ptest = r.insert({c, std::vector<TestDocumentation>()}).first;
+    }
+    ptest->second.emplace_back(TestDocumentation());
+    auto& t = ptest->second.back();
+    t.name = this->file;
+    t.date = this->date;
+    t.author = this->author;
+    t.descriptions.insert({"english", this->description});
+  }  // end of MTestDocParser::execute
 
-    void MTestDocParser::addDocumentation(
-        std::map<std::string, std::vector<TestDocumentation>>& r) {
-      const auto c = "Mechanical behaviour unary testing";
-      auto ptest = r.find(c);
-      if (r.find(c) == r.end()) {
-        ptest = r.insert({c, std::vector<TestDocumentation>()}).first;
-      }
-      ptest->second.emplace_back(TestDocumentation());
-      auto& t = ptest->second.back();
-      t.name = this->file;
-      t.date = this->date;
-      t.author = this->author;
-      t.descriptions.insert({"english", this->description});
-    }  // end of MTestDocParser::execute
+  MTestDocParser::~MTestDocParser() = default;
 
-    MTestDocParser::~MTestDocParser() = default;
-
-  }  // end of namespace utilities
-
-}  // end of namespace tfel
+}  // end of namespace tfel::utilities

@@ -14,16 +14,8 @@
 
 #include "TFEL/Math/Parser/ExternalFunction.hxx"
 
-namespace tfel {
+namespace tfel::math::parser {
 
-  namespace math {
+  ExternalFunction::~ExternalFunction() = default;
 
-    namespace parser {
-
-      ExternalFunction::~ExternalFunction() = default;
-
-    }  // end of namespace parser
-
-  }  // end of namespace math
-
-}  // end of namespace tfel
+}  // end of namespace tfel::math::parser

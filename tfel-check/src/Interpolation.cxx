@@ -13,17 +13,13 @@
 
 #include "TFEL/Check/Interpolation.hxx"
 
-namespace tfel {
+namespace tfel::check {
 
-  namespace check {
+  Interpolation::Interpolation() = default;
+  Interpolation::Interpolation(Interpolation&&) = default;
+  Interpolation::Interpolation(const Interpolation&) = default;
+  Interpolation& Interpolation::operator=(Interpolation&&) = default;
+  Interpolation& Interpolation::operator=(const Interpolation&) = default;
+  Interpolation::~Interpolation() = default;
 
-    Interpolation::Interpolation() = default;
-    Interpolation::Interpolation(Interpolation&&) = default;
-    Interpolation::Interpolation(const Interpolation&) = default;
-    Interpolation& Interpolation::operator=(Interpolation&&) = default;
-    Interpolation& Interpolation::operator=(const Interpolation&) = default;
-    Interpolation::~Interpolation() = default;
-
-  }  // end of namespace check
-
-}  // end of namespace tfel
+}  // end of namespace tfel::check

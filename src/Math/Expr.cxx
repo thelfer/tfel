@@ -16,24 +16,17 @@
 
 #include "TFEL/Math/Parser/Expr.hxx"
 
-namespace tfel {
-  namespace math {
+namespace tfel::math::parser {
 
-    namespace parser {
+  Expr::~Expr() = default;
 
-      Expr::~Expr() = default;
+  void mergeVariablesNames(std::vector<std::string>& v,
+                           const std::vector<std::string>& nv) {
+    for (const auto& vn : nv) {
+      if (std::find(v.begin(), v.end(), vn) == v.end()) {
+        v.push_back(vn);
+      }
+    }
+  }  // end of mergeVariablesNames
 
-      void mergeVariablesNames(std::vector<std::string>& v,
-                               const std::vector<std::string>& nv) {
-        for (const auto& vn : nv) {
-          if (std::find(v.begin(), v.end(), vn) == v.end()) {
-            v.push_back(vn);
-          }
-        }
-      }  // end of mergeVariablesNames
-
-    }  // end of namespace parser
-
-  }  // end of namespace math
-
-}  // end of namespace tfel
+}  // end of namespace tfel::math::parser

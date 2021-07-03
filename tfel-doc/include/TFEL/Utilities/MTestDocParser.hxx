@@ -19,32 +19,28 @@
 
 #include "MTest/MTest.hxx"
 
-namespace tfel {
+namespace tfel::utilities {
 
-  namespace utilities {
-
+  /*!
+   * \brief structure in charge of reading a test documentation file
+   */
+  struct MTestDocParser : protected mtest::MTest {
     /*!
-     * \brief structure in charge of reading a test documentation file
+     * \param f : file to be read
      */
-    struct MTestDocParser : protected mtest::MTest {
-      /*!
-       * \param f : file to be read
-       */
-      MTestDocParser(const std::string&);
-      /*!
-       * add a new test documentation
-       */
-      virtual void addDocumentation(
-          std::map<std::string, std::vector<TestDocumentation>>&);
-      //! \brief destructor
-      ~MTestDocParser() override;
+    MTestDocParser(const std::string&);
+    /*!
+     * add a new test documentation
+     */
+    virtual void addDocumentation(
+        std::map<std::string, std::vector<TestDocumentation>>&);
+    //! \brief destructor
+    ~MTestDocParser() override;
 
-     private:
-      const std::string file;
-    };  // end of struct MTestDocParser
+   private:
+    const std::string file;
+  };  // end of struct MTestDocParser
 
-  }  // end of namespace utilities
-
-}  // end of namespace tfel
+}  // end of namespace tfel::utilities
 
 #endif /* LIB_TFEL_UTILITIES_MTESTDOCPARSER_H */

@@ -16,22 +16,18 @@
 
 #include "TFEL/Math/tvector.hxx"
 
-namespace tfel {
+namespace tfel::math {
 
-  namespace math {
+  template <unsigned short N, typename T>
+  struct KrigingVariable {
+    typedef tvector<N, T> type;
+  };  // end of KrigingVariable<N,T>
 
-    template <unsigned short N, typename T>
-    struct KrigingVariable {
-      typedef tvector<N, T> type;
-    };  // end of KrigingVariable<N,T>
+  template <typename T>
+  struct KrigingVariable<1u, T> {
+    typedef T type;
+  };  // end of KrigingVariable<1u,T>
 
-    template <typename T>
-    struct KrigingVariable<1u, T> {
-      typedef T type;
-    };  // end of KrigingVariable<1u,T>
-
-  }  // end of namespace math
-
-}  // end of namespace tfel
+}  // end of namespace tfel::math
 
 #endif /* LIB_TFEL_MATH_KRIGINGVARIABLES_HXX */

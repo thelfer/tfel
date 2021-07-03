@@ -16,16 +16,12 @@
 #include <map>
 #include <string>
 
-namespace tfel {
+namespace tfel::utilities {
 
-  namespace utilities {
+  // forward declaration
+  struct Data;
 
-    // forward declaration
-    struct Data;
-
-  }  // end of namespace utilities
-
-}  // end of namespace tfel
+}  // end of namespace tfel::utilities
 
 namespace mfmtg {
 

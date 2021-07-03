@@ -65,6 +65,6 @@ namespace tfel::math {
 
 }  // end of namespace tfel::math
 
-#include "TFEL/Math/RootFinding/Broyden.ixx"
+#include "TFEL/Math/NonLinearSolvers/Broyden.ixx"
 
 #endif /* LIB_TFEL_MATH_BROYDEN_HXX */

@@ -16,47 +16,43 @@
 
 #include "TFEL/Utilities/CxxTokenizer.hxx"
 
-namespace tfel {
+namespace tfel::utilities {
 
-  namespace utilities {
+  /*!
+   * This class defines some helper function for parsing
+   * configuration files
+   */
+  struct ParserBase : public tfel::utilities::CxxTokenizer {
+   protected:
+    /*!
+     * check if the end of file has not been reached
+     * \param p : current location in file
+     */
+    void checkNotEndOfFile(const_iterator);
 
     /*!
-     * This class defines some helper function for parsing
-     * configuration files
+     * check if the specified word is at the specified location
+     * \param v : word to be read
+     * \param p : current location in file
      */
-    struct ParserBase : public tfel::utilities::CxxTokenizer {
-     protected:
-      /*!
-       * check if the end of file has not been reached
-       * \param p : current location in file
-       */
-      void checkNotEndOfFile(const_iterator);
+    void readSpecifiedToken(const std::string &, const_iterator &);
 
-      /*!
-       * check if the specified word is at the specified location
-       * \param v : word to be read
-       * \param p : current location in file
-       */
-      void readSpecifiedToken(const std::string &, const_iterator &);
+    /*!
+     * extract the value of a string
+     * \param s : string to be read
+     * \param p : current location in file
+     */
+    void readString(std::string &, const_iterator &);
 
-      /*!
-       * extract the value of a string
-       * \param s : string to be read
-       * \param p : current location in file
-       */
-      void readString(std::string &, const_iterator &);
+    /*!
+     * \return the value of the string at the specified location
+     * \param p : current location in file
+     */
+    std::string readString(const_iterator &);
+    //! destructor
+    ~ParserBase() noexcept override;
+  };
 
-      /*!
-       * \return the value of the string at the specified location
-       * \param p : current location in file
-       */
-      std::string readString(const_iterator &);
-      //! destructor
-      ~ParserBase() noexcept override;
-    };
-
-  }  // end of namespace utilities
-
-}  // end of namespace tfel
+}  // end of namespace tfel::utilities
 
 #endif /* LIB_PARSERBASE_H */

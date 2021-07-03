@@ -18,9 +18,7 @@
 #include "TFEL/Utilities/TerminalColors.hxx"
 #include "TFEL/Utilities/StringAlgorithms.hxx"
 
-namespace tfel {
-
-  namespace utilities {
+namespace tfel::utilities {
 
     std::map<std::string, std::map<std::string, std::string>>& getTypeMap() {
       static std::map<std::string, std::map<std::string, std::string>> t;
@@ -135,6 +133,4 @@ namespace tfel {
       return r;
     }  // end of capitalize
 
-  }  // end of namespace utilities
-
-}  // end of namespace tfel
+  }  // end of namespace tfel::utilities

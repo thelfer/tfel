@@ -19,9 +19,7 @@
 #include "TFEL/Config/TFELConfig.hxx"
 #include "TFEL/Math/Kriging/KrigingVariable.hxx"
 
-namespace tfel {
-
-  namespace math {
+namespace tfel::math {
 
     /*!
      * Partial specialisation in 3D
@@ -70,8 +68,6 @@ namespace tfel {
                 KrigingDefaultModel<3u, T, NM>::y,
                 KrigingDefaultModel<3u, T, NM>::z};
 
-  }  // end of namespace math
-
-}  // end of namespace tfel
+  }  // end of namespace tfel::math
 
 #endif /* LIB_TFEL_MATH_KRIGINGDEFAULTMODEL3D_HXX */

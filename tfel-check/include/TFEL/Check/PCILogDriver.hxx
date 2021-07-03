@@ -25,9 +25,7 @@
 #include <iosfwd>
 #include "TFEL/Check/TFELCheckConfig.hxx"
 
-namespace tfel {
-
-  namespace check {
+namespace tfel::check {
 
     struct TFELCHECK_VISIBILITY_EXPORT PCILogDriver {
       //! constructor
@@ -102,8 +100,7 @@ namespace tfel {
       std::shared_ptr<std::ostream> log;
     };
 
-  }  // end of namespace check
+  }  // end of namespace tfel::check
 
-}  // end of namespace tfel
 
 #endif /* LIB_TFELCHECK_PCILOGDRIVER_HXX */

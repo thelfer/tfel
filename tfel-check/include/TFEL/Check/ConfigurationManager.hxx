@@ -20,9 +20,7 @@
 #include "TFEL/Check/TFELCheckConfig.hxx"
 #include "TFEL/Check/Configuration.hxx"
 
-namespace tfel {
-
-  namespace check {
+namespace tfel::check {
 
     /*!
      * \brief configurations are organized as a tree.
@@ -30,7 +28,7 @@ namespace tfel {
      * All modifications to the configuration of the root of the tree
      * are made to the subtrees, called here the subordinates.
      *
-     * The `ConfigurationManager` is build in such a way that each
+     * The `ConfigurationManaoger` is build in such a way that each
      * change to the root configuration is propagated to all the
      * subordinates.
      */
@@ -103,8 +101,6 @@ namespace tfel {
     TFELCHECK_VISIBILITY_EXPORT void parse(ConfigurationManager&,
                                            const std::string&);
 
-  }  // end of namespace check
-
-}  // namespace tfel
+  }  // end of namespace tfel::check
 
 #endif /* LIB_TFEL_CHECK_CONFIGURATIONMANAGER_HXX */

@@ -20,9 +20,7 @@
 #include "TFEL/Check/Interpolation.hxx"
 #include "TFEL/Check/Comparison.hxx"
 
-namespace tfel {
-
-  namespace check {
+namespace tfel::check {
 
     struct TFELCHECK_VISIBILITY_EXPORT Test {
       Test();
@@ -197,8 +195,6 @@ namespace tfel {
     };
     // end of struct Test
 
-  }  // end of namespace check
-
-}  // end of namespace tfel
+  }  // end of namespace tfel::check
 
 #endif /* LIB_TFELCHECK_TEST_HXX */

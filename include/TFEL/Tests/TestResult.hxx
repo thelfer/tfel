@@ -20,9 +20,7 @@
 
 #include "TFEL/Config/TFELConfig.hxx"
 
-namespace tfel {
-
-  namespace tests {
+namespace tfel::tests {
 
     //! \brief structure describing the result of a test or a test suite
     struct TFELTESTS_VISIBILITY_EXPORT TestResult
@@ -100,8 +98,6 @@ namespace tfel {
 
     std::ostream& operator<<(std::ostream&, const TestResult&);
 
-  }  // end of namespace tests
-
-}  // end of namespace tfel
+  }  // end of namespace tfel::tests
 
 #endif /* LIB_TFEL_TESTS_TESTRESULT_HXX */

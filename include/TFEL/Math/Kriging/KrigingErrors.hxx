@@ -18,34 +18,29 @@
 
 #include "TFEL/Config/TFELConfig.hxx"
 
-namespace tfel {
+namespace tfel::math {
 
-  namespace math {
+  struct TFELMATHKRIGING_VISIBILITY_EXPORT KrigingErrorInvalidLength
+      : public std::runtime_error {
+    KrigingErrorInvalidLength();
+    KrigingErrorInvalidLength(const KrigingErrorInvalidLength&) = default;
+    ~KrigingErrorInvalidLength() noexcept override;
+  };  // end of struct KrigingErrorInvalidLength
 
-    struct TFELMATHKRIGING_VISIBILITY_EXPORT KrigingErrorInvalidLength
-        : public std::runtime_error {
-      KrigingErrorInvalidLength();
-      KrigingErrorInvalidLength(const KrigingErrorInvalidLength&) = default;
-      ~KrigingErrorInvalidLength() noexcept override;
-    };  // end of struct KrigingErrorInvalidLength
+  struct TFELMATHKRIGING_VISIBILITY_EXPORT KrigingErrorNoDataSpecified
+      : public std::runtime_error {
+    KrigingErrorNoDataSpecified();
+    KrigingErrorNoDataSpecified(const KrigingErrorNoDataSpecified&) = default;
+    ~KrigingErrorNoDataSpecified() noexcept override;
+  };  // end of struct KrigingErrorNoDataSpecified
 
-    struct TFELMATHKRIGING_VISIBILITY_EXPORT KrigingErrorNoDataSpecified
-        : public std::runtime_error {
-      KrigingErrorNoDataSpecified();
-      KrigingErrorNoDataSpecified(const KrigingErrorNoDataSpecified&) = default;
-      ~KrigingErrorNoDataSpecified() noexcept override;
-    };  // end of struct KrigingErrorNoDataSpecified
+  struct TFELMATHKRIGING_VISIBILITY_EXPORT KrigingErrorInsufficientData
+      : public std::runtime_error {
+    KrigingErrorInsufficientData();
+    KrigingErrorInsufficientData(const KrigingErrorInsufficientData&) = default;
+    ~KrigingErrorInsufficientData() noexcept override;
+  };  // end of struct KrigingErrorInsufficientData
 
-    struct TFELMATHKRIGING_VISIBILITY_EXPORT KrigingErrorInsufficientData
-        : public std::runtime_error {
-      KrigingErrorInsufficientData();
-      KrigingErrorInsufficientData(const KrigingErrorInsufficientData&) =
-          default;
-      ~KrigingErrorInsufficientData() noexcept override;
-    };  // end of struct KrigingErrorInsufficientData
-
-  }  // end of namespace math
-
-}  // end of namespace tfel
+}  // end of namespace tfel::math
 
 #endif /* LIB_TFEL_MATH_KRINGINGERRORS_HXX */

@@ -18,33 +18,29 @@
 #include "TFEL/Raise.hxx"
 #include "TFEL/Check/PCILogDriver.hxx"
 
-namespace tfel {
+namespace tfel::check {
 
-  namespace check {
+  PCILogDriver::PCILogDriver() = default;
+  PCILogDriver::PCILogDriver(PCILogDriver&&) = default;
+  PCILogDriver::PCILogDriver(const PCILogDriver&) = default;
 
-    PCILogDriver::PCILogDriver() = default;
-    PCILogDriver::PCILogDriver(PCILogDriver&&) = default;
-    PCILogDriver::PCILogDriver(const PCILogDriver&) = default;
+  PCILogDriver::PCILogDriver(const std::string& f) {
+    this->log = std::make_shared<std::ofstream>(f);
+    raise_if(!this->log->good(),
+             "PCILogDriver::PCILogDriver: "
+             "can't open file '" +
+                 f + "'");
+  }
 
-    PCILogDriver::PCILogDriver(const std::string& f) {
-      this->log = std::make_shared<std::ofstream>(f);
-      raise_if(!this->log->good(),
-               "PCILogDriver::PCILogDriver: "
-               "can't open file '" +
-                   f + "'");
+  std::ostream& PCILogDriver::getStream() {
+    if (this->log != nullptr) {
+      return *(this->log);
     }
+    return std::cout;
+  }
 
-    std::ostream& PCILogDriver::getStream() {
-      if (this->log != nullptr) {
-        return *(this->log);
-      }
-      return std::cout;
-    }
+  void PCILogDriver::terminate() {}
 
-    void PCILogDriver::terminate() {}
+  PCILogDriver::~PCILogDriver() = default;
 
-    PCILogDriver::~PCILogDriver() = default;
-
-  }  // end of namespace check
-
-}  // end of namespace tfel
+}  // end of namespace tfel::check

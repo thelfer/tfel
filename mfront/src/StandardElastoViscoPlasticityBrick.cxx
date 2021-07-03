@@ -243,7 +243,7 @@ namespace mfront {
     if (this->porosity_evolution_algorithm ==
         mfront::bbrick::PorosityEvolutionAlgorithm::STAGGERED_SCHEME) {
       this->bd.appendToIncludes(
-          "#include \"TFEL/Math/RootFinding/BissectionAlgorithmBase.hxx\"\n");
+          "#include \"TFEL/Math/NonLinearSolvers/BissectionAlgorithmBase.hxx\"\n");
       mfront::bbrick::addLocalVariable(
           bd, "tfel::math::BissectionAlgorithmBase<real>",
           staggeredSchemeBissectionAlgorithm);

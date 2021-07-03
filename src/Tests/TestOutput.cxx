@@ -13,12 +13,8 @@
 
 #include "TFEL/Tests/TestOutput.hxx"
 
-namespace tfel {
+namespace tfel::tests {
 
-  namespace tests {
+  TestOutput::~TestOutput() = default;
 
-    TestOutput::~TestOutput() = default;
-
-  }  // end of namespace tests
-
-}  // end of namespace tfel
+}  // end of namespace tfel::tests

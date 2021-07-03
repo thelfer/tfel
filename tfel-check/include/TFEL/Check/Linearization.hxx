@@ -22,45 +22,41 @@
 #include <vector>
 #include "TFEL/Check/TFELCheckConfig.hxx"
 
-namespace tfel {
+namespace tfel::check {
 
-  namespace check {
+  struct TFELCHECK_VISIBILITY_EXPORT Linearization {
+    //! constructor
+    Linearization();
+    //! move constructor
+    Linearization(Linearization&&);
+    //! copy constructor
+    Linearization(const Linearization&);
+    //! move assignement
+    Linearization& operator=(Linearization&&);
+    //! copy assignement
+    Linearization& operator=(const Linearization&);
+    /*!
+     * \param[in] times
+     * \param[in] values
+     */
+    Linearization(const std::vector<double>&, const std::vector<double>&);
+    //! destructor
+    ~Linearization();
+    /*!
+     * \return the value at time in parameter
+     */
+    double operator()(const double x) const;
 
-    struct TFELCHECK_VISIBILITY_EXPORT Linearization {
-      //! constructor
-      Linearization();
-      //! move constructor
-      Linearization(Linearization&&);
-      //! copy constructor
-      Linearization(const Linearization&);
-      //! move assignement
-      Linearization& operator=(Linearization&&);
-      //! copy assignement
-      Linearization& operator=(const Linearization&);
-      /*!
-       * \param[in] times
-       * \param[in] values
-       */
-      Linearization(const std::vector<double>&, const std::vector<double>&);
-      //! destructor
-      ~Linearization();
-      /*!
-       * \return the value at time in parameter
-       */
-      double operator()(const double x) const;
+    /*!
+     * \return true if the evolution
+     * is constant
+     */
+    bool isConstant() const;
 
-      /*!
-       * \return true if the evolution
-       * is constant
-       */
-      bool isConstant() const;
+   private:
+    std::map<double, double> values; /*< the times and values */
+  };
 
-     private:
-      std::map<double, double> values; /*< the times and values */
-    };
-
-  }  // end of namespace check
-
-}  // end of namespace tfel
+}  // end of namespace tfel::check
 
 #endif /* LIB_TFELCHECK_LINEARIZATION_HXX */

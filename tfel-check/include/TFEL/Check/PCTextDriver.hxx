@@ -22,27 +22,23 @@
 #include "TFEL/Check/TFELCheckConfig.hxx"
 #include "TFEL/Check/PCILogDriver.hxx"
 
-namespace tfel {
+namespace tfel::check {
 
-  namespace check {
+  struct TFELCHECK_VISIBILITY_EXPORT PCTextDriver : public PCILogDriver {
+    PCTextDriver();
+    PCTextDriver(const std::string&);
+    void addMessage(const std::string&) override;
+    void reportSkippedTest(const std::string&) override;
+    void addTestResult(const std::string&,
+                       const std::string&,
+                       const std::string&,
+                       const float,
+                       bool,
+                       const std::string& = "") override;
+    //! destructor
+    ~PCTextDriver() override;
+  };
 
-    struct TFELCHECK_VISIBILITY_EXPORT PCTextDriver : public PCILogDriver {
-      PCTextDriver();
-      PCTextDriver(const std::string&);
-      void addMessage(const std::string&) override;
-      void reportSkippedTest(const std::string&) override;
-      void addTestResult(const std::string&,
-                         const std::string&,
-                         const std::string&,
-                         const float,
-                         bool,
-                         const std::string& = "") override;
-      //! destructor
-      ~PCTextDriver() override;
-    };
-
-  }  // end of namespace check
-
-}  // end of namespace tfel
+}  // end of namespace tfel::check
 
 #endif /* LIB_TFELCHECK_PCTEXTDRIVER_HXX */

@@ -21,9 +21,7 @@
 #include "TFEL/Tests/TestOutput.hxx"
 #include "TFEL/Tests/TestResult.hxx"
 
-namespace tfel {
-
-  namespace tests {
+namespace tfel::tests {
 
     /*!
      * \brief an helper class for gathering multiple outputs.
@@ -74,8 +72,6 @@ namespace tfel {
       std::vector<TestOutputPtr> outputs;
     };  // end of struct MultipleTestOutputs
 
-  }  // namespace tests
-
-}  // end of namespace tfel
+}  // end of namespace tfel::tests
 
 #endif /* LIB_TFEL_TESTS_MULTIPLETESTOUTPUTS_HXX */

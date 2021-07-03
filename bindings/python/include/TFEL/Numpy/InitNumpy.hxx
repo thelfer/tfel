@@ -16,17 +16,13 @@
 
 #include "TFEL/Numpy/Config.hxx"
 
-namespace tfel {
+namespace tfel::numpy {
 
-  namespace numpy {
+  /*!
+   * \brief function to be called in modules using numpy
+   */
+  TFEL_NUMPY_EXPORT void initializeNumPy();
 
-    /*!
-     * \brief function to be called in modules using numpy
-     */
-    TFEL_NUMPY_EXPORT void initializeNumPy();
-
-  }  // end of namespace numpy
-
-}  // end of namespace tfel
+}  // end of namespace tfel::numpy
 
 #endif /* LIB_TFEL_NUMPY_INITNUMPY_HXX */

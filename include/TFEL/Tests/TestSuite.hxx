@@ -22,9 +22,7 @@
 #include "TFEL/Tests/Test.hxx"
 #include "TFEL/Tests/TestOutput.hxx"
 
-namespace tfel {
-
-  namespace tests {
+namespace tfel::tests {
 
     /*!
      * \brief a class handling test suites
@@ -80,8 +78,6 @@ namespace tfel {
       const std::string sname;
     };  // end of struct TestSuite
 
-  }  // namespace tests
-
-}  // end of namespace tfel
+}  // end of namespace tfel::tests
 
 #endif /* LIB_TFEL_TESTS_TESTSUITE_HXX */

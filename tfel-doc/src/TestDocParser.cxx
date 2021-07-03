@@ -21,9 +21,7 @@
 #include "TFEL/Utilities/TestDocParser.hxx"
 #include "TFEL/Utilities/TerminalColors.hxx"
 
-namespace tfel {
-
-  namespace utilities {
+namespace tfel::utilities {
 
     TestDocParser::TestDocParser(const std::string& f) {
       this->openFile(f);
@@ -223,6 +221,4 @@ namespace tfel {
 
     TestDocParser::~TestDocParser() noexcept = default;
 
-  }  // end of namespace utilities
-
-}  // end of namespace tfel
+  }  // end of namespace tfel::utilities

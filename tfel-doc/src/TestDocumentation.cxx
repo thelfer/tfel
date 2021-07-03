@@ -14,9 +14,7 @@
 #include "TFEL/Utilities/Global.hxx"
 #include "TFEL/Utilities/TestDocumentation.hxx"
 
-namespace tfel {
-
-  namespace utilities {
+namespace tfel::utilities {
 
     TestDocumentation::TestDocumentation() = default;
 
@@ -32,6 +30,5 @@ namespace tfel {
 
     TestDocumentation::~TestDocumentation() = default;
 
-  }  // end of namespace utilities
+  }  // end of namespace tfel::utilities
 
-}  // end of namespace tfel

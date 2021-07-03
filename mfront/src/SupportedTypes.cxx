@@ -144,7 +144,7 @@ namespace mfront {
       if (s == 1) {
         os << v;
       } else {
-        os << s << " * " << v;
+        os << s << "u * " << v;
       }
       first = false;
     };
@@ -152,7 +152,7 @@ namespace mfront {
     add(this->stensorSize, values[1]);
     add(this->tensorSize, values[2]);
     if (first) {
-      return "0";
+      return "0u";
     }
     return os.str();
   }  // end of getValue

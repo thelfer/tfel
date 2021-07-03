@@ -16,15 +16,11 @@
 
 #include <string>
 #include <fstream>
-
 #include "TFEL/Config/TFELConfig.hxx"
-
 #include "TFEL/Tests/TestOutput.hxx"
 #include "TFEL/Tests/TestResult.hxx"
 
-namespace tfel {
-
-  namespace tests {
+namespace tfel::tests {
 
     /*!
      * \brief Instances of this class reports tests' outputs in an
@@ -75,8 +71,6 @@ namespace tfel {
       unsigned short testsuite;
     };  // end of struct XMLTestOutput
 
-  }  // namespace tests
-
-}  // end of namespace tfel
+}  // end of namespace tfel::tests
 
 #endif /* LIB_TFEL_TESTS_XMLTESTOUTPUT_HXX */

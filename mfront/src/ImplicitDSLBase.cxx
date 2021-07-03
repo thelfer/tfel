@@ -1332,7 +1332,7 @@ namespace mfront {
       std::ostream& os, const Hypothesis h) const {
     if (this->solver->usesExternalAlgorithm()) {
       const auto n = this->solver->getExternalAlgorithmClassName(this->mb, h);
-      os << ",\nprotected " << n;
+      os << ",\npublic " << n;
     }
   }  // end of writeBehaviourParserSpecificInheritanceRelationship
 
@@ -1340,8 +1340,22 @@ namespace mfront {
                                               const Hypothesis h) const {
     BehaviourDSLCommon::writeBehaviourFriends(os, h);
     if (this->solver->usesExternalAlgorithm()) {
-      const auto n = this->solver->getExternalAlgorithmClassName(this->mb, h);
-      os << "friend struct " << n << ";\n";
+      const auto hn = [&h]() -> std::string {
+        if (h == tfel::material::ModellingHypothesis::UNDEFINEDHYPOTHESIS) {
+          return "hypothesis";
+        }
+        return "ModellingHypothesis::" +
+               tfel::material::ModellingHypothesis::toUpperCaseString(h);
+      }();
+      const auto n =
+          mfront::getTypeSize(
+              this->mb.getBehaviourData(h).getIntegrationVariables())
+              .getValue(
+                  {"ModellingHypothesisToSpaceDimension<" + hn + ">::value",
+                   "ModellingHypothesisToStensorSize<" + hn + ">::value",
+                   "ModellingHypothesisToTensorSize<" + hn + ">::value"});
+      os << "friend struct tfel::math::TinyNonLinearSolverBase<" << n
+         << ", NumericType, " << this->mb.getClassName() << ">;\n";
     }
   }  // end of writeBehaviourFriends
 

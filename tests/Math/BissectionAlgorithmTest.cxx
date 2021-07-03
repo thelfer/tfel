@@ -19,13 +19,11 @@
 #include <limits>
 #include <cassert>
 #include <iostream>
-
 #include "TFEL/Tests/TestCase.hxx"
 #include "TFEL/Tests/TestProxy.hxx"
 #include "TFEL/Tests/TestManager.hxx"
-
 #include "TFEL/Math/General/IEEE754.hxx"
-#include "TFEL/Math/RootFinding/BissectionAlgorithmBase.hxx"
+#include "TFEL/Math/NonLinearSolvers/BissectionAlgorithmBase.hxx"
 
 struct BissectionAlgorithmTest final : public tfel::tests::TestCase {
   BissectionAlgorithmTest()

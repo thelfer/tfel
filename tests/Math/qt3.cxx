@@ -53,6 +53,7 @@ struct QtRefTest final : public tfel::tests::TestCase {
         (std::is_same_v<double, ViewStorageType<stensor<3u, qt<Mass>>>>));
   }
    void test2() {
+#ifndef __INTEL_COMPILER
      using namespace tfel::math;
      constexpr auto eps = double{1e-14};
      constexpr auto s = []() constexpr->stensor<3, qt<Stress, double>> {
@@ -66,6 +67,7 @@ struct QtRefTest final : public tfel::tests::TestCase {
      TFEL_TESTS_STATIC_ASSERT(my_abs(s[3].getValue() - 3) < eps);
      TFEL_TESTS_STATIC_ASSERT(my_abs(s[4].getValue() - 4) < eps);
      TFEL_TESTS_STATIC_ASSERT(my_abs(s[5].getValue() - 5) < eps);
+#endif /* __INTEL_COMPILER */
    }  // end of test2
    void test3() {
      using namespace tfel::math;

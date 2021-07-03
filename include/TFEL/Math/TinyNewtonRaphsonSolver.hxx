@@ -1,0 +1,70 @@
+/*!
+ * \file   include/TFEL/Math/TinyNewtonRaphsonSolver.hxx
+ *
+ * \brief
+ * \author Thomas Helfer
+ * \date   02 Aug 2006
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
+ */
+
+#ifndef LIB_TFEL_MATH_TINYNEWTONRAPHSONSOLVER_HXX
+#define LIB_TFEL_MATH_TINYNEWTONRAPHSONSOLVER_HXX
+
+#include <type_traits>
+#include "TFEL/Math/tvector.hxx"
+#include "TFEL/Math/tmatrix.hxx"
+#include "TFEL/Math/NonLinearSolvers/TinyNonLinearSolverBase.hxx"
+
+namespace tfel::math {
+
+  /*!
+   * \brief A class based on the curiously recurring template pattern (CRTP)
+   * to solve system of non linear equations using the Newton-Raphson algorithm.
+   * \tparam N: size of the system of non linear equations.
+   * \tparam NumericType: numeric type.
+   * \tparam Child: base class.
+   *
+   * By default, the `Child` class must:
+   *
+   * 1. Set the values of `epsilon` and `iterMax` data members and the initial
+   * guess of the unknowns, i.e. by setting the value of the `zeros` data
+   * member.
+   * 2. Provide a method called `computeResidualAndJacobian` which must computes
+   * the residual, i.e. the data member `fzeros` and the jacobian matrix, i.e.
+   * the data member `jacobian` using the current estimate of the solution, i.e.
+   * the data member `zeros`.
+   */
+  template <unsigned short N, typename NumericType, typename Child>
+  struct TinyNewtonRaphsonSolver : TinyNonLinearSolverBase<N, NumericType, Child> {
+    //
+    static_assert(N != 0, "invalid size");
+    static_assert(std::is_floating_point_v<NumericType>,
+                  "invalid numeric type");
+    //! \brief default constructor
+    TinyNewtonRaphsonSolver() = default;
+    //! \brief default constructor
+    TinyNewtonRaphsonSolver(TinyNewtonRaphsonSolver&) noexcept = default;
+    //! \brief default constructor
+    TinyNewtonRaphsonSolver(TinyNewtonRaphsonSolver&&) noexcept = default;
+    //! \brief default constructor
+    TinyNewtonRaphsonSolver& operator=(TinyNewtonRaphsonSolver&&) noexcept =
+        default;
+    //! \brief default constructor
+    TinyNewtonRaphsonSolver& operator=(
+        const TinyNewtonRaphsonSolver&) noexcept = default;
+    //! \brief destructor
+    ~TinyNewtonRaphsonSolver() noexcept = default;
+    //! \brief compute a new correction to the unknowns
+    bool computeNewCorrection();
+  };
+
+}  // end of namespace tfel::math
+
+#include "TFEL/Math/NonLinearSolvers/TinyNewtonRaphsonSolver.ixx"
+
+#endif /* LIB_TFEL_MATH_TINYNEWTONRAPHSONSOLVER_HXX */

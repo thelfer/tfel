@@ -13,31 +13,26 @@
 
 #include "TFEL/Check/NoInterpolation.hxx"
 
-namespace tfel {
+namespace tfel::check {
 
-  namespace check {
+  NoInterpolation::NoInterpolation() = default;
+  NoInterpolation::NoInterpolation(NoInterpolation&&) = default;
+  NoInterpolation::NoInterpolation(const NoInterpolation&) = default;
+  NoInterpolation& NoInterpolation::operator=(NoInterpolation&&) = default;
+  NoInterpolation& NoInterpolation::operator=(const NoInterpolation&) = default;
+  NoInterpolation::~NoInterpolation() = default;
 
-    NoInterpolation::NoInterpolation() = default;
-    NoInterpolation::NoInterpolation(NoInterpolation&&) = default;
-    NoInterpolation::NoInterpolation(const NoInterpolation&) = default;
-    NoInterpolation& NoInterpolation::operator=(NoInterpolation&&) = default;
-    NoInterpolation& NoInterpolation::operator=(const NoInterpolation&) =
-        default;
-    NoInterpolation::~NoInterpolation() = default;
+  void NoInterpolation::interpolate(const std::vector<double>&,
+                                    const std::vector<double>&) {}
 
-    void NoInterpolation::interpolate(const std::vector<double>&,
-                                      const std::vector<double>&) {}
+  double NoInterpolation::getValue(const double) const { return 0; }
 
-    double NoInterpolation::getValue(const double) const { return 0; }
+  std::string NoInterpolation::getType() const { return "none"; }
 
-    std::string NoInterpolation::getType() const { return "none"; }
+  bool NoInterpolation::isConform() const { return false; }
 
-    bool NoInterpolation::isConform() const { return false; }
+  std::shared_ptr<Interpolation> NoInterpolation::clone() const {
+    return std::make_shared<NoInterpolation>(*this);
+  }
 
-    std::shared_ptr<Interpolation> NoInterpolation::clone() const {
-      return std::make_shared<NoInterpolation>(*this);
-    }
-
-  }  // end of namespace check
-
-}  // end of namespace tfel
+}  // end of namespace tfel::check

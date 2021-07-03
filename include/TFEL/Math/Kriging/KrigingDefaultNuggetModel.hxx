@@ -16,29 +16,25 @@
 
 #include "TFEL/Math/Kriging/KrigingVariable.hxx"
 
-namespace tfel {
+namespace tfel::math {
 
-  namespace math {
+  template <unsigned short N, typename T>
+  struct KrigingDefaultNuggetModel {
+    KrigingDefaultNuggetModel<N, T>() : nugget(T(0)) {}
 
-    template <unsigned short N, typename T>
-    struct KrigingDefaultNuggetModel {
-      KrigingDefaultNuggetModel<N, T>() : nugget(T(0)) {}
+    T nuggetEffect(typename vector<T>::size_type,
+                   const typename KrigingVariable<N, T>::type&) const {
+      using namespace std;
+      return this->nugget;
+    }  // end of nuggetEffect
 
-      T nuggetEffect(typename vector<T>::size_type,
-                     const typename KrigingVariable<N, T>::type&) const {
-        using namespace std;
-        return this->nugget;
-      }  // end of nuggetEffect
+    void setNuggetEffect(const T& v) { this->nugget = v; }
 
-      void setNuggetEffect(const T& v) { this->nugget = v; }
+   protected:
+    T nugget;
 
-     protected:
-      T nugget;
+  };  // end of KrigingDefaultNuggetModel
 
-    };  // end of KrigingDefaultNuggetModel
-
-  }  // end of namespace math
-
-}  // end of namespace tfel
+}  // end of namespace tfel::math
 
 #endif /* LIB_TFEL_MATH_KRIGINGDEFAULTNUGGETMODEL_HXX */

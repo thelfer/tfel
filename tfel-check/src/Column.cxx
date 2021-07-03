@@ -18,9 +18,7 @@
 #include "TFEL/Math/Evaluator.hxx"
 #include "TFEL/Check/Column.hxx"
 
-namespace tfel {
-
-  namespace check {
+namespace tfel::check {
 
     static std::vector<double> eval(const tfel::utilities::TextData& d,
                                     const std::string& f) {
@@ -132,6 +130,5 @@ namespace tfel {
 
     Column::~Column() = default;
 
-  }  // end of namespace check
+  }  // end of namespace tfel::check
 
-}  // end of namespace tfel

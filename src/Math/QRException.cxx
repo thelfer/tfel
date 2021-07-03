@@ -13,43 +13,39 @@
 
 #include "TFEL/Math/QR/QRException.hxx"
 
-namespace tfel {
+namespace tfel::math {
 
-  namespace math {
+  QRException::QRException() = default;
+  QRException::QRException(QRException&&) = default;
+  QRException::QRException(const QRException&) = default;
+  QRException::~QRException() noexcept = default;
 
-    QRException::QRException() = default;
-    QRException::QRException(QRException&&) = default;
-    QRException::QRException(const QRException&) = default;
-    QRException::~QRException() noexcept = default;
+  QRUnmatchedSize::QRUnmatchedSize() = default;
+  QRUnmatchedSize::QRUnmatchedSize(QRUnmatchedSize&&) = default;
+  QRUnmatchedSize::QRUnmatchedSize(const QRUnmatchedSize&) = default;
+  QRUnmatchedSize::~QRUnmatchedSize() noexcept = default;
 
-    QRUnmatchedSize::QRUnmatchedSize() = default;
-    QRUnmatchedSize::QRUnmatchedSize(QRUnmatchedSize&&) = default;
-    QRUnmatchedSize::QRUnmatchedSize(const QRUnmatchedSize&) = default;
-    QRUnmatchedSize::~QRUnmatchedSize() noexcept = default;
+  const char* QRUnmatchedSize::what() const noexcept {
+    return "QRDecomp : entry size does not match";
+  }  // end of QRUnmatchedSize::what
 
-    const char* QRUnmatchedSize::what() const noexcept {
-      return "QRDecomp : entry size does not match";
-    }  // end of QRUnmatchedSize::what
+  QRInvalidMatrixSize::QRInvalidMatrixSize() = default;
+  QRInvalidMatrixSize::QRInvalidMatrixSize(QRInvalidMatrixSize&&) = default;
+  QRInvalidMatrixSize::QRInvalidMatrixSize(const QRInvalidMatrixSize&) =
+      default;
+  QRInvalidMatrixSize::~QRInvalidMatrixSize() noexcept = default;
 
-    QRInvalidMatrixSize::QRInvalidMatrixSize() = default;
-    QRInvalidMatrixSize::QRInvalidMatrixSize(QRInvalidMatrixSize&&) = default;
-    QRInvalidMatrixSize::QRInvalidMatrixSize(const QRInvalidMatrixSize&) =
-        default;
-    QRInvalidMatrixSize::~QRInvalidMatrixSize() noexcept = default;
+  const char* QRInvalidMatrixSize::what() const noexcept {
+    return "QRDecomp : null matrix size";
+  }  // end of QRInvalidMatrixSize::what
 
-    const char* QRInvalidMatrixSize::what() const noexcept {
-      return "QRDecomp : null matrix size";
-    }  // end of QRInvalidMatrixSize::what
+  QRNullPivot::QRNullPivot() = default;
+  QRNullPivot::QRNullPivot(QRNullPivot&&) = default;
+  QRNullPivot::QRNullPivot(const QRNullPivot&) = default;
+  QRNullPivot::~QRNullPivot() noexcept = default;
 
-    QRNullPivot::QRNullPivot() = default;
-    QRNullPivot::QRNullPivot(QRNullPivot&&) = default;
-    QRNullPivot::QRNullPivot(const QRNullPivot&) = default;
-    QRNullPivot::~QRNullPivot() noexcept = default;
+  const char* QRNullPivot::what() const noexcept {
+    return "QRDecomp::back_substitute : null pivot";
+  }  // end of QRNullPivot::QRNullPivot
 
-    const char* QRNullPivot::what() const noexcept {
-      return "QRDecomp::back_substitute : null pivot";
-    }  // end of QRNullPivot::QRNullPivot
-
-  }  // end of namespace math
-
-}  // end of namespace tfel
+}  // end of namespace tfel::math

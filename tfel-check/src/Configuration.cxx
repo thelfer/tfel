@@ -13,20 +13,16 @@
 
 #include "TFEL/Check/Configuration.hxx"
 
-namespace tfel {
+namespace tfel::check {
 
-  namespace check {
+  Configuration::Configuration() = default;
 
-    Configuration::Configuration() = default;
+  Configuration::Configuration(Configuration&&) = default;
 
-    Configuration::Configuration(Configuration&&) = default;
+  Configuration::Configuration(const Configuration&) = default;
 
-    Configuration::Configuration(const Configuration&) = default;
+  Configuration& Configuration::operator=(Configuration&&) = default;
 
-    Configuration& Configuration::operator=(Configuration&&) = default;
+  Configuration& Configuration::operator=(const Configuration&) = default;
 
-    Configuration& Configuration::operator=(const Configuration&) = default;
-
-  }  // end of namespace check
-
-}  // end of namespace tfel
+}  // end of namespace tfel::check

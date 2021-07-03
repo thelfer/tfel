@@ -20,18 +20,14 @@
 #include "TFEL/Math/Kriging/KrigingVariable.hxx"
 #include "TFEL/Math/Kriging/KrigingDefaultNuggetModel.hxx"
 
-namespace tfel {
+namespace tfel::math {
 
-  namespace math {
+  template <unsigned short N,
+            typename T,
+            typename NM = KrigingDefaultNuggetModel<N, T>>
+  struct KrigingDefaultModel;
 
-    template <unsigned short N,
-              typename T,
-              typename NM = KrigingDefaultNuggetModel<N, T>>
-    struct KrigingDefaultModel;
-
-  }  // end of namespace math
-
-}  // end of namespace tfel
+}  // end of namespace tfel::math
 
 #include "TFEL/Math/Kriging/KrigingDefaultModel1D.hxx"
 #include "TFEL/Math/Kriging/KrigingDefaultModel2D.hxx"

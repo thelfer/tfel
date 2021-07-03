@@ -20,23 +20,21 @@
 #include <iterator>
 #include <algorithm>
 #include <functional>
-
 #include <cstdlib>
 #include <cmath>
-
 #include <utility>
 #include <vector>
-
 #include <memory>
 #include "TFEL/Math/Evaluator.hxx"
 #include "TFEL/Math/LevenbergMarquardt.hxx"
-#include "TFEL/Math/LevenbergMarquardt/LevenbergMarquardtEvaluatorWrapper.hxx"
+#include "TFEL/Math/Parser/LevenbergMarquardtEvaluatorWrapper.hxx"
 
 /* coverity [UNCAUGHT_EXCEPT]*/
 int main() {
 #if __GNUC__ != 3
   using namespace std;
   using namespace tfel::math;
+  using namespace tfel::math::parser;
   using tfel::math::vector;
   const double x_data[] = {0.840188, 0.783099, 0.911647, 0.335223, 0.277775,
                            0.477397, 0.364784, 0.952230, 0.635712, 0.141603};
@@ -48,8 +46,7 @@ int main() {
   v.push_back("p0");
   v.push_back("p1");
   auto test = std::make_shared<Evaluator>(v, "p1*exp(p0*cos(x*x))");
-  LevenbergMarquardt<LevenbergMarquardtEvaluatorWrapper> levmar(
-      LevenbergMarquardtEvaluatorWrapper(test, 1u, 2u));
+  LevenbergMarquardt<LevenbergMarquardtEvaluatorWrapper> levmar(LevenbergMarquardtEvaluatorWrapper(test, 1u, 2u));
   vector<double> x(1u);
   vector<double> p(2u);
   unsigned short i;

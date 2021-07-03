@@ -1,5 +1,5 @@
 /*!
- * \file   include/TFEL/Math/RootFinding/Broyden.ixx
+ * \file   include/TFEL/Math/NonLinearSolvers/Broyden.ixx
  * \brief
  *
  * \author Thomas Helfer

@@ -17,99 +17,93 @@
 #include "TFEL/Config/TFELConfig.hxx"
 #include "TFEL/Math/MathException.hxx"
 
-namespace tfel {
+namespace tfel::math {
 
-  namespace math {
+  /*!
+   * Base class for the exception thrown by
+   * the LUDecomp class
+   */
+  struct TFELMATH_VISIBILITY_EXPORT LUException : public MathRunTimeException {
+    LUException();
+    LUException(LUException&&);
+    LUException(const LUException&);
+    //! \brief destructor
+    ~LUException() noexcept override;
+  };  // end of struct LUException
 
-    /*!
-     * Base class for the exception thrown by
-     * the LUDecomp class
-     */
-    struct TFELMATH_VISIBILITY_EXPORT LUException
-        : public MathRunTimeException {
-      LUException();
-      LUException(LUException&&);
-      LUException(const LUException&);
-      //! \brief destructor
-      ~LUException() noexcept override;
-    };  // end of struct LUException
+  /*!
+   * Base class for the exception thrown by
+   * the LUDecomp class
+   */
+  struct TFELMATH_VISIBILITY_EXPORT LUUnmatchedSize final : public LUException {
+    LUUnmatchedSize();
+    LUUnmatchedSize(LUUnmatchedSize&&);
+    LUUnmatchedSize(const LUUnmatchedSize&);
+    //! \return a string describing the error
+    const char* what() const noexcept override final;
+    //! destructor
+    ~LUUnmatchedSize() noexcept override;
+  };  // end of struct LUException
 
-    /*!
-     * Base class for the exception thrown by
-     * the LUDecomp class
-     */
-    struct TFELMATH_VISIBILITY_EXPORT LUUnmatchedSize final
-        : public LUException {
-      LUUnmatchedSize();
-      LUUnmatchedSize(LUUnmatchedSize&&);
-      LUUnmatchedSize(const LUUnmatchedSize&);
-      //! \return a string describing the error
-      const char* what() const noexcept override final;
-      //! destructor
-      ~LUUnmatchedSize() noexcept override;
-    };  // end of struct LUException
+  /*!
+   * Base class for the exception thrown by
+   * the LUDecomp class
+   */
+  struct TFELMATH_VISIBILITY_EXPORT LUMatrixNotSquare final
+      : public LUException {
+    LUMatrixNotSquare();
+    LUMatrixNotSquare(LUMatrixNotSquare&&);
+    LUMatrixNotSquare(const LUMatrixNotSquare&);
+    //! \return a string describing the error
+    const char* what() const noexcept override final;
+    //! destructor
+    ~LUMatrixNotSquare() noexcept override;
+  };  // end of struct LUException
 
-    /*!
-     * Base class for the exception thrown by
-     * the LUDecomp class
-     */
-    struct TFELMATH_VISIBILITY_EXPORT LUMatrixNotSquare final
-        : public LUException {
-      LUMatrixNotSquare();
-      LUMatrixNotSquare(LUMatrixNotSquare&&);
-      LUMatrixNotSquare(const LUMatrixNotSquare&);
-      //! \return a string describing the error
-      const char* what() const noexcept override final;
-      //! destructor
-      ~LUMatrixNotSquare() noexcept override;
-    };  // end of struct LUException
+  /*!
+   * Base class for the exception thrown by
+   * the LUDecomp class
+   */
+  struct TFELMATH_VISIBILITY_EXPORT LUInvalidMatrixSize final
+      : public LUException {
+    LUInvalidMatrixSize();
+    LUInvalidMatrixSize(LUInvalidMatrixSize&&);
+    LUInvalidMatrixSize(const LUInvalidMatrixSize&);
+    //! \return a string describing the error
+    const char* what() const noexcept override final;
+    //! destructor
+    ~LUInvalidMatrixSize() noexcept override;
+  };  // end of struct LUException
 
-    /*!
-     * Base class for the exception thrown by
-     * the LUDecomp class
-     */
-    struct TFELMATH_VISIBILITY_EXPORT LUInvalidMatrixSize final
-        : public LUException {
-      LUInvalidMatrixSize();
-      LUInvalidMatrixSize(LUInvalidMatrixSize&&);
-      LUInvalidMatrixSize(const LUInvalidMatrixSize&);
-      //! \return a string describing the error
-      const char* what() const noexcept override final;
-      //! destructor
-      ~LUInvalidMatrixSize() noexcept override;
-    };  // end of struct LUException
+  /*!
+   * Base class for the exception thrown by
+   * the LUDecomp class
+   */
+  struct TFELMATH_VISIBILITY_EXPORT LUNullPivot final : public LUException {
+    LUNullPivot();
+    LUNullPivot(LUNullPivot&&);
+    LUNullPivot(const LUNullPivot&);
+    //! \return a string describing the error
+    const char* what() const noexcept override final;
+    //! destructor
+    ~LUNullPivot() noexcept override;
+  };  // end of struct LUException
 
-    /*!
-     * Base class for the exception thrown by
-     * the LUDecomp class
-     */
-    struct TFELMATH_VISIBILITY_EXPORT LUNullPivot final : public LUException {
-      LUNullPivot();
-      LUNullPivot(LUNullPivot&&);
-      LUNullPivot(const LUNullPivot&);
-      //! \return a string describing the error
-      const char* what() const noexcept override final;
-      //! destructor
-      ~LUNullPivot() noexcept override;
-    };  // end of struct LUException
+  /*!
+   * Base class for the exception thrown by
+   * the LUDecomp class
+   */
+  struct TFELMATH_VISIBILITY_EXPORT LUNullDeterminant final
+      : public LUException {
+    LUNullDeterminant();
+    LUNullDeterminant(LUNullDeterminant&&);
+    LUNullDeterminant(const LUNullDeterminant&);
+    //! \return a string describing the error
+    const char* what() const noexcept override final;
+    //! destructor
+    ~LUNullDeterminant() noexcept override;
+  };  // end of struct LUException
 
-    /*!
-     * Base class for the exception thrown by
-     * the LUDecomp class
-     */
-    struct TFELMATH_VISIBILITY_EXPORT LUNullDeterminant final
-        : public LUException {
-      LUNullDeterminant();
-      LUNullDeterminant(LUNullDeterminant&&);
-      LUNullDeterminant(const LUNullDeterminant&);
-      //! \return a string describing the error
-      const char* what() const noexcept override final;
-      //! destructor
-      ~LUNullDeterminant() noexcept override;
-    };  // end of struct LUException
-
-  }  // end of namespace math
-
-}  // end of namespace tfel
+}  // end of namespace tfel::math
 
 #endif /* LIB_TFEL_MATH_LUEXCEPTION_HXX */

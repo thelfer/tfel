@@ -13,32 +13,28 @@
 
 #include "TFEL/Math/Discretization1D.hxx"
 
-namespace tfel {
+namespace tfel::math {
 
-  namespace math {
+  const char* GeometricDiscretizationInvalidDensity::what() const noexcept {
+    return "geometricDiscretization : invalid density";
+  }  // end of GeometricDiscretizationInvalidDensity::what
 
-    const char* GeometricDiscretizationInvalidDensity::what() const noexcept {
-      return "geometricDiscretization : invalid density";
-    }  // end of GeometricDiscretizationInvalidDensity::what
+  GeometricDiscretizationInvalidDensity::
+      ~GeometricDiscretizationInvalidDensity() noexcept = default;
 
-    GeometricDiscretizationInvalidDensity::
-        ~GeometricDiscretizationInvalidDensity() noexcept = default;
+  const char* GeometricDiscretizationInvalidLength::what() const noexcept {
+    return "geometricDiscretization : invalid length";
+  }  // end of GeometricDiscretizationInvalidLength::what
 
-    const char* GeometricDiscretizationInvalidLength::what() const noexcept {
-      return "geometricDiscretization : invalid length";
-    }  // end of GeometricDiscretizationInvalidLength::what
+  GeometricDiscretizationInvalidLength::
+      ~GeometricDiscretizationInvalidLength() noexcept = default;
 
-    GeometricDiscretizationInvalidLength::
-        ~GeometricDiscretizationInvalidLength() noexcept = default;
+  const char* GeometricDiscretizationInvalidNumberOfElements::what() const
+      noexcept {
+    return "geometricDiscretization : invalid number of elements";
+  }  // end of GeometricDiscretizationInvalidNumberOfElements::what
 
-    const char* GeometricDiscretizationInvalidNumberOfElements::what() const
-        noexcept {
-      return "geometricDiscretization : invalid number of elements";
-    }  // end of GeometricDiscretizationInvalidNumberOfElements::what
+  GeometricDiscretizationInvalidNumberOfElements::
+      ~GeometricDiscretizationInvalidNumberOfElements() noexcept = default;
 
-    GeometricDiscretizationInvalidNumberOfElements::
-        ~GeometricDiscretizationInvalidNumberOfElements() noexcept = default;
-
-  }  // end of namespace math
-
-}  // end of namespace tfel
+}  // end of namespace tfel::math

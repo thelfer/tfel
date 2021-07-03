@@ -33,6 +33,7 @@ test_PROGRAMS = IndexingPoliciesTest             \
 		krigeage1D                               \
 		krigeage2D                               \
 		newton_raphson                           \
+		powell_dog_leg_newton_raphson            \
 		solve                                    \
 		fsarray                                  \
 		runtime_array                            \
@@ -104,6 +105,7 @@ invert2_SOURCES               = invert2.cxx
 tinymatrixsolve_SOURCES       = tinymatrixsolve.cxx
 tinymatrixsolve2_SOURCES      = tinymatrixsolve2.cxx
 newton_raphson_SOURCES        = newton_raphson.cxx       
+powell_dog_leg_newton_raphson_SOURCES = powell_dog_leg_newton_raphson.cxx       
 solve_SOURCES                 = solve.cxx                
 fsarray_SOURCES               = fsarray.cxx
 runtime_array_SOURCES         = runtime_array.cxx

@@ -20,9 +20,7 @@
 #include <memory>
 #include "TFEL/Check/TFELCheckConfig.hxx"
 
-namespace tfel {
-
-  namespace check {
+namespace tfel::check {
 
     // forward declaration
     struct PCILogDriver;
@@ -105,8 +103,6 @@ namespace tfel {
       std::vector<driver> drivers;
     };
 
-  }  // end of namespace check
-
-}  // end of namespace tfel
+  }  // end of namespace tfel::check
 
 #endif /* LIB_TFELCHECK_PCLOGGER_HXX */

@@ -23,9 +23,7 @@
 #include "TFEL/Check/Column.hxx"
 #include "TFEL/Check/Interpolation.hxx"
 
-namespace tfel {
-
-  namespace check {
+namespace tfel::check {
 
     struct TFELCHECK_VISIBILITY_EXPORT Comparison {
       Comparison();
@@ -92,8 +90,6 @@ namespace tfel {
                                     integration*/
     };
 
-  }  // end of namespace check
-
-}  // end of namespace tfel
+}  // end of namespace tfel::check
 
 #endif /* LIB_TFELCHECK_COMPARISON_HXX */

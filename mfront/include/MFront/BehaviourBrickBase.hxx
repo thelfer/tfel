@@ -16,11 +16,10 @@
 
 #include "MFront/AbstractBehaviourBrick.hxx"
 
-namespace tfel {
-  namespace glossary {
-    struct GlossaryEntry;
-  }  // end of namespace glossary
-}  // end of namespace tfel
+namespace tfel::glossary {
+  // forward declaration
+  struct GlossaryEntry;
+}  // end of namespace tfel::glossary
 
 namespace mfront {
 
@@ -209,6 +208,7 @@ namespace mfront {
     //! mechanical behaviour description of which the BehaviourBrick acts
     BehaviourDescription& bd;
   };  // end of struct BehaviourBrickBase
+
 }  // namespace mfront
 
 #endif /* LIB_MFRONT_BEHAVIOURBRICKBASE_H */

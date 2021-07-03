@@ -24,16 +24,12 @@ static void* wrapInitializeNumPy() {
 }
 #endif
 
-namespace tfel {
+namespace tfel::numpy {
 
-  namespace numpy {
+  void initializeNumPy() {
+    Py_Initialize();
+    boost::python::numpy::initialize();
+    ::wrapInitializeNumPy();
+  }  // end of initializeNumPy
 
-    void initializeNumPy() {
-      Py_Initialize();
-      boost::python::numpy::initialize();
-      ::wrapInitializeNumPy();
-    }  // end of initializeNumPy
-
-  }  // end of namespace numpy
-
-}  // end of namespace tfel
+}  // end of namespace tfel::numpy

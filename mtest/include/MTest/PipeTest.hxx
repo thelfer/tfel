@@ -26,12 +26,10 @@
 #include "MTest/PipeMesh.hxx"
 #include "MTest/SingleStructureScheme.hxx"
 
-namespace tfel {
-  namespace utilities {
-    // forward declaration
-    struct TextData;
-  }  // namespace utilities
-}  // namespace tfel
+namespace tfel::utilities {
+  // forward declaration
+  struct TextData;
+}  // namespace tfel::utilities
 
 namespace mtest {
 

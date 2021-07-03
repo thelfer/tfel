@@ -13,37 +13,33 @@
 
 #include "TFEL/Check/LinearInterpolation.hxx"
 
-namespace tfel {
+namespace tfel::check {
 
-  namespace check {
+  LinearInterpolation::LinearInterpolation() = default;
+  LinearInterpolation::LinearInterpolation(LinearInterpolation&&) = default;
+  LinearInterpolation::LinearInterpolation(const LinearInterpolation&) =
+      default;
+  LinearInterpolation& LinearInterpolation::operator=(LinearInterpolation&&) =
+      default;
+  LinearInterpolation& LinearInterpolation::operator=(
+      const LinearInterpolation&) = default;
+  LinearInterpolation::~LinearInterpolation() = default;
 
-    LinearInterpolation::LinearInterpolation() = default;
-    LinearInterpolation::LinearInterpolation(LinearInterpolation&&) = default;
-    LinearInterpolation::LinearInterpolation(const LinearInterpolation&) =
-        default;
-    LinearInterpolation& LinearInterpolation::operator=(LinearInterpolation&&) =
-        default;
-    LinearInterpolation& LinearInterpolation::operator=(
-        const LinearInterpolation&) = default;
-    LinearInterpolation::~LinearInterpolation() = default;
+  void LinearInterpolation::interpolate(const std::vector<double>& times,
+                                        const std::vector<double>& values) {
+    this->linear = Linearization(times, values);
+  }
 
-    void LinearInterpolation::interpolate(const std::vector<double>& times,
-                                          const std::vector<double>& values) {
-      this->linear = Linearization(times, values);
-    }
+  double LinearInterpolation::getValue(const double x) const {
+    return this->linear(x);
+  }
 
-    double LinearInterpolation::getValue(const double x) const {
-      return this->linear(x);
-    }
+  std::string LinearInterpolation::getType() const { return "linear"; }
 
-    std::string LinearInterpolation::getType() const { return "linear"; }
+  bool LinearInterpolation::isConform() const { return true; }
 
-    bool LinearInterpolation::isConform() const { return true; }
+  std::shared_ptr<Interpolation> LinearInterpolation::clone() const {
+    return std::make_shared<LinearInterpolation>(*this);
+  }
 
-    std::shared_ptr<Interpolation> LinearInterpolation::clone() const {
-      return std::make_shared<LinearInterpolation>(*this);
-    }
-
-  }  // end of namespace check
-
-}  // end of namespace tfel
+}  // end of namespace tfel::check

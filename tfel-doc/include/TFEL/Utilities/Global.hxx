@@ -17,39 +17,33 @@
 #include <map>
 #include <string>
 
-namespace tfel {
+namespace tfel::utilities {
 
-  namespace utilities {
+  std::map<std::string, std::map<std::string, std::string>>& getTypeMap();
 
-    std::map<std::string, std::map<std::string, std::string>>& getTypeMap();
+  std::map<std::string, std::string>& getTypeMap(const std::string& l);
 
-    std::map<std::string, std::string>& getTypeMap(const std::string& l);
+  std::map<std::string, std::map<std::string, std::string>>& getCategoriesMap();
 
-    std::map<std::string, std::map<std::string, std::string>>&
-    getCategoriesMap();
+  std::map<std::string, std::string>& getCategoriesMap(const std::string& l);
 
-    std::map<std::string, std::string>& getCategoriesMap(const std::string& l);
+  std::map<std::string, std::map<std::string, std::string>>& getKeysMap();
 
-    std::map<std::string, std::map<std::string, std::string>>& getKeysMap();
+  std::map<std::string, std::string>& getKeysMap(const std::string& l);
 
-    std::map<std::string, std::string>& getKeysMap(const std::string& l);
+  std::map<std::string, std::map<std::string, std::string>>&
+  getTranslationsMap();
 
-    std::map<std::string, std::map<std::string, std::string>>&
-    getTranslationsMap();
+  std::map<std::string, std::string>& getTranslationsMap(const std::string& l);
 
-    std::map<std::string, std::string>& getTranslationsMap(
-        const std::string& l);
+  std::string getTranslation(const std::string& s, const std::string& l);
 
-    std::string getTranslation(const std::string& s, const std::string& l);
+  std::string getKeyValue(const std::string&, const std::string&);
 
-    std::string getKeyValue(const std::string&, const std::string&);
+  std::string getCategory(const std::string&, const std::string&);
 
-    std::string getCategory(const std::string&, const std::string&);
+  std::string capitalize(const std::string&);
 
-    std::string capitalize(const std::string&);
-
-  }  // end of namespace utilities
-
-}  // end of namespace tfel
+}  // end of namespace tfel::utilities
 
 #endif /* LIB_TFEL_UTILITIES_GLOBAL_H */

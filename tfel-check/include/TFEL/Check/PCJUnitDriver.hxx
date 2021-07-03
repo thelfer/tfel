@@ -23,30 +23,26 @@
 #include "TFEL/Check/TFELCheckConfig.hxx"
 #include "TFEL/Check/PCILogDriver.hxx"
 
-namespace tfel {
+namespace tfel::check {
 
-  namespace check {
+  /*!
+   * \brief class in charg of build XML report for JUnit.
+   */
+  struct TFELCHECK_VISIBILITY_EXPORT PCJUnitDriver : public PCILogDriver {
+    PCJUnitDriver(const std::string& f = "");
+    void addMessage(const std::string&) override;
+    void addTestResult(const std::string&,
+                       const std::string&,
+                       const std::string&,
+                       const float,
+                       const bool,
+                       const std::string& = "") override;
+    void reportSkippedTest(const std::string&) override;
+    void terminate() override;
+    //! destructor
+    ~PCJUnitDriver() override;
+  };
 
-    /*!
-     * \brief class in charg of build XML report for JUnit.
-     */
-    struct TFELCHECK_VISIBILITY_EXPORT PCJUnitDriver : public PCILogDriver {
-      PCJUnitDriver(const std::string& f = "");
-      void addMessage(const std::string&) override;
-      void addTestResult(const std::string&,
-                         const std::string&,
-                         const std::string&,
-                         const float,
-                         const bool,
-                         const std::string& = "") override;
-      void reportSkippedTest(const std::string&) override;
-      void terminate() override;
-      //! destructor
-      ~PCJUnitDriver() override;
-    };
-
-  }  // end of namespace check
-
-}  // end of namespace tfel
+}  // end of namespace tfel::check
 
 #endif /* LIB_TFELCHECK_PCJUNITDRIVER_HXX */

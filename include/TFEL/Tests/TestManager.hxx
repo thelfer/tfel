@@ -28,9 +28,7 @@
 
 #define TFEL_TESTS_HAS_XML_OUTPUT 1
 
-namespace tfel {
-
-  namespace tests {
+namespace tfel::tests {
 
     /*!
      * \brief a singleton in charge of managing a collection of tests.
@@ -120,8 +118,6 @@ namespace tfel {
       std::map<std::string, TestSuitePtr> tests;
     };  // end of struct TestManager
 
-  }  // namespace tests
-
-}  // end of namespace tfel
+}  // end of namespace tfel::tests
 
 #endif /* LIB_TFEL_TESTS_TESTMANAGER_HXX */

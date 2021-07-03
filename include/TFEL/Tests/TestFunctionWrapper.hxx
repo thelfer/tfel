@@ -19,9 +19,7 @@
 #include "TFEL/Tests/Test.hxx"
 #include "TFEL/Tests/TestResult.hxx"
 
-namespace tfel {
-
-  namespace tests {
+namespace tfel::tests {
 
     /*!
      * \brief A simple wrapper around test functions.
@@ -63,9 +61,7 @@ namespace tfel {
       const std::string fname;
     };  // end of struct TestFunctionWrapper
 
-  }  // end of namespace tests
-
-}  // end of namespace tfel
+}  // end of namespace tfel::tests
 
 #include "TFEL/Tests/TestFunctionWrapper.ixx"
 

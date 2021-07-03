@@ -22,76 +22,72 @@
 #include "TFEL/Utilities/ArgumentParserBase.hxx"
 #include "TFEL/Utilities/GeneratorOptions.hxx"
 
-namespace tfel {
+namespace tfel::utilities {
 
-  namespace utilities {
+  struct TestDocMain : public ArgumentParserBase<TestDocMain> {
+    TestDocMain(const int, const char *const *const);
 
-    struct TestDocMain : public ArgumentParserBase<TestDocMain> {
-      TestDocMain(const int, const char *const *const);
+    void treatUnknownArgument() override;
 
-      void treatUnknownArgument() override;
+    virtual int execute();
 
-      virtual int execute();
+    ~TestDocMain() override;
 
-      ~TestDocMain() override;
+   private:
+    void registerArgumentCallBacks();
 
-     private:
-      void registerArgumentCallBacks();
+    std::string getVersionDescription() const override;
 
-      std::string getVersionDescription() const override;
+    std::string getUsageDescription() const override;
 
-      std::string getUsageDescription() const override;
+    void treatLaTeX();
 
-      void treatLaTeX();
+    void treatMarkdown();
 
-      void treatMarkdown();
+    void treatSplit();
 
-      void treatSplit();
+    void treatFragment();
 
-      void treatFragment();
+    void treatSrc();
 
-      void treatSrc();
+    void treatLang();
 
-      void treatLang();
+    void treatLogFile();
 
-      void treatLogFile();
+    void treatPrefix();
 
-      void treatPrefix();
+    void treatKeyFile();
 
-      void treatKeyFile();
+    void treatCategoryFile();
 
-      void treatCategoryFile();
+    void treatTranslationFile();
 
-      void treatTranslationFile();
+    void treatMTest();
 
-      void treatMTest();
+    std::string srcdir;
 
-      std::string srcdir;
+    std::string outputDirectory;
 
-      std::string outputDirectory;
+    std::string outputFile;
 
-      std::string outputFile;
+    std::string logFile;
 
-      std::string logFile;
+    std::ofstream output;
 
-      std::ofstream output;
+    std::ostream *log;
 
-      std::ostream *log;
+    std::shared_ptr<std::ostream> logptr;
 
-      std::shared_ptr<std::ostream> logptr;
+    GeneratorOptions opts;
 
-      GeneratorOptions opts;
+    bool latex = false;
 
-      bool latex = false;
+    bool markdown = false;
 
-      bool markdown = false;
+    bool mtest = false;
 
-      bool mtest = false;
+  };  // end of struct TestDocMain
 
-    };  // end of struct TestDocMain
-
-  }  // end of namespace utilities
-
-}  // end of namespace tfel
+}  // end of namespace tfel::utilities
 
 #endif /* LIB_TFEL_UTILITIES_TESTDOCMAIN_H */

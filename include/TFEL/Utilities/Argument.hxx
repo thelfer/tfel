@@ -17,55 +17,51 @@
 #include <string>
 #include "TFEL/Config/TFELConfig.hxx"
 
-namespace tfel {
+namespace tfel::utilities {
 
-  namespace utilities {
-
+  /*!
+   * \brief class holding a command line argument
+   *
+   * This class is used internally.
+   * \note inheriting from std::string shall be forbidden in most
+   *cases. Here its does not harm.
+   */
+  struct TFELUTILITIES_VISIBILITY_EXPORT Argument {
+    //! \param s : argument name
+    Argument(std::string);
+    //! \param s : argument name
+    Argument(const char* const s);
+    Argument(Argument&&);
+    Argument(const Argument&);
+    Argument& operator=(Argument&&);
+    Argument& operator=(const Argument&);
+    //! \return true if an option was given for this argument
+    bool hasOption() const noexcept;
+    //! convertion to string
+    std::string& as_string() noexcept;
+    //! convertion to string
+    const std::string& as_string() const noexcept;
+    //! convertion to string (return argument's name)
+    explicit operator const std::string&() const noexcept;
     /*!
-     * \brief class holding a command line argument
-     *
-     * This class is used internally.
-     * \note inheriting from std::string shall be forbidden in most
-     *cases. Here its does not harm.
+     * \brief set argument option
+     * \param o : option
      */
-    struct TFELUTILITIES_VISIBILITY_EXPORT Argument {
-      //! \param s : argument name
-      Argument(std::string);
-      //! \param s : argument name
-      Argument(const char* const s);
-      Argument(Argument&&);
-      Argument(const Argument&);
-      Argument& operator=(Argument&&);
-      Argument& operator=(const Argument&);
-      //! \return true if an option was given for this argument
-      bool hasOption() const noexcept;
-      //! convertion to string
-      std::string& as_string() noexcept;
-      //! convertion to string
-      const std::string& as_string() const noexcept;
-      //! convertion to string (return argument's name)
-      explicit operator const std::string&() const noexcept;
-      /*!
-       * \brief set argument option
-       * \param o : option
-       */
-      void setOption(const std::string& o);
-      //! \return argument option
-      const std::string& getOption() const noexcept;
-      //! destructor
-      ~Argument() noexcept;
+    void setOption(const std::string& o);
+    //! \return argument option
+    const std::string& getOption() const noexcept;
+    //! destructor
+    ~Argument() noexcept;
 
-     private:
-      //! argument name
-      std::string name;
-      //! argument option
-      std::string option;
-      //! flag telling if an option has been defined
-      bool isOptionSet = false;
-    };  // end of struct Argument
+   private:
+    //! argument name
+    std::string name;
+    //! argument option
+    std::string option;
+    //! flag telling if an option has been defined
+    bool isOptionSet = false;
+  };  // end of struct Argument
 
-  }  // end of namespace utilities
-
-}  // end of namespace tfel
+}  // end of namespace tfel::utilities
 
 #endif /* LIB_TFEL_UTILITIES_ARGUMENT_HXX */

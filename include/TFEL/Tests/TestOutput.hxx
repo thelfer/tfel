@@ -15,12 +15,9 @@
 #define LIB_TFEL_TESTS_TESTOUTPUT_HXX 1
 
 #include <string>
-
 #include "TFEL/Tests/TestResult.hxx"
 
-namespace tfel {
-
-  namespace tests {
+namespace tfel::tests {
 
     //! \brief base class for tests' outputs
     struct TestOutput {
@@ -47,8 +44,6 @@ namespace tfel {
       virtual ~TestOutput();
     };  // end of struct TestOutput
 
-  }  // namespace tests
-
-}  // end of namespace tfel
+}  // end of namespace tfel::tests
 
 #endif /* LIB_TFEL_TESTS_TESTOUTPUT_HXX */
