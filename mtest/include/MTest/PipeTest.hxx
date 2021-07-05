@@ -142,20 +142,24 @@ namespace mtest{
      */
     virtual void setElementType(const PipeMesh::ElementType);
     /*!
-     * \brief set the pipe modelling hypothesis
-     * \param[in] ph: pipe modelling hypothesis
+     * \brief set the pipe axial loading
+     * \param[in] al: axial loading
      */
     virtual void setAxialLoading(const AxialLoading);
+    //! \return the axial loading
+    virtual AxialLoading getAxialLoading() const;
     /*!
      * \brief set the inner pressure evolution
      * \param[in] p : pressure evolution
      */
     virtual void setInnerPressureEvolution(std::shared_ptr<Evolution>);
     /*!
-     * \brief set the loading type
-     * \param[in] t: loading type
+     * \brief set the radial loading type
+     * \param[in] t: radial loading type
      */
     virtual void setRadialLoading(const RadialLoading);
+    //! \return the radial loading type
+    virtual RadialLoading getRadialLoading() const;
     /*!
      * \brief set the inner radius evolution
      * \param[in] p : radius evolution
