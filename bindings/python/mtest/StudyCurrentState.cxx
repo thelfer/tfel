@@ -12,6 +12,7 @@
  */
 
 #include <boost/python.hpp>
+#include "MTest/Evolution.hxx"
 #include "MTest/StudyCurrentState.hxx"
 #include "MTest/StructureCurrentState.hxx"
 
@@ -33,6 +34,12 @@ static mtest::StructureCurrentState& getStructureCurrentState(
   return s.getStructureCurrentState(n);
 }
 
+static double StudyCurrentState_getEvolutionValue(mtest::StudyCurrentState& s,
+                                                  const std::string& n,
+                                                  const double t) {
+  return s.getEvolution(n)(t);
+}
+
 void declareStudyCurrentState() {
   using mtest::StudyCurrentState;
 
@@ -45,6 +52,7 @@ void declareStudyCurrentState() {
       .def_readonly("iterations", &StudyCurrentState::iterations)
       .def_readonly("subSteps", &StudyCurrentState::subSteps)
       .def_readonly("dt_1", &StudyCurrentState::dt_1)
+      .def("getEvolutionValue", &StudyCurrentState_getEvolutionValue)
       .def("getStructureCurrentState", getStructureCurrentState,
            boost::python::return_internal_reference<>());
 }

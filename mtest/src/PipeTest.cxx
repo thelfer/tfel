@@ -289,7 +289,7 @@ namespace mtest {
 
   PipeTest::PipeTest() {
     insert(*(this->evm), "r", 0);
-  }  // end of PipeTest::PipeTest
+  }  // end of PipeTest
 
   void PipeTest::setInnerRadius(const real r) {
     if (this->mesh.outer_radius > 0) {
@@ -301,7 +301,7 @@ namespace mtest {
     setMeshValue(this->mesh.inner_radius, "PipeTest::setInnerRadius",
                  "inner radius", r, true);
     insert(*(this->evm), "Ri", this->mesh.inner_radius);
-  }  // end of PipeTest::setInnerRadius
+  }  // end of setInnerRadius
 
   void PipeTest::setOuterRadius(const real r) {
     if (this->mesh.inner_radius > 0) {
@@ -313,12 +313,12 @@ namespace mtest {
     setMeshValue(this->mesh.outer_radius, "PipeTest::setOuterRadius",
                  "outer radius", r, false);
     insert(*(this->evm), "Re", this->mesh.outer_radius);
-  }  // end of PipeTest::setOuterRadius
+  }  // end of setOuterRadius
 
   void PipeTest::setNumberOfElements(const int r) {
     setMeshValue(this->mesh.number_of_elements, "PipeTest::setNumberOfElements",
                  "number of elements", r, false);
-  }  // end of PipeTest::setNumberOfElements
+  }  // end of setNumberOfElements
 
   const PipeMesh& PipeTest::getMesh() const { return this->mesh; }
 
@@ -340,7 +340,7 @@ namespace mtest {
   void PipeTest::setGaussPointPositionForEvolutionsEvaluation(
       const CurrentState& s) const {
     setCurrentPosition(*(this->evm), s.position);
-  }  // end of PipeTest::setGaussPointPositionForEvolutionsEvaluation
+  }  // end of setGaussPointPositionForEvolutionsEvaluation
 
   void PipeTest::addIntegralTest(const std::string& n,
                                  const tfel::utilities::TextData& d,
@@ -356,7 +356,7 @@ namespace mtest {
           "unsupported variable '" +
           n + "'");
     }
-  }  // end of PipeTest::addIntegralTest
+  }  // end of addIntegralTest
 
   void PipeTest::addProfileTest(const std::string& n,
                                 const tfel::utilities::TextData& d,
@@ -391,7 +391,7 @@ namespace mtest {
       this->tests.push_back(std::shared_ptr<UTest>(
           new InternalStateVariableProfileTest(n, p, d, c, e)));
     }
-  }  // end of PipeTest::addReferenceFileComparisonTest
+  }  // end of addReferenceFileComparisonTest
 
   void PipeTest::completeInitialisation() {
     checkValue(mesh.inner_radius, "inner radius");
@@ -483,7 +483,7 @@ namespace mtest {
         this->n0 = this->gseq->computeNumberOfMoles(this->P0, V, this->T0);
       }
     }
-  }  // end of PipeTest::completeInitialisation
+  }  // end of completeInitialisation
 
   PipeTest::size_type PipeTest::getNumberOfNodes() const {
     tfel::raise_if(this->mesh.number_of_elements <= 0,
@@ -508,7 +508,7 @@ namespace mtest {
 
   PipeTest::size_type PipeTest::getNumberOfUnknowns() const {
     return this->getNumberOfNodes() + 1;
-  }  // end of PipeTest::getNumberOfUnknowns
+  }  // end of getNumberOfUnknowns
 
   void PipeTest::setDisplacementEpsilon(const real e) {
     tfel::raise_if(this->options.eeps > 0,
@@ -518,7 +518,7 @@ namespace mtest {
                    "PipeTest::setDisplacementEpsilon: "
                    "invalid criterion value");
     this->options.eeps = e;
-  }  // end of PipeTest::setDisplacementEpsilon
+  }  // end of setDisplacementEpsilon
 
   void PipeTest::setResidualEpsilon(const real s) {
     tfel::raise_if(this->options.seps > 0,
@@ -629,17 +629,17 @@ namespace mtest {
         cs.Tref = ev(0);
       }
     }
-  }  // end of PipeTest::initializeCurrentState
+  }  // end of initializeCurrentState
 
   std::string PipeTest::name() const {
     return "pipe test";
-  }  // end of PipeTest::name
+  }  // end of name
 
   std::string PipeTest::classname() const { return "MTest"; }
 
   tfel::tests::TestResult PipeTest::execute() {
     return this->execute(true);
-  }  // end of PipeTest::execute
+  }  // end of execute
 
   tfel::tests::TestResult PipeTest::execute(const bool bInit) {
     auto report = [](const char* msg, const StudyCurrentState& s,
@@ -766,7 +766,7 @@ namespace mtest {
     wk.x.resize(psz);
     wk.r.resize(psz, 0.);
     wk.du.resize(psz, 0.);
-  }  // end of PipeTest::initializeWorkSpace
+  }  // end of initializeWorkSpace
 
   void PipeTest::prepare(StudyCurrentState& state,
                          const real t,
@@ -797,7 +797,7 @@ namespace mtest {
       auto& Pi = state.getEvolution("InnerPressure");
       Pi.setValue(t + dt, Pi(t));
     }
-  }  // end of PipeTest::prepare
+  }  // end of prepare
 
   void PipeTest::makeLinearPrediction(StudyCurrentState& state,
                                       const real dt) const {
@@ -810,7 +810,7 @@ namespace mtest {
         s.s1 = s.s0 + (s.s0 - s.s_1) * r;
       }
     }
-  }  // end of PipeTest::makeLinearPrediction
+  }  // end of makeLinearPrediction
 
   std::pair<bool, real> PipeTest::computePredictionStiffnessAndResidual(
       StudyCurrentState&,
@@ -995,7 +995,7 @@ namespace mtest {
       }
     }
     return {true, r_dt};
-  }  // end of PipeTest::computeStiffnessMatrixAndResidual
+  }  // end of computeStiffnessMatrixAndResidual
 
   void PipeTest::checkBehaviourConsistency(
       const std::shared_ptr<Behaviour>& bp) {
@@ -1029,7 +1029,7 @@ namespace mtest {
                      "the behaviour must be small strain");
     }
     this->hpp = true;
-  }  // en dof PipeTest::performSmallStrainAnalysis
+  }  // en dof performSmallStrainAnalysis
 
   static real PipeTest_getErrorNorm(
       const tfel::math::vector<real>& v,
@@ -1215,7 +1215,7 @@ namespace mtest {
       const real Fv = F(t + dt);
       F.setValue(t + dt, Fv - (ezz - iag) / dezz_dF);
     }
-  }  // end of PipeTest::computeLoadingCorrection
+  }  // end of computeLoadingCorrection
 
   void PipeTest::postConvergence(StudyCurrentState& state,
                                  const real t,
@@ -1238,7 +1238,7 @@ namespace mtest {
     for (const auto& test : this->tests) {
       test->check(state, t, dt, p);
     }
-  }  // end of PipeTest::postConvergence
+  }  // end of postConvergence
 
   std::pair<real, real> PipeTest::computeMinimumAndMaximumValues(
       const StudyCurrentState& state, const std::string& n) const {
@@ -1254,7 +1254,7 @@ namespace mtest {
       vmax = std::max(vmax, v);
     }
     return {vmin, vmax};
-  }  // end of PipeTest::computeMinimumAndMaximumValues
+  }  // end of computeMinimumAndMaximumValues
 
   void PipeTest::addOutput(const std::string& t, const std::string& n) {
     if (t == "minimum_value") {
@@ -1279,17 +1279,17 @@ namespace mtest {
           "- minimum_value\n"
           "- maximum_value\n");
     }
-  }  // end of PipeTest::addAdditionalOutput
+  }  // end of addAdditionalOutput
 
   real PipeTest::computeMinimumValue(const StudyCurrentState& state,
                                      const std::string& n) const {
     return this->computeMinimumAndMaximumValues(state, n).first;
-  }  // end of PipeTest::computeMaximumValue
+  }  // end of computeMaximumValue
 
   real PipeTest::computeMaximumValue(const StudyCurrentState& state,
                                      const std::string& n) const {
     return this->computeMinimumAndMaximumValues(state, n).second;
-  }  // end of PipeTest::computeMaximumValue
+  }  // end of computeMaximumValue
 
   void PipeTest::addProfile(const std::string& f,
                             const std::vector<std::string>& cn) {
@@ -1339,7 +1339,7 @@ namespace mtest {
       }
     }
     this->profiles.push_back(ph);
-  }  // end of PipeTest::addProfile
+  }  // end of addProfile
 
   void PipeTest::setModellingHypothesis(const std::string& h) {
     tfel::raise_if(h != "AxisymmetricalGeneralisedPlaneStrain",
@@ -1350,7 +1350,7 @@ namespace mtest {
                    "PipeTest::setModellingHypothesis: "
                    "modelling hypothesis already defined");
     this->hypothesis = ModellingHypothesis::fromString(h);
-  }  // end of PipeTest::setModellingHypothesis
+  }  // end of setModellingHypothesis
 
   void PipeTest::setDefaultModellingHypothesis() {
     tfel::raise_if(this->hypothesis != ModellingHypothesis::UNDEFINEDHYPOTHESIS,
@@ -1358,28 +1358,42 @@ namespace mtest {
                    "modelling hypothesis already defined");
     this->hypothesis =
         ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN;
-  }  // end of PipeTest::setDefaultModellingHypothesis
+  }  // end of setDefaultModellingHypothesis
 
   void PipeTest::setAxialLoading(const PipeTest::AxialLoading ph) {
     tfel::raise_if(this->al != DEFAULTAXIALLOADING,
                    "PipeTest::setAxialLoading: "
-                   "modelling hypothesis already defined");
+                   "axial loading already defined");
     this->al = ph;
-  }  // end of PipeTest::setAxialLoading
+  }  // end of setAxialLoading
 
+  PipeTest::AxialLoading PipeTest::getAxialLoading() const {
+    tfel::raise_if(this->al == DEFAULTAXIALLOADING,
+                   "PipeTest::setAxialLoading: "
+                   "axial loading undefined");
+    return this->al;
+  }  // end of setAxialLoading
+  
   void PipeTest::setRadialLoading(const PipeTest::RadialLoading t) {
     tfel::raise_if(this->rl != DEFAULTLOADINGTYPE,
                    "PipeTest::setRadialLoading: "
                    "loading type already defined");
     this->rl = t;
-  }  // end of PipeTest::setRadialLoading
+  }  // end of setRadialLoading
 
+  PipeTest::RadialLoading PipeTest::getRadialLoading() const {
+    tfel::raise_if(this->rl == DEFAULTLOADINGTYPE,
+                   "PipeTest::setRadialLoading: "
+                   "radial loading undefined");
+    return this->rl;
+  }  // end of getRadialLoading
+  
   void PipeTest::setElementType(const PipeMesh::ElementType ph) {
     tfel::raise_if(this->mesh.etype != PipeMesh::DEFAULT,
                    "PipeTest::setElementType: "
                    "element type already defined");
     this->mesh.etype = ph;
-  }  // end of PipeTest::setElementType
+  }  // end of setElementType
 
   void PipeTest::setInnerPressureEvolution(std::shared_ptr<Evolution> p) {
     auto throw_if = [](const bool c, const std::string& m) {
@@ -1393,14 +1407,14 @@ namespace mtest {
     throw_if(this->inner_pressure != nullptr,
              "inner pressure evolution already set");
     this->inner_pressure = p;
-  }  // end of PipeTest::setInnerPressureEvolution
+  }  // end of setInnerPressureEvolution
 
   void PipeTest::setOuterPressureEvolution(std::shared_ptr<Evolution> p) {
     tfel::raise_if(this->outer_pressure != nullptr,
                    "PipeTest::setOuterPressureEvolution: "
                    "outer pressure evolution already set");
     this->outer_pressure = p;
-  }  // end of PipeTest::setOuterPressureEvolution
+  }  // end of setOuterPressureEvolution
 
   void PipeTest::setAxialForceEvolution(std::shared_ptr<Evolution> f) {
     auto throw_if = [](const bool c, const std::string& m) {
@@ -1411,7 +1425,7 @@ namespace mtest {
              "only if the pipe modelling hypothesis is 'ImposedAxialForce'");
     throw_if(this->axial_force != nullptr, "axial force evolution already set");
     this->axial_force = f;
-  }  // end of PipeTest::setAxialForceEvolution
+  }  // end of setAxialForceEvolution
 
   void PipeTest::setAxialGrowthEvolution(std::shared_ptr<Evolution> f) {
     auto throw_if = [](const bool c, const std::string& m) {
@@ -1423,7 +1437,7 @@ namespace mtest {
     throw_if(this->axial_growth != nullptr,
              "axial growth evolution already set");
     this->axial_growth = f;
-  }  // end of PipeTest::setAxialGrowthEvolution
+  }  // end of setAxialGrowthEvolution
 
   void PipeTest::setOuterRadiusEvolution(std::shared_ptr<Evolution> e) {
     auto throw_if = [](const bool c, const std::string& m) {
@@ -1434,7 +1448,7 @@ namespace mtest {
              "only if the loading type is 'ImposedOuterRadius'");
     throw_if(this->orev != nullptr, "axial force evolution already set");
     this->orev = e;
-  }  // end of PipeTest::setOuterRadiusEvolution
+  }  // end of setOuterRadiusEvolution
 
   void PipeTest::setGasEquationOfState(const std::string& e) {
     auto throw_if = [](const bool c, const std::string& m) {
@@ -1446,7 +1460,7 @@ namespace mtest {
     throw_if(this->gseq != nullptr, "gas equation of state already defined");
     this->gseq = std::unique_ptr<GasEquationOfState>(
         new GasEquationOfState(e, *(this->evm)));
-  }  // end of PipeTest::setGasEquationOfState
+  }  // end of setGasEquationOfState
 
   void PipeTest::setFillingPressure(const real p) {
     auto throw_if = [](const bool c, const std::string& m) {
@@ -1459,7 +1473,7 @@ namespace mtest {
     throw_if(p < 0,
              "invalid  filling pressure value ('" + std::to_string(p) + "') ");
     this->P0 = p;
-  }  // end of PipeTest::setFillingPressure
+  }  // end of setFillingPressure
 
   void PipeTest::setFillingTemperature(const real T) {
     auto throw_if = [](const bool c, const std::string& m) {
@@ -1472,7 +1486,7 @@ namespace mtest {
     throw_if(T < 0, "invalid  filling temperature value ('" +
                         std::to_string(T) + "') ");
     this->T0 = T;
-  }  // end of PipeTest::setFillingTemperature
+  }  // end of setFillingTemperature
 
   void PipeTest::printOutput(const real t,
                              const StudyCurrentState& state,
@@ -1501,7 +1515,7 @@ namespace mtest {
       }
       this->out << '\n';
     }
-  }  // end of PipeTest::printOutput
+  }  // end of printOutput
 
   PipeTest::~PipeTest() = default;
 
