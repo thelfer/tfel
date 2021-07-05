@@ -48,6 +48,22 @@ This development was made to solve Issue #267 (see Section @sec:tfel:3.4.1:issue
 
 # Issues fixed
 
+## Ticket #269: Allow postprocessing of the inner pressure evolution in PipeTest when imposing the axial radius evolution in the `python` bindings
+
+When the evolution of the outer radius is imposed, the inner pressure evolution can now be retrieved using the following code:
+​
+~~~~{.python}
+p = s.getEvolutionValue("InnerPressure", t)
+~~~~
+​
+where `s` is an object of type `StudyCurrentState` and `t` the considered time.
+​
+This syntax can also be used to retrieve the "AxialForce" when the axial growth is imposed, as follows:
+​
+~~~~{.python}
+f = s.getEvolutionValue("AxialForce", t)
+~~~~
+
 ## Ticket #268: Missing methods in mtest.MTest for the comparison of the tangent operator to a numerical approximation
 
 The `MTest` executable allows to compare the tangent operator returned
