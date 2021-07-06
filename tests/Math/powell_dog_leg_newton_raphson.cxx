@@ -1,9 +1,9 @@
 /*!
- * \file   tests/Math/newton_raphson.cxx
+ * \file   tests/Math/powell_dog_leg_newton_raphson.cxx
  *
  * \brief
  * \author Thomas Helfer
- * \date   02 Aug 2006
+ * \date   02/07/2021
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence
@@ -23,15 +23,18 @@
 #include "TFEL/Tests/TestProxy.hxx"
 #include "TFEL/Tests/TestManager.hxx"
 #include "TFEL/Math/General/MathConstants.hxx"
-#include "TFEL/Math/TinyNewtonRaphsonSolver.hxx"
+#include "TFEL/Math/TinyPowellDogLegNewtonRaphsonSolver.hxx"
 
-struct NewtonRaphsonSolver
-    : public tfel::math::
-          TinyNewtonRaphsonSolver<2u, double, NewtonRaphsonSolver> {
-  NewtonRaphsonSolver() {
+struct PowellDogLegNewtonRaphsonSolver
+    : public tfel::math::TinyPowellDogLegNewtonRaphsonSolver<
+          2u,
+          double,
+          PowellDogLegNewtonRaphsonSolver> {
+  PowellDogLegNewtonRaphsonSolver() {
     this->zeros = {0., 0.};
     this->epsilon = 1.e-14;
     this->iterMax = 20;
+    this->powell_dogleg_trust_region_size = 0.25;
   }
 
   bool solve() { return this->solveNonLinearSystem(); }
@@ -54,15 +57,18 @@ struct NewtonRaphsonSolver
     return true;
   }  // end of computeResidual
 
-};  // end of struct NewtonRaphsonSolver
+};  // end of struct PowellDogLegNewtonRaphsonSolver
 
-struct NewtonRaphsonSolver2
-    : public tfel::math::
-          TinyNewtonRaphsonSolver<1u, double, NewtonRaphsonSolver2> {
-  NewtonRaphsonSolver2() {
-    this->zeros = {100};
+struct PowellDogLegNewtonRaphsonSolver2
+    : public tfel::math::TinyPowellDogLegNewtonRaphsonSolver<
+          1u,
+          double,
+          PowellDogLegNewtonRaphsonSolver2> {
+  PowellDogLegNewtonRaphsonSolver2() {
+    this->zeros = {10};
     this->epsilon = 1.e-14;
     this->iterMax = 20;
+    this->powell_dogleg_trust_region_size = 2;
   }
 
   bool solve() { return this->solveNonLinearSystem(); }
@@ -77,17 +83,18 @@ struct NewtonRaphsonSolver2
     J = 2 * x;
     return true;
   }  // end of computFdF
-};   // end of struct NewtonRaphsonSolver2
+};   // end of struct PowellDogLegNewtonRaphsonSolver2
 
-struct NewtonRaphsonSolver3
-    : public tfel::math::TinyNewtonRaphsonSolver<
+struct PowellDogLegNewtonRaphsonSolver3
+    : public tfel::math::TinyPowellDogLegNewtonRaphsonSolver<
           2u,
           double,
-          NewtonRaphsonSolver3> {
-  NewtonRaphsonSolver3() {
+          PowellDogLegNewtonRaphsonSolver3> {
+  PowellDogLegNewtonRaphsonSolver3() {
     this->zeros = {0.5, 0.5};
-    this->epsilon = 1.e-14;
+    this->epsilon = 1.e-12;
     this->iterMax = 20;
+    this->powell_dogleg_trust_region_size = 0.2;
   }
 
   bool solve() { return this->solveNonLinearSystem(); }
@@ -103,12 +110,14 @@ struct NewtonRaphsonSolver3
          -200 * x(0), 100.};
     return true;
   }  // end of computFdF
-};   // end of struct NewtonRaphsonSolver3
+};   // end of struct PowellDogLegNewtonRaphsonSolver3
 
-struct TinyNewtonRaphsonSolverTest final : public tfel::tests::TestCase {
-  TinyNewtonRaphsonSolverTest()
-      : tfel::tests::TestCase("TFEL/Math", "TinyNewtonRaphsonSolverTest") {
-  }  // end of TinyNewtonRaphsonSolverTest
+struct TinyPowellDogLegNewtonRaphsonSolverTest final
+    : public tfel::tests::TestCase {
+  TinyPowellDogLegNewtonRaphsonSolverTest()
+      : tfel::tests::TestCase("TFEL/Math",
+                              "TinyPowellDogLegNewtonRaphsonSolverTest") {
+  }  // end of TinyPowellDogLegNewtonRaphsonSolverTest
   tfel::tests::TestResult execute() override {
     this->test1();
     this->test2();
@@ -117,7 +126,7 @@ struct TinyNewtonRaphsonSolverTest final : public tfel::tests::TestCase {
   }  // end of execute
  private:
   void test1() {
-    auto nr = NewtonRaphsonSolver{};
+    auto nr = PowellDogLegNewtonRaphsonSolver{};
     TFEL_TESTS_ASSERT(nr.solve());
     const auto x = nr.getCurrentEstimate();
     TFEL_TESTS_ASSERT(std::abs(x(0) - 1) < 1e-14);
@@ -125,13 +134,14 @@ struct TinyNewtonRaphsonSolverTest final : public tfel::tests::TestCase {
   }
   void test2() {
     using namespace tfel::math;
-    auto nr = NewtonRaphsonSolver2{};
+    auto nr = PowellDogLegNewtonRaphsonSolver2{};
     TFEL_TESTS_ASSERT(nr.solve());
     const auto x = nr.getCurrentEstimate();
     TFEL_TESTS_ASSERT(std::abs(x - Cste<double>::sqrt2) < 1e-14);
   }
   void test3() {
-    auto nr = NewtonRaphsonSolver3{};
+    using namespace tfel::math;
+    auto nr = PowellDogLegNewtonRaphsonSolver3{};
     TFEL_TESTS_ASSERT(nr.solve());
     const auto x = nr.getCurrentEstimate();
     TFEL_TESTS_ASSERT(std::abs(x(0) - 1) < 1e-14);
@@ -139,13 +149,13 @@ struct TinyNewtonRaphsonSolverTest final : public tfel::tests::TestCase {
   }
 };
 
-TFEL_TESTS_GENERATE_PROXY(TinyNewtonRaphsonSolverTest,
-                          "TinyNewtonRaphsonSolverTest");
+TFEL_TESTS_GENERATE_PROXY(TinyPowellDogLegNewtonRaphsonSolverTest,
+                          "TinyPowellDogLegNewtonRaphsonSolverTest");
 
 /* coverity [UNCAUGHT_EXCEPT]*/
 int main() {
   auto& m = tfel::tests::TestManager::getTestManager();
   m.addTestOutput(std::cout);
-  m.addXMLTestOutput("TinyNewtonRaphsonSolver.xml");
+  m.addXMLTestOutput("TinyPowellDogLegNewtonRaphsonSolver.xml");
   return m.execute().success() ? EXIT_SUCCESS : EXIT_FAILURE;
 }

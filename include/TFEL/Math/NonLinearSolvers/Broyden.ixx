@@ -15,10 +15,7 @@
 #ifndef LIB_TFEL_MATH_MATH_BROYDENIXX
 #define LIB_TFEL_MATH_MATH_BROYDENIXX
 
-#ifdef TFEL_BROYDEN_VERBOSE_MODE
-#include <iostream>
-#endif /* LIB_TFEL_MATH_BROYDENIXX */
-
+#include "TFEL/Math/General/IEEE754.hxx"
 #include "TFEL/Math/tmatrix.hxx"
 #include "TFEL/Math/TinyMatrixSolve.hxx"
 
@@ -28,33 +25,32 @@ namespace tfel::math {
             typename T,
             const tvector<N, T> (*f)(const tvector<N, T>&)>
   std::pair<bool, tvector<N, T>> broyden(const tvector<N, T>& x0,
-                                         tmatrix<N, N, T>& A,
+                                         tmatrix<N, N, T>& J,
                                          const T e,
                                          const unsigned short n) {
-    using namespace std;
-    using namespace tfel::math;
-    tvector<N, T> x = x0;
-    tvector<N, T> vf = f(x);
+    auto x = x0;
+    auto vf = f(x);
     unsigned short i = 0;
-    while ((i < n) && (norm(vf) / N > e)) {
-#ifdef TFEL_BROYDEN_VERBOSE_MODE
-      cout << "iteration : " << i << endl;
-      cout << "x         : " << x << endl;
-      cout << "||f||     : " << norm(vf) << endl;
-#endif /* LIB_TFEL_MATH_BROYDENIXX */
-      tvector<N, T> s = -vf;
-      tmatrix<N, N, T> J = A;
-      TinyMatrixSolve<N, T>::exe(J, s);
-      x += s;
-      const tvector<N, T> vf2 = vf;
+    auto vf_1 = tfel::math::tvector<N, T>{};
+    auto c = tfel::math::tvector<N, T>{};
+    while ((i < n) && (norm(vf) > N * e)) {
+      if (i > 1) {
+        // update the jacobian
+        const tvector<N, T> t = J * c;
+        const auto nc = (c | c);
+        if (tfel::math::ieee754::fpclassify(nc) != FP_ZERO) {
+          J += ((vf - vf_1 - t) ^ c) / nc;
+        }
+      }
+      auto A = J;
+      c = -vf;
+      TinyMatrixSolve<N, T>::exe(A, c);
+      x += c;
+      vf_1 = vf;
       vf = f(x);
-      const tvector<N, T> y = vf - vf2;
-      J = A;
-      const tvector<N, T> t = -J * s;
-      A += ((y - t) ^ s) / (s | s);
       ++i;
     }
-    return pair<bool, tvector<N, T>>(i != n, x);
+    return std::pair<bool, tvector<N, T>>(i != n, x);
   }  // end of function broyden
 
   template <unsigned short N,
@@ -63,13 +59,7 @@ namespace tfel::math {
   std::pair<bool, tvector<N, T>> broyden(const tvector<N, T>& x0,
                                          const T e,
                                          const unsigned short n) {
-    using namespace std;
-    using namespace tfel::math;
-    tmatrix<N, N, T> A(0.);
-    unsigned short i;
-    for (i = 0; i != N; ++i) {
-      A(i, i) = 1.;
-    }
+    auto A = tmatrix<N, N, T>::Id();
     return broyden<N, T, f>(x0, A, e, n);
   }  // end of function broyden
 

@@ -61,6 +61,14 @@ namespace tfel::math {
     using type = VectorConcept<Type>;
   };
 
+  //! \brief a simple alias for backward compatibility with versions prior
+  //! to 4.0
+  template <typename VectorType>
+  using VectorTraits =
+      std::conditional_t<implementsVectorConcept<VectorType>(),
+                         MathObjectTraits<VectorType>,
+                         MathObjectTraits<tfel::meta::InvalidType>>;
+
 }  // end of namespace tfel::math
 
 #include "TFEL/Math/Vector/VectorConcept.ixx"

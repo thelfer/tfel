@@ -70,6 +70,14 @@ namespace tfel::math {
     using type = MatrixConcept<Type>;
   };
 
+  //! \brief a simple alias for backward compatibility with versions prior
+  //! to 4.0
+  template <typename MatrixType>
+  using MatrixTraits =
+      std::conditional_t<implementsMatrixConcept<MatrixType>(),
+                         MathObjectTraits<MatrixType>,
+                         MathObjectTraits<tfel::meta::InvalidType>>;
+
 }  // end of namespace tfel::math
 
 #include "TFEL/Math/Matrix/MatrixConcept.ixx"

@@ -16,62 +16,117 @@
 #undef NDEBUG
 #endif /* NDEBUG */
 
-#include <cstdlib>
 #include <cmath>
-
+#include <cstdlib>
+#include <iostream>
+#include "TFEL/Tests/TestCase.hxx"
+#include "TFEL/Tests/TestProxy.hxx"
+#include "TFEL/Tests/TestManager.hxx"
 #include "TFEL/Math/Broyden.hxx"
+#include "TFEL/Math/TinyBroydenSolver.hxx"
 
-#ifndef _MSC_VER
-#define BROYDEN_STATIC static
-#else
-#define BROYDEN_STATIC
-#endif
+struct BroydenSolver
+    : public tfel::math::
+          TinyBroydenSolver<2u, double, BroydenSolver> {
+  BroydenSolver() {
+    this->zeros = {1., 2.};
+    this->epsilon = 1.e-14;
+    this->iterMax = 20;
+    this->jacobian = {1, 2,  //
+                      2, 16};
+  }
 
-BROYDEN_STATIC const tfel::math::tvector<2, double> f(
-    const tfel::math::tvector<2, double>& x) {
-  using namespace tfel::math;
-  tvector<2, double> y;
-  y(0) = 1 + x(0) * (2 * x(0) - 4) - 2 * x(1) * x(1) * x(1);
-  y(1) = -4 + x(0) * x(0) * x(0) * x(0) + 4 * x(1) * (1 + x(1) * x(1) * x(1));
-  return y;
-}
+  bool solve() { return this->solveNonLinearSystem(); }
 
-BROYDEN_STATIC void test() {
-  using namespace std;
-  using namespace tfel::math;
-  tvector<2, double> res;
-  tvector<2, double> x0;
-  tvector<2, double> vf;
-  tmatrix<2, 2, double> A;
-  x0(0) = 1.5;
-  x0(1) = -0.5;
-  A(0, 0) = 4 * (x0(0) - 1);
-  A(0, 1) = -6 * x0(1) * x0(1);
-  A(1, 0) = 4 * x0(0) * x0(0) * x0(0);
-  A(1, 1) = 4 * (4 * x0(1) * x0(1) * x0(1) + 1);
-  res = broyden<2, double, f>(x0, A, 1.e-11, 20).second;
-  vf = f(res);
-  A(0, 0) = 4 * (res(0) - 1);
-  A(0, 1) = -6 * res(1) * res(1);
-  A(1, 0) = 4 * res(0) * res(0) * res(0);
-  A(1, 1) = 4 * (4 * res(1) * res(1) * res(1) + 1);
-}
+  auto getCurrentEstimate() const noexcept { return this->zeros; }
 
-BROYDEN_STATIC void test2() {
-  using namespace std;
-  using namespace tfel::math;
-  tvector<2, double> res;
-  tvector<2, double> x0;
-  tvector<2, double> vf;
-  x0(0) = 1.5;
-  x0(1) = -0.5;
-  res = broyden<2, double, f>(x0, 1.e-11, 20).second;
-  vf = f(res);
-}
+  //
+  bool computeResidual() noexcept {
+    auto& x = this->zeros;
+    this->fzeros = {x(0) + 2 * x(1) - 2, x(0) * x(0) + 4 * x(1) * x(1) - 4};
+    return true;
+  }  // end of computeResidual
+
+};  // end of struct BroydenSolver
+
+struct TinyBroydenSolverTest final : public tfel::tests::TestCase {
+  TinyBroydenSolverTest()
+      : tfel::tests::TestCase("TFEL/Math", "TinyBroydenSolverTest") {
+  }  // end of TinyBroydenSolverTest
+  tfel::tests::TestResult execute() override {
+    this->test1();
+    this->test2();
+    this->test3();
+    this->test4();
+    return this->result;
+  }  // end of execute
+ private:
+  static const tfel::math::tvector<2, double> f(
+      const tfel::math::tvector<2, double>& x) {
+    tfel::math::tvector<2, double> y;
+    y(0) = 1 + x(0) * (2 * x(0) - 4) - 2 * x(1) * x(1) * x(1);
+    y(1) = -4 + x(0) * x(0) * x(0) * x(0) + 4 * x(1) * (1 + x(1) * x(1) * x(1));
+    return y;
+  }
+  static const tfel::math::tvector<2, double> f2(
+      const tfel::math::tvector<2, double>& x) {
+    return {x(0) + 2 * x(1) - 2, x(0) * x(0) + 4 * x(1) * x(1) - 4};
+  }
+
+  void test1() {
+    using namespace tfel::math;
+    auto x0 = tvector<2u, double>{1.5, -0.5};
+    auto A = tmatrix<2u, 2u, double>{4 * (x0(0) - 1), -6 * x0(1) * x0(1),  //
+                                     4 * x0(0) * x0(0) * x0(0),
+                                     4 * (4 * x0(1) * x0(1) * x0(1) + 1)};
+    const auto [b, x] = broyden<2, double, f>(x0, A, 1.e-11, 20);
+    TFEL_TESTS_ASSERT(b);
+    const auto vf = f(x);
+    TFEL_TESTS_ASSERT(norm(vf) < 1e-11);
+    TFEL_TESTS_ASSERT(abs(x(0) - 1.5560974843220530275) < 1.e-11);
+    TFEL_TESTS_ASSERT(abs(x(1) + 0.57565076961884345) < 1.e-11);
+  }
+
+  void test2() {
+    using namespace tfel::math;
+    const auto x0 = tvector<2u,double>{1., 2.};
+    auto A = tmatrix<2u, 2u, double>{1, 2,  //
+                                     2, 16};
+    const auto [b, x] = broyden<2, double, f2>(x0, A, 1.e-15, 20);
+    TFEL_TESTS_ASSERT(b);
+    const auto vf = f2(x);
+    TFEL_TESTS_ASSERT(norm(vf) < 1.e-11);
+    TFEL_TESTS_ASSERT(abs(x(0)) < 1.e-11);
+    TFEL_TESTS_ASSERT(abs(x(1) - 1) < 1.e-11);
+  }
+
+  void test3() {
+    using namespace tfel::math;
+    const auto x0 = tvector<2u,double>{1.5, -0.5};
+    const auto [b, x] = broyden<2, double, f2>(x0, 1.e-11, 20);
+    TFEL_TESTS_ASSERT(b);
+    const auto vf = f2(x);
+    TFEL_TESTS_ASSERT(norm(vf) < 1.e-11);
+    TFEL_TESTS_ASSERT(abs(x(0)-2) < 1.e-11);
+    TFEL_TESTS_ASSERT(abs(x(1)) < 1.e-11);
+  }
+
+  void test4() {
+    BroydenSolver s;
+    TFEL_TESTS_ASSERT(s.solve());
+    const auto x = s.getCurrentEstimate();
+    TFEL_TESTS_ASSERT(abs(x(0)) < 1.e-11);
+    TFEL_TESTS_ASSERT(abs(x(1) - 1) < 1.e-11);
+  }
+};
+
+TFEL_TESTS_GENERATE_PROXY(TinyBroydenSolverTest,
+                          "TinyBroydenSolverTest");
 
 /* coverity [UNCAUGHT_EXCEPT]*/
 int main() {
-  test();
-  test2();
-  return EXIT_SUCCESS;
+  auto& m = tfel::tests::TestManager::getTestManager();
+  m.addTestOutput(std::cout);
+  m.addXMLTestOutput("TinyBroydenSolver.xml");
+  return m.execute().success() ? EXIT_SUCCESS : EXIT_FAILURE;
 }

@@ -36,7 +36,7 @@ namespace tfel::math {
       ++(this->iter);
     };
     while ((!converged) && (this->iter != this->iterMax)) {
-      const auto successful_evaluation = child.computeResidualAndJacobian();
+      const auto successful_evaluation = child.computeResidual();
       const auto error = [&successful_evaluation, &child] {
         if (successful_evaluation) {
           return child.computeResidualNorm();

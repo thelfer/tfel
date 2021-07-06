@@ -1,9 +1,8 @@
 /*!
- * \file   include/TFEL/Math/TinyNewtonRaphsonSolver.hxx
- *
+ * \file include/TFEL/Math/TinyPowellDogLegBroydenSolver.hxx
  * \brief
  * \author Thomas Helfer
- * \date   02 Aug 2006
+ * \date   02/07/2021
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence
@@ -12,8 +11,8 @@
  * project under specific licensing conditions.
  */
 
-#ifndef LIB_TFEL_MATH_TINYNEWTONRAPHSONSOLVER_HXX
-#define LIB_TFEL_MATH_TINYNEWTONRAPHSONSOLVER_HXX
+#ifndef LIB_TFEL_MATH_TINYPOWELLDOGLEGBROYDENSOLVER_HXX
+#define LIB_TFEL_MATH_TINYPOWELLDOGLEGBROYDENSOLVER_HXX
 
 #include <type_traits>
 #include "TFEL/Math/tvector.hxx"
@@ -24,7 +23,8 @@ namespace tfel::math {
 
   /*!
    * \brief A class based on the curiously recurring template pattern (CRTP)
-   * to solve system of non linear equations using the Newton-Raphson algorithm.
+   * to solve system of non linear equations using the
+   * Newton-Raphson algorithm coupled with the Powell' dog leg algorithm.
    * \tparam N: size of the system of non linear equations.
    * \tparam NumericType: numeric type.
    * \tparam Child: base class.
@@ -40,36 +40,44 @@ namespace tfel::math {
    * the data member `zeros`.
    */
   template <unsigned short N, typename NumericType, typename Child>
-  struct TinyNewtonRaphsonSolver
+  struct TinyPowellDogLegBroydenSolver
       : TinyNonLinearSolverBase<N, NumericType, Child> {
     //
     static_assert(N != 0, "invalid size");
     static_assert(std::is_floating_point_v<NumericType>,
                   "invalid numeric type");
     //! \brief default constructor
-    TinyNewtonRaphsonSolver() = default;
+    TinyPowellDogLegBroydenSolver() = default;
     //! \brief default constructor
-    TinyNewtonRaphsonSolver(TinyNewtonRaphsonSolver&) noexcept = default;
+    TinyPowellDogLegBroydenSolver(
+        TinyPowellDogLegBroydenSolver&) noexcept = default;
     //! \brief default constructor
-    TinyNewtonRaphsonSolver(TinyNewtonRaphsonSolver&&) noexcept = default;
+    TinyPowellDogLegBroydenSolver(
+        TinyPowellDogLegBroydenSolver&&) noexcept = default;
     //! \brief default constructor
-    TinyNewtonRaphsonSolver& operator=(TinyNewtonRaphsonSolver&&) noexcept =
-        default;
+    TinyPowellDogLegBroydenSolver& operator=(
+        TinyPowellDogLegBroydenSolver&&) noexcept = default;
     //! \brief default constructor
-    TinyNewtonRaphsonSolver& operator=(
-        const TinyNewtonRaphsonSolver&) noexcept = default;
+    TinyPowellDogLegBroydenSolver& operator=(
+        const TinyPowellDogLegBroydenSolver&) noexcept = default;
     //! \brief destructor
-    ~TinyNewtonRaphsonSolver() noexcept = default;
+    ~TinyPowellDogLegBroydenSolver() noexcept = default;
+    //! \brief update the jacobian matrix
+    void updateOrCheckJacobian();
     //! \brief compute a new correction to the unknowns
     bool computeNewCorrection();
 
    protected:
-    //! \brief jacobian matrix
+    //! \brief approximation of the invert of the jacobian matrix
     tmatrix<N, N, NumericType> jacobian;
+    //! \brief residual of the previous iterations
+    tvector<N, NumericType> fzeros_1;
+    //! \brief size of the trust region
+    NumericType powell_dogleg_trust_region_size;
   };
 
 }  // end of namespace tfel::math
 
-#include "TFEL/Math/NonLinearSolvers/TinyNewtonRaphsonSolver.ixx"
+#include "TFEL/Math/NonLinearSolvers/TinyPowellDogLegBroydenSolver.ixx"
 
-#endif /* LIB_TFEL_MATH_TINYNEWTONRAPHSONSOLVER_HXX */
+#endif /* LIB_TFEL_MATH_TINYPOWELLDOGLEGBROYDENSOLVER_HXX */

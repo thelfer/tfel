@@ -49,6 +49,7 @@ MFRONTS= DDIF2.mfront                                                      \
          ThermalNorton2.mfront                                             \
          ImplicitFiniteStrainNorton.mfront                                 \
          ImplicitNorton_Broyden.mfront                                     \
+         ImplicitNorton_PowellDogLegBroyden.mfront                         \
          ImplicitNorton_Broyden2.mfront                                    \
          ImplicitNorton_LevenbergMarquardt.mfront                          \
          ImplicitNorton_NumericallyComputedJacobianBlocks.mfront           \

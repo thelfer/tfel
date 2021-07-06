@@ -31,10 +31,10 @@ namespace tfel::math {
    * 1. Set the values of `epsilon` and `iterMax` data members and the initial
    * guess of the unknowns, i.e. by setting the value of the `zeros` data
    * member.
-   * 2. Provide a method called `computeResidualAndJacobian` which must computes
-   * the residual, i.e. the data member `fzeros` and the jacobian matrix, i.e.
-   * the data member `jacobian` using the current estimate of the solution, i.e.
-   * the data member `zeros`.
+   * 2. Provide a method called `computeResidual` which must computes
+   * the residual, i.e. the data member `fzeros`  using the current estimate of
+   * the solution, i.e. the data member `zeros`. When meaningful, this method
+   * may also compute the jacobian matrix, i.e. the data member `jacobian`.
    *
    * This class has numerous customisation points:
    * - `checkConvergence`: checks if convergence is achieved.
@@ -94,9 +94,8 @@ namespace tfel::math {
      * \brief update the jacobian matrix if required.
      *
      * This method can be used to compute the jacobian or part of the jacobian
-     * numerically. If the jacobian was computed analytically in
-     * `computeResidualAndJacobian`, this method can be used to compare it to a
-     * numerical approximation.
+     * numerically. If the jacobian was computed in `computeResidual`, this
+     * method can be used to compare it to a numerical approximation.
      */
     void updateOrCheckJacobian() {}
     /*!
@@ -124,8 +123,6 @@ namespace tfel::math {
      * \param[in] e: error
      */
     void reportStandardNewtonIteration(const NumericType) const {}
-    //! \brief jacobian matrix
-    tmatrix<N, N, NumericType> jacobian;
     //! \brief residual vector
     tvector<N, NumericType> fzeros;
     //! \brief current estimate of the unknowns

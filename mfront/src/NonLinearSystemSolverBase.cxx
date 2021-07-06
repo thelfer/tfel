@@ -25,6 +25,19 @@ namespace mfront {
     return {};
   }  // end of getSpecificHeaders
 
+  std::vector<std::string> NonLinearSystemSolverBase::getReservedNames() const {
+    return {"jacobian_error", "error", "iter", "iterMax", "converged"};
+  }  // end of NonLinearSystemSolverBase::getReservedNames
+
+  void NonLinearSystemSolverBase::initializeNumericalParameters(
+      std::ostream& os,
+      const BehaviourDescription& bd,
+      const Hypothesis h) const {
+    const auto sn = this->getExternalAlgorithmClassName(bd, h);
+    os << sn << "::epsilon = this->epsilon;\n"
+       << sn << "::iterMax = this->iterMax;\n";
+  }  // end of initializeNumericalParameters
+
   bool NonLinearSystemSolverBase::usesExternalAlgorithm() const {
     return false;
   }  // end of usesExternalAlgorithm
@@ -34,9 +47,6 @@ namespace mfront {
     return "";
   }  // end of getExternalAlgorithmClassName
 
-  std::vector<std::string> NonLinearSystemSolverBase::getReservedNames() const {
-    return {"jacobian_error", "error", "iter", "iterMax", "converged"};
-  }  // end of NonLinearSystemSolverBase::getReservedNames
 
   int NonLinearSystemSolverBase::getJacobianUpdatePeriod() const {
     return this->jacobianUpdatePeriod;

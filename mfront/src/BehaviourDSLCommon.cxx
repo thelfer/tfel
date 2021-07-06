@@ -3408,7 +3408,6 @@ namespace mfront {
     this->mb.registerMemberName(h, "Dt");
     this->reserveName("N");
     this->reserveName("Type");
-    this->reserveName("NumericType");
     this->reserveName("use_qt");
     this->reserveName("src1");
     this->reserveName("src2");
@@ -6234,6 +6233,10 @@ namespace mfront {
     this->checkBehaviourFile(os);
     const auto& d = this->mb.getBehaviourData(h);
     for (const auto& v : d.getParameters()) {
+      if (v.getAttribute<bool>(VariableDescription::variableDeclaredInBaseClass,
+                               false)) {
+        continue;
+      }
       if (!getDebugMode()) {
         if (v.lineNumber != 0u) {
           os << "#line " << v.lineNumber << " \"" << this->fd.fileName

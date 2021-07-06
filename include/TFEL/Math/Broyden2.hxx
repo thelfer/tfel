@@ -17,6 +17,7 @@
 
 #include <utility>
 #include "TFEL/Math/tvector.hxx"
+#include "TFEL/Math/matrix.hxx"
 
 namespace tfel::math {
 

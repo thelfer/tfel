@@ -30,6 +30,7 @@ namespace mfront {
     using namespace std;
     using TypeFlag = SupportedTypes::TypeFlag;
     static map<string, TypeFlag> flags = {
+        {"NumericType", SupportedTypes::SCALAR},
         {"real", SupportedTypes::SCALAR},
         {"frequency", SupportedTypes::SCALAR},
         {"stress", SupportedTypes::SCALAR},

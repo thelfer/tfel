@@ -16,9 +16,7 @@
 
 #include <iosfwd>
 #include <string>
-
 #include "TFEL/Material/ModellingHypothesis.hxx"
-
 #include "MFront/SupportedTypes.hxx"
 #include "MFront/NonLinearSystemSolver.hxx"
 
@@ -111,6 +109,9 @@ namespace mfront {
      */
     std::vector<std::string> getReservedNames() const override;
     std::vector<std::string> getSpecificHeaders() const override;
+    void initializeNumericalParameters(std::ostream&,
+                                       const BehaviourDescription&,
+                                       const Hypothesis) const override;
     bool usesExternalAlgorithm() const override;
     std::string getExternalAlgorithmClassName(const BehaviourDescription&,
                                               const Hypothesis) const override;

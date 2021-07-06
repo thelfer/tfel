@@ -1902,9 +1902,14 @@ include/TFEL/Math/NonLinearSolvers/LevenbergMarquardt.ixx -text
 include/TFEL/Math/NonLinearSolvers/LevenbergMarquardtFunctionWrapper.hxx -text
 include/TFEL/Math/NonLinearSolvers/LevenbergMarquardtFunctionWrapper.ixx -text
 include/TFEL/Math/NonLinearSolvers/ScalarNewtonRaphson.ixx -text
+include/TFEL/Math/NonLinearSolvers/TinyBroyden2Solver.ixx -text
+include/TFEL/Math/NonLinearSolvers/TinyBroydenSolver.ixx -text
 include/TFEL/Math/NonLinearSolvers/TinyNewtonRaphsonSolver.ixx -text
 include/TFEL/Math/NonLinearSolvers/TinyNonLinearSolverBase.hxx -text
 include/TFEL/Math/NonLinearSolvers/TinyNonLinearSolverBase.ixx -text
+include/TFEL/Math/NonLinearSolvers/TinyPowellDogLegAlgorithmBase.hxx -text
+include/TFEL/Math/NonLinearSolvers/TinyPowellDogLegBroydenSolver.ixx -text
+include/TFEL/Math/NonLinearSolvers/TinyPowellDogLegNewtonRaphsonSolver.ixx -text
 include/TFEL/Math/Parser/BinaryFunction.hxx -text
 include/TFEL/Math/Parser/BinaryFunction.ixx -text
 include/TFEL/Math/Parser/BinaryOperator.hxx -text
@@ -2064,9 +2069,13 @@ include/TFEL/Math/Tensor/TensorTransposeExpr.hxx -text
 include/TFEL/Math/Tensor/TensorViewFromStensor.hxx -text
 include/TFEL/Math/Tensor/tensor.ixx -text
 include/TFEL/Math/Tensor/tensorResultType.hxx -text
+include/TFEL/Math/TinyBroyden2Solver.hxx -text
+include/TFEL/Math/TinyBroydenSolver.hxx -text
 include/TFEL/Math/TinyMatrixInvert.hxx -text
 include/TFEL/Math/TinyMatrixSolve.hxx -text
 include/TFEL/Math/TinyNewtonRaphsonSolver.hxx -text
+include/TFEL/Math/TinyPowellDogLegBroydenSolver.hxx -text
+include/TFEL/Math/TinyPowellDogLegNewtonRaphsonSolver.hxx -text
 include/TFEL/Math/Vector/VectorConcept.hxx -text
 include/TFEL/Math/Vector/VectorConcept.ixx -text
 include/TFEL/Math/Vector/VectorConceptOperations.hxx -text
@@ -3048,6 +3057,7 @@ mfront/tests/behaviours/ImplicitNorton_Broyden.mfront -text
 mfront/tests/behaviours/ImplicitNorton_Broyden2.mfront -text
 mfront/tests/behaviours/ImplicitNorton_LevenbergMarquardt.mfront -text
 mfront/tests/behaviours/ImplicitNorton_NumericallyComputedJacobianBlocks.mfront -text
+mfront/tests/behaviours/ImplicitNorton_PowellDogLegBroyden.mfront -text
 mfront/tests/behaviours/ImplicitOrthotropicCreep.mfront -text
 mfront/tests/behaviours/ImplicitOrthotropicCreep2.mfront -text
 mfront/tests/behaviours/ImplicitOrthotropicCreep3.mfront -text
@@ -7312,6 +7322,7 @@ tests/Math/parser6.cxx -text
 tests/Math/parser7.cxx -text
 tests/Math/parser8.cxx -text
 tests/Math/parser9.cxx -text
+tests/Math/powell_dog_leg_newton_raphson.cxx -text
 tests/Math/power.cxx -text
 tests/Math/promote.cxx -text
 tests/Math/qr.cxx -text

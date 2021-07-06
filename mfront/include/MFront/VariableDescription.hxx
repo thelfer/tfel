@@ -32,14 +32,23 @@ namespace mfront {
   //! \brief structure standing for a standard (non static) variable
   struct MFRONT_VISIBILITY_EXPORT VariableDescription
       : public VariableDescriptionBase {
-    //! standard attribute name
+    //! \brief standard attribute name
     static const char* const depth;
-    //! standard attribute name
+    //! \brief standard attribute name
     static const char* const initialValue;
-    //! standard attribute name
+    //! \brief standard attribute name
     static const char* const defaultValue;
-    //! error normalisation factor
+    //! \brief error normalisation factor
     static const char* const errorNormalisationFactor;
+    /*!
+     * \brief attribute stating that a variable has already been declared in a
+     * based class.
+     *
+     * This attribute has been introduced for parameters corresponding to
+     * numerical parameters declared in base classes describing the resolution
+     * algorithms.
+     */
+    static const char* const variableDeclaredInBaseClass;
     //! \brief default constructor
     VariableDescription();
     //! \brief copy constructor

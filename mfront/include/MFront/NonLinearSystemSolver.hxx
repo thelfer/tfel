@@ -46,6 +46,15 @@ namespace mfront {
      */
     virtual std::string getExternalAlgorithmClassName(
         const BehaviourDescription&, const Hypothesis) const = 0;
+    /*!
+     * \brief initialize numerical parameters for the behaviour parameters
+     * \param[in] os: output stream
+     * \param[in] bd: behaviour description
+     * \param[in] h: modelling hypothesis
+     */
+    virtual void initializeNumericalParameters(std::ostream&,
+                                               const BehaviourDescription&,
+                                               const Hypothesis) const = 0;
     //! \return the header to be included
     virtual std::vector<std::string> getSpecificHeaders() const = 0;
     //! \return the reserved names

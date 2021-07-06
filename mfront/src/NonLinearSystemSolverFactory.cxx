@@ -45,22 +45,22 @@ namespace mfront {
 
   NonLinearSystemSolverFactory::NonLinearSystemSolverFactory() {
     this->registerSolver("NewtonRaphson",
-                         buildSolverConstructor<MFrontNewtonRaphsonSolver>);
+                         buildSolverConstructor<NewtonRaphsonSolver>);
     this->registerSolver(
         "NewtonRaphson_NumericalJacobian",
-        buildSolverConstructor<MFrontNewtonRaphsonNumericalJacobianSolver>);
+        buildSolverConstructor<NewtonRaphsonNumericalJacobianSolver>);
     this->registerSolver(
         "PowellDogLeg_NewtonRaphson",
-        buildSolverConstructor<MFrontPowellDogLegNewtonRaphsonSolver>);
+        buildSolverConstructor<PowellDogLegNewtonRaphsonSolver>);
     this->registerSolver(
         "PowellDogLeg_NewtonRaphson_NumericalJacobian",
         buildSolverConstructor<
-            MFrontPowellDogLegNewtonRaphsonNumericalJacobianSolver>);
+            PowellDogLegNewtonRaphsonNumericalJacobianSolver>);
     this->registerSolver("Broyden",
-                         buildSolverConstructor<MFrontBroydenSolver>);
+                         buildSolverConstructor<BroydenSolver>);
     this->registerSolver(
         "PowellDogLeg_Broyden",
-        buildSolverConstructor<MFrontPowellDogLegBroydenSolver>);
+        buildSolverConstructor<PowellDogLegBroydenSolver>);
     this->registerSolver("Broyden2",
                          buildSolverConstructor<SecondBroydenSolver>);
     this->registerSolver("LevenbergMarquardt",

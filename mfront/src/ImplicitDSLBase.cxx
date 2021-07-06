@@ -52,11 +52,8 @@ namespace mfront {
     this->reserveName("perturbatedSystemEvaluation");
     // additional reserve name
     this->reserveName("vect_e");
-    this->reserveName("zeros");
     this->reserveName("tzeros");
     this->reserveName("zeros_1");
-    this->reserveName("fzeros");
-    this->reserveName("jacobian");
     this->reserveName("jacobian_invert");
     this->reserveName("njacobian");
     this->reserveName("partial_jacobian");
@@ -70,6 +67,9 @@ namespace mfront {
     this->reserveName("getPartialJacobianInvert");
     this->reserveName("GetPartialJacobianInvert");
     this->reserveName("TinyMatrixSolve");
+    this->mb.registerMemberName(uh, "zeros");
+    this->mb.registerMemberName(uh, "fzeros");
+    this->mb.registerMemberName(uh, "jacobian");
     this->mb.registerMemberName(uh, "computePartialJacobianInvert");
     this->mb.registerMemberName(uh, "computeNumericalJacobian");
     this->mb.registerMemberName(uh, "additionalConvergenceChecks");
@@ -473,7 +473,7 @@ namespace mfront {
           "Theta value must be positive and smaller than 1.");
     }
     this->readSpecifiedToken("ImplicitDSLBase::treatTheta", ";");
-    VariableDescription tv("real", "\u03B8", "theta", 1u, 0u);
+    VariableDescription tv("NumericType", "\u03B8", "theta", 1u, 0u);
     tv.description = "theta value used by the implicit scheme";
     this->mb.addParameter(h, tv, BehaviourData::ALREADYREGISTRED);
     this->mb.setParameterDefaultValue(h, "theta", theta);
@@ -481,7 +481,7 @@ namespace mfront {
   }  // end of treatTheta
 
   void ImplicitDSLBase::treatEpsilon() {
-    const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+    const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     this->checkNotEndOfFile("ImplicitDSLBase::treatEpsilon",
                             "Cannot read epsilon value.");
     const auto epsilon = this->readDouble();
@@ -490,12 +490,12 @@ namespace mfront {
                               "Epsilon value must be positive.");
     }
     this->readSpecifiedToken("ImplicitDSLBase::treatEpsilon", ";");
-    VariableDescription e("real", "\u03B5", "epsilon", 1u, 0u);
+    VariableDescription e("NumericType", "\u03B5", "epsilon", 1u, 0u);
     e.description =
         "value used to stop the iteration of the implicit algorithm";
-    this->mb.addParameter(h, e, BehaviourData::ALREADYREGISTRED);
-    this->mb.setParameterDefaultValue(h, "epsilon", epsilon);
-    this->mb.setEntryName(h, "epsilon", "epsilon");
+    this->mb.addParameter(uh, e, BehaviourData::ALREADYREGISTRED);
+    this->mb.setParameterDefaultValue(uh, "epsilon", epsilon);
+    this->mb.setEntryName(uh, "epsilon", "epsilon");
   }  // ImplicitDSLBase::treatEpsilon
 
   void ImplicitDSLBase::treatAdditionalConvergenceChecks() {
@@ -521,7 +521,7 @@ namespace mfront {
         "ImplicitDSLBase::"
         "treatPerturbationValueForNumericalJacobianComputation",
         ";");
-    VariableDescription e("real", "numerical_jacobian_epsilon", 1u, 0u);
+    VariableDescription e("NumericType", "numerical_jacobian_epsilon", 1u, 0u);
     e.description =
         "perturbation value used to compute a finite difference approximation "
         "of the jacobian";
@@ -1116,7 +1116,7 @@ namespace mfront {
     }
     // creating default parameters if not explicitely specified by the user
     if (!this->mb.hasParameter(uh, "epsilon")) {
-      VariableDescription e("real", "\u03B5", "epsilon", 1u, 0u);
+      VariableDescription e("NumericType", "\u03B5", "epsilon", 1u, 0u);
       e.description =
           "value used to stop the iteration of the implicit algorithm";
       this->mb.addParameter(uh, e, BehaviourData::ALREADYREGISTRED);
@@ -1124,7 +1124,7 @@ namespace mfront {
       this->mb.setParameterDefaultValue(uh, "epsilon", 1.e-8);
     }
     if (!this->mb.hasParameter(uh, "theta")) {
-      VariableDescription tv("real", "\u03B8", "theta", 1u, 0u);
+      VariableDescription tv("NumericType", "\u03B8", "theta", 1u, 0u);
       tv.description = "theta value used by the implicit scheme";
       this->mb.addParameter(uh, tv, BehaviourData::ALREADYREGISTRED);
       this->mb.setEntryName(uh, "theta", "theta");
@@ -1138,7 +1138,7 @@ namespace mfront {
       if (!this->mb.hasParameter(uh, nje)) {
         const auto eps = 0.1 * this->mb.getFloattingPointParameterDefaultValue(
                                    uh, "epsilon");
-        VariableDescription v("real", nje, 1u, 0u);
+        VariableDescription v("NumericType", nje, 1u, 0u);
         v.description =
             "perturbation value used to compute a numerical "
             "approximation of the jacobian";
@@ -2287,10 +2287,8 @@ namespace mfront {
                                              BehaviourData::Integrator);
     }
     if (this->solver->usesExternalAlgorithm()) {
-      const auto sn = this->solver->getExternalAlgorithmClassName(this->mb, h);
-      os << sn << "::epsilon = this->epsilon;\n"
-         << sn << "::iterMax = this->iterMax;\n"
-         << "if(!this->solveNonLinearSystem()){\n";
+      this->solver->initializeNumericalParameters(os, this->mb, h);
+      os << "if(!this->solveNonLinearSystem()){\n";
       if (this->mb.useQt()) {
         os << "return MechanicalBehaviour<" << btype
            << ",hypothesis, NumericType, use_qt>::FAILURE;\n";
@@ -2385,7 +2383,7 @@ namespace mfront {
     os << "} // end of " << this->mb.getClassName() << "::integrate\n\n";
     //
     if (this->solver->usesExternalAlgorithm()) {
-      os << "bool computeResidualAndJacobian(){\n";
+      os << "bool computeResidual(){\n";
       if (this->mb.hasCode(h, BehaviourData::ComputeThermodynamicForces)) {
         os << "this->computeThermodynamicForces();\n";
       }
@@ -2413,12 +2411,12 @@ namespace mfront {
          << " *\n"
          << " * This method can be used to compute the jacobian or part "
          << " * of the jacobian numerically. If the jacobian was computed\n"
-         << " * analytically in `computeResidualAndJacobian`, this method "
-         << " * can be used to compare it to a numerical approximation.\n"
+         << " * in `computeResidual`, this method can be used to compare it "
+         << " * to a numerical approximation.\n"
          << " */\n"
          << "void updateOrCheckJacobian(){\n";
-    if (this->solver->requiresNumericalJacobian()) {
-      os << "this->computeNumericalJacobian(this->jacobian);\n";
+      if (this->solver->requiresNumericalJacobian()) {
+        os << "this->computeNumericalJacobian(this->jacobian);\n";
     } else {
       NonLinearSystemSolverBase::writeEvaluateNumericallyComputedBlocks(os, mb,
                                                                         h);

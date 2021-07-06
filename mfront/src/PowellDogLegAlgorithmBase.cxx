@@ -53,8 +53,8 @@ namespace mfront {
           "ImplicitDSLBase::treatPowellDogLegTrustRegionSize", ";", current,
           pe);
       mb.addParameter(
-          h, VariableDescription("real", "powell_dogleg_trust_region_size", 1u,
-                                 0u));
+          h, VariableDescription("NumericType",
+                                 "powell_dogleg_trust_region_size", 1u, 0u));
       mb.setParameterDefaultValue(h, "powell_dogleg_trust_region_size",
                                   pdl_trs);
       return {true, current};
@@ -68,11 +68,17 @@ namespace mfront {
     const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     if (!mb.hasParameter(h, "powell_dogleg_trust_region_size")) {
       mb.addParameter(
-          h, VariableDescription("real", "powell_dogleg_trust_region_size", 1u,
-                                 0u));
+          h, VariableDescription("NumericType",
+                                 "powell_dogleg_trust_region_size", 1u, 0u));
       mb.setParameterDefaultValue(h, "powell_dogleg_trust_region_size", 1.e-4);
     }
   }  // end of PowellDogLegAlgorithmBase::completeVariableDeclaration
+
+  void PowellDogLegAlgorithmBase::initializeNumericalParameters(
+      std::ostream& os, const std::string& n) {
+    const auto radius = "powell_dogleg_trust_region_size";
+    os << n << "::" << radius << "= this->" << radius << ";\n";
+  }  // end of initializeNumericalParameters
 
   void PowellDogLegAlgorithmBase::writePowellDogLegStep(
       std::ostream& out,

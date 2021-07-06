@@ -1,9 +1,8 @@
 /*!
- * \file   include/TFEL/Math/TinyNewtonRaphsonSolver.hxx
- *
+ * \file   TinyBroydenSolver.hxx
  * \brief
  * \author Thomas Helfer
- * \date   02 Aug 2006
+ * \date   05/07/2021
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence
@@ -12,10 +11,9 @@
  * project under specific licensing conditions.
  */
 
-#ifndef LIB_TFEL_MATH_TINYNEWTONRAPHSONSOLVER_HXX
-#define LIB_TFEL_MATH_TINYNEWTONRAPHSONSOLVER_HXX
+#ifndef LIB_TFEL_MATH_TINYBROYDENSOLVER_HXX
+#define LIB_TFEL_MATH_TINYBROYDENSOLVER_HXX
 
-#include <type_traits>
 #include "TFEL/Math/tvector.hxx"
 #include "TFEL/Math/tmatrix.hxx"
 #include "TFEL/Math/NonLinearSolvers/TinyNonLinearSolverBase.hxx"
@@ -24,7 +22,7 @@ namespace tfel::math {
 
   /*!
    * \brief A class based on the curiously recurring template pattern (CRTP)
-   * to solve system of non linear equations using the Newton-Raphson algorithm.
+   * to solve system of non linear equations using the Broyden algorithm.
    * \tparam N: size of the system of non linear equations.
    * \tparam NumericType: numeric type.
    * \tparam Child: base class.
@@ -34,42 +32,43 @@ namespace tfel::math {
    * 1. Set the values of `epsilon` and `iterMax` data members and the initial
    * guess of the unknowns, i.e. by setting the value of the `zeros` data
    * member.
-   * 2. Provide a method called `computeResidual` which must computes
-   * the residual, i.e. the data member `fzeros` and the jacobian matrix, i.e.
-   * the data member `jacobian` using the current estimate of the solution, i.e.
-   * the data member `zeros`.
+   * 2. Initialize the jacobian matrix, i.e. the jacobian data member
+   * 3. Provide a method called `computeResidual` which must computes
+   * the residual, i.e. the data member `fzeros` using the current estimate of
+   * the solution, i.e. the data member `zeros`.
    */
   template <unsigned short N, typename NumericType, typename Child>
-  struct TinyNewtonRaphsonSolver
-      : TinyNonLinearSolverBase<N, NumericType, Child> {
+  struct TinyBroydenSolver : TinyNonLinearSolverBase<N, NumericType, Child> {
     //
     static_assert(N != 0, "invalid size");
     static_assert(std::is_floating_point_v<NumericType>,
                   "invalid numeric type");
     //! \brief default constructor
-    TinyNewtonRaphsonSolver() = default;
+    TinyBroydenSolver() = default;
     //! \brief default constructor
-    TinyNewtonRaphsonSolver(TinyNewtonRaphsonSolver&) noexcept = default;
+    TinyBroydenSolver(TinyBroydenSolver&) noexcept = default;
     //! \brief default constructor
-    TinyNewtonRaphsonSolver(TinyNewtonRaphsonSolver&&) noexcept = default;
+    TinyBroydenSolver(TinyBroydenSolver&&) noexcept = default;
     //! \brief default constructor
-    TinyNewtonRaphsonSolver& operator=(TinyNewtonRaphsonSolver&&) noexcept =
-        default;
+    TinyBroydenSolver& operator=(TinyBroydenSolver&&) noexcept = default;
     //! \brief default constructor
-    TinyNewtonRaphsonSolver& operator=(
-        const TinyNewtonRaphsonSolver&) noexcept = default;
+    TinyBroydenSolver& operator=(const TinyBroydenSolver&) noexcept = default;
     //! \brief destructor
-    ~TinyNewtonRaphsonSolver() noexcept = default;
+    ~TinyBroydenSolver() noexcept = default;
+    //! \brief update the jacobian matrix
+    void updateOrCheckJacobian();
     //! \brief compute a new correction to the unknowns
     bool computeNewCorrection();
 
    protected:
+    //! \brief residual of the previous iterations
+    tvector<N, NumericType> fzeros_1;
     //! \brief jacobian matrix
     tmatrix<N, N, NumericType> jacobian;
   };
 
 }  // end of namespace tfel::math
 
-#include "TFEL/Math/NonLinearSolvers/TinyNewtonRaphsonSolver.ixx"
+#include "TFEL/Math/NonLinearSolvers/TinyBroydenSolver.ixx"
 
-#endif /* LIB_TFEL_MATH_TINYNEWTONRAPHSONSOLVER_HXX */
+#endif /* LIB_TFEL_MATH_TINYBROYDENSOLVER_HXX */

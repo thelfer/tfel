@@ -1,0 +1,70 @@
+@DSL Implicit;
+@Behaviour ImplicitNorton_PowellDogLegBroyden;
+@Algorithm PowellDogLeg_Broyden;
+@Author Helfer Thomas;
+@Date   21 sep 2008;
+@Description{
+  "The norton law integrated using "
+  "an implicit scheme."
+  "The non linear system is solved "
+  "using Broyden Algorithm"
+}
+
+@MaterialProperty stress young;
+young.setGlossaryName("YoungModulus");
+@MaterialProperty real nu;
+nu.setGlossaryName("PoissonRatio");
+
+@LocalVariable real lambda;
+@LocalVariable real mu;
+
+@StateVar real p;
+p.setGlossaryName("EquivalentViscoplasticStrain");
+
+/* Initialize Lame coefficients */
+@InitLocalVariables{
+  lambda = computeLambda(young,nu);
+  mu = computeMu(young,nu);
+} // end of @InitLocalVars
+
+@InitJacobian{
+  computeNumericalJacobian(this->jacobian);
+}
+
+@IsTangentOperatorSymmetric true;
+@TangentOperator{
+  computeNumericalJacobian(this->jacobian);
+  if((smt==ELASTIC)||(smt==SECANTOPERATOR)){
+     computeAlteredElasticStiffness<hypothesis,Type>::exe(Dt,lambda,mu);
+  } else if (smt==CONSISTENTTANGENTOPERATOR){
+    StiffnessTensor De;
+    Stensor4 Je;
+    computeUnalteredElasticStiffness<N,Type>::exe(De,lambda,mu);
+    getPartialJacobianInvert(Je);
+    Dt = De*Je;
+  } else {
+    return false;
+  }
+}
+
+@ComputeStress{
+  sig = lambda*trace(eel)*Stensor::Id()+2*mu*eel;
+} // end of @ComputeStresss
+
+@Integrator{
+  constexpr const real cste      = real{3}/real{2};
+  constexpr const real one_third = real{1}/real{3};
+  static const Stensor4 M(Stensor4::Id()-one_third*(Stensor::Id()^Stensor::Id()));
+  constexpr real A = 8.e-67;
+  constexpr real E = 8.2;
+  const real sigeq = sigmaeq(sig);
+  const real tmp = A*pow(sigeq,E-1.);
+  real inv_sigeq(0);
+  Stensor  n(0.);
+  if(sigeq > 1.){
+    inv_sigeq = 1/sigeq;
+  }
+  n     = cste*deviator(sig)*inv_sigeq;
+  feel  += dp*n-deto;
+  fp    -= tmp*sigeq*dt;
+} // end of @Integrator

@@ -20,64 +20,49 @@
 
 namespace mfront {
 
-  MFrontNewtonRaphsonSolverBase::MFrontNewtonRaphsonSolverBase() = default;
+  NewtonRaphsonSolverBase::NewtonRaphsonSolverBase() = default;
 
-  std::vector<std::string> MFrontNewtonRaphsonSolverBase::getSpecificHeaders()
-      const {
-    return {"TFEL/Math/TinyNewtonRaphsonSolver.hxx"};
-  }  // end of MFrontNewtonRaphsonSolverBase::getSpecificHeaders
+  bool NewtonRaphsonSolverBase::usesExternalAlgorithm() const {
+    return true;
+  }  // end of usesExternalAlgorithm
 
-  std::vector<std::string> MFrontNewtonRaphsonSolverBase::getReservedNames()
+  std::vector<std::string> NewtonRaphsonSolverBase::getReservedNames()
       const {
-    auto n = std::vector<std::string>{};
-    if (this->usesPowellDogLegAlgorithm()) {
-      const auto& n2 = PowellDogLegAlgorithmBase::getReservedNames();
-      n.insert(n.end(), n2.begin(), n2.end());
-      n.insert(n.end(), {"tjacobian", "tfzeros"});
-    }
-    n.insert(n.end(),
-             {"permutation_vector", "integrate_one_half", "computeFdF_ok"});
-    return n;
+    return {};
   }  // end of getReservedNames
 
-  bool MFrontNewtonRaphsonSolverBase::usesJacobian() const {
+  bool NewtonRaphsonSolverBase::usesJacobian() const {
     return true;
   }  // end of usesJacobian
 
-  bool MFrontNewtonRaphsonSolverBase::usesJacobianInvert() const {
+  bool NewtonRaphsonSolverBase::usesJacobianInvert() const {
     return false;
   }  // end of usesJacobianInvert
 
-  bool MFrontNewtonRaphsonSolverBase::allowsJacobianInitialisation() const {
+  bool NewtonRaphsonSolverBase::allowsJacobianInitialisation() const {
     return false;
   }  // end of allowsJacobianInitialisation
 
-  bool MFrontNewtonRaphsonSolverBase::allowsJacobianInvertInitialisation()
+  bool NewtonRaphsonSolverBase::allowsJacobianInvertInitialisation()
       const {
     return false;
   }  // end of allowsJacobianInvertInitialisation
 
-  bool MFrontNewtonRaphsonSolverBase::
+  bool NewtonRaphsonSolverBase::
       requiresJacobianToBeReinitialisedToIdentityAtEachIterations() const {
     return !this->requiresNumericalJacobian();
-  }  // end of
-     // MFrontNewtonRaphsonSolverBase::requiresJacobianToBeReinitialisedToIdentityAtEachIterations
+  }  // end of requiresJacobianToBeReinitialisedToIdentityAtEachIterations
 
-  std::pair<bool, MFrontNewtonRaphsonSolverBase::tokens_iterator>
-  MFrontNewtonRaphsonSolverBase::treatSpecificKeywords(
-      BehaviourDescription& mb,
+  std::pair<bool, NewtonRaphsonSolverBase::tokens_iterator>
+  NewtonRaphsonSolverBase::treatSpecificKeywords(
+      BehaviourDescription&,
       const std::string& key,
       const tokens_iterator p,
       const tokens_iterator pe) {
     auto throw_if = [](const bool c, const std::string& m) {
       tfel::raise_if(
-          c, "MFrontNewtonRaphsonSolverBase::treatSpecificKeywords: " + m);
+          c, "NewtonRaphsonSolverBase::treatSpecificKeywords: " + m);
     };
-    const auto r =
-        PowellDogLegAlgorithmBase::treatSpecificKeywords(mb, key, p, pe);
-    if (r.first) {
-      return r;
-    }
     if (key == "@JacobianUpdatePeriod") {
       throw_if(!this->requiresNumericalJacobian(),
                "jacobian update period is only defined "
@@ -91,193 +76,35 @@ namespace mfront {
                "(read '" +
                    p->value + "')");
       CxxTokenizer::readSpecifiedToken(
-          "MFrontNewtonRaphsonSolverBase::treatSpecificKeywords", ";", c, pe);
+          "NewtonRaphsonSolverBase::treatSpecificKeywords", ";", c, pe);
       return {true, c};
     }
     return {false, p};
   }  // end of treatSpecificKeywords
 
-  void MFrontNewtonRaphsonSolverBase::completeVariableDeclaration(
-      BehaviourDescription& mb) const {
-    if (this->usesPowellDogLegAlgorithm()) {
-      return PowellDogLegAlgorithmBase::completeVariableDeclaration(mb);
-    }
-  }  // end of completeVariableDeclaration
+  void NewtonRaphsonSolverBase::completeVariableDeclaration(
+      BehaviourDescription&) const {}  // end of completeVariableDeclaration
 
-  void MFrontNewtonRaphsonSolverBase::writeSpecificInitializeMethodPart(
+  void NewtonRaphsonSolverBase::writeSpecificInitializeMethodPart(
       std::ostream&, const BehaviourDescription&, const Hypothesis) const {
   }  // end of writeSpecificMembers
 
-  void MFrontNewtonRaphsonSolverBase::writeSpecificMembers(
+  void NewtonRaphsonSolverBase::writeSpecificMembers(
       std::ostream&, const BehaviourDescription&, const Hypothesis) const {
   }  // end of writeSpecificMembers
 
-  void MFrontNewtonRaphsonSolverBase::writeResolutionAlgorithm(
-      std::ostream& out,
-      const BehaviourDescription& mb,
-      const Hypothesis h) const {
-    const auto btype = mb.getBehaviourTypeFlag();
-    const auto& d = mb.getBehaviourData(h);
-    const auto n2 = d.getIntegrationVariables().getTypeSize();
-    if ((this->requiresNumericalJacobian()) &&
-        (this->jacobianUpdatePeriod != -1) &&
-        (n2.getValueForDimension(1u) > 3)) {
-      out << "TinyPermutation<" << n2 << "> permutation_vector;\n";
-    }
-    out << "auto error = real{};\n"
-        << "bool converged=false;\n"
-        << "this->iter=0;\n";
-    if (getDebugMode()) {
-      out << "cout << endl << \"" << mb.getClassName()
-          << "::integrate() : beginning of resolution\\n\";\n";
-    }
-    out << "while((converged==false)&&\n"
-        << "(this->iter<" << mb.getClassName() << "::iterMax)){\n"
-        << "++(this->iter);\n";
-    if (mb.hasCode(h, BehaviourData::ComputeThermodynamicForces)) {
-      out << "this->computeThermodynamicForces();\n";
-    }
-    out << "const auto computeFdF_ok = this->computeFdF(false);\n"
-        << "if(computeFdF_ok){\n"
-        << "error=norm(this->fzeros)/(real(" << n2 << "));\n"
-        << "}\n"
-        << "if((!computeFdF_ok)||(!ieee754::isfinite(error))){\n"
-        << "if(this->iter==1){\n";
-    if (getDebugMode()) {
-      out << "cout << endl << \"" << mb.getClassName()
-          << "::integrate() : computFdF returned "
-             "false on first iteration, abording...\" "
-             "<< endl;\n";
-    }
-    if (mb.useQt()) {
-      out << "return MechanicalBehaviour<" << btype
-          << ",hypothesis, NumericType,use_qt>::FAILURE;\n";
-    } else {
-      out << "return MechanicalBehaviour<" << btype
-          << ",hypothesis, NumericType,false>::FAILURE;\n";
-    }
-    out << "} else {\n";
-    if (getDebugMode()) {
-      out << "cout << endl << \"" << mb.getClassName()
-          << "::integrate() : computFdF returned false, dividing increment by "
-             "two...\" << endl;\n";
-    }
-    out << "constexpr NumericType integrate_one_half = NumericType(1) / 2;\n"
-        << "this->zeros -= "
-           "(this->zeros-this->zeros_1)*integrate_one_half;\n"
-        << "this->updateMaterialPropertiesDependantOnStateVariables();\n"
-        << "}\n"
-        << "} else {\n"
-        << "this->zeros_1  = this->zeros;\n";
-    out << "converged = error<this->epsilon;\n"
-        << "this->additionalConvergenceChecks(converged, error);\n";
-    if (this->requiresNumericalJacobian()) {
-      // We compute the numerical jacobian even if we converged since
-      // most of the time, this tangent operator will be computed
-      // using the partial jacobian invert. We consider very unlikely
-      // that a user may use a numerical jacobian and provide an
-      // analytic definition of the tangent operator
-      out << "if((!converged)||(smt!=NOSTIFFNESSREQUESTED)){\n";
-      if (this->jacobianUpdatePeriod != -1) {
-        out << "if(converged){\n"
-            << "this->computeNumericalJacobian(this->jacobian);\n"
-            << "} else {\n"
-            << "if(this->iter%" << jacobianUpdatePeriod << "){\n";
-        if (getDebugMode()) {
-          out << "cout << \"" << mb.getClassName()
-              << "::integrate() : updating jacobian\" << endl;\n";
-        }
-        out << "this->computeNumericalJacobian(this->jacobian);\n"
-            << "}\n"
-            << "}\n";
-      } else {
-        out << "this->computeNumericalJacobian(this->jacobian);\n";
-      }
-      out << "}\n";
-    } else {
-      out << "if((!converged)||(smt!=NOSTIFFNESSREQUESTED)){\n";
-      NonLinearSystemSolverBase::writeEvaluateNumericallyComputedBlocks(out, mb,
-                                                                        h);
-      if (mb.hasAttribute(h, BehaviourData::compareToNumericalJacobian)) {
-        out << "tmatrix<" << n2 << "," << n2 << ",real> njacobian;\n";
-      }
-      NonLinearSystemSolverBase::writeComparisonToNumericalJacobian(
-          out, mb, h, "njacobian");
-      out << "}\n";
-    }
-    if (getDebugMode()) {
-      out << "cout << \"" << mb.getClassName()
-          << "::integrate() : iteration \" "
-          << "<< this->iter << \" : \" << error << endl;\n";
-    }
-    out << "if(!converged){\n";
-    if (this->usesPowellDogLegAlgorithm()) {
-      out << "tmatrix<" << n2 << "," << n2
-          << ",real> tjacobian(this->jacobian);\n";
-      out << "tvector<" << n2 << ",real> tfzeros(this->fzeros);\n";
-    }
-    out << "try{\n";
-    if (mb.getAttribute(BehaviourData::profiling, false)) {
-      writeStandardPerformanceProfilingBegin(out, mb.getClassName(),
-                                             "TinyMatrixSolve", "lu");
-    }
-    if ((this->requiresNumericalJacobian()) &&
-        (this->jacobianUpdatePeriod != -1) &&
-        (n2.getValueForDimension(1u) > 3)) {
-      out << "if(this->iter%" << jacobianUpdatePeriod << "){\n"
-          << "TinyMatrixSolve<" << n2 << ", NumericType>"
-          << "::decomp(this->jacobian,permutation_vector);\n"
-          << "}\n"
-          << "TinyMatrixSolve<" << n2 << ", NumericType>"
-          << "::back_substitute(this->jacobian,permutation_vector, "
-          << "this->fzeros);\n";
-    } else {
-      out << "TinyMatrixSolve<" << n2 << ", NumericType>"
-          << "::exe(this->jacobian,this->fzeros);\n";
-    }
-    if (mb.getAttribute(BehaviourData::profiling, false)) {
-      writeStandardPerformanceProfilingEnd(out);
-    }
-    out << "}\n"
-        << "catch(tfel::math::LUException&){\n";
-    if (getDebugMode()) {
-      out << "cout << \"" << mb.getClassName()
-          << "::integrate(): jacobian inversion failed\" << endl << endl;\n";
-    }
-    if (mb.useQt()) {
-      out << "return MechanicalBehaviour<" << btype
-          << ",hypothesis, NumericType, use_qt>::FAILURE;\n";
-    } else {
-      out << "return MechanicalBehaviour<" << btype
-          << ",hypothesis, NumericType, false>::FAILURE;\n";
-    }
-    out << "}\n";
-    if (this->usesPowellDogLegAlgorithm()) {
-      this->writePowellDogLegStep(out, mb, h, "tjacobian", "tfzeros", "fzeros");
-    } else {
-      NonLinearSystemSolverBase::writeLimitsOnIncrementValues(out, mb, h,
-                                                              "fzeros");
-      out << "this->zeros -= this->fzeros;\n";
-    }
-    NonLinearSystemSolverBase::
-        writeLimitsOnIncrementValuesBasedOnStateVariablesPhysicalBounds(out, mb,
-                                                                        h);
-    NonLinearSystemSolverBase::
-        writeLimitsOnIncrementValuesBasedOnIntegrationVariablesIncrementsPhysicalBounds(
-            out, mb, h);
-    out << "this->updateMaterialPropertiesDependantOnStateVariables();\n"
-        << "}\n"
-        << "}\n"
-        << "}\n";
+  void NewtonRaphsonSolverBase::writeResolutionAlgorithm(
+      std::ostream&, const BehaviourDescription&, const Hypothesis) const {
   }  // end of writeResolutionAlgorithm
 
-  MFrontNewtonRaphsonSolverBase::~MFrontNewtonRaphsonSolverBase() = default;
+  NewtonRaphsonSolverBase::~NewtonRaphsonSolverBase() = default;
 
-  bool MFrontNewtonRaphsonSolver::usesExternalAlgorithm() const {
-    return true;
-  }  // end of usesExternalAlgorithm
+  std::vector<std::string> NewtonRaphsonSolver::getSpecificHeaders()
+      const {
+    return {"TFEL/Math/TinyNewtonRaphsonSolver.hxx"};
+  }  // end of NewtonRaphsonSolverBase::getSpecificHeaders
 
-  std::string MFrontNewtonRaphsonSolver::getExternalAlgorithmClassName(
+  std::string NewtonRaphsonSolver::getExternalAlgorithmClassName(
       const BehaviourDescription& bd, const Hypothesis h) const {
     const auto hn = [&h]() -> std::string {
       if (h == tfel::material::ModellingHypothesis::UNDEFINEDHYPOTHESIS) {
@@ -298,18 +125,19 @@ namespace mfront {
            n + ", NumericType, " + cn + ">";
   }  // end of getExternalAlgorithmClassName
 
-  bool MFrontNewtonRaphsonSolver::requiresNumericalJacobian() const {
+  bool NewtonRaphsonSolver::requiresNumericalJacobian() const {
     return false;
   }
 
-  bool MFrontNewtonRaphsonSolver::usesPowellDogLegAlgorithm() const {
-    return false;
-  }
+  NewtonRaphsonSolver::~NewtonRaphsonSolver() = default;
 
-  MFrontNewtonRaphsonSolver::~MFrontNewtonRaphsonSolver() = default;
+  std::vector<std::string>
+  NewtonRaphsonNumericalJacobianSolver::getSpecificHeaders() const {
+    return {"TFEL/Math/TinyNewtonRaphsonSolver.hxx"};
+  }  // end of NewtonRaphsonSolverBase::getSpecificHeaders
 
   std::string
-  MFrontNewtonRaphsonNumericalJacobianSolver::getExternalAlgorithmClassName(
+  NewtonRaphsonNumericalJacobianSolver::getExternalAlgorithmClassName(
       const BehaviourDescription& bd, const Hypothesis h) const {
     const auto hn = [&h]() -> std::string {
       if (h == tfel::material::ModellingHypothesis::UNDEFINEDHYPOTHESIS) {
@@ -330,48 +158,139 @@ namespace mfront {
            n + ", NumericType, " + cn + ">";
   }  // end of getExternalAlgorithmClassName
 
-  bool MFrontNewtonRaphsonNumericalJacobianSolver::usesExternalAlgorithm()
-      const {
-    return true;
-  }  // end of usesExternalAlgorithm
-
-  bool MFrontNewtonRaphsonNumericalJacobianSolver::requiresNumericalJacobian()
+  bool NewtonRaphsonNumericalJacobianSolver::requiresNumericalJacobian()
       const {
     return true;
   }
 
-  bool MFrontNewtonRaphsonNumericalJacobianSolver::usesPowellDogLegAlgorithm()
+  NewtonRaphsonNumericalJacobianSolver::
+      ~NewtonRaphsonNumericalJacobianSolver() = default;
+
+  std::vector<std::string>
+  PowellDogLegNewtonRaphsonSolver::getSpecificHeaders() const {
+    return {"TFEL/Math/TinyPowellDogLegNewtonRaphsonSolver.hxx"};
+  }  // end of NewtonRaphsonSolverBase::getSpecificHeaders
+
+  std::string
+  PowellDogLegNewtonRaphsonSolver::getExternalAlgorithmClassName(
+      const BehaviourDescription& bd, const Hypothesis h) const {
+    const auto hn = [&h]() -> std::string {
+      if (h == tfel::material::ModellingHypothesis::UNDEFINEDHYPOTHESIS) {
+        return "hypothesis";
+      }
+      return "ModellingHypothesis::" +
+             tfel::material::ModellingHypothesis::toUpperCaseString(h);
+    }();
+    const auto n =
+        mfront::getTypeSize(bd.getBehaviourData(h).getIntegrationVariables())
+            .getValue({"ModellingHypothesisToSpaceDimension<" + hn + ">::value",
+                       "ModellingHypothesisToStensorSize<" + hn + ">::value",
+                       "ModellingHypothesisToTensorSize<" + hn + ">::value"});
+    const auto cn =
+        bd.useQt() ? bd.getClassName() + "<" + hn + ", NumericType, true>"
+                   : bd.getClassName() + "<" + hn + ", NumericType, false>";
+    return "tfel::math::TinyPowellDogLegNewtonRaphsonSolver<" +  //
+           n + ", NumericType, " + cn + ">";
+  }  // end of getExternalAlgorithmClassName
+
+  bool PowellDogLegNewtonRaphsonSolver::requiresNumericalJacobian()
       const {
     return false;
   }
 
-  MFrontNewtonRaphsonNumericalJacobianSolver::
-      ~MFrontNewtonRaphsonNumericalJacobianSolver() = default;
+  std::pair<bool, NewtonRaphsonSolverBase::tokens_iterator>
+  PowellDogLegNewtonRaphsonSolver::treatSpecificKeywords(
+      BehaviourDescription& mb,
+      const std::string& key,
+      const tokens_iterator p,
+      const tokens_iterator pe) {
+    const auto r =
+        PowellDogLegAlgorithmBase::treatSpecificKeywords(mb, key, p, pe);
+    if (r.first) {
+      return r;
+    }
+    return NewtonRaphsonSolverBase::treatSpecificKeywords(mb, key, p, pe);
+  }  // end of treatSpecificKeywords
 
-  bool MFrontPowellDogLegNewtonRaphsonSolver::requiresNumericalJacobian()
-      const {
-    return false;
+  void PowellDogLegNewtonRaphsonSolver::initializeNumericalParameters(
+      std::ostream& os,
+      const BehaviourDescription& bd,
+      const Hypothesis h) const {
+    const auto sn = this->getExternalAlgorithmClassName(bd, h);
+    NewtonRaphsonSolverBase::initializeNumericalParameters(os, bd, h);
+    PowellDogLegAlgorithmBase::initializeNumericalParameters(os, sn);
+  }  // end of initializeNumericalParameters
+
+  void PowellDogLegNewtonRaphsonSolver::completeVariableDeclaration(
+      BehaviourDescription& bd) const {
+    PowellDogLegAlgorithmBase::completeVariableDeclaration(bd);
   }
 
-  bool MFrontPowellDogLegNewtonRaphsonSolver::usesPowellDogLegAlgorithm()
+  PowellDogLegNewtonRaphsonSolver::
+      ~PowellDogLegNewtonRaphsonSolver() = default;
+
+  std::vector<std::string>
+  PowellDogLegNewtonRaphsonNumericalJacobianSolver::getSpecificHeaders()
       const {
-    return true;
-  }
+    return {"TFEL/Math/TinyPowellDogLegNewtonRaphsonSolver.hxx"};
+  }  // end of NewtonRaphsonSolverBase::getSpecificHeaders
 
-  MFrontPowellDogLegNewtonRaphsonSolver::
-      ~MFrontPowellDogLegNewtonRaphsonSolver() = default;
+  std::string PowellDogLegNewtonRaphsonNumericalJacobianSolver::
+      getExternalAlgorithmClassName(const BehaviourDescription& bd,
+                                    const Hypothesis h) const {
+    const auto hn = [&h]() -> std::string {
+      if (h == tfel::material::ModellingHypothesis::UNDEFINEDHYPOTHESIS) {
+        return "hypothesis";
+      }
+      return "ModellingHypothesis::" +
+             tfel::material::ModellingHypothesis::toUpperCaseString(h);
+    }();
+    const auto n =
+        mfront::getTypeSize(bd.getBehaviourData(h).getIntegrationVariables())
+            .getValue({"ModellingHypothesisToSpaceDimension<" + hn + ">::value",
+                       "ModellingHypothesisToStensorSize<" + hn + ">::value",
+                       "ModellingHypothesisToTensorSize<" + hn + ">::value"});
+    const auto cn =
+        bd.useQt() ? bd.getClassName() + "<" + hn + ", NumericType, true>"
+                   : bd.getClassName() + "<" + hn + ", NumericType, false>";
+    return "tfel::math::TinyPowellDogLegNewtonRaphsonSolver<" +  //
+           n + ", NumericType, " + cn + ">";
+  }  // end of getExternalAlgorithmClassName
 
-  bool MFrontPowellDogLegNewtonRaphsonNumericalJacobianSolver::
+  void PowellDogLegNewtonRaphsonNumericalJacobianSolver::
+      initializeNumericalParameters(std::ostream& os,
+                                    const BehaviourDescription& bd,
+                                    const Hypothesis h) const {
+    const auto sn = this->getExternalAlgorithmClassName(bd, h);
+    NewtonRaphsonSolverBase::initializeNumericalParameters(os, bd, h);
+    PowellDogLegAlgorithmBase::initializeNumericalParameters(os, sn);
+  }  // end of initializeNumericalParameters
+
+  bool PowellDogLegNewtonRaphsonNumericalJacobianSolver::
       requiresNumericalJacobian() const {
     return true;
   }
 
-  bool MFrontPowellDogLegNewtonRaphsonNumericalJacobianSolver::
-      usesPowellDogLegAlgorithm() const {
-    return true;
+  void PowellDogLegNewtonRaphsonNumericalJacobianSolver::
+      completeVariableDeclaration(BehaviourDescription& bd) const {
+    PowellDogLegAlgorithmBase::completeVariableDeclaration(bd);
   }
 
-  MFrontPowellDogLegNewtonRaphsonNumericalJacobianSolver::
-      ~MFrontPowellDogLegNewtonRaphsonNumericalJacobianSolver() = default;
+  std::pair<bool, NewtonRaphsonSolverBase::tokens_iterator>
+  PowellDogLegNewtonRaphsonNumericalJacobianSolver::treatSpecificKeywords(
+      BehaviourDescription& mb,
+      const std::string& key,
+      const tokens_iterator p,
+      const tokens_iterator pe) {
+    const auto r =
+        PowellDogLegAlgorithmBase::treatSpecificKeywords(mb, key, p, pe);
+    if (r.first) {
+      return r;
+    }
+    return NewtonRaphsonSolverBase::treatSpecificKeywords(mb, key, p, pe);
+  }  // end of treatSpecificKeywords
+
+  PowellDogLegNewtonRaphsonNumericalJacobianSolver::
+      ~PowellDogLegNewtonRaphsonNumericalJacobianSolver() = default;
 
 }  // end of namespace mfront

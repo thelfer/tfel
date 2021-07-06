@@ -25,8 +25,7 @@ namespace mfront {
    * The Newton-Raphson algorithm can be coupled with the
    * PowellDogLegAlgorithm for increased robustness.
    */
-  struct MFrontNewtonRaphsonSolverBase : public NonLinearSystemSolverBase,
-                                         protected PowellDogLegAlgorithmBase {
+  struct NewtonRaphsonSolverBase : public NonLinearSystemSolverBase {
     //! a simple alias
     using NonLinearSystemSolverBase::CxxTokenizer;
     //! a simple alias
@@ -34,9 +33,9 @@ namespace mfront {
     //! a simple alias
     using Hypothesis = NonLinearSystemSolverBase::Hypothesis;
     //! \brief default constructor
-    MFrontNewtonRaphsonSolverBase();
-    std::vector<std::string> getSpecificHeaders() const override;
+    NewtonRaphsonSolverBase();
     std::vector<std::string> getReservedNames() const override;
+    bool usesExternalAlgorithm() const override;
     bool usesJacobian() const override;
     bool usesJacobianInvert() const override;
     bool allowsJacobianInitialisation() const override;
@@ -60,70 +59,87 @@ namespace mfront {
                                   const Hypothesis) const override;
 
    protected:
-    virtual bool usesPowellDogLegAlgorithm() const = 0;
     //! \brief destructor
-    ~MFrontNewtonRaphsonSolverBase() override;
-  };  // end of struct MFrontNewtonRaphsonSolverBase
+    ~NewtonRaphsonSolverBase() override;
+  };  // end of struct NewtonRaphsonSolverBase
 
   //! \brief the standard Newton-Raphson Solver
-  struct MFrontNewtonRaphsonSolver : public MFrontNewtonRaphsonSolverBase {
-    bool usesExternalAlgorithm() const override;
+  struct NewtonRaphsonSolver : public NewtonRaphsonSolverBase {
+    std::vector<std::string> getSpecificHeaders() const override;
     std::string getExternalAlgorithmClassName(const BehaviourDescription&,
                                               const Hypothesis) const override;
     bool requiresNumericalJacobian() const override;
     //! \brief destructor
-    ~MFrontNewtonRaphsonSolver() override;
-
-   protected:
-    bool usesPowellDogLegAlgorithm() const override;
+    ~NewtonRaphsonSolver() override;
   };
 
   //! \brief the standard Newton-Raphson solver with a numerical jacobian
-  struct MFrontNewtonRaphsonNumericalJacobianSolver
-      : public MFrontNewtonRaphsonSolverBase {
-    bool usesExternalAlgorithm() const override;
+  struct NewtonRaphsonNumericalJacobianSolver
+      : public NewtonRaphsonSolverBase {
+    std::vector<std::string> getSpecificHeaders() const override;
     std::string getExternalAlgorithmClassName(const BehaviourDescription&,
                                               const Hypothesis) const override;
     bool requiresNumericalJacobian() const override;
     //! destructor
-    ~MFrontNewtonRaphsonNumericalJacobianSolver() override;
-
-   protected:
-    bool usesPowellDogLegAlgorithm() const override;
+    ~NewtonRaphsonNumericalJacobianSolver() override;
   };
 
   /*!
-   * The standard Newton-Raphson Solver
+   * \brief the standard Newton-Raphson Solver coupled with a Powell' dog leg
+   * algorithm.
    */
-  struct MFrontPowellDogLegNewtonRaphsonSolver
-      : public MFrontNewtonRaphsonSolverBase {
+  struct PowellDogLegNewtonRaphsonSolver
+      : public NewtonRaphsonSolverBase,
+        protected PowellDogLegAlgorithmBase  {
+    using Hypothesis = NewtonRaphsonSolverBase::Hypothesis;
+    //! a simple alias
+    using NonLinearSystemSolverBase::CxxTokenizer;
+    //! a simple alias
+    using NonLinearSystemSolverBase::tokens_iterator;
+    std::vector<std::string> getSpecificHeaders() const override;
+    void initializeNumericalParameters(std::ostream&,
+                                       const BehaviourDescription&,
+                                       const Hypothesis) const override;
+    std::pair<bool, tokens_iterator> treatSpecificKeywords(
+        BehaviourDescription&,
+        const std::string&,
+        const tokens_iterator,
+        const tokens_iterator) override;
+    void completeVariableDeclaration(BehaviourDescription&) const override;
+    std::string getExternalAlgorithmClassName(const BehaviourDescription&,
+                                              const Hypothesis) const override;
     bool requiresNumericalJacobian() const override;
     //! \brief destructor
-    ~MFrontPowellDogLegNewtonRaphsonSolver() override;
-
-   protected:
-    /*!
-     * The derived class shall return true if the PowellDogLegNewtonAlgorithm
-     * shall be combined with the powell dog leg algorithm
-     */
-    bool usesPowellDogLegAlgorithm() const override;
+    ~PowellDogLegNewtonRaphsonSolver() override;
   };
 
   /*!
-   * The standard PowellDogLegNewton-Raphson Solver
+   * \brief the standard Newton-Raphson Solver with numerical jacobian coupled
+   * with a Powell' dog leg algorithm.
    */
-  struct MFrontPowellDogLegNewtonRaphsonNumericalJacobianSolver
-      : public MFrontNewtonRaphsonSolverBase {
+  struct PowellDogLegNewtonRaphsonNumericalJacobianSolver
+      : public NewtonRaphsonSolverBase,
+        protected PowellDogLegAlgorithmBase {
+    using Hypothesis = NewtonRaphsonSolverBase::Hypothesis;
+    //! a simple alias
+    using NonLinearSystemSolverBase::CxxTokenizer;
+    //! a simple alias
+    using NonLinearSystemSolverBase::tokens_iterator;
+    std::vector<std::string> getSpecificHeaders() const override;
+    void initializeNumericalParameters(std::ostream&,
+                                       const BehaviourDescription&,
+                                       const Hypothesis) const override;
+    std::pair<bool, tokens_iterator> treatSpecificKeywords(
+        BehaviourDescription&,
+        const std::string&,
+        const tokens_iterator,
+        const tokens_iterator) override;
+    void completeVariableDeclaration(BehaviourDescription&) const override;
+    std::string getExternalAlgorithmClassName(const BehaviourDescription&,
+                                              const Hypothesis) const override;
     bool requiresNumericalJacobian() const override;
     //! destructor
-    ~MFrontPowellDogLegNewtonRaphsonNumericalJacobianSolver() override;
-
-   protected:
-    /*!
-     * The derived class shall return true if the PowellDogLegNewtonAlgorithm
-     * shall be combined with the powell dog leg algorithm
-     */
-    bool usesPowellDogLegAlgorithm() const override;
+    ~PowellDogLegNewtonRaphsonNumericalJacobianSolver() override;
   };
 
 }  // end of namespace mfront

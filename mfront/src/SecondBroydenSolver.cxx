@@ -20,32 +20,57 @@
 namespace mfront {
 
   std::vector<std::string> SecondBroydenSolver::getReservedNames() const {
-    return {"fzeros2",       "fzeros3",     "fzeros4",
-            "Dzeros",        "Dfzeros",     "inv_jacobian",
-            "inv_jacobian2", "broyden_inv", "integrate_one_half",
-            "computeFdF_ok"};
-  }  // end of SecondBroydenSolver::getReservedNames
+    return {};
+  }  // end of getReservedNames
+
+  bool SecondBroydenSolver::usesExternalAlgorithm() const {
+    return true;
+  }  // end of usesExternalAlgorithm
+
+  std::vector<std::string> SecondBroydenSolver::getSpecificHeaders() const {
+    return {"TFEL/Math/TinyBroyden2Solver.hxx"};
+  }  // end of getSpecificHeaders
+
+  std::string SecondBroydenSolver::getExternalAlgorithmClassName(
+      const BehaviourDescription& bd, const Hypothesis h) const {
+    const auto hn = [&h]() -> std::string {
+      if (h == tfel::material::ModellingHypothesis::UNDEFINEDHYPOTHESIS) {
+        return "hypothesis";
+      }
+      return "ModellingHypothesis::" +
+             tfel::material::ModellingHypothesis::toUpperCaseString(h);
+    }();
+    const auto n =
+        mfront::getTypeSize(bd.getBehaviourData(h).getIntegrationVariables())
+            .getValue({"ModellingHypothesisToSpaceDimension<" + hn + ">::value",
+                       "ModellingHypothesisToStensorSize<" + hn + ">::value",
+                       "ModellingHypothesisToTensorSize<" + hn + ">::value"});
+    const auto cn =
+        bd.useQt() ? bd.getClassName() + "<" + hn + ", NumericType, true>"
+                   : bd.getClassName() + "<" + hn + ", NumericType, false>";
+    return "tfel::math::TinyBroyden2Solver<" + n + ", NumericType, " + cn + ">";
+  }  // end of getExternalAlgorithmClassName
 
   bool SecondBroydenSolver::usesJacobian() const {
     return false;
-  }  // end of SecondBroydenSolver::usesJacobian
+  }  // end of usesJacobian
 
   bool SecondBroydenSolver::usesJacobianInvert() const {
     return true;
-  }  // end of SecondBroydenSolver::usesJacobianInvert
+  }  // end of usesJacobianInvert
 
   bool SecondBroydenSolver::allowsJacobianInitialisation() const {
     return false;
-  }  // end of SecondBroydenSolver::allowsJacobianInitialisation
+  }  // end of allowsJacobianInitialisation
 
   bool SecondBroydenSolver::allowsJacobianInvertInitialisation() const {
     return true;
-  }  // end of SecondBroydenSolver::allowsJacobianInvertInitialisation
+  }  // end of allowsJacobianInvertInitialisation
 
   bool SecondBroydenSolver::
       requiresJacobianToBeReinitialisedToIdentityAtEachIterations() const {
     return false;
-  }  // end of SecondBroydenSolver::allowsJacobianInitialisation
+  }  // end of allowsJacobianInitialisation
 
   bool SecondBroydenSolver::requiresNumericalJacobian() const { return false; }
 
@@ -55,16 +80,15 @@ namespace mfront {
                                              const tokens_iterator p,
                                              const tokens_iterator) {
     return {false, p};
-  }  // end of SecondBroydenSolver::treatSpecificKeywords
+  }  // end of treatSpecificKeywords
 
   void SecondBroydenSolver::completeVariableDeclaration(
-      BehaviourDescription&) const {
-  }  // end of SecondBroydenSolver::completeVariableDeclaration
+      BehaviourDescription&) const {}  // end of completeVariableDeclaration
 
   void SecondBroydenSolver::writeSpecificMembers(std::ostream&,
                                                  const BehaviourDescription&,
                                                  const Hypothesis) const {
-  }  // end of SecondBroydenSolver::writeSpecificMembers
+  }  // end of writeSpecificMembers
 
   void SecondBroydenSolver::writeSpecificInitializeMethodPart(
       std::ostream& out,
@@ -82,104 +106,12 @@ namespace mfront {
           << "this->inv_jacobian(idx,idx)= real(1);\n"
           << "}\n";
     }
-  }  // end of SecondBroydenSolver::writeSpecificInitializeMethodPart
+  }  // end of writeSpecificInitializeMethodPart
 
   void SecondBroydenSolver::writeResolutionAlgorithm(
-      std::ostream& out,
-      const BehaviourDescription& mb,
-      const Hypothesis h) const {
-    const auto btype = mb.getBehaviourTypeFlag();
-    const auto& d = mb.getBehaviourData(h);
-    const auto n2 = d.getIntegrationVariables().getTypeSize();
-    out << "tmatrix<" << n2 << "," << n2 << ",real> inv_jacobian2;\n"
-        << "tvector<" << n2 << ",real> fzeros2;\n"
-        << "tvector<" << n2 << ",real> Dzeros;\n"
-        << "tvector<" << n2 << ",real> Dfzeros;\n"
-        << "real broyden_inv;\n"
-        << "auto error = real{};\n"
-        << "bool converged=false;\n"
-        << "this->iter=0;\n";
-    if (getDebugMode()) {
-      out << "cout << endl << \"" << mb.getClassName()
-          << "::integrate() : beginning of resolution\\n\";\n";
-    }
-    out << "while((converged==false)&&\n"
-        << "(this->iter<" << mb.getClassName() << "::iterMax)){\n"
-        << "++(this->iter);\n"
-        << "fzeros2 = this->fzeros;\n";
-    if (mb.hasCode(h, BehaviourData::ComputeThermodynamicForces)) {
-      out << "this->computeThermodynamicForces();\n";
-    }
-    out << "const auto computeFdF_ok = this->computeFdF(false);\n"
-        << "if(computeFdF_ok){\n"
-        << "error=norm(this->fzeros);\n"
-        << "}\n"
-        << "if((!computeFdF_ok)||(!ieee754::isfinite(error))){\n"
-        << "if(this->iter==1){\n";
-    if (getDebugMode()) {
-      out << "cout << endl << \"" << mb.getClassName()
-          << "::integrate() : computFdF returned false on first iteration, "
-             "abording...\" << endl;\n";
-    }
-    if (mb.useQt()) {
-      out << "return MechanicalBehaviour<" << btype
-          << ",hypothesis, NumericType,use_qt>::FAILURE;\n";
-    } else {
-      out << "return MechanicalBehaviour<" << btype
-          << ",hypothesis, NumericType,false>::FAILURE;\n";
-    }
-    out << "} else {\n";
-    if (getDebugMode()) {
-      out << "cout << endl << \"" << mb.getClassName()
-          << "::integrate() : computFdF returned false, dividing increment by "
-             "two...\" << endl;\n";
-    }
-    out << "constexpr auto integrate_one_half = NumericType(1)/2;\n"
-        << "this->zeros -= (this->zeros-this->zeros_1)*integrate_one_half;\n"
-        << "this->updateMaterialPropertiesDependantOnStateVariables();\n"
-        << "}\n"
-        << "} else {\n"
-        << "this->zeros_1  = this->zeros;\n"
-        << "error=norm(this->fzeros)/(NumericType(" << n2 << "));\n"
-        << "converged = error<this->epsilon;\n"
-        << "this->additionalConvergenceChecks(converged, error);\n";
-    if (getDebugMode()) {
-      out << "cout << \"" << mb.getClassName()
-          << "::integrate() : iteration \" "
-          << "<< this->iter << \" : \" << error << endl;\n";
-    }
-    out << "if(!converged){\n"
-        << "Dzeros   = -(this->inv_jacobian)*(this->fzeros);\n";
-    this->writeLimitsOnIncrementValues(out, mb, h, "Dzeros");
-    out << "this->zeros  += Dzeros;\n"
-        << "if(this->iter>1){\n"
-        << "Dfzeros   = (this->fzeros)-fzeros2;\n"
-        << "broyden_inv = Dzeros|((this->inv_jacobian)*Dfzeros);\n"
-        << "if(broyden_inv>100*std::numeric_limits<real>::epsilon()){\n"
-        << "inv_jacobian2 = this->inv_jacobian;\n"
-        << "#if (!defined __INTEL_COMPILER) and (!defined __PGI)\n"
-        << "this->inv_jacobian += "
-        << "((Dzeros-inv_jacobian2*Dfzeros)^(Dzeros*inv_jacobian2))/"
-           "(broyden_inv);\n"
-        << "#else\n"
-        << "const tvector<" << n2 << ",real> fzeros3 = inv_jacobian2*Dfzeros;\n"
-        << "const tvector<" << n2 << ",real> fzeros4 = Dzeros*inv_jacobian2;\n"
-        << "this->inv_jacobian += "
-        << "((Dzeros-fzeros3)^(fzeros4))/(broyden_inv);\n"
-        << "#endif  /* not __INTEL_COMPILER OR __PGI */\n"
-        << "}\n"
-        << "}\n";
-    NonLinearSystemSolverBase::
-        writeLimitsOnIncrementValuesBasedOnStateVariablesPhysicalBounds(out, mb,
-                                                                        h);
-    NonLinearSystemSolverBase::
-        writeLimitsOnIncrementValuesBasedOnIntegrationVariablesIncrementsPhysicalBounds(
-            out, mb, h);
-    out << "this->updateMaterialPropertiesDependantOnStateVariables();\n"
-        << "}\n"
-        << "}\n"
-        << "}\n";
-  }  // end of SecondBroydenSolver::writeResolutionAlgorithm
+      std::ostream&, const BehaviourDescription&, const Hypothesis) const {
+    tfel::raise("invalid call");
+  }  // end of writeResolutionAlgorithm
 
   SecondBroydenSolver::~SecondBroydenSolver() = default;
 

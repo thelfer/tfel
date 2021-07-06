@@ -1,8 +1,9 @@
 /*!
- * \file   include/TFEL/Math/NonLinearSolvers/TinyNewtonRaphsonSolver.ixx
- * \brief  This file implements the TinyNewtonMatrix
+ * \file
+ * include/TFEL/Math/NonLinearSolvers/TinyPowellDogLegNewtonRaphsonSolver.ixx
+ * \brief  This file implements the TinyPowellDogLegNewtonMatrix class
  * \author Thomas Helfer
- * \date   09 Aug 2006
+ * \date   02/07/2021
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence
@@ -15,18 +16,24 @@
 #define LIB_TFEL_MATH_TINYNEWTONRAPHSONSOLVER_IXX
 
 #include "TFEL/Math/TinyMatrixSolve.hxx"
+#include "TFEL/Math/NonLinearSolvers/TinyPowellDogLegAlgorithmBase.hxx"
 
 namespace tfel::math {
 
   template <unsigned short N, typename NumericType, typename Child>
-  bool TinyNewtonRaphsonSolver<N, NumericType, Child>::computeNewCorrection() {
+  bool TinyPowellDogLegNewtonRaphsonSolver<N, NumericType, Child>::
+      computeNewCorrection() {
+    const auto tjacobian = this->jacobian;
+    const auto tfzeros = this->fzeros;
     if (!TinyMatrixSolve<N, NumericType, false>::exe(this->jacobian,
                                                      this->fzeros)) {
       return false;
     }
-    this->delta_zeros = -(this->fzeros);
+    this->delta_zeros = -this->fzeros;
+    applyPowellDogLegAlgorithm(this->delta_zeros, tjacobian, tfzeros,
+                               this->powell_dogleg_trust_region_size);
     return true;
-  } // end of computeNewCorrection
+  }  // end of computeNewCorrection
 
 }  // end of namespace tfel::math
 

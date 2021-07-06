@@ -1,5 +1,5 @@
 /*!
- * \file   include/TFEL/Math/Newton-Raphson/ScalarNewtonRaphson.ixx
+ * \file   include/TFEL/Math/NonLinearSolvers/ScalarNewtonRaphson.ixx
  * \brief
  * \author Thomas Helfer
  * \date   31/03/2020

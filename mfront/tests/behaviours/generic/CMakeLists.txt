@@ -69,6 +69,7 @@ set(mfront_tests_SOURCES
   ThermalNorton2
   ImplicitFiniteStrainNorton
   ImplicitNorton_Broyden
+  ImplicitNorton_PowellDogLegBroyden
   ImplicitNorton_Broyden2
   ImplicitNorton_LevenbergMarquardt
   JohnsonCook_s

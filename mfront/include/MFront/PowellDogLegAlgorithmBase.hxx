@@ -71,6 +71,13 @@ namespace mfront {
                                       const std::string&,
                                       const std::string&);
     /*!
+     * \brief initialize numerical parameters for the behaviour parameters
+     * \param[in] os: output stream
+     * \param[in] n: name of the solver
+     */
+    static void initializeNumericalParameters(std::ostream&,
+                                              const std::string&);
+    /*!
      * destructor
      */
     ~PowellDogLegAlgorithmBase();

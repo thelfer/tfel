@@ -30,6 +30,8 @@ namespace mfront {
   const char* const VariableDescription::defaultValue = "defaultValue";
   const char* const VariableDescription::errorNormalisationFactor =
       "errorNormalisationFactor";
+  const char* const VariableDescription::variableDeclaredInBaseClass =
+      "variableDeclaredInBaseClass";
 
   VariableDescription::VariableDescription() = default;
 

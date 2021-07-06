@@ -15,11 +15,7 @@
 #ifndef LIB_TFEL_MATH_BROYDEN2IXX
 #define LIB_TFEL_MATH_BROYDEN2IXX
 
-#ifdef TFEL_BROYDEN2_VERBOSE_MODE
-#include <iostream>
-#endif /* LIB_TFEL_BROYDEN2IXX */
-
-#include "TFEL/Math/tmatrix.hxx"
+#include "TFEL/Math/General/IEEE754.hxx"
 
 namespace tfel::math {
 
@@ -27,28 +23,29 @@ namespace tfel::math {
             typename T,
             const tvector<N, T> (*f)(const tvector<N, T>&)>
   std::pair<bool, tvector<N, T>> broyden2(const tvector<N, T>& x0,
-                                          tmatrix<N, N, T>& A,
+                                          tmatrix<N, N, T>& iJ,
                                           const T e,
                                           const unsigned short n) {
     auto x = x0;
     auto vf = f(x);
+    auto c = tvector<N, T>{};
+    auto df = tvector<N, T>{};
     unsigned short i = 0;
-    while ((i < n) && (norm(vf) / N > e)) {
-#ifdef TFEL_BROYDEN2_VERBOSE_MODE
-      std::cout << "iteration : " << i << std::endl;
-      std::cout << "x         : " << x << std::endl;
-      std::cout << "||f||     : " << norm(vf) << std::endl;
-      std::cout << "A         : " << A << std::endl;
-#endif /* LIB_TFEL_BROYDEN2IXX */
-      const auto J = A;
-      const auto vf2 = vf;
-      const tvector<N, T> s = -A * vf;
-      const tvector<N, T> y = vf - vf2;
-      x += s;
+    while ((i < n) && (norm(vf) > e * N)) {
+      if (i > 1) {
+        // updating jacobian
+        const tvector<N, T> c2 = iJ * df;
+        const tvector<N, T> t2 = c * iJ;
+        const auto nc = t2 | df;
+        if (tfel::math::ieee754::fpclassify(nc) != FP_ZERO) {
+          iJ += ((c - c2) ^ (t2)) / nc;
+        }
+      }
+      c = -iJ * vf;
+      x += c;
+      df = -vf;
       vf = f(x);
-      const tvector<N, T> t = J * y;
-      const tvector<N, T> t2 = s * J;
-      A += ((s - t) ^ t2) / (s | t);
+      df += vf;
       ++i;
     }
     return {i != n, x};
@@ -60,11 +57,8 @@ namespace tfel::math {
   std::pair<bool, tvector<N, T>> broyden2(const tvector<N, T>& x0,
                                           const T e,
                                           const unsigned short n) {
-    tmatrix<N, N, T> A(0.);
-    for (unsigned short i = 0; i != N; ++i) {
-      A(i, i) = 1.;
-    }
-    return broyden2<N, T, f>(x0, A, e, n);
+    auto iJ = tmatrix<N, N, T>::Id();
+    return broyden2<N, T, f>(x0, iJ, e, n);
   }  // end of function broyden2
 
 }  // end of namespace tfel::math
