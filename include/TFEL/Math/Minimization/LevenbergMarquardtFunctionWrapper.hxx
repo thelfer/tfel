@@ -60,6 +60,6 @@ namespace tfel::math {
 
 }  // end of namespace tfel::math
 
-#include "TFEL/Math/NonLinearSolvers/LevenbergMarquardtFunctionWrapper.ixx"
+#include "TFEL/Math/Minimization/LevenbergMarquardtFunctionWrapper.ixx"
 
 #endif /* LIB_LEVENBERGMARQUARDTFUNCTIONWRAPPER_HXX */

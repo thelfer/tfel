@@ -428,25 +428,21 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Math/ST2toT2/ST2toT2StensorProductExpr.hxx						                         \
 			TFEL/Math/ST2toT2/T2toT2ST2toT2ProductExpr.hxx						                         \
 			TFEL/Math/ST2toT2/ST2toT2ST2toST2ProductExpr.hxx					                         \
-			TFEL/Math/ST2toT2/T2toST2ST2toT2ProductExpr.hxx						                     \
-			TFEL/Math/ST2toT2/ST2toT2T2toST2ProductExpr.hxx						                     \
-			TFEL/Math/Broyden.hxx                                                                       \
-			TFEL/Math/Broyden2.hxx                                                                      \
-			TFEL/Math/LevenbergMarquardt.hxx                                                            \
-			TFEL/Math/TinyBroydenSolver.hxx		                                                       \
-			TFEL/Math/TinyBroyden2Solver.hxx		                                                       \
-			TFEL/Math/TinyNewtonRaphsonSolver.hxx		                                                   \
-			TFEL/Math/TinyPowellDogLegBroydenSolver.hxx		                                           \
-			TFEL/Math/TinyPowellDogLegNewtonRaphsonSolver.hxx		                                       \
-			TFEL/Math/FSLevenbergMarquardt.hxx                                                           \
+			TFEL/Math/ST2toT2/T2toST2ST2toT2ProductExpr.hxx			                             \
+			TFEL/Math/ST2toT2/ST2toT2T2toST2ProductExpr.hxx				                     \
+			TFEL/Math/Broyden.hxx                                                                        \
+			TFEL/Math/Broyden2.hxx                                                                       \
+			TFEL/Math/TinyBroydenSolver.hxx		                                                     \
+			TFEL/Math/TinyBroyden2Solver.hxx		                                             \
+			TFEL/Math/TinyNewtonRaphsonSolver.hxx		                                             \
+			TFEL/Math/TinyPowellDogLegBroydenSolver.hxx		                                     \
+			TFEL/Math/TinyPowellDogLegNewtonRaphsonSolver.hxx		                             \
+			TFEL/Math/TinyLevenbergMarquardtSolver.hxx		                                     \
+			TFEL/Math/NonLinearSolvers/ScalarNewtonRaphson.ixx                                           \
 			TFEL/Math/NonLinearSolvers/BissectionAlgorithmBase.hxx                                       \
 			TFEL/Math/NonLinearSolvers/BissectionAlgorithmBase.ixx                                       \
 			TFEL/Math/NonLinearSolvers/Broyden.ixx                                                       \
 			TFEL/Math/NonLinearSolvers/Broyden2.ixx                                                      \
-			TFEL/Math/NonLinearSolvers/LevenbergMarquardt.ixx                                            \
-			TFEL/Math/NonLinearSolvers/LevenbergMarquardtFunctionWrapper.hxx                             \
-			TFEL/Math/NonLinearSolvers/LevenbergMarquardtFunctionWrapper.ixx                             \
-			TFEL/Math/NonLinearSolvers/ScalarNewtonRaphson.ixx                                           \
 			TFEL/Math/NonLinearSolvers/TinyNonLinearSolverBase.hxx                                       \
 			TFEL/Math/NonLinearSolvers/TinyNonLinearSolverBase.ixx                                       \
 			TFEL/Math/NonLinearSolvers/TinyBroydenSolver.ixx                                             \
@@ -455,7 +451,13 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Math/NonLinearSolvers/TinyPowellDogLegAlgorithmBase.hxx                                 \
 			TFEL/Math/NonLinearSolvers/TinyPowellDogLegBroydenSolver.ixx                                 \
 			TFEL/Math/NonLinearSolvers/TinyPowellDogLegNewtonRaphsonSolver.ixx                           \
-			TFEL/Math/NonLinearSolvers/FSLevenbergMarquardt.ixx                                          \
+			TFEL/Math/NonLinearSolvers/TinyLevenbergMarquardtSolver.ixx	                             \
+			TFEL/Math/LevenbergMarquardt.hxx                                                             \
+			TFEL/Math/FSLevenbergMarquardt.hxx                                                           \
+			TFEL/Math/Minimization/LevenbergMarquardt.ixx                                            \
+			TFEL/Math/Minimization/LevenbergMarquardtFunctionWrapper.hxx                             \
+			TFEL/Math/Minimization/LevenbergMarquardtFunctionWrapper.ixx                             \
+			TFEL/Math/Minimization/FSLevenbergMarquardt.ixx                                          \
 			TFEL/Math/ExpressionTemplates/Expr.hxx							     \
 			TFEL/Math/ExpressionTemplates/StandardOperations.hxx					     \
 			TFEL/Math/AccelerationAlgorithms/UAnderson.hxx						     \

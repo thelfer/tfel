@@ -163,6 +163,6 @@ namespace tfel::math {
 
 }  // end of namespace tfel::math
 
-#include "TFEL/Math/NonLinearSolvers/FSLevenbergMarquardt.ixx"
+#include "TFEL/Math/Minimization/FSLevenbergMarquardt.ixx"
 
 #endif /* LIB_TFEL_MATH_FSLEVENBERGMARQUARDT_HXX */

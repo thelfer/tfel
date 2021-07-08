@@ -71,6 +71,7 @@ test_PROGRAMS = IndexingPoliciesTest             \
 		levenberg-marquardt2                     \
 		levenberg-marquardt3                     \
 		levenberg-marquardt4                     \
+		levenberg-marquardt5                     \
 		discretization1D                         \
 		TensorProductCheck                       \
         CorotationnalCauchyStressToSecondPioloKirchhoffStressTest \
@@ -130,6 +131,7 @@ TinyVectorOfStensorFromTinyVectorView_SOURCES    = TinyVectorOfStensorFromTinyVe
 levenberg_marquardt_SOURCES   = levenberg-marquardt.cxx
 levenberg_marquardt2_SOURCES  = levenberg-marquardt2.cxx
 levenberg_marquardt3_SOURCES  = levenberg-marquardt3.cxx
+levenberg_marquardt5_SOURCES  = levenberg-marquardt5.cxx
 TensorProductCheck_SOURCES    = TensorProductCheck.cxx
 CorotationnalCauchyStressToSecondPioloKirchhoffStressTest_SOURCES = CorotationnalCauchyStressToSecondPioloKirchhoffStressTest.cxx
 StridedRandomAccessIteratorTest_SOURCES    = StridedRandomAccessIteratorTest.cxx

@@ -24,7 +24,7 @@
 #include "TFEL/Math/vector.hxx"
 #include "TFEL/Math/matrix.hxx"
 #include "TFEL/Math/LUSolve.hxx"
-#include "TFEL/Math/NonLinearSolvers/LevenbergMarquardtFunctionWrapper.hxx"
+#include "TFEL/Math/Minimization/LevenbergMarquardtFunctionWrapper.hxx"
 
 namespace tfel::math {
 
@@ -73,6 +73,6 @@ namespace tfel::math {
 
 }  // end of namespace tfel::math
 
-#include "TFEL/Math/NonLinearSolvers/LevenbergMarquardt.ixx"
+#include "TFEL/Math/Minimization/LevenbergMarquardt.ixx"
 
 #endif /* LIB_TFEL_MATH_LEVENBERGMARQUARDT_HXX */

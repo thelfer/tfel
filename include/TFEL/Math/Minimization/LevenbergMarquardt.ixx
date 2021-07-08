@@ -16,7 +16,6 @@
 #define LIB_TFEL_MATH_LEVENBERGMARQUARDTIXX
 
 #include <algorithm>
-
 #include "TFEL/Math/power.hxx"
 #include "TFEL/Math/MathException.hxx"
 

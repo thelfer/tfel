@@ -1547,6 +1547,7 @@ docs/web/release-notes-3.0.4.md -text
 docs/web/release-notes-3.0.5.md -text
 docs/web/release-notes-3.0.6.md -text
 docs/web/release-notes-3.0.7.md -text
+docs/web/release-notes-3.0.8.md -text
 docs/web/release-notes-3.0.md -text
 docs/web/release-notes-3.1.1.md -text
 docs/web/release-notes-3.1.2.md -text
@@ -1893,17 +1894,18 @@ include/TFEL/Math/Matrix/matrix.ixx -text
 include/TFEL/Math/Matrix/tmatrix.ixx -text
 include/TFEL/Math/Matrix/tmatrixIO.hxx -text
 include/TFEL/Math/Matrix/tmatrixResultType.hxx -text
+include/TFEL/Math/Minimization/FSLevenbergMarquardt.ixx -text
+include/TFEL/Math/Minimization/LevenbergMarquardt.ixx -text
+include/TFEL/Math/Minimization/LevenbergMarquardtFunctionWrapper.hxx -text
+include/TFEL/Math/Minimization/LevenbergMarquardtFunctionWrapper.ixx -text
 include/TFEL/Math/NonLinearSolvers/BissectionAlgorithmBase.hxx -text
 include/TFEL/Math/NonLinearSolvers/BissectionAlgorithmBase.ixx -text
 include/TFEL/Math/NonLinearSolvers/Broyden.ixx -text
 include/TFEL/Math/NonLinearSolvers/Broyden2.ixx -text
-include/TFEL/Math/NonLinearSolvers/FSLevenbergMarquardt.ixx -text
-include/TFEL/Math/NonLinearSolvers/LevenbergMarquardt.ixx -text
-include/TFEL/Math/NonLinearSolvers/LevenbergMarquardtFunctionWrapper.hxx -text
-include/TFEL/Math/NonLinearSolvers/LevenbergMarquardtFunctionWrapper.ixx -text
 include/TFEL/Math/NonLinearSolvers/ScalarNewtonRaphson.ixx -text
 include/TFEL/Math/NonLinearSolvers/TinyBroyden2Solver.ixx -text
 include/TFEL/Math/NonLinearSolvers/TinyBroydenSolver.ixx -text
+include/TFEL/Math/NonLinearSolvers/TinyLevenbergMarquardtSolver.ixx -text
 include/TFEL/Math/NonLinearSolvers/TinyNewtonRaphsonSolver.ixx -text
 include/TFEL/Math/NonLinearSolvers/TinyNonLinearSolverBase.hxx -text
 include/TFEL/Math/NonLinearSolvers/TinyNonLinearSolverBase.ixx -text
@@ -2071,6 +2073,7 @@ include/TFEL/Math/Tensor/tensor.ixx -text
 include/TFEL/Math/Tensor/tensorResultType.hxx -text
 include/TFEL/Math/TinyBroyden2Solver.hxx -text
 include/TFEL/Math/TinyBroydenSolver.hxx -text
+include/TFEL/Math/TinyLevenbergMarquardtSolver.hxx -text
 include/TFEL/Math/TinyMatrixInvert.hxx -text
 include/TFEL/Math/TinyMatrixSolve.hxx -text
 include/TFEL/Math/TinyNewtonRaphsonSolver.hxx -text
@@ -7307,6 +7310,7 @@ tests/Math/levenberg-marquardt.cxx -text
 tests/Math/levenberg-marquardt2.cxx -text
 tests/Math/levenberg-marquardt3.cxx -text
 tests/Math/levenberg-marquardt4.cxx -text
+tests/Math/levenberg-marquardt5.cxx -text
 tests/Math/lu.cxx -text
 tests/Math/lu2.cxx -text
 tests/Math/lu3.cxx -text
