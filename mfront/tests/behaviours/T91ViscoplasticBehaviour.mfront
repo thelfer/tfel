@@ -12,7 +12,8 @@
 @Date      27/11/13;
 
 @Theta 0.5;
-@Epsilon 1.E-8 ;
+@Epsilon 1.E-10;
+@PerturbationValueForNumericalJacobianComputation 1e-8;
 
 @MaterialProperty stress young;
 young.setGlossaryName("YoungModulus");
@@ -119,6 +120,20 @@ R_aust.setNormalisationFactor(1.e11);
 @InitLocalVars{
   const real R = 8.3144621;
   const real KELVIN= 273.15;
+  // Beta model parameter
+  D_mart = 217.;
+  D_aust = 204.;
+  
+  // Brachet parameter
+  A =  0.04;
+  Asat =  970.  + KELVIN;
+  Aeq =  840.  + KELVIN;
+  Cb =  15.;
+  Kb =  6.7876e15;
+  km =  0.056;
+  mb =  1.151;
+  nb =  2.52;
+  Wb =  485.e3;
 
   T_ = T + theta * dT ;
   
@@ -160,20 +175,6 @@ R_aust.setNormalisationFactor(1.e11);
   F_aust = T91AusteniticSteel_F_ROUX2007(T_);
   Q_aust = 0.;
 
-  // Beta model parameter
-  D_mart = 217.;
-  D_aust = 204.;
-  
-  // Brachet parameter
-  A =  0.04;
-  Asat =  970.  + KELVIN;
-  Aeq =  840.  + KELVIN;
-  Cb =  15.;
-  Kb =  6.7876e15;
-  km =  0.056;
-  mb =  1.151;
-  nb =  2.52;
-  Wb =  485.e3;
   growth = T91MartensiticSteel_growth_ROUX2007(T_);
   
   // Incubation time for phase transition according to Roux' empirical law
