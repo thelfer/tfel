@@ -37,8 +37,6 @@ namespace mfront {
     using CxxTokenizer = tfel::utilities::CxxTokenizer;
     //! a simple alias
     using tokens_iterator = CxxTokenizer::TokensContainer::const_iterator;
-    //! \return true if the algorithm is based on an external algorithm
-    virtual bool usesExternalAlgorithm() const = 0;
     /*!
      * \return the name of the class implementing the external algorithm
      * \param[in] bd: behaviour description
@@ -135,15 +133,6 @@ namespace mfront {
     virtual void writeSpecificMembers(std::ostream&,
                                       const BehaviourDescription&,
                                       const Hypothesis) const = 0;
-    /*!
-     * \brief write the resolution algorithm
-     * \param[in] out : output file
-     * \param[in] md  : mechanical description
-     * \param[in] h   : modelling hypotheis
-     */
-    virtual void writeResolutionAlgorithm(std::ostream&,
-                                          const BehaviourDescription&,
-                                          const Hypothesis) const = 0;
     /*!
      * \brief return the period at which the jacobian must be updated, when
      * meaningful.

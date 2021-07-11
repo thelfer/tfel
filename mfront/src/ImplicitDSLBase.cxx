@@ -1330,33 +1330,28 @@ namespace mfront {
 
   void ImplicitDSLBase::writeBehaviourParserSpecificInheritanceRelationship(
       std::ostream& os, const Hypothesis h) const {
-    if (this->solver->usesExternalAlgorithm()) {
-      const auto n = this->solver->getExternalAlgorithmClassName(this->mb, h);
-      os << ",\npublic " << n;
-    }
+    const auto n = this->solver->getExternalAlgorithmClassName(this->mb, h);
+    os << ",\npublic " << n;
   }  // end of writeBehaviourParserSpecificInheritanceRelationship
 
   void ImplicitDSLBase::writeBehaviourFriends(std::ostream& os,
                                               const Hypothesis h) const {
     BehaviourDSLCommon::writeBehaviourFriends(os, h);
-    if (this->solver->usesExternalAlgorithm()) {
-      const auto hn = [&h]() -> std::string {
-        if (h == tfel::material::ModellingHypothesis::UNDEFINEDHYPOTHESIS) {
-          return "hypothesis";
-        }
-        return "ModellingHypothesis::" +
-               tfel::material::ModellingHypothesis::toUpperCaseString(h);
-      }();
-      const auto n =
-          mfront::getTypeSize(
-              this->mb.getBehaviourData(h).getIntegrationVariables())
-              .getValue(
-                  {"ModellingHypothesisToSpaceDimension<" + hn + ">::value",
-                   "ModellingHypothesisToStensorSize<" + hn + ">::value",
-                   "ModellingHypothesisToTensorSize<" + hn + ">::value"});
-      os << "friend struct tfel::math::TinyNonLinearSolverBase<" << n
-         << ", NumericType, " << this->mb.getClassName() << ">;\n";
-    }
+    const auto hn = [&h]() -> std::string {
+      if (h == tfel::material::ModellingHypothesis::UNDEFINEDHYPOTHESIS) {
+        return "hypothesis";
+      }
+      return "ModellingHypothesis::" +
+             tfel::material::ModellingHypothesis::toUpperCaseString(h);
+    }();
+    const auto n =
+        mfront::getTypeSize(
+            this->mb.getBehaviourData(h).getIntegrationVariables())
+            .getValue({"ModellingHypothesisToSpaceDimension<" + hn + ">::value",
+                       "ModellingHypothesisToStensorSize<" + hn + ">::value",
+                       "ModellingHypothesisToTensorSize<" + hn + ">::value"});
+    os << "friend struct tfel::math::TinyNonLinearSolverBase<" << n
+       << ", NumericType, " << this->mb.getClassName() << ">;\n";
   }  // end of writeBehaviourFriends
 
   void ImplicitDSLBase::writeDerivativeView(
@@ -1732,28 +1727,8 @@ namespace mfront {
     }
     // size of linear system
     n = n3;
-    if (!this->solver->usesExternalAlgorithm()) {
-      os << "// Jacobian\n";
-      os << "tfel::math::tmatrix<" << n << "," << n
-         << ", NumericType> jacobian;\n";
-      if (this->solver->usesJacobianInvert()) {
-        os << "// Jacobian\n";
-        os << "tfel::math::tmatrix<" << n << "," << n
-           << ", NumericType> inv_jacobian;\n";
-      }
-    }
     this->solver->writeSpecificMembers(os, this->mb, h);
     os << "SMType stiffness_matrix_type;\n";
-    if (!this->solver->usesExternalAlgorithm()) {
-      os << "// zeros\n";
-      os << "tfel::math::tvector<" << n << ", NumericType> zeros;\n\n";
-      os << "// previous zeros\n";
-      os << "tfel::math::tvector<" << n << ", NumericType> zeros_1;\n\n";
-      os << "// function\n";
-      os << "tfel::math::tvector<" << n << ", NumericType> fzeros;\n\n";
-      os << "// number of iterations\n";
-      os << "unsigned int iter = 0u;\n\n";
-    }
     //
     if (this->solver->usesJacobian()) {
       // compute the numerical part of the jacobian.  This method is
@@ -2286,48 +2261,24 @@ namespace mfront {
       writeStandardPerformanceProfilingBegin(os, mb.getClassName(),
                                              BehaviourData::Integrator);
     }
-    if (this->solver->usesExternalAlgorithm()) {
-      this->solver->initializeNumericalParameters(os, this->mb, h);
-      os << "if(!this->solveNonLinearSystem()){\n";
-      if (this->mb.useQt()) {
-        os << "return MechanicalBehaviour<" << btype
-           << ",hypothesis, NumericType, use_qt>::FAILURE;\n";
-      } else {
-        os << "return MechanicalBehaviour<" << btype
-           << ",hypothesis, NumericType, false>::FAILURE;\n";
-      }
-      os << "}\n";
-      // We compute the numerical jacobian even if we converged since
-      // most of the time, this tangent operator will be computed
-      // using the partial jacobian invert. We consider very unlikely
-      // that a user may use a numerical jacobian and provide an
-      // analytic definition of the tangent operator
-      os << "if (this->stiffness_matrix_type != NOSTIFFNESSREQUESTED){\n"
-         << "this->updateOrCheckJacobian();\n"
-         << "}\n";
+    this->solver->initializeNumericalParameters(os, this->mb, h);
+    os << "if(!this->solveNonLinearSystem()){\n";
+    if (this->mb.useQt()) {
+      os << "return MechanicalBehaviour<" << btype
+         << ",hypothesis, NumericType, use_qt>::FAILURE;\n";
     } else {
-      this->solver->writeResolutionAlgorithm(os, this->mb, h);
-      os << "if(this->iter==this->iterMax){\n";
-      if (getDebugMode()) {
-        os << "cout << \"" << this->mb.getClassName()
-           << "::integrate() : no convergence after \" "
-           << "<< this->iter << \" iterations\"<< endl << endl;\n";
-        os << "cout << *this << endl;\n";
-      }
-      if (this->mb.useQt()) {
-        os << "return MechanicalBehaviour<" << btype
-           << ",hypothesis, NumericType, use_qt>::FAILURE;\n";
-      } else {
-        os << "return MechanicalBehaviour<" << btype
-           << ",hypothesis, NumericType, false>::FAILURE;\n";
-      }
-      os << "}\n";
-      if (getDebugMode()) {
-        os << "cout << \"" << this->mb.getClassName()
-           << "::integrate() : convergence after \" "
-           << "<< this->iter << \" iterations\"<< endl << endl;\n";
-      }
+      os << "return MechanicalBehaviour<" << btype
+         << ",hypothesis, NumericType, false>::FAILURE;\n";
     }
+    os << "}\n";
+    // We compute the numerical jacobian even if we converged since
+    // most of the time, this tangent operator will be computed
+    // using the partial jacobian invert. We consider very unlikely
+    // that a user may use a numerical jacobian and provide an
+    // analytic definition of the tangent operator
+    os << "if (this->stiffness_matrix_type != NOSTIFFNESSREQUESTED){\n"
+       << "this->updateOrCheckJacobian();\n"
+       << "}\n";
     if (this->mb.getAttribute(BehaviourData::profiling, false)) {
       writeStandardPerformanceProfilingEnd(os);
     }
@@ -2382,41 +2333,40 @@ namespace mfront {
     }
     os << "} // end of " << this->mb.getClassName() << "::integrate\n\n";
     //
-    if (this->solver->usesExternalAlgorithm()) {
-      os << "bool computeResidual(){\n";
-      if (this->mb.hasCode(h, BehaviourData::ComputeThermodynamicForces)) {
-        os << "this->computeThermodynamicForces();\n";
-      }
-      os << "return this->computeFdF(false);\n"
-         << "}\n";
-      //
-      os << "//! \\return the norm of the residual\n"
-         << "NumericType computeResidualNorm() {\n"
-         << "return tfel::math::norm(this->fzeros) / (" << n2 << ");\n"
-         << "}\n"
-         << "/*!\n"
-         << " * \\brief check the convergence of the method\n"
-         << " * \\param[in] error: current error\n"
-         << " */\n"
-         << "bool checkConvergence(const NumericType error) {\n"
-         << "auto converged = error < this->epsilon;\n"
-         << "this->additionalConvergenceChecks(converged, error);\n"
-         << "return converged;\n"
-         << "}\n"
-         << "/*!\n"
-         << " * \\brief update the jacobian matrix if required.\n"
-         << " * \\param[in] converged: boolean stating if the method is\n"
-         << " * called after the convergence of the algorithm or before "
-         << " * the computation of the next correction.\n"
-         << " *\n"
-         << " * This method can be used to compute the jacobian or part "
-         << " * of the jacobian numerically. If the jacobian was computed\n"
-         << " * in `computeResidual`, this method can be used to compare it "
-         << " * to a numerical approximation.\n"
-         << " */\n"
-         << "void updateOrCheckJacobian(){\n";
-      if (this->solver->requiresNumericalJacobian()) {
-        os << "this->computeNumericalJacobian(this->jacobian);\n";
+    os << "bool computeResidual(){\n";
+    if (this->mb.hasCode(h, BehaviourData::ComputeThermodynamicForces)) {
+      os << "this->computeThermodynamicForces();\n";
+    }
+    os << "return this->computeFdF(false);\n"
+       << "}\n";
+    //
+    os << "//! \\return the norm of the residual\n"
+       << "NumericType computeResidualNorm() {\n"
+       << "return tfel::math::norm(this->fzeros) / (" << n2 << ");\n"
+       << "}\n"
+       << "/*!\n"
+       << " * \\brief check the convergence of the method\n"
+       << " * \\param[in] error: current error\n"
+       << " */\n"
+       << "bool checkConvergence(const NumericType error) {\n"
+       << "auto converged = error < this->epsilon;\n"
+       << "this->additionalConvergenceChecks(converged, error);\n"
+       << "return converged;\n"
+       << "}\n"
+       << "/*!\n"
+       << " * \\brief update the jacobian matrix if required.\n"
+       << " * \\param[in] converged: boolean stating if the method is\n"
+       << " * called after the convergence of the algorithm or before "
+       << " * the computation of the next correction.\n"
+       << " *\n"
+       << " * This method can be used to compute the jacobian or part "
+       << " * of the jacobian numerically. If the jacobian was computed\n"
+       << " * in `computeResidual`, this method can be used to compare it "
+       << " * to a numerical approximation.\n"
+       << " */\n"
+       << "void updateOrCheckJacobian(){\n";
+    if (this->solver->requiresNumericalJacobian()) {
+      os << "this->computeNumericalJacobian(this->jacobian);\n";
     } else {
       NonLinearSystemSolverBase::writeEvaluateNumericallyComputedBlocks(os, mb,
                                                                         h);
@@ -2486,394 +2436,397 @@ namespace mfront {
          << " * \\brief method called after a standard Newton step\n"
          << " * \\param[in] e: error\n"
          << " */\n"
-         << "void reportStandardNewtonIteration(const NumericType error) const {\n"
+         << "void reportStandardNewtonIteration(const NumericType error) "
+            "const {\n"
          << "std::cout << \"" << mb.getClassName()
          << "::integrate() : iteration \" "
          << "<< this->iter << \" : \" << error << '\\n';\n"
          << "}\n";
     }
-  }
-  this->writeComputeFdF(os, h);
-}  // namespace mfront
+    this->writeComputeFdF(os, h);
+  }  // namespace mfront
 
-void ImplicitDSLBase::writeComputeFdF(std::ostream& os,
-                                      const Hypothesis h) const {
-  const auto& d = this->mb.getBehaviourData(h);
-  auto jp(this->jacobianPartsUsedInIntegrator);
-  if (this->solver
-          ->requiresJacobianToBeReinitialisedToIdentityAtEachIterations()) {
-    for (const auto& v : d.getIntegrationVariables()) {
-      jp.insert("df" + v.name + "_dd" + v.name);
+  void ImplicitDSLBase::writeComputeFdF(std::ostream& os,
+                                        const Hypothesis h) const {
+    const auto& d = this->mb.getBehaviourData(h);
+    auto jp(this->jacobianPartsUsedInIntegrator);
+    if (this->solver
+            ->requiresJacobianToBeReinitialisedToIdentityAtEachIterations()) {
+      for (const auto& v : d.getIntegrationVariables()) {
+        jp.insert("df" + v.name + "_dd" + v.name);
+      }
     }
-  }
-  //
-  os << "/*!\n"
-     << "* \\brief compute fzeros and jacobian\n"
-     << "*/\n"
-     << "bool computeFdF(const bool perturbatedSystemEvaluation){\n"
-     << "using namespace std;\n"
-     << "using namespace tfel::math;\n"
-     << "using std::vector;\n";
-  if (this->mb.getAttribute(BehaviourData::profiling, false)) {
-    writeStandardPerformanceProfiling(os, mb.getClassName(), "ComputeFdF");
-  }
-  writeMaterialLaws(os, this->mb.getMaterialLaws());
-  os << "// silent compiler warning\n"
-     << "static_cast<void>(perturbatedSystemEvaluation); \n";
-  auto n = SupportedTypes::TypeSize();
-  for (const auto& v : d.getIntegrationVariables()) {
-    os << "constexpr auto " << v.name << "_offset = " << n << ";\n";
-    os << "static_cast<void>(" << v.name << "_offset);\n";
-    if (v.arraySize == 1u) {
-      if (SupportedTypes::getTypeFlag(v.type) == SupportedTypes::SCALAR) {
-        if (this->mb.useQt()) {
-          os << "tfel::math::scalar_view<" << v.type << "> f" << v.name
-             << "(this->fzeros(" << n << "));\n";
+    //
+    os << "/*!\n"
+       << "* \\brief compute fzeros and jacobian\n"
+       << "*/\n"
+       << "bool computeFdF(const bool perturbatedSystemEvaluation){\n"
+       << "using namespace std;\n"
+       << "using namespace tfel::math;\n"
+       << "using std::vector;\n";
+    if (this->mb.getAttribute(BehaviourData::profiling, false)) {
+      writeStandardPerformanceProfiling(os, mb.getClassName(), "ComputeFdF");
+    }
+    writeMaterialLaws(os, this->mb.getMaterialLaws());
+    os << "// silent compiler warning\n"
+       << "static_cast<void>(perturbatedSystemEvaluation); \n";
+    auto n = SupportedTypes::TypeSize();
+    for (const auto& v : d.getIntegrationVariables()) {
+      os << "constexpr auto " << v.name << "_offset = " << n << ";\n";
+      os << "static_cast<void>(" << v.name << "_offset);\n";
+      if (v.arraySize == 1u) {
+        if (SupportedTypes::getTypeFlag(v.type) == SupportedTypes::SCALAR) {
+          if (this->mb.useQt()) {
+            os << "tfel::math::scalar_view<" << v.type << "> f" << v.name
+               << "(this->fzeros(" << n << "));\n";
+          } else {
+            os << "real& f" << v.name << "(this->fzeros(" << n << "));\n";
+          }
         } else {
-          os << "real& f" << v.name << "(this->fzeros(" << n << "));\n";
+          os << "auto f" << v.name << " = tfel::math::map<" << v.type << ", "
+             << n << ">(this->fzeros);\n";
         }
       } else {
-        os << "auto f" << v.name << " = tfel::math::map<" << v.type << ", " << n
-           << ">(this->fzeros);\n";
-      }
-    } else {
-      os << "auto f" << v.name << " = tfel::math::map<" << v.arraySize << ", "
-         << v.type << ", " << n << ">(this->fzeros);\n";
-    }
-    n += this->getTypeSize(v.type, v.arraySize);
-  }
-  if ((this->solver->usesJacobian()) &&
-      (!(this->solver->requiresNumericalJacobian()))) {
-    n = SupportedTypes::TypeSize();
-    for (const auto& v : d.getIntegrationVariables()) {
-      auto n2 = SupportedTypes::TypeSize();
-      for (const auto& v2 : d.getIntegrationVariables()) {
-        if ((v.arraySize == 1u) && (v2.arraySize == 1u)) {
-          os << "// derivative of residual f" << v.name
-             << " with respect to variable " << v2.name << "\n"
-             << NonLinearSystemSolverBase::getJacobianPart(v, v2, n, n2);
-        }
-        n2 += this->getTypeSize(v2.type, v2.arraySize);
+        os << "auto f" << v.name << " = tfel::math::map<" << v.arraySize << ", "
+           << v.type << ", " << n << ">(this->fzeros);\n";
       }
       n += this->getTypeSize(v.type, v.arraySize);
     }
-  }
-  if (this->solver
-          ->requiresJacobianToBeReinitialisedToIdentityAtEachIterations()) {
-    os << "// setting jacobian to identity\n"
-       << "std::fill(this->jacobian.begin(),this->jacobian.end(), "
-          "NumericType(0))"
-          ";\n"
-       << "for(unsigned short idx = 0; idx != " << n << "; ++idx){\n"
-       << "this->jacobian(idx, idx) = NumericType(1);\n"
-       << "}\n";
-  }
-  os << "// setting f values to zeros\n"
-     << "this->fzeros = this->zeros;\n";
-  for (const auto& v : d.getIntegrationVariables()) {
-    if (this->mb.hasAttribute(h, v.name + "_normalisation_factor")) {
-      const auto& nf = this->mb.getAttribute<std::string>(
-          h, v.name + "_normalisation_factor");
-      os << "f" << v.name << " *= " << nf << ";\n";
-    }
-  }
-  os << this->mb.getCodeBlock(h, BehaviourData::Integrator).code << "\n";
-  for (const auto& v : d.getIntegrationVariables()) {
-    if (this->mb.hasAttribute(h, 'f' + v.name + "_normalisation_factor")) {
-      const auto& nf = this->mb.getAttribute<std::string>(
-          h, 'f' + v.name + "_normalisation_factor");
-      os << "f" << v.name << "*= NumericType(1)/(" << nf << ");\n";
-    }
-  }
-  if ((this->solver->usesJacobian()) &&
-      (!(this->solver->requiresNumericalJacobian()))) {
-    for (const auto& v : d.getIntegrationVariables()) {
-      for (const auto& v2 : d.getIntegrationVariables()) {
-        if ((v.arraySize == 1u) && (v2.arraySize == 1u)) {
-          os << "static_cast<void>(df" << v.name << "_dd" << v2.name
-             << "); /* suppress potential warnings */\n";
+    if ((this->solver->usesJacobian()) &&
+        (!(this->solver->requiresNumericalJacobian()))) {
+      n = SupportedTypes::TypeSize();
+      for (const auto& v : d.getIntegrationVariables()) {
+        auto n2 = SupportedTypes::TypeSize();
+        for (const auto& v2 : d.getIntegrationVariables()) {
+          if ((v.arraySize == 1u) && (v2.arraySize == 1u)) {
+            os << "// derivative of residual f" << v.name
+               << " with respect to variable " << v2.name << "\n"
+               << NonLinearSystemSolverBase::getJacobianPart(v, v2, n, n2);
+          }
+          n2 += this->getTypeSize(v2.type, v2.arraySize);
         }
-        if (jp.find("df" + v.name + "_dd" + v2.name) != jp.end()) {
-          const bool bfnf =
-              this->mb.hasAttribute(h, 'f' + v.name + "_normalisation_factor");
-          const bool bvnf =
-              this->mb.hasAttribute(h, v2.name + "_normalisation_factor");
-          if (bfnf) {
-            const auto& fnf = this->mb.getAttribute<std::string>(
+        n += this->getTypeSize(v.type, v.arraySize);
+      }
+    }
+    if (this->solver
+            ->requiresJacobianToBeReinitialisedToIdentityAtEachIterations()) {
+      os << "// setting jacobian to identity\n"
+         << "std::fill(this->jacobian.begin(),this->jacobian.end(), "
+            "NumericType(0))"
+            ";\n"
+         << "for(unsigned short idx = 0; idx != " << n << "; ++idx){\n"
+         << "this->jacobian(idx, idx) = NumericType(1);\n"
+         << "}\n";
+    }
+    os << "// setting f values to zeros\n"
+       << "this->fzeros = this->zeros;\n";
+    for (const auto& v : d.getIntegrationVariables()) {
+      if (this->mb.hasAttribute(h, v.name + "_normalisation_factor")) {
+        const auto& nf = this->mb.getAttribute<std::string>(
+            h, v.name + "_normalisation_factor");
+        os << "f" << v.name << " *= " << nf << ";\n";
+      }
+    }
+    os << this->mb.getCodeBlock(h, BehaviourData::Integrator).code << "\n";
+    for (const auto& v : d.getIntegrationVariables()) {
+      if (this->mb.hasAttribute(h, 'f' + v.name + "_normalisation_factor")) {
+        const auto& nf = this->mb.getAttribute<std::string>(
+            h, 'f' + v.name + "_normalisation_factor");
+        os << "f" << v.name << "*= NumericType(1)/(" << nf << ");\n";
+      }
+    }
+    if ((this->solver->usesJacobian()) &&
+        (!(this->solver->requiresNumericalJacobian()))) {
+      for (const auto& v : d.getIntegrationVariables()) {
+        for (const auto& v2 : d.getIntegrationVariables()) {
+          if ((v.arraySize == 1u) && (v2.arraySize == 1u)) {
+            os << "static_cast<void>(df" << v.name << "_dd" << v2.name
+               << "); /* suppress potential warnings */\n";
+          }
+          if (jp.find("df" + v.name + "_dd" + v2.name) != jp.end()) {
+            const bool bfnf = this->mb.hasAttribute(
                 h, 'f' + v.name + "_normalisation_factor");
-            if (bvnf) {
-              const auto& vnf = this->mb.getAttribute<std::string>(
-                  h, v2.name + "_normalisation_factor");
-              if ((v.arraySize != 1u) && (v2.arraySize != 1u)) {
-                os << "for(unsigned short idx=0;idx!=" << v.arraySize
-                   << ";++idx){\n";
-                os << "for(unsigned short idx2=0;idx2!=" << v2.arraySize
-                   << ";++idx2){\n";
-                os << "df" << v.name << "_dd" << v2.name
-                   << "(idx,idx2) *= " << vnf << "/(" << fnf << ");\n";
-                os << "}\n";
-                os << "}\n";
-              } else if ((v.arraySize != 1u) && (v2.arraySize == 1u)) {
-                os << "for(unsigned short idx=0;idx!=" << v.arraySize
-                   << ";++idx){\n";
-                os << "df" << v.name << "_dd" << v2.name << "(idx) *= " << vnf
-                   << "/(" << fnf << ");\n";
-                os << "}\n";
-              } else if ((v.arraySize == 1u) && (v2.arraySize != 1u)) {
-                os << "for(unsigned short idx=0;idx!=" << v2.arraySize
-                   << ";++idx){\n";
-                os << "df" << v.name << "_dd" << v2.name << "(idx) *= " << vnf
-                   << "/(" << fnf << ");\n";
-                os << "}\n";
-              } else if ((v.arraySize == 1u) && (v2.arraySize == 1u)) {
-                os << "df" << v.name << "_dd" << v2.name << " *= " << vnf
-                   << "/(" << fnf << ");\n";
+            const bool bvnf =
+                this->mb.hasAttribute(h, v2.name + "_normalisation_factor");
+            if (bfnf) {
+              const auto& fnf = this->mb.getAttribute<std::string>(
+                  h, 'f' + v.name + "_normalisation_factor");
+              if (bvnf) {
+                const auto& vnf = this->mb.getAttribute<std::string>(
+                    h, v2.name + "_normalisation_factor");
+                if ((v.arraySize != 1u) && (v2.arraySize != 1u)) {
+                  os << "for(unsigned short idx=0;idx!=" << v.arraySize
+                     << ";++idx){\n";
+                  os << "for(unsigned short idx2=0;idx2!=" << v2.arraySize
+                     << ";++idx2){\n";
+                  os << "df" << v.name << "_dd" << v2.name
+                     << "(idx,idx2) *= " << vnf << "/(" << fnf << ");\n";
+                  os << "}\n";
+                  os << "}\n";
+                } else if ((v.arraySize != 1u) && (v2.arraySize == 1u)) {
+                  os << "for(unsigned short idx=0;idx!=" << v.arraySize
+                     << ";++idx){\n";
+                  os << "df" << v.name << "_dd" << v2.name << "(idx) *= " << vnf
+                     << "/(" << fnf << ");\n";
+                  os << "}\n";
+                } else if ((v.arraySize == 1u) && (v2.arraySize != 1u)) {
+                  os << "for(unsigned short idx=0;idx!=" << v2.arraySize
+                     << ";++idx){\n";
+                  os << "df" << v.name << "_dd" << v2.name << "(idx) *= " << vnf
+                     << "/(" << fnf << ");\n";
+                  os << "}\n";
+                } else if ((v.arraySize == 1u) && (v2.arraySize == 1u)) {
+                  os << "df" << v.name << "_dd" << v2.name << " *= " << vnf
+                     << "/(" << fnf << ");\n";
+                }
+              } else {
+                if ((v.arraySize != 1u) && (v2.arraySize != 1u)) {
+                  os << "for(unsigned short idx=0;idx!=" << v.arraySize
+                     << ";++idx){\n";
+                  os << "for(unsigned short idx2=0;idx2!=" << v2.arraySize
+                     << ";++idx2){\n";
+                  os << "df" << v.name << "_dd" << v2.name << "(idx,idx2) *= "
+                     << "NumericType(1)/(" << fnf << ");\n";
+                  os << "}\n";
+                  os << "}\n";
+                } else if ((v.arraySize != 1u) && (v2.arraySize == 1u)) {
+                  os << "for(unsigned short idx=0;idx!=" << v.arraySize
+                     << ";++idx){\n";
+                  os << "df" << v.name << "_dd" << v2.name << "(idx) *= "
+                     << "NumericType(1)/(" << fnf << ");\n";
+                  os << "}\n";
+                } else if ((v.arraySize == 1u) && (v2.arraySize != 1u)) {
+                  os << "for(unsigned short idx=0;idx!=" << v2.arraySize
+                     << ";++idx){\n";
+                  os << "df" << v.name << "_dd" << v2.name << "(idx) *= "
+                     << "NumericType(1)/(" << fnf << ");\n";
+                  os << "}\n";
+                } else if ((v.arraySize == 1u) && (v2.arraySize == 1u)) {
+                  os << "df" << v.name << "_dd" << v2.name << " *= "
+                     << "NumericType(1)/(" << fnf << ");\n";
+                }
               }
             } else {
-              if ((v.arraySize != 1u) && (v2.arraySize != 1u)) {
-                os << "for(unsigned short idx=0;idx!=" << v.arraySize
-                   << ";++idx){\n";
-                os << "for(unsigned short idx2=0;idx2!=" << v2.arraySize
-                   << ";++idx2){\n";
-                os << "df" << v.name << "_dd" << v2.name << "(idx,idx2) *= "
-                   << "NumericType(1)/(" << fnf << ");\n";
-                os << "}\n";
-                os << "}\n";
-              } else if ((v.arraySize != 1u) && (v2.arraySize == 1u)) {
-                os << "for(unsigned short idx=0;idx!=" << v.arraySize
-                   << ";++idx){\n";
-                os << "df" << v.name << "_dd" << v2.name << "(idx) *= "
-                   << "NumericType(1)/(" << fnf << ");\n";
-                os << "}\n";
-              } else if ((v.arraySize == 1u) && (v2.arraySize != 1u)) {
-                os << "for(unsigned short idx=0;idx!=" << v2.arraySize
-                   << ";++idx){\n";
-                os << "df" << v.name << "_dd" << v2.name << "(idx) *= "
-                   << "NumericType(1)/(" << fnf << ");\n";
-                os << "}\n";
-              } else if ((v.arraySize == 1u) && (v2.arraySize == 1u)) {
-                os << "df" << v.name << "_dd" << v2.name << " *= "
-                   << "NumericType(1)/(" << fnf << ");\n";
-              }
-            }
-          } else {
-            if (bvnf) {
-              const auto& vnf = this->mb.getAttribute<std::string>(
-                  h, v2.name + "_normalisation_factor");
-              if ((v.arraySize != 1u) && (v2.arraySize != 1u)) {
-                os << "for(unsigned short idx=0;idx!=" << v.arraySize
-                   << ";++idx){\n";
-                os << "for(unsigned short idx2=0;idx2!=" << v2.arraySize
-                   << ";++idx2){\n";
-                os << "df" << v.name << "_dd" << v2.name
-                   << "(idx,idx2) *= " << vnf << ";\n";
-                os << "}\n";
-                os << "}\n";
-              } else if ((v.arraySize != 1u) && (v2.arraySize == 1u)) {
-                os << "for(unsigned short idx=0;idx!=" << v.arraySize
-                   << ";++idx){\n";
-                os << "df" << v.name << "_dd" << v2.name << "(idx) *= " << vnf
-                   << ";\n";
-                os << "}\n";
-              } else if ((v.arraySize == 1u) && (v2.arraySize != 1u)) {
-                os << "for(unsigned short idx=0;idx!=" << v2.arraySize
-                   << ";++idx){\n";
-                os << "df" << v.name << "_dd" << v2.name << "(idx) *= " << vnf
-                   << ";\n";
-                os << "}\n";
-              } else if ((v.arraySize == 1u) && (v2.arraySize == 1u)) {
-                os << "df" << v.name << "_dd" << v2.name << " *= " << vnf
-                   << ";\n";
+              if (bvnf) {
+                const auto& vnf = this->mb.getAttribute<std::string>(
+                    h, v2.name + "_normalisation_factor");
+                if ((v.arraySize != 1u) && (v2.arraySize != 1u)) {
+                  os << "for(unsigned short idx=0;idx!=" << v.arraySize
+                     << ";++idx){\n";
+                  os << "for(unsigned short idx2=0;idx2!=" << v2.arraySize
+                     << ";++idx2){\n";
+                  os << "df" << v.name << "_dd" << v2.name
+                     << "(idx,idx2) *= " << vnf << ";\n";
+                  os << "}\n";
+                  os << "}\n";
+                } else if ((v.arraySize != 1u) && (v2.arraySize == 1u)) {
+                  os << "for(unsigned short idx=0;idx!=" << v.arraySize
+                     << ";++idx){\n";
+                  os << "df" << v.name << "_dd" << v2.name << "(idx) *= " << vnf
+                     << ";\n";
+                  os << "}\n";
+                } else if ((v.arraySize == 1u) && (v2.arraySize != 1u)) {
+                  os << "for(unsigned short idx=0;idx!=" << v2.arraySize
+                     << ";++idx){\n";
+                  os << "df" << v.name << "_dd" << v2.name << "(idx) *= " << vnf
+                     << ";\n";
+                  os << "}\n";
+                } else if ((v.arraySize == 1u) && (v2.arraySize == 1u)) {
+                  os << "df" << v.name << "_dd" << v2.name << " *= " << vnf
+                     << ";\n";
+                }
               }
             }
           }
         }
       }
     }
-  }
-  os << "return true;\n"
-     << "}\n\n";
-}  // end of writeBehaviourIntegrator
+    os << "return true;\n"
+       << "}\n\n";
+  }  // end of writeBehaviourIntegrator
 
-std::string ImplicitDSLBase::getIntegrationVariablesIncrementsInitializers(
-    const Hypothesis h) const {
-  SupportedTypes::TypeSize n;
-  std::ostringstream init;
-  bool first = true;
-  for (const auto& v : this->mb.getBehaviourData(h).getIntegrationVariables()) {
-    const auto flag = getTypeFlag(v.type);
-    if (!first) {
-      init << ",\n";
-    }
-    if (v.arraySize == 1u) {
-      if (flag == SupportedTypes::SCALAR) {
-        init << "d" << v.name << "(this->zeros(" << n << "))";
-      } else {
-        init << "d" << v.name << "(tfel::math::map<" << v.type << ", " << n
-             << ">(this->zeros))";
+  std::string ImplicitDSLBase::getIntegrationVariablesIncrementsInitializers(
+      const Hypothesis h) const {
+    SupportedTypes::TypeSize n;
+    std::ostringstream init;
+    bool first = true;
+    for (const auto& v :
+         this->mb.getBehaviourData(h).getIntegrationVariables()) {
+      const auto flag = getTypeFlag(v.type);
+      if (!first) {
+        init << ",\n";
       }
-    } else {
-      init << "d" << v.name << "(tfel::math::map<" << v.arraySize << ", "
-           << v.type << ", " << n << ">(this->zeros))";
-    }
-    n += this->getTypeSize(v.type, v.arraySize);
-    first = false;
-  }
-  return init.str();
-}  // end of getIntegrationVariableIncrementsInitializers
-
-std::string ImplicitDSLBase::getLocalVariablesInitializers(
-    const Hypothesis) const {
-  auto init = std::string{};
-  auto append = [&init](const std::string& s) {
-    if (s.empty()) {
-      return;
-    }
-    if (!init.empty()) {
-      init += ",\n";
-    }
-    init += s;
-  };
-  if (this->mb.getAttribute(BehaviourDescription::computesStiffnessTensor,
-                            false)) {
-    if (this->mb.areElasticMaterialPropertiesConstantDuringTheTimeStep()) {
-      append("D_tdt(D)");
-    }
-  }
-  for (const auto& ht : this->mb.getHillTensors()) {
-    if ((this->mb.getBehaviourType() !=
-         BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) &&
-        (this->mb.getBehaviourType() !=
-         BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR)) {
-      this->throwRuntimeError(
-          "ImplicitDSLBase::getLocalVariablesInitializers",
-          "Hill tensors shall only be defined for finite strain "
-          "or small strain behaviours");
-    }
-    if (this->mb.areMaterialPropertiesConstantDuringTheTimeStep(ht.c)) {
-      append(ht.name + "_tdt(" + ht.name + ")");
-    }
-  }
-  return init;
-}  // end of getLocalVariablesInitializers
-
-void ImplicitDSLBase::writeBehaviourParserSpecificInitializeMethodPart(
-    std::ostream& os, const Hypothesis h) const {
-  this->solver->writeSpecificInitializeMethodPart(os, mb, h);
-}
-
-void ImplicitDSLBase::writeBehaviourIntegrationVariablesIncrements(
-    std::ostream& os, const Hypothesis h) const {
-  const auto& d = this->mb.getBehaviourData(h);
-  this->checkBehaviourFile(os);
-  for (const auto& v : d.getIntegrationVariables()) {
-    if ((!getDebugMode()) && (v.lineNumber != 0u)) {
-      os << "#line " << v.lineNumber << " \"" << this->fd.fileName << "\"\n";
-    }
-    if (v.arraySize == 1u) {
-      if (SupportedTypes::getTypeFlag(v.type) == SupportedTypes::SCALAR) {
-        if (this->mb.useQt()) {
-          os << "tfel::math::scalar_view<" << v.type << "> "
-             << "d" << v.name << ";\n";
+      if (v.arraySize == 1u) {
+        if (flag == SupportedTypes::SCALAR) {
+          init << "d" << v.name << "(this->zeros(" << n << "))";
         } else {
-          os << "real& d" << v.name << ";\n";
+          init << "d" << v.name << "(tfel::math::map<" << v.type << ", " << n
+               << ">(this->zeros))";
         }
       } else {
-        os << "tfel::math::View<" << v.type << "> d" << v.name << ";\n";
+        init << "d" << v.name << "(tfel::math::map<" << v.arraySize << ", "
+             << v.type << ", " << n << ">(this->zeros))";
       }
-    } else {
-      os << "tfel::math::ViewsFixedSizeVector<" << v.type
-         << ", unsigned short, " << v.arraySize << "> d" << v.name << ";\n";
+      n += this->getTypeSize(v.type, v.arraySize);
+      first = false;
     }
-  }
-  os << '\n';
-}
+    return init.str();
+  }  // end of getIntegrationVariableIncrementsInitializers
 
-void ImplicitDSLBase::getSymbols(std::map<std::string, std::string>& symbols,
-                                 const Hypothesis h,
-                                 const std::string& n) {
-  using namespace tfel::material;
-  BehaviourDSLCommon::getSymbols(symbols, h, n);
-  const auto& d = this->mb.getBehaviourData(h);
-  for (const auto& v : d.getIntegrationVariables()) {
-    getIncrementSymbol(symbols, v);
-  }
-  for (const auto& mv : this->mb.getMainVariables()) {
-    if (Gradient::isIncrementKnown(mv.first)) {
-      getIncrementSymbol(symbols, mv.first);
-    } else {
-      mfront::addSymbol(symbols, displayName(mv.first) + "\u2080",
-                        mv.first.name + "0");
-      mfront::addSymbol(symbols, displayName(mv.first) + "\u2081",
-                        mv.first.name + "1");
-    }
-  }
-  mfront::getIncrementSymbols(symbols, d.getExternalStateVariables());
-  mfront::addSymbol(symbols, "\u0394t", "dt");
-  if (n == BehaviourData::Integrator) {
-    for (const auto& v1 : d.getIntegrationVariables()) {
-      if (!v1.symbolic_form.empty()) {
-        addSymbol(symbols, "f" + v1.symbolic_form, "f" + v1.name);
+  std::string ImplicitDSLBase::getLocalVariablesInitializers(
+      const Hypothesis) const {
+    auto init = std::string{};
+    auto append = [&init](const std::string& s) {
+      if (s.empty()) {
+        return;
       }
-      for (const auto& v2 : d.getIntegrationVariables()) {
-        const auto& s1 = !v1.symbolic_form.empty() ? v1.symbolic_form : v1.name;
-        const auto& s2 = !v2.symbolic_form.empty() ? v2.symbolic_form : v2.name;
-        addSymbol(symbols, "\u2202f" + s1 + "\u2215\u2202\u0394" + s2,
-                  "df" + v1.name + "_dd" + v2.name);
+      if (!init.empty()) {
+        init += ",\n";
+      }
+      init += s;
+    };
+    if (this->mb.getAttribute(BehaviourDescription::computesStiffnessTensor,
+                              false)) {
+      if (this->mb.areElasticMaterialPropertiesConstantDuringTheTimeStep()) {
+        append("D_tdt(D)");
       }
     }
+    for (const auto& ht : this->mb.getHillTensors()) {
+      if ((this->mb.getBehaviourType() !=
+           BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) &&
+          (this->mb.getBehaviourType() !=
+           BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR)) {
+        this->throwRuntimeError(
+            "ImplicitDSLBase::getLocalVariablesInitializers",
+            "Hill tensors shall only be defined for finite strain "
+            "or small strain behaviours");
+      }
+      if (this->mb.areMaterialPropertiesConstantDuringTheTimeStep(ht.c)) {
+        append(ht.name + "_tdt(" + ht.name + ")");
+      }
+    }
+    return init;
+  }  // end of getLocalVariablesInitializers
+
+  void ImplicitDSLBase::writeBehaviourParserSpecificInitializeMethodPart(
+      std::ostream& os, const Hypothesis h) const {
+    this->solver->writeSpecificInitializeMethodPart(os, mb, h);
   }
-  const auto is_tangent_operator_code_block = [this, &n] {
-    if (this->mb.getBehaviourType() ==
-        BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR) {
-      // all available tangent operators for finite strain  behaviours
-      for (const auto& t : getFiniteStrainBehaviourTangentOperatorFlags()) {
-        const auto ktype =
-            convertFiniteStrainBehaviourTangentOperatorFlagToString(t);
-        const auto bn =
-            std::string(BehaviourData::ComputeTangentOperator) + '-' + ktype;
-        if (n == bn) {
-          return true;
+
+  void ImplicitDSLBase::writeBehaviourIntegrationVariablesIncrements(
+      std::ostream& os, const Hypothesis h) const {
+    const auto& d = this->mb.getBehaviourData(h);
+    this->checkBehaviourFile(os);
+    for (const auto& v : d.getIntegrationVariables()) {
+      if ((!getDebugMode()) && (v.lineNumber != 0u)) {
+        os << "#line " << v.lineNumber << " \"" << this->fd.fileName << "\"\n";
+      }
+      if (v.arraySize == 1u) {
+        if (SupportedTypes::getTypeFlag(v.type) == SupportedTypes::SCALAR) {
+          if (this->mb.useQt()) {
+            os << "tfel::math::scalar_view<" << v.type << "> "
+               << "d" << v.name << ";\n";
+          } else {
+            os << "real& d" << v.name << ";\n";
+          }
+        } else {
+          os << "tfel::math::View<" << v.type << "> d" << v.name << ";\n";
+        }
+      } else {
+        os << "tfel::math::ViewsFixedSizeVector<" << v.type
+           << ", unsigned short, " << v.arraySize << "> d" << v.name << ";\n";
+      }
+    }
+    os << '\n';
+  }
+
+  void ImplicitDSLBase::getSymbols(std::map<std::string, std::string>& symbols,
+                                   const Hypothesis h,
+                                   const std::string& n) {
+    using namespace tfel::material;
+    BehaviourDSLCommon::getSymbols(symbols, h, n);
+    const auto& d = this->mb.getBehaviourData(h);
+    for (const auto& v : d.getIntegrationVariables()) {
+      getIncrementSymbol(symbols, v);
+    }
+    for (const auto& mv : this->mb.getMainVariables()) {
+      if (Gradient::isIncrementKnown(mv.first)) {
+        getIncrementSymbol(symbols, mv.first);
+      } else {
+        mfront::addSymbol(symbols, displayName(mv.first) + "\u2080",
+                          mv.first.name + "0");
+        mfront::addSymbol(symbols, displayName(mv.first) + "\u2081",
+                          mv.first.name + "1");
+      }
+    }
+    mfront::getIncrementSymbols(symbols, d.getExternalStateVariables());
+    mfront::addSymbol(symbols, "\u0394t", "dt");
+    if (n == BehaviourData::Integrator) {
+      for (const auto& v1 : d.getIntegrationVariables()) {
+        if (!v1.symbolic_form.empty()) {
+          addSymbol(symbols, "f" + v1.symbolic_form, "f" + v1.name);
+        }
+        for (const auto& v2 : d.getIntegrationVariables()) {
+          const auto& s1 =
+              !v1.symbolic_form.empty() ? v1.symbolic_form : v1.name;
+          const auto& s2 =
+              !v2.symbolic_form.empty() ? v2.symbolic_form : v2.name;
+          addSymbol(symbols, "\u2202f" + s1 + "\u2215\u2202\u0394" + s2,
+                    "df" + v1.name + "_dd" + v2.name);
         }
       }
-      return false;
-    } else {
-      return n == BehaviourData::ComputeTangentOperator;
     }
-  }();
-  if (is_tangent_operator_code_block) {
-    for (const auto& to : this->mb.getTangentOperatorBlocks()) {
-      const auto& sname = to.second.symbolic_form;
-      if (!sname.empty()) {
-        const auto& name = to.second.name;
-        addSymbol(symbols, "getIntegrationVariablesDerivatives_" + sname,
-                  "getIntegrationVariablesDerivatives_" + name);
-      }
-      for (const auto& iv : d.getIntegrationVariables()) {
-        const auto s1 = iv.symbolic_form.empty() ? iv.name : iv.symbolic_form;
-        const auto s2 = to.second.symbolic_form.empty()
-                            ? to.second.name
-                            : to.second.symbolic_form;
-        addSymbol(symbols, "\u2202f" + s1 + "\u2215\u2202\u0394" + s2,
-                  "df" + iv.name + "_dd" + to.second.name);
-      }
-    }
-    for (const auto& iv1 : d.getIntegrationVariables()) {
-      for (const auto& iv2 : d.getIntegrationVariables()) {
-        if ((iv1.symbolic_form.empty()) && (iv2.symbolic_form.empty())) {
-          continue;
+    const auto is_tangent_operator_code_block = [this, &n] {
+      if (this->mb.getBehaviourType() ==
+          BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR) {
+        // all available tangent operators for finite strain  behaviours
+        for (const auto& t : getFiniteStrainBehaviourTangentOperatorFlags()) {
+          const auto ktype =
+              convertFiniteStrainBehaviourTangentOperatorFlagToString(t);
+          const auto bn =
+              std::string(BehaviourData::ComputeTangentOperator) + '-' + ktype;
+          if (n == bn) {
+            return true;
+          }
         }
-        const auto s1 =
-            iv1.symbolic_form.empty() ? iv1.name : iv1.symbolic_form;
-        const auto s2 =
-            iv2.symbolic_form.empty() ? iv2.name : iv2.symbolic_form;
-        addSymbol(symbols, "iJ_" + s1 + "_" + s2,
-                  "iJ_" + iv1.name + "_" + iv2.name);
+        return false;
+      } else {
+        return n == BehaviourData::ComputeTangentOperator;
+      }
+    }();
+    if (is_tangent_operator_code_block) {
+      for (const auto& to : this->mb.getTangentOperatorBlocks()) {
+        const auto& sname = to.second.symbolic_form;
+        if (!sname.empty()) {
+          const auto& name = to.second.name;
+          addSymbol(symbols, "getIntegrationVariablesDerivatives_" + sname,
+                    "getIntegrationVariablesDerivatives_" + name);
+        }
+        for (const auto& iv : d.getIntegrationVariables()) {
+          const auto s1 = iv.symbolic_form.empty() ? iv.name : iv.symbolic_form;
+          const auto s2 = to.second.symbolic_form.empty()
+                              ? to.second.name
+                              : to.second.symbolic_form;
+          addSymbol(symbols, "\u2202f" + s1 + "\u2215\u2202\u0394" + s2,
+                    "df" + iv.name + "_dd" + to.second.name);
+        }
+      }
+      for (const auto& iv1 : d.getIntegrationVariables()) {
+        for (const auto& iv2 : d.getIntegrationVariables()) {
+          if ((iv1.symbolic_form.empty()) && (iv2.symbolic_form.empty())) {
+            continue;
+          }
+          const auto s1 =
+              iv1.symbolic_form.empty() ? iv1.name : iv1.symbolic_form;
+          const auto s2 =
+              iv2.symbolic_form.empty() ? iv2.name : iv2.symbolic_form;
+          addSymbol(symbols, "iJ_" + s1 + "_" + s2,
+                    "iJ_" + iv1.name + "_" + iv2.name);
+        }
       }
     }
-  }
-}  // end of getSymbols
+  }  // end of getSymbols
 
-ImplicitDSLBase::~ImplicitDSLBase() = default;
+  ImplicitDSLBase::~ImplicitDSLBase() = default;
 
 }  // end of namespace mfront

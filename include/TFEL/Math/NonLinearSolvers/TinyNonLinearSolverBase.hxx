@@ -83,6 +83,11 @@ namespace tfel::math {
      * \return true on success
      */
     bool solveNonLinearSystem();
+    /*!
+     * \brief solve the non linear problem
+     * \return true on success
+     */
+    bool solveNonLinearSystem2();
     //! \return the norm of the residual
     NumericType computeResidualNorm() { return norm(this->fzeros); }
     /*!
@@ -135,6 +140,8 @@ namespace tfel::math {
     size_type iter;
     //! \brief maximum number of iterations
     size_type iterMax;
+    //!
+    bool is_delta_zero_defined;
   };
 
 }  // end of namespace tfel::math

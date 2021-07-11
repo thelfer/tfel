@@ -19,55 +19,62 @@
 namespace tfel::math {
 
   template <unsigned short N, typename NumericType, typename Child>
-  bool TinyNonLinearSolverBase<N, NumericType, Child>::solveNonLinearSystem() {
+  bool TinyNonLinearSolverBase<N, NumericType, Child>::solveNonLinearSystem2() {
     auto& child = static_cast<Child&>(*this);
-    // newton correction
     auto converged = false;
-    this->iter =
-      typename TinyNonLinearSolverBase<N, NumericType,Child>::size_type{};
-    child.reportBeginningOfResolution();
-    child.processNewEstimate();
-    auto treat_invalid_residual = [this, &child] {
-      constexpr auto one_half = NumericType(1) / 2;
-      child.reportInvalidResidualEvaluation();
-      this->delta_zeros *= one_half;
-      this->zeros -= this->delta_zeros;
-      child.processNewEstimate();
-      ++(this->iter);
-    };
-    while ((!converged) && (this->iter != this->iterMax)) {
-      const auto successful_evaluation = child.computeResidual();
-      const auto error = [&successful_evaluation, &child] {
-        if (successful_evaluation) {
-          return child.computeResidualNorm();
-        }
-        return NumericType{};
-      }();
+    while (this->iter != this->iterMax) {
+      if (!child.computeResidual()) {
+        return false;
+      }
+      const auto error = child.computeResidualNorm();
       const auto finite_error = ieee754::isfinite(error);
-      if ((!successful_evaluation) || (!finite_error)) {
-        treat_invalid_residual();
-        continue;
+      if (!finite_error) {
+        return false;
       }
       child.reportStandardNewtonIteration(error);
       converged = child.checkConvergence(error);
-      if (!converged) {
-        child.updateOrCheckJacobian();
-        if (!child.computeNewCorrection()) {
-          treat_invalid_residual();
-          continue;
+      if (converged) {
+        return true;
+      }
+      child.updateOrCheckJacobian();
+      if (!child.computeNewCorrection()) {
+        return false;
+      }
+      this->is_delta_zero_defined = true;
+      child.processNewCorrection();
+      this->zeros += this->delta_zeros;
+      child.processNewEstimate();
+      ++(this->iter);
+    }
+    return false;
+  }  // end of solveNonLinearSystem2
+
+  template <unsigned short N, typename NumericType, typename Child>
+  bool TinyNonLinearSolverBase<N, NumericType, Child>::solveNonLinearSystem() {
+    constexpr auto one_half = NumericType(1) / 2;
+    auto& child = static_cast<Child&>(*this);
+    child.reportBeginningOfResolution();
+    this->iter =
+      typename TinyNonLinearSolverBase<N, NumericType,Child>::size_type{};
+    this->is_delta_zero_defined = false;
+    child.processNewEstimate();
+    while (this->iter != this->iterMax) {
+      if (this->solveNonLinearSystem2()) {
+        child.reportSuccess();
+        return true;
+      }
+      if (this->iter != this->iterMax) {
+        if (this->is_delta_zero_defined) {
+          this->delta_zeros *= one_half;
+          this->zeros -= this->delta_zeros;
+        } else {
+          this->zeros *= one_half;
         }
-        child.processNewCorrection();
-        this->zeros += this->delta_zeros;
         child.processNewEstimate();
         ++(this->iter);
       }
     }
-    if (converged) {
-      child.reportSuccess();
-    } else {
-      child.reportFailure();
-    }
-    return converged;
+    return false;
   }  // end of solve
 
 }  // end of namespace tfel::math

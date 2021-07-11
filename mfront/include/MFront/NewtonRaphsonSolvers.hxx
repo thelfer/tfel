@@ -35,7 +35,6 @@ namespace mfront {
     //! \brief default constructor
     NewtonRaphsonSolverBase();
     std::vector<std::string> getReservedNames() const override;
-    bool usesExternalAlgorithm() const override;
     bool usesJacobian() const override;
     bool usesJacobianInvert() const override;
     bool allowsJacobianInitialisation() const override;
@@ -54,10 +53,6 @@ namespace mfront {
     void writeSpecificMembers(std::ostream&,
                               const BehaviourDescription&,
                               const Hypothesis) const override;
-    void writeResolutionAlgorithm(std::ostream&,
-                                  const BehaviourDescription&,
-                                  const Hypothesis) const override;
-
    protected:
     //! \brief destructor
     ~NewtonRaphsonSolverBase() override;

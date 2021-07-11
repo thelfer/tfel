@@ -23,10 +23,6 @@ namespace mfront {
     return {};
   }  // end of getReservedNames
 
-  bool SecondBroydenSolver::usesExternalAlgorithm() const {
-    return true;
-  }  // end of usesExternalAlgorithm
-
   std::vector<std::string> SecondBroydenSolver::getSpecificHeaders() const {
     return {"TFEL/Math/TinyBroyden2Solver.hxx"};
   }  // end of getSpecificHeaders
@@ -107,11 +103,6 @@ namespace mfront {
           << "}\n";
     }
   }  // end of writeSpecificInitializeMethodPart
-
-  void SecondBroydenSolver::writeResolutionAlgorithm(
-      std::ostream&, const BehaviourDescription&, const Hypothesis) const {
-    tfel::raise("invalid call");
-  }  // end of writeResolutionAlgorithm
 
   SecondBroydenSolver::~SecondBroydenSolver() = default;
 

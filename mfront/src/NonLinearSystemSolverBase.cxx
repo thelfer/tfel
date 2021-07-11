@@ -38,10 +38,6 @@ namespace mfront {
        << sn << "::iterMax = this->iterMax;\n";
   }  // end of initializeNumericalParameters
 
-  bool NonLinearSystemSolverBase::usesExternalAlgorithm() const {
-    return false;
-  }  // end of usesExternalAlgorithm
-
   std::string NonLinearSystemSolverBase::getExternalAlgorithmClassName(
       const BehaviourDescription&, const Hypothesis) const {
     return "";

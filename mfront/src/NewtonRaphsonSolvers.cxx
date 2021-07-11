@@ -22,10 +22,6 @@ namespace mfront {
 
   NewtonRaphsonSolverBase::NewtonRaphsonSolverBase() = default;
 
-  bool NewtonRaphsonSolverBase::usesExternalAlgorithm() const {
-    return true;
-  }  // end of usesExternalAlgorithm
-
   std::vector<std::string> NewtonRaphsonSolverBase::getReservedNames()
       const {
     return {};
@@ -92,10 +88,6 @@ namespace mfront {
   void NewtonRaphsonSolverBase::writeSpecificMembers(
       std::ostream&, const BehaviourDescription&, const Hypothesis) const {
   }  // end of writeSpecificMembers
-
-  void NewtonRaphsonSolverBase::writeResolutionAlgorithm(
-      std::ostream&, const BehaviourDescription&, const Hypothesis) const {
-  }  // end of writeResolutionAlgorithm
 
   NewtonRaphsonSolverBase::~NewtonRaphsonSolverBase() = default;
 

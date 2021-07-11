@@ -54,23 +54,11 @@ namespace mfront {
         << "}\n";
   }  // end of writeSpecificInitializeMethodPart
 
-  void BroydenSolverBase::writeResolutionAlgorithm(std::ostream&,
-                                                   const BehaviourDescription&,
-                                                   const Hypothesis) const {
-    tfel::raise(
-        "BroydenSolverBase::writeResolutionAlgorithm: "
-        "invalid call");
-  }  // end of writeResolutionAlgorithm
-
   BroydenSolverBase::~BroydenSolverBase() = default;
 
   std::vector<std::string> BroydenSolver::getReservedNames() const {
     return {};
   }
-
-  bool BroydenSolver::usesExternalAlgorithm() const{
-    return true;
-  }  // end of usesExternalAlgorithm
 
   std::vector<std::string> BroydenSolver::getSpecificHeaders()
       const {
@@ -120,10 +108,6 @@ namespace mfront {
     return PowellDogLegAlgorithmBase::getReservedNames();
   }  // end of getReservedNames
 
-  bool PowellDogLegBroydenSolver::usesExternalAlgorithm() const{
-    return true;
-  }  // end of usesExternalAlgorithm
-
   std::vector<std::string> PowellDogLegBroydenSolver::getSpecificHeaders()
       const {
     return {"TFEL/Math/TinyPowellDogLegBroydenSolver.hxx"};
@@ -167,6 +151,15 @@ namespace mfront {
       BehaviourDescription& mb) const {
     PowellDogLegAlgorithmBase::completeVariableDeclaration(mb);
   }  // end of completeVariableDeclaration
+
+  void PowellDogLegBroydenSolver::initializeNumericalParameters(
+      std::ostream& os,
+      const BehaviourDescription& bd,
+      const Hypothesis h) const {
+    const auto sn = this->getExternalAlgorithmClassName(bd, h);
+    BroydenSolverBase::initializeNumericalParameters(os, bd, h);
+    PowellDogLegAlgorithmBase::initializeNumericalParameters(os, sn);
+  }  // end of initializeNumericalParameters
 
   PowellDogLegBroydenSolver::~PowellDogLegBroydenSolver() = default;
 

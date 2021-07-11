@@ -112,7 +112,6 @@ namespace mfront {
     void initializeNumericalParameters(std::ostream&,
                                        const BehaviourDescription&,
                                        const Hypothesis) const override;
-    bool usesExternalAlgorithm() const override;
     std::string getExternalAlgorithmClassName(const BehaviourDescription&,
                                               const Hypothesis) const override;
     int getJacobianUpdatePeriod() const override;

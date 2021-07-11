@@ -25,7 +25,6 @@ namespace mfront {
   struct SecondBroydenSolver : public NonLinearSystemSolverBase {
     std::vector<std::string> getReservedNames() const override;
     std::vector<std::string> getSpecificHeaders() const override;
-    bool usesExternalAlgorithm() const override;
     std::string getExternalAlgorithmClassName(const BehaviourDescription&,
                                               const Hypothesis) const override;
     bool usesJacobian() const override;
@@ -47,9 +46,6 @@ namespace mfront {
     void writeSpecificMembers(std::ostream&,
                               const BehaviourDescription&,
                               const Hypothesis) const override;
-    void writeResolutionAlgorithm(std::ostream&,
-                                  const BehaviourDescription&,
-                                  const Hypothesis) const override;
     //! \brief destructor
     ~SecondBroydenSolver() override;
   };  // end of struct SecondBroydenSolver

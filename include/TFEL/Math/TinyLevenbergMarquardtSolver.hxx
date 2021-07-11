@@ -62,10 +62,12 @@ namespace tfel::math {
     ~TinyLevenbergMarquardtSolver() noexcept = default;
     //!
     bool solveNonLinearSystem();
+    //!
+    bool solveNonLinearSystem2();
     //! \brief compute a new correction to the unknowns
     bool computeNewCorrection();
     //!
-    void rejectCorrection();
+    bool computeLevenbergMarquardtCorrection();
    protected:
     //! \brief jacobian matrix
     tmatrix<N, N, NumericType> jacobian;
@@ -82,6 +84,7 @@ namespace tfel::math {
     NumericType levmar_error;
     NumericType levmar_error_1;
     NumericType levmar_mu;
+    bool levmar_first;
   };
 
 }  // end of namespace tfel::math

@@ -20,8 +20,8 @@
 namespace tfel::math {
 
   template <unsigned short N, typename NumericType, typename Child>
-  bool
-  TinyLevenbergMarquardtSolver<N, NumericType, Child>::computeNewCorrection() {
+  bool TinyLevenbergMarquardtSolver<N, NumericType, Child>::
+      computeLevenbergMarquardtCorrection() {
     // matrix containing tJJ+levmar_mu*I
     tmatrix<N, N, NumericType> levmar_tJJ;
     // vector containing tJ*F
@@ -46,81 +46,117 @@ namespace tfel::math {
     }
     this->delta_zeros = -levmar_sm;
     return true;
-  }
+  }  // end of computeLevenbergMarquardtCorrection
 
   template <unsigned short N, typename NumericType, typename Child>
-  void TinyLevenbergMarquardtSolver<N, NumericType, Child>::rejectCorrection() {
+  bool
+  TinyLevenbergMarquardtSolver<N, NumericType, Child>::computeNewCorrection() {
+    auto& child = static_cast<Child&>(*this);
+    this->levmar_error = norm(this->fzeros);
+    if (!this->levmar_first) {
+      const auto levmar_error2 =
+          eval(this->levmar_jacobian_1 * this->delta_zeros);
+      const auto error_p = norm(this->levmar_fzeros_1 + levmar_error2);
+      const auto levmar_r =
+          (this->levmar_error * this->levmar_error -
+           this->levmar_error_1 * this->levmar_error_1) /
+          (error_p * error_p - this->levmar_error_1 * this->levmar_error_1);
+      if (levmar_r < this->levmar_p0) {
+        // rejecting the step
+        this->levmar_mu *= 4;
+        this->zeros -= this->delta_zeros;
     this->fzeros = this->levmar_fzeros_1;
     this->jacobian = this->levmar_jacobian_1;
     this->levmar_error = this->levmar_error_1;
-    this->zeros -= this->delta_zeros;
-    // updating mu
+        if (!child.computeLevenbergMarquardtCorrection()) {
+          return false;
+        }
+      } else {
+        // accepting the step and updating mu
+        if (levmar_r < this->levmar_p1) {
     this->levmar_mu *= 4;
-  }  // end of rejectCorrection
+        } else if (levmar_r > this->levmar_p2) {
+          this->levmar_mu = std::max(this->levmar_mu / 4, this->levmar_m);
+        }
+        child.updateOrCheckJacobian();
+        if (!child.computeLevenbergMarquardtCorrection()) {
+          return false;
+        }
+      }
+    } else {
+      child.updateOrCheckJacobian();
+      if (!child.computeLevenbergMarquardtCorrection()) {
+        return false;
+      }
+      this->levmar_first = false;
+    }
+    this->levmar_error_1 = this->levmar_error;
+    this->levmar_fzeros_1 = this->fzeros;
+    this->levmar_jacobian_1 = this->jacobian;
+    return true;
+  }  // end of computeNewCorrection
+
+  template <unsigned short N, typename NumericType, typename Child>
+  bool
+  TinyLevenbergMarquardtSolver<N, NumericType, Child>::solveNonLinearSystem2() {
+    auto& child = static_cast<Child&>(*this);
+    bool converged = false;
+    this->levmar_first = true;
+    while (this->iter < this->iterMax) {
+    if (!child.computeResidual()) {
+      return false;
+    }
+      const auto error = child.computeResidualNorm();
+      const auto finite_error = ieee754::isfinite(error);
+      if (!finite_error) {
+        return false;
+      }
+      child.reportStandardNewtonIteration(error);
+      converged = child.checkConvergence(error);
+      if (converged) {
+        return true;
+      }
+      if (!child.computeNewCorrection()) {
+        return false;
+      }
+      child.processNewCorrection();
+      this->zeros += this->delta_zeros;
+      child.processNewEstimate();
+      this->is_delta_zero_defined = true;
+      ++(this->iter);
+      }
+    return converged;
+  }  // end of solveNonLinearSystem2
 
   template <unsigned short N, typename NumericType, typename Child>
   bool
   TinyLevenbergMarquardtSolver<N, NumericType, Child>::solveNonLinearSystem() {
+    constexpr auto one_half = NumericType(1) / 2;
     auto& child = static_cast<Child&>(*this);
-    // dumping parameter
-    this->iter = 0;
-    if (!child.computeResidual()) {
-      return false;
-    }
+    child.reportBeginningOfResolution();
+    this->iter =
+        typename TinyNonLinearSolverBase<N, NumericType, Child>::size_type{};
     this->levmar_mu = this->levmar_mu0;
-    this->levmar_error = norm(this->fzeros);
-    bool converged = false;
-    while ((converged == false) && (this->iter < this->iterMax)) {
-      ++(this->iter);
-      auto error = child.computeResidualNorm();
-      const auto finite_error = ieee754::isfinite(error);
-      if (!finite_error) {
-        child.rejectCorrection();
-        continue;
+    this->is_delta_zero_defined = false;
+    child.processNewEstimate();
+    while (this->iter != this->iterMax) {
+      if (this->solveNonLinearSystem2()) {
+        child.reportSuccess();
+        return true;
       }
-      child.reportStandardNewtonIteration(error);
-      converged = child.checkConvergence(error);
-      if (!converged) {
-        child.updateOrCheckJacobian();
-        if (!child.computeNewCorrection()) {
-          child.rejectCorrection();
-          continue;
-        }
-        child.processNewCorrection();
-        this->zeros += this->delta_zeros;
+      if (this->iter != this->iterMax) {
+        if (this->is_delta_zero_defined) {
+          this->delta_zeros *= one_half;
+          this->zeros -= this->delta_zeros;
+        } else {
+          this->zeros *= one_half;
+      }
         child.processNewEstimate();
-        this->levmar_fzeros_1 = this->fzeros;
-        this->levmar_jacobian_1 = this->jacobian;
-        if (!child.computeResidual()) {
-          child.rejectCorrection();
-          continue;
-        }
-        this->levmar_error_1 = levmar_error;
-        const auto levmar_error2 = eval(levmar_jacobian_1 * this->delta_zeros);
-        const auto error_p = norm(levmar_fzeros_1 + levmar_error2);
-        this->levmar_error = norm(this->fzeros);
-        const auto levmar_r =
-            (levmar_error * levmar_error - levmar_error_1 * levmar_error_1) /
-            (error_p * error_p - levmar_error_1 * levmar_error_1);
-        if (levmar_r < this->levmar_p0) {
-          // rejecting the step
-          child.rejectCorrection();
-          continue;
-        }
-        // accepting the step and updating mu
-        error = levmar_error / (NumericType(N));
-        if (levmar_r < this->levmar_p1) {
-          levmar_mu *= 4;
-        } else if (levmar_r > this->levmar_p2) {
-          levmar_mu = std::max(levmar_mu / 4, this->levmar_m);
-        }
-      } // end of if(!converged)
+        ++(this->iter);
+      }
     }
-    if (this->iter == this->iterMax) {
-      return false;
-    }
-    return true;
-  }  // end of computeNewCorrection
+    return false;
+  }  // end of solveNonLinearSystem
 
 }  // end of namespace tfel::math
 

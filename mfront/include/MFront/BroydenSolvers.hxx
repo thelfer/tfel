@@ -39,9 +39,6 @@ namespace mfront {
     void writeSpecificMembers(std::ostream&,
                               const BehaviourDescription&,
                               const Hypothesis) const override;
-    void writeResolutionAlgorithm(std::ostream&,
-                                  const BehaviourDescription&,
-                                  const Hypothesis) const override;
     //! \brief destructor
     ~BroydenSolverBase() override;
   };  // end of struct BroydenSolverBase
@@ -50,7 +47,6 @@ namespace mfront {
   struct BroydenSolver : public BroydenSolverBase {
     std::vector<std::string> getReservedNames() const override;
     std::vector<std::string> getSpecificHeaders() const override;
-    bool usesExternalAlgorithm() const override;
     std::string getExternalAlgorithmClassName(const BehaviourDescription&,
                                               const Hypothesis) const override;
     bool usesJacobian() const override;
@@ -77,7 +73,6 @@ namespace mfront {
     //
     std::vector<std::string> getReservedNames() const override;
     std::vector<std::string> getSpecificHeaders() const override;
-    bool usesExternalAlgorithm() const override;
     std::string getExternalAlgorithmClassName(const BehaviourDescription&,
                                               const Hypothesis) const override;
     bool usesJacobian() const override;
@@ -88,6 +83,9 @@ namespace mfront {
         const tokens_iterator,
         const tokens_iterator) override;
     void completeVariableDeclaration(BehaviourDescription&) const override;
+    void initializeNumericalParameters(std::ostream&,
+                                       const BehaviourDescription&,
+                                       const Hypothesis) const override;
     //! \brief destructor
     ~PowellDogLegBroydenSolver() override;
   };
