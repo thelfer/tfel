@@ -79,55 +79,100 @@ namespace tfel::math {
 
    protected:
     /*!
-     * \brief solve the non linear problem
+     * \brief solve the non linear problem. This methods wraps the resolution
+     * algorithm and tries to handles failures of the latter.
+     *
+     * Failure is handled by dividing the last correction by two and restarting
+     * the resolution algorithm implemented in `solveNonLinearSystem2`. This can
+     * be done several times, up to the moment when the correction allows the
+     * resolution algorithm to restart correctly.
+     *
+     * If the resolution algorithm fails before being able to compute a
+     * correction, it probably means that the initial estimate given by the user
+     * is pretty bad. Since the main usage of the non linear solver is to find
+     * the increment of the internal state variables of some physical
+     * behaviours, the null vector is a pretty natural choice for an intial
+     * estimate, so we simply choose here to divide the initial estimate by two
+     * and restart the resolution algorithm implemented in
+     * `solveNonLinearSystem2`. Of course, this strategy is questionable in the
+     * general case.
+     *
      * \return true on success
      */
     bool solveNonLinearSystem();
     /*!
-     * \brief solve the non linear problem
+     * \brief solve the non linear problem. This method is called by the
+     * `solveNonLinearSystem` and must contain the core of the resolution
+     * algorithm.
      * \return true on success
      */
     bool solveNonLinearSystem2();
+    /*!
+     * \brief this method is called at the beginning of the
+     * `solveNonLinearSystem` method.
+     *
+     * This method can be used to initialize some internal state, including
+     * numerical parameters.
+     */
+    constexpr void executeInitialisationTaskBeforeResolution() noexcept {}
+    /*!
+     * \brief this method is called at the beginning of the
+     * `solveNonLinearSystem2` method.
+     *
+     *
+     * This method can be used to initialize some internal state, including
+     * numerical parameters.
+     */
+    constexpr void
+    executeInitialisationTaskBeforeBeginningOfCoreAlgorithm() noexcept {}
     //! \return the norm of the residual
-    NumericType computeResidualNorm() { return norm(this->fzeros); }
+    NumericType computeResidualNorm() const noexcept {
+      return norm(this->fzeros);
+    }
     /*!
      * \brief check the convergence of the method
      * \param[in] e: current error
      */
-    bool checkConvergence(const NumericType e) { return e < this->epsilon; }
+    constexpr bool checkConvergence(const NumericType e) const noexcept {
+      return e < this->epsilon;
+    }
     /*!
      * \brief update the jacobian matrix if required.
      *
      * This method can be used to compute the jacobian or part of the jacobian
      * numerically. If the jacobian was computed in `computeResidual`, this
      * method can be used to compare it to a numerical approximation.
+     *
+     * This method is not used directly used by the `TinyNonLinearSolverBase`.
+     * It is only defined to name an appropriate method which shall be used in
+     * derived class if required.
      */
-    void updateOrCheckJacobian() {}
+    constexpr void updateOrCheckJacobian() noexcept {}
     /*!
      * \brief method meant to set bounds on some components of the current
      * correction or to implement a line search.
      * \param[in] c: current Newton correction
      */
-    void processNewCorrection() {}
+    constexpr void processNewCorrection() noexcept {}
     /*!
      * \brief method meant to process the new estimate.
      *
      * This method may be called to apply bounds on the estimate.
      */
-    void processNewEstimate() {}
+    constexpr void processNewEstimate() noexcept {}
     //! \brief method called when the resolution begins
-    void reportBeginningOfResolution() const {}
+    constexpr void reportBeginningOfResolution() const noexcept {}
     //! \brief method called when the resolution succeeds
-    void reportSuccess() const {}
+    constexpr void reportSuccess() const noexcept {}
     //! \brief method called when the resolution fails
-    void reportFailure() const {}
+    constexpr void reportFailure() const noexcept {}
     //! \brief method called with the evaluation of the residual failed.
-    void reportInvalidResidualEvaluation() const {}
+    constexpr void reportInvalidResidualEvaluation() const noexcept {}
     /*!
      * \brief method called after a standard Newton step
      * \param[in] e: error
      */
-    void reportStandardNewtonIteration(const NumericType) const {}
+    constexpr void reportStandardIteration(const NumericType) const noexcept {}
     //! \brief residual vector
     tvector<N, NumericType> fzeros;
     //! \brief current estimate of the unknowns
@@ -136,11 +181,18 @@ namespace tfel::math {
     tvector<N, NumericType> delta_zeros;
     //! \brief criterion value
     NumericType epsilon;
-    //! \brief current iteration number
+    /*!
+     * \brief current iteration number
+     *
+     * This variable is set to zero at the beginning of the
+     * `solveNonLinearSystem` method
+     */
     size_type iter;
     //! \brief maximum number of iterations
     size_type iterMax;
-    //!
+    /*!
+     * \brief boolean stating if an increment of the unknowns has been computed.
+     */
     bool is_delta_zero_defined;
   };
 

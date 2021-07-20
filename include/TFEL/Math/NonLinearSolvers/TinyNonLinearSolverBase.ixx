@@ -22,21 +22,23 @@ namespace tfel::math {
   bool TinyNonLinearSolverBase<N, NumericType, Child>::solveNonLinearSystem2() {
     auto& child = static_cast<Child&>(*this);
     auto converged = false;
+    child.executeInitialisationTaskBeforeBeginningOfCoreAlgorithm();
     while (this->iter != this->iterMax) {
       if (!child.computeResidual()) {
+        child.reportInvalidResidualEvaluation();
         return false;
       }
       const auto error = child.computeResidualNorm();
       const auto finite_error = ieee754::isfinite(error);
       if (!finite_error) {
+        child.reportInvalidResidualEvaluation();
         return false;
       }
-      child.reportStandardNewtonIteration(error);
+      child.reportStandardIteration(error);
       converged = child.checkConvergence(error);
       if (converged) {
         return true;
       }
-      child.updateOrCheckJacobian();
       if (!child.computeNewCorrection()) {
         return false;
       }
@@ -57,9 +59,10 @@ namespace tfel::math {
     this->iter =
       typename TinyNonLinearSolverBase<N, NumericType,Child>::size_type{};
     this->is_delta_zero_defined = false;
+    child.executeInitialisationTaskBeforeResolution();
     child.processNewEstimate();
     while (this->iter != this->iterMax) {
-      if (this->solveNonLinearSystem2()) {
+      if (child.solveNonLinearSystem2()) {
         child.reportSuccess();
         return true;
       }

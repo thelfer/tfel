@@ -37,7 +37,7 @@ namespace tfel::math {
         }
       }
     }
-    const NumericType levmar_muF = (this->levmar_mu)*norm(this->fzeros);
+    const NumericType levmar_muF = (this->levmar_mu) * norm(this->fzeros);
     for (unsigned short idx = 0; idx != N; ++idx) {
       levmar_tJJ(idx, idx) += levmar_muF;
     }
@@ -65,16 +65,16 @@ namespace tfel::math {
         // rejecting the step
         this->levmar_mu *= 4;
         this->zeros -= this->delta_zeros;
-    this->fzeros = this->levmar_fzeros_1;
-    this->jacobian = this->levmar_jacobian_1;
-    this->levmar_error = this->levmar_error_1;
+        this->fzeros = this->levmar_fzeros_1;
+        this->jacobian = this->levmar_jacobian_1;
+        this->levmar_error = this->levmar_error_1;
         if (!child.computeLevenbergMarquardtCorrection()) {
           return false;
         }
       } else {
         // accepting the step and updating mu
         if (levmar_r < this->levmar_p1) {
-    this->levmar_mu *= 4;
+          this->levmar_mu *= 4;
         } else if (levmar_r > this->levmar_p2) {
           this->levmar_mu = std::max(this->levmar_mu / 4, this->levmar_m);
         }
@@ -95,68 +95,6 @@ namespace tfel::math {
     this->levmar_jacobian_1 = this->jacobian;
     return true;
   }  // end of computeNewCorrection
-
-  template <unsigned short N, typename NumericType, typename Child>
-  bool
-  TinyLevenbergMarquardtSolver<N, NumericType, Child>::solveNonLinearSystem2() {
-    auto& child = static_cast<Child&>(*this);
-    bool converged = false;
-    this->levmar_first = true;
-    while (this->iter < this->iterMax) {
-    if (!child.computeResidual()) {
-      return false;
-    }
-      const auto error = child.computeResidualNorm();
-      const auto finite_error = ieee754::isfinite(error);
-      if (!finite_error) {
-        return false;
-      }
-      child.reportStandardNewtonIteration(error);
-      converged = child.checkConvergence(error);
-      if (converged) {
-        return true;
-      }
-      if (!child.computeNewCorrection()) {
-        return false;
-      }
-      child.processNewCorrection();
-      this->zeros += this->delta_zeros;
-      child.processNewEstimate();
-      this->is_delta_zero_defined = true;
-      ++(this->iter);
-      }
-    return converged;
-  }  // end of solveNonLinearSystem2
-
-  template <unsigned short N, typename NumericType, typename Child>
-  bool
-  TinyLevenbergMarquardtSolver<N, NumericType, Child>::solveNonLinearSystem() {
-    constexpr auto one_half = NumericType(1) / 2;
-    auto& child = static_cast<Child&>(*this);
-    child.reportBeginningOfResolution();
-    this->iter =
-        typename TinyNonLinearSolverBase<N, NumericType, Child>::size_type{};
-    this->levmar_mu = this->levmar_mu0;
-    this->is_delta_zero_defined = false;
-    child.processNewEstimate();
-    while (this->iter != this->iterMax) {
-      if (this->solveNonLinearSystem2()) {
-        child.reportSuccess();
-        return true;
-      }
-      if (this->iter != this->iterMax) {
-        if (this->is_delta_zero_defined) {
-          this->delta_zeros *= one_half;
-          this->zeros -= this->delta_zeros;
-        } else {
-          this->zeros *= one_half;
-      }
-        child.processNewEstimate();
-        ++(this->iter);
-      }
-    }
-    return false;
-  }  // end of solveNonLinearSystem
 
 }  // end of namespace tfel::math
 

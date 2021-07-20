@@ -23,6 +23,8 @@ namespace tfel::math {
   template <unsigned short N, typename NumericType, typename Child>
   bool TinyPowellDogLegNewtonRaphsonSolver<N, NumericType, Child>::
       computeNewCorrection() {
+    auto& child = static_cast<Child&>(*this);
+    child.updateOrCheckJacobian();
     const auto tjacobian = this->jacobian;
     const auto tfzeros = this->fzeros;
     if (!TinyMatrixSolve<N, NumericType, false>::exe(this->jacobian,

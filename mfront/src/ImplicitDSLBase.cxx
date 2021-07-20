@@ -2436,8 +2436,7 @@ namespace mfront {
          << " * \\brief method called after a standard Newton step\n"
          << " * \\param[in] e: error\n"
          << " */\n"
-         << "void reportStandardNewtonIteration(const NumericType error) "
-            "const {\n"
+         << "void reportStandardIteration(const NumericType error) const {\n"
          << "std::cout << \"" << mb.getClassName()
          << "::integrate() : iteration \" "
          << "<< this->iter << \" : \" << error << '\\n';\n"

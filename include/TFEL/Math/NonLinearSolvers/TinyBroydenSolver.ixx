@@ -35,6 +35,8 @@ namespace tfel::math {
 
   template <unsigned short N, typename NumericType, typename Child>
   bool TinyBroydenSolver<N, NumericType, Child>::computeNewCorrection() {
+    auto& child = static_cast<Child&>(*this);
+    child.updateOrCheckJacobian();
     auto tmp_jacobian = this->jacobian;
     auto tmp_fzeros = this->fzeros;
     if (!TinyMatrixSolve<N, NumericType, false>::exe(tmp_jacobian,

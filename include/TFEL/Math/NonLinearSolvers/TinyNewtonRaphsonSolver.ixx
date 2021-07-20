@@ -20,6 +20,8 @@ namespace tfel::math {
 
   template <unsigned short N, typename NumericType, typename Child>
   bool TinyNewtonRaphsonSolver<N, NumericType, Child>::computeNewCorrection() {
+    auto& child = static_cast<Child&>(*this);
+    child.updateOrCheckJacobian();
     if (!TinyMatrixSolve<N, NumericType, false>::exe(this->jacobian,
                                                      this->fzeros)) {
       return false;

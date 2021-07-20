@@ -36,6 +36,8 @@ namespace tfel::math {
 
   template <unsigned short N, typename NumericType, typename Child>
   bool TinyBroyden2Solver<N, NumericType, Child>::computeNewCorrection() {
+    auto& child = static_cast<Child&>(*this);
+    child.updateOrCheckJacobian();
     this->delta_zeros = -(this->inv_jacobian) * (this->fzeros);
     this->fzeros_1 = this->fzeros;
     return true;

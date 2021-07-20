@@ -60,10 +60,21 @@ namespace tfel::math {
         const TinyLevenbergMarquardtSolver&) noexcept = default;
     //! \brief destructor
     ~TinyLevenbergMarquardtSolver() noexcept = default;
-    //!
-    bool solveNonLinearSystem();
-    //!
-    bool solveNonLinearSystem2();
+    /*!
+     * \brief this method is called at the beginning of the
+     * `solveNonLinearSystem` method.
+     */
+    constexpr void executeInitialisationTaskBeforeResolution() noexcept {
+      this->levmar_mu = this->levmar_mu0;
+    }
+    /*!
+     * \brief this method is called at the beginning of the
+     * `solveNonLinearSystem2` method.
+     */
+    constexpr void
+    executeInitialisationTaskBeforeBeginningOfCoreAlgorithm() noexcept {
+      this->levmar_first = true;
+    }
     //! \brief compute a new correction to the unknowns
     bool computeNewCorrection();
     //!

@@ -64,7 +64,7 @@ namespace tfel::math {
   template <unsigned short N, typename T>
   std::enable_if_t<isScalar<T>(),
                    typename tfel::typetraits::RealPartType<T>::type>
-  norm(const tvector<N, T>& vec) {
+  norm(const tvector<N, T>& vec) noexcept {
     typedef result_type<T, T, OpMult> squareT;
     return std::sqrt(
         real(dotProduct<N>::exe(vec.begin(), vec.begin(), squareT(0u))));
