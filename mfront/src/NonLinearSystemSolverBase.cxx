@@ -43,11 +43,6 @@ namespace mfront {
     return "";
   }  // end of getExternalAlgorithmClassName
 
-
-  int NonLinearSystemSolverBase::getJacobianUpdatePeriod() const {
-    return this->jacobianUpdatePeriod;
-  }
-
   std::string NonLinearSystemSolverBase::getJacobianPart(
       const VariableDescription& v1,
       const VariableDescription& v2,

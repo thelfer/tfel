@@ -59,7 +59,6 @@ namespace mfront {
     this->reserveName("partial_jacobian");
     this->reserveName("jacobian_permutation");
     this->reserveName("t");
-    this->reserveName("error_1");
     this->reserveName("error_p");
     this->reserveName("idx");
     this->reserveName("idx2");
@@ -2217,13 +2216,11 @@ namespace mfront {
     const auto btype = this->mb.getBehaviourTypeFlag();
     const auto& d = this->mb.getBehaviourData(h);
     const auto n2 = mfront::getTypeSize(d.getIntegrationVariables());
-    SupportedTypes::TypeSize n;
-    SupportedTypes::TypeSize n3;
     this->checkBehaviourFile(os);
     os << "/*!\n"
-          " * \\brief Integrate behaviour law over the time step\n"
-          " */\n"
-          "IntegrationResult ";
+       << " * \\brief Integrate behaviour law over the time step\n"
+       << " */\n"
+       << "IntegrationResult ";
     if (this->mb.hasAttribute(h, BehaviourData::hasConsistentTangentOperator)) {
       os << "integrate(const SMFlag smflag,const SMType smt) override{\n";
     } else {
@@ -2442,8 +2439,32 @@ namespace mfront {
          << "<< this->iter << \" : \" << error << '\\n';\n"
          << "}\n";
     }
+    os << "/*!\n"
+       << " * \\brief solve linear system\n"
+       << " * \\return true on success\n"
+       << " * \\param[in] m: matrix\n"
+       << " * \\param[in,out] v: right hand side on input, solution on output\n"
+       << " */\n"
+       << "bool solveLinearSystem("
+       << "tfel::math::tmatrix<" << n2 << ", " << n2
+       << ", NumericType>& mfront_matrix,"
+       << "tfel::math::tvector<" << n2 << ", NumericType>& mfront_vector)"
+       << "const noexcept{\n"
+       << "auto mfront_success = true;\n";
+    if (mb.getAttribute(BehaviourData::profiling, false)) {
+      writeStandardPerformanceProfilingBegin(os, mb.getClassName(),
+                                             "TinyMatrixSolve", "lu");
+    }
+    os << "mfront_success = "
+       << "tfel::math::TinyMatrixSolve<" << n2
+       << ", NumericType, false>::exe(mfront_matrix, mfront_vector);\n";
+    if (mb.getAttribute(BehaviourData::profiling, false)) {
+      writeStandardPerformanceProfilingEnd(os);
+    }
+    os << "return mfront_success;\n"
+       << "}\n";
     this->writeComputeFdF(os, h);
-  }  // namespace mfront
+  }  // end of writeBehaviourIntegrator
 
   void ImplicitDSLBase::writeComputeFdF(std::ostream& os,
                                         const Hypothesis h) const {

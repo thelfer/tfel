@@ -114,13 +114,10 @@ namespace mfront {
                                        const Hypothesis) const override;
     std::string getExternalAlgorithmClassName(const BehaviourDescription&,
                                               const Hypothesis) const override;
-    int getJacobianUpdatePeriod() const override;
 
    protected:
     //! destructor
     ~NonLinearSystemSolverBase() override;
-    //! update jacobian period
-    int jacobianUpdatePeriod = -1;
   };  // end of struct NonLinearSystemSolverBase
 
 }  // end of namespace mfront

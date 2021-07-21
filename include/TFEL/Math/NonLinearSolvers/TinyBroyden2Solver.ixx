@@ -15,7 +15,6 @@
 #define LIB_TFEL_MATH_TINYBROYDEN2SOLVER_IXX
 
 #include "TFEL/Math/General/IEEE754.hxx"
-#include "TFEL/Math/TinyMatrixSolve.hxx"
 
 namespace tfel::math {
 

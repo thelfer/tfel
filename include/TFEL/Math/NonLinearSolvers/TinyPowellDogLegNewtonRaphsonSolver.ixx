@@ -15,7 +15,6 @@
 #ifndef LIB_TFEL_MATH_TINYNEWTONRAPHSONSOLVER_IXX
 #define LIB_TFEL_MATH_TINYNEWTONRAPHSONSOLVER_IXX
 
-#include "TFEL/Math/TinyMatrixSolve.hxx"
 #include "TFEL/Math/NonLinearSolvers/TinyPowellDogLegAlgorithmBase.hxx"
 
 namespace tfel::math {
@@ -27,8 +26,7 @@ namespace tfel::math {
     child.updateOrCheckJacobian();
     const auto tjacobian = this->jacobian;
     const auto tfzeros = this->fzeros;
-    if (!TinyMatrixSolve<N, NumericType, false>::exe(this->jacobian,
-                                                     this->fzeros)) {
+    if (!child.solveLinearSystem(this->jacobian, this->fzeros)) {
       return false;
     }
     this->delta_zeros = -this->fzeros;

@@ -14,16 +14,13 @@
 #ifndef LIB_TFEL_MATH_TINYNEWTONRAPHSONSOLVER_IXX
 #define LIB_TFEL_MATH_TINYNEWTONRAPHSONSOLVER_IXX
 
-#include "TFEL/Math/TinyMatrixSolve.hxx"
-
 namespace tfel::math {
 
   template <unsigned short N, typename NumericType, typename Child>
   bool TinyNewtonRaphsonSolver<N, NumericType, Child>::computeNewCorrection() {
     auto& child = static_cast<Child&>(*this);
     child.updateOrCheckJacobian();
-    if (!TinyMatrixSolve<N, NumericType, false>::exe(this->jacobian,
-                                                     this->fzeros)) {
+    if (!child.solveLinearSystem(this->jacobian, this->fzeros)) {
       return false;
     }
     this->delta_zeros = -(this->fzeros);

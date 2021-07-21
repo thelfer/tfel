@@ -133,11 +133,6 @@ namespace mfront {
     virtual void writeSpecificMembers(std::ostream&,
                                       const BehaviourDescription&,
                                       const Hypothesis) const = 0;
-    /*!
-     * \brief return the period at which the jacobian must be updated, when
-     * meaningful.
-     */
-    virtual int getJacobianUpdatePeriod() const = 0;
     //! \brief destructor
     virtual ~NonLinearSystemSolver();
 

@@ -137,15 +137,24 @@ namespace tfel::math {
       return e < this->epsilon;
     }
     /*!
+     * \brief solve linear system
+     * \return true on success
+     * \param[in] m: matrix
+     * \param[in,out] v: right hand side on input, solution on output
+     */
+    bool solveLinearSystem(tfel::math::tmatrix<N, N, NumericType>&,
+                           tfel::math::tvector<N, NumericType>&) const noexcept;
+    /*!
      * \brief update the jacobian matrix if required.
      *
-     * This method can be used to compute the jacobian or part of the jacobian
-     * numerically. If the jacobian was computed in `computeResidual`, this
-     * method can be used to compare it to a numerical approximation.
+     * This method can be used to compute the jacobian or part of the
+     * jacobian numerically. If the jacobian was computed in
+     * `computeResidual`, this method can be used to compare it to a
+     * numerical approximation.
      *
-     * This method is not used directly used by the `TinyNonLinearSolverBase`.
-     * It is only defined to name an appropriate method which shall be used in
-     * derived class if required.
+     * This method is not used directly used by the
+     * `TinyNonLinearSolverBase`. It is only defined to name an appropriate
+     * method which shall be used in derived class if required.
      */
     constexpr void updateOrCheckJacobian() noexcept {}
     /*!

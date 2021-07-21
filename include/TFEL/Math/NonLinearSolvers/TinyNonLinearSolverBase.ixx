@@ -15,6 +15,7 @@
 #define LIB_TFEL_MATH_NONLINEARSOLVERS_TINYNONLINEARSOLVERBASE_IXX
 
 #include "TFEL/Math/General/IEEE754.hxx"
+#include "TFEL/Math/TinyMatrixSolve.hxx"
 
 namespace tfel::math {
 
@@ -79,6 +80,13 @@ namespace tfel::math {
     }
     return false;
   }  // end of solve
+
+  template <unsigned short N, typename NumericType, typename Child>
+  bool TinyNonLinearSolverBase<N, NumericType, Child>::solveLinearSystem(
+      tfel::math::tmatrix<N, N, NumericType>& m,
+      tfel::math::tvector<N, NumericType>& v) const noexcept {
+    return TinyMatrixSolve<N, NumericType, false>::exe(m, v);
+  }  // end of solveLinearSystem
 
 }  // end of namespace tfel::math
 

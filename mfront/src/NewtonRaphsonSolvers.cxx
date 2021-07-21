@@ -50,31 +50,10 @@ namespace mfront {
   }  // end of requiresJacobianToBeReinitialisedToIdentityAtEachIterations
 
   std::pair<bool, NewtonRaphsonSolverBase::tokens_iterator>
-  NewtonRaphsonSolverBase::treatSpecificKeywords(
-      BehaviourDescription&,
-      const std::string& key,
-      const tokens_iterator p,
-      const tokens_iterator pe) {
-    auto throw_if = [](const bool c, const std::string& m) {
-      tfel::raise_if(
-          c, "NewtonRaphsonSolverBase::treatSpecificKeywords: " + m);
-    };
-    if (key == "@JacobianUpdatePeriod") {
-      throw_if(!this->requiresNumericalJacobian(),
-               "jacobian update period is only defined "
-               "for algorithms using a numerical jacobian");
-      throw_if(this->jacobianUpdatePeriod != -1,
-               "jacobian update period already defined");
-      auto c = p;
-      this->jacobianUpdatePeriod = CxxTokenizer::readInt(c, pe);
-      throw_if(this->jacobianUpdatePeriod <= 0,
-               "invalid value for jacobian update period "
-               "(read '" +
-                   p->value + "')");
-      CxxTokenizer::readSpecifiedToken(
-          "NewtonRaphsonSolverBase::treatSpecificKeywords", ";", c, pe);
-      return {true, c};
-    }
+  NewtonRaphsonSolverBase::treatSpecificKeywords(BehaviourDescription&,
+                                                 const std::string&,
+                                                 const tokens_iterator p,
+                                                 const tokens_iterator) {
     return {false, p};
   }  // end of treatSpecificKeywords
 

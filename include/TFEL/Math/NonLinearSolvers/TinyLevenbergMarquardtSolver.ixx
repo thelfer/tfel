@@ -15,13 +15,13 @@
 #define LIB_TFEL_MATH_TINYLEVENBERGMARQUARDTSOLVER_IXX
 
 #include <cmath>
-#include "TFEL/Math/TinyMatrixSolve.hxx"
 
 namespace tfel::math {
 
   template <unsigned short N, typename NumericType, typename Child>
   bool TinyLevenbergMarquardtSolver<N, NumericType, Child>::
       computeLevenbergMarquardtCorrection() {
+    auto& child = static_cast<Child&>(*this);
     // matrix containing tJJ+levmar_mu*I
     tmatrix<N, N, NumericType> levmar_tJJ;
     // vector containing tJ*F
@@ -41,7 +41,7 @@ namespace tfel::math {
     for (unsigned short idx = 0; idx != N; ++idx) {
       levmar_tJJ(idx, idx) += levmar_muF;
     }
-    if (!TinyMatrixSolve<N, NumericType, false>::exe(levmar_tJJ, levmar_sm)) {
+    if (!child.solveLinearSystem(levmar_tJJ, levmar_sm)) {
       return false;
     }
     this->delta_zeros = -levmar_sm;

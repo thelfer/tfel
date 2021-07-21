@@ -15,7 +15,6 @@
 #ifndef LIB_TFEL_MATH_TINYBROYDENSOLVER_IXX
 #define LIB_TFEL_MATH_TINYBROYDENSOLVER_IXX
 
-#include "TFEL/Math/TinyMatrixSolve.hxx"
 #include "TFEL/Math/NonLinearSolvers/TinyPowellDogLegAlgorithmBase.hxx"
 
 namespace tfel::math {
@@ -42,8 +41,7 @@ namespace tfel::math {
     child.updateOrCheckJacobian();
     auto tmp_jacobian = this->jacobian;
     auto tmp_fzeros = this->fzeros;
-    if (!TinyMatrixSolve<N, NumericType, false>::exe(tmp_jacobian,
-                                                     tmp_fzeros)) {
+    if (!child.solveLinearSystem(tmp_jacobian, tmp_fzeros)) {
       return false;
     }
     this->delta_zeros = -tmp_fzeros;
