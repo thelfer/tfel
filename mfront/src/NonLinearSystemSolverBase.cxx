@@ -29,6 +29,10 @@ namespace mfront {
     return {"jacobian_error", "error", "iter", "iterMax", "converged"};
   }  // end of NonLinearSystemSolverBase::getReservedNames
 
+  std::vector<std::string> NonLinearSystemSolverBase::getMemberNames() const {
+    return {"iter"};
+  }  // end of NonLinearSystemSolverBase::getMemberNames
+
   void NonLinearSystemSolverBase::initializeNumericalParameters(
       std::ostream& os,
       const BehaviourDescription& bd,

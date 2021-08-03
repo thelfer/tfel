@@ -201,6 +201,11 @@ namespace mfront {
     //! \brief treat the `@NumericallyComputedJacobianBlocks` keyword
     virtual void treatNumericallyComputedJacobianBlocks();
     /*!
+     * \brief set the non linear solver
+     * \param[in] s: non linear solver
+     */
+    virtual void setNonLinearSolver(const std::string&);
+    /*!
      * \return true if the the given variable may have methods
      * \param[in] h : modelling hypothesis
      * \param[in] n : name

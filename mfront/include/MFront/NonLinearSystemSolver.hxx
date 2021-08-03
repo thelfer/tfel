@@ -58,6 +58,11 @@ namespace mfront {
     //! \return the reserved names
     virtual std::vector<std::string> getReservedNames() const = 0;
     /*!
+     * \return list of member names that are defined by the non
+     * linear system solver.
+     */
+    virtual std::vector<std::string> getMemberNames() const = 0;
+    /*!
      * \return true if the solver uses the jacobian of the system
      * (Newton-Raphson solvers) or an approximation of it (Broyden
      * method).d'

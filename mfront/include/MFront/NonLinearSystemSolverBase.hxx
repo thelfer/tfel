@@ -97,17 +97,8 @@ namespace mfront {
     static void
     writeLimitsOnIncrementValuesBasedOnIntegrationVariablesIncrementsPhysicalBounds(
         std::ostream&, const BehaviourDescription&, const Hypothesis);
-    /*!
-     * \return reserved names that ought to be used by on the non
-     * linear system solvers:
-     * - error     : current residual. The exact meaning depends on the
-                     underlying solver
-     * - epsilon   : stopping criterium value
-     * - iter      : current iteration, automatically declared as a member
-     * - iterMax   : maximum number of iteration
-     * - converged : boolean stating that convergence is reached
-     */
     std::vector<std::string> getReservedNames() const override;
+    std::vector<std::string> getMemberNames() const override;
     std::vector<std::string> getSpecificHeaders() const override;
     void initializeNumericalParameters(std::ostream&,
                                        const BehaviourDescription&,

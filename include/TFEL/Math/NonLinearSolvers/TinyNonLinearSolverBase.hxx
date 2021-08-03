@@ -202,7 +202,7 @@ namespace tfel::math {
     /*!
      * \brief boolean stating if an increment of the unknowns has been computed.
      */
-    bool is_delta_zero_defined;
+    bool is_delta_zeros_defined;
   };
 
 }  // end of namespace tfel::math

@@ -442,6 +442,20 @@ namespace mfront {
                                       jacobianComparisonCriterion);
   }  // ImplicitDSLBase::treatJacobianComparisonCriterion
 
+  void ImplicitDSLBase::setNonLinearSolver(const std::string& s) {
+    const auto& f =
+        NonLinearSystemSolverFactory::getNonLinearSystemSolverFactory();
+    this->solver = f.getSolver(s);
+    for (const auto& n : this->solver->getReservedNames()) {
+      this->reserveName(n);
+    }
+    for (const auto& n : this->solver->getMemberNames()) {
+      constexpr auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+      this->mb.registerMemberName(uh, n);
+    }
+    this->mb.setAttribute(BehaviourData::algorithm, s, false);
+  } // end of setNonLinearSolver
+
   void ImplicitDSLBase::treatAlgorithm() {
     const auto& f =
         NonLinearSystemSolverFactory::getNonLinearSystemSolverFactory();
@@ -454,11 +468,7 @@ namespace mfront {
     const auto& s = this->current->value;
     ++this->current;
     this->readSpecifiedToken("ImplicitDSLBase::treatAlgorithm", ";");
-    this->solver = f.getSolver(s);
-    for (const auto& n : this->solver->getReservedNames()) {
-      this->reserveName(n);
-    }
-    this->mb.setAttribute(BehaviourData::algorithm, s, false);
+    this->setNonLinearSolver(s);
   }  // end of treatAlgorithm
 
   void ImplicitDSLBase::treatTheta() {
@@ -1016,9 +1026,7 @@ namespace mfront {
     using namespace tfel::glossary;
     const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     if (this->solver == nullptr) {
-      const auto& f =
-          NonLinearSystemSolverFactory::getNonLinearSystemSolverFactory();
-      this->solver = f.getSolver("NewtonRaphson");
+      this->setNonLinearSolver("NewtonRaphson");
     }
     BehaviourDSLCommon::completeVariableDeclaration();
     if (this->mb.getAttribute<bool>(
@@ -1758,10 +1766,6 @@ namespace mfront {
          << "static_cast<void>(error);\n"
          << "static_cast<void>(smt);\n"
          << "} // end of additionalConvergenceChecks\n\n";
-    } else {
-      os << "void additionalConvergenceChecks(bool&, const NumericType&) "
-            "const{\n"
-         << "} // end of additionalConvergenceChecks\n\n";
     }
     // compute stress
     if (this->mb.hasCode(h, BehaviourData::ComputeThermodynamicForces)) {
@@ -2346,9 +2350,15 @@ namespace mfront {
        << " * \\param[in] error: current error\n"
        << " */\n"
        << "bool checkConvergence(const NumericType error) {\n"
-       << "auto converged = error < this->epsilon;\n"
-       << "this->additionalConvergenceChecks(converged, error);\n"
-       << "return converged;\n"
+       << "auto converged = error < this->epsilon;\n";
+    if (this->mb.hasCode(h, BehaviourData::AdditionalConvergenceChecks)) {
+      os << "auto mfront_internals_converged = converged;\n"
+         << "this->additionalConvergenceChecks(converged, error);\n"
+         << "if((mfront_internals_converged) && (!converged)){\n"
+         << "this->is_delta_zeros_defined = false;\n"
+         << "}\n";
+    }
+    os << "return converged;\n"
        << "}\n"
        << "/*!\n"
        << " * \\brief update the jacobian matrix if required.\n"

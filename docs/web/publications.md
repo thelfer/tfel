@@ -13,6 +13,7 @@ eqnPrefixTemplate: "($$i$$)"
 
 ---
 nocite: |
+    @reymond_thermo-mechanical_2021
     @liang_micromechanical_2021
     @gelebart_grain_2021
     @seidlhofer_compressible_2021

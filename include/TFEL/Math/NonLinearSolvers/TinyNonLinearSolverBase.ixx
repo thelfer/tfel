@@ -24,7 +24,7 @@ namespace tfel::math {
     auto& child = static_cast<Child&>(*this);
     auto converged = false;
     child.executeInitialisationTaskBeforeBeginningOfCoreAlgorithm();
-    while (this->iter != this->iterMax) {
+    while (true) {
       if (!child.computeResidual()) {
         child.reportInvalidResidualEvaluation();
         return false;
@@ -40,14 +40,17 @@ namespace tfel::math {
       if (converged) {
         return true;
       }
-      if (!child.computeNewCorrection()) {
-        return false;
+      ++(this->iter);
+      if (this->iter == this->iterMax) {
+        break;
       }
-      this->is_delta_zero_defined = true;
+      if (!child.computeNewCorrection()) {
+        break;
+      }
+      this->is_delta_zeros_defined = true;
       child.processNewCorrection();
       this->zeros += this->delta_zeros;
       child.processNewEstimate();
-      ++(this->iter);
     }
     return false;
   }  // end of solveNonLinearSystem2
@@ -59,25 +62,26 @@ namespace tfel::math {
     child.reportBeginningOfResolution();
     this->iter =
       typename TinyNonLinearSolverBase<N, NumericType,Child>::size_type{};
-    this->is_delta_zero_defined = false;
+    this->is_delta_zeros_defined = false;
     child.executeInitialisationTaskBeforeResolution();
-    child.processNewEstimate();
     while (this->iter != this->iterMax) {
+      child.processNewEstimate();
       if (child.solveNonLinearSystem2()) {
         child.reportSuccess();
         return true;
       }
-      if (this->iter != this->iterMax) {
-        if (this->is_delta_zero_defined) {
-          this->delta_zeros *= one_half;
-          this->zeros -= this->delta_zeros;
-        } else {
-          this->zeros *= one_half;
-        }
-        child.processNewEstimate();
-        ++(this->iter);
+      if (this->iter == this->iterMax) {
+        break;
       }
+      if (this->is_delta_zeros_defined) {
+        this->delta_zeros *= one_half;
+        this->zeros -= this->delta_zeros;
+      } else {
+        this->zeros *= one_half;
+      }
+      ++(this->iter);
     }
+    child.reportFailure();
     return false;
   }  // end of solve
 
@@ -87,8 +91,7 @@ namespace tfel::math {
       tfel::math::tvector<N, NumericType>& v) const noexcept {
     return TinyMatrixSolve<N, NumericType, false>::exe(m, v);
   }  // end of solveLinearSystem
-
+ 
 }  // end of namespace tfel::math
-
 
 #endif /* LIB_TFEL_MATH_NONLINEARSOLVERS_TINYNONLINEARSOLVERBASE_IXX */
