@@ -19,10 +19,10 @@ namespace tfel::math {
 
   template <typename TensorType1, typename TensorType2>
   std::enable_if_t<
-      implementsTensorConcept<TensorType1>() &&
-          implementsTensorConcept<TensorType2>() &&
-          !isInvalid<
-              BinaryOperationResult<TensorType1, TensorType2, OpDotProduct>>(),
+      ((implementsTensorConcept<TensorType1>()) &&
+       (implementsTensorConcept<TensorType2>()) &&
+       (!isInvalid<
+           BinaryOperationResult<TensorType1, TensorType2, OpDotProduct>>())),
       BinaryOperationResult<TensorType1, TensorType2, OpDotProduct>>
   operator|(const TensorType1& a, const TensorType2& b) {
     constexpr auto N = getSpaceDimension<TensorType1>();

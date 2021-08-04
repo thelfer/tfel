@@ -20,14 +20,14 @@
 namespace tfel::math {
 
   // Serialisation operator
-  template <typename T>
-  std::ostream& operator<<(std::ostream&, const TensorConcept<T>&);
-
-  template <typename T>
-  std::ostream& operator<<(std::ostream& os, const TensorConcept<T>& s) {
-    unsigned short i;
+  template <class TensorType>
+  std::enable_if_t<implementsTensorConcept<TensorType>(),
+		   std::ostream&>
+  operator<<(std::ostream& os, const TensorType& s){
+    constexpr auto size =
+        TensorDimeToSize<getSpaceDimension<TensorType>()>::value;
     os << "[ ";
-    for (i = 0; i != TensorDimeToSize<getSpaceDimension<T>()>::value; ++i) {
+    for (unsigned short i = 0; i != size; ++i) {
       os << s(i) << " ";
     }
     os << "]";

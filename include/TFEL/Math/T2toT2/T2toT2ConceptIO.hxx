@@ -20,27 +20,25 @@
 namespace tfel::math {
 
   // Serialisation operator
-  template <typename T>
-  std::ostream& operator<<(std::ostream&, const T2toT2Concept<T>&);
-
-  template <typename T>
-  std::ostream& operator<<(std::ostream& os, const T2toT2Concept<T>& s) {
-    unsigned short i;
-    unsigned short j;
+  template <typename T2toT2Type>
+  std::enable_if_t<implementsT2toT2Concept<T2toT2Type>(), std::ostream&>
+  operator<<(std::ostream& os, const T2toT2Type& s) {
+    constexpr auto N = getSpaceDimension<T2toT2Type>();
+    constexpr auto tensor_size = TensorDimeToSize<N>::value;
     os << "[";
-    for (i = 0; i < TensorDimeToSize<getSpaceDimension<T>()>::value; ++i) {
+    for (unsigned short i = 0; i < tensor_size;) {
       if (i != 0) {
         os << " [";
       } else {
         os << "[";
       }
-      for (j = 0; j < TensorDimeToSize<getSpaceDimension<T>()>::value; ++j) {
+      for (unsigned short j = 0; j < tensor_size;) {
         os << s(i, j);
-        if (j != TensorDimeToSize<getSpaceDimension<T>()>::value - 1) {
+        if (++j != tensor_size) {
           os << ",";
         }
       }
-      if (i != TensorDimeToSize<getSpaceDimension<T>()>::value - 1) {
+      if (++i != tensor_size) {
         os << "]\n";
       } else {
         os << "]";

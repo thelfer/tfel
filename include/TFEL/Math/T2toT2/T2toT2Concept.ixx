@@ -21,12 +21,6 @@
 
 namespace tfel::math {
 
-  template <class T>
-  TFEL_MATH_INLINE numeric_type<T> T2toT2Concept<T>::operator()(
-      const unsigned short i, const unsigned short j) const {
-    return static_cast<const T&>(*this).operator()(i, j);
-  }  // end of T2toT2Concept<T>::operator()
-
   template <typename T2toT2Type>
   std::enable_if_t<
       implementsT2toT2Concept<T2toT2Type>(),

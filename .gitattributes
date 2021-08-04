@@ -1885,7 +1885,6 @@ include/TFEL/Math/LUSolve.hxx -text
 include/TFEL/Math/LevenbergMarquardt.hxx -text
 include/TFEL/Math/MathException.hxx -text
 include/TFEL/Math/Matrix/MatrixConcept.hxx -text
-include/TFEL/Math/Matrix/MatrixConcept.ixx -text
 include/TFEL/Math/Matrix/MatrixConceptOperations.hxx -text
 include/TFEL/Math/Matrix/TMatrixTVectorExpr.hxx -text
 include/TFEL/Math/Matrix/TVectorTMatrixExpr.hxx -text
@@ -2080,7 +2079,6 @@ include/TFEL/Math/TinyNewtonRaphsonSolver.hxx -text
 include/TFEL/Math/TinyPowellDogLegBroydenSolver.hxx -text
 include/TFEL/Math/TinyPowellDogLegNewtonRaphsonSolver.hxx -text
 include/TFEL/Math/Vector/VectorConcept.hxx -text
-include/TFEL/Math/Vector/VectorConcept.ixx -text
 include/TFEL/Math/Vector/VectorConceptOperations.hxx -text
 include/TFEL/Math/Vector/VectorConceptOperations.ixx -text
 include/TFEL/Math/Vector/VectorVectorDotProduct.hxx -text

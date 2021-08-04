@@ -22,76 +22,66 @@
 #include "TFEL/Math/Tensor/MatrixViewFromTensor.hxx"
 #include "TFEL/Math/Tensor/TensorTransposeExpr.hxx"
 
+namespace tfel::math::internals {
+
+  template <unsigned short N>
+  struct TensorConceptMatrixAccessOperator;
+
+  template <>
+  struct TensorConceptMatrixAccessOperator<1u> {
+    template <typename TensorType>
+    static TFEL_MATH_INLINE numeric_type<TensorType> exe(
+        const TensorType& t, const unsigned short i, const unsigned short j) {
+      if ((i == j) && (i < 3)) {
+        return t(i);
+      }
+      return {0};
+    }
+  };
+
+  template <>
+  struct TensorConceptMatrixAccessOperator<2u> {
+    template <typename TensorType>
+    TFEL_MATH_INLINE static numeric_type<TensorType> exe(
+        const TensorType& t, const unsigned short i, const unsigned short j) {
+      if ((i == j) && (i < 3)) {
+        return t(i);
+      } else if ((i == 0) && (j == 1)) {
+        return t(3);
+      } else if ((i == 1) && (j == 0)) {
+        return t(4);
+      }
+      return {0};
+    }
+  };
+
+  template <>
+  struct TensorConceptMatrixAccessOperator<3u> {
+    template <typename TensorType>
+    TFEL_MATH_INLINE static numeric_type<TensorType> exe(
+        const TensorType& t, const unsigned short i, const unsigned short j) {
+      if ((i == j) && (i < 3)) {
+        return t(i);
+      } else if ((i == 0) && (j == 1)) {
+        return t(3);
+      } else if ((i == 1) && (j == 0)) {
+        return t(4);
+      } else if ((i == 0) && (j == 2)) {
+        return t(5);
+      } else if ((i == 2) && (j == 0)) {
+        return t(6);
+      } else if ((i == 1) && (j == 2)) {
+        return t(7);
+      } else if ((i == 2) && (j == 1)) {
+        return t(8);
+      }
+      throw(TensorInvalidIndexesException());
+    }
+  };
+
+}  // end of namespace tfel::math::internals
+
 namespace tfel::math {
-
-  namespace internals {
-
-    template <unsigned short N>
-    struct TensorConceptMatrixAccessOperator;
-
-    template <>
-    struct TensorConceptMatrixAccessOperator<1u> {
-      template <typename TensorType>
-      static TFEL_MATH_INLINE numeric_type<TensorType> exe(
-          const TensorType& t, const unsigned short i, const unsigned short j) {
-        if ((i == j) && (i < 3)) {
-          return t(i);
-        }
-        return {0};
-      }
-    };
-
-    template <>
-    struct TensorConceptMatrixAccessOperator<2u> {
-      template <typename TensorType>
-      TFEL_MATH_INLINE static numeric_type<TensorType> exe(
-          const TensorType& t, const unsigned short i, const unsigned short j) {
-        if ((i == j) && (i < 3)) {
-          return t(i);
-        } else if ((i == 0) && (j == 1)) {
-          return t(3);
-        } else if ((i == 1) && (j == 0)) {
-          return t(4);
-        }
-        return {0};
-      }
-    };
-
-    template <>
-    struct TensorConceptMatrixAccessOperator<3u> {
-      template <typename TensorType>
-      TFEL_MATH_INLINE static numeric_type<TensorType> exe(
-          const TensorType& t, const unsigned short i, const unsigned short j) {
-        if ((i == j) && (i < 3)) {
-          return t(i);
-        } else if ((i == 0) && (j == 1)) {
-          return t(3);
-        } else if ((i == 1) && (j == 0)) {
-          return t(4);
-        } else if ((i == 0) && (j == 2)) {
-          return t(5);
-        } else if ((i == 2) && (j == 0)) {
-          return t(6);
-        } else if ((i == 1) && (j == 2)) {
-          return t(7);
-        } else if ((i == 2) && (j == 1)) {
-          return t(8);
-        }
-        throw(TensorInvalidIndexesException());
-      }
-    };
-
-  }  // end of namespace internals
-
-  template <typename T>
-  numeric_type<T> TensorConcept<T>::operator()(const unsigned short i) const {
-    return static_cast<const T&>(*this).operator()(i);
-  }
-
-  template <typename T>
-  numeric_type<T> TensorConcept<T>::operator[](const unsigned short i) const {
-    return static_cast<const T&>(*this).operator()(i);
-  }
 
   template <typename T>
   numeric_type<T> TensorConcept<T>::operator()(const unsigned short i,

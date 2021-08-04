@@ -33,10 +33,6 @@ namespace tfel::math {
   struct VectorConcept {
     typedef VectorTag ConceptTag;
 
-    TFEL_MATH_INLINE numeric_type<T> operator()(const index_type<T>) const;
-
-    TFEL_MATH_INLINE numeric_type<T> operator[](const index_type<T>) const;
-
    protected:
     VectorConcept() = default;
     VectorConcept(VectorConcept&&) = default;
@@ -71,7 +67,6 @@ namespace tfel::math {
 
 }  // end of namespace tfel::math
 
-#include "TFEL/Math/Vector/VectorConcept.ixx"
 #include "TFEL/Math/Vector/VectorConceptOperations.hxx"
 
 #endif /* LIB_TFEL_MATH_VECTOR_CONCEPT_HXX */

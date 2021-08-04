@@ -20,27 +20,26 @@
 namespace tfel::math {
 
   // Serialisation operator
-  template <typename T>
-  std::ostream& operator<<(std::ostream&, const T2toST2Concept<T>&);
-
-  template <typename T>
-  std::ostream& operator<<(std::ostream& os, const T2toST2Concept<T>& s) {
-    unsigned short i;
-    unsigned short j;
+  template <typename T2toST2Type>
+  std::enable_if_t<implementsT2toST2Concept<T2toST2Type>(), std::ostream&>
+  operator<<(std::ostream& os, const T2toST2Type& s) {
+    constexpr auto N = getSpaceDimension<T2toST2Type>();
+    constexpr auto stensor_size = StensorDimeToSize<N>::value;
+    constexpr auto tensor_size = TensorDimeToSize<N>::value;
     os << "[";
-    for (i = 0; i < StensorDimeToSize<getSpaceDimension<T>()>::value; ++i) {
+    for (unsigned short i = 0; i < stensor_size; ++i) {
       if (i != 0) {
         os << " [";
       } else {
         os << "[";
       }
-      for (j = 0; j < TensorDimeToSize<getSpaceDimension<T>()>::value; ++j) {
+      for (unsigned short j = 0; j < tensor_size;) {
         os << s(i, j);
-        if (j != TensorDimeToSize<getSpaceDimension<T>()>::value - 1) {
+        if (++j != tensor_size) {
           os << ",";
         }
       }
-      if (i != StensorDimeToSize<getSpaceDimension<T>()>::value - 1) {
+      if (++i != stensor_size) {
         os << "]\n";
       } else {
         os << "]";

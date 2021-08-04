@@ -91,10 +91,6 @@ namespace tfel::math {
     numeric_type<T> operator()(const unsigned short,
                                const unsigned short) const;
 
-    numeric_type<T> operator()(const unsigned short) const;
-
-    numeric_type<T> operator[](const unsigned short) const;
-
    protected:
     TensorConcept() = default;
     TensorConcept(TensorConcept&&) = default;

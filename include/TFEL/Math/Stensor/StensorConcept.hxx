@@ -38,10 +38,6 @@ namespace tfel::math {
   struct StensorConcept {
     using ConceptTag = StensorTag;
 
-    numeric_type<T> operator()(const unsigned short) const;
-
-    numeric_type<T> operator[](const unsigned short) const;
-
    protected:
     StensorConcept() = default;
     StensorConcept(StensorConcept&&) = default;

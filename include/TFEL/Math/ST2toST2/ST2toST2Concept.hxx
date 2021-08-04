@@ -41,9 +41,6 @@ namespace tfel::math {
   struct ST2toST2Concept {
     typedef ST2toST2Tag ConceptTag;
 
-    numeric_type<T> operator()(const unsigned short,
-                               const unsigned short) const;
-
    protected:
     ST2toST2Concept() = default;
     ST2toST2Concept(ST2toST2Concept&&) = default;

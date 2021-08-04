@@ -296,7 +296,6 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Math/Vector/tvector.ixx			                                             \
 			TFEL/Math/Vector/tvectorIO.hxx			                                             \
 			TFEL/Math/Vector/VectorConcept.hxx		                                             \
-			TFEL/Math/Vector/VectorConcept.ixx		                                             \
 			TFEL/Math/Vector/vector.ixx			                                             \
 			TFEL/Math/Vector/VectorConceptOperations.hxx	                                             \
 			TFEL/Math/Vector/VectorConceptOperations.ixx	                                             \
@@ -309,7 +308,6 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Math/Matrix/tmatrixIO.hxx			                                             \
 			TFEL/Math/Matrix/matrix.ixx			                                             \
 			TFEL/Math/Matrix/MatrixConcept.hxx		                                             \
-			TFEL/Math/Matrix/MatrixConcept.ixx		                                             \
 			TFEL/Math/Matrix/MatrixConceptOperations.hxx                                                 \
 			TFEL/Math/Matrix/TMatrixTVectorExpr.hxx                                                      \
 			TFEL/Math/Matrix/TVectorTMatrixExpr.hxx                                                      \

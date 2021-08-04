@@ -18,16 +18,6 @@
 
 namespace tfel::math {
 
-  template <class T>
-  numeric_type<T> StensorConcept<T>::operator()(const unsigned short i) const {
-    return static_cast<const T&>(*this).operator()(i);
-  }
-
-  template <class T>
-  numeric_type<T> StensorConcept<T>::operator[](const unsigned short i) const {
-    return static_cast<const T&>(*this).operator()(i);
-  }
-
   template <typename StensorType>
   std::enable_if_t<implementsStensorConcept<StensorType>(),
                    numeric_type<StensorType>>

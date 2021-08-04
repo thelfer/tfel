@@ -25,19 +25,21 @@
   }                                               \
   static_cast<void>(0)
 
-template <class T>
-void function(const tfel::math::VectorConcept<T>& x) {
+template <typename VectorType>
+std::enable_if_t<tfel::math::implementsVectorConcept<VectorType>(),void>
+function(const VectorType& x) {
   std::cout << x(0) << " " << x(1) << " " << x(2) << std::endl;
   std::cout << "------" << std::endl;
 }
 
-template <class T>
-void function(const tfel::math::VectorConcept<T>& x,
-              const typename tfel::math::MathObjectTraits<T>::NumType v0,
-              const typename tfel::math::MathObjectTraits<T>::NumType v1,
-              const typename tfel::math::MathObjectTraits<T>::NumType v2,
-              const typename tfel::math::MathObjectTraits<T>::NumType eps,
-              const unsigned int test_number) {
+template <typename VectorType>
+std::enable_if_t<tfel::math::implementsVectorConcept<VectorType>(),void>
+function(const VectorType& x,
+         const tfel::math::numeric_type<VectorType> v0,
+         const tfel::math::numeric_type<VectorType> v1,
+         const tfel::math::numeric_type<VectorType> v2,
+         const tfel::math::numeric_type<VectorType> eps,
+         const unsigned int test_number) {
 #ifdef TFEL_VERBOSE
   std::cout << "Test : " << test_number << std::endl;
 #else
@@ -48,14 +50,15 @@ void function(const tfel::math::VectorConcept<T>& x,
   ASSERT(std::abs(x(2) - v2) <= eps);
 }
 
-template <class T>
-void function(const tfel::math::MatrixConcept<T>& x,
-              const typename tfel::math::MathObjectTraits<T>::NumType v0,
-              const typename tfel::math::MathObjectTraits<T>::NumType v1,
-              const typename tfel::math::MathObjectTraits<T>::NumType v2,
-              const typename tfel::math::MathObjectTraits<T>::NumType v3,
-              const typename tfel::math::MathObjectTraits<T>::NumType eps,
-              const unsigned int test_number) {
+template <typename MatrixType>
+std::enable_if_t<tfel::math::implementsMatrixConcept<MatrixType>(),void>
+function(const MatrixType& x,
+	 const tfel::math::numeric_type<MatrixType> v0,
+	 const tfel::math::numeric_type<MatrixType> v1,
+	 const tfel::math::numeric_type<MatrixType> v2,
+	 const tfel::math::numeric_type<MatrixType> v3,
+	 const tfel::math::numeric_type<MatrixType> eps,
+	 const unsigned int test_number) {
 #ifdef TFEL_VERBOSE
   std::cout << "Test : " << test_number << std::endl;
 #else
@@ -67,8 +70,9 @@ void function(const tfel::math::MatrixConcept<T>& x,
   ASSERT(std::abs(x(1, 1) - v3) <= eps);
 }
 
-template <class T>
-void function(const tfel::math::StensorConcept<T>& x) {
+template <typename StensorType>
+std::enable_if_t<tfel::math::implementsStensorConcept<StensorType>(),void>
+function(const StensorType& x) {
   std::cout << x(0) << " " << x(1) << " " << x(2) << std::endl;
   std::cout << "------" << std::endl;
 }

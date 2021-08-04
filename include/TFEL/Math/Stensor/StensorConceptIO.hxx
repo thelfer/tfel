@@ -20,14 +20,13 @@
 namespace tfel::math {
 
   //! Serialisation operator
-  template <typename T>
-  std::ostream& operator<<(std::ostream&, const StensorConcept<T>&);
-
-  template <typename T>
-  std::ostream& operator<<(std::ostream& os, const StensorConcept<T>& s) {
-    unsigned short i;
+  template <class StensorType>
+  std::enable_if_t<implementsStensorConcept<StensorType>(), std::ostream&>
+  operator<<(std::ostream& os, const StensorType& s) {
+    constexpr auto size =
+        StensorDimeToSize<getSpaceDimension<StensorType>()>::value;
     os << "[ ";
-    for (i = 0; i != StensorDimeToSize<getSpaceDimension<T>()>::value; ++i) {
+    for (unsigned short i = 0; i != size; ++i) {
       os << s(i) << " ";
     }
     os << "]";

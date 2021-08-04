@@ -20,27 +20,25 @@
 namespace tfel::math {
 
   // Serialisation operator
-  template <typename T>
-  std::ostream& operator<<(std::ostream&, const ST2toST2Concept<T>&);
-
-  template <typename T>
-  std::ostream& operator<<(std::ostream& os, const ST2toST2Concept<T>& s) {
-    unsigned short i;
-    unsigned short j;
+  template <typename ST2toST2Type>
+  std::enable_if_t<implementsST2toST2Concept<ST2toST2Type>(), std::ostream&>
+  operator<<(std::ostream& os, const ST2toST2Type& s) {
+    constexpr auto stensor_size =
+        StensorDimeToSize<getSpaceDimension<ST2toST2Type>()>::value;
     os << "[";
-    for (i = 0; i < StensorDimeToSize<getSpaceDimension<T>()>::value;) {
+    for (unsigned short i = 0; i < stensor_size;) {
       if (i != 0) {
         os << " [";
       } else {
         os << "[";
       }
-      for (j = 0; j < StensorDimeToSize<getSpaceDimension<T>()>::value;) {
+      for (unsigned short j = 0; j < stensor_size;) {
         os << s(i, j);
-        if (++j != StensorDimeToSize<getSpaceDimension<T>()>::value) {
+        if (++j != stensor_size) {
           os << ",";
         }
       }
-      if (++i != StensorDimeToSize<getSpaceDimension<T>()>::value) {
+      if (++i != stensor_size) {
         os << "]\n";
       } else {
         os << "]";

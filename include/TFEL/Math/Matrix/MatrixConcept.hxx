@@ -39,12 +39,6 @@ namespace tfel::math {
   template <typename T>
   struct MatrixConcept {
     using ConceptTag = MatrixTag;
-    /*!
-     * \param  i: the row index
-     * \param  j: the column index
-     * \return m(i,j)
-     */
-    numeric_type<T> operator()(const index_type<T>, const index_type<T>) const;
 
    protected:
     MatrixConcept() = default;
@@ -79,7 +73,5 @@ namespace tfel::math {
                          MathObjectTraits<tfel::meta::InvalidType>>;
 
 }  // end of namespace tfel::math
-
-#include "TFEL/Math/Matrix/MatrixConcept.ixx"
 
 #endif /* LIB_TFEL_MATH_MATRIXCONCEPT_HXX */

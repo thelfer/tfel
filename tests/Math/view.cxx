@@ -37,8 +37,7 @@ struct StensorViewTest final : public tfel::tests::TestCase {
     this->test4();
     this->test5();
     this->test6();
-    //     this->test7();
-    //     this->test8();
+    this->test7();
     this->constexpr_test1();
     this->constexpr_test2();
     return this->result;
@@ -136,52 +135,21 @@ struct StensorViewTest final : public tfel::tests::TestCase {
     TFEL_TESTS_ASSERT(std::abs(v[2] - 1) < eps);
     TFEL_TESTS_ASSERT(std::abs(v[3] - 0) < eps);
   }
-  //   //! \brief create an array view from a tiny vector
-  //   void test7() {
-  //     using namespace tfel::math;
-  //     this->array = tvector<12, double>{0};
-  //     this->check0();
-  //     auto s1 = map<stensor<2u, double>>(this->array);
-  //     s1 = stensor<2u, double>::Id();
-  //     auto v1 = map<4u, double>(this->array);
-  //     auto v2 = tvector<4u, double>{1, 2, 3, 4};
-  //     v2 += v1;
-  //     TFEL_TESTS_ASSERT(std::abs(v2[0] - 2) < eps);
-  //     TFEL_TESTS_ASSERT(std::abs(v2[1] - 3) < eps);
-  //     TFEL_TESTS_ASSERT(std::abs(v2[2] - 4) < eps);
-  //     TFEL_TESTS_ASSERT(std::abs(v2[3] - 4) < eps);
-  //   }
-  //   //! \brief create an array view from a tiny vector
-  //   void test8() {
-  //     using namespace tfel::math;
-  //     constexpr auto id = stensor<2u, double>::Id();
-  //     auto local_check = [this] {
-  //       TFEL_TESTS_ASSERT(std::abs(this->array[0] - 1) < eps);
-  //       TFEL_TESTS_ASSERT(std::abs(this->array[1] - 1) < eps);
-  //       TFEL_TESTS_ASSERT(std::abs(this->array[2] - 1) < eps);
-  //       TFEL_TESTS_ASSERT(std::abs(this->array[3] - 0) < eps);
-  //       TFEL_TESTS_ASSERT(std::abs(this->array[4] - 0) < eps);
-  //       TFEL_TESTS_ASSERT(std::abs(this->array[5] - 0) < eps);
-  //       TFEL_TESTS_ASSERT(std::abs(this->array[6] - 2) < eps);
-  //       TFEL_TESTS_ASSERT(std::abs(this->array[7] - 2) < eps);
-  //       TFEL_TESTS_ASSERT(std::abs(this->array[8] - 2) < eps);
-  //       TFEL_TESTS_ASSERT(std::abs(this->array[9] - 0) < eps);
-  //       TFEL_TESTS_ASSERT(std::abs(this->array[10] - 0) < eps);
-  //       TFEL_TESTS_ASSERT(std::abs(this->array[11] - 0) < eps);
-  //     };
-  //     const auto values = tvector<2u, stensor<2u, double>>{id, eval(2 * id)};
-  //     this->array = tvector<12, double>{0};
-  //     this->check0();
-  //     auto s1 =
-  //         map_array<tvector<2u, stensor<2u, double>>, 0,
-  //         6>(this->array.data());
-  //     s1 = values;
-  //     local_check();
-  //     s1 -= values;
-  //     this->check0();
-  //     s1 += values;
-  //     local_check();
-  //   }
+  //! \brief create an array view from a tiny vector
+  void test7() {
+    using namespace tfel::math;
+    this->array = tvector<12, double>{0};
+    this->check0();
+    auto s1 = map<stensor<2u, double>>(this->array);
+    s1 = stensor<2u, double>::Id();
+    auto v1 = map<tvector<4u, double>>(this->array);
+    auto v2 = tvector<4u, double>{1, 2, 3, 4};
+    v2 += v1;
+    TFEL_TESTS_ASSERT(std::abs(v2[0] - 2) < eps);
+    TFEL_TESTS_ASSERT(std::abs(v2[1] - 3) < eps);
+    TFEL_TESTS_ASSERT(std::abs(v2[2] - 4) < eps);
+    TFEL_TESTS_ASSERT(std::abs(v2[3] - 4) < eps);
+  }
 
   void constexpr_test1() {
     constexpr auto s = StensorViewTest::get();
