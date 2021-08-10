@@ -500,7 +500,7 @@ struct TensorTest9<3u> : public tfel::tests::TestCase {
     using namespace std;
     using namespace tfel::math;
     using real = double;
-    const real cste = real(1) / sqrt(real(2));
+    const real icste = real(1) / sqrt(real(2));
     const real eps = 10. * numeric_limits<real>::epsilon();
     stensor<3u, real> s;
     tensor<3u, real> t;
@@ -511,21 +511,24 @@ struct TensorTest9<3u> : public tfel::tests::TestCase {
       t[i] = exp(sin(real(i * i + 1)));
     }
     const tensor<3u, real> t2(0.62 * (2.3 * t + 0.45 * s));
-    TFEL_TESTS_ASSERT((abs(t2(0) - (0.62 * (0.45 * s(0) + 2.3 * t(0)))) < eps));
-    TFEL_TESTS_ASSERT((abs(t2(1) - (0.62 * (0.45 * s(1) + 2.3 * t(1)))) < eps));
-    TFEL_TESTS_ASSERT((abs(t2(2) - (0.62 * (0.45 * s(2) + 2.3 * t(2)))) < eps));
     TFEL_TESTS_ASSERT(
-        (abs(t2(3) - (0.62 * (0.45 * cste * s(3) + 2.3 * t(3)))) < eps));
+        (std::abs(t2(0) - (0.62 * (0.45 * s(0) + 2.3 * t(0)))) < eps));
     TFEL_TESTS_ASSERT(
-        (abs(t2(4) - (0.62 * (0.45 * cste * s(3) + 2.3 * t(4)))) < eps));
+        (std::abs(t2(1) - (0.62 * (0.45 * s(1) + 2.3 * t(1)))) < eps));
     TFEL_TESTS_ASSERT(
-        (abs(t2(5) - (0.62 * (0.45 * cste * s(4) + 2.3 * t(5)))) < eps));
+        (std::abs(t2(2) - (0.62 * (0.45 * s(2) + 2.3 * t(2)))) < eps));
     TFEL_TESTS_ASSERT(
-        (abs(t2(6) - (0.62 * (0.45 * cste * s(4) + 2.3 * t(6)))) < eps));
+        (std::abs(t2(3) - (0.62 * (0.45 * icste * s(3) + 2.3 * t(3)))) < eps));
     TFEL_TESTS_ASSERT(
-        (abs(t2(7) - (0.62 * (0.45 * cste * s(5) + 2.3 * t(7)))) < eps));
+        (std::abs(t2(4) - (0.62 * (0.45 * icste * s(3) + 2.3 * t(4)))) < eps));
     TFEL_TESTS_ASSERT(
-        (abs(t2(8) - (0.62 * (0.45 * cste * s(5) + 2.3 * t(8)))) < eps));
+        (std::abs(t2(5) - (0.62 * (0.45 * icste * s(4) + 2.3 * t(5)))) < eps));
+    TFEL_TESTS_ASSERT(
+        (std::abs(t2(6) - (0.62 * (0.45 * icste * s(4) + 2.3 * t(6)))) < eps));
+    TFEL_TESTS_ASSERT(
+        (std::abs(t2(7) - (0.62 * (0.45 * icste * s(5) + 2.3 * t(7)))) < eps));
+    TFEL_TESTS_ASSERT(
+        (std::abs(t2(8) - (0.62 * (0.45 * icste * s(5) + 2.3 * t(8)))) < eps));
     return this->result;
   }  // end of execute
 };

@@ -48,6 +48,26 @@ This development was made to solve Issue #267 (see Section @sec:tfel:3.4.1:issue
 
 # Issues fixed
 
+## Ticket #271: [mfront bindings] Support for material properties
+
+The `getDSL` method now returns an object of the `MaterialPropertyDSL`
+type which derives from the `AbstractDSL` class. It exposes a method
+called `getMaterialPropertyDescription` which returns information about
+the material property.
+
+The `MaterialPropertyDescription` exposes the following methods:
+
+- `getInputs` which returns the inputs of the material property.
+- `getParameters` which returns the parameters of the material property.
+- `getOutput` which returns the output of the material property.
+- `getLawName` which returns the name of material property.
+- `getMaterialName` which returns the name of material described by this
+  material property.
+- `getClassName` which returns a class name combining the name of the
+  material property and the name of the material.
+
+For more details, see: <https://sourceforge.net/p/tfel/tickets/271/>
+
 ## Ticket #269: Allow postprocessing of the inner pressure evolution in PipeTest when imposing the axial radius evolution in the `python` bindings
 
 When the evolution of the outer radius is imposed, the inner pressure evolution can now be retrieved using the following code:
@@ -64,6 +84,8 @@ This syntax can also be used to retrieve the "AxialForce" when the axial growth 
 f = s.getEvolutionValue("AxialForce", t)
 ~~~~
 
+For more details, see: <https://sourceforge.net/p/tfel/tickets/269/>
+
 ## Ticket #268: Missing methods in mtest.MTest for the comparison of the tangent operator to a numerical approximation
 
 The `MTest` executable allows to compare the tangent operator returned
@@ -79,6 +101,8 @@ using the `python` interface, the following methods have been added:
 - `setNumericalTangentOperatorPerturbationValue`: set the perburtation
   of the gradient used to compute a numerical approximation of the
   tangent operator.
+
+For more details, see: <https://sourceforge.net/p/tfel/tickets/268/>
 
 ## Ticket #267: InteractionMatrix coefficients as parameters / material properties {#sec:tfel:3.4.1:issue:267}
 

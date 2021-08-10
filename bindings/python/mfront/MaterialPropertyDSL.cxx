@@ -1,8 +1,8 @@
 /*!
- * \file   bindings/python/mfront/AbstractBehaviourDSL.cxx
+ * \file   bindings/python/mfront/MaterialPropertyDSL.cxx
  * \brief
  * \author Thomas Helfer
- * \date   04/05/2016
+ * \date   09/08/2021
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence
@@ -15,17 +15,16 @@
 #include <memory>
 #include "TFEL/Python/SharedPtr.hxx"
 #include <boost/python.hpp>
-#include "MFront/BehaviourDescription.hxx"
-#include "MFront/AbstractBehaviourDSL.hxx"
+#include "MFront/MaterialPropertyDescription.hxx"
+#include "MFront/MaterialPropertyDSL.hxx"
 
-void declareAbstractBehaviourDSL();
-void declareAbstractBehaviourDSL() {
+void declareMaterialPropertyDSL();
+void declareMaterialPropertyDSL() {
   using namespace boost::python;
   using namespace mfront;
-  class_<AbstractBehaviourDSL, std::shared_ptr<AbstractBehaviourDSL>,
-         bases<AbstractDSL>, boost::noncopyable>("AbstractBehaviourDSL",
-                                                 no_init)
-      .def("getBehaviourDescription",
-           &AbstractBehaviourDSL::getBehaviourDescription,
+  class_<MaterialPropertyDSL, std::shared_ptr<MaterialPropertyDSL>,
+         bases<AbstractDSL>, boost::noncopyable>("MaterialPropertyDSL", no_init)
+      .def("getMaterialPropertyDescription",
+           &MaterialPropertyDSL::getMaterialPropertyDescription,
            return_internal_reference<>());
 }

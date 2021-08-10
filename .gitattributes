@@ -53,6 +53,8 @@ bindings/python/mfront/GeneratorOptions.cxx -text
 bindings/python/mfront/LibraryDescription.cxx -text
 bindings/python/mfront/Makefile.am -text
 bindings/python/mfront/MakefileGenerator.cxx -text
+bindings/python/mfront/MaterialPropertyDSL.cxx -text
+bindings/python/mfront/MaterialPropertyDescription.cxx -text
 bindings/python/mfront/OverridableImplementation.cxx -text
 bindings/python/mfront/SearchPathsHandler.cxx -text
 bindings/python/mfront/TargetsDescription.cxx -text

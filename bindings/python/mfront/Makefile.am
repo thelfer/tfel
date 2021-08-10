@@ -1,6 +1,6 @@
 SUBDIRS = umatxx mtest
 
-AM_CPPFLAGS = -I@top_srcdir@/include/                       \
+AM_CPPFLAGS = -I@top_srcdir@/include/                   \
 	      -I@top_srcdir@/mfront/include/                \
 	      -I@top_srcdir@/bindings/python/include/       \
 	      @BOOST_CPPFLAGS@                              \
@@ -19,6 +19,8 @@ _mfront_la_SOURCES = mfront.cxx                \
 		     DSLFactory.cxx                    \
 		     VariableBoundsDescription.cxx     \
 		     VariableDescription.cxx           \
+		     MaterialPropertyDSL.cxx           \
+		     MaterialPropertyDescription.cxx   \
 		     AbstractBehaviourDSL.cxx          \
 		     BehaviourAttribute.cxx            \
 		     BehaviourData.cxx                 \

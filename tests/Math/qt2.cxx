@@ -40,6 +40,9 @@ struct QtRefTest final : public tfel::tests::TestCase {
     this->test4();
     this->test5();
     this->test6();
+    this->test7();
+    this->test8();
+    this->test9();
     return this->result;
   } // end of execute
   void test1() {
@@ -117,6 +120,33 @@ struct QtRefTest final : public tfel::tests::TestCase {
     TFEL_TESTS_ASSERT(my_abs(devp(4)) < eeps);
     TFEL_TESTS_ASSERT(my_abs(devp(5)) < eeps);
 #endif /* __INTEL_COMPILER */
+  }
+  void test7() {
+    using namespace tfel::math;
+    constexpr auto eps = 1e-14;
+    constexpr auto value = [] ()constexpr {
+      constexpr qt<Mass> m(100.);
+      constexpr qt<Acceleration> a(2);
+      auto vf = double{};
+      auto f = qt_ref<Force>(vf);
+      f = m * a;
+      return vf;
+    }();
+    TFEL_TESTS_STATIC_ASSERT(my_abs(value - 200.) < eps);
+  }
+  void test8() {
+    using namespace tfel::math;
+    constexpr auto eps = 1e-14;
+    constexpr qt<NoUnit> m(100.);
+    constexpr double m_value = m;
+    TFEL_TESTS_STATIC_ASSERT(my_abs(m_value - 100.) < eps);
+  }
+  void test9() {
+    using namespace tfel::math;
+    constexpr auto eps = 1e-14;
+    constexpr qt<NoUnit> q(1.2);
+    const auto cos_q = std::cos(q);
+    TFEL_TESTS_ASSERT(std::abs(cos_q - std::cos(1.2)) < eps);
   }
 };
 

@@ -18,6 +18,7 @@
 #include "MFront/MFrontBase.hxx"
 #include "MFront/InitInterfaces.hxx"
 #include "MFront/AbstractDSL.hxx"
+#include "MFront/MaterialPropertyDSL.hxx"
 #include "MFront/AbstractBehaviourDSL.hxx"
 #include "MFront/PathSpecifier.hxx"
 
@@ -57,12 +58,14 @@ void declareFileDescription();
 void declareCompiledTargetDescriptionBase();
 void declareLibraryDescription();
 void declareTargetsDescription();
+void declareMaterialPropertyDSL();
 void declareAbstractBehaviourDSL();
 void declareBehaviourSymmetryType();
 void declareVariableBoundsDescription();
 void declareVariableDescription();
 void declareBehaviourAttribute();
 void declareBehaviourData();
+void declareMaterialPropertyDescription();
 void declareBehaviourDescription();
 void declareSearchPathsHandler();
 void declareGeneratorOptions();
@@ -72,7 +75,11 @@ void declareOverridableImplementation();
 
 static boost::python::object getDSL(const std::string& f) {
   auto dsl = mfront::MFrontBase::getDSL(f);
-  if (dsl->getTargetType() == mfront::AbstractDSL::BEHAVIOURDSL) {
+  if (dsl->getTargetType() == mfront::AbstractDSL::MATERIALPROPERTYDSL) {
+    auto b = std::dynamic_pointer_cast<mfront::MaterialPropertyDSL>(dsl);
+    tfel::raise_if(!b, "getDSL: invalid dsl implementation");
+    return boost::python::object(b);
+  } else if (dsl->getTargetType() == mfront::AbstractDSL::BEHAVIOURDSL) {
     auto b = std::dynamic_pointer_cast<mfront::AbstractBehaviourDSL>(dsl);
     tfel::raise_if(!b, "getDSL: invalid dsl implementation");
     return boost::python::object(b);
@@ -101,6 +108,9 @@ BOOST_PYTHON_MODULE(_mfront) {
   declareLibraryDescription();
   declareTargetsDescription();
   declareOverridableImplementation();
+  // material properties
+  declareMaterialPropertyDSL();
+  declareMaterialPropertyDescription();
   // behaviours
   declareAbstractBehaviourDSL();
   declareBehaviourAttribute();
