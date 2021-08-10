@@ -8,6 +8,8 @@ mfront_python_module(_mfront mfront.cxx
   CompiledTargetDescriptionBase.cxx
   LibraryDescription.cxx
   DSLFactory.cxx
+  MaterialPropertyDSL.cxx
+  MaterialPropertyDescription.cxx
   AbstractBehaviourDSL.cxx
   VariableBoundsDescription.cxx
   VariableDescription.cxx

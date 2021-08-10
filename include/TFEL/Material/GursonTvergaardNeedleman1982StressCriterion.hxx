@@ -84,6 +84,11 @@ namespace tfel {
       real q_2;
       //! \brief \f$q_3\f$ material property
       real q_3;
+    /*!
+     * \brief convergence criterion for the determination of the equilvalent
+     * stress.
+     */
+    real eps = real(1e-14);
     };  // end of struct GursonTvergaardNeedleman1982StressCriterionParameters
 
     /*!

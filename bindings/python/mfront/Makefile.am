@@ -19,6 +19,8 @@ _mfront_la_SOURCES = mfront.cxx                \
 		     DSLFactory.cxx                    \
 		     VariableBoundsDescription.cxx     \
 		     VariableDescription.cxx           \
+		     MaterialPropertyDSL.cxx           \
+		     MaterialPropertyDescription.cxx   \
 		     AbstractBehaviourDSL.cxx          \
 		     BehaviourAttribute.cxx            \
 		     BehaviourData.cxx                 \

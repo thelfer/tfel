@@ -2,7 +2,7 @@
  * \file   bindings/python/mfront/AbstractBehaviourDSL.cxx
  * \brief    
  * \author Thomas Helfer
- * \date   04 mai 2016
+ * \date   04/05/2016
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
  * reserved. 
  * This project is publicly released under either the GNU GPL Licence 

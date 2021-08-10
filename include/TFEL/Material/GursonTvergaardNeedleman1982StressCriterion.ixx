@@ -108,6 +108,14 @@ namespace tfel {
       };
       const auto c = [seps](const real, const istress dx, const istress x,
                             const size_type) {
+      // First criterion based on the value of the yield surface
+      if (std::abs(S) < p.eps) {
+        return true;
+      }
+      // Second criterion based on the stationnarity of the solution
+      // This criterion may become much more restrictive than the first one when
+      // the equivalent stress tends to zero.
+      //
         // d(1/y) = -dy/(y*y) => y*y*d(1/y) = -dy
         // so if I want |dy|<eps, |y*y*d(1/y)| must be lower than eps
         // Here, x is the inverse of the equivalent stress, so
