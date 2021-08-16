@@ -47,7 +47,7 @@ namespace std {
     s << v;
     return s.str();
   }
-}
+}  // namespace std
 #endif /* defined __CYGWIN__ &&  (!defined _GLIBCXX_USE_C99) */
 
 namespace mfront {
@@ -237,13 +237,36 @@ namespace mfront {
   void MaterialPropertyDSL::treatParameter() {
     this->checkNotEndOfFile("MaterialPropertyDSL::treatParameter",
                             "Expected parameter name.");
-    VariableDescription p("real", this->current->value, 1u,
-                          this->current->line);
-    if (!isValidIdentifier(p.name)) {
+    const auto type = [this]() -> std::string {
+      SupportedTypes stypes;
+      if (stypes.isSupportedType(this->current->value)) {
+        const auto t = this->current->value;
+        ++(this->current);
+        this->checkNotEndOfFile("MaterialPropertyDSL::treatInput");
+        return t;
+      }
+      return "real";
+    }();
+    if (SupportedTypes::getTypeFlag(type) != SupportedTypes::SCALAR) {
       this->throwRuntimeError("DSLBase::treatParameter",
-                              "parameter name '" + p.name + "' is not valid.");
+                              "parameter type'" + type + "' is not valid.");
+    }
+    //
+    const auto sname = this->current->value;
+    const auto name = tfel::unicode::getMangledString(sname);
+    if (!this->isValidIdentifier(name)) {
+      this->throwRuntimeError("DSLBase::treatParameter",
+                              "parameter name '" + name + "' is not valid.");
     }
     ++(this->current);
+    this->checkNotEndOfFile("MaterialPropertyDSL::treatParameter",
+                            "Expected parameter name.");
+    auto p = [this, type, sname, name] {
+      if (sname != name) {
+        return VariableDescription(type, sname, name, 1u, this->current->line);
+      }
+      return VariableDescription(type, name, 1u, this->current->line);
+    }();
     const auto value = this->readInitialisationValue<double>(p.name, false);
     if (value.first) {
       const auto op = this->overriding_parameters.find(p.name);
@@ -332,6 +355,7 @@ namespace mfront {
     throw_if(!this->md.f.body.empty(), "function already defined");
     if (this->md.output.name.empty()) {
       this->reserveName("res");
+      this->md.output.type = "real";
       this->md.output.name = "res";
     }
     this->md.f.modified = false;
@@ -625,8 +649,19 @@ namespace mfront {
   }  // end of MaterialPropertyDSL::generateOutputFiles
 
   void MaterialPropertyDSL::treatInput() {
-    VariableDescriptionContainer ninputs;
-    this->readVarList(ninputs, "real", false);
+    this->checkNotEndOfFile("MaterialPropertyDSL::treatInput");
+    const auto type = [this]() -> std::string {
+      SupportedTypes stypes;
+      if (stypes.isSupportedType(this->current->value)) {
+        const auto t = this->current->value;
+        ++(this->current);
+        this->checkNotEndOfFile("MaterialPropertyDSL::treatInput");
+        return t;
+      }
+      return "real";
+    }();
+    auto ninputs = VariableDescriptionContainer{};
+    this->readVarList(ninputs, type, false);
     for (const auto& i : ninputs) {
       this->reserveName(i.name);
       this->md.inputs.push_back(i);
@@ -638,13 +673,29 @@ namespace mfront {
       this->throwRuntimeError("MaterialPropertyDSL::treatOutput",
                               "Output already defined.");
     }
+    this->checkNotEndOfFile("MaterialPropertyDSL::treatInput");
+    const auto type = [this]() -> std::string {
+      SupportedTypes stypes;
+      if (stypes.isSupportedType(this->current->value)) {
+        const auto t = this->current->value;
+        ++(this->current);
+        this->checkNotEndOfFile("MaterialPropertyDSL::treatInput");
+        return t;
+      }
+      return "real";
+    }();
     const auto s = this->readOnlyOneToken();
+    if (SupportedTypes::getTypeFlag(type) != SupportedTypes::SCALAR) {
+      this->throwRuntimeError("DSLBase::treatOutput",
+                              "output type'" + type + "' is not valid.");
+    }
     const auto n = tfel::unicode::getMangledString(s);
     if (!tfel::utilities::CxxTokenizer::isValidIdentifier(n, false)) {
       this->throwRuntimeError("MaterialPropertyDSL::treatOutput",
                               "invalid output name.");
     }
     this->reserveName(n);
+    this->md.output.type = type;
     this->md.output.name = n;
     if (s != n) {
       this->reserveName(s);
