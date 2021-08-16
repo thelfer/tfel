@@ -38,7 +38,7 @@ namespace mtest {
   // forward declaration
   struct BehaviourWorkSpace;
 
-  //! A simple wrapper around mechanical behaviours
+  //! \brief a simple wrapper around mechanical behaviours
   struct MTEST_VISIBILITY_EXPORT Behaviour
       : std::enable_shared_from_this<Behaviour> {
     //! a simple alias

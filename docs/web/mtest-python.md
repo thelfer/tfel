@@ -1,8 +1,82 @@
-% The MTest Python API
-% Thomas Helfer
-% 10/06/2016
+---
+title: The MTest Python API
+author: Thomas Helfer
+date: 16/08/2021
+lang: en-EN
+link-citations: true
+colorlinks: true
+figPrefixTemplate: "$$i$$"
+tblPrefixTemplate: "$$i$$"
+secPrefixTemplate: "$$i$$"
+eqnPrefixTemplate: "($$i$$)"
+---
 
 This page describes the `mtest` module
+
+# The `MaterialProperty` class
+
+## Description
+
+The `MaterialProperty` class handles a material property.
+
+This class has the following core interface:
+
+- `getVariablesNames`, which returns the names of the arguments of
+  material property.
+- `setVariableValue` which allows to set the value of an argument of the
+  material property.
+- `getValue` which evaluates the material property for the values of the
+  arguments set by the `setVariableValue` method.
+- `getParametersNames`, which returns the names of the parameters of
+  material property.
+- `setParameter` which allows to change the value of a parameter.
+
+As described in the next paragraph, several convenient methods and
+operators are also provided to simplify the usage of this class.
+
+## Usage
+
+Here is an example of the usage of the `MaterialProperty` class.
+
+~~~~{.python}
+import mtest
+young_modulus = mtest.MaterialProperty(
+    'src/libCastemVanadium.so', 'VanadiumAlloy_YoungModulus_SRMA')
+~~~~
+
+Note that the `MaterialProperty` constructor automatically detects the
+interface used to generate the material property and instantiates the
+proper concrete implementation internally. In this case, an instance of
+the `CastemMaterialProperty` class is instanciated.
+
+The arguments of the material property can then be set and the material
+property can be evaluated:
+
+~~~~{.python}
+young_modulus.setVariableValue('Temperature', 562)
+E = young_modulus.getValue()
+~~~~
+
+Setting the variables' values and evaluating the material property can
+be tedious. To avoid this, overloaded versions of the `getValue` are
+available:
+
+~~~~{.python}
+# using a dictionary
+E = young_modulus.getValue({'Temperature': 562})
+# for material properties with only one argument
+E = young_modulus.getValue(562)
+~~~~
+
+To make the code even more explicit, the call operator can also be used,
+as follows:
+
+~~~~{.python}
+# using a dictionary
+E = young_modulus({'Temperature': 562})
+# for material properties with only one argument
+E = young_modulus(562)
+~~~~
 
 # The `Behaviour` class
 
@@ -597,5 +671,7 @@ for i in range(0,len(times)-1):
              for cs in scs.istates])
     print(str(times[i+1])+" "+str(p))
 ~~~~
+
+# References
 
 <!-- Local IspellDict: english -->

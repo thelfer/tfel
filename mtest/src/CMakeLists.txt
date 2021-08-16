@@ -1,4 +1,8 @@
 set(TFELMTest_SOURCES
+  MaterialProperty.cxx
+  MaterialPropertyBase.cxx
+  CastemMaterialProperty.cxx
+  CyranoMaterialProperty.cxx
   RoundingMode.cxx
   Study.cxx
   StudyCurrentState.cxx

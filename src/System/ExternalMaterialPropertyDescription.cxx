@@ -41,8 +41,11 @@ namespace tfel::system {
     this->source = elm.getSource(l, f);
     this->mfront_interface = elm.getInterface(l, f);
     this->arguments = elm.getMaterialPropertyVariables(l, f);
-  }  // end of
-     // ExternalMaterialPropertyDescription::ExternalMaterialPropertyDescription
+    try {
+      this->parameters = elm.getMaterialPropertyParameters(l, f);
+    } catch (...) {
+    }
+  }  // end of ExternalMaterialPropertyDescription
 
   ExternalMaterialPropertyDescription::ExternalMaterialPropertyDescription() =
       default;

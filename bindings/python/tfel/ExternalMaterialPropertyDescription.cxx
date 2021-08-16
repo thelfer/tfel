@@ -19,6 +19,11 @@ static std::vector<std::string> get_args(
   return d.arguments;
 }
 
+static std::vector<std::string> get_parameters(
+    const tfel::system::ExternalMaterialPropertyDescription& d) {
+  return d.parameters;
+}
+
 void declareExternalMaterialPropertyDescription();
 
 void declareExternalMaterialPropertyDescription() {
@@ -35,6 +40,7 @@ void declareExternalMaterialPropertyDescription() {
       .def_readonly("source", &ExternalMaterialPropertyDescription::source)
       .def_readonly("mfront_interface",
                     &ExternalMaterialPropertyDescription::mfront_interface)
-      .add_property("arguments", &get_args);
+      .add_property("arguments", &get_args)
+      .add_property("parameters", &get_parameters);
 
 }  // end of declareExternalMaterialPropertyDescription

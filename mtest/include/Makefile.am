@@ -1,5 +1,9 @@
 nobase_include_HEADERS = MTest/Config.hxx	                         \
 			 MTest/Types.hxx	                         \
+			 MTest/MaterialProperty.hxx                             \
+			 MTest/MaterialPropertyBase.hxx                             \
+			 MTest/CastemMaterialProperty.hxx                             \
+			 MTest/CyranoMaterialProperty.hxx                             \
 			 MTest/RoundingMode.hxx	                         \
 			 MTest/Solver.hxx	                         \
 			 MTest/SolverOptions.hxx	                 \

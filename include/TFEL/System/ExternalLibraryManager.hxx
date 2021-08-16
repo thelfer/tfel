@@ -469,6 +469,20 @@ namespace tfel::system {
                                       const std::string&,
                                       const std::string&);
     /*!
+     * \param[in] l : name of the library
+     * \param[in] f : function name
+     */
+    std::vector<std::string> getMaterialPropertyParameters(const std::string&,
+                                                           const std::string&);
+    /*!
+     * \param[out] n: names of  the variables
+     * \param[in] l : name of the library
+     * \param[in] f : function name
+     */
+    void getMaterialPropertyParameters(std::vector<std::string>&,
+                                       const std::string&,
+                                       const std::string&);
+    /*!
      * \param[in] l: name of the library
      * \param[in] f: function name
      * \param[in] h: modelling hypothesis
@@ -1208,16 +1222,25 @@ namespace tfel::system {
      */
     FortranFunction15Ptr getFortranFunction15(const std::string&,
                                               const std::string&);
-
+    //! \brief destructor
     ~ExternalLibraryManager();
 
    private:
-    TFEL_VISIBILITY_LOCAL ExternalLibraryManager();
+    ExternalLibraryManager();
+    ExternalLibraryManager(ExternalLibraryManager&&) = delete;
+    ExternalLibraryManager(const ExternalLibraryManager&) = delete;
+    ExternalLibraryManager& operator=(ExternalLibraryManager&&) = delete;
+    ExternalLibraryManager& operator=(const ExternalLibraryManager&) = delete;
 
-    TFEL_VISIBILITY_LOCAL ExternalLibraryManager(const ExternalLibraryManager&);
-
-    TFEL_VISIBILITY_LOCAL ExternalLibraryManager& operator=(
-        const ExternalLibraryManager&);
+    /*!
+     * \return an array of strings associated with an entry point
+     * \param[in] l: library
+     * \param[in] e: entry point
+     * \param[in] n: name of the array
+     */
+    std::vector<std::string> getArrayOfStrings(const std::string&,
+                                               const std::string&,
+                                               const std::string&);
 
     TFEL_VISIBILITY_LOCAL void getUMATNames(std::vector<std::string>&,
                                             const std::string&,

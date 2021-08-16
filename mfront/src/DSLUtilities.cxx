@@ -40,6 +40,107 @@ static const char* const constexpr_c = "const";
 
 namespace mfront {
 
+  void writeParametersSymbols(std::ostream& os,
+                              const std::string& n,
+                              const MaterialPropertyDescription& mpd) {
+    writeParametersDeclarationSymbols(os, n, mpd.parameters);
+    writeParametersDefaultValuesSymbols(os, n, mpd.parameters);
+    writeBoundsSymbols(os, n, mpd.parameters);
+    writePhysicalBoundsSymbols(os, n, mpd.parameters);
+  }  // end of writeParametersSymbols
+
+  void writeParametersDeclarationSymbols(
+      std::ostream& os,
+      const std::string& n,
+      const VariableDescriptionContainer& parameters) {
+    os << "MFRONT_SHAREDOBJ unsigned short " << n
+       << "_nParameters = " << parameters.getNumberOfVariables() << ";\n";
+    writeArrayOfStringsSymbol(os, n + "_Parameters",
+                              parameters.getExternalNames());
+    if (parameters.empty()) {
+      os << "MFRONT_SHAREDOBJ const int * " << n
+         << "_ParametersTypes = nullptr;\n\n";
+      return;
+    }
+    os << "MFRONT_SHAREDOBJ int " << n << "_ParametersTypes [] = {";
+    for (auto p = parameters.begin(); p != parameters.end();) {
+      for (unsigned short is = 0; is != p->arraySize;) {
+        if (p->type == "int") {
+          os << "1";
+        } else if (p->type == "ushort") {
+          os << "2";
+        } else {
+          const auto f = SupportedTypes::getTypeFlag(p->type);
+          tfel::raise_if(f != SupportedTypes::SCALAR,
+                         "SymbolsGenerator::writeParametersSymbols: "
+                         "internal error, unsupported type "
+                         "for parameter '" +
+                             p->name + "'");
+          os << "0";
+        }
+        if (++is != p->arraySize) {
+          os << ",";
+        }
+      }
+      if (++p != parameters.end()) {
+        os << ",";
+      }
+    }
+    os << "};\n\n";
+  }  // end of writeParametersDeclarationSymbols
+
+  void writeParametersDefaultValuesSymbols(
+      std::ostream& os,
+      const std::string& n,
+      const VariableDescriptionContainer& parameters) {
+    const auto prec = os.precision();
+    for (const auto& p : parameters) {
+      const auto f = SupportedTypes::getTypeFlag(p.type);
+      if (f != SupportedTypes::SCALAR) {
+        tfel::raise(
+            "writeParameterDefaultValueSymbols: "
+            "unsupported paramaeter type '" +
+            p.type + "'");
+      }
+      os.precision(14);
+      if (p.arraySize != 1u) {
+        tfel::raise(
+            "writeParameterDefaultValueSymbols: "
+            "array of parameters is not supported");
+      }
+      os << "MFRONT_SHAREDOBJ double " << n << "_" << p.getExternalName()
+         << "_ParameterDefaultValue"
+         << " = " << p.getAttribute<double>(VariableDescription::defaultValue)
+         << ";\n\n";
+      os.precision(prec);
+    }
+  }  // end of writeParametersDefaultValuesSymbols
+
+  void writeArrayOfStringsSymbol(std::ostream& os,
+                                 const std::string& s,
+                                 const std::vector<std::string>& values) {
+    if (values.empty()) {
+      os << "MFRONT_SHAREDOBJ const char * const * " << s << " = nullptr;\n\n";
+      return;
+    }
+    auto i = decltype(values.size()){};
+    auto p = values.begin();
+    os << "MFRONT_SHAREDOBJ const char * " << s << "[" << values.size()
+       << "] = {";
+    while (p != values.end()) {
+      os << '"' << *p << '"';
+      if (++p != values.end()) {
+        if (i % 5 == 0) {
+          os << ",\n";
+        } else {
+          os << ",";
+        }
+      }
+      ++i;
+    }
+    os << "};\n";
+  }  // end of writeArrayOfStringsSymbol
+
   void writeVariablesNamesSymbol(
       std::ostream& out,
       const std::string& name,
@@ -76,6 +177,58 @@ namespace mfront {
           << "Upper" << bt << "Bound = " << b.upperBound << ";\n\n";
     }
   }  // end of writeBoundsSymbol
+
+  void writeBoundsSymbols(std::ostream& os,
+                          const std::string& n,
+                          const VariableDescriptionContainer& vc) {
+    const auto prec = os.precision();
+    os.precision(14);
+    for (const auto& v : vc) {
+      if (v.arraySize == 1u) {
+        if (!v.hasBounds()) {
+          continue;
+        }
+        mfront::writeBoundsSymbol(os, n, v.getExternalName(), "",
+                                  v.getBounds());
+      } else {
+        for (auto idx = 0; idx != v.arraySize; ++idx) {
+          if (!v.hasBounds(idx)) {
+            continue;
+          }
+          mfront::writeBoundsSymbol(
+              os, n, v.getExternalName() + "__" + std::to_string(idx) + "__",
+              "", v.getBounds(idx));
+        }
+      }
+    }
+    os.precision(prec);
+  }  // end of writeBoundsSymbols
+
+  void writePhysicalBoundsSymbols(std::ostream& os,
+                                  const std::string& n,
+                                  const VariableDescriptionContainer& vc) {
+    const auto prec = os.precision();
+    os.precision(14);
+    for (const auto& v : vc) {
+      if (v.arraySize == 1u) {
+        if (!v.hasPhysicalBounds()) {
+          continue;
+        }
+        mfront::writeBoundsSymbol(os, n, v.getExternalName(), "Physical",
+                                  v.getPhysicalBounds());
+      } else {
+        for (auto idx = 0; idx != v.arraySize; ++idx) {
+          if (!v.hasPhysicalBounds(idx)) {
+            continue;
+          }
+          mfront::writeBoundsSymbol(
+              os, n, v.getExternalName() + "__" + std::to_string(idx) + "__",
+              "Physical", v.getPhysicalBounds(idx));
+        }
+      }
+    }
+    os.precision(prec);
+  } // end of writePhysicalBoundsSymbols
 
   void writeVariablesBoundsSymbols(
       std::ostream& out,
@@ -271,31 +424,31 @@ namespace mfront {
   }  // end of writeF77FuncMacros
 
   void writeExportDirectives(std::ostream& file) {
-    file
-        << "#ifdef _WIN32\n"
-        << "#ifndef NOMINMAX\n"
-        << "#define NOMINMAX\n"
-        << "#endif /* NOMINMAX */\n"
-        << "#include <windows.h>\n"
-        << "#ifdef small\n"
-        << "#undef small\n"
-        << "#endif /* small */\n"
-        << "#ifndef MFRONT_SHAREDOBJ\n"
-        << "#ifdef  MFRONT_COMPILING\n"
-        << "#define MFRONT_SHAREDOBJ __declspec(dllexport)\n"
-        << "#else /* MFRONT_COMPILING */\n"
-        << "#define MFRONT_SHAREDOBJ __declspec(dllimport)\n"
-        << "#endif /* MFRONT_COMPILING */\n"
-        << "#endif /* MFRONT_SHAREDOBJ */\n"
-        << "#else\n"
-        << "#ifndef MFRONT_SHAREDOBJ\n"
-        << "#ifdef __GNUC__\n"
-        << "#define MFRONT_SHAREDOBJ __attribute__((visibility(\"default\")))\n"
-        << "#else\n"
-        << "#define MFRONT_SHAREDOBJ\n"
-        << "#endif /* __GNUC__ */\n"
-        << "#endif /* MFRONT_SHAREDOBJ */\n"
-        << "#endif /* _WIN32 */\n\n";
+    file << "#ifdef _WIN32\n"
+         << "#ifndef NOMINMAX\n"
+         << "#define NOMINMAX\n"
+         << "#endif /* NOMINMAX */\n"
+         << "#include <windows.h>\n"
+         << "#ifdef small\n"
+         << "#undef small\n"
+         << "#endif /* small */\n"
+         << "#ifndef MFRONT_SHAREDOBJ\n"
+         << "#ifdef  MFRONT_COMPILING\n"
+         << "#define MFRONT_SHAREDOBJ __declspec(dllexport)\n"
+         << "#else /* MFRONT_COMPILING */\n"
+         << "#define MFRONT_SHAREDOBJ __declspec(dllimport)\n"
+         << "#endif /* MFRONT_COMPILING */\n"
+         << "#endif /* MFRONT_SHAREDOBJ */\n"
+         << "#else\n"
+         << "#ifndef MFRONT_SHAREDOBJ\n"
+         << "#ifdef __GNUC__\n"
+         << "#define MFRONT_SHAREDOBJ "
+            "__attribute__((visibility(\"default\")))\n"
+         << "#else\n"
+         << "#define MFRONT_SHAREDOBJ\n"
+         << "#endif /* __GNUC__ */\n"
+         << "#endif /* MFRONT_SHAREDOBJ */\n"
+         << "#endif /* _WIN32 */\n\n";
   }  // end of writeExportDirectives
 
   std::string makeUpperCase(const std::string& n) {

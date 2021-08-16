@@ -22,7 +22,6 @@ namespace mtest {
                                    const std::string& fn,
                                    const EvolutionManager& evm_)
       : evm(evm_) {
-    using namespace tfel::system;
     using ELM = tfel::system::ExternalLibraryManager;
     auto& elm = ELM::getExternalLibraryManager();
     this->f = elm.getCastemFunction(l, fn);

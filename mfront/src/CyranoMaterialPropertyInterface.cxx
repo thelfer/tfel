@@ -338,6 +338,7 @@ namespace mfront {
     writeInterfaceSymbol(out, name, "Cyrano");
     writeMaterialSymbol(out, name, mpd.material);
     writeMaterialKnowledgeTypeSymbol(out, name, MATERIALPROPERTY);
+    writeParametersSymbols(out, name, mpd);
 
     out << "MFRONT_SHAREDOBJ const char *\n"
         << name << "_src = \""

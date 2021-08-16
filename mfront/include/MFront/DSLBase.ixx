@@ -23,7 +23,7 @@ namespace mfront {
   template <typename T>
   std::pair<bool, T> DSLBase::readInitialisationValue(const std::string& n,
                                                       const bool b) {
-    std::pair<bool, T> value;
+    auto value = std::pair<bool, T>{};
     this->checkNotEndOfFile("DSLBase::readInitialisationValue",
                             "unexpected end of file");
     if ((this->current->value == "=") || (this->current->value == "{") ||

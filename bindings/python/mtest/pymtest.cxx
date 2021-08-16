@@ -15,6 +15,7 @@
 #include "MTest/RoundingMode.hxx"
 #include "MTest/SolverOptions.hxx"
 
+void declareMaterialProperty();
 void declareBehaviour();
 void declareSchemeBase();
 void declareSingleStructureScheme();
@@ -56,6 +57,7 @@ BOOST_PYTHON_MODULE(_mtest) {
       .value("CONSISTENTTANGENTOPERATOR",
              mtest::StiffnessMatrixType::CONSISTENTTANGENTOPERATOR);
 
+  declareMaterialProperty();
   declareBehaviour();
   declareCurrentState();
   declareStructureCurrentState();
