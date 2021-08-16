@@ -41,7 +41,110 @@
 
 namespace mfront {
 
-void writeVariablesNamesSymbol(std::ostream &out, const std::string &name,
+  void writeParametersSymbols(std::ostream& os,
+                              const std::string& n,
+                              const MaterialPropertyDescription& mpd) {
+    writeParametersDeclarationSymbols(os, n, mpd.parameters);
+    writeParametersDefaultValuesSymbols(os, n, mpd.parameters);
+    writeBoundsSymbols(os, n, mpd.parameters);
+    writePhysicalBoundsSymbols(os, n, mpd.parameters);
+  }  // end of writeParametersSymbols
+
+  void writeParametersDeclarationSymbols(
+      std::ostream& os,
+      const std::string& n,
+      const VariableDescriptionContainer& parameters) {
+    os << "MFRONT_SHAREDOBJ unsigned short " << n
+       << "_nParameters = " << parameters.getNumberOfVariables() << ";\n";
+    writeArrayOfStringsSymbol(os, n + "_Parameters",
+                              parameters.getExternalNames());
+    if (parameters.empty()) {
+      os << "MFRONT_SHAREDOBJ const int * " << n
+         << "_ParametersTypes = nullptr;\n\n";
+      return;
+    }
+    os << "MFRONT_SHAREDOBJ int " << n << "_ParametersTypes [] = {";
+    for (auto p = parameters.begin(); p != parameters.end();) {
+      for (unsigned short is = 0; is != p->arraySize;) {
+        if (p->type == "int") {
+          os << "1";
+        } else if (p->type == "ushort") {
+          os << "2";
+        } else {
+          const auto f = SupportedTypes::getTypeFlag(p->type);
+          tfel::raise_if(f != SupportedTypes::SCALAR,
+                         "SymbolsGenerator::writeParametersSymbols: "
+                         "internal error, unsupported type "
+                         "for parameter '" +
+                             p->name + "'");
+          os << "0";
+        }
+        if (++is != p->arraySize) {
+          os << ",";
+        }
+      }
+      if (++p != parameters.end()) {
+        os << ",";
+      }
+    }
+    os << "};\n\n";
+  }  // end of writeParametersDeclarationSymbols
+
+  void writeParametersDefaultValuesSymbols(
+      std::ostream& os,
+      const std::string& n,
+      const VariableDescriptionContainer& parameters) {
+    const auto prec = os.precision();
+    for (const auto& p : parameters) {
+      const auto f = SupportedTypes::getTypeFlag(p.type);
+      if (f != SupportedTypes::SCALAR) {
+        tfel::raise(
+            "writeParameterDefaultValueSymbols: "
+            "unsupported paramaeter type '" +
+            p.type + "'");
+      }
+      os.precision(14);
+      if (p.arraySize != 1u) {
+        tfel::raise(
+            "writeParameterDefaultValueSymbols: "
+            "array of parameters is not supported");
+      }
+      os << "MFRONT_SHAREDOBJ double " << n << "_" << p.getExternalName()
+         << "_ParameterDefaultValue"
+         << " = " << p.getAttribute<double>(VariableDescription::defaultValue)
+         << ";\n\n";
+      os.precision(prec);
+    }
+  }  // end of writeParametersDefaultValuesSymbols
+
+  void writeArrayOfStringsSymbol(std::ostream& os,
+                                 const std::string& s,
+                                 const std::vector<std::string>& values) {
+    if (values.empty()) {
+      os << "MFRONT_SHAREDOBJ const char * const * " << s << " = nullptr;\n\n";
+      return;
+    }
+    auto i = decltype(values.size()){};
+    auto p = values.begin();
+    os << "MFRONT_SHAREDOBJ const char * " << s << "[" << values.size()
+       << "] = {";
+    while (p != values.end()) {
+      os << '"' << *p << '"';
+      if (++p != values.end()) {
+        if (i % 5 == 0) {
+          os << ",\n";
+        } else {
+          os << ",";
+        }
+      }
+      ++i;
+    }
+    os << "};\n";
+  }  // end of writeArrayOfStringsSymbol
+
+  void writeVariablesNamesSymbol(
+      std::ostream& out,
+      const std::string& name,
                                const mfront::MaterialPropertyDescription &mpd) {
   if (!mpd.inputs.empty()) {
     out << "MFRONT_SHAREDOBJ const char *\n"
@@ -77,7 +180,61 @@ void writeVariablesNamesSymbol(std::ostream &out, const std::string &name,
     }
   }  // end of writeBoundsSymbol
 
-  void  writeVariablesBoundsSymbols(std::ostream &out, const std::string &name,
+  void writeBoundsSymbols(std::ostream& os,
+                          const std::string& n,
+                          const VariableDescriptionContainer& vc) {
+    const auto prec = os.precision();
+    os.precision(14);
+    for (const auto& v : vc) {
+      if (v.arraySize == 1u) {
+        if (!v.hasBounds()) {
+          continue;
+        }
+        mfront::writeBoundsSymbol(os, n, v.getExternalName(), "",
+                                  v.getBounds());
+      } else {
+        for (auto idx = 0; idx != v.arraySize; ++idx) {
+          if (!v.hasBounds(idx)) {
+            continue;
+          }
+          mfront::writeBoundsSymbol(
+              os, n, v.getExternalName() + "__" + std::to_string(idx) + "__",
+              "", v.getBounds(idx));
+        }
+      }
+    }
+    os.precision(prec);
+  }  // end of writeBoundsSymbols
+
+  void writePhysicalBoundsSymbols(std::ostream& os,
+                                  const std::string& n,
+                                  const VariableDescriptionContainer& vc) {
+    const auto prec = os.precision();
+    os.precision(14);
+    for (const auto& v : vc) {
+      if (v.arraySize == 1u) {
+        if (!v.hasPhysicalBounds()) {
+          continue;
+        }
+        mfront::writeBoundsSymbol(os, n, v.getExternalName(), "Physical",
+                                  v.getPhysicalBounds());
+      } else {
+        for (auto idx = 0; idx != v.arraySize; ++idx) {
+          if (!v.hasPhysicalBounds(idx)) {
+            continue;
+          }
+          mfront::writeBoundsSymbol(
+              os, n, v.getExternalName() + "__" + std::to_string(idx) + "__",
+              "Physical", v.getPhysicalBounds(idx));
+        }
+      }
+    }
+    os.precision(prec);
+  } // end of writePhysicalBoundsSymbols
+
+  void writeVariablesBoundsSymbols(
+      std::ostream& out,
+      const std::string& name,
                               const mfront::MaterialPropertyDescription &mpd) {
 
     const auto prec = out.precision();
@@ -87,8 +244,7 @@ void writeVariablesNamesSymbol(std::ostream &out, const std::string &name,
         if (!v.hasBounds()) {
           continue;
         }
-          writeBoundsSymbol(out, name, v.getExternalName(), "",
-                          v.getBounds());
+        writeBoundsSymbol(out, name, v.getExternalName(), "", v.getBounds());
         if (!v.hasPhysicalBounds()) {
           continue;
         }
@@ -99,15 +255,17 @@ void writeVariablesNamesSymbol(std::ostream &out, const std::string &name,
             if (!v.hasBounds(idx)) {
               continue;
             }
-            writeBoundsSymbol(out, name, 
+          writeBoundsSymbol(
+              out, name,
                 v.getExternalName() + "__" + std::to_string(idx) + "__", "",
                 v.getBounds(idx));
             if (!v.hasPhysicalBounds(idx)) {
               continue;
             }
-            writeBoundsSymbol(out, name, 
-                v.getExternalName() + "__" + std::to_string(idx) + "__", "Physical",
-                v.getPhysicalBounds(idx));
+          writeBoundsSymbol(
+              out, name,
+              v.getExternalName() + "__" + std::to_string(idx) + "__",
+              "Physical", v.getPhysicalBounds(idx));
           }
         }
     }

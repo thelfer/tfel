@@ -25,9 +25,7 @@
 
 namespace mtest {
 
-  /*!
-   * An evolution defined by a castem fonction
-   */
+  //! \brief An evolution defined by a castem fonction
   struct MTEST_VISIBILITY_EXPORT CastemEvolution : public Evolution {
     /*!
      * \brief constructor
@@ -43,17 +41,17 @@ namespace mtest {
     bool isConstant() const override;
     void setValue(const real) override;
     void setValue(const real, const real) override;
-    //! destructor
+    //! \brief destructor
     ~CastemEvolution() override;
 
    protected:
-    //! externally defined evolutions
+    //! \brief externally defined evolutions
     const EvolutionManager& evm;
-    //! the castem function
+    //! \brief the castem function
     tfel::system::CastemFunctionPtr f;
-    //! names of the variables
+    //! \brief names of the variables
     std::vector<std::string> vnames;
-    //! arguments send to the Cast3M function
+    //! \brief arguments send to the Cast3M function
     mutable std::vector<real> args;
   };
 

@@ -15,6 +15,7 @@
 #include"MTest/RoundingMode.hxx"
 #include"MTest/SolverOptions.hxx"
 
+void declareMaterialProperty();
 void declareBehaviour();
 void declareSchemeBase();
 void declareSingleStructureScheme();
@@ -29,17 +30,15 @@ void declareStudyCurrentState();
 void declareSolverWorkSpace();
 void declareMFrontLogStream();
 
-BOOST_PYTHON_MODULE(_mtest)
-{
-
-  boost::python::enum_<mtest::StiffnessUpdatingPolicy>("StiffnessUpdatingPolicy")
+BOOST_PYTHON_MODULE(_mtest) {
+  boost::python::enum_<mtest::StiffnessUpdatingPolicy>(
+      "StiffnessUpdatingPolicy")
     .value("CONSTANTSTIFFNESS",
 	   mtest::StiffnessUpdatingPolicy::CONSTANTSTIFFNESS)
     .value("CONSTANTSTIFFNESSBYPERIOD",
 	   mtest::StiffnessUpdatingPolicy::CONSTANTSTIFFNESSBYPERIOD)
     .value("UPDATEDSTIFFNESSMATRIX",
-	   mtest::StiffnessUpdatingPolicy::UPDATEDSTIFFNESSMATRIX)
-    ;
+             mtest::StiffnessUpdatingPolicy::UPDATEDSTIFFNESSMATRIX);
 
   boost::python::enum_<mtest::PredictionPolicy>("PredictionPolicy")
     .value("NOPREDICTION",mtest::PredictionPolicy::NOPREDICTION)
@@ -48,8 +47,7 @@ BOOST_PYTHON_MODULE(_mtest)
     .value("SECANTOPERATORPREDICTION",
 	   mtest::PredictionPolicy::SECANTOPERATORPREDICTION)
     .value("TANGENTOPERATORPREDICTION",
-	   mtest::PredictionPolicy::TANGENTOPERATORPREDICTION)
-    ;
+             mtest::PredictionPolicy::TANGENTOPERATORPREDICTION);
   
   boost::python::enum_<mtest::StiffnessMatrixType>("StiffnessMatrixType")
     .value("NOSTIFFNESS",mtest::StiffnessMatrixType::NOSTIFFNESS)
@@ -57,9 +55,9 @@ BOOST_PYTHON_MODULE(_mtest)
     .value("SECANTOPERATOR",mtest::StiffnessMatrixType::SECANTOPERATOR)
     .value("TANGENTOPERATOR",mtest::StiffnessMatrixType::TANGENTOPERATOR)
     .value("CONSISTENTTANGENTOPERATOR",
-	   mtest::StiffnessMatrixType::CONSISTENTTANGENTOPERATOR)
-    ;
+             mtest::StiffnessMatrixType::CONSISTENTTANGENTOPERATOR);
   
+  declareMaterialProperty();
   declareBehaviour();
   declareCurrentState();
   declareStructureCurrentState();

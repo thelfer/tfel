@@ -20,7 +20,7 @@
 namespace mtest {
 
   /*!
-   * a scheme describe a specific kind of computation.
+   * \brief a scheme describe a specific kind of computation.
    */
   struct MTEST_VISIBILITY_EXPORT Scheme : public tfel::tests::Test {
     //! desctructor

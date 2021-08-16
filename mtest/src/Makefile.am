@@ -7,7 +7,12 @@ lib_LTLIBRARIES = libTFELMTest.la
 bin_PROGRAMS  = mtest
 mtest_SOURCES = MTestMain.cxx
 
-libTFELMTest_la_SOURCES = RoundingMode.cxx              \
+libTFELMTest_la_SOURCES =                               \
+              MaterialProperty.cxx                      \
+              MaterialPropertyBase.cxx                  \
+              CastemMaterialProperty.cxx                \
+              CyranoMaterialProperty.cxx                \
+              RoundingMode.cxx                          \
 			  Study.cxx                                 \
 			  StudyCurrentState.cxx                     \
 			  StructureCurrentState.cxx                 \

@@ -10,6 +10,7 @@ mtest_LTLIBRARIES = _mtest.la
 mtest_PYTHON = __init__.py
 
 _mtest_la_SOURCES =  pymtest.cxx        \
+		     MaterialProperty.cxx       \
 		     Behaviour.cxx              \
 		     SchemeBase.cxx             \
 		     SingleStructureScheme.cxx  \

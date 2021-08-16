@@ -234,6 +234,9 @@ void declareExternalLibraryManager() {
            static_cast<std::vector<std::string> (ELM::*)(const std::string&,
                                                          const std::string&)>(
                &ELM::getMaterialPropertyVariables))
-    ;
+      .def("getMaterialPropertyParameters",
+           static_cast<std::vector<std::string> (ELM::*)(const std::string&,
+                                                         const std::string&)>(
+               &ELM::getMaterialPropertyParameters));
 
 }  // end of declareExternalLibraryManager

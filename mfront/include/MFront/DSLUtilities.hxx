@@ -41,7 +41,8 @@ namespace mfront {
    * \param[out] os: output stream
    * \param[in]  n:  name of the law
    * \param[in]  mpd:  material property description
-   */ MFRONT_VISIBILITY_EXPORT void writeVariablesNamesSymbol(
+   */
+  MFRONT_VISIBILITY_EXPORT void writeVariablesNamesSymbol(
       std::ostream&,
       const std::string&,
       const mfront::MaterialPropertyDescription&);
@@ -53,19 +54,37 @@ namespace mfront {
    * \param[in]  vn:  name of the variable
    * \param[in]  bt:  type of bounds (physical or not)
    * \param[in]  b:  bound description 
-   */ MFRONT_VISIBILITY_EXPORT void writeBoundsSymbol(
+   */
+  MFRONT_VISIBILITY_EXPORT void writeBoundsSymbol(
       std::ostream&,
       const std::string&,
       const std::string&,
       const std::string&,
       const mfront::VariableBoundsDescription&);
+  /*!
+   * \brief write the bounds associated with the given variables
+   * \param[out] os: output stream
+   * \param[in] n:  name of the symbol
+   * \param[in] vc:  variables
+   */
+  MFRONT_VISIBILITY_EXPORT void writeBoundsSymbols(
+      std::ostream&, const std::string&, const VariableDescriptionContainer&);
+  /*!
+   * \brief write the physical bounds associated with the given variables
+   * \param[out] os: output stream
+   * \param[in] n:  name of the symbol
+   * \param[in] vc:  variables
+   */
+  MFRONT_VISIBILITY_EXPORT void writePhysicalBoundsSymbols(
+      std::ostream&, const std::string&, const VariableDescriptionContainer&);
 
   /*!
    * \brief write the name of the variable
    * \param[out] os: output stream
    * \param[in]  n:  name of the law
    * \param[in]  mpd:  material property description
-   */ MFRONT_VISIBILITY_EXPORT void writeVariablesBoundsSymbols(
+   */
+  MFRONT_VISIBILITY_EXPORT void writeVariablesBoundsSymbols(
       std::ostream&,
       const std::string&,
       const mfront::MaterialPropertyDescription&);
@@ -192,6 +211,47 @@ namespace mfront {
    */
   MFRONT_VISIBILITY_EXPORT void displayGlossaryEntryCompleteDescription(
       std::ostream&, const tfel::glossary::GlossaryEntry&);
+  /*!
+   * \brief export all symbols related to parameters
+   * \param[out] os: output stream
+   * \param[out] n: name of the entry point
+   * \param[out] parameters: list of parameters
+   *
+   * This functions calls successively:
+   *
+   * - `writeParametersDecarationSymbols`
+   * - `writeParametersDefaultValuesSymbols`
+   * - `writeBoundsSymbols`
+   * - `writePhysicalBoundsSymbols`
+   */
+  MFRONT_VISIBILITY_EXPORT void writeParametersSymbols(
+      std::ostream&, const std::string&, const MaterialPropertyDescription&);
+  /*!
+   * \brief export parameters declarations
+   * \param[out] os: output stream
+   * \param[out] n: name of the entry point
+   * \param[out] parameters: list of parameters
+   */
+  MFRONT_VISIBILITY_EXPORT void writeParametersDeclarationSymbols(
+      std::ostream&, const std::string&, const VariableDescriptionContainer&);
+  /*!
+   * \brief export the default values of a set of parameters
+   * \param[out] os: output stream
+   * \param[out] n: name of the entry point
+   * \param[out] parameters: list of parameters
+   */
+  MFRONT_VISIBILITY_EXPORT void writeParametersDefaultValuesSymbols(
+      std::ostream&, const std::string&, const VariableDescriptionContainer&);
+  /*!
+   * \brief write a symbol describing an array of strings
+   * \param[out] os: output stream
+   * \param[out] n: name of the generated symbol
+   * \param[out] values: array of strings
+   */
+  MFRONT_VISIBILITY_EXPORT
+  void writeArrayOfStringsSymbol(std::ostream&,
+                                 const std::string&,
+                                 const std::vector<std::string>&);
 
 #ifdef MFRONT_HAVE_MADNEX
 

@@ -24,10 +24,10 @@ namespace tfel {
   namespace system {
 
     ExternalMaterialPropertyData::ExternalMaterialPropertyData() = default;
-    ExternalMaterialPropertyData::ExternalMaterialPropertyData(ExternalMaterialPropertyData&&) =
-        default;
-    ExternalMaterialPropertyData::ExternalMaterialPropertyData(const ExternalMaterialPropertyData&) =
-        default;
+  ExternalMaterialPropertyData::ExternalMaterialPropertyData(
+      ExternalMaterialPropertyData&&) = default;
+  ExternalMaterialPropertyData::ExternalMaterialPropertyData(
+      const ExternalMaterialPropertyData&) = default;
     ExternalMaterialPropertyData& ExternalMaterialPropertyData::operator=(
         ExternalMaterialPropertyData&&) = default;
     ExternalMaterialPropertyData& ExternalMaterialPropertyData::operator=(
@@ -43,26 +43,33 @@ namespace tfel {
       this->source = elm.getSource(l, f);
       this->mfront_interface = elm.getInterface(l, f);
       this->arguments = elm.getMaterialPropertyVariables(l, f);
-    } // end of ExternalMaterialPropertyDescription::ExternalMaterialPropertyDescription
+    try {
+      this->parameters = elm.getMaterialPropertyParameters(l, f);
+    } catch (...) {
+    }
+  }  // end of ExternalMaterialPropertyDescription
 
-    ExternalMaterialPropertyDescription::ExternalMaterialPropertyDescription() = default;
+  ExternalMaterialPropertyDescription::ExternalMaterialPropertyDescription() =
+      default;
     ExternalMaterialPropertyDescription::ExternalMaterialPropertyDescription(
         ExternalMaterialPropertyDescription&&) = default;
     ExternalMaterialPropertyDescription::ExternalMaterialPropertyDescription(
         const ExternalMaterialPropertyDescription&) = default;
-    ExternalMaterialPropertyDescription& ExternalMaterialPropertyDescription::operator=(
-        const ExternalMaterialPropertyDescription&) = default;
-    ExternalMaterialPropertyDescription& ExternalMaterialPropertyDescription::operator=(
-        ExternalMaterialPropertyDescription&&) = default;
-    ExternalMaterialPropertyDescription::~ExternalMaterialPropertyDescription() = default;
+  ExternalMaterialPropertyDescription& ExternalMaterialPropertyDescription::
+  operator=(const ExternalMaterialPropertyDescription&) = default;
+  ExternalMaterialPropertyDescription& ExternalMaterialPropertyDescription::
+  operator=(ExternalMaterialPropertyDescription&&) = default;
+  ExternalMaterialPropertyDescription::~ExternalMaterialPropertyDescription() =
+      default;
 
-  }  // end of namespace system
-
+}  // end of namespace system
+  
 }  // end of namespace tfel
 
 extern "C" {
 
-char* getExternalMaterialPropertyData(tfel::system::ExternalMaterialPropertyData* const d,
+char* getExternalMaterialPropertyData(
+    tfel::system::ExternalMaterialPropertyData* const d,
                                const char* const l,
                                const char* const f) {
   auto report = [](const char* e) {
@@ -105,8 +112,9 @@ tfel::system::ExternalMaterialPropertyData* newExternalMaterialPropertyData() {
   return new tfel::system::ExternalMaterialPropertyData;
 }
 
-void freeExternalMaterialPropertyData(tfel::system::ExternalMaterialPropertyData* ptr) {
+void freeExternalMaterialPropertyData(
+    tfel::system::ExternalMaterialPropertyData* ptr) {
   delete ptr;
 }
 
-}  // end of extern "C"
+} // end of extern "C"

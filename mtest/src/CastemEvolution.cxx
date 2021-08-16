@@ -22,7 +22,6 @@ namespace mtest {
                                    const std::string& fn,
                                    const EvolutionManager& evm_)
       : evm(evm_) {
-    using namespace tfel::system;
     using ELM = tfel::system::ExternalLibraryManager;
     auto& elm = ELM::getExternalLibraryManager();
     this->f = elm.getCastemFunction(l, fn);
@@ -33,15 +32,14 @@ namespace mtest {
   }  // end of CastemEvolution::CastemEvolution
 
   real CastemEvolution::operator()(const real t) const {
-    using namespace std;
-    vector<string>::size_type i;
+    std::vector<std::string>::size_type i;
     for (i = 0; i != this->vnames.size(); ++i) {
       auto pev = this->evm.find(vnames[i]);
       tfel::raise_if(pev == this->evm.end(),
                      "CastemEvolution::operator(): "
                      "can't evaluate argument '" +
                          vnames[i] + "'");
-      const Evolution& ev = *(pev->second);
+      const auto& ev = *(pev->second);
       args[i] = ev(t);
     }
     return this->f(&args[0]);

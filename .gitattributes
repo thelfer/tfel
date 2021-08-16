@@ -53,6 +53,8 @@ bindings/python/mfront/GeneratorOptions.cxx -text
 bindings/python/mfront/LibraryDescription.cxx -text
 bindings/python/mfront/Makefile.am -text
 bindings/python/mfront/MakefileGenerator.cxx -text
+bindings/python/mfront/MaterialPropertyDSL.cxx -text
+bindings/python/mfront/MaterialPropertyDescription.cxx -text
 bindings/python/mfront/OverridableImplementation.cxx -text
 bindings/python/mfront/SearchPathsHandler.cxx -text
 bindings/python/mfront/TargetsDescription.cxx -text
@@ -77,6 +79,7 @@ bindings/python/mtest/MFrontLogStream.cxx -text
 bindings/python/mtest/MTest.cxx -text
 bindings/python/mtest/MTestParser.cxx -text
 bindings/python/mtest/Makefile.am -text
+bindings/python/mtest/MaterialProperty.cxx -text
 bindings/python/mtest/PipeMesh.cxx -text
 bindings/python/mtest/PipeTest.cxx -text
 bindings/python/mtest/SchemeBase.cxx -text
@@ -6798,6 +6801,7 @@ mtest/include/MTest/CastemEvolution.hxx -text
 mtest/include/MTest/CastemFiniteStrainBehaviour.hxx -text
 mtest/include/MTest/CastemFiniteStrainBehaviour2.hxx -text
 mtest/include/MTest/CastemInterfaceVersion.hxx -text
+mtest/include/MTest/CastemMaterialProperty.hxx -text
 mtest/include/MTest/CastemSmallStrainBehaviour.hxx -text
 mtest/include/MTest/CastemStandardBehaviour.hxx -text
 mtest/include/MTest/CastemUmatFiniteStrainBehaviour.hxx -text
@@ -6813,6 +6817,7 @@ mtest/include/MTest/CrossedSecantAccelerationAlgorithm.hxx -text
 mtest/include/MTest/CurrentState.hxx -text
 mtest/include/MTest/CyranoBehaviour.hxx -text
 mtest/include/MTest/CyranoEvolution.hxx -text
+mtest/include/MTest/CyranoMaterialProperty.hxx -text
 mtest/include/MTest/DianaFEASmallStrainBehaviour.hxx -text
 mtest/include/MTest/EuroplexusFiniteStrainBehaviour.hxx -text
 mtest/include/MTest/EuroplexusStandardBehaviour.hxx -text
@@ -6828,6 +6833,8 @@ mtest/include/MTest/IronsTuckAccelerationAlgorithm.hxx -text
 mtest/include/MTest/LogarithmicStrain1DBehaviourWrapper.hxx -text
 mtest/include/MTest/MTest.hxx -text
 mtest/include/MTest/MTestParser.hxx -text
+mtest/include/MTest/MaterialProperty.hxx -text
+mtest/include/MTest/MaterialPropertyBase.hxx -text
 mtest/include/MTest/MistralBehaviour.hxx -text
 mtest/include/MTest/NonLinearConstraint.hxx -text
 mtest/include/MTest/PipeCubicElement.hxx -text
@@ -6892,6 +6899,7 @@ mtest/src/CastemCohesiveZoneModel.cxx -text
 mtest/src/CastemEvolution.cxx -text
 mtest/src/CastemFiniteStrainBehaviour.cxx -text
 mtest/src/CastemFiniteStrainBehaviour2.cxx -text
+mtest/src/CastemMaterialProperty.cxx -text
 mtest/src/CastemSmallStrainBehaviour.cxx -text
 mtest/src/CastemStandardBehaviour.cxx -text
 mtest/src/CastemUmatFiniteStrainBehaviour.cxx -text
@@ -6906,6 +6914,7 @@ mtest/src/CrossedSecantAccelerationAlgorithm.cxx -text
 mtest/src/CurrentState.cxx -text
 mtest/src/CyranoBehaviour.cxx -text
 mtest/src/CyranoEvolution.cxx -text
+mtest/src/CyranoMaterialProperty.cxx -text
 mtest/src/DianaFEASmallStrainBehaviour.cxx -text
 mtest/src/EuroplexusFiniteStrainBehaviour.cxx -text
 mtest/src/EuroplexusStandardBehaviour.cxx -text
@@ -6923,6 +6932,8 @@ mtest/src/MTest.cxx -text
 mtest/src/MTestMain.cxx -text
 mtest/src/MTestParser.cxx -text
 mtest/src/Makefile.am -text
+mtest/src/MaterialProperty.cxx -text
+mtest/src/MaterialPropertyBase.cxx -text
 mtest/src/MistralBehaviour.cxx -text
 mtest/src/NonLinearConstraint.cxx -text
 mtest/src/PipeCubicElement.cxx -text

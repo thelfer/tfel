@@ -72,7 +72,7 @@ typedef struct {
    *   The value gives the rank of this argument (here the rank starts at 1).
    */
   CyranoIntegerType bounds_status;
-  //! error message
+  //! \brief error message
   char msg[512];
 } CyranoOutputStatus;  // end of struct CyranoMaterialPropertyOutputStatus
 
