@@ -1526,6 +1526,7 @@ docs/web/mfm.md -text
 docs/web/mfront-doc.md -text
 docs/web/mfront-python.md -text
 docs/web/mfront-template.html -text
+docs/web/mfront-types.md -text
 docs/web/mfront/PorousStressCriterionTest.mfront -text
 docs/web/mfront/PorousStressCriterionTest_NumericalJacobian.mfront -text
 docs/web/mfront/StressCriterionTest.mfront -text
@@ -1584,6 +1585,7 @@ docs/web/svn.md -text
 docs/web/tensors.md -text
 docs/web/tex/lcmd_utf8.tex -text
 docs/web/tfel-check.md -text
+docs/web/tfel-physical-constants.md -text
 docs/web/tfel-python.md -text
 docs/web/theory.md -text
 docs/web/tutorial-spanish.md -text

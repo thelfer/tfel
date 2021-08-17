@@ -40,6 +40,49 @@ static const char* const constexpr_c = "const";
 
 namespace mfront {
 
+  std::vector<std::string> getScalarStandardTFELTypedefs() {
+    return {"real",
+            "time",
+            "length",
+            "frequency",
+            "speed",
+            "stress",
+            "strain",
+            "strainrate",
+            "stressrate",
+            "temperature",
+            "thermalexpansion",
+            "thermalconductivity",
+            "massdensity",
+            "energydensity"};
+  }  // end of getScalarStandardTFELTypedefs
+
+  std::vector<std::string> getTinyVectorStandardTFELTypedefs() {
+    return {"TVector", "DisplacementTVector", "ForceTVector", "HeatFlux",
+            "TemperatureGradient"};
+  }  // end of getTinyVectorStandardTFELTypedefs
+
+  std::vector<std::string> getStensorStandardTFELTypedefs() {
+    return {"Stensor", "StressStensor", "StressRateStensor", "StrainStensor",
+            "StrainRateStensor", "FrequencyStensor"};
+  }
+
+  std::vector<std::string> getTensorStandardTFELTypedefs() {
+    return {"Tensor", "DeformationGradientTensor", "StressTensor"};
+  }
+
+  std::vector<std::string> getStandardTFELTypedefs() {
+    auto aliases = getScalarStandardTFELTypedefs();
+    auto append = [&aliases](const std::vector<std::string>& others) {
+      aliases.insert(aliases.end(), others.begin(), others.end());
+    };
+    append(getTinyVectorStandardTFELTypedefs());
+    append(getStensorStandardTFELTypedefs());
+    append(getTensorStandardTFELTypedefs());
+    aliases.insert(aliases.end(), {"StiffnessTensor", "Stensor4"});
+    return aliases;
+  }  // end of getStandardTFELTypedefs
+
   void writeParametersSymbols(std::ostream& os,
                               const std::string& n,
                               const MaterialPropertyDescription& mpd) {
@@ -228,7 +271,7 @@ namespace mfront {
       }
     }
     os.precision(prec);
-  } // end of writePhysicalBoundsSymbols
+  }  // end of writePhysicalBoundsSymbols
 
   void writeVariablesBoundsSymbols(
       std::ostream& out,

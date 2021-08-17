@@ -18,51 +18,36 @@
 #include "TFEL/Raise.hxx"
 #include "MFront/MFrontDebugMode.hxx"
 #include "MFront/VariableDescription.hxx"
+#include "MFront/DSLUtilities.hxx"
 #include "MFront/SupportedTypes.hxx"
 
 namespace mfront {
 
-  /*!
-   * \return a map between type names and Supported::TypeFlags
-   */
+  //! \return a map between type names and Supported::TypeFlags
+  static std::map<std::string, SupportedTypes::TypeFlag>
+  SupportedTypes_buildFlags() {
+    std::map<std::string, SupportedTypes::TypeFlag> flags;
+    flags.insert({"NumericType", SupportedTypes::SCALAR});
+    for (const auto& t : getScalarStandardTFELTypedefs()) {
+      flags.insert({t, SupportedTypes::SCALAR});
+    }
+    for (const auto& t : getTinyVectorStandardTFELTypedefs()) {
+      flags.insert({t, SupportedTypes::TVECTOR});
+    }
+    for (const auto& t : getStensorStandardTFELTypedefs()) {
+      flags.insert({t, SupportedTypes::STENSOR});
+    }
+    for (const auto& t : getTensorStandardTFELTypedefs()) {
+      flags.insert({t, SupportedTypes::TENSOR});
+    }
+    return flags;
+  }  // end of SupportedTypes_getFlags
+
+  //! \return a map between type names and Supported::TypeFlags
   static std::map<std::string, SupportedTypes::TypeFlag>&
   SupportedTypes_getFlags() {
-    using namespace std;
     using TypeFlag = SupportedTypes::TypeFlag;
-    static map<string, TypeFlag> flags = {
-        {"NumericType", SupportedTypes::SCALAR},
-        {"real", SupportedTypes::SCALAR},
-        {"frequency", SupportedTypes::SCALAR},
-        {"stress", SupportedTypes::SCALAR},
-        {"length", SupportedTypes::SCALAR},
-        {"time", SupportedTypes::SCALAR},
-        {"speed", SupportedTypes::SCALAR},
-        //    {"stressrate",SupportedTypes::SCALAR},
-        {"strain", SupportedTypes::SCALAR},
-        {"strainrate", SupportedTypes::SCALAR},
-        {"temperature", SupportedTypes::SCALAR},
-        {"energydensity", SupportedTypes::SCALAR},
-        {"thermalexpansion", SupportedTypes::SCALAR},
-        {"thermalconductivity", SupportedTypes::SCALAR},
-        {"massdensity", SupportedTypes::SCALAR},
-        {"TVector", SupportedTypes::TVECTOR},
-        {"Vector", SupportedTypes::TVECTOR},
-        {"Stensor", SupportedTypes::STENSOR},
-        {"Tensor", SupportedTypes::TENSOR},
-        {"StressStensor", SupportedTypes::STENSOR},
-        {"StressRateStensor", SupportedTypes::STENSOR},
-        {"StrainStensor", SupportedTypes::STENSOR},
-        {"StrainRateStensor", SupportedTypes::STENSOR},
-        // CZM
-        {"DisplacementTVector", SupportedTypes::TVECTOR},
-        {"ForceTVector", SupportedTypes::TVECTOR},
-        // Finite Strain
-        {"DeformationGradientTensor", SupportedTypes::TENSOR},
-        {"StressTensor", SupportedTypes::TENSOR},
-        // GenericBehaviour
-        {"HeatFlux", SupportedTypes::TVECTOR},
-        {"TemperatureGradient", SupportedTypes::TVECTOR},
-    };
+    static std::map<std::string, TypeFlag> flags = SupportedTypes_buildFlags();
     return flags;
   }  // end of SupportedTypes_getFlags
 

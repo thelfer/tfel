@@ -1122,7 +1122,7 @@ namespace mfront {
     }
     /*
      * Special exceptions for glossary name which are also supported type name:
-     * those names are already registred and no clash ispossible.
+     * those names are already registred and no clash is possible.
      */
     const auto& flags = SupportedTypes::getTypeFlags();
     if (flags.find(g) == flags.end()) {

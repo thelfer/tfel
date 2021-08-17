@@ -1,6 +1,15 @@
-% General documentation 
-% Helfer Thomas; Jean-Michel Proix
-% August 2, 2017
+---
+title: General documentation
+author: Thomas Helfer, Jean-Michel Proix
+date: 17/08/2021
+lang: en-EN
+link-citations: true
+colorlinks: true
+figPrefixTemplate: "$$i$$"
+tblPrefixTemplate: "$$i$$"
+secPrefixTemplate: "$$i$$"
+eqnPrefixTemplate: "($$i$$)"
+---
 
 This page provides several links to available documentations regarding
 `TFEL` and `MFront`, which are fairly detailed. Unfortunately, most of
@@ -86,6 +95,13 @@ MFront Users are available there:
   element solver is available [here](epx.html).
 - The description of the interface to the [CalculiX](calculix.de)
   finite element solver is available [here](calculix.html).
+
+# Dedicated pages
+
+- Support for unicode symbols in `MFront` is described
+  [here](unicode.html).
+- The list of predefined type aliases in `MFront` is given
+  [here](mfront-types.html).
 
 # Bibliography
 

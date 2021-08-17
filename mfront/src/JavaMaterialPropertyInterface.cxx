@@ -290,6 +290,7 @@ namespace mfront {
             << "#include<cstdlib>\n"
             << "#include<string>\n"
             << "#include<cmath>\n\n"
+            << "#include\"TFEL/Config/TFELTypes.hxx\"\n"
             << "#include <jni.h>\n\n";
     if (!mpd.includes.empty()) {
       srcFile << mpd.includes << "\n\n";
@@ -321,8 +322,7 @@ namespace mfront {
       srcFile << ", const jdouble " << i.name;
     }
     srcFile << ")\n{\n";
-    srcFile << "using namespace std;\n";
-    srcFile << "using real = jdouble;\n";
+    writeBeginningOfMaterialPropertyBody(srcFile, mpd, fd);
     // handle java exceptions
     srcFile
         << "auto throwJavaRuntimeException = [java_env](const string& msg){\n"
@@ -337,10 +337,6 @@ namespace mfront {
         << "  java_env->DeleteLocalRef(jexcept);\n"
         << "  return real{};\n"
         << "};\n";
-    // material laws
-    writeMaterialLaws(srcFile, mpd.materialLaws);
-    // static variables
-    writeStaticVariables(srcFile, mpd.staticVars, fd.fileName);
     // parameters
     for (const auto& p : mpd.parameters) {
       throw_if(

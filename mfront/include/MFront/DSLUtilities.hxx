@@ -37,6 +37,37 @@ namespace mfront {
   struct BehaviourDescription;
 
   /*!
+   * \return a list of standard types defined in the `tfel::config::Type` type
+   * \note this method internally calls the `getStandardScalarTFELTypedefs`
+   * function.
+   */
+  MFRONT_VISIBILITY_EXPORT std::vector<std::string> getStandardTFELTypedefs();
+  /*!
+   * \return a list of standard scalar types defined in the
+   * `tfel::config::Type` type
+   */
+  MFRONT_VISIBILITY_EXPORT std::vector<std::string>
+  getScalarStandardTFELTypedefs();
+  /*!
+   * \return a list of standard tiny vector types defined in the
+   * `tfel::config::Type` type
+   */
+  MFRONT_VISIBILITY_EXPORT std::vector<std::string>
+  getTinyVectorStandardTFELTypedefs();
+  /*!
+   * \return a list of standard symmetric tensor types defined in the
+   * `tfel::config::Type` type
+   */
+  MFRONT_VISIBILITY_EXPORT std::vector<std::string>
+  getStensorStandardTFELTypedefs();
+  /*!
+   * \return a list of standard tensor types defined in the
+   * `tfel::config::Type` type
+   */
+  MFRONT_VISIBILITY_EXPORT std::vector<std::string>
+  getTensorStandardTFELTypedefs();
+
+  /*!
    * \brief write the name of the variable
    * \param[out] os: output stream
    * \param[in]  n:  name of the law

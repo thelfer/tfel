@@ -228,6 +228,7 @@ namespace mfront {
         << "#include<vector>\n"
         << "#include<string>\n"
         << "#include\"TFEL/Raise.hxx\"\n"
+        << "#include\"TFEL/Config/TFELTypes.hxx\"\n"
         << "#include\"TFEL/Math/General/IEEE754.hxx\"\n"
         << "#include\"" << name << "-cxx.hxx\"\n\n";
     writeExportDirectives(src);
@@ -286,13 +287,8 @@ namespace mfront {
         src << ",";
       }
     }
-    src << ") const\n{\n"
-        << "using namespace std;\n"
-        << "using real = double;\n";
-    // material laws
-    writeMaterialLaws(src, mpd.materialLaws);
-    // static variables
-    writeStaticVariables(src, mpd.staticVars, fd.fileName);
+    src << ") const\n{\n";
+    writeBeginningOfMaterialPropertyBody(src, mpd, fd);
     // body
     src << "real " << mpd.output.name << ";\n";
     if ((hasBounds(mpd.inputs)) || (hasPhysicalBounds(mpd.inputs))) {

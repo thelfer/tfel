@@ -18,6 +18,7 @@
 #include <set>
 #include <vector>
 #include <string>
+#include <iosfwd>
 
 #include "MFront/LawFunction.hxx"
 #include "MFront/VariableDescription.hxx"
@@ -25,6 +26,9 @@
 #include "MFront/VariableBoundsDescription.hxx"
 
 namespace mfront {
+
+  // forward declaration
+  struct FileDescription;
 
   //! structure describing a material property
   struct MFRONT_VISIBILITY_EXPORT MaterialPropertyDescription {
@@ -151,7 +155,18 @@ namespace mfront {
      * \param[in] n: variable name
      */
     VariableDescription& getVariableDescription(const std::string&);
-  };  // end of MaterialProopertyDescription
+  };  // end of MaterialPropertyDescription
+
+  /*!
+   * \brief an helper function
+   * \param[in, out] os: output stream
+   * \param[in] mpd: material property description
+   * \param[in] fd: file description
+   */
+  MFRONT_VISIBILITY_EXPORT void writeBeginningOfMaterialPropertyBody(
+      std::ostream&,
+      const MaterialPropertyDescription&,
+      const FileDescription&);
 
 }  // end of namespace mfront
 

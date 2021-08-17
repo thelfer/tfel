@@ -3,20 +3,26 @@
  short_name: "mu";
  description: "Atomic mass constant";
  unit: "kg";
+ qt_unit:
+   [ 1, 0, 0, 0, 0, 0, 0 ];
  value: 1.660539040e-27;
 }
 {
  name: "AvogadroConstant";
  short_name: "Na";
  description: "Avogadro constant";
- unit: "mol-1";
+ unit: "mol^{-1}";
+ qt_unit:
+   [ 0, 0, 0, 0, 0, 0, -1 ];
  value: 6.022140857e23;
 }
 {
  name: "BoltzmannConstant";
  short_name: "kb";
  description: "Boltzmann constant";
- unit: "J.K-1";
+ unit: "J.K^{-1}";
+ qt_unit:
+   [ 1, 2, -2, 0, -1, 0, 0 ];
  value: 1.38064852e-23;
 }
 {
@@ -24,13 +30,16 @@
  short_name : "G0";
  description: "Conductance quantum";
  unit: "S";
+ qt_unit: [ -1, -2, 3, 2, 0, 0, 0 ];
  value:7.7480917310e-5;
 }
 {
  name: "ElectricConstant";
  short_name : "e0";
  description: "Electric constant";
- unit: "F.m-1";
+ unit: "F.m^{-1}"; 
+ qt_unit:
+   [ -1, -3, 4, 2, 0, 0, 0 ];
  value:8.854187817e-12;
 }
 {
@@ -38,6 +47,8 @@
  short_name : "me";
  description: "Electron mass";
  unit: "kg";
+ qt_unit:
+   [ 1, 0, 0, 0, 0, 0, 0 ];
  value:9.10938356e-31;
 }
 {
@@ -45,6 +56,8 @@
  short_name : "eV";
  description: "Electron volt";
  unit: "J";
+ qt_unit:
+   [ 1, 2, -2, 0, 0, 0, 0 ];
  value:1.6021766208e-19;
 }
 {
@@ -52,13 +65,17 @@
  short_name : "e";
  description: "Elementary charge";
  unit: "C";
+ qt_unit:
+   [ 0, 0, -1, 1, 0, 0, 0 ];
  value:1.6021766208e-19;
 }
 {
  name: "FaradayConstant";
  short_name : "F";
  description: "Faraday constant";
- unit: "C.mol-1";
+ unit: "C.mol^{-1}";
+ qt_unit:
+   [ 0, 0, -1, 1, 0, 0, -1 ];
  value:96485.33289;
 }
 {
@@ -71,13 +88,17 @@
  name: "MolarGasConstant";
  short_name : "R";
  description: "Molar gas constant";
- unit: "J.mol-1.K-1";
+ unit: "J.mol^{-1}.K^{-1}";
+ qt_unit:
+   [ 1, 2, -2, 0, -1, 0, -1 ];
  value:8.3144598;
 }
 {
  name: "StefanBoltzmannConstant";
  short_name : "s";
  description: "Stefan-Boltzmann constant";
- unit: "W.m-2.K-4";
+ unit: "W.m^{-2}.K^{-4}";
+ qt_unit:
+   [ 1, 0, -3, 0, -5, 0, 0 ];
  value:5.670367e-8;
 }

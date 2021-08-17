@@ -131,6 +131,7 @@ namespace mfront {
         << "#include<string>\n"
         << "#include<vector>\n"
         << "#include<cmath>\n"
+        << "#include\"TFEL/Config/TFELTypes.hxx\"\n"
         << "#include<octave/oct.h>\n\n";
     if (!mpd.includes.empty()) {
       out << mpd.includes << "\n\n";
@@ -178,13 +179,8 @@ namespace mfront {
     } else {
       out << "void";
     }
-    out << ")\n{\n"
-        << "using namespace std;\n"
-        << "using real = double;\n";
-    // material laws
-    writeMaterialLaws(out, mpd.materialLaws);
-    // static variables
-    writeStaticVariables(out, mpd.staticVars, fd.fileName);
+    out << ")\n{\n";
+    writeBeginningOfMaterialPropertyBody(out, mpd, fd);
     // parameters
     if (!mpd.parameters.empty()) {
       writeAssignMaterialPropertyParameters(out, mpd, name, "double", "octave");

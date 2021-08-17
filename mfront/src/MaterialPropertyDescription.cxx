@@ -11,13 +11,31 @@
  * project under specific licensing conditions.
  */
 
+#include <ostream>
 #include <algorithm>
 #include "TFEL/Raise.hxx"
 #include "TFEL/Glossary/Glossary.hxx"
 #include "TFEL/Glossary/GlossaryEntry.hxx"
+#include "MFront/DSLUtilities.hxx"
+#include "MFront/FileDescription.hxx"
 #include "MFront/MaterialPropertyDescription.hxx"
 
 namespace mfront {
+
+  void writeBeginningOfMaterialPropertyBody(
+      std::ostream& os,
+      const MaterialPropertyDescription& mpd,
+      const FileDescription& fd) {
+    os << "using namespace std;\n";
+    for (const auto& a : getScalarStandardTFELTypedefs()) {
+      os << "using " << a << " [[maybe_unused]] = "
+         << "typename tfel::config::ScalarTypes<double, false>::" << a << ";\n";
+    }
+    // material laws
+    writeMaterialLaws(os, mpd.materialLaws);
+    // static variables
+    writeStaticVariables(os, mpd.staticVars, fd.fileName);
+  }  // end of writeBeginningOfMaterialPropertyBody
 
   const VariableDescription&
   MaterialPropertyDescription::getVariableDescription(

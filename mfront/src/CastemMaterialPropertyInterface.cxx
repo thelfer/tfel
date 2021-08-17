@@ -296,8 +296,6 @@ namespace mfront {
     const auto& author = fd.authorName;
     const auto& date = fd.date;
     const auto& includes = mpd.includes;
-    const auto& materialLaws = mpd.materialLaws;
-    const auto& staticVars = mpd.staticVars;
     const auto& params = mpd.parameters;
     const auto& function = mpd.f;
     out << "/*!\n"
@@ -323,7 +321,8 @@ namespace mfront {
         << "#include<cstdlib>\n"
         << "#include<string>\n"
         << "#include<vector>\n"
-        << "#include<cmath>\n";
+        << "#include<cmath>\n"
+        << "#include\"TFEL/Config/TFELTypes.hxx\"\n";
     if (!includes.empty()) {
       out << includes << "\n\n";
     }
@@ -369,13 +368,8 @@ namespace mfront {
     } else {
       out << "const double * const";
     }
-    out << ")\n{\n"
-        << "using namespace std;\n"
-        << "typedef double real;\n";
-    // material laws
-    writeMaterialLaws(out, materialLaws);
-    // static variables
-    writeStaticVariables(out, staticVars, file);
+    out << ")\n{\n";
+    writeBeginningOfMaterialPropertyBody(out, mpd, fd);
     // parameters
     if (!params.empty()) {
       const auto hn = getMaterialPropertyParametersHandlerClassName(name);

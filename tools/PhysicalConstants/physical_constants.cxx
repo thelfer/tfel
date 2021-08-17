@@ -29,6 +29,7 @@
 #include <limits>
 #include <string>
 #include <vector>
+#include <array>
 
 #include "TFEL/Utilities/CxxTokenizer.hxx"
 #include "TFEL/Utilities/StringAlgorithms.hxx"
@@ -38,6 +39,8 @@ struct Constant {
   std::string short_name;
   std::string description;
   std::string unit;
+  bool has_qt_units = false;
+  std::array<int, 7> qt_units;
   long double value;
 };
 
@@ -80,6 +83,17 @@ Constant extract(tfel::utilities::CxxTokenizer::const_iterator& p,
     read_tokens({"unit", ":"});
     c.unit = CxxTokenizer::readString(p, pe);
     read_token(";");
+  }
+  if (p->value == "qt_unit") {
+    read_tokens({"qt_unit", ":", "["});
+    c.has_qt_units = true;
+    for (unsigned short i = 0; i != 7;) {
+      c.qt_units[i] = CxxTokenizer::readInt(p, pe);
+      if (++i != 7) {
+        read_token(",");
+      }
+    }
+    read_tokens({"]", ";"});
   }
   read_tokens({"value", ":"});
   CxxTokenizer::checkNotEndOfLine("extract", p, pe);
@@ -134,18 +148,62 @@ static void generate_cxx(const std::vector<Constant>& cs) {
      << "#define LIB_TFEL_PHYSICALCONSTANTS_HXX\n"
      << "\n"
      << "#include\"TFEL/Config/TFELConfig.hxx\"\n"
+     << "#include\"TFEL/Math/qt.hxx\"\n"
      << "\n"
      << "namespace tfel{\n"
      << "\n"
-     << "  template<typename real = double>\n"
-     << "  struct PhysicalConstants{\n";
+     << "  template<typename NumericType = double, "
+     << "           bool use_quantities = false>\n"
+     << "  struct PhysicalConstants;\n\n"
+     << "/*!\n"
+     << " * \\brief partial specialisation when quantities are used"
+     << " */\n"
+     << "  template<typename NumericType>\n"
+     << "  struct PhysicalConstants<NumericType, true> {\n"
+     << "//! a simple alias\n"
+     << "template<int N1, int N2, int N3, int N4, int N5, int N6, int N7>\n"
+     << "using quantity = "
+     << "tfel::math::qt<typename tfel::math::GenerateUnit<N1, N2, N3, N4, N5, "
+        "N6, N7>::type, NumericType>;\n";
   for (const auto& c : cs) {
     write_comments(os, c);
-    os << "static constexpr real " << c.name << " = real(" << c.value << ");\n";
+    const auto type = [&c]() -> std::string {
+      if (c.has_qt_units) {
+        auto t = std::string();
+        t += "quantity<";
+        for (unsigned short i = 0; i != 7;) {
+          t += std::to_string(c.qt_units[i]);
+          if (++i != 7) {
+            t += ", ";
+          }
+        }
+        t += ">";
+        return t;
+      }
+      return "NumericType";
+    }();
+    os << "static constexpr auto " << c.name << " = " << type << "(" << c.value
+       << ");\n";
     if (!c.short_name.empty()) {
       write_comments(os, c);
-      os << "static constexpr real " << c.short_name << "= real(" << c.value
-         << ");\n";
+      os << "static constexpr auto " << c.short_name << "= " << type << "("
+         << c.value << ");\n";
+    }
+  }
+  os << "  }; // end of PhysicalConstants\n"
+     << "/*!\n"
+     << " * \\brief partial specialisation when quantities are not used"
+     << " */\n"
+     << "  template<typename NumericType>\n"
+     << "  struct PhysicalConstants<NumericType, false> {\n";
+  for (const auto& c : cs) {
+    write_comments(os, c);
+    os << "static constexpr auto " << c.name << " = NumericType(" << c.value
+       << ");\n";
+    if (!c.short_name.empty()) {
+      write_comments(os, c);
+      os << "static constexpr auto " << c.short_name << "= NumericType("
+         << c.value << ");\n";
     }
   }
   os << "  }; // end of PhysicalConstants\n"
@@ -154,13 +212,18 @@ static void generate_cxx(const std::vector<Constant>& cs) {
      << "namespace tfel::constants{\n\n";
   for (const auto& c : cs) {
     write_comments(os, c);
-    os << "template<typename real>\n"
-       << "inline constexpr real " << c.name << " = real(" << c.value << ");\n";
+    os << "template<typename NumericType = double, bool use_quantities = "
+          "false>\n"
+       << "inline constexpr auto " << c.name
+       << " = tfel::PhysicalConstants<NumericType, use_quantities>::" << c.name
+       << ";\n";
     if (!c.short_name.empty()) {
       write_comments(os, c);
-      os << "template<typename real = double>\n"
-         << "inline constexpr real " << c.short_name << " = real(" << c.value
-         << ");\n";
+      os << "template<typename NumericType = double, bool use_quantities = "
+            "false>\n"
+         << "inline constexpr auto " << c.short_name
+         << " = tfel::PhysicalConstants<NumericType, use_quantities>::"
+         << c.short_name << ";\n";
     }
   }
   os << "\n"
@@ -370,11 +433,81 @@ static void generate_fortran90(const std::vector<Constant>& cs) {
   os << "endmodule TFEL_PHYSICAL_CONSTANTS\n";
 }
 
+static void generate_pandoc(const std::vector<Constant>& cs) {
+  std::ofstream os("tfel-physical-constants.md");
+  os << "---\n"
+     << "title: The `TFEL/PhysicalConstants` library\n"
+     << "author: Thomas Helfer\n"
+     << "date: 17/08/2021\n"
+     << "lang: en-EN\n"
+     << "link-citations: true\n"
+     << "colorlinks: true\n"
+     << "figPrefixTemplate: \"$$i$$\"\n"
+     << "tblPrefixTemplate: \"$$i$$\"\n"
+     << "secPrefixTemplate: \"$$i$$\"\n"
+     << "eqnPrefixTemplate: \"($$i$$)\"\n"
+     << "---\n"
+     << "\n"
+     << "# Description of the library\n\n"
+     << "The `TFEL/PhysicalConstants` library is header-only which "
+     << "provides:\n\n"
+     << "- A template class called `PhysicalConstants` in the namespace "
+     << "`tfel`. This class defined a constexpr static data member per "
+     << "physical constant. This class has two template parameters:\n"
+     << "    - `NumericType`: which is the floatting point number type\n"
+     << "      to be used to define the physical constants.\n"
+     << "    - `use_quantities`: which states if quantities (i.e. numbers\n"
+     << "       with units) shall be used.\n"
+     << "      to be used to define the physical constants.\n"
+     << "- A set of template constexpr inline variables defined in the\n"
+     << "  namespace `tfel::constants`. Those variables have the same\n"
+     << "  template parameters than the `PhysicalConstants class`\n"
+     << "\n"
+     << "## Bindings\n\n"
+     << "### `Fortran` bindings\n"
+     << "\n"
+     << "A include file named `TFELPHYSICALCONSTANTS.INC` is provided for "
+     << "`fortran77`. This include declares the physical constants as `real64` "
+     << "parameters.\n"
+     << "\n"
+     << "A module named `TFEL_PHYSICAL_CONSTANTS` is provided for "
+     << "`fortran95`. This module exposes the physical constants as `real64` "
+     << "parameters.\n"
+     << "\n"
+     << "### `Python` bindings\n"
+     << "\n"
+     << "The `tfel` module exposes the class `PhysicalConstants` which "
+     << "declares the physical constants as read-only attributes.\n"
+     << "\n"
+     << "# Physical constants\n"
+     << "\n";
+  for (const auto& c : cs) {
+    os << "- " << c.name;
+    if ((!c.short_name.empty()) || (!c.unit.empty())) {
+      os << " (";
+      if (!c.short_name.empty()) {
+        os << c.short_name;
+        if (!c.unit.empty()) {
+          os << ", \\(" << c.unit << "\\)";
+        }
+      } else {
+        os << ", \\(" << c.unit << "\\)";
+      }
+      os << ")";
+    }
+    if (!c.description.empty()) {
+      os << ": " << c.description;
+    }
+    os << '\n';
+  }
+}
+
 int main() {
   const auto cs = extract("physical_constants.json");
   generate_cxx(cs);
   generate_python(cs);
   generate_fortran77(cs);
   generate_fortran90(cs);
+  generate_pandoc(cs);
   return EXIT_SUCCESS;
 }

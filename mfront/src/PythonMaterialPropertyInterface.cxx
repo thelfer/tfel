@@ -225,7 +225,6 @@ namespace mfront {
   void PythonMaterialPropertyInterface::writeOutputFiles(
       const MaterialPropertyDescription& mpd, const FileDescription& fd) const {
     using namespace tfel::system;
-    const auto& file = fd.fileName;
     const auto& author = fd.authorName;
     const auto& description = fd.description;
     const auto& date = fd.date;
@@ -235,8 +234,6 @@ namespace mfront {
     const auto& includes = mpd.includes;
     const auto& output = mpd.output;
     const auto& inputs = mpd.inputs;
-    const auto& materialLaws = mpd.materialLaws;
-    const auto& staticVars = mpd.staticVars;
     const auto& function = mpd.f;
     const auto name = (!material.empty()) ? material + "_" + law : law;
     const auto outName = "include/" + name + "-python.hxx";
@@ -313,7 +310,8 @@ namespace mfront {
             << "#include<cstdio>\n"
             << "#include<string>\n"
             << "#include<vector>\n"
-            << "#include<cmath>\n";
+            << "#include<cmath>\n"
+            << "#include\"TFEL/Config/TFELTypes.hxx\"\n";
     if (!includes.empty()) {
       srcFile << includes << "\n\n";
     }
@@ -343,13 +341,7 @@ namespace mfront {
               << name << "_wrapper("
               << "PyObject *,PyObject*)\n{\n";
     }
-    srcFile << "using namespace std;\n"
-            << "using real = double;\n";
-
-    // material laws
-    writeMaterialLaws(srcFile, materialLaws);
-    // static variables
-    writeStaticVariables(srcFile, staticVars, file);
+    writeBeginningOfMaterialPropertyBody(srcFile, mpd, fd);
     srcFile << "auto throwPythonRuntimeException = [](const string& msg){\n"
             << "  PyErr_SetString(PyExc_RuntimeError,msg.c_str());\n"
             << "  return nullptr;\n"

@@ -104,7 +104,6 @@ namespace tfel::math {
             FixedSizeArrayDerivative<Array1, Array2>,
             FixedSizeArrayDerivativePolicy<typename Array1::array_policy,
                                            typename Array2::array_policy>> {
-    static_assert(getSpaceDimension<Array1>() == getSpaceDimension<Array2>());
     //! \brief a simple alias
     using GenericFixedSizeArrayBase = GenericFixedSizeArray<
         FixedSizeArrayDerivative,

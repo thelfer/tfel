@@ -1,6 +1,15 @@
-% Frequently asked questions
-% Helfer Thomas
-% December 18, 2017
+---
+title: Frequently asked questions
+author: Thomas Helfer
+date: 18/12/2017
+lang: en-EN
+link-citations: true
+colorlinks: true
+figPrefixTemplate: "$$i$$"
+tblPrefixTemplate: "$$i$$"
+secPrefixTemplate: "$$i$$"
+eqnPrefixTemplate: "($$i$$)"
+---
 
 # Getting help
 
@@ -321,35 +330,29 @@ calling solver works in quadruple precision, real will be a
 Thus, we do recommend not to use the numerical types defined by the
 `C++` language directly.
 
-We now get more specific and **only** deal with *mechanical
-behaviours*.
+For scalar values, `MFront` introduces many different aliases to be able
+to express the nature of the variable:
 
-For scalar values, `MFront` introduces many different `typedef`
-to be able to express the nature of the variable:
-
-`real`, `frequency`, `stress`, `length`, `time`, `strain`,
-`strainrate`, `temperature`, `energy_density`,
-`thermalexpansion`, `massdensity`
+- `real`, `frequency`, `stress`, `length`, `time`, `strain`,
+  `strainrate`, `temperature`, `energy_density`, `thermalexpansion`,
+  `massdensity`
 
 For vector values, `MFront` introduces these `typedef`:
 
-`TVector`,`DisplacementTVector`, `ForceTVector`
+- `TVector`,`DisplacementTVector`, `ForceTVector`
 
 For symmetric tensor values, `MFront` also introduces many different
 `typedef`:
 
-`Stensor`, `StressStensor`, `StressRateStensor`, `StrainStensor`,
-`StrainRateStensor`
+- `Stensor`, `StressStensor`, `StressRateStensor`, `StrainStensor`,
+  `StrainRateStensor`
 
 Finally, for tensor values, `MFront` introduces these `typedef`:
 
-`Tensor`, `DeformationGradientTensor`
+- `Tensor`, `DeformationGradientTensor`
 
-For the moment, distinction between those various types is only
-informative. We hope to introduce more severe tests in future versions
-of `MFront` so that we won't be able to add a `StressStensor` and a
-`StrainStensor`. The `TFEL` library already provides the mandatory
-types to do that.
+An up-to-date list of all aliases automatically defined by `MFront` is
+available on the [following page](mfront-types.html).
 
 You can also directly use to types provided by the `TFEL`
 library. The most interesting ones for the end user are:

@@ -124,11 +124,12 @@ namespace mfront {
     // tfel namespaces
     names.insert(names.end(), {"tfel", "math", "material", "utilities",
                                "exception", "glossary"});
-    for (const auto& v : SupportedTypes::getTypeFlags()) {
-      names.push_back(v.first);
-    }
     names.insert(names.end(),
                  {"policy", "errno", "mfront_errno", "mfront_errno_old"});
+    // standard aliases
+    for (const auto& a : getStandardTFELTypedefs()) {
+      names.push_back(a);
+    }
     return names;
   }
 

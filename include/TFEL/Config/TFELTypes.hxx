@@ -28,16 +28,12 @@
 namespace tfel::config {
 
   /*!
-   * \class Types
-   * \brief A set of useful typedef.
-   * \param unsigned short N, space dimension.
-   * \param typename T, numerical type, double by default.
-   * \param bool use_quantities, says if one shall use quantities.
-   * \author Thomas Helfer
-   * \date   08 Aug 2006
+   * \brief a class gathering aliases to scalars.
+   * \tparam T: numeric type
+   * \tparam use_quantities: boolean stating if quantities shall be used
    */
-  template <unsigned short N, typename T = double, bool use_quantities = true>
-  struct Types {
+  template <typename T = double, bool use_quantities = true>
+  struct ScalarTypes {
     using real = tfel::math::qt<tfel::math::NoUnit, T>;
     typedef tfel::math::qt<tfel::math::Time, T> time;
     typedef tfel::math::qt<tfel::math::Frequency, T> frequency;
@@ -54,28 +50,79 @@ namespace tfel::config {
     typedef tfel::math::qt<tfel::math::Density, T> massdensity;
     typedef tfel::math::qt<tfel::math::EnergyDensity, T> energydensity;
     typedef tfel::math::qt<tfel::math::Speed, T> speed;
-    typedef tfel::math::tvector<N, real> TVector;
-    typedef tfel::math::stensor<N, real> Stensor;
-    typedef tfel::math::stensor<N, frequency> FrequencyStensor;
-    typedef tfel::math::tvector<N, force> ForceTVector;
-    typedef tfel::math::stensor<N, stress> StressStensor;
-    typedef tfel::math::stensor<N, stressrate> StressRateStensor;
-    typedef tfel::math::tvector<N, length> DisplacementTVector;
+    using thermalconductivity =
+        tfel::math::qt<tfel::math::ThermalConductivity, T>;
+  };
+
+  /*!
+   * \brief partial specialisation of the `ScalarTypes` class when quantities
+   * are not used.
+   * \tparam T: numeric type
+   */
+  template <typename T>
+  struct ScalarTypes<T, false> {
+    using real = T;
+    using time = T;
+    using frequency = T;
+    using length = T;
+    using inv_length = T;
+    using displacement = T;
+    using strain = T;
+    using strainrate = T;
+    using force = T;
+    using stress = T;
+    using stressrate = T;
+    using temperature = T;
+    using thermalexpansion = T;
+    using massdensity = T;
+    using energydensity = T;
+    using speed = T;
+    using thermalconductivity = T;
+  }; // end of ScalarTypes<T, false>
+
+  /*!
+   * \class Types
+   * \brief A set of useful typedef.
+   * \param unsigned short N, space dimension.
+   * \param typename T, numerical type, double by default.
+   * \param bool use_quantities, says if one shall use quantities.
+   * \author Thomas Helfer
+   * \date   08 Aug 2006
+   */
+  template <unsigned short N, typename T = double, bool use_quantities = true>
+  struct Types : ScalarTypes<T, true> {
+    typedef tfel::math::tvector<N, typename ScalarTypes<T, true>::real> TVector;
+    typedef tfel::math::stensor<N, typename ScalarTypes<T, true>::real> Stensor;
+    typedef tfel::math::stensor<N, typename ScalarTypes<T, true>::frequency>
+        FrequencyStensor;
+    typedef tfel::math::tvector<N, typename ScalarTypes<T, true>::force>
+        ForceTVector;
+    typedef tfel::math::stensor<N, typename ScalarTypes<T, true>::stress>
+        StressStensor;
+    typedef tfel::math::stensor<N, typename ScalarTypes<T, true>::stressrate>
+        StressRateStensor;
+    typedef tfel::math::tvector<N, typename ScalarTypes<T, true>::length>
+        DisplacementTVector;
     typedef tfel::math::stensor<N, tfel::math::qt<tfel::math::NoUnit, T>>
         StrainStensor;
     typedef tfel::math::stensor<N, tfel::math::qt<tfel::math::Frequency, T>>
         StrainRateStensor;
-    typedef tfel::math::stensor<N, thermalexpansion>
+    typedef tfel::math::stensor<N,
+                                typename ScalarTypes<T, true>::thermalexpansion>
         ThermalExpansionCoefficientTensor;
     typedef tfel::math::tensor<N, tfel::math::qt<tfel::math::NoUnit, T>> Tensor;
-    typedef tfel::math::tensor<N, frequency> FrequencyTensor;
-    typedef tfel::math::tensor<N, stress> StressTensor;
+    typedef tfel::math::tensor<N, typename ScalarTypes<T, true>::frequency>
+        FrequencyTensor;
+    typedef tfel::math::tensor<N, typename ScalarTypes<T, true>::stress>
+        StressTensor;
     typedef tfel::math::tensor<N, tfel::math::qt<tfel::math::NoUnit, T>>
         DeformationGradientTensor;
     typedef tfel::math::tensor<N, tfel::math::qt<tfel::math::Frequency, T>>
         DeformationGradientRateTensor;
-    typedef tfel::math::st2tost2<N, real> Stensor4;
-    typedef tfel::math::st2tost2<N, stress> StiffnessTensor;
+    typedef tfel::math::st2tost2<N, typename ScalarTypes<T, true>::real>
+        Stensor4;
+    typedef tfel::math::st2tost2<N, typename ScalarTypes<T, true>::stress>
+        StiffnessTensor;
     typedef typename tfel::config::internals::PositionType<N, T, true>::type
         PositionType;
     typedef typename tfel::config::internals::SpatialGradType<N, T, true>::type
@@ -85,8 +132,6 @@ namespace tfel::config {
     typedef typename tfel::config::internals::InvJacobianType<N, T, true>::type
         InvJacobianType;
     /* Thermal related stuff */
-    using thermalconductivity =
-        tfel::math::qt<tfel::math::ThermalConductivity, T>;
     using TemperatureGradient = typename tfel::config::internals::
         TemperatureGradientType<N, T, true>::type;
     using HeatFluxVector =
@@ -99,26 +144,10 @@ namespace tfel::config {
   };
 
   /*!
-   * \brief partial specialisation when qt are not used
+   * \brief partial specialisation when quantities are not used
    */
   template <unsigned short N, typename T>
-  struct Types<N, T, false> {
-    typedef T real;
-    typedef T time;
-    typedef T frequency;
-    typedef T length;
-    typedef T inv_length;
-    typedef T displacement;
-    typedef T strain;
-    typedef T strainrate;
-    typedef T force;
-    typedef T stress;
-    typedef T stressrate;
-    typedef T temperature;
-    typedef T thermalexpansion;
-    typedef T massdensity;
-    typedef T energydensity;
-    typedef T speed;
+  struct Types<N, T, false> : ScalarTypes<T, false> {
     typedef tfel::math::tvector<N, T> TVector;
     typedef tfel::math::stensor<N, T> Stensor;
     typedef tfel::math::stensor<N, T> FrequencyStensor;
@@ -145,7 +174,6 @@ namespace tfel::config {
     typedef typename tfel::config::internals::InvJacobianType<N, T, false>::type
         InvJacobianType;
     /* Thermal related stuff */
-    using thermalconductivity = T;
     using TemperatureGradient = typename tfel::config::internals::
         TemperatureGradientType<N, T, false>::type;
     typedef

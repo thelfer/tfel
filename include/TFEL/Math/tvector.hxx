@@ -31,6 +31,7 @@
 #include "TFEL/Math/Vector/VectorConceptOperations.hxx"
 #include "TFEL/Math/Forward/tmatrix.hxx"
 #include "TFEL/Math/Forward/tvector.hxx"
+#include "TFEL/Math/fsarray.hxx"
 
 namespace tfel::math {
 
@@ -54,6 +55,12 @@ namespace tfel::math {
     //
     TFEL_MATH_FIXED_SIZE_ARRAY_DEFAULT_METHODS(tvector,
                                                GenericFixedSizeArrayBase);
+    /*!
+     * \brief implicit conversion from an `fsarray` provided for backward
+     * compatibility.
+     * \param[in] src: object to be copied
+     */
+    tvector(const fsarray<N, ValueType>&);
     // inheriting GenericFixedSizeArray' access operators
     using GenericFixedSizeArrayBase::operator[];
     using GenericFixedSizeArrayBase::operator();

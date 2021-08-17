@@ -183,6 +183,7 @@ namespace mfront {
        << "-pleiades.hh\"\n\n"
        << "#include <string>\n"
        << "#include <cmath>\n\n"
+       << "#include \"TFEL/Math/Config.hxx\"\n"
        << "#include \"Pleiades/Examplars/ClassProxy.hh\"\n"
        << "#include \"Pleiades/Metier/Field/FieldApply.hh\"\n"
        << "#include \"Pleiades/Exceptions/pexceptions.hh\"\n"
@@ -247,13 +248,8 @@ namespace mfront {
     } else {
       os << "void";
     }
-    os << ") const {\n"
-       << "using namespace std;\n";
-
-    // material laws
-    writeMaterialLaws(os, mpd.materialLaws);
-    // static variables
-    writeStaticVariables(os, mpd.staticVars, fd.fileName);
+    os << ") const {\n";
+    writeBeginningOfMaterialPropertyBody(os, mpd, fd);
     if (!mpd.parameters.empty()) {
       for (const auto& p : mpd.parameters) {
         throw_if(!p.hasAttribute(VariableDescription::defaultValue),

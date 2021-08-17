@@ -270,6 +270,7 @@ namespace mfront {
        << "#include<cmath>\n"
        << "#include<cerrno>\n"
        << "#include<algorithm>\n"
+       << "#include\"TFEL/Config/TFELTypes.hxx\"\n"
        << "#include\"TFEL/Math/General/IEEE754.hxx\"\n\n";
     if (!mpd.includes.empty()) {
       os << mpd.includes << "\n\n";
@@ -289,13 +290,8 @@ namespace mfront {
     this->writeBeginSrcNamespace(os);
     os << "double " << this->getFunctionName(mpd) << "(";
     this->writeParameterList(os, mpd.inputs);
-    os << ")\n{\n"
-       << "using namespace std;\n"
-       << "using real = double;\n";
-    // material laws
-    writeMaterialLaws(os, mpd.materialLaws);
-    // static variables
-    writeStaticVariables(os, mpd.staticVars, fd.fileName);
+    os << ")\n{\n";
+    writeBeginningOfMaterialPropertyBody(os, mpd, fd);
     // parameters
     if (!mpd.parameters.empty()) {
       for (const auto& p : mpd.parameters) {
@@ -316,7 +312,8 @@ namespace mfront {
          << "errno=0;\n"
          << "#endif /* MFRONT_NOERRNO_HANDLING */\n";
     }
-    os << "real " << mpd.output.name << ";\n" << mpd.f.body << "\n";
+    os << mpd.output.type << " " << mpd.output.name << ";\n"
+       << mpd.f.body << "\n";
     if (!mpd.inputs.empty()) {
       os << "#ifndef MFRONT_NOERRNO_HANDLING\n"
          // can't use std::swap here as errno might be a macro

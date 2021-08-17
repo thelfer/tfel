@@ -12,6 +12,7 @@
  * project under specific licensing conditions.
  */
 
+#include <iostream>
 #include <algorithm>
 #include <stdexcept>
 #include <iterator>
@@ -116,8 +117,8 @@ namespace mfront {
     const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     this->mb.setUsableInPurelyImplicitResolution(h, true);
     // reserve names
-    for (const auto& v : DSLBase::getDefaultReservedNames()) {
-      this->mb.reserveName(h, v);
+    for (const auto& n : DSLBase::getDefaultReservedNames()) {
+      this->reserveName(n);
     }
     // register behaviours specific names
     this->registerDefaultVarNames();
@@ -3466,7 +3467,6 @@ namespace mfront {
     this->reserveName("alpha1_T_t_dt");
     this->reserveName("alpha2_T_t");
     this->reserveName("alpha2_T_t_dt");
-    this->reserveName("TangentOperator");
     this->reserveName("StressFreeExpansionType");
     this->reserveName("behaviourData");
     this->reserveName("time_scaling_factor");
@@ -3557,50 +3557,23 @@ namespace mfront {
     } else {
       file << "using Types = tfel::config::Types<N, NumericType, false>;\n";
     }
-    file << "using Type                = NumericType;\n"
-         << "using real                = typename Types::real;\n"
-         << "using time                = typename Types::time;\n"
-         << "using length              = typename Types::length;\n"
-         << "using frequency           = typename Types::frequency;\n"
-         << "using speed               = typename Types::speed;\n"
-         << "using stress              = typename Types::stress;\n"
-         << "using strain              = typename Types::strain;\n"
-         << "using strainrate          = typename Types::strainrate;\n"
-         << "using stressrate          = typename Types::stressrate;\n"
-         << "using temperature         = typename Types::temperature;\n"
-         << "using thermalexpansion    = typename Types::thermalexpansion;\n"
-         << "using thermalconductivity = typename Types::thermalconductivity;\n"
-         << "using massdensity         = typename Types::massdensity;\n"
-         << "using energydensity         = typename Types::energydensity;\n"
-         << "using TVector             = typename Types::TVector;\n"
-         << "using Stensor             = typename Types::Stensor;\n"
-         << "using Stensor4            = typename Types::Stensor4;\n"
-         << "using FrequencyStensor    = typename Types::FrequencyStensor;\n"
-         << "using ForceTVector        = typename Types::ForceTVector;\n"
-         << "using StressStensor       = typename Types::StressStensor;\n"
-         << "using StressRateStensor   = typename Types::StressRateStensor;\n"
-         << "using DisplacementTVector = typename Types::DisplacementTVector;\n"
-         << "using StrainStensor       = typename Types::StrainStensor;\n"
-         << "using StrainRateStensor   = typename Types::StrainRateStensor;\n"
-         << "using StiffnessTensor     = typename Types::StiffnessTensor;\n"
-         << "using Tensor              = typename Types::Tensor;\n"
-         << "using FrequencyTensor     = typename Types::FrequencyTensor;\n"
-         << "using StressTensor        = typename Types::StressTensor;\n"
-         << "using ThermalExpansionCoefficientTensor = typename "
-            "Types::ThermalExpansionCoefficientTensor;\n"
-         << "using DeformationGradientTensor         = typename "
-            "Types::DeformationGradientTensor;\n"
-         << "using DeformationGradientRateTensor     = typename "
-            "Types::DeformationGradientRateTensor;\n"
-         << "using TemperatureGradient = typename Types::TemperatureGradient;\n"
-         << "using HeatFlux = typename Types::HeatFlux;\n";
+    file << "using Type = NumericType;\n";
+    for (const auto& a : getStandardTFELTypedefs()) {
+      file << "using " << a << " = typename Types::" << a << ";\n";
+    }
     // tangent operator
     if (this->mb.hasTangentOperator()) {
-      file << "using TangentOperator   = " << this->mb.getTangentOperatorType()
+      file << "using TangentOperator = " << this->mb.getTangentOperatorType()
            << ";\n";
     }
     // physical constants
-    file << "using PhysicalConstants = tfel::PhysicalConstants<real>;\n";
+    if (this->mb.useQt()) {
+      file << "using PhysicalConstants = "
+           << "tfel::PhysicalConstants<NumericType, use_qt>;\n";
+    } else {
+      file << "using PhysicalConstants = "
+           << "tfel::PhysicalConstants<NumericType, false>;\n";
+    }
   }  // end of writeStandardTFELTypedefs
 
   std::string BehaviourDSLCommon::getIntegrationVariablesIncrementsInitializers(

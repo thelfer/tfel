@@ -36,6 +36,7 @@ EXTRA_DIST=CMakeLists.txt					      \
 	   ./about.md						      \
 	   ./news.md						      \
 	   ./mfront-template.html				      \
+	   ./mfront-types.md                       \
 	   ./benchmark.md					      \
 	   ./documentations.md					      \
 	   ./gallery.md					              \
@@ -46,6 +47,7 @@ EXTRA_DIST=CMakeLists.txt					      \
 	   ./mtest-python.md					      \
 	   ./tutorial.md					      \
 	   ./tutorial-spanish.md				      \
+	   ./tfel-physical-constants.md					      \
 	   ./tfel-python.md					      \
 	   ./LICENSE.md						      \
 	   ./glossary.md					      \
@@ -107,7 +109,7 @@ EXTRA_DIST=CMakeLists.txt					      \
 	   ./BehaviourBricks.md				                      \
 	   ./DDIF2Brick.md                                            \
 	   ./StandardElastoViscoPlasticityBrick.md     				        \
-	   ./StandardElastoViscoPlasticityBrick-PorousPlasticity.md     				        \
+	   ./StandardElastoViscoPlasticityBrick-PorousPlasticity.md               \
        ./ExtendingStandardElastoViscoPlasticityBrick-StressCriterion.md       \
        ./ExtendingStandardElastoViscoPlasticityBrick-PorousStressCriterion.md \
 	   ./HookeStressPotential.md				     \
