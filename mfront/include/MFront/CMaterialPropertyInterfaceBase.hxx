@@ -49,13 +49,13 @@ namespace mfront {
     ~CMaterialPropertyInterfaceBase() override;
 
    protected:
-    virtual void writeParameterList(std::ostream&,
-                                    const VariableDescriptionContainer&) const;
+    virtual void writeArgumentsList(std::ostream&,
+                                    const MaterialPropertyDescription&) const;
     /*!
      * \param[out] os:  output file stream
      */
     virtual void writeInterfaceSpecificVariables(
-        std::ostream&, const VariableDescriptionContainer&) const;
+        std::ostream&, const MaterialPropertyDescription&) const;
     /*!
      * \param[out] os:  output file stream
      */

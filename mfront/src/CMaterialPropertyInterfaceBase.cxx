@@ -20,12 +20,6 @@
 #include "MFront/MaterialPropertyDescription.hxx"
 #include "MFront/CMaterialPropertyInterfaceBase.hxx"
 
-#ifndef _MSC_VER
-static const char* const constexpr_c = "constexpr";
-#else
-static const char* const constexpr_c = "const";
-#endif
-
 namespace mfront {
 
   static std::string transformHeaderName(const std::string& h) {
@@ -48,17 +42,17 @@ namespace mfront {
   void CMaterialPropertyInterfaceBase::writeHeaderPreprocessorDirectives(
       std::ostream& os, const MaterialPropertyDescription&) const {
     writeExportDirectives(os);
-  }  // end of CMaterialPropertyInterfaceBase::writeSrcPreprocessorDirectives
+  }  // end of writeSrcPreprocessorDirectives
 
   void CMaterialPropertyInterfaceBase::writeSrcPreprocessorDirectives(
       std::ostream&, const MaterialPropertyDescription&) const {
-  }  // end of CMaterialPropertyInterfaceBase::writeSrcPreprocessorDirectives
+  }  // end of writeSrcPreprocessorDirectives
 
   void CMaterialPropertyInterfaceBase::writeOutputFiles(
       const MaterialPropertyDescription& mpd, const FileDescription& fd) const {
     this->writeHeaderFile(mpd, fd);
     this->writeSrcFile(mpd, fd);
-  }  // end of CMaterialPropertyInterfaceBase::writeOutputFiles
+  }  // end of writeOutputFiles
 
   std::string CMaterialPropertyInterfaceBase::getCallingConvention() const {
     return "";
@@ -104,38 +98,47 @@ namespace mfront {
     os << "MFRONT_SHAREDOBJ double " << this->getCallingConvention() << '\n'
        << this->getFunctionName(mpd);
     os << "(";
-    this->writeParameterList(os, mpd.inputs);
+    this->writeArgumentsList(os, mpd);
     os << ");\n\n";
     if (((hasBounds(mpd.inputs)) || (hasPhysicalBounds(mpd.inputs))) ||
         (this->requiresCheckBoundsFunction())) {
       os << "MFRONT_SHAREDOBJ int " << this->getCallingConvention() << '\n'
          << this->getCheckBoundsFunctionName(mpd);
       os << "(";
-      this->writeParameterList(os, mpd.inputs);
+      this->writeArgumentsList(os, mpd);
       os << ");\n\n";
     }
     this->writeEndHeaderNamespace(os);
     os << "#endif /* " << headerGard << " */\n";
     os.close();
-  }  // end of CMaterialPropertyInterfaceBase::writeHeaderFile()
+  }  // end of writeHeaderFile()
 
   void CMaterialPropertyInterfaceBase::writeInterfaceSpecificVariables(
-      std::ostream&, const VariableDescriptionContainer&) const {
-  }  // end of CMaterialPropertyInterfaceBase::writeInterfaceSpecificVariables
+      std::ostream& os, const MaterialPropertyDescription& mpd) const {
+    if ((!useQuantities(mpd)) && (!mpd.inputs.empty())) {
+      return;
+    }
+    for (const auto& a : mpd.inputs) {
+      os << "const auto " << a.name << " = "  //
+         << a.type << "(mfront_" << a.name << ");\n";
+    }
+  }  // end of writeInterfaceSpecificVariables
 
-  void CMaterialPropertyInterfaceBase::writeParameterList(
-      std::ostream& os, const VariableDescriptionContainer& inputs) const {
-    if (!inputs.empty()) {
-      for (auto p = inputs.begin(); p != inputs.end();) {
-        os << "const double " << p->name;
-        if ((++p) != inputs.end()) {
+  void CMaterialPropertyInterfaceBase::writeArgumentsList(
+      std::ostream& os, const MaterialPropertyDescription& mpd) const {
+    const auto use_qt = useQuantities(mpd);
+    if (!mpd.inputs.empty()) {
+      for (auto p = mpd.inputs.begin(); p != mpd.inputs.end();) {
+        const auto n = (use_qt ? "mfront_" : "") + p->name;
+        os << "const double " << n;
+        if ((++p) != mpd.inputs.end()) {
           os << ",";
         }
       }
     } else {
       os << "void";
     }
-  }  // end of CMaterialPropertyInterfaceBase::writeParameterList
+  }  // end of writeArgumentsList
 
   VariableDescriptionContainer::size_type
   CMaterialPropertyInterfaceBase::getVariableNumber(
@@ -151,7 +154,7 @@ namespace mfront {
         "CMaterialPropertyInterfaceBase::getVariableNumber: "
         "no inputs named '" +
         n + "'");
-  }  // end of CMaterialPropertyInterfaceBase::getVariableNumber
+  }  // end of getVariableNumber
 
   static void writePhysicalBounds(std::ostream& out,
                                   const MaterialPropertyDescription& mpd) {
@@ -162,17 +165,23 @@ namespace mfront {
       const auto& b = i.getPhysicalBounds();
       const auto nbr =
           CMaterialPropertyInterfaceBase::getVariableNumber(mpd, i.name);
+      const auto cast_start = useQuantities(mpd) ? i.type + "(" : "";
+      const auto cast_end = useQuantities(mpd) ? ")" : "";
       if (b.boundsType == VariableBoundsDescription::LOWER) {
-        out << "if(" << i.name << " < " << b.lowerBound << "){\n"
+        out << "if(" << i.name << " < " << cast_start << b.lowerBound
+            << cast_end << "){\n"
             << "return -" << nbr << ";\n"
             << "}\n";
       } else if (b.boundsType == VariableBoundsDescription::UPPER) {
-        out << "if(" << i.name << " > " << b.upperBound << "){\n"
+        out << "if(" << i.name << " > " << cast_start << b.upperBound
+            << cast_end << "){\n"
             << "return -" << nbr << ";\n"
             << "}\n";
       } else {
-        out << "if((" << i.name << " < " << b.lowerBound << ")||"
-            << "(" << i.name << " > " << b.upperBound << ")){\n"
+        out << "if((" << i.name << " < " << cast_start << b.lowerBound
+            << cast_end << ")||"
+            << "(" << i.name << " > " << cast_start << b.upperBound << cast_end
+            << ")){\n"
             << "return -" << nbr << ";\n"
             << "}\n";
       }
@@ -188,17 +197,23 @@ namespace mfront {
       const auto& b = i.getBounds();
       const auto nbr =
           CMaterialPropertyInterfaceBase::getVariableNumber(mpd, i.name);
+      const auto cast_start = useQuantities(mpd) ? i.type + "(" : "";
+      const auto cast_end = useQuantities(mpd) ? ")" : "";
       if (b.boundsType == VariableBoundsDescription::LOWER) {
-        out << "if(" << i.name << " < " << b.lowerBound << "){\n"
+        out << "if(" << i.name << " < " << cast_start << b.lowerBound
+            << cast_end << "){\n"
             << "return " << nbr << ";\n"
             << "}\n";
       } else if (b.boundsType == VariableBoundsDescription::UPPER) {
-        out << "if(" << i.name << " > " << b.upperBound << "){\n"
+        out << "if(" << i.name << " > " << cast_start << b.upperBound
+            << cast_end << "){\n"
             << "return " << nbr << ";\n"
             << "}\n";
       } else {
-        out << "if((" << i.name << " < " << b.lowerBound << ")||"
-            << "(" << i.name << " > " << b.upperBound << ")){\n"
+        out << "if((" << i.name << " < " << cast_start << b.lowerBound
+            << cast_end << ")||"
+            << "(" << i.name << " > " << cast_start << b.upperBound << cast_end
+            << ")){\n"
             << "return " << nbr << ";\n"
             << "}\n";
       }
@@ -208,37 +223,37 @@ namespace mfront {
   void CMaterialPropertyInterfaceBase::writeEntryPointSymbol(
       std::ostream& os, const MaterialPropertyDescription& mpd) const {
     mfront::writeEntryPointSymbol(os, this->getFunctionName(mpd));
-  }  // end of CMaterialPropertyInterfaceBase::writeEntryPointSymbol
+  }  // end of writeEntryPointSymbol
 
   void CMaterialPropertyInterfaceBase::writeTFELVersionSymbol(
       std::ostream& os, const MaterialPropertyDescription& mpd) const {
     mfront::writeTFELVersionSymbol(os, this->getFunctionName(mpd));
-  }  // end of CMaterialPropertyInterfaceBase::writeTFELVersionSymbol
+  }  // end of writeTFELVersionSymbol
 
   void CMaterialPropertyInterfaceBase::writeMaterialSymbol(
       std::ostream& os, const MaterialPropertyDescription& mpd) const {
     mfront::writeMaterialSymbol(os, this->getFunctionName(mpd), mpd.material);
-  }  // end of CMaterialPropertyInterfaceBase::writeMaterialSymbol
+  }  // end of writeMaterialSymbol
 
   void CMaterialPropertyInterfaceBase::writeMaterialKnowledgeTypeSymbol(
       std::ostream& os, const MaterialPropertyDescription& mpd) const {
     mfront::writeMaterialKnowledgeTypeSymbol(os, this->getFunctionName(mpd),
                                              MATERIALPROPERTY);
-  }  // end of CMaterialPropertyInterfaceBase::writeMaterialKnowledgeTypeSymbol
+  }  // end of writeMaterialKnowledgeTypeSymbol
 
   void CMaterialPropertyInterfaceBase::writeVariablesNamesSymbol(
       std::ostream& os,
       const std::string& name,
       const MaterialPropertyDescription& mpd) const {
     mfront::writeVariablesNamesSymbol(os, name, mpd);
-  }  // end of CMaterialPropertyInterfaceBase::writeVariablesNamesSymbol
+  }  // end of writeVariablesNamesSymbol
 
   void CMaterialPropertyInterfaceBase::writeVariablesBoundsSymbols(
       std::ostream& os,
       const std::string& name,
       const MaterialPropertyDescription& mpd) const {
     mfront::writeVariablesBoundsSymbols(os, name, mpd);
-  }  // end of CMaterialPropertyInterfaceBase::writeVariablesBoundsSymbols
+  }  // end of writeVariablesBoundsSymbols
 
   void CMaterialPropertyInterfaceBase::writeSrcFile(
       const MaterialPropertyDescription& mpd, const FileDescription& fd) const {
@@ -272,6 +287,10 @@ namespace mfront {
        << "#include<algorithm>\n"
        << "#include\"TFEL/Config/TFELTypes.hxx\"\n"
        << "#include\"TFEL/Math/General/IEEE754.hxx\"\n\n";
+    if (useQuantities(mpd)) {
+      os << "#include\"TFEL/Math/qt.hxx\"\n\n" 
+         << "#include\"TFEL/Math/Quantity/qtIO.hxx\"\n\n";
+    }
     if (!mpd.includes.empty()) {
       os << mpd.includes << "\n\n";
     }
@@ -289,9 +308,9 @@ namespace mfront {
     this->writeMaterialKnowledgeTypeSymbol(os, mpd);
     this->writeBeginSrcNamespace(os);
     os << "double " << this->getFunctionName(mpd) << "(";
-    this->writeParameterList(os, mpd.inputs);
+    this->writeArgumentsList(os, mpd);
     os << ")\n{\n";
-    writeBeginningOfMaterialPropertyBody(os, mpd, fd);
+    writeBeginningOfMaterialPropertyBody(os, mpd, fd, "double", true);
     // parameters
     if (!mpd.parameters.empty()) {
       for (const auto& p : mpd.parameters) {
@@ -300,12 +319,12 @@ namespace mfront {
                        "internal error (can't find value of "
                        "parameter '" +
                            p.name + "')");
-        os << "static " << constexpr_c << " real " << p.name << " = "
+        os << "static constexpr auto " << p.name << " = " << p.type << "("
            << p.getAttribute<double>(VariableDescription::defaultValue)
-           << ";\n";
+           << ");\n";
       }
     }
-    this->writeInterfaceSpecificVariables(os, mpd.inputs);
+    this->writeInterfaceSpecificVariables(os, mpd);
     if (!mpd.inputs.empty()) {
       os << "#ifndef MFRONT_NOERRNO_HANDLING\n"
          << "const auto mfront_errno_old = errno;\n"
@@ -319,21 +338,26 @@ namespace mfront {
          // can't use std::swap here as errno might be a macro
          << "const auto mfront_errno = errno;\n"
          << "errno = mfront_errno_old;\n"
-         << "if((mfront_errno!=0)||(!tfel::math::ieee754::isfinite("
-         << mpd.output.name << "))){\n";
+         << "if((mfront_errno != 0)||"
+         << "(!tfel::math::ieee754::isfinite(" << mpd.output.name << "))){\n";
       this->writeCErrorTreatment(os, mpd);
       os << "}\n"
          << "#endif /* MFRONT_NOERRNO_HANDLING */\n";
     }
-    os << "return " << mpd.output.name << ";\n"
-       << "} /* end of " << mpd.className << " */\n\n";
+    if (useQuantities(mpd)) {
+      os << "return " << mpd.output.name << ".getValue();\n";
+    } else {
+      os << "return " << mpd.output.name << ";\n";
+    }
+    os << "} /* end of " << mpd.className << " */\n\n";
     if (((hasBounds(mpd.inputs)) || (hasPhysicalBounds(mpd.inputs))) ||
         (this->requiresCheckBoundsFunction())) {
       os << "int " << this->getCheckBoundsFunctionName(mpd);
       os << "(";
-      this->writeParameterList(os, mpd.inputs);
+      this->writeArgumentsList(os, mpd);
       os << ")\n{\n";
-      this->writeInterfaceSpecificVariables(os, mpd.inputs);
+      writeScalarStandardTypedefs(os, mpd, "double", true);
+      this->writeInterfaceSpecificVariables(os, mpd);
       for (const auto& i : mpd.inputs) {
         os << "static_cast<void>(" << i.name << ");\n";
       }
@@ -349,13 +373,13 @@ namespace mfront {
     }
     this->writeEndSrcNamespace(os);
     os.close();
-  }  // end of CMaterialPropertyInterfaceBase::writeSrcFile()
+  }  // end of writeSrcFile
 
   void CMaterialPropertyInterfaceBase::writeCErrorTreatment(
       std::ostream& os, const MaterialPropertyDescription& mpd) const {
     os << "return std::nan(\"" << this->getFunctionName(mpd)
        << ": invalid call to a C function (errno is not null)\");\n";
-  }  // CMaterialPropertyInterfaceBase::writeCErrorTreatment
+  }  // end of writeCErrorTreatment
 
   CMaterialPropertyInterfaceBase::~CMaterialPropertyInterfaceBase() = default;
 

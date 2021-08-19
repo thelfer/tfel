@@ -131,8 +131,12 @@ namespace mfront {
         << "#include<string>\n"
         << "#include<vector>\n"
         << "#include<cmath>\n"
-        << "#include\"TFEL/Config/TFELTypes.hxx\"\n"
-        << "#include<octave/oct.h>\n\n";
+        << "#include\"TFEL/Config/TFELTypes.hxx\"\n";
+    if (useQuantities(mpd)) {
+      out << "#include\"TFEL/Math/qt.hxx\"\n"
+          << "#include\"TFEL/Math/Quantity/qtIO.hxx\"\n";
+    } 
+    out << "#include<octave/oct.h>\n\n";
     if (!mpd.includes.empty()) {
       out << mpd.includes << "\n\n";
     }
@@ -171,7 +175,11 @@ namespace mfront {
     out << "static double " << name << "_compute(";
     if (!mpd.inputs.empty()) {
       for (auto p3 = mpd.inputs.begin(); p3 != mpd.inputs.end();) {
-        out << "const double " << p3->name;
+        if (useQuantities(mpd)) {
+          out << "const double mfront_" << p3->name;
+        } else {
+          out << "const double " << p3->name;
+        }
         if ((++p3) != mpd.inputs.end()) {
           out << ",";
         }
@@ -180,14 +188,29 @@ namespace mfront {
       out << "void";
     }
     out << ")\n{\n";
-    writeBeginningOfMaterialPropertyBody(out, mpd, fd);
+    writeBeginningOfMaterialPropertyBody(out, mpd, fd, "double", true);
+    if (useQuantities(mpd)) {
+      for (const auto& i : mpd.inputs) {
+        out << "const auto " << i.name << " = "  //
+            << i.type << "(mfront_" << i.name << ");\n";
+      }
+    }
     // parameters
     if (!mpd.parameters.empty()) {
       writeAssignMaterialPropertyParameters(out, mpd, name, "double", "octave");
     }
-    out << "real " << mpd.output.name << ";\n"
-        << mpd.f.body << "return " << mpd.output.name << ";\n"
-        << "} // end of " << name << "_compute\n\n";
+    if (useQuantities(mpd)) {
+      out << "auto " << mpd.output.name << " = " << mpd.output.type << "{};\n";
+    } else {
+      out << "auto " << mpd.output.name << " = real{};\n";
+    }
+    out << mpd.f.body;
+    if (useQuantities(mpd)) {
+      out << "return " << mpd.output.name << ".getValue();\n";
+    } else {
+      out << "return " << mpd.output.name << ";\n";
+    }
+    out << "} // end of " << name << "_compute\n\n";
     if ((hasBounds(mpd.inputs)) || (hasPhysicalBounds(mpd.inputs))) {
       out << "static double " << name << "_checkBounds(";
       for (auto p3 = mpd.inputs.begin(); p3 != mpd.inputs.end();) {

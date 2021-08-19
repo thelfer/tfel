@@ -19,6 +19,7 @@
 #include <vector>
 #include <string>
 #include <iosfwd>
+#include <optional>
 
 #include "MFront/LawFunction.hxx"
 #include "MFront/VariableDescription.hxx"
@@ -114,41 +115,43 @@ namespace mfront {
     bool isNameReserved(const std::string&) const;
     //! destructor
     ~MaterialPropertyDescription();
-    //! body of the material property
+    //! \brief use quantities if available
+    std::optional<bool> use_qt;
+    //! \brief body of the material property
     LawFunction f;
-    //! list of inputs
+    //! \brief list of inputs
     VariableDescriptionContainer inputs;
-    //! list of parameters
+    //! \brief list of parameters
     VariableDescriptionContainer parameters;
-    //! output
+    //! \brief output
     VariableDescription output;
-    //! law name
+    //! \brief law name
     std::string law;
-    //! material name
+    //! \brief material name
     std::string material;
-    //! library name
+    //! \brief library name
     std::string library;
-    //! class name
+    //! \brief class name
     std::string className;
-    //! included header files
+    //! \brief included header files
     std::string includes;
-    //! specific sources
+    //! \brief specific sources
     std::string sources;
-    //! private code
+    //! \brief private code
     std::string privateCode;
-    //! class member
+    //! \brief class member
     std::string members;
-    //! list of material laws used
+    //! \brief list of material laws used
     std::vector<std::string> materialLaws;
-    //! static variables
+    //! \brief static variables
     StaticVariableDescriptionContainer staticVars;
 
    protected:
-    //! list of reserved names
+    //! \brief list of reserved names
     std::set<std::string> reservedNames;
-    //! list of variables names
+    //! \brief list of variables names
     std::set<std::string> memberNames;
-    //! list of variables names
+    //! \brief list of variables names
     std::set<std::string> staticMemberNames;
     /*!
      * \return the variable description with the given name
@@ -158,15 +161,51 @@ namespace mfront {
   };  // end of MaterialPropertyDescription
 
   /*!
-   * \brief an helper function
+   * \return if the material property shall use quantities
+   * \param[in] mpd: material property description
+   */
+  MFRONT_VISIBILITY_EXPORT bool useQuantities(
+      const MaterialPropertyDescription&);
+
+  /*!
+   * \brief an helper function which writes useful declarations at the beginning
+   * of the function body.
+   *
+   * This function:
+   *
+   * - imports the namespace std (`use namespace std`)
+   * - declares TFEL scalar type aliases (see the `writeScalarStandardTypedefs`
+   *   function).
+   * - imports material laws used by the material property (see the
+   *   `writeStaticVariables` function).
+   * - declares the static variables declared by the material property (see the
+   *   `writeMaterialLaws` function).
+   *
    * \param[in, out] os: output stream
    * \param[in] mpd: material property description
    * \param[in] fd: file description
+   * \param[in] numeric_type: numeric type used by the interface
+   * \param[in] bool: allow quantities
    */
   MFRONT_VISIBILITY_EXPORT void writeBeginningOfMaterialPropertyBody(
       std::ostream&,
       const MaterialPropertyDescription&,
-      const FileDescription&);
+      const FileDescription&,
+      const std::string&,
+      const bool);
+  /*!
+   * \brief an helper function which writes the declaration of some `TFEL`
+   * standard scalar alias. The `tfel::config::ScalarTypes` class for details.
+   * \param[in, out] os: output stream
+   * \param[in] mpd: material property description
+   * \param[in] numeric_type: numeric type used by the interface
+   * \param[in] bool: allow quantities
+   */
+  MFRONT_VISIBILITY_EXPORT void writeScalarStandardTypedefs(
+      std::ostream&,
+      const MaterialPropertyDescription&,
+      const std::string&,
+      const bool);
 
 }  // end of namespace mfront
 

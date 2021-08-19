@@ -42,7 +42,7 @@ namespace mfront {
     static std::string getName();
     //! \return a description of the parser
     static std::string getDescription();
-    //! default constructor
+    //! \brief default constructor
     MaterialPropertyDSL();
 
     DSLTarget getTargetType() const override final;
@@ -64,7 +64,7 @@ namespace mfront {
 
     virtual const MaterialPropertyDescription& getMaterialPropertyDescription()
         const;
-    //! destructor
+    //! \brief destructor
     ~MaterialPropertyDSL() override;
 
    protected:
@@ -83,49 +83,49 @@ namespace mfront {
     void addStaticVariableDescription(
         const StaticVariableDescription&) override;
     int getIntegerConstant(const std::string&) const override;
-    //! \brief method called by the analyseFile and analyseString method
-    virtual void analyse();
     void setMaterial(const std::string&) override;
     void setMaterialKnowledgeIdentifier(const std::string&) override;
+    //! \brief method called by the analyseFile and analyseString method
+    virtual void analyse();
     /*!
      * \brief add a new interface
      * \param[in] n: interface name
      */
     virtual void addInterface(const std::string&);
-    //! treat the `@Library` keyword
+    //! \brief treat the `UseQt` keyword
+    virtual void treatUseQt();
+    //! \brief treat the `@Library` keyword
     virtual void treatLibrary();
-    //! treat the `@Output` keyword
+    //! \brief treat the `@Output` keyword
     virtual void treatOutput();
-    //! treat the `@Input` keyword
+    //! \brief treat the `@Input` keyword
     virtual void treatInput();
-    //! treat the `@Law` keyword
+    //! \brief treat the `@Law` keyword
     virtual void treatLaw();
-    //! treat the `@Function` keyword
+    //! \brief treat the `@Function` keyword
     virtual void treatFunction();
     /*!
      * treat the setGlossaryName and the setEntryName method for
      * inputs or output.
      */
     virtual void treatMethod();
-    //! treat the `@Interface` keyword
+    //! \brief treat the `@Interface` keyword
     virtual void treatInterface();
-    //! treat the `@Parameter` keyword
+    //! \brief treat the `@Parameter` keyword
     virtual void treatParameter();
-    //! treat the `@Constant` keyword
+    //! \brief treat the `@Constant` keyword
     virtual void treatConstant();
-    //! treat the `@Bounds` keyword
+    //! \brief treat the `@Bounds` keyword
     virtual void treatBounds();
-    //! treat the `@PhysicalBounds` keyword
+    //! \brief treat the `@PhysicalBounds` keyword
     virtual void treatPhysicalBounds();
 
     virtual void registerNewCallBack(const std::string&, const MemberFuncPtr);
-    //! description of the material property
+    //! \brief description of the material property
     MaterialPropertyDescription md;
     //! \brief overriding parameters
     std::map<std::string, double> overriding_parameters;
-    /*!
-     * list of registred interfaces
-     */
+    //! \brief list of registred interfaces
     std::map<std::string, std::shared_ptr<AbstractMaterialPropertyInterface>>
         interfaces;
     //! \brief list of resgistred keywords

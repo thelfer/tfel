@@ -122,8 +122,13 @@ namespace mfront {
            << "#include<ostream>\n"
            << "#include<cmath>\n"
            << "#include<algorithm>\n"
-           << "#include<stdexcept>\n\n"
-           << "#include<functional>\n\n";
+           << "#include<stdexcept>\n"
+           << "#include<functional>\n\n"
+           << "#include\"TFEL/Config/TFELTypes.hxx\"\n";
+    if (useQuantities(mpd)) {
+      header << "#include\"TFEL/Math/qt.hxx\"\n"
+             << "#include\"TFEL/Math/Quantity/qtIO.hxx\"\n";
+    }
     if (!mpd.includes.empty()) {
       header << mpd.includes << '\n';
     }
@@ -143,15 +148,16 @@ namespace mfront {
              << " model an adaptable generator (STL compliance)\n\n";
       header << "typedef double result_type;\n\n";
     }
-    header << "//! default constructor\n"
+    writeScalarStandardTypedefs(header, mpd, "double", true);
+    header << "//! \\brief default constructor\n"
            << name << "() noexcept;\n\n"
-           << "//! move constructor\n"
+           << "//! \\brief move constructor\n"
            << name << "(" << name << "&&) noexcept = default;\n"
-           << "//! copy constructor\n"
+           << "//! \\brief copy constructor\n"
            << name << "(const " << name << "&) noexcept = default;\n"
-           << "//! move assignement operator\n"
+           << "//! \\brief move assignement operator\n"
            << name << "& operator=(" << name << "&&) noexcept = default;\n"
-           << "//! assignement operator\n"
+           << "//! \\brief assignement operator\n"
            << name << "& operator=(const " << name
            << "&) noexcept = default;\n\n"
            << "double\noperator()(";
@@ -173,18 +179,16 @@ namespace mfront {
       header << ");\n\n";
     }
     for (const auto& p : mpd.parameters) {
-      header << "const double& get" << p.name << "() const;\n";
-    }
-    for (const auto& p : mpd.parameters) {
-      header << "double& get" << p.name << "();\n";
-    }
-    for (const auto& p : mpd.parameters) {
+      const auto t = useQuantities(mpd) ? p.type : "double";
+      header << "const " << t << "& get" << p.name << "() const;\n";
+      header << t << "& get" << p.name << "();\n";
       header << "void set" << p.name << "(const double);\n";
     }
     if (!mpd.parameters.empty()) {
       header << "private:\n";
       for (const auto& p : mpd.parameters) {
-        header << "double " << p.name << ";\n";
+        const auto t = useQuantities(mpd) ? p.type : "double";
+        header << t << " " << p.name << ";\n";
       }
     }
     header << "}; // end of class " << name << "\n\n"
@@ -265,37 +269,59 @@ namespace mfront {
     }
     src << "{} // end of " << name << "::" << name << "\n\n";
     for (const auto& p : mpd.parameters) {
-      src << "const double& ";
-      src << name;
-      src << "::get" << p.name << "() const{\n"
+      const auto t = useQuantities(mpd) ? name + "::" + p.type : "double";
+      src << "const " << t << "& "  //
+          << name << "::get" << p.name << "() const{\n"
           << "return this->" << p.name << ";\n"
-          << "} // end of " << name << "::get\n\n";
-      src << "double& " << name << "::get" << p.name << "(){\n"
+          << "} // end of " << name << "::get" << p.name << "\n\n";
+      src << t << "& " << name << "::get" << p.name << "(){\n"
           << "return " << p.name << ";\n"
           << "} // end of " << name << "::get\n\n";
-      src << "void " << name;
-      src << "::set" << p.name;
-      src << "(const double " << name << "_value_)";
-      src << "{\n"
-          << "this->" << p.name << " = " << name << "_value_;\n"
-          << "} // end of " << name << "::set\n\n";
+      src << "void " << name << "::set" << p.name  //
+          << "(const double mfront_" << name << "){\n";
+      if (useQuantities(mpd)) {
+        src << "this->" << p.name << " = "  //
+            << p.type << "(mfront_" << name << ");\n";
+      } else {
+        src << "this->" << p.name << " = mfront_" << name << ";\n";
+      }
+      src << "} // end of " << name << "::set" << p.name << "\n\n";
     }
     src << "double " << name << "::operator()(";
     for (auto pi = mpd.inputs.begin(); pi != mpd.inputs.end();) {
-      src << "const double " << pi->name;
+      if (useQuantities(mpd)) {
+        src << "const double mfront_" << pi->name;
+      } else {
+        src << "const double " << pi->name;
+      }
       if (++pi != mpd.inputs.end()) {
         src << ",";
       }
     }
-    src << ") const\n{\n";
-    writeBeginningOfMaterialPropertyBody(src, mpd, fd);
+    src << ") const\n{\n"
+        << "using namespace std;\n";
+    writeMaterialLaws(src, mpd.materialLaws);
+    writeStaticVariables(src, mpd.staticVars, fd.fileName);
+    for (const auto& i : mpd.inputs){
+      if (useQuantities(mpd)) {
+        src << "const auto " << i.name << " = "  //
+            << i.type << "(mfront_" << i.name << ");\n";
+      }
+    }
     // body
-    src << "real " << mpd.output.name << ";\n";
+    if (useQuantities(mpd)) {
+      src << "auto " << mpd.output.name << " = " << mpd.output.type << "{};\n";
+    } else {
+      src << "auto " << mpd.output.name << " = real{};\n";
+    }
     if ((hasBounds(mpd.inputs)) || (hasPhysicalBounds(mpd.inputs))) {
       src << "#ifndef MFRONT_NO_BOUNDS_CHECK\n";
       src << name << "::checkBounds(";
       for (auto pi = mpd.inputs.begin(); pi != mpd.inputs.end();) {
         src << pi->name;
+        if (useQuantities(mpd)) {
+          src << ".getValue()";
+        }
         if ((++pi) != mpd.inputs.end()) {
           src << ",";
         }
@@ -321,8 +347,12 @@ namespace mfront {
           << "\"(\"+std::string(::strerror(errno))+\")\");\n"
           << "#endif /* MFRONT_NOERRNO_HANDLING */\n";
     }
-    src << "return " << mpd.output.name << ";\n"
-        << "} // end of " << name << "::operator()\n\n";
+    if (useQuantities(mpd)) {
+      src << "return " << mpd.output.name << ".getValue();\n";
+    } else {
+      src << "return " << mpd.output.name << ";\n";
+    }
+    src << "} // end of " << name << "::operator()\n\n";
     if ((hasBounds(mpd.inputs)) || (hasPhysicalBounds(mpd.inputs))) {
       src << "void\n";
       src << name;

@@ -75,6 +75,8 @@ namespace mfront {
     insert_if(l.cppflags, CASTEM_CPPFLAGS);
     insert_if(l.cppflags,
               "$(shell " + tfel_config + " --cppflags --compiler-flags)");
+    insert_if(l.include_directories,
+              "$(shell " + tfel_config + " --include-path)");
     insert_if(l.sources, this->getSourceFileName(name));
 #if !((defined _WIN32) && (defined _MSC_VER))
     insert_if(l.link_libraries, "m");
@@ -118,7 +120,8 @@ namespace mfront {
     }
     const auto& b = v.getPhysicalBounds();
     if (b.boundsType == VariableBoundsDescription::LOWER) {
-      out << "if(" << v.name << " < " << b.lowerBound << "){\n"
+      out << "if(" << v.name << " < " << v.type << "(" << b.lowerBound
+          << ")){\n"
           << "cerr << \"" << name << ": " << v.name
           << " is below its physical lower bound (\"\n << " << v.name
           << " << \"<" << b.lowerBound << ").\\n\";\n"
@@ -126,7 +129,8 @@ namespace mfront {
           << " is not physically valid.\");\n"
           << "}\n";
     } else if (b.boundsType == VariableBoundsDescription::UPPER) {
-      out << "if(" << v.name << " > " << b.upperBound << "){\n"
+      out << "if(" << v.name << " > " << v.type << "(" << b.upperBound
+          << ")){\n"
           << "cerr << \"" << name << ": " << v.name
           << " is below its physical upper bound (\"\n << " << v.name
           << " << \">" << b.upperBound << ").\\n\";\n"
@@ -134,8 +138,9 @@ namespace mfront {
           << " is not physically valid.\");\n"
           << "}\n";
     } else {
-      out << "if((" << v.name << " < " << b.lowerBound << ")||"
-          << "(" << v.name << " > " << b.upperBound << ")){\n"
+      out << "if((" << v.name << " < " << v.type << "(" << b.lowerBound
+          << "))||"
+          << "(" << v.name << " > " << v.type << "(" << b.upperBound << "))){\n"
           << "if(" << v.name << " < " << b.lowerBound << "){\n"
           << "cerr << \"" << name << ": " << v.name
           << " is below its physical lower bound (\"\n << " << v.name
@@ -159,7 +164,8 @@ namespace mfront {
     }
     const auto& b = v.getBounds();
     if (b.boundsType == VariableBoundsDescription::LOWER) {
-      out << "if(" << v.name << " < " << b.lowerBound << "){\n"
+      out << "if(" << v.name << " < " << v.type << "(" << b.lowerBound
+          << ")){\n"
           << "const char * const policy = "
           << "::getenv(\"CASTEM_OUT_OF_BOUNDS_POLICY\");\n"
           << "if(policy!=nullptr){\n"
@@ -174,7 +180,8 @@ namespace mfront {
           << "}\n"
           << "}\n";
     } else if (b.boundsType == VariableBoundsDescription::UPPER) {
-      out << "if(" << v.name << " > " << b.upperBound << "){\n"
+      out << "if(" << v.name << " > " << v.type << "(" << b.upperBound
+          << ")){\n"
           << "const char * const policy = "
           << "::getenv(\"CASTEM_OUT_OF_BOUNDS_POLICY\");\n"
           << "if(policy!=nullptr){\n"
@@ -192,13 +199,15 @@ namespace mfront {
           << "}\n"
           << "}\n";
     } else {
-      out << "if((" << v.name << " < " << b.lowerBound << ")||"
-          << "(" << v.name << " > " << b.upperBound << ")){\n"
+      out << "if((" << v.name << " < " << v.type << "(" << b.lowerBound
+          << "))||"
+          << "(" << v.name << " > " << v.type << "(" << b.upperBound << "))){\n"
           << "const char * const policy = "
           << "::getenv(\"CASTEM_OUT_OF_BOUNDS_POLICY\");\n"
           << "if(policy!=nullptr){\n"
           << "if(strcmp(policy,\"STRICT\")==0){\n"
-          << "if(" << v.name << " < " << b.lowerBound << "){\n"
+          << "if(" << v.name << " < " << v.type << "(" << b.lowerBound
+          << ")){\n"
           << "cerr << \"" << name << ": " << v.name
           << " is below its lower bound (\"\n << " << v.name << " << \"<"
           << b.lowerBound << ").\\n\";\n"
@@ -210,7 +219,8 @@ namespace mfront {
           << "return nan(\"" << name << ": " << v.name
           << " is out of bounds.\");\n"
           << "} else if (strcmp(policy,\"WARNING\")==0){\n"
-          << "if(" << v.name << " < " << b.lowerBound << "){\n"
+          << "if(" << v.name << " < " << v.type << "(" << b.lowerBound
+          << ")){\n"
           << "cerr << \"" << name << ": " << v.name
           << " is below its lower bound (\"\n << " << v.name << " << \"<"
           << b.lowerBound << ").\\n\";\n"
@@ -323,6 +333,10 @@ namespace mfront {
         << "#include<vector>\n"
         << "#include<cmath>\n"
         << "#include\"TFEL/Config/TFELTypes.hxx\"\n";
+    if (useQuantities(mpd)) {
+      out << "#include\"TFEL/Math/qt.hxx\"\n"
+          << "#include\"TFEL/Math/Quantity/qtIO.hxx\"\n";
+    }
     if (!includes.empty()) {
       out << includes << "\n\n";
     }
@@ -369,7 +383,7 @@ namespace mfront {
       out << "const double * const";
     }
     out << ")\n{\n";
-    writeBeginningOfMaterialPropertyBody(out, mpd, fd);
+    writeBeginningOfMaterialPropertyBody(out, mpd, fd, "double", true);
     // parameters
     if (!params.empty()) {
       const auto hn = getMaterialPropertyParametersHandlerClassName(name);
@@ -383,15 +397,19 @@ namespace mfront {
     if (!mpd.inputs.empty()) {
       auto p3 = mpd.inputs.begin();
       for (auto i = 0u; p3 != mpd.inputs.end(); ++p3, ++i) {
-        out << "const double " << p3->name << " = ";
+        auto cast_start = useQuantities(mpd) ? p3->type + "(" : "";
+        auto cast_end = useQuantities(mpd) ? ")" : "";
+        out << "const auto " << p3->name << " = ";
+        out << cast_start;
         if (i == 0) {
-          out << "*(castem_params);\n";
+          out << "*(castem_params)";
         } else {
-          out << "*(castem_params+" + std::to_string(i) + "u);\n";
+          out << "*(castem_params+" + std::to_string(i) + "u)";
         }
+        out << cast_end << ";\n";
       }
     }
-    out << "real " << mpd.output.name << ";\n";
+    out << "auto " << mpd.output.name << " = " << mpd.output.type << "{};\n";
     if ((hasPhysicalBounds(mpd.inputs)) || (hasBounds(mpd.inputs))) {
       out << "#ifndef NO_CASTEM_BOUNDS_CHECK\n";
     }
@@ -423,8 +441,12 @@ namespace mfront {
       }
       out << "#endif /* NO_CASTEM_BOUNDS_CHECK */\n";
     }
-    out << "return " << mpd.output.name << ";\n"
-        << "} // end of " << name << "\n\n"
+    if (useQuantities(mpd)) {
+      out << "return " << mpd.output.name << ".getValue();\n";
+    } else {
+      out << "return " << mpd.output.name << ";\n";
+    }
+    out << "} // end of " << name << "\n\n"
         << "#ifdef __cplusplus\n"
         << "} // end of extern \"C\"\n"
         << "#endif /* __cplusplus */\n\n";

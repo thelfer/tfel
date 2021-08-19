@@ -245,7 +245,7 @@ namespace mfront {
       os << "void";
     }
     os << ") const {\n";
-    writeBeginningOfMaterialPropertyBody(os, mpd, fd);
+    writeBeginningOfMaterialPropertyBody(os, mpd, fd, "double", false);
     if (!mpd.parameters.empty()) {
       for (const auto& p : mpd.parameters) {
         throw_if(!p.hasAttribute(VariableDescription::defaultValue),

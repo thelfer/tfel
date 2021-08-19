@@ -68,12 +68,12 @@ namespace mfront {
     insert_if(l.link_libraries, "m");
 #endif /* !((defined _WIN32) && (defined _MSC_VER)) */
     insert_if(l.epts, {f, f + "_checkBounds"});
-  }  // end of FortranMaterialPropertyInterface::getTargetsDescription
+  }  // end of getTargetsDescription
 
   std::string FortranMaterialPropertyInterface::getHeaderFileName(
       const std::string&, const std::string&) const {
     return "";
-  }  // end of FortranMaterialPropertyInterface::getHeaderFileName
+  }  // end of getHeaderFileName
 
   std::string FortranMaterialPropertyInterface::getSrcFileName(
       const std::string& material, const std::string& className) const {
@@ -81,34 +81,40 @@ namespace mfront {
       return className + "-fortran";
     }
     return material + "_" + className + "-fortran";
-  }  // end of FortranMaterialPropertyInterface::getSrcFileName
+  }  // end of getSrcFileName
 
   void FortranMaterialPropertyInterface::writeInterfaceSymbol(
       std::ostream& out, const MaterialPropertyDescription& mpd) const {
     mfront::writeInterfaceSymbol(out, this->getFunctionName(mpd), "Fortran");
   }  // end of FortranMaterialPropertyInterface
 
-  void FortranMaterialPropertyInterface::writeInterfaceSpecificVariables(
-      std::ostream& os, const VariableDescriptionContainer& inputs) const {
-    for (const auto& i : inputs) {
-      os << "const mfront_fortran_real8 " << i.name << " =  *(_mfront_var_"
-         << i.name << ");\n";
-    }
-  }  // end of FortranMaterialPropertyInterface::writeInterfaceSpecificVariables
-
-  void FortranMaterialPropertyInterface::writeParameterList(
-      std::ostream& file, const VariableDescriptionContainer& inputs) const {
-    if (!inputs.empty()) {
-      for (auto p = inputs.begin(); p != inputs.end();) {
-        file << "const mfront_fortran_real8 * const _mfront_var_" << p->name;
-        if ((++p) != inputs.end()) {
+  void FortranMaterialPropertyInterface::writeArgumentsList(
+      std::ostream& file, const MaterialPropertyDescription& mpd) const {
+    if (!mpd.inputs.empty()) {
+      for (auto p = mpd.inputs.begin(); p != mpd.inputs.end();) {
+        file << "const mfront_fortran_real8 * const mfront_argument_"
+             << p->name;
+        if ((++p) != mpd.inputs.end()) {
           file << ",\n";
         }
       }
     } else {
       file << "void";
     }
-  }  // end of FortranMaterialPropertyInterface::writeParameterList
+  }  // end of writeArgumentsList
+
+  void FortranMaterialPropertyInterface::writeInterfaceSpecificVariables(
+      std::ostream& os, const MaterialPropertyDescription& mpd) const {
+    const auto use_qt = useQuantities(mpd);
+    for (const auto& i : mpd.inputs) {
+      os << "const auto " << i.name << " =  ";
+      if (use_qt) {
+        os << i.type << "(*(mfront_argument_" << i.name << "));\n";
+      } else {
+        os << "*(mfront_argument_" << i.name << ");\n";
+      }
+    }
+  }  // end of writeInterfaceSpecificVariables
 
   void FortranMaterialPropertyInterface::writeSrcPreprocessorDirectives(
       std::ostream& os, const MaterialPropertyDescription& mpd) const {
@@ -129,38 +135,38 @@ namespace mfront {
        << "#endif /* __cplusplus */\n\n"
        << "typedef double mfront_fortran_real8;\n\n"
        << "\nMFRONT_SHAREDOBJ double " << this->getFunctionName(mpd) << "(";
-    this->writeParameterList(os, mpd.inputs);
+    this->writeArgumentsList(os, mpd);
     os << ");\n"
        << "MFRONT_SHAREDOBJ int " << this->getCheckBoundsFunctionName(mpd)
        << "(";
-    this->writeParameterList(os, mpd.inputs);
+    this->writeArgumentsList(os, mpd);
     os << ");\n\n"
        << "#ifdef __cplusplus\n"
        << "}\n"
        << "#endif /* __cplusplus */\n\n";
-  }  // end of FortranMaterialPropertyInterface::writeSrcPreprocessorDirectives
+  }  // end of writeSrcPreprocessorDirectives
 
   void FortranMaterialPropertyInterface::writeBeginHeaderNamespace(
       std::ostream&) const {
-  }  // end of FortranMaterialPropertyInterface::writeBeginHeaderNamespace
+  }  // end of writeBeginHeaderNamespace
 
   void FortranMaterialPropertyInterface::writeEndHeaderNamespace(
       std::ostream&) const {
-  }  // end of FortranMaterialPropertyInterface::writeEndHeaderNamespace()
+  }  // end of writeEndHeaderNamespace
 
   void FortranMaterialPropertyInterface::writeBeginSrcNamespace(
       std::ostream& os) const {
     os << "#ifdef __cplusplus\n"
        << "extern \"C\"{\n"
        << "#endif /* __cplusplus */\n\n";
-  }  // end of FortranMaterialPropertyInterface::writeBeginSrcNamespace
+  }  // end of writeBeginSrcNamespace
 
   void FortranMaterialPropertyInterface::writeEndSrcNamespace(
       std::ostream& os) const {
     os << "#ifdef __cplusplus\n"
        << "} // end of extern \"C\"\n"
        << "#endif /* __cplusplus */\n\n";
-  }  // end of FortranMaterialPropertyInterface::writeEndSrcNamespace()
+  }  // end of writeEndSrcNamespace
 
   std::string FortranMaterialPropertyInterface::getFunctionName(
       const MaterialPropertyDescription& mpd) const {
@@ -169,11 +175,11 @@ namespace mfront {
     return (material.empty() ? makeUpperCase(className)
                              : makeUpperCase(material + "_" + className)) +
            "_F77";
-  }  // end of FortranMaterialPropertyInterface::getFunctionName
+  }  // end of getFunctionName
 
   bool FortranMaterialPropertyInterface::requiresCheckBoundsFunction() const {
     return false;
-  }
+  } // end of requiresCheckBoundsFunction
 
   std::string FortranMaterialPropertyInterface::getCheckBoundsFunctionName(
       const MaterialPropertyDescription& mpd) const {
@@ -182,7 +188,7 @@ namespace mfront {
     return (material.empty() ? makeUpperCase(className)
                              : makeUpperCase(material + "_" + className)) +
            "_CHECKBOUNDS_F77";
-  }  // end of FortranMaterialPropertyInterface::getCheckBoundsFunctionName
+  }  // end of getCheckBoundsFunctionName
 
   FortranMaterialPropertyInterface::~FortranMaterialPropertyInterface() =
       default;

@@ -127,7 +127,7 @@ namespace mfront {
        << "double operator()(";
     if (!mpd.inputs.empty()) {
       for (auto p4 = mpd.inputs.begin(); p4 != mpd.inputs.end();) {
-        os << "const double& " << p4->name;
+        os << "const double& ";
         if ((++p4) != mpd.inputs.end()) {
           os << ",";
         }
@@ -183,8 +183,13 @@ namespace mfront {
        << "-pleiades.hh\"\n\n"
        << "#include <string>\n"
        << "#include <cmath>\n\n"
-       << "#include \"TFEL/Math/Config.hxx\"\n"
-       << "#include \"Pleiades/Examplars/ClassProxy.hh\"\n"
+       << "#include\"TFEL/Config/TFELTypes.hxx\"\n"
+       << "#include \"TFEL/Math/Config.hxx\"\n";
+    if (useQuantities(mpd)) {
+      os << "#include\"TFEL/Math/qt.hxx\"\n"
+         << "#include\"TFEL/Math/Quantity/qtIO.hxx\"\n";
+    }
+    os << "#include \"Pleiades/Examplars/ClassProxy.hh\"\n"
        << "#include \"Pleiades/Metier/Field/FieldApply.hh\"\n"
        << "#include \"Pleiades/Exceptions/pexceptions.hh\"\n"
        << "#include \"Pleiades/Metier/Glossary/Glossary.hh\"\n"
@@ -240,7 +245,11 @@ namespace mfront {
     os << "double " << name << "::operator()(";
     if (!mpd.inputs.empty()) {
       for (auto pi = mpd.inputs.begin(); pi != mpd.inputs.end();) {
-        os << "const double& " << pi->name;
+        if (useQuantities(mpd)) {
+          os << "const double& mfront_" << pi->name;
+        } else {
+          os << "const double& " << pi->name;
+        }
         if ((++pi) != mpd.inputs.end()) {
           os << ",";
         }
@@ -249,24 +258,34 @@ namespace mfront {
       os << "void";
     }
     os << ") const {\n";
-    writeBeginningOfMaterialPropertyBody(os, mpd, fd);
-    if (!mpd.parameters.empty()) {
-      for (const auto& p : mpd.parameters) {
-        throw_if(!p.hasAttribute(VariableDescription::defaultValue),
-                 "internal error (can't find value of "
-                 "parameter " +
-                     p.name + ")");
-        os << "static constexpr double " << p.name << " = "
-           << p.getAttribute<double>(VariableDescription::defaultValue)
-           << ";\n";
+    writeBeginningOfMaterialPropertyBody(os, mpd, fd, "double", true);
+    if (useQuantities(mpd)) {
+      for (const auto& i : mpd.inputs) {
+        os << "const auto " << i.name << " = "  //
+           << i.type << "(mfront_" << i.name << ");\n";
       }
     }
-
-    os << "double " << mpd.output.name << ";\n";
+    for (const auto& p : mpd.parameters) {
+      throw_if(!p.hasAttribute(VariableDescription::defaultValue),
+               "internal error (can't find value of "
+               "parameter " +
+                   p.name + ")");
+      const auto v = p.getAttribute<double>(VariableDescription::defaultValue);
+      if (useQuantities(mpd)) {
+        os << "static constexpr auto " << p.name << " = "  //
+           << p.type << "(" << v << ");\n";
+      } else {
+        os << "static constexpr double " << p.name << " = " << v << ";\n";
+      }
+    }
+    if (useQuantities(mpd)) {
+      os << "auto " << mpd.output.name << " = " << mpd.output.type << "{};\n";
+    } else {
+      os << "auto " << mpd.output.name << " = double{};\n";
+    }
     if ((hasPhysicalBounds(mpd.inputs)) || (hasBounds(mpd.inputs))) {
       os << "#ifndef NO_PLEIADES_BOUNDS_CHECK\n";
     }
-
     auto get_ename = [](const VariableDescription& v) {
       if (v.hasGlossaryName()) {
         return "Glossary::" + v.getExternalName();
@@ -284,8 +303,14 @@ namespace mfront {
         }
         const auto& b = i.getPhysicalBounds();
         const auto fname = get_ename(i);
+        const auto n = [&i, &mpd] {
+          if (useQuantities(mpd)) {
+            return "mfront_" + i.name;
+          }
+          return i.name;
+        }();
         if (b.boundsType == VariableBoundsDescription::LOWER) {
-          os << "if(" << i.name << " < " << b.lowerBound << "){\n"
+          os << "if(" << n << " < " << b.lowerBound << "){\n"
              << "string msg (\"" << name << "::compute : \");\n"
              << "msg += " << fname << ";\n"
              << "msg += \" is below its physical lower bound \";\n"
@@ -293,7 +318,7 @@ namespace mfront {
              << "PLEIADES_THROW(msg);\n"
              << "}\n";
         } else if (b.boundsType == VariableBoundsDescription::UPPER) {
-          os << "if(" << i.name << " > " << b.upperBound << "){\n"
+          os << "if(" << n << " > " << b.upperBound << "){\n"
              << "string msg (\"" << name << "::compute : \");\n"
              << "msg += " << fname << ";\n"
              << "msg += \" is over its physical upper bound \";\n"
@@ -301,9 +326,9 @@ namespace mfront {
              << "PLEIADES_THROW(msg);\n"
              << "}\n";
         } else {
-          os << "if((" << i.name << " < " << b.lowerBound << ")||"
-             << "(" << i.name << " > " << b.upperBound << ")){\n"
-             << "if(" << i.name << " < " << b.lowerBound << "){\n"
+          os << "if((" << n << " < " << b.lowerBound << ")||"
+             << "(" << n << " > " << b.upperBound << ")){\n"
+             << "if(" << n << " < " << b.lowerBound << "){\n"
              << "string msg (\"" << name << "::compute : \");\n"
              << "msg += " << fname << ";\n"
              << "msg += \" is below its physical lower bound \";\n"
@@ -331,8 +356,14 @@ namespace mfront {
         }
         const auto fname = get_ename(i);
         const auto& b = i.getBounds();
+        const auto n = [&i, &mpd] {
+          if (useQuantities(mpd)) {
+            return "mfront_" + i.name;
+          }
+          return i.name;
+        }();
         if (b.boundsType == VariableBoundsDescription::LOWER) {
-          os << "if(" << i.name << " < " << b.lowerBound << "){\n"
+          os << "if(" << n << " < " << b.lowerBound << "){\n"
              << "string msg(\"" << name << "::compute : value of\");\n"
              << "msg += " << fname << ";\n"
              << "msg += \" is below its lower bound \";\n"
@@ -340,7 +371,7 @@ namespace mfront {
              << "treatOutOfBounds(msg);\n"
              << "}\n";
         } else if (b.boundsType == VariableBoundsDescription::UPPER) {
-          os << "if(" << i.name << " > " << b.upperBound << "){\n"
+          os << "if(" << n << " > " << b.upperBound << "){\n"
              << "string msg(\"" << name << "::compute : value of\");\n"
              << "msg += " << fname << ";\n"
              << "msg += \" is over its upper bound \";\n"
@@ -348,8 +379,8 @@ namespace mfront {
              << "treatOutOfBounds(msg);\n"
              << "}\n";
         } else {
-          os << "if((" << i.name << " < " << b.lowerBound << ")||"
-             << "(" << i.name << " > " << b.upperBound << ")){\n"
+          os << "if((" << n << " < " << b.lowerBound << ")||"
+             << "(" << n << " > " << b.upperBound << ")){\n"
              << "string msg(\"" << name << "::compute : value of\");\n"
              << "msg += " << fname << ";\n"
              << "msg += \" is out of bounds \";\n"
@@ -363,8 +394,13 @@ namespace mfront {
     if ((hasPhysicalBounds(mpd.inputs)) || (hasBounds(mpd.inputs))) {
       os << "#endif /* NO_PLEIADES_BOUNDS_CHECK */\n";
     }
-    os << mpd.f.body << "return " << mpd.output.name << ";\n"
-       << "} // end of " << name << "::law\n\n"
+    os << mpd.f.body;
+    if (useQuantities(mpd)) {
+      os << "return " << mpd.output.name << ".getValue();\n";
+    } else {
+      os << "return " << mpd.output.name << ";\n";
+    }
+    os << "} // end of " << name << "::law\n\n"
        << "GENERATE_PROXY(IMaterialProperty," << name << ");\n"
        << "} // end of namespace Pleiades\n";
     os.close();

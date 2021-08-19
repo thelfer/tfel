@@ -48,12 +48,6 @@
 #include "MFront/CMaterialPropertyInterface.hxx"
 #include "MFront/JavaMaterialPropertyInterface.hxx"
 
-#ifndef _MSC_VER
-static const char* const constexpr_c = "constexpr";
-#else
-static const char* const constexpr_c = "const";
-#endif
-
 namespace mfront {
 
   static std::string getJavaClassName(const MaterialPropertyDescription& mpd) {
@@ -163,23 +157,27 @@ namespace mfront {
     }
     const auto& b = v.getPhysicalBounds();
     if (b.boundsType == VariableBoundsDescription::LOWER) {
-      out << "if(" << v.name << " < " << b.lowerBound << "){\n"
+      out << "if(" << v.name << " < " << v.type << "(" << b.lowerBound
+          << ")){\n"
           << "ostringstream msg;\nmsg << \"" << name << " : " << v.name
           << " is below its physical lower bound (\"\n << " << v.name
           << " << \"<" << b.lowerBound << ").\";\n"
           << "return throwJavaRuntimeException(msg.str());\n"
           << "}\n";
     } else if (b.boundsType == VariableBoundsDescription::UPPER) {
-      out << "if(" << v.name << " > " << b.upperBound << "){\n"
+      out << "if(" << v.name << " > " << v.type << "(" << b.upperBound
+          << ")){\n"
           << "ostringstream msg;\nmsg << \"" << name << " : " << v.name
           << " is beyond its physical upper bound (\"\n << " << v.name
           << " << \">" << b.upperBound << ").\";\n"
           << "return throwJavaRuntimeException(msg.str());\n"
           << "}\n";
     } else {
-      out << "if((" << v.name << " < " << b.lowerBound << ")||"
-          << "(" << v.name << " > " << b.upperBound << ")){\n"
-          << "if(" << v.name << " < " << b.lowerBound << "){\n"
+      out << "if((" << v.name << " < " << v.type << "(" << b.lowerBound
+          << "))||"
+          << "(" << v.name << " > " << v.type << "(" << b.upperBound << "))){\n"
+          << "if(" << v.name << " < " << v.type << "(" << b.lowerBound
+          << ")){\n"
           << "ostringstream msg;\nmsg << \"" << name << " : " << v.name
           << " is below its physical lower bound (\"\n << " << v.name
           << " << \"<" << b.lowerBound << ").\";\n"
@@ -203,7 +201,8 @@ namespace mfront {
     const auto& b = v.getBounds();
     if ((b.boundsType == VariableBoundsDescription::LOWER) ||
         (b.boundsType == VariableBoundsDescription::LOWERANDUPPER)) {
-      out << "if(" << v.name << " < " << b.lowerBound << "){\n"
+      out << "if(" << v.name << " < " << v.type << "(" << b.lowerBound
+          << ")){\n"
           << "auto policy = "
           << "::getenv(\"JAVA_OUT_OF_BOUNDS_POLICY\");\n"
           << "if(policy!=nullptr){\n"
@@ -224,7 +223,8 @@ namespace mfront {
     }
     if ((b.boundsType == VariableBoundsDescription::UPPER) ||
         (b.boundsType == VariableBoundsDescription::LOWERANDUPPER)) {
-      out << "if(" << v.name << " > " << b.upperBound << "){\n"
+      out << "if(" << v.name << " > " << v.type << "(" << b.upperBound
+          << ")){\n"
           << "auto policy = "
           << "::getenv(\"JAVA_OUT_OF_BOUNDS_POLICY\");\n"
           << "if(policy!=nullptr){\n"
@@ -290,8 +290,12 @@ namespace mfront {
             << "#include<cstdlib>\n"
             << "#include<string>\n"
             << "#include<cmath>\n\n"
-            << "#include\"TFEL/Config/TFELTypes.hxx\"\n"
-            << "#include <jni.h>\n\n";
+            << "#include\"TFEL/Config/TFELTypes.hxx\"\n";
+    if (useQuantities(mpd)) {
+      srcFile << "#include\"TFEL/Math/qt.hxx\"\n"
+              << "#include\"TFEL/Math/Quantity/qtIO.hxx\"\n";
+    }
+    srcFile << "#include <jni.h>\n\n";
     if (!mpd.includes.empty()) {
       srcFile << mpd.includes << "\n\n";
     }
@@ -319,10 +323,20 @@ namespace mfront {
     srcFile << "_" << replace_all(mpd.law, "_", "_1") << "(";
     srcFile << "JNIEnv *java_env,jclass";
     for (const auto& i : mpd.inputs) {
-      srcFile << ", const jdouble " << i.name;
+      if (useQuantities(mpd)) {
+        srcFile << ", const jdouble mfront_" << i.name;
+      } else {
+        srcFile << ", const jdouble " << i.name;
+      }
     }
     srcFile << ")\n{\n";
-    writeBeginningOfMaterialPropertyBody(srcFile, mpd, fd);
+    writeBeginningOfMaterialPropertyBody(srcFile, mpd, fd, "jdouble", true);
+    if (useQuantities(mpd)) {
+      for (const auto& i : mpd.inputs) {
+        srcFile << "const auto " << i.name << " = "  //
+                << i.type << "(mfront_" << i.name << ");\n";
+      }
+    }
     // handle java exceptions
     srcFile
         << "auto throwJavaRuntimeException = [java_env](const string& msg){\n"
@@ -342,9 +356,13 @@ namespace mfront {
       throw_if(
           !p.hasAttribute(VariableDescription::defaultValue),
           "internal error (can't find value of parameter '" + p.name + "')");
-      srcFile << "static " << constexpr_c << " double " << p.name << " = "
-              << p.getAttribute<double>(VariableDescription::defaultValue)
-              << ";\n";
+      const auto pv = p.getAttribute<double>(VariableDescription::defaultValue);
+      if (useQuantities(mpd)) {
+        srcFile << "static constexpr auto " << p.name  //
+                << " = " << p.type << "(" << pv << ");\n";
+      } else {
+        srcFile << "static constexpr double " << p.name << " = " << pv << ";\n";
+      }
     }
     if ((hasPhysicalBounds(mpd.inputs)) || (hasBounds(mpd.inputs))) {
       srcFile << "#ifndef JAVA_NO_BOUNDS_CHECK\n";
@@ -362,10 +380,16 @@ namespace mfront {
       }
       srcFile << "#endif /* JAVA_NO_BOUNDS_CHECK */\n";
     }  //  if((hasPhysicalBounds(mpd))||(hasBounds(mpd))){
+    if (useQuantities(mpd)) {
+      srcFile << "auto " << mpd.output.name << " = "  //
+              << mpd.output.type << "{};\n";
+    } else {
+      srcFile << "auto " << mpd.output.name << " = real{};\n";
+    }
     srcFile
-        << "real " << mpd.output.name << ";\n"
         << "try{\n"
-        << mpd.f.body << "} catch(std::exception& cpp_except){\n"
+        << mpd.f.body << "}\n"
+        << "catch(std::exception& cpp_except){\n"
         << "  return throwJavaRuntimeException(cpp_except.what());\n"
         << "} catch(...){\n"
         << "  return throwJavaRuntimeException(\"unknown C++ exception\");\n"
@@ -382,8 +406,12 @@ namespace mfront {
       }
       srcFile << "#endif /* JAVA_NO_BOUNDS_CHECK */\n";
     }  // (hasPhysicalBounds(mpd.output))||(hasBounds(mpd.output))
-    srcFile << "return " << mpd.output.name << ";\n"
-            << "} // end of " << name << "\n\n"
+    if (useQuantities(mpd)) {
+      srcFile << "return " << mpd.output.name << ".getValue();\n";
+    } else {
+      srcFile << "return " << mpd.output.name << ";\n";
+    }
+    srcFile << "} // end of " << name << "\n\n"
             << "#ifdef __cplusplus\n"
             << "} // end of extern \"C\"\n"
             << "#endif /* __cplusplus */\n\n";

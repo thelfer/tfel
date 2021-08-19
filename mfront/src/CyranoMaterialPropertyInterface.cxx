@@ -102,42 +102,46 @@ namespace mfront {
 
   static void writePhysicalBounds(std::ostream& os,
                                   const VariableDescription& v,
-                                  const size_t i) {
+                                  const size_t i,
+                                  const bool useQuantities) {
     if (!v.hasPhysicalBounds()) {
       return;
     }
     const auto& b = v.getPhysicalBounds();
+    const auto to_string = useQuantities
+                               ? "std::to_string(" + v.name + ".getValue())"
+                               : "std::to_string(" + v.name + ")";
     if (b.boundsType == VariableBoundsDescription::LOWER) {
-      os << "if(" << v.name << " < " << b.lowerBound << "){\n"
+      os << "if(" << v.name << " < " << v.type << "(" << b.lowerBound << ")){\n"
          << "cyrano_report(\"" << v.name
-         << " is below its physical lower bound (\" + std::to_string(" << v.name
-         << ")+\"<" << b.lowerBound << ").\\n\");\n"
+         << " is below its physical lower bound (\" + " << to_string << " + \"<"
+         << b.lowerBound << ").\\n\");\n"
          << "cyrano_output_status->status = -1;\n"
          << "cyrano_output_status->bounds_status = -" << i << ";\n"
          << "errno = cyrano_errno_old;\n"
          << "return nan(\"" << v.name << " is not physically valid.\");\n"
          << "}\n";
     } else if (b.boundsType == VariableBoundsDescription::UPPER) {
-      os << "if(" << v.name << " > " << b.upperBound << "){\n"
+      os << "if(" << v.name << " > " << v.type << "(" << b.upperBound << ")){\n"
          << "cyrano_report(\"" << v.name
-         << " is below its physical upper bound (\"+std::to_string(" << v.name
-         << ")+\">" << b.upperBound << ").\\n\");\n"
+         << " is below its physical upper bound (\" + " << to_string << " + \">"
+         << b.upperBound << ").\\n\");\n"
          << "cyrano_output_status->status = -1;\n"
          << "cyrano_output_status->bounds_status = -" << i << ";\n"
          << "errno = cyrano_errno_old;\n"
          << "return nan(\"" << v.name << " is not physically valid.\");\n"
          << "}\n";
     } else {
-      os << "if((" << v.name << " < " << b.lowerBound << ")||"
-         << "(" << v.name << " > " << b.upperBound << ")){\n"
-         << "if(" << v.name << " < " << b.lowerBound << "){\n"
+      os << "if((" << v.name << " < " << v.type << "(" << b.lowerBound << "))||"
+         << "(" << v.name << " > " << v.type << "(" << b.upperBound << "))){\n"
+         << "if(" << v.name << " < " << v.type << "(" << b.lowerBound << ")){\n"
          << "cyrano_report(\"" << v.name
-         << " is below its physical lower bound (\"+std::to_string(" << v.name
-         << ")+\"<" << b.lowerBound << ").\\n\");\n"
+         << " is below its physical lower bound (\" + " << to_string << " + \"<"
+         << b.lowerBound << ").\\n\");\n"
          << "} else {\n"
          << "cyrano_report(\"" << v.name
-         << " is over its physical upper bound (\"+std::to_string(" << v.name
-         << ")+\">" << b.upperBound << ").\\n\");\n"
+         << " is over its physical upper bound (\" + " << to_string << " + \">"
+         << b.upperBound << ").\\n\");\n"
          << "}\n"
          << "cyrano_output_status->status = -1;\n"
          << "cyrano_output_status->bounds_status = -" << i << ";\n"
@@ -149,13 +153,17 @@ namespace mfront {
 
   static void writeBounds(std::ostream& os,
                           const VariableDescription& v,
-                          const size_t i) {
+                          const size_t i,
+                          const bool useQuantities) {
     if (!v.hasBounds()) {
       return;
     }
+    const auto to_string = useQuantities
+                               ? "std::to_string(" + v.name + ".getValue())"
+                               : "std::to_string(" + v.name + ")";
     const auto& b = v.getBounds();
     if (b.boundsType == VariableBoundsDescription::LOWER) {
-      os << "if(" << v.name << " < " << b.lowerBound << "){\n"
+      os << "if(" << v.name << " < " << v.type << "(" << b.lowerBound << ")){\n"
          << "if(cyrano_os_of_bounds_policy==CYRANO_STRICT_POLICY){\n"
          << "cyrano_report(\"" << v.name << " is os of bounds.\");\n"
          << "cyrano_output_status->status = -1;\n"
@@ -164,55 +172,48 @@ namespace mfront {
          << "return nan(\"" << v.name << " is os of bounds.\");\n"
          << "} else if (cyrano_os_of_bounds_policy==CYRANO_WARNING_POLICY){\n"
          << "cyrano_output_status->bounds_status = " << i << ";\n"
-         << "cyrano_report(\"" << v.name
-         << " is below its lower bound (\" + std::to_string(" << v.name
-         << ") + \"<" << b.lowerBound << ").\\n\");\n"
+         << "cyrano_report(\"" << v.name << " is below its lower bound (\" + "
+         << to_string << " + \"<" << b.lowerBound << ").\\n\");\n"
          << "}\n"
          << "}\n";
     } else if (b.boundsType == VariableBoundsDescription::UPPER) {
-      os << "if(" << v.name << " > " << b.upperBound << "){\n"
+      os << "if(" << v.name << " > " << v.type << "(" << b.upperBound << ")){\n"
          << "if(cyrano_os_of_bounds_policy==CYRANO_STRICT_POLICY){\n"
-         << "cyrano_report(\"" << v.name
-         << " is over its upper bound (\" + std::to_string(" << v.name
-         << ") + \">" << b.upperBound << ").\\n\");\n"
+         << "cyrano_report(\"" << v.name << " is over its upper bound (\" + "
+         << to_string << " + \">" << b.upperBound << ").\\n\");\n"
          << "cyrano_output_status->status = -1;\n"
          << "cyrano_output_status->bounds_status = -" << i << ";\n"
          << "return nan(\"" << v.name << " is os of bounds.\");\n"
          << "} else if (cyrano_os_of_bounds_policy==CYRANO_WARNING_POLICY){\n"
          << "cyrano_output_status->bounds_status = " << i << ";\n"
-         << "cyrano_report(\"" << v.name
-         << " is over its upper bound (\" + std::to_string(" << v.name
-         << ") + \">" << b.upperBound << ").\\n\");\n"
+         << "cyrano_report(\"" << v.name << " is over its upper bound (\" + "
+         << to_string << " + \">" << b.upperBound << ").\\n\");\n"
          << "}\n"
          << "}\n";
     } else {
-      os << "if((" << v.name << " < " << b.lowerBound << ")||"
-         << "(" << v.name << " > " << b.upperBound << ")){\n"
+      os << "if((" << v.name << " < " << v.type << "(" << b.lowerBound << "))||"
+         << "(" << v.name << " > " << v.type << "(" << b.upperBound << "))){\n"
          << "if(cyrano_os_of_bounds_policy==CYRANO_STRICT_POLICY){\n"
-         << "if(" << v.name << " < " << b.lowerBound << "){\n"
-         << "cyrano_report(\"" << v.name
-         << " is below its lower bound (\" + std::to_string(" << v.name
-         << ") + \"<" << b.lowerBound << ").\\n\");\n"
+         << "if(" << v.name << " < " << v.type << "(" << b.lowerBound << ")){\n"
+         << "cyrano_report(\"" << v.name << " is below its lower bound (\" + "
+         << to_string << " + \"<" << b.lowerBound << ").\\n\");\n"
          << "} else {\n"
-         << "cyrano_report(\"" << v.name
-         << " is over its upper bound (\" + std::to_string(" << v.name
-         << ") + \">" << b.upperBound << ").\\n\");\n"
+         << "cyrano_report(\"" << v.name << " is over its upper bound (\" + "
+         << to_string << " + \">" << b.upperBound << ").\\n\");\n"
          << "}\n"
          << "cyrano_output_status->status = -1;\n"
          << "cyrano_output_status->bounds_status = -" << i << ";\n"
          << "errno = cyrano_errno_old;\n"
          << "return nan(\"" << v.name << " is os of bounds.\");\n"
          << "} else if (cyrano_os_of_bounds_policy==CYRANO_WARNING_POLICY){\n"
-         << "if(" << v.name << " < " << b.lowerBound << "){\n"
+         << "if(" << v.name << " < " << v.type << "(" << b.lowerBound << ")){\n"
          << "cyrano_output_status->bounds_status = " << i << ";\n"
-         << "cyrano_report(\"" << v.name
-         << " is below its lower bound (\" + std::to_string(" << v.name
-         << ") + \"<" << b.lowerBound << ").\\n\");\n"
+         << "cyrano_report(\"" << v.name << " is below its lower bound (\" + "
+         << to_string << " + \"<" << b.lowerBound << ").\\n\");\n"
          << "} else {\n"
          << "cyrano_output_status->bounds_status = " << i << ";\n"
-         << "cyrano_report(\"" << v.name
-         << " is over its upper bound (\" + std::to_string(" << v.name
-         << ") + \">" << b.upperBound << ").\\n\");\n"
+         << "cyrano_report(\"" << v.name << " is over its upper bound (\" + "
+         << to_string << " + \">" << b.upperBound << ").\\n\");\n"
          << "}\n"
          << "}\n"
          << "}\n";
@@ -321,6 +322,10 @@ namespace mfront {
        << "#include<cmath>\n"
        << "#include\"TFEL/Config/TFELTypes.hxx\"\n"
        << "#include\"TFEL/Math/General/IEEE754.hxx\"\n";
+    if (useQuantities(mpd)) {
+      os << "#include\"TFEL/Math/qt.hxx\"\n"
+         << "#include\"TFEL/Math/Quantity/qtIO.hxx\"\n";
+    }
     os << "#include\"" << name << "-cyrano.hxx\"\n\n";
     if (!includes.empty()) {
       os << includes << "\n\n";
@@ -382,7 +387,7 @@ namespace mfront {
       }
     }
     os << ")\n{\n";
-    writeBeginningOfMaterialPropertyBody(os, mpd, fd);
+    writeBeginningOfMaterialPropertyBody(os, mpd, fd, "double", true);
     os << "auto cyrano_report = "
        << "[&cyrano_output_status](const std::string& "
        << "cyrano_error_message){\n"
@@ -423,15 +428,18 @@ namespace mfront {
     if (!mpd.inputs.empty()) {
       auto p3 = mpd.inputs.begin();
       for (auto i = 0u; p3 != mpd.inputs.end(); ++p3, ++i) {
-        os << "const CyranoRealType " << p3->name << " = ";
+        auto cast_start = useQuantities(mpd) ? p3->type + "(" : "";
+        auto cast_end = useQuantities(mpd) ? ")" : "";
+        os << "const auto " << p3->name << " = " << cast_start;
         if (i == 0) {
-          os << "*(cyrano_params);\n";
+          os << "*(cyrano_params)";
         } else {
-          os << "*(cyrano_params+" + std::to_string(i) + "u);\n";
+          os << "*(cyrano_params+" + std::to_string(i) + "u)";
         }
+        os << cast_end << ";\n";
       }
     }
-    os << "real " << mpd.output.name << ";\n";
+    os << "auto " << mpd.output.name << " = " << mpd.output.type << "{};\n";
     os << "try{\n";
     if ((hasPhysicalBounds(mpd.inputs)) || (hasBounds(mpd.inputs))) {
       os << "#ifndef NO_CYRANO_BOUNDS_CHECK\n";
@@ -439,13 +447,13 @@ namespace mfront {
     if (hasPhysicalBounds(mpd.inputs)) {
       os << "// treating physical bounds\n";
       for (decltype(mpd.inputs.size()) i = 0; i != mpd.inputs.size(); ++i) {
-        writePhysicalBounds(os, mpd.inputs[i], i + 1);
+        writePhysicalBounds(os, mpd.inputs[i], i + 1, useQuantities(mpd));
       }
     }
     if (hasBounds(mpd.inputs)) {
       os << "// treating standard bounds\n";
       for (decltype(mpd.inputs.size()) i = 0; i != mpd.inputs.size(); ++i) {
-        writeBounds(os, mpd.inputs[i], i + 1);
+        writeBounds(os, mpd.inputs[i], i + 1, useQuantities(mpd));
       }
     }
     if ((hasPhysicalBounds(mpd.inputs)) || (hasBounds(mpd.inputs))) {
@@ -456,11 +464,12 @@ namespace mfront {
       os << "#ifndef NO_CYRANO_BOUNDS_CHECK\n";
       if (mpd.output.hasPhysicalBounds()) {
         os << "// treating physical bounds\n";
-        writePhysicalBounds(os, mpd.output, mpd.inputs.size() + 1);
+        writePhysicalBounds(os, mpd.output, mpd.inputs.size() + 1,
+                            useQuantities(mpd));
       }
       if (mpd.output.hasBounds()) {
         os << "// treating bounds\n";
-        writeBounds(os, mpd.output, mpd.inputs.size() + 1);
+        writeBounds(os, mpd.output, mpd.inputs.size() + 1, useQuantities(mpd));
       }
       os << "#endif /* NO_CYRANO_BOUNDS_CHECK */\n";
     }
@@ -483,9 +492,13 @@ namespace mfront {
        << "errno = cyrano_errno_old;\n"
        << "if(!tfel::math::ieee754::isfinite(" << mpd.output.name << ")){\n"
        << "cyrano_output_status->status = -4;\n"
-       << "}\n"
-       << "return " << mpd.output.name << ";\n"
-       << "} // end of " << name << "\n\n"
+       << "}\n";
+    if (useQuantities(mpd)) {
+      os << "return " << mpd.output.name << ".getValue();\n";
+    } else {
+      os << "return " << mpd.output.name << ";\n";
+    }
+    os << "} // end of " << name << "\n\n"
        << "#ifdef __cplusplus\n"
        << "} // end of extern \"C\"\n"
        << "#endif /* __cplusplus */\n\n";

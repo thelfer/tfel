@@ -59,6 +59,7 @@ namespace mfront {
   MaterialPropertyDSL::MaterialPropertyDSL() {
     // Call Back
     this->registerNewCallBack(";", &MaterialPropertyDSL::treatLonelySeparator);
+    this->registerNewCallBack("@UseQt", &MaterialPropertyDSL::treatUseQt);
     this->registerNewCallBack("@Link", &MaterialPropertyDSL::treatLink);
     this->registerNewCallBack("@MaterialLaw",
                               &MaterialPropertyDSL::treatMaterialLaw);
@@ -204,6 +205,13 @@ namespace mfront {
     }
     this->md.material = m;
   }  // end of MaterialPropertyDSL::setMaterial
+
+  void MaterialPropertyDSL::treatUseQt() {
+    this->checkNotEndOfFile("MaterialPropertyDSL::treatUseQt",
+                            "Expected 'true' or 'false'.");
+    this->md.use_qt = this->readBooleanValue("MaterialPropertyDSL::treatUseQt");
+    this->readSpecifiedToken("MaterialPropertyDSL::treatUseQt", ";");
+  }  // end of treatUseQt
 
   void MaterialPropertyDSL::treatLibrary() {
     if (!this->md.library.empty()) {

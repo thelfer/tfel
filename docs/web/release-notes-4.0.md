@@ -35,15 +35,20 @@ eqnPrefixTemplate: "($$i$$)"
 
 # Tickets fixed
 
+## Ticket:#277: [material properties] Support for quantities
+
+The `UseQt` keyword now allows to turn on support for quantities in
+material properties for interfaces that supports it.
+
+All interfaces delivered by `MFront` have proper support for quantities.
+
+For more details, see : <https://sourceforge.net/p/tfel/tickets/277/>
+
 ## Ticket #276: Support for quantities in `TFEL/PhysicalConstants`
 
 The `PhysicalConstants` class now have an additional boolean template
 parameter stating if quantities are to be used. For backward
 compatibility, this boolean value is `false` by default.
-
-~~~~{.cxx}
-
-~~~~
 
 The inline variables in the `tfel::constants` now also have a similar
 template parameter.

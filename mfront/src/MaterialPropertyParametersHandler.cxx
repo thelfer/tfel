@@ -144,10 +144,18 @@ namespace mfront {
       const std::string& n,
       const std::string& t,
       const std::string& i) {
-    for (const auto& p : mpd.parameters) {
-      os << "const " << t << " " << p.name << " = " << i << "::" << n
-         << "MaterialPropertyHandler::get" << n << "MaterialPropertyHandler()."
-         << p.name << ";\n";
+    if (useQuantities(mpd)) {
+      for (const auto& p : mpd.parameters) {
+        os << "const auto " << p.name << " = " << p.type << "(" << i
+           << "::" << n << "MaterialPropertyHandler::get" << n
+           << "MaterialPropertyHandler()." << p.name << ");\n";
+      }
+    } else {
+      for (const auto& p : mpd.parameters) {
+        os << "const " << t << " " << p.name << " = " << i << "::" << n
+           << "MaterialPropertyHandler::get" << n
+           << "MaterialPropertyHandler()." << p.name << ";\n";
+      }
     }
   }
 

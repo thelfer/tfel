@@ -140,23 +140,27 @@ namespace mfront {
     }
     const auto& b = v.getPhysicalBounds();
     if (b.boundsType == VariableBoundsDescription::LOWER) {
-      out << "if(" << v.name << " < " << b.lowerBound << "){\n"
+      out << "if(" << v.name << " < " << v.type << "(" << b.lowerBound
+          << ")){\n"
           << "ostringstream msg;\nmsg << \"" << name << " : " << v.name
           << " is below its physical lower bound (\"\n << " << v.name
           << " << \"<" << b.lowerBound << ").\";\n"
           << "return throwPythonRuntimeException(msg.str());\n"
           << "}\n";
     } else if (b.boundsType == VariableBoundsDescription::UPPER) {
-      out << "if(" << v.name << " > " << b.upperBound << "){\n"
+      out << "if(" << v.name << " > " << v.type << "(" << b.upperBound
+          << ")){\n"
           << "ostringstream msg;\nmsg << \"" << name << " : " << v.name
           << " is beyond its physical upper bound (\"\n << " << v.name
           << " << \">" << b.upperBound << ").\";\n"
           << "return throwPythonRuntimeException(msg.str());\n"
           << "}\n";
     } else {
-      out << "if((" << v.name << " < " << b.lowerBound << ")||"
-          << "(" << v.name << " > " << b.upperBound << ")){\n"
-          << "if(" << v.name << " < " << b.lowerBound << "){\n"
+      out << "if((" << v.name << " < " << v.type << "(" << b.lowerBound
+          << "))||"
+          << "(" << v.name << " > " << v.type << "(" << b.upperBound << "))){\n"
+          << "if(" << v.name << " < " << v.type << "(" << b.lowerBound
+          << ")){\n"
           << "ostringstream msg;\nmsg << \"" << name << " : " << v.name
           << " is below its physical lower bound (\"\n << " << v.name
           << " << \"<" << b.lowerBound << ").\";\n"
@@ -180,7 +184,8 @@ namespace mfront {
     const auto& b = v.getBounds();
     if ((b.boundsType == VariableBoundsDescription::LOWER) ||
         (b.boundsType == VariableBoundsDescription::LOWERANDUPPER)) {
-      out << "if(" << v.name << " < " << b.lowerBound << "){\n"
+      out << "if(" << v.name << " < " << v.type << "(" << b.lowerBound
+          << ")){\n"
           << "policy = "
           << "::getenv(\"PYTHON_OUT_OF_BOUNDS_POLICY\");\n"
           << "if(policy!=nullptr){\n"
@@ -201,7 +206,8 @@ namespace mfront {
     }
     if ((b.boundsType == VariableBoundsDescription::UPPER) ||
         (b.boundsType == VariableBoundsDescription::LOWERANDUPPER)) {
-      out << "if(" << v.name << " > " << b.upperBound << "){\n"
+      out << "if(" << v.name << " > " << v.type << "(" << b.upperBound
+          << ")){\n"
           << "policy = "
           << "::getenv(\"PYTHON_OUT_OF_BOUNDS_POLICY\");\n"
           << "if(policy!=nullptr){\n"
@@ -231,7 +237,6 @@ namespace mfront {
     const auto& material = mpd.material;
     const auto& library = mpd.library;
     const auto& law = mpd.law;
-    const auto& includes = mpd.includes;
     const auto& output = mpd.output;
     const auto& inputs = mpd.inputs;
     const auto& function = mpd.f;
@@ -312,8 +317,12 @@ namespace mfront {
             << "#include<vector>\n"
             << "#include<cmath>\n"
             << "#include\"TFEL/Config/TFELTypes.hxx\"\n";
-    if (!includes.empty()) {
-      srcFile << includes << "\n\n";
+    if (useQuantities(mpd)) {
+      srcFile << "#include\"TFEL/Math/qt.hxx\"\n"
+              << "#include\"TFEL/Math/Quantity/qtIO.hxx\"\n";
+    }
+    if (!mpd.includes.empty()) {
+      srcFile << mpd.includes << "\n\n";
     }
     srcFile << "#include\"" << name << "-python.hxx\"\n\n";
     writeExportDirectives(srcFile);
@@ -341,7 +350,7 @@ namespace mfront {
               << name << "_wrapper("
               << "PyObject *,PyObject*)\n{\n";
     }
-    writeBeginningOfMaterialPropertyBody(srcFile, mpd, fd);
+    writeBeginningOfMaterialPropertyBody(srcFile, mpd, fd, "double", true);
     srcFile << "auto throwPythonRuntimeException = [](const string& msg){\n"
             << "  PyErr_SetString(PyExc_RuntimeError,msg.c_str());\n"
             << "  return nullptr;\n"
@@ -358,7 +367,11 @@ namespace mfront {
                                             "python");
     }
     for (const auto& i : inputs) {
-      srcFile << "real " << i.name << ";\n";
+      if (useQuantities(mpd)) {
+        srcFile << "auto " << i.name << " = " << i.type << " {};\n";
+      } else {
+        srcFile << "auto " << i.name << " = real{};\n";
+      }
     }
     if (hasBounds(mpd.inputs) || hasBounds(mpd.output)) {
       srcFile << "#ifndef PYTHON_NO_BOUNDS_CHECK\n";
@@ -367,13 +380,16 @@ namespace mfront {
     }
     if (!inputs.empty()) {
       srcFile << "if(!PyArg_ParseTuple(py_args_,\"";
-      unsigned short i;
-      for (i = 0; i != inputs.size(); ++i) {
+      for (unsigned short i = 0; i != inputs.size(); ++i) {
         srcFile << "d";
       }
       srcFile << "\",";
       for (auto p3 = inputs.begin(); p3 != inputs.end();) {
-        srcFile << "&" << p3->name;
+        if (useQuantities(mpd)) {
+          srcFile << "&(" << p3->name << ".getValue())";
+        } else {
+          srcFile << "&" << p3->name;
+        }
         if (++p3 != inputs.end()) {
           srcFile << ",";
         }
@@ -396,8 +412,12 @@ namespace mfront {
       }
       srcFile << "#endif /* PYTHON_NO_BOUNDS_CHECK */\n";
     }
+    if (useQuantities(mpd)) {
+      srcFile << "auto " << output.name << " = " << output.type << "{};\n";
+    } else {
+      srcFile << "auto " << output.name << " = real{};\n";
+    }
     srcFile
-        << "real " << output.name << ";\n"
         << "try{\n"
         << function.body << "} catch(exception& cpp_except){\n"
         << "  return throwPythonRuntimeException(cpp_except.what());\n"

@@ -3055,19 +3055,9 @@ namespace mfront {
   }  // end of treatUnknownKeyword
 
   void BehaviourDSLCommon::treatUseQt() {
-    this->checkNotEndOfFile("BehaviourDSLCommon::treatUseQt : ",
+    this->checkNotEndOfFile("BehaviourDSLCommon::treatUseQt",
                             "Expected 'true' or 'false'.");
-    if (this->current->value == "true") {
-      this->mb.setUseQt(true);
-    } else if (this->current->value == "false") {
-      this->mb.setUseQt(false);
-    } else {
-      this->throwRuntimeError(
-          "BehaviourDSLCommon::treatUseQt",
-          "Expected to read 'true' or 'false' instead of '" +
-              this->current->value + ".");
-    }
-    ++(this->current);
+    this->mb.setUseQt(this->readBooleanValue("BehaviourDSLCommon::treatUseQt"));
     this->readSpecifiedToken("BehaviourDSLCommon::treatUseQt", ";");
   }  // end of treatUseQt
 
