@@ -176,7 +176,8 @@ namespace mfront {
     };
     //! \brief constructor
     BehaviourDSLCommon();
-
+    bool useQt() const override;
+    void disableQuantitiesUsageIfNotAlreadySet() override;
     std::string getClassName() const override;
     void addMaterialLaw(const std::string&) override;
     void appendToIncludes(const std::string&) override;
@@ -443,57 +444,24 @@ namespace mfront {
     using DSLBase::readNextBlock;
     //! \brief throw an exception is some options were not recognized
     void treatUnsupportedCodeBlockOptions(const CodeBlockOptions&);
-    /*!
-     * \brief add a static variable description
-     * \param[in] v : variable description
-     */
+    //
     void addStaticVariableDescription(
         const StaticVariableDescription&) override;
-    /*!
-     * \return the value of an integer constant
-     * \param[in] n: variable name
-     */
+    std::map<std::string, int> getIntegerConstants() const override;
     int getIntegerConstant(const std::string&) const override;
     /*!
-     * disable the declaration of new variables
+     * \brief disable the declaration of new variables
      * \param[in] h : modelling hypothesis
      */
     virtual void disableVariableDeclaration();
     //! \brief method called at the end of the input file processing.
     virtual void completeVariableDeclaration();
-    //! \brief write the output files
+    //
     void generateOutputFiles() override;
     //! \brief write the header files declaring the slip systems
     virtual void generateSlipSystemsFiles();
-    /*!
-     * \return the list of hypothesis supported by
-     * default by the DSL, i.e. without requiring specific treatment.
-     * This means that additional modelling hypotheses may or may not be
-     * supported (typically plane stress) by that the user must add the
-     * appropriate treatments.
-     *
-     * To enable other hypothesis or restrict the hypotheses
-     * supported, the user must use the `@ModellingHypothesis` or
-     * `@ModellingHypotheses` keywords.
-     */
+    //
     std::set<Hypothesis> getDefaultModellingHypotheses() const override;
-    /*!
-     * \return true if the given modelling hypothesis is handled by
-     * the parser
-     *
-     * Some parsers have restrictions on the modelling hypotheses
-     * supported. For example, the isotropic behaviours were not able
-     * to handle plane stress hypotheses when this comment was
-     * written(but it was planned, so this comment may be outdated
-     * now).
-     *
-     * The fact that this method returns true means that the user
-     * *can* provide code to support this modelling hypothesis. For
-     * example, to support plane stress in RungeKutta and Implicit
-     * parsers, the user must provide some hand-crafted code. He must
-     * enable this modelling hypothesis by calling explicitely
-     * `@ModellingHypothesis` or `@ModellingHypotheses` keywords.
-     */
     bool isModellingHypothesisSupported(const Hypothesis) const override;
     /*!
      * \brief the standard variable modifier

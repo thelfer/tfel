@@ -49,14 +49,15 @@ namespace mfront {
     bool hasUpperBound() const;
     //! destructor
     ~VariableBoundsDescription() noexcept;
-    //! type of the bound
+    //! \brief type of the bound
     BoundsType boundsType;
-    size_t lineNumber = 0u;
+    long double lowerBound = std::numeric_limits<long double>::min();
+    long double upperBound = std::numeric_limits<long double>::max();
     // component. If component is egal to -1, bounds acts of all
     // components
     short component = -1;
-    long double lowerBound = std::numeric_limits<long double>::min();
-    long double upperBound = std::numeric_limits<long double>::max();
+    // \brief line number used to describe the bounds
+    size_t lineNumber = 0u;
   };  // end of class VariableBoundsDescription
 
 }  // end of namespace mfront

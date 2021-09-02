@@ -135,13 +135,34 @@ namespace tfel::math {
 
   /*!
    * \brief a meta function returning the type of the derivative of
-   * a variable of type `FunctionType` with respect to a variable of type
-   * `VariableType`.
+   * a variable of type `FunctionType` with respect to variables of type
+   * `VariablesType`.
+   * \tparam FunctionType: function type
+   * \tparam VariablesTypes: variables types
+   */
+  template <typename FunctionType, typename... VariablesTypes>
+  struct DerivativeType;
+
+  /*!
+   * \partial specialisation for more than two variables.
+   * \tparam FunctionType: function type
+   * \tparam VariableType: first variable type
+   * \tparam OtherVariablesTypes: other variables' types
+   */
+  template <typename FunctionType, typename VariableType, typename... OtherVariablesTypes>
+  struct DerivativeType<FunctionType, VariableType, OtherVariablesTypes...> {
+    //! \brief the result
+    using type = typename DerivativeType<
+        typename DerivativeType<FunctionType, VariableType>::type,
+        OtherVariablesTypes...>::type;
+  };  // end of DerivativeType
+  /*!
+   * \partial specialisation for one variable.
    * \tparam FunctionType: function type
    * \tparam VariableType: variable type
    */
   template <typename FunctionType, typename VariableType>
-  struct DerivativeType {
+  struct DerivativeType<FunctionType, VariableType> {
     //! \brief the result
     using type = typename DerivativeTypeImplementation<isScalar<FunctionType>(),
                                                        isScalar<VariableType>(),

@@ -1244,7 +1244,7 @@ namespace mfront {
     for (const auto& v : persistentVarsHolder) {
       vs += SupportedTypes::getTypeSize(v.type, v.arraySize);
     }
-    const auto vsize = [mb, &vs]() -> unsigned int {
+    const auto vsize = [&mb, &vs]() -> unsigned int {
       if ((mb.getBehaviourType() ==
            BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) &&
           (CalculiXInterface::hasFiniteStrainStrategy(mb)) &&

@@ -212,6 +212,12 @@ namespace mfront {
     }
   }  // end of callBehaviourData
 
+  template <typename Res>
+  Res BehaviourDescription::getData(const Hypothesis h,
+                                    Res (BehaviourData::*m)() const) const {
+    return (this->getBehaviourData(h).*m)();
+  }  // end of getData
+
   template <typename Res, typename Arg1>
   Res BehaviourDescription::getData(const Hypothesis h,
                                     Res (BehaviourData::*m)(const Arg1&) const,
@@ -1626,14 +1632,17 @@ namespace mfront {
   }  // end of setDislocationsMeanFreePathInteractionMatrix
 
   void BehaviourDescription::setUseQt(const bool b) {
-    tfel::raise_if(this->use_qt,
+    tfel::raise_if(this->use_qt.has_value(),
                    "BehaviourDescription::setUseQt: "
                    "setUseQt already called");
     this->use_qt = b;
   }  // end of setUseQt
 
   bool BehaviourDescription::useQt() const {
-    return this->use_qt;
+    if (!this->use_qt.has_value()) {
+      this->disableQuantitiesUsageIfNotAlreadySet();
+    }
+    return *(this->use_qt);
   }  // end of useQt
 
   bool BehaviourDescription::hasTangentOperator() const {
@@ -2198,6 +2207,11 @@ namespace mfront {
       this->getBehaviourData2(h).addStaticVariable(v, s);
     }
   }  // end of addStaticVariable
+
+  std::map<std::string, int> BehaviourDescription::getIntegerConstants(
+      const Hypothesis h) const {
+    return this->getData(h, &BehaviourData::getIntegerConstants);
+  }  // end of getIntegerConstant
 
   int BehaviourDescription::getIntegerConstant(const Hypothesis h,
                                                const std::string& n) const {
@@ -2773,6 +2787,12 @@ namespace mfront {
   BehaviourDescription::getAttributes() const {
     return this->attributes;
   }  // end of getAttributes
+
+  void BehaviourDescription::disableQuantitiesUsageIfNotAlreadySet() const {
+    if (!this->use_qt.has_value()) {
+      this->use_qt = false;
+    }
+  } // end of disableQuantitiesUsageIfNotAlreadySet
 
   void BehaviourDescription::reserveName(const Hypothesis h,
                                          const std::string& n) {

@@ -31,18 +31,18 @@ namespace mfront {
     typedef long double StaticVariableValueType;
 #endif /* LIB_MFRONT_STATICVARIABLEDESCRIPTION_HXX */
     /*!
-     * Constructor
+     * \brief constructor
      * \param[in] type_       : variable type
      * \param[in] name_       : variable name
      * \param[in] lineNumber_ : line number
      * \param[in] value_      : value
      */
     StaticVariableDescription(const std::string&,
-                              const std::string&,
-                              const unsigned int,
-                              const StaticVariableValueType);
+        const std::string&,
+        const unsigned int,
+        const StaticVariableValueType);
     /*!
-     * Constructor
+     * \brief constructor
      * \param[in] type_          : variable type
      * \param[in] symbolic_name_ : symbolic variable name
      * \param[in] name_          : variable name
@@ -50,10 +50,10 @@ namespace mfront {
      * \param[in] value_         : value
      */
     StaticVariableDescription(const std::string&,
-                              const std::string&,
-                              const std::string&,
-                              const unsigned int,
-                              const StaticVariableValueType);
+        const std::string&,
+        const std::string&,
+        const unsigned int,
+        const StaticVariableValueType);
     //! \brief move constructor
     StaticVariableDescription(StaticVariableDescription&&);
     //! \brief copy constructor

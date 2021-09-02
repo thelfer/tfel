@@ -17,50 +17,50 @@
 
 namespace tfel::utilities {
 
-  bool starts_with(const std::string& s1, const std::string& s2) {
+  bool starts_with(std::string_view s1, std::string_view s2) {
     return ((s1.size() >= s2.size()) &&
             (std::equal(s2.begin(), s2.end(), s1.begin())));
   }  // end of starts_with
 
-  bool ends_with(const std::string& s1, const std::string& s2) {
+  bool ends_with(std::string_view s1, std::string_view s2) {
     return ((s1.size() >= s2.size()) &&
             (std::equal(s2.rbegin(), s2.rend(), s1.rbegin())));
   }  // end of ends_with
 
-  std::vector<std::string> tokenize(const std::string& s, const char c) {
+  std::vector<std::string> tokenize(std::string_view s, const char c) {
     std::vector<std::string> res;
     auto b = std::string::size_type{};
     auto e = s.find_first_of(c, b);
     while (std::string::npos != e || std::string::npos != b) {
       // Found a token, add it to the vector.
-      res.push_back(s.substr(b, e - b));
+      res.push_back(std::string{s.substr(b, e - b)});
       b = s.find_first_not_of(c, e);
       e = s.find_first_of(c, b);
     }
     return res;
   }  // end of tokenize
 
-  std::vector<std::string> tokenize(const std::string& s,
-                                    const std::string& d) {
+  std::vector<std::string> tokenize(std::string_view s,
+                                    std::string_view d) {
     std::vector<std::string> res;
     const auto sl = s.length();
     const auto dl = d.length();
     auto b = std::string::size_type{};
     auto e = s.find(d, b);
     while (e != std::string::npos) {
-      res.push_back(s.substr(b, e - b));
+      res.push_back(std::string{s.substr(b, e - b)});
       b = e + dl;
       e = s.find(d, b);
     }
     if (b != sl) {
-      res.push_back(s.substr(b));
+      res.push_back(std::string{s.substr(b)});
     }
     return res;
   }  // end of tokenize
 
-  std::string replace_all(const std::string& s,
-                          const std::string& s1,
-                          const std::string& s2,
+  std::string replace_all(std::string_view s,
+                          std::string_view s1,
+                          std::string_view s2,
                           const std::string::size_type ps) {
     std::string r;
     replace_all(r, s, s1, s2, ps);
@@ -68,9 +68,9 @@ namespace tfel::utilities {
   }
 
   void replace_all(std::string& r,
-                   const std::string& s,
-                   const std::string& s1,
-                   const std::string& s2,
+                   std::string_view s,
+                   std::string_view s1,
+                   std::string_view s2,
                    const std::string::size_type ps) {
     using namespace std;
     string::size_type rs;
@@ -94,7 +94,7 @@ namespace tfel::utilities {
     copy(&s[0] + pos, &s[0] + s.size(), &r[0] + rs);
   }
 
-  std::string replace_all(const std::string& c, const char c1, const char c2) {
+  std::string replace_all(std::string_view c, const char c1, const char c2) {
     std::string s(c);
     std::string::size_type p = 0u;
     if (s.empty()) {
@@ -107,7 +107,7 @@ namespace tfel::utilities {
     return s;
   }
 
-  void replace_all(std::string& s, const char c, const std::string& n) {
+  void replace_all(std::string& s, const char c, std::string_view n) {
     std::string::size_type p = 0u;
     std::string::size_type ns = n.size();
     if ((s.empty()) || (ns == 0)) {

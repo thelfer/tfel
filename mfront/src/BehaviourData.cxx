@@ -160,13 +160,13 @@ namespace mfront {
         "BehaviourData::getAttribute: "
         "no attribute named '" +
         n + "'");
-  }  // end of BehaviourData::throwUndefinedAttribute
+  }  // end of throwUndefinedAttribute
 
   BehaviourData::CodeBlocksAggregator::CodeBlocksAggregator() = default;
 
   bool BehaviourData::CodeBlocksAggregator::isMutable() const {
     return this->is_mutable;
-  }  // end of BehaviourData::CodeBlocksAggregator::isMutable
+  }  // end of CodeBlocksAggregator::isMutable
 
   void BehaviourData::CodeBlocksAggregator::update() {
     // updating code
@@ -205,7 +205,7 @@ namespace mfront {
       }
     }
     this->cblock.description += cdoc_end;
-  }  // end of BehaviourData::update
+  }  // end of update
 
   void BehaviourData::CodeBlocksAggregator::set(const CodeBlock& c,
                                                 const Position p,
@@ -296,7 +296,7 @@ namespace mfront {
     }
     this->update();
     this->is_mutable = b;
-  }  // end of BehaviourData::CodeBlocksAggregator::set
+  }  // end of CodeBlocksAggregator::set
 
   void BehaviourData::CodeBlocksAggregator::replace(const CodeBlock& c,
                                                     const Position p,
@@ -309,18 +309,18 @@ namespace mfront {
     this->cblock.members.clear();
     this->cblock.staticMembers.clear();
     this->set(c, p, b);
-  }  // end of BehaviourData::CodeBlocksAggregator::set
+  }  // end of CodeBlocksAggregator::set
 
   void BehaviourData::CodeBlocksAggregator::check() const {
     tfel::raise_if(!this->is_mutable,
                    "BehaviourData::CodeBlocksAggregator::set: "
                    "can't modifiy a code block");
-  }  // end of BehaviourData::CodeBlocksAggregator::check
+  }  // end of CodeBlocksAggregator::check
 
   const CodeBlock& BehaviourData::CodeBlocksAggregator::get() const {
     this->is_mutable = false;
     return this->cblock;
-  }  // end of BehaviourData::CodeBlocksAggregator::get
+  }  // end of CodeBlocksAggregator::get
 
   BehaviourData::CodeBlocksAggregator::~CodeBlocksAggregator() = default;
 
@@ -331,7 +331,7 @@ namespace mfront {
     auto T = VariableDescription{"temperature", "T", 1u, 0u};
     T.setGlossaryName("Temperature");
     this->addExternalStateVariable(T, UNREGISTRED);
-  }  // end of BehaviourData::BehaviourData()
+  }  // end of BehaviourData()
 
   BehaviourData::BehaviourData(const BehaviourData&) = default;
 
@@ -374,7 +374,17 @@ namespace mfront {
       checkAlreadyRegistred(this->reservedNames, v.name);
     }
     this->staticVariables.push_back(v);
-  }  // end of BehaviourData::addStaticVariable
+  }  // end of addStaticVariable
+
+  std::map<std::string, int> BehaviourData::getIntegerConstants() const {
+    auto r= std::map<std::string, int>{};
+    for (const auto& v : this->staticVariables) {
+      if (v.type == "int") {
+        r.insert({v.name, v.value});
+      }
+    }
+    return r;
+  } // end of getIntegerConstants
 
   int BehaviourData::getIntegerConstant(const std::string& n) const {
     for (const auto& v : this->staticVariables) {
@@ -390,79 +400,79 @@ namespace mfront {
         "MaterialPropertyDSL::getIntegerConstant: "
         "unknown variable '" +
         n + "'");
-  }  // end of BehaviourData::getIntegerConstant
+  }  // end of getIntegerConstant
 
   const StaticVariableDescriptionContainer& BehaviourData::getStaticVariables()
       const {
     return this->staticVariables;
-  }  // end of BehaviourData::getStaticVariables
+  }  // end of getStaticVariables
 
   const VariableDescription& BehaviourData::getPersistentVariableDescription(
       const std::string& v) const {
     return this->getPersistentVariables().getVariable(v);
-  }  // end of BehaviourData::getPersistentVariableDescription
+  }  // end of getPersistentVariableDescription
 
   const VariableDescription&
   BehaviourData::getPersistentVariableDescriptionByExternalName(
       const std::string& v) const {
     return this->getPersistentVariables().getVariableByExternalName(v);
-  }  // end of BehaviourData::getPersistentVariableDescriptionByExternalName
+  }  // end of getPersistentVariableDescriptionByExternalName
 
   const VariableDescription& BehaviourData::getIntegrationVariableDescription(
       const std::string& v) const {
     return this->getIntegrationVariables().getVariable(v);
-  }  // end of BehaviourData::getIntegrationVariableDescription
+  }  // end of getIntegrationVariableDescription
 
   const VariableDescription&
   BehaviourData::getIntegrationVariableDescriptionByExternalName(
       const std::string& v) const {
     return this->getIntegrationVariables().getVariableByExternalName(v);
-  }  // end of BehaviourData::getIntegrationVariableDescriptionByExternalName
+  }  // end of getIntegrationVariableDescriptionByExternalName
 
   const VariableDescription& BehaviourData::getStateVariableDescription(
       const std::string& v) const {
     return this->getStateVariables().getVariable(v);
-  }  // end of BehaviourData::getStateVariableDescription
+  }  // end of getStateVariableDescription
 
   const VariableDescription&
   BehaviourData::getStateVariableDescriptionByExternalName(
       const std::string& v) const {
     return this->getStateVariables().getVariableByExternalName(v);
-  }  // end of BehaviourData::getStateVariableDescriptionByExternalName
+  }  // end of getStateVariableDescriptionByExternalName
 
   const VariableDescription& BehaviourData::getExternalStateVariableDescription(
       const std::string& v) const {
     return this->getExternalStateVariables().getVariable(v);
-  }  // end of BehaviourData::getExternalStateVariableDescription
+  }  // end of getExternalStateVariableDescription
 
   const VariableDescription&
   BehaviourData::getExternalStateVariableDescriptionByExternalName(
       const std::string& v) const {
     return this->getExternalStateVariables().getVariableByExternalName(v);
-  }  // end of BehaviourData::getExternalStateVariableDescriptionByExternalName
+  }  // end of getExternalStateVariableDescriptionByExternalName
 
   const VariableDescription&
   BehaviourData::getAuxiliaryStateVariableDescription(
       const std::string& v) const {
     return this->getAuxiliaryStateVariables().getVariable(v);
-  }  // end of BehaviourData::getAuxiliaryStateVariableDescription
+  }  // end of getAuxiliaryStateVariableDescription
 
   const VariableDescription&
   BehaviourData::getAuxiliaryStateVariableDescriptionByExternalName(
       const std::string& v) const {
     return this->getAuxiliaryStateVariables().getVariableByExternalName(v);
-  }  // end of BehaviourData::getAuxiliaryStateVariableDescriptionByExternalName
+  }  // end of getAuxiliaryStateVariableDescriptionByExternalName
 
   const VariableDescription& BehaviourData::getParameterDescription(
       const std::string& v) const {
     return this->getParameters().getVariable(v);
-  }  // end of BehaviourData::getParameterDescription
+  }  // end of getParameterDescription
 
   const VariableDescription&
   BehaviourData::getParameterDescriptionByExternalName(
       const std::string& v) const {
     return this->getParameters().getVariableByExternalName(v);
-  }  // end of BehaviourData::getParameterDescriptionByExternalName
+  }  // end of getParameterDescriptionByExternalName
 
   void BehaviourData::addMaterialProperty(const VariableDescription& v,
                                           const RegistrationStatus s) {
@@ -478,12 +488,12 @@ namespace mfront {
     } else {
       this->addVariable(this->materialProperties, v, s, false);
     }
-  }  // end of BehaviourData::addMaterialProperty
+  }  // end of addMaterialProperty
 
   void BehaviourData::addIntegrationVariable(const VariableDescription& v,
                                              const RegistrationStatus s) {
     this->addVariable(this->integrationVariables, v, s, true);
-  }  // end of BehaviourData::addIntegrationVariable
+  }  // end of addIntegrationVariable
 
   void BehaviourData::addStateVariable(const VariableDescription& v,
                                        const RegistrationStatus s) {
@@ -513,7 +523,7 @@ namespace mfront {
     if (!found) {
       this->persistentVariables.push_back(v);
     }
-  }  // end of BehaviourData::addStateVariable
+  }  // end of addStateVariable
 
   void BehaviourData::addAuxiliaryStateVariable(const VariableDescription& v,
                                                 const RegistrationStatus s) {
@@ -524,7 +534,7 @@ namespace mfront {
     } else {
       this->addVariable(this->persistentVariables, v, ALREADYREGISTRED, true);
     }
-  }  // end of BehaviourData::addAuxiliaryStateVariable
+  }  // end of addAuxiliaryStateVariable
 
   void BehaviourData::addPostProcessingVariable(const VariableDescription& v) {
     this->reserveName(v.name);
@@ -538,17 +548,17 @@ namespace mfront {
       this->entryNames.insert({v.name, v.getExternalName()});
     }
     this->postProcessingVariables.push_back(v);
-  }  // end of BehaviourData::addPostProcessingVariable
+  }  // end of addPostProcessingVariable
 
   void BehaviourData::addExternalStateVariable(const VariableDescription& v,
                                                const RegistrationStatus s) {
     this->addVariable(this->externalStateVariables, v, s, true);
-  }  // end of BehaviourData::addExternalStateVariable
+  }  // end of addExternalStateVariable
 
   void BehaviourData::addLocalVariable(const VariableDescription& v,
                                        const RegistrationStatus s) {
     this->addVariable(this->localVariables, v, s, false, true);
-  }  // end of BehaviourData::addLocalVariable
+  }  // end of addLocalVariable
 
   void BehaviourData::addParameter(const VariableDescription& v,
                                    const RegistrationStatus s) {
@@ -561,7 +571,7 @@ namespace mfront {
       }
     }
     this->addVariable(this->parameters, v, s, false);
-  }  // end of BehaviourData::addParameter
+  }  // end of addParameter
 
   bool BehaviourData::hasParameter(const std::string& n) const {
     return this->parameters.contains(n);
@@ -579,27 +589,27 @@ namespace mfront {
       }
     }
     return false;
-  }  // end of BehaviourData::isMemberUsedInCodeBlocks
+  }  // end of isMemberUsedInCodeBlocks
 
   bool BehaviourData::isMaterialPropertyName(const std::string& n) const {
     return this->getMaterialProperties().contains(n);
-  }  // end of BehaviourData::isMaterialPropertyName
+  }  // end of isMaterialPropertyName
 
   bool BehaviourData::isStaticVariableName(const std::string& n) const {
     return this->getStaticVariables().contains(n);
-  }  // end of BehaviourData::isStaticVariableName
+  }  // end of isStaticVariableName
 
   bool BehaviourData::isLocalVariableName(const std::string& n) const {
     return this->getLocalVariables().contains(n);
-  }  // end of BehaviourData::isLocalVariableName
+  }  // end of isLocalVariableName
 
   bool BehaviourData::isPersistentVariableName(const std::string& n) const {
     return this->getPersistentVariables().contains(n);
-  }  // end of BehaviourData::isPersistentVariableName
+  }  // end of isPersistentVariableName
 
   bool BehaviourData::isIntegrationVariableName(const std::string& n) const {
     return this->getIntegrationVariables().contains(n);
-  }  // end of BehaviourData::isIntegrationVariableName
+  }  // end of isIntegrationVariableName
 
   bool BehaviourData::isIntegrationVariableIncrementName(
       const std::string& n) const {
@@ -610,11 +620,11 @@ namespace mfront {
       return false;
     }
     return this->getIntegrationVariables().contains(n.substr(1));
-  }  // end of BehaviourData::isIntegrationVariableName
+  }  // end of isIntegrationVariableName
 
   bool BehaviourData::isStateVariableName(const std::string& n) const {
     return this->getStateVariables().contains(n);
-  }  // end of BehaviourData::isStateVariableName
+  }  // end of isStateVariableName
 
   bool BehaviourData::isStateVariableIncrementName(const std::string& n) const {
     if (n.size() < 2) {
@@ -624,19 +634,19 @@ namespace mfront {
       return false;
     }
     return this->getStateVariables().contains(n.substr(1));
-  }  // end of BehaviourData::isStateVariableName
+  }  // end of isStateVariableName
 
   bool BehaviourData::isAuxiliaryStateVariableName(const std::string& n) const {
     return this->getAuxiliaryStateVariables().contains(n);
-  }  // end of BehaviourData::isAuxiliaryStateVariableName
+  }  // end of isAuxiliaryStateVariableName
 
   bool BehaviourData::isPostProcessingVariableName(const std::string& n) const {
     return this->getPostProcessingVariables().contains(n);
-  }  // end of BehaviourData::isPostProcessingVariableName
+  }  // end of isPostProcessingVariableName
 
   bool BehaviourData::isExternalStateVariableName(const std::string& n) const {
     return this->getExternalStateVariables().contains(n);
-  }  // end of BehaviourData::isExternalStateVariableName
+  }  // end of isExternalStateVariableName
 
   bool BehaviourData::isExternalStateVariableIncrementName(
       const std::string& n) const {
@@ -647,21 +657,21 @@ namespace mfront {
       return false;
     }
     return this->getExternalStateVariables().contains(n.substr(1));
-  }  // end of BehaviourData::isExternalStateVariableName
+  }  // end of isExternalStateVariableName
 
   bool BehaviourData::isParameterName(const std::string& n) const {
     return this->getParameters().contains(n);
-  }  // end of BehaviourData::isParameterName
+  }  // end of isParameterName
 
   const VariableDescriptionContainer& BehaviourData::getMaterialProperties()
       const {
     return this->materialProperties;
-  }  // end of BehaviourData::getMaterialProperties
+  }  // end of getMaterialProperties
 
   const VariableDescriptionContainer& BehaviourData::getPersistentVariables()
       const {
     return this->persistentVariables;
-  }  // end of BehaviourData::getPersistentVariables
+  }  // end of getPersistentVariables
 
   std::set<std::string> BehaviourData::getVariablesNames() const {
     auto getNames = [](std::set<std::string>& r,
@@ -681,7 +691,7 @@ namespace mfront {
     getNames(n, this->getExternalStateVariables());
     getNames(n, this->getParameters());
     return n;
-  }  // end of BehaviourData::getVariablesNames
+  }  // end of getVariablesNames
 
   const VariableDescriptionContainer& BehaviourData::getVariables(
       const std::string& t) const {
@@ -709,39 +719,39 @@ namespace mfront {
           t + "'");
     }
     return (this->*m)();
-  }  // end of BehaviourData::getVariables
+  }  // end of getVariables
 
   const VariableDescriptionContainer& BehaviourData::getIntegrationVariables()
       const {
     return this->integrationVariables;
-  }  // end of BehaviourData::getIntegrationVariables
+  }  // end of getIntegrationVariables
 
   const VariableDescriptionContainer& BehaviourData::getStateVariables() const {
     return this->stateVariables;
-  }  // end of BehaviourData::getStateVariables
+  }  // end of getStateVariables
 
   const VariableDescriptionContainer&
   BehaviourData::getAuxiliaryStateVariables() const {
     return this->auxiliaryStateVariables;
-  }  // end of BehaviourData::getAuxiliaryStateVariables
+  }  // end of getAuxiliaryStateVariables
 
   const VariableDescriptionContainer&
   BehaviourData::getPostProcessingVariables() const {
     return this->postProcessingVariables;
-  }  // end of BehaviourData::getPostProcessingVariables
+  }  // end of getPostProcessingVariables
 
   const VariableDescriptionContainer& BehaviourData::getExternalStateVariables()
       const {
     return this->externalStateVariables;
-  }  // end of BehaviourData::getExternalStateVariables
+  }  // end of getExternalStateVariables
 
   const VariableDescriptionContainer& BehaviourData::getLocalVariables() const {
     return this->localVariables;
-  }  // end of BehaviourData::getLocalVariables
+  }  // end of getLocalVariables
 
   bool BehaviourData::isUsableInPurelyImplicitResolution() const {
     return this->usableInPurelyImplicitResolution;
-  }  // end of BehaviourData::isUsableInPurelyImplicitResolution
+  }  // end of isUsableInPurelyImplicitResolution
 
   void BehaviourData::setBounds(const std::string& n,
                                 const VariableBoundsDescription& b) {
@@ -764,7 +774,7 @@ namespace mfront {
                    "BehaviourData::setBounds: "
                    "no variable named '" +
                        n + "'");
-  }  // end of BehaviourData::getBounds
+  }  // end of getBounds
 
   void BehaviourData::setBounds(const std::string& n,
                                 const unsigned short i,
@@ -839,7 +849,7 @@ namespace mfront {
         "- an post-processing variable\n"
         "- an external state variable\n"
         "- a parameter");
-  }  // end of BehaviourData::getVariableDescriptionByExternalName
+  }  // end of getVariableDescriptionByExternalName
 
   const VariableDescription& BehaviourData::getVariableDescription(
       const std::string& n) const {
@@ -881,7 +891,7 @@ namespace mfront {
         "- an external state variable\n"
         "- an post-processing variable\n"
         "- a parameter");
-  }  // end of BehaviourData::getVariableDescription
+  }  // end of getVariableDescription
 
   void BehaviourData::setVariableAttribute(const std::string& v,
                                            const std::string& n,
@@ -917,7 +927,7 @@ namespace mfront {
                        "- a  persistent variable\n"
                        "- an external state variable\n"
                        "- a parameter");
-  }  // end of BehaviourData::setVariableAttribute
+  }  // end of setVariableAttribute
 
   VariableDescription& BehaviourData::getVariableDescription(
       const std::string& n) {
@@ -959,7 +969,7 @@ namespace mfront {
         "- an external state variable\n"
         "- an post-processing variable\n"
         "- a parameter");
-  }  // end of BehaviourData::getVariableDescription
+  }  // end of getVariableDescription
 
   void BehaviourData::setPhysicalBounds(const std::string& n,
                                         const VariableBoundsDescription& b) {
@@ -982,7 +992,7 @@ namespace mfront {
                    "BehaviourData::setPhysicalBounds: "
                    "no variable named '" +
                        n + "'");
-  }  // end of BehaviourData::setPhysicalBounds
+  }  // end of setPhysicalBounds
 
   void BehaviourData::setPhysicalBounds(const std::string& n,
                                         const unsigned short i,
@@ -1006,11 +1016,11 @@ namespace mfront {
                    "BehaviourData::setPhysicalBounds: "
                    "no variable named '" +
                        n + "'");
-  }  // end of BehaviourData::setPhysicalBounds
+  }  // end of setPhysicalBounds
 
   void BehaviourData::setUsableInPurelyImplicitResolution(const bool b) {
     this->usableInPurelyImplicitResolution = b;
-  }  // end of BehaviourData::setUsableInPurelyImplicitResolution
+  }  // end of setUsableInPurelyImplicitResolution
 
   void BehaviourData::
       declareExternalStateVariableProbablyUnusableInPurelyImplicitResolution(
@@ -1083,14 +1093,14 @@ namespace mfront {
       this->entryNames.insert({v.name, v.getExternalName()});
     }
     c.push_back(v);
-  }  // end of BehaviourData::addVariable
+  }  // end of addVariable
 
   void BehaviourData::reserveName(const std::string& n) {
     tfel::raise_if(!this->reservedNames.insert(n).second,
                    "BehaviourData::reserveName: "
                    "name '" +
                        n + "' already registred");
-  }  // end of BehaviourData::reserveName
+  }  // end of reserveName
 
   bool BehaviourData::isNameReserved(const std::string& n) const {
     return this->reservedNames.count(n) != 0;
@@ -1132,7 +1142,7 @@ namespace mfront {
                    "BehaviourData::registerGlossaryName: "
                    "a variable named '" +
                        n + "' has already been registred");
-  }  // end of BehaviourData::registerGlossaryName
+  }  // end of registerGlossaryName
 
   void BehaviourData::registerEntryName(const std::string& n,
                                         const std::string& e) {
@@ -1164,7 +1174,7 @@ namespace mfront {
                    "BehaviourData::registerEntryName: "
                    "a variable named '" +
                        n + "' has already been registred");
-  }  // end of BehaviourData::registerEntryName
+  }  // end of registerEntryName
 
   void BehaviourData::registerMemberName(const std::string& n) {
     using namespace tfel::glossary;
@@ -1190,7 +1200,7 @@ namespace mfront {
                    "BehaviourData::registerMemberName: "
                    "a variable named '" +
                        n + "' has already been registred");
-  }  // end of BehaviourData::registerMemberName
+  }  // end of registerMemberName
 
   void BehaviourData::registerStaticMemberName(const std::string& n) {
     const auto& g = tfel::glossary::Glossary::getGlossary();
@@ -1214,16 +1224,16 @@ namespace mfront {
                    "BehaviourData::registerStaticMemberName: "
                    "a variable named '" +
                        n + "' has already been registred");
-  }  // end of BehaviourData::registerStaticMemberName
+  }  // end of registerStaticMemberName
 
   const std::set<std::string>& BehaviourData::getRegistredMembersNames() const {
     return this->membersNames;
-  }  // end of BehaviourData::getRegistredMemberNames
+  }  // end of getRegistredMemberNames
 
   const std::set<std::string>& BehaviourData::getRegistredStaticMembersNames()
       const {
     return this->staticMembersNames;
-  }  // end of BehaviourData::getRegistredStaticMemberNames
+  }  // end of getRegistredStaticMemberNames
 
   void BehaviourData::checkVariableName(const std::string& n) const {
     if ((this->materialProperties.contains(n)) ||
@@ -1241,7 +1251,7 @@ namespace mfront {
         "BehaviourData::checkVariableName: "
         "no variable named '" +
         n + "'");
-  }  // end of BehaviourData::checkVariableName
+  }  // end of checkVariableName
 
   void BehaviourData::setCode(const std::string& n,
                               const CodeBlock& c,
@@ -1276,7 +1286,7 @@ namespace mfront {
       }
     }
     pc->second.set(c, p, b);
-  }  // end of BehaviourData::setCode
+  }  // end of setCode
 
   const CodeBlock& BehaviourData::getCodeBlock(const std::string& n) const {
     auto p = this->cblocks.find(n);
@@ -1285,7 +1295,7 @@ namespace mfront {
                    "no code block associated with '" +
                        n + "'");
     return p->second.get();
-  }  // end of BehaviourData::getCodeBlock
+  }  // end of getCodeBlock
 
   std::string BehaviourData::getCode(const std::string& n,
                                      const std::string& cn,
@@ -1298,7 +1308,7 @@ namespace mfront {
     out << this->getCodeBlock(n).code;
     writeStandardPerformanceProfilingEnd(out);
     return out.str();
-  }  // end of BehaviourData::getCode
+  }  // end of getCode
 
   bool BehaviourData::hasCode(const std::string& n) const {
     return this->cblocks.find(n) != this->cblocks.end();
@@ -1322,7 +1332,7 @@ namespace mfront {
       throw_if(!this->parametersDefaultValues.insert({n, op->second}).second,
                "default value for parameter '" + n + "' already defined");
     }
-  }  // end of BehaviourData::setParameterDefaultValue
+  }  // end of setParameterDefaultValue
 
   void BehaviourData::setParameterDefaultValue(const std::string& n,
                                                const unsigned short i,
@@ -1384,7 +1394,7 @@ namespace mfront {
     throw_if(p == this->parametersDefaultValues.end(),
              "no default value defined for parameter '" + n + "'");
     return p->second;
-  }  // end of BehaviourData::getFloattingPointParameterDefaultValue
+  }  // end of getFloattingPointParameterDefaultValue
 
   double BehaviourData::getFloattingPointParameterDefaultValue(
       const std::string& n, const unsigned short i) const {
@@ -1401,7 +1411,7 @@ namespace mfront {
     throw_if(p == this->parametersDefaultValues.end(),
              "no default value defined for parameter '" + n2 + "'");
     return p->second;
-  }  // end of BehaviourData::getFloattingPointParameterDefaultValue
+  }  // end of getFloattingPointParameterDefaultValue
 
   int BehaviourData::getIntegerParameterDefaultValue(
       const std::string& n) const {
@@ -1415,7 +1425,7 @@ namespace mfront {
                    "no default value defined for parameter '" +
                        n + "'");
     return p->second;
-  }  // end of BehaviourData::getIntegerParameterDefaultValue
+  }  // end of getIntegerParameterDefaultValue
 
   unsigned short BehaviourData::getUnsignedShortParameterDefaultValue(
       const std::string& n) const {
@@ -1429,7 +1439,7 @@ namespace mfront {
                    "no default value defined for parameter '" +
                        n + "'");
     return p->second;
-  }  // end of BehaviourData::getUnsignedShortParameterDefaultValue
+  }  // end of getUnsignedShortParameterDefaultValue
 
   void BehaviourData::setAttribute(const std::string& n,
                                    const BehaviourAttribute& a,
@@ -1445,7 +1455,7 @@ namespace mfront {
     if (!this->attributes.insert({n, a}).second) {
       throw_if(!b, "attribute '" + n + "' already declared");
     }
-  }  // end of BehaviourData::setAttribute
+  }  // end of setAttribute
 
   void BehaviourData::updateAttribute(const std::string& n,
                                       const BehaviourAttribute& a) {
@@ -1457,16 +1467,16 @@ namespace mfront {
     throw_if(a.getTypeIndex() != p->second.getTypeIndex(),
              "attribute already exists with a different type");
     p->second = a;
-  }  // end of BehaviourData::setAttribute
+  }  // end of setAttribute
 
   bool BehaviourData::hasAttribute(const std::string& n) const {
     return this->attributes.count(n) != 0u;
-  }  // end of BehaviourData::hasAttribute
+  }  // end of hasAttribute
 
   const std::map<std::string, BehaviourAttribute>&
   BehaviourData::getAttributes() const {
     return this->attributes;
-  }  // end of BehaviourData::getAttributes
+  }  // end of getAttributes
 
   std::vector<std::string> BehaviourData::getCodeBlockNames() const {
     auto names = std::vector<std::string>{};
@@ -1474,17 +1484,17 @@ namespace mfront {
       names.push_back(c.first);
     }
     return names;
-  }  // end of BehaviourData::getCodeBlockNames
+  }  // end of getCodeBlockNames
 
   bool BehaviourData::hasGlossaryName(const std::string& n) const {
     this->checkVariableName(n);
     return this->glossaryNames.find(n) != this->glossaryNames.end();
-  }  // end of BehaviourData::hasGlossaryName
+  }  // end of hasGlossaryName
 
   bool BehaviourData::hasEntryName(const std::string& n) const {
     this->checkVariableName(n);
     return this->entryNames.find(n) != this->entryNames.end();
-  }  // end of BehaviourData::hasEntryName
+  }  // end of hasEntryName
 
   std::string BehaviourData::getExternalName(const std::string& n) const {
     this->checkVariableName(n);
@@ -1497,22 +1507,22 @@ namespace mfront {
       return p->second;
     }
     return n;
-  }  // end of BehaviourData::getExternalName
+  }  // end of getExternalName
 
   std::vector<std::string> BehaviourData::getExternalNames(
       const VarContainer& v) const {
     return v.getExternalNames();
-  }  // end of BehaviourData::getExternalNames
+  }  // end of getExternalNames
 
   void BehaviourData::getExternalNames(std::vector<std::string>& names,
                                        const VarContainer& v) const {
     v.getExternalNames(names);
-  }  // end of BehaviourData::getExternalNames
+  }  // end of getExternalNames
 
   void BehaviourData::appendExternalNames(std::vector<std::string>& names,
                                           const VarContainer& v) const {
     v.appendExternalNames(names);
-  }  // end of BehaviourData::appendExternalNames
+  }  // end of appendExternalNames
 
   void BehaviourData::setGlossaryName(const std::string& n,
                                       const std::string& g) {
@@ -1547,7 +1557,7 @@ namespace mfront {
                    "BehaviourData::setGlossaryName: "
                    "no variable named '" +
                        n + "'");
-  }  // end of BehaviourData::addGlossaryName
+  }  // end of addGlossaryName
 
   bool BehaviourData::isGlossaryNameUsed(const std::string& n) const {
     using namespace tfel::glossary;
@@ -1562,7 +1572,7 @@ namespace mfront {
       }
     }
     return false;
-  }  // end of BehaviourData::isGlossaryName
+  }  // end of isGlossaryName
 
   void BehaviourData::setEntryName(const std::string& n, const std::string& e) {
     using namespace tfel::glossary;
@@ -1605,7 +1615,7 @@ namespace mfront {
                    "BehaviourData::setEntryName: "
                    "no variable named '" +
                        n + "'");
-  }  // end of BehaviourData::addEntryName
+  }  // end of addEntryName
 
   bool BehaviourData::isUsedAsEntryName(const std::string& n) const {
     for (const auto& en : this->entryNames) {
@@ -1614,7 +1624,7 @@ namespace mfront {
       }
     }
     return false;
-  }  // end of BehaviourData::isEntryName
+  }  // end of isEntryName
 
   std::string BehaviourData::getVariableNameFromGlossaryNameOrEntryName(
       const std::string& n) const {
@@ -1632,11 +1642,11 @@ namespace mfront {
         "BehaviourData::getVariableNameFromGlossaryNameOrEntryName: "
         "no variable with glossary or entry name '" +
         n + "'");
-  }  // end of BehaviourData::getVariableNameFromGlossaryNameOrEntryName
+  }  // end of getVariableNameFromGlossaryNameOrEntryName
 
   const VariableDescriptionContainer& BehaviourData::getParameters() const {
     return this->parameters;
-  }  // end of BehaviourData::getParameters
+  }  // end of getParameters
 
   void BehaviourData::appendToMembers(const std::string& c) {
     this->members += c;
@@ -1645,11 +1655,11 @@ namespace mfront {
         this->members += '\n';
       }
     }
-  }  // end of BehaviourData::appendToMembers
+  }  // end of appendToMembers
 
   std::string BehaviourData::getMembers() const {
     return this->members;
-  }  // end of BehaviourData::getMembers
+  }  // end of getMembers
 
   void BehaviourData::appendToPrivateCode(const std::string& c) {
     this->privateCode += c;
@@ -1658,11 +1668,11 @@ namespace mfront {
         this->privateCode += '\n';
       }
     }
-  }  // end of BehaviourData::appendToPrivateCode
+  }  // end of appendToPrivateCode
 
   std::string BehaviourData::getPrivateCode() const {
     return this->privateCode;
-  }  // end of BehaviourData::getPrivateCode
+  }  // end of getPrivateCode
 
   void BehaviourData::addStressFreeExpansion(
       const StressFreeExpansionDescription& sfed) {
@@ -1763,12 +1773,12 @@ namespace mfront {
       throw_if(true, "internal error, unsupported stress free expansion type");
     }
     this->sfeds.push_back(sfed);
-  }  // end of BehaviourData::addStressFreeExpansion
+  }  // end of addStressFreeExpansion
 
   const std::vector<BehaviourData::StressFreeExpansionDescription>&
   BehaviourData::getStressFreeExpansionDescriptions() const {
     return this->sfeds;
-  }  // end of BehaviourData::getStressFreeExpansionDescriptions
+  }  // end of getStressFreeExpansionDescriptions
 
   bool BehaviourData::isStressFreeExansionAnisotropic() const {
     for (const auto& sfed : this->sfeds) {
@@ -1787,7 +1797,7 @@ namespace mfront {
       }
     }
     return false;
-  }  // end of BehaviourData::isStressFreeExansionAnisotropic
+  }  // end of isStressFreeExansionAnisotropic
 
   void BehaviourData::getSymbols(
       std::map<std::string, std::string>& symbols) const {
@@ -1800,7 +1810,7 @@ namespace mfront {
     mfront::getSymbols(symbols, this->localVariables);
     mfront::getSymbols(symbols, this->parameters);
     mfront::getSymbols(symbols, this->postProcessingVariables);
-  }  // end of BehaviourData::getSymbols
+  }  // end of getSymbols
 
   void BehaviourData::overrideByAParameter(const std::string& n,
                                            const double v) {
@@ -1811,13 +1821,13 @@ namespace mfront {
           n + "' has already been specified");
     }
     this->overriding_parameters[n] = v;
-  }  // end of BehaviourData::overrideByAParameter
+  }  // end of overrideByAParameter
 
   const CodeBlock& BehaviourData::getUserDefinedInitializeCodeBlock(
       const std::string& n) const {
     return this->getCodeBlock(BehaviourData::UserDefinedInitializeCodeBlock +
                               n);
-  }  // end of BehaviourData::getUserDefinedInitializeCodeBlock
+  }  // end of getUserDefinedInitializeCodeBlock
 
   std::vector<std::string>
   BehaviourData::getUserDefinedInitializeCodeBlocksNames() const {

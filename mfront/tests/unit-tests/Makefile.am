@@ -10,6 +10,7 @@ testdir = $(pkgdatadir)/mfront/tests/unit-tests
 test_PROGRAMS = DSLTest                                    \
 		DSLTest2                                   \
 		SwellingTest                               \
+		SupportedTypesTest                         \
 		BehaviourDataTest                          \
 		BehaviourDescriptionTest                   \
 		BehaviourDescriptionBoundsHandlingTest     \
@@ -26,10 +27,10 @@ test_PROGRAMS = DSLTest                                    \
 		VUMATTest_sp                               \
 		OrthotropicAxesConventionTest
 
-
 DSLTest_SOURCES                     = DSLTest.cxx
 DSLTest2_SOURCES                    = DSLTest2.cxx
 SwellingTest_SOURCES                = SwellingTest.cxx
+SupportedTypesTest_SOURCES          = SupportedTypesTest.cxx
 BehaviourDataTest_SOURCES           = BehaviourDataTest.cxx
 BehaviourDescriptionTest_SOURCES    = BehaviourDescriptionTest.cxx
 BehaviourBrickProviderTest_SOURCES  = BehaviourBrickProviderTest.cxx

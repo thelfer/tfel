@@ -58,14 +58,6 @@ namespace mfront {
   VariableDescription& VariableDescription::operator=(
       const VariableDescription&) = default;
 
-  SupportedTypes::TypeFlag VariableDescription::getTypeFlag() const {
-    return SupportedTypes::getTypeFlag(this->type);
-  }
-
-  SupportedTypes::TypeSize VariableDescription::getTypeSize() const {
-    return SupportedTypes::getTypeSize(this->type, this->arraySize);
-  }
-
   void VariableDescription::setGlossaryName(const std::string& g) {
     using tfel::glossary::Glossary;
     auto throw_if = [](const bool b, const std::string& m) {

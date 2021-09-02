@@ -650,6 +650,8 @@ namespace mfront {
      */
     void addStaticVariable(const StaticVariableDescription&,
                            const RegistrationStatus);
+    //! \return all the integer constants
+    virtual std::map<std::string, int> getIntegerConstants() const;
     /*!
      * \return the value of an integer constant
      * \param[in] n: variable name

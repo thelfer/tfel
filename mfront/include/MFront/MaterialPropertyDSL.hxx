@@ -15,9 +15,8 @@
 #ifndef LIB_MFRONTMATERIALLAWPARSER_HXX
 #define LIB_MFRONTMATERIALLAWPARSER_HXX
 
-#include <string>
 #include <set>
-
+#include <string>
 #include "MFront/DSLBase.hxx"
 #include "MFront/LawFunction.hxx"
 #include "MFront/VariableBoundsDescription.hxx"
@@ -70,6 +69,9 @@ namespace mfront {
    protected:
     typedef void (MaterialPropertyDSL::*MemberFuncPtr)();
     typedef std::map<std::string, MemberFuncPtr> CallBackContainer;
+    std::map<std::string, int> getIntegerConstants() const override;
+    bool useQt() const override;
+    void disableQuantitiesUsageIfNotAlreadySet() override;
     void treatUnknownKeyword() override;
     void reserveName(const std::string&) override;
     bool isNameReserved(const std::string&) const override;

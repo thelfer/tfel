@@ -66,7 +66,7 @@ namespace mfront {
      */
     [[noreturn]] static void throwUndefinedAttribute(const std::string&);
     /*!
-     * Constructor
+     * \brief constructor
      * \param[in] t: variable type
      * \param[in] n: variable name
      * \param[in] as: if greater than 1, this variable will
@@ -74,11 +74,11 @@ namespace mfront {
      * \param[in] l: line number
      */
     VariableDescription(const std::string&,
-                        const std::string&,
-                        const unsigned short,
-                        const size_t);
+        const std::string&,
+        const unsigned short,
+        const size_t);
     /*!
-     * Constructor
+     * \brief constructor
      * \param[in] t: variable type
      * \param[in] s: symbolic name
      * \param[in] n: variable name
@@ -87,14 +87,10 @@ namespace mfront {
      * \param[in] l: line number
      */
     VariableDescription(const std::string&,
-                        const std::string&,
-                        const std::string&,
-                        const unsigned short,
-                        const size_t);
-    //! \return the type flag associated to a the variable
-    SupportedTypes::TypeFlag getTypeFlag() const;
-    //! \return the size of the variable
-    SupportedTypes::TypeSize getTypeSize() const;
+        const std::string&,
+        const std::string&,
+        const unsigned short,
+        const size_t);
     /*!
      * \brief insert a new attribute
      * \param[in] n : name
@@ -219,8 +215,6 @@ namespace mfront {
         std::variant<std::monostate,
                      VariableBoundsDescription,
                      std::map<unsigned short, VariableBoundsDescription>>;
-    //! \brief a simple alias
-    using OptionalString = std::optional<std::string>;
     //! \brief standard bounds
     OptionalVariableBoundsDescription bounds;
     //! \brief standard bounds
@@ -334,7 +328,9 @@ namespace mfront {
      * \return true if a variable with the given name exists
      */
     bool contains(const std::string&) const;
-    //! \return the sum of the sizes of all the variables
+    /*!
+     * \return the sum of the sizes of all the variables
+     */
     SupportedTypes::TypeSize getTypeSize() const;
     //! \return the sum of the array sizes of all the variables
     unsigned short getNumberOfVariables() const;

@@ -56,37 +56,6 @@ namespace std {
 
 namespace mfront {
 
-  static bool isInteger(const std::string& s) {
-    const auto s2 = [&s]() -> std::string {
-      if (s.empty()) {
-        return s;
-      }
-      if ((s.back() == 'u') || (s.back() == 'U') || (s.back() == 'l') ||
-          (s.back() == 'L')) {
-        return s.substr(0, s.size() - 1);
-      } else if ((tfel::utilities::ends_with(s, "ul")) ||
-                 (tfel::utilities::ends_with(s, "uL")) ||
-                 (tfel::utilities::ends_with(s, "lu")) ||
-                 (tfel::utilities::ends_with(s, "Lu")) ||
-                 (tfel::utilities::ends_with(s, "Ul")) ||
-                 (tfel::utilities::ends_with(s, "UL")) ||
-                 (tfel::utilities::ends_with(s, "lU")) ||
-                 (tfel::utilities::ends_with(s, "LU"))) {
-        return s.substr(0, s.size() - 2);
-      }
-      return s;
-    }();
-    if (s2.empty()) {
-      return false;
-    }
-    for (const auto c : s2) {
-      if (!std::isdigit(c)) {
-        return false;
-      }
-    }
-    return true;
-  }
-
   bool isValidMaterialName(const std::string& n) {
     return tfel::utilities::CxxTokenizer::isValidIdentifier(n, true);
   }
@@ -665,67 +634,17 @@ namespace mfront {
     }
   }
 
-  std::pair<std::string, bool> DSLBase::readType() {
-    auto throw_if = [this](const bool b, const std::string& m) {
-      if (b) {
-        this->throwRuntimeError("DSLBase::readType", m);
-      }
-    };
-    auto type = this->current->value;
-    throw_if(!this->isValidIdentifier(type, false),
-             "given type '" + type + "' is not valid.");
-    ++(this->current);
-    this->checkNotEndOfFile("DSLBase::readType");
-    while (this->current->value == "::") {
-      ++(this->current);
-      this->checkNotEndOfFile("DSLBase::readType");
-      const auto t = this->current->value;
-      throw_if(!this->isValidIdentifier(t, false),
-               "given type '" + t + "' is not valid.");
-      type += "::" + t;
-      ++(this->current);
-      this->checkNotEndOfFile("DSLBase::readType");
-    }
-    if (this->current->value == "<") {
-      bool b = false;
-      type += "<";
-      this->checkNotEndOfFile("DSLBase::readType");
-      ++(this->current);
-      this->checkNotEndOfFile("DSLBase::readType");
-      bool c = true;
-      while (c) {
-        if (isInteger(this->current->value)) {
-          type += this->current->value;
-          ++(this->current);
-        } else {
-          const auto r = this->readType();
-          type += r.first;
-          b = r.second;
-          if (!b) {
-            c = false;
-          }
-        }
-        if (c) {
-          this->checkNotEndOfFile("DSLBase::readType");
-          if (this->current->value == ",") {
-            this->readSpecifiedToken("DSLBase::readType", ",");
-            type += ",";
-          } else {
-            c = false;
-          }
-        }
-      }
-      if (b) {
-        if (this->current->value == ">>") {
-          ++(this->current);
-          return {type + '>', false};
-        } else {
-          this->readSpecifiedToken("DSLBase::readType", ">");
-        }
-        type += ">";
-      }
-    }
-    return {type, true};
+  SupportedTypes::TypeParsingOptions DSLBase::getTypeParsingOptions() const {
+    auto opts = SupportedTypes::TypeParsingOptions{};
+    opts.integer_constants = this->getIntegerConstants();
+    opts.use_qt = this->useQt();
+    return opts;
+  }  // end of getTypeParsingOptions
+
+  std::string DSLBase::readType() {
+    this->disableQuantitiesUsageIfNotAlreadySet();
+    return SupportedTypes::extractType(this->current, this->tokens.end(),
+                                       this->getTypeParsingOptions());
   }  // end of DSLBase::readType
 
   void DSLBase::readVarList(VariableDescriptionContainer& cont,
@@ -733,10 +652,7 @@ namespace mfront {
     this->checkNotEndOfFile("DSLBase::readVarList",
                             "Cannot read type of varName.\n");
     const auto r = this->readType();
-    if (!r.second) {
-      this->throwRuntimeError("DSLBase::readVarList", "unbalanced '>'");
-    }
-    this->readVarList(cont, r.first, allowArray);
+    this->readVarList(cont, r, allowArray);
   }  // end of DSLBase::readVarList
 
   std::vector<tfel::utilities::Token> DSLBase::readList(const std::string& m,

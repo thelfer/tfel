@@ -120,10 +120,9 @@ namespace tfel::math {
   template <typename MathObjectTag, typename A, typename B>
   class ComputeBinaryOperationHandler<MathObjectTag, ScalarTag, A, B, OpMult> {
     struct DummyHandle {};
-    using MathObjectTagTypeA = EvaluationResult<A>;
 
    public:
-    using Result = result_type<MathObjectTagTypeA, B, OpMult>;
+    using Result = result_type<EvaluationResult<A>, B, OpMult>;
     using Handle =
         std::conditional_t<tfel::typetraits::isInvalid<Result>(),
                            DummyHandle,
@@ -137,10 +136,9 @@ namespace tfel::math {
   template <typename MathObjectTag, typename A, typename B>
   class ComputeBinaryOperationHandler<MathObjectTag, ScalarTag, A, B, OpDiv> {
     struct DummyHandle {};
-    using MathObjectTagTypeA = EvaluationResult<A>;
 
    public:
-    using Result = result_type<MathObjectTagTypeA, B, OpDiv>;
+    using Result = result_type<EvaluationResult<A>, B, OpDiv>;
     using Handle =
         std::conditional_t<tfel::typetraits::isInvalid<Result>(),
                            DummyHandle,
@@ -158,11 +156,10 @@ namespace tfel::math {
                                       B,
                                       OpPlus> {
     struct DummyHandle {};
-    using MathObjectTagTypeA = EvaluationResult<A>;
-    using MathObjectTagTypeB = EvaluationResult<B>;
 
    public:
-    using Result = result_type<MathObjectTagTypeA, MathObjectTagTypeB, OpPlus>;
+    using Result =
+        result_type<EvaluationResult<A>, EvaluationResult<B>, OpPlus>;
     using Handle =
         std::conditional_t<tfel::typetraits::isInvalid<Result>(),
                            DummyHandle,
@@ -180,11 +177,9 @@ namespace tfel::math {
                                       B,
                                       OpMinus> {
     struct DummyHandle {};
-    using MathObjectTagTypeA = EvaluationResult<A>;
-    using MathObjectTagTypeB = EvaluationResult<B>;
-
    public:
-    using Result = result_type<MathObjectTagTypeA, MathObjectTagTypeB, OpMinus>;
+    using Result =
+        result_type<EvaluationResult<A>, EvaluationResult<B>, OpMinus>;
     using Handle =
         std::conditional_t<tfel::typetraits::isInvalid<Result>(),
                            DummyHandle,
@@ -222,35 +217,33 @@ namespace tfel::math {
    */
   template <typename A, typename B, typename Op>
   class ComputeBinaryResult {
-    //! a simple alias
-    using A_ = std::decay_t<A>;
-    //! a simple alias
-    using B_ = std::decay_t<B>;
-    //! tag of the left hand side
-    typedef typename ComputeObjectTag<A_>::type TagA;
-    //! tag of the right hand side
-    typedef typename ComputeObjectTag<B_>::type TagB;
+    //! \brief tag of the left hand side
+    using TagA = typename ComputeObjectTag<std::decay_t<A>>::type;
+    //! \brief tag of the right hand side
+    using TagB = typename ComputeObjectTag<std::decay_t<B>>::type;
 
    public:
-    //! call to ComputeBinaryOperationHandler to get the Result type.
-    typedef typename ComputeBinaryOperationHandler<TagA, TagB, A, B, Op>::Result
-        Result;
-    //! call to ComputeBinaryOperationHandler to get the Handle type.
-    typedef typename ComputeBinaryOperationHandler<TagA, TagB, A, B, Op>::Handle
-        Handle;
+    //! \brief call to ComputeBinaryOperationHandler to get the Result type.
+    using Result =
+        typename ComputeBinaryOperationHandler<TagA, TagB, A, B, Op>::Result;
+    //! \brief call to ComputeBinaryOperationHandler to get the Handle type.
+    using Handle =
+        typename ComputeBinaryOperationHandler<TagA, TagB, A, B, Op>::Handle;
   };  // end of ComputeBinaryResult.
 
   //! an alias for the result of an binary operation
   template <typename T1, typename T2, typename Op>
   using BinaryOperationResult =
       typename ComputeBinaryResult<T1, T2, Op>::Result;
-  //! a metafunction returning true if the result of the binary operation is
-  //! valid
+  /*!
+   *\brief  a metafunction returning true if the result of the binary operation
+   * is valid
+   */
   template <typename T1, typename T2, typename Op>
   using isBinaryOperationResultTypeValid = std::integral_constant<
       bool,
       !tfel::typetraits::IsInvalid<BinaryOperationResult<T1, T2, Op>>::cond>;
-  //! an alias of the handler of an binary operation
+  //! \brief an alias of the handler of an binary operation
   template <typename T1, typename T2, typename Op>
   using BinaryOperationHandler =
       typename ComputeBinaryResult<T1, T2, Op>::Handle;

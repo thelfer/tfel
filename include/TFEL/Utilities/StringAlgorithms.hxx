@@ -16,7 +16,7 @@
 
 #include <vector>
 #include <string>
-
+#include <string_view>
 #include "TFEL/Config/TFELConfig.hxx"
 
 namespace tfel::utilities {
@@ -27,14 +27,14 @@ namespace tfel::utilities {
    * \return true if the first string starts with the second
    */
   TFELUTILITIES_VISIBILITY_EXPORT
-  bool starts_with(const std::string&, const std::string&);
+  bool starts_with(std::string_view, std::string_view);
   /*!
    * \param[in] s1: first string
    * \param[in] s2: second string
    * \return true if the first string ends with the second
    */
   TFELUTILITIES_VISIBILITY_EXPORT
-  bool ends_with(const std::string&, const std::string&);
+  bool ends_with(std::string_view, std::string_view);
   /*!
    * split a string into tokens using the specified delimiter
    * \param s : string to be splitted
@@ -42,7 +42,7 @@ namespace tfel::utilities {
    * \return the tokens
    */
   TFELUTILITIES_VISIBILITY_EXPORT
-  std::vector<std::string> tokenize(const std::string&, const char);
+  std::vector<std::string> tokenize(std::string_view, const char);
 
   /*!
    * split a string into tokens using the specified delimiter
@@ -51,7 +51,7 @@ namespace tfel::utilities {
    * \return the tokens
    */
   TFELUTILITIES_VISIBILITY_EXPORT
-  std::vector<std::string> tokenize(const std::string&, const std::string&);
+  std::vector<std::string> tokenize(std::string_view, std::string_view);
 
   /*!
    * \brief replace all occurences of substring s1 by s2
@@ -63,9 +63,9 @@ namespace tfel::utilities {
    * been replaced by s2
    */
   TFELUTILITIES_VISIBILITY_EXPORT std::string replace_all(
-      const std::string&,
-      const std::string&,
-      const std::string&,
+      std::string_view,
+      std::string_view,
+      std::string_view,
       const std::string::size_type = 0u);
 
   /*!
@@ -78,9 +78,9 @@ namespace tfel::utilities {
    */
   TFELUTILITIES_VISIBILITY_EXPORT void replace_all(
       std::string&,
-      const std::string&,
-      const std::string&,
-      const std::string&,
+      std::string_view,
+      std::string_view,
+      std::string_view,
       const std::string::size_type = 0u);
 
   /*!
@@ -91,7 +91,7 @@ namespace tfel::utilities {
    * \return a copy of c where all occurences of c1 have
    * been replaced by c2
    */
-  TFELUTILITIES_VISIBILITY_EXPORT std::string replace_all(const std::string&,
+  TFELUTILITIES_VISIBILITY_EXPORT std::string replace_all(std::string_view,
                                                           const char,
                                                           const char);
 
@@ -105,7 +105,7 @@ namespace tfel::utilities {
    */
   TFELUTILITIES_VISIBILITY_EXPORT void replace_all(std::string&,
                                                    const char,
-                                                   const std::string&);
+                                                   std::string_view);
   /*!
    * \brief convert a string to the given type
    * \param[in] s: string to be converted

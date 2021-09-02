@@ -356,11 +356,20 @@ namespace mfront {
       const std::string& name,
       const Hypothesis h) const {
     using namespace std;
-    auto throw_if = [](const bool b, const std::string& m) {
-      tfel::raise_if(b,
-                     "SymbolsGenerator::writeMaterialPropertiesSymbols: " + m);
+    auto throw_if = [](const bool b, const std::string_view m) {
+      if (b) {
+        tfel::raise("SymbolsGenerator::writeMaterialPropertiesSymbols: " +
+                    std::string{m});
+      }
     };
     const auto mprops = i.buildMaterialPropertiesList(mb, h);
+    for (const auto& mp : mprops.first) {
+      if (SupportedTypes::getTypeFlag(mp.type) != SupportedTypes::SCALAR) {
+        throw_if(
+            true,
+            "internal error: the material properties shall all be scalars");
+      }
+    }
     if (mprops.first.empty()) {
       out << "MFRONT_SHAREDOBJ unsigned short "
           << this->getSymbolName(i, name, h) << "_nMaterialProperties = 0u;\n\n"
@@ -370,18 +379,9 @@ namespace mfront {
     } else {
       const auto& last = mprops.first.back();
       SupportedTypes::TypeSize s;
-      throw_if((mprops.second.getTensorSize() != 0) ||
-                   (mprops.second.getStensorSize() != 0) ||
-                   (mprops.second.getTVectorSize() != 0),
-               "internal error: the material properties shall all be scalars");
       s = last.offset;
       s += SupportedTypes::getTypeSize(last.type, last.arraySize);
       s -= mprops.second;
-      throw_if((s.getTensorSize() != 0) || (s.getStensorSize() != 0) ||
-                   (s.getTVectorSize() != 0),
-               "internal error: the material properties shall all be scalars");
-      throw_if(s.getScalarSize() < 0,
-               "internal error: negative number of the material properties");
       vector<BehaviourMaterialProperty>::size_type ib =
           0; /* index of the first element which
               * is not imposed by the material properties */
@@ -394,8 +394,6 @@ namespace mfront {
         }
       }
       if (!found) {
-        throw_if(s.getScalarSize() != 0,
-                 "internal error: inconsistent offset declaration");
         out << "MFRONT_SHAREDOBJ unsigned short "
             << this->getSymbolName(i, name, h)
             << "_nMaterialProperties = 0u;\n\n";
@@ -404,11 +402,11 @@ namespace mfront {
             << "_MaterialProperties = nullptr;\n\n";
       } else {
         out << "MFRONT_SHAREDOBJ unsigned short "
-            << this->getSymbolName(i, name, h)
-            << "_nMaterialProperties = " << s.getScalarSize() << "u;\n\n";
+            << this->getSymbolName(i, name, h) << "_nMaterialProperties = " << s
+            << "u;\n\n";
         out << "MFRONT_SHAREDOBJ const char *"
-            << this->getSymbolName(i, name, h) << "_MaterialProperties["
-            << s.getScalarSize() << "u] = {";
+            << this->getSymbolName(i, name, h) << "_MaterialProperties[" << s
+            << "u] = {";
         for (auto idx = ib; idx != mprops.first.size();) {
           const auto& m = mprops.first[idx];
           if (m.arraySize == 1u) {

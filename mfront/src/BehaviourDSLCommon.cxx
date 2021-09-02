@@ -12,7 +12,6 @@
  * project under specific licensing conditions.
  */
 
-#include <iostream>
 #include <algorithm>
 #include <stdexcept>
 #include <iterator>
@@ -111,8 +110,6 @@ namespace mfront {
       : useStateVarTimeDerivative(false),
         explicitlyDeclaredUsableInPurelyImplicitResolution(false) {
     using MemberFunc = void (BehaviourDSLCommon::*)();
-    // By default disable use of quantities
-    this->mb.setUseQt(false);
     // By default, a behaviour can be used in a purely implicit resolution
     const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     this->mb.setUsableInPurelyImplicitResolution(h, true);
@@ -1070,6 +1067,11 @@ namespace mfront {
       const StaticVariableDescription& v) {
     this->mb.addStaticVariable(ModellingHypothesis::UNDEFINEDHYPOTHESIS, v);
   }  // end of addStaticVariableDescription
+
+  std::map<std::string, int> BehaviourDSLCommon::getIntegerConstants() const {
+    return this->mb.getIntegerConstants(
+        ModellingHypothesis::UNDEFINEDHYPOTHESIS);
+  }
 
   int BehaviourDSLCommon::getIntegerConstant(const std::string& n) const {
     return this->mb.getIntegerConstant(ModellingHypothesis::UNDEFINEDHYPOTHESIS,
@@ -3463,6 +3465,14 @@ namespace mfront {
     this->reserveName("mp_bounds_check_status");
   }  // end of registerDefaultVarNames
 
+  bool BehaviourDSLCommon::useQt() const {
+    return this->mb.useQt();
+  } // end of useQt
+
+  void BehaviourDSLCommon::disableQuantitiesUsageIfNotAlreadySet() {
+    this->mb.disableQuantitiesUsageIfNotAlreadySet();
+  }  // end of disableQuantitiesUsageIfNotAlreadySet
+
   void BehaviourDSLCommon::reserveName(const std::string& n) {
     this->mb.reserveName(ModellingHypothesis::UNDEFINEDHYPOTHESIS, n);
   }
@@ -5059,58 +5069,7 @@ namespace mfront {
         append(this->mb.getTangentOperatorBlockName(blocks.front()) + "(Dt)");
       }
     } else {
-      tfel::math::tvector<10, int> offset;
-      tfel::fsalgo::fill<10>::exe(offset.begin(), 0);
-      auto update_offset = [&offset](const SupportedTypes::TypeSize s1,
-                                     const SupportedTypes::TypeSize s2) {
-        offset[0] += s1.getScalarSize() * s2.getScalarSize();
-        offset[1] += s1.getTVectorSize() * s2.getTVectorSize();
-        offset[2] += s1.getStensorSize() * s2.getStensorSize();
-        offset[3] += s1.getTensorSize() * s2.getTensorSize();
-        offset[4] += s1.getScalarSize() * s2.getTVectorSize() +
-                     s2.getScalarSize() * s1.getTVectorSize();
-        offset[5] += s1.getScalarSize() * s2.getStensorSize() +
-                     s2.getScalarSize() * s1.getStensorSize();
-        offset[6] += s1.getScalarSize() * s2.getTensorSize() +
-                     s2.getScalarSize() * s1.getTensorSize();
-        offset[7] += s1.getTVectorSize() * s2.getStensorSize() +
-                     s2.getTVectorSize() * s1.getStensorSize();
-        offset[8] += s1.getTVectorSize() * s2.getTensorSize() +
-                     s2.getTVectorSize() * s1.getTensorSize();
-        offset[9] += s1.getStensorSize() * s2.getTensorSize() +
-                     s2.getStensorSize() * s1.getTensorSize();
-      };
-      auto get_offset = [&offset]() -> std::string {
-        const char* sizes[10] = {"",
-                                 "TVectorSize*TVectorSize",
-                                 "StensorSize*StensorSize",
-                                 "TensorSize*TensorSize",
-                                 "TVectorSize",
-                                 "StensorSize",
-                                 "TensorSize",
-                                 "TVectorSize*StensorSize",
-                                 "TVectorSize*TensorSize",
-                                 "StensorSize*TensorSize"};
-        std::string o;
-        if (offset[0] != 0) {
-          o += std::to_string(offset[0]);
-        }
-        for (int i = 1; i != 10; ++i) {
-          if (offset[i] != 0) {
-            if (!o.empty()) {
-              o += "+";
-            }
-            if (offset[i] != 1) {
-              o += std::to_string(offset[i]) + "*";
-            }
-            o += sizes[i];
-          }
-        }
-        if (o.empty()) {
-          return "0";
-        }
-        return o;
-      };
+      auto o = SupportedTypes::TypeSize{};
       // write blocks
       for (const auto& b : blocks) {
         const auto& v1 = b.first;
@@ -5118,72 +5077,19 @@ namespace mfront {
         if ((v1.arraySize != 1u) || (v2.arraySize != 1u)) {
           break;
         }
-        auto throw_unsupported_block = [&v1, &v2] {
-          tfel::raise(
-              "BehaviourDSLCommon::getBehaviourConstructorsInitializers:"
-              "tangent operator blocks associated with "
-              "the derivative of '" +
-              displayName(v1) + "' (of type '" + v1.type +
-              "') with respect to '" + displayName(v2) + "' (of type '" +
-              v2.type + "') is not supported");
-        };
         const auto bn = this->mb.getTangentOperatorBlockName(b);
-        if (v1.getTypeFlag() == SupportedTypes::SCALAR) {
-          const auto o = get_offset();
-          if (v2.getTypeFlag() == SupportedTypes::SCALAR) {
-            append(bn + "(Dt[" + o + "])");
-          } else if ((v2.getTypeFlag() == SupportedTypes::STENSOR) ||
-                     (v2.getTypeFlag() == SupportedTypes::TENSOR)) {
-            if (o != "0") {
-              append(bn + "(Dt.begin()+" + o + ")");
-            } else {
-              append(bn + "(Dt.begin())");
-            }
-          } else {
-            throw_unsupported_block();
-          }
-        } else if (v1.getTypeFlag() == SupportedTypes::TVECTOR) {
-          if ((v2.getTypeFlag() == SupportedTypes::SCALAR) ||
-              (v2.getTypeFlag() == SupportedTypes::TVECTOR)) {
-            const auto o = get_offset();
-            if (o != "0") {
-              append(bn + "(Dt.begin()+" + o + ")");
-            } else {
-              append(bn + "(Dt.begin())");
-            }
-          } else {
-            throw_unsupported_block();
-          }
-        } else if (v1.getTypeFlag() == SupportedTypes::STENSOR) {
-          if ((v2.getTypeFlag() == SupportedTypes::SCALAR) ||
-              (v2.getTypeFlag() == SupportedTypes::STENSOR) ||
-              (v2.getTypeFlag() == SupportedTypes::TENSOR)) {
-            const auto o = get_offset();
-            if (o != "0") {
-              append(bn + "(Dt.begin()+" + o + ")");
-            } else {
-              append(bn + "(Dt.begin())");
-            }
-          } else {
-            throw_unsupported_block();
-          }
-        } else if (v1.getTypeFlag() == SupportedTypes::TENSOR) {
-          if ((v2.getTypeFlag() == SupportedTypes::SCALAR) ||
-              (v2.getTypeFlag() == SupportedTypes::STENSOR) ||
-              (v2.getTypeFlag() == SupportedTypes::TENSOR)) {
-            const auto o = get_offset();
-            if (o != "0") {
-              append(bn + "(Dt.begin()+" + o + ")");
-            } else {
-              append(bn + "(Dt.begin())");
-            }
-          } else {
-            throw_unsupported_block();
-          }
+        if ((v1.getTypeFlag() == SupportedTypes::SCALAR) &&
+            (v2.getTypeFlag() == SupportedTypes::SCALAR)) {
+          append(bn + "(Dt[" + o.asString() + "])");
         } else {
-          throw_unsupported_block();
+          if (o.isNull()) {
+            append(bn + "(Dt.begin())");
+          } else {
+            append(bn + "(Dt.begin()+" + o.asString() + ")");
+          }
         }
-        update_offset(v1.getTypeSize(), v2.getTypeSize());
+        o += SupportedTypes::TypeSize::getDerivativeSize(v1.getTypeSize(),
+                                                         v2.getTypeSize());
       }
     }
     return init;
@@ -6577,7 +6483,8 @@ namespace mfront {
         externalStateVarsSize += this->getTypeSize(v.type, v.arraySize);
       }
       externalStateVarsSize2 = externalStateVarsSize;
-      externalStateVarsSize2 -= SupportedTypes::TypeSize(1, 0, 0, 0);
+      externalStateVarsSize2 -=
+          SupportedTypes::TypeSize(SupportedTypes::SCALAR);
     }
     os << "/*!\n"
        << "* Partial specialisation for " << this->mb.getClassName() << ".\n"

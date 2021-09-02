@@ -1560,11 +1560,13 @@ docs/web/release-notes-3.1.4.md -text
 docs/web/release-notes-3.1.5.md -text
 docs/web/release-notes-3.1.6.md -text
 docs/web/release-notes-3.1.7.md -text
+docs/web/release-notes-3.1.8.md -text
 docs/web/release-notes-3.1.md -text
 docs/web/release-notes-3.2.1.md -text
 docs/web/release-notes-3.2.2.md -text
 docs/web/release-notes-3.2.3.md -text
 docs/web/release-notes-3.2.4.md -text
+docs/web/release-notes-3.2.5.md -text
 docs/web/release-notes-3.2.md -text
 docs/web/release-notes-3.3.1.md -text
 docs/web/release-notes-3.3.2.md -text
@@ -6771,6 +6773,7 @@ mfront/tests/unit-tests/OrthotropicAxesConventionTest.cxx -text
 mfront/tests/unit-tests/SlipSystemsTest.cxx -text
 mfront/tests/unit-tests/StandardElasticityBrickTest.cxx -text
 mfront/tests/unit-tests/StandardElastoViscoPlasticityBrickTest.cxx -text
+mfront/tests/unit-tests/SupportedTypesTest.cxx -text
 mfront/tests/unit-tests/SwellingTest.cxx.in -text
 mfront/tests/unit-tests/TargetsDescriptionTest.cxx -text
 mfront/tests/unit-tests/UMATTest.cxx -text

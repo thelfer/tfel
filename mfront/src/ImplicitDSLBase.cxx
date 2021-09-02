@@ -457,8 +457,6 @@ namespace mfront {
   } // end of setNonLinearSolver
 
   void ImplicitDSLBase::treatAlgorithm() {
-    const auto& f =
-        NonLinearSystemSolverFactory::getNonLinearSystemSolverFactory();
     if (this->solver != nullptr) {
       this->throwRuntimeError("ImplicitDSLBase::treatAlgorithm",
                               "an algorithm has already been defined.");
@@ -1354,7 +1352,7 @@ namespace mfront {
     const auto n =
         mfront::getTypeSize(
             this->mb.getBehaviourData(h).getIntegrationVariables())
-            .getValue({"ModellingHypothesisToSpaceDimension<" + hn + ">::value",
+            .asString({"ModellingHypothesisToSpaceDimension<" + hn + ">::value",
                        "ModellingHypothesisToStensorSize<" + hn + ">::value",
                        "ModellingHypothesisToTensorSize<" + hn + ">::value"});
     os << "friend struct tfel::math::TinyNonLinearSolverBase<" << n

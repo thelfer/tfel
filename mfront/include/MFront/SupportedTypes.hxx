@@ -18,7 +18,10 @@
 #include <array>
 #include <string>
 #include <vector>
-
+#include <variant>
+#include <optional>
+#include <string_view>
+#include "TFEL/Utilities/CxxTokenizer.hxx"
 #include "TFEL/Material/ModellingHypothesis.hxx"
 #include "MFront/MFrontConfig.hxx"
 
@@ -32,10 +35,10 @@ namespace mfront {
 #else
     static constexpr int ArraySizeLimit = 10u;
 #endif /* LIB_TFEL_SYSTEM_EXTERNALFUNCTIONSPROTOTYPES_HXX */
-    //! type of variable supported
+    //! \brief flag associaed with a variable type
     enum TypeFlag { SCALAR, TVECTOR, STENSOR, TENSOR };
     /*!
-     * class handling the size of a variable or a set of variables as
+     * \brief class handling the size of a variable or a set of variables as
      * a function of the variables' type and the modelling hypothesis
      */
     struct MFRONT_VISIBILITY_EXPORT TypeSize {
@@ -43,20 +46,47 @@ namespace mfront {
       using ModellingHypothesis = tfel::material::ModellingHypothesis;
       //! \brief a simple alias
       using Hypothesis = tfel::material::ModellingHypothesis::Hypothesis;
-      //! constructor
+      /*!
+       * \return the type size of a derivative of a variable of size `s1`
+       * with respect to a variable of size `s2`.
+       * \param[in] s1: size of the first variable
+       * \param[in] s2: size of the second variable
+       * \note s1 and s2 must not describe describe a unique type
+       * (`describesAnUniqueType` must return true) and not an array (`isArray`
+       * must return false).
+       */
+      static TypeSize getDerivativeSize(const TypeSize&, const TypeSize&);
+      //! \brief constructor
       TypeSize();
-      //! move constructor
+      //! \brief move constructor
       TypeSize(TypeSize&&);
-      //! copy constructor
+      //! \brief copy constructor
       TypeSize(const TypeSize&);
       /*!
        * \brief constructor
-       * \param[in] a: scalar size
-       * \param[in] b: vector size
-       * \param[in] c: symmetric tensor size
-       * \param[in] d: (unsymmetric) tensor size
+       * \param[in] a: array size
+       * \param[in] i1: vector exponent
+       * \param[in] i2: symmetric tensor exponent
+       * \param[in] i3: (unsymmetric) tensor exponent
+       *
+       * \note if the three exponents i1, i2 and i3 are null, a scalar is
+       * described.
        */
-      TypeSize(const int, const int, const int, const int);
+      TypeSize(const unsigned int,
+               const unsigned int,
+               const unsigned int,
+               const unsigned int);
+      /*!
+       * \brief constructor
+       * \param[in] a: array size
+       * \param[in] f: type flag
+       */
+      TypeSize(const unsigned int, const TypeFlag);
+      /*!
+       * \brief constructor
+       * \param[in] f: type flag
+       */
+      TypeSize(const TypeFlag);
       //! assignement
       TypeSize& operator=(const TypeSize&);
       //! move assignement
@@ -75,14 +105,15 @@ namespace mfront {
       bool operator!=(const TypeSize&) const;
       //! comparision operator
       bool operator==(const TypeSize&) const;
-      //! return the scalar part of the size
-      int getScalarSize() const;
-      //! return the vector part of the size
-      int getTVectorSize() const;
-      //! return the symmetric tensor part of the size
-      int getStensorSize() const;
-      //! return the (un)symmetric tensor part of the size
-      int getTensorSize() const;
+
+      /*!
+       * \return a string representation of the type size.
+       *
+       * - The size of a tiny vector is `TVectorSize`.
+       * - The size of a symmetric tensor is `StensorSize`.
+       * - The size of a (unsymmetric) tensor is `TensorSize`.
+       */
+      std::string asString() const;
       /*!
        * \brief return a string representation of the type size given
        * the string representation of a tiny vector, a symmetric tensor and a
@@ -90,40 +121,137 @@ namespace mfront {
        * \param[in] values: string representations of a tiny vector, a symmetric
        * tensor and a non symmetric tensor
        */
-      std::string getValue(const std::array<std::string, 3u>&) const;
+      std::string asString(const std::array<std::string, 3u>&) const;
       /*!
        *
        */
-      int getValueForDimension(const unsigned short) const;
+      unsigned int getValueForDimension(const unsigned short) const;
 
-      int getValueForModellingHypothesis(const Hypothesis) const;
+      unsigned int getValueForModellingHypothesis(const Hypothesis) const;
       //! \return true if all components of the TipeSize are null
       bool isNull() const;
+      /*!
+       * \return true if the type
+       */
+      bool isScalarOrArrayOfScalars();
       /*!
        * \return true if only the scalar component is not null and is
        * equal to one
        */
       bool isOne() const;
+      //! \return true if the type size describe an array of an unique type
+      bool isArray() const;
+      //! \return true if the type size describe an unique type (can be an
+      //! array)
+      bool describesAnUniqueType() const;
 
      private:
-      //! ouptut operator
+      /*!
+       * \brief structure representing the size of an array of a unique type
+       */
+      struct Monomial {
+        //! \brief scalar exponent
+        int array_size = 0;
+        //! \brief vector exponent
+        unsigned int tvector_exponent = 0;
+        //! \brief symmetric tensor exponent
+        unsigned int stensor_exponent = 0;
+        //! \brie unsymmetric tensor exponent
+        unsigned int tensor_exponent = 0;
+      };
+      /*!
+       * \return true if two monomials match (i.e. both monomials have the
+       * same exponents but not necessarily the same array sizes)
+       * \param[in] m1: first monomial
+       * \param[in] m2: second monomial
+       */
+      static bool matches(const Monomial& m1, const Monomial& m2);
+      /*!
+       * \return an iterator to a matching monomial (i.e. a monomial with
+       * the same exponent but not necessarily the same array size) if any
+       * or an iterator past the last monomial otherwise.
+       *
+       * \param[in] m: monomial
+       */
+      std::vector<Monomial>::iterator findMatchingMonomial(const Monomial&);
+      /*!
+       * \return an iterator to a matching monomial (i.e. a monomial with the
+       * same exponent but not necessarily the same array size) if any or an
+       * iterator past the last monomial otherwise.
+       *
+       * \param[in] m: monomial
+       */
+      std::vector<Monomial>::const_iterator findMatchingMonomial(
+          const Monomial&) const;
+
+      //!  \brief list of monomials
+      std::vector<Monomial> monomials;
+
+      //
       friend std::ostream& operator<<(std::ostream&, const TypeSize&);
-      //! scalar part
-      int scalarSize = 0;
-      //! vector part
-      int tvectorSize = 0;
-      //! symmetric tensor part
-      int stensorSize = 0;
-      //! (un)symmetric tensor part
-      int tensorSize = 0;
-    };  // end of class SupportedTypes::TypeSize
+    };  // end of struct SupportedTypes::TypeSize
+
+    /*!
+     * \brief a small structure which allows to configure how type can be
+     * parsed.
+     */
+    struct TypeParsingOptions {
+      TypeParsingOptions();
+      TypeParsingOptions(TypeParsingOptions&&);
+      TypeParsingOptions(const TypeParsingOptions&);
+      TypeParsingOptions& operator=(TypeParsingOptions&&);
+      TypeParsingOptions& operator=(const TypeParsingOptions&);
+      ~TypeParsingOptions();
+      /*!
+       * \brief integer constants are static variables with the `int` type whose
+       * size is known. Integer constants are replaced by their values during
+       * the type evaluation.
+       */
+      std::map<std::string, int> integer_constants;
+      /*!
+       * \brief boolean stating if the usage of quantities is allowed
+       */
+      bool use_qt = true;
+    };
+
     //! \return a list of type names associated with type flags
-    static const std::map<std::string, TypeFlag>& getTypeFlags();
+    static const std::map<std::string, TypeFlag, std::less<>>& getTypeFlags();
+    //! \brief a simple alias
+    using const_iterator = tfel::utilities::CxxTokenizer::const_iterator;
+    /*!
+     * \return if the given value designates one of the supported  constexpr
+     * integer variables, i.e. `N`, `TVectorSize`, `StensorSize`, `TensorSize`.
+     * \param[in] v: value
+     */
+    static bool isSupportedConstexprIntegerVariables(const std::string_view);
+    /*!
+     * \return a normalized representation of a type read from a list of tokens.
+     * \param[in] current: current position.
+     * \param[in] end: iterator past the last token.
+     * \param[in] opts: parsing options
+     */
+    static std::string extractType(
+        const_iterator&,
+        const const_iterator&,
+        const TypeParsingOptions& = TypeParsingOptions());
+    /*!
+     * \return a normalized representation of a type read from a string.
+     * \param[in] s: string.
+     * \param[in] opts: parsing options
+     */
+    static std::string extractType(
+        const std::string_view,
+        const TypeParsingOptions& = TypeParsingOptions());
     /*!
      * \return the flag associated with the given type
      * \param[in] t : type
      */
-    static TypeFlag getTypeFlag(const std::string&);
+    static TypeFlag getTypeFlag(const std::string_view);
+    /*!
+     * \param[in] t : variable type
+     * \param[in] a : array size
+     */
+    static TypeSize getTypeSize(const std::string_view, const unsigned short);
     //! default constructor
     SupportedTypes();
     //! move constructor
@@ -138,19 +266,90 @@ namespace mfront {
      * \return true if the given type is supported
      * \param[in] t : type
      */
-    bool isSupportedType(const std::string&) const;
-    //! return a map associating a supported type to is type flag
-    /*!
-     * \param[in] t : variable type
-     * \param[in] a : array size
-     */
-    static TypeSize getTypeSize(const std::string&, const unsigned short);
-
-    std::string getTimeDerivativeType(const std::string&) const;
+    bool isSupportedType(const std::string_view) const;
+    //! \return the
+    std::string getTimeDerivativeType(const std::string_view) const;
     //! desctructor
     virtual ~SupportedTypes();
 
-  };  // end of class SupportedTypes
+   private:
+    /*!
+     * \brief a simple structure which represents a C++ type
+     */
+    struct TypeInformation {
+      //! \brief a simple alias
+      using IntegerTemplateArgument = std::variant<int, std::string>;
+      //! \brief a simple alias
+      using TemplateArgument =
+          std::variant<TypeInformation, IntegerTemplateArgument>;
+      //! \brief base type
+      std::string type;
+      //! \brief list of template arguments
+      std::optional<std::vector<TemplateArgument>> template_arguments;
+    };
+    /*!
+     * \return the flag associated with the given type
+     * \param[in] t : type
+     */
+    static std::optional<TypeFlag> getTypeFlag(const TypeInformation&);
+    //
+    static void normalize(TypeInformation&, const TypeParsingOptions&);
+    static bool matchesTFELMathType(const std::string_view, const std::string&);
+    static void normalizeRawScalarType(const TypeInformation&);
+    static void normalizeQuantity(TypeInformation&, const TypeParsingOptions&);
+    static void normalizeScalarType(TypeInformation&,
+                                    const TypeParsingOptions&);
+    static bool checkIntegerTemplateArgument(
+        const TypeInformation::TemplateArgument&);
+    static void normalizeTinyVectorTemplateArguments(TypeInformation&,
+                                                     const TypeParsingOptions&);
+    static void normalizeTinyMatrixTemplateArguments(TypeInformation&,
+                                                     const TypeParsingOptions&);
+    static void normalizeTensorialTypeTemplateArguments(
+        TypeInformation&, const TypeParsingOptions&);
+    static std::vector<std::string> getSupportedTFELMathTensorialTypes();
+    static std::string encode(const TypeInformation&);
+    /*!
+     * \return the information about a type
+     * \param[in] t: type
+     * \param[in] opts: type parsing options
+     */
+    static TypeInformation getTypeInformation(const std::string_view,
+                                              const TypeParsingOptions&);
+    /*!
+     * \brief extract a type from tokens
+     * \return a pair whose for element is a type information and the second
+     * element a boolean. This boolean is false if a template argument list
+     * must be closed.
+     * \param[in] current: current position.
+     * \param[in] end: iterator past the last token.
+     * \param[in] opts: type parsing options
+     */
+    static std::pair<TypeInformation, bool> parseType(
+        const_iterator&, const const_iterator&, const TypeParsingOptions&);
+    /*!
+     * \brief check if given iterator is after the last valid iterator
+     * \param[in] c: current position
+     * \param[in] e: iterator past the last token.
+     */
+    static void checkIteratorValidity(const const_iterator,
+                                      const const_iterator&);
+    /*!
+     * \brief check if the given iterator points to a token with the given
+     * value and increments the iterator. \param[in] c: current position.
+     * \param[in] e: iterator past the last token.
+     * \param[in] v: expected value.
+     */
+    static void checkCurrentValueAndIncrementIterator(const_iterator&,
+                                                      const const_iterator&,
+                                                      const std::string_view);
+    /*!
+     * \return an optional value which contains the value of the integer
+     * represented by the given string, if the string contains an integer.
+     * \param[in] s: string
+     */
+    static std::optional<int> extractInteger(const std::string_view);
+  };  // end of struct SupportedTypes
 
   /*!
    * \brief convert to string

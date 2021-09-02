@@ -1,16 +1,35 @@
-% Material properties in MFront
-% Helfer Thomas
-% August 15, 2014
+---
+title: Implementation material properties
+author: Thomas Helfer
+date: 19/08/2021
+lang: en-EN
+link-citations: true
+colorlinks: true
+figPrefixTemplate: "$$i$$"
+tblPrefixTemplate: "$$i$$"
+secPrefixTemplate: "$$i$$"
+eqnPrefixTemplate: "($$i$$)"
+---
 
 Material properties generally depend on some state variables which
 describes the current thermodynamical state of the material.
 
-# A first example: uranium dioxide Young modulus
+# A first example: Young modulus of uranium dioxide 
+
+The Young modulus of uranium dioxide is generally expressed as a
+function of the porosity of the material and its temperature as follows:
+
+\[
+E(T,f)=2.2693\,10^{11}\,(1-2.5\,f)\,(1-6.786\,10^{-5}\,T-4.23\,10^{-8}\,T^{2})
+\]
+
+
+
 
 A possible implementation of the Young modulus of uranium dioxide is:
 
 ~~~~ {#UO2YoungModulus .cpp .numberLines}
-@Parser MaterialLaw;          // treating a material property
+@DSL MaterialLaw;          // treating a material property
 @Material UO2;                // material name
 @Law YoungModulus_Martin1989; // name of the material property 
 @Author   T. Helfer;  // author name
@@ -41,9 +60,6 @@ f.setGlossaryName("Porosity");
 
 The code computing the Young modulus, introduced by the `@Function`
 keyword on line 24, is reasonably closed to the mathematical
-expression of the material property:
-\[
-E(T,f)=2.2693\,10^{11}\,(1-2.5\,f)\,(1-6.786\,10^{-5}\,T-4.23\,10^{-8}\,T^{2})
-\]
+expression of the material property.
 
 <!-- Local IspellDict: english -->

@@ -1057,9 +1057,7 @@ namespace mfront {
     }
     ErrorEvaluation eev;
     auto svsize = d.getStateVariables().getTypeSize();
-    if (svsize.getScalarSize() + svsize.getTVectorSize() +
-            3u * svsize.getStensorSize() + 3u * svsize.getTensorSize() >=
-        20) {
+    if (svsize.getValueForDimension(1) >= 20) {
       eev = MAXIMUMVALUEERROREVALUATION;
     } else {
       eev = ERRORSUMMATIONEVALUATION;
@@ -2028,9 +2026,7 @@ namespace mfront {
     }
     ErrorEvaluation eev;
     auto svsize = d.getStateVariables().getTypeSize();
-    if (svsize.getScalarSize() + svsize.getTVectorSize() +
-            3u * svsize.getStensorSize() + 3u * svsize.getTensorSize() >=
-        20) {
+    if (svsize.getValueForDimension(1) >= 20) {
       eev = MAXIMUMVALUEERROREVALUATION;
     } else {
       eev = ERRORSUMMATIONEVALUATION;

@@ -31,7 +31,6 @@ struct BehaviourDescriptionTest final : public tfel::tests::TestCase {
   }  // end of BehaviourDescriptionTest
 
   tfel::tests::TestResult execute() override {
-    using namespace mfront;
     this->test1();
     this->test2(&BehaviourDescription::declareAsASmallStrainStandardBehaviour);
     {
@@ -40,9 +39,9 @@ struct BehaviourDescriptionTest final : public tfel::tests::TestCase {
       TFEL_TESTS_CHECK_THROW(bd.declareAsASmallStrainStandardBehaviour(),
                              std::runtime_error);
       TFEL_TESTS_CHECK_THROW(bd.declareAsAFiniteStrainStandardBehaviour(true),
-                             std::runtime_error);
+			     std::runtime_error);
       TFEL_TESTS_CHECK_THROW(bd.declareAsACohesiveZoneModel(),
-                             std::runtime_error);
+			     std::runtime_error);
     }
     this->test2(&BehaviourDescription::declareAsACohesiveZoneModel);
     this->test3(&BehaviourDescription::addMaterialProperty);
@@ -136,12 +135,10 @@ struct BehaviourDescriptionTest final : public tfel::tests::TestCase {
   }  // end of test3
 
   void test4() {
-    using std::runtime_error;
     BehaviourDescription bd;
-    TFEL_TESTS_ASSERT(!bd.useQt());
     bd.setUseQt(true);
     TFEL_TESTS_ASSERT(bd.useQt());
-    TFEL_TESTS_CHECK_THROW(bd.setUseQt(false), runtime_error);
+    TFEL_TESTS_CHECK_THROW(bd.setUseQt(false), std::runtime_error);
   }
 
   void test5() {

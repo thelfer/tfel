@@ -55,6 +55,8 @@ namespace mfront {
     ~ModelDSLCommon() override;
 
    protected:
+    void disableQuantitiesUsageIfNotAlreadySet() override;
+    bool useQt() const override;
     void reserveName(const std::string&) override;
     bool isNameReserved(const std::string&) const override;
     std::string getClassName() const override;
@@ -65,6 +67,7 @@ namespace mfront {
     void appendToSources(const std::string&) override;
     void addStaticVariableDescription(
         const StaticVariableDescription&) override;
+    std::map<std::string, int> getIntegerConstants() const override;
     int getIntegerConstant(const std::string&) const override;
     void treatUnknownKeyword() override;
     void setMaterial(const std::string&) override;

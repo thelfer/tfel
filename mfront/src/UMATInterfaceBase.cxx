@@ -15,13 +15,11 @@
 #include <fstream>
 #include <stdexcept>
 #include <algorithm>
-
 #include "TFEL/Raise.hxx"
 #include "TFEL/System/System.hxx"
 #include "TFEL/Utilities/StringAlgorithms.hxx"
 #include "TFEL/Glossary/Glossary.hxx"
 #include "TFEL/Glossary/GlossaryEntry.hxx"
-
 #include "MFront/DSLUtilities.hxx"
 #include "MFront/MFrontLogStream.hxx"
 #include "MFront/FileDescription.hxx"
@@ -487,19 +485,18 @@ namespace mfront {
       }
       const auto n = prefix + mp.name + suffix;
       const auto& m = findBehaviourMaterialProperty(i, mp.getExternalName());
-      auto offset = m.offset;
-      offset -= ioffset;
       if (!first) {
         f << ",\n";
       }
       first = false;
       const auto flag = SupportedTypes::getTypeFlag(mp.type);
+      // note m.offset can be lower than ioffset in some interfaces
       if (flag == SupportedTypes::SCALAR) {
-        f << n << "(" + src + "[" << offset << "])";
+        f << n << "(" + src + "[" << m.offset << "-" << ioffset << "])";
       } else if ((flag == SupportedTypes::TVECTOR) ||
                  (flag == SupportedTypes::STENSOR) ||
                  (flag == SupportedTypes::TENSOR)) {
-        f << n << "(&" + src + "[" << offset << "])";
+        f << n << "(&" + src + "[" << m.offset << "-" << ioffset << "])";
       } else {
         tfel::raise(
             "SupportedTypes::"
@@ -1137,12 +1134,12 @@ namespace mfront {
         if (flag == SupportedTypes::SCALAR) {
           out << "mg.addInternalStateVariable(\"" << ivname
               << "\",SupportedTypes::SCALAR,&mg_STATEV[" << ivoffset << "]);\n";
-          ivoffset += SupportedTypes::TypeSize(1u, 0u, 0u, 0u);
+          ivoffset += SupportedTypes::TypeSize(SupportedTypes::SCALAR);
         } else {
           out << "mg.addInternalStateVariable(\"" << ivname
               << "\",SupportedTypes::STENSOR,&mg_STATEV[" << ivoffset
               << "]);\n";
-          ivoffset += SupportedTypes::TypeSize(0u, 0u, 1u, 0u);
+          ivoffset += SupportedTypes::TypeSize(SupportedTypes::STENSOR);
         }
       } else {
         if (v.arraySize >= SupportedTypes::ArraySizeLimit) {
@@ -1161,9 +1158,9 @@ namespace mfront {
           }
           out << "}\n";
           if (flag == SupportedTypes::SCALAR) {
-            ivoffset += SupportedTypes::TypeSize(v.arraySize, 0u, 0u, 0u);
+            ivoffset += SupportedTypes::TypeSize(v.arraySize, SupportedTypes::SCALAR);
           } else {
-            ivoffset += SupportedTypes::TypeSize(0u, 0u, v.arraySize, 0u);
+            ivoffset += SupportedTypes::TypeSize(v.arraySize, SupportedTypes::STENSOR);
           }
         } else {
           for (unsigned short i = 0; i != v.arraySize; ++i) {
@@ -1171,12 +1168,12 @@ namespace mfront {
               out << "mg.addInternalStateVariable(\"" << ivname << "[" << i
                   << "]\",SupportedTypes::SCALAR,&mg_STATEV[" << ivoffset
                   << "]);\n";
-              ivoffset += SupportedTypes::TypeSize(1u, 0u, 0u, 0u);
+              ivoffset += SupportedTypes::TypeSize(SupportedTypes::SCALAR);
             } else {
               out << "mg.addInternalStateVariable(\"" << ivname << "[" << i
                   << "]\",SupportedTypes::STENSOR,&mg_STATEV[" << ivoffset
                   << "]);\n";
-              ivoffset += SupportedTypes::TypeSize(0u, 0u, 1u, 0u);
+              ivoffset += SupportedTypes::TypeSize(SupportedTypes::STENSOR);
             }
           }
         }

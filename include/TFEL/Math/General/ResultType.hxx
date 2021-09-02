@@ -16,9 +16,14 @@
 
 #include "TFEL/Metaprogramming/InvalidType.hxx"
 #include "TFEL/TypeTraits/IsInvalid.hxx"
+#include "TFEL/TypeTraits/BaseType.hxx"
+#include "TFEL/TypeTraits/IsScalar.hxx"
 #include "TFEL/Math/General/ComputeObjectTag.hxx"
 
 namespace tfel::math {
+
+  // forward declaration
+  struct OpDiv;
 
   /*
    * \class ComputeBinaryOperationResult
@@ -78,6 +83,63 @@ namespace tfel::math {
   //! \brief a simple alias
   template <typename A, typename B, typename Op>
   using result_type = typename ResultType<A, B, Op>::type;
+
+  /*!
+   *
+   */
+
+  /*!
+   * \brief metafunction returning the inverse of a type.
+   * \tparam isScalar: boolean stating of the given type is scalar.
+   * \tparam MathObjectType: type
+   */
+  template <bool isScalar, typename MathObjectType>
+  struct InverseTypeImplementation;
+
+  /*!
+   * \brief partial specialisation of the `InverseTypeImplementation` for
+   * scalars.
+   * \tparam ScalarTypes: type whose inverse is requested
+   */
+  template <typename ScalarType>
+  struct InverseTypeImplementation<true, ScalarType> {
+    //! \brief result
+    using type =
+        result_type<tfel::typetraits::base_type<ScalarType>, ScalarType, OpDiv>;
+  };
+
+  /*!
+   * \brief an help structure to compute the inverse of a MathObject. This
+   * structure is meant to be specialized when meaningful.
+   * \tparam MathObjectTag: tag associated with the math object
+   * \tparam MathObjectType: type of the considered math object
+   */
+  template <typename MathObjectTag, typename MathObjectType>
+  struct InverseTypeDispatcher {
+    //! \brief default result
+    using type = tfel::meta::InvalidType;
+  };
+
+  /*!
+   * \brief partial specialisation of the `InverseTypeImplementation` for
+   * non scalar types.
+   * \tparam MathObjectType: type whose inverse is requested
+   */
+  template <typename MathObjectType>
+  struct InverseTypeImplementation<false, MathObjectType> {
+    //! \brief result
+    using type = typename InverseTypeDispatcher<
+        typename ComputeObjectTag<MathObjectType>::type,
+        MathObjectType>::type;
+  };  // end of struct InverseTypeImplementation
+
+  /*!
+   * \brief  a simple alias to compute the type of the inverse of a type
+   */
+  template <typename MathObjectType>
+  using invert_type = typename InverseTypeImplementation<
+      tfel::typetraits::isScalar<MathObjectType>(),
+      MathObjectType>::type;
 
 }  // end of namespace tfel::math
 

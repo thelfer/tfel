@@ -457,8 +457,16 @@ namespace mfront {
     std::string computeTangentOperatorSize() const;
     //! \return the type of the stiffness operator
     std::string getTangentOperatorType() const;
-
+    //! \return if the quantities are used
     bool useQt() const;
+    /*!`
+     * \brief disable the usage of quantities if not already specified.
+     *
+     * This method shall be called before reading the first type of a variable.
+     * It is also automatically called by the `useQt` method if the usage of
+     * quantities is not already specified.
+     */
+    void disableQuantitiesUsageIfNotAlreadySet() const;
 
     void setUseQt(const bool);
 
@@ -879,6 +887,11 @@ namespace mfront {
         const Hypothesis,
         const StaticVariableDescription&,
         const BehaviourData::RegistrationStatus = BehaviourData::UNREGISTRED);
+    /*!
+     * \return all the integer constants
+     * \param[in] h: modelling hypothesis
+     */
+    std::map<std::string, int> getIntegerConstants(const Hypothesis) const;
     /*!
      * \return the value of an integer constant
      * \param[in] h: modelling hypothesis
@@ -1621,6 +1634,13 @@ namespace mfront {
      * \call the behaviour data associated with the given hypothesis
      * \param[in] h: modelling hypothesis
      * \param[in] m: behaviour data method
+     */
+    template <typename Res>
+    Res getData(const Hypothesis, Res (BehaviourData::*)() const) const;
+    /*!
+     * \call the behaviour data associated with the given hypothesis
+     * \param[in] h: modelling hypothesis
+     * \param[in] m: behaviour data method
      * \param[in] a: argument given to the behaviour data's method
      */
     template <typename Res, typename Arg1>
@@ -1856,8 +1876,8 @@ namespace mfront {
     //! \brief an optional boolean stating if the dual stress stress shall be
     //! saved
     std::optional<bool> saveDualStressValue;
-    //! \brief use units
-    bool use_qt = false;
+    //! \brief use quantities
+    mutable std::optional<bool> use_qt;
     //! \brief type of behaviour
     tfel::utilities::GenType<BehaviourType> type;
     //! \brief symmetry of behaviour (isotropic or orthotropic)

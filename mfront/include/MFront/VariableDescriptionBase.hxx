@@ -18,8 +18,8 @@
 #include <vector>
 #include <string>
 #include <initializer_list>
-
 #include "MFront/MFrontConfig.hxx"
+#include "MFront/SupportedTypes.hxx"
 #include "MFront/VariableAttribute.hxx"
 
 namespace mfront {
@@ -42,7 +42,7 @@ namespace mfront {
     //! assignement operator
     VariableDescriptionBase& operator=(const VariableDescriptionBase&);
     /*!
-     * Constructor
+     * \brief constructor
      * \param[in] t: variable type
      * \param[in] n: variable name
      * \param[in] as: if greater than 1, this variable will
@@ -54,7 +54,7 @@ namespace mfront {
                             const unsigned short,
                             const size_t);
     /*!
-     * Constructor
+     * \brief constructor
      * \param[in] t: variable type
      * \param[in] s: variable name
      * \param[in] n: variable name
@@ -67,11 +67,18 @@ namespace mfront {
                             const std::string&,
                             const unsigned short,
                             const size_t);
-    //! destructor
+    //! \return the type flag associated to a the variable
+    SupportedTypes::TypeFlag getTypeFlag() const;
+    //! \return the size of the variable
+    SupportedTypes::TypeSize getTypeSize() const;
+    //! \brief destructor
     ~VariableDescriptionBase();
-    //! type of the variable
-    //  If the variable has been declared as an array (see below),
-    //  this field holds the type contained by the array.
+    /*!
+     * \brief type of the variable
+     *
+     *  If the variable has been declared as an array (see below),
+     *  this field holds the type contained by the array.
+     */
     std::string type;
     //! symbolic representation of the variable
     std::string symbolic_form;
@@ -91,8 +98,8 @@ namespace mfront {
    * variable name.
    * \param[in] v: variable
    */
-  MFRONT_VISIBILITY_EXPORT const std::string& displayName(
-      const VariableDescriptionBase&);
+    MFRONT_VISIBILITY_EXPORT const std::string& displayName(
+        const VariableDescriptionBase&);
 
 }  // end of namespace mfront
 

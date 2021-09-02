@@ -20,12 +20,11 @@
 #include <tuple>
 #include <memory>
 #include <string>
-
-#include "MFront/MFrontConfig.hxx"
 #include "TFEL/Utilities/CxxTokenizer.hxx"
-
+#include "MFront/MFrontConfig.hxx"
 #include "MFront/CodeBlock.hxx"
 #include "MFront/AbstractDSL.hxx"
+#include "MFront/SupportedTypes.hxx"
 #include "MFront/FileDescription.hxx"
 #include "MFront/TargetsDescription.hxx"
 #include "MFront/VariableDescription.hxx"
@@ -155,9 +154,7 @@ namespace mfront {
     };  // end of CodeBlockParserOptions
     //! \return a list of names that shall be reserved
     static std::vector<std::string> getDefaultReservedNames();
-    /*!
-     * constructor
-     */
+    //! \brief constructor
     DSLBase();
     /*!
      * \brief register a name.
@@ -226,6 +223,8 @@ namespace mfront {
      */
     virtual void addStaticVariableDescription(
         const StaticVariableDescription&) = 0;
+    //! \return all the integer constants (static variables of the integer type)
+    virtual std::map<std::string, int> getIntegerConstants() const = 0;
     /*!
      * \return the value of an integer constant
      * \param[in] n: variable name
@@ -310,8 +309,15 @@ namespace mfront {
      */
     template <typename T>
     std::pair<bool, T> readInitialisationValue(const std::string&, const bool);
+    //! \return if the usage of quantities is alllowed
+    virtual bool useQt() const = 0;
+    //! \brief disable the usage of quantities if not already set
+    virtual void disableQuantitiesUsageIfNotAlreadySet() = 0;
+    //! \brief return the type parsing options used by the DSL
+    virtual SupportedTypes::TypeParsingOptions
+    getTypeParsingOptions() const;
     //! \brief read a C++ type
-    std::pair<std::string, bool> readType();
+    std::string readType();
     /*!
      * \return the size of an array of variables, or 1 if the variable are not
      * defined as an array.

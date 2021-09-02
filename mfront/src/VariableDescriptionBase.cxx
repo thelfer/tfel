@@ -53,6 +53,14 @@ namespace mfront {
   VariableDescriptionBase& VariableDescriptionBase::operator=(
       const VariableDescriptionBase&) = default;
 
+  SupportedTypes::TypeFlag VariableDescriptionBase::getTypeFlag() const {
+    return SupportedTypes::getTypeFlag(this->type);
+  }
+
+  SupportedTypes::TypeSize VariableDescriptionBase::getTypeSize() const {
+    return SupportedTypes::getTypeSize(this->type, this->arraySize);
+  }
+
   VariableDescriptionBase::~VariableDescriptionBase() = default;
 
   const std::string& displayName(const VariableDescriptionBase& v) {

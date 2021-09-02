@@ -1,0 +1,119 @@
+/*!
+ * \file   mfront/tests/unit-tests/SupportedTypesTest.cxx
+ * \brief
+ * \author Thomas Helfer
+ * \date   30/08/2021
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * re served.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
+ */
+
+#ifdef NDEBUG
+#undef NDEBUG
+#endif /* NDEBUG */
+
+#include <cstdlib>
+#include <iostream>
+#include <stdexcept>
+#include <string_view>
+#include "TFEL/Tests/TestCase.hxx"
+#include "TFEL/Tests/TestProxy.hxx"
+#include "TFEL/Tests/TestManager.hxx"
+#include "MFront/SupportedTypes.hxx"
+
+struct SupportedTypesTest final : public tfel::tests::TestCase {
+  SupportedTypesTest()
+      : tfel::tests::TestCase("MFront", "SupportedTypesTest") {
+  }  // end of SupportedTypesTest
+
+  tfel::tests::TestResult execute() override {
+    this->test1();
+    this->test2();
+    this->test3();
+    return this->result;
+  }  // end of execute
+
+ private:
+  void test1() {
+    const auto opts = [] {
+      auto o = mfront::SupportedTypes::TypeParsingOptions{};
+      o.integer_constants = std::map<std::string, int>{{"Nss", 12}};
+      o.use_qt = true;
+      return o;
+    }();
+    auto check = [&opts, this](std::string_view v1, std::string_view v2) {
+      TFEL_TESTS_CHECK_EQUAL(mfront::SupportedTypes::extractType(v1, opts), v2);
+    };
+    check("stress", "stress");
+    check("::stress", "::stress");
+    check("std::vector<real, tfel::math::matrix<3u, 3u, real> >",
+          "std::vector<real,tfel::math::matrix<3,3,real>>");
+    check("std::vector<real, tfel::math::matrix<3u, 3u, real>>",
+          "std::vector<real,tfel::math::matrix<3,3,real>>");
+    check("std::vector<std::vector<tfel::math::matrix<3u,3u,real>>>",
+          "std::vector<std::vector<tfel::math::matrix<3,3,real>>>");
+    check("stensor <N, real>", "tfel::math::stensor<N,real>");
+    check("derivative_type<real,Stensor>",
+          "tfel::math::derivative_type<real,Stensor>");
+    check("result_type<toto,tata,OpDiv>",
+          "tfel::math::result_type<toto,tata,tfel::math::OpDiv>");
+    check("result_type<toto,tata,tfel::math::OpDiv>",
+          "tfel::math::result_type<toto,tata,tfel::math::OpDiv>");
+    check("quantity<real,1,0,0,3,2,-1,0>",
+          "tfel::math::quantity<real,1,0,0,3,2,-1,0>");
+    check("test_empty_template_arguments<>", "test_empty_template_arguments<>");
+    check("derivative_type<quantity<real,1,0,0,3,2,-1,0>,time>",
+          "tfel::math::derivative_type<"
+          "tfel::math::quantity<real,1,0,0,3,2,-1,0>,time>");
+    check("vector<2u,3u+3u>", "vector<2,6>");
+    check("quantity<real,0,1>", "tfel::math::quantity<real,0,1,0,0,0,0,0>");
+    check("quantity<real,0,1,2>", "tfel::math::quantity<real,0,1,2,0,0,0,0>");
+    check("tvector<Nss,real>", "tfel::math::tvector<12,real>");
+    check("stensor<N,real>", "tfel::math::stensor<N,real>");
+    check("tensor<N,real>", "tfel::math::tensor<N,real>");
+    check("st2tost2<N,real>", "tfel::math::st2tost2<N,real>");
+    check("t2tot2<N,real>", "tfel::math::t2tot2<N,real>");
+    check("st2tot2<N,real>", "tfel::math::st2tot2<N,real>");
+    check("t2tost2<N,real>", "tfel::math::t2tost2<N,real>");
+  }
+  void test2() {
+    const auto opts = [] {
+      auto o = mfront::SupportedTypes::TypeParsingOptions{};
+      o.integer_constants = std::map<std::string, int>{{"Nss", 12}};
+      o.use_qt = false;
+      return o;
+    }();
+    auto check = [&opts, this](std::string_view v1, std::string_view v2) {
+      TFEL_TESTS_CHECK_EQUAL(mfront::SupportedTypes::extractType(v1, opts), v2);
+    };
+    check("quantity<real,1,0,0,3,2,-1,0>", "real");
+    check("derivative_type<quantity<real,1,0,0,3,2,-1,0>,time>",
+          "tfel::math::derivative_type<real,time>");
+    check("quantity<real,0,1>", "real");
+    check("quantity<real,0,1,2>", "real");
+  }
+  void test3() {
+    auto o = mfront::SupportedTypes::TypeParsingOptions{};
+    o.integer_constants = std::map<std::string, int>{{"Nss", 12}};
+    auto check = [&, this](std::string_view v,
+                           const mfront::SupportedTypes::TypeFlag f) {
+      TFEL_TESTS_CHECK_EQUAL(mfront::SupportedTypes::getTypeFlag(v), f);
+    };
+    check("Stensor", mfront::SupportedTypes::STENSOR);
+    check("stensor<N,real>", mfront::SupportedTypes::STENSOR);
+    check("tensor<N,real>", mfront::SupportedTypes::TENSOR);
+  }
+};
+
+TFEL_TESTS_GENERATE_PROXY(SupportedTypesTest, "SupportedTypesTest");
+
+/* coverity [UNCAUGHT_EXCEPT]*/
+int main() {
+  auto& m = tfel::tests::TestManager::getTestManager();
+  m.addTestOutput(std::cout);
+  m.addXMLTestOutput("SupportedTypes.xml");
+  return m.execute().success() ? EXIT_SUCCESS : EXIT_FAILURE;
+}  // end of main

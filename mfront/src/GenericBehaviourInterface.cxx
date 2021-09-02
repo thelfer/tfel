@@ -1362,12 +1362,12 @@ namespace mfront {
           out << "mg.addInternalStateVariable(\"" << ivname
               << "\",SupportedTypes::SCALAR,&(d->s0.internal_state_variables["
               << ivoffset << "]));\n";
-          ivoffset += SupportedTypes::TypeSize(1u, 0u, 0u, 0u);
+          ivoffset += SupportedTypes::TypeSize(SupportedTypes::SCALAR);
         } else {
           out << "mg.addInternalStateVariable(\"" << ivname
               << "\",SupportedTypes::STENSOR,&(d->s0.internal_state_variables["
               << ivoffset << "]));\n";
-          ivoffset += SupportedTypes::TypeSize(0u, 0u, 1u, 0u);
+          ivoffset += SupportedTypes::TypeSize(SupportedTypes::STENSOR);
         }
       } else {
         if (v.arraySize >= SupportedTypes::ArraySizeLimit) {
@@ -1386,9 +1386,11 @@ namespace mfront {
           }
           out << "}\n";
           if (flag == SupportedTypes::SCALAR) {
-            ivoffset += SupportedTypes::TypeSize(v.arraySize, 0u, 0u, 0u);
+            ivoffset +=
+                SupportedTypes::TypeSize(v.arraySize, SupportedTypes::SCALAR);
           } else {
-            ivoffset += SupportedTypes::TypeSize(0u, 0u, v.arraySize, 0u);
+            ivoffset +=
+                SupportedTypes::TypeSize(v.arraySize, SupportedTypes::STENSOR);
           }
         } else {
           for (unsigned short i = 0; i != v.arraySize; ++i) {
@@ -1397,13 +1399,13 @@ namespace mfront {
                   << "]\",SupportedTypes::SCALAR,&(d->s0.internal_state_"
                      "variables["
                   << ivoffset << "]));\n";
-              ivoffset += SupportedTypes::TypeSize(1u, 0u, 0u, 0u);
+              ivoffset += SupportedTypes::TypeSize(SupportedTypes::SCALAR);
             } else {
               out << "mg.addInternalStateVariable(\"" << ivname << "[" << i
                   << "]\",SupportedTypes::STENSOR,&(d->s0.internal_state_"
                      "variables["
                   << ivoffset << "]));\n";
-              ivoffset += SupportedTypes::TypeSize(0u, 0u, 1u, 0u);
+              ivoffset += SupportedTypes::TypeSize(SupportedTypes::STENSOR);
             }
           }
         }

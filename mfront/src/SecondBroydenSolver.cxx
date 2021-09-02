@@ -38,7 +38,7 @@ namespace mfront {
     }();
     const auto n =
         mfront::getTypeSize(bd.getBehaviourData(h).getIntegrationVariables())
-            .getValue({"ModellingHypothesisToSpaceDimension<" + hn + ">::value",
+            .asString({"ModellingHypothesisToSpaceDimension<" + hn + ">::value",
                        "ModellingHypothesisToStensorSize<" + hn + ">::value",
                        "ModellingHypothesisToTensorSize<" + hn + ">::value"});
     const auto cn =
