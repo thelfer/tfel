@@ -149,10 +149,9 @@ namespace mfront {
     auto throw_if = [](const bool c, const std::string& m) {
       tfel::raise_if(c, "mfront::checkBoundsCompatibility: " + m);
     };
-    SupportedTypes st;
-    throw_if(!st.isSupportedType(v.type), "can't assign bounds to variable '" +
-                                              v.name + "' (invalid type '" +
-                                              v.type + "')");
+    throw_if(!SupportedTypes::hasTypeFlag(v.type),
+             "can't assign bounds to variable '" + v.name +
+                 "' (invalid type '" + v.type + "')");
     if ((b.component != -1) && (b.component != 0)) {
       const auto f = SupportedTypes::getTypeFlag(v.type);
       throw_if(f != SupportedTypes::SCALAR,

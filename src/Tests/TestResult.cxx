@@ -18,28 +18,32 @@
 namespace tfel::tests {
 
   TestResult::TestResult() = default;
-
-  TestResult::TestResult(const bool b)
-      : s(b) {}  // end of TestResult::TestResult
-
-  TestResult::TestResult(const bool b, const char* const c)
-      : d(c), s(b) {}  // end of TestResult::TestResult
-
-  TestResult::TestResult(const bool b, const std::string& c)
-      : d(c), s(b) {}  // end of TestResult::TestResult
-
   TestResult::TestResult(const TestResult&) = default;
   TestResult::TestResult(TestResult&&) noexcept = default;
   TestResult& TestResult::operator=(const TestResult&) = default;
   TestResult& TestResult::operator=(TestResult&&) = default;
 
+  TestResult::TestResult(const bool b)
+      : status(b) {}  // end of TestResult::TestResult
+
+  TestResult::TestResult(const bool b,
+                         const std::string_view c,
+                         const std::string_view e)
+      : description(c),
+        status(b),
+        failure_description(b ? "" : e) {}  // end of TestResult::TestResult
+
   bool TestResult::success() const {
-    return this->s;
+    return this->status;
   }  // end of TestResult::succees
 
-  const std::string& TestResult::details() const {
-    return this->d;
-  }  // end of TestResult::succees
+  const std::string& TestResult::getDescription() const {
+    return this->description;
+  }  // end of TestResult::getDescription
+
+  const std::string& TestResult::getFailureDescription() const {
+    return this->failure_description;
+  }  // end of TestResult::getFailureDescription
 
   TestResult::const_iterator TestResult::begin() const {
     return std::vector<TestResult>::begin();
@@ -51,7 +55,7 @@ namespace tfel::tests {
 
   void TestResult::append(const TestResult& r) {
     if (!r.success()) {
-      this->s = false;
+      this->status = false;
     }
     std::vector<TestResult>::push_back(r);
   }  // end of TestResult::end()
@@ -77,7 +81,7 @@ namespace tfel::tests {
     } else {
       os << "FAILED\n";
     }
-    os << "\nDetails : " << r.details() << '\n';
+    os << "\nDetails : " << r.getDescription() << '\n';
     for (const auto& t : r) {
       os << t << '\n';
     }

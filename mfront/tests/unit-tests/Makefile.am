@@ -14,8 +14,6 @@ test_PROGRAMS = DSLTest                                    \
 		BehaviourDataTest                          \
 		BehaviourDescriptionTest                   \
 		BehaviourDescriptionBoundsHandlingTest     \
-		BehaviourBrickProviderTest                 \
-		BehaviourBrickRequirementManagerTest       \
 		TargetsDescriptionTest                     \
 		StandardElasticityBrickTest                \
          StandardElastoViscoPlasticityBrickTest     \
@@ -33,8 +31,6 @@ SwellingTest_SOURCES                = SwellingTest.cxx
 SupportedTypesTest_SOURCES          = SupportedTypesTest.cxx
 BehaviourDataTest_SOURCES           = BehaviourDataTest.cxx
 BehaviourDescriptionTest_SOURCES    = BehaviourDescriptionTest.cxx
-BehaviourBrickProviderTest_SOURCES  = BehaviourBrickProviderTest.cxx
-BehaviourBrickRequirementManagerTest_SOURCES = BehaviourBrickRequirementManagerTest.cxx
 TargetsDescriptionTest_SOURCES      = TargetsDescriptionTest.cxx
 StandardElasticityBrickTest_SOURCES = StandardElasticityBrickTest.cxx
 StandardElastoViscoPlasticityBrickTest_SOURCES = StandardElastoViscoPlasticityBrickTest.cxx

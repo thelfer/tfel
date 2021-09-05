@@ -12,6 +12,7 @@
  * project under specific licensing conditions.
  */
 
+#include <iostream>
 #include <utility>
 #include <sstream>
 #include <charconv>
@@ -32,16 +33,16 @@ namespace mfront {
   SupportedTypes_buildFlags() {
     std::map<std::string, SupportedTypes::TypeFlag, std::less<>> flags;
     flags.insert({"NumericType", SupportedTypes::SCALAR});
-    for (const auto& t : getScalarStandardTFELTypedefs()) {
+    for (const auto& t : getScalarTypeAliases()) {
       flags.insert({t, SupportedTypes::SCALAR});
     }
-    for (const auto& t : getTinyVectorStandardTFELTypedefs()) {
+    for (const auto& t : getTinyVectorTypeAliases()) {
       flags.insert({t, SupportedTypes::TVECTOR});
     }
-    for (const auto& t : getStensorStandardTFELTypedefs()) {
+    for (const auto& t : getStensorTypeAliases()) {
       flags.insert({t, SupportedTypes::STENSOR});
     }
-    for (const auto& t : getTensorStandardTFELTypedefs()) {
+    for (const auto& t : getTensorTypeAliases()) {
       flags.insert({t, SupportedTypes::TENSOR});
     }
     return flags;
@@ -64,7 +65,7 @@ namespace mfront {
       const std::string_view v) {
     return (v == "N") || (v == "TVectorSize") || (v == "StensorSize") ||
            (v == "TensorSize");
-  } // end of isSupportedConstexprIntegerVariables
+  }  // end of isSupportedConstexprIntegerVariables
 
   SupportedTypes::TypeParsingOptions::TypeParsingOptions() = default;
   SupportedTypes::TypeParsingOptions::TypeParsingOptions(TypeParsingOptions&&) =
@@ -79,20 +80,28 @@ namespace mfront {
 
   SupportedTypes::TypeSize SupportedTypes::TypeSize::getDerivativeSize(
       const TypeSize& s1, const TypeSize& s2) {
-    if ((!s1.describesAnUniqueType()) || (s1.isArray())) {
+    return TypeSize::getDerivativeSize(1u, s1, s2);
+  }
+
+  SupportedTypes::TypeSize SupportedTypes::TypeSize::getDerivativeSize(
+      const unsigned int a, const TypeSize& s1, const TypeSize& s2) {
+    if ((!s1.isMonomial()) || (s1.isArray())) {
       tfel::raise(
           "SupportedTypes::TypeSize::getDerivativeSize: "
           "invalid first argument");
     }
-    if ((!s2.describesAnUniqueType()) || (s2.isArray())) {
+    if ((!s2.isMonomial()) || (s2.isArray())) {
       tfel::raise(
           "SupportedTypes::TypeSize::getDerivativeSize: "
           "invalid second argument");
     }
+    if (a == 0) {
+      return TypeSize{};
+    }
     auto m = Monomial{};
     const auto& m1 = s1.monomials[0];
     const auto& m2 = s2.monomials[0];
-    m.array_size = 1;
+    m.array_size = static_cast<int>(a);
     m.tvector_exponent = m1.tvector_exponent + m2.tvector_exponent;
     m.stensor_exponent = m1.stensor_exponent + m2.stensor_exponent;
     m.tensor_exponent = m1.tensor_exponent + m2.tensor_exponent;
@@ -100,6 +109,11 @@ namespace mfront {
     r.monomials.push_back(m);
     return r;
   }  // end of getDerivativeSize
+
+  SupportedTypes::TypeSize SupportedTypes::TypeSize::buildFromExponents(
+      const unsigned int i1, const unsigned int i2, const unsigned int i3) {
+    return TypeSize{1, i1, i2, i3};
+  }  // end of buildFromExponents
 
   SupportedTypes::TypeSize::TypeSize() = default;
 
@@ -112,30 +126,39 @@ namespace mfront {
                                      const unsigned int i2,
                                      const unsigned int i3) {
     if (a != 0) {
-      this->monomials.push_back(Monomial{a, i1, i2, i3});
+      const auto ia = static_cast<int>(a);
+      this->monomials.push_back(Monomial{ia, i1, i2, i3});
     }
   }
 
-  SupportedTypes::TypeSize::TypeSize(const unsigned int a, const TypeFlag f) {
+  SupportedTypes::TypeSize::TypeSize(const TypeFlag f, const unsigned int e)
+      : TypeSize(1u, f, e) {}  // end of TypeSize
+
+  SupportedTypes::TypeSize::TypeSize(const unsigned int a,
+                                     const TypeFlag f,
+                                     const unsigned int e) {
+    if (e == 0) {
+      tfel::raise(
+          "SupportedTypes::TypeSize::TypeSize: "
+          "null exponent");
+    }
     if (a != 0) {
+      const auto ia = static_cast<int>(a);
       if (f == SupportedTypes::SCALAR) {
-        this->monomials.push_back(Monomial{a, 0, 0, 0});
+        this->monomials.push_back(Monomial{ia, 0, 0, 0});
       } else if (f == SupportedTypes::TVECTOR) {
-        this->monomials.push_back(Monomial{a, 1, 0, 0});
+        this->monomials.push_back(Monomial{ia, e, 0, 0});
       } else if (f == SupportedTypes::STENSOR) {
-        this->monomials.push_back(Monomial{a, 0, 1, 0});
+        this->monomials.push_back(Monomial{ia, 0, e, 0});
       } else if (f == SupportedTypes::TENSOR) {
-        this->monomials.push_back(Monomial{a, 0, 0, 1});
+        this->monomials.push_back(Monomial{ia, 0, 0, e});
       } else {
         tfel::raise(
             "SupportedTypes::TypeSize::TypeSize: "
             "unsupported type flag");
       }
     }
-  } // end of TypeSize
-
-  SupportedTypes::TypeSize::TypeSize(const TypeFlag f)
-      : TypeSize(1u, f) {}  // end of TypeSize
+  }  // end of TypeSize
 
   SupportedTypes::TypeSize& SupportedTypes::TypeSize::operator=(TypeSize&&) =
       default;
@@ -175,7 +198,34 @@ namespace mfront {
     return *this;
   }
 
-  unsigned int SupportedTypes::TypeSize::getValueForDimension(
+  SupportedTypes::TypeSize& SupportedTypes::TypeSize::operator*=(
+      const unsigned int a) {
+    if (a == 0) {
+      *this = TypeSize{};
+      return *this;
+    }
+    const auto ia = static_cast<int>(a);
+    for (auto& m : this->monomials) {
+      m.array_size *= ia;
+    }
+    return *this;
+  }  // end of operator*
+
+  SupportedTypes::TypeSize operator*(const SupportedTypes::TypeSize& s,
+                                     const unsigned int a) {
+    auto r = s;
+    r *= a;
+    return r;
+  }  // end of operator*
+
+  SupportedTypes::TypeSize operator*(const unsigned int a,
+                                     const SupportedTypes::TypeSize& s) {
+    auto r = s;
+    r *= a;
+    return r;
+  }  // end of operator *
+
+  int SupportedTypes::TypeSize::getValueForDimension(
       const unsigned short d) const {
     const auto sizes = [&d]() -> std::array<unsigned int, 3u> {
       switch (d) {
@@ -197,7 +247,7 @@ namespace mfront {
       }
       return r;
     };
-    unsigned int r = 0;
+    int r = 0;
     for (const auto& m : this->monomials) {
       r += m.array_size *  //
            power(sizes[0], m.tvector_exponent) *
@@ -207,7 +257,7 @@ namespace mfront {
     return r;
   }  // end of SupportedTypes::TypeSize::getValueForDimension
 
-  unsigned int SupportedTypes::TypeSize::getValueForModellingHypothesis(
+  int SupportedTypes::TypeSize::getValueForModellingHypothesis(
       const Hypothesis h) const {
     return this->getValueForDimension(tfel::material::getSpaceDimension(h));
   }
@@ -254,9 +304,9 @@ namespace mfront {
     return os.str();
   }  // end of asString
 
-  bool SupportedTypes::TypeSize::describesAnUniqueType() const {
+  bool SupportedTypes::TypeSize::isMonomial() const {
     return this->monomials.size() == 1u;
-  }  // end of describesAnUniqueType
+  }  // end of isMonomial
 
   bool SupportedTypes::TypeSize::isArray() const {
     if (this->monomials.size() != 1u) {
@@ -272,11 +322,6 @@ namespace mfront {
   }
 
   SupportedTypes::SupportedTypes() = default;
-
-  bool SupportedTypes::isSupportedType(const std::string_view t) const {
-    const auto& flags = SupportedTypes_getFlags();
-    return flags.find(t) != flags.end();
-  }  // end of SupportedTypes::isSupportedType
 
   static std::map<std::tuple<SupportedTypes::TypeFlag,
                              SupportedTypes::TypeFlag,
@@ -303,11 +348,41 @@ namespace mfront {
     return r;
   }  // end of buildResultTypeFlags
 
+  void SupportedTypes::checkNumberOfTemplateArguments(const TypeInformation& t,
+                                                      const std::size_t n) {
+    auto report_error = [&t] {
+      tfel::raise(
+          "SupportedTypes::checkNumberOfTemplateArguments: "
+          "invalid template arguments for class '" +
+          t.type + "'");
+    };
+    if (n == 0) {
+      if (t.template_arguments) {
+        report_error();
+      }
+      return;
+    }
+    if (!t.template_arguments) {
+      report_error();
+    }
+    const auto& args = *(t.template_arguments);
+    if (args.size() != n) {
+      report_error();
+    }
+  }  // end of checkNumberOfTemplateArguments
+
+  bool SupportedTypes::hasTypeFlag(const std::string_view type) {
+    const auto oflag = SupportedTypes::getTypeFlag(
+        SupportedTypes::getTypeInformation(type, TypeParsingOptions()));
+    return oflag.has_value();
+  } // end of SupportedTypes::hasTypeFlag
+
   std::optional<SupportedTypes::TypeFlag> SupportedTypes::getTypeFlag(
       const TypeInformation& t) {
     const auto& flags = SupportedTypes_getFlags();
     const auto p = flags.find(t.type);
     if (p != flags.end()) {
+      SupportedTypes::checkNumberOfTemplateArguments(t, 0u);
       return p->second;
     }
     if (t.type == "tfel::math::quantity") {
@@ -319,27 +394,38 @@ namespace mfront {
     } else if (t.type == "tfel::math::tensor") {
       return SupportedTypes::TENSOR;
     } else if (t.type == "tfel::math::result_type") {
-      const auto result_flags = buildResultTypeFlags();
+      SupportedTypes::checkNumberOfTemplateArguments(t, 3u);
       const auto& args = *(t.template_arguments);
-      const auto f1 =
-          SupportedTypes::getTypeFlag(std::get<TypeInformation>(args[0]));
-      const auto f2 =
-          SupportedTypes::getTypeFlag(std::get<TypeInformation>(args[1]));
+      const auto& t1 = std::get<TypeInformation>(args[0]);
+      const auto& t2 = std::get<TypeInformation>(args[1]);
+      const auto f1 = SupportedTypes::getTypeFlag(t1);
+      const auto f2 = SupportedTypes::getTypeFlag(t2);
       if ((!f1) || (!f2)) {
         return {};
       }
+      SupportedTypes::checkNumberOfTemplateArguments(
+          std::get<TypeInformation>(args[2]), 0u);
       const auto op = std::get<TypeInformation>(args[2]).type;
+      if ((f1 != SupportedTypes::SCALAR) && (f2 != SupportedTypes::SCALAR)) {
+        const auto N1 = getTensorialObjectSpaceDimension(t1);
+        const auto N2 = getTensorialObjectSpaceDimension(t2);
+        if (N1 != N2) {
+          return {};
+        }
+      }
+      const auto result_flags = buildResultTypeFlags();
       const auto pflag = result_flags.find(std::make_tuple(*f1, *f2, op));
       if (pflag == result_flags.end()) {
         return {};
       }
       return pflag->second;
     } else if (t.type == "tfel::math::derivative_type") {
+      SupportedTypes::checkNumberOfTemplateArguments(t, 2u);
       const auto& args = *(t.template_arguments);
-      const auto of1 =
-          SupportedTypes::getTypeFlag(std::get<TypeInformation>(args[0]));
-      const auto of2 =
-          SupportedTypes::getTypeFlag(std::get<TypeInformation>(args[1]));
+      const auto& t1 = std::get<TypeInformation>(args[0]);
+      const auto& t2 = std::get<TypeInformation>(args[1]);
+      const auto of1 = SupportedTypes::getTypeFlag(t1);
+      const auto of2 = SupportedTypes::getTypeFlag(t2);
       if ((!of1) || (!of2)) {
         return {};
       }
@@ -368,6 +454,7 @@ namespace mfront {
         return {};
       }
     } else if (t.type == "tfel::math::invert_type") {
+      SupportedTypes::checkNumberOfTemplateArguments(t, 1u);
       const auto& args = *(t.template_arguments);
       const auto f1 =
           SupportedTypes::getTypeFlag(std::get<TypeInformation>(args[0]));
@@ -382,11 +469,6 @@ namespace mfront {
 
   SupportedTypes::TypeFlag SupportedTypes::getTypeFlag(
       const std::string_view type) {
-    const auto& flags = SupportedTypes_getFlags();
-    const auto p = flags.find(type);
-    if (p != flags.end()) {
-      return p->second;
-    }
     const auto oflag = SupportedTypes::getTypeFlag(
         SupportedTypes::getTypeInformation(type, TypeParsingOptions()));
     if (!oflag) {
@@ -400,60 +482,128 @@ namespace mfront {
       const std::string_view type, const unsigned short a) {
     const auto t =
         SupportedTypes::getTypeInformation(type, TypeParsingOptions());
+    return SupportedTypes::getTypeSize(t, a);
+  }
+
+  SupportedTypes::TypeSize SupportedTypes::getTypeSize(const TypeInformation& t,
+                                                       const unsigned short a) {
+    // first looking for aliases
+    const auto& flags = SupportedTypes_getFlags();
+    const auto p = flags.find(t.type);
+    if (p != flags.end()) {
+      SupportedTypes::checkNumberOfTemplateArguments(t, 0u);
+      return TypeSize(a, p->second);
+    }
+    //
+    auto treatFourthOrderTensor = [&t, a](const TypeFlag& f1,
+                                          const TypeFlag& f2) {
+      auto N = getTensorialObjectSpaceDimension(t);
+      if (N == 0) {
+        return TypeSize::getDerivativeSize(a, f1, f2);
+      }
+      const auto s1 = TypeSize(f1).getValueForDimension(N);
+      const auto s2 = TypeSize(f2).getValueForDimension(N);
+      return TypeSize(a * s1 * s2, SupportedTypes::SCALAR);
+    };
+    //
+    const auto st2tost2_alias = getST2toST2TypeAliases();
+    if (std::find(st2tost2_alias.begin(), st2tost2_alias.end(), t.type) !=
+        st2tost2_alias.end()) {
+      SupportedTypes::checkNumberOfTemplateArguments(t, 0u);
+      return TypeSize::getDerivativeSize(a, SupportedTypes::STENSOR,
+                                         SupportedTypes::STENSOR);
+    }
+    //
+    if (t.type == "tfel::math::st2tost2") {
+      return treatFourthOrderTensor(SupportedTypes::STENSOR,
+                                    SupportedTypes::STENSOR);
+    } else if (t.type == "tfel::math::t2tot2") {
+      return treatFourthOrderTensor(SupportedTypes::TENSOR,
+                                    SupportedTypes::TENSOR);
+    } else if (t.type == "tfel::math::st2tot2") {
+      return treatFourthOrderTensor(SupportedTypes::TENSOR,
+                                    SupportedTypes::STENSOR);
+    } else if (t.type == "tfel::math::t2tost2") {
+      return treatFourthOrderTensor(SupportedTypes::STENSOR,
+                                    SupportedTypes::TENSOR);
+    } else if (t.type == "tfel::math::result_type") {
+      // here we support only a limited number of operations as the most obvious
+      // ones are already treated in the getTypeFlag method
+      SupportedTypes::checkNumberOfTemplateArguments(t, 3u);
+      const auto& args = *(t.template_arguments);
+      const auto& t1 = std::get<TypeInformation>(args[0]);
+      const auto& t2 = std::get<TypeInformation>(args[1]);
+      const auto op = std::get<TypeInformation>(args[2]);
+      SupportedTypes::checkNumberOfTemplateArguments(op, 0u);
+      if ((op.type == "tfel::math::OpPlus") ||
+          (op.type == "tfel::math::OpMinus")) {
+        const auto s1 = SupportedTypes::getTypeSize(t1, 1u);
+        const auto s2 = SupportedTypes::getTypeSize(t2, 1u);
+        if (s1 != s2) {
+          tfel::raise(
+              "SupportedTypes::getTypeSize: "
+              "unsupported result of operation.");
+        }
+        return a * s1;
+      } else if (op.type == "tfel::math::OpMult") {
+        const auto of1 = SupportedTypes::getTypeFlag(t1);
+        const auto of2 = SupportedTypes::getTypeFlag(t2);
+        if ((of1) && (*of1 == SupportedTypes::SCALAR)) {
+          return SupportedTypes::getTypeSize(t2, a);
+        } else if ((of2) && (*of2 == SupportedTypes::SCALAR)) {
+          return SupportedTypes::getTypeSize(t1, a);
+        } else {
+          tfel::raise("SupportedTypes::getTypeSize: unsupported type.");
+        }
+      } else if (op.type == "tfel::math::OpDiv") {
+        const auto of2 = SupportedTypes::getTypeFlag(t2);
+        if ((of2) && (*of2 == SupportedTypes::SCALAR)) {
+          return SupportedTypes::getTypeSize(t1, a);
+        } else {
+          tfel::raise("SupportedTypes::getTypeSize: unsupported type.");
+        }
+      } else {
+        tfel::raise("SupportedTypes::getTypeSize: invalid operation '" +
+                    op.type + "'.");
+      }
+    } else if (t.type == "tfel::math::derivative_type") {
+      SupportedTypes::checkNumberOfTemplateArguments(t, 2u);
+      const auto& args = *(t.template_arguments);
+      const auto& t1 = std::get<TypeInformation>(args[0]);
+      const auto& t2 = std::get<TypeInformation>(args[1]);
+      const auto s1 = SupportedTypes::getTypeSize(t1, 1u);
+      const auto s2 = SupportedTypes::getTypeSize(t2, 1u);
+      return a * SupportedTypes::TypeSize::getDerivativeSize(s1, s2);
+    } else if (t.type == "tfel::math::invert_type") {
+      SupportedTypes::checkNumberOfTemplateArguments(t, 1u);
+      const auto& args = *(t.template_arguments);
+      const auto& t1 = std::get<TypeInformation>(args[0]);
+      const auto s1 = SupportedTypes::getTypeSize(t1, 1u);
+      return a * s1;
+    }
+    // this must be called **after** looking for all the other possibilities
     const auto oflag = SupportedTypes::getTypeFlag(t);
     if (oflag) {
-      return TypeSize(a, *oflag);
+      if (*oflag == SupportedTypes::SCALAR) {
+        return TypeSize(a, *oflag);
+      } else {
+        const auto N = getTensorialObjectSpaceDimension(t);
+        if (N == 0) {
+          return TypeSize(a, *oflag);
+        } else {
+          const auto s = TypeSize(*oflag);
+          return TypeSize(a * s.getValueForDimension(N),
+                          SupportedTypes::SCALAR);
+        }
+      }
     }
-    auto report_invalid_tensorial_type = [] {
-      tfel::raise(
-          "SupportedTypes::getTypeSize: "
-          "invalid tensorial type");
-    };
-    //     auto get_tensorial_object_space_dimension = [&t]() {
-    //       if (!t.template_arguments) {
-    //         report_invalid_tensorial_type();
-    //       }
-    //       const auto& args = t.template_arguments;
-    //       if (args.empty()) {
-    //         report_invalid_tensorial_type();
-    //       }
-    //       return args[0];
-    //     };
-    //     auto depends_on_space_dimension = [&] {
-    //       const auto N = get_tensorial_object_space_dimension();
-    //       if (std::holds_alternative<std::string>(N)) {
-    //         const auto& s = std::get<std::string>(N);
-    //         if (s != "N") {
-    //           report_invalid_tensorial_type();
-    //         }
-    //         return true;
-    //       }
-    //       return false;
-    //     };
-    //     auto get_tensor_object_intrinsic_space_dimension[&t]() {
-    //       const auto N =
-    //       std::get<int>(get_tensorial_object_space_dimension()); if ((N != 1)
-    //       && (N != 2) && (N != 3)) {
-    //         report_invalid_tensorial_type();
-    //       }
-    //       return N;
-    //     };
-    //     if (t.type == "st2tost2") {
-    //       if (depends_on_space_dimension()) {
-    // return TypeSize(a)
-    //       }
-    //     } else if (t.type == "t2tot2") {
-    //     } else if (t.type == "st2tot2") {
-    //     } else if (t.type == "t2tost2") {
-    //     }
+    //
     tfel::raise(
-        "SupportedTypes::getTypeSize: "
-        "can't determine of type '" +
-        std::string{type} + "'.");
-  } // end of getTypeSize
+        "SupportedTypes::getTypeSize: can't determine of size of given type");
+  }  // end of getTypeSize
 
   std::string SupportedTypes::getTimeDerivativeType(
-      const std::string_view type) const {
+      const std::string_view type) {
     if (type == "real") {
       return "frequency";
     } else if (type == "strain") {
@@ -470,12 +620,8 @@ namespace mfront {
       return "DeformationGradientRateTensor";
     } else if (type == "Tensor") {
       return "FrequencyTensor";
-    } else {
-      tfel::raise(
-          "SupportedTypes::getTimeDerivativeType: "
-          "internal error, unsupported type '" +
-          std::string{type} + "'");
     }
+    return "tfel::math::derivative_type<" + extractType(type) + ",time>";
   }
 
   bool SupportedTypes::TypeSize::matches(const Monomial& m1,
@@ -483,14 +629,14 @@ namespace mfront {
     return (m1.tvector_exponent == m2.tvector_exponent) &&
            (m1.stensor_exponent == m2.stensor_exponent) &&
            (m1.tensor_exponent == m2.tensor_exponent);
-  } // end of matches
+  }  // end of matches
 
   std::vector<SupportedTypes::TypeSize::Monomial>::iterator
   SupportedTypes::TypeSize::findMatchingMonomial(const Monomial& m) {
     return std::find_if(
         this->monomials.begin(), this->monomials.end(),
         [&m](const Monomial& m2) { return TypeSize::matches(m, m2); });
-  } // end of findMatchingMonomial
+  }  // end of findMatchingMonomial
 
   std::vector<SupportedTypes::TypeSize::Monomial>::const_iterator
   SupportedTypes::TypeSize::findMatchingMonomial(const Monomial& m) const {
@@ -712,40 +858,64 @@ namespace mfront {
     SupportedTypes::normalize(std::get<TypeInformation>(args[2]), opts);
   }  // end of normalizeTinyMatrixTemplateArguments
 
-  void SupportedTypes::normalizeTensorialTypeTemplateArguments(
-      TypeInformation& t, const TypeParsingOptions& opts) {
+  unsigned short SupportedTypes::getTensorialObjectSpaceDimension(
+      const TypeInformation& t) {
+    auto raise = [&t](const std::string_view msg) {
+      tfel::raise("SupportedTypes::getTensorialObjectSpaceDimension: " +
+                  std::string{msg} + " (invalid type '" + t.type + "')");
+    };
+    auto report_invalid_space_dimension = [&raise] {
+      raise(
+          "the first template argument of a tensorial object "
+          "must be equal to 1, 2, 3 or N");
+    };
     if (!t.template_arguments) {
-      tfel::raise("tensor objects must have 2 template arguments");
+      raise("tensor objects must have 2 template arguments");
     }
     auto& args = *(t.template_arguments);
     if (args.size() != 2u) {
-      tfel::raise("tensor objects must have 2 template arguments");
+      raise("tensor objects must have 2 template arguments");
     }
     if (!std::holds_alternative<TypeInformation::IntegerTemplateArgument>(
             args[0])) {
-      tfel::raise(
-          "tensorial object must have an integer as first template argument");
+      raise("tensorial object must have an integer as first template argument");
     }
     const auto& N = std::get<TypeInformation::IntegerTemplateArgument>(args[0]);
     if (std::holds_alternative<int>(N)) {
-      const auto Nv = std::get<int>(N);
-      if ((Nv != 1) && (Nv != 2) && (Nv != 3)) {
-        tfel::raise(
-            "the first template argument of a tensorial object "
-            "must be equal to 1, 2, 3 or N");
+      const auto r = std::get<int>(N);
+      if ((r != 1) && (r != 2) && (r != 3)) {
+        report_invalid_space_dimension();
       }
-    } else {
-      const auto& f = std::get<std::string>(N);
-      if (f != "N") {
-        tfel::raise(
-            "the first template argument of a tensorial object "
-            "must be equal to 1, 2, 3 or N");
-      }
+      return static_cast<unsigned short>(r);
+    }
+    const auto& f = std::get<std::string>(N);
+    if (f != "N") {
+      report_invalid_space_dimension();
+    }
+    return 0;
+  }  // end of getTensorialObjectSpaceDimension
+
+  void SupportedTypes::normalizeTensorialTypeTemplateArguments(
+      TypeInformation& t, const TypeParsingOptions& opts) {
+    if (!t.template_arguments) {
+      tfel::raise(
+          "SupportedTypes::normalizeTensorialTypeTemplateArguments: "
+          "tensor objects must have 2 template arguments");
+    }
+    auto& args = *(t.template_arguments);
+    if (args.size() != 2u) {
+      tfel::raise(
+          "SupportedTypes::normalizeTensorialTypeTemplateArguments: "
+          "tensor objects must have 2 template arguments");
+    }
+    // check if the space dimension is correctly defined
+    getTensorialObjectSpaceDimension(t);
+    if (!std::holds_alternative<TypeInformation>(args[1])) {
+      tfel::raise(
+          "SupportedTypes::normalizeTensorialTypeTemplateArguments: "
+          "tensorial object must have a type as template argument");
     }
     //
-    if (!std::holds_alternative<TypeInformation>(args[1])) {
-      tfel::raise("tensorial object must have a type as template argument");
-    }
     SupportedTypes::normalizeScalarType(std::get<TypeInformation>(args[1]),
                                         opts);
   }  // end of normalizeTensorialTypeTemplateArguments

@@ -36,10 +36,6 @@ namespace mfront {
     return {false, p};
   }  // end of BehaviourBrickBase::treatKeyword
 
-  void BehaviourBrickBase::addRequirements(bbrick::RequirementManager&,
-                                           const Hypothesis) const {
-  }  // end of BehaviourBrickBase::addRequirements
-
   void BehaviourBrickBase::checkThatParameterHasNoValue(
       const Parameter& p) const {
     tfel::raise_if(!p.second.empty(),

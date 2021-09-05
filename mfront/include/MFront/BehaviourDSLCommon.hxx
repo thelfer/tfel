@@ -786,11 +786,11 @@ namespace mfront {
 
     virtual void writeNamespaceEnd(std::ostream&) const;
 
-    virtual void writeStandardTFELTypedefs(std::ostream&) const;
+    virtual void writeTypeAliases(std::ostream&) const;
 
     virtual void checkBehaviourDataFile(std::ostream&) const;
 
-    virtual void writeBehaviourDataStandardTFELTypedefs(std::ostream&) const;
+    virtual void writeBehaviourDataTypeAliases(std::ostream&) const;
 
     virtual void writeBehaviourDataStandardTFELIncludes(std::ostream&) const;
 
@@ -848,7 +848,7 @@ namespace mfront {
 
     virtual void checkIntegrationDataFile(std::ostream&) const;
 
-    virtual void writeIntegrationDataStandardTFELTypedefs(std::ostream&) const;
+    virtual void writeIntegrationDataTypeAliases(std::ostream&) const;
 
     virtual void writeIntegrationDataStandardTFELIncludes(std::ostream&) const;
 
@@ -899,7 +899,7 @@ namespace mfront {
 
     virtual void checkBehaviourFile(std::ostream&) const;
 
-    virtual void writeBehaviourStandardTFELTypedefs(std::ostream&) const;
+    virtual void writeBehaviourTypeAliases(std::ostream&) const;
 
     virtual void writeBehaviourFileHeader(std::ostream&) const;
 

@@ -17,7 +17,7 @@
 #include <iosfwd>
 #include <string>
 #include <vector>
-
+#include <string_view>
 #include "TFEL/Config/TFELConfig.hxx"
 
 namespace tfel::tests {
@@ -36,15 +36,12 @@ namespace tfel::tests {
       /*!
        * \brief constructor
        * \param[in] b: tells if the test is a success
-       * \param[in] c: detail
+       * \param[in] c: description of the test
+       * \param[in] e: description of why the test failed
        */
-      TestResult(const bool, const char* const);
-      /*!
-       * \brief constructor
-       * \param[in] b: tells if the test is a success
-       * \param[in] c: detail
-       */
-      TestResult(const bool, const std::string&);
+      TestResult(const bool,
+                 const std::string_view,
+                 const std::string_view = std::string_view{});
       //! copy constructor
       TestResult(const TestResult&);
       //! copy constructor
@@ -55,8 +52,10 @@ namespace tfel::tests {
       TestResult& operator=(const TestResult&);
       //! \brief report success
       bool success() const;
-      //! \return result details
-      const std::string& details() const;
+      //! \return a description of the test
+      const std::string& getDescription() const;
+      //! \return a description of why the test fails
+      const std::string& getFailureDescription() const;
       /*!
        *  \return a read-only (constant) iterator that points to the
        *  first element in the vector.
@@ -88,12 +87,14 @@ namespace tfel::tests {
       ~TestResult();
 
      private:
-      //! detail
-      std::string d;
-      //! test duration
+      //! \brief success of the test
+      bool status = true;
+      //! \brief details
+      std::string description;
+      //! \brief reason why the test failed (if any)
+      std::string failure_description;
+      //! \brief test duration
       double test_duration = 0.;
-      //! success of the test
-      bool s = true;
     };  // end of struct
 
     std::ostream& operator<<(std::ostream&, const TestResult&);

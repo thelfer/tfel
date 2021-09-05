@@ -37,8 +37,6 @@ namespace mfront {
 
   namespace bbrick {
     // forward declaration
-    struct RequirementManager;
-    // forward declaration
     struct OptionDescription;
   }  // end of namespace bbrick
 
@@ -113,13 +111,6 @@ namespace mfront {
      *   list, a set of default modelling hypotheses is selected.
      */
     virtual std::vector<Hypothesis> getSupportedModellingHypotheses() const = 0;
-    /*!
-     * \brief add requirements for the given modelling hypothesis
-     * \param[in] r : requirement manager
-     * \param[in] h : modelling hypothesis
-     */
-    virtual void addRequirements(bbrick::RequirementManager&,
-                                 const Hypothesis) const = 0;
     //! method called at the end of the input file processing
     virtual void endTreatment() const = 0;
     //! complete the variable description

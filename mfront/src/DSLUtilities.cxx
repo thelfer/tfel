@@ -40,7 +40,7 @@ static const char* const constexpr_c = "const";
 
 namespace mfront {
 
-  std::vector<std::string> getScalarStandardTFELTypedefs() {
+  std::vector<std::string> getScalarTypeAliases() {
     return {"real",
             "time",
             "length",
@@ -55,33 +55,37 @@ namespace mfront {
             "thermalconductivity",
             "massdensity",
             "energydensity"};
-  }  // end of getScalarStandardTFELTypedefs
+  }  // end of getScalarTypeAliases
 
-  std::vector<std::string> getTinyVectorStandardTFELTypedefs() {
+  std::vector<std::string> getTinyVectorTypeAliases() {
     return {"TVector", "DisplacementTVector", "ForceTVector", "HeatFlux",
             "TemperatureGradient"};
-  }  // end of getTinyVectorStandardTFELTypedefs
+  }  // end of getTinyVectorTypeAliases
 
-  std::vector<std::string> getStensorStandardTFELTypedefs() {
+  std::vector<std::string> getStensorTypeAliases() {
     return {"Stensor", "StressStensor", "StressRateStensor", "StrainStensor",
             "StrainRateStensor", "FrequencyStensor"};
   }
 
-  std::vector<std::string> getTensorStandardTFELTypedefs() {
+  std::vector<std::string> getTensorTypeAliases() {
     return {"Tensor", "DeformationGradientTensor", "StressTensor"};
   }
 
-  std::vector<std::string> getStandardTFELTypedefs() {
-    auto aliases = getScalarStandardTFELTypedefs();
+  std::vector<std::string> getST2toST2TypeAliases() {
+    return {"StiffnessTensor", "Stensor4"};
+  }
+
+  std::vector<std::string> getTypeAliases() {
+    auto aliases = getScalarTypeAliases();
     auto append = [&aliases](const std::vector<std::string>& others) {
       aliases.insert(aliases.end(), others.begin(), others.end());
     };
-    append(getTinyVectorStandardTFELTypedefs());
-    append(getStensorStandardTFELTypedefs());
-    append(getTensorStandardTFELTypedefs());
-    aliases.insert(aliases.end(), {"StiffnessTensor", "Stensor4"});
+    append(getTinyVectorTypeAliases());
+    append(getStensorTypeAliases());
+    append(getTensorTypeAliases());
+    append(getST2toST2TypeAliases());
     return aliases;
-  }  // end of getStandardTFELTypedefs
+  }  // end of getTypeAliases
 
   void writeParametersSymbols(std::ostream& os,
                               const std::string& n,

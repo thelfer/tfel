@@ -43,13 +43,6 @@ namespace mfront {
      */
     BehaviourBrickBase(AbstractBehaviourDSL&, BehaviourDescription&);
     /*!
-     * \brief add requirements for the given modelling hypothesis
-     * \param[in] r : requirement manager
-     * \param[in] h : modelling hypothesis
-     */
-    void addRequirements(bbrick::RequirementManager&,
-                         const Hypothesis) const override;
-    /*!
      * \brief treat a keyword
      * \param[in] key: keyword to be treated
      * \param[in,out] p:   current position in the file

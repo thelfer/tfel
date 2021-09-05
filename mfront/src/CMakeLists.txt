@@ -125,10 +125,6 @@ set(TFELMFront_SOURCES
     BehaviourBrickDescription.cxx
     AbstractBehaviourBrick.cxx
     BehaviourBrickFactory.cxx
-    BehaviourBrickProviderIdentifier.cxx
-    BehaviourBrickProvider.cxx
-    BehaviourBrickRequirement.cxx
-    BehaviourBrickRequirementManager.cxx
     BehaviourBrickBase.cxx
     StandardElasticityBrick.cxx
     StandardElastoViscoPlasticityBrick.cxx

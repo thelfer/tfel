@@ -47,6 +47,18 @@ namespace mfront {
       //! \brief a simple alias
       using Hypothesis = tfel::material::ModellingHypothesis::Hypothesis;
       /*!
+       * \brief constructor
+       * \param[in] i1: vector exponent
+       * \param[in] i2: symmetric tensor exponent
+       * \param[in] i3: (unsymmetric) tensor exponent
+       *
+       * \note if the three exponents i1, i2 and i3 are null, a scalar is
+       * described.
+       */
+      static TypeSize buildFromExponents(const unsigned int,
+                                         const unsigned int,
+                                         const unsigned int);
+      /*!
        * \return the type size of a derivative of a variable of size `s1`
        * with respect to a variable of size `s2`.
        * \param[in] s1: size of the first variable
@@ -56,6 +68,19 @@ namespace mfront {
        * must return false).
        */
       static TypeSize getDerivativeSize(const TypeSize&, const TypeSize&);
+      /*!
+       * \return the type size of a derivative of a variable of size `s1`
+       * with respect to a variable of size `s2`.
+       * \param[in] a: array size
+       * \param[in] s1: size of the first variable
+       * \param[in] s2: size of the second variable
+       * \note s1 and s2 must not describe describe a unique type
+       * (`describesAnUniqueType` must return true) and not an array (`isArray`
+       * must return false).
+       */
+      static TypeSize getDerivativeSize(const unsigned int a,
+                                        const TypeSize&,
+                                        const TypeSize&);
       //! \brief constructor
       TypeSize();
       //! \brief move constructor
@@ -65,45 +90,34 @@ namespace mfront {
       /*!
        * \brief constructor
        * \param[in] a: array size
-       * \param[in] i1: vector exponent
-       * \param[in] i2: symmetric tensor exponent
-       * \param[in] i3: (unsymmetric) tensor exponent
-       *
-       * \note if the three exponents i1, i2 and i3 are null, a scalar is
-       * described.
+       * \param[in] f: type flag
+       * \param[in] e: type exponent
        */
-      TypeSize(const unsigned int,
-               const unsigned int,
-               const unsigned int,
-               const unsigned int);
+      TypeSize(const TypeFlag, const unsigned int = 1u);
       /*!
        * \brief constructor
        * \param[in] a: array size
        * \param[in] f: type flag
+       * \param[in] e: type exponent
        */
-      TypeSize(const unsigned int, const TypeFlag);
-      /*!
-       * \brief constructor
-       * \param[in] f: type flag
-       */
-      TypeSize(const TypeFlag);
-      //! assignement
+      TypeSize(const unsigned int, const TypeFlag, const unsigned int = 1u);
+      //! \brief assignement operator
       TypeSize& operator=(const TypeSize&);
-      //! move assignement
+      //! \brief move assignement operator
       TypeSize& operator=(TypeSize&&);
       /*!
-       * plus-equal operator
+       * \brief plus-equal operator
        * \param[in] rhs: right hand side
        */
       TypeSize& operator+=(const TypeSize&);
       /*!
-       * minus-equal operator
+       * \brief minus-equal operator
        * \param[in] rhs: right hand side
        */
       TypeSize& operator-=(const TypeSize&);
-      //! comparision operator
+      //! \brief comparision operator
       bool operator!=(const TypeSize&) const;
-      //! comparision operator
+      //! \brief comparision operator
       bool operator==(const TypeSize&) const;
 
       /*!
@@ -125,15 +139,13 @@ namespace mfront {
       /*!
        *
        */
-      unsigned int getValueForDimension(const unsigned short) const;
-
-      unsigned int getValueForModellingHypothesis(const Hypothesis) const;
+      int getValueForDimension(const unsigned short) const;
+      /*!
+       *
+       */
+      int getValueForModellingHypothesis(const Hypothesis) const;
       //! \return true if all components of the TipeSize are null
       bool isNull() const;
-      /*!
-       * \return true if the type
-       */
-      bool isScalarOrArrayOfScalars();
       /*!
        * \return true if only the scalar component is not null and is
        * equal to one
@@ -141,11 +153,27 @@ namespace mfront {
       bool isOne() const;
       //! \return true if the type size describe an array of an unique type
       bool isArray() const;
-      //! \return true if the type size describe an unique type (can be an
-      //! array)
-      bool describesAnUniqueType() const;
+      /*!
+       * \brief multiply the array size by the given parameter
+       * \param[in] a: array size
+       */
+      TypeSize& operator*=(const unsigned int);
 
      private:
+      /*!
+       * \brief constructor
+       * \param[in] a: array size
+       * \param[in] i1: vector exponent
+       * \param[in] i2: symmetric tensor exponent
+       * \param[in] i3: (unsymmetric) tensor exponent
+       *
+       * \note if the three exponents i1, i2 and i3 are null, a scalar is
+       * described.
+       */
+      TypeSize(const unsigned int,
+               const unsigned int,
+               const unsigned int,
+               const unsigned int);
       /*!
        * \brief structure representing the size of an array of a unique type
        */
@@ -166,6 +194,10 @@ namespace mfront {
        * \param[in] m2: second monomial
        */
       static bool matches(const Monomial& m1, const Monomial& m2);
+      /*!
+       * \return true if the type size is only described by an unique monomial.
+       */
+      bool isMonomial() const;
       /*!
        * \return an iterator to a matching monomial (i.e. a monomial with
        * the same exponent but not necessarily the same array size) if any
@@ -246,30 +278,33 @@ namespace mfront {
      * \return the flag associated with the given type
      * \param[in] t : type
      */
+    static bool hasTypeFlag(const std::string_view);
+    /*!
+     * \return the flag associated with the given type
+     * \param[in] t : type
+     */
     static TypeFlag getTypeFlag(const std::string_view);
     /*!
+     * \return the size of a type (i.e. the number of values hold)
+     * \note this method is only meaningful for TFEL mathematical objects.
      * \param[in] t : variable type
      * \param[in] a : array size
      */
-    static TypeSize getTypeSize(const std::string_view, const unsigned short);
-    //! default constructor
+    static TypeSize getTypeSize(const std::string_view,
+                                const unsigned short = 1);
+    //! \return the time derivative of a variable
+    static std::string getTimeDerivativeType(const std::string_view);
+    //! \brief default constructor
     SupportedTypes();
-    //! move constructor
+    //! \brief move constructor
     SupportedTypes(SupportedTypes&&) = default;
-    //! copy constructor
+    //! \brief copy constructor
     SupportedTypes(const SupportedTypes&) = default;
-    //! move assignement
+    //! \brief move assignement
     SupportedTypes& operator=(SupportedTypes&&) = default;
-    //! copy assignement
+    //! \brief copy assignement
     SupportedTypes& operator=(const SupportedTypes&) = default;
-    /*!
-     * \return true if the given type is supported
-     * \param[in] t : type
-     */
-    bool isSupportedType(const std::string_view) const;
-    //! \return the
-    std::string getTimeDerivativeType(const std::string_view) const;
-    //! desctructor
+    //! \brief desctructor
     virtual ~SupportedTypes();
 
    private:
@@ -292,6 +327,12 @@ namespace mfront {
      * \param[in] t : type
      */
     static std::optional<TypeFlag> getTypeFlag(const TypeInformation&);
+    /*!
+     * \return the size of a type (i.e. the number of values hold)
+     * \param[in] t : type information
+     * \param[in] a : array size
+     */
+    static TypeSize getTypeSize(const TypeInformation&, const unsigned short);
     //
     static void normalize(TypeInformation&, const TypeParsingOptions&);
     static bool matchesTFELMathType(const std::string_view, const std::string&);
@@ -305,6 +346,25 @@ namespace mfront {
                                                      const TypeParsingOptions&);
     static void normalizeTinyMatrixTemplateArguments(TypeInformation&,
                                                      const TypeParsingOptions&);
+    /*!
+     * \brief check that the number of template arguments is the expected one
+     * \param[in] t: type information
+     * \param[in] n: expected number of template arguments
+     */
+    static void checkNumberOfTemplateArguments(const TypeInformation&,
+                                               const std::size_t);
+    /*!
+     * \return the space dimension of the tensorial object (0 if it depends on
+     * the context of instanciation, 1 for an 1D tensor, 2 for a 2D tensor, 3
+     * for a 3D tensor)
+     */
+    static unsigned short getTensorialObjectSpaceDimension(
+        const TypeInformation&);
+    /*!
+     * \brief analyse the template arguments of a tensorial object
+     * \param[in] t: type information
+     * \param[in] opts: parsing options
+     */
     static void normalizeTensorialTypeTemplateArguments(
         TypeInformation&, const TypeParsingOptions&);
     static std::vector<std::string> getSupportedTFELMathTensorialTypes();
@@ -357,6 +417,20 @@ namespace mfront {
    */
   MFRONT_VISIBILITY_EXPORT std::string to_string(
       const SupportedTypes::TypeSize&);
+  /*!
+   * \brief multiply a type size by a scalar
+   * \param[in] a: factor
+   * \param[in] s: type size
+   */
+  MFRONT_VISIBILITY_EXPORT SupportedTypes::TypeSize operator*(
+      const SupportedTypes::TypeSize&, const unsigned int);
+  /*!
+   * \brief multiply a type size by a scalar
+   * \param[in] a: factor
+   * \param[in] s: type size
+   */
+  MFRONT_VISIBILITY_EXPORT SupportedTypes::TypeSize operator*(
+      const unsigned int, const SupportedTypes::TypeSize&);
 
 }  // end of namespace mfront
 

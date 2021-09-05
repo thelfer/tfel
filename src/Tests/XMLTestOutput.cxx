@@ -86,8 +86,15 @@ namespace tfel::tests {
     } else {
       this->os << "<failure>\n";
     }
-    if (!r.details().empty()) {
-      std::string out(r.details());
+    const auto& d = r.getDescription();
+    const auto& e = r.getFailureDescription();
+    if (!d.empty()) {
+      std::string out(d);
+      convert_to_xml(out);
+      this->os << out << '\n';
+    }
+    if (!e.empty()) {
+      std::string out(e);
       convert_to_xml(out);
       this->os << out << '\n';
     }
@@ -109,7 +116,7 @@ namespace tfel::tests {
     } else {
       out = "FAILURE : ";
     }
-    out += r.details();
+    out += r.getDescription();
     convert_to_xml(out);
     this->os << out << '\n';
     for (const auto& t : r) {

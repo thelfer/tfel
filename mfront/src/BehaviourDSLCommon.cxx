@@ -53,8 +53,6 @@
 #include "MFront/ModelDSL.hxx"
 #include "MFront/MFrontModelInterface.hxx"
 #include "MFront/BehaviourDSLCommon.hxx"
-#include "MFront/BehaviourBrick/Requirement.hxx"
-#include "MFront/BehaviourBrick/RequirementManager.hxx"
 
 // fixing a bug on current glibc++ cygwin versions (19/08/2015)
 #if defined __CYGWIN__ && (!defined _GLIBCXX_USE_C99)
@@ -1141,7 +1139,6 @@ namespace mfront {
 
   void BehaviourDSLCommon::completeVariableDeclaration() {
     using namespace mfront::bbrick;
-    const auto& g = tfel::glossary::Glossary::getGlossary();
     if (getVerboseMode() >= VERBOSE_DEBUG) {
       getLogStream()
           << "BehaviourDSLCommon::completeVariableDeclaration: begin\n";
@@ -1175,50 +1172,6 @@ namespace mfront {
     }
     const auto& mh = this->mb.getModellingHypotheses();
     // treating bricks
-    if (!this->bricks.empty()) {
-      if (getVerboseMode() >= VERBOSE_DEBUG) {
-        getLogStream() << "BehaviourDSLCommon::completeVariableDeclaration: "
-                       << "treating bricks\n";
-      }
-      for (const auto h : mh) {
-        auto& d = this->mb.getBehaviourData(h);
-        RequirementManager r{d, this->mb.useQt()};
-        // for(const auto& pb : this->bricks){
-        //   pb->declareProviders(r,h);
-        // }
-        for (const auto& pb : this->bricks) {
-          pb->addRequirements(r, h);
-        }
-        // unmatched requirements
-        auto umrqs = std::vector<std::string>{};
-        const auto& urs = r.getUnresolvedRequirements();
-        for (const auto& n : urs) {
-          const auto s = SupportedTypes{};
-          const auto& ur = r.getRequirement(n);
-          if ((s.getTypeFlag(ur.type) != SupportedTypes::SCALAR) ||
-              (find(ur.aproviders.begin(), ur.aproviders.end(),
-                    ProviderIdentifier::MATERIALPROPERTY) ==
-               ur.aproviders.end())) {
-            umrqs.push_back(ur.name);
-          }
-        }
-        if (!umrqs.empty()) {
-          std::string msg = "the following requirements can't be met: ";
-          for (const auto& umrq : umrqs) {
-            msg += "\n- " + umrq;
-          }
-          this->throwRuntimeError(
-              "BehaviourDSLCommon::completeVariableDeclaration", msg);
-        }
-        for (const auto& n : urs) {
-          const auto& ur = r.getRequirement(n);
-          this->mb.addMaterialProperty(h, {ur.type, ur.name, ur.asize, 0u});
-          if (!g.contains(ur.name)) {
-            this->mb.setEntryName(h, ur.name, ur.name);
-          }
-        }
-      }
-    }
     for (const auto& pb : this->bricks) {
       pb->completeVariableDeclaration();
     }
@@ -3546,9 +3499,9 @@ namespace mfront {
     file << "} // end of namespace tfel::material\n\n";
   }
 
-  void BehaviourDSLCommon::writeStandardTFELTypedefs(std::ostream& file) const {
+  void BehaviourDSLCommon::writeTypeAliases(std::ostream& file) const {
     if ((!file) || (!file.good())) {
-      this->throwRuntimeError("BehaviourDSLCommon::writeStandardTFELTypedefs",
+      this->throwRuntimeError("BehaviourDSLCommon::writeTypeAliases",
                               "output file is not valid");
     }
     file << "using ushort =  unsigned short;\n";
@@ -3558,7 +3511,7 @@ namespace mfront {
       file << "using Types = tfel::config::Types<N, NumericType, false>;\n";
     }
     file << "using Type = NumericType;\n";
-    for (const auto& a : getStandardTFELTypedefs()) {
+    for (const auto& a : getTypeAliases()) {
       file << "using " << a << " = typename Types::" << a << ";\n";
     }
     // tangent operator
@@ -3574,7 +3527,7 @@ namespace mfront {
       file << "using PhysicalConstants = "
            << "tfel::PhysicalConstants<NumericType, false>;\n";
     }
-  }  // end of writeStandardTFELTypedefs
+  }  // end of writeTypeAliases
 
   std::string BehaviourDSLCommon::getIntegrationVariablesIncrementsInitializers(
       const Hypothesis h) const {
@@ -3751,7 +3704,7 @@ namespace mfront {
     }
   }
 
-  void BehaviourDSLCommon::writeBehaviourDataStandardTFELTypedefs(
+  void BehaviourDSLCommon::writeBehaviourDataTypeAliases(
       std::ostream& os) const {
     this->checkBehaviourDataFile(os);
     os << "static " << constexpr_c << " unsigned short TVectorSize = N;\n"
@@ -3761,7 +3714,7 @@ namespace mfront {
        << "typedef tfel::math::TensorDimeToSize<N> TensorDimeToSize;\n"
        << "static " << constexpr_c << " unsigned short TensorSize = "
        << "TensorDimeToSize::value;\n\n";
-    this->writeStandardTFELTypedefs(os);
+    this->writeTypeAliases(os);
     os << '\n';
   }
 
@@ -4165,7 +4118,7 @@ namespace mfront {
                                                    const Hypothesis h) const {
     this->checkBehaviourDataFile(os);
     this->writeBehaviourDataClassBegin(os, h);
-    this->writeBehaviourDataStandardTFELTypedefs(os);
+    this->writeBehaviourDataTypeAliases(os);
     os << "protected:\n\n";
     this->writeBehaviourDataDefaultMembers(os);
     this->writeBehaviourDataMaterialProperties(os, h);
@@ -6368,7 +6321,7 @@ namespace mfront {
     }
   }  // end of void BehaviourDSLCommon::writeBehaviourPrivate
 
-  void BehaviourDSLCommon::writeBehaviourStandardTFELTypedefs(
+  void BehaviourDSLCommon::writeBehaviourTypeAliases(
       std::ostream& os) const {
     using namespace tfel::material;
     this->checkBehaviourFile(os);
@@ -6380,7 +6333,7 @@ namespace mfront {
        << "typedef tfel::math::TensorDimeToSize<N> TensorDimeToSize;\n"
        << "static " << constexpr_c << " unsigned short TensorSize = "
        << "TensorDimeToSize::value;\n\n";
-    this->writeStandardTFELTypedefs(os);
+    this->writeTypeAliases(os);
     os << '\n' << "public :\n\n";
     const auto qt = this->mb.useQt() ? "use_qt" : "false";
     os << "typedef " << this->mb.getClassName()
@@ -6435,7 +6388,7 @@ namespace mfront {
       os << "using StressFreeExpansionType = "
          << this->mb.getStressFreeExpansionType() << ";\n\n";
     }
-  }  // end of writeBehaviourStandardTFELTypedefs
+  }  // end of writeBehaviourTypeAliases
 
   void BehaviourDSLCommon::writeBehaviourTraits(std::ostream& os) const {
     constexpr auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
@@ -6863,7 +6816,7 @@ namespace mfront {
     this->checkBehaviourFile(os);
     this->writeBehaviourClassBegin(os, h);
     this->writeBehaviourFriends(os, h);
-    this->writeBehaviourStandardTFELTypedefs(os);
+    this->writeBehaviourTypeAliases(os);
     os << "private :\n\n";
     this->writeBehaviourParserSpecificTypedefs(os);
     this->writeBehaviourStaticVariables(os, h);
@@ -7535,7 +7488,7 @@ namespace mfront {
        << "time dt;\n\n";
   }
 
-  void BehaviourDSLCommon::writeIntegrationDataStandardTFELTypedefs(
+  void BehaviourDSLCommon::writeIntegrationDataTypeAliases(
       std::ostream& os) const {
     this->checkIntegrationDataFile(os);
     os << "static " << constexpr_c << " unsigned short TVectorSize = N;\n"
@@ -7545,7 +7498,7 @@ namespace mfront {
        << "typedef tfel::math::TensorDimeToSize<N> TensorDimeToSize;\n"
        << "static " << constexpr_c << " unsigned short TensorSize = "
        << "TensorDimeToSize::value;\n\n";
-    this->writeStandardTFELTypedefs(os);
+    this->writeTypeAliases(os);
     os << '\n';
   }
 
@@ -7918,7 +7871,7 @@ namespace mfront {
                                                      const Hypothesis h) const {
     this->checkIntegrationDataFile(os);
     this->writeIntegrationDataClassBegin(os, h);
-    this->writeIntegrationDataStandardTFELTypedefs(os);
+    this->writeIntegrationDataTypeAliases(os);
     this->writeIntegrationDataDefaultMembers(os);
     this->writeIntegrationDataExternalStateVariables(os, h);
     this->writeIntegrationDataDisabledConstructors(os);
@@ -8519,15 +8472,12 @@ namespace mfront {
     this->readHypothesesList(mh);
     auto endOfTreatment = false;
     while ((this->current != this->tokens.end()) && (!endOfTreatment)) {
-      const auto vtype = [this, throw_if]() -> std::string {
-        const auto v = this->current->value;
-        if (SupportedTypes::isSupportedType(v)) {
-          throw_if(SupportedTypes::getTypeFlag(v) != SupportedTypes::SCALAR,
-                   "invalid parameter type");
-          ++(this->current);
-          return v;
+      const auto vtype = [this]() -> std::string {
+        const auto otype = this->readVariableTypeIfPresent();
+        if (!otype) {
+          return "real";
         }
-        return "real";
+        return *otype;
       }();
       this->checkNotEndOfFile("BehaviourDSLCommon::treatParameter");
       const auto sname = this->current->value;

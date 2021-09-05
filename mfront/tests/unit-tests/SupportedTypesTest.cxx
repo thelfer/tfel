@@ -15,6 +15,7 @@
 #undef NDEBUG
 #endif /* NDEBUG */
 
+#include <utility>
 #include <cstdlib>
 #include <iostream>
 #include <stdexcept>
@@ -33,6 +34,7 @@ struct SupportedTypesTest final : public tfel::tests::TestCase {
     this->test1();
     this->test2();
     this->test3();
+    this->test4();
     return this->result;
   }  // end of execute
 
@@ -96,15 +98,57 @@ struct SupportedTypesTest final : public tfel::tests::TestCase {
     check("quantity<real,0,1,2>", "real");
   }
   void test3() {
+    using pair = std::pair<std::string, mfront::SupportedTypes::TypeFlag>;
     auto o = mfront::SupportedTypes::TypeParsingOptions{};
     o.integer_constants = std::map<std::string, int>{{"Nss", 12}};
-    auto check = [&, this](std::string_view v,
-                           const mfront::SupportedTypes::TypeFlag f) {
+    auto check = [&o, this](std::string_view v,
+                            const mfront::SupportedTypes::TypeFlag f) {
       TFEL_TESTS_CHECK_EQUAL(mfront::SupportedTypes::getTypeFlag(v), f);
     };
     check("Stensor", mfront::SupportedTypes::STENSOR);
     check("stensor<N,real>", mfront::SupportedTypes::STENSOR);
     check("tensor<N,real>", mfront::SupportedTypes::TENSOR);
+    for (const auto& m :
+         {pair{"tvector<N,real>", mfront::SupportedTypes::TVECTOR},
+          pair{"tensor<N,real>", mfront::SupportedTypes::TENSOR},
+          pair{"tfel::math::stensor<N,real>", mfront::SupportedTypes::STENSOR}}) {
+      check("result_type<" + m.first + "," + m.first + ",OpPlus>", m.second);
+      check("result_type<" + m.first + ",stress,OpMult>", m.second);
+    }
+    check("result_type<stress,stress,OpMult>", mfront::SupportedTypes::SCALAR);
+    check("stensor<3u,real>", mfront::SupportedTypes::STENSOR);
+  }
+  void test4() {
+    using mfront::SupportedTypes;
+    auto check = [this](const std::string_view v,
+                        const SupportedTypes::TypeSize& v2) {
+      TFEL_TESTS_CHECK_EQUAL(SupportedTypes::getTypeSize(v), v2);
+    };
+    auto check_throw = [this](std::string_view v1) {
+      TFEL_TESTS_CHECK_THROW(mfront::SupportedTypes::getTypeSize(v1),
+                             std::runtime_error);
+    };
+    check("Stensor", SupportedTypes::STENSOR);
+    check("derivative_type<Stensor,real>", SupportedTypes::STENSOR);
+    check("Stensor4", SupportedTypes::TypeSize::buildFromExponents(0u, 2u, 0u));
+    check("tfel::math::st2tost2<N,real>",
+          SupportedTypes::TypeSize::buildFromExponents(0u, 2u, 0u));
+    check("tfel::math::st2tot2<N,real>",
+          SupportedTypes::TypeSize::buildFromExponents(0u, 1u, 1u));
+    check("tfel::math::t2tost2<N,real>",
+          SupportedTypes::TypeSize::buildFromExponents(0u, 1u, 1u));
+    check("tfel::math::t2tot2<N,real>",
+          SupportedTypes::TypeSize::buildFromExponents(0u, 0u, 2u));
+    check("tfel::math::st2tost2<3,real>",
+          SupportedTypes::TypeSize(36, SupportedTypes::SCALAR));
+    check("derivative_type<Stensor4,Stensor>",
+          SupportedTypes::TypeSize::buildFromExponents(0u, 3u, 0u));
+    check("derivative_type<Stensor4,Tensor>",
+          SupportedTypes::TypeSize::buildFromExponents(0u, 2u, 1u));
+    check_throw("result_type<stress,Stensor,OpDiv>");
+    check("result_type<stensor<1u,real>,stensor<1u,real>,OpPlus>",
+          SupportedTypes::TypeSize(3, SupportedTypes::SCALAR));
+    check_throw("result_type<stensor<1u,real>,stensor<2u,real>,OpPlus>");
   }
 };
 

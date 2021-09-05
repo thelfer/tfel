@@ -648,7 +648,6 @@ AC_OUTPUT([debug.sh Makefile Doxyfile docs/Makefile docs/tfel/Makefile
 	   mfront/tests/unit-tests/Makefile
 	   mfront/tests/unit-tests/DSLTest2.cxx
 	   mfront/tests/unit-tests/SwellingTest.cxx
-	   mfront/tests/unit-tests/BehaviourBrickRequirementManagerTest.cxx
 	   mfront/tests/Makefile mfront/tests/properties/Makefile
 	   mfront/tests/properties/interfaces/Makefile
 	   mfront/tests/properties/interfaces/include/Makefile

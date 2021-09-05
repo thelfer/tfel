@@ -41,31 +41,32 @@ namespace mfront {
    * \note this method internally calls the `getStandardScalarTFELTypedefs`
    * function.
    */
-  MFRONT_VISIBILITY_EXPORT std::vector<std::string> getStandardTFELTypedefs();
+  MFRONT_VISIBILITY_EXPORT std::vector<std::string> getTypeAliases();
   /*!
    * \return a list of standard scalar types defined in the
    * `tfel::config::Type` type
    */
-  MFRONT_VISIBILITY_EXPORT std::vector<std::string>
-  getScalarStandardTFELTypedefs();
+  MFRONT_VISIBILITY_EXPORT std::vector<std::string> getScalarTypeAliases();
   /*!
    * \return a list of standard tiny vector types defined in the
    * `tfel::config::Type` type
    */
-  MFRONT_VISIBILITY_EXPORT std::vector<std::string>
-  getTinyVectorStandardTFELTypedefs();
+  MFRONT_VISIBILITY_EXPORT std::vector<std::string> getTinyVectorTypeAliases();
   /*!
    * \return a list of standard symmetric tensor types defined in the
    * `tfel::config::Type` type
    */
-  MFRONT_VISIBILITY_EXPORT std::vector<std::string>
-  getStensorStandardTFELTypedefs();
+  MFRONT_VISIBILITY_EXPORT std::vector<std::string> getStensorTypeAliases();
   /*!
    * \return a list of standard tensor types defined in the
    * `tfel::config::Type` type
    */
-  MFRONT_VISIBILITY_EXPORT std::vector<std::string>
-  getTensorStandardTFELTypedefs();
+  MFRONT_VISIBILITY_EXPORT std::vector<std::string> getTensorTypeAliases();
+  /*!
+   * \return a list of standard st2tost2 types defined in the
+   * `tfel::config::Type` type
+   */
+  MFRONT_VISIBILITY_EXPORT std::vector<std::string> getST2toST2TypeAliases();
 
   /*!
    * \brief write the name of the variable

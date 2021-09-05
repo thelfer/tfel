@@ -83,7 +83,7 @@ namespace tfel::tests {
     const char red[5] = {033, '[', '3', '1', 'm'};
     const char reset[4] = {033, '[', '0', 'm'};
     auto out = s;
-    out += r.details();
+    out += r.getDescription();
     if (out.size() < 65) {
       out.resize(65, ' ');
     } else {
@@ -97,7 +97,10 @@ namespace tfel::tests {
         this->os.write(red, sizeof(red));
       }
       this->os << "FAILED\n";
-      this->os << r.details() << '\n';
+      const auto& error = r.getFailureDescription();
+      if (!error.empty()) {
+        this->os << error << '\n';
+      }
       if (this->colorOutput) {
         this->os.write(reset, sizeof(reset));
       }

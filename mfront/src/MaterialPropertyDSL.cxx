@@ -12,12 +12,12 @@
  */
 
 #include <string>
-#include <stdexcept>
-#include <sstream>
 #include <cctype>
-#include <algorithm>
-#include <iterator>
+#include <sstream>
 #include <cstdlib>
+#include <iterator>
+#include <algorithm>
+#include <stdexcept>
 
 #include "TFEL/Raise.hxx"
 #include "TFEL/Utilities/Token.hxx"
@@ -256,14 +256,11 @@ namespace mfront {
     this->checkNotEndOfFile("MaterialPropertyDSL::treatParameter",
                             "Expected parameter name.");
     const auto type = [this]() -> std::string {
-      SupportedTypes stypes;
-      if (stypes.isSupportedType(this->current->value)) {
-        const auto t = this->current->value;
-        ++(this->current);
-        this->checkNotEndOfFile("MaterialPropertyDSL::treatInput");
-        return t;
+      const auto otype = this->readVariableTypeIfPresent();
+      if (!otype) {
+        return "real";
       }
-      return "real";
+      return *otype;
     }();
     if (SupportedTypes::getTypeFlag(type) != SupportedTypes::SCALAR) {
       this->throwRuntimeError("DSLBase::treatParameter",
@@ -684,14 +681,11 @@ namespace mfront {
   void MaterialPropertyDSL::treatInput() {
     this->checkNotEndOfFile("MaterialPropertyDSL::treatInput");
     const auto type = [this]() -> std::string {
-      SupportedTypes stypes;
-      if (stypes.isSupportedType(this->current->value)) {
-        const auto t = this->current->value;
-        ++(this->current);
-        this->checkNotEndOfFile("MaterialPropertyDSL::treatInput");
-        return t;
+      const auto otype = this->readVariableTypeIfPresent();
+      if (!otype) {
+        return "real";
       }
-      return "real";
+      return *otype;
     }();
     auto ninputs = VariableDescriptionContainer{};
     this->readVarList(ninputs, type, false);
@@ -708,14 +702,11 @@ namespace mfront {
     }
     this->checkNotEndOfFile("MaterialPropertyDSL::treatInput");
     const auto type = [this]() -> std::string {
-      SupportedTypes stypes;
-      if (stypes.isSupportedType(this->current->value)) {
-        const auto t = this->current->value;
-        ++(this->current);
-        this->checkNotEndOfFile("MaterialPropertyDSL::treatInput");
-        return t;
+      const auto otype = this->readVariableTypeIfPresent();
+      if (!otype) {
+        return "real";
       }
-      return "real";
+      return *otype;
     }();
     const auto s = this->readOnlyOneToken();
     if (SupportedTypes::getTypeFlag(type) != SupportedTypes::SCALAR) {

@@ -29,8 +29,10 @@ namespace tfel::tests {
     return this->tname;
   }  // end of TestCase::~TestCase
 
-  void TestCase::registerResult(const std::string& n, const bool b) {
-    this->result.append(TestResult(b, n));
+  void TestCase::registerResult(const std::string_view n,
+                                const bool b,
+                                const std::string_view e) {
+    this->result.append(TestResult(b, n, e));
   }  // end of TestCase::registerResult
 
   TestCase::~TestCase() = default;

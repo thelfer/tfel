@@ -96,7 +96,7 @@ namespace mfront {
     names.insert(names.end(),
                  {"policy", "errno", "mfront_errno", "mfront_errno_old"});
     // standard aliases
-    for (const auto& a : getStandardTFELTypedefs()) {
+    for (const auto& a : getTypeAliases()) {
       names.push_back(a);
     }
     return names;
@@ -640,6 +640,23 @@ namespace mfront {
     opts.use_qt = this->useQt();
     return opts;
   }  // end of getTypeParsingOptions
+
+  std::optional<std::string> DSLBase::readVariableTypeIfPresent() {
+    this->disableQuantitiesUsageIfNotAlreadySet();
+    if (this->current->value == "::") {
+      return this->readType();
+    }
+    const auto n = std::next(this->current);
+    if (n == this->tokens.end()) {
+      this->throwRuntimeError("DSLBase::readVariableTypeIfPresent",
+                              "unexpected end of file");
+    }
+    if ((n->value == ";") || (n->value == ",") || (n->value == "=") ||
+        (n->value == "[") || (n->value == "{") || (n->value == "(")) {
+      return {};
+    }
+    return this->readType();
+  }  // end of readVariableTypeIfPresent
 
   std::string DSLBase::readType() {
     this->disableQuantitiesUsageIfNotAlreadySet();

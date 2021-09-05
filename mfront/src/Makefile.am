@@ -115,10 +115,6 @@ libTFELMFront_la_SOURCES = MFront.cxx                                     \
 		           BehaviourBrickDescription.cxx                             \
 		           AbstractBehaviourBrick.cxx                             \
 		           BehaviourBrickBase.cxx                                 \
-			   BehaviourBrickProviderIdentifier.cxx                      \
-			   BehaviourBrickRequirement.cxx                             \
-			   BehaviourBrickRequirementManager.cxx                      \
-			   BehaviourBrickProvider.cxx                                \
 		           StandardElasticityBrick.cxx                            \
 		           StandardElastoViscoPlasticityBrick.cxx                 \
 		           DDIF2Brick.cxx                                         \

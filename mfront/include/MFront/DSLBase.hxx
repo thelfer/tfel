@@ -318,6 +318,8 @@ namespace mfront {
     getTypeParsingOptions() const;
     //! \brief read a C++ type
     std::string readType();
+    //! \brief read a C++ type if present
+    std::optional<std::string> readVariableTypeIfPresent();
     /*!
      * \return the size of an array of variables, or 1 if the variable are not
      * defined as an array.

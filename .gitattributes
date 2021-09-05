@@ -2430,10 +2430,6 @@ mfront/include/MFront/BehaviourBrick/PowerIsotropicHardeningRule.hxx -text
 mfront/include/MFront/BehaviourBrick/PowerLawStrainBasedPorosityNucleationModel.hxx -text
 mfront/include/MFront/BehaviourBrick/PowerLawStressBasedPorosityNucleationModel.hxx -text
 mfront/include/MFront/BehaviourBrick/PragerKinematicHardeningRule.hxx -text
-mfront/include/MFront/BehaviourBrick/Provider.hxx -text
-mfront/include/MFront/BehaviourBrick/ProviderIdentifier.hxx -text
-mfront/include/MFront/BehaviourBrick/Requirement.hxx -text
-mfront/include/MFront/BehaviourBrick/RequirementManager.hxx -text
 mfront/include/MFront/BehaviourBrick/RousselierTanguyBesson2002StressCriterion.hxx -text
 mfront/include/MFront/BehaviourBrick/StandardPorousStressCriterionBase.hxx -text
 mfront/include/MFront/BehaviourBrick/StandardStressCriterionBase.hxx -text
@@ -2770,10 +2766,6 @@ mfront/src/Barlat2004StressCriterion.cxx -text
 mfront/src/BehaviourBrickBase.cxx -text
 mfront/src/BehaviourBrickDescription.cxx -text
 mfront/src/BehaviourBrickFactory.cxx -text
-mfront/src/BehaviourBrickProvider.cxx -text
-mfront/src/BehaviourBrickProviderIdentifier.cxx -text
-mfront/src/BehaviourBrickRequirement.cxx -text
-mfront/src/BehaviourBrickRequirementManager.cxx -text
 mfront/src/BehaviourDSLCommon.cxx -text
 mfront/src/BehaviourDSLDescription.cxx -text
 mfront/src/BehaviourData.cxx -text
@@ -6758,8 +6750,6 @@ mfront/tests/properties/interfaces/src/PleiadesMaterialPropertyInterface-2.0.cxx
 mfront/tests/properties/test-c.c -text
 mfront/tests/properties/test-cxx.cxx -text
 mfront/tests/properties/test-f.c -text
-mfront/tests/unit-tests/BehaviourBrickProviderTest.cxx -text
-mfront/tests/unit-tests/BehaviourBrickRequirementManagerTest.cxx.in -text
 mfront/tests/unit-tests/BehaviourDataTest.cxx -text
 mfront/tests/unit-tests/BehaviourDescriptionBoundsHandlingTest.cxx -text
 mfront/tests/unit-tests/BehaviourDescriptionTest.cxx -text
