@@ -40,8 +40,8 @@ namespace tfel::fsalgo {
      */
     template <typename ForwardIterator, typename Generator>
     static void exe(ForwardIterator p, Generator gen) {
-      *p = gen();
       if constexpr (N >= 1) {
+        *p = gen();
         generate<N - 1>::exe(++p, gen);
       }
     }
