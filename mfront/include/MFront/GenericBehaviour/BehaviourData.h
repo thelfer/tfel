@@ -112,12 +112,16 @@ struct mfront_gb_BehaviourData {
 
 #ifdef __cplusplus
 
-namespace mfront::gb {
+namespace mfront {
 
-  //! \brief a simple alias
-  using BehaviourData = ::mfront_gb_BehaviourData;
+  namespace gb {
 
-}  // end of namespace mfront::gb
+    //! \brief a simple alias
+    using BehaviourData = ::mfront_gb_BehaviourData;
+
+  }  // end of namespace gb
+
+} // end of namespace mfront
 
 #endif
 

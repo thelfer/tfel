@@ -46,7 +46,7 @@ namespace mtest {
       const auto& ev = *(pev->second);
       args[i] = ev(t);
     }
-    auto s = CyranoOutputStatus{};
+    auto s = CyranoOutputStatus();
     const auto r =
         this->f(&s, &args[0], static_cast<CyranoIntegerType>(args.size()),
                 CYRANO_NONE_POLICY);
