@@ -1,6 +1,4 @@
-EXTRA_DIST=reveal.js/.gitignore				        \
-	   reveal.js/.travis.yml			        \
-	   reveal.js/README.md				        \
+EXTRA_DIST=reveal.js/README.md				        \
 	   reveal.js/js/reveal.js			        \
 	   reveal.js/js/reveal.min.js			        \
 	   reveal.js/index.html				        \
