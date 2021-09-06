@@ -16,69 +16,73 @@
 
 #include "TFEL/Math/Forward/qt.hxx"
 
-namespace tfel::math {
+namespace tfel{
 
-  /*!
-   * \brief Defines a mass.
-   * \see qt, Mass
-   */
-  typedef qt<Mass> mass;
-  /*!
-   * \brief Defines a length.
-   * \see qt, Length
-   */
-  typedef qt<Length> length;
-  /*!
-   * \brief Defines a invlength.
-   * \see qt, InvLength
-   */
-  typedef qt<Length> invlength;
-  /*!
-   * \brief Defines a time.
-   * \see qt, Time
-   */
-  typedef qt<Time> time;
-  /*!
-   * \brief Defines an ampere.
-   * \see qt, Ampere
-   */
-  typedef qt<Ampere> ampere;
-  /*!
-   * \brief Defines a temperature.
-   * \see qt, Temperature
-   */
-  typedef qt<Temperature> temperature;
-  /*!
-   * \brief Defines a candela.
-   * \see qt, Candela
-   */
-  typedef qt<Candela> candela;
-  /*!
-   * \brief Defines a mole.
-   * \see qt, Mole
-   */
-  typedef qt<Mole> mole;
-  /*!
-   * \brief Defines a speed.
-   * \see qt, Speed
-   */
-  typedef qt<Speed> velocity;
-  /*!
-   * \brief Defines an acceleration.
-   * \see qt, Acceleration
-   */
-  typedef qt<Acceleration> acceleration;
-  /*!
-   * \brief Defines a momentum.
-   * \see qt, Momentum
-   */
-  typedef qt<Momentum> momentum;
-  /*!
-   * \brief Defines a force.
-   * \see qt, Force
-   */
-  typedef qt<Force> force;
+  namespace math {
 
-}  // end of namespace tfel::math
+    /*!
+     * \brief Defines a mass.
+     * \see qt, Mass
+     */
+    typedef qt<Mass> mass;
+    /*!
+     * \brief Defines a length.
+     * \see qt, Length
+     */
+    typedef qt<Length> length;
+    /*!
+     * \brief Defines a invlength.
+     * \see qt, InvLength
+     */
+    typedef qt<Length> invlength;
+    /*!
+     * \brief Defines a time.
+     * \see qt, Time
+     */
+    typedef qt<Time> time;
+    /*!
+     * \brief Defines an ampere.
+     * \see qt, Ampere
+     */
+    typedef qt<Ampere> ampere;
+    /*!
+     * \brief Defines a temperature.
+     * \see qt, Temperature
+     */
+    typedef qt<Temperature> temperature;
+    /*!
+     * \brief Defines a candela.
+     * \see qt, Candela
+     */
+    typedef qt<Candela> candela;
+    /*!
+     * \brief Defines a mole.
+     * \see qt, Mole
+     */
+    typedef qt<Mole> mole;
+    /*!
+     * \brief Defines a speed.
+     * \see qt, Speed
+     */
+    typedef qt<Speed> velocity;
+    /*!
+     * \brief Defines an acceleration.
+     * \see qt, Acceleration
+     */
+    typedef qt<Acceleration> acceleration;
+    /*!
+     * \brief Defines a momentum.
+     * \see qt, Momentum
+     */
+    typedef qt<Momentum> momentum;
+    /*!
+     * \brief Defines a force.
+     * \see qt, Force
+     */
+    typedef qt<Force> force;
+
+  }  // end of namespace math
+
+}  // end of namespace tfel
 
 #endif /* LIB_TFEL_MATH_QTSAMPLES_HXX */
