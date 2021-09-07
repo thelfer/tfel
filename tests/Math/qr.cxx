@@ -1,7 +1,7 @@
 /*! 
  * \file  tests/Math/qr.cxx
  * \brief
- * \author Helfer Thomas
+ * \author Thomas Helfer
  * \brief 14 avr 2009
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
  * reserved. 
@@ -54,9 +54,12 @@ bool QRDecompTest()
   QRDecomp::exe(m,rdiag,beta);
   QRDecomp::tq_product(b,m,beta);
   QRDecomp::back_substitute(b,m,rdiag);
-  return ((abs(b(0)+1)<10*numeric_limits<T>::epsilon())&&
-	  (abs(b(1)-2)<10*numeric_limits<T>::epsilon())&&
-	  (abs(b(2)-1)<10*numeric_limits<T>::epsilon()));
+  const auto e1 = std::abs(b(0)+1);
+  const auto e2 = std::abs(b(1)-2);
+  const auto e3 = std::abs(b(2)-1);
+  return ((e1<100*std::numeric_limits<T>::epsilon())&&
+	  (e2<100*std::numeric_limits<T>::epsilon())&&
+	  (e3<100*std::numeric_limits<T>::epsilon()));
 } // end of QRDecompTest
 
 /* coverity [UNCAUGHT_EXCEPT]*/
