@@ -92,9 +92,22 @@ nodist_libMFrontMaterialProperties_castem_la_SOURCES = src/VanadiumAlloy_YoungMo
 						       src/Inconel600_YoungModulus-castem.cxx
 endif
 
+BUILT_SOURCES=include/ErrnoHandlingCheck.hxx                         \
+	      include/VanadiumAlloy_YoungModulus_SRMA.hxx            \
+	      include/VanadiumAlloy_PoissonRatio_SRMA.hxx            \
+	      include/VanadiumAlloy_SpecificHeat_SRMA.hxx            \
+	      include/VanadiumAlloy_ThermalExpansion_SRMA.hxx        \
+	      include/VanadiumAlloy_ThermalConductivity_SRMA.hxx     \
+              include/ErrnoHandlingCheck-cxx.hxx                     \
+	      include/VanadiumAlloy_YoungModulus_SRMA-cxx.hxx        \
+	      include/VanadiumAlloy_PoissonRatio_SRMA-cxx.hxx        \
+	      include/VanadiumAlloy_SpecificHeat_SRMA-cxx.hxx        \
+	      include/VanadiumAlloy_ThermalExpansion_SRMA-cxx.hxx    \
+	      include/VanadiumAlloy_ThermalConductivity_SRMA-cxx.hxx
+
 testdir = $(pkgdatadir)/mfront/tests/
 
-check_PROGRAMS = test-c
+test_PROGRAMS = test-c
 
 test_c_SOURCES = test-c.c
 test_c_LDFLAGS = -L@builddir@ -lMFrontMaterialProperties -lm
@@ -107,7 +120,7 @@ test-c.c : include/ErrnoHandlingCheck.hxx                     \
 	   include/VanadiumAlloy_ThermalExpansion_SRMA.hxx    \
 	   include/VanadiumAlloy_ThermalConductivity_SRMA.hxx
 
-check_PROGRAMS += test-cxx
+test_PROGRAMS += test-cxx
 test_cxx_SOURCES = test-cxx.cxx
 test_cxx_LDFLAGS = -L@builddir@ -lMFrontMaterialProperties-cxx \
         -L$(top_builddir)/src/Tests -lTFELTests
@@ -128,13 +141,13 @@ test_c_LDFLAGS += -lstdc++
 endif
 
 if HAVE_FORTRAN
-check_PROGRAMS += test-f
+test_PROGRAMS += test-f
 test_f_SOURCES = test-f.c compute.f
 test_f_LDFLAGS = -L@builddir@ -lMFrontMaterialProperties-fortran -lstdc++
 test_f_DEPENDENCIES = libMFrontMaterialProperties-fortran.la
 endif
 
-TESTS=$(check_PROGRAMS)
+TESTS=$(test_PROGRAMS)
 
 include/%.hxx src/%.cxx : %.mfront
 if !TFEL_WIN
