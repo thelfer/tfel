@@ -1,4 +1,26 @@
 #! /usr/bin/env bash
+#
+# Usage: check_all.sh [options]
+#
+# The following options are available:
+#
+# - `-b` (short for broken-lib-math): shall be specified if the libmath does
+#        not support changing the rounding mode
+# - `-d` (short for documentation, requires an argument): specify if the
+#        documentation must be built. The default value is ON.
+#        Valid options are ON and OFF.
+# - `-f` (short of fast-check): if specified, builds in debug mode are skipped
+# - `-j` (short of parallel-build, requires an argument): if specified, builds
+#        in parallel. The arguments is the number of thread allowed.
+# - `-m` (short of march=native, requires an argument): specify if processor specific
+#        instructions must be used. Valid options are ON and OFF. The default value
+#        is ON.
+# - `-p` (short of python-bindings): if specified, builds in debug mode are skipped
+# - `-r` (short for random-tests, requires an argument): specify if
+#        tests where the rounding modes changes randomly shall be executed.
+#        Valid options are ON and OFF. The default value is ON.
+# - `-w` (short for win-build): if specified, try to cross-compile TFEL
+#        with mingw32
 # Exit if any error detected
 set -e
 # parallel build
@@ -11,24 +33,39 @@ rtests=ON
 fcheck=no
 # cross compilation using mingw
 wbuild=no
-# fast check
+# broken_libmath
 broken_libmath=OFF
+# python-bindings
+python_configure_arg=""
+python_bindings_configure_arg=""
+python_cmake_arg=""
+python_bindings_cmake_arg=""
+# portable-build
+march_native=ON
 
-while getopts ":w:rdbfj:" opt;
+while getopts "fwbd:r:j:pm:" opt;
 do
   case $opt in
     f) fcheck=yes
-      ;;
+       ;;
     b) broken_libmath=ON
       ;;
+    w) wbuild=yes
+      ;;
     d) rdoc="$OPTARG";
-      ;;
+       ;;
     r) rtests="$OPTARG";
-      ;;
+       ;;
     j) pbuild=yes;
        nbproc="$OPTARG";
-      ;;
-    w) wbuild=yes
+       ;;
+    m) march_native="$OPTARG";
+       ;;
+    p)
+	python_configure_arg="--enable-python"
+	python_bindings_configure_arg="--enable-python-bindings"
+	python_cmake_arg="-Denable-python=ON"
+	python_bindings_cmake_arg="-Denable-python-bindings=ON"
       ;;
     \?)
       echo "$0 : invalid option '$OPTARG'" >&2
@@ -47,6 +84,13 @@ make_exec=make
 if test "x$pbuild" == "xyes" ;
 then
     make_exec="$make_exec -j $nbproc"
+fi
+
+if test "x$march_native" == "xOFF" ;
+then
+    portable_build="ON"
+else
+    portable_build="OFF"
 fi
 
 # remove previous temporary
@@ -75,22 +119,28 @@ then
 fi
 mkdir build-autotools
 pushd build-autotools
-$src/configure --enable-python --enable-python-bindings --enable-fortran --enable-abaqus --enable-calculix --enable-ansys --enable-europlexus --enable-zmat --enable-tests --enable-local-castem-header --enable-cyrano --prefix=$build/build-check/autotools/install-autotools 
+$src/configure ${python_configure_arg} ${python_bindings_configure_arg} --enable-fortran --enable-abaqus --enable-calculix --enable-comsol --enable-diana-fea --enable-ansys --enable-europlexus --enable-zmat --enable-tests --enable-local-castem-header --enable-cyrano --enable-lsdyna --prefix=$build/build-check/autotools/install-autotools 
 $make_exec
 $make_exec check
 $make_exec distcheck
-$make_exec doc-pdf
+if test "x$rdoc" == "xON" ;
+then
+    $make_exec doc-pdf
+fi
 $make_exec install
 popd # from build-autotools
 if test "x$fcheck" == "xno" ;
 then
     mkdir build-autotools-debug
     pushd build-autotools-debug
-    $src/configure --enable-debug --enable-python --enable-python-bindings --enable-fortran --enable-abaqus --enable-calculix --enable-ansys --enable-europlexus --enable-zmat --enable-tests --enable-local-castem-header --enable-cyrano --prefix=$build/build-check/autotools/install-autotools-debug 
+    $src/configure --enable-debug ${python_configure_arg} ${python_bindings_configure_arg} --enable-fortran --enable-abaqus --enable-calculix --enable-comsol --enable-diana-fea --enable-ansys --enable-europlexus --enable-zmat --enable-tests --enable-local-castem-header --enable-cyrano --enable-lsdyna --prefix=$build/build-check/autotools/install-autotools-debug 
     $make_exec
     $make_exec check
     $make_exec distcheck
-    $make_exec doc-pdf
+    if test "x$rdoc" == "xON" ;
+    then
+	$make_exec doc-pdf
+    fi
     $make_exec install
     popd # from build-autotools-debug
 fi
@@ -109,7 +159,7 @@ then
     mkdir build-cmake-debug
 fi
 pushd build-cmake
-cmake ../tfel-$pkg_name/ -DTFEL_BROKEN_LIBMATH=$broken_libmath -Dlocal-castem-header=ON -Denable-fortran=ON -Denable-python=ON -Denable-python-bindings=ON -Denable-aster=ON -Denable-abaqus=ON -Denable-calculix=ON -Denable-ansys=ON -Denable-europlexus=ON -Denable-zmat=ON -Denable-cyrano=ON -Denable-random-tests=${rtests} -Denable-reference-doc=${rdoc} -DCMAKE_INSTALL_PREFIX=$build/build-check/cmake/install-cmake
+cmake ../tfel-$pkg_name/ -DTFEL_BROKEN_LIBMATH=$broken_libmath -Dlocal-castem-header=ON -Denable-fortran=ON ${python_cmake_arg} ${python_bindings_cmake_arg} -Denable-aster=ON -Denable-abaqus=ON -Denable-calculix=ON -Denable-comsol=ON -Denable-diana-fea=ON -Denable-ansys=ON -Denable-europlexus=ON -Denable-zmat=ON -Denable-cyrano=ON -Denable-lsdyna=ON -Denable-random-tests=${rtests} -Denable-reference-doc=${rdoc} -Denable-portable-build=${portable_build} -DCMAKE_INSTALL_PREFIX=$build/build-check/cmake/install-cmake
 $make_exec 
 if [ test "x$pbuild" == "xyes" ];
 then
@@ -122,7 +172,7 @@ popd #from build-cmake
 if test "x$fcheck" == "xno" ;
 then
     pushd build-cmake-release
-    cmake ../tfel-$pkg_name/ -DCMAKE_BUILD_TYPE=Release -DTFEL_BROKEN_LIBMATH=$broken_libmath -Dlocal-castem-header=ON -Denable-fortran=ON -Denable-python=ON -Denable-python-bindings=ON -Denable-aster=ON -Denable-abaqus=ON -Denable-calculix=ON -Denable-ansys=ON -Denable-europlexus=ON -Denable-zmat=ON -Denable-cyrano=ON -Denable-random-tests=${rtests} -Denable-reference-doc=${rdoc} -DCMAKE_INSTALL_PREFIX=$build/build-check/cmake/install-cmake-release
+    cmake ../tfel-$pkg_name/ -DCMAKE_BUILD_TYPE=Release -DTFEL_BROKEN_LIBMATH=$broken_libmath -Dlocal-castem-header=ON -Denable-fortran=ON ${python_cmake_arg} ${python_bindings_cmake_arg} -Denable-aster=ON -Denable-abaqus=ON -Denable-calculix=ON -Denable-comsol=ON -Denable-diana-fea=ON -Denable-ansys=ON -Denable-europlexus=ON -Denable-zmat=ON -Denable-cyrano=ON -Denable-lsdyna=ON -Denable-random-tests=${rtests} -Denable-reference-doc=${rdoc} -Denable-portable-build=${portable_build} -DCMAKE_INSTALL_PREFIX=$build/build-check/cmake/install-cmake-release
     $make_exec
     if [ test "x$pbuild" == "xyes" ];
     then
@@ -133,7 +183,7 @@ then
     $make_exec install
     popd #from build-cmake-release
     pushd build-cmake-debug
-    cmake ../tfel-$pkg_name/ -DCMAKE_BUILD_TYPE=Debug -DTFEL_BROKEN_LIBMATH=$broken_libmath -Dlocal-castem-header=ON -Denable-fortran=ON -Denable-python=ON -Denable-python-bindings=ON -Denable-aster=ON -Denable-abaqus=ON -Denable-calculix=ON -Denable-ansys=ON -Denable-europlexus=ON -Denable-zmat=ON -Denable-cyrano=ON -Denable-random-tests=${rtests} -Denable-reference-doc=${rdoc} -DCMAKE_INSTALL_PREFIX=$build/build-check/cmake/install-cmake-debug
+    cmake ../tfel-$pkg_name/ -DCMAKE_BUILD_TYPE=Debug -DTFEL_BROKEN_LIBMATH=$broken_libmath -Dlocal-castem-header=ON -Denable-fortran=ON ${python_cmake_arg} ${python_bindings_cmake_arg} -Denable-aster=ON -Denable-abaqus=ON -Denable-calculix=ON -Denable-comsol=ON -Denable-diana-fea=ON -Denable-ansys=ON -Denable-europlexus=ON -Denable-zmat=ON -Denable-cyrano=ON -Denable-lsdyna=ON -Denable-random-tests=${rtests} -Denable-reference-doc=${rdoc} -Denable-portable-build=${portable_build} -DCMAKE_INSTALL_PREFIX=$build/build-check/cmake/install-cmake-debug
     $make_exec
     if [ test "x$pbuild" == "xyes" ];
     then
@@ -151,7 +201,7 @@ then
     then
 	mkdir build-cmake-i686-w64-mingw32
 	pushd build-cmake-i686-w64-mingw32
-	cmake ../tfel-$pkg_name/ -DTFEL_BROKEN_LIBMATH=$broken_libmath -Dlocal-castem-header=ON -Denable-fortran=ON -Denable-python=OFF -Denable-python-bindings=OFF -Denable-aster=ON -Denable-abaqus=ON -Denable-calculix=ON -Denable-ansys=ON -Denable-europlexus=ON -Denable-zmat=ON -Denable-cyrano=ON -Denable-random-tests=${rtests} -Denable-reference-doc=${rdoc} -DCMAKE_INSTALL_PREFIX=$build/build-check/cmake/install-cmake-i686-w64-mingw32 -DCMAKE_TOOLCHAIN_FILE=../tfel-$pkg_name/cmake/ToolChain-i686-w64-mingw32.cmake
+	cmake ../tfel-$pkg_name/ -DTFEL_BROKEN_LIBMATH=$broken_libmath -Dlocal-castem-header=ON -Denable-fortran=ON -Denable-python=OFF -Denable-python-bindings=OFF -Denable-aster=ON -Denable-abaqus=ON -Denable-calculix=ON -Denable-comsol=ON -Denable-diana-fea=ON -Denable-ansys=ON -Denable-europlexus=ON -Denable-zmat=ON -Denable-cyrano=ON -Denable-lsdyna=ON -Denable-random-tests=${rtests} -Denable-reference-doc=${rdoc} -Denable-portable-build=${portable_build} -DCMAKE_INSTALL_PREFIX=$build/build-check/cmake/install-cmake-i686-w64-mingw32 -DCMAKE_TOOLCHAIN_FILE=../tfel-$pkg_name/cmake/ToolChain-i686-w64-mingw32.cmake
 	$make_exec
 	if [ "x$(which wine)" != "x" ];
 	then
@@ -170,7 +220,7 @@ then
     then
 	mkdir build-cmake-i586-mingw32msvc
 	pushd build-cmake-i586-mingw32msvc
-	cmake ../tfel-$pkg_name/ -DTFEL_BROKEN_LIBMATH=$broken_libmath -Dlocal-castem-header=ON -Denable-fortran=ON -Denable-python=OFF -Denable-python-bindings=OFF -Denable-aster=ON -Denable-abaqus=ON -Denable-calculix=ON -Denable-ansys=ON -Denable-europlexus=ON -Denable-zmat=ON -Denable-cyrano=ON -Denable-random-tests=${rtests} -Denable-reference-doc=${rdoc} -DCMAKE_INSTALL_PREFIX=$build/build-check/cmake/install-cmake-i586-mingw32msvc -DCMAKE_TOOLCHAIN_FILE=../tfel-$pkg_name/cmake/ToolChain-i586-mingw32msvc.cmake
+	cmake ../tfel-$pkg_name/ -DTFEL_BROKEN_LIBMATH=$broken_libmath -Dlocal-castem-header=ON -Denable-fortran=ON -Denable-python=OFF -Denable-python-bindings=OFF -Denable-aster=ON -Denable-abaqus=ON -Denable-calculix=ON -Denable-comsol=ON -Denable-diana-fea=ON -Denable-ansys=ON -Denable-europlexus=ON -Denable-zmat=ON -Denable-cyrano=ON -Denable-lsdyna=ON -Denable-random-tests=${rtests} -Denable-reference-doc=${rdoc} -Denable-portable-build=${portable_build} -DCMAKE_INSTALL_PREFIX=$build/build-check/cmake/install-cmake-i586-mingw32msvc -DCMAKE_TOOLCHAIN_FILE=../tfel-$pkg_name/cmake/ToolChain-i586-mingw32msvc.cmake
 	$make_exec
 	if [ "x$(which wine)" != "x" ];
 	then
