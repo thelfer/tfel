@@ -1445,6 +1445,11 @@ docs/web/img/poster-giens2015.svg -text
 docs/web/img/poster-giens2017-fr.svg -text
 docs/web/img/poster-giens2017.svg -text
 docs/web/img/rusinek-klepaczko.svg -text
+docs/web/img/tfel-math/expression_templates.svg -text
+docs/web/img/tfel-math/matrix_row_major.svg -text
+docs/web/img/tfel-math/solveNonLinearSystem.svg -text
+docs/web/img/tfel-math/solveNonLinearSystem2.svg -text
+docs/web/img/tfel-math/view.svg -text
 docs/web/img/topfuel2015-poster.png -text
 docs/web/img/tplot.svg -text
 docs/web/img/tutorial-spanish-1.png -text
@@ -1512,7 +1517,6 @@ docs/web/js/vendor/jquery-1.10.2.min.js -text
 docs/web/js/vendor/modernizr-2.6.2.min.js -text
 docs/web/madnex.md -text
 docs/web/material-properties.md -text
-docs/web/material.md -text
 docs/web/math.md -text
 docs/web/media/CalculiXSheetForming-50.mp4 -text
 docs/web/media/DeepDrawing.mp4 -text
@@ -1587,6 +1591,8 @@ docs/web/svn.md -text
 docs/web/tensors.md -text
 docs/web/tex/lcmd_utf8.tex -text
 docs/web/tfel-check.md -text
+docs/web/tfel-material.md -text
+docs/web/tfel-math.md -text
 docs/web/tfel-physical-constants.md -text
 docs/web/tfel-python.md -text
 docs/web/theory.md -text

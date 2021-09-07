@@ -42,7 +42,6 @@ EXTRA_DIST=CMakeLists.txt					      \
 	   ./gallery.md					              \
 	   ./mfront-python.md					      \
 	   ./math.md					              \
-	   ./material.md					      \
 	   ./mtest.md						      \
 	   ./mtest-python.md					      \
 	   ./tutorial.md					      \
@@ -151,6 +150,8 @@ EXTRA_DIST=CMakeLists.txt					      \
            ./FischerBurmeister.md                                     \
            ./TFELSystem.md                                            \
 	   ./tfel-check.md                                            \
+	   ./tfel-math.md                                            \
+	   ./tfel-material.md					                        \
            ./theory.md                                                \
 	   ./robots.txt						      \
 	   ./crossdomain.xml					      \
@@ -361,7 +362,11 @@ EXTRA_DIST=CMakeLists.txt					      \
        ./img/Burger_EDF_CIWAP_2021/test6b.png                         \
        ./img/Burger_EDF_CIWAP_2021/test6c.png                         \
        ./img/Burger_EDF_CIWAP_2021/test6-water-content-evolution.png  \
-	   ./media/epx1.mp4                                               \
+       ./img/tfel-math/solveNonLinearSystem.svg			      \
+       ./img/tfel-math/matrix_row_major.svg			      \
+       ./img/tfel-math/solveNonLinearSystem2.svg		      \
+       ./img/tfel-math/view.svg					      \
+	   ./media/epx1.mp4                                           \
 	   ./media/epx2.mp4                                           \
 	   ./media/abaqus-explicit.mp4                                \
 	   ./media/SignoriniCompression.mp4                           \
