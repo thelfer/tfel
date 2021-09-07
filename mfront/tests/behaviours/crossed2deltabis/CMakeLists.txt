@@ -106,7 +106,7 @@ test_crossed2deltabis(plasisocin)
 test_crossed2deltabis(plasticity)
 test_crossed2deltabis(strainhardeningcreep)
 test_crossed2deltabis(stressrelaxation)
-test_crossed2deltabis(T91-satohtest)
+# test_crossed2deltabis(T91-satohtest)
 test_crossed2deltabis(T91-viscositytest)
 test_crossed2deltabis(viscoplasisocin)
 
