@@ -45,7 +45,6 @@ namespace mfront {
         {"thermalconductivity", SupportedTypes::SCALAR},
         {"massdensity", SupportedTypes::SCALAR},
         {"TVector", SupportedTypes::TVECTOR},
-        {"Vector", SupportedTypes::TVECTOR},
         {"Stensor", SupportedTypes::STENSOR},
         {"Tensor", SupportedTypes::TENSOR},
         {"StressStensor", SupportedTypes::STENSOR},
