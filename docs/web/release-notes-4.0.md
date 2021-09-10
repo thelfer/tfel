@@ -93,9 +93,9 @@ For example, `MFront` may define or update this code block to evaluate
 material properties dependent on the value of the state variable (for
 example, a Young modulus depending of the porosity), if any.
 
-# Tickets fixed
+# Issues fixed
 
-## Ticket:#277: [material properties] Support for quantities
+## Issue:#277: [material properties] Support for quantities
 
 The `UseQt` keyword now allows to turn on support for quantities in
 material properties for interfaces that supports it.
@@ -104,7 +104,7 @@ All interfaces delivered by `MFront` have proper support for quantities.
 
 For more details, see : <https://sourceforge.net/p/tfel/tickets/277/>
 
-## Ticket #276: Support for quantities in `TFEL/PhysicalConstants`
+## Issue #276: Support for quantities in `TFEL/PhysicalConstants`
 
 The `PhysicalConstants` class now have an additional boolean template
 parameter stating if quantities are to be used. For backward
@@ -115,7 +115,7 @@ template parameter.
 
 For more details, see : <https://sourceforge.net/p/tfel/tickets/276/>
 
-## Ticket #275: [material properties] Define standard MFront scalar types
+## Issue #275: [material properties] Define standard MFront scalar types
 
 For consistency with behaviours, aliases to many scalar types are now
 automatically defined in material properties, such as:
@@ -125,5 +125,13 @@ automatically defined in material properties, such as:
 A complete list of those aliases can be found on [this page](mfront-types.html).
 
 For more details, see : <https://sourceforge.net/p/tfel/tickets/275/>
+
+## Issue #160: Add the ability to change the linear solver used by the Implicit DSL
+
+Changing the linear solver can now be done by defining an user defined
+algorithm. The general framework to a new linear solver is documented
+here: <http://tfel.sourceforge.net/tfel-math.html>
+
+For more details, see : <https://sourceforge.net/p/tfel/tickets/160/>
 
 # References

@@ -100,6 +100,7 @@ libTFELMFront_la_SOURCES = MFront.cxx                                     \
 		           BroydenSolvers.cxx		      		          \
 		           SecondBroydenSolver.cxx			          \
 		           LevenbergMarquardtSolvers.cxx			  \
+		           UserDefinedNonLinearSystemSolver.cxx			  \
 		           PerformanceProfiling.cxx                               \
 		           MultipleIsotropicMisesFlowsDSL.cxx                     \
 		           IsotropicBehaviourDSLBase.cxx                          \
