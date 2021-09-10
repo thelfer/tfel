@@ -674,7 +674,8 @@ namespace tfel {
           return ((tfel::fsalgo::equal<3u>::exe(ss1_3d.burgers.begin(), ss2_3d.burgers.begin())) &&
                   (tfel::fsalgo::equal<3u>::exe(ss1_3d.plane.begin(), ss2_3d.plane.begin())));
         }
-        throw_if(!ss1.is<system3d>(), "internal error (unsupported slip system type)");
+        throw_if(!ss1.is<system4d>(),
+                 "internal error (unsupported slip system type)");
         if (!ss2.is<system4d>()) {
           return false;
         }
