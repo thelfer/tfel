@@ -64,6 +64,7 @@ nobase_include_HEADERS= MFront/MFront.hxx                                     \
 			MFront/NonLinearSystemSolver.hxx                                  \
 			MFront/NonLinearSystemSolverBase.hxx                              \
 			MFront/NonLinearSystemSolverFactory.hxx                           \
+			MFront/UserDefinedNonLinearSystemSolver.hxx                       \
 			MFront/BehaviourAttribute.hxx                                     \
 			MFront/BehaviourData.hxx                                          \
 			MFront/BehaviourData.ixx                                          \

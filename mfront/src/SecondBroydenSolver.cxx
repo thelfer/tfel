@@ -19,32 +19,14 @@
 
 namespace mfront {
 
-  std::vector<std::string> SecondBroydenSolver::getReservedNames() const {
-    return {};
-  }  // end of getReservedNames
-
   std::vector<std::string> SecondBroydenSolver::getSpecificHeaders() const {
     return {"TFEL/Math/TinyBroyden2Solver.hxx"};
   }  // end of getSpecificHeaders
 
   std::string SecondBroydenSolver::getExternalAlgorithmClassName(
       const BehaviourDescription& bd, const Hypothesis h) const {
-    const auto hn = [&h]() -> std::string {
-      if (h == tfel::material::ModellingHypothesis::UNDEFINEDHYPOTHESIS) {
-        return "hypothesis";
-      }
-      return "ModellingHypothesis::" +
-             tfel::material::ModellingHypothesis::toUpperCaseString(h);
-    }();
-    const auto n =
-        mfront::getTypeSize(bd.getBehaviourData(h).getIntegrationVariables())
-            .asString({"ModellingHypothesisToSpaceDimension<" + hn + ">::value",
-                       "ModellingHypothesisToStensorSize<" + hn + ">::value",
-                       "ModellingHypothesisToTensorSize<" + hn + ">::value"});
-    const auto cn =
-        bd.useQt() ? bd.getClassName() + "<" + hn + ", NumericType, true>"
-                   : bd.getClassName() + "<" + hn + ", NumericType, false>";
-    return "tfel::math::TinyBroyden2Solver<" + n + ", NumericType, " + cn + ">";
+    return NonLinearSystemSolverBase::buildExternalAlgorithmClassName(
+        bd, h, "TinyBroyden2Solver");
   }  // end of getExternalAlgorithmClassName
 
   bool SecondBroydenSolver::usesJacobian() const {

@@ -1,8 +1,8 @@
 /*!
- * \file  mfront/include/MFront/SecondBroydenSolver.hxx
+ * \file  mfront/include/MFront/UserDefinedNonLinearSystem.hxx
  * \brief
  * \author Thomas Helfer
- * \brief 22 août 2014
+ * \brief 09/09/2021
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence
@@ -11,21 +11,22 @@
  * project under specific licensing conditions.
  */
 
-#ifndef LIB_MFRONT_MFRONTSECONDBROYDENSOLVER_HXX
-#define LIB_MFRONT_MFRONTSECONDBROYDENSOLVER_HXX
+#ifndef LIB_MFRONT_USERDEFINEDNONLINEARSYSTEMSOLVER_HXX
+#define LIB_MFRONT_USERDEFINEDNONLINEARSYSTEMSOLVER_HXX
 
+#include "TFEL/Utilities/Data.hxx"
 #include "MFront/NonLinearSystemSolverBase.hxx"
 
 namespace mfront {
 
-  /*!
-   * \brief Non linear system solver based on the
-   * second Broyden algorithm.
-   */
-  struct SecondBroydenSolver : public NonLinearSystemSolverBase {
-    std::vector<std::string> getSpecificHeaders() const override;
-    std::string getExternalAlgorithmClassName(const BehaviourDescription&,
-                                              const Hypothesis) const override;
+  //! \brief class for user defined non linear system solvers
+  struct UserDefinedNonLinearSystemSolver : public NonLinearSystemSolverBase {
+    //! \brief
+    using DataMap = std::map<std::string, tfel::utilities::Data>;
+    /*!
+     * \brief constructor
+     */
+    UserDefinedNonLinearSystemSolver(const DataMap&);
     bool usesJacobian() const override;
     bool usesJacobianInvert() const override;
     bool requiresNumericalJacobian() const override;
@@ -45,10 +46,30 @@ namespace mfront {
     void writeSpecificMembers(std::ostream&,
                               const BehaviourDescription&,
                               const Hypothesis) const override;
+    std::string getExternalAlgorithmClassName(const BehaviourDescription&,
+                                              const Hypothesis) const override;
+    std::vector<std::string> getSpecificHeaders() const override;
     //! \brief destructor
-    ~SecondBroydenSolver() override;
-  };  // end of struct SecondBroydenSolver
+    ~UserDefinedNonLinearSystemSolver() override;
+
+   public:
+    //! \brief class implementing the non linear solver
+    std::string class_name;
+    /*!
+     * \brief path to the header file in which the non linear solver is
+     * implemented.
+     */
+    std::string header_file;
+    //! \brief
+    bool use_jacobian = true;
+    bool use_jacobian_invert = false;
+    bool requires_numerical_jacobian = false;
+    bool allows_jacobian_initialisation = false;
+    bool allows_jacobian_invert_initialisation = false;
+    bool requires_jacobian_reinitialisation_to_identity_at_each_iterations =
+        true;
+  };  // end of struct UserDefinedNonLinearSystemSolver
 
 }  // end of namespace mfront
 
-#endif /* LIB_MFRONT_MFRONTSECONDBROYDENSOLVER_HXX */
+#endif /* LIB_MFRONT_USERDEFINEDNONLINEARSYSTEMSOLVER_HXX */

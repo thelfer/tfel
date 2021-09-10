@@ -72,6 +72,9 @@ namespace mfront {
       "InitializeJacobianInvert";
   const char* const BehaviourData::AdditionalConvergenceChecks =
       "AdditionalConvergenceChecks";
+  const char* const BehaviourData::ProcessNewEstimate = "ProcessNewEstimate";
+  const char* const BehaviourData::ProcessNewCorrection =
+      "ProcessNewCorrection";
 
   const char* const BehaviourData::profiling = "profiling";
   const char* const BehaviourData::hasAPrioriTimeStepScalingFactor =

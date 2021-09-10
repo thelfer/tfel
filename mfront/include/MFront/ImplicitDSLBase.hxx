@@ -73,9 +73,6 @@ namespace mfront {
       SupportedTypes::TypeSize derivative_column_position;
     };  // end of struct DerivativeViewDescription
 
-    //! a simple alias
-    using Solver = std::shared_ptr<NonLinearSystemSolver>;
-
     virtual void predictorAnalyser(const Hypothesis, const std::string&);
 
     virtual void integratorAnalyser(const Hypothesis, const std::string&);
@@ -103,6 +100,10 @@ namespace mfront {
                                     const std::string&) override;
 
     void treatStateVariable() override;
+    //! \brief treat the `@ProcessNewCorrection` keyword
+    void treatProcessNewCorrection();
+    //! \brief treat the `@ProcessNewEstimate` keyword
+    void treatProcessNewEstimate();
     //! \brief treat the `@IntegrationVariable` keyword
     void treatIntegrationVariable();
 
@@ -203,6 +204,13 @@ namespace mfront {
     /*!
      * \brief set the non linear solver
      * \param[in] s: non linear solver
+     * \param[in] n: name of the non linear solver
+     */
+    virtual void setNonLinearSolver(std::shared_ptr<NonLinearSystemSolver>,
+                                    const std::string&);
+    /*!
+     * \brief set the non linear solver
+     * \param[in] s: non linear solver
      */
     virtual void setNonLinearSolver(const std::string&);
     /*!
@@ -219,9 +227,8 @@ namespace mfront {
     std::set<std::string> jacobianPartsUsedInIntegrator;
 
     std::set<std::string> integrationVariablesIncrementsUsedInPredictor;
-
-    Solver solver;
-
+    //! \brief non linear solver
+    std::shared_ptr<NonLinearSystemSolver> solver;
   };  // end of struct ImplicitDSLBase
 
 }  // end of namespace mfront

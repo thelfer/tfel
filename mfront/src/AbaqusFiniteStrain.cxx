@@ -13,7 +13,6 @@
 
 #include <cmath>
 #include <sstream>
-#include <iostream>
 #include <stdexcept>
 
 #include "TFEL/Raise.hxx"

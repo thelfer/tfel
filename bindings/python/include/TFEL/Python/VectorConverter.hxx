@@ -11,10 +11,9 @@
  * project under specific licensing conditions.
  */
 
-#ifndef LIB_TFEL_PYTHON_VECTORCONVERTER_H_
-#define LIB_TFEL_PYTHON_VECTORCONVERTER_H_
+#ifndef LIB_TFEL_PYTHON_VECTORCONVERTER_HXX
+#define LIB_TFEL_PYTHON_VECTORCONVERTER_HXX
 
-#include <iostream>
 #include <vector>
 
 #ifdef _MSC_VER
@@ -114,4 +113,4 @@ namespace tfel::python {
 
 }  // end of namespace tfel::python
 
-#endif /* LIB_TFEL_PYTHON_VECTORCONVERTER_H_ */
+#endif /* LIB_TFEL_PYTHON_VECTORCONVERTER_HXX */

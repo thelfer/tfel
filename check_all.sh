@@ -48,7 +48,7 @@ while getopts "fwbd:r:j:pm:" opt;
 do
   case $opt in
     f) fcheck=yes
-      ;;
+       ;;
     b) broken_libmath=ON
       ;;
     w) wbuild=yes
@@ -56,7 +56,7 @@ do
     d) rdoc="$OPTARG";
        ;;
     r) rtests="$OPTARG";
-      ;;
+       ;;
     j) pbuild=yes;
        nbproc="$OPTARG";
        ;;
@@ -203,7 +203,7 @@ then
     then
 	mkdir build-cmake-i686-w64-mingw32
 	pushd build-cmake-i686-w64-mingw32
-	cmake ../tfel-$pkg_name/ -DTFEL_BROKEN_LIBMATH=$broken_libmath -Dlocal-castem-header=ON -Denable-fortran=ON -Denable-python=OFF -Denable-python-bindings=OFF -Denable-aster=ON -Denable-abaqus=ON -Denable-calculix=ON -Denable-comsol=ON -Denable-diana-fea=ON -Denable-ansys=ON -Denable-europlexus=ON -Denable-zmat=ON -Denable-cyrano=ON -Denable-lsdyna=ON -Denable-random-tests=${rtests} -Denable-reference-doc=${rdoc}  -Denable-portable-build=${portable_build} -DCMAKE_INSTALL_PREFIX=$build/build-check/cmake/install-cmake-i686-w64-mingw32 -DCMAKE_TOOLCHAIN_FILE=../tfel-$pkg_name/cmake/ToolChain-i686-w64-mingw32.cmake
+	cmake ../tfel-$pkg_name/ -DTFEL_BROKEN_LIBMATH=$broken_libmath -Dlocal-castem-header=ON -Denable-fortran=ON -Denable-python=OFF -Denable-python-bindings=OFF -Denable-aster=ON -Denable-abaqus=ON -Denable-calculix=ON -Denable-comsol=ON -Denable-diana-fea=ON -Denable-ansys=ON -Denable-europlexus=ON -Denable-zmat=ON -Denable-cyrano=ON -Denable-lsdyna=ON -Denable-random-tests=${rtests} -Denable-reference-doc=${rdoc} -Denable-portable-build=${portable_build} -DCMAKE_INSTALL_PREFIX=$build/build-check/cmake/install-cmake-i686-w64-mingw32 -DCMAKE_TOOLCHAIN_FILE=../tfel-$pkg_name/cmake/ToolChain-i686-w64-mingw32.cmake
 	$make_exec
 	if [ "x$(which wine)" != "x" ];
 	then
@@ -222,7 +222,7 @@ then
     then
 	mkdir build-cmake-i586-mingw32msvc
 	pushd build-cmake-i586-mingw32msvc
-	cmake ../tfel-$pkg_name/ -DTFEL_BROKEN_LIBMATH=$broken_libmath -Dlocal-castem-header=ON -Denable-fortran=ON -Denable-python=OFF -Denable-python-bindings=OFF -Denable-aster=ON -Denable-abaqus=ON -Denable-calculix=ON -Denable-comsol=ON -Denable-diana-fea=ON -Denable-ansys=ON -Denable-europlexus=ON -Denable-zmat=ON -Denable-cyrano=ON -Denable-lsdyna=ON -Denable-random-tests=${rtests} -Denable-reference-doc=${rdoc}  -Denable-portable-build=${portable_build} -DCMAKE_INSTALL_PREFIX=$build/build-check/cmake/install-cmake-i586-mingw32msvc -DCMAKE_TOOLCHAIN_FILE=../tfel-$pkg_name/cmake/ToolChain-i586-mingw32msvc.cmake
+	cmake ../tfel-$pkg_name/ -DTFEL_BROKEN_LIBMATH=$broken_libmath -Dlocal-castem-header=ON -Denable-fortran=ON -Denable-python=OFF -Denable-python-bindings=OFF -Denable-aster=ON -Denable-abaqus=ON -Denable-calculix=ON -Denable-comsol=ON -Denable-diana-fea=ON -Denable-ansys=ON -Denable-europlexus=ON -Denable-zmat=ON -Denable-cyrano=ON -Denable-lsdyna=ON -Denable-random-tests=${rtests} -Denable-reference-doc=${rdoc} -Denable-portable-build=${portable_build} -DCMAKE_INSTALL_PREFIX=$build/build-check/cmake/install-cmake-i586-mingw32msvc -DCMAKE_TOOLCHAIN_FILE=../tfel-$pkg_name/cmake/ToolChain-i586-mingw32msvc.cmake
 	$make_exec
 	if [ "x$(which wine)" != "x" ];
 	then

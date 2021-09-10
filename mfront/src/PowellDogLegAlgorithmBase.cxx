@@ -11,9 +11,7 @@
  * project under specific licensing conditions.
  */
 
-#include <iostream>
 #include <sstream>
-
 #include "TFEL/Raise.hxx"
 #include "TFEL/Utilities/StringAlgorithms.hxx"
 #include "MFront/BehaviourDescription.hxx"

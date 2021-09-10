@@ -34,7 +34,6 @@ namespace mfront {
     using Hypothesis = NonLinearSystemSolverBase::Hypothesis;
     //! \brief default constructor
     NewtonRaphsonSolverBase();
-    std::vector<std::string> getReservedNames() const override;
     bool usesJacobian() const override;
     bool usesJacobianInvert() const override;
     bool allowsJacobianInitialisation() const override;

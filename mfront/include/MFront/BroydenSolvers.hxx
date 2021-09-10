@@ -45,7 +45,6 @@ namespace mfront {
 
   //! \brief the standard Broyden Solver
   struct BroydenSolver : public BroydenSolverBase {
-    std::vector<std::string> getReservedNames() const override;
     std::vector<std::string> getSpecificHeaders() const override;
     std::string getExternalAlgorithmClassName(const BehaviourDescription&,
                                               const Hypothesis) const override;

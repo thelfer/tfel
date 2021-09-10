@@ -12,8 +12,6 @@
  * project under specific licensing conditions.
  */
 
-#include <iostream>
-
 #include <cstdlib>
 #include <fstream>
 #include <sstream>

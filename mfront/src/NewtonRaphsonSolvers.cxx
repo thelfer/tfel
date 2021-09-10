@@ -22,11 +22,6 @@ namespace mfront {
 
   NewtonRaphsonSolverBase::NewtonRaphsonSolverBase() = default;
 
-  std::vector<std::string> NewtonRaphsonSolverBase::getReservedNames()
-      const {
-    return {};
-  }  // end of getReservedNames
-
   bool NewtonRaphsonSolverBase::usesJacobian() const {
     return true;
   }  // end of usesJacobian
@@ -77,23 +72,8 @@ namespace mfront {
 
   std::string NewtonRaphsonSolver::getExternalAlgorithmClassName(
       const BehaviourDescription& bd, const Hypothesis h) const {
-    const auto hn = [&h]() -> std::string {
-      if (h == tfel::material::ModellingHypothesis::UNDEFINEDHYPOTHESIS) {
-        return "hypothesis";
-      }
-      return "ModellingHypothesis::" +
-             tfel::material::ModellingHypothesis::toUpperCaseString(h);
-    }();
-    const auto n =
-        mfront::getTypeSize(bd.getBehaviourData(h).getIntegrationVariables())
-            .asString({"ModellingHypothesisToSpaceDimension<" + hn + ">::value",
-                       "ModellingHypothesisToStensorSize<" + hn + ">::value",
-                       "ModellingHypothesisToTensorSize<" + hn + ">::value"});
-    const auto cn =
-        bd.useQt() ? bd.getClassName() + "<" + hn + ", NumericType, true>"
-                   : bd.getClassName() + "<" + hn + ", NumericType, false>";
-    return "tfel::math::TinyNewtonRaphsonSolver<" +  //
-           n + ", NumericType, " + cn + ">";
+    return NonLinearSystemSolverBase::buildExternalAlgorithmClassName(
+        bd, h, "TinyNewtonRaphsonSolver");
   }  // end of getExternalAlgorithmClassName
 
   bool NewtonRaphsonSolver::requiresNumericalJacobian() const {
@@ -110,23 +90,8 @@ namespace mfront {
   std::string
   NewtonRaphsonNumericalJacobianSolver::getExternalAlgorithmClassName(
       const BehaviourDescription& bd, const Hypothesis h) const {
-    const auto hn = [&h]() -> std::string {
-      if (h == tfel::material::ModellingHypothesis::UNDEFINEDHYPOTHESIS) {
-        return "hypothesis";
-      }
-      return "ModellingHypothesis::" +
-             tfel::material::ModellingHypothesis::toUpperCaseString(h);
-    }();
-    const auto n =
-        mfront::getTypeSize(bd.getBehaviourData(h).getIntegrationVariables())
-            .asString({"ModellingHypothesisToSpaceDimension<" + hn + ">::value",
-                       "ModellingHypothesisToStensorSize<" + hn + ">::value",
-                       "ModellingHypothesisToTensorSize<" + hn + ">::value"});
-    const auto cn =
-        bd.useQt() ? bd.getClassName() + "<" + hn + ", NumericType, true>"
-                   : bd.getClassName() + "<" + hn + ", NumericType, false>";
-    return "tfel::math::TinyNewtonRaphsonSolver<" +  //
-           n + ", NumericType, " + cn + ">";
+    return NonLinearSystemSolverBase::buildExternalAlgorithmClassName(
+        bd, h, "TinyNewtonRaphsonSolver");
   }  // end of getExternalAlgorithmClassName
 
   bool NewtonRaphsonNumericalJacobianSolver::requiresNumericalJacobian()
@@ -145,23 +110,8 @@ namespace mfront {
   std::string
   PowellDogLegNewtonRaphsonSolver::getExternalAlgorithmClassName(
       const BehaviourDescription& bd, const Hypothesis h) const {
-    const auto hn = [&h]() -> std::string {
-      if (h == tfel::material::ModellingHypothesis::UNDEFINEDHYPOTHESIS) {
-        return "hypothesis";
-      }
-      return "ModellingHypothesis::" +
-             tfel::material::ModellingHypothesis::toUpperCaseString(h);
-    }();
-    const auto n =
-        mfront::getTypeSize(bd.getBehaviourData(h).getIntegrationVariables())
-            .asString({"ModellingHypothesisToSpaceDimension<" + hn + ">::value",
-                       "ModellingHypothesisToStensorSize<" + hn + ">::value",
-                       "ModellingHypothesisToTensorSize<" + hn + ">::value"});
-    const auto cn =
-        bd.useQt() ? bd.getClassName() + "<" + hn + ", NumericType, true>"
-                   : bd.getClassName() + "<" + hn + ", NumericType, false>";
-    return "tfel::math::TinyPowellDogLegNewtonRaphsonSolver<" +  //
-           n + ", NumericType, " + cn + ">";
+    return NonLinearSystemSolverBase::buildExternalAlgorithmClassName(
+        bd, h, "TinyPowellDogLegNewtonRaphsonSolver");
   }  // end of getExternalAlgorithmClassName
 
   bool PowellDogLegNewtonRaphsonSolver::requiresNumericalJacobian()

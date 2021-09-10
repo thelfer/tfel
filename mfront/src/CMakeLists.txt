@@ -117,6 +117,7 @@ set(TFELMFront_SOURCES
     NonLinearSystemSolver.cxx
     NonLinearSystemSolverBase.cxx
     NonLinearSystemSolverFactory.cxx
+    UserDefinedNonLinearSystemSolver.cxx
     PowellDogLegAlgorithmBase.cxx
     NewtonRaphsonSolvers.cxx
     BroydenSolvers.cxx

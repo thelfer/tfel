@@ -210,11 +210,11 @@ namespace mtest {
     const auto& b = *(t.getBehaviour());
     // adding parameters
     const auto& n = b.getBehaviourName();
-    for (const auto& p : b.getParametersNames()) {
+    for (const auto& parameter : b.getParametersNames()) {
       const auto cste =
           std::make_shared<tfel::math::parser::ConstantExternalFunction>(
-              b.getRealParameterDefaultValue(p));
-      this->externalFunctions->insert({n + "::" + p, cste});
+              b.getRealParameterDefaultValue(parameter));
+      this->externalFunctions->insert({n + "::" + parameter, cste});
     }
   }  // end of SingleStructureSchemeParser::handleBehaviour
 

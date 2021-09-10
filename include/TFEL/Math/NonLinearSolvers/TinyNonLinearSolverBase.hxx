@@ -160,7 +160,6 @@ namespace tfel::math {
     /*!
      * \brief method meant to set bounds on some components of the current
      * correction or to implement a line search.
-     * \param[in] c: current Newton correction
      */
     constexpr void processNewCorrection() noexcept {}
     /*!

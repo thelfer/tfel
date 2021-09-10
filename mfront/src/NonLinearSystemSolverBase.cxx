@@ -20,18 +20,15 @@
 
 namespace mfront {
 
-  std::vector<std::string> NonLinearSystemSolverBase::getSpecificHeaders()
-      const {
-    return {};
-  }  // end of getSpecificHeaders
-
   std::vector<std::string> NonLinearSystemSolverBase::getReservedNames() const {
-    return {"jacobian_error", "error", "iter", "iterMax", "converged"};
-  }  // end of NonLinearSystemSolverBase::getReservedNames
+    return {};
+  }  // end of getMemberNames
 
   std::vector<std::string> NonLinearSystemSolverBase::getMemberNames() const {
-    return {"iter"};
-  }  // end of NonLinearSystemSolverBase::getMemberNames
+    // iter, epsilon, iterMax, zeros, fzeros, delta_zeros, jacobian are declared
+    // by ImplicitDSLBase
+    return {};
+  }  // end of getMemberNames
 
   void NonLinearSystemSolverBase::initializeNumericalParameters(
       std::ostream& os,
@@ -42,10 +39,27 @@ namespace mfront {
        << sn << "::iterMax = this->iterMax;\n";
   }  // end of initializeNumericalParameters
 
-  std::string NonLinearSystemSolverBase::getExternalAlgorithmClassName(
-      const BehaviourDescription&, const Hypothesis) const {
-    return "";
-  }  // end of getExternalAlgorithmClassName
+  std::string NonLinearSystemSolverBase::buildExternalAlgorithmClassName(
+      const BehaviourDescription& bd,
+      const Hypothesis h,
+      const std::string& n) {
+    const auto hn = [&h]() -> std::string {
+      if (h == tfel::material::ModellingHypothesis::UNDEFINEDHYPOTHESIS) {
+        return "hypothesis";
+      }
+      return "ModellingHypothesis::" +
+             tfel::material::ModellingHypothesis::toUpperCaseString(h);
+    }();
+    const auto hs =
+        mfront::getTypeSize(bd.getBehaviourData(h).getIntegrationVariables())
+            .asString({"ModellingHypothesisToSpaceDimension<" + hn + ">::value",
+                       "ModellingHypothesisToStensorSize<" + hn + ">::value",
+                       "ModellingHypothesisToTensorSize<" + hn + ">::value"});
+    const auto cn =
+        bd.useQt() ? bd.getClassName() + "<" + hn + ", NumericType, true>"
+                   : bd.getClassName() + "<" + hn + ", NumericType, false>";
+    return "tfel::math::" + n + "<" + hs + ", NumericType, " + cn + ">";
+  }  // end of buildExternalAlgorithmClassName
 
   std::string NonLinearSystemSolverBase::getJacobianPart(
       const VariableDescription& v1,

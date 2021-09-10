@@ -11,8 +11,6 @@
  * project under specific licensing conditions.
  */
 
-#include <iostream>
-
 #include <sstream>
 #include "TFEL/Raise.hxx"
 #include "TFEL/Config/GetTFELVersion.h"

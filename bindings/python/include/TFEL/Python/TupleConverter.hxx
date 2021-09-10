@@ -11,10 +11,9 @@
  * project under specific licensing conditions.
  */
 
-#ifndef LIB_TFEL_PYTHON_TUPLECONVERTER_H_
-#define LIB_TFEL_PYTHON_TUPLECONVERTER_H_
+#ifndef LIB_TFEL_PYTHON_TUPLECONVERTER_HXX
+#define LIB_TFEL_PYTHON_TUPLECONVERTER_HXX
 
-#include <iostream>
 #include <boost/python.hpp>
 #include <boost/python/stl_iterator.hpp>
 
@@ -165,4 +164,4 @@ namespace tfel::python {
 
 }  // end of namespace tfel::python
 
-#endif /* LIB_TFEL_PYTHON_TUPLECONVERTER_H_ */
+#endif /* LIB_TFEL_PYTHON_TUPLECONVERTER_HXX */

@@ -102,6 +102,10 @@ namespace mfront {
     static const char* const AdditionalConvergenceChecks;
     //! \brief standard code name
     static const char* const PostProcessings;
+    //! \brief standard code name
+    static const char* const ProcessNewCorrection;
+    //! \brief standard code name
+    static const char* const ProcessNewEstimate;
     /*
      * normalised attribute names
      * \note properties name begins with a lower case

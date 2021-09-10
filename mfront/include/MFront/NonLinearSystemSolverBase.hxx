@@ -34,6 +34,15 @@ namespace mfront {
    */
   struct NonLinearSystemSolverBase : public NonLinearSystemSolver {
     /*!
+     * \brief brief build a suitable specialisation of the class implementing
+     * the algorithm.
+     * \param[in] bd: behaviour description
+     * \param[in] h: hypothesis
+     * \param[in] n: class name
+     */
+    static std::string buildExternalAlgorithmClassName(
+        const BehaviourDescription&, const Hypothesis, const std::string&);
+    /*!
      * \return the part of the jacobian where the partial derivative
      * of the first variable with respect to the second variable is
      * stored
@@ -99,12 +108,9 @@ namespace mfront {
         std::ostream&, const BehaviourDescription&, const Hypothesis);
     std::vector<std::string> getReservedNames() const override;
     std::vector<std::string> getMemberNames() const override;
-    std::vector<std::string> getSpecificHeaders() const override;
     void initializeNumericalParameters(std::ostream&,
                                        const BehaviourDescription&,
                                        const Hypothesis) const override;
-    std::string getExternalAlgorithmClassName(const BehaviourDescription&,
-                                              const Hypothesis) const override;
 
    protected:
     //! destructor

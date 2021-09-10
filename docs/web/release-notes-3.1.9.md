@@ -1,7 +1,7 @@
 ---
-title: Release notes of the 3.3.2 version of `TFEL`, `MFront` and `MTest`
+title: Release notes of the 3.1.9 version of `TFEL`, `MFront` and `MTest`
 author: Thomas Helfer
-date: 2020
+date: 2021
 lang: en-EN
 numbersections: true
 documentclass: article
@@ -19,8 +19,6 @@ eqnPrefixTemplate: "($$i$$)"
 
 # Issues fixed
 
-## Issue #278: Fix reading a map of Data
+## Issue #279: Fix SlipSystemsDescription::InteractionMatrixStructure::getRank for hexagonal systems
 
-Empty map were not supported properly in `Data::read_map`.
-
-For more details, see: <https://sourceforge.net/p/tfel/tickets/278/>
+For more details, see: <https://sourceforge.net/p/tfel/tickets/279/>

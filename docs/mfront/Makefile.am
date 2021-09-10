@@ -63,6 +63,8 @@ MFRONT_DOCS = AdditionalConvergenceChecks.md                            \
 	      Parser.md                                                 \
 	      PerturbationValueForNumericalJacobianComputation.md       \
 	      PhysicalBounds.md                                         \
+	      ProcessNewCorrection.md                                   \
+	      ProcessNewEstimate.md                                     \
 	      Private.md                                                \
 	      Profiling.md                                              \
 	      Relocation.md			                        \

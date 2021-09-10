@@ -56,10 +56,6 @@ namespace mfront {
 
   BroydenSolverBase::~BroydenSolverBase() = default;
 
-  std::vector<std::string> BroydenSolver::getReservedNames() const {
-    return {};
-  }
-
   std::vector<std::string> BroydenSolver::getSpecificHeaders()
       const {
     return {"TFEL/Math/TinyBroydenSolver.hxx"};
@@ -67,23 +63,8 @@ namespace mfront {
 
   std::string BroydenSolver::getExternalAlgorithmClassName(
       const BehaviourDescription& bd, const Hypothesis h) const {
-    const auto hn = [&h]() -> std::string {
-      if (h == tfel::material::ModellingHypothesis::UNDEFINEDHYPOTHESIS) {
-        return "hypothesis";
-      }
-      return "ModellingHypothesis::" +
-             tfel::material::ModellingHypothesis::toUpperCaseString(h);
-    }();
-    const auto n =
-        mfront::getTypeSize(bd.getBehaviourData(h).getIntegrationVariables())
-            .asString({"ModellingHypothesisToSpaceDimension<" + hn + ">::value",
-                       "ModellingHypothesisToStensorSize<" + hn + ">::value",
-                       "ModellingHypothesisToTensorSize<" + hn + ">::value"});
-    const auto cn =
-        bd.useQt() ? bd.getClassName() + "<" + hn + ", NumericType, true>"
-                   : bd.getClassName() + "<" + hn + ", NumericType, false>";
-    return "tfel::math::TinyBroydenSolver<" +  //
-           n + ", NumericType, " + cn + ">";
+    return NonLinearSystemSolverBase::buildExternalAlgorithmClassName(
+        bd, h, "TinyBroydenSolver");
   }  // end of getExternalAlgorithmClassName
 
   bool BroydenSolver::usesJacobian() const { return true; }
@@ -115,23 +96,8 @@ namespace mfront {
 
   std::string PowellDogLegBroydenSolver::getExternalAlgorithmClassName(
       const BehaviourDescription& bd, const Hypothesis h) const {
-    const auto hn = [&h]() -> std::string {
-      if (h == tfel::material::ModellingHypothesis::UNDEFINEDHYPOTHESIS) {
-        return "hypothesis";
-      }
-      return "ModellingHypothesis::" +
-             tfel::material::ModellingHypothesis::toUpperCaseString(h);
-    }();
-    const auto n =
-        mfront::getTypeSize(bd.getBehaviourData(h).getIntegrationVariables())
-            .asString({"ModellingHypothesisToSpaceDimension<" + hn + ">::value",
-                       "ModellingHypothesisToStensorSize<" + hn + ">::value",
-                       "ModellingHypothesisToTensorSize<" + hn + ">::value"});
-    const auto cn =
-        bd.useQt() ? bd.getClassName() + "<" + hn + ", NumericType, true>"
-                   : bd.getClassName() + "<" + hn + ", NumericType, false>";
-    return "tfel::math::TinyPowellDogLegBroydenSolver<" +  //
-           n + ", NumericType, " + cn + ">";
+    return NonLinearSystemSolverBase::buildExternalAlgorithmClassName(
+        bd, h, "TinyPowellDogLegBroydenSolver");
   }  // end of getExternalAlgorithmClassName
 
   bool PowellDogLegBroydenSolver::usesJacobian() const { return true; }

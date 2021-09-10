@@ -21,6 +21,7 @@
 #include "TFEL/Raise.hxx"
 #include "TFEL/Glossary/Glossary.hxx"
 #include "TFEL/Glossary/GlossaryEntry.hxx"
+#include "TFEL/Utilities/Data.hxx"
 #include "TFEL/Utilities/StringAlgorithms.hxx"
 #include "TFEL/UnicodeSupport/UnicodeSupport.hxx"
 #include "TFEL/Material/FiniteStrainBehaviourTangentOperator.hxx"
@@ -29,11 +30,58 @@
 #include "MFront/NonLinearSystemSolver.hxx"
 #include "MFront/NonLinearSystemSolverBase.hxx"
 #include "MFront/NonLinearSystemSolverFactory.hxx"
+#include "MFront/UserDefinedNonLinearSystemSolver.hxx"
 #include "MFront/PerformanceProfiling.hxx"
 #include "MFront/AbstractBehaviourBrick.hxx"
 #include "MFront/ImplicitDSLBase.hxx"
 
 namespace mfront {
+
+  static void writeVariablesOffsets(
+      std::ostream& os, const VariableDescriptionContainer& variables) {
+    auto n = SupportedTypes::TypeSize();
+    for (const auto& v : variables) {
+      os << "constexpr auto " << v.name << "_offset = " << n << ";\n";
+      n += SupportedTypes::getTypeSize(v.type, v.arraySize);
+    }
+  }  // end of writeVariablesOffsets
+
+  static void writeIgnoreVariablesOffsets(
+      std::ostream& os, const VariableDescriptionContainer& variables) {
+    for (const auto& v : variables) {
+      os << "static_cast<void>(" << v.name << "_offset);\n";
+    }
+  }  // end of writeIgnoreVariablesOffsets
+
+  static void declareViewsFromArrayOfVariables(
+      std::ostream& os,
+      const VariableDescriptionContainer& variables,
+      const std::function<std::string(const std::string&)>&
+          variable_name_generator,
+      const std::string& array_name,
+      const bool use_qt) {
+    auto n = SupportedTypes::TypeSize();
+    for (const auto& v : variables) {
+      const auto& vname = variable_name_generator(v.name);
+      if (v.arraySize == 1u) {
+        if (SupportedTypes::getTypeFlag(v.type) == SupportedTypes::SCALAR) {
+          if (use_qt) {
+            os << "tfel::math::scalar_view<" << v.type << "> " << vname << "("
+               << array_name << "(" << n << "));\n";
+          } else {
+            os << "real& " << vname << "(" << array_name << "(" << n << "));\n";
+          }
+        } else {
+          os << "auto " << vname << " = tfel::math::map<" << v.type << ", " << n
+             << ">(" << array_name << ");\n";
+        }
+      } else {
+        os << "auto " << vname << " = tfel::math::map<" << v.arraySize << ", "
+           << v.type << ", " << n << ">(" << array_name << ");\n";
+      }
+      n += SupportedTypes::getTypeSize(v.type, v.arraySize);
+    }
+  }  // end of declareViewsFromArrayOfVariables
 
   ImplicitDSLBase::ImplicitDSLBase() {
     constexpr auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
@@ -66,7 +114,9 @@ namespace mfront {
     this->reserveName("getPartialJacobianInvert");
     this->reserveName("GetPartialJacobianInvert");
     this->reserveName("TinyMatrixSolve");
+    this->mb.registerMemberName(uh, "iter");
     this->mb.registerMemberName(uh, "zeros");
+    this->mb.registerMemberName(uh, "delta_zeros");
     this->mb.registerMemberName(uh, "fzeros");
     this->mb.registerMemberName(uh, "jacobian");
     this->mb.registerMemberName(uh, "computePartialJacobianInvert");
@@ -105,6 +155,10 @@ namespace mfront {
                               &ImplicitDSLBase::treatInitJacobianInvert);
     this->registerNewCallBack("@InitializeJacobianInvert",
                               &ImplicitDSLBase::treatInitJacobianInvert);
+    this->registerNewCallBack("@ProcessNewCorrection",
+                              &ImplicitDSLBase::treatProcessNewCorrection);
+    this->registerNewCallBack("@ProcessNewEstimate",
+                              &ImplicitDSLBase::treatProcessNewEstimate);
     this->registerNewCallBack(
         "@CompareToNumericalJacobian",
         &ImplicitDSLBase::treatCompareToNumericalJacobian);
@@ -251,6 +305,16 @@ namespace mfront {
     BehaviourDSLCommon::treatUnknownKeyword();
   }  // end of treatUnknownKeyword
 
+  void ImplicitDSLBase::treatProcessNewCorrection() {
+    this->treatCodeBlock(*this, BehaviourData::ProcessNewCorrection,
+                         &ImplicitDSLBase::standardModifier, true, true);
+  }  // end of treatProcessNewCorrection
+
+  void ImplicitDSLBase::treatProcessNewEstimate() {
+    this->treatCodeBlock(*this, BehaviourData::ProcessNewEstimate,
+                         &ImplicitDSLBase::standardModifier, true, true);
+  }  // end of treatProcessNewEstimate
+
   void ImplicitDSLBase::treatStateVariable() {
     VariableDescriptionContainer v;
     auto hs = std::set<Hypothesis>{};
@@ -259,6 +323,8 @@ namespace mfront {
     for (const auto h : hs) {
       for (const auto& iv : v) {
         this->mb.reserveName(h, "f" + iv.name);
+        this->mb.reserveName(h, iv.name + "_offset");
+        this->mb.reserveName(h, "delta_d" + iv.name);
       }
     }
   }
@@ -272,6 +338,7 @@ namespace mfront {
       for (const auto& iv : v) {
         this->mb.reserveName(h, "f" + iv.name);
         this->mb.reserveName(h, iv.name + "_offset");
+        this->mb.reserveName(h, "delta_d" + iv.name);
       }
     }
   }
@@ -442,10 +509,9 @@ namespace mfront {
                                       jacobianComparisonCriterion);
   }  // ImplicitDSLBase::treatJacobianComparisonCriterion
 
-  void ImplicitDSLBase::setNonLinearSolver(const std::string& s) {
-    const auto& f =
-        NonLinearSystemSolverFactory::getNonLinearSystemSolverFactory();
-    this->solver = f.getSolver(s);
+  void ImplicitDSLBase::setNonLinearSolver(
+      std::shared_ptr<NonLinearSystemSolver> s, const std::string& name) {
+    this->solver = s;
     for (const auto& n : this->solver->getReservedNames()) {
       this->reserveName(n);
     }
@@ -453,7 +519,13 @@ namespace mfront {
       constexpr auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
       this->mb.registerMemberName(uh, n);
     }
-    this->mb.setAttribute(BehaviourData::algorithm, s, false);
+    this->mb.setAttribute(BehaviourData::algorithm, name, false);
+  }  // end of setNonLinearSolver
+
+  void ImplicitDSLBase::setNonLinearSolver(const std::string& s) {
+    const auto& f =
+        NonLinearSystemSolverFactory::getNonLinearSystemSolverFactory();
+    this->setNonLinearSolver(f.getSolver(s), s);
   } // end of setNonLinearSolver
 
   void ImplicitDSLBase::treatAlgorithm() {
@@ -465,8 +537,24 @@ namespace mfront {
                             "Cannot read algorithm name.");
     const auto& s = this->current->value;
     ++this->current;
-    this->readSpecifiedToken("ImplicitDSLBase::treatAlgorithm", ";");
-    this->setNonLinearSolver(s);
+    this->checkNotEndOfFile("ImplicitDSLBase::treatAlgorithm");
+    if (s == "UserDefined") {
+      const auto d = [this] {
+        using namespace tfel::utilities;
+        using DataMap = std::map<std::string, Data>;
+        DataParsingOptions o;
+        o.allowMultipleKeysInMap = true;
+        const auto opts =
+            Data::read(this->current, this->tokens.end(), o).get<DataMap>();
+        return opts;
+      }();
+      this->setNonLinearSolver(
+          std::make_shared<UserDefinedNonLinearSystemSolver>(d), "UserDefined");
+      this->readSpecifiedToken("ImplicitDSLBase::treatAlgorithm", ";");
+    } else {
+      this->readSpecifiedToken("ImplicitDSLBase::treatAlgorithm", ";");
+      this->setNonLinearSolver(s);
+    }
   }  // end of treatAlgorithm
 
   void ImplicitDSLBase::treatTheta() {
@@ -1335,8 +1423,8 @@ namespace mfront {
 
   void ImplicitDSLBase::writeBehaviourParserSpecificInheritanceRelationship(
       std::ostream& os, const Hypothesis h) const {
-    const auto n = this->solver->getExternalAlgorithmClassName(this->mb, h);
-    os << ",\npublic " << n;
+    os << ",\npublic "
+       << this->solver->getExternalAlgorithmClassName(this->mb, h);
   }  // end of writeBehaviourParserSpecificInheritanceRelationship
 
   void ImplicitDSLBase::writeBehaviourFriends(std::ostream& os,
@@ -2390,8 +2478,27 @@ namespace mfront {
        << " */\n"
        << "void processNewCorrection()\n"
        << "{\n";
+    if (this->mb.hasCode(h, BehaviourData::ProcessNewCorrection)) {
+      os << "using namespace std;\n"
+         << "using namespace tfel::math;\n"
+         << "using std::vector;\n";
+      writeMaterialLaws(os, this->mb.getMaterialLaws());
+      writeVariablesOffsets(os, d.getIntegrationVariables());
+      declareViewsFromArrayOfVariables(
+        os, d.getIntegrationVariables(),
+        [](const std::string& n) { return "delta_d" + n; }, "this->delta_zeros",
+        this->mb.useQt());
+    }
     NonLinearSystemSolverBase::writeLimitsOnIncrementValues(
         os, this->mb, h, "this->delta_zeros");
+    if (this->mb.hasCode(h, BehaviourData::ProcessNewCorrection)) {
+      os << this->mb.getCodeBlock(h, BehaviourData::ProcessNewCorrection).code
+         << "\n";
+      writeIgnoreVariablesOffsets(os, d.getIntegrationVariables());
+      for (const auto& v : d.getIntegrationVariables()) {
+        os << "static_cast<void>(delta_d" << v.name << ");\n";
+      }
+    }
     os << "};\n"
        << "/*!\n"
        << " * \\brief method meant to process the new estimate.\n"
@@ -2400,12 +2507,22 @@ namespace mfront {
        << " * new estimate.\n"
        << " */\n"
        << "void processNewEstimate(){\n";
+    if (this->mb.hasCode(h, BehaviourData::ProcessNewEstimate)) {
+      os << "using namespace std;\n"
+         << "using namespace tfel::math;\n"
+         << "using std::vector;\n";
+      writeMaterialLaws(os, this->mb.getMaterialLaws());
+    }
     NonLinearSystemSolverBase::
         writeLimitsOnIncrementValuesBasedOnStateVariablesPhysicalBounds(
             os, this->mb, h);
     NonLinearSystemSolverBase::
         writeLimitsOnIncrementValuesBasedOnIntegrationVariablesIncrementsPhysicalBounds(
             os, this->mb, h);
+    if (this->mb.hasCode(h, BehaviourData::ProcessNewEstimate)) {
+      os << this->mb.getCodeBlock(h, BehaviourData::ProcessNewEstimate).code
+         << "\n";
+    }
     os << "this->updateMaterialPropertiesDependantOnStateVariables();\n"
        << "}\n";
     if (getDebugMode()) {
@@ -2464,8 +2581,8 @@ namespace mfront {
                                              "TinyMatrixSolve", "lu");
     }
     os << "mfront_success = "
-       << "tfel::math::TinyMatrixSolve<" << n2
-       << ", NumericType, false>::exe(mfront_matrix, mfront_vector);\n";
+       << this->solver->getExternalAlgorithmClassName(this->mb, h) <<
+        "::solveLinearSystem(mfront_matrix, mfront_vector);\n";
     if (mb.getAttribute(BehaviourData::profiling, false)) {
       writeStandardPerformanceProfilingEnd(os);
     }
@@ -2498,31 +2615,14 @@ namespace mfront {
     writeMaterialLaws(os, this->mb.getMaterialLaws());
     os << "// silent compiler warning\n"
        << "static_cast<void>(perturbatedSystemEvaluation); \n";
-    auto n = SupportedTypes::TypeSize();
-    for (const auto& v : d.getIntegrationVariables()) {
-      os << "constexpr auto " << v.name << "_offset = " << n << ";\n";
-      os << "static_cast<void>(" << v.name << "_offset);\n";
-      if (v.arraySize == 1u) {
-        if (SupportedTypes::getTypeFlag(v.type) == SupportedTypes::SCALAR) {
-          if (this->mb.useQt()) {
-            os << "tfel::math::scalar_view<" << v.type << "> f" << v.name
-               << "(this->fzeros(" << n << "));\n";
-          } else {
-            os << "real& f" << v.name << "(this->fzeros(" << n << "));\n";
-          }
-        } else {
-          os << "auto f" << v.name << " = tfel::math::map<" << v.type << ", "
-             << n << ">(this->fzeros);\n";
-        }
-      } else {
-        os << "auto f" << v.name << " = tfel::math::map<" << v.arraySize << ", "
-           << v.type << ", " << n << ">(this->fzeros);\n";
-      }
-      n += this->getTypeSize(v.type, v.arraySize);
-    }
+    writeVariablesOffsets(os, d.getIntegrationVariables());
+    declareViewsFromArrayOfVariables(
+        os, d.getIntegrationVariables(),
+        [](const std::string& n) { return "f" + n; }, "this->fzeros",
+        this->mb.useQt());
     if ((this->solver->usesJacobian()) &&
         (!(this->solver->requiresNumericalJacobian()))) {
-      n = SupportedTypes::TypeSize();
+      auto n = SupportedTypes::TypeSize();
       for (const auto& v : d.getIntegrationVariables()) {
         auto n2 = SupportedTypes::TypeSize();
         for (const auto& v2 : d.getIntegrationVariables()) {
@@ -2542,7 +2642,8 @@ namespace mfront {
          << "std::fill(this->jacobian.begin(),this->jacobian.end(), "
             "NumericType(0))"
             ";\n"
-         << "for(unsigned short idx = 0; idx != " << n << "; ++idx){\n"
+         << "for(unsigned short idx = 0; idx != "
+         << mfront::getTypeSize(d.getIntegrationVariables()) << "; ++idx){\n"
          << "this->jacobian(idx, idx) = NumericType(1);\n"
          << "}\n";
     }
@@ -2669,6 +2770,7 @@ namespace mfront {
         }
       }
     }
+    writeIgnoreVariablesOffsets(os, d.getIntegrationVariables());
     os << "return true;\n"
        << "}\n\n";
   }  // end of writeBehaviourIntegrator
@@ -2802,6 +2904,12 @@ namespace mfront {
           addSymbol(symbols, "\u2202f" + s1 + "\u2215\u2202\u0394" + s2,
                     "df" + v1.name + "_dd" + v2.name);
         }
+      }
+    }
+    if (n == BehaviourData::ProcessNewCorrection) {
+      for (const auto& v : d.getIntegrationVariables()) {
+        const auto& s = !v.symbolic_form.empty() ? v.symbolic_form : v.name;
+        addSymbol(symbols, "\u03B4\u0394" + s, "delta_d" + v.name);
       }
     }
     const auto is_tangent_operator_code_block = [this, &n] {

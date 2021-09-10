@@ -34,8 +34,6 @@ eqnPrefixTemplate: "($$i$$)"
 \newcommand{\dtot}{{{\mathrm{d}}}}
 \newcommand{\paren}[1]{{\left(#1\right)}}
 
-![Description of the steps of the implicit scheme and the associated code blocks.](img/ImplicitDSL.svg ""){width=100%}
-
 # Description
 
 Let \(\vec{Y}\) be a vector holding all the integration variables[^1].
@@ -98,6 +96,8 @@ tensor \(\Delta\tepsilonto\) and may be rewritten as:
 
 # Available algorithms
 
+![Description of the steps of the implicit scheme and the associated code blocks.](img/ImplicitDSL.svg ""){#fig:mfront:implicit-dsl:resolution_steps width=100%}
+
 The following algorithms are available:
 
 - `NewtonRaphson`
@@ -109,6 +109,11 @@ The following algorithms are available:
 - `Broyden2`
 - `LevenbergMarquardt`
 - `LevenbergMarquardt_NumericalJacobian`
+
+Thoses algorithms are described in the documention of the [`TFEL/Math`
+library](tfel-math.html). The main steps of those algorithms and the
+associated code blocks are depicted in Figure
+@fig:mfront:implicit-dsl:resolution_steps.
 
 ## Notes about updating auxiliary state variable or local variables in the `Integrator` code blocks when the numerical evaluation of the jacobian is requested
 
