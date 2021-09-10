@@ -181,6 +181,10 @@ namespace tfel::utilities {
     auto c = p;
     CxxTokenizer::checkNotEndOfLine("Data::read", c, pe);
     CxxTokenizer::readSpecifiedToken("Data::read_map", "{", c, pe);
+    CxxTokenizer::checkNotEndOfLine("Data::read", c, pe);
+    if (c->value == "}") {
+      return std::map<std::string, Data>{};
+    }
     if (c->flag == Token::Number) {
       p = c;
       std::map<double, double> values;
