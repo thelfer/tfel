@@ -36,7 +36,7 @@ namespace mfront::gb {
    */
   template <typename StressType>
   void exportTangentOperator(tfel::math::base_type<StressType>* const v,
-                             const real K) {
+                             const StressType K) {
     tfel::math::map<StressType>(v) = K;
   }  // end of exportTangentOperator
 
