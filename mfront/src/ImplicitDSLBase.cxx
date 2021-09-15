@@ -1326,6 +1326,19 @@ namespace mfront {
     };
     const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     BehaviourDSLCommon::endsInputFileProcessing();
+    // Supported modelling hypothesis
+    const auto mh = this->mb.getDistinctModellingHypotheses();
+    // check that at leas an integration variable is
+    for (const auto& h : mh) {
+      const auto n = mfront::getTypeSize(
+          this->mb.getBehaviourData(h).getIntegrationVariables());
+      if (n.isNull()) {
+        tfel::raise(
+            "ImplicitDSLBase::endsInputFileProcessing: "
+            "no integration variables defined");
+      }
+    }
+    // consistency checks
     if (this->mb.getAttribute(uh, BehaviourData::compareToNumericalJacobian,
                               false)) {
       throw_if((!this->solver->usesJacobian()) ||
@@ -1336,7 +1349,6 @@ namespace mfront {
     // create the compute final stress code is necessary
     this->setComputeFinalThermodynamicForcesFromComputeFinalThermodynamicForcesCandidateIfNecessary();
     // correct prediction to take into account normalisation factors
-    const auto mh = this->mb.getDistinctModellingHypotheses();
     for (const auto& h : mh) {
       if (this->mb.hasAttribute(
               h, BehaviourData::numericallyComputedJacobianBlocks)) {
