@@ -119,21 +119,25 @@ E = young_modulus(562)
 
 # Issues fixed
 
-## Ticket #274:  [material properties] Allow to specify types of the output, inputs and parameters
+## Issue #8: [python bindings] Implementation error in overrideModelName in OverridableImplementation
+
+For more details, see: <https://github.com/thelfer/tfel/issues/8>
+
+## Issue #274:  [material properties] Allow to specify types of the output, inputs and parameters
 
 The output, inputs and parameters of a material property can now be
 declared with any scalar type supported by the `SupportedTypes` class.
 
 For more details, see: <https://sourceforge.net/p/tfel/tickets/274/>
 
-## Ticket #273: [mtest] Add basic support for testing material properties {#sec:tfel:3.4.2:issue:273}
+## Issue #273: [mtest] Add basic support for testing material properties {#sec:tfel:3.4.2:issue:273}
 
 The developments associated with this issue are described in Section
 @sec:tfel:3.4.2:mtest:material_properties.
 
 For more details, see: <https://sourceforge.net/p/tfel/tickets/273/>
 
-## Ticket #272: [material properties] Export parameters list, bounds and default values
+## Issue #272: [material properties] Export parameters list, bounds and default values
 
 The list of parameters is now exported by interfaces of material
 properties which provides a `setParameter` method (namely the `Cast3M`
@@ -150,7 +154,7 @@ This data member is also accessible in the `python` bindings.
 
 For more details, see: <https://sourceforge.net/p/tfel/tickets/272/>
 
-## Ticket #271: [mfront bindings] Support for material properties
+## Issue #271: [mfront bindings] Support for material properties
 
 The `getDSL` method now returns an object of the `MaterialPropertyDSL`
 type which derives from the `AbstractDSL` class. It exposes a method
@@ -170,7 +174,7 @@ The `MaterialPropertyDescription` exposes the following methods:
 
 For more details, see: <https://sourceforge.net/p/tfel/tickets/271/>
 
-## Ticket #269: Allow postprocessing of the inner pressure evolution in PipeTest when imposing the axial radius evolution in the `python` bindings
+## Issue #269: Allow postprocessing of the inner pressure evolution in PipeTest when imposing the axial radius evolution in the `python` bindings
 
 When the evolution of the outer radius is imposed, the inner pressure
 evolution can now be retrieved using the following code:
@@ -191,7 +195,7 @@ f = s.getEvolutionValue("AxialForce", t)
 
 For more details, see: <https://sourceforge.net/p/tfel/tickets/269/>
 
-## Ticket #268: Missing methods in mtest.MTest for the comparison of the tangent operator to a numerical approximation
+## Issue #268: Missing methods in mtest.MTest for the comparison of the tangent operator to a numerical approximation
 
 The `MTest` executable allows to compare the tangent operator returned
 by the behaviour to a numerical approximation. To be able to do the same
@@ -209,7 +213,7 @@ using the `python` interface, the following methods have been added:
 
 For more details, see: <https://sourceforge.net/p/tfel/tickets/268/>
 
-## Ticket #267: InteractionMatrix coefficients as parameters / material properties {#sec:tfel:3.4.2:issue:267}
+## Issue #267: InteractionMatrix coefficients as parameters / material properties {#sec:tfel:3.4.2:issue:267}
 
 The developments associated with this issue are described in Section
 @sec:tfel:3.4.2:mfront:interaction_matrix.
