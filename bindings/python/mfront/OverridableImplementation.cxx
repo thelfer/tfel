@@ -74,7 +74,7 @@ void declareOverridableImplementation() {
       .def(
           "overrideModelName",
           +[](mfront::OverridableImplementation& i, const std::string& a) {
-            if (i.getTargetType() != mfront::AbstractDSL::MATERIALPROPERTYDSL) {
+            if (i.getTargetType() != mfront::AbstractDSL::MODELDSL) {
               tfel::raise(
                   "overrideModelName: invalid call (the DSL does not describe "
                   "a model");
