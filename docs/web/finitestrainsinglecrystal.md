@@ -1,6 +1,15 @@
-% A framework to implement finite strain single crystal behaviors, introducing the `FiniteStrainSingleCrystal` brick
-% Thomas Helfer
-% 27/03/2017
+---
+title: A framework to implement finite strain single crystal behaviors, introducing the `FiniteStrainSingleCrystal` brick
+author: Thomas Helfer, Chao Ling, Jérémy Hure
+date: 13/09/2021
+lang: en-EN
+link-citations: true
+colorlinks: true
+figPrefixTemplate: "$$i$$"
+tblPrefixTemplate: "$$i$$"
+secPrefixTemplate: "$$i$$"
+eqnPrefixTemplate: "($$i$$)"
+---
 
 \newcommand{\tenseur}[1]{\underline{#1}}
 \newcommand{\tenseurq}[1]{\underline{\mathbf{#1}}}
