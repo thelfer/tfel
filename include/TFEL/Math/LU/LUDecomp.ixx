@@ -102,7 +102,11 @@ namespace tfel::math {
         }
       }
       if (tfel::math::abs(m(p(i), i)) < eps) {
-        throw(LUNullPivot());
+        if constexpr (use_exceptions) {
+          tfel::raise<LUNullPivot>();
+        } else {
+          return {false, 0};
+        }
       }
       if (p.isIdentity()) {
         auto j = i;
