@@ -27,7 +27,7 @@ namespace tfel::math {
     constexpr auto stensor_size = StensorDimeToSize<N>::value;
     constexpr auto tensor_size = TensorDimeToSize<N>::value;
     os << "[";
-    for (unsigned short i = 0; i < stensor_size; ++i) {
+    for (unsigned short i = 0; i < stensor_size;) {
       if (i != 0) {
         os << " [";
       } else {
