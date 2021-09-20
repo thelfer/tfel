@@ -1973,10 +1973,14 @@ namespace mfront {
       const auto v2 = VariableDescription{"StrainStensor", "\u03B5\u1D57\u1D52",
                                           "eto", 1u, 0u};
       os << "struct TFEL_VISIBILITY_LOCAL GetPartialJacobianInvert{\n"
-         << "GetPartialJacobianInvert(" << this->mb.getClassName() << "& b,\n"
-         << "const tfel::math::TinyPermutation<" << nivs << ">& p)\n"
-         << ": behaviour(b),\n"
-         << "permutation(p)\n"
+         << "GetPartialJacobianInvert(" << this->mb.getClassName()
+         << "& mfront_behaviour_argument,\n"
+         << "const tfel::math::TinyPermutation<" << nivs
+         << ">& mfront_permutation_argument)\n"
+         << ": mfront_get_partial_jacobian_invert_behaviour("
+         << "mfront_behaviour_argument),\n"
+         << "mfront_get_partial_jacobian_invert_permutation("
+         << "mfront_permutation_argument)\n"
          << "{}\n";
       for (size_type i = 0; i != isvs.size(); ++i) {
         os << "void operator()(";
@@ -1989,8 +1993,9 @@ namespace mfront {
           }
         }
         os << "){\n"
-           << "this->behaviour.computePartialJacobianInvert("
-           << "this->permutation, ";
+           << "this->mfront_get_partial_jacobian_invert_behaviour."
+           << "computePartialJacobianInvert("
+           << "this->mfront_get_partial_jacobian_invert_permutation, ";
         for (size_type i2 = 0; i2 <= i;) {
           const auto& v = isvs[i2];
           os << "partial_jacobian_" << v.name;
@@ -2002,8 +2007,10 @@ namespace mfront {
            << "}\n";
       }
       os << "private:\n"
-         << this->mb.getClassName() << "& behaviour;\n"
-         << "const tfel::math::TinyPermutation<" << nivs << ">& permutation;\n"
+         << this->mb.getClassName() << "& "
+         << "mfront_get_partial_jacobian_invert_behaviour;\n"
+         << "const tfel::math::TinyPermutation<" << nivs << ">& "
+         << "mfront_get_partial_jacobian_invert_permutation;\n"
          << "}; // end of struct GetPartialJacobianInvert\n"
          << "GetPartialJacobianInvert "
             "getPartialJacobianInvert(*this, jacobian_permutation);\n";
@@ -2482,7 +2489,7 @@ namespace mfront {
             os, mb, h, "njacobian");
       }
     }
-    os << "};\n"
+    os << "}\n"
        << "/*!\n"
        << " * \\brief method meant to set bounds on some components "
        << " * of the current Newton correction or to implement a line "
@@ -2511,7 +2518,7 @@ namespace mfront {
         os << "static_cast<void>(delta_d" << v.name << ");\n";
       }
     }
-    os << "};\n"
+    os << "}\n"
        << "/*!\n"
        << " * \\brief method meant to process the new estimate.\n"
        << " *\n"
@@ -2565,6 +2572,14 @@ namespace mfront {
          << "::integrate() : computFdF returned false or the norm of the "
          << "residual is not finite, dividing increment by "
          << "two\\n\\n\";\n"
+         << "}\n"
+         << "/*!\n"
+         << " * \brief method called when the computation of a new correction\n"
+         << " * failed.\n"
+         << " */\n"
+         << "void reportNewCorrectionComputationFailure() const {\n"
+         << "std::cout << '\\n' << \"" << mb.getClassName()
+         << "::integrate(): failed to compute a new correction\";\n"
          << "}\n"
          << "/*!\n"
          << " * \\brief method called after a standard Newton step\n"

@@ -40,17 +40,18 @@ namespace tfel::math {
       if (converged) {
         return true;
       }
-      ++(this->iter);
-      if (this->iter == this->iterMax) {
-        break;
-      }
       if (!child.computeNewCorrection()) {
+        child.reportNewCorrectionComputationFailure();
         break;
       }
       this->is_delta_zeros_defined = true;
       child.processNewCorrection();
       this->zeros += this->delta_zeros;
       child.processNewEstimate();
+      ++(this->iter);
+      if (this->iter == this->iterMax) {
+        break;
+      }
     }
     return false;
   }  // end of solveNonLinearSystem2

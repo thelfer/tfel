@@ -53,10 +53,10 @@ struct QtRefTest final : public tfel::tests::TestCase {
         (std::is_same_v<double, ViewStorageType<stensor<3u, qt<Mass>>>>));
   }
    void test2() {
-#ifndef __INTEL_COMPILER
+#if (not defined __INTEL_COMPILER) && (not defined __clang__) 
      using namespace tfel::math;
      constexpr auto eps = double{1e-14};
-     constexpr auto s = []() constexpr->stensor<3, qt<Stress, double>> {
+     constexpr auto s = []() constexpr -> stensor<3, qt<Stress, double>> {
        double stress_values[6] = {0, 1, 2, 3, 4, 5};
        return map<stensor<3, qt<Stress>>>(stress_values);
      }
@@ -67,7 +67,7 @@ struct QtRefTest final : public tfel::tests::TestCase {
      TFEL_TESTS_STATIC_ASSERT(my_abs(s[3].getValue() - 3) < eps);
      TFEL_TESTS_STATIC_ASSERT(my_abs(s[4].getValue() - 4) < eps);
      TFEL_TESTS_STATIC_ASSERT(my_abs(s[5].getValue() - 5) < eps);
-#endif /* __INTEL_COMPILER */
+#endif /* (not defined __INTEL_COMPILER) && (not defined __clang__) */
    }  // end of test2
    void test3() {
      using namespace tfel::math;

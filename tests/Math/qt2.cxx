@@ -105,7 +105,7 @@ struct QtRefTest final : public tfel::tests::TestCase {
     TFEL_TESTS_STATIC_ASSERT(my_abs(m3.getValue() - 100.) < 1.e-14);
   }  // end of test5
   void test6() {
-#ifndef __INTEL_COMPILER
+#if (not defined __INTEL_COMPILER) && (not defined __clang__) 
     using namespace tfel::math;
     using strain = qt<NoUnit>;
     constexpr auto eeps = strain{1e-14};
@@ -119,7 +119,7 @@ struct QtRefTest final : public tfel::tests::TestCase {
     TFEL_TESTS_ASSERT(my_abs(devp(3)) < eeps);
     TFEL_TESTS_ASSERT(my_abs(devp(4)) < eeps);
     TFEL_TESTS_ASSERT(my_abs(devp(5)) < eeps);
-#endif /* __INTEL_COMPILER */
+#endif /* (not defined __INTEL_COMPILER) && (not defined __clang__) */
   }
   void test7() {
     using namespace tfel::math;

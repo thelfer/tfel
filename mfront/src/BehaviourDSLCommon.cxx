@@ -4154,7 +4154,7 @@ namespace mfront {
     os << "//! \\brief forward declaration\n"
        << "template<ModellingHypothesis::Hypothesis, "
        << "typename NumericType, bool use_qt>\n"
-       << "class " << this->mb.getClassName() << ";\n\n";
+       << "struct " << this->mb.getClassName() << ";\n\n";
     if (this->mb.useQt()) {
       os << "//! \\brief forward declaration\n"
          << "template<ModellingHypothesis::Hypothesis hypothesis, "

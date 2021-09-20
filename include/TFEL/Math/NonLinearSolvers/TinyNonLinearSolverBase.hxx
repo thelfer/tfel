@@ -50,9 +50,12 @@ namespace tfel::math {
    * - `reportFailure`: this method is meant to be overloaded by the `Child`
    * class to report the resolution fails because the maximal number of
    * iterations has been reached. The default implementation does nothing.
-   * - `reportInvalidResidualEvaluation`:  this method  this method is meant to
+   * - `reportInvalidResidualEvaluation`:  this method is meant to
    * be overloaded by the `Child` class to report that the residual evaluation
    * failed. The default implementation does nothing.
+   * - `reportNewCorrectionComputationFailure`: this method is meant to
+   * be overloaded by the `Child` class to report the failure of the computation
+   * of a new correction.
    */
   template <unsigned short N, typename NumericType, typename Child>
   struct TinyNonLinearSolverBase {
@@ -174,8 +177,10 @@ namespace tfel::math {
     constexpr void reportSuccess() const noexcept {}
     //! \brief method called when the resolution fails
     constexpr void reportFailure() const noexcept {}
-    //! \brief method called with the evaluation of the residual failed.
+    //! \brief method called when the evaluation of the residual failed.
     constexpr void reportInvalidResidualEvaluation() const noexcept {}
+    //! \brief method called when the computation of a new correction failed.
+    constexpr void reportNewCorrectionComputationFailure() const noexcept {}
     /*!
      * \brief method called after a standard Newton step
      * \param[in] e: error

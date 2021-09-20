@@ -356,12 +356,16 @@ namespace cyrano {
                 throwPredictionComputationFailedException(Traits::getName());
               }
             }
-          } catch (const tfel::material::DivergenceException &e) {
 #ifdef MFRONT_CYRANO_VERBOSE
+          } catch (const tfel::material::DivergenceException &e) {
             std::cerr << "no convergence : " << e.what() << std::endl;
-#endif /* LIB_MFRONT_CYRANO_CYRANOBEHAVIOURHANDLER_HXX */
             r = BV::FAILURE;
           }
+#else  /* LIB_MFRONT_CYRANO_CYRANOBEHAVIOURHANDLER_HXX */
+          } catch (const tfel::material::DivergenceException &) {
+            r = BV::FAILURE;
+          }
+#endif /* LIB_MFRONT_CYRANO_CYRANOBEHAVIOURHANDLER_HXX */
           if ((r == BV::SUCCESS) ||
               ((r == BV::UNRELIABLE_RESULTS) &&
                (!CyranoTraits<BV>::doSubSteppingOnInvalidResults))) {

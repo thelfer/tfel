@@ -204,20 +204,24 @@ namespace tfel::math {
 
   /*!
    * \return the inner product of a tensor
-   * \param const T1&, the left  tensor.
-   * \param const T2&, the right tensor.
+   * \tparam TensorType1, type of the left  tensor.
+   * \tparam TensorType2, type of the right tensor.
+   * \param[in] a: the left  tensor.
+   * \param[in] b: the right tensor.
    * \return const result_type<T,T2,OpMult>, the
    * result.
    * \warning the operator| has not the priority expected for such
    * an operation : use of parenthesis is required.
    */
-  template <typename T1, typename T2>
+  template <typename TensorType1, typename TensorType2>
   std::enable_if_t<
-      implementsTensorConcept<T1>() && implementsTensorConcept<T2>() &&
-          !isInvalid<BinaryOperationResult<T1, T2, OpDotProduct>>(),
-      BinaryOperationResult<T1, T2, OpDotProduct>>
-  operator|(const T1&, const T2&);
-
+      ((implementsTensorConcept<TensorType1>()) &&
+       (implementsTensorConcept<TensorType2>()) &&
+       (!isInvalid<
+           BinaryOperationResult<TensorType1, TensorType2, OpDotProduct>>())),
+      BinaryOperationResult<TensorType1, TensorType2, OpDotProduct>>
+  operator|(const TensorType1&, const TensorType2&);
+  
 }  // end of namespace tfel::math
 
 #include "TFEL/Math/Tensor/TensorConceptOperations.ixx"

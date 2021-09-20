@@ -1,15 +1,15 @@
-@DSL       Default;
+@DSL Default;
 @Behaviour UnilateralMazars;
-@Author    François Hamon;
-@Date      26/05/2015;
-@Description{
+@Author François Hamon;
+@Date 26 / 05 / 2015;
+@Description {
   "An unilateral version of the Mazars model"
   "based on the following paper:"
 
   "A new 3D damage model for concrete"
   "under monotonic, cyclic and dynamic"
   "loadings."
-    
+
   "Jacky Mazars, François Hamon and Stéphane Grange"
 
   "Materials and Structures ISSN 1359-5997"
@@ -36,59 +36,67 @@ nu.setGlossaryName("PoissonRatio");
 @StateVariable real Tmax;
 
 @ProvidesSymmetricTangentOperator;
-@Integrator{
+@Integrator {
   constexpr const real dmax = 0.99999;
-  const stress        lambda = computeLambda(young,nu);
-  const stress        mu     = computeMu(young,nu);  
-  const StrainStensor e      = eto+deto;
+  const stress lambda = computeLambda(young, nu);
+  const stress mu = computeMu(young, nu);
+  const StrainStensor e = eto + deto;
   const strain tr = trace(e);
-  strain e1,e2,e3;
-  e.computeEigenValues(e1,e2,e3);
-  const real limint=st_max/young;
-  const real liminc=abs(sc_max/young);
+  strain e1, e2, e3;
+  e.computeEigenValues(e1, e2, e3);
+  const real limint = st_max / young;
+  const real liminc = abs(sc_max / young);
   // eigen values of s0
-  const stress s1   = 2*mu*e1+lambda*tr;
-  const stress s2   = 2*mu*e2+lambda*tr;
-  const stress s3   = 2*mu*e3+lambda*tr;
-  const stress sn   = max(abs(s1),max(abs(s2),abs(s3)));
-  const stress pps1 = max(stress(0),s1);
-  const stress pps2 = max(stress(0),s2);
-  const stress pps3 = max(stress(0),s3);
-  const stress r    = (sn>1.e-6*young) ?
-    min(max((pps1+pps2+pps3)/(abs(s1)+abs(s2)+abs(s3)),real(0)),real(1)) : 0;
-  real EPTM= (Yt0>limint) ? Yt0 : limint;
-  real EPCM= (Yc0>liminc) ? Yc0 : liminc;
-  const strain Inv1 = e1+e2+e3;
-  const auto   Inv2 = ((e1-e2)*(e1-e2)+(e2-e3)*(e2-e3)+(e3-e1)*(e3-e1))/2;
-  const real   ept  = Inv1/(2*(1-2*nu))+sqrt(Inv2)/(2*(1+nu));
-  const real   epc  = (6*sqrt(Inv2)/(1+nu)+Inv1/(1-2*nu))/5;
-  if ((ept>EPTM)&&(r>0)&&(d<dmax)){
-    EPTM=ept;
+  const stress s1 = 2 * mu * e1 + lambda * tr;
+  const stress s2 = 2 * mu * e2 + lambda * tr;
+  const stress s3 = 2 * mu * e3 + lambda * tr;
+  const stress sn = max(abs(s1), max(abs(s2), abs(s3)));
+  const stress pps1 = max(stress(0), s1);
+  const stress pps2 = max(stress(0), s2);
+  const stress pps3 = max(stress(0), s3);
+  const stress r =
+      (sn > 1.e-6 * young)
+          ? min(max((pps1 + pps2 + pps3) / (abs(s1) + abs(s2) + abs(s3)),
+                    real(0)),
+                real(1))
+          : 0;
+  real EPTM = (Yt0 > limint) ? Yt0 : limint;
+  real EPCM = (Yc0 > liminc) ? Yc0 : liminc;
+  const strain Inv1 = e1 + e2 + e3;
+  const auto Inv2 =
+      ((e1 - e2) * (e1 - e2) + (e2 - e3) * (e2 - e3) + (e3 - e1) * (e3 - e1)) /
+      2;
+  const real ept = Inv1 / (2 * (1 - 2 * nu)) + sqrt(Inv2) / (2 * (1 + nu));
+  const real epc = (6 * sqrt(Inv2) / (1 + nu) + Inv1 / (1 - 2 * nu)) / 5;
+  if ((ept > EPTM) && (r > 0) && (d < dmax)) {
+    EPTM = ept;
   }
-  Yt = max(Yt,EPTM);
-  if ((epc>EPCM)&&(r<1)&&(d<dmax)){
-    EPCM=epc;
+  Yt = max(Yt, EPTM);
+  if ((epc > EPCM) && (r < 1) && (d < dmax)) {
+    EPCM = epc;
   }
-  Yc =max(Yc,EPCM);
-  real A=At*(2*r*r*(1-2*k)-r*(1-4*k))+Ac*(2*r*r-3*r+1);
-  real B=pow(r,r*r-2*r+2)*Bt+(1-pow(r,r*r-2*r+2))*Bc;
-  const real Y0 =r*limint+(1.0-r)*liminc;
-  const real Y =r*EPTM+(1.0-r)*EPCM;
-  const real dmu= (Y<Y0) ? 0 : 1-(1-A)*Y0/(Y)-A*exp(-B*((Y)-Y0));
-  d=min(max(real(0),dmu),dmax);
-  Yt0=EPTM;
-  Yc0=EPCM;
+  Yc = max(Yc, EPCM);
+  real A = At * (2 * r * r * (1 - 2 * k) - r * (1 - 4 * k)) +
+           Ac * (2 * r * r - 3 * r + 1);
+  real B =
+      pow(r, r * r - 2 * r + 2) * Bt + (1 - pow(r, r * r - 2 * r + 2)) * Bc;
+  const real Y0 = r * limint + (1.0 - r) * liminc;
+  const real Y = r * EPTM + (1.0 - r) * EPCM;
+  const real dmu = (Y < Y0) ? 0 : 1 - (1 - A) * Y0 / (Y)-A * exp(-B * ((Y)-Y0));
+  d = min(max(real(0), dmu), dmax);
+  Yt0 = EPTM;
+  Yc0 = EPCM;
   // stresses at the end
-  sig = (1-d)*(lambda*trace(e)*Stensor::Id()+2*mu*e);
+  sig = (1 - d) * (lambda * trace(e) * Stensor::Id() + 2 * mu * e);
   // auxiliary task
-  Tmax=max(Tmax,T);
-  if(computeTangentOperator_){
+  Tmax = max(Tmax, T);
+  if (computeTangentOperator_) {
     StiffnessTensor Hooke;
-    computeAlteredElasticStiffness<hypothesis,Type>::exe(Hooke,lambda,mu);
-    if((smt==ELASTIC)||(smt==TANGENTOPERATOR)){
-      Dt=Hooke;
-    } else if(smt==SECANTOPERATOR){
-      Dt = (1-d)*Hooke ;
+    computeAlteredElasticStiffness<hypothesis, Type>::exe(Hooke, lambda, mu);
+    if ((smt == ELASTIC) || (smt == TANGENTOPERATOR)) {
+      Dt = Hooke;
+    } else if (smt == SECANTOPERATOR) {
+      Dt = (1 - d) * Hooke;
     }
   }
 }
