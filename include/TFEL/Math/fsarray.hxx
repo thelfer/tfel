@@ -217,4 +217,58 @@ namespace tfel::typetraits {
 
 }  // end of namespace tfel::typetraits
 
+namespace std {
+
+  /*!
+   * \brief partial specialisation of the `std::tuple_size` for
+   * `tfel::math::fsarray`
+   * \tparam N: size of the tiny vector
+   * \tparam ValueType: type hold by the tiny vector
+   */
+  template <unsigned short N, typename ValueType>
+  struct tuple_size<tfel::math::fsarray<N, ValueType>>
+      : integral_constant<size_t, N> {};
+  /*!
+   * \brief partial specialisation of the `std::tuple_element` for
+   * `tfel::math::fsarray`
+   * \tparam N: size of the tiny vector
+   * \tparam ValueType: type hold by the tiny vector
+   */
+  template <std::size_t I, unsigned short N, typename ValueType>
+  struct tuple_element<I, tfel::math::fsarray<N, ValueType>> {
+    //! \brief returned type
+    using type = ValueType;
+  };  // end of struct tuple_element
+
+}  // namespace std
+
+namespace tfel::math{
+
+  /*!
+   * \brief partial specialisation of `std::get` for
+   * `tfel::math::fsarray`
+   * \tparam i: index of the element to be retrieved
+   * \tparam N: size of the tiny vector
+   * \tparam ValueType: type hold by the tiny vector
+   */
+  template <std::size_t i, unsigned short N, typename ValueType>
+  constexpr std::tuple_element_t<i, fsarray<N, ValueType>>& get(
+      fsarray<N, ValueType>& v) noexcept {
+    return v[i];
+  }  // end of get
+  /*!
+   * \brief partial specialisation of `std::get` for
+   * `tfel::math::fsarray`
+   * \tparam i: index of the element to be retrieved
+   * \tparam N: size of the tiny vector
+   * \tparam ValueType: type hold by the tiny vector
+   */
+  template <std::size_t i, unsigned short N, typename ValueType>
+  constexpr const std::tuple_element_t<i, fsarray<N, ValueType>>& get(
+      const fsarray<N, ValueType>& v) noexcept {
+    return v[i];
+  }  // end of get
+
+} // end of namespace tfel::math
+
 #endif /* LIB_TFEL_MATH_FSARRAY_HXX */

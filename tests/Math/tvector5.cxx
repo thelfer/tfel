@@ -31,28 +31,48 @@ struct TVectorTest5 final : public tfel::tests::TestCase {
   }  // end of TVectorTest
 
   tfel::tests::TestResult execute() override {
-    using namespace std;
-    using namespace tfel::math;
-    const double v1_values[3u] = {1.2, -4.2, -0.3};
-    tvector<3u, double> v1(v1_values);
-    cout << "v1      : " << v1 << endl;
-    cout << "abs(v1) : " << abs(v1) << endl;
+    this->test1();
+    this->test2();
+    this->test3();
     return this->result;
   }  // end of execute
+
+ private:
+  void test1() {
+    constexpr auto eps = double(1.e-14);
+    const double v1_values[3u] = {1.2, -4.2, -0.3};
+    tfel::math::tvector<3u, double> v1(v1_values);
+    for (unsigned short i = 0; i != 3; ++i) {
+      TFEL_TESTS_ASSERT(std::abs(v1[i] - v1_values[i]) < eps);
+    }
+  }  // end of test1
+  void test2() {
+    constexpr auto eps = double(1.e-14);
+    const tfel::math::tvector<3u, double> v1{1.2, -4.2, -0.3};
+    const auto [a, b, c] = v1;
+    TFEL_TESTS_ASSERT(std::abs(a - 1.2) < eps);
+    TFEL_TESTS_ASSERT(std::abs(b + 4.2) < eps);
+    TFEL_TESTS_ASSERT(std::abs(c + 0.3) < eps);
+  }  // end of test2
+  void test3() {
+    constexpr auto eps = double(1.e-14);
+    tfel::math::fsarray<3u, double> v1(0);
+    auto& [a, b, c] = v1;
+    a = 1.2;
+    b = -4.2;
+    c = -0.3;
+    TFEL_TESTS_ASSERT(std::abs(v1[0] - 1.2) < eps);
+    TFEL_TESTS_ASSERT(std::abs(v1[1] + 4.2) < eps);
+    TFEL_TESTS_ASSERT(std::abs(v1[2] + 0.3) < eps);
+  }  // end of test3
 };
 
 TFEL_TESTS_GENERATE_PROXY(TVectorTest5, "TVectorTest5");
 
 /* coverity [UNCAUGHT_EXCEPT]*/
 int main() {
-  using namespace std;
-  using namespace tfel::tests;
-  auto& manager = TestManager::getTestManager();
-  manager.addTestOutput(cout);
-  manager.addXMLTestOutput("tvector5.xml");
-  TestResult r = manager.execute();
-  if (!r.success()) {
-    return EXIT_FAILURE;
-  }
-  return EXIT_SUCCESS;
+  auto& m = tfel::tests::TestManager::getTestManager();
+  m.addTestOutput(std::cout);
+  m.addXMLTestOutput("tvector5.xml");
+  return m.execute().success() ? EXIT_SUCCESS : EXIT_FAILURE;
 }  // end of main

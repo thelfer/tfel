@@ -13,6 +13,7 @@
 #ifndef LIB_TFEL_MATH_TVECTOR_HXX
 #define LIB_TFEL_MATH_TVECTOR_HXX 1
 
+#include <utility>
 #include <cstddef>
 #include <iterator>
 #include <type_traits>
@@ -319,6 +320,60 @@ namespace tfel::typetraits {
   };
 
 }  // end of namespace tfel::typetraits
+
+namespace std {
+
+  /*!
+   * \brief partial specialisation of the `std::tuple_size` for
+   * `tfel::math::tvector`
+   * \tparam N: size of the tiny vector
+   * \tparam ValueType: type hold by the tiny vector
+   */
+  template <unsigned short N, typename ValueType>
+  struct tuple_size<tfel::math::tvector<N, ValueType>>
+      : integral_constant<size_t, N> {};
+  /*!
+   * \brief partial specialisation of the `std::tuple_element` for
+   * `tfel::math::tvector`
+   * \tparam N: size of the tiny vector
+   * \tparam ValueType: type hold by the tiny vector
+   */
+  template <std::size_t I, unsigned short N, typename ValueType>
+  struct tuple_element<I, tfel::math::tvector<N, ValueType>> {
+    //! \brief returned type
+    using type = ValueType;
+  };  // end of struct tuple_element
+
+}  // namespace std
+
+namespace tfel::math{
+
+  /*!
+   * \brief partial specialisation of `std::get` for
+   * `tfel::math::tvector`
+   * \tparam i: index of the element to be retrieved
+   * \tparam N: size of the tiny vector
+   * \tparam ValueType: type hold by the tiny vector
+   */
+  template <std::size_t i, unsigned short N, typename ValueType>
+  constexpr std::tuple_element_t<i, tvector<N, ValueType>>& get(
+      tvector<N, ValueType>& v) noexcept {
+    return v[i];
+  }  // end of get
+  /*!
+   * \brief partial specialisation of `std::get` for
+   * `tfel::math::tvector`
+   * \tparam i: index of the element to be retrieved
+   * \tparam N: size of the tiny vector
+   * \tparam ValueType: type hold by the tiny vector
+   */
+  template <std::size_t i, unsigned short N, typename ValueType>
+  constexpr const std::tuple_element_t<i, tvector<N, ValueType>>& get(
+      const tvector<N, ValueType>& v) noexcept {
+    return v[i];
+  }  // end of get
+
+} // end of namespace tfel::math
 
 #include "TFEL/Math/Vector/tvector.ixx"
 #include "TFEL/Math/Vector/tvectorResultType.hxx"

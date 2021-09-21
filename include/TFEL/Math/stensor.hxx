@@ -275,7 +275,7 @@ namespace tfel::math {
     TFEL_MATH_INLINE2 bool computeEigenVector(VectorType&,
                                               const ValueType) const;
     /*!
-     * change basis
+     * \brief change basis
      */
     TFEL_MATH_INLINE2 void changeBasis(const rotation_matrix<ValueType>&);
     //! \return the identity

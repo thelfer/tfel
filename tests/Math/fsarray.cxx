@@ -38,6 +38,7 @@ struct FSArrayTest final : public tfel::tests::TestCase {
     this->test1();
     this->test2();
     this->test3();
+    this->test4();
     return this->result;
   }  // end of execute
  private:
@@ -104,6 +105,25 @@ struct FSArrayTest final : public tfel::tests::TestCase {
     TFEL_TESTS_ASSERT(v[1] == 0);
     TFEL_TESTS_ASSERT(v[2] == 5);
   }
+  void test4() {
+    constexpr auto eps = double(1.e-14);
+    const tfel::math::fsarray<3u, double> v1{1.2, -4.2, -0.3};
+    const auto [a, b, c] = v1;
+    TFEL_TESTS_ASSERT(std::abs(a - 1.2) < eps);
+    TFEL_TESTS_ASSERT(std::abs(b + 4.2) < eps);
+    TFEL_TESTS_ASSERT(std::abs(c + 0.3) < eps);
+  }  // end of test4
+  void test5() {
+    constexpr auto eps = double(1.e-14);
+    tfel::math::fsarray<3u, double> v1(0);
+    auto& [a, b, c] = v1;
+    a = 1.2;
+    b = -4.2;
+    c = -0.3;
+    TFEL_TESTS_ASSERT(std::abs(v1[0] - 1.2) < eps);
+    TFEL_TESTS_ASSERT(std::abs(v1[1] + 4.2) < eps);
+    TFEL_TESTS_ASSERT(std::abs(v1[2] + 0.3) < eps);
+  }  // end of test5
 };
 
 TFEL_TESTS_GENERATE_PROXY(FSArrayTest, "FSArrayTest");

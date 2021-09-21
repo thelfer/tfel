@@ -16,6 +16,7 @@
 
 #include <type_traits>
 #include "TFEL/Metaprogramming/ResultOf.hxx"
+#include "TFEL/TypeTraits/IsScalar.hxx"
 #include "TFEL/TypeTraits/IsAssignableTo.hxx"
 #include "TFEL/Math/General/MathObjectTraits.hxx"
 #include "TFEL/Math/General/BasicOperations.hxx"
@@ -33,13 +34,16 @@ namespace tfel::math {
   struct ExprBase {
    protected:
     /*!
-     * a simple metafunction defining how an argument of an
+     * \brief a simple metafunction defining how an argument of an
      * operation is stored in the Expr class.
      */
-    template <typename T>
-    using ArgumentStorage = std::conditional_t<std::is_rvalue_reference_v<T>,
-                                               const std::decay_t<T>,
-                                               const std::decay_t<T>&>;
+    template <typename ValueType>
+    using ArgumentStorage = std::conditional_t<
+        tfel::typetraits::isScalar<ValueType>(),
+        const std::decay_t<ValueType>,
+        std::conditional_t<std::is_rvalue_reference_v<ValueType>,
+                           const std::decay_t<ValueType>,
+                           const std::decay_t<ValueType>&>>;
   };  // end of strut ExprBase
 
   template <typename ResultType, typename Operation>
