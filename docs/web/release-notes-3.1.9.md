@@ -1,7 +1,7 @@
 ---
 title: Release notes of the 3.1.9 version of `TFEL`, `MFront` and `MTest`
 author: Thomas Helfer
-date: 2021
+date: 21/09/2021
 lang: en-EN
 numbersections: true
 documentclass: article
