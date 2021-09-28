@@ -1,7 +1,7 @@
 ---
-title: Release notes of the 3.1.9 version of `TFEL`, `MFront` and `MTest`
+title: Release notes of the 3.0.9 version of `TFEL`, `MFront` and `MTest`
 author: Thomas Helfer
-date: 2021
+date: 2020
 lang: en-EN
 numbersections: true
 documentclass: article
@@ -17,10 +17,10 @@ secPrefixTemplate: "$$i$$"
 eqnPrefixTemplate: "($$i$$)"
 ---
 
-This version was released on September 21, 2021 along with `TFEL-3.0.9`.
+This version was released on September 21, 2021.
 
 # Issues fixed
 
-## Issue #279: Fix SlipSystemsDescription::InteractionMatrixStructure::getRank for hexagonal systems
+## Issue #9: The `TFELCheck` library is not installed by `cmake`
 
-For more details, see: <https://sourceforge.net/p/tfel/tickets/279/>
+For more details, see: <https://github.com/thelfer/tfel/issues/9>

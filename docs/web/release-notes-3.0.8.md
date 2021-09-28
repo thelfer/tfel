@@ -19,6 +19,6 @@ eqnPrefixTemplate: "($$i$$)"
 
 # Tickets fixed
 
-## Ticket #20: Fix uninitialized values in the `T91ViscoplasticBehaviour` example
+## Ticket #270: Fix uninitialized values in the `T91ViscoplasticBehaviour` example
 
 For more details, see: <https://sourceforge.net/p/tfel/tickets/270/>

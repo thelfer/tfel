@@ -20,6 +20,10 @@ eqnPrefixTemplate: "($$i$$)"
 The page describes the new functionalities of Version 3.4.2 of the
 `TFEL` project.
 
+This version was released This version was released on September 21,
+2021 along with Versions `3.0.9`, `3.1.9`, `3.2.6` an `3.3.2` and
+inherits from the issues solved in those versions.
+
 # New features of `MFront`
 
 ## Ability to compute the interaction matrix manually {#sec:tfel:3.4.2:mfront:interaction_matrix}
