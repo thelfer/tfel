@@ -1,6 +1,6 @@
 AM_CPPFLAGS = -I$(top_srcdir)/include            \
-	          -I$(top_srcdir)/tfel-check/include \
-	          -I$(top_srcdir)/mfront/include
+	      -I$(top_srcdir)/tfel-check/include \
+	      -I$(top_srcdir)/mfront/include
 
 lib_LTLIBRARIES=libTFELCheck.la
 
@@ -28,9 +28,9 @@ libTFELCheck_la_SOURCES = Configuration.cxx     \
 			  Test.cxx
 
 libTFELCheck_la_LDFLAGS  = -L$(top_builddir)/src/System  -lTFELSystem       \
-			               -L$(top_builddir)/src/Utilities  -lTFELUtilities \
-			               -L$(top_builddir)/src/Math  -lTFELMathParser     \
-			               -lTFELMathCubicSpline
+			   -L$(top_builddir)/src/Utilities  -lTFELUtilities \
+			   -L$(top_builddir)/src/Math  -lTFELMathParser     \
+			   -lTFELMathCubicSpline
 libTFELCheck_la_CPPFLAGS = $(AM_CPPFLAGS) -DTFELCheck_EXPORTS
 
 bin_PROGRAMS = tfel-check

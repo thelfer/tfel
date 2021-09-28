@@ -1,4 +1,4 @@
-add_library(TFELCheck
+tfel_library(TFELCheck
   Configuration.cxx
   ConfigurationManager.cxx
   PCILogDriver.cxx
@@ -21,8 +21,10 @@ add_library(TFELCheck
   MixedComparison.cxx
   AreaComparison.cxx
   Test.cxx)
-target_include_directories(TFELCheck
-  PUBLIC "${PROJECT_SOURCE_DIR}/tfel-check/include")
+target_include_directories(TFELUtilities
+   PUBLIC 
+   $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/tfel-check/include>
+   $<INSTALL_INTERFACE:include>)
 target_link_libraries(TFELCheck
   TFELMathCubicSpline TFELMathParser
   TFELMath TFELUtilities TFELSystem)
@@ -34,8 +36,9 @@ if(TFEL_APPEND_SUFFIX)
   set_target_properties(tfel-check
     PROPERTIES OUTPUT_NAME "tfel-check-${TFEL_SUFFIX}")
 endif(TFEL_APPEND_SUFFIX)
-  install(TARGETS tfel-check DESTINATION bin
-    COMPONENT core)
+
+install(TARGETS tfel-check DESTINATION bin
+  COMPONENT core)
 
 if(HAVE_MADNEX)
   target_compile_definitions(tfel-check
