@@ -4,7 +4,7 @@ link_directories("${PROJECT_BINARY_DIR}/src/Utilities"
   "${PROJECT_BINARY_DIR}/src/System"
   "${PROJECT_BINARY_DIR}/src/Math")
 
-add_library(TFELCheck
+tfel_library(TFELCheck
   Configuration.cxx
     ConfigurationManager.cxx
   PCILogDriver.cxx
