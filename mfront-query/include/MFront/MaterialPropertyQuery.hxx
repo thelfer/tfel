@@ -35,8 +35,8 @@ namespace mfront {
   struct VariableDescriptionContainer;
 
   /*!
-   * Class used by the mfront-query tool to extract information from
-   * behaviour implementation
+   * \brief class used by the mfront-query tool to extract information from
+   * the implementation of a material property
    */
   struct MaterialPropertyQuery final
       : public tfel::utilities::ArgumentParserBase<MaterialPropertyQuery>,
@@ -52,45 +52,47 @@ namespace mfront {
                           const char *const *const,
                           std::shared_ptr<MaterialPropertyDSL>,
                           const std::string &);
-    //! treat the requests
+    //! \brief treat the requests
     virtual void exe();
-    //! destructor
+    //! \brief destructor
     ~MaterialPropertyQuery() override;
 
    private:
-    //! a simple alias
+    //! \brief a simple alias
     using query = std::function<void(const FileDescription &,
                                      const MaterialPropertyDescription &)>;
-    //! ArgumentParserBase must be a friend
+    //! \brief ArgumentParserBase must be a friend
     friend struct tfel::utilities::ArgumentParserBase<MaterialPropertyQuery>;
-    //! \brief register call-backs associated with command line arguments
+    //! \brief \brief register call-backs associated with command line arguments
     virtual void registerCommandLineCallBacks();
-    //! return the current argument
+    //! \brief return the current argument
     const tfel::utilities::Argument &getCurrentCommandLineArgument()
         const override final;
-    //! treat the "--generated-sources" query
+    //! \brief treat the "--generated-sources" query
     virtual void treatGeneratedSources() final;
-    //! treat the "--cppflags" query
+    //! \brief treat the "--cppflags" query
     virtual void treatCppFlags() final;
-    //! treat the "--generated-headers" query
+    //! \brief treat the "--generated-headers" query
     virtual void treatGeneratedHeaders() final;
-    //! treat the "--libraries-dependencies" query
+    //! \brief treat the "--libraries-dependencies" query
     virtual void treatLibrariesDependencies() final;
-    //! treat the "--specific-targets" query
+    //! \brief treat the "--specific-targets" query
     virtual void treatSpecificTargets() final;
-    //! treat a standard query
+    //! \brief treat the "--parameter-default-value" query
+    virtual void treatParameterDefaultValue() final;
+    //! \brief treat a standard query
     virtual void treatStandardQuery() final;
-    //! treat an unknown argument
+    //! \brief treat an unknown argument
     void treatUnknownArgument() override final;
-    //! get the version description
+    //! \brief get the version description
     std::string getVersionDescription() const override final;
-    //! get the usage description
+    //! \brief get the usage description
     std::string getUsageDescription() const override final;
-    //! all the registred queries
+    //! \brief all the registred queries
     std::vector<std::pair<std::string, query>> queries;
-    //! abstract behaviour dsl
+    //! \brief abstract behaviour dsl
     std::shared_ptr<MaterialPropertyDSL> dsl;
-    //! file name
+    //! \brief file name
     std::string file;
   };  // end of struct MaterialPropertyQuery
 

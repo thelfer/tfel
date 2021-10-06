@@ -15,12 +15,38 @@
 #include <iterator>
 #include "TFEL/Raise.hxx"
 #include "TFEL/Utilities/StringAlgorithms.hxx"
+#include "TFEL/Glossary/Glossary.hxx"
+#include "TFEL/Glossary/GlossaryEntry.hxx"
 #include "MFront/MaterialPropertyDSL.hxx"
 #include "MFront/MFrontLogStream.hxx"
 #include "MFront/MFrontHeader.hxx"
 #include "MFront/MaterialPropertyQuery.hxx"
 
 namespace mfront {
+
+  static void display_variable(const mfront::VariableDescription& v) {
+    const auto& n = v.getExternalName();
+    if (n == v.name) {
+      std::cout << "- " << displayName(v);
+    } else {
+      std::cout << "- " << n;
+    }
+    if (v.arraySize != 1u) {
+      std::cout << '[' << v.arraySize << ']';
+    }
+    if (n != v.name) {
+      std::cout << " (" << mfront::displayName(v) << ")";
+    }
+    if (!v.description.empty()) {
+      std::cout << ": " << v.description;
+    } else {
+      const auto& glossary = tfel::glossary::Glossary::getGlossary();
+      if (glossary.contains(n)) {
+        std::cout << ": " << glossary.getGlossaryEntry(n).getShortDescription();
+      }
+    }
+    std::cout << '\n';
+  }  // end of display_variable
 
   MaterialPropertyQuery::MaterialPropertyQuery(
       const int argc,
@@ -98,11 +124,16 @@ namespace mfront {
         {"--description", "show the file description"},
         {"--date", "show the file implementation date"},
         {"--material", "show the material name"},
-        {"--library", "show the library name"}};
+        {"--library", "show the library name"},
+        {"--parameters", "show the list of parameters"}};
     for (const auto& q : sq) {
       Parser::registerNewCallBack(
           q.first, &MaterialPropertyQuery::treatStandardQuery, q.second);
     }
+    Parser::registerNewCallBack(
+        "--parameter-default-value",
+        &MaterialPropertyQuery::treatParameterDefaultValue,
+        "display the default value of a parameter", true);
     Parser::registerNewCallBack("--generated-sources",
                                 &MaterialPropertyQuery::treatGeneratedSources,
                                 "show all the generated sources");
@@ -120,6 +151,34 @@ namespace mfront {
                                 &MaterialPropertyQuery::treatSpecificTargets,
                                 "show all the specific targets");
   }  // end of MaterialPropertyQuery::registerCommandLineCallBacks
+
+  void MaterialPropertyQuery::treatParameterDefaultValue() {
+    const auto& q = this->getCurrentCommandLineArgument();
+    const auto& qn = q.as_string();
+    const auto pn = q.getOption();
+    tfel::raise_if(pn.empty(),
+                   "Behaviour::treatStandardQuery2 : "
+                   "no option given to the '" +
+                       qn + "' query");
+    this->queries.push_back(
+        {"parameter-default-value",
+         [pn](const FileDescription&, const MaterialPropertyDescription& mpd) {
+           const auto& p = findByExternalName(mpd.parameters, pn);
+           if (p == mpd.parameters.end()) {
+             tfel::raise_if(!p->hasAttribute(VariableDescription::defaultValue),
+                            "no parameter named "
+                            "'" +
+                                pn + "'");
+           }
+           tfel::raise_if(!p->hasAttribute(VariableDescription::defaultValue),
+                          "no default value for parameter "
+                          "'" +
+                              p->name + "'");
+           const auto pv =
+               p->getAttribute<double>(VariableDescription::defaultValue);
+           std::cout << pv << '\n';
+         }});
+  } // end of MaterialPropertyQuery::treatParameterDefaultValue
 
   void MaterialPropertyQuery::treatStandardQuery() {
     using namespace std;
@@ -169,6 +228,14 @@ namespace mfront {
            [](const FileDescription&, const MaterialPropertyDescription& d) {
              const auto& l = d.library;
              cout << (!l.empty() ? l : "(undefined)") << endl;
+           }});
+    } else if (qn == "--parameters") {
+      this->queries.push_back(
+          {"parameters",
+           [](const FileDescription&, const MaterialPropertyDescription& mpd) {
+             for (const auto& p : mpd.parameters) {
+               display_variable(p);
+             }
            }});
     } else {
       tfel::raise(
