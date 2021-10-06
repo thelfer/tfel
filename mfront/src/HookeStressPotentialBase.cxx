@@ -256,7 +256,7 @@ namespace mfront {
       opts.emplace_back(
           "relative_value_for_the_equivalent_stress_lower_bound",
           "Relative value used to define a lower bound "
-          "for the equilavent stress. For isotropic parameters, "
+          "for the equivalent stress. For isotropic parameters, "
           "this lower bound will be equal to this value multiplied "
           "by the Young modulus. For orthotropic materials, this lower "
           "bound will be this value multiplied by the first component "
@@ -452,7 +452,7 @@ namespace mfront {
       VariableDescription seps("real", seps_n, 1u, 0u);
       seps.description =
           "Relative value used to define a lower bound "
-          "for the equilavent stress. For isotropic parameters, "
+          "for the equivalent stress. For isotropic parameters, "
           "this lower bound will be equal to this value multiplied "
           "by the Young modulus. For orthotropic materials, this lower "
           "bound will be this value multiplied by the first component "
