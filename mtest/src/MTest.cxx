@@ -755,22 +755,27 @@ namespace mtest {
     //! update the stiffness matrix and the residual
     std::fill(k.begin(), k.end(), real(0));
     updateStiffnessAndResidual(k, r, *(this->b), bwk.k, s.s1);
-    if (!state.containsParameter("LagrangeMultipliersNormalisationFactor")) {
-      state.setParameter(
-          "LagrangeMultipliersNormalisationFactor",
-          std::abs(*(std::max_element(k.begin(), k.end(),
-                                      [](const real v1, const real v2) {
-                                        return std::abs(v1) < std::abs(v2);
-                                      }))));
-    }
-    const auto a =
-        state.getParameter<real>("LagrangeMultipliersNormalisationFactor");
-    const auto d = getSpaceDimension(this->hypothesis);
-    size_type pos = ndv;
-    for (const auto& c : this->constraints) {
-      const auto nl = c->getNumberOfLagrangeMultipliers();
-      c->setValues(k, r, state.u0, state.u1, bwk.k, s.s1, pos, d, t, dt, a);
-      pos = static_cast<size_type>(pos + nl);
+    if(!this->constraints.empty()){
+      if (!state.containsParameter("LagrangeMultipliersNormalisationFactor")) {
+	if(k.empty()){
+	  state.setParameter("LagrangeMultipliersNormalisationFactor", real(1));
+	} else {
+	  state.setParameter("LagrangeMultipliersNormalisationFactor",
+			     std::abs(*(std::max_element(k.begin(), k.end(),
+							 [](const real v1, const real v2) {
+							   return std::abs(v1) < std::abs(v2);
+							 }))));
+	}
+      }
+      const auto a =
+	state.getParameter<real>("LagrangeMultipliersNormalisationFactor");
+      const auto d = getSpaceDimension(this->hypothesis);
+      size_type pos = ndv;
+      for (const auto& c : this->constraints) {
+	const auto nl = c->getNumberOfLagrangeMultipliers();
+	c->setValues(k, r, state.u0, state.u1, bwk.k, s.s1, pos, d, t, dt, a);
+	pos = static_cast<size_type>(pos + nl);
+      }
     }
     return rb;
   }  // end of MTest::computeStiffnessMatrixAndResidual

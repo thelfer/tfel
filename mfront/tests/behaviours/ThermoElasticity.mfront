@@ -37,19 +37,27 @@ Cₑ.setEntryName("SpecificHeatAtConstantStrainPerUnitOfMass");
 @Parameter thermalconductivity k = 237e-6;
 k.setGlossaryName("ThermalConductivity");
 
+@LocalVariable stress λ, μ;
+@LocalVariable result_type<stress, thermalexpansion, OpMult> κ;
+
+@InitLocalVariables {
+  λ = computeLambda(E, ν);
+  μ = computeMu(E, ν);
+  κ = α ⋅ (2 ⋅ μ + 3 ⋅ λ);
+}
+
 @Integrator{
-  const auto λ = computeLambda(E, ν);
-  const auto μ = computeMu(E, ν);
-  const auto κ = α ⋅ (2 ⋅ μ + 3 ⋅ λ);
   const auto ε = εᵗᵒ + Δεᵗᵒ;
   σ = λ ⋅ trace(ε) ⋅ I₂ + 2 ⋅ μ ⋅ ε - κ ⋅ (T + ΔT - Tʳᵉᶠ) ⋅ I₂;
   s = Cₑ / Tʳᵉᶠ ⋅ (T + ΔT - Tʳᵉᶠ) + (κ / ρ) ⋅ trace(ε);
   j = -k ⋅ (∇T + Δ∇T);
-  if (computeTangentOperator_) {
-    ∂σ∕∂Δεᵗᵒ = λ ⋅ (I₂ ⊗ I₂) + 2 ⋅ μ ⋅ I₄;
-    ∂σ∕∂ΔT = -κ ⋅ I₂;
-    ∂s∕∂ΔT = Cₑ / Tʳᵉᶠ;
-    ∂s∕∂Δεᵗᵒ = κ ⋅ Cₑ / Tʳᵉᶠ ⋅ I₂;
-    ∂j∕∂Δ∇T = -k ⋅ tmatrix<N, N, real>::Id();
-  }
+}
+
+@TangentOperator{
+  static_cast<void>(smt);
+  ∂σ∕∂Δεᵗᵒ = λ ⋅ (I₂ ⊗ I₂) + 2 ⋅ μ ⋅ I₄;
+  ∂σ∕∂ΔT = -κ ⋅ I₂;
+  ∂s∕∂ΔT = Cₑ / Tʳᵉᶠ;
+  ∂s∕∂Δεᵗᵒ = κ ⋅ Cₑ / Tʳᵉᶠ ⋅ I₂;
+  ∂j∕∂Δ∇T = -k ⋅ tmatrix<N, N, real>::Id();
 }

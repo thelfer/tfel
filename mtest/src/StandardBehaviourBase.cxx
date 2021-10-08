@@ -858,6 +858,10 @@ namespace mtest {
       tfel::math::matrix<real>& D,
       const StiffnessMatrixType ktype,
       const bool b) const {
+    if (this->getGradientsSize() == 0) {
+      D(0, 0) = real(0);
+      return;
+    }
     if (b) {
       if ((ktype == StiffnessMatrixType::NOSTIFFNESS) ||
           (ktype ==
@@ -873,7 +877,7 @@ namespace mtest {
         D(0, 0) = real(4);
       } else {
         tfel::raise(
-            "StandardBehaviourBase::call_behaviour: "
+            "StandardBehaviourBase::initializeTangentOperator: "
             "invalid or unspecified stiffness matrix type");
       }
     } else {
@@ -885,7 +889,7 @@ namespace mtest {
         D(0, 0) = real(-3);
       } else {
         tfel::raise(
-            "StandardBehaviourBase::call_behaviour: "
+            "StandardBehaviourBase::initializeTangentOperator: "
             "invalid or unspecified stiffness matrix type");
       }
     }

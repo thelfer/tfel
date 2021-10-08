@@ -37,10 +37,14 @@ namespace tfel::math {
    * may also compute the jacobian matrix, i.e. the data member `jacobian`.
    *
    * This class has numerous customisation points:
+   *
    * - `checkConvergence`: checks if convergence is achieved.
    * - `processNewEstimate`: this method is called at the beginning of the
    * `resolution and each time the estimate of the solution is updated. The
    * default implementation does nothing.
+   * - `rejectCurrentCorrection`: this method is meant to
+   * be overloaded by the `Child` class to handle the rejection of the current
+   * correction. The default implementation does nothing.
    * - `reportBeginningOfResolution`: this method is meant to be overloaded by
    * the `Child` class to trace the beginning of the resolution. The default
    * implementation does nothing.
@@ -162,9 +166,16 @@ namespace tfel::math {
     constexpr void updateOrCheckJacobian() noexcept {}
     /*!
      * \brief method meant to set bounds on some components of the current
-     * correction or to implement a line search.
+     * correction or to implement a line search or to implement static
+     * decondensation.
      */
     constexpr void processNewCorrection() noexcept {}
+    /*!
+     * \brief method called when the current correction is rejected.
+     *
+     * This can be used to cancel static decondensation.
+     */
+    constexpr void rejectCurrentCorrection() noexcept {}
     /*!
      * \brief method meant to process the new estimate.
      *

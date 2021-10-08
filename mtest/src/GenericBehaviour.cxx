@@ -273,9 +273,12 @@ namespace mtest {
             "unsupported tangent operator type");
       }
     } else {
-      wk.D.resize(nth, ndv);
-      wk.k.resize(nth, ndv);
-      wk.kt.resize(nth, ndv);
+      constexpr unsigned short one = 1u;
+      const auto enth = std::max(nth, one);
+      const auto endv = std::max(ndv, one);
+      wk.D.resize(enth, endv);
+      wk.k.resize(enth, endv);
+      wk.kt.resize(enth, endv);
     }
     wk.nk.resize(nth, ndv);
     wk.ne.resize(ndv);

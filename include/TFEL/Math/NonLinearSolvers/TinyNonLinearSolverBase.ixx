@@ -26,12 +26,14 @@ namespace tfel::math {
     child.executeInitialisationTaskBeforeBeginningOfCoreAlgorithm();
     while (true) {
       if (!child.computeResidual()) {
+        child.rejectCurrentCorrection();
         child.reportInvalidResidualEvaluation();
         return false;
       }
       const auto error = child.computeResidualNorm();
       const auto finite_error = ieee754::isfinite(error);
       if (!finite_error) {
+        child.rejectCurrentCorrection();
         child.reportInvalidResidualEvaluation();
         return false;
       }

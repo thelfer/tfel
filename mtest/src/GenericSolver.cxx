@@ -38,6 +38,35 @@ namespace mtest {
     log << '\n';
   }
 
+  static std::pair<bool, real> iterate2(StudyCurrentState& scs,
+                                        SolverWorkSpace& wk,
+                                        const Study& s,
+                                        const SolverOptions& o,
+                                        const real t,
+                                        const real dt) {
+    using namespace tfel::math;
+    using namespace tfel::material;
+    // compute material properties and state variables
+    s.prepare(scs, t, dt);
+    // packaging step
+    if (scs.period == 1) {
+      if (!s.doPackagingStep(scs)) {
+        if (mfront::getVerboseMode() > mfront::VERBOSE_QUIET) {
+          auto& log = mfront::getLogStream();
+          log << "GenericSolver::execute: "
+              << "behaviour compute prediction matrix failed\n";
+        }
+      }
+    }
+    const auto r =
+        s.computeStiffnessMatrixAndResidual(scs, wk.K, wk.r, t, dt, o.ktype);
+    if (!r.first) {
+      return r;
+      }
+    s.postConvergence(scs, t, dt, scs.period);
+    return r;
+  }  // end of iterate2
+
   static std::pair<bool, real> iterate(StudyCurrentState& scs,
                                        SolverWorkSpace& wk,
                                        const Study& s,
@@ -116,15 +145,6 @@ namespace mtest {
       ++iter;
       nep2 = nep;
       nep = ne;
-      //	ktype = o.ktype;
-      // if(o.ks==SolverOptions::CONSTANTSTIFFNESS){
-      //   if(!wk.stiffnessInitialised){
-
-      //   }
-      // }
-      // if(o.ks==SolverOptions::CONSTANTSTIFFNESSBYPERIOD){
-
-      // }
       auto r =
           s.computeStiffnessMatrixAndResidual(scs, wk.K, wk.r, t, dt, o.ktype);
       if (!r.first) {
@@ -143,60 +163,6 @@ namespace mtest {
         }
         log << '\n';
       }
-      // scs.revert();
-      // tfel::math::matrix<real> nK(wk.K.getNbRows(),wk.K.getNbCols());
-      // tfel::math::vector<real> nr(wk.K.getNbRows());
-      // std::fill(nK.begin(),nK.end(),real(0));
-      // std::fill(nr.begin(),nr.end(),real(0));
-      // for(size_type i=0;i!=wk.K.getNbRows();++i){
-      // 	constexpr real eps = 1.e-6;
-      // 	scs.revert();
-      // 	scs.u1[i] += eps;
-      // 	s.computeStiffnessMatrixAndResidual(scs,nK,nr,t,dt,
-      // 					    StiffnessMatrixType::NOSTIFFNESS);
-      // 	// std::cout << "nr : ";
-      // 	for(size_type j=0;j!=wk.K.getNbCols();++j){
-      // 	  // std::cout << nr[j] << " ";
-      // 	  nK(j,i) = nr[j];
-      // 	}
-      // 	// std::cout << "\n";
-      // 	scs.revert();
-      // 	scs.u1[i] -= eps;
-      // 	s.computeStiffnessMatrixAndResidual(scs,nK,nr,t,dt,
-      // 					    StiffnessMatrixType::NOSTIFFNESS);
-      // 	// std::cout << "nr : ";
-      // 	for(size_type j=0;j!=wk.K.getNbCols();++j){
-      // 	  // std::cout << nr[j] << " ";
-      // 	  nK(j,i) -= nr[j];
-      // 	  nK(j,i) /= 2*eps;
-      // 	}
-      // 	// std::cout << "\n";
-      // }
-      // if(mfront::getVerboseMode()>=mfront::VERBOSE_DEBUG){
-      // 	auto& log = mfront::getLogStream();
-      // 	log << "Numerical stiffness matrix:\n";
-      // 	for(size_type i=0;i!=wk.K.getNbRows();++i){
-      // 	  for(size_type j=0;j!=wk.K.getNbCols();++j){
-      // 	    log << nK(i,j) << " ";
-      // 	  }
-      // 	  log << '\n';
-      // 	}
-      // 	log << endl;
-      // }
-      // for(size_type i=0;i!=wk.K.getNbRows();++i){
-      // 	for(size_type j=0;j!=wk.K.getNbCols();++j){
-      // 	  if(std::abs(wk.K(i,j)-nK(i,j))>1){
-      // 	    std::cout << i << " " << j << " " << wk.K(i,j) << " " <<
-      // nK(i,j)
-      // 		      << " " << std::abs(wk.K(i,j)-nK(i,j))
-      // 		      << " " <<
-      // std::abs(wk.K(i,j)-nK(i,j))/std::abs(nK(i,j))*100
-      // 		      << std::endl;
-      // 	  }
-      // 	}
-      // }
-      // ::exit(-1);
-
       wk.du = wk.r;
       setRoundingMode();
       LUSolve::exe(wk.K, wk.du, wk.x, wk.p_lu);
@@ -296,10 +262,15 @@ namespace mtest {
     }
 
     while ((!end) && (subStep != o.mSubSteps)) {
-      auto r = iterate(scs, wk, s, o, t, dt);
-      auto converged = o.dynamic_time_step_scaling
-                           ? (r.first && (r.second >= aone))
-                           : r.first;
+      const auto r = [&]() {
+        if (scs.u1.empty()) {
+          return iterate2(scs, wk, s, o, t, dt);
+        }
+        return iterate(scs, wk, s, o, t, dt);
+      }();
+      const auto converged = o.dynamic_time_step_scaling
+                                 ? (r.first && (r.second >= aone))
+                                 : r.first;
       if (converged) {
         scs.update(dt);
         t += dt;

@@ -156,7 +156,10 @@ set(mfront_tests_SOURCES
   StationaryHeatTransfer
   StationaryHeatTransfer2
   ThermoElasticity
-  MiehePhaseFieldDisplacementDeviatoricSplit)
+  MiehePhaseFieldDisplacementDeviatoricSplit
+  ode_default
+  ode_rk54
+  ode_implicit)
 
 mfront_dependencies(MFrontGenericBehaviours
   Inconel600_YoungModulus
@@ -748,4 +751,7 @@ test_generic(computethermalexpansion3)
 
 test_generic(LogarithmicStrainPlasticity2)
 test_generic(ThermoElasticity)
+test_generic(ode_default ode_default.ref)
+test_generic(ode_implicit ode_implicit.ref)
+test_generic(ode_rk54 ode_rk54.ref)
 

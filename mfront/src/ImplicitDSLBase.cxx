@@ -157,6 +157,8 @@ namespace mfront {
                               &ImplicitDSLBase::treatInitJacobianInvert);
     this->registerNewCallBack("@ProcessNewCorrection",
                               &ImplicitDSLBase::treatProcessNewCorrection);
+    this->registerNewCallBack("@RejectCurrentCorrection",
+                              &ImplicitDSLBase::treatRejectCurrentCorrection);
     this->registerNewCallBack("@ProcessNewEstimate",
                               &ImplicitDSLBase::treatProcessNewEstimate);
     this->registerNewCallBack(
@@ -168,15 +170,11 @@ namespace mfront {
     this->registerNewCallBack(
         "@JacobianComparisonCriterium",
         &ImplicitDSLBase::treatJacobianComparisonCriterion);
-    this->registerNewCallBack("@RequireStiffnessTensor",
-                              &ImplicitDSLBase::treatRequireStiffnessOperator);
     this->registerNewCallBack(
         "@MaximumIncrementValuePerIteration",
         &ImplicitDSLBase::treatMaximumIncrementValuePerIteration);
     this->registerNewCallBack("@IntegrationVariable",
                               &ImplicitDSLBase::treatIntegrationVariable);
-    this->registerNewCallBack("@ComputeStiffnessTensor",
-                              &ImplicitDSLBase::treatComputeStiffnessTensor);
     this->registerNewCallBack("@ComputeStiffnessTensor",
                               &ImplicitDSLBase::treatComputeStiffnessTensor);
     this->registerNewCallBack("@ElasticMaterialProperties",
@@ -309,6 +307,11 @@ namespace mfront {
     this->treatCodeBlock(*this, BehaviourData::ProcessNewCorrection,
                          &ImplicitDSLBase::standardModifier, true, true);
   }  // end of treatProcessNewCorrection
+
+  void ImplicitDSLBase::treatRejectCurrentCorrection() {
+    this->treatCodeBlock(*this, BehaviourData::RejectCurrentCorrection,
+                         &ImplicitDSLBase::standardModifier, true, true);
+  }  // end of treatRejectCurrentCorrection
 
   void ImplicitDSLBase::treatProcessNewEstimate() {
     this->treatCodeBlock(*this, BehaviourData::ProcessNewEstimate,
@@ -2346,18 +2349,22 @@ namespace mfront {
     os << "using namespace tfel::math;\n";
     writeMaterialLaws(os, this->mb.getMaterialLaws());
     os << "this->stiffness_matrix_type = smt;" << '\n';
-    if ((this->mb.getBehaviourType() ==
-         BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) ||
-        (this->mb.getBehaviourType() ==
-         BehaviourDescription::COHESIVEZONEMODEL)) {
-      if (this->mb.useQt()) {
-        os << "tfel::raise_if(smflag!=MechanicalBehaviour<" << btype
-           << ",hypothesis, NumericType, use_qt>::STANDARDTANGENTOPERATOR,\n"
-           << "\"invalid tangent operator flag\");\n";
-      } else {
-        os << "tfel::raise_if(smflag!=MechanicalBehaviour<" << btype
-           << ",hypothesis, NumericType, false>::STANDARDTANGENTOPERATOR,\n"
-           << "\"invalid tangent operator flag\");\n";
+    if (!this->mb.getMainVariables().empty()) {
+      if ((this->mb.getBehaviourType() ==
+           BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) ||
+          (this->mb.getBehaviourType() ==
+           BehaviourDescription::COHESIVEZONEMODEL) ||
+          (this->mb.getBehaviourType() ==
+           BehaviourDescription::GENERALBEHAVIOUR)) {
+        if (this->mb.useQt()) {
+          os << "tfel::raise_if(smflag!=MechanicalBehaviour<" << btype
+             << ",hypothesis, NumericType, use_qt>::STANDARDTANGENTOPERATOR,\n"
+             << "\"invalid tangent operator flag\");\n";
+        } else {
+          os << "tfel::raise_if(smflag!=MechanicalBehaviour<" << btype
+             << ",hypothesis, NumericType, false>::STANDARDTANGENTOPERATOR,\n"
+             << "\"invalid tangent operator flag\");\n";
+        }
       }
     }
     if (this->mb.hasCode(h, BehaviourData::ComputePredictor)) {
@@ -2407,29 +2414,32 @@ namespace mfront {
     for (const auto& v : d.getPersistentVariables()) {
       this->writeBoundsChecks(os, v, false);
     }
-    os << "if(smt!=NOSTIFFNESSREQUESTED){\n";
-    if (this->mb.hasAttribute(h, BehaviourData::hasConsistentTangentOperator)) {
-      if (this->mb.getBehaviourType() ==
-          BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR) {
-        os << "if(!this->computeConsistentTangentOperator(smflag,smt)){\n";
+    if (!this->mb.getMainVariables().empty()) {
+      os << "if(smt!=NOSTIFFNESSREQUESTED){\n";
+      if (this->mb.hasAttribute(h,
+                                BehaviourData::hasConsistentTangentOperator)) {
+        if (this->mb.getBehaviourType() ==
+            BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR) {
+          os << "if(!this->computeConsistentTangentOperator(smflag,smt)){\n";
+        } else {
+          os << "if(!this->computeConsistentTangentOperator(smt)){\n";
+        }
+        if (this->mb.useQt()) {
+          os << "return MechanicalBehaviour<" << btype
+             << ",hypothesis, NumericType, use_qt>::FAILURE;\n";
+        } else {
+          os << "return MechanicalBehaviour<" << btype
+             << ",hypothesis, NumericType, false>::FAILURE;\n";
+        }
+        os << "}\n";
       } else {
-        os << "if(!this->computeConsistentTangentOperator(smt)){\n";
-      }
-      if (this->mb.useQt()) {
-        os << "return MechanicalBehaviour<" << btype
-           << ",hypothesis, NumericType, use_qt>::FAILURE;\n";
-      } else {
-        os << "return MechanicalBehaviour<" << btype
-           << ",hypothesis, NumericType, false>::FAILURE;\n";
+        os << "string msg(\"" << this->mb.getClassName()
+           << "::integrate : \");\n";
+        os << "msg +=\"unimplemented feature\";\n";
+        os << "throw(runtime_error(msg));\n";
       }
       os << "}\n";
-    } else {
-      os << "string msg(\"" << this->mb.getClassName()
-         << "::integrate : \");\n";
-      os << "msg +=\"unimplemented feature\";\n";
-      os << "throw(runtime_error(msg));\n";
     }
-    os << "}\n";
     if (this->mb.useQt()) {
       os << "return MechanicalBehaviour<" << btype
          << ",hypothesis, NumericType, use_qt>::SUCCESS;\n";
@@ -2483,8 +2493,8 @@ namespace mfront {
       NonLinearSystemSolverBase::writeEvaluateNumericallyComputedBlocks(os, mb,
                                                                         h);
       if (mb.hasAttribute(h, BehaviourData::compareToNumericalJacobian)) {
-        os << "tfel::math::tmatrix<" << n2 << "," << n2
-           << ",real> njacobian;\n";
+        os << "tfel::math::tmatrix<" << n2 << ", " << n2
+           << ", NumericType> njacobian;\n";
         NonLinearSystemSolverBase::writeComparisonToNumericalJacobian(
             os, mb, h, "njacobian");
       }
@@ -2520,6 +2530,30 @@ namespace mfront {
     }
     os << "}\n"
        << "/*!\n"
+       << " * \\brief method called when the current Newton is rejected\n"
+       << " */\n";
+    if (this->mb.hasCode(h, BehaviourData::RejectCurrentCorrection)) {
+      os << "void rejectCurrentCorrection()\n"
+         << "{\n"
+         << "using namespace std;\n"
+         << "using namespace tfel::math;\n"
+         << "using std::vector;\n";
+      writeMaterialLaws(os, this->mb.getMaterialLaws());
+      writeVariablesOffsets(os, d.getIntegrationVariables());
+      declareViewsFromArrayOfVariables(
+        os, d.getIntegrationVariables(),
+        [](const std::string& n) { return "delta_d" + n; }, "this->delta_zeros",
+        this->mb.useQt());
+      os << this->mb.getCodeBlock(h, BehaviourData::RejectCurrentCorrection)
+                .code
+         << "\n";
+      writeIgnoreVariablesOffsets(os, d.getIntegrationVariables());
+      for (const auto& v : d.getIntegrationVariables()) {
+        os << "static_cast<void>(delta_d" << v.name << ");\n";
+      }
+      os << "}\n";
+    }
+    os << "/*!\n"
        << " * \\brief method meant to process the new estimate.\n"
        << " *\n"
        << " * This method may be called to apply bounds on the "

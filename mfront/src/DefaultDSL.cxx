@@ -23,8 +23,6 @@ namespace mfront {
 
   DefaultDSL::DefaultDSL() {
     this->mb.setDSLName("Default");
-    this->registerNewCallBack("@RequireStiffnessTensor",
-                              &DefaultDSL::treatRequireStiffnessOperator);
     this->mb.declareAsASmallStrainStandardBehaviour();
   }
 

@@ -201,23 +201,32 @@ namespace mfront::gb {
   };  // end of struct DoNothingEnergyComputer
 
   /*!
-   * \brief a simple function to report integration failure when
-   * an exception is thrown.
+   * \brief a simple function to report errors
+   * \param[in] d: behaviour data
+   * \param[in] e: error message
    */
-  inline void reportIntegrationFailure(mfront_gb_BehaviourData& d) {
+  inline void reportError(mfront_gb_BehaviourData& d, const char* const e) {
     constexpr std::size_t bsize = 511;
     if (d.error_message == nullptr) {
       return;
     }
+    std::strncpy(d.error_message, e, bsize);
+    d.error_message[bsize] = '\0';
+  }
+
+  /*!
+   * \brief a simple function to report integration failure when
+   * an exception is thrown.
+   * \param[in] d: behaviour data
+   */
+  inline void reportIntegrationFailure(mfront_gb_BehaviourData& d) {
     try {
       throw;
     } catch (std::exception& e) {
-      std::strncpy(d.error_message, e.what(), bsize);
+      reportError(d, e.what());
     } catch (...) {
-      const char* error = "unknown exception";
-      std::strncpy(d.error_message, error, bsize);
+      reportError(d, "unknown exception");
     }
-    d.error_message[bsize] = '\0';
   }  // end of reportIntegrationFailure
 
   /*!
@@ -252,10 +261,15 @@ namespace mfront::gb {
       const auto bs = d.K[0] > 50;
       const auto Ke = bs ? d.K[0] - 100 : d.K[0];
       if (Ke < -0.25) {
-        computePredictionOperator(b, d, f);
         if (bs) {
           tfel::math::map<speed>(d.speed_of_sound) =
               b.computeSpeedOfSound(massdensity(*(d.s0.mass_density)));
+        }
+        if constexpr (!MTraits::hasPredictionOperator) {
+          reportError(d, "prediction operator is not implemented");
+          return -1;
+        } else {
+          return computePredictionOperator(b, d, f);
         }
       }
       const auto smt = [&Ke] {
@@ -270,6 +284,12 @@ namespace mfront::gb {
         }
         return Behaviour::CONSISTENTTANGENTOPERATOR;
       }();
+      if constexpr (!MTraits::hasConsistentTangentOperator) {
+        if (smt != Behaviour::NOSTIFFNESSREQUESTED) {
+          reportError(d, "tangent operator is not implemented");
+          return -1;
+        }
+      }
       auto tsf = b.computeAPrioriTimeStepScalingFactor(rdt);
       rdt = tsf.second;
       if (!tsf.first) {
@@ -288,8 +308,10 @@ namespace mfront::gb {
         return -1;
       }
       b.exportStateData(d.s1);
-      if (Ke > 0.5) {
-        exportTangentOperator(d.K, b.getTangentOperator());
+      if constexpr (MTraits::hasConsistentTangentOperator) {
+        if (Ke > 0.5) {
+          exportTangentOperator(d.K, b.getTangentOperator());
+        }
       }
       IEnergyComputer::exe(d, b);
       DEnergyComputer::exe(d, b);

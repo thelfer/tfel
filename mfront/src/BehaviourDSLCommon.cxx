@@ -67,12 +67,6 @@ namespace std {
 }  // namespace std
 #endif /* defined __CYGWIN__ &&  (!defined _GLIBCXX_USE_C99) */
 
-#ifndef _MSC_VER
-static const char* const constexpr_c = "constexpr";
-#else
-static const char* const constexpr_c = "const";
-#endif
-
 namespace mfront {
 
   BehaviourDSLCommon::StandardVariableModifier::StandardVariableModifier(
@@ -359,9 +353,19 @@ namespace mfront {
     }
   }  // end of getKeywordsList
 
-  void BehaviourDSLCommon::addCallBack(const std::string& k, const CallBack c) {
-    this->callBacks.insert({k, c});
-    this->registredKeyWords.insert(k);
+  void BehaviourDSLCommon::addCallBack(const std::string& k,
+                                       const CallBack c,
+                                       const bool b) {
+    if (!this->callBacks.insert({k, c}).second) {
+      if (!b) {
+        this->throwRuntimeError("BehaviourDSLCommon::addCallBack",
+                                "callback '" + k + "' already registred");
+      } else {
+        this->callBacks[k] = c;
+      }
+    } else {
+      this->registredKeyWords.insert(k);
+    }
   }  // end of addCallBack
 
   void BehaviourDSLCommon::addHook(const std::string& k, const Hook h) {
@@ -1038,6 +1042,22 @@ namespace mfront {
       getLogStream() << "BehaviourDSLCommon::treatModel: end\n";
     }
     this->readSpecifiedToken("BehaviourDSLCommon::treatModel", ";");
+  }  // end of treatModel
+
+  void BehaviourDSLCommon::treatModel2() {
+    if (getVerboseMode() >= VERBOSE_DEBUG) {
+      getLogStream() << "BehaviourDSLCommon::treatModel2: begin\n";
+    }
+    this->checkNotEndOfFile("BehaviourDSLCommon::treatModel2",
+                            "Unexpected end of file.");
+    if (current->flag == tfel::utilities::Token::String) {
+      this->treatModel();
+    } else {
+      this->treatBehaviour();
+    }
+    if (getVerboseMode() >= VERBOSE_DEBUG) {
+      getLogStream() << "BehaviourDSLCommon::treatModel2: end\n";
+    }
   }  // end of treatModel
 
   void BehaviourDSLCommon::treatUnsupportedCodeBlockOptions(
@@ -2294,6 +2314,11 @@ namespace mfront {
   void BehaviourDSLCommon::treatTangentOperator() {
     using namespace tfel::material;
     using namespace tfel::utilities;
+    if (this->mb.getMainVariables().empty()) {
+      this->throwRuntimeError(
+          "BehaviourDSLCommon::treatTangentOperator",
+          "no thermodynamic force defined");
+    }
     CodeBlockOptions o;
     this->readCodeBlockOptions(o, true);
     if (this->mb.getBehaviourType() ==
@@ -3420,7 +3445,7 @@ namespace mfront {
 
   bool BehaviourDSLCommon::useQt() const {
     return this->mb.useQt();
-  } // end of useQt
+  }  // end of useQt
 
   void BehaviourDSLCommon::disableQuantitiesUsageIfNotAlreadySet() {
     this->mb.disableQuantitiesUsageIfNotAlreadySet();
@@ -3707,12 +3732,12 @@ namespace mfront {
   void BehaviourDSLCommon::writeBehaviourDataTypeAliases(
       std::ostream& os) const {
     this->checkBehaviourDataFile(os);
-    os << "static " << constexpr_c << " unsigned short TVectorSize = N;\n"
+    os << "static constexpr unsigned short TVectorSize = N;\n"
        << "typedef tfel::math::StensorDimeToSize<N> StensorDimeToSize;\n"
-       << "static " << constexpr_c << " unsigned short StensorSize = "
+       << "static constexpr unsigned short StensorSize = "
        << "StensorDimeToSize::value;\n"
        << "typedef tfel::math::TensorDimeToSize<N> TensorDimeToSize;\n"
-       << "static " << constexpr_c << " unsigned short TensorSize = "
+       << "static constexpr unsigned short TensorSize = "
        << "TensorDimeToSize::value;\n\n";
     this->writeTypeAliases(os);
     os << '\n';
@@ -3766,20 +3791,32 @@ namespace mfront {
       first = false;
     }
     for (const auto& v : md.getMaterialProperties()) {
-      os << ",\n";
+      if (!first) {
+        os << ",\n";
+      }
       os << v.name << "(src." << v.name << ")";
+      first = false;
     }
     for (const auto& v : md.getStateVariables()) {
-      os << ",\n";
+      if (!first) {
+        os << ",\n";
+      }
       os << v.name << "(src." << v.name << ")";
+      first = false;
     }
     for (const auto& v : md.getAuxiliaryStateVariables()) {
-      os << ",\n";
+      if (!first) {
+        os << ",\n";
+      }
       os << v.name << "(src." << v.name << ")";
+      first = false;
     }
     for (const auto& v : md.getExternalStateVariables()) {
-      os << ",\n";
+      if (!first) {
+        os << ",\n";
+      }
       os << v.name << "(src." << v.name << ")";
+      first = false;
     }
     os << "\n{}\n\n";
     // Creating constructor for external interfaces
@@ -3788,7 +3825,7 @@ namespace mfront {
         i.second->writeBehaviourDataConstructor(os, h, this->mb);
       }
     }
-  }  // end of WriteBehaviourDataConstructors
+  }  // end of writeBehaviourDataConstructors
 
   void BehaviourDSLCommon::writeBehaviourDataAssignementOperator(
       std::ostream& os, const Hypothesis h) const {
@@ -3971,14 +4008,12 @@ namespace mfront {
     }
     os << "{\n\n";
     if (h != ModellingHypothesis::UNDEFINEDHYPOTHESIS) {
-      os << "static " << constexpr_c
-         << " ModellingHypothesis::Hypothesis hypothesis = "
+      os << "static constexpr ModellingHypothesis::Hypothesis hypothesis = "
          << "ModellingHypothesis::" << ModellingHypothesis::toUpperCaseString(h)
          << ";\n";
     }
-    os << "static " << constexpr_c
-       << " unsigned short N = "
-          "ModellingHypothesisToSpaceDimension<hypothesis>::value;\n"
+    os << "static constexpr unsigned short N = "
+       << "ModellingHypothesisToSpaceDimension<hypothesis>::value;\n"
        << "static_assert(N==1||N==2||N==3);\n"
        << "static_assert(tfel::typetraits::"
        << "IsFundamentalNumericType<NumericType>::cond);\n"
@@ -4294,13 +4329,11 @@ namespace mfront {
     }
     os << "{\n\n";
     if (h != ModellingHypothesis::UNDEFINEDHYPOTHESIS) {
-      os << "static " << constexpr_c
-         << " ModellingHypothesis::Hypothesis hypothesis = "
+      os << "static constexpr ModellingHypothesis::Hypothesis hypothesis = "
          << "ModellingHypothesis::" << ModellingHypothesis::toUpperCaseString(h)
          << ";\n";
     }
-    os << "static " << constexpr_c
-       << " unsigned short N = "
+    os << "static constexpr unsigned short N = "
           "ModellingHypothesisToSpaceDimension<hypothesis>::value;\n\n";
     os << "static_assert(N==1||N==2||N==3);\n";
     os << "static_assert(tfel::typetraits::"
@@ -4762,29 +4795,36 @@ namespace mfront {
     this->checkBehaviourFile(os);
     os << "/*!\n"
        << "* \\brief Integrate behaviour  over the time step\n"
-       << "*/\n"
-       << "IntegrationResult\n"
-       << "integrate(const SMFlag smflag, const SMType smt) override{\n"
-       << "using namespace std;\n"
+       << "*/\n";
+    if (!this->mb.getMainVariables().empty()) {
+      os << "IntegrationResult\n"
+         << "integrate(const SMFlag smflag, const SMType smt) override{\n";
+    } else {
+      os << "IntegrationResult\n"
+         << "integrate(const SMFlag, const SMType) override{\n";
+    }
+    os << "using namespace std;\n"
        << "using namespace tfel::math;\n";
     writeMaterialLaws(os, this->mb.getMaterialLaws());
-    if ((this->mb.getBehaviourType() ==
-         BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) ||
-        (this->mb.getBehaviourType() ==
-         BehaviourDescription::COHESIVEZONEMODEL) ||
-        (this->mb.getBehaviourType() ==
-         BehaviourDescription::GENERALBEHAVIOUR)) {
-      if (this->mb.useQt()) {
-        os << "raise_if(smflag!=MechanicalBehaviour<" << btype
-           << ",hypothesis, NumericType, use_qt>::STANDARDTANGENTOPERATOR,\n"
-           << "\"invalid tangent operator flag\");\n";
-      } else {
-        os << "raise_if(smflag!=MechanicalBehaviour<" << btype
-           << ",hypothesis, NumericType, false>::STANDARDTANGENTOPERATOR,\n"
-           << "\"invalid tangent operator flag\");\n";
+    if (!this->mb.getMainVariables().empty()) {
+      if ((this->mb.getBehaviourType() ==
+           BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) ||
+          (this->mb.getBehaviourType() ==
+           BehaviourDescription::COHESIVEZONEMODEL) ||
+          (this->mb.getBehaviourType() ==
+           BehaviourDescription::GENERALBEHAVIOUR)) {
+        if (this->mb.useQt()) {
+          os << "raise_if(smflag!=MechanicalBehaviour<" << btype
+             << ",hypothesis, NumericType, use_qt>::STANDARDTANGENTOPERATOR,\n"
+             << "\"invalid tangent operator flag\");\n";
+        } else {
+          os << "raise_if(smflag!=MechanicalBehaviour<" << btype
+             << ",hypothesis, NumericType, false>::STANDARDTANGENTOPERATOR,\n"
+             << "\"invalid tangent operator flag\");\n";
+        }
       }
+      os << "bool computeTangentOperator_ = smt!=NOSTIFFNESSREQUESTED;\n";
     }
-    os << "bool computeTangentOperator_ = smt!=NOSTIFFNESSREQUESTED;\n";
     if (this->mb.hasCode(h, BehaviourData::ComputePredictor)) {
       os << this->mb.getCode(h, BehaviourData::ComputePredictor) << '\n';
     }
@@ -4802,23 +4842,25 @@ namespace mfront {
          this->mb.getBehaviourData(h).getPersistentVariables()) {
       this->writeBoundsChecks(os, v, false);
     }
-    if (this->hasUserDefinedTangentOperatorCode(h)) {
-      os << "if(computeTangentOperator_){\n";
-      if (this->mb.getBehaviourType() ==
-          BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR) {
-        os << "if(!this->computeConsistentTangentOperator(smflag,smt)){\n";
-      } else {
-        os << "if(!this->computeConsistentTangentOperator(smt)){\n";
+    if (!this->mb.getMainVariables().empty()) {
+      if (this->hasUserDefinedTangentOperatorCode(h)) {
+        os << "if(computeTangentOperator_){\n";
+        if (this->mb.getBehaviourType() ==
+            BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR) {
+          os << "if(!this->computeConsistentTangentOperator(smflag,smt)){\n";
+        } else {
+          os << "if(!this->computeConsistentTangentOperator(smt)){\n";
+        }
+        if (this->mb.useQt()) {
+          os << "return MechanicalBehaviour<" << btype
+             << ",hypothesis, NumericType, use_qt>::FAILURE;\n";
+        } else {
+          os << "return MechanicalBehaviour<" << btype
+             << ",hypothesis, NumericType, false>::FAILURE;\n";
+        }
+        os << "}\n"
+           << "}\n";
       }
-      if (this->mb.useQt()) {
-        os << "return MechanicalBehaviour<" << btype
-           << ",hypothesis, NumericType, use_qt>::FAILURE;\n";
-      } else {
-        os << "return MechanicalBehaviour<" << btype
-           << ",hypothesis, NumericType, false>::FAILURE;\n";
-      }
-      os << "}\n";
-      os << "}\n";
     }
     if (this->mb.useQt()) {
       os << "return MechanicalBehaviour<" << btype
@@ -5451,8 +5493,8 @@ namespace mfront {
                              MATERIALPROPERTY) ||
                    (c ==
                     BehaviourDescription::MaterialPropertyInput::PARAMETER)) {
-          m.insert({i.name,
-                    "tfel::math::base_type_cast(this->" + i.name + ")"});
+          m.insert(
+              {i.name, "tfel::math::base_type_cast(this->" + i.name + ")"});
         } else if (c == BehaviourDescription::MaterialPropertyInput::
                             STATICVARIABLE) {
           m.insert({i.name, "tfel::math::base_type_cast(" +
@@ -6321,17 +6363,16 @@ namespace mfront {
     }
   }  // end of void BehaviourDSLCommon::writeBehaviourPrivate
 
-  void BehaviourDSLCommon::writeBehaviourTypeAliases(
-      std::ostream& os) const {
+  void BehaviourDSLCommon::writeBehaviourTypeAliases(std::ostream& os) const {
     using namespace tfel::material;
     this->checkBehaviourFile(os);
     const auto btype = this->mb.getBehaviourTypeFlag();
-    os << "static " << constexpr_c << " unsigned short TVectorSize = N;\n"
+    os << "static constexpr unsigned short TVectorSize = N;\n"
        << "typedef tfel::math::StensorDimeToSize<N> StensorDimeToSize;\n"
-       << "static " << constexpr_c << " unsigned short StensorSize = "
+       << "static constexpr unsigned short StensorSize = "
        << "StensorDimeToSize::value;\n"
        << "typedef tfel::math::TensorDimeToSize<N> TensorDimeToSize;\n"
-       << "static " << constexpr_c << " unsigned short TensorSize = "
+       << "static constexpr unsigned short TensorSize = "
        << "TensorDimeToSize::value;\n\n";
     this->writeTypeAliases(os);
     os << '\n' << "public :\n\n";
@@ -6420,6 +6461,26 @@ namespace mfront {
 
   void BehaviourDSLCommon::writeBehaviourTraitsSpecialisation(
       std::ostream& os, const Hypothesis h, const bool b) const {
+    auto boolean = [](const bool bv) {
+      return bv ? "true" : "false";
+    };
+    auto get_boolean_attribute = [boolean, &b, &h,
+                                  this](const char* const attribute) {
+      if (b) {
+        if (this->mb.getAttribute<bool>(h, attribute, false)) {
+          return boolean(true);
+        }
+      }
+      return boolean(false);
+    };
+    auto has_code = [boolean, &b, &h, this](const char* const cb) {
+      if (b) {
+        if (this->mb.hasCode(h, cb)) {
+          return boolean(true);
+        }
+      }
+      return boolean(false);
+    };
     SupportedTypes::TypeSize coefSize;
     SupportedTypes::TypeSize stateVarsSize;
     SupportedTypes::TypeSize externalStateVarsSize;
@@ -6469,156 +6530,88 @@ namespace mfront {
            << ", NumericType, false> >\n";
       }
     }
-    os << "{\n";
+    os << "{\n"
+       << "using size_type = unsigned short;\n";
     if (b) {
       if (h == ModellingHypothesis::UNDEFINEDHYPOTHESIS) {
-        os << "static " << constexpr_c << " unsigned short N = "
+        os << "static constexpr unsigned short N = "
            << "ModellingHypothesisToSpaceDimension<hypothesis>::value;\n";
       } else {
-        os << "static " << constexpr_c
-           << " unsigned short N = ModellingHypothesisToSpaceDimension<"
+        os << "static constexpr unsigned short N = "
+              "ModellingHypothesisToSpaceDimension<"
            << "ModellingHypothesis::"
            << ModellingHypothesis::toUpperCaseString(h) << ">::value;\n";
       }
-      os << "static " << constexpr_c << " unsigned short TVectorSize = N;\n"
+      os << "static constexpr unsigned short TVectorSize = N;\n"
          << "typedef tfel::math::StensorDimeToSize<N> StensorDimeToSize;\n"
-         << "static " << constexpr_c << " unsigned short StensorSize = "
+         << "static constexpr unsigned short StensorSize = "
          << "StensorDimeToSize::value;\n"
          << "typedef tfel::math::TensorDimeToSize<N> TensorDimeToSize;\n"
-         << "static " << constexpr_c << " unsigned short TensorSize = "
+         << "static constexpr unsigned short TensorSize = "
          << "TensorDimeToSize::value;\n";
     }
     os << "public:\n";
-    if (b) {
-      os << "static " << constexpr_c << " bool is_defined = true;\n";
-    } else {
-      os << "static " << constexpr_c << " bool is_defined = false;\n";
-    }
+    os << "static constexpr bool is_defined = " << boolean(b) << ";\n";
     if (this->mb.useQt()) {
-      os << "static " << constexpr_c << " bool use_quantities = use_qt;\n";
+      os << "static constexpr bool use_quantities = use_qt;\n";
     } else {
-      os << "static " << constexpr_c << " bool use_quantities = false;\n";
+      os << "static constexpr bool use_quantities = false;\n";
     }
     if (this->mb.getSymmetryType() == mfront::ORTHOTROPIC) {
       os << "//! orthotropic axes convention\n";
       if (this->mb.getOrthotropicAxesConvention() ==
           OrthotropicAxesConvention::DEFAULT) {
-        os << "static " << constexpr_c
-           << " OrthotropicAxesConvention oac = "
-              "OrthotropicAxesConvention::DEFAULT;\n";
+        os << "static constexpr OrthotropicAxesConvention oac = "
+           << "OrthotropicAxesConvention::DEFAULT;\n";
       } else if (this->mb.getOrthotropicAxesConvention() ==
                  OrthotropicAxesConvention::PIPE) {
-        os << "static " << constexpr_c
-           << " OrthotropicAxesConvention oac = "
-              "OrthotropicAxesConvention::PIPE;\n";
+        os << "static constexpr OrthotropicAxesConvention oac = "
+           << "OrthotropicAxesConvention::PIPE;\n";
       } else if (this->mb.getOrthotropicAxesConvention() ==
                  OrthotropicAxesConvention::PLATE) {
-        os << "static " << constexpr_c
-           << " OrthotropicAxesConvention oac = "
-              "OrthotropicAxesConvention::PLATE;\n";
+        os << "static constexpr OrthotropicAxesConvention oac = "
+           << "OrthotropicAxesConvention::PLATE;\n";
       } else {
         this->throwRuntimeError(
             "BehaviourDSLCommon::writeBehaviourTraitsSpecialisation",
             "internal error : unsupported orthotropic axes convention");
       }
     }
-    if ((b) && (this->mb.requiresStressFreeExpansionTreatment(h))) {
-      os << "static " << constexpr_c
-         << " bool hasStressFreeExpansion = true;\n";
-    } else {
-      os << "static " << constexpr_c
-         << " bool hasStressFreeExpansion = false;\n";
-    }
-    if (this->mb.areThermalExpansionCoefficientsDefined()) {
-      os << "static " << constexpr_c
-         << " bool handlesThermalExpansion = true;\n";
-    } else {
-      os << "static " << constexpr_c
-         << " bool handlesThermalExpansion = false;\n";
-    }
+    os << "static constexpr bool hasStressFreeExpansion = "
+       << boolean((b) && (this->mb.requiresStressFreeExpansionTreatment(h)))
+       << ";\n";
+    os << "static constexpr bool handlesThermalExpansion = "
+       << boolean(this->mb.areThermalExpansionCoefficientsDefined()) << ";\n";
     if (b) {
-      os << "static " << constexpr_c << " unsigned short dimension = N;\n";
+      os << "static constexpr unsigned short dimension = N;\n";
     } else {
-      os << "static " << constexpr_c << " unsigned short dimension = 0u;\n";
+      os << "static constexpr unsigned short dimension = 0u;\n";
     }
-    os << "static " << constexpr_c
-       << " unsigned short material_properties_nb = " << coefSize << ";\n"
-       << "static " << constexpr_c
-       << " unsigned short internal_variables_nb  = " << stateVarsSize << ";\n"
-       << "static " << constexpr_c
-       << " unsigned short external_variables_nb  = " << externalStateVarsSize
+    os << "static constexpr size_type material_properties_nb = " << coefSize
        << ";\n"
-       << "static " << constexpr_c
-       << " unsigned short external_variables_nb2 = " << externalStateVarsSize2
-       << ";\n"
-       << "static " << constexpr_c << " bool hasConsistentTangentOperator = ";
-    if (b) {
-      if (this->mb.getAttribute<bool>(
-              h, BehaviourData::hasConsistentTangentOperator, false)) {
-        os << "true;\n";
-      } else {
-        os << "false;\n";
-      }
-    } else {
-      os << "false;\n";
-    }
-    os << "static " << constexpr_c
-       << " bool isConsistentTangentOperatorSymmetric = ";
-    if (b) {
-      if (this->mb.getAttribute<bool>(
-              h, BehaviourData::isConsistentTangentOperatorSymmetric, false)) {
-        os << "true;\n";
-      } else {
-        os << "false;\n";
-      }
-    } else {
-      os << "false;\n";
-    }
-    os << "static " << constexpr_c << " bool hasPredictionOperator = ";
-    if (b) {
-      if (this->mb.getAttribute<bool>(h, BehaviourData::hasPredictionOperator,
-                                      false)) {
-        os << "true;\n";
-      } else {
-        os << "false;\n";
-      }
-    } else {
-      os << "false;\n";
-    }
-    os << "static " << constexpr_c
-       << " bool hasAPrioriTimeStepScalingFactor = ";
-    if (b) {
-      if (this->mb.getAttribute<bool>(
-              h, BehaviourData::hasAPrioriTimeStepScalingFactor, false)) {
-        os << "true;\n";
-      } else {
-        os << "false;\n";
-      }
-    } else {
-      os << "false;\n";
-    }
+       << "static constexpr size_type internal_variables_nb  = "
+       << stateVarsSize << ";\n"
+       << "static constexpr size_type external_variables_nb  = "
+       << externalStateVarsSize << ";\n"
+       << "static constexpr size_type external_variables_nb2 = "
+       << externalStateVarsSize2 << ";\n";
+    os << "static constexpr bool hasConsistentTangentOperator = "
+       << get_boolean_attribute(BehaviourData::hasConsistentTangentOperator)
+       << ";\n";
+    os << "static constexpr bool isConsistentTangentOperatorSymmetric = "
+       << get_boolean_attribute(
+              BehaviourData::isConsistentTangentOperatorSymmetric)
+       << ";\n";
+    os << "static constexpr bool hasPredictionOperator = "
+       << get_boolean_attribute(BehaviourData::hasPredictionOperator) << ";\n";
+    os << "static constexpr bool hasAPrioriTimeStepScalingFactor = "
+       << get_boolean_attribute(BehaviourData::hasAPrioriTimeStepScalingFactor) << ";\n";
     // internal enery
-    os << "static " << constexpr_c << " bool hasComputeInternalEnergy = ";
-    if (b) {
-      if (this->mb.hasCode(h, BehaviourData::ComputeInternalEnergy)) {
-        os << "true;\n";
-      } else {
-        os << "false;\n";
-      }
-    } else {
-      os << "false;\n";
-    }
+    os << "static constexpr bool hasComputeInternalEnergy = "
+       << has_code(BehaviourData::ComputeInternalEnergy) << ";\n";
     // dissipated energy
-    os << "static " << constexpr_c << " bool hasComputeDissipatedEnergy = ";
-    if (b) {
-      if (this->mb.hasCode(h, BehaviourData::ComputeDissipatedEnergy)) {
-        os << "true;\n";
-      } else {
-        os << "false;\n";
-      }
-    } else {
-      os << "false;\n";
-    }
+    os << "static constexpr bool hasComputeDissipatedEnergy = "
+       << has_code(BehaviourData::ComputeDissipatedEnergy) << ";\n";
     // name of the class
     os << "/*!\n"
        << "* \\return the name of the class.\n"
@@ -7211,9 +7204,11 @@ namespace mfront {
   void BehaviourDSLCommon::writeBehaviourGetTangentOperator(
       std::ostream& os) const {
     this->checkBehaviourFile(os);
-    os << "const TangentOperator& getTangentOperator() const{\n"
-       << "return this->Dt;\n"
-       << "}\n\n";
+    if (this->mb.hasTangentOperator()) {
+      os << "const TangentOperator& getTangentOperator() const{\n"
+         << "return this->Dt;\n"
+         << "}\n\n";
+    }
   }  // end of writeBehaviourComputeTangentOperator()
 
   void BehaviourDSLCommon::writeBehaviourGetTimeStepScalingFactor(
@@ -7491,12 +7486,12 @@ namespace mfront {
   void BehaviourDSLCommon::writeIntegrationDataTypeAliases(
       std::ostream& os) const {
     this->checkIntegrationDataFile(os);
-    os << "static " << constexpr_c << " unsigned short TVectorSize = N;\n"
+    os << "static constexpr unsigned short TVectorSize = N;\n"
        << "typedef tfel::math::StensorDimeToSize<N> StensorDimeToSize;\n"
-       << "static " << constexpr_c << " unsigned short StensorSize = "
+       << "static constexpr unsigned short StensorSize = "
        << "StensorDimeToSize::value;\n"
        << "typedef tfel::math::TensorDimeToSize<N> TensorDimeToSize;\n"
-       << "static " << constexpr_c << " unsigned short TensorSize = "
+       << "static constexpr unsigned short TensorSize = "
        << "TensorDimeToSize::value;\n\n";
     this->writeTypeAliases(os);
     os << '\n';
@@ -7742,13 +7737,11 @@ namespace mfront {
     }
     os << "{\n\n";
     if (h != ModellingHypothesis::UNDEFINEDHYPOTHESIS) {
-      os << "static " << constexpr_c
-         << " ModellingHypothesis::Hypothesis hypothesis = "
+      os << "static constexpr ModellingHypothesis::Hypothesis hypothesis = "
          << "ModellingHypothesis::" << ModellingHypothesis::toUpperCaseString(h)
          << ";\n";
     }
-    os << "static " << constexpr_c
-       << " unsigned short N = "
+    os << "static constexpr unsigned short N = "
           "ModellingHypothesisToSpaceDimension<hypothesis>::value;\n";
     os << "static_assert(N==1||N==2||N==3);\n";
     os << "static_assert(tfel::typetraits::"
@@ -8397,6 +8390,11 @@ namespace mfront {
   void BehaviourDSLCommon::treatPredictionOperator() {
     using namespace tfel::material;
     using namespace tfel::utilities;
+    if (this->mb.getMainVariables().empty()) {
+      this->throwRuntimeError(
+          "BehaviourDSLCommon::treatTangentOperator",
+          "no thermodynamic force defined");
+    }
     CodeBlockOptions o;
     this->readCodeBlockOptions(o, true);
     if (this->mb.getBehaviourType() ==

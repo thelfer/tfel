@@ -1,6 +1,15 @@
-% Getting started with `MFront`
-% Thomas Helfer
-% 16/06/2017
+---
+title: Getting started with `MFront`
+author: Thomas Helfer
+date: 16/06/2017
+lang: en-EN
+link-citations: true
+colorlinks: true
+figPrefixTemplate: "$$i$$"
+tblPrefixTemplate: "$$i$$"
+secPrefixTemplate: "$$i$$"
+eqnPrefixTemplate: "($$i$$)"
+---
 
 This document is meant to help new users to find their ways in the
 existing documentation of `MFront` and summarize the most important
@@ -40,7 +49,7 @@ The final advice is the more important: as every open-source project,
 `MFront` has its community of users. **Do not hesitate to ask
 questions**:
 
-- [on the forum](https://sourceforge.net/p/tfel/discussion/).
+- [on the forum](https://github.com/thelfer/tfel/discussions).
 - [on the mailing lists](https://sourceforge.net/p/tfel/tfel/).
 - [to the authors](mailto:tfel-contact@cea.fr).
 
@@ -66,7 +75,7 @@ The main points are the followings:
   you do use a compatible compiler*. This is particulary important under
   the `Windows` platform: on `LinuX`, most compilers strives to be
   binary compatible with `gcc`. For example, if you use `Cast3M` under
-  windows, you may want to use the compiler which is package with the
+  windows, you may want to use the compiler which is packaged with the
   `Cast3M` distribution (see [here](install-windows-Cast3M2017.html) for
   details). For `Abaqus`, you may need to have the Intel compilers (or
   at least the Intel fortran compiler).
@@ -128,7 +137,7 @@ in the `mfront/tests/behaviours` directory (online access on github
 
 > **About the tests cases**
 > 
-> Beware that the tests may not reflect the current best way to
+> Beware that the tests may not reflect the best way to
 > implement a specific behaviour (`MFront` evolves a lot and each
 > version introduces new features): they can be kept outdated to ensure
 > backward compatibility.
@@ -152,24 +161,52 @@ in the `mfront/tests/behaviours` directory (online access on github
 > For French users, a detailed tutorial can be found
 > [here](documents/tutoriel/tutoriel.pdf)
 
-# Third step: before starting to write our first behaviour
+# Third step: before starting to write your first behaviour
 
-## Start looking at the documentation of the tensor operations
+## Look if your behaviour can be implemented using the `StandardElastoViscoPlasticity` brick
+
+The [`StandardElastoViscoPlasticity`
+brick](StandardElastoViscoPlasticityBrick.html) can be used to implement
+a large class of strain based elasto-visco-plastic behaviours
+implementations.
+
+It is worth to look if your behaviour falls in that category, or a least
+if part of your behaviour falls in that category:
+
+- In the first case, implementing the behaviour using the
+  `StandardElastoViscoPlasticity` brick can be straightforward. Even if
+  you do not want to use the `StandardElastoViscoPlasticity` brick, it
+  is worth to have a reference implementation to which one can compare
+  its own implementation in terms of performance, robustness, etc.
+- In the second case, implementing a complex behaviour is only tractable
+  step by step. So it is worth to implement first the part which can be
+  implemented using the `StandardElastoViscoPlasticity` brick and
+  validate this part.
+
+## Have a look at the `MFront` gallery
+
+The [`MFront` gallery](gallery.html) is meant to document how to
+describe in depth and step by step the implementation of some
+behaviours. If one of the described behaviour is close to the one you
+plan to implement, it is highly recommend to carefully read the
+associated page and start by modifying the one described in the gallery.
+
+## Write your constitutive equations as a system of ordinary differential equations using tensorial notations
+
+Constitutive equations can be expressed as a system of ordinary
+differential equations which allows to determine the evolution of the
+state variables of the material.
+
+## Select your integration algorithm
+
+## Write your discretized equations by hand using tensorial notations
+
+## Look at the documentation of the tensor operations
 
 Second and fourth orders tensors are the basic mathematical tools used
 to describe mechanical behaviours. `MFront` is based on the `TFEL/Math`
 library which provides many standards operations and functions to handle
 them. See [here](tensors.html) for an introduction.
-
-## Start looking in the `MFront` gallery
-
-The [`MFront` gallery](gallery.html) is meant to document how to
-describe in depth and step by step the implementation of some chosen
-behaviours. If one of the described behaviour is close to the one you
-plan to implement, it is highly recommend to start by modifying the one
-described in the gallery.
-
-## Write your discretized equations by hand in tensor notations
 
 # Fourth step: your first implementation
 

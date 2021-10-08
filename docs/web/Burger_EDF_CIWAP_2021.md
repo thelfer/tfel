@@ -784,8 +784,8 @@ fails if the given name is not in this list, avoiding typing errors.
 > are declared using the `@Parameter` keyword.
 >
 > Contrary to material properties, parameters have default values.
-> Parameters are thus usefull to build behaviours specific to one
-> particular materials. Such behaviours are self-contained, which
+> Parameters are thus useful to build behaviours specific to one
+> particular material. Such behaviours are self-contained, which
 > considerably eases building a strict material knowledge management
 > policy.
 >

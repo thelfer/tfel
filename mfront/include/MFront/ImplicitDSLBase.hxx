@@ -102,6 +102,8 @@ namespace mfront {
     void treatStateVariable() override;
     //! \brief treat the `@ProcessNewCorrection` keyword
     void treatProcessNewCorrection();
+    //! \brief treat the `@RejectCurrentCorrection` keyword
+    void treatRejectCurrentCorrection();
     //! \brief treat the `@ProcessNewEstimate` keyword
     void treatProcessNewEstimate();
     //! \brief treat the `@IntegrationVariable` keyword

@@ -105,6 +105,8 @@ namespace mfront {
     //! \brief standard code name
     static const char* const ProcessNewCorrection;
     //! \brief standard code name
+    static const char* const RejectCurrentCorrection;
+    //! \brief standard code name
     static const char* const ProcessNewEstimate;
     /*
      * normalised attribute names

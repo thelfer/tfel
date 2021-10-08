@@ -273,9 +273,6 @@ namespace mfront {
     this->registerNewCallBack("@Epsilon", &RungeKuttaDSLBase::treatEpsilon);
     this->registerNewCallBack("@MinimalTimeStep",
                               &RungeKuttaDSLBase::treatMinimalTimeStep);
-    this->registerNewCallBack(
-        "@RequireStiffnessTensor",
-        &RungeKuttaDSLBase::treatRequireStiffnessOperator);
     this->disableCallBack("@Integrator");
     this->disableCallBack("@ComputedVar");
     this->registerNewCallBack("@ComputeStiffnessTensor",
@@ -398,6 +395,11 @@ namespace mfront {
   }  // end of RungeKuttaDSLBase::computeThermodynamicForcesVariableModifier2
 
   void RungeKuttaDSLBase::treatComputeThermodynamicForces() {
+    if (this->mb.getMainVariables().empty()) {
+      this->throwRuntimeError(
+          "RungeKuttaDSLBase::treatComputeThermodynamicForces",
+          "no thermodynamic force defined");
+    }
     this->treatCodeBlock(
         *this, BehaviourData::ComputeThermodynamicForces,
         BehaviourData::ComputeFinalThermodynamicForces,
@@ -703,10 +705,12 @@ namespace mfront {
     // some checks
     for (const auto& h : this->mb.getDistinctModellingHypotheses()) {
       const auto& d = this->mb.getBehaviourData(h);
-      if (!d.hasCode(BehaviourData::ComputeFinalThermodynamicForces)) {
-        this->throwRuntimeError(
-            "RungeKuttaDSLBase::endsInputFileProcessing",
-            "@ComputeFinalThermodynamicForces was not defined.");
+      if (!this->mb.getMainVariables().empty()) {
+        if (!d.hasCode(BehaviourData::ComputeFinalThermodynamicForces)) {
+          this->throwRuntimeError(
+              "RungeKuttaDSLBase::endsInputFileProcessing",
+              "@ComputeFinalThermodynamicForces was not defined.");
+        }
       }
       if (!d.hasCode(BehaviourData::ComputeDerivative)) {
         this->throwRuntimeError("RungeKuttaDSLBase::endsInputFileProcessing",
@@ -785,8 +789,8 @@ namespace mfront {
     for (const auto& vm : this->mb.getMainVariables()) {
       const auto& dv = vm.first;
       if (Gradient::isIncrementKnown(dv)) {
-        ie.code +=
-            "this->d" + dv.name + "_ = (this->d" + dv.name + ") / (this->dt);\n";
+        ie.code += "this->d" + dv.name + "_ = (this->d" + dv.name +
+                   ") / (this->dt);\n";
       } else {
         ie.code += "this->d" + dv.name + "_ = (this->" + dv.name + "1-this->" +
                    dv.name + "0)/(this->dt);\n";
@@ -863,16 +867,18 @@ namespace mfront {
          << "} // end of " << this->mb.getClassName()
          << "::computeThermodynamicForces\n\n";
     }
-    os << "bool\ncomputeFinalThermodynamicForces(){\n"
-       << "using namespace std;\n"
-       << "using namespace tfel::math;\n";
-    writeMaterialLaws(os, this->mb.getMaterialLaws());
-    os << this->mb.getCode(h, BehaviourData::ComputeFinalThermodynamicForces)
-       << '\n'
-       << "return true;\n"
-       << "} // end of " << this->mb.getClassName()
-       << "::computeFinalThermodynamicForces\n\n"
-       << "bool\ncomputeDerivative(){\n"
+    if (!this->mb.getMainVariables().empty()) {
+      os << "bool\ncomputeFinalThermodynamicForces(){\n"
+         << "using namespace std;\n"
+         << "using namespace tfel::math;\n";
+      writeMaterialLaws(os, this->mb.getMaterialLaws());
+      os << this->mb.getCode(h, BehaviourData::ComputeFinalThermodynamicForces)
+         << '\n'
+         << "return true;\n"
+         << "} // end of " << this->mb.getClassName()
+         << "::computeFinalThermodynamicForces\n\n";
+    }
+    os << "bool\ncomputeDerivative(){\n"
        << "using namespace std;\n"
        << "using namespace tfel::math;\n";
     writeMaterialLaws(os, this->mb.getMaterialLaws());
@@ -934,8 +940,10 @@ namespace mfront {
           modifyVariableForStiffnessTensorComputation2(this->mb.getClassName());
       this->writeStiffnessTensorComputation(os, "this->D", md);
     }
-    os << "// update the thermodynamic forces\n"
-       << "this->computeFinalThermodynamicForces();\n";
+    if (!this->mb.getMainVariables().empty()) {
+      os << "// update the thermodynamic forces\n"
+         << "this->computeFinalThermodynamicForces();\n";
+    }
     if (d.hasCode(BehaviourData::UpdateAuxiliaryStateVariables)) {
       os << "this->updateAuxiliaryStateVariables(this->dt);\n";
     }
@@ -1009,8 +1017,10 @@ namespace mfront {
           modifyVariableForStiffnessTensorComputation2(this->mb.getClassName());
       this->writeStiffnessTensorComputation(os, "this->D", m);
     }
-    os << "// update the thermodynamic forces\n"
-       << "this->computeFinalThermodynamicForces();\n";
+    if (!this->mb.getMainVariables().empty()) {
+      os << "// update the thermodynamic forces\n"
+         << "this->computeFinalThermodynamicForces();\n";
+    }
     if (d.hasCode(BehaviourData::UpdateAuxiliaryStateVariables)) {
       os << "this->updateAuxiliaryStateVariables(this->dt);\n";
     }
@@ -1063,46 +1073,61 @@ namespace mfront {
       eev = ERRORSUMMATIONEVALUATION;
     }
     if (shallUpdateExternalStateValues) {
-      os << "constexpr const auto cste1_2         = NumericType{1}/NumericType{2};\n"
-         << "constexpr const auto cste3_8         = NumericType{3}/NumericType{8};\n"
-         << "constexpr const auto cste12_13       = NumericType(12)/NumericType(13);\n";
+      os << "constexpr const auto cste1_2         = "
+            "NumericType{1}/NumericType{2};\n"
+         << "constexpr const auto cste3_8         = "
+            "NumericType{3}/NumericType{8};\n"
+         << "constexpr const auto cste12_13       = "
+            "NumericType(12)/NumericType(13);\n";
     }
     if (shallUpdateInternalStateValues) {
       os << "constexpr const auto cste3544_2565   = "
             "NumericType(3544)/NumericType(2565);\n"
-         << "constexpr const auto cste11_40       = NumericType(11)/NumericType(40);\n"
+         << "constexpr const auto cste11_40       = "
+            "NumericType(11)/NumericType(40);\n"
          << "constexpr const auto cste1859_4104   = "
             "NumericType(1859)/NumericType(4104);\n"
-         << "constexpr const auto cste8_27        = NumericType(8)/NumericType(27);\n"
+         << "constexpr const auto cste8_27        = "
+            "NumericType(8)/NumericType(27);\n"
          << "constexpr const auto cste845_4104    = "
             "NumericType(845)/NumericType(4104);\n"
          << "constexpr const auto cste3680_513    = "
             "NumericType(3680)/NumericType(513);\n"
-         << "constexpr const auto cste439_216     = NumericType(439)/NumericType(216);\n"
+         << "constexpr const auto cste439_216     = "
+            "NumericType(439)/NumericType(216);\n"
          << "constexpr const auto cste7296_2197   = "
             "NumericType(7296)/NumericType(2197);\n"
          << "constexpr const auto cste7200_2197   = "
             "NumericType(7200)/NumericType(2197);\n"
-         << "constexpr const auto cste3_32        = NumericType{3}/NumericType{32};\n"
+         << "constexpr const auto cste3_32        = "
+            "NumericType{3}/NumericType{32};\n"
          << "constexpr const auto cste1932_2197   = "
             "NumericType(1932)/NumericType(2197);\n";
     }
-    os << "constexpr const auto cste1_4         = NumericType{1}/NumericType{4};\n"
-       << "constexpr const auto cste16_135      = NumericType(16)/NumericType(135);\n"
+    os << "constexpr const auto cste1_4         = "
+          "NumericType{1}/NumericType{4};\n"
+       << "constexpr const auto cste16_135      = "
+          "NumericType(16)/NumericType(135);\n"
        << "constexpr const auto cste6656_12825  = "
           "NumericType(6656)/NumericType(12825);\n"
        << "constexpr const auto cste28561_56430 = "
           "NumericType(28561)/NumericType(56430);\n"
-       << "constexpr const auto cste9_50        = NumericType(9)/NumericType(50);\n"
-       << "constexpr const auto cste2_55        = NumericType(2)/NumericType(55);\n"
-       << "constexpr const auto cste1_360       = NumericType(1)/NumericType(360);\n"
-       << "constexpr const auto cste128_4275    = NumericType(128)/NumericType(4275);\n"
+       << "constexpr const auto cste9_50        = "
+          "NumericType(9)/NumericType(50);\n"
+       << "constexpr const auto cste2_55        = "
+          "NumericType(2)/NumericType(55);\n"
+       << "constexpr const auto cste1_360       = "
+          "NumericType(1)/NumericType(360);\n"
+       << "constexpr const auto cste128_4275    = "
+          "NumericType(128)/NumericType(4275);\n"
        << "constexpr const auto cste2197_75240  = "
           "NumericType(2197)/NumericType(75240);\n"
-       << "constexpr const auto cste1_50        = NumericType(1)/NumericType(50);\n"
+       << "constexpr const auto cste1_50        = "
+          "NumericType(1)/NumericType(50);\n"
        << "time t      = time(0);\n"
        << "time dt_    = this->dt;\n"
-       << "time dtprec = 100* (this->dt) * std::numeric_limits<NumericType>::epsilon();\n"
+       << "time dtprec = 100* (this->dt) * "
+          "std::numeric_limits<NumericType>::epsilon();\n"
        << "auto error = NumericType{};\n"
        << "bool converged = false;\n";
     if (getDebugMode()) {
@@ -1551,8 +1576,10 @@ namespace mfront {
       os << "// updating stiffness tensor at the end of the time step\n";
       this->writeStiffnessTensorComputation(os, "this->D", m);
     }
-    os << "// update the thermodynamic forces\n"
-       << "this->computeFinalThermodynamicForces();\n";
+    if (!this->mb.getMainVariables().empty()) {
+      os << "// update the thermodynamic forces\n"
+         << "this->computeFinalThermodynamicForces();\n";
+    }
     if (d.hasCode(BehaviourData::UpdateAuxiliaryStateVariables)) {
       os << "this->updateAuxiliaryStateVariables(dt_);\n";
     }
@@ -1905,8 +1932,8 @@ namespace mfront {
     for (const auto& v : d.getStateVariables()) {
       if (uvs.find(v.name) != uvs.end()) {
         os << "this->" << v.name << "_ = this->" << v.name
-           << "+cste1_6*(this->d" << v.name << "_K1 + NumericType(4)*this->d" << v.name
-           << "_K3 + this->d" << v.name << "_K5);\n";
+           << "+cste1_6*(this->d" << v.name << "_K1 + NumericType(4)*this->d"
+           << v.name << "_K3 + this->d" << v.name << "_K5);\n";
       }
     }
     if ((this->mb.getAttribute<bool>(
@@ -1965,7 +1992,9 @@ namespace mfront {
       os << "// updating stiffness tensor at the end of the time step\n";
       this->writeStiffnessTensorComputation(os, "this->D", m);
     }
-    os << "this->computeFinalThermodynamicForces();\n";
+    if (!this->mb.getMainVariables().empty()) {
+      os << "this->computeFinalThermodynamicForces();\n";
+    }
     if (this->mb.hasCode(h, BehaviourData::UpdateAuxiliaryStateVariables)) {
       os << "this->updateAuxiliaryStateVariables(dt_);\n";
     }
@@ -2004,7 +2033,8 @@ namespace mfront {
        << "throw(tfel::material::DivergenceException());\n"
        << "}\n"
        << "if(!converged){\n"
-       << "if((tfel::math::abs(this->dt-t-dt_)<2*dtprec) || (t+dt_>this->dt)){\n"
+       << "if((tfel::math::abs(this->dt-t-dt_)<2*dtprec) || "
+          "(t+dt_>this->dt)){\n"
        << "dt_=this->dt-t;\n"
        << "}\n"
        << "}\n"
@@ -2040,7 +2070,8 @@ namespace mfront {
        << "constexpr const auto cste1_3  = NumericType(1)/NumericType(3);\n"
        << "time t   = time(0);\n"
        << "time dt_ = this->dt;\n"
-       << "time dtprec = 100 * (this->dt) * std::numeric_limits<NumericType>::epsilon();\n"
+       << "time dtprec = 100 * (this->dt) * "
+          "std::numeric_limits<NumericType>::epsilon();\n"
        << "auto error = NumericType{};\n"
        << "bool converged = false;\n";
     if (getDebugMode()) {
@@ -2366,7 +2397,9 @@ namespace mfront {
          << "    cste1_3*(this->d" << v.name << "_K3 + this->d" << v.name
          << "_K2);\n";
     }
-    os << "this->computeFinalThermodynamicForces();\n";
+    if (!this->mb.getMainVariables().empty()) {
+      os << "this->computeFinalThermodynamicForces();\n";
+    }
     if (this->mb.hasCode(h, BehaviourData::UpdateAuxiliaryStateVariables)) {
       os << "this->updateAuxiliaryStateVariables(dt_);\n";
     }
@@ -2542,8 +2575,10 @@ namespace mfront {
          << "(this->d" << v.name << "_K1+this->d" << v.name << "_K4)/6+\n";
       os << "(this->d" << v.name << "_K2+this->d" << v.name << "_K3)/3;\n";
     }
-    os << "// update the thermodynamic forces\n"
-       << "this->computeFinalThermodynamicForces();\n";
+    if (!this->mb.getMainVariables().empty()) {
+      os << "// update the thermodynamic forces\n"
+         << "this->computeFinalThermodynamicForces();\n";
+    }
     if (this->mb.hasCode(h, BehaviourData::UpdateAuxiliaryStateVariables)) {
       os << "this->updateAuxiliaryStateVariables(this->dt);\n";
     }

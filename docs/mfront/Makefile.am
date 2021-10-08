@@ -68,6 +68,7 @@ MFRONT_DOCS = AdditionalConvergenceChecks.md                            \
 	      Private.md                                                \
 	      Profiling.md                                              \
 	      Relocation.md			                        \
+	      RejectCurrentCorrection.md                                   \
 	      RequireStiffnessOperator.md                               \
 	      RequireStiffnessTensor.md                                 \
 	      RequireThermalExpansionCoefficientTensor.md               \

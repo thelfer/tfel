@@ -38,8 +38,12 @@ namespace mfront {
      * (using CRTP).
      * \param[in] k: keyword
      * \param[in] f: member function
+     * \param[in] b: if true, allow the given member function to override an
+     * existing call-back, if any.
      */
-    void registerNewCallBack(const std::string&, const MemberFuncPtr);
+    void registerNewCallBack(const std::string&,
+                             const MemberFuncPtr,
+                             const bool = false);
     //! \brief destructor
     ~BehaviourDSLBase() override;
   };  // end of struct BehaviourDSLBase

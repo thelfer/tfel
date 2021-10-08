@@ -187,6 +187,7 @@ nobase_noinst_HEADERS = MFront/IsotropicBehaviourDSLBase.hxx                    
 			MFront/RungeKuttaDSL.hxx                                      \
 			MFront/RungeKuttaFiniteStrainDSL.hxx                          \
 			MFront/RungeKuttaGenericBehaviourDSL.hxx                      \
+			MFront/RungeKuttaModelDSL.hxx                                 \
 			MFront/PerformanceProfiling.hxx			              \
 			MFront/StandardElasticityBrick.hxx                            \
 			MFront/StandardElastoViscoPlasticityBrick.hxx                 \
@@ -202,7 +203,9 @@ nobase_noinst_HEADERS = MFront/IsotropicBehaviourDSLBase.hxx                    
 			MFront/ImplicitDSLII.hxx                                      \
 			MFront/ImplicitFiniteStrainDSL.hxx                            \
 			MFront/DefaultGenericBehaviourDSL.hxx                        \
+			MFront/DefaultModelDSL.hxx                        \
 			MFront/ImplicitGenericBehaviourDSL.hxx                        \
+			MFront/ImplicitModelDSL.hxx                                   \
 			MFront/NewtonRaphsonSolvers.hxx                               \
 			MFront/FiniteStrainBehaviourTangentOperatorConversion.hxx     \
 			MFront/FiniteStrainBehaviourTangentOperatorConversionPath.hxx

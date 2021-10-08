@@ -65,6 +65,7 @@ EXTRA_DIST=CMakeLists.txt					      \
 	   ./release-notes-3.0.7.md				      \
 	   ./release-notes-3.0.8.md				      \
 	   ./release-notes-3.0.8.md				      \
+	   ./release-notes-3.0.9.md				      \
 	   ./release-notes-3.1.md				      \
 	   ./release-notes-3.1.1.md				      \
 	   ./release-notes-3.1.2.md				      \
@@ -88,6 +89,7 @@ EXTRA_DIST=CMakeLists.txt					      \
 	   ./release-notes-3.4.md				      \
 	   ./release-notes-3.4.1.md				      \
 	   ./release-notes-3.4.2.md				      \
+	   ./release-notes-3.4.3.md				      \
 	   ./release-notes-4.0.md				      \
 	   ./hyperelasticity.md				              \
 	   ./search.md				              \
@@ -369,6 +371,7 @@ EXTRA_DIST=CMakeLists.txt					      \
        ./img/tfel-math/matrix_row_major.svg			      \
        ./img/tfel-math/solveNonLinearSystem2.svg		      \
        ./img/tfel-math/view.svg					      \
+       ./img/ModelDSLs.svg					      \
 	   ./media/epx1.mp4                                           \
 	   ./media/epx2.mp4                                           \
 	   ./media/abaqus-explicit.mp4                                \
