@@ -1,0 +1,13 @@
+@DSL RungeKuttaModelDSL;
+@Model ode_rk54;
+@Author Thomas Helfer;
+@Date 21 / 09 / 2021;
+
+@Epsilon 1.e-11;
+
+@StateVariable real x;
+@Parameter frequency A = 1.2;
+
+@Derivative {
+  dx = -A * x;
+}

@@ -1,0 +1,12 @@
+@DSL DefaultModelDSL;
+@Model ode_default;
+@Author Thomas Helfer;
+@Date 21 / 09 / 2021;
+
+@StateVariable real x;
+@Parameter frequency A = 1.2;
+@Parameter real theta = 0.5;
+
+@Integrator{
+  dx += -dt * A * x / (1 + A * theta * dt);
+}

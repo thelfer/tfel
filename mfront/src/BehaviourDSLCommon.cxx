@@ -362,10 +362,20 @@ namespace mfront {
     }
   }  // end of BehaviourDSLCommon::getKeywordsList
 
-  void BehaviourDSLCommon::addCallBack(const std::string& k, const CallBack c) {
-    this->callBacks.insert({k, c});
+  void BehaviourDSLCommon::addCallBack(const std::string& k,
+                                       const CallBack c,
+                                       const bool b) {
+    if (!this->callBacks.insert({k, c}).second) {
+      if (!b) {
+        this->throwRuntimeError("BehaviourDSLCommon::addCallBack",
+                                "callback '" + k + "' already registred");
+      } else {
+        this->callBacks[k] = c;
+      }
+    } else {
     this->registredKeyWords.insert(k);
-  }  // end of BehaviourDSLCommon::addCallBack
+    }
+  }  // end of addCallBack
 
   void BehaviourDSLCommon::addHook(const std::string& k, const Hook h) {
     if (this->callBacks.find(k) == this->callBacks.end()) {
@@ -999,7 +1009,24 @@ namespace mfront {
     this->readSpecifiedToken("BehaviourDSLCommon::treatModel", ";");
   }  // end of BehaviourDSLCommon::treatModel
 
-  void BehaviourDSLCommon::treatUnsupportedCodeBlockOptions(const CodeBlockOptions& o) {
+  void BehaviourDSLCommon::treatModel2() {
+    if (getVerboseMode() >= VERBOSE_DEBUG) {
+      getLogStream() << "BehaviourDSLCommon::treatModel2: begin\n";
+    }
+    this->checkNotEndOfFile("BehaviourDSLCommon::treatModel2",
+                            "Unexpected end of file.");
+    if (current->flag == tfel::utilities::Token::String) {
+      this->treatModel();
+    } else {
+      this->treatBehaviour();
+    }
+    if (getVerboseMode() >= VERBOSE_DEBUG) {
+      getLogStream() << "BehaviourDSLCommon::treatModel2: end\n";
+    }
+  }  // end of treatModel
+
+  void BehaviourDSLCommon::treatUnsupportedCodeBlockOptions(
+      const CodeBlockOptions& o) {
     if (o.untreated.empty()) {
       return;
     }
@@ -3591,20 +3618,32 @@ namespace mfront {
       first = false;
     }
     for (const auto& v : md.getMaterialProperties()) {
+      if (!first) {
       os << ",\n";
+      }
       os << v.name << "(src." << v.name << ")";
+      first = false;
     }
     for (const auto& v : md.getStateVariables()) {
+      if (!first) {
       os << ",\n";
+      }
       os << v.name << "(src." << v.name << ")";
+      first = false;
     }
     for (const auto& v : md.getAuxiliaryStateVariables()) {
+      if (!first) {
       os << ",\n";
+      }
       os << v.name << "(src." << v.name << ")";
+      first = false;
     }
     for (const auto& v : md.getExternalStateVariables()) {
+      if (!first) {
       os << ",\n";
+      }
       os << v.name << "(src." << v.name << ")";
+      first = false;
     }
     os << "\n{}\n\n";
     // Creating constructor for external interfaces
@@ -4427,15 +4466,24 @@ namespace mfront {
     this->checkBehaviourFile(os);
     os << "/*!\n"
        << "* \\brief Integrate behaviour  over the time step\n"
-       << "*/\n"
-       << "IntegrationResult\n"
-       << "integrate(const SMFlag smflag, const SMType smt) override{\n"
-       << "using namespace std;\n"
+       << "*/\n";
+    if (!this->mb.getMainVariables().empty()) {
+      os << "IntegrationResult\n"
+         << "integrate(const SMFlag smflag, const SMType smt) override{\n";
+    } else {
+      os << "IntegrationResult\n"
+         << "integrate(const SMFlag, const SMType) override{\n";
+    }
+    os << "using namespace std;\n"
        << "using namespace tfel::math;\n";
     writeMaterialLaws(os, this->mb.getMaterialLaws());
-    if ((this->mb.getBehaviourType() == BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) ||
-        (this->mb.getBehaviourType() == BehaviourDescription::COHESIVEZONEMODEL)||
-	(this->mb.getBehaviourType() == BehaviourDescription::GENERALBEHAVIOUR)) {
+    if (!this->mb.getMainVariables().empty()) {
+      if ((this->mb.getBehaviourType() ==
+           BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) ||
+          (this->mb.getBehaviourType() ==
+           BehaviourDescription::COHESIVEZONEMODEL) ||
+          (this->mb.getBehaviourType() ==
+           BehaviourDescription::GENERALBEHAVIOUR)) {
       if (this->mb.useQt()) {
         os << "raise_if(smflag!=MechanicalBehaviour<" << btype << ",hypothesis,Type,use_qt>::STANDARDTANGENTOPERATOR,\n"
            << "\"invalid tangent operator flag\");\n";
@@ -4445,6 +4493,7 @@ namespace mfront {
       }
     }
     os << "bool computeTangentOperator_ = smt!=NOSTIFFNESSREQUESTED;\n";
+    }
     if (this->mb.hasCode(h, BehaviourData::ComputePredictor)) {
       os << this->mb.getCode(h, BehaviourData::ComputePredictor) << '\n';
     }
@@ -4460,6 +4509,7 @@ namespace mfront {
     for (const auto& v : this->mb.getBehaviourData(h).getPersistentVariables()) {
       this->writeBoundsChecks(os, v, false);
     }
+    if (!this->mb.getMainVariables().empty()) {
     if (this->hasUserDefinedTangentOperatorCode(h)) {
       os << "if(computeTangentOperator_){\n";
       if (this->mb.getBehaviourType() == BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR) {
@@ -4472,8 +4522,9 @@ namespace mfront {
       } else {
         os << "return MechanicalBehaviour<" << btype << ",hypothesis,Type,false>::FAILURE;\n";
       }
-      os << "}\n";
-      os << "}\n";
+        os << "}\n"
+           << "}\n";
+      }
     }
     if (this->mb.useQt()) {
       os << "return MechanicalBehaviour<" << btype << ",hypothesis,Type,use_qt>::SUCCESS;\n";
@@ -6625,9 +6676,11 @@ namespace mfront {
 
   void BehaviourDSLCommon::writeBehaviourGetTangentOperator(std::ostream& os) const {
     this->checkBehaviourFile(os);
+    if (this->mb.hasTangentOperator()) {
     os << "const TangentOperator& getTangentOperator() const{\n"
        << "return this->Dt;\n"
        << "}\n\n";
+    }
   }  // end of BehaviourDSLCommon::writeBehaviourComputeTangentOperator()
 
   void BehaviourDSLCommon::writeBehaviourGetTimeStepScalingFactor(std::ostream& os) const {

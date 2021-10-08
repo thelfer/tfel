@@ -115,15 +115,11 @@ namespace mfront {
     this->registerNewCallBack(
         "@JacobianComparisonCriterium",
         &ImplicitDSLBase::treatJacobianComparisonCriterion);
-    this->registerNewCallBack("@RequireStiffnessTensor",
-                              &ImplicitDSLBase::treatRequireStiffnessOperator);
     this->registerNewCallBack(
         "@MaximumIncrementValuePerIteration",
         &ImplicitDSLBase::treatMaximumIncrementValuePerIteration);
     this->registerNewCallBack("@IntegrationVariable",
                               &ImplicitDSLBase::treatIntegrationVariable);
-    this->registerNewCallBack("@ComputeStiffnessTensor",
-                              &ImplicitDSLBase::treatComputeStiffnessTensor);
     this->registerNewCallBack("@ComputeStiffnessTensor",
                               &ImplicitDSLBase::treatComputeStiffnessTensor);
     this->registerNewCallBack("@ElasticMaterialProperties",
@@ -2823,10 +2819,13 @@ namespace mfront {
     os << "using namespace std;\n";
     os << "using namespace tfel::math;\n";
     writeMaterialLaws(os, this->mb.getMaterialLaws());
+    if (!this->mb.getMainVariables().empty()) {
     if ((this->mb.getBehaviourType() ==
          BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) ||
         (this->mb.getBehaviourType() ==
-         BehaviourDescription::COHESIVEZONEMODEL)) {
+           BehaviourDescription::COHESIVEZONEMODEL) ||
+          (this->mb.getBehaviourType() ==
+           BehaviourDescription::GENERALBEHAVIOUR)) {
       if (this->mb.useQt()) {
         os << "tfel::raise_if(smflag!=MechanicalBehaviour<" << btype
            << ",hypothesis,Type,use_qt>::STANDARDTANGENTOPERATOR,\n"
@@ -2836,6 +2835,7 @@ namespace mfront {
            << ",hypothesis,Type,false>::STANDARDTANGENTOPERATOR,\n"
            << "\"invalid tangent operator flag\");\n";
       }
+    }
     }
     if (this->mb.hasCode(h, BehaviourData::ComputePredictor)) {
       os << this->mb.getCode(h, BehaviourData::ComputePredictor) << '\n';
@@ -2887,6 +2887,7 @@ namespace mfront {
     for (const auto& v : d.getPersistentVariables()) {
       this->writeBoundsChecks(os, v, false);
     }
+    if (!this->mb.getMainVariables().empty()) {
     os << "if(smt!=NOSTIFFNESSREQUESTED){\n";
     if (this->mb.hasAttribute(h, BehaviourData::hasConsistentTangentOperator)) {
       if (this->mb.getBehaviourType() ==
@@ -2910,6 +2911,7 @@ namespace mfront {
       os << "throw(runtime_error(msg));\n";
     }
     os << "}\n";
+    }
     if (this->mb.useQt()) {
       os << "return MechanicalBehaviour<" << btype
          << ",hypothesis,Type,use_qt>::SUCCESS;\n";

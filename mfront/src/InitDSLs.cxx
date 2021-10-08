@@ -21,6 +21,7 @@
 #include"MFront/DefaultCZMDSL.hxx"
 #include"MFront/DefaultFiniteStrainDSL.hxx"
 #include"MFront/DefaultGenericBehaviourDSL.hxx"
+#include "MFront/DefaultModelDSL.hxx"
 #include"MFront/IsotropicMisesCreepDSL.hxx"
 #include"MFront/IsotropicMisesPlasticFlowDSL.hxx"
 #include"MFront/IsotropicStrainHardeningMisesCreepDSL.hxx"
@@ -29,10 +30,12 @@
 #include"MFront/RungeKuttaDSL.hxx"
 #include"MFront/RungeKuttaFiniteStrainDSL.hxx"
 #include"MFront/RungeKuttaGenericBehaviourDSL.hxx"
+#include "MFront/RungeKuttaModelDSL.hxx"
 #include"MFront/ImplicitDSL.hxx"
 #include"MFront/ImplicitDSLII.hxx"
 #include"MFront/ImplicitFiniteStrainDSL.hxx"
 #include"MFront/ImplicitGenericBehaviourDSL.hxx"
+#include "MFront/ImplicitModelDSL.hxx"
 
 #include"MFront/ModelDSL.hxx"
 #include"MFront/InitDSLs.hxx"
@@ -80,6 +83,12 @@ namespace mfront {
           "ImplicitGenericBehaviour", "ImplicitGenericBehaviourParser"});
       DSLProxy<RungeKuttaGenericBehaviourDSL> proxy302(std::vector<std::string>{
           "RungeKuttaGenericBehaviour", "RungeKuttaGenericBehaviourParser"});
+      DSLProxy<DefaultModelDSL> proxy303(
+          std::vector<std::string>{"DefaultModel", "DefaultModelParser"});
+      DSLProxy<ImplicitModelDSL> proxy304(
+          std::vector<std::string>{"ImplicitModel", "ImplicitModelParser"});
+      DSLProxy<RungeKuttaModelDSL> proxy305(
+          std::vector<std::string>{"RungeKuttaModel", "RungeKuttaModelParser"});
       init = true;
     }
   } // end of initDSLs 

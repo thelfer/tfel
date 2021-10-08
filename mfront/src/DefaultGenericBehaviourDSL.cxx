@@ -57,7 +57,7 @@ namespace mfront{
   BehaviourDSLDescription DefaultGenericBehaviourDSL::getBehaviourDSLDescription() const {
     auto d = BehaviourDSLDescription{};
     d.behaviourType =
-        tfel::material::MechanicalBehaviourBase::COHESIVEZONEMODEL;
+        tfel::material::MechanicalBehaviourBase::GENERALBEHAVIOUR;
     d.integrationScheme = IntegrationScheme::USERDEFINEDSCHEME;
     d.typicalCodeBlocks = {BehaviourData::ComputePredictionOperator,
                            BehaviourData::Integrator,

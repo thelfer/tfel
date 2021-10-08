@@ -192,7 +192,17 @@ namespace mfront {
 
     virtual void disableCallBack(const std::string&);
 
-    virtual void addCallBack(const std::string&, const CallBack);
+    /*!
+     * \brief add a new call-back associated with a keyword
+     *
+     * \param[in] k: keyword
+     * \param[in] c: call-back
+     * \param[in] b: if true, allow the given call-back to override an existing
+     * call-back, if any.
+     */
+    virtual void addCallBack(const std::string&,
+                             const CallBack,
+                             const bool = false);
 
     /*!
      * \brief get all symbols required to interpret the given code block.
@@ -593,6 +603,13 @@ namespace mfront {
     virtual void treatBrick();
     //!\brief treat the `@Model` keyword
     virtual void treatModel();
+    /*!
+     * \brief alternative treatment of the `@Model` keyword
+     *
+     * This alternative treatment is meant to be used by simple point-wise
+     * models.
+     */
+    virtual void treatModel2();
     /*!
      * \brief get a model description from an mfront file
      * \param[in] m: file

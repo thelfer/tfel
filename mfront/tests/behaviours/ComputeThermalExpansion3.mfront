@@ -32,7 +32,8 @@ nu.setGlossaryName("PoissonRatio");
 
 @Integrator{
   sig = lambda*trace(eto+deto)*StrainStensor::Id()+2*mu*(eto+deto);
-  if(computeTangentOperator_){
+}
+
+@TangentOperator {
     Dt = lambda*Stensor4::IxI()+2*mu*Stensor4::Id();
-  }
 }

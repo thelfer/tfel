@@ -203,6 +203,10 @@ namespace tfel {
        * \return reverse_iterator, a reverse iterator before the first element
        */
       using tfel::math::vector<T>::rend;
+      /*!
+       * \brief return if the matrix is empty
+       */
+      using tfel::math::vector<T>::empty;
 
       /*
        * Assignement operator.

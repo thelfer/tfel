@@ -170,7 +170,10 @@ MFRONTS= DDIF2.mfront                                                      \
 	 StationaryHeatTransfer.mfront					   \
 	 StationaryHeatTransfer2.mfront                                    \
 	 ThermoElasticity.mfront                                           \
-         MiehePhaseFieldDisplacementDeviatoricSplit.mfront
+         MiehePhaseFieldDisplacementDeviatoricSplit.mfront                 \
+         ode_default.mfront                                                \
+         ode_rk54.mfront                                                   \
+         ode_implicit.mfront
 
 testsdir = $(pkgdatadir)/mfront/tests/behaviours
 tests_DATA = $(MFRONTS)
@@ -219,4 +222,7 @@ EXTRA_DIST=CMakeLists.txt                                                 \
 	   references/rusinek-klepaczko_ssrt.ref			  \
 	   references/tssf.ref                                            \
 	   references/tssf2.ref                                           \
-	   references/tssf3.ref
+	   references/tssf3.ref                                           \
+	   references/ode_default.ref                                     \
+	   references/ode_implicit.ref                                    \
+	   references/ode_rk54.ref

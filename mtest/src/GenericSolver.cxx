@@ -38,6 +38,35 @@ namespace mtest {
     log << '\n';
   }
 
+  static std::pair<bool, real> iterate2(StudyCurrentState& scs,
+                                        SolverWorkSpace& wk,
+                                        const Study& s,
+                                        const SolverOptions& o,
+                                        const real t,
+                                        const real dt) {
+    using namespace tfel::math;
+    using namespace tfel::material;
+    // compute material properties and state variables
+    s.prepare(scs, t, dt);
+    // packaging step
+    if (scs.period == 1) {
+      if (!s.doPackagingStep(scs)) {
+        if (mfront::getVerboseMode() > mfront::VERBOSE_QUIET) {
+          auto& log = mfront::getLogStream();
+          log << "GenericSolver::execute: "
+              << "behaviour compute prediction matrix failed\n";
+        }
+      }
+    }
+    const auto r =
+        s.computeStiffnessMatrixAndResidual(scs, wk.K, wk.r, t, dt, o.ktype);
+    if (!r.first) {
+      return r;
+      }
+    s.postConvergence(scs, t, dt, scs.period);
+    return r;
+  }  // end of iterate2
+
   static std::pair<bool, real> iterate(StudyCurrentState& scs,
                                        SolverWorkSpace& wk,
                                        const Study& s,
@@ -299,8 +328,13 @@ namespace mtest {
     }
 
     while ((!end) && (subStep != o.mSubSteps)) {
-      auto r = iterate(scs, wk, s, o, t, dt);
-      auto converged = o.dynamic_time_step_scaling
+      const auto r = [&]() {
+        if (scs.u1.empty()) {
+          return iterate2(scs, wk, s, o, t, dt);
+        }
+        return iterate(scs, wk, s, o, t, dt);
+      }();
+      const auto converged = o.dynamic_time_step_scaling
                            ? (r.first && (r.second >= aone))
                            : r.first;
       if (converged) {
