@@ -20,6 +20,7 @@ MTEST_DOCS = Author.md                                    \
 	     MaximumNumberOfIterations.md                 \
 	     MaximumNumberOfSubSteps.md                   \
 	     Message.md                                   \
+	     Model.md                                     \
 	     OutputFrequency.md                           \
 	     Parameter.md                                 \
 	     Print.md                                     \
