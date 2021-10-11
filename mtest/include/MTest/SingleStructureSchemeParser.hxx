@@ -27,6 +27,11 @@ namespace mtest {
      */
     virtual void handleBehaviour(SingleStructureScheme&, tokens_iterator&);
     /*!
+     * \brief handle the `@Model` keyword
+     * \param[in,out] p : position in the input file
+     */
+    virtual void handleModel(SingleStructureScheme&, tokens_iterator&);
+    /*!
      * \brief handle the `@Parameter` keyword
      * \param[in,out] p : position in the input file
      */

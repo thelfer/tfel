@@ -216,7 +216,18 @@ namespace mtest {
               b.getRealParameterDefaultValue(parameter));
       this->externalFunctions->insert({n + "::" + parameter, cste});
     }
-  }  // end of SingleStructureSchemeParser::handleBehaviour
+  }  // end of handleBehaviour
+
+  void SingleStructureSchemeParser::handleModel(SingleStructureScheme& t,
+                                                tokens_iterator& p) {
+    this->handleBehaviour(t, p);
+    const auto& b = *(t.getBehaviour());
+    if (b.getGradientsSize() != 0) {
+      tfel::raise(
+          "SingleStructureSchemeParser::handleModel: "
+          "no gradient expected");
+    }
+  }  // end of handleModel
 
   void SingleStructureSchemeParser::handleMaterialProperty(
       SingleStructureScheme& t, tokens_iterator& p) {
@@ -299,7 +310,7 @@ namespace mtest {
           "unsupported policy '" +
           s + "'");
     }
-  }  // end of SingleStructureSchemeParser::handleOutOfBoundsPolicy
+  }  // end of handleOutOfBoundsPolicy
 
   void SingleStructureSchemeParser::handleParameter(SingleStructureScheme& t,
                                                     tokens_iterator& p) {
@@ -308,7 +319,7 @@ namespace mtest {
     t.setParameter(n, v);
     this->readSpecifiedToken("SingleStructureSchemeParser::handleParameter",
                              ";", p, this->tokens.end());
-  }  // end of SingleStructureSchemeParser::handleParameter
+  }  // end of handleParameter
 
   void SingleStructureSchemeParser::handleIntegerParameter(
       SingleStructureScheme& t, tokens_iterator& p) {
@@ -318,7 +329,7 @@ namespace mtest {
     this->readSpecifiedToken(
         "SingleStructureSchemeParser::handleIntegerParameter", ";", p,
         this->tokens.end());
-  }  // end of SingleStructureSchemeParser::handleIntegerParameter
+  }  // end of handleIntegerParameter
 
   void SingleStructureSchemeParser::handleUnsignedIntegerParameter(
       SingleStructureScheme& t, tokens_iterator& p) {
@@ -328,7 +339,7 @@ namespace mtest {
     this->readSpecifiedToken(
         "SingleStructureSchemeParser::handleUnsignedIntegerParameter", ";", p,
         this->tokens.end());
-  }  // end of SingleStructureSchemeParser::handleUnsignedIntegerParameteru
+  }  // end of handleUnsignedIntegerParameteru
 
   void SingleStructureSchemeParser::handleInternalStateVariable(
       SingleStructureScheme& t, tokens_iterator& p) {
@@ -429,11 +440,12 @@ namespace mtest {
   void SingleStructureSchemeParser::registerCallBack(
       const std::string& k, const SingleStructureSchemeParser::CallBack& p) {
     this->callbacks.insert({k, p});
-  }  // end of SingleStructureSchemeParser::registerCallBack
+  }  // end of registerCallBack
 
   void SingleStructureSchemeParser::registerCallBacks() {
     this->registerCallBack("@Behaviour",
                            &SingleStructureSchemeParser::handleBehaviour);
+    this->registerCallBack("@Model", &SingleStructureSchemeParser::handleModel);
     this->registerCallBack(
         "@MaterialProperty",
         &SingleStructureSchemeParser::handleMaterialProperty);
@@ -457,7 +469,7 @@ namespace mtest {
     this->registerCallBack(
         "@HandleThermalExpansion",
         &SingleStructureSchemeParser::handleHandleThermalExpansion);
-  }  // end of SingleStructureSchemeParser::registerCallBacks
+  }  // end of registerCallBacks
 
   bool SingleStructureSchemeParser::treatKeyword(SingleStructureScheme& t,
                                                  tokens_iterator& p) {
@@ -482,7 +494,7 @@ namespace mtest {
       tfel::raise(msg.str());
     }
     return true;
-  }  // end of SingleStructureSchemeParser::treatKeyword
+  }  // end of treatKeyword
 
   std::vector<std::string> SingleStructureSchemeParser::getKeyWordsList()
       const {
@@ -491,7 +503,7 @@ namespace mtest {
       keys.push_back(k.first);
     }
     return keys;
-  }  // end of SingleStructureSchemeParser::getKeyWordsList
+  }  // end of getKeyWordsList
 
   SingleStructureSchemeParser::~SingleStructureSchemeParser() = default;
 
