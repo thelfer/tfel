@@ -212,8 +212,19 @@ namespace mtest {
     }
   }  // end of SingleStructureSchemeParser::handleBehaviour
 
-  void SingleStructureSchemeParser::handleMaterialProperty(SingleStructureScheme& t,
+  void SingleStructureSchemeParser::handleModel(SingleStructureScheme& t,
                                                            tokens_iterator& p) {
+    this->handleBehaviour(t, p);
+    const auto& b = *(t.getBehaviour());
+    if (b.getGradientsSize() != 0) {
+      tfel::raise(
+          "SingleStructureSchemeParser::handleModel: "
+          "no gradient expected");
+    }
+  }  // end of handleModel
+
+  void SingleStructureSchemeParser::handleMaterialProperty(
+      SingleStructureScheme& t, tokens_iterator& p) {
     using namespace std;
     using namespace tfel::utilities;
     string i;
@@ -413,6 +424,7 @@ namespace mtest {
 
   void SingleStructureSchemeParser::registerCallBacks() {
     this->registerCallBack("@Behaviour", &SingleStructureSchemeParser::handleBehaviour);
+    this->registerCallBack("@Model", &SingleStructureSchemeParser::handleModel);
     this->registerCallBack("@MaterialProperty",
                            &SingleStructureSchemeParser::handleMaterialProperty);
     this->registerCallBack("@InternalStateVariable",

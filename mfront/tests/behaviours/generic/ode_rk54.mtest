@@ -2,7 +2,7 @@
 @Date   21/09/2021;
 
 @ModellingHypothesis 'Tridimensional';
-@Behaviour<generic> @library@ 'ode_rk54';
+@Model<generic> @library@ 'ode_rk54';
 
 // internal state variable initialisations
 @InternalStateVariable 'x' 1;
