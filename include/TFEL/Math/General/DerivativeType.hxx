@@ -149,7 +149,9 @@ namespace tfel::math {
    * \tparam VariableType: first variable type
    * \tparam OtherVariablesTypes: other variables' types
    */
-  template <typename FunctionType, typename VariableType, typename... OtherVariablesTypes>
+  template <typename FunctionType,
+            typename VariableType,
+            typename... OtherVariablesTypes>
   struct DerivativeType<FunctionType, VariableType, OtherVariablesTypes...> {
     //! \brief the result
     using type = typename DerivativeType<
@@ -181,6 +183,25 @@ namespace tfel::math {
   using derivative_type =
       typename DerivativeType<FunctionType, VariableType>::type;
 
+  /*!
+   * \brief compute a numerical approximation of the derivative  a a function
+   * with respect to a variable with a centered finite difference scheme.
+   * \tparam FunctionType: type of the function to be differentiated.
+   * \tparam VariableType: type of the variable.
+   * \tparam ScalarType: type of the perturbation value.
+   * \param[in] f: function.
+   * \param[in] v: variable.
+   * \param[in] e: perturbation value.
+   */
+  template <typename FunctionType, typename VariableType, typename ScalarType>
+  derivative_type<std::invoke_result_t<FunctionType, VariableType>,
+                  VariableType>
+  computeNumericalDerivative(const FunctionType&,
+                             const VariableType&,
+                             const ScalarType&);
+
 }  // end of namespace tfel::math
+
+#include "TFEL/Math/General/DerivativeType.ixx"
 
 #endif /* LIB_TFEL_MATH_DERIVATIVETYPE_HXX */

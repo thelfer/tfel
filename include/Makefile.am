@@ -331,6 +331,7 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Math/General/ComputeObjectTag.ixx	                                                     \
 			TFEL/Math/General/ComputeObjectTag.hxx	                                                     \
 			TFEL/Math/General/DerivativeType.hxx	                                                     \
+			TFEL/Math/General/DerivativeType.ixx	                                                     \
 			TFEL/Math/General/Complex.hxx		                                                     \
 			TFEL/Math/General/RandomRotationMatrix.hxx                                                   \
 			TFEL/Math/General/StridedRandomAccessIterator.hxx                                            \

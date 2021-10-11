@@ -14,42 +14,61 @@
 #ifndef LIB_TFEL_MATH_DERIVATIVETYPE_IXX
 #define LIB_TFEL_MATH_DERIVATIVETYPE_IXX
 
-#include <type_traits>
-#include "TFEL/Metaprogramming/InvalidType.hxx"
 #include "TFEL/TypeTraits/IsScalar.hxx"
-#include "TFEL/Math/General/ComputeObjectTag.hxx"
 
 namespace tfel::math {
 
-  /*!
-   * \brief an helper metafunction meant to be specialised
-   */
-  template <typename TagA, typename TagB, typename A, typename B>
-  struct DerivativeTypeDispatcher {
-    //! \brief result
-    using type = tfel::meta::InvalidType;
-  };  // end of struct DerivativeTypeDispatcher
-
-  /*!
-   * \brief a meta function returning the type of the derivative of
-   * a variable of type T1 with respect to a variable of type T2
-   * \tparam T1: type
-   * \tparam T2: type
-   */
-  template <typename T1, typename T2>
-  struct DerivativeType {
-    //! boolean stating if both variables are scalar
-    static constexpr auto are_scalars = isScalar<T1>() && isScalar<T2>();
-    //! the result
-    using type =
-        typename std::conditional<are_scalars,
-                                  BinaryOperationResult<T1, T2, OpDiv>,
-                                  typename tfel::math::DerivativeTypeDispatcher<
-                                      typename ComputeObjectTag<T1>::type,
-                                      typename ComputeObjectTag<T2>::type,
-                                      T1,
-                                      T2>::type>::type;
-  };  // end of DerivativeType
+  template <typename FunctionType, typename VariableType, typename ScalarType>
+  derivative_type<std::invoke_result_t<FunctionType, VariableType>,
+                  VariableType>
+  computeNumericalDerivative(const FunctionType& f,
+                             const VariableType& v,
+                             const ScalarType& e) {
+    using ResultType = std::invoke_result_t<FunctionType, VariableType>;
+    static_assert(isScalar<ScalarType>(), "invalid third argument");
+    if constexpr (isScalar<VariableType>()) {
+      const auto fp = f(v + e);
+      const auto fm = f(v - e);
+      return (fp - fm) / (2 * e);
+    } else if constexpr (isScalar<ResultType>()) {
+      using VariableTypeIndexingPolicy = typename VariableType::indexing_policy;
+      static_assert(VariableTypeIndexingPolicy::arity == 1u,
+                    "unsupported case");
+      using size_type = typename VariableTypeIndexingPolicy::size_type;
+      auto d = derivative_type<ResultType, VariableType>{};
+      for (size_type i = 0; i != v.size(); ++i) {
+        auto vp = v;
+        vp[i] += e;
+        const auto fp = f(vp);
+        auto vm = v;
+        vm[i] -= e;
+        const auto fm = f(vm);
+        d[i] = (fp - fm) / (2 * e);
+      }
+      return d;
+    } else {
+      using ResultTypeIndexingPolicy = typename ResultType::indexing_policy;
+      using VariableTypeIndexingPolicy = typename VariableType::indexing_policy;
+      static_assert(((ResultTypeIndexingPolicy::arity == 1u) &&
+                     (VariableTypeIndexingPolicy::arity == 1u)),
+                    "unsupported case");
+      using size_type_r = typename ResultTypeIndexingPolicy::size_type;
+      using size_type_v = typename VariableTypeIndexingPolicy::size_type;
+      auto d = derivative_type<ResultType, VariableType>{};
+      for (size_type_v i = 0; i != v.size(); ++i) {
+        auto vp = v;
+        vp[i] += e;
+        const auto fp = f(vp);
+        auto vm = v;
+        vm[i] -= e;
+        const auto fm = f(vm);
+        for (size_type_r j = 0; j != d.size(0); ++j) {
+          d(j, i) = (fp[j] - fm[j]) / (2 * e);
+        }
+      }
+      return d;
+    }
+  }  // end of computeNumericalDerivative
 
 }  // end of namespace tfel::math
 

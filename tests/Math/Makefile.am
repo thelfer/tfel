@@ -80,7 +80,8 @@ test_PROGRAMS = IndexingPoliciesTest             \
 	        IEEE754Test                          \
         ScalarNewtonRaphsonTest                  \
         BissectionAlgorithmTest                  \
-        FixedSizeArrayDerivativeTest
+        FixedSizeArrayDerivativeTest             \
+        ComputeNumericalDerivativeTest
 
 LDADD = -L$(top_builddir)/src/Math      \
 	-L$(top_builddir)/src/Utilities \
@@ -140,6 +141,7 @@ IEEE754Test_SOURCES = IEEE754Test.cxx
 ScalarNewtonRaphsonTest_SOURCES = ScalarNewtonRaphsonTest.cxx
 BissectionAlgorithmTest_SOURCES = BissectionAlgorithmTest.cxx
 FixedSizeArrayDerivativeTest_SOURCES = FixedSizeArrayDerivativeTest.cxx
+ComputeNumericalDerivativeTest_SOURCES = ComputeNumericalDerivativeTest.cxx
 
 discretization1D_SOURCES = discretization1D.cxx
 discretization1D_LDADD   = -L$(top_builddir)/src/Math      \

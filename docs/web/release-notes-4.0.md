@@ -56,7 +56,7 @@ eqnPrefixTemplate: "($$i$$)"
   plane is changed from the C1-continuous version (Abbo and Sloan, 1995)
   to the C2-continuous version from Abbo et al., 2011.
 
-# Rejuvenation of the `TFEL/Math` library in `TFEL-4.0`
+# Rejuvenation of the `TFEL/Math` library
 
 ## Description of some shortcomings of previous versions
 
@@ -713,7 +713,7 @@ A class matching the `IndexingPolicy` concept must provide:
 
 ##### An example of indexing policy
 
-![Storage of the elements of a matrix using the row-major format](img/matrix_row_major.pdf){#fig:tfel_math:matrix_row_major width=90%}
+![Storage of the elements of a matrix using the row-major format](img/tfel-math/matrix_row_major.svg){#fig:tfel_math:matrix_row_major width=90%}
 
 Let us consider an \(N\,\times\,M\) matrix stored in a contiguous memory
 location using the row major format, i.e. all elements of the same row
@@ -897,7 +897,7 @@ addition of \(\vec{e1}\) and the vector \(\vec{c}\).
 
 ![Application of the expression templates technique to the addition of
 three
-vectors.](img/expression_templates.pdf){#fig:tfel_math:expression_templates
+vectors.](img/tfel-math/expression_templates.svg){#fig:tfel_math:expression_templates
 width=50%}
 
 Figure @fig:tfel_math:expression_templates shows how the access operator of
@@ -1041,7 +1041,7 @@ auto eel = map<stensor<3u, double>>(Y);
 auto& p = Y[6];
 ~~~~
 
-!["Exemple of decomposition by blocks of a memory area using views"](img/view.pdf){#fig:tfel_4.0:view width=75%}
+!["Exemple of decomposition by blocks of a memory area using views"](img/tfel-math/view.svg){#fig:tfel_4.0:view width=75%}
 
 The `map` function allows to define offset at compile-time: this allows
 to checks at compile-time that the memory area is large enough to store
@@ -1247,7 +1247,7 @@ beforehand.
 The algorithm implemented by `solveNonLinearSystem2` method is depicted
 in Figure @fig:tfel_math:TinyNonLinearSolverBase:solveNonLinearSystem2.
 
-!["Flowchart for the resolution of non linear systems proposed by the `solveNonLinearSystem2` of the `TinyNonLinearSolverBase` class"](img/solveNonLinearSystem2.pdf){#fig:tfel_math:TinyNonLinearSolverBase:solveNonLinearSystem2}
+!["Flowchart for the resolution of non linear systems proposed by the `solveNonLinearSystem2` of the `TinyNonLinearSolverBase` class"](img/tfel-math/solveNonLinearSystem2.svg){#fig:tfel_math:TinyNonLinearSolverBase:solveNonLinearSystem2 width=100%}
 
 The `computeNewCorrection` is the only method that must be implemented
 in the derived class. It totally defines the resolution algorithm. This
@@ -1346,7 +1346,7 @@ the robustness of the non linear solvers. When used correctly, this
 method may also be used to increase the performances of the non linear
 solvers (i.e. reduce the total number of iterations).
 
-!["Flowchart for the resolution of non linear systems proposed by the `solveNonLinearSystem` of the `TinyNonLinearSolverBase` class"](img/solveNonLinearSystem.pdf)
+!["Flowchart for the resolution of non linear systems proposed by the `solveNonLinearSystem` of the `TinyNonLinearSolverBase` class"](img/tfel-math/solveNonLinearSystem.svg){width=100%}
 
 The idea of this hand-crafted linesearch is simply to take the last
 correction to the unknowns and divide it by two and restart the core
