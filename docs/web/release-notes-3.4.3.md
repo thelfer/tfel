@@ -135,7 +135,16 @@ with the implementation of the model presented in Section
 @sec:tfel-3.4.3:ode_example with all the DSLs dedicated to piont-wise
 models.
 
+## Support for the `amitex` interface
+
+Behaviours created using the `amitex` interface can now be tested with
+`MTest`. See [Issue #13](https://github.com/thelfer/tfel/issues/13).
+
 # Issues solved
+
+## Issue #13: [mtest] Support for the `amitex` interface in `MTest`
+
+For more details, see <https://github.com/thelfer/tfel/issues/13>.
 
 ## Issue #12: [mtest] Add support for generic behaviours with no gradients, aka point-wise models
 

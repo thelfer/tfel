@@ -98,7 +98,8 @@ namespace mtest {
 #ifdef HAVE_CASTEM
     if ((in == "castem") || (in == "umat") || (in == "Castem") ||
         (in == "Cast3M") ||  //
-        (in == "castem21") || (in == "Castem21") || (in == "Cast3M21")) {
+        (in == "castem21") || (in == "Castem21") || (in == "Cast3M21") ||
+        (in == "amitex") || (in == "Amitex")) {
       check_no_parameters();
       const auto type = elm.getUMATBehaviourType(l, f);
       const auto ktype = elm.getUMATBehaviourKinematic(l, f);

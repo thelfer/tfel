@@ -126,6 +126,9 @@ namespace mtest {
           (p->value == "Cast3M21")) {
         i = "castem21";
       }
+      if ((p->value == "amitex") || (p->value == "Amitex")) {
+        i = "amitex";
+      }
       if (p->value == "mistral") {
         i = "mistral";
       }
