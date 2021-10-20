@@ -499,7 +499,6 @@ namespace mtest {
     // saving the read values
     tfel::math::tmatrix<3u, 3u, real> rm;
     if (choice == MILLER) {
-      TFEL_CONSTEXPR const real cste = 180. / M_PI;
       this->readSpecifiedToken("MTestParser::handleRotationMatrix", "{", p,
                                this->tokens.end());
       const auto h = this->readInt(p, this->tokens.end());
@@ -511,12 +510,26 @@ namespace mtest {
       const auto l = this->readInt(p, this->tokens.end());
       this->readSpecifiedToken("MTestParser::handleRotationMatrix", "}", p,
                                this->tokens.end());
-      const real n1 = std::sqrt(static_cast<real>(h * h + k * k + l * l));
-      const real n2 = std::sqrt(static_cast<real>(h * h + k * k));
-      const real phi1 = 0;
-      const real phi = std::acos(l / n1) * cste;
-      const real phi2 = std::atan2(h / n2, k / n2) * cste;
-      from_euler(rm, phi1, phi, phi2);
+      if ((h == 0) && (k == 0) && (l == 0)) {
+        throw(
+            std::runtime_error("MTestParser::handleRotationMatrix: "
+                               "invalide Miller indices"));
+      }
+      const auto s = std::sqrt(static_cast<real>(h * h + k * k + l * l));
+      const auto nx = static_cast<real>(h) / s;
+      const auto ny = static_cast<real>(k) / s;
+      const auto nz = static_cast<real>(l) / s;
+      real cx, sx, sq;
+      std::tie(cx, sx, sq) = [&]() -> std::tuple<real, real, real> {
+        if ((h == 0) && (k == 0)) {
+          return {1, 0, 0};
+        }
+        const auto tsq = std::sqrt(nx * nx + ny * ny);
+        return {ny / tsq, nx / tsq, tsq};
+      }();
+      rm = {cx,      -sx,     real(0),  //
+            nz * sx, nz * cx, -sq,      //
+            nx,      ny,      nz};
     } else if (choice == EULER) {
       std::vector<real> v(3);
       this->checkNotEndOfLine("MTestParser::handleRotationMatrix", p,
