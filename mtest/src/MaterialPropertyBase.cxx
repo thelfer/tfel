@@ -19,9 +19,7 @@ namespace mtest {
 
   MaterialPropertyBase::MaterialPropertyBase(const std::string& l,
                                                  const std::string& f)
-      : tfel::system::ExternalMaterialPropertyDescription(l, f),
-        library(l),
-        function(f) {
+      : tfel::system::ExternalMaterialPropertyDescription(l, f) {
     this->arguments_values.resize(this->arguments.size());
   }  // end of MaterialPropertyBase
 
@@ -72,7 +70,7 @@ namespace mtest {
           "no parameter named '" +
           n + "'");
     }
-    elm.setParameter(this->library, this->function, n, v);
+    elm.setParameter(this->library, this->material_property, n, v);
   } // end of setParameter
 
   MaterialPropertyBase::~MaterialPropertyBase() = default;

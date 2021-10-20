@@ -47,10 +47,6 @@ namespace mtest {
     ~MaterialPropertyBase() override;
 
    protected:
-    //! \brief library
-    std::string library;
-    //! \brief function
-    std::string function;
     //! \brief variables values
     std::vector<real> arguments_values;
   };  // end of MaterialPropertyBase
