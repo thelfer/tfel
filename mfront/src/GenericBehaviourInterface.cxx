@@ -1550,7 +1550,7 @@ namespace mfront {
       }
       return "TensorSize";
     };
-    auto init = [&os, &vsize, this](
+    auto init = [&os, this](
                     SupportedTypes::TypeSize& o, const VariableDescription& v,
                     const std::string& n, const std::string& src) {
       const auto f = this->getTypeFlag(v.type);
@@ -2029,7 +2029,7 @@ namespace mfront {
       }
       return "TensorSize";
     };
-    auto export_variable = [this, &bd, &os, &vsize](
+    auto export_variable = [this, &bd, &os](
                                const VariableDescription& v,
                                const char* const dest,
                                const SupportedTypes::TypeSize o) {

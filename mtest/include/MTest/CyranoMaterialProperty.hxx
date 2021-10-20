@@ -30,7 +30,7 @@ namespace mtest {
     //
     real getValue() const override;
     //! \brief destructor
-    ~CyranoMaterialProperty();
+    ~CyranoMaterialProperty() override;
    private:
     //! \brief the castem function
     ::CyranoMaterialPropertyPtr fct;

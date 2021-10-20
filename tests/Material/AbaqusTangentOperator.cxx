@@ -174,7 +174,6 @@ struct AbaqusTangentOperator final : public tfel::tests::TestCase {
       }
       return {2 * idx - 3, 2 * idx - 2};
     }();
-    tfel::math::tensor<N, real> dF;
     tfel::math::tensor<N, real> eiej(real(0));
     const auto v = (idx > 2 ? std::sqrt(2) : real(1)) * e / 2;
     eiej(c.first) += v;

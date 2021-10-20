@@ -87,14 +87,14 @@ namespace tfel::tests {
       ~TestResult();
 
      private:
-      //! \brief success of the test
-      bool status = true;
       //! \brief details
       std::string description;
       //! \brief reason why the test failed (if any)
       std::string failure_description;
       //! \brief test duration
       double test_duration = 0.;
+      //! \brief success of the test
+      bool status = true;
     };  // end of struct
 
     std::ostream& operator<<(std::ostream&, const TestResult&);

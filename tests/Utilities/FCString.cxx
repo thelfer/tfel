@@ -165,7 +165,6 @@ struct FCStringTest final : public tfel::tests::TestCase {
   }
   void test10() {
     using namespace tfel::utilities;
-    ;
     const char c[5] = {'1', '2', '3', '4', '5'};
     const char c2[5] = {'1', '2', '3', '\0', '5'};
     const auto sv4 = narrow<4>(c);
@@ -202,7 +201,6 @@ struct FCStringTest final : public tfel::tests::TestCase {
   }
   void test11() {
     using namespace tfel::utilities;
-    ;
     char c[5] = {'\0', '\0', '\0', '\0', '\0'};
     char c2[5] = {'1', '2', '3', '4', '\0'};
     fcstring<4> s = "abcd";

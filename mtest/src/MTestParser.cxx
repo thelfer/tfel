@@ -521,11 +521,25 @@ namespace mtest {
       from_euler(rm, phi1, phi, phi2);
     } else if (choice == EULER) {
       std::vector<real> v(3);
-      this->readSpecifiedToken("MTestParser::handleRotationMatrix", "{", p,
-                               this->tokens.end());
+      this->checkNotEndOfLine("MTestParser::handleRotationMatrix", p,
+                              this->tokens.end());
+      auto np = std::next(p);
+      this->checkNotEndOfLine("MTestParser::handleRotationMatrix", np,
+                              this->tokens.end());
+      const auto b = np->value == "{";
+      if (b) {
+        auto& log = mfront::getLogStream();
+        log << "MTestParser::handleRotationMatrix: using two curly brackets is "
+            << "deprecated. Refer to https://github.com/thelfer/tfel/issues/16 "
+            << "for details\n";
+        this->readSpecifiedToken("MTestParser::handleRotationMatrix", "{", p,
+                                 this->tokens.end());
+      }
       this->readArrayOfSpecifiedSize(v, t, p);
-      this->readSpecifiedToken("MTestParser::handleRotationMatrix", "}", p,
-                               this->tokens.end());
+      if (b) {
+        this->readSpecifiedToken("MTestParser::handleRotationMatrix", "}", p,
+                                 this->tokens.end());
+      }
       from_euler(rm, v[0], v[1], v[2]);
     } else {
       // standard choice
