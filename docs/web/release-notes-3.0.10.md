@@ -18,3 +18,7 @@ eqnPrefixTemplate: "($$i$$)"
 ---
 
 # Issues fixed
+
+## Issue #16: [mtest] Unnecessary  brackets when declaring rotation matrix using Euler conventions
+
+For more details, see <https://github.com/thelfer/tfel/issues/16>.
