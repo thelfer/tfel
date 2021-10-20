@@ -19,6 +19,11 @@ eqnPrefixTemplate: "($$i$$)"
 
 # Issues fixed
 
+## Issue #17: [mtest]  Unsupported degenerated case when defining the rotation matrix using Miller' indices
+
+For more details, see <https://github.com/thelfer/tfel/issues/17>.
+
 ## Issue #16: [mtest] Unnecessary  brackets when declaring rotation matrix using Euler conventions
 
 For more details, see <https://github.com/thelfer/tfel/issues/16>.
+
