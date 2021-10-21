@@ -522,14 +522,14 @@ namespace mtest {
       real cx, sx, sq;
       std::tie(cx, sx, sq) = [&]() -> std::tuple<real, real, real> {
         if ((h == 0) && (k == 0)) {
-          return {1, 0, 0};
+          return std::tuple<real, real, real>{1, 0, 0};
         }
         const auto tsq = std::sqrt(nx * nx + ny * ny);
-        return {ny / tsq, nx / tsq, tsq};
+        return std::tuple<real, real, real>{ny / tsq, nx / tsq, tsq};
       }();
-      rm = {cx,      -sx,     real(0),  //
-            nz * sx, nz * cx, -sq,      //
-            nx,      ny,      nz};
+      rm = tfel::math::tmatrix<3u, 3u, real>{cx,      -sx,     real(0),  //
+                                             nz * sx, nz * cx, -sq,      //
+                                             nx,      ny,      nz};
     } else if (choice == EULER) {
       std::vector<real> v(3);
       this->checkNotEndOfLine("MTestParser::handleRotationMatrix", p,
