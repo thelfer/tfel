@@ -1,14 +1,14 @@
 /*!
- * \file   include/NUMODIS/Vect3.hxx  
- * \brief    
+ * \file   include/NUMODIS/Vect3.hxx
+ * \brief
  * \author Laurent Dupuy
  * \date   9/06/2017
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef NUMEODIS_VECT3_HXX
@@ -17,8 +17,7 @@
 #include <iosfwd>
 #include "NUMODIS/Config.hxx"
 
-namespace numodis
-{
+namespace numodis {
 
   //===============================================================
   // Class Vect3
@@ -36,46 +35,42 @@ namespace numodis
 
   */
   //===============================================================
-  struct TFELNUMODIS_VISIBILITY_EXPORT Vect3
-  {
-
+  struct TFELNUMODIS_VISIBILITY_EXPORT Vect3 {
     Vect3();
 
     Vect3(const Vect3& vec);
 
-    Vect3(double x,
-	  double y,
-	  double z);
+    Vect3(double x, double y, double z);
 
-    bool operator== (const Vect3& vec);
+    bool operator==(const Vect3& vec);
 
-    Vect3 operator- () const;
+    Vect3 operator-() const;
 
-    Vect3 operator+ (const Vect3& vec) const;
+    Vect3 operator+(const Vect3& vec) const;
 
-    Vect3 operator- (const Vect3& vec) const;
+    Vect3 operator-(const Vect3& vec) const;
 
-    Vect3 operator- (const double scalar) const;
+    Vect3 operator-(const double scalar) const;
 
-    Vect3 operator* (const double scalar) const;
+    Vect3 operator*(const double scalar) const;
 
-    Vect3 operator/ (const double scalar) const;
+    Vect3 operator/(const double scalar) const;
 
-    Vect3 operator* (const Vect3& vec) const;
+    Vect3 operator*(const Vect3& vec) const;
 
-    Vect3& operator= (const Vect3& vec);
+    Vect3& operator=(const Vect3& vec);
 
-    Vect3& operator= (const double scalar);
+    Vect3& operator=(const double scalar);
 
-    Vect3& operator/= (const double scalar);
+    Vect3& operator/=(const double scalar);
 
-    Vect3& operator*= (const double scalar);
+    Vect3& operator*=(const double scalar);
 
-    Vect3& operator+= (const Vect3& vec);
+    Vect3& operator+=(const Vect3& vec);
 
-    Vect3& operator+= (const double scalar);
+    Vect3& operator+=(const double scalar);
 
-    Vect3& operator-= (const Vect3& vec);
+    Vect3& operator-=(const Vect3& vec);
 
     Vect3 UnitVector() const;
 
@@ -85,7 +80,7 @@ namespace numodis
 
     double& operator[](int i);
 
-    double operator[](int i) const ;
+    double operator[](int i) const;
 
     double Length() const;
 
@@ -104,8 +99,7 @@ namespace numodis
     //----------------------------------------------------------
     /*! \return reference to the component                    */
     //==========================================================
-    inline double& X()
-    { return this->_vector[0]; }
+    inline double& X() { return this->_vector[0]; }
 
     //===========================================================
     // Vect3::Y
@@ -114,8 +108,7 @@ namespace numodis
     //-----------------------------------------------------------
     /*! \return reference to the component                     */
     //===========================================================
-    inline double& Y()
-    { return this->_vector[1]; }
+    inline double& Y() { return this->_vector[1]; }
 
     //==========================================================
     // Vect3::Z
@@ -124,8 +117,7 @@ namespace numodis
     //----------------------------------------------------------
     /*! \return reference to the component                    */
     //==========================================================
-    inline double& Z()
-    { return this->_vector[2]; }
+    inline double& Z() { return this->_vector[2]; }
 
     //==========================================================
     // Vect3::X
@@ -134,8 +126,7 @@ namespace numodis
     //----------------------------------------------------------
     /*! \return first component                               */
     //==========================================================
-    inline double X() const
-    { return this->_vector[0]; }
+    inline double X() const { return this->_vector[0]; }
 
     //==========================================================
     // Vect3::Y
@@ -144,8 +135,7 @@ namespace numodis
     //----------------------------------------------------------
     /*! \return second component                              */
     //==========================================================
-    inline double Y() const
-    { return this->_vector[1]; }
+    inline double Y() const { return this->_vector[1]; }
 
     //==========================================================
     // Vect3::Z
@@ -154,8 +144,7 @@ namespace numodis
     //----------------------------------------------------------
     /*! \return third component                               */
     //==========================================================
-    inline double Z() const
-    { return this->_vector[2]; }
+    inline double Z() const { return this->_vector[2]; }
 
     //==========================================================
     // Vect::Norm
@@ -164,23 +153,19 @@ namespace numodis
     //----------------------------------------------------------
     /*! \return length of the vector                          */
     //==========================================================
-    double Norm() const
-    { return this->Length(); }
+    double Norm() const { return this->Length(); }
 
-    TFELNUMODIS_VISIBILITY_EXPORT friend std::ostream&
-    operator << (std::ostream& stream,
-		 const Vect3& vect);
+    TFELNUMODIS_VISIBILITY_EXPORT friend std::ostream& operator<<(
+        std::ostream& stream, const Vect3& vect);
 
-  protected:
-
+   protected:
     double _vector[3];
-
   };
 
-  Vect3 operator* (const double scalar,const Vect3& vec);
+  Vect3 operator*(const double scalar, const Vect3& vec);
 
-  Vect3 operator- (const double scalar,const Vect3& vec);
+  Vect3 operator-(const double scalar, const Vect3& vec);
 
-} // end of namesapce NUMODIS
-  
+}  // namespace numodis
+
 #endif

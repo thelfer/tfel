@@ -3,24 +3,24 @@
  * \brief  This file declares the MechanicalBehaviour class
  * \author Thomas Helfer
  * \date   22 Sep 2006
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_TFEL_MECHANICALBEHAVIOUR_HXX
-#define LIB_TFEL_MECHANICALBEHAVIOUR_HXX 
+#define LIB_TFEL_MECHANICALBEHAVIOUR_HXX
 
-#include<utility>
-#include"TFEL/Material/ModellingHypothesis.hxx"
-#include"TFEL/Material/FiniteStrainBehaviourTangentOperatorBase.hxx"
+#include <utility>
+#include "TFEL/Material/ModellingHypothesis.hxx"
+#include "TFEL/Material/FiniteStrainBehaviourTangentOperatorBase.hxx"
 
-namespace tfel{
+namespace tfel {
 
-  namespace material{
+  namespace material {
 
     /*!
      * \class MechanicalBehaviourBase
@@ -32,9 +32,10 @@ namespace tfel{
       /*!
        * An indication of the type of the behaviour treated
        * If the behaviour is a small strain standard behaviour, then:
-       * - the only driving variable is the total strain 'eto' (symmetric tensor)
-       * - the only thermodynamic force is the stress    'sig' (symmetric tensor)
-       * If the behaviour is a cohesive zone model, then:
+       * - the only driving variable is the total strain 'eto' (symmetric
+       * tensor)
+       * - the only thermodynamic force is the stress    'sig' (symmetric
+       * tensor) If the behaviour is a cohesive zone model, then:
        * - the only driving variable is the opening displacement (tvector)
        * - the only thermodynamic force is the traction (tvector)
        */
@@ -74,7 +75,7 @@ namespace tfel{
         CONSISTENTTANGENTOPERATOR,
         NOSTIFFNESSREQUESTED
       };  // end of enum SMType
-    }; // end of struct MechanicalBehaviourBase
+    };    // end of struct MechanicalBehaviourBase
 
     /*!
      * a trait class describing which tangent operators can be
@@ -87,7 +88,7 @@ namespace tfel{
        * operator. Finite strain beaviours are a noticeable exception.
        */
       enum SMFlag { STANDARDTANGENTOPERATOR };  // end of enum Flag
-    }; // end of struct
+    };                                          // end of struct
 
     /*!
      * a trait class describing which tangent operators can be
@@ -102,7 +103,7 @@ namespace tfel{
        * operator. Finite strain beaviours are a noticeable exception.
        */
       typedef FiniteStrainBehaviourTangentOperatorBase::Flag SMFlag;
-    }; // end of struct
+    };  // end of struct
 
     /*!
      * \class MechanicalBehaviour
@@ -113,13 +114,12 @@ namespace tfel{
      * \author Thomas Helfer
      * \date   28 Jul 2006
      */
-    template<MechanicalBehaviourBase::BehaviourType btype,
-	     ModellingHypothesis::Hypothesis H,
-	     typename NumType, bool use_qt>
-    struct MechanicalBehaviour
-      : public TangentOperatorTraits<btype>,
-	public MechanicalBehaviourBase
-    {
+    template <MechanicalBehaviourBase::BehaviourType btype,
+              ModellingHypothesis::Hypothesis H,
+              typename NumType,
+              bool use_qt>
+    struct MechanicalBehaviour : public TangentOperatorTraits<btype>,
+                                 public MechanicalBehaviourBase {
       /*!
        * available tangent operator
        */
@@ -128,7 +128,7 @@ namespace tfel{
        * dimension of the space for the the given modelling hypothesis
        */
       static constexpr unsigned short N =
-	ModellingHypothesisToSpaceDimension<H>::value;
+          ModellingHypothesisToSpaceDimension<H>::value;
       /*!
        * \brief only compute a prediction stiffness matrix.
        * The result shall be retrieved through the
@@ -137,16 +137,14 @@ namespace tfel{
        * \param[in] smt    : expected tangent operator
        * \return SUCCESS if the integration is successfull.
        */
-      virtual IntegrationResult
-      computePredictionOperator(const SMFlag,
-				const SMType) = 0;
+      virtual IntegrationResult computePredictionOperator(const SMFlag,
+                                                          const SMType) = 0;
       /*!
        * \return the minimal scaling factor to be used. This scaling
        * factor is used to decrease the time step if the integration
        * failed.
        */
-      virtual NumType
-      getMinimalTimeStepScalingFactor() const = 0;
+      virtual NumType getMinimalTimeStepScalingFactor() const = 0;
       /*!
        * \param[in] dt: time step scaling factor proposed by the calling code
        * \return a pair containing:
@@ -163,8 +161,8 @@ namespace tfel{
        * give such a time step scaling factor. If not, behaviours
        * may return the NumType(1) value.
        */
-      virtual std::pair<bool,NumType>
-      computeAPrioriTimeStepScalingFactor(const NumType) const = 0;
+      virtual std::pair<bool, NumType> computeAPrioriTimeStepScalingFactor(
+          const NumType) const = 0;
       /*!
        * \brief determine the value of the internal state variables at
        * the end of the time step
@@ -172,9 +170,7 @@ namespace tfel{
        * \param[in] smt    : expected tangent operator
        * \return SUCCESS if the integration is successfull.
        */
-      virtual IntegrationResult
-      integrate(const SMFlag,
-		const SMType) = 0;
+      virtual IntegrationResult integrate(const SMFlag, const SMType) = 0;
       /*!
        * \param[in] dt: current time step scaling factor
        * \return a pair containing:
@@ -191,17 +187,16 @@ namespace tfel{
        * give such a time step scaling factor. If not, behaviours
        * may return the NumType(1) value.
        */
-      virtual std::pair<bool,NumType>
-      computeAPosterioriTimeStepScalingFactor(const NumType) const = 0;
+      virtual std::pair<bool, NumType> computeAPosterioriTimeStepScalingFactor(
+          const NumType) const = 0;
       /*!
        * destructor
        */
-      virtual ~MechanicalBehaviour(){}
+      virtual ~MechanicalBehaviour() {}
     };
 
-  } // end of namespace material 
+  }  // end of namespace material
 
-} // end of namespace tfel
+}  // end of namespace tfel
 
 #endif /* LIB_TFEL_MECHANICALBEHAVIOUR_HXX */
-

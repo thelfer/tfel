@@ -1,14 +1,14 @@
-/*! 
+/*!
  * \file  mfront/include/MFront/NonLinearSystemSolverFactory.hxx
  * \brief
  * \author Thomas Helfer
  * \brief 10 juin 2014
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_MFRONT_MFRONTNONLINEARSYSTEMSOLVERFACTORY_HXX
@@ -27,7 +27,7 @@ namespace mfront {
    */
   struct MFRONT_VISIBILITY_EXPORT NonLinearSystemSolverFactory {
     //! a simple alias
-    typedef std::shared_ptr<NonLinearSystemSolver> (* constructor)();
+    typedef std::shared_ptr<NonLinearSystemSolver> (*constructor)();
     /*!
      * \return the uniq instance of the solver factory
      */
@@ -38,8 +38,8 @@ namespace mfront {
      */
     std::shared_ptr<NonLinearSystemSolver> getSolver(const std::string&) const;
     /*!
-     * \param[in] a : solver name 
-     * \param[in] c : solver constructor 
+     * \param[in] a : solver name
+     * \param[in] c : solver constructor
      */
     void registerSolver(const std::string&, const constructor);
     /*!
@@ -58,13 +58,12 @@ namespace mfront {
     /*!
      * assignement operator (disabled)
      */
-    NonLinearSystemSolverFactory&
-    operator=(const NonLinearSystemSolverFactory&);
+    NonLinearSystemSolverFactory& operator=(
+        const NonLinearSystemSolverFactory&);
     //! all registred constructors
-    std::map<std::string,constructor> constructors;
-  }; // end of struct NonLinearSystemSolverFactory
+    std::map<std::string, constructor> constructors;
+  };  // end of struct NonLinearSystemSolverFactory
 
-} // end of namespace mfront
+}  // end of namespace mfront
 
 #endif /* LIB_MFRONT_MFRONTNONLINEARSYSTEMSOLVERFACTORY_HXX */
-

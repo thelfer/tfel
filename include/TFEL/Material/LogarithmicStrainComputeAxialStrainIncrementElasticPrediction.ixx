@@ -1,5 +1,6 @@
 /*!
- * \file include/TFEL/Material/LogarithmicStrainComputeAxialStrainIncrementElasticPrediction.ixx
+ * \file
+ * include/TFEL/Material/LogarithmicStrainComputeAxialStrainIncrementElasticPrediction.ixx
  * \brief
  * \author Thomas Helfer
  * \date   14/05/2018
@@ -25,7 +26,8 @@ namespace tfel {
   namespace material {
 
     template <typename stress>
-    tfel::typetraits::base_type<stress> computeAxialStrainIncrementElasticPrediction(
+    tfel::typetraits::base_type<stress>
+    computeAxialStrainIncrementElasticPrediction(
         const stress D10,
         const stress D11,
         const stress D12,
@@ -52,8 +54,7 @@ namespace tfel {
       const auto& f = fdfv.first;
       const auto& df = fdfv.second;
       auto iter = index_type{};
-      while ((std::abs(f) > e) ||
-	     (std::abs(f) > e*df)){
+      while ((std::abs(f) > e) || (std::abs(f) > e * df)) {
         if (iter == iter_max) {
           tfel::raise<DivergenceException>(
               "computeAxialStrainIncrementElasticPrediction: "
@@ -71,4 +72,4 @@ namespace tfel {
 }  // end of namespace tfel
 
 #endif /* LIB_TFEL_MATERIAL_LOGARITHMICSTRAINCOMPUTEAXIALSTRAININCREMENTELASTICPREDICTION_IXX \
-          */
+        */

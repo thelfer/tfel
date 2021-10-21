@@ -1,6 +1,6 @@
 /*!
  * \file   mtest/src/CyranoMaterialProperty.cxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   10/08/2021
  * This project is publicly released under either the GNU GPL Licence
@@ -47,4 +47,4 @@ namespace mtest {
 
   CyranoMaterialProperty::~CyranoMaterialProperty() = default;
 
-} // end of namespace mtest
+}  // end of namespace mtest

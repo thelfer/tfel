@@ -1,21 +1,21 @@
-/*! 
+/*!
  * \file  mfront/include/MFront/UmatFiniteStrainMTestFileGenerator.hxx
  * \brief
  * \author Thomas Helfer
  * \brief 10 juil. 2013
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_MFRONT_UMATFINITESTRAINMTESTFILEGENERATOR_HXX
-#define LIB_MFRONT_UMATFINITESTRAINMTESTFILEGENERATOR_HXX 
+#define LIB_MFRONT_UMATFINITESTRAINMTESTFILEGENERATOR_HXX
 
-#include"MFront/MFrontConfig.hxx"
-#include"MFront/MTestFileGeneratorBase.hxx"
+#include "MFront/MFrontConfig.hxx"
+#include "MFront/MTestFileGeneratorBase.hxx"
 
 namespace mfront {
 
@@ -28,18 +28,20 @@ namespace mfront {
      * \param[in] b : behaviour
      */
     UmatFiniteStrainMTestFileGenerator(const std::string&,
-				      const std::string&,
-				      const std::string&);
+                                       const std::string&,
+                                       const std::string&);
     /*!
      * set the deformation gradient at the beginning of the time step
      * \param[in] F : deformation gradient
      */
-    virtual void setDeformationGradientAtTheBeginningOfTheStimeStep(const double* const);
+    virtual void setDeformationGradientAtTheBeginningOfTheStimeStep(
+        const double* const);
     /*!
      * set the deformation gradient at the end of the time step
      * \param[in] F : deformation gradient
      */
-    virtual void setDeformationGradientAtTheEndOfTheStimeStep(const double* const);
+    virtual void setDeformationGradientAtTheEndOfTheStimeStep(
+        const double* const);
     /*!
      * set stresses
      * \param[in] s : stresses
@@ -49,7 +51,8 @@ namespace mfront {
      * destructor
      */
     ~UmatFiniteStrainMTestFileGenerator() override;
-  protected:
+
+   protected:
     /*!
      * write behaviour declaration
      * \param[in] os : output stream
@@ -72,9 +75,8 @@ namespace mfront {
     double F1[36];
     //! stress increment
     double stress[6];
-  }; // end of struct UmatFiniteStrainMTestFileGenerator
+  };  // end of struct UmatFiniteStrainMTestFileGenerator
 
-} // end of namespace mfront
+}  // end of namespace mfront
 
 #endif /* LIB_MFRONT_UMATFINITESTRAINMTESTFILEGENERATOR_HXX */
-

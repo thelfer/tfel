@@ -177,7 +177,7 @@ namespace mfront {
                p->getAttribute<double>(VariableDescription::defaultValue);
            std::cout << pv << '\n';
          }});
-  } // end of MaterialPropertyQuery::treatParameterDefaultValue
+  }  // end of MaterialPropertyQuery::treatParameterDefaultValue
   void MaterialPropertyQuery::treatStandardQuery() {
     using namespace std;
     const auto& q = this->getCurrentCommandLineArgument();

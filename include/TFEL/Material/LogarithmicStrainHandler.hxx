@@ -642,7 +642,7 @@ namespace tfel {
 
   }  // end of namespace material
 
-}  // end of namespace material
+}  // namespace tfel
 
 #include "TFEL/Material/LogarithmicStrainHandler.ixx"
 

@@ -1,6 +1,6 @@
 /*!
  * \file   mfm-test-generator/src/AbstractTestCaseFactory.cxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   17/09/2019
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
@@ -30,7 +30,7 @@ namespace mfmtg {
     this->add("ClosedPipeTest", [](const TestCaseParameters& p) {
       return std::make_shared<ClosedPipeTest>(p);
     });
-  } // end of AbstractTestCaseFactory::AbstractTestCaseFactory
+  }  // end of AbstractTestCaseFactory::AbstractTestCaseFactory
 
   void AbstractTestCaseFactory::add(const std::string& n, const generator g) {
     if (!this->generators.insert({n, g}).second) {

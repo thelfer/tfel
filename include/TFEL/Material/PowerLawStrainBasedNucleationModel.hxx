@@ -99,8 +99,8 @@ namespace tfel {
      * \tparam real: numeric type
      *
      * \param[in] params: parameters
-     * \param[in] p: equivalent plastic strain at the beginning of the time step.
-     * \param[in] dp: increment of the equivalent plastic strain.
+     * \param[in] p: equivalent plastic strain at the beginning of the time
+     * step. \param[in] dp: increment of the equivalent plastic strain.
      * \param[in] theta: parameter of the theta method.
      */
     template <typename real>
@@ -124,8 +124,8 @@ namespace tfel {
      *
      * \param[in] params: parameters
      * \param[in] p: equivalent plastic strain
-     * \param[in] p: equivalent plastic strain at the beginning of the time step.
-     * \param[in] dp: increment of the equivalent plastic strain.
+     * \param[in] p: equivalent plastic strain at the beginning of the time
+     * step. \param[in] dp: increment of the equivalent plastic strain.
      * \param[in] theta: parameter of the theta method.
      */
     template <typename real>
@@ -135,7 +135,6 @@ namespace tfel {
         const real,
         const real,
         const real);
-
 
   }  // end of namespace material
 

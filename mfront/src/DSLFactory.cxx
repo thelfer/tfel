@@ -1,14 +1,14 @@
 /*!
  * \file   mfront/src/DSLFactory.cxx
- * \brief  
+ * \brief
  * \author Thomas Helfer
  * \date   09 nov 2006
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #include <vector>
@@ -21,18 +21,18 @@
 #include "MFront/DSLFactory.hxx"
 #include "MFront/DSLProxy.hxx"
 
-namespace mfront{
+namespace mfront {
 
   DSLFactory& DSLFactory::getDSLFactory() {
     static DSLFactory f;
     return f;
   }
 
-  DSLFactory::DSLFactory()= default;
+  DSLFactory::DSLFactory() = default;
 
   std::vector<std::string> DSLFactory::getRegistredDSLs(const bool b) const {
     auto res = std::vector<std::string>{};
-    for(const auto& p  :  this->creators){
+    for (const auto& p : this->creators) {
       res.push_back(p.first);
     }
     if (b) {
@@ -43,7 +43,7 @@ namespace mfront{
       }
     }
     return res;
-  } // end of DSLFactory::getRegistredDSLs()
+  }  // end of DSLFactory::getRegistredDSLs()
 
   void DSLFactory::registerDSLCreator(const std::string& n,
                                       const DSLFactory::DSLCreator f,
@@ -52,7 +52,7 @@ namespace mfront{
       tfel::raise("DSLFactory::registerDSLCreator: a DSL named '" + n +
                   "' has already been registred");
     };
-    if(!this->creators.insert({n, f}).second){
+    if (!this->creators.insert({n, f}).second) {
       raise();
     }
     for (const auto& as : this->aliases) {
@@ -61,15 +61,15 @@ namespace mfront{
         raise();
       }
     }
-    if(!this->descriptions.insert({n,f2}).second){
+    if (!this->descriptions.insert({n, f2}).second) {
       raise();
     }
-  } // end of DSLFactory::registerDSLCreator
+  }  // end of DSLFactory::registerDSLCreator
 
   void DSLFactory::registerDSLAlias(const std::string& n,
                                     const std::string& a) {
     auto raise = [](const std::string& m) {
-      tfel::raise("DSLFactory::registerAlias: "+m);
+      tfel::raise("DSLFactory::registerAlias: " + m);
     };
     if (this->creators.find(n) == this->creators.end()) {
       tfel::raise("no DSL named '" + n + "' registred");
@@ -106,7 +106,7 @@ namespace mfront{
     }
     auto c = p->second;
     return c();
-  } // end of DSLFactory::createNewDSL
+  }  // end of DSLFactory::createNewDSL
 
   std::string DSLFactory::getDSLDescription(const std::string& n) const {
     const auto rn = [this, &n]() -> const std::string& {
@@ -127,17 +127,17 @@ namespace mfront{
     }
     auto c = p->second;
     return c();
-  } // end of DSLFactory::getDSLDescription
+  }  // end of DSLFactory::getDSLDescription
 
   std::vector<std::string> DSLFactory::getRegistredParsers(const bool b) const {
     return this->getRegistredDSLs(b);
-  } // end of DSLFactory::getRegistredParsers()
+  }  // end of DSLFactory::getRegistredParsers()
 
   void DSLFactory::registerParserCreator(const std::string& n,
                                          const DSLFactory::ParserCreator f,
                                          const DSLFactory::DescriptionPtr f2) {
     this->registerDSLCreator(n, f, f2);
-  } // end of DSLFactory::registerParserCreator
+  }  // end of DSLFactory::registerParserCreator
 
   std::string DSLFactory::getParserDescription(const std::string& n) const {
     return this->getDSLDescription(n);
@@ -150,4 +150,4 @@ namespace mfront{
 
   DSLFactory::~DSLFactory() = default;
 
-} // end of namespace mfront
+}  // end of namespace mfront

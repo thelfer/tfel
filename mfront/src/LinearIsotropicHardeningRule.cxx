@@ -29,7 +29,7 @@ namespace mfront {
       using namespace tfel::glossary;
       constexpr const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
       // this shall be captured in gcc 4.7.2
-      auto get_mp = [&dsl, &bd, &fid, &id, &d,this](const std::string& n) {
+      auto get_mp = [&dsl, &bd, &fid, &id, &d, this](const std::string& n) {
         const auto ni = IsotropicHardeningRule::getVariableId(n, fid, id);
         auto mp = getBehaviourDescriptionMaterialProperty(dsl, n, d.at(n));
         declareParameterOrLocalVariable(bd, mp, "stress", ni);
@@ -133,7 +133,7 @@ namespace mfront {
         c += ";\n";
         c += "const auto " + dR + " = stress(0);\n";
       }
-      return c;       
+      return c;
     }  // end of LinearIsotropicHardeningRule::computeElasticLimitAndDerivative
 
     void LinearIsotropicHardeningRule::endTreatment(

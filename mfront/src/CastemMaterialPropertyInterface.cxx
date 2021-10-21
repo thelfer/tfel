@@ -40,7 +40,7 @@ namespace std {
     s << v;
     return s.str();
   }
-}
+}  // namespace std
 #endif /* defined __CYGWIN__ &&  (!defined _GLIBCXX_USE_C99) */
 
 namespace mfront {
@@ -333,8 +333,8 @@ namespace mfront {
         << "extern \"C\"{\n"
         << "#endif /* __cplusplus */\n\n";
 
-    writeVariablesNamesSymbol(out,name,mpd);
-    writeVariablesBoundsSymbols(out,name,mpd);
+    writeVariablesNamesSymbol(out, name, mpd);
+    writeVariablesBoundsSymbols(out, name, mpd);
     writeEntryPointSymbol(out, name);
     writeTFELVersionSymbol(out, name);
     writeInterfaceSymbol(out, name, "Castem");

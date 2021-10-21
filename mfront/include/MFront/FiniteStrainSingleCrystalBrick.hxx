@@ -1,22 +1,22 @@
-/*! 
+/*!
  * \file   FiniteStrainSingleCrystalBrick.hxx
  * \brief
  * \author Thomas Helfer
  * \date   October,20 2014
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_MFRONT_FINITESTRAINSINGLECRYSTALBRICK_HXX
-#define LIB_MFRONT_FINITESTRAINSINGLECRYSTALBRICK_HXX 
+#define LIB_MFRONT_FINITESTRAINSINGLECRYSTALBRICK_HXX
 
 #include "MFront/BehaviourBrickBase.hxx"
 
-namespace mfront{
+namespace mfront {
 
   // forward declaration
   struct AbstractBehaviourDSL;
@@ -47,8 +47,8 @@ namespace mfront{
     void endTreatment() const override;
     //! destructor
     ~FiniteStrainSingleCrystalBrick() override;
-  }; // end of struct FiniteStrainSingleCrystalBrick
+  };  // end of struct FiniteStrainSingleCrystalBrick
 
-} // end of namespace mfront
+}  // end of namespace mfront
 
 #endif /* LIB_MFRONT_FINITESTRAINSINGLECRYSTALBRICK_H */

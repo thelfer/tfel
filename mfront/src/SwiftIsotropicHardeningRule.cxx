@@ -22,15 +22,16 @@ namespace mfront {
   namespace bbrick {
 
     void SwiftIsotropicHardeningRule::initialize(BehaviourDescription& bd,
-                                                  AbstractBehaviourDSL& dsl,
-                                                  const std::string& fid,
-                                                  const std::string& id,
-                                                  const DataMap& d) {
+                                                 AbstractBehaviourDSL& dsl,
+                                                 const std::string& fid,
+                                                 const std::string& id,
+                                                 const DataMap& d) {
       using namespace tfel::glossary;
       constexpr const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
       // this shall be captured in gcc 4.7.2
-      auto get_mp = [&dsl, &bd, &fid, &id, &d, this](
-          const std::string& mpn, const std::string& t, const std::string& vn) {
+      auto get_mp = [&dsl, &bd, &fid, &id, &d, this](const std::string& mpn,
+                                                     const std::string& t,
+                                                     const std::string& vn) {
         if (d.count(mpn) == 0) {
           tfel::raise(
               "SwiftIsotropicHardeningRule::initialize: "
@@ -87,8 +88,9 @@ namespace mfront {
       const auto p0n = IsotropicHardeningRule::getVariableId("p0", fid, id);
       const auto nn = IsotropicHardeningRule::getVariableId("E", fid, id);
       const auto pn = "p" + fid;
-      auto c = "const auto " + R + " = (this->" + pn + "+(this->theta)*(this->d" + pn + ")>this->" +
-           p0n + ") ? (this->" + R0n + ")*";
+      auto c = "const auto " + R + " = (this->" + pn +
+               "+(this->theta)*(this->d" + pn + ")>this->" + p0n +
+               ") ? (this->" + R0n + ")*";
       c += "pow((this->" + pn + "+(this->theta)*(this->d" + pn + ")+this->" +
            p0n + ")/(this->" + p0n + "),this->" + nn + ") : this->" + R0n +
            ";\n";
@@ -103,8 +105,9 @@ namespace mfront {
       const auto p0n = IsotropicHardeningRule::getVariableId("p0", fid, id);
       const auto nn = IsotropicHardeningRule::getVariableId("E", fid, id);
       const auto pn = "p" + fid;
-      auto c = "const auto " + R + " = (this->" + pn + "+(this->theta)*(this->d" + pn + ")>this->" +
-           p0n + ") ? (this->" + R0n + ")*";
+      auto c = "const auto " + R + " = (this->" + pn +
+               "+(this->theta)*(this->d" + pn + ")>this->" + p0n +
+               ") ? (this->" + R0n + ")*";
       c += "pow((this->" + pn + "+(this->theta)*(this->d" + pn + ")+this->" +
            p0n + ")/(this->" + p0n + "),this->" + nn + ") : this->" + R0n +
            ";\n";

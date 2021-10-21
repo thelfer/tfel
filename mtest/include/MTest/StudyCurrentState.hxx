@@ -1,41 +1,40 @@
 /*!
  * \file   StudyCurrentState.hxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   11 nov. 2015
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_MTEST_STUDYCURRENTSTATE_HXX
 #define LIB_MTEST_STUDYCURRENTSTATE_HXX
 
-#include<map>
-#include<string>
-#include<memory>
+#include <map>
+#include <string>
+#include <memory>
 
-#include"TFEL/Config/TFELConfig.hxx"
-#include"TFEL/Math/vector.hxx"
-#include"MTest/Config.hxx"
-#include"MTest/Types.hxx"
-#include"MTest/StudyParameter.hxx"
+#include "TFEL/Config/TFELConfig.hxx"
+#include "TFEL/Math/vector.hxx"
+#include "MTest/Config.hxx"
+#include "MTest/Types.hxx"
+#include "MTest/StudyParameter.hxx"
 
-namespace mtest{
+namespace mtest {
 
   // forward declaration
   struct Evolution;
   // forward declaration
   struct StructureCurrentState;
-  
+
   /*!
    * structure describing the current state of a study
    */
-  struct MTEST_VISIBILITY_EXPORT StudyCurrentState
-  {
+  struct MTEST_VISIBILITY_EXPORT StudyCurrentState {
     //! a simple alias
     using size_type = tfel::math::vector<real>::size_type;
     //! default constructor
@@ -45,7 +44,7 @@ namespace mtest{
     StudyCurrentState& operator=(const StudyCurrentState&);
     StudyCurrentState& operator=(StudyCurrentState&&);
     ~StudyCurrentState();
-    // vector of unknows at 
+    // vector of unknows at
     // the beginning of the
     // previous time step.
     tfel::math::vector<real> u_1;
@@ -65,7 +64,7 @@ namespace mtest{
     // number of sub-steppings so far
     unsigned int subSteps = 0u;
     // previous time step
-    real dt_1 = real{};    
+    real dt_1 = real{};
     /*!
      * \brief allocate memory
      * \param[out] psz: problem size
@@ -85,15 +84,14 @@ namespace mtest{
     /*!
      * \return the state associated with a structure
      * \param[in] n: structure name
-     */ 
-    StructureCurrentState&
-    getStructureCurrentState(const std::string&);
+     */
+    StructureCurrentState& getStructureCurrentState(const std::string&);
     /*!
      * \return the state associated with a structure
      * \param[in] n: structure name
-     */ 
-    const StructureCurrentState&
-    getStructureCurrentState(const std::string&) const;
+     */
+    const StructureCurrentState& getStructureCurrentState(
+        const std::string&) const;
     /*!
      * \param[in] n: parameter name
      */
@@ -106,7 +104,7 @@ namespace mtest{
      * \note an exception is thrown if no data of the specified name
      * is found or if the object type has not the requested type
      */
-    template<typename T>
+    template <typename T>
     bool checkParameterType(const std::string&) const;
     /*!
      * \return the object holded by the study parameter with the
@@ -117,8 +115,8 @@ namespace mtest{
      * \note an exception is thrown if no data of the specified name
      * is found or if the object type has not the requested type
      */
-    template<typename T>
-    T& getParameter(const std::string&,const bool = false);
+    template <typename T>
+    T& getParameter(const std::string&, const bool = false);
     /*!
      * \return the object holded by the study parameter with the
      * specified name
@@ -127,7 +125,7 @@ namespace mtest{
      * \note an exception is thrown if no data of the specified name
      * is found or if the object type has not the requested type
      */
-    template<typename T>
+    template <typename T>
     const T& getParameter(const std::string&) const;
     /*!
      * \brief set a parameter
@@ -137,8 +135,8 @@ namespace mtest{
      * \note an exception is thrown if a data of the specified name
      * is found
      */
-    template<typename T>
-    T& setParameter(const std::string&,const T&);
+    template <typename T>
+    T& setParameter(const std::string&, const T&);
     /*!
      * \param[in] n : name of the evolution
      */
@@ -148,8 +146,7 @@ namespace mtest{
      * \param[in] n : name of the evolution
      * \param[in] e : evolution
      */
-    void addEvolution(const std::string&,
-		      std::shared_ptr<Evolution>);
+    void addEvolution(const std::string&, std::shared_ptr<Evolution>);
     /*!
      * \return the evolution with the given name
      * \param[in] n  : name of the evolution
@@ -160,39 +157,39 @@ namespace mtest{
      * \param[in] n  : name of the evolution
      */
     const Evolution& getEvolution(const std::string&) const;
-  protected:
+
+   protected:
     /*!
      * \brief throw an exception stating that no parameter with the
      * given name has been found
      * \param[in] n: parameter name
      */
-    TFEL_NORETURN static void
-    throwUnknownParameterException(const std::string&);
+    TFEL_NORETURN static void throwUnknownParameterException(
+        const std::string&);
     /*!
      * \brief throw an exception stating that a parameter with the
      * given name has been found
      * \param[in] n: parameter name
      */
-    TFEL_NORETURN static void
-    throwAlreadyDeclaredParameterException(const std::string&);
+    TFEL_NORETURN static void throwAlreadyDeclaredParameterException(
+        const std::string&);
     /*!
      * study parameters
      */
-    std::map<std::string,StudyParameter> parameters;
+    std::map<std::string, StudyParameter> parameters;
     /*!
      * current state of the structures indexed by the structure's
      * names
      */
-    std::map<std::string,
-	     std::shared_ptr<StructureCurrentState>> s;
+    std::map<std::string, std::shared_ptr<StructureCurrentState>> s;
     /*!
      * evolutions
      */
-    std::map<std::string,std::shared_ptr<Evolution>> evs;
-  }; // end of struct StudyCurrentState
-    
-} // end of namespace mtest
+    std::map<std::string, std::shared_ptr<Evolution>> evs;
+  };  // end of struct StudyCurrentState
 
-#include"MTest/StudyCurrentState.ixx"
+}  // end of namespace mtest
+
+#include "MTest/StudyCurrentState.ixx"
 
 #endif /* LIB_MTEST_STUDYCURRENTSTATE_HXX */

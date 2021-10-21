@@ -183,7 +183,7 @@ namespace tfel {
       Data& operator=(const Data&);
       //! destructor
       ~Data();
-    }; // end of struct Data
+    };  // end of struct Data
 
     //! comparison operator
     TFELUTILITIES_VISIBILITY_EXPORT bool operator==(const Data&, const Data&);

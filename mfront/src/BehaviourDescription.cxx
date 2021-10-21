@@ -326,8 +326,8 @@ namespace mfront {
       }
     };
     auto assign_if = [&check, &a, &b, &found, &bn](
-        const VariableDescription& v1, const VariableDescription& v2,
-        const bool no_inc) {
+                         const VariableDescription& v1,
+                         const VariableDescription& v2, const bool no_inc) {
       const auto block_name = [&v1, &v2, &no_inc] {
         if (no_inc) {
           return "d" + v1.name + "_d" + v2.name + "1";
@@ -1835,8 +1835,9 @@ namespace mfront {
     if (this->hypotheses.empty()) {
       if ((this->stypeIsDefined) &&
           (this->getSymmetryType() == mfront::ORTHOTROPIC) &&
-          (this->oacIsDefined) && (this->getOrthotropicAxesConvention() ==
-                                   OrthotropicAxesConvention::PLATE)) {
+          (this->oacIsDefined) &&
+          (this->getOrthotropicAxesConvention() ==
+           OrthotropicAxesConvention::PLATE)) {
         for (const auto h : mh) {
           throw_if((h != ModellingHypothesis::TRIDIMENSIONAL) &&
                        (h != ModellingHypothesis::PLANESTRESS) &&
@@ -2348,14 +2349,16 @@ namespace mfront {
         &BehaviourData::
             declareExternalStateVariableProbablyUnusableInPurelyImplicitResolution;
     this->callBehaviourData(h, m, n, true);
-  }  // end of declareExternalStateVariableProbablyUnusableInPurelyImplicitResolution
+  }  // end of
+     // declareExternalStateVariableProbablyUnusableInPurelyImplicitResolution
 
   void BehaviourDescription::setUsableInPurelyImplicitResolution(
       const Hypothesis h, const bool b) {
     void (BehaviourData::*m)(const bool) =
         &BehaviourData::setUsableInPurelyImplicitResolution;
     this->callBehaviourData(h, m, b, true);
-  }  // end of declareExternalStateVariableProbablyUnusableInPurelyImplicitResolution
+  }  // end of
+     // declareExternalStateVariableProbablyUnusableInPurelyImplicitResolution
 
   bool BehaviourDescription::isMemberUsedInCodeBlocks(
       const Hypothesis h, const std::string& v) const {
@@ -2961,7 +2964,7 @@ namespace mfront {
                    "BehaviourDescription::setStrainMeasure: "
                    "strain measure already defined");
     this->strainMeasure = sm;
-  } // end of setStrainMeasure
+  }  // end of setStrainMeasure
 
   void BehaviourDescription::setSaveStrainMeasure(const bool b) {
     constexpr auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
@@ -2978,7 +2981,8 @@ namespace mfront {
     v.setGlossaryName(tfel::glossary::Glossary::StrainMeasure);
     this->addAuxiliaryStateVariable(uh, v, BehaviourData::UNREGISTRED);
     CodeBlock save_strain;
-    save_strain.code += "this->saved_strain_measure = this->eto + this->deto;\n";
+    save_strain.code +=
+        "this->saved_strain_measure = this->eto + this->deto;\n";
     this->setCode(uh, BehaviourData::UpdateAuxiliaryStateVariables, save_strain,
                   BehaviourData::CREATEORAPPEND, BehaviourData::AT_BEGINNING);
   }  // end of setSaveStrainMeasure
@@ -3090,15 +3094,15 @@ namespace mfront {
     const auto& themps = this->getThermalExpansionCoefficients();
     auto thempds = std::vector<MaterialPropertyDescription>{themps.size()};
     if (themps.size() == 1u) {
-      thempds[0] =
-          buildMaterialPropertyDescription(themps[0], *this, "ThermalExpansion");
+      thempds[0] = buildMaterialPropertyDescription(themps[0], *this,
+                                                    "ThermalExpansion");
     } else if (themps.size() == 3u) {
       thempds[0] = buildMaterialPropertyDescription(themps[0], *this,
-                                                   "ThermalExpansion1");
+                                                    "ThermalExpansion1");
       thempds[1] = buildMaterialPropertyDescription(themps[1], *this,
-                                                   "ThermalExpansion2");
+                                                    "ThermalExpansion2");
       thempds[2] = buildMaterialPropertyDescription(themps[2], *this,
-                                                   "ThermalExpansion3");
+                                                    "ThermalExpansion3");
     } else {
       tfel::raise(
           "BehaviourDescription::getThermalExpansionCoefficientsDescriptions: "
@@ -3151,12 +3155,12 @@ namespace mfront {
     }
   }  // end of checkIsStrictlyNegative
 
-  std::string getParametersFileName(const BehaviourDescription& bd){
+  std::string getParametersFileName(const BehaviourDescription& bd) {
     return bd.getClassName() + "-parameters.txt";
   }  // end of getParametersFileName
 
   std::string getParametersFileName(const BehaviourDescription& bd,
-                                   const BehaviourDescription::Hypothesis h) {
+                                    const BehaviourDescription::Hypothesis h) {
     const auto hn = BehaviourDescription::ModellingHypothesis::toString(h);
     return bd.getClassName() + hn + "-parameters.txt";
   }  // end of getParametersFileName

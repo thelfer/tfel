@@ -1,30 +1,27 @@
 /*!
  * \file   tfel-doc/include/TFEL/Utilities/GeneratorOptions.hxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   21 août 2015
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_TFEL_UTILITIES_GENERATOROPTIONS_HXX
 #define LIB_TFEL_UTILITIES_GENERATOROPTIONS_HXX
 
-namespace tfel
-{
+namespace tfel {
 
-  namespace utilities
-  {
+  namespace utilities {
 
     /*!
      * a structure holding generator options
      */
-    struct GeneratorOptions
-    {
+    struct GeneratorOptions {
       //! install path (i.e. where to find the tests files)
       std::string prefix;
       //! basename where individual files shall be created (used if
@@ -36,11 +33,10 @@ namespace tfel
       bool standAlone = true;
       //! generate one output file by category
       bool split = false;
-    }; // end of struct GeneratorOptions
-    
-  } // end of namespace utilities
+    };  // end of struct GeneratorOptions
 
-} // end of namespace tfel
+  }  // end of namespace utilities
 
+}  // end of namespace tfel
 
 #endif /* LIB_TFEL_UTILITIES_GENERATOROPTIONS_HXX */

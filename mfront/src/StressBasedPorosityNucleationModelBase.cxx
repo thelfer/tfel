@@ -1,6 +1,6 @@
 /*!
  * \file   mfront/src/StressBasedPorosityNucleationModelBase.cxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   05/04/2020
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
@@ -60,7 +60,8 @@ namespace mfront {
           d.count("fmax") == 0,
           "ChuNeedleman1980StressBasedPorosityNucleationModel::initialize: "
           "material property 'fmax' is not defined");
-      this->fmax = getBehaviourDescriptionMaterialProperty(dsl, "fmax", d.at("fmax"));
+      this->fmax =
+          getBehaviourDescriptionMaterialProperty(dsl, "fmax", d.at("fmax"));
       declareParameterOrLocalVariable(bd, this->fmax, "real", fmax_n);
       // porosity factor
       const auto An_n = PorosityNucleationModel::getVariableId("An", id);
@@ -89,7 +90,8 @@ namespace mfront {
       CodeBlock init;
       for (const auto& mc : this->getMaterialCoefficientDescriptions()) {
         const auto mc_n = PorosityNucleationModel::getVariableId(mc.name, id);
-        init.code += "this->" + parameters + "." + mc.name + " = this->" + mc_n + ";\n";
+        init.code +=
+            "this->" + parameters + "." + mc.name + " = this->" + mc_n + ";\n";
       }
       init.code += generateMaterialPropertyInitializationCode(dsl, bd, fmax_n,
                                                               this->fmax);
@@ -109,7 +111,7 @@ namespace mfront {
             v += " + ";
           }
           v += "this->p" + flow.first + " + ";
-          v += theta+" * std::max(this->dp" + flow.first + ", real(0))";
+          v += theta + " * std::max(this->dp" + flow.first + ", real(0))";
           first = false;
         }
         return v;
@@ -217,7 +219,7 @@ namespace mfront {
             v += " + ";
           }
           v += "this->p" + flow.first + " + ";
-          v += theta+" * std::max(this->dp" + flow.first + ", real(0))";
+          v += theta + " * std::max(this->dp" + flow.first + ", real(0))";
           first = false;
         }
         return v;
@@ -240,8 +242,8 @@ namespace mfront {
       c += "const auto " + An_n + " = ";
       c += "compute" + mn + "PorosityRateFactor<StressStensor>" +  //
            "(this->" + parameters + ", this->sig, " + p + ");\n";
-      c += "this->dfn" + id + " = std::min(" + An_n + " * (" + dp + "), this->" +
-           fmax_n + " - this->fn);\n";
+      c += "this->dfn" + id + " = std::min(" + An_n + " * (" + dp +
+           "), this->" + fmax_n + " - this->fn);\n";
       c += mfront::StandardElastoViscoPlasticityBrick::
           nextEstimateOfThePorosityIncrement;
       c += " += this->dfn" + id + ";\n";
@@ -255,4 +257,3 @@ namespace mfront {
   }  // end of namespace bbrick
 
 }  // end of namespace mfront
-

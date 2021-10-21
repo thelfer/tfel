@@ -371,8 +371,8 @@ namespace mfront {
 
   void BehaviourQuery::treatStandardQuery() {
     using namespace tfel::utilities;
-    using tfel::material::ModellingHypothesis;
     using std::cout;
+    using tfel::material::ModellingHypothesis;
     const auto& q = this->getCurrentCommandLineArgument();
     const auto& qn = q.as_string();
     if (qn == "--author") {
@@ -808,14 +808,15 @@ namespace mfront {
              cout << '\n';
            }});
     } else if (qn == "--code-blocks") {
-      this->queries.push_back(
-          {"code-blocks", [](const FileDescription&,
-                            const BehaviourDescription& d, const Hypothesis h) {
-             const auto& names = d.getBehaviourData(h).getCodeBlockNames();
-             for (const auto& n : names) {
-               cout << "- " << n << '\n';
-             }
-           }});
+      this->queries.push_back({"code-blocks", [](const FileDescription&,
+                                                 const BehaviourDescription& d,
+                                                 const Hypothesis h) {
+                                 const auto& names =
+                                     d.getBehaviourData(h).getCodeBlockNames();
+                                 for (const auto& n : names) {
+                                   cout << "- " << n << '\n';
+                                 }
+                               }});
     } else if (qn == "--parameters-file") {
       this->queries.push_back(
           {"parameters-file",
@@ -1271,4 +1272,3 @@ namespace mfront {
   BehaviourQuery::~BehaviourQuery() = default;
 
 }  // end of namespace mfront
-

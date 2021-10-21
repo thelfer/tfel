@@ -1,35 +1,33 @@
 /*!
  * \file   tests/Utilities/UnicodeSupportTest.cxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   23 janv. 2017
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifdef NDEBUG
 #undef NDEBUG
 #endif
 
-#include<string>
-#include<cstring>
-#include<cassert>
-#include<cstdlib>
-#include<sstream>
-#include<iostream>
+#include <string>
+#include <cstring>
+#include <cassert>
+#include <cstdlib>
+#include <sstream>
+#include <iostream>
 
-#include"TFEL/Tests/TestCase.hxx"
-#include"TFEL/Tests/TestProxy.hxx"
-#include"TFEL/Tests/TestManager.hxx"
-#include"TFEL/UnicodeSupport/UnicodeSupport.hxx"
+#include "TFEL/Tests/TestCase.hxx"
+#include "TFEL/Tests/TestProxy.hxx"
+#include "TFEL/Tests/TestManager.hxx"
+#include "TFEL/UnicodeSupport/UnicodeSupport.hxx"
 
-struct UnicodeSupportTest final
-  : public tfel::tests::TestCase
-{
+struct UnicodeSupportTest final : public tfel::tests::TestCase {
   UnicodeSupportTest()
       : tfel::tests::TestCase("TFEL/UnicodeSupport", "UnicodeSupportTest") {
   }  // end of MyTest
@@ -38,8 +36,8 @@ struct UnicodeSupportTest final
     this->test2();
     return this->result;
   }  // end of execute()
-private:
-  void test1(){
+ private:
+  void test1() {
     using namespace tfel::unicode;
     for (const auto& ucd : getSupportedUnicodeCharactersDescriptions()) {
       TFEL_TESTS_ASSERT(getMangledString(ucd.uc) == ucd.m);
@@ -54,7 +52,7 @@ private:
   };
 };
 
-TFEL_TESTS_GENERATE_PROXY(UnicodeSupportTest,"UnicodeSupport");
+TFEL_TESTS_GENERATE_PROXY(UnicodeSupportTest, "UnicodeSupport");
 
 int main() {
   auto& m = tfel::tests::TestManager::getTestManager();

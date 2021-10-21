@@ -191,7 +191,7 @@ namespace mfront {
       } else if (e.first == "inelastic_flow") {
         auto append_flow = [this, &iff, getDataStructure, raise,
                             &save_individual_porosity_increase](
-            const Data& ifd, const size_t msize) {
+                               const Data& ifd, const size_t msize) {
           const auto ds = getDataStructure("inelatic_flow", ifd);
           auto iflow = iff.generate(ds.name);
           auto data = ds.data;
@@ -306,7 +306,8 @@ namespace mfront {
       } else if (ped.first == "nucleation_model") {
         auto append_nucleation_model = [this, &nmf, getDataStructure, raise,
                                         &save_individual_porosity_increase](
-            const Data& nmd, const size_t msize) {
+                                           const Data& nmd,
+                                           const size_t msize) {
           const auto ds = getDataStructure("nucleation_model", nmd);
           auto nm = nmf.generate(ds.name);
           auto data = ds.data;
@@ -458,7 +459,7 @@ namespace mfront {
         }
         this->staggered_scheme_parameters.maximum_number_of_iterations =
             static_cast<unsigned int>(i);
-      } else if (p.first == "acceleration_algorithm"){
+      } else if (p.first == "acceleration_algorithm") {
         if (!p.second.is<std::string>()) {
           raise(
               "invalid type for the `acceleration_algorithm`"
@@ -917,7 +918,8 @@ namespace mfront {
            << " ) * ( this->" << porosityUpperBound << ")){\n"
            << nextEstimateOfThePorosityIncrement << " = "
            << "(this->" << currentEstimateOfThePorosityIncrement << " + (this->"
-           << porosityUpperBound << " - this->f))/2;\n"
+           << porosityUpperBound
+           << " - this->f))/2;\n"
            // Treat the case when the newly computed porosity is negative
            //
            // The maximum allowed increment is the opposite of the initial

@@ -25,14 +25,17 @@ namespace tfel {
     template <typename StressStensor>
     std::ostream& operator<<(
         std::ostream& os,
-        const __StressCriterionName__StressCriterionParameters<StressStensor>& p) {
+        const __StressCriterionName__StressCriterionParameters<StressStensor>&
+            p) {
       return os;
     }  // end of operator <<
 
     template <typename StressStensor>
-    __StressCriterionName__StressType<StressStensor> compute__StressCriterionName__Stress(
+    __StressCriterionName__StressType<StressStensor>
+    compute__StressCriterionName__Stress(
         const StressStensor& sig,
-        const __StressCriterionName__StressCriterionParameters<StressStensor>& p,
+        const __StressCriterionName__StressCriterionParameters<StressStensor>&
+            p,
         const __StressCriterionName__StressType<StressStensor> seps) {
       using stress = __StressCriterionName__StressType<StressStensor>;
       using real = __StressCriterionName__BaseType<StressStensor>;
@@ -44,7 +47,8 @@ namespace tfel {
                __StressCriterionName__StressNormalType<StressStensor>>
     compute__StressCriterionName__StressNormal(
         const StressStensor& sig,
-        const __StressCriterionName__StressCriterionParameters<StressStensor>& p,
+        const __StressCriterionName__StressCriterionParameters<StressStensor>&
+            p,
         const __StressCriterionName__StressType<StressStensor> seps) {
       constexpr const auto N = tfel::math::StensorTraits<StressStensor>::dime;
       using stress = __StressCriterionName__StressType<StressStensor>;
@@ -60,14 +64,16 @@ namespace tfel {
                __StressCriterionName__StressSecondDerivativeType<StressStensor>>
     compute__StressCriterionName__StressSecondDerivative(
         const StressStensor& sig,
-        const __StressCriterionName__StressCriterionParameters<StressStensor>& p,
+        const __StressCriterionName__StressCriterionParameters<StressStensor>&
+            p,
         const __StressCriterionName__StressType<StressStensor> seps) {
       constexpr const auto N = tfel::math::StensorTraits<StressStensor>::dime;
       using stress = __StressCriterionName__StressType<StressStensor>;
       using real = __StressCriterionName__BaseType<StressStensor>;
       using istress = tfel::math::result_type<real, stress, tfel::math::OpDiv>;
       using normal = __StressCriterionName__StressNormalType<StressStensor>;
-      using normal_derivative = __StressCriterionName__StressSecondDerivativeType<StressStensor>;
+      using normal_derivative =
+          __StressCriterionName__StressSecondDerivativeType<StressStensor>;
       return {stress{}, normal{}, normal_derivative{}};
     }  // end of compute__StressCriterionName__SecondDerivative
 

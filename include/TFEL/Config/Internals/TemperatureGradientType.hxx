@@ -1,6 +1,6 @@
 /*!
  * \file   TemperatureGradientType.hxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   13/02/2019
  */
@@ -23,18 +23,17 @@ namespace tfel {
         typedef tfel::math::
             tvector<N, tfel::math::qt<tfel::math::TemperatureGradient, T>>
                 type;
-      }; // end of struct TemperatureGradientVectorType
+      };  // end of struct TemperatureGradientVectorType
 
       template <unsigned short N, typename T>
       struct TemperatureGradientType<N, T, false> {
         typedef tfel::math::tvector<N, T> type;
-      }; // end of struct TemperatureGradientVectorType
+      };  // end of struct TemperatureGradientVectorType
 
     }  // end of namespace internals
 
   }  // end of namespace config
 
 }  // end of namespace tfel
-
 
 #endif /* LIB_TFEL_CONFIG_INTERNALS_TEMPERATUREGRADIENTTYPE_HXX */

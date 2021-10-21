@@ -1,20 +1,20 @@
-/*! 
+/*!
  * \file  mfront/include/MFront/RungeKuttaFiniteStrainDSL.hxx
  * \brief
  * \author Thomas Helfer
  * \brief  17/10/2016
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_MFRONT_RUNGEKUTTAFINITESTRAINPARSER_HXX
-#define LIB_MFRONT_RUNGEKUTTAFINITESTRAINPARSER_HXX 
+#define LIB_MFRONT_RUNGEKUTTAFINITESTRAINPARSER_HXX
 
-#include"MFront/RungeKuttaDSLBase.hxx"
+#include "MFront/RungeKuttaDSLBase.hxx"
 
 namespace mfront {
 
@@ -37,9 +37,8 @@ namespace mfront {
         const MFrontTemplateGenerationOptions&) const override;
     //! \brief destructor
     ~RungeKuttaFiniteStrainDSL() noexcept override;
-  }; // end of struct RungeKuttaFiniteStrainDSL
+  };  // end of struct RungeKuttaFiniteStrainDSL
 
-} // end of namespace mfront
+}  // end of namespace mfront
 
 #endif /* LIB_MFRONT_RUNGEKUTTAFINITESTRAINPARSER_HXX */
-

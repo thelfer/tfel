@@ -106,16 +106,16 @@ namespace tfel {
         const auto dS = 2 * seq2 * x + 3 * p.q_1 * p.q_2 * fstar * pr * sh;
         return std::make_tuple(S, dS);
       };
-    const auto c = [&p, seps](const real S, const istress dx, const istress x,
-                            const size_type) {
-      // First criterion based on the value of the yield surface
-      if (std::abs(S) < p.eps) {
-        return true;
-      }
-      // Second criterion based on the stationnarity of the solution
-      // This criterion may become much more restrictive than the first one when
-      // the equivalent stress tends to zero.
-      //
+      const auto c = [&p, seps](const real S, const istress dx, const istress x,
+                                const size_type) {
+        // First criterion based on the value of the yield surface
+        if (std::abs(S) < p.eps) {
+          return true;
+        }
+        // Second criterion based on the stationnarity of the solution
+        // This criterion may become much more restrictive than the first one
+        // when the equivalent stress tends to zero.
+        //
         // d(1/y) = -dy/(y*y) => y*y*d(1/y) = -dy
         // so if I want |dy|<eps, |y*y*d(1/y)| must be lower than eps
         // Here, x is the inverse of the equivalent stress, so
@@ -246,10 +246,10 @@ namespace tfel {
           (-6. * s * iss - q1q2 * fstar * sh * id -  //
            3 * q1q2 * p.q_2 * (fstar / 2) * pr * iss * ch * id) *
           power<2>(iss);
-      const auto d2S_dss2 = ((6 * seq2 * iss) +
-                             (3 * q1q2 * fstar * pr) *  //
-                                 (2 * sh + 3 * p.q_2 * pr * (iss / 2) * ch)) *
-                            power<3>(iss);
+      const auto d2S_dss2 =
+          ((6 * seq2 * iss) + (3 * q1q2 * fstar * pr) *  //
+                                  (2 * sh + 3 * p.q_2 * pr * (iss / 2) * ch)) *
+          power<3>(iss);
       const auto dn_dsig =
           -idS_dss * (d2S_dsig2 + (d2S_dsigdss ^ n)) +  //
           power<2>(idS_dss) * (dS_dsig ^ (d2S_dsigdss + (d2S_dss2 * n)));

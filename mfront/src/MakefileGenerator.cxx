@@ -296,7 +296,7 @@ namespace mfront {
             break;
         }
         if (o.debugFlags) {
-            m << "$(shell " << tfel_config << " --debug-flags) ";
+          m << "$(shell " << tfel_config << " --debug-flags) ";
         }
       }
       if ((o.sys == "win32") || (o.sys == "cygwin")) {

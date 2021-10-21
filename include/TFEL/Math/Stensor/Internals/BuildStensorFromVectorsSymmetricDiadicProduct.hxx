@@ -46,9 +46,8 @@ namespace tfel {
                                              VectorNumType<VectorType2>,
                                              OpMult>::Result,
                 T>::cond,
-            void>::type exe(stensor<1u, T>& s,
-                            const VectorType& v1,
-                            const VectorType2& v2) {
+            void>::type
+        exe(stensor<1u, T>& s, const VectorType& v1, const VectorType2& v2) {
           s = {2 * v1(0) * v2(0), 2 * v1(1) * v2(1), 2 * v1(2) * v2(2)};
         }
       };
@@ -66,9 +65,8 @@ namespace tfel {
                                              VectorNumType<VectorType2>,
                                              OpMult>::Result,
                 T>::cond,
-            void>::type exe(stensor<2u, T>& s,
-                            const VectorType& v1,
-                            const VectorType2& v2) {
+            void>::type
+        exe(stensor<2u, T>& s, const VectorType& v1, const VectorType2& v2) {
           constexpr const auto cste = Cste<T>::sqrt2;
           s = {2 * v1(0) * v2(0), 2 * v1(1) * v2(1), 2 * v1(2) * v2(2),
                cste * (v1(0) * v2(1) + v2(0) * v1(1))};
@@ -88,9 +86,8 @@ namespace tfel {
                                              VectorNumType<VectorType2>,
                                              OpMult>::Result,
                 T>::cond,
-            void>::type exe(stensor<3u, T>& s,
-                            const VectorType& v1,
-                            const VectorType2& v2) {
+            void>::type
+        exe(stensor<3u, T>& s, const VectorType& v1, const VectorType2& v2) {
           constexpr const auto cste = Cste<T>::sqrt2;
           s = {2 * v1(0) * v2(0),
                2 * v1(1) * v2(1),
@@ -108,4 +105,4 @@ namespace tfel {
 }  // end of namespace tfel
 
 #endif /* LIB_TFEL_MATH_INTERNALS_BUILDSTENSORFROMVECTORSSYMMETRICDIADICPRODUCT_HXX \
-          */
+        */

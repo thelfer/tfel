@@ -79,7 +79,7 @@ namespace mfront {
     }
 #ifdef TFEL_APPEND_SUFFIX
     fn = root + "/share/doc/mfront-" TFEL_SUFFIX "/" + key + ".md";
-#else /* TFEL_APPEND_SUFFIX */
+#else  /* TFEL_APPEND_SUFFIX */
     fn = root + "/share/doc/mfront/" + key + ".md";
 #endif /* TFEL_APPEND_SUFFIX */
     desc.open(fn);
@@ -326,15 +326,13 @@ namespace mfront {
     this->registerNewCallBack(
         "--model", &MFront::treatModelIdentifier,
         "specify a model identifier (can be a regular expression)", true);
-    this->registerNewCallBack(
-        "--all-material-properties", &MFront::treatAllMaterialProperties,
-        "select all material properties", true);
-    this->registerNewCallBack(
-        "--all-behaviours", &MFront::treatAllBehaviours,
-        "select all behaviours", true);
-    this->registerNewCallBack(
-        "--all-models", &MFront::treatAllModels,
-        "select all models", true);
+    this->registerNewCallBack("--all-material-properties",
+                              &MFront::treatAllMaterialProperties,
+                              "select all material properties", true);
+    this->registerNewCallBack("--all-behaviours", &MFront::treatAllBehaviours,
+                              "select all behaviours", true);
+    this->registerNewCallBack("--all-models", &MFront::treatAllModels,
+                              "select all models", true);
 #endif /* MFRONT_HAVE_MADNEX */
     this->registerNewCallBack(
         "--help-commands", &MFront::treatHelpCommands,

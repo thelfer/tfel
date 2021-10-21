@@ -139,7 +139,8 @@ namespace mfront {
      * variables.
      */
     static const char* const allowsNewUserDefinedVariables;
-    //! \brief a boolean attribute telling if profiling information shall be collected
+    //! \brief a boolean attribute telling if profiling information shall be
+    //! collected
     static const char* const profiling;
     //! \brief algorithm used
     static const char* const algorithm;

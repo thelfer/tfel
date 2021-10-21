@@ -25,17 +25,18 @@ namespace tfel {
 
     //! a simple alias
     template <typename StressStensor>
-    using __StressCriterionName__StressType = tfel::math::StensorNumType<StressStensor>;
+    using __StressCriterionName__StressType =
+        tfel::math::StensorNumType<StressStensor>;
     //! a simple alias
     template <typename StressStensor>
     using __StressCriterionName__BaseType =
         tfel::typetraits::base_type<tfel::math::StensorNumType<StressStensor>>;
     //! a simple alias
     template <typename StressStensor>
-    using __StressCriterionName__InvertStressType =
-        tfel::math::result_type<__StressCriterionName__BaseType<StressStensor>,
-                                __StressCriterionName__StressType<StressStensor>,
-                                tfel::math::OpDiv>;
+    using __StressCriterionName__InvertStressType = tfel::math::result_type<
+        __StressCriterionName__BaseType<StressStensor>,
+        __StressCriterionName__StressType<StressStensor>,
+        tfel::math::OpDiv>;
     //! a simple alias
     template <typename StressStensor>
     using __StressCriterionName__StressNormalType =
@@ -49,8 +50,9 @@ namespace tfel {
     //! a simple alias
     template <typename StressStensor>
     using __StressCriterionName__StressSecondDerivativeType =
-        tfel::math::st2tost2<tfel::math::StensorTraits<StressStensor>::dime,
-                             __StressCriterionName__InvertStressType<StressStensor>>;
+        tfel::math::st2tost2<
+            tfel::math::StensorTraits<StressStensor>::dime,
+            __StressCriterionName__InvertStressType<StressStensor>>;
 
     /*!
      * \brief parameters of the __StressCriterionName__ criterion
@@ -71,7 +73,8 @@ namespace tfel {
      */
     template <typename StressStensor>
     std::ostream& operator<<(
-        std::ostream&, const __StressCriterionName__StressCriterionParameters<StressStensor>&);
+        std::ostream&,
+        const __StressCriterionName__StressCriterionParameters<StressStensor>&);
 
     /*!
      * \brief compute the __StressCriterionName__ yield stress
@@ -81,16 +84,16 @@ namespace tfel {
      * \param[in] seps: threshold for the equivalent stress.
      */
     template <typename StressStensor>
-    __StressCriterionName__StressType<StressStensor> compute__StressCriterionName__Stress(
+    __StressCriterionName__StressType<StressStensor>
+    compute__StressCriterionName__Stress(
         const StressStensor&,
         const __StressCriterionName__StressCriterionParameters<StressStensor>&,
         const __StressCriterionName__StressType<StressStensor>);
     /*!
-     * \brief compute the __StressCriterionName__ yield stress and the its first derivative
-     * \tparam StressStensor: type of the stress tensor
-     * \param[in] sig: stress tensor
-     * \param[in] p: parameters
-     * \param[in] seps: threshold for the equivalent stress.
+     * \brief compute the __StressCriterionName__ yield stress and the its first
+     * derivative \tparam StressStensor: type of the stress tensor \param[in]
+     * sig: stress tensor \param[in] p: parameters \param[in] seps: threshold
+     * for the equivalent stress.
      */
     template <typename StressStensor>
     std::tuple<__StressCriterionName__StressType<StressStensor>,
@@ -100,9 +103,8 @@ namespace tfel {
         const __StressCriterionName__StressCriterionParameters<StressStensor>&,
         const __StressCriterionName__StressType<StressStensor>);
     /*!
-     * \brief compute the __StressCriterionName__ yield stress and its first and second
-     * derivatives
-     * \tparam StressStensor: type of the stress tensor
+     * \brief compute the __StressCriterionName__ yield stress and its first and
+     * second derivatives \tparam StressStensor: type of the stress tensor
      * \param[in] sig: stress tensor
      * \param[in] p: parameters
      * \param[in] seps: threshold for the equivalent stress.

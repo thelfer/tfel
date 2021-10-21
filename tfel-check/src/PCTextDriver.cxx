@@ -60,7 +60,7 @@ namespace tfel {
       // format with 80 char width
       auto& os = this->getStream();
       os << std::setw(70) << std::left << std::setfill(' ') << msg
-        << std::setfill(' ') << std::right << std::setw(10);
+         << std::setfill(' ') << std::right << std::setw(10);
       setStreamColor(os, TerminalColors::Yellow);
       os << "[SKIPPED]";
       setStreamColor(os, TerminalColors::Reset);
@@ -79,9 +79,9 @@ namespace tfel {
       // format with 80 char width
       auto& os = this->getStream();
       os << std::setw(70) << std::left << std::setfill(' ') << msg
-        << std::setfill(' ') << std::right << std::setw(10);
+         << std::setfill(' ') << std::right << std::setw(10);
       if (success) {
-        setStreamColor(os,TerminalColors::Green);
+        setStreamColor(os, TerminalColors::Green);
       } else {
         setStreamColor(os, TerminalColors::Red);
       }

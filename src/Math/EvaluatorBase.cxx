@@ -97,32 +97,30 @@ namespace tfel {
         };
         auto res = std::vector<std::string>{};
         for (const auto& w : t) {
-	  auto replace_all = [](const std::string& s,
-				const char*const s1,
-				const char*const s2){
-	    auto r = std::string{};
-	    auto rs = std::string::size_type{};
-	    auto pos = std::string::size_type{};
-	    auto p = std::string::size_type{};
-	    const auto ls1 = std::strlen(s1);
-	    const auto ls2 = std::strlen(s2);
-	    if(ls1 != 0){
-	      p=s.find(s1,pos);
-	      while(p!=std::string::npos){
-		rs = r.size();
-		r.resize(rs+p-pos+ls2);
-		std::copy(&s[0]+pos,&s[0]+p,&r[0]+rs);
-		std::copy(s2,s2+ls2,&r[0]+rs+p-pos);
-		pos=p+ls1;
-		p=s.find(s1,pos);
-	      }
-	    }
-	    rs = r.size();
-	    r.resize(rs+s.size()-pos);
-	    std::copy(&s[0]+pos,&s[0]+s.size(),
-		      &r[0]+rs);
-	    return r;
-	  };
+          auto replace_all = [](const std::string& s, const char* const s1,
+                                const char* const s2) {
+            auto r = std::string{};
+            auto rs = std::string::size_type{};
+            auto pos = std::string::size_type{};
+            auto p = std::string::size_type{};
+            const auto ls1 = std::strlen(s1);
+            const auto ls2 = std::strlen(s2);
+            if (ls1 != 0) {
+              p = s.find(s1, pos);
+              while (p != std::string::npos) {
+                rs = r.size();
+                r.resize(rs + p - pos + ls2);
+                std::copy(&s[0] + pos, &s[0] + p, &r[0] + rs);
+                std::copy(s2, s2 + ls2, &r[0] + rs + p - pos);
+                pos = p + ls1;
+                p = s.find(s1, pos);
+              }
+            }
+            rs = r.size();
+            r.resize(rs + s.size() - pos);
+            std::copy(&s[0] + pos, &s[0] + s.size(), &r[0] + rs);
+            return r;
+          };
           const auto w2 = replace_all(w, "\u22C5", "*");
           auto b = w2.begin();
           auto p2 = w2.begin();

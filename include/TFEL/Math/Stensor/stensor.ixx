@@ -1116,14 +1116,17 @@ namespace tfel {
                                                                  const T2& U) {
       const auto J = det(U);
       const auto iU = invert(U);
-      return {J * (s[1] * iU[3] * iU[3] + 2 * s[3] * iU[0] * iU[3] +
+      return {J *
+                  (s[1] * iU[3] * iU[3] + 2 * s[3] * iU[0] * iU[3] +
                    2 * s[0] * iU[0] * iU[0]) /
                   2,
-              J * (s[0] * iU[3] * iU[3] + 2 * s[3] * iU[1] * iU[3] +
+              J *
+                  (s[0] * iU[3] * iU[3] + 2 * s[3] * iU[1] * iU[3] +
                    2 * s[1] * iU[1] * iU[1]) /
                   2,
               J * s[2] * iU[2] * iU[2],
-              J * (s[3] * iU[3] * iU[3] +
+              J *
+                  (s[3] * iU[3] * iU[3] +
                    (2 * s[1] * iU[1] + 2 * s[0] * iU[0]) * iU[3] +
                    2 * s[3] * iU[0] * iU[1]) /
                   2};
@@ -1145,35 +1148,41 @@ namespace tfel {
       const auto J = det(U);
       const auto iU = invert(U);
       return {
-          J * (s[2] * iU[4] * iU[4] +
+          J *
+              (s[2] * iU[4] * iU[4] +
                (cste * s[5] * iU[3] + 2 * s[4] * iU[0]) * iU[4] +
                s[1] * iU[3] * iU[3] + 2 * s[3] * iU[0] * iU[3] +
                2 * s[0] * iU[0] * iU[0]) /
               2,
-          J * (s[2] * iU[5] * iU[5] +
+          J *
+              (s[2] * iU[5] * iU[5] +
                (cste * s[4] * iU[3] + 2 * s[5] * iU[1]) * iU[5] +
                s[0] * iU[3] * iU[3] + 2 * s[3] * iU[1] * iU[3] +
                2 * s[1] * iU[1] * iU[1]) /
               2,
-          J * (s[1] * iU[5] * iU[5] +
+          J *
+              (s[1] * iU[5] * iU[5] +
                (cste * s[3] * iU[4] + 2 * s[5] * iU[2]) * iU[5] +
                s[0] * iU[4] * iU[4] + 2 * s[4] * iU[2] * iU[4] +
                2 * s[2] * iU[2] * iU[2]) /
               2,
-          J * ((cste * s[2] * iU[4] + s[5] * iU[3] + cste * s[4] * iU[0]) *
+          J *
+              ((cste * s[2] * iU[4] + s[5] * iU[3] + cste * s[4] * iU[0]) *
                    iU[5] +
                (s[4] * iU[3] + cste * s[5] * iU[1]) * iU[4] +
                s[3] * iU[3] * iU[3] +
                (2 * s[1] * iU[1] + 2 * s[0] * iU[0]) * iU[3] +
                2 * s[3] * iU[0] * iU[1]) /
               2,
-          J * ((s[5] * iU[4] + cste * s[1] * iU[3] + cste * s[3] * iU[0]) *
+          J *
+              ((s[5] * iU[4] + cste * s[1] * iU[3] + cste * s[3] * iU[0]) *
                    iU[5] +
                s[4] * iU[4] * iU[4] +
                (s[3] * iU[3] + 2 * s[2] * iU[2] + 2 * s[0] * iU[0]) * iU[4] +
                cste * s[5] * iU[2] * iU[3] + 2 * s[4] * iU[0] * iU[2]) /
               2,
-          J * (s[5] * iU[5] * iU[5] +
+          J *
+              (s[5] * iU[5] * iU[5] +
                (s[4] * iU[4] + s[3] * iU[3] + 2 * s[2] * iU[2] +
                 2 * s[1] * iU[1]) *
                    iU[5] +
@@ -1208,17 +1217,20 @@ namespace tfel {
     convertSecondPiolaKirchhoffStressToCorotationnalCauchyStress(const T& S,
                                                                  const T2& U) {
       const auto iJ = 1 / det(U);
-      return {iJ * (S[1] * U[3] * U[3] + 2 * S[3] * U[0] * U[3] +
-                    2 * S[0] * U[0] * U[0]) /
-                  2,
-              iJ * (S[0] * U[3] * U[3] + 2 * S[3] * U[1] * U[3] +
-                    2 * S[1] * U[1] * U[1]) /
-                  2,
-              iJ * S[2] * U[2] * U[2],
-              iJ * (S[3] * U[3] * U[3] +
-                    (2 * S[1] * U[1] + 2 * S[0] * U[0]) * U[3] +
-                    2 * S[3] * U[0] * U[1]) /
-                  2};
+      return {
+          iJ *
+              (S[1] * U[3] * U[3] + 2 * S[3] * U[0] * U[3] +
+               2 * S[0] * U[0] * U[0]) /
+              2,
+          iJ *
+              (S[0] * U[3] * U[3] + 2 * S[3] * U[1] * U[3] +
+               2 * S[1] * U[1] * U[1]) /
+              2,
+          iJ * S[2] * U[2] * U[2],
+          iJ *
+              (S[3] * U[3] * U[3] + (2 * S[1] * U[1] + 2 * S[0] * U[0]) * U[3] +
+               2 * S[3] * U[0] * U[1]) /
+              2};
     }
     template <typename T, typename T2>
     typename std::enable_if<
@@ -1235,30 +1247,35 @@ namespace tfel {
       constexpr const auto cste = Cste<real>::sqrt2;
       const auto iJ = 1 / det(U);
       return {
-          iJ * (S[2] * U[4] * U[4] +
-                (cste * S[5] * U[3] + 2 * S[4] * U[0]) * U[4] +
-                S[1] * U[3] * U[3] + 2 * S[3] * U[0] * U[3] +
-                2 * S[0] * U[0] * U[0]) /
+          iJ *
+              (S[2] * U[4] * U[4] +
+               (cste * S[5] * U[3] + 2 * S[4] * U[0]) * U[4] +
+               S[1] * U[3] * U[3] + 2 * S[3] * U[0] * U[3] +
+               2 * S[0] * U[0] * U[0]) /
               2,
-          iJ * (S[2] * U[5] * U[5] +
-                (cste * S[4] * U[3] + 2 * S[5] * U[1]) * U[5] +
-                S[0] * U[3] * U[3] + 2 * S[3] * U[1] * U[3] +
-                2 * S[1] * U[1] * U[1]) /
+          iJ *
+              (S[2] * U[5] * U[5] +
+               (cste * S[4] * U[3] + 2 * S[5] * U[1]) * U[5] +
+               S[0] * U[3] * U[3] + 2 * S[3] * U[1] * U[3] +
+               2 * S[1] * U[1] * U[1]) /
               2,
-          iJ * (S[1] * U[5] * U[5] +
-                (cste * S[3] * U[4] + 2 * S[5] * U[2]) * U[5] +
-                S[0] * U[4] * U[4] + 2 * S[4] * U[2] * U[4] +
-                2 * S[2] * U[2] * U[2]) /
+          iJ *
+              (S[1] * U[5] * U[5] +
+               (cste * S[3] * U[4] + 2 * S[5] * U[2]) * U[5] +
+               S[0] * U[4] * U[4] + 2 * S[4] * U[2] * U[4] +
+               2 * S[2] * U[2] * U[2]) /
               2,
-          iJ * ((cste * S[2] * U[4] + S[5] * U[3] + cste * S[4] * U[0]) * U[5] +
-                (S[4] * U[3] + cste * S[5] * U[1]) * U[4] + S[3] * U[3] * U[3] +
-                (2 * S[1] * U[1] + 2 * S[0] * U[0]) * U[3] +
-                2 * S[3] * U[0] * U[1]) /
+          iJ *
+              ((cste * S[2] * U[4] + S[5] * U[3] + cste * S[4] * U[0]) * U[5] +
+               (S[4] * U[3] + cste * S[5] * U[1]) * U[4] + S[3] * U[3] * U[3] +
+               (2 * S[1] * U[1] + 2 * S[0] * U[0]) * U[3] +
+               2 * S[3] * U[0] * U[1]) /
               2,
-          iJ * ((S[5] * U[4] + cste * S[1] * U[3] + cste * S[3] * U[0]) * U[5] +
-                S[4] * U[4] * U[4] +
-                (S[3] * U[3] + 2 * S[2] * U[2] + 2 * S[0] * U[0]) * U[4] +
-                cste * S[5] * U[2] * U[3] + 2 * S[4] * U[0] * U[2]) /
+          iJ *
+              ((S[5] * U[4] + cste * S[1] * U[3] + cste * S[3] * U[0]) * U[5] +
+               S[4] * U[4] * U[4] +
+               (S[3] * U[3] + 2 * S[2] * U[2] + 2 * S[0] * U[0]) * U[4] +
+               cste * S[5] * U[2] * U[3] + 2 * S[4] * U[0] * U[2]) /
               2,
           iJ *
               (S[5] * U[5] * U[5] +

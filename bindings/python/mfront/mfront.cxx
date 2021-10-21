@@ -49,7 +49,7 @@ namespace boost {
       const volatile mfront::BehaviourData* c) {
     return c;
   }
-}
+}  // namespace boost
 #endif /* _MSC_VER */
 
 void declareAbstractDSL();

@@ -517,13 +517,13 @@ namespace mfront {
                  "unsupported parameters array of type '" + p.type + "'");
         os << "MFRONT_SHAREDOBJ int " << n << "_" << p.getExternalName()
            << "_ParameterDefaultValue  = "
-            << mb.getIntegerParameterDefaultValue(h, p.name) << ";\n\n";
+           << mb.getIntegerParameterDefaultValue(h, p.name) << ";\n\n";
       } else if (p.type == "ushort") {
         throw_if(p.arraySize != 1u,
                  "unsupported parameters array of type '" + p.type + "'");
         os << "MFRONT_SHAREDOBJ unsigned short " << n << "_"
            << p.getExternalName() << "_ParameterDefaultValue  = "
-            << mb.getUnsignedShortParameterDefaultValue(h, p.name) << ";\n\n";
+           << mb.getUnsignedShortParameterDefaultValue(h, p.name) << ";\n\n";
       } else {
         const auto f = SupportedTypes::getTypeFlag(p.type);
         throw_if(f != SupportedTypes::SCALAR,
@@ -533,14 +533,14 @@ namespace mfront {
         if (p.arraySize == 1u) {
           os << "MFRONT_SHAREDOBJ double " << n << "_" << p.getExternalName()
              << "_ParameterDefaultValue"
-              << " = " << mb.getFloattingPointParameterDefaultValue(h, p.name)
-              << ";\n\n";
+             << " = " << mb.getFloattingPointParameterDefaultValue(h, p.name)
+             << ";\n\n";
         } else {
           for (unsigned short is = 0; is != p.arraySize; ++is) {
             os << "MFRONT_SHAREDOBJ double " << n << "_" << p.getExternalName()
                << "__" << is << "___ParameterDefaultValue = "
-                << mb.getFloattingPointParameterDefaultValue(h, p.name, is)
-                << ";\n\n";
+               << mb.getFloattingPointParameterDefaultValue(h, p.name, is)
+               << ";\n\n";
           }
         }
         os.precision(prec);
@@ -548,17 +548,15 @@ namespace mfront {
     }
   }  // end of writeParameterDefaultValueSymbols
 
-
   void SymbolsGenerator::writeBoundsSymbols(std::ostream& os,
                                             const StandardBehaviourInterface& i,
                                             const BehaviourDescription& mb,
                                             const std::string& name,
                                             const Hypothesis h) const {
-    
     const auto& d = mb.getBehaviourData(h);
     const auto n = this->getSymbolName(i, name, h);
     mfront::writeBoundsSymbols(os, n, d.getMaterialProperties());
-    mfront::writeBoundsSymbols(os, n,d.getPersistentVariables());
+    mfront::writeBoundsSymbols(os, n, d.getPersistentVariables());
     mfront::writeBoundsSymbols(os, n, d.getExternalStateVariables());
     mfront::writeBoundsSymbols(os, n, d.getParameters());
   }  // end of writeBoundsSymbols
@@ -569,7 +567,6 @@ namespace mfront {
       const BehaviourDescription& mb,
       const std::string& name,
       const Hypothesis h) const {
-    
     const auto& d = mb.getBehaviourData(h);
     const auto n = this->getSymbolName(i, name, h);
     mfront::writePhysicalBoundsSymbols(os, n, d.getMaterialProperties());

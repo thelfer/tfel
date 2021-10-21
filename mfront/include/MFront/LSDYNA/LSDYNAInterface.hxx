@@ -3,42 +3,41 @@
  * \brief  This file implements the LSDYNAInterface class.
  * \author Thomas Helfer
  * \date   28 Jul 2006
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_MFRONT_LSDYNA_CALL_HXX
-#define LIB_MFRONT_LSDYNA_CALL_HXX 
+#define LIB_MFRONT_LSDYNA_CALL_HXX
 
-#include<string>
-#include<vector>
-#include<limits>
-#include<algorithm>
-#include<type_traits>
+#include <string>
+#include <vector>
+#include <limits>
+#include <algorithm>
+#include <type_traits>
 
-#include"TFEL/Config/TFELTypes.hxx"
-#include"TFEL/Exception/TFELException.hxx"
-#include"TFEL/FSAlgorithm/copy.hxx"
+#include "TFEL/Config/TFELTypes.hxx"
+#include "TFEL/Exception/TFELException.hxx"
+#include "TFEL/FSAlgorithm/copy.hxx"
 
-#include"TFEL/Material/MechanicalBehaviourTraits.hxx"
-#include"TFEL/Material/MaterialException.hxx"
-#include"TFEL/Material/ModellingHypothesis.hxx"
+#include "TFEL/Material/MechanicalBehaviourTraits.hxx"
+#include "TFEL/Material/MaterialException.hxx"
+#include "TFEL/Material/ModellingHypothesis.hxx"
 
-#include"MFront/LSDYNA/LSDYNA.hxx"
-#include"MFront/LSDYNA/LSDYNAData.hxx"
-#include"MFront/LSDYNA/LSDYNAConfig.hxx"
-#include"MFront/LSDYNA/LSDYNATraits.hxx"
-#include"MFront/LSDYNA/LSDYNAException.hxx"
-#include"MFront/LSDYNA/LSDYNABehaviourHandler.hxx"
-#include"MFront/LSDYNA/LSDYNAInterfaceExceptions.hxx"
+#include "MFront/LSDYNA/LSDYNA.hxx"
+#include "MFront/LSDYNA/LSDYNAData.hxx"
+#include "MFront/LSDYNA/LSDYNAConfig.hxx"
+#include "MFront/LSDYNA/LSDYNATraits.hxx"
+#include "MFront/LSDYNA/LSDYNAException.hxx"
+#include "MFront/LSDYNA/LSDYNABehaviourHandler.hxx"
+#include "MFront/LSDYNA/LSDYNAInterfaceExceptions.hxx"
 
-namespace lsdyna
-{
-  
+namespace lsdyna {
+
   /*!
    * \class  LSDYNAInterface
    * \brief This class create an interface between a behaviour class
@@ -52,91 +51,79 @@ namespace lsdyna
    * duplication between two different finite strain strategies (to
    * reduce both compile-time and library size).
    */
-  template<tfel::material::ModellingHypothesis::Hypothesis H,
-	   template<tfel::material::ModellingHypothesis::Hypothesis,
-		    typename,bool> class Behaviour>
+  template <
+      tfel::material::ModellingHypothesis::Hypothesis H,
+      template <tfel::material::ModellingHypothesis::Hypothesis, typename, bool>
+      class Behaviour>
   struct TFEL_VISIBILITY_LOCAL LSDYNAInterface
-    : protected LSDYNAInterfaceExceptions
-  {
-    
-    TFEL_LSDYNA_INLINE2 static
-    int exe(const LSDYNAData& d)
-    {
-      using BV = Behaviour<H,LSDYNAReal,false>;
-      using MTraits  = tfel::material::MechanicalBehaviourTraits<BV>;
+      : protected LSDYNAInterfaceExceptions {
+    TFEL_LSDYNA_INLINE2 static int exe(const LSDYNAData& d) {
+      using BV = Behaviour<H, LSDYNAReal, false>;
+      using MTraits = tfel::material::MechanicalBehaviourTraits<BV>;
       const bool is_defined_ = MTraits::is_defined;
-      using Handler = typename std::conditional<is_defined_,CallBehaviour,
-						UnsupportedHypothesisHandler>::type;
-      try{
-	Handler::exe(d);
-      }
-      catch(const LSDYNAException& e){
-	LSDYNAInterfaceExceptions::treatLSDYNAException(MTraits::getName(),e);
-	return -2;
-      }
-      catch(const tfel::material::OutOfBoundsException& e){
-	LSDYNAInterfaceExceptions::treatMaterialException(MTraits::getName(),e);
-	return -3;
-      }
-      catch(const tfel::material::DivergenceException& e){
-	LSDYNAInterfaceExceptions::treatMaterialException(MTraits::getName(),e);
-	return -4;
-      }
-      catch(const tfel::material::MaterialException& e){
-	LSDYNAInterfaceExceptions::treatMaterialException(MTraits::getName(),e);
-	return -5;
-      }
-      catch(const tfel::exception::TFELException& e){
-	LSDYNAInterfaceExceptions::treatTFELException(MTraits::getName(),e);
-	return -6;
-      }
-      catch(const std::exception& e){
-	LSDYNAInterfaceExceptions::treatStandardException(MTraits::getName(),e);
-	return -7;
-      }
-      catch(...){
-	LSDYNAInterfaceExceptions::treatUnknownException(MTraits::getName());
-	return -8;
+      using Handler =
+          typename std::conditional<is_defined_, CallBehaviour,
+                                    UnsupportedHypothesisHandler>::type;
+      try {
+        Handler::exe(d);
+      } catch (const LSDYNAException& e) {
+        LSDYNAInterfaceExceptions::treatLSDYNAException(MTraits::getName(), e);
+        return -2;
+      } catch (const tfel::material::OutOfBoundsException& e) {
+        LSDYNAInterfaceExceptions::treatMaterialException(MTraits::getName(),
+                                                          e);
+        return -3;
+      } catch (const tfel::material::DivergenceException& e) {
+        LSDYNAInterfaceExceptions::treatMaterialException(MTraits::getName(),
+                                                          e);
+        return -4;
+      } catch (const tfel::material::MaterialException& e) {
+        LSDYNAInterfaceExceptions::treatMaterialException(MTraits::getName(),
+                                                          e);
+        return -5;
+      } catch (const tfel::exception::TFELException& e) {
+        LSDYNAInterfaceExceptions::treatTFELException(MTraits::getName(), e);
+        return -6;
+      } catch (const std::exception& e) {
+        LSDYNAInterfaceExceptions::treatStandardException(MTraits::getName(),
+                                                          e);
+        return -7;
+      } catch (...) {
+        LSDYNAInterfaceExceptions::treatUnknownException(MTraits::getName());
+        return -8;
       }
       return 0;
-    } // end of exe
+    }  // end of exe
 
-  private:
-
-    struct UnsupportedHypothesisHandler
-    {
-      TFEL_LSDYNA_INLINE2 static void
-      exe(const LSDYNAData&)
-      {
-	using BV = Behaviour<H,LSDYNAReal,false>;
-	using MTraits = tfel::material::MechanicalBehaviourTraits<BV>;
-	throw(LSDYNAInvalidModellingHypothesis(MTraits::getName()));
+   private:
+    struct UnsupportedHypothesisHandler {
+      TFEL_LSDYNA_INLINE2 static void exe(const LSDYNAData&) {
+        using BV = Behaviour<H, LSDYNAReal, false>;
+        using MTraits = tfel::material::MechanicalBehaviourTraits<BV>;
+        throw(LSDYNAInvalidModellingHypothesis(MTraits::getName()));
       }
-    }; // end of struct UnsupportedHypothesisHandler
-    
-    struct CallBehaviour
-    {
-      TFEL_LSDYNA_INLINE2 static void
-      exe(const LSDYNAData& d)
-      {
-	typedef LSDYNABehaviourHandler<H,Behaviour> AHandler;
-	using BV = Behaviour<H,LSDYNAReal,false>;
-	using ATraits =  LSDYNATraits<BV>;
-	TFEL_CONSTEXPR const auto bs = ATraits::requiresStiffnessTensor;
-	TFEL_CONSTEXPR const auto ba = ATraits::requiresThermalExpansionCoefficientTensor;
-	using Integrator = typename AHandler::template Integrator<bs,ba>;
+    };  // end of struct UnsupportedHypothesisHandler
+
+    struct CallBehaviour {
+      TFEL_LSDYNA_INLINE2 static void exe(const LSDYNAData& d) {
+        typedef LSDYNABehaviourHandler<H, Behaviour> AHandler;
+        using BV = Behaviour<H, LSDYNAReal, false>;
+        using ATraits = LSDYNATraits<BV>;
+        TFEL_CONSTEXPR const auto bs = ATraits::requiresStiffnessTensor;
+        TFEL_CONSTEXPR const auto ba =
+            ATraits::requiresThermalExpansionCoefficientTensor;
+        using Integrator = typename AHandler::template Integrator<bs, ba>;
 #ifndef MFRONT_LSDYNA_NORUNTIMECHECKS
-	AHandler::checkNPROPS(d.NPROPS);
-	AHandler::checkNSTATV(d.NSTATV);
-	AHandler::checkNTENS(d.NTENS);
+        AHandler::checkNPROPS(d.NPROPS);
+        AHandler::checkNSTATV(d.NSTATV);
+        AHandler::checkNTENS(d.NTENS);
 #endif /* MFRONT_LSDYNA_NORUNTIMECHECKS */
-	Integrator i(d);
-	i.exe(d);
+        Integrator i(d);
+        i.exe(d);
       }
-    }; // end of struct CallBehaviour2
-  }; // end of struct LSDYNAInterface
-    
-} // end of namespace lsdyna
+    };  // end of struct CallBehaviour2
+  };    // end of struct LSDYNAInterface
+
+}  // end of namespace lsdyna
 
 #endif /* LIB_MFRONT_LSDYNA_CALL_HXX */
-

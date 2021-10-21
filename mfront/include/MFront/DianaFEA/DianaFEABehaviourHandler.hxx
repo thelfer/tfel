@@ -166,7 +166,8 @@ namespace dianafea {
           typename std::conditional<bs,
                                     StiffnessOperatorInitializer,
                                     DoNothingInitializer>::type;
-      //! An alias to the class handling the thermal expansion coefficient computation
+      //! An alias to the class handling the thermal expansion coefficient
+      //! computation
       using AInitializer = typename std::conditional<
           ba,
           ThermalExpansionCoefficientTensorInitializer,

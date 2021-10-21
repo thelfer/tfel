@@ -57,7 +57,8 @@ namespace mfront {
     return this->dsl->getTargetType();
   }  // end of OverridableImplementation::getTargetType
 
-  const FileDescription& OverridableImplementation::getSourceFileDescription() const {
+  const FileDescription& OverridableImplementation::getSourceFileDescription()
+      const {
     return this->dsl->getFileDescription();
   }  // end of OverridableImplementation::getSourceFileDescription
 
@@ -97,8 +98,9 @@ namespace mfront {
             i.getOverridenValue<Tags::MATERIAL_KNOWLEDGE_IDENTIFIER>(),
             i.getSourceMaterialKnowledgeIdentifier());
     if (impl.name.empty()) {
-      tfel::raise("mfront::writeMadnexFile: "
-		  "no material knowledge identifier defined");
+      tfel::raise(
+          "mfront::writeMadnexFile: "
+          "no material knowledge identifier defined");
     }
     copy_if(impl.metadata.author, i.getOverridenValue<Tags::AUTHOR_NAME>(),
             fd.authorName);
@@ -112,7 +114,7 @@ namespace mfront {
     impl.parameters = i.getOverridingParameters();
     const auto mkt = [i]() -> std::string {
       const auto t = i.getTargetType();
-      if(t == AbstractDSL::MATERIALPROPERTYDSL){
+      if (t == AbstractDSL::MATERIALPROPERTYDSL) {
         return "MaterialProperties";
       } else if (t == AbstractDSL::BEHAVIOURDSL) {
         return "Behaviours";

@@ -1,31 +1,29 @@
-/*! 
+/*!
  * \file  mtest/include/MTest/IronsTuckAccelerationAlgorithm.hxx
  * \brief
  * \author Thomas Helfer
  * \brief 10 juin 2014
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_MTEST_MTEST_MTESTIRONSTUCKACCELERATIONALGORITHM_HXX
-#define LIB_MTEST_MTEST_MTESTIRONSTUCKACCELERATIONALGORITHM_HXX 
+#define LIB_MTEST_MTEST_MTESTIRONSTUCKACCELERATIONALGORITHM_HXX
 
-#include"MTest/Config.hxx"
-#include"MTest/AccelerationAlgorithm.hxx"
+#include "MTest/Config.hxx"
+#include "MTest/AccelerationAlgorithm.hxx"
 
-namespace mtest
-{
+namespace mtest {
 
   /*!
    * \brief This class implements the Irons-Tuck acceleration algorithm.
    */
   struct MTEST_VISIBILITY_EXPORT IronsTuckAccelerationAlgorithm
-    : public AccelerationAlgorithm
-  {
+      : public AccelerationAlgorithm {
     //! default constructor
     IronsTuckAccelerationAlgorithm();
     /*!
@@ -41,8 +39,7 @@ namespace mtest
      * \param[in] p : parameter name
      * \param[in] v : parameter value
      */
-    void setParameter(const std::string&,
-		      const std::string&) override;
+    void setParameter(const std::string&, const std::string&) override;
     /*!
      * called at each time step, before the beginning of the Newton
      * algorithm
@@ -57,27 +54,27 @@ namespace mtest
      * \param[in]     iter : current iteration number
      */
     void execute(tfel::math::vector<real>&,
-		 const tfel::math::vector<real>&,
-		 const tfel::math::vector<real>&,
-		 const real,
-		 const real,
-		 const unsigned short) override;
+                 const tfel::math::vector<real>&,
+                 const tfel::math::vector<real>&,
+                 const real,
+                 const real,
+                 const unsigned short) override;
     /*!
      * called at each time step, once convergence is reached
      */
     void postExecuteTasks() override;
     //! destructor
     ~IronsTuckAccelerationAlgorithm() override;
-  protected:
+
+   protected:
     // Irons and Tuck acceleration algorithm
     tfel::math::vector<real> ita_r0;
     tfel::math::vector<real> ita_r1;
     tfel::math::vector<real> ita_dr;
     //! IronsTuck acceleration trigger
     int itat;
-  }; // end of struct IronsTuckAccelerationAlgorithm
+  };  // end of struct IronsTuckAccelerationAlgorithm
 
-} // end of namespace mtest
+}  // end of namespace mtest
 
 #endif /* LIB_MTEST_MTEST_MTESTIRONSTUCKACCELERATIONALGORITHM_HXX */
-

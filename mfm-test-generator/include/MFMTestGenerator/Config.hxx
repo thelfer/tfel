@@ -1,6 +1,6 @@
 /*!
  * \file   Config.hxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   17/09/2019
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
@@ -14,20 +14,20 @@
 #ifndef LIB_MFM_TEST_GENERATOR_CONFIG_HXX
 #define LIB_MFM_TEST_GENERATOR_CONFIG_HXX
 
-#include"TFEL/Config/TFELConfig.hxx"
+#include "TFEL/Config/TFELConfig.hxx"
 
-#if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
-#  if defined MFMTestGenerator_EXPORTS
-#    define MFMTG_VISIBILITY_EXPORT TFEL_VISIBILITY_EXPORT
-#  else
-#  ifndef TFEL_STATIC_BUILD
-#    define MFMTG_VISIBILITY_EXPORT TFEL_VISIBILITY_IMPORT
-#  else 
-#    define MFMTG_VISIBILITY_EXPORT 
-#  endif
-#  endif
+#if defined _WIN32 || defined _WIN64 || defined __CYGWIN__
+#if defined MFMTestGenerator_EXPORTS
+#define MFMTG_VISIBILITY_EXPORT TFEL_VISIBILITY_EXPORT
 #else
-#  define MFMTG_VISIBILITY_EXPORT TFEL_VISIBILITY_EXPORT
-#endif 
+#ifndef TFEL_STATIC_BUILD
+#define MFMTG_VISIBILITY_EXPORT TFEL_VISIBILITY_IMPORT
+#else
+#define MFMTG_VISIBILITY_EXPORT
+#endif
+#endif
+#else
+#define MFMTG_VISIBILITY_EXPORT TFEL_VISIBILITY_EXPORT
+#endif
 
 #endif /* LIB_MFM_TEST_GENERATOR_CONFIG_HXX */

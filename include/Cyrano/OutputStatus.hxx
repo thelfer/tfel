@@ -3,12 +3,12 @@
  * \brief
  * \author Thomas Helfer
  * \date   13/09/2019
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_CYRANO_OUTPUTSTATUS_HXX
@@ -21,10 +21,10 @@ extern "C" {
 #endif /* __cplusplus */
 
 /*!
-* \brief this structure summarizes the exit status of a function conforming to
-* one of the `Cyrano`'
-* interface.
-*/
+ * \brief this structure summarizes the exit status of a function conforming to
+ * one of the `Cyrano`'
+ * interface.
+ */
 typedef struct {
   /*!
    * \brief exit status

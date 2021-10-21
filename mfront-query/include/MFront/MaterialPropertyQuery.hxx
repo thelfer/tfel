@@ -1,29 +1,29 @@
 /*!
  * \file   MaterialPropertyQuery.hxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   08 juin 2016
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_MFRONT_MATERIALPROPERTYQUERY_HXX
 #define LIB_MFRONT_MATERIALPROPERTYQUERY_HXX
 
-#include<string>
-#include<vector>
-#include<memory>
-#include<utility>
-#include<functional>
+#include <string>
+#include <vector>
+#include <memory>
+#include <utility>
+#include <functional>
 
-#include"TFEL/Utilities/ArgumentParserBase.hxx"
-#include"MFront/MFrontBase.hxx"
+#include "TFEL/Utilities/ArgumentParserBase.hxx"
+#include "MFront/MFrontBase.hxx"
 
-namespace mfront{
+namespace mfront {
 
   // forward declaration
   struct MaterialPropertyDSL;
@@ -39,7 +39,7 @@ namespace mfront{
    * the implementation of a material property
    */
   struct MaterialPropertyQuery final
-    : public tfel::utilities::ArgumentParserBase<MaterialPropertyQuery>,
+      : public tfel::utilities::ArgumentParserBase<MaterialPropertyQuery>,
         public MFrontBase {
     /*!
      * build a MaterialPropertyQuery object based on command line arguments
@@ -50,16 +50,17 @@ namespace mfront{
      */
     MaterialPropertyQuery(const int,
                           const char *const *const,
-			  std::shared_ptr<MaterialPropertyDSL>,
-			  const std::string&);
+                          std::shared_ptr<MaterialPropertyDSL>,
+                          const std::string &);
     //! \brief treat the requests
     virtual void exe();
     //! \brief destructor
     ~MaterialPropertyQuery() override;
-  private :
+
+   private:
     //! \brief a simple alias
-    using query = std::function<void(const FileDescription&,
-				     const MaterialPropertyDescription&)>;
+    using query = std::function<void(const FileDescription &,
+                                     const MaterialPropertyDescription &)>;
     //! \brief ArgumentParserBase must be a friend
     friend struct tfel::utilities::ArgumentParserBase<MaterialPropertyQuery>;
     //! \brief \brief register call-backs associated with command line arguments
@@ -88,13 +89,13 @@ namespace mfront{
     //! \brief get the usage description
     std::string getUsageDescription() const override final;
     //! \brief all the registred queries
-    std::vector<std::pair<std::string,query>> queries;
+    std::vector<std::pair<std::string, query>> queries;
     //! \brief abstract behaviour dsl
     std::shared_ptr<MaterialPropertyDSL> dsl;
     //! \brief file name
-    std::string file;    
-  }; // end of struct MaterialPropertyQuery
-  
-} // end of namespace mfront
+    std::string file;
+  };  // end of struct MaterialPropertyQuery
+
+}  // end of namespace mfront
 
 #endif /* LIB_MFRONT_MATERIALPROPERTYQUERY_HXX */

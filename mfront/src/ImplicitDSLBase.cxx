@@ -200,8 +200,9 @@ namespace mfront {
             }
           }
         } else {
-          i += "for(unsigned short i = 0; i != " +
-               std::to_string(v1.arraySize) + ";++i){\n";
+          i +=
+              "for(unsigned short i = 0; i != " + std::to_string(v1.arraySize) +
+              ";++i){\n";
           i += "f" + v1n + "(i) += ;\n";
           i += "// jacobian blocks\n";
           if ((this->solver != nullptr) && (this->solver->usesJacobian())) {
@@ -893,14 +894,17 @@ namespace mfront {
             }
           }
           auto add_derivative_in_attribute = [this, &cb](
-              const char* const attribute, const Derivative& derivative) {
+                                                 const char* const attribute,
+                                                 const Derivative& derivative) {
             if (cb.attributes.count(attribute) == 0) {
-              cb.attributes[attribute] = std::vector<Derivative>(1u, derivative);
+              cb.attributes[attribute] =
+                  std::vector<Derivative>(1u, derivative);
             } else {
               if (!cb.attributes[attribute].is<std::vector<Derivative>>()) {
                 this->throwRuntimeError(
                     "ImplicitDSLBase::readTangentOperatorCodeBlock",
-                    "invalid type for attribute '" + std::string(attribute) + "'");
+                    "invalid type for attribute '" + std::string(attribute) +
+                        "'");
               }
               auto& derivatives =
                   cb.attributes[attribute].get<std::vector<Derivative>>();
@@ -942,8 +946,9 @@ namespace mfront {
     this->readSpecifiedToken(
         "ImplicitDSLBase::MaximumIncrementValuePerIteration", ";");
     this->mb.addParameter(
-        h, VariableDescription("real", "maximum_increment_value_per_iteration",
-                               1u, 0u),
+        h,
+        VariableDescription("real", "maximum_increment_value_per_iteration", 1u,
+                            0u),
         BehaviourData::ALREADYREGISTRED);
     this->mb.setParameterDefaultValue(
         h, "maximum_increment_value_per_iteration", value);
@@ -1127,9 +1132,8 @@ namespace mfront {
         (this->solver->usesJacobian())) {
       const std::string nje = "numerical_jacobian_epsilon";
       if (!this->mb.hasParameter(uh, nje)) {
-        const auto eps =
-            0.1 *
-            this->mb.getFloattingPointParameterDefaultValue(uh, "epsilon");
+        const auto eps = 0.1 * this->mb.getFloattingPointParameterDefaultValue(
+                                   uh, "epsilon");
         VariableDescription v("real", nje, 1u, 0u);
         v.description =
             "perturbation value used to compute a numerical "
@@ -1244,8 +1248,9 @@ namespace mfront {
                  "numerically computed jacobian blocks can only be "
                  "used with solver using an analytical jacobian "
                  "(or an approximation of it");
-        auto decompose = [throw_if](
-            const std::string& jb) -> std::pair<std::string, std::string> {
+        auto decompose =
+            [throw_if](
+                const std::string& jb) -> std::pair<std::string, std::string> {
           throw_if(jb.empty(), "empty jacobian block");
           throw_if(jb.size() < 6, "invalid jacobian block '" + jb + "'");
           throw_if(jb[0] != 'd', "invalid jacobian block '" + jb + "'");
@@ -2315,7 +2320,8 @@ namespace mfront {
          << "static_cast<void>(smt);\n"
          << "} // end of additionalConvergenceChecks\n\n";
     } else {
-      os << "void additionalConvergenceChecks(bool&,real&,const SMType) const{\n"
+      os << "void additionalConvergenceChecks(bool&,real&,const SMType) "
+            "const{\n"
          << "} // end of additionalConvergenceChecks\n\n";
     }
     // compute stress
@@ -2483,7 +2489,7 @@ namespace mfront {
         } else {
           p->second.push_back(derivative.first);
         }
-      } // 
+      }  //
       for (const auto& derivatives : implicit_equations_derivatives) {
         auto nc = mfront::getTypeSize(derivatives.first);
         const auto rhs_type = [&nivs, &nc] {
@@ -2520,115 +2526,115 @@ namespace mfront {
           cr += mfront::getTypeSize(iv);
         }
       }
-     }
-     // treating getIntegrationDerivatives
-     if (hasAttribute<std::vector<VariableDescription>>(
-             cb, CodeBlock::used_get_integration_variables_derivatives)) {
-       const auto& get_integration_variables_derivatives =
-           getAttribute<std::vector<VariableDescription>>(
-               cb, CodeBlock::used_get_integration_variables_derivatives);
-       if (!hasAttribute<std::vector<Derivative>>(cb, attr)) {
-         this->throwRuntimeError(
-             "ImplicitDSLBase::writeBehaviourComputeTangentOperatorBody",
-             "internal error, no implicit equation derivative with respect "
-             "to "
-             "a gradient or and external state variable detected");
-       }
-       const auto& implicit_equations_derivatives =
-           getAttribute<std::vector<Derivative>>(cb, attr);
-       for (const auto& givd : get_integration_variables_derivatives) {
-         std::vector<Derivative> derivatives;
-         std::copy_if(implicit_equations_derivatives.begin(),
-                      implicit_equations_derivatives.end(),
-                      std::back_inserter(derivatives),
-                      [&givd](const Derivative& v) {
-                        return givd.name == v.second.name;
-                      });
-         if (derivatives.empty()) {
-           this->throwRuntimeError(
-               "ImplicitDSLBase::writeBehaviourComputeTangentOperatorBody",
-               "internal error, no implicit equation derivative with "
-               "respect to "
-               "'" +
-                   displayName(givd) + "' defined");
-         }
-         auto nc = mfront::getTypeSize(givd);
-         const auto rhs_type = [&nivs, &nc] {
-           std::ostringstream rhs_os;
-           rhs_os << "tfel::math::tmatrix<" << nivs << ", " << nc << ", real>";
-           return rhs_os.str();
-         }();
-         const auto m = "dfzeros_dd" + givd.name;
-         os << "struct TFEL_VISIBILITY_LOCAL GetIntegrationVariablesDerivatives_" << givd.name
-            << "{\n"
-            << "GetIntegrationVariablesDerivatives_" << givd.name << "("
-            << this->mb.getClassName() << "& b,\n"
-            << "const tfel::math::TinyPermutation<" << nivs << ">& p,\n"
-            << rhs_type << "& v)\n"
-            << ": behaviour(b),\n"
-            << "permutation(p)\n,"
-            << "rhs(v)\n"
-            << "{}\n";
-         for (size_type i = 0; i != isvs.size(); ++i) {
-           os << "void operator()(";
-           for (size_type i2 = 0; i2 <= i;) {
-             const auto& v = isvs[i2];
-             os << getDerivativeTypeHolder(v, givd) << "& "
-                << "integration_variable_derivative_d" << v.name << "_dd"
-                << givd.name;
-             if (++i2 <= i) {
-               os << ",\n";
-             }
-           }
-           os << "){\n"
-              << rhs_type << " lhs(-(this->rhs));\n"
-              << "tfel::math::TinyMatrixSolve<" << nivs
-              << ", real>::back_substitute(this->behaviour."
-                 "jacobian, this->permutation, lhs);\n";
-           auto cr = SupportedTypes::TypeSize{};  // current row
-           for (size_type i2 = 0; i2 <= i; ++i2) {
-             const auto& v = isvs[i2];
-             auto derivative_view = DerivativeViewDescription{};
-             derivative_view.derivative_name =
-                 "integration_variable_derivative_d" + v.name + "_dd" +
-                 givd.name + "_view";
-             derivative_view.matrix_name = "lhs";
-             derivative_view.first_variable = v;
-             derivative_view.second_variable = givd;
-             derivative_view.matrix_number_of_rows = nivs;
-             derivative_view.matrix_number_of_columns = nc;
-             derivative_view.derivative_row_position = cr;
-             derivative_view.derivative_column_position =
-                 SupportedTypes::TypeSize{};
-             this->writeDerivativeView(os, derivative_view);
-             // update the row position
-             cr += mfront::getTypeSize(v);
-             // assign the view to the ouptut derivatives
-             if (v.arraySize == 1u) {
-               os << "integration_variable_derivative_d" << v.name << "_dd"
-                  << givd.name << " = integration_variable_derivative_d"
-                  << v.name << "_dd" << givd.name << "_view;\n";
-             } else {
-               os << "for(typename " << rhs_type
-                  << "::size_type idx; idx!=" << v.arraySize << "; ++idx){\n"
-                  << "integration_variable_derivative_d" << v.name << "_dd"
-                  << givd.name << "(idx) = integration_variable_derivative_d"
-                  << v.name << "_dd" << givd.name << "_view(idx);"
-                  << "}\n";
-             }
-           }
-           os << "}\n";
-         }
-         os << "private:\n"
-            << this->mb.getClassName() << "& behaviour;\n"
-            << "const tfel::math::TinyPermutation<" << nivs
-            << ">& permutation;\n"
-            << rhs_type << "& rhs;\n"
-            << "};\n"
-            << "GetIntegrationVariablesDerivatives_" << givd.name << " "
-            << "getIntegrationVariablesDerivatives_" << givd.name
-            << "(*this, jacobian_permutation," << m << ");\n";
-       }
+    }
+    // treating getIntegrationDerivatives
+    if (hasAttribute<std::vector<VariableDescription>>(
+            cb, CodeBlock::used_get_integration_variables_derivatives)) {
+      const auto& get_integration_variables_derivatives =
+          getAttribute<std::vector<VariableDescription>>(
+              cb, CodeBlock::used_get_integration_variables_derivatives);
+      if (!hasAttribute<std::vector<Derivative>>(cb, attr)) {
+        this->throwRuntimeError(
+            "ImplicitDSLBase::writeBehaviourComputeTangentOperatorBody",
+            "internal error, no implicit equation derivative with respect "
+            "to "
+            "a gradient or and external state variable detected");
+      }
+      const auto& implicit_equations_derivatives =
+          getAttribute<std::vector<Derivative>>(cb, attr);
+      for (const auto& givd : get_integration_variables_derivatives) {
+        std::vector<Derivative> derivatives;
+        std::copy_if(implicit_equations_derivatives.begin(),
+                     implicit_equations_derivatives.end(),
+                     std::back_inserter(derivatives),
+                     [&givd](const Derivative& v) {
+                       return givd.name == v.second.name;
+                     });
+        if (derivatives.empty()) {
+          this->throwRuntimeError(
+              "ImplicitDSLBase::writeBehaviourComputeTangentOperatorBody",
+              "internal error, no implicit equation derivative with "
+              "respect to "
+              "'" +
+                  displayName(givd) + "' defined");
+        }
+        auto nc = mfront::getTypeSize(givd);
+        const auto rhs_type = [&nivs, &nc] {
+          std::ostringstream rhs_os;
+          rhs_os << "tfel::math::tmatrix<" << nivs << ", " << nc << ", real>";
+          return rhs_os.str();
+        }();
+        const auto m = "dfzeros_dd" + givd.name;
+        os << "struct TFEL_VISIBILITY_LOCAL GetIntegrationVariablesDerivatives_"
+           << givd.name << "{\n"
+           << "GetIntegrationVariablesDerivatives_" << givd.name << "("
+           << this->mb.getClassName() << "& b,\n"
+           << "const tfel::math::TinyPermutation<" << nivs << ">& p,\n"
+           << rhs_type << "& v)\n"
+           << ": behaviour(b),\n"
+           << "permutation(p)\n,"
+           << "rhs(v)\n"
+           << "{}\n";
+        for (size_type i = 0; i != isvs.size(); ++i) {
+          os << "void operator()(";
+          for (size_type i2 = 0; i2 <= i;) {
+            const auto& v = isvs[i2];
+            os << getDerivativeTypeHolder(v, givd) << "& "
+               << "integration_variable_derivative_d" << v.name << "_dd"
+               << givd.name;
+            if (++i2 <= i) {
+              os << ",\n";
+            }
+          }
+          os << "){\n"
+             << rhs_type << " lhs(-(this->rhs));\n"
+             << "tfel::math::TinyMatrixSolve<" << nivs
+             << ", real>::back_substitute(this->behaviour."
+                "jacobian, this->permutation, lhs);\n";
+          auto cr = SupportedTypes::TypeSize{};  // current row
+          for (size_type i2 = 0; i2 <= i; ++i2) {
+            const auto& v = isvs[i2];
+            auto derivative_view = DerivativeViewDescription{};
+            derivative_view.derivative_name =
+                "integration_variable_derivative_d" + v.name + "_dd" +
+                givd.name + "_view";
+            derivative_view.matrix_name = "lhs";
+            derivative_view.first_variable = v;
+            derivative_view.second_variable = givd;
+            derivative_view.matrix_number_of_rows = nivs;
+            derivative_view.matrix_number_of_columns = nc;
+            derivative_view.derivative_row_position = cr;
+            derivative_view.derivative_column_position =
+                SupportedTypes::TypeSize{};
+            this->writeDerivativeView(os, derivative_view);
+            // update the row position
+            cr += mfront::getTypeSize(v);
+            // assign the view to the ouptut derivatives
+            if (v.arraySize == 1u) {
+              os << "integration_variable_derivative_d" << v.name << "_dd"
+                 << givd.name << " = integration_variable_derivative_d"
+                 << v.name << "_dd" << givd.name << "_view;\n";
+            } else {
+              os << "for(typename " << rhs_type
+                 << "::size_type idx; idx!=" << v.arraySize << "; ++idx){\n"
+                 << "integration_variable_derivative_d" << v.name << "_dd"
+                 << givd.name << "(idx) = integration_variable_derivative_d"
+                 << v.name << "_dd" << givd.name << "_view(idx);"
+                 << "}\n";
+            }
+          }
+          os << "}\n";
+        }
+        os << "private:\n"
+           << this->mb.getClassName() << "& behaviour;\n"
+           << "const tfel::math::TinyPermutation<" << nivs
+           << ">& permutation;\n"
+           << rhs_type << "& rhs;\n"
+           << "};\n"
+           << "GetIntegrationVariablesDerivatives_" << givd.name << " "
+           << "getIntegrationVariablesDerivatives_" << givd.name
+           << "(*this, jacobian_permutation," << m << ");\n";
+      }
     }
     //
     BehaviourDSLCommon::writeBehaviourComputeTangentOperatorBody(os, h, n);
@@ -2820,22 +2826,22 @@ namespace mfront {
     os << "using namespace tfel::math;\n";
     writeMaterialLaws(os, this->mb.getMaterialLaws());
     if (!this->mb.getMainVariables().empty()) {
-    if ((this->mb.getBehaviourType() ==
-         BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) ||
-        (this->mb.getBehaviourType() ==
+      if ((this->mb.getBehaviourType() ==
+           BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) ||
+          (this->mb.getBehaviourType() ==
            BehaviourDescription::COHESIVEZONEMODEL) ||
           (this->mb.getBehaviourType() ==
            BehaviourDescription::GENERALBEHAVIOUR)) {
-      if (this->mb.useQt()) {
-        os << "tfel::raise_if(smflag!=MechanicalBehaviour<" << btype
-           << ",hypothesis,Type,use_qt>::STANDARDTANGENTOPERATOR,\n"
-           << "\"invalid tangent operator flag\");\n";
-      } else {
-        os << "tfel::raise_if(smflag!=MechanicalBehaviour<" << btype
-           << ",hypothesis,Type,false>::STANDARDTANGENTOPERATOR,\n"
-           << "\"invalid tangent operator flag\");\n";
+        if (this->mb.useQt()) {
+          os << "tfel::raise_if(smflag!=MechanicalBehaviour<" << btype
+             << ",hypothesis,Type,use_qt>::STANDARDTANGENTOPERATOR,\n"
+             << "\"invalid tangent operator flag\");\n";
+        } else {
+          os << "tfel::raise_if(smflag!=MechanicalBehaviour<" << btype
+             << ",hypothesis,Type,false>::STANDARDTANGENTOPERATOR,\n"
+             << "\"invalid tangent operator flag\");\n";
+        }
       }
-    }
     }
     if (this->mb.hasCode(h, BehaviourData::ComputePredictor)) {
       os << this->mb.getCode(h, BehaviourData::ComputePredictor) << '\n';
@@ -2888,29 +2894,30 @@ namespace mfront {
       this->writeBoundsChecks(os, v, false);
     }
     if (!this->mb.getMainVariables().empty()) {
-    os << "if(smt!=NOSTIFFNESSREQUESTED){\n";
-    if (this->mb.hasAttribute(h, BehaviourData::hasConsistentTangentOperator)) {
-      if (this->mb.getBehaviourType() ==
-          BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR) {
-        os << "if(!this->computeConsistentTangentOperator(smflag,smt)){\n";
+      os << "if(smt!=NOSTIFFNESSREQUESTED){\n";
+      if (this->mb.hasAttribute(h,
+                                BehaviourData::hasConsistentTangentOperator)) {
+        if (this->mb.getBehaviourType() ==
+            BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR) {
+          os << "if(!this->computeConsistentTangentOperator(smflag,smt)){\n";
+        } else {
+          os << "if(!this->computeConsistentTangentOperator(smt)){\n";
+        }
+        if (this->mb.useQt()) {
+          os << "return MechanicalBehaviour<" << btype
+             << ",hypothesis,Type,use_qt>::FAILURE;\n";
+        } else {
+          os << "return MechanicalBehaviour<" << btype
+             << ",hypothesis,Type,false>::FAILURE;\n";
+        }
+        os << "}\n";
       } else {
-        os << "if(!this->computeConsistentTangentOperator(smt)){\n";
-      }
-      if (this->mb.useQt()) {
-        os << "return MechanicalBehaviour<" << btype
-           << ",hypothesis,Type,use_qt>::FAILURE;\n";
-      } else {
-        os << "return MechanicalBehaviour<" << btype
-           << ",hypothesis,Type,false>::FAILURE;\n";
+        os << "string msg(\"" << this->mb.getClassName()
+           << "::integrate : \");\n";
+        os << "msg +=\"unimplemented feature\";\n";
+        os << "throw(runtime_error(msg));\n";
       }
       os << "}\n";
-    } else {
-      os << "string msg(\"" << this->mb.getClassName()
-         << "::integrate : \");\n";
-      os << "msg +=\"unimplemented feature\";\n";
-      os << "throw(runtime_error(msg));\n";
-    }
-    os << "}\n";
     }
     if (this->mb.useQt()) {
       os << "return MechanicalBehaviour<" << btype

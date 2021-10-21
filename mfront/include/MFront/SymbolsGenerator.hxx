@@ -86,14 +86,14 @@ namespace mfront {
         const StandardBehaviourInterface &,
         const std::string &) const;
     /*!
-    * \param[in] out  : output file
-    * \param[in] i    : standard behaviour interface
-    * \param[in] mb   : behaviour description
-    * \param[in] fd   : file description
-    * \param[in] name : name of the behaviour as defined by the interface
-    *                   (generally taking into account the material
-    *                    and the behaviour name)
-    */
+     * \param[in] out  : output file
+     * \param[in] i    : standard behaviour interface
+     * \param[in] mb   : behaviour description
+     * \param[in] fd   : file description
+     * \param[in] name : name of the behaviour as defined by the interface
+     *                   (generally taking into account the material
+     *                    and the behaviour name)
+     */
     virtual void writeSpecificSymbols(std::ostream &,
                                       const StandardBehaviourInterface &,
                                       const BehaviourDescription &,

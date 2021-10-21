@@ -1,14 +1,14 @@
 /*!
- * \file   include/NUMODIS/Cubic.hxx  
- * \brief    
+ * \file   include/NUMODIS/Cubic.hxx
+ * \brief
  * \author Laurent Dupuy
  * \date   9/06/2017
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef NUMEODIS_CUBIC_HXX
@@ -20,8 +20,7 @@
 #include "NUMODIS/Math/Utilities.hxx"
 #include "NUMODIS/Crystallo.hxx"
 
-namespace numodis
-{
+namespace numodis {
 
   //===============================================================
   // Class Cubic
@@ -38,10 +37,7 @@ namespace numodis
     \ingroup ClassCrystallo
   */
   //===============================================================
-  struct TFELNUMODIS_VISIBILITY_EXPORT Cubic
-    : public Crystallo
-  {
-
+  struct TFELNUMODIS_VISIBILITY_EXPORT Cubic : public Crystallo {
     Cubic();
 
     Cubic(Cubic&&);
@@ -49,36 +45,35 @@ namespace numodis
     Cubic(const Cubic&);
 
     virtual Vect3 direction(const IDirection&) const override;
-    
+
     virtual Vect3 burgers_vector(const IBurgers&) const override;
-    
+
     virtual Vect3 normal(const IPlane&) const override;
-    
+
     virtual double Norm2(const IBurgers& iburgers) const override;
 
     virtual int getNsymmetries() const override;
 
-    virtual GSystem Symmetry(int k,
-			     const GSystem& gsystem) const override;
+    virtual GSystem Symmetry(int k, const GSystem& gsystem) const override;
 
-    virtual void
-    GenerateEquivalentIndices(const std::vector<int>& ind0,
-			      std::vector<std::vector<int> >& equivalent) const override;
+    virtual void GenerateEquivalentIndices(
+        const std::vector<int>& ind0,
+        std::vector<std::vector<int>>& equivalent) const override;
 
     virtual void GenerateOrthogonalVector(const IPlane& u,
-					  IDirection& v) const override;
+                                          IDirection& v) const override;
 
     virtual void CrossProduct(const IPlane& iplane1,
-			      const IPlane& iplane2,
-			      IDirection& idirection) const override;
+                              const IPlane& iplane2,
+                              IDirection& idirection) const override;
 
     virtual void CrossProduct(const IBurgers& iburgers,
-			      const IDirection& idirection,
-			      IPlane& iplane) const override;
+                              const IDirection& idirection,
+                              IPlane& iplane) const override;
 
     virtual void CrossProduct(const IDirection& idirection0,
-			      const IDirection& idirection1,
-			      IDirection& idirection2) const;
+                              const IDirection& idirection1,
+                              IDirection& idirection2) const;
 
     //===========================================================
     // Cubic::ScalProduct
@@ -96,7 +91,7 @@ namespace numodis
     */
     //===========================================================
     virtual int ScalProduct(const IPlane& iplane,
-			    const IBurgers& iburgers) const override;
+                            const IBurgers& iburgers) const override;
 
     //===========================================================
     // Cubic::ScalProduct
@@ -114,7 +109,7 @@ namespace numodis
     */
     //===========================================================
     virtual int ScalProduct(const IPlane& iplane,
-			    const IDirection& idirection) const override;
+                            const IDirection& idirection) const override;
 
     //===========================================================
     // Cubic::ScalProduct
@@ -132,32 +127,30 @@ namespace numodis
     */
     //===========================================================
     int ScalProduct(const IDirection& idirection0,
-		    const IDirection& idirection1) const
-    { return numodis::math::iScalProduct(idirection0.getIndex(),idirection1.getIndex()); }
+                    const IDirection& idirection1) const {
+      return numodis::math::iScalProduct(idirection0.getIndex(),
+                                         idirection1.getIndex());
+    }
 
     virtual bool SamePlaneFamily(const IPlane& iplane0,
-				 const IPlane& iplane1) const override;
+                                 const IPlane& iplane1) const override;
 
     virtual bool SameBurgersFamily(const IBurgers& iburgers0,
-				   const IBurgers& iburgers1) const override;
+                                   const IBurgers& iburgers1) const override;
 
     virtual bool SameGlideSystem(const IPlane& iplane0,
-				 const IBurgers& iburgers0,
-				 const IPlane& iplane1,
-				 const IBurgers& iburgers1) const override;
+                                 const IBurgers& iburgers0,
+                                 const IPlane& iplane1,
+                                 const IBurgers& iburgers1) const override;
 
     virtual ~Cubic() override;
 
-  protected:
-
+   protected:
     virtual void Init();
 
-    std::vector<int> Symmetry(int k,
-			      const std::vector<int>& indices) const;
-    
-
+    std::vector<int> Symmetry(int k, const std::vector<int>& indices) const;
   };
 
-} // end of namespace numodis
-  
+}  // end of namespace numodis
+
 #endif

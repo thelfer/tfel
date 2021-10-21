@@ -156,9 +156,9 @@ namespace mfront {
         return res;
       };  // end of filter
       auto append = [&inputs, &f](
-          const std::map<std::string, std::vector<std::string>>&
-              selected_implementations,
-          const std::string& t) {
+                        const std::map<std::string, std::vector<std::string>>&
+                            selected_implementations,
+                        const std::string& t) {
         for (const auto& mi : selected_implementations) {
           for (const auto& i : mi.second) {
             insert_if(inputs,
@@ -205,13 +205,14 @@ namespace mfront {
             [&r](const std::string& n) { return std::regex_match(n, r); });
         return res;
       };  // end of filter
-      auto append = [&inputs, &f, &m_id](
-          const std::vector<std::string>& selected_implementations,
-          const std::string& t) {
-        for (const auto& i : selected_implementations) {
-          insert_if(inputs, "madnex:" + f + ":" + t + ":" + m_id + ":" + i);
-        }
-      };
+      auto append =
+          [&inputs, &f, &m_id](
+              const std::vector<std::string>& selected_implementations,
+              const std::string& t) {
+            for (const auto& i : selected_implementations) {
+              insert_if(inputs, "madnex:" + f + ":" + t + ":" + m_id + ":" + i);
+            }
+          };
       if (!material_property_identifier.empty()) {
         const auto mps = filter(db.getAvailableMaterialProperties(m_id),
                                 material_property_identifier);

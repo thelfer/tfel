@@ -123,8 +123,9 @@ namespace mtest {
     for (const auto& ev : evm) {
       auto pcev = dynamic_cast<const ConstantEvolution*>(ev.second.get());
       if (pcev != nullptr) {
-	const auto& cev = *pcev;
-	efm->insert({ev.first, std::make_shared<ConstantExternalFunction>(cev(0))});
+        const auto& cev = *pcev;
+        efm->insert(
+            {ev.first, std::make_shared<ConstantExternalFunction>(cev(0))});
       }
     }
     return efm;

@@ -1,6 +1,6 @@
 /*!
  * \file   include/MFront/BehaviourBrick/PorosityEvolutionAlgorithm.hxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   21/07/2020
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
@@ -28,6 +28,6 @@ namespace mfront {
 
   }  // end of namespace bbrick
 
-} // end of namespace mfront
+}  // end of namespace mfront
 
 #endif /* LIB_MFRONT_BBRICK_POROSITYEVOLUTIONALGORITHM_HXX */

@@ -106,9 +106,9 @@ namespace mtest {
       constexpr const double R = 8.3144598;
       constexpr const unsigned short imax = 100;
       if (mfront::getVerboseMode() >= mfront::VERBOSE_DEBUG) {
-        mfront::getLogStream() << "GasEquationOfState::computePressure: begin ("
-                               << "V=" << V << ", n=" << n << ", T=" << T
-                               << ")\n";
+        mfront::getLogStream()
+            << "GasEquationOfState::computePressure: begin ("
+            << "V=" << V << ", n=" << n << ", T=" << T << ")\n";
       }
       auto iter = [this, n, V, T](double& P, double& dP) {
         dP = -eval(this->s, P, V, n, T) / eval(*(this->ds_dP), P, V, n, T);

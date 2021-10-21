@@ -1,5 +1,6 @@
 /*!
- * \file   include/TFEL/Math/AccelerationAlgorithms/AitkenAccelerationAlgorithm.hxx
+ * \file
+ * include/TFEL/Math/AccelerationAlgorithms/AitkenAccelerationAlgorithm.hxx
  * \brief
  * \author Thomas Helfer
  * \date   28/05/2020
@@ -64,4 +65,5 @@ namespace tfel {
 
 #include "TFEL/Math/AccelerationAlgorithms/AitkenAccelerationAlgorithm.ixx"
 
-#endif /* LIB_TFEL_MATH_ACCELERATIONALGORITHMS_AITKENACCELERATIONALGORITHM_HXX */
+#endif /* LIB_TFEL_MATH_ACCELERATIONALGORITHMS_AITKENACCELERATIONALGORITHM_HXX \
+        */

@@ -40,8 +40,7 @@ namespace mfront {
 
   BehaviourDSLDescription DefaultModelDSL::getBehaviourDSLDescription() const {
     auto d = BehaviourDSLDescription{};
-    d.behaviourType =
-        tfel::material::MechanicalBehaviourBase::GENERALBEHAVIOUR;
+    d.behaviourType = tfel::material::MechanicalBehaviourBase::GENERALBEHAVIOUR;
     d.integrationScheme = IntegrationScheme::USERDEFINEDSCHEME;
     d.typicalCodeBlocks = {BehaviourData::Integrator};
     d.minimalMFrontFileBody = "@Integrator{}\n\n";

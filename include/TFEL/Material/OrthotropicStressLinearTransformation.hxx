@@ -1,27 +1,27 @@
 /*!
  * \file   OrthotropicStressLinearTransformation.hxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   13/01/2018
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_TFEL_MATERIAL_ORTHOTROPICSTRESSLINEARTRANSFORMATION_HXX
 #define LIB_TFEL_MATERIAL_ORTHOTROPICSTRESSLINEARTRANSFORMATION_HXX
 
-#include"TFEL/Math/tvector.hxx"
-#include"TFEL/Math/stensor.hxx"
-#include"TFEL/Math/st2tost2.hxx"
-#include"TFEL/Material/OrthotropicAxesConvention.hxx"
+#include "TFEL/Math/tvector.hxx"
+#include "TFEL/Math/stensor.hxx"
+#include "TFEL/Math/st2tost2.hxx"
+#include "TFEL/Material/OrthotropicAxesConvention.hxx"
 
-namespace tfel{
+namespace tfel {
 
-  namespace material{
+  namespace material {
 
     /*!
      * \tparam N:    space dimension
@@ -62,11 +62,17 @@ namespace tfel{
      * \end{pmatrix}
      * \f]
      */
-    template<unsigned short N, typename real>
-    tfel::math::st2tost2<N,real>
-    makeOrthotropicStressLinearTransformation(const real,const real, const real,
-					      const real,const real, const real,
-					      const real,const real, const real);
+    template <unsigned short N, typename real>
+    tfel::math::st2tost2<N, real> makeOrthotropicStressLinearTransformation(
+        const real,
+        const real,
+        const real,
+        const real,
+        const real,
+        const real,
+        const real,
+        const real,
+        const real);
     /*!
      * \tparam N:    space dimension
      * \tparam real: numerical type
@@ -98,9 +104,9 @@ namespace tfel{
      * \end{pmatrix}
      * \f]
      */
-    template<unsigned short N, typename real>
-    tfel::math::st2tost2<N,real>
-    makeOrthotropicStressLinearTransformation(const tfel::math::tvector<9u,real>&);
+    template <unsigned short N, typename real>
+    tfel::math::st2tost2<N, real> makeOrthotropicStressLinearTransformation(
+        const tfel::math::tvector<9u, real>&);
     /*!
      * \tparam H: modelling hypothesis
      * \tparam c: orthotropic axis convention
@@ -115,7 +121,7 @@ namespace tfel{
      * \param[in] c44: coefficient of the linear transformation
      * \param[in] c55: coefficient of the linear transformation
      * \param[in] c66: coefficient of the linear transformation
-     * 
+     *
      * \brief This function is barely a wrapper around the
      * `makeOrthotropicStressLinearTransformation<N,real>`, where `N` is
      * the space dimension associated with the modelling hypothesis
@@ -147,19 +153,26 @@ namespace tfel{
      *   coefficients related to the third axis.
      * - 1D, 2D axisymmetric modelling hypotheses are not available.
      */
-    template<ModellingHypothesis::Hypothesis H,
-	     OrthotropicAxesConvention,typename real>
-    tfel::math::st2tost2<ModellingHypothesisToSpaceDimension<H>::value,real>
-    makeOrthotropicStressLinearTransformation(const real,const real, const real,
-					      const real,const real, const real,
-					      const real,const real, const real);
+    template <ModellingHypothesis::Hypothesis H,
+              OrthotropicAxesConvention,
+              typename real>
+    tfel::math::st2tost2<ModellingHypothesisToSpaceDimension<H>::value, real>
+    makeOrthotropicStressLinearTransformation(const real,
+                                              const real,
+                                              const real,
+                                              const real,
+                                              const real,
+                                              const real,
+                                              const real,
+                                              const real,
+                                              const real);
     /*!
      * \tparam H: modelling hypothesis
      * \tparam oac: orthotropic axis convention
      * \tparam real: numerical type
      * \return a linear transformation of the stresses
      * \param[in] c: coefficients of the linear transformation
-     * 
+     *
      * \brief This function is barely a wrapper around the
      * `makeOrthotropicStressLinearTransformation<N,real>`, where `N` is
      * the space dimension associated with the modelling hypothesis
@@ -191,15 +204,17 @@ namespace tfel{
      *   coefficients related to the third axis.
      * - 1D, 2D axisymmetric modelling hypotheses are not available.
      */
-    template<ModellingHypothesis::Hypothesis H,
-	     OrthotropicAxesConvention,typename real>
-    tfel::math::st2tost2<ModellingHypothesisToSpaceDimension<H>::value,real>
-    makeOrthotropicStressLinearTransformation(const tfel::math::tvector<9u,real>&);
+    template <ModellingHypothesis::Hypothesis H,
+              OrthotropicAxesConvention,
+              typename real>
+    tfel::math::st2tost2<ModellingHypothesisToSpaceDimension<H>::value, real>
+    makeOrthotropicStressLinearTransformation(
+        const tfel::math::tvector<9u, real>&);
 
-  } // end of namespace material
-  
-} // end of namespace tfel
+  }  // end of namespace material
 
-#include"TFEL/Material/OrthotropicStressLinearTransformation.ixx"
+}  // end of namespace tfel
+
+#include "TFEL/Material/OrthotropicStressLinearTransformation.ixx"
 
 #endif /* LIB_TFEL_MATERIAL_ORTHOTROPICSTRESSLINEARTRANSFORMATION_HXX */

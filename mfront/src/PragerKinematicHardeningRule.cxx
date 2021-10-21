@@ -1,6 +1,6 @@
 /*!
  * \file   PragerKinematicHardeningRule.cxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   04/04/2018
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
@@ -39,8 +39,8 @@ namespace mfront {
         // opposite of dfa_ds
         const auto mdf_ds = "(this->dp" + fid + ") * dn" + fid + "_ds" + fid;
         c += "df" + an + "_ddp" + fid + " = - n" + fid + ";\n";
-        c += sp.generateImplicitEquationDerivatives(bd, "StrainStensor", an, "-" + mdf_ds,
-                                   fc.isNormalDeviatoric());
+        c += sp.generateImplicitEquationDerivatives(
+            bd, "StrainStensor", an, "-" + mdf_ds, fc.isNormalDeviatoric());
         auto kid2 = decltype(khrs.size()){};
         for (const auto& khr : khrs) {
           c += khr->generateImplicitEquationDerivatives(an, mdf_ds, fid,

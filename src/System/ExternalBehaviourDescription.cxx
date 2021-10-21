@@ -60,7 +60,8 @@ namespace tfel {
         this->elastic_material_properties_epts =
             elm.getUMATElasticMaterialPropertiesEntryPoints(l, f);
       }
-      if (elm.contains(l, f + "_LinearThermalExpansionCoefficientsEntryPoints")) {
+      if (elm.contains(l,
+                       f + "_LinearThermalExpansionCoefficientsEntryPoints")) {
         this->linear_thermal_expansion_coefficients_epts =
             elm.getUMATLinearThermalExpansionCoefficientsEntryPoints(l, f);
       }
@@ -88,7 +89,7 @@ namespace tfel {
       this->ivnames = elm.getUMATInternalStateVariablesNames(l, f, h);
       this->ivtypes = elm.getUMATInternalStateVariablesTypes(l, f, h);
       this->evnames = elm.getUMATExternalStateVariablesNames(l, f, h);
-    // parameters
+      // parameters
       const auto pn = elm.getUMATParametersNames(l, f, h);
       const auto pt = elm.getUMATParametersTypes(l, f, h);
       throw_if(

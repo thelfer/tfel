@@ -26,8 +26,7 @@
 namespace mfmtg {
 
   //! \brief a test on a unit cube
-  struct MFMTG_VISIBILITY_EXPORT ClosedPipeTest : TestCaseBase,
-                                                       BehaviourData {
+  struct MFMTG_VISIBILITY_EXPORT ClosedPipeTest : TestCaseBase, BehaviourData {
     //! type of elements
     enum ElementType { LINEAR, QUADRATIC };
     //! \brief default constructor

@@ -38,8 +38,7 @@ struct UAndersonAccelerationAlgorithm {
    * \param[in] p: period of acceleration
    */
   UAndersonAccelerationAlgorithm(const size_type n, const size_type p)
-      : nfields(n),
-        period(p) {}  // end of UAndersonAccelerationAlgorithm
+      : nfields(n), period(p) {}  // end of UAndersonAccelerationAlgorithm
   /*!
    * \brief must be called at the beginning of each time step
    */
@@ -74,7 +73,7 @@ struct UAndersonAccelerationAlgorithm {
     *(this->uN) = tfel::math::vector<double>(b, b + s);
     this->a->newIter(this->uO, this->uN);
     std::copy(this->uO->begin(), this->uO->end(), b);
-  } // end of accelerate
+  }  // end of accelerate
 
  private:
   //! the underlying algorithm
@@ -107,8 +106,7 @@ struct FAndersonAccelerationAlgorithm {
    * \param[in] p: period of acceleration
    */
   FAndersonAccelerationAlgorithm(const size_type n, const size_type p)
-      : nfields(n),
-        period(p) {}  // end of FAndersonAccelerationAlgorithm
+      : nfields(n), period(p) {}  // end of FAndersonAccelerationAlgorithm
   /*!
    * \brief must be called at the beginning of each time step
    */
@@ -145,7 +143,7 @@ struct FAndersonAccelerationAlgorithm {
     *(this->Df) = tfel::math::vector<double>(br, br + s);
     this->a->newIter(this->uO, this->uN, this->Df);
     std::copy(this->uO->begin(), this->uO->end(), b);
-  } // end of accelerate
+  }  // end of accelerate
 
  private:
   //! the underlying algorithm
@@ -154,7 +152,7 @@ struct FAndersonAccelerationAlgorithm {
   //!< previous displacement estimate
   Field* uO = nullptr;
   //!< current displacement estimate
-  Field *uN = nullptr;
+  Field* uN = nullptr;
   //! current residual
   Field* Df = nullptr;
   //! number of fields

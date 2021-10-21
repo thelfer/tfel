@@ -29,10 +29,10 @@ namespace std {
     s << v;
     return s.str();
   }
-}
+}  // namespace std
 #endif /* defined __CYGWIN__ &&  (!defined _GLIBCXX_USE_C99) */
 
-static bool getDisplayErrorMessageFlag(){
+static bool getDisplayErrorMessageFlag() {
   const auto* e = ::getenv("CASTEM_DISPLAY_ERROR_MESSAGE");
   if (e == nullptr) {
     return true;
@@ -46,7 +46,6 @@ static bool displayErrorMessage() {
 }  // end of displayErrorMessage
 
 namespace castem {
-
 
   void CastemInterfaceExceptions::throwUnMatchedNumberOfMaterialProperties(
       const std::string& b, const unsigned short n1, const CastemInt n2) {
@@ -163,11 +162,11 @@ namespace castem {
 
   void
   CastemInterfaceExceptions::displayInvalidModellingHypothesisErrorMessage() {
-      if (displayErrorMessage()) {
-        std::cout << "CastemInterfaceExceptions::"
-                     "displayInvalidModellingHypothesisErrorMessage : "
-                  << "invalid value for the NDI parameter" << std::endl;
-      }
+    if (displayErrorMessage()) {
+      std::cout << "CastemInterfaceExceptions::"
+                   "displayInvalidModellingHypothesisErrorMessage : "
+                << "invalid value for the NDI parameter" << std::endl;
+    }
   }
 
   void

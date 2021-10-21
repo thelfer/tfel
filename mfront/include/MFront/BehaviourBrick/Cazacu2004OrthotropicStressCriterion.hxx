@@ -1,5 +1,5 @@
 /*!
- * \file   include/MFront/BehaviourBrick/Cazacu2004OrthotropicStressCriterion.hxx
+ * \file include/MFront/BehaviourBrick/Cazacu2004OrthotropicStressCriterion.hxx
  * \brief
  * \author Thomas Helfer
  * \date   15/03/2018
@@ -33,7 +33,7 @@ namespace mfront {
      * of the deviatoric part of the stress tensor
      * \f$\underline{\sigma}\f$.
      *
-     * Cazacu, Oano and Barlat, Frédéric. 2004. 
+     * Cazacu, Oano and Barlat, Frédéric. 2004.
      * “A Criterion for Description of Anisotropy and Yield Differential
      * Effects in Pressure-Insensitive Metals.”
      * International Journal of Plasticity,
@@ -70,7 +70,8 @@ namespace mfront {
                                           const Role) const override;
       bool isCoupledWithPorosityEvolution() const override;
       bool isNormalDeviatoric() const override;
-      PorosityEffectOnFlowRule getPorosityEffectOnEquivalentPlasticStrain() const override;
+      PorosityEffectOnFlowRule getPorosityEffectOnEquivalentPlasticStrain()
+          const override;
       //! destructor
       ~Cazacu2004OrthotropicStressCriterion() override;
 
@@ -87,4 +88,5 @@ namespace mfront {
 
 }  // end of namespace mfront
 
-#endif /* LIB_MFRONT_BEHAVIOURBRICK_CAZACU2004ORTHOTROPICSTRESSCRITERION_HXX */
+#endif /* LIB_MFRONT_BEHAVIOURBRICK_CAZACU2004ORTHOTROPICSTRESSCRITERION_HXX \
+        */

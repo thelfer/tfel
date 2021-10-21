@@ -81,7 +81,8 @@ namespace mfront {
     }();
     os << "MFRONT_SHAREDOBJ unsigned short " << fn
        << "_nElasticMaterialPropertiesEntryPoints = " << emps.size() << "u;\n";
-    this->writeArrayOfStringsSymbol(os, fn + "_ElasticMaterialPropertiesEntryPoints", emps);
+    this->writeArrayOfStringsSymbol(
+        os, fn + "_ElasticMaterialPropertiesEntryPoints", emps);
     // material properties associated with the thermal expansion coefficients
     auto themps = [&bd, &i, &name] {
       auto names = std::vector<std::string>{};
@@ -100,7 +101,7 @@ namespace mfront {
         os, fn + "_LinearThermalExpansionCoefficientsEntryPoints", themps);
   }  // end of CastemSymbolsGenerator::writeSpecificSymbols
 
-  bool CastemSymbolsGenerator::handleStrainMeasure() const{
+  bool CastemSymbolsGenerator::handleStrainMeasure() const {
     return true;
   }  // end of CastemSymbolsGenerator::handleStrainMeasure
 

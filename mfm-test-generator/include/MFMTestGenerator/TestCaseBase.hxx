@@ -1,6 +1,6 @@
 /*!
  * \file   TestCaseBase.hxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   17/09/2019
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
@@ -47,7 +47,7 @@ namespace mfmtg {
    private:
     //! list of all registred generators
     std::vector<generator> generators;
-  }; // end of struct TestCaseBase 
+  };  // end of struct TestCaseBase
 
 }  // end of namespace mfmtg
 

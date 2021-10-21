@@ -27,7 +27,7 @@ namespace mfront {
 
   // forward declaration
   struct LibraryDescription;
-  
+
   struct MFRONT_VISIBILITY_EXPORT CastemMaterialPropertyInterface
       : public AbstractMaterialPropertyInterface {
     static std::string getName();
@@ -65,7 +65,6 @@ namespace mfront {
     ~CastemMaterialPropertyInterface() override;
 
    protected:
-
     virtual std::string getHeaderFileName(const std::string&) const;
 
     virtual std::string getSourceFileName(const std::string&) const;

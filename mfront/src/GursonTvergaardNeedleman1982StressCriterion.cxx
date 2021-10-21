@@ -22,18 +22,21 @@ namespace mfront {
 
   namespace bbrick {
 
-    GursonTvergaardNeedleman1982StressCriterion::GursonTvergaardNeedleman1982StressCriterion()
-        : StandardPorousStressCriterionBase("GursonTvergaardNeedleman1982") {}  // end of
+    GursonTvergaardNeedleman1982StressCriterion::
+        GursonTvergaardNeedleman1982StressCriterion()
+        : StandardPorousStressCriterionBase("GursonTvergaardNeedleman1982") {
+    }  // end of
     // GursonTvergaardNeedleman1982StressCriterion::GursonTvergaardNeedleman1982StressCriterion
 
     std::vector<mfront::BehaviourSymmetryType>
-    GursonTvergaardNeedleman1982StressCriterion::getSupportedBehaviourSymmetries() const {
+    GursonTvergaardNeedleman1982StressCriterion::
+        getSupportedBehaviourSymmetries() const {
       return {mfront::ISOTROPIC, mfront::ORTHOTROPIC};
     }  // end of
     // GursonTvergaardNeedleman1982StressCriterion::getSupporxtedBehaviourSymmetries()
 
-    std::vector<OptionDescription> GursonTvergaardNeedleman1982StressCriterion::getOptions()
-        const {
+    std::vector<OptionDescription>
+    GursonTvergaardNeedleman1982StressCriterion::getOptions() const {
       auto opts = StressCriterionBase::getOptions();
       opts.emplace_back("f_c", "coalescence porosity",
                         OptionDescription::MATERIALPROPERTY);
@@ -49,9 +52,12 @@ namespace mfront {
     }  // end of GursonTvergaardNeedleman1982StressCriterion::getOptions()
 
     StressCriterion::PorosityEffectOnFlowRule
-    GursonTvergaardNeedleman1982StressCriterion::getPorosityEffectOnEquivalentPlasticStrain() const {
-      return StressCriterion::STANDARD_POROSITY_CORRECTION_ON_EQUIVALENT_PLASTIC_STRAIN;
-    }  // end of GursonTvergaardNeedleman1982StressCriterion::getPorosityEffectOnEquivalentPlasticStrain()
+    GursonTvergaardNeedleman1982StressCriterion::
+        getPorosityEffectOnEquivalentPlasticStrain() const {
+      return StressCriterion::
+          STANDARD_POROSITY_CORRECTION_ON_EQUIVALENT_PLASTIC_STRAIN;
+    }  // end of
+       // GursonTvergaardNeedleman1982StressCriterion::getPorosityEffectOnEquivalentPlasticStrain()
 
     std::string
     GursonTvergaardNeedleman1982StressCriterion::updatePorosityUpperBound(
@@ -72,8 +78,8 @@ namespace mfront {
               "sscb_parameters", id, r);
       return "this->" + bound + " = " +  //
              "std::min(this->" + bound + ", this->" + params + ".f_r);\n";
-    }  // end of GursonTvergaardNeedleman1982StressCriterion::updatePorosityUpperBound()
-
+    }  // end of
+       // GursonTvergaardNeedleman1982StressCriterion::updatePorosityUpperBound()
 
     GursonTvergaardNeedleman1982StressCriterion::
         ~GursonTvergaardNeedleman1982StressCriterion() = default;

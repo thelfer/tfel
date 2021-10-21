@@ -37,11 +37,10 @@ namespace mfmtg {
       debug("Loading library '" + l + "'");
       lm.loadLibrary(l);
     }
-  } // load plugins
+  }  // load plugins
 
   struct MFMTestGenerator
       : public tfel::utilities::ArgumentParserBase<MFMTestGenerator> {
-
     MFMTestGenerator(const int argc, const char* const* const argv)
         : tfel::utilities::ArgumentParserBase<MFMTestGenerator>(argc, argv) {
       this->registerCommandLineCallBacks();
@@ -264,7 +263,7 @@ namespace mfmtg {
     //! external commands
     std::vector<std::string> ecmds;
     //! substitutions
-    std::map<std::string,std::string> substitutions;
+    std::map<std::string, std::string> substitutions;
   };  // end of MFMTestGenerator
 
 }  // end of namespace mfmtg

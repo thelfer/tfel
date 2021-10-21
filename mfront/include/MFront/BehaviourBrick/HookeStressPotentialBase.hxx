@@ -22,7 +22,8 @@ namespace mfront {
      * standard Hooke law.
      */
     struct HookeStressPotentialBase : StressPotential {
-      //! \brief name of the parameter holding the factor used to determine the residual stiffness
+      //! \brief name of the parameter holding the factor used to determine the
+      //! residual stiffness
       static const char* const residualStiffnessFactor;
       /*!
        * \return the options associated with material properties which are valid

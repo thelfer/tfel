@@ -23,13 +23,14 @@ namespace mfront {
 
   namespace bbrick {
 
-    PorosityNucleationModelFactory& PorosityNucleationModelFactory::getFactory() {
+    PorosityNucleationModelFactory&
+    PorosityNucleationModelFactory::getFactory() {
       static PorosityNucleationModelFactory i;
       return i;
     }  // end of PorosityNucleationModelFactory::getFactory
 
     void PorosityNucleationModelFactory::addGenerator(const std::string& n,
-                                            const Generator& g) {
+                                                      const Generator& g) {
       if (!this->generators.insert({n, g}).second) {
         tfel::raise(
             "PorosityNucleationModelFactory::addGenerator: "
@@ -39,12 +40,14 @@ namespace mfront {
     }  // end of PorosityNucleationModelFactory::addGenerator
 
     std::vector<std::string>
-    PorosityNucleationModelFactory::getRegistredPorosityNucleationModels() const {
+    PorosityNucleationModelFactory::getRegistredPorosityNucleationModels()
+        const {
       return getKeys(this->generators);
-    }  // end of PorosityNucleationModelFactory::getRegistredPorosityNucleationModels
+    }  // end of
+       // PorosityNucleationModelFactory::getRegistredPorosityNucleationModels
 
-    std::shared_ptr<PorosityNucleationModel> PorosityNucleationModelFactory::generate(
-        const std::string& n) const {
+    std::shared_ptr<PorosityNucleationModel>
+    PorosityNucleationModelFactory::generate(const std::string& n) const {
       const auto p = this->generators.find(n);
       if (p == this->generators.end()) {
         tfel::raise(

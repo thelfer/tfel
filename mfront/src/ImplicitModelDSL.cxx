@@ -27,11 +27,11 @@ namespace mfront {
   }  // end of ImplicitModelDSL::getName
 
   std::string ImplicitModelDSL::getDescription() {
-    return "this dsl provides an integrator for models based on a theta method.";
+    return "this dsl provides an integrator for models based on a theta "
+           "method.";
   }  // end of ImplicitModelDSL::getDescription
 
-  BehaviourDSLDescription
-  ImplicitModelDSL::getBehaviourDSLDescription() const {
+  BehaviourDSLDescription ImplicitModelDSL::getBehaviourDSLDescription() const {
     auto d = BehaviourDSLDescription();
     d.integrationScheme = IntegrationScheme::IMPLICITSCHEME;
     d.typicalCodeBlocks = {BehaviourData::Integrator};
@@ -39,7 +39,6 @@ namespace mfront {
     return d;
   }  // end of ImplicitModelDSL::getBehaviourDSLDescription
 
-  ImplicitModelDSL::~ImplicitModelDSL() noexcept =
-      default;
+  ImplicitModelDSL::~ImplicitModelDSL() noexcept = default;
 
 }  // end of namespace mfront

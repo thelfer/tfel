@@ -43,8 +43,7 @@ namespace tfel {
       template <StandardFunctionPtr f>
       StandardFunction<f>::StandardFunction(
           const char* const n, const std::shared_ptr<Expr> e) noexcept
-          : name(n),
-            expr(e) {}  // end of StandardFunction::StandardFunction
+          : name(n), expr(e) {}  // end of StandardFunction::StandardFunction
 
       template <StandardFunctionPtr f>
       StandardFunction<f>::~StandardFunction() = default;

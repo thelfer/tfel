@@ -72,62 +72,75 @@ static void ELM_setDoubleParameter2(tfel::system::ExternalLibraryManager& elm,
   elm.setParameter(l, n, h, p, v);
 }
 
-
 void declareExternalLibraryManager() {
   using namespace boost;
   using namespace boost::python;
   using namespace tfel::system;
   using ELM = tfel::system::ExternalLibraryManager;
 
-  bool (ELM::* hasBounds1)(const std::string&, const std::string&,
-  const std::string&, const std::string&) = &ELM::hasBounds;
-  bool (ELM::* hasBounds2)(const std::string&, const std::string&, 
-  const std::string&) = &ELM::hasBounds;
+  bool (ELM::*hasBounds1)(const std::string&, const std::string&,
+                          const std::string&, const std::string&) =
+      &ELM::hasBounds;
+  bool (ELM::*hasBounds2)(const std::string&, const std::string&,
+                          const std::string&) = &ELM::hasBounds;
 
-  bool (ELM::* hasLowerBound1)(const std::string&, const std::string&,
-  const std::string&, const std::string&) = &ELM::hasLowerBound;
-  bool (ELM::* hasLowerBound2)(const std::string&, const std::string&, 
-  const std::string&) = &ELM::hasLowerBound;
+  bool (ELM::*hasLowerBound1)(const std::string&, const std::string&,
+                              const std::string&, const std::string&) =
+      &ELM::hasLowerBound;
+  bool (ELM::*hasLowerBound2)(const std::string&, const std::string&,
+                              const std::string&) = &ELM::hasLowerBound;
 
-  bool (ELM::* hasUpperBound1)(const std::string&, const std::string&,
-  const std::string&, const std::string&) = &ELM::hasUpperBound;
-  bool (ELM::* hasUpperBound2)(const std::string&, const std::string&, 
-  const std::string&) = &ELM::hasUpperBound;
+  bool (ELM::*hasUpperBound1)(const std::string&, const std::string&,
+                              const std::string&, const std::string&) =
+      &ELM::hasUpperBound;
+  bool (ELM::*hasUpperBound2)(const std::string&, const std::string&,
+                              const std::string&) = &ELM::hasUpperBound;
 
-  long double (ELM::* getLowerBound1)(const std::string&, const std::string&,
-  const std::string&, const std::string&) = &ELM::getLowerBound;
-  long double (ELM::* getLowerBound2)(const std::string&, const std::string&, 
-  const std::string&) = &ELM::getLowerBound;
+  long double (ELM::*getLowerBound1)(const std::string&, const std::string&,
+                                     const std::string&, const std::string&) =
+      &ELM::getLowerBound;
+  long double (ELM::*getLowerBound2)(const std::string&, const std::string&,
+                                     const std::string&) = &ELM::getLowerBound;
 
-  long double (ELM::* getUpperBound1)(const std::string&, const std::string&,
-  const std::string&, const std::string&) = &ELM::getUpperBound;
-  long double (ELM::* getUpperBound2)(const std::string&, const std::string&, 
-  const std::string&) = &ELM::getUpperBound; 
+  long double (ELM::*getUpperBound1)(const std::string&, const std::string&,
+                                     const std::string&, const std::string&) =
+      &ELM::getUpperBound;
+  long double (ELM::*getUpperBound2)(const std::string&, const std::string&,
+                                     const std::string&) = &ELM::getUpperBound;
 
-  bool (ELM::* hasPhysicalBounds1)(const std::string&, const std::string&,
-  const std::string&, const std::string&) = &ELM::hasPhysicalBounds;
-  bool (ELM::* hasPhysicalBounds2)(const std::string&, const std::string&, 
-  const std::string&) = &ELM::hasPhysicalBounds;
+  bool (ELM::*hasPhysicalBounds1)(const std::string&, const std::string&,
+                                  const std::string&, const std::string&) =
+      &ELM::hasPhysicalBounds;
+  bool (ELM::*hasPhysicalBounds2)(const std::string&, const std::string&,
+                                  const std::string&) = &ELM::hasPhysicalBounds;
 
-  bool (ELM::* hasLowerPhysicalBound1)(const std::string&, const std::string&,
-  const std::string&, const std::string&) = &ELM::hasLowerPhysicalBound;
-  bool (ELM::* hasLowerPhysicalBound2)(const std::string&, const std::string&, 
-  const std::string&) = &ELM::hasLowerPhysicalBound;
+  bool (ELM::*hasLowerPhysicalBound1)(const std::string&, const std::string&,
+                                      const std::string&, const std::string&) =
+      &ELM::hasLowerPhysicalBound;
+  bool (ELM::*hasLowerPhysicalBound2)(const std::string&, const std::string&,
+                                      const std::string&) =
+      &ELM::hasLowerPhysicalBound;
 
-  bool (ELM::* hasUpperPhysicalBound1)(const std::string&, const std::string&,
-  const std::string&, const std::string&) = &ELM::hasUpperPhysicalBound;
-  bool (ELM::* hasUpperPhysicalBound2)(const std::string&, const std::string&, 
-  const std::string&) = &ELM::hasUpperPhysicalBound;
+  bool (ELM::*hasUpperPhysicalBound1)(const std::string&, const std::string&,
+                                      const std::string&, const std::string&) =
+      &ELM::hasUpperPhysicalBound;
+  bool (ELM::*hasUpperPhysicalBound2)(const std::string&, const std::string&,
+                                      const std::string&) =
+      &ELM::hasUpperPhysicalBound;
 
-  long double (ELM::* getLowerPhysicalBound1)(const std::string&, const std::string&,
-  const std::string&, const std::string&) = &ELM::getLowerPhysicalBound;
-  long double (ELM::* getLowerPhysicalBound2)(const std::string&, const std::string&, 
-  const std::string&) = &ELM::getLowerPhysicalBound;
+  long double (ELM::*getLowerPhysicalBound1)(
+      const std::string&, const std::string&, const std::string&,
+      const std::string&) = &ELM::getLowerPhysicalBound;
+  long double (ELM::*getLowerPhysicalBound2)(
+      const std::string&, const std::string&, const std::string&) =
+      &ELM::getLowerPhysicalBound;
 
-  long double (ELM::* getUpperPhysicalBound1)(const std::string&, const std::string&,
-  const std::string&, const std::string&) = &ELM::getUpperPhysicalBound;
-  long double (ELM::* getUpperPhysicalBound2)(const std::string&, const std::string&, 
-  const std::string&) = &ELM::getUpperPhysicalBound;
+  long double (ELM::*getUpperPhysicalBound1)(
+      const std::string&, const std::string&, const std::string&,
+      const std::string&) = &ELM::getUpperPhysicalBound;
+  long double (ELM::*getUpperPhysicalBound2)(
+      const std::string&, const std::string&, const std::string&) =
+      &ELM::getUpperPhysicalBound;
 
   class_<ELM, noncopyable>("ExternalLibraryManager", no_init)
       .def("getExternalLibraryManager", ELM::getExternalLibraryManager,
@@ -169,7 +182,7 @@ void declareExternalLibraryManager() {
            "return the list of the parameters")
       .def("getUMATParametersTypes", &ELM::getUMATParametersTypes,
            "return the types of the parameters")
-      
+
       .def("hasBounds", hasBounds1,
            "return true if the given variable has bounds")
       .def("hasBounds", hasBounds2,
@@ -185,12 +198,12 @@ void declareExternalLibraryManager() {
       .def("getLowerBound", getLowerBound1,
            "return the lower bound of a variable")
       .def("getLowerBound", getLowerBound2,
-           "return the lower bound of a variable")      
+           "return the lower bound of a variable")
       .def("getUpperBound", getUpperBound1,
            "return the upper bound of a variable")
       .def("getUpperBound", getUpperBound2,
            "return the upper bound of a variable")
-      
+
       .def("hasPhysicalBounds", hasPhysicalBounds1,
            "return true if the given variable has physical bounds")
       .def("hasPhysicalBounds", hasPhysicalBounds2,
@@ -206,12 +219,12 @@ void declareExternalLibraryManager() {
       .def("getLowerPhysicalBound", getLowerPhysicalBound1,
            "return the lower physical bound of a variable")
       .def("getLowerPhysicalBound", getLowerPhysicalBound2,
-           "return the lower physical bound of a variable")      
+           "return the lower physical bound of a variable")
       .def("getUpperPhysicalBound", getUpperPhysicalBound1,
            "return the upper physical bound of a variable")
       .def("getUpperPhysicalBound", getUpperPhysicalBound2,
            "return the upper physical bound of a variable")
-      
+
       .def("contains", &ELM::contains)
       .def("getUMATBehaviourType", &ELM::getUMATBehaviourType)
       .def("getUMATSymmetryType", &ELM::getUMATSymmetryType)

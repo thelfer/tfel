@@ -144,10 +144,10 @@ namespace mfront {
           "if true (default value), we use an algorithm based on statuses. "
           "Otherwise the algorithm used up to versions 3.2.1 is selected.",
           OptionDescription::BOOLEAN);
-      opts.emplace_back(
-          "first_converge_on_damage",
-          "if true, the time step is set to zero to converge on the damage state first.",
-          OptionDescription::BOOLEAN);
+      opts.emplace_back("first_converge_on_damage",
+                        "if true, the time step is set to zero to converge on "
+                        "the damage state first.",
+                        OptionDescription::BOOLEAN);
       opts.emplace_back("handle_pressure_on_crack_surface",
                         "if true, a pressure is applied on the crack surface",
                         OptionDescription::BOOLEAN);
@@ -334,9 +334,8 @@ namespace mfront {
           return "this->young_tdt";
         }
         if (bd.hasAttribute("HookeStressPotentialBase::YoungModulus")) {
-          return "this->" +
-                 bd.getAttribute<std::string>(
-                     "HookeStressPotentialBase::YoungModulus");
+          return "this->" + bd.getAttribute<std::string>(
+                                "HookeStressPotentialBase::YoungModulus");
         }
         return "this->young";
       }();
@@ -440,15 +439,15 @@ namespace mfront {
                  BehaviourData::CREATEORAPPEND, BehaviourData::AT_END);
       for (const auto h : bd.getModellingHypotheses()) {
         if (h == ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN) {
-	  continue;
-	}
-	CodeBlock init2;
-	init2.code +=
-	  "// change to cylindrical coordinates\n"
-	  "DDIF2Base::cart2cyl(this->deto,this->angl);\n"
-	  "DDIF2Base::cart2cyl(this->sig,this->angl);\n";
-	bd.setCode(h, BehaviourData::BeforeInitializeLocalVariables, init2,
-		   BehaviourData::CREATEORAPPEND, BehaviourData::AT_END);
+          continue;
+        }
+        CodeBlock init2;
+        init2.code +=
+            "// change to cylindrical coordinates\n"
+            "DDIF2Base::cart2cyl(this->deto,this->angl);\n"
+            "DDIF2Base::cart2cyl(this->sig,this->angl);\n";
+        bd.setCode(h, BehaviourData::BeforeInitializeLocalVariables, init2,
+                   BehaviourData::CREATEORAPPEND, BehaviourData::AT_END);
       }
       CodeBlock prediction;
       if (this->firstConvergeOnDamage) {
@@ -526,8 +525,7 @@ namespace mfront {
                  BehaviourData::CREATEORAPPEND, BehaviourData::AT_END);
       /* post-processing checks */
       CodeBlock acc;
-        acc.code =
-            "if (converged) {\n";
+      acc.code = "if (converged) {\n";
       if (this->algorithm == STATUS) {
         acc.code +=
             "this->ddif2bdata.sig=(" + lambda +

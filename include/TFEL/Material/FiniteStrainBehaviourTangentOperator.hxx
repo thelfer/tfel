@@ -75,9 +75,9 @@ namespace tfel {
                   tfel::math::t2tot2<N, StressType>,
                   tfel::math::t2tost2<N, StressType>,
                   tfel::math::st2tost2<N, StressType>,
-                  tfel::math::t2tot2<N, StressType> *,
-                  tfel::math::t2tost2<N, StressType> *,
-                  tfel::math::st2tost2<N, StressType> *>::type> {
+                  tfel::math::t2tot2<N, StressType>*,
+                  tfel::math::t2tost2<N, StressType>*,
+                  tfel::math::st2tost2<N, StressType>*>::type> {
       //! supported tangent operator types;
       using TOTypes = typename tfel::meta::GenerateTypeList<
           tfel::math::t2tot2<N, StressType>,
@@ -184,9 +184,8 @@ namespace tfel {
     struct FiniteStrainBehaviourTangentOperatorType;
 
     /*!
-     * \brief partial specialisation for the derivative of the Cauchy stress with
-     * respect to
-     * the deformation gradient
+     * \brief partial specialisation for the derivative of the Cauchy stress
+     * with respect to the deformation gradient
      */
     template <unsigned short N, typename StressType>
     struct FiniteStrainBehaviourTangentOperatorType<
@@ -350,8 +349,8 @@ namespace tfel {
         // FiniteStrainBehaviourTangentOperatorType<FiniteStrainBehaviourTangentOperatorBase::DS_DEGL,N,StressType>
 
     /*!
-     * \brief partial specialisation for the dual of the lagrangian Hencky strain with
-     * respect to the lagrangian Hencky strain
+     * \brief partial specialisation for the dual of the lagrangian Hencky
+     * strain with respect to the lagrangian Hencky strain
      */
     template <unsigned short N, typename StressType>
     struct FiniteStrainBehaviourTangentOperatorType<

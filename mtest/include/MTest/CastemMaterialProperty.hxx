@@ -31,6 +31,7 @@ namespace mtest {
     real getValue() const override;
     //! \brief destructor
     ~CastemMaterialProperty() override;
+
    private:
     //! \brief the castem function
     tfel::system::CastemFunctionPtr fct;

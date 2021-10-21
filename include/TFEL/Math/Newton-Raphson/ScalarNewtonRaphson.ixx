@@ -52,7 +52,7 @@ namespace tfel {
         return std::make_tuple(false, p.x0, i);
       }
 #if __cplusplus >= 201703L
-      auto[fv, dfv] = f(p.x0);
+      auto [fv, dfv] = f(p.x0);
 #else
       auto fdf = f(p.x0);
       auto fv = std::get<0>(fdf);
@@ -95,7 +95,8 @@ namespace tfel {
             }
           }
         }
-        converged = have_valid_increment_estimate && tfel::math::ieee754::isfinite(x) &&
+        converged = have_valid_increment_estimate &&
+                    tfel::math::ieee754::isfinite(x) &&
                     tfel::math::ieee754::isfinite(fv) && c(fv, dx, x, i);
         if (!converged) {
           x += dx;

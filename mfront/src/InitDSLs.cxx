@@ -1,44 +1,44 @@
 /*!
  * \file   mfront/src/InitDSLs.cxx
- * \brief  
- * 
+ * \brief
+ *
  * \author Thomas Helfer
  * \date   13 sep 2008
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef TFEL_MISSING_STD_THREADS_SUPPORT
-#include<mutex>
+#include <mutex>
 #endif /* TFEL_MISSING_STD_THREADS_SUPPORT */
-#include"MFront/DSLProxy.hxx"
+#include "MFront/DSLProxy.hxx"
 
-#include"MFront/DefaultDSL.hxx"
-#include"MFront/DefaultCZMDSL.hxx"
-#include"MFront/DefaultFiniteStrainDSL.hxx"
-#include"MFront/DefaultGenericBehaviourDSL.hxx"
+#include "MFront/DefaultDSL.hxx"
+#include "MFront/DefaultCZMDSL.hxx"
+#include "MFront/DefaultFiniteStrainDSL.hxx"
+#include "MFront/DefaultGenericBehaviourDSL.hxx"
 #include "MFront/DefaultModelDSL.hxx"
-#include"MFront/IsotropicMisesCreepDSL.hxx"
-#include"MFront/IsotropicMisesPlasticFlowDSL.hxx"
-#include"MFront/IsotropicStrainHardeningMisesCreepDSL.hxx"
-#include"MFront/MaterialPropertyDSL.hxx"
-#include"MFront/MultipleIsotropicMisesFlowsDSL.hxx"
-#include"MFront/RungeKuttaDSL.hxx"
-#include"MFront/RungeKuttaFiniteStrainDSL.hxx"
-#include"MFront/RungeKuttaGenericBehaviourDSL.hxx"
+#include "MFront/IsotropicMisesCreepDSL.hxx"
+#include "MFront/IsotropicMisesPlasticFlowDSL.hxx"
+#include "MFront/IsotropicStrainHardeningMisesCreepDSL.hxx"
+#include "MFront/MaterialPropertyDSL.hxx"
+#include "MFront/MultipleIsotropicMisesFlowsDSL.hxx"
+#include "MFront/RungeKuttaDSL.hxx"
+#include "MFront/RungeKuttaFiniteStrainDSL.hxx"
+#include "MFront/RungeKuttaGenericBehaviourDSL.hxx"
 #include "MFront/RungeKuttaModelDSL.hxx"
-#include"MFront/ImplicitDSL.hxx"
-#include"MFront/ImplicitDSLII.hxx"
-#include"MFront/ImplicitFiniteStrainDSL.hxx"
-#include"MFront/ImplicitGenericBehaviourDSL.hxx"
+#include "MFront/ImplicitDSL.hxx"
+#include "MFront/ImplicitDSLII.hxx"
+#include "MFront/ImplicitFiniteStrainDSL.hxx"
+#include "MFront/ImplicitGenericBehaviourDSL.hxx"
 #include "MFront/ImplicitModelDSL.hxx"
 
-#include"MFront/ModelDSL.hxx"
-#include"MFront/InitDSLs.hxx"
+#include "MFront/ModelDSL.hxx"
+#include "MFront/InitDSLs.hxx"
 
 namespace mfront {
 
@@ -48,7 +48,7 @@ namespace mfront {
     static std::mutex m;
     std::lock_guard<std::mutex> lock(m);
 #endif /* TFEL_MISSING_STD_THREADS_SUPPORT */
-    if(init){
+    if (init) {
       return;
     }
     if (!init) {
@@ -91,6 +91,6 @@ namespace mfront {
           std::vector<std::string>{"RungeKuttaModel", "RungeKuttaModelParser"});
       init = true;
     }
-  } // end of initDSLs 
+  }  // end of initDSLs
 
-} // end of namespace mfront
+}  // end of namespace mfront

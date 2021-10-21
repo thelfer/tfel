@@ -29,13 +29,13 @@ namespace std {
     s << v;
     return s.str();
   }
-}
+}  // namespace std
 #endif /* defined __CYGWIN__ &&  (!defined _GLIBCXX_USE_C99) */
 
 namespace mfront {
 
   void mergeExecutableDescription(ExecutableDescription& d,
-                               const ExecutableDescription& s) {
+                                  const ExecutableDescription& s) {
     tfel::raise_if(
         (d.name != s.name) || (d.prefix != s.prefix) || (d.suffix != s.suffix),
         "mergeExecutableDescription : "
@@ -43,7 +43,8 @@ namespace mfront {
             d.name +
             "' ("
             "prefix: '" +
-            d.prefix + "', " + "suffix: '" + d.suffix + "')"
+            d.prefix + "', " + "suffix: '" + d.suffix +
+            "')"
             "and description of executable '" +
             s.name +
             "' ("
@@ -73,9 +74,10 @@ namespace mfront {
   const char* ExecutableDescription::getDefaultExecutablePrefix(
       const TargetSystem) noexcept {
     return "";
-  } // end of getDefaultExecutablePrefix
+  }  // end of getDefaultExecutablePrefix
 
-  const char* ExecutableDescription::getDefaultExecutableSuffix(const TargetSystem s) noexcept {
+  const char* ExecutableDescription::getDefaultExecutableSuffix(
+      const TargetSystem s) noexcept {
     return (s == WINDOWS) ? "exe" : "";
   }  // end of ExecutableDescription::getDefaultExecutableSuffix
 
@@ -85,8 +87,10 @@ namespace mfront {
       : CompiledTargetDescriptionBase(n, p, s) {
   }  // end of ExecutableDescription::ExecutableDescription
 
-  ExecutableDescription::ExecutableDescription(const ExecutableDescription&) = default;
-  ExecutableDescription::ExecutableDescription(ExecutableDescription&&) = default;
+  ExecutableDescription::ExecutableDescription(const ExecutableDescription&) =
+      default;
+  ExecutableDescription::ExecutableDescription(ExecutableDescription&&) =
+      default;
   ExecutableDescription::~ExecutableDescription() = default;
 
   std::ostream& operator<<(std::ostream& os, const ExecutableDescription& l) {
@@ -112,7 +116,9 @@ namespace mfront {
        const tfel::utilities::CxxTokenizer::const_iterator pe) {
     using tfel::utilities::CxxTokenizer;
     const auto f = "read<ExecutableDescription>";
-    auto error = [&f](const std::string& m) { tfel::raise(std::string{f} + ": " + m); };
+    auto error = [&f](const std::string& m) {
+      tfel::raise(std::string{f} + ": " + m);
+    };
     auto name = std::string{};
     auto prefix = std::string{};
     auto suffix = std::string{};
@@ -130,7 +136,7 @@ namespace mfront {
     CxxTokenizer::readSpecifiedToken(f, "{", c, pe);
     CxxTokenizer::checkNotEndOfLine(f, c, pe);
     auto get_string = [&c, pe, &error, &f](std::string& s,
-					   const char* const e) {
+                                           const char* const e) {
       if (!s.empty()) {
         error(std::string(e) + " multiply defined");
       }
@@ -141,7 +147,7 @@ namespace mfront {
     };
     auto get_vector = [&c, pe, &error, &f](std::vector<std::string>& v,
                                            const char* const e) {
-      if(!v.empty()){
+      if (!v.empty()) {
         error("executable member '" + std::string(e) + "' multiply defined");
       }
       ++c;

@@ -281,10 +281,12 @@ namespace mfront {
     this->md.parameters.push_back(p);
   }  // MaterialPropertyDSL::treatParameter
 
-  void MaterialPropertyDSL::setMaterialKnowledgeIdentifier(const std::string& i) {
+  void MaterialPropertyDSL::setMaterialKnowledgeIdentifier(
+      const std::string& i) {
     auto throw_if = [this](const bool b, const std::string& m) {
       if (b) {
-        this->throwRuntimeError("MaterialPropertyDSL::setMaterialKnowledgeIdentifier", m);
+        this->throwRuntimeError(
+            "MaterialPropertyDSL::setMaterialKnowledgeIdentifier", m);
       }
     };
     throw_if(!isValidMaterialPropertyName(i),
@@ -298,7 +300,7 @@ namespace mfront {
 
   void MaterialPropertyDSL::treatLaw() {
     const auto& l = this->readOnlyOneToken();
-    if(!isValidMaterialPropertyName(l)){
+    if (!isValidMaterialPropertyName(l)) {
       this->throwRuntimeError("MaterialPropertyDSL::treatLaw",
                               "'" + l + "' is not a valid law name");
     }

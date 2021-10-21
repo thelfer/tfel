@@ -38,7 +38,7 @@ namespace tfel {
       LATIN_LETTER_SUBSCRIPT_SMALL,
       ARABIC_NUMBER_SUPERSCRIPT,
       ARABIC_NUMBER_SUBSCRIPT
-    }; // end of UnicodeCharacterCategory
+    };  // end of UnicodeCharacterCategory
 
     /*!
      * \brief description of an unicode character

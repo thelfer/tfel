@@ -19,9 +19,10 @@ namespace tfel {
   namespace material {
 
     template <typename StressStensorType>
-    std::ostream& operator<<(std::ostream& os,
-                             const PowerLawStressBasedNucleationModelParameters<
-                                 StressStensorType>& p) {
+    std::ostream& operator<<(
+        std::ostream& os,
+        const PowerLawStressBasedNucleationModelParameters<StressStensorType>&
+            p) {
       os << '{' << p.fn << ", " << p.sn << ", " << p.m << '}';
       return os;
     }  // end of operator<<
@@ -32,7 +33,8 @@ namespace tfel {
         const PowerLawStressBasedNucleationModelParameters<StressStensorType>&
             params,
         const StressStensorType& sig,
-        const PowerLawStressBasedNucleationModelRealType<StressStensorType>& p) {
+        const PowerLawStressBasedNucleationModelRealType<StressStensorType>&
+            p) {
       if (p < params.pmin) {
         return 0;
       }

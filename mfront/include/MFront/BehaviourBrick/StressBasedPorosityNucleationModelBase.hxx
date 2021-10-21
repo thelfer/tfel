@@ -1,6 +1,7 @@
 /*!
- * \file   include/MFront/BehaviourBrick/StressBasedPorosityNucleationModelBase.hxx
- * \brief    
+ * \file
+ * include/MFront/BehaviourBrick/StressBasedPorosityNucleationModelBase.hxx
+ * \brief
  * \author Thomas Helfer
  * \date   05/04/2020
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
@@ -55,7 +56,7 @@ namespace mfront {
        * \return the name of the underlying nucleation model.
        */
       virtual std::string getModelName() const = 0;
-      //! 
+      //!
       BehaviourDescription::MaterialProperty fmax;
     };  // end of struct StressBasedPorosityNucleationModelBase
 
@@ -63,4 +64,5 @@ namespace mfront {
 
 }  // end of namespace mfront
 
-#endif /* LIB_MFRONT_BEHAVIOURBRICK_STRESSBASEDPOROSITYNUCLEATIONMODELBASE_HXX */
+#endif /* LIB_MFRONT_BEHAVIOURBRICK_STRESSBASEDPOROSITYNUCLEATIONMODELBASE_HXX \
+        */

@@ -1,19 +1,19 @@
-/*! 
+/*!
  * \file  mfront/src/ImplicitGenericBehaviourDSL.cxx
  * \brief
  * \author Thomas Helfer
  * \brief 18 févr. 2013
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
-#include"MFront/ImplicitGenericBehaviourDSL.hxx"
+#include "MFront/ImplicitGenericBehaviourDSL.hxx"
 
-namespace mfront{
+namespace mfront {
 
   ImplicitGenericBehaviourDSL::ImplicitGenericBehaviourDSL() {
     this->mb.setDSLName("ImplicitGenericBehaviour");
@@ -47,11 +47,11 @@ namespace mfront{
 
   std::string ImplicitGenericBehaviourDSL::getName() {
     return "ImplicitGenericBehaviourDSL";
-  } // end of ImplicitGenericBehaviourDSL::getName
+  }  // end of ImplicitGenericBehaviourDSL::getName
 
   std::string ImplicitGenericBehaviourDSL::getDescription() {
     return "this dsl provides a generic integrator based on a theta method.";
-  } // end of ImplicitGenericBehaviourDSL::getDescription
+  }  // end of ImplicitGenericBehaviourDSL::getDescription
 
   std::string ImplicitGenericBehaviourDSL::getCodeBlockTemplate(
       const std::string& c, const MFrontTemplateGenerationOptions& o) const {
@@ -61,7 +61,8 @@ namespace mfront{
     return ImplicitDSLBase::getCodeBlockTemplate(c, o);
   }  // end of ImplicitGenericBehaviourDSL::getCodeBlockTemplate
 
-  BehaviourDSLDescription ImplicitGenericBehaviourDSL::getBehaviourDSLDescription() const {
+  BehaviourDSLDescription
+  ImplicitGenericBehaviourDSL::getBehaviourDSLDescription() const {
     auto d = BehaviourDSLDescription();
     d.integrationScheme = IntegrationScheme::IMPLICITSCHEME;
     d.typicalCodeBlocks = {BehaviourData::ComputePredictionOperator,
@@ -74,6 +75,6 @@ namespace mfront{
   }  // end of ImplicitGenericBehaviourDSL::getBehaviourDSLDescription
 
   ImplicitGenericBehaviourDSL::~ImplicitGenericBehaviourDSL() noexcept =
-          default;
+      default;
 
-} // end of namespace mfront  
+}  // end of namespace mfront

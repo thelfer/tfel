@@ -3,24 +3,24 @@
  * \brief  This file declares the IsRandomAccessIterator class.
  * \author Thomas Helfer
  * \date   15/08/2006
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_TFEL_ISRANDOMAACCESSITERATOR_HXX
-#define LIB_TFEL_ISRANDOMAACCESSITERATOR_HXX 
+#define LIB_TFEL_ISRANDOMAACCESSITERATOR_HXX
 
-#include<iterator>
+#include <iterator>
 
-#include<type_traits>
+#include <type_traits>
 
-namespace tfel{
+namespace tfel {
 
-  namespace typetraits{
+  namespace typetraits {
 
     /*!
      * \brief Traits class which says if its argument is a random
@@ -33,18 +33,18 @@ namespace tfel{
      * \author Thomas Helfer
      * \date   04 Jul 2006
      */
-    template<typename T>
-    struct IsRandomAccessIterator
-    {
+    template <typename T>
+    struct IsRandomAccessIterator {
       /*!
        *  Result
        */
-      static constexpr bool cond = std::is_same<typename std::iterator_traits<T>::iterator_category,std::random_access_iterator_tag>::value;
+      static constexpr bool cond =
+          std::is_same<typename std::iterator_traits<T>::iterator_category,
+                       std::random_access_iterator_tag>::value;
     };
 
-  } // end of namespace typetraits
+  }  // end of namespace typetraits
 
-} // end of namespace typetraits
+}  // namespace tfel
 
 #endif /* LIB_TFEL_ISRANDOMAACCESSITERATOR_HXX */
-

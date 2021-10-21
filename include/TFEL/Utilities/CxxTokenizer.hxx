@@ -45,8 +45,7 @@ namespace tfel {
        * \param[in] s : variable name
        * \param[in] b : boolean telling if C++ keywords are allowed.
        */
-      static bool isValidIdentifier(const std::string&,
-                                    const bool = true);
+      static bool isValidIdentifier(const std::string&, const bool = true);
       /*!
        * \brief an helper method throwing an exception if the given
        * iterator is egal to the third argument (which shall point
@@ -116,8 +115,7 @@ namespace tfel {
        * \throw std::runtime_error if the given iterator is egal to
        * the second argument or if the given token is not a string
        */
-      static std::string readString(const_iterator&,
-                                    const const_iterator);
+      static std::string readString(const_iterator&, const const_iterator);
       /*!
        * \brief an helper method to extract a set of values from the
        * given as an array
@@ -216,7 +214,7 @@ namespace tfel {
        * \brief constructor with options
        * \param[in] o: options
        */
-      CxxTokenizer(const CxxTokenizerOptions &);
+      CxxTokenizer(const CxxTokenizerOptions&);
       /*!
        * \brief constructor from a file
        * \param[in] f : file name
@@ -351,8 +349,7 @@ namespace tfel {
        * \param[in] n:    line number
        * \param[in] from: origin of the stream
        */
-      virtual void splitLine(const std::string&,
-                             const Token::size_type);
+      virtual void splitLine(const std::string&, const Token::size_type);
 
       virtual void parseChar(Token::size_type&,
                              std::string::const_iterator&,
@@ -386,12 +383,11 @@ namespace tfel {
                                std::string::const_iterator&,
                                const std::string::const_iterator,
                                const Token::size_type);
-      virtual void parsePreprocessorDirective(
-          Token::size_type&,
-          std::string::const_iterator&,
-          const std::string::const_iterator,
-          const std::string::const_iterator,
-          const Token::size_type);
+      virtual void parsePreprocessorDirective(Token::size_type&,
+                                              std::string::const_iterator&,
+                                              const std::string::const_iterator,
+                                              const std::string::const_iterator,
+                                              const Token::size_type);
       virtual void parseStandardLine(Token::size_type&,
                                      std::string::const_iterator&,
                                      const std::string::const_iterator,

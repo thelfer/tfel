@@ -1,37 +1,38 @@
-/*! 
+/*!
  * \file  mfront/src/RungeKuttaFiniteStrainDSL.cxx
  * \brief
  * \author Thomas Helfer
  * \brief 17 févr. 2016
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
-#include"MFront/RungeKuttaFiniteStrainDSL.hxx"
+#include "MFront/RungeKuttaFiniteStrainDSL.hxx"
 
-namespace mfront{
+namespace mfront {
 
   RungeKuttaFiniteStrainDSL::RungeKuttaFiniteStrainDSL() {
     this->mb.setDSLName("RungeKuttaFiniteStrain");
     this->mb.declareAsAFiniteStrainStandardBehaviour(true);
     this->registerNewCallBack(
-        "@ComputeStress", &RungeKuttaFiniteStrainDSL::treatComputeThermodynamicForces);
+        "@ComputeStress",
+        &RungeKuttaFiniteStrainDSL::treatComputeThermodynamicForces);
     this->registerNewCallBack(
         "@ComputeFinalStress",
         &RungeKuttaFiniteStrainDSL::treatComputeFinalThermodynamicForces);
-  } // end of RungeKuttaFiniteStrainDSL::RungeKuttaFiniteStrainDSL
+  }  // end of RungeKuttaFiniteStrainDSL::RungeKuttaFiniteStrainDSL
 
   std::string RungeKuttaFiniteStrainDSL::getName() {
     return "RungeKuttaFiniteStrain";
-  } // end of RungeKuttaFiniteStrainDSL::getName
+  }  // end of RungeKuttaFiniteStrainDSL::getName
 
   std::string RungeKuttaFiniteStrainDSL::getDescription() {
     return "this parser provides a generic integrator based on a theta method.";
-  } // end of RungeKuttaFiniteStrainDSL::getDescription
+  }  // end of RungeKuttaFiniteStrainDSL::getDescription
 
   std::string RungeKuttaFiniteStrainDSL::getCodeBlockTemplate(
       const std::string& c, const MFrontTemplateGenerationOptions& o) const {
@@ -41,7 +42,8 @@ namespace mfront{
     return RungeKuttaDSLBase::getCodeBlockTemplate(c, o);
   }  // end of RungeKuttaFiniteStrainDSL::getCodeBlockTemplate
 
-  BehaviourDSLDescription RungeKuttaFiniteStrainDSL::getBehaviourDSLDescription() const {
+  BehaviourDSLDescription
+  RungeKuttaFiniteStrainDSL::getBehaviourDSLDescription() const {
     auto d = mfront::getDefaultFiniteStrainBehaviourDSLDescription();
     d.integrationScheme = IntegrationScheme::EXPLICITSCHEME;
     d.typicalCodeBlocks = {BehaviourData::ComputePredictionOperator,
@@ -54,4 +56,4 @@ namespace mfront{
 
   RungeKuttaFiniteStrainDSL::~RungeKuttaFiniteStrainDSL() noexcept = default;
 
-} // end of namespace mfront  
+}  // end of namespace mfront

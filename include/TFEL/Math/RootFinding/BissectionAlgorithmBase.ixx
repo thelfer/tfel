@@ -1,6 +1,6 @@
 /*!
  * \file   include/TFEL/Math/RootFinding/BissectionAlgorithmBase.ixx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   10/10/2020
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
@@ -57,7 +57,7 @@ namespace tfel {
         if (BissectionAlgorithmBase::haveSameSign(this->fmin, f)) {
           if (x < this->xmin) {
             update_range(this->xmax, this->fmax, x, f);
-          } 
+          }
           if (x > this->xmax) {
             update_range(this->xmin, this->fmin, x, f);
           }
@@ -78,12 +78,12 @@ namespace tfel {
           this->fmin = f;
         }
       } else {
-        if ((x <this-> xmax) && (x > this->xmin)) {
+        if ((x < this->xmax) && (x > this->xmin)) {
           this->xmax = x;
           this->fmax = f;
         }
       }
-    } // end of BissectionAlgorithm<NumericType>::updateBounds
+    }  // end of BissectionAlgorithm<NumericType>::updateBounds
 
     template <typename NumericType>
     void BissectionAlgorithmBase<NumericType>::iterate(NumericType& x) {
@@ -96,7 +96,7 @@ namespace tfel {
           ((x < this->xmin) || (x > this->xmax))) {
         this->getNextRootEstimate(x);
       }
-    } // end of BissectionAlgorithm<NumericType>::iterate
+    }  // end of BissectionAlgorithm<NumericType>::iterate
 
     template <typename NumericType>
     bool BissectionAlgorithmBase<NumericType>::getNextRootEstimate(
@@ -117,7 +117,7 @@ namespace tfel {
         x = (this->xmin + this->xmax) / 2;
       }
       return true;
-    } // end of BissectionAlgorithmBase<NumericType>::getNextRootEstimate
+    }  // end of BissectionAlgorithmBase<NumericType>::getNextRootEstimate
 
     template <typename NumericType>
     bool BissectionAlgorithmBase<NumericType>::haveSameSign(
@@ -127,7 +127,7 @@ namespace tfel {
         return (zero < value) - (value < zero);
       };
       return sgn(a) == sgn(b);
-    } // end of BissectionAlgorithmBase<NumericType>::haveSameSign
+    }  // end of BissectionAlgorithmBase<NumericType>::haveSameSign
 
     template <typename NumericType>
     const BissectionAlgorithmData<NumericType>&
@@ -148,8 +148,8 @@ namespace tfel {
                              const BissectionAlgorithmBase<NumericType>& a) {
       os << a.getData();
       return os;
-    } // end of operator<<
- 
+    }  // end of operator<<
+
   }  // end of namespace math
 
 }  // end of namespace tfel

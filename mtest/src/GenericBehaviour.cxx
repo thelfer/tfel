@@ -129,14 +129,16 @@ namespace mtest {
           l, f + "_rotateGradients");
       if (this->btype == 2u) {
         // finite strain behaviour
-        this->rtf_fct = elm.getGenericBehaviourRotateThermodynamicForcesFunction(
-            l, f + "_rotateThermodynamicForces_CauchyStress");
+        this->rtf_fct =
+            elm.getGenericBehaviourRotateThermodynamicForcesFunction(
+                l, f + "_rotateThermodynamicForces_CauchyStress");
         this->rto_fct =
             elm.getGenericBehaviourRotateTangentOperatorBlocksFunction(
                 l, f + "_rotateTangentOperatorBlocks_dsig_dF");
       } else {
-        this->rtf_fct = elm.getGenericBehaviourRotateThermodynamicForcesFunction(
-            l, f + "_rotateThermodynamicForces");
+        this->rtf_fct =
+            elm.getGenericBehaviourRotateThermodynamicForcesFunction(
+                l, f + "_rotateThermodynamicForces");
         this->rto_fct =
             elm.getGenericBehaviourRotateTangentOperatorBlocksFunction(
                 l, f + "_rotateTangentOperatorBlocks");

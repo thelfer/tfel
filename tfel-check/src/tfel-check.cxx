@@ -147,7 +147,7 @@ namespace tfel {
       if (s1.empty()) {
         return false;
       }
-      this->configurations.addSubstitution(s1,o);
+      this->configurations.addSubstitution(s1, o);
       return true;
     }  // end of TFELCheck::treatSubstitution
 

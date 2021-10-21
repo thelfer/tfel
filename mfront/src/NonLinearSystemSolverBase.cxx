@@ -127,16 +127,16 @@ namespace mfront {
     for (const auto& b : blocs) {
       auto getPositionAndSize = [&ivs, throw_if](const std::string& v)
           -> std::pair<SupportedTypes::TypeSize, SupportedTypes::TypeSize> {
-            auto ns = SupportedTypes::TypeSize{};
-            for (const auto& iv : ivs) {
-              const auto s = SupportedTypes::getTypeSize(iv.type, iv.arraySize);
-              if (iv.name == v) {
-                return {ns, s};
-              }
-              ns += s;
-            }
-            throw_if(true, "no integration variable named '" + v + "'");
-          };
+        auto ns = SupportedTypes::TypeSize{};
+        for (const auto& iv : ivs) {
+          const auto s = SupportedTypes::getTypeSize(iv.type, iv.arraySize);
+          if (iv.name == v) {
+            return {ns, s};
+          }
+          ns += s;
+        }
+        throw_if(true, "no integration variable named '" + v + "'");
+      };
       const auto pd = getPositionAndSize(b.first);
       auto update_jacobian = [&out, &b,
                               getPositionAndSize](const std::string& j) {
@@ -384,13 +384,15 @@ namespace mfront {
         out << "if(std::abs(" << v << "[" << n
             << "+idx])>this->maximum_increment_value_per_iteration){\n";
         out << "if(" << v << "[" << n << "+idx]<0){\n";
-        out << "" << v << "[" << n << "+idx] = "
-                                      "-this->maximum_increment_value_"
-                                      "per_iteration;\n";
+        out << "" << v << "[" << n
+            << "+idx] = "
+               "-this->maximum_increment_value_"
+               "per_iteration;\n";
         out << "} else {\n";
-        out << "" << v << "[" << n << "+idx] =  "
-                                      "this->maximum_increment_value_"
-                                      "per_iteration;\n";
+        out << "" << v << "[" << n
+            << "+idx] =  "
+               "this->maximum_increment_value_"
+               "per_iteration;\n";
         out << "}\n";
         out << "}\n";
         out << "}\n";

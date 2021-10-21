@@ -1,6 +1,6 @@
 /*!
  * \file   include/TFEL/MATH/FischerBurmeister.ixx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   29/05/2019
  */
@@ -10,19 +10,20 @@
 
 #include "TFEL/Math/General/IEEE754.hxx"
 
-namespace tfel{
+namespace tfel {
 
   namespace math {
 
     template <typename real>
-    real regularisedFischerBurmeisterFunction(const real& x, const real& y, const real& e) {
+    real regularisedFischerBurmeisterFunction(const real& x,
+                                              const real& y,
+                                              const real& e) {
       return x + y - std::sqrt(x * x + y * y + e * e);
     }  // end of FischerBurmeisterFunction
 
     template <typename real>
-    std::tuple<real, real> regularisedFischerBurmeisterFunctionFirstDerivatives(const real& x,
-                                                                                const real& y,
-                                                                                const real& e) {
+    std::tuple<real, real> regularisedFischerBurmeisterFunctionFirstDerivatives(
+        const real& x, const real& y, const real& e) {
       const auto is = 1 / std::sqrt(x * x + y * y + e * e);
       return {1 - x * is, 1 - y * is};
     }  // end of regularisedFischerBurmeisterFunctionFirstDerivatives
@@ -34,7 +35,8 @@ namespace tfel{
     }  // end of squaredFischerBurmeisterFunction
 
     template <typename real>
-    std::tuple<real,real> squaredFischerBurmeisterFunctionFirstDerivatives(const real& x, const real& y) {
+    std::tuple<real, real> squaredFischerBurmeisterFunctionFirstDerivatives(
+        const real& x, const real& y) {
       const auto df_dx = [&x, &y] {
         constexpr const auto zero = real{0};
         if (tfel::math::ieee754::fpclassify(x) == FP_ZERO) {

@@ -538,10 +538,10 @@ namespace tfel {
                                                const AnsysRealType *const,
                                                const AnsysRealType *const);
     /*!
-    * a simple alias.
-    * This is the prototype of the external functions used by the
-    * abaqus explicit solver
-    */
+     * a simple alias.
+     * This is the prototype of the external functions used by the
+     * abaqus explicit solver
+     */
     typedef void(TFEL_ADDCALL_PTR AbaqusExplicitFctPtr)(
         const AbaqusIntegerType *const,
         const AbaqusIntegerType *const,

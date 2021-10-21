@@ -19,34 +19,37 @@
 
 namespace mfront {
 
-namespace bbrick {
+  namespace bbrick {
 
-/*!
- * \brief implementation of the __StressCriterionName__ stress criterion
- */
-struct __StressCriterionName__StressCriterion : StandardPorousStressCriterionBase {
-  /*!
-   * \brief constructor
-   */
-  __StressCriterionName__StressCriterion();
+    /*!
+     * \brief implementation of the __StressCriterionName__ stress criterion
+     */
+    struct __StressCriterionName__StressCriterion
+        : StandardPorousStressCriterionBase {
+      /*!
+       * \brief constructor
+       */
+      __StressCriterionName__StressCriterion();
 
-  std::vector<BehaviourSymmetry>
-  getSupportedBehaviourSymmetries() const override;
+      std::vector<BehaviourSymmetry> getSupportedBehaviourSymmetries()
+          const override;
 
-  std::vector<OptionDescription> getOptions() const override;
+      std::vector<OptionDescription> getOptions() const override;
 
-  PorosityEffectOnFlowRule getPorosityEffectOnEquivalentPlasticStrain() const override;
+      PorosityEffectOnFlowRule getPorosityEffectOnEquivalentPlasticStrain()
+          const override;
 
-  std::string updatePorosityUpperBound(const BehaviourDescription &,
-                                       const std::string &,
-                                       const Role) const override;
+      std::string updatePorosityUpperBound(const BehaviourDescription &,
+                                           const std::string &,
+                                           const Role) const override;
 
-  //! \brief destructor
-  ~__StressCriterionName__StressCriterion() override;
-}; // end of struct __StressCriterionName__StressCriterion
+      //! \brief destructor
+      ~__StressCriterionName__StressCriterion() override;
+    };  // end of struct __StressCriterionName__StressCriterion
 
-} // end of namespace bbrick
+  }  // end of namespace bbrick
 
-} // end of namespace mfront
+}  // end of namespace mfront
 
-#endif /* LIB__MFRONT_BEHAVIOURBRICK___STRESS_CRITERION_NAME___STRESSCRITERION_HXX */
+#endif /* LIB__MFRONT_BEHAVIOURBRICK___STRESS_CRITERION_NAME___STRESSCRITERION_HXX \
+        */

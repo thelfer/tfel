@@ -26,8 +26,11 @@
 namespace lsdyna {
 
   //! pointer to a MFront Behaviour
-  using LSDynaBehaviourPointer = void (*)(
-      const double* const, const double* const, double* const, double* const, const double* const);
+  using LSDynaBehaviourPointer = void (*)(const double* const,
+                                          const double* const,
+                                          double* const,
+                                          double* const,
+                                          const double* const);
   /*!
    * A behaviour is associated to two pointer:
    * - one for the 3D case
@@ -42,10 +45,11 @@ namespace lsdyna {
     const DWORD error = GetLastError();
     if (error) {
       LPVOID lpMsgBuf;
-      DWORD bufLen = FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM |
-                                       FORMAT_MESSAGE_IGNORE_INSERTS,
-                                   nullptr, error, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
-                                   (LPTSTR)&lpMsgBuf, 0, nullptr);
+      DWORD bufLen = FormatMessage(
+          FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM |
+              FORMAT_MESSAGE_IGNORE_INSERTS,
+          nullptr, error, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
+          (LPTSTR)&lpMsgBuf, 0, nullptr);
       if (bufLen) {
         LPCSTR lpMsgStr = (LPTSTR)lpMsgBuf;
         std::string result(lpMsgStr, lpMsgStr + bufLen);
@@ -144,12 +148,13 @@ namespace lsdyna {
     BehaviourLoader& operator=(const BehaviourLoader&) = delete;
     ~BehaviourLoader();
     BehaviourContainer operator[](const BehaviourContainer::size_type);
+
    private:
 //! a simple alias
 #if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__)
-        using libhandler = HINSTANCE__*;
-#else /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
-        using libhandler = void*;
+    using libhandler = HINSTANCE__*;
+#else  /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
+    using libhandler = void*;
 #endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
     //! internal data structure storing pointers to external libraries
     struct ExternalLibraryHandler {
@@ -166,8 +171,9 @@ namespace lsdyna {
 
   BehaviourLoader::BehaviourLoader() {
     auto find_library = [this](const std::string& n) {
-      return std::find_if(this->libraries.begin(), this->libraries.end(),
-                          [&n](const ExternalLibraryHandler& l) { return l.name == n; });
+      return std::find_if(
+          this->libraries.begin(), this->libraries.end(),
+          [&n](const ExternalLibraryHandler& l) { return l.name == n; });
     };
     auto exit_if = [](const bool b, const std::string& m) {
       if (b) {
@@ -207,7 +213,7 @@ namespace lsdyna {
       return nullptr;
     };
     for (auto& b : this->behaviours) {
-      b = { nullptr, nullptr };
+      b = {nullptr, nullptr};
     }
     std::ifstream in("mfront-lsdyna.k");
     exit_if(!in, "unable to open file 'mfront-lsdyna.dat'");
@@ -225,16 +231,18 @@ namespace lsdyna {
       const auto id = std::stoi(tokens[0]);
       const auto lib = tokens[1];
       const auto fct = tokens[2];
-      exit_if((id < 41) || (id > 50),
-              "invalid indentifier (" + tokens[0] + ") at line '" + std::to_string(ln) + "'");
-      auto& f = this->behaviours[id-41];
+      exit_if((id < 41) || (id > 50), "invalid indentifier (" + tokens[0] +
+                                          ") at line '" + std::to_string(ln) +
+                                          "'");
+      auto& f = this->behaviours[id - 41];
       exit_if((f[0] != nullptr) && (f[1] != nullptr),
               "a behaviour has already been associated to material "
               "identifier '" +
                   std::to_string(id) + "'");
       log("BehaviourLoader::BehaviourLoader: "
           "associating material '" +
-          std::to_string(id) + "' to behaviour '" + fct + "' in library '" + lib);
+          std::to_string(id) + "' to behaviour '" + fct + "' in library '" +
+          lib);
       auto ptr = find_library(lib);
       if (ptr == this->libraries.end()) {
         const auto l = open_library(lib);
@@ -243,38 +251,44 @@ namespace lsdyna {
         ptr = std::prev(this->libraries.end());
       }
 #if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__)
-      f = {
-          reinterpret_cast<LSDynaBehaviourPointer>(::GetProcAddress(ptr->l, (fct + "_3D").c_str())),
-          reinterpret_cast<LSDynaBehaviourPointer>(
-              ::GetProcAddress(ptr->l, (fct + "_PSTRESS").c_str()))};
+      f = {reinterpret_cast<LSDynaBehaviourPointer>(
+               ::GetProcAddress(ptr->l, (fct + "_3D").c_str())),
+           reinterpret_cast<LSDynaBehaviourPointer>(
+               ::GetProcAddress(ptr->l, (fct + "_PSTRESS").c_str()))};
 #else  /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
-      f = {reinterpret_cast<LSDynaBehaviourPointer>(::dlsym(ptr->l, (fct + "_3D").c_str())),
-           reinterpret_cast<LSDynaBehaviourPointer>(::dlsym(ptr->l, (fct + "_PSTRESS").c_str()))};
+      f = {reinterpret_cast<LSDynaBehaviourPointer>(
+               ::dlsym(ptr->l, (fct + "_3D").c_str())),
+           reinterpret_cast<LSDynaBehaviourPointer>(
+               ::dlsym(ptr->l, (fct + "_PSTRESS").c_str()))};
 #endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
-      exit_if((f[0] == nullptr) && (f[1] == nullptr), "could not load behaviour '" + fct +
-                                                          "' in library '" + lib + "' (" +
-                                                          getErrorMessage() + ")");
+      exit_if((f[0] == nullptr) && (f[1] == nullptr),
+              "could not load behaviour '" + fct + "' in library '" + lib +
+                  "' (" + getErrorMessage() + ")");
       ++ln;
     }
     exit_if(in.bad(), "error while reading file 'mfront-lsdyna.dat'");
     in.close();
   }  // end of BehaviourLoader::BehaviourLoader
 
-  BehaviourContainer BehaviourLoader::operator[](const BehaviourContainer::size_type id) {
+  BehaviourContainer BehaviourLoader::operator[](
+      const BehaviourContainer::size_type id) {
     if (id >= 10) {
       exit("BehaviourLoader::operator: invalid index");
     }
     const auto f = this->behaviours[id];
     if ((f[0] == nullptr) && (f[1] == nullptr)) {
-      exit("BehaviourLoader::operator: no behaviour associated with identifier '" +
-           std::to_string(id) + "'");
+      exit(
+          "BehaviourLoader::operator: no behaviour associated with identifier "
+          "'" +
+          std::to_string(id) + "'");
     }
     return f;
-  } // end of BehaviourLoader::operator[]
+  }  // end of BehaviourLoader::operator[]
 
   BehaviourLoader::~BehaviourLoader() = default;
 
-  void getBehaviours(BehaviourContainer& c, const BehaviourContainer::size_type i) {
+  void getBehaviours(BehaviourContainer& c,
+                     const BehaviourContainer::size_type i) {
     static BehaviourLoader l;
     c = l[i];
   }  // end of getBehaviours
@@ -283,11 +297,11 @@ namespace lsdyna {
     //! array containing pointers to behaviours pointer
     BehaviourContainer c;
     /*!
-    * \param[in] i: function index
-    * - umat41 has index 0
-    * - umat42 has index 1
-    * - etc
-    */
+     * \param[in] i: function index
+     * - umat41 has index 0
+     * - umat42 has index 1
+     * - etc
+     */
     LSDynaBehaviour(const BehaviourContainer::size_type);
     LSDynaBehaviour() = delete;
     LSDynaBehaviour(LSDynaBehaviour&&) = delete;
@@ -295,7 +309,7 @@ namespace lsdyna {
     LSDynaBehaviour& operator=(LSDynaBehaviour&&) = delete;
     LSDynaBehaviour& operator=(const LSDynaBehaviour&) = delete;
     ~LSDynaBehaviour();
-  }; // end of struct LSDynaBehaviour
+  };  // end of struct LSDynaBehaviour
 
   LSDynaBehaviour::LSDynaBehaviour(const BehaviourContainer::size_type i) {
     getBehaviours(c, i);
@@ -304,16 +318,16 @@ namespace lsdyna {
   LSDynaBehaviour::~LSDynaBehaviour() = default;
 
   /*!
-  * \param[in] l: structure containing the behaviour pointers
-  * \param[in] m: material properties
-  * \param[in] de: strain increment
-  * \param[in] hisv: history variable
-  * \param[in] dt: time increment
-  * \param[in] capa: reduction factor for transverse shear
-  * \param[in] etype: type of element, used to get the modelling hypothesis
-  * \param[in] time: current time (unused)
-  * \param[in] size: size of tye etype string (unused)
-  */
+   * \param[in] l: structure containing the behaviour pointers
+   * \param[in] m: material properties
+   * \param[in] de: strain increment
+   * \param[in] hisv: history variable
+   * \param[in] dt: time increment
+   * \param[in] capa: reduction factor for transverse shear
+   * \param[in] etype: type of element, used to get the modelling hypothesis
+   * \param[in] time: current time (unused)
+   * \param[in] size: size of tye etype string (unused)
+   */
   void call_umat(LSDynaBehaviour& l,
                  const double* const m,
                  const double* const de,
@@ -322,7 +336,7 @@ namespace lsdyna {
                  const double* const dt,
                  const char* const etype,
                  const int s) {
-    if (::strncmp(etype, "brick", std::max(5,s)) == 0) {
+    if (::strncmp(etype, "brick", std::max(5, s)) == 0) {
       const auto f = l.c[0];
       f(m, de, sig, hisv, dt);
     } else if (::strncmp(etype, "shell", std::max(5, s)) == 0) {
@@ -332,7 +346,8 @@ namespace lsdyna {
       const auto f = l.c[2];
       f(m, de, sig, hisv, dt);
     } else {
-      exit("lsdyna::call_umat: unsupported element type '" + std::string(etype, s) + "'");
+      exit("lsdyna::call_umat: unsupported element type '" +
+           std::string(etype, s) + "'");
     }
   }  // end of call_umat
 
@@ -344,7 +359,7 @@ namespace lsdyna {
  *
  * This macro was taken from the boost library:
  * - http://boost.org/
- * 
+ *
  * The following piece of macro magic joins the two
  * arguments together, even when one of the arguments is
  * itself a macro (see 16.3.1 in C++ standard).  The key
@@ -354,7 +369,7 @@ namespace lsdyna {
  * \author Thomas Helfer
  * \date   28 Aug 2006
  */
-#define LSDYNA_PP_JOIN( X, Y ) LSDYNA_PP_DO_JOIN( X, Y )
+#define LSDYNA_PP_JOIN(X, Y) LSDYNA_PP_DO_JOIN(X, Y)
 
 /*!
  * \def LSDYNA_PP_DO_JOIN
@@ -363,7 +378,7 @@ namespace lsdyna {
  * \author Thomas Helfer
  * \date   28 Aug 2006
  */
-#define LSDYNA_PP_DO_JOIN( X, Y ) LSDYNA_PP_DO_JOIN2(X,Y)
+#define LSDYNA_PP_DO_JOIN(X, Y) LSDYNA_PP_DO_JOIN2(X, Y)
 
 /*!
  * \def LSDYNA_PP_DO_JOIN2
@@ -372,39 +387,40 @@ namespace lsdyna {
  * \author Thomas Helfer
  * \date   28 Aug 2006
  */
-#define LSDYNA_PP_DO_JOIN2( X, Y ) X##Y
+#define LSDYNA_PP_DO_JOIN2(X, Y) X##Y
 
-#define UMATFCT2(fct) LSDYNA_PP_JOIN(LSDYNA_PP_JOIN(umat, fct),_)
+#define UMATFCT2(fct) LSDYNA_PP_JOIN(LSDYNA_PP_JOIN(umat, fct), _)
 
-#define UMATFCT(fct, id)                                                               \
-  /*!                                                                                  \
-   * \param[in] m: material properties                                                 \
-   * \param[in] de: strain increment                                                   \
-   * \param[in] hisv: history variable                                                 \
-   * \param[in] dt: time increment                                                     \
-   * \param[in] capa: reduction factor for transverse shear                            \
-   * \param[in] etype: type of element, used to get the modelling hypothesis           \
-   * \param[in] time: current time (unused)                                            \
-   * \param[in] size: size of tye etype string (unused)                                \
-   */                                                                                  \
-  void UMATFCT2(fct)(const double* const m, const double* const de, double* const sig, \
-                     double* const hisv, const double* const dt, const double* const,  \
-                     const char* const etype, const double* const, const int s) {      \
-    static lsdyna::LSDynaBehaviour l(id);                                              \
-    call_umat(l, m, de, sig, hisv, dt, etype, s);                                      \
+#define UMATFCT(fct, id)                                                     \
+  /*!                                                                        \
+   * \param[in] m: material properties                                       \
+   * \param[in] de: strain increment                                         \
+   * \param[in] hisv: history variable                                       \
+   * \param[in] dt: time increment                                           \
+   * \param[in] capa: reduction factor for transverse shear                  \
+   * \param[in] etype: type of element, used to get the modelling hypothesis \
+   * \param[in] time: current time (unused)                                  \
+   * \param[in] size: size of tye etype string (unused)                      \
+   */                                                                        \
+  void UMATFCT2(fct)(                                                        \
+      const double* const m, const double* const de, double* const sig,      \
+      double* const hisv, const double* const dt, const double* const,       \
+      const char* const etype, const double* const, const int s) {           \
+    static lsdyna::LSDynaBehaviour l(id);                                    \
+    call_umat(l, m, de, sig, hisv, dt, etype, s);                            \
   }  // end of UMATFCT2(fct)
 
 extern "C" {
 
-UMATFCT(41,0)
-UMATFCT(42,1)
-UMATFCT(43,2)
-UMATFCT(44,3)
-UMATFCT(45,4)
-UMATFCT(46,5)
-UMATFCT(47,6)
-UMATFCT(48,7)
-UMATFCT(49,8)
-UMATFCT(50,9)
+UMATFCT(41, 0)
+UMATFCT(42, 1)
+UMATFCT(43, 2)
+UMATFCT(44, 3)
+UMATFCT(45, 4)
+UMATFCT(46, 5)
+UMATFCT(47, 6)
+UMATFCT(48, 7)
+UMATFCT(49, 8)
+UMATFCT(50, 9)
 
 }  // end of extern "C"

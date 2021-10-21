@@ -1,6 +1,6 @@
 /*!
  * \file   ndarray.cxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   23/03/2020
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
@@ -16,7 +16,7 @@
 #include "TFEL/Raise.hxx"
 #include "TFEL/Numpy/ndarray.hxx"
 
-namespace tfel{
+namespace tfel {
 
   namespace numpy {
 

@@ -40,7 +40,8 @@ struct ScalarNewtonRaphsonTest final : public tfel::tests::TestCase {
     };
     const auto r = tfel::math::scalarNewtonRaphson(fdf, c, 0.1, 100);
     TFEL_TESTS_ASSERT(std::get<0>(r));
-    TFEL_TESTS_ASSERT(std::abs(std::get<1>(r) - std::sqrt(double(13))) < 1.e-13);
+    TFEL_TESTS_ASSERT(std::abs(std::get<1>(r) - std::sqrt(double(13))) <
+                      1.e-13);
     return this->result;
   }  // end of execute
 };

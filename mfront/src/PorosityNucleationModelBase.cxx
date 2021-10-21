@@ -28,7 +28,8 @@ namespace mfront {
       return {};
     }  // end of getMaterialCoefficientDescriptions
 
-    std::vector<OptionDescription> PorosityNucleationModelBase::getOptions() const {
+    std::vector<OptionDescription> PorosityNucleationModelBase::getOptions()
+        const {
       std::vector<OptionDescription> opts;
       opts.emplace_back(
           "save_individual_porosity_increase",

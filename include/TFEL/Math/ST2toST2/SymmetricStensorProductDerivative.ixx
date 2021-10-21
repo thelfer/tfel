@@ -139,10 +139,22 @@ namespace tfel {
       using NumType = decltype(a[0] * a[0]);
       using real = tfel::typetraits::base_type<NumType>;
       constexpr const auto zero = real(0);
-      return {a[0]*a[0],a[3]*a[3]/2,zero,a[0]*a[3],//
-	  a[3]*a[3]/2,a[1]*a[1],zero,a[1]*a[3],//
-	  zero,zero,a[2]*a[2],zero,//
-	  a[0]*a[3],a[1]*a[3],zero,(a[3]*a[3]+2*a[0]*a[1])/2};
+      return {a[0] * a[0],
+              a[3] * a[3] / 2,
+              zero,
+              a[0] * a[3],  //
+              a[3] * a[3] / 2,
+              a[1] * a[1],
+              zero,
+              a[1] * a[3],  //
+              zero,
+              zero,
+              a[2] * a[2],
+              zero,  //
+              a[0] * a[3],
+              a[1] * a[3],
+              zero,
+              (a[3] * a[3] + 2 * a[0] * a[1]) / 2};
     }  // end of symmetric_product_derivative_daba_db
 
     template <typename StensorType>
@@ -153,15 +165,45 @@ namespace tfel {
             st2tost2<3u, decltype(a[0] * a[0])>>::type {
       using NumType = decltype(a[0] * a[0]);
       using real = tfel::typetraits::base_type<NumType>;
-      constexpr const auto cste  = Cste<real>::sqrt2;
+      constexpr const auto cste = Cste<real>::sqrt2;
       constexpr const auto icste = Cste<real>::isqrt2;
-      constexpr const auto cste2 = 2*Cste<real>::sqrt2;
-      return {a[0]*a[0],a[3]*a[3]/2,a[4]*a[4]/2,a[0]*a[3],a[0]*a[4],(a[3]*a[4])*icste,//
-	  a[3]*a[3]/2,a[1]*a[1],a[5]*a[5]/2,a[1]*a[3],(a[3]*a[5])*icste,a[1]*a[5],//
-	  a[4]*a[4]/2,a[5]*a[5]/2,a[2]*a[2],(a[4]*a[5])*icste,a[2]*a[4],a[2]*a[5],//
-	  a[0]*a[3],a[1]*a[3],(a[4]*a[5])*icste,(cste*a[3]*a[3]+cste2*a[0]*a[1])/cste2,(2*a[0]*a[5]+cste*a[3]*a[4])/cste2,(cste*a[3]*a[5]+2*a[1]*a[4])/cste2,//
-	  a[0]*a[4],(a[3]*a[5])*icste,a[2]*a[4],(2*a[0]*a[5]+cste*a[3]*a[4])/cste2,(cste*a[4]*a[4]+cste2*a[0]*a[2])/cste2,(cste*a[4]*a[5]+2*a[2]*a[3])/cste2,//
-	  (a[3]*a[4])*icste,a[1]*a[5],a[2]*a[5],(cste*a[3]*a[5]+2*a[1]*a[4])/cste2,(cste*a[4]*a[5]+2*a[2]*a[3])/cste2,(cste*a[5]*a[5]+cste2*a[1]*a[2])/cste2};
+      constexpr const auto cste2 = 2 * Cste<real>::sqrt2;
+      return {a[0] * a[0],
+              a[3] * a[3] / 2,
+              a[4] * a[4] / 2,
+              a[0] * a[3],
+              a[0] * a[4],
+              (a[3] * a[4]) * icste,  //
+              a[3] * a[3] / 2,
+              a[1] * a[1],
+              a[5] * a[5] / 2,
+              a[1] * a[3],
+              (a[3] * a[5]) * icste,
+              a[1] * a[5],  //
+              a[4] * a[4] / 2,
+              a[5] * a[5] / 2,
+              a[2] * a[2],
+              (a[4] * a[5]) * icste,
+              a[2] * a[4],
+              a[2] * a[5],  //
+              a[0] * a[3],
+              a[1] * a[3],
+              (a[4] * a[5]) * icste,
+              (cste * a[3] * a[3] + cste2 * a[0] * a[1]) / cste2,
+              (2 * a[0] * a[5] + cste * a[3] * a[4]) / cste2,
+              (cste * a[3] * a[5] + 2 * a[1] * a[4]) / cste2,  //
+              a[0] * a[4],
+              (a[3] * a[5]) * icste,
+              a[2] * a[4],
+              (2 * a[0] * a[5] + cste * a[3] * a[4]) / cste2,
+              (cste * a[4] * a[4] + cste2 * a[0] * a[2]) / cste2,
+              (cste * a[4] * a[5] + 2 * a[2] * a[3]) / cste2,  //
+              (a[3] * a[4]) * icste,
+              a[1] * a[5],
+              a[2] * a[5],
+              (cste * a[3] * a[5] + 2 * a[1] * a[4]) / cste2,
+              (cste * a[4] * a[5] + 2 * a[2] * a[3]) / cste2,
+              (cste * a[5] * a[5] + cste2 * a[1] * a[2]) / cste2};
     }  // end of symmetric_product_derivative_daba_db
 
   }  // end of namespace math

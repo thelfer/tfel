@@ -44,8 +44,8 @@ namespace mfront {
       const BehaviourDescription& mb,
       const std::string& name) const {
     auto throw_if = [](const bool b, const std::string& m) {
-      tfel::raise_if(
-          b, "AnsysSymbolsGenerator::writeBehaviourTypeSymbols: " + m);
+      tfel::raise_if(b,
+                     "AnsysSymbolsGenerator::writeBehaviourTypeSymbols: " + m);
     };
     out << "MFRONT_SHAREDOBJ unsigned short " << i.getFunctionNameBasis(name)
         << "_BehaviourType = ";
@@ -72,8 +72,7 @@ namespace mfront {
       const std::string& name) const {
     auto throw_if = [](const bool b, const std::string& m) {
       tfel::raise_if(
-          b,
-          "AnsysSymbolsGenerator::writeBehaviourKinematicSymbols: " + m);
+          b, "AnsysSymbolsGenerator::writeBehaviourKinematicSymbols: " + m);
     };
     out << "MFRONT_SHAREDOBJ unsigned short " << i.getFunctionNameBasis(name)
         << "_BehaviourKinematic = ";
@@ -93,7 +92,7 @@ namespace mfront {
     }
   }  // end of AnsysSymbolsGenerator::writeBehaviourKinematicSymbols
 
-  bool AnsysSymbolsGenerator::handleStrainMeasure() const{
+  bool AnsysSymbolsGenerator::handleStrainMeasure() const {
     return true;
   }  // end of AnsysSymbolsGenerator::handleStrainMeasure
 

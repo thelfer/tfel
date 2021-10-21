@@ -31,7 +31,8 @@ namespace tfel {
     //! \brief a simple alias
     template <typename StressStensorType>
     using PowerLawStressBasedNucleationModelRealType =
-        tfel::typetraits::base_type<tfel::math::StensorNumType<StressStensorType>>;
+        tfel::typetraits::base_type<
+            tfel::math::StensorNumType<StressStensorType>>;
     //! \brief a simple alias
     template <typename StressStensorType>
     using PowerLawStressBasedNucleationModelInverseStressType =
@@ -41,11 +42,9 @@ namespace tfel {
             tfel::math::OpDiv>;
     //! \brief a simple alias
     template <typename StressStensorType>
-    using PowerLawStressBasedNucleationModeDerivativeType =
-        tfel::math::stensor<
-            tfel::math::StensorTraits<StressStensorType>::dime,
-            PowerLawStressBasedNucleationModelInverseStressType<
-                StressStensorType>>;
+    using PowerLawStressBasedNucleationModeDerivativeType = tfel::math::stensor<
+        tfel::math::StensorTraits<StressStensorType>::dime,
+        PowerLawStressBasedNucleationModelInverseStressType<StressStensorType>>;
 
     /*!
      * \brief parameters of the strain version of the nucleation model
@@ -78,8 +77,7 @@ namespace tfel {
     template <typename StressStensorType>
     std::ostream& operator<<(
         std::ostream&,
-        const PowerLawStressBasedNucleationModelParameters<
-            StressStensorType>&);
+        const PowerLawStressBasedNucleationModelParameters<StressStensorType>&);
     /*!
      * \brief computes the porosity rate factor \f$A_{n}\f$ as defined by
      * the power law nucleation model.
@@ -104,8 +102,8 @@ namespace tfel {
     /*!
      * \brief computes the porosity rate factor \f$A_{n}\f$ as defined by
      * the power law nucleation model and its derivative
-     * \f$\frac{\partial A_{n}}{\partial \underline{\sigma}}\f$ with respect to the
-     * stress.
+     * \f$\frac{\partial A_{n}}{\partial \underline{\sigma}}\f$ with respect to
+     * the stress.
      *
      * \f[
      * A_{n} = f_{n}\langle\dfrac{\sigma_{I}}{s_{n}}-1\rangle^{m}

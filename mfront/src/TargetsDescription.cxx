@@ -126,7 +126,7 @@ namespace mfront {
     if (s.specific_targets.count("all") != 0) {
       auto& a = d.specific_targets["all"];
       const auto& as = s.specific_targets.at("all");
-      for (const auto& dep: as.deps) {
+      for (const auto& dep : as.deps) {
         insert_if(a.deps, dep);
       }
     }
@@ -134,7 +134,8 @@ namespace mfront {
 
   bool describes(const TargetsDescription& t, const std::string& n) {
     auto comp = [&n](const LibraryDescription& ld) { return ld.name == n; };
-    return std::find_if(t.libraries.begin(), t.libraries.end(), comp) != t.libraries.end();
+    return std::find_if(t.libraries.begin(), t.libraries.end(), comp) !=
+           t.libraries.end();
   }  // end of describes
 
   std::ostream& operator<<(std::ostream& os, const TargetsDescription& t) {
@@ -167,10 +168,10 @@ namespace mfront {
       tfel::raise(std::string{f} + ": " + m);
     };
     auto get_vector = [&f](
-        std::vector<std::string>& v,
-        tfel::utilities::CxxTokenizer::const_iterator& pc,
-        const tfel::utilities::CxxTokenizer::const_iterator e,
-        const std::string& n) {
+                          std::vector<std::string>& v,
+                          tfel::utilities::CxxTokenizer::const_iterator& pc,
+                          const tfel::utilities::CxxTokenizer::const_iterator e,
+                          const std::string& n) {
       tfel::raise_if(!v.empty(), std::string{f} + ": library member '" + n +
                                      "' multiply defined");
       auto c = pc;
@@ -193,7 +194,8 @@ namespace mfront {
         if (describes(t, l.name)) {
           error("library '" + l.name + "' multiply defined");
         }
-        mergeLibraryDescription(t.getLibrary(l.name, l.prefix, l.suffix, l.type), l);
+        mergeLibraryDescription(
+            t.getLibrary(l.name, l.prefix, l.suffix, l.type), l);
       } else if (c->value == "headers") {
         ++c;
         get_vector(t.headers, c, pe, "headers");

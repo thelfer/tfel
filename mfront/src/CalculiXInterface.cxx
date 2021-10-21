@@ -888,11 +888,11 @@ namespace mfront {
                    "CalculiXInterface::writeBehaviourDataMainVariablesSetter : "
                    "only one driving variable supported");
     if (Gradient::isIncrementKnown(v)) {
-      os << "calculix::ImportGradients::exe(this->" << v.name << ","
-         << iprefix << "stran);\n";
+      os << "calculix::ImportGradients::exe(this->" << v.name << "," << iprefix
+         << "stran);\n";
     } else {
-      os << "calculix::ImportGradients::exe(this->" << v.name << "0,"
-         << iprefix << "stran);\n";
+      os << "calculix::ImportGradients::exe(this->" << v.name << "0," << iprefix
+         << "stran);\n";
     }
   }  // end of CalculiXInterface::writeBehaviourDataGradientSetter
 
@@ -906,11 +906,11 @@ namespace mfront {
         "CalculiXInterface::writeIntegrationDataMainVariablesSetter : "
         "only one driving variable supported");
     if (Gradient::isIncrementKnown(v)) {
-      os << "calculix::ImportGradients::exe(this->d" << v.name << ","
-         << iprefix << "dstran);\n";
+      os << "calculix::ImportGradients::exe(this->d" << v.name << "," << iprefix
+         << "dstran);\n";
     } else {
-      os << "calculix::ImportGradients::exe(this->" << v.name << "1,"
-         << iprefix << "dstran);\n";
+      os << "calculix::ImportGradients::exe(this->" << v.name << "1," << iprefix
+         << "dstran);\n";
     }
   }  // end of CalculiXInterface::writeIntegrationDataGradientSetter
 
@@ -977,8 +977,8 @@ namespace mfront {
     }
 #if __cplusplus >= 201703L
     insert_if(l.link_libraries, "$(shell " + tfel_config +
-                                         " --library-dependency "
-                                         "--material --mfront-profiling)");
+                                    " --library-dependency "
+                                    "--material --mfront-profiling)");
 #else  /* __cplusplus < 201703L */
     insert_if(l.link_libraries,
               "$(shell " + tfel_config +
@@ -1041,14 +1041,16 @@ namespace mfront {
         << "//! behaviour type\n";
     if (mb.getBehaviourType() ==
         BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) {
-      out << "static " << constexpr_c << " CalculiXBehaviourType btype = "
-                                         "calculix::"
-                                         "STANDARDSTRAINBASEDBEHAVIOUR;\n";
+      out << "static " << constexpr_c
+          << " CalculiXBehaviourType btype = "
+             "calculix::"
+             "STANDARDSTRAINBASEDBEHAVIOUR;\n";
     } else if (mb.getBehaviourType() ==
                BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR) {
-      out << "static " << constexpr_c << " CalculiXBehaviourType btype = "
-                                         "calculix::"
-                                         "STANDARDFINITESTRAINBEHAVIOUR;\n";
+      out << "static " << constexpr_c
+          << " CalculiXBehaviourType btype = "
+             "calculix::"
+             "STANDARDFINITESTRAINBEHAVIOUR;\n";
     } else {
       tfel::raise(
           "CalculiXInterface::writeCalculiXBehaviourTraits : "

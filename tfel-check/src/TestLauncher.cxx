@@ -51,9 +51,9 @@ namespace tfel {
     TestLauncher::Command::Command(Command&&) = default;
     TestLauncher::Command::Command(const Command&) = default;
     TestLauncher::Command&  //
-        TestLauncher::Command::operator=(Command&&) = default;
+    TestLauncher::Command::operator=(Command&&) = default;
     TestLauncher::Command&  //
-        TestLauncher::Command::operator=(const Command&) = default;
+    TestLauncher::Command::operator=(const Command&) = default;
     TestLauncher::Command::~Command() = default;
 
     TestLauncher::TestLauncher(const Configuration& c, const std::string& f)
@@ -189,22 +189,22 @@ namespace tfel {
        * - `expected_output`: if specified, a test is added to which compares
        *    the command output to the expected value.
        */
-      auto parseCommandOptions = [&c](
-          const std::map<std::string, tfel::utilities::Data>& options) {
-        for (const auto& o : options) {
-          if (o.first == "expected_output") {
-            if (!o.second.is<std::string>()) {
-              tfel::raise(
-                  "parseCommandOptions: invalid type "
-                  "for option 'expected_output'");
+      auto parseCommandOptions =
+          [&c](const std::map<std::string, tfel::utilities::Data>& options) {
+            for (const auto& o : options) {
+              if (o.first == "expected_output") {
+                if (!o.second.is<std::string>()) {
+                  tfel::raise(
+                      "parseCommandOptions: invalid type "
+                      "for option 'expected_output'");
+                }
+                c.expected_output = o.second.get<std::string>();
+              } else {
+                tfel::raise("parseCommandOptions: invalid option '" + o.first +
+                            "'");
+              }
             }
-            c.expected_output = o.second.get<std::string>();
-          } else {
-            tfel::raise("parseCommandOptions: invalid option '" + o.first +
-                        "'");
-          }
-        }
-      };  // end of parseCommandOptions
+          };  // end of parseCommandOptions
       c.command = this->readString("TestLauncher::treatCommand");
       if (this->current->value == "{") {
         parseCommandOptions(

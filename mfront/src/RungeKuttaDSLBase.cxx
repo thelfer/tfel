@@ -701,11 +701,11 @@ namespace mfront {
     for (const auto& h : this->mb.getDistinctModellingHypotheses()) {
       const auto& d = this->mb.getBehaviourData(h);
       if (!this->mb.getMainVariables().empty()) {
-      if (!d.hasCode(BehaviourData::ComputeFinalThermodynamicForces)) {
-        this->throwRuntimeError(
-            "RungeKuttaDSLBase::endsInputFileProcessing",
-            "@ComputeFinalThermodynamicForces was not defined.");
-      }
+        if (!d.hasCode(BehaviourData::ComputeFinalThermodynamicForces)) {
+          this->throwRuntimeError(
+              "RungeKuttaDSLBase::endsInputFileProcessing",
+              "@ComputeFinalThermodynamicForces was not defined.");
+        }
       }
       if (!d.hasCode(BehaviourData::ComputeDerivative)) {
         this->throwRuntimeError("RungeKuttaDSLBase::endsInputFileProcessing",
@@ -863,14 +863,14 @@ namespace mfront {
          << "::computeThermodynamicForces\n\n";
     }
     if (!this->mb.getMainVariables().empty()) {
-    os << "bool\ncomputeFinalThermodynamicForces(){\n"
-       << "using namespace std;\n"
-       << "using namespace tfel::math;\n";
-    writeMaterialLaws(os, this->mb.getMaterialLaws());
-    os << this->mb.getCode(h, BehaviourData::ComputeFinalThermodynamicForces)
-       << '\n'
-       << "return true;\n"
-       << "} // end of " << this->mb.getClassName()
+      os << "bool\ncomputeFinalThermodynamicForces(){\n"
+         << "using namespace std;\n"
+         << "using namespace tfel::math;\n";
+      writeMaterialLaws(os, this->mb.getMaterialLaws());
+      os << this->mb.getCode(h, BehaviourData::ComputeFinalThermodynamicForces)
+         << '\n'
+         << "return true;\n"
+         << "} // end of " << this->mb.getClassName()
          << "::computeFinalThermodynamicForces\n\n";
     }
     os << "bool\ncomputeDerivative(){\n"
@@ -936,8 +936,8 @@ namespace mfront {
       this->writeStiffnessTensorComputation(os, "this->D", md);
     }
     if (!this->mb.getMainVariables().empty()) {
-    os << "// update the thermodynamic forces\n"
-       << "this->computeFinalThermodynamicForces();\n";
+      os << "// update the thermodynamic forces\n"
+         << "this->computeFinalThermodynamicForces();\n";
     }
     if (d.hasCode(BehaviourData::UpdateAuxiliaryStateVariables)) {
       os << "this->updateAuxiliaryStateVariables(this->dt);\n";
@@ -1013,8 +1013,8 @@ namespace mfront {
       this->writeStiffnessTensorComputation(os, "this->D", m);
     }
     if (!this->mb.getMainVariables().empty()) {
-    os << "// update the thermodynamic forces\n"
-       << "this->computeFinalThermodynamicForces();\n";
+      os << "// update the thermodynamic forces\n"
+         << "this->computeFinalThermodynamicForces();\n";
     }
     if (d.hasCode(BehaviourData::UpdateAuxiliaryStateVariables)) {
       os << "this->updateAuxiliaryStateVariables(this->dt);\n";
@@ -1559,8 +1559,8 @@ namespace mfront {
       this->writeStiffnessTensorComputation(os, "this->D", m);
     }
     if (!this->mb.getMainVariables().empty()) {
-    os << "// update the thermodynamic forces\n"
-       << "this->computeFinalThermodynamicForces();\n";
+      os << "// update the thermodynamic forces\n"
+         << "this->computeFinalThermodynamicForces();\n";
     }
     if (d.hasCode(BehaviourData::UpdateAuxiliaryStateVariables)) {
       os << "this->updateAuxiliaryStateVariables(dt_);\n";
@@ -1974,7 +1974,7 @@ namespace mfront {
       this->writeStiffnessTensorComputation(os, "this->D", m);
     }
     if (!this->mb.getMainVariables().empty()) {
-    os << "this->computeFinalThermodynamicForces();\n";
+      os << "this->computeFinalThermodynamicForces();\n";
     }
     if (this->mb.hasCode(h, BehaviourData::UpdateAuxiliaryStateVariables)) {
       os << "this->updateAuxiliaryStateVariables(dt_);\n";
@@ -2379,7 +2379,7 @@ namespace mfront {
          << "_K2);\n";
     }
     if (!this->mb.getMainVariables().empty()) {
-    os << "this->computeFinalThermodynamicForces();\n";
+      os << "this->computeFinalThermodynamicForces();\n";
     }
     if (this->mb.hasCode(h, BehaviourData::UpdateAuxiliaryStateVariables)) {
       os << "this->updateAuxiliaryStateVariables(dt_);\n";
@@ -2557,8 +2557,8 @@ namespace mfront {
       os << "(this->d" << v.name << "_K2+this->d" << v.name << "_K3)/3;\n";
     }
     if (!this->mb.getMainVariables().empty()) {
-    os << "// update the thermodynamic forces\n"
-       << "this->computeFinalThermodynamicForces();\n";
+      os << "// update the thermodynamic forces\n"
+         << "this->computeFinalThermodynamicForces();\n";
     }
     if (this->mb.hasCode(h, BehaviourData::UpdateAuxiliaryStateVariables)) {
       os << "this->updateAuxiliaryStateVariables(this->dt);\n";

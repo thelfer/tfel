@@ -1,6 +1,6 @@
 /*!
  * \file   mfront/src/ChuNeedleman1980StressBasedPorosityNucleationModel.cxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   05/04/2020
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
@@ -45,4 +45,3 @@ namespace mfront {
   }  // end of namespace bbrick
 
 }  // end of namespace mfront
-

@@ -158,7 +158,6 @@ namespace mtest {
     return desc;
   }  // end of AsterStandardBehaviour::getInternalStateVariablesDescriptions
 
-
   void AsterStandardBehaviour::allocate(BehaviourWorkSpace& wk) const {
     const auto ndv = this->getGradientsSize();
     const auto nth = this->getThermodynamicForcesSize();

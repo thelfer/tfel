@@ -3,18 +3,18 @@
  * \brief  This file declares the BehaviourData class
  * \author Thomas Helfer
  * \date   21 Mars 2014
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_MFRONT_BEHAVIOURDATA_IXX
-#define LIB_MFRONT_BEHAVIOURDATA_IXX 
+#define LIB_MFRONT_BEHAVIOURDATA_IXX
 
-namespace mfront{
+namespace mfront {
 
   template <typename T>
   typename std::enable_if<
@@ -22,11 +22,11 @@ namespace mfront{
       T&>::type
   BehaviourData::getAttribute(const std::string& n) {
     auto p = this->attributes.find(n);
-    if(p==this->attributes.end()){
-      p = this->attributes.insert({n,BehaviourAttribute(T())}).first;
+    if (p == this->attributes.end()) {
+      p = this->attributes.insert({n, BehaviourAttribute(T())}).first;
     }
     return p->second.template get<T>();
-  } // end of BehaviourData::getAttribute
+  }  // end of BehaviourData::getAttribute
 
   template <typename T>
   typename std::enable_if<
@@ -34,12 +34,12 @@ namespace mfront{
       const T&>::type
   BehaviourData::getAttribute(const std::string& n) const {
     auto p = this->attributes.find(n);
-    if(p==this->attributes.end()){
+    if (p == this->attributes.end()) {
       BehaviourData::throwUndefinedAttribute(n);
     }
     return p->second.template get<T>();
-  } // end of BehaviourData::getAttribute
+  }  // end of BehaviourData::getAttribute
 
-} // end of namespace mfront
+}  // end of namespace mfront
 
 #endif /* LIB_MFRONT_BEHAVIOURDATA_IXX */

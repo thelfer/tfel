@@ -65,8 +65,9 @@ namespace tfel {
                     "StensorType is not a symmetric tensor");
       static_assert(tfel::typetraits::IsScalar<ScalarType>::cond,
                     "ScalarType is not a scalar");
-      static_assert(tfel::typetraits::IsScalar<StensorNumType<StensorType>>::cond,
-                    "the symmetric tensor type does not hold a scalar");
+      static_assert(
+          tfel::typetraits::IsScalar<StensorNumType<StensorType>>::cond,
+          "the symmetric tensor type does not hold a scalar");
       //! \brief result
       using type =
           stensor<StensorTraits<StensorType>::dime,

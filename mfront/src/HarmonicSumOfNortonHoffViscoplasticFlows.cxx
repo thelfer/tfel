@@ -63,7 +63,9 @@ namespace mfront {
       // the base class
       ViscoplasticFlowBase::initialize(bd, dsl, id, d);
       //
-      bd.appendToIncludes("#include\"TFEL/Material/HarmonicSumOfNortonHoffViscoplasticFlows.hxx\"\n");
+      bd.appendToIncludes(
+          "#include\"TFEL/Material/"
+          "HarmonicSumOfNortonHoffViscoplasticFlows.hxx\"\n");
       // Norton flow options
       this->K = get_mps("K");
       this->n = get_mps("n");
@@ -165,7 +167,8 @@ namespace mfront {
       c += "const auto [vp" + id + ", dvp" + id + "_dseqe" + id + "] = ";
 #else  /* __cplusplus >= 201703L */
       c += "auto vp" + id + " = strainrate{};\n";
-      c += "auto dvp" + id + "_dseqe" + id + " = derivative_type<strainrate,stress>{};\n";
+      c += "auto dvp" + id + "_dseqe" + id +
+           " = derivative_type<strainrate,stress>{};\n";
       c += "std::tie(vp" + id + ", dvp" + id + "_dseqe" + id + ") = ";
 #endif /* __cplusplus >= 201703L */
       c += "tfel::material::computeEquivalentStrainRateAndDerivativeOf"

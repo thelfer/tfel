@@ -31,13 +31,16 @@ namespace tfel {
     //! \brief a simple alias
     template <typename StressStensorType>
     using ChuNeedleman1980StressBasedNucleationModelRealType =
-        tfel::typetraits::base_type<tfel::math::StensorNumType<StressStensorType>>;
+        tfel::typetraits::base_type<
+            tfel::math::StensorNumType<StressStensorType>>;
     //! \brief a simple alias
     template <typename StressStensorType>
     using ChuNeedleman1980StressBasedNucleationModelInverseStressType =
         tfel::math::result_type<
-            ChuNeedleman1980StressBasedNucleationModelRealType<StressStensorType>,
-            ChuNeedleman1980StressBasedNucleationModelStressType<StressStensorType>,
+            ChuNeedleman1980StressBasedNucleationModelRealType<
+                StressStensorType>,
+            ChuNeedleman1980StressBasedNucleationModelStressType<
+                StressStensorType>,
             tfel::math::OpDiv>;
     //! \brief a simple alias
     template <typename StressStensorType>
@@ -58,11 +61,14 @@ namespace tfel {
     template <typename StressStensorType>
     struct ChuNeedleman1980StressBasedNucleationModelParameters {
       //! \brief factor in front of the gaussian distribution
-      ChuNeedleman1980StressBasedNucleationModelStressType<StressStensorType> fn;
+      ChuNeedleman1980StressBasedNucleationModelStressType<StressStensorType>
+          fn;
       //! \brief mean value of the gaussian distribution
-      ChuNeedleman1980StressBasedNucleationModelStressType<StressStensorType> sigm;
+      ChuNeedleman1980StressBasedNucleationModelStressType<StressStensorType>
+          sigm;
       //! \brief standard deviation of the gaussian distribution
-      ChuNeedleman1980StressBasedNucleationModelStressType<StressStensorType> sn;
+      ChuNeedleman1980StressBasedNucleationModelStressType<StressStensorType>
+          sn;
     };  // end of struct ChuNeedleman1980StressBasedNucleationModelParameters
 
     /*!
@@ -85,8 +91,8 @@ namespace tfel {
      * \f[
      * A_{n} = \frac{f_N}{s_N \sqrt{2\pi}}
      *         \exp\left(-\frac{1}{2}
-     *                    \left(\frac{\sigma_{I} - \epsilon_N}{s_N}\right)^2\right)
-     * \f]
+     *                    \left(\frac{\sigma_{I} -
+     * \epsilon_N}{s_N}\right)^2\right) \f]
      *
      * Chu, C. C., and A. Needleman. 1980.
      * “Void Nucleation Effects in Biaxially Stretched Sheets.”
@@ -108,14 +114,14 @@ namespace tfel {
     /*!
      * \brief computes the porosity rate factor \f$A_{n}\f$ as defined by
      * the nucleation model of Chu and Needleman and its derivative
-     * \f$\frac{\partial A_{n}}{\partial \underline{\sigma}}\f$ with respect to the
-     * stress.
+     * \f$\frac{\partial A_{n}}{\partial \underline{\sigma}}\f$ with respect to
+     * the stress.
      *
      * \f[
      * A_{n} = \frac{f_N}{s_N \sqrt{2\pi}}
      *         \exp\left(-\frac{1}{2}
-     *                    \left(\frac{\sigma_{I} - \epsilon_N}{s_N}\right)^2\right)
-     * \f]
+     *                    \left(\frac{\sigma_{I} -
+     * \epsilon_N}{s_N}\right)^2\right) \f]
      *
      * Chu, C. C., and A. Needleman. 1980.
      * “Void Nucleation Effects in Biaxially Stretched Sheets.”

@@ -52,4 +52,4 @@ namespace mfront {
 }  // end of namespace mfront
 
 #endif /* LIB__MFRONT_BEHAVIOURBRICK_ROUSSELIER_TANGUY_BESSON_2002_STRESSCRITERION_HXX \
-          */
+        */

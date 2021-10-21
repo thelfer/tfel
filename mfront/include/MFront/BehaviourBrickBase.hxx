@@ -209,6 +209,6 @@ namespace mfront {
     //! mechanical behaviour description of which the BehaviourBrick acts
     BehaviourDescription& bd;
   };  // end of struct BehaviourBrickBase
-}
+}  // namespace mfront
 
 #endif /* LIB_MFRONT_BEHAVIOURBRICKBASE_H */

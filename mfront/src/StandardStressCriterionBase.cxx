@@ -67,14 +67,16 @@ namespace mfront {
       return false;
     }  // end of StandardStressCriterionBase::isCoupledWithPorosityEvolution()
 
-    void StandardStressCriterionBase::endTreatment(BehaviourDescription& bd,
-                                                   const AbstractBehaviourDSL& dsl,
-                                                   const std::string& id,
-                                                   const Role r) {
+    void StandardStressCriterionBase::endTreatment(
+        BehaviourDescription& bd,
+        const AbstractBehaviourDSL& dsl,
+        const std::string& id,
+        const Role r) {
       constexpr const auto uh =
           tfel::material::ModellingHypothesis::UNDEFINEDHYPOTHESIS;
       StressCriterionBase::endTreatment(bd, dsl, id, r);
-      const auto params = StressCriterion::getVariableId("sscb_parameters", id, r);
+      const auto params =
+          StressCriterion::getVariableId("sscb_parameters", id, r);
       auto c = std::string{};
       for (const auto& mp : this->getOptions()) {
         if (mp.type != OptionDescription::MATERIALPROPERTY) {
@@ -120,7 +122,8 @@ namespace mfront {
         const BehaviourDescription& bd,
         const StressPotential& sp,
         const Role r) const {
-      const auto params = StressCriterion::getVariableId("sscb_parameters", id, r);
+      const auto params =
+          StressCriterion::getVariableId("sscb_parameters", id, r);
       auto c = std::string{};
       if ((r == STRESSCRITERION) || (r == STRESSANDFLOWCRITERION)) {
 #if __cplusplus >= 201703L
@@ -159,7 +162,8 @@ namespace mfront {
         const BehaviourDescription& bd,
         const StressPotential& sp,
         const Role r) const {
-      const auto params = StressCriterion::getVariableId("sscb_parameters", id, r);
+      const auto params =
+          StressCriterion::getVariableId("sscb_parameters", id, r);
       auto c = std::string{};
       if ((r == STRESSCRITERION) || (r == STRESSANDFLOWCRITERION)) {
 #if __cplusplus >= 201703L
@@ -206,9 +210,11 @@ namespace mfront {
     }  // end of StandardStressCriterionBase::computeNormalDerivative
 
     StressCriterion::PorosityEffectOnFlowRule
-    StandardStressCriterionBase::getPorosityEffectOnEquivalentPlasticStrain() const {
+    StandardStressCriterionBase::getPorosityEffectOnEquivalentPlasticStrain()
+        const {
       return StressCriterion::NO_POROSITY_EFFECT_ON_EQUIVALENT_PLASTIC_STRAIN;
-    }  // end of StandardStressCriterionBase::getPorosityEffectOnEquivalentPlasticStrain()
+    }  // end of
+       // StandardStressCriterionBase::getPorosityEffectOnEquivalentPlasticStrain()
 
     StandardStressCriterionBase::~StandardStressCriterionBase() = default;
 

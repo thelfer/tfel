@@ -1,6 +1,7 @@
 /*!
- * \file   include/MFront/BehaviourBrick/ChuNeedleman1980StrainBasedPorosityNucleationModel.hxx
- * \brief    
+ * \file
+ * include/MFront/BehaviourBrick/ChuNeedleman1980StrainBasedPorosityNucleationModel.hxx
+ * \brief
  * \author Thomas Helfer
  * \date   05/04/2020
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
@@ -44,4 +45,5 @@ namespace mfront {
 
 }  // end of namespace mfront
 
-#endif /* LIB_MFRONT_BEHAVIOURBRICK_CHUNEEDLEMAN1980STRAINBASEDPOROSITYNUCLEATIONMODEL_HXX */
+#endif /* LIB_MFRONT_BEHAVIOURBRICK_CHUNEEDLEMAN1980STRAINBASEDPOROSITYNUCLEATIONMODEL_HXX \
+        */

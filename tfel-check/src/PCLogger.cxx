@@ -61,13 +61,13 @@ namespace tfel {
       for (auto& d : this->drivers) {
         d->addTestResult(testname, step, command, time, success, message);
       }
-    } // end of addTestResult
+    }  // end of addTestResult
 
     void PCLogger::terminate() {
       for (auto& driver : this->drivers) {
         driver->terminate();
       }
-    } // end of terminate
+    }  // end of terminate
 
   }  // end of namespace check
 

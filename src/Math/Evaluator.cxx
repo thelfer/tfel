@@ -806,9 +806,8 @@ namespace tfel {
             auto peo =
                 Evaluator::getFunctionGeneratorManager().extOpGenerators.find(
                     *prev);
-            if (peo !=
-                Evaluator::getFunctionGeneratorManager()
-                    .extOpGenerators.end()) {
+            if (peo != Evaluator::getFunctionGeneratorManager()
+                           .extOpGenerators.end()) {
               ++p;
               Evaluator::checkNotEndOfExpression(
                   "Evaluator::searchComparisonOperator", p, pe);

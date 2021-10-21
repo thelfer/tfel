@@ -1,23 +1,23 @@
-/*! 
+/*!
  * \file  mtest/include/MTest/StandardBehaviourBase.hxx
  * \brief
  * \author Thomas Helfer
  * \brief 07 avril 2013
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_MTEST_MTESTUMATBEHAVIOURBASE_HXX
-#define LIB_MTEST_MTESTUMATBEHAVIOURBASE_HXX 
+#define LIB_MTEST_MTESTUMATBEHAVIOURBASE_HXX
 
-#include"TFEL/Math/matrix.hxx"
-#include"TFEL/System/ExternalFunctionsPrototypes.hxx"
-#include"TFEL/System/ExternalBehaviourDescription.hxx"
-#include"MTest/Behaviour.hxx"
+#include "TFEL/Math/matrix.hxx"
+#include "TFEL/System/ExternalFunctionsPrototypes.hxx"
+#include "TFEL/System/ExternalBehaviourDescription.hxx"
+#include "MTest/Behaviour.hxx"
 
 namespace mtest {
 
@@ -41,7 +41,7 @@ namespace mtest {
     StandardBehaviourDescription& operator=(
         const StandardBehaviourDescription&);
   };
-  
+
   //! \brief A class to handle standard mechanical behaviours
   struct StandardBehaviourBase : public Behaviour,
                                  public StandardBehaviourDescription {
@@ -66,8 +66,10 @@ namespace mtest {
     std::vector<std::string> getTensorComponentsSuffixes() const override;
     std::vector<std::string> getGradientsComponents() const override;
     std::vector<std::string> getThermodynamicForcesComponents() const override;
-    unsigned short getGradientComponentPosition(const std::string&) const override;
-    unsigned short getThermodynamicForceComponentPosition(const std::string&) const override;
+    unsigned short getGradientComponentPosition(
+        const std::string&) const override;
+    unsigned short getThermodynamicForceComponentPosition(
+        const std::string&) const override;
     unsigned short getSymmetryType() const override;
     size_t getTangentOperatorArraySize() const override;
     std::vector<std::pair<std::string, std::string>> getTangentOperatorBlocks()
@@ -77,12 +79,12 @@ namespace mtest {
     std::vector<std::string> getInternalStateVariablesNames() const override;
     std::vector<std::string> expandInternalStateVariablesNames() const override;
     size_t getInternalStateVariablesSize() const override;
-    std::vector<std::string>
-    getInternalStateVariablesDescriptions() const override;
-    unsigned short
-    getInternalStateVariableType(const std::string&) const override;
-    unsigned short
-    getInternalStateVariablePosition(const std::string&) const override;
+    std::vector<std::string> getInternalStateVariablesDescriptions()
+        const override;
+    unsigned short getInternalStateVariableType(
+        const std::string&) const override;
+    unsigned short getInternalStateVariablePosition(
+        const std::string&) const override;
     std::vector<std::string> getExternalStateVariablesNames() const override;
     size_t getExternalStateVariablesSize() const override;
     std::vector<std::string> getParametersNames() const override;
@@ -90,9 +92,10 @@ namespace mtest {
     std::vector<std::string> getUnsignedShortParametersNames() const override;
     double getRealParameterDefaultValue(const std::string&) const override;
     int getIntegerParameterDefaultValue(const std::string&) const override;
-    unsigned short
-    getUnsignedShortParameterDefaultValue(const std::string&) const override;
-    void setOutOfBoundsPolicy(const tfel::material::OutOfBoundsPolicy) const override;
+    unsigned short getUnsignedShortParameterDefaultValue(
+        const std::string&) const override;
+    void setOutOfBoundsPolicy(
+        const tfel::material::OutOfBoundsPolicy) const override;
     bool hasBounds(const std::string&) const override;
     bool hasLowerBound(const std::string&) const override;
     bool hasUpperBound(const std::string&) const override;
@@ -104,8 +107,7 @@ namespace mtest {
     long double getLowerPhysicalBound(const std::string&) const override;
     long double getUpperPhysicalBound(const std::string&) const override;
     void setParameter(const std::string&, const real) const override;
-    void setIntegerParameter(const std::string&,
-			     const int) const override;
+    void setIntegerParameter(const std::string&, const int) const override;
     void setUnsignedIntegerParameter(const std::string&,
                                      const unsigned short) const override;
     std::vector<std::string> getOptionalMaterialProperties() const override;
@@ -114,19 +116,19 @@ namespace mtest {
     bool doPackagingStep(CurrentState&, BehaviourWorkSpace&) const override;
     //! destructor
     ~StandardBehaviourBase() override;
-  protected:
+
+   protected:
     /*!
      * \brief initialize the first value of the tangent operator
      * \param[out] wk    : behaviour workspace
      * \param[in]  ktype : requested tangent operator type
      * \param[in]  b     : if false, a prediction operator is requested
      */
-   void initializeTangentOperator(tfel::math::matrix<real>&,
-                                  const StiffnessMatrixType,
-                                  const bool) const;
-  }; // end of struct Behaviour
-  
-} // end of namespace mtest
+    void initializeTangentOperator(tfel::math::matrix<real>&,
+                                   const StiffnessMatrixType,
+                                   const bool) const;
+  };  // end of struct Behaviour
+
+}  // end of namespace mtest
 
 #endif /* LIB_MTEST_MTESTUMATBEHAVIOURBASE_HXX */
-

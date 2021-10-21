@@ -1,9 +1,9 @@
 @Parser MaterialLaw;
-@Law    SIC_THERMALCONDUCTIVITY_SNEAD;
+@Law SIC_THERMALCONDUCTIVITY_SNEAD;
 @Author Éric Brunon;
-@Date   2007-12-06;
+@Date 2007 - 12 - 06;
 
-@Description{
+@Description {
  Loi de la publication JNM ajustée sur les mesures du SPUA 
 
  Publication JNM :                                      
@@ -32,8 +32,8 @@ T.setGlossaryName("Temperature");
 @PhysicalBounds T in [0:*[;
 
 @Function{
-  static constexpr double a =  0.781151102452916 ;
-  static constexpr double b =  1.05E-5 ;
-  static constexpr double c = -3.00E-4 ;
-  k = a/(b*T+c);
+  static constexpr double a = 0.781151102452916;
+  static constexpr double b = 1.05E-5;
+  static constexpr double c = -3.00E-4;
+  k = a / (b * T + c);
 } // end of function

@@ -447,9 +447,8 @@ namespace tfel {
         tfel::meta::Implements<ST2toST2Type, ST2toST2Concept>::cond,
         st2tost2<ST2toST2Traits<ST2toST2Type>::dime,
                  ST2toST2NumType<ST2toST2Type>>>::type
-    change_basis(
-        const ST2toST2Type& s,
-        const rotation_matrix<ST2toST2NumType<ST2toST2Type>>& r) {
+    change_basis(const ST2toST2Type& s,
+                 const rotation_matrix<ST2toST2NumType<ST2toST2Type>>& r) {
       return st2tost2_internals::ChangeBasis<
           ST2toST2Traits<ST2toST2Type>::dime>::exe(s, r);
     }

@@ -1825,7 +1825,8 @@ namespace mfront {
     optional<StrainMeasure> strainMeasure;
     //! \brief an optional boolean stating if the strain measure shall be saved
     optional<bool> saveStrainMeasureValue;
-    //! \brief an optional boolean stating if the dual stress stress shall be saved
+    //! \brief an optional boolean stating if the dual stress stress shall be
+    //! saved
     optional<bool> saveDualStressValue;
     //! \brief use units
     bool use_qt = false;

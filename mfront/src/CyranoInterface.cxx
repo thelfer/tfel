@@ -65,7 +65,8 @@ namespace mfront {
     tfel::raise(msg.str());
   }
 
-  std::string CyranoInterface::getLibraryName(const BehaviourDescription& mb) const {
+  std::string CyranoInterface::getLibraryName(
+      const BehaviourDescription& mb) const {
     auto lib = std::string{};
     if (mb.getLibrary().empty()) {
       if (!mb.getMaterialName().empty()) {
@@ -88,13 +89,13 @@ namespace mfront {
     return "cyrano" + makeLowerCase(n);
   }  // end of CyranoInterface::getLibraryName
 
-  std::string CyranoInterface::getBehaviourName(const std::string& library,
-                                                const std::string& className) const {
+  std::string CyranoInterface::getBehaviourName(
+      const std::string& library, const std::string& className) const {
     return library + className;
   }  // end of CyranoInterface::getBehaviourName
 
-  std::string CyranoInterface::getUmatFunctionName(const std::string& library,
-                                                   const std::string& className) const {
+  std::string CyranoInterface::getUmatFunctionName(
+      const std::string& library, const std::string& className) const {
     return "cyrano" + makeLowerCase(this->getBehaviourName(library, className));
   }  // end of CyranoInterface::getUmatFunctionName
 
@@ -103,12 +104,12 @@ namespace mfront {
         doSubSteppingOnInvalidResults(false),
         maximumSubStepping(0u) {}  // end of CyranoInterface::CyranoInterface
 
-  std::pair<bool, CyranoInterface::tokens_iterator> CyranoInterface::treatKeyword(
-      BehaviourDescription& bd,
-      const std::string& key,
-      const std::vector<std::string>& i,
-      tokens_iterator current,
-      const tokens_iterator end) {
+  std::pair<bool, CyranoInterface::tokens_iterator>
+  CyranoInterface::treatKeyword(BehaviourDescription& bd,
+                                const std::string& key,
+                                const std::vector<std::string>& i,
+                                tokens_iterator current,
+                                const tokens_iterator end) {
     auto throw_if = [](const bool b, const std::string& m) {
       tfel::raise_if(b, "Cyrano::treatKeyword: " + m);
     };
@@ -123,10 +124,12 @@ namespace mfront {
       this->setGenerateMTestFileOnFailureAttribute(
           bd, this->readBooleanValue(key, current, end));
       return {true, current};
-    } else if ((key == "@CyranoUseTimeSubStepping") || (key == "@UMATUseTimeSubStepping")) {
+    } else if ((key == "@CyranoUseTimeSubStepping") ||
+               (key == "@UMATUseTimeSubStepping")) {
       this->useTimeSubStepping = this->readBooleanValue(key, current, end);
       return {true, current};
-    } else if ((key == "@CyranoMaximumSubStepping") || (key == "@UMATMaximumSubStepping")) {
+    } else if ((key == "@CyranoMaximumSubStepping") ||
+               (key == "@UMATMaximumSubStepping")) {
       throw_if(!this->useTimeSubStepping,
                "time sub stepping is not enabled at this stage.\n"
                "Use the @CyranoUseTimeSubStepping directive before "
@@ -137,7 +140,8 @@ namespace mfront {
       throw_if(flux.fail(), "failed to read maximum substepping value.");
       ++(current);
       throw_if(current == end, "unexpected end of file");
-      throw_if(current->value != ";", "expected ';',read '" + current->value + "'");
+      throw_if(current->value != ";",
+               "expected ';',read '" + current->value + "'");
       ++(current);
       return {true, current};
     } else if ((key == "@CyranoDoSubSteppingOnInvalidResults") ||
@@ -147,13 +151,15 @@ namespace mfront {
                "enabled at this stage.\n"
                "Use the @CyranoUseTimeSubStepping directive before "
                "@CyranoMaximumSubStepping");
-      this->doSubSteppingOnInvalidResults = this->readBooleanValue(key, current, end);
+      this->doSubSteppingOnInvalidResults =
+          this->readBooleanValue(key, current, end);
       return {true, current};
     }
     return {false, current};
   }  // end of treatKeyword
 
-  std::set<CyranoInterface::Hypothesis> CyranoInterface::getModellingHypothesesToBeTreated(
+  std::set<CyranoInterface::Hypothesis>
+  CyranoInterface::getModellingHypothesesToBeTreated(
       const BehaviourDescription& mb) const {
     // treatment
     std::set<Hypothesis> h;
@@ -161,18 +167,21 @@ namespace mfront {
     const auto& bh = mb.getModellingHypotheses();
     // cyrano only supports the AxisymmetricalGeneralisedPlaneStrain
     // and the AxisymmetricalGeneralisedPlaneStress hypotheses
-    if (bh.find(ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN) != bh.end()) {
+    if (bh.find(ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN) !=
+        bh.end()) {
       h.insert(ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN);
     }
-    if (bh.find(ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS) != bh.end()) {
+    if (bh.find(ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS) !=
+        bh.end()) {
       h.insert(ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS);
     }
-    tfel::raise_if(h.empty(),
-                   "CyranoInterface::getModellingHypothesesToBeTreated : "
-                   "no hypotheses selected. This means that the given beahviour "
-                   "can't be used neither in 'AxisymmetricalGeneralisedPlaneStrain' "
-                   "nor in 'AxisymmetricalGeneralisedPlaneStress', so it does not "
-                   "make sense to use the Cyrano interface");
+    tfel::raise_if(
+        h.empty(),
+        "CyranoInterface::getModellingHypothesesToBeTreated : "
+        "no hypotheses selected. This means that the given beahviour "
+        "can't be used neither in 'AxisymmetricalGeneralisedPlaneStrain' "
+        "nor in 'AxisymmetricalGeneralisedPlaneStress', so it does not "
+        "make sense to use the Cyrano interface");
     return h;
   }  // end of CyranoInterface::getModellingHypothesesToBeTreated
 
@@ -187,7 +196,8 @@ namespace mfront {
            "getOutOfBoundsPolicy();\n"
         << "return policy;\n"
         << "}\n\n";
-  }  // end of MFrontCyranoInterface::writeGetOutOfBoundsPolicyFunctionImplementation
+  }  // end of
+     // MFrontCyranoInterface::writeGetOutOfBoundsPolicyFunctionImplementation
 
   void CyranoInterface::endTreatment(const BehaviourDescription& mb,
                                      const FileDescription& fd) const {
@@ -201,7 +211,8 @@ namespace mfront {
     const auto& mhs = this->getModellingHypothesesToBeTreated(mb);
     const auto name = mb.getLibrary() + mb.getClassName();
     // some checks
-    throw_if(mb.getBehaviourType() != BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR,
+    throw_if(mb.getBehaviourType() !=
+                 BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR,
              "the cyrano interface only supports "
              "small strain behaviours");
     if (mb.isStrainMeasureDefined()) {
@@ -213,17 +224,20 @@ namespace mfront {
                "- finite strain behaviours based on the Hencky strain measure");
     }
     if (mb.getAttribute(BehaviourDescription::requiresStiffnessTensor, false)) {
-      throw_if(mb.getSymmetryType() != mb.getElasticSymmetryType(),
-               "the type of the behaviour (isotropic or orthotropic) does not "
-               "match the the type of its elastic behaviour.\n"
-               "This is not allowed here :\n"
-               "- an isotropic behaviour must have an isotropic elastic behaviour\n"
-               "- an orthotropic behaviour must have an orthotropic elastic behaviour");
+      throw_if(
+          mb.getSymmetryType() != mb.getElasticSymmetryType(),
+          "the type of the behaviour (isotropic or orthotropic) does not "
+          "match the the type of its elastic behaviour.\n"
+          "This is not allowed here :\n"
+          "- an isotropic behaviour must have an isotropic elastic behaviour\n"
+          "- an orthotropic behaviour must have an orthotropic elastic "
+          "behaviour");
     }
     if (this->useTimeSubStepping) {
-      throw_if(this->maximumSubStepping == 0u,
-               "use of time sub stepping requested but MaximumSubStepping is zero.\n"
-               "Please use the @CyranoMaximumSubStepping directive");
+      throw_if(
+          this->maximumSubStepping == 0u,
+          "use of time sub stepping requested but MaximumSubStepping is zero.\n"
+          "Please use the @CyranoMaximumSubStepping directive");
     }
     // create the output directories
     systemCall::mkdir("include/MFront");
@@ -247,14 +261,14 @@ namespace mfront {
     }
 
     // opening header file
-    auto fileName = "cyrano"+name+".hxx";
+    auto fileName = "cyrano" + name + ".hxx";
     std::ofstream out("include/MFront/Cyrano/" + fileName);
     throw_if(!out, "could not open file '" + fileName + "'");
 
     out << "/*!\n";
     out << "* \\file   " << fileName << endl;
-    out << "* \\brief  This file declares the cyrano interface for the " << mb.getClassName()
-        << " behaviour law\n";
+    out << "* \\brief  This file declares the cyrano interface for the "
+        << mb.getClassName() << " behaviour law\n";
     out << "* \\author " << fd.authorName << endl;
     out << "* \\date   " << fd.date << endl;
     out << "*/\n\n";
@@ -278,7 +292,8 @@ namespace mfront {
     out << "namespace cyrano{\n\n";
 
     if (!mb.areAllMechanicalDataSpecialised(mhs)) {
-      this->writeCyranoBehaviourTraits(out, mb, ModellingHypothesis::UNDEFINEDHYPOTHESIS);
+      this->writeCyranoBehaviourTraits(
+          out, mb, ModellingHypothesis::UNDEFINEDHYPOTHESIS);
     }
     for (const auto& h : mhs) {
       if (mb.hasSpecialisedMechanicalData(h)) {
@@ -307,7 +322,7 @@ namespace mfront {
 
     out.close();
 
-    fileName = "cyrano"+name+".cxx";
+    fileName = "cyrano" + name + ".cxx";
     out.open("src/" + fileName);
     tfel::raise_if(!out,
                    "CyranoInterface::endTreatment: "
@@ -316,8 +331,8 @@ namespace mfront {
 
     out << "/*!\n";
     out << "* \\file   " << fileName << endl;
-    out << "* \\brief  This file implements the cyrano interface for the " << mb.getClassName()
-        << " behaviour law\n";
+    out << "* \\brief  This file implements the cyrano interface for the "
+        << mb.getClassName() << " behaviour law\n";
     out << "* \\author " << fd.authorName << endl;
     out << "* \\date   " << fd.date << endl;
     out << "*/\n\n";
@@ -370,7 +385,8 @@ namespace mfront {
     out.close();
   }  // end of CyranoInterface::endTreatment
 
-  void CyranoInterface::writeMTestFileGeneratorSetModellingHypothesis(std::ostream& out) const {
+  void CyranoInterface::writeMTestFileGeneratorSetModellingHypothesis(
+      std::ostream& out) const {
     out << "mg.setModellingHypothesis(cyrano::getModellingHypothesis(*NDI));\n";
   }
 
@@ -379,7 +395,8 @@ namespace mfront {
   void CyranoInterface::getTargetsDescription(TargetsDescription& d,
                                               const BehaviourDescription& bd) {
     const auto lib = CyranoInterface::getLibraryName(bd);
-    const auto name = ((!bd.getLibrary().empty()) ? bd.getLibrary() : "") + bd.getClassName();
+    const auto name =
+        ((!bd.getLibrary().empty()) ? bd.getLibrary() : "") + bd.getClassName();
     const auto tfel_config = tfel::getTFELConfigExecutableName();
     auto& l = d.getLibrary(lib);
     insert_if(l.cppflags,
@@ -420,23 +437,25 @@ namespace mfront {
       }
     }
     if (bd.areThermalExpansionCoefficientsDefined()) {
-      for (const auto& themp : bd.getThermalExpansionCoefficientsDescriptions()) {
+      for (const auto& themp :
+           bd.getThermalExpansionCoefficientsDescriptions()) {
         CyranoMaterialPropertyInterface i;
         i.getLibraryDescription(d, l, themp);
       }
     }
-  }    // end of CyranoInterface::getTargetsDescription(TargetsDescription&)
+  }  // end of CyranoInterface::getTargetsDescription(TargetsDescription&)
 
-  void CyranoInterface::writeInterfaceSpecificIncludes(std::ostream& out,
-                                                       const BehaviourDescription&) const {
+  void CyranoInterface::writeInterfaceSpecificIncludes(
+      std::ostream& out, const BehaviourDescription&) const {
     out << "#include\"MFront/Cyrano/Cyrano.hxx\"\n\n";
   }
 
-  void CyranoInterface::writeCyranoFunctionDeclaration(std::ostream& out,
-                                                       const std::string& name) const {
+  void CyranoInterface::writeCyranoFunctionDeclaration(
+      std::ostream& out, const std::string& name) const {
     using namespace std;
     out << "MFRONT_SHAREDOBJ void\n"
-        << name << "(const cyrano::CyranoInt *const,const cyrano::CyranoReal *const,\n"
+        << name
+        << "(const cyrano::CyranoInt *const,const cyrano::CyranoReal *const,\n"
         << "const cyrano::CyranoReal *const,      cyrano::CyranoReal *const,\n"
         << "const cyrano::CyranoReal *const,const cyrano::CyranoReal *const,\n"
         << "const cyrano::CyranoReal *const,const cyrano::CyranoReal *const,\n"
@@ -484,14 +503,22 @@ namespace mfront {
                                            const std::string& n) {
     out << "MFRONT_SHAREDOBJ void\n"
         << fname
-        << "(const cyrano::CyranoInt *const NTENS, const cyrano::CyranoReal *const DTIME,\n"
-        << "const cyrano::CyranoReal *const DROT,  cyrano::CyranoReal *const DDSDDE,\n"
-        << "const cyrano::CyranoReal *const STRAN, const cyrano::CyranoReal *const DSTRAN,\n"
-        << "const cyrano::CyranoReal *const TEMP,  const cyrano::CyranoReal *const DTEMP,\n"
-        << "const cyrano::CyranoReal *const PROPS, const cyrano::CyranoInt    *const NPROPS,\n"
-        << "const cyrano::CyranoReal *const PREDEF,const cyrano::CyranoReal *const DPRED,\n"
-        << "cyrano::CyranoReal *const STATEV,const cyrano::CyranoInt    *const NSTATV,\n"
-        << "cyrano::CyranoReal *const STRESS,const cyrano::CyranoInt    *const NDI,\n"
+        << "(const cyrano::CyranoInt *const NTENS, const cyrano::CyranoReal "
+           "*const DTIME,\n"
+        << "const cyrano::CyranoReal *const DROT,  cyrano::CyranoReal *const "
+           "DDSDDE,\n"
+        << "const cyrano::CyranoReal *const STRAN, const cyrano::CyranoReal "
+           "*const DSTRAN,\n"
+        << "const cyrano::CyranoReal *const TEMP,  const cyrano::CyranoReal "
+           "*const DTEMP,\n"
+        << "const cyrano::CyranoReal *const PROPS, const cyrano::CyranoInt    "
+           "*const NPROPS,\n"
+        << "const cyrano::CyranoReal *const PREDEF,const cyrano::CyranoReal "
+           "*const DPRED,\n"
+        << "cyrano::CyranoReal *const STATEV,const cyrano::CyranoInt    *const "
+           "NSTATV,\n"
+        << "cyrano::CyranoReal *const STRESS,const cyrano::CyranoInt    *const "
+           "NDI,\n"
         << "cyrano::CyranoInt    *const KINC)\n"
         << "{\n"
         << n << "(NTENS, DTIME,DROT,DDSDDE,STRAN,DSTRAN,TEMP,DTEMP,\n"
@@ -500,18 +527,28 @@ namespace mfront {
     out << "}\n\n";
   }  // end of writeSecondaryCyranoFunction
 
-  void CyranoInterface::writeStandardCyranoFunction(std::ostream& out,
-                                                    const std::string& n,
-                                                    const BehaviourDescription& mb) const {
+  void CyranoInterface::writeStandardCyranoFunction(
+      std::ostream& out,
+      const std::string& n,
+      const BehaviourDescription& mb) const {
     out << "MFRONT_SHAREDOBJ void\n"
-        << n << "(const cyrano::CyranoInt *const NTENS, const cyrano::CyranoReal *const DTIME,\n"
-        << "const cyrano::CyranoReal *const DROT,  cyrano::CyranoReal *const DDSDDE,\n"
-        << "const cyrano::CyranoReal *const STRAN, const cyrano::CyranoReal *const DSTRAN,\n"
-        << "const cyrano::CyranoReal *const TEMP,  const cyrano::CyranoReal *const DTEMP,\n"
-        << "const cyrano::CyranoReal *const PROPS, const cyrano::CyranoInt    *const NPROPS,\n"
-        << "const cyrano::CyranoReal *const PREDEF,const cyrano::CyranoReal *const DPRED,\n"
-        << "cyrano::CyranoReal *const STATEV,const cyrano::CyranoInt    *const NSTATV,\n"
-        << "cyrano::CyranoReal *const STRESS,const cyrano::CyranoInt    *const NDI,\n"
+        << n
+        << "(const cyrano::CyranoInt *const NTENS, const cyrano::CyranoReal "
+           "*const DTIME,\n"
+        << "const cyrano::CyranoReal *const DROT,  cyrano::CyranoReal *const "
+           "DDSDDE,\n"
+        << "const cyrano::CyranoReal *const STRAN, const cyrano::CyranoReal "
+           "*const DSTRAN,\n"
+        << "const cyrano::CyranoReal *const TEMP,  const cyrano::CyranoReal "
+           "*const DTEMP,\n"
+        << "const cyrano::CyranoReal *const PROPS, const cyrano::CyranoInt    "
+           "*const NPROPS,\n"
+        << "const cyrano::CyranoReal *const PREDEF,const cyrano::CyranoReal "
+           "*const DPRED,\n"
+        << "cyrano::CyranoReal *const STATEV,const cyrano::CyranoInt    *const "
+           "NSTATV,\n"
+        << "cyrano::CyranoReal *const STRESS,const cyrano::CyranoInt    *const "
+           "NDI,\n"
         << "cyrano::CyranoInt    *const KINC)\n";
     out << "{\n";
     out << "const auto op = " << this->getFunctionNameBasis(n)
@@ -519,40 +556,54 @@ namespace mfront {
     if (mb.getAttribute(BehaviourData::profiling, false)) {
       out << "using mfront::BehaviourProfiler;\n";
       out << "using tfel::material::" << mb.getClassName() << "Profiler;\n";
-      out << "auto total_timer(" << mb.getClassName() << "Profiler::getProfiler(),\n"
+      out << "auto total_timer(" << mb.getClassName()
+          << "Profiler::getProfiler(),\n"
           << "BehaviourProfiler::TOTALTIME);\n";
     }
     this->generateMTestFile1(out, mb);
     out << "cyrano::CyranoInterface<tfel::material::" << mb.getClassName()
-        << ">::exe(NTENS,DTIME,DROT,DDSDDE,STRAN,DSTRAN,TEMP,DTEMP,PROPS,NPROPS,"
+        << ">::exe(NTENS,DTIME,DROT,DDSDDE,STRAN,DSTRAN,TEMP,DTEMP,PROPS,"
+           "NPROPS,"
         << "PREDEF,DPRED,STATEV,NSTATV,STRESS,NDI,KINC,"
         << "cyrano::CyranoStandardSmallStrainStressFreeExpansionHandler,op);\n";
     if (this->shallGenerateMTestFileOnFailure(mb)) {
       out << "if(*KINC<0){\n";
-      this->generateMTestFile2(out, mb, BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR, n, "");
+      this->generateMTestFile2(
+          out, mb, BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR, n, "");
       out << "}\n";
     }
     out << "}\n\n";
     writeSecondaryCyranoFunction(out, this->getFunctionNameBasis(n), n);
   }  // end of CyranoInterface::writeStandardCyranoFunction
 
-  void CyranoInterface::writeLogarithmicStrainCyranoFunction(std::ostream& out,
-                                                             const std::string& n,
-                                                             const BehaviourDescription& mb) const {
+  void CyranoInterface::writeLogarithmicStrainCyranoFunction(
+      std::ostream& out,
+      const std::string& n,
+      const BehaviourDescription& mb) const {
     auto throw_if = [](const bool b, const std::string& m) {
       if (b) {
-        tfel::raise("CyranoInterface::writeLogarithmicStrainCyranoFunction: " + m);
+        tfel::raise("CyranoInterface::writeLogarithmicStrainCyranoFunction: " +
+                    m);
       }
     };
     out << "MFRONT_SHAREDOBJ void\n"
-        << n << "(const cyrano::CyranoInt *const NTENS, const cyrano::CyranoReal *const DTIME,\n"
-        << "const cyrano::CyranoReal *const DROT,  cyrano::CyranoReal *const DDSDDE,\n"
-        << "const cyrano::CyranoReal *const STRAN, const cyrano::CyranoReal *const DSTRAN,\n"
-        << "const cyrano::CyranoReal *const TEMP,  const cyrano::CyranoReal *const DTEMP,\n"
-        << "const cyrano::CyranoReal *const PROPS, const cyrano::CyranoInt    *const NPROPS,\n"
-        << "const cyrano::CyranoReal *const PREDEF,const cyrano::CyranoReal *const DPRED,\n"
-        << "cyrano::CyranoReal *const STATEV,const cyrano::CyranoInt    *const NSTATV,\n"
-        << "cyrano::CyranoReal *const STRESS,const cyrano::CyranoInt    *const NDI,\n"
+        << n
+        << "(const cyrano::CyranoInt *const NTENS, const cyrano::CyranoReal "
+           "*const DTIME,\n"
+        << "const cyrano::CyranoReal *const DROT,  cyrano::CyranoReal *const "
+           "DDSDDE,\n"
+        << "const cyrano::CyranoReal *const STRAN, const cyrano::CyranoReal "
+           "*const DSTRAN,\n"
+        << "const cyrano::CyranoReal *const TEMP,  const cyrano::CyranoReal "
+           "*const DTEMP,\n"
+        << "const cyrano::CyranoReal *const PROPS, const cyrano::CyranoInt    "
+           "*const NPROPS,\n"
+        << "const cyrano::CyranoReal *const PREDEF,const cyrano::CyranoReal "
+           "*const DPRED,\n"
+        << "cyrano::CyranoReal *const STATEV,const cyrano::CyranoInt    *const "
+           "NSTATV,\n"
+        << "cyrano::CyranoReal *const STRESS,const cyrano::CyranoInt    *const "
+           "NDI,\n"
         << "cyrano::CyranoInt    *const KINC)\n"
         << "{\n";
     out << "const auto op = " << this->getFunctionNameBasis(n)
@@ -560,7 +611,8 @@ namespace mfront {
     if (mb.getAttribute(BehaviourData::profiling, false)) {
       out << "using mfront::BehaviourProfiler;\n"
           << "using tfel::material::" << mb.getClassName() << "Profiler;\n"
-          << "auto total_timer(" << mb.getClassName() << "Profiler::getProfiler(),\n"
+          << "auto total_timer(" << mb.getClassName()
+          << "Profiler::getProfiler(),\n"
           << "BehaviourProfiler::TOTALTIME);\n";
     }
     this->generateMTestFile1(out, mb);
@@ -575,15 +627,17 @@ namespace mfront {
         << "// axisymmetrical generalised plane stress\n";
     if (mb.isModellingHypothesisSupported(
             ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS)) {
-      const auto& d =
-          mb.getBehaviourData(ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS);
+      const auto& d = mb.getBehaviourData(
+          ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS);
       // this must be added for gcc 4.7.2
-      const auto astress = [this,&d, throw_if]() -> std::pair<bool, SupportedTypes::TypeSize> {
+      const auto astress =
+          [this, &d, throw_if]() -> std::pair<bool, SupportedTypes::TypeSize> {
         SupportedTypes::TypeSize o;
         // skipping the temperature
         auto pev = std::next(d.getExternalStateVariables().begin());
         while (pev != d.getExternalStateVariables().end()) {
-          if (d.getExternalName(pev->name) == tfel::glossary::Glossary::AxialStress) {
+          if (d.getExternalName(pev->name) ==
+              tfel::glossary::Glossary::AxialStress) {
             throw_if(
                 SupportedTypes::getTypeFlag(pev->type) !=
                     SupportedTypes::SCALAR,
@@ -597,17 +651,24 @@ namespace mfront {
       }();
       const auto astrain = this->checkIfAxialStrainIsDefinedAndGetItsOffset(
           mb, ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS);
-      tfel::raise_if(!astress.first, "no external state state variable standing for the axial stress");
-      tfel::raise_if(!astrain.first, "no state variable standing for the axial strain");
+      tfel::raise_if(
+          !astress.first,
+          "no external state state variable standing for the axial stress");
+      tfel::raise_if(!astrain.first,
+                     "no state variable standing for the axial strain");
       if (mb.getAttribute(BehaviourData::profiling, false)) {
         out << "{\n"
-            << "auto pre_timer(" << mb.getClassName() << "Profiler::getProfiler(),\n"
+            << "auto pre_timer(" << mb.getClassName()
+            << "Profiler::getProfiler(),\n"
             << "BehaviourProfiler::FINITESTRAINPREPROCESSING);\n";
       }
-      out << "const auto Pzz0 = PREDEF[" << astress.second.getValueForDimension(1) << "];\n"
-          << "const auto Pzz1 = Pzz0+DPRED[" << astress.second.getValueForDimension(1) << "];\n"
-	  << "const auto Tzz0 = "
-          << "Pzz0*std::exp(STATEV[" << astrain.second.getValueForDimension(1) << "]);\n"
+      out << "const auto Pzz0 = PREDEF["
+          << astress.second.getValueForDimension(1) << "];\n"
+          << "const auto Pzz1 = Pzz0+DPRED["
+          << astress.second.getValueForDimension(1) << "];\n"
+          << "const auto Tzz0 = "
+          << "Pzz0*std::exp(STATEV[" << astrain.second.getValueForDimension(1)
+          << "]);\n"
           << "eto[0]=std::log1p(*STRAN);\n"
           << "eto[1]=std::log1p(*(STRAN+1));\n"
           << "eto[2]=0;\n"
@@ -628,7 +689,8 @@ namespace mfront {
       out << "if(*KINC>=0){\n";
       if (mb.getAttribute(BehaviourData::profiling, false)) {
         out << "{\n"
-            << "auto post_timer(" << mb.getClassName() << "Profiler::getProfiler(),\n"
+            << "auto post_timer(" << mb.getClassName()
+            << "Profiler::getProfiler(),\n"
             << "BehaviourProfiler::FINITESTRAINPOSTPROCESSING);\n";
       }
       // First Piola-Kirchhoff stress
@@ -637,11 +699,17 @@ namespace mfront {
           << "STRESS[2]=Pzz1;\n";
       // computation of the stiffness matrix
       out << "if(k){\n"
-          << "*DDSDDE     = (-STRESS[0]+K[0]/(1+STRAN[0]+DSTRAN[0]))/(1+STRAN[0]+DSTRAN[0]);\n"
-          << "*(DDSDDE+3) = K[3]/((1+STRAN[1]+DSTRAN[1])*(1+STRAN[0]+DSTRAN[0]));\n"
+          << "*DDSDDE     = "
+             "(-STRESS[0]+K[0]/(1+STRAN[0]+DSTRAN[0]))/"
+             "(1+STRAN[0]+DSTRAN[0]);\n"
+          << "*(DDSDDE+3) = "
+             "K[3]/((1+STRAN[1]+DSTRAN[1])*(1+STRAN[0]+DSTRAN[0]));\n"
           << "*(DDSDDE+6) = 0;\n"
-          << "*(DDSDDE+1) = K[1]/((1+STRAN[0]+DSTRAN[0])*(1+STRAN[1]+DSTRAN[1]));\n"
-          << "*(DDSDDE+4) = (-STRESS[1]+K[4]/(1+STRAN[1]+DSTRAN[1]))/(1+STRAN[1]+DSTRAN[1]);\n"
+          << "*(DDSDDE+1) = "
+             "K[1]/((1+STRAN[0]+DSTRAN[0])*(1+STRAN[1]+DSTRAN[1]));\n"
+          << "*(DDSDDE+4) = "
+             "(-STRESS[1]+K[4]/(1+STRAN[1]+DSTRAN[1]))/"
+             "(1+STRAN[1]+DSTRAN[1]);\n"
           << "*(DDSDDE+7) = 0;\n"
           << "*(DDSDDE+2) = 0;\n"
           << "*(DDSDDE+5) = 0;\n"
@@ -660,7 +728,8 @@ namespace mfront {
         << "// axisymmetrical generalised plane strain\n";
     if (mb.getAttribute(BehaviourData::profiling, false)) {
       out << "{\n"
-          << "auto pre_timer(" << mb.getClassName() << "Profiler::getProfiler(),\n"
+          << "auto pre_timer(" << mb.getClassName()
+          << "Profiler::getProfiler(),\n"
           << "BehaviourProfiler::FINITESTRAINPREPROCESSING);\n";
     }
     out << "eto[0]=std::log1p(*STRAN);\n"
@@ -683,7 +752,8 @@ namespace mfront {
     out << "if(*KINC>=0){\n";
     if (mb.getAttribute(BehaviourData::profiling, false)) {
       out << "{\n"
-          << "auto post_timer(" << mb.getClassName() << "Profiler::getProfiler(),\n"
+          << "auto post_timer(" << mb.getClassName()
+          << "Profiler::getProfiler(),\n"
           << "BehaviourProfiler::FINITESTRAINPOSTPROCESSING);\n";
     }
     // First Piola-Kirchhoff stress
@@ -692,15 +762,24 @@ namespace mfront {
         << "STRESS[2]=s[2]/(1+*(STRAN+2)+*(DSTRAN+2));\n";
     // computation of the stiffness matrix
     out << "if(k){\n"
-        << "*DDSDDE     = (-STRESS[0]+K[0]/(1+STRAN[0]+DSTRAN[0]))/(1+STRAN[0]+DSTRAN[0]);\n"
-        << "*(DDSDDE+3) = K[3]/((1+STRAN[1]+DSTRAN[1])*(1+STRAN[0]+DSTRAN[0]));\n"
-        << "*(DDSDDE+6) = K[6]/((1+STRAN[2]+DSTRAN[2])*(1+STRAN[0]+DSTRAN[0]));\n"
-        << "*(DDSDDE+1) = K[1]/((1+STRAN[0]+DSTRAN[0])*(1+STRAN[1]+DSTRAN[1]));\n"
-        << "*(DDSDDE+4) = (-STRESS[1]+K[4]/(1+STRAN[1]+DSTRAN[1]))/(1+STRAN[1]+DSTRAN[1]);\n"
-        << "*(DDSDDE+7) = K[7]/((1+STRAN[2]+DSTRAN[2])*(1+STRAN[1]+DSTRAN[1]));\n"
-        << "*(DDSDDE+2) = K[2]/((1+STRAN[0]+DSTRAN[0])*(1+STRAN[2]+DSTRAN[2]));\n"
-        << "*(DDSDDE+5) = K[5]/((1+STRAN[1]+DSTRAN[1])*(1+STRAN[2]+DSTRAN[2]));\n"
-        << "*(DDSDDE+8) = (-STRESS[2]+K[8]/(1+STRAN[2]+DSTRAN[2]))/(1+STRAN[2]+DSTRAN[2]);\n"
+        << "*DDSDDE     = "
+           "(-STRESS[0]+K[0]/(1+STRAN[0]+DSTRAN[0]))/(1+STRAN[0]+DSTRAN[0]);\n"
+        << "*(DDSDDE+3) = "
+           "K[3]/((1+STRAN[1]+DSTRAN[1])*(1+STRAN[0]+DSTRAN[0]));\n"
+        << "*(DDSDDE+6) = "
+           "K[6]/((1+STRAN[2]+DSTRAN[2])*(1+STRAN[0]+DSTRAN[0]));\n"
+        << "*(DDSDDE+1) = "
+           "K[1]/((1+STRAN[0]+DSTRAN[0])*(1+STRAN[1]+DSTRAN[1]));\n"
+        << "*(DDSDDE+4) = "
+           "(-STRESS[1]+K[4]/(1+STRAN[1]+DSTRAN[1]))/(1+STRAN[1]+DSTRAN[1]);\n"
+        << "*(DDSDDE+7) = "
+           "K[7]/((1+STRAN[2]+DSTRAN[2])*(1+STRAN[1]+DSTRAN[1]));\n"
+        << "*(DDSDDE+2) = "
+           "K[2]/((1+STRAN[0]+DSTRAN[0])*(1+STRAN[2]+DSTRAN[2]));\n"
+        << "*(DDSDDE+5) = "
+           "K[5]/((1+STRAN[1]+DSTRAN[1])*(1+STRAN[2]+DSTRAN[2]));\n"
+        << "*(DDSDDE+8) = "
+           "(-STRESS[2]+K[8]/(1+STRAN[2]+DSTRAN[2]))/(1+STRAN[2]+DSTRAN[2]);\n"
         << "}\n";
     if (mb.getAttribute(BehaviourData::profiling, false)) {
       out << "}\n";
@@ -709,21 +788,24 @@ namespace mfront {
     out << "} // end of if(*NDI!=1)\n";
     if (this->shallGenerateMTestFileOnFailure(mb)) {
       out << "if(*KINC<0){\n";
-      this->generateMTestFile2(out, mb,BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR, n, "");
+      this->generateMTestFile2(
+          out, mb, BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR, n, "");
       out << "}\n";
     }
     out << "}\n\n";
     writeSecondaryCyranoFunction(out, this->getFunctionNameBasis(n), n);
   }  // end of CyranoInterface::writeLogarithmicStrainCyranoFunction
 
-  void CyranoInterface::writeCyranoBehaviourTraits(std::ostream& out,
-                                                   const BehaviourDescription& mb,
-                                                   const Hypothesis h) const {
+  void CyranoInterface::writeCyranoBehaviourTraits(
+      std::ostream& out,
+      const BehaviourDescription& mb,
+      const Hypothesis h) const {
     using namespace tfel::material;
     const auto mvs = mb.getMainVariablesSize();
     const auto mprops = this->buildMaterialPropertiesList(mb, h);
     if (h == ModellingHypothesis::UNDEFINEDHYPOTHESIS) {
-      out << "template<tfel::material::ModellingHypothesis::Hypothesis H,typename Type";
+      out << "template<tfel::material::ModellingHypothesis::Hypothesis "
+             "H,typename Type";
       if (mb.useQt()) {
         out << ",bool use_qt";
       }
@@ -735,11 +817,12 @@ namespace mfront {
     }
     out << ">\n";
     if (h == ModellingHypothesis::UNDEFINEDHYPOTHESIS) {
-      out << "struct CyranoTraits<tfel::material::" << mb.getClassName() << "<H,Type,";
+      out << "struct CyranoTraits<tfel::material::" << mb.getClassName()
+          << "<H,Type,";
     } else {
       out << "struct CyranoTraits<tfel::material::" << mb.getClassName()
-          << "<tfel::material::ModellingHypothesis::" << ModellingHypothesis::toUpperCaseString(h)
-          << ",Type,";
+          << "<tfel::material::ModellingHypothesis::"
+          << ModellingHypothesis::toUpperCaseString(h) << ",Type,";
     }
     if (mb.useQt()) {
       out << "use_qt";
@@ -749,28 +832,33 @@ namespace mfront {
     out << "> >{\n";
     if (h != ModellingHypothesis::UNDEFINEDHYPOTHESIS) {
       out << "// modelling hypothesis\n";
-      out << "static " << constexpr_c << " tfel::material::ModellingHypothesis::Hypothesis H = "
-          << "tfel::material::ModellingHypothesis::" << ModellingHypothesis::toUpperCaseString(h)
-          << ";\n";
+      out << "static " << constexpr_c
+          << " tfel::material::ModellingHypothesis::Hypothesis H = "
+          << "tfel::material::ModellingHypothesis::"
+          << ModellingHypothesis::toUpperCaseString(h) << ";\n";
     }
     out << "// space dimension\n";
-    out << "static " << constexpr_c << " unsigned short N           = "
-                                       "tfel::material::ModellingHypothesisToSpaceDimension<H>::"
-                                       "value;\n";
+    out << "static " << constexpr_c
+        << " unsigned short N           = "
+           "tfel::material::ModellingHypothesisToSpaceDimension<H>::"
+           "value;\n";
     out << "// tiny vector size\n";
     out << "static " << constexpr_c << " unsigned short TVectorSize = N;\n";
     out << "// symmetric tensor size\n";
     out << "static " << constexpr_c
-        << " unsigned short StensorSize = tfel::math::StensorDimeToSize<N>::value;\n";
+        << " unsigned short StensorSize = "
+           "tfel::math::StensorDimeToSize<N>::value;\n";
     out << "// tensor size\n";
     out << "static " << constexpr_c
-        << " unsigned short TensorSize  = tfel::math::TensorDimeToSize<N>::value;\n";
+        << " unsigned short TensorSize  = "
+           "tfel::math::TensorDimeToSize<N>::value;\n";
     out << "// size of the driving variable array (STRAN)\n";
-    out << "static " << constexpr_c << " unsigned short GradientSize  = " << mvs.first
-        << ";\n";
+    out << "static " << constexpr_c
+        << " unsigned short GradientSize  = " << mvs.first << ";\n";
     out << "// size of the thermodynamic force variable array (STRAN)\n";
     out << "static " << constexpr_c
-        << " unsigned short ThermodynamicForceVariableSize  = " << mvs.second << ";\n";
+        << " unsigned short ThermodynamicForceVariableSize  = " << mvs.second
+        << ";\n";
     out << "static " << constexpr_c << " bool useTimeSubStepping = ";
     if (this->useTimeSubStepping) {
       out << "true;\n";
@@ -790,16 +878,23 @@ namespace mfront {
       out << "0u;\n";
     }
     if (mb.getAttribute(BehaviourDescription::requiresStiffnessTensor, false)) {
-      out << "static " << constexpr_c << " bool requiresStiffnessTensor = true;\n";
-      if (mb.getAttribute(BehaviourDescription::requiresUnAlteredStiffnessTensor, false)) {
-        out << "static " << constexpr_c << " bool requiresUnAlteredStiffnessTensor = true;\n";
+      out << "static " << constexpr_c
+          << " bool requiresStiffnessTensor = true;\n";
+      if (mb.getAttribute(
+              BehaviourDescription::requiresUnAlteredStiffnessTensor, false)) {
+        out << "static " << constexpr_c
+            << " bool requiresUnAlteredStiffnessTensor = true;\n";
       } else {
-        out << "static " << constexpr_c << " bool requiresUnAlteredStiffnessTensor = false;\n";
+        out << "static " << constexpr_c
+            << " bool requiresUnAlteredStiffnessTensor = false;\n";
       }
     } else {
-      out << "static " << constexpr_c << " bool requiresStiffnessTensor = false;\n";
+      out << "static " << constexpr_c
+          << " bool requiresStiffnessTensor = false;\n";
     }
-    if (mb.getAttribute(BehaviourDescription::requiresThermalExpansionCoefficientTensor, false)) {
+    if (mb.getAttribute(
+            BehaviourDescription::requiresThermalExpansionCoefficientTensor,
+            false)) {
       out << "static " << constexpr_c
           << " bool requiresThermalExpansionCoefficientTensor = true;\n";
     } else {
@@ -814,46 +909,68 @@ namespace mfront {
       msize += SupportedTypes::getTypeSize(m.type, m.arraySize);
       msize -= mprops.second;
     }
-    out << "static " << constexpr_c << " unsigned short material_properties_nb = " << msize
-        << ";\n";
+    out << "static " << constexpr_c
+        << " unsigned short material_properties_nb = " << msize << ";\n";
     if (mb.getSymmetryType() == mfront::ISOTROPIC) {
-      if (mb.getAttribute(BehaviourDescription::requiresStiffnessTensor, false)) {
-        if (mb.getAttribute(BehaviourDescription::requiresThermalExpansionCoefficientTensor,
-                            false)) {
-          out << "static " << constexpr_c << " unsigned short propertiesOffset        = 3u;\n";
-          out << "static " << constexpr_c << " unsigned short elasticPropertiesOffset = 2u;\n";
+      if (mb.getAttribute(BehaviourDescription::requiresStiffnessTensor,
+                          false)) {
+        if (mb.getAttribute(
+                BehaviourDescription::requiresThermalExpansionCoefficientTensor,
+                false)) {
+          out << "static " << constexpr_c
+              << " unsigned short propertiesOffset        = 3u;\n";
+          out << "static " << constexpr_c
+              << " unsigned short elasticPropertiesOffset = 2u;\n";
         } else {
-          out << "static " << constexpr_c << " unsigned short propertiesOffset        = 2u;\n";
-          out << "static " << constexpr_c << " unsigned short elasticPropertiesOffset = 2u;\n";
+          out << "static " << constexpr_c
+              << " unsigned short propertiesOffset        = 2u;\n";
+          out << "static " << constexpr_c
+              << " unsigned short elasticPropertiesOffset = 2u;\n";
         }
       } else {
-        if (mb.getAttribute(BehaviourDescription::requiresThermalExpansionCoefficientTensor,
-                            false)) {
-          out << "static " << constexpr_c << " unsigned short propertiesOffset        = 1u;\n";
-          out << "static " << constexpr_c << " unsigned short elasticPropertiesOffset = 0u;\n";
+        if (mb.getAttribute(
+                BehaviourDescription::requiresThermalExpansionCoefficientTensor,
+                false)) {
+          out << "static " << constexpr_c
+              << " unsigned short propertiesOffset        = 1u;\n";
+          out << "static " << constexpr_c
+              << " unsigned short elasticPropertiesOffset = 0u;\n";
         } else {
-          out << "static " << constexpr_c << " unsigned short propertiesOffset        = 0u;\n";
-          out << "static " << constexpr_c << " unsigned short elasticPropertiesOffset = 0u;\n";
+          out << "static " << constexpr_c
+              << " unsigned short propertiesOffset        = 0u;\n";
+          out << "static " << constexpr_c
+              << " unsigned short elasticPropertiesOffset = 0u;\n";
         }
       }
     } else if (mb.getSymmetryType() == mfront::ORTHOTROPIC) {
-      if (mb.getAttribute(BehaviourDescription::requiresStiffnessTensor, false)) {
-        if (mb.getAttribute(BehaviourDescription::requiresThermalExpansionCoefficientTensor,
-                            false)) {
-          out << "static " << constexpr_c << " unsigned short propertiesOffset        = 9u;\n";
-          out << "static " << constexpr_c << " unsigned short elasticPropertiesOffset = 6u;\n";
+      if (mb.getAttribute(BehaviourDescription::requiresStiffnessTensor,
+                          false)) {
+        if (mb.getAttribute(
+                BehaviourDescription::requiresThermalExpansionCoefficientTensor,
+                false)) {
+          out << "static " << constexpr_c
+              << " unsigned short propertiesOffset        = 9u;\n";
+          out << "static " << constexpr_c
+              << " unsigned short elasticPropertiesOffset = 6u;\n";
         } else {
-          out << "static " << constexpr_c << " unsigned short propertiesOffset        = 6u;\n";
-          out << "static " << constexpr_c << " unsigned short elasticPropertiesOffset = 6u;\n";
+          out << "static " << constexpr_c
+              << " unsigned short propertiesOffset        = 6u;\n";
+          out << "static " << constexpr_c
+              << " unsigned short elasticPropertiesOffset = 6u;\n";
         }
       } else {
-        if (mb.getAttribute(BehaviourDescription::requiresThermalExpansionCoefficientTensor,
-                            false)) {
-          out << "static " << constexpr_c << " unsigned short propertiesOffset        = 3u;\n";
-          out << "static " << constexpr_c << " unsigned short elasticPropertiesOffset = 0u;\n";
+        if (mb.getAttribute(
+                BehaviourDescription::requiresThermalExpansionCoefficientTensor,
+                false)) {
+          out << "static " << constexpr_c
+              << " unsigned short propertiesOffset        = 3u;\n";
+          out << "static " << constexpr_c
+              << " unsigned short elasticPropertiesOffset = 0u;\n";
         } else {
-          out << "static " << constexpr_c << " unsigned short propertiesOffset = 0u;\n";
-          out << "static " << constexpr_c << " unsigned short elasticPropertiesOffset = 0u;\n";
+          out << "static " << constexpr_c
+              << " unsigned short propertiesOffset = 0u;\n";
+          out << "static " << constexpr_c
+              << " unsigned short elasticPropertiesOffset = 0u;\n";
         }
       }
     } else {
@@ -864,9 +981,11 @@ namespace mfront {
           "orthotropic behaviour at this time.");
     }
     if (mb.getSymmetryType() == mfront::ISOTROPIC) {
-      out << "static " << constexpr_c << " CyranoSymmetryType stype = cyrano::ISOTROPIC;\n";
+      out << "static " << constexpr_c
+          << " CyranoSymmetryType stype = cyrano::ISOTROPIC;\n";
     } else if (mb.getSymmetryType() == mfront::ORTHOTROPIC) {
-      out << "static " << constexpr_c << " CyranoSymmetryType stype = cyrano::ORTHOTROPIC;\n";
+      out << "static " << constexpr_c
+          << " CyranoSymmetryType stype = cyrano::ORTHOTROPIC;\n";
     } else {
       tfel::raise(
           "CyranoInterface::writeCyranoBehaviourTraits: "
@@ -877,7 +996,8 @@ namespace mfront {
     out << "}; // end of class CyranoTraits\n\n";
   }  // end of CyranoInterface::writeCyranoBehaviourTraits
 
-  std::string CyranoInterface::getModellingHypothesisTest(const Hypothesis h) const {
+  std::string CyranoInterface::getModellingHypothesisTest(
+      const Hypothesis h) const {
     std::ostringstream test;
     test << "*NDI==" << this->getModellingHypothesisIdentifier(h);
     return test.str();

@@ -1,6 +1,6 @@
 /*!
  * \file   tests/Math/derivative_type.cxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   25/06/2020
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights

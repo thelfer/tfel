@@ -48,7 +48,8 @@ namespace mfront {
       constexpr const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
       // `this` must be captured in gcc 4.7.2
       auto get_mp = [&bd, &dsl, &d, &fid, &kid, this](
-          BehaviourDescription::MaterialProperty& mp, const std::string& n) {
+                        BehaviourDescription::MaterialProperty& mp,
+                        const std::string& n) {
         const auto nid = KinematicHardeningRule::getVariableId(n, fid, kid);
         if (d.count(n) == 0) {
           tfel::raise(

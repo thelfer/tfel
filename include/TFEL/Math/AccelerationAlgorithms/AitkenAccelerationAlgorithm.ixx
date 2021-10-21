@@ -1,6 +1,7 @@
 /*!
- * \file   include/TFEL/Math/AccelerationAlgorithms/AitkenAccelerationAlgorithm.ixx
- * \brief    
+ * \file
+ * include/TFEL/Math/AccelerationAlgorithms/AitkenAccelerationAlgorithm.ixx
+ * \brief
  * \author Thomas Helfer
  * \date   28/05/2020
  * This project is publicly released under either the GNU GPL Licence
@@ -65,4 +66,5 @@ namespace tfel {
 
 }  // end of namespace tfel
 
-#endif /* LIB_TFEL_MATH_ACCELERATIONALGORITHMS_AITKENACCELERATIONALGORITHM_IXX */
+#endif /* LIB_TFEL_MATH_ACCELERATIONALGORITHMS_AITKENACCELERATIONALGORITHM_IXX \
+        */

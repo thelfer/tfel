@@ -133,7 +133,7 @@ namespace tfel {
        * \param[in] l : name of the library
        * \param[in] s : name of function or mechanical behaviour
        * \param[in] h : modelling hypothesis
-        * \param[in] p : parameter name
+       * \param[in] p : parameter name
        * \param[in] v : value
        */
       void setParameter(const std::string&,
@@ -476,20 +476,20 @@ namespace tfel {
        * \param[in] l: name of the library
        * \param[in] f: function name
        */
-    std::vector<std::string> getMaterialPropertyParameters(const std::string&,
-                                                           const std::string&);
-    /*!
-     * \param[out] n: names of  the variables
-     * \param[in] l : name of the library
-     * \param[in] f : function name
-     */
-    void getMaterialPropertyParameters(std::vector<std::string>&,
-                                       const std::string&,
-                                       const std::string&);
-    /*!
-     * \param[in] l: name of the library
-     * \param[in] f: function name
-     */
+      std::vector<std::string> getMaterialPropertyParameters(
+          const std::string&, const std::string&);
+      /*!
+       * \param[out] n: names of  the variables
+       * \param[in] l : name of the library
+       * \param[in] f : function name
+       */
+      void getMaterialPropertyParameters(std::vector<std::string>&,
+                                         const std::string&,
+                                         const std::string&);
+      /*!
+       * \param[in] l: name of the library
+       * \param[in] f: function name
+       */
       GenericBehaviourFctPtr getGenericBehaviourFunction(const std::string&,
                                                          const std::string&);
       /*!
@@ -767,9 +767,9 @@ namespace tfel {
       std::vector<std::string> getUMATElasticMaterialPropertiesEntryPoints(
           const std::string&, const std::string&);
       /*!
-       * \brief return the name of entry points for the linear thermal expansion coefficients
-       * associated with a behaviour, if any. The kind of entry point (function,
-       * class, etc.) depends on the interface used.
+       * \brief return the name of entry points for the linear thermal expansion
+       * coefficients associated with a behaviour, if any. The kind of entry
+       * point (function, class, etc.) depends on the interface used.
        *
        * The size of the returned vector is currently either:
        * - 0: which means that the behaviour does not export its elastic
@@ -780,8 +780,9 @@ namespace tfel {
        * \param[in] l : name of the library
        * \param[in] f : law name
        */
-      std::vector<std::string> getUMATLinearThermalExpansionCoefficientsEntryPoints(
-          const std::string&, const std::string&);
+      std::vector<std::string>
+      getUMATLinearThermalExpansionCoefficientsEntryPoints(const std::string&,
+                                                           const std::string&);
       /*!
        * \brief return true if the behaviour computes the internal energy
        * \param[in] l : name of the library
@@ -1220,25 +1221,25 @@ namespace tfel {
       FortranFunction15Ptr getFortranFunction15(const std::string&,
                                                 const std::string&);
 
-    //! \brief destructor
+      //! \brief destructor
       ~ExternalLibraryManager();
 
      private:
-    ExternalLibraryManager();
-    ExternalLibraryManager(ExternalLibraryManager&&) = delete;
-    ExternalLibraryManager(const ExternalLibraryManager&) = delete;
-    ExternalLibraryManager& operator=(ExternalLibraryManager&&) = delete;
-    ExternalLibraryManager& operator=(const ExternalLibraryManager&) = delete;
+      ExternalLibraryManager();
+      ExternalLibraryManager(ExternalLibraryManager&&) = delete;
+      ExternalLibraryManager(const ExternalLibraryManager&) = delete;
+      ExternalLibraryManager& operator=(ExternalLibraryManager&&) = delete;
+      ExternalLibraryManager& operator=(const ExternalLibraryManager&) = delete;
 
-    /*!
-     * \return an array of strings associated with an entry point
-     * \param[in] l: library
-     * \param[in] e: entry point
-     * \param[in] n: name of the array
-     */
-    std::vector<std::string> getArrayOfStrings(const std::string&,
-                                               const std::string&,
-                                               const std::string&);
+      /*!
+       * \return an array of strings associated with an entry point
+       * \param[in] l: library
+       * \param[in] e: entry point
+       * \param[in] n: name of the array
+       */
+      std::vector<std::string> getArrayOfStrings(const std::string&,
+                                                 const std::string&,
+                                                 const std::string&);
 
       TFEL_VISIBILITY_LOCAL void getUMATNames(std::vector<std::string>&,
                                               const std::string&,

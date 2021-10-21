@@ -1,6 +1,6 @@
 /*!
  * \file   mfront/src/IsotropicHardeningRule.cxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   15/03/2018
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
@@ -13,7 +13,7 @@
 
 #include "MFront/BehaviourBrick/IsotropicHardeningRule.hxx"
 
-namespace mfront{
+namespace mfront {
 
   namespace bbrick {
 
@@ -21,9 +21,9 @@ namespace mfront{
                                                       const std::string& fid,
                                                       const std::string& id) {
       if (fid.empty()) {
-        return "ihr_" + n+"_"+id;
+        return "ihr_" + n + "_" + id;
       }
-      return "ihr_" + n + fid+"_"+id;
+      return "ihr_" + n + fid + "_" + id;
     }  // end of IsotropicHardeningRule::getVariableId
 
     IsotropicHardeningRule::~IsotropicHardeningRule() = default;

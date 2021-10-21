@@ -83,7 +83,7 @@ namespace tfel {
         const real dp,
         const real) {
       if (dp < 0) {
-        return std::make_tuple(real(0),real(0));
+        return std::make_tuple(real(0), real(0));
       }
       constexpr const auto cste = tfel::math::Cste<real>::sqrt2;
       const auto Fa = std::erf((p - params.en) / (cste * (params.sn)));

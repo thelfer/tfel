@@ -25,15 +25,15 @@ namespace tfel {
   namespace math {
 
     /*!
-     * \brief convert the derivative of the first Piola-Kirchhoff stress with 
-     * first Piola-Kirchhoff deformation gradient to the derivative of the 
+     * \brief convert the derivative of the first Piola-Kirchhoff stress with
+     * first Piola-Kirchhoff deformation gradient to the derivative of the
      * Kirchhoff stress with respect to the deformation gradient.
      *
      * \tparam N: spatial dimension
      * \tparam stress: stress type
      * \tparam real: numeric type
      *
-     * \param[in] dP: derivative of first Piola-Kirchhoff stress the with 
+     * \param[in] dP: derivative of first Piola-Kirchhoff stress the with
      *                respect to the deformation gradient
      * \param[in] F: deformation gradient
      * \param[in] s: Cauchy stress
@@ -49,8 +49,8 @@ namespace tfel {
         const stensor<N, stress>&);
 
     /*!
-     * \brief convert the derivative of the first Piola-Kirchhoff stress with 
-     * first Piola-Kirchhoff deformation gradient to the derivative of the 
+     * \brief convert the derivative of the first Piola-Kirchhoff stress with
+     * first Piola-Kirchhoff deformation gradient to the derivative of the
      * Kirchhoff stress with respect to the deformation gradient.
      *
      * \tparam N: spatial dimension
@@ -59,7 +59,7 @@ namespace tfel {
      *
      * \param[out] ds: derivative of the Kirchhoff stress with respect to the
      *                 deformation gradient
-     * \param[in] dP: derivative of first Piola-Kirchhoff stress the with 
+     * \param[in] dP: derivative of first Piola-Kirchhoff stress the with
      *                respect to the deformation gradient
      * \param[in] F: deformation gradient
      * \param[in] s: Cauchy stress

@@ -33,7 +33,7 @@ namespace mfmtg {
     Values times;
     //! \brief description of the values
     Values values;
-  }; // end of EvolutionFromFile
+  };  // end of EvolutionFromFile
 
   //! \brief types used to describe an evolution
   using EvolutionTypes = tfel::meta::GenerateTypeList<double,

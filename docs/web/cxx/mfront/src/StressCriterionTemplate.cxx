@@ -24,48 +24,49 @@
 
 namespace mfront {
 
-namespace bbrick {
+  namespace bbrick {
 
-__StressCriterionName__StressCriterion::__StressCriterionName__StressCriterion()
-    : StandardStressCriterionBase("__StressCriterionName__") {
-} // end of
-  // __StressCriterionName__StressCriterion::__StressCriterionName__StressCriterion
+    __StressCriterionName__StressCriterion::
+        __StressCriterionName__StressCriterion()
+        : StandardStressCriterionBase("__StressCriterionName__") {
+    }  // end of
+       // __StressCriterionName__StressCriterion::__StressCriterionName__StressCriterion
 
-std::vector<mfront::BehaviourSymmetryType>
-__StressCriterionName__StressCriterion::getSupportedBehaviourSymmetries()
-    const {
-  return {mfront::ISOTROPIC, mfront::ORTHOTROPIC};
-} // end of
-  // __StressCriterionName__StressCriterion::getSupportedBehaviourSymmetries()
+    std::vector<mfront::BehaviourSymmetryType>
+    __StressCriterionName__StressCriterion::getSupportedBehaviourSymmetries()
+        const {
+      return {mfront::ISOTROPIC, mfront::ORTHOTROPIC};
+    }  // end of
+       // __StressCriterionName__StressCriterion::getSupportedBehaviourSymmetries()
 
-std::vector<OptionDescription>
-__StressCriterionName__StressCriterion::getOptions() const {
-  auto opts = StressCriterionBase::getOptions();
-  return opts;
-} // end of __StressCriterionName__StressCriterion::getOptions()
+    std::vector<OptionDescription>
+    __StressCriterionName__StressCriterion::getOptions() const {
+      auto opts = StressCriterionBase::getOptions();
+      return opts;
+    }  // end of __StressCriterionName__StressCriterion::getOptions()
 
-bool __StressCriterionName__StressCriterion::isNormalDeviatoric() const {
-  return false;
-} // end of __StressCriterionName__StressCriterion::isNormalDeviatoric
+    bool __StressCriterionName__StressCriterion::isNormalDeviatoric() const {
+      return false;
+    }  // end of __StressCriterionName__StressCriterion::isNormalDeviatoric
 
-__StressCriterionName__StressCriterion::
-    ~__StressCriterionName__StressCriterion() = default;
+    __StressCriterionName__StressCriterion::
+        ~__StressCriterionName__StressCriterion() = default;
 
 #ifdef MFRONT_ADITIONNAL_LIBRARY
 
-struct __StressCriterionName__StressCriterionProxy {
-  __StressCriterionName__StressCriterionProxy() {
-    auto &f = StressCriterionFactory::getFactory();
-    f.addGenerator("__StressCriterionName__", [] {
-      return std::make_shared<__StressCriterionName__StressCriterion>();
-    });
-  } // end of __StressCriterionName__StressCriterionProxy
-};  // end of struct __StressCriterionName__StressCriterionProxy
+    struct __StressCriterionName__StressCriterionProxy {
+      __StressCriterionName__StressCriterionProxy() {
+        auto &f = StressCriterionFactory::getFactory();
+        f.addGenerator("__StressCriterionName__", [] {
+          return std::make_shared<__StressCriterionName__StressCriterion>();
+        });
+      }  // end of __StressCriterionName__StressCriterionProxy
+    };   // end of struct __StressCriterionName__StressCriterionProxy
 
-static __StressCriterionName__StressCriterionProxy proxy;
+    static __StressCriterionName__StressCriterionProxy proxy;
 
 #endif /* MFRONT_ADITIONNAL_LIBRARY */
 
-} // end of namespace bbrick
+  }  // end of namespace bbrick
 
-} // end of namespace mfront
+}  // end of namespace mfront

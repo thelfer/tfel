@@ -231,7 +231,7 @@ namespace mfront {
                    "a model identifier");
     this->material_property_identifier = ".+";
   }  // end of MFrontBase::treatAllMaterialProperties
- 
+
   void MFrontBase::treatBehaviourIdentifier() {
     auto& o = this->getCurrentCommandLineArgument().getOption();
     tfel::raise_if(o.empty(),

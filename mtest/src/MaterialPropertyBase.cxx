@@ -1,6 +1,6 @@
 /*!
  * \file   mtest/src/MaterialPropertyBase.cxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   10/08/2021
  * This project is publicly released under either the GNU GPL Licence
@@ -18,7 +18,7 @@
 namespace mtest {
 
   MaterialPropertyBase::MaterialPropertyBase(const std::string& l,
-                                                 const std::string& f)
+                                             const std::string& f)
       : tfel::system::ExternalMaterialPropertyDescription(l, f) {
     this->arguments_values.resize(this->arguments.size());
   }  // end of MaterialPropertyBase
@@ -29,11 +29,11 @@ namespace mtest {
 
   std::vector<std::string> MaterialPropertyBase::getVariablesNames() const {
     return this->arguments;
-  } // end of getVariablesNames
+  }  // end of getVariablesNames
 
   std::vector<std::string> MaterialPropertyBase::getParametersNames() const {
     return this->parameters;
-  } // end of getParametersNames
+  }  // end of getParametersNames
 
   void MaterialPropertyBase::setVariableValue(const std::string& n,
                                               const real v) {
@@ -43,7 +43,8 @@ namespace mtest {
     if (p == pe) {
       tfel::raise(
           "MaterialPropertyBase::setVariableValue: "
-          "no variable named '" +n+"'");
+          "no variable named '" +
+          n + "'");
     }
     this->arguments_values[p - pb] = v;
   }  // end of setVariableValue
@@ -58,8 +59,7 @@ namespace mtest {
     this->arguments_values[i] = v;
   }  // end of setVariableValue
 
-  void MaterialPropertyBase::setParameter(const std::string& n,
-                                          const real v) {
+  void MaterialPropertyBase::setParameter(const std::string& n, const real v) {
     auto& elm =
         tfel::system::ExternalLibraryManager::getExternalLibraryManager();
     const auto pe = std::end(this->parameters);
@@ -71,9 +71,8 @@ namespace mtest {
           n + "'");
     }
     elm.setParameter(this->library, this->material_property, n, v);
-  } // end of setParameter
+  }  // end of setParameter
 
   MaterialPropertyBase::~MaterialPropertyBase() = default;
 
-} // end of namespace mtest
-
+}  // end of namespace mtest

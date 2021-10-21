@@ -62,7 +62,7 @@ namespace mtest {
         s.computeStiffnessMatrixAndResidual(scs, wk.K, wk.r, t, dt, o.ktype);
     if (!r.first) {
       return r;
-      }
+    }
     s.postConvergence(scs, t, dt, scs.period);
     return r;
   }  // end of iterate2
@@ -335,8 +335,8 @@ namespace mtest {
         return iterate(scs, wk, s, o, t, dt);
       }();
       const auto converged = o.dynamic_time_step_scaling
-                           ? (r.first && (r.second >= aone))
-                           : r.first;
+                                 ? (r.first && (r.second >= aone))
+                                 : r.first;
       if (converged) {
         scs.update(dt);
         t += dt;

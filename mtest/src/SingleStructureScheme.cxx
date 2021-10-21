@@ -35,7 +35,7 @@ namespace mtest {
                               const EvolutionManager& m,
                               const std::string& type) {
     for (const auto& n : names) {
-      if(m.find(n) == m.end()){
+      if (m.find(n) == m.end()) {
         tfel::raise("no '" + type +
                     "' named "
                     "'" +
@@ -172,9 +172,9 @@ namespace mtest {
     for (const auto& p : this->b->getParametersNames()) {
       const auto v = this->b->getRealParameterDefaultValue(p);
       if (mfront::getVerboseMode() >= mfront::VERBOSE_DEBUG) {
-        mfront::getLogStream() << "Adding evolution '" << n << "::" << p
-                               << "' from parameter '" << p << "' with value '"
-                               << v << "'\n";
+        mfront::getLogStream()
+            << "Adding evolution '" << n << "::" << p << "' from parameter '"
+            << p << "' with value '" << v << "'\n";
       }
       this->addEvolution(n + "::" + p, std::make_shared<ConstantEvolution>(v),
                          true, true);

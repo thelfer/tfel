@@ -34,7 +34,7 @@ namespace mfront {
         const std::string&,
         const MFrontTemplateGenerationOptions&) const override;
     //! \brief destructor
-    ~ImplicitGenericBehaviourDSL() noexcept override ;
+    ~ImplicitGenericBehaviourDSL() noexcept override;
   };  // end of struct ImplicitGenericBehaviourDSL
 
 }  // end of namespace mfront

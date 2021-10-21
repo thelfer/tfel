@@ -84,7 +84,7 @@ namespace mfront {
     //     }
   }  // end of LSDYNASymbolsGenerator::writeBehaviourKinematicSymbols
 
-  bool LSDYNASymbolsGenerator::handleStrainMeasure() const{
+  bool LSDYNASymbolsGenerator::handleStrainMeasure() const {
     return true;
   }  // end of LSDYNASymbolsGenerator::handleStrainMeasure
 

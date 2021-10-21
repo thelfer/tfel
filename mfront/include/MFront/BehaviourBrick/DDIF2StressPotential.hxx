@@ -59,11 +59,11 @@ namespace mfront {
                  * the assumtions are modified and the implicit resolution is
                  * restarted. */
         UPDATE_IMPLICIT_EQUATIONS_DURING_ITERATIONS /*!< algorithm used in
-						     * version prior to 3.3.
-						     * A priori less robust
-						     * than the algorithm
-						     * based on status
-						     */
+                                                     * version prior to 3.3.
+                                                     * A priori less robust
+                                                     * than the algorithm
+                                                     * based on status
+                                                     */
       } algorithm = STATUS;
       //! fracture stress
       std::array<MaterialProperty, 3u> sr;
@@ -71,16 +71,16 @@ namespace mfront {
       std::array<MaterialProperty, 3u> rp;
       //! fracture energy
       std::array<MaterialProperty, 3u> gc;
-     /*!
-      * \brief if true, the implicit resolution is first performed with a null
-      * time step.
-      */
+      /*!
+       * \brief if true, the implicit resolution is first performed with a null
+       * time step.
+       */
       bool firstConvergeOnDamage = true;
       //! handle pressure on crack surface
       bool pr = false;
-};  // end of struct DDIF2StressPotential
+    };  // end of struct DDIF2StressPotential
 
-}  // end of namespace bbrick
+  }  // end of namespace bbrick
 
 }  // end of namespace mfront
 

@@ -1,50 +1,48 @@
 /*!
  * \file   include/TFEL/Math/General/Complex.hxx
- * \brief  
+ * \brief
  * \author Thomas Helfer
  * \date   10/12/2006
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_TFEL_MATH_COMPLEX_HXX
-#define LIB_TFEL_MATH_COMPLEX_HXX 
+#define LIB_TFEL_MATH_COMPLEX_HXX
 
-#include<complex>
+#include <complex>
 
-#include"TFEL/Config/TFELConfig.hxx"
-#include"TFEL/Math/Forward/Complex.hxx"
-#include"TFEL/Math/General/UnaryResultType.hxx"
- 
-namespace tfel{
+#include "TFEL/Config/TFELConfig.hxx"
+#include "TFEL/Math/Forward/Complex.hxx"
+#include "TFEL/Math/General/UnaryResultType.hxx"
 
-  namespace math{
-    
-    template<int N,unsigned int D>
+namespace tfel {
+
+  namespace math {
+
+    template <int N, unsigned int D>
     struct Power;
-    
-    template<int N,unsigned int D>
-    class TFEL_VISIBILITY_LOCAL UnaryResultType<Complex<float>,Power<N,D> >
-    {
-    public:
+
+    template <int N, unsigned int D>
+    class TFEL_VISIBILITY_LOCAL UnaryResultType<Complex<float>, Power<N, D>> {
+     public:
       typedef Complex<float> type;
     };
 
-    template<int N,unsigned int D>
-    class TFEL_VISIBILITY_LOCAL UnaryResultType<Complex<double>,Power<N,D> >
-    {
-    public:
+    template <int N, unsigned int D>
+    class TFEL_VISIBILITY_LOCAL UnaryResultType<Complex<double>, Power<N, D>> {
+     public:
       typedef Complex<double> type;
     };
 
-    template<int N,unsigned int D>
-    class TFEL_VISIBILITY_LOCAL UnaryResultType<Complex<long double>,Power<N,D> >
-    {
-    public:
+    template <int N, unsigned int D>
+    class TFEL_VISIBILITY_LOCAL
+        UnaryResultType<Complex<long double>, Power<N, D>> {
+     public:
       typedef Complex<long double> type;
     };
 
@@ -70,9 +68,8 @@ namespace tfel{
     // ValueType
     // real(const Complex<ValueType>&);
 
-  } // end of namespace math
+  }  // end of namespace math
 
-} // end of namespace tfel
+}  // end of namespace tfel
 
 #endif /* LIB_TFEL_MATH_COMPLEX_HXX */
-

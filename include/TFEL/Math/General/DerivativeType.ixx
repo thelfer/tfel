@@ -53,7 +53,7 @@ namespace tfel {
               typename ComputeObjectTag<T2>::type,
               T1,
               T2>::type>::type;
-    }; // end of DerivativeType
+    };  // end of DerivativeType
 
   }  // end of namespace math
 

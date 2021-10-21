@@ -250,8 +250,8 @@ namespace tfel {
     };  // end of struct
         // Expr<T2toST2Type,RightCauchyGreenTensorDerivativeExpr<1u> >
 
-  }  // end of namespace tfel
+  }  // namespace math
 
-}  // end of namespace math
+}  // namespace tfel
 
 #endif /* LIB_TFEL_MATH_RIGHTCAUCHYGREENTENSORDERIVATIVEEXPR_HXX */

@@ -48,7 +48,7 @@ namespace mtest {
                          n + "' already defined");
     }
     (*(this->evm))[n] = p;
-  } // end of SchemeBase::addEvolution
+  }  // end of SchemeBase::addEvolution
 
   void SchemeBase::setEvolutionValue(const std::string& n,
                                      const real t,

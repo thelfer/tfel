@@ -32,8 +32,8 @@ namespace mfront {
                                                     const bool b) {
     this->addCallBack(k,
                       [this, f] {
-      auto& c = *(static_cast<Child*>(this));
-      (c.*f)();
+                        auto& c = *(static_cast<Child*>(this));
+                        (c.*f)();
                       },
                       b);
   }  // end of registerNewCallBack

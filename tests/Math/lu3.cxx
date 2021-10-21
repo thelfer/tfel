@@ -86,7 +86,6 @@ bool TinyMatrixSolveTest2() {
       (std::abs(b(3, 1) + 12) < 100 * std::numeric_limits<T>::epsilon()));
 }  // end of TinyMatrixSolveTest
 
-
 /* coverity [UNCAUGHT_EXCEPT]*/
 int main() {
   using Wrapper1 =
@@ -98,7 +97,8 @@ int main() {
       tfel::tests::TestFunctionWrapper<TinyMatrixSolveTest2<long double>>;
   using Wrapper5 =
       tfel::tests::TestFunctionWrapper<TinyMatrixSolveTest2<double>>;
-  using Wrapper6 = tfel::tests::TestFunctionWrapper<TinyMatrixSolveTest2<float>>;
+  using Wrapper6 =
+      tfel::tests::TestFunctionWrapper<TinyMatrixSolveTest2<float>>;
   //  typedef TestFunctionWrapper<test2> Wrapper2;
   auto& m = tfel::tests::TestManager::getTestManager();
   m.addTestOutput(std::cout);

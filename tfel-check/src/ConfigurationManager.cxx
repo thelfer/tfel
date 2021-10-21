@@ -149,7 +149,6 @@ namespace tfel {
           const auto variables =
               convert<std::map<std::string, std::string>>(Data::read(p, pe));
           for (const auto& v : variables) {
-
             c.addSubstitution("@" + v.first + "@", v.second);
           }
           CxxTokenizer::readSpecifiedToken("tfel::check::parse", ";", p, pe);

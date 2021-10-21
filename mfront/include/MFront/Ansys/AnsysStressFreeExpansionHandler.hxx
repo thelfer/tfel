@@ -1,24 +1,23 @@
-/*! 
+/*!
  * \file   mfront/include/MFront/Ansys/AnsysStressFreeExpansionHandler.hxx
  * \brief
  * \author Thomas Helfer
  * \brief  05 mars 2014
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_MFRONT_ANSYS_ANSYSSTRESSFREEEXPANSIONHANDLER_HXX
-#define LIB_MFRONT_ANSYS_ANSYSSTRESSFREEEXPANSIONHANDLER_HXX 
+#define LIB_MFRONT_ANSYS_ANSYSSTRESSFREEEXPANSIONHANDLER_HXX
 
-#include"MFront/Ansys/Ansys.hxx"
-#include"MFront/Ansys/AnsysConfig.hxx"
+#include "MFront/Ansys/Ansys.hxx"
+#include "MFront/Ansys/AnsysConfig.hxx"
 
-namespace ansys
-{
+namespace ansys {
 
   /*!
    * standard handler of stress free expansion handler for small
@@ -34,11 +33,11 @@ namespace ansys
    * \param[in] d      : spatial dimension
    */
   MFRONT_ANSYS_VISIBILITY_EXPORT void
-  AnsysStandardSmallStrainStressFreeExpansionHandler(float * const,
-						      float * const,
-						      const float *const,
-						      const float *const,
-						      const AnsysInt);
+  AnsysStandardSmallStrainStressFreeExpansionHandler(float *const,
+                                                     float *const,
+                                                     const float *const,
+                                                     const float *const,
+                                                     const AnsysInt);
   /*!
    * standard handler of stress free expansion handler for small
    * strain behaviours
@@ -53,11 +52,11 @@ namespace ansys
    * \param[in] d      : spatial dimension
    */
   MFRONT_ANSYS_VISIBILITY_EXPORT void
-  AnsysStandardSmallStrainStressFreeExpansionHandler(double * const,
-						      double * const,
-						      const double *const,
-						      const double *const,
-						      const AnsysInt);
+  AnsysStandardSmallStrainStressFreeExpansionHandler(double *const,
+                                                     double *const,
+                                                     const double *const,
+                                                     const double *const,
+                                                     const AnsysInt);
   /*!
    * standard handler of stress free expansion handler for logarithmic
    * strain behaviours
@@ -72,11 +71,11 @@ namespace ansys
    * \param[in] d      : spatial dimension
    */
   MFRONT_ANSYS_VISIBILITY_EXPORT void
-  AnsysLogarithmicStrainStressFreeExpansionHandler(float * const,
-						    float * const,
-						    const float *const,
-						    const float *const,
-						    const AnsysInt);
+  AnsysLogarithmicStrainStressFreeExpansionHandler(float *const,
+                                                   float *const,
+                                                   const float *const,
+                                                   const float *const,
+                                                   const AnsysInt);
   /*!
    * standard handler of stress free expansion handler for logarithmic
    * strain behaviours
@@ -91,13 +90,12 @@ namespace ansys
    * \param[in] d      : spatial dimension
    */
   MFRONT_ANSYS_VISIBILITY_EXPORT void
-  AnsysLogarithmicStrainStressFreeExpansionHandler(double * const,
-						    double * const,
-						    const double *const,
-						    const double *const,
-						    const AnsysInt);
-  
-} // end of namespace ansys
+  AnsysLogarithmicStrainStressFreeExpansionHandler(double *const,
+                                                   double *const,
+                                                   const double *const,
+                                                   const double *const,
+                                                   const AnsysInt);
+
+}  // end of namespace ansys
 
 #endif /* LIB_MFRONT_ANSYS_ANSYSSTRESSFREEEXPANSIONHANDLER_HXX */
-

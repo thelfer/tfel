@@ -320,9 +320,11 @@ namespace mfront {
     }  // end of Barlat2004StressCriterion::isNormalDeviatoric
 
     StressCriterion::PorosityEffectOnFlowRule
-    Barlat2004StressCriterion::getPorosityEffectOnEquivalentPlasticStrain() const {
+    Barlat2004StressCriterion::getPorosityEffectOnEquivalentPlasticStrain()
+        const {
       return StressCriterion::NO_POROSITY_EFFECT_ON_EQUIVALENT_PLASTIC_STRAIN;
-    }  // end of Barlat2004StressCriterion::getPorosityEffectOnEquivalentPlasticStrain()
+    }  // end of
+       // Barlat2004StressCriterion::getPorosityEffectOnEquivalentPlasticStrain()
 
     std::string Barlat2004StressCriterion::getTemplateParameters() const {
       if (this->eigen_solver.empty()) {

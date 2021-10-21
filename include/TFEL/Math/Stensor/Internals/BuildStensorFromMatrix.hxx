@@ -29,7 +29,8 @@ namespace tfel {
         static TFEL_MATH_INLINE2 TFEL_VISIBILITY_LOCAL typename std::enable_if<
             tfel::typetraits::IsAssignableTo<MatrixNumType<MatrixType>,
                                              T>::cond,
-            void>::type exe(stensor<1u, T>& s, const MatrixType& m) {
+            void>::type
+        exe(stensor<1u, T>& s, const MatrixType& m) {
           s[0] = m(0, 0);
           s[1] = m(1, 1);
           s[2] = m(2, 2);
@@ -42,7 +43,8 @@ namespace tfel {
         static TFEL_MATH_INLINE2 TFEL_VISIBILITY_LOCAL typename std::enable_if<
             tfel::typetraits::IsAssignableTo<MatrixNumType<MatrixType>,
                                              T>::cond,
-            void>::type exe(stensor<2u, T>& s, const MatrixType& m) {
+            void>::type
+        exe(stensor<2u, T>& s, const MatrixType& m) {
           constexpr const auto cste = Cste<T>::isqrt2;
           s[0] = m(0, 0);
           s[1] = m(1, 1);
@@ -57,7 +59,8 @@ namespace tfel {
         static TFEL_MATH_INLINE2 TFEL_VISIBILITY_LOCAL typename std::enable_if<
             tfel::typetraits::IsAssignableTo<MatrixNumType<MatrixType>,
                                              T>::cond,
-            void>::type exe(stensor<3u, T>& s, const MatrixType& m) {
+            void>::type
+        exe(stensor<3u, T>& s, const MatrixType& m) {
           constexpr const auto cste = Cste<T>::isqrt2;
           s[0] = m(0, 0);
           s[1] = m(1, 1);

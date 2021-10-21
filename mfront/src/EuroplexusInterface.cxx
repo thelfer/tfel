@@ -730,9 +730,8 @@ namespace mfront {
       std::ostream& os, const BehaviourDescription& mb) const {
     const auto iprefix = makeUpperCase(this->getInterfaceName());
     SupportedTypes::TypeSize ov, of;
-    os << "void set" << iprefix
-       << "BehaviourDataGradients(const Type* const " << iprefix
-       << "stran)\n"
+    os << "void set" << iprefix << "BehaviourDataGradients(const Type* const "
+       << iprefix << "stran)\n"
        << "{\n";
     for (const auto& v : mb.getMainVariables()) {
       this->writeBehaviourDataGradientSetter(os, v.first, ov);
@@ -885,8 +884,8 @@ namespace mfront {
     }
 #if __cplusplus >= 201703L
     insert_if(l.link_libraries, "$(shell " + tfel_config +
-                                         " --library-dependency "
-                                         "--material --mfront-profiling)");
+                                    " --library-dependency "
+                                    "--material --mfront-profiling)");
 #else  /* __cplusplus < 201703L */
     insert_if(l.link_libraries,
               "$(shell " + tfel_config +
@@ -935,13 +934,15 @@ namespace mfront {
         << "//! behaviour type\n";
     if (mb.getBehaviourType() ==
         BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) {
-      out << "static " << constexpr_c << " EuroplexusBehaviourType btype = "
-                                         "epx::STANDARDSTRAINBASEDBEHAVIOUR;\n";
+      out << "static " << constexpr_c
+          << " EuroplexusBehaviourType btype = "
+             "epx::STANDARDSTRAINBASEDBEHAVIOUR;\n";
     } else if (mb.getBehaviourType() ==
                BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR) {
-      out << "static " << constexpr_c << " EuroplexusBehaviourType btype = "
-                                         "epx::STANDARDFINITESTRAINBEHAVIOUR;"
-                                         "\n";
+      out << "static " << constexpr_c
+          << " EuroplexusBehaviourType btype = "
+             "epx::STANDARDFINITESTRAINBEHAVIOUR;"
+             "\n";
     } else {
       tfel::raise(
           "EuroplexusInterface::writeEuroplexusBehaviourTraits : "

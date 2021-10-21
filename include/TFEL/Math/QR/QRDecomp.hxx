@@ -1,27 +1,27 @@
-/*! 
+/*!
  * \file  include/TFEL/Math/QR/QRDecomp.hxx
  * \brief
  * \author Thomas Helfer
  * \brief 18 mai 2013
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_TFEL_MATH_QRDECOMP_HXX
-#define LIB_TFEL_MATH_QRDECOMP_HXX 
+#define LIB_TFEL_MATH_QRDECOMP_HXX
 
-#include<cmath>
-#include<limits>
-#include<algorithm>
+#include <cmath>
+#include <limits>
+#include <algorithm>
 
-#include"TFEL/Config/TFELConfig.hxx"
-#include"TFEL/Math/General/Abs.hxx"
-#include"TFEL/Math/Matrix/MatrixConcept.hxx"
-#include"TFEL/Math/LU/Permutation.hxx"
+#include "TFEL/Config/TFELConfig.hxx"
+#include "TFEL/Math/General/Abs.hxx"
+#include "TFEL/Math/Matrix/MatrixConcept.hxx"
+#include "TFEL/Math/LU/Permutation.hxx"
 
 namespace tfel {
 
@@ -69,7 +69,7 @@ namespace tfel {
 
       /*!
        * \param[in] v : vector
-       * \param[in] a : decomposed matrix 
+       * \param[in] a : decomposed matrix
        * \param[in] d : diagonal element of the matrix
        * \param[in] e : precision
        */
@@ -81,7 +81,7 @@ namespace tfel {
           const typename MatrixTraits<MatrixType>::NumType);
       /*!
        * \param[in] v : vector
-       * \param[in] a : decomposed matrix 
+       * \param[in] a : decomposed matrix
        * \param[in] d : diagonal element of the matrix
        */
       template <typename VectorType, typename MatrixType>
@@ -90,7 +90,6 @@ namespace tfel {
                                                     const VectorType&);
 
      protected:
-
       /*!
        * do the product of a householder matrix, stored in the kth
        * column of the matrix a, to a vector.
@@ -123,11 +122,10 @@ namespace tfel {
           const typename MatrixTraits<MatrixType>::IndexType);
     };
 
-  } // end of namespace math
+  }  // end of namespace math
 
-} // end of namespace tfel
+}  // end of namespace tfel
 
-#include"TFEL/Math/QR/QRDecomp.ixx"
+#include "TFEL/Math/QR/QRDecomp.ixx"
 
 #endif /* LIB_TFEL_MATH_QRDECOMP_HXX */
-

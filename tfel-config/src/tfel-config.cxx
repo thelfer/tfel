@@ -529,7 +529,7 @@ int main(const int argc, const char* const* const argv) {
 #if (defined __GNUC__) || (defined __clang__) || (defined __INTEL_COMPILER)
       std::cout << "-g ";
 #endif /* __GNUC__ */
-#ifdef  _MSC_VER
+#ifdef _MSC_VER
       std::cout << "/Z7 ";
 #endif /* _MSC_VER */
     }

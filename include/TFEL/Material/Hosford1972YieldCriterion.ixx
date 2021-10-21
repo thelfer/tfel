@@ -48,9 +48,10 @@ namespace tfel {
               d2Psi_ds2,
           const tfel::math::
               tvector<3u, tfel::material::HosfordBaseType<StressStensor>>&,
-          const tfel::math::tvector<6u,
-                                    tfel::material::HosfordInvertStressType<
-                                        StressStensor>>& d2Psi_dvp2,
+          const tfel::math::tvector<
+              6u,
+              tfel::material::HosfordInvertStressType<StressStensor>>&
+              d2Psi_dvp2,
           const tfel::material::HosfordStressEigenTensorType<StressStensor>&,
           const tfel::material::HosfordStressEigenTensorType<StressStensor>&,
           const tfel::material::HosfordStressEigenTensorType<StressStensor>&,
@@ -86,9 +87,10 @@ namespace tfel {
           const tfel::math::tvector<
               3u,
               tfel::material::HosfordBaseType<StressStensor>>& dPsi_dvp,
-          const tfel::math::tvector<6u,
-                                    tfel::material::HosfordInvertStressType<
-                                        StressStensor>>& d2Psi_dvp2,
+          const tfel::math::tvector<
+              6u,
+              tfel::material::HosfordInvertStressType<StressStensor>>&
+              d2Psi_dvp2,
           const tfel::material::HosfordStressEigenTensorType<StressStensor>& n0,
           const tfel::material::HosfordStressEigenTensorType<StressStensor>& n1,
           const tfel::material::HosfordStressEigenTensorType<StressStensor>& n2,
@@ -144,9 +146,10 @@ namespace tfel {
           const tfel::math::tvector<
               3u,
               tfel::material::HosfordBaseType<StressStensor>>& dPsi_dvp,
-          const tfel::math::tvector<6u,
-                                    tfel::material::HosfordInvertStressType<
-                                        StressStensor>>& d2Psi_dvp2,
+          const tfel::math::tvector<
+              6u,
+              tfel::material::HosfordInvertStressType<StressStensor>>&
+              d2Psi_dvp2,
           const tfel::material::HosfordStressEigenTensorType<StressStensor>& n0,
           const tfel::material::HosfordStressEigenTensorType<StressStensor>& n1,
           const tfel::material::HosfordStressEigenTensorType<StressStensor>& n2,

@@ -46,7 +46,7 @@ namespace mfront {
                              const bool = false);
     //! \brief destructor
     ~BehaviourDSLBase() override;
-  }; // end of struct BehaviourDSLBase
+  };  // end of struct BehaviourDSLBase
 
 }  // end of namespace mfront
 

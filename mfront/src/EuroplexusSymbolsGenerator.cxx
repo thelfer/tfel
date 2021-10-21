@@ -80,7 +80,7 @@ namespace mfront {
       const Hypothesis) const {
   }  // end of EuroplexusSymbolsGenerator::writeAdditionalSymbols
 
-  bool EuroplexusSymbolsGenerator::handleStrainMeasure() const{
+  bool EuroplexusSymbolsGenerator::handleStrainMeasure() const {
     return true;
   }  // end of EuroplexusSymbolsGenerator::handleStrainMeasure
 

@@ -1,6 +1,6 @@
 /*!
  * \file   InitNumpy.cxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   23/03/2020
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
@@ -20,7 +20,8 @@ static void wrapInitializeNumPy() { import_array(); }
 #else
 static void* wrapInitializeNumPy() {
   import_array();
-  return nullptr;}
+  return nullptr;
+}
 #endif
 
 namespace tfel {

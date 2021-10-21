@@ -3,26 +3,25 @@
  * \brief  This file declares the MFrontMaterialPropertyInterface class
  * \author Thomas Helfer
  * \date   06 mai 2008
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_MFRONT_MFRONTLAWINTERFACE_HXX
-#define LIB_MFRONT_MFRONTLAWINTERFACE_HXX 
+#define LIB_MFRONT_MFRONTLAWINTERFACE_HXX
 
-#include"MFront/CMaterialPropertyInterfaceBase.hxx"
+#include "MFront/CMaterialPropertyInterfaceBase.hxx"
 
-namespace mfront{
+namespace mfront {
 
   struct MFrontMaterialPropertyInterface
-    : public CMaterialPropertyInterfaceBase
-  {
+      : public CMaterialPropertyInterfaceBase {
     static std::string getName();
-    
+
     MFrontMaterialPropertyInterface();
     /*!
      * \param[in] k  : keyword treated
@@ -33,44 +32,45 @@ namespace mfront{
      * treated by the interface. The second entry is an iterator after
      * the last token treated.
      */
-    std::pair<bool,tokens_iterator>
-    treatKeyword(const std::string&,
-		 const std::vector<std::string>&,
-		 tokens_iterator,
-		 const tokens_iterator) override;
+    std::pair<bool, tokens_iterator> treatKeyword(
+        const std::string&,
+        const std::vector<std::string>&,
+        tokens_iterator,
+        const tokens_iterator) override;
     /*!
      * \brief : fill the target descripton
      * \param[out] d   : target description
      * \param[in]  mpd : material property description
      */
-    void getTargetsDescription(TargetsDescription&,
-			       const MaterialPropertyDescription&) const override;
+    void getTargetsDescription(
+        TargetsDescription&, const MaterialPropertyDescription&) const override;
     /*!
-     * \param[in] mpd: material property description 
+     * \param[in] mpd: material property description
      */
-    std::string getFunctionName(const MaterialPropertyDescription&) const override;
+    std::string getFunctionName(
+        const MaterialPropertyDescription&) const override;
     /*!
      * \param const std::string&, name of the material
      * \param const std::string&, name of the class
      */
     std::string getHeaderFileName(const std::string&,
-				  const std::string&) const override;
+                                  const std::string&) const override;
     /*!
      * \param[out] os:  output file stream
      * \param[in]  mpd: material property description
      */
     void writeMaterialSymbol(std::ostream&,
-			     const MaterialPropertyDescription&) const override;
+                             const MaterialPropertyDescription&) const override;
     /*!
      * \param[out] os:  output file stream
      * \param[in]  mpd: material property description
      */
-    void writeInterfaceSymbol(std::ostream&,
-			      const MaterialPropertyDescription&) const override;
+    void writeInterfaceSymbol(
+        std::ostream&, const MaterialPropertyDescription&) const override;
     //! destructor
     ~MFrontMaterialPropertyInterface() override;
-  private:
 
+   private:
     void writeBeginHeaderNamespace(std::ostream&) const override;
 
     void writeEndHeaderNamespace(std::ostream&) const override;
@@ -84,43 +84,45 @@ namespace mfront{
      * \param const std::string&, name of the class
      */
     std::string getSrcFileName(const std::string&,
-			       const std::string&) const override;
+                               const std::string&) const override;
     /*!
-     * \param[in] mpd: material property description 
+     * \param[in] mpd: material property description
      */
-    std::string getCheckBoundsFunctionName(const MaterialPropertyDescription&) const override;
-    /*!
-     * \param[out] os:  output file stream
-     * \param[in]  mpd: material property description
-     */
-    void writeEntryPointSymbol(std::ostream&,
-			       const MaterialPropertyDescription&) const override;
+    std::string getCheckBoundsFunctionName(
+        const MaterialPropertyDescription&) const override;
     /*!
      * \param[out] os:  output file stream
      * \param[in]  mpd: material property description
      */
-    void writeTFELVersionSymbol(std::ostream&,
-				const MaterialPropertyDescription&) const override;
+    void writeEntryPointSymbol(
+        std::ostream&, const MaterialPropertyDescription&) const override;
     /*!
      * \param[out] os:  output file stream
      * \param[in]  mpd: material property description
      */
-    void writeMaterialKnowledgeTypeSymbol(std::ostream&,
-					  const MaterialPropertyDescription&) const override;  
+    void writeTFELVersionSymbol(
+        std::ostream&, const MaterialPropertyDescription&) const override;
+    /*!
+     * \param[out] os:  output file stream
+     * \param[in]  mpd: material property description
+     */
+    void writeMaterialKnowledgeTypeSymbol(
+        std::ostream&, const MaterialPropertyDescription&) const override;
 
-    void writeVariablesNamesSymbol(std::ostream&,
-				   const std::string&,
-				   const MaterialPropertyDescription&) const override;
-    
-    void writeVariablesBoundsSymbols(std::ostream&,
-				     const std::string&,
-				     const MaterialPropertyDescription&) const override;
-    
+    void writeVariablesNamesSymbol(
+        std::ostream&,
+        const std::string&,
+        const MaterialPropertyDescription&) const override;
+
+    void writeVariablesBoundsSymbols(
+        std::ostream&,
+        const std::string&,
+        const MaterialPropertyDescription&) const override;
+
     bool requiresCheckBoundsFunction() const override;
 
-  }; // end of MFrontMaterialPropertyInterface
+  };  // end of MFrontMaterialPropertyInterface
 
-} // end of namespace mfront
+}  // end of namespace mfront
 
 #endif /* LIB_MFRONT_MFRONTLAWINTERFACE_HXX */
-

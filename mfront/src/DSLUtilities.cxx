@@ -1,16 +1,16 @@
 /*!
-  * \file   mfront/src/DSLUtilities.cxx
-  * \brief
-  *
-  * \author Thomas Helfer
-  * \date   23 oct 2008
-  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
-  * reserved.
-  * This project is publicly released under either the GNU GPL Licence
-  * or the CECILL-A licence. A copy of thoses licences are delivered
-  * with the sources of TFEL. CEA or EDF may also distribute this
-  * project under specific licensing conditions.
-  */
+ * \file   mfront/src/DSLUtilities.cxx
+ * \brief
+ *
+ * \author Thomas Helfer
+ * \date   23 oct 2008
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
+ */
 
 #include <iostream>
 
@@ -32,11 +32,10 @@
 #include "MFront/MaterialPropertyParametersHandler.hxx"
 #include "MFront/SymbolsGenerator.hxx"
 
-
 #ifndef _MSC_VER
-    static const char *const constexpr_c = "constexpr";
+static const char* const constexpr_c = "constexpr";
 #else
-    static const char *const constexpr_c = "const";
+static const char* const constexpr_c = "const";
 #endif
 
 namespace mfront {
@@ -145,23 +144,22 @@ namespace mfront {
   void writeVariablesNamesSymbol(
       std::ostream& out,
       const std::string& name,
-                               const mfront::MaterialPropertyDescription &mpd) {
-  if (!mpd.inputs.empty()) {
-    out << "MFRONT_SHAREDOBJ const char *\n"
-        << name << "_args[" << mpd.inputs.size() << "] = {";
-    for (auto p3 = mpd.inputs.begin(); p3 != mpd.inputs.end();) {
-      const auto iname = '\"' + p3->getExternalName() + '\"';
-      out << iname;
-      if (++p3 != mpd.inputs.end()) {
-        out << ",";
+      const mfront::MaterialPropertyDescription& mpd) {
+    if (!mpd.inputs.empty()) {
+      out << "MFRONT_SHAREDOBJ const char *\n"
+          << name << "_args[" << mpd.inputs.size() << "] = {";
+      for (auto p3 = mpd.inputs.begin(); p3 != mpd.inputs.end();) {
+        const auto iname = '\"' + p3->getExternalName() + '\"';
+        out << iname;
+        if (++p3 != mpd.inputs.end()) {
+          out << ",";
+        }
       }
+      out << "};\n\n";
     }
-    out << "};\n\n";
-  }
-  out << "MFRONT_SHAREDOBJ unsigned short\n"
-      << name << "_nargs = " << mpd.inputs.size() << "u;\n\n";
-  } // end of writeVariableNamesSymbol
-
+    out << "MFRONT_SHAREDOBJ unsigned short\n"
+        << name << "_nargs = " << mpd.inputs.size() << "u;\n\n";
+  }  // end of writeVariableNamesSymbol
 
   void writeBoundsSymbol(std::ostream& out,
                          const std::string& n,
@@ -230,16 +228,15 @@ namespace mfront {
       }
     }
     os.precision(prec);
-  } // end of writePhysicalBoundsSymbols
+  }  // end of writePhysicalBoundsSymbols
 
   void writeVariablesBoundsSymbols(
       std::ostream& out,
       const std::string& name,
-                              const mfront::MaterialPropertyDescription &mpd) {
-
+      const mfront::MaterialPropertyDescription& mpd) {
     const auto prec = out.precision();
     out.precision(14);
-    for (const auto& v: mpd.inputs){
+    for (const auto& v : mpd.inputs) {
       if (v.arraySize == 1u) {
         if (!v.hasBounds()) {
           continue;
@@ -248,30 +245,29 @@ namespace mfront {
         if (!v.hasPhysicalBounds()) {
           continue;
         }
-          writeBoundsSymbol(out, name, v.getExternalName(), "Physical",
-                          v.getPhysicalBounds());        
+        writeBoundsSymbol(out, name, v.getExternalName(), "Physical",
+                          v.getPhysicalBounds());
       } else {
-          for (auto idx = 0; idx != v.arraySize; ++idx) {
-            if (!v.hasBounds(idx)) {
-              continue;
-            }
+        for (auto idx = 0; idx != v.arraySize; ++idx) {
+          if (!v.hasBounds(idx)) {
+            continue;
+          }
           writeBoundsSymbol(
               out, name,
-                v.getExternalName() + "__" + std::to_string(idx) + "__", "",
-                v.getBounds(idx));
-            if (!v.hasPhysicalBounds(idx)) {
-              continue;
-            }
+              v.getExternalName() + "__" + std::to_string(idx) + "__", "",
+              v.getBounds(idx));
+          if (!v.hasPhysicalBounds(idx)) {
+            continue;
+          }
           writeBoundsSymbol(
               out, name,
               v.getExternalName() + "__" + std::to_string(idx) + "__",
               "Physical", v.getPhysicalBounds(idx));
-          }
         }
+      }
     }
-    out.precision(prec); 
-  } // end of writeVariablesBoundsSymbols
-
+    out.precision(prec);
+  }  // end of writeVariablesBoundsSymbols
 
   void writeEntryPointSymbol(std::ostream& out, const std::string& n) {
     writeEntryPointSymbol(out, n, n);
@@ -502,7 +498,7 @@ namespace mfront {
       }
     }
   }  // end of displayGlossaryEntryCompleteDescription
-  
+
   void addSymbol(std::map<std::string, std::string>& symbols,
                  const std::string& s,
                  const std::string& r) {
@@ -520,7 +516,8 @@ namespace mfront {
 
   std::tuple<std::string, std::string, std::string, std::string>
   decomposeImplementationPathInMadnexFile(const std::string& p) {
-    using result_type = std::tuple<std::string, std::string, std::string, std::string>;
+    using result_type =
+        std::tuple<std::string, std::string, std::string, std::string>;
     std::vector<std::string> details = tfel::utilities::tokenize(p, ':');
     auto raise_if = [&p](const bool b) {
       if (b) {
@@ -531,13 +528,12 @@ namespace mfront {
     raise_if((details.size() != 5) && (details.size() != 4));
     if (details.size() == 4) {
       return result_type{std::move(details[1]), std::move(details[2]), "",
-              std::move(details[3])};
+                         std::move(details[3])};
     }
-    return result_type{std::move(details[1]), std::move(details[2]), std::move(details[3]),
-            std::move(details[4])};
+    return result_type{std::move(details[1]), std::move(details[2]),
+                       std::move(details[3]), std::move(details[4])};
   }  // end of decomposeImplementationPathInMadnexFile
 
 #endif /* MFRONT_HAVE_MADNEX */
-
 
 }  // end of namespace mfront

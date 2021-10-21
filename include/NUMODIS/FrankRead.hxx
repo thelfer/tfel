@@ -1,24 +1,24 @@
 /*!
- * \file   include/NUMODIS/FrankRead.hxx  
- * \brief  Provide all the tools to compute the properties of a FR source  .  
+ * \file   include/NUMODIS/FrankRead.hxx
+ * \brief  Provide all the tools to compute the properties of a FR source  .
  * \author Laurent Dupuy
  * \date   9/06/2017
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_NUMODIS_FRANKREAD_HXX
 #define LIB_NUMODIS_FRANKREAD_HXX
 
 #include <math.h>
-#include"NUMODIS/Config.hxx"
+#include "NUMODIS/Config.hxx"
 #include "NUMODIS/IsotropicLineTensionModel.hxx"
 
-namespace numodis{
+namespace numodis {
 
   struct Crystallo;
   struct GSystem;
@@ -26,14 +26,16 @@ namespace numodis{
   //===============================================================================================
   // class FrankRead
   //-----------------------------------------------------------------------------------------------
-  //! Provide all the tools to compute the properties of a FR source within the line tension model
+  //! Provide all the tools to compute the properties of a FR source within the
+  //! line tension model
   //===============================================================================================
-  struct TFELNUMODIS_VISIBILITY_EXPORT FrankRead
-  {
-
+  struct TFELNUMODIS_VISIBILITY_EXPORT FrankRead {
     FrankRead(const IsotropicLineTensionModel& linetension);
-  
-    double computeBetaF(double alpha,double beta0,double tol = 0.00001,int Nmax = 20) const;
+
+    double computeBetaF(double alpha,
+                        double beta0,
+                        double tol = 0.00001,
+                        int Nmax = 20) const;
 
     double computeActivationAngle(double alpha) const;
 
@@ -42,16 +44,16 @@ namespace numodis{
     //--------------------------------------------------------------------
     //! Compute the force acting on the first node of a FR source along x
     //--------------------------------------------------------------------
-    /*!    
+    /*!
       x is the direction conneting the two nodes of the Frank-Read source
       \param alpha angle between the Burgers vector and the x direction
       \param phi tangeant vector at the first node
       \return force acting on the first node along x direction
     */
     //====================================================================
-    double Fx(double alpha,double phi) const
-    {
-      return _linetension.E(phi-alpha)*cos(phi)-_linetension.dEdtheta(phi-alpha)*sin(phi);
+    double Fx(double alpha, double phi) const {
+      return _linetension.E(phi - alpha) * cos(phi) -
+             _linetension.dEdtheta(phi - alpha) * sin(phi);
     }
 
     //====================================================================
@@ -59,16 +61,16 @@ namespace numodis{
     //--------------------------------------------------------------------
     //! Compute the force acting on the first node of a FR source along y
     //--------------------------------------------------------------------
-    /*!    
+    /*!
       y is the direction orthogonal to the Frank-Read source
       \param alpha angle between the Burgers vector and the x direction
       \param phi tangeant vector at the first node
       \return force acting on the first node along y direction
     */
     //====================================================================
-    double Fy(double alpha,double phi) const
-    {
-      return _linetension.E(phi-alpha)*sin(phi)+_linetension.dEdtheta(phi-alpha)*cos(phi);
+    double Fy(double alpha, double phi) const {
+      return _linetension.E(phi - alpha) * sin(phi) +
+             _linetension.dEdtheta(phi - alpha) * cos(phi);
     }
 
     //=====================================================================
@@ -83,17 +85,15 @@ namespace numodis{
       \return product between the stress, the Burgers vector and the Length
     */
     //=====================================================================
-    double SigmaBurgersLength(double alpha,double beta0,double betaF) const
-    {
-      return this->Fy(alpha,beta0)-this->Fy(alpha,betaF);
+    double SigmaBurgersLength(double alpha, double beta0, double betaF) const {
+      return this->Fy(alpha, beta0) - this->Fy(alpha, betaF);
     }
 
-  private:
-
+   private:
     //=====================================================================
     // FrankRead::Equation4
     //---------------------------------------------------------------------
-    //! At equilibrium the Fx on the two nodes should be equal 
+    //! At equilibrium the Fx on the two nodes should be equal
     //---------------------------------------------------------------------
     /*!
       see Dupuy & Fivel (Acta Materiala 2002)
@@ -103,16 +103,15 @@ namespace numodis{
       \return difference between the two Fx forces
     */
     //=====================================================================
-    double Equation4(double alpha,double beta0,double betaF) const
-    {
-      return this->Fx(alpha,beta0)-this->Fx(alpha,betaF);
+    double Equation4(double alpha, double beta0, double betaF) const {
+      return this->Fx(alpha, beta0) - this->Fx(alpha, betaF);
     }
 
     //! line tension model
     const IsotropicLineTensionModel& _linetension;
-  
-  }; // end of struct FrankRead
 
-} // end of namespace numodis
-  
-#endif  /* LIB_NUMODIS_FRANKREAD_HXX*/
+  };  // end of struct FrankRead
+
+}  // end of namespace numodis
+
+#endif /* LIB_NUMODIS_FRANKREAD_HXX*/

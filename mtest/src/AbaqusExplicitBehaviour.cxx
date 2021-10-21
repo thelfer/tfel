@@ -189,8 +189,8 @@ namespace mtest {
 
   bool AbaqusExplicitBehaviour::doPackagingStep(CurrentState& s,
                                                 BehaviourWorkSpace& wk) const {
-    using tfel::math::matrix;
     using abaqus::AbaqusInt;
+    using tfel::math::matrix;
     auto throw_if = [](const bool c, const std::string& m) {
       tfel::raise_if(c, "AbaqusExplicitBehaviour::doPackagingStep:" + m);
     };

@@ -33,7 +33,8 @@ namespace mfront {
      */
     struct Drucker1949StressCriterion final : StressCriterionBase {
       std::vector<OptionDescription> getOptions() const override;
-      std::vector<BehaviourSymmetry> getSupportedBehaviourSymmetries() const override;
+      std::vector<BehaviourSymmetry> getSupportedBehaviourSymmetries()
+          const override;
       void initialize(BehaviourDescription&,
                       AbstractBehaviourDSL&,
                       const std::string&,
@@ -60,7 +61,8 @@ namespace mfront {
                                           const Role) const override;
       bool isCoupledWithPorosityEvolution() const override;
       bool isNormalDeviatoric() const override;
-      PorosityEffectOnFlowRule getPorosityEffectOnEquivalentPlasticStrain() const override;
+      PorosityEffectOnFlowRule getPorosityEffectOnEquivalentPlasticStrain()
+          const override;
       //! destructor
       ~Drucker1949StressCriterion() override;
 

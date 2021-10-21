@@ -19,29 +19,31 @@
 
 namespace mfront {
 
-namespace bbrick {
+  namespace bbrick {
 
-/*!
- * \brief implementation of the __StressCriterionName__ stress criterion
- */
-struct __StressCriterionName__StressCriterion : StandardStressCriterionBase {
-  /*!
-   * \brief constructor
-   */
-  __StressCriterionName__StressCriterion();
+    /*!
+     * \brief implementation of the __StressCriterionName__ stress criterion
+     */
+    struct __StressCriterionName__StressCriterion
+        : StandardStressCriterionBase {
+      /*!
+       * \brief constructor
+       */
+      __StressCriterionName__StressCriterion();
 
-  std::vector<BehaviourSymmetry>
-  getSupportedBehaviourSymmetries() const override;
+      std::vector<BehaviourSymmetry> getSupportedBehaviourSymmetries()
+          const override;
 
-  std::vector<OptionDescription> getOptions() const override;
+      std::vector<OptionDescription> getOptions() const override;
 
-  bool isNormalDeviatoric() const override;
-  //! \brief destructor
-  ~__StressCriterionName__StressCriterion() override;
-}; // end of struct __StressCriterionName__StressCriterion
+      bool isNormalDeviatoric() const override;
+      //! \brief destructor
+      ~__StressCriterionName__StressCriterion() override;
+    };  // end of struct __StressCriterionName__StressCriterion
 
-} // end of namespace bbrick
+  }  // end of namespace bbrick
 
-} // end of namespace mfront
+}  // end of namespace mfront
 
-#endif /* LIB__MFRONT_BEHAVIOURBRICK___STRESS_CRITERION_NAME___STRESSCRITERION_HXX */
+#endif /* LIB__MFRONT_BEHAVIOURBRICK___STRESS_CRITERION_NAME___STRESSCRITERION_HXX \
+        */

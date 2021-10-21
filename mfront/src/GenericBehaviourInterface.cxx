@@ -1558,8 +1558,8 @@ namespace mfront {
       return "TensorSize";
     };
     auto init = [&os, &vsize, this](
-        SupportedTypes::TypeSize& o, const VariableDescription& v,
-        const std::string& n, const std::string& src) {
+                    SupportedTypes::TypeSize& o, const VariableDescription& v,
+                    const std::string& n, const std::string& src) {
       const auto f = this->getTypeFlag(v.type);
       if (f == SupportedTypes::SCALAR) {
         os << "this->" << n << " = mgb_d." << src << "[" << o << "];\n";
@@ -1671,9 +1671,10 @@ namespace mfront {
       const BehaviourDescription& bd) const {
     // write variable initializer
     // this is captured for gcc 4.7.2
-    auto wvi = [&os, this](
-        bool& first, const VariableDescription& v, const std::string& src,
-        const SupportedTypes::TypeSize& o, const std::string& eo) {
+    auto wvi = [&os, this](bool& first, const VariableDescription& v,
+                           const std::string& src,
+                           const SupportedTypes::TypeSize& o,
+                           const std::string& eo) {
       if (v.arraySize != 1u) {
         return;
       }
@@ -1712,8 +1713,8 @@ namespace mfront {
     // write variable initializer
     // this is captured for gcc 4.7.2
     auto wvi2 = [&os, &bd, this](
-        const VariableDescription& v, const std::string& src,
-        const SupportedTypes::TypeSize& c, const std::string& eo) {
+                    const VariableDescription& v, const std::string& src,
+                    const SupportedTypes::TypeSize& c, const std::string& eo) {
       auto get_offset = [&eo](const SupportedTypes::TypeSize o) {
         std::ostringstream out;
         out << o;
@@ -2034,8 +2035,9 @@ namespace mfront {
       return "TensorSize";
     };
     auto export_variable = [this, &os, &vsize](
-        const VariableDescription& v, const char* const dest,
-        const SupportedTypes::TypeSize o) {
+                               const VariableDescription& v,
+                               const char* const dest,
+                               const SupportedTypes::TypeSize o) {
       const auto f = this->getTypeFlag(v.type);
       if (v.arraySize == 1u) {
         if (f == SupportedTypes::SCALAR) {

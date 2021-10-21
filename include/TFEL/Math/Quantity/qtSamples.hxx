@@ -16,7 +16,7 @@
 
 #include "TFEL/Math/Forward/qt.hxx"
 
-namespace tfel{
+namespace tfel {
 
   namespace math {
 

@@ -1,6 +1,6 @@
 /*!
  * \file   mfm-test-generator/src/TestCaseBase.cxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   25/09/2019
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
@@ -18,7 +18,7 @@ namespace mfmtg {
 
   static Times readTimes(const TestCaseParameter& p) {
     if (p.is<TestCaseParameters>()) {
-      auto times = TimesFromFile {};
+      auto times = TimesFromFile{};
       const auto& d = p.get<TestCaseParameters>();
       times.file = get(d, "file");
       const auto& c = getParameter(d, "values");
@@ -35,7 +35,7 @@ namespace mfmtg {
       return times;
     }
     return tfel::utilities::convert<std::vector<double>>(p);
-  } // end of readTimes
+  }  // end of readTimes
 
   TestCaseBase::TestCaseBase(const TestCaseParameters& p)
       : name(get<std::string>(p, "name")),

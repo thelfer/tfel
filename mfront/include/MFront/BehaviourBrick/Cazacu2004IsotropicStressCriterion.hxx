@@ -31,7 +31,7 @@ namespace mfront {
      * of the first and second invariants of the deviatoric part of the stress
      * tensor \f$\underline{\sigma}\f$.
      *
-     * Cazacu, Oano and Barlat, Frédéric. 2004. 
+     * Cazacu, Oano and Barlat, Frédéric. 2004.
      * “A Criterion for Description of Anisotropy and Yield Differential
      * Effects in Pressure-Insensitive Metals.”
      * International Journal of Plasticity,
@@ -68,7 +68,8 @@ namespace mfront {
                                           const Role) const override;
       bool isCoupledWithPorosityEvolution() const override;
       bool isNormalDeviatoric() const override;
-      PorosityEffectOnFlowRule getPorosityEffectOnEquivalentPlasticStrain() const override;
+      PorosityEffectOnFlowRule getPorosityEffectOnEquivalentPlasticStrain()
+          const override;
       //! destructor
       ~Cazacu2004IsotropicStressCriterion() override;
 

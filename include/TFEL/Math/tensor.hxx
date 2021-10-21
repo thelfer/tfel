@@ -71,7 +71,7 @@ namespace tfel {
       //! \brief result
       using type =
           tensor<TensorTraits<TensorType>::dime,
-                  derivative_type<TensorNumType<TensorType>, ScalarType>>;
+                 derivative_type<TensorNumType<TensorType>, ScalarType>>;
     };  // end of struct DerivativeTypeDispatcher
     /*!
      * \brief partial specialisation of the `DerivativeTypeDispatcher`
@@ -91,7 +91,7 @@ namespace tfel {
       //! \brief result
       using type =
           tensor<TensorTraits<TensorType>::dime,
-                  derivative_type<ScalarType, TensorNumType<TensorType>>>;
+                 derivative_type<ScalarType, TensorNumType<TensorType>>>;
     };  // end of struct DerivativeTypeDispatcher
 
     /*!
@@ -397,7 +397,8 @@ namespace tfel {
                typename ResultType<StensorNumType<StensorType>,
                                    TensorNumType<TensorType>,
                                    OpMult>::type>>::type
-    convertCauchyStressToFirstPiolaKirchhoffStress(const StensorType&, const TensorType&);
+    convertCauchyStressToFirstPiolaKirchhoffStress(const StensorType&,
+                                                   const TensorType&);
 
     /*!
      * \brief convert the Cauchy stress to the first Piola-Kirchhoff stress in
@@ -420,7 +421,8 @@ namespace tfel {
                typename ResultType<StensorNumType<StensorType>,
                                    TensorNumType<TensorType>,
                                    OpMult>::type>>::type
-    convertCauchyStressToFirstPiolaKirchhoffStress(const StensorType&, const TensorType&);
+    convertCauchyStressToFirstPiolaKirchhoffStress(const StensorType&,
+                                                   const TensorType&);
 
     /*!
      * \brief convert the Cauchy stress to the first Piola-Kirchhoff stress in
@@ -443,7 +445,8 @@ namespace tfel {
                typename ResultType<StensorNumType<StensorType>,
                                    TensorNumType<TensorType>,
                                    OpMult>::type>>::type
-    convertCauchyStressToFirstPiolaKirchhoffStress(const StensorType&, const TensorType&);
+    convertCauchyStressToFirstPiolaKirchhoffStress(const StensorType&,
+                                                   const TensorType&);
 
     template <typename TensorType, typename TensorType2>
     typename std::enable_if<

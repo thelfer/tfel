@@ -1,6 +1,6 @@
 /*!
  * \file   bindings/python/include/TFEL/Numpy/ndarray.hxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   23/03/2020
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
@@ -17,18 +17,19 @@
 #include <boost/python/numpy.hpp>
 #include "TFEL/Numpy/Config.hxx"
 
-namespace tfel{
+namespace tfel {
 
   namespace numpy {
 
     TFEL_NUMPY_EXPORT size_t get_size(const boost::python::numpy::ndarray&);
 
-    TFEL_NUMPY_EXPORT const double* get_data(const boost::python::numpy::ndarray&);
+    TFEL_NUMPY_EXPORT const double* get_data(
+        const boost::python::numpy::ndarray&);
 
     TFEL_NUMPY_EXPORT double* get_data(boost::python::numpy::ndarray&);
 
   }  // end of namespace numpy
 
-}// end of namespace tfel
+}  // end of namespace tfel
 
 #endif /* LIB_TFEL_NUMPY_NDARRAY_HXX */

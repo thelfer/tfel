@@ -64,7 +64,8 @@ namespace tfel {
       }
       const auto pa = std::max(p, params.en);
       auto F = [&params](const real v) {
-        return (params.fn) * (params.en) / (params.m + 1) * pow(v / (params.en) - 1, params.m + 1);
+        return (params.fn) * (params.en) / (params.m + 1) *
+               pow(v / (params.en) - 1, params.m + 1);
       };
       return F(p + dp) - F(pa);
     }
@@ -80,8 +81,8 @@ namespace tfel {
         return std::make_tuple(real(0), real(0));
       }
       const auto pa = std::max(p, params.en);
-      auto Fa =
-          (params.fn) * (params.en) / (params.m + 1) * pow((pa / (params.en) - 1), params.m + 1);
+      auto Fa = (params.fn) * (params.en) / (params.m + 1) *
+                pow((pa / (params.en) - 1), params.m + 1);
       const auto rp = (p + dp) / (params.en) - 1;
       const auto rp_m = pow(rp, params.m);
       auto Fb = (params.fn) * (params.en) / (params.m + 1) * rp_m * rp;

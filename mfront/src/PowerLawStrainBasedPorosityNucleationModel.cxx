@@ -1,6 +1,6 @@
 /*!
  * \file   mfront/src/PowerLawStrainBasedPorosityNucleationModel.cxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   05/04/2020
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
@@ -20,8 +20,8 @@ namespace mfront {
 
   namespace bbrick {
 
-    std::string
-    PowerLawStrainBasedPorosityNucleationModel::getModelName() const {
+    std::string PowerLawStrainBasedPorosityNucleationModel::getModelName()
+        const {
       return "PowerLawStrainBasedNucleationModel";
     }  // end of getModelName
 
@@ -48,4 +48,3 @@ namespace mfront {
   }  // end of namespace bbrick
 
 }  // end of namespace mfront
-

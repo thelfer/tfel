@@ -1,6 +1,6 @@
 /*!
  * \file   InitNumpy.hxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   23/03/2020
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
@@ -25,8 +25,8 @@ namespace tfel {
      */
     TFEL_NUMPY_EXPORT void initializeNumPy();
 
-}  // end of namespace numpy
+  }  // end of namespace numpy
 
-} // end of namespace tfel
+}  // end of namespace tfel
 
 #endif /* LIB_TFEL_NUMPY_INITNUMPY_HXX */
