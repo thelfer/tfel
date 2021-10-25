@@ -3,18 +3,18 @@
  * \brief  This file declares the BaseType traits class.
  * \author Helfer Thomas
  * \date   26 Jul 2006
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_TFEL_BASETYPE_H_
-#define LIB_TFEL_BASETYPE_H_ 
+#define LIB_TFEL_BASETYPE_H_
 
-#include"TFEL/Math/Forward/Complex.hxx"
+#include "TFEL/Math/Forward/Complex.hxx"
 
 /*!
  * \def TFEL_MATH_BASETYPE
@@ -23,36 +23,35 @@
  * \author Helfer Thomas
  * \date   26 Jul 2006
  */
-#define TFEL_MATH_BASETYPE(X)              \
-    /*!                                    \
-     * \brief Partial specialisation for X \
-     * \see   BaseType                     \
-     */                                    \
-    template<>                             \
-    struct BaseType< X >                   \
-    {                                      \
-      /*!		                   \
-       *  Result	                   \
-       */		                   \
-      typedef X type;                      \
-    }
+#define TFEL_MATH_BASETYPE(X)            \
+  /*!                                    \
+   * \brief Partial specialisation for X \
+   * \see   BaseType                     \
+   */                                    \
+  template <>                            \
+  struct BaseType<X> {                   \
+    /*!                                  \
+     *  Result                           \
+     */                                  \
+    typedef X type;                      \
+  }
 
-namespace tfel{
-  
-  namespace typetraits{
+namespace tfel {
+
+  namespace typetraits {
 
     /*!
      * \class BaseType
      * \brief Most mathematical objects are build upon a fundamental
      * numeric type. This traits gives access to this type.
-     * 
+     *
      * \param  T, type for which we want to know the base type.
      * \return type, the fundamental numeric type upon which T is build.
      *
      * \author Helfer Thomas
      * \date   26 Jul 2006
      */
-    template<typename T>
+    template <typename T>
     struct BaseType;
     /*!
      * \brief Partial specialisation for unsigned short
@@ -145,13 +144,11 @@ namespace tfel{
      */
     TFEL_MATH_BASETYPE(tfel::math::Complex<long double>);
     //! a convenient alias
-    template<typename T>
+    template <typename T>
     using base_type = typename BaseType<T>::type;
-    
-  } // end of namespace typetraits
 
-} // end of namespace tfel
+  }  // end of namespace typetraits
 
+}  // end of namespace tfel
 
 #endif /* LIB_TFEL_BASETYPE_H_ */
-

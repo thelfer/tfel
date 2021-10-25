@@ -1,34 +1,33 @@
 /*!
  * \file   include/TFEL/Math/General/RunTimeCheck.hxx
- * 
- * \brief    
+ *
+ * \brief
  * \author Helfer Thomas
  * \date   24 Aug 2006
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_TFEL_MATH_RUNTIMECHECK_H_
-#define LIB_TFEL_MATH_RUNTIMECHECK_H_ 
+#define LIB_TFEL_MATH_RUNTIMECHECK_H_
 
-#include"TFEL/Config/TFELConfig.hxx"
-#include"TFEL/Math/MathException.hxx"
-#include"TFEL/Math/General/EmptyRunTimeProperties.hxx"
+#include "TFEL/Config/TFELConfig.hxx"
+#include "TFEL/Math/MathException.hxx"
+#include "TFEL/Math/General/EmptyRunTimeProperties.hxx"
 
-namespace tfel{
+namespace tfel {
 
-  namespace math{
+  namespace math {
 
     /*!
      * Exception thrown when runtime checks failed
      */
     struct TFELMATH_VISIBILITY_EXPORT RuntimeCheckFailure
-      : public MathRunTimeException
-    {
+        : public MathRunTimeException {
       RuntimeCheckFailure() = default;
       RuntimeCheckFailure(RuntimeCheckFailure&&) = default;
       RuntimeCheckFailure(const RuntimeCheckFailure&) = default;
@@ -36,16 +35,15 @@ namespace tfel{
       virtual const char* what() const noexcept override final;
       //! destructor
       virtual ~RuntimeCheckFailure() noexcept;
-    }; // end of struct RuntimeCheckFailure
+    };  // end of struct RuntimeCheckFailure
 
     /*
      * \class RunTimeCheck
      * \brief Type used to compare two runtime properties.
      * \param RunTimeProperties, type of twe runtime properties used.
-     */    
-    template<typename RunTimeProperties>
-    struct RunTimeCheck
-    {
+     */
+    template <typename RunTimeProperties>
+    struct RunTimeCheck {
       /*
        * \brief check if two runtime properties matches.
        * This is the default implementation which takes two arguments,
@@ -60,15 +58,13 @@ namespace tfel{
        * \throw MathRunTimeExpection, if test fails.
        */
       TFEL_MATH_INLINE
-      static const RunTimeProperties& 
-      exe(const RunTimeProperties& a,
-	  const RunTimeProperties& b)
-      {
-	if(a!=b){
-	  throw(RuntimeCheckFailure());
-	}
-	return a;
-      } // end of exe.
+      static const RunTimeProperties& exe(const RunTimeProperties& a,
+                                          const RunTimeProperties& b) {
+        if (a != b) {
+          throw(RuntimeCheckFailure());
+        }
+        return a;
+      }  // end of exe.
       /*
        * \brief check if two runtime properties matches.
        * This is the default implementation which takes two arguments,
@@ -83,39 +79,34 @@ namespace tfel{
        * \throw MathRunTimeExpection, if test fails.
        */
       TFEL_MATH_INLINE
-      static RunTimeProperties 
-      exe(RunTimeProperties&& a,
-	  const RunTimeProperties& b)
-      {
-	if(a!=b){
-	  throw(RuntimeCheckFailure());
-	}
-	return a;
-      } // end of exe.
-    }; // end of RunTimeCheck.
+      static RunTimeProperties exe(RunTimeProperties&& a,
+                                   const RunTimeProperties& b) {
+        if (a != b) {
+          throw(RuntimeCheckFailure());
+        }
+        return a;
+      }  // end of exe.
+    };   // end of RunTimeCheck.
 
     /*!
      * Partial specialisation for EmptyRunTimeProperties.
      * \see RunTimeCheck.
      * \see EmptyRunTimeProperties.
      */
-    template<>
-    struct RunTimeCheck<EmptyRunTimeProperties>
-    {
+    template <>
+    struct RunTimeCheck<EmptyRunTimeProperties> {
       /*!
        * A do nothing function.
        */
       TFEL_MATH_INLINE
-      static EmptyRunTimeProperties 
-      exe(const EmptyRunTimeProperties,const EmptyRunTimeProperties) noexcept
-      {
-	return EmptyRunTimeProperties();
-      } // end of exe
-    }; // end of RunTimeCheck<EmptyRunTimeProperties>
+      static EmptyRunTimeProperties exe(const EmptyRunTimeProperties,
+                                        const EmptyRunTimeProperties) noexcept {
+        return EmptyRunTimeProperties();
+      }  // end of exe
+    };   // end of RunTimeCheck<EmptyRunTimeProperties>
 
-  } // end of namespace math
+  }  // end of namespace math
 
-} // end of namespace tfel
+}  // end of namespace tfel
 
 #endif /* LIB_TFEL_MATH_RUNTIMECHECK_H_ */
-

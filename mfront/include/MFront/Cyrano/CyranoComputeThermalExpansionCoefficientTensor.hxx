@@ -1,71 +1,78 @@
 /*!
- * \file   mfront/include/MFront/Cyrano/CyranoComputeThermalExpansionCoefficientTensor.hxx
- * \brief  
- * 
+ * \file
+ * mfront/include/MFront/Cyrano/CyranoComputeThermalExpansionCoefficientTensor.hxx
+ * \brief
+ *
  * \author Helfer Thomas
  * \date   21 fév 2014
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_MFRONT_CYRANOCOMPUTETHERMALEXPANSIONTENSOR_HXX_
-#define LIB_MFRONT_CYRANOCOMPUTETHERMALEXPANSIONTENSOR_HXX_ 
+#define LIB_MFRONT_CYRANOCOMPUTETHERMALEXPANSIONTENSOR_HXX_
 
-#include"TFEL/Config/TFELTypes.hxx"
-#include"TFEL/Material/ModellingHypothesis.hxx"
+#include "TFEL/Config/TFELTypes.hxx"
+#include "TFEL/Material/ModellingHypothesis.hxx"
 
-#include"MFront/Cyrano/Cyrano.hxx"
-#include"MFront/Cyrano/CyranoConfig.hxx"
-#include"MFront/Cyrano/CyranoTraits.hxx"
+#include "MFront/Cyrano/Cyrano.hxx"
+#include "MFront/Cyrano/CyranoConfig.hxx"
+#include "MFront/Cyrano/CyranoTraits.hxx"
 
-namespace cyrano
-{
+namespace cyrano {
 
-  template<tfel::material::ModellingHypothesis::Hypothesis H,
-	   CyranoSymmetryType>
+  template <tfel::material::ModellingHypothesis::Hypothesis H,
+            CyranoSymmetryType>
   struct CyranoComputeThermalExpansionCoefficientTensor;
 
-  template<>
+  template <>
   struct MFRONT_CYRANO_VISIBILITY_EXPORT
-  CyranoComputeThermalExpansionCoefficientTensor<tfel::material::ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN,ISOTROPIC>
-  {
-    static void
-      exe(const CyranoReal* const,
-	  tfel::config::Types<1u,CyranoReal,false>::ThermalExpansionCoefficientTensor&);
-  }; // end of struct CyranoComputeThermalExpansionCoefficientTensor
+      CyranoComputeThermalExpansionCoefficientTensor<
+          tfel::material::ModellingHypothesis::
+              AXISYMMETRICALGENERALISEDPLANESTRAIN,
+          ISOTROPIC> {
+    static void exe(const CyranoReal* const,
+                    tfel::config::Types<1u, CyranoReal, false>::
+                        ThermalExpansionCoefficientTensor&);
+  };  // end of struct CyranoComputeThermalExpansionCoefficientTensor
 
-  template<>
+  template <>
   struct MFRONT_CYRANO_VISIBILITY_EXPORT
-  CyranoComputeThermalExpansionCoefficientTensor<tfel::material::ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN,ORTHOTROPIC>
-  {
-    static void
-      exe(const CyranoReal* const,
-	  tfel::config::Types<1u,CyranoReal,false>::ThermalExpansionCoefficientTensor&);
-  }; // end of struct CyranoComputeThermalExpansionCoefficientTensor
+      CyranoComputeThermalExpansionCoefficientTensor<
+          tfel::material::ModellingHypothesis::
+              AXISYMMETRICALGENERALISEDPLANESTRAIN,
+          ORTHOTROPIC> {
+    static void exe(const CyranoReal* const,
+                    tfel::config::Types<1u, CyranoReal, false>::
+                        ThermalExpansionCoefficientTensor&);
+  };  // end of struct CyranoComputeThermalExpansionCoefficientTensor
 
-  template<>
+  template <>
   struct MFRONT_CYRANO_VISIBILITY_EXPORT
-  CyranoComputeThermalExpansionCoefficientTensor<tfel::material::ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS,ISOTROPIC>
-  {
-    static void
-      exe(const CyranoReal* const,
-	  tfel::config::Types<1u,CyranoReal,false>::ThermalExpansionCoefficientTensor&);
-  }; // end of struct CyranoComputeThermalExpansionCoefficientTensor
+      CyranoComputeThermalExpansionCoefficientTensor<
+          tfel::material::ModellingHypothesis::
+              AXISYMMETRICALGENERALISEDPLANESTRESS,
+          ISOTROPIC> {
+    static void exe(const CyranoReal* const,
+                    tfel::config::Types<1u, CyranoReal, false>::
+                        ThermalExpansionCoefficientTensor&);
+  };  // end of struct CyranoComputeThermalExpansionCoefficientTensor
 
-  template<>
+  template <>
   struct MFRONT_CYRANO_VISIBILITY_EXPORT
-  CyranoComputeThermalExpansionCoefficientTensor<tfel::material::ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS,ORTHOTROPIC>
-  {
-    static void
-      exe(const CyranoReal* const,
-	  tfel::config::Types<1u,CyranoReal,false>::ThermalExpansionCoefficientTensor&);
-  }; // end of struct CyranoComputeThermalExpansionCoefficientTensor
+      CyranoComputeThermalExpansionCoefficientTensor<
+          tfel::material::ModellingHypothesis::
+              AXISYMMETRICALGENERALISEDPLANESTRESS,
+          ORTHOTROPIC> {
+    static void exe(const CyranoReal* const,
+                    tfel::config::Types<1u, CyranoReal, false>::
+                        ThermalExpansionCoefficientTensor&);
+  };  // end of struct CyranoComputeThermalExpansionCoefficientTensor
 
-} // end of namespace cyrano
+}  // end of namespace cyrano
 
 #endif /* LIB_MFRONT_CYRANOCOMPUTETHERMALEXPANSIONTENSOR_HXX_ */
-

@@ -3,19 +3,19 @@
  * \brief  This file declares the MechanicalBehaviourTraits template class
  * \author Helfer Thomas
  * \date   10 Aug 2006
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_TFEL_MATERIALTRAITS_H_
-#define LIB_TFEL_MATERIALTRAITS_H_ 
+#define LIB_TFEL_MATERIALTRAITS_H_
 
-namespace tfel{
-  
+namespace tfel {
+
   namespace material {
 
     /*!
@@ -26,10 +26,10 @@ namespace tfel{
      * \author Helfer Thomas
      * \date   10 Aug 2006
      */
-    template<class Behaviour>
-    struct MechanicalBehaviourTraits{
+    template <class Behaviour>
+    struct MechanicalBehaviourTraits {
       /*!
-       * Says if the traits class has been specialised 
+       * Says if the traits class has been specialised
        */
       static constexpr bool is_defined = false;
       /*!
@@ -48,11 +48,11 @@ namespace tfel{
       /*!
        * Number of external variables.
        */
-      static constexpr unsigned short external_variables_nb  = 0;
+      static constexpr unsigned short external_variables_nb = 0;
       /*!
        * Number of internal variables.
        */
-      static constexpr unsigned short internal_variables_nb  = 0;
+      static constexpr unsigned short internal_variables_nb = 0;
       /*!
        * Says if the Behaviour class uses quantities
        * \see qt.hxx
@@ -89,15 +89,11 @@ namespace tfel{
        * would instantiate the class even if it is not defined. This
        * can lead to static assertion failures.
        */
-      static const char*
-      getName(void){
-	return "";
-      }
+      static const char* getName(void) { return ""; }
     };
 
-  } // end of namespace material
+  }  // end of namespace material
 
-} // end of namespace tfel
+}  // end of namespace tfel
 
 #endif /* LIB_TFEL_MATERIALTRAITS_H_ */
-

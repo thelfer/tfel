@@ -4,19 +4,19 @@
  * and specialises it for standard numeric types.
  * \author Helfer Thomas
  * \date   23 Aug 2006
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_TFEL_REALPARTTYPE_H_
-#define LIB_TFEL_REALPARTTYPE_H_ 
+#define LIB_TFEL_REALPARTTYPE_H_
 
-#include"TFEL/Metaprogramming/InvalidType.hxx"
-#include"TFEL/Math/Forward/Complex.hxx"
+#include "TFEL/Metaprogramming/InvalidType.hxx"
+#include "TFEL/Math/Forward/Complex.hxx"
 
 /*!
  * \def    TFEL_TYPETRAITS_REALPARTTYPE
@@ -25,16 +25,15 @@
  * \author Helfer Thomas
  * \date   23 Aug 2006
  */
-#define TFEL_TYPETRAITS_REALPARTTYPE(X)    \
-    /*!                                    \
-     * \brief Partial specialisation for X \
-     * \see   RealPartType                 \
-     */                                    \
-    template<>                             \
-    struct RealPartType<X>		   \
-    {			                   \
-      typedef X type;			   \
-    }
+#define TFEL_TYPETRAITS_REALPARTTYPE(X)  \
+  /*!                                    \
+   * \brief Partial specialisation for X \
+   * \see   RealPartType                 \
+   */                                    \
+  template <>                            \
+  struct RealPartType<X> {               \
+    typedef X type;                      \
+  }
 
 /*!
  * \def    TFEL_TYPETRAITS_REALPARTTYPEII
@@ -44,28 +43,26 @@
  * \author Helfer Thomas
  * \date   23 Aug 2006
  */
-#define TFEL_TYPETRAITS_REALPARTTYPEII(X)        \
-    /*!                                          \
-     * \brief Partial specialisation for X       \
-     * \see   RealPartType                       \
-     */                                          \
-    template<>                                   \
-    struct RealPartType<tfel::math::Complex<X> > \
-    {				                 \
-      typedef X type;		                 \
-    }
+#define TFEL_TYPETRAITS_REALPARTTYPEII(X)       \
+  /*!                                           \
+   * \brief Partial specialisation for X        \
+   * \see   RealPartType                        \
+   */                                           \
+  template <>                                   \
+  struct RealPartType<tfel::math::Complex<X>> { \
+    typedef X type;                             \
+  }
 
+namespace tfel {
 
-namespace tfel{
-
-  namespace typetraits{
+  namespace typetraits {
 
     /*!
      * \brief  Traits class which associates to its argument its real part type.
      *
-     * If the argument is not complex, the result is the argument itself. 
-     * 
-     * \note The name is not well choosen since the result may be an int for  
+     * If the argument is not complex, the result is the argument itself.
+     *
+     * \note The name is not well choosen since the result may be an int for
      *
      * \param  T, type to be tested.
      * \return type, type of the real part of the argument
@@ -73,11 +70,10 @@ namespace tfel{
      * \author Helfer Thomas
      * \date   23 Aug 2006
      */
-    template<typename T>
-    struct RealPartType
-    {
+    template <typename T>
+    struct RealPartType {
       typedef tfel::meta::InvalidType type;
-    }; // end of struct RealPartType
+    };  // end of struct RealPartType
 
     TFEL_TYPETRAITS_REALPARTTYPE(unsigned short);
     TFEL_TYPETRAITS_REALPARTTYPE(unsigned int);
@@ -99,9 +95,8 @@ namespace tfel{
     TFEL_TYPETRAITS_REALPARTTYPEII(double);
     TFEL_TYPETRAITS_REALPARTTYPEII(long double);
 
-  } // end of namespace typetraits
+  }  // end of namespace typetraits
 
-} // end of namespace tfel
+}  // end of namespace tfel
 
 #endif /* LIB_TFEL_REALPARTTYPE_H_ */
-

@@ -3,42 +3,43 @@
  * \brief  This file declares the MFront class
  * \author Helfer Thomas
  * \date   22 Nov 2006
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_MFRONT_MFRONT_HXX
-#define LIB_MFRONT_MFRONT_HXX 
+#define LIB_MFRONT_MFRONT_HXX
 
-#include<set>
-#include<map>
-#include<string>
-#include<vector>
-#include<iosfwd>
+#include <set>
+#include <map>
+#include <string>
+#include <vector>
+#include <iosfwd>
 
-#include"TFEL/Utilities/ArgumentParserBase.hxx"
-#include"MFront/MFrontBase.hxx"
-#include"MFront/MFrontConfig.hxx"
-#include"MFront/GeneratorOptions.hxx"
-#include"MFront/TargetsDescription.hxx"
+#include "TFEL/Utilities/ArgumentParserBase.hxx"
+#include "MFront/MFrontBase.hxx"
+#include "MFront/MFrontConfig.hxx"
+#include "MFront/GeneratorOptions.hxx"
+#include "MFront/TargetsDescription.hxx"
 
-#if (!(defined _WIN32 || defined _WIN64)) || ((defined __CYGWIN__)|| (defined __MINGW32__)) || defined(__MINGW64__) 
+#if (!(defined _WIN32 || defined _WIN64)) || \
+    ((defined __CYGWIN__) || (defined __MINGW32__)) || defined(__MINGW64__)
 #define MFRONT_MAKE_SUPPORT
-#endif /* (!(defined _WIN32 || defined _WIN64)) || ((defined __CYGWIN__)|| (defined __MINGW32__)) || defined(__MINGW64__)  */
+#endif /* (!(defined _WIN32 || defined _WIN64)) || ((defined __CYGWIN__)|| \
+          (defined __MINGW32__)) || defined(__MINGW64__)  */
 
-namespace mfront{
+namespace mfront {
 
   /*!
    * \brief the main class of MFront
    */
   struct MFRONT_VISIBILITY_EXPORT MFront
-    : public tfel::utilities::ArgumentParserBase<MFront>,
-      public MFrontBase
-  {
+      : public tfel::utilities::ArgumentParserBase<MFront>,
+        public MFrontBase {
     //! constructor
     MFront();
     /*!
@@ -52,8 +53,7 @@ namespace mfront{
      * \param[in] f : file name
      * \return the target's description
      */
-    virtual TargetsDescription
-    treatFile(const std::string&) const;
+    virtual TargetsDescription treatFile(const std::string &) const;
     /*!
      * \brief execute MFront process
      */
@@ -61,8 +61,7 @@ namespace mfront{
     //! destructor
     virtual ~MFront();
 
-  protected :
-
+   protected:
     friend struct tfel::utilities::ArgumentParserBase<MFront>;
 
     //! treat an unknown argument
@@ -70,14 +69,12 @@ namespace mfront{
     //! a do nothing callback
     virtual void doNothing(void) final;
     //! return the current argument
-    virtual const tfel::utilities::Argument&
-    getCurrentCommandLineArgument() const override final;
+    virtual const tfel::utilities::Argument &getCurrentCommandLineArgument()
+        const override final;
     //! get the version description
-    virtual std::string
-    getVersionDescription(void) const override final;
+    virtual std::string getVersionDescription(void) const override final;
     //! get the usage description
-    virtual std::string
-    getUsageDescription(void) const override final;
+    virtual std::string getUsageDescription(void) const override final;
     //! treat the -D command line option
     virtual void treatDefine(void);
     //! treat the --help-commands-list command line option
@@ -110,7 +107,7 @@ namespace mfront{
     virtual void treatOTarget(void);
 
 #endif /* MFRONT_MAKE_SUPPORT */
-    
+
     virtual void treatListParsers(void);
 
     virtual void registerArgumentCallBacks(void);
@@ -120,21 +117,19 @@ namespace mfront{
     virtual void writeTargetsDescription(void) const;
 
 #ifdef MFRONT_MAKE_SUPPORT
-    virtual void
-    buildLibraries(const std::string&);
+    virtual void buildLibraries(const std::string &);
 
-    virtual void
-    cleanLibraries(void);
+    virtual void cleanLibraries(void);
 #endif /* MFRONT_MAKE_SUPPORT */
 
-#if (defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)
+#if (defined _WIN32 || defined _WIN64 || defined __CYGWIN__)
     //! treat the --def-file command line option
     virtual void treatDefFile(void);
     //! generate def files
     virtual void generateDefsFiles(void);
 #endif
-    
-#if !(defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)
+
+#if !(defined _WIN32 || defined _WIN64 || defined __CYGWIN__)
     virtual void treatWin32(void);
 #endif /* LIB_MFRONT_H_ */
 
@@ -143,17 +138,17 @@ namespace mfront{
 
     //! generator options
     GeneratorOptions opts;
-    
+
     //! targets to be build as specified by the user
     std::set<std::string> specifiedTargets;
     //! macros defined by the user on the command line
     std::set<std::string> defines;
-    
-#if (defined _WIN32 || defined _WIN64 ||defined __CYGWIN__)
+
+#if (defined _WIN32 || defined _WIN64 || defined __CYGWIN__)
     // libraries for which a def file must be generated
     std::set<std::string> defs;
 #endif /* (defined _WIN32 || defined _WIN64 ||defined __CYGWIN__) */
-    
+
 #ifdef MFRONT_MAKE_SUPPORT
 
     bool genMake = false;
@@ -164,8 +159,8 @@ namespace mfront{
 
 #endif /* MFRONT_MAKE_SUPPORT */
 
-  }; // end of class MFront
+  };  // end of class MFront
 
-} // end of namespace mfront
+}  // end of namespace mfront
 
 #endif /* LIB_MFRONT_MFRONT_H_ */

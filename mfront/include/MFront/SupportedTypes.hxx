@@ -3,27 +3,26 @@
  * \brief  This file declares the SupportedTypes class
  * \author Helfer Thomas
  * \date   12 Jan 2007
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_MFRONT_SUPPORTEDTYPES_H_
-#define LIB_MFRONT_SUPPORTEDTYPES_H_ 
+#define LIB_MFRONT_SUPPORTEDTYPES_H_
 
-#include<map>
-#include<iosfwd>
-#include<string>
-#include<vector>
+#include <map>
+#include <iosfwd>
+#include <string>
+#include <vector>
 
-#include"TFEL/Material/ModellingHypothesis.hxx"
-#include"MFront/MFrontConfig.hxx"
+#include "TFEL/Material/ModellingHypothesis.hxx"
+#include "MFront/MFrontConfig.hxx"
 
-namespace mfront
-{
+namespace mfront {
 
   // forward declaration
   struct VariableDescription;
@@ -31,22 +30,20 @@ namespace mfront
   struct VariableDescriptionContainer;
 
   //! class handling all type variables types supported by MFront
-  struct MFRONT_VISIBILITY_EXPORT SupportedTypes
-  {
+  struct MFRONT_VISIBILITY_EXPORT SupportedTypes {
     //! limit for small array support
-#if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
+#if defined _WIN32 || defined _WIN64 || defined __CYGWIN__
     static const int ArraySizeLimit = 10u;
-#else 
+#else
     static constexpr int ArraySizeLimit = 10u;
 #endif /* LIB_TFEL_SYSTEM_EXTERNALFUNCTIONSPROTOTYPES_H_ */
     //! type of variable supported
-    enum TypeFlag{Scalar,TVector,Stensor,Tensor};
+    enum TypeFlag { Scalar, TVector, Stensor, Tensor };
     /*!
      * class handling the size of a variable or a set of variables as
      * a function of the variables' type and the modelling hypothesis
      */
-    struct MFRONT_VISIBILITY_EXPORT TypeSize
-    {
+    struct MFRONT_VISIBILITY_EXPORT TypeSize {
       //! a simple alias
       using Hypothesis = tfel::material::ModellingHypothesis::Hypothesis;
       //! constructor
@@ -62,8 +59,7 @@ namespace mfront
        * \param[in] c: symmetric tensor size
        * \param[in] d: (unsymmetric) tensor size
        */
-      TypeSize(const int,const int,
-	       const int,const int);
+      TypeSize(const int, const int, const int, const int);
       //! assignement
       TypeSize& operator=(const TypeSize&);
       //! move assignement
@@ -91,30 +87,26 @@ namespace mfront
       //! return the (un)symmetric tensor part of the size
       int getTensorSize() const;
 
-      int
-      getValueForDimension(const unsigned short) const;
+      int getValueForDimension(const unsigned short) const;
 
-      int
-      getValueForModellingHypothesis(const Hypothesis) const;
+      int getValueForModellingHypothesis(const Hypothesis) const;
       //! \return true is all components of the TipeSize are null
       bool isNull(void) const;
-      
-    private:
+
+     private:
       //! ouptut operator
-      friend std::ostream& 
-      operator<< (std::ostream&, const TypeSize&);
+      friend std::ostream& operator<<(std::ostream&, const TypeSize&);
       //! scalar part
-      int scalarSize  = 0;
+      int scalarSize = 0;
       //! vector part
       int tvectorSize = 0;
       //! symmetric tensor part
       int stensorSize = 0;
       //! (un)symmetric tensor part
-      int tensorSize  = 0;
-    }; // end of class SupportedTypes::TypeSize
+      int tensorSize = 0;
+    };  // end of class SupportedTypes::TypeSize
     //! \return a list of type names associated with type flags
-    static const std::map<std::string,TypeFlag>&
-    getTypeFlags(void);
+    static const std::map<std::string, TypeFlag>& getTypeFlags(void);
     //! default constructor
     SupportedTypes();
     //! move constructor
@@ -140,23 +132,18 @@ namespace mfront
      * \param[in] t : variable type
      * \param[in] a : array size
      */
-    TypeSize
-    getTypeSize(const std::string&,
-		const unsigned short) const;
+    TypeSize getTypeSize(const std::string&, const unsigned short) const;
 
-    std::string
-    getTimeDerivativeType(const std::string&) const;
+    std::string getTimeDerivativeType(const std::string&) const;
     /*!
      * \return true of the parser shall declare a dynamically
      * allocated vector for the given array size
      */
-    bool
-    useDynamicallyAllocatedVector(const unsigned short) const;
+    bool useDynamicallyAllocatedVector(const unsigned short) const;
     /*!
      * \return true if dynamically allocated vectors are allowed
      */
-    bool
-    areDynamicallyAllocatedVectorsAllowed(void) const;
+    bool areDynamicallyAllocatedVectorsAllowed(void) const;
     /*!
      * write the given variables declaration
      * \param[out] f                 : output file
@@ -165,13 +152,12 @@ namespace mfront
      * \param[in]  suffix            : suffix added to variable's names
      * \param[in]  useTimeDerivative : declare time derivative of the variables
      */
-    virtual void
-    writeVariablesDeclarations(std::ostream&,
-			       const VariableDescriptionContainer&,
-			       const std::string&,
-			       const std::string&,
-			       const std::string&,
-			       const bool) const;
+    virtual void writeVariablesDeclarations(std::ostream&,
+                                            const VariableDescriptionContainer&,
+                                            const std::string&,
+                                            const std::string&,
+                                            const std::string&,
+                                            const bool) const;
     /*!
      * write the given variable declaration
      * \param[out] f                 : output file
@@ -180,48 +166,48 @@ namespace mfront
      * \param[in]  suffix            : suffix added to variable's names
      * \param[in]  useTimeDerivative : declare time derivative of the variables
      */
-    virtual void
-    writeVariableDeclaration(std::ostream&,
-			     const VariableDescription&,
-			     const std::string&,
-			     const std::string&,
-			     const std::string&,
-			     const bool) const;
+    virtual void writeVariableDeclaration(std::ostream&,
+                                          const VariableDescription&,
+                                          const std::string&,
+                                          const std::string&,
+                                          const std::string&,
+                                          const bool) const;
     /*!
      * \param[out] f      : output file
      * \param[in]  v      : variables to be initialized
-     * \param[in]  src    : name of the array from which the variables are initialized
-     * \param[in]  prefix : prefix added to variable's names
+     * \param[in]  src    : name of the array from which the variables are
+     * initialized \param[in]  prefix : prefix added to variable's names
      * \param[in]  suffix : suffix added to variable's names
-     * \param[in]  o      : offset in the array from which the variables are initialized
+     * \param[in]  o      : offset in the array from which the variables are
+     * initialized
      */
-    virtual void
-    writeVariableInitializersInBehaviourDataConstructorI(std::ostream&,
-							 const VariableDescriptionContainer&,
-							 const std::string&,
-							 const std::string&,
-							 const std::string&) const;
+    virtual void writeVariableInitializersInBehaviourDataConstructorI(
+        std::ostream&,
+        const VariableDescriptionContainer&,
+        const std::string&,
+        const std::string&,
+        const std::string&) const;
     /*!
      * \param[out] f      : output file
      * \param[in]  v      : variables to be initialized
-     * \param[in]  src    : name of the array from which the variables are initialized
-     * \param[in]  prefix : prefix added to variable's names
+     * \param[in]  src    : name of the array from which the variables are
+     * initialized \param[in]  prefix : prefix added to variable's names
      * \param[in]  suffix : suffix added to variable's names
-     * \param[in]  o      : offset in the array from which the variables are initialized
+     * \param[in]  o      : offset in the array from which the variables are
+     * initialized
      */
-    virtual void
-    writeVariableInitializersInBehaviourDataConstructorII(std::ostream&,
-							  const VariableDescriptionContainer&,
-							  const std::string&,
-							  const std::string&,
-							  const std::string&) const;
+    virtual void writeVariableInitializersInBehaviourDataConstructorII(
+        std::ostream&,
+        const VariableDescriptionContainer&,
+        const std::string&,
+        const std::string&,
+        const std::string&) const;
     /*!
      * \param[in]  v                 : variables to be initialized
      * \param[in]  useTimeDerivative : declare time derivative of the variables
      */
-    virtual std::string
-    getIntegrationVariablesIncrementsInitializers(const VariableDescriptionContainer&,
-						  const bool) const;
+    virtual std::string getIntegrationVariablesIncrementsInitializers(
+        const VariableDescriptionContainer&, const bool) const;
 
     /*!
      * \param[out] f     : output file
@@ -229,35 +215,31 @@ namespace mfront
      * \param[in]  src   : name of the array to which the variables are exported
      * \param[in]  useQt : true if quantities are used
      */
-    virtual void
-    exportResults(std::ostream&,
-		  const VariableDescriptionContainer&,
-		  const std::string&,
-		  const bool) const;
+    virtual void exportResults(std::ostream&,
+                               const VariableDescriptionContainer&,
+                               const std::string&,
+                               const bool) const;
     /*!
      * \param[in]  v   : variables
      */
-    TypeSize
-    getTotalSize(const VariableDescriptionContainer&) const;
+    TypeSize getTotalSize(const VariableDescriptionContainer&) const;
     /*!
      * \param[in]  vc : variables
      */
-    unsigned short
-    getNumberOfVariables(const VariableDescriptionContainer&) const;
+    unsigned short getNumberOfVariables(
+        const VariableDescriptionContainer&) const;
 
-    void
-    writeResultsArrayResize(std::ostream&,
-			    const std::string&,
-			    const VariableDescriptionContainer&) const;
-    
-    void
-    writeResultsArrayResize(std::ostream&,
-			    const std::string&,
-			    const SupportedTypes::TypeSize&) const;
+    void writeResultsArrayResize(std::ostream&,
+                                 const std::string&,
+                                 const VariableDescriptionContainer&) const;
+
+    void writeResultsArrayResize(std::ostream&,
+                                 const std::string&,
+                                 const SupportedTypes::TypeSize&) const;
     //! desctructor
     virtual ~SupportedTypes();
 
-  protected:
+   protected:
     //! reset the class members
     void reset(void);
     /*!
@@ -266,9 +248,8 @@ namespace mfront
      * dynamically allocated vectors
      */
     bool areDynamicallyAllocatedVectorsAllowed_;
-  }; // end of class SupportedTypes
+  };  // end of class SupportedTypes
 
-} // end of namespace mfront
+}  // end of namespace mfront
 
 #endif /* LIB_MFRONT_SUPPORTEDTYPES_H_ */
-

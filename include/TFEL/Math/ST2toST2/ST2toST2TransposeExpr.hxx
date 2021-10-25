@@ -1,6 +1,6 @@
 /*!
  * \file   TFEL/Math/ST2toST2/ST2toST2TransposeExpr.hxx
- * \brief    
+ * \brief
  * \author THOMAS HELFER
  * \date   30 août 2016
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
@@ -43,7 +43,8 @@ namespace tfel {
       //! a simple alias
       using IndexType = unsigned short;
       //! a simple alias
-      using NumType = typename ST2toST2Traits<typename std::decay<A>::type>::NumType;
+      using NumType =
+          typename ST2toST2Traits<typename std::decay<A>::type>::NumType;
 
       TFEL_MATH_INLINE RunTimeProperties getRunTimeProperties() const {
         return EmptyRunTimeProperties();
@@ -60,15 +61,16 @@ namespace tfel {
 
       TFEL_MATH_INLINE ST2toST2TransposeExpr(A l) : a(l) {}
 
-      TFEL_MATH_INLINE NumType operator()(const IndexType i, const IndexType j) const {
+      TFEL_MATH_INLINE NumType operator()(const IndexType i,
+                                          const IndexType j) const {
         return this->a(j, i);
       }  // end of operator()
       //! storage for the object
       ArgumentStorage<A> a;
 
      private:
-      TFEL_STATIC_ASSERT(
-          (tfel::meta::Implements<typename std::decay<A>::type, ST2toST2Concept>::cond));
+      TFEL_STATIC_ASSERT((tfel::meta::Implements<typename std::decay<A>::type,
+                                                 ST2toST2Concept>::cond));
     };
 
   }  // end of  namespace math

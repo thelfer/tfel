@@ -1,52 +1,52 @@
 /*!
  * \file   mfront/include/MFront/Castem/CastemTraits.hxx
- * \brief  
- * 
+ * \brief
+ *
  * \author Helfer Thomas
  * \date   13 fév 2007
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_MFRONT_CASTEMTRAITS_HXX_
-#define LIB_MFRONT_CASTEMTRAITS_HXX_ 
+#define LIB_MFRONT_CASTEMTRAITS_HXX_
 
-namespace castem{
+namespace castem {
 
-  enum CastemBehaviourType{
+  enum CastemBehaviourType {
     SMALLSTRAINSTANDARDBEHAVIOUR,
     FINITESTRAINSTANDARDBEHAVIOUR,
     COHESIVEZONEMODEL
-  }; // end of enum CastemBehaviourType
+  };  // end of enum CastemBehaviourType
 
-  enum CastemSymmetryType{
+  enum CastemSymmetryType {
     ISOTROPIC,
     ORTHOTROPIC
-  }; // end of enum CastemSymmetryType
+  };  // end of enum CastemSymmetryType
 
-  template<typename Behaviour>
-  struct CastemTraits{
-    static constexpr CastemBehaviourType btype = castem::SMALLSTRAINSTANDARDBEHAVIOUR;
+  template <typename Behaviour>
+  struct CastemTraits {
+    static constexpr CastemBehaviourType btype =
+        castem::SMALLSTRAINSTANDARDBEHAVIOUR;
     // size of the driving variable array (STRAN)
     static constexpr unsigned short DrivingVariableSize = 0u;
     // size of the thermodynamic force variable array (STESS)
     static constexpr unsigned short ThermodynamicForceVariableSize = 0u;
     static constexpr bool useTimeSubStepping = false;
-    static constexpr bool doSubSteppingOnInvalidResults  = false;
-    static constexpr unsigned short maximumSubStepping   = 0u;
-    static constexpr bool requiresStiffnessTensor        = false;
+    static constexpr bool doSubSteppingOnInvalidResults = false;
+    static constexpr unsigned short maximumSubStepping = 0u;
+    static constexpr bool requiresStiffnessTensor = false;
     static constexpr bool requiresThermalExpansionCoefficientTensor = false;
-    static constexpr unsigned short propertiesOffset       = 0u;
+    static constexpr unsigned short propertiesOffset = 0u;
     static constexpr unsigned short material_properties_nb = 0u;
-    static constexpr unsigned short internal_variables_nb  = 0u;
+    static constexpr unsigned short internal_variables_nb = 0u;
     static constexpr CastemSymmetryType stype = castem::ISOTROPIC;
-  }; // end of class CastemTraits
+  };  // end of class CastemTraits
 
-} // end of namespace castem  
+}  // end of namespace castem
 
 #endif /* LIB_MFRONT_CASTEMTRAITS_HXX_ */
-

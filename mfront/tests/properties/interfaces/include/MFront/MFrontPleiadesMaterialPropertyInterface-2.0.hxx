@@ -1,36 +1,35 @@
 /*!
- * \file   mfront/tests/properties/interfaces/include/MFront/MFrontPleiadesMaterialPropertyInterface-2.0.hxx
+ * \file
+ * mfront/tests/properties/interfaces/include/MFront/MFrontPleiadesMaterialPropertyInterface-2.0.hxx
  * \brief  This file declares the MFrontPleiadesMaterialPropertyInterface class
  * \author Helfer Thomas
  * \date   06 mai 2008
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_MFRONTPLEIADESLAWINTERFACE_H_
-#define LIB_MFRONTPLEIADESLAWINTERFACE_H_ 
+#define LIB_MFRONTPLEIADESLAWINTERFACE_H_
 
-#include<string>
-#include<fstream>
+#include <string>
+#include <fstream>
 
-#include"TFEL/Utilities/CxxTokenizer.hxx"
+#include "TFEL/Utilities/CxxTokenizer.hxx"
 
-#include"MFront/VariableDescription.hxx"
-#include"MFront/StaticVariableDescription.hxx"
-#include"MFront/LawFunction.hxx"
-#include"MFront/VariableBoundsDescription.hxx"
-#include"MFront/AbstractMaterialPropertyInterface.hxx"
+#include "MFront/VariableDescription.hxx"
+#include "MFront/StaticVariableDescription.hxx"
+#include "MFront/LawFunction.hxx"
+#include "MFront/VariableBoundsDescription.hxx"
+#include "MFront/AbstractMaterialPropertyInterface.hxx"
 
-namespace mfront{
+namespace mfront {
 
   struct MFrontPleiadesMaterialPropertyInterface final
-    : public AbstractMaterialPropertyInterface
-  {
-
+      : public AbstractMaterialPropertyInterface {
     MFrontPleiadesMaterialPropertyInterface();
 
     static std::string getName(void);
@@ -43,30 +42,33 @@ namespace mfront{
      * treated by the interface. The second entry is an iterator after
      * the last token treated.
      */
-    virtual std::pair<bool,tfel::utilities::CxxTokenizer::TokensContainer::const_iterator>
-    treatKeyword(const std::string&,
-		 const std::vector<std::string>&,
-		 tfel::utilities::CxxTokenizer::TokensContainer::const_iterator,
-		 const tfel::utilities::CxxTokenizer::TokensContainer::const_iterator) override;
+    virtual std::pair<
+        bool,
+        tfel::utilities::CxxTokenizer::TokensContainer::const_iterator>
+    treatKeyword(
+        const std::string&,
+        const std::vector<std::string>&,
+        tfel::utilities::CxxTokenizer::TokensContainer::const_iterator,
+        const tfel::utilities::CxxTokenizer::TokensContainer::const_iterator)
+        override;
     /*!
      * \brief : fill the target descripton
      * \param[out] d   : target description
      * \param[in]  mpd : material property description
      */
-    virtual void getTargetsDescription(TargetsDescription&,
-				       const MaterialPropertyDescription&) override;
+    virtual void getTargetsDescription(
+        TargetsDescription&, const MaterialPropertyDescription&) override;
     /*!
      * \brief generate the output files
      * \param[in] mpd : material property description
      * \param[in] fd  : mfront file description
      */
     void writeOutputFiles(const MaterialPropertyDescription&,
-			  const FileDescription&) override;
+                          const FileDescription&) override;
 
     virtual ~MFrontPleiadesMaterialPropertyInterface();
 
-  private:
-
+   private:
     /*
      * \param const std::string&, name of the original file
      * \param const std::string&, className
@@ -77,12 +79,12 @@ namespace mfront{
      * \param const VarContainer&, inputs
      */
     void writeHeaderFile(const std::string&,
-			 const std::string&,
-			 const std::string&,
-			 const std::string&,
-			 const std::string&,
-			 const std::string&,
-			 const VarContainer&);
+                         const std::string&,
+                         const std::string&,
+                         const std::string&,
+                         const std::string&,
+                         const std::string&,
+                         const VarContainer&);
 
     /*
      * \param const std::string&, name of the original file
@@ -99,30 +101,31 @@ namespace mfront{
      * \param const std::map<std::string,double>&, parameters values
      * \param const LawFunction&, function definition
      * \param const std::vector<VariableBoundsDescription>&, bounds of the law
-     * \param const std::vector<VariableBoundsDescription>&, physical bounds of the law
+     * \param const std::vector<VariableBoundsDescription>&, physical bounds of
+     * the law
      */
     void writeSrcFile(const std::string&,
-		      const std::string&,
-		      const std::string&,
-		      const std::string&,
-		      const std::string&,
-		      const VarContainer&,
-		      const std::vector<std::string>&,
-		      const std::map<std::string,std::string>&,
-		      const std::map<std::string,std::string>&,
-		      const StaticVarContainer& staticVars,
-		      const std::vector<std::string>&,
-		      const std::map<std::string,double>&,
-		      const LawFunction&,
-		      const std::vector<VariableBoundsDescription>&,
-		      const std::vector<VariableBoundsDescription>&);
+                      const std::string&,
+                      const std::string&,
+                      const std::string&,
+                      const std::string&,
+                      const VarContainer&,
+                      const std::vector<std::string>&,
+                      const std::map<std::string, std::string>&,
+                      const std::map<std::string, std::string>&,
+                      const StaticVarContainer& staticVars,
+                      const std::vector<std::string>&,
+                      const std::map<std::string, double>&,
+                      const LawFunction&,
+                      const std::vector<VariableBoundsDescription>&,
+                      const std::vector<VariableBoundsDescription>&);
 
     std::ofstream headerFile;
     std::ofstream srcFile;
     std::string headerFileName;
     std::string srcFileName;
-  }; // end of MfrontPleiadesMaterialPropertyInterface
+  };  // end of MfrontPleiadesMaterialPropertyInterface
 
-} // end of namespace mfront
+}  // end of namespace mfront
 
 #endif /* LIB_MFRONTPLEIADESLAWINTERFACE_H */

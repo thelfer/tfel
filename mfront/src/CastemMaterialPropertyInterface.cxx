@@ -1,150 +1,137 @@
 /*!
  * \file   mfront/src/CastemMaterialPropertyInterface.cxx
- * \brief    
+ * \brief
  * \author Helfer Thomas
  * \date   06 mai 2008
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
-#include<fstream>
-#include<sstream>
-#include<algorithm>
-#include<stdexcept>
+#include <fstream>
+#include <sstream>
+#include <algorithm>
+#include <stdexcept>
 
-#include"TFEL/Config/GetInstallPath.hxx"
-#include"TFEL/Utilities/StringAlgorithms.hxx"
-#include"TFEL/System/System.hxx"
+#include "TFEL/Config/GetInstallPath.hxx"
+#include "TFEL/Utilities/StringAlgorithms.hxx"
+#include "TFEL/System/System.hxx"
 
-#include"MFront/DSLUtilities.hxx"
-#include"MFront/MFrontUtilities.hxx"
-#include"MFront/MFrontHeader.hxx"
-#include"MFront/FileDescription.hxx"
-#include"MFront/TargetsDescription.hxx"
-#include"MFront/MaterialPropertyDescription.hxx"
-#include"MFront/MaterialPropertyParametersHandler.hxx"
-#include"MFront/CastemMaterialPropertyInterface.hxx"
+#include "MFront/DSLUtilities.hxx"
+#include "MFront/MFrontUtilities.hxx"
+#include "MFront/MFrontHeader.hxx"
+#include "MFront/FileDescription.hxx"
+#include "MFront/TargetsDescription.hxx"
+#include "MFront/MaterialPropertyDescription.hxx"
+#include "MFront/MaterialPropertyParametersHandler.hxx"
+#include "MFront/CastemMaterialPropertyInterface.hxx"
 
 // fixing a bug on current glibc++ cygwin versions (19/08/2015)
-#if defined __CYGWIN__ &&  (!defined _GLIBCXX_USE_C99)
-#include<sstream>
-namespace std{
-  template<typename T>
-  std::string to_string(const T& v){
+#if defined __CYGWIN__ && (!defined _GLIBCXX_USE_C99)
+#include <sstream>
+namespace std {
+  template <typename T>
+  std::string to_string(const T& v) {
     std::ostringstream s;
     s << v;
     return s.str();
   }
-}
+}  // namespace std
 #endif /* defined __CYGWIN__ &&  (!defined _GLIBCXX_USE_C99) */
 
-namespace mfront
-{
-  
-  std::string
-  CastemMaterialPropertyInterface::getName()
-  {
-    return "castem";
-  }
+namespace mfront {
 
-  CastemMaterialPropertyInterface::CastemMaterialPropertyInterface()
-  {}
-  
-  std::pair<bool,tfel::utilities::CxxTokenizer::TokensContainer::const_iterator>
-  CastemMaterialPropertyInterface::treatKeyword(const std::string& k,
-						const std::vector<std::string>& i,
-						tokens_iterator current,
-						const tokens_iterator)
-  {
-    if((std::find(i.begin(),i.end(),"castem")!=i.end())||
-       (std::find(i.begin(),i.end(),"Castem")!=i.end())||
-       (std::find(i.begin(),i.end(),"Cast3m")!=i.end())){
-      throw(std::runtime_error("CastemMaterialPropertyInterface::treatKeyword: "
-			       "unsupported keyword '"+k+"'"));
+  std::string CastemMaterialPropertyInterface::getName() { return "castem"; }
+
+  CastemMaterialPropertyInterface::CastemMaterialPropertyInterface() {}
+
+  std::pair<bool,
+            tfel::utilities::CxxTokenizer::TokensContainer::const_iterator>
+  CastemMaterialPropertyInterface::treatKeyword(
+      const std::string& k,
+      const std::vector<std::string>& i,
+      tokens_iterator current,
+      const tokens_iterator) {
+    if ((std::find(i.begin(), i.end(), "castem") != i.end()) ||
+        (std::find(i.begin(), i.end(), "Castem") != i.end()) ||
+        (std::find(i.begin(), i.end(), "Cast3m") != i.end())) {
+      throw(
+          std::runtime_error("CastemMaterialPropertyInterface::treatKeyword: "
+                             "unsupported keyword '" +
+                             k + "'"));
     }
-    return {false,current};
-  } // end of treatKeyword
+    return {false, current};
+  }  // end of treatKeyword
 
   CastemMaterialPropertyInterface::~CastemMaterialPropertyInterface() = default;
 
-  void
-  CastemMaterialPropertyInterface::getTargetsDescription(TargetsDescription& d,
-							 const MaterialPropertyDescription& mpd)
-  {
-    const auto lib = "Castem"+getMaterialLawLibraryNameBase(mpd.library,
-							    mpd.material);
-    const auto name    = this->getCastemFunctionName(mpd.material,
-						     mpd.className);
-#if  !((defined _WIN32) && (defined _MSC_VER))
-    insert_if(d[lib].ldflags,"-lm");
+  void CastemMaterialPropertyInterface::getTargetsDescription(
+      TargetsDescription& d, const MaterialPropertyDescription& mpd) {
+    const auto lib =
+        "Castem" + getMaterialLawLibraryNameBase(mpd.library, mpd.material);
+    const auto name = this->getCastemFunctionName(mpd.material, mpd.className);
+#if !((defined _WIN32) && (defined _MSC_VER))
+    insert_if(d[lib].ldflags, "-lm");
 #endif /* !((defined _WIN32) && (defined _MSC_VER)) */
-    insert_if(d[lib].cppflags,CASTEM_CPPFLAGS);
-    insert_if(d[lib].sources,this->getSourceFileName(name));
-    d.headers.push_back("include/"+this->getHeaderFileName(name));    
-    insert_if(d[lib].epts,name);
-  } // end of CastemMaterialPropertyInterface::getTargetsDescription
+    insert_if(d[lib].cppflags, CASTEM_CPPFLAGS);
+    insert_if(d[lib].sources, this->getSourceFileName(name));
+    d.headers.push_back("include/" + this->getHeaderFileName(name));
+    insert_if(d[lib].epts, name);
+  }  // end of CastemMaterialPropertyInterface::getTargetsDescription
 
-  std::string
-  CastemMaterialPropertyInterface::getCastemFunctionName(const std::string& material,
-							 const std::string& className)
-  {
-    if(material.empty()){
+  std::string CastemMaterialPropertyInterface::getCastemFunctionName(
+      const std::string& material, const std::string& className) {
+    if (material.empty()) {
       return className;
     }
-    return material+"_"+className;
+    return material + "_" + className;
   }
 
-  std::string
-  CastemMaterialPropertyInterface::getHeaderFileName(const std::string& name)
-  {
+  std::string CastemMaterialPropertyInterface::getHeaderFileName(
+      const std::string& name) {
     return name + "-castem.hxx";
   }
 
-  std::string
-  CastemMaterialPropertyInterface::getSourceFileName(const std::string& name)
-  {
+  std::string CastemMaterialPropertyInterface::getSourceFileName(
+      const std::string& name) {
     return name + "-castem.cxx";
   }
 
-  void
-  CastemMaterialPropertyInterface::writeOutputFiles(const MaterialPropertyDescription& mpd,
-						    const FileDescription& fd)
-  {
-    this->writeHeaderFile(mpd,fd);
-    this->writeSrcFile(mpd,fd);
-  } // end of CastemMaterialPropertyInterface::writeOutputFiles
+  void CastemMaterialPropertyInterface::writeOutputFiles(
+      const MaterialPropertyDescription& mpd, const FileDescription& fd) {
+    this->writeHeaderFile(mpd, fd);
+    this->writeSrcFile(mpd, fd);
+  }  // end of CastemMaterialPropertyInterface::writeOutputFiles
 
-  void
-  CastemMaterialPropertyInterface::writeHeaderFile(const MaterialPropertyDescription& mpd,
-						   const FileDescription& fd)
-  {
-    const auto name = this->getCastemFunctionName(mpd.material,mpd.className);
-    const auto fn = "include/"+this->getHeaderFileName(name);
+  void CastemMaterialPropertyInterface::writeHeaderFile(
+      const MaterialPropertyDescription& mpd, const FileDescription& fd) {
+    const auto name = this->getCastemFunctionName(mpd.material, mpd.className);
+    const auto fn = "include/" + this->getHeaderFileName(name);
     std::ofstream out{fn};
-    if(!out){
-      throw(std::runtime_error("CastemMaterialPropertyInterface::writeOutputFiles: "
-			       "unable to open '"+fn+"'"));
+    if (!out) {
+      throw(std::runtime_error(
+          "CastemMaterialPropertyInterface::writeOutputFiles: "
+          "unable to open '" +
+          fn + "'"));
     }
-    out.exceptions(std::ios::badbit|std::ios::failbit);
+    out.exceptions(std::ios::badbit | std::ios::failbit);
     out << "/*!\n"
-	<< "* \\file   " << fn  << "\n"
-	<< "* \\brief  " << "this file declares the " 
-	<< name << " MaterialLaw.\n"
-	<< "*         File generated by "
-	<< MFrontHeader::getVersionName() << " "
-	<< "version " << MFrontHeader::getVersionNumber()
-	<< '\n';
-    if(!fd.authorName.empty()){
+        << "* \\file   " << fn << "\n"
+        << "* \\brief  "
+        << "this file declares the " << name << " MaterialLaw.\n"
+        << "*         File generated by " << MFrontHeader::getVersionName()
+        << " "
+        << "version " << MFrontHeader::getVersionNumber() << '\n';
+    if (!fd.authorName.empty()) {
       out << "* \\author " << fd.authorName << '\n';
     }
-    if(!fd.date.empty()){
-      out << "* \\date   " << fd.date       << '\n';
+    if (!fd.date.empty()) {
+      out << "* \\date   " << fd.date << '\n';
     }
-    if(!fd.description.empty()){
+    if (!fd.description.empty()) {
       out << fd.description << '\n';
     }
     out << " */\n\n";
@@ -159,7 +146,7 @@ namespace mfront
     out << name << "(";
     out << "const double * const";
     out << ");\n\n";
-    if(!mpd.parameters.empty()){
+    if (!mpd.parameters.empty()) {
       out << "MFRONT_SHAREDOBJ int\n";
       out << name << "_setParameter(const char *const,";
       out << "const double";
@@ -170,279 +157,269 @@ namespace mfront
     out << "#endif /* __cplusplus */\n\n";
     out << "#endif /* " << makeUpperCase(name) << "_CASTEM_HH */\n";
     out.close();
-  } // end of CastemMaterialPropertyInterface::writeHeaderFile(void)
+  }  // end of CastemMaterialPropertyInterface::writeHeaderFile(void)
 
-  void
-  CastemMaterialPropertyInterface::writeSrcFile(const MaterialPropertyDescription& mpd,
-						const FileDescription& fd)
-  {
-    const auto name = this->getCastemFunctionName(mpd.material,mpd.className);
-    const auto fn   = "src/"+this->getSourceFileName(name);
+  void CastemMaterialPropertyInterface::writeSrcFile(
+      const MaterialPropertyDescription& mpd, const FileDescription& fd) {
+    const auto name = this->getCastemFunctionName(mpd.material, mpd.className);
+    const auto fn = "src/" + this->getSourceFileName(name);
     std::ofstream out{fn};
-    if(!out){
-      throw(std::runtime_error("CastemMaterialPropertyInterface::writeOutputFiles: "
-			       "unable to open '"+fn+"'"));
+    if (!out) {
+      throw(std::runtime_error(
+          "CastemMaterialPropertyInterface::writeOutputFiles: "
+          "unable to open '" +
+          fn + "'"));
     }
-    out.exceptions(std::ios::badbit|std::ios::failbit);
-    const auto& file=fd.fileName;
-    const auto& author=fd.authorName;
-    const auto& date=fd.date;
-    const auto& includes=mpd.includes;
-    const auto& output=mpd.output;
-    const auto& inputs=mpd.inputs;
-    const auto& materialLaws=mpd.materialLaws;
-    const auto& glossaryNames=mpd.glossaryNames;
-    const auto& entryNames=mpd.entryNames;
-    const auto& staticVars=mpd.staticVars;
-    const auto& params=mpd.parameters;
-    const auto& function=mpd.f;
-    const auto& bounds=mpd.bounds;
-    const auto& physicalBounds=mpd.physicalBounds;
+    out.exceptions(std::ios::badbit | std::ios::failbit);
+    const auto& file = fd.fileName;
+    const auto& author = fd.authorName;
+    const auto& date = fd.date;
+    const auto& includes = mpd.includes;
+    const auto& output = mpd.output;
+    const auto& inputs = mpd.inputs;
+    const auto& materialLaws = mpd.materialLaws;
+    const auto& glossaryNames = mpd.glossaryNames;
+    const auto& entryNames = mpd.entryNames;
+    const auto& staticVars = mpd.staticVars;
+    const auto& params = mpd.parameters;
+    const auto& function = mpd.f;
+    const auto& bounds = mpd.bounds;
+    const auto& physicalBounds = mpd.physicalBounds;
     out << "/*!\n";
-    out << "* \\file   " << fn  << '\n';
-    out << "* \\brief  " << "this file implements the " 
-	<< name << " MaterialLaw.\n";
+    out << "* \\file   " << fn << '\n';
+    out << "* \\brief  "
+        << "this file implements the " << name << " MaterialLaw.\n";
     out << "*         File generated by ";
     out << MFrontHeader::getVersionName() << " ";
     out << "version " << MFrontHeader::getVersionNumber();
     out << '\n';
-    if(!author.empty()){
+    if (!author.empty()) {
       out << "* \\author " << author << '\n';
     }
-    if(!date.empty()){
-      out << "* \\date   " << date       << '\n';
+    if (!date.empty()) {
+      out << "* \\date   " << date << '\n';
     }
     out << " */\n\n"
-	<< "#include<algorithm>\n"
-	<< "#include<iostream>\n"
-	<< "#include<iterator>\n"
-	<< "#include<fstream>\n"
-	<< "#include<sstream>\n"
-	<< "#include<cstring>\n"
-	<< "#include<cstdlib>\n"
-	<< "#include<string>\n"
-      	<< "#include<vector>\n"
-	<< "#include<cmath>\n";
-    if(!includes.empty()){
+        << "#include<algorithm>\n"
+        << "#include<iostream>\n"
+        << "#include<iterator>\n"
+        << "#include<fstream>\n"
+        << "#include<sstream>\n"
+        << "#include<cstring>\n"
+        << "#include<cstdlib>\n"
+        << "#include<string>\n"
+        << "#include<vector>\n"
+        << "#include<cmath>\n";
+    if (!includes.empty()) {
       out << includes << "\n\n";
     }
     out << "#include\"" << name << "-castem.hxx\"\n\n";
-    writeMaterialPropertyParametersHandler(out,mpd,
-					   name,"double","castem");
+    writeMaterialPropertyParametersHandler(out, mpd, name, "double", "castem");
     out << "#ifdef __cplusplus\n"
-	<< "extern \"C\"{\n"
-	<< "#endif /* __cplusplus */\n\n";
+        << "extern \"C\"{\n"
+        << "#endif /* __cplusplus */\n\n";
 
     out << "MFRONT_SHAREDOBJ const char *\n"
-	<< name << "_src = \""
-	<< tfel::utilities::tokenize(file,tfel::system::dirSeparator()).back()
-	<< "\";\n\n";
-    if(!inputs.empty()){
+        << name << "_src = \""
+        << tfel::utilities::tokenize(file, tfel::system::dirSeparator()).back()
+        << "\";\n\n";
+    if (!inputs.empty()) {
       out << "MFRONT_SHAREDOBJ const char *\n";
       out << name << "_args[" << inputs.size();
       out << "] = {";
-      for(auto p3=inputs.begin();p3!=inputs.end();){
-	std::string iname;
-	auto p4=glossaryNames.find(p3->name);
-	if(p4!=glossaryNames.end()){
-	  iname = "\""+p4->second+"\"";
-	} else if((p4=entryNames.find(p3->name))!=entryNames.end()){
-	  iname = "\""+p4->second+"\"";
-	} else {
-	  iname = "\""+p3->name+"\"";
-	}
-	out << iname;
-	if(++p3!=inputs.end()){
-	  out << ",";
-	}
+      for (auto p3 = inputs.begin(); p3 != inputs.end();) {
+        std::string iname;
+        auto p4 = glossaryNames.find(p3->name);
+        if (p4 != glossaryNames.end()) {
+          iname = "\"" + p4->second + "\"";
+        } else if ((p4 = entryNames.find(p3->name)) != entryNames.end()) {
+          iname = "\"" + p4->second + "\"";
+        } else {
+          iname = "\"" + p3->name + "\"";
+        }
+        out << iname;
+        if (++p3 != inputs.end()) {
+          out << ",";
+        }
       }
       out << "};\n\n";
     }
 
     out << "MFRONT_SHAREDOBJ unsigned short\n"
-	<< name << "_nargs = " << inputs.size() << "u;\n\n";
+        << name << "_nargs = " << inputs.size() << "u;\n\n";
 
-    if(!params.empty()){
+    if (!params.empty()) {
       const auto hn = getMaterialPropertyParametersHandlerClassName(name);
       out << "MFRONT_SHAREDOBJ int\n";
       out << name << "_setParameter(const char *const p,";
       out << "const double v";
       out << "){\n";
-      for(const auto& p : params){
-	out << "if(strcmp(\"" << p << "\",p)==0){\n";
-	out << "castem::" <<  hn << "::get" << hn << "()." << p << " = v;\n";
-	out << "return 1;\n";
-	out << "}\n";
-      }	
+      for (const auto& p : params) {
+        out << "if(strcmp(\"" << p << "\",p)==0){\n";
+        out << "castem::" << hn << "::get" << hn << "()." << p << " = v;\n";
+        out << "return 1;\n";
+        out << "}\n";
+      }
       out << "return 0;\n";
       out << "}\n\n";
     }
 
-    out << "MFRONT_SHAREDOBJ double\n"
-	<< name << "(";
-    if(!inputs.empty()){
+    out << "MFRONT_SHAREDOBJ double\n" << name << "(";
+    if (!inputs.empty()) {
       out << "const double * const castem_params";
     } else {
       out << "const double * const";
     }
     out << ")\n{\n"
-	<< "using namespace std;\n"
-	<< "typedef double real;\n";
+        << "using namespace std;\n"
+        << "typedef double real;\n";
     // material laws
-    writeMaterialLaws("CastemMaterialPropertyInterface::writeOutputFile",
-		      out,materialLaws);
+    writeMaterialLaws("CastemMaterialPropertyInterface::writeOutputFile", out,
+                      materialLaws);
     // static variables
     writeStaticVariables("CastemMaterialPropertyInterface::writeOutputFile",
-			 out,staticVars,file);
+                         out, staticVars, file);
     // parameters
-    if(!params.empty()){
+    if (!params.empty()) {
       const auto hn = getMaterialPropertyParametersHandlerClassName(name);
-      out << "if(!castem::" <<  hn << "::get" << hn << "().ok){\n"
-	  << "return std::nan(castem::"<< name << "MaterialPropertyHandler::get"
-	  << name << "MaterialPropertyHandler().msg.c_str());\n"
-	  << "}\n";
-      writeAssignMaterialPropertyParameters(out,mpd,name,
-					    "double","castem");
+      out << "if(!castem::" << hn << "::get" << hn << "().ok){\n"
+          << "return std::nan(castem::" << name
+          << "MaterialPropertyHandler::get" << name
+          << "MaterialPropertyHandler().msg.c_str());\n"
+          << "}\n";
+      writeAssignMaterialPropertyParameters(out, mpd, name, "double", "castem");
     }
-    if(!inputs.empty()){
-      auto p3=inputs.begin();
-      for(auto i=0u;p3!=inputs.end();++p3,++i){
-	out << "const double " << p3->name << " = ";
-	if(i==0){
-	  out << "*(castem_params);\n";
-	} else {
-	  out << "*(castem_params+"+std::to_string(i)+"u);\n";
-	}
+    if (!inputs.empty()) {
+      auto p3 = inputs.begin();
+      for (auto i = 0u; p3 != inputs.end(); ++p3, ++i) {
+        out << "const double " << p3->name << " = ";
+        if (i == 0) {
+          out << "*(castem_params);\n";
+        } else {
+          out << "*(castem_params+" + std::to_string(i) + "u);\n";
+        }
       }
     }
     out << "real " << output << ";\n";
-    if((!physicalBounds.empty())||
-       (!bounds.empty())){
+    if ((!physicalBounds.empty()) || (!bounds.empty())) {
       out << "#ifndef NO_CASTEM_BOUNDS_CHECK\n";
     }
-    if(!physicalBounds.empty()){
+    if (!physicalBounds.empty()) {
       out << "// treating physical bounds\n";
-      for(const auto& b : physicalBounds){
-	if(b.boundsType==VariableBoundsDescription::Lower){
-	  out << "if(" << b.varName<< " < "<< b.lowerBound << "){\n";
-	  out << "cerr << \"" << name << " : "
-	      << b.varName << " is below its physical lower bound (\"\n << "
-	      << b.varName << " << \"<" << b.lowerBound << ").\\n\";\n";
-	  out << "return nan(\""
-	      << name << " : "
-	      << b.varName << " is not physically valid.\");\n";
-	  out << "}\n";
-	} else if(b.boundsType==VariableBoundsDescription::Upper){
-	  out << "if(" << b.varName<< " > "<< b.upperBound << "){\n";
-	  out << "cerr << \"" << name << " : "
-	      << b.varName << " is below its physical upper bound (\"\n << "
-	      << b.varName << " << \">" << b.upperBound << ").\\n\";\n";
-	  out << "return nan(\""
-	      << name << " : "
-	      << b.varName << " is not physically valid.\");\n";
-	  out << "}\n";
-	} else {
-	  out << "if((" << b.varName<< " < "<< b.lowerBound << ")||"
-	      << "(" << b.varName<< " > "<< b.upperBound << ")){\n";
-	  out << "if(" << b.varName<< " < " << b.lowerBound << "){\n";
-	  out << "cerr << \"" << name << " : "
-	      << b.varName << " is below its physical lower bound (\"\n << "
-	      << b.varName << " << \"<" << b.lowerBound << ").\\n\";\n";
-	  out << "} else {\n";
-	  out << "cerr << \"" << name << " : "
-	      << b.varName << " is over its physical upper bound (\"\n << "
-	      << b.varName << " << \">" << b.upperBound << ").\\n\";\n";
-	  out << "}\n";
-	  out << "return nan(\""
-	      << name << " : "
-	      << b.varName << " is not physically valid.\");\n";
-	  out << "}\n";
-	}
+      for (const auto& b : physicalBounds) {
+        if (b.boundsType == VariableBoundsDescription::Lower) {
+          out << "if(" << b.varName << " < " << b.lowerBound << "){\n";
+          out << "cerr << \"" << name << " : " << b.varName
+              << " is below its physical lower bound (\"\n << " << b.varName
+              << " << \"<" << b.lowerBound << ").\\n\";\n";
+          out << "return nan(\"" << name << " : " << b.varName
+              << " is not physically valid.\");\n";
+          out << "}\n";
+        } else if (b.boundsType == VariableBoundsDescription::Upper) {
+          out << "if(" << b.varName << " > " << b.upperBound << "){\n";
+          out << "cerr << \"" << name << " : " << b.varName
+              << " is below its physical upper bound (\"\n << " << b.varName
+              << " << \">" << b.upperBound << ").\\n\";\n";
+          out << "return nan(\"" << name << " : " << b.varName
+              << " is not physically valid.\");\n";
+          out << "}\n";
+        } else {
+          out << "if((" << b.varName << " < " << b.lowerBound << ")||"
+              << "(" << b.varName << " > " << b.upperBound << ")){\n";
+          out << "if(" << b.varName << " < " << b.lowerBound << "){\n";
+          out << "cerr << \"" << name << " : " << b.varName
+              << " is below its physical lower bound (\"\n << " << b.varName
+              << " << \"<" << b.lowerBound << ").\\n\";\n";
+          out << "} else {\n";
+          out << "cerr << \"" << name << " : " << b.varName
+              << " is over its physical upper bound (\"\n << " << b.varName
+              << " << \">" << b.upperBound << ").\\n\";\n";
+          out << "}\n";
+          out << "return nan(\"" << name << " : " << b.varName
+              << " is not physically valid.\");\n";
+          out << "}\n";
+        }
       }
     }
-    if(!bounds.empty()){
+    if (!bounds.empty()) {
       out << "// treating standard bounds\n";
-      for(const auto& b : bounds){
-	if(b.boundsType==VariableBoundsDescription::Lower){
-	  out << "if(" << b.varName<< " < "<< b.lowerBound << "){\n";
-	  out << "const char * const policy = "
-	      << "::getenv(\"CASTEM_OUT_OF_BOUNDS_POLICY\");\n";
-	  out << "if(policy!=nullptr){\n";
-	  out << "if(strcmp(policy,\"STRICT\")==0){\n";
-	  out << "return nan(\""
-	      << name << " : "
-	      << b.varName << " is out of bounds.\");\n";
-	  out << "} else if (strcmp(policy,\"WARNING\")==0){\n";
-	  out << "cerr << \"" << name << " : "
-	      << b.varName << " is below its lower bound (\"\n << "
-	      << b.varName << " << \"<" << b.lowerBound << ").\\n\";\n";
-	  out << "}\n";
-	  out << "}\n";
-	  out << "}\n";
-	} else if(b.boundsType==VariableBoundsDescription::Upper){
-	  out << "if(" << b.varName<< " > "<< b.upperBound << "){\n";
-	  out << "const char * const policy = "
-	      << "::getenv(\"CASTEM_OUT_OF_BOUNDS_POLICY\");\n";
-	  out << "if(policy!=nullptr){\n";
-	  out << "if(strcmp(policy,\"STRICT\")==0){\n";
-	  out << "cerr << \"" << name << " : "
-	      << b.varName << " is over its upper bound (\"\n << "
-	      << b.varName << " << \">" << b.upperBound << ").\\n\";\n";
-	  out << "return nan(\""
-	      << name << " : "
-	      << b.varName << " is out of bounds.\");\n";
-	  out << "} else if (strcmp(policy,\"WARNING\")==0){\n";
-	  out << "cerr << \"" << name << " : "
-	      << b.varName << " is over its upper bound (\"\n << "
-	      << b.varName << " << \">" << b.upperBound << ").\\n\";\n";
-	  out << "}\n";
-	  out << "}\n";
-	  out << "}\n";
-	} else {
-	  out << "if((" << b.varName<< " < "<< b.lowerBound << ")||"
-	      << "(" << b.varName<< " > "<< b.upperBound << ")){\n";
-	  out << "const char * const policy = "
-	      << "::getenv(\"CASTEM_OUT_OF_BOUNDS_POLICY\");\n";
-	  out << "if(policy!=nullptr){\n";
-	  out << "if(strcmp(policy,\"STRICT\")==0){\n";
-	  out << "if(" << b.varName<< " < " << b.lowerBound << "){\n";
-	  out << "cerr << \"" << name << " : "
-	      << b.varName << " is below its lower bound (\"\n << "
-	      << b.varName << " << \"<" << b.lowerBound << ").\\n\";\n";
-	  out << "} else {\n";
-	  out << "cerr << \"" << name << " : "
-	      << b.varName << " is over its upper bound (\"\n << "
-	      << b.varName << " << \">" << b.upperBound << ").\\n\";\n";
-	  out << "}\n";
-	  out << "return nan(\""
-	      << name << " : "
-	      << b.varName << " is out of bounds.\");\n";
-	  out << "} else if (strcmp(policy,\"WARNING\")==0){\n";
-	  out << "if(" << b.varName<< " < "<< b.lowerBound << "){\n";
-	  out << "cerr << \"" << name << " : "
-	      << b.varName << " is below its lower bound (\"\n << "
-	      << b.varName << " << \"<" << b.lowerBound << ").\\n\";\n"
-	      << "} else {\n"
-	      << "cerr << \"" << name << " : "
-	      << b.varName << " is over its upper bound (\"\n << "
-	      << b.varName << " << \">" << b.upperBound << ").\\n\";\n"
-	      << "}\n"
-	      << "}\n"
-	      << "}\n"
-	      << "}\n";
-	}
+      for (const auto& b : bounds) {
+        if (b.boundsType == VariableBoundsDescription::Lower) {
+          out << "if(" << b.varName << " < " << b.lowerBound << "){\n";
+          out << "const char * const policy = "
+              << "::getenv(\"CASTEM_OUT_OF_BOUNDS_POLICY\");\n";
+          out << "if(policy!=nullptr){\n";
+          out << "if(strcmp(policy,\"STRICT\")==0){\n";
+          out << "return nan(\"" << name << " : " << b.varName
+              << " is out of bounds.\");\n";
+          out << "} else if (strcmp(policy,\"WARNING\")==0){\n";
+          out << "cerr << \"" << name << " : " << b.varName
+              << " is below its lower bound (\"\n << " << b.varName << " << \"<"
+              << b.lowerBound << ").\\n\";\n";
+          out << "}\n";
+          out << "}\n";
+          out << "}\n";
+        } else if (b.boundsType == VariableBoundsDescription::Upper) {
+          out << "if(" << b.varName << " > " << b.upperBound << "){\n";
+          out << "const char * const policy = "
+              << "::getenv(\"CASTEM_OUT_OF_BOUNDS_POLICY\");\n";
+          out << "if(policy!=nullptr){\n";
+          out << "if(strcmp(policy,\"STRICT\")==0){\n";
+          out << "cerr << \"" << name << " : " << b.varName
+              << " is over its upper bound (\"\n << " << b.varName << " << \">"
+              << b.upperBound << ").\\n\";\n";
+          out << "return nan(\"" << name << " : " << b.varName
+              << " is out of bounds.\");\n";
+          out << "} else if (strcmp(policy,\"WARNING\")==0){\n";
+          out << "cerr << \"" << name << " : " << b.varName
+              << " is over its upper bound (\"\n << " << b.varName << " << \">"
+              << b.upperBound << ").\\n\";\n";
+          out << "}\n";
+          out << "}\n";
+          out << "}\n";
+        } else {
+          out << "if((" << b.varName << " < " << b.lowerBound << ")||"
+              << "(" << b.varName << " > " << b.upperBound << ")){\n";
+          out << "const char * const policy = "
+              << "::getenv(\"CASTEM_OUT_OF_BOUNDS_POLICY\");\n";
+          out << "if(policy!=nullptr){\n";
+          out << "if(strcmp(policy,\"STRICT\")==0){\n";
+          out << "if(" << b.varName << " < " << b.lowerBound << "){\n";
+          out << "cerr << \"" << name << " : " << b.varName
+              << " is below its lower bound (\"\n << " << b.varName << " << \"<"
+              << b.lowerBound << ").\\n\";\n";
+          out << "} else {\n";
+          out << "cerr << \"" << name << " : " << b.varName
+              << " is over its upper bound (\"\n << " << b.varName << " << \">"
+              << b.upperBound << ").\\n\";\n";
+          out << "}\n";
+          out << "return nan(\"" << name << " : " << b.varName
+              << " is out of bounds.\");\n";
+          out << "} else if (strcmp(policy,\"WARNING\")==0){\n";
+          out << "if(" << b.varName << " < " << b.lowerBound << "){\n";
+          out << "cerr << \"" << name << " : " << b.varName
+              << " is below its lower bound (\"\n << " << b.varName << " << \"<"
+              << b.lowerBound << ").\\n\";\n"
+              << "} else {\n"
+              << "cerr << \"" << name << " : " << b.varName
+              << " is over its upper bound (\"\n << " << b.varName << " << \">"
+              << b.upperBound << ").\\n\";\n"
+              << "}\n"
+              << "}\n"
+              << "}\n"
+              << "}\n";
+        }
       }
     }
-    if((!physicalBounds.empty())||(!bounds.empty())){
+    if ((!physicalBounds.empty()) || (!bounds.empty())) {
       out << "#endif /* NO_CASTEM_BOUNDS_CHECK */\n";
     }
-    out << function.body
-	<< "return " << output << ";\n"
-	<< "} // end of " << name << "\n\n"
-	<< "#ifdef __cplusplus\n"
-	<< "} // end of extern \"C\"\n"
-	<< "#endif /* __cplusplus */\n\n";
+    out << function.body << "return " << output << ";\n"
+        << "} // end of " << name << "\n\n"
+        << "#ifdef __cplusplus\n"
+        << "} // end of extern \"C\"\n"
+        << "#endif /* __cplusplus */\n\n";
     out.close();
-  } // end of CastemMaterialPropertyInterface::writeSrcFile(void)
+  }  // end of CastemMaterialPropertyInterface::writeSrcFile(void)
 
-} // end of namespace mfront
+}  // end of namespace mfront

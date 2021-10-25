@@ -1,571 +1,591 @@
-/*! 
+/*!
  * \file  mfront/include/MFront/Aster/AsterOrthotropicBehaviourHandler.hxx
  * \brief
  * \author Helfer Thomas
  * \brief 30 janv. 2013
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_MFRONT_ASTER_ASTERORTHOTROPICBEHAVIOURHANDLER_H_
-#define LIB_MFRONT_ASTER_ASTERORTHOTROPICBEHAVIOURHANDLER_H_ 
+#define LIB_MFRONT_ASTER_ASTERORTHOTROPICBEHAVIOURHANDLER_H_
 
 #ifndef LIB_MFRONT_ASTER_ASTERBEHAVIOURHANDLER_H_
 #error "This header shall not be called directly"
 #endif /* LIB_MFRONT_ASTER_ASTERBEHAVIOURHANDLER_H_ */
 
-#include"MFront/Aster/AsterRotationMatrix.hxx"
-#include"MFront/Aster/AsterFiniteStrainRotationMatrix.hxx"
+#include "MFront/Aster/AsterRotationMatrix.hxx"
+#include "MFront/Aster/AsterFiniteStrainRotationMatrix.hxx"
 
-namespace aster
-{
+namespace aster {
 
   //! forward declaration
-  template<tfel::material::ModellingHypothesis::Hypothesis H,
-	   template<tfel::material::ModellingHypothesis::Hypothesis,
-		    typename,bool> class Behaviour>
+  template <
+      tfel::material::ModellingHypothesis::Hypothesis H,
+      template <tfel::material::ModellingHypothesis::Hypothesis, typename, bool>
+      class Behaviour>
   struct AsterOrthotropicSmallStrainBehaviourHandler2D;
 
   //! forward declaration
-  template<tfel::material::ModellingHypothesis::Hypothesis H,
-	   template<tfel::material::ModellingHypothesis::Hypothesis,
-		    typename,bool> class Behaviour>
+  template <
+      tfel::material::ModellingHypothesis::Hypothesis H,
+      template <tfel::material::ModellingHypothesis::Hypothesis, typename, bool>
+      class Behaviour>
   struct AsterOrthotropicSmallStrainBehaviourHandler3D;
 
   //! forward declaration
-  template<tfel::material::ModellingHypothesis::Hypothesis H,
-	   template<tfel::material::ModellingHypothesis::Hypothesis,
-		    typename,bool> class Behaviour>
+  template <
+      tfel::material::ModellingHypothesis::Hypothesis H,
+      template <tfel::material::ModellingHypothesis::Hypothesis, typename, bool>
+      class Behaviour>
   struct AsterOrthotropicFiniteStrainBehaviourHandler2D;
 
   //! forward declaration
-  template<tfel::material::ModellingHypothesis::Hypothesis H,
-	   template<tfel::material::ModellingHypothesis::Hypothesis,
-		    typename,bool> class Behaviour>
+  template <
+      tfel::material::ModellingHypothesis::Hypothesis H,
+      template <tfel::material::ModellingHypothesis::Hypothesis, typename, bool>
+      class Behaviour>
   struct AsterOrthotropicFiniteStrainBehaviourHandler3D;
-  
-  /*!
-   * An helper structure to make an appropriate dispatch based on the
-   * spatial dimension
-   */
-  template<tfel::material::ModellingHypothesis::Hypothesis H,
-	   template<tfel::material::ModellingHypothesis::Hypothesis,
-		    typename,bool> class Behaviour>
-  struct TFEL_VISIBILITY_LOCAL AsterOrthotropicSmallStrainBehaviourDispatcher
-  {
-    //! a simple alias
-    typedef tfel::material::ModellingHypothesisToSpaceDimension<H> ModellingHypothesisToSpaceDimension;
-    // spatial dimension
-    static constexpr unsigned short N = ModellingHypothesisToSpaceDimension::value;
-    // the dispatch
-    typedef typename std::conditional<N==2,
-				    AsterOrthotropicSmallStrainBehaviourHandler2D<H,Behaviour>,
-				    AsterOrthotropicSmallStrainBehaviourHandler3D<H,Behaviour> >::type type;
-  }; // end of struct AsterOrthotropicSmallStrainBehaviourDispatcher;
 
   /*!
    * An helper structure to make an appropriate dispatch based on the
    * spatial dimension
    */
-  template<tfel::material::ModellingHypothesis::Hypothesis H,
-	   template<tfel::material::ModellingHypothesis::Hypothesis,
-		    typename,bool> class Behaviour>
-  struct TFEL_VISIBILITY_LOCAL AsterOrthotropicFiniteStrainBehaviourDispatcher
-  {
+  template <
+      tfel::material::ModellingHypothesis::Hypothesis H,
+      template <tfel::material::ModellingHypothesis::Hypothesis, typename, bool>
+      class Behaviour>
+  struct TFEL_VISIBILITY_LOCAL AsterOrthotropicSmallStrainBehaviourDispatcher {
     //! a simple alias
-    typedef tfel::material::ModellingHypothesisToSpaceDimension<H> ModellingHypothesisToSpaceDimension;
+    typedef tfel::material::ModellingHypothesisToSpaceDimension<H>
+        ModellingHypothesisToSpaceDimension;
     // spatial dimension
-    static constexpr unsigned short N = ModellingHypothesisToSpaceDimension::value;
+    static constexpr unsigned short N =
+        ModellingHypothesisToSpaceDimension::value;
     // the dispatch
-    typedef typename std::conditional<N==2,
-				    AsterOrthotropicFiniteStrainBehaviourHandler2D<H,Behaviour>,
-				    AsterOrthotropicFiniteStrainBehaviourHandler3D<H,Behaviour> >::type type;
-  }; // end of struct AsterOrthotropicFiniteStrainBehaviourDispatcher;
-  
+    typedef typename std::conditional<
+        N == 2,
+        AsterOrthotropicSmallStrainBehaviourHandler2D<H, Behaviour>,
+        AsterOrthotropicSmallStrainBehaviourHandler3D<H, Behaviour>>::type type;
+  };  // end of struct AsterOrthotropicSmallStrainBehaviourDispatcher;
+
+  /*!
+   * An helper structure to make an appropriate dispatch based on the
+   * spatial dimension
+   */
+  template <
+      tfel::material::ModellingHypothesis::Hypothesis H,
+      template <tfel::material::ModellingHypothesis::Hypothesis, typename, bool>
+      class Behaviour>
+  struct TFEL_VISIBILITY_LOCAL AsterOrthotropicFiniteStrainBehaviourDispatcher {
+    //! a simple alias
+    typedef tfel::material::ModellingHypothesisToSpaceDimension<H>
+        ModellingHypothesisToSpaceDimension;
+    // spatial dimension
+    static constexpr unsigned short N =
+        ModellingHypothesisToSpaceDimension::value;
+    // the dispatch
+    typedef typename std::conditional<
+        N == 2,
+        AsterOrthotropicFiniteStrainBehaviourHandler2D<H, Behaviour>,
+        AsterOrthotropicFiniteStrainBehaviourHandler3D<H, Behaviour>>::type
+        type;
+  };  // end of struct AsterOrthotropicFiniteStrainBehaviourDispatcher;
+
   /*!
    * The handler for orthotropic behaviours
    * By default, this is unsupported (cohesive zone models)
    */
-  template<AsterBehaviourType type,
-	   tfel::material::ModellingHypothesis::Hypothesis H,
-	   template<tfel::material::ModellingHypothesis::Hypothesis,
-		    typename,bool> class Behaviour>
+  template <
+      AsterBehaviourType type,
+      tfel::material::ModellingHypothesis::Hypothesis H,
+      template <tfel::material::ModellingHypothesis::Hypothesis, typename, bool>
+      class Behaviour>
   struct TFEL_VISIBILITY_LOCAL AsterOrthotropicBehaviourHandler
-    : public AsterUnSupportedCaseHandler
-  {
+      : public AsterUnSupportedCaseHandler {
     using AsterUnSupportedCaseHandler::exe;
   };
 
   /*!
    * The handler for small strain orthotropic behaviours
    */
-  template<tfel::material::ModellingHypothesis::Hypothesis H,
-	   template<tfel::material::ModellingHypothesis::Hypothesis,
-		    typename,bool> class Behaviour>
-  struct TFEL_VISIBILITY_LOCAL AsterOrthotropicBehaviourHandler<SMALLSTRAINSTANDARDBEHAVIOUR,H,Behaviour>
-    : public AsterOrthotropicSmallStrainBehaviourDispatcher<H,Behaviour>::type
-  {
-    typedef typename AsterOrthotropicSmallStrainBehaviourDispatcher<H,Behaviour>::type Handler;
+  template <
+      tfel::material::ModellingHypothesis::Hypothesis H,
+      template <tfel::material::ModellingHypothesis::Hypothesis, typename, bool>
+      class Behaviour>
+  struct TFEL_VISIBILITY_LOCAL
+      AsterOrthotropicBehaviourHandler<SMALLSTRAINSTANDARDBEHAVIOUR,
+                                       H,
+                                       Behaviour>
+      : public AsterOrthotropicSmallStrainBehaviourDispatcher<H,
+                                                              Behaviour>::type {
+    typedef
+        typename AsterOrthotropicSmallStrainBehaviourDispatcher<H,
+                                                                Behaviour>::type
+            Handler;
     using Handler::exe;
   };
 
-  template<tfel::material::ModellingHypothesis::Hypothesis H,
-	   template<tfel::material::ModellingHypothesis::Hypothesis,typename,bool> class Behaviour>
+  template <
+      tfel::material::ModellingHypothesis::Hypothesis H,
+      template <tfel::material::ModellingHypothesis::Hypothesis, typename, bool>
+      class Behaviour>
   struct TFEL_VISIBILITY_LOCAL AsterOrthotropicSmallStrainBehaviourHandler1D
-    : private AsterBehaviourHandler<H,Behaviour>
-  {
-    TFEL_ASTER_INLINE2 static 
-      void exe(const AsterReal *const DTIME,
-	       const AsterReal *const,
-	       AsterReal *const DDSOE,
-	       const AsterReal *const STRAN ,
-	       const AsterReal *const DSTRAN,
-	       const AsterReal *const TEMP  ,
-	       const AsterReal *const DTEMP,
-	       const AsterReal *const PROPS ,
-	       const AsterInt  *const NPROPS,
-	       const AsterReal *const PREDEF,
-	       const AsterReal *const DPRED,
-	       AsterReal *const STATEV,
-	       const AsterInt  *const NSTATV,
-	       AsterReal *const STRESS,
-	       const tfel::material::OutOfBoundsPolicy op,
-	       const StressFreeExpansionHandler& sfeh)
-    {
+      : private AsterBehaviourHandler<H, Behaviour> {
+    TFEL_ASTER_INLINE2 static void exe(
+        const AsterReal *const DTIME,
+        const AsterReal *const,
+        AsterReal *const DDSOE,
+        const AsterReal *const STRAN,
+        const AsterReal *const DSTRAN,
+        const AsterReal *const TEMP,
+        const AsterReal *const DTEMP,
+        const AsterReal *const PROPS,
+        const AsterInt *const NPROPS,
+        const AsterReal *const PREDEF,
+        const AsterReal *const DPRED,
+        AsterReal *const STATEV,
+        const AsterInt *const NSTATV,
+        AsterReal *const STRESS,
+        const tfel::material::OutOfBoundsPolicy op,
+        const StressFreeExpansionHandler &sfeh) {
       using namespace tfel::meta;
       using namespace tfel::material;
       using namespace tfel::math;
-      typedef MechanicalBehaviourTraits<Behaviour<H,AsterReal,false> > MTraits;
-      typedef AsterTraits<Behaviour<H,AsterReal,false> > Traits;
-      typedef AsterBehaviourHandler<H,Behaviour> AsterBehaviourHandler;
+      typedef MechanicalBehaviourTraits<Behaviour<H, AsterReal, false>> MTraits;
+      typedef AsterTraits<Behaviour<H, AsterReal, false>> Traits;
+      typedef AsterBehaviourHandler<H, Behaviour> AsterBehaviourHandler;
       const bool is_defined_ = MTraits::is_defined;
       const bool bs = Traits::requiresStiffnessTensor;
       const bool ba = Traits::requiresThermalExpansionCoefficientTensor;
       typedef typename std::conditional<
-	is_defined_,
-	typename AsterBehaviourHandler::template Integrator<bs,ba>,
-	typename AsterBehaviourHandler::Error>::type Handler;
+          is_defined_,
+          typename AsterBehaviourHandler::template Integrator<bs, ba>,
+          typename AsterBehaviourHandler::Error>::type Handler;
       AsterBehaviourHandler::checkNPROPS(*NPROPS);
       AsterBehaviourHandler::checkNSTATV(*NSTATV);
-      Handler handler(DTIME,STRAN,DSTRAN,TEMP,DTEMP,PROPS,
-		      PREDEF,DPRED,STATEV,STRESS,op,sfeh);
-      handler.exe(DDSOE,STRESS,STATEV);
-    } // end of AsterOrthotropicBehaviourHander<1u,Behaviour>::exe
-  }; // end of struct AsterOrthotropicBehaviourHander<1u,Behaviour>
+      Handler handler(DTIME, STRAN, DSTRAN, TEMP, DTEMP, PROPS, PREDEF, DPRED,
+                      STATEV, STRESS, op, sfeh);
+      handler.exe(DDSOE, STRESS, STATEV);
+    }  // end of AsterOrthotropicBehaviourHander<1u,Behaviour>::exe
+  };   // end of struct AsterOrthotropicBehaviourHander<1u,Behaviour>
 
-  template<tfel::material::ModellingHypothesis::Hypothesis H,
-	   template<tfel::material::ModellingHypothesis::Hypothesis,
-		    typename,bool> class Behaviour>
+  template <
+      tfel::material::ModellingHypothesis::Hypothesis H,
+      template <tfel::material::ModellingHypothesis::Hypothesis, typename, bool>
+      class Behaviour>
   struct TFEL_VISIBILITY_LOCAL AsterOrthotropicSmallStrainBehaviourHandler2D
-    : private AsterBehaviourHandler<H,Behaviour>
-  {
-    TFEL_ASTER_INLINE2 static 
-      void exe(const AsterReal *const DTIME ,
-	       const AsterReal *const DROT  ,
-	       AsterReal *const DDSOE,
-	       const AsterReal *const STRAN ,
-	       const AsterReal *const DSTRAN,
-	       const AsterReal *const TEMP  ,
-	       const AsterReal *const DTEMP,
-	       const AsterReal *const PROPS ,
-	       const AsterInt  *const NPROPS,
-	       const AsterReal *const PREDEF,
-	       const AsterReal *const DPRED,
-	       AsterReal *const STATEV,
-	       const AsterInt  *const NSTATV,
-	       AsterReal *const STRESS,
-	     const tfel::material::OutOfBoundsPolicy op,
-	     const StressFreeExpansionHandler& sfeh) 
-    {
+      : private AsterBehaviourHandler<H, Behaviour> {
+    TFEL_ASTER_INLINE2 static void exe(
+        const AsterReal *const DTIME,
+        const AsterReal *const DROT,
+        AsterReal *const DDSOE,
+        const AsterReal *const STRAN,
+        const AsterReal *const DSTRAN,
+        const AsterReal *const TEMP,
+        const AsterReal *const DTEMP,
+        const AsterReal *const PROPS,
+        const AsterInt *const NPROPS,
+        const AsterReal *const PREDEF,
+        const AsterReal *const DPRED,
+        AsterReal *const STATEV,
+        const AsterInt *const NSTATV,
+        AsterReal *const STRESS,
+        const tfel::material::OutOfBoundsPolicy op,
+        const StressFreeExpansionHandler &sfeh) {
       using namespace tfel::meta;
       using namespace tfel::material;
       using namespace tfel::math;
-      typedef MechanicalBehaviourTraits<Behaviour<H,AsterReal,false> > MTraits;
-      typedef AsterTraits<Behaviour<H,AsterReal,false> > Traits;
-      typedef AsterBehaviourHandler<H,Behaviour> AsterBehaviourHandler;
+      typedef MechanicalBehaviourTraits<Behaviour<H, AsterReal, false>> MTraits;
+      typedef AsterTraits<Behaviour<H, AsterReal, false>> Traits;
+      typedef AsterBehaviourHandler<H, Behaviour> AsterBehaviourHandler;
       const bool is_defined_ = MTraits::is_defined;
       const bool bs = Traits::requiresStiffnessTensor;
       const bool ba = Traits::requiresThermalExpansionCoefficientTensor;
       typedef typename std::conditional<
-	is_defined_,
-	typename AsterBehaviourHandler::template Integrator<bs,ba>,
-	typename AsterBehaviourHandler::Error>::type Handler;
+          is_defined_,
+          typename AsterBehaviourHandler::template Integrator<bs, ba>,
+          typename AsterBehaviourHandler::Error>::type Handler;
       AsterReal s[4];
       AsterReal e[4];
       AsterReal de[4];
       AsterRotationMatrix2D m(DROT);
       AsterBehaviourHandler::checkNPROPS(*NPROPS);
       AsterBehaviourHandler::checkNSTATV(*NSTATV);
-      m.rotateStressesForward(STRESS,s);
-      m.rotateStrainsForward(STRAN,e);
-      m.rotateStrainsForward(DSTRAN,de);
-      const bool bDDSOE = std::abs(*DDSOE)>0.5; 
-      Handler handler(DTIME,e,de,TEMP,DTEMP,PROPS,
-		      PREDEF,DPRED,STATEV,s,op,sfeh);
-      handler.exe(DDSOE,s,STATEV);
-      m.rotateStressesBackward(s,STRESS);
-      if(bDDSOE){
-	m.rotateTangentOperatorBackward(DDSOE);
+      m.rotateStressesForward(STRESS, s);
+      m.rotateStrainsForward(STRAN, e);
+      m.rotateStrainsForward(DSTRAN, de);
+      const bool bDDSOE = std::abs(*DDSOE) > 0.5;
+      Handler handler(DTIME, e, de, TEMP, DTEMP, PROPS, PREDEF, DPRED, STATEV,
+                      s, op, sfeh);
+      handler.exe(DDSOE, s, STATEV);
+      m.rotateStressesBackward(s, STRESS);
+      if (bDDSOE) {
+        m.rotateTangentOperatorBackward(DDSOE);
       }
-    } // end of AsterOrthotropicBehaviourHander<2u,Behaviour>::exe
-  }; // end of AsterOrthotropicBehaviourHander<2u,Behaviour>
+    }  // end of AsterOrthotropicBehaviourHander<2u,Behaviour>::exe
+  };   // end of AsterOrthotropicBehaviourHander<2u,Behaviour>
 
-  template<template<tfel::material::ModellingHypothesis::Hypothesis,
-		    typename,bool> class Behaviour>
-  struct TFEL_VISIBILITY_LOCAL
-  AsterOrthotropicSmallStrainBehaviourHandler2D<tfel::material::ModellingHypothesis::PLANESTRESS,
-					       Behaviour>
-    : private AsterBehaviourHandler<tfel::material::ModellingHypothesis::PLANESTRESS,
-				    Behaviour>
-  {
-    TFEL_ASTER_INLINE2 static 
-      void exe(const AsterReal *const DTIME ,
-	       const AsterReal *const DROT  ,
-	       AsterReal *const DDSOE,
-	       const AsterReal *const STRAN ,
-	       const AsterReal *const DSTRAN,
-	       const AsterReal *const TEMP  ,
-	       const AsterReal *const DTEMP,
-	       const AsterReal *const PROPS ,
-	       const AsterInt  *const NPROPS,
-	       const AsterReal *const PREDEF,
-	       const AsterReal *const DPRED,
-	       AsterReal *const STATEV,
-	       const AsterInt  *const NSTATV,
-	       AsterReal *const STRESS,
-	     const tfel::material::OutOfBoundsPolicy op,
-	     const StressFreeExpansionHandler& sfeh) 
-    {
+  template <
+      template <tfel::material::ModellingHypothesis::Hypothesis, typename, bool>
+      class Behaviour>
+  struct TFEL_VISIBILITY_LOCAL AsterOrthotropicSmallStrainBehaviourHandler2D<
+      tfel::material::ModellingHypothesis::PLANESTRESS,
+      Behaviour>
+      : private AsterBehaviourHandler<
+            tfel::material::ModellingHypothesis::PLANESTRESS,
+            Behaviour> {
+    TFEL_ASTER_INLINE2 static void exe(
+        const AsterReal *const DTIME,
+        const AsterReal *const DROT,
+        AsterReal *const DDSOE,
+        const AsterReal *const STRAN,
+        const AsterReal *const DSTRAN,
+        const AsterReal *const TEMP,
+        const AsterReal *const DTEMP,
+        const AsterReal *const PROPS,
+        const AsterInt *const NPROPS,
+        const AsterReal *const PREDEF,
+        const AsterReal *const DPRED,
+        AsterReal *const STATEV,
+        const AsterInt *const NSTATV,
+        AsterReal *const STRESS,
+        const tfel::material::OutOfBoundsPolicy op,
+        const StressFreeExpansionHandler &sfeh) {
       using namespace tfel::meta;
       using namespace tfel::material;
       using namespace tfel::math;
-      const ModellingHypothesis::Hypothesis H = ModellingHypothesis::PLANESTRESS;	   
-      typedef MechanicalBehaviourTraits<Behaviour<H,AsterReal,false> > MTraits;
-      typedef AsterTraits<Behaviour<H,AsterReal,false> > Traits;
-      typedef AsterBehaviourHandler<H,Behaviour> AsterBehaviourHandler;
+      const ModellingHypothesis::Hypothesis H =
+          ModellingHypothesis::PLANESTRESS;
+      typedef MechanicalBehaviourTraits<Behaviour<H, AsterReal, false>> MTraits;
+      typedef AsterTraits<Behaviour<H, AsterReal, false>> Traits;
+      typedef AsterBehaviourHandler<H, Behaviour> AsterBehaviourHandler;
       const bool is_defined_ = MTraits::is_defined;
       const bool bs = Traits::requiresStiffnessTensor;
       const bool ba = Traits::requiresThermalExpansionCoefficientTensor;
       typedef typename std::conditional<
-	is_defined_,
-	typename AsterBehaviourHandler::template Integrator<bs,ba>,
-	typename AsterBehaviourHandler::Error>::type Handler;
+          is_defined_,
+          typename AsterBehaviourHandler::template Integrator<bs, ba>,
+          typename AsterBehaviourHandler::Error>::type Handler;
       AsterReal s[4];
       AsterReal e[4];
       AsterReal de[4];
       AsterRotationMatrix2D m(DROT);
       AsterBehaviourHandler::checkNPROPS(*NPROPS);
       AsterBehaviourHandler::checkNSTATV(*NSTATV);
-      m.rotateStressesForward(STRESS,s);
-      m.rotateStrainsForward(STRAN,e);
-      m.rotateStrainsForward(DSTRAN,de);
-      const bool bDDSOE = std::abs(*DDSOE)>0.5; 
-      Handler handler(DTIME,e,de,TEMP,DTEMP,PROPS,
-		      PREDEF,DPRED,STATEV,s,op,sfeh);
-      handler.exe(DDSOE,s,STATEV);
-      m.rotateStressesBackward(s,STRESS);
-      if(bDDSOE){
-	m.rotateTangentOperatorBackward(DDSOE);
+      m.rotateStressesForward(STRESS, s);
+      m.rotateStrainsForward(STRAN, e);
+      m.rotateStrainsForward(DSTRAN, de);
+      const bool bDDSOE = std::abs(*DDSOE) > 0.5;
+      Handler handler(DTIME, e, de, TEMP, DTEMP, PROPS, PREDEF, DPRED, STATEV,
+                      s, op, sfeh);
+      handler.exe(DDSOE, s, STATEV);
+      m.rotateStressesBackward(s, STRESS);
+      if (bDDSOE) {
+        m.rotateTangentOperatorBackward(DDSOE);
       }
-    } // end of AsterOrthotropicBehaviourHander<2u,Behaviour>::exe
-  }; // end of AsterOrthotropicBehaviourHander<2u,Behaviour>
+    }  // end of AsterOrthotropicBehaviourHander<2u,Behaviour>::exe
+  };   // end of AsterOrthotropicBehaviourHander<2u,Behaviour>
 
-  template<tfel::material::ModellingHypothesis::Hypothesis H,
-	   template<tfel::material::ModellingHypothesis::Hypothesis,
-		    typename,bool> class Behaviour>
+  template <
+      tfel::material::ModellingHypothesis::Hypothesis H,
+      template <tfel::material::ModellingHypothesis::Hypothesis, typename, bool>
+      class Behaviour>
   struct TFEL_VISIBILITY_LOCAL AsterOrthotropicSmallStrainBehaviourHandler3D
-    : private AsterBehaviourHandler<H,Behaviour>
-  {
-    TFEL_ASTER_INLINE2 static 
-      void exe(const AsterReal *const DTIME,
-	       const AsterReal *const DROT,
-	       AsterReal *const DDSOE,
-	       const AsterReal *const STRAN,
-	       const AsterReal *const DSTRAN,
-	       const AsterReal *const TEMP  ,
-	       const AsterReal *const DTEMP,
-	       const AsterReal *const PROPS ,
-	       const AsterInt  *const NPROPS,
-	       const AsterReal *const PREDEF,
-	       const AsterReal *const DPRED,
-	       AsterReal *const STATEV,
-	       const AsterInt  *const NSTATV,
-	       AsterReal *const STRESS,
-	       const tfel::material::OutOfBoundsPolicy op,
-	       const StressFreeExpansionHandler& sfeh)
-    {
+      : private AsterBehaviourHandler<H, Behaviour> {
+    TFEL_ASTER_INLINE2 static void exe(
+        const AsterReal *const DTIME,
+        const AsterReal *const DROT,
+        AsterReal *const DDSOE,
+        const AsterReal *const STRAN,
+        const AsterReal *const DSTRAN,
+        const AsterReal *const TEMP,
+        const AsterReal *const DTEMP,
+        const AsterReal *const PROPS,
+        const AsterInt *const NPROPS,
+        const AsterReal *const PREDEF,
+        const AsterReal *const DPRED,
+        AsterReal *const STATEV,
+        const AsterInt *const NSTATV,
+        AsterReal *const STRESS,
+        const tfel::material::OutOfBoundsPolicy op,
+        const StressFreeExpansionHandler &sfeh) {
       using namespace tfel::meta;
       using namespace tfel::material;
       using namespace tfel::math;
-      typedef MechanicalBehaviourTraits<Behaviour<H,AsterReal,false> > MTraits;
-      typedef AsterTraits<Behaviour<H,AsterReal,false> > Traits;
-      typedef AsterBehaviourHandler<H,Behaviour> AsterBehaviourHandler;
+      typedef MechanicalBehaviourTraits<Behaviour<H, AsterReal, false>> MTraits;
+      typedef AsterTraits<Behaviour<H, AsterReal, false>> Traits;
+      typedef AsterBehaviourHandler<H, Behaviour> AsterBehaviourHandler;
       const bool is_defined_ = MTraits::is_defined;
       const bool bs = Traits::requiresStiffnessTensor;
       const bool ba = Traits::requiresThermalExpansionCoefficientTensor;
       typedef typename std::conditional<
-	is_defined_,
-	typename AsterBehaviourHandler::template Integrator<bs,ba>,
-	typename AsterBehaviourHandler::Error>::type Handler;
-      AsterReal  s[6];
-      AsterReal  e[6];
+          is_defined_,
+          typename AsterBehaviourHandler::template Integrator<bs, ba>,
+          typename AsterBehaviourHandler::Error>::type Handler;
+      AsterReal s[6];
+      AsterReal e[6];
       AsterReal de[6];
       // Passage au repère matériau
       AsterRotationMatrix3D m(DROT);
-      m.rotateStressesForward(STRESS,s);
-      m.rotateStrainsForward(STRAN,e);
-      m.rotateStrainsForward(DSTRAN,de);
+      m.rotateStressesForward(STRESS, s);
+      m.rotateStrainsForward(STRAN, e);
+      m.rotateStrainsForward(DSTRAN, de);
       AsterBehaviourHandler::checkNPROPS(*NPROPS);
       AsterBehaviourHandler::checkNSTATV(*NSTATV);
-      const bool bDDSOE = std::abs(*DDSOE)>0.5; 
-      Handler handler(DTIME,e,de,TEMP,DTEMP,PROPS,
-		      PREDEF,DPRED,STATEV,s,op,sfeh);
-      handler.exe(DDSOE,s,STATEV);
-      m.rotateStressesBackward(s,STRESS);
-      if(bDDSOE){
-	m.rotateTangentOperatorBackward(DDSOE);
+      const bool bDDSOE = std::abs(*DDSOE) > 0.5;
+      Handler handler(DTIME, e, de, TEMP, DTEMP, PROPS, PREDEF, DPRED, STATEV,
+                      s, op, sfeh);
+      handler.exe(DDSOE, s, STATEV);
+      m.rotateStressesBackward(s, STRESS);
+      if (bDDSOE) {
+        m.rotateTangentOperatorBackward(DDSOE);
       }
-    } // end of AsterOrthotropicBehaviourHandler<3u,Behaviour>::exe
+    }  // end of AsterOrthotropicBehaviourHandler<3u,Behaviour>::exe
   };
 
   /*!
    * The handler for finite strain orthotropic behaviours
    */
-  template<tfel::material::ModellingHypothesis::Hypothesis H,
-	   template<tfel::material::ModellingHypothesis::Hypothesis,
-		    typename,bool> class Behaviour>
-  struct TFEL_VISIBILITY_LOCAL AsterOrthotropicBehaviourHandler<FINITESTRAINSTANDARDBEHAVIOUR,H,Behaviour>
-    : public AsterOrthotropicFiniteStrainBehaviourDispatcher<H,Behaviour>::type
-  {
-    typedef typename AsterOrthotropicFiniteStrainBehaviourDispatcher<H,Behaviour>::type Handler;
+  template <
+      tfel::material::ModellingHypothesis::Hypothesis H,
+      template <tfel::material::ModellingHypothesis::Hypothesis, typename, bool>
+      class Behaviour>
+  struct TFEL_VISIBILITY_LOCAL
+      AsterOrthotropicBehaviourHandler<FINITESTRAINSTANDARDBEHAVIOUR,
+                                       H,
+                                       Behaviour>
+      : public AsterOrthotropicFiniteStrainBehaviourDispatcher<H, Behaviour>::
+            type {
+    typedef
+        typename AsterOrthotropicFiniteStrainBehaviourDispatcher<H, Behaviour>::
+            type Handler;
     using Handler::exe;
   };
 
-  template<tfel::material::ModellingHypothesis::Hypothesis H,
-	   template<tfel::material::ModellingHypothesis::Hypothesis,typename,bool> class Behaviour>
+  template <
+      tfel::material::ModellingHypothesis::Hypothesis H,
+      template <tfel::material::ModellingHypothesis::Hypothesis, typename, bool>
+      class Behaviour>
   struct TFEL_VISIBILITY_LOCAL AsterOrthotropicFiniteStrainBehaviourHandler1D
-    : private AsterBehaviourHandler<H,Behaviour>
-  {
-    TFEL_ASTER_INLINE2 static 
-      void exe(const AsterReal *const DTIME,
-	       const AsterReal *const,
-	       AsterReal *const DDSOE,
-	       const AsterReal *const F0 ,
-	       const AsterReal *const F1,
-	       const AsterReal *const TEMP  ,
-	       const AsterReal *const DTEMP,
-	       const AsterReal *const PROPS ,
-	       const AsterInt  *const NPROPS,
-	       const AsterReal *const PREDEF,
-	       const AsterReal *const DPRED,
-	       AsterReal *const STATEV,
-	       const AsterInt  *const NSTATV,
-	       AsterReal *const STRESS,
-	       const tfel::material::OutOfBoundsPolicy op,
-	       const StressFreeExpansionHandler& sfeh)
-    {
+      : private AsterBehaviourHandler<H, Behaviour> {
+    TFEL_ASTER_INLINE2 static void exe(
+        const AsterReal *const DTIME,
+        const AsterReal *const,
+        AsterReal *const DDSOE,
+        const AsterReal *const F0,
+        const AsterReal *const F1,
+        const AsterReal *const TEMP,
+        const AsterReal *const DTEMP,
+        const AsterReal *const PROPS,
+        const AsterInt *const NPROPS,
+        const AsterReal *const PREDEF,
+        const AsterReal *const DPRED,
+        AsterReal *const STATEV,
+        const AsterInt *const NSTATV,
+        AsterReal *const STRESS,
+        const tfel::material::OutOfBoundsPolicy op,
+        const StressFreeExpansionHandler &sfeh) {
       using namespace tfel::meta;
       using namespace tfel::material;
       using namespace tfel::math;
-      typedef MechanicalBehaviourTraits<Behaviour<H,AsterReal,false> > MTraits;
-      typedef AsterTraits<Behaviour<H,AsterReal,false> > Traits;
-      typedef AsterBehaviourHandler<H,Behaviour> AsterBehaviourHandler;
+      typedef MechanicalBehaviourTraits<Behaviour<H, AsterReal, false>> MTraits;
+      typedef AsterTraits<Behaviour<H, AsterReal, false>> Traits;
+      typedef AsterBehaviourHandler<H, Behaviour> AsterBehaviourHandler;
       const bool is_defined_ = MTraits::is_defined;
       const bool bs = Traits::requiresStiffnessTensor;
       const bool ba = Traits::requiresThermalExpansionCoefficientTensor;
       typedef typename std::conditional<
-	is_defined_,
-	typename AsterBehaviourHandler::template Integrator<bs,ba>,
-	typename AsterBehaviourHandler::Error>::type Handler;
+          is_defined_,
+          typename AsterBehaviourHandler::template Integrator<bs, ba>,
+          typename AsterBehaviourHandler::Error>::type Handler;
       AsterBehaviourHandler::checkNPROPS(*NPROPS);
       AsterBehaviourHandler::checkNSTATV(*NSTATV);
-      Handler handler(DTIME,F0,F1,TEMP,DTEMP,PROPS,
-		      PREDEF,DPRED,STATEV,STRESS,op,sfeh);
-      handler.exe(DDSOE,STRESS,STATEV);
-    } // end of AsterOrthotropicBehaviourHander<1u,Behaviour>::exe
-  }; // end of struct AsterOrthotropicBehaviourHander<1u,Behaviour>
+      Handler handler(DTIME, F0, F1, TEMP, DTEMP, PROPS, PREDEF, DPRED, STATEV,
+                      STRESS, op, sfeh);
+      handler.exe(DDSOE, STRESS, STATEV);
+    }  // end of AsterOrthotropicBehaviourHander<1u,Behaviour>::exe
+  };   // end of struct AsterOrthotropicBehaviourHander<1u,Behaviour>
 
-  template<tfel::material::ModellingHypothesis::Hypothesis H,
-	   template<tfel::material::ModellingHypothesis::Hypothesis,
-		    typename,bool> class Behaviour>
+  template <
+      tfel::material::ModellingHypothesis::Hypothesis H,
+      template <tfel::material::ModellingHypothesis::Hypothesis, typename, bool>
+      class Behaviour>
   struct TFEL_VISIBILITY_LOCAL AsterOrthotropicFiniteStrainBehaviourHandler2D
-    : private AsterBehaviourHandler<H,Behaviour>
-  {
-    TFEL_ASTER_INLINE2 static 
-      void exe(const AsterReal *const DTIME ,
-	       const AsterReal *const DROT  ,
-	       AsterReal *const DDSOE,
-	       const AsterReal *const F0 ,
-	       const AsterReal *const F1,
-	       const AsterReal *const TEMP  ,
-	       const AsterReal *const DTEMP,
-	       const AsterReal *const PROPS ,
-	       const AsterInt  *const NPROPS,
-	       const AsterReal *const PREDEF,
-	       const AsterReal *const DPRED,
-	       AsterReal *const STATEV,
-	       const AsterInt  *const NSTATV,
-	       AsterReal *const STRESS,
-	       const tfel::material::OutOfBoundsPolicy op,
-	       const StressFreeExpansionHandler& sfeh) 
-    {
+      : private AsterBehaviourHandler<H, Behaviour> {
+    TFEL_ASTER_INLINE2 static void exe(
+        const AsterReal *const DTIME,
+        const AsterReal *const DROT,
+        AsterReal *const DDSOE,
+        const AsterReal *const F0,
+        const AsterReal *const F1,
+        const AsterReal *const TEMP,
+        const AsterReal *const DTEMP,
+        const AsterReal *const PROPS,
+        const AsterInt *const NPROPS,
+        const AsterReal *const PREDEF,
+        const AsterReal *const DPRED,
+        AsterReal *const STATEV,
+        const AsterInt *const NSTATV,
+        AsterReal *const STRESS,
+        const tfel::material::OutOfBoundsPolicy op,
+        const StressFreeExpansionHandler &sfeh) {
       using namespace tfel::meta;
       using namespace tfel::material;
       using namespace tfel::math;
-      typedef MechanicalBehaviourTraits<Behaviour<H,AsterReal,false> > MTraits;
-      typedef AsterTraits<Behaviour<H,AsterReal,false> > Traits;
-      typedef AsterBehaviourHandler<H,Behaviour> AsterBehaviourHandler;
+      typedef MechanicalBehaviourTraits<Behaviour<H, AsterReal, false>> MTraits;
+      typedef AsterTraits<Behaviour<H, AsterReal, false>> Traits;
+      typedef AsterBehaviourHandler<H, Behaviour> AsterBehaviourHandler;
       const bool is_defined_ = MTraits::is_defined;
       const bool bs = Traits::requiresStiffnessTensor;
       const bool ba = Traits::requiresThermalExpansionCoefficientTensor;
       typedef typename std::conditional<
-	is_defined_,
-	typename AsterBehaviourHandler::template Integrator<bs,ba>,
-	typename AsterBehaviourHandler::Error>::type Handler;
+          is_defined_,
+          typename AsterBehaviourHandler::template Integrator<bs, ba>,
+          typename AsterBehaviourHandler::Error>::type Handler;
       AsterReal s[4];
       AsterReal F0m[9];
       AsterReal F1m[9];
       AsterFiniteStrainRotationMatrix2D m(DROT);
       AsterBehaviourHandler::checkNPROPS(*NPROPS);
       AsterBehaviourHandler::checkNSTATV(*NSTATV);
-      m.rotateStressesForward(STRESS,s);
-      m.rotateDeformationGradientForward(F0,F0m);
-      m.rotateDeformationGradientForward(F1,F1m);
-      const bool bDDSOE = std::abs(*DDSOE)>0.5; 
-      Handler handler(DTIME,F0m,F1m,TEMP,DTEMP,PROPS,
-		      PREDEF,DPRED,STATEV,s,op,sfeh);
-      handler.exe(DDSOE,s,STATEV);
-      m.rotateStressesBackward(s,STRESS);
-      if(bDDSOE){
-	m.rotateTangentOperatorBackward(DDSOE);
+      m.rotateStressesForward(STRESS, s);
+      m.rotateDeformationGradientForward(F0, F0m);
+      m.rotateDeformationGradientForward(F1, F1m);
+      const bool bDDSOE = std::abs(*DDSOE) > 0.5;
+      Handler handler(DTIME, F0m, F1m, TEMP, DTEMP, PROPS, PREDEF, DPRED,
+                      STATEV, s, op, sfeh);
+      handler.exe(DDSOE, s, STATEV);
+      m.rotateStressesBackward(s, STRESS);
+      if (bDDSOE) {
+        m.rotateTangentOperatorBackward(DDSOE);
       }
-    } // end of AsterOrthotropicBehaviourHander<2u,Behaviour>::exe
-  }; // end of AsterOrthotropicBehaviourHander<2u,Behaviour>
+    }  // end of AsterOrthotropicBehaviourHander<2u,Behaviour>::exe
+  };   // end of AsterOrthotropicBehaviourHander<2u,Behaviour>
 
-  template<template<tfel::material::ModellingHypothesis::Hypothesis,
-		    typename,bool> class Behaviour>
-  struct TFEL_VISIBILITY_LOCAL
-  AsterOrthotropicFiniteStrainBehaviourHandler2D<tfel::material::ModellingHypothesis::PLANESTRESS,
-						Behaviour>
-    : private AsterBehaviourHandler<
-				   tfel::material::ModellingHypothesis::PLANESTRESS,
-				   Behaviour>
-  {
-    TFEL_ASTER_INLINE2 static 
-      void exe(const AsterReal *const DTIME ,
-	       const AsterReal *const DROT  ,
-	       AsterReal *const DDSOE,
-	       const AsterReal *const F0 ,
-	       const AsterReal *const F1,
-	       const AsterReal *const TEMP  ,
-	       const AsterReal *const DTEMP,
-	       const AsterReal *const PROPS ,
-	       const AsterInt  *const NPROPS,
-	       const AsterReal *const PREDEF,
-	       const AsterReal *const DPRED,
-	       AsterReal *const STATEV,
-	       const AsterInt  *const NSTATV,
-	       AsterReal *const STRESS,
-	       const tfel::material::OutOfBoundsPolicy op,
-	       const StressFreeExpansionHandler& sfeh) 
-    {
+  template <
+      template <tfel::material::ModellingHypothesis::Hypothesis, typename, bool>
+      class Behaviour>
+  struct TFEL_VISIBILITY_LOCAL AsterOrthotropicFiniteStrainBehaviourHandler2D<
+      tfel::material::ModellingHypothesis::PLANESTRESS,
+      Behaviour>
+      : private AsterBehaviourHandler<
+            tfel::material::ModellingHypothesis::PLANESTRESS,
+            Behaviour> {
+    TFEL_ASTER_INLINE2 static void exe(
+        const AsterReal *const DTIME,
+        const AsterReal *const DROT,
+        AsterReal *const DDSOE,
+        const AsterReal *const F0,
+        const AsterReal *const F1,
+        const AsterReal *const TEMP,
+        const AsterReal *const DTEMP,
+        const AsterReal *const PROPS,
+        const AsterInt *const NPROPS,
+        const AsterReal *const PREDEF,
+        const AsterReal *const DPRED,
+        AsterReal *const STATEV,
+        const AsterInt *const NSTATV,
+        AsterReal *const STRESS,
+        const tfel::material::OutOfBoundsPolicy op,
+        const StressFreeExpansionHandler &sfeh) {
       using namespace tfel::meta;
       using namespace tfel::material;
       using namespace tfel::math;
-      const ModellingHypothesis::Hypothesis H = ModellingHypothesis::PLANESTRESS;	   
-      typedef MechanicalBehaviourTraits<Behaviour<H,AsterReal,false> > MTraits;
-      typedef AsterTraits<Behaviour<H,AsterReal,false> > Traits;
-      typedef AsterBehaviourHandler<H,Behaviour> AsterBehaviourHandler;
+      const ModellingHypothesis::Hypothesis H =
+          ModellingHypothesis::PLANESTRESS;
+      typedef MechanicalBehaviourTraits<Behaviour<H, AsterReal, false>> MTraits;
+      typedef AsterTraits<Behaviour<H, AsterReal, false>> Traits;
+      typedef AsterBehaviourHandler<H, Behaviour> AsterBehaviourHandler;
       const bool is_defined_ = MTraits::is_defined;
       const bool bs = Traits::requiresStiffnessTensor;
       const bool ba = Traits::requiresThermalExpansionCoefficientTensor;
       typedef typename std::conditional<
-	is_defined_,
-	typename AsterBehaviourHandler::template Integrator<bs,ba>,
-	typename AsterBehaviourHandler::Error>::type Handler;
+          is_defined_,
+          typename AsterBehaviourHandler::template Integrator<bs, ba>,
+          typename AsterBehaviourHandler::Error>::type Handler;
       AsterReal s[4];
       AsterReal F0m[9];
       AsterReal F1m[9];
       AsterFiniteStrainRotationMatrix2D m(DROT);
       AsterBehaviourHandler::checkNPROPS(*NPROPS);
       AsterBehaviourHandler::checkNSTATV(*NSTATV);
-      m.rotateStressesForward(STRESS,s);
-      m.rotateDeformationGradientForward(F0,F0m);
-      m.rotateDeformationGradientForward(F1,F1m);
-      const bool bDDSOE = std::abs(*DDSOE)>0.5; 
-      Handler handler(DTIME,F0m,F1m,TEMP,DTEMP,PROPS,
-		      PREDEF,DPRED,STATEV,s,op,sfeh);
-      handler.exe(DDSOE,s,STATEV);
-      m.rotateStressesBackward(s,STRESS);
-      if(bDDSOE){
-	m.rotateTangentOperatorBackward(DDSOE);
+      m.rotateStressesForward(STRESS, s);
+      m.rotateDeformationGradientForward(F0, F0m);
+      m.rotateDeformationGradientForward(F1, F1m);
+      const bool bDDSOE = std::abs(*DDSOE) > 0.5;
+      Handler handler(DTIME, F0m, F1m, TEMP, DTEMP, PROPS, PREDEF, DPRED,
+                      STATEV, s, op, sfeh);
+      handler.exe(DDSOE, s, STATEV);
+      m.rotateStressesBackward(s, STRESS);
+      if (bDDSOE) {
+        m.rotateTangentOperatorBackward(DDSOE);
       }
-    } // end of AsterOrthotropicBehaviourHander<2u,Behaviour>::exe
-  }; // end of AsterOrthotropicBehaviourHander<2u,Behaviour>
+    }  // end of AsterOrthotropicBehaviourHander<2u,Behaviour>::exe
+  };   // end of AsterOrthotropicBehaviourHander<2u,Behaviour>
 
-  template<tfel::material::ModellingHypothesis::Hypothesis H,
-	   template<tfel::material::ModellingHypothesis::Hypothesis,
-		    typename,bool> class Behaviour>
+  template <
+      tfel::material::ModellingHypothesis::Hypothesis H,
+      template <tfel::material::ModellingHypothesis::Hypothesis, typename, bool>
+      class Behaviour>
   struct TFEL_VISIBILITY_LOCAL AsterOrthotropicFiniteStrainBehaviourHandler3D
-    : private AsterBehaviourHandler<H,Behaviour>
-  {
-    TFEL_ASTER_INLINE2 static 
-      void exe(const AsterReal *const DTIME,
-	       const AsterReal *const DROT,
-	       AsterReal *const DDSOE,
-	       const AsterReal *const F0,
-	       const AsterReal *const F1,
-	       const AsterReal *const TEMP  ,
-	       const AsterReal *const DTEMP,
-	       const AsterReal *const PROPS ,
-	       const AsterInt  *const NPROPS,
-	       const AsterReal *const PREDEF,
-	       const AsterReal *const DPRED,
-	       AsterReal *const STATEV,
-	       const AsterInt  *const NSTATV,
-	       AsterReal *const STRESS,
-	       const tfel::material::OutOfBoundsPolicy op,
-	       const StressFreeExpansionHandler& sfeh)
-    {
+      : private AsterBehaviourHandler<H, Behaviour> {
+    TFEL_ASTER_INLINE2 static void exe(
+        const AsterReal *const DTIME,
+        const AsterReal *const DROT,
+        AsterReal *const DDSOE,
+        const AsterReal *const F0,
+        const AsterReal *const F1,
+        const AsterReal *const TEMP,
+        const AsterReal *const DTEMP,
+        const AsterReal *const PROPS,
+        const AsterInt *const NPROPS,
+        const AsterReal *const PREDEF,
+        const AsterReal *const DPRED,
+        AsterReal *const STATEV,
+        const AsterInt *const NSTATV,
+        AsterReal *const STRESS,
+        const tfel::material::OutOfBoundsPolicy op,
+        const StressFreeExpansionHandler &sfeh) {
       using namespace tfel::meta;
       using namespace tfel::material;
       using namespace tfel::math;
-      typedef MechanicalBehaviourTraits<Behaviour<H,AsterReal,false> > MTraits;
-      typedef AsterTraits<Behaviour<H,AsterReal,false> > Traits;
-      typedef AsterBehaviourHandler<H,Behaviour> AsterBehaviourHandler;
+      typedef MechanicalBehaviourTraits<Behaviour<H, AsterReal, false>> MTraits;
+      typedef AsterTraits<Behaviour<H, AsterReal, false>> Traits;
+      typedef AsterBehaviourHandler<H, Behaviour> AsterBehaviourHandler;
       const bool is_defined_ = MTraits::is_defined;
       const bool bs = Traits::requiresStiffnessTensor;
       const bool ba = Traits::requiresThermalExpansionCoefficientTensor;
       typedef typename std::conditional<
-	is_defined_,
-	typename AsterBehaviourHandler::template Integrator<bs,ba>,
-	typename AsterBehaviourHandler::Error>::type Handler;
+          is_defined_,
+          typename AsterBehaviourHandler::template Integrator<bs, ba>,
+          typename AsterBehaviourHandler::Error>::type Handler;
       AsterReal sm[6];
       AsterReal F0m[9];
       AsterReal F1m[9];
       // Passage au repère matériau
       AsterFiniteStrainRotationMatrix3D m(DROT);
-      m.rotateStressesForward(STRESS,sm);
-      m.rotateDeformationGradientForward(F0,F0m);
-      m.rotateDeformationGradientForward(F1,F1m);
+      m.rotateStressesForward(STRESS, sm);
+      m.rotateDeformationGradientForward(F0, F0m);
+      m.rotateDeformationGradientForward(F1, F1m);
       AsterBehaviourHandler::checkNPROPS(*NPROPS);
       AsterBehaviourHandler::checkNSTATV(*NSTATV);
-      const bool bDDSOE = std::abs(*DDSOE)>0.5; 
-      Handler handler(DTIME,F0m,F1m,TEMP,DTEMP,PROPS,
-		      PREDEF,DPRED,STATEV,sm,op,sfeh);
-      handler.exe(DDSOE,sm,STATEV);
-      m.rotateStressesBackward(sm,STRESS);
-      if(bDDSOE){
-	m.rotateTangentOperatorBackward(DDSOE);
+      const bool bDDSOE = std::abs(*DDSOE) > 0.5;
+      Handler handler(DTIME, F0m, F1m, TEMP, DTEMP, PROPS, PREDEF, DPRED,
+                      STATEV, sm, op, sfeh);
+      handler.exe(DDSOE, sm, STATEV);
+      m.rotateStressesBackward(sm, STRESS);
+      if (bDDSOE) {
+        m.rotateTangentOperatorBackward(DDSOE);
       }
-    } // end of AsterOrthotropicBehaviourHandler<3u,Behaviour>::exe
-	
-  }; // end of struct AsterOrthotropicBehaviourHandler<3u,Behaviour>
+    }  // end of AsterOrthotropicBehaviourHandler<3u,Behaviour>::exe
 
-} // end of namespace aster
+  };  // end of struct AsterOrthotropicBehaviourHandler<3u,Behaviour>
+
+}  // end of namespace aster
 
 #endif /* LIB_MFRONT_ASTER_ASTERORTHOTROPICBEHAVIOURHANDLER_H_ */

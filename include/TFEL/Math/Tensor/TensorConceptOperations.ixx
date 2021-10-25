@@ -22,10 +22,11 @@ namespace tfel {
     template <typename T1, typename T2>
     typename std::enable_if<
         tfel::meta::Implements<T1, TensorConcept>::cond &&
-            tfel::meta::Implements<T2, TensorConcept>::cond && TensorTraits<T1>::dime == 1u &&
-            TensorTraits<T2>::dime == 1u &&
+            tfel::meta::Implements<T2, TensorConcept>::cond &&
+            TensorTraits<T1>::dime == 1u && TensorTraits<T2>::dime == 1u &&
             !tfel::typetraits::IsInvalid<
-                typename ComputeBinaryResult<T1, T2, OpDotProduct>::Result>::cond,
+                typename ComputeBinaryResult<T1, T2, OpDotProduct>::Result>::
+                cond,
         typename ComputeBinaryResult<T1, T2, OpDotProduct>::Result>::type
     operator|(const T1& a, const T2& b) {
       return a(0) * b(0) + a(1) * b(1) + a(2) * b(2);
@@ -34,10 +35,11 @@ namespace tfel {
     template <typename T1, typename T2>
     typename std::enable_if<
         tfel::meta::Implements<T1, TensorConcept>::cond &&
-            tfel::meta::Implements<T2, TensorConcept>::cond && TensorTraits<T1>::dime == 2u &&
-            TensorTraits<T2>::dime == 2u &&
+            tfel::meta::Implements<T2, TensorConcept>::cond &&
+            TensorTraits<T1>::dime == 2u && TensorTraits<T2>::dime == 2u &&
             !tfel::typetraits::IsInvalid<
-                typename ComputeBinaryResult<T1, T2, OpDotProduct>::Result>::cond,
+                typename ComputeBinaryResult<T1, T2, OpDotProduct>::Result>::
+                cond,
         typename ComputeBinaryResult<T1, T2, OpDotProduct>::Result>::type
     operator|(const T1& a, const T2& b) {
       return a(0) * b(0) + a(1) * b(1) + a(2) * b(2) + a(3) * b(3) +
@@ -47,10 +49,11 @@ namespace tfel {
     template <typename T1, typename T2>
     typename std::enable_if<
         tfel::meta::Implements<T1, TensorConcept>::cond &&
-            tfel::meta::Implements<T2, TensorConcept>::cond && TensorTraits<T1>::dime == 3u &&
-            TensorTraits<T2>::dime == 3u &&
+            tfel::meta::Implements<T2, TensorConcept>::cond &&
+            TensorTraits<T1>::dime == 3u && TensorTraits<T2>::dime == 3u &&
             !tfel::typetraits::IsInvalid<
-                typename ComputeBinaryResult<T1, T2, OpDotProduct>::Result>::cond,
+                typename ComputeBinaryResult<T1, T2, OpDotProduct>::Result>::
+                cond,
         typename ComputeBinaryResult<T1, T2, OpDotProduct>::Result>::type
     operator|(const T1& a, const T2& b) {
       return a(0) * b(0) + a(1) * b(1) + a(2) * b(2) + a(3) * b(3) +

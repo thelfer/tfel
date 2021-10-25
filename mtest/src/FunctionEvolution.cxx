@@ -1,88 +1,86 @@
-/*! 
+/*!
  * \file  mfront/mtest/FunctionEvolution.cxx
  * \brief
  * \author Helfer Thomas
  * \brief 14 avril 2013
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
-#include<stdexcept>
+#include <stdexcept>
 
-#include"MTest/FunctionEvolution.hxx"
+#include "MTest/FunctionEvolution.hxx"
 
-namespace mtest{
+namespace mtest {
 
   FunctionEvolution::FunctionEvolution(const std::string& f_,
-				       const EvolutionManager& evm_)
-    : evm(evm_),
-      f(f_)
-  {} // end of FunctionEvolution::FunctionEvolution
+                                       const EvolutionManager& evm_)
+      : evm(evm_), f(f_) {}  // end of FunctionEvolution::FunctionEvolution
 
-  real
-  FunctionEvolution::operator()(const real t) const
-  {
+  real FunctionEvolution::operator()(const real t) const {
     const auto& args = this->f.getVariablesNames();
     std::vector<std::string>::size_type i;
-    for(i=0;i!=args.size();++i){
-      if(args[i]=="t"){
-	this->f.setVariableValue("t",t);
+    for (i = 0; i != args.size(); ++i) {
+      if (args[i] == "t") {
+        this->f.setVariableValue("t", t);
       } else {
-	auto pev = evm.find(args[i]);
-	if(pev==evm.end()){
-	  throw(std::runtime_error("FunctionEvolution::operator(): "
-				   "can't evaluate argument '"+args[i]+"'"));
-	} else {
-	  const auto& ev = *(pev->second);
-	  this->f.setVariableValue(args[i],ev(t));
-	}
+        auto pev = evm.find(args[i]);
+        if (pev == evm.end()) {
+          throw(
+              std::runtime_error("FunctionEvolution::operator(): "
+                                 "can't evaluate argument '" +
+                                 args[i] + "'"));
+        } else {
+          const auto& ev = *(pev->second);
+          this->f.setVariableValue(args[i], ev(t));
+        }
       }
     }
     return this->f.getValue();
-  } // end of FunctionEvolution::operator()
+  }  // end of FunctionEvolution::operator()
 
-  bool
-  FunctionEvolution::isConstant() const
-  {
+  bool FunctionEvolution::isConstant() const {
     const auto& args = this->f.getVariablesNames();
     std::vector<std::string>::size_type i;
-    for(i=0;i!=args.size();++i){
-      if(args[i]=="t"){
-	return false;
+    for (i = 0; i != args.size(); ++i) {
+      if (args[i] == "t") {
+        return false;
       } else {
-	auto pev = evm.find(args[i]);
-	if(pev==evm.end()){
-	  throw(std::runtime_error("FunctionEvolution::operator(): "
-				   "can't evaluate argument '"+args[i]+"'"));
-	} else {
-	  const Evolution& ev = *(pev->second);
-	  if(!ev.isConstant()){
-	    return false;
-	  }
-	}
+        auto pev = evm.find(args[i]);
+        if (pev == evm.end()) {
+          throw(
+              std::runtime_error("FunctionEvolution::operator(): "
+                                 "can't evaluate argument '" +
+                                 args[i] + "'"));
+        } else {
+          const Evolution& ev = *(pev->second);
+          if (!ev.isConstant()) {
+            return false;
+          }
+        }
       }
     }
     return true;
-  } // end of FunctionEvolution::isConstant
+  }  // end of FunctionEvolution::isConstant
 
-  void FunctionEvolution::setValue(const real)
-  {
-    throw(std::runtime_error("FunctionEvolution::setValue: "
-			     "this method does not makes sense "
-			     "for function evolution"));
+  void FunctionEvolution::setValue(const real) {
+    throw(
+        std::runtime_error("FunctionEvolution::setValue: "
+                           "this method does not makes sense "
+                           "for function evolution"));
   }
-  
-  void FunctionEvolution::setValue(const real,const real)
-  {
-    throw(std::runtime_error("FunctionEvolution::setValue: "
-			     "this method does not makes sense "
-			     "for function evolution"));
+
+  void FunctionEvolution::setValue(const real, const real) {
+    throw(
+        std::runtime_error("FunctionEvolution::setValue: "
+                           "this method does not makes sense "
+                           "for function evolution"));
   }
-  
+
   FunctionEvolution::~FunctionEvolution() = default;
 
-}
+}  // namespace mtest

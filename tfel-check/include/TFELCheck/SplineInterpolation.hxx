@@ -9,12 +9,12 @@
  *
  *  Class that allows to do a spline interpolation using TFEL's CubicSpline
  *
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_TFELCHECK_SPLINEINTERPOLATION_HXX
@@ -27,8 +27,7 @@
 namespace tfel_check {
 
   struct TFELCHECK_VISIBILITY_EXPORT SplineInterpolation
-    : public Interpolation
-  {
+      : public Interpolation {
     SplineInterpolation();
     SplineInterpolation(SplineInterpolation&&);
     SplineInterpolation(const SplineInterpolation&);
@@ -36,15 +35,14 @@ namespace tfel_check {
     SplineInterpolation& operator=(const SplineInterpolation&);
     virtual ~SplineInterpolation();
     virtual void interpolate(const std::vector<double>&,
-			     const std::vector<double>&) override;
+                             const std::vector<double>&) override;
     virtual double getValue(const double x) const override;
     virtual std::string getType() const override;
     virtual bool isConform() const override;
-    virtual std::shared_ptr<Interpolation>
-    clone() const override;
-  private:
-    struct tfel::math::CubicSpline<double> spline;
+    virtual std::shared_ptr<Interpolation> clone() const override;
 
+   private:
+    struct tfel::math::CubicSpline<double> spline;
   };
 
 } /* namespace tfel_check */

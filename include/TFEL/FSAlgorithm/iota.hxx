@@ -3,27 +3,28 @@
  * \brief  This file implements the iota class.
  * \author Helfer Thomas
  * \date   01 Aug 2006
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_TFEL_IOTA_H_
-#define LIB_TFEL_IOTA_H_ 
+#define LIB_TFEL_IOTA_H_
 
-#include"TFEL/Config/TFELConfig.hxx"
+#include "TFEL/Config/TFELConfig.hxx"
 
-namespace tfel{
+namespace tfel {
 
-  namespace fsalgo{
+  namespace fsalgo {
 
     /*!
-     * \class iota 
-     * \brief iota assigns sequentially increasing values to a range. That is, it assigns value to *first, value + 1 to *(first + 1) and so on. 
-     * \param N number of elements.
+     * \class iota
+     * \brief iota assigns sequentially increasing values to a range. That is,
+     * it assigns value to *first, value + 1 to *(first + 1) and so on. \param N
+     * number of elements.
      *
      * This documentation is mostly inspired from:
      * http://www.sgi.com/tech/stl/iota.html
@@ -31,44 +32,40 @@ namespace tfel{
      * \see iota.cxx for some elementary tests.
      *
      * \author Helfer Thomas
-     * \date   30 Jun 2006      
+     * \date   30 Jun 2006
      */
-    template<unsigned int N>
-    struct iota
-    {
-      /*! 
+    template <unsigned int N>
+    struct iota {
+      /*!
        * \param ForwardIterator iterator to the range in concern
        * \param T  type of the value assigned to the sequence
-       * 
-       * \return void 
-       * 
+       *
+       * \return void
+       *
        * \pre
        * - ForwardIterator is a model of Forward Iterator.
        * - ForwardIterator is mutable.
        * - T is Assignable.
        * - If x is an object of type T, then x++ is defined.
        * - T is convertible to ForwardIterator's value type.
-       * 
+       *
        */
-      template<typename ForwardIterator,typename T>
-      static TFEL_FSALGORITHM_INLINE
-      void exe(ForwardIterator p, T value)
-      {
-	*p = value;
-	iota<N-1>::exe(++p,++value);
+      template <typename ForwardIterator, typename T>
+      static TFEL_FSALGORITHM_INLINE void exe(ForwardIterator p, T value) {
+        *p = value;
+        iota<N - 1>::exe(++p, ++value);
       }
-
-    };  
+    };
 
     /*!
-     * \brief partial specialisation used to end recursion when using the iota algorithm.
+     * \brief partial specialisation used to end recursion when using the iota
+     * algorithm.
      *
      * \author Helfer Thomas
-     * \date   30 Jun 2006      
+     * \date   30 Jun 2006
      */
-    template<>
-    struct iota<0u>
-    {
+    template <>
+    struct iota<0u> {
       /*!
        * \return void
        * \sa iota<N>::exe() for details
@@ -76,16 +73,12 @@ namespace tfel{
        * \author Helfer Thomas
        * \date   30 Jun 2006
        */
-      template<typename ForwardIterator,typename T>
-      static TFEL_FSALGORITHM_INLINE
-      void exe(ForwardIterator, T )
-      {}
+      template <typename ForwardIterator, typename T>
+      static TFEL_FSALGORITHM_INLINE void exe(ForwardIterator, T) {}
     };
 
-  } // end of namespace fsalgo
+  }  // end of namespace fsalgo
 
-} // end of namespace tfel
-
+}  // end of namespace tfel
 
 #endif /* LIB_TFEL_IOTA_H_ */
-

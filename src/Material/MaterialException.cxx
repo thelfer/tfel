@@ -1,64 +1,60 @@
 /*!
  * \file   src/Material/MaterialException.cxx
- * \brief  
- * 
+ * \brief
+ *
  * \author Helfer Thomas
  * \date   14 fév 2007
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
-#include<iostream>
-#include<utility>
-#include"TFEL/Material/MaterialException.hxx"
+#include <iostream>
+#include <utility>
+#include "TFEL/Material/MaterialException.hxx"
 
-namespace tfel{
-  
+namespace tfel {
+
   namespace material {
 
     MaterialException::~MaterialException() noexcept = default;
 
-    MaterialException::MaterialException(const char* const msg){
+    MaterialException::MaterialException(const char* const msg) {
       std::cerr << "MaterialException::MaterialException: " << msg << std::endl;
     }
 
-    MaterialException::MaterialException(const std::string& msg){
+    MaterialException::MaterialException(const std::string& msg) {
       std::cerr << "MaterialException::MaterialException: " << msg << std::endl;
     }
-    
-    DivergenceException::DivergenceException(const char* const msg){
-      std::cerr << "DivergenceException::DivergenceException: " << msg << std::endl;
+
+    DivergenceException::DivergenceException(const char* const msg) {
+      std::cerr << "DivergenceException::DivergenceException: " << msg
+                << std::endl;
     }
 
-    DivergenceException::DivergenceException(const std::string& msg){
-      std::cerr << "DivergenceException::DivergenceException: " << msg << std::endl;
+    DivergenceException::DivergenceException(const std::string& msg) {
+      std::cerr << "DivergenceException::DivergenceException: " << msg
+                << std::endl;
     }
-    
-    const char*
-    DivergenceException::what() const noexcept
-    {
+
+    const char* DivergenceException::what() const noexcept {
       return "DivergenceException";
-    } // end of DivergenceException::what
-    
+    }  // end of DivergenceException::what
+
     DivergenceException::~DivergenceException() noexcept = default;
 
     OutOfBoundsException::OutOfBoundsException(std::string m)
-      : msg(std::forward<std::string>(m))
-    {}
+        : msg(std::forward<std::string>(m)) {}
 
-    const char*
-    OutOfBoundsException::what() const noexcept
-    {
+    const char* OutOfBoundsException::what() const noexcept {
       return this->msg.c_str();
-    } // end of DivergenceException::~DivergenceException
+    }  // end of DivergenceException::~DivergenceException
 
     OutOfBoundsException::~OutOfBoundsException() noexcept = default;
 
-  } // end of namespace material
+  }  // end of namespace material
 
-} // end of namespace tfel
-
+}  // end of namespace tfel

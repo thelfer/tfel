@@ -1,76 +1,75 @@
 /*!
  * \file   include/TFEL/TypeTraits/IsAssignableTo.hxx
- * \brief  This file implements the IsAssignableTo class traits and 
+ * \brief  This file implements the IsAssignableTo class traits and
  * its partial specialisation for each standard numeric types.
- * 
+ *
  * \author Helfer Thomas
  * \date   28 jun 2006
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_TFEL_IS_ASSIGNABLETO_HXX_
-#define LIB_TFEL_IS_ASSIGNABLETO_HXX_ 
+#define LIB_TFEL_IS_ASSIGNABLETO_HXX_
 
-#include<type_traits>
-#include"TFEL/TypeTraits/Promote.hxx"
-#include"TFEL/Math/Forward/Complex.hxx"
+#include <type_traits>
+#include "TFEL/TypeTraits/Promote.hxx"
+#include "TFEL/Math/Forward/Complex.hxx"
 
 /*!
  * \def TFEL_MATH_IS_ASSIGNABLE_
  * \brief An helper macro to specialise IsAssignableTo for each
  * standard numeric types.
  * \author Helfer Thomas
- * \date   28 jun 2006 
+ * \date   28 jun 2006
  */
-#define TFEL_MATH_IS_ASSIGNABLE_(X,Y)                                           \
-    /*!                                                                         \
-     * \brief Partial specialisation for X and Y                                \
-     * \see   IsAssignableTo                                                    \
-     */                                                                         \
-    template<>                                                                  \
-    struct IsAssignableTo< X , Y >                                              \
-    {                                                                           \
-      /*!									\
-       *  Result								\
-       */									\
-      static constexpr bool cond = std::is_same<Promote< X , Y >::type, Y >::value; \
-    }
+#define TFEL_MATH_IS_ASSIGNABLE_(X, Y)                                        \
+  /*!                                                                         \
+   * \brief Partial specialisation for X and Y                                \
+   * \see   IsAssignableTo                                                    \
+   */                                                                         \
+  template <>                                                                 \
+  struct IsAssignableTo<X, Y> {                                               \
+    /*!                                                                       \
+     *  Result                                                                \
+     */                                                                       \
+    static constexpr bool cond = std::is_same<Promote<X, Y>::type, Y>::value; \
+  }
 
 /*!
  * \def TFEL_MATH_IS_ASSIGNABLE
  * \brief An helper macro to specialise IsAssignableTo for each
  * standard numeric types.
  * \author Helfer Thomas
- * \date   28 jun 2006 
+ * \date   28 jun 2006
  */
-#define TFEL_MATH_IS_ASSIGNABLE(X)                                        \
-    TFEL_MATH_IS_ASSIGNABLE_(X,unsigned short);                           \
-    TFEL_MATH_IS_ASSIGNABLE_(X,unsigned int);                             \
-    TFEL_MATH_IS_ASSIGNABLE_(X,long unsigned int);                        \
-    TFEL_MATH_IS_ASSIGNABLE_(X,short);                                    \
-    TFEL_MATH_IS_ASSIGNABLE_(X,int);                                      \
-    TFEL_MATH_IS_ASSIGNABLE_(X,long int);                                 \
-    TFEL_MATH_IS_ASSIGNABLE_(X,float);                                    \
-    TFEL_MATH_IS_ASSIGNABLE_(X,double);                                   \
-    TFEL_MATH_IS_ASSIGNABLE_(X,long double);                              \
-    TFEL_MATH_IS_ASSIGNABLE_(X,tfel::math::Complex<unsigned short>);      \
-    TFEL_MATH_IS_ASSIGNABLE_(X,tfel::math::Complex<unsigned int>);        \
-    TFEL_MATH_IS_ASSIGNABLE_(X,tfel::math::Complex<long unsigned int>);   \
-    TFEL_MATH_IS_ASSIGNABLE_(X,tfel::math::Complex<short>);               \
-    TFEL_MATH_IS_ASSIGNABLE_(X,tfel::math::Complex<int>);                 \
-    TFEL_MATH_IS_ASSIGNABLE_(X,tfel::math::Complex<long int>);            \
-    TFEL_MATH_IS_ASSIGNABLE_(X,tfel::math::Complex<float>);               \
-    TFEL_MATH_IS_ASSIGNABLE_(X,tfel::math::Complex<double>);              \
-    TFEL_MATH_IS_ASSIGNABLE_(X,tfel::math::Complex<long double>)
+#define TFEL_MATH_IS_ASSIGNABLE(X)                                     \
+  TFEL_MATH_IS_ASSIGNABLE_(X, unsigned short);                         \
+  TFEL_MATH_IS_ASSIGNABLE_(X, unsigned int);                           \
+  TFEL_MATH_IS_ASSIGNABLE_(X, long unsigned int);                      \
+  TFEL_MATH_IS_ASSIGNABLE_(X, short);                                  \
+  TFEL_MATH_IS_ASSIGNABLE_(X, int);                                    \
+  TFEL_MATH_IS_ASSIGNABLE_(X, long int);                               \
+  TFEL_MATH_IS_ASSIGNABLE_(X, float);                                  \
+  TFEL_MATH_IS_ASSIGNABLE_(X, double);                                 \
+  TFEL_MATH_IS_ASSIGNABLE_(X, long double);                            \
+  TFEL_MATH_IS_ASSIGNABLE_(X, tfel::math::Complex<unsigned short>);    \
+  TFEL_MATH_IS_ASSIGNABLE_(X, tfel::math::Complex<unsigned int>);      \
+  TFEL_MATH_IS_ASSIGNABLE_(X, tfel::math::Complex<long unsigned int>); \
+  TFEL_MATH_IS_ASSIGNABLE_(X, tfel::math::Complex<short>);             \
+  TFEL_MATH_IS_ASSIGNABLE_(X, tfel::math::Complex<int>);               \
+  TFEL_MATH_IS_ASSIGNABLE_(X, tfel::math::Complex<long int>);          \
+  TFEL_MATH_IS_ASSIGNABLE_(X, tfel::math::Complex<float>);             \
+  TFEL_MATH_IS_ASSIGNABLE_(X, tfel::math::Complex<double>);            \
+  TFEL_MATH_IS_ASSIGNABLE_(X, tfel::math::Complex<long double>)
 
-namespace tfel{
-  
-  namespace typetraits{
+namespace tfel {
+
+  namespace typetraits {
 
     /*!
      * \class IsAssignableTo
@@ -83,11 +82,10 @@ namespace tfel{
      *
      * \see Promote
      * \author Helfer Thomas
-     * \date   28 jun 2006     
-     */ 
-    template<typename A,typename B>
-    struct IsAssignableTo
-    {
+     * \date   28 jun 2006
+     */
+    template <typename A, typename B>
+    struct IsAssignableTo {
       /*!
        *  Result
        */
@@ -113,10 +111,8 @@ namespace tfel{
     TFEL_MATH_IS_ASSIGNABLE(tfel::math::Complex<double>);
     TFEL_MATH_IS_ASSIGNABLE(tfel::math::Complex<long double>);
 
-  } // end of namespace typetraits
+  }  // end of namespace typetraits
 
-} // end of namespace tfel
-  
+}  // end of namespace tfel
 
 #endif /* LIB_TFEL_IS_ASSIGNABLETO_HXX_ */
-

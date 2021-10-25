@@ -1,44 +1,43 @@
-/*! 
+/*!
  * \file  mfront/include/MFront/BehaviourDescription.hxx
  * \brief
  * \author Helfer Thomas
  * \brief 07 mars 2014
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_MFRONT_BEHAVIOURDESCRIPTION_H_
-#define LIB_MFRONT_BEHAVIOURDESCRIPTION_H_ 
+#define LIB_MFRONT_BEHAVIOURDESCRIPTION_H_
 
-#include<set>
-#include<map>
-#include<vector>
-#include<memory>
+#include <set>
+#include <map>
+#include <vector>
+#include <memory>
 
-#include"TFEL/Utilities/GenTypeBase.hxx"
-#include"TFEL/Material/MechanicalBehaviour.hxx"
-#include"TFEL/Material/ModellingHypothesis.hxx"
-#include"TFEL/Material/OrthotropicAxesConvention.hxx"
+#include "TFEL/Utilities/GenTypeBase.hxx"
+#include "TFEL/Material/MechanicalBehaviour.hxx"
+#include "TFEL/Material/ModellingHypothesis.hxx"
+#include "TFEL/Material/OrthotropicAxesConvention.hxx"
 
-#include"MFront/MFrontConfig.hxx"
-#include"MFront/CodeBlock.hxx"
-#include"MFront/SupportedTypes.hxx"
-#include"MFront/BehaviourAttribute.hxx"
-#include"MFront/BehaviourData.hxx"
-#include"MFront/BehaviourSymmetryType.hxx"
+#include "MFront/MFrontConfig.hxx"
+#include "MFront/CodeBlock.hxx"
+#include "MFront/SupportedTypes.hxx"
+#include "MFront/BehaviourAttribute.hxx"
+#include "MFront/BehaviourData.hxx"
+#include "MFront/BehaviourSymmetryType.hxx"
 
-namespace mfront
-{
+namespace mfront {
 
   // forward declaration
   struct LocalDataStructure;
   // forward declaration
   struct MaterialPropertyDescription;
-  
+
   /*!
    * This structure describes a mechanical behaviour
    *
@@ -51,15 +50,13 @@ namespace mfront
    * mechanical behaviour datas when required.
    */
   struct MFRONT_VISIBILITY_EXPORT BehaviourDescription
-    : public tfel::material::MechanicalBehaviourBase,
-      public SupportedTypes  
-  {
+      : public tfel::material::MechanicalBehaviourBase,
+        public SupportedTypes {
     /*!
      * \brief this structure holds the value of a constant material
      * property
      */
-    struct ConstantMaterialProperty
-    {
+    struct ConstantMaterialProperty {
       //! parameter name associated with the material property
       std::string name;
       //! default value for the constant material property
@@ -69,65 +66,68 @@ namespace mfront
      * \brief this structure holds the value of a material
      * property defined through an mfront file
      */
-    struct ComputedMaterialProperty
-    {
+    struct ComputedMaterialProperty {
       //! description of a material property
       std::shared_ptr<MaterialPropertyDescription> mpd;
     };
     //! list of supported material properties types
     using MaterialPropertyTypes =
-      tfel::meta::GenerateTypeList<ConstantMaterialProperty,
-				   ComputedMaterialProperty>::type;
+        tfel::meta::GenerateTypeList<ConstantMaterialProperty,
+                                     ComputedMaterialProperty>::type;
     //! a simple alias
     using StressFreeExpansionDescription =
-      BehaviourData::StressFreeExpansionDescription;
+        BehaviourData::StressFreeExpansionDescription;
     /*!
      * The description of a material property from the point of
      * view of a behaviour.
      */
     using MaterialProperty =
-      tfel::utilities::GenTypeBase<MaterialPropertyTypes>;
+        tfel::utilities::GenTypeBase<MaterialPropertyTypes>;
     /*!
      * structure used to defined a Hill tensor
      */
-    struct HillTensor{
+    struct HillTensor {
       //! name of the Hill tensor
       std::string name;
       //! Hill coeffients
       std::vector<MaterialProperty> c;
-    }; // end of struct HillTensor
+    };  // end of struct HillTensor
     /*!
      * \brief Available integration schemes.
      * One of the first thing a dsl shall do is to set the
      * integration scheme it uses.
      */
-    enum IntegrationScheme{
-      IMPLICITSCHEME, //!< value set by the `Implicit` Dsl family
-      EXPLICITSCHEME, //!< value set by the `Runge-Kutta` Dsl
-      SPECIFICSCHEME, /*!< value set by the `	IsotropicMisesCreepDSL`,
-		       * `IsotropicMisesPlasticFlowDSL`,
-		       * `IsotropicStrainHardeningMisesCreepDSL`
-		       * `MultipleIsotropicMisesFlowsDSL` dsls. */
-      UNDEFINEDINTEGRATIONSCHEME //! default value.
+    enum IntegrationScheme {
+      IMPLICITSCHEME,  //!< value set by the `Implicit` Dsl family
+      EXPLICITSCHEME,  //!< value set by the `Runge-Kutta` Dsl
+      SPECIFICSCHEME,  /*!< value set by the `	IsotropicMisesCreepDSL`,
+                        * `IsotropicMisesPlasticFlowDSL`,
+                        * `IsotropicStrainHardeningMisesCreepDSL`
+                        * `MultipleIsotropicMisesFlowsDSL` dsls. */
+      UNDEFINEDINTEGRATIONSCHEME  //! default value.
     };
     /*!
      * a simple structure used to compte the value of a material
      * property
      */
-    struct MaterialPropertyInput{
+    struct MaterialPropertyInput {
       //! variable name
       std::string name;
       //! external name
       std::string ename;
       //! variable type
-      enum {TEMPERATURE,MATERIALPROPERTY,
-	    AUXILIARYSTATEVARIABLEFROMEXTERNALMODEL,
-	    EXTERNALSTATEVARIABLE,PARAMETER} type;
-    }; // end of 
+      enum {
+        TEMPERATURE,
+        MATERIALPROPERTY,
+        AUXILIARYSTATEVARIABLEFROMEXTERNALMODEL,
+        EXTERNALSTATEVARIABLE,
+        PARAMETER
+      } type;
+    };  // end of
     //! a simple alias
     using ModellingHypothesis = tfel::material::ModellingHypothesis;
     //! a simple alias
-    using  Hypothesis = ModellingHypothesis::Hypothesis;
+    using Hypothesis = ModellingHypothesis::Hypothesis;
     //! a simple alias
     typedef BehaviourData::Mode Mode;
     //! a simple alias
@@ -170,8 +170,7 @@ namespace mfront
     /*!
      * \return the material name
      */
-    const std::string&
-    getMaterialName(void) const;
+    const std::string& getMaterialName(void) const;
     /*!
      * \brief set the library name
      * \param[in] l : library name
@@ -190,8 +189,8 @@ namespace mfront
      * \return the inputs of a material property
      * \param[in] mpd: material property description
      */
-    std::vector<MaterialPropertyInput>
-    getMaterialPropertyInputs(const MaterialPropertyDescription&) const;
+    std::vector<MaterialPropertyInput> getMaterialPropertyInputs(
+        const MaterialPropertyDescription&) const;
     /*!
      * \brief append the given code to the sources
      * \param[in] s : sources
@@ -203,23 +202,21 @@ namespace mfront
      * \brief append the given code to the members
      * \param[in] h: hypothesis
      * \param[in] s: members
-     * \param[in] b: if h is UNDEFINEDHYPOTHIS, propagate to all specialised data
-     
+     * \param[in] b: if h is UNDEFINEDHYPOTHIS, propagate to all specialised
+     data
+
      */
-    void appendToMembers(const Hypothesis,
-			 const std::string&,
-			 const bool);
+    void appendToMembers(const Hypothesis, const std::string&, const bool);
     //! \return the aditional members
     const std::string getMembers(const Hypothesis) const;
     /*!
      * \brief append the given code to the members
      * \param[in] h : hypothesis
      * \param[in] s : members
-     * \param[in] b: if h is UNDEFINEDHYPOTHIS, propagate to all specialised data
+     * \param[in] b: if h is UNDEFINEDHYPOTHIS, propagate to all specialised
+     * data
      */
-    void appendToPrivateCode(const Hypothesis,
-			     const std::string&,
-			     const bool);
+    void appendToPrivateCode(const Hypothesis, const std::string&, const bool);
     /*!
      * \return the material private code
      * \param[in] h : hypothesis
@@ -240,8 +237,8 @@ namespace mfront
     void addMaterialLaw(const std::string&);
     /*!
      * \brief add a model description.
-     * All outputs of the model are automatically added as auxiliary state variables
-     * \param[in] md: model description
+     * All outputs of the model are automatically added as auxiliary state
+     * variables \param[in] md: model description
      */
     void addModelDescription(const ModelDescription&);
     /*!
@@ -249,27 +246,25 @@ namespace mfront
      * \param[in] lds: local data structure
      * \param[in] s : registration status
      */
-    void addLocalDataStructure(const LocalDataStructure&,
-			       const BehaviourData::RegistrationStatus = BehaviourData::UNREGISTRED);
+    void addLocalDataStructure(
+        const LocalDataStructure&,
+        const BehaviourData::RegistrationStatus = BehaviourData::UNREGISTRED);
     //! \return the list of material laws
-    const std::vector<std::string>&
-    getMaterialLaws(void) const;
+    const std::vector<std::string>& getMaterialLaws(void) const;
     //! \return the size of the main variables
-    std::pair<SupportedTypes::TypeSize,
-	      SupportedTypes::TypeSize>
+    std::pair<SupportedTypes::TypeSize, SupportedTypes::TypeSize>
     getMainVariablesSize(void) const;
     /*!
      * \brief add a new main variable
      * \note using this method means that the behaviour type is always
      * 'GENERALBEHAVIOUR'. This can't be changed afterwards.
      */
-    void addMainVariable(const DrivingVariable&,
-			 const ThermodynamicForce&);
+    void addMainVariable(const DrivingVariable&, const ThermodynamicForce&);
     /*!
      * \return the main variables of the behaviour
      */
-    const std::map<DrivingVariable,ThermodynamicForce>&
-    getMainVariables(void) const;
+    const std::map<DrivingVariable, ThermodynamicForce>& getMainVariables(
+        void) const;
     /*!
      * \brief set the behaviour to be a small strain standard
      * behaviour
@@ -319,30 +314,30 @@ namespace mfront
      * \param[in] c : new value for the orthotropic axes convention.
      * \note this method can be only call once.
      */
-    void
-    setOrthotropicAxesConvention(const tfel::material::OrthotropicAxesConvention);
+    void setOrthotropicAxesConvention(
+        const tfel::material::OrthotropicAxesConvention);
     /*!
      * \return the orthotropic axes convention.
      * \note if the orthotropic axes convention has not been defined,
      * the UNDEFINED convention is assumed and oacIsDefined is set to
      * true.
      */
-    tfel::material::OrthotropicAxesConvention
-    getOrthotropicAxesConvention(void) const;
-    
+    tfel::material::OrthotropicAxesConvention getOrthotropicAxesConvention(
+        void) const;
+
     bool isSymmetryTypeDefined() const;
 
     BehaviourSymmetryType getElasticSymmetryType() const;
 
     void setElasticSymmetryType(const BehaviourSymmetryType);
-    
+
     bool isElasticSymmetryTypeDefined() const;
     /*!
      * \return true if the material property is constant over the time step
      * \param[in] mp: material property
      */
-    bool
-    isMaterialPropertyConstantDuringTheTimeStep(const MaterialProperty&) const;
+    bool isMaterialPropertyConstantDuringTheTimeStep(
+        const MaterialProperty&) const;
     /*!
      * \return registred models
      */
@@ -351,13 +346,12 @@ namespace mfront
      * \brief set the elastic material properties
      * \param[in] emps : elastic material properties
      */
-    void
-    setElasticMaterialProperties(const std::vector<MaterialProperty>&);
+    void setElasticMaterialProperties(const std::vector<MaterialProperty>&);
     /*!
      * \return the elastic material properties
      */
-    const std::vector<MaterialProperty>&
-    getElasticMaterialProperties(void) const;
+    const std::vector<MaterialProperty>& getElasticMaterialProperties(
+        void) const;
     /*!
      * \return true if the elastic material properties have been defined
      */
@@ -372,7 +366,8 @@ namespace mfront
      * the time step
      * \param[in] mps: list of material propertiesx
      */
-    bool areMaterialPropertiesConstantDuringTheTimeStep(const std::vector<MaterialProperty>&) const;
+    bool areMaterialPropertiesConstantDuringTheTimeStep(
+        const std::vector<MaterialProperty>&) const;
     /*!
      * \brief add a new Hill tensor
      * \param[in] v:   variable description
@@ -385,7 +380,7 @@ namespace mfront
      * \pre the array size of the variable must be 1
      */
     void addHillTensor(const VariableDescription&,
-		       const std::vector<MaterialProperty>&);
+                       const std::vector<MaterialProperty>&);
     /*!
      * \return the list of Hill tensors that have been defined
      */
@@ -433,7 +428,7 @@ namespace mfront
      * - if b is false, an exception is thrown.
      */
     void setModellingHypotheses(const std::set<Hypothesis>&,
-				const bool b = false);
+                                const bool b = false);
     /*!
      * \brief add material properties
      * \param[in] h : modelling hypothesis
@@ -443,10 +438,10 @@ namespace mfront
      * \note if h is UNDEFINEDHYPOTHESIS, add the material properties
      * to the default data and to all the specialisations
      */
-    void
-    addMaterialProperties(const Hypothesis,
-			  const VariableDescriptionContainer&,
-			  const BehaviourData::RegistrationStatus = BehaviourData::UNREGISTRED);
+    void addMaterialProperties(
+        const Hypothesis,
+        const VariableDescriptionContainer&,
+        const BehaviourData::RegistrationStatus = BehaviourData::UNREGISTRED);
     /*!
      * \brief add a material property
      * \param[in] h : modelling hypothesis
@@ -456,10 +451,10 @@ namespace mfront
      * \note if h is UNDEFINEDHYPOTHESIS, add the material properties
      * to the default data and to all the specialisations
      */
-    void
-    addMaterialProperty(const Hypothesis,
-			const VariableDescription&,
-			const BehaviourData::RegistrationStatus = BehaviourData::UNREGISTRED);
+    void addMaterialProperty(
+        const Hypothesis,
+        const VariableDescription&,
+        const BehaviourData::RegistrationStatus = BehaviourData::UNREGISTRED);
     /*!
      * \brief add a state variables
      * \param[in] h : modelling hypothesis
@@ -469,10 +464,10 @@ namespace mfront
      * \note if h is UNDEFINEDHYPOTHESIS, add the state variables
      * to the default data and to all the specialisations
      */
-    void
-    addIntegrationVariable(const Hypothesis,
-			   const VariableDescription&,
-			   const BehaviourData::RegistrationStatus = BehaviourData::UNREGISTRED);
+    void addIntegrationVariable(
+        const Hypothesis,
+        const VariableDescription&,
+        const BehaviourData::RegistrationStatus = BehaviourData::UNREGISTRED);
     /*!
      * \brief add state variables
      * \param[in] h : modelling hypothesis
@@ -482,10 +477,10 @@ namespace mfront
      * \note if h is UNDEFINEDHYPOTHESIS, add the state variables
      * to the default data and to all the specialisations
      */
-    void
-    addIntegrationVariables(const Hypothesis,
-			    const VariableDescriptionContainer&,
-			    const BehaviourData::RegistrationStatus = BehaviourData::UNREGISTRED);
+    void addIntegrationVariables(
+        const Hypothesis,
+        const VariableDescriptionContainer&,
+        const BehaviourData::RegistrationStatus = BehaviourData::UNREGISTRED);
     /*!
      * \brief add a state variables
      * \param[in] h : modelling hypothesis
@@ -495,10 +490,10 @@ namespace mfront
      * \note if h is UNDEFINEDHYPOTHESIS, add the state variables
      * to the default data and to all the specialisations
      */
-    void
-    addStateVariable(const Hypothesis,
-		     const VariableDescription&,
-		     const BehaviourData::RegistrationStatus = BehaviourData::UNREGISTRED);
+    void addStateVariable(
+        const Hypothesis,
+        const VariableDescription&,
+        const BehaviourData::RegistrationStatus = BehaviourData::UNREGISTRED);
     /*!
      * \brief add state variables
      * \param[in] h : modelling hypothesis
@@ -508,10 +503,10 @@ namespace mfront
      * \note if h is UNDEFINEDHYPOTHESIS, add the state variables
      * to the default data and to all the specialisations
      */
-    void
-    addStateVariables(const Hypothesis,
-		      const VariableDescriptionContainer&,
-		      const BehaviourData::RegistrationStatus = BehaviourData::UNREGISTRED);
+    void addStateVariables(
+        const Hypothesis,
+        const VariableDescriptionContainer&,
+        const BehaviourData::RegistrationStatus = BehaviourData::UNREGISTRED);
     /*!
      * \brief add auxiliary state variables
      * \param[in] h : modelling hypothesis
@@ -521,10 +516,10 @@ namespace mfront
      * \note if h is UNDEFINEDHYPOTHESIS, add the auxiliary state
      * variables to the default data and to all the specialisations
      */
-    void
-    addAuxiliaryStateVariables(const Hypothesis,
-			       const VariableDescriptionContainer&,
-			       const BehaviourData::RegistrationStatus = BehaviourData::UNREGISTRED);
+    void addAuxiliaryStateVariables(
+        const Hypothesis,
+        const VariableDescriptionContainer&,
+        const BehaviourData::RegistrationStatus = BehaviourData::UNREGISTRED);
     /*!
      * \brief add an auxiliary state variable
      * \param[in] h : modelling hypothesis
@@ -534,10 +529,10 @@ namespace mfront
      * \note if h is UNDEFINEDHYPOTHESIS, add the auxiliary state
      * variables to the default data and to all the specialisations
      */
-    void
-    addAuxiliaryStateVariable(const Hypothesis,
-			      const VariableDescription&,
-			      const BehaviourData::RegistrationStatus = BehaviourData::UNREGISTRED);
+    void addAuxiliaryStateVariable(
+        const Hypothesis,
+        const VariableDescription&,
+        const BehaviourData::RegistrationStatus = BehaviourData::UNREGISTRED);
     /*!
      * \brief add external state variables
      * \param[in] h : modelling hypothesis
@@ -547,10 +542,10 @@ namespace mfront
      * \note if h is UNDEFINEDHYPOTHESIS, add the external state
      * variables to the default data and to all the specialisations
      */
-    void
-    addExternalStateVariables(const Hypothesis,
-			      const VariableDescriptionContainer&,
-			      const BehaviourData::RegistrationStatus = BehaviourData::UNREGISTRED);
+    void addExternalStateVariables(
+        const Hypothesis,
+        const VariableDescriptionContainer&,
+        const BehaviourData::RegistrationStatus = BehaviourData::UNREGISTRED);
     /*!
      * \brief add external state variable
      * \param[in] h : modelling hypothesis
@@ -560,10 +555,10 @@ namespace mfront
      * \note if h is UNDEFINEDHYPOTHESIS, add the external state
      * variables to the default data and to all the specialisations
      */
-    void
-    addExternalStateVariable(const Hypothesis,
-			     const VariableDescription&,
-			     const BehaviourData::RegistrationStatus = BehaviourData::UNREGISTRED);
+    void addExternalStateVariable(
+        const Hypothesis,
+        const VariableDescription&,
+        const BehaviourData::RegistrationStatus = BehaviourData::UNREGISTRED);
     /*!
      * \brief add a local variable
      * \param[in] h : modelling hypothesis
@@ -573,10 +568,10 @@ namespace mfront
      * \note if h is UNDEFINEDHYPOTHESIS, add the local variables to
      * the default data and to all the specialisations
      */
-    void
-    addLocalVariable(const Hypothesis,
-		     const VariableDescription&,
-		     const BehaviourData::RegistrationStatus = BehaviourData::UNREGISTRED);
+    void addLocalVariable(
+        const Hypothesis,
+        const VariableDescription&,
+        const BehaviourData::RegistrationStatus = BehaviourData::UNREGISTRED);
     /*!
      * \brief add local variables
      * \param[in] h : modelling hypothesis
@@ -586,10 +581,10 @@ namespace mfront
      * \note if h is UNDEFINEDHYPOTHESIS, add the local variables to
      * the default data and to all the specialisations
      */
-    void
-    addLocalVariables(const Hypothesis,
-		      const VariableDescriptionContainer&,
-		      const BehaviourData::RegistrationStatus = BehaviourData::UNREGISTRED);
+    void addLocalVariables(
+        const Hypothesis,
+        const VariableDescriptionContainer&,
+        const BehaviourData::RegistrationStatus = BehaviourData::UNREGISTRED);
     /*!
      * \brief add a static variable
      * \param[in] h : modelling hypothesis
@@ -599,10 +594,10 @@ namespace mfront
      * \note if h is UNDEFINEDHYPOTHESIS, add the local variable to
      * the default data and to all the specialisations
      */
-    void
-    addStaticVariable(const Hypothesis,
-		      const StaticVariableDescription&,
-		      const BehaviourData::RegistrationStatus = BehaviourData::UNREGISTRED);
+    void addStaticVariable(
+        const Hypothesis,
+        const StaticVariableDescription&,
+        const BehaviourData::RegistrationStatus = BehaviourData::UNREGISTRED);
     /*!
      * \brief add a material property
      * \param[in] h : modelling hypothesis
@@ -611,10 +606,10 @@ namespace mfront
      * \note if h is UNDEFINEDHYPOTHESIS, add the material properties
      * to the default data and to all the specialisations
      */
-    void
-    addParameter(const Hypothesis,
-		 const VariableDescription&,
-		 const BehaviourData::RegistrationStatus = BehaviourData::UNREGISTRED);
+    void addParameter(
+        const Hypothesis,
+        const VariableDescription&,
+        const BehaviourData::RegistrationStatus = BehaviourData::UNREGISTRED);
     //! \return a type suitable for storing stress-free expansion
     std::string getStressFreeExpansionType(void) const;
     /*!
@@ -623,7 +618,7 @@ namespace mfront
      * \param[in] sfed: stress free expansion description
      */
     void addStressFreeExpansion(const Hypothesis,
-				const StressFreeExpansionDescription&);
+                                const StressFreeExpansionDescription&);
     /*!
      * \return the registred stress free expansion descriptions
      * \param[in] h : modelling hypothesis
@@ -641,31 +636,27 @@ namespace mfront
      * \param[in] h : modelling hypothesis
      * \param[in] n : name
      */
-    bool isMaterialPropertyName(const Hypothesis,
-				const std::string&) const;
+    bool isMaterialPropertyName(const Hypothesis, const std::string&) const;
     /*!
      * \return true if the given name is the one of a local variable.
      * \param[in] h : modelling hypothesis
      * \param[in] n : name
      */
-    bool isLocalVariableName(const Hypothesis,
-			     const std::string&) const;
+    bool isLocalVariableName(const Hypothesis, const std::string&) const;
     /*!
      * \return true if the given name is the one of an persistent
      * variable.
      * \param[in] h : modelling hypothesis
      * \param[in] n : name
      */
-    bool isPersistentVariableName(const Hypothesis,
-				  const std::string&) const;
+    bool isPersistentVariableName(const Hypothesis, const std::string&) const;
     /*!
      * \return true if the given name is the one of an integration
      * variable.
      * \param[in] h : modelling hypothesis
      * \param[in] n : name
      */
-    bool isIntegrationVariableName(const Hypothesis,
-				   const std::string&) const;
+    bool isIntegrationVariableName(const Hypothesis, const std::string&) const;
     /*!
      * \return true if the given name is the one of an integration
      * variable increment.
@@ -673,15 +664,14 @@ namespace mfront
      * \param[in] n : name
      */
     bool isIntegrationVariableIncrementName(const Hypothesis,
-					    const std::string&) const;
+                                            const std::string&) const;
     /*!
      * \return true if the given name is the one of an state
      * variable.
      * \param[in] h : modelling hypothesis
      * \param[in] n : name
      */
-    bool isStateVariableName(const Hypothesis,
-			     const std::string&) const;
+    bool isStateVariableName(const Hypothesis, const std::string&) const;
     /*!
      * \return true if the given name is the one of an state
      * variable increment.
@@ -689,7 +679,7 @@ namespace mfront
      * \param[in] n : name
      */
     bool isStateVariableIncrementName(const Hypothesis,
-				      const std::string&) const;
+                                      const std::string&) const;
     /*!
      * \return true if the given name is the one of an auxiliary
      * internal state variable.
@@ -697,7 +687,7 @@ namespace mfront
      * \param[in] n : name
      */
     bool isAuxiliaryStateVariableName(const Hypothesis,
-				      const std::string&) const;
+                                      const std::string&) const;
     /*!
      * \return true if the given name is the one of an external state
      * variable.
@@ -705,29 +695,27 @@ namespace mfront
      * \param[in] n : name
      */
     bool isExternalStateVariableName(const Hypothesis,
-				     const std::string&) const;
+                                     const std::string&) const;
     /*!
      * \return true if the given name is the one of an external state
      * variable increment
      * \param[in] h : modelling hypothesis
      * \param[in] n : name
      */
-    bool
-    isExternalStateVariableIncrementName(const Hypothesis,
-					 const std::string&) const;
+    bool isExternalStateVariableIncrementName(const Hypothesis,
+                                              const std::string&) const;
     /*!
      * \return true if the given name is the one of a static variable
      * \param[in] h : modelling hypothesis
      * \param[in] n : name
      */
-    bool isStaticVariableName(const Hypothesis,
-			      const std::string&) const;
+    bool isStaticVariableName(const Hypothesis, const std::string&) const;
     /*!
      * \brief check if one has to include tvector.hxx or vector.hxx
      * \param[in] b1 : requires true if one has to include tvector.hxx
      * \param[in] b2 : requires true if one has to include vector.hxx
      */
-    void requiresTVectorOrVectorIncludes(bool&,bool&) const;
+    void requiresTVectorOrVectorIncludes(bool&, bool&) const;
     /*!
      * \return true if all mechanical data are specialised
      * This means that the default mechanical data is useless
@@ -750,8 +738,8 @@ namespace mfront
     //! \return true if thermal expansion coefficient were defined
     bool areThermalExpansionCoefficientsDefined(void) const;
     //! \return the thermal expansion coefficients
-    const std::vector<MaterialProperty>&
-    getThermalExpansionCoefficients(void) const;
+    const std::vector<MaterialProperty>& getThermalExpansionCoefficients(
+        void) const;
     /*!
      * set the behaviour thermal expansion coefficient (isotropic behaviour)
      * \param[in] a : thermal expansion
@@ -764,17 +752,16 @@ namespace mfront
      * \param[in] a3 : thermal expansion in the third  direction
      */
     void setThermalExpansionCoefficients(MaterialProperty,
-					 MaterialProperty,
-					 MaterialProperty);
+                                         MaterialProperty,
+                                         MaterialProperty);
     /*!
      * \return the external names associated with the variables
      * contained in the given container
      * \param[in] h : modelling Hypothesis
      * \param[in] v : variables for which external names are requested
      */
-    std::vector<std::string>
-    getExternalNames(const Hypothesis,
-		     const VarContainer&) const;
+    std::vector<std::string> getExternalNames(const Hypothesis,
+                                              const VarContainer&) const;
     /*!
      * get the external names associated with the variables
      * contained in the given container
@@ -783,8 +770,8 @@ namespace mfront
      * \param[in]  v : variables for which external names are requested
      */
     void getExternalNames(std::vector<std::string>&,
-			  const Hypothesis,
-			  const VarContainer&) const;
+                          const Hypothesis,
+                          const VarContainer&) const;
     /*!
      * get the external names associated with the variables
      * contained in the given container
@@ -793,165 +780,140 @@ namespace mfront
      * \param[in]  v : variables for which external names are requested
      */
     void appendExternalNames(std::vector<std::string>&,
-			     const Hypothesis,
-			     const VarContainer&) const;
+                             const Hypothesis,
+                             const VarContainer&) const;
     /*!
      * \return true if the given member is used in a code block
      * \param[in] h : modelling hypothesis
      * \param[in] n : name
      */
-    bool isMemberUsedInCodeBlocks(const Hypothesis,
-				  const std::string&) const;
+    bool isMemberUsedInCodeBlocks(const Hypothesis, const std::string&) const;
     /*!
      * \return true if the given name is a parameter name
      * \param[in] h : modelling hypothesis
      * \param[in] n : name
      */
-    bool  isParameterName(const Hypothesis,
-		    const std::string&) const;
+    bool isParameterName(const Hypothesis, const std::string&) const;
     /*!
      * \param[in] h : modelling hypothesis
      * \param[in] n : parameter name
      * \param[in] v : parameter default value
      */
-    void
-    setParameterDefaultValue(const Hypothesis,
-			     const std::string&,
-			     const double);
+    void setParameterDefaultValue(const Hypothesis,
+                                  const std::string&,
+                                  const double);
     /*!
      * \param[in] h : modelling hypothesis
      * \param[in] n : parameter name
      * \param[in] i : index
      * \param[in] v : parameter default value
      */
-    void
-    setParameterDefaultValue(const Hypothesis,
-			     const std::string&,
-			     const unsigned short i,
-			     const double);
+    void setParameterDefaultValue(const Hypothesis,
+                                  const std::string&,
+                                  const unsigned short i,
+                                  const double);
     /*!
      * \param[in] h : modelling hypothesis
      * \param[in] n : parameter name
      * \param[in] v : parameter default value
      */
-    void
-    setParameterDefaultValue(const Hypothesis,
-			     const std::string&,
-			     const int);
+    void setParameterDefaultValue(const Hypothesis,
+                                  const std::string&,
+                                  const int);
     /*!
      * \param[in] h : modelling hypothesis
      * \param[in] n : parameter name
      * \param[in] v : parameter default value
      */
-    void
-    setParameterDefaultValue(const Hypothesis,
-			     const std::string&,
-			     const unsigned short);
+    void setParameterDefaultValue(const Hypothesis,
+                                  const std::string&,
+                                  const unsigned short);
     /*!
      * \return the default value of a parameter
      * \param[in] h : modelling hypothesis
      * \param[in] v : parameter default value
      */
-    double
-    getFloattingPointParameterDefaultValue(const Hypothesis,
-					   const std::string&) const;
+    double getFloattingPointParameterDefaultValue(const Hypothesis,
+                                                  const std::string&) const;
     /*!
      * \return the default value of a parameter (array case)
      * \param[in] h: modelling hypothesis
      * \param[in] v: parameter default value
      * \param[in] i: index
      */
-    double
-    getFloattingPointParameterDefaultValue(const Hypothesis,
-					   const std::string&,
-					   const unsigned short) const;
+    double getFloattingPointParameterDefaultValue(const Hypothesis,
+                                                  const std::string&,
+                                                  const unsigned short) const;
     /*!
      * \return the default value of a parameter
      * \param[in] h : modelling hypothesis
      * \param[in] v : parameter default value
      */
-    int
-    getIntegerParameterDefaultValue(const Hypothesis,
-				    const std::string&) const;
+    int getIntegerParameterDefaultValue(const Hypothesis,
+                                        const std::string&) const;
     /*!
      * \return the default value of a parameter
      * \param[in] h : modelling hypothesis
      * \param[in] v : parameter default value
      */
-    unsigned short
-    getUnsignedShortParameterDefaultValue(const Hypothesis,
-					  const std::string&) const;
+    unsigned short getUnsignedShortParameterDefaultValue(
+        const Hypothesis, const std::string&) const;
     /*!
      * associate a glossary name to a variable
      * \param[in] h : modelling Hypothesis
      * \param[in] n : variable name
      * \param[in] g : glossary name
      */
-    void
-    setGlossaryName(const Hypothesis,
-		    const std::string&,
-		    const std::string&);
+    void setGlossaryName(const Hypothesis,
+                         const std::string&,
+                         const std::string&);
     /*!
      * \return true if the given glossary name is used
      * \param[in] h : modelling Hypothesis
      * \param[in] n : name
      */
-    bool
-    isGlossaryNameUsed(const Hypothesis,
-		       const std::string&) const;
+    bool isGlossaryNameUsed(const Hypothesis, const std::string&) const;
     /*!
      * \return true if the given variable name is associated with a
      * glossary name
      * \param[in] h : modelling hypothesis
      * \param[in] n : name
      */
-    bool
-    hasGlossaryName(const Hypothesis,
-		    const std::string&) const;
+    bool hasGlossaryName(const Hypothesis, const std::string&) const;
     /*!
      * \return true if the given variable name is associated with a
      * entry name
      * \param[in] h : modelling hypothesis
      * \param[in] n : name
      */
-    bool
-    hasEntryName(const Hypothesis,
-		 const std::string&) const;
+    bool hasEntryName(const Hypothesis, const std::string&) const;
     /*!
      * associate an entry name to a variable
      * \param[in] h : modelling Hypothesis
      * \param[in] n : variable name
      * \param[in] e : entry name
      */
-    void
-    setEntryName(const Hypothesis,
-		 const std::string&,
-		 const std::string&);
+    void setEntryName(const Hypothesis, const std::string&, const std::string&);
     /*!
      * get the glossary name or the entry name of a variable
      * \param[in] h : modelling Hypothesis
      * \param[in] n : variable name
      */
-    std::string
-    getExternalName(const Hypothesis h,
-		    const std::string& n) const;
+    std::string getExternalName(const Hypothesis h, const std::string& n) const;
     /*!
      * \return the name of the variable associated with the given
      * glossary or entry name
      * \param[in] h : modelling Hypothesis
      * \param[in] n : name
      */
-    std::string
-    getVariableNameFromGlossaryNameOrEntryName(const Hypothesis,
-					       const std::string&) const;
+    std::string getVariableNameFromGlossaryNameOrEntryName(
+        const Hypothesis, const std::string&) const;
     /*!
      * \return true if the given name is an entry name
      * \param[in] h : modelling Hypothesis
      * \param[in] n : name
      */
-    bool
-    isUsedAsEntryName(const Hypothesis,
-		      const std::string&) const;
+    bool isUsedAsEntryName(const Hypothesis, const std::string&) const;
     /*!
      * \brief declares an external state variable to be probably
      * unusable in a purely implicit resolution. This means that its
@@ -968,9 +930,8 @@ namespace mfront
      * \param[in] h : modelling hypothesis
      * \param[in] n : variable name
      */
-    void
-    declareExternalStateVariableProbablyUnusableInPurelyImplicitResolution(const Hypothesis,
-									   const std::string&);
+    void declareExternalStateVariableProbablyUnusableInPurelyImplicitResolution(
+        const Hypothesis, const std::string&);
     /*!
      * \brief set if this behaviour can be used in a purely implicit
      * resolution.
@@ -980,9 +941,7 @@ namespace mfront
      * \see isUsableInPurelyImplicitResolution for details about
      * purely implicit resolution.
      */
-    void
-    setUsableInPurelyImplicitResolution(const Hypothesis,
-					const bool);
+    void setUsableInPurelyImplicitResolution(const Hypothesis, const bool);
     /*!
      * \brief declare or update a code block
      * \param[in] h : modelling hypothesis
@@ -993,48 +952,40 @@ namespace mfront
      * \param[in] b : if true, the code can be overriden or completed
      */
     void setCode(const Hypothesis,
-		 const std::string&,
-		 const CodeBlock&,
-		 const Mode,
-		 const Position,
-		 const bool = true);
+                 const std::string&,
+                 const CodeBlock&,
+                 const Mode,
+                 const Position,
+                 const bool = true);
     /*!
      * \brief return the name of the code blocks defined so far
      * \param[in] h : modelling hypothesis
      */
-    std::vector<std::string>
-    getCodeBlockNames(const Hypothesis) const;
+    std::vector<std::string> getCodeBlockNames(const Hypothesis) const;
     /*!
      * \return the code block with the given name
      * \param[in] h : modelling hypothesis
      * \param[in] n : name
      */
-    const CodeBlock&
-    getCodeBlock(const Hypothesis,
-		 const std::string&) const;
+    const CodeBlock& getCodeBlock(const Hypothesis, const std::string&) const;
     /*!
      * \return the code with the given name
      * \param[in] h : modelling hypothesis
      * \param[in] n : name
      */
-    std::string
-    getCode(const Hypothesis,
-	    const std::string&) const;
+    std::string getCode(const Hypothesis, const std::string&) const;
     /*!
      * \return the code with the given name
      * \param[in] h : modelling hypothesis
      * \param[in] n : name
      */
-    bool
-    hasCode(const Hypothesis,
-	    const std::string&) const;
+    bool hasCode(const Hypothesis, const std::string&) const;
     /*!
      * \brief set the bound description for a given variable
      * \param[in] h : modelling hypothesis
      * \param[in] b : bounds description
      */
-    void setBounds(const Hypothesis,
-		   const BoundsDescription&);
+    void setBounds(const Hypothesis, const BoundsDescription&);
     /*!
      * \brief set a mechanical attribute
      * \param[in] h : modelling hypothesis
@@ -1046,18 +997,16 @@ namespace mfront
      *                However the type of the attribute is checked.
      */
     void setAttribute(const Hypothesis,
-		      const std::string&,
-		      const BehaviourAttribute&,
-		      const bool = false);
+                      const std::string&,
+                      const BehaviourAttribute&,
+                      const bool = false);
     /*!
      * \return a mechanical attribute
      * \param[in] h : modelling hypothesis
      * \param[in] n : name
      */
-    template<typename T>
-    const T&
-    getAttribute(const Hypothesis,
-		 const std::string&) const;
+    template <typename T>
+    const T& getAttribute(const Hypothesis, const std::string&) const;
     /*!
      * \return a mechanical attribute if it exists or the default
      * value
@@ -1065,24 +1014,20 @@ namespace mfront
      * \param[in] n : name
      * \param[in] v : default value
      */
-    template<typename T>
-    T getAttribute(const Hypothesis,
-		   const std::string&,
-		   const T&) const;
+    template <typename T>
+    T getAttribute(const Hypothesis, const std::string&, const T&) const;
     /*!
      * \return true an attribute with the given name has been declared
      * \param[in] h : modelling hypothesis
      * \param[in] n : name
      */
-    bool hasAttribute(const Hypothesis,
-		      const std::string&) const;
+    bool hasAttribute(const Hypothesis, const std::string&) const;
     /*!
      * \return true a parameter with the given name has been declared
      * \param[in] h : modelling hypothesis
      * \param[in] n : name
      */
-    bool hasParameter(const Hypothesis,
-		      const std::string&) const;
+    bool hasParameter(const Hypothesis, const std::string&) const;
     /*!
      * \return true the given modelling hypothesis has a
      * parameter.
@@ -1104,76 +1049,69 @@ namespace mfront
      *                The attribute is left unchanged.
      *                However the type of the attribute is checked.
      */
-    void
-    setAttribute(const std::string&,
-		 const BehaviourAttribute&,
-		 const bool);
+    void setAttribute(const std::string&,
+                      const BehaviourAttribute&,
+                      const bool);
     /*!
      * \return true if an attribute with the given name as been registred
      * \param[in] n : name
      */
-    bool
-    hasAttribute(const std::string&) const;
+    bool hasAttribute(const std::string&) const;
     /*!
      * \return the attribute with the given name
      * \param[in] n : name
      */
-    template<typename T>
+    template <typename T>
     typename std::enable_if<
-      tfel::meta::TLCountNbrOfT<T,BehaviourAttributeTypes>::value==1, 
-      T&>::type
+        tfel::meta::TLCountNbrOfT<T, BehaviourAttributeTypes>::value == 1,
+        T&>::type
     getAttribute(const std::string&);
     /*!
      * \return the attribute with the given name
      * \param[in] n : name
      */
-    template<typename T>
+    template <typename T>
     typename std::enable_if<
-      tfel::meta::TLCountNbrOfT<T,BehaviourAttributeTypes>::value==1, 
-      const T&>::type
+        tfel::meta::TLCountNbrOfT<T, BehaviourAttributeTypes>::value == 1,
+        const T&>::type
     getAttribute(const std::string&) const;
     /*!
      * \return the attribute with the given name
      * \param[in] n : name
      */
-    template<typename T>
+    template <typename T>
     typename std::enable_if<
-      tfel::meta::TLCountNbrOfT<T,BehaviourAttributeTypes>::value==1, 
-      T>::type
-    getAttribute(const std::string&,
-		 const T&) const;
+        tfel::meta::TLCountNbrOfT<T, BehaviourAttributeTypes>::value == 1,
+        T>::type
+    getAttribute(const std::string&, const T&) const;
     /*!
      * \return all the attribute registred
      * \param[in] n : name
      */
-    const std::map<std::string,BehaviourAttribute>&
-    getAttributes(void) const;
+    const std::map<std::string, BehaviourAttribute>& getAttributes(void) const;
     /*!
      * reserve the given name
      * \param[in] h : hypothesis
      * \param[in] n : variable name
      */
-    void reserveName(const Hypothesis,
-		     const std::string&);
+    void reserveName(const Hypothesis, const std::string&);
     /*!
      * \brief look if a name is reserved
      * \param[in] n : name
      */
-     bool isNameReserved(const std::string&) const;
+    bool isNameReserved(const std::string&) const;
     /*!
      * register the given member name
      * \param[in] h : hypothesis
      * \param[in] n : variable name
      */
-    void registerMemberName(const Hypothesis,
-			    const std::string&);
+    void registerMemberName(const Hypothesis, const std::string&);
     /*!
      * register the given static member name
      * \param[in] h : hypothesis
      * \param[in] n : variable name
      */
-    void registerStaticMemberName(const Hypothesis,
-				  const std::string&);
+    void registerStaticMemberName(const Hypothesis, const std::string&);
     /*!
      * \brief check variable existence
      * \return a pair of iterator. The first part tells if the
@@ -1184,8 +1122,7 @@ namespace mfront
      * integration variable, static variable, ...)
      * \param[in] v  : variable name
      */
-    std::pair<bool,bool>
-    checkVariableExistence(const std::string&) const;
+    std::pair<bool, bool> checkVariableExistence(const std::string&) const;
     /*!
      * \brief check variable existence for a particular sort of variable.
      * \return a pair of iterator. The first part tells if the
@@ -1194,12 +1131,12 @@ namespace mfront
      * for all distinct modelling hypothesis.
      * \param[in] v: variable name
      * \param[in] c: variable category
-     * \param[in] b: if true, an exception if thrown if the variable is not found
+     * \param[in] b: if true, an exception if thrown if the variable is not
+     * found
      */
-    std::pair<bool,bool>
-    checkVariableExistence(const std::string&,
-			   const std::string&,
-			   const bool = true) const;
+    std::pair<bool, bool> checkVariableExistence(const std::string&,
+                                                 const std::string&,
+                                                 const bool = true) const;
     /*!
      * \brief check variable glossary name.
      * The variable must exists for all modelling hypothesis and have
@@ -1210,7 +1147,7 @@ namespace mfront
      * \param[in] g: glossary name
      */
     void checkVariableGlossaryName(const std::string&,
-				   const std::string&) const;
+                                   const std::string&) const;
     /*!
      * \brief check variable entry name.
      * The variable must exists for all modelling hypothesis and have
@@ -1220,8 +1157,7 @@ namespace mfront
      * \param[in] v: variable name
      * \param[in] g: entry name
      */
-    void checkVariableEntryName(const std::string&,
-				const std::string&) const;
+    void checkVariableEntryName(const std::string&, const std::string&) const;
     /*!
      * \brief check a variable position. Throw an exception if this
      * check is not satisfied.
@@ -1232,17 +1168,17 @@ namespace mfront
      * than the position given, otherwise an exception is thrown
      */
     void checkVariablePosition(const std::string&,
-			       const std::string&,
-			       const size_t);
+                               const std::string&,
+                               const size_t);
     //! destructor
     ~BehaviourDescription();
-  private:
+
+   private:
     /*!
      * \brief throw an exception saying that no attribute with the
      * given name exists
      */
-    TFEL_NORETURN static void
-    throwUndefinedAttribute(const std::string&);
+    TFEL_NORETURN static void throwUndefinedAttribute(const std::string&);
     /*!
      * update the class name
      */
@@ -1252,19 +1188,17 @@ namespace mfront
      * given modelling hypothesis if necessary, and returns it.
      * \param[in] h : modelling hypothesis
      */
-    BehaviourData&
-    getBehaviourData2(const ModellingHypothesis::Hypothesis&);
+    BehaviourData& getBehaviourData2(const ModellingHypothesis::Hypothesis&);
     /*!
      * \call the behaviour data associated with the given hypothesis
      * \param[in] h : modelling hypothesis
      * \param[in] m : behaviour data method
      * \param[in] a : argument given to the behaviour data's method
      */
-    template<typename Res,typename Arg1>
-    Res
-    getData(const Hypothesis,
-	    Res (BehaviourData:: *)(const Arg1&) const,
-	    const Arg1&) const;
+    template <typename Res, typename Arg1>
+    Res getData(const Hypothesis,
+                Res (BehaviourData::*)(const Arg1&) const,
+                const Arg1&) const;
     /*!
      * \brief call the behaviour data associated with the given hypothesis
      * \param[in] h : modelling hypothesis
@@ -1272,12 +1206,14 @@ namespace mfront
      * \param[in] a : argument given to the behaviour data's method
      * \param[in] b: propagate to all hypothesis if h is UNDEFINEDHYPOTHESIS
      * \note if h is UNDEFINEDHYPOTHESIS, the default data
-     * and all the specialisations are called, unless the last parameter is false.
+     * and all the specialisations are called, unless the last parameter is
+     * false.
      */
-    template<typename Arg1>
+    template <typename Arg1>
     void callBehaviourData(const Hypothesis,
-    			   void (BehaviourData:: *)(const Arg1&),
-    			   const Arg1&,const bool);
+                           void (BehaviourData::*)(const Arg1&),
+                           const Arg1&,
+                           const bool);
     /*!
      * \brief call the behaviour data associated with the given hypothesis
      * \param[in] h : modelling hypothesis
@@ -1286,13 +1222,15 @@ namespace mfront
      * \param[in] a2 : second argument given to the behaviour data's method
      * \param[in] b: propagate to all hypothesis if h is UNDEFINEDHYPOTHESIS
      * \note if h is UNDEFINEDHYPOTHESIS, the default data
-     * and all the specialisations are called, unless the last parameter is false.
+     * and all the specialisations are called, unless the last parameter is
+     * false.
      */
-    template<typename Arg1,typename Arg2>
+    template <typename Arg1, typename Arg2>
     void callBehaviourData(const Hypothesis,
-    			   void (BehaviourData:: *)(const Arg1&,
-    						    const Arg2),
-    			   const Arg1&,const Arg2,const bool);
+                           void (BehaviourData::*)(const Arg1&, const Arg2),
+                           const Arg1&,
+                           const Arg2,
+                           const bool);
     /*!
      * \brief call the behaviour data associated with the given hypothesis
      * \param[in] h : modelling hypothesis
@@ -1301,14 +1239,18 @@ namespace mfront
      * \param[in] a2 : second argument given to the behaviour data's method
      * \param[in] b: propagate to all hypothesis if h is UNDEFINEDHYPOTHESIS
      * \note if h is UNDEFINEDHYPOTHESIS, the default data
-     * and all the specialisations are called, unless the last parameter is false.
+     * and all the specialisations are called, unless the last parameter is
+     * false.
      */
-    template<typename Arg1,typename Arg2,typename Arg3>
+    template <typename Arg1, typename Arg2, typename Arg3>
     void callBehaviourData(const Hypothesis,
-    			   void (BehaviourData:: *)(const Arg1&,
-    						    const Arg2&,
-    						    const Arg3&),
-    			   const Arg1&,const Arg2&,const Arg3&, const bool);
+                           void (BehaviourData::*)(const Arg1&,
+                                                   const Arg2&,
+                                                   const Arg3&),
+                           const Arg1&,
+                           const Arg2&,
+                           const Arg3&,
+                           const bool);
     /*!
      * \brief call the behaviour data associated with the given hypothesis
      * \param[in] h : modelling hypothesis
@@ -1317,13 +1259,15 @@ namespace mfront
      * \param[in] a2 : second argument given to the behaviour data's method
      * \param[in] b: propagate to all hypothesis if h is UNDEFINEDHYPOTHESIS
      * \note if h is UNDEFINEDHYPOTHESIS, the default data
-     * and all the specialisations are called, unless the last parameter is false.
+     * and all the specialisations are called, unless the last parameter is
+     * false.
      */
-    template<typename Arg1,typename Arg2>
+    template <typename Arg1, typename Arg2>
     void callBehaviourData(const Hypothesis,
-    			   void (BehaviourData:: *)(const Arg1&,
-    						    const Arg2&),
-    			   const Arg1&,const Arg2&,const bool);
+                           void (BehaviourData::*)(const Arg1&, const Arg2&),
+                           const Arg1&,
+                           const Arg2&,
+                           const bool);
     /*!
      * \brief call the behaviour data associated with the given hypothesis
      * \param[in] h: modelling hypothesis
@@ -1331,83 +1275,83 @@ namespace mfront
      * \param[in] a: argument given to the behaviour data's method
      * \param[in] b: propagate to all hypothesis if h is UNDEFINEDHYPOTHESIS
      * \note if h is UNDEFINEDHYPOTHESIS, the default data
-     * and all the specialisations are called, unless the last parameter is false.
+     * and all the specialisations are called, unless the last parameter is
+     * false.
      */
-    template<typename Arg1>
+    template <typename Arg1>
     void callBehaviourData(const Hypothesis,
-    			   void (BehaviourData:: *)(const Arg1),
-    			   const Arg1,const bool);
+                           void (BehaviourData::*)(const Arg1),
+                           const Arg1,
+                           const bool);
     /*!
      * \brief add variables to the behaviour data
      * \param[in] h : modelling hypothesis
      * \param[in] v : variables to be added
      * \param[in] s : registration status
-     * \param[in] m : method retrieving the variable container     
+     * \param[in] m : method retrieving the variable container
      *
      * \note if h is UNDEFINEDHYPOTHESIS, add the material properties
      * to the default data and to all the specialisations
      */
-    void
-    addVariables(const Hypothesis,
-		 const VariableDescriptionContainer&,
-		 const BehaviourData::RegistrationStatus,
-		 void (BehaviourData::*)(const VariableDescription&,
-					 const BehaviourData::RegistrationStatus));
+    void addVariables(
+        const Hypothesis,
+        const VariableDescriptionContainer&,
+        const BehaviourData::RegistrationStatus,
+        void (BehaviourData::*)(const VariableDescription&,
+                                const BehaviourData::RegistrationStatus));
     /*!
      * \brief add a variable to the behaviour data
      * \param[in] h : modelling hypothesis
      * \param[in] v : variable to be added
      * \param[in] s : registration status
-     * \param[in] m : method retrieving the variable container     
+     * \param[in] m : method retrieving the variable container
      *
      * \note if h is UNDEFINEDHYPOTHESIS, add the material properties
      * to the default data and to all the specialisations
      */
-    void
-    addVariable(const Hypothesis,
-		const VariableDescription&,
-		const BehaviourData::RegistrationStatus,
-		void (BehaviourData::*)(const VariableDescription&,
-					const BehaviourData::RegistrationStatus));
+    void addVariable(
+        const Hypothesis,
+        const VariableDescription&,
+        const BehaviourData::RegistrationStatus,
+        void (BehaviourData::*)(const VariableDescription&,
+                                const BehaviourData::RegistrationStatus));
     /*!
      * \brief add variables to the behaviour data
      * \param[out] b : behaviour data
      * \param[in]  v : variables to be added
      * \param[in]  s : registration status
-     * \param[in]  m : method retrieving the variable container     
+     * \param[in]  m : method retrieving the variable container
      */
-    void
-    addVariables(BehaviourData&,
-		 const VariableDescriptionContainer&,
-		 const BehaviourData::RegistrationStatus,
-		 void (BehaviourData::*)(const VariableDescription&,
-					 const BehaviourData::RegistrationStatus));
+    void addVariables(
+        BehaviourData&,
+        const VariableDescriptionContainer&,
+        const BehaviourData::RegistrationStatus,
+        void (BehaviourData::*)(const VariableDescription&,
+                                const BehaviourData::RegistrationStatus));
     /*!
      * \brief add a variable to the behaviour data
      * \param[out] b : behaviour data
      * \param[in]  v : variable to be added
      * \param[in]  s : registration status
-     * \param[in]  m : method retrieving the variable container     
+     * \param[in]  m : method retrieving the variable container
      */
-    void
-    addVariable(BehaviourData&,
-		const VariableDescription&,
-		const BehaviourData::RegistrationStatus,
-		void (BehaviourData::*)(const VariableDescription&,
-					const BehaviourData::RegistrationStatus));
+    void addVariable(
+        BehaviourData&,
+        const VariableDescription&,
+        const BehaviourData::RegistrationStatus,
+        void (BehaviourData::*)(const VariableDescription&,
+                                const BehaviourData::RegistrationStatus));
     /*!
      * \brief check that the given hypothesis is supported
      * \param[in] h : modelling hypothesis
      */
-    void
-    checkModellingHypothesis(const Hypothesis&) const;
+    void checkModellingHypothesis(const Hypothesis&) const;
     //! a simple alias
     typedef std::shared_ptr<BehaviourData> MBDPtr;
     /*!
      * behaviour attributes
      */
-    std::map<std::string,
-	     BehaviourAttribute> attributes;
+    std::map<std::string, BehaviourAttribute> attributes;
     /*!
      * behaviour name
      */
@@ -1453,28 +1397,31 @@ namespace mfront
     /*!
      * specialisations
      */
-    std::map<Hypothesis,MBDPtr> sd;
+    std::map<Hypothesis, MBDPtr> sd;
     /*!
      * main variables, association of a driving variable and a
      * thermodynamicforce
      */
-    std::map<DrivingVariable,ThermodynamicForce> mvariables;
+    std::map<DrivingVariable, ThermodynamicForce> mvariables;
     /*!
      * elastic material properties
-     * For isotropic   behaviours, only two elastic material properties must be defined.
-     * For orthotropic behaviours, two or nine elastic material properties must be defined.
+     * For isotropic   behaviours, only two elastic material properties must be
+     * defined. For orthotropic behaviours, two or nine elastic material
+     * properties must be defined.
      */
     std::vector<MaterialProperty> elasticMaterialProperties;
     /*!
      * average thermal coefficient
-     * For isotropic   behaviours, only one thermal expansion coefficient must be defined.
-     * For orthotropic behaviours, one or three thermal expansions coefficients must be defined.
+     * For isotropic   behaviours, only one thermal expansion coefficient must
+     * be defined. For orthotropic behaviours, one or three thermal expansions
+     * coefficients must be defined.
      */
     std::vector<MaterialProperty> thermalExpansionCoefficients;
     /*!
      * elastic material properties
-     * For isotropic   behaviours, only two elastic material properties must be defined.
-     * For orthotropic behaviours, two or nine elastic material properties must be defined.
+     * For isotropic   behaviours, only two elastic material properties must be
+     * defined. For orthotropic behaviours, two or nine elastic material
+     * properties must be defined.
      */
     std::vector<ModelDescription> models;
     /*!
@@ -1489,8 +1436,8 @@ namespace mfront
     mutable BehaviourSymmetryType stype = mfront::ISOTROPIC;
     //! orthotropic axes convention
     tfel::material::OrthotropicAxesConvention oac =
-      tfel::material::OrthotropicAxesConvention::DEFAULT;
-    //!flag telling if the orthotropic axes convention has been defined
+        tfel::material::OrthotropicAxesConvention::DEFAULT;
+    //! flag telling if the orthotropic axes convention has been defined
     mutable bool oacIsDefined = false;
     //! flag telling the behaviour symmetry has been defined
     mutable bool stypeIsDefined = false;
@@ -1502,7 +1449,7 @@ namespace mfront
     IntegrationScheme ischeme = UNDEFINEDINTEGRATIONSCHEME;
     //! list of material laws used
     std::vector<std::string> materialLaws;
-  }; // end of struct BehaviourDescription
+  };  // end of struct BehaviourDescription
 
   /*!
    * \brief set the elastic symmetry of a material if not already
@@ -1511,12 +1458,11 @@ namespace mfront
    * \param[in,out] bd: behaviour description
    * \param[in]     s:  symmetry type
    */
-  MFRONT_VISIBILITY_EXPORT void
-  setElasticSymmetryType(BehaviourDescription&,
-			 const BehaviourSymmetryType);
-  
-} // end of namespace mfront
+  MFRONT_VISIBILITY_EXPORT void setElasticSymmetryType(
+      BehaviourDescription&, const BehaviourSymmetryType);
 
-#include"MFront/BehaviourDescription.ixx"
+}  // end of namespace mfront
+
+#include "MFront/BehaviourDescription.ixx"
 
 #endif /* LIB_MFRONT_BEHAVIOURDESCRIPTION_H_ */

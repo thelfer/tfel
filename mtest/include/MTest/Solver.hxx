@@ -1,23 +1,23 @@
 /*!
  * \file   Solver.hxx
- * \brief    
+ * \brief
  * \author THOMAS HELFER
  * \date   08 nov. 2015
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_MTEST_SOLVER_HXX_
 #define LIB_MTEST_SOLVER_HXX_
 
-#include"MTest/Config.hxx"
-#include"MTest/Types.hxx"
+#include "MTest/Config.hxx"
+#include "MTest/Types.hxx"
 
-namespace mtest{
+namespace mtest {
 
   // forward declaration
   struct StudyCurrentState;
@@ -27,12 +27,11 @@ namespace mtest{
   struct Study;
   // forward declaration
   struct SolverOptions;
-  
+
   /*!
    *
    */
-  struct Solver
-  {
+  struct Solver {
     /*!
      * \brief find the current state of the structure at the end of the
      * time step
@@ -43,17 +42,16 @@ namespace mtest{
      * \param[in]   ti: time at the beginning of the time step
      * \param[in]   ti: time at the end of the time step
      */
-    virtual void
-    execute(StudyCurrentState& scs,
-	    SolverWorkSpace& wk,
-	    const Study& s,
-	    const SolverOptions& o,
-	    const real ti,
-	    const real te) = 0;
+    virtual void execute(StudyCurrentState& scs,
+                         SolverWorkSpace& wk,
+                         const Study& s,
+                         const SolverOptions& o,
+                         const real ti,
+                         const real te) = 0;
     //! destructor
     virtual ~Solver();
   };
-  
-} // end of namespace mtest
+
+}  // end of namespace mtest
 
 #endif /* LIB_MTEST_SOLVER_HXX_ */

@@ -1,6 +1,6 @@
 /*!
  * \file   include/TFEL/Math/FSLevenbergMarquardt.hxx
- * \brief  
+ * \brief
  *
  * "Methods for non-linear least
  * squares problems"
@@ -9,26 +9,24 @@
  *
  * \author Helfer Thomas
  * \date   21 nov 2008
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_FSLEVENBERGMARQUARDT_HXX_
-#define LIB_FSLEVENBERGMARQUARDT_HXX_ 
+#define LIB_FSLEVENBERGMARQUARDT_HXX_
 
-#include"TFEL/Math/tvector.hxx"
-#include"TFEL/Math/tmatrix.hxx"
-#include"TFEL/Math/TinyMatrixSolve.hxx"
+#include "TFEL/Math/tvector.hxx"
+#include "TFEL/Math/tmatrix.hxx"
+#include "TFEL/Math/TinyMatrixSolve.hxx"
 
-namespace tfel
-{
+namespace tfel {
 
-  namespace math
-  {
+  namespace math {
 
     /*!
      * an helper class to define the type of variable used by the
@@ -36,46 +34,42 @@ namespace tfel
      * \param N : number of variables
      * \param T : numerical type
      */
-    template<unsigned short N, // number of variables
-	     typename T>
-    struct FSLevenbergMarquardtVariable
-    {
+    template <unsigned short N,  // number of variables
+              typename T>
+    struct FSLevenbergMarquardtVariable {
       //! a simple alias
-      typedef tvector<N,T> type;
-    }; // end of struct Variable
+      typedef tvector<N, T> type;
+    };  // end of struct Variable
 
     /*!
      * an helper class to define the type of variable used by the
      * FSLevenbergMarquardt class in 1D.
      * \param T : numerical type
      */
-    template<typename T>
-    struct FSLevenbergMarquardtVariable<1u,T>
-    {
+    template <typename T>
+    struct FSLevenbergMarquardtVariable<1u, T> {
       //! a simple alias
       typedef T type;
-    }; // end of struct Variable
+    };  // end of struct Variable
 
-    
     /*!
      * class implementing the Levenberg-Marquardt algorithm.
      * \param N : number of variables
      * \param N : number of parameters
      * \param T : numerical type
      */
-    template<unsigned short N, // number of variables
-	     unsigned short M, // number of parameters
-	     typename T = double>
-    struct FSLevenbergMarquardt
-    {
+    template <unsigned short N,  // number of variables
+              unsigned short M,  // number of parameters
+              typename T = double>
+    struct FSLevenbergMarquardt {
       //! a simple alias
-      typedef  typename FSLevenbergMarquardtVariable<N,T>::type Variable;
+      typedef typename FSLevenbergMarquardtVariable<N, T>::type Variable;
       //! a simple alias
-      typedef  typename FSLevenbergMarquardtVariable<M,T>::type Parameter;
-      
+      typedef typename FSLevenbergMarquardtVariable<M, T>::type Parameter;
+
       //! a simple alias
-      typedef std::pair<T,Parameter> (* PtrFun)(const Variable&,
-						const Parameter&);
+      typedef std::pair<T, Parameter> (*PtrFun)(const Variable&,
+                                                const Parameter&);
 
       /*!
        * Default constructor
@@ -88,66 +82,56 @@ namespace tfel
        * \param x : abscissae
        * \param y : value
        */
-      void
-      addData(const Variable&,
-	      const T);
+      void addData(const Variable&, const T);
 
       /*!
        * set the initial solution guess
        * \param p_ : initial guess
        */
-      void
-      setInitialGuess(const Parameter&);
+      void setInitialGuess(const Parameter&);
 
       /*!
        * set the initial damping parameter
        * \param value : initial damping parameter
        */
-      void
-      setInitialDampingParameter(const T);
+      void setInitialDampingParameter(const T);
 
       /*!
        * set the first criterium value
        * \param value : first criterium value
        */
-      void
-      setFirstCriterium(const T);
+      void setFirstCriterium(const T);
 
       /*!
        * set the second criterium value
        * \param value : second criterium value
        */
-      void
-      setSecondCriterium(const T);
+      void setSecondCriterium(const T);
 
       /*!
        * set the multiplication factor value
        * \param value : multiplication factor value
        */
-      void
-      setMultiplicationFactor(const T);
+      void setMultiplicationFactor(const T);
 
       /*!
        * set the maximum number of iterations value
        * \param value : maximum number of iterations value
        */
-      void
-      setMaximumIteration(const T);
+      void setMaximumIteration(const T);
 
       /*!
        * start the resolution
        * \return the optimal set of parameters found
        * \throw MathDivergenceException if convergence was not reached
        */
-      const Parameter&
-      execute(void);
-      
-    private:
+      const Parameter& execute(void);
 
+     private:
       /*!
        * set of data used for minimisation
        */
-      std::vector<std::pair<Variable,double> > data;
+      std::vector<std::pair<Variable, double>> data;
       /*!
        * current set of parameters
        */
@@ -177,13 +161,12 @@ namespace tfel
        */
       PtrFun f;
 
-    }; // end of struct FSLevenbergMarquardt
+    };  // end of struct FSLevenbergMarquardt
 
-  } // end of namespace math
+  }  // end of namespace math
 
-} // end of namespace tfel
+}  // end of namespace tfel
 
-#include"TFEL/Math/LevenbergMarquardt/FSLevenbergMarquardt.ixx"
+#include "TFEL/Math/LevenbergMarquardt/FSLevenbergMarquardt.ixx"
 
 #endif /* LIB_FSLEVENBERGMARQUARDT_HXX_ */
-

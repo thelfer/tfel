@@ -4,18 +4,18 @@
  * and specialises it for standard numeric types.
  * \author Helfer Thomas
  * \date   07 Jun 2006
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_TFEL_ISSCALAR_H_
-#define LIB_TFEL_ISSCALAR_H_ 
+#define LIB_TFEL_ISSCALAR_H_
 
-#include"TFEL/Math/Forward/Complex.hxx"
+#include "TFEL/Math/Forward/Complex.hxx"
 
 /*!
  * \def    TFEL_META_IS_SCALAR
@@ -23,35 +23,35 @@
  * "real" numeric types.
  *
  * \author Helfer Thomas
- * \date   28 jun 2006 
+ * \date   28 jun 2006
  */
-#define TFEL_META_IS_SCALAR(X)             \
-    /*!                                    \
-     * \brief Partial specialisation for X \
-     * \see   IsScalar                     \
-     */                                    \
-    template<>                             \
-    struct IsScalar< X >{                  \
-      /*!				   \
-       *  Result			   \
-       */				   \
-      static constexpr bool cond = true;       \
-    };                                     \
-    /*!                                    \
-     * \brief Partial specialisation for X \
-     * \see   IsScalar                     \
-     */                                    \
-    template<>                             \
-    struct IsScalar<const X >{             \
-      /*!				   \
-       *  Result			   \
-       */				   \
-      static constexpr bool cond = true;       \
-    }                                 
+#define TFEL_META_IS_SCALAR(X)           \
+  /*!                                    \
+   * \brief Partial specialisation for X \
+   * \see   IsScalar                     \
+   */                                    \
+  template <>                            \
+  struct IsScalar<X> {                   \
+    /*!                                  \
+     *  Result                           \
+     */                                  \
+    static constexpr bool cond = true;   \
+  };                                     \
+  /*!                                    \
+   * \brief Partial specialisation for X \
+   * \see   IsScalar                     \
+   */                                    \
+  template <>                            \
+  struct IsScalar<const X> {             \
+    /*!                                  \
+     *  Result                           \
+     */                                  \
+    static constexpr bool cond = true;   \
+  }
 
-namespace tfel{
+namespace tfel {
 
-  namespace typetraits{
+  namespace typetraits {
 
     /*!
      * \brief  Traits class which says if its argument stands for a scalar
@@ -64,8 +64,8 @@ namespace tfel{
      * \author Helfer Thomas
      * \date   04 Jul 2006
      */
-    template<typename T>
-    struct IsScalar{
+    template <typename T>
+    struct IsScalar {
       /*!
        *  Result
        */
@@ -91,9 +91,8 @@ namespace tfel{
     TFEL_META_IS_SCALAR(tfel::math::Complex<double>);
     TFEL_META_IS_SCALAR(tfel::math::Complex<long double>);
 
-  } // end of namespace typetraits
+  }  // end of namespace typetraits
 
-} // end of namespace tfel
+}  // end of namespace tfel
 
 #endif /* LIB_TFEL_ISSCALAR_H_ */
-

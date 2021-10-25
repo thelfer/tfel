@@ -1,36 +1,35 @@
 /*!
  * \file   AbaqusData.hxx
- * \brief    
+ * \brief
  * \author Helfer Thomas
  * \date   22/03/2016
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_MFRONT_ABAQUS_ABAQUSDATA_HXX
 #define LIB_MFRONT_ABAQUS_ABAQUSDATA_HXX
 
-#include"MFront/Abaqus/Abaqus.hxx"
+#include "MFront/Abaqus/Abaqus.hxx"
 
-namespace abaqus{
+namespace abaqus {
 
   /*!
    * \brief a structure used to collect the parameters passed through
    * the umat interface
    */
-  struct AbaqusData
-  {
+  struct AbaqusData {
     AbaqusReal *const STRESS;
     AbaqusReal *const PNEWDT;
     AbaqusReal *const DDSDDE;
     AbaqusReal *const STATEV;
-    const AbaqusInt  NTENS;
-    const AbaqusInt  NPROPS;
-    const AbaqusInt  NSTATV;
+    const AbaqusInt NTENS;
+    const AbaqusInt NPROPS;
+    const AbaqusInt NSTATV;
     const AbaqusReal DTIME;
     const AbaqusReal *const DROT;
     const AbaqusReal *const STRAN;
@@ -42,8 +41,8 @@ namespace abaqus{
     const AbaqusReal *const DPRED;
     const tfel::material::OutOfBoundsPolicy op;
     const StressFreeExpansionHandler<AbaqusReal> sfeh;
-  }; // end of struct AbaqusData
-  
-} // end of namespace abaqus
+  };  // end of struct AbaqusData
+
+}  // end of namespace abaqus
 
 #endif /* LIB_MFRONT_ABAQUS_ABAQUSDATA_HXX_ */

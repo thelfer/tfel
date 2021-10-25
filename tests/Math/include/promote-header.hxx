@@ -1,28 +1,28 @@
 /*!
  * \file   tests/Math/include/promote-header.hxx
- * \brief  
- * 
+ * \brief
+ *
  * \author Helfer Thomas
  * \date   05 fév 2008
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_TFEL_PROMOTE_HEADER_HXX
-#define LIB_TFEL_PROMOTE_HEADER_HXX 
+#define LIB_TFEL_PROMOTE_HEADER_HXX
 
-#include<iostream>
-#include<cstdlib>
-#include<cassert>
-#include<limits>
-#include<string>
+#include <iostream>
+#include <cstdlib>
+#include <cassert>
+#include <limits>
+#include <string>
 
-#include"TFEL/TypeTraits/Promote.hxx"
-#include"TFEL/Math/General/Complex.hxx"
+#include "TFEL/TypeTraits/Promote.hxx"
+#include "TFEL/Math/General/Complex.hxx"
 
 std::string Test(const float&);
 
@@ -55,5 +55,5 @@ std::string Test(const tfel::math::Complex<float>&);
 std::string Test(const tfel::math::Complex<double>&);
 
 std::string Test(const tfel::math::Complex<long double>&);
-  
+
 #endif /* LIB_TFEL_PROMOTE_HEADER_HXX */

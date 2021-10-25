@@ -1,34 +1,34 @@
 /*!
  * \file   Requirement.hxx
- * \brief    
+ * \brief
  * \author THOMAS HELFER
  * \date   25 juin 2015
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  * <!-- Local IspellDict: english -->
  */
 
 #ifndef LIB_BEHAVIOURBRICKREQUIREMENT_HXX_
 #define LIB_BEHAVIOURBRICKREQUIREMENT_HXX_
 
-#include<string>
-#include<vector>
+#include <string>
+#include <vector>
 
-#include"MFront/MFrontConfig.hxx"
-#include"MFront/BehaviourBrick/ProviderIdentifier.hxx"
+#include "MFront/MFrontConfig.hxx"
+#include "MFront/BehaviourBrick/ProviderIdentifier.hxx"
 
-namespace mfront{
+namespace mfront {
 
-  namespace bbrick{
+  namespace bbrick {
 
     /*!
      * This structure describes a requirement of a behaviour brick.
      */
-    struct MFRONT_VISIBILITY_EXPORT Requirement{
+    struct MFRONT_VISIBILITY_EXPORT Requirement {
       /*!
        * \brief constructor
        * \param[in] t : variable type
@@ -38,9 +38,9 @@ namespace mfront{
        * \pre t must be a type be known by the SupportedTypes class.
        */
       Requirement(const std::string&,
-		  const std::string&,
-		  const unsigned short,
-		  const std::vector<ProviderIdentifier>&);
+                  const std::string&,
+                  const unsigned short,
+                  const std::vector<ProviderIdentifier>&);
       //! copy constructor
       Requirement(const Requirement&);
       //! move constructor
@@ -63,14 +63,15 @@ namespace mfront{
       const std::vector<ProviderIdentifier> aproviders;
       //! destructor
       ~Requirement();
-    private:
+
+     private:
       Requirement() = delete;
       Requirement& operator=(const Requirement&) = delete;
       Requirement& operator=(Requirement&&) = delete;
-    }; // end of struct Requirement
+    };  // end of struct Requirement
 
-  } // end of namespace bbrick
-  
-} // end of namespace mfront
+  }  // end of namespace bbrick
+
+}  // end of namespace mfront
 
 #endif /* LIB_MFRONT_BEHAVIOURBRICK_REQUIREMENT_HXX_ */

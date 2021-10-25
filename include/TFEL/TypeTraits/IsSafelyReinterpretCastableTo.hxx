@@ -3,18 +3,18 @@
  * \brief  This file implements the IsSafelyReinterpretCastableTo traits class.
  * \author Helfer Thomas
  * \date   26 Jul 2006
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_TFEL_IS_SAFELY_REINTERPRET_CASTABLE_H_
-#define LIB_TFEL_IS_SAFELY_REINTERPRET_CASTABLE_H_ 
+#define LIB_TFEL_IS_SAFELY_REINTERPRET_CASTABLE_H_
 
-namespace tfel{
+namespace tfel {
 
   namespace typetraits {
 
@@ -27,33 +27,31 @@ namespace tfel{
      *  - reinterpret_cast<const B* const>(p)
      * shall be considered valid for all object a of type A and for
      * all object of type A*.
-     *  
+     *
      * \param  A, first type
      * \param  B, second type
      * \return bool cond, true if the above expressions are valid,
      * false otherwise.
      *
      * \author Helfer Thomas
-     * \date   28 jun 2006     
-     */ 
-    template<typename A,typename B>
+     * \date   28 jun 2006
+     */
+    template <typename A, typename B>
     struct IsSafelyReinterpretCastableTo;
 
     /*!
      * Partial specialisation if the two types in argument are valid
      */
-    template<typename T>
-    struct IsSafelyReinterpretCastableTo<T,T>
-    {
+    template <typename T>
+    struct IsSafelyReinterpretCastableTo<T, T> {
       /*!
        *  Result
        */
-      static constexpr bool cond = true; 
-    }; // end of struct IsSafelyReinterpretCastableTo
+      static constexpr bool cond = true;
+    };  // end of struct IsSafelyReinterpretCastableTo
 
-  } //end of namespace typetraits
+  }  // end of namespace typetraits
 
-} // end of namespace tfel
+}  // end of namespace tfel
 
 #endif /* LIB_TFEL_IS_SAFELY_REINTERPRET_CASTABLE_H_ */
-

@@ -3,27 +3,30 @@
  *
  *  Created on: 7 mai 2013
  *      Author: rp238441
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #include "TFELCheck/SplineInterpolation.hxx"
 
 namespace tfel_check {
 
-  SplineInterpolation::SplineInterpolation()  = default;
-  SplineInterpolation::SplineInterpolation(SplineInterpolation&&)  = default;
-  SplineInterpolation::SplineInterpolation(const SplineInterpolation&)  = default;
-  SplineInterpolation& SplineInterpolation::operator=(SplineInterpolation&&)  = default;
-  SplineInterpolation& SplineInterpolation::operator=(const SplineInterpolation&)  = default;
+  SplineInterpolation::SplineInterpolation() = default;
+  SplineInterpolation::SplineInterpolation(SplineInterpolation&&) = default;
+  SplineInterpolation::SplineInterpolation(const SplineInterpolation&) =
+      default;
+  SplineInterpolation& SplineInterpolation::operator=(SplineInterpolation&&) =
+      default;
+  SplineInterpolation& SplineInterpolation::operator=(
+      const SplineInterpolation&) = default;
   SplineInterpolation::~SplineInterpolation() = default;
-  
+
   void SplineInterpolation::interpolate(const std::vector<double>& times,
-					const std::vector<double>& values) {
+                                        const std::vector<double>& values) {
     this->spline.setCollocationPoints(times, values);
   }
 
@@ -31,13 +34,9 @@ namespace tfel_check {
     return this->spline.getValue(x);
   }
 
-  std::string SplineInterpolation::getType() const {
-    return "spline";
-  }
+  std::string SplineInterpolation::getType() const { return "spline"; }
 
-  bool SplineInterpolation::isConform() const {
-    return true;
-  }
+  bool SplineInterpolation::isConform() const { return true; }
 
   std::shared_ptr<Interpolation> SplineInterpolation::clone() const {
     return std::make_shared<SplineInterpolation>(*this);

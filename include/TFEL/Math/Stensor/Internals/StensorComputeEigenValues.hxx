@@ -1,142 +1,144 @@
 /*!
  * \file   include/TFEL/Math/Stensor/Internals/StensorComputeEigenValues.hxx
- * \brief    
+ * \brief
  * \author Helfer Thomas
  * \date   13 Jul 2006
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_TFEL_STENSORCOMPUTEEIGENVALUES_H_
-#define LIB_TFEL_STENSORCOMPUTEEIGENVALUES_H_ 
+#define LIB_TFEL_STENSORCOMPUTEEIGENVALUES_H_
 
-#include<cmath>
+#include <cmath>
 
-#include"TFEL/Config/TFELConfig.hxx"
-#include"TFEL/Math/MathException.hxx"
-#include"TFEL/Math/General/CubicRoots.hxx"
-#include"TFEL/Exception/TFELException.hxx"
+#include "TFEL/Config/TFELConfig.hxx"
+#include "TFEL/Math/MathException.hxx"
+#include "TFEL/Math/General/CubicRoots.hxx"
+#include "TFEL/Exception/TFELException.hxx"
 
-namespace tfel{
+namespace tfel {
 
   namespace math {
 
-    namespace internals{
+    namespace internals {
 
-      struct TFELMATH_VISIBILITY_EXPORT StensorEigenValuesComputationFailureException
-	: tfel::math::MathException
-      {
-	StensorEigenValuesComputationFailureException() = default;
-	StensorEigenValuesComputationFailureException(StensorEigenValuesComputationFailureException&&) = default;
-	StensorEigenValuesComputationFailureException(const StensorEigenValuesComputationFailureException&) = default;
-	virtual const char* what() const noexcept override final;
-	virtual ~StensorEigenValuesComputationFailureException() noexcept;
-      }; // end of struct StensorEigenValuesComputationFailureException
-	
+      struct TFELMATH_VISIBILITY_EXPORT
+          StensorEigenValuesComputationFailureException
+          : tfel::math::MathException {
+        StensorEigenValuesComputationFailureException() = default;
+        StensorEigenValuesComputationFailureException(
+            StensorEigenValuesComputationFailureException&&) = default;
+        StensorEigenValuesComputationFailureException(
+            const StensorEigenValuesComputationFailureException&) = default;
+        virtual const char* what() const noexcept override final;
+        virtual ~StensorEigenValuesComputationFailureException() noexcept;
+      };  // end of struct StensorEigenValuesComputationFailureException
+
       // computeEigenValues
-      template<unsigned short N>
+      template <unsigned short N>
       struct StensorComputeEigenValues_;
-      
-      template<>
-      struct StensorComputeEigenValues_<1u>
-      {
-	template<typename T>
-	static TFEL_MATH_INLINE2 void exe(const T* const v,T& vp1,T& vp2,T& vp3,
-					  const bool)
-	{
-	  TFEL_STATIC_ASSERT(tfel::typetraits::IsFundamentalNumericType<T>::cond);
-	  TFEL_STATIC_ASSERT(tfel::typetraits::IsReal<T>::cond);
-	  vp1 = *v;
-	  vp2 = *(v+1);
-	  vp3 = *(v+2);
-	}
-      };
-      
-      template<>
-      struct StensorComputeEigenValues_<2u>
-      {
-	template<typename T>
-	static TFEL_MATH_INLINE2 void exe(const T* const v,
-					  T& vp1,T& vp2,T& vp3,
-					  const bool)
-	{
-	  TFEL_STATIC_ASSERT(tfel::typetraits::IsFundamentalNumericType<T>::cond);
-	  TFEL_STATIC_ASSERT(tfel::typetraits::IsReal<T>::cond);
-	  TFEL_CONSTEXPR const auto one_half = T(1)/T(2);
-	  const auto tr    = v[0] + v[1];
-	  const auto tmp   = v[0] - v[1];
-	  const auto delta = (tmp*tmp*one_half+(v[3]*v[3]))*one_half;
-	  vp1 = one_half*tr+std::sqrt(delta); 
-	  vp2 = one_half*tr-std::sqrt(delta); 
-	  vp3 = *(v+2);
-	}
+
+      template <>
+      struct StensorComputeEigenValues_<1u> {
+        template <typename T>
+        static TFEL_MATH_INLINE2 void exe(
+            const T* const v, T& vp1, T& vp2, T& vp3, const bool) {
+          TFEL_STATIC_ASSERT(
+              tfel::typetraits::IsFundamentalNumericType<T>::cond);
+          TFEL_STATIC_ASSERT(tfel::typetraits::IsReal<T>::cond);
+          vp1 = *v;
+          vp2 = *(v + 1);
+          vp3 = *(v + 2);
+        }
       };
 
-      template<>
-      struct StensorComputeEigenValues_<3u>
-      {
-	template<typename T>
-	static TFEL_MATH_INLINE2 void exe(const T* const v,T& vp1,T& vp2,T& vp3,
-					  const bool b)
-	{
-	  TFEL_STATIC_ASSERT(tfel::typetraits::IsFundamentalNumericType<T>::cond);
-	  TFEL_STATIC_ASSERT(tfel::typetraits::IsReal<T>::cond);
-	  using tfel::math::constexpr_fct::sqrt;
-	  constexpr const auto icste = Cste<T>::isqrt2;
-	  TFEL_CONSTEXPR T one_half  = T{1}/T{2};
-	  TFEL_CONSTEXPR T one_third = T{1}/T{3};
-	  stensor<3u,T> s(v);
-	  stensor<3u,T> s2(deviator(s));
-	  const T vmax = *(fsalgo::max_element<6u>::exe(s2.begin(),[](const T x, const T y){
-		return std::abs(x)>std::abs(y);
-	      }));
-	  const bool n = abs(vmax)*std::numeric_limits<T>::epsilon()>std::numeric_limits<T>::min();
-  	  if(n){
-	    s2 *= T(1)/vmax;
-	  }
-	  constexpr auto p3 = T{-1};
-	  constexpr auto p2 = T{ 0};
-	  const T p1 =  one_half*(s2[5]*s2[5]+s2[4]*s2[4]+s2[3]*s2[3])-(s2[0]*(s2[2]+s2[1])+s2[1]*s2[2]);
-	  const T p0 = -one_half*(s2[0]*s2[5]*s2[5]+s2[1]*s2[4]*s2[4]+s2[2]*s2[3]*s2[3])+icste*(s2[3]*s2[4]*s2[5])+s2[0]*s2[1]*s2[2];
-	  const auto nb = CubicRoots::exe(vp1,vp2,vp3,p3,p2,p1,p0,b);
-	  if(nb==0u){
-	    throw(StensorEigenValuesComputationFailureException());
-	  } else if(nb==1u){
-	    if(std::abs(vp1-vp2)<std::numeric_limits<T>::epsilon()){
-	      const T vm = (vp1+vp2)*one_half;
-	      vp1=vp2=vm;
-	    }
-	    if(std::abs(vp1-vp3)<std::numeric_limits<T>::epsilon()){
-	      const T vm = (vp1+vp3)*one_half;
-	      vp1=vp3=vm;
-	    }
-	    if(std::abs(vp2-vp3)<std::numeric_limits<T>::epsilon()){
-	      const T vm = (vp2+vp3)*one_half;
-	      vp2=vp3=vm;
-	    }
-	  }
-	  if(n){
-	    vp1 *= vmax;
-	    vp2 *= vmax;
-	    vp3 *= vmax;
-	  }
-	  const T tr = trace(s)*one_third;
-	  vp1 += tr;
-	  vp2 += tr;
-	  vp3 += tr;
-	}
+      template <>
+      struct StensorComputeEigenValues_<2u> {
+        template <typename T>
+        static TFEL_MATH_INLINE2 void exe(
+            const T* const v, T& vp1, T& vp2, T& vp3, const bool) {
+          TFEL_STATIC_ASSERT(
+              tfel::typetraits::IsFundamentalNumericType<T>::cond);
+          TFEL_STATIC_ASSERT(tfel::typetraits::IsReal<T>::cond);
+          TFEL_CONSTEXPR const auto one_half = T(1) / T(2);
+          const auto tr = v[0] + v[1];
+          const auto tmp = v[0] - v[1];
+          const auto delta = (tmp * tmp * one_half + (v[3] * v[3])) * one_half;
+          vp1 = one_half * tr + std::sqrt(delta);
+          vp2 = one_half * tr - std::sqrt(delta);
+          vp3 = *(v + 2);
+        }
       };
-      
-    } //end of namespace internals
-    
-  } //end of namespace math
-  
-} // end of namespace tfel
 
+      template <>
+      struct StensorComputeEigenValues_<3u> {
+        template <typename T>
+        static TFEL_MATH_INLINE2 void exe(
+            const T* const v, T& vp1, T& vp2, T& vp3, const bool b) {
+          TFEL_STATIC_ASSERT(
+              tfel::typetraits::IsFundamentalNumericType<T>::cond);
+          TFEL_STATIC_ASSERT(tfel::typetraits::IsReal<T>::cond);
+          using tfel::math::constexpr_fct::sqrt;
+          constexpr const auto icste = Cste<T>::isqrt2;
+          TFEL_CONSTEXPR T one_half = T{1} / T{2};
+          TFEL_CONSTEXPR T one_third = T{1} / T{3};
+          stensor<3u, T> s(v);
+          stensor<3u, T> s2(deviator(s));
+          const T vmax = *(fsalgo::max_element<6u>::exe(
+              s2.begin(),
+              [](const T x, const T y) { return std::abs(x) > std::abs(y); }));
+          const bool n = abs(vmax) * std::numeric_limits<T>::epsilon() >
+                         std::numeric_limits<T>::min();
+          if (n) {
+            s2 *= T(1) / vmax;
+          }
+          constexpr auto p3 = T{-1};
+          constexpr auto p2 = T{0};
+          const T p1 =
+              one_half * (s2[5] * s2[5] + s2[4] * s2[4] + s2[3] * s2[3]) -
+              (s2[0] * (s2[2] + s2[1]) + s2[1] * s2[2]);
+          const T p0 =
+              -one_half * (s2[0] * s2[5] * s2[5] + s2[1] * s2[4] * s2[4] +
+                           s2[2] * s2[3] * s2[3]) +
+              icste * (s2[3] * s2[4] * s2[5]) + s2[0] * s2[1] * s2[2];
+          const auto nb = CubicRoots::exe(vp1, vp2, vp3, p3, p2, p1, p0, b);
+          if (nb == 0u) {
+            throw(StensorEigenValuesComputationFailureException());
+          } else if (nb == 1u) {
+            if (std::abs(vp1 - vp2) < std::numeric_limits<T>::epsilon()) {
+              const T vm = (vp1 + vp2) * one_half;
+              vp1 = vp2 = vm;
+            }
+            if (std::abs(vp1 - vp3) < std::numeric_limits<T>::epsilon()) {
+              const T vm = (vp1 + vp3) * one_half;
+              vp1 = vp3 = vm;
+            }
+            if (std::abs(vp2 - vp3) < std::numeric_limits<T>::epsilon()) {
+              const T vm = (vp2 + vp3) * one_half;
+              vp2 = vp3 = vm;
+            }
+          }
+          if (n) {
+            vp1 *= vmax;
+            vp2 *= vmax;
+            vp3 *= vmax;
+          }
+          const T tr = trace(s) * one_third;
+          vp1 += tr;
+          vp2 += tr;
+          vp3 += tr;
+        }
+      };
+
+    }  // end of namespace internals
+
+  }  // end of namespace math
+
+}  // end of namespace tfel
 
 #endif /* LIB_TFEL_STENSORCOMPUTEEIGENVALUES_H_ */
-

@@ -3,23 +3,23 @@
  * \brief  This file declares the IsotropicLinearFourierHookLaw class
  * \author Helfer Thomas
  * \date   27 Sep 2006
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_TFEL_ISOTROPICLINEARFOURIERHOOKLAW_H_
-#define LIB_TFEL_ISOTROPICLINEARFOURIERHOOKLAW_H_ 
+#define LIB_TFEL_ISOTROPICLINEARFOURIERHOOKLAW_H_
 
-#include"TFEL/Material/IsotropicLinearFourierLaw.hxx"
-#include"TFEL/Material/IsotropicLinearHookLaw.hxx"
+#include "TFEL/Material/IsotropicLinearFourierLaw.hxx"
+#include "TFEL/Material/IsotropicLinearHookLaw.hxx"
 
-namespace tfel{
+namespace tfel {
 
-  namespace material{
+  namespace material {
 
     /*!
      * \class IsotropicLinearFourierHookLaw
@@ -29,16 +29,13 @@ namespace tfel{
      * \author Helfer Thomas
      * \date   28 Jul 2006
      */
-    template<unsigned short N,typename T,bool use_qt>
+    template <unsigned short N, typename T, bool use_qt>
     class IsotropicLinearFourierHookLaw
-      : public IsotropicLinearFourierLaw<N,T,use_qt>,
-	public IsotropicLinearHookLaw<N,T,use_qt>
-    {};
+        : public IsotropicLinearFourierLaw<N, T, use_qt>,
+          public IsotropicLinearHookLaw<N, T, use_qt> {};
 
-  } // end of namespace material
+  }  // end of namespace material
 
-} // end of namespace  tfel
-
+}  // end of namespace  tfel
 
 #endif /* LIB_TFEL_ISOTROPICLINEARFOURIERHOOKLAW_H_ */
-

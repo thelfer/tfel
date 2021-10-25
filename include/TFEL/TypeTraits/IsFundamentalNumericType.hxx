@@ -4,54 +4,53 @@
  * class and specialises it for standard numerical types.
  * \author Helfer Thomas
  * \date   05 jui 2006
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_TFEL_ISFUNDAMENTALNUMERICTYPE_HXX_
-#define LIB_TFEL_ISFUNDAMENTALNUMERICTYPE_HXX_ 
+#define LIB_TFEL_ISFUNDAMENTALNUMERICTYPE_HXX_
 
-#include"TFEL/Math/Forward/Complex.hxx"
+#include "TFEL/Math/Forward/Complex.hxx"
 
 /*!
  * \def    TFEL_META_IS_FUNDAMENTAL_NUMERIC_TYPE
  * \brief An helper macro to specialise IsFundamentalNumericType for
  * each standard numeric types.
  * \author Helfer Thomas
- * \date   28 jun 2006 
+ * \date   28 jun 2006
  */
-#define TFEL_META_IS_FUNDAMENTAL_NUMERIC_TYPE(X)         \
-    /*!                                                  \
-     * \brief Partial specialisation for X               \
-     * \see   IsFundamentalNumericType                   \
-     */                                                  \
-    template<>                                           \
-    struct IsFundamentalNumericType< X >{                \
-      /*!						 \
-       *  Result					 \
-       */						 \
-      static constexpr bool cond = true;                     \
-    };                                                   \
-    /*!                                                  \
-     * \brief Partial specialisation for X               \
-     * \see   IsFundamentalNumericType                   \
-     */                                                  \
-    template<>                                           \
-    struct IsFundamentalNumericType<const X >{           \
-      /*!						 \
-       *  Result					 \
-       */						 \
-      static constexpr bool cond = true;                     \
-    }                                 
+#define TFEL_META_IS_FUNDAMENTAL_NUMERIC_TYPE(X) \
+  /*!                                            \
+   * \brief Partial specialisation for X         \
+   * \see   IsFundamentalNumericType             \
+   */                                            \
+  template <>                                    \
+  struct IsFundamentalNumericType<X> {           \
+    /*!                                          \
+     *  Result                                   \
+     */                                          \
+    static constexpr bool cond = true;           \
+  };                                             \
+  /*!                                            \
+   * \brief Partial specialisation for X         \
+   * \see   IsFundamentalNumericType             \
+   */                                            \
+  template <>                                    \
+  struct IsFundamentalNumericType<const X> {     \
+    /*!                                          \
+     *  Result                                   \
+     */                                          \
+    static constexpr bool cond = true;           \
+  }
 
+namespace tfel {
 
-namespace tfel{
-
-  namespace typetraits{
+  namespace typetraits {
 
     /*!
      * \brief Traits class which says if its argument is one of the
@@ -66,8 +65,8 @@ namespace tfel{
      * \author Helfer Thomas
      * \date   04 Jul 2006
      */
-    template<typename T>
-    struct IsFundamentalNumericType{
+    template <typename T>
+    struct IsFundamentalNumericType {
       /*!
        *  Result
        */
@@ -85,7 +84,8 @@ namespace tfel{
     TFEL_META_IS_FUNDAMENTAL_NUMERIC_TYPE(long double);
     TFEL_META_IS_FUNDAMENTAL_NUMERIC_TYPE(tfel::math::Complex<unsigned short>);
     TFEL_META_IS_FUNDAMENTAL_NUMERIC_TYPE(tfel::math::Complex<unsigned int>);
-    TFEL_META_IS_FUNDAMENTAL_NUMERIC_TYPE(tfel::math::Complex<long unsigned int>);
+    TFEL_META_IS_FUNDAMENTAL_NUMERIC_TYPE(
+        tfel::math::Complex<long unsigned int>);
     TFEL_META_IS_FUNDAMENTAL_NUMERIC_TYPE(tfel::math::Complex<short>);
     TFEL_META_IS_FUNDAMENTAL_NUMERIC_TYPE(tfel::math::Complex<int>);
     TFEL_META_IS_FUNDAMENTAL_NUMERIC_TYPE(tfel::math::Complex<long int>);
@@ -93,9 +93,8 @@ namespace tfel{
     TFEL_META_IS_FUNDAMENTAL_NUMERIC_TYPE(tfel::math::Complex<double>);
     TFEL_META_IS_FUNDAMENTAL_NUMERIC_TYPE(tfel::math::Complex<long double>);
 
-  } // end of namespace typetraits
+  }  // end of namespace typetraits
 
-} // end of namespace tfel
-  
+}  // end of namespace tfel
+
 #endif /* LIB_TFEL_ISFUNDAMENTALNUMERICTYPE_HXX_ */
-

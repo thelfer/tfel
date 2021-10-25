@@ -3,29 +3,27 @@
  * \brief  This file declares the JavaMaterialPropertyInterface class
  * \author Helfer Thomas
  * \date   06 mai 2008
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_MFRONT_JAVAMATERIALPROPERTYINTERFACE_H_
-#define LIB_MFRONT_JAVAMATERIALPROPERTYINTERFACE_H_ 
+#define LIB_MFRONT_JAVAMATERIALPROPERTYINTERFACE_H_
 
-#include<string>
-#include"TFEL/Utilities/CxxTokenizer.hxx"
-#include"MFront/AbstractMaterialPropertyInterface.hxx"
+#include <string>
+#include "TFEL/Utilities/CxxTokenizer.hxx"
+#include "MFront/AbstractMaterialPropertyInterface.hxx"
 
-namespace mfront{
+namespace mfront {
 
   struct JavaMaterialPropertyInterface
-    : public AbstractMaterialPropertyInterface
-  {
+      : public AbstractMaterialPropertyInterface {
     //! \return the interface name
-    static std::string 
-    getName(void);
+    static std::string getName(void);
     //! constructor
     JavaMaterialPropertyInterface();
     /*!
@@ -37,33 +35,33 @@ namespace mfront{
      * treated by the interface. The second entry is an iterator after
      * the last token treated.
      */
-    virtual std::pair<bool,tokens_iterator>
-    treatKeyword(const std::string&,
-		 const std::vector<std::string>&,
-		 tokens_iterator,
-		 const tokens_iterator) override;
+    virtual std::pair<bool, tokens_iterator> treatKeyword(
+        const std::string&,
+        const std::vector<std::string>&,
+        tokens_iterator,
+        const tokens_iterator) override;
     /*!
      * \brief : fill the target descripton
      * \param[out] d   : target description
      * \param[in]  mpd : material property description
      */
-    virtual void getTargetsDescription(TargetsDescription&,
-				       const MaterialPropertyDescription&) override;
+    virtual void getTargetsDescription(
+        TargetsDescription&, const MaterialPropertyDescription&) override;
     /*!
      * \brief generate the output files
      * \param[in] mpd : material property description
      * \param[in] fd  : mfront file description
      */
     virtual void writeOutputFiles(const MaterialPropertyDescription&,
-				  const FileDescription&) override;
+                                  const FileDescription&) override;
     //! destructor
     virtual ~JavaMaterialPropertyInterface();
-  private:
+
+   private:
     //! package name
     std::string package;
-  }; // end of JavaMaterialPropertyInterface
+  };  // end of JavaMaterialPropertyInterface
 
-} // end of namespace mfront
+}  // end of namespace mfront
 
 #endif /* LIB_MFRONT_JAVAMATERIALPROPERTYINTERFACE_H_ */
-

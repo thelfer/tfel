@@ -1,33 +1,33 @@
 /*!
  * \file   mfront/include/MFront/AbstractBehaviourInterface.hxx
- * \brief  
- * 
+ * \brief
+ *
  * \author Helfer Thomas
  * \date   16 jan 2007
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_MFRONTBEHAVIOURVIRTUALINTERFACE_HXX_
-#define LIB_MFRONTBEHAVIOURVIRTUALINTERFACE_HXX_ 
+#define LIB_MFRONTBEHAVIOURVIRTUALINTERFACE_HXX_
 
-#include<map>
-#include<set>
-#include<string>
-#include<vector>
-#include<memory>
-#include<utility>
+#include <map>
+#include <set>
+#include <string>
+#include <vector>
+#include <memory>
+#include <utility>
 
-#include"MFront/MFrontConfig.hxx"
-#include"TFEL/Utilities/CxxTokenizer.hxx"
-#include"TFEL/Material/ModellingHypothesis.hxx"
+#include "MFront/MFrontConfig.hxx"
+#include "TFEL/Utilities/CxxTokenizer.hxx"
+#include "TFEL/Material/ModellingHypothesis.hxx"
 
-namespace mfront{
-  
+namespace mfront {
+
   // forward declaration
   struct BehaviourDescription;
   // forward declaration
@@ -38,8 +38,7 @@ namespace mfront{
   /*!
    * This is the abstract base class of all behaviour interfaces
    */
-  struct MFRONT_VISIBILITY_EXPORT AbstractBehaviourInterface
-  {
+  struct MFRONT_VISIBILITY_EXPORT AbstractBehaviourInterface {
     //! a simple alias
     typedef tfel::material::ModellingHypothesis ModellingHypothesis;
     //! a simple alias
@@ -52,8 +51,7 @@ namespace mfront{
      * set if dynamically allocated arrays are allowed
      * \param[in] b : boolean
      */
-    virtual void
-    allowDynamicallyAllocatedArrays(const bool) = 0;
+    virtual void allowDynamicallyAllocatedArrays(const bool) = 0;
     /*!
      * \brief treat a keyword
      * \param[out/in] bd: behaviour description
@@ -65,40 +63,37 @@ namespace mfront{
      * treated by the interface. The second entry is an iterator after
      * the last token treated.
      */
-    virtual std::pair<bool,tokens_iterator>
-    treatKeyword(BehaviourDescription&,
-		 const std::string&,
-		 const std::vector<std::string>&,
-		 tokens_iterator,
-		 const tokens_iterator) = 0;
+    virtual std::pair<bool, tokens_iterator> treatKeyword(
+        BehaviourDescription&,
+        const std::string&,
+        const std::vector<std::string>&,
+        tokens_iterator,
+        const tokens_iterator) = 0;
     /*!
      * \return true if the interface handles the given modelling hypothesis
      * \param[in] h  : modelling hypothesis
      * \param[in] mb : behaviour description
      */
-    virtual bool
-    isModellingHypothesisHandled(const Hypothesis,
-				 const BehaviourDescription&) const = 0;
+    virtual bool isModellingHypothesisHandled(
+        const Hypothesis, const BehaviourDescription&) const = 0;
     /*!
      * \return the list of modelling hypotheses treated by the interface
      * \param[in] mb : behaviour description
      */
-    virtual std::set<Hypothesis>
-    getModellingHypothesesToBeTreated(const BehaviourDescription&) const = 0;
+    virtual std::set<Hypothesis> getModellingHypothesesToBeTreated(
+        const BehaviourDescription&) const = 0;
 
     /*!
      * write interface specific includes
      * \param[in] out : output file
      * \param[in] mb  : behaviour description
      */
-    virtual void 
-    writeInterfaceSpecificIncludes(std::ostream&,
-				   const BehaviourDescription&) const = 0;
+    virtual void writeInterfaceSpecificIncludes(
+        std::ostream&, const BehaviourDescription&) const = 0;
 
-    virtual void 
-    exportMechanicalData(std::ostream&,
-			 const Hypothesis,
-			 const BehaviourDescription&) const = 0;
+    virtual void exportMechanicalData(std::ostream&,
+                                      const Hypothesis,
+                                      const BehaviourDescription&) const = 0;
     /*!
      * write the behaviour constructor associated with the law
      * \param[in] behaviourFile           : output file
@@ -107,55 +102,47 @@ namespace mfront{
      *                                      default value (zero) to state
      *                                      variable increments
      */
-    virtual void 
-    writeBehaviourConstructor(std::ostream&,
-			      const BehaviourDescription&,
-			      const std::string&) const = 0;
-    
-    virtual void
-    writeBehaviourDataConstructor(std::ostream&,
-				  const Hypothesis,
-				  const BehaviourDescription&) const = 0;
+    virtual void writeBehaviourConstructor(std::ostream&,
+                                           const BehaviourDescription&,
+                                           const std::string&) const = 0;
+
+    virtual void writeBehaviourDataConstructor(
+        std::ostream&, const Hypothesis, const BehaviourDescription&) const = 0;
     /*!
      * write the behaviour constructor associated with the law
      * \param[in] behaviourFile : output file
      * \param[in] mb            : behaviour description
      */
-    virtual void 
-    writeBehaviourDataMainVariablesSetters(std::ostream&,
-					   const BehaviourDescription&) const = 0;
-    
-    virtual void 
-    writeIntegrationDataConstructor(std::ostream&,
-				    const Hypothesis,
-				    const BehaviourDescription&) const = 0;
+    virtual void writeBehaviourDataMainVariablesSetters(
+        std::ostream&, const BehaviourDescription&) const = 0;
+
+    virtual void writeIntegrationDataConstructor(
+        std::ostream&, const Hypothesis, const BehaviourDescription&) const = 0;
     /*!
      * write the behaviour constructor associated with the law
      * \param[in] behaviourFile : output file
      * \param[in] mb            : behaviour description
      */
-    virtual void 
-    writeIntegrationDataMainVariablesSetters(std::ostream&,
-					     const BehaviourDescription&) const = 0;
+    virtual void writeIntegrationDataMainVariablesSetters(
+        std::ostream&, const BehaviourDescription&) const = 0;
     /*!
      * \brief write output files
      * \param[in] mb : behaviour description
      * \param[in] fd : mfront file description
      */
-    virtual void
-    endTreatment(const BehaviourDescription&,
-		  const FileDescription&) const = 0;
+    virtual void endTreatment(const BehaviourDescription&,
+                              const FileDescription&) const = 0;
     /*!
      * \param[out] d  : target description
      * \param[out] bd : behaviour description
      */
     virtual void getTargetsDescription(TargetsDescription&,
-				       const BehaviourDescription&) = 0;
+                                       const BehaviourDescription&) = 0;
     //! destructor
     virtual ~AbstractBehaviourInterface();
 
-  }; // end of AbstractBehaviourInterface
+  };  // end of AbstractBehaviourInterface
 
-} // end of namespace mfront  
+}  // end of namespace mfront
 
 #endif /* LIB_MFRONTBEHAVIOURVIRTUALINTERFACE_HXX_ */

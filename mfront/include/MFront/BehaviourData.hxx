@@ -3,34 +3,34 @@
  * \brief  This file declares the BehaviourData class
  * \author Helfer Thomas
  * \date   21 Mars 2014
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_MFRONT_BEHAVIOURDATA_HXX
-#define LIB_MFRONT_BEHAVIOURDATA_HXX 
+#define LIB_MFRONT_BEHAVIOURDATA_HXX
 
-#include<set>
-#include<map>
-#include<vector>
-#include<string>
-#include<memory>
+#include <set>
+#include <map>
+#include <vector>
+#include <string>
+#include <memory>
 
-#include"MFront/MFrontConfig.hxx"
-#include"MFront/CodeBlock.hxx"
-#include"MFront/VariableDescription.hxx"
-#include"MFront/DrivingVariable.hxx"
-#include"MFront/BoundsDescription.hxx"
-#include"MFront/ThermodynamicForce.hxx"
-#include"MFront/SupportedTypes.hxx"
-#include"MFront/StaticVariableDescription.hxx"
-#include"MFront/BehaviourAttribute.hxx"
+#include "MFront/MFrontConfig.hxx"
+#include "MFront/CodeBlock.hxx"
+#include "MFront/VariableDescription.hxx"
+#include "MFront/DrivingVariable.hxx"
+#include "MFront/BoundsDescription.hxx"
+#include "MFront/ThermodynamicForce.hxx"
+#include "MFront/SupportedTypes.hxx"
+#include "MFront/StaticVariableDescription.hxx"
+#include "MFront/BehaviourAttribute.hxx"
 
-namespace mfront{
+namespace mfront {
 
   // forward declaration
   struct ModelDescription;
@@ -38,9 +38,7 @@ namespace mfront{
   /*!
    * This structure gathers various behaviour characteristic
    */
-  struct MFRONT_VISIBILITY_EXPORT BehaviourData
-    : private SupportedTypes
-  {
+  struct MFRONT_VISIBILITY_EXPORT BehaviourData : private SupportedTypes {
     /*
      * normalised code block names
      * \note code block name begins with an upper case
@@ -126,36 +124,36 @@ namespace mfront{
     static const std::string profiling;
     //! algorithm used
     static const std::string algorithm;
-    //! number of evaluation of the computeDerivative method 
+    //! number of evaluation of the computeDerivative method
     //  of a Runge-Kutta algorithm
     static const std::string numberOfEvaluations;
     /*!
      * The description of a stress free expansion defined through an
      * external state variable
-    * \note SFED_ESV: Stress Free Expansion Description _ External
-    * State Variable
+     * \note SFED_ESV: Stress Free Expansion Description _ External
+     * State Variable
      */
-    struct SFED_ESV
-    {
+    struct SFED_ESV {
       //! variable name
       std::string vname;
-    }; // end of SFED_ESV
+    };  // end of SFED_ESV
     //! a placeholder for null expansion
-    struct NullExpansion{};
+    struct NullExpansion {};
     /*!
      * a stress free expansion can be computed using by:
      * - an external state variable
      * - a  model
      */
     using StressFreeExpansionHandlerTypes =
-      typename tfel::meta::GenerateTypeList<SFED_ESV,
-					    NullExpansion,
-					    std::shared_ptr<ModelDescription>>::type;
+        typename tfel::meta::GenerateTypeList<
+            SFED_ESV,
+            NullExpansion,
+            std::shared_ptr<ModelDescription>>::type;
     /*!
      * a stress free expansion handler
      */
     using StressFreeExpansionHandler =
-      tfel::utilities::GenTypeBase<StressFreeExpansionHandlerTypes>;
+        tfel::utilities::GenTypeBase<StressFreeExpansionHandlerTypes>;
     /*!
      * \brief a simple wrapper around an isotropic swelling model
      * given by a volume change
@@ -163,10 +161,10 @@ namespace mfront{
      * s = \left(dV_V0/3,dV_V0/3,dV_V0/3\,0\,0\,0\right)
      * \]
      */
-    struct VolumeSwellingStressFreeExpansion{
+    struct VolumeSwellingStressFreeExpansion {
       //! volumetric stress free expansion
       StressFreeExpansionHandler sfe;
-    }; // end of struct VolumeSwellingStressFreeExpansion
+    };  // end of struct VolumeSwellingStressFreeExpansion
     /*!
      * \brief a simple wrapper around a model describing an axial
      * growth.
@@ -174,10 +172,10 @@ namespace mfront{
      * s = \left(0,0,dlz_lz\,0\,0\,0\right)
      * \]
      */
-    struct AxialGrowth{
+    struct AxialGrowth {
       //! description of the axial growth
       StressFreeExpansionHandler sfe;
-    }; // end of struct AxialGrowth
+    };  // end of struct AxialGrowth
     /*!
      * \brief a simple wrapper around a model describing fuel
      * relocation.
@@ -185,10 +183,10 @@ namespace mfront{
      * s = \left(0,0,dlz_lz\,0\,0\,0\right)
      * \]
      */
-    struct Relocation{
+    struct Relocation {
       //! description of the axial growth
       StressFreeExpansionHandler sfe;
-    }; // end of struct Relocation
+    };  // end of struct Relocation
     /*!
      * \brief a brief structure describing a stress free expansion du
      * to an isotropic swelling given by a linear change in each
@@ -197,85 +195,77 @@ namespace mfront{
      * s = \left(dl_l,dl_l,dl_l\,0\,0\,0\right)
      * \]
      */
-    struct IsotropicStressFreeExpansion{
+    struct IsotropicStressFreeExpansion {
       //! stress free expansion in each direction
       StressFreeExpansionHandler sfe;
-    }; // end of struct IsotropicStressFreeExpansion
+    };  // end of struct IsotropicStressFreeExpansion
     /*!
      * \brief a brief structure describing a stress free expansion du
      * to an orthotropic swelling
      */
-    struct OrthotropicStressFreeExpansion{
+    struct OrthotropicStressFreeExpansion {
       //! stress free expansion in the first material direction
       StressFreeExpansionHandler sfe0;
       //! stress free expansion in the second material direction
       StressFreeExpansionHandler sfe1;
       //! stress free expansion in the third material direction
       StressFreeExpansionHandler sfe2;
-    }; // end of struct OrthotropicStressFreeExpansion
+    };  // end of struct OrthotropicStressFreeExpansion
     /*!
      * \brief a brief structure describing a stress free expansion du
      * to an orthotropic swelling described by an array of external
      * state variables
      */
-    struct OrthotropicStressFreeExpansionII{
+    struct OrthotropicStressFreeExpansionII {
       //! stress free expansions
       SFED_ESV esv;
-    }; // end of struct OrthotropicStressFreeExpansion
+    };  // end of struct OrthotropicStressFreeExpansion
     /*!
      * \brief list of a stress free expansion descriptions
      */
     using StressFreeExpansionDescriptionTypes =
-      typename tfel::meta::GenerateTypeList<
-	VolumeSwellingStressFreeExpansion,
-      AxialGrowth,Relocation,
-      IsotropicStressFreeExpansion,
-      OrthotropicStressFreeExpansion,
-      OrthotropicStressFreeExpansionII>::type;
+        typename tfel::meta::GenerateTypeList<
+            VolumeSwellingStressFreeExpansion,
+            AxialGrowth,
+            Relocation,
+            IsotropicStressFreeExpansion,
+            OrthotropicStressFreeExpansion,
+            OrthotropicStressFreeExpansionII>::type;
     //! description of a stress free expansion
     using StressFreeExpansionDescription =
-      tfel::utilities::GenTypeBase<StressFreeExpansionDescriptionTypes>;
+        tfel::utilities::GenTypeBase<StressFreeExpansionDescriptionTypes>;
     /*!
      * mode used when inserting code
      */
-    enum Mode
-    {
-      CREATE,               /*!< create a code block. Return an error
-			         if if fails */
-      CREATEORREPLACE,      /*!< create a code block or replace 
-			     *   it if it already exists. If the
-			     *   code is to be replaced, all 
-			     *   positions are cleard. This applies
-			     *   to the whole code block and not only
-			     *   to specific positions */
-      CREATEORAPPEND,       /*!< create a code block or append 
-			     *   a code block to an existing one */
-      CREATEBUTDONTREPLACE  /*!< create a code block but don't replace 
-			     *   it if it already exists. This applies
-			     *   to the whole code block and not only
-			     *   to specific positions. This option
-			     *   is meant to be used internally and
-			     *   is not accessible from a mfront file*/
-    }; // end of enum Mode
+    enum Mode {
+      CREATE,              /*!< create a code block. Return an error
+                                if if fails */
+      CREATEORREPLACE,     /*!< create a code block or replace
+                            *   it if it already exists. If the
+                            *   code is to be replaced, all
+                            *   positions are cleard. This applies
+                            *   to the whole code block and not only
+                            *   to specific positions */
+      CREATEORAPPEND,      /*!< create a code block or append
+                            *   a code block to an existing one */
+      CREATEBUTDONTREPLACE /*!< create a code block but don't replace
+                            *   it if it already exists. This applies
+                            *   to the whole code block and not only
+                            *   to specific positions. This option
+                            *   is meant to be used internally and
+                            *   is not accessible from a mfront file*/
+    };                     // end of enum Mode
     /*!
      * position of the inserted code
      */
-    enum Position
-    {
-      AT_BEGINNING,
-      BODY,
-      AT_END   
-    }; // end of enum Mode
+    enum Position { AT_BEGINNING, BODY, AT_END };  // end of enum Mode
     /*!
      * Some dsl may want to avoid the user to declare a variable with
      * a given name. To avoid this, they shall reserve the name. Once
      * the variable is finally declare, they shall pass the
      * ALREADYREGISTRED flag to the addXXXVariables methods
      */
-    enum RegistrationStatus{
-      UNREGISTRED,
-      ALREADYREGISTRED
-    };
+    enum RegistrationStatus { UNREGISTRED, ALREADYREGISTRED };
     //! constructor
     BehaviourData();
     //! copy constructor
@@ -283,9 +273,9 @@ namespace mfront{
     //! move constructor (disabled)
     BehaviourData(BehaviourData&&) = delete;
     //! assignement operator (disabled)
-    BehaviourData& operator = (const BehaviourData&) = delete;
+    BehaviourData& operator=(const BehaviourData&) = delete;
     //! move assignement operator (disabled)
-    BehaviourData& operator = (BehaviourData&&) = delete;
+    BehaviourData& operator=(BehaviourData&&) = delete;
     /*!
      * This method has been introduced to optimize the mechanical
      * resolution in licos : a purely implicit resolution only
@@ -293,8 +283,7 @@ namespace mfront{
      * implies that no increment of an external loading is used in the
      * behaviour law.
      */
-    bool
-    isUsableInPurelyImplicitResolution(void) const;
+    bool isUsableInPurelyImplicitResolution(void) const;
     /*!
      * \brief set if this behaviour can be used in a purely implicit
      * resolution.
@@ -303,8 +292,7 @@ namespace mfront{
      * \see isUsableInPurelyImplicitResolution for details about
      * purely implicit resolution.
      */
-    void
-    setUsableInPurelyImplicitResolution(const bool);
+    void setUsableInPurelyImplicitResolution(const bool);
     /*!
      * \brief declares an external state variable to be probably
      * unusable in a purely implicit resolution. This means that its
@@ -318,14 +306,15 @@ namespace mfront{
      * \(t+\theta\,\Delta\,t\). However, this expression is still
      * valid in a purely implicit resolution.
      */
-    void
-    declareExternalStateVariableProbablyUnusableInPurelyImplicitResolution(const std::string&);
+    void declareExternalStateVariableProbablyUnusableInPurelyImplicitResolution(
+        const std::string&);
     /*!
      * \brief get all the external state variables found to be
      * probably unusable in a purely implicit resolution.
      */
     const std::set<std::string>&
-    getExternalStateVariablesDeclaredProbablyUnusableInPurelyImplicitResolution(void) const;
+    getExternalStateVariablesDeclaredProbablyUnusableInPurelyImplicitResolution(
+        void) const;
     /*!
      * \return the variables of the specificed type
      * \param[in] t: type of the variable
@@ -338,71 +327,62 @@ namespace mfront{
      * - `ExternalStateVariables`
      * - `Parameters`
      */
-    const VariableDescriptionContainer&
-    getVariables(const std::string&) const;
+    const VariableDescriptionContainer& getVariables(const std::string&) const;
     /*!
      * \return all material properties
      */
-    const VariableDescriptionContainer&
-    getMaterialProperties(void) const;
+    const VariableDescriptionContainer& getMaterialProperties(void) const;
     /*!
      * \return all persistent variables
      */
-    const VariableDescriptionContainer&
-    getPersistentVariables(void) const;
+    const VariableDescriptionContainer& getPersistentVariables(void) const;
     /*!
      * \return all integration variables
      */
-    const VariableDescriptionContainer&
-    getIntegrationVariables(void) const;
+    const VariableDescriptionContainer& getIntegrationVariables(void) const;
     /*!
      * \return all state variables
      */
-    const VariableDescriptionContainer&
-    getStateVariables(void) const;
+    const VariableDescriptionContainer& getStateVariables(void) const;
     /*!
      * \return all auxiliary state variables
      */
-    const VariableDescriptionContainer&
-    getAuxiliaryStateVariables(void) const;
+    const VariableDescriptionContainer& getAuxiliaryStateVariables(void) const;
     /*!
      * \return all external state variables
      */
-    const VariableDescriptionContainer&
-    getExternalStateVariables(void) const;
+    const VariableDescriptionContainer& getExternalStateVariables(void) const;
     /*!
      * \return all local variables
      */
-    const VariableDescriptionContainer&
-    getLocalVariables(void) const;
+    const VariableDescriptionContainer& getLocalVariables(void) const;
     /*!
      * \return all parameter variables
      */
-    const VariableDescriptionContainer&
-    getParameters(void) const;
+    const VariableDescriptionContainer& getParameters(void) const;
 
-    const VariableDescription&
-    getPersistentVariableDescription(const std::string&) const;
+    const VariableDescription& getPersistentVariableDescription(
+        const std::string&) const;
 
-    const VariableDescription&
-    getIntegrationVariableDescription(const std::string&) const;
+    const VariableDescription& getIntegrationVariableDescription(
+        const std::string&) const;
     /*!
      * \return the state variable associated with the given name
      * \param[in] n: name
      */
-    const VariableDescription&
-    getStateVariableDescription(const std::string&) const;
+    const VariableDescription& getStateVariableDescription(
+        const std::string&) const;
     /*!
      * \return the state variable associated with the given name
      * \param[in] n: name
      */
-    const VariableDescription&
-    getAuxiliaryStateVariableDescription(const std::string&) const;
+    const VariableDescription& getAuxiliaryStateVariableDescription(
+        const std::string&) const;
     /*!
      * \param[in] n: name
      */
-    const VariableDescription&
-    getExternalStateVariableDescription(const std::string&) const;
+    const VariableDescription& getExternalStateVariableDescription(
+        const std::string&) const;
     /*!
      * \param[in] n: external name
      */
@@ -412,7 +392,8 @@ namespace mfront{
      * \param[in] n: external name
      */
     const VariableDescription&
-    getAuxiliaryStateVariableDescriptionByExternalName(const std::string&) const;
+    getAuxiliaryStateVariableDescriptionByExternalName(
+        const std::string&) const;
     /*!
      * \return true if a least one modelling hypothesis is anisotropic
      */
@@ -456,75 +437,62 @@ namespace mfront{
      */
     bool isStaticVariableName(const std::string& n) const;
 
-    const std::vector<BoundsDescription>&
-    getBounds(void) const;
+    const std::vector<BoundsDescription>& getBounds(void) const;
     /*!
      * \brief set a bound on a variable
      * \param[in] d : bounds description
      */
-    void
-    setBounds(const BoundsDescription&);
+    void setBounds(const BoundsDescription&);
     /*!
      * \return the static variables defined
      */
-    const StaticVariableDescriptionContainer&
-    getStaticVariables(void) const;
+    const StaticVariableDescriptionContainer& getStaticVariables(void) const;
     /*!
      * \brief add a material property
      * \param[in] v : variable description
      * \param[in] s : registration status
      */
-    void
-    addMaterialProperty(const VariableDescription&,
-			const RegistrationStatus);
+    void addMaterialProperty(const VariableDescription&,
+                             const RegistrationStatus);
     /*!
      * \brief add a integration variable
      * \param[in] v : variable description
      * \param[in] s : registration status
      */
-    void
-    addIntegrationVariable(const VariableDescription&,
-			   const RegistrationStatus);
+    void addIntegrationVariable(const VariableDescription&,
+                                const RegistrationStatus);
     /*!
      * \brief add a state variable
      * \param[in] v : variable description
      * \param[in] s : registration status
      */
-    void
-    addStateVariable(const VariableDescription&,
-		     const RegistrationStatus);
+    void addStateVariable(const VariableDescription&, const RegistrationStatus);
     /*!
      * \brief add an auxiliary state variable
      * \param[in] v : variable description
      * \param[in] s : registration status
      */
-    void
-    addAuxiliaryStateVariable(const VariableDescription&,
-			      const RegistrationStatus);
+    void addAuxiliaryStateVariable(const VariableDescription&,
+                                   const RegistrationStatus);
     /*!
      * \brief add an external state variable
      * \param[in] v : variable description
      * \param[in] s : registration status
      */
-    void
-    addExternalStateVariable(const VariableDescription&,
-			     const RegistrationStatus);
+    void addExternalStateVariable(const VariableDescription&,
+                                  const RegistrationStatus);
     /*!
      * \brief add a : variable
      * \param[in] v : variable description
      * \param[in] s : registration status
      */
-    void
-    addLocalVariable(const VariableDescription&,
-		     const RegistrationStatus);
+    void addLocalVariable(const VariableDescription&, const RegistrationStatus);
     /*!
      * \brief add a parameter
      * \param[in] v : variable description
      * \param[in] s : registration status
      */
-    void
-    addParameter(const VariableDescription&,
-		 const RegistrationStatus);
+    void addParameter(const VariableDescription&, const RegistrationStatus);
     /*!
      * \return true if a parameter with the given name exists
      * \param[in] n : name
@@ -538,28 +506,25 @@ namespace mfront{
      * \param[in] n : parameter name
      * \param[in] v : parameter default value
      */
-    void setParameterDefaultValue(const std::string&,
-				  const double);
+    void setParameterDefaultValue(const std::string&, const double);
     /*!
      * \param[in] n : parameter name
      * \param[in] i : index
      * \param[in] v : parameter default value
      */
     void setParameterDefaultValue(const std::string&,
-				  const unsigned short i,
-				  const double);
+                                  const unsigned short i,
+                                  const double);
     /*!
      * \param[in] n : parameter name
      * \param[in] v : parameter default value
      */
-    void setParameterDefaultValue(const std::string&,
-				  const int);
+    void setParameterDefaultValue(const std::string&, const int);
     /*!
      * \param[in] n : parameter name
      * \param[in] v : parameter default value
      */
-    void setParameterDefaultValue(const std::string&,
-				  const unsigned short);
+    void setParameterDefaultValue(const std::string&, const unsigned short);
     /*!
      * \return the default value of a paramater
      * \param[in] v : parameter default value
@@ -571,7 +536,7 @@ namespace mfront{
      * \param[in] i: index
      */
     double getFloattingPointParameterDefaultValue(const std::string&,
-						  const unsigned short) const;
+                                                  const unsigned short) const;
     /*!
      * \return the default value of a paramater
      * \param[in] v : parameter default value
@@ -581,15 +546,15 @@ namespace mfront{
      * \return the default value of a paramater
      * \param[in] v : parameter default value
      */
-    unsigned short getUnsignedShortParameterDefaultValue(const std::string&) const;
+    unsigned short getUnsignedShortParameterDefaultValue(
+        const std::string&) const;
     /*!
      * \brief add a static variable description
      * \param[in] v : variable description
      * \param[in] s : registration status
      */
-    void
-    addStaticVariable(const StaticVariableDescription&,
-		      const RegistrationStatus);
+    void addStaticVariable(const StaticVariableDescription&,
+                           const RegistrationStatus);
     /*!
      * \brief add a new stress free expansion description
      * \param[in] sfed: stress free expansion description
@@ -600,9 +565,7 @@ namespace mfront{
      * \param[in] b1 : requires true if one has to include tvector.hxx
      * \param[in] b2 : requires true if one has to include vector.hxx
      */
-    void
-    requiresTVectorOrVectorIncludes(bool&,
-				    bool&) const;   
+    void requiresTVectorOrVectorIncludes(bool&, bool&) const;
     /*!
      * \brief append the given code to the members
      * \param[in] s : members
@@ -623,8 +586,7 @@ namespace mfront{
      * \brief return the name of the code blocks defined so far
      * \param[in] h : modelling hypothesis
      */
-    std::vector<std::string>
-    getCodeBlockNames(void) const;
+    std::vector<std::string> getCodeBlockNames(void) const;
     /*!
      * \brief declare or update a code block
      * \param[in] n : name
@@ -634,26 +596,24 @@ namespace mfront{
      * \param[in] b : if true, the code can be overriden or completed
      */
     void setCode(const std::string&,
-		 const CodeBlock&,
-		 const Mode,
-		 const Position,
-		 const bool);
+                 const CodeBlock&,
+                 const Mode,
+                 const Position,
+                 const bool);
     /*!
      * \return the code block associated with the given name
      * \param[in] n : name
      */
-    const CodeBlock&
-    getCodeBlock(const std::string&) const;
+    const CodeBlock& getCodeBlock(const std::string&) const;
     /*!
      * \return the code block associated with the given name
      * \param[in] n  : name
      * \param[in] cn : behaviour class name
      * \param[in] b  : add profiling information
      */
-    std::string
-    getCode(const std::string&,
-	    const std::string&,
-	    const bool) const;
+    std::string getCode(const std::string&,
+                        const std::string&,
+                        const bool) const;
     /*!
      * \return true if a code block associated with the given name has
      * been defined
@@ -669,10 +629,9 @@ namespace mfront{
      *                The attribute is left unchanged.
      *                However the type of the attribute is checked.
      */
-    void
-    setAttribute(const std::string&,
-		 const BehaviourAttribute&,
-		 const bool);
+    void setAttribute(const std::string&,
+                      const BehaviourAttribute&,
+                      const bool);
     /*!
      * \return true if an attribute with the given name as been registred
      * \param[in] n : name
@@ -695,16 +654,14 @@ namespace mfront{
      * given variable. If none was defined, return the variable name.
      * \param[in] v : variable name
      */
-    std::string
-    getExternalName(const std::string&) const;
+    std::string getExternalName(const std::string&) const;
     /*!
      * \return the external names associated with the
      * variables contained in the given container.
      * \see getExternalName
      * \param[in] v  : variables for which glossary names are requested
      */
-    std::vector<std::string>
-    getExternalNames(const VarContainer&) const;
+    std::vector<std::string> getExternalNames(const VarContainer&) const;
     /*!
      * get the external names associated with the variables
      * contained in the given container.
@@ -712,9 +669,7 @@ namespace mfront{
      * \param[out] n : names
      * \param[in] v  : variables for which glossary names are requested
      */
-    void
-    getExternalNames(std::vector<std::string>&,
-		     const VarContainer&) const;
+    void getExternalNames(std::vector<std::string>&, const VarContainer&) const;
     /*!
      * get the external names associated with the variables
      * contained in the given container.
@@ -722,17 +677,14 @@ namespace mfront{
      * \param[out] n : names
      * \param[in]  v : variables for which glossary names are requested
      */
-    void
-    appendExternalNames(std::vector<std::string>&,
-			const VarContainer&) const;
+    void appendExternalNames(std::vector<std::string>&,
+                             const VarContainer&) const;
     /*!
      * associate a glossary name to a variable
      * \param[in] n : variable name
      * \param[in] g : glossary name
      */
-    void
-    setGlossaryName(const std::string&,
-		    const std::string&);
+    void setGlossaryName(const std::string&, const std::string&);
     /*!
      * Look if the given glossary name is used.
      * \note we explicitely check that the given name is part of the
@@ -745,9 +697,7 @@ namespace mfront{
      * \param[in] n : variable name
      * \param[in] e : entry name
      */
-    void
-    setEntryName(const std::string&,
-		 const std::string&);
+    void setEntryName(const std::string&, const std::string&);
     /*!
      * look if the given name is used as an entry name
      * \param[in] n : name
@@ -758,32 +708,31 @@ namespace mfront{
      * glossary or entry name
      * \param[in] n : name
      */
-    std::string
-    getVariableNameFromGlossaryNameOrEntryName(const std::string&) const;
+    std::string getVariableNameFromGlossaryNameOrEntryName(
+        const std::string&) const;
     /*!
      * \return the attribute with the given name
      * \param[in] n : name
      */
-    template<typename T>
+    template <typename T>
     typename std::enable_if<
-      tfel::meta::TLCountNbrOfT<T,BehaviourAttributeTypes>::value==1, 
-      T&>::type
+        tfel::meta::TLCountNbrOfT<T, BehaviourAttributeTypes>::value == 1,
+        T&>::type
     getAttribute(const std::string&);
     /*!
      * \return the attribute with the given name
      * \param[in] n : name
      */
-    template<typename T>
+    template <typename T>
     typename std::enable_if<
-      tfel::meta::TLCountNbrOfT<T,BehaviourAttributeTypes>::value==1, 
-      const T&>::type
+        tfel::meta::TLCountNbrOfT<T, BehaviourAttributeTypes>::value == 1,
+        const T&>::type
     getAttribute(const std::string&) const;
     /*!
      * \return all the attribute registred
      * \param[in] n : name
      */
-    const std::map<std::string,BehaviourAttribute>&
-    getAttributes(void) const;
+    const std::map<std::string, BehaviourAttribute>& getAttributes(void) const;
     /*!
      * reserve the given name
      * \param[in] n : variable name
@@ -795,7 +744,7 @@ namespace mfront{
      * \brief look if a name is reserved
      * \param[in] n : name
      */
-     bool isNameReserved(const std::string&) const;
+    bool isNameReserved(const std::string&) const;
     /*!
      * register a member name
      * \param[in] n : member name
@@ -813,11 +762,9 @@ namespace mfront{
      */
     void registerStaticMemberName(const std::string&);
     //! \return all the registred member names
-    const std::set<std::string>&
-    getRegistredMembersNames(void) const;
+    const std::set<std::string>& getRegistredMembersNames(void) const;
     //! \return all the registred static member names
-    const std::set<std::string>&
-    getRegistredStaticMembersNames(void) const;
+    const std::set<std::string>& getRegistredStaticMembersNames(void) const;
     /*!
      * \return the name of all the variables (material properties,
      * state variables, auxiliary state variables, external state
@@ -826,12 +773,12 @@ namespace mfront{
     std::set<std::string> getVariablesNames(void) const;
     //! destructor
     virtual ~BehaviourData();
-  private:
+
+   private:
     /*!
      * structure used to handle a blocks of code
      */
-    struct CodeBlocksAggregator
-    {
+    struct CodeBlocksAggregator {
       //! a simple alias
       typedef BehaviourData::Position Position;
       //! a simple alias
@@ -848,25 +795,22 @@ namespace mfront{
        * \param[in] p : position
        * \param[in] b : if true, the code can be overriden or completed
        */
-      void set(const CodeBlock&,
-	       const Position,
-	       const bool);
+      void set(const CodeBlock&, const Position, const bool);
       /*!
        * setter
        * \param[in] c : code
        * \param[in] p : position
        * \param[in] b : if true, the code can be overriden or completed
        */
-      void replace(const CodeBlock&,
-		   const Position,
-		   const bool);
+      void replace(const CodeBlock&, const Position, const bool);
       //! \return the code block
       const CodeBlock& get() const;
       //! \return true if the code is mutable
       bool isMutable() const;
       //! destructor
       ~CodeBlocksAggregator();
-    private:
+
+     private:
       //! \brief update the code block
       void update(void);
       //! check that the get function was not already called.
@@ -889,10 +833,10 @@ namespace mfront{
       mutable bool is_mutable = true;
     };
     /*!
-     * \brief throw an exception saying that no attribute with the given name exists
+     * \brief throw an exception saying that no attribute with the given name
+     * exists
      */
-    TFEL_NORETURN static void
-    throwUndefinedAttribute(const std::string&);
+    TFEL_NORETURN static void throwUndefinedAttribute(const std::string&);
     /*!
      * check that the given name has been registred as a variable name
      * \param[in] n : variable name
@@ -906,11 +850,10 @@ namespace mfront{
      * \param[in] s  : registration status
      * \param[in] bi : if true, register variable increment name
      */
-    void
-    addVariable(VariableDescriptionContainer&,
-		const VariableDescription&,
-		const RegistrationStatus,
-		const bool);
+    void addVariable(VariableDescriptionContainer&,
+                     const VariableDescription&,
+                     const RegistrationStatus,
+                     const bool);
     /*!
      * variables flagged as probably unusable in purely implicit
      * resolutions
@@ -924,7 +867,7 @@ namespace mfront{
      */
     bool usableInPurelyImplicitResolution;
     //! registred code blocks
-    std::map<std::string,CodeBlocksAggregator> cblocks;
+    std::map<std::string, CodeBlocksAggregator> cblocks;
     //! registred material properties
     VariableDescriptionContainer materialProperties;
     //! registred persistent variables
@@ -942,11 +885,11 @@ namespace mfront{
     //! parameters of the behaviour
     VariableDescriptionContainer parameters;
     //! default value for floatting point paramerters
-    std::map<std::string,double>         parametersDefaultValues;
+    std::map<std::string, double> parametersDefaultValues;
     //! default value for signed integer paramerters
-    std::map<std::string,int>            iParametersDefaultValues;
+    std::map<std::string, int> iParametersDefaultValues;
     //! default value for short unsigned integer paramerters
-    std::map<std::string,unsigned short> uParametersDefaultValues;
+    std::map<std::string, unsigned short> uParametersDefaultValues;
     //! static variables
     StaticVariableDescriptionContainer staticVariables;
     //! bounds of the registred variables
@@ -956,27 +899,25 @@ namespace mfront{
      */
     std::vector<StressFreeExpansionDescription> sfeds;
     //! behaviour attributes
-    std::map<std::string,
-	     BehaviourAttribute> attributes;
+    std::map<std::string, BehaviourAttribute> attributes;
     //! private code
     std::string privateCode;
     //! class members
     std::string members;
     //! list of glossary names used by the behaviour
-    std::map<std::string,std::string> glossaryNames;
+    std::map<std::string, std::string> glossaryNames;
     //! list of entry names used by the behaviour
-    std::map<std::string,std::string> entryNames;
+    std::map<std::string, std::string> entryNames;
     //! list of reserved names
     std::set<std::string> reservedNames;
     //! list of variables names
     std::set<std::string> membersNames;
     //! list of variables names
     std::set<std::string> staticMembersNames;
-  }; // end of struct BehaviourData
+  };  // end of struct BehaviourData
 
-} // end of namespace mfront
+}  // end of namespace mfront
 
-#include"MFront/BehaviourData.ixx"
+#include "MFront/BehaviourData.ixx"
 
 #endif /* LIB_MFRONT_BEHAVIOURDATA_HXX */
-

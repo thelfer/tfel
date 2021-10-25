@@ -3,27 +3,27 @@
  * \brief  This file declares some tools to work with TL.
  * \author Helfer Thomas
  * \date   30 August 2006
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_TFEL_TYPELIST_H_
-#define LIB_TFEL_TYPELIST_H_ 
+#define LIB_TFEL_TYPELIST_H_
 
-#include<cstddef>
-#include"TFEL/Config/TFELConfig.hxx"
+#include <cstddef>
+#include "TFEL/Config/TFELConfig.hxx"
 
-namespace tfel{
-  
-  namespace meta{
-    
-    /*! 
+namespace tfel {
+
+  namespace meta {
+
+    /*!
      *\brief An empty class used as parent for all typelist.
-     * The idea of this class was taken from 
+     * The idea of this class was taken from
      * Andrei Alexandrescu works
      * \latexonly
      * \cite{alexandrescu01:_c_desig,alexandrescu02}
@@ -35,7 +35,7 @@ namespace tfel{
      * \author Helfer Thomas
      * \date   30 August 2006
      */
-    struct TFEL_VISIBILITY_LOCAL TL{};
+    struct TFEL_VISIBILITY_LOCAL TL {};
 
     /*!
      * \class TLNode
@@ -44,7 +44,7 @@ namespace tfel{
      * \author Helfer Thomas
      * \date   30 August 2006
      */
-    template<typename T, typename U>
+    template <typename T, typename U>
     struct TLNode;
 
     /*!
@@ -58,9 +58,9 @@ namespace tfel{
     /*!
      * \class TLTransform
      * \brief Metafunction which transform a TL
-     * into another by applying the Transform metafunction 
+     * into another by applying the Transform metafunction
      * to each type in the TL.
-     * 
+     *
      * \param Tlist, a TL.
      * \param Transform, a metafunction taking a type and returning a type.
      *
@@ -69,27 +69,27 @@ namespace tfel{
      * \author Helfer Thomas
      * \date   30 August 2006
      */
-    template<typename Tlist, template<typename> class Transform>
+    template <typename Tlist, template <typename> class Transform>
     struct TLTransform;
 
     /*!
      * \class TLSize
-     * \brief A metafunction which counts the number of elements in a TL. 
-     * 
+     * \brief A metafunction which counts the number of elements in a TL.
+     *
      * \param T, a TL
      * \return value, the number of elements in T.
      *
      * \author Helfer Thomas
      * \date   30 August 2006
      */
-    template<typename T>
+    template <typename T>
     struct TLSize;
 
     /*!
      * \class TLCountNbrOfT
-     * \brief A metafunction which counts the number of 
-     * times T appears in a TL. 
-     * 
+     * \brief A metafunction which counts the number of
+     * times T appears in a TL.
+     *
      * \param T, a type.
      * \param U, a TL.
      * \return value, the number of times T appears in U.
@@ -97,14 +97,14 @@ namespace tfel{
      * \author Helfer Thomas
      * \date   30 August 2006
      */
-    template<typename T, typename U>
+    template <typename T, typename U>
     struct TLCountNbrOfT;
-    
+
     /*!
      * \class TLFindEltPos
-     * \brief A metafunction which returns the position of the 
-     * first appearance of a type in a TL. 
-     * 
+     * \brief A metafunction which returns the position of the
+     * first appearance of a type in a TL.
+     *
      * \param T, a type.
      * \param List, a TL.
      * \return value, the position of T in List.
@@ -112,114 +112,114 @@ namespace tfel{
      * \author Helfer Thomas
      * \date   30 August 2006
      */
-    template<typename T, typename List>
+    template <typename T, typename List>
     struct TLFindEltPos;
 
     /*!
      * \class TLPrepend
-     * \brief A metafunction which returns a new typelist by adding 
-     * an element at the beginnig of a typelist. 
+     * \brief A metafunction which returns a new typelist by adding
+     * an element at the beginnig of a typelist.
      * \param List, a TL.
      * \param T, a type.
      * \return type, a new typelist.
      * \author Helfer Thomas
      * \date   09 September 2006
      */
-    template<typename List,typename T>
+    template <typename List, typename T>
     struct TLPrepend;
 
     /*!
      * \class TLAppend
      * \brief A metafunction which returns a new typelist by adding
-     * an element at the end of a typelist. 
+     * an element at the end of a typelist.
      * \param List, a TL.
      * \param T, a type.
      * \return type, a new typelist.
      * \author Helfer Thomas
      * \date   09 September 2006
      */
-    template<typename List,typename T>
+    template <typename List, typename T>
     struct TLAppend;
 
     /*!
      * \class TLConcatenate
      * \brief A metafunction which returns the concatenation of two TLs
-     * 
-     * \param  typename First,  a TL. 
-     * \param  typename Second, a TL. 
+     *
+     * \param  typename First,  a TL.
+     * \param  typename Second, a TL.
      * \return type, the resulting TL.
      *
      * \author Helfer Thomas
      * \date   15 Sept. 2006
      */
-    template<typename First,typename Second>
-    struct TLConcatenate;    
+    template <typename First, typename Second>
+    struct TLConcatenate;
 
     /*!
      * \class TLFindNthElt
      * \brief A metafunction which returns the Nth
      * element of the TL.
-     * 
+     *
      * \param T, a TL.
-     * \param N, a positive integer. 
-     * \return type, the Nth element of T or TLE 
+     * \param N, a positive integer.
+     * \return type, the Nth element of T or TLE
      * if T contains less than N elements.
      *
      * \author Helfer Thomas
      * \date   30 August 2006
      */
-    template<typename T, unsigned int N>
+    template <typename T, unsigned int N>
     struct TLFindNthElt;
-    
+
     /*!
      * \class TLRemoveNthFirstElt
      * \brief A metafunction which remove the first Nth
      * elements of the TL.
-     * 
+     *
      * \param T, a TL.
-     * \param N, a positive integer. 
-     * \return type, a TL or TLE 
+     * \param N, a positive integer.
+     * \return type, a TL or TLE
      * if T contains less than N elements.
      *
      * \author Helfer Thomas
      * \date   30 August 2006
      */
-    template<typename T, unsigned int N>
+    template <typename T, unsigned int N>
     struct TLRemoveNthFirstElt;
 
     /*!
      * \class TLElementIsUnique
-     * \brief A metafunction which returns true if a 
+     * \brief A metafunction which returns true if a
      * type appears one and only one time in a TL.
-     * 
+     *
      * \param T, a type.
-     * \param U, a TL. 
+     * \param U, a TL.
      * \return cond, true if T  appears one and only one time in U.
      *
      * \author Helfer Thomas
      * \date   30 August 2006
      */
-    template<typename T,typename U>
+    template <typename T, typename U>
     struct TLElementIsUnique;
 
     /*!
      * \class TLElementsAreUnique
-     * \brief A metafunction which returns true if all elements 
+     * \brief A metafunction which returns true if all elements
      * in a TL are unique.
-     * 
-     * \param T, a TL. 
+     *
+     * \param T, a TL.
      * \return cond, true if all elements in T are unique
      *
      * \author Helfer Thomas
      * \date   30 August 2006
      */
-    template<typename T>
-    struct TLElementsAreUnique;    
+    template <typename T>
+    struct TLElementsAreUnique;
 
     /*!
      * \class TLExtractSubClassesOf
      * \brief A metafunction which returns a new typelist from a
-     * typelist.  All types in the new typelist inherit from the 
+     * typelist.  All types in the new typelist inherit from the
      * type given in argument.
      * \param List, a TL.
      * \param BaseType, a type.
@@ -227,9 +227,9 @@ namespace tfel{
      * \author Helfer Thomas
      * \date   09 September 2006
      */
-    template<typename List,typename BaseType>
+    template <typename List, typename BaseType>
     struct TLExtractSubClassesOf;
-    
+
     /*!
      * \class TLUnique
      * \brief A metafunction which returns a new typelist from a
@@ -240,7 +240,7 @@ namespace tfel{
      * \author Helfer Thomas
      * \date   08 Januar 2006
      */
-    template<typename List>
+    template <typename List>
     struct TLUnique;
 
     /*!
@@ -249,12 +249,12 @@ namespace tfel{
      * contains InvalidType.
      *
      * \param typename List, a TL.
-     * 
+     *
      * \return const bool.
      * \author Helfer Thomas
      * \date   10 March 2007
      */
-    template<typename List>
+    template <typename List>
     struct TLContainsInvalidType;
 
     //! Computes the maximum size of all types in a TL.
@@ -267,7 +267,7 @@ namespace tfel{
      * \author Helfer Thomas.
      * \date   22 Apr. 2007.
      */
-    template<typename List> 
+    template <typename List>
     class TLMaxSize;
 
     /*
@@ -279,7 +279,7 @@ namespace tfel{
      * \author Helfer Thomas.
      * \date   16/12/2014
      */
-    template<typename List> 
+    template <typename List>
     class TLMaxAlign;
 
     /*
@@ -292,15 +292,14 @@ namespace tfel{
      * \author Helfer Thomas.
      * \date   22 Apr. 2007.
      */
-    template<typename List,size_t size>
+    template <typename List, size_t size>
     class TLComputeAlignBound;
 
-  } // end of namespace meta
+  }  // end of namespace meta
 
-} // end of namespace tfel
+}  // end of namespace tfel
 
-#include"TFEL/Metaprogramming/TypeList.ixx"
-#include"TFEL/Metaprogramming/GenerateTypeList.hxx"
+#include "TFEL/Metaprogramming/TypeList.ixx"
+#include "TFEL/Metaprogramming/GenerateTypeList.hxx"
 
 #endif /* LIB_TFEL_TYPELIST_H_ */
-

@@ -1,88 +1,83 @@
 /*!
  * \file   mfront/src/CyranoException.cxx
- * \brief  
- * 
+ * \brief
+ *
  * \author Helfer Thomas
  * \date   21 fév 2014
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
-#include"MFront/Cyrano/CyranoException.hxx"
+#include "MFront/Cyrano/CyranoException.hxx"
 
 // fixing a bug on current glibc++ cygwin versions (19/08/2015)
-#if defined __CYGWIN__ &&  (!defined _GLIBCXX_USE_C99)
-#include<sstream>
-namespace std{
-  template<typename T>
-  std::string to_string(const T& v){
+#if defined __CYGWIN__ && (!defined _GLIBCXX_USE_C99)
+#include <sstream>
+namespace std {
+  template <typename T>
+  std::string to_string(const T& v) {
     std::ostringstream s;
     s << v;
     return s.str();
   }
-}
+}  // namespace std
 #endif /* defined __CYGWIN__ &&  (!defined _GLIBCXX_USE_C99) */
 
-namespace cyrano 
-{
-  
+namespace cyrano {
+
   CyranoException::CyranoException(const std::string& s)
-    : msg(s)
-  {} // end of CyranoException::CyranoException
-    
+      : msg(s) {}  // end of CyranoException::CyranoException
+
   CyranoException::CyranoException(const CyranoException& e)
-    : std::exception(),
-      msg(e.msg)
-  {} // end of CyranoException::CyranoException
+      : std::exception(),
+        msg(e.msg) {}  // end of CyranoException::CyranoException
 
-  const char* 
-  CyranoException::what () const noexcept
-  { 
-    return msg.c_str(); 
-  } // end of CyranoException::what
+  const char* CyranoException::what() const noexcept {
+    return msg.c_str();
+  }  // end of CyranoException::what
 
-  std::string
-  CyranoException::getMsg() const noexcept
-  {
+  std::string CyranoException::getMsg() const noexcept {
     return msg;
-  } // end of CyranoException::getMsg
-  
+  }  // end of CyranoException::getMsg
+
   CyranoException::~CyranoException() noexcept = default;
 
   CyranoIntegrationFailed::CyranoIntegrationFailed()
-    : CyranoException("behaviour integration failed")
-  {} // end of CyranoIntegrationFailed::CyranoIntegrationFailed
+      : CyranoException("behaviour integration failed") {
+  }  // end of CyranoIntegrationFailed::CyranoIntegrationFailed
 
   CyranoIntegrationFailed::CyranoIntegrationFailed(const std::string& m)
-    : CyranoException("behaviour integration failed : "+m)
-  {} // end of CyranoIntegrationFailed::CyranoIntegrationFailed
+      : CyranoException("behaviour integration failed : " + m) {
+  }  // end of CyranoIntegrationFailed::CyranoIntegrationFailed
 
-  CyranoIntegrationFailed::CyranoIntegrationFailed(const CyranoIntegrationFailed&) = default;
+  CyranoIntegrationFailed::CyranoIntegrationFailed(
+      const CyranoIntegrationFailed&) = default;
 
   CyranoIntegrationFailed::~CyranoIntegrationFailed() noexcept = default;
 
   CyranoInvalidNTENSValue::CyranoInvalidNTENSValue(const unsigned short N)
-    : CyranoException("Invalid tensor size declared '"+
-		      std::to_string(static_cast<unsigned int>(N))+"'")
-  {} // end of CyranoInvalidNTENSValue::CyranoInvalidNTENSValue
+      : CyranoException("Invalid tensor size declared '" +
+                        std::to_string(static_cast<unsigned int>(N)) + "'") {
+  }  // end of CyranoInvalidNTENSValue::CyranoInvalidNTENSValue
 
-  CyranoInvalidNTENSValue::CyranoInvalidNTENSValue(const CyranoInvalidNTENSValue&) = default;
+  CyranoInvalidNTENSValue::CyranoInvalidNTENSValue(
+      const CyranoInvalidNTENSValue&) = default;
 
   CyranoInvalidNTENSValue::~CyranoInvalidNTENSValue() noexcept = default;
 
   CyranoInvalidDimension::CyranoInvalidDimension(const std::string& b,
-						 const unsigned short N)
-    : CyranoException("''"+b+"' can't be used in "+
-		      std::to_string(static_cast<unsigned int>(N))+"D")
-  {} // end of CyranoInvalidDimension::CyranoInvalidDimension
+                                                 const unsigned short N)
+      : CyranoException("''" + b + "' can't be used in " +
+                        std::to_string(static_cast<unsigned int>(N)) + "D") {
+  }  // end of CyranoInvalidDimension::CyranoInvalidDimension
 
-  CyranoInvalidDimension::CyranoInvalidDimension(const CyranoInvalidDimension&) = default;
+  CyranoInvalidDimension::CyranoInvalidDimension(
+      const CyranoInvalidDimension&) = default;
 
   CyranoInvalidDimension::~CyranoInvalidDimension() noexcept = default;
 
-} // end of namespace cyrano
-
+}  // end of namespace cyrano

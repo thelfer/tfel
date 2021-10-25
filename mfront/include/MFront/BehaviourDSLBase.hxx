@@ -1,28 +1,26 @@
 /*!
  * \file   mfront/include/MFront/BehaviourDSLBase.hxx
- * \brief  
- * 
+ * \brief
+ *
  * \author Helfer Thomas
  * \date   08 nov 2006
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_MFRONTPARSERBASE_HXX_
-#define LIB_MFRONTPARSERBASE_HXX_ 
+#define LIB_MFRONTPARSERBASE_HXX_
 
-#include"MFront/BehaviourDSLCommon.hxx"
+#include "MFront/BehaviourDSLCommon.hxx"
 
-namespace mfront{
+namespace mfront {
 
-  template<typename Child>
-  struct BehaviourDSLBase
-    : public BehaviourDSLCommon
-  {
+  template <typename Child>
+  struct BehaviourDSLBase : public BehaviourDSLCommon {
     /*!
      * \brief analyse a file
      * \param[in] f     : file name
@@ -32,37 +30,33 @@ namespace mfront{
      * substitutions are given through command-line options such as
      * `--@YYY@=XXX`)
      */
-    virtual void
-    importFile(const std::string&,
-	       const std::vector<std::string>&,
-	       const std::map<std::string,std::string>&) override;
+    virtual void importFile(const std::string&,
+                            const std::vector<std::string>&,
+                            const std::map<std::string, std::string>&) override;
     /*!
      * \brief analyse the specified string.
      * \param[in] s : analyse a string
      */
-    virtual void
-    analyseString(const std::string&) override;
+    virtual void analyseString(const std::string&) override;
     /*!
      * \brief return the list of keywords usable with this parser
      * \param[out] k : the list of keywords registred for this parser
      */
-    virtual void
-    getKeywordsList(std::vector<std::string>&) const override;
+    virtual void getKeywordsList(std::vector<std::string>&) const override;
 
-  protected:
-    
-    typedef void (Child::* MemberFuncPtr)(void);
-    typedef std::map<std::string,MemberFuncPtr> CallBackContainer;
+   protected:
+    typedef void (Child::*MemberFuncPtr)(void);
+    typedef std::map<std::string, MemberFuncPtr> CallBackContainer;
 
     BehaviourDSLBase();
 
     virtual void analyse(void);
-    
+
     void registerDefaultCallBacks(void);
 
     void treatDisabledCallBack(void);
 
-    void registerNewCallBack(const std::string&,const MemberFuncPtr);
+    void registerNewCallBack(const std::string&, const MemberFuncPtr);
 
     void disableCallBack(const std::string&);
 
@@ -71,8 +65,8 @@ namespace mfront{
     CallBackContainer callBacks;
   };
 
-} // end of namespace mfront  
+}  // end of namespace mfront
 
-#include"MFront/BehaviourDSLBase.ixx"
+#include "MFront/BehaviourDSLBase.ixx"
 
 #endif /* LIB_MFRONTPARSERBASE_HXX_ */

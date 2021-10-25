@@ -3,27 +3,27 @@
  * \brief  This file implements the CastemInterface class.
  * \author Helfer Thomas
  * \date   28 Jul 2006
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_MFRONT_CASTEM_CALL_HXX
 #define LIB_MFRONT_CASTEM_CALL_HXX
 
-#include"MFront/MFrontConfig.hxx"
-#include"TFEL/Exception/TFELException.hxx"
-#include"TFEL/Material/MaterialException.hxx"
+#include "MFront/MFrontConfig.hxx"
+#include "TFEL/Exception/TFELException.hxx"
+#include "TFEL/Material/MaterialException.hxx"
 
-#include"MFront/Castem/Castem.hxx"
-#include"MFront/Castem/CastemException.hxx"
-#include"MFront/Castem/CastemInterfaceExceptions.hxx"
-#include"MFront/Castem/CastemInterfaceDispatch.hxx"
+#include "MFront/Castem/Castem.hxx"
+#include "MFront/Castem/CastemException.hxx"
+#include "MFront/Castem/CastemInterfaceExceptions.hxx"
+#include "MFront/Castem/CastemInterfaceDispatch.hxx"
 
-namespace castem{
+namespace castem {
 
   /*!
    * \class CastemInterface
@@ -41,118 +41,131 @@ namespace castem{
    * \author Helfer Thomas
    * \date   28 Jul 2006
    */
-  template<template<tfel::material::ModellingHypothesis::Hypothesis,
-		    typename,bool> class Behaviour>
+  template <
+      template <tfel::material::ModellingHypothesis::Hypothesis, typename, bool>
+      class Behaviour>
   struct TFEL_VISIBILITY_LOCAL CastemInterface
-    : protected CastemInterfaceExceptions
-  {
-
+      : protected CastemInterfaceExceptions {
     /*!
      * Main entry point This barely make a dispatch based on the
      * spatial dimension and the modelling hypothesis.
      */
-    TFEL_CASTEM_INLINE2 static
-      void exe(const CastemInt  *const NTENS, const CastemReal *const DTIME,
-	       const CastemReal *const DROT,  CastemReal *const DDSDDE,
-	       const CastemReal *const STRAN, const CastemReal *const DSTRAN,
-	       const CastemReal *const TEMP,  const CastemReal *const DTEMP,
-	       const CastemReal *const PROPS, const CastemInt  *const NPROPS,
-	       const CastemReal *const PREDEF,const CastemReal *const DPRED,
-	       CastemReal *const STATEV,const CastemInt  *const NSTATV,
-	       CastemReal *const STRESS,      CastemReal *const PNEWDT,
-	       const CastemInt  *const NDI,
-	       CastemInt  *const KINC,
-	       const tfel::material::OutOfBoundsPolicy op,
-	       const StressFreeExpansionHandler& sfeh)
-    {
+    TFEL_CASTEM_INLINE2 static void exe(
+        const CastemInt *const NTENS,
+        const CastemReal *const DTIME,
+        const CastemReal *const DROT,
+        CastemReal *const DDSDDE,
+        const CastemReal *const STRAN,
+        const CastemReal *const DSTRAN,
+        const CastemReal *const TEMP,
+        const CastemReal *const DTEMP,
+        const CastemReal *const PROPS,
+        const CastemInt *const NPROPS,
+        const CastemReal *const PREDEF,
+        const CastemReal *const DPRED,
+        CastemReal *const STATEV,
+        const CastemInt *const NSTATV,
+        CastemReal *const STRESS,
+        CastemReal *const PNEWDT,
+        const CastemInt *const NDI,
+        CastemInt *const KINC,
+        const tfel::material::OutOfBoundsPolicy op,
+        const StressFreeExpansionHandler &sfeh) {
       using namespace tfel::material;
       typedef ModellingHypothesis MH;
-      if(*NDI==2){
-	CastemInterface::template callBehaviour<MH::TRIDIMENSIONAL>(NTENS,DTIME,DROT,DDSDDE,STRAN,DSTRAN,
-								  TEMP,DTEMP,PROPS,NPROPS,PREDEF,DPRED,
-								  STATEV,NSTATV,STRESS,PNEWDT,KINC,op,sfeh);
-      } else if(*NDI==0){
-	CastemInterface::template callBehaviour<MH::AXISYMMETRICAL>(NTENS,DTIME,DROT,DDSDDE,STRAN,DSTRAN,
-								  TEMP,DTEMP,PROPS,NPROPS,PREDEF,DPRED,
-								  STATEV,NSTATV,STRESS,PNEWDT,KINC,op,sfeh);
-      } else if(*NDI==-1){
-	CastemInterface::template callBehaviour<MH::PLANESTRAIN>(NTENS,DTIME,DROT,DDSDDE,STRAN,DSTRAN,
-							       TEMP,DTEMP,PROPS,NPROPS,PREDEF,DPRED,
-							       STATEV,NSTATV,STRESS,PNEWDT,KINC,op,sfeh);
-      } else if(*NDI==-2){
-	CastemInterface::template callBehaviour<MH::PLANESTRESS>(NTENS,DTIME,DROT,DDSDDE,STRAN,DSTRAN,
-							       TEMP,DTEMP,PROPS,NPROPS,PREDEF,DPRED,
-							       STATEV,NSTATV,STRESS,PNEWDT,KINC,op,sfeh);
-      } else if(*NDI==-3){
-	CastemInterface::template callBehaviour<MH::GENERALISEDPLANESTRAIN>(NTENS,DTIME,DROT,DDSDDE,STRAN,DSTRAN,
-									  TEMP,DTEMP,PROPS,NPROPS,PREDEF,DPRED,
-									  STATEV,NSTATV,STRESS,PNEWDT,KINC,op,sfeh);
-      } else if(*NDI==14){
-	CastemInterface::template callBehaviour<MH::AXISYMMETRICALGENERALISEDPLANESTRAIN>(NTENS,DTIME,DROT,DDSDDE,STRAN,DSTRAN,
-											TEMP,DTEMP,PROPS,NPROPS,PREDEF,DPRED,
-											STATEV,NSTATV,STRESS,PNEWDT,KINC,op,sfeh);
+      if (*NDI == 2) {
+        CastemInterface::template callBehaviour<MH::TRIDIMENSIONAL>(
+            NTENS, DTIME, DROT, DDSDDE, STRAN, DSTRAN, TEMP, DTEMP, PROPS,
+            NPROPS, PREDEF, DPRED, STATEV, NSTATV, STRESS, PNEWDT, KINC, op,
+            sfeh);
+      } else if (*NDI == 0) {
+        CastemInterface::template callBehaviour<MH::AXISYMMETRICAL>(
+            NTENS, DTIME, DROT, DDSDDE, STRAN, DSTRAN, TEMP, DTEMP, PROPS,
+            NPROPS, PREDEF, DPRED, STATEV, NSTATV, STRESS, PNEWDT, KINC, op,
+            sfeh);
+      } else if (*NDI == -1) {
+        CastemInterface::template callBehaviour<MH::PLANESTRAIN>(
+            NTENS, DTIME, DROT, DDSDDE, STRAN, DSTRAN, TEMP, DTEMP, PROPS,
+            NPROPS, PREDEF, DPRED, STATEV, NSTATV, STRESS, PNEWDT, KINC, op,
+            sfeh);
+      } else if (*NDI == -2) {
+        CastemInterface::template callBehaviour<MH::PLANESTRESS>(
+            NTENS, DTIME, DROT, DDSDDE, STRAN, DSTRAN, TEMP, DTEMP, PROPS,
+            NPROPS, PREDEF, DPRED, STATEV, NSTATV, STRESS, PNEWDT, KINC, op,
+            sfeh);
+      } else if (*NDI == -3) {
+        CastemInterface::template callBehaviour<MH::GENERALISEDPLANESTRAIN>(
+            NTENS, DTIME, DROT, DDSDDE, STRAN, DSTRAN, TEMP, DTEMP, PROPS,
+            NPROPS, PREDEF, DPRED, STATEV, NSTATV, STRESS, PNEWDT, KINC, op,
+            sfeh);
+      } else if (*NDI == 14) {
+        CastemInterface::template callBehaviour<
+            MH::AXISYMMETRICALGENERALISEDPLANESTRAIN>(
+            NTENS, DTIME, DROT, DDSDDE, STRAN, DSTRAN, TEMP, DTEMP, PROPS,
+            NPROPS, PREDEF, DPRED, STATEV, NSTATV, STRESS, PNEWDT, KINC, op,
+            sfeh);
       } else {
-	CastemInterfaceExceptions::displayInvalidModellingHypothesisErrorMessage();
-	*KINC = -7;
+        CastemInterfaceExceptions::
+            displayInvalidModellingHypothesisErrorMessage();
+        *KINC = -7;
       }
-    } // end of exe
-    
-    template<tfel::material::ModellingHypothesis::Hypothesis H>
-    TFEL_CASTEM_INLINE2 static void
-    callBehaviour(const CastemInt  *const NTENS, const CastemReal *const DTIME,
-		  const CastemReal *const DROT,  CastemReal *const DDSDDE,
-		  const CastemReal *const STRAN, const CastemReal *const DSTRAN,
-		  const CastemReal *const TEMP,  const CastemReal *const DTEMP,
-		  const CastemReal *const PROPS, const CastemInt  *const NPROPS,
-		  const CastemReal *const PREDEF,const CastemReal *const DPRED,
-		  CastemReal *const STATEV,const CastemInt  *const NSTATV,
-		  CastemReal *const STRESS,      CastemReal *const PNEWDT,
-		  CastemInt  *const KINC,
-		  const tfel::material::OutOfBoundsPolicy op,
-		  const StressFreeExpansionHandler& sfeh)
-    {
+    }  // end of exe
+
+    template <tfel::material::ModellingHypothesis::Hypothesis H>
+    TFEL_CASTEM_INLINE2 static void callBehaviour(
+        const CastemInt *const NTENS,
+        const CastemReal *const DTIME,
+        const CastemReal *const DROT,
+        CastemReal *const DDSDDE,
+        const CastemReal *const STRAN,
+        const CastemReal *const DSTRAN,
+        const CastemReal *const TEMP,
+        const CastemReal *const DTEMP,
+        const CastemReal *const PROPS,
+        const CastemInt *const NPROPS,
+        const CastemReal *const PREDEF,
+        const CastemReal *const DPRED,
+        CastemReal *const STATEV,
+        const CastemInt *const NSTATV,
+        CastemReal *const STRESS,
+        CastemReal *const PNEWDT,
+        CastemInt *const KINC,
+        const tfel::material::OutOfBoundsPolicy op,
+        const StressFreeExpansionHandler &sfeh) {
       using tfel::material::MechanicalBehaviourTraits;
-      typedef Behaviour<H,CastemReal,false> BV;
+      typedef Behaviour<H, CastemReal, false> BV;
       typedef tfel::material::MechanicalBehaviourTraits<BV> Traits;
       typedef CastemTraits<BV> CastemTraits;
       try {
-	CastemInterfaceDispatch<CastemTraits::btype,H,
-				Behaviour>::exe(NTENS,DTIME,DROT,DDSDDE,STRAN,DSTRAN,
-						TEMP,DTEMP,PROPS,NPROPS,PREDEF,DPRED,
-						STATEV,NSTATV,STRESS,PNEWDT,op,sfeh);
+        CastemInterfaceDispatch<CastemTraits::btype, H, Behaviour>::exe(
+            NTENS, DTIME, DROT, DDSDDE, STRAN, DSTRAN, TEMP, DTEMP, PROPS,
+            NPROPS, PREDEF, DPRED, STATEV, NSTATV, STRESS, PNEWDT, op, sfeh);
+      } catch (const CastemIntegrationFailed &e) {
+        CastemInterfaceExceptions::treatCastemException(Traits::getName(), e);
+        *KINC = -1;
+      } catch (const CastemException &e) {
+        CastemInterfaceExceptions::treatCastemException(Traits::getName(), e);
+        *KINC = -2;
+      } catch (const tfel::material::MaterialException &e) {
+        CastemInterfaceExceptions::treatMaterialException(Traits::getName(), e);
+        *KINC = -3;
+      } catch (const tfel::exception::TFELException &e) {
+        CastemInterfaceExceptions::treatTFELException(Traits::getName(), e);
+        *KINC = -4;
+      } catch (const std::exception &e) {
+        CastemInterfaceExceptions::treatStandardException(Traits::getName(), e);
+        *KINC = -5;
+      } catch (...) {
+        CastemInterfaceExceptions::treatUnknownException(Traits::getName());
+        *KINC = -6;
       }
-      catch(const CastemIntegrationFailed& e){
-	CastemInterfaceExceptions::treatCastemException(Traits::getName(),e);
-	*KINC = -1;
-      }
-      catch(const CastemException& e){
-	CastemInterfaceExceptions::treatCastemException(Traits::getName(),e);
-	*KINC = -2;
-      }
-      catch(const tfel::material::MaterialException& e){
-	CastemInterfaceExceptions::treatMaterialException(Traits::getName(),e);
-	*KINC = -3;
-      }
-      catch(const tfel::exception::TFELException& e){
-	CastemInterfaceExceptions::treatTFELException(Traits::getName(),e);
-	*KINC = -4;
-      }
-      catch(const std::exception& e){
-	CastemInterfaceExceptions::treatStandardException(Traits::getName(),e);
-	*KINC = -5;
-      }
-      catch(...){
-	CastemInterfaceExceptions::treatUnknownException(Traits::getName());
-	*KINC = -6;
-      }
-    } // end of CastemInterface::callBehaviour
-    
-  }; // end of struct CastemInterface
-    
-} // end of namespace castem
+    }  // end of CastemInterface::callBehaviour
 
-#include"MFront/Castem/CastemBehaviourHandler.hxx"
-#include"MFront/Castem/CastemGenericPlaneStressHandler.hxx"
+  };  // end of struct CastemInterface
+
+}  // end of namespace castem
+
+#include "MFront/Castem/CastemBehaviourHandler.hxx"
+#include "MFront/Castem/CastemGenericPlaneStressHandler.hxx"
 
 #endif /* LIB_MFRONT_CASTEM_CALL_HXX */
-

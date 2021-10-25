@@ -3,23 +3,23 @@
  * \brief  This file declares the ThermoMechanicalBehaviour class
  * \author Helfer Thomas
  * \date   27 Sep 2006
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_TFEL_THERMOMECHANICALBEHAVIOUR_H_
-#define LIB_TFEL_THERMOMECHANICALBEHAVIOUR_H_ 
+#define LIB_TFEL_THERMOMECHANICALBEHAVIOUR_H_
 
-#include"TFEL/Material/ThermalBehaviour.hxx"
-#include"TFEL/Material/MechanicalBehaviour.hxx"
+#include "TFEL/Material/ThermalBehaviour.hxx"
+#include "TFEL/Material/MechanicalBehaviour.hxx"
 
-namespace tfel{
+namespace tfel {
 
-  namespace material{
+  namespace material {
 
     /*!
      * \class ThermoMechanicalBehaviour
@@ -30,16 +30,13 @@ namespace tfel{
      * \author Helfer Thomas
      * \date   28 Jul 2006
      */
-    template<unsigned short N,typename NumType, bool use_qt>
+    template <unsigned short N, typename NumType, bool use_qt>
     class ThermoMechanicalBehaviour
-      : public ThermalBehaviour<N,NumType,use_qt>,
-	public MechanicalBehaviour<N,NumType,use_qt>
-    {};
+        : public ThermalBehaviour<N, NumType, use_qt>,
+          public MechanicalBehaviour<N, NumType, use_qt> {};
 
+  }  // end of namespace material
 
-  } // end of namespace material
-
-} // end of namespace tfel
+}  // end of namespace tfel
 
 #endif /* LIB_TFEL_THERMOMECHANICALBEHAVIOUR_H_ */
-

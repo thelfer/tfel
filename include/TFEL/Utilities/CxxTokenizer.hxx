@@ -1,38 +1,37 @@
 /*!
  * \file   include/TFEL/Utilities/CxxTokenizer.hxx
- * \brief  
- * 
+ * \brief
+ *
  * \author Helfer Thomas
  * \date   12 nov 2006
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_TFEL_CXXTOKENIZER_HXX_
-#define LIB_TFEL_CXXTOKENIZER_HXX_ 
+#define LIB_TFEL_CXXTOKENIZER_HXX_
 
-#include<map>
-#include<string>
-#include<vector>
-#include<iosfwd>
+#include <map>
+#include <string>
+#include <vector>
+#include <iosfwd>
 
-#include"TFEL/Config/TFELConfig.hxx"
-#include"TFEL/Utilities/Token.hxx"
+#include "TFEL/Config/TFELConfig.hxx"
+#include "TFEL/Utilities/Token.hxx"
 
-namespace tfel{
+namespace tfel {
 
-  namespace utilities{
+  namespace utilities {
 
     /*!
      * class in charge of reading a C++-style file and converting it
      * in tokens.
      */
-    struct TFELUTILITIES_VISIBILITY_EXPORT CxxTokenizer
-    {
+    struct TFELUTILITIES_VISIBILITY_EXPORT CxxTokenizer {
       //! a simple alias
       typedef std::vector<Token> TokensContainer;
       //! a simple alias
@@ -44,8 +43,7 @@ namespace tfel{
        * \param[in] s : variable name
        * \param[in] b : boolean telling if C++ keywords are allowed.
        */
-      static bool
-      isValidIdentifier(const std::string&,const bool=true);
+      static bool isValidIdentifier(const std::string&, const bool = true);
       /*!
        * \brief default constructor
        */
@@ -63,24 +61,23 @@ namespace tfel{
        * \param[in] p : iterator to the first token
        * \param[in] pe : iterator past the last token
        */
-      template<typename InputIterator>
-      void import(const InputIterator,
-		  const InputIterator);
+      template <typename InputIterator>
+      void import(const InputIterator, const InputIterator);
       /*!
        * \brief analyse the string given
        * all previous tokens are erased
        * \param[in] s : string to be parsed
-       */ 
+       */
       void parseString(const std::string&);
       /*!
        * \brief import the specified file
        * \param[in] f : file name
-       */ 
+       */
       void openFile(const std::string&);
       /*!
        * \brief print the stored tokens to the specified stream
        * \param[out] out : output stream
-       */ 
+       */
       void printFileTokens(std::ostream&) const;
       /*!
        * \brief assume that a C-style comment was opened at the
@@ -91,38 +88,38 @@ namespace tfel{
       void setCStyleCommentOpened(const bool);
       /*!
        * \brief remove all comment tokens
-       */ 
+       */
       void stripComments(void);
       /*!
        * \brief clear the object
-       */ 
+       */
       void clear(void);
       /*!
        * \brief set if char tokens shall be treated as string tokens
        * \param[in] b : boolean telling if char tokens shall be
        * treated as string tokens
-       */ 
+       */
       void treatCharAsString(const bool);
       /*!
        * \brief set if '.' shall be treated as as sperator
        * \param[in] b : boolean telling if '.' shall be treated as as sperator
-       */ 
+       */
       void treatDotAsSeparator(const bool);
       /*!
        * \brief set if '-' shall be treated as as sperator
        * \param[in] b : boolean telling if '-' shall be treated as as sperator
-       */ 
+       */
       void treatMinusAsSeparator(const bool);
       /*!
        * \brief set if successive strings shall be merged
        * \param[in] b : boolean
-       */ 
+       */
       void mergeStrings(const bool);
       /*!
        * \brief set if tokens shall be split to extract numbers
        * \param[in] b : boolean telling numbers shall be extracted
        * from tokens
-       */ 
+       */
       void extractNumbers(const bool);
       /*!
        * \brief an helper method throwing an exception if the given
@@ -134,11 +131,10 @@ namespace tfel{
        * line
        * \throw std::runtime_error if the given iterator is egal to
        * the third argument
-       */ 
-      static void
-      checkNotEndOfLine(const std::string&,
-			const_iterator&, 
-			const const_iterator);
+       */
+      static void checkNotEndOfLine(const std::string&,
+                                    const_iterator&,
+                                    const const_iterator);
       /*!
        * \brief an helper method throwing an exception if the given
        * iterator is egal to the fourth argument (which shall point
@@ -150,12 +146,11 @@ namespace tfel{
        * line
        * \throw std::runtime_error if the given iterator is egal to
        * the fourth argument
-       */ 
-      static void
-      checkNotEndOfLine(const std::string&,
-			const std::string&,
-			const_iterator&, 
-			const const_iterator);
+       */
+      static void checkNotEndOfLine(const std::string&,
+                                    const std::string&,
+                                    const_iterator&,
+                                    const const_iterator);
       /*!
        * \brief an helper method throwing an exception if the given
        * iterator is egal to the fourth argument (which shall point
@@ -168,12 +163,11 @@ namespace tfel{
        * line
        * \throw std::runtime_error if the given iterator is egal to
        * the fourth argument
-       */ 
-      static void
-      readSpecifiedToken(const std::string&,
-			 const std::string&,
-			 const_iterator&, 
-			 const const_iterator);
+       */
+      static void readSpecifiedToken(const std::string&,
+                                     const std::string&,
+                                     const_iterator&,
+                                     const const_iterator);
       /*!
        * \brief an helper method to extract an unsigned int from the
        * given token
@@ -183,10 +177,9 @@ namespace tfel{
        * \return the extracted value
        * \throw std::runtime_error if the given iterator is egal to
        * the second argument
-       */ 
-      static unsigned int
-      readUnsignedInt(const_iterator&, 
-		      const const_iterator);
+       */
+      static unsigned int readUnsignedInt(const_iterator&,
+                                          const const_iterator);
       /*!
        * \brief an helper method to extract a string from the
        * given token
@@ -196,10 +189,8 @@ namespace tfel{
        * \return the extracted value
        * \throw std::runtime_error if the given iterator is egal to
        * the second argument or if the given token is not a string
-       */ 
-      static std::string
-      readString(const_iterator&, 
-		 const const_iterator);
+       */
+      static std::string readString(const_iterator&, const const_iterator);
       /*!
        * \brief an helper method to extract a set of values from the
        * given as an array
@@ -210,12 +201,11 @@ namespace tfel{
        * line
        * \throw std::runtime_error if the given iterator is egal to
        * the second argument or if the given token is not a string
-       */ 
-      static void
-      readArray(const std::string&,
-		std::vector<std::string>&,
-		const_iterator&, 
-		const const_iterator);
+       */
+      static void readArray(const std::string&,
+                            std::vector<std::string>&,
+                            const_iterator&,
+                            const const_iterator);
       /*!
        * \brief an helper method to extract a set of values from the
        * given as an array
@@ -225,10 +215,9 @@ namespace tfel{
        * line
        * \throw std::runtime_error if the given iterator is egal to
        * the second argument or if the given token is not a string
-       */ 
-      static std::vector<std::string>
-      readStringArray(const_iterator&, 
-		      const const_iterator);
+       */
+      static std::vector<std::string> readStringArray(const_iterator&,
+                                                      const const_iterator);
       /*!
        * \brief an helper method to extract a double from the given
        * token
@@ -238,10 +227,8 @@ namespace tfel{
        * \return the extracted value
        * \throw std::runtime_error if the given iterator is egal to
        * the second argument
-       */ 
-      static double
-      readDouble(const_iterator&, 
-		 const const_iterator);	
+       */
+      static double readDouble(const_iterator&, const const_iterator);
       /*!
        * \brief an helper method to extract a int from the given
        * token
@@ -251,10 +238,8 @@ namespace tfel{
        * \return the extracted value
        * \throw std::runtime_error if the given iterator is egal to
        * the second argument
-       */ 
-      static int
-      readInt(const_iterator&, 
-	      const const_iterator);	
+       */
+      static int readInt(const_iterator&, const const_iterator);
       //! \return an iterator to the first token
       const_iterator begin(void) const;
       //! \return an iterator past the last token
@@ -269,80 +254,67 @@ namespace tfel{
       size_type size() const;
       //! destructor
       virtual ~CxxTokenizer();
-      
-    protected:
 
-      static bool
-      isValidFunctionIdentifier(const std::string&,const bool=true);
+     protected:
+      static bool isValidFunctionIdentifier(const std::string&,
+                                            const bool = true);
       /*!
        * \param[in] in:   input stream
        * \param[in] n:    line number
        * \param[in] from: origin of the stream
-       */ 
-      virtual void
-      parseStream(std::istream&,
-		  Token::size_type&,
-		  const std::string&);
+       */
+      virtual void parseStream(std::istream&,
+                               Token::size_type&,
+                               const std::string&);
 
-      virtual void
-      splitLine(const std::string&,
-		const Token::size_type);
+      virtual void splitLine(const std::string&, const Token::size_type);
 
-      virtual void
-      treatChar(Token::size_type&,
-		std::string::const_iterator&,
-		const std::string::const_iterator,
-		const Token::size_type);
-      virtual void
-      treatString(Token::size_type&,
-		  std::string::const_iterator&,
-		  const std::string::const_iterator,
-		  const Token::size_type,
-		  const char);
-      virtual void
-      treatCComment(Token::size_type&,
-		    std::string::const_iterator&,
-		    const std::string::const_iterator,
-		    const Token::size_type);
-      virtual void
-      treatCxxComment(Token::size_type&,
-		      std::string::const_iterator&,
-		      const std::string::const_iterator,
-		      const Token::size_type);
-      virtual void
-      try_join(Token::size_type&,
-	       std::string::const_iterator&,
-	       const std::string::const_iterator,
-	       const Token::size_type,
-	       const char);
-      virtual void
-      try_join(Token::size_type&,
-	       std::string::const_iterator&,
-	       const std::string::const_iterator,
-	       const Token::size_type,
-	       const char,
-	       const char);
-      virtual void
-      readNumber(Token::size_type&,
-		 std::string::const_iterator&,
-		 const std::string::const_iterator,
-		 const Token::size_type);
-      virtual void
-      treatPreprocessorDirective(Token::size_type&,
-				 std::string::const_iterator&,
-				 const std::string::const_iterator,
-				 const std::string::const_iterator,
-				 const Token::size_type);
-      virtual void
-      treatStandardLine(Token::size_type&,
-			std::string::const_iterator&,
-			const std::string::const_iterator,
-			const std::string::const_iterator,
-			const Token::size_type);
+      virtual void treatChar(Token::size_type&,
+                             std::string::const_iterator&,
+                             const std::string::const_iterator,
+                             const Token::size_type);
+      virtual void treatString(Token::size_type&,
+                               std::string::const_iterator&,
+                               const std::string::const_iterator,
+                               const Token::size_type,
+                               const char);
+      virtual void treatCComment(Token::size_type&,
+                                 std::string::const_iterator&,
+                                 const std::string::const_iterator,
+                                 const Token::size_type);
+      virtual void treatCxxComment(Token::size_type&,
+                                   std::string::const_iterator&,
+                                   const std::string::const_iterator,
+                                   const Token::size_type);
+      virtual void try_join(Token::size_type&,
+                            std::string::const_iterator&,
+                            const std::string::const_iterator,
+                            const Token::size_type,
+                            const char);
+      virtual void try_join(Token::size_type&,
+                            std::string::const_iterator&,
+                            const std::string::const_iterator,
+                            const Token::size_type,
+                            const char,
+                            const char);
+      virtual void readNumber(Token::size_type&,
+                              std::string::const_iterator&,
+                              const std::string::const_iterator,
+                              const Token::size_type);
+      virtual void treatPreprocessorDirective(Token::size_type&,
+                                              std::string::const_iterator&,
+                                              const std::string::const_iterator,
+                                              const std::string::const_iterator,
+                                              const Token::size_type);
+      virtual void treatStandardLine(Token::size_type&,
+                                     std::string::const_iterator&,
+                                     const std::string::const_iterator,
+                                     const std::string::const_iterator,
+                                     const Token::size_type);
       //! list of tokens read
       TokensContainer tokens;
       //! store all the comments of a line
-      std::map<Token::size_type,std::string> comments;
+      std::map<Token::size_type, std::string> comments;
       //! treat '.' as a c++ separator
       bool dotAsSeparator = true;
       //! treat '-' as a c++ separator
@@ -356,17 +328,17 @@ namespace tfel{
        * if true, a cStyle comment what opened when the last line
        * treatment was finised
        */
-      bool cStyleCommentOpened= false;
+      bool cStyleCommentOpened = false;
       /*!
        * if true, successive strings are merged
        */
       bool shallMergeStrings = false;
-    }; // end of struct CxxTokenizer
+    };  // end of struct CxxTokenizer
 
-  } // end of namespace utilities
+  }  // end of namespace utilities
 
-} // end of namespace tfel
+}  // end of namespace tfel
 
-#include"TFEL/Utilities/CxxTokenizer.ixx"
+#include "TFEL/Utilities/CxxTokenizer.ixx"
 
 #endif /* LIB_TFEL_CXXTOKENIZER_HXX_ */

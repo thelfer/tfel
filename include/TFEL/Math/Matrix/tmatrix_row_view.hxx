@@ -1,31 +1,30 @@
-/*! 
+/*!
  * \file  include/TFEL/Math/Matrix/tmatrix_row_view.hxx
  * \brief
  * \author Helfer Thomas
  * \brief 27 déc. 2012
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_TFEL_MATH_TMATRIX_ROW_VIEW_H_
-#define LIB_TFEL_MATH_TMATRIX_ROW_VIEW_H_ 
+#define LIB_TFEL_MATH_TMATRIX_ROW_VIEW_H_
 
-namespace tfel
-{
+namespace tfel {
 
-  namespace math
-  {
-    
-    template<unsigned short N,unsigned short M,
-	     unsigned short I,unsigned short J,
-	     unsigned short K,
-	     typename T>
-    struct tmatrix_row_view_expr
-    {
+  namespace math {
+
+    template <unsigned short N,
+              unsigned short M,
+              unsigned short I,
+              unsigned short J,
+              unsigned short K,
+              typename T>
+    struct tmatrix_row_view_expr {
       //! a simple typedef to the tmatrix runtime properties
       /*
        * This is a MatrixConcept requirement.
@@ -74,9 +73,9 @@ namespace tfel
       /*!
        * constructor
        * \param[in] m_ : the underlying matrix
-       */      
+       */
       TFEL_MATH_INLINE
-      tmatrix_row_view_expr(tmatrix<N,M,T>&);
+      tmatrix_row_view_expr(tmatrix<N, M, T>&);
       //! Return the RunTimeProperties of the tmatrix.
       /*
        * This is a VectorConcept requirement.
@@ -84,8 +83,7 @@ namespace tfel
        * the tmatrix
        */
       TFEL_MATH_INLINE
-      RunTimeProperties
-      getRunTimeProperties(void) const;
+      RunTimeProperties getRunTimeProperties(void) const;
       /*!
        * \brief index operator.
        * This is a vector concept requirement.
@@ -93,8 +91,7 @@ namespace tfel
        * \return a reference to the ith element of the row.
        */
       TFEL_MATH_INLINE
-      const T& 
-      operator()(const unsigned short i) const;
+      const T& operator()(const unsigned short i) const;
       /*!
        * \brief index operator.
        * \param[in] i : index.
@@ -109,8 +106,7 @@ namespace tfel
        * \return a reference to the ith element of the row.
        */
       TFEL_MATH_INLINE
-      const T& 
-      operator[](const unsigned short) const;
+      const T& operator[](const unsigned short) const;
       /*!
        * \brief index operator.
        * \param[in] i : index.
@@ -119,46 +115,42 @@ namespace tfel
       TFEL_MATH_INLINE
       T& operator[](const unsigned short);
 
-    private:
-      
+     private:
       //! reference to the underlying matrix
-      tmatrix<N,M,T>& m;
-
+      tmatrix<N, M, T>& m;
     };
 
-    template<unsigned short N,
-	     unsigned short M,
-	     unsigned short I,
-	     unsigned short J,
-	     unsigned short K,
-	     typename T>
+    template <unsigned short N,
+              unsigned short M,
+              unsigned short I,
+              unsigned short J,
+              unsigned short K,
+              typename T>
     struct tmatrix_row_view
-      : public Expr<tvector<K,T>, tmatrix_row_view_expr<N,M,I,J,K,T> >,
-	public tvector_base<tmatrix_row_view<N,M,I,J,K,T>,K,T>
-    {
+        : public Expr<tvector<K, T>, tmatrix_row_view_expr<N, M, I, J, K, T>>,
+          public tvector_base<tmatrix_row_view<N, M, I, J, K, T>, K, T> {
       /*!
        * constructor
        * \param[in] m_ : the underlying matrix
-       */      
+       */
       TFEL_MATH_INLINE
-      tmatrix_row_view(tmatrix<N,M,T>&);
+      tmatrix_row_view(tmatrix<N, M, T>&);
       //! using tvector_base::operator=
-      using tvector_base<tmatrix_row_view,K,T>::operator=;
+      using tvector_base<tmatrix_row_view, K, T>::operator=;
       //! using tvector_base::operator+=
-      using tvector_base<tmatrix_row_view,K,T>::operator+=;
+      using tvector_base<tmatrix_row_view, K, T>::operator+=;
       //! using tvector_base::operator-=
-      using tvector_base<tmatrix_row_view,K,T>::operator-=;
+      using tvector_base<tmatrix_row_view, K, T>::operator-=;
       //! using tvector_base::operator*=
-      using tvector_base<tmatrix_row_view,K,T>::operator*=;
+      using tvector_base<tmatrix_row_view, K, T>::operator*=;
       //! using tvector_base::operator/=
-      using tvector_base<tmatrix_row_view,K,T>::operator/=;
+      using tvector_base<tmatrix_row_view, K, T>::operator/=;
     };
 
-  } // end of namespace math
-  
-} // end of namespace tfel
+  }  // end of namespace math
 
-#include"TFEL/Math/Matrix/tmatrix_row_view.ixx"
+}  // end of namespace tfel
+
+#include "TFEL/Math/Matrix/tmatrix_row_view.ixx"
 
 #endif /* LIB_TFEL_MATH_TMATRIX_ROW_VIEW_H_ */
-

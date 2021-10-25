@@ -1,57 +1,50 @@
-/*! 
+/*!
  * \file  mtest/include/MTest/Alternate2DeltaAccelerationAlgorithm.hxx
  * \brief
  * \author RAMIERE Isabelle
  * \brief 19 mars 2015
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_MTEST_MTEST_MTESTALTERNATE2DELTAACCELERATIONALGORITHM_H_
-#define LIB_MTEST_MTEST_MTESTALTERNATE2DELTAACCELERATIONALGORITHM_H_ 
+#define LIB_MTEST_MTEST_MTESTALTERNATE2DELTAACCELERATIONALGORITHM_H_
 
-#include"MTest/Config.hxx"
-#include"MTest/AccelerationAlgorithm.hxx"
+#include "MTest/Config.hxx"
+#include "MTest/AccelerationAlgorithm.hxx"
 
-namespace mtest
-{
+namespace mtest {
 
   /*!
    * \brief This class implements the secant acceleration algorithm.
    */
   struct MTEST_VISIBILITY_EXPORT Alternate2DeltaAccelerationAlgorithm
-    : public AccelerationAlgorithm
-  {
+      : public AccelerationAlgorithm {
     //! default constructor
     Alternate2DeltaAccelerationAlgorithm();
     /*!
      * \return the name of the acceleration algorithm
      */
-    virtual std::string
-    getName(void) const override;
+    virtual std::string getName(void) const override;
     /*!
      * \param[in] psz : total number of unknowns (problem size)
      */
-    virtual void
-    initialize(const unsigned short) override;
+    virtual void initialize(const unsigned short) override;
     /*!
      * set a parameter of the acceleration algorithm
      * \param[in] p : parameter name
      * \param[in] v : parameter value
      */
-    virtual void
-    setParameter(const std::string&,
-		 const std::string&) override;
+    virtual void setParameter(const std::string&, const std::string&) override;
     /*!
      * called at each time step, before the beginning of the Newton
      * algorithm
      */
-    virtual void
-    preExecuteTasks(void) override;
+    virtual void preExecuteTasks(void) override;
     /*!
      * \param[in,out] u1   : current estimate of the unknowns
      * \param[in]     ru   : fixed point residual on the unknowns
@@ -60,21 +53,20 @@ namespace mtest
      * \param[in]     seps : criterium on the thermodynamic forces
      * \param[in]     iter : current iteration number
      */
-    virtual void
-    execute(tfel::math::vector<real>&,
-	    const tfel::math::vector<real>&,
-	    const tfel::math::vector<real>&,
-	    const real,
-	    const real,
-	    const unsigned short) override;
+    virtual void execute(tfel::math::vector<real>&,
+                         const tfel::math::vector<real>&,
+                         const tfel::math::vector<real>&,
+                         const real,
+                         const real,
+                         const unsigned short) override;
     /*!
      * called at each time step, once convergence is reached
      */
-    virtual void
-    postExecuteTasks(void) override;
+    virtual void postExecuteTasks(void) override;
     //! destructor
     virtual ~Alternate2DeltaAccelerationAlgorithm();
-  protected:
+
+   protected:
     tfel::math::vector<real> asa_u0;
     tfel::math::vector<real> asa_u1;
     tfel::math::vector<real> asa_du0;
@@ -87,9 +79,8 @@ namespace mtest
     tfel::math::vector<real> asa_d2r;
     //! trigger
     int asat;
-  }; // end of struct Alternate2DeltaAccelerationAlgorithm
+  };  // end of struct Alternate2DeltaAccelerationAlgorithm
 
-} // end of namespace mtest
+}  // end of namespace mtest
 
 #endif /* LIB_MTEST_MTEST_MTESTALTERNATE2DELTAACCELERATIONALGORITHM_H_ */
-

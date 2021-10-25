@@ -15,21 +15,21 @@
 #ifndef LIB_MFRONT_MFRONTBEHAVIOURDSLCOMMON_HXX
 #define LIB_MFRONT_MFRONTBEHAVIOURDSLCOMMON_HXX
 
-#include<set>
-#include<map>
-#include<vector>
-#include<string>
-#include<memory>
-#include<fstream>
-#include<functional>
+#include <set>
+#include <map>
+#include <vector>
+#include <string>
+#include <memory>
+#include <fstream>
+#include <functional>
 
-#include"MFront/MFrontConfig.hxx"
-#include"MFront/DSLBase.hxx"
-#include"MFront/SupportedTypes.hxx"
-#include"MFront/AbstractBehaviourDSL.hxx"
-#include"MFront/BehaviourDescription.hxx"
+#include "MFront/MFrontConfig.hxx"
+#include "MFront/DSLBase.hxx"
+#include "MFront/SupportedTypes.hxx"
+#include "MFront/AbstractBehaviourDSL.hxx"
+#include "MFront/BehaviourDescription.hxx"
 
-namespace mfront{
+namespace mfront {
 
   // forward declaration
   struct AbstractBehaviourInterface;
@@ -42,16 +42,14 @@ namespace mfront{
    *
    */
   struct MFRONT_VISIBILITY_EXPORT BehaviourDSLCommon
-    : public virtual AbstractBehaviourDSL,
-      public DSLBase,
-      public SupportedTypes
-  {
+      : public virtual AbstractBehaviourDSL,
+        public DSLBase,
+        public SupportedTypes {
     //! a simple alias
-    using OrthotropicAxesConvention =
-      tfel::material::OrthotropicAxesConvention;
+    using OrthotropicAxesConvention = tfel::material::OrthotropicAxesConvention;
     //! \return the behaviour description
-    virtual const BehaviourDescription&
-    getBehaviourDescription(void) const override final;
+    virtual const BehaviourDescription& getBehaviourDescription(
+        void) const override final;
     /*!
      * \brief This function handles a material property treated as a
      * dependency of the current file.
@@ -82,42 +80,37 @@ namespace mfront{
      * `--@YYY@=XXX`)
      *
      */
-    virtual void
-    analyseFile(const std::string&,
-		const std::vector<std::string>&,
-		const std::map<std::string,std::string>&) override;
-  protected:
+    virtual void analyseFile(
+        const std::string&,
+        const std::vector<std::string>&,
+        const std::map<std::string, std::string>&) override;
+
+   protected:
     /*!
      * create a variable modifier from a method
      */
-    template<typename T,typename T2>
+    template <typename T, typename T2>
     struct TFEL_VISIBILITY_LOCAL StandardVariableModifier final
-      : public VariableModifier
-    {
+        : public VariableModifier {
       //! a simple alias
-      typedef std::string (T2::* MPtr)(const Hypothesis,
-				       const std::string&,
-				       const bool);
+      typedef std::string (T2::*MPtr)(const Hypothesis,
+                                      const std::string&,
+                                      const bool);
       /*!
        * constructor
        */
-      StandardVariableModifier(T&,
-			       const Hypothesis,
-			       const MPtr);
+      StandardVariableModifier(T&, const Hypothesis, const MPtr);
       /*!
        * \param[in] v : the variable name
        * \param[in] b : true if "this" shall be added
        */
-      virtual std::string
-	exe(const std::string&,
-	    const bool) override;
+      virtual std::string exe(const std::string&, const bool) override;
       /*!
        * destructor
        */
       virtual ~StandardVariableModifier();
 
-    private:
-
+     private:
       T& instance;
       const Hypothesis hypothesis;
       const MPtr mptr;
@@ -126,37 +119,30 @@ namespace mfront{
      * create a standard variable modifier from an instance of a class
      * and a pointer to a member
      */
-    template<typename T,typename T2>
-    std::shared_ptr<VariableModifier>
-    makeVariableModifier(T&,
-			 const Hypothesis,
-			 std::string (T2::*)(const Hypothesis,
-					     const std::string&,
-					     const bool));
-    template<typename T,typename T2>
+    template <typename T, typename T2>
+    std::shared_ptr<VariableModifier> makeVariableModifier(
+        T&,
+        const Hypothesis,
+        std::string (T2::*)(const Hypothesis, const std::string&, const bool));
+    template <typename T, typename T2>
     struct TFEL_VISIBILITY_LOCAL StandardWordAnalyser final
-      : public WordAnalyser
-    {
+        : public WordAnalyser {
       //! a simple alias
-      typedef void (T2::* MPtr)(const Hypothesis,
-				const std::string&);
+      typedef void (T2::*MPtr)(const Hypothesis, const std::string&);
       /*!
        * constructor
        */
-      StandardWordAnalyser(T&,const Hypothesis,
-			   const MPtr);
+      StandardWordAnalyser(T&, const Hypothesis, const MPtr);
       /*!
        * \param[in] k : the current word
        */
-      virtual void
-      exe(const std::string&) override;
+      virtual void exe(const std::string&) override;
       /*!
        * destructor
        */
       virtual ~StandardWordAnalyser();
 
-    private:
-
+     private:
       T& instance;
       const MPtr mptr;
       const Hypothesis hypothesis;
@@ -165,16 +151,15 @@ namespace mfront{
      * create a standard variable modifier from an instance of a class
      * and a pointer to a member
      */
-    template<typename T,typename T2>
-    std::shared_ptr<WordAnalyser>
-    makeWordAnalyser(T&,const Hypothesis,
-		     void (T2::*)(const Hypothesis,
-				  const std::string&));
+    template <typename T, typename T2>
+    std::shared_ptr<WordAnalyser> makeWordAnalyser(
+        T&,
+        const Hypothesis,
+        void (T2::*)(const Hypothesis, const std::string&));
     /*!
      * option to code blocks
      */
-    struct CodeBlockOptions
-    {
+    struct CodeBlockOptions {
       //! a simple alias
       typedef BehaviourData::Mode Mode;
       //! a simple alias
@@ -224,8 +209,7 @@ namespace mfront{
      * \param[out] o : options to be read
      * \param[in]  s : allow specialisation
      */
-    void readCodeBlockOptions(CodeBlockOptions&,
-			      const bool);
+    void readCodeBlockOptions(CodeBlockOptions&, const bool);
     /*!
      * \brief read the next code block and adds it tho the mechanical
      * behaviour
@@ -235,15 +219,14 @@ namespace mfront{
      * \param[in] b     : add "this->" in front of variables
      * \param[in] s     : allow specialisation
      */
-    template<typename T,
-	     typename T2>
-    CodeBlockOptions
-    readCodeBlock(T&,
-		  const std::string&,
-		  std::string (T2::*)(const Hypothesis,
-				      const std::string&,
-				      const bool),
-		  const bool,const bool);
+    template <typename T, typename T2>
+    CodeBlockOptions readCodeBlock(T&,
+                                   const std::string&,
+                                   std::string (T2::*)(const Hypothesis,
+                                                       const std::string&,
+                                                       const bool),
+                                   const bool,
+                                   const bool);
     /*!
      * \brief read the next code block and adds it tho the mechanical
      * behaviour
@@ -252,16 +235,14 @@ namespace mfront{
      * \param[in] m     : modifier
      * \param[in] b     : add "this->" in front of variables
      */
-    template<typename T,
-	     typename T2>
-    void
-    readCodeBlock(T&,
-		  const CodeBlockOptions&,
-		  const std::string&,
-		  std::string (T2::*)(const Hypothesis,
-				      const std::string&,
-				      const bool),
-		  const bool);
+    template <typename T, typename T2>
+    void readCodeBlock(T&,
+                       const CodeBlockOptions&,
+                       const std::string&,
+                       std::string (T2::*)(const Hypothesis,
+                                           const std::string&,
+                                           const bool),
+                       const bool);
     /*!
      * \brief read the next code block and adds it tho the mechanical
      * behaviour
@@ -272,18 +253,14 @@ namespace mfront{
      * \param[in] b     : add "this->" in front of variables
      * \param[in] s     : allow specialisation
      */
-    template<typename T,
-	     typename T2,
-	     typename T3>
-    CodeBlockOptions
-    readCodeBlock(T&,
-		  const std::string&,
-		  std::string (T2::*)(const Hypothesis,
-				      const std::string&,
-				      const bool),
-		  void (T3::*)(const Hypothesis,
-			       const std::string&),
-		  const bool,const bool);
+    template <typename T, typename T2, typename T3>
+    CodeBlockOptions readCodeBlock(
+        T&,
+        const std::string&,
+        std::string (T2::*)(const Hypothesis, const std::string&, const bool),
+        void (T3::*)(const Hypothesis, const std::string&),
+        const bool,
+        const bool);
     /*!
      * \brief read the next code block and adds it tho the mechanical
      * behaviour
@@ -294,19 +271,15 @@ namespace mfront{
      * \param[in] b     : add "this->" in front of variables
      * \param[in] s     : allow specialisation
      */
-    template<typename T,
-	     typename T2,
-	     typename T3>
-    void
-    readCodeBlock(T&,
-		  const CodeBlockOptions&,
-		  const std::string&,
-		  std::string (T2::*)(const Hypothesis,
-				      const std::string&,
-				      const bool),
-		  void (T3::*)(const Hypothesis,
-			       const std::string&),
-		  const bool);
+    template <typename T, typename T2, typename T3>
+    void readCodeBlock(T&,
+                       const CodeBlockOptions&,
+                       const std::string&,
+                       std::string (T2::*)(const Hypothesis,
+                                           const std::string&,
+                                           const bool),
+                       void (T3::*)(const Hypothesis, const std::string&),
+                       const bool);
     /*!
      * \brief read the next code block and adds it tho the mechanical
      * behaviour
@@ -318,19 +291,15 @@ namespace mfront{
      * \param[in] b     : add "this->" in front of variables
      * \param[in] s     : allow specialisation
      */
-    template<typename T,
-	     typename T2>
-    CodeBlockOptions
-    readCodeBlock(T&,
-		  const std::string&,
-		  const std::string&,
-		  std::string (T2::*)(const Hypothesis,
-				      const std::string&,
-				      const bool),
-		  std::string (T2::*)(const Hypothesis,
-				      const std::string&,
-				      const bool),
-		  const bool,const bool);
+    template <typename T, typename T2>
+    CodeBlockOptions readCodeBlock(
+        T&,
+        const std::string&,
+        const std::string&,
+        std::string (T2::*)(const Hypothesis, const std::string&, const bool),
+        std::string (T2::*)(const Hypothesis, const std::string&, const bool),
+        const bool,
+        const bool);
     /*!
      * \brief read the next code block and adds it tho the mechanical
      * behaviour
@@ -341,37 +310,30 @@ namespace mfront{
      * \param[in] m2    : modifier
      * \param[in] b     : add "this->" in front of variables
      */
-    template<typename T,
-	     typename T2>
-    void
-    readCodeBlock(T&,
-		  const CodeBlockOptions&,
-		  const std::string&,
-		  const std::string&,
-		  std::string (T2::*)(const Hypothesis,
-				      const std::string&,
-				      const bool),
-		  std::string (T2::*)(const Hypothesis,
-				      const std::string&,
-				      const bool),
-		  const bool);
+    template <typename T, typename T2>
+    void readCodeBlock(
+        T&,
+        const CodeBlockOptions&,
+        const std::string&,
+        const std::string&,
+        std::string (T2::*)(const Hypothesis, const std::string&, const bool),
+        std::string (T2::*)(const Hypothesis, const std::string&, const bool),
+        const bool);
     /*!
      * \brief throw an exception is some options were not recognized
      */
-    void
-    treatUnsupportedCodeBlockOptions(const CodeBlockOptions&);
+    void treatUnsupportedCodeBlockOptions(const CodeBlockOptions&);
     /*!
      * \brief add a static variable description
      * \param[in] v : variable description
      */
-    virtual void
-    addStaticVariableDescription(const StaticVariableDescription&) override;
+    virtual void addStaticVariableDescription(
+        const StaticVariableDescription&) override;
     /*!
      * disable the declaration of new variables
      * \param[in] h : modelling hypothesis
      */
-    virtual void
-    disableVariableDeclaration(const Hypothesis);
+    virtual void disableVariableDeclaration(const Hypothesis);
     /*!
      * write the output files
      */
@@ -384,8 +346,8 @@ namespace mfront{
      * supported, the user must use the `@ModellingHypothesis` or
      * `@ModellingHypotheses` keywords.
      */
-    virtual std::set<Hypothesis>
-    getDefaultModellingHypotheses(void) const override;
+    virtual std::set<Hypothesis> getDefaultModellingHypotheses(
+        void) const override;
     /*!
      * \return true if the given modelling hypothesis is handled by
      * the parser
@@ -403,32 +365,29 @@ namespace mfront{
      * enable this modelling hypothesis by calling explicitely
      * `@ModellingHypothesis` or `@ModellingHypotheses` keywords.
      */
-    virtual bool
-    isModellingHypothesisSupported(const Hypothesis) const override;
+    virtual bool isModellingHypothesisSupported(
+        const Hypothesis) const override;
     /*!
      *
      */
-    virtual void
-    endsInputFileProcessing();
+    virtual void endsInputFileProcessing();
     /*!
      * \brief the standard variable modifier
      * \param[in] h : modelling hypothesis
      * \param[in] v : variable name
      * \param[in] b : if true, shall add the "this" qualifier
      */
-    virtual std::string
-    standardModifier(const Hypothesis,
-		     const std::string&,
-		     const bool);
+    virtual std::string standardModifier(const Hypothesis,
+                                         const std::string&,
+                                         const bool);
 
-    virtual std::string
-    predictionOperatorVariableModifier(const Hypothesis,
-				       const std::string&,const bool);
+    virtual std::string predictionOperatorVariableModifier(const Hypothesis,
+                                                           const std::string&,
+                                                           const bool);
 
-    virtual std::string
-    tangentOperatorVariableModifier(const Hypothesis,
-				    const std::string&,
-				    const bool);
+    virtual std::string tangentOperatorVariableModifier(const Hypothesis,
+                                                        const std::string&,
+                                                        const bool);
     /*!
      * \brief extract a material property from a token. If the token
      * is a string, it is interpred as a mfront file name. Otherwise,
@@ -437,9 +396,8 @@ namespace mfront{
      * \param[in] t: token
      * \return a material property
      */
-    BehaviourDescription::MaterialProperty
-    extractMaterialProperty(const std::string&,
-			    const tfel::utilities::Token&);
+    BehaviourDescription::MaterialProperty extractMaterialProperty(
+        const std::string&, const tfel::utilities::Token&);
     /*!
      * \brief read an an array of material properties. String are
      * interpreted as mfront file name. Other tokens are interpreted
@@ -452,64 +410,59 @@ namespace mfront{
     /*!
      *
      */
-    virtual void
-    readStringList(std::vector<std::string>&);
+    virtual void readStringList(std::vector<std::string>&);
     /*!
      * read a list of hypotheses
      * \param[out] h : list of hypotheses
      * \note by default, the returning set contains UNDEFINEDHYPOTHESIS
      */
-    virtual void
-    readHypothesesList(std::set<Hypothesis>&);
+    virtual void readHypothesesList(std::set<Hypothesis>&);
     /*!
      * \brief append the given modelling hypothesis to the set of hypothesis
      * \param[out] h : list of hypotheses
      * \param[in]  v : hypothesis to be inserted
      */
-    void
-    appendToHypothesesList(std::set<Hypothesis>&,
-			   const std::string&) const;
+    void appendToHypothesesList(std::set<Hypothesis>&,
+                                const std::string&) const;
     /*!
      * First read a set of Hypothesis. Then read a list variables and
      * assign them to mechanical data associated with those hypotheses.
      * \param[out] v  : the declared variables
-     * \param[out] h  : modelling hypothesis on which the variables were declared
-     * \param[in]  m  : method used to assign the variables
-     * \param[in]  b1 : allows variables to be declared as array
-     * \param[in]  b2 : if true, allows variable declaration after that
-     *                  a code block has been defined (this is a
-     *                  priori only valid for local variables)
+     * \param[out] h  : modelling hypothesis on which the variables were
+     * declared \param[in]  m  : method used to assign the variables \param[in]
+     * b1 : allows variables to be declared as array \param[in]  b2 : if true,
+     * allows variable declaration after that a code block has been defined
+     * (this is a priori only valid for local variables)
      */
-    virtual void
-    readVariableList(VariableDescriptionContainer&,
-		     std::set<Hypothesis>&,
-		     void (BehaviourDescription::*)(const Hypothesis,
-						    const VariableDescriptionContainer&,
-						    const BehaviourData::RegistrationStatus),
-		     const bool,const bool);
+    virtual void readVariableList(
+        VariableDescriptionContainer&,
+        std::set<Hypothesis>&,
+        void (BehaviourDescription::*)(const Hypothesis,
+                                       const VariableDescriptionContainer&,
+                                       const BehaviourData::RegistrationStatus),
+        const bool,
+        const bool);
 
     /*!
-     * Assign a list variables to mechanical data associated with the given hypotheses.
-     * \param[out] h : modelling hypothesis on which the variables were declared
-     * \param[out] v : the declared variables
-     * \param[in]  m : method used to assign the variables
-     * \param[in]  b : if true, allows variable declaration after that
-     *                  a code block has been defined (this is a
+     * Assign a list variables to mechanical data associated with the given
+     * hypotheses. \param[out] h : modelling hypothesis on which the variables
+     * were declared \param[out] v : the declared variables \param[in]  m :
+     * method used to assign the variables \param[in]  b : if true, allows
+     * variable declaration after that a code block has been defined (this is a
      *                  priori only valid for local variables)
      */
-    virtual void
-    addVariableList(const std::set<Hypothesis>&,
-		    const VariableDescriptionContainer&,
-		    void (BehaviourDescription::*)(const Hypothesis,
-						   const VariableDescriptionContainer&,
-						   const BehaviourData::RegistrationStatus),
-		    const bool);
+    virtual void addVariableList(
+        const std::set<Hypothesis>&,
+        const VariableDescriptionContainer&,
+        void (BehaviourDescription::*)(const Hypothesis,
+                                       const VariableDescriptionContainer&,
+                                       const BehaviourData::RegistrationStatus),
+        const bool);
 
     /*!
      * set the interfaces to be used
      */
-    virtual void
-    setInterfaces(const std::set<std::string>&) override;
+    virtual void setInterfaces(const std::set<std::string>&) override;
     /*!
      * \brief register a name.
      * \param[in] n : name
@@ -523,8 +476,7 @@ namespace mfront{
     /*!
      * register the default variable names
      */
-    virtual void
-    registerDefaultVarNames(void);
+    virtual void registerDefaultVarNames(void);
     //!\brief treat the @Brick keyword
     virtual void treatBrick(void);
     //!\brief treat the @Model keyword
@@ -534,8 +486,7 @@ namespace mfront{
      * \param[in] m: file
      * \return a model description
      */
-    virtual ModelDescription
-    getModelDescription(const std::string&);
+    virtual ModelDescription getModelDescription(const std::string&);
     //! \brief treat the @Private keyword
     virtual void treatPrivate(void) override;
     //! \brief treat the @Members keyword
@@ -563,8 +514,7 @@ namespace mfront{
     //! \brief treat the @ComputeStressFreeExpansion keyword
     virtual void treatComputeStressFreeExpansion(void);
     //! \brief treat the @UsableInPurelyImplicitResolution keyword
-    virtual void
-    treatUsableInPurelyImplicitResolution(void);
+    virtual void treatUsableInPurelyImplicitResolution(void);
     //! \brief treat the @Parameter keyword
     virtual void treatParameter(void);
     //! \brief treat the @LocalVariables keyword
@@ -595,10 +545,9 @@ namespace mfront{
     //! \brief handle the @RequireStiffnessTensor keyword
     virtual void treatRequireStiffnessTensor(void);
 
-    virtual void  treatStiffnessTensorOption(void);
+    virtual void treatStiffnessTensorOption(void);
     //! \brief handle the @RequireThermalExpansionCoefficientTensor keyword
-    virtual void
-    treatRequireThermalExpansionCoefficientTensor(void);
+    virtual void treatRequireThermalExpansionCoefficientTensor(void);
     //! \brief handle the @Behaviour keyword
     virtual void treatBehaviour(void);
     //! \brief handle the @Interface keyword
@@ -631,8 +580,7 @@ namespace mfront{
      * \param[out] d : bounds description
      * \param[in]  h : modelling hypothesis
      */
-    virtual void treatBounds(BoundsDescription&,
-			     const Hypothesis);
+    virtual void treatBounds(BoundsDescription&, const Hypothesis);
     //! \brief treat the @PredictionOperator keyword
     virtual void treatPredictionOperator(void);
     //! \brief treat the @Swelling keyword
@@ -663,221 +611,152 @@ namespace mfront{
 
     virtual void writeIncludes(std::ostream&);
 
-    virtual void
-    writeNamespaceBegin(std::ostream&);
+    virtual void writeNamespaceBegin(std::ostream&);
 
-    virtual void
-    writeNamespaceEnd(std::ostream&);
+    virtual void writeNamespaceEnd(std::ostream&);
 
-    virtual void
-    writeStandardTFELTypedefs(std::ostream&);
+    virtual void writeStandardTFELTypedefs(std::ostream&);
 
-    virtual void
-    checkBehaviourDataFile(void) const;
+    virtual void checkBehaviourDataFile(void) const;
 
-    virtual void
-    writeBehaviourDataStandardTFELTypedefs(void);
+    virtual void writeBehaviourDataStandardTFELTypedefs(void);
 
-    virtual void
-    writeBehaviourDataStandardTFELIncludes(void);
+    virtual void writeBehaviourDataStandardTFELIncludes(void);
 
-    virtual void
-    writeBehaviourDataFileHeader(void);
+    virtual void writeBehaviourDataFileHeader(void);
 
-    virtual void
-    writeBehaviourDataFileHeaderBegin(void);
+    virtual void writeBehaviourDataFileHeaderBegin(void);
 
-    virtual void
-    writeBehaviourDataFileHeaderEnd(void);
+    virtual void writeBehaviourDataFileHeaderEnd(void);
 
-    virtual void
-    writeBehaviourDataClassHeader(void);
+    virtual void writeBehaviourDataClassHeader(void);
 
-    virtual void
-    writeBehaviourDataDisabledConstructors(void);
+    virtual void writeBehaviourDataDisabledConstructors(void);
 
-    virtual void
-    writeBehaviourDataConstructors(const Hypothesis);
+    virtual void writeBehaviourDataConstructors(const Hypothesis);
     /*!
      * write interface's setters for the main variables
      */
-    virtual void
-    writeBehaviourDataMainVariablesSetters(void);
+    virtual void writeBehaviourDataMainVariablesSetters(void);
 
-    virtual void
-    writeBehaviourDataClassBegin(const Hypothesis);
+    virtual void writeBehaviourDataClassBegin(const Hypothesis);
 
-    virtual void
-    writeBehaviourDataClassEnd(void);
+    virtual void writeBehaviourDataClassEnd(void);
 
-    virtual void
-    writeBehaviourDataDefaultMembers(void);
+    virtual void writeBehaviourDataDefaultMembers(void);
 
-    virtual void
-    writeBehaviourDataMaterialProperties(const Hypothesis);
+    virtual void writeBehaviourDataMaterialProperties(const Hypothesis);
 
-    virtual void
-    writeBehaviourDataStateVariables(const Hypothesis);
+    virtual void writeBehaviourDataStateVariables(const Hypothesis);
 
-    virtual void
-    writeBehaviourDataAssignementOperator(const Hypothesis);
+    virtual void writeBehaviourDataAssignementOperator(const Hypothesis);
 
-    virtual void
-    writeBehaviourDataOutputOperator(const Hypothesis);
+    virtual void writeBehaviourDataOutputOperator(const Hypothesis);
 
-    virtual void
-    writeBehaviourDataExport(const Hypothesis);
+    virtual void writeBehaviourDataExport(const Hypothesis);
 
-    virtual void
-    writeBehaviourDataPublicMembers(void);
+    virtual void writeBehaviourDataPublicMembers(void);
 
-    virtual void
-    writeBehaviourDataFileBegin(void);
+    virtual void writeBehaviourDataFileBegin(void);
 
-    virtual void
-    writeBehaviourDataFileEnd(void);
+    virtual void writeBehaviourDataFileEnd(void);
 
-    virtual void
-    writeBehaviourDataClass(const Hypothesis);
+    virtual void writeBehaviourDataClass(const Hypothesis);
 
-    virtual void
-    writeBehaviourDataForwardDeclarations(void);
+    virtual void writeBehaviourDataForwardDeclarations(void);
 
-    virtual void
-    checkIntegrationDataFile(void) const;
+    virtual void checkIntegrationDataFile(void) const;
 
-    virtual void
-    writeIntegrationDataStandardTFELTypedefs(void);
+    virtual void writeIntegrationDataStandardTFELTypedefs(void);
 
-    virtual void
-    writeIntegrationDataStandardTFELIncludes(void);
+    virtual void writeIntegrationDataStandardTFELIncludes(void);
 
-    virtual void
-    writeIntegrationDataFileHeader(void);
+    virtual void writeIntegrationDataFileHeader(void);
 
-    virtual void
-    writeIntegrationDataFileHeaderBegin(void);
+    virtual void writeIntegrationDataFileHeaderBegin(void);
 
-    virtual void
-    writeIntegrationDataFileHeaderEnd(void);
+    virtual void writeIntegrationDataFileHeaderEnd(void);
 
-    virtual void
-    writeIntegrationDataClassHeader(void);
+    virtual void writeIntegrationDataClassHeader(void);
 
-    virtual void
-    writeIntegrationDataDisabledConstructors(void);
+    virtual void writeIntegrationDataDisabledConstructors(void);
 
-    virtual void
-    writeIntegrationDataConstructors(const Hypothesis);
+    virtual void writeIntegrationDataConstructors(const Hypothesis);
     /*!
      * write interface's setters for the main variables
      */
-    virtual void
-    writeIntegrationDataMainVariablesSetters(void);
+    virtual void writeIntegrationDataMainVariablesSetters(void);
 
-    virtual void
-    writeIntegrationDataScaleOperators(const Hypothesis);
+    virtual void writeIntegrationDataScaleOperators(const Hypothesis);
 
     virtual void writeIntegrationDataUpdateDrivingVariablesMethod();
 
-    virtual void
-    writeIntegrationDataClassBegin(const Hypothesis);
+    virtual void writeIntegrationDataClassBegin(const Hypothesis);
 
-    virtual void
-    writeIntegrationDataClassEnd(void);
+    virtual void writeIntegrationDataClassEnd(void);
 
-    virtual void
-    writeIntegrationDataDefaultMembers(void);
+    virtual void writeIntegrationDataDefaultMembers(void);
 
-    virtual void
-    writeIntegrationDataExternalStateVariables(const Hypothesis);
+    virtual void writeIntegrationDataExternalStateVariables(const Hypothesis);
 
-    virtual void
-    writeIntegrationDataFileBegin(void);
+    virtual void writeIntegrationDataFileBegin(void);
 
-    virtual void
-    writeIntegrationDataFileEnd(void);
+    virtual void writeIntegrationDataFileEnd(void);
 
-    virtual void
-    writeIntegrationDataClass(const Hypothesis);
+    virtual void writeIntegrationDataClass(const Hypothesis);
 
-    virtual void
-    writeIntegrationDataForwardDeclarations(void);
+    virtual void writeIntegrationDataForwardDeclarations(void);
 
-    virtual void
-    writeIntegrationDataOutputOperator(const Hypothesis);
+    virtual void writeIntegrationDataOutputOperator(const Hypothesis);
 
-    virtual void
-    checkBehaviourFile(void) const;
+    virtual void checkBehaviourFile(void) const;
 
-    virtual void
-    writeBehaviourStandardTFELTypedefs(void);
+    virtual void writeBehaviourStandardTFELTypedefs(void);
 
-    virtual void
-    writeBehaviourFileHeader(void);
+    virtual void writeBehaviourFileHeader(void);
 
-    virtual void
-    writeBehaviourFileHeaderBegin(void);
+    virtual void writeBehaviourFileHeaderBegin(void);
 
-    virtual void
-    writeBehaviourFileHeaderEnd(void);
+    virtual void writeBehaviourFileHeaderEnd(void);
 
-    virtual void
-    writeBehaviourFileBegin(void);
+    virtual void writeBehaviourFileBegin(void);
 
-    virtual void
-    writeBehaviourFileEnd(void);
+    virtual void writeBehaviourFileEnd(void);
 
-    virtual void
-    writeBehaviourClass(const Hypothesis);
+    virtual void writeBehaviourClass(const Hypothesis);
 
-    virtual void
-    writeBehaviourForwardDeclarations(void);
+    virtual void writeBehaviourForwardDeclarations(void);
 
-    virtual void
-    writeBehaviourProfiler(void);
+    virtual void writeBehaviourProfiler(void);
 
-    virtual void
-    writeBehaviourParserSpecificInheritanceRelationship(void);
+    virtual void writeBehaviourParserSpecificInheritanceRelationship(void);
 
-    virtual void
-    writeBehaviourParserSpecificTypedefs(void);
+    virtual void writeBehaviourParserSpecificTypedefs(void);
 
-    virtual void
-    writeBehaviourParserSpecificMembers(const Hypothesis);
+    virtual void writeBehaviourParserSpecificMembers(const Hypothesis);
 
-    virtual void
-    writeBehaviourParserSpecificIncludes(void);
+    virtual void writeBehaviourParserSpecificIncludes(void);
 
-    virtual void
-    writeBehaviourClassBegin(const Hypothesis);
+    virtual void writeBehaviourClassBegin(const Hypothesis);
 
-    virtual void
-    writeBehaviourGetModellingHypothesis(void);
+    virtual void writeBehaviourGetModellingHypothesis(void);
 
-    virtual void
-    writeBehaviourClassEnd(void);
+    virtual void writeBehaviourClassEnd(void);
 
-    virtual void
-    writeBehaviourPolicyVariable(void);
+    virtual void writeBehaviourPolicyVariable(void);
 
-    virtual void
-    writeBehaviourSetOutOfBoundsPolicy(void);
+    virtual void writeBehaviourSetOutOfBoundsPolicy(void);
 
-    virtual void
-    writeBehaviourCheckBounds(const Hypothesis);
+    virtual void writeBehaviourCheckBounds(const Hypothesis);
 
-    virtual void
-    writeBehaviourDisabledConstructors(void);
+    virtual void writeBehaviourDisabledConstructors(void);
 
-    virtual void
-    writeBehaviourConstructors(const Hypothesis);
+    virtual void writeBehaviourConstructors(const Hypothesis);
 
     /*!
      * \return behaviour constructor initializers.
      */
-    virtual std::string
-    getBehaviourConstructorsInitializers(const Hypothesis);
+    virtual std::string getBehaviourConstructorsInitializers(const Hypothesis);
     /*!
      * \brief write the arguments of a material property, including
      * the the surrounding parenthesis. Those arguments are used to
@@ -889,10 +768,10 @@ namespace mfront{
      * For example, if we want to evaluate the variable name 'V' at
      * the end of the time step, we could make f return V+dV
      */
-    virtual void
-    writeMaterialPropertyArguments(std::ostream&,
-				   const BehaviourDescription::ComputedMaterialProperty&,
-				   std::function<std::string(const MaterialPropertyInput&)>&);
+    virtual void writeMaterialPropertyArguments(
+        std::ostream&,
+        const BehaviourDescription::ComputedMaterialProperty&,
+        std::function<std::string(const MaterialPropertyInput&)>&);
     /*!
      * \brief write the bounds checks to a material property
      * \param[out] out: output stream
@@ -902,10 +781,10 @@ namespace mfront{
      * For example, if we want to evaluate the variable name 'V' at
      * the end of the time step, we could make f return V+dV
      */
-    virtual void
-    writeMaterialPropertyCheckBoundsEvaluation(std::ostream&,
-					       const BehaviourDescription::MaterialProperty&,
-					       std::function<std::string(const MaterialPropertyInput&)>&);
+    virtual void writeMaterialPropertyCheckBoundsEvaluation(
+        std::ostream&,
+        const BehaviourDescription::MaterialProperty&,
+        std::function<std::string(const MaterialPropertyInput&)>&);
     /*!
      * \brief write the call to a material property
      * \param[out] out: output stream
@@ -915,10 +794,10 @@ namespace mfront{
      * For example, if we want to evaluate the variable name 'V' at
      * the end of the time step, we could make f return V+dV
      */
-    virtual void
-    writeMaterialPropertyEvaluation(std::ostream&,
-				    const BehaviourDescription::MaterialProperty&,
-				    std::function<std::string(const MaterialPropertyInput&)>&);
+    virtual void writeMaterialPropertyEvaluation(
+        std::ostream&,
+        const BehaviourDescription::MaterialProperty&,
+        std::function<std::string(const MaterialPropertyInput&)>&);
     /*!
      * \brief write the evoluation of a thermal expansion coefficient
      * \param[out] out: output stream
@@ -928,200 +807,165 @@ namespace mfront{
      * \param[in] i: indice
      * \param[in] s: suffix
      */
-    virtual void
-    writeThermalExpansionCoefficientComputation(std::ostream&,
-						const BehaviourDescription::MaterialProperty&,
-						const std::string&,
-						const std::string&,
-						const std::string&);
-    virtual void
-    writeThermalExpansionCoefficientsComputations(std::ostream&,
-						  const BehaviourDescription::MaterialProperty&,
-						  const std::string& = "");
-    virtual void
-    writeThermalExpansionComputation(std::ostream&,
-				     const BehaviourDescription::MaterialProperty&,
-				     const std::string&,
-				     const std::string&,
-				     const std::string& = "");
+    virtual void writeThermalExpansionCoefficientComputation(
+        std::ostream&,
+        const BehaviourDescription::MaterialProperty&,
+        const std::string&,
+        const std::string&,
+        const std::string&);
+    virtual void writeThermalExpansionCoefficientsComputations(
+        std::ostream&,
+        const BehaviourDescription::MaterialProperty&,
+        const std::string& = "");
+    virtual void writeThermalExpansionComputation(
+        std::ostream&,
+        const BehaviourDescription::MaterialProperty&,
+        const std::string&,
+        const std::string&,
+        const std::string& = "");
     /*!
      * \brief write the behaviour's computeStressFreeExpansion method, if
      * mandatory.
      * \param[in] h : modelling hypothesis
      */
-    virtual void
-    writeBehaviourComputeStressFreeExpansion(const Hypothesis);
+    virtual void writeBehaviourComputeStressFreeExpansion(const Hypothesis);
     /*!
      * \brief write the stiffness tensor computation evaluation
      * from the elastic material properties.
      * \param[out] out: output stream
      * \param[in]  D:   name of the stiffness tensor variable
-     * \param[in]  f:   function used to handle the variables of the material properties.
+     * \param[in]  f:   function used to handle the variables of the material
+     * properties.
      */
-    virtual void
-    writeStiffnessTensorComputation(std::ostream&,
-				    const std::string&,
-				    std::function<std::string(const MaterialPropertyInput&)>&);
+    virtual void writeStiffnessTensorComputation(
+        std::ostream&,
+        const std::string&,
+        std::function<std::string(const MaterialPropertyInput&)>&);
     /*!
      * \brief write the Hill tensor computation evaluation
      * from the elastic material properties.
      * \param[out] out: output stream
      * \param[in]  H:   name of the Hill tensor variable to be computed
      * \param[in]  h:   Hill tensor definition
-     * \param[in]  f:   function used to handle the variables of the material properties.
+     * \param[in]  f:   function used to handle the variables of the material
+     * properties.
      */
-    virtual void
-    writeHillTensorComputation(std::ostream&,
-			       const std::string&,
-			       const BehaviourDescription::HillTensor&,
-			       std::function<std::string(const MaterialPropertyInput&)>&);
+    virtual void writeHillTensorComputation(
+        std::ostream&,
+        const std::string&,
+        const BehaviourDescription::HillTensor&,
+        std::function<std::string(const MaterialPropertyInput&)>&);
     /*!
      * \brief write the initalize method . This method is called after that
      * the main variables were set.
      */
-    virtual void
-    writeBehaviourInitializeMethod(const Hypothesis);
+    virtual void writeBehaviourInitializeMethod(const Hypothesis);
     /*!
      * write part of the constructor specific to the parser
      * \param[in] h : modelling hypothesis
      */
-    virtual void
-    writeBehaviourParserSpecificInitializeMethodPart(const Hypothesis);
+    virtual void writeBehaviourParserSpecificInitializeMethodPart(
+        const Hypothesis);
 
-    virtual void
-    writeBehaviourIntegrationVariablesIncrements(const Hypothesis);
+    virtual void writeBehaviourIntegrationVariablesIncrements(const Hypothesis);
 
-    virtual void
-    writeBehaviourLocalVariables(const Hypothesis);
+    virtual void writeBehaviourLocalVariables(const Hypothesis);
 
-    virtual void
-    writeBehaviourIntegrationVariables(const Hypothesis);
+    virtual void writeBehaviourIntegrationVariables(const Hypothesis);
 
-    virtual void
-    writeBehaviourParameters(const Hypothesis);
+    virtual void writeBehaviourParameters(const Hypothesis);
 
-    virtual void
-    writeBehaviourStaticVariables(const Hypothesis);
+    virtual void writeBehaviourStaticVariables(const Hypothesis);
 
-    virtual void
-    writeBehaviourAdditionalMembers(const Hypothesis);
+    virtual void writeBehaviourAdditionalMembers(const Hypothesis);
 
-    virtual void
-    writeBehaviourPrivate(const Hypothesis);
+    virtual void writeBehaviourPrivate(const Hypothesis);
 
-    virtual void
-    writeBehaviourUpdateIntegrationVariables(const Hypothesis);
+    virtual void writeBehaviourUpdateIntegrationVariables(const Hypothesis);
 
-    virtual void
-    writeBehaviourUpdateStateVariables(const Hypothesis);
+    virtual void writeBehaviourUpdateStateVariables(const Hypothesis);
 
-    virtual void
-    writeBehaviourUpdateAuxiliaryStateVariables(const Hypothesis);
+    virtual void writeBehaviourUpdateAuxiliaryStateVariables(const Hypothesis);
     /*!
      * \brief write the computeInternalEnergy method
      * \param[in] h: modelling hypothesis
      */
-    virtual void
-      writeBehaviourComputeInternalEnergy(const Hypothesis);
+    virtual void writeBehaviourComputeInternalEnergy(const Hypothesis);
     /*!
      * \brief write the computeInternalEnergy method
      * \param[in] h: modelling hypothesis
      */
-    virtual void
-    writeBehaviourComputeDissipatedEnergy(const Hypothesis);
+    virtual void writeBehaviourComputeDissipatedEnergy(const Hypothesis);
     //! \brief write the getTimeStepScalingFactor method
-    virtual void
-    writeBehaviourGetTimeStepScalingFactor(void);
+    virtual void writeBehaviourGetTimeStepScalingFactor(void);
     //! \brief write the integrate method
-    virtual void
-    writeBehaviourIntegrator(const Hypothesis);
+    virtual void writeBehaviourIntegrator(const Hypothesis);
     /*!
      * \brief write the computeAPrioriTimeStepsScalingFactor method
      */
-    virtual void
-    writeBehaviourComputeAPrioriTimeStepScalingFactor();
+    virtual void writeBehaviourComputeAPrioriTimeStepScalingFactor();
     /*!
      * \brief write the computeAPrioriTimeStepsScalingFactorII method
      */
-    virtual void
-    writeBehaviourComputeAPrioriTimeStepScalingFactorII(const Hypothesis);
+    virtual void writeBehaviourComputeAPrioriTimeStepScalingFactorII(
+        const Hypothesis);
     /*!
      * \brief write the computeAPosterioriTimeStepsScalingFactor method
      */
-    virtual void
-    writeBehaviourComputeAPosterioriTimeStepScalingFactor();
+    virtual void writeBehaviourComputeAPosterioriTimeStepScalingFactor();
     /*!
      * \brief write the computeAPosterioriTimeStepsScalingFactorII method
      */
-    virtual void
-    writeBehaviourComputeAPosterioriTimeStepScalingFactorII(const Hypothesis);
+    virtual void writeBehaviourComputeAPosterioriTimeStepScalingFactorII(
+        const Hypothesis);
 
-    virtual void
-    writeBehaviourUpdateExternalStateVariables(const Hypothesis);
+    virtual void writeBehaviourUpdateExternalStateVariables(const Hypothesis);
 
-    virtual void
-    writeBehaviourOutputOperator(const Hypothesis);
+    virtual void writeBehaviourOutputOperator(const Hypothesis);
 
-    virtual void
-    writeBehaviourDestructor(void);
+    virtual void writeBehaviourDestructor(void);
 
-    virtual void
-    writeBehaviourTraits(void);
+    virtual void writeBehaviourTraits(void);
 
     /*!
      * \param[in] h : modelling hypothesis
-     * \param[in] b : true if the behaviour is defined for the given modelling hypothesis
+     * \param[in] b : true if the behaviour is defined for the given modelling
+     * hypothesis
      */
-    virtual void
-    writeBehaviourTraitsSpecialisation(const Hypothesis,
-				       const bool);
+    virtual void writeBehaviourTraitsSpecialisation(const Hypothesis,
+                                                    const bool);
 
-    virtual void
-    writeBehaviourIncludes(void);
+    virtual void writeBehaviourIncludes(void);
 
-    virtual void
-    writeBehaviourLocalVariablesInitialisation(const Hypothesis);
+    virtual void writeBehaviourLocalVariablesInitialisation(const Hypothesis);
 
-    virtual void
-    writeBehaviourParameterInitialisation(const Hypothesis);
+    virtual void writeBehaviourParameterInitialisation(const Hypothesis);
 
-    virtual void
-    writeBehaviourParametersInitializers();
+    virtual void writeBehaviourParametersInitializers();
 
-    virtual void
-    writeBehaviourParametersInitializer(const Hypothesis);
+    virtual void writeBehaviourParametersInitializer(const Hypothesis);
 
-    virtual void
-    checkSrcFile(void) const;
+    virtual void checkSrcFile(void) const;
 
-    virtual void
-    writeSrcFileHeader(void);
+    virtual void writeSrcFileHeader(void);
 
-    virtual void
-    writeSrcFileUserDefinedCode(void);
+    virtual void writeSrcFileUserDefinedCode(void);
 
-    virtual void
-    writeSrcFileBehaviourProfiler(void);
+    virtual void writeSrcFileBehaviourProfiler(void);
 
-    virtual void
-    writeSrcFileParametersInitializers(void);
+    virtual void writeSrcFileParametersInitializers(void);
 
-    virtual void
-    writeSrcFileParametersInitializer(const Hypothesis);
+    virtual void writeSrcFileParametersInitializer(const Hypothesis);
 
-    virtual void
-    writeSrcFileStaticVariables(const Hypothesis);
+    virtual void writeSrcFileStaticVariables(const Hypothesis);
     /*!
      * \brief write the source file
      */
-    virtual void
-    writeSrcFile(void);
+    virtual void writeSrcFile(void);
 
-    virtual void
-    writeBehaviourComputePredictionOperator(const Hypothesis);
+    virtual void writeBehaviourComputePredictionOperator(const Hypothesis);
 
-    virtual void
-    writeBehaviourComputeTangentOperator(const Hypothesis);
+    virtual void writeBehaviourComputeTangentOperator(const Hypothesis);
 
     virtual void writeBehaviourGetTangentOperator();
 
@@ -1135,41 +979,36 @@ namespace mfront{
      * \param[in]  vs:  name of the variable containing the value of the
      *                  variable modified by the model at the beginning
      *                  of the time step
-     * \param[in]  bn:  base name for temporary variable 
+     * \param[in]  bn:  base name for temporary variable
      */
     virtual void writeModelCall(std::ostream&,
-				const Hypothesis,
-				const ModelDescription&,
-				const std::string&,
-				const std::string&,
-				const std::string&);
+                                const Hypothesis,
+                                const ModelDescription&,
+                                const std::string&,
+                                const std::string&,
+                                const std::string&);
     /*!
      * \brief treat methods associated with parameters
      * \param[in] h : modelling hypothesis
      */
-    virtual void
-    treatParameterMethod(const Hypothesis);
+    virtual void treatParameterMethod(const Hypothesis);
     /*!
      * \return true if the the given variable may have methods
      * \param[in] h : modelling hypothesis
      * \param[in] n : name
      */
-    virtual bool
-    isCallableVariable(const Hypothesis,
-		       const std::string&) const;
+    virtual bool isCallableVariable(const Hypothesis, const std::string&) const;
     /*!
      * treat a method
      * \param[in] h : modelling hypothesis
      */
-    virtual void
-    treatVariableMethod(const Hypothesis);
+    virtual void treatVariableMethod(const Hypothesis);
     /*!
      * \param[in] h : modelling hypothesis
      * \param[in] n : variable name
      */
-    virtual void
-    treatUnknownVariableMethod(const Hypothesis,
-			       const std::string&);
+    virtual void treatUnknownVariableMethod(const Hypothesis,
+                                            const std::string&);
     //! method called when an unknown keyword is parsed
     virtual void treatUnknownKeyword(void) override;
     //! destructor
@@ -1179,8 +1018,8 @@ namespace mfront{
      * \param[in] n : variable name
      */
     virtual void
-    declareExternalStateVariableProbablyUnusableInPurelyImplicitResolution(const Hypothesis,
-									   const std::string&);
+    declareExternalStateVariableProbablyUnusableInPurelyImplicitResolution(
+        const Hypothesis, const std::string&);
     /*!
      * \brief if no tangent operator was provided, but that the
      * behaviour requires a stiffness matrix, this method creates a
@@ -1190,8 +1029,7 @@ namespace mfront{
      * \note This method is meant to be used in the
      * endsInputFileProcessing method.
      */
-    virtual void
-    setMinimalTangentOperator(void);
+    virtual void setMinimalTangentOperator(void);
     /*!
      * \brief if the compte final stress code is not available, create
      * it from the ComputeFinalStressCandidate code if it is
@@ -1206,15 +1044,13 @@ namespace mfront{
     /*!
      * \brief perform pedantic checks
      */
-    virtual void
-    doPedanticChecks(void) const;
+    virtual void doPedanticChecks(void) const;
     /*!
      * \return true if the user defined a block of code computing the
      * tangent operator
      * \param[in] h : modelling hypothesis
      */
-    virtual bool
-    hasUserDefinedTangentOperatorCode(const Hypothesis) const;
+    virtual bool hasUserDefinedTangentOperatorCode(const Hypothesis) const;
     //! constructor
     BehaviourDSLCommon();
     //! behaviour description
@@ -1224,8 +1060,8 @@ namespace mfront{
     //! the list of registred keywords
     std::set<std::string> registredKeyWords;
     //! list of registred interfaces, indexed by their name
-    std::map<std::string,
-	     std::shared_ptr<AbstractBehaviourInterface>> interfaces;
+    std::map<std::string, std::shared_ptr<AbstractBehaviourInterface>>
+        interfaces;
     /*!
      * local variables initalizers. This variable to initialize local
      * variables defined by domains specific languages and shall not
@@ -1245,10 +1081,10 @@ namespace mfront{
 
     bool useStateVarTimeDerivative;
     bool explicitlyDeclaredUsableInPurelyImplicitResolution;
-  }; // end of struct BehaviourDSLCommon
+  };  // end of struct BehaviourDSLCommon
 
-} // end of namespace mfront
+}  // end of namespace mfront
 
-#include"MFront/BehaviourDSLCommon.ixx"
+#include "MFront/BehaviourDSLCommon.ixx"
 
 #endif /* LIB_MFRONT_MFRONTBEHAVIOURDSLCOMMON_HXX */

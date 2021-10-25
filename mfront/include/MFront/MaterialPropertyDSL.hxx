@@ -1,29 +1,29 @@
 /*!
  * \file   mfront/include/MFront/MaterialPropertyDSL.hxx
- * \brief  
- * 
+ * \brief
+ *
  * \author Helfer Thomas
  * \date   06 jui 2007
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_MFRONTMATERIALLAWPARSER_HXX_
-#define LIB_MFRONTMATERIALLAWPARSER_HXX_ 
+#define LIB_MFRONTMATERIALLAWPARSER_HXX_
 
-#include<string>
-#include<set>
+#include <string>
+#include <set>
 
-#include"MFront/DSLBase.hxx"
-#include"MFront/LawFunction.hxx"
-#include"MFront/VariableBoundsDescription.hxx"
-#include"MFront/MaterialPropertyDescription.hxx"
+#include "MFront/DSLBase.hxx"
+#include "MFront/LawFunction.hxx"
+#include "MFront/VariableBoundsDescription.hxx"
+#include "MFront/MaterialPropertyDescription.hxx"
 
-namespace mfront{
+namespace mfront {
 
   // forward declaration
   struct AbstractMaterialPropertyInterface;
@@ -32,46 +32,40 @@ namespace mfront{
    * Parser handling material properties
    */
   struct MFRONT_VISIBILITY_EXPORT MaterialPropertyDSL
-    : public DSLBase,
-      protected MaterialPropertyDescription
-  {
+      : public DSLBase,
+        protected MaterialPropertyDescription {
     //! \return the target of the dsl
     virtual DSLTarget getTargetType() const override final;
     /*!
      * return the name of the parser
      */
-    static std::string 
-    getName();
+    static std::string getName();
     /*!
      * return a description of the parser
      */
-    static std::string
-    getDescription();
+    static std::string getDescription();
     /*!
      * default constructor
      */
     MaterialPropertyDSL();
 
-    virtual void
-    getKeywordsList(std::vector<std::string>&) const override;
+    virtual void getKeywordsList(std::vector<std::string>&) const override;
 
-    virtual void
-    setInterfaces(const std::set<std::string>&) override;
+    virtual void setInterfaces(const std::set<std::string>&) override;
     /*!
      * \brief analyse a file without generating any output
      * \param[in] f     : file name
      * \param[in] ecmds : additionnal commands inserted treated before
      */
-    virtual void
-    analyseFile(const std::string&,
-		const std::vector<std::string>& = {},
-		const std::map<std::string,std::string>& = {}) override;
+    virtual void analyseFile(
+        const std::string&,
+        const std::vector<std::string>& = {},
+        const std::map<std::string, std::string>& = {}) override;
     /*!
      * \brief analyse the specified string.
      * \param[in] s : analyse a string
      */
-    virtual void
-    analyseString(const std::string&) override;
+    virtual void analyseString(const std::string&) override;
     /*!
      * \brief import a file
      * \param[in] f     : file name
@@ -82,19 +76,18 @@ namespace mfront{
      * `--@YYY@=XXX`)
      */
     virtual void importFile(const std::string&,
-			    const std::vector<std::string>&,
-			    const std::map<std::string,std::string>&) override;
-    
-    virtual const MaterialPropertyDescription&
-    getMaterialPropertyDescription() const;
+                            const std::vector<std::string>&,
+                            const std::map<std::string, std::string>&) override;
+
+    virtual const MaterialPropertyDescription& getMaterialPropertyDescription()
+        const;
 
     //! destructor
     virtual ~MaterialPropertyDSL();
 
-  protected:
-
-    typedef void (MaterialPropertyDSL::* MemberFuncPtr)();
-    typedef std::map<std::string,MemberFuncPtr> CallBackContainer;
+   protected:
+    typedef void (MaterialPropertyDSL::*MemberFuncPtr)();
+    typedef std::map<std::string, MemberFuncPtr> CallBackContainer;
     //! treat an unknown keyword
     virtual void treatUnknownKeyword() override;
     /*!
@@ -145,8 +138,8 @@ namespace mfront{
      * \brief add a static variable description
      * \param[in] v : variable description
      */
-    virtual void
-    addStaticVariableDescription(const StaticVariableDescription&) override;
+    virtual void addStaticVariableDescription(
+        const StaticVariableDescription&) override;
 
     virtual void addInterface(const std::string&);
     //! treat the @Material keyword
@@ -177,16 +170,14 @@ namespace mfront{
     //! treat the @PhysicalBounds keyword
     virtual void treatPhysicalBounds();
 
-    virtual void
-    registerBounds(std::vector<VariableBoundsDescription>&);
-    
-    virtual void
-    registerNewCallBack(const std::string&,const MemberFuncPtr);
+    virtual void registerBounds(std::vector<VariableBoundsDescription>&);
+
+    virtual void registerNewCallBack(const std::string&, const MemberFuncPtr);
     /*!
      * list of registred interfaces
      */
-    std::map<std::string,
-	     std::shared_ptr<AbstractMaterialPropertyInterface>> interfaces;
+    std::map<std::string, std::shared_ptr<AbstractMaterialPropertyInterface>>
+        interfaces;
     /*!
      * list of resgistred keywords
      */
@@ -200,9 +191,8 @@ namespace mfront{
      * which a method is called
      */
     std::string currentVar;
-  }; // end of class MaterialPropertyDSL
+  };  // end of class MaterialPropertyDSL
 
-} // end of namespace mfront  
-  
+}  // end of namespace mfront
+
 #endif /* LIB_MFRONTMATERIALLAWPARSER_HXX_ */
-

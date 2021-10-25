@@ -1,40 +1,39 @@
 /*!
  * \file   CastemUmatStandardBehaviour.hxx
- * \brief    
+ * \brief
  * \author THOMAS HELFER
  * \date   15 sept. 2016
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_MTEST_CASTEMUMATSTANDARDBEHAVIOUR_HXX
 #define LIB_MTEST_CASTEMUMATSTANDARDBEHAVIOUR_HXX
 
-#include<string>
-#include<memory>
-#include"TFEL/Utilities/Data.hxx"
-#include"TFEL/Material/ModellingHypothesis.hxx"
-#include"MTest/Behaviour.hxx"
+#include <string>
+#include <memory>
+#include "TFEL/Utilities/Data.hxx"
+#include "TFEL/Material/ModellingHypothesis.hxx"
+#include "MTest/Behaviour.hxx"
 
-namespace mtest
-{
+namespace mtest {
 
   /*!
    * an helper class used by to gather common code between the
    * `CastemUmatSmallStrainBehaviour` and
    * `CastemUmatFiniteStrainBehaviour` classes.
    */
-  struct CastemUmatStandardBehaviour
-  {
+  struct CastemUmatStandardBehaviour {
     //! a simple alias
     using ModellingHypothesis = tfel::material::ModellingHypothesis;
     //! a simple alias
     using Hypothesis = ModellingHypothesis::Hypothesis;
-  protected:
+
+   protected:
     /*!
      * \param[in] l: library
      * \param[in] f: function
@@ -42,26 +41,26 @@ namespace mtest
      * \param[in] t: type of behaviour
      * \param[in] h: modelling hypothesis
      */
-    static std::shared_ptr<Behaviour>
-    buildCastemUmatStandardBehaviour(const std::string&,
-				     const std::string&,
-				     const tfel::utilities::Data&,
-				     const int,
-				     const Hypothesis);
+    static std::shared_ptr<Behaviour> buildCastemUmatStandardBehaviour(
+        const std::string&,
+        const std::string&,
+        const tfel::utilities::Data&,
+        const int,
+        const Hypothesis);
     /*!
      * \param[in] mp: material properties
      * \param[in] evm: currently defined evolution
      * \param[in] stype: symmetry of behaviour
      * \param[in] h: modelling hypothesis
      */
-    static void
-    setOptionalMaterialPropertiesDefaultValues(EvolutionManager&,
-					       const EvolutionManager&,
-					       const int,
-					       const Hypothesis);
-    
-  }; // end of struct CastemUmatStandardBehaviour
+    static void setOptionalMaterialPropertiesDefaultValues(
+        EvolutionManager&,
+        const EvolutionManager&,
+        const int,
+        const Hypothesis);
 
-} // end of namespace mtest
+  };  // end of struct CastemUmatStandardBehaviour
+
+}  // end of namespace mtest
 
 #endif /* LIB_MTEST_CASTEMUMATSTANDARDBEHAVIOUR_HXX_ */

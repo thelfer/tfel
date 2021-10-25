@@ -3,16 +3,16 @@
  *
  *  Created on: 13 mai 2013
  *      Author: rp238441
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
-#include<string>
-#include<stdexcept>
+#include <string>
+#include <stdexcept>
 
 #include "TFELCheck/Linearization.hxx"
 
@@ -20,20 +20,22 @@ namespace tfel_check {
 
   Linearization::Linearization() = default;
   Linearization::~Linearization() = default;
-  
-  Linearization::Linearization(const std::vector<double>& t,
-			       const std::vector<double>& v) {
 
+  Linearization::Linearization(const std::vector<double>& t,
+                               const std::vector<double>& v) {
     if (t.size() != v.size()) {
-      throw(std::runtime_error("Linearization::Linearization : "
-			       "the number of values of the times don't match "
-			       "the number of values of the evolution"));
+      throw(
+          std::runtime_error("Linearization::Linearization : "
+                             "the number of values of the times don't match "
+                             "the number of values of the evolution"));
     } else if (t.size() < 1) {
-      throw(std::runtime_error("Linearization::Linearization : "
-			       "wrong number of values for the times"));
+      throw(
+          std::runtime_error("Linearization::Linearization : "
+                             "wrong number of values for the times"));
     } else if (v.size() < 1) {
-      throw(std::runtime_error("Linearization::Linearization : "
-			       "wrong number of values for the ordinates"));
+      throw(
+          std::runtime_error("Linearization::Linearization : "
+                             "wrong number of values for the ordinates"));
     }
     auto pX = t.begin();
     auto pY = v.begin();
@@ -46,10 +48,10 @@ namespace tfel_check {
   }  // constructor
 
   double Linearization::operator()(const double x) const {
-
-    if(this->values.empty()){
-      throw(std::runtime_error("Linearization::operator(): "
-			       "no values specified"));
+    if (this->values.empty()) {
+      throw(
+          std::runtime_error("Linearization::operator(): "
+                             "no values specified"));
     }
     auto p = this->values.lower_bound(x);
     double x0;

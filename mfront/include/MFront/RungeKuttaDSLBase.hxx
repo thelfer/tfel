@@ -3,54 +3,46 @@
  * \brief  This file declares the RungeKuttaDSLBase class
  * \author Helfer Thomas
  * \date   10 Nov 2006
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_MFRONT_RUNGEKUTTADSLBASE_H_
-#define LIB_MFRONT_RUNGEKUTTADSLBASE_H_ 
+#define LIB_MFRONT_RUNGEKUTTADSLBASE_H_
 
-#include<string>
-#include"MFront/BehaviourDSLBase.hxx"
+#include <string>
+#include "MFront/BehaviourDSLBase.hxx"
 
-namespace mfront{
+namespace mfront {
 
-  struct RungeKuttaDSLBase
-    : public BehaviourDSLBase<RungeKuttaDSLBase>
-  {
-
-    static std::string 
-    getDescription(void);
+  struct RungeKuttaDSLBase : public BehaviourDSLBase<RungeKuttaDSLBase> {
+    static std::string getDescription(void);
     //! constructor
     RungeKuttaDSLBase();
     //! destructor
     ~RungeKuttaDSLBase();
 
-  private:
-
-    enum ErrorEvaluation{
+   private:
+    enum ErrorEvaluation {
       DEFAULTERROREVALUATION,
       ERRORSUMMATIONEVALUATION,
       MAXIMUMVALUEERROREVALUATION
-    }; // end of ErrorEvaluation
+    };  // end of ErrorEvaluation
 
-    std::string
-    computeStressVariableModifier1(const Hypothesis,
-				   const std::string&,
-				   const bool);
+    std::string computeStressVariableModifier1(const Hypothesis,
+                                               const std::string&,
+                                               const bool);
 
-    std::string
-    computeStressVariableModifier2(const Hypothesis,
-				   const std::string&,
-				   const bool);
+    std::string computeStressVariableModifier2(const Hypothesis,
+                                               const std::string&,
+                                               const bool);
 
-    virtual void
-    treatUnknownVariableMethod(const Hypothesis,
-			       const std::string&) override;
+    virtual void treatUnknownVariableMethod(const Hypothesis,
+                                            const std::string&) override;
 
     virtual void treatEpsilon(void);
 
@@ -62,8 +54,7 @@ namespace mfront{
 
     virtual void treatComputeFinalStress(void);
 
-    virtual void
-    treatUpdateAuxiliaryStateVariables(void) override;
+    virtual void treatUpdateAuxiliaryStateVariables(void) override;
 
     virtual void treatDerivative(void);
 
@@ -73,8 +64,9 @@ namespace mfront{
 
     virtual void writeBehaviourParserSpecificMembers(const Hypothesis) override;
 
-    virtual void writeBehaviourLocalVariablesInitialisation(const Hypothesis) override;
-    
+    virtual void writeBehaviourLocalVariablesInitialisation(
+        const Hypothesis) override;
+
     virtual void writeBehaviourEulerIntegrator(const Hypothesis);
 
     virtual void writeBehaviourRK2Integrator(const Hypothesis);
@@ -89,26 +81,21 @@ namespace mfront{
 
     virtual void writeBehaviourUpdateStateVariables(const Hypothesis) override;
 
-    virtual void
-    writeBehaviourUpdateAuxiliaryStateVariables(const Hypothesis) override;
+    virtual void writeBehaviourUpdateAuxiliaryStateVariables(
+        const Hypothesis) override;
 
-    virtual void
-    writeBehaviourIntegrator(const Hypothesis) override;
+    virtual void writeBehaviourIntegrator(const Hypothesis) override;
 
-    virtual void
-    endsInputFileProcessing(void) override;
+    virtual void endsInputFileProcessing(void) override;
 
-    virtual void
-    setDefaultAlgorithm(void);
+    virtual void setDefaultAlgorithm(void);
 
     friend struct BehaviourDSLBase<RungeKuttaDSLBase>;
 
     // error normalisation factors
-    std::map<std::string,std::string> enf;
-
+    std::map<std::string, std::string> enf;
   };
 
-} // end of namespace mfront  
+}  // end of namespace mfront
 
 #endif /* LIB_MFRONT_RUNGEKUTTADSLBASE_H_ */
-

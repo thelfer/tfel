@@ -156,8 +156,8 @@ namespace mtest {
           const real err = std::abs(v - this->values[dp]);
           if (err > this->eps) {
             std::ostringstream msg;
-            msg << "ProfileTest::check : comparison for variable '" << this->name
-                << "' failed for time '" << t + dt << "' "
+            msg << "ProfileTest::check : comparison for variable '"
+                << this->name << "' failed for time '" << t + dt << "' "
                 << "(computed value: '" << v << "', "
                 << "expected value: '" << this->values[dp] << "', "
                 << "error: '" << err << "', criterion '" << this->eps << "')";
@@ -185,7 +185,8 @@ namespace mtest {
      * extracted
      * \param[in] s: gauss point state
      */
-    virtual const tfel::math::vector<real>& getComputedValues(const CurrentState&) const = 0;
+    virtual const tfel::math::vector<real>& getComputedValues(
+        const CurrentState&) const = 0;
     //! results of the test
     tfel::tests::TestResult results;
     //! name of the variable
@@ -259,29 +260,38 @@ namespace mtest {
   };
 
   template <typename T>
-  static void setMeshValue(
-      T& v, const char* const m, const char* const n, const T nv, const bool b) {
+  static void setMeshValue(T& v,
+                           const char* const m,
+                           const char* const n,
+                           const T nv,
+                           const bool b) {
     if (v >= 0) {
-      throw(std::runtime_error(std::string(m) + ": "
-                                                "value '" +
+      throw(std::runtime_error(std::string(m) +
+                               ": "
+                               "value '" +
                                std::string(n) + "' already set"));
     }
     if (b ? nv < T(0) : nv <= T(0)) {
-      throw(std::runtime_error(std::string(m) + ": "
-                                                "invalid value for '" +
+      throw(std::runtime_error(std::string(m) +
+                               ": "
+                               "invalid value for '" +
                                std::string(n) + "'"));
     }
     v = nv;
   }  // end of setMeshValue
 
-  static void insert(EvolutionManager& evm, const std::string& n, const real v) {
+  static void insert(EvolutionManager& evm,
+                     const std::string& n,
+                     const real v) {
     if (evm.find(n) != evm.end()) {
       throw(std::runtime_error("insert: variable 'n' already declared"));
     }
     evm.insert({n, make_evolution(v)});
   }  // end of setCurrentPosition
 
-  PipeTest::PipeTest() { insert(*(this->evm), "r", 0); }  // end of PipeTest::PipeTest
+  PipeTest::PipeTest() {
+    insert(*(this->evm), "r", 0);
+  }  // end of PipeTest::PipeTest
 
   void PipeTest::setInnerRadius(const real r) {
     if (this->mesh.outer_radius > 0) {
@@ -292,7 +302,8 @@ namespace mtest {
                                "external radius"));
       }
     }
-    setMeshValue(this->mesh.inner_radius, "PipeTest::setInnerRadius", "inner radius", r, true);
+    setMeshValue(this->mesh.inner_radius, "PipeTest::setInnerRadius",
+                 "inner radius", r, true);
     insert(*(this->evm), "Ri", this->mesh.inner_radius);
   }  // end of PipeTest::setInnerRadius
 
@@ -305,7 +316,8 @@ namespace mtest {
                                "external radius"));
       }
     }
-    setMeshValue(this->mesh.outer_radius, "PipeTest::setOuterRadius", "outer radius", r, false);
+    setMeshValue(this->mesh.outer_radius, "PipeTest::setOuterRadius",
+                 "outer radius", r, false);
     insert(*(this->evm), "Re", this->mesh.outer_radius);
   }  // end of PipeTest::setOuterRadius
 
@@ -336,7 +348,8 @@ namespace mtest {
     p->second->setValue(r);
   }  // end of setCurrentPosition
 
-  void PipeTest::setGaussPointPositionForEvolutionsEvaluation(const CurrentState& s) const {
+  void PipeTest::setGaussPointPositionForEvolutionsEvaluation(
+      const CurrentState& s) const {
     setCurrentPosition(*(this->evm), s.position);
   }  // end of PipeTest::setGaussPointPositionForEvolutionsEvaluation
 
@@ -344,8 +357,10 @@ namespace mtest {
                                  const tfel::utilities::TextData& d,
                                  const unsigned short c,
                                  const real e) {
-    if ((n == "InnerDisplacement") || (n == "OuterDisplacement") || (n == "AxialGrowth")) {
-      this->tests.push_back(std::shared_ptr<UTest>(new IntegralTest(n, d, c, e)));
+    if ((n == "InnerDisplacement") || (n == "OuterDisplacement") ||
+        (n == "AxialGrowth")) {
+      this->tests.push_back(
+          std::shared_ptr<UTest>(new IntegralTest(n, d, c, e)));
     } else {
       throw(
           std::runtime_error("PipeTest::addIntegralTest: "
@@ -359,19 +374,26 @@ namespace mtest {
                                 const unsigned short c,
                                 const real e) {
     if (n == "SRR") {
-      this->tests.push_back(std::shared_ptr<UTest>(new StressProfileTest(n, 0u, d, c, e)));
+      this->tests.push_back(
+          std::shared_ptr<UTest>(new StressProfileTest(n, 0u, d, c, e)));
     } else if (n == "SZZ") {
-      this->tests.push_back(std::shared_ptr<UTest>(new StressProfileTest(n, 1u, d, c, e)));
+      this->tests.push_back(
+          std::shared_ptr<UTest>(new StressProfileTest(n, 1u, d, c, e)));
     } else if (n == "STT") {
-      this->tests.push_back(std::shared_ptr<UTest>(new StressProfileTest(n, 2u, d, c, e)));
+      this->tests.push_back(
+          std::shared_ptr<UTest>(new StressProfileTest(n, 2u, d, c, e)));
     } else if (n == "ERR") {
-      this->tests.push_back(std::shared_ptr<UTest>(new StrainProfileTest(n, 0u, d, c, e)));
+      this->tests.push_back(
+          std::shared_ptr<UTest>(new StrainProfileTest(n, 0u, d, c, e)));
     } else if (n == "EZZ") {
-      this->tests.push_back(std::shared_ptr<UTest>(new StrainProfileTest(n, 1u, d, c, e)));
+      this->tests.push_back(
+          std::shared_ptr<UTest>(new StrainProfileTest(n, 1u, d, c, e)));
     } else if (n == "ETT") {
-      this->tests.push_back(std::shared_ptr<UTest>(new StrainProfileTest(n, 2u, d, c, e)));
+      this->tests.push_back(
+          std::shared_ptr<UTest>(new StrainProfileTest(n, 2u, d, c, e)));
     } else {
-      const auto piv = std::find(this->ivfullnames.begin(), this->ivfullnames.end(), n);
+      const auto piv =
+          std::find(this->ivfullnames.begin(), this->ivfullnames.end(), n);
       if (piv == this->ivfullnames.end()) {
         throw(
             std::runtime_error("PipeTest::addProfileTest: "
@@ -379,8 +401,8 @@ namespace mtest {
                                n + "'"));
       }
       const auto p = piv - this->ivfullnames.begin();
-      this->tests.push_back(
-          std::shared_ptr<UTest>(new InternalStateVariableProfileTest(n, p, d, c, e)));
+      this->tests.push_back(std::shared_ptr<UTest>(
+          new InternalStateVariableProfileTest(n, p, d, c, e)));
     }
   }  // end of PipeTest::addReferenceFileComparisonTest
 
@@ -388,7 +410,8 @@ namespace mtest {
     checkValue(mesh.inner_radius, "inner radius");
     checkValue(mesh.outer_radius, "outer radius");
     checkValue(mesh.number_of_elements, "number of elements");
-    setCurrentPosition(*(this->evm), (mesh.outer_radius - mesh.inner_radius) / 2);
+    setCurrentPosition(*(this->evm),
+                       (mesh.outer_radius - mesh.inner_radius) / 2);
     if (this->mesh.etype == PipeMesh::DEFAULT) {
       this->mesh.etype = PipeMesh::QUADRATIC;
     }
@@ -399,11 +422,12 @@ namespace mtest {
     if (this->options.seps < 0) {
       this->options.seps = 1.e-3;
     }
-    if (this->hypothesis != ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN) {
-      throw(
-          std::runtime_error("PipeTest::completeInitialisation: "
-                             "invalid modelling hypothesis ('" +
-                             ModellingHypothesis::toString(this->hypothesis) + "')"));
+    if (this->hypothesis !=
+        ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN) {
+      throw(std::runtime_error(
+          "PipeTest::completeInitialisation: "
+          "invalid modelling hypothesis ('" +
+          ModellingHypothesis::toString(this->hypothesis) + "')"));
     }
     if (this->al == DEFAULTAXIALLOADING) {
       this->al = ENDCAPEFFECT;
@@ -432,11 +456,12 @@ namespace mtest {
     } else {
       if ((this->rl != TIGHTPIPE) && (this->al != IMPOSEDAXIALFORCE) &&
           (this->al != IMPOSEDAXIALGROWTH)) {
-        if ((this->inner_pressure == nullptr) && (this->outer_pressure == nullptr)) {
-          throw(
-              std::runtime_error("PipeTest::completeInitialisation: "
-                                 "either an inner pressure evolution or "
-                                 "an outer pressure evolution must be defined"));
+        if ((this->inner_pressure == nullptr) &&
+            (this->outer_pressure == nullptr)) {
+          throw(std::runtime_error(
+              "PipeTest::completeInitialisation: "
+              "either an inner pressure evolution or "
+              "an outer pressure evolution must be defined"));
         }
       }
     }
@@ -544,13 +569,15 @@ namespace mtest {
           std::runtime_error("PipeTest::initializeCurrentState: "
                              "mechanical behaviour not set"));
     }
-    if (this->hypothesis == tfel::material::ModellingHypothesis::UNDEFINEDHYPOTHESIS) {
+    if (this->hypothesis ==
+        tfel::material::ModellingHypothesis::UNDEFINEDHYPOTHESIS) {
       throw(
           std::runtime_error("PipeTest::initializeCurrentState: "
                              "modelling hypothesis not set"));
     }
-    if ((this->mesh.number_of_elements == -1) || (this->mesh.inner_radius < 0) ||
-        (this->mesh.outer_radius < 0) || (this->mesh.etype == PipeMesh::DEFAULT)) {
+    if ((this->mesh.number_of_elements == -1) ||
+        (this->mesh.inner_radius < 0) || (this->mesh.outer_radius < 0) ||
+        (this->mesh.etype == PipeMesh::DEFAULT)) {
       throw(
           std::runtime_error("PipeTest::initializeCurrentState: "
                              "mesh not properly initialised"));
@@ -602,26 +629,28 @@ namespace mtest {
       // there could be an inconsistency with displacements
       // we should also be able to give a profile
       // throw(std::runtime_error("PipeTest::initializeCurrentState: "
-      // 			 "initialisation of strain is not supported yet"));
-      // std::copy(this->e_t0.begin(),this->e_t0.end(),s.e0.begin());
+      // 			 "initialisation of strain is not supported
+      // yet")); std::copy(this->e_t0.begin(),this->e_t0.end(),s.e0.begin());
       //      }
       // setting the intial  values of stresses
       // if(!this->s_t0.empty()){
       // 	// we should be able to give a profile to do this
       // 	throw(std::runtime_error("PipeTest::initializeCurrentState: "
-      // 				 "initialisation of stress is not supported yet"));
+      // 				 "initialisation of stress is not supported
+      // yet"));
       // 	// std::copy(this->s_t0.begin(),this->s_t0.end(),cs.s0.begin());
       // }
 
       // We should be able to give a profile here.
       // getting the initial values of internal state variables
-      if ((this->iv_t0.size() > cs.iv_1.size()) || (this->iv_t0.size() > cs.iv0.size()) ||
+      if ((this->iv_t0.size() > cs.iv_1.size()) ||
+          (this->iv_t0.size() > cs.iv0.size()) ||
           (this->iv_t0.size() > cs.iv1.size())) {
-        throw(
-            std::runtime_error("PipeTest::initializeCurrentState: "
-                               "the number of initial values declared "
-                               "by the user for the internal state variables exceeds the "
-                               "number of internal state variables declared by the behaviour"));
+        throw(std::runtime_error(
+            "PipeTest::initializeCurrentState: "
+            "the number of initial values declared "
+            "by the user for the internal state variables exceeds the "
+            "number of internal state variables declared by the behaviour"));
       }
       std::copy(this->iv_t0.begin(), this->iv_t0.end(), cs.iv_1.begin());
       std::copy(this->iv_t0.begin(), this->iv_t0.end(), cs.iv0.begin());
@@ -644,7 +673,9 @@ namespace mtest {
     }
   }  // end of PipeTest::initializeCurrentState
 
-  std::string PipeTest::name() const { return "pipe test"; }  // end of PipeTest::name
+  std::string PipeTest::name() const {
+    return "pipe test";
+  }  // end of PipeTest::name
 
   std::string PipeTest::classname() const { return "MTest"; }
 
@@ -663,7 +694,8 @@ namespace mtest {
       throw(std::runtime_error("PipeTest::execute: no times defined"));
     }
     if (this->times.size() < 2) {
-      throw(std::runtime_error("PipeTest::execute: invalid number of times defined"));
+      throw(std::runtime_error(
+          "PipeTest::execute: invalid number of times defined"));
     }
     // finish initialization
     this->completeInitialisation();
@@ -677,16 +709,19 @@ namespace mtest {
       auto pt = this->times.begin();
       auto pt2 = pt + 1;
       if (this->rl == IMPOSEDOUTERRADIUS) {
-        state.addEvolution("InnerPressure", std::shared_ptr<Evolution>(
-                                                new LPIEvolution({*pt, *pt2}, {real(0), real(0)})));
+        state.addEvolution("InnerPressure",
+                           std::shared_ptr<Evolution>(new LPIEvolution(
+                               {*pt, *pt2}, {real(0), real(0)})));
       }
       if (this->rl == TIGHTPIPE) {
-        state.addEvolution("InnerPressure", std::shared_ptr<Evolution>(new LPIEvolution(
-                                                {*pt, *pt2}, {this->P0, this->P0})));
+        state.addEvolution("InnerPressure",
+                           std::shared_ptr<Evolution>(new LPIEvolution(
+                               {*pt, *pt2}, {this->P0, this->P0})));
       }
       if (this->al == IMPOSEDAXIALGROWTH) {
-        state.addEvolution("AxialForce", std::shared_ptr<Evolution>(
-                                             new LPIEvolution({*pt, *pt2}, {real(0), real(0)})));
+        state.addEvolution("AxialForce",
+                           std::shared_ptr<Evolution>(new LPIEvolution(
+                               {*pt, *pt2}, {real(0), real(0)})));
       }
       this->printOutput(*pt, state, true);
       // real work begins here
@@ -717,21 +752,24 @@ namespace mtest {
     if (this->rl == IMPOSEDOUTERRADIUS) {
       if (!state.containsEvolution("InnerPressure")) {
         // first call with this study state
-        state.addEvolution("InnerPressure", std::make_shared<LPIEvolution>(
-                                                vector{ti, te}, vector{real(0), real(0)}));
+        state.addEvolution("InnerPressure",
+                           std::make_shared<LPIEvolution>(
+                               vector{ti, te}, vector{real(0), real(0)}));
       }
     }
     if (this->rl == TIGHTPIPE) {
       if (!state.containsEvolution("InnerPressure")) {
-        state.addEvolution("InnerPressure", std::make_shared<LPIEvolution>(
-                                                vector{ti, te}, vector{this->P0, this->P0}));
+        state.addEvolution("InnerPressure",
+                           std::make_shared<LPIEvolution>(
+                               vector{ti, te}, vector{this->P0, this->P0}));
       }
     }
     if (this->al == IMPOSEDAXIALFORCE) {
       if (!state.containsEvolution("AxialForce")) {
         // first call with this study state
-        state.addEvolution(
-            "AxialForce", std::make_shared<LPIEvolution>(vector{ti, te}, vector{real(0), real(0)}));
+        state.addEvolution("AxialForce",
+                           std::make_shared<LPIEvolution>(
+                               vector{ti, te}, vector{real(0), real(0)}));
       }
     }
     GenericSolver().execute(state, wk, *this, this->options, ti, te);
@@ -753,7 +791,9 @@ namespace mtest {
     wk.du.resize(psz, 0.);
   }  // end of PipeTest::initializeWorkSpace
 
-  void PipeTest::prepare(StudyCurrentState& state, const real t, const real dt) const {
+  void PipeTest::prepare(StudyCurrentState& state,
+                         const real t,
+                         const real dt) const {
     auto& scs = state.getStructureCurrentState("");
     // number of elements
     const auto ne = size_t(this->mesh.number_of_elements);
@@ -762,7 +802,8 @@ namespace mtest {
       if (this->mesh.etype == PipeMesh::LINEAR) {
         PipeLinearElement::computeStrain(scs, this->mesh, state.u0, i, false);
       } else if (this->mesh.etype == PipeMesh::QUADRATIC) {
-        PipeQuadraticElement::computeStrain(scs, this->mesh, state.u0, i, false);
+        PipeQuadraticElement::computeStrain(scs, this->mesh, state.u0, i,
+                                            false);
       } else if (this->mesh.etype == PipeMesh::CUBIC) {
         PipeCubicElement::computeStrain(scs, this->mesh, state.u0, i, false);
       } else {
@@ -783,7 +824,8 @@ namespace mtest {
     }
   }  // end of PipeTest::prepare
 
-  void PipeTest::makeLinearPrediction(StudyCurrentState& state, const real dt) const {
+  void PipeTest::makeLinearPrediction(StudyCurrentState& state,
+                                      const real dt) const {
     if (state.period > 1) {
       const auto r = dt / state.dt_1;
       state.u1 = state.u0 + (state.u0 - state.u_1) * r;
@@ -836,8 +878,9 @@ namespace mtest {
     /* external forces */
     if ((this->rl == IMPOSEDOUTERRADIUS) ||
         ((this->rl == IMPOSEDPRESSURE) && (this->inner_pressure != nullptr))) {
-      const auto Pi = (this->rl == IMPOSEDPRESSURE) ? (*(this->inner_pressure))(t + dt)
-                                                    : state.getEvolution("InnerPressure")(t + dt);
+      const auto Pi = (this->rl == IMPOSEDPRESSURE)
+                          ? (*(this->inner_pressure))(t + dt)
+                          : state.getEvolution("InnerPressure")(t + dt);
       const auto Ri_ = (this->hpp) ? Ri : Ri + state.u1[0];
       if (this->hpp) {
         r(0) -= 2 * pi * Pi * Ri_;
@@ -885,7 +928,8 @@ namespace mtest {
         if (this->gseq == nullptr) {
           const auto tmp = pi * (this->P0) * (T / this->T0) * Ri * Ri;
           // for post-processing
-          const auto Pi_ = (this->P0) * (T / this->T0) * Ri * Ri / (Ri_ * Ri_) / (1 + ezz);
+          const auto Pi_ =
+              (this->P0) * (T / this->T0) * Ri * Ri / (Ri_ * Ri_) / (1 + ezz);
           state.getEvolution("InnerPressure").setValue(t + dt, Pi_);
           r(0) -= 2 * tmp / Ri_;
           if (mt != StiffnessMatrixType::NOSTIFFNESS) {
@@ -954,14 +998,14 @@ namespace mtest {
     for (size_type i = 0; i != ne; ++i) {
       auto ri = std::pair<bool, real>{};
       if (this->mesh.etype == PipeMesh::LINEAR) {
-        ri = LE::updateStiffnessMatrixAndInnerForces(k, r, scs, *(this->b), state.u1, this->mesh,
-                                                     dt, mt, i);
+        ri = LE::updateStiffnessMatrixAndInnerForces(
+            k, r, scs, *(this->b), state.u1, this->mesh, dt, mt, i);
       } else if (this->mesh.etype == PipeMesh::QUADRATIC) {
-        ri = QE::updateStiffnessMatrixAndInnerForces(k, r, scs, *(this->b), state.u1, this->mesh,
-                                                     dt, mt, i);
+        ri = QE::updateStiffnessMatrixAndInnerForces(
+            k, r, scs, *(this->b), state.u1, this->mesh, dt, mt, i);
       } else if (this->mesh.etype == PipeMesh::CUBIC) {
-        ri = CE::updateStiffnessMatrixAndInnerForces(k, r, scs, *(this->b), state.u1, this->mesh,
-                                                     dt, mt, i);
+        ri = CE::updateStiffnessMatrixAndInnerForces(
+            k, r, scs, *(this->b), state.u1, this->mesh, dt, mt, i);
       } else {
         throw(
             std::runtime_error("PipeTest::computeStiffnessMatrixAndResidual: "
@@ -978,7 +1022,8 @@ namespace mtest {
     return {true, r_dt};
   }  // end of PipeTest::computeStiffnessMatrixAndResidual
 
-  void PipeTest::checkBehaviourConsistency(const std::shared_ptr<Behaviour>& bp) {
+  void PipeTest::checkBehaviourConsistency(
+      const std::shared_ptr<Behaviour>& bp) {
     using tfel::material::MechanicalBehaviourBase;
     auto throw_if = [](const bool c, const std::string& m) {
       if (c) {
@@ -987,23 +1032,26 @@ namespace mtest {
     };
     throw_if(bp == nullptr, "null behaviour pointer");
     if (this->hpp) {
-      throw_if(bp->getBehaviourType() != MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR,
+      throw_if(bp->getBehaviourType() !=
+                   MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR,
                "the behaviour must be a small strain one "
                "when performing small strain analysis");
     } else {
-      throw_if(bp->getBehaviourType() != MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR,
+      throw_if(bp->getBehaviourType() !=
+                   MechanicalBehaviourBase::FINITESTRAINSTANDARDBEHAVIOUR,
                "the behaviour must be a finite strain one "
                "when performing a finite strain analysis");
-      throw_if(
-          bp->getBehaviourKinematic() != MechanicalBehaviourBase::FINITESTRAINKINEMATIC_ETO_PK1,
-          "the behaviour must have the ETO_PK1 kinematic");
+      throw_if(bp->getBehaviourKinematic() !=
+                   MechanicalBehaviourBase::FINITESTRAINKINEMATIC_ETO_PK1,
+               "the behaviour must have the ETO_PK1 kinematic");
     }
   }
 
   void PipeTest::performSmallStrainAnalysis() {
     using tfel::material::MechanicalBehaviourBase;
     if (this->b != nullptr) {
-      if (this->b->getBehaviourType() != MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR) {
+      if (this->b->getBehaviourType() !=
+          MechanicalBehaviourBase::SMALLSTRAINSTANDARDBEHAVIOUR) {
         throw(
             std::runtime_error("PipeTest::performSmallStrainAnalysis: "
                                "the behaviour must be small strain"));
@@ -1012,8 +1060,9 @@ namespace mtest {
     this->hpp = true;
   }  // en dof PipeTest::performSmallStrainAnalysis
 
-  static real PipeTest_getErrorNorm(const tfel::math::vector<real>& v,
-                                    const tfel::math::vector<real>::size_type s) {
+  static real PipeTest_getErrorNorm(
+      const tfel::math::vector<real>& v,
+      const tfel::math::vector<real>::size_type s) {
     using size_type = tfel::math::vector<real>::size_type;
     auto n = real(0);
     for (size_type i = 0; i != s; ++i) {
@@ -1039,7 +1088,8 @@ namespace mtest {
     constexpr const real pi = 3.14159265358979323846;
     const auto Re = this->mesh.outer_radius;
     auto nu = PipeTest_getErrorNorm(du, this->getNumberOfUnknowns());
-    auto nr = PipeTest_getErrorNorm(r, this->getNumberOfUnknowns()) / (2 * pi * Re);
+    auto nr =
+        PipeTest_getErrorNorm(r, this->getNumberOfUnknowns()) / (2 * pi * Re);
     if (mfront::getVerboseMode() >= mfront::VERBOSE_LEVEL1) {
       auto& log = mfront::getLogStream();
       report(log, nu, nr);
@@ -1065,25 +1115,29 @@ namespace mtest {
     return ok;
   }  // end of
 
-  std::vector<std::string> PipeTest::getFailedCriteriaDiagnostic(const StudyCurrentState& state,
-                                                                 const tfel::math::vector<real>& du,
-                                                                 const tfel::math::vector<real>& r,
-                                                                 const SolverOptions& o,
-                                                                 const real t,
-                                                                 const real dt) const {
+  std::vector<std::string> PipeTest::getFailedCriteriaDiagnostic(
+      const StudyCurrentState& state,
+      const tfel::math::vector<real>& du,
+      const tfel::math::vector<real>& r,
+      const SolverOptions& o,
+      const real t,
+      const real dt) const {
     constexpr const real pi = 3.14159265358979323846;
     auto cd = std::vector<std::string>{};
     const auto Re = this->mesh.outer_radius;
     auto nu = PipeTest_getErrorNorm(du, this->getNumberOfUnknowns());
-    auto nr = PipeTest_getErrorNorm(r, this->getNumberOfUnknowns()) / (2 * pi * Re);
+    auto nr =
+        PipeTest_getErrorNorm(r, this->getNumberOfUnknowns()) / (2 * pi * Re);
     if (nu > Re * o.eeps) {
       std::ostringstream msg;
-      msg << "test on displacement (error : " << nu << ", criterion value : " << Re * o.eeps << ")";
+      msg << "test on displacement (error : " << nu
+          << ", criterion value : " << Re * o.eeps << ")";
       cd.push_back(msg.str());
     }
     if (nr > o.seps) {
       std::ostringstream msg;
-      msg << "test on residual (error : " << nr << ", criterion value : " << o.seps << ")";
+      msg << "test on residual (error : " << nr
+          << ", criterion value : " << o.seps << ")";
       cd.push_back(msg.str());
     }
     if (this->rl == IMPOSEDOUTERRADIUS) {
@@ -1209,8 +1263,8 @@ namespace mtest {
     }
   }  // end of PipeTest::postConvergence
 
-  std::pair<real, real> PipeTest::computeMinimumAndMaximumValues(const StudyCurrentState& state,
-                                                                 const std::string& n) const {
+  std::pair<real, real> PipeTest::computeMinimumAndMaximumValues(
+      const StudyCurrentState& state, const std::string& n) const {
     // current pipe state
     auto& scs = state.getStructureCurrentState("");
     auto g = buildValueExtractor(*(this->b), n);
@@ -1228,34 +1282,40 @@ namespace mtest {
   void PipeTest::addOutput(const std::string& t, const std::string& n) {
     if (t == "minimum_value") {
       this->aoutputs.push_back(
-          {"minimum value of '" + n + "'", [this, n](std::ostream& os, const StudyCurrentState& s) {
+          {"minimum value of '" + n + "'",
+           [this, n](std::ostream& os, const StudyCurrentState& s) {
              os << this->computeMinimumValue(s, n);
            }});
     } else if (t == "maximum_value") {
       this->aoutputs.push_back(
-          {"maximum value of '" + n + "'", [this, n](std::ostream& os, const StudyCurrentState& s) {
+          {"maximum value of '" + n + "'",
+           [this, n](std::ostream& os, const StudyCurrentState& s) {
              os << this->computeMaximumValue(s, n);
            }});
     } else {
       throw(
           std::runtime_error("PipeTest::addAdditionalOutput: "
                              "invalid additional output type '" +
-                             t + "'.\n"
-                                 "Valid additional output types are:\n"
-                                 "- minimum_value\n"
-                                 "- maximum_value\n"));
+                             t +
+                             "'.\n"
+                             "Valid additional output types are:\n"
+                             "- minimum_value\n"
+                             "- maximum_value\n"));
     }
   }  // end of PipeTest::addAdditionalOutput
 
-  real PipeTest::computeMinimumValue(const StudyCurrentState& state, const std::string& n) const {
+  real PipeTest::computeMinimumValue(const StudyCurrentState& state,
+                                     const std::string& n) const {
     return this->computeMinimumAndMaximumValues(state, n).first;
   }  // end of PipeTest::computeMaximumValue
 
-  real PipeTest::computeMaximumValue(const StudyCurrentState& state, const std::string& n) const {
+  real PipeTest::computeMaximumValue(const StudyCurrentState& state,
+                                     const std::string& n) const {
     return this->computeMinimumAndMaximumValues(state, n).second;
   }  // end of PipeTest::computeMaximumValue
 
-  void PipeTest::addProfile(const std::string& f, const std::vector<std::string>& cn) {
+  void PipeTest::addProfile(const std::string& f,
+                            const std::vector<std::string>& cn) {
     auto ph = PipeProfileHandler{};
     ph.out = std::make_shared<std::ofstream>(f);
     if (!(*(ph.out))) {
@@ -1292,7 +1352,8 @@ namespace mtest {
         *(ph.out) << "axial strain \n";
         ph.profiles.emplace_back(new PipeStrainProfile(1u));
       } else {
-        const auto piv = std::find(this->ivfullnames.begin(), this->ivfullnames.end(), c);
+        const auto piv =
+            std::find(this->ivfullnames.begin(), this->ivfullnames.end(), c);
         if (piv == this->ivfullnames.end()) {
           throw(
               std::runtime_error("PipeTest::addProfile: "
@@ -1328,7 +1389,8 @@ namespace mtest {
           std::runtime_error("PipeTest::setDefaultModellingHypothesis: "
                              "modelling hypothesis already defined"));
     }
-    this->hypothesis = ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN;
+    this->hypothesis =
+        ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN;
   }  // end of PipeTest::setDefaultModellingHypothesis
 
   void PipeTest::setAxialLoading(const PipeTest::AxialLoading ph) {
@@ -1364,11 +1426,13 @@ namespace mtest {
         throw(std::runtime_error("PipeTest::setInnerPressureEvolution: " + m));
       }
     };
-    throw_if(this->rl == IMPOSEDOUTERRADIUS, "inner pressure evolution can't be set");
+    throw_if(this->rl == IMPOSEDOUTERRADIUS,
+             "inner pressure evolution can't be set");
     if (this->rl == DEFAULTLOADINGTYPE) {
       this->setRadialLoading(IMPOSEDPRESSURE);
     }
-    throw_if(this->inner_pressure != nullptr, "inner pressure evolution already set");
+    throw_if(this->inner_pressure != nullptr,
+             "inner pressure evolution already set");
     this->inner_pressure = p;
   }  // end of PipeTest::setInnerPressureEvolution
 
@@ -1403,7 +1467,8 @@ namespace mtest {
     throw_if(this->al != IMPOSEDAXIALGROWTH,
              "axial growth evolution can be set "
              "only if the pipe modelling hypothesis is 'ImposedAxialGrowth'");
-    throw_if(this->axial_growth != nullptr, "axial growth evolution already set");
+    throw_if(this->axial_growth != nullptr,
+             "axial growth evolution already set");
     this->axial_growth = f;
   }  // end of PipeTest::setAxialGrowthEvolution
 
@@ -1430,7 +1495,8 @@ namespace mtest {
              "the gas equation of state is only meaningfull "
              "if the radial loading type is 'TightPipe'");
     throw_if(this->gseq != nullptr, "gas equation of state already defined");
-    this->gseq = std::unique_ptr<GasEquationOfState>(new GasEquationOfState(e, *(this->evm)));
+    this->gseq = std::unique_ptr<GasEquationOfState>(
+        new GasEquationOfState(e, *(this->evm)));
   }  // end of PipeTest::setGasEquationOfState
 
   void PipeTest::setFillingPressure(const real p) {
@@ -1443,7 +1509,8 @@ namespace mtest {
              "filling pressure can be set "
              "only if the loading type is 'TightPipe'");
     throw_if(this->P0 >= 0, "filling pressure already set ");
-    throw_if(p < 0, "invalid  filling pressure value ('" + std::to_string(p) + "') ");
+    throw_if(p < 0,
+             "invalid  filling pressure value ('" + std::to_string(p) + "') ");
     this->P0 = p;
   }  // end of PipeTest::setFillingPressure
 
@@ -1457,11 +1524,14 @@ namespace mtest {
              "filling temperature can be set "
              "only if the loading type is 'TightPipe'");
     throw_if(this->T0 >= 0, "filling temperature already set ");
-    throw_if(T < 0, "invalid  filling temperature value ('" + std::to_string(T) + "') ");
+    throw_if(T < 0, "invalid  filling temperature value ('" +
+                        std::to_string(T) + "') ");
     this->T0 = T;
   }  // end of PipeTest::setFillingTemperature
 
-  void PipeTest::printOutput(const real t, const StudyCurrentState& state, const bool o) const {
+  void PipeTest::printOutput(const real t,
+                             const StudyCurrentState& state,
+                             const bool o) const {
     if ((!o) && (this->output_frequency == USERDEFINEDTIMES)) {
       return;
     }
@@ -1472,8 +1542,8 @@ namespace mtest {
       const auto Ri = this->mesh.inner_radius;
       // outer radius
       const auto Re = this->mesh.outer_radius;
-      this->out << t << " " << Ri + u1[0] << " " << Re + u1[n - 1] << " " << u1[0] << " "
-                << u1[n - 1] << " " << u1[n];
+      this->out << t << " " << Ri + u1[0] << " " << Re + u1[n - 1] << " "
+                << u1[0] << " " << u1[n - 1] << " " << u1[n];
       if ((this->rl == IMPOSEDOUTERRADIUS) || (this->rl == TIGHTPIPE)) {
         this->out << " " << state.getEvolution("InnerPressure")(t);
       }

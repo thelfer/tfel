@@ -1,38 +1,36 @@
-/*! 
+/*!
  * \file  mfront/include/MFront/ZMATInterface.hxx
  * \brief
  * \author Helfer Thomas
  * \brief 23 mai 2014
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_MFRONT_MFRONTZMATINTERFACE_H_
-#define LIB_MFRONT_MFRONTZMATINTERFACE_H_ 
+#define LIB_MFRONT_MFRONTZMATINTERFACE_H_
 
-#include<set>
-#include<string>
+#include <set>
+#include <string>
 
-#include"TFEL/Utilities/CxxTokenizer.hxx"
+#include "TFEL/Utilities/CxxTokenizer.hxx"
 
-#include"MFront/SupportedTypes.hxx"
-#include"MFront/BehaviourDescription.hxx"
-#include"MFront/AbstractBehaviourInterface.hxx"
+#include "MFront/SupportedTypes.hxx"
+#include "MFront/BehaviourDescription.hxx"
+#include "MFront/AbstractBehaviourInterface.hxx"
 
-namespace mfront{
+namespace mfront {
 
   /*!
    * This class provides some helper function for behaviours
    * interfaces based on the umat standard
    */
-  struct ZMATInterface
-    : public SupportedTypes,
-      public AbstractBehaviourInterface
-  {
+  struct ZMATInterface : public SupportedTypes,
+                         public AbstractBehaviourInterface {
     //! a simple alias
     typedef tfel::material::ModellingHypothesis ModellingHypothesis;
     //! a simple alias
@@ -41,8 +39,7 @@ namespace mfront{
     /*!
      * \return the name of the interface
      */
-    static std::string
-    getName(void);
+    static std::string getName(void);
 
     ZMATInterface();
 
@@ -50,8 +47,7 @@ namespace mfront{
      * set if dynamically allocated arrays are allowed
      * \param[in] b : boolean
      */
-    virtual void
-    allowDynamicallyAllocatedArrays(const bool) override;
+    virtual void allowDynamicallyAllocatedArrays(const bool) override;
     /*!
      * \param[in,out] mb: behaviour description
      * \param[in] k:   keyword treated
@@ -62,36 +58,34 @@ namespace mfront{
      * treated by the interface. The second entry is an iterator after
      * the last token treated.
      */
-    virtual std::pair<bool,tokens_iterator>
-    treatKeyword(BehaviourDescription&,
-		 const std::string&,
-		 const std::vector<std::string>&,
-		 tokens_iterator,
-		 const tokens_iterator) override;
+    virtual std::pair<bool, tokens_iterator> treatKeyword(
+        BehaviourDescription&,
+        const std::string&,
+        const std::vector<std::string>&,
+        tokens_iterator,
+        const tokens_iterator) override;
     /*!
      * \return true if the interface handles the given modelling hypothesis
      * \param[in] h  : modelling hypothesis
      * \param[in] mb : mechanical behaviour description
      */
-    virtual bool
-    isModellingHypothesisHandled(const Hypothesis,
-				 const BehaviourDescription&) const override;
-    
-    virtual std::set<Hypothesis>
-    getModellingHypothesesToBeTreated(const BehaviourDescription&) const override;
+    virtual bool isModellingHypothesisHandled(
+        const Hypothesis, const BehaviourDescription&) const override;
+
+    virtual std::set<Hypothesis> getModellingHypothesesToBeTreated(
+        const BehaviourDescription&) const override;
     /*!
      * write interface specific includes
      * \param[in] out : output file
      * \param[in] mb  : mechanical behaviour description
      */
-    virtual void 
-    writeInterfaceSpecificIncludes(std::ostream&,
-				   const BehaviourDescription&) const override;
+    virtual void writeInterfaceSpecificIncludes(
+        std::ostream&, const BehaviourDescription&) const override;
 
-    virtual void
-    exportMechanicalData(std::ostream&,
-			 const Hypothesis,
-			 const BehaviourDescription&) const override;
+    virtual void exportMechanicalData(
+        std::ostream&,
+        const Hypothesis,
+        const BehaviourDescription&) const override;
     /*!
      * write the behaviour constructor associated with the law
      * \param[in] behaviourFile           : output file
@@ -100,101 +94,91 @@ namespace mfront{
      *                                      default value (zero) to state
      *                                      variable increments
      */
-    virtual void
-    writeBehaviourConstructor(std::ostream&,
-			      const BehaviourDescription&,
-			      const std::string&) const override;
+    virtual void writeBehaviourConstructor(std::ostream&,
+                                           const BehaviourDescription&,
+                                           const std::string&) const override;
 
-    virtual void
-    writeBehaviourDataConstructor(std::ostream&,
-				  const Hypothesis,
-				  const BehaviourDescription&) const override;
+    virtual void writeBehaviourDataConstructor(
+        std::ostream&,
+        const Hypothesis,
+        const BehaviourDescription&) const override;
 
     /*!
      * write the initialisation of the driving variables
      * \param[in] behaviourFile : output file
      * \param[in] mb            : mechanical behaviour description
      */
-    virtual void 
-    writeBehaviourDataMainVariablesSetters(std::ostream&,
-					   const BehaviourDescription&) const override;
-    
-    virtual void
-    writeIntegrationDataConstructor(std::ostream&,
-				    const Hypothesis,
-				    const BehaviourDescription&) const override;
+    virtual void writeBehaviourDataMainVariablesSetters(
+        std::ostream&, const BehaviourDescription&) const override;
+
+    virtual void writeIntegrationDataConstructor(
+        std::ostream&,
+        const Hypothesis,
+        const BehaviourDescription&) const override;
     /*!
      * write the initialisation of the driving variables
      * \param[in] behaviourFile : output file
      * \param[in] mb            : mechanical behaviour description
      */
-    virtual void 
-    writeIntegrationDataMainVariablesSetters(std::ostream&,
-					     const BehaviourDescription&) const override;
+    virtual void writeIntegrationDataMainVariablesSetters(
+        std::ostream&, const BehaviourDescription&) const override;
     /*!
      * \brief write output files
      * \param[in] mb        : mechanical behaviour description
      * \param[in] fd        : mfront file description
      */
-    virtual void
-    endTreatment(const BehaviourDescription&,
-		  const FileDescription&) const override;
+    virtual void endTreatment(const BehaviourDescription&,
+                              const FileDescription&) const override;
     /*!
      * \param[out] d  : target description
      * \param[out] bd : behaviour description
      */
     virtual void getTargetsDescription(TargetsDescription&,
-				       const BehaviourDescription&) override;
+                                       const BehaviourDescription&) override;
     //! destructor
     virtual ~ZMATInterface();
 
-  protected:
-
+   protected:
     /*!
      * \brief write behaviour initialisation for the given hypothesis
      * \param[out] out : output file
      * \param[in]  mb  : mechancial behaviour description
      * \param[in]  h   : modelling hypothesis
      */
-    void
-    writeBehaviourInitialisation(std::ostream&,
-				 const BehaviourDescription&,
-				 const ZMATInterface::Hypothesis) const;
+    void writeBehaviourInitialisation(std::ostream&,
+                                      const BehaviourDescription&,
+                                      const ZMATInterface::Hypothesis) const;
     /*!
      * \brief write parameters initialisation for the given hypothesis
      * \param[out] out : output file
      * \param[in]  mb  : mechancial behaviour description
      * \param[in]  h   : modelling hypothesis
      */
-    void
-    writeParametersInitialisation(std::ostream&,
-				  const BehaviourDescription&,
-				  const ZMATInterface::Hypothesis) const;
+    void writeParametersInitialisation(std::ostream&,
+                                       const BehaviourDescription&,
+                                       const ZMATInterface::Hypothesis) const;
     /*!
      * \brief write material properties initialisation for the given hypothesis
      * \param[out] out : output file
      * \param[in]  mb  : mechancial behaviour description
      * \param[in]  h   : modelling hypothesis
      */
-    void
-    writeMaterialPropertiesInitialisation(std::ostream&,
-					  const BehaviourDescription&,
-					  const ZMATInterface::Hypothesis) const;
+    void writeMaterialPropertiesInitialisation(
+        std::ostream&,
+        const BehaviourDescription&,
+        const ZMATInterface::Hypothesis) const;
     /*!
      * \brief write behaviour initialisation for the given hypothesis
      * \param[out] out : output file
      * \param[in]  mb  : mechancial behaviour description
      * \param[in]  h   : modelling hypothesis
      */
-    void
-    writeCallMFrontBehaviour(std::ostream&,
-			     const BehaviourDescription&,
-			     const ZMATInterface::Hypothesis) const;
+    void writeCallMFrontBehaviour(std::ostream&,
+                                  const BehaviourDescription&,
+                                  const ZMATInterface::Hypothesis) const;
 
-    
-  }; //end of struct ZMATInterface
+  };  // end of struct ZMATInterface
 
-} // end of namespace mfront
+}  // end of namespace mfront
 
 #endif /* LIB_MFRONT_MFRONTZMATINTERFACE_H_ */
-

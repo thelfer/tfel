@@ -1,49 +1,49 @@
 /*!
  * \file   src/Math/BinaryFunction.cxx
- * \brief  
- * 
+ * \brief
+ *
  * \author Helfer Thomas
  * \date   02 oct 2007
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
-#include<cerrno>
-#include<stdexcept>
+#include <cerrno>
+#include <stdexcept>
 
-#include"TFEL/Math/Parser/BinaryFunction.hxx"
+#include "TFEL/Math/Parser/BinaryFunction.hxx"
 
-namespace tfel
-{
-  namespace math
-  {
+namespace tfel {
+  namespace math {
 
-    namespace parser
-    {
+    namespace parser {
 
-      void StandardBinaryFunctionBase::throwUnimplementedDifferentiateFunctionException()
-      {
-	throw(std::runtime_error("StandardBinaryFunctionBase::"
-				 "throwUnimplementedDifferentiateFunctionException: "
-				 "unimplemented feature"));
-      } // end of StandardBinaryFunctionBase::throwUnimplementedDifferentiateFunctionException
+      void StandardBinaryFunctionBase::
+          throwUnimplementedDifferentiateFunctionException() {
+        throw(std::runtime_error(
+            "StandardBinaryFunctionBase::"
+            "throwUnimplementedDifferentiateFunctionException: "
+            "unimplemented feature"));
+      }  // end of
+         // StandardBinaryFunctionBase::throwUnimplementedDifferentiateFunctionException
 
-      void StandardBinaryFunctionBase::throwInvalidCallException(const int e)
-      {
-	throw(std::runtime_error("StandardBinaryFunctionBase::"
-				 "throwInvalidCallException: "
-				 "call to function failed "
-				 "("+std::string(strerror(e))+")"));
-      } // end of struct StandardBinaryFunctionBase::throwInvalidCallException
+      void StandardBinaryFunctionBase::throwInvalidCallException(const int e) {
+        throw(
+            std::runtime_error("StandardBinaryFunctionBase::"
+                               "throwInvalidCallException: "
+                               "call to function failed "
+                               "(" +
+                               std::string(strerror(e)) + ")"));
+      }  // end of struct StandardBinaryFunctionBase::throwInvalidCallException
 
       BinaryFunction::~BinaryFunction() = default;
 
-    } // end of namespace parser
+    }  // end of namespace parser
 
-  } // end of namespace math
+  }  // end of namespace math
 
-} // end of namespace tfel
+}  // end of namespace tfel

@@ -1,102 +1,109 @@
-/*! 
+/*!
  * \file  mfront/src/PowellDogLegAlgorithmBase.cxx
  * \brief
  * \author Helfer Thomas
  * \brief 22 août 2014
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
-#include<iostream>
-#include<sstream>
+#include <iostream>
+#include <sstream>
 
-#include"MFront/BehaviourDescription.hxx"
-#include"MFront/NonLinearSystemSolverBase.hxx"
-#include"MFront/PowellDogLegAlgorithmBase.hxx"
+#include "MFront/BehaviourDescription.hxx"
+#include "MFront/NonLinearSystemSolverBase.hxx"
+#include "MFront/PowellDogLegAlgorithmBase.hxx"
 
-namespace mfront{
+namespace mfront {
 
-  std::vector<std::string>
-  PowellDogLegAlgorithmBase::getReservedNames()
-  {
-    return {"pdl_g","pdl_g2","pdl_0",
-	"pdl_1","pdl_2","pdl_3",
-	"pdl_alpha","pdl_cste",
-	"powell_dogleg_trust_region_size_inv"};
-  } // end of PowellDogLegAlgorithmBase::getReservedNames
+  std::vector<std::string> PowellDogLegAlgorithmBase::getReservedNames() {
+    return {"pdl_g",     "pdl_g2",   "pdl_0",
+            "pdl_1",     "pdl_2",    "pdl_3",
+            "pdl_alpha", "pdl_cste", "powell_dogleg_trust_region_size_inv"};
+  }  // end of PowellDogLegAlgorithmBase::getReservedNames
 
-  std::pair<bool,PowellDogLegAlgorithmBase::tokens_iterator>
+  std::pair<bool, PowellDogLegAlgorithmBase::tokens_iterator>
   PowellDogLegAlgorithmBase::treatSpecificKeywords(BehaviourDescription& mb,
-						   const std::string& key,
-						   const tokens_iterator p,
-						   const tokens_iterator pe)
-  {
+                                                   const std::string& key,
+                                                   const tokens_iterator p,
+                                                   const tokens_iterator pe) {
     using namespace std;
     using namespace tfel::material;
     using namespace tfel::utilities;
-    const ModellingHypothesis::Hypothesis h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
-    if(key=="@PowellDogLegTrustRegionSize"){
+    const ModellingHypothesis::Hypothesis h =
+        ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+    if (key == "@PowellDogLegTrustRegionSize") {
       CxxTokenizer::TokensContainer::const_iterator current = p;
-      CxxTokenizer::checkNotEndOfLine("PowellDogLegAlgorithmBase::treatSpecificKeywords",current,pe);
+      CxxTokenizer::checkNotEndOfLine(
+          "PowellDogLegAlgorithmBase::treatSpecificKeywords", current, pe);
       double pdl_trs;
-      CxxTokenizer::checkNotEndOfLine("ImplicitDSLBase::treatPowellDogLegTrustRegionSize"
-				      "Cannot read pdl_trs value.",current,pe);
+      CxxTokenizer::checkNotEndOfLine(
+          "ImplicitDSLBase::treatPowellDogLegTrustRegionSize"
+          "Cannot read pdl_trs value.",
+          current, pe);
       istringstream flux(current->value);
       flux >> pdl_trs;
-      if((flux.fail())||(!flux.eof())){
-	string msg("ImplicitDSLBase::treatPowellDogLegTrustRegionSize",
-		   "Failed to read region size.");
-	throw(runtime_error(msg));
+      if ((flux.fail()) || (!flux.eof())) {
+        string msg("ImplicitDSLBase::treatPowellDogLegTrustRegionSize",
+                   "Failed to read region size.");
+        throw(runtime_error(msg));
       }
-      if(pdl_trs<0){
-	string msg("ImplicitDSLBase::treatPowellDogLegTrustRegionSize",
-		   "Region size must be positive.");
-	throw(runtime_error(msg));
+      if (pdl_trs < 0) {
+        string msg("ImplicitDSLBase::treatPowellDogLegTrustRegionSize",
+                   "Region size must be positive.");
+        throw(runtime_error(msg));
       }
       ++current;
-      CxxTokenizer::readSpecifiedToken("ImplicitDSLBase::treatPowellDogLegTrustRegionSize",";",current,pe);
-      mb.addParameter(h,VariableDescription("real","powell_dogleg_trust_region_size",1u,0u));
-      mb.setParameterDefaultValue(h,"powell_dogleg_trust_region_size",pdl_trs);
-      return make_pair(true,current);
+      CxxTokenizer::readSpecifiedToken(
+          "ImplicitDSLBase::treatPowellDogLegTrustRegionSize", ";", current,
+          pe);
+      mb.addParameter(
+          h, VariableDescription("real", "powell_dogleg_trust_region_size", 1u,
+                                 0u));
+      mb.setParameterDefaultValue(h, "powell_dogleg_trust_region_size",
+                                  pdl_trs);
+      return make_pair(true, current);
     }
-    return make_pair(false,p);
-  } // end of PowellDogLegAlgorithmBase::treatSpecificKeywords
+    return make_pair(false, p);
+  }  // end of PowellDogLegAlgorithmBase::treatSpecificKeywords
 
-
-  void
-  PowellDogLegAlgorithmBase::endsInputFileProcessing(BehaviourDescription& mb)
-  {
+  void PowellDogLegAlgorithmBase::endsInputFileProcessing(
+      BehaviourDescription& mb) {
     using namespace tfel::material;
-    const ModellingHypothesis::Hypothesis h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
-    if(!mb.hasParameter(h,"powell_dogleg_trust_region_size")){
-      mb.addParameter(h,VariableDescription("real","powell_dogleg_trust_region_size",1u,0u));
-      mb.setParameterDefaultValue(h,"powell_dogleg_trust_region_size",1.e-4);
+    const ModellingHypothesis::Hypothesis h =
+        ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+    if (!mb.hasParameter(h, "powell_dogleg_trust_region_size")) {
+      mb.addParameter(
+          h, VariableDescription("real", "powell_dogleg_trust_region_size", 1u,
+                                 0u));
+      mb.setParameterDefaultValue(h, "powell_dogleg_trust_region_size", 1.e-4);
     }
-  } // end of PowellDogLegAlgorithmBase::endsInputFileProcessing
-  
-  void
-  PowellDogLegAlgorithmBase::writePowellDogLegStep(std::ostream& out,
-							 const BehaviourDescription& mb,
-							 const Hypothesis h,
-							 const std::string& B,
-							 const std::string& f,
-							 const std::string& pn)
-  {
+  }  // end of PowellDogLegAlgorithmBase::endsInputFileProcessing
+
+  void PowellDogLegAlgorithmBase::writePowellDogLegStep(
+      std::ostream& out,
+      const BehaviourDescription& mb,
+      const Hypothesis h,
+      const std::string& B,
+      const std::string& f,
+      const std::string& pn) {
     using namespace std;
     const auto& d = mb.getBehaviourData(h);
     VariableDescriptionContainer::const_iterator p;
     SupportedTypes::TypeSize n;
-    for(p=d.getIntegrationVariables().begin();p!=d.getIntegrationVariables().end();++p){
-      n += mb.getTypeSize(p->type,p->arraySize);
+    for (p = d.getIntegrationVariables().begin();
+         p != d.getIntegrationVariables().end(); ++p) {
+      n += mb.getTypeSize(p->type, p->arraySize);
     }
-    out << "if(abs(" << pn<< ")<(" << n << ")*(this->powell_dogleg_trust_region_size)){" << endl;
+    out << "if(abs(" << pn << ")<(" << n
+        << ")*(this->powell_dogleg_trust_region_size)){" << endl;
     out << "// using the newton method only" << endl;
-    NonLinearSystemSolverBase::writeLimitsOnIncrementValues(out,mb,h,pn);
-    out << "this->zeros -= " << pn<< ";\n";
+    NonLinearSystemSolverBase::writeLimitsOnIncrementValues(out, mb, h, pn);
+    out << "this->zeros -= " << pn << ";\n";
     out << "} else { " << endl;
     out << "// computing the steepest descent step\n";
     out << "tvector<" << n << ",real> pdl_g;\n";
@@ -115,23 +122,33 @@ namespace mfront{
     out << "}" << endl;
     out << "const real pdl_cste = (pdl_g|pdl_g)/(pdl_g2|pdl_g2);" << endl;
     out << "pdl_g *= pdl_cste;" << endl;
-    out << "if(abs(pdl_g)<(" << n << ")*(this->powell_dogleg_trust_region_size)){" << endl;
-    out << "const real pdl_0 = (this->powell_dogleg_trust_region_size)*(this->powell_dogleg_trust_region_size);" << endl;
+    out << "if(abs(pdl_g)<(" << n
+        << ")*(this->powell_dogleg_trust_region_size)){" << endl;
+    out << "const real pdl_0 = "
+           "(this->powell_dogleg_trust_region_size)*(this->powell_dogleg_trust_"
+           "region_size);"
+        << endl;
     out << "const real pdl_1 = (pdl_g|pdl_g);" << endl;
     out << "const real pdl_2 = ((" << pn << ")|pdl_g);" << endl;
     out << "const real pdl_3 = ((" << pn << ")|(" << pn << "));" << endl;
     out << "const real pdl_alpha = "
-			<< "(pdl_0-pdl_1)/((pdl_2-pdl_1)+sqrt(max((pdl_2-pdl_0)*(pdl_2-pdl_0)+(pdl_3-pdl_0)*(pdl_0-pdl_1),real(0))));" << endl;
-    out << "pdl_g = pdl_alpha*(" << pn<< ") + (1-pdl_alpha)*pdl_g;" << endl;
+        << "(pdl_0-pdl_1)/"
+           "((pdl_2-pdl_1)+sqrt(max((pdl_2-pdl_0)*(pdl_2-pdl_0)+(pdl_3-pdl_0)*("
+           "pdl_0-pdl_1),real(0))));"
+        << endl;
+    out << "pdl_g = pdl_alpha*(" << pn << ") + (1-pdl_alpha)*pdl_g;" << endl;
     out << "} else {" << endl;
-    out << "const real pdl_alpha = (this->powell_dogleg_trust_region_size)/(norm(pdl_g));" << endl;
+    out << "const real pdl_alpha = "
+           "(this->powell_dogleg_trust_region_size)/(norm(pdl_g));"
+        << endl;
     out << "pdl_g *= pdl_alpha;" << endl;
     out << "}" << endl;
-    NonLinearSystemSolverBase::writeLimitsOnIncrementValues(out,mb,h,"pdl_g");
+    NonLinearSystemSolverBase::writeLimitsOnIncrementValues(out, mb, h,
+                                                            "pdl_g");
     out << "this->zeros -= pdl_g;\n";
     out << "}" << endl;
-  } // end of ImplicitDSLBase::writePowellDogLegStep
+  }  // end of ImplicitDSLBase::writePowellDogLegStep
 
   PowellDogLegAlgorithmBase::~PowellDogLegAlgorithmBase() = default;
 
-} // end of namespace mfront
+}  // end of namespace mfront

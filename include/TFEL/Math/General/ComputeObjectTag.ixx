@@ -3,79 +3,72 @@
  * \brief  This file declares the ComputeObjectTag class
  * \author Helfer Thomas
  * \date   16 Oct 2006
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_TFEL_COMPUTEOBJECTTAG_I_
-#define LIB_TFEL_COMPUTEOBJECTTAG_I_ 
+#define LIB_TFEL_COMPUTEOBJECTTAG_I_
 
-#include<type_traits>
-#include"TFEL/Metaprogramming/InvalidType.hxx"
-#include"TFEL/TypeTraits/IsScalar.hxx"
-#include"TFEL/TypeTraits/IsUnaryOperator.hxx"
+#include <type_traits>
+#include "TFEL/Metaprogramming/InvalidType.hxx"
+#include "TFEL/TypeTraits/IsScalar.hxx"
+#include "TFEL/TypeTraits/IsUnaryOperator.hxx"
 
-namespace tfel{
+namespace tfel {
 
-  namespace math{
+  namespace math {
 
-    namespace internals{
+    namespace internals {
 
-      template<typename A>
-      class HasConceptTag
-      {
-	/*!
-	 * \brief A first type.
-	 */
-	typedef char Small;
-	/*!
-	 * \brief A Second type which size is higher than Small
-	 */
-	class Big{Small dummy[2];};
-	/*
-	 * \brief a substitute for classes that have only protected constructors
-	 */
-	template<typename B>
-	struct Subs
-	{};
-	
-      protected:
-	
-	template<typename B>
-	static typename std::enable_if<
-	  sizeof(typename B::ConceptTag)!=0,
-	  Small
-	  >::type
-	Test(const Subs<B>);
-	
-	static Big Test(...);
-	
-	/*!
-	 * \brief A function returning a T.
-	 * A small trick for classes that are not default constructible.
-	 */
-	static Subs<A> MakeSubsA(void);
-	
-      public:
-	
-	static constexpr bool cond = sizeof(Test(MakeSubsA()))==sizeof(Small);
-	
-      }; // end of class HasConceptTag
-      
-      
-    } // end of namespace internals
+      template <typename A>
+      class HasConceptTag {
+        /*!
+         * \brief A first type.
+         */
+        typedef char Small;
+        /*!
+         * \brief A Second type which size is higher than Small
+         */
+        class Big {
+          Small dummy[2];
+        };
+        /*
+         * \brief a substitute for classes that have only protected constructors
+         */
+        template <typename B>
+        struct Subs {};
 
-    struct ScalarTag
-    {}; // end of ScalarTag
+       protected:
+        template <typename B>
+        static typename std::enable_if<sizeof(typename B::ConceptTag) != 0,
+                                       Small>::type
+        Test(const Subs<B>);
 
-    struct UnaryOperatorTag
-    {}; // end of UnaryOperatorTag
+        static Big Test(...);
 
-    /*!                                       
+        /*!
+         * \brief A function returning a T.
+         * A small trick for classes that are not default constructible.
+         */
+        static Subs<A> MakeSubsA(void);
+
+       public:
+        static constexpr bool cond = sizeof(Test(MakeSubsA())) == sizeof(Small);
+
+      };  // end of class HasConceptTag
+
+    }  // end of namespace internals
+
+    struct ScalarTag {};  // end of ScalarTag
+
+    struct UnaryOperatorTag {};  // end of UnaryOperatorTag
+
+    /*!
      * \class   ComputeObjectTag_
      * \brief   An helper metafunction for tag computing.
      * \warning This class shall not be used directly.
@@ -85,58 +78,54 @@ namespace tfel{
      * \param   bool b2, true if operator.
      * \param   bool b3, true if the object has a ConceptTag typedef.
      * \return  type, the tag searched. By default, return InvalidType.
-     */     
-    template<typename Type,bool b1=false,bool b2=false,bool b3=false>
-    struct ComputeObjectTag_{
+     */
+    template <typename Type, bool b1 = false, bool b2 = false, bool b3 = false>
+    struct ComputeObjectTag_ {
       /*!
        * Result
        */
       typedef tfel::meta::InvalidType type;
-    }; // end of ComputeObjectTag_
+    };  // end of ComputeObjectTag_
 
-    /*!   
+    /*!
      * \brief Partial specialisation for scalars.
      * \see   ComputeObjectTag_
      */
-    template<typename Type>
-    struct ComputeObjectTag_<Type,true>
-    {
+    template <typename Type>
+    struct ComputeObjectTag_<Type, true> {
       /*!
        * Result
        */
       typedef ScalarTag type;
-    }; // end of ComputeObjectTag_<true,false,false,false,false,false,false>
+    };  // end of ComputeObjectTag_<true,false,false,false,false,false,false>
 
     /*!
      * \brief Partial specialisation for unary operators.
      * \see   ComputeObjectTag_
      */
-    template<typename Type>
-    struct ComputeObjectTag_<Type,false,true>
-    {
+    template <typename Type>
+    struct ComputeObjectTag_<Type, false, true> {
       /*!
        * Result
        */
       typedef UnaryOperatorTag type;
-    }; // end of ComputeObjectTag_<true,false,false,false,false,false,false>
-    
-    /*!                                     
+    };  // end of ComputeObjectTag_<true,false,false,false,false,false,false>
+
+    /*!
      * \brief Partial specialisation for functions.
      * \see   ComputeObjectTag_
      */
-    template<typename Type>
-    struct ComputeObjectTag_<Type,false,false,true>
-    {
-      /*!		                      
-       * Result	                      
-       */		                      
+    template <typename Type>
+    struct ComputeObjectTag_<Type, false, false, true> {
+      /*!
+       * Result
+       */
       typedef typename Type::ConceptTag type;
-    }; // end of ComputeObjectTag_<false,false,true>
+    };  // end of ComputeObjectTag_<false,false,true>
 
-    template<typename T>
-    struct ComputeObjectTag
-    {
-    private:
+    template <typename T>
+    struct ComputeObjectTag {
+     private:
       /*!
        * \brief tells if T is a scalar.
        */
@@ -144,23 +133,27 @@ namespace tfel{
       /*!
        * \brief tells if T is an unary operator.
        */
-      static constexpr bool IsTUnaryOperator = tfel::typetraits::IsUnaryOperator<T>::cond;
+      static constexpr bool IsTUnaryOperator =
+          tfel::typetraits::IsUnaryOperator<T>::cond;
       /*!
        * \brief tells if T has a ConceptTag typedef.
        */
-      static constexpr bool HasConceptTag = tfel::math::internals::HasConceptTag<T>::cond;
-    public:
+      static constexpr bool HasConceptTag =
+          tfel::math::internals::HasConceptTag<T>::cond;
+
+     public:
       /*!
        * The result type, which is computed by the auxiliary
        * metafunction ComputeObjectTag_
        */
-      typedef typename ComputeObjectTag_<T,IsTScalar,IsTUnaryOperator,
-					 HasConceptTag>::type type;
-    }; // end of ComputeObjectTag
+      typedef typename ComputeObjectTag_<T,
+                                         IsTScalar,
+                                         IsTUnaryOperator,
+                                         HasConceptTag>::type type;
+    };  // end of ComputeObjectTag
 
-  } // end of namespace math
+  }  // end of namespace math
 
-} // end of namespace tfel
+}  // end of namespace tfel
 
 #endif /* LIB_TFEL_COMPUTEOBJECTTAG_I_ */
-

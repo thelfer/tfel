@@ -4,47 +4,46 @@
  * \author Helfer Thomas
  * \date   28 Jan 2008
  *
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_TFELCHECK_TESTLAUNCHER_HXX
 #define LIB_TFELCHECK_TESTLAUNCHER_HXX
 
-#include<fstream>
-#include<vector>
-#include<string>
-#include<memory>
-#include<map>
-#include<set>
-#include<sys/times.h>
+#include <fstream>
+#include <vector>
+#include <string>
+#include <memory>
+#include <map>
+#include <set>
+#include <sys/times.h>
 
-#include"TFEL/Utilities/CxxTokenizer.hxx"
-#include"TFEL/Utilities/TextData.hxx"
+#include "TFEL/Utilities/CxxTokenizer.hxx"
+#include "TFEL/Utilities/TextData.hxx"
 #include "TFELCheck/TFELCheckConfig.hxx"
-#include"TFELCheck/PCLogger.hxx"
-#include"TFELCheck/Interpolation.hxx"
-#include"TFELCheck/Column.hxx"
-#include"TFELCheck/Comparison.hxx"
-#include"TFELCheck/Test.hxx"
+#include "TFELCheck/PCLogger.hxx"
+#include "TFELCheck/Interpolation.hxx"
+#include "TFELCheck/Column.hxx"
+#include "TFELCheck/Comparison.hxx"
+#include "TFELCheck/Test.hxx"
 
 namespace tfel_check {
-  
+
   struct TFELCHECK_VISIBILITY_EXPORT TestLauncher
-    : public tfel::utilities::CxxTokenizer
-  {
-    using CxxTokenizer=tfel::utilities::CxxTokenizer;
-    
+      : public tfel::utilities::CxxTokenizer {
+    using CxxTokenizer = tfel::utilities::CxxTokenizer;
+
     TestLauncher(const std::string&, const PCLogger&);
     bool execute(void);
     //! desctrutor
     ~TestLauncher(void);
 
-  private:
+   private:
     typedef void (TestLauncher::*CallBack)(void);
     void registerCallBack(const std::string&, const CallBack&);
     //! analyse the input file
@@ -61,7 +60,7 @@ namespace tfel_check {
      * \param[in] msg: error message
      */
     TFEL_NORETURN void throwRuntimeError(const std::string&,
-					 const std::string&);
+                                         const std::string&);
     /*!
      * \brief check that there is still something to read
      * \param[in] m: calling method
@@ -73,8 +72,7 @@ namespace tfel_check {
      * \param[in] m: calling method
      * \param[in] v: value to be read
      */
-    void readSpecifiedToken(const std::string&,
-			    const std::string&);
+    void readSpecifiedToken(const std::string&, const std::string&);
     /*!
      * \brief check that the current token is a string, return its
      * value, and go to the next token
@@ -86,7 +84,7 @@ namespace tfel_check {
      * \param[in] m: calling method
      */
     void setInterpolation(const std::string&);
-    
+
     enum ClockEventType {
       START,
       STOP,
@@ -100,12 +98,13 @@ namespace tfel_check {
     std::vector<Test> comparisons;
     std::map<std::string, CallBack> callBacks;
     std::string logfile;
-    PCLogger log; /**!< logfile output stream */
-    PCLogger glog; /**!< global logfile output stream */
-    std::string file; /**!< file containing tfel-check commands */
+    PCLogger log;         /**!< logfile output stream */
+    PCLogger glog;        /**!< global logfile output stream */
+    std::string file;     /**!< file containing tfel-check commands */
     std::string testname; /**!< test name based on file name */
     std::vector<std::string> commands;
-    std::string XMLResult; /**!< string containing testcase result, Junit formatted. */
+    std::string
+        XMLResult; /**!< string containing testcase result, Junit formatted. */
     double prec = 1.e-8;
     double precision2 = 0.;
     //! the type of comparison of the test (absolute, relative...)
@@ -122,10 +121,9 @@ namespace tfel_check {
     //! true if user allows to interpolate ref
     bool allowLessResults = false;
   };
-  
+
   // end of struct TestLauncher
 
-}// end of namespace tfel_check
+}  // end of namespace tfel_check
 
 #endif /* LIB_TFELCHECK_TESTLAUNCHER_HXX */
-

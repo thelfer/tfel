@@ -7,12 +7,12 @@
  *  \brief class that does a relative comparison between two columns
  *  \class RelativeComparison
  *
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_TFELCHECK_RELATIVECOMPARISON_HXX
@@ -24,8 +24,7 @@
 namespace tfel_check {
 
   struct TFELCHECK_VISIBILITY_EXPORT RelativeComparison final
-    : public Comparison
-  {
+      : public Comparison {
     RelativeComparison();
     virtual void compare() override;
     virtual ~RelativeComparison();

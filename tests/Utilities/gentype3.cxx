@@ -24,7 +24,8 @@
 
 typedef tfel::meta::GenerateTypeList<int, std::string>::type HoldedTypes;
 
-struct TFEL_VISIBILITY_EXPORT GenType : tfel::utilities::GenTypeBase<HoldedTypes> {
+struct TFEL_VISIBILITY_EXPORT GenType
+    : tfel::utilities::GenTypeBase<HoldedTypes> {
   using tfel::utilities::GenTypeBase<HoldedTypes>::operator=;
 
   std::string dumpToString() const;
@@ -110,7 +111,9 @@ void GenType::load(const std::string& t, const std::string& v) {
 }
 
 struct GenTypeTest3 final : public tfel::tests::TestCase {
-  GenTypeTest3() : tfel::tests::TestCase("TFEL/Utilities", "GenTypeTest3") {}  // end of MyTest
+  GenTypeTest3()
+      : tfel::tests::TestCase("TFEL/Utilities", "GenTypeTest3") {
+  }  // end of MyTest
   tfel::tests::TestResult execute() override {
     using namespace std;
     GenType g;

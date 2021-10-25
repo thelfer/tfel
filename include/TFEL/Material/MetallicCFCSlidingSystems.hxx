@@ -1,66 +1,62 @@
-/*! 
+/*!
  * \file  include/TFEL/Material/MetallicCFCSlidingSystems.hxx
  * \brief
  * \author Helfer Thomas
  * \brief 21 mars 2013
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_TFEL_MATERIAL_METALLICCFCSLIDINGSYSTEMS_H_
-#define LIB_TFEL_MATERIAL_METALLICCFCSLIDINGSYSTEMS_H_ 
+#define LIB_TFEL_MATERIAL_METALLICCFCSLIDINGSYSTEMS_H_
 
-#include"TFEL/Config/TFELConfig.hxx"
-#include"TFEL/Math/tvector.hxx"
-#include"TFEL/Math/stensor.hxx"
-#include"TFEL/Math/tensor.hxx"
+#include "TFEL/Config/TFELConfig.hxx"
+#include "TFEL/Math/tvector.hxx"
+#include "TFEL/Math/stensor.hxx"
+#include "TFEL/Math/tensor.hxx"
 
-namespace tfel
-{
+namespace tfel {
 
-  namespace material
-  {
+  namespace material {
 
     /*!
      * An helper class which actually does the computation of the
      * tensor of directional sense for CFC crystals.
      */
-    template<typename NumType>
-    struct MetallicCFCSlidingSystems
-    {
+    template <typename NumType>
+    struct MetallicCFCSlidingSystems {
       //! a simple alias
       typedef NumType real;
       //! number of sliding systems
       static constexpr const unsigned short Nss = 12;
       //! tensor of directional sense
-      tfel::math::tvector<Nss,tfel::math::tensor<3u,real> >  mu;
+      tfel::math::tvector<Nss, tfel::math::tensor<3u, real>> mu;
       //! symmetric tensor of directional sense
-      tfel::math::tvector<Nss,tfel::math::stensor<3u,real> > mus;
+      tfel::math::tvector<Nss, tfel::math::stensor<3u, real>> mus;
       //! return the uniq instance of the class
-      static const MetallicCFCSlidingSystems&
-      getSlidingSystems(void);
-    protected:
+      static const MetallicCFCSlidingSystems& getSlidingSystems(void);
+
+     protected:
       /*!
        * constructor
        */
       MetallicCFCSlidingSystems();
-    private:
+
+     private:
       // copy constructor (disabled)
       MetallicCFCSlidingSystems(const MetallicCFCSlidingSystems&);
       // assignement operator (disabled)
-      MetallicCFCSlidingSystems&
-      operator=(const MetallicCFCSlidingSystems&);
+      MetallicCFCSlidingSystems& operator=(const MetallicCFCSlidingSystems&);
     };
 
-  } // end of namespace material
+  }  // end of namespace material
 
-} // end of namespace tfel
+}  // end of namespace tfel
 
-#include"TFEL/Material/MetallicCFCSlidingSystems.ixx"
+#include "TFEL/Material/MetallicCFCSlidingSystems.ixx"
 
 #endif /* LIB_TFEL_MATERIAL_METALLICCFCSLIDINGSYSTEMS_H_ */
-

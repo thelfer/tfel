@@ -5,15 +5,15 @@
  *
  * \author sb152252
  * \date 31 août 2009
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
-#include<iostream>
+#include <iostream>
 #include "TFELCheck/PCLogger.hxx"
 
 namespace tfel_check {
@@ -24,10 +24,8 @@ namespace tfel_check {
   PCLogger& PCLogger::operator=(PCLogger&&) = default;
   PCLogger& PCLogger::operator=(const PCLogger&) = default;
   PCLogger::~PCLogger() = default;
-  
-  PCLogger::PCLogger(const driver& logDriver) {
-    this->addDriver(logDriver);
-  }
+
+  PCLogger::PCLogger(const driver& logDriver) { this->addDriver(logDriver); }
 
   void PCLogger::addDriver(driver logDriver) {
     this->drivers.push_back(logDriver);
@@ -39,15 +37,18 @@ namespace tfel_check {
     }
   }
 
-  void PCLogger::addSimpleTestResult(const std::string& testname, bool success,
-				     const std::string& message) {
+  void PCLogger::addSimpleTestResult(const std::string& testname,
+                                     bool success,
+                                     const std::string& message) {
     this->addTestResult(testname, "", "", 0.0, success, message);
   }
 
   void PCLogger::addTestResult(const std::string& testname,
-			       const std::string& step,
-			       const std::string& command, float time,
-			       bool success, const std::string& message) {
+                               const std::string& step,
+                               const std::string& command,
+                               float time,
+                               bool success,
+                               const std::string& message) {
     for (auto& d : this->drivers) {
       d->addTestResult(testname, step, command, time, success, message);
     }

@@ -1,24 +1,24 @@
 /*!
  * \file   SolverOptions.hxx
- * \brief    
+ * \brief
  * \author THOMAS HELFER
  * \date   04 nov. 2015
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_MTEST_SOLVEROPTIONS_HXX_
 #define LIB_MTEST_SOLVEROPTIONS_HXX_
 
-#include<memory>
+#include <memory>
 
-#include"MTest/Types.hxx"
+#include "MTest/Types.hxx"
 
-namespace mtest{
+namespace mtest {
 
   // forward declaration
   struct AccelerationAlgorithm;
@@ -26,8 +26,7 @@ namespace mtest{
   /*!
    * \brief possible type of stiffness matrix
    */
-  enum struct StiffnessMatrixType
-  {
+  enum struct StiffnessMatrixType {
     //! list of possible matrix type
     NOSTIFFNESS,
     ELASTIC,
@@ -38,12 +37,12 @@ namespace mtest{
     ELASTICSTIFNESSFROMMATERIALPROPERTIES,
     UNSPECIFIEDSTIFFNESSMATRIXTYPE
   };
-  
+
   /*!
    * \brief possible algorithms used for global convergence to
    * update the stiffness matrix
    */
-  enum struct StiffnessUpdatingPolicy{
+  enum struct StiffnessUpdatingPolicy {
     /*!
      * the initial prediction matrix or the initial tangent coherent
      * matrix or the initial secant matrix (normally equal to the
@@ -63,11 +62,11 @@ namespace mtest{
     UPDATEDSTIFFNESSMATRIX,
     //! default value
     UNSPECIFIEDSTIFFNESSUPDATINGPOLICY
-  }; // end of enum struct StiffnessUpdatingPolicy
+  };  // end of enum struct StiffnessUpdatingPolicy
   /*!
    * \brief possible prediction policies
    */
-  enum struct PredictionPolicy{
+  enum struct PredictionPolicy {
     NOPREDICTION,
     LINEARPREDICTION,
     ELASTICPREDICTION,
@@ -75,20 +74,17 @@ namespace mtest{
     SECANTOPERATORPREDICTION,
     TANGENTOPERATORPREDICTION,
     UNSPECIFIEDPREDICTIONPOLICY
-  }; // end of enum struct PredictionPolicy
-  
+  };  // end of enum struct PredictionPolicy
+
   /*!
    * work space used by the solver
    */
-  struct SolverOptions
-  {
+  struct SolverOptions {
     SolverOptions();
     SolverOptions(SolverOptions&&);
     SolverOptions(const SolverOptions&);
-    SolverOptions&
-    operator=(SolverOptions&&);
-    SolverOptions&
-    operator=(const SolverOptions&);
+    SolverOptions& operator=(SolverOptions&&);
+    SolverOptions& operator=(const SolverOptions&);
     ~SolverOptions();
     //! acceleration algorithm
     std::shared_ptr<AccelerationAlgorithm> aa;
@@ -96,13 +92,12 @@ namespace mtest{
     bool useCastemAcceleration = false;
     //! stiffness updating policy
     StiffnessUpdatingPolicy ks =
-      StiffnessUpdatingPolicy::UNSPECIFIEDSTIFFNESSUPDATINGPOLICY;
+        StiffnessUpdatingPolicy::UNSPECIFIEDSTIFFNESSUPDATINGPOLICY;
     //! type of stifness matrix to use for the resolution
     StiffnessMatrixType ktype =
-      StiffnessMatrixType::UNSPECIFIEDSTIFFNESSMATRIXTYPE;
+        StiffnessMatrixType::UNSPECIFIEDSTIFFNESSMATRIXTYPE;
     //! use a prediction matrix before beginning the resolution
-    PredictionPolicy ppolicy =
-      PredictionPolicy::UNSPECIFIEDPREDICTIONPOLICY;
+    PredictionPolicy ppolicy = PredictionPolicy::UNSPECIFIEDPREDICTIONPOLICY;
     //! order of magnitude of the precision expected for the unknows
     real eeps = -real(1);
     //! order of magnitude of the precision expected for the forces
@@ -128,8 +123,8 @@ namespace mtest{
     //! if true, the time step is adjusted using the values given by
     //! the mechanical behaviour
     bool dynamic_time_step_scaling = false;
-  }; // end of struct SolverOptions
-  
-} // end of namespace namespace mtest
+  };  // end of struct SolverOptions
+
+}  // namespace mtest
 
 #endif /* LIB_MTEST_SOLVEROPTIONS_HXX_ */

@@ -1,713 +1,775 @@
 
-/*! 
+/*!
  * \file   include/TFEL/Math/Stensor/DecompositionInPositiveAndNegativeParts.ixx
  * \brief
  * \author Helfer Thomas
  * \date   22 nov. 2014
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_TFEL_MATH_STENSOR_DECOMPOSITIONINPOSITIVEANDNEGATIVEPARTS_IXX_
-#define LIB_TFEL_MATH_STENSOR_DECOMPOSITIONINPOSITIVEANDNEGATIVEPARTS_IXX_ 
+#define LIB_TFEL_MATH_STENSOR_DECOMPOSITIONINPOSITIVEANDNEGATIVEPARTS_IXX_
 
-#include"TFEL/Math/General/MathConstants.hxx"
+#include "TFEL/Math/General/MathConstants.hxx"
 
-namespace tfel{
+namespace tfel {
 
-  namespace math{
+  namespace math {
 
-    namespace internals{
-      
-      template<typename NumType>
-      TFEL_MATH_INLINE NumType stensor_ppos(const NumType x)
-      {
-	return x >= NumType(0) ? x : NumType(0);
+    namespace internals {
+
+      template <typename NumType>
+      TFEL_MATH_INLINE NumType stensor_ppos(const NumType x) {
+        return x >= NumType(0) ? x : NumType(0);
       }
 
-      template<typename NumType>
-      TFEL_MATH_INLINE NumType stensor_pneg(const NumType x)
-      {
-	return x <= NumType(0) ? x : NumType(0);
+      template <typename NumType>
+      TFEL_MATH_INLINE NumType stensor_pneg(const NumType x) {
+        return x <= NumType(0) ? x : NumType(0);
       }
 
-    }
+    }  // namespace internals
 
-    template<typename DPPType,typename PPType,typename StensorType>
+    template <typename DPPType, typename PPType, typename StensorType>
     typename std::enable_if<
-      tfel::meta::Implements<DPPType,ST2toST2Concept>::cond&&
-      tfel::meta::Implements<PPType,StensorConcept>::cond&&
-      tfel::meta::Implements<StensorType,StensorConcept>::cond&&
-      ST2toST2Traits<DPPType>::dime==StensorTraits<StensorType>::dime &&
-      StensorTraits<PPType>::dime==StensorTraits<StensorType>::dime   &&
-      StensorTraits<StensorType>::dime==1u                            &&
-      tfel::typetraits::IsAssignableTo<typename StensorTraits<StensorType>::NumType,
-				       typename StensorTraits<PPType>::NumType>::cond &&
-      tfel::typetraits::IsAssignableTo<typename tfel::typetraits::BaseType<typename StensorTraits<StensorType>::NumType>::type,
-				       typename ST2toST2Traits<DPPType>::NumType>::cond,
-      void>::type
-    computeStensorPositivePartAndDerivative(DPPType& dpp,
-					    PPType& pp,
-					    const StensorType& s,
-					    const typename StensorTraits<StensorType>::NumType eps)
-    {
+        tfel::meta::Implements<DPPType, ST2toST2Concept>::cond &&
+            tfel::meta::Implements<PPType, StensorConcept>::cond &&
+            tfel::meta::Implements<StensorType, StensorConcept>::cond &&
+            ST2toST2Traits<DPPType>::dime == StensorTraits<StensorType>::dime &&
+            StensorTraits<PPType>::dime == StensorTraits<StensorType>::dime &&
+            StensorTraits<StensorType>::dime == 1u &&
+            tfel::typetraits::IsAssignableTo<
+                typename StensorTraits<StensorType>::NumType,
+                typename StensorTraits<PPType>::NumType>::cond &&
+            tfel::typetraits::IsAssignableTo<
+                typename tfel::typetraits::BaseType<
+                    typename StensorTraits<StensorType>::NumType>::type,
+                typename ST2toST2Traits<DPPType>::NumType>::cond,
+        void>::type
+    computeStensorPositivePartAndDerivative(
+        DPPType& dpp,
+        PPType& pp,
+        const StensorType& s,
+        const typename StensorTraits<StensorType>::NumType eps) {
       using std::abs;
       typedef typename StensorTraits<StensorType>::NumType NumType;
       typedef typename tfel::typetraits::BaseType<NumType>::type real;
-      TFEL_CONSTEXPR const auto one_half = real(1)/(real(2));
-      dpp(0,1) = dpp(0,2) = dpp(1,0) = dpp(1,2) = dpp(2,0) = dpp(2,1) = real(0);
-      if(abs(s(0))<eps){
-	dpp(0,0) = one_half;
-	pp(0)=real(0);
-      } else if (s(0)>NumType(0)){
-	dpp(0,0) = real(1);
-	pp(0)=s(0);
+      TFEL_CONSTEXPR const auto one_half = real(1) / (real(2));
+      dpp(0, 1) = dpp(0, 2) = dpp(1, 0) = dpp(1, 2) = dpp(2, 0) = dpp(2, 1) =
+          real(0);
+      if (abs(s(0)) < eps) {
+        dpp(0, 0) = one_half;
+        pp(0) = real(0);
+      } else if (s(0) > NumType(0)) {
+        dpp(0, 0) = real(1);
+        pp(0) = s(0);
       } else {
-	dpp(0,0) = real(0);
-	pp(0)=NumType(0);
+        dpp(0, 0) = real(0);
+        pp(0) = NumType(0);
       }
-      if(abs(s(1))<eps){
-	dpp(1,1) = one_half;
-	pp(1)=real(0);
-      } else if (s(1)>NumType(0)){
-	dpp(1,1) = real(1);
-	pp(1)=s(1);
+      if (abs(s(1)) < eps) {
+        dpp(1, 1) = one_half;
+        pp(1) = real(0);
+      } else if (s(1) > NumType(0)) {
+        dpp(1, 1) = real(1);
+        pp(1) = s(1);
       } else {
-	dpp(1,1) = real(0);
-	pp(1)=NumType(0);
+        dpp(1, 1) = real(0);
+        pp(1) = NumType(0);
       }
-      if(abs(s(2))<eps){
-	dpp(2,2) = one_half;
-	pp(2)=real(0);
-      } else if (s(2)>NumType(0)){
-	dpp(2,2) = real(1);
-	pp(2)=s(2);
+      if (abs(s(2)) < eps) {
+        dpp(2, 2) = one_half;
+        pp(2) = real(0);
+      } else if (s(2) > NumType(0)) {
+        dpp(2, 2) = real(1);
+        pp(2) = s(2);
       } else {
-	dpp(2,2) = real(0);
-	pp(2)=NumType(0);
-      }
-    }
-    
-    template<typename DPPType,
-	     typename PPType,
-	     typename StensorType>
-    typename std::enable_if<
-      tfel::meta::Implements<DPPType,ST2toST2Concept>::cond&&
-      tfel::meta::Implements<PPType,StensorConcept>::cond&&
-      tfel::meta::Implements<StensorType,StensorConcept>::cond&&
-      ST2toST2Traits<DPPType>::dime==StensorTraits<StensorType>::dime &&
-      StensorTraits<PPType>::dime==StensorTraits<StensorType>::dime   &&
-      StensorTraits<StensorType>::dime==2u                            &&
-      tfel::typetraits::IsAssignableTo<typename StensorTraits<StensorType>::NumType,
-				       typename StensorTraits<PPType>::NumType>::cond &&
-      tfel::typetraits::IsAssignableTo<typename tfel::typetraits::BaseType<typename StensorTraits<StensorType>::NumType>::type,
-				       typename ST2toST2Traits<DPPType>::NumType>::cond,
-      void>::type
-    computeStensorPositivePartAndDerivative(DPPType& dpp,
-					    PPType& pp,
-					    const StensorType& s,
-					    const typename StensorTraits<StensorType>::NumType eps)
-    {
-      using std::abs;
-      using tfel::math::internals::stensor_ppos;
-      using tfel::math::internals::stensor_pneg;
-      typedef typename StensorTraits<StensorType>::NumType NumType;
-      typedef typename tfel::typetraits::BaseType<NumType>::type real;
-      constexpr const auto cste     = Cste<real>::sqrt2;
-      TFEL_CONSTEXPR const auto one_half = real(1)/(real(2));
-      stensor<2u,NumType> ls(s); // local copy of s
-      stensor<2u,real> n0;
-      stensor<2u,real> n1;
-      stensor<2u,real> n2;
-      tvector<3u,NumType> vp;
-      tmatrix<3u,3u,real> m;
-      ls.computeEigenVectors(vp,m);
-      stensor<2u,real>::computeEigenTensors(n0,n1,n2,m);
-      const tvector<3u,real> v0 = m.template column_view<0u>();
-      const tvector<3u,real> v1 = m.template column_view<1u>();
-      const stensor<2u,real> n01 = stensor<2u,real>::buildFromVectorsSymmetricDiadicProduct(v0,v1)/cste;
-      if(abs(vp(0)-vp(1))<eps){
-	const NumType vpm = (vp(0)+vp(1))*one_half;
-	if(abs(vpm)<eps){
-	  dpp = ((n0^n0)+(n1^n1)+(n01^n01))*one_half;
-	  pp  = stensor<2u,NumType>(real(0));
-	} else if(vpm>NumType(0)){
-	  dpp = (n0^n0)+(n1^n1)+(n01^n01);
-	  pp  = vpm*(n0+n1);
-	} else {
-	  dpp = st2tost2<2u,real>(real(0));
-	  pp  = stensor<2u,NumType>(real(0));
-	}
-      } else {
-	if(abs(vp(0))<eps){
-	  dpp = (n0^n0)*one_half;
-	  pp  = stensor<2u,NumType>(real(0));
-	} else if(vp(0)>NumType(0)){
-	  dpp = (n0^n0);
-	  pp  = vp(0)*n0;
-	} else {
-	  dpp = st2tost2<2u,real>(real(0));
-	  pp  = stensor<2u,NumType>(real(0));
-	}
-	if(abs(vp(1))<eps){
-	  dpp += (n1^n1)*one_half;
-	} else if(vp(1)>NumType(0)){
-	  dpp += (n1^n1);
-	  pp  += vp(1)*n1;
-	}
-	dpp += (stensor_ppos(vp(1))-stensor_ppos(vp(0)))/(vp(1)-vp(0))*(n01^n01);
-      }
-      if(abs(vp(2))<eps){
-	dpp += (n2^n2)*one_half;
-      } else if (vp(2)>0){
-	dpp   += (n2^n2);
-	pp(2) += vp(2);
+        dpp(2, 2) = real(0);
+        pp(2) = NumType(0);
       }
     }
 
-    template<typename DPPType,
-	     typename PPType,
-	     typename StensorType>
+    template <typename DPPType, typename PPType, typename StensorType>
     typename std::enable_if<
-      tfel::meta::Implements<DPPType,ST2toST2Concept>::cond&&
-      tfel::meta::Implements<PPType,StensorConcept>::cond&&
-      tfel::meta::Implements<StensorType,StensorConcept>::cond&&
-      ST2toST2Traits<DPPType>::dime==StensorTraits<StensorType>::dime &&
-      StensorTraits<PPType>::dime==StensorTraits<StensorType>::dime   &&
-      StensorTraits<StensorType>::dime==3u                            &&
-      tfel::typetraits::IsAssignableTo<typename StensorTraits<StensorType>::NumType,
-				       typename StensorTraits<PPType>::NumType>::cond &&
-      tfel::typetraits::IsAssignableTo<typename tfel::typetraits::BaseType<typename StensorTraits<StensorType>::NumType>::type,
-				       typename ST2toST2Traits<DPPType>::NumType>::cond,
-      void>::type
-    computeStensorPositivePartAndDerivative(DPPType& dpp,
-					    PPType& pp,
-					    const StensorType& s,
-					    const typename StensorTraits<StensorType>::NumType eps)
-    {
-      using tfel::math::internals::stensor_ppos;
+        tfel::meta::Implements<DPPType, ST2toST2Concept>::cond &&
+            tfel::meta::Implements<PPType, StensorConcept>::cond &&
+            tfel::meta::Implements<StensorType, StensorConcept>::cond &&
+            ST2toST2Traits<DPPType>::dime == StensorTraits<StensorType>::dime &&
+            StensorTraits<PPType>::dime == StensorTraits<StensorType>::dime &&
+            StensorTraits<StensorType>::dime == 2u &&
+            tfel::typetraits::IsAssignableTo<
+                typename StensorTraits<StensorType>::NumType,
+                typename StensorTraits<PPType>::NumType>::cond &&
+            tfel::typetraits::IsAssignableTo<
+                typename tfel::typetraits::BaseType<
+                    typename StensorTraits<StensorType>::NumType>::type,
+                typename ST2toST2Traits<DPPType>::NumType>::cond,
+        void>::type
+    computeStensorPositivePartAndDerivative(
+        DPPType& dpp,
+        PPType& pp,
+        const StensorType& s,
+        const typename StensorTraits<StensorType>::NumType eps) {
+      using std::abs;
       using tfel::math::internals::stensor_pneg;
+      using tfel::math::internals::stensor_ppos;
       typedef typename StensorTraits<StensorType>::NumType NumType;
       typedef typename tfel::typetraits::BaseType<NumType>::type real;
-      constexpr const auto cste     = Cste<real>::sqrt2;
-      TFEL_CONSTEXPR const auto one_half = real(1)/(real(2));
-      stensor<3u,NumType> ls(s); // local copy of s
-      stensor<3u,real> n0;
-      stensor<3u,real> n1;
-      stensor<3u,real> n2;
-      tvector<3u,NumType> vp;
-      tmatrix<3u,3u,real> m;
-      ls.computeEigenVectors(vp,m);
-      stensor<3u,real>::computeEigenTensors(n0,n1,n2,m);
-      if((abs(vp(0)-vp(1))<eps)&&(abs(vp(0)-vp(2))<eps)){
-	NumType vpm = (vp(0)+vp(1)+vp(2))/3;
-	if(abs(vpm)<eps){
-	  dpp = st2tost2<3u,real>::Id()*one_half;
-	  pp  = stensor<3u,NumType>(NumType(0));
-	} else if(vpm>NumType(0)){
-	  dpp = st2tost2<3u,real>::Id();
-	  pp  = s;
-	} else {
-	  dpp = st2tost2<3u,real>(real(0));
-	  pp  = stensor<3u,real>(real(0));
-	}
+      constexpr const auto cste = Cste<real>::sqrt2;
+      TFEL_CONSTEXPR const auto one_half = real(1) / (real(2));
+      stensor<2u, NumType> ls(s);  // local copy of s
+      stensor<2u, real> n0;
+      stensor<2u, real> n1;
+      stensor<2u, real> n2;
+      tvector<3u, NumType> vp;
+      tmatrix<3u, 3u, real> m;
+      ls.computeEigenVectors(vp, m);
+      stensor<2u, real>::computeEigenTensors(n0, n1, n2, m);
+      const tvector<3u, real> v0 = m.template column_view<0u>();
+      const tvector<3u, real> v1 = m.template column_view<1u>();
+      const stensor<2u, real> n01 =
+          stensor<2u, real>::buildFromVectorsSymmetricDiadicProduct(v0, v1) /
+          cste;
+      if (abs(vp(0) - vp(1)) < eps) {
+        const NumType vpm = (vp(0) + vp(1)) * one_half;
+        if (abs(vpm) < eps) {
+          dpp = ((n0 ^ n0) + (n1 ^ n1) + (n01 ^ n01)) * one_half;
+          pp = stensor<2u, NumType>(real(0));
+        } else if (vpm > NumType(0)) {
+          dpp = (n0 ^ n0) + (n1 ^ n1) + (n01 ^ n01);
+          pp = vpm * (n0 + n1);
+        } else {
+          dpp = st2tost2<2u, real>(real(0));
+          pp = stensor<2u, NumType>(real(0));
+        }
       } else {
-	const tvector<3u,real> v0 = m.template column_view<0u>();
-	const tvector<3u,real> v1 = m.template column_view<1u>();
-	const tvector<3u,real> v2 = m.template column_view<2u>();
-	const stensor<3u,real> n01 = stensor<3u,real>::buildFromVectorsSymmetricDiadicProduct(v0,v1)/cste;
-	const stensor<3u,real> n02 = stensor<3u,real>::buildFromVectorsSymmetricDiadicProduct(v0,v2)/cste;
-	const stensor<3u,real> n12 = stensor<3u,real>::buildFromVectorsSymmetricDiadicProduct(v1,v2)/cste;
-	if(abs(vp(0)-vp(1))<eps){
-	  NumType vpm = (vp(0)+vp(1))*one_half;
-	  if(abs(vpm)<eps){
-	    dpp = ((n0^n0)+(n1^n1)+(n01^n01))*one_half;
-	    pp  = stensor<3u,NumType>(NumType(0));
-	  } else if(vpm>NumType(0)){
-	    dpp = (n0^n0)+(n1^n1)+(n01^n01);
-	    pp  = vpm*(n0+n1);
-	  } else {
-	    dpp = st2tost2<3u,real>(real(0));
-	    pp  = stensor<3u,NumType>(NumType(0));
-	  }
-	  if(abs(vp(2))<eps){
-	    dpp += (n2^n2)*one_half;
-	  } else if(vp(2)>NumType(0)){
-	    dpp += n2^n2;
-	    pp  += vp(2)*n2;
-	  }
-	  dpp += (stensor_ppos(vpm)-stensor_ppos(vp(2)))/(vpm-vp(2))*((n02^n02)+(n12^n12));
-	} else if(abs(vp(0)-vp(2))<eps){
-	  NumType vpm = (vp(0)+vp(2))*one_half;
-	  if(abs(vpm)<eps){
-	    dpp = ((n0^n0)+(n2^n2)+(n02^n02))*one_half;
-	    pp  = stensor<3u,NumType>(NumType(0));
-	  } else if(vpm>NumType(0)){
-	    dpp = (n0^n0)+(n2^n2)+(n02^n02);
-	    pp  = vpm*(n0+n2);
-	  } else {
-	    dpp = st2tost2<3u,real>(real(0));
-	    pp  = stensor<3u,NumType>(NumType(0));
-	  }
-	  if(abs(vp(1))<eps){
-	    dpp += (n1^n1)*one_half;
-	  } else if(vp(1)>NumType(0)){
-	    dpp += (n1^n1);
-	    pp  += vp(1)*n1;
-	  }
-	  dpp += (stensor_ppos(vpm)-stensor_ppos(vp(1)))/(vpm-vp(1))*((n01^n01)+(n12^n12));
-	} else if(abs(vp(1)-vp(2))<eps){
-	  NumType vpm = (vp(1)+vp(2))*one_half;
-	  if(abs(vpm)<eps){
-	    dpp = ((n1^n1)+(n2^n2)+(n12^n12))*one_half;
-	    pp  = stensor<3u,NumType>(NumType(0));
-	  } else if(vpm>NumType(0)){
-	    dpp = (n1^n1)+(n2^n2)+(n12^n12);
-	    pp  = vpm*(n1+n2);
-	  } else {
-	    dpp = st2tost2<3u,real>(real(0));
-	    pp  = stensor<3u,NumType>(NumType(0));
-	  }
-	  if(abs(vp(0))<eps){
-	    dpp += (n0^n0)*one_half;
-	  } else if(vp(0)>NumType(0)){
-	    dpp += (n0^n0);
-	    pp  += vp(0)*n0;
-	  }
-	  dpp += (stensor_ppos(vpm)-stensor_ppos(vp(0)))/(vpm-vp(0))*((n01^n01)+(n02^n02));
-	} else {
-	  // all eigenvalues are distincts
-	  if(abs(vp(0))<eps){
-	    dpp = (n0^n0)*one_half;
-	    pp  = stensor<3u,NumType>(NumType(0));
-	  } else if (vp(0)>NumType(0)){
-	    dpp = (n0^n0)+vp(0)/(vp(0)-vp(1))*(n01^n01)+vp(0)/(vp(0)-vp(2))*(n02^n02);
-	    pp  = vp(0)*n0;
-	  } else {
-	    dpp = st2tost2<3u,real>(real(0));
-	    pp  = stensor<3u,NumType>(NumType(0));
-	  }
-	  if(abs(vp(1))<eps){
-	    dpp += (n1^n1)*one_half;
-	  } else if (vp(1)>NumType(0)){
-	    dpp += (n1^n1)+vp(1)/(vp(1)-vp(0))*(n01^n01)+vp(1)/(vp(1)-vp(2))*(n12^n12);
-	    pp  += vp(1)*n1;
-	  } else {
-	    dpp += st2tost2<3u,real>(real(0));
-	    pp  += stensor<3u,NumType>(NumType(0));
-	  }
-	  if(abs(vp(2))<eps){
-	    dpp += (n2^n2)*one_half;
-	  } else if (vp(2)>NumType(0)){
-	    dpp += (n2^n2)+vp(2)/(vp(2)-vp(0))*(n02^n02)+vp(2)/(vp(2)-vp(1))*(n12^n12);
-	    pp  += vp(2)*n2;
-	  } else {
-	    dpp += st2tost2<3u,real>(real(0));
-	    pp  += stensor<3u,NumType>(NumType(0));
-	  }
-	}
-      }      
+        if (abs(vp(0)) < eps) {
+          dpp = (n0 ^ n0) * one_half;
+          pp = stensor<2u, NumType>(real(0));
+        } else if (vp(0) > NumType(0)) {
+          dpp = (n0 ^ n0);
+          pp = vp(0) * n0;
+        } else {
+          dpp = st2tost2<2u, real>(real(0));
+          pp = stensor<2u, NumType>(real(0));
+        }
+        if (abs(vp(1)) < eps) {
+          dpp += (n1 ^ n1) * one_half;
+        } else if (vp(1) > NumType(0)) {
+          dpp += (n1 ^ n1);
+          pp += vp(1) * n1;
+        }
+        dpp += (stensor_ppos(vp(1)) - stensor_ppos(vp(0))) / (vp(1) - vp(0)) *
+               (n01 ^ n01);
+      }
+      if (abs(vp(2)) < eps) {
+        dpp += (n2 ^ n2) * one_half;
+      } else if (vp(2) > 0) {
+        dpp += (n2 ^ n2);
+        pp(2) += vp(2);
+      }
     }
 
-    template<typename DPPType,
-	     typename DNPType,
-	     typename PPType,
-	     typename NPType,
-	     typename StensorType>
+    template <typename DPPType, typename PPType, typename StensorType>
     typename std::enable_if<
-      tfel::meta::Implements<DPPType,ST2toST2Concept>::cond&&
-      tfel::meta::Implements<DNPType,ST2toST2Concept>::cond&&
-      tfel::meta::Implements<PPType,StensorConcept>::cond&&
-      tfel::meta::Implements<NPType,StensorConcept>::cond&&
-      tfel::meta::Implements<StensorType,StensorConcept>::cond&&
-      ST2toST2Traits<DPPType>::dime==StensorTraits<StensorType>::dime &&
-      ST2toST2Traits<DNPType>::dime==StensorTraits<StensorType>::dime &&
-      StensorTraits<PPType>::dime==StensorTraits<StensorType>::dime   &&
-      StensorTraits<NPType>::dime==StensorTraits<StensorType>::dime   &&
-      StensorTraits<StensorType>::dime==1u                            &&
-      tfel::typetraits::IsAssignableTo<typename StensorTraits<StensorType>::NumType,
-				       typename StensorTraits<PPType>::NumType>::cond &&
-      tfel::typetraits::IsAssignableTo<typename StensorTraits<StensorType>::NumType,
-				       typename StensorTraits<NPType>::NumType>::cond &&
-      tfel::typetraits::IsAssignableTo<typename tfel::typetraits::BaseType<typename StensorTraits<StensorType>::NumType>::type,
-				       typename ST2toST2Traits<DPPType>::NumType>::cond &&
-      tfel::typetraits::IsAssignableTo<typename tfel::typetraits::BaseType<typename StensorTraits<StensorType>::NumType>::type,
-				       typename ST2toST2Traits<DNPType>::NumType>::cond,
-      void>::type
-    computeStensorDecompositionInPositiveAndNegativeParts(DPPType& dpp,
-							  DNPType& dnp,
-							  PPType& pp,
-							  NPType& np,
-							  const StensorType& s,
-							  const typename StensorTraits<StensorType>::NumType eps)
-    {
+        tfel::meta::Implements<DPPType, ST2toST2Concept>::cond &&
+            tfel::meta::Implements<PPType, StensorConcept>::cond &&
+            tfel::meta::Implements<StensorType, StensorConcept>::cond &&
+            ST2toST2Traits<DPPType>::dime == StensorTraits<StensorType>::dime &&
+            StensorTraits<PPType>::dime == StensorTraits<StensorType>::dime &&
+            StensorTraits<StensorType>::dime == 3u &&
+            tfel::typetraits::IsAssignableTo<
+                typename StensorTraits<StensorType>::NumType,
+                typename StensorTraits<PPType>::NumType>::cond &&
+            tfel::typetraits::IsAssignableTo<
+                typename tfel::typetraits::BaseType<
+                    typename StensorTraits<StensorType>::NumType>::type,
+                typename ST2toST2Traits<DPPType>::NumType>::cond,
+        void>::type
+    computeStensorPositivePartAndDerivative(
+        DPPType& dpp,
+        PPType& pp,
+        const StensorType& s,
+        const typename StensorTraits<StensorType>::NumType eps) {
+      using tfel::math::internals::stensor_pneg;
+      using tfel::math::internals::stensor_ppos;
+      typedef typename StensorTraits<StensorType>::NumType NumType;
+      typedef typename tfel::typetraits::BaseType<NumType>::type real;
+      constexpr const auto cste = Cste<real>::sqrt2;
+      TFEL_CONSTEXPR const auto one_half = real(1) / (real(2));
+      stensor<3u, NumType> ls(s);  // local copy of s
+      stensor<3u, real> n0;
+      stensor<3u, real> n1;
+      stensor<3u, real> n2;
+      tvector<3u, NumType> vp;
+      tmatrix<3u, 3u, real> m;
+      ls.computeEigenVectors(vp, m);
+      stensor<3u, real>::computeEigenTensors(n0, n1, n2, m);
+      if ((abs(vp(0) - vp(1)) < eps) && (abs(vp(0) - vp(2)) < eps)) {
+        NumType vpm = (vp(0) + vp(1) + vp(2)) / 3;
+        if (abs(vpm) < eps) {
+          dpp = st2tost2<3u, real>::Id() * one_half;
+          pp = stensor<3u, NumType>(NumType(0));
+        } else if (vpm > NumType(0)) {
+          dpp = st2tost2<3u, real>::Id();
+          pp = s;
+        } else {
+          dpp = st2tost2<3u, real>(real(0));
+          pp = stensor<3u, real>(real(0));
+        }
+      } else {
+        const tvector<3u, real> v0 = m.template column_view<0u>();
+        const tvector<3u, real> v1 = m.template column_view<1u>();
+        const tvector<3u, real> v2 = m.template column_view<2u>();
+        const stensor<3u, real> n01 =
+            stensor<3u, real>::buildFromVectorsSymmetricDiadicProduct(v0, v1) /
+            cste;
+        const stensor<3u, real> n02 =
+            stensor<3u, real>::buildFromVectorsSymmetricDiadicProduct(v0, v2) /
+            cste;
+        const stensor<3u, real> n12 =
+            stensor<3u, real>::buildFromVectorsSymmetricDiadicProduct(v1, v2) /
+            cste;
+        if (abs(vp(0) - vp(1)) < eps) {
+          NumType vpm = (vp(0) + vp(1)) * one_half;
+          if (abs(vpm) < eps) {
+            dpp = ((n0 ^ n0) + (n1 ^ n1) + (n01 ^ n01)) * one_half;
+            pp = stensor<3u, NumType>(NumType(0));
+          } else if (vpm > NumType(0)) {
+            dpp = (n0 ^ n0) + (n1 ^ n1) + (n01 ^ n01);
+            pp = vpm * (n0 + n1);
+          } else {
+            dpp = st2tost2<3u, real>(real(0));
+            pp = stensor<3u, NumType>(NumType(0));
+          }
+          if (abs(vp(2)) < eps) {
+            dpp += (n2 ^ n2) * one_half;
+          } else if (vp(2) > NumType(0)) {
+            dpp += n2 ^ n2;
+            pp += vp(2) * n2;
+          }
+          dpp += (stensor_ppos(vpm) - stensor_ppos(vp(2))) / (vpm - vp(2)) *
+                 ((n02 ^ n02) + (n12 ^ n12));
+        } else if (abs(vp(0) - vp(2)) < eps) {
+          NumType vpm = (vp(0) + vp(2)) * one_half;
+          if (abs(vpm) < eps) {
+            dpp = ((n0 ^ n0) + (n2 ^ n2) + (n02 ^ n02)) * one_half;
+            pp = stensor<3u, NumType>(NumType(0));
+          } else if (vpm > NumType(0)) {
+            dpp = (n0 ^ n0) + (n2 ^ n2) + (n02 ^ n02);
+            pp = vpm * (n0 + n2);
+          } else {
+            dpp = st2tost2<3u, real>(real(0));
+            pp = stensor<3u, NumType>(NumType(0));
+          }
+          if (abs(vp(1)) < eps) {
+            dpp += (n1 ^ n1) * one_half;
+          } else if (vp(1) > NumType(0)) {
+            dpp += (n1 ^ n1);
+            pp += vp(1) * n1;
+          }
+          dpp += (stensor_ppos(vpm) - stensor_ppos(vp(1))) / (vpm - vp(1)) *
+                 ((n01 ^ n01) + (n12 ^ n12));
+        } else if (abs(vp(1) - vp(2)) < eps) {
+          NumType vpm = (vp(1) + vp(2)) * one_half;
+          if (abs(vpm) < eps) {
+            dpp = ((n1 ^ n1) + (n2 ^ n2) + (n12 ^ n12)) * one_half;
+            pp = stensor<3u, NumType>(NumType(0));
+          } else if (vpm > NumType(0)) {
+            dpp = (n1 ^ n1) + (n2 ^ n2) + (n12 ^ n12);
+            pp = vpm * (n1 + n2);
+          } else {
+            dpp = st2tost2<3u, real>(real(0));
+            pp = stensor<3u, NumType>(NumType(0));
+          }
+          if (abs(vp(0)) < eps) {
+            dpp += (n0 ^ n0) * one_half;
+          } else if (vp(0) > NumType(0)) {
+            dpp += (n0 ^ n0);
+            pp += vp(0) * n0;
+          }
+          dpp += (stensor_ppos(vpm) - stensor_ppos(vp(0))) / (vpm - vp(0)) *
+                 ((n01 ^ n01) + (n02 ^ n02));
+        } else {
+          // all eigenvalues are distincts
+          if (abs(vp(0)) < eps) {
+            dpp = (n0 ^ n0) * one_half;
+            pp = stensor<3u, NumType>(NumType(0));
+          } else if (vp(0) > NumType(0)) {
+            dpp = (n0 ^ n0) + vp(0) / (vp(0) - vp(1)) * (n01 ^ n01) +
+                  vp(0) / (vp(0) - vp(2)) * (n02 ^ n02);
+            pp = vp(0) * n0;
+          } else {
+            dpp = st2tost2<3u, real>(real(0));
+            pp = stensor<3u, NumType>(NumType(0));
+          }
+          if (abs(vp(1)) < eps) {
+            dpp += (n1 ^ n1) * one_half;
+          } else if (vp(1) > NumType(0)) {
+            dpp += (n1 ^ n1) + vp(1) / (vp(1) - vp(0)) * (n01 ^ n01) +
+                   vp(1) / (vp(1) - vp(2)) * (n12 ^ n12);
+            pp += vp(1) * n1;
+          } else {
+            dpp += st2tost2<3u, real>(real(0));
+            pp += stensor<3u, NumType>(NumType(0));
+          }
+          if (abs(vp(2)) < eps) {
+            dpp += (n2 ^ n2) * one_half;
+          } else if (vp(2) > NumType(0)) {
+            dpp += (n2 ^ n2) + vp(2) / (vp(2) - vp(0)) * (n02 ^ n02) +
+                   vp(2) / (vp(2) - vp(1)) * (n12 ^ n12);
+            pp += vp(2) * n2;
+          } else {
+            dpp += st2tost2<3u, real>(real(0));
+            pp += stensor<3u, NumType>(NumType(0));
+          }
+        }
+      }
+    }
+
+    template <typename DPPType,
+              typename DNPType,
+              typename PPType,
+              typename NPType,
+              typename StensorType>
+    typename std::enable_if<
+        tfel::meta::Implements<DPPType, ST2toST2Concept>::cond &&
+            tfel::meta::Implements<DNPType, ST2toST2Concept>::cond &&
+            tfel::meta::Implements<PPType, StensorConcept>::cond &&
+            tfel::meta::Implements<NPType, StensorConcept>::cond &&
+            tfel::meta::Implements<StensorType, StensorConcept>::cond &&
+            ST2toST2Traits<DPPType>::dime == StensorTraits<StensorType>::dime &&
+            ST2toST2Traits<DNPType>::dime == StensorTraits<StensorType>::dime &&
+            StensorTraits<PPType>::dime == StensorTraits<StensorType>::dime &&
+            StensorTraits<NPType>::dime == StensorTraits<StensorType>::dime &&
+            StensorTraits<StensorType>::dime == 1u &&
+            tfel::typetraits::IsAssignableTo<
+                typename StensorTraits<StensorType>::NumType,
+                typename StensorTraits<PPType>::NumType>::cond &&
+            tfel::typetraits::IsAssignableTo<
+                typename StensorTraits<StensorType>::NumType,
+                typename StensorTraits<NPType>::NumType>::cond &&
+            tfel::typetraits::IsAssignableTo<
+                typename tfel::typetraits::BaseType<
+                    typename StensorTraits<StensorType>::NumType>::type,
+                typename ST2toST2Traits<DPPType>::NumType>::cond &&
+            tfel::typetraits::IsAssignableTo<
+                typename tfel::typetraits::BaseType<
+                    typename StensorTraits<StensorType>::NumType>::type,
+                typename ST2toST2Traits<DNPType>::NumType>::cond,
+        void>::type
+    computeStensorDecompositionInPositiveAndNegativeParts(
+        DPPType& dpp,
+        DNPType& dnp,
+        PPType& pp,
+        NPType& np,
+        const StensorType& s,
+        const typename StensorTraits<StensorType>::NumType eps) {
       using std::abs;
       typedef typename StensorTraits<StensorType>::NumType NumType;
       typedef typename tfel::typetraits::BaseType<NumType>::type real;
-      const real one_half = real(1)/(real(2));
-      dpp(0,1) = dpp(0,2) = dpp(1,0) = dpp(1,2) = dpp(2,0) = dpp(2,1) = real(0);
-      dnp(0,1) = dnp(0,2) = dnp(1,0) = dnp(1,2) = dnp(2,0) = dnp(2,1) = real(0);
-      if(abs(s(0))<eps){
-	dpp(0,0) = one_half;
-	dnp(0,0) = one_half;
-	pp(0)=np(0)=real(0);
-      } else if (s(0)>NumType(0)){
-	dpp(0,0) = real(1);
-	dnp(0,0) = real(0);
-	pp(0)=s(0);
-	np(0)=NumType(0);
+      const real one_half = real(1) / (real(2));
+      dpp(0, 1) = dpp(0, 2) = dpp(1, 0) = dpp(1, 2) = dpp(2, 0) = dpp(2, 1) =
+          real(0);
+      dnp(0, 1) = dnp(0, 2) = dnp(1, 0) = dnp(1, 2) = dnp(2, 0) = dnp(2, 1) =
+          real(0);
+      if (abs(s(0)) < eps) {
+        dpp(0, 0) = one_half;
+        dnp(0, 0) = one_half;
+        pp(0) = np(0) = real(0);
+      } else if (s(0) > NumType(0)) {
+        dpp(0, 0) = real(1);
+        dnp(0, 0) = real(0);
+        pp(0) = s(0);
+        np(0) = NumType(0);
       } else {
-	dpp(0,0) = real(0);
-	dnp(0,0) = real(1);
-	pp(0)=NumType(0);
-	np(0)=s(0);
+        dpp(0, 0) = real(0);
+        dnp(0, 0) = real(1);
+        pp(0) = NumType(0);
+        np(0) = s(0);
       }
-      if(abs(s(1))<eps){
-	dpp(1,1) = one_half;
-	dnp(1,1) = one_half;
-	pp(1)=np(1)=real(0);
-      } else if (s(1)>NumType(0)){
-	dpp(1,1) = real(1);
-	dnp(1,1) = real(0);
-	pp(1)=s(1);
-	np(1)=NumType(0);
+      if (abs(s(1)) < eps) {
+        dpp(1, 1) = one_half;
+        dnp(1, 1) = one_half;
+        pp(1) = np(1) = real(0);
+      } else if (s(1) > NumType(0)) {
+        dpp(1, 1) = real(1);
+        dnp(1, 1) = real(0);
+        pp(1) = s(1);
+        np(1) = NumType(0);
       } else {
-	dpp(1,1) = real(0);
-	dnp(1,1) = real(1);
-	pp(1)=NumType(0);
-	np(1)=s(1);
+        dpp(1, 1) = real(0);
+        dnp(1, 1) = real(1);
+        pp(1) = NumType(0);
+        np(1) = s(1);
       }
-      if(abs(s(2))<eps){
-	dpp(2,2) = one_half;
-	dnp(2,2) = one_half;
-	pp(2)=np(2)=real(0);
-      } else if (s(2)>NumType(0)){
-	dpp(2,2) = real(1);
-	dnp(2,2) = real(0);
-	pp(2)=s(2);
-	np(2)=NumType(0);
+      if (abs(s(2)) < eps) {
+        dpp(2, 2) = one_half;
+        dnp(2, 2) = one_half;
+        pp(2) = np(2) = real(0);
+      } else if (s(2) > NumType(0)) {
+        dpp(2, 2) = real(1);
+        dnp(2, 2) = real(0);
+        pp(2) = s(2);
+        np(2) = NumType(0);
       } else {
-	dpp(2,2) = real(0);
-	dnp(2,2) = real(1);
-	pp(2)=NumType(0);
-	np(2)=s(2);
+        dpp(2, 2) = real(0);
+        dnp(2, 2) = real(1);
+        pp(2) = NumType(0);
+        np(2) = s(2);
       }
-    } // end of computeStensorDecompositionInPositiveAndNegativeParts
+    }  // end of computeStensorDecompositionInPositiveAndNegativeParts
 
-    template<typename DPPType,
-	     typename DNPType,
-	     typename PPType,
-	     typename NPType,
-	     typename StensorType>
+    template <typename DPPType,
+              typename DNPType,
+              typename PPType,
+              typename NPType,
+              typename StensorType>
     typename std::enable_if<
-      tfel::meta::Implements<DPPType,ST2toST2Concept>::cond&&
-      tfel::meta::Implements<DNPType,ST2toST2Concept>::cond&&
-      tfel::meta::Implements<PPType,StensorConcept>::cond&&
-      tfel::meta::Implements<NPType,StensorConcept>::cond&&
-      tfel::meta::Implements<StensorType,StensorConcept>::cond&&
-      ST2toST2Traits<DPPType>::dime==StensorTraits<StensorType>::dime &&
-      ST2toST2Traits<DNPType>::dime==StensorTraits<StensorType>::dime &&
-      StensorTraits<PPType>::dime==StensorTraits<StensorType>::dime   &&
-      StensorTraits<NPType>::dime==StensorTraits<StensorType>::dime   &&
-      StensorTraits<StensorType>::dime==2u                            &&
-      tfel::typetraits::IsAssignableTo<typename StensorTraits<StensorType>::NumType,
-				       typename StensorTraits<PPType>::NumType>::cond &&
-      tfel::typetraits::IsAssignableTo<typename StensorTraits<StensorType>::NumType,
-				       typename StensorTraits<NPType>::NumType>::cond &&
-      tfel::typetraits::IsAssignableTo<typename tfel::typetraits::BaseType<typename StensorTraits<StensorType>::NumType>::type,
-				       typename ST2toST2Traits<DPPType>::NumType>::cond &&
-      tfel::typetraits::IsAssignableTo<typename tfel::typetraits::BaseType<typename StensorTraits<StensorType>::NumType>::type,
-				       typename ST2toST2Traits<DNPType>::NumType>::cond,
-      void>::type
-    computeStensorDecompositionInPositiveAndNegativeParts(DPPType& dpp,
-							  DNPType& dnp,
-							  PPType& pp,
-							  NPType& np,
-							  const StensorType& s,
-							  const typename StensorTraits<StensorType>::NumType eps)
-    {
+        tfel::meta::Implements<DPPType, ST2toST2Concept>::cond &&
+            tfel::meta::Implements<DNPType, ST2toST2Concept>::cond &&
+            tfel::meta::Implements<PPType, StensorConcept>::cond &&
+            tfel::meta::Implements<NPType, StensorConcept>::cond &&
+            tfel::meta::Implements<StensorType, StensorConcept>::cond &&
+            ST2toST2Traits<DPPType>::dime == StensorTraits<StensorType>::dime &&
+            ST2toST2Traits<DNPType>::dime == StensorTraits<StensorType>::dime &&
+            StensorTraits<PPType>::dime == StensorTraits<StensorType>::dime &&
+            StensorTraits<NPType>::dime == StensorTraits<StensorType>::dime &&
+            StensorTraits<StensorType>::dime == 2u &&
+            tfel::typetraits::IsAssignableTo<
+                typename StensorTraits<StensorType>::NumType,
+                typename StensorTraits<PPType>::NumType>::cond &&
+            tfel::typetraits::IsAssignableTo<
+                typename StensorTraits<StensorType>::NumType,
+                typename StensorTraits<NPType>::NumType>::cond &&
+            tfel::typetraits::IsAssignableTo<
+                typename tfel::typetraits::BaseType<
+                    typename StensorTraits<StensorType>::NumType>::type,
+                typename ST2toST2Traits<DPPType>::NumType>::cond &&
+            tfel::typetraits::IsAssignableTo<
+                typename tfel::typetraits::BaseType<
+                    typename StensorTraits<StensorType>::NumType>::type,
+                typename ST2toST2Traits<DNPType>::NumType>::cond,
+        void>::type
+    computeStensorDecompositionInPositiveAndNegativeParts(
+        DPPType& dpp,
+        DNPType& dnp,
+        PPType& pp,
+        NPType& np,
+        const StensorType& s,
+        const typename StensorTraits<StensorType>::NumType eps) {
       using std::abs;
-      using tfel::math::internals::stensor_ppos;
       using tfel::math::internals::stensor_pneg;
+      using tfel::math::internals::stensor_ppos;
       typedef typename StensorTraits<StensorType>::NumType NumType;
       typedef typename tfel::typetraits::BaseType<NumType>::type real;
-      constexpr const auto cste     = Cste<real>::sqrt2;
-      TFEL_CONSTEXPR const auto one_half = real(1)/(real(2));
-      stensor<2u,NumType> ls(s); // local copy of s
-      stensor<2u,real> n0;
-      stensor<2u,real> n1;
-      stensor<2u,real> n2;
-      tvector<3u,NumType> vp;
-      tmatrix<3u,3u,real> m;
-      ls.computeEigenVectors(vp,m);
-      stensor<2u,real>::computeEigenTensors(n0,n1,n2,m);
-      const tvector<3u,real> v0 = m.template column_view<0u>();
-      const tvector<3u,real> v1 = m.template column_view<1u>();
-      const stensor<2u,real> n01 = stensor<2u,real>::buildFromVectorsSymmetricDiadicProduct(v0,v1)/cste;
-      if(abs(vp(0)-vp(1))<eps){
-	const NumType vpm = (vp(0)+vp(1))*one_half;
-	if(abs(vpm)<eps){
-	  dpp = dnp = ((n0^n0)+(n1^n1)+(n01^n01))*one_half;
-	  pp = np = stensor<2u,NumType>(real(0));
-	} else if(vpm>NumType(0)){
-	  dpp = (n0^n0)+(n1^n1)+(n01^n01);
-	  dnp = st2tost2<2u,real>(real(0));
-	  pp  = vpm*(n0+n1);
-	  np  = stensor<2u,NumType>(real(0));
-	} else {
-	  dpp = st2tost2<2u,real>(real(0));
-	  dnp = (n0^n0)+(n1^n1)+(n01^n01);
-	  pp  = stensor<2u,NumType>(real(0));
-	  np  = vpm*(n0+n1);
-	}
+      constexpr const auto cste = Cste<real>::sqrt2;
+      TFEL_CONSTEXPR const auto one_half = real(1) / (real(2));
+      stensor<2u, NumType> ls(s);  // local copy of s
+      stensor<2u, real> n0;
+      stensor<2u, real> n1;
+      stensor<2u, real> n2;
+      tvector<3u, NumType> vp;
+      tmatrix<3u, 3u, real> m;
+      ls.computeEigenVectors(vp, m);
+      stensor<2u, real>::computeEigenTensors(n0, n1, n2, m);
+      const tvector<3u, real> v0 = m.template column_view<0u>();
+      const tvector<3u, real> v1 = m.template column_view<1u>();
+      const stensor<2u, real> n01 =
+          stensor<2u, real>::buildFromVectorsSymmetricDiadicProduct(v0, v1) /
+          cste;
+      if (abs(vp(0) - vp(1)) < eps) {
+        const NumType vpm = (vp(0) + vp(1)) * one_half;
+        if (abs(vpm) < eps) {
+          dpp = dnp = ((n0 ^ n0) + (n1 ^ n1) + (n01 ^ n01)) * one_half;
+          pp = np = stensor<2u, NumType>(real(0));
+        } else if (vpm > NumType(0)) {
+          dpp = (n0 ^ n0) + (n1 ^ n1) + (n01 ^ n01);
+          dnp = st2tost2<2u, real>(real(0));
+          pp = vpm * (n0 + n1);
+          np = stensor<2u, NumType>(real(0));
+        } else {
+          dpp = st2tost2<2u, real>(real(0));
+          dnp = (n0 ^ n0) + (n1 ^ n1) + (n01 ^ n01);
+          pp = stensor<2u, NumType>(real(0));
+          np = vpm * (n0 + n1);
+        }
       } else {
-	if(abs(vp(0))<eps){
-	  dpp = dnp = (n0^n0)*one_half;
-	  pp = np = stensor<2u,NumType>(real(0));
-	} else if(vp(0)>NumType(0)){
-	  dpp = (n0^n0);
-	  dnp = st2tost2<2u,real>(real(0));
-	  pp  = vp(0)*n0;
-	  np  = stensor<2u,NumType>(real(0));
-	} else {
-	  dpp = st2tost2<2u,real>(real(0));
-	  dnp = (n0^n0);
-	  pp  = stensor<2u,NumType>(real(0));
-	  np  = vp(0)*n0;
-	}
-	if(abs(vp(1))<eps){
-	  dpp += (n1^n1)*one_half;
-	  dnp += (n1^n1)*one_half;
-	} else if(vp(1)>NumType(0)){
-	  dpp += (n1^n1);
-	  pp  += vp(1)*n1;
-	} else {
-	  dnp += (n1^n1);
-	  np  += vp(1)*n1;
-	}
-	dpp += (stensor_ppos(vp(1))-stensor_ppos(vp(0)))/(vp(1)-vp(0))*(n01^n01);
-	dnp += (stensor_pneg(vp(1))-stensor_pneg(vp(0)))/(vp(1)-vp(0))*(n01^n01);
+        if (abs(vp(0)) < eps) {
+          dpp = dnp = (n0 ^ n0) * one_half;
+          pp = np = stensor<2u, NumType>(real(0));
+        } else if (vp(0) > NumType(0)) {
+          dpp = (n0 ^ n0);
+          dnp = st2tost2<2u, real>(real(0));
+          pp = vp(0) * n0;
+          np = stensor<2u, NumType>(real(0));
+        } else {
+          dpp = st2tost2<2u, real>(real(0));
+          dnp = (n0 ^ n0);
+          pp = stensor<2u, NumType>(real(0));
+          np = vp(0) * n0;
+        }
+        if (abs(vp(1)) < eps) {
+          dpp += (n1 ^ n1) * one_half;
+          dnp += (n1 ^ n1) * one_half;
+        } else if (vp(1) > NumType(0)) {
+          dpp += (n1 ^ n1);
+          pp += vp(1) * n1;
+        } else {
+          dnp += (n1 ^ n1);
+          np += vp(1) * n1;
+        }
+        dpp += (stensor_ppos(vp(1)) - stensor_ppos(vp(0))) / (vp(1) - vp(0)) *
+               (n01 ^ n01);
+        dnp += (stensor_pneg(vp(1)) - stensor_pneg(vp(0))) / (vp(1) - vp(0)) *
+               (n01 ^ n01);
       }
-      if(abs(vp(2))<eps){
-	dpp += (n2^n2)*one_half;
-	dnp += (n2^n2)*one_half;
-      } else if (vp(2)>0){
-	dpp   += (n2^n2);
-	pp(2) += vp(2);
+      if (abs(vp(2)) < eps) {
+        dpp += (n2 ^ n2) * one_half;
+        dnp += (n2 ^ n2) * one_half;
+      } else if (vp(2) > 0) {
+        dpp += (n2 ^ n2);
+        pp(2) += vp(2);
       } else {
-	dnp   += (n2^n2);
-	np(2) += vp(2);
+        dnp += (n2 ^ n2);
+        np(2) += vp(2);
       }
-    } // end of computeStensorDecompositionInPositiveAndNegativeParts
+    }  // end of computeStensorDecompositionInPositiveAndNegativeParts
 
-    template<typename DPPType,
-	     typename DNPType,
-	     typename PPType,
-	     typename NPType,
-	     typename StensorType>
+    template <typename DPPType,
+              typename DNPType,
+              typename PPType,
+              typename NPType,
+              typename StensorType>
     typename std::enable_if<
-      tfel::meta::Implements<DPPType,ST2toST2Concept>::cond&&
-      tfel::meta::Implements<DNPType,ST2toST2Concept>::cond&&
-      tfel::meta::Implements<PPType,StensorConcept>::cond&&
-      tfel::meta::Implements<NPType,StensorConcept>::cond&&
-      tfel::meta::Implements<StensorType,StensorConcept>::cond&&
-      ST2toST2Traits<DPPType>::dime==StensorTraits<StensorType>::dime &&
-      ST2toST2Traits<DNPType>::dime==StensorTraits<StensorType>::dime &&
-      StensorTraits<PPType>::dime==StensorTraits<StensorType>::dime   &&
-      StensorTraits<NPType>::dime==StensorTraits<StensorType>::dime   &&
-      StensorTraits<StensorType>::dime==3u                            &&
-      tfel::typetraits::IsAssignableTo<typename StensorTraits<StensorType>::NumType,
-				       typename StensorTraits<PPType>::NumType>::cond &&
-      tfel::typetraits::IsAssignableTo<typename StensorTraits<StensorType>::NumType,
-				       typename StensorTraits<NPType>::NumType>::cond &&
-      tfel::typetraits::IsAssignableTo<typename tfel::typetraits::BaseType<typename StensorTraits<StensorType>::NumType>::type,
-				       typename ST2toST2Traits<DPPType>::NumType>::cond &&
-      tfel::typetraits::IsAssignableTo<typename tfel::typetraits::BaseType<typename StensorTraits<StensorType>::NumType>::type,
-				       typename ST2toST2Traits<DNPType>::NumType>::cond,
-      void>::type
-    computeStensorDecompositionInPositiveAndNegativeParts(DPPType& dpp,
-							  DNPType& dnp,
-							  PPType& pp,
-							  NPType& np,
-							  const StensorType& s,
-							  const typename StensorTraits<StensorType>::NumType eps)
-    {
-      using tfel::math::internals::stensor_ppos;
+        tfel::meta::Implements<DPPType, ST2toST2Concept>::cond &&
+            tfel::meta::Implements<DNPType, ST2toST2Concept>::cond &&
+            tfel::meta::Implements<PPType, StensorConcept>::cond &&
+            tfel::meta::Implements<NPType, StensorConcept>::cond &&
+            tfel::meta::Implements<StensorType, StensorConcept>::cond &&
+            ST2toST2Traits<DPPType>::dime == StensorTraits<StensorType>::dime &&
+            ST2toST2Traits<DNPType>::dime == StensorTraits<StensorType>::dime &&
+            StensorTraits<PPType>::dime == StensorTraits<StensorType>::dime &&
+            StensorTraits<NPType>::dime == StensorTraits<StensorType>::dime &&
+            StensorTraits<StensorType>::dime == 3u &&
+            tfel::typetraits::IsAssignableTo<
+                typename StensorTraits<StensorType>::NumType,
+                typename StensorTraits<PPType>::NumType>::cond &&
+            tfel::typetraits::IsAssignableTo<
+                typename StensorTraits<StensorType>::NumType,
+                typename StensorTraits<NPType>::NumType>::cond &&
+            tfel::typetraits::IsAssignableTo<
+                typename tfel::typetraits::BaseType<
+                    typename StensorTraits<StensorType>::NumType>::type,
+                typename ST2toST2Traits<DPPType>::NumType>::cond &&
+            tfel::typetraits::IsAssignableTo<
+                typename tfel::typetraits::BaseType<
+                    typename StensorTraits<StensorType>::NumType>::type,
+                typename ST2toST2Traits<DNPType>::NumType>::cond,
+        void>::type
+    computeStensorDecompositionInPositiveAndNegativeParts(
+        DPPType& dpp,
+        DNPType& dnp,
+        PPType& pp,
+        NPType& np,
+        const StensorType& s,
+        const typename StensorTraits<StensorType>::NumType eps) {
       using tfel::math::internals::stensor_pneg;
+      using tfel::math::internals::stensor_ppos;
       typedef typename StensorTraits<StensorType>::NumType NumType;
       typedef typename tfel::typetraits::BaseType<NumType>::type real;
-      constexpr const auto cste     = Cste<real>::sqrt2;
-      TFEL_CONSTEXPR const auto one_half = real(1)/(real(2));
-      stensor<3u,NumType> ls(s); // local copy of s
-      stensor<3u,real> n0;
-      stensor<3u,real> n1;
-      stensor<3u,real> n2;
-      tvector<3u,NumType> vp;
-      tmatrix<3u,3u,real> m;
-      ls.computeEigenVectors(vp,m);
-      stensor<3u,real>::computeEigenTensors(n0,n1,n2,m);
-      if((abs(vp(0)-vp(1))<eps)&&(abs(vp(0)-vp(2))<eps)){
-	NumType vpm = (vp(0)+vp(1)+vp(2))/3;
-	if(abs(vpm)<eps){
-	  dpp = dnp = st2tost2<3u,real>::Id()*one_half;
-	  pp  = np  = stensor<3u,NumType>(NumType(0));
-	} else if(vpm>NumType(0)){
-	  dpp = st2tost2<3u,real>::Id();
-	  pp  = s;
-	  dnp = st2tost2<3u,real>(real(0));
-	  np  = stensor<3u,real>(real(0));
-	} else {
-	  dpp = st2tost2<3u,real>(real(0));
-	  pp  = stensor<3u,real>(real(0));
-	  dnp = st2tost2<3u,real>::Id();
-	  np  = s;
-	}
+      constexpr const auto cste = Cste<real>::sqrt2;
+      TFEL_CONSTEXPR const auto one_half = real(1) / (real(2));
+      stensor<3u, NumType> ls(s);  // local copy of s
+      stensor<3u, real> n0;
+      stensor<3u, real> n1;
+      stensor<3u, real> n2;
+      tvector<3u, NumType> vp;
+      tmatrix<3u, 3u, real> m;
+      ls.computeEigenVectors(vp, m);
+      stensor<3u, real>::computeEigenTensors(n0, n1, n2, m);
+      if ((abs(vp(0) - vp(1)) < eps) && (abs(vp(0) - vp(2)) < eps)) {
+        NumType vpm = (vp(0) + vp(1) + vp(2)) / 3;
+        if (abs(vpm) < eps) {
+          dpp = dnp = st2tost2<3u, real>::Id() * one_half;
+          pp = np = stensor<3u, NumType>(NumType(0));
+        } else if (vpm > NumType(0)) {
+          dpp = st2tost2<3u, real>::Id();
+          pp = s;
+          dnp = st2tost2<3u, real>(real(0));
+          np = stensor<3u, real>(real(0));
+        } else {
+          dpp = st2tost2<3u, real>(real(0));
+          pp = stensor<3u, real>(real(0));
+          dnp = st2tost2<3u, real>::Id();
+          np = s;
+        }
       } else {
-	const tvector<3u,real> v0 = m.template column_view<0u>();
-	const tvector<3u,real> v1 = m.template column_view<1u>();
-	const tvector<3u,real> v2 = m.template column_view<2u>();
-	const stensor<3u,real> n01 = stensor<3u,real>::buildFromVectorsSymmetricDiadicProduct(v0,v1)/cste;
-	const stensor<3u,real> n02 = stensor<3u,real>::buildFromVectorsSymmetricDiadicProduct(v0,v2)/cste;
-	const stensor<3u,real> n12 = stensor<3u,real>::buildFromVectorsSymmetricDiadicProduct(v1,v2)/cste;
-	if(abs(vp(0)-vp(1))<eps){
-	  NumType vpm = (vp(0)+vp(1))*one_half;
-	  if(abs(vpm)<eps){
-	    dpp = dnp = ((n0^n0)+(n1^n1)+(n01^n01))*one_half;
-	    pp  = np  = stensor<3u,NumType>(NumType(0));
-	  } else if(vpm>NumType(0)){
-	    dpp = (n0^n0)+(n1^n1)+(n01^n01);
-	    dnp = st2tost2<3u,real>(real(0));
-	    pp  = vpm*(n0+n1);
-	    np  = stensor<3u,NumType>(NumType(0));
-	  } else {
-	    dpp = st2tost2<3u,real>(real(0));
-	    dnp = (n0^n0)+(n1^n1)+(n01^n01);
-	    pp  = stensor<3u,NumType>(NumType(0));
-	    np  = vpm*(n0+n1);
-	  }
-	  if(abs(vp(2))<eps){
-	    dpp += (n2^n2)*one_half;
-	    dnp += (n2^n2)*one_half;
-	  } else if(vp(2)>NumType(0)){
-	    dpp += n2^n2;
-	    pp  += vp(2)*n2;
-	  } else {
-	    dnp += n2^n2;
-	    np  += vp(2)*n2;
-	  }
-	  dpp += (stensor_ppos(vpm)-stensor_ppos(vp(2)))/(vpm-vp(2))*((n02^n02)+(n12^n12));
-	  dnp += (stensor_pneg(vpm)-stensor_pneg(vp(2)))/(vpm-vp(2))*((n02^n02)+(n12^n12));
-	} else if(abs(vp(0)-vp(2))<eps){
-	  NumType vpm = (vp(0)+vp(2))*one_half;
-	  if(abs(vpm)<eps){
-	    dpp = dnp = ((n0^n0)+(n2^n2)+(n02^n02))*one_half;
-	    pp  = np  = stensor<3u,NumType>(NumType(0));
-	  } else if(vpm>NumType(0)){
-	    dpp = (n0^n0)+(n2^n2)+(n02^n02);
-	    dnp = st2tost2<3u,real>(real(0));
-	    pp  = vpm*(n0+n2);
-	    np  = stensor<3u,NumType>(NumType(0));
-	  } else {
-	    dpp = st2tost2<3u,real>(real(0));
-	    dnp = (n0^n0)+(n2^n2)+(n02^n02);
-	    pp  = stensor<3u,NumType>(NumType(0));
-	    np  = vpm*(n0+n2);
-	  }
-	  if(abs(vp(1))<eps){
-	    dpp += (n1^n1)*one_half;
-	    dnp += (n1^n1)*one_half;
-	  } else if(vp(1)>NumType(0)){
-	    dpp += (n1^n1);
-	    pp  += vp(1)*n1;
-	  } else {
-	    dnp += (n1^n1);
-	    np  += vp(1)*n1;
-	  }
-	  dpp += (stensor_ppos(vpm)-stensor_ppos(vp(1)))/(vpm-vp(1))*((n01^n01)+(n12^n12));
-	  dnp += (stensor_pneg(vpm)-stensor_pneg(vp(1)))/(vpm-vp(1))*((n01^n01)+(n12^n12));
-	} else if(abs(vp(1)-vp(2))<eps){
-	  NumType vpm = (vp(1)+vp(2))*one_half;
-	  if(abs(vpm)<eps){
-	    dpp = dnp = ((n1^n1)+(n2^n2)+(n12^n12))*one_half;
-	    pp  = np  = stensor<3u,NumType>(NumType(0));
-	  } else if(vpm>NumType(0)){
-	    dpp = (n1^n1)+(n2^n2)+(n12^n12);
-	    dnp = st2tost2<3u,real>(real(0));
-	    pp  = vpm*(n1+n2);
-	    np  = stensor<3u,NumType>(NumType(0));
-	  } else {
-	    dpp = st2tost2<3u,real>(real(0));
-	    dnp = (n1^n1)+(n2^n2)+(n12^n12);
-	    pp  = stensor<3u,NumType>(NumType(0));
-	    np  = vpm*(n1+n2);
-	  }
-	  if(abs(vp(0))<eps){
-	    dpp += (n0^n0)*one_half;
-	    dnp += (n0^n0)*one_half;
-	  } else if(vp(0)>NumType(0)){
-	    dpp += (n0^n0);
-	    pp  += vp(0)*n0;
-	  } else {
-	    dnp += (n0^n0);
-	    np  += vp(0)*n0;
-	  }
-	  dpp += (stensor_ppos(vpm)-stensor_ppos(vp(0)))/(vpm-vp(0))*((n01^n01)+(n02^n02));
-	  dnp += (stensor_pneg(vpm)-stensor_pneg(vp(0)))/(vpm-vp(0))*((n01^n01)+(n02^n02));
-	} else {
-	  // all eigenvalues are distincts
-	  if(abs(vp(0))<eps){
-	    dpp = (n0^n0)*one_half;
-	    dnp = (n0^n0)*one_half;
-	    pp  = stensor<3u,NumType>(NumType(0));
-	    np  = stensor<3u,NumType>(NumType(0));
-	  } else if (vp(0)>NumType(0)){
-	    dpp = (n0^n0)+vp(0)/(vp(0)-vp(1))*(n01^n01)+vp(0)/(vp(0)-vp(2))*(n02^n02);
-	    dnp = st2tost2<3u,real>(real(0));
-	    pp  = vp(0)*n0;
-	    np  = stensor<3u,NumType>(NumType(0));
-	  } else {
-	    dpp = st2tost2<3u,real>(real(0));
-	    dnp = (n0^n0)+vp(0)/(vp(0)-vp(1))*(n01^n01)+vp(0)/(vp(0)-vp(2))*(n02^n02);
-	    pp  = stensor<3u,NumType>(NumType(0));
-	    np  = vp(0)*n0;
-	  }
-	  if(abs(vp(1))<eps){
-	    dpp += (n1^n1)*one_half;
-	    dnp += (n1^n1)*one_half;
-	  } else if (vp(1)>NumType(0)){
-	    dpp += (n1^n1)+vp(1)/(vp(1)-vp(0))*(n01^n01)+vp(1)/(vp(1)-vp(2))*(n12^n12);
-	    dnp += st2tost2<3u,real>(real(0));
-	    pp  += vp(1)*n1;
-	    np  += stensor<3u,NumType>(NumType(0));
-	  } else {
-	    dpp += st2tost2<3u,real>(real(0));
-	    dnp += (n1^n1)+vp(1)/(vp(1)-vp(0))*(n01^n01)+vp(1)/(vp(1)-vp(2))*(n12^n12);
-	    pp  += stensor<3u,NumType>(NumType(0));
-	    np  += vp(1)*n1;
-	  }
-	  if(abs(vp(2))<eps){
-	    dpp += (n2^n2)*one_half;
-	    dnp += (n2^n2)*one_half;
-	  } else if (vp(2)>NumType(0)){
-	    dpp += (n2^n2)+vp(2)/(vp(2)-vp(0))*(n02^n02)+vp(2)/(vp(2)-vp(1))*(n12^n12);
-	    dnp += st2tost2<3u,real>(real(0));
-	    pp  += vp(2)*n2;
-	    np  += stensor<3u,NumType>(NumType(0));
-	  } else {
-	    dpp += st2tost2<3u,real>(real(0));
-	    dnp += (n2^n2)+vp(2)/(vp(2)-vp(1))*(n02^n02)+vp(2)/(vp(2)-vp(1))*(n12^n12);
-	    pp  += stensor<3u,NumType>(NumType(0));
-	    np  += vp(2)*n2;
-	  }
-	}
+        const tvector<3u, real> v0 = m.template column_view<0u>();
+        const tvector<3u, real> v1 = m.template column_view<1u>();
+        const tvector<3u, real> v2 = m.template column_view<2u>();
+        const stensor<3u, real> n01 =
+            stensor<3u, real>::buildFromVectorsSymmetricDiadicProduct(v0, v1) /
+            cste;
+        const stensor<3u, real> n02 =
+            stensor<3u, real>::buildFromVectorsSymmetricDiadicProduct(v0, v2) /
+            cste;
+        const stensor<3u, real> n12 =
+            stensor<3u, real>::buildFromVectorsSymmetricDiadicProduct(v1, v2) /
+            cste;
+        if (abs(vp(0) - vp(1)) < eps) {
+          NumType vpm = (vp(0) + vp(1)) * one_half;
+          if (abs(vpm) < eps) {
+            dpp = dnp = ((n0 ^ n0) + (n1 ^ n1) + (n01 ^ n01)) * one_half;
+            pp = np = stensor<3u, NumType>(NumType(0));
+          } else if (vpm > NumType(0)) {
+            dpp = (n0 ^ n0) + (n1 ^ n1) + (n01 ^ n01);
+            dnp = st2tost2<3u, real>(real(0));
+            pp = vpm * (n0 + n1);
+            np = stensor<3u, NumType>(NumType(0));
+          } else {
+            dpp = st2tost2<3u, real>(real(0));
+            dnp = (n0 ^ n0) + (n1 ^ n1) + (n01 ^ n01);
+            pp = stensor<3u, NumType>(NumType(0));
+            np = vpm * (n0 + n1);
+          }
+          if (abs(vp(2)) < eps) {
+            dpp += (n2 ^ n2) * one_half;
+            dnp += (n2 ^ n2) * one_half;
+          } else if (vp(2) > NumType(0)) {
+            dpp += n2 ^ n2;
+            pp += vp(2) * n2;
+          } else {
+            dnp += n2 ^ n2;
+            np += vp(2) * n2;
+          }
+          dpp += (stensor_ppos(vpm) - stensor_ppos(vp(2))) / (vpm - vp(2)) *
+                 ((n02 ^ n02) + (n12 ^ n12));
+          dnp += (stensor_pneg(vpm) - stensor_pneg(vp(2))) / (vpm - vp(2)) *
+                 ((n02 ^ n02) + (n12 ^ n12));
+        } else if (abs(vp(0) - vp(2)) < eps) {
+          NumType vpm = (vp(0) + vp(2)) * one_half;
+          if (abs(vpm) < eps) {
+            dpp = dnp = ((n0 ^ n0) + (n2 ^ n2) + (n02 ^ n02)) * one_half;
+            pp = np = stensor<3u, NumType>(NumType(0));
+          } else if (vpm > NumType(0)) {
+            dpp = (n0 ^ n0) + (n2 ^ n2) + (n02 ^ n02);
+            dnp = st2tost2<3u, real>(real(0));
+            pp = vpm * (n0 + n2);
+            np = stensor<3u, NumType>(NumType(0));
+          } else {
+            dpp = st2tost2<3u, real>(real(0));
+            dnp = (n0 ^ n0) + (n2 ^ n2) + (n02 ^ n02);
+            pp = stensor<3u, NumType>(NumType(0));
+            np = vpm * (n0 + n2);
+          }
+          if (abs(vp(1)) < eps) {
+            dpp += (n1 ^ n1) * one_half;
+            dnp += (n1 ^ n1) * one_half;
+          } else if (vp(1) > NumType(0)) {
+            dpp += (n1 ^ n1);
+            pp += vp(1) * n1;
+          } else {
+            dnp += (n1 ^ n1);
+            np += vp(1) * n1;
+          }
+          dpp += (stensor_ppos(vpm) - stensor_ppos(vp(1))) / (vpm - vp(1)) *
+                 ((n01 ^ n01) + (n12 ^ n12));
+          dnp += (stensor_pneg(vpm) - stensor_pneg(vp(1))) / (vpm - vp(1)) *
+                 ((n01 ^ n01) + (n12 ^ n12));
+        } else if (abs(vp(1) - vp(2)) < eps) {
+          NumType vpm = (vp(1) + vp(2)) * one_half;
+          if (abs(vpm) < eps) {
+            dpp = dnp = ((n1 ^ n1) + (n2 ^ n2) + (n12 ^ n12)) * one_half;
+            pp = np = stensor<3u, NumType>(NumType(0));
+          } else if (vpm > NumType(0)) {
+            dpp = (n1 ^ n1) + (n2 ^ n2) + (n12 ^ n12);
+            dnp = st2tost2<3u, real>(real(0));
+            pp = vpm * (n1 + n2);
+            np = stensor<3u, NumType>(NumType(0));
+          } else {
+            dpp = st2tost2<3u, real>(real(0));
+            dnp = (n1 ^ n1) + (n2 ^ n2) + (n12 ^ n12);
+            pp = stensor<3u, NumType>(NumType(0));
+            np = vpm * (n1 + n2);
+          }
+          if (abs(vp(0)) < eps) {
+            dpp += (n0 ^ n0) * one_half;
+            dnp += (n0 ^ n0) * one_half;
+          } else if (vp(0) > NumType(0)) {
+            dpp += (n0 ^ n0);
+            pp += vp(0) * n0;
+          } else {
+            dnp += (n0 ^ n0);
+            np += vp(0) * n0;
+          }
+          dpp += (stensor_ppos(vpm) - stensor_ppos(vp(0))) / (vpm - vp(0)) *
+                 ((n01 ^ n01) + (n02 ^ n02));
+          dnp += (stensor_pneg(vpm) - stensor_pneg(vp(0))) / (vpm - vp(0)) *
+                 ((n01 ^ n01) + (n02 ^ n02));
+        } else {
+          // all eigenvalues are distincts
+          if (abs(vp(0)) < eps) {
+            dpp = (n0 ^ n0) * one_half;
+            dnp = (n0 ^ n0) * one_half;
+            pp = stensor<3u, NumType>(NumType(0));
+            np = stensor<3u, NumType>(NumType(0));
+          } else if (vp(0) > NumType(0)) {
+            dpp = (n0 ^ n0) + vp(0) / (vp(0) - vp(1)) * (n01 ^ n01) +
+                  vp(0) / (vp(0) - vp(2)) * (n02 ^ n02);
+            dnp = st2tost2<3u, real>(real(0));
+            pp = vp(0) * n0;
+            np = stensor<3u, NumType>(NumType(0));
+          } else {
+            dpp = st2tost2<3u, real>(real(0));
+            dnp = (n0 ^ n0) + vp(0) / (vp(0) - vp(1)) * (n01 ^ n01) +
+                  vp(0) / (vp(0) - vp(2)) * (n02 ^ n02);
+            pp = stensor<3u, NumType>(NumType(0));
+            np = vp(0) * n0;
+          }
+          if (abs(vp(1)) < eps) {
+            dpp += (n1 ^ n1) * one_half;
+            dnp += (n1 ^ n1) * one_half;
+          } else if (vp(1) > NumType(0)) {
+            dpp += (n1 ^ n1) + vp(1) / (vp(1) - vp(0)) * (n01 ^ n01) +
+                   vp(1) / (vp(1) - vp(2)) * (n12 ^ n12);
+            dnp += st2tost2<3u, real>(real(0));
+            pp += vp(1) * n1;
+            np += stensor<3u, NumType>(NumType(0));
+          } else {
+            dpp += st2tost2<3u, real>(real(0));
+            dnp += (n1 ^ n1) + vp(1) / (vp(1) - vp(0)) * (n01 ^ n01) +
+                   vp(1) / (vp(1) - vp(2)) * (n12 ^ n12);
+            pp += stensor<3u, NumType>(NumType(0));
+            np += vp(1) * n1;
+          }
+          if (abs(vp(2)) < eps) {
+            dpp += (n2 ^ n2) * one_half;
+            dnp += (n2 ^ n2) * one_half;
+          } else if (vp(2) > NumType(0)) {
+            dpp += (n2 ^ n2) + vp(2) / (vp(2) - vp(0)) * (n02 ^ n02) +
+                   vp(2) / (vp(2) - vp(1)) * (n12 ^ n12);
+            dnp += st2tost2<3u, real>(real(0));
+            pp += vp(2) * n2;
+            np += stensor<3u, NumType>(NumType(0));
+          } else {
+            dpp += st2tost2<3u, real>(real(0));
+            dnp += (n2 ^ n2) + vp(2) / (vp(2) - vp(1)) * (n02 ^ n02) +
+                   vp(2) / (vp(2) - vp(1)) * (n12 ^ n12);
+            pp += stensor<3u, NumType>(NumType(0));
+            np += vp(2) * n2;
+          }
+        }
       }
-    } // end of computeStensorDecompositionInPositiveAndNegativeParts
+    }  // end of computeStensorDecompositionInPositiveAndNegativeParts
 
-  } // end of namespace math
-} // end of namespace tfel
+  }  // end of namespace math
+}  // end of namespace tfel
 
-#endif /* LIB_TFEL_MATH_STENSOR_DECOMPOSITIONINPOSITIVEANDNEGATIVEPARTS_IXX_ */
+#endif /* LIB_TFEL_MATH_STENSOR_DECOMPOSITIONINPOSITIVEANDNEGATIVEPARTS_IXX_ \
+        */

@@ -1,38 +1,35 @@
 /*!
  * \file   mfront/include/MFront/ModelDSLBase.hxx
- * \brief  
- * 
+ * \brief
+ *
  * \author Helfer Thomas
  * \date   04 jun 2007
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_MFRONTMODELPARSERBASE_HXX_
-#define LIB_MFRONTMODELPARSERBASE_HXX_ 
+#define LIB_MFRONTMODELPARSERBASE_HXX_
 
-#include<map>
-#include<string>
+#include <map>
+#include <string>
 
-#include"MFront/DSLBase.hxx"
-#include"MFront/ModelDSLCommon.hxx"
+#include "MFront/DSLBase.hxx"
+#include "MFront/ModelDSLCommon.hxx"
 
-namespace mfront{
+namespace mfront {
 
-  template<typename Child>
-  struct ModelDSLBase
-    : public ModelDSLCommon
-  {
+  template <typename Child>
+  struct ModelDSLBase : public ModelDSLCommon {
     /*!
      * \brief return the list of keywords usable with this parser
      * \param[out] k : the list of keywords registred for this parser
      */
-    virtual void
-    getKeywordsList(std::vector<std::string>&) const override;
+    virtual void getKeywordsList(std::vector<std::string>&) const override;
     /*!
      * \brief analyse a file. This method is called only once, for the
      * main mfront file. The imported files are treated by the import
@@ -45,16 +42,15 @@ namespace mfront{
      * substitutions are given through command-line options such as
      * `--@YYY@=XXX`)
      */
-    virtual void
-    analyseFile(const std::string&,
-		const std::vector<std::string>&,
-		const std::map<std::string,std::string>&) override;
+    virtual void analyseFile(
+        const std::string&,
+        const std::vector<std::string>&,
+        const std::map<std::string, std::string>&) override;
     /*!
      * \brief analyse the specified string.
      * \param[in] s : analyse a string
      */
-    virtual void
-    analyseString(const std::string&) override;
+    virtual void analyseString(const std::string&) override;
     /*!
      * \brief import a file
      * \param[in] f     : file name
@@ -62,32 +58,28 @@ namespace mfront{
      * the input file commands
      */
     virtual void importFile(const std::string&,
-			    const std::vector<std::string>&,
-			    const std::map<std::string,std::string>&) override;
-  protected:
+                            const std::vector<std::string>&,
+                            const std::map<std::string, std::string>&) override;
 
-    typedef void (Child::* MemberFuncPtr)(void);
-    typedef std::map<std::string,MemberFuncPtr> CallBackContainer;
+   protected:
+    typedef void (Child::*MemberFuncPtr)(void);
+    typedef std::map<std::string, MemberFuncPtr> CallBackContainer;
 
     ModelDSLBase();
 
     virtual void analyse(void);
-    
-    virtual void
-    registerDefaultCallBacks(void);
 
-    virtual void
-    registerNewCallBack(const std::string&,const MemberFuncPtr);
-    
+    virtual void registerDefaultCallBacks(void);
+
+    virtual void registerNewCallBack(const std::string&, const MemberFuncPtr);
+
     CallBackContainer callBacks;
-    
-    std::set<std::string> registredKeyWords;
 
+    std::set<std::string> registredKeyWords;
   };
 
-} // end of namespace mfront
+}  // end of namespace mfront
 
-#include"MFront/ModelDSLBase.ixx"
+#include "MFront/ModelDSLBase.ixx"
 
 #endif /* LIB_MFRONTMODELPARSERBASE_HXX_ */
-

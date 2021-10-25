@@ -2,22 +2,22 @@
  * \file   include/TFEL/Tests/TestProxy.hxx
  * \author Helfer Thomas
  * \date   10 Apr 10
- * \brief  
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \brief
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_TFEL_TESTS_TESTPROXY_HXX
 #define LIB_TFEL_TESTS_TESTPROXY_HXX 1
 
-#include<string>
+#include <string>
 
-#include"TFEL/Config/TFELConfig.hxx"
-#include"TFEL/Tests/TestFunctionWrapper.hxx"
+#include "TFEL/Config/TFELConfig.hxx"
+#include "TFEL/Tests/TestFunctionWrapper.hxx"
 
 /*!
  * \def TFEL_PP_JOIN
@@ -25,7 +25,7 @@
  *
  * This macro was taken from the boost library:
  * - http://boost.org/
- * 
+ *
  * The following piece of macro magic joins the two
  * arguments together, even when one of the arguments is
  * itself a macro (see 16.3.1 in C++ standard).  The key
@@ -35,7 +35,7 @@
  * \author Helfer Thomas
  * \date   28 Aug 2006
  */
-#define TFEL_PP_JOIN(X,Y) TFEL_PP_DO_JOIN( X, Y )
+#define TFEL_PP_JOIN(X, Y) TFEL_PP_DO_JOIN(X, Y)
 
 /*!
  * \def TFEL_PP_DO_JOIN
@@ -44,7 +44,7 @@
  * \author Helfer Thomas
  * \date   28 Aug 2006
  */
-#define TFEL_PP_DO_JOIN(X,Y) TFEL_PP_DO_JOIN2(X,Y)
+#define TFEL_PP_DO_JOIN(X, Y) TFEL_PP_DO_JOIN2(X, Y)
 
 /*!
  * \def TFEL_PP_DO_JOIN2
@@ -53,7 +53,7 @@
  * \author Helfer Thomas
  * \date   28 Aug 2006
  */
-#define TFEL_PP_DO_JOIN2(X,Y) X##Y
+#define TFEL_PP_DO_JOIN2(X, Y) X##Y
 
 /*!
  * \def TFEL_TESTS_GENERATE_PROXY2
@@ -64,9 +64,9 @@
  * \author Helfer Thomas
  * \date   11 Apr 2010
  */
-#define TFEL_TESTS_GENERATE_PROXY2(X,X2,Y)                       \
-  extern tfel::tests::TestProxy< X > TFEL_PP_JOIN(testproxy,X2); \
-  tfel::tests::TestProxy< X > TFEL_PP_JOIN(testproxy,X2)(Y)
+#define TFEL_TESTS_GENERATE_PROXY2(X, X2, Y)                    \
+  extern tfel::tests::TestProxy<X> TFEL_PP_JOIN(testproxy, X2); \
+  tfel::tests::TestProxy<X> TFEL_PP_JOIN(testproxy, X2)(Y)
 
 /*!
  * \def TFEL_TESTS_GENERATE_PROXY3
@@ -78,9 +78,9 @@
  * \author Helfer Thomas
  * \date   11 Apr 2010
  */
-#define TFEL_TESTS_GENERATE_PROXY3(X,X2,Y,Y2)			 \
-  extern tfel::tests::TestProxy< X > TFEL_PP_JOIN(testproxy,X2); \
-  tfel::tests::TestProxy< X > TFEL_PP_JOIN(testproxy,X2)(Y,Y2)
+#define TFEL_TESTS_GENERATE_PROXY3(X, X2, Y, Y2)                \
+  extern tfel::tests::TestProxy<X> TFEL_PP_JOIN(testproxy, X2); \
+  tfel::tests::TestProxy<X> TFEL_PP_JOIN(testproxy, X2)(Y, Y2)
 
 /*!
  * \def TFEL_TESTS_GENERATE_PROXY
@@ -90,8 +90,7 @@
  * \author Helfer Thomas
  * \date   11 Apr 2010
  */
-#define TFEL_TESTS_GENERATE_PROXY(X,Y)                     \
-  TFEL_TESTS_GENERATE_PROXY2(X,X,Y)
+#define TFEL_TESTS_GENERATE_PROXY(X, Y) TFEL_TESTS_GENERATE_PROXY2(X, X, Y)
 
 /*!
  * \def TFEL_TESTS_FUNCTION
@@ -102,24 +101,21 @@
  * \author Helfer Thomas
  * \date   11 Apr 2010
  */
-#define TFEL_TESTS_FUNCTION(X,G,Y)				   \
-  bool TFEL_VISIBILITY_LOCAL X(void);	                           \
-  TFEL_TESTS_GENERATE_PROXY3(tfel::tests::TestFunctionWrapper<X>,  \
-                             TFEL_PP_JOIN(X,FunctionWrapper),G,Y); \
+#define TFEL_TESTS_FUNCTION(X, G, Y)                                  \
+  bool TFEL_VISIBILITY_LOCAL X(void);                                 \
+  TFEL_TESTS_GENERATE_PROXY3(tfel::tests::TestFunctionWrapper<X>,     \
+                             TFEL_PP_JOIN(X, FunctionWrapper), G, Y); \
   bool X(void)
 
-namespace tfel
-{
+namespace tfel {
 
-  namespace tests
-  {
-    
+  namespace tests {
+
     /*!
      * proxy class for automatic registration of tests
      */
-    template<typename T>
-    struct TFEL_VISIBILITY_LOCAL TestProxy
-    {
+    template <typename T>
+    struct TFEL_VISIBILITY_LOCAL TestProxy {
       /*!
        * Default constructor
        * \param n : test suite name
@@ -128,28 +124,24 @@ namespace tfel
       /*!
        * Default constructor
        * \param n : test suite name
-       * \param t : test argument 
+       * \param t : test argument
        */
-      template<typename T2>
-      TestProxy(const std::string&,
-		const T2&);
+      template <typename T2>
+      TestProxy(const std::string&, const T2&);
       /*!
        * Default constructor
        * \param n  : test suite name
-       * \param t1 : first test argument 
-       * \param t2 : second test argument 
+       * \param t1 : first test argument
+       * \param t2 : second test argument
        */
-      template<typename T2,
-	       typename T3>
-      TestProxy(const std::string&,
-		const T2&,
-		const T3&);
-    }; // end of struct Test
-    
-  } // end of namespace test
+      template <typename T2, typename T3>
+      TestProxy(const std::string&, const T2&, const T3&);
+    };  // end of struct Test
 
-} // end of namespace tfel
+  }  // namespace tests
 
-#include"TFEL/Tests/TestProxy.ixx"
+}  // end of namespace tfel
+
+#include "TFEL/Tests/TestProxy.ixx"
 
 #endif /* LIB_TFEL_TESTS_TESTPROXY_HXX */

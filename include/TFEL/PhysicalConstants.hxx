@@ -3,21 +3,21 @@
  * \brief
  * \author HELFER Thomas 202608
  * \date   18 août 2017
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_TFEL_PHYSICALCONSTANTS_HXX
 #define LIB_TFEL_PHYSICALCONSTANTS_HXX
 
-namespace tfel{
+namespace tfel {
 
-  template<typename real = double,bool use_qt = false>
-  struct PhysicalConstants{
+  template <typename real = double, bool use_qt = false>
+  struct PhysicalConstants {
     //! Atomic mass constant (kg)
     static constexpr const real mu = real(1.66054e-27);
     //! Avogadro constant (mol-1)
@@ -42,8 +42,8 @@ namespace tfel{
     static constexpr const real R = real(8.31446);
     //! Stefan-Boltzmann constant (W.m-2.K-4)
     static constexpr const real s = real(5.67037e-08);
-  }; // end of PhysicalConstants
+  };  // end of PhysicalConstants
 
-} // end of namespace tfel
+}  // end of namespace tfel
 
 #endif /* LIB_TFEL_PHYSICALCONSTANTS_HXX */

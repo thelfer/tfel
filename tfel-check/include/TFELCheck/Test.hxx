@@ -3,12 +3,12 @@
  * \brief Represents a single test between two columns
  * \date 29 mai 2013
  * \author Remy Petkantchin
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_TFELCHECK_TEST_HXX
@@ -23,7 +23,6 @@
 namespace tfel_check {
 
   struct TFELCHECK_VISIBILITY_EXPORT Test {
-
     Test();
     Test(Test&&);
     Test(const Test&);
@@ -57,7 +56,8 @@ namespace tfel_check {
     void setComparison(const std::shared_ptr<Comparison>&);
 
     /*!
-     * \brief Returns true if user allowed less values for the results in the test
+     * \brief Returns true if user allowed less values for the results in the
+     * test
      */
     bool isAllowLessResults() const;
 
@@ -144,7 +144,8 @@ namespace tfel_check {
     /*!
      * \brief Sets the column to be interpolated for the integration
      */
-    void setColIntegralInterpolated(const std::shared_ptr<Column>& colIntegralInterpolated);
+    void setColIntegralInterpolated(
+        const std::shared_ptr<Column>& colIntegralInterpolated);
 
     /*!
      * \brief Gets the interpolation for the integration
@@ -154,7 +155,8 @@ namespace tfel_check {
     /*!
      * \brief Sets the interpolation for the integration
      */
-    void setIntegralInterpolation(const std::shared_ptr<Interpolation>& integralInterpolation);
+    void setIntegralInterpolation(
+        const std::shared_ptr<Interpolation>& integralInterpolation);
 
     /*!
      * \brief Gets the column of values of the first file
@@ -166,24 +168,31 @@ namespace tfel_check {
      */
     const std::shared_ptr<Column>& getColB() const;
 
-  private:
-    double prec = 0; /**!< the first precision given */
+   private:
+    double prec = 0;       /**!< the first precision given */
     double precision2 = 0; /**!< the second optional precision given */
-    bool allowLessResults = false; /**!< true if user allows to interpolate ref */
-    std::string f1; /**!< first file : .ref */
-    std::string f2; /**!< second file : .res */
+    bool allowLessResults =
+        false;                  /**!< true if user allows to interpolate ref */
+    std::string f1;             /**!< first file : .ref */
+    std::string f2;             /**!< second file : .res */
     std::shared_ptr<Column> c1; /**!< column used in first file **/
     std::shared_ptr<Column> c2; /**!< column used in second file **/
-    std::shared_ptr<Interpolation> interpolation; /**!< the interpolation chosen */
-    std::shared_ptr<Column> ci; /**!< the column used for interpolation (abscissa) */
-    std::shared_ptr<Interpolation> integralInterpolation; /**!< the interpolation chosen for the integration*/
-    std::shared_ptr<Column> colIntegralInterpolated; /**!< the column used for integration interpolation (abscissa)*/
-    std::shared_ptr<Comparison> comparison; /**!< the type of the test (absolute, relative...) */
+    std::shared_ptr<Interpolation>
+        interpolation; /**!< the interpolation chosen */
+    std::shared_ptr<Column>
+        ci; /**!< the column used for interpolation (abscissa) */
+    std::shared_ptr<Interpolation>
+        integralInterpolation; /**!< the interpolation chosen for the
+                                  integration*/
+    std::shared_ptr<Column>
+        colIntegralInterpolated; /**!< the column used for integration
+                                    interpolation (abscissa)*/
+    std::shared_ptr<Comparison>
+        comparison;     /**!< the type of the test (absolute, relative...) */
     std::string msgLog; /**!< message log */
-
   };
   // end of struct Test
 
-}
+}  // namespace tfel_check
 
 #endif /* LIB_TFELCHECK_TEST_HXX */

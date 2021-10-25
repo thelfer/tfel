@@ -1,34 +1,34 @@
 /*!
- * \file   include/TFEL/Math/T2toT2/T2toT2Concept.hxx  
- * \brief    
+ * \file   include/TFEL/Math/T2toT2/T2toT2Concept.hxx
+ * \brief
  * \author Helfer Thomas
  * \date   19 November 2013
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef TFEL_MATH_T2TOT2_CONCEPT_LIB_
 #define TFEL_MATH_T2TOT2_CONCEPT_LIB_ 1
 
-#include<type_traits>
+#include <type_traits>
 
-#include"TFEL/Config/TFELConfig.hxx"
-#include"TFEL/Metaprogramming/Implements.hxx"
-#include"TFEL/Metaprogramming/InvalidType.hxx"
-#include"TFEL/Math/General/Abs.hxx"
-#include"TFEL/Math/General/ConceptRebind.hxx"
-#include"TFEL/Math/Forward/T2toT2Concept.hxx"
+#include "TFEL/Config/TFELConfig.hxx"
+#include "TFEL/Metaprogramming/Implements.hxx"
+#include "TFEL/Metaprogramming/InvalidType.hxx"
+#include "TFEL/Math/General/Abs.hxx"
+#include "TFEL/Math/General/ConceptRebind.hxx"
+#include "TFEL/Math/Forward/T2toT2Concept.hxx"
 
-namespace tfel{
+namespace tfel {
 
-  namespace math{
+  namespace math {
 
-    template<class T>
-    struct T2toT2Traits{
+    template <class T>
+    struct T2toT2Traits {
       typedef tfel::meta::InvalidType NumType;
       static constexpr unsigned short dime = 0u;
     };
@@ -36,51 +36,46 @@ namespace tfel{
     /*!
      * \class T2toT2Tag
      * \brief Helper class to characterise t2tot2.
-     */ 
-    struct T2toT2Tag
-    {};
+     */
+    struct T2toT2Tag {};
 
-    template<class T>
-    struct T2toT2Concept 
-    {
+    template <class T>
+    struct T2toT2Concept {
       typedef T2toT2Tag ConceptTag;
 
-      typename T2toT2Traits<T>::NumType
-      operator()(const unsigned short,
-		 const unsigned short) const;
+      typename T2toT2Traits<T>::NumType operator()(const unsigned short,
+                                                   const unsigned short) const;
 
-    protected:
+     protected:
       T2toT2Concept() = default;
       T2toT2Concept(T2toT2Concept&&) = default;
       T2toT2Concept(const T2toT2Concept&) = default;
-      T2toT2Concept&
-      operator=(const T2toT2Concept&) = default;
-      ~T2toT2Concept() = default;      
+      T2toT2Concept& operator=(const T2toT2Concept&) = default;
+      ~T2toT2Concept() = default;
     };
 
     //! paratial specialisation for symmetric tensors
-    template<typename Type>
-    struct ConceptRebind<T2toT2Tag,Type>
-    {
+    template <typename Type>
+    struct ConceptRebind<T2toT2Tag, Type> {
       using type = T2toT2Concept<Type>;
     };
 
-    template<typename T>
-    struct T2toT2Type{
+    template <typename T>
+    struct T2toT2Type {
       typedef T type;
     };
 
-    template<typename T2toT2Type>
+    template <typename T2toT2Type>
     typename std::enable_if<
-      tfel::meta::Implements<T2toT2Type,T2toT2Concept>::cond,
-      typename tfel::typetraits::AbsType<typename T2toT2Traits<T2toT2Type>::NumType>::type
-    >::type
+        tfel::meta::Implements<T2toT2Type, T2toT2Concept>::cond,
+        typename tfel::typetraits::AbsType<
+            typename T2toT2Traits<T2toT2Type>::NumType>::type>::type
     abs(const T2toT2Type&);
 
-  } // end of namespace math
+  }  // end of namespace math
 
-} // end of namespace tfel
+}  // end of namespace tfel
 
-#include"TFEL/Math/T2toT2/T2toT2Concept.ixx"
+#include "TFEL/Math/T2toT2/T2toT2Concept.ixx"
 
 #endif /* TFEL_MATH_T2TOT2_CONCEPT_LIB_ */

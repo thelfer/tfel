@@ -3,31 +3,31 @@
  * \brief  This file implements the IsSubClassOf metafunction.
  * \author Helfer Thomas
  * \date   28 Aug 2006
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_TFEL_ISSUBCLASSOF_H_
-#define LIB_TFEL_ISSUBCLASSOF_H_ 
+#define LIB_TFEL_ISSUBCLASSOF_H_
 
-#include<type_traits>
-#include"TFEL/Config/TFELConfig.hxx"
+#include <type_traits>
+#include "TFEL/Config/TFELConfig.hxx"
 
-namespace tfel{
+namespace tfel {
 
-  namespace meta{
-    
+  namespace meta {
+
     /*!
-     * \brief  The metafunction IsSubClassOf test if a given 
+     * \brief  The metafunction IsSubClassOf test if a given
      * class T publically inherits from type U.
-     * This idea of this class was found in Andrei 
+     * This idea of this class was found in Andrei
      * Alexandrescu's book
      * \latexonly\cite{alexandrescu01:_c_desig}\endlatexonly
-     * \htmlonly, modern C++ Design : generic programming 
+     * \htmlonly, modern C++ Design : generic programming
      * and design patterns applied\endhtmlonly.
      *
      * \param T, type to be tested.
@@ -36,20 +36,18 @@ namespace tfel{
      * \author Helfer Thomas
      * \date   28 Aug 2006
      */
-    template<typename T, typename U>
-    struct TFEL_VISIBILITY_LOCAL IsSubClassOf{
+    template <typename T, typename U>
+    struct TFEL_VISIBILITY_LOCAL IsSubClassOf {
       /*!
-       * \brief the result of the metafunction. 
+       * \brief the result of the metafunction.
        * True if T is publically inherits from U, false otherwise.
        * \see IsSuperClassOf
        */
-      static constexpr bool cond = std::is_base_of<U,T>::value;
+      static constexpr bool cond = std::is_base_of<U, T>::value;
     };
 
-  } // end of namespace meta
+  }  // end of namespace meta
 
-} // end of namespace tfel
-
+}  // end of namespace tfel
 
 #endif /* LIB_TFEL_ISSUBCLASSOF_H_ */
-

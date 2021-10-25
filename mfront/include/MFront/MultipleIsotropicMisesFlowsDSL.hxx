@@ -1,68 +1,57 @@
 /*!
  * \file   mfront/include/MFront/MultipleIsotropicMisesFlowsDSL.hxx
- * \brief  
- * 
+ * \brief
+ *
  * \author Helfer Thomas
  * \date   31 jan 2008
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_MFRONTMULTIPLEISOTROPICMISESFLOWSPARSER_HXX_
-#define LIB_MFRONTMULTIPLEISOTROPICMISESFLOWSPARSER_HXX_ 
+#define LIB_MFRONTMULTIPLEISOTROPICMISESFLOWSPARSER_HXX_
 
-#include<vector>
-#include<string>
+#include <vector>
+#include <string>
 
-#include"MFront/IsotropicBehaviourDSLBase.hxx"
+#include "MFront/IsotropicBehaviourDSLBase.hxx"
 
-namespace mfront{
+namespace mfront {
 
-  struct MultipleIsotropicMisesFlowsDSL
-    : public IsotropicBehaviourDSLBase
-  {
+  struct MultipleIsotropicMisesFlowsDSL : public IsotropicBehaviourDSLBase {
+    static std::string getName(void);
 
-    static std::string 
-    getName(void);
+    static std::string getDescription(void);
 
-    static std::string
-    getDescription(void);
+    virtual void writeBehaviourParserSpecificInitializeMethodPart(
+        const Hypothesis) override;
 
-    virtual void
-    writeBehaviourParserSpecificInitializeMethodPart(const Hypothesis) override;
+    virtual void writeBehaviourParserSpecificMembers(const Hypothesis) override;
 
-    virtual void
-    writeBehaviourParserSpecificMembers(const Hypothesis) override;
+    virtual void writeBehaviourParserSpecificIncludes(void) override;
 
-    virtual void
-    writeBehaviourParserSpecificIncludes(void) override;
+    virtual void writeBehaviourIntegrator(const Hypothesis) override;
 
-    virtual void
-    writeBehaviourIntegrator(const Hypothesis) override;
-
-    virtual void
-    writeBehaviourComputeTangentOperator(const Hypothesis) override;
+    virtual void writeBehaviourComputeTangentOperator(
+        const Hypothesis) override;
 
     MultipleIsotropicMisesFlowsDSL();
 
     virtual ~MultipleIsotropicMisesFlowsDSL();
 
-  private:
+   private:
+    virtual void treatFlowRule(void) override;
 
-    virtual void
-    treatFlowRule(void) override;
-
-    struct FlowHandler
-    {
-      enum FlowType{
-	PlasticFlow,
-	CreepFlow,
-	StrainHardeningCreepFlow
-      }; // end of enum FlowType
+    struct FlowHandler {
+      enum FlowType {
+        PlasticFlow,
+        CreepFlow,
+        StrainHardeningCreepFlow
+      };  // end of enum FlowType
       FlowHandler() = default;
       FlowHandler(FlowHandler&&) = default;
       FlowHandler(const FlowHandler&) = default;
@@ -71,15 +60,14 @@ namespace mfront{
       ~FlowHandler() noexcept;
       std::string flowRule;
       FlowType flow = PlasticFlow;
-      double theta  = 1.;
+      double theta = 1.;
       bool hasSpecificTheta = false;
-    }; // end of struct LawHandler
-    
+    };  // end of struct LawHandler
+
     std::vector<FlowHandler> flows;
 
-  }; // end of struct MultipleIsotropicMisesFlowsDSL
+  };  // end of struct MultipleIsotropicMisesFlowsDSL
 
-} // end of namespace mfront  
+}  // end of namespace mfront
 
 #endif /* LIB_MFRONTMULTIPLEISOTROPICMISESFLOWSPARSER_HXX_ */
-

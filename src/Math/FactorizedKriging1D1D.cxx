@@ -1,30 +1,28 @@
-/*! 
+/*!
  * \file  src/Math/FactorizedKriging1D1D.cxx
  * \brief
  * \author Helfer Thomas
  * \brief 19 mai 2010
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
-#include"TFEL/Math/FactorizedKriging1D1D.hxx"
+#include "TFEL/Math/FactorizedKriging1D1D.hxx"
 
-namespace tfel
-{
+namespace tfel {
 
-  namespace math
-  {
+  namespace math {
 
-    FactorizedKriging1D1D::FactorizedKriging1D1D(const std::vector<double>& vx,
-						 const std::vector<double>& vy,
-						 const std::vector<double>& vz)
-    {
-      if((vx.size()!=vy.size())||(vx.size()!=vz.size())){
-	throw(KrigingErrorInvalidLength());
+    FactorizedKriging1D1D::FactorizedKriging1D1D(
+        const std::vector<double>& vx,
+        const std::vector<double>& vy,
+        const std::vector<double>& vz) {
+      if ((vx.size() != vy.size()) || (vx.size() != vz.size())) {
+        throw(KrigingErrorInvalidLength());
       }
       const auto n0 = KrigingUtilities::normalize(vx);
       this->a0 = n0.first;
@@ -35,19 +33,19 @@ namespace tfel
       auto px = vx.cbegin();
       auto py = vy.cbegin();
       auto pz = vz.cbegin();
-      for(;px!=vx.end();++px,++py,++pz){
-	FK::addValue(this->a0*(*px)+this->b0,
-		     this->a1*(*py)+this->b1,*pz);
+      for (; px != vx.end(); ++px, ++py, ++pz) {
+        FK::addValue(this->a0 * (*px) + this->b0, this->a1 * (*py) + this->b1,
+                     *pz);
       }
       FK::buildInterpolation();
     }
 
-    FactorizedKriging1D1D::FactorizedKriging1D1D(const tfel::math::vector<double>& vx,
-						 const tfel::math::vector<double>& vy,
-						 const tfel::math::vector<double>& vz)
-    {
-      if((vx.size()!=vy.size())||(vx.size()!=vz.size())){
-	throw(KrigingErrorInvalidLength());
+    FactorizedKriging1D1D::FactorizedKriging1D1D(
+        const tfel::math::vector<double>& vx,
+        const tfel::math::vector<double>& vy,
+        const tfel::math::vector<double>& vz) {
+      if ((vx.size() != vy.size()) || (vx.size() != vz.size())) {
+        throw(KrigingErrorInvalidLength());
       }
       const auto n0 = KrigingUtilities::normalize(vx);
       this->a0 = n0.first;
@@ -58,23 +56,21 @@ namespace tfel
       auto px = vx.cbegin();
       auto py = vy.cbegin();
       auto pz = vz.cbegin();
-      for(;px!=vx.end();++px,++py,++pz){
-	FK::addValue(this->a0*(*px)+this->b0,
-		     this->a1*(*py)+this->b1,*pz);
+      for (; px != vx.end(); ++px, ++py, ++pz) {
+        FK::addValue(this->a0 * (*px) + this->b0, this->a1 * (*py) + this->b1,
+                     *pz);
       }
       FK::buildInterpolation();
     }
-  
+
     double FactorizedKriging1D1D::operator()(const double vx,
-					     const double vy) const
-    {
-      return FK::operator()(this->a0*(vx)+this->b0,
-			    this->a1*(vy)+this->b1);
-    } // end of FactorizedKriging1D1D::operator()
-      
+                                             const double vy) const {
+      return FK::operator()(this->a0*(vx) + this->b0,
+                            this->a1 * (vy) + this->b1);
+    }  // end of FactorizedKriging1D1D::operator()
+
     FactorizedKriging1D1D::~FactorizedKriging1D1D() = default;
 
-  } // end of namespace math
+  }  // end of namespace math
 
-} // end of namespace tfel
-
+}  // end of namespace tfel

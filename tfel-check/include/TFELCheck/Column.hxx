@@ -6,12 +6,12 @@
  *
  *  \class Column
  *  \brief Treats the columns in files
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_TFELCHECK_COLUMN_HXX
@@ -26,10 +26,9 @@
 #include "TFEL/Utilities/TextData.hxx"
 #include "TFELCheck/PCLogger.hxx"
 
-namespace tfel_check{
+namespace tfel_check {
 
-  struct TFELCHECK_VISIBILITY_EXPORT Column
-  {
+  struct TFELCHECK_VISIBILITY_EXPORT Column {
     Column(int);
     Column(std::string);
     Column(Column&&);
@@ -64,15 +63,15 @@ namespace tfel_check{
     /*!
      * \brief returns the filename
      */
-    const std::string&
-    getFilename() const;
+    const std::string& getFilename() const;
     /*!
      * \brief returns the TextData used to create column
      */
     const std::shared_ptr<tfel::utilities::TextData> getData() const;
     //! destructor
     virtual ~Column();
-  private:
+
+   private:
     //! the data from the column
     std::shared_ptr<tfel::utilities::TextData> data;
     //! the values contained in the column
@@ -87,7 +86,7 @@ namespace tfel_check{
     std::string name;
     //! column number
     unsigned short num;
-    //! 
+    //!
     bool byName;
   };
 

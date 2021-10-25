@@ -1,52 +1,43 @@
 /*!
  * \file   tests/Math/RungeKutta/rk54.cxx
- * \brief  
- * 
+ * \brief
+ *
  * \author Helfer Thomas
  * \date   27 sep 2007
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
-#include<cstdlib>
-#include<cmath>
-#include<fstream>
-#include<cassert>
+#include <cstdlib>
+#include <cmath>
+#include <fstream>
+#include <cassert>
 
-#include"TFEL/Math/Vector/tvectorIO.hxx"
-#include"TFEL/Math/RungeKutta54.hxx"
+#include "TFEL/Math/Vector/tvectorIO.hxx"
+#include "TFEL/Math/RungeKutta54.hxx"
 
+struct VanDerPol : public tfel::math::RungeKutta54<2, VanDerPol> {
+  typedef tfel::math::tvector<2, double> vector;
 
-struct VanDerPol
-  : public tfel::math::RungeKutta54<2,VanDerPol>
-{
-  typedef tfel::math::tvector<2,double> vector;
+  void setMu(const double mu_) { this->mu = mu_; }
 
-  void setMu(const double mu_)
-  {
-    this->mu=mu_;
-  }
-
-  const vector
-  computeF(const double, const vector& x) const
-  {
+  const vector computeF(const double, const vector& x) const {
     vector f;
-    f(0) =  x(1);
-    f(1) = -x(0)+(this->mu)*x(1)*(1.-x(0)*x(0));
+    f(0) = x(1);
+    f(1) = -x(0) + (this->mu) * x(1) * (1. - x(0) * x(0));
     return f;
   }
 
-private:
+ private:
   double mu;
 };
 
 /* coverity [UNCAUGHT_EXCEPT]*/
-int main()
-{
+int main() {
   using namespace std;
   using namespace tfel::math;
 
@@ -63,17 +54,17 @@ int main()
   rk.setCriterium(1.e-9);
   rk.setMu(10.);
 
-  double t=0.;
-  double h=1.;
+  double t = 0.;
+  double h = 1.;
   rk.setInitialTimeIncrement(h);
-  out << t << " "<< rk.getValue() << endl;
-  for(;t<end-0.5*h;t+=h){
-    h=std::min(end-t,rk.getTimeIncrement());
+  out << t << " " << rk.getValue() << endl;
+  for (; t < end - 0.5 * h; t += h) {
+    h = std::min(end - t, rk.getTimeIncrement());
     rk.setInitialTime(t);
-    rk.setFinalTime(t+h);
+    rk.setFinalTime(t + h);
     rk.iterate();
-    out  << t+h << " "<< rk.getValue() << endl;
+    out << t + h << " " << rk.getValue() << endl;
   }
-  
+
   return EXIT_SUCCESS;
 }

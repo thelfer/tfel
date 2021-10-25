@@ -1,51 +1,48 @@
-/*! 
+/*!
  * \file   mtest/include/MTest/CastemStandardBehaviour.hxx
  * \brief
  * \author Helfer Thomas
  * \brief  18 november 2013
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_MTEST_CASTEMSTANDARDUMATBEHAVIOUR_H_
-#define LIB_MTEST_CASTEMSTANDARDUMATBEHAVIOUR_H_ 
+#define LIB_MTEST_CASTEMSTANDARDUMATBEHAVIOUR_H_
 
-#include"TFEL/System/ExternalFunctionsPrototypes.hxx"
-#include"MTest/UmatBehaviourBase.hxx"
+#include "TFEL/System/ExternalFunctionsPrototypes.hxx"
+#include "MTest/UmatBehaviourBase.hxx"
 
-namespace mtest
-{
+namespace mtest {
 
   /*!
    * A class to handle mechanical beheaviours written using the umat
    * interface
    */
   struct TFEL_VISIBILITY_LOCAL CastemStandardBehaviour
-    : public UmatBehaviourBase
-  {
+      : public UmatBehaviourBase {
     /*!
      * \param[in] h : modelling hypothesis
      * \param[in] l : library name
      * \param[in] b : behaviour name
      */
     CastemStandardBehaviour(const Hypothesis,
-			    const std::string&,
-			    const std::string&);
+                            const std::string&,
+                            const std::string&);
     /*!
      * \param[in] umb: behaviour description
      * \param[in] h:   modelling hypothesis
      */
-    CastemStandardBehaviour(const UmatBehaviourDescription&,
-			    const Hypothesis);
+    CastemStandardBehaviour(const UmatBehaviourDescription&, const Hypothesis);
     /*!
      * \return the default type of stiffness matrix used by the behaviour
      */
-    virtual StiffnessMatrixType
-    getDefaultStiffnessMatrixType(void) const override;
+    virtual StiffnessMatrixType getDefaultStiffnessMatrixType(
+        void) const override;
     /*!
      * \brief allocate internal workspace
      * \param[out] wk : workspace
@@ -58,9 +55,9 @@ namespace mtest
      * \note this method is only meaningfull for the umat (Cast3M)
      * interface
      */
-    virtual tfel::math::tmatrix<3u,3u,real>
-    getRotationMatrix(const tfel::math::vector<real>&,
-		      const tfel::math::tmatrix<3u,3u,real>&) const override;
+    virtual tfel::math::tmatrix<3u, 3u, real> getRotationMatrix(
+        const tfel::math::vector<real>&,
+        const tfel::math::tmatrix<3u, 3u, real>&) const override;
     /*!
      * \brief some interfaces requires dummy material properties to be
      * declared. For example, the Cast3M finite element solver
@@ -68,23 +65,22 @@ namespace mtest
      * describing orthotropic axes to be declared.  This method is
      * meant to automatically declare those if they are not defined by
      * the user.
-     * \param[out] mp  : evolution manager where 
+     * \param[out] mp  : evolution manager where
      * \param[in]  evm : evolution manager
      */
-    virtual void
-    setOptionalMaterialPropertiesDefaultValues(EvolutionManager&,
-					       const EvolutionManager&) const override;
+    virtual void setOptionalMaterialPropertiesDefaultValues(
+        EvolutionManager&, const EvolutionManager&) const override;
     /*!
      * \return the string passed to the UMAT function through the
      * CMNAME parameter.
      */
-    virtual const char*
-    getBehaviourNameForUMATFunctionCall(void) const = 0;
+    virtual const char* getBehaviourNameForUMATFunctionCall(void) const = 0;
     /*!
      * destructor
      */
     ~CastemStandardBehaviour();
-  protected:
+
+   protected:
     /*!
      * \brief build the appropriate material properties for the
      * modelling hypothesis from the ones declared in the current
@@ -92,11 +88,12 @@ namespace mtest
      * introduced to properly handle the plane stress hypothesis if
      * this hypothesis is handled by the `Cast3M` interface and not
      * the the behaviour directly.
-     * 
+     *
      * \param[out] wk: workspace
      * \param[in] s: current state
      */
-   virtual void buildMaterialProperties(BehaviourWorkSpace&, const CurrentState&) const;
+    virtual void buildMaterialProperties(BehaviourWorkSpace&,
+                                         const CurrentState&) const;
     //! the umat fonction
     tfel::system::CastemFctPtr fct;
     /*!
@@ -107,9 +104,8 @@ namespace mtest
      * distinguishes this case.
      */
     bool usesGenericPlaneStressAlgorithm = false;
-  }; // end of struct Behaviour
-  
-} // end of namespace mtest
+  };  // end of struct Behaviour
+
+}  // end of namespace mtest
 
 #endif /* LIB_MTEST_CASTEMSTANDARDUMATBEHAVIOUR_H_ */
-

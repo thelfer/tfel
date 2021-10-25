@@ -1,65 +1,55 @@
 /*!
  * \file   include/TFEL/Math/LU/TinyPermutation.hxx
- * 
- * \brief    
+ *
+ * \brief
  * \author Helfer Thomas
  * \date   01 Aug 2006
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_TFEL_MATH_TINYPERMUTATION_H_
-#define LIB_TFEL_MATH_TINYPERMUTATION_H_ 
+#define LIB_TFEL_MATH_TINYPERMUTATION_H_
 
-#include"TFEL/Math/tvector.hxx"
+#include "TFEL/Math/tvector.hxx"
 
-namespace tfel{
+namespace tfel {
 
-  namespace math{
+  namespace math {
 
-    template<unsigned short N>
-    struct TinyPermutation
-      : protected tvector<N,unsigned short>
-    {
+    template <unsigned short N>
+    struct TinyPermutation : protected tvector<N, unsigned short> {
       //! default constructor
       TinyPermutation();
       //! disabling default constructors and assignement operators
       TinyPermutation(const TinyPermutation&) = delete;
       TinyPermutation(TinyPermutation&&) = delete;
-      TinyPermutation&
-      operator=(const TinyPermutation&) = delete;
-      TinyPermutation&
-      operator=(TinyPermutation&&) = delete;
+      TinyPermutation& operator=(const TinyPermutation&) = delete;
+      TinyPermutation& operator=(TinyPermutation&&) = delete;
       //! apply the permutation to the given vector
-      template<typename T>
-      TFEL_MATH_INLINE void exe(tvector<N,T>&) const;
+      template <typename T>
+      TFEL_MATH_INLINE void exe(tvector<N, T>&) const;
 
-      using tvector<N,unsigned short>::operator[];
-      using tvector<N,unsigned short>::operator();
-      using tvector<N,unsigned short>::size;
-            
-      TFEL_MATH_INLINE void
-      swap(const unsigned short,
-	   const unsigned short);
+      using tvector<N, unsigned short>::operator[];
+      using tvector<N, unsigned short>::operator();
+      using tvector<N, unsigned short>::size;
 
-      TFEL_MATH_INLINE bool
-      isIdentity() const;
-      
-    protected:
+      TFEL_MATH_INLINE void swap(const unsigned short, const unsigned short);
 
+      TFEL_MATH_INLINE bool isIdentity() const;
+
+     protected:
       bool is_identity;
-
     };
 
-  } // end of namespace math
+  }  // end of namespace math
 
-} // end of namespace tfel
+}  // end of namespace tfel
 
-#include"TFEL/Math/LU/TinyPermutation.ixx"
+#include "TFEL/Math/LU/TinyPermutation.ixx"
 
 #endif /* LIB_TFEL_MATH_TINYPERMUTATION_H_ */
-

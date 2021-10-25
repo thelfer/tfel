@@ -3,15 +3,12 @@
  * \brief  This file defines various functions dealing with Lame's coefficients.
  * Using Lame's coefficients, linear elastic behaviour may be written~:
  * \f[ \underline{\sigma} =
- * \lambda*\mathrm{tr}\left(\underline{\epsilon}\right)\underline{I}+2\mu\underline{\epsilon} \f]
- * \author Helfer Thomas
- * \date   31 Jul 2006
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
- * reserved.
- * This project is publicly released under either the GNU GPL Licence
- * or the CECILL-A licence. A copy of thoses licences are delivered
- * with the sources of TFEL. CEA or EDF may also distribute this
- * project under specific licensing conditions.
+ * \lambda*\mathrm{tr}\left(\underline{\epsilon}\right)\underline{I}+2\mu\underline{\epsilon}
+ * \f] \author Helfer Thomas \date   31 Jul 2006 \copyright Copyright (C)
+ * 2006-2018 CEA/DEN, EDF R&D. All rights reserved. This project is publicly
+ * released under either the GNU GPL Licence or the CECILL-A licence. A copy of
+ * thoses licences are delivered with the sources of TFEL. CEA or EDF may also
+ * distribute this project under specific licensing conditions.
  */
 
 #ifndef LIB_TFEL_LAME_H_
@@ -79,9 +76,10 @@ namespace tfel {
      */
     template <typename T>
     struct computeElasticStiffness<1u, T> {
-      static void exe(typename tfel::config::Types<1u, T, true>::StiffnessTensor& D,
-                      const typename tfel::config::Types<1u, T, true>::stress lambda,
-                      const typename tfel::config::Types<1u, T, true>::stress mu) {
+      static void exe(
+          typename tfel::config::Types<1u, T, true>::StiffnessTensor& D,
+          const typename tfel::config::Types<1u, T, true>::stress lambda,
+          const typename tfel::config::Types<1u, T, true>::stress mu) {
         typedef typename tfel::config::Types<1u, T, true>::stress stress;
         stress G = 2 * mu;
         stress tmp = lambda + G;
@@ -89,9 +87,10 @@ namespace tfel {
         D(0, 1) = D(0, 2) = D(1, 2) = lambda;
         D(1, 0) = D(2, 0) = D(2, 1) = lambda;
       }
-      static void exe(typename tfel::config::Types<1u, T, false>::StiffnessTensor& D,
-                      const typename tfel::config::Types<1u, T, false>::stress lambda,
-                      const typename tfel::config::Types<1u, T, false>::stress mu) {
+      static void exe(
+          typename tfel::config::Types<1u, T, false>::StiffnessTensor& D,
+          const typename tfel::config::Types<1u, T, false>::stress lambda,
+          const typename tfel::config::Types<1u, T, false>::stress mu) {
         typedef typename tfel::config::Types<1u, T, false>::stress stress;
         stress G = 2 * mu;
         stress tmp = lambda + G;
@@ -106,9 +105,10 @@ namespace tfel {
      */
     template <typename T>
     struct computeElasticStiffness<2u, T> {
-      static void exe(typename tfel::config::Types<2u, T, true>::StiffnessTensor& D,
-                      const typename tfel::config::Types<2u, T, true>::stress lambda,
-                      const typename tfel::config::Types<2u, T, true>::stress mu) {
+      static void exe(
+          typename tfel::config::Types<2u, T, true>::StiffnessTensor& D,
+          const typename tfel::config::Types<2u, T, true>::stress lambda,
+          const typename tfel::config::Types<2u, T, true>::stress mu) {
         typedef typename tfel::config::Types<2u, T, true>::stress stress;
         const stress G = 2 * mu;
         const stress tmp = lambda + G;
@@ -122,9 +122,10 @@ namespace tfel {
         D(3, 3) = G;
       }
 
-      static void exe(typename tfel::config::Types<2u, T, false>::StiffnessTensor& D,
-                      const typename tfel::config::Types<2u, T, false>::stress lambda,
-                      const typename tfel::config::Types<2u, T, false>::stress mu) {
+      static void exe(
+          typename tfel::config::Types<2u, T, false>::StiffnessTensor& D,
+          const typename tfel::config::Types<2u, T, false>::stress lambda,
+          const typename tfel::config::Types<2u, T, false>::stress mu) {
         typedef typename tfel::config::Types<2u, T, false>::stress stress;
         const stress G = 2 * mu;
         const stress tmp = lambda + G;
@@ -144,9 +145,10 @@ namespace tfel {
      */
     template <typename T>
     struct computeElasticStiffness<3u, T> {
-      static void exe(typename tfel::config::Types<3u, T, true>::StiffnessTensor& D,
-                      const typename tfel::config::Types<3u, T, true>::stress lambda,
-                      const typename tfel::config::Types<3u, T, true>::stress mu) {
+      static void exe(
+          typename tfel::config::Types<3u, T, true>::StiffnessTensor& D,
+          const typename tfel::config::Types<3u, T, true>::stress lambda,
+          const typename tfel::config::Types<3u, T, true>::stress mu) {
         typedef typename tfel::config::Types<3u, T, true>::stress stress;
         const stress G = 2 * mu;
         const stress tmp = lambda + G;
@@ -167,9 +169,10 @@ namespace tfel {
         D(5, 5) = G;
       }
 
-      static void exe(typename tfel::config::Types<3u, T, false>::StiffnessTensor& D,
-                      const typename tfel::config::Types<3u, T, false>::stress lambda,
-                      const typename tfel::config::Types<3u, T, false>::stress mu) {
+      static void exe(
+          typename tfel::config::Types<3u, T, false>::StiffnessTensor& D,
+          const typename tfel::config::Types<3u, T, false>::stress lambda,
+          const typename tfel::config::Types<3u, T, false>::stress mu) {
         typedef typename tfel::config::Types<3u, T, false>::stress stress;
         const stress G = 2 * mu;
         const stress tmp = lambda + G;
@@ -201,14 +204,16 @@ namespace tfel {
      */
     template <unsigned short N, typename T>
     struct computeUnalteredElasticStiffness {
-      static void exe(typename tfel::config::Types<N, T, true>::StiffnessTensor& D,
-                      const typename tfel::config::Types<N, T, true>::stress lambda,
-                      const typename tfel::config::Types<N, T, true>::stress mu) {
+      static void exe(
+          typename tfel::config::Types<N, T, true>::StiffnessTensor& D,
+          const typename tfel::config::Types<N, T, true>::stress lambda,
+          const typename tfel::config::Types<N, T, true>::stress mu) {
         computeElasticStiffness<N, T>::exe(D, lambda, mu);
       }
-      static void exe(typename tfel::config::Types<N, T, false>::StiffnessTensor& D,
-                      const typename tfel::config::Types<N, T, false>::stress lambda,
-                      const typename tfel::config::Types<N, T, false>::stress mu) {
+      static void exe(
+          typename tfel::config::Types<N, T, false>::StiffnessTensor& D,
+          const typename tfel::config::Types<N, T, false>::stress lambda,
+          const typename tfel::config::Types<N, T, false>::stress mu) {
         computeElasticStiffness<N, T>::exe(D, lambda, mu);
       }
     };
@@ -223,25 +228,30 @@ namespace tfel {
      */
     template <ModellingHypothesis::Hypothesis H, typename T>
     struct computeAlteredElasticStiffness {
-      static constexpr unsigned short N = ModellingHypothesisToSpaceDimension<H>::value;
-      static void exe(typename tfel::config::Types<N, T, true>::StiffnessTensor& D,
-                      const typename tfel::config::Types<N, T, true>::stress lambda,
-                      const typename tfel::config::Types<N, T, true>::stress mu) {
+      static constexpr unsigned short N =
+          ModellingHypothesisToSpaceDimension<H>::value;
+      static void exe(
+          typename tfel::config::Types<N, T, true>::StiffnessTensor& D,
+          const typename tfel::config::Types<N, T, true>::stress lambda,
+          const typename tfel::config::Types<N, T, true>::stress mu) {
         computeElasticStiffness<N, T>::exe(D, lambda, mu);
       }
-      static void exe(typename tfel::config::Types<N, T, false>::StiffnessTensor& D,
-                      const typename tfel::config::Types<N, T, false>::stress lambda,
-                      const typename tfel::config::Types<N, T, false>::stress mu) {
+      static void exe(
+          typename tfel::config::Types<N, T, false>::StiffnessTensor& D,
+          const typename tfel::config::Types<N, T, false>::stress lambda,
+          const typename tfel::config::Types<N, T, false>::stress mu) {
         computeElasticStiffness<N, T>::exe(D, lambda, mu);
       }
     };  // end of struct computeAlteredElasticStiffness
 
     template <typename T>
-    struct computeAlteredElasticStiffness<ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS,
-                                          T> {
-      static void exe(typename tfel::config::Types<1u, T, true>::StiffnessTensor& D,
-                      const typename tfel::config::Types<1u, T, true>::stress lambda,
-                      const typename tfel::config::Types<1u, T, true>::stress mu) {
+    struct computeAlteredElasticStiffness<
+        ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS,
+        T> {
+      static void exe(
+          typename tfel::config::Types<1u, T, true>::StiffnessTensor& D,
+          const typename tfel::config::Types<1u, T, true>::stress lambda,
+          const typename tfel::config::Types<1u, T, true>::stress mu) {
         typedef typename tfel::config::Types<1u, T, true>::stress stress;
         const stress D1 = 4 * mu * (lambda + mu) / (lambda + 2 * mu);
         const stress D2 = 2 * mu * lambda / (lambda + 2 * mu);
@@ -251,9 +261,10 @@ namespace tfel {
         D(1, 1) = D1;
         D(2, 2) = D(0, 2) = D(1, 2) = D(2, 0) = D(2, 1) = stress(T(0));
       }
-      static void exe(typename tfel::config::Types<1u, T, false>::StiffnessTensor& D,
-                      const typename tfel::config::Types<1u, T, false>::stress lambda,
-                      const typename tfel::config::Types<1u, T, false>::stress mu) {
+      static void exe(
+          typename tfel::config::Types<1u, T, false>::StiffnessTensor& D,
+          const typename tfel::config::Types<1u, T, false>::stress lambda,
+          const typename tfel::config::Types<1u, T, false>::stress mu) {
         typedef typename tfel::config::Types<1u, T, false>::stress stress;
         const stress D1 = 4 * mu * (lambda + mu) / (lambda + 2 * mu);
         const stress D2 = 2 * mu * lambda / (lambda + 2 * mu);
@@ -267,9 +278,10 @@ namespace tfel {
 
     template <typename T>
     struct computeAlteredElasticStiffness<ModellingHypothesis::PLANESTRESS, T> {
-      static void exe(typename tfel::config::Types<2u, T, true>::StiffnessTensor& D,
-                      const typename tfel::config::Types<2u, T, true>::stress lambda,
-                      const typename tfel::config::Types<2u, T, true>::stress mu) {
+      static void exe(
+          typename tfel::config::Types<2u, T, true>::StiffnessTensor& D,
+          const typename tfel::config::Types<2u, T, true>::stress lambda,
+          const typename tfel::config::Types<2u, T, true>::stress mu) {
         typedef typename tfel::config::Types<2u, T, true>::stress stress;
         const stress D1 = 4 * mu * (lambda + mu) / (lambda + 2 * mu);
         const stress D2 = 2 * mu * lambda / (lambda + 2 * mu);
@@ -278,12 +290,14 @@ namespace tfel {
         D(1, 0) = D2;
         D(1, 1) = D1;
         D(3, 3) = 2 * mu;
-        D(0, 2) = D(0, 3) = D(1, 2) = D(1, 3) = D(2, 0) = D(2, 1) = stress(T(0));
+        D(0, 2) = D(0, 3) = D(1, 2) = D(1, 3) = D(2, 0) = D(2, 1) =
+            stress(T(0));
         D(2, 2) = D(2, 3) = D(3, 0) = D(3, 1) = D(3, 2) = stress(T(0));
       }
-      static void exe(typename tfel::config::Types<2u, T, false>::StiffnessTensor& D,
-                      const typename tfel::config::Types<2u, T, false>::stress lambda,
-                      const typename tfel::config::Types<2u, T, false>::stress mu) {
+      static void exe(
+          typename tfel::config::Types<2u, T, false>::StiffnessTensor& D,
+          const typename tfel::config::Types<2u, T, false>::stress lambda,
+          const typename tfel::config::Types<2u, T, false>::stress mu) {
         typedef typename tfel::config::Types<2u, T, false>::stress stress;
         const stress D1 = 4 * mu * (lambda + mu) / (lambda + 2 * mu);
         const stress D2 = 2 * mu * lambda / (lambda + 2 * mu);
@@ -292,7 +306,8 @@ namespace tfel {
         D(1, 0) = D2;
         D(1, 1) = D1;
         D(3, 3) = 2 * mu;
-        D(0, 2) = D(0, 3) = D(1, 2) = D(1, 3) = D(2, 0) = D(2, 1) = stress(T(0));
+        D(0, 2) = D(0, 3) = D(1, 2) = D(1, 3) = D(2, 0) = D(2, 1) =
+            stress(T(0));
         D(2, 2) = D(2, 3) = D(3, 0) = D(3, 1) = D(3, 2) = stress(T(0));
       }
     };  // end of struct computeAlteredElasticStiffness
