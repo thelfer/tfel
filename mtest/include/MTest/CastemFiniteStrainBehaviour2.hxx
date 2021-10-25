@@ -22,13 +22,16 @@ namespace mtest {
    * \brief a class to handle finite strain mechanical beheaviours written
    * using the castem interface based on the ETO/PK1 kinematic
    */
-  struct TFEL_VISIBILITY_LOCAL CastemFiniteStrainBehaviour2 : public CastemSmallStrainBehaviour {
+  struct TFEL_VISIBILITY_LOCAL CastemFiniteStrainBehaviour2
+      : public CastemSmallStrainBehaviour {
     /*!
      * \param[in] h : modelling hypothesis
      * \param[in] l : library name
      * \param[in] b : behaviour name
      */
-    CastemFiniteStrainBehaviour2(const Hypothesis, const std::string&, const std::string&);
+    CastemFiniteStrainBehaviour2(const Hypothesis,
+                                 const std::string&,
+                                 const std::string&);
     //! destructor
     ~CastemFiniteStrainBehaviour2() override;
 

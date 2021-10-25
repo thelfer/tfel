@@ -3,29 +3,29 @@
  * \brief  This file declares the ModelDSLCommon class
  * \author Thomas Helfer
  * \date   10 Nov 2006
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_MFRONT_MFRONTMODELDSLCOMMON_HXX
-#define LIB_MFRONT_MFRONTMODELDSLCOMMON_HXX 
+#define LIB_MFRONT_MFRONTMODELDSLCOMMON_HXX
 
-#include<set>
-#include<map>
-#include<vector>
-#include<string>
+#include <set>
+#include <map>
+#include <vector>
+#include <string>
 
-#include"MFront/MFrontConfig.hxx"
+#include "MFront/MFrontConfig.hxx"
 
-#include"MFront/DSLBase.hxx"
-#include"MFront/AbstractDSL.hxx"
-#include"MFront/ModelDescription.hxx"
+#include "MFront/DSLBase.hxx"
+#include "MFront/AbstractDSL.hxx"
+#include "MFront/ModelDescription.hxx"
 
-namespace mfront{
+namespace mfront {
 
   // forward declaration
   struct AbstractModelInterface;
@@ -34,7 +34,7 @@ namespace mfront{
    * \return if the given name is valid
    * \param[in] n: model name
    */
-  MFRONT_VISIBILITY_EXPORT  bool isValidModelName(const std::string&);
+  MFRONT_VISIBILITY_EXPORT bool isValidModelName(const std::string&);
 
   struct MFRONT_VISIBILITY_EXPORT ModelDSLCommon : public DSLBase {
     //! constructor
@@ -46,7 +46,7 @@ namespace mfront{
     //! destructor
     ~ModelDSLCommon() override;
 
-  protected:
+   protected:
     /*!
      * \brief register a name.
      * \param[in] n : name
@@ -64,7 +64,7 @@ namespace mfront{
     /*!
      * \return the name of the generated class
      */
-    std::string getClassName() const override ;
+    std::string getClassName() const override;
     /*!
      * \brief add a material law
      * \param[in] m : added material law name
@@ -90,7 +90,8 @@ namespace mfront{
      * \brief add a static variable description
      * \param[in] v : variable description
      */
-    void addStaticVariableDescription(const StaticVariableDescription&) override;
+    void addStaticVariableDescription(
+        const StaticVariableDescription&) override;
     /*!
      * \return the value of an integer constant
      * \param[in] n: variable name
@@ -110,7 +111,7 @@ namespace mfront{
     void treatUnknownKeyword() override;
 
     virtual void treatBounds();
-    
+
     virtual void treatPhysicalBounds();
 
     virtual void treatConstantMaterialProperty();
@@ -140,14 +141,12 @@ namespace mfront{
     virtual bool isInputVariable(const std::string&) const;
 
     ModelDescription md;
-    
-    std::map<std::string,
-	     std::shared_ptr<AbstractModelInterface>> interfaces;
+
+    std::map<std::string, std::shared_ptr<AbstractModelInterface>> interfaces;
 
     std::string currentVar;
-  }; // end of class ModelDSLCommon
+  };  // end of class ModelDSLCommon
 
-} // end of namespace mfront  
+}  // end of namespace mfront
 
 #endif /* LIB_MFRONT_MFRONTMODELDSLCOMMON_HXX */
-

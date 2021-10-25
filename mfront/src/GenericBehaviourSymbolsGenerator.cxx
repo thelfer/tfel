@@ -27,8 +27,8 @@ namespace mfront {
       const StandardBehaviourInterface& i,
       const BehaviourDescription& bd,
       const std::string& name) const {
-    os << "MFRONT_SHAREDOBJ unsigned short "
-        << i.getFunctionNameBasis(name) << "_BehaviourType = ";
+    os << "MFRONT_SHAREDOBJ unsigned short " << i.getFunctionNameBasis(name)
+       << "_BehaviourType = ";
     if (bd.getBehaviourType() == BehaviourDescription::GENERALBEHAVIOUR) {
       os << "0u";
     } else if (bd.getBehaviourType() ==
@@ -50,9 +50,11 @@ namespace mfront {
       } else {
         os << "1u";
       }
-    } else if (bd.getBehaviourType() == BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR) {
+    } else if (bd.getBehaviourType() ==
+               BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR) {
       os << "2u";
-    } else if (bd.getBehaviourType() == BehaviourDescription::COHESIVEZONEMODEL) {
+    } else if (bd.getBehaviourType() ==
+               BehaviourDescription::COHESIVEZONEMODEL) {
       os << "3u";
     } else {
       tfel::raise(
@@ -67,8 +69,8 @@ namespace mfront {
       const StandardBehaviourInterface& i,
       const BehaviourDescription& bd,
       const std::string& name) const {
-    os << "MFRONT_SHAREDOBJ unsigned short "
-        << i.getFunctionNameBasis(name) << "_BehaviourKinematic = ";
+    os << "MFRONT_SHAREDOBJ unsigned short " << i.getFunctionNameBasis(name)
+       << "_BehaviourKinematic = ";
     if (bd.getBehaviourType() == BehaviourDescription::GENERALBEHAVIOUR) {
       os << "0u";
     } else if (bd.getBehaviourType() ==
@@ -83,15 +85,18 @@ namespace mfront {
           os << "3u";
         } else {
           tfel::raise(
-              "GenericBehaviourSymbolsGenerator::writeBehaviourKinematicSymbols: "
+              "GenericBehaviourSymbolsGenerator::"
+              "writeBehaviourKinematicSymbols: "
               "unsupported strain measure");
         }
       } else {
         os << "1u";
       }
-    } else if (bd.getBehaviourType() == BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR) {
+    } else if (bd.getBehaviourType() ==
+               BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR) {
       os << "3u";
-    } else if (bd.getBehaviourType() == BehaviourDescription::COHESIVEZONEMODEL) {
+    } else if (bd.getBehaviourType() ==
+               BehaviourDescription::COHESIVEZONEMODEL) {
       os << "2u";
     } else {
       tfel::raise(
@@ -144,7 +149,7 @@ namespace mfront {
     os << '\n';
   }  // end of GenericBehaviourSymbolsGenerator::writeAdditionalSymbols
 
-  bool GenericBehaviourSymbolsGenerator::handleStrainMeasure() const{
+  bool GenericBehaviourSymbolsGenerator::handleStrainMeasure() const {
     return true;
   }  // end of GenericBehaviourSymbolsGenerator::handleStrainMeasure
 

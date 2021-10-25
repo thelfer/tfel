@@ -1,27 +1,27 @@
 /*!
  * \file   include/TFEL/Material/PiPlane.hxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   14/12/2017
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_TFEL_MATERIAL_PIPLANE_HXX
 #define LIB_TFEL_MATERIAL_PIPLANE_HXX
 
-#include<tuple>
-#include"TFEL/Math/tvector.hxx"
-#include"TFEL/Math/stensor.hxx"
-#include"TFEL/Math/General/MathConstants.hxx"
+#include <tuple>
+#include "TFEL/Math/tvector.hxx"
+#include "TFEL/Math/stensor.hxx"
+#include "TFEL/Math/General/MathConstants.hxx"
 
-namespace tfel{
+namespace tfel {
 
-  namespace material{
+  namespace material {
 
     /*!
      * \brief this function project a stress state defined by the the
@@ -52,9 +52,9 @@ namespace tfel{
      * \param[in] s: eigen values of the stress
      * \return the projection of the stresses on the \f$\pi\f$-plane
      */
-    template<typename stress>
-    std::tuple<stress,stress>
-    projectOnPiPlane(const tfel::math::tvector<3u,stress>&);
+    template <typename stress>
+    std::tuple<stress, stress> projectOnPiPlane(
+        const tfel::math::tvector<3u, stress>&);
     /*!
      * \brief this function project a stress state defined by the the
      * principal stress axes \f$\left(S_{0},S_{1},S_{2}\right)\f$ on
@@ -86,10 +86,10 @@ namespace tfel{
      * \param[in] s2: third eigen value
      * \return the projection of the stresses on the \f$\pi\f$-plane
      */
-    template<typename stress>
-    std::tuple<stress,stress> projectOnPiPlane(const stress,
-						  const stress,
-						  const stress);
+    template <typename stress>
+    std::tuple<stress, stress> projectOnPiPlane(const stress,
+                                                const stress,
+                                                const stress);
     /*!
      * \brief this function project a stress state defined by the the
      * principal stress axes \f$\left(S_{0},S_{1},S_{2}\right)\f$ on
@@ -119,11 +119,11 @@ namespace tfel{
      * \param[in] s: stress tensor
      * \return the projection of the stresses on the \f$\pi\f$-plane
      */
-    template<typename StressStensor,
-	     tfel::math::stensor_common::EigenSolver es =
-	     tfel::math::stensor_common::TFELEIGENSOLVER>
+    template <typename StressStensor,
+              tfel::math::stensor_common::EigenSolver es =
+                  tfel::math::stensor_common::TFELEIGENSOLVER>
     std::tuple<tfel::math::StensorNumType<StressStensor>,
-	       tfel::math::StensorNumType<StressStensor>>
+               tfel::math::StensorNumType<StressStensor>>
     projectOnPiPlane(const StressStensor&);
     /*!
      * \brief this function returns the stress state
@@ -153,14 +153,14 @@ namespace tfel{
      * \return a stress state corresponding to the point in the
      * \f$\pi\f$-plane.
      */
-    template<typename stress>
-    std::tuple<stress,stress,stress>
-    buildFromPiPlane(const stress,const stress);
-  
-  } // end of namespace material
-  
-} // end of namespace tfel
+    template <typename stress>
+    std::tuple<stress, stress, stress> buildFromPiPlane(const stress,
+                                                        const stress);
 
-#include"TFEL/Material/PiPlane.ixx"
+  }  // end of namespace material
+
+}  // end of namespace tfel
+
+#include "TFEL/Material/PiPlane.ixx"
 
 #endif /* LIB_TFEL_MATERIAL_PIPLANE_HXX */

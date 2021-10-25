@@ -39,7 +39,7 @@ namespace mfront {
     }  // end of StressCriterionFactory::getRegistredStressCriteria
 
     void StressCriterionFactory::addGenerator(const std::string& n,
-                                                 const Generator& g) {
+                                              const Generator& g) {
       if (!this->generators.insert({n, g}).second) {
         tfel::raise(
             "StressCriterionFactory::addGenerator: "
@@ -118,7 +118,7 @@ namespace mfront {
       this->addGenerator("MohrCoulomb", []() {
         return std::make_shared<bbrick::MohrCoulombStressCriterion>();
       });
-    } // end of StressCriterionFactory::StressCriterionFactory
+    }  // end of StressCriterionFactory::StressCriterionFactory
 
     StressCriterionFactory::~StressCriterionFactory() = default;
 

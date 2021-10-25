@@ -217,7 +217,7 @@ namespace tfel {
       // blocking all signals
 #ifdef sigfillset
       sigfillset(&nSigSet);
-#else /* sigfillset */
+#else  /* sigfillset */
       ::sigfillset(&nSigSet);
 #endif /* sigfillset */
 #ifdef sigprocmask

@@ -1,6 +1,6 @@
 /*!
  * \file   UserDefinedPostProcessing.hxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   27/02/2018
  */
@@ -13,7 +13,7 @@
 #include <fstream>
 #include "TFEL/Math/Evaluator.hxx"
 
-namespace mtest{
+namespace mtest {
 
   // forward declaration
   struct Behaviour;
@@ -50,7 +50,7 @@ namespace mtest{
     //! output file
     std::ofstream out;
   };  // end of UserDefinedPostProcessing
-  
+
 }  // end of namespace mtest
 
 #endif /* LIB_MTEST_USERDEFINEDPOSTPROCESSING_HXX */

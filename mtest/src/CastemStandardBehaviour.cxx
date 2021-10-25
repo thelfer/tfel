@@ -185,7 +185,7 @@ namespace mtest {
     };
     // mass density
     omps.push_back("MassDensity");
-    if(this->stype==0){
+    if (this->stype == 0) {
       append_if("YoungModulus");
       append_if("PoissonRatio");
       append_if("ThermalExpansion");
@@ -221,7 +221,7 @@ namespace mtest {
           "getOptionalMaterialProperties: "
           "unsupported symmetry type");
     }
-    if(h == ModellingHypothesis::PLANESTRESS){
+    if (h == ModellingHypothesis::PLANESTRESS) {
       omps.push_back("PlateWidth");
     }
     return omps;
@@ -232,7 +232,8 @@ namespace mtest {
     const auto h = this->getHypothesis();
     // elastic material properties
     auto set_emp = [this, &mp, &evm](
-        const char* const n, const std::vector<std::string>::size_type pos) {
+                       const char* const n,
+                       const std::vector<std::string>::size_type pos) {
       const auto& emps = this->elastic_material_properties_epts;
       if ((emps.empty()) || ((this->stype == 1) && (emps.size() != 9u))) {
         return;
@@ -258,10 +259,10 @@ namespace mtest {
             std::string(n) + "' already declared");
       }
     };
-    if(this->stype==0){
+    if (this->stype == 0) {
       set_emp("YoungModulus", 0);
       set_emp("PoissonRatio", 1);
-    } else if(this->stype==1){
+    } else if (this->stype == 1) {
       set_emp("YoungModulus1", 0);
       set_emp("YoungModulus2", 1);
       set_emp("YoungModulus3", 2);
@@ -279,24 +280,30 @@ namespace mtest {
         set_emp("ShearModulus13", 5);
       }
     } else {
-      tfel::raise("CastemFiniteStrainBehaviour::"
-		  "setOptionalMaterialPropertiesDefaultValues : "
-		  "unsupported symmetry type");
+      tfel::raise(
+          "CastemFiniteStrainBehaviour::"
+          "setOptionalMaterialPropertiesDefaultValues : "
+          "unsupported symmetry type");
     }
     // mass density
     Behaviour::setOptionalMaterialPropertyDefaultValue(mp, evm, "MassDensity",
                                                        0.);
     // thermal expansion
-    if(this->stype==0){
-      Behaviour::setOptionalMaterialPropertyDefaultValue(mp,evm,"ThermalExpansion",0.);
-    } else if(this->stype==1){
-      Behaviour::setOptionalMaterialPropertyDefaultValue(mp,evm,"ThermalExpansion1",0.);
-      Behaviour::setOptionalMaterialPropertyDefaultValue(mp,evm,"ThermalExpansion2",0.);
-      Behaviour::setOptionalMaterialPropertyDefaultValue(mp,evm,"ThermalExpansion3",0.);
+    if (this->stype == 0) {
+      Behaviour::setOptionalMaterialPropertyDefaultValue(
+          mp, evm, "ThermalExpansion", 0.);
+    } else if (this->stype == 1) {
+      Behaviour::setOptionalMaterialPropertyDefaultValue(
+          mp, evm, "ThermalExpansion1", 0.);
+      Behaviour::setOptionalMaterialPropertyDefaultValue(
+          mp, evm, "ThermalExpansion2", 0.);
+      Behaviour::setOptionalMaterialPropertyDefaultValue(
+          mp, evm, "ThermalExpansion3", 0.);
     } else {
-      tfel::raise("CastemFiniteStrainBehaviour::"
-		  "setOptionalMaterialPropertiesDefaultValues : "
-		  "unsupported symmetry type");
+      tfel::raise(
+          "CastemFiniteStrainBehaviour::"
+          "setOptionalMaterialPropertiesDefaultValues : "
+          "unsupported symmetry type");
     }
     if (this->stype == 1) {
       if (h != ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN) {
@@ -348,7 +355,7 @@ namespace mtest {
         }
       }
     }
-    if(h == ModellingHypothesis::PLANESTRESS){
+    if (h == ModellingHypothesis::PLANESTRESS) {
       Behaviour::setOptionalMaterialPropertyDefaultValue(mp, evm, "PlateWidth",
                                                          1.);
     }
@@ -421,4 +428,4 @@ namespace mtest {
   }  // end of CastemStandardBehaviour::buildMaterialProperties
 
   CastemStandardBehaviour::~CastemStandardBehaviour() = default;
-}
+}  // namespace mtest

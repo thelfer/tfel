@@ -1,6 +1,6 @@
 /*!
  * \file   mfm-test-generator/include/MFMTestGenerator/MTestFileGenerators.hxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   25/09/2019
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights

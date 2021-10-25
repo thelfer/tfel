@@ -1,6 +1,6 @@
 /*!
  * \file   BrickUtilities.ixx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   26/03/2018
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
@@ -23,7 +23,7 @@ namespace mfront {
     getArrayOfBehaviourDescriptionMaterialProperties(
         AbstractBehaviourDSL& dsl,
         const std::string& n,
-        const tfel::utilities::Data& d){
+        const tfel::utilities::Data& d) {
       std::array<BehaviourDescription::MaterialProperty, N> mps;
       if (!d.is<std::vector<tfel::utilities::Data>>()) {
         tfel::raise(
@@ -52,7 +52,7 @@ namespace mfront {
 
     template <std::size_t N>
     bool areAllConstantMaterialProperties(
-        const std::array<BehaviourDescription::MaterialProperty, N> & mps){
+        const std::array<BehaviourDescription::MaterialProperty, N>& mps) {
       for (const auto& mp : mps) {
         if (!mp.template is<BehaviourDescription::ConstantMaterialProperty>()) {
           return false;
@@ -89,7 +89,7 @@ namespace mfront {
         VariableDescription m(t, n, N, 0u);
         bd.addLocalVariable(h, m);
       }
-    } // end of declareParameterOrLocalVariable
+    }  // end of declareParameterOrLocalVariable
 
     template <std::size_t N>
     void declareParameterOrLocalVariable(
@@ -101,10 +101,10 @@ namespace mfront {
       constexpr const auto h =
           tfel::material::ModellingHypothesis::UNDEFINEDHYPOTHESIS;
       declareParameterOrLocalVariable(bd, mps, t, n);
-      if (areAllConstantMaterialProperties(mps)){
+      if (areAllConstantMaterialProperties(mps)) {
         bd.setEntryName(h, n, en);
       }
-    } // end of declareParameterOrLocalVariable
+    }  // end of declareParameterOrLocalVariable
 
     template <std::size_t N>
     void declareParameterOrLocalVariable(
@@ -116,7 +116,7 @@ namespace mfront {
       constexpr const auto h =
           tfel::material::ModellingHypothesis::UNDEFINEDHYPOTHESIS;
       declareParameterOrLocalVariable(bd, mps, t, n);
-      if (areAllConstantMaterialProperties(mps)){
+      if (areAllConstantMaterialProperties(mps)) {
         bd.setGlossaryName(h, n, g);
       }
     }  // end of declareParameterOrLocalVariable
@@ -138,13 +138,13 @@ namespace mfront {
           } else {
             const auto& cmp = mp.template get<
                 BehaviourDescription::ConstantMaterialProperty>();
-            c += "this->" + vn + " = " + std::to_string(i) + "] = " +
-                 std::to_string(cmp.value) + ";\n";
+            c += "this->" + vn + " = " + std::to_string(i) +
+                 "] = " + std::to_string(cmp.value) + ";\n";
           }
         }
       }
       return c;
-    } // end of generateMaterialPropertiesInitializationCode
+    }  // end of generateMaterialPropertiesInitializationCode
 
   }  // end of namespace bbrick
 

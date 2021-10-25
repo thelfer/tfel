@@ -37,7 +37,8 @@ namespace mtest {
   DianaFEASmallStrainBehaviour::DianaFEASmallStrainBehaviour(
       const Hypothesis h, const std::string& l, const std::string& b)
       : StandardBehaviourBase(h, l, b) {
-    auto& elm = tfel::system::ExternalLibraryManager::getExternalLibraryManager();
+    auto& elm =
+        tfel::system::ExternalLibraryManager::getExternalLibraryManager();
     this->fct = elm.getDianaFEAExternalBehaviourFunction(l, b);
     if (this->stype != 0) {
       tfel::raise(
@@ -51,33 +52,36 @@ namespace mtest {
     if (this->requiresThermalExpansionCoefficientTensor) {
       tmp.push_back("ThermalExpansion");
     }
-    this->mpnames.insert(this->mpnames.begin(),tmp.begin(),tmp.end());
+    this->mpnames.insert(this->mpnames.begin(), tmp.begin(), tmp.end());
   }  // end of DianaFEASmallStrainBehaviour::DianaFEASmallStrainBehaviour
 
-  void DianaFEASmallStrainBehaviour::allocate(BehaviourWorkSpace& wk) const{
-    const auto ndv     = this->getGradientsSize();
-    const auto nth     = this->getThermodynamicForcesSize();
+  void DianaFEASmallStrainBehaviour::allocate(BehaviourWorkSpace& wk) const {
+    const auto ndv = this->getGradientsSize();
+    const auto nth = this->getThermodynamicForcesSize();
     const auto nstatev = this->getInternalStateVariablesSize();
-    wk.D.resize(nth,nth);
-    wk.k.resize(nth,ndv);
-    wk.kt.resize(nth,ndv);
+    wk.D.resize(nth, nth);
+    wk.k.resize(nth, ndv);
+    wk.kt.resize(nth, ndv);
     wk.ivs.resize(nstatev);
-    wk.nk.resize(nth,ndv);
+    wk.nk.resize(nth, ndv);
     wk.ne.resize(ndv);
     wk.ns.resize(nth);
     wk.nivs.resize(nstatev);
     wk.mps.resize(this->mpnames.size());
-    mtest::allocate(wk.cs,this->shared_from_this());
-  } // end of DianaFEASmallStrainBehaviour::allocate
+    mtest::allocate(wk.cs, this->shared_from_this());
+  }  // end of DianaFEASmallStrainBehaviour::allocate
 
-  tfel::math::tmatrix<3u, 3u, real> DianaFEASmallStrainBehaviour::getRotationMatrix(
-      const tfel::math::vector<real>&, const tfel::math::tmatrix<3u, 3u, real>& r) const {
+  tfel::math::tmatrix<3u, 3u, real>
+  DianaFEASmallStrainBehaviour::getRotationMatrix(
+      const tfel::math::vector<real>&,
+      const tfel::math::tmatrix<3u, 3u, real>& r) const {
     return r;
   }  // end of DianaFEASmallStrainBehaviour::getRotationMatrix
 
-  StiffnessMatrixType DianaFEASmallStrainBehaviour::getDefaultStiffnessMatrixType() const {
+  StiffnessMatrixType
+  DianaFEASmallStrainBehaviour::getDefaultStiffnessMatrixType() const {
     return StiffnessMatrixType::CONSISTENTTANGENTOPERATOR;
-  } // end of DianaFEASmallStrainBehaviour::getDefaultStiffnessMatrixType
+  }  // end of DianaFEASmallStrainBehaviour::getDefaultStiffnessMatrixType
 
   void DianaFEASmallStrainBehaviour::getGradientsDefaultInitialValues(
       tfel::math::vector<real>& v) const {
@@ -110,8 +114,8 @@ namespace mtest {
     using namespace std;
     using namespace tfel::math;
     using namespace dianafea;
-    using tfel::math::vector;
     using tfel::material::getSpaceDimension;
+    using tfel::math::vector;
     constexpr const auto sqrt2 = Cste<real>::sqrt2;
     auto throw_if = [](const bool c, const std::string& m) {
       tfel::raise_if(c, "DianaFEASmallStrainBehaviour::call_behaviour: " + m);
@@ -140,7 +144,8 @@ namespace mtest {
       ude(i) -= s.e_th1(i) - s.e_th0(i);
     }
     // convert from umat conventions
-    for (decltype(s.e1.size()) i = 3; i != this->getThermodynamicForcesSize(); ++i) {
+    for (decltype(s.e1.size()) i = 3; i != this->getThermodynamicForcesSize();
+         ++i) {
       s.s1(i) /= sqrt2;
       ue0(i) *= sqrt2;
       ude(i) *= sqrt2;

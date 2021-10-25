@@ -3,22 +3,22 @@
  * \brief  This file implements the for_each class.
  * \author Thomas Helfer
  * \date   30 Jun 2006
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_TFEL_FOR_EACH_HXX
-#define LIB_TFEL_FOR_EACH_HXX 
+#define LIB_TFEL_FOR_EACH_HXX
 
-#include"TFEL/Config/TFELConfig.hxx"
+#include "TFEL/Config/TFELConfig.hxx"
 
-namespace tfel{
+namespace tfel {
 
-  namespace fsalgo{
+  namespace fsalgo {
 
     /*!
      * \class for_each
@@ -31,49 +31,47 @@ namespace tfel{
      *
      * This documentation is mostly inspired from:
      * http://www.sgi.com/tech/stl/for_each.html
-     * 
+     *
      * \see for_each.cxx for some elementary tests.
      *
      * \author Thomas Helfer
-     * \date   30 Jun 2006      
+     * \date   30 Jun 2006
      */
-    template<unsigned int N>
-    struct for_each
-    {
-      /*! 
-       * \param InputIterator input iterator 
+    template <unsigned int N>
+    struct for_each {
+      /*!
+       * \param InputIterator input iterator
        * \param UnaryFunction unary function which is applied to the elements
-       * 
+       *
        * \return UnaryFunction
        *
        * \pre
        * - InputIterator is a model of Input Iterator
        * - UnaryFunction is a model of Unary Function
-       * - UnaryFunction does not apply any non-constant operation through its argument.
-       * - InputIterator's value type is convertible to UnaryFunction's argument type.
+       * - UnaryFunction does not apply any non-constant operation through its
+       * argument.
+       * - InputIterator's value type is convertible to UnaryFunction's argument
+       * type.
        *
        * \author Thomas Helfer
-       * \date   30 Jun 2006      
+       * \date   30 Jun 2006
        */
-      template<typename InputIterator,typename UnaryFunction>
-      static TFEL_FSALGORITHM_INLINE
-      void exe(InputIterator p, UnaryFunction& f)
-      {
-	f(*p);
-	for_each<N-1>::exe(++p,f);
+      template <typename InputIterator, typename UnaryFunction>
+      static TFEL_FSALGORITHM_INLINE void exe(InputIterator p,
+                                              UnaryFunction& f) {
+        f(*p);
+        for_each<N - 1>::exe(++p, f);
       }
-
-    };  
+    };
 
     /*!
      * \brief partial specialisation of struct for_each to end recursion.
      *
      * \author Thomas Helfer
-     * \date   30 Jun 2006      
+     * \date   30 Jun 2006
      */
-    template<>
-    struct for_each<0u>
-    {
+    template <>
+    struct for_each<0u> {
       /*!
        * \return UnaryFunction
        * \sa for_each<N>::exe() for details
@@ -81,15 +79,12 @@ namespace tfel{
        * \author Thomas Helfer
        * \date   30 Jun 2006
        */
-      template<typename InputIterator,typename UnaryFunction>
-      static TFEL_FSALGORITHM_INLINE
-      void exe(InputIterator, UnaryFunction&)
-      {}
+      template <typename InputIterator, typename UnaryFunction>
+      static TFEL_FSALGORITHM_INLINE void exe(InputIterator, UnaryFunction&) {}
     };
-  
-  } // end of namespace fsalgo
 
-} // end of namespace tfel
+  }  // end of namespace fsalgo
+
+}  // end of namespace tfel
 
 #endif /* LIB_TFEL_FOR_EACH_HXX */
-

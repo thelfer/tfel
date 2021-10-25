@@ -91,9 +91,10 @@ namespace mfront {
       out << "// setting jacobian to identity\n"
              "std::fill(this->jacobian.begin(),this->jacobian.end(),real(0));\n"
              "for(unsigned short idx = 0; idx!= "
-          << n << ";++idx){\n"
-                  "this->jacobian(idx,idx)= real(1);\n"
-                  "}\n";
+          << n
+          << ";++idx){\n"
+             "this->jacobian(idx,idx)= real(1);\n"
+             "}\n";
     }
   }  // end of MFrontBroydenSolverBase::writeSpecificInitializeMethodPart
 

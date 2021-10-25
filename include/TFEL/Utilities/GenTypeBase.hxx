@@ -167,7 +167,7 @@ namespace tfel {
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
           : public GenTypeSpecializedMethods<Child, typename List::Next>,
             public GenTypeSpecializedAccessor<Child, typename List::Current>
-#else /* DOXYGEN_SHOULD_SKIP_THIS */
+#else  /* DOXYGEN_SHOULD_SKIP_THIS */
           public GenTypeSpecializedAccessor<Child, typename List::Current>
 #endif /* DOXYGEN_SHOULD_SKIP_THIS */
       {
@@ -219,7 +219,9 @@ namespace tfel {
       template <typename List, typename... Types>
       struct TFEL_VISIBILITY_LOCAL GenTypeRunTimeMethods
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-          : public GenTypeRunTimeMethods<typename List::Next, Types..., typename List::Current>
+          : public GenTypeRunTimeMethods<typename List::Next,
+                                         Types...,
+                                         typename List::Current>
 #endif /* DOXYGEN_SHOULD_SKIP_THIS */
       {
       };
@@ -230,13 +232,14 @@ namespace tfel {
        * \date   20 Apr. 2007.
        */
       template <typename... Types>
-      struct TFEL_VISIBILITY_LOCAL GenTypeRunTimeMethods<tfel::meta::TLE, Types...> {
+      struct TFEL_VISIBILITY_LOCAL
+          GenTypeRunTimeMethods<tfel::meta::TLE, Types...> {
         //! choose the function used to destroy the N-1 type of the typelist.
         template <typename T>
-        using GenTypeDestroy =
-            typename std::conditional<std::is_trivial<T>::value,
-                                      GenTypeTrivialDestroy<T>,
-                                      GenTypeGenericDestroy<T>>::type;  //! size of the typelise
+        using GenTypeDestroy = typename std::conditional<
+            std::is_trivial<T>::value,
+            GenTypeTrivialDestroy<T>,
+            GenTypeGenericDestroy<T>>::type;  //! size of the typelise
         static constexpr const auto N = sizeof...(Types);
         //! a simple alias.
         using DestructorPtr = void (*)(void *const);
@@ -257,7 +260,8 @@ namespace tfel {
          * \return a pointer to a copy constructor
          */
         CopyConstructorPtr get_copy_constructor(const unsigned short i) {
-          constexpr const CopyConstructorPtr m[N] = {&GenTypeCopy<Types>::exe...};
+          constexpr const CopyConstructorPtr m[N] = {
+              &GenTypeCopy<Types>::exe...};
           return (i >= N) ? nullptr : m[i];
         }
         /*!
@@ -265,7 +269,8 @@ namespace tfel {
          * \return a pointer to an assignement operator
          */
         AssignOperatorPtr get_assignement_operator(const unsigned short i) {
-          constexpr const AssignOperatorPtr m[N] = {&GenTypeAssign<Types>::exe...};
+          constexpr const AssignOperatorPtr m[N] = {
+              &GenTypeAssign<Types>::exe...};
           return (i >= N) ? nullptr : m[i];
         }
       };
@@ -280,24 +285,28 @@ namespace tfel {
      */
     template <typename List>
     struct GenTypeBase
-        : public tfel::utilities::internals::GenTypeSpecializedMethods<GenTypeBase<List>, List>,
+        : public tfel::utilities::internals::
+              GenTypeSpecializedMethods<GenTypeBase<List>, List>,
           public tfel::utilities::internals::GenTypeRunTimeMethods<List> {
       /*!
        * \brief a simple wrapper around std::enable_if
-       * \tparam T: tested type which must belong to List for the requirement to hold true
-       * \tparam R: result
+       * \tparam T: tested type which must belong to List for the requirement to
+       * hold true \tparam R: result
        */
       template <typename T, typename R = T>
-      using count = typename tfel::meta::TLCountNbrOfT<typename std::decay<T>::type, List>;
+      using count =
+          typename tfel::meta::TLCountNbrOfT<typename std::decay<T>::type,
+                                             List>;
       /*!
        * \brief a simple wrapper around std::enable_if
-       * \tparam T: tested type which must belong to List for the requirement to hold true
-       * \tparam R: result
+       * \tparam T: tested type which must belong to List for the requirement to
+       * hold true \tparam R: result
        */
       template <typename T, typename R = T>
       using type_check = typename std::enable_if<count<T>::value == 1, R>::type;
       //! number of object that the GenType can hold
-      static constexpr unsigned short ListSize = tfel::meta::TLSize<List>::value;
+      static constexpr unsigned short ListSize =
+          tfel::meta::TLSize<List>::value;
       //! Default constructor.
       TFEL_INLINE GenTypeBase() = default;
       /*!
@@ -454,7 +463,8 @@ namespace tfel {
       /*
        * \return T1&, the value affected to the GenType.
        * \pre    T1 must be a type that the GenType can hold.
-       * \throw  GenTypeCastError, if the type contained in the GenType does not match.
+       * \throw  GenTypeCastError, if the type contained in the GenType does not
+       * match.
        */
       template <typename T1>
       TFEL_INLINE type_check<T1, T1 &> get() {
@@ -497,8 +507,9 @@ namespace tfel {
         this->index = tfel::meta::TLFindEltPos<T1, List>::value;
       }
       //! container type
-      typedef typename std::aligned_storage<tfel::meta::TLMaxSize<List>::value,
-                                            tfel::meta::TLMaxAlign<List>::value>::type storage_t;
+      typedef typename std::aligned_storage<
+          tfel::meta::TLMaxSize<List>::value,
+          tfel::meta::TLMaxAlign<List>::value>::type storage_t;
       //! the buffer where objects are hold.
       storage_t buffer;
       //! index to the current type hold by the GenType.
@@ -572,7 +583,8 @@ namespace tfel {
      * hold any object.
      */
     template <typename T, typename List>
-    typename T::return_type apply(const GenTypeBase<List> &, const GenTypeBase<List> &);
+    typename T::return_type apply(const GenTypeBase<List> &,
+                                  const GenTypeBase<List> &);
 
     /*!
      * Apply functor T to a GenTypeBase for the types holded by the
@@ -592,7 +604,9 @@ namespace tfel {
      * object.
      */
     template <typename T, typename List>
-    typename T::return_type apply(T &, const GenTypeBase<List> &, const GenTypeBase<List> &);
+    typename T::return_type apply(T &,
+                                  const GenTypeBase<List> &,
+                                  const GenTypeBase<List> &);
 
     /*!
      * Apply function T::apply to a GenTypeBase for the type holded by the
@@ -667,10 +681,13 @@ namespace tfel {
      * object.
      */
     template <typename T, typename List>
-    typename T::return_type apply(T &, GenTypeBase<List> &, GenTypeBase<List> &);
+    typename T::return_type apply(T &,
+                                  GenTypeBase<List> &,
+                                  GenTypeBase<List> &);
 
     template <typename... Types>
-    using GenType = GenTypeBase<typename tfel::meta::GenerateTypeList<Types...>::type>;
+    using GenType =
+        GenTypeBase<typename tfel::meta::GenerateTypeList<Types...>::type>;
 
   }  // end of namespace utilities
 

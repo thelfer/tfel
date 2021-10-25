@@ -266,7 +266,8 @@ namespace mtest {
      * \param[in] m: calling method
      * \param[in,out] p: position in the input file
      */
-    ConstraintOptions readConstraintOptions(const std::string&, tokens_iterator&);
+    ConstraintOptions readConstraintOptions(const std::string&,
+                                            tokens_iterator&);
     /*!
      * \brief treat the current keyword
      * \param[in,out] t: `MTest` object to be configured

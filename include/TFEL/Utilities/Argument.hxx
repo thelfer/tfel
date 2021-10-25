@@ -1,27 +1,25 @@
 /*!
  * \file   Argument.hxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   09 juin 2016
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_TFEL_UTILITIES_ARGUMENT_HXX
 #define LIB_TFEL_UTILITIES_ARGUMENT_HXX
 
-#include<string>
-#include"TFEL/Config/TFELConfig.hxx"
+#include <string>
+#include "TFEL/Config/TFELConfig.hxx"
 
-namespace tfel
-{
+namespace tfel {
 
-  namespace utilities
-  {
+  namespace utilities {
 
     /*!
      * \brief class holding a command line argument
@@ -30,8 +28,7 @@ namespace tfel
      * \note inheriting from std::string shall be forbidden in most
      *cases. Here its does not harm.
      */
-    struct TFELUTILITIES_VISIBILITY_EXPORT Argument
-    {
+    struct TFELUTILITIES_VISIBILITY_EXPORT Argument {
       //! \param s : argument name
       Argument(std::string);
       //! \param s : argument name
@@ -47,7 +44,7 @@ namespace tfel
       //! convertion to string
       const std::string& as_string() const noexcept;
       //! convertion to string (return argument's name)
-      explicit operator const std::string& () const noexcept;
+      explicit operator const std::string&() const noexcept;
       /*!
        * \brief set argument option
        * \param o : option
@@ -57,17 +54,18 @@ namespace tfel
       const std::string& getOption() const noexcept;
       //! destructor
       ~Argument() noexcept;
-    private:
+
+     private:
       //! argument name
       std::string name;
       //! argument option
       std::string option;
       //! flag telling if an option has been defined
       bool isOptionSet = false;
-    }; // end of struct Argument
+    };  // end of struct Argument
 
-  } // end of namespace utilities
+  }  // end of namespace utilities
 
-} // end of namespace tfel
+}  // end of namespace tfel
 
 #endif /* LIB_TFEL_UTILITIES_ARGUMENT_HXX */

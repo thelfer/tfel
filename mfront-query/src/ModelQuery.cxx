@@ -288,4 +288,4 @@ namespace mfront {
   }
 
   ModelQuery::~ModelQuery() = default;
-}
+}  // namespace mfront

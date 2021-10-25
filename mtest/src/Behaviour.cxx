@@ -75,14 +75,16 @@ namespace mtest {
       if (d.empty()) {
         return;
       }
-      throw_if(!d.is<std::map<std::string, Parameters>>(), "unsupported parameters type");
+      throw_if(!d.is<std::map<std::string, Parameters>>(),
+               "unsupported parameters type");
       const auto& p = d.get<std::map<std::string, Parameters>>();
       throw_if(!p.empty(), "no parameter expected");
     };
-    auto& elm = tfel::system::ExternalLibraryManager::getExternalLibraryManager();
+    auto& elm =
+        tfel::system::ExternalLibraryManager::getExternalLibraryManager();
     auto b = std::shared_ptr<Behaviour>{};
     const auto in = i.empty() ? elm.getInterface(l, f) : i;
-    if ((in == "generic") || (in == "Generic")){
+    if ((in == "generic") || (in == "Generic")) {
       if (d.empty()) {
         b = std::make_shared<GenericBehaviour>(h, l, f);
       } else {
@@ -93,10 +95,11 @@ namespace mtest {
       }
     } else {
       throw_if(!elm.contains(l, f),
-	       "behaviour '" + f + "' not defined in library '" + l + "'");
+               "behaviour '" + f + "' not defined in library '" + l + "'");
     }
 #ifdef HAVE_CASTEM
-    if ((in == "castem") || (in == "umat") || (in == "Castem") || (in == "Cast3M")) {
+    if ((in == "castem") || (in == "umat") || (in == "Castem") ||
+        (in == "Cast3M")) {
       check_no_parameters();
       const auto type = elm.getUMATBehaviourType(l, f);
       const auto ktype = elm.getUMATBehaviourKinematic(l, f);
@@ -113,17 +116,20 @@ namespace mtest {
       } else if (type == 3u) {
         b = std::make_shared<CastemCohesiveZoneModel>(h, l, f);
       } else {
-        throw_if(true, "unsupported behaviour type (" + std::to_string(type) + ")");
+        throw_if(true,
+                 "unsupported behaviour type (" + std::to_string(type) + ")");
       }
     }
     if (in == "mistral") {
       b = MistralBehaviour::buildMistralBehaviour(l, f, d, h);
     }
     if (in == "castem_umat_small_strain") {
-      b = CastemUmatSmallStrainBehaviour::buildCastemUmatSmallStrainBehaviour(l, f, d, h);
+      b = CastemUmatSmallStrainBehaviour::buildCastemUmatSmallStrainBehaviour(
+          l, f, d, h);
     }
     if (in == "castem_umat_finite_strain") {
-      b = CastemUmatFiniteStrainBehaviour::buildCastemUmatFiniteStrainBehaviour(l, f, d, h);
+      b = CastemUmatFiniteStrainBehaviour::buildCastemUmatFiniteStrainBehaviour(
+          l, f, d, h);
     }
 #endif
 #ifdef HAVE_ASTER
@@ -132,14 +138,16 @@ namespace mtest {
       const auto type = elm.getUMATBehaviourType(l, f);
       if (type == 1u) {
         const auto ktype = elm.getUMATBehaviourKinematic(l, f);
-        throw_if((ktype != 0u) && (ktype != 1u), "unsupported behaviour kinematic");
+        throw_if((ktype != 0u) && (ktype != 1u),
+                 "unsupported behaviour kinematic");
         b = std::make_shared<AsterSmallStrainBehaviour>(h, l, f);
       } else if (type == 2u) {
         b = std::make_shared<AsterFiniteStrainBehaviour>(h, l, f);
       } else if (type == 3u) {
         b = std::make_shared<AsterCohesiveZoneModel>(h, l, f);
       } else {
-        throw_if(true, "unsupported behaviour type (" + std::to_string(type) + ")");
+        throw_if(true,
+                 "unsupported behaviour type (" + std::to_string(type) + ")");
       }
     }
 #endif
@@ -150,7 +158,8 @@ namespace mtest {
       if (type == 2u) {
         b = std::make_shared<EuroplexusFiniteStrainBehaviour>(h, l, f);
       } else {
-        throw_if(true, "unsupported behaviour type (" + std::to_string(type) + ")");
+        throw_if(true,
+                 "unsupported behaviour type (" + std::to_string(type) + ")");
       }
     }
 #endif
@@ -165,7 +174,8 @@ namespace mtest {
       } else if (type == 2u) {
         b = std::make_shared<AbaqusFiniteStrainBehaviour>(h, l, f);
       } else {
-        throw_if(true, "unsupported behaviour type (" + std::to_string(type) + ")");
+        throw_if(true,
+                 "unsupported behaviour type (" + std::to_string(type) + ")");
       }
     }
     if ((in == "AbaqusExplicit") || (in == "abaqus_explicit") ||
@@ -176,7 +186,8 @@ namespace mtest {
       if (type == 2u) {
         b = std::make_shared<AbaqusExplicitBehaviour>(h, l, f);
       } else {
-        throw_if(true, "unsupported behaviour type (" + std::to_string(type) + ")");
+        throw_if(true,
+                 "unsupported behaviour type (" + std::to_string(type) + ")");
       }
     }
 #endif
@@ -190,7 +201,8 @@ namespace mtest {
       } else if (type == 2u) {
         b = std::make_shared<AnsysFiniteStrainBehaviour>(h, l, f);
       } else {
-        throw_if(true, "unsupported behaviour type (" + std::to_string(type) + ")");
+        throw_if(true,
+                 "unsupported behaviour type (" + std::to_string(type) + ")");
       }
     }
 #endif
@@ -221,7 +233,8 @@ namespace mtest {
       } else if (type == 2u) {
         b = std::make_shared<CalculiXFiniteStrainBehaviour>(h, l, f);
       } else {
-        throw_if(true, "unsupported behaviour type (" + std::to_string(type) + ")");
+        throw_if(true,
+                 "unsupported behaviour type (" + std::to_string(type) + ")");
       }
     }
 #endif
@@ -232,7 +245,8 @@ namespace mtest {
       if (type == 1u) {
         b = std::make_shared<DianaFEASmallStrainBehaviour>(h, l, f);
       } else {
-        throw_if(true, "unsupported behaviour type (" + std::to_string(type) + ")");
+        throw_if(true,
+                 "unsupported behaviour type (" + std::to_string(type) + ")");
       }
     }
 #endif
@@ -284,8 +298,8 @@ namespace mtest {
     return false;
   }  // end of canValueBeExtracted
 
-  std::function<real(const CurrentState&)> buildValueExtractor(const Behaviour& b,
-                                                               const std::string& n) {
+  std::function<real(const CurrentState&)> buildValueExtractor(
+      const Behaviour& b, const std::string& n) {
     const auto enames = b.getGradientsComponents();
     auto p = std::find(enames.begin(), enames.end(), n);
     if (p != enames.end()) {

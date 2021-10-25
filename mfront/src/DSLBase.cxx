@@ -46,7 +46,7 @@ namespace std {
     s << v;
     return s.str();
   }
-}
+}  // namespace std
 #endif /* defined __CYGWIN__ &&  (!defined _GLIBCXX_USE_C99) */
 
 namespace mfront {
@@ -56,12 +56,17 @@ namespace mfront {
       if (s.empty()) {
         return s;
       }
-      if ((s.back() == 'u') || (s.back() == 'U') || (s.back() == 'l') || (s.back() == 'L')) {
+      if ((s.back() == 'u') || (s.back() == 'U') || (s.back() == 'l') ||
+          (s.back() == 'L')) {
         return s.substr(0, s.size() - 1);
-      } else if ((tfel::utilities::ends_with(s, "ul")) || (tfel::utilities::ends_with(s, "uL")) ||
-                 (tfel::utilities::ends_with(s, "lu")) || (tfel::utilities::ends_with(s, "Lu")) ||
-                 (tfel::utilities::ends_with(s, "Ul")) || (tfel::utilities::ends_with(s, "UL")) ||
-                 (tfel::utilities::ends_with(s, "lU")) || (tfel::utilities::ends_with(s, "LU"))) {
+      } else if ((tfel::utilities::ends_with(s, "ul")) ||
+                 (tfel::utilities::ends_with(s, "uL")) ||
+                 (tfel::utilities::ends_with(s, "lu")) ||
+                 (tfel::utilities::ends_with(s, "Lu")) ||
+                 (tfel::utilities::ends_with(s, "Ul")) ||
+                 (tfel::utilities::ends_with(s, "UL")) ||
+                 (tfel::utilities::ends_with(s, "lU")) ||
+                 (tfel::utilities::ends_with(s, "LU"))) {
         return s.substr(0, s.size() - 2);
       }
       return s;
@@ -101,18 +106,24 @@ namespace mfront {
   std::vector<std::string> DSLBase::getDefaultReservedNames() {
     auto names = std::vector<std::string>{};
     // names of the c++ standard
-    names.insert(names.end(),
-                 {"std",   "cout",   "cerr",   "endl",    "cos",    "sin",      "tan",           "acos",    "asin",
-                  "atan",  "atan2",  "cosh",   "sinh",    "tanh",   "acosh",    "asinh",         "atanh",   "exp",
-                  "frexp", "ldexp",  "log",    "log10",   "modf",   "exp2",     "expm1",         "ilogb",   "log1p",
-                  "log2",  "logb",   "scalbn", "scalbln", "pow",    "sqrt",     "cbrt",          "hypot",   "erf",
-                  "erfc",  "tgamma", "lgamma", "abs",     "string", "ofstream", "ostringstream", "ifstream"});
+    names.insert(
+        names.end(),
+        {"std",           "cout",    "cerr",   "endl",  "cos",    "sin",
+         "tan",           "acos",    "asin",   "atan",  "atan2",  "cosh",
+         "sinh",          "tanh",    "acosh",  "asinh", "atanh",  "exp",
+         "frexp",         "ldexp",   "log",    "log10", "modf",   "exp2",
+         "expm1",         "ilogb",   "log1p",  "log2",  "logb",   "scalbn",
+         "scalbln",       "pow",     "sqrt",   "cbrt",  "hypot",  "erf",
+         "erfc",          "tgamma",  "lgamma", "abs",   "string", "ofstream",
+         "ostringstream", "ifstream"});
     // tfel namespaces
-    names.insert(names.end(), {"tfel", "math", "material", "utilities", "exception", "glossary"});
+    names.insert(names.end(), {"tfel", "math", "material", "utilities",
+                               "exception", "glossary"});
     for (const auto& v : SupportedTypes::getTypeFlags()) {
       names.push_back(v.first);
     }
-    names.insert(names.end(), {"policy", "errno", "mfront_errno", "mfront_errno_old"});
+    names.insert(names.end(),
+                 {"policy", "errno", "mfront_errno", "mfront_errno_old"});
     return names;
   }
 
@@ -185,23 +196,23 @@ namespace mfront {
 
   CodeBlock DSLBase::readNextBlock(const CodeBlockParserOptions& options) {
     using tfel::utilities::Token;
-    auto addSpaceBetweenToken = [this](
-        std::string& r, const TokensContainer::const_iterator c,
-        const TokensContainer::const_iterator n) {
-      if ((n == this->tokens.end()) || (n->line != c->line)) {
-        return;
-      }
-      const auto csize = [&c] {
-        if ((c->flag == Token::String) || (c->flag == Token::Char)) {
-          return c->value.size() + 2;
-        }
-        return c->value.size();
-      }();
-      if (n->offset > c->offset + csize) {
-        const auto d = n->offset - csize - c->offset;
-        r += std::string(d, ' ');
-      }
-    };
+    auto addSpaceBetweenToken =
+        [this](std::string& r, const TokensContainer::const_iterator c,
+               const TokensContainer::const_iterator n) {
+          if ((n == this->tokens.end()) || (n->line != c->line)) {
+            return;
+          }
+          const auto csize = [&c] {
+            if ((c->flag == Token::String) || (c->flag == Token::Char)) {
+              return c->value.size() + 2;
+            }
+            return c->value.size();
+          }();
+          if (n->offset > c->offset + csize) {
+            const auto d = n->offset - csize - c->offset;
+            r += std::string(d, ' ');
+          }
+        };
     const auto& smn = options.smn;
     const auto& mn = options.mn;
     const auto& delim1 = options.delim1;
@@ -229,7 +240,8 @@ namespace mfront {
     auto& res = b.code;
     unsigned int openedBlock = 0;
     this->readSpecifiedToken("DSLBase::readNextBlock", delim1);
-    this->checkNotEndOfFile("DSLBase::readNextBlock", "Expected a '" + delim2 + "'.");
+    this->checkNotEndOfFile("DSLBase::readNextBlock",
+                            "Expected a '" + delim2 + "'.");
     if ((this->current->value == ";") && (!allowSemiColon)) {
       this->throwRuntimeError("DSLBase::readNextBlock",
                               "read ';' before the end of block.\n"
@@ -292,7 +304,7 @@ namespace mfront {
       }
       previous = std::prev(this->current);
       if (previous->value == "*") {
-        res += "(" + cv+ ")";
+        res += "(" + cv + ")";
       } else {
         res += cv;
       }
@@ -301,7 +313,8 @@ namespace mfront {
     }
     addSpaceBetweenToken(res, this->current, std::next(this->current));
     ++(this->current);
-    while ((this->current != this->tokens.end()) && (!((this->current->value == delim2) && (openedBlock == 0)))) {
+    while ((this->current != this->tokens.end()) &&
+           (!((this->current->value == delim2) && (openedBlock == 0)))) {
       currentValue = demangle(*(this->current));
       if (currentLine != this->current->line) {
         currentLine = this->current->line;
@@ -334,7 +347,8 @@ namespace mfront {
       if (smn.find(currentValue) != smn.end()) {
         b.staticMembers.insert(currentValue);
         const auto previous = std::prev(this->current);
-        if ((previous->value != "->") && (previous->value != ".") && (previous->value != "::")) {
+        if ((previous->value != "->") && (previous->value != ".") &&
+            (previous->value != "::")) {
           if (addClassName) {
             res += this->getClassName();
             res += "::";
@@ -345,7 +359,8 @@ namespace mfront {
         b.members.insert(currentValue);
         auto cv = std::string{};
         const auto previous = std::prev(this->current);
-        if ((previous->value == "->") || (previous->value == ".") || (previous->value == "::")) {
+        if ((previous->value == "->") || (previous->value == ".") ||
+            (previous->value == "::")) {
           cv = currentValue;
         } else {
           if (modifier != nullptr) {
@@ -413,14 +428,16 @@ namespace mfront {
     oFileTokens.swap(this->tokens);
     const auto ocurrent = this->current;
     for (const auto& f : files) {
-      this->importFile(SearchPathsHandler::search(f), std::vector<std::string>(), {});
+      this->importFile(SearchPathsHandler::search(f),
+                       std::vector<std::string>(), {});
     }
     this->fd.fileName = oFileName;
     this->tokens.swap(oFileTokens);
     this->current = ocurrent;
   }
 
-  void DSLBase::checkNotEndOfFile(const std::string& m, const std::string& e) const {
+  void DSLBase::checkNotEndOfFile(const std::string& m,
+                                  const std::string& e) const {
     if (this->current == this->tokens.end()) {
       auto msg = std::string{};
       msg += "unexpected end of file.";
@@ -463,17 +480,21 @@ namespace mfront {
 
   std::string DSLBase::readUntilEndOfInstruction() {
     auto res = std::string{};
-    while ((this->current != this->tokens.end()) && (this->current->value != ";")) {
+    while ((this->current != this->tokens.end()) &&
+           (this->current->value != ";")) {
       if (!this->current->value.empty()) {
         if (this->current->value[0] == '@') {
-          this->throwRuntimeError("DSLBase::readUntilEndOfInstruction", "no word beginning with '@' are allowed here");
+          this->throwRuntimeError(
+              "DSLBase::readUntilEndOfInstruction",
+              "no word beginning with '@' are allowed here");
         }
         res += this->current->value;
         res += " ";
       }
       ++(this->current);
     }
-    this->checkNotEndOfFile("DSLBase::readUntilEndOfInstruction", "Missing ';' delimiter.");
+    this->checkNotEndOfFile("DSLBase::readUntilEndOfInstruction",
+                            "Missing ';' delimiter.");
     if (!res.empty()) {
       res.erase(res.length() - 1);
     }
@@ -492,19 +513,25 @@ namespace mfront {
     return res;
   }  // end of DSLBase::readOnlyOneToken
 
-  std::pair<std::string, VariableBoundsDescription> DSLBase::readVariableBounds() {
+  std::pair<std::string, VariableBoundsDescription>
+  DSLBase::readVariableBounds() {
     return mfront::readVariableBounds(this->current, this->end());
   }  // end of DSLBase::readVariableBounds
 
-  void DSLBase::registerIntegerConstant(const std::string& n, const size_t l, const int v) {
+  void DSLBase::registerIntegerConstant(const std::string& n,
+                                        const size_t l,
+                                        const int v) {
     if (!this->isValidIdentifier(n)) {
-      this->throwRuntimeError("DSLBase::registerIntegerConstant", "Variable name '" + n + "' is not valid.");
+      this->throwRuntimeError("DSLBase::registerIntegerConstant",
+                              "Variable name '" + n + "' is not valid.");
     }
-    this->addStaticVariableDescription(StaticVariableDescription("int", n, l, v));
+    this->addStaticVariableDescription(
+        StaticVariableDescription("int", n, l, v));
   }  // end of DSLBase::registerIntegerConstant
 
   void DSLBase::treatIntegerConstant() {
-    this->checkNotEndOfFile("DSLBase::treatIntegerConstant", "Cannot read type of static variable.");
+    this->checkNotEndOfFile("DSLBase::treatIntegerConstant",
+                            "Cannot read type of static variable.");
     const auto name = this->current->value;
     const auto line = this->current->line;
     ++(this->current);
@@ -610,14 +637,16 @@ namespace mfront {
       }
     };
     auto type = this->current->value;
-    throw_if(!this->isValidIdentifier(type, false), "given type '" + type + "' is not valid.");
+    throw_if(!this->isValidIdentifier(type, false),
+             "given type '" + type + "' is not valid.");
     ++(this->current);
     this->checkNotEndOfFile("DSLBase::readType");
     while (this->current->value == "::") {
       ++(this->current);
       this->checkNotEndOfFile("DSLBase::readType");
       const auto t = this->current->value;
-      throw_if(!this->isValidIdentifier(t, false), "given type '" + t + "' is not valid.");
+      throw_if(!this->isValidIdentifier(t, false),
+               "given type '" + t + "' is not valid.");
       type += "::" + t;
       ++(this->current);
       this->checkNotEndOfFile("DSLBase::readType");
@@ -664,8 +693,10 @@ namespace mfront {
     return {type, true};
   }  // end of DSLBase::readType
 
-  void DSLBase::readVarList(VariableDescriptionContainer& cont, const bool allowArray) {
-    this->checkNotEndOfFile("DSLBase::readVarList", "Cannot read type of varName.\n");
+  void DSLBase::readVarList(VariableDescriptionContainer& cont,
+                            const bool allowArray) {
+    this->checkNotEndOfFile("DSLBase::readVarList",
+                            "Cannot read type of varName.\n");
     const auto r = this->readType();
     if (!r.second) {
       this->throwRuntimeError("DSLBase::readVarList", "unbalanced '>'");
@@ -768,12 +799,14 @@ namespace mfront {
     if (this->current->flag != tfel::utilities::Token::String) {
       this->throwRuntimeError(m, "Expected a string");
     }
-    const auto& r = this->current->value.substr(1, this->current->value.size() - 2);
+    const auto& r =
+        this->current->value.substr(1, this->current->value.size() - 2);
     ++(this->current);
     return r;
   }  // end of DSLBase::readString
 
-  std::vector<std::string> DSLBase::readStringOrArrayOfString(const std::string& m) {
+  std::vector<std::string> DSLBase::readStringOrArrayOfString(
+      const std::string& m) {
     this->checkNotEndOfFile(m, "Expected a string or '{'");
     if (this->current->value == "{") {
       return this->readArrayOfString(m);
@@ -806,7 +839,9 @@ namespace mfront {
     auto vinterfaces = std::vector<std::string>{};
     this->checkNotEndOfFile("DSLBase::treatMfront", "Expected '}'");
     if (!((this->current->value == "}") || (this->current->value == ","))) {
-      this->throwRuntimeError("DSLBase::treatMfront", "Expected ',' or '}', read '" + this->current->value + "'");
+      this->throwRuntimeError(
+          "DSLBase::treatMfront",
+          "Expected ',' or '}', read '" + this->current->value + "'");
     }
     if (this->current->value == ",") {
       ++(this->current);
@@ -819,20 +854,23 @@ namespace mfront {
     }
   }  // end of DSLBase::treatMfront
 
-  std::string DSLBase::readSpecifiedValue(const std::string& file, const std::string& value) {
+  std::string DSLBase::readSpecifiedValue(const std::string& file,
+                                          const std::string& value) {
     std::vector<std::string> values(1, value);
     return this->readSpecifiedValues(file, values)[1];
   }  // end of DSLBase::readSpecifiedValue
 
-  std::vector<std::string> DSLBase::readSpecifiedValues(const std::string& file,
-                                                        const std::string& value1,
-                                                        const std::string& value2) {
+  std::vector<std::string> DSLBase::readSpecifiedValues(
+      const std::string& file,
+      const std::string& value1,
+      const std::string& value2) {
     return this->readSpecifiedValues(file, {value1, value2});
   }  // end of DSLBase::readSpecifiedValues
 
-  std::vector<std::string> DSLBase::readSpecifiedValues(const std::string& file,
-                                                        const std::vector<std::string>& values) {
-    auto throw_if = [](const bool b, const std::string& m, const unsigned int l) {
+  std::vector<std::string> DSLBase::readSpecifiedValues(
+      const std::string& file, const std::vector<std::string>& values) {
+    auto throw_if = [](const bool b, const std::string& m,
+                       const unsigned int l) {
       tfel::raise_if(b, "DSLBase::readSpecifiedValues : " + m +
                             "\n"
                             "Error at line " +
@@ -849,24 +887,35 @@ namespace mfront {
       if (p != values.end()) {
         if (pt != cfile.begin()) {
           auto ptp = std::prev(pt);
-          throw_if(ptp->value != ";", "the keyword '" + *p +
-                                          "' does not "
-                                          "begin a new instruction.",
+          throw_if(ptp->value != ";",
+                   "the keyword '" + *p +
+                       "' does not "
+                       "begin a new instruction.",
                    pt->line);
         }
-        throw_if(++pt == pte, "unexepected end of file '" + file + "' (expected " + *p + ").\n", (--pt)->line);
+        throw_if(
+            ++pt == pte,
+            "unexepected end of file '" + file + "' (expected " + *p + ").\n",
+            (--pt)->line);
         const auto value = pt->value;
-        throw_if(pt->value == ";", "unexepected token ';' (exepected " + *p + ")", pt->line);
-        throw_if(++pt == pte, "unexepected end of file '" + file + "' (expected ';').\n", (--pt)->line);
-        throw_if(pt->value != ";", "unexepected token '" + pt->value + "' (exepected ';')", pt->line);
-        res[static_cast<std::vector<std::string>::size_type>(p - values.begin())] = value;
+        throw_if(pt->value == ";",
+                 "unexepected token ';' (exepected " + *p + ")", pt->line);
+        throw_if(++pt == pte,
+                 "unexepected end of file '" + file + "' (expected ';').\n",
+                 (--pt)->line);
+        throw_if(pt->value != ";",
+                 "unexepected token '" + pt->value + "' (exepected ';')",
+                 pt->line);
+        res[static_cast<std::vector<std::string>::size_type>(
+            p - values.begin())] = value;
       }
       ++pt;
     }
     return res;
   }  // end of DSLBase::readSpecifiedValues
 
-  std::shared_ptr<MaterialPropertyDescription> DSLBase::handleMaterialPropertyDescription(const std::string& f) {
+  std::shared_ptr<MaterialPropertyDescription>
+  DSLBase::handleMaterialPropertyDescription(const std::string& f) {
     // getting informations the source files
     MaterialPropertyDSL mp;
     try {
@@ -876,31 +925,37 @@ namespace mfront {
       mp.analyseFile(path);
       const auto t = mp.getTargetsDescription();
       if (!t.specific_targets.empty()) {
-        this->throwRuntimeError("DSLBase::handleMaterialPropertyDescription", "error while treating file '" + f +
-                                                                                  "'.\n"
-                                                                                  "Specific targets are not supported");
+        this->throwRuntimeError("DSLBase::handleMaterialPropertyDescription",
+                                "error while treating file '" + f +
+                                    "'.\n"
+                                    "Specific targets are not supported");
       }
       const auto& mpd = mp.getMaterialPropertyDescription();
       const auto& mname = minterface.getFunctionName(mpd);
       this->reserveName(mname);
       this->reserveName(mname + "_checkBounds");
       this->reserveName(mname + "_bounds_check_status");
-      this->appendToIncludes("#include\"" + minterface.getHeaderFileName(mpd.material, mpd.law) + ".hxx\"");
+      this->appendToIncludes(
+          "#include\"" + minterface.getHeaderFileName(mpd.material, mpd.law) +
+          ".hxx\"");
       this->addMaterialLaw(mname);
       this->atds.push_back(std::move(t));
       this->externalMFrontFiles.insert({path, {"mfront"}});
     } catch (std::exception& e) {
-      this->throwRuntimeError("DSLBase::handleMaterialPropertyDescription",
-                              "error while treating file '" + f + "'\n" + std::string(e.what()));
+      this->throwRuntimeError(
+          "DSLBase::handleMaterialPropertyDescription",
+          "error while treating file '" + f + "'\n" + std::string(e.what()));
     } catch (...) {
-      this->throwRuntimeError("DSLBase::handleMaterialPropertyDescription", "error while treating file '" + f + "'");
+      this->throwRuntimeError("DSLBase::handleMaterialPropertyDescription",
+                              "error while treating file '" + f + "'");
     }
     const auto& m = mp.getMaterialPropertyDescription();
     return std::make_shared<MaterialPropertyDescription>(m);
   }  // end of DSLBase::handleMaterialLaw
 
   void DSLBase::treatMaterialLaw() {
-    const auto vfiles = this->readStringOrArrayOfString("DSLBase::treatMaterialLaw");
+    const auto vfiles =
+        this->readStringOrArrayOfString("DSLBase::treatMaterialLaw");
     this->readSpecifiedToken("DSLBase::treatMaterialLaw", ";");
     for (const auto& f : vfiles) {
       this->handleMaterialPropertyDescription(f);
@@ -913,16 +968,19 @@ namespace mfront {
     this->fd.description += "* ";
     auto currentLine = this->current->line;
     unsigned int openedBrackets = 1u;
-    while ((this->current != this->tokens.end()) && (!((this->current->value == "}") && (openedBrackets == 1u)))) {
+    while ((this->current != this->tokens.end()) &&
+           (!((this->current->value == "}") && (openedBrackets == 1u)))) {
       if (this->current->value == "{") {
         const auto previous = std::prev(this->current);
-        if ((previous->value.size() > 0) && (previous->value[previous->value.size() - 1] != '\\')) {
+        if ((previous->value.size() > 0) &&
+            (previous->value[previous->value.size() - 1] != '\\')) {
           ++openedBrackets;
         }
       }
       if (this->current->value == "}") {
         const auto previous = std::prev(this->current);
-        if ((previous->value.size() > 0) && (previous->value[previous->value.size() - 1] != '\\')) {
+        if ((previous->value.size() > 0) &&
+            (previous->value[previous->value.size() - 1] != '\\')) {
           --openedBrackets;
         }
       }
@@ -933,7 +991,8 @@ namespace mfront {
         }
       }
       if (this->current->flag == tfel::utilities::Token::String) {
-        this->fd.description += this->current->value.substr(1, this->current->value.size() - 2u);
+        this->fd.description +=
+            this->current->value.substr(1, this->current->value.size() - 2u);
       } else {
         this->fd.description += this->current->value;
       }
@@ -942,14 +1001,16 @@ namespace mfront {
     }
     if (this->current == this->tokens.end()) {
       --(this->current);
-      this->throwRuntimeError("DSLBase::treatDescription", "File ended before the end of description.");
+      this->throwRuntimeError("DSLBase::treatDescription",
+                              "File ended before the end of description.");
     }
     ++(this->current);
   }  // end of DSLBase::treatDescription
 
   void DSLBase::treatLonelySeparator() {
     if (getPedanticMode()) {
-      getLogStream() << this->fd.fileName << ":" << this->current->line << ":" << this->current->offset
+      getLogStream() << this->fd.fileName << ":" << this->current->line << ":"
+                     << this->current->offset
                      << ": warning: extra ‘;’ [-pedantic]\n";
     }
   }  // end of DSLBase::treatLonelySperator
@@ -958,11 +1019,15 @@ namespace mfront {
     this->fd.authorName = this->readUntilEndOfInstruction();
   }  // end of DSLBase::treatAuthor
 
-  void DSLBase::treatDate() { this->fd.date = this->readUntilEndOfInstruction(); }  // end of DSLBase::treatDate
+  void DSLBase::treatDate() {
+    this->fd.date = this->readUntilEndOfInstruction();
+  }  // end of DSLBase::treatDate
 
   void DSLBase::treatUnknownKeyword() {
     --(this->current);
-    this->throwRuntimeError("DSLBase::treatUnknownKeyword", "unknown keyword (read '" + this->current->value + "')");
+    this->throwRuntimeError(
+        "DSLBase::treatUnknownKeyword",
+        "unknown keyword (read '" + this->current->value + "')");
   }  // end of DSLBase::treatUnknownKeyword
 
   void DSLBase::treatIncludes() {
@@ -989,40 +1054,51 @@ namespace mfront {
     this->appendToPrivateCode(this->readNextBlock(options).code);
   }  // end of DSLBase::treatPrivate
 
-  void DSLBase::treatParser() { this->readUntilEndOfInstruction(); }  // end of DSLBase::treatParser
+  void DSLBase::treatParser() {
+    this->readUntilEndOfInstruction();
+  }  // end of DSLBase::treatParser
 
   void DSLBase::treatStaticVar() {
-    this->checkNotEndOfFile("DSLBase::treatStaticVar", "Cannot read type of static variable.");
+    this->checkNotEndOfFile("DSLBase::treatStaticVar",
+                            "Cannot read type of static variable.");
     const auto type = this->current->value;
     if (!this->isValidIdentifier(type, false)) {
       --(this->current);
-      this->throwRuntimeError("DSLBase::treatStaticVar", "type given is not valid.");
+      this->throwRuntimeError("DSLBase::treatStaticVar",
+                              "type given is not valid.");
     }
     ++(this->current);
-    this->checkNotEndOfFile("DSLBase::treatStaticVar", "Cannot read variable name.");
+    this->checkNotEndOfFile("DSLBase::treatStaticVar",
+                            "Cannot read variable name.");
     const auto name = this->current->value;
     if (!this->isValidIdentifier(name)) {
-      this->throwRuntimeError("DSLBase::treatStaticVar", "Variable name '" + name + "' is not valid.");
+      this->throwRuntimeError("DSLBase::treatStaticVar",
+                              "Variable name '" + name + "' is not valid.");
     }
     const auto line = this->current->line;
     ++(this->current);
-    this->checkNotEndOfFile("DSLBase::treatStaticVar", "Expected to read value of variable.");
+    this->checkNotEndOfFile("DSLBase::treatStaticVar",
+                            "Expected to read value of variable.");
     const auto value = this->readInitialisationValue<long double>(name, true);
     this->readSpecifiedToken("DSLBase::treatStaticVar", ";");
-    this->addStaticVariableDescription(StaticVariableDescription(type, name, line, value.second));
+    this->addStaticVariableDescription(
+        StaticVariableDescription(type, name, line, value.second));
   }  // end of DSLBase::treatStaticVar
 
   void DSLBase::ignoreKeyWord(const std::string& key) {
-    this->checkNotEndOfFile("DSLBase::ignoreKeyWord", "error while treating keyword '" + key + "' ");
+    this->checkNotEndOfFile("DSLBase::ignoreKeyWord",
+                            "error while treating keyword '" + key + "' ");
     while ((this->current->value != "{") && (this->current->value != ";")) {
       ++(this->current);
-      this->checkNotEndOfFile("DSLBase::ignoreKeyWord", "error while treating keyword '" + key + "' ");
+      this->checkNotEndOfFile("DSLBase::ignoreKeyWord",
+                              "error while treating keyword '" + key + "' ");
     }
     if (this->current->value == "{") {
       unsigned short openedBrackets = 1;
       while (!((this->current->value == "}") && (openedBrackets == 0))) {
         ++(this->current);
-        this->checkNotEndOfFile("DSLBase::ignoreKeyWord", "error while treating keyword '" + key + "' ");
+        this->checkNotEndOfFile("DSLBase::ignoreKeyWord",
+                                "error while treating keyword '" + key + "' ");
         if (this->current->value == "{") {
           ++openedBrackets;
         }
@@ -1047,7 +1123,8 @@ namespace mfront {
 
   void DSLBase::completeTargetsDescription() {
     for (auto& l : this->td.libraries) {
-      l.ldflags.insert(l.ldflags.end(), this->ldflags.begin(), this->ldflags.end());
+      l.ldflags.insert(l.ldflags.end(), this->ldflags.begin(),
+                       this->ldflags.end());
     }
     for (const auto& t : this->atds) {
       for (const auto& al : t.libraries) {

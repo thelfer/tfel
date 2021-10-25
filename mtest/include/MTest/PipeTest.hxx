@@ -1,99 +1,94 @@
 /*!
  * \file   mtest/include/MTest/PipeTest.hxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   24 nov. 2015
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_MTEST_PIPETEST_HXX
 #define LIB_MTEST_PIPETEST_HXX
 
-#include<string>
-#include<vector>
+#include <string>
+#include <vector>
 
-#include"TFEL/Math/vector.hxx"
-#include"TFEL/Material/ModellingHypothesis.hxx"
+#include "TFEL/Math/vector.hxx"
+#include "TFEL/Material/ModellingHypothesis.hxx"
 
-#include"MTest/Config.hxx"
-#include"MTest/Types.hxx"
-#include"MTest/PipeProfileHandler.hxx"
-#include"MTest/PipeMesh.hxx"
-#include"MTest/SingleStructureScheme.hxx"
+#include "MTest/Config.hxx"
+#include "MTest/Types.hxx"
+#include "MTest/PipeProfileHandler.hxx"
+#include "MTest/PipeMesh.hxx"
+#include "MTest/SingleStructureScheme.hxx"
 
-namespace tfel{
-  namespace utilities{
+namespace tfel {
+  namespace utilities {
     // forward declaration
     struct TextData;
-  }
-}
+  }  // namespace utilities
+}  // namespace tfel
 
-namespace mtest{
+namespace mtest {
 
   // forward declaration
   struct PipeProfileHandler;
   // forward declaration
   struct GasEquationOfState;
-  
+
   /*!
    * a study describing mechanical tests on pipes
    */
-  struct MTEST_VISIBILITY_EXPORT PipeTest
-    : public SingleStructureScheme
-  {
+  struct MTEST_VISIBILITY_EXPORT PipeTest : public SingleStructureScheme {
     //! how the pipe is modelled
-    enum AxialLoading{
+    enum AxialLoading {
       DEFAULTAXIALLOADING,
       ENDCAPEFFECT,
       IMPOSEDAXIALFORCE,
       IMPOSEDAXIALGROWTH,
       NONE
-    }; // end of enum AxialLoading
+    };  // end of enum AxialLoading
     //! how the pipe is modelled
-    enum RadialLoading{
+    enum RadialLoading {
       DEFAULTLOADINGTYPE,
       TIGHTPIPE,
       IMPOSEDPRESSURE,
       IMPOSEDOUTERRADIUS
-    }; // end of enum AxialLoading
+    };  // end of enum AxialLoading
     //! a simple alias
     using size_type = tfel::math::vector<real>::size_type;
     /*!
      * \brief base class for tests
      */
-    struct UTest
-    {
+    struct UTest {
       /*!
        * \param[in] s  : current state
        * \param[in] t  : time
        * \param[in] dt : time increment
        * \param[in] p  : period
        */
-      virtual void
-      check(const StudyCurrentState&,
-	    const real,
-	    const real,
-	    const unsigned int) = 0;
+      virtual void check(const StudyCurrentState&,
+                         const real,
+                         const real,
+                         const unsigned int) = 0;
       /*!
        * \return the results of the test
        */
-      virtual tfel::tests::TestResult
-      getResults() const = 0;
+      virtual tfel::tests::TestResult getResults() const = 0;
       //! desctructor
       virtual ~UTest();
-    }; // end of struct UnitTest
+    };  // end of struct UnitTest
     //! default constructor
     PipeTest();
-    /*! 
+    /*!
      * \return the name of the test
      */
     std::string name() const override;
-    /*! 
+    /*!
      * \return the group of the test
      */
     std::string classname() const override;
@@ -115,12 +110,11 @@ namespace mtest{
      * \param[out] wk: workspace
      * \param[in]  t:  current time
      * \param[in]  dt: time increment
-     */ 
-    virtual void
-    execute(StudyCurrentState&,
-	    SolverWorkSpace&,
-	    const real,
-	    const real) const;
+     */
+    virtual void execute(StudyCurrentState&,
+                         SolverWorkSpace&,
+                         const real,
+                         const real) const;
     /*!
      * \brief set the pipe inner radius
      * \param[in] r: radius value
@@ -209,8 +203,7 @@ namespace mtest{
     /*!
      * \return the total number of nodes
      */
-    virtual size_type
-    getNumberOfNodes() const;
+    virtual size_type getNumberOfNodes() const;
     /*!
      * \brief initialize the current state
      * \param[in] s : current state
@@ -230,16 +223,13 @@ namespace mtest{
      * \param[in]  t: current time
      * \param[in] dt: time increment
      */
-    void prepare(StudyCurrentState&,
-		 const real,
-		 const real) const override;
+    void prepare(StudyCurrentState&, const real, const real) const override;
     /*!
      * \brief make a linear prediction of the unknows and state
      * \param[out] s: current structure state
      * \param[in] dt: time increment
      */
-    void makeLinearPrediction(StudyCurrentState&,
-			      const real) const override;
+    void makeLinearPrediction(StudyCurrentState&, const real) const override;
     /*!
      * \brief compute the stiffness matrix and the residual
      * \return a pair containing:
@@ -257,13 +247,13 @@ namespace mtest{
      * \param[in]  smt: type of tangent operator
      * \note the memory has already been allocated
      */
-    std::pair<bool,real>
-    computePredictionStiffnessAndResidual(StudyCurrentState&,
-					  tfel::math::matrix<real>&,
-					  tfel::math::vector<real>&,
-					  const real&,
-					  const real&,
-					  const StiffnessMatrixType) const override;
+    std::pair<bool, real> computePredictionStiffnessAndResidual(
+        StudyCurrentState&,
+        tfel::math::matrix<real>&,
+        tfel::math::vector<real>&,
+        const real&,
+        const real&,
+        const StiffnessMatrixType) const override;
     /*!
      * \brief compute the stiffness matrix and the residual
      * \return a pair containing:
@@ -281,13 +271,13 @@ namespace mtest{
      * \param[in]  smt: type of tangent operator
      * \note the memory has already been allocated
      */
-    std::pair<bool,real>
-    computeStiffnessMatrixAndResidual(StudyCurrentState&,
-				      tfel::math::matrix<real>&,
-				      tfel::math::vector<real>&,
-				      const real,
-				      const real,
-				      const StiffnessMatrixType) const override;
+    std::pair<bool, real> computeStiffnessMatrixAndResidual(
+        StudyCurrentState&,
+        tfel::math::matrix<real>&,
+        tfel::math::vector<real>&,
+        const real,
+        const real,
+        const StiffnessMatrixType) const override;
     /*!
      * \param[in] : du unknows increment difference between two iterations
      */
@@ -303,12 +293,12 @@ namespace mtest{
      * \return a boolean saying if all convergence criteria are met
      */
     bool checkConvergence(const StudyCurrentState&,
-			  const tfel::math::vector<real>&,
-			  const tfel::math::vector<real>&,
-			  const SolverOptions&,
-			  const unsigned int,
-			  const real,
-			  const real) const override;
+                          const tfel::math::vector<real>&,
+                          const tfel::math::vector<real>&,
+                          const SolverOptions&,
+                          const unsigned int,
+                          const real,
+                          const real) const override;
     /*!
      * \param[in]  s: current structure state
      * \param[in] du: unknows increment estimation
@@ -318,13 +308,13 @@ namespace mtest{
      * \param[in] dt: time increment
      * \return a description of all the criteria that were not met.
      */
-    std::vector<std::string>
-    getFailedCriteriaDiagnostic(const StudyCurrentState&,
-				const tfel::math::vector<real>&,
-				const tfel::math::vector<real>&,
-				const SolverOptions&,
-				const real,
-				const real) const override;
+    std::vector<std::string> getFailedCriteriaDiagnostic(
+        const StudyCurrentState&,
+        const tfel::math::vector<real>&,
+        const tfel::math::vector<real>&,
+        const SolverOptions&,
+        const real,
+        const real) const override;
     /*!
      * \param[in,out]  s: current structure state
      * \param[in,out] wk: solver workspace
@@ -333,10 +323,10 @@ namespace mtest{
      * \param[in] dt: time increment
      */
     void computeLoadingCorrection(StudyCurrentState&,
-				  SolverWorkSpace&,
-				  const SolverOptions&,
-				  const real,
-				  const real) const override;
+                                  SolverWorkSpace&,
+                                  const SolverOptions&,
+                                  const real,
+                                  const real) const override;
     /*!
      * \param[out] s: current structure state
      * \param[in]  t:  current time
@@ -344,16 +334,16 @@ namespace mtest{
      * \param[in]  p:  period
      */
     void postConvergence(StudyCurrentState&,
-			 const real,
-			 const real,
-			 const unsigned int) const override;
+                         const real,
+                         const real,
+                         const unsigned int) const override;
     /*!
      * \brief add a new profile postprocessing
      * \param[in] f: file name
      * \param[in] c: components
      */
-    virtual void
-    addProfile(const std::string&,const std::vector<std::string>&);
+    virtual void addProfile(const std::string&,
+                            const std::vector<std::string>&);
     /*!
      * \param[in] h : modelling hypothesis
      */
@@ -363,82 +353,81 @@ namespace mtest{
     //! \brief turn hpp to true
     virtual void performSmallStrainAnalysis();
     /*!
-     * \brief print usefull information in the output file 
+     * \brief print usefull information in the output file
      * \param[in] t: time
      * \param[in] s: current state
      * \param[in] o: if true, this time has been specified by the
      * user. Otherwise, it has been reached due to sub-stepping.
      */
-    void printOutput(const real,const StudyCurrentState&,
-		     const bool) const override;
+    void printOutput(const real,
+                     const StudyCurrentState&,
+                     const bool) const override;
     /*!
      * \brief compute the minium and maximum values of a scalar
      * variable
-     * \param[in] s: structure state 
+     * \param[in] s: structure state
      * \param[in] n: variable name
      */
-    virtual std::pair<real,real>
-    computeMinimumAndMaximumValues(const StudyCurrentState&,
-				   const std::string&) const;
+    virtual std::pair<real, real> computeMinimumAndMaximumValues(
+        const StudyCurrentState&, const std::string&) const;
     /*!
      * \brief compute the maximum value of a scalar variable
-     * \param[in] s: structure state 
+     * \param[in] s: structure state
      * \param[in] n: variable name
      */
     virtual real computeMinimumValue(const StudyCurrentState&,
-				     const std::string&) const;
+                                     const std::string&) const;
     /*!
      * \brief compute the maximum value of a scalar variable
-     * \param[in] s: structure state 
+     * \param[in] s: structure state
      * \param[in] n: variable name
      */
     virtual real computeMaximumValue(const StudyCurrentState&,
-				     const std::string&) const;
+                                     const std::string&) const;
     /*!
      * \brief add a test comparing to results stored in a reference
      * file to the computed ones
-     * \param[in] n: named of the variable tested 
+     * \param[in] n: named of the variable tested
      * \param[in] d: data
      * \param[in] c: column
      * \param[in] e: criterion value
      */
-    virtual void
-    addIntegralTest(const std::string&,
-		    const tfel::utilities::TextData&,
-		    const unsigned short,
-		    const real);
+    virtual void addIntegralTest(const std::string&,
+                                 const tfel::utilities::TextData&,
+                                 const unsigned short,
+                                 const real);
     /*!
      * \brief add a test comparing to results stored in a reference
      * file to the computed ones
-     * \param[in] n: named of the variable tested 
+     * \param[in] n: named of the variable tested
      * \param[in] d: data
      * \param[in] c: column
      * \param[in] e: criterion value
      */
-    virtual void
-    addProfileTest(const std::string&,
-		   const tfel::utilities::TextData&,
-		   const unsigned short,
-		   const real);
+    virtual void addProfileTest(const std::string&,
+                                const tfel::utilities::TextData&,
+                                const unsigned short,
+                                const real);
     /*!
      * \brief add a output
      * \param[in] t: type of output (minimum_value, maximum_value,
      *               minimum_and_maximum_value)
      * \param[in] n: name of the output
      */
-    virtual void addOutput(const std::string&,
-			   const std::string&);
+    virtual void addOutput(const std::string&, const std::string&);
     void completeInitialisation() override;
     //! destructor
     ~PipeTest() override;
-  protected:
+
+   protected:
     /*!
      * \brief check that the behaviour is consistent with the
      * modelling hypothesis
      * \param[in] bp : pointer to the behaviour
      */
     void checkBehaviourConsistency(const std::shared_ptr<Behaviour>&) override;
-  private:
+
+   private:
     //! a simple alias
     using ModellingHypothesis = tfel::material::ModellingHypothesis;
     /*!
@@ -446,13 +435,14 @@ namespace mtest{
      * manager
      * \param[in] s: current state
      */
-    void setGaussPointPositionForEvolutionsEvaluation(const CurrentState&) const override;
+    void setGaussPointPositionForEvolutionsEvaluation(
+        const CurrentState&) const override;
     //! description of an additional
-    struct AdditionalOutput{
+    struct AdditionalOutput {
       //! description
       std::string d;
       //! functor
-      std::function<void(std::ostream&,const StudyCurrentState&)> f;
+      std::function<void(std::ostream&, const StudyCurrentState&)> f;
     };
     //! additional outputs
     std::vector<AdditionalOutput> aoutputs;
@@ -483,12 +473,12 @@ namespace mtest{
     //! pipe modelling hypothesis
     RadialLoading rl = DEFAULTLOADINGTYPE;
     //! axial modelling hypothesis
-    AxialLoading  al = DEFAULTAXIALLOADING;
+    AxialLoading al = DEFAULTAXIALLOADING;
     //! element type
     //! small strain hypothesis
     bool hpp = false;
-  }; // end of struct PipeTest
-  
-} // end of namespace mtest
+  };  // end of struct PipeTest
+
+}  // end of namespace mtest
 
 #endif /* LIB_MTEST_PIPETEST_HXX */

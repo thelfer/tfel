@@ -1,256 +1,264 @@
-/*! 
+/*!
  * \file  ModelDescription.cxx
  * \brief
  * \author Thomas Helfer
  * \date   21 janv. 2015
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
-#include<algorithm>
-#include"TFEL/Raise.hxx"
-#include"TFEL/Utilities/CxxTokenizer.hxx"
-#include"TFEL/Glossary/Glossary.hxx"
-#include"TFEL/Glossary/GlossaryEntry.hxx"
-#include"MFront/ModelDescription.hxx"
+#include <algorithm>
+#include "TFEL/Raise.hxx"
+#include "TFEL/Utilities/CxxTokenizer.hxx"
+#include "TFEL/Glossary/Glossary.hxx"
+#include "TFEL/Glossary/GlossaryEntry.hxx"
+#include "MFront/ModelDescription.hxx"
 
-namespace mfront
-{
+namespace mfront {
 
   ModelDescription::Function::Function() = default;
-  ModelDescription::Function::Function(const ModelDescription::Function&) = default;
+  ModelDescription::Function::Function(const ModelDescription::Function&) =
+      default;
   ModelDescription::Function::Function(ModelDescription::Function&&) = default;
-  ModelDescription::Function&
-  ModelDescription::Function::operator=(const ModelDescription::Function&) = default;
-  ModelDescription::Function&
-  ModelDescription::Function::operator=(ModelDescription::Function&&) = default;
+  ModelDescription::Function& ModelDescription::Function::operator=(
+      const ModelDescription::Function&) = default;
+  ModelDescription::Function& ModelDescription::Function::operator=(
+      ModelDescription::Function&&) = default;
   ModelDescription::Function::~Function() = default;
 
-  std::pair<std::string,unsigned short>
-  ModelDescription::decomposeVariableName(const std::string& n) const
-  {
+  std::pair<std::string, unsigned short>
+  ModelDescription::decomposeVariableName(const std::string& n) const {
     auto get = [&n](const VariableDescriptionContainer& vc)
-      -> std::pair<std::string,unsigned short>
-    {
+        -> std::pair<std::string, unsigned short> {
       using size_type = unsigned short;
-      for(const auto& v:vc){
-	if(v.name==n){
-	  return {v.name,0u};
-	}
-	const auto d = v.getAttribute<size_type>(VariableDescription::depth,0);
-	for(size_type j=1;j<=d;++j){
-	  auto fn = v.name + "_" + std::to_string(j);
-	  if(fn==n){
-	    return {v.name,j};
-	  }
-	}
+      for (const auto& v : vc) {
+        if (v.name == n) {
+          return {v.name, 0u};
+        }
+        const auto d = v.getAttribute<size_type>(VariableDescription::depth, 0);
+        for (size_type j = 1; j <= d; ++j) {
+          auto fn = v.name + "_" + std::to_string(j);
+          if (fn == n) {
+            return {v.name, j};
+          }
+        }
       }
       return {};
     };
     auto r = get(this->outputs);
-    if(!r.first.empty()){
+    if (!r.first.empty()) {
       return r;
     }
     r = get(this->inputs);
-    tfel::raise_if(r.first.empty(),"decomposeVariableName: "
-		   "field name '"+n+"' has not been found");
+    tfel::raise_if(r.first.empty(),
+                   "decomposeVariableName: "
+                   "field name '" +
+                       n + "' has not been found");
     return r;
-  } // end of ModelDescription::decomposeVariableName
+  }  // end of ModelDescription::decomposeVariableName
 
   ModelDescription::ModelDescription() = default;
   ModelDescription::ModelDescription(const ModelDescription&) = default;
   ModelDescription::ModelDescription(ModelDescription&&) = default;
-  ModelDescription&
-  ModelDescription::operator=(const ModelDescription&) = default;
-  ModelDescription&
-  ModelDescription::operator=(ModelDescription&&) = default;
+  ModelDescription& ModelDescription::operator=(const ModelDescription&) =
+      default;
+  ModelDescription& ModelDescription::operator=(ModelDescription&&) = default;
 
-  void ModelDescription::reserveName(const std::string& n){
+  void ModelDescription::reserveName(const std::string& n) {
     tfel::raise_if(!this->reservedNames.insert(n).second,
-		   "ModelDescription::reserveName: "
-		   "name '"+n+"' already reserved");
+                   "ModelDescription::reserveName: "
+                   "name '" +
+                       n + "' already reserved");
   }
 
-  bool ModelDescription::isNameReserved(const std::string& n) const{
-    return this->reservedNames.count(n)!=0;
+  bool ModelDescription::isNameReserved(const std::string& n) const {
+    return this->reservedNames.count(n) != 0;
   }
-  
-  void ModelDescription::registerMemberName(const std::string& n)
-  {
+
+  void ModelDescription::registerMemberName(const std::string& n) {
     this->reserveName(n);
     tfel::raise_if(!this->memberNames.insert(n).second,
-		   "ModelDescription::registerMemberName: "
-		   "name '"+n+"' already reserved");
-  } // end of ModelDescription::registerMemberName
+                   "ModelDescription::registerMemberName: "
+                   "name '" +
+                       n + "' already reserved");
+  }  // end of ModelDescription::registerMemberName
 
-  void ModelDescription::registerStaticMemberName(const std::string& n)
-  {
+  void ModelDescription::registerStaticMemberName(const std::string& n) {
     this->reserveName(n);
     tfel::raise_if(!this->staticMemberNames.insert(n).second,
-		   "ModelDescription::registerStaticMemberName: "
-		   "name '"+n+"' already reserved");
-  } // end of ModelDescription::registerStaticMemberName
-  
-  VariableDescription&
-  ModelDescription::getVariableDescription(const std::string& n)
-  {
-    if(this->outputs.contains(n)){
-      return this->outputs.getVariable(n);
-    }
-    if(this->inputs.contains(n)){
-      return this->inputs.getVariable(n);
-    }
-    if(this->parameters.contains(n)){
-      return this->parameters.getVariable(n);
-    }
-    if(this->constantMaterialProperties.contains(n)){
-      return this->constantMaterialProperties.getVariable(n);
-    }
-    tfel::raise("ModelDescription::getVariableDescription: "
-		"No variable named '"+n+"'.\n"
-		"'"+n+"' is neither:\n"
-		"- An output.\n"
-		"- An input.\n"
-		"- A parameter.\n"
-		"- A constant material properties.");
-  } // end of ModelDescription::getVariableDescription
+                   "ModelDescription::registerStaticMemberName: "
+                   "name '" +
+                       n + "' already reserved");
+  }  // end of ModelDescription::registerStaticMemberName
 
-  const VariableDescription&
-  ModelDescription::getVariableDescription(const std::string& n) const
-  {
-    if(this->outputs.contains(n)){
+  VariableDescription& ModelDescription::getVariableDescription(
+      const std::string& n) {
+    if (this->outputs.contains(n)) {
       return this->outputs.getVariable(n);
     }
-    if(this->inputs.contains(n)){
+    if (this->inputs.contains(n)) {
       return this->inputs.getVariable(n);
     }
-    if(this->parameters.contains(n)){
+    if (this->parameters.contains(n)) {
       return this->parameters.getVariable(n);
     }
-    if(this->constantMaterialProperties.contains(n)){
+    if (this->constantMaterialProperties.contains(n)) {
       return this->constantMaterialProperties.getVariable(n);
     }
-    tfel::raise("ModelDescription::getVariableDescription: "
-		"No variable named '"+n+"'.\n"
-		"'"+n+"' is neither:\n"
-		"- An output.\n"
-		"- An input.\n"
-		"- A parameter.\n"
-		"- A constant material properties.");
-  } // end of ModelDescription::getVariableDescription
-  
-  void ModelDescription::checkVariableExistence(const std::string& v) const{
-    tfel::raise_if((!this->inputs.contains(v))&&
-		   (!this->outputs.contains(v))&&
-		   (!this->parameters.contains(v))&&
-		   (!this->staticVars.contains(v))&&
-		   (!this->constantMaterialProperties.contains(v)),
-		   "ModelDescription::checkVariableExistence: "
-		   "no variable named '"+v+"'");
-  } // end of ModelDescription::checkVariableExistence
-  
+    tfel::raise(
+        "ModelDescription::getVariableDescription: "
+        "No variable named '" +
+        n +
+        "'.\n"
+        "'" +
+        n +
+        "' is neither:\n"
+        "- An output.\n"
+        "- An input.\n"
+        "- A parameter.\n"
+        "- A constant material properties.");
+  }  // end of ModelDescription::getVariableDescription
+
+  const VariableDescription& ModelDescription::getVariableDescription(
+      const std::string& n) const {
+    if (this->outputs.contains(n)) {
+      return this->outputs.getVariable(n);
+    }
+    if (this->inputs.contains(n)) {
+      return this->inputs.getVariable(n);
+    }
+    if (this->parameters.contains(n)) {
+      return this->parameters.getVariable(n);
+    }
+    if (this->constantMaterialProperties.contains(n)) {
+      return this->constantMaterialProperties.getVariable(n);
+    }
+    tfel::raise(
+        "ModelDescription::getVariableDescription: "
+        "No variable named '" +
+        n +
+        "'.\n"
+        "'" +
+        n +
+        "' is neither:\n"
+        "- An output.\n"
+        "- An input.\n"
+        "- A parameter.\n"
+        "- A constant material properties.");
+  }  // end of ModelDescription::getVariableDescription
+
+  void ModelDescription::checkVariableExistence(const std::string& v) const {
+    tfel::raise_if((!this->inputs.contains(v)) &&
+                       (!this->outputs.contains(v)) &&
+                       (!this->parameters.contains(v)) &&
+                       (!this->staticVars.contains(v)) &&
+                       (!this->constantMaterialProperties.contains(v)),
+                   "ModelDescription::checkVariableExistence: "
+                   "no variable named '" +
+                       v + "'");
+  }  // end of ModelDescription::checkVariableExistence
+
   void ModelDescription::setGlossaryName(const std::string& v,
-					 const std::string& g){
+                                         const std::string& g) {
     this->checkVariableExistence(v);
     const auto& glossary = tfel::glossary::Glossary::getGlossary();
     tfel::raise_if(!glossary.contains(g),
-		   "ModelDescription::setGlossaryName: "
-		   "no glossary name '"+g+"'");
-    tfel::raise_if((this->glossaryNames.find(v)!=this->glossaryNames.end())||
-		   (this->entryNames.find(v)!=this->entryNames.end()),
-		   "ModelDescription::setGlossaryName: "
-		   "an external name has already been set "
-		   "for variable '"+v+"'");
-    if(v!=g){
+                   "ModelDescription::setGlossaryName: "
+                   "no glossary name '" +
+                       g + "'");
+    tfel::raise_if((this->glossaryNames.find(v) != this->glossaryNames.end()) ||
+                       (this->entryNames.find(v) != this->entryNames.end()),
+                   "ModelDescription::setGlossaryName: "
+                   "an external name has already been set "
+                   "for variable '" +
+                       v + "'");
+    if (v != g) {
       this->reserveName(g);
     }
     const auto gn = glossary.getGlossaryEntry(g).getKey();
     this->getVariableDescription(v).setGlossaryName(g);
-    this->glossaryNames.insert({v,gn});
+    this->glossaryNames.insert({v, gn});
   }
 
   void ModelDescription::setEntryName(const std::string& v,
-				      const std::string& e){
+                                      const std::string& e) {
     this->checkVariableExistence(v);
-    tfel::raise_if(!tfel::utilities::CxxTokenizer::isValidIdentifier(e,false),
-		   "ModelDescription::setEntryName: "
-		   "'"+e+"' is a not a valid entry name");
+    tfel::raise_if(!tfel::utilities::CxxTokenizer::isValidIdentifier(e, false),
+                   "ModelDescription::setEntryName: "
+                   "'" +
+                       e + "' is a not a valid entry name");
     tfel::raise_if(tfel::glossary::Glossary::getGlossary().contains(e),
-		   "ModelDescription::setEntryName: "
-		   "'"+e+"' is a glossary name");
-    tfel::raise_if((this->glossaryNames.find(v)!=this->glossaryNames.end())||
-		   (this->entryNames.find(v)!=this->entryNames.end()),
-		   "ModelDescription::setEntryName: "
-		   "an external name has already been set "
-		   "for variable '"+v+"'");
-    if(v!=e){
+                   "ModelDescription::setEntryName: "
+                   "'" +
+                       e + "' is a glossary name");
+    tfel::raise_if((this->glossaryNames.find(v) != this->glossaryNames.end()) ||
+                       (this->entryNames.find(v) != this->entryNames.end()),
+                   "ModelDescription::setEntryName: "
+                   "an external name has already been set "
+                   "for variable '" +
+                       v + "'");
+    if (v != e) {
       this->reserveName(e);
     }
     this->getVariableDescription(v).setEntryName(e);
-    this->entryNames.insert({v,e});
+    this->entryNames.insert({v, e});
   }
 
-  std::set<std::string>& ModelDescription::getReservedNames(){
-    return this->reservedNames;
-  }
-  
-  const std::set<std::string>&
-  ModelDescription::getReservedNames() const{
+  std::set<std::string>& ModelDescription::getReservedNames() {
     return this->reservedNames;
   }
 
-  void ModelDescription::addMaterialLaw(const std::string& m)
-  {
-    if(std::find(this->materialLaws.begin(),
-		 this->materialLaws.end(),m)==this->materialLaws.end()){
+  const std::set<std::string>& ModelDescription::getReservedNames() const {
+    return this->reservedNames;
+  }
+
+  void ModelDescription::addMaterialLaw(const std::string& m) {
+    if (std::find(this->materialLaws.begin(), this->materialLaws.end(), m) ==
+        this->materialLaws.end()) {
       this->materialLaws.push_back(m);
     }
-  } // end of ModelDescription::addMaterialLaw
+  }  // end of ModelDescription::addMaterialLaw
 
-  void ModelDescription::appendToIncludes(const std::string& c)
-  {
-    this->includes+=c;
-    if(!this->includes.empty()){
-      if(*(this->includes.rbegin())!='\n'){
-	this->includes+='\n';
+  void ModelDescription::appendToIncludes(const std::string& c) {
+    this->includes += c;
+    if (!this->includes.empty()) {
+      if (*(this->includes.rbegin()) != '\n') {
+        this->includes += '\n';
       }
     }
-  } // end of ModelDescription::appendToIncludes
+  }  // end of ModelDescription::appendToIncludes
 
-  void ModelDescription::appendToMembers(const std::string& c)
-  {
-    this->members+=c;
-    if(!this->members.empty()){
-      if(*(this->members.rbegin())!='\n'){
-	this->members+='\n';
+  void ModelDescription::appendToMembers(const std::string& c) {
+    this->members += c;
+    if (!this->members.empty()) {
+      if (*(this->members.rbegin()) != '\n') {
+        this->members += '\n';
       }
     }
-  } // end of ModelDescription::appendToMembers
+  }  // end of ModelDescription::appendToMembers
 
-  void ModelDescription::appendToPrivateCode(const std::string& c)
-  {
-    this->privateCode+=c;
-    if(!this->privateCode.empty()){
-      if(*(this->privateCode.rbegin())!='\n'){
-	this->privateCode+='\n';
+  void ModelDescription::appendToPrivateCode(const std::string& c) {
+    this->privateCode += c;
+    if (!this->privateCode.empty()) {
+      if (*(this->privateCode.rbegin()) != '\n') {
+        this->privateCode += '\n';
       }
     }
-  } // end of ModelDescription::appendToPrivateCode
+  }  // end of ModelDescription::appendToPrivateCode
 
-  void ModelDescription::appendToSources(const std::string& c)
-  {
-    this->sources+=c;
-    if(!this->sources.empty()){
-      if(*(this->sources.rbegin())!='\n'){
-	this->sources+='\n';
+  void ModelDescription::appendToSources(const std::string& c) {
+    this->sources += c;
+    if (!this->sources.empty()) {
+      if (*(this->sources.rbegin()) != '\n') {
+        this->sources += '\n';
       }
     }
-  } // end of ModelDescription::appendToSources
-  
+  }  // end of ModelDescription::appendToSources
+
   ModelDescription::~ModelDescription() = default;
-  
-} // end of namespace mfront
+
+}  // end of namespace mfront

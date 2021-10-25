@@ -1,21 +1,20 @@
 /*!
- * \file   src/NUMODIS/BCC.cxx  
- * \brief    
+ * \file   src/NUMODIS/BCC.cxx
+ * \brief
  * \author Laurent Dupuy
  * \date   9/06/2017
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #include "NUMODIS/Math/Utilities.hxx"
 #include "NUMODIS/BCC.hxx"
 
-namespace numodis
-{
+namespace numodis {
 
   //===============================================================
   // BCC::BCC
@@ -29,12 +28,11 @@ namespace numodis
     \param a lattice parameter (Angstrom)
   */
   //===============================================================
-  BCC::BCC()
-  {
+  BCC::BCC() {
     //------------
     // class name
     //------------
-    _name="BCC";
+    _name = "BCC";
     //------------------------
     // lattice initialization
     //------------------------
@@ -46,11 +44,10 @@ namespace numodis
   //---------------------------------------------------------------
   //! set the lattice vectors from the lattice parameters
   //===============================================================
-  void BCC::Init()
-  {}
+  void BCC::Init() {}
 
   BCC::BCC(const BCC&) = default;
   BCC::BCC(BCC&&) = default;
   BCC::~BCC() = default;
-  
-} // end of namespace numodis
+
+}  // end of namespace numodis

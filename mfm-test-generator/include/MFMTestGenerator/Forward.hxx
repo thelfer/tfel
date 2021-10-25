@@ -1,6 +1,6 @@
 /*!
  * \file   Forward.hxx
- * \brief    
+ * \brief
  * \date   07/10/2019
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
  * reserved.
@@ -16,7 +16,7 @@
 #include <map>
 #include <string>
 
-namespace tfel{
+namespace tfel {
 
   namespace utilities {
 
@@ -25,7 +25,7 @@ namespace tfel{
 
   }  // end of namespace utilities
 
-}// end of namespace tfel
+}  // end of namespace tfel
 
 namespace mfmtg {
 
@@ -37,6 +37,6 @@ namespace mfmtg {
   // forward declaration
   struct Evolution;
 
-} // end of namespace mfmtg
+}  // end of namespace mfmtg
 
 #endif /* LIB_MFM_TEST_GENERATOR_FORWARD_HXX */

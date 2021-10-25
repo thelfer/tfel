@@ -84,9 +84,10 @@ namespace mfront {
     auto write_bounds = [&throw_if](std::ostream& out,
                                     const VariableDescription& v,
                                     const std::string& vn) {
-      auto write = [&out, &v, &vn, &throw_if](
-          const VariableBoundsDescription& (VariableDescription::*m)() const,
-          const std::string& p) {
+      auto write = [&out, &v, &vn, &throw_if](const VariableBoundsDescription& (
+                                                  VariableDescription::*m)()
+                                                  const,
+                                              const std::string& p) {
         const auto& bd = (v.*m)();
         if (bd.boundsType == VariableBoundsDescription::LOWER) {
           out << "BoundsCheckBase::lowerBoundCheck"

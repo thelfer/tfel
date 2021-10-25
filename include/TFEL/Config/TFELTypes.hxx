@@ -89,19 +89,14 @@ namespace tfel {
           typename tfel::config::internals::InvJacobianType<N, T, true>::type
               InvJacobianType;
       /* Thermal related stuff */
-      using thermalconductivity = tfel::math::qt<tfel::math::ThermalConductivity, T>;
-      using TemperatureGradient =
-          typename tfel::config::internals::TemperatureGradientType<N,
-                                                                    T,
-                                                                    true>::type;
-      using HeatFluxVector =
-          typename tfel::config::internals::HeatFluxVectorType<N,
-                                                               T,
-                                                               true>::type;
-      using HeatFlux =
-          typename tfel::config::internals::HeatFluxVectorType<N,
-                                                               T,
-                                                               true>::type;
+      using thermalconductivity =
+          tfel::math::qt<tfel::math::ThermalConductivity, T>;
+      using TemperatureGradient = typename tfel::config::internals::
+          TemperatureGradientType<N, T, true>::type;
+      using HeatFluxVector = typename tfel::config::internals::
+          HeatFluxVectorType<N, T, true>::type;
+      using HeatFlux = typename tfel::config::internals::
+          HeatFluxVectorType<N, T, true>::type;
       typedef typename tfel::config::internals::
           ThermalConductivityMatrixType<N, T, true>::type
               ThermalConductivityMatrix;
@@ -160,10 +155,8 @@ namespace tfel {
           TemperatureGradientType<N, T, false>::type;
       typedef typename tfel::config::internals::
           HeatFluxVectorType<N, T, false>::type HeatFluxVector;
-      using HeatFlux =
-          typename tfel::config::internals::HeatFluxVectorType<N,
-                                                               T,
-                                                               false>::type;
+      using HeatFlux = typename tfel::config::internals::
+          HeatFluxVectorType<N, T, false>::type;
       typedef typename tfel::config::internals::
           ThermalConductivityMatrixType<N, T, false>::type
               ThermalConductivityMatrix;

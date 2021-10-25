@@ -1,14 +1,14 @@
 /*!
  * \file   include/FSES/syev2.hxx
- * \brief    
+ * \brief
  * \author Joachim Kopp/Thomas Helfer
  * \date   02 janv. 2017
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  *
  * ----------------------------------------------------------------------------
  * This file has been introduced in TFEL with the courtesy of Joachim Kopp.
@@ -17,7 +17,7 @@
  *
  * Numerical diagonalization of 3x3 matrcies
  * Copyright (C) 2006  Joachim Kopp
- * 
+ *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
@@ -36,7 +36,7 @@
 #ifndef LIB_FSES_SYEV2_HXX
 #define LIB_FSES_SYEV2_HXX
 
-namespace fses{
+namespace fses {
 
   // ----------------------------------------------------------------------------
   // Calculates the eigensystem of a real symmetric 2x2 matrix
@@ -48,13 +48,17 @@ namespace fses{
   // where rt1 >= rt2. Note that this convention is different from the one used
   // in the LAPACK routine DLAEV2, where |rt1| >= |rt2|.
   // ----------------------------------------------------------------------------
-  template<typename real>
-  inline void syev2(real &rt1, real &rt2,
-		    real &cs,  real &sn,
-		    const real A, const real B, const real C);
+  template <typename real>
+  inline void syev2(real &rt1,
+                    real &rt2,
+                    real &cs,
+                    real &sn,
+                    const real A,
+                    const real B,
+                    const real C);
 
-} // end of namespace fses
+}  // end of namespace fses
 
-#include"FSES/syev2.ixx"
+#include "FSES/syev2.ixx"
 
 #endif /* LIB_FSES_SYEV2_HXX */

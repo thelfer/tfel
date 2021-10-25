@@ -36,7 +36,8 @@ namespace tfel {
       //! \brief move assignement
       ExternalMaterialPropertyData& operator=(ExternalMaterialPropertyData&&);
       //! \brief standard assignement
-      ExternalMaterialPropertyData& operator=(const ExternalMaterialPropertyData&);
+      ExternalMaterialPropertyData& operator=(
+          const ExternalMaterialPropertyData&);
       //! \brief version of TFEL used to generate the behaviour
       std::string tfel_version;
       //! \brief build identifier
@@ -51,7 +52,7 @@ namespace tfel {
       std::string material_property;
       //! list of arguments
       std::vector<std::string> arguments;
-    }; // end of struct ExternalMaterialPropertyData
+    };  // end of struct ExternalMaterialPropertyData
 
     /*!
      * A structure containing the information that could be retrieved
@@ -68,17 +69,20 @@ namespace tfel {
       //! \brief default constructor
       ExternalMaterialPropertyDescription();
       //! \brief copy constructor
-      ExternalMaterialPropertyDescription(const ExternalMaterialPropertyDescription&);
+      ExternalMaterialPropertyDescription(
+          const ExternalMaterialPropertyDescription&);
       //! \brief move constructor
-      ExternalMaterialPropertyDescription(ExternalMaterialPropertyDescription&&);
+      ExternalMaterialPropertyDescription(
+          ExternalMaterialPropertyDescription&&);
       //! \brief assignement
       ExternalMaterialPropertyDescription& operator=(
           const ExternalMaterialPropertyDescription&);
       //! \brief move assignement
-      ExternalMaterialPropertyDescription& operator=(ExternalMaterialPropertyDescription&&);
+      ExternalMaterialPropertyDescription& operator=(
+          ExternalMaterialPropertyDescription&&);
       //! \brief destructor
       ~ExternalMaterialPropertyDescription();
-    }; // end of ExternalMaterialPropertyDescription
+    };  // end of ExternalMaterialPropertyDescription
 
   }  // end of namespace system
 

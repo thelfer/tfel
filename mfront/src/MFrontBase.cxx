@@ -189,7 +189,7 @@ namespace mfront {
     } else {
       setVerboseMode(o);
     }
-  } // end of MFrontBase::treatVerbose
+  }  // end of MFrontBase::treatVerbose
 
   void MFrontBase::treatUnicodeOutput() {
     const auto& o = this->getCurrentCommandLineArgument().getOption();
@@ -207,7 +207,7 @@ namespace mfront {
             o + "'");
       }
     }
-  } // end of MFrontBase::treatUnicodeOutput
+  }  // end of MFrontBase::treatUnicodeOutput
 
   void MFrontBase::treatInstallPath() {
     setInstallPath(this->getCurrentCommandLineArgument().getOption());

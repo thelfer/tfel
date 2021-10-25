@@ -22,7 +22,7 @@ namespace mfront {
 
   // forward declaration
   struct LibraryDescription;
-  
+
   /*!
    * \brief material properties' interface for EDF' `Cyrano` fuel
    * performance code.

@@ -164,8 +164,8 @@ namespace mfront {
     virtual void writeHenckyStrainMeasurePostProcessing(
         std::ostream&, const BehaviourDescription&, const Hypothesis) const;
     /*!
-     * \brief write the post-processings associated with a standard finite strain
-     * behaviour.
+     * \brief write the post-processings associated with a standard finite
+     * strain behaviour.
      *
      * \param[out] out: output stream
      * \param[in]  bd: behaviour description

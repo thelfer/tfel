@@ -1,25 +1,25 @@
 /*!
  * \file   mfront/src/DefaultFiniteStrainDSL.cxx
- * \brief  
+ * \brief
  * \author Thomas Helfer
  * \date   08 nov 2006
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
-#include<string>
-#include<fstream>
-#include<stdexcept>
+#include <string>
+#include <fstream>
+#include <stdexcept>
 
-#include"MFront/AbstractBehaviourInterface.hxx"
-#include"MFront/BehaviourInterfaceFactory.hxx"
-#include"MFront/DefaultFiniteStrainDSL.hxx"
+#include "MFront/AbstractBehaviourInterface.hxx"
+#include "MFront/BehaviourInterfaceFactory.hxx"
+#include "MFront/DefaultFiniteStrainDSL.hxx"
 
-namespace mfront{
+namespace mfront {
 
   DefaultFiniteStrainDSL::DefaultFiniteStrainDSL() {
     this->mb.setDSLName("DefaultFiniteStrain");
@@ -27,9 +27,10 @@ namespace mfront{
   }
 
   std::string DefaultFiniteStrainDSL::getDescription() {
-    return "this parser is the most generic one as it does not make any restriction "
+    return "this parser is the most generic one as it does not make any "
+           "restriction "
            "on the behaviour or the integration method that may be used";
-  } // end of DefaultFiniteStrainDSL::getDescription
+  }  // end of DefaultFiniteStrainDSL::getDescription
 
   std::string DefaultFiniteStrainDSL::getName() {
     return "DefaultFiniteStrainDSL";
@@ -39,9 +40,10 @@ namespace mfront{
       std::ostream& os) const {
     DefaultDSLBase::writeBehaviourParserSpecificIncludes(os);
     os << "#include\"TFEL/Math/tensor.hxx\"\n";
-  } // end of DefaultFiniteStrainDSL::writeBehaviourParserSpecificIncludes
+  }  // end of DefaultFiniteStrainDSL::writeBehaviourParserSpecificIncludes
 
-  BehaviourDSLDescription DefaultFiniteStrainDSL::getBehaviourDSLDescription() const {
+  BehaviourDSLDescription DefaultFiniteStrainDSL::getBehaviourDSLDescription()
+      const {
     auto d = mfront::getDefaultFiniteStrainBehaviourDSLDescription();
     d.integrationScheme = IntegrationScheme::USERDEFINEDSCHEME;
     d.typicalCodeBlocks = {BehaviourData::ComputePredictionOperator,
@@ -53,4 +55,4 @@ namespace mfront{
 
   DefaultFiniteStrainDSL::~DefaultFiniteStrainDSL() = default;
 
-} // end of namespace mfront  
+}  // end of namespace mfront

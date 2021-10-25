@@ -40,12 +40,12 @@ namespace mfront {
    * \return if the given name is valid
    * \param[in] n: material name
    */
-  MFRONT_VISIBILITY_EXPORT  bool isValidMaterialName(const std::string&);
+  MFRONT_VISIBILITY_EXPORT bool isValidMaterialName(const std::string&);
   /*!
    * \return if the given name is valid
    * \param[in] n: library name
    */
-  MFRONT_VISIBILITY_EXPORT  bool isValidLibraryName(const std::string&);
+  MFRONT_VISIBILITY_EXPORT bool isValidLibraryName(const std::string&);
 
   /*!
    * \brief base structure for domain specific languages

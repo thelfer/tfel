@@ -1,6 +1,6 @@
 /*!
  * \file   AbstractTestCaseFactory.hxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   17/09/2019
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
@@ -63,7 +63,7 @@ namespace mfmtg {
     //! list of registred generators
     std::map<std::string, generator> generators;
 
-  }; // end of struct AbstractTestCaseFactory 
+  };  // end of struct AbstractTestCaseFactory
 
 }  // end of namespace mfmtg
 

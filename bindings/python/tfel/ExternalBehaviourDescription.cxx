@@ -1,28 +1,31 @@
-/*! 
+/*!
  * \file  bindings/python/tfel/ExternalBehaviourDescription.cxx
  * \brief
  * \author Thomas Helfer
  * \brief 15 june 2015
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
-#include<boost/python.hpp>
-#include"TFEL/System/ExternalBehaviourDescription.hxx"
+#include <boost/python.hpp>
+#include "TFEL/System/ExternalBehaviourDescription.hxx"
 
-static std::vector<std::string> get_emps_epts(const tfel::system::ExternalBehaviourDescription& d) {
+static std::vector<std::string> get_emps_epts(
+    const tfel::system::ExternalBehaviourDescription& d) {
   return d.elastic_material_properties_epts;
 }
 
-static std::vector<std::string> get_mps(const tfel::system::ExternalBehaviourDescription& d) {
+static std::vector<std::string> get_mps(
+    const tfel::system::ExternalBehaviourDescription& d) {
   return d.mpnames;
 }
 
-static std::vector<std::string> get_ivs(const tfel::system::ExternalBehaviourDescription& d) {
+static std::vector<std::string> get_ivs(
+    const tfel::system::ExternalBehaviourDescription& d) {
   return d.ivnames;
 }
 
@@ -31,7 +34,8 @@ static std::vector<int> get_ivs_types(
   return d.ivtypes;
 }
 
-static std::vector<std::string> get_evs(const tfel::system::ExternalBehaviourDescription& d) {
+static std::vector<std::string> get_evs(
+    const tfel::system::ExternalBehaviourDescription& d) {
   return d.evnames;
 }
 

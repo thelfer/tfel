@@ -783,101 +783,99 @@ namespace mtest {
     } else {
       throw_if(true, "internal error, unexpected stress measure");
     }
-    }  // end of
-       // GenericBehaviour::executeFiniteStrainBehaviourStressPostProcessing
+  }  // end of
+     // GenericBehaviour::executeFiniteStrainBehaviourStressPostProcessing
 
-    void GenericBehaviour::
-        executeFiniteStrainBehaviourTangentOperatorPostProcessing(
-            mfront::gb::BehaviourData & d) const {
-      if (this->fsto == DSIG_DF) {
-        // nothing to be done
-      } else if (this->fsto == DS_DEGL) {
-        const auto n = tfel::material::getSpaceDimension(this->getHypothesis());
-        if (n == 1u) {
-          if (this->getHypothesis() ==
-              ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS) {
-            tfel::raise(
-                "GenericBehaviour::call_behaviour: "
-                "using DS_DEGL in plane strain is not supported yet");
-          } else {
-            convertFromDSDEGL<1u>(d.K, d.s0.gradients, d.s1.gradients,
-                                  d.s1.thermodynamic_forces);
-          }
-        } else if (n == 2u) {
-          if (this->getHypothesis() == ModellingHypothesis::PLANESTRESS) {
-            tfel::raise(
-                "GenericBehaviour::call_behaviour: "
-                "using DS_DEGL in plane strain is not supported yet");
-          } else {
-            convertFromDSDEGL<2u>(d.K, d.s0.gradients, d.s1.gradients,
-                                  d.s1.thermodynamic_forces);
-          }
-        } else if (n == 3u) {
-          convertFromDSDEGL<3u>(d.K, d.s0.gradients, d.s1.gradients,
-                                d.s1.thermodynamic_forces);
-        } else {
+  void
+  GenericBehaviour::executeFiniteStrainBehaviourTangentOperatorPostProcessing(
+      mfront::gb::BehaviourData& d) const {
+    if (this->fsto == DSIG_DF) {
+      // nothing to be done
+    } else if (this->fsto == DS_DEGL) {
+      const auto n = tfel::material::getSpaceDimension(this->getHypothesis());
+      if (n == 1u) {
+        if (this->getHypothesis() ==
+            ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS) {
           tfel::raise(
               "GenericBehaviour::call_behaviour: "
-              "invalid space dimensions");
-        }
-      } else if (this->fsto == DPK1_DF) {
-        const auto n = tfel::material::getSpaceDimension(this->getHypothesis());
-        if (n == 1u) {
-          if (this->getHypothesis() ==
-              ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS) {
-            tfel::raise(
-                "GenericBehaviour::call_behaviour: "
-                "using DS_DEGL in plane strain is not supported yet");
-          } else {
-            convertFromDPK1DF<1u>(d.K, d.s0.gradients, d.s1.gradients,
-                                  d.s1.thermodynamic_forces);
-          }
-        } else if (n == 2u) {
-          if (this->getHypothesis() ==
-              ModellingHypothesis::PLANESTRESS) {
-            tfel::raise(
-                "GenericBehaviour::call_behaviour: "
-                "using DS_DEGL in plane strain is not supported yet");
-          } else {
-            convertFromDPK1DF<2u>(d.K, d.s0.gradients, d.s1.gradients,
-                                  d.s1.thermodynamic_forces);
-          }
-        } else if (n == 3u) {
-          convertFromDPK1DF<3u>(d.K, d.s0.gradients, d.s1.gradients,
-                                d.s1.thermodynamic_forces);
+              "using DS_DEGL in plane strain is not supported yet");
         } else {
+          convertFromDSDEGL<1u>(d.K, d.s0.gradients, d.s1.gradients,
+                                d.s1.thermodynamic_forces);
+        }
+      } else if (n == 2u) {
+        if (this->getHypothesis() == ModellingHypothesis::PLANESTRESS) {
           tfel::raise(
               "GenericBehaviour::call_behaviour: "
-              "invalid space dimensions");
+              "using DS_DEGL in plane strain is not supported yet");
+        } else {
+          convertFromDSDEGL<2u>(d.K, d.s0.gradients, d.s1.gradients,
+                                d.s1.thermodynamic_forces);
         }
+      } else if (n == 3u) {
+        convertFromDSDEGL<3u>(d.K, d.s0.gradients, d.s1.gradients,
+                              d.s1.thermodynamic_forces);
       } else {
         tfel::raise(
             "GenericBehaviour::call_behaviour: "
-            "internal error, unexpected tangent operator type");
+            "invalid space dimensions");
       }
-    }  // end of
-    // GenericBehaviour::executeFiniteStrainBehaviourTangentOperatorPostProcessing
+    } else if (this->fsto == DPK1_DF) {
+      const auto n = tfel::material::getSpaceDimension(this->getHypothesis());
+      if (n == 1u) {
+        if (this->getHypothesis() ==
+            ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS) {
+          tfel::raise(
+              "GenericBehaviour::call_behaviour: "
+              "using DS_DEGL in plane strain is not supported yet");
+        } else {
+          convertFromDPK1DF<1u>(d.K, d.s0.gradients, d.s1.gradients,
+                                d.s1.thermodynamic_forces);
+        }
+      } else if (n == 2u) {
+        if (this->getHypothesis() == ModellingHypothesis::PLANESTRESS) {
+          tfel::raise(
+              "GenericBehaviour::call_behaviour: "
+              "using DS_DEGL in plane strain is not supported yet");
+        } else {
+          convertFromDPK1DF<2u>(d.K, d.s0.gradients, d.s1.gradients,
+                                d.s1.thermodynamic_forces);
+        }
+      } else if (n == 3u) {
+        convertFromDPK1DF<3u>(d.K, d.s0.gradients, d.s1.gradients,
+                              d.s1.thermodynamic_forces);
+      } else {
+        tfel::raise(
+            "GenericBehaviour::call_behaviour: "
+            "invalid space dimensions");
+      }
+    } else {
+      tfel::raise(
+          "GenericBehaviour::call_behaviour: "
+          "internal error, unexpected tangent operator type");
+    }
+  }  // end of
+  // GenericBehaviour::executeFiniteStrainBehaviourTangentOperatorPostProcessing
 
-    tfel::math::tmatrix<3u, 3u, real> GenericBehaviour::getRotationMatrix(
-        const tfel::math::vector<real>&,
-        const tfel::math::tmatrix<3u, 3u, real>& r) const {
-      return r;
-    }  // end of GenericBehaviour::getRotationMatrix
+  tfel::math::tmatrix<3u, 3u, real> GenericBehaviour::getRotationMatrix(
+      const tfel::math::vector<real>&,
+      const tfel::math::tmatrix<3u, 3u, real>& r) const {
+    return r;
+  }  // end of GenericBehaviour::getRotationMatrix
 
-    std::vector<std::string> GenericBehaviour::getOptionalMaterialProperties()
-        const {
-      return {};
-    }  // end of GenericBehaviour::getOptionalMaterialProperties
+  std::vector<std::string> GenericBehaviour::getOptionalMaterialProperties()
+      const {
+    return {};
+  }  // end of GenericBehaviour::getOptionalMaterialProperties
 
-    void GenericBehaviour::setOptionalMaterialPropertiesDefaultValues(
-        EvolutionManager&, const EvolutionManager&) const {
-    }  // end of GenericBehaviour::setOptionalMaterialPropertiesDefaultValues
+  void GenericBehaviour::setOptionalMaterialPropertiesDefaultValues(
+      EvolutionManager&, const EvolutionManager&) const {
+  }  // end of GenericBehaviour::setOptionalMaterialPropertiesDefaultValues
 
-    StiffnessMatrixType GenericBehaviour::getDefaultStiffnessMatrixType()
-        const {
-      return StiffnessMatrixType::CONSISTENTTANGENTOPERATOR;
-    }  // end of GenericBehaviour::getDefaultStiffnessMatrixType
+  StiffnessMatrixType GenericBehaviour::getDefaultStiffnessMatrixType() const {
+    return StiffnessMatrixType::CONSISTENTTANGENTOPERATOR;
+  }  // end of GenericBehaviour::getDefaultStiffnessMatrixType
 
-    GenericBehaviour::~GenericBehaviour() = default;
+  GenericBehaviour::~GenericBehaviour() = default;
 
 }  // end of namespace mtest

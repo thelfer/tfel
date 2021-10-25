@@ -1,28 +1,28 @@
 /*!
  * \file   StructureCurrentState.hxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   28 oct. 2015
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_MTEST_STRUCTURECURRENTSTATE_HXX
 #define LIB_MTEST_STRUCTURECURRENTSTATE_HXX
 
-#include<memory>
-#include<vector>
+#include <memory>
+#include <vector>
 
-#include"TFEL/Math/vector.hxx"
-#include"MTest/Config.hxx"
-#include"MTest/Types.hxx"
-#include"TFEL/Material/ModellingHypothesis.hxx"
+#include "TFEL/Math/vector.hxx"
+#include "MTest/Config.hxx"
+#include "MTest/Types.hxx"
+#include "TFEL/Material/ModellingHypothesis.hxx"
 
-namespace mtest{
+namespace mtest {
 
   // forward declaration
   struct CurrentState;
@@ -30,12 +30,11 @@ namespace mtest{
   struct Behaviour;
   // forward declaration
   struct BehaviourWorkSpace;
-  
+
   /*!
    * Data structure containing the state of a mechanical structure.
    */
-  struct MTEST_VISIBILITY_EXPORT StructureCurrentState
-  {
+  struct MTEST_VISIBILITY_EXPORT StructureCurrentState {
     //! a simple alias
     using Hypothesis = tfel::material::ModellingHypothesis::Hypothesis;
     /*!
@@ -49,11 +48,9 @@ namespace mtest{
     //! copy constructor
     StructureCurrentState(const StructureCurrentState&);
     //! move assignment operator
-    StructureCurrentState&
-    operator=(StructureCurrentState&&);
+    StructureCurrentState& operator=(StructureCurrentState&&);
     //! assignment operator
-    StructureCurrentState&
-    operator=(const StructureCurrentState&);
+    StructureCurrentState& operator=(const StructureCurrentState&);
     /*!
      * \set the behaviour associated to the structure
      * \param[in] p : pointer to the behaviour
@@ -61,7 +58,7 @@ namespace mtest{
     void setBehaviour(const std::shared_ptr<Behaviour>&);
     /*!
      * \set the behaviour associated to the structure
-     * \param[in] mh : modelling hypothesis 
+     * \param[in] mh : modelling hypothesis
      */
     void setModellingHypothesis(const Hypothesis);
     /*!
@@ -76,7 +73,8 @@ namespace mtest{
     ~StructureCurrentState();
     //! current state of each integration points
     tfel::math::vector<CurrentState> istates;
-  private:
+
+   private:
     //! behaviour
     std::shared_ptr<Behaviour> b;
     //! modelling hypothesis
@@ -90,16 +88,14 @@ namespace mtest{
    * becomes the values at the beginning of the next time step
    * \param[out] s: state
    */
-  MTEST_VISIBILITY_EXPORT void
-  update(StructureCurrentState&);
+  MTEST_VISIBILITY_EXPORT void update(StructureCurrentState&);
   /*!
    * \brief revert the state: values at the end of the time step are
    * set equal to the values at the beginning of the next time step
    * \param[out] s: state
    */
-  MTEST_VISIBILITY_EXPORT void
-  revert(StructureCurrentState&);
-  
-} // end of namespace mtest
+  MTEST_VISIBILITY_EXPORT void revert(StructureCurrentState&);
+
+}  // end of namespace mtest
 
 #endif /* LIB_MTEST_STRUCTURECURRENTSTATE_HXX */

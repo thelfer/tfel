@@ -1,6 +1,6 @@
 /*!
  * \file   AbstractTestCase.cxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   17/09/2019
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights

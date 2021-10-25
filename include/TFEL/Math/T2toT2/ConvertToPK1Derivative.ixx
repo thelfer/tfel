@@ -655,64 +655,62 @@ namespace tfel {
                cste * ds(4, 8) * F[2] * F[4] + cste * F[0] * ds(5, 8) * F[2]) /
               2;
         }
-        };  // end of struct DSIG_DF_to_DPK1_DF_Converter<3u>
+      };  // end of struct DSIG_DF_to_DPK1_DF_Converter<3u>
 
-      }  // end of namespace internals
+    }  // end of namespace internals
 
-      template <unsigned short N, typename stress, typename real>
-      void convertCauchyStressDerivativeToFirstPiolaKirchoffStressDerivative(
-          t2tot2<N, stress>& dP,
-          const t2tost2<N, stress>& ds,
-          const tensor<N, real>& F,
-          const stensor<N, stress>& s) {
-        tfel::math::internals::DSIG_DF_to_DPK1_DF_Converter<N>::exe(dP, ds, F,
-                                                                    s);
-      }  // end of
-         // convertCauchyStressDerivativeToFirstPiolaKirchoffStressDerivative
+    template <unsigned short N, typename stress, typename real>
+    void convertCauchyStressDerivativeToFirstPiolaKirchoffStressDerivative(
+        t2tot2<N, stress>& dP,
+        const t2tost2<N, stress>& ds,
+        const tensor<N, real>& F,
+        const stensor<N, stress>& s) {
+      tfel::math::internals::DSIG_DF_to_DPK1_DF_Converter<N>::exe(dP, ds, F, s);
+    }  // end of
+       // convertCauchyStressDerivativeToFirstPiolaKirchoffStressDerivative
 
-      template <unsigned short N, typename stress, typename real>
-      t2tot2<N, stress>
-      convertCauchyStressDerivativeToFirstPiolaKirchoffStressDerivative(
-          const t2tost2<N, stress>& ds,
-          const tensor<N, real>& F,
-          const stensor<N, stress>& s) {
-        t2tot2<N, stress> dP;
-        tfel::math::internals::DSIG_DF_to_DPK1_DF_Converter<N>::exe(dP, ds, F,
-                                                                    s);
-        return dP;
-      }  // end of
-         // convertCauchyStressDerivativeToFirstPiolaKirchoffStressDerivative
+    template <unsigned short N, typename stress, typename real>
+    t2tot2<N, stress>
+    convertCauchyStressDerivativeToFirstPiolaKirchoffStressDerivative(
+        const t2tost2<N, stress>& ds,
+        const tensor<N, real>& F,
+        const stensor<N, stress>& s) {
+      t2tot2<N, stress> dP;
+      tfel::math::internals::DSIG_DF_to_DPK1_DF_Converter<N>::exe(dP, ds, F, s);
+      return dP;
+    }  // end of
+       // convertCauchyStressDerivativeToFirstPiolaKirchoffStressDerivative
 
-      template <unsigned short N, typename stress, typename real>
-      t2tot2<N, stress>
+    template <unsigned short N, typename stress, typename real>
+    t2tot2<N, stress>
+    convertSecondPiolaKirchhoffStressDerivativeToFirstPiolaKirchoffStressDerivative(
+        const st2tost2<N, stress>& dS,
+        const tensor<N, real>& F,
+        const stensor<N, stress>& s) {
+      t2tot2<N, stress> dP;
       convertSecondPiolaKirchhoffStressDerivativeToFirstPiolaKirchoffStressDerivative(
-          const st2tost2<N, stress>& dS,
-          const tensor<N, real>& F,
-          const stensor<N, stress>& s) {
-        t2tot2<N, stress> dP;
-        convertSecondPiolaKirchhoffStressDerivativeToFirstPiolaKirchoffStressDerivative(
-            dP, dS, F, s);
-        return dP;
-      }  // end of
-         // convertSecondPiolaKirchhoffStressDerivativeToFirstPiolaKirchoffStressDerivative
+          dP, dS, F, s);
+      return dP;
+    }  // end of
+       // convertSecondPiolaKirchhoffStressDerivativeToFirstPiolaKirchoffStressDerivative
 
-      template <unsigned short N, typename stress, typename real>
-      void
-      convertSecondPiolaKirchhoffStressDerivativeToFirstPiolaKirchoffStressDerivative(
-          t2tot2<N, stress>& dP,
-          const st2tost2<N, stress>& dS,
-          const tensor<N, real>& F,
-          const stensor<N, stress>& s) {
-        const auto dE_dF = eval(t2tost2<N, real>::dCdF(F) / 2);
-        const auto dS_dF = t2tot2<N, real>{dS * dE_dF};
-        const auto S =
-            unsyme(convertCauchyStressToSecondPiolaKirchhoffStress(s, F));
-        dP = t2tot2<N, stress>::tpld(S) + t2tot2<N, real>::tprd(F, dS_dF);
-      }  // end of
-         // convertSecondPiolaKirchhoffStressDerivativeToFirstPiolaKirchoffStressDerivative
+    template <unsigned short N, typename stress, typename real>
+    void
+    convertSecondPiolaKirchhoffStressDerivativeToFirstPiolaKirchoffStressDerivative(
+        t2tot2<N, stress>& dP,
+        const st2tost2<N, stress>& dS,
+        const tensor<N, real>& F,
+        const stensor<N, stress>& s) {
+      const auto dE_dF = eval(t2tost2<N, real>::dCdF(F) / 2);
+      const auto dS_dF = t2tot2<N, real>{dS * dE_dF};
+      const auto S =
+          unsyme(convertCauchyStressToSecondPiolaKirchhoffStress(s, F));
+      dP = t2tot2<N, stress>::tpld(S) + t2tot2<N, real>::tprd(F, dS_dF);
+    }  // end of
+       // convertSecondPiolaKirchhoffStressDerivativeToFirstPiolaKirchoffStressDerivative
 
-    }  // end of namespace math
+  }  // end of namespace math
 
-  }  // end of namespace tfel
+}  // end of namespace tfel
 
 #endif /* LIB_TFEL_MATH_T2TOT2_CONVERTTOPK1DERIVATIVE_IXX */

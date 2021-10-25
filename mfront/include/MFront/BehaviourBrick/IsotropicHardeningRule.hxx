@@ -78,8 +78,8 @@ namespace mfront {
        * \param[in] fid: flow id
        * \param[in] id: identifier
        */
-      virtual std::string computeElasticPrediction(const std::string&,
-                                                   const std::string&) const = 0;
+      virtual std::string computeElasticPrediction(
+          const std::string&, const std::string&) const = 0;
       /*!
        * \brief return the code computing the radius of the elastic limit.
        * The code defines a variable named "R"+fid+"_"+id

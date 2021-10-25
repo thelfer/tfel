@@ -262,7 +262,7 @@ namespace mfront {
       }
     }
   }  // end of displayGlossaryEntryCompleteDescription
-  
+
   void addSymbol(std::map<std::string, std::string>& symbols,
                  const std::string& s,
                  const std::string& r) {

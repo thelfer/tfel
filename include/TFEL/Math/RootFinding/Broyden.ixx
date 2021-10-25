@@ -1,89 +1,82 @@
 /*!
  * \file   include/TFEL/Math/RootFinding/Broyden.ixx
- * \brief  
- * 
+ * \brief
+ *
  * \author Thomas Helfer
  * \date   05 avr 2008
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_TFEL_MATH_BROYDENIXX
-#define LIB_TFEL_MATH_BROYDENIXX 
+#define LIB_TFEL_MATH_BROYDENIXX
 
 #ifdef TFEL_BROYDEN_VERBOSE_MODE
-#include<iostream>
+#include <iostream>
 #endif /* LIB_TFEL_MATH_BROYDENIXX */
 
-#include"TFEL/Math/tmatrix.hxx"
-#include"TFEL/Math/TinyMatrixSolve.hxx"
+#include "TFEL/Math/tmatrix.hxx"
+#include "TFEL/Math/TinyMatrixSolve.hxx"
 
-namespace tfel
-{
-  
-  namespace math
-  {
+namespace tfel {
 
-    template<unsigned short N,
-	     typename T,
-	     const tvector<N,T> (*f)(const tvector<N,T>&)>
-    const std::pair<bool,tvector<N,T> >
-    broyden(const tvector<N,T>& x0,
-	    tmatrix<N,N,T>& A,
-	    const T e,
-	    const unsigned short n)
-    {
+  namespace math {
+
+    template <unsigned short N,
+              typename T,
+              const tvector<N, T> (*f)(const tvector<N, T>&)>
+    const std::pair<bool, tvector<N, T>> broyden(const tvector<N, T>& x0,
+                                                 tmatrix<N, N, T>& A,
+                                                 const T e,
+                                                 const unsigned short n) {
       using namespace std;
       using namespace tfel::math;
-      tvector<N,T> x  = x0;
-      tvector<N,T> vf = f(x);
+      tvector<N, T> x = x0;
+      tvector<N, T> vf = f(x);
       unsigned short i = 0;
-      while((i<n)&&(norm(vf)/N>e)){
+      while ((i < n) && (norm(vf) / N > e)) {
 #ifdef TFEL_BROYDEN_VERBOSE_MODE
-	cout << "iteration : " << i <<  endl;	
-	cout << "x         : " << x <<  endl;	
-	cout << "||f||     : " << norm(vf) <<  endl;	
+        cout << "iteration : " << i << endl;
+        cout << "x         : " << x << endl;
+        cout << "||f||     : " << norm(vf) << endl;
 #endif /* LIB_TFEL_MATH_BROYDENIXX */
-	tvector<N,T> s = -vf;
-	tmatrix<N,N,T> J = A;
-	TinyMatrixSolve<N,T>::exe(J,s);
-	x  += s;
-	const tvector<N,T> vf2 = vf;
-	vf  = f(x);
-	const tvector<N,T> y = vf-vf2;
-	J   = A;
-	const tvector<N,T> t = -J*s;
-	A  += ((y-t)^s)/(s|s);
-	++i;
+        tvector<N, T> s = -vf;
+        tmatrix<N, N, T> J = A;
+        TinyMatrixSolve<N, T>::exe(J, s);
+        x += s;
+        const tvector<N, T> vf2 = vf;
+        vf = f(x);
+        const tvector<N, T> y = vf - vf2;
+        J = A;
+        const tvector<N, T> t = -J * s;
+        A += ((y - t) ^ s) / (s | s);
+        ++i;
       }
-      return pair<bool,tvector<N,T> >(i!=n,x);
-    } // end of function broyden
+      return pair<bool, tvector<N, T>>(i != n, x);
+    }  // end of function broyden
 
-    template<unsigned short N,
-	     typename T,
-	     const tvector<N,T> (*f)(const tvector<N,T>&)>
-    const std::pair<bool,tvector<N,T> >
-    broyden(const tvector<N,T>& x0,
-	    const T e,
-	    const unsigned short n)
-    {
+    template <unsigned short N,
+              typename T,
+              const tvector<N, T> (*f)(const tvector<N, T>&)>
+    const std::pair<bool, tvector<N, T>> broyden(const tvector<N, T>& x0,
+                                                 const T e,
+                                                 const unsigned short n) {
       using namespace std;
       using namespace tfel::math;
-      tmatrix<N,N,T> A(0.);
+      tmatrix<N, N, T> A(0.);
       unsigned short i;
-      for(i=0;i!=N;++i){
-	A(i,i) = 1.;
+      for (i = 0; i != N; ++i) {
+        A(i, i) = 1.;
       }
-      return broyden<N,T,f>(x0,A,e,n);
-    } // end of function broyden
-    
-  } // end of namespace math
+      return broyden<N, T, f>(x0, A, e, n);
+    }  // end of function broyden
 
-} // end of namespace tfel
+  }  // end of namespace math
+
+}  // end of namespace tfel
 
 #endif /* LIB_TFEL_MATH_BROYDENIXX */
-

@@ -23,8 +23,8 @@ namespace mfront {
 
   namespace bbrick {
 
-    std::vector<OptionDescription> Chaboche2012KinematicHardeningRule::getOptions()
-        const {
+    std::vector<OptionDescription>
+    Chaboche2012KinematicHardeningRule::getOptions() const {
       auto opts = KinematicHardeningRuleBase::getOptions();
       opts.emplace_back("D", "back-strain callback coefficient",
                         OptionDescription::MATERIALPROPERTY);
@@ -47,8 +47,9 @@ namespace mfront {
         const DataMap& d) {
       constexpr const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
       // `this` must be captured in gcc 4.7.2
-      auto get_mp = [&bd, &dsl, &d, &fid, &kid,this](
-          BehaviourDescription::MaterialProperty& mp, const std::string& n) {
+      auto get_mp = [&bd, &dsl, &d, &fid, &kid, this](
+                        BehaviourDescription::MaterialProperty& mp,
+                        const std::string& n) {
         const auto nid = KinematicHardeningRule::getVariableId(n, fid, kid);
         if (d.count(n) == 0) {
           tfel::raise(
@@ -69,8 +70,10 @@ namespace mfront {
       get_mp(this->w, "w");
       // reserved named
       const auto DJan = KinematicHardeningRule::getVariableId("DJa", fid, kid);
-      const auto iDJan = KinematicHardeningRule::getVariableId("iDJa", fid, kid);
-      const auto dDJan = KinematicHardeningRule::getVariableId("dDJa", fid, kid);
+      const auto iDJan =
+          KinematicHardeningRule::getVariableId("iDJa", fid, kid);
+      const auto dDJan =
+          KinematicHardeningRule::getVariableId("dDJa", fid, kid);
       const auto Psin = KinematicHardeningRule::getVariableId("Psi", fid, kid);
       const auto dPsin =
           KinematicHardeningRule::getVariableId("dPsi", fid, kid) + "_d" +
@@ -133,10 +136,12 @@ namespace mfront {
       const auto Phi_infn =
           KinematicHardeningRule::getVariableId("Phi_inf", fid, kid);
       const auto DJan = KinematicHardeningRule::getVariableId("DJa", fid, kid);
-      const auto dDJan = KinematicHardeningRule::getVariableId("dDJa", fid, kid);
+      const auto dDJan =
+          KinematicHardeningRule::getVariableId("dDJa", fid, kid);
       const auto Phin = KinematicHardeningRule::getVariableId("Phi", fid, kid);
       const auto dPhin =
-          KinematicHardeningRule::getVariableId("dPhi", fid, kid) + "_ddp" + fid;
+          KinematicHardeningRule::getVariableId("dPhi", fid, kid) + "_ddp" +
+          fid;
       const auto Psin = KinematicHardeningRule::getVariableId("Psi", fid, kid);
       const auto dPsin =
           KinematicHardeningRule::getVariableId("dPsi", fid, kid) + "_d" +
@@ -245,7 +250,8 @@ namespace mfront {
     }  // end of
     // Chaboche2012KinematicHardeningRule::buildBackStrainImplicitEquations
 
-    Chaboche2012KinematicHardeningRule::~Chaboche2012KinematicHardeningRule() = default;
+    Chaboche2012KinematicHardeningRule::~Chaboche2012KinematicHardeningRule() =
+        default;
 
   }  // end of namespace bbrick
 

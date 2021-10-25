@@ -68,14 +68,14 @@ namespace mfront {
                         const unsigned short,
                         const size_t);
     /*!
-    * Constructor
-    * \param[in] t: variable type
-    * \param[in] s: symbolic name
-    * \param[in] n: variable name
-    * \param[in] as: if greater than 1, this variable will
-    * be considered as an array
-    * \param[in] l: line number
-    */
+     * Constructor
+     * \param[in] t: variable type
+     * \param[in] s: symbolic name
+     * \param[in] n: variable name
+     * \param[in] as: if greater than 1, this variable will
+     * be considered as an array
+     * \param[in] l: line number
+     */
     VariableDescription(const std::string&,
                         const std::string&,
                         const std::string&,

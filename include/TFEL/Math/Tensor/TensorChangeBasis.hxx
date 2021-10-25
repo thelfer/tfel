@@ -1,62 +1,58 @@
-/*! 
+/*!
  * \file  include/TFEL/Math/Tensor/TensorChangeBasis.hxx
  * \brief
  * \author Thomas Helfer
  * \brief 04 juil. 2013
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_TFEL_MATH_TENSORCHANGEBASIS_HXX
-#define LIB_TFEL_MATH_TENSORCHANGEBASIS_HXX 
+#define LIB_TFEL_MATH_TENSORCHANGEBASIS_HXX
 
-namespace tfel{
+namespace tfel {
 
-  namespace math{
-    
+  namespace math {
+
     /*!
      * \brief structure in charge of changing the basis of a tensor
-     * \tparam N, the spatial dimension, see TensorDimeToSize for details. 
+     * \tparam N, the spatial dimension, see TensorDimeToSize for details.
      * \tparam T, numerical type used, by default, double
      * \note partial specialisation are provided in 1D, 2D and 3D
      */
-    template<unsigned short N,
-	     typename T>
+    template <unsigned short N, typename T>
     struct TensorChangeBasis;
     /*!
      * \brief partial specialisation in 1D
      */
-    template<typename T>
-    struct TensorChangeBasis<1u,T>
-    {
+    template <typename T>
+    struct TensorChangeBasis<1u, T> {
       //! a simple alias
       using real = tfel::typetraits::base_type<T>;
       /*!
        * do the change of basis
-       * \param[in,out] v : on input, initial values of the tensor, on output new values
-       * \param[out]    m : rotation matrix
+       * \param[in,out] v : on input, initial values of the tensor, on output
+       * new values \param[out]    m : rotation matrix
        */
-      static TFEL_MATH_INLINE2
-      void exe(T * const,
-	       const rotation_matrix<real>&)
-      {} // end of exe
+      static TFEL_MATH_INLINE2 void exe(T* const,
+                                        const rotation_matrix<real>&) {
+      }  // end of exe
     };
     /*!
      * \brief partial specialisation in 2D
      */
-    template<typename T>
-    struct TensorChangeBasis<2u,T>
-    {
+    template <typename T>
+    struct TensorChangeBasis<2u, T> {
       //! a simple alias
       using real = tfel::typetraits::base_type<T>;
       /*!
        * do the change of basis
-       * \param[in,out] v : on input, initial values of the tensor, on output new values
-       * \param[out]    m : rotation matrix
+       * \param[in,out] v : on input, initial values of the tensor, on output
+       * new values \param[out]    m : rotation matrix
        */
       static TFEL_MATH_INLINE2 void exe(T* const v,
                                         const rotation_matrix<real>& m) {
@@ -77,15 +73,14 @@ namespace tfel{
     /*!
      * \brief partial specialisation in 3D
      */
-    template<typename T>
-    struct TensorChangeBasis<3u,T>
-    {
+    template <typename T>
+    struct TensorChangeBasis<3u, T> {
       //! a simple alias
       using real = tfel::typetraits::base_type<T>;
       /*!
        * do the change of basis
-       * \param[in,out] v : on input, initial values of the tensor, on output new values
-       * \param[out]    m : rotation matrix
+       * \param[in,out] v : on input, initial values of the tensor, on output
+       * new values \param[out]    m : rotation matrix
        */
       static TFEL_MATH_INLINE2 void exe(T* const v,
                                         const rotation_matrix<real>& m) {
@@ -131,9 +126,8 @@ namespace tfel{
       }
     };
 
-  } // end of namespace math
+  }  // end of namespace math
 
-} // end of namespace tfel
+}  // end of namespace tfel
 
 #endif /* LIB_TFEL_MATH_TENSORCHANGEBASIS_HXX */
-

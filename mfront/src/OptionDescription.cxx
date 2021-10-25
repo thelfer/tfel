@@ -21,51 +21,59 @@ namespace mfront {
 
   namespace bbrick {
 
-    OptionDescription::OptionDescription(const std::string& n, const std::string& d, const Type t)
-        : name(n), description(d), type(t) {}  // end of OptionDescription::OptionDescription
+    OptionDescription::OptionDescription(const std::string& n,
+                                         const std::string& d,
+                                         const Type t)
+        : name(n),
+          description(d),
+          type(t) {}  // end of OptionDescription::OptionDescription
 
     OptionDescription::OptionDescription(const std::string& n,
-                   const std::string& d,
-                   const Type t,
-                   const std::vector<std::string>& ro,
-                   const std::vector<std::string>& eo)
+                                         const std::string& d,
+                                         const Type t,
+                                         const std::vector<std::string>& ro,
+                                         const std::vector<std::string>& eo)
         : name(n),
           description(d),
           type(t),
           required_options(ro),
-          incompatible_options(eo) {}  // end of OptionDescription::OptionDescription
+          incompatible_options(eo) {
+    }  // end of OptionDescription::OptionDescription
 
     OptionDescription::OptionDescription(const std::string& n,
-                   const tfel::glossary::GlossaryEntry& e,
-                   const Type t)
+                                         const tfel::glossary::GlossaryEntry& e,
+                                         const Type t)
         : name(n),
           description(e.getShortDescription()),
           type(t) {}  // end of OptionDescription::OptionDescription
 
     OptionDescription::OptionDescription(const std::string& n,
-                   const tfel::glossary::GlossaryEntry& e,
-                   const Type t,
-                   const std::vector<std::string>& ro,
-                   const std::vector<std::string>& eo)
+                                         const tfel::glossary::GlossaryEntry& e,
+                                         const Type t,
+                                         const std::vector<std::string>& ro,
+                                         const std::vector<std::string>& eo)
         : name(n),
           description(e.getShortDescription()),
           type(t),
           required_options(ro),
-          incompatible_options(eo) {}  // end of OptionDescription::OptionDescription
+          incompatible_options(eo) {
+    }  // end of OptionDescription::OptionDescription
 
     OptionDescription::OptionDescription() = default;
     OptionDescription::OptionDescription(const OptionDescription&) = default;
     OptionDescription::OptionDescription(OptionDescription&&) = default;
-    OptionDescription& OptionDescription::operator=(const OptionDescription&) = default;
-    OptionDescription& OptionDescription::operator=(OptionDescription&&) = default;
+    OptionDescription& OptionDescription::operator=(const OptionDescription&) =
+        default;
+    OptionDescription& OptionDescription::operator=(OptionDescription&&) =
+        default;
     OptionDescription::~OptionDescription() = default;
 
     void check(const std::map<std::string, tfel::utilities::Data>& dv,
                const std::vector<OptionDescription>& ov) {
       auto get_opt = [&ov](const std::string& n) {
-        const auto p =
-            std::find_if(ov.begin(), ov.end(),
-                         [&n](const OptionDescription& o) { return o.name == n; });
+        const auto p = std::find_if(
+            ov.begin(), ov.end(),
+            [&n](const OptionDescription& o) { return o.name == n; });
         if (p == ov.end()) {
           auto msg = std::string{};
           msg += "check: no option named '" + n + "'.\n";

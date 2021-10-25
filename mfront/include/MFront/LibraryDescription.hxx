@@ -47,11 +47,11 @@ namespace mfront {
     static const char* getDefaultLibraryPrefix(const TargetSystem,
                                                const LibraryType) noexcept;
     /*!
-      * \return the default library suffix for the given target system
-      * and library type
-      * \param[in] s : target system
-      * \param[in] t : library type
-      */
+     * \return the default library suffix for the given target system
+     * and library type
+     * \param[in] s : target system
+     * \param[in] t : library type
+     */
     static const char* getDefaultLibrarySuffix(const TargetSystem,
                                                const LibraryType) noexcept;
     /*!

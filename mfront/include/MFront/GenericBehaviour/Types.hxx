@@ -17,16 +17,16 @@
 #include "MFront/GenericBehaviour/Types.h"
 
 #ifdef __cplusplus
-namespace mfront{
+namespace mfront {
 
-  namespace gb{
+  namespace gb {
 
     //! a simple alias
     using real = ::MFront_GB_real;
 
-  } // end of namspace gb
+  }  // namespace gb
 
-} // end of namespace mfront    
+}  // end of namespace mfront
 #endif /* __cplusplus */
 
 #endif /* LIB_MFRONT_GENERICBEHAVIOUR_TYPES_HXX */

@@ -1,31 +1,30 @@
 /*!
  * \file   tests/Math/ExpressionTemplates/test_expr9.cxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   17 Oct 2006
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifdef NDEBUG
 #undef NDEBUG
 #endif /* NDEBUG */
 
-#include<algorithm>
-#include<cassert>
-#include<cstdlib>
-#include<iterator>
+#include <algorithm>
+#include <cassert>
+#include <cstdlib>
+#include <iterator>
 
-#include"TFEL/Math/vector.hxx"
-#include"TFEL/Math/General/ObjectObjectRandomAccessConstIterator.hxx"
+#include "TFEL/Math/vector.hxx"
+#include "TFEL/Math/General/ObjectObjectRandomAccessConstIterator.hxx"
 
 /* coverity [UNCAUGHT_EXCEPT]*/
-int main()
-{
+int main() {
   using namespace std;
   using namespace tfel::math;
   using tfel::math::vector;
@@ -40,11 +39,14 @@ int main()
   v2(1) = 4.;
   v2(2) = 5.;
   v2(3) = 6.;
-  ObjectObjectRandomAccessConstIterator<vector<double>,vector<double>,OpMinus> begin(v1.begin(),v2.begin());
-  ObjectObjectRandomAccessConstIterator<vector<double>,vector<double>,OpMinus> end(v1.end(),v2.end());
-  ObjectObjectRandomAccessConstIterator<vector<double>,vector<double>,OpMinus> p;
-  for(i=0,p=begin;p!=end;++p,++i){
-    assert(abs(*p-(v1(i)-v2(i)))<1.e-14);
+  ObjectObjectRandomAccessConstIterator<vector<double>, vector<double>, OpMinus>
+      begin(v1.begin(), v2.begin());
+  ObjectObjectRandomAccessConstIterator<vector<double>, vector<double>, OpMinus>
+      end(v1.end(), v2.end());
+  ObjectObjectRandomAccessConstIterator<vector<double>, vector<double>, OpMinus>
+      p;
+  for (i = 0, p = begin; p != end; ++p, ++i) {
+    assert(abs(*p - (v1(i) - v2(i))) < 1.e-14);
   }
   return EXIT_SUCCESS;
 }

@@ -1,31 +1,31 @@
-/*! 
+/*!
  * \file  TargetsDescription.hxx
  * \brief
  * \author Thomas Helfer
  * \date   17 mars 2015
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_MFRONT_TARGETSDESCRIPTION_HXX
-#define LIB_MFRONT_TARGETSDESCRIPTION_HXX 
+#define LIB_MFRONT_TARGETSDESCRIPTION_HXX
 
-#include<map>
-#include<string>
-#include<vector>
-#include<iosfwd>
+#include <map>
+#include <string>
+#include <vector>
+#include <iosfwd>
 
-#include"MFront/MFrontConfig.hxx"
-#include"MFront/MFrontUtilities.hxx"
-#include"MFront/LibraryDescription.hxx"
-#include"MFront/ExecutableDescription.hxx"
-#include"MFront/SpecificTargetDescription.hxx"
+#include "MFront/MFrontConfig.hxx"
+#include "MFront/MFrontUtilities.hxx"
+#include "MFront/LibraryDescription.hxx"
+#include "MFront/ExecutableDescription.hxx"
+#include "MFront/SpecificTargetDescription.hxx"
 
-namespace mfront{
+namespace mfront {
 
   /*!
    * \brief structure containing the results of the analysis of a
@@ -33,7 +33,7 @@ namespace mfront{
    * rules for the libraries and specific targets defined by MFront
    * interfaces.
    */
-  struct MFRONT_VISIBILITY_EXPORT TargetsDescription{
+  struct MFRONT_VISIBILITY_EXPORT TargetsDescription {
     TargetsDescription();
     TargetsDescription(const TargetsDescription&);
     TargetsDescription(TargetsDescription&&);
@@ -116,7 +116,7 @@ namespace mfront{
      * \endcode
      */
     std::map<std::string, SpecificTargetDescription> specific_targets;
-  }; // end of struct TargetsDescription
+  };  // end of struct TargetsDescription
 
   /*!
    * \return true if the target description describes a library with
@@ -155,6 +155,6 @@ namespace mfront{
   read(tfel::utilities::CxxTokenizer::const_iterator&,
        const tfel::utilities::CxxTokenizer::const_iterator);
 
-} // end of namespace mfront
+}  // end of namespace mfront
 
 #endif /* LIB_MFRONT_TARGETSDESCRIPTION_HXX */

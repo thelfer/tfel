@@ -1,6 +1,6 @@
 /*!
  * \file   KinematicHardeningRuleBase.hxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   04/04/2018
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights

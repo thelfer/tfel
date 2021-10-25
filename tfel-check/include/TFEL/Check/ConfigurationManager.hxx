@@ -1,28 +1,28 @@
 /*!
  * \file   tfel-check/include/TFEL/Check/ConfigurationManager.hxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   13/09/2017
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_TFEL_CHECK_CONFIGURATIONMANAGER_HXX
 #define LIB_TFEL_CHECK_CONFIGURATIONMANAGER_HXX
 
-#include<map>
-#include<string>
-#include<functional>
-#include"TFEL/Check/TFELCheckConfig.hxx"
-#include"TFEL/Check/Configuration.hxx"
+#include <map>
+#include <string>
+#include <functional>
+#include "TFEL/Check/TFELCheckConfig.hxx"
+#include "TFEL/Check/Configuration.hxx"
 
-namespace tfel{
+namespace tfel {
 
-  namespace check{
+  namespace check {
 
     /*!
      * \brief configurations are organized as a tree.
@@ -37,10 +37,10 @@ namespace tfel{
      * change to the root configuration is propagated to all the
      * subordinates.
      */
-    struct TFELCHECK_VISIBILITY_EXPORT ConfigurationManager{
+    struct TFELCHECK_VISIBILITY_EXPORT ConfigurationManager {
       //! \brief default constructor
       ConfigurationManager();
-      /*! 
+      /*!
        * \brief constructor from a configuration.
        * \param[in] src: configuration
        */
@@ -62,41 +62,42 @@ namespace tfel{
        * \return the configuration associated at the specified
        * location.
        * \param[in] l: level
-       */ 
+       */
       ConfigurationManager& getConfigurationManager(const std::string&);
       /*!
        * \return the configuration associated at the specified
        * location.
        * \param[in] l: level
-       */ 
-      const ConfigurationManager& getConfigurationManager(const std::string&) const;
+       */
+      const ConfigurationManager& getConfigurationManager(
+          const std::string&) const;
       //! \return the configuration associated at the root of the tree
       const Configuration& getConfiguration() const;
 
-    private:
+     private:
       /*!
        * \brief decompose a location in two parts: the first level and the rest.
        * \param[in] l: location
-       * \return a pair which contains the first level and the rest of the location
+       * \return a pair which contains the first level and the rest of the
+       * location
        */
-      static std::pair<std::string,std::string>
-      extract(const std::string&);
+      static std::pair<std::string, std::string> extract(const std::string&);
       //! configuration of the root of the tree
       Configuration c;
       //! \brief list of subordinates
-      std::map<std::string,ConfigurationManager> subordinates;
-    }; // end of ConfigurationManager
+      std::map<std::string, ConfigurationManager> subordinates;
+    };  // end of ConfigurationManager
 
     /*!
      * \brief parse a configuration file.
      * \param[in,out] c: configuration
      * \param[in]     n: file name
      */
-    TFELCHECK_VISIBILITY_EXPORT void
-    parse(ConfigurationManager&,const std::string&);
-    
-  } // end of namespace check
+    TFELCHECK_VISIBILITY_EXPORT void parse(ConfigurationManager&,
+                                           const std::string&);
 
-} // end of namespace check
+  }  // end of namespace check
+
+}  // namespace tfel
 
 #endif /* LIB_TFEL_CHECK_CONFIGURATIONMANAGER_HXX */

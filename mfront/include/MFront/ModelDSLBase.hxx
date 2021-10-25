@@ -1,27 +1,27 @@
 /*!
  * \file   mfront/include/MFront/ModelDSLBase.hxx
- * \brief  
- * 
+ * \brief
+ *
  * \author Thomas Helfer
  * \date   04 jun 2007
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_MFRONTMODELPARSERBASE_HXX
-#define LIB_MFRONTMODELPARSERBASE_HXX 
+#define LIB_MFRONTMODELPARSERBASE_HXX
 
-#include<map>
-#include<string>
+#include <map>
+#include <string>
 
-#include"MFront/DSLBase.hxx"
-#include"MFront/ModelDSLCommon.hxx"
+#include "MFront/DSLBase.hxx"
+#include "MFront/ModelDSLCommon.hxx"
 
-namespace mfront{
+namespace mfront {
 
   template <typename Child>
   struct ModelDSLBase : public ModelDSLCommon {
@@ -61,29 +61,24 @@ namespace mfront{
                     const std::map<std::string, std::string>&) override;
 
    protected:
-
-    typedef void (Child::* MemberFuncPtr)();
-    typedef std::map<std::string,MemberFuncPtr> CallBackContainer;
+    typedef void (Child::*MemberFuncPtr)();
+    typedef std::map<std::string, MemberFuncPtr> CallBackContainer;
 
     ModelDSLBase();
 
     virtual void analyse();
-    
-    virtual void
-    registerDefaultCallBacks();
 
-    virtual void
-    registerNewCallBack(const std::string&,const MemberFuncPtr);
-    
+    virtual void registerDefaultCallBacks();
+
+    virtual void registerNewCallBack(const std::string&, const MemberFuncPtr);
+
     CallBackContainer callBacks;
-    
-    std::set<std::string> registredKeyWords;
 
+    std::set<std::string> registredKeyWords;
   };
 
-} // end of namespace mfront
+}  // end of namespace mfront
 
-#include"MFront/ModelDSLBase.ixx"
+#include "MFront/ModelDSLBase.ixx"
 
 #endif /* LIB_MFRONTMODELPARSERBASE_HXX */
-

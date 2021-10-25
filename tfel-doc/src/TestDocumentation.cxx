@@ -1,20 +1,20 @@
-/*! 
+/*!
  * \file  tfel-doc/src/TestDocumentation.cxx
  * \brief
  * \author Thomas Helfer
  * \brief 03 mai 2011
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
-#include"TFEL/Utilities/Global.hxx"
-#include"TFEL/Utilities/TestDocumentation.hxx"
+#include "TFEL/Utilities/Global.hxx"
+#include "TFEL/Utilities/TestDocumentation.hxx"
 
-namespace tfel{
+namespace tfel {
 
   namespace utilities {
 
@@ -24,15 +24,14 @@ namespace tfel{
 
     TestDocumentation::TestDocumentation(TestDocumentation&&) = default;
 
-    TestDocumentation&
-    TestDocumentation::operator=(const TestDocumentation& ) = default;
+    TestDocumentation& TestDocumentation::operator=(const TestDocumentation&) =
+        default;
 
-    TestDocumentation&
-    TestDocumentation::operator=(TestDocumentation&&) = default;
+    TestDocumentation& TestDocumentation::operator=(TestDocumentation&&) =
+        default;
 
     TestDocumentation::~TestDocumentation() = default;
 
-  } // end of namespace utilities
+  }  // end of namespace utilities
 
-} // end of namespace tfel
-
+}  // end of namespace tfel

@@ -179,7 +179,7 @@ namespace mfront {
   std::tuple<std::string, bool, unsigned short>
   extractVariableNameAndArrayPosition(const std::string&);
 
-}  // end of mfront
+}  // namespace mfront
 
 #include "MFront/MFrontUtilities.ixx"
 

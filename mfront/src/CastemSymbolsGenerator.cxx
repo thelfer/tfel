@@ -81,10 +81,11 @@ namespace mfront {
     const auto fn = i.getFunctionNameBasis(name);
     os << "MFRONT_SHAREDOBJ unsigned short " << fn
        << "_nElasticMaterialPropertiesEntryPoints = " << emps.size() << "u;\n";
-    this->writeArrayOfStringsSymbol(os, fn + "_ElasticMaterialPropertiesEntryPoints", emps);
+    this->writeArrayOfStringsSymbol(
+        os, fn + "_ElasticMaterialPropertiesEntryPoints", emps);
   }  // end of CastemSymbolsGenerator::writeSpecificSymbols
 
-  bool CastemSymbolsGenerator::handleStrainMeasure() const{
+  bool CastemSymbolsGenerator::handleStrainMeasure() const {
     return true;
   }  // end of CastemSymbolsGenerator::handleStrainMeasure
 

@@ -33,7 +33,7 @@ namespace tfel {
        * \brief partial specialisation in 1D
        */
       template <typename T>
-      struct BuildFromRotationMatrix<1u,T> {
+      struct BuildFromRotationMatrix<1u, T> {
         /*!
          * \return the t2tot2 that has the same effect as applying
          * the rotation
@@ -57,7 +57,7 @@ namespace tfel {
             const tfel::math::rotation_matrix<T>& r) {
           using real = tfel::typetraits::base_type<T>;
           constexpr const auto zero = real{0};
-          constexpr const auto one  = real{1};
+          constexpr const auto one = real{1};
           tfel::math::t2tot2<2u, T> rt;
           const T a = r(0, 0);
           const T b = r(0, 1);
@@ -100,7 +100,7 @@ namespace tfel {
        * \brief partial specialisation in 3D
        */
       template <typename T>
-      struct BuildFromRotationMatrix<3u,T> {
+      struct BuildFromRotationMatrix<3u, T> {
         /*!
          * \return the t2tot2 that has the same effect as applying
          * the rotation

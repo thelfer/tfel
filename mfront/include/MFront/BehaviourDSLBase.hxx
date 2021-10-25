@@ -42,7 +42,7 @@ namespace mfront {
     void registerNewCallBack(const std::string&, const MemberFuncPtr);
     //! \brief destructor
     ~BehaviourDSLBase() override;
-  }; // end of struct BehaviourDSLBase
+  };  // end of struct BehaviourDSLBase
 
 }  // end of namespace mfront
 

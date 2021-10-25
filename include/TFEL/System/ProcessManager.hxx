@@ -1,49 +1,45 @@
 /*!
  * \file   include/TFEL/System/ProcessManager.hxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   09 Nov 2007
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_TFEL_SYSTEM_PROCESSMANAGER_HXX
-#define LIB_TFEL_SYSTEM_PROCESSMANAGER_HXX 
+#define LIB_TFEL_SYSTEM_PROCESSMANAGER_HXX
 
-#include<map>
-#include<string>
-#include<vector>
+#include <map>
+#include <string>
+#include <vector>
 
-#include<sys/types.h>
-#include<signal.h>
+#include <sys/types.h>
+#include <signal.h>
 
-#include"TFEL/Config/TFELConfig.hxx"
-#include"TFEL/System/SystemError.hxx"
-#include"TFEL/System/rstreamView.hxx"
-#include"TFEL/System/wstreamView.hxx"
+#include "TFEL/Config/TFELConfig.hxx"
+#include "TFEL/System/SystemError.hxx"
+#include "TFEL/System/rstreamView.hxx"
+#include "TFEL/System/wstreamView.hxx"
 
-namespace tfel
-{
+namespace tfel {
 
-  namespace system
-  {
+  namespace system {
 
     /*!
      * \brief a class used to handle external processes
      */
-    struct TFELSYSTEM_VISIBILITY_EXPORT ProcessManager
-    {
-
+    struct TFELSYSTEM_VISIBILITY_EXPORT ProcessManager {
       //! a simple alias
       typedef pid_t ProcessId;
       //! a simple alias
-      typedef int   StreamId;
+      typedef int StreamId;
       //! a simple alias
-      typedef std::map<ProcessId,StreamId> StreamMap;
+      typedef std::map<ProcessId, StreamId> StreamMap;
       //! a simple alias
       typedef rstreamView<true> rstream;
       //! a simple alias
@@ -51,34 +47,29 @@ namespace tfel
       /*!
        * \brief base class to pass commands to sub processes
        */
-      struct TFELSYSTEM_VISIBILITY_EXPORT Command
-      {
-	virtual bool execute(const StreamId,const StreamId) = 0;
-	//! destructor
-	virtual ~Command();
-      }; // end of struct Command
+      struct TFELSYSTEM_VISIBILITY_EXPORT Command {
+        virtual bool execute(const StreamId, const StreamId) = 0;
+        //! destructor
+        virtual ~Command();
+      };  // end of struct Command
 
-      enum RedirectionType{None,StdIn,StdOut,StdInAndOut};
-      
+      enum RedirectionType { None, StdIn, StdOut, StdInAndOut };
+
       ProcessManager();
 
-      virtual void
-      killProcess(const ProcessId);
-      
-      virtual void
-      sendSignal(const ProcessId,const int = SIGTERM);
+      virtual void killProcess(const ProcessId);
+
+      virtual void sendSignal(const ProcessId, const int = SIGTERM);
 
       /*!
        * create a new process
        * \param const std::string&, command to be executed. The first word
        * is the program name, the others options
-       * \param const RedirectionType, tells if standard file descriptors must be
-       * redirected.
-       * \return const ProcessId, the pid of the new process
+       * \param const RedirectionType, tells if standard file descriptors must
+       * be redirected. \return const ProcessId, the pid of the new process
        */
-      virtual ProcessId
-      createProcess(const std::string&,
-		    const RedirectionType = None);
+      virtual ProcessId createProcess(const std::string&,
+                                      const RedirectionType = None);
       /*!
        * create a new process
        * \param const std::string&, command to be executed. The first word
@@ -92,11 +83,11 @@ namespace tfel
        * \param[in] e : additionnal environment variables for the child process
        * \return the pid of the new process
        */
-      virtual ProcessId
-      createProcess(const std::string&,
-		    const std::string&,
-		    const std::string&,
-		    const std::map<std::string, std::string>& = {});
+      virtual ProcessId createProcess(
+          const std::string&,
+          const std::string&,
+          const std::string&,
+          const std::map<std::string, std::string>& = {});
       /*!
        * execute the command and wait until its end
        * \param const std::string&, command to be executed. The first word
@@ -109,46 +100,38 @@ namespace tfel
        * if this name is void.
        * \param[in] e : additionnal environment variables for the child process
        */
-      virtual void
-      execute(const std::string&,
-	      const std::string& = "",
-	      const std::string& = "",
-	      const std::map<std::string, std::string>& = {});
-      
-      virtual void
-      stopOnSignals(const bool);
+      virtual void execute(const std::string&,
+                           const std::string& = "",
+                           const std::string& = "",
+                           const std::map<std::string, std::string>& = {});
 
-      virtual wstream
-      getInputStream(const ProcessId) const;
-      
-      virtual rstream
-      getOutputStream(const ProcessId) const;
+      virtual void stopOnSignals(const bool);
 
-      virtual ProcessId
-      createProcess(ProcessManager::Command&);
-      
-      virtual void
-      wait(const ProcessId);
+      virtual wstream getInputStream(const ProcessId) const;
+
+      virtual rstream getOutputStream(const ProcessId) const;
+
+      virtual ProcessId createProcess(ProcessManager::Command&);
+
+      virtual void wait(const ProcessId);
 
       /*!
        * destructor.
-       * kills all registred process and close all input/output file descriptors.
+       * kills all registred process and close all input/output file
+       * descriptors.
        */
       virtual ~ProcessManager();
 
-    protected:
-      
+     protected:
       virtual void cleanUp();
-      
-    private:
- 
-      struct TFEL_VISIBILITY_LOCAL  Process
-      {
-	ProcessId id;
-	bool isRunning;
-	bool exitStatus;
-	int exitValue;
-      }; // end of struct Process
+
+     private:
+      struct TFEL_VISIBILITY_LOCAL Process {
+        ProcessId id;
+        bool isRunning;
+        bool exitStatus;
+        int exitValue;
+      };  // end of struct Process
 
       /*
        * create a new process
@@ -167,31 +150,27 @@ namespace tfel
        */
       TFEL_VISIBILITY_LOCAL ProcessId
       createProcess(const std::string&,
-		    const StreamId *const,
-		    const StreamId *const,
-		    StreamMap&,StreamMap&,
-		    const std::map<std::string,std::string>& = {});
+                    const StreamId* const,
+                    const StreamId* const,
+                    StreamMap&,
+                    StreamMap&,
+                    const std::map<std::string, std::string>& = {});
 
       TFEL_VISIBILITY_LOCAL
       void sigChildHandler(const int);
 
-      TFEL_NORETURN TFEL_VISIBILITY_LOCAL
-      void terminateHandler(const int) ;
+      TFEL_NORETURN TFEL_VISIBILITY_LOCAL void terminateHandler(const int);
 
-      TFEL_VISIBILITY_LOCAL void
-      setProcessExitStatus(Process&,
-			   const int);
-      
-      TFEL_VISIBILITY_LOCAL void
-      closeProcessFiles(const ProcessId);
-      
-      TFEL_VISIBILITY_LOCAL 
-      std::vector<Process>::reverse_iterator
-      findProcess(const ProcessId);
+      TFEL_VISIBILITY_LOCAL void setProcessExitStatus(Process&, const int);
 
-      TFEL_VISIBILITY_LOCAL 
-      std::vector<Process>::const_reverse_iterator
-      findProcess(const ProcessId) const;
+      TFEL_VISIBILITY_LOCAL void closeProcessFiles(const ProcessId);
+
+      TFEL_VISIBILITY_LOCAL
+      std::vector<Process>::reverse_iterator findProcess(const ProcessId);
+
+      TFEL_VISIBILITY_LOCAL
+      std::vector<Process>::const_reverse_iterator findProcess(
+          const ProcessId) const;
 
       std::vector<Process> processes;
 
@@ -211,10 +190,10 @@ namespace tfel
       unsigned short sHandlerSIGQUIT;
       bool shallStopOnSignals;
 
-    }; // end of struct ProcessManager
+    };  // end of struct ProcessManager
 
-  } // end of namespace system
+  }  // end of namespace system
 
-} // end of namespace tfel
+}  // end of namespace tfel
 
 #endif /* LIB_TFEL_SYSTEM_PROCESSMANAGER_HXX */

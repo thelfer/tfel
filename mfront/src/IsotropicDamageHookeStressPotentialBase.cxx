@@ -113,7 +113,7 @@ namespace mfront {
                   m += "this->sigzz+this->dsigzz,";
                   m += "real(1),this->epsilon);\n";
                   m += "const StressStensor prediction_stress = ";
-                  m += de+" * (this->D) * prediction_strain;\n";
+                  m += de + " * (this->D) * prediction_strain;\n";
                   m += "return prediction_stress;\n";
                 } else {
                   m += "StressStensor prediction_stress;\n";
@@ -177,8 +177,8 @@ namespace mfront {
                 m += "StressStensor prediction_stress;\n";
                 m += "StrainStensor prediction_strain = "
                      "this->eel+(this->theta)*this->deto;\n";
-                m += "prediction_stress(0) = " + de + " * (2 * (" + mu + ") * ((" +
-                     lambda + ")/(" + lambda + "+2*(" + mu +
+                m += "prediction_stress(0) = " + de + " * (2 * (" + mu +
+                     ") * ((" + lambda + ")/(" + lambda + "+2*(" + mu +
                      "))*(prediction_strain(0)+prediction_strain(2))+"
                      "prediction_"
                      "strain(0))+\n";
@@ -638,7 +638,9 @@ namespace mfront {
               c += "deviator(this->eel + (this->theta) * (this->deel));\n";
             } else if (vf == SupportedTypes::STENSOR) {
               c = "df" + v + "_ddeel += ";
-              c += "2 * (" + mu + ") * (this->theta) * (1-this->d-(this->theta)*(this->dd)) * ";
+              c +=
+                  "2 * (" + mu +
+                  ") * (this->theta) * (1-this->d-(this->theta)*(this->dd)) * ";
               c += "(" + dfv_ds + ");\n";
               c += "df" + v + "_ddd -= ";
               c += "2 * (" + mu + ") *(this->theta) * (" + dfv_ds + ") * ";

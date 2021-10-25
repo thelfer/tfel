@@ -1,6 +1,6 @@
 /*!
  * \file   Log.cxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   26/09/2019
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights

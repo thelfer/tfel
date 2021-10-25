@@ -539,8 +539,8 @@ namespace mfront {
         const auto f = SupportedTypes::getTypeFlag(p.type);
         throw_if(f != SupportedTypes::SCALAR,
                  "unsupported paramaeter type '" + p.type + "'");
-	const auto prec = out.precision();
-	out.precision(14);
+        const auto prec = out.precision();
+        out.precision(14);
         if (p.arraySize == 1u) {
           out << "MFRONT_SHAREDOBJ double " << this->getSymbolName(i, name, h)
               << "_" << p.getExternalName() << "_ParameterDefaultValue"
@@ -555,7 +555,7 @@ namespace mfront {
                 << ";\n\n";
           }
         }
-	out.precision(prec);
+        out.precision(prec);
       }
     }
   }  // end of SymbolsGenerator::writeParameterDefaultValueSymbols

@@ -1,24 +1,23 @@
-/*! 
- * \file  mfront/include/MFront/GenericBehaviourSmallStrainMTestFileGenerator.hxx
+/*!
+ * \file mfront/include/MFront/GenericBehaviourSmallStrainMTestFileGenerator.hxx
  * \brief
  * \author Thomas Helfer
  * \date   19/03/2019
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_MFRONT_GENERICBEHAVIOURSMALLSTRAINMTESTFILEGENERATOR_HXX
-#define LIB_MFRONT_GENERICBEHAVIOURSMALLSTRAINMTESTFILEGENERATOR_HXX 
+#define LIB_MFRONT_GENERICBEHAVIOURSMALLSTRAINMTESTFILEGENERATOR_HXX
 
-#include"MFront/MFrontConfig.hxx"
-#include"MFront/MTestFileGeneratorBase.hxx"
+#include "MFront/MFrontConfig.hxx"
+#include "MFront/MTestFileGeneratorBase.hxx"
 
-namespace mfront
-{
+namespace mfront {
 
   struct MTESTFILEGENERATOR_VISIBILITY_EXPORT
       GenericBehaviourSmallStrainMTestFileGenerator final
@@ -34,7 +33,8 @@ namespace mfront
      * set the strain at the beginning of the time step
      * \param[in] e : strain
      */
-    virtual void setStrainTensorAtTheBeginningOfTheTimeStep(const double* const);
+    virtual void setStrainTensorAtTheBeginningOfTheTimeStep(
+        const double* const);
     /*!
      * set the strain at the end of the time step
      * \param[in] e : strain
@@ -49,30 +49,30 @@ namespace mfront
      * destructor
      */
     ~GenericBehaviourSmallStrainMTestFileGenerator() override;
-  protected:
+
+   protected:
     /*!
      * write behaviour declaration
      * \param[in] os : output stream
      */
-   void writeBehaviourDeclaration(std::ostream&) const override;
-   /*!
-    * \brief write driving variables
-    * \param[in] os : output stream
-    */
-   void writeGradients(std::ostream&) const override;
-   //! library name
-   std::string library;
-   //! behaviour name
-   std::string behaviour;
-   //! strain
-   double eto0[6];
-   //! strain increment
-   double eto1[6];
-   //! stress increment
-   double stress[6];
-  }; // end of struct GenericBehaviourSmallStrainMTestFileGenerator
+    void writeBehaviourDeclaration(std::ostream&) const override;
+    /*!
+     * \brief write driving variables
+     * \param[in] os : output stream
+     */
+    void writeGradients(std::ostream&) const override;
+    //! library name
+    std::string library;
+    //! behaviour name
+    std::string behaviour;
+    //! strain
+    double eto0[6];
+    //! strain increment
+    double eto1[6];
+    //! stress increment
+    double stress[6];
+  };  // end of struct GenericBehaviourSmallStrainMTestFileGenerator
 
-} // end of namespace mfront
+}  // end of namespace mfront
 
 #endif /* LIB_MFRONT_GENERICBEHAVIOURSMALLSTRAINMTESTFILEGENERATOR_HXX */
-

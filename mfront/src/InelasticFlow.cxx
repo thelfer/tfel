@@ -1,13 +1,13 @@
 /*!
  * \file   mfront/src/InelasticFlow.cxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   15/03/2018
  */
 
 #include "MFront/BehaviourBrick/InelasticFlow.hxx"
 
-namespace mfront{
+namespace mfront {
 
   namespace bbrick {
 

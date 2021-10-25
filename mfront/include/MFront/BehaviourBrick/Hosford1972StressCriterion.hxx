@@ -33,7 +33,8 @@ namespace mfront {
      * \f$\underline{\sigma}\f$.
      */
     struct Hosford1972StressCriterion final : StressCriterionBase {
-      std::vector<BehaviourSymmetry> getSupportedBehaviourSymmetries() const override;
+      std::vector<BehaviourSymmetry> getSupportedBehaviourSymmetries()
+          const override;
       std::vector<OptionDescription> getOptions() const override;
       void initialize(BehaviourDescription&,
                       AbstractBehaviourDSL&,
@@ -62,6 +63,7 @@ namespace mfront {
       bool isNormalDeviatoric() const override;
       //! destructor
       ~Hosford1972StressCriterion() override;
+
      protected:
       //! \brief hosford exponent
       BehaviourDescription::MaterialProperty a;

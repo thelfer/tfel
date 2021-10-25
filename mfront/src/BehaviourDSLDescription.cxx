@@ -1,6 +1,6 @@
 /*!
  * \file   BehaviourDSLDescription.cxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   29/08/2019
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
@@ -20,8 +20,8 @@ namespace mfront {
   BehaviourDSLDescription::BehaviourDSLDescription(
       const BehaviourDSLDescription&) = default;
 
-  BehaviourDSLDescription::BehaviourDSLDescription(
-      BehaviourDSLDescription&&) = default;
+  BehaviourDSLDescription::BehaviourDSLDescription(BehaviourDSLDescription&&) =
+      default;
 
   BehaviourDSLDescription& BehaviourDSLDescription::operator=(
       const BehaviourDSLDescription&) = default;

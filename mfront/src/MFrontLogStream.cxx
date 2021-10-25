@@ -95,7 +95,7 @@ namespace mfront {
     } else {
       tfel::raise("setVerboseMode: insupported verbose level '" + l + "'");
     }
-  } // end of setVerboseMode
+  }  // end of setVerboseMode
 
   std::ostream& getLogStream() {
     auto& log = LogStream::getLogStream();

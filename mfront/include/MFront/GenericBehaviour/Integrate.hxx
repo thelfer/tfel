@@ -46,7 +46,8 @@ namespace mfront {
      * \param[in] K: computed tangent operator
      */
     template <typename real, unsigned short N>
-    void exportTangentOperator(real* const v, const tfel::math::tvector<N,real>& K) {
+    void exportTangentOperator(real* const v,
+                               const tfel::math::tvector<N, real>& K) {
       std::copy(K.begin(), K.end(), v);
     }  // end of exportTangentOperator
     /*!
@@ -70,7 +71,7 @@ namespace mfront {
      */
     template <typename real, unsigned short N>
     void exportTangentOperator(real* const v,
-			       const tfel::math::t2tot2<N, real>& K) {
+                               const tfel::math::t2tot2<N, real>& K) {
       std::copy(K.begin(), K.end(), v);
     }  // end of exportTangentOperator
     /*!

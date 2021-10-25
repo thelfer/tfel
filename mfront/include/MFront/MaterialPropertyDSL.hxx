@@ -1,29 +1,29 @@
 /*!
  * \file   mfront/include/MFront/MaterialPropertyDSL.hxx
- * \brief  
- * 
+ * \brief
+ *
  * \author Thomas Helfer
  * \date   06 jui 2007
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_MFRONTMATERIALLAWPARSER_HXX
-#define LIB_MFRONTMATERIALLAWPARSER_HXX 
+#define LIB_MFRONTMATERIALLAWPARSER_HXX
 
-#include<string>
-#include<set>
+#include <string>
+#include <set>
 
-#include"MFront/DSLBase.hxx"
-#include"MFront/LawFunction.hxx"
-#include"MFront/VariableBoundsDescription.hxx"
-#include"MFront/MaterialPropertyDescription.hxx"
+#include "MFront/DSLBase.hxx"
+#include "MFront/LawFunction.hxx"
+#include "MFront/VariableBoundsDescription.hxx"
+#include "MFront/MaterialPropertyDescription.hxx"
 
-namespace mfront{
+namespace mfront {
 
   // forward declaration
   struct AbstractMaterialPropertyInterface;
@@ -32,14 +32,12 @@ namespace mfront{
    * \return if the given name is valid
    * \param[in] n: behaviour name
    */
-  MFRONT_VISIBILITY_EXPORT  bool isValidMaterialPropertyName(const std::string&);
+  MFRONT_VISIBILITY_EXPORT bool isValidMaterialPropertyName(const std::string&);
 
   /*!
    * Parser handling material properties
    */
-  struct MFRONT_VISIBILITY_EXPORT MaterialPropertyDSL
-    : public DSLBase
-  {
+  struct MFRONT_VISIBILITY_EXPORT MaterialPropertyDSL : public DSLBase {
     //! \return the name of the parser
     static std::string getName();
     //! \return a description of the parser
@@ -64,15 +62,14 @@ namespace mfront{
 
     void endsInputFileProcessing() override;
 
-    virtual const MaterialPropertyDescription&
-    getMaterialPropertyDescription() const;
+    virtual const MaterialPropertyDescription& getMaterialPropertyDescription()
+        const;
     //! destructor
     ~MaterialPropertyDSL() override;
 
-  protected:
-
-    typedef void (MaterialPropertyDSL::* MemberFuncPtr)();
-    typedef std::map<std::string,MemberFuncPtr> CallBackContainer;
+   protected:
+    typedef void (MaterialPropertyDSL::*MemberFuncPtr)();
+    typedef std::map<std::string, MemberFuncPtr> CallBackContainer;
     //! treat an unknown keyword
     void treatUnknownKeyword() override;
     /*!
@@ -123,7 +120,8 @@ namespace mfront{
      * \brief add a static variable description
      * \param[in] v : variable description
      */
-    void addStaticVariableDescription(const StaticVariableDescription&) override;
+    void addStaticVariableDescription(
+        const StaticVariableDescription&) override;
     /*!
      * \return the value of an integer constant
      * \param[in] n: variable name
@@ -161,16 +159,15 @@ namespace mfront{
     virtual void treatBounds();
     //! treat the `@PhysicalBounds` keyword
     virtual void treatPhysicalBounds();
-    
-    virtual void
-    registerNewCallBack(const std::string&,const MemberFuncPtr);
-    //! description of the material property 
+
+    virtual void registerNewCallBack(const std::string&, const MemberFuncPtr);
+    //! description of the material property
     MaterialPropertyDescription md;
     /*!
      * list of registred interfaces
      */
-    std::map<std::string,
-	     std::shared_ptr<AbstractMaterialPropertyInterface>> interfaces;
+    std::map<std::string, std::shared_ptr<AbstractMaterialPropertyInterface>>
+        interfaces;
     //! \brief list of resgistred keywords
     std::set<std::string> registredKeyWords;
     //! \brief map of callbacks used during the file interpretation
@@ -180,9 +177,8 @@ namespace mfront{
      * which a method is called
      */
     std::string currentVar;
-  }; // end of class MaterialPropertyDSL
+  };  // end of class MaterialPropertyDSL
 
-} // end of namespace mfront  
-  
+}  // end of namespace mfront
+
 #endif /* LIB_MFRONTMATERIALLAWPARSER_HXX */
-

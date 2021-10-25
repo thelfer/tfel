@@ -44,10 +44,9 @@ namespace mfront {
     //! constructor
     UMATInterfaceBase();
 
-    void exportMechanicalData(
-        std::ostream&,
-        const Hypothesis,
-        const BehaviourDescription&) const override;
+    void exportMechanicalData(std::ostream&,
+                              const Hypothesis,
+                              const BehaviourDescription&) const override;
     /*!
      * \param[out] f      : output file
      * \param[out] first  : true if not initializer has been declared yet
@@ -184,15 +183,16 @@ namespace mfront {
     virtual std::vector<std::pair<std::string, std::string>>
     getIntegrationDataConstructorAdditionalVariables() const;
     void writeBehaviourConstructorHeader(std::ostream&,
-					 const BehaviourDescription&,
-					 const Hypothesis,
-					 const std::string&) const override;
+                                         const BehaviourDescription&,
+                                         const Hypothesis,
+                                         const std::string&) const override;
     void writeBehaviourConstructorBody(std::ostream&,
-				       const BehaviourDescription&,
-				       const Hypothesis) const override;
-    void writeBehaviourDataConstructor(std::ostream&,
-				       const Hypothesis,
-				       const BehaviourDescription&) const override;
+                                       const BehaviourDescription&,
+                                       const Hypothesis) const override;
+    void writeBehaviourDataConstructor(
+        std::ostream&,
+        const Hypothesis,
+        const BehaviourDescription&) const override;
     /*!
      * \brief add interface specific lines at the end of the behaviour
      * data constructor
@@ -202,30 +202,32 @@ namespace mfront {
      */
     virtual void completeBehaviourDataConstructor(
         std::ostream&, const Hypothesis, const BehaviourDescription&) const;
-    
-    void writeBehaviourDataMainVariablesSetters(std::ostream&, const BehaviourDescription&) const override;
+
+    void writeBehaviourDataMainVariablesSetters(
+        std::ostream&, const BehaviourDescription&) const override;
     /*!
      * \brief write the initialisation of a driving variables
      * \param[in] os : output file
      * \param[in] v  : variable to be initialised
      * \param[in] o  : variable offsert
      */
-    virtual void writeBehaviourDataGradientSetter(std::ostream&,
-							 const Gradient&,
-							 const SupportedTypes::TypeSize) const;
+    virtual void writeBehaviourDataGradientSetter(
+        std::ostream&, const Gradient&, const SupportedTypes::TypeSize) const;
     /*!
      * \brief write the initialisation of a thermodynamic force
      * \param[in] os : output file
      * \param[in] v  : variable to be initialised
      * \param[in] o  : variable offsert
      */
-    virtual void writeBehaviourDataThermodynamicForceSetter(std::ostream&,
-							    const ThermodynamicForce&,
-							    const SupportedTypes::TypeSize) const;
+    virtual void writeBehaviourDataThermodynamicForceSetter(
+        std::ostream&,
+        const ThermodynamicForce&,
+        const SupportedTypes::TypeSize) const;
 
-    void writeIntegrationDataConstructor(std::ostream&,
-					 const Hypothesis,
-					 const BehaviourDescription&) const override;
+    void writeIntegrationDataConstructor(
+        std::ostream&,
+        const Hypothesis,
+        const BehaviourDescription&) const override;
     virtual void writeIntegrationDataMainVariablesSetters(
         std::ostream&, const BehaviourDescription&) const override;
     /*!
@@ -235,14 +237,11 @@ namespace mfront {
      * \param[in] o  : variable offsert
      */
     virtual void writeIntegrationDataGradientSetter(
-        std::ostream&,
-        const Gradient&,
-        const SupportedTypes::TypeSize) const;
+        std::ostream&, const Gradient&, const SupportedTypes::TypeSize) const;
     //! destructor
     ~UMATInterfaceBase() override;
 
    protected:
-
     /*!
      * \return the name of the generated library
      * \param[in] mb : behaviour description

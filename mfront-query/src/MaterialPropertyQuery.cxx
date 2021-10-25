@@ -280,4 +280,4 @@ namespace mfront {
   }
 
   MaterialPropertyQuery::~MaterialPropertyQuery() = default;
-}
+}  // namespace mfront

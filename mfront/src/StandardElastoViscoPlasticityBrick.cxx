@@ -40,34 +40,37 @@ namespace mfront {
 
   std::string StandardElastoViscoPlasticityBrick::getName() const {
     return "ElastoViscoPlasticity";
-  } // end of StandardElastoViscoPlasticityBrick::getName
+  }  // end of StandardElastoViscoPlasticityBrick::getName
 
-  BehaviourBrickDescription StandardElastoViscoPlasticityBrick::getDescription() const {
+  BehaviourBrickDescription StandardElastoViscoPlasticityBrick::getDescription()
+      const {
     auto d = BehaviourBrickDescription{};
-    d.behaviourType = tfel::material::MechanicalBehaviourBase::STANDARDSTRAINBASEDBEHAVIOUR;
+    d.behaviourType =
+        tfel::material::MechanicalBehaviourBase::STANDARDSTRAINBASEDBEHAVIOUR;
     d.integrationScheme = IntegrationScheme::IMPLICITSCHEME;
-    d.supportedModellingHypotheses = ModellingHypothesis::getModellingHypotheses();
-    d.supportedBehaviourSymmetries = {mfront::ISOTROPIC,mfront::ORTHOTROPIC};
+    d.supportedModellingHypotheses =
+        ModellingHypothesis::getModellingHypotheses();
+    d.supportedBehaviourSymmetries = {mfront::ISOTROPIC, mfront::ORTHOTROPIC};
     return d;
-  } // end of StandardElastoViscoPlasticityBrick::getDescription
+  }  // end of StandardElastoViscoPlasticityBrick::getDescription
 
   std::vector<bbrick::OptionDescription>
   StandardElastoViscoPlasticityBrick::getOptions(const bool) const {
     auto opts = std::vector<bbrick::OptionDescription>{};
-    opts.emplace_back("stress_potential", "", bbrick::OptionDescription::STRING);
+    opts.emplace_back("stress_potential", "",
+                      bbrick::OptionDescription::STRING);
     opts.emplace_back("inelastic_flow", "", bbrick::OptionDescription::STRING);
     return opts;
   }  // end of StandardElastoViscoPlasticityBrick::getOptions
 
   void StandardElastoViscoPlasticityBrick::initialize(const Parameters&,
                                                       const DataMap& d) {
-    auto raise =
-        [](const std::string& m) {
-          tfel::raise(
-              "StandardElastoViscoPlasticityBrick::"
-              "StandardElastoViscoPlasticityBrick: " +
-              m);
-        };  // end of raise
+    auto raise = [](const std::string& m) {
+      tfel::raise(
+          "StandardElastoViscoPlasticityBrick::"
+          "StandardElastoViscoPlasticityBrick: " +
+          m);
+    };  // end of raise
     auto& iff = bbrick::InelasticFlowFactory::getFactory();
     auto getDataStructure = [&raise](const std::string& n, const Data& ds) {
       if (ds.is<std::string>()) {

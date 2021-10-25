@@ -808,7 +808,7 @@ namespace tfel {
     unsigned short ExternalLibraryManager::getCastemFunctionNumberOfVariables(
         const std::string& l, const std::string& f) {
       return this->getMaterialPropertyNumberOfVariables(l, f);
-    } // end of ExternalLibraryManager::getCastemFunctionNumberOfVariables
+    }  // end of ExternalLibraryManager::getCastemFunctionNumberOfVariables
 
     bool ExternalLibraryManager::getUMATRequiresStiffnessTensor(
         const std::string& l, const std::string& f, const std::string& h) {
@@ -957,8 +957,9 @@ namespace tfel {
       return static_cast<unsigned short>(res);
     }
 
-    std::vector<std::string> ExternalLibraryManager::getMaterialPropertyVariables(
-        const std::string& l, const std::string& f) {
+    std::vector<std::string>
+    ExternalLibraryManager::getMaterialPropertyVariables(const std::string& l,
+                                                         const std::string& f) {
       std::vector<std::string> vars;
       this->getMaterialPropertyVariables(vars, l, f);
       return vars;
@@ -981,12 +982,14 @@ namespace tfel {
       }
     }  // end of ExternalLibraryManager::getMaterialPropertyVariables
 
-    unsigned short ExternalLibraryManager::getCyranoMaterialPropertyNumberOfVariables(
+    unsigned short
+    ExternalLibraryManager::getCyranoMaterialPropertyNumberOfVariables(
         const std::string& l, const std::string& f) {
       return this->getMaterialPropertyNumberOfVariables(l, f);
     }
 
-    std::vector<std::string> ExternalLibraryManager::getCyranoMaterialPropertyVariables(
+    std::vector<std::string>
+    ExternalLibraryManager::getCyranoMaterialPropertyVariables(
         const std::string& l, const std::string& f) {
       return this->getMaterialPropertyVariables(l, f);
     }  // end of ExternalLibraryManager::getCyranoMaterialPropertyVariables
@@ -1005,10 +1008,10 @@ namespace tfel {
       raise_if(fct == nullptr,
                "ExternalLibraryManager::getCyranoMaterialProperty: "
                "could not load Cyrano function '" +
-	       f +"' (" +getErrorMessage() + ")");
+                   f + "' (" + getErrorMessage() + ")");
       return fct;
     }
-    
+
     CyranoBehaviourPtr ExternalLibraryManager::getCyranoFunction(
         const std::string& l, const std::string& f) {
       const auto lib = this->loadLibrary(l);
@@ -1095,7 +1098,7 @@ namespace tfel {
                    "(" +
                    getErrorMessage() + ")");
       return fct;
-    } // end of ExternalLibraryManager::getDianaFEAExternalBehaviourFunction
+    }  // end of ExternalLibraryManager::getDianaFEAExternalBehaviourFunction
 
     CastemFctPtr ExternalLibraryManager::getCastemExternalBehaviourFunction(
         const std::string& l, const std::string& f) {
@@ -1301,7 +1304,8 @@ namespace tfel {
         return {};
       }
       std::vector<std::string> names;
-      this->getUMATNames(names, l, f, "", "ElasticMaterialPropertiesEntryPoints");
+      this->getUMATNames(names, l, f, "",
+                         "ElasticMaterialPropertiesEntryPoints");
       return names;
     }  // end of
        // ExternalLibraryManager::getUMATElasticMaterialPropertiesEntryPoints

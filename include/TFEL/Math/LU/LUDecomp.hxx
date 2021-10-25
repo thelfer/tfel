@@ -50,7 +50,7 @@ namespace tfel {
           const typename MatrixTraits<MatrixType>::NumType =
               100 * std::numeric_limits<
                         typename MatrixTraits<MatrixType>::NumType>::min());
-                        
+
     };  // end of struct LUDecomp
 
   }  // end of namespace math

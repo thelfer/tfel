@@ -74,7 +74,7 @@ namespace tfel {
         } else {
           throw_if(p->value != "}", "unexpected token '" + p->value + "'");
         }
-        const auto pv = r.find (k);
+        const auto pv = r.find(k);
         if (pv == r.end()) {
           r.insert({k, v});
         } else {
@@ -165,7 +165,7 @@ namespace tfel {
       CxxTokenizer::checkNotEndOfLine("Data::read_vector", p, pe);
       std::vector<Data> v;
       while (p->value != "}") {
-        v.push_back(Data::read(p, pe,o));
+        v.push_back(Data::read(p, pe, o));
         if (p->value == ",") {
           CxxTokenizer::readSpecifiedToken("Data::read_vector", ",", p, pe);
           CxxTokenizer::checkNotEndOfLine("Data::read_vector", p, pe);
@@ -184,13 +184,13 @@ namespace tfel {
       auto c = p;
       CxxTokenizer::checkNotEndOfLine("Data::read", c, pe);
       CxxTokenizer::readSpecifiedToken("Data::read_map", "{", c, pe);
-    CxxTokenizer::checkNotEndOfLine("Data::read", c, pe);
-    if (c->value == "}") {
-      return std::map<std::string, Data>{};
-    }
+      CxxTokenizer::checkNotEndOfLine("Data::read", c, pe);
+      if (c->value == "}") {
+        return std::map<std::string, Data>{};
+      }
       if (c->flag == Token::Number) {
         p = c;
-        std::map<double,double> values;
+        std::map<double, double> values;
         while (p->value != "}") {
           const auto a = convert<double>(p->value);
           ++p;
@@ -214,7 +214,7 @@ namespace tfel {
         return values;
       }
       std::map<std::string, Data> r;
-      tfel::utilities::read_map(r, p, pe,opts);
+      tfel::utilities::read_map(r, p, pe, opts);
       return std::move(r);
     }
 
@@ -235,7 +235,7 @@ namespace tfel {
         CxxTokenizer::checkNotEndOfLine("Data::read", p, pe);
         if (p->value == ":") {
           p = std::prev(p, 2);
-          return read_map(p, pe,o);
+          return read_map(p, pe, o);
         }
         if ((p->value != ",") && (p->value != "}")) {
           raise("expected ',' or ':' or '}', read '" + p->value + "'");

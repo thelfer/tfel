@@ -37,7 +37,7 @@ namespace std {
     s << v;
     return s.str();
   }
-}
+}  // namespace std
 #endif /* defined __CYGWIN__ &&  (!defined _GLIBCXX_USE_C99) */
 
 template <unsigned short N>

@@ -79,7 +79,7 @@ namespace mfront {
     }
 #ifdef TFEL_APPEND_SUFFIX
     fn = root + "/share/doc/mfront-" TFEL_SUFFIX "/" + key + ".md";
-#else /* TFEL_APPEND_SUFFIX */
+#else  /* TFEL_APPEND_SUFFIX */
     fn = root + "/share/doc/mfront/" + key + ".md";
 #endif /* TFEL_APPEND_SUFFIX */
     desc.open(fn);

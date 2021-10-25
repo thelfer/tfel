@@ -84,11 +84,11 @@ namespace mtest {
      * step, if false compute a prediction of the stiffness matrix
      */
     virtual std::pair<bool, real> call_behaviour(tfel::math::matrix<real>&,
-                                         CurrentState&,
-                                         BehaviourWorkSpace&,
-                                         const real,
-                                         const StiffnessMatrixType,
-                                         const bool) const;
+                                                 CurrentState&,
+                                                 BehaviourWorkSpace&,
+                                                 const real,
+                                                 const StiffnessMatrixType,
+                                                 const bool) const;
 
     virtual void executeFiniteStrainBehaviourStressPreProcessing(
         BehaviourWorkSpace&, mfront::gb::BehaviourData&) const;

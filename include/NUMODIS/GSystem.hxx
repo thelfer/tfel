@@ -1,14 +1,14 @@
 /*!
- * \file   include/NUMODIS/GSystem.hxx  
- * \brief    
+ * \file   include/NUMODIS/GSystem.hxx
+ * \brief
  * \author Laurent Dupuy
  * \date   9/06/2017
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef NUMEODIS_GSYSTEM_HXX
@@ -21,8 +21,7 @@
 #include "NUMODIS/IBurgers.hxx"
 #include "NUMODIS/IPlane.hxx"
 
-namespace numodis
-{
+namespace numodis {
 
   struct IDirection;
   struct Crystallo;
@@ -32,20 +31,15 @@ namespace numodis
   //---------------------------------------------------------------
   //! GSystem handles all the properties of a glide system
   //===============================================================
-  struct TFELNUMODIS_VISIBILITY_EXPORT GSystem
-  {
-
-    void PrintProperties(std::ostream& os,
-			 unsigned shift=0) const;
+  struct TFELNUMODIS_VISIBILITY_EXPORT GSystem {
+    void PrintProperties(std::ostream& os, unsigned shift = 0) const;
 
     //=============================================================
     // GSystem::GSystem
     //-------------------------------------------------------------
     //! Constructor
     //=============================================================
-    GSystem(const unsigned size)
-      :_iburgers(size),_iplane(size)
-    {}
+    GSystem(const unsigned size) : _iburgers(size), _iplane(size) {}
 
     //=============================================================
     // GSystem::GSystem
@@ -57,11 +51,8 @@ namespace numodis
       \param gpl glide plane
     */
     //=============================================================
-    GSystem(const IBurgers& iburgers,
-	    const IPlane& iplane)
-      :_iburgers(iburgers),
-       _iplane(iplane)
-    {}
+    GSystem(const IBurgers& iburgers, const IPlane& iplane)
+        : _iburgers(iburgers), _iplane(iplane) {}
 
     //=============================================================
     // GSystem::GSystem
@@ -71,8 +62,7 @@ namespace numodis
     /*! \param gsystem GSystem to be copied                      */
     //=============================================================
     GSystem(const GSystem& gsystem)
-      :_iburgers(gsystem._iburgers),_iplane(gsystem._iplane)
-    {}
+        : _iburgers(gsystem._iburgers), _iplane(gsystem._iplane) {}
 
     //=============================================================
     // GSystem::getBurgers
@@ -81,10 +71,7 @@ namespace numodis
     //-------------------------------------------------------------
     /*! \return const reference to the Burgers vector            */
     //=============================================================
-    const IBurgers& getIBurgers() const
-    {
-      return _iburgers;
-    }
+    const IBurgers& getIBurgers() const { return _iburgers; }
 
     //=============================================================
     // GSystem::getIPlane
@@ -93,10 +80,7 @@ namespace numodis
     //-------------------------------------------------------------
     /*! \return const reference the glide plane                  */
     //=============================================================
-    const IPlane& getIPlane() const
-    {
-      return _iplane;
-    }
+    const IPlane& getIPlane() const { return _iplane; }
 
     //=============================================================
     // GSystem::getNindices
@@ -105,32 +89,24 @@ namespace numodis
     //-------------------------------------------------------------
     /*! \return number of indices                                */
     //=============================================================
-    IBurgers::size_type getNindices() const
-    {
-      return _iburgers.getNindices();
-    }
+    IBurgers::size_type getNindices() const { return _iburgers.getNindices(); }
 
-    TFELNUMODIS_VISIBILITY_EXPORT friend bool
-    operator== (const GSystem& lhs,
-		const GSystem& rhs);
-    
-    TFELNUMODIS_VISIBILITY_EXPORT friend std::ostream&
-    operator<< (std::ostream& os,
-		const GSystem& gsystem);
+    TFELNUMODIS_VISIBILITY_EXPORT friend bool operator==(const GSystem& lhs,
+                                                         const GSystem& rhs);
+
+    TFELNUMODIS_VISIBILITY_EXPORT friend std::ostream& operator<<(
+        std::ostream& os, const GSystem& gsystem);
 
     virtual ~GSystem();
-    
-  private:
 
+   private:
     //! burgers vector
     IBurgers _iburgers;
 
     //! constraining planes
     IPlane _iplane;
-
   };
 
-} // end of namespace numodis
-  
-#endif
+}  // end of namespace numodis
 
+#endif

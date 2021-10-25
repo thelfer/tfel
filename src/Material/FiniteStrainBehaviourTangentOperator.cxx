@@ -1,27 +1,26 @@
-/*! 
+/*!
  * \file  src/Material/FiniteStrainBehaviourTangentOperator.cxx
  * \brief
  * \author Thomas Helfer
  * \brief 11 juin 2014
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
-#include<ostream>
-#include"TFEL/Raise.hxx"
-#include"TFEL/Material/FiniteStrainBehaviourTangentOperator.hxx"
+#include <ostream>
+#include "TFEL/Raise.hxx"
+#include "TFEL/Material/FiniteStrainBehaviourTangentOperator.hxx"
 
-namespace tfel{
+namespace tfel {
 
-  namespace material{
-    
+  namespace material {
+
     std::vector<FiniteStrainBehaviourTangentOperatorBase::Flag>
-    getFiniteStrainBehaviourTangentOperatorFlags()
-    {
+    getFiniteStrainBehaviourTangentOperatorFlags() {
       return {FiniteStrainBehaviourTangentOperatorBase::DSIG_DF,
               FiniteStrainBehaviourTangentOperatorBase::DSIG_DDF,
               FiniteStrainBehaviourTangentOperatorBase::C_TRUESDELL,
@@ -61,8 +60,9 @@ namespace tfel{
         case FiniteStrainBehaviourTangentOperatorBase::DPK1_DF:
           return "t2tot2";
       }
-      raise("getFiniteStrainBehaviourTangentOperatorFlagType : "
-	    "unsupported FiniteStrainBehaviourTangentOperatorBase flag ");
+      raise(
+          "getFiniteStrainBehaviourTangentOperatorFlagType : "
+          "unsupported FiniteStrainBehaviourTangentOperatorBase flag ");
     }
 
     std::string convertFiniteStrainBehaviourTangentOperatorFlagToString(
@@ -99,8 +99,9 @@ namespace tfel{
         case FiniteStrainBehaviourTangentOperatorBase::DPK1_DF:
           return "DPK1_DF";
       }
-      raise("convertFiniteStrainBehaviourTangentOperatorFlagToString : "
-	    "unsupported FiniteStrainBehaviourTangentOperatorBase flag ");
+      raise(
+          "convertFiniteStrainBehaviourTangentOperatorFlagToString : "
+          "unsupported FiniteStrainBehaviourTangentOperatorBase flag ");
     }
 
     std::string getFiniteStrainBehaviourTangentOperatorDescription(
@@ -152,10 +153,11 @@ namespace tfel{
           return "derivative of the first Piola-Kirchhoff stress "
                  "with respect to the deformation gradident";
       }
-      raise("getFiniteStrainBehaviourTangentOperatorDescription : "
-	    "unsupported FiniteStrainBehaviourTangentOperatorBase flag ");
+      raise(
+          "getFiniteStrainBehaviourTangentOperatorDescription : "
+          "unsupported FiniteStrainBehaviourTangentOperatorBase flag ");
     }
 
-  } // end of namespace material
-  
-} // end of namespace tfel
+  }  // end of namespace material
+
+}  // end of namespace tfel

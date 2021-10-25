@@ -1,56 +1,56 @@
 /*!
  * \file   mfront/src/MaterialPropertyDSL.cxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   10 Nov 2006
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
-#include<string>
-#include<stdexcept>
-#include<sstream>
-#include<cctype>
-#include<algorithm>
-#include<iterator>
-#include<cstdlib>
+#include <string>
+#include <stdexcept>
+#include <sstream>
+#include <cctype>
+#include <algorithm>
+#include <iterator>
+#include <cstdlib>
 
-#include"TFEL/Raise.hxx"
-#include"TFEL/Utilities/Token.hxx"
-#include"TFEL/System/System.hxx"
-#include"TFEL/Glossary/Glossary.hxx"
-#include"TFEL/Glossary/GlossaryEntry.hxx"
+#include "TFEL/Raise.hxx"
+#include "TFEL/Utilities/Token.hxx"
+#include "TFEL/System/System.hxx"
+#include "TFEL/Glossary/Glossary.hxx"
+#include "TFEL/Glossary/GlossaryEntry.hxx"
 #include "TFEL/UnicodeSupport/UnicodeSupport.hxx"
 
-#include"MFront/MFrontHeader.hxx"
-#include"MFront/MFrontLogStream.hxx"
-#include"MFront/DSLUtilities.hxx"
-#include"MFront/MFrontUtilities.hxx"
-#include"MFront/MFrontDebugMode.hxx"
-#include"MFront/MFrontLogStream.hxx"
-#include"MFront/DSLFactory.hxx"
-#include"MFront/MaterialPropertyDSL.hxx"
-#include"MFront/TargetsDescription.hxx"
-#include"MFront/MaterialPropertyInterfaceFactory.hxx"
+#include "MFront/MFrontHeader.hxx"
+#include "MFront/MFrontLogStream.hxx"
+#include "MFront/DSLUtilities.hxx"
+#include "MFront/MFrontUtilities.hxx"
+#include "MFront/MFrontDebugMode.hxx"
+#include "MFront/MFrontLogStream.hxx"
+#include "MFront/DSLFactory.hxx"
+#include "MFront/MaterialPropertyDSL.hxx"
+#include "MFront/TargetsDescription.hxx"
+#include "MFront/MaterialPropertyInterfaceFactory.hxx"
 
 // fixing a bug on current glibc++ cygwin versions (19/08/2015)
-#if defined __CYGWIN__ &&  (!defined _GLIBCXX_USE_C99)
-#include<sstream>
-namespace std{
-  template<typename T>
-  std::string to_string(const T& v){
+#if defined __CYGWIN__ && (!defined _GLIBCXX_USE_C99)
+#include <sstream>
+namespace std {
+  template <typename T>
+  std::string to_string(const T& v) {
     std::ostringstream s;
     s << v;
     return s.str();
   }
-}
+}  // namespace std
 #endif /* defined __CYGWIN__ &&  (!defined _GLIBCXX_USE_C99) */
 
-namespace mfront{
+namespace mfront {
 
   bool isValidMaterialPropertyName(const std::string& n) {
     return tfel::utilities::CxxTokenizer::isValidIdentifier(n, false);
@@ -58,43 +58,45 @@ namespace mfront{
 
   MaterialPropertyDSL::MaterialPropertyDSL() {
     // Call Back
-    this->registerNewCallBack(";",&MaterialPropertyDSL::treatLonelySeparator);
-    this->registerNewCallBack("@Link",
-			      &MaterialPropertyDSL::treatLink);
+    this->registerNewCallBack(";", &MaterialPropertyDSL::treatLonelySeparator);
+    this->registerNewCallBack("@Link", &MaterialPropertyDSL::treatLink);
     this->registerNewCallBack("@MaterialLaw",
                               &MaterialPropertyDSL::treatMaterialLaw);
-    this->registerNewCallBack("@MFront",&MaterialPropertyDSL::treatMFront);
-    this->registerNewCallBack("@Material",&MaterialPropertyDSL::treatMaterial);
-    this->registerNewCallBack("@Library",&MaterialPropertyDSL::treatLibrary);
-    this->registerNewCallBack("@DSL",&MaterialPropertyDSL::treatParser);
-    this->registerNewCallBack("@Parser",&MaterialPropertyDSL::treatParser);
-    this->registerNewCallBack("@Law",&MaterialPropertyDSL::treatLaw);
-    this->registerNewCallBack("@Author",&MaterialPropertyDSL::treatAuthor);
-    this->registerNewCallBack("@Date",&MaterialPropertyDSL::treatDate);
-    this->registerNewCallBack("@Includes",&MaterialPropertyDSL::treatIncludes);
-    this->registerNewCallBack("@StaticVar",&MaterialPropertyDSL::treatStaticVar);
-    this->registerNewCallBack("@StaticVariable",&MaterialPropertyDSL::treatStaticVar);
-    this->registerNewCallBack("@Parameter",&MaterialPropertyDSL::treatParameter);
-    this->registerNewCallBack("@Constant",&MaterialPropertyDSL::treatConstant);
-    this->registerNewCallBack("@Description",&MaterialPropertyDSL::treatDescription);
-    this->registerNewCallBack("@Input",&MaterialPropertyDSL::treatInput);
-    this->registerNewCallBack("@Output",&MaterialPropertyDSL::treatOutput);
-    this->registerNewCallBack("@Function",&MaterialPropertyDSL::treatFunction);
-    this->registerNewCallBack("@Import",&MaterialPropertyDSL::treatImport);
+    this->registerNewCallBack("@MFront", &MaterialPropertyDSL::treatMFront);
+    this->registerNewCallBack("@Material", &MaterialPropertyDSL::treatMaterial);
+    this->registerNewCallBack("@Library", &MaterialPropertyDSL::treatLibrary);
+    this->registerNewCallBack("@DSL", &MaterialPropertyDSL::treatParser);
+    this->registerNewCallBack("@Parser", &MaterialPropertyDSL::treatParser);
+    this->registerNewCallBack("@Law", &MaterialPropertyDSL::treatLaw);
+    this->registerNewCallBack("@Author", &MaterialPropertyDSL::treatAuthor);
+    this->registerNewCallBack("@Date", &MaterialPropertyDSL::treatDate);
+    this->registerNewCallBack("@Includes", &MaterialPropertyDSL::treatIncludes);
+    this->registerNewCallBack("@StaticVar",
+                              &MaterialPropertyDSL::treatStaticVar);
+    this->registerNewCallBack("@StaticVariable",
+                              &MaterialPropertyDSL::treatStaticVar);
+    this->registerNewCallBack("@Parameter",
+                              &MaterialPropertyDSL::treatParameter);
+    this->registerNewCallBack("@Constant", &MaterialPropertyDSL::treatConstant);
+    this->registerNewCallBack("@Description",
+                              &MaterialPropertyDSL::treatDescription);
+    this->registerNewCallBack("@Input", &MaterialPropertyDSL::treatInput);
+    this->registerNewCallBack("@Output", &MaterialPropertyDSL::treatOutput);
+    this->registerNewCallBack("@Function", &MaterialPropertyDSL::treatFunction);
+    this->registerNewCallBack("@Import", &MaterialPropertyDSL::treatImport);
     this->registerNewCallBack("@Interface",
-			      &MaterialPropertyDSL::treatInterface);
-    this->registerNewCallBack("@Bounds",
-			      &MaterialPropertyDSL::treatBounds);
+                              &MaterialPropertyDSL::treatInterface);
+    this->registerNewCallBack("@Bounds", &MaterialPropertyDSL::treatBounds);
     this->registerNewCallBack("@PhysicalBounds",
-			      &MaterialPropertyDSL::treatPhysicalBounds);
+                              &MaterialPropertyDSL::treatPhysicalBounds);
     // reverse names
-    for(const auto& v : DSLBase::getDefaultReservedNames()){
+    for (const auto& v : DSLBase::getDefaultReservedNames()) {
       this->reserveName(v);
     }
     this->reserveName("params");
-  } // end of MaterialPropertyDSL::MaterialPropertyDSL()
-  
-  AbstractDSL::DSLTarget MaterialPropertyDSL::getTargetType() const{
+  }  // end of MaterialPropertyDSL::MaterialPropertyDSL()
+
+  AbstractDSL::DSLTarget MaterialPropertyDSL::getTargetType() const {
     return MATERIALPROPERTYDSL;
   }
 
@@ -103,29 +105,29 @@ namespace mfront{
 
   void MaterialPropertyDSL::registerNewCallBack(const std::string& keyword,
                                                 const MemberFuncPtr ptr) {
-    this->callBacks.insert({keyword,ptr});
+    this->callBacks.insert({keyword, ptr});
     this->registredKeyWords.insert(keyword);
-  } // end of MaterialPropertyDSL::registerNewCall
+  }  // end of MaterialPropertyDSL::registerNewCall
 
   void MaterialPropertyDSL::getKeywordsList(std::vector<std::string>& k) const {
-    for(const auto& c : this->callBacks){
+    for (const auto& c : this->callBacks) {
       k.push_back(c.first);
     }
   }
 
   std::string MaterialPropertyDSL::getClassName() const {
     return this->md.className;
-  } // end of MaterialPropertyDSL::getClassName
+  }  // end of MaterialPropertyDSL::getClassName
 
   void MaterialPropertyDSL::addStaticVariableDescription(
       const StaticVariableDescription& v) {
     this->reserveName(v.name);
     this->md.staticVars.push_back(v);
-  } // end of MaterialPropertyDSL::addStaticVariableDescription
+  }  // end of MaterialPropertyDSL::addStaticVariableDescription
 
-  int MaterialPropertyDSL::getIntegerConstant(const std::string& n) const{
-    for(const auto& v:this->md.staticVars){
-      if(v.name==n){
+  int MaterialPropertyDSL::getIntegerConstant(const std::string& n) const {
+    for (const auto& v : this->md.staticVars) {
+      if (v.name == n) {
         if (v.type != "int") {
           this->throwRuntimeError("MaterialPropertyDSL::getIntegerConstant",
                                   "invalid type for variable '" + n + "'");
@@ -134,8 +136,8 @@ namespace mfront{
       }
     }
     this->throwRuntimeError("MaterialPropertyDSL::getIntegerConstant",
-			    "unknown variable '"+n+"'");
-  } // end of MaterialPropertyDSL::getIntegerConstant
+                            "unknown variable '" + n + "'");
+  }  // end of MaterialPropertyDSL::getIntegerConstant
 
   std::string MaterialPropertyDSL::getDescription() {
     using MLIF = MaterialPropertyInterfaceFactory;
@@ -158,12 +160,12 @@ namespace mfront{
 
   std::string MaterialPropertyDSL::getName() {
     return "MaterialLaw";
-  } // end of MaterialPropertyDSL::getName()
+  }  // end of MaterialPropertyDSL::getName()
 
   void MaterialPropertyDSL::treatMaterial() {
-    if(!this->md.material.empty()){
+    if (!this->md.material.empty()) {
       this->throwRuntimeError("MaterialPropertyDSL::treatMaterial",
-			      "material name alreay defined");
+                              "material name alreay defined");
     }
     const auto& m = this->readOnlyOneToken();
     if (!isValidMaterialName(m)) {
@@ -171,98 +173,103 @@ namespace mfront{
                               "invalid material name '" + m + "'");
     }
     this->md.material = m;
-  } // end of MaterialPropertyDSL::treatMaterial
+  }  // end of MaterialPropertyDSL::treatMaterial
 
   void MaterialPropertyDSL::treatLibrary() {
-    if(!this->md.library.empty()){
+    if (!this->md.library.empty()) {
       this->throwRuntimeError("MaterialPropertyDSL::treatLibrary",
                               "material name alreay defined");
     }
     const auto& l = this->readOnlyOneToken();
     if (!isValidLibraryName(l)) {
       this->throwRuntimeError("MaterialPropertyDSL::treatLibrary",
-			      "invalid library name '"+l+"'");
+                              "invalid library name '" + l + "'");
     }
     this->md.library = l;
-  } // end of MFrontLibraryLawParser::treatLibrary
+  }  // end of MFrontLibraryLawParser::treatLibrary
 
   void MaterialPropertyDSL::treatConstant() {
     this->checkNotEndOfFile("MaterialPropertyDSL::treatConstant",
-			    "Cannot read variable name.");
+                            "Cannot read variable name.");
     const auto name = this->current->value;
-    if(!isValidIdentifier(name)){
+    if (!isValidIdentifier(name)) {
       this->throwRuntimeError("DSLBase::treatConstant",
-			      "constant name '"+name+"' is not valid.");
+                              "constant name '" + name + "' is not valid.");
     }
     const auto line = this->current->line;
     ++(this->current);
-    const auto value = this->readInitialisationValue<long double>(name,true);
-    this->readSpecifiedToken("MaterialPropertyDSL::treatConstant",";");
-    this->addStaticVariableDescription(StaticVariableDescription("real",name,line,value.second));
-  } // end of MaterialPropertyDSL::treatConstant
+    const auto value = this->readInitialisationValue<long double>(name, true);
+    this->readSpecifiedToken("MaterialPropertyDSL::treatConstant", ";");
+    this->addStaticVariableDescription(
+        StaticVariableDescription("real", name, line, value.second));
+  }  // end of MaterialPropertyDSL::treatConstant
 
   void MaterialPropertyDSL::treatParameter() {
     this->checkNotEndOfFile("MaterialPropertyDSL::treatParameter",
-			    "Expected parameter name.");
-    VariableDescription p("real",this->current->value,1u,this->current->line);
-    if(!isValidIdentifier(p.name)){
+                            "Expected parameter name.");
+    VariableDescription p("real", this->current->value, 1u,
+                          this->current->line);
+    if (!isValidIdentifier(p.name)) {
       this->throwRuntimeError("DSLBase::treatParameter",
-			      "parameter name '"+p.name+"' is not valid.");
+                              "parameter name '" + p.name + "' is not valid.");
     }
     ++(this->current);
-    const auto value = this->readInitialisationValue<double>(p.name,false);
-    if(value.first){
-      p.setAttribute(VariableDescription::defaultValue,value.second,false);
+    const auto value = this->readInitialisationValue<double>(p.name, false);
+    if (value.first) {
+      p.setAttribute(VariableDescription::defaultValue, value.second, false);
     }
-    this->readSpecifiedToken("MaterialPropertyDSL::treatParameter",";");
+    this->readSpecifiedToken("MaterialPropertyDSL::treatParameter", ";");
     this->reserveName(p.name);
     this->md.parameters.push_back(p);
-  } // MaterialPropertyDSL::treatParameter
+  }  // MaterialPropertyDSL::treatParameter
 
   void MaterialPropertyDSL::treatLaw() {
-    auto throw_if = [this](const bool b,const std::string& m){
-      if(b){this->throwRuntimeError("MaterialPropertyDSL::treatLaw",m);}
+    auto throw_if = [this](const bool b, const std::string& m) {
+      if (b) {
+        this->throwRuntimeError("MaterialPropertyDSL::treatLaw", m);
+      }
     };
-    throw_if(!this->md.className.empty(),"law name has already been declared");
-    throw_if(!this->md.law.empty(),"law name has already been declared");
+    throw_if(!this->md.className.empty(), "law name has already been declared");
+    throw_if(!this->md.law.empty(), "law name has already been declared");
     const auto& l = this->readOnlyOneToken();
     throw_if(!isValidMaterialPropertyName(l),
              "'" + l + "' is not a valid law name");
-    this->md.law       = l;
+    this->md.law = l;
     this->md.className = l;
-  } // end of MaterialPropertyDSL::treatLaw
+  }  // end of MaterialPropertyDSL::treatLaw
 
   void MaterialPropertyDSL::addInterface(const std::string& i) {
     using MLIF = mfront::MaterialPropertyInterfaceFactory;
-    if(this->interfaces.find(i)==this->interfaces.end()){
+    if (this->interfaces.find(i) == this->interfaces.end()) {
       auto& mlif = MLIF::getMaterialPropertyInterfaceFactory();
-      this->interfaces.insert({i,mlif.getInterface(i)});
+      this->interfaces.insert({i, mlif.getInterface(i)});
     }
-  } // end of MaterialPropertyDSL::addInterface
+  }  // end of MaterialPropertyDSL::addInterface
 
   void MaterialPropertyDSL::setInterfaces(const std::set<std::string>& inames) {
     using MLIF = mfront::MaterialPropertyInterfaceFactory;
     auto& mlif = MLIF::getMaterialPropertyInterfaceFactory();
     // searching i2 depedencies
-    for(const auto& i: inames){
-      for(const auto& d : mlif.getInterfaceDependencies(i)){
-	this->addInterface(d);
+    for (const auto& i : inames) {
+      for (const auto& d : mlif.getInterfaceDependencies(i)) {
+        this->addInterface(d);
       }
       this->addInterface(i);
     }
-  } // end of MaterialPropertyDSL::setInterface
+  }  // end of MaterialPropertyDSL::setInterface
 
   void MaterialPropertyDSL::treatInterface() {
     this->checkNotEndOfFile("MaterialPropertyDSL::treatInterface",
-			    "Expected interface name.");
-    if(this->current->flag==tfel::utilities::Token::String){
-      this->addInterface(this->current->value.substr(1,this->current->value.size()-2));
+                            "Expected interface name.");
+    if (this->current->flag == tfel::utilities::Token::String) {
+      this->addInterface(
+          this->current->value.substr(1, this->current->value.size() - 2));
     } else {
       this->addInterface(this->current->value);
     }
     ++(this->current);
-    this->readSpecifiedToken("MaterialPropertyDSL::treatInterface",";");
-  } // end of MaterialPropertyDSL::treatInterface
+    this->readSpecifiedToken("MaterialPropertyDSL::treatInterface", ";");
+  }  // end of MaterialPropertyDSL::treatInterface
 
   void MaterialPropertyDSL::treatFunction() {
     auto throw_if = [this](const bool b, const std::string& m) {
@@ -378,12 +385,14 @@ namespace mfront{
   void MaterialPropertyDSL::treatMethod() {
     using namespace tfel::utilities;
     using namespace tfel::glossary;
-    auto throw_if = [this](const bool b,const std::string& m){
-      if(b){this->throwRuntimeError("MaterialPropertyDSL::analyse",m);}
+    auto throw_if = [this](const bool b, const std::string& m) {
+      if (b) {
+        this->throwRuntimeError("MaterialPropertyDSL::analyse", m);
+      }
     };
-    this->readSpecifiedToken("MaterialPropertyDSL::treatMethod",".");
+    this->readSpecifiedToken("MaterialPropertyDSL::treatMethod", ".");
     this->checkNotEndOfFile("MaterialPropertyDSL::treatMethod",
-			    "Expected method name.");
+                            "Expected method name.");
     const auto methodName = this->current->value;
     throw_if((methodName != "setGlossaryName") &&
                  (methodName != "setEntryName") &&
@@ -394,29 +403,28 @@ namespace mfront{
                  "'setEntryName' and 'setDefaultValue'");
     ++(this->current);
     this->readSpecifiedToken("MaterialPropertyDSL::treatMethod", "(");
-    if(methodName=="setGlossaryName"){
+    if (methodName == "setGlossaryName") {
       const auto& glossary = Glossary::getGlossary();
       this->checkNotEndOfFile("MaterialPropertyDSL::treatMethod",
                               "Expected glossary name");
       throw_if(this->current->flag != Token::String,
                "expected a string as glossary name");
-      throw_if(this->current->value.size()<3,
-	       "glossary name too short");
+      throw_if(this->current->value.size() < 3, "glossary name too short");
       const auto gn =
           this->current->value.substr(1, this->current->value.size() - 2);
       throw_if(!glossary.contains(gn),
                "'" + gn + "' is not a valid glossary name");
-      this->md.setGlossaryName(this->currentVar,gn);
+      this->md.setGlossaryName(this->currentVar, gn);
     } else if (methodName == "setEntryName") {
       const auto& glossary = Glossary::getGlossary();
       this->checkNotEndOfFile("MaterialPropertyDSL::treatMethod",
                               "Expected entry file name.");
-      throw_if(this->current->flag!=Token::String,
-	       "expected a string as entry file name");
-      throw_if(this->current->value.size()<3,
-	       "entry file name too short");
-      const auto en = this->current->value.substr(1,this->current->value.size()-2);
-      if(glossary.contains(en)){
+      throw_if(this->current->flag != Token::String,
+               "expected a string as entry file name");
+      throw_if(this->current->value.size() < 3, "entry file name too short");
+      const auto en =
+          this->current->value.substr(1, this->current->value.size() - 2);
+      if (glossary.contains(en)) {
         std::ostringstream msg;
         msg << "'" << en << "' is a glossary name. Please use "
             << "the 'setGlossaryName' method or choose another entry name.";
@@ -434,22 +442,23 @@ namespace mfront{
           "MaterialPropertyDSL::treatMethod",
           "Expected to read value of variable '" + this->currentVar + "'");
       auto& p = this->md.parameters.getVariable(this->currentVar);
-      p.setAttribute(VariableDescription::defaultValue,this->readDouble(),false);
+      p.setAttribute(VariableDescription::defaultValue, this->readDouble(),
+                     false);
       --(this->current);
     } else {
-      throw_if(true,"internal error (untreated method '"+ methodName +"'");
+      throw_if(true, "internal error (untreated method '" + methodName + "'");
     }
     ++(this->current);
-    this->readSpecifiedToken("MaterialPropertyDSL::treatMethod",")");
-    this->readSpecifiedToken("MaterialPropertyDSL::treatMethod",";");
-  } // end of MaterialPropertyDSL::treatMethod
+    this->readSpecifiedToken("MaterialPropertyDSL::treatMethod", ")");
+    this->readSpecifiedToken("MaterialPropertyDSL::treatMethod", ";");
+  }  // end of MaterialPropertyDSL::treatMethod
 
   void MaterialPropertyDSL::importFile(
       const std::string& fn,
       const std::vector<std::string>& ecmds,
       const std::map<std::string, std::string>& s) {
     this->fd.fileName = fn;
-    this->openFile(this->fd.fileName,ecmds,s);
+    this->openFile(this->fd.fileName, ecmds, s);
     this->analyse();
   }
 
@@ -526,9 +535,9 @@ namespace mfront{
       const std::string& fileName_,
       const std::vector<std::string>& ecmds,
       const std::map<std::string, std::string>& s) {
-    this->importFile(fileName_,ecmds,s);
-    for(const auto & i : this->interfaces){
-      i.second->getTargetsDescription(this->td,this->md);
+    this->importFile(fileName_, ecmds, s);
+    for (const auto& i : this->interfaces) {
+      i.second->getTargetsDescription(this->td, this->md);
     }
     this->completeTargetsDescription();
   }
@@ -537,46 +546,46 @@ namespace mfront{
     this->md.reserveName(n);
   }
 
-  bool MaterialPropertyDSL::isNameReserved(const std::string& n) const{
+  bool MaterialPropertyDSL::isNameReserved(const std::string& n) const {
     return this->md.isNameReserved(n);
   }
 
   void MaterialPropertyDSL::generateOutputFiles() {
-    auto throw_if = [](const bool b,const std::string& m){
-      tfel::raise_if(b,"MaterialPropertyDSL::generateOutputFiles: "+m);
+    auto throw_if = [](const bool b, const std::string& m) {
+      tfel::raise_if(b, "MaterialPropertyDSL::generateOutputFiles: " + m);
     };
-    throw_if(this->md.className.empty(),"no material property name defined.");
-    throw_if(this->md.f.body.empty(),"no function defined.");
-    throw_if(this->interfaces.empty(),"no interface defined.");
+    throw_if(this->md.className.empty(), "no material property name defined.");
+    throw_if(this->md.f.body.empty(), "no function defined.");
+    throw_if(this->interfaces.empty(), "no interface defined.");
     // creating directories
     tfel::system::systemCall::mkdir("include");
     tfel::system::systemCall::mkdir("src");
     //! generating sources du to external material properties and models
-    for(const auto& em : this->externalMFrontFiles){
-      this->callMFront(em.second,{em.first});
+    for (const auto& em : this->externalMFrontFiles) {
+      this->callMFront(em.second, {em.first});
     }
     // calling interfaces
-    for(const auto& i : this->interfaces){
-      if(getVerboseMode()>=VERBOSE_LEVEL2){
-	getLogStream() << "calling interface " << i.first << '\n';
+    for (const auto& i : this->interfaces) {
+      if (getVerboseMode() >= VERBOSE_LEVEL2) {
+        getLogStream() << "calling interface " << i.first << '\n';
       }
-      i.second->writeOutputFiles(this->md,this->fd);
+      i.second->writeOutputFiles(this->md, this->fd);
     }
-  } // end of MaterialPropertyDSL::generateOutputFiles
+  }  // end of MaterialPropertyDSL::generateOutputFiles
 
   void MaterialPropertyDSL::treatInput() {
     VariableDescriptionContainer ninputs;
-    this->readVarList(ninputs,"real",false);
-    for(const auto& i : ninputs){
+    this->readVarList(ninputs, "real", false);
+    for (const auto& i : ninputs) {
       this->reserveName(i.name);
       this->md.inputs.push_back(i);
     }
-  } // end of MaterialPropertyDSL::treatInput
+  }  // end of MaterialPropertyDSL::treatInput
 
   void MaterialPropertyDSL::treatOutput() {
-    if(!this->md.output.name.empty()){
+    if (!this->md.output.name.empty()) {
       this->throwRuntimeError("MaterialPropertyDSL::treatOutput",
-			      "Output already defined.");
+                              "Output already defined.");
     }
     const auto s = this->readOnlyOneToken();
     const auto n = tfel::unicode::getMangledString(s);
@@ -590,21 +599,21 @@ namespace mfront{
       this->reserveName(s);
       this->md.output.symbolic_form = s;
     }
-  } // end of MaterialPropertyDSL::treatOutput
+  }  // end of MaterialPropertyDSL::treatOutput
 
   void MaterialPropertyDSL::treatBounds() {
     const auto b = this->readVariableBounds();
-    this->readSpecifiedToken("MaterialPropertyDSL::treatBounds",";");
+    this->readSpecifiedToken("MaterialPropertyDSL::treatBounds", ";");
     auto& v = this->md.inputs.getVariable(std::get<0>(b));
     v.setBounds(std::get<1>(b));
-  } // end of MaterialPropertyDSL::treatBounds
+  }  // end of MaterialPropertyDSL::treatBounds
 
   void MaterialPropertyDSL::treatPhysicalBounds() {
     const auto b = this->readVariableBounds();
-    this->readSpecifiedToken("MaterialPropertyDSL::treatPhysicalBounds",";");
+    this->readSpecifiedToken("MaterialPropertyDSL::treatPhysicalBounds", ";");
     auto& v = this->md.inputs.getVariable(std::get<0>(b));
     v.setPhysicalBounds(std::get<1>(b));
-  } // end of MaterialPropertyDSL::treatPhysicalBounds
+  }  // end of MaterialPropertyDSL::treatPhysicalBounds
 
   void MaterialPropertyDSL::treatUnknownKeyword() {
     TokensContainer::const_iterator p2;
@@ -717,4 +726,4 @@ namespace mfront{
 
   MaterialPropertyDSL::~MaterialPropertyDSL() = default;
 
-} // end of namespace mfront  
+}  // end of namespace mfront

@@ -47,7 +47,7 @@ namespace mfmtg {
         number_of_elements(get<int>(p, "number_of_elements")),
         element_type(getElementType(get_if(p, "element_type", "Linear"))),
         outer_pressure(getEvolution(p, "outer_pressure")),
-        inner_pressure(getEvolution(p, "inner_pressure")){
+        inner_pressure(getEvolution(p, "inner_pressure")) {
     message(
         "ClosedPipeTest::ClosedPipeTest: "
         "pre-processing of test '" +
@@ -59,8 +59,8 @@ namespace mfmtg {
         "ClosedPipeTest::ClosedPipeTest: "
         "pre-processing of test '" +
         this->name + "' is finished");
-    }  // end of ClosedPipeTest::ClosedPipeTest
+  }  // end of ClosedPipeTest::ClosedPipeTest
 
-    ClosedPipeTest::~ClosedPipeTest() = default;
+  ClosedPipeTest::~ClosedPipeTest() = default;
 
 }  // end of namespace mfmtg

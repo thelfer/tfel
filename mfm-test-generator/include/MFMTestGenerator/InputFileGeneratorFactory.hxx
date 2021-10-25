@@ -39,9 +39,9 @@ namespace mfmtg {
      */
     void add(const std::string&, const std::string&, const generator);
     /*!
-     * \return a input file generator for the given test case and the given targeted code
-     * \param[in] n: name of the test case
-     * \param[in] i: name of the targeted code
+     * \return a input file generator for the given test case and the given
+     * targeted code \param[in] n: name of the test case \param[in] i: name of
+     * the targeted code
      */
     generator get(const std::string&, const std::string&) const;
 

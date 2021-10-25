@@ -146,7 +146,7 @@ namespace mfront {
     } else if (c == BehaviourData::Integrator) {
       // implicit system
       auto ivs = this->mb.getBehaviourData(h).getIntegrationVariables();
-      const auto mivs = [this,h] {
+      const auto mivs = [this, h] {
         auto livs = this->mb.getBehaviourData(h).getIntegrationVariables();
         // remove managed integration variables
         const auto mivs_names = [this] {
@@ -196,8 +196,9 @@ namespace mfront {
             }
           }
         } else {
-          i += "for(unsigned short i = 0; i != " + std::to_string(v1.arraySize) +
-               ";++i){\n";
+          i +=
+              "for(unsigned short i = 0; i != " + std::to_string(v1.arraySize) +
+              ";++i){\n";
           i += "f" + v1n + "(i) += ;\n";
           i += "// jacobian blocks\n";
           if ((this->solver != nullptr) && (this->solver->usesJacobian())) {
@@ -726,17 +727,19 @@ namespace mfront {
      * the user does not provide an alternative through the
      * @ComputeFinalStress
      */
-    this->readCodeBlock(*this, BehaviourData::ComputeThermodynamicForces,
-                        BehaviourData::ComputeFinalThermodynamicForcesCandidate,
-                        &ImplicitDSLBase::computeThermodynamicForcesVariableModifier1,
-                        &ImplicitDSLBase::computeThermodynamicForcesVariableModifier2, true,
-                        true);
+    this->readCodeBlock(
+        *this, BehaviourData::ComputeThermodynamicForces,
+        BehaviourData::ComputeFinalThermodynamicForcesCandidate,
+        &ImplicitDSLBase::computeThermodynamicForcesVariableModifier1,
+        &ImplicitDSLBase::computeThermodynamicForcesVariableModifier2, true,
+        true);
   }  // end of ImplicitDSLBase::treatComputeThermodynamicForces
 
   void ImplicitDSLBase::treatComputeFinalThermodynamicForces() {
-    this->readCodeBlock(*this, BehaviourData::ComputeFinalThermodynamicForces,
-                        &ImplicitDSLBase::computeThermodynamicForcesVariableModifier2, true,
-                        true);
+    this->readCodeBlock(
+        *this, BehaviourData::ComputeFinalThermodynamicForces,
+        &ImplicitDSLBase::computeThermodynamicForcesVariableModifier2, true,
+        true);
   }  // end of ImplicitDSLBase::treatComputeFinalThermodynamicForces
 
   void ImplicitDSLBase::treatMaximumIncrementValuePerIteration() {
@@ -754,8 +757,9 @@ namespace mfront {
     this->readSpecifiedToken(
         "ImplicitDSLBase::MaximumIncrementValuePerIteration", ";");
     this->mb.addParameter(
-        h, VariableDescription("real", "maximum_increment_value_per_iteration",
-                               1u, 0u),
+        h,
+        VariableDescription("real", "maximum_increment_value_per_iteration", 1u,
+                            0u),
         BehaviourData::ALREADYREGISTRED);
     this->mb.setParameterDefaultValue(
         h, "maximum_increment_value_per_iteration", value);
@@ -939,9 +943,8 @@ namespace mfront {
         (this->solver->usesJacobian())) {
       const std::string nje = "numerical_jacobian_epsilon";
       if (!this->mb.hasParameter(uh, nje)) {
-        const auto eps =
-            0.1 *
-            this->mb.getFloattingPointParameterDefaultValue(uh, "epsilon");
+        const auto eps = 0.1 * this->mb.getFloattingPointParameterDefaultValue(
+                                   uh, "epsilon");
         VariableDescription v("real", nje, 1u, 0u);
         v.description =
             "perturbation value used to compute a numerical "
@@ -1026,8 +1029,9 @@ namespace mfront {
                  "numerically computed jacobian blocks can only be "
                  "used with solver using an analytical jacobian "
                  "(or an approximation of it");
-        auto decompose = [throw_if](
-            const std::string& jb) -> std::pair<std::string, std::string> {
+        auto decompose =
+            [throw_if](
+                const std::string& jb) -> std::pair<std::string, std::string> {
           throw_if(jb.empty(), "empty jacobian block");
           throw_if(jb.size() < 6, "invalid jacobian block '" + jb + "'");
           throw_if(jb[0] != 'd', "invalid jacobian block '" + jb + "'");
@@ -2561,7 +2565,7 @@ namespace mfront {
       if (Gradient::isIncrementKnown(mv.first)) {
         getIncrementSymbol(symbols, mv.first);
       } else {
-         mfront::addSymbol(symbols, displayName(mv.first) + "\u2080",
+        mfront::addSymbol(symbols, displayName(mv.first) + "\u2080",
                           mv.first.name + "0");
         mfront::addSymbol(symbols, displayName(mv.first) + "\u2081",
                           mv.first.name + "1");

@@ -1,33 +1,30 @@
-/*! 
+/*!
  * \file  include/TFEL/Math/Matrix/tmatrix_const_column_view.hxx
  * \brief
  * \author Thomas Helfer
  * \brief 27 déc. 2012
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_TFEL_MATH_TMATRIX_CONST_COLUMN_VIEW_HXX
-#define LIB_TFEL_MATH_TMATRIX_CONST_COLUMN_VIEW_HXX 
+#define LIB_TFEL_MATH_TMATRIX_CONST_COLUMN_VIEW_HXX
 
-namespace tfel
-{
+namespace tfel {
 
-  namespace math
-  {
+  namespace math {
 
-    template<unsigned short N,
-	     unsigned short M,
-	     unsigned short I,
-	     unsigned short J,
-	     unsigned short K,
-	     typename T>
-    struct TMatrixConstColumnView
-    {
+    template <unsigned short N,
+              unsigned short M,
+              unsigned short I,
+              unsigned short J,
+              unsigned short K,
+              typename T>
+    struct TMatrixConstColumnView {
       //! a simple typedef to the tmatrix runtime properties
       /*
        * This is a MatrixConcept requirement.
@@ -76,9 +73,9 @@ namespace tfel
       /*!
        * constructor
        * \param[in] m_ : the underlying matrix
-       */      
+       */
       TFEL_MATH_INLINE
-      TMatrixConstColumnView(const tmatrix<N,M,T>&);
+      TMatrixConstColumnView(const tmatrix<N, M, T>&);
       //! Return the RunTimeProperties of the tmatrix.
       /*
        * This is a VectorConcept requirement.
@@ -86,8 +83,7 @@ namespace tfel
        * the tmatrix
        */
       TFEL_MATH_INLINE
-      RunTimeProperties
-      getRunTimeProperties() const;
+      RunTimeProperties getRunTimeProperties() const;
       /*!
        * \brief index operator.
        * This is a vector concept requirement.
@@ -95,8 +91,7 @@ namespace tfel
        * \return a reference to the ith element of the column.
        */
       TFEL_MATH_INLINE
-      const T& 
-      operator()(const unsigned short i) const;
+      const T& operator()(const unsigned short i) const;
       /*!
        * \brief index operator.
        * This is a vector concept requirement.
@@ -104,38 +99,33 @@ namespace tfel
        * \return a reference to the ith element of the column.
        */
       TFEL_MATH_INLINE
-      const T& 
-      operator[](const unsigned short) const;
+      const T& operator[](const unsigned short) const;
 
-    private:
-      
+     private:
       //! reference to the underlying matrix
-      const tmatrix<N,M,T>& m;
-
+      const tmatrix<N, M, T>& m;
     };
 
-    template<unsigned short N,
-	     unsigned short M,
-	     unsigned short I,
-	     unsigned short J,
-	     unsigned short K,
-	     typename T>
+    template <unsigned short N,
+              unsigned short M,
+              unsigned short I,
+              unsigned short J,
+              unsigned short K,
+              typename T>
     struct tmatrix_const_column_view
-      : public Expr<tvector<K,T>,TMatrixConstColumnView<N,M,I,J,K,T> >
-    {
+        : public Expr<tvector<K, T>, TMatrixConstColumnView<N, M, I, J, K, T>> {
       /*!
        * constructor
        * \param[in] m_ : the underlying matrix
-       */      
+       */
       TFEL_MATH_INLINE
-      tmatrix_const_column_view(const tmatrix<N,M,T>&);
+      tmatrix_const_column_view(const tmatrix<N, M, T>&);
     };
 
-  } // end of namespace math
-  
-} // end of namespace tfel
+  }  // end of namespace math
 
-#include"TFEL/Math/Matrix/tmatrix_const_column_view.ixx"
+}  // end of namespace tfel
+
+#include "TFEL/Math/Matrix/tmatrix_const_column_view.ixx"
 
 #endif /* LIB_TFEL_MATH_TMATRIX_CONST_COLUMN_VIEW_HXX */
-

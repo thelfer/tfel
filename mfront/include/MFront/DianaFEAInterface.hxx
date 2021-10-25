@@ -125,7 +125,7 @@ namespace mfront {
         const BehaviourDescription &) const override;
     std::string getLibraryName(const BehaviourDescription &) const override;
     void writeGetOutOfBoundsPolicyFunctionImplementation(
-        std::ostream&, const std::string&) const override;
+        std::ostream &, const std::string &) const override;
     bool areExternalStateVariablesSupported() const override;
     bool isTemperatureIncrementSupported() const override;
     /*!

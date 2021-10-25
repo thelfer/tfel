@@ -202,8 +202,10 @@ namespace mfront {
     Parser::registerNewCallBack("--modelling-hypothesis",
                                 &BehaviourQuery::treatModellingHypothesis,
                                 "select a modelling hypothesis", true);
-    Parser::registerCallBack("--no-gui",CallBack("do not display errors using "
-						 "a message box (windows only)",[]{},false));
+    Parser::registerCallBack("--no-gui",
+                             CallBack("do not display errors using "
+                                      "a message box (windows only)",
+                                      [] {}, false));
     // standard queries
     const std::vector<std::pair<const char*, const char*>> sq = {
         {"--author", "show the author name"},
@@ -258,7 +260,8 @@ namespace mfront {
          "show the list of supported modelling hypothesis"},
         {"--gradients", "show the list of the gradients"},
         {"--thermodynamic-forces", "show the list of the thermodynamic forces"},
-        {"--tangent-operator-blocks", "show the list of blocks in the tangent operator"},
+        {"--tangent-operator-blocks",
+         "show the list of blocks in the tangent operator"},
         {"--material-properties",
          "show the list of material properties for the selected modelling "
          "hypothesis"},
@@ -349,8 +352,8 @@ namespace mfront {
 
   void BehaviourQuery::treatStandardQuery() {
     using namespace tfel::utilities;
-    using tfel::material::ModellingHypothesis;
     using std::cout;
+    using tfel::material::ModellingHypothesis;
     const auto& q = this->getCurrentCommandLineArgument();
     const auto& qn = q.as_string();
     if (qn == "--author") {
@@ -678,15 +681,14 @@ namespace mfront {
              }
              cout << '\n';
            }});
-    } else if (qn == "--gradients"){
-      this->queries2.push_back(
-          {"gradients",
-           [](const FileDescription&, const BehaviourDescription& d) {
-             for (const auto& v : d.getMainVariables()) {
-               display_variable(v.first);
-             }
-           }});
-    } else if (qn == "--thermodynamic-forces"){
+    } else if (qn == "--gradients") {
+      this->queries2.push_back({"gradients", [](const FileDescription&,
+                                                const BehaviourDescription& d) {
+                                  for (const auto& v : d.getMainVariables()) {
+                                    display_variable(v.first);
+                                  }
+                                }});
+    } else if (qn == "--thermodynamic-forces") {
       this->queries2.push_back(
           {"thermodynamic-forces",
            [](const FileDescription&, const BehaviourDescription& d) {
@@ -694,7 +696,7 @@ namespace mfront {
                display_variable(v.second);
              }
            }});
-    } else if (qn == "--tangent-operator-blocks"){
+    } else if (qn == "--tangent-operator-blocks") {
       this->queries2.push_back(
           {"tangent-operator-blocks",
            [](const FileDescription&, const BehaviourDescription& d) {

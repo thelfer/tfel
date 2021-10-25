@@ -1,30 +1,30 @@
-/*! 
+/*!
  * \file  mtest/src/AnsysStandardBehaviour.cxx
  * \brief
  * \author Thomas Helfer
  * \brief 07 avril 2013
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
-#include<cmath>
-#include<sstream>
-#include<algorithm>
-#include"TFEL/Raise.hxx"
-#include"TFEL/Math/tmatrix.hxx"
-#include"TFEL/Math/stensor.hxx"
-#include"TFEL/Math/st2tost2.hxx"
-#include"TFEL/System/ExternalLibraryManager.hxx"
-#include"MFront/Ansys/Ansys.hxx"
-#include"MFront/Ansys/AnsysComputeStiffnessTensor.hxx"
+#include <cmath>
+#include <sstream>
+#include <algorithm>
+#include "TFEL/Raise.hxx"
+#include "TFEL/Math/tmatrix.hxx"
+#include "TFEL/Math/stensor.hxx"
+#include "TFEL/Math/st2tost2.hxx"
+#include "TFEL/System/ExternalLibraryManager.hxx"
+#include "MFront/Ansys/Ansys.hxx"
+#include "MFront/Ansys/AnsysComputeStiffnessTensor.hxx"
 
-#include"MTest/CurrentState.hxx"
-#include"MTest/BehaviourWorkSpace.hxx"
-#include"MTest/AnsysStandardBehaviour.hxx"
+#include "MTest/CurrentState.hxx"
+#include "MTest/BehaviourWorkSpace.hxx"
+#include "MTest/AnsysStandardBehaviour.hxx"
 
 namespace mtest {
 
@@ -41,18 +41,20 @@ namespace mtest {
     tfel::raise(
         "AnsysStandardBehaviour::getHypothesisSuffix: "
         "invalid hypothesis.");
-  } // end of AnsysStandardBehaviour::getHypothesisSuffix
+  }  // end of AnsysStandardBehaviour::getHypothesisSuffix
 
-  std::string AnsysStandardBehaviour::getBehaviourName(const std::string& b, const Hypothesis h) {
-    auto ends = [&b](const std::string& s){
-      if(b.length()>=s.length()){
-        return b.compare(b.length()-s.length(),s.length(),s)==0;
+  std::string AnsysStandardBehaviour::getBehaviourName(const std::string& b,
+                                                       const Hypothesis h) {
+    auto ends = [&b](const std::string& s) {
+      if (b.length() >= s.length()) {
+        return b.compare(b.length() - s.length(), s.length(), s) == 0;
       }
       return false;
     };
     const auto s = AnsysStandardBehaviour::getHypothesisSuffix(h);
-    tfel::raise_if(!ends(s),"AnsysStandardBehaviour::AnsysStandardBehaviour: "
-		   "invalid function name.");
+    tfel::raise_if(!ends(s),
+                   "AnsysStandardBehaviour::AnsysStandardBehaviour: "
+                   "invalid function name.");
     return {b.begin(), b.begin() + b.length() - s.length()};
   }
 
@@ -124,23 +126,24 @@ namespace mtest {
       const tfel::math::vector<real>&,
       const tfel::math::tmatrix<3u, 3u, real>& r) const {
     return r;
-  } // end of AnsysStandardBehaviour::getRotationMatrix
+  }  // end of AnsysStandardBehaviour::getRotationMatrix
 
   void AnsysStandardBehaviour::allocate(BehaviourWorkSpace& wk) const {
-    const auto ndv     = this->getGradientsSize();
-    const auto nth     = this->getThermodynamicForcesSize();
+    const auto ndv = this->getGradientsSize();
+    const auto nth = this->getThermodynamicForcesSize();
     const auto nstatev = this->getInternalStateVariablesSize();
-    wk.D.resize(nth,nth);
-    wk.kt.resize(nth,ndv);
-    wk.k.resize(nth,ndv);
-    wk.mps.resize(this->mpnames.size()==0 ? 1u : this->mpnames.size(),real(0));
+    wk.D.resize(nth, nth);
+    wk.kt.resize(nth, ndv);
+    wk.k.resize(nth, ndv);
+    wk.mps.resize(this->mpnames.size() == 0 ? 1u : this->mpnames.size(),
+                  real(0));
     wk.ivs.resize(nstatev);
-    wk.nk.resize(nth,ndv);
+    wk.nk.resize(nth, ndv);
     wk.ne.resize(ndv);
     wk.ns.resize(nth);
     wk.nivs.resize(nstatev);
-    mtest::allocate(wk.cs,this->shared_from_this());
-  } // end of AnsysStandardBehaviour::allocate
+    mtest::allocate(wk.cs, this->shared_from_this());
+  }  // end of AnsysStandardBehaviour::allocate
 
   StiffnessMatrixType AnsysStandardBehaviour::getDefaultStiffnessMatrixType()
       const {
@@ -151,11 +154,11 @@ namespace mtest {
       BehaviourWorkSpace& wk,
       const CurrentState& s,
       const StiffnessMatrixType ktype) const {
-    if(ktype==StiffnessMatrixType::ELASTICSTIFNESSFROMMATERIALPROPERTIES){
-      return {false,real(-1)};
+    if (ktype == StiffnessMatrixType::ELASTICSTIFNESSFROMMATERIALPROPERTIES) {
+      return {false, real(-1)};
     }
     wk.cs = s;
-    return this->call_behaviour(wk.kt,wk.cs,wk,real(1),ktype,false);
+    return this->call_behaviour(wk.kt, wk.cs, wk, real(1), ktype, false);
   }
 
   std::pair<bool, real> AnsysStandardBehaviour::integrate(
@@ -163,19 +166,19 @@ namespace mtest {
       BehaviourWorkSpace& wk,
       const real dt,
       const StiffnessMatrixType ktype) const {
-    return this->call_behaviour(wk.k,s,wk,dt,ktype,true);
-  } // end of AnsysStandardBehaviour::integrate
+    return this->call_behaviour(wk.k, s, wk, dt, ktype, true);
+  }  // end of AnsysStandardBehaviour::integrate
 
   std::vector<std::string>::size_type
   AnsysStandardBehaviour::getOrthototropicAxesOffset() const {
     const auto b = this->mpnames.begin();
     const auto e = this->mpnames.end();
-    const auto p = std::find(b,e,"FirstOrthotropicAxis_1");
-    tfel::raise_if(p==this->mpnames.end(),
-		   "AnsysStandardBehaviour::getOrthototropicAxesOffset: "
-		   "orthotropic axes not found");
-    return static_cast<std::vector<std::string>::size_type>(p-b);
-  } // end of AnsysStandardBehaviour::getOrthototropicAxesOffset
+    const auto p = std::find(b, e, "FirstOrthotropicAxis_1");
+    tfel::raise_if(p == this->mpnames.end(),
+                   "AnsysStandardBehaviour::getOrthototropicAxesOffset: "
+                   "orthotropic axes not found");
+    return static_cast<std::vector<std::string>::size_type>(p - b);
+  }  // end of AnsysStandardBehaviour::getOrthototropicAxesOffset
 
   std::vector<std::string>
   AnsysStandardBehaviour::getOptionalMaterialProperties() const {
@@ -245,9 +248,9 @@ namespace mtest {
         throw_if(true, "unsupported hypothesis");
       }
     }
-    }  // end of
-       // AnsysStandardBehaviour::setOptionalMaterialPropertiesDefaultValues
+  }  // end of
+     // AnsysStandardBehaviour::setOptionalMaterialPropertiesDefaultValues
 
-    AnsysStandardBehaviour::~AnsysStandardBehaviour() = default;
-  
-} // end of namespace mtest
+  AnsysStandardBehaviour::~AnsysStandardBehaviour() = default;
+
+}  // end of namespace mtest

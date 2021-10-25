@@ -106,11 +106,11 @@ namespace mtest {
     auto throw_if = [](const bool cond, const std::string& m) {
       tfel::raise_if(cond, "NonLinearConstraint::NonLinearConstraint: " + m);
     };
-    auto add_variable = [](
-        std::vector<std::shared_ptr<Constraint::Variable>>& cv,
-        const std::string& n, const unsigned short pos) {
-      cv.push_back(std::make_shared<Constraint::Variable>(n, pos));
-    };
+    auto add_variable =
+        [](std::vector<std::shared_ptr<Constraint::Variable>>& cv,
+           const std::string& n, const unsigned short pos) {
+          cv.push_back(std::make_shared<Constraint::Variable>(n, pos));
+        };
     this->c = std::make_shared<Constraint>();
     this->c->c = std::make_shared<Evaluator>(f);
     this->c->np = p;
@@ -276,7 +276,7 @@ namespace mtest {
         }
       }
     } else {
-      K(pos,pos)=1;
+      K(pos, pos) = 1;
     }
   }  // end of NonLinearConstraint::setValues
 

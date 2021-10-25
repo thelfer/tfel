@@ -1,19 +1,19 @@
 /*!
  * \file   ComputePK1Derivative.cxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   14 déc. 2015
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
-#include<cmath>
-#include<cstdlib>
-#include<iostream>
+#include <cmath>
+#include <cstdlib>
+#include <iostream>
 
 #include "TFEL/Tests/TestCase.hxx"
 #include "TFEL/Tests/TestProxy.hxx"
@@ -26,20 +26,19 @@
 
 struct ComputePK1DerivativeTest final : public tfel::tests::TestCase {
   ComputePK1DerivativeTest()
-    : tfel::tests::TestCase("TFEL/Math",
-			    "ComputePK1DerivativeTest")
-  {} // end of ComputePK1DerivativeTest
+      : tfel::tests::TestCase("TFEL/Math", "ComputePK1DerivativeTest") {
+  }  // end of ComputePK1DerivativeTest
   tfel::tests::TestResult execute() override {
     this->execute<1>();
     this->execute<2>();
     this->execute<3>();
     return this->result;
-  } // end of execute
+  }  // end of execute
   ~ComputePK1DerivativeTest() override = default;
 
  private:
-  template<unsigned short N>
-  void execute(){
+  template <unsigned short N>
+  void execute() {
     using namespace tfel::math;
     const auto lambda = 150e9;
     const auto mu = 70e9;
@@ -63,19 +62,21 @@ struct ComputePK1DerivativeTest final : public tfel::tests::TestCase {
       Fp[i] += eps;
       Fm[i] -= eps;
       const auto ep = computeGreenLagrangeTensor(Fp);
-      const auto Sp = lambda * trace(ep) * stensor<N, double>::Id() + 2 * mu * ep;
+      const auto Sp =
+          lambda * trace(ep) * stensor<N, double>::Id() + 2 * mu * ep;
       const auto sp = convertSecondPiolaKirchhoffStressToCauchyStress(Sp, Fp);
-      const auto PK1p = convertCauchyStressToFirstPiolaKirchhoffStress(sp,Fp);
+      const auto PK1p = convertCauchyStressToFirstPiolaKirchhoffStress(sp, Fp);
       const auto em = computeGreenLagrangeTensor(Fm);
-      const auto Sm = lambda * trace(em) * stensor<N, double>::Id() + 2 * mu * em;
+      const auto Sm =
+          lambda * trace(em) * stensor<N, double>::Id() + 2 * mu * em;
       const auto sm = convertSecondPiolaKirchhoffStressToCauchyStress(Sm, Fm);
-      const auto PK1m = convertCauchyStressToFirstPiolaKirchhoffStress(sm,Fm);
+      const auto PK1m = convertCauchyStressToFirstPiolaKirchhoffStress(sm, Fm);
       for (unsigned short j = 0; j != F.size(); ++j) {
         ndPK1(j, i) = (PK1p(j) - PK1m(j)) / (2 * eps);
       }
     }
-    for(unsigned short i=0;i!=F.size();++i){
-      for(unsigned short j=0;j!=F.size();++j){
+    for (unsigned short i = 0; i != F.size(); ++i) {
+      for (unsigned short j = 0; j != F.size(); ++j) {
         const auto err = std::abs(ndPK1(i, j) - dPK1(i, j));
         if (err > prec) {
           std::cout << i << " " << j << " " << ndPK1(i, j) << " " << dPK1(i, j)
@@ -95,4 +96,4 @@ int main() {
   m.addTestOutput(std::cout);
   m.addXMLTestOutput("ComputePK1Derivative.xml");
   return m.execute().success() ? EXIT_SUCCESS : EXIT_FAILURE;
-} // end of main
+}  // end of main

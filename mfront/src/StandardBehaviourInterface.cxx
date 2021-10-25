@@ -11,28 +11,29 @@
  * project under specific licensing conditions.
  */
 
-#include<ostream>
-#include"TFEL/Raise.hxx"
-#include"TFEL/Glossary/Glossary.hxx"
-#include"TFEL/Glossary/GlossaryEntry.hxx"
-#include"MFront/DSLUtilities.hxx"
-#include"MFront/BehaviourDescription.hxx"
-#include"MFront/StandardBehaviourInterface.hxx"
+#include <ostream>
+#include "TFEL/Raise.hxx"
+#include "TFEL/Glossary/Glossary.hxx"
+#include "TFEL/Glossary/GlossaryEntry.hxx"
+#include "MFront/DSLUtilities.hxx"
+#include "MFront/BehaviourDescription.hxx"
+#include "MFront/StandardBehaviourInterface.hxx"
 
 namespace mfront {
 
-    /*!
-     * \param[out] rp: if true, a least one floatting-point parameter
-     * has been found.
-     * \param[out] ip: if true, a least one integer parameter has been
-     * found.
-     * \param[out] up: if true, a least one parameter of type
-     * `unsigned short` has been found.
-     * \param[in] pc: list of parameters.
-     */
-  static void checkParametersType(
-      bool& rp,bool& ip,bool& up,
-      const VariableDescriptionContainer& pc) {
+  /*!
+   * \param[out] rp: if true, a least one floatting-point parameter
+   * has been found.
+   * \param[out] ip: if true, a least one integer parameter has been
+   * found.
+   * \param[out] up: if true, a least one parameter of type
+   * `unsigned short` has been found.
+   * \param[in] pc: list of parameters.
+   */
+  static void checkParametersType(bool& rp,
+                                  bool& ip,
+                                  bool& up,
+                                  const VariableDescriptionContainer& pc) {
     rp = false;
     ip = false;
     up = false;
@@ -51,7 +52,7 @@ namespace mfront {
       }
     }
   }  // end of checkParametersType
-  
+
   StandardBehaviourInterface::StandardBehaviourInterface() = default;
 
   const char* const StandardBehaviourInterface::generateMTestFileAttribute =
@@ -64,7 +65,7 @@ namespace mfront {
       return !mb.areAllMechanicalDataSpecialised(mhs);
     }
     return mhs.find(h) != mhs.end();
-  } // end of StandardBehaviourInterface::isBehaviourConstructorRequired
+  }  // end of StandardBehaviourInterface::isBehaviourConstructorRequired
 
   std::string StandardBehaviourInterface::getHeaderGuard(
       const BehaviourDescription& mb) const {
@@ -83,8 +84,9 @@ namespace mfront {
     header += "_HXX";
     return header;
   }  // end of StandardBehaviourInterface::getHeaderGuard
-  
-  void StandardBehaviourInterface::writeVisibilityDefines(std::ostream& out) const {
+
+  void StandardBehaviourInterface::writeVisibilityDefines(
+      std::ostream& out) const {
     out << "#ifdef _WIN32\n"
         << "#ifndef NOMINMAX\n"
         << "#define NOMINMAX\n"
@@ -100,8 +102,8 @@ namespace mfront {
   }  // end of StandardBehaviourInterface::writeVisibilityDefines
 
   std::pair<std::vector<BehaviourMaterialProperty>, SupportedTypes::TypeSize>
-  StandardBehaviourInterface::buildMaterialPropertiesList(const BehaviourDescription& bd,
-                                                 const Hypothesis h) const {
+  StandardBehaviourInterface::buildMaterialPropertiesList(
+      const BehaviourDescription& bd, const Hypothesis h) const {
     if (h == ModellingHypothesis::UNDEFINEDHYPOTHESIS) {
       return mfront::buildMaterialPropertiesList(
           bd, this->getModellingHypothesesToBeTreated(bd));
@@ -116,7 +118,8 @@ namespace mfront {
         << "_setOutOfBoundsPolicy(const int);\n\n";
   }
 
-  void StandardBehaviourInterface::writeGetOutOfBoundsPolicyFunctionImplementation(
+  void
+  StandardBehaviourInterface::writeGetOutOfBoundsPolicyFunctionImplementation(
       std::ostream& out, const std::string& name) const {
     out << "static tfel::material::OutOfBoundsPolicy&\n"
         << this->getFunctionNameBasis(name) << "_getOutOfBoundsPolicy(){\n"
@@ -127,7 +130,8 @@ namespace mfront {
   }  // end of
      // StandardBehaviourInterface::writeGetOutOfBoundsPolicyFunctionImplementation
 
-  void StandardBehaviourInterface::writeSetOutOfBoundsPolicyFunctionImplementation(
+  void
+  StandardBehaviourInterface::writeSetOutOfBoundsPolicyFunctionImplementation(
       std::ostream& out, const std::string& name) const {
     out << "MFRONT_SHAREDOBJ void\n"
         << this->getFunctionNameBasis(name)
@@ -179,12 +183,14 @@ namespace mfront {
         }
         if (up) {
           out << "MFRONT_SHAREDOBJ int\n"
-              << fctName << "_setUnsignedShortParameter(const char "
-                            "*const,const unsigned short);\n\n";
+              << fctName
+              << "_setUnsignedShortParameter(const char "
+                 "*const,const unsigned short);\n\n";
         }
       }
     }
-  }  // end of StandardBehaviourInterface::writeSetParametersFunctionsDeclarations
+  }  // end of
+     // StandardBehaviourInterface::writeSetParametersFunctionsDeclarations
 
   void StandardBehaviourInterface::writeSetParametersFunctionsImplementations(
       std::ostream& out,
@@ -223,8 +229,9 @@ namespace mfront {
         }
         if (ip) {
           out << "MFRONT_SHAREDOBJ int\n"
-              << fctName << "_setIntegerParameter(const char *const key,const "
-                            "int value){\n"
+              << fctName
+              << "_setIntegerParameter(const char *const key,const "
+                 "int value){\n"
               << "using tfel::material::" << cname << ";\n"
               << "auto& i = " << cname << "::get();\n"
               << "try{\n"
@@ -238,8 +245,9 @@ namespace mfront {
         }
         if (up) {
           out << "MFRONT_SHAREDOBJ int\n"
-              << fctName << "_setUnsignedShortParameter(const char *const "
-                            "key,const unsigned short value){\n"
+              << fctName
+              << "_setUnsignedShortParameter(const char *const "
+                 "key,const unsigned short value){\n"
               << "using tfel::material::" << cname << ";\n"
               << "auto& i = " << cname << "::get();\n"
               << "try{\n"
@@ -260,7 +268,8 @@ namespace mfront {
     const auto a = this->getInterfaceName() + "::" +
                    StandardBehaviourInterface::generateMTestFileAttribute;
     bd.setAttribute(a, b, false);
-  }  // end of StandardBehaviourInterface::setGenerateMTestFileOnFailureAttribute
+  }  // end of
+     // StandardBehaviourInterface::setGenerateMTestFileOnFailureAttribute
 
   bool StandardBehaviourInterface::shallGenerateMTestFileOnFailure(
       const BehaviourDescription& bd) const {
@@ -326,7 +335,7 @@ namespace mfront {
     ++(current);
     return b;
   }  // end of StandardBehaviourInterface::readBooleanValue
-  
+
   StandardBehaviourInterface::~StandardBehaviourInterface() = default;
 
 }  // end of namespace mfront

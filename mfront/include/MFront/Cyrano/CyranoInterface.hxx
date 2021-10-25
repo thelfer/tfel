@@ -31,73 +31,80 @@ namespace cyrano {
    * \author Thomas Helfer
    * \date   28 Jul 2006
    */
-  template <template <tfel::material::ModellingHypothesis::Hypothesis, typename, bool>
-            class Behaviour>
-  struct TFEL_VISIBILITY_LOCAL CyranoInterface : protected CyranoInterfaceExceptions {
+  template <
+      template <tfel::material::ModellingHypothesis::Hypothesis, typename, bool>
+      class Behaviour>
+  struct TFEL_VISIBILITY_LOCAL CyranoInterface
+      : protected CyranoInterfaceExceptions {
     /*!
      * Main entry point This barely make a dispatch based on the
      * spatial dimension and the modelling hypothesis.
      */
-    TFEL_CYRANO_INLINE2 static void exe(const CyranoInt *const NTENS,
-                                        const CyranoReal *const DTIME,
-                                        const CyranoReal *const DROT,
-                                        CyranoReal *const DDSOE,
-                                        const CyranoReal *const STRAN,
-                                        const CyranoReal *const DSTRAN,
-                                        const CyranoReal *const TEMP,
-                                        const CyranoReal *const DTEMP,
-                                        const CyranoReal *const PROPS,
-                                        const CyranoInt *const NPROPS,
-                                        const CyranoReal *const PREDEF,
-                                        const CyranoReal *const DPRED,
-                                        CyranoReal *const STATEV,
-                                        const CyranoInt *const NSTATV,
-                                        CyranoReal *const STRESS,
-                                        const CyranoInt *const NDI,
-                                        CyranoInt *const KINC,
-                                        const StressFreeExpansionHandler sfeh,
-                                        const tfel::material::OutOfBoundsPolicy op) {
+    TFEL_CYRANO_INLINE2 static void exe(
+        const CyranoInt *const NTENS,
+        const CyranoReal *const DTIME,
+        const CyranoReal *const DROT,
+        CyranoReal *const DDSOE,
+        const CyranoReal *const STRAN,
+        const CyranoReal *const DSTRAN,
+        const CyranoReal *const TEMP,
+        const CyranoReal *const DTEMP,
+        const CyranoReal *const PROPS,
+        const CyranoInt *const NPROPS,
+        const CyranoReal *const PREDEF,
+        const CyranoReal *const DPRED,
+        CyranoReal *const STATEV,
+        const CyranoInt *const NSTATV,
+        CyranoReal *const STRESS,
+        const CyranoInt *const NDI,
+        CyranoInt *const KINC,
+        const StressFreeExpansionHandler sfeh,
+        const tfel::material::OutOfBoundsPolicy op) {
       using namespace tfel::material;
       typedef ModellingHypothesis MH;
       CyranoInterfaceExceptions::checkNTENSValue(*NTENS, 3u);
       if (*NDI == 1) {
-        CyranoInterface::template callBehaviour<MH::AXISYMMETRICALGENERALISEDPLANESTRAIN>(
-            DTIME, DROT, DDSOE, STRAN, DSTRAN, TEMP, DTEMP, PROPS, NPROPS, PREDEF, DPRED, STATEV,
-            NSTATV, STRESS, KINC, sfeh, op);
+        CyranoInterface::template callBehaviour<
+            MH::AXISYMMETRICALGENERALISEDPLANESTRAIN>(
+            DTIME, DROT, DDSOE, STRAN, DSTRAN, TEMP, DTEMP, PROPS, NPROPS,
+            PREDEF, DPRED, STATEV, NSTATV, STRESS, KINC, sfeh, op);
       } else if (*NDI == 2) {
-        CyranoInterface::template callBehaviour<MH::AXISYMMETRICALGENERALISEDPLANESTRESS>(
-            DTIME, DROT, DDSOE, STRAN, DSTRAN, TEMP, DTEMP, PROPS, NPROPS, PREDEF, DPRED, STATEV,
-            NSTATV, STRESS, KINC, sfeh, op);
+        CyranoInterface::template callBehaviour<
+            MH::AXISYMMETRICALGENERALISEDPLANESTRESS>(
+            DTIME, DROT, DDSOE, STRAN, DSTRAN, TEMP, DTEMP, PROPS, NPROPS,
+            PREDEF, DPRED, STATEV, NSTATV, STRESS, KINC, sfeh, op);
       } else {
-        CyranoInterfaceExceptions::displayInvalidModellingHypothesisErrorMessage();
+        CyranoInterfaceExceptions::
+            displayInvalidModellingHypothesisErrorMessage();
         *KINC = -7;
       }
     }  // end of exe
 
     template <tfel::material::ModellingHypothesis::Hypothesis H>
-    TFEL_CYRANO_INLINE2 static void callBehaviour(const CyranoReal *const DTIME,
-                                                  const CyranoReal *const DROT,
-                                                  CyranoReal *const DDSOE,
-                                                  const CyranoReal *const STRAN,
-                                                  const CyranoReal *const DSTRAN,
-                                                  const CyranoReal *const TEMP,
-                                                  const CyranoReal *const DTEMP,
-                                                  const CyranoReal *const PROPS,
-                                                  const CyranoInt *const NPROPS,
-                                                  const CyranoReal *const PREDEF,
-                                                  const CyranoReal *const DPRED,
-                                                  CyranoReal *const STATEV,
-                                                  const CyranoInt *const NSTATV,
-                                                  CyranoReal *const STRESS,
-                                                  CyranoInt *const KINC,
-                                                  const StressFreeExpansionHandler sfeh,
-                                                  const tfel::material::OutOfBoundsPolicy op) {
+    TFEL_CYRANO_INLINE2 static void callBehaviour(
+        const CyranoReal *const DTIME,
+        const CyranoReal *const DROT,
+        CyranoReal *const DDSOE,
+        const CyranoReal *const STRAN,
+        const CyranoReal *const DSTRAN,
+        const CyranoReal *const TEMP,
+        const CyranoReal *const DTEMP,
+        const CyranoReal *const PROPS,
+        const CyranoInt *const NPROPS,
+        const CyranoReal *const PREDEF,
+        const CyranoReal *const DPRED,
+        CyranoReal *const STATEV,
+        const CyranoInt *const NSTATV,
+        CyranoReal *const STRESS,
+        CyranoInt *const KINC,
+        const StressFreeExpansionHandler sfeh,
+        const tfel::material::OutOfBoundsPolicy op) {
       typedef Behaviour<H, CyranoReal, false> BV;
       typedef tfel::material::MechanicalBehaviourTraits<BV> Traits;
       try {
-        CyranoInterfaceDispatch<H, Behaviour>::exe(DTIME, DROT, DDSOE, STRAN, DSTRAN, TEMP, DTEMP,
-                                                   PROPS, NPROPS, PREDEF, DPRED, STATEV, NSTATV,
-                                                   STRESS, sfeh, op);
+        CyranoInterfaceDispatch<H, Behaviour>::exe(
+            DTIME, DROT, DDSOE, STRAN, DSTRAN, TEMP, DTEMP, PROPS, NPROPS,
+            PREDEF, DPRED, STATEV, NSTATV, STRESS, sfeh, op);
       } catch (const CyranoIntegrationFailed &e) {
         CyranoInterfaceExceptions::treatCyranoException(Traits::getName(), e);
         *KINC = -1;

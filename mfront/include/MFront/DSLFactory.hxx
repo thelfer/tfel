@@ -1,28 +1,28 @@
 /*!
  * \file   mfront/include/MFront/DSLFactory.hxx
- * \brief  
+ * \brief
  * \author Thomas Helfer
  * \date   09 nov 2006
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_MFRONTPARSERFACTORY_HXX
-#define LIB_MFRONTPARSERFACTORY_HXX 
+#define LIB_MFRONTPARSERFACTORY_HXX
 
-#include<map>
-#include<vector>
-#include<string>
-#include<memory>
+#include <map>
+#include <vector>
+#include <string>
+#include <memory>
 
-#include"MFront/MFrontConfig.hxx"
-#include"MFront/AbstractDSL.hxx"
+#include "MFront/MFrontConfig.hxx"
+#include "MFront/AbstractDSL.hxx"
 
-namespace mfront{
+namespace mfront {
 
   struct MFRONT_VISIBILITY_EXPORT DSLFactory {
     //! \brief a simple alias
@@ -49,7 +49,9 @@ namespace mfront{
 
     std::vector<std::string> getRegistredParsers(const bool = true) const;
 
-    void registerParserCreator(const std::string&, ParserCreator, DescriptionPtr);
+    void registerParserCreator(const std::string&,
+                               ParserCreator,
+                               DescriptionPtr);
 
     std::string getParserDescription(const std::string&) const;
 
@@ -57,17 +59,16 @@ namespace mfront{
     //! destructor
     ~DSLFactory();
 
-  private:
-   std::map<std::string, std::vector<std::string>> aliases;
-   std::map<std::string, DSLCreator> creators;
-   std::map<std::string, DescriptionPtr> descriptions;
+   private:
+    std::map<std::string, std::vector<std::string>> aliases;
+    std::map<std::string, DSLCreator> creators;
+    std::map<std::string, DescriptionPtr> descriptions;
 
-   TFEL_VISIBILITY_LOCAL
-   DSLFactory();
+    TFEL_VISIBILITY_LOCAL
+    DSLFactory();
 
-  }; // end of struct DSLFactory
+  };  // end of struct DSLFactory
 
-} // end of namespace mfront  
+}  // end of namespace mfront
 
 #endif /* LIB_MFRONTPARSERFACTORY_HXX */
-

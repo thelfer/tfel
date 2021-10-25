@@ -349,7 +349,8 @@ namespace mtest {
     std::copy(cn.begin(), cn.end(), this->mname);
   }  // end of MistralBehaviour::MistralBehaviour
 
-  std::vector<std::string> MistralBehaviour::getOptionalMaterialProperties() const {
+  std::vector<std::string> MistralBehaviour::getOptionalMaterialProperties()
+      const {
     auto omps = CastemSmallStrainBehaviour::getOptionalMaterialProperties();
     for (decltype(this->parameters.size()) i = 0; i != this->parameters.size();
          ++i) {
@@ -358,7 +359,7 @@ namespace mtest {
                      std::to_string(idx);
       omps.push_back(n);
     }
-    omps.insert(omps.end(),{"SENSIP1", "SENSIP2", "ICBASE"});
+    omps.insert(omps.end(), {"SENSIP1", "SENSIP2", "ICBASE"});
     return omps;
   }  // end of MistralBehaviour::getOptionalMaterialProperties
 
@@ -434,8 +435,8 @@ namespace mtest {
 
   const char* MistralBehaviour::getBehaviourNameForUMATFunctionCall() const {
     return this->mname;
-    }  // end of MistralBehaviour::getBehaviourNameForUMATFunctionCall
+  }  // end of MistralBehaviour::getBehaviourNameForUMATFunctionCall
 
-    MistralBehaviour::~MistralBehaviour() = default;
+  MistralBehaviour::~MistralBehaviour() = default;
 
 }  // end of namespace mtest

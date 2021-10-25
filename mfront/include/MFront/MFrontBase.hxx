@@ -89,4 +89,3 @@ namespace mfront {
 }  // end of namespace mfront
 
 #endif /* LIB_MFRONT_MFRONTBASE_HXX */
-

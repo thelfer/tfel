@@ -1,6 +1,6 @@
 /*!
  * \file   TestCaseParameters.cxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   17/09/2019
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
@@ -16,7 +16,7 @@
 #include "MFMTestGenerator/Evolution.hxx"
 #include "MFMTestGenerator/TestCaseParameters.hxx"
 
-namespace mfmtg{
+namespace mfmtg {
 
   void check(const TestCaseParameters& m, const std::vector<std::string>& k) {
     for (const auto& p : m) {
@@ -27,11 +27,11 @@ namespace mfmtg{
   }  // end of check
 
   bool contains(const TestCaseParameters& parameters, const std::string& n) {
-    return parameters.count(n)!=0;
+    return parameters.count(n) != 0;
   }  // end of contains
 
   bool contains(const TestCaseParameters& parameters, const char* const n) {
-    return parameters.count(n)!=0;
+    return parameters.count(n) != 0;
   }  // end of contains
 
   const TestCaseParameter& getParameter(const TestCaseParameters& parameters,
@@ -82,8 +82,8 @@ namespace mfmtg{
       return static_cast<double>(e.get<int>());
     } else if (e.is<double>()) {
       return e.get<double>();
-    } else if (e.is<std::map<double,double>>()) {
-      return e.get<std::map<double,double>>();
+    } else if (e.is<std::map<double, double>>()) {
+      return e.get<std::map<double, double>>();
     } else if (!e.is<TestCaseParameters>()) {
       tfel::raise("getEvolution: invalid type for evolution '" +
                   std::string(n) + "'");
@@ -146,10 +146,10 @@ namespace mfmtg{
       evs.insert({ev.first, getEvolution(m, ev.first)});
     }
     return evs;
-  } // end of getEvolutions
+  }  // end of getEvolutions
 
   void throwInvalidParameterTypeException(const std::string& n) {
     tfel::raise("get_parameter: unexpected type for parameter '" + n + "'");
   }  // end of throwInvalidParameterTypeException
 
-} // end of namespace mfmtg
+}  // end of namespace mfmtg

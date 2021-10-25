@@ -278,7 +278,7 @@ namespace mfront {
 
   BehaviourData::BehaviourData() {
     this->registerMemberName("dt");
-    this->reserveName("\u0394t"); // symbolic value
+    this->reserveName("\u0394t");  // symbolic value
     // treating the temperature
     auto T = VariableDescription{"temperature", "T", 1u, 0u};
     T.setGlossaryName("Temperature");
@@ -1674,7 +1674,8 @@ namespace mfront {
     return false;
   }  // end of BehaviourData::isStressFreeExansionAnisotropic
 
-  void BehaviourData::getSymbols(std::map<std::string, std::string>& symbols) const {
+  void BehaviourData::getSymbols(
+      std::map<std::string, std::string>& symbols) const {
     mfront::getSymbols(symbols, this->materialProperties);
     mfront::getSymbols(symbols, this->persistentVariables);
     mfront::getSymbols(symbols, this->integrationVariables);

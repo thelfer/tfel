@@ -1,31 +1,31 @@
 /*!
  * \file   include/TFEL/Math/T2toST2/T2toST2FromTinyMatrixView.hxx
  * \brief  T2toST2FromTMatrixView
- * 
+ *
  * \author Thomas Helfer
  * \date   19 November 2013
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_TFEL_MATH_T2TOST2FROMTINYMATRIXVIEW_HXX
-#define LIB_TFEL_MATH_T2TOST2FROMTINYMATRIXVIEW_HXX 
+#define LIB_TFEL_MATH_T2TOST2FROMTINYMATRIXVIEW_HXX
 
-#include"TFEL/Metaprogramming/StaticAssert.hxx"
+#include "TFEL/Metaprogramming/StaticAssert.hxx"
 
-#include"TFEL/Math/General/EmptyRunTimeProperties.hxx"
-#include"TFEL/Math/Matrix/MatrixUtilities.hxx"
-#include"TFEL/Math/T2toST2/T2toST2Concept.hxx"
-#include"TFEL/Math/t2tost2.hxx"
-#include"TFEL/Math/tmatrix.hxx"
+#include "TFEL/Math/General/EmptyRunTimeProperties.hxx"
+#include "TFEL/Math/Matrix/MatrixUtilities.hxx"
+#include "TFEL/Math/T2toST2/T2toST2Concept.hxx"
+#include "TFEL/Math/t2tost2.hxx"
+#include "TFEL/Math/tmatrix.hxx"
 
 // namespace tfel
 // {
-  
+
 //   namespace math
 //   {
 
@@ -50,9 +50,10 @@
 //     struct Expr<t2tost2<N,T>,
 // 			T2toST2FromTinyMatrixViewExpr<N,Mn,Mm,In,Im,T> >
 // 	: public T2toST2Concept<Expr<t2tost2<N,T>,
-// 					      T2toST2FromTinyMatrixViewExpr<N,Mn,Mm,In,Im,T> > >,
-// 	  public t2tost2_base<Expr<t2tost2<N,T>,
-// 					    T2toST2FromTinyMatrixViewExpr<N,Mn,Mm,In,Im,T> > >
+// 					      T2toST2FromTinyMatrixViewExpr<N,Mn,Mm,In,Im,T>
+// > >, 	  public t2tost2_base<Expr<t2tost2<N,T>,
+// 					    T2toST2FromTinyMatrixViewExpr<N,Mn,Mm,In,Im,T> >
+// >
 //     {
 
 //       typedef EmptyRunTimeProperties RunTimeProperties;
@@ -87,23 +88,22 @@
 
 //       //! assignement operator
 //       using t2tost2_base<Expr>::operator=;
-      
+
 //     protected:
 
 //       tmatrix<Mn,Mm,T>& m;
-      
+
 //     private:
-      
+
 //       /*!
 //        * Simple checks
 //        */
 //       TFEL_STATIC_ASSERT((N==1u)||(N==2u)||(N==3u));
 //       TFEL_STATIC_ASSERT((In<Mn));
 //       TFEL_STATIC_ASSERT((StensorDimeToSize<N>::value<=Mm-Im));
-      
+
 //     }; // end of struct Expr
-    
-    
+
 //     template<unsigned short N,
 // 	     unsigned short Mn,
 // 	     unsigned short Mm,
@@ -112,12 +112,13 @@
 // 	     typename T = double>
 //     struct T2toST2FromTinyMatrixView
 //     {
-//       typedef Expr<t2tost2<N,T>,T2toST2FromTinyMatrixViewExpr<N,Mn,Mm,In,Im,T> > type;
+//       typedef
+//       Expr<t2tost2<N,T>,T2toST2FromTinyMatrixViewExpr<N,Mn,Mm,In,Im,T> >
+//       type;
 //     }; // end of struct T2toST2FromTinyMatrixView
-    
+
 //   } // end of namespace math
-  
+
 // } // end of namespace tfel
 
 #endif /* LIB_TFEL_MATH_T2TOST2FROMTINYMATRIXVIEW_HXX */
-

@@ -110,13 +110,14 @@ namespace tfel {
             (p.cos_lodeT / 3) *
             (3 + p.tan_lodeT * p.tan_3_lodeT +
              isqrt3 * sign * (p.tan_3_lodeT - 3 * p.tan_lodeT) * p.sin_angle);
-        const auto B = 1 / (3 * p.cos_3_lodeT) *
-                       (sign * p.sin_lodeT + isqrt3 * p.sin_angle * p.cos_lodeT);
+        const auto B =
+            1 / (3 * p.cos_3_lodeT) *
+            (sign * p.sin_lodeT + isqrt3 * p.sin_angle * p.cos_lodeT);
         return A - B * sin_3_lode;
       }();
-      const auto rootF =
-          std::max(std::sqrt(J2 * K * K + p.a * p.a * p.sin_angle * p.sin_angle),
-                   local_zero_tolerance);
+      const auto rootF = std::max(
+          std::sqrt(J2 * K * K + p.a * p.a * p.sin_angle * p.sin_angle),
+          local_zero_tolerance);
       const auto Fy1 = I1 * p.sin_angle / 3 + rootF;
       return Fy1 - p.c * p.cos_angle;
     }  // end of computeMohrCoulombStressCriterion
@@ -165,17 +166,18 @@ namespace tfel {
             (p.cos_lodeT / 3) *
             (3 + p.tan_lodeT * p.tan_3_lodeT +
              isqrt3 * sign * (p.tan_3_lodeT - 3 * p.tan_lodeT) * p.sin_angle);
-        const auto B = 1 / (3 * p.cos_3_lodeT) *
-                       (sign * p.sin_lodeT + isqrt3 * p.sin_angle * p.cos_lodeT);
+        const auto B =
+            1 / (3 * p.cos_3_lodeT) *
+            (sign * p.sin_lodeT + isqrt3 * p.sin_angle * p.cos_lodeT);
         return {A - B * sin_3_lode, -3 * B * cos_3_lode};
       }();
       // flow direction
       const auto dev_s_squared =
           tfel::math::computeDeviatorDeterminantDerivative(sig);
       const auto dG_dI1 = p.sin_angle / 3;
-      const auto root =
-          std::max(std::sqrt(J2 * K * K + p.a * p.a * p.sin_angle * p.sin_angle),
-                   local_zero_tolerance);
+      const auto root = std::max(
+          std::sqrt(J2 * K * K + p.a * p.a * p.sin_angle * p.sin_angle),
+          local_zero_tolerance);
       const auto dG_dJ2 = K / (2 * root) * (K - tan_3_lode * dK_dlode);
       const auto dG_dJ3 = J2 * K * tan_3_lode / (3 * J3 * root) * dK_dlode;
       const auto n =
@@ -234,8 +236,9 @@ namespace tfel {
             (p.cos_lodeT / 3) *
             (3 + p.tan_lodeT * p.tan_3_lodeT +
              isqrt3 * sign * (p.tan_3_lodeT - 3 * p.tan_lodeT) * p.sin_angle);
-        const auto B = 1 / (3 * p.cos_3_lodeT) *
-                       (sign * p.sin_lodeT + isqrt3 * p.sin_angle * p.cos_lodeT);
+        const auto B =
+            1 / (3 * p.cos_3_lodeT) *
+            (sign * p.sin_lodeT + isqrt3 * p.sin_angle * p.cos_lodeT);
         return {A - B * sin_3_lode, -3 * B * cos_3_lode, 9. * B * sin_3_lode};
       }();
       // flow direction
@@ -243,16 +246,17 @@ namespace tfel {
       const auto d2J3 =
           tfel::math::computeDeviatorDeterminantSecondDerivative(sig);
       const auto dG_dI1 = p.sin_angle / 3;
-      const auto root =
-          std::max(std::sqrt(J2 * K * K + p.a * p.a * p.sin_angle * p.sin_angle),
-                   local_zero_tolerance);
+      const auto root = std::max(
+          std::sqrt(J2 * K * K + p.a * p.a * p.sin_angle * p.sin_angle),
+          local_zero_tolerance);
       const auto dG_dJ2 = K / (2 * root) * (K - tan_3_lode * dK_dlode);
       const auto dG_dJ3 = J2 * K * tan_3_lode / (3 * J3 * root) * dK_dlode;
       const auto Pdev = id4 - (id ^ id) / 3;
       const auto dG_dlode = K * J2 / (root)*dK_dlode;
       const auto d2G_d2lode =
-          J2 / root * (dK_dlode * dK_dlode * (1. - J2 * K * K / (root * root)) +
-                       K * d2K_d2lode);
+          J2 / root *
+          (dK_dlode * dK_dlode * (1. - J2 * K * K / (root * root)) +
+           K * d2K_d2lode);
       const auto d2G_dlodedJ2 =
           K / root * dK_dlode * (1. - J2 * K * K / (2 * root * root));
       const auto dG_d2J2 =
@@ -283,7 +287,8 @@ namespace tfel {
                              const MohrCoulombParameters<StressStensor>& p) {
       os << "c (cohesion): " << p.c << '\n';
       os << "angle (friction angle or dilatancy angle): " << p.angle << '\n';
-      os << "lodeT (transition angle as defined by Abbo and Sloan): " << p.lodeT<< '\n';
+      os << "lodeT (transition angle as defined by Abbo and Sloan): " << p.lodeT
+         << '\n';
       os << "a (tension cuff-off parameter): " << p.a << '\n';
       return os;
     }  // end of operator <<

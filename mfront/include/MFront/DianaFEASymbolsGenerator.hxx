@@ -1,6 +1,6 @@
 /*!
  * \file   DianaFEASymbolsGenerator.hxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   08/01/2019
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
@@ -27,14 +27,13 @@ namespace mfront {
     //! constructor
     DianaFEASymbolsGenerator();
     void writeBehaviourTypeSymbols(std::ostream &,
-                                         const StandardBehaviourInterface &,
-                                         const BehaviourDescription &,
-                                         const std::string &) const override;
-    void writeBehaviourKinematicSymbols(
-        std::ostream &,
-        const StandardBehaviourInterface &,
-        const BehaviourDescription &,
-        const std::string &) const override;
+                                   const StandardBehaviourInterface &,
+                                   const BehaviourDescription &,
+                                   const std::string &) const override;
+    void writeBehaviourKinematicSymbols(std::ostream &,
+                                        const StandardBehaviourInterface &,
+                                        const BehaviourDescription &,
+                                        const std::string &) const override;
     void writeAdditionalSymbols(std::ostream &,
                                 const StandardBehaviourInterface &,
                                 const BehaviourDescription &,

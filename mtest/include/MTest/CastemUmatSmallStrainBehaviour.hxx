@@ -1,27 +1,26 @@
-/*! 
+/*!
  * \file  mtest/include/MTest/CastemUmatSmallStrainBehaviour.hxx
  * \brief
  * \author Thomas Helfer
  * \brief 07 avril 2013
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_MTEST_CASTEMUMATSMALLSTRAINBEHAVIOUR_HXX
-#define LIB_MTEST_CASTEMUMATSMALLSTRAINBEHAVIOUR_HXX 
+#define LIB_MTEST_CASTEMUMATSMALLSTRAINBEHAVIOUR_HXX
 
-#include<memory>
-#include"TFEL/Utilities/Data.hxx"
-#include"TFEL/System/ExternalFunctionsPrototypes.hxx"
-#include"MTest/CastemUmatStandardBehaviour.hxx"
-#include"MTest/CastemSmallStrainBehaviour.hxx"
+#include <memory>
+#include "TFEL/Utilities/Data.hxx"
+#include "TFEL/System/ExternalFunctionsPrototypes.hxx"
+#include "MTest/CastemUmatStandardBehaviour.hxx"
+#include "MTest/CastemSmallStrainBehaviour.hxx"
 
-namespace mtest
-{
+namespace mtest {
 
   /*!
    * A class to handle mechanical beheaviours written using the umat
@@ -53,8 +52,8 @@ namespace mtest
                                    const std::string&);
 
     std::vector<std::string> getOptionalMaterialProperties() const override;
-    void setOptionalMaterialPropertiesDefaultValues(EvolutionManager&,
-						    const EvolutionManager&) const override;
+    void setOptionalMaterialPropertiesDefaultValues(
+        EvolutionManager&, const EvolutionManager&) const override;
     /*!
      * \return the string passed to the UMAT function through the
      * CMNAME parameter.
@@ -62,11 +61,12 @@ namespace mtest
     const char* getBehaviourNameForUMATFunctionCall() const override;
     //! destructor
     ~CastemUmatSmallStrainBehaviour() override;
-  protected:
+
+   protected:
     //! material name
     char mname[16u];
-  }; // end of struct Behaviour
-  
-} // end of namespace mtest
+  };  // end of struct Behaviour
+
+}  // end of namespace mtest
 
 #endif /* LIB_MTEST_CASTEMUMATSMALLSTRAINBEHAVIOUR_HXX */

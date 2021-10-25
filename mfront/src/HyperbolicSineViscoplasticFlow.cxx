@@ -27,7 +27,8 @@ namespace mfront {
 
   namespace bbrick {
 
-    std::vector<OptionDescription> HyperbolicSineViscoplasticFlow::getOptions() const {
+    std::vector<OptionDescription> HyperbolicSineViscoplasticFlow::getOptions()
+        const {
       auto opts = ViscoplasticFlowBase::getOptions();
       opts.emplace_back("A", "Norton coefficient (optional)",
                         OptionDescription::MATERIALPROPERTY);
@@ -43,12 +44,13 @@ namespace mfront {
     }  // end of HyperbolicSineViscoplasticFlow::getOptions
 
     void HyperbolicSineViscoplasticFlow::initialize(BehaviourDescription& bd,
-                                         AbstractBehaviourDSL& dsl,
-                                         const std::string& id,
-                                         const DataMap& d) {
+                                                    AbstractBehaviourDSL& dsl,
+                                                    const std::string& id,
+                                                    const DataMap& d) {
       constexpr const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
-      auto get_mp = [&dsl, &bd, &id, &d](
-          const std::string& mpn, const std::string& t, const std::string& vn) {
+      auto get_mp = [&dsl, &bd, &id, &d](const std::string& mpn,
+                                         const std::string& t,
+                                         const std::string& vn) {
         if (d.count(mpn) == 0) {
           tfel::raise(
               "HyperbolicSineViscoplasticFlow::"
@@ -87,10 +89,11 @@ namespace mfront {
       bd.reserveName(uh, "cosh_seqe" + id + "_K");
     }  // end of HyperbolicSineViscoplasticFlow::initialize
 
-    void HyperbolicSineViscoplasticFlow::endTreatment(BehaviourDescription& bd,
-                                           const AbstractBehaviourDSL& dsl,
-                                           const StressPotential& sp,
-                                           const std::string& id) const {
+    void HyperbolicSineViscoplasticFlow::endTreatment(
+        BehaviourDescription& bd,
+        const AbstractBehaviourDSL& dsl,
+        const StressPotential& sp,
+        const std::string& id) const {
       constexpr const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
       ViscoplasticFlowBase::endTreatment(bd, dsl, sp, id);
       if ((!this->A.is<BehaviourDescription::ConstantMaterialProperty>()) ||
@@ -99,8 +102,8 @@ namespace mfront {
         auto mts = getMiddleOfTimeStepModifier(bd);
         CodeBlock i;
         auto eval = [&mts, &dsl, &i](
-            const BehaviourDescription::MaterialProperty& mp,
-            const std::string& mpn) {
+                        const BehaviourDescription::MaterialProperty& mp,
+                        const std::string& mpn) {
           if (!mp.is<BehaviourDescription::ConstantMaterialProperty>()) {
             std::ostringstream mps;
             mps << "this->" + mpn + " = ";

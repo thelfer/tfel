@@ -356,7 +356,8 @@ namespace tfel {
                typename ResultType<StensorNumType<StensorType>,
                                    TensorNumType<TensorType>,
                                    OpMult>::type>>::type
-    convertCauchyStressToFirstPiolaKirchhoffStress(const StensorType&, const TensorType&);
+    convertCauchyStressToFirstPiolaKirchhoffStress(const StensorType&,
+                                                   const TensorType&);
 
     /*!
      * \brief convert the Cauchy stress to the first Piola-Kirchhoff stress in
@@ -379,7 +380,8 @@ namespace tfel {
                typename ResultType<StensorNumType<StensorType>,
                                    TensorNumType<TensorType>,
                                    OpMult>::type>>::type
-    convertCauchyStressToFirstPiolaKirchhoffStress(const StensorType&, const TensorType&);
+    convertCauchyStressToFirstPiolaKirchhoffStress(const StensorType&,
+                                                   const TensorType&);
 
     /*!
      * \brief convert the Cauchy stress to the first Piola-Kirchhoff stress in
@@ -402,7 +404,8 @@ namespace tfel {
                typename ResultType<StensorNumType<StensorType>,
                                    TensorNumType<TensorType>,
                                    OpMult>::type>>::type
-    convertCauchyStressToFirstPiolaKirchhoffStress(const StensorType&, const TensorType&);
+    convertCauchyStressToFirstPiolaKirchhoffStress(const StensorType&,
+                                                   const TensorType&);
 
     template <typename TensorType, typename TensorType2>
     typename std::enable_if<

@@ -31,7 +31,7 @@ namespace mfmtg {
         "UniaxialTensileTest::UniaxialTensileTest: "
         "pre-processing of test '" +
         this->name + "' is finished");
-  } // end of UniaxialTensileTest::UniaxialTensileTest
+  }  // end of UniaxialTensileTest::UniaxialTensileTest
 
   UniaxialTensileTest::~UniaxialTensileTest() = default;
 

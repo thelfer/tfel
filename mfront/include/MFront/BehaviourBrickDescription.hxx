@@ -80,7 +80,8 @@ namespace mfront {
     bool requireCrystalStructureDefinition = false;
     //! \brief allow elastic properties definition as brick options
     bool allowElasticPropertiesDefinitionAsBrickOptions = true;
-    //! \brief allow the definition of the elastic properties (outside brick options)
+    //! \brief allow the definition of the elastic properties (outside brick
+    //! options)
     bool allowElasticPropertiesDefinition = true;
     //! \brief allow the definition stiffness tensor (outside brick options)
     bool allowStiffnessTensorDefinition = true;

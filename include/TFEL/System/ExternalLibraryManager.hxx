@@ -133,7 +133,7 @@ namespace tfel {
        * \param[in] l : name of the library
        * \param[in] s : name of function or mechanical behaviour
        * \param[in] h : modelling hypothesis
-        * \param[in] p : parameter name
+       * \param[in] p : parameter name
        * \param[in] v : value
        */
       void setParameter(const std::string&,

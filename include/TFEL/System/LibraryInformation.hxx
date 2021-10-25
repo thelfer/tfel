@@ -3,12 +3,12 @@
  * \brief A class for querying information about a library.
  * \author Thomas Helfer
  * \date   28 mars 2017
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  *
  * \note This file contains code that has been extracted from the
  * boost/dll library version 1.63 and has been originally written by
@@ -18,15 +18,15 @@
 #ifndef LIB_TFEL_SYSTEM_LIBRARYINFORMATION_HXX
 #define LIB_TFEL_SYSTEM_LIBRARYINFORMATION_HXX
 
-#include<vector>
-#include<string>
-#include<memory>
-#include<iosfwd>
-#include"TFEL/Config/TFELConfig.hxx"
+#include <vector>
+#include <string>
+#include <memory>
+#include <iosfwd>
+#include "TFEL/Config/TFELConfig.hxx"
 
-namespace tfel{
+namespace tfel {
 
-  namespace system{
+  namespace system {
 
     /*!
      * \brief class that is capable of extracting different
@@ -38,8 +38,7 @@ namespace tfel{
      * version 1.63 and has been originally written by Antony
      * Polukhin, Renato Tegon Forti and Antony Polukhin.
      */
-    struct TFELSYSTEM_VISIBILITY_EXPORT LibraryInformation
-    {
+    struct TFELSYSTEM_VISIBILITY_EXPORT LibraryInformation {
       //! structure used to implement the PImpl idiom.
       struct Implementation;
       /*!
@@ -50,8 +49,7 @@ namespace tfel{
        * \param[in] b: throw an exception if this file format is not
        * supported by OS.
        */
-      explicit LibraryInformation(const std::string&,
-				  const bool = true);
+      explicit LibraryInformation(const std::string&, const bool = true);
       //! copy constructor
       LibraryInformation(const LibraryInformation&);
       //! move constructor
@@ -83,13 +81,14 @@ namespace tfel{
       std::vector<std::string> symbols(const std::string&);
       //! \brief destructor
       ~LibraryInformation() noexcept;
-    private:
+
+     private:
       //! pointer to the internal structure
       std::shared_ptr<Implementation> impl;
-    }; // end of struct LibraryInformation
-    
-  } // end of namespace system
-    
-} // end of namespace tfel
+    };  // end of struct LibraryInformation
+
+  }  // end of namespace system
+
+}  // end of namespace tfel
 
 #endif /* LIB_TFEL_SYSTEM_LIBRARYINFORMATION_HXX */

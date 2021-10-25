@@ -3,20 +3,20 @@
  * \brief  This file declares the ExcelMaterialPropertyInternalInterface class
  * \author Thomas Helfer
  * \date   06 mai 2008
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_MFRONT_MFRONTEXCELLAWINTERNALINTERFACE_HXX
-#define LIB_MFRONT_MFRONTEXCELLAWINTERNALINTERFACE_HXX 
+#define LIB_MFRONT_MFRONTEXCELLAWINTERNALINTERFACE_HXX
 
-#include"MFront/CMaterialPropertyInterface.hxx"
+#include "MFront/CMaterialPropertyInterface.hxx"
 
-namespace mfront{
+namespace mfront {
 
   /*!
    * An interface used to generate the dll to be called by excel.
@@ -29,8 +29,7 @@ namespace mfront{
    * `Excel` interface uses the `__stdcall` one.
    */
   struct ExcelMaterialPropertyInternalInterface
-    : public CMaterialPropertyInterface
-  {
+      : public CMaterialPropertyInterface {
     /*!
      * \return the name of this interface
      */
@@ -41,40 +40,40 @@ namespace mfront{
      * \param[out] os:  output file stream
      * \param[in]  mpd: material property description
      */
-    void writeInterfaceSymbol(std::ostream&,
-			      const MaterialPropertyDescription&) const override;
+    void writeInterfaceSymbol(
+        std::ostream&, const MaterialPropertyDescription&) const override;
     //! destructor
     ~ExcelMaterialPropertyInternalInterface() override;
-  private:
 
+   private:
     std::string getCallingConvention() const override;
     /*!
      * \return the name of the generated library
      * \param[in] mpd: material property description
      */
-    std::string getGeneratedLibraryName(const MaterialPropertyDescription&) const override;
+    std::string getGeneratedLibraryName(
+        const MaterialPropertyDescription&) const override;
     /*!
      * \brief write the header preprocessor directives
      * \param[in] os:  output stream
      * \param[in] mpd: material property description
      */
-    void writeHeaderPreprocessorDirectives(std::ostream&,
-					   const MaterialPropertyDescription&) const override;
+    void writeHeaderPreprocessorDirectives(
+        std::ostream&, const MaterialPropertyDescription&) const override;
     /*!
      * \param[in] m: material name
      * \param[in] c: class name
      */
     std::string getHeaderFileName(const std::string&,
-				  const std::string&) const override;
+                                  const std::string&) const override;
     /*!
      * \param[in] m: material name
      * \param[in] c: class name
      */
     std::string getSrcFileName(const std::string&,
-			       const std::string&) const override;
-  }; // end of MfrontExcelLawInternalInterface
+                               const std::string&) const override;
+  };  // end of MfrontExcelLawInternalInterface
 
-} // end of namespace mfront
+}  // end of namespace mfront
 
 #endif /* LIB_MFRONT_MFRONTEXCELLAWINTERNALINTERFACE_HXX */
-

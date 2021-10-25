@@ -631,16 +631,18 @@ namespace mfront {
           out << ": " << mb.getClassName()
               << "BehaviourData<hypothesis,Type,use_qt>(ZMATsig,ZMATeto,"
                  "ZMATmprops,ZMATdata,ZMATT_pos,ZMATevs_pos),\n";
-          out << mb.getClassName() << "IntegrationData<hypothesis,Type,use_qt>("
-                                      "ZMATdeto,ZMATdata,ZMATT_pos,ZMATevs_pos,"
-                                      "ZMATdt)";
+          out << mb.getClassName()
+              << "IntegrationData<hypothesis,Type,use_qt>("
+                 "ZMATdeto,ZMATdata,ZMATT_pos,ZMATevs_pos,"
+                 "ZMATdt)";
         } else {
           out << ": " << mb.getClassName()
               << "BehaviourData<hypothesis,Type,false>(ZMATsig,ZMATeto,"
                  "ZMATmprops,ZMATdata,ZMATT_pos,ZMATevs_pos),\n";
-          out << mb.getClassName() << "IntegrationData<hypothesis,Type,false>("
-                                      "ZMATdeto,ZMATdata,ZMATT_pos,ZMATevs_pos,"
-                                      "ZMATdt)";
+          out << mb.getClassName()
+              << "IntegrationData<hypothesis,Type,false>("
+                 "ZMATdeto,ZMATdata,ZMATT_pos,ZMATevs_pos,"
+                 "ZMATdt)";
         }
         break;
       case BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR:
@@ -648,16 +650,18 @@ namespace mfront {
           out << ": " << mb.getClassName()
               << "BehaviourData<hypothesis,Type,use_qt>(ZMATsig,ZMATF0,"
                  "ZMATmprops,ZMATdata,ZMATT_pos,ZMATevs_pos),\n";
-          out << mb.getClassName() << "IntegrationData<hypothesis,Type,use_qt>("
-                                      "ZMATF1,ZMATdata,ZMATT_pos,ZMATevs_pos,"
-                                      "ZMATdt)";
+          out << mb.getClassName()
+              << "IntegrationData<hypothesis,Type,use_qt>("
+                 "ZMATF1,ZMATdata,ZMATT_pos,ZMATevs_pos,"
+                 "ZMATdt)";
         } else {
           out << ": " << mb.getClassName()
               << "BehaviourData<hypothesis,Type,false>(ZMATsig,ZMATF0,"
                  "ZMATmprops,ZMATdata,ZMATT_pos,ZMATevs_pos),\n";
-          out << mb.getClassName() << "IntegrationData<hypothesis,Type,false>("
-                                      "ZMATF1,ZMATdata,ZMATT_pos,ZMATevs_pos,"
-                                      "ZMATdt)";
+          out << mb.getClassName()
+              << "IntegrationData<hypothesis,Type,false>("
+                 "ZMATF1,ZMATdata,ZMATT_pos,ZMATevs_pos,"
+                 "ZMATdt)";
         }
         break;
       default:
@@ -1265,9 +1269,9 @@ namespace mfront {
               const auto f = SupportedTypes::getTypeFlag(p.type);
               throw_if(f != SupportedTypes::SCALAR,
                        "unsupported parameter type '" + p.type + "'");
-	      const auto prec = out.precision();
-	      out.precision(14);
-	      if (p.arraySize == 1) {
+              const auto prec = out.precision();
+              out.precision(14);
+              if (p.arraySize == 1) {
                 out << d.getFloattingPointParameterDefaultValue(p.name) << '\n';
               } else {
                 for (unsigned short i = 0; i != p.arraySize;) {
@@ -1278,7 +1282,7 @@ namespace mfront {
                 }
                 out << '\n';
               }
-	      out.precision(prec);
+              out.precision(prec);
             }
           }
         }
@@ -1653,14 +1657,16 @@ namespace mfront {
         << "}\n";
     switch (mb.getBehaviourType()) {
       case BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR:
-        out << mb.getClassName() << " b(this->sig,stran,dstran,this->mprops,"
-                                    "mdat,this->temperature_position,\n"
+        out << mb.getClassName()
+            << " b(this->sig,stran,dstran,this->mprops,"
+               "mdat,this->temperature_position,\n"
             << "this->evs_positions,ZSET::stored_thread_zbase_globals->ptr()->"
                "active_clock->get_dtime());\n";
         break;
       case BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR:
-        out << mb.getClassName() << " b(this->sig,F0,&(this->F[0]),this->"
-                                    "mprops,mdat,this->temperature_position,\n"
+        out << mb.getClassName()
+            << " b(this->sig,F0,&(this->F[0]),this->"
+               "mprops,mdat,this->temperature_position,\n"
             << "this->evs_positions,ZSET::stored_thread_zbase_globals->ptr()->"
                "active_clock->get_dtime());\n";
         break;

@@ -27,9 +27,8 @@ namespace mfront {
   template <typename DSLType>
   DSLProxy<DSLType>::DSLProxy(const std::string& a) {
     auto& f = DSLFactory::getDSLFactory();
-    f.registerDSLCreator(DSLType::getName(),
-                                        &DSLProxy<DSLType>::createDSL,
-                                        &DSLType::getDescription);
+    f.registerDSLCreator(DSLType::getName(), &DSLProxy<DSLType>::createDSL,
+                         &DSLType::getDescription);
     f.registerDSLAlias(DSLType::getName(), a);
   }
 

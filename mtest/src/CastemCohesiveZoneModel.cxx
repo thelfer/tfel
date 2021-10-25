@@ -253,7 +253,7 @@ namespace mtest {
 
   std::vector<std::string>
   CastemCohesiveZoneModel::getOptionalMaterialProperties() const {
-    return {"MassDensity","NormalThermalExpansion"};
+    return {"MassDensity", "NormalThermalExpansion"};
   }  // end of CastemCohesiveZoneModel::getOptionalMaterialProperties
 
   void CastemCohesiveZoneModel::setOptionalMaterialPropertiesDefaultValues(

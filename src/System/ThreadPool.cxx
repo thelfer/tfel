@@ -50,7 +50,7 @@ namespace tfel {
         };
         this->workers.emplace_back(f);
       }
-    } // end of ThreadPool::ThreadPool
+    }  // end of ThreadPool::ThreadPool
 
     ThreadPool::size_type ThreadPool::getNumberOfThreads() const {
       return this->workers.size();
@@ -79,7 +79,7 @@ namespace tfel {
       for (auto &w : this->workers) {
         w.join();
       }
-    } // end of ThreadPool::~ThreadPool
+    }  // end of ThreadPool::~ThreadPool
 
   }  // end of namespace system
 

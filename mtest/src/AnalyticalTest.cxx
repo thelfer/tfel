@@ -19,12 +19,17 @@
 
 namespace mtest {
 
-  AnalyticalTest::AnalyticalTest(const std::string& f_,
-                                 const std::string& v,
-                                 const std::function<real(const CurrentState&)>& g,
-                                 const EvolutionManager& evm_,
-                                 const real eps_)
-      : f(f_), name(v), get(g), evm(evm_), eps(eps_) {}  // AnalyticalTest::AnalyticalTest
+  AnalyticalTest::AnalyticalTest(
+      const std::string& f_,
+      const std::string& v,
+      const std::function<real(const CurrentState&)>& g,
+      const EvolutionManager& evm_,
+      const real eps_)
+      : f(f_),
+        name(v),
+        get(g),
+        evm(evm_),
+        eps(eps_) {}  // AnalyticalTest::AnalyticalTest
 
   void AnalyticalTest::check(const CurrentState& s,
                              const real t,
@@ -38,7 +43,8 @@ namespace mtest {
         this->f.setVariableValue("t", t + dt);
       } else {
         auto pev = this->evm.find(vn);
-        throw_if(pev == this->evm.end(), "no evolution named '" + vn + "' defined");
+        throw_if(pev == this->evm.end(),
+                 "no evolution named '" + vn + "' defined");
         const auto& ev = *(pev->second);
         this->f.setVariableValue(vn, ev(t + dt));
       }

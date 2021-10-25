@@ -1,30 +1,28 @@
-/*! 
+/*!
  * \file  include/TFEL/Math/fsarray.hxx
  * \brief
  * \author Thomas Helfer
  * \brief 30 août 2013
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_TFEL_MATH_FSARRAY_HXX
-#define LIB_TFEL_MATH_FSARRAY_HXX 
+#define LIB_TFEL_MATH_FSARRAY_HXX
 
-#include<iterator>
-#include<type_traits>
-#include<initializer_list>
-#include"TFEL/Config/TFELConfig.hxx"
-#include"TFEL/Metaprogramming/StaticAssert.hxx"
+#include <iterator>
+#include <type_traits>
+#include <initializer_list>
+#include "TFEL/Config/TFELConfig.hxx"
+#include "TFEL/Metaprogramming/StaticAssert.hxx"
 
-namespace tfel
-{
+namespace tfel {
 
-  namespace math
-  {
+  namespace math {
 
     /*!
      * an aggregate type
@@ -36,7 +34,7 @@ namespace tfel
       //! values holded
       T v[N];
     };
-    
+
     /*!
      * \brief a container for finite size array.
      * This is mainly equivalent to the array class of C++11.
@@ -46,10 +44,8 @@ namespace tfel
      * because two many classes who inherits from tfel::math::fsarry
      * used direct access to the values through the `v` member.
      */
-    template<unsigned short N,typename T>
-    struct TFEL_VISIBILITY_LOCAL fsarray
-      : protected array_container<N,T>
-    {
+    template <unsigned short N, typename T>
+    struct TFEL_VISIBILITY_LOCAL fsarray : protected array_container<N, T> {
       /*!
        * type of the fsarray's values.
        * (this is a stl requirement).
@@ -99,7 +95,7 @@ namespace tfel
        * type of the fsarray's reverse iterator.
        * (provided for stl compatibility).
        */
-      typedef std::reverse_iterator<const_iterator> const_reverse_iterator; 
+      typedef std::reverse_iterator<const_iterator> const_reverse_iterator;
       /*!
        * type of the fsarray's const reverse iterator.
        * (provided for stl compatibility).
@@ -113,26 +109,29 @@ namespace tfel
        * constructor
        * \param[in] values
        */
-      template<typename T2,
-	       typename std::enable_if<tfel::typetraits::IsAssignableTo<T2,T>::cond,bool>::type = true>
-      TFEL_MATH_INLINE constexpr
-      fsarray(const fsarray<N,T2>&);
+      template <
+          typename T2,
+          typename std::enable_if<tfel::typetraits::IsAssignableTo<T2, T>::cond,
+                                  bool>::type = true>
+      TFEL_MATH_INLINE constexpr fsarray(const fsarray<N, T2>&);
       /*!
        * constructor
        * \param[in] values
        */
-      template<typename T2,
-	       typename std::enable_if<tfel::typetraits::IsAssignableTo<T2,T>::cond,bool>::type = true>
-      TFEL_MATH_INLINE constexpr
-      fsarray(const std::initializer_list<T2>&);
+      template <
+          typename T2,
+          typename std::enable_if<tfel::typetraits::IsAssignableTo<T2, T>::cond,
+                                  bool>::type = true>
+      TFEL_MATH_INLINE constexpr fsarray(const std::initializer_list<T2>&);
       /*!
        * constructor from a single value
        * \param[in] value
        */
-      template<typename T2,
-	       typename std::enable_if<tfel::typetraits::IsAssignableTo<T2,T>::cond,bool>::type = true>
-      TFEL_MATH_INLINE constexpr
-      fsarray(const T2&);
+      template <
+          typename T2,
+          typename std::enable_if<tfel::typetraits::IsAssignableTo<T2, T>::cond,
+                                  bool>::type = true>
+      TFEL_MATH_INLINE constexpr fsarray(const T2&);
       /*!
        * \brief member function for structured bindings support
        * \tparam I: index to be retrieved
@@ -144,97 +143,87 @@ namespace tfel
        * (provided for stl compatibility)
        * \return iterator, an iterator to the first element
        */
-      TFEL_MATH_INLINE iterator
-      begin() noexcept;
+      TFEL_MATH_INLINE iterator begin() noexcept;
       /*!
        * return an const iterator to the first element of the vector
        * (provided for stl compatibility)
        * \return const_iterator, a const iterator to the first element
        */
-      TFEL_MATH_INLINE const_iterator 
-      begin() const noexcept;
+      TFEL_MATH_INLINE const_iterator begin() const noexcept;
       /*!
        * return an const iterator to the first element of the vector
        * (provided for stl compatibility)
        * \return const_iterator, a const iterator to the first element
        */
-      TFEL_MATH_INLINE const_iterator 
-      cbegin() const noexcept;
+      TFEL_MATH_INLINE const_iterator cbegin() const noexcept;
       /*!
        * return an iterator after the last element of the vector
        * (provided for stl compatibility)
        * \return iterator, an iterator after the last element
        */
-      TFEL_MATH_INLINE iterator
-      end() noexcept;
+      TFEL_MATH_INLINE iterator end() noexcept;
       /*!
        * return an const iterator after the last element of the vector
        * (provided for stl compatibility)
        * \return const_iterator, a const iterator after the last element
        */
-      TFEL_MATH_INLINE const_iterator
-      end() const noexcept;
+      TFEL_MATH_INLINE const_iterator end() const noexcept;
       /*!
        * return an const iterator after the last element of the vector
        * (provided for stl compatibility)
        * \return const_iterator, a const iterator after the last element
        */
-      TFEL_MATH_INLINE const_iterator
-      cend() const noexcept;
+      TFEL_MATH_INLINE const_iterator cend() const noexcept;
       /*!
        * return an reverse iterator to the last element of the vector
        * (provided for stl compatibility)
        * \return reverse_iterator, a reverse iterator to the last element
        */
-      TFEL_MATH_INLINE reverse_iterator
-      rbegin() noexcept;
+      TFEL_MATH_INLINE reverse_iterator rbegin() noexcept;
       /*!
        * return an const reverse iterator to the last element of the vector
        * (provided for stl compatibility)
-       * \return const_reverse_iterator, a const reverse iterator to the last element
+       * \return const_reverse_iterator, a const reverse iterator to the last
+       * element
        */
-      TFEL_MATH_INLINE const_reverse_iterator
-      rbegin() const noexcept;
+      TFEL_MATH_INLINE const_reverse_iterator rbegin() const noexcept;
       /*!
        * return an  reverse iterator before the first element of the vector
        * (provided for stl compatibility)
        * \return reverse_iterator, a reverse iterator before the first element
        */
-      TFEL_MATH_INLINE reverse_iterator
-      rend() noexcept;
+      TFEL_MATH_INLINE reverse_iterator rend() noexcept;
       /*!
        * return an const reverse iterator before the first element of the vector
        * (provided for stl compatibility)
-       * \return const_reverse_iterator, a const reverse iterator before the first element
+       * \return const_reverse_iterator, a const reverse iterator before the
+       * first element
        */
-      TFEL_MATH_INLINE const_reverse_iterator
-      rend() const noexcept;
+      TFEL_MATH_INLINE const_reverse_iterator rend() const noexcept;
       /*!
        * size of the finite size array
        * (compatibility with array)
        */
-      constexpr TFEL_MATH_INLINE unsigned short
-      size() const noexcept;
+      constexpr TFEL_MATH_INLINE unsigned short size() const noexcept;
       /*!
        * access operator
        */
-      TFEL_MATH_INLINE reference
-      operator[](const size_type) noexcept;
+      TFEL_MATH_INLINE reference operator[](const size_type) noexcept;
       /*!
        * access operator
        */
       constexpr TFEL_MATH_INLINE const_reference
       operator[](const size_type) const noexcept;
-    private:
+
+     private:
       //! a simple assertion stating that the dimension is valid.
-      TFEL_STATIC_ASSERT(N!=0);
+      TFEL_STATIC_ASSERT(N != 0);
     };
 
-  } // end of namespace math
+  }  // end of namespace math
 
-} // end of namespace tfel
+}  // end of namespace tfel
 
-#include"TFEL/Math/General/fsarray.ixx"
+#include "TFEL/Math/General/fsarray.ixx"
 
 #endif /* LIB_TFEL_MATH_FSARRAY_HXX */
-

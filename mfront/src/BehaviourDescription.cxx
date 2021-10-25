@@ -326,8 +326,8 @@ namespace mfront {
       }
     };
     auto assign_if = [&check, &a, &b, &found, &bn](
-        const VariableDescription& v1, const VariableDescription& v2,
-        const bool no_inc) {
+                         const VariableDescription& v1,
+                         const VariableDescription& v2, const bool no_inc) {
       const auto block_name = [&v1, &v2, &no_inc] {
         if (no_inc) {
           return "d" + v1.name + "_d" + v2.name + "1";
@@ -1813,8 +1813,9 @@ namespace mfront {
     if (this->hypotheses.empty()) {
       if ((this->stypeIsDefined) &&
           (this->getSymmetryType() == mfront::ORTHOTROPIC) &&
-          (this->oacIsDefined) && (this->getOrthotropicAxesConvention() ==
-                                   OrthotropicAxesConvention::PLATE)) {
+          (this->oacIsDefined) &&
+          (this->getOrthotropicAxesConvention() ==
+           OrthotropicAxesConvention::PLATE)) {
         for (const auto h : mh) {
           throw_if((h != ModellingHypothesis::TRIDIMENSIONAL) &&
                        (h != ModellingHypothesis::PLANESTRESS) &&

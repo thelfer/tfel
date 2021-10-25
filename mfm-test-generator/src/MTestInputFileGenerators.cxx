@@ -1,6 +1,6 @@
 /*!
  * \file   MTestInputFileGenerators.cxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   25/09/2019
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
@@ -62,7 +62,7 @@ namespace mfmtg {
           }
         }
         os << "};\n";
-      } else if(!t.is<TimesFromFile>()){
+      } else if (!t.is<TimesFromFile>()) {
         tfel::raise(
             "mfmtg::mtest::writeTimes: "
             "unsupported type for times");
@@ -146,12 +146,12 @@ namespace mfmtg {
     static void writeMaterialProperties(std::ostream& os,
                                         const BehaviourData& c) {
       for (const auto& mp : c.material_properties) {
-        os << "@MaterialProperty<" << getMaterialPropertyType(mp.second) << "> '"
-           << mp.first << "' ";
+        os << "@MaterialProperty<" << getMaterialPropertyType(mp.second)
+           << "> '" << mp.first << "' ";
         writeMaterialProperty(os, mp.second);
         os << ";\n";
       }
-    } // end of writeMaterialProperties
+    }  // end of writeMaterialProperties
 
     static void writeExternalStateVariables(std::ostream& os,
                                             const BehaviourData& c) {
@@ -163,10 +163,10 @@ namespace mfmtg {
       }
     }  // end of writeExternalStateVariables
 
-    void generateUniaxialTensileTest(const AbstractTestCase& at){
+    void generateUniaxialTensileTest(const AbstractTestCase& at) {
+      using ::mtest::Behaviour;
       using ::tfel::material::MechanicalBehaviourBase;
       using ::tfel::material::ModellingHypothesis;
-      using ::mtest::Behaviour;
       auto raise = [](const std::string& msg) {
         tfel::raise("mfmtg::mtest::generateUniaxialTensileTest: " + msg);
       };  // end of raise
@@ -181,7 +181,7 @@ namespace mfmtg {
       if ((bt != MechanicalBehaviourBase::STANDARDSTRAINBASEDBEHAVIOUR) &&
           (bt != MechanicalBehaviourBase::STANDARDFINITESTRAINBEHAVIOUR)) {
         raise("Invalid behaviour type");
-      } 
+      }
       std::ofstream os(t.name + ".mtest");
       if (!os) {
         raise("can't open file '" + f + "'");
@@ -189,7 +189,7 @@ namespace mfmtg {
       os.exceptions(std::ios::badbit | std::ios::failbit);
       os.precision(14);
       writeMetaData(os, t);
-      write(os, "@ModellingHypothesis '{}';",t.hypothesis);
+      write(os, "@ModellingHypothesis '{}';", t.hypothesis);
       writeBehaviour(os, t);
       writeTimes(os, t.times);
       writeMaterialProperties(os, t);
@@ -199,7 +199,7 @@ namespace mfmtg {
          << "> 'MFMTGImposedStrain' ";
       writeEvolution(os, t.imposed_strain);
       os << ";\n\n";
-      if (bt == MechanicalBehaviourBase::STANDARDSTRAINBASEDBEHAVIOUR){
+      if (bt == MechanicalBehaviourBase::STANDARDSTRAINBASEDBEHAVIOUR) {
         os << "@ImposedStrain<function> 'EXX' 'MFMTGImposedStrain';\n";
       } else {
         os << "@ImposedDeformationGradient<function> "
@@ -210,15 +210,15 @@ namespace mfmtg {
            << "@ImposedDeformationGradient 'FZX' 0;\n"
            << "@ImposedDeformationGradient 'FYZ' 0;\n"
            << "@ImposedDeformationGradient 'FZY' 0;\n";
-      } 
+      }
       os.close();
       debug("mfmtg::mtest::generateUniaxialTensileTest: end");
     }  // end of generateUniaxialTensileTest
 
-    void generateClosedPipeTest(const AbstractTestCase& at){
+    void generateClosedPipeTest(const AbstractTestCase& at) {
+      using ::mtest::Behaviour;
       using ::tfel::material::MechanicalBehaviourBase;
       using ::tfel::material::ModellingHypothesis;
-      using ::mtest::Behaviour;
       auto raise = [](const std::string& msg) {
         tfel::raise("mfmtg::mtest::generateClosedPipeTest: " + msg);
       };  // end of raise
@@ -233,7 +233,7 @@ namespace mfmtg {
       if ((bt != MechanicalBehaviourBase::STANDARDSTRAINBASEDBEHAVIOUR) &&
           (bt != MechanicalBehaviourBase::STANDARDFINITESTRAINBEHAVIOUR)) {
         raise("Invalid behaviour type");
-      } 
+      }
       std::ofstream os(t.name + ".ptest");
       if (!os) {
         raise("can't open file '" + f + "'");

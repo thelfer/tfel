@@ -1,49 +1,45 @@
-/*! 
+/*!
  * \file  include/TFEL/Math/LU/LUException.hxx
  * \brief
  * \author Thomas Helfer
  * \brief 12 avr 2009
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_TFEL_MATH_LUEXCEPTION_HXX
-#define LIB_TFEL_MATH_LUEXCEPTION_HXX 
+#define LIB_TFEL_MATH_LUEXCEPTION_HXX
 
-#include"TFEL/Config/TFELConfig.hxx"
-#include"TFEL/Math/MathException.hxx"
- 
-namespace tfel
-{
+#include "TFEL/Config/TFELConfig.hxx"
+#include "TFEL/Math/MathException.hxx"
 
-  namespace math
-  {
-    
+namespace tfel {
+
+  namespace math {
+
     /*!
      * Base class for the exception thrown by
      * the LUDecomp class
      */
     struct TFELMATH_VISIBILITY_EXPORT LUException
-      : public MathRunTimeException
-    {
+        : public MathRunTimeException {
       LUException();
       LUException(LUException&&);
       LUException(const LUException&);
       //! destructor
       virtual ~LUException() noexcept;
-    }; // end of struct LUException
+    };  // end of struct LUException
 
     /*!
      * Base class for the exception thrown by
      * the LUDecomp class
      */
     struct TFELMATH_VISIBILITY_EXPORT LUUnmatchedSize final
-      : public LUException
-    {
+        : public LUException {
       LUUnmatchedSize();
       LUUnmatchedSize(LUUnmatchedSize&&);
       LUUnmatchedSize(const LUUnmatchedSize&);
@@ -51,15 +47,14 @@ namespace tfel
       const char* what() const noexcept override final;
       //! destructor
       ~LUUnmatchedSize() noexcept override;
-    }; // end of struct LUException
+    };  // end of struct LUException
 
     /*!
      * Base class for the exception thrown by
      * the LUDecomp class
      */
     struct TFELMATH_VISIBILITY_EXPORT LUMatrixNotSquare final
-      : public LUException
-    {
+        : public LUException {
       LUMatrixNotSquare();
       LUMatrixNotSquare(LUMatrixNotSquare&&);
       LUMatrixNotSquare(const LUMatrixNotSquare&);
@@ -67,15 +62,14 @@ namespace tfel
       const char* what() const noexcept override final;
       //! destructor
       ~LUMatrixNotSquare() noexcept override;
-    }; // end of struct LUException
+    };  // end of struct LUException
 
     /*!
      * Base class for the exception thrown by
      * the LUDecomp class
      */
     struct TFELMATH_VISIBILITY_EXPORT LUInvalidMatrixSize final
-      : public LUException
-    {
+        : public LUException {
       LUInvalidMatrixSize();
       LUInvalidMatrixSize(LUInvalidMatrixSize&&);
       LUInvalidMatrixSize(const LUInvalidMatrixSize&);
@@ -83,15 +77,13 @@ namespace tfel
       const char* what() const noexcept override final;
       //! destructor
       ~LUInvalidMatrixSize() noexcept override;
-    }; // end of struct LUException
+    };  // end of struct LUException
 
     /*!
      * Base class for the exception thrown by
      * the LUDecomp class
      */
-    struct TFELMATH_VISIBILITY_EXPORT LUNullPivot final
-      : public LUException
-    {
+    struct TFELMATH_VISIBILITY_EXPORT LUNullPivot final : public LUException {
       LUNullPivot();
       LUNullPivot(LUNullPivot&&);
       LUNullPivot(const LUNullPivot&);
@@ -99,15 +91,14 @@ namespace tfel
       const char* what() const noexcept override final;
       //! destructor
       ~LUNullPivot() noexcept override;
-    }; // end of struct LUException
-    
+    };  // end of struct LUException
+
     /*!
      * Base class for the exception thrown by
      * the LUDecomp class
      */
     struct TFELMATH_VISIBILITY_EXPORT LUNullDeterminant final
-      : public LUException
-    {
+        : public LUException {
       LUNullDeterminant();
       LUNullDeterminant(LUNullDeterminant&&);
       LUNullDeterminant(const LUNullDeterminant&);
@@ -115,11 +106,10 @@ namespace tfel
       const char* what() const noexcept override final;
       //! destructor
       ~LUNullDeterminant() noexcept override;
-    }; // end of struct LUException
-    
-  } // end of namespace math
+    };  // end of struct LUException
 
-} // end of namespace tfel
+  }  // end of namespace math
+
+}  // end of namespace tfel
 
 #endif /* LIB_TFEL_MATH_LUEXCEPTION_HXX */
-

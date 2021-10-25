@@ -185,15 +185,15 @@ namespace mtest {
         omps.insert(omps.end(), {"V1X", "V1Y", "V1Z", "V2X", "V2Y", "V2Z"});
       }
       omps.insert(omps.end(), {"ALP1", "ALP2", "ALP3"});
-   } else {
-     tfel::raise(
-         "CastemUmatStandardBehaviour::getOptionalMaterialProperties: "
-         "unsupported symmetry type");
-   }
-   if (h == ModellingHypothesis::PLANESTRESS) {
-     omps.push_back("DIM3");
-   }
-   return omps;
+    } else {
+      tfel::raise(
+          "CastemUmatStandardBehaviour::getOptionalMaterialProperties: "
+          "unsupported symmetry type");
+    }
+    if (h == ModellingHypothesis::PLANESTRESS) {
+      omps.push_back("DIM3");
+    }
+    return omps;
   }  // end of CastemUmatStandardBehaviour::getOptionalMaterialProperties
 
   void CastemUmatStandardBehaviour::setOptionalMaterialPropertiesDefaultValues(
@@ -201,20 +201,20 @@ namespace mtest {
       const EvolutionManager& evm,
       const int stype,
       const Hypothesis h) {
-    auto setOptionalMaterialPropertyDefaultValue = [&mp, &evm](
-        const std::string& n, const real v) {
-      if (evm.find(n) == evm.end()) {
-        if (mfront::getVerboseMode() >= mfront::VERBOSE_LEVEL2) {
-          auto& log = mfront::getLogStream();
-          log << "setOptionalMaterialPropertiesDefaultValues : "
-              << "set material property '" << n << "' to default value\n";
-        }
-        tfel::raise_if(!mp.insert({n, make_evolution(v)}).second,
-                       "setOptionalMaterialPropertiesDefaultValues: "
-                       "default value for material property '" +
-                           n + "' already declared");
-      }
-    };
+    auto setOptionalMaterialPropertyDefaultValue =
+        [&mp, &evm](const std::string& n, const real v) {
+          if (evm.find(n) == evm.end()) {
+            if (mfront::getVerboseMode() >= mfront::VERBOSE_LEVEL2) {
+              auto& log = mfront::getLogStream();
+              log << "setOptionalMaterialPropertiesDefaultValues : "
+                  << "set material property '" << n << "' to default value\n";
+            }
+            tfel::raise_if(!mp.insert({n, make_evolution(v)}).second,
+                           "setOptionalMaterialPropertiesDefaultValues: "
+                           "default value for material property '" +
+                               n + "' already declared");
+          }
+        };
     auto throw_if = [](const bool b, const std::string& msg) {
       tfel::raise_if(b,
                      "CastemUmatStandardBehaviour::"

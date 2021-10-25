@@ -1,14 +1,14 @@
 /*!
- * \file   include/NUMODIS/Hardening.hxx  
- * \brief    
+ * \file   include/NUMODIS/Hardening.hxx
+ * \brief
  * \author Laurent Dupuy
  * \date   9/06/2017
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef NUMEODIS_HARDENING1_HXX
@@ -18,8 +18,7 @@
 #include <iosfwd>
 #include "NUMODIS/Config.hxx"
 
-namespace numodis
-{
+namespace numodis {
 
   struct Crystallo;
   struct GSystem;
@@ -29,33 +28,28 @@ namespace numodis
   //---------------------------------------------------------------
   //! Compute all the possibles interactions between glide systems
   //===============================================================
-  struct TFELNUMODIS_VISIBILITY_EXPORT Hardening
-  {
-
-    Hardening(const Crystallo&,
-	      const std::vector<GSystem>&);
+  struct TFELNUMODIS_VISIBILITY_EXPORT Hardening {
+    Hardening(const Crystallo&, const std::vector<GSystem>&);
 
     int getNinteractions() const;
 
     int getRankInteraction(const GSystem& gsystem1,
-			   const GSystem& gsystem2) const;
-    
-    TFELNUMODIS_VISIBILITY_EXPORT friend std::ostream&
-    operator << (std::ostream&,const Hardening&);
-				      
-  private:
+                           const GSystem& gsystem2) const;
 
+    TFELNUMODIS_VISIBILITY_EXPORT friend std::ostream& operator<<(
+        std::ostream&, const Hardening&);
+
+   private:
     //! pointer to the Crystallo object
     const Crystallo& _pcrystallo;
     //! all glide systems
     const std::vector<GSystem> _gsystems;
     //! hardening matrix
-    std::vector<std::vector<int> > _coefficients;
+    std::vector<std::vector<int>> _coefficients;
     //! interacting glide systems
-    std::vector<std::pair<GSystem,GSystem> > _interactions;
-
+    std::vector<std::pair<GSystem, GSystem>> _interactions;
   };
-  
-} // end of namespace numodis     
+
+}  // end of namespace numodis
 
 #endif

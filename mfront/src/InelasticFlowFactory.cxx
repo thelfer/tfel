@@ -37,8 +37,8 @@ namespace mfront {
       }
     }  // end of InelasticFlowFactory::addGenerator
 
-    std::vector<std::string>
-    InelasticFlowFactory::getRegistredInelasticFlows() const {
+    std::vector<std::string> InelasticFlowFactory::getRegistredInelasticFlows()
+        const {
       return getKeys(this->generators);
     }  // end of InelasticFlowFactory::getRegistredInelasticFlows
 

@@ -41,7 +41,7 @@ namespace tfel {
         const real Fzz) {
       this->F[1] = Fzz;
     }  // end of
-       // LogarithmicStrainHandler<1u,StressType>::updateAxialDeformationGradien    
+       // LogarithmicStrainHandler<1u,StressType>::updateAxialDeformationGradien
     template <typename StressType>
     typename LogarithmicStrainHandler<1u, StressType>::StrainStensor
     LogarithmicStrainHandler<1u, StressType>::getHenckyLogarithmicStrain()
@@ -416,10 +416,12 @@ namespace tfel {
             f[2] * dzeta(2) * (M(2) ^ M(2))) /
                4;
 #endif
-      Kr += 2 * xsi[0] * (dzeta(3) * ((M(3) ^ M(1)) + (M(1) ^ M(3))) +
-                          dzeta(1) * (M(3) ^ M(3)));
-      Kr += 2 * xsi[1] * (dzeta(3) * ((M(3) ^ M(0)) + (M(0) ^ M(3))) +
-                          dzeta(0) * (M(3) ^ M(3)));
+      Kr += 2 * xsi[0] *
+            (dzeta(3) * ((M(3) ^ M(1)) + (M(1) ^ M(3))) +
+             dzeta(1) * (M(3) ^ M(3)));
+      Kr += 2 * xsi[1] *
+            (dzeta(3) * ((M(3) ^ M(0)) + (M(0) ^ M(3))) +
+             dzeta(0) * (M(3) ^ M(3)));
     }  // end of LogarithmicStrainHandler<2u,StressType>::convertTangentModuli
 
     template <typename StressType>
@@ -1010,11 +1012,10 @@ namespace tfel {
                4;
 #else
       const tfel::math::st2tost2<3u, real> tp = transpose(p);
-      Kr = 4 * tp * Ks * p +
-           (f[0] * dzeta(0, 0) * (M(0, 0) ^ M(0, 0)) +
-            f[1] * dzeta(1, 1) * (M(1, 1) ^ M(1, 1)) +
-            f[2] * dzeta(2, 2) * (M(2, 2) ^ M(2, 2))) /
-               4;
+      Kr = 4 * tp * Ks * p + (f[0] * dzeta(0, 0) * (M(0, 0) ^ M(0, 0)) +
+                              f[1] * dzeta(1, 1) * (M(1, 1) ^ M(1, 1)) +
+                              f[2] * dzeta(2, 2) * (M(2, 2) ^ M(2, 2))) /
+                                 4;
 #endif
       for (size_type i = 0; i != 3; ++i) {
         for (size_type j = 0; j != 3; ++j) {
@@ -1297,6 +1298,6 @@ namespace tfel {
 
   }  // end of namespace material
 
-}  // end of namespace material
+}  // namespace tfel
 
 #endif /* LIB_TFEL_MATH_LOGARITHMICSTRAINHANDLER_IXX */

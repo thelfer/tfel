@@ -1,27 +1,27 @@
 /*!
  * \file   IEEE754.hxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   13 mars 2017
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_TFEL_MATH_IEEE754_HXX
 #define LIB_TFEL_MATH_IEEE754_HXX
 
-#include<cmath>
-#include"TFEL/Config/TFELConfig.hxx"
+#include <cmath>
+#include "TFEL/Config/TFELConfig.hxx"
 
-namespace tfel{
+namespace tfel {
 
-  namespace math{
+  namespace math {
 
-    namespace ieee754{
+    namespace ieee754 {
 
       /*!
        * \brief a portable implementation of the std::fpclassify
@@ -116,13 +116,13 @@ namespace tfel{
        * infinite or NaN.
        */
       TFEL_VISIBILITY_LOCAL inline bool isfinite(const long double);
-      
-    } // end of namespace ieee754
-      
-  } // end of namespace math
-  
-} // end of namespace tfel
 
-#include"TFEL/Math/General/IEEE754.ixx"
+    }  // end of namespace ieee754
+
+  }  // end of namespace math
+
+}  // end of namespace tfel
+
+#include "TFEL/Math/General/IEEE754.ixx"
 
 #endif /* LIB_TFEL_MATH_IEEE754_HXX */
