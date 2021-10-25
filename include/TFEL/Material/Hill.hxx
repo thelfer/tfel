@@ -3,26 +3,24 @@
  * \author Thomas Helfer
  * \date   26 March 2009
  * \brief  This file declares the hillTensor function.
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_TFEL_MATERIAL_HILL_HXX
-#define LIB_TFEL_MATERIAL_HILL_HXX 
+#define LIB_TFEL_MATERIAL_HILL_HXX
 
-#include"TFEL/Math/st2tost2.hxx"
-#include"TFEL/Material/ModellingHypothesis.hxx"
-#include"TFEL/Material/OrthotropicAxesConvention.hxx"
+#include "TFEL/Math/st2tost2.hxx"
+#include "TFEL/Material/ModellingHypothesis.hxx"
+#include "TFEL/Material/OrthotropicAxesConvention.hxx"
 
-namespace tfel
-{
+namespace tfel {
 
-  namespace material
-  {
+  namespace material {
 
     /*!
      * \brief compute the Hill tensor.
@@ -46,7 +44,7 @@ namespace tfel
      * \end{array}
      * \right)
      * \f]
-     * if \f$\sigma\f$ is a second order symetric tensor (stensor), 
+     * if \f$\sigma\f$ is a second order symetric tensor (stensor),
      * \f$\sigma|H_H*\sigma\f$ computes the Hill stress :
      * \f[
      * H_F\left(\sigma_{11}-\sigma_{22}\right)^2+H_G\left(\sigma_{22}-\sigma_{33}\right)^2+H_H\left(\sigma_{33}-\sigma_{11}\right)^2
@@ -58,11 +56,10 @@ namespace tfel
      * other books.
      *
      * \return an object of type st2tost2
-     */    
-    template<unsigned short N,typename real>
-    tfel::math::st2tost2<N,real>
-    hillTensor(const real,const real,const real,
-	       const real,const real,const real);
+     */
+    template <unsigned short N, typename real>
+    tfel::math::st2tost2<N, real> hillTensor(
+        const real, const real, const real, const real, const real, const real);
     /*!
      * \brief an alias to the `hillTensor` function introduced for
      * consistency.
@@ -86,7 +83,7 @@ namespace tfel
      * \end{array}
      * \right)
      * \f]
-     * if \f$\sigma\f$ is a second order symetric tensor (stensor), 
+     * if \f$\sigma\f$ is a second order symetric tensor (stensor),
      * \f$\sigma|H_H*\sigma\f$ computes the Hill stress :
      * \f[
      * H_F\left(\sigma_{11}-\sigma_{22}\right)^2+H_G\left(\sigma_{22}-\sigma_{33}\right)^2+H_H\left(\sigma_{33}-\sigma_{11}\right)^2
@@ -98,11 +95,10 @@ namespace tfel
      * other books.
      *
      * \return an object of type st2tost2
-     */    
-    template<unsigned short N,typename real>
-    tfel::math::st2tost2<N,real>
-    makeHillTensor(const real,const real,const real,
-		   const real,const real,const real);
+     */
+    template <unsigned short N, typename real>
+    tfel::math::st2tost2<N, real> makeHillTensor(
+        const real, const real, const real, const real, const real, const real);
     /*!
      * \brief compute the Hill tensor.
      *
@@ -127,7 +123,7 @@ namespace tfel
      * \end{array}
      * \right)
      * \f]
-     * if \f$\sigma\f$ is a second order symetric tensor (stensor), 
+     * if \f$\sigma\f$ is a second order symetric tensor (stensor),
      * \f$\sigma|H_H*\sigma\f$ computes the Hill stress :
      * \f[
      * H_F\left(\sigma_{11}-\sigma_{22}\right)^2+H_G\left(\sigma_{22}-\sigma_{33}\right)^2+H_H\left(\sigma_{33}-\sigma_{11}\right)^2
@@ -139,12 +135,13 @@ namespace tfel
      * other books.
      *
      * \return an object of type st2tost2
-     */    
-    template<ModellingHypothesis::Hypothesis H,
-	     OrthotropicAxesConvention c,typename real>
-    tfel::math::st2tost2<ModellingHypothesisToSpaceDimension<H>::value,real>
-    computeHillTensor(const real,const real,const real,
-		      const real,const real,const real);
+     */
+    template <ModellingHypothesis::Hypothesis H,
+              OrthotropicAxesConvention c,
+              typename real>
+    tfel::math::st2tost2<ModellingHypothesisToSpaceDimension<H>::value, real>
+    computeHillTensor(
+        const real, const real, const real, const real, const real, const real);
     /*!
      * \brief a simple alias to the `computeHillTensor` introduced by
      * consistency.
@@ -170,7 +167,7 @@ namespace tfel
      * \end{array}
      * \right)
      * \f]
-     * if \f$\sigma\f$ is a second order symetric tensor (stensor), 
+     * if \f$\sigma\f$ is a second order symetric tensor (stensor),
      * \f$\sigma|H_H*\sigma\f$ computes the Hill stress :
      * \f[
      * H_F\left(\sigma_{11}-\sigma_{22}\right)^2+H_G\left(\sigma_{22}-\sigma_{33}\right)^2+H_H\left(\sigma_{33}-\sigma_{11}\right)^2
@@ -182,17 +179,18 @@ namespace tfel
      * other books.
      *
      * \return an object of type st2tost2
-     */    
-    template<ModellingHypothesis::Hypothesis H,
-	     OrthotropicAxesConvention c,typename real>
-    tfel::math::st2tost2<ModellingHypothesisToSpaceDimension<H>::value,real>
-    makeHillTensor(const real,const real,const real,
-		   const real,const real,const real);
-    
-  } // end of namespace material
+     */
+    template <ModellingHypothesis::Hypothesis H,
+              OrthotropicAxesConvention c,
+              typename real>
+    tfel::math::st2tost2<ModellingHypothesisToSpaceDimension<H>::value, real>
+    makeHillTensor(
+        const real, const real, const real, const real, const real, const real);
 
-} // end of namespace tfel
+  }  // end of namespace material
 
-#include"TFEL/Material/Hill.ixx"
+}  // end of namespace tfel
+
+#include "TFEL/Material/Hill.ixx"
 
 #endif /* LIB_TFEL_MATERIAL_HILL_HXX */

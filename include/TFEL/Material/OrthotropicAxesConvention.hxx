@@ -1,27 +1,27 @@
 /*!
  * \file   OrthotropicAxesConvention.hxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   24 août 2015
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_TFEL_MATERIAL_ORTHOTROPICAXESCONVENTION_HXX
 #define LIB_TFEL_MATERIAL_ORTHOTROPICAXESCONVENTION_HXX
 
-#include"TFEL/Config/TFELConfig.hxx"
-#include"TFEL/Math/stensor.hxx"
-#include"TFEL/Material/StiffnessTensor.hxx"
-#include"TFEL/Material/ModellingHypothesis.hxx"
+#include "TFEL/Config/TFELConfig.hxx"
+#include "TFEL/Math/stensor.hxx"
+#include "TFEL/Material/StiffnessTensor.hxx"
+#include "TFEL/Material/ModellingHypothesis.hxx"
 
-namespace tfel{
+namespace tfel {
 
-  namespace material{
+  namespace material {
 
     /*!
      * Most finite element solver can't have a uniq definition of the
@@ -38,10 +38,10 @@ namespace tfel{
      * This means that we have to exchange the second and third
      * axis. This is the PIPE (orthotropic axes) convention.
      */
-    enum class OrthotropicAxesConvention{
+    enum class OrthotropicAxesConvention {
       DEFAULT,
       PIPE
-    }; // end of enum class OrthotropicAxesConvention
+    };  // end of enum class OrthotropicAxesConvention
 
     /*!
      * convert a diagonal tensor from a convention to another.
@@ -50,8 +50,12 @@ namespace tfel{
      * \tparam T        : type holded by the tensor
      * \param[in,out] s : stensor
      */
-    template<ModellingHypothesis::Hypothesis mh,OrthotropicAxesConvention c,typename T>
-    void convertStressFreeExpansionStrain(tfel::math::stensor<ModellingHypothesisToSpaceDimension<mh>::value,T>&);
+    template <ModellingHypothesis::Hypothesis mh,
+              OrthotropicAxesConvention c,
+              typename T>
+    void convertStressFreeExpansionStrain(
+        tfel::math::stensor<ModellingHypothesisToSpaceDimension<mh>::value,
+                            T>&);
 
     /*!
      * \param[out] D: stiffness tensor
@@ -65,20 +69,28 @@ namespace tfel{
      * \param[in]  G23:  shear modulus
      * \param[in]  G13:  shear modulus
      */
-    template<ModellingHypothesis::Hypothesis H,
-	     StiffnessTensorAlterationCharacteristic smt,
-	     OrthotropicAxesConvention c,
-	     typename StressType,typename RealType>
-    TFEL_MATERIAL_INLINE void
-    computeOrthotropicStiffnessTensor(tfel::math::st2tost2<ModellingHypothesisToSpaceDimension<H>::value,StressType>&,
-				      const StressType,const StressType,const StressType,
-				      const RealType,const RealType,const RealType,
-				      const StressType,const StressType,const StressType);
-    
-  } // end of namespace material
+    template <ModellingHypothesis::Hypothesis H,
+              StiffnessTensorAlterationCharacteristic smt,
+              OrthotropicAxesConvention c,
+              typename StressType,
+              typename RealType>
+    TFEL_MATERIAL_INLINE void computeOrthotropicStiffnessTensor(
+        tfel::math::st2tost2<ModellingHypothesisToSpaceDimension<H>::value,
+                             StressType>&,
+        const StressType,
+        const StressType,
+        const StressType,
+        const RealType,
+        const RealType,
+        const RealType,
+        const StressType,
+        const StressType,
+        const StressType);
 
-} // end of namespace tfel
+  }  // end of namespace material
 
-#include"TFEL/Material/OrthotropicAxesConvention.ixx"
-  
+}  // end of namespace tfel
+
+#include "TFEL/Material/OrthotropicAxesConvention.ixx"
+
 #endif /* LIB_TFEL_MATERIAL_ORTHOTROPICAXESCONVENTION_HXX */

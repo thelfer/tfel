@@ -1,26 +1,24 @@
-/*! 
+/*!
  * \file   include/TFEL/Material/GursonTvergaardNeedleman.hxx
  * \brief
  * \author Jeremy Hure
  * \brief  04 Septembre 2013
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_TFEL_MATERIAL_GURSONTVERGAARDNEEDLEMAN_HXX
-#define LIB_TFEL_MATERIAL_GURSONTVERGAARDNEEDLEMAN_HXX 
+#define LIB_TFEL_MATERIAL_GURSONTVERGAARDNEEDLEMAN_HXX
 
-#include<cmath>
+#include <cmath>
 
-namespace tfel
-{
+namespace tfel {
 
-  namespace material
-  {
+  namespace material {
 
     /*!
      * \brief This function computes the implicit flow stress
@@ -40,28 +38,29 @@ namespace tfel
      * \param[in] q1  : \f$q_1\f$ parameter
      * \param[in] q2  : \f$q_2\f$ parameter
      */
-    template<typename T>
-    T computeFlowStressGTN(const T seq,
-			   const T skk,
-			   const T fst,
-			   const T q1,
-			   const T q2)
-    {
+    template <typename T>
+    T computeFlowStressGTN(
+        const T seq, const T skk, const T fst, const T q1, const T q2) {
       using namespace std;
       T sst = seq;
-      T S = pow((seq/sst),2) + 2*q1*fst*cosh((q2*skk)/(2*sst)) - 1 - pow((q1*fst),2);
-      T SP = (-2*pow((seq/sst),2)/(sst)) - ((q1*q2*fst*skk)/(sst*sst))*sinh((q2*skk)/(2*sst));
-      while(S>1.e-10){
-	sst = sst - S/SP;
-	S =  pow((seq/sst),2) + 2*q1*fst*cosh((q2*skk)/(2*sst)) - 1 - pow((q1*fst),2);
-	SP = (-2*pow((seq/sst),2)/(sst)) - ((q1*q2*fst*skk)/(sst*sst))*sinh((q2*skk)/(2*sst));   
+      T S = pow((seq / sst), 2) + 2 * q1 * fst * cosh((q2 * skk) / (2 * sst)) -
+            1 - pow((q1 * fst), 2);
+      T SP =
+          (-2 * pow((seq / sst), 2) / (sst)) -
+          ((q1 * q2 * fst * skk) / (sst * sst)) * sinh((q2 * skk) / (2 * sst));
+      while (S > 1.e-10) {
+        sst = sst - S / SP;
+        S = pow((seq / sst), 2) + 2 * q1 * fst * cosh((q2 * skk) / (2 * sst)) -
+            1 - pow((q1 * fst), 2);
+        SP = (-2 * pow((seq / sst), 2) / (sst)) -
+             ((q1 * q2 * fst * skk) / (sst * sst)) *
+                 sinh((q2 * skk) / (2 * sst));
       }
       return sst;
-    } // end of computeFlowStressGTN
+    }  // end of computeFlowStressGTN
 
-  } // end of namespace material
+  }  // end of namespace material
 
-} // end of namespace tfel
+}  // end of namespace tfel
 
 #endif /* LIB_TFEL_MATERIAL_GURSONTVERGAARDNEEDLEMAN_HXX */
-

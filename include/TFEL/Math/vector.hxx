@@ -5,36 +5,36 @@
  * medium sized vectors.
  * \author Thomas Helfer
  * \date   05 oct 2006
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_TFEL_VECTOR_HXX
-#define LIB_TFEL_VECTOR_HXX 
+#define LIB_TFEL_VECTOR_HXX
 
-#include<vector>
-#include<type_traits>
+#include <vector>
+#include <type_traits>
 
-#include"TFEL/TypeTraits/BaseType.hxx"
-#include"TFEL/TypeTraits/IsAssignableTo.hxx"
-#include"TFEL/Math/Forward/vector.hxx"
-#include"TFEL/Math/Vector/VectorConcept.hxx"
-#include"TFEL/Math/Vector/VectorConceptOperations.hxx"
+#include "TFEL/TypeTraits/BaseType.hxx"
+#include "TFEL/TypeTraits/IsAssignableTo.hxx"
+#include "TFEL/Math/Forward/vector.hxx"
+#include "TFEL/Math/Vector/VectorConcept.hxx"
+#include "TFEL/Math/Vector/VectorConceptOperations.hxx"
 
-namespace tfel{
+namespace tfel {
 
-  namespace math{
-    
+  namespace math {
+
     /*!
      * \brief Partial specialisation for the vector class.
      * \see VectorTraits
      */
-    template<typename T>
-    struct TFEL_VISIBILITY_LOCAL VectorTraits<vector<T> >{
+    template <typename T>
+    struct TFEL_VISIBILITY_LOCAL VectorTraits<vector<T>> {
       /*
        * The underlying numerical type.
        */
@@ -48,18 +48,14 @@ namespace tfel{
        */
       typedef IndexType RunTimeProperties;
     };
-    
-    
-    template<typename T>
-    class TFEL_VISIBILITY_LOCAL vector
-      : public VectorConcept<vector<T> >,
-	protected std::vector<T>
-    {
+
+    template <typename T>
+    class TFEL_VISIBILITY_LOCAL vector : public VectorConcept<vector<T>>,
+                                         protected std::vector<T> {
       //! typedef to the underlying container class.
       typedef std::vector<T> Container;
 
-    public:
-
+     public:
       /*!
        * type of the vector's values.
        * (this i<s a stl requirement).
@@ -135,7 +131,7 @@ namespace tfel{
       /*
        * Constructor
        * \param size_type size, size of vector
-       * \param T value, initial value 
+       * \param T value, initial value
        */
       vector(const size_type, const T&);
       //! constructor from initializer list
@@ -145,96 +141,86 @@ namespace tfel{
        * \param[in] b: beginning of the sequence
        * \param[in] e: end of the sequence
        */
-      template<typename InputIterator>
-      vector(const InputIterator,const InputIterator);
-      
-      using Container::front;
+      template <typename InputIterator>
+      vector(const InputIterator, const InputIterator);
+
       using Container::back;
-      using Container::insert;
-      using Container::clear;
-      using Container::resize;
-      using Container::size;
       using Container::begin;
-      using Container::end;
       using Container::cbegin;
       using Container::cend;
-      using Container::rbegin;
-      using Container::rend;
-      using Container::push_back;
+      using Container::clear;
       using Container::emplace_back;
       using Container::empty;
+      using Container::end;
+      using Container::front;
+      using Container::insert;
+      using Container::push_back;
+      using Container::rbegin;
+      using Container::rend;
+      using Container::resize;
+      using Container::size;
       using Container::operator[];
       //! assignement operator
-      vector& 
-      operator=(const vector&);
+      vector& operator=(const vector&);
       /*!
        * Assignement operator.
        * \param  const vector&, the vector to be copied.
        * \return vector&, a reference to itself.
        */
-      vector& 
-      operator+=(const vector&);
+      vector& operator+=(const vector&);
       /*!
        * Assignement operator.
        * \param  const vector&, the vector to be copied.
        * \return vector&, a reference to itself.
        */
-      vector& 
-      operator-=(const vector&);
+      vector& operator-=(const vector&);
       /*
        * Assignement operator
        * \param const Expr<vector<T2>,Expr>&, a vector
        * expression based on vector
        * \return vector&, a reference to itself.
        */
-      template<typename T2,typename Operation>
+      template <typename T2, typename Operation>
       TFEL_MATH_INLINE2
-      typename std::enable_if<
-	tfel::typetraits::IsAssignableTo<T2,T>::cond,
-	vector<T>&
-      >::type
-      operator=(const Expr<vector<T2>,Operation>&);
+          typename std::enable_if<tfel::typetraits::IsAssignableTo<T2, T>::cond,
+                                  vector<T>&>::type
+          operator=(const Expr<vector<T2>, Operation>&);
       /*
        * Assignement operator
        * \param const Expr<vector<T2>,Operation>&, a vector
        * expression based on vector
        * \return vector&, a reference to itself.
        */
-      template<typename T2,typename Operation>
+      template <typename T2, typename Operation>
       TFEL_MATH_INLINE2
-      typename std::enable_if<
-	tfel::typetraits::IsAssignableTo<T2,T>::cond,
-	vector<T>&
-      >::type
-      operator+=(const Expr<vector<T2>,Operation>&);
+          typename std::enable_if<tfel::typetraits::IsAssignableTo<T2, T>::cond,
+                                  vector<T>&>::type
+          operator+=(const Expr<vector<T2>, Operation>&);
       /*
        * Assignement operator
        * \param const Expr<vector<T2>,Operation>&, a vector
        * expression based on vector
        * \return vector&, a reference to itself.
        */
-      template<typename T2,typename Operation>
+      template <typename T2, typename Operation>
       TFEL_MATH_INLINE2
-      typename std::enable_if<
-	tfel::typetraits::IsAssignableTo<T2,T>::cond,
-	vector<T>&
-      >::type
-      operator-=(const Expr<vector<T2>,Operation>&);
+          typename std::enable_if<tfel::typetraits::IsAssignableTo<T2, T>::cond,
+                                  vector<T>&>::type
+          operator-=(const Expr<vector<T2>, Operation>&);
       /*
        * index operator
        * \param size_type, index
        * \return T&, a reference to the vector ith element.
        */
-      TFEL_MATH_INLINE T&
-      operator()(const size_type) noexcept;
+      TFEL_MATH_INLINE T& operator()(const size_type) noexcept;
       /*
        * index operator
        * this is a vector concept requirement
        * \param size_type, index
        * \return const T&, a reference to the vector ith element
        */
-      TFEL_MATH_INLINE constexpr const T&
-      operator()(const size_type) const noexcept;
+      TFEL_MATH_INLINE constexpr const T& operator()(const size_type) const
+          noexcept;
       /*
        * Return the runtime property of the vector
        * \return const RunTimeProperties, the runtime properties of the
@@ -242,8 +228,7 @@ namespace tfel{
        * (this is a vector concept requirement)
        */
       TFEL_MATH_INLINE2
-      const RunTimeProperties
-      getRunTimeProperties() const;
+      const RunTimeProperties getRunTimeProperties() const;
       /*
        * swap two vectors
        * \param vector&, the other vector
@@ -257,10 +242,8 @@ namespace tfel{
        * \param const InputIterator, an iterator to the first element
        * not to be copied.
        */
-      template<typename InputIterator>
-      TFEL_MATH_INLINE2
-      void 
-      copy(const InputIterator,const InputIterator);
+      template <typename InputIterator>
+      TFEL_MATH_INLINE2 void copy(const InputIterator, const InputIterator);
       //! destructor
       ~vector() noexcept;
     };
@@ -268,20 +251,19 @@ namespace tfel{
     /*!
      * \brief return the euclidian norm of a vector
      * \param const vector<T>&, the vector.
-     * \return const typename tfel::typetraits::RealPartType<T>::type, the result
+     * \return const typename tfel::typetraits::RealPartType<T>::type, the
+     * result
      */
-    template<typename T>
+    template <typename T>
     typename std::enable_if<
-      tfel::typetraits::IsScalar<T>::cond,
-      typename tfel::typetraits::RealPartType<T>::type
-      >::type
+        tfel::typetraits::IsScalar<T>::cond,
+        typename tfel::typetraits::RealPartType<T>::type>::type
     norm(const vector<T>&);
 
-  } // end of namespace math
+  }  // end of namespace math
 
-} // end of namespace tfel  
+}  // end of namespace tfel
 
-#include"TFEL/Math/Vector/vector.ixx"
+#include "TFEL/Math/Vector/vector.ixx"
 
 #endif /* LIB_TFEL_VECTOR_HXX */
-

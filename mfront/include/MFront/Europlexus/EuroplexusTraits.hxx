@@ -1,49 +1,49 @@
 /*!
  * \file   mfront/include/MFront/Europlexus/EuroplexusTraits.hxx
- * \brief  
- * 
+ * \brief
+ *
  * \author Thomas Helfer
  * \date   13 fév 2007
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_MFRONT_EPXTRAITS_HXX
-#define LIB_MFRONT_EPXTRAITS_HXX 
+#define LIB_MFRONT_EPXTRAITS_HXX
 
-namespace epx{
+namespace epx {
 
-  enum EuroplexusBehaviourType{
+  enum EuroplexusBehaviourType {
     STANDARDSTRAINBASEDBEHAVIOUR,
     STANDARDFINITESTRAINBEHAVIOUR
-  }; // end of enum EPXBehaviourType
+  };  // end of enum EPXBehaviourType
 
-  enum EuroplexusSymmetryType{
+  enum EuroplexusSymmetryType {
     ISOTROPIC,
     ORTHOTROPIC
-  }; // end of enum EuroplexusSymmetryType
+  };  // end of enum EuroplexusSymmetryType
 
-  template<typename Behaviour>
-  struct EuroplexusTraits{
-    static constexpr EuroplexusBehaviourType btype = epx::STANDARDSTRAINBASEDBEHAVIOUR;
+  template <typename Behaviour>
+  struct EuroplexusTraits {
+    static constexpr EuroplexusBehaviourType btype =
+        epx::STANDARDSTRAINBASEDBEHAVIOUR;
     // size of the driving variable array (STRAN)
     static constexpr unsigned short DrivingVariableSize = 0u;
     // size of the thermodynamic force variable array (STESS)
     static constexpr unsigned short ThermodynamicForceVariableSize = 0u;
-    static constexpr bool requiresStiffnessTensor             = false;
+    static constexpr bool requiresStiffnessTensor = false;
     static constexpr bool requiresThermalExpansionCoefficientTensor = false;
-    static constexpr unsigned short propertiesOffset          = 0u;
+    static constexpr unsigned short propertiesOffset = 0u;
     // Type of the behaviour of the material (isotropic or orthotropic)
-    static constexpr EuroplexusSymmetryType type   = epx::ISOTROPIC;
+    static constexpr EuroplexusSymmetryType type = epx::ISOTROPIC;
     // Type of the elastic behaviour of the material (isotropic or orthotropic)
-    static constexpr EuroplexusSymmetryType  etype = epx::ISOTROPIC;
-  }; // end of class EPXTraits
+    static constexpr EuroplexusSymmetryType etype = epx::ISOTROPIC;
+  };  // end of class EPXTraits
 
-} // end of namespace epx  
+}  // end of namespace epx
 
 #endif /* LIB_MFRONT_EPXTRAITS_HXX */
-

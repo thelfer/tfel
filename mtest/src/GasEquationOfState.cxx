@@ -22,7 +22,8 @@ namespace mtest {
 
   struct GasEquationOfState::GasEquationOfStateMembers {
     //! a simple alias
-    using ExternalFunctionManager = std::shared_ptr<tfel::math::parser::ExternalFunctionManager>;
+    using ExternalFunctionManager =
+        std::shared_ptr<tfel::math::parser::ExternalFunctionManager>;
     /*!
      * \param[in] e: equation of state
      */
@@ -47,16 +48,21 @@ namespace mtest {
                                        "must reference a constant evolution");
         this->m->insert({p, std::make_shared<Constant>(ev(0))});
       }
-      this->ds_dn = std::dynamic_pointer_cast<tfel::math::Evaluator>(s.differentiate("n"));
-      this->ds_dV = std::dynamic_pointer_cast<tfel::math::Evaluator>(s.differentiate("V"));
-      this->ds_dP = std::dynamic_pointer_cast<tfel::math::Evaluator>(s.differentiate("P"));
+      this->ds_dn = std::dynamic_pointer_cast<tfel::math::Evaluator>(
+          s.differentiate("n"));
+      this->ds_dV = std::dynamic_pointer_cast<tfel::math::Evaluator>(
+          s.differentiate("V"));
+      this->ds_dP = std::dynamic_pointer_cast<tfel::math::Evaluator>(
+          s.differentiate("P"));
     }  // end of GasEquationOfStateMembers
        /*!
         * \param[in] P: pressure
         * \param[in] V: volume
         * \param[in] T: temperature
         */
-    double computeNumberOfMoles(const double P, const double V, const double T) {
+    double computeNumberOfMoles(const double P,
+                                const double V,
+                                const double T) {
       constexpr const double R = 8.3144598;
       constexpr const unsigned short imax = 100;
       auto iter = [this, P, V, T](double& n, double& dn) {
@@ -112,17 +118,23 @@ namespace mtest {
      * \param[in] n: number of moles
      * \param[in] T: temperature
      */
-    double computeIsothermalBulkModulus(const double V, const double n, const double T) {
+    double computeIsothermalBulkModulus(const double V,
+                                        const double n,
+                                        const double T) {
       const auto P = this->computePressure(V, n, T);
       // ds_dp*dP=-ds_dV*dV => dP_dV = - (ds_dV/ds_dP)
-      const auto dP_dV = -eval(*(this->ds_dV), P, V, n, T) / eval(*(this->ds_dP), P, V, n, T);
+      const auto dP_dV =
+          -eval(*(this->ds_dV), P, V, n, T) / eval(*(this->ds_dP), P, V, n, T);
       // K=-V*dP_dV
       return -V * dP_dV;
     }
 
    private:
-    static double eval(
-        tfel::math::Evaluator& e, const double P, const double V, const double n, const double T) {
+    static double eval(tfel::math::Evaluator& e,
+                       const double P,
+                       const double V,
+                       const double n,
+                       const double T) {
       e.setVariableValue("P", P);
       e.setVariableValue("V", V);
       e.setVariableValue("n", n);
@@ -141,15 +153,21 @@ namespace mtest {
     std::shared_ptr<tfel::math::Evaluator> ds_dP;
   };
 
-  GasEquationOfState::GasEquationOfState(const std::string& e, const EvolutionManager& evm)
-      : m(std::unique_ptr<GasEquationOfStateMembers>(new GasEquationOfStateMembers(e, evm))) {
+  GasEquationOfState::GasEquationOfState(const std::string& e,
+                                         const EvolutionManager& evm)
+      : m(std::unique_ptr<GasEquationOfStateMembers>(
+            new GasEquationOfStateMembers(e, evm))) {
   }  // end of GasEquationOfState::GasEquationOfState
 
-  double GasEquationOfState::computeNumberOfMoles(const double P, const double V, const double T) {
+  double GasEquationOfState::computeNumberOfMoles(const double P,
+                                                  const double V,
+                                                  const double T) {
     return this->m->computeNumberOfMoles(P, V, T);
   }  // end of GasEquationOfState::computeNumberOfMoles
 
-  double GasEquationOfState::computePressure(const double V, const double n, const double T) {
+  double GasEquationOfState::computePressure(const double V,
+                                             const double n,
+                                             const double T) {
     return this->m->computePressure(V, n, T);
   }  // end of GasEquationOfState::computePressure
 

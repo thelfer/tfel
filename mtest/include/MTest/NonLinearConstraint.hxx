@@ -1,44 +1,41 @@
-/*! 
+/*!
  * \file  mtest/include/MTest/NonLinearConstraint.hxx
  * \brief
  * \author Thomas Helfer
  * \brief  03/03/2017
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_MTEST_MTESTNONLINEARCONSTRAINT_HXX
-#define LIB_MTEST_MTESTNONLINEARCONSTRAINT_HXX 
+#define LIB_MTEST_MTESTNONLINEARCONSTRAINT_HXX
 
-#include<vector>
-#include<string>
-#include<memory>
-#include"TFEL/Math/matrix.hxx"
-#include"TFEL/Math/vector.hxx"
-#include"TFEL/Math/Evaluator.hxx"
-#include"TFEL/Material/ModellingHypothesis.hxx"
+#include <vector>
+#include <string>
+#include <memory>
+#include "TFEL/Math/matrix.hxx"
+#include "TFEL/Math/vector.hxx"
+#include "TFEL/Math/Evaluator.hxx"
+#include "TFEL/Material/ModellingHypothesis.hxx"
 
-#include"MTest/Types.hxx"
-#include"MTest/Config.hxx"
-#include"MTest/Evolution.hxx"
-#include"MTest/Constraint.hxx"
+#include "MTest/Types.hxx"
+#include "MTest/Config.hxx"
+#include "MTest/Evolution.hxx"
+#include "MTest/Constraint.hxx"
 
-namespace mtest
-{
+namespace mtest {
 
   // forward declaration
   struct Behaviour;
 
   //! \brief Impose a contraint on the driving variables.
-  struct MTEST_VISIBILITY_EXPORT NonLinearConstraint final
-    : public Constraint
-  {
+  struct MTEST_VISIBILITY_EXPORT NonLinearConstraint final : public Constraint {
     //! \brief define the normalisation policy
-    enum NormalisationPolicy{
+    enum NormalisationPolicy {
       /*!
        * \brief this policy assumes that the constraint is defined by
        * a function which values are of the order of magnitude of the
@@ -51,7 +48,7 @@ namespace mtest
        * thermodynamic forces.
        */
       THERMODYNAMICFORCECONSTRAINT
-    }; // end of enum NormalisationPolicy
+    };  // end of enum NormalisationPolicy
     /*!
      * constructor
      * \param[in] b_:  behaviour
@@ -60,15 +57,14 @@ namespace mtest
      * \param[in] p:   normalisation policy
      */
     NonLinearConstraint(const Behaviour&,
-			const std::string&,
-			const EvolutionManager&,
-			const NormalisationPolicy);
+                        const std::string&,
+                        const EvolutionManager&,
+                        const NormalisationPolicy);
     /*!
      * \return the number of Lagrange Multipliers
      * associated with this contraint
      */
-    virtual unsigned short
-    getNumberOfLagrangeMultipliers() const override;
+    virtual unsigned short getNumberOfLagrangeMultipliers() const override;
     /*!
      * \brief builds up the stiffness matrix and the residual.
      * \param[out] K:  stiffness matrix
@@ -83,24 +79,23 @@ namespace mtest
      * \param[in]  f: thermodynamic forces.
      * \param[in]  u1: current estimate of the unknowns
      * \param[in]  p:  position of the first lagrange multiplier
-     *                 in the residual 
+     *                 in the residual
      * \param[in]  d:  space dimension
      * \param[in]  t:  beginning of the time step
      * \param[in]  dt: time increment
      * \param[in]  a:  normalisation factor
      */
-    virtual void
-    setValues(tfel::math::matrix<real>&,
-	      tfel::math::vector<real>&,
-	      const tfel::math::vector<real>&,
-	      const tfel::math::vector<real>&,
-	      const tfel::math::matrix<real>&,
-	      const tfel::math::vector<real>&,
-	      const unsigned short,
-	      const unsigned short,
-	      const real,
-	      const real,
-	      const real) const override;
+    virtual void setValues(tfel::math::matrix<real>&,
+                           tfel::math::vector<real>&,
+                           const tfel::math::vector<real>&,
+                           const tfel::math::vector<real>&,
+                           const tfel::math::matrix<real>&,
+                           const tfel::math::vector<real>&,
+                           const unsigned short,
+                           const unsigned short,
+                           const real,
+                           const real,
+                           const real) const override;
     /*!
      * \param[in]  e    : driving variables
      * \param[in]  s    : stresses
@@ -109,13 +104,12 @@ namespace mtest
      * \param[in]  t    : beginning of the time step
      * \param[in]  dt   : time increment
      */
-    virtual bool
-    checkConvergence(const tfel::math::vector<real>&,
-		     const tfel::math::vector<real>&,
-		     const real,
-		     const real,
-		     const real,
-		     const real) const override;
+    virtual bool checkConvergence(const tfel::math::vector<real>&,
+                                  const tfel::math::vector<real>&,
+                                  const real,
+                                  const real,
+                                  const real,
+                                  const real) const override;
     /*!
      * \param[in]  e    : driving variables
      * \param[in]  s    : thermodynamic forces
@@ -124,16 +118,17 @@ namespace mtest
      * \param[in]  t    : beginning of the time step
      * \param[in]  dt   : time increment
      */
-    virtual std::string
-    getFailedCriteriaDiagnostic(const tfel::math::vector<real>&,
-				const tfel::math::vector<real>&,
-				const real,
-				const real,
-				const real,
-				const real) const override;
+    virtual std::string getFailedCriteriaDiagnostic(
+        const tfel::math::vector<real>&,
+        const tfel::math::vector<real>&,
+        const real,
+        const real,
+        const real,
+        const real) const override;
     //! destructor
     virtual ~NonLinearConstraint();
-  protected:
+
+   protected:
     // Internal structure
     struct Constraint;
     /*!
@@ -144,10 +139,10 @@ namespace mtest
      * \param[in]  dt: time increment
      */
     double eval(tfel::math::Evaluator&,
-		const tfel::math::vector<real>&,
-		const tfel::math::vector<real>&,
-		const real,
-		const real) const;
+                const tfel::math::vector<real>&,
+                const tfel::math::vector<real>&,
+                const real,
+                const real) const;
     //! \brief evaluation of the constraint
     std::shared_ptr<Constraint> c;
     //! normalisation policy
@@ -155,9 +150,8 @@ namespace mtest
     //! disabled operatorx
     NonLinearConstraint& operator=(const NonLinearConstraint&) = delete;
     NonLinearConstraint& operator=(NonLinearConstraint&&) = delete;
-  }; // end of struct NonLinearConstraint
-  
-} // end of namespace mtest
+  };  // end of struct NonLinearConstraint
+
+}  // end of namespace mtest
 
 #endif /* LIB_MTEST_MTESTNONLINEARCONSTRAINT_HXX */
-

@@ -1,28 +1,27 @@
-/*! 
+/*!
  * \file   mfront/include/MFront/AbstractBehaviourBrickFactory.hxx
  * \brief
  * \author Thomas Helfer
  * \date   October 20, 2014
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_MFRONT_MFRONTBEHAVIOURBRICKFACTORY_HXX
-#define LIB_MFRONT_MFRONTBEHAVIOURBRICKFACTORY_HXX 
+#define LIB_MFRONT_MFRONTBEHAVIOURBRICKFACTORY_HXX
 
-#include<map>
-#include<string>
+#include <map>
+#include <string>
 
-#include<memory>
-#include"MFront/AbstractBehaviourBrick.hxx"
+#include <memory>
+#include "MFront/AbstractBehaviourBrick.hxx"
 
-namespace mfront
-{
-  
+namespace mfront {
+
   // forward declaration
   struct AbstractBehaviourDSL;
   // forward declaration
@@ -31,13 +30,13 @@ namespace mfront
   /*!
    * register the non linear AbstractBehaviourBrick used by the implicit parser
    */
-  struct AbstractBehaviourBrickFactory
-  {
+  struct AbstractBehaviourBrickFactory {
     //! a simple alias
-    typedef std::shared_ptr<AbstractBehaviourBrick> (* constructor)(AbstractBehaviourDSL&,
-								    BehaviourDescription&,
-								    const AbstractBehaviourBrick::Parameters&,
-								    const AbstractBehaviourBrick::DataMap&);
+    typedef std::shared_ptr<AbstractBehaviourBrick> (*constructor)(
+        AbstractBehaviourDSL&,
+        BehaviourDescription&,
+        const AbstractBehaviourBrick::Parameters&,
+        const AbstractBehaviourBrick::DataMap&);
     /*!
      * \return the uniq instance of the AbstractBehaviourBrick factory
      */
@@ -51,19 +50,19 @@ namespace mfront
      * \param[out]    p:   parameters
      * \param[out]    d:   data
      */
-    std::shared_ptr<AbstractBehaviourBrick>
-    get(const std::string&,
-	AbstractBehaviourDSL&,
-	BehaviourDescription&,
-	const AbstractBehaviourBrick::Parameters&,
-	const AbstractBehaviourBrick::DataMap&) const;
+    std::shared_ptr<AbstractBehaviourBrick> get(
+        const std::string&,
+        AbstractBehaviourDSL&,
+        BehaviourDescription&,
+        const AbstractBehaviourBrick::Parameters&,
+        const AbstractBehaviourBrick::DataMap&) const;
     /*!
-     * \param[in] a : AbstractBehaviourBrick name 
-     * \param[in] c : AbstractBehaviourBrick constructor 
+     * \param[in] a : AbstractBehaviourBrick name
+     * \param[in] c : AbstractBehaviourBrick constructor
      */
-    void registerAbstractBehaviourBrick(const std::string&,
-					const constructor);
-  private:
+    void registerAbstractBehaviourBrick(const std::string&, const constructor);
+
+   private:
     /*!
      * default constructor
      */
@@ -75,13 +74,12 @@ namespace mfront
     /*!
      * assignement operator (disabled)
      */
-    AbstractBehaviourBrickFactory&
-    operator=(const AbstractBehaviourBrickFactory&);
+    AbstractBehaviourBrickFactory& operator=(
+        const AbstractBehaviourBrickFactory&);
     //! all registred constructors
-    std::map<std::string,constructor> constructors;
-  }; // end of struct AbstractBehaviourBrickFactory
+    std::map<std::string, constructor> constructors;
+  };  // end of struct AbstractBehaviourBrickFactory
 
-} // end of namespace mfront
+}  // end of namespace mfront
 
 #endif /* LIB_MFRONT_MFRONTBEHAVIOURBRICKFACTORY_HXX */
-

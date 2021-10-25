@@ -1,52 +1,46 @@
 /*!
  * \file   ThreadPoolTest.cxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   09 nov. 2016
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
-#include<iostream>
-#include"TFEL/Tests/TestCase.hxx"
-#include"TFEL/Tests/TestProxy.hxx"
-#include"TFEL/Tests/TestManager.hxx"
-#include"TFEL/System/ThreadPool.hxx"
+#include <iostream>
+#include "TFEL/Tests/TestCase.hxx"
+#include "TFEL/Tests/TestProxy.hxx"
+#include "TFEL/Tests/TestManager.hxx"
+#include "TFEL/System/ThreadPool.hxx"
 
-struct ThreadPoolTest final
-  : public tfel::tests::TestCase
-{
-   ThreadPoolTest()
-    : tfel::tests::TestCase("TFEL/System","ThreadPoolTest")
-  {} // end of ThreadPoolTest
-  tfel::tests::TestResult execute() override
-  {
+struct ThreadPoolTest final : public tfel::tests::TestCase {
+  ThreadPoolTest()
+      : tfel::tests::TestCase("TFEL/System", "ThreadPoolTest") {
+  }  // end of ThreadPoolTest
+  tfel::tests::TestResult execute() override {
     using namespace tfel::system;
     ThreadPool pool(2);
     auto results = std::vector<std::future<ThreadedTaskResult<int>>>{};
-    for(int i = 0; i < 5; ++i) {
-      auto r = pool.addTask([i]{
-	  return i*i;
-	});
+    for (int i = 0; i < 5; ++i) {
+      auto r = pool.addTask([i] { return i * i; });
       results.emplace_back(std::move(r));
     }
     int value = 0;
-    for(auto && r: results){
+    for (auto&& r : results) {
       value += *(r.get());
     }
-    TFEL_TESTS_ASSERT(value==30);    
+    TFEL_TESTS_ASSERT(value == 30);
     return this->result;
-  } // end of execute
+  }  // end of execute
 };
 
-TFEL_TESTS_GENERATE_PROXY(ThreadPoolTest,"ThreadPoolTest");
+TFEL_TESTS_GENERATE_PROXY(ThreadPoolTest, "ThreadPoolTest");
 
-int main()
-{
+int main() {
   auto& m = tfel::tests::TestManager::getTestManager();
   m.addTestOutput(std::cout);
   m.addXMLTestOutput("ThreadPoolTest.xml");

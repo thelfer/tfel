@@ -1,40 +1,38 @@
-/*! 
+/*!
  * \file  mtest/include/MTest/MTestParser.hxx
  * \brief
  * \author Thomas Helfer
  * \brief 09 avril 2013
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_MTEST_MTESTPARSER_HXX
-#define LIB_MTEST_MTESTPARSER_HXX 
+#define LIB_MTEST_MTESTPARSER_HXX
 
-#include<map>
-#include<string>
-#include<vector>
-#include<memory>
+#include <map>
+#include <string>
+#include <vector>
+#include <memory>
 
-#include"MTest/Config.hxx"
-#include"MTest/Types.hxx"
-#include"MTest/SingleStructureSchemeParser.hxx"
+#include "MTest/Config.hxx"
+#include "MTest/Types.hxx"
+#include "MTest/SingleStructureSchemeParser.hxx"
 
-namespace mtest
-{
+namespace mtest {
 
   // forward declaration
   struct MTest;
-  
+
   /*!
    * MTestParser is used to parse mtest file.
    */
   struct MTEST_VISIBILITY_EXPORT MTestParser
-    : public SingleStructureSchemeParser
-  {
+      : public SingleStructureSchemeParser {
     /*!
      * default constructor
      */
@@ -48,30 +46,29 @@ namespace mtest
      * substitutions are given through command-line options such as
      * `--@YYY@=XXX`)
      */
-    void execute(MTest&,const std::string&,
-		 const std::vector<std::string>&,
-		 const std::map<std::string,std::string>&);
+    void execute(MTest&,
+                 const std::string&,
+                 const std::vector<std::string>&,
+                 const std::map<std::string, std::string>&);
     /*!
      * execute mtest parser on a string
      * \param[in] s : string
      */
-    void parseString(MTest&,
-		     const std::string&);
+    void parseString(MTest&, const std::string&);
     //! \return the list of keywords
-    virtual std::vector<std::string>
-    getKeyWordsList() const;
+    virtual std::vector<std::string> getKeyWordsList() const;
     //! \brief display the list of keywords
     virtual void displayKeyWordsList() const;
     //! \brief display the list of keywords
     virtual void displayKeyWordsHelp() const;
     //! \brief display the description of a keyword
-    virtual void
-    displayKeyWordDescription(const std::string&) const;
+    virtual void displayKeyWordDescription(const std::string&) const;
     //! \brief destructor
     virtual ~MTestParser();
-  protected:
+
+   protected:
     //! a simple alias
-    typedef void (MTestParser::* CallBack)(MTest&,tokens_iterator&);
+    typedef void (MTestParser::*CallBack)(MTest&, tokens_iterator&);
     /*!
      * execute mtest parser after reading a file or parsing a string
      * \param[out] t : structure to be filled
@@ -86,216 +83,191 @@ namespace mtest
      * \param[in,out] t: `MTest` object to be configured
      * \param[in,out] p: position in the input file
      */
-    virtual void
-    handleCompareToNumericalTangentOperator(MTest&,tokens_iterator&);
+    virtual void handleCompareToNumericalTangentOperator(MTest&,
+                                                         tokens_iterator&);
     /*!
      * \brief handle the `@TangentOperatorComparisonCriterium` keyword
      * \param[in,out] t: `MTest` object to be configured
      * \param[in,out] p: position in the input file
      */
-    virtual void
-    handleTangentOperatorComparisonCriterium(MTest&,tokens_iterator&);
+    virtual void handleTangentOperatorComparisonCriterium(MTest&,
+                                                          tokens_iterator&);
     /*!
      * \brief handle the `@NumericalTangentOperatorPerturbationValue`
      * keyword.
      * \param[in,out] t: `MTest` object to be configured
      * \param[in,out] p: position in the input file
      */
-    virtual void
-    handleNumericalTangentOperatorPerturbationValue(MTest&,tokens_iterator&);
+    virtual void handleNumericalTangentOperatorPerturbationValue(
+        MTest&, tokens_iterator&);
     /*!
      * \brief handle the `@Test` keyword
      * \param[in,out] t: `MTest` object to be configured
      * \param[in,out] p: position in the input file
      */
-    virtual void
-    handleTest(MTest&,tokens_iterator&);
+    virtual void handleTest(MTest&, tokens_iterator&);
     /*!
      * \brief handle the `@RotationMatrix` keyword
      * \param[in,out] t: `MTest` object to be configured
      * \param[in,out] p: position in the input file
      */
-    virtual void
-    handleRotationMatrix(MTest&,tokens_iterator&);
+    virtual void handleRotationMatrix(MTest&, tokens_iterator&);
     /*!
      * \brief handle the `@StrainEpsilon` keyword
      * \param[in,out] t: `MTest` object to be configured
      * \param[in,out] p: position in the input file
      */
-    virtual void
-    handleStrainEpsilon(MTest&,tokens_iterator&);
+    virtual void handleStrainEpsilon(MTest&, tokens_iterator&);
     /*!
      * \brief handle the `@DeformationGradientEpsilon` keyword
      * \param[in,out] t: `MTest` object to be configured
      * \param[in,out] p: position in the input file
      */
-    virtual void
-    handleDeformationGradientEpsilon(MTest&,tokens_iterator&);
+    virtual void handleDeformationGradientEpsilon(MTest&, tokens_iterator&);
     /*!
      * \brief handle the `@OpeningDisplacementEpsilon` keyword
      * \param[in,out] t: `MTest` object to be configured
      * \param[in,out] p: position in the input file
      */
-    virtual void
-    handleOpeningDisplacementEpsilon(MTest&,tokens_iterator&);
+    virtual void handleOpeningDisplacementEpsilon(MTest&, tokens_iterator&);
     /*!
      * \brief handle the `@DrivingVariableEpsilon` keyword
      * \param[in,out] t: `MTest` object to be configured
      * \param[in,out] p: position in the input file
      */
-    virtual void
-    handleDrivingVariableEpsilon(MTest&,tokens_iterator&);
+    virtual void handleDrivingVariableEpsilon(MTest&, tokens_iterator&);
     /*!
      * \brief handle the `@StressEpsilon` keyword
      * \param[in,out] t: `MTest` object to be configured
      * \param[in,out] p: position in the input file
      */
-    virtual void
-    handleStressEpsilon(MTest&,tokens_iterator&);
+    virtual void handleStressEpsilon(MTest&, tokens_iterator&);
     /*!
      * \brief handle the `@CohesiveForceEpsilon` keyword
      * \param[in,out] t: `MTest` object to be configured
      * \param[in,out] p: position in the input file
      */
-    virtual void
-    handleCohesiveForceEpsilon(MTest&,tokens_iterator&);
+    virtual void handleCohesiveForceEpsilon(MTest&, tokens_iterator&);
     /*!
      * \brief handle the `@ThermodynamicForceEpsilon` keyword
      * \param[in,out] t: `MTest` object to be configured
      * \param[in,out] p: position in the input file
      */
-    virtual void
-    handleThermodynamicForceEpsilon(MTest&,tokens_iterator&);
+    virtual void handleThermodynamicForceEpsilon(MTest&, tokens_iterator&);
     /*!
      * \brief handle the `@ModellingHypothesis` keyword
      * \param[in,out] t: `MTest` object to be configured
      * \param[in,out] p: position in the input file
      */
-    virtual void
-    handleModellingHypothesis(MTest&,tokens_iterator&);
+    virtual void handleModellingHypothesis(MTest&, tokens_iterator&);
     /*!
      * \brief handle the `@Strain` keyword
      * \param[in,out] t: `MTest` object to be configured
      * \param[in,out] p: position in the input file
      */
-    virtual void
-    handleStrain(MTest&,tokens_iterator&);
+    virtual void handleStrain(MTest&, tokens_iterator&);
     /*!
      * \brief handle the `@DeformationGradient` keyword
      * \param[in,out] t: `MTest` object to be configured
      * \param[in,out] p: position in the input file
      */
-    virtual void
-    handleDeformationGradient(MTest&,tokens_iterator&);
+    virtual void handleDeformationGradient(MTest&, tokens_iterator&);
     /*!
      * \brief handle the `@OpeningDisplacement` keyword
      * \param[in,out] t: `MTest` object to be configured
      * \param[in,out] p: position in the input file
      */
-    virtual void
-    handleOpeningDisplacement(MTest&,tokens_iterator&);
+    virtual void handleOpeningDisplacement(MTest&, tokens_iterator&);
     /*!
      * \brief handle the `@DrivingVariable` keyword
      * \param[in,out] t: `MTest` object to be configured
      * \param[in,out] p: position in the input file
      */
-    virtual void
-    handleDrivingVariable(MTest&,tokens_iterator&);
+    virtual void handleDrivingVariable(MTest&, tokens_iterator&);
     /*!
      * \brief handle the `@Stress` keyword
      * \param[in,out] t: `MTest` object to be configured
      * \param[in,out] p: position in the input file
      */
-    virtual void
-    handleStress(MTest&,tokens_iterator&);
+    virtual void handleStress(MTest&, tokens_iterator&);
     /*!
      * \brief handle the `@CohesiveForce` keyword
      * \param[in,out] t: `MTest` object to be configured
      * \param[in,out] p: position in the input file
      */
-    virtual void
-    handleCohesiveForce(MTest&,tokens_iterator&);
+    virtual void handleCohesiveForce(MTest&, tokens_iterator&);
     /*!
      * \brief handle the `@ThermodynamicForce` keyword
      * \param[in,out] t: `MTest` object to be configured
      * \param[in,out] p: position in the input file
      */
-    virtual void
-    handleThermodynamicForce(MTest&,tokens_iterator&);
+    virtual void handleThermodynamicForce(MTest&, tokens_iterator&);
     /*!
      * \brief handle the `@ImposedStress` keyword
      * \param[in,out] t: `MTest` object to be configured
      * \param[in,out] p: position in the input file
      */
-    virtual void
-    handleImposedStress(MTest&,tokens_iterator&);
+    virtual void handleImposedStress(MTest&, tokens_iterator&);
     /*!
      * \brief handle the `@ImposedCohesiveForce` keyword
      * \param[in,out] t: `MTest` object to be configured
      * \param[in,out] p: position in the input file
      */
-    virtual void
-    handleImposedCohesiveForce(MTest&,tokens_iterator&);
+    virtual void handleImposedCohesiveForce(MTest&, tokens_iterator&);
     /*!
      * \brief handle the `@ImposedThermodynamicForce` keyword
      * \param[in,out] t: `MTest` object to be configured
      * \param[in,out] p: position in the input file
      */
-    virtual void
-    handleImposedThermodynamicForce(MTest&,tokens_iterator&);
+    virtual void handleImposedThermodynamicForce(MTest&, tokens_iterator&);
     /*!
      * \brief handle the `@NonLinearConstraint`` keyword
      * \param[in,out] t: `MTest` object to be configured
      * \param[in,out] p: position in the input file
      */
-    virtual void
-    handleNonLinearConstraint(MTest&,tokens_iterator&);
+    virtual void handleNonLinearConstraint(MTest&, tokens_iterator&);
     /*!
      * \brief handle the `@ImposedStrain` keyword
      * \param[in,out] t: `MTest` object to be configured
      * \param[in,out] p: position in the input file
      */
-    virtual void
-    handleImposedStrain(MTest&,tokens_iterator&);
+    virtual void handleImposedStrain(MTest&, tokens_iterator&);
     /*!
      * \brief handle the `@ImposedDeformationGradient` keyword
      * \param[in,out] t: `MTest` object to be configured
      * \param[in,out] p: position in the input file
      */
-    virtual void
-    handleImposedDeformationGradient(MTest&,tokens_iterator&);
+    virtual void handleImposedDeformationGradient(MTest&, tokens_iterator&);
     /*!
      * \brief handle the `@ImposedOpeningDisplacement` keyword
      * \param[in,out] t: `MTest` object to be configured
      * \param[in,out] p: position in the input file
      */
-    virtual void
-    handleImposedOpeningDisplacement(MTest&,tokens_iterator&);
+    virtual void handleImposedOpeningDisplacement(MTest&, tokens_iterator&);
     /*!
      * \brief handle the `@ImposedDrivingVariable` keyword
      * \param[in,out] t: `MTest` object to be configured
      * \param[in,out] p: position in the input file
      */
-    virtual void
-    handleImposedDrivingVariable(MTest&,tokens_iterator&);
+    virtual void handleImposedDrivingVariable(MTest&, tokens_iterator&);
     /*!
      * \brief treat the current keyword
      * \param[in,out] t: `MTest` object to be configured
      * \param[in,out] p: position in the input file
      */
-    bool treatKeyword(MTest&,tokens_iterator&);
-  private:
+    bool treatKeyword(MTest&, tokens_iterator&);
+
+   private:
     //! callbacks
-    std::map<std::string,CallBack> callbacks;
+    std::map<std::string, CallBack> callbacks;
     /*!
      * register a call back
      * \param[in] k : key word
      * \param[in] p : pointer to a member function
      */
-    void registerCallBack(const std::string&,const CallBack&);
-  }; // end of struct MTestParser
+    void registerCallBack(const std::string&, const CallBack&);
+  };  // end of struct MTestParser
 
-} // end of namespace mtest
+}  // end of namespace mtest
 
 #endif /* LIB_MTEST_MTESTPARSER_HXX */
-

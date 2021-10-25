@@ -1,66 +1,61 @@
 /*!
  * \file   parser10.cxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   22 févr. 2016
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifdef NDEBUG
 #undef NDEBUG
 #endif /* NDEBUG */
 
-#include<cstdlib>
-#include<iostream>
-#include<stdexcept>
+#include <cstdlib>
+#include <iostream>
+#include <stdexcept>
 
-#include"TFEL/Tests/TestCase.hxx"
-#include"TFEL/Tests/TestProxy.hxx"
-#include"TFEL/Tests/TestManager.hxx"
+#include "TFEL/Tests/TestCase.hxx"
+#include "TFEL/Tests/TestProxy.hxx"
+#include "TFEL/Tests/TestManager.hxx"
 
-#include"TFEL/Math/Evaluator.hxx"
+#include "TFEL/Math/Evaluator.hxx"
 
-struct ParserTest10 final
-  : public tfel::tests::TestCase
-{
+struct ParserTest10 final : public tfel::tests::TestCase {
   ParserTest10()
-    : tfel::tests::TestCase("TFEL/Math","ParserTest10")
-  {} // end of ParserTest10
-  tfel::tests::TestResult execute() override
-  {
-    this->check("x< 2 ? 3 : 1",{{1,3},{2,1},{5,1}});
-    this->check("x<=2 ? 3 : 1",{{1,3},{2,3},{5,1}});
-    this->check("x>=2 ? 3 : 1",{{1,1},{2,3},{5,3}});
-    this->check("x> 2 ? 3 : 1",{{1,1},{2,1},{5,3}});
-    this->check("x< 2 && x>-2 ? 3 : 1",{{0,3},{-3,1},{3,1}});
-    this->check("x> 2 || x<-2 ? 3 : 1",{{0,1},{-3,3},{3,3}});
-    this->check("x==0 ? 2 : 1",{{0,2},{-1,1},{1,1}});
-    TFEL_TESTS_CHECK_THROW(tfel::math::Evaluator("x>"),std::runtime_error);
+      : tfel::tests::TestCase("TFEL/Math", "ParserTest10") {
+  }  // end of ParserTest10
+  tfel::tests::TestResult execute() override {
+    this->check("x< 2 ? 3 : 1", {{1, 3}, {2, 1}, {5, 1}});
+    this->check("x<=2 ? 3 : 1", {{1, 3}, {2, 3}, {5, 1}});
+    this->check("x>=2 ? 3 : 1", {{1, 1}, {2, 3}, {5, 3}});
+    this->check("x> 2 ? 3 : 1", {{1, 1}, {2, 1}, {5, 3}});
+    this->check("x< 2 && x>-2 ? 3 : 1", {{0, 3}, {-3, 1}, {3, 1}});
+    this->check("x> 2 || x<-2 ? 3 : 1", {{0, 1}, {-3, 3}, {3, 3}});
+    this->check("x==0 ? 2 : 1", {{0, 2}, {-1, 1}, {1, 1}});
+    TFEL_TESTS_CHECK_THROW(tfel::math::Evaluator("x>"), std::runtime_error);
     return this->result;
-  } // end of execute
+  }  // end of execute
  private:
-  void check(const std::string& f,
-	     const std::map<double,double>& values){
+  void check(const std::string& f, const std::map<double, double>& values) {
     tfel::math::Evaluator ev(f);
-    for(const auto v : values){
-      ev.setVariableValue("x",v.first);
-      TFEL_TESTS_ASSERT(std::abs(ev.getValue()-v.second)<1.e-14);
+    for (const auto v : values) {
+      ev.setVariableValue("x", v.first);
+      TFEL_TESTS_ASSERT(std::abs(ev.getValue() - v.second) < 1.e-14);
     }
   }
 };
 
-TFEL_TESTS_GENERATE_PROXY(ParserTest10,"ParserTest10");
+TFEL_TESTS_GENERATE_PROXY(ParserTest10, "ParserTest10");
 
 /* coverity[UNCAUGHT_EXCEPT] */
-int main()
-{
+int main() {
   auto& manager = tfel::tests::TestManager::getTestManager();
   manager.addTestOutput(std::cout);
   manager.addXMLTestOutput("Parser10.xml");
   return manager.execute().success() ? EXIT_SUCCESS : EXIT_FAILURE;
-} // end of main
+}  // end of main

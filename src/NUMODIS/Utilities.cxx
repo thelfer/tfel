@@ -1,14 +1,14 @@
 /*!
- * \file   src/NUMODIS/Utilities.cxx  
- * \brief    
+ * \file   src/NUMODIS/Utilities.cxx
+ * \brief
  * \author Laurent Dupuy
  * \date   9/06/2017
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #include <cerrno>
@@ -18,11 +18,9 @@
 
 #include "NUMODIS/Math/Utilities.hxx"
 
-namespace numodis
-{
+namespace numodis {
 
-  namespace math
-  {
+  namespace math {
 
     //===============================================================
     // dUnitVector
@@ -33,16 +31,12 @@ namespace numodis
     // \param U input vector (3D)
     // \param V input vector (3D)
     //===============================================================
-    double dUnitVector(const Vect3& U,
-		       Vect3& V)
-    {
+    double dUnitVector(const Vect3& U, Vect3& V) {
+      double norm = U.Length();
 
-      double norm=U.Length();
-
-      V=U/norm;
+      V = U / norm;
 
       return norm;
-
     }
 
     //===============================================================
@@ -53,15 +47,12 @@ namespace numodis
     // Note that we do not check whether U is of non-zero length.
     // \param U input/output vector (3D)
     //===============================================================
-    double dUnitVector(Vect3& U)
-    {
+    double dUnitVector(Vect3& U) {
+      double norm = U.Length();
 
-      double norm=U.Length();
-
-      U/=norm;
+      U /= norm;
 
       return norm;
-
     }
 
     //===============================================================
@@ -78,22 +69,18 @@ namespace numodis
       \return true if U and V are collinear, false otherwise
     */
     //===============================================================
-    bool iCollinear(const std::vector<int>& U,
-		    const std::vector<int>& V)
-    {
-
+    bool iCollinear(const std::vector<int>& U, const std::vector<int>& V) {
       //----------------------------------------------------
       // dot products (compatible with 4 indices notations)
       //----------------------------------------------------
-      int UV=iScalProduct(U,V);
-      int UU=iScalProduct(U,U);
-      int VV=iScalProduct(V,V);
+      int UV = iScalProduct(U, V);
+      int UU = iScalProduct(U, U);
+      int VV = iScalProduct(V, V);
 
       //-------------------------
       // compare scalar products
       //-------------------------
-      return (UU!=0 && VV!=0 ? (UU*VV==UV*UV) : (UU==VV));
-
+      return (UU != 0 && VV != 0 ? (UU * VV == UV * UV) : (UU == VV));
     }
 
     //===============================================================
@@ -109,42 +96,37 @@ namespace numodis
     */
     //===============================================================
     bool iCollinear(const std::vector<int>& U,
-		    const std::vector<int>& V,
-		    int* pdirection)
-    {
-
+                    const std::vector<int>& V,
+                    int* pdirection) {
       //----------------
       // initialization
       //----------------
-      *pdirection=0;
+      *pdirection = 0;
 
       //--------------
       // compare size
       //--------------
-      if(U.size()!=V.size())
-	return false;
+      if (U.size() != V.size()) return false;
 
       //----------------------------------------------------
       // dot products (compatible with 4 indices notations)
       //----------------------------------------------------
-      int UV=iScalProduct(U,V);
-      int UU=iScalProduct(U,U);
-      int VV=iScalProduct(V,V);
+      int UV = iScalProduct(U, V);
+      int UU = iScalProduct(U, U);
+      int VV = iScalProduct(V, V);
 
       //-------------------------
       // compare scalar products
       //-------------------------
-      if(UU*VV==UV*UV)
-	{
-	  *pdirection=(UV<0 ? -1 : +1);
-	  return true;
-	}
+      if (UU * VV == UV * UV) {
+        *pdirection = (UV < 0 ? -1 : +1);
+        return true;
+      }
 
       //---------------
       // default value
       //---------------
       return false;
-
     }
 
     //===============================================================
@@ -154,22 +136,17 @@ namespace numodis
     //---------------------------------------------------------------
     /*! \param U vector to be sorted then sorted                 */
     //===============================================================
-    void iSortVector(std::vector<int>& U)
-    {
-
+    void iSortVector(std::vector<int>& U) {
       std::vector<int> V(U.size());
 
       // copy as a vector
-      for(unsigned i=0; i<U.size(); i++)
-	V[i]=U[i];
+      for (unsigned i = 0; i < U.size(); i++) V[i] = U[i];
 
       // sort as a vector
-      sort(V.begin(),V.end());
+      sort(V.begin(), V.end());
 
       // copy back
-      for(unsigned i=0; i<U.size(); i++)
-	U[i]=V[i];
-
+      for (unsigned i = 0; i < U.size(); i++) U[i] = V[i];
     }
 
     //===============================================================
@@ -179,12 +156,17 @@ namespace numodis
     //---------------------------------------------------------------
     /*! \param U vector to be sorted then sorted                 */
     //===============================================================
-    void iSortVector3FirstValue(std::vector<int>& U)
-    {
-      if(U[0]<U[1]) { std::swap(U[0],U[1]); }
-      if(U[1]<U[2]) { std::swap(U[1],U[2]); }
-      else return;
-      if(U[0]<U[1]) { std::swap(U[0],U[1]); }
+    void iSortVector3FirstValue(std::vector<int>& U) {
+      if (U[0] < U[1]) {
+        std::swap(U[0], U[1]);
+      }
+      if (U[1] < U[2]) {
+        std::swap(U[1], U[2]);
+      } else
+        return;
+      if (U[0] < U[1]) {
+        std::swap(U[0], U[1]);
+      }
     }
 
     //===============================================================
@@ -197,16 +179,14 @@ namespace numodis
       \return greatest common divisor
     */
     //===============================================================
-    int GCD(const std::vector<int>& u)
-    {
+    int GCD(const std::vector<int>& u) {
       // trivial situation
-      if(u.size()==1)
-	return std::abs(u[0]);
+      if (u.size() == 1) return std::abs(u[0]);
       // default value
-      int gcd=std::abs(u[0]);
+      int gcd = std::abs(u[0]);
       // find the overall gcd
-      for(unsigned i=1; i<u.size(); i++)
-	gcd=numodis::math::GCD(gcd,std::abs(u[i]));
+      for (unsigned i = 1; i < u.size(); i++)
+        gcd = numodis::math::GCD(gcd, std::abs(u[i]));
       // output value
       return gcd;
     }
@@ -227,24 +207,17 @@ namespace numodis
 
     */
     //===============================================================
-    int Epsilon(const unsigned i,
-		const unsigned j,
-		const unsigned k)
-    {
-
+    int Epsilon(const unsigned i, const unsigned j, const unsigned k) {
       // look for identical terms
-      if(i==j || j==k || i==k)
-	return 0;
+      if (i == j || j == k || i == k) return 0;
 
       // look for odd permutations
-      if(i+2==j || j+2==k || k+2==i)
-	return -1;
+      if (i + 2 == j || j + 2 == k || k + 2 == i) return -1;
 
       // default value
       return 1;
-
     }
 
-  } // end namespace math
-  
-} // end of namespace numodis
+  }  // end namespace math
+
+}  // end of namespace numodis

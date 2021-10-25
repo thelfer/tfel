@@ -3,42 +3,41 @@
  * \brief  This file implements the AnsysInterface class.
  * \author Thomas Helfer
  * \date   28 Jul 2006
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_MFRONT_ANSYS_CALL_HXX
-#define LIB_MFRONT_ANSYS_CALL_HXX 
+#define LIB_MFRONT_ANSYS_CALL_HXX
 
-#include<string>
-#include<vector>
-#include<limits>
-#include<algorithm>
-#include<type_traits>
+#include <string>
+#include <vector>
+#include <limits>
+#include <algorithm>
+#include <type_traits>
 
-#include"TFEL/Config/TFELTypes.hxx"
-#include"TFEL/Exception/TFELException.hxx"
-#include"TFEL/FSAlgorithm/copy.hxx"
+#include "TFEL/Config/TFELTypes.hxx"
+#include "TFEL/Exception/TFELException.hxx"
+#include "TFEL/FSAlgorithm/copy.hxx"
 
-#include"TFEL/Material/MechanicalBehaviourTraits.hxx"
-#include"TFEL/Material/MaterialException.hxx"
-#include"TFEL/Material/ModellingHypothesis.hxx"
+#include "TFEL/Material/MechanicalBehaviourTraits.hxx"
+#include "TFEL/Material/MaterialException.hxx"
+#include "TFEL/Material/ModellingHypothesis.hxx"
 
-#include"MFront/Ansys/Ansys.hxx"
-#include"MFront/Ansys/AnsysData.hxx"
-#include"MFront/Ansys/AnsysConfig.hxx"
-#include"MFront/Ansys/AnsysTraits.hxx"
-#include"MFront/Ansys/AnsysException.hxx"
-#include"MFront/Ansys/AnsysBehaviourHandler.hxx"
-#include"MFront/Ansys/AnsysInterfaceExceptions.hxx"
+#include "MFront/Ansys/Ansys.hxx"
+#include "MFront/Ansys/AnsysData.hxx"
+#include "MFront/Ansys/AnsysConfig.hxx"
+#include "MFront/Ansys/AnsysTraits.hxx"
+#include "MFront/Ansys/AnsysException.hxx"
+#include "MFront/Ansys/AnsysBehaviourHandler.hxx"
+#include "MFront/Ansys/AnsysInterfaceExceptions.hxx"
 
-namespace ansys
-{
-  
+namespace ansys {
+
   /*!
    * \class  AnsysInterface
    * \brief This class create an interface between a behaviour class
@@ -52,88 +51,71 @@ namespace ansys
    * duplication between two different finite strain strategies (to
    * reduce both compile-time and library size).
    */
-  template<tfel::material::ModellingHypothesis::Hypothesis H,
-	   template<tfel::material::ModellingHypothesis::Hypothesis,
-		    typename,bool> class Behaviour>
+  template <
+      tfel::material::ModellingHypothesis::Hypothesis H,
+      template <tfel::material::ModellingHypothesis::Hypothesis, typename, bool>
+      class Behaviour>
   struct TFEL_VISIBILITY_LOCAL AnsysInterface
-    : protected AnsysInterfaceExceptions
-  {
-    
-    TFEL_ANSYS_INLINE2 static
-    int exe(const AnsysData& d)
-    {
-      using BV = Behaviour<H,AnsysReal,false>;
-      using MTraits  = tfel::material::MechanicalBehaviourTraits<BV>;
+      : protected AnsysInterfaceExceptions {
+    TFEL_ANSYS_INLINE2 static int exe(const AnsysData& d) {
+      using BV = Behaviour<H, AnsysReal, false>;
+      using MTraits = tfel::material::MechanicalBehaviourTraits<BV>;
       const bool is_defined_ = MTraits::is_defined;
-      using Handler = typename std::conditional<is_defined_,CallBehaviour,
-						UnsupportedHypothesisHandler>::type;
-      try{
-	Handler::exe(d);
-      }
-      catch(const AnsysException& e){
-	AnsysInterfaceExceptions::treatAnsysException(MTraits::getName(),e);
-	return -2;
-      }
-      catch(const tfel::material::OutOfBoundsException& e){
-	AnsysInterfaceExceptions::treatMaterialException(MTraits::getName(),e);
-	return -3;
-      }
-      catch(const tfel::material::DivergenceException& e){
-	AnsysInterfaceExceptions::treatMaterialException(MTraits::getName(),e);
-	return -4;
-      }
-      catch(const tfel::material::MaterialException& e){
-	AnsysInterfaceExceptions::treatMaterialException(MTraits::getName(),e);
-	return -5;
-      }
-      catch(const tfel::exception::TFELException& e){
-	AnsysInterfaceExceptions::treatTFELException(MTraits::getName(),e);
-	return -6;
-      }
-      catch(const std::exception& e){
-	AnsysInterfaceExceptions::treatStandardException(MTraits::getName(),e);
-	return -7;
-      }
-      catch(...){
-	AnsysInterfaceExceptions::treatUnknownException(MTraits::getName());
-	return -8;
+      using Handler =
+          typename std::conditional<is_defined_, CallBehaviour,
+                                    UnsupportedHypothesisHandler>::type;
+      try {
+        Handler::exe(d);
+      } catch (const AnsysException& e) {
+        AnsysInterfaceExceptions::treatAnsysException(MTraits::getName(), e);
+        return -2;
+      } catch (const tfel::material::OutOfBoundsException& e) {
+        AnsysInterfaceExceptions::treatMaterialException(MTraits::getName(), e);
+        return -3;
+      } catch (const tfel::material::DivergenceException& e) {
+        AnsysInterfaceExceptions::treatMaterialException(MTraits::getName(), e);
+        return -4;
+      } catch (const tfel::material::MaterialException& e) {
+        AnsysInterfaceExceptions::treatMaterialException(MTraits::getName(), e);
+        return -5;
+      } catch (const tfel::exception::TFELException& e) {
+        AnsysInterfaceExceptions::treatTFELException(MTraits::getName(), e);
+        return -6;
+      } catch (const std::exception& e) {
+        AnsysInterfaceExceptions::treatStandardException(MTraits::getName(), e);
+        return -7;
+      } catch (...) {
+        AnsysInterfaceExceptions::treatUnknownException(MTraits::getName());
+        return -8;
       }
       return 0;
-    } // end of exe
+    }  // end of exe
 
-  private:
+   private:
+    struct UnsupportedHypothesisHandler {
+      TFEL_ANSYS_INLINE2 static void exe(const AnsysData&) {
+        using BV = Behaviour<H, AnsysReal, false>;
+        using MTraits = tfel::material::MechanicalBehaviourTraits<BV>;
+        throw(AnsysInvalidModellingHypothesis(MTraits::getName()));
+      }
+    };  // end of struct UnsupportedHypothesisHandler
 
-    struct UnsupportedHypothesisHandler
-    {
-      TFEL_ANSYS_INLINE2 static void
-      exe(const AnsysData&)
-      {
-	using BV = Behaviour<H,AnsysReal,false>;
-	using MTraits = tfel::material::MechanicalBehaviourTraits<BV>;
-	throw(AnsysInvalidModellingHypothesis(MTraits::getName()));
+    struct CallBehaviour {
+      TFEL_ANSYS_INLINE2 static void exe(const AnsysData& d) {
+        typedef AnsysBehaviourHandler<H, Behaviour> AHandler;
+        using BV = Behaviour<H, AnsysReal, false>;
+        using ATraits = AnsysTraits<BV>;
+        const bool bs = ATraits::requiresStiffnessTensor;
+        const bool ba = ATraits::requiresThermalExpansionCoefficientTensor;
+        using Integrator = typename AHandler::template Integrator<bs, ba>;
+        AHandler::checkNPROPS(d.NPROPS);
+        AHandler::checkNSTATV(d.NSTATV);
+        Integrator i(d);
+        i.exe(d);
       }
-    }; // end of struct UnsupportedHypothesisHandler
-    
-    struct CallBehaviour
-    {
-      TFEL_ANSYS_INLINE2 static void
-      exe(const AnsysData& d)
-      {
-	typedef AnsysBehaviourHandler<H,Behaviour> AHandler;
-	using BV = Behaviour<H,AnsysReal,false>;
-	using ATraits =  AnsysTraits<BV>;
-	const bool bs = ATraits::requiresStiffnessTensor;
-	const bool ba = ATraits::requiresThermalExpansionCoefficientTensor;
-	using Integrator = typename AHandler::template Integrator<bs,ba>;
-	AHandler::checkNPROPS(d.NPROPS);
-	AHandler::checkNSTATV(d.NSTATV);
-	Integrator i(d);
-	i.exe(d);
-      }
-    }; // end of struct CallBehaviour2
-  }; // end of struct AnsysInterface
-    
-} // end of namespace ansys
+    };  // end of struct CallBehaviour2
+  };    // end of struct AnsysInterface
+
+}  // end of namespace ansys
 
 #endif /* LIB_MFRONT_ANSYS_CALL_HXX */
-

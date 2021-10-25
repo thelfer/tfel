@@ -3,35 +3,40 @@
  * \brief  This file declares the Token class
  * \author Thomas Helfer
  * \date   20 Nov 2006
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_TFEL_UTILITIES_TOKEN_HXX
-#define LIB_TFEL_UTILITIES_TOKEN_HXX 
+#define LIB_TFEL_UTILITIES_TOKEN_HXX
 
-#include<string>
-#include"TFEL/Config/TFELConfig.hxx"
+#include <string>
+#include "TFEL/Config/TFELConfig.hxx"
 
-namespace tfel{
+namespace tfel {
 
-  namespace utilities{
+  namespace utilities {
 
     /*!
      * \brief class representing a token in a C++-like file
      */
-    struct TFELUTILITIES_VISIBILITY_EXPORT Token
-    {
+    struct TFELUTILITIES_VISIBILITY_EXPORT Token {
       //! a simple alias
       using size_type = size_t;
       //! possible type of the token
-      enum TokenFlag{Standard,Comment,DoxygenComment,
-		     DoxygenBackwardComment,
-		     String,Char,Preprocessor};
+      enum TokenFlag {
+        Standard,
+        Comment,
+        DoxygenComment,
+        DoxygenBackwardComment,
+        String,
+        Char,
+        Preprocessor
+      };
       //! default constructor
       Token();
       /*!
@@ -42,9 +47,9 @@ namespace tfel{
        * \param[in] f: token flag
        */
       Token(const std::string&,
-	    const size_type,
-	    const size_type,
-	    const TokenFlag = Standard);
+            const size_type,
+            const size_type,
+            const TokenFlag = Standard);
       //! copy constructor
       Token(const Token&);
       //! move constructor
@@ -65,11 +70,10 @@ namespace tfel{
       std::string comment;
       //! type of the token
       TokenFlag flag = Standard;
-    }; // end of struct Token
+    };  // end of struct Token
 
-  } // end of namespace utilities
+  }  // end of namespace utilities
 
-} // end of namespace tfel
+}  // end of namespace tfel
 
 #endif /* LIB_TFEL_UTILITIES_TOKEN_HXX */
-

@@ -69,7 +69,8 @@ namespace mtest {
     const auto nth = b.getThermodynamicForcesSize();
     std::fill(k.begin(), k.end(), real(0));
     std::fill(r.begin(), r.end(), real(0));
-    if (b.getBehaviourType() == MechanicalBehaviourBase::STANDARDFINITESTRAINBEHAVIOUR) {
+    if (b.getBehaviourType() ==
+        MechanicalBehaviourBase::STANDARDFINITESTRAINBEHAVIOUR) {
       for (size_type i = 0; i != 3u; ++i) {
         r(i) += s(i);
         for (size_type j = 0; j != ndv; ++j) {
@@ -106,11 +107,15 @@ namespace mtest {
     MTestParser().execute(*this, f, ecmds, s);
   }  // end of MTest::readInputFile
 
-  std::string MTest::name() const { return "unit behaviour test"; }  // end of MTest::name
+  std::string MTest::name() const {
+    return "unit behaviour test";
+  }  // end of MTest::name
 
   std::string MTest::classname() const { return "MTest"; }
 
-  void MTest::addConstraint(const std::shared_ptr<Constraint> c) { this->constraints.push_back(c); }
+  void MTest::addConstraint(const std::shared_ptr<Constraint> c) {
+    this->constraints.push_back(c);
+  }
 
   void MTest::setDrivingVariableEpsilon(const real e) {
     tfel::raise_if(this->options.eeps > 0,
@@ -131,7 +136,8 @@ namespace mtest {
     this->options.seps = s;
   }
 
-  void MTest::setRotationMatrix(const tfel::math::tmatrix<3u, 3u, real>& r, const bool bo) {
+  void MTest::setRotationMatrix(const tfel::math::tmatrix<3u, 3u, real>& r,
+                                const bool bo) {
     using namespace tfel::math;
     tfel::raise_if(this->b == nullptr,
                    "MTest::setRotationMatrix: "
@@ -148,16 +154,20 @@ namespace mtest {
     const tvector<3u, real> c0 = r.column_view<0>();
     const tvector<3u, real> c1 = r.column_view<1>();
     const tvector<3u, real> c2 = r.column_view<2>();
-    tfel::raise_if((abs(norm(c0) - real(1)) > 100 * std::numeric_limits<real>::epsilon()) ||
-                       (abs(norm(c1) - real(1)) > 100 * std::numeric_limits<real>::epsilon()) ||
-                       (abs(norm(c2) - real(1)) > 100 * std::numeric_limits<real>::epsilon()),
+    tfel::raise_if((abs(norm(c0) - real(1)) >
+                    100 * std::numeric_limits<real>::epsilon()) ||
+                       (abs(norm(c1) - real(1)) >
+                        100 * std::numeric_limits<real>::epsilon()) ||
+                       (abs(norm(c2) - real(1)) >
+                        100 * std::numeric_limits<real>::epsilon()),
                    "MTest::setRotationMatrix: "
                    "at least one column is not normalised");
-    tfel::raise_if((abs(c0 | c1) > 100 * std::numeric_limits<real>::epsilon()) ||
-                       (abs(c0 | c2) > 100 * std::numeric_limits<real>::epsilon()) ||
-                       (abs(c1 | c2) > 100 * std::numeric_limits<real>::epsilon()),
-                   "MTest::setRotationMatrix : "
-                   "at least two columns are not orthogonals");
+    tfel::raise_if(
+        (abs(c0 | c1) > 100 * std::numeric_limits<real>::epsilon()) ||
+            (abs(c0 | c2) > 100 * std::numeric_limits<real>::epsilon()) ||
+            (abs(c1 | c2) > 100 * std::numeric_limits<real>::epsilon()),
+        "MTest::setRotationMatrix : "
+        "at least two columns are not orthogonals");
     this->rm = r;
   }
 
@@ -177,7 +187,9 @@ namespace mtest {
     this->hypothesis = ModellingHypothesis::TRIDIMENSIONAL;
   }
 
-  void MTest::addTest(const std::shared_ptr<MTest::UTest> t) { this->tests.push_back(t); }
+  void MTest::addTest(const std::shared_ptr<MTest::UTest> t) {
+    this->tests.push_back(t);
+  }
 
   void MTest::setDrivingVariablesInitialValues(const std::vector<real>& v) {
     tfel::raise_if(!this->e_t0.empty(),
@@ -205,7 +217,8 @@ namespace mtest {
     std::copy(v.begin(), v.end(), this->s_t0.begin());
   }  // end of MTest::setThermodynamicForcesInitialValues
 
-  void MTest::setGaussPointPositionForEvolutionsEvaluation(const CurrentState&) const {
+  void MTest::setGaussPointPositionForEvolutionsEvaluation(
+      const CurrentState&) const {
   }  // end of MTest::setGaussPointPositionForEvolutionsEvaluation
 
   void MTest::completeInitialisation() {
@@ -214,10 +227,13 @@ namespace mtest {
     // additional constraints
     // must be set *before* `SingleStructureScheme::completeInitialisation`
     if (this->hypothesis == ModellingHypothesis::PLANESTRAIN) {
-      if ((this->b->getBehaviourType() == MechanicalBehaviourBase::STANDARDSTRAINBASEDBEHAVIOUR) ||
-          (this->b->getBehaviourType() == MechanicalBehaviourBase::STANDARDFINITESTRAINBEHAVIOUR)) {
+      if ((this->b->getBehaviourType() ==
+           MechanicalBehaviourBase::STANDARDSTRAINBASEDBEHAVIOUR) ||
+          (this->b->getBehaviourType() ==
+           MechanicalBehaviourBase::STANDARDFINITESTRAINBEHAVIOUR)) {
         shared_ptr<Evolution> eev;
-        if (this->b->getBehaviourType() == MechanicalBehaviourBase::STANDARDFINITESTRAINBEHAVIOUR) {
+        if (this->b->getBehaviourType() ==
+            MechanicalBehaviourBase::STANDARDFINITESTRAINBEHAVIOUR) {
           eev = make_evolution(1.);
         } else {
           eev = make_evolution(0.);
@@ -231,12 +247,16 @@ namespace mtest {
             "handled for small and finite strain behaviours");
       }
     }
-    if (this->hypothesis == ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS) {
+    if (this->hypothesis ==
+        ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS) {
       // shall be in the behaviour
-      if ((this->b->getBehaviourType() == MechanicalBehaviourBase::STANDARDSTRAINBASEDBEHAVIOUR) ||
-          (this->b->getBehaviourType() == MechanicalBehaviourBase::STANDARDFINITESTRAINBEHAVIOUR)) {
+      if ((this->b->getBehaviourType() ==
+           MechanicalBehaviourBase::STANDARDSTRAINBASEDBEHAVIOUR) ||
+          (this->b->getBehaviourType() ==
+           MechanicalBehaviourBase::STANDARDFINITESTRAINBEHAVIOUR)) {
         shared_ptr<Evolution> eev;
-        if (this->b->getBehaviourType() == MechanicalBehaviourBase::STANDARDFINITESTRAINBEHAVIOUR) {
+        if (this->b->getBehaviourType() ==
+            MechanicalBehaviourBase::STANDARDFINITESTRAINBEHAVIOUR) {
           eev = make_evolution(1.);
         } else {
           eev = make_evolution(0.);
@@ -261,10 +281,13 @@ namespace mtest {
     }
     if (this->hypothesis == ModellingHypothesis::PLANESTRESS) {
       // shall be in the behaviour
-      if ((this->b->getBehaviourType() == MechanicalBehaviourBase::STANDARDSTRAINBASEDBEHAVIOUR) ||
-          (this->b->getBehaviourType() == MechanicalBehaviourBase::STANDARDFINITESTRAINBEHAVIOUR)) {
+      if ((this->b->getBehaviourType() ==
+           MechanicalBehaviourBase::STANDARDSTRAINBASEDBEHAVIOUR) ||
+          (this->b->getBehaviourType() ==
+           MechanicalBehaviourBase::STANDARDFINITESTRAINBEHAVIOUR)) {
         shared_ptr<Evolution> eev;
-        if (this->b->getBehaviourType() == MechanicalBehaviourBase::STANDARDFINITESTRAINBEHAVIOUR) {
+        if (this->b->getBehaviourType() ==
+            MechanicalBehaviourBase::STANDARDFINITESTRAINBEHAVIOUR) {
           eev = make_evolution(1.);
         } else {
           eev = make_evolution(0.);
@@ -287,14 +310,16 @@ namespace mtest {
     const char* dvn;
     const char* thn;
     this->out << "# first column : time" << endl;
-    if (this->b->getBehaviourType() == MechanicalBehaviourBase::STANDARDSTRAINBASEDBEHAVIOUR) {
+    if (this->b->getBehaviourType() ==
+        MechanicalBehaviourBase::STANDARDSTRAINBASEDBEHAVIOUR) {
       dvn = "strain";
       thn = "stress";
     } else if (this->b->getBehaviourType() ==
                MechanicalBehaviourBase::STANDARDFINITESTRAINBEHAVIOUR) {
       dvn = "deformation gradient";
       thn = "Cauchy stress";
-    } else if (this->b->getBehaviourType() == MechanicalBehaviourBase::COHESIVEZONEMODEL) {
+    } else if (this->b->getBehaviourType() ==
+               MechanicalBehaviourBase::COHESIVEZONEMODEL) {
       dvn = "opening displacement";
       thn = "cohesive force";
     } else {
@@ -304,11 +329,13 @@ namespace mtest {
     const auto ndv = this->b->getDrivingVariablesSize();
     const auto nth = this->b->getThermodynamicForcesSize();
     for (unsigned short i = 0; i != ndv; ++i) {
-      this->out << "# " << cnbr << " column : " << i + 1 << "th component of the " << dvn << '\n';
+      this->out << "# " << cnbr << " column : " << i + 1
+                << "th component of the " << dvn << '\n';
       ++cnbr;
     }
     for (unsigned short i = 0; i != nth; ++i) {
-      this->out << "# " << cnbr << " column : " << i + 1 << "th component of the " << thn << '\n';
+      this->out << "# " << cnbr << " column : " << i + 1
+                << "th component of the " << thn << '\n';
       ++cnbr;
     }
     const auto& ivdes = this->b->getInternalStateVariablesDescriptions();
@@ -356,7 +383,8 @@ namespace mtest {
       this->residual << "#first  column : iteration number\n"
                      << "#second column : driving variable residual\n"
                      << "#third  column : thermodynamic force residual\n"
-                     << "#The following columns are the components of the driving variable\n";
+                     << "#The following columns are the components of the "
+                        "driving variable\n";
     }
   }
 
@@ -365,7 +393,8 @@ namespace mtest {
       tfel::raise_if(c, "MTest::initializeCurrentState: " + m);
     };
     throw_if(this->b == nullptr, "mechanical behaviour not set");
-    throw_if(this->hypothesis == tfel::material::ModellingHypothesis::UNDEFINEDHYPOTHESIS,
+    throw_if(this->hypothesis ==
+                 tfel::material::ModellingHypothesis::UNDEFINEDHYPOTHESIS,
              "modelling hypothesis is not set");
     // unknowns
     const auto psz = this->getNumberOfUnknowns();
@@ -386,7 +415,8 @@ namespace mtest {
     // setting the intial  values of stresses
     copy(this->s_t0.begin(), this->s_t0.end(), cs.s0.begin());
     // getting the initial values of internal state variables
-    throw_if((this->iv_t0.size() > cs.iv_1.size()) || (this->iv_t0.size() > cs.iv0.size()) ||
+    throw_if((this->iv_t0.size() > cs.iv_1.size()) ||
+                 (this->iv_t0.size() > cs.iv0.size()) ||
                  (this->iv_t0.size() > cs.iv1.size()),
              "the number of initial values declared "
              "by the user for the internal state variables exceeds the "
@@ -459,7 +489,8 @@ namespace mtest {
     try {
       // some checks
       tfel::raise_if(times.empty(), "MTest::execute: no times defined");
-      tfel::raise_if(times.size() < 2, "MTest::execute: invalid number of times defined");
+      tfel::raise_if(times.size() < 2,
+                     "MTest::execute: invalid number of times defined");
       // finish initialization
       this->completeInitialisation();
       this->initializeCurrentState(state);
@@ -506,7 +537,9 @@ namespace mtest {
     this->pv = v;
   }  // end of MTest::setNumericalTangentOperatorPerturbationValue
 
-  void MTest::prepare(StudyCurrentState& state, const real t, const real dt) const {
+  void MTest::prepare(StudyCurrentState& state,
+                      const real t,
+                      const real dt) const {
     auto& scs = state.getStructureCurrentState("");
     tfel::raise_if(scs.istates.size() != 1u, "MTest::prepare: invalid state");
     // driving variables at the beginning of the time step
@@ -519,7 +552,8 @@ namespace mtest {
     SingleStructureScheme::prepare(state, t, dt);
   }  // end of MTest::prepare
 
-  void MTest::makeLinearPrediction(StudyCurrentState& state, const real dt) const {
+  void MTest::makeLinearPrediction(StudyCurrentState& state,
+                                   const real dt) const {
     auto& scs = state.getStructureCurrentState("");
     tfel::raise_if(scs.istates.size() != 1u, "MTest::prepare: invalid state");
     auto& s = scs.istates[0];
@@ -553,7 +587,8 @@ namespace mtest {
     const auto ndv = this->b->getDrivingVariablesSize();
     const auto nth = this->b->getThermodynamicForcesSize();
     // free dilatation treatment
-    if (this->b->getBehaviourType() == MechanicalBehaviourBase::STANDARDSTRAINBASEDBEHAVIOUR) {
+    if (this->b->getBehaviourType() ==
+        MechanicalBehaviourBase::STANDARDSTRAINBASEDBEHAVIOUR) {
       for (size_type i = 0; i != nth; ++i) {
         for (size_type j = 0; j != ndv; ++j) {
           r(i) -= k(i, j) * (s.e_th1[j] - s.e_th0[j]);
@@ -564,12 +599,14 @@ namespace mtest {
       state.setParameter("LagrangeMultipliersNormalisationFactor",
                          *(std::max_element(k.begin(), k.end())));
     }
-    const auto a = state.getParameter<real>("LagrangeMultipliersNormalisationFactor");
+    const auto a =
+        state.getParameter<real>("LagrangeMultipliersNormalisationFactor");
     unsigned short pos = ndv;
     for (const auto& c : this->constraints) {
-      c->setValues(k, r, state.u0, state.u0, bwk.kt, s.s0, pos, getSpaceDimension(this->hypothesis),
-                   t, dt, a);
-      pos = static_cast<unsigned short>(pos + c->getNumberOfLagrangeMultipliers());
+      c->setValues(k, r, state.u0, state.u0, bwk.kt, s.s0, pos,
+                   getSpaceDimension(this->hypothesis), t, dt, a);
+      pos = static_cast<unsigned short>(pos +
+                                        c->getNumberOfLagrangeMultipliers());
     }
     return res;
   }  // end of MTest::computePredictionStiffnessAndResidual
@@ -582,7 +619,8 @@ namespace mtest {
       const real dt,
       const StiffnessMatrixType mt) const {
     using namespace tfel::material;
-    auto display = [](const tfel::math::matrix<real>& m, const size_type mi, const size_type mj) {
+    auto display = [](const tfel::math::matrix<real>& m, const size_type mi,
+                      const size_type mj) {
       using tfel::utilities::TerminalColors;
       auto& os = mfront::getLogStream();
       for (size_type i = 0; i != m.getNbRows(); ++i) {
@@ -682,11 +720,12 @@ namespace mtest {
         if (merr > this->toeps) {
           auto& log = mfront::getLogStream();
           log << "Compaison to numerical jacobian failed "
-              << "(error : " << merr << " for (" << mi << "," << mj << "), criterium "
-              << this->toeps << ").\n"
+              << "(error : " << merr << " for (" << mi << "," << mj
+              << "), criterium " << this->toeps << ").\n"
               << "Tangent operator returned by the behaviour : \n";
           display(bwk.k, mi, mj);
-          log << "Numerical tangent operator (perturbation value : " << this->pv << ") : \n";
+          log << "Numerical tangent operator (perturbation value : " << this->pv
+              << ") : \n";
           display(bwk.nk, mi, mj);
         }
       } else {
@@ -695,18 +734,20 @@ namespace mtest {
       }
     }
     //! update the stiffness matrix and the residual
-    std::fill(k.begin(),k.end(),real(0));
+    std::fill(k.begin(), k.end(), real(0));
     updateStiffnessAndResidual(k, r, *(this->b), bwk.k, s.s1);
     if (!state.containsParameter("LagrangeMultipliersNormalisationFactor")) {
       state.setParameter("LagrangeMultipliersNormalisationFactor",
                          *(std::max_element(k.begin(), k.end())));
     }
-    const auto a = state.getParameter<real>("LagrangeMultipliersNormalisationFactor");
+    const auto a =
+        state.getParameter<real>("LagrangeMultipliersNormalisationFactor");
     const auto d = getSpaceDimension(this->hypothesis);
     unsigned short pos = ndv;
     for (const auto& c : this->constraints) {
       c->setValues(k, r, state.u0, state.u1, bwk.k, s.s1, pos, d, t, dt, a);
-      pos = static_cast<unsigned short>(pos + c->getNumberOfLagrangeMultipliers());
+      pos = static_cast<unsigned short>(pos +
+                                        c->getNumberOfLagrangeMultipliers());
     }
     return rb;
   }  // end of MTest::computeStiffnessMatrixAndResidual
@@ -738,7 +779,8 @@ namespace mtest {
                                const unsigned int iter,
                                const real t,
                                const real dt) const {
-    auto report = [&iter, &state](std::ostream& os, const tfel::math::vector<real>::size_type ndv,
+    auto report = [&iter, &state](std::ostream& os,
+                                  const tfel::math::vector<real>::size_type ndv,
                                   const real ne, const real nr) {
       os << "iteration " << iter << " : " << ne << " " << nr << " (";
       for (size_type i = 0; i != ndv;) {
@@ -762,7 +804,8 @@ namespace mtest {
     if (this->residual) {
       report(this->residual, ndv, ne, nr);
     }
-    if ((!tfel::math::ieee754::isfinite(ne)) || (!tfel::math::ieee754::isfinite(nr))) {
+    if ((!tfel::math::ieee754::isfinite(ne)) ||
+        (!tfel::math::ieee754::isfinite(nr))) {
       return false;
     }
     if ((ne > o.eeps) || (nr > o.seps)) {
@@ -776,14 +819,16 @@ namespace mtest {
     return true;
   }
 
-  std::vector<std::string> MTest::getFailedCriteriaDiagnostic(const StudyCurrentState& state,
-                                                              const tfel::math::vector<real>& du,
-                                                              const tfel::math::vector<real>& r,
-                                                              const SolverOptions& o,
-                                                              const real t,
-                                                              const real dt) const {
+  std::vector<std::string> MTest::getFailedCriteriaDiagnostic(
+      const StudyCurrentState& state,
+      const tfel::math::vector<real>& du,
+      const tfel::math::vector<real>& r,
+      const SolverOptions& o,
+      const real t,
+      const real dt) const {
     const auto& scs = state.getStructureCurrentState("");
-    tfel::raise_if(scs.istates.size() != 1u, "MTest::getFailedCriteriaDiagnostic: invalid state");
+    tfel::raise_if(scs.istates.size() != 1u,
+                   "MTest::getFailedCriteriaDiagnostic: invalid state");
     const auto& s = scs.istates[0];
     const auto ndv = this->b->getDrivingVariablesSize();
     const auto ne = this->getErrorNorm(du);
@@ -791,25 +836,30 @@ namespace mtest {
     auto fc = std::vector<std::string>{};
     if (ne > o.eeps) {
       std::ostringstream msg;
-      msg << "test on driving variables (error : " << ne << ", criterion value : " << o.eeps << ")";
+      msg << "test on driving variables (error : " << ne
+          << ", criterion value : " << o.eeps << ")";
       fc.push_back(msg.str());
     }
     if (nr > o.seps) {
       std::ostringstream msg;
-      msg << "test on thermodynamic forces (error : " << nr << ", criterion value : " << o.seps
-          << ")";
+      msg << "test on thermodynamic forces (error : " << nr
+          << ", criterion value : " << o.seps << ")";
       fc.push_back(msg.str());
     }
     for (const auto& c : this->constraints) {
       if (!c->checkConvergence(state.u1, s.s1, o.eeps, o.seps, t, dt)) {
-        fc.push_back(c->getFailedCriteriaDiagnostic(state.u1, s.s1, o.eeps, o.seps, t, dt));
+        fc.push_back(c->getFailedCriteriaDiagnostic(state.u1, s.s1, o.eeps,
+                                                    o.seps, t, dt));
       }
     }
     return fc;
   }  // end of MTest::getFailedCriteriaDiagnostic
 
-  void MTest::computeLoadingCorrection(
-      StudyCurrentState&, SolverWorkSpace&, const SolverOptions&, const real, const real) const {
+  void MTest::computeLoadingCorrection(StudyCurrentState&,
+                                       SolverWorkSpace&,
+                                       const SolverOptions&,
+                                       const real,
+                                       const real) const {
   }  // end of MTest::computeLoadingCorrection
 
   void MTest::postConvergence(StudyCurrentState& state,
@@ -817,7 +867,8 @@ namespace mtest {
                               const real dt,
                               const unsigned int p) const {
     auto& scs = state.getStructureCurrentState("");
-    tfel::raise_if(scs.istates.size() != 1u, "MTest::postConvergence: invalid state");
+    tfel::raise_if(scs.istates.size() != 1u,
+                   "MTest::postConvergence: invalid state");
     auto& s = scs.istates[0];
     for (const auto& test : this->tests) {
       test->check(s, t, dt, p);
@@ -831,13 +882,16 @@ namespace mtest {
     GenericSolver().execute(state, wk, *this, this->options, ti, te);
   }
 
-  void MTest::printOutput(const real t, const StudyCurrentState& s, const bool o) const {
+  void MTest::printOutput(const real t,
+                          const StudyCurrentState& s,
+                          const bool o) const {
     if ((!o) && (this->output_frequency == USERDEFINEDTIMES)) {
       return;
     }
     if (this->out) {
       auto& cs = s.getStructureCurrentState("").istates[0];
-      // number of components of the driving variables and the thermodynamic forces
+      // number of components of the driving variables and the thermodynamic
+      // forces
       const auto ndv = this->b->getDrivingVariablesSize();
       const auto nth = this->b->getThermodynamicForcesSize();
       unsigned short i;
@@ -848,7 +902,8 @@ namespace mtest {
       for (i = 0; i != nth; ++i) {
         this->out << cs.s0[i] << " ";
       }
-      std::copy(cs.iv0.begin(), cs.iv0.end(), std::ostream_iterator<real>(this->out, " "));
+      std::copy(cs.iv0.begin(), cs.iv0.end(),
+                std::ostream_iterator<real>(this->out, " "));
       this->out << '\n';
     }
   }

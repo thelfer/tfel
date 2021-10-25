@@ -53,11 +53,14 @@ namespace tfel {
       //! a simple alias
       using size_type = std::vector<system3d>::size_type;
       //! list of all supported interaction matrix model
-      enum InteractionMatrixModel { NONE, DUPUY2017 };  // end of InteractionMatrixModel
-                                                        /*!
-                                                         * \brief structure describing the structure of the interaction
-                                                         * matrix.
-                                                         */
+      enum InteractionMatrixModel {
+        NONE,
+        DUPUY2017
+      };  // end of InteractionMatrixModel
+          /*!
+           * \brief structure describing the structure of the interaction
+           * matrix.
+           */
       struct TFELMATERIAL_VISIBILITY_EXPORT InteractionMatrixStructure {
         /*!
          * \brief structure descrbing the interaction of two sliding
@@ -67,7 +70,8 @@ namespace tfel {
           system g1;
           system g2;
         };
-        using SSIContainer = std::vector<std::vector<SlidingSystemsInteraction>>;
+        using SSIContainer =
+            std::vector<std::vector<SlidingSystemsInteraction>>;
         //! constructor
         InteractionMatrixStructure(const SSIContainer&);
         //! move constructor
@@ -165,7 +169,8 @@ namespace tfel {
        * \param[in] d: direction
        * \param[in] i: index
        */
-      std::vector<long double> getSchmidFactors(const vec, const size_type) const;
+      std::vector<long double> getSchmidFactors(const vec,
+                                                const size_type) const;
       /*!
        * \return a structure defining the structure of the
        * interaction matrix
@@ -190,9 +195,11 @@ namespace tfel {
        * \brief set the interaction matrix
        * \param[in] v: values
        */
-      void setDislocationsMeanFreePathInteractionMatrix(const std::vector<long double>&);
+      void setDislocationsMeanFreePathInteractionMatrix(
+          const std::vector<long double>&);
       //! \return the interaction matrix
-      const std::vector<long double>& getDislocationsMeanFreePathInteractionMatrix() const;
+      const std::vector<long double>&
+      getDislocationsMeanFreePathInteractionMatrix() const;
       //! destructor
       ~SlipSystemsDescription();
 

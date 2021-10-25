@@ -309,8 +309,8 @@ namespace mfront {
 
   void BehaviourQuery::treatStandardQuery() {
     using namespace tfel::utilities;
-    using tfel::material::ModellingHypothesis;
     using std::cout;
+    using tfel::material::ModellingHypothesis;
     const auto& q = this->getCurrentCommandLineArgument();
     const auto& qn = q.as_string();
     if (qn == "--author") {

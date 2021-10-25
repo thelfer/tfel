@@ -1,109 +1,103 @@
 /*!
  * \file   StensorComputeJacobianDerivativeTest.cxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   24 déc. 2016
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifdef NDEBUG
 #undef NDEBUG
 #endif
 
-#include<iostream>
-#include<cstdlib>
-#include<cmath>
+#include <iostream>
+#include <cstdlib>
+#include <cmath>
 
-#include<cassert>
+#include <cassert>
 
-#include"TFEL/Tests/TestCase.hxx"
-#include"TFEL/Tests/TestProxy.hxx"
-#include"TFEL/Tests/TestManager.hxx"
+#include "TFEL/Tests/TestCase.hxx"
+#include "TFEL/Tests/TestProxy.hxx"
+#include "TFEL/Tests/TestManager.hxx"
 
-#include"TFEL/Math/stensor.hxx"
+#include "TFEL/Math/stensor.hxx"
 
-template<unsigned short N,typename F,typename real>
-static tfel::math::stensor<N,real>
-getNumericalApproximation(const F& f,
-			  const tfel::math::stensor<N,real>& C,
-			  const real e){
-  tfel::math::stensor<N,real> r;
-  for(unsigned short j=0;j!=C.size();++j){
+template <unsigned short N, typename F, typename real>
+static tfel::math::stensor<N, real> getNumericalApproximation(
+    const F& f, const tfel::math::stensor<N, real>& C, const real e) {
+  tfel::math::stensor<N, real> r;
+  for (unsigned short j = 0; j != C.size(); ++j) {
     auto Cp = C;
     auto Cm = C;
-    Cp(j)+=e;
-    Cm(j)-=e;
+    Cp(j) += e;
+    Cm(j) -= e;
     const auto Fp = f(Cp);
     const auto Fm = f(Cm);
-    const auto dF = (Fp-Fm)/(2*e);
-    r(j)=dF;
+    const auto dF = (Fp - Fm) / (2 * e);
+    r(j) = dF;
   }
   return r;
-} // end of getNumericalApproximation
+}  // end of getNumericalApproximation
 
 struct StensorComputeJacobianDerivativeTest final
-  : public tfel::tests::TestCase
-{
-   StensorComputeJacobianDerivativeTest()
-    : tfel::tests::TestCase("TFEL/Math",
-			    "StensorComputeJacobianDerivativeTest")
-  {} // end of StensorComputeJacobianDerivativeTest
-  tfel::tests::TestResult execute() override
-  {
+    : public tfel::tests::TestCase {
+  StensorComputeJacobianDerivativeTest()
+      : tfel::tests::TestCase("TFEL/Math",
+                              "StensorComputeJacobianDerivativeTest") {
+  }  // end of StensorComputeJacobianDerivativeTest
+  tfel::tests::TestResult execute() override {
     const double sqrt2 = std::sqrt(2.);
-    const double v0[6] = {0,0,0,0,0,0};
-    const double v1[6] = {8.2e-2,-4.5e-2,7.2e-2,2.3e-2*sqrt2,0,0.};
-    const double v2[6] = {-8.2e-2,4.5e-2,7.2e-2,0e-2,2.3e-2*sqrt2,0.};
-    const double v3[6] = {8.2e-2,4.5e-2,-7.2e-2,0e-2,0.e-2,2.3e-2*sqrt2};
-    const double v4[6] = {8.2e-2,4.5e-2,-7.2e-2,3.14e-2*sqrt2,-6.42e-2*sqrt2,2.3e-2*sqrt2};
-    this->check(tfel::math::stensor<1u,double>(v0));
-    this->check(tfel::math::stensor<2u,double>(v0));
-    this->check(tfel::math::stensor<3u,double>(v0));
-    this->check(tfel::math::stensor<1u,double>(v1));
-    this->check(tfel::math::stensor<2u,double>(v1));
-    this->check(tfel::math::stensor<3u,double>(v1));
-    this->check(tfel::math::stensor<1u,double>(v2));
-    this->check(tfel::math::stensor<2u,double>(v2));
-    this->check(tfel::math::stensor<3u,double>(v2));
-    this->check(tfel::math::stensor<1u,double>(v3));
-    this->check(tfel::math::stensor<2u,double>(v3));
-    this->check(tfel::math::stensor<3u,double>(v3));
-    this->check(tfel::math::stensor<1u,double>(v4));
-    this->check(tfel::math::stensor<2u,double>(v4));
-    this->check(tfel::math::stensor<3u,double>(v4));
+    const double v0[6] = {0, 0, 0, 0, 0, 0};
+    const double v1[6] = {8.2e-2, -4.5e-2, 7.2e-2, 2.3e-2 * sqrt2, 0, 0.};
+    const double v2[6] = {-8.2e-2, 4.5e-2, 7.2e-2, 0e-2, 2.3e-2 * sqrt2, 0.};
+    const double v3[6] = {8.2e-2, 4.5e-2, -7.2e-2, 0e-2, 0.e-2, 2.3e-2 * sqrt2};
+    const double v4[6] = {8.2e-2,          4.5e-2,           -7.2e-2,
+                          3.14e-2 * sqrt2, -6.42e-2 * sqrt2, 2.3e-2 * sqrt2};
+    this->check(tfel::math::stensor<1u, double>(v0));
+    this->check(tfel::math::stensor<2u, double>(v0));
+    this->check(tfel::math::stensor<3u, double>(v0));
+    this->check(tfel::math::stensor<1u, double>(v1));
+    this->check(tfel::math::stensor<2u, double>(v1));
+    this->check(tfel::math::stensor<3u, double>(v1));
+    this->check(tfel::math::stensor<1u, double>(v2));
+    this->check(tfel::math::stensor<2u, double>(v2));
+    this->check(tfel::math::stensor<3u, double>(v2));
+    this->check(tfel::math::stensor<1u, double>(v3));
+    this->check(tfel::math::stensor<2u, double>(v3));
+    this->check(tfel::math::stensor<3u, double>(v3));
+    this->check(tfel::math::stensor<1u, double>(v4));
+    this->check(tfel::math::stensor<2u, double>(v4));
+    this->check(tfel::math::stensor<3u, double>(v4));
     return this->result;
-  } // end of execute
-private:
-  template<unsigned short N>
-  void check(const tfel::math::stensor<N,double>& s){
-    auto J = [](const tfel::math::stensor<N,double>& v){
-      return det(v);
-    };
-    TFEL_CONSTEXPR const auto eps   = 1e-2;
-    TFEL_CONSTEXPR const auto prec  = 1e-13;
-    auto ndJ = getNumericalApproximation(J,s,eps);
-    auto dJ  = computeDeterminantDerivative(s);
-    for(unsigned short i=0;i!=s.size();++i){
-      if(std::abs(dJ(i)-ndJ(i))>prec){
-	std::cout << "dJ : " << i << " " << dJ(i) << " " << ndJ(i)
-		  << " " << std::abs(dJ(i)-ndJ(i)) << std::endl;
+  }  // end of execute
+ private:
+  template <unsigned short N>
+  void check(const tfel::math::stensor<N, double>& s) {
+    auto J = [](const tfel::math::stensor<N, double>& v) { return det(v); };
+    TFEL_CONSTEXPR const auto eps = 1e-2;
+    TFEL_CONSTEXPR const auto prec = 1e-13;
+    auto ndJ = getNumericalApproximation(J, s, eps);
+    auto dJ = computeDeterminantDerivative(s);
+    for (unsigned short i = 0; i != s.size(); ++i) {
+      if (std::abs(dJ(i) - ndJ(i)) > prec) {
+        std::cout << "dJ : " << i << " " << dJ(i) << " " << ndJ(i) << " "
+                  << std::abs(dJ(i) - ndJ(i)) << std::endl;
       }
-      TFEL_TESTS_ASSERT(std::abs(dJ(i)-ndJ(i))<prec);
-    }    
+      TFEL_TESTS_ASSERT(std::abs(dJ(i) - ndJ(i)) < prec);
+    }
   }
 };
 
 TFEL_TESTS_GENERATE_PROXY(StensorComputeJacobianDerivativeTest,
-			  "StensorComputeJacobianDerivativeTest");
+                          "StensorComputeJacobianDerivativeTest");
 
 /* coverity [UNCAUGHT_EXCEPT]*/
-int main()
-{
+int main() {
   auto& m = tfel::tests::TestManager::getTestManager();
   m.addTestOutput(std::cout);
   m.addXMLTestOutput("StensorComputeJacobianDerivativeTest.xml");

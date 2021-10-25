@@ -1,35 +1,33 @@
-/*! 
+/*!
  * \file  mfront/include/MFront/MaterialPropertyDescription.hxx
  * \brief
  * \author Thomas Helfer
  * \brief 26 févr. 2014
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_MFRONT_MATERIALPROPERTYDESCRIPTION_HXX
-#define LIB_MFRONT_MATERIALPROPERTYDESCRIPTION_HXX 
+#define LIB_MFRONT_MATERIALPROPERTYDESCRIPTION_HXX
 
-#include<map>
-#include<set>
-#include<vector>
-#include<string>
+#include <map>
+#include <set>
+#include <vector>
+#include <string>
 
-#include"MFront/LawFunction.hxx"
-#include"MFront/VariableDescription.hxx"
-#include"MFront/StaticVariableDescription.hxx"
-#include"MFront/VariableBoundsDescription.hxx"
+#include "MFront/LawFunction.hxx"
+#include "MFront/VariableDescription.hxx"
+#include "MFront/StaticVariableDescription.hxx"
+#include "MFront/VariableBoundsDescription.hxx"
 
-namespace mfront
-{
+namespace mfront {
 
   //! structure describing a material property
-  struct MFRONT_VISIBILITY_EXPORT MaterialPropertyDescription
-  {
+  struct MFRONT_VISIBILITY_EXPORT MaterialPropertyDescription {
     //! default constructor
     MaterialPropertyDescription();
     //! copy constructor
@@ -44,11 +42,9 @@ namespace mfront
      * \return the variable description with the given name
      * \param[in] n: variable name
      */
-    const VariableDescription&
-    getVariableDescription(const std::string&) const;
+    const VariableDescription& getVariableDescription(const std::string&) const;
     //! \return the external names of each input variables.
-    std::vector<std::string>
-    getInputVariablesExternalNames();
+    std::vector<std::string> getInputVariablesExternalNames();
     /*!
      * \return true if the given variable is the name of a input
      * \param[in] n: name
@@ -64,8 +60,7 @@ namespace mfront
      * \param[in] n : variable name
      * \param[in] g : glossary name
      */
-    void setGlossaryName(const std::string&,
-			 const std::string&);
+    void setGlossaryName(const std::string&, const std::string&);
     /*!
      * \return true if the given name is used as a glossary name
      * \param[in] g: glossary name
@@ -76,8 +71,7 @@ namespace mfront
      * \param[in] n: variable name
      * \param[in] e: entry name
      */
-    void setEntryName(const std::string&,
-		      const std::string&);
+    void setEntryName(const std::string&, const std::string&);
     /*!
      * \return true if the given name is used as a entry name
      * \param[in] e: entry name
@@ -144,7 +138,8 @@ namespace mfront
     std::vector<std::string> materialLaws;
     //! static variables
     StaticVariableDescriptionContainer staticVars;
-  protected:
+
+   protected:
     //! list of reserved names
     std::set<std::string> reservedNames;
     //! list of variables names
@@ -156,8 +151,8 @@ namespace mfront
      * \param[in] n: variable name
      */
     VariableDescription& getVariableDescription(const std::string&);
-  }; // end of MaterialProopertyDescription
-    
-} // end of namespace mfront
+  };  // end of MaterialProopertyDescription
+
+}  // end of namespace mfront
 
 #endif /* LIB_MFRONT_MATERIALPROPERTYDESCRIPTION_HXX */

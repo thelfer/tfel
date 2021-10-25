@@ -1,44 +1,40 @@
 /*!
  * \file   BehaviourWorkSpace.hxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   17 nov. 2015
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_MTEST_BEHAVIOURWORKSPACE_HXX
 #define LIB_MTEST_BEHAVIOURWORKSPACE_HXX
 
-#include"TFEL/Math/matrix.hxx"
-#include"TFEL/Math/vector.hxx"
+#include "TFEL/Math/matrix.hxx"
+#include "TFEL/Math/vector.hxx"
 
-#include"MTest/Config.hxx"
-#include"MTest/Types.hxx"
-#include"MTest/CurrentState.hxx"
+#include "MTest/Config.hxx"
+#include "MTest/Types.hxx"
+#include "MTest/CurrentState.hxx"
 
-namespace mtest
-{
+namespace mtest {
 
   /*!
    * structure in which local variables used by a behaviour to perform
    * its integration is stored.
    */
-  struct MTEST_VISIBILITY_EXPORT BehaviourWorkSpace
-  {
+  struct MTEST_VISIBILITY_EXPORT BehaviourWorkSpace {
     //! default constructor
     BehaviourWorkSpace();
     // deleted members
     BehaviourWorkSpace(BehaviourWorkSpace&&) = delete;
     BehaviourWorkSpace(const BehaviourWorkSpace&) = delete;
-    BehaviourWorkSpace&
-    operator=(BehaviourWorkSpace&&) = delete;
-    BehaviourWorkSpace&
-    operator=(const BehaviourWorkSpace&) = delete;
+    BehaviourWorkSpace& operator=(BehaviourWorkSpace&&) = delete;
+    BehaviourWorkSpace& operator=(const BehaviourWorkSpace&) = delete;
     //! destructor
     ~BehaviourWorkSpace();
     //! current state
@@ -53,20 +49,20 @@ namespace mtest
     tfel::math::matrix<real> D;
     //! temporary vector for material properties
     tfel::math::vector<real> mps;
-   //! temporary vector for internal variables
+    //! temporary vector for internal variables
     tfel::math::vector<real> ivs;
-   //! temporary vector for external state variables
+    //! temporary vector for external state variables
     tfel::math::vector<real> evs;
     //! numerical stiffness operator
     tfel::math::matrix<real> nk;
-   //! temporary vector for internal state variables
+    //! temporary vector for internal state variables
     tfel::math::vector<real> nivs;
-   //! temporary vector for driving variables
+    //! temporary vector for driving variables
     tfel::math::vector<real> ne;
-   //! temporary vector for stresses
+    //! temporary vector for stresses
     tfel::math::vector<real> ns;
-  }; // end of struct BehaviourWorkSpace
-  
-} // end of namespace mtest
+  };  // end of struct BehaviourWorkSpace
+
+}  // end of namespace mtest
 
 #endif /* LIB_MTEST_BEHAVIOURWORKSPACE_HXX */

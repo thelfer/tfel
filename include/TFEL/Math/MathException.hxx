@@ -1,87 +1,82 @@
 /*!
  * \file   include/TFEL/Math/MathException.hxx
- * 
- * \brief    
+ *
+ * \brief
  * \author Thomas Helfer
  * \date   24 Aug 2006
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_TFEL_MATHEXCEPTION_HXX
-#define LIB_TFEL_MATHEXCEPTION_HXX 
+#define LIB_TFEL_MATHEXCEPTION_HXX
 
-#include"TFEL/Config/TFELConfig.hxx"
-#include"TFEL/Exception/TFELException.hxx"
+#include "TFEL/Config/TFELConfig.hxx"
+#include "TFEL/Exception/TFELException.hxx"
 
-namespace tfel{
+namespace tfel {
 
-  namespace math{
+  namespace math {
 
     struct TFELMATH_VISIBILITY_EXPORT MathException
-      : public tfel::exception::TFELException 
-    {      
+        : public tfel::exception::TFELException {
       MathException() = default;
       MathException(MathException&&) = default;
       MathException(const MathException&) = default;
       virtual ~MathException() noexcept;
-    }; // end of struct MathException
+    };  // end of struct MathException
 
     struct TFELMATH_VISIBILITY_EXPORT MathRunTimeException
-      : public MathException
-    {
+        : public MathException {
       MathRunTimeException() = default;
       MathRunTimeException(MathRunTimeException&&) = default;
       MathRunTimeException(const MathRunTimeException&) = default;
       virtual ~MathRunTimeException() noexcept;
-    }; // end of struct MathRunTimeException
+    };  // end of struct MathRunTimeException
 
     struct TFELMATH_VISIBILITY_EXPORT InvalidTimeStepException
-      : public MathRunTimeException
-    {
+        : public MathRunTimeException {
       InvalidTimeStepException() = default;
       InvalidTimeStepException(InvalidTimeStepException&&) = default;
       InvalidTimeStepException(const InvalidTimeStepException&) = default;
       virtual const char* what() const noexcept override final;
       virtual ~InvalidTimeStepException() noexcept;
-    }; // end of struct InvalidTimeStepException
+    };  // end of struct InvalidTimeStepException
 
     struct TFELMATH_VISIBILITY_EXPORT MathDivergenceException
-      : public MathException
-    {
+        : public MathException {
       MathDivergenceException() = default;
       MathDivergenceException(MathDivergenceException&&) = default;
       MathDivergenceException(const MathDivergenceException&) = default;
       virtual ~MathDivergenceException() noexcept;
-    }; // end of struct MathDivergenceException
+    };  // end of struct MathDivergenceException
 
     struct TFELMATH_VISIBILITY_EXPORT MaximumNumberOfIterationsReachedException
-      : public MathDivergenceException
-    {
+        : public MathDivergenceException {
       MaximumNumberOfIterationsReachedException() = default;
-      MaximumNumberOfIterationsReachedException(MaximumNumberOfIterationsReachedException&&) = default;
-      MaximumNumberOfIterationsReachedException(const MaximumNumberOfIterationsReachedException&) = default;
+      MaximumNumberOfIterationsReachedException(
+          MaximumNumberOfIterationsReachedException&&) = default;
+      MaximumNumberOfIterationsReachedException(
+          const MaximumNumberOfIterationsReachedException&) = default;
       virtual const char* what() const noexcept override final;
       virtual ~MaximumNumberOfIterationsReachedException() noexcept;
-    }; // end of struct MaximumNumberOfIterationsReachedException
+    };  // end of struct MaximumNumberOfIterationsReachedException
 
     struct TFELMATH_VISIBILITY_EXPORT SingularJacobianException
-      : public MathDivergenceException
-    {
+        : public MathDivergenceException {
       SingularJacobianException() = default;
       SingularJacobianException(SingularJacobianException&&) = default;
       SingularJacobianException(const SingularJacobianException&) = default;
       virtual const char* what() const noexcept override final;
       virtual ~SingularJacobianException() noexcept;
-    }; // end of struct SingularJacobianException
+    };  // end of struct SingularJacobianException
 
-  } // end of namespace math
+  }  // end of namespace math
 
-} // end of namespace tfel
+}  // end of namespace tfel
 
 #endif /* LIB_TFEL_MATHEXCEPTION_HXX */
-

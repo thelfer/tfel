@@ -1,141 +1,134 @@
 /*!
  * \file   BehaviourBrickProvider.cxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   26 juin 2015
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  * <!-- Local IspellDict: english -->
  */
 
-#include<sstream>
-#include<algorithm>
-#include<stdexcept>
-#include"TFEL/Raise.hxx"
-#include"MFront/SupportedTypes.hxx"
-#include"MFront/VariableDescription.hxx"
-#include"MFront/StaticVariableDescription.hxx"
-#include"MFront/BehaviourBrick/Requirement.hxx"
-#include"MFront/BehaviourBrick/Provider.hxx"
+#include <sstream>
+#include <algorithm>
+#include <stdexcept>
+#include "TFEL/Raise.hxx"
+#include "MFront/SupportedTypes.hxx"
+#include "MFront/VariableDescription.hxx"
+#include "MFront/StaticVariableDescription.hxx"
+#include "MFront/BehaviourBrick/Requirement.hxx"
+#include "MFront/BehaviourBrick/Provider.hxx"
 
-namespace mfront{
+namespace mfront {
 
-  namespace bbrick{
-  
+  namespace bbrick {
+
     Provider::~Provider() = default;
 
     bool ProviderBase::handleRequirement(const Requirement& r,
-					 const bool b) const
-    {
+                                         const bool b) const {
       using namespace std;
-      if(this->getExternalName()!=r.name){
-	return false;
+      if (this->getExternalName() != r.name) {
+        return false;
       }
-      if(this->getArraySize()!=r.asize){
-	ostringstream msg;
-	msg << "ProviderBase::handleRequirement : "
-	    << "unmatched array size for requirement '"
-	    << this->getExternalName() <<"' "
-	    << "(requirement array size is " << r.asize << " and "
-	    << " provided variable array size is "
-	    << this->getArraySize() << ")";
-	tfel::raise(msg.str());
+      if (this->getArraySize() != r.asize) {
+        ostringstream msg;
+        msg << "ProviderBase::handleRequirement : "
+            << "unmatched array size for requirement '"
+            << this->getExternalName() << "' "
+            << "(requirement array size is " << r.asize << " and "
+            << " provided variable array size is " << this->getArraySize()
+            << ")";
+        tfel::raise(msg.str());
       }
       // check for type
-      if(this->getVariableType()!=r.type){
-	const auto s = SupportedTypes{};
-	const auto f1 = s.getTypeFlag(r.type);
-	const auto f2 = s.getTypeFlag(this->getVariableType());
-	const bool b1 = f1==f2;
-	tfel::raise_if((!b1)||(b),
-		       "ProviderBase::handleRequirement : "
-		       "provided value of type '"+
-		       this->getVariableType()+
-		       "' does not math requirement '"+
-		       r.name+"' type ('"+r.type+"""')");
+      if (this->getVariableType() != r.type) {
+        const auto s = SupportedTypes{};
+        const auto f1 = s.getTypeFlag(r.type);
+        const auto f2 = s.getTypeFlag(this->getVariableType());
+        const bool b1 = f1 == f2;
+        tfel::raise_if((!b1) || (b),
+                       "ProviderBase::handleRequirement : "
+                       "provided value of type '" +
+                           this->getVariableType() +
+                           "' does not math requirement '" + r.name +
+                           "' type ('" + r.type +
+                           ""
+                           "')");
       }
       // check if provider is allowed
       const auto id = this->getIdentifier();
-      tfel::raise_if(find(r.aproviders.begin(),r.aproviders.end(),id)==
-		     r.aproviders.end(),
-		     "ProviderBase::handleRequirement : "
-		     "a provider of type '"+
-		     convertProviderIdentifierToString(id)+
-		     "' is not allowed for "
-		     "requirement '"+r.name+"'");
+      tfel::raise_if(find(r.aproviders.begin(), r.aproviders.end(), id) ==
+                         r.aproviders.end(),
+                     "ProviderBase::handleRequirement : "
+                     "a provider of type '" +
+                         convertProviderIdentifierToString(id) +
+                         "' is not allowed for "
+                         "requirement '" +
+                         r.name + "'");
       return true;
-    } // end of ProviderBase::handleRequirement
-    
+    }  // end of ProviderBase::handleRequirement
+
     ProviderBase::~ProviderBase() = default;
-    
+
     StandardProvider::StandardProvider(const std::string& t,
-				       const std::string& n,
-				       const std::string& e,
-				       const unsigned short s,
-				       const bool b)
-      : type(t),
-	name(n),
-	ename(e),
-	asize(s)
-    {
+                                       const std::string& n,
+                                       const std::string& e,
+                                       const unsigned short s,
+                                       const bool b)
+        : type(t), name(n), ename(e), asize(s) {
       const auto st = SupportedTypes{};
-      if(b){
-	tfel::raise_if(!st.isSupportedType(this->type),
-		       "StandardProvider::StandardProvider : "
-		       "unsupported type '"+this->type+"'");
+      if (b) {
+        tfel::raise_if(!st.isSupportedType(this->type),
+                       "StandardProvider::StandardProvider : "
+                       "unsupported type '" +
+                           this->type + "'");
       }
-    } // end of StandardProvider::StandardProvider
+    }  // end of StandardProvider::StandardProvider
 
     StandardProvider::StandardProvider(const mfront::VariableDescription& v,
-				       const std::string& e,
-				       const bool b)
-      : type(v.type),
-	name(v.name),
-	ename(e),
-	asize(v.arraySize)
-    {
+                                       const std::string& e,
+                                       const bool b)
+        : type(v.type), name(v.name), ename(e), asize(v.arraySize) {
       const auto st = SupportedTypes{};
-      if(b){
-	tfel::raise_if(!st.isSupportedType(this->type),
-		       "StandardProvider::StandardProvider : "
-		       "unsupported type '"+this->type+"'");
+      if (b) {
+        tfel::raise_if(!st.isSupportedType(this->type),
+                       "StandardProvider::StandardProvider : "
+                       "unsupported type '" +
+                           this->type + "'");
       }
-    } // end of StandardProvider::StandardProvider
-    
-    std::string StandardProvider::getVariableType() const {
-      return this->type;
-    }
-    
+    }  // end of StandardProvider::StandardProvider
+
+    std::string StandardProvider::getVariableType() const { return this->type; }
+
     std::string StandardProvider::getExternalName() const {
       return this->ename;
     }
-    
-    unsigned short StandardProvider::getArraySize() const{
-      return this->asize; 
+
+    unsigned short StandardProvider::getArraySize() const {
+      return this->asize;
     }
-    
+
     StandardProvider::~StandardProvider() = default;
 
     MaterialPropertyProvider::MaterialPropertyProvider(const std::string& t,
-						       const std::string& n,
-						       const std::string& e,
-						       const unsigned short s)
-      : StandardProvider(t,n,e,s,true)
-    {} // end of MaterialPropertyProvider::MaterialPropertyProvider
+                                                       const std::string& n,
+                                                       const std::string& e,
+                                                       const unsigned short s)
+        : StandardProvider(t, n, e, s, true) {
+    }  // end of MaterialPropertyProvider::MaterialPropertyProvider
 
-    MaterialPropertyProvider::MaterialPropertyProvider(const mfront::VariableDescription& v,
-						       const std::string& e)
-      : StandardProvider(v,e,true)
-    {} // end of MaterialPropertyProvider::MaterialPropertyProvider
-    
-    ProviderIdentifier
-    MaterialPropertyProvider::getIdentifier() const{
+    MaterialPropertyProvider::MaterialPropertyProvider(
+        const mfront::VariableDescription& v, const std::string& e)
+        : StandardProvider(v, e, true) {
+    }  // end of MaterialPropertyProvider::MaterialPropertyProvider
+
+    ProviderIdentifier MaterialPropertyProvider::getIdentifier() const {
       return ProviderIdentifier::MATERIALPROPERTY;
-    } // end of MaterialPropertyProvider::getIdentifier
+    }  // end of MaterialPropertyProvider::getIdentifier
 
     MaterialPropertyProvider::~MaterialPropertyProvider() = default;
 
@@ -148,12 +141,12 @@ namespace mfront{
     // MaterialLawProvider::getExternalName() const{
     //   return this->name;
     // }
-    
+
     // unsigned short
     // MaterialLawProvider::getArraySize() const{
     //   return 1u;
     // }
-    
+
     // ProviderIdentifier
     // MaterialLawProvider::getIdentifier() const{
     //   return ProviderIdentifier::MATERIALLAW;
@@ -161,165 +154,151 @@ namespace mfront{
 
     // MaterialLawProvider::~MaterialLawProvider() = default;
 
-    AuxiliaryStateVariableProvider::AuxiliaryStateVariableProvider(const std::string& t,
-								   const std::string& n,
-								   const std::string& e,
-								   const unsigned short s)
-      : StandardProvider(t,n,e,s,true)
-    {} // end of AuxiliaryStateVariableProvider::AuxiliaryStateVariableProvider
+    AuxiliaryStateVariableProvider::AuxiliaryStateVariableProvider(
+        const std::string& t,
+        const std::string& n,
+        const std::string& e,
+        const unsigned short s)
+        : StandardProvider(t, n, e, s, true) {
+    }  // end of AuxiliaryStateVariableProvider::AuxiliaryStateVariableProvider
 
-    AuxiliaryStateVariableProvider::AuxiliaryStateVariableProvider(const mfront::VariableDescription& v,
-								   const std::string& e)
-      : StandardProvider(v,e,true)
-    {} // end of AuxiliaryStateVariableProvider::AuxiliaryStateVariableProvider
-    
-    ProviderIdentifier
-    AuxiliaryStateVariableProvider::getIdentifier() const{
+    AuxiliaryStateVariableProvider::AuxiliaryStateVariableProvider(
+        const mfront::VariableDescription& v, const std::string& e)
+        : StandardProvider(v, e, true) {
+    }  // end of AuxiliaryStateVariableProvider::AuxiliaryStateVariableProvider
+
+    ProviderIdentifier AuxiliaryStateVariableProvider::getIdentifier() const {
       return ProviderIdentifier::AUXILIARYSTATEVARIABLE;
-    } // end of AuxiliaryStateVariableProvider::getIdentifier
+    }  // end of AuxiliaryStateVariableProvider::getIdentifier
 
     AuxiliaryStateVariableProvider::~AuxiliaryStateVariableProvider() = default;
 
-    ExternalStateVariableProvider::ExternalStateVariableProvider(const std::string& t,
-								 const std::string& n,
-								 const std::string& e,
-								 const unsigned short s)
-      : StandardProvider(t,n,e,s,true)
-    {} // end of ExternalStateVariableProvider::ExternalStateVariableProvider
+    ExternalStateVariableProvider::ExternalStateVariableProvider(
+        const std::string& t,
+        const std::string& n,
+        const std::string& e,
+        const unsigned short s)
+        : StandardProvider(t, n, e, s, true) {
+    }  // end of ExternalStateVariableProvider::ExternalStateVariableProvider
 
-    ExternalStateVariableProvider::ExternalStateVariableProvider(const mfront::VariableDescription& v,
-								 const std::string& e)
-      : StandardProvider(v,e,true)
-    {} // end of ExternalStateVariableProvider::ExternalStateVariableProvider
-    
-    ProviderIdentifier
-    ExternalStateVariableProvider::getIdentifier() const{
+    ExternalStateVariableProvider::ExternalStateVariableProvider(
+        const mfront::VariableDescription& v, const std::string& e)
+        : StandardProvider(v, e, true) {
+    }  // end of ExternalStateVariableProvider::ExternalStateVariableProvider
+
+    ProviderIdentifier ExternalStateVariableProvider::getIdentifier() const {
       return ProviderIdentifier::EXTERNALSTATEVARIABLE;
-    } // end of ExternalStateVariableProvider::getIdentifier
+    }  // end of ExternalStateVariableProvider::getIdentifier
 
     ExternalStateVariableProvider::~ExternalStateVariableProvider() = default;
 
-    IntegrationVariableProvider::IntegrationVariableProvider(const std::string& t,
-							     const std::string& n,
-							     const std::string& e,
-							     const unsigned short s)
-      : StandardProvider(t,n,e,s,true)
-    {} // end of IntegrationVariableProvider::IntegrationVariableProvider
+    IntegrationVariableProvider::IntegrationVariableProvider(
+        const std::string& t,
+        const std::string& n,
+        const std::string& e,
+        const unsigned short s)
+        : StandardProvider(t, n, e, s, true) {
+    }  // end of IntegrationVariableProvider::IntegrationVariableProvider
 
-    IntegrationVariableProvider::IntegrationVariableProvider(const mfront::VariableDescription& v,
-							     const std::string& e)
-      : StandardProvider(v,e,true)
-    {} // end of IntegrationVariableProvider::IntegrationVariableProvider
-    
-    ProviderIdentifier
-    IntegrationVariableProvider::getIdentifier() const{
+    IntegrationVariableProvider::IntegrationVariableProvider(
+        const mfront::VariableDescription& v, const std::string& e)
+        : StandardProvider(v, e, true) {
+    }  // end of IntegrationVariableProvider::IntegrationVariableProvider
+
+    ProviderIdentifier IntegrationVariableProvider::getIdentifier() const {
       return ProviderIdentifier::INTEGRATIONVARIABLE;
-    } // end of IntegrationVariableProvider::getIdentifier
+    }  // end of IntegrationVariableProvider::getIdentifier
 
     IntegrationVariableProvider::~IntegrationVariableProvider() = default;
 
     LocalVariableProvider::LocalVariableProvider(const std::string& t,
-						 const std::string& n,
-						 const std::string& e,
-						 const unsigned short s)
-      : StandardProvider(t,n,e,s,false)
-    {} // end of LocalVariableProvider::LocalVariableProvider
+                                                 const std::string& n,
+                                                 const std::string& e,
+                                                 const unsigned short s)
+        : StandardProvider(t, n, e, s, false) {
+    }  // end of LocalVariableProvider::LocalVariableProvider
 
-    LocalVariableProvider::LocalVariableProvider(const mfront::VariableDescription& v,
-							   const std::string& e)
-      : StandardProvider(v,e,false)
-    {} // end of LocalVariableProvider::LocalVariableProvider
-    
-    ProviderIdentifier
-    LocalVariableProvider::getIdentifier() const{
+    LocalVariableProvider::LocalVariableProvider(
+        const mfront::VariableDescription& v, const std::string& e)
+        : StandardProvider(v, e, false) {
+    }  // end of LocalVariableProvider::LocalVariableProvider
+
+    ProviderIdentifier LocalVariableProvider::getIdentifier() const {
       return ProviderIdentifier::LOCALVARIABLE;
-    } // end of LocalVariableProvider::getIdentifier
+    }  // end of LocalVariableProvider::getIdentifier
 
     LocalVariableProvider::~LocalVariableProvider() = default;
 
     StaticVariableProvider::StaticVariableProvider(const std::string& t,
-						   const std::string& n,
-						   const std::string& e)
-      : type(t),
-	name(n),
-	ename(e)
-    {
+                                                   const std::string& n,
+                                                   const std::string& e)
+        : type(t), name(n), ename(e) {
       const auto s = SupportedTypes{};
       tfel::raise_if(!s.isSupportedType(this->type),
-		     "StaticVariableProvider::StaticVariableProvider : "
-		     "unsupported type '"+this->type+"'");
-    } // end of StaticVariableProvider::StaticVariableProvider
+                     "StaticVariableProvider::StaticVariableProvider : "
+                     "unsupported type '" +
+                         this->type + "'");
+    }  // end of StaticVariableProvider::StaticVariableProvider
 
-    StaticVariableProvider::StaticVariableProvider(const mfront::StaticVariableDescription& v,
-						   const std::string& e)
-      : type(v.type),
-	name(v.name),
-	ename(e)
-    {} // end of StaticVariableProvider::StaticVariableProvider
-    
+    StaticVariableProvider::StaticVariableProvider(
+        const mfront::StaticVariableDescription& v, const std::string& e)
+        : type(v.type),
+          name(v.name),
+          ename(e) {}  // end of StaticVariableProvider::StaticVariableProvider
+
     std::string StaticVariableProvider::getVariableType() const {
       return this->type;
     }
-    
+
     std::string StaticVariableProvider::getExternalName() const {
       return this->ename;
     }
-    
-    unsigned short StaticVariableProvider::getArraySize() const{
-      return 1u; 
-    }
-    
-    ProviderIdentifier
-    StaticVariableProvider::getIdentifier() const{
+
+    unsigned short StaticVariableProvider::getArraySize() const { return 1u; }
+
+    ProviderIdentifier StaticVariableProvider::getIdentifier() const {
       return ProviderIdentifier::STATICVARIABLE;
-    } // end of StaticVariableProvider::getIdentifier
+    }  // end of StaticVariableProvider::getIdentifier
 
     StaticVariableProvider::~StaticVariableProvider() = default;
 
     ParameterProvider::ParameterProvider(const std::string& t,
-					 const std::string& n,
-					 const std::string& e)
-      : type(t),
-	name(n),
-	ename(e)
-    {
+                                         const std::string& n,
+                                         const std::string& e)
+        : type(t), name(n), ename(e) {
       const auto s = SupportedTypes{};
       tfel::raise_if(!s.isSupportedType(this->type),
-		     "ParameterProvider::ParameterProvider : "
-		     "unsupported type '"+this->type+"'");
-    } // end of ParameterProvider::ParameterProvider
+                     "ParameterProvider::ParameterProvider : "
+                     "unsupported type '" +
+                         this->type + "'");
+    }  // end of ParameterProvider::ParameterProvider
 
     ParameterProvider::ParameterProvider(const mfront::VariableDescription& v,
-					 const std::string& e)
-      : type(v.type),
-	name(v.name),
-	ename(e)
-    {
+                                         const std::string& e)
+        : type(v.type), name(v.name), ename(e) {
       const auto s = SupportedTypes{};
       tfel::raise_if(!s.isSupportedType(this->type),
-		     "ParameterProvider::ParameterProvider : "
-		     "unsupported type '"+this->type+"'");
-    } // end of ParameterProvider::ParameterProvider
-    
+                     "ParameterProvider::ParameterProvider : "
+                     "unsupported type '" +
+                         this->type + "'");
+    }  // end of ParameterProvider::ParameterProvider
+
     std::string ParameterProvider::getVariableType() const {
       return this->type;
     }
-    
+
     std::string ParameterProvider::getExternalName() const {
       return this->ename;
     }
-    
-    unsigned short ParameterProvider::getArraySize() const{
-      return 1u; 
-    }
-    
-    ProviderIdentifier
-    ParameterProvider::getIdentifier() const{
+
+    unsigned short ParameterProvider::getArraySize() const { return 1u; }
+
+    ProviderIdentifier ParameterProvider::getIdentifier() const {
       return ProviderIdentifier::PARAMETER;
-    } // end of ParameterProvider::getIdentifier
+    }  // end of ParameterProvider::getIdentifier
 
     ParameterProvider::~ParameterProvider() = default;
-    
-  } // end of namespace bbrick
-  
-} // end of namespace mfront
+
+  }  // end of namespace bbrick
+
+}  // end of namespace mfront

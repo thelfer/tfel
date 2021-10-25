@@ -83,7 +83,8 @@ namespace tfel {
     }  // end of DDIF2Base::cart2cyl
 
     template <typename real>
-    void DDIF2Base::cart2cyl(tfel::math::stensor<2u, real>& s, const real theta) {
+    void DDIF2Base::cart2cyl(tfel::math::stensor<2u, real>& s,
+                             const real theta) {
       using namespace std;
       constexpr const auto cste = tfel::math::Cste<real>::sqrt2;
       constexpr const auto icste = tfel::math::Cste<real>::isqrt2;
@@ -93,23 +94,27 @@ namespace tfel {
       const real alpha = cost * a[0] + sint * a[3];
       const real beta = cost * a[3] + sint * a[1];
       s(0) = cost * alpha + sint * beta;
-      s(1) = sint * (sint * a[0] - cost * a[3]) + cost * (cost * a[1] - sint * a[3]);
+      s(1) = sint * (sint * a[0] - cost * a[3]) +
+             cost * (cost * a[1] - sint * a[3]);
       s(2) = a[2];
       s(3) = (cost * beta - sint * alpha) * cste;
     }  // end of DDIF2Base::cart2cyl
 
     template <typename real>
-    void DDIF2Base::cart2cyl(tfel::math::stensor<3u, real>& s, const real theta) {
+    void DDIF2Base::cart2cyl(tfel::math::stensor<3u, real>& s,
+                             const real theta) {
       using namespace std;
       constexpr const auto cste = tfel::math::Cste<real>::sqrt2;
       constexpr const auto icste = tfel::math::Cste<real>::isqrt2;
-      const real a[6] = {s(0), s(1), s(2), s(3) * icste, s(4) * icste, s(5) * icste};
+      const real a[6] = {s(0),         s(1),         s(2),
+                         s(3) * icste, s(4) * icste, s(5) * icste};
       const real cost = cos(theta);
       const real sint = sin(theta);
       const real alpha = cost * a[0] + sint * a[3];
       const real beta = cost * a[3] + sint * a[1];
       s(0) = cost * alpha + sint * beta;
-      s(1) = sint * (sint * a[0] - cost * a[3]) + cost * (cost * a[1] - sint * a[3]);
+      s(1) = sint * (sint * a[0] - cost * a[3]) +
+             cost * (cost * a[1] - sint * a[3]);
       s(2) = a[2];
       s(3) = (cost * beta - sint * alpha) * cste;
       s(4) = (cost * a[4] + sint * a[5]) * cste;
@@ -121,7 +126,8 @@ namespace tfel {
     }  // end of DDIF2Base::cyl2cart
 
     template <typename real>
-    void DDIF2Base::cyl2cart(tfel::math::stensor<2u, real>& s, const real theta) {
+    void DDIF2Base::cyl2cart(tfel::math::stensor<2u, real>& s,
+                             const real theta) {
       using namespace std;
       constexpr const auto cste = tfel::math::Cste<real>::sqrt2;
       constexpr const auto icste = tfel::math::Cste<real>::isqrt2;
@@ -131,23 +137,27 @@ namespace tfel {
       const real alpha = cost * a[0] - sint * a[3];
       const real beta = cost * a[3] - sint * a[1];
       s(0) = cost * alpha - sint * beta;
-      s(1) = sint * (sint * a[0] + cost * a[3]) + cost * (sint * a[3] + cost * a[1]);
+      s(1) = sint * (sint * a[0] + cost * a[3]) +
+             cost * (sint * a[3] + cost * a[1]);
       s(2) = a[2];
       s(3) = (sint * alpha + cost * beta) * cste;
     }  // end of DDIF2Base::cyl2cart
 
     template <typename real>
-    void DDIF2Base::cyl2cart(tfel::math::stensor<3u, real>& s, const real theta) {
+    void DDIF2Base::cyl2cart(tfel::math::stensor<3u, real>& s,
+                             const real theta) {
       using namespace std;
       constexpr const auto cste = tfel::math::Cste<real>::sqrt2;
       constexpr const auto icste = tfel::math::Cste<real>::isqrt2;
-      const real a[6] = {s(0), s(1), s(2), s(3) * icste, s(4) * icste, s(5) * icste};
+      const real a[6] = {s(0),         s(1),         s(2),
+                         s(3) * icste, s(4) * icste, s(5) * icste};
       const real cost = cos(theta);
       const real sint = sin(theta);
       const real alpha = cost * a[0] - sint * a[3];
       const real beta = cost * a[3] - sint * a[1];
       s(0) = cost * alpha - sint * beta;
-      s(1) = sint * (sint * a[0] + cost * a[3]) + cost * (sint * a[3] + cost * a[1]);
+      s(1) = sint * (sint * a[0] + cost * a[3]) +
+             cost * (sint * a[3] + cost * a[1]);
       s(2) = a[2];
       s(3) = (sint * alpha + cost * beta) * cste;
       s(4) = (cost * a[4] - sint * a[5]) * cste;
@@ -155,19 +165,20 @@ namespace tfel {
     }  // end of DDIF2Base::cyl2cart
 
     template <typename real>
-    void DDIF2Base::rk(tfel::math::tmatrix<3, 3, real>& m,
-                       tfel::math::tvector<3, real>& v,
-                       real& Hr,
-                       const real s,
-                       const real dse,  // elastic stress estimation
-                       const real e,
-                       const real X,
-                       const real,  // this was formerly the young modulus (actually not used)
-                       const real lambda,
-                       const real mu,
-                       const unsigned short i,
-                       const unsigned short i1,
-                       const unsigned short i2) {
+    void DDIF2Base::rk(
+        tfel::math::tmatrix<3, 3, real>& m,
+        tfel::math::tvector<3, real>& v,
+        real& Hr,
+        const real s,
+        const real dse,  // elastic stress estimation
+        const real e,
+        const real X,
+        const real,  // this was formerly the young modulus (actually not used)
+        const real lambda,
+        const real mu,
+        const unsigned short i,
+        const unsigned short i1,
+        const unsigned short i2) {
       using namespace std;
       m(i, i1) = m(i, i2) = 0.;
       m(i, i) = 1.;

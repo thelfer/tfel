@@ -1,24 +1,24 @@
-/*! 
+/*!
  * \file   DDIF2Brick.hxx
  * \brief
  * \author Thomas Helfer
  * \date   October,20 2014
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_MFRONT_DDIF2BRICKBEHAVIOURBRICK_HXX
-#define LIB_MFRONT_DDIF2BRICKBEHAVIOURBRICK_HXX 
+#define LIB_MFRONT_DDIF2BRICKBEHAVIOURBRICK_HXX
 
 #include <array>
 #include "TFEL/Utilities/GenTypeBase.hxx"
 #include "MFront/StandardElasticityBrick.hxx"
 
-namespace mfront{
+namespace mfront {
 
   // forward declaration
   struct AbstractBehaviourDSL;
@@ -56,9 +56,7 @@ namespace mfront{
    *   generic computation of the prediction operator will not be
    *   provided.
    */
-  struct DDIF2Brick
-    : public StandardElasticityBrick
-  {
+  struct DDIF2Brick : public StandardElasticityBrick {
     /*!
      * \brief constructor
      * \param[in] dsl_ : calling domain specific language
@@ -67,42 +65,43 @@ namespace mfront{
      * \param[in] d    : data
      */
     DDIF2Brick(AbstractBehaviourDSL&,
-	       BehaviourDescription&,
-	       const Parameters&,
-	       const DataMap&);
+               BehaviourDescription&,
+               const Parameters&,
+               const DataMap&);
     //! \return the name of the brick
     virtual std::string getName() const override;
     /*!
      * \return the list of supported modelling hypotheses.
      */
-    virtual std::vector<Hypothesis> 
-    getSupportedModellingHypotheses() const override;
+    virtual std::vector<Hypothesis> getSupportedModellingHypotheses()
+        const override;
     //! complete the variable description
     virtual void completeVariableDeclaration() const override;
     //! method called at the end of the input file processing
     virtual void endTreatment() const override;
     //! destructor
     virtual ~DDIF2Brick();
-  protected:
+
+   protected:
     using FractureStress =
-      tfel::utilities::GenType<std::shared_ptr<MaterialPropertyDescription>,
-			       double>;
+        tfel::utilities::GenType<std::shared_ptr<MaterialPropertyDescription>,
+                                 double>;
     using SofteningSlope =
-      tfel::utilities::GenType<std::shared_ptr<MaterialPropertyDescription>,
-			       double>;
+        tfel::utilities::GenType<std::shared_ptr<MaterialPropertyDescription>,
+                                 double>;
     using FractureEnergy =
-      tfel::utilities::GenType<std::shared_ptr<MaterialPropertyDescription>,
-			       double>;
+        tfel::utilities::GenType<std::shared_ptr<MaterialPropertyDescription>,
+                                 double>;
     //! fracture stress
-    std::array<FractureStress,3u> sr;
+    std::array<FractureStress, 3u> sr;
     //! softening slopes
-    std::array<SofteningSlope,3u> rp;
+    std::array<SofteningSlope, 3u> rp;
     //! fracture energy
-    std::array<FractureEnergy,3u> gc;
+    std::array<FractureEnergy, 3u> gc;
     //! handle pressure on crack surface
     bool pr = false;
-  }; // end of struct DDIF2Brick
+  };  // end of struct DDIF2Brick
 
-} // end of namespace mfront
+}  // end of namespace mfront
 
 #endif /* LIB_MFRONT_DDIF2BRICKBEHAVIOURBRICK_H */

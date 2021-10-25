@@ -1,14 +1,14 @@
 /*!
- * \file   include/NUMODIS/BCC.hxx  
- * \brief    
+ * \file   include/NUMODIS/BCC.hxx
+ * \brief
  * \author Laurent Dupuy
  * \date   9/06/2017
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef NUMEODIS_BCC_HXX
@@ -19,8 +19,7 @@
 #include "NUMODIS/Config.hxx"
 #include "NUMODIS/Cubic.hxx"
 
-namespace numodis
-{
+namespace numodis {
 
   //===============================================================
   // Class BCC
@@ -50,23 +49,17 @@ namespace numodis
     \ingroup ClassCrystallo
   */
   //===============================================================
-  struct TFELNUMODIS_VISIBILITY_EXPORT BCC
-    : public Cubic
-  {
-
+  struct TFELNUMODIS_VISIBILITY_EXPORT BCC : public Cubic {
     BCC();
 
-    void PrintData(std::ostream & os) const;
+    void PrintData(std::ostream& os) const;
 
     virtual ~BCC();
-    
-  private:
 
+   private:
     virtual void Init() override;
-
-
   };
 
-} // end of namespace numodis
-  
+}  // end of namespace numodis
+
 #endif

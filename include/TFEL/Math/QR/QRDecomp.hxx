@@ -1,40 +1,37 @@
-/*! 
+/*!
  * \file  include/TFEL/Math/QR/QRDecomp.hxx
  * \brief
  * \author Thomas Helfer
  * \brief 18 mai 2013
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_TFEL_MATH_QRDECOMP_HXX
-#define LIB_TFEL_MATH_QRDECOMP_HXX 
+#define LIB_TFEL_MATH_QRDECOMP_HXX
 
-#include<cmath>
-#include<limits>
-#include<algorithm>
+#include <cmath>
+#include <limits>
+#include <algorithm>
 
-#include"TFEL/Config/TFELConfig.hxx"
-#include"TFEL/Math/General/Abs.hxx"
-#include"TFEL/Math/Matrix/MatrixConcept.hxx"
-#include"TFEL/Math/LU/Permutation.hxx"
+#include "TFEL/Config/TFELConfig.hxx"
+#include "TFEL/Math/General/Abs.hxx"
+#include "TFEL/Math/Matrix/MatrixConcept.hxx"
+#include "TFEL/Math/LU/Permutation.hxx"
 
-namespace tfel
-{
+namespace tfel {
 
-  namespace math
-  {
+  namespace math {
 
     /*!
      * structure in charge of computing the QR decomposition of a
      * matrix. Column permutation is performed.
-     */ 
-    struct QRDecomp
-    {
+     */
+    struct QRDecomp {
       /*!
        * Compute the QR decomposition of a matrix.
        *
@@ -54,12 +51,8 @@ namespace tfel
        * \]
        * where v has zeros in the first k-1 positions.
        */
-      template<typename MatrixType,
-	       typename VectorType>
-      static TFEL_MATH_INLINE2
-      void exe(MatrixType&,
-	       VectorType&,
-	       VectorType&);
+      template <typename MatrixType, typename VectorType>
+      static TFEL_MATH_INLINE2 void exe(MatrixType&, VectorType&, VectorType&);
 
       /*!
        * do the product of the transpose q matrix which is stored in a
@@ -69,40 +62,34 @@ namespace tfel
        * householder transformations in its lower diagonal part
        * \param[in] beta : square of norm of the householder vectors
        */
-      template<typename VectorType,
-	       typename MatrixType>
-      static TFEL_MATH_INLINE2
-      void tq_product(VectorType&,
-		      const MatrixType&,
-		      const VectorType&);
+      template <typename VectorType, typename MatrixType>
+      static TFEL_MATH_INLINE2 void tq_product(VectorType&,
+                                               const MatrixType&,
+                                               const VectorType&);
 
       /*!
        * \param[in] v : vector
-       * \param[in] a : decomposed matrix 
+       * \param[in] a : decomposed matrix
        * \param[in] d : diagonal element of the matrix
        * \param[in] e : precision
        */
-      template<typename VectorType,
-	       typename MatrixType>
-      static TFEL_MATH_INLINE2
-      void back_substitute(VectorType&,
-			   const MatrixType&,
-			   const VectorType&,
-			   const typename MatrixTraits<MatrixType>::NumType);
+      template <typename VectorType, typename MatrixType>
+      static TFEL_MATH_INLINE2 void back_substitute(
+          VectorType&,
+          const MatrixType&,
+          const VectorType&,
+          const typename MatrixTraits<MatrixType>::NumType);
       /*!
        * \param[in] v : vector
-       * \param[in] a : decomposed matrix 
+       * \param[in] a : decomposed matrix
        * \param[in] d : diagonal element of the matrix
        */
-      template<typename VectorType,
-	       typename MatrixType>
-      static TFEL_MATH_INLINE2
-      void back_substitute(VectorType&,
-			   const MatrixType&,
-			   const VectorType&);
-	
-    protected:
+      template <typename VectorType, typename MatrixType>
+      static TFEL_MATH_INLINE2 void back_substitute(VectorType&,
+                                                    const MatrixType&,
+                                                    const VectorType&);
 
+     protected:
       /*!
        * do the product of a householder matrix, stored in the kth
        * column of the matrix a, to a vector.
@@ -112,13 +99,12 @@ namespace tfel
        * \param[in] beta : square of norm of the householder vectors
        * \param[in] c    : column index
        */
-      template<typename VectorType,
-	       typename MatrixType>
-      static TFEL_MATH_INLINE2
-      void householder_product(VectorType&,
-			       const MatrixType&,
-			       const VectorType&,
-			       const typename MatrixTraits<MatrixType>::IndexType);
+      template <typename VectorType, typename MatrixType>
+      static TFEL_MATH_INLINE2 void householder_product(
+          VectorType&,
+          const MatrixType&,
+          const VectorType&,
+          const typename MatrixTraits<MatrixType>::IndexType);
 
       /*!
        * Compute the norm of the cth column of matrix m,
@@ -128,20 +114,18 @@ namespace tfel
        * \param[in] b : starting row
        * \param[in] e : past-the end row
        */
-      template<typename MatrixType>
-      static typename MatrixTraits<MatrixType>::NumType
-      enorm(const MatrixType&,
-	    const typename MatrixTraits<MatrixType>::IndexType,
-	    const typename MatrixTraits<MatrixType>::IndexType,
-	    const typename MatrixTraits<MatrixType>::IndexType);
-
+      template <typename MatrixType>
+      static typename MatrixTraits<MatrixType>::NumType enorm(
+          const MatrixType&,
+          const typename MatrixTraits<MatrixType>::IndexType,
+          const typename MatrixTraits<MatrixType>::IndexType,
+          const typename MatrixTraits<MatrixType>::IndexType);
     };
 
-  } // end of namespace math
+  }  // end of namespace math
 
-} // end of namespace tfel
+}  // end of namespace tfel
 
-#include"TFEL/Math/QR/QRDecomp.ixx"
+#include "TFEL/Math/QR/QRDecomp.ixx"
 
 #endif /* LIB_TFEL_MATH_QRDECOMP_HXX */
-

@@ -1,92 +1,87 @@
 /*!
  * \file   ThreadPool.cxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   19 juin 2016
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
-#include<memory>
-#include<stdexcept>
-#include"TFEL/System/ThreadPool.hxx"
+#include <memory>
+#include <stdexcept>
+#include "TFEL/System/ThreadPool.hxx"
 
-namespace tfel{
+namespace tfel {
 
-  namespace system{
-   
-    ThreadPool::ThreadPool(const size_t n)
-    {
-      this->statuses.resize(n,ThreadPool::Status::IDLE);
-      for(size_t i = 0;i<n;++i){
-	auto f = [this,i]{
-	  for(;;){
-	    std::function<void()> task;
-	    {
-	      std::unique_lock<std::mutex> lock(this->m);
-	      while(!(this->stop || !this->tasks.empty())){
-		this->c.wait(lock,[this]{
-		    return this->stop || !this->tasks.empty();
-		  });
-	      }
-	      if(this->stop && this->tasks.empty()){
-		return;
-	      }
-	      task = std::move(this->tasks.front());
-	      this->tasks.pop();
-	      this->statuses[i] = ThreadPool::Status::WORKING;
-	      this->c.notify_all();
-	    }
-	    task();
-	    {
-	      std::unique_lock<std::mutex> lock(this->m);
-	      this->statuses[i] = ThreadPool::Status::IDLE;
-	      this->c.notify_all();
-	    }
-	  }
-	};
-	this->workers.emplace_back(f);
+  namespace system {
+
+    ThreadPool::ThreadPool(const size_t n) {
+      this->statuses.resize(n, ThreadPool::Status::IDLE);
+      for (size_t i = 0; i < n; ++i) {
+        auto f = [this, i] {
+          for (;;) {
+            std::function<void()> task;
+            {
+              std::unique_lock<std::mutex> lock(this->m);
+              while (!(this->stop || !this->tasks.empty())) {
+                this->c.wait(lock, [this] {
+                  return this->stop || !this->tasks.empty();
+                });
+              }
+              if (this->stop && this->tasks.empty()) {
+                return;
+              }
+              task = std::move(this->tasks.front());
+              this->tasks.pop();
+              this->statuses[i] = ThreadPool::Status::WORKING;
+              this->c.notify_all();
+            }
+            task();
+            {
+              std::unique_lock<std::mutex> lock(this->m);
+              this->statuses[i] = ThreadPool::Status::IDLE;
+              this->c.notify_all();
+            }
+          }
+        };
+        this->workers.emplace_back(f);
       }
     }
 
-    ThreadPool::size_type ThreadPool::getNumberOfThreads() const{
+    ThreadPool::size_type ThreadPool::getNumberOfThreads() const {
       return this->workers.size();
-    } // end of ThreadPool::getNumberOfThreads
+    }  // end of ThreadPool::getNumberOfThreads
 
-    void ThreadPool::wait()
-    {
+    void ThreadPool::wait() {
       std::unique_lock<std::mutex> lock(this->m);
-      while(!this->tasks.empty()){
-	this->c.wait(lock,[this]{
-	    return this->tasks.empty();
-	  });
+      while (!this->tasks.empty()) {
+        this->c.wait(lock, [this] { return this->tasks.empty(); });
       }
-      for(decltype(this->statuses.size()) i=0;i!=this->statuses.size();++i){
-	while(this->statuses[i]!=Status::IDLE){
-	  this->c.wait(lock,[this,i]{
-	      return this->statuses[i]==Status::IDLE;
-	    });
-	}
+      for (decltype(this->statuses.size()) i = 0; i != this->statuses.size();
+           ++i) {
+        while (this->statuses[i] != Status::IDLE) {
+          this->c.wait(lock,
+                       [this, i] { return this->statuses[i] == Status::IDLE; });
+        }
       }
-    } // end of ThreadPool::wait()
-    
-    ThreadPool::~ThreadPool()
-    {
+    }  // end of ThreadPool::wait()
+
+    ThreadPool::~ThreadPool() {
       {
-	std::unique_lock<std::mutex> lock(m);
-	this->stop = true;
+        std::unique_lock<std::mutex> lock(m);
+        this->stop = true;
       }
       this->c.notify_all();
       // the destructor joins all threads
-      for(auto &w: this->workers){
-	w.join();
+      for (auto &w : this->workers) {
+        w.join();
       }
     }
 
-  } // end of namespace system
+  }  // end of namespace system
 
-} // end of namespace tfel
+}  // end of namespace tfel

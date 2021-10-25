@@ -1,40 +1,37 @@
- /*!
-  * \file   include/TFEL/Tests/MultipleTestOutputs.hxx
-  * \author Thomas Helfer
-  * \date   10 Apr 10
-  * \brief  
-  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+/*!
+ * \file   include/TFEL/Tests/MultipleTestOutputs.hxx
+ * \author Thomas Helfer
+ * \date   10 Apr 10
+ * \brief
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_TFEL_TESTS_MULTIPLETESTOUTPUTS_HXX
 #define LIB_TFEL_TESTS_MULTIPLETESTOUTPUTS_HXX 1
 
-#include<vector>
-#include<memory>
+#include <vector>
+#include <memory>
 
-#include"TFEL/Config/TFELConfig.hxx"
-#include"TFEL/Tests/TestOutput.hxx"
-#include"TFEL/Tests/TestResult.hxx"
+#include "TFEL/Config/TFELConfig.hxx"
+#include "TFEL/Tests/TestOutput.hxx"
+#include "TFEL/Tests/TestResult.hxx"
 
-namespace tfel
-{
+namespace tfel {
 
-  namespace tests
-  {
-    
+  namespace tests {
+
     /*!
      * \brief an helper class for gathering multiple outputs.
      */
     struct TFELTESTS_VISIBILITY_EXPORT MultipleTestOutputs final
-      : public TestOutput
-    {
+        : public TestOutput {
       //! a simple alias
-      using TestOutputPtr =  std::shared_ptr<TestOutput>;
+      using TestOutputPtr = std::shared_ptr<TestOutput>;
       //! \brief default constructor
       MultipleTestOutputs();
       /*!
@@ -54,8 +51,8 @@ namespace tfel
        * \param r: result of the test
        */
       void addTest(const std::string&,
-		   const std::string&,
-		   const TestResult&) override;
+                   const std::string&,
+                   const TestResult&) override;
       /*!
        * \brief end a test suite
        * \param r: (global) result of the test suite
@@ -63,23 +60,22 @@ namespace tfel
       void endTestSuite(const TestResult&) override;
       //! destructor
       ~MultipleTestOutputs() override;
-    private:
+
+     private:
       //! \brief move constructor (disabled)
       MultipleTestOutputs(MultipleTestOutputs&&) = delete;
       //! \brief copy constructor (disabled)
       MultipleTestOutputs(const MultipleTestOutputs&) = delete;
       //! \brief assignement operator (disabled)
-      MultipleTestOutputs&
-      operator=(const MultipleTestOutputs&) = delete;
+      MultipleTestOutputs& operator=(const MultipleTestOutputs&) = delete;
       //! \brief move assignement operator (disabled)
-      MultipleTestOutputs&
-      operator=(MultipleTestOutputs&&) = delete;
+      MultipleTestOutputs& operator=(MultipleTestOutputs&&) = delete;
       //! registred outputs
       std::vector<TestOutputPtr> outputs;
-    }; // end of struct MultipleTestOutputs
-    
-  } // end of namespace test
+    };  // end of struct MultipleTestOutputs
 
-} // end of namespace tfel
+  }  // namespace tests
+
+}  // end of namespace tfel
 
 #endif /* LIB_TFEL_TESTS_MULTIPLETESTOUTPUTS_HXX */

@@ -40,15 +40,19 @@
 namespace aster {
 
   // forward declaration
-  template <AsterBehaviourType,
-            tfel::material::ModellingHypothesis::Hypothesis,
-            template <tfel::material::ModellingHypothesis::Hypothesis, typename, bool> class>
+  template <
+      AsterBehaviourType,
+      tfel::material::ModellingHypothesis::Hypothesis,
+      template <tfel::material::ModellingHypothesis::Hypothesis, typename, bool>
+      class>
   struct AsterIsotropicBehaviourHandler;
 
   // forward declaration
-  template <AsterBehaviourType,
-            tfel::material::ModellingHypothesis::Hypothesis,
-            template <tfel::material::ModellingHypothesis::Hypothesis, typename, bool> class>
+  template <
+      AsterBehaviourType,
+      tfel::material::ModellingHypothesis::Hypothesis,
+      template <tfel::material::ModellingHypothesis::Hypothesis, typename, bool>
+      class>
   struct AsterOrthotropicBehaviourHandler;
 
   /*!
@@ -67,28 +71,31 @@ namespace aster {
    * \author Thomas Helfer
    * \date   28 Jul 2006
    */
-  template <template <tfel::material::ModellingHypothesis::Hypothesis, typename, bool>
-            class Behaviour>
-  struct TFEL_VISIBILITY_LOCAL AsterInterface : protected AsterInterfaceExceptions {
-    TFEL_ASTER_INLINE2 static int exe(char *const emsg,
-                                      const AsterInt *const NTENS,
-                                      const AsterReal *const DTIME,
-                                      const AsterReal *const DROT,
-                                      AsterReal *const DDSOE,
-                                      const AsterReal *const STRAN,
-                                      const AsterReal *const DSTRAN,
-                                      const AsterReal *const TEMP,
-                                      const AsterReal *const DTEMP,
-                                      const AsterReal *const PROPS,
-                                      const AsterInt *const NPROPS,
-                                      const AsterReal *const PREDEF,
-                                      const AsterReal *const DPRED,
-                                      AsterReal *const STATEV,
-                                      const AsterInt *const NSTATV,
-                                      AsterReal *const STRESS,
-                                      const AsterInt *const NUMMOD,
-                                      const tfel::material::OutOfBoundsPolicy op,
-                                      const StressFreeExpansionHandler &sfeh) {
+  template <
+      template <tfel::material::ModellingHypothesis::Hypothesis, typename, bool>
+      class Behaviour>
+  struct TFEL_VISIBILITY_LOCAL AsterInterface
+      : protected AsterInterfaceExceptions {
+    TFEL_ASTER_INLINE2 static int exe(
+        char *const emsg,
+        const AsterInt *const NTENS,
+        const AsterReal *const DTIME,
+        const AsterReal *const DROT,
+        AsterReal *const DDSOE,
+        const AsterReal *const STRAN,
+        const AsterReal *const DSTRAN,
+        const AsterReal *const TEMP,
+        const AsterReal *const DTEMP,
+        const AsterReal *const PROPS,
+        const AsterInt *const NPROPS,
+        const AsterReal *const PREDEF,
+        const AsterReal *const DPRED,
+        AsterReal *const STATEV,
+        const AsterInt *const NSTATV,
+        AsterReal *const STRESS,
+        const AsterInt *const NUMMOD,
+        const tfel::material::OutOfBoundsPolicy op,
+        const StressFreeExpansionHandler &sfeh) {
       using namespace tfel::meta;
       using namespace tfel::material;
       typedef ModellingHypothesis ModellingHypothesis;
@@ -99,50 +106,62 @@ namespace aster {
          * être appelée quand les contraintes planes sont traitées par
          * l'algorithme de De Borst.
          */
-        using BV = Behaviour<ModellingHypothesis::GENERALISEDPLANESTRAIN, AsterReal, false>;
-        using MTraits = MechanicalBehaviourTraits<BV>;
-        using Traits = AsterTraits<BV>;
-        const bool is_defined_ = MTraits::is_defined;
+        using BV = Behaviour<ModellingHypothesis::GENERALISEDPLANESTRAIN,
+                             AsterReal, false>;
+        const bool is_defined = MechanicalBehaviourTraits<BV>::is_defined;
         typedef typename std::conditional<
-            is_defined_, CallBehaviour<ModellingHypothesis::GENERALISEDPLANESTRAIN>,
-            Behaviour2DWrapper<Traits::btype, ModellingHypothesis::GENERALISEDPLANESTRAIN>>::type
-            Handler;
-        return Handler::exe(emsg, NTENS, DTIME, DROT, DDSOE, STRAN, DSTRAN, TEMP, DTEMP, PROPS,
-                            NPROPS, PREDEF, DPRED, STATEV, NSTATV, STRESS, op, sfeh);
+            is_defined,
+            CallBehaviour<ModellingHypothesis::GENERALISEDPLANESTRAIN>,
+            Behaviour2DWrapper<AsterTraits<BV>::btype,
+                               ModellingHypothesis::GENERALISEDPLANESTRAIN>>::
+            type Handler;
+        return Handler::exe(emsg, NTENS, DTIME, DROT, DDSOE, STRAN, DSTRAN,
+                            TEMP, DTEMP, PROPS, NPROPS, PREDEF, DPRED, STATEV,
+                            NSTATV, STRESS, op, sfeh);
       } else if (*NUMMOD == 4u) {
-        typedef Behaviour<ModellingHypothesis::AXISYMMETRICAL, AsterReal, false> BV;
-        typedef MechanicalBehaviourTraits<BV> MTraits;
-        typedef AsterTraits<BV> Traits;
-        const bool is_defined_ = MTraits::is_defined;
+        typedef Behaviour<ModellingHypothesis::AXISYMMETRICAL, AsterReal, false>
+            BV;
+        const bool is_defined = MechanicalBehaviourTraits<BV>::is_defined;
         typedef typename std::conditional<
-            is_defined_, CallBehaviour<ModellingHypothesis::AXISYMMETRICAL>,
-            Behaviour2DWrapper<Traits::btype, ModellingHypothesis::AXISYMMETRICAL>>::type Handler;
-        return Handler::exe(emsg, NTENS, DTIME, DROT, DDSOE, STRAN, DSTRAN, TEMP, DTEMP, PROPS,
-                            NPROPS, PREDEF, DPRED, STATEV, NSTATV, STRESS, op, sfeh);
+            is_defined, CallBehaviour<ModellingHypothesis::AXISYMMETRICAL>,
+            Behaviour2DWrapper<AsterTraits<BV>::btype,
+                               ModellingHypothesis::AXISYMMETRICAL>>::type
+            Handler;
+        return Handler::exe(emsg, NTENS, DTIME, DROT, DDSOE, STRAN, DSTRAN,
+                            TEMP, DTEMP, PROPS, NPROPS, PREDEF, DPRED, STATEV,
+                            NSTATV, STRESS, op, sfeh);
       } else if (*NUMMOD == 5u) {
-        typedef Behaviour<ModellingHypothesis::PLANESTRESS, AsterReal, false> BV;
-        typedef MechanicalBehaviourTraits<BV> MTraits;
-        typedef AsterTraits<BV> Traits;
-        const bool is_defined_ = MTraits::is_defined;
+        typedef Behaviour<ModellingHypothesis::PLANESTRESS, AsterReal, false>
+            BV;
+        const bool is_defined = MechanicalBehaviourTraits<BV>::is_defined;
         typedef typename std::conditional<
-            is_defined_, CallBehaviour<ModellingHypothesis::PLANESTRESS>,
-            Behaviour2DWrapper<Traits::btype, ModellingHypothesis::PLANESTRESS>>::type Handler;
-        return Handler::exe(emsg, NTENS, DTIME, DROT, DDSOE, STRAN, DSTRAN, TEMP, DTEMP, PROPS,
-                            NPROPS, PREDEF, DPRED, STATEV, NSTATV, STRESS, op, sfeh);
+            is_defined, CallBehaviour<ModellingHypothesis::PLANESTRESS>,
+            Behaviour2DWrapper<AsterTraits<BV>::btype,
+                               ModellingHypothesis::PLANESTRESS>>::type Handler;
+        return Handler::exe(emsg, NTENS, DTIME, DROT, DDSOE, STRAN, DSTRAN,
+                            TEMP, DTEMP, PROPS, NPROPS, PREDEF, DPRED, STATEV,
+                            NSTATV, STRESS, op, sfeh);
       } else if (*NUMMOD == 6u) {
-        typedef Behaviour<ModellingHypothesis::PLANESTRAIN, AsterReal, false> BV;
-        typedef MechanicalBehaviourTraits<BV> MTraits;
-        typedef AsterTraits<BV> Traits;
-        const bool is_defined_ = MTraits::is_defined;
+        typedef Behaviour<ModellingHypothesis::PLANESTRAIN, AsterReal, false>
+            BV;
+        const bool is_defined = MechanicalBehaviourTraits<BV>::is_defined;
         typedef typename std::conditional<
-            is_defined_, CallBehaviour<ModellingHypothesis::PLANESTRAIN>,
-            Behaviour2DWrapper<Traits::btype, ModellingHypothesis::PLANESTRAIN>>::type Handler;
-        return Handler::exe(emsg, NTENS, DTIME, DROT, DDSOE, STRAN, DSTRAN, TEMP, DTEMP, PROPS,
-                            NPROPS, PREDEF, DPRED, STATEV, NSTATV, STRESS, op, sfeh);
+            is_defined, CallBehaviour<ModellingHypothesis::PLANESTRAIN>,
+            Behaviour2DWrapper<AsterTraits<BV>::btype,
+                               ModellingHypothesis::PLANESTRAIN>>::type Handler;
+        return Handler::exe(emsg, NTENS, DTIME, DROT, DDSOE, STRAN, DSTRAN,
+                            TEMP, DTEMP, PROPS, NPROPS, PREDEF, DPRED, STATEV,
+                            NSTATV, STRESS, op, sfeh);
       } else if (*NUMMOD == 3u) {
-        return CallBehaviour<ModellingHypothesis::TRIDIMENSIONAL>::exe(
-            emsg, NTENS, DTIME, DROT, DDSOE, STRAN, DSTRAN, TEMP, DTEMP, PROPS, NPROPS, PREDEF,
-            DPRED, STATEV, NSTATV, STRESS, op, sfeh);
+        using BV =
+            Behaviour<ModellingHypothesis::TRIDIMENSIONAL, AsterReal, false>;
+        const bool is_defined = MechanicalBehaviourTraits<BV>::is_defined;
+        using Handler = typename std::conditional<
+            is_defined, CallBehaviour<ModellingHypothesis::TRIDIMENSIONAL>,
+            UnsupportedHypothesis>::type;
+        return Handler::exe(emsg, NTENS, DTIME, DROT, DDSOE, STRAN, DSTRAN,
+                            TEMP, DTEMP, PROPS, NPROPS, PREDEF, DPRED, STATEV,
+                            NSTATV, STRESS, op, sfeh);
       } else {
         AsterInterfaceExceptions::displayUnsupportedHypothesisMessage();
         return -2;
@@ -150,29 +169,54 @@ namespace aster {
     }
 
    private:
-    template <AsterBehaviourType, tfel::material::ModellingHypothesis::Hypothesis>
+    //
+    struct UnsupportedHypothesis {
+      TFEL_ASTER_INLINE2 static int exe(char *const,
+                                        const AsterInt *const,
+                                        const AsterReal *const,
+                                        const AsterReal *const,
+                                        AsterReal *const,
+                                        const AsterReal *const,
+                                        const AsterReal *const,
+                                        const AsterReal *const,
+                                        const AsterReal *const,
+                                        const AsterReal *const,
+                                        const AsterInt *const,
+                                        const AsterReal *const,
+                                        const AsterReal *const,
+                                        AsterReal *const,
+                                        const AsterInt *const,
+                                        AsterReal *const,
+                                        const tfel::material::OutOfBoundsPolicy,
+                                        const StressFreeExpansionHandler &) {
+        return -2;
+      }
+    };
+    template <AsterBehaviourType,
+              tfel::material::ModellingHypothesis::Hypothesis>
     struct Behaviour2DWrapper;
 
     template <tfel::material::ModellingHypothesis::Hypothesis H>
     struct Behaviour2DWrapper<aster::STANDARDSTRAINBASEDBEHAVIOUR, H> {
-      TFEL_ASTER_INLINE2 static int exe(char *const emsg,
-                                        const AsterInt *const,
-                                        const AsterReal *const DTIME,
-                                        const AsterReal *const DROT,
-                                        AsterReal *const DDSOE,
-                                        const AsterReal *const STRAN,
-                                        const AsterReal *const DSTRAN,
-                                        const AsterReal *const TEMP,
-                                        const AsterReal *const DTEMP,
-                                        const AsterReal *const PROPS,
-                                        const AsterInt *const NPROPS,
-                                        const AsterReal *const PREDEF,
-                                        const AsterReal *const DPRED,
-                                        AsterReal *const STATEV,
-                                        const AsterInt *const NSTATV,
-                                        AsterReal *const STRESS,
-                                        const tfel::material::OutOfBoundsPolicy op,
-                                        const StressFreeExpansionHandler &sfeh) {
+      TFEL_ASTER_INLINE2 static int exe(
+          char *const emsg,
+          const AsterInt *const,
+          const AsterReal *const DTIME,
+          const AsterReal *const DROT,
+          AsterReal *const DDSOE,
+          const AsterReal *const STRAN,
+          const AsterReal *const DSTRAN,
+          const AsterReal *const TEMP,
+          const AsterReal *const DTEMP,
+          const AsterReal *const PROPS,
+          const AsterInt *const NPROPS,
+          const AsterReal *const PREDEF,
+          const AsterReal *const DPRED,
+          AsterReal *const STATEV,
+          const AsterInt *const NSTATV,
+          AsterReal *const STRESS,
+          const tfel::material::OutOfBoundsPolicy op,
+          const StressFreeExpansionHandler &sfeh) {
         using namespace tfel::meta;
         using namespace tfel::math;
         using namespace tfel::material;
@@ -182,15 +226,16 @@ namespace aster {
         AsterReal s[6u] = {0., 0., 0., 0., 0., 0.};
         AsterReal e[6u] = {0., 0., 0., 0., 0., 0.};
         AsterReal de[6u] = {0., 0., 0., 0., 0., 0.};
-        AsterReal K[36u] = {0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.,
-                            0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.};
+        AsterReal K[36u] = {0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.,
+                            0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.,
+                            0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.};
         K[0u] = DDSOE[0];
         copy<StensorDimeToSize<N>::value>::exe(STRESS, s);
         copy<StensorDimeToSize<N>::value>::exe(STRAN, e);
         copy<StensorDimeToSize<N>::value>::exe(DSTRAN, de);
         int r = CallBehaviour<ModellingHypothesis::TRIDIMENSIONAL>::exe(
-            emsg, &NTENS, DTIME, DROT, K, e, de, TEMP, DTEMP, PROPS, NPROPS, PREDEF, DPRED, STATEV,
-            NSTATV, s, op, sfeh);
+            emsg, &NTENS, DTIME, DROT, K, e, de, TEMP, DTEMP, PROPS, NPROPS,
+            PREDEF, DPRED, STATEV, NSTATV, s, op, sfeh);
         if (r == 0) {
           AsterReduceTangentOperator<N>::exe(DDSOE, K);
           copy<StensorDimeToSize<N>::value>::exe(s, STRESS);
@@ -201,24 +246,25 @@ namespace aster {
 
     template <tfel::material::ModellingHypothesis::Hypothesis H>
     struct Behaviour2DWrapper<aster::STANDARDFINITESTRAINBEHAVIOUR, H> {
-      TFEL_ASTER_INLINE2 static int exe(char * const emsg,
-					const AsterInt *const,
-                                        const AsterReal *const DTIME,
-                                        const AsterReal *const DROT,
-                                        AsterReal *const DDSOE,
-                                        const AsterReal *const STRAN,
-                                        const AsterReal *const DSTRAN,
-                                        const AsterReal *const TEMP,
-                                        const AsterReal *const DTEMP,
-                                        const AsterReal *const PROPS,
-                                        const AsterInt *const NPROPS,
-                                        const AsterReal *const PREDEF,
-                                        const AsterReal *const DPRED,
-                                        AsterReal *const STATEV,
-                                        const AsterInt *const NSTATV,
-                                        AsterReal *const STRESS,
-                                        const tfel::material::OutOfBoundsPolicy op,
-                                        const StressFreeExpansionHandler &sfeh) {
+      TFEL_ASTER_INLINE2 static int exe(
+          char *const emsg,
+          const AsterInt *const,
+          const AsterReal *const DTIME,
+          const AsterReal *const DROT,
+          AsterReal *const DDSOE,
+          const AsterReal *const STRAN,
+          const AsterReal *const DSTRAN,
+          const AsterReal *const TEMP,
+          const AsterReal *const DTEMP,
+          const AsterReal *const PROPS,
+          const AsterInt *const NPROPS,
+          const AsterReal *const PREDEF,
+          const AsterReal *const DPRED,
+          AsterReal *const STATEV,
+          const AsterInt *const NSTATV,
+          AsterReal *const STRESS,
+          const tfel::material::OutOfBoundsPolicy op,
+          const StressFreeExpansionHandler &sfeh) {
         using namespace std;
         using namespace tfel::meta;
         using namespace tfel::math;
@@ -232,9 +278,9 @@ namespace aster {
         copy<StensorDimeToSize<N>::value>::exe(STRESS, s);
         copy<9u>::exe(STRAN, F0);
         copy<9u>::exe(DSTRAN, F1);
-        int r = CallBehaviour<ModellingHypothesis::TRIDIMENSIONAL>::exe(emsg,
-            &NTENS, DTIME, DROT, DDSOE, F0, F1, TEMP, DTEMP, PROPS, NPROPS, PREDEF, DPRED, STATEV,
-            NSTATV, s, op, sfeh);
+        int r = CallBehaviour<ModellingHypothesis::TRIDIMENSIONAL>::exe(
+            emsg, &NTENS, DTIME, DROT, DDSOE, F0, F1, TEMP, DTEMP, PROPS,
+            NPROPS, PREDEF, DPRED, STATEV, NSTATV, s, op, sfeh);
         if (r == 0) {
           copy<StensorDimeToSize<N>::value>::exe(s, STRESS);
         }
@@ -244,24 +290,25 @@ namespace aster {
 
     template <tfel::material::ModellingHypothesis::Hypothesis H>
     struct Behaviour2DWrapper<aster::COHESIVEZONEMODEL, H> {
-      TFEL_ASTER_INLINE2 static int exe(char * const emsg,
-					const AsterInt *const,
-                                        const AsterReal *const DTIME,
-                                        const AsterReal *const DROT,
-                                        AsterReal *const DDSOE,
-                                        const AsterReal *const STRAN,
-                                        const AsterReal *const DSTRAN,
-                                        const AsterReal *const TEMP,
-                                        const AsterReal *const DTEMP,
-                                        const AsterReal *const PROPS,
-                                        const AsterInt *const NPROPS,
-                                        const AsterReal *const PREDEF,
-                                        const AsterReal *const DPRED,
-                                        AsterReal *const STATEV,
-                                        const AsterInt *const NSTATV,
-                                        AsterReal *const STRESS,
-                                        const tfel::material::OutOfBoundsPolicy op,
-                                        const StressFreeExpansionHandler &sfeh) {
+      TFEL_ASTER_INLINE2 static int exe(
+          char *const emsg,
+          const AsterInt *const,
+          const AsterReal *const DTIME,
+          const AsterReal *const DROT,
+          AsterReal *const DDSOE,
+          const AsterReal *const STRAN,
+          const AsterReal *const DSTRAN,
+          const AsterReal *const TEMP,
+          const AsterReal *const DTEMP,
+          const AsterReal *const PROPS,
+          const AsterInt *const NPROPS,
+          const AsterReal *const PREDEF,
+          const AsterReal *const DPRED,
+          AsterReal *const STATEV,
+          const AsterInt *const NSTATV,
+          AsterReal *const STRESS,
+          const tfel::material::OutOfBoundsPolicy op,
+          const StressFreeExpansionHandler &sfeh) {
         using tfel::fsalgo::copy;
         using tfel::material::ModellingHypothesis;
         AsterInt NTENS = 6u;
@@ -273,9 +320,9 @@ namespace aster {
         copy<2u>::exe(STRESS, s);
         copy<2u>::exe(STRAN, u0);
         copy<2u>::exe(DSTRAN, du);
-        int r = CallBehaviour<ModellingHypothesis::TRIDIMENSIONAL>::exe(emsg,
-            &NTENS, DTIME, DROT, DDSOE, u0, du, TEMP, DTEMP, PROPS, NPROPS, PREDEF, DPRED, STATEV,
-            NSTATV, s, op, sfeh);
+        int r = CallBehaviour<ModellingHypothesis::TRIDIMENSIONAL>::exe(
+            emsg, &NTENS, DTIME, DROT, DDSOE, u0, du, TEMP, DTEMP, PROPS,
+            NPROPS, PREDEF, DPRED, STATEV, NSTATV, s, op, sfeh);
         if (r == 0) {
           copy<2u>::exe(s, STRESS);
           DDSOE[0] = K[0];
@@ -289,40 +336,42 @@ namespace aster {
 
     template <tfel::material::ModellingHypothesis::Hypothesis H>
     struct CallBehaviour {
-      TFEL_ASTER_INLINE2 static int exe(char *const emsg,
-                                        const AsterInt *const,
-                                        const AsterReal *const DTIME,
-                                        const AsterReal *const DROT,
-                                        AsterReal *const DDSOE,
-                                        const AsterReal *const STRAN,
-                                        const AsterReal *const DSTRAN,
-                                        const AsterReal *const TEMP,
-                                        const AsterReal *const DTEMP,
-                                        const AsterReal *const PROPS,
-                                        const AsterInt *const NPROPS,
-                                        const AsterReal *const PREDEF,
-                                        const AsterReal *const DPRED,
-                                        AsterReal *const STATEV,
-                                        const AsterInt *const NSTATV,
-                                        AsterReal *const STRESS,
-                                        const tfel::material::OutOfBoundsPolicy op,
-                                        const StressFreeExpansionHandler &sfeh) {
+      TFEL_ASTER_INLINE2 static int exe(
+          char *const emsg,
+          const AsterInt *const,
+          const AsterReal *const DTIME,
+          const AsterReal *const DROT,
+          AsterReal *const DDSOE,
+          const AsterReal *const STRAN,
+          const AsterReal *const DSTRAN,
+          const AsterReal *const TEMP,
+          const AsterReal *const DTEMP,
+          const AsterReal *const PROPS,
+          const AsterInt *const NPROPS,
+          const AsterReal *const PREDEF,
+          const AsterReal *const DPRED,
+          AsterReal *const STATEV,
+          const AsterInt *const NSTATV,
+          AsterReal *const STRESS,
+          const tfel::material::OutOfBoundsPolicy op,
+          const StressFreeExpansionHandler &sfeh) {
         using BV = Behaviour<H, AsterReal, false>;
         using Traits = tfel::material::MechanicalBehaviourTraits<BV>;
         using AsterTraits = AsterTraits<BV>;
         auto getErrorMessage = [emsg](const char *const msg) {
-	  if(emsg!=nullptr){
-	    ::memset(emsg, 0, 128);
-	    ::strncpy(emsg, msg, 127);
-	  }
+          if (emsg != nullptr) {
+            ::memset(emsg, 0, 128);
+            ::strncpy(emsg, msg, 127);
+          }
         };
         try {
           typedef typename std::conditional<
               AsterTraits::type == aster::ISOTROPIC,
               AsterIsotropicBehaviourHandler<AsterTraits::btype, H, Behaviour>,
-              AsterOrthotropicBehaviourHandler<AsterTraits::btype, H, Behaviour>>::type Handler;
-          Handler::exe(DTIME, DROT, DDSOE, STRAN, DSTRAN, TEMP, DTEMP, PROPS, NPROPS, PREDEF, DPRED,
-                       STATEV, NSTATV, STRESS, op, sfeh);
+              AsterOrthotropicBehaviourHandler<AsterTraits::btype, H,
+                                               Behaviour>>::type Handler;
+          Handler::exe(DTIME, DROT, DDSOE, STRAN, DSTRAN, TEMP, DTEMP, PROPS,
+                       NPROPS, PREDEF, DPRED, STATEV, NSTATV, STRESS, op, sfeh);
         } catch (const AsterException &e) {
           getErrorMessage(e.what());
           if (AsterTraits::errorReportPolicy != ASTER_NOERRORREPORT) {
@@ -332,7 +381,8 @@ namespace aster {
         } catch (const tfel::material::OutOfBoundsException &e) {
           getErrorMessage(e.what());
           if (AsterTraits::errorReportPolicy != ASTER_NOERRORREPORT) {
-            AsterInterfaceExceptions::treatMaterialException(Traits::getName(), e);
+            AsterInterfaceExceptions::treatMaterialException(Traits::getName(),
+                                                             e);
           }
           return -3;
         } catch (const tfel::material::DivergenceException &e) {
@@ -344,7 +394,8 @@ namespace aster {
         } catch (const tfel::material::MaterialException &e) {
           getErrorMessage(e.what());
           if (AsterTraits::errorReportPolicy != ASTER_NOERRORREPORT) {
-            AsterInterfaceExceptions::treatStandardException(Traits::getName(), e);
+            AsterInterfaceExceptions::treatStandardException(Traits::getName(),
+                                                             e);
           }
           return -5;
         } catch (const tfel::exception::TFELException &e) {
@@ -356,7 +407,8 @@ namespace aster {
         } catch (const std::exception &e) {
           getErrorMessage(e.what());
           if (AsterTraits::errorReportPolicy != ASTER_NOERRORREPORT) {
-            AsterInterfaceExceptions::treatStandardException(Traits::getName(), e);
+            AsterInterfaceExceptions::treatStandardException(Traits::getName(),
+                                                             e);
           }
           return -7;
         } catch (...) {

@@ -7,12 +7,12 @@
  * \author sb152252
  * \date 1 sept. 2009
  *
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_TFELCHECK_PCTEXTDRIVER_HXX
@@ -22,14 +22,11 @@
 #include "TFEL/Check/TFELCheckConfig.hxx"
 #include "TFEL/Check/PCILogDriver.hxx"
 
-namespace tfel{
+namespace tfel {
 
-  namespace check{
+  namespace check {
 
-    struct TFELCHECK_VISIBILITY_EXPORT PCTextDriver
-      : public PCILogDriver
-    {
-
+    struct TFELCHECK_VISIBILITY_EXPORT PCTextDriver : public PCILogDriver {
       PCTextDriver();
       PCTextDriver(const std::string&);
       virtual void addMessage(const std::string&) override;
@@ -42,17 +39,17 @@ namespace tfel{
        * \param[in] message:
        */
       virtual void addTestResult(const std::string&,
-				 const std::string&,
-				 const std::string&,
-				 const float,
-				 bool,
-				 const std::string& = "") override;
+                                 const std::string&,
+                                 const std::string&,
+                                 const float,
+                                 bool,
+                                 const std::string& = "") override;
       //! destructor
       virtual ~PCTextDriver();
     };
 
-  } // end of namespace check
+  }  // end of namespace check
 
-} // end of namespace tfel
+}  // end of namespace tfel
 
 #endif /* LIB_TFELCHECK_PCTEXTDRIVER_HXX */

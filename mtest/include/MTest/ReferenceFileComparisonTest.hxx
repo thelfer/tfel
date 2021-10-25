@@ -1,37 +1,36 @@
-/*! 
+/*!
  * \file  mtest/include/MTest/ReferenceFileComparisonTest.hxx
  * \brief
  * \author Thomas Helfer
  * \brief 18 avril 2013
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_MTEST_MTESTREFERENCEFILECOMPARISONTEST_HXX
-#define LIB_MTEST_MTESTREFERENCEFILECOMPARISONTEST_HXX 
+#define LIB_MTEST_MTESTREFERENCEFILECOMPARISONTEST_HXX
 
-#include<map>
-#include<memory>
-#include<string>
+#include <map>
+#include <memory>
+#include <string>
 
-#include"TFEL/Tests/TestResult.hxx"
-#include"TFEL/Utilities/CxxTokenizer.hxx"
-#include"TFEL/Utilities/TextData.hxx"
-#include"MTest/Config.hxx"
-#include"MTest/MTest.hxx"
+#include "TFEL/Tests/TestResult.hxx"
+#include "TFEL/Utilities/CxxTokenizer.hxx"
+#include "TFEL/Utilities/TextData.hxx"
+#include "MTest/Config.hxx"
+#include "MTest/MTest.hxx"
 
-namespace mtest{
+namespace mtest {
 
   /*!
    * Test based on the comparison of the solution to a reference file
    */
   struct MTEST_VISIBILITY_EXPORT ReferenceFileComparisonTest
-    : public MTest::UTest
-  {
+      : public MTest::UTest {
     /*!
      * constructor
      * \param[in] d    : data
@@ -42,10 +41,10 @@ namespace mtest{
      * \param[in] eps  : criterium value
      */
     ReferenceFileComparisonTest(const tfel::utilities::TextData&,
-				const unsigned int,
-				const std::string&,
-				const std::function<real(const CurrentState&)>&,
-				const real);
+                                const unsigned int,
+                                const std::string&,
+                                const std::function<real(const CurrentState&)>&,
+                                const real);
     /*!
      * constructor
      * \param[in] d    : data
@@ -57,11 +56,11 @@ namespace mtest{
      * \param[in] eps  : criterium value
      */
     ReferenceFileComparisonTest(const tfel::utilities::TextData&,
-				const EvolutionManager&,
-				const std::string&,
-				const std::string&,
-				const std::function<real(const CurrentState&)>&,
-				const real);
+                                const EvolutionManager&,
+                                const std::string&,
+                                const std::string&,
+                                const std::function<real(const CurrentState&)>&,
+                                const real);
     /*!
      * \param[in] s:  state
      * \param[in] t:  time
@@ -69,18 +68,19 @@ namespace mtest{
      * \param[in] p:  period
      */
     virtual void check(const CurrentState&,
-		       const real,const real,
-		       const unsigned int) override;
+                       const real,
+                       const real,
+                       const unsigned int) override;
     //! \return the results of the test
-    virtual tfel::tests::TestResult
-    getResults() const override;
+    virtual tfel::tests::TestResult getResults() const override;
     //! destructor
     virtual ~ReferenceFileComparisonTest();
-  protected:
-    ReferenceFileComparisonTest&
-    operator=(const ReferenceFileComparisonTest&) = delete;
-    ReferenceFileComparisonTest&
-    operator=(ReferenceFileComparisonTest&&) = delete;
+
+   protected:
+    ReferenceFileComparisonTest& operator=(const ReferenceFileComparisonTest&) =
+        delete;
+    ReferenceFileComparisonTest& operator=(ReferenceFileComparisonTest&&) =
+        delete;
     //! reference values
     const std::vector<real> values;
     //! results of the test
@@ -91,9 +91,8 @@ namespace mtest{
     std::function<real(const CurrentState&)> get;
     //! criterium value
     const real eps;
-  }; 
+  };
 
-} // end of namespace mtest
+}  // end of namespace mtest
 
 #endif /* LIB_MTEST_MTESTREFERENCEFILECOMPARISONTEST_HXX */
-

@@ -1,56 +1,54 @@
-/*! 
+/*!
  * \file  mfront/include/MFront/BehaviourProfiler.hxx
  * \brief
  * \author Thomas Helfer
  * \brief 15 mai 2014
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_MFRONT_MFRONTBEHAVIOURPROFILER_HXX
-#define LIB_MFRONT_MFRONTBEHAVIOURPROFILER_HXX 
+#define LIB_MFRONT_MFRONTBEHAVIOURPROFILER_HXX
 
-#include"TFEL/Config/TFELConfig.hxx"
+#include "TFEL/Config/TFELConfig.hxx"
 #if defined _MSC_VER
 #define MFRONTBEHAVIOURPROFILER_CONST_QUALIFIER const
-#else 
+#else
 #define MFRONTBEHAVIOURPROFILER_CONST_QUALIFIER constexpr
-#include<time.h>
+#include <time.h>
 #endif
 
-#include"MFront/MFrontConfig.hxx"
+#include "MFront/MFrontConfig.hxx"
 
-#include<array>
-#include<atomic>
-#include<string>
+#include <array>
+#include <atomic>
+#include <string>
 
-namespace mfront{
+namespace mfront {
 
   /*!
    * structure in charge of performance measurements in mechanical
    * behaviour
    */
-  struct MFRONTPROFILING_VISIBILITY_EXPORT BehaviourProfiler
-  {
+  struct MFRONTPROFILING_VISIBILITY_EXPORT BehaviourProfiler {
     /*!
      * a timer for a specicied code block.
      * This descructor will increase the time count for the code block.
      */
-    struct MFRONTPROFILING_VISIBILITY_EXPORT Timer
-    {
+    struct MFRONTPROFILING_VISIBILITY_EXPORT Timer {
       /*!
        * \param[in,out] t  : global timer
-       * \param[in]     cn : code block 
+       * \param[in]     cn : code block
        */
-      Timer(BehaviourProfiler&,
-	    const unsigned short);
+      Timer(BehaviourProfiler&, const unsigned short);
       //! destructor
       ~Timer();
-    protected:
+
+     protected:
       Timer(const Timer&) = default;
       Timer(Timer&&) = default;
       Timer& operator=(const Timer&) = delete;
@@ -65,7 +63,7 @@ namespace mfront{
       //! end
       timespec end;
 #endif
-    }; // end of struct Timer
+    };  // end of struct Timer
     /*!
      * constructor
      * \param[in] n : behaviour name
@@ -75,82 +73,81 @@ namespace mfront{
      * \see MechanialBehaviourData for a description
      */
     //! code block index in the measures array
-    static MFRONTBEHAVIOURPROFILER_CONST_QUALIFIER
-    unsigned short FLOWRULE = 0;
+    static MFRONTBEHAVIOURPROFILER_CONST_QUALIFIER unsigned short FLOWRULE = 0;
     //! code block index in the measures array
-    static MFRONTBEHAVIOURPROFILER_CONST_QUALIFIER
-    unsigned short BEFOREINITIALIZELOCALVARIABLES = 1;
+    static MFRONTBEHAVIOURPROFILER_CONST_QUALIFIER unsigned short
+        BEFOREINITIALIZELOCALVARIABLES = 1;
     //! code block index in the measures array
-    static MFRONTBEHAVIOURPROFILER_CONST_QUALIFIER
-    unsigned short INITIALIZELOCALVARIABLES = 2;
+    static MFRONTBEHAVIOURPROFILER_CONST_QUALIFIER unsigned short
+        INITIALIZELOCALVARIABLES = 2;
     //! code block index in the measures array
-    static MFRONTBEHAVIOURPROFILER_CONST_QUALIFIER
-    unsigned short AFTERINITIALIZELOCALVARIABLES = 3;
+    static MFRONTBEHAVIOURPROFILER_CONST_QUALIFIER unsigned short
+        AFTERINITIALIZELOCALVARIABLES = 3;
     //! code block index in the measures array
-    static MFRONTBEHAVIOURPROFILER_CONST_QUALIFIER
-    unsigned short COMPUTEPREDICTOR = 4;
+    static MFRONTBEHAVIOURPROFILER_CONST_QUALIFIER unsigned short
+        COMPUTEPREDICTOR = 4;
     //! code block index in the measures array
-    static MFRONTBEHAVIOURPROFILER_CONST_QUALIFIER
-    unsigned short COMPUTEPREDICTIONOPERATOR = 5;
+    static MFRONTBEHAVIOURPROFILER_CONST_QUALIFIER unsigned short
+        COMPUTEPREDICTIONOPERATOR = 5;
     //! code block index in the measures array
-    static MFRONTBEHAVIOURPROFILER_CONST_QUALIFIER
-    unsigned short INTEGRATOR = 6;
+    static MFRONTBEHAVIOURPROFILER_CONST_QUALIFIER unsigned short INTEGRATOR =
+        6;
     //! code block index in the measures array
-    static MFRONTBEHAVIOURPROFILER_CONST_QUALIFIER
-    unsigned short COMPUTESTRESS = 7;
+    static MFRONTBEHAVIOURPROFILER_CONST_QUALIFIER unsigned short
+        COMPUTESTRESS = 7;
     //! code block index in the measures array
-    static MFRONTBEHAVIOURPROFILER_CONST_QUALIFIER
-    unsigned short COMPUTEDERIVATIVE = 8;
+    static MFRONTBEHAVIOURPROFILER_CONST_QUALIFIER unsigned short
+        COMPUTEDERIVATIVE = 8;
     //! code block index in the measures array
-    static MFRONTBEHAVIOURPROFILER_CONST_QUALIFIER
-    unsigned short INITIALIZEJACOBIAN = 9;
+    static MFRONTBEHAVIOURPROFILER_CONST_QUALIFIER unsigned short
+        INITIALIZEJACOBIAN = 9;
     //! code block index in the measures array
-    static MFRONTBEHAVIOURPROFILER_CONST_QUALIFIER
-    unsigned short COMPUTEFDF = 10;
+    static MFRONTBEHAVIOURPROFILER_CONST_QUALIFIER unsigned short COMPUTEFDF =
+        10;
     //! code block index in the measures array
-    static MFRONTBEHAVIOURPROFILER_CONST_QUALIFIER
-    unsigned short TINYMATRIXSOLVE = 11;
+    static MFRONTBEHAVIOURPROFILER_CONST_QUALIFIER unsigned short
+        TINYMATRIXSOLVE = 11;
     //! code block index in the measures array
-    static MFRONTBEHAVIOURPROFILER_CONST_QUALIFIER
-    unsigned short COMPUTEFINALSTRESS = 12;
+    static MFRONTBEHAVIOURPROFILER_CONST_QUALIFIER unsigned short
+        COMPUTEFINALSTRESS = 12;
     //! code block index in the measures array
-    static MFRONTBEHAVIOURPROFILER_CONST_QUALIFIER
-    unsigned short COMPUTETANGENTOPERATOR = 13;
+    static MFRONTBEHAVIOURPROFILER_CONST_QUALIFIER unsigned short
+        COMPUTETANGENTOPERATOR = 13;
     //! code block index in the measures array
-    static MFRONTBEHAVIOURPROFILER_CONST_QUALIFIER
-    unsigned short UPDATEAUXILIARYSTATEVARIABLES = 14;
+    static MFRONTBEHAVIOURPROFILER_CONST_QUALIFIER unsigned short
+        UPDATEAUXILIARYSTATEVARIABLES = 14;
     //! code block index in the measures array
-    static MFRONTBEHAVIOURPROFILER_CONST_QUALIFIER
-    unsigned short FINITESTRAINPREPROCESSING  = 15;
+    static MFRONTBEHAVIOURPROFILER_CONST_QUALIFIER unsigned short
+        FINITESTRAINPREPROCESSING = 15;
     //! code block index in the measures array
-    static MFRONTBEHAVIOURPROFILER_CONST_QUALIFIER
-    unsigned short FINITESTRAINPOSTPROCESSING = 16;
+    static MFRONTBEHAVIOURPROFILER_CONST_QUALIFIER unsigned short
+        FINITESTRAINPOSTPROCESSING = 16;
     //! code block index in the measures array
-    static MFRONTBEHAVIOURPROFILER_CONST_QUALIFIER
-    unsigned short USERDEFINEDCODE1 = 17;
+    static MFRONTBEHAVIOURPROFILER_CONST_QUALIFIER unsigned short
+        USERDEFINEDCODE1 = 17;
     //! code block index in the measures array
-    static MFRONTBEHAVIOURPROFILER_CONST_QUALIFIER
-    unsigned short USERDEFINEDCODE2 = 18;
+    static MFRONTBEHAVIOURPROFILER_CONST_QUALIFIER unsigned short
+        USERDEFINEDCODE2 = 18;
     //! code block index in the measures array
-    static MFRONTBEHAVIOURPROFILER_CONST_QUALIFIER
-    unsigned short ADDITIONALCONVERGENCECHECKS = 19;
-    static MFRONTBEHAVIOURPROFILER_CONST_QUALIFIER
-    unsigned short APRIORITIMESTEPSCALINGFACTOR = 20;
-    static MFRONTBEHAVIOURPROFILER_CONST_QUALIFIER
-    unsigned short APOSTERIORITIMESTEPSCALINGFACTOR = 21;
+    static MFRONTBEHAVIOURPROFILER_CONST_QUALIFIER unsigned short
+        ADDITIONALCONVERGENCECHECKS = 19;
+    static MFRONTBEHAVIOURPROFILER_CONST_QUALIFIER unsigned short
+        APRIORITIMESTEPSCALINGFACTOR = 20;
+    static MFRONTBEHAVIOURPROFILER_CONST_QUALIFIER unsigned short
+        APOSTERIORITIMESTEPSCALINGFACTOR = 21;
     //! code block index in the measures array (must be the last one !)
-    static MFRONTBEHAVIOURPROFILER_CONST_QUALIFIER
-    unsigned short TOTALTIME  = 22;
+    static MFRONTBEHAVIOURPROFILER_CONST_QUALIFIER unsigned short TOTALTIME =
+        22;
     //! destructor
     ~BehaviourProfiler();
-  protected:
+
+   protected:
     //! name of the behaviour
     const std::string name;
     //! time spend in each code block (nanoseconds)
     std::array<std::atomic<intmax_t>, 23> measures;
-  }; // end of BehaviourProfiler
+  };  // end of BehaviourProfiler
 
-} // end of namespace mfront
+}  // end of namespace mfront
 
 #endif /* LIB_MFRONT_MFRONTBEHAVIOURPROFILER_HXX */
-

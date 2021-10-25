@@ -164,7 +164,8 @@ namespace tfel {
        * \param[in] n: size of the string
        * \return true if the two string are equals
        */
-      bool strcmp(const CharT*, const typename std::array<CharT, N + 1>::size_type) const;
+      bool strcmp(const CharT*,
+                  const typename std::array<CharT, N + 1>::size_type) const;
       /*!
        * \return the size of an external C-string if a null character
        * is found in the N first characters, N+1 otherwise.
@@ -183,7 +184,8 @@ namespace tfel {
      * \param[in]  s:  fixed sized string
      */
     template <std::size_t N, typename CharT, typename Traits>
-    std::ostream& operator<<(std::ostream&, const basic_fcstring<N, CharT, Traits>&);
+    std::ostream& operator<<(std::ostream&,
+                             const basic_fcstring<N, CharT, Traits>&);
     /*!
      * \brief output operator
      * \param[out] os: output stream

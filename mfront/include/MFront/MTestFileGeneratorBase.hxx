@@ -1,39 +1,37 @@
-/*! 
+/*!
  * \file  mfront/include/MFront/MTestFileGeneratorBase.hxx
  * \brief
  * \author Thomas Helfer
  * \brief 09 juil. 2013
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_MFRONT_MTESTFILEGENERATORBASE_HXX
-#define LIB_MFRONT_MTESTFILEGENERATORBASE_HXX 
+#define LIB_MFRONT_MTESTFILEGENERATORBASE_HXX
 
-#include<map>
-#include<set>
-#include<vector>
-#include<string>
-#include<iosfwd>
+#include <map>
+#include <set>
+#include <vector>
+#include <string>
+#include <iosfwd>
 
-#include"TFEL/Material/ModellingHypothesis.hxx"
+#include "TFEL/Material/ModellingHypothesis.hxx"
 
-#include"MFront/MFrontConfig.hxx"
-#include"MFront/SupportedTypes.hxx"
+#include "MFront/MFrontConfig.hxx"
+#include "MFront/SupportedTypes.hxx"
 
-namespace mfront
-{
+namespace mfront {
 
   /*!
    * \brief a base class for mtest files generation
    * \see UMATSmallStrainMTestFileGenerator
    */
-  struct MTESTFILEGENERATOR_VISIBILITY_EXPORT MTestFileGeneratorBase
-  {
+  struct MTESTFILEGENERATOR_VISIBILITY_EXPORT MTestFileGeneratorBase {
     //! a simple alias
     using Hypothesis = tfel::material::ModellingHypothesis::Hypothesis;
     //! a simple alias
@@ -41,8 +39,7 @@ namespace mfront
     /*!
      * \return an uniq identifier
      */
-    static unsigned int
-    getIdentifier();
+    static unsigned int getIdentifier();
     /*!
      * Constructor
      */
@@ -51,19 +48,16 @@ namespace mfront
      * \see the modelling hypothesis class
      * \param[in] h : modelling hypothesis
      */
-    virtual void
-    setModellingHypothesis(const Hypothesis);
+    virtual void setModellingHypothesis(const Hypothesis);
     /*!
      * \brief add a computed time
      * \param[in] t : time
      */
-    virtual void
-    addTime(const real);
+    virtual void addTime(const real);
     /*!
      * \param[in] b : boolean
      */
-    virtual void
-    setHandleThermalExpansion(const bool);
+    virtual void setHandleThermalExpansion(const bool);
     /*!
      * \brief set the rotation matrix
      * \param[in] m00 : m(0,0)
@@ -76,136 +70,121 @@ namespace mfront
      * \param[in] m21 : m(2,1)
      * \param[in] m22 : m(2,2)
      */
-    virtual void
-    setRotationMatrix(const real,const real,const real,
-		      const real,const real,const real,
-		      const real,const real,const real);
+    virtual void setRotationMatrix(const real,
+                                   const real,
+                                   const real,
+                                   const real,
+                                   const real,
+                                   const real,
+                                   const real,
+                                   const real,
+                                   const real);
     /*!
      * add a material property
      * \param[in] n : material property name
      * \param[in] v : value
      */
-    virtual void
-    addMaterialProperty(const std::string&,
-			const real);
+    virtual void addMaterialProperty(const std::string&, const real);
     /*!
      * add internal state variable
      * \param[in] n : internal state variable name
      * \param[in] f : variable type
      * \param[in] v : value
      */
-    virtual void
-    addInternalStateVariable(const std::string&,
-			     const SupportedTypes::TypeFlag,
-			     const real * const);
+    virtual void addInternalStateVariable(const std::string&,
+                                          const SupportedTypes::TypeFlag,
+                                          const real* const);
     /*!
      * add the value of an external state variable at the given time
      * \param[in] n : external state variable name
      * \param[in] t : time
      * \param[in] v : value
      */
-    virtual void
-    addExternalStateVariableValue(const std::string&,
-				  const real,
-				  const real);
-    
-    virtual void
-    generate(const std::string&) const;
+    virtual void addExternalStateVariableValue(const std::string&,
+                                               const real,
+                                               const real);
+
+    virtual void generate(const std::string&) const;
     /*!
      * return the size of an tiny vector
      */
-    virtual unsigned short
-    getTVectorSize() const;
+    virtual unsigned short getTVectorSize() const;
     /*!
      * return the size of an stensor
      */
-    virtual unsigned short
-    getStensorSize() const;
+    virtual unsigned short getStensorSize() const;
     /*!
      * return the size of an tensor
      */
-    virtual unsigned short
-    getTensorSize() const;
+    virtual unsigned short getTensorSize() const;
     /*!
      * destructor
      */
     virtual ~MTestFileGeneratorBase();
-  protected:
+
+   protected:
     /*!
      * return the names of the components of the strain tensor
      */
-    virtual std::vector<std::string>
-    getStrainComponentsNames() const;
+    virtual std::vector<std::string> getStrainComponentsNames() const;
     /*!
      * return the names of the components of the deformation gradient
      */
-    virtual std::vector<std::string>
-    getDeformationGradientComponentsNames() const;
+    virtual std::vector<std::string> getDeformationGradientComponentsNames()
+        const;
     /*!
      * return the names of the components of the stress tensor
      */
-    virtual std::vector<std::string>
-    getStressComponentsNames() const;
+    virtual std::vector<std::string> getStressComponentsNames() const;
     /*!
      * write modelling hypothesis
      * \param[in] os : output stream
      */
-    virtual void
-      writeModellingHypothesis(std::ostream&) const;
+    virtual void writeModellingHypothesis(std::ostream&) const;
     /*!
      * write behaviour declaration
      * \param[in] os : output stream
      */
-    virtual void
-    writeBehaviourDeclaration(std::ostream&) const = 0;
+    virtual void writeBehaviourDeclaration(std::ostream&) const = 0;
     /*!
      * write rotation matrix
      * \param[in] os : output stream
      */
-    virtual void
-    writeRotationMatrix(std::ostream&) const;
+    virtual void writeRotationMatrix(std::ostream&) const;
     /*!
      * write material properties
      * \param[in] os : output stream
      */
-    virtual void
-    writeMaterialProperties(std::ostream&) const;
+    virtual void writeMaterialProperties(std::ostream&) const;
     /*!
      * write material properties
      * \param[in] os : output stream
      */
-    virtual void
-    writeInternalStateVariables(std::ostream&) const;
+    virtual void writeInternalStateVariables(std::ostream&) const;
     /*!
      * write external state variable
      * \param[in] os : output stream
      */
-    virtual void
-    writeExternalStateVariables(std::ostream&) const;
+    virtual void writeExternalStateVariables(std::ostream&) const;
     /*!
      * write times
      * \param[in] os : output stream
      */
-    virtual void
-    writeTimes(std::ostream&) const;
+    virtual void writeTimes(std::ostream&) const;
     /*!
      * write driving variables
      * \param[in] os : output stream
      */
-    virtual void
-    writeDrivingVariables(std::ostream&) const = 0;
+    virtual void writeDrivingVariables(std::ostream&) const = 0;
     /*!
      * structure representing an internal state variable
      */
-    struct InternalStateVariable
-    {
+    struct InternalStateVariable {
       InternalStateVariable() = default;
       InternalStateVariable(InternalStateVariable&&) = default;
       InternalStateVariable(const InternalStateVariable&) = default;
-      InternalStateVariable&
-      operator = (InternalStateVariable&&) = default;
-      InternalStateVariable&
-      operator = (const InternalStateVariable&) = default;
+      InternalStateVariable& operator=(InternalStateVariable&&) = default;
+      InternalStateVariable& operator=(const InternalStateVariable&) = default;
       ~InternalStateVariable();
       //! name
       std::string name;
@@ -213,7 +192,7 @@ namespace mfront
       SupportedTypes::TypeFlag type;
       //! initial value
       real values[9];
-    }; // end of struct InternalStateVariable
+    };  // end of struct InternalStateVariable
     //! modelling hypothesis
     Hypothesis hypothesis;
     //! real time step
@@ -221,10 +200,9 @@ namespace mfront
     //! internal state variable
     std::vector<InternalStateVariable> ivs;
     //! values of the material properties
-    std::map<std::string,real> mps;
+    std::map<std::string, real> mps;
     //! values of the external state variables
-    std::map<std::string,
-	     std::map<real,real> > evs;
+    std::map<std::string, std::map<real, real>> evs;
     //! if true handles thermal expansion
     bool handleThermalExpansion;
     //! flag true if the rotation matrix is defined
@@ -233,7 +211,6 @@ namespace mfront
     real m[9u];
   };
 
-} // end of namespace mfront
+}  // end of namespace mfront
 
 #endif /* LIB_MFRONT_MTESTFILEGENERATORBASE_HXX */
-

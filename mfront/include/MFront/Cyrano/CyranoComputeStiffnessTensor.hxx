@@ -3,26 +3,25 @@
  * \brief  This file declares the CyranoComputeStiffnessTensor class
  * \author Thomas Helfer
  * \date   21 fév 2014
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_MFRONT_CYRANOCOMPUTESTIFFNESSTENSOR_HXX
-#define LIB_MFRONT_CYRANOCOMPUTESTIFFNESSTENSOR_HXX 
+#define LIB_MFRONT_CYRANOCOMPUTESTIFFNESSTENSOR_HXX
 
-#include"TFEL/Config/TFELTypes.hxx"
-#include"TFEL/Material/ModellingHypothesis.hxx"
+#include "TFEL/Config/TFELTypes.hxx"
+#include "TFEL/Material/ModellingHypothesis.hxx"
 
-#include"MFront/Cyrano/Cyrano.hxx"
-#include"MFront/Cyrano/CyranoConfig.hxx"
-#include"MFront/Cyrano/CyranoTraits.hxx"
+#include "MFront/Cyrano/Cyrano.hxx"
+#include "MFront/Cyrano/CyranoConfig.hxx"
+#include "MFront/Cyrano/CyranoTraits.hxx"
 
-namespace cyrano
-{
+namespace cyrano {
 
   /*!
    * This structure is in charge of computing the Stiffness tensor
@@ -32,38 +31,35 @@ namespace cyrano
    * The template parameter is the behaviour symmetry type
    * (isotropy or orthotropy)
    */
-  template<CyranoSymmetryType>
+  template <CyranoSymmetryType>
   struct CyranoComputeStiffnessTensor;
 
-  template<>
+  template <>
   struct MFRONT_CYRANO_VISIBILITY_EXPORT
-  CyranoComputeStiffnessTensor<ISOTROPIC>
-  {
+      CyranoComputeStiffnessTensor<ISOTROPIC> {
     /*!
      * \brief compute the stiffness tensor
      * \param[out] D     : stiffness tensor
      * \param[in]  props : material properties
      */
-    static void
-    exe(tfel::config::Types<1u,CyranoReal,false>::StiffnessTensor&,
-	const CyranoReal* const);
-  }; // end of struct CyranoComputeStiffnessTensor
+    static void exe(
+        tfel::config::Types<1u, CyranoReal, false>::StiffnessTensor&,
+        const CyranoReal* const);
+  };  // end of struct CyranoComputeStiffnessTensor
 
-  template<>
+  template <>
   struct MFRONT_CYRANO_VISIBILITY_EXPORT
-  CyranoComputeStiffnessTensor<ORTHOTROPIC>
-  {
+      CyranoComputeStiffnessTensor<ORTHOTROPIC> {
     /*!
      * \brief compute the stiffness tensor
      * \param[out] D     : stiffness tensor
      * \param[in]  props : material properties
      */
-    static void
-    exe(tfel::config::Types<1u,CyranoReal,false>::StiffnessTensor&,
-	const CyranoReal* const);
-  }; // end of struct CyranoComputeStiffnessTensor
+    static void exe(
+        tfel::config::Types<1u, CyranoReal, false>::StiffnessTensor&,
+        const CyranoReal* const);
+  };  // end of struct CyranoComputeStiffnessTensor
 
-} // end of namespace cyrano
+}  // end of namespace cyrano
 
 #endif /* LIB_MFRONT_CYRANOCOMPUTESTIFFNESSTENSOR_HXX */
-

@@ -2,12 +2,12 @@
  * \file   include/TFEL/Math/CubicSpline.hxx
  * \author Castelier Etienne
  * \date   07/08/2007
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_TFEL_MATH_CUBICSPLINE_HXX
@@ -15,96 +15,94 @@
 
 #include <vector>
 
-#include"TFEL/Config/TFELConfig.hxx"
-#include"TFEL/Math/MathException.hxx"
+#include "TFEL/Config/TFELConfig.hxx"
+#include "TFEL/Math/MathException.hxx"
 
-namespace tfel
-{
+namespace tfel {
 
-  namespace math
-  {
+  namespace math {
 
     /*!
      * Exception thrown when calling any of the getValue method before
      * calling setCollocationPoints.
      */
     struct TFELMATHCUBICSPLINE_VISIBILITY_EXPORT CubicSplineUninitialised
-      : public MathRunTimeException
-    {
+        : public MathRunTimeException {
       CubicSplineUninitialised() = default;
       CubicSplineUninitialised(const CubicSplineUninitialised&) = default;
       CubicSplineUninitialised(CubicSplineUninitialised&&) = default;
       virtual const char* what() const noexcept override final;
       virtual ~CubicSplineUninitialised() noexcept;
-    }; // end of struct CubicSplineUninitialised
+    };  // end of struct CubicSplineUninitialised
 
     /*!
      * Exception thrown when the abscissa vector given to the
      * CubicSpline constructor has a size smaller than 3.
      */
-    struct TFELMATHCUBICSPLINE_VISIBILITY_EXPORT CubicSplineInvalidAbscissaVectorSize
-      : public MathRunTimeException
-    {
+    struct TFELMATHCUBICSPLINE_VISIBILITY_EXPORT
+        CubicSplineInvalidAbscissaVectorSize : public MathRunTimeException {
       CubicSplineInvalidAbscissaVectorSize() = default;
-      CubicSplineInvalidAbscissaVectorSize(const CubicSplineInvalidAbscissaVectorSize&) = default;
-      CubicSplineInvalidAbscissaVectorSize(CubicSplineInvalidAbscissaVectorSize&&) = default;
+      CubicSplineInvalidAbscissaVectorSize(
+          const CubicSplineInvalidAbscissaVectorSize&) = default;
+      CubicSplineInvalidAbscissaVectorSize(
+          CubicSplineInvalidAbscissaVectorSize&&) = default;
       virtual const char* what() const noexcept override final;
       virtual ~CubicSplineInvalidAbscissaVectorSize() noexcept;
-    }; // end of struct CubicSplineInvalidAbscissaVectorSize
+    };  // end of struct CubicSplineInvalidAbscissaVectorSize
 
     /*!
      * Exception thrown when the linear system solved leads to a null pivot
      */
     struct TFELMATHCUBICSPLINE_VISIBILITY_EXPORT CubicSplineNullPivot
-      : public MathRunTimeException
-    {
+        : public MathRunTimeException {
       CubicSplineNullPivot() = default;
       CubicSplineNullPivot(const CubicSplineNullPivot&) = default;
       CubicSplineNullPivot(CubicSplineNullPivot&&) = default;
       virtual const char* what() const noexcept override final;
       virtual ~CubicSplineNullPivot() noexcept;
-    }; // end of struct CubicSplineInvalidAbscissaVectorSize
+    };  // end of struct CubicSplineInvalidAbscissaVectorSize
 
     /*!
      * Exception thrown when the ordinate vector given to the
      * CubicSpline constructor has a size smaller than 3.
      */
-    struct TFELMATHCUBICSPLINE_VISIBILITY_EXPORT CubicSplineInvalidOrdinateVectorSize
-      : public MathRunTimeException
-    {
+    struct TFELMATHCUBICSPLINE_VISIBILITY_EXPORT
+        CubicSplineInvalidOrdinateVectorSize : public MathRunTimeException {
       CubicSplineInvalidOrdinateVectorSize() = default;
-      CubicSplineInvalidOrdinateVectorSize(const CubicSplineInvalidOrdinateVectorSize&) = default;
-      CubicSplineInvalidOrdinateVectorSize(CubicSplineInvalidOrdinateVectorSize&&) = default;
+      CubicSplineInvalidOrdinateVectorSize(
+          const CubicSplineInvalidOrdinateVectorSize&) = default;
+      CubicSplineInvalidOrdinateVectorSize(
+          CubicSplineInvalidOrdinateVectorSize&&) = default;
       virtual const char* what() const noexcept override final;
       virtual ~CubicSplineInvalidOrdinateVectorSize() noexcept;
-    }; // end of struct CubicSplineInvalidOrdinateVectorSize
+    };  // end of struct CubicSplineInvalidOrdinateVectorSize
 
     /*!
      * Exception thrown when the abscissa and the ordinate vectors
      * don't have the same size
      */
     struct TFELMATHCUBICSPLINE_VISIBILITY_EXPORT CubicSplineInvalidInputs
-      : public MathRunTimeException
-    {
+        : public MathRunTimeException {
       CubicSplineInvalidInputs() = default;
       CubicSplineInvalidInputs(const CubicSplineInvalidInputs&) = default;
       CubicSplineInvalidInputs(CubicSplineInvalidInputs&&) = default;
       virtual const char* what() const noexcept override final;
       virtual ~CubicSplineInvalidInputs() noexcept;
-    }; // end of struct CubicSplineInvalidInputs
+    };  // end of struct CubicSplineInvalidInputs
 
     /*!
      * Exception thrown when the abscissa vector is not ordered
      */
-    struct TFELMATHCUBICSPLINE_VISIBILITY_EXPORT CubicSplineUnorderedAbscissaVector
-      : public MathRunTimeException
-    {
+    struct TFELMATHCUBICSPLINE_VISIBILITY_EXPORT
+        CubicSplineUnorderedAbscissaVector : public MathRunTimeException {
       CubicSplineUnorderedAbscissaVector() = default;
-      CubicSplineUnorderedAbscissaVector(const CubicSplineUnorderedAbscissaVector&) = default;
-      CubicSplineUnorderedAbscissaVector(CubicSplineUnorderedAbscissaVector&&) = default;
+      CubicSplineUnorderedAbscissaVector(
+          const CubicSplineUnorderedAbscissaVector&) = default;
+      CubicSplineUnorderedAbscissaVector(CubicSplineUnorderedAbscissaVector&&) =
+          default;
       virtual const char* what() const noexcept override final;
       virtual ~CubicSplineUnorderedAbscissaVector() noexcept;
-    }; // end of struct CubicSplineUnorderedAbscissaVector
+    };  // end of struct CubicSplineUnorderedAbscissaVector
 
     /*!
      * structure in charge of computing the cubic spline of a series
@@ -113,32 +111,22 @@ namespace tfel
      * \param real  : floatting type number used for the computations
      * \param value : result type
      */
-    template<typename real,
-	     typename value = real>
-    struct CubicSpline
-    {
-      
+    template <typename real, typename value = real>
+    struct CubicSpline {
       /*!
        * \param[in] px  : iterator to the first abscissa
        * \param[in] pxe : iterator past the last abscissa
        * \param[in] py  : iterator to the first ordinate
        */
-      template<typename AIterator,
-	       typename OIterator>
-      void
-      setCollocationPoints(AIterator,
-			   AIterator,
-			   OIterator);
+      template <typename AIterator, typename OIterator>
+      void setCollocationPoints(AIterator, AIterator, OIterator);
 
       /*!
        * \param[in] x : abscissa
        * \param[in] y : ordinates
        */
-      template<typename AContainer,
-	       typename OContainer>
-      void
-      setCollocationPoints(const AContainer&,
-			   const OContainer&);
+      template <typename AContainer, typename OContainer>
+      void setCollocationPoints(const AContainer&, const OContainer&);
 
       /*!
        * \return the spline value at the given point
@@ -151,23 +139,21 @@ namespace tfel
        * \param[in] xa : left end point
        * \param[in] xb : right end point
        */
-      value computeIntegral(const real,
-			    const real) const;
+      value computeIntegral(const real, const real) const;
 
       /*!
        * \return the spline mean value
        * \param[in] xa : point at which the spline is evaluated
        * \param[in] xb : point at which the spline is evaluated
        */
-      value computeMeanValue(const real,
-			     const real) const;
+      value computeMeanValue(const real, const real) const;
 
       /*!
        * \return the spline value at the given point
        * \param[in] x : point at which the spline is evaluated
        */
       value getValue(real) const;
-      
+
       /*!
        * \return the value of the spline and the value of its
        * derivative at the given point
@@ -175,10 +161,10 @@ namespace tfel
        * \param[out] f  : spline value
        * \param[out] df : spline derivative value
        * \param[in]  x  : point at which the spline is evaluated
-       * 
+       *
        */
-      void getValues(value&,value&,real) const;
-      
+      void getValues(value&, value&, real) const;
+
       /*!
        * \return the value of the spline and the value of its
        * derivative at the given point
@@ -187,80 +173,73 @@ namespace tfel
        * \param[out] df  : spline derivative value
        * \param[out] d2f : spline derivative value
        * \param[in]  x   : point at which the spline is evaluated
-       * 
+       *
        */
-      void getValues(value&,value&,value&,real) const;
-            
-    protected:
+      void getValues(value&, value&, value&, real) const;
 
+     protected:
       /*!
        * internal structure which represents a collocation point
        */
       struct Point {
-	//! abscissa
-	real x;
-	//! ordinate
-	value y;
-	//! derivate
-	value d;
-      }; // end of struct Point
+        //! abscissa
+        real x;
+        //! ordinate
+        value y;
+        //! derivate
+        value d;
+      };  // end of struct Point
 
       /*!
        * internal structure to compare collocation points
        */
-      struct PointComparator
-      {
-	/*!
-	 * \return true if p->x < x
-	 * \param p : first point
-	 * \param x : abscissa
-	 */
-      	bool
-	operator()(const Point&,const real&) const; 
-      }; //end of struct PointComparator
+      struct PointComparator {
+        /*!
+         * \return true if p->x < x
+         * \param p : first point
+         * \param x : abscissa
+         */
+        bool operator()(const Point&, const real&) const;
+      };  // end of struct PointComparator
 
       /*!
        * http://en.wikipedia.org/wiki/Tridiagonal_matrix_algorithm
        * n - number of equations
-       * c - sup-diagonal (means it is the diagonal above the main diagonal) -- indexed from 0..n-2
-       * b - the main diagonal
-       * x - the answer
+       * c - sup-diagonal (means it is the diagonal above the main diagonal) --
+       * indexed from 0..n-2 b - the main diagonal x - the answer
        */
-      void
-      solveTridiagonalLinearSystem(const real * const,
-				   real * const);
-      
+      void solveTridiagonalLinearSystem(const real* const, real* const);
+
       /*!
        * an helper function to ease integral computations
        */
-      static value computeLocalIntegral(const real,
-					const real,
-					const typename std::vector<Point>::const_iterator);
+      static value computeLocalIntegral(
+          const real,
+          const real,
+          const typename std::vector<Point>::const_iterator);
 
       /*!
        * an helper function to ease factorize computations
        */
-      static void computeLocalCoefficients(value&,
-					   value&,
-					   const typename std::vector<Point>::const_iterator);
-      
+      static void computeLocalCoefficients(
+          value&, value&, const typename std::vector<Point>::const_iterator);
+
       /*!
        * build the spline interpolation
        */
       void buildInterpolation();
-    
+
       /*!
        * collocation points
        */
       std::vector<Point> values;
-  
-    }; // end of struct CubicSpline
 
-  } // end of namespace math
+    };  // end of struct CubicSpline
 
-} // end of namespace tfel
+  }  // end of namespace math
 
-#include"TFEL/Math/CubicSpline.ixx"
+}  // end of namespace tfel
+
+#include "TFEL/Math/CubicSpline.ixx"
 
 #endif /* LIB_TFEL_MATH_CUBICSPLINE_HXX */
-

@@ -25,62 +25,64 @@
 
 namespace mfront {
 
-struct PleiadesMaterialPropertyInterface
-  : public AbstractMaterialPropertyInterface
-{
+  struct PleiadesMaterialPropertyInterface
+      : public AbstractMaterialPropertyInterface {
+    PleiadesMaterialPropertyInterface();
 
-  PleiadesMaterialPropertyInterface();
+    using const_iterator =
+        tfel::utilities::CxxTokenizer::TokensContainer::const_iterator;
 
-  using const_iterator = tfel::utilities::CxxTokenizer::TokensContainer::const_iterator;
+    static std::string getName();
 
-  static std::string getName();
+    /*!
+     * \param[in] k:  keyword treated
+     * \param[in] i:  list of interfaces to which the keyword is restricted
+     * \param[in] p:  iterator to the current token
+     * \param[in] pe: iterator past the end of the file
+     * \return a pair. The first entry is true if the keyword was
+     * treated by the interface. The second entry is an iterator after
+     * the last token treated.
+     */
+    virtual std::pair<bool, const_iterator> treatKeyword(
+        const std::string&,
+        const std::vector<std::string>&,
+        const_iterator,
+        const const_iterator) override;
 
-  /*!
-   * \param[in] k:  keyword treated
-   * \param[in] i:  list of interfaces to which the keyword is restricted
-   * \param[in] p:  iterator to the current token
-   * \param[in] pe: iterator past the end of the file
-   * \return a pair. The first entry is true if the keyword was
-   * treated by the interface. The second entry is an iterator after
-   * the last token treated.
-   */
-  virtual std::pair<bool, const_iterator> treatKeyword(const std::string&,
-                                                       const std::vector<std::string>&,
-                                                       const_iterator,
-                                                       const const_iterator) override;
+    /*!
+     * \brief : fill the target descripton
+     * \param[out] d   : target description
+     * \param[in]  mpd : material property description
+     */
+    virtual void getTargetsDescription(
+        TargetsDescription&, const MaterialPropertyDescription&) const override;
 
-  /*!
-   * \brief : fill the target descripton
-   * \param[out] d   : target description
-   * \param[in]  mpd : material property description
-   */
-  virtual void getTargetsDescription(TargetsDescription&,
-                                     const MaterialPropertyDescription&) const override;
+    /*!
+     * \brief generate the output files
+     * \param[in] mpd : material property description
+     * \param[in] fd  : mfront file description
+     */
+    void writeOutputFiles(const MaterialPropertyDescription& mpd,
+                          const FileDescription& fd) const override;
 
-  /*!
-   * \brief generate the output files
-   * \param[in] mpd : material property description
-   * \param[in] fd  : mfront file description
-   */
-  void writeOutputFiles(const MaterialPropertyDescription& mpd,
-                        const FileDescription& fd) const override;
+    virtual ~PleiadesMaterialPropertyInterface();
 
-  virtual ~PleiadesMaterialPropertyInterface();
+   private:
+    /*!
+     * \param[in] mpd : material property description
+     * \param[in] fd  : mfront file description
+     */
+    void writeHeaderFile(const MaterialPropertyDescription& mpd,
+                         const FileDescription& fd) const;
 
- private:
-  /*!
-   * \param[in] mpd : material property description
-   * \param[in] fd  : mfront file description
-   */
-  void writeHeaderFile(const MaterialPropertyDescription& mpd, const FileDescription& fd) const;
+    /*!
+     * \param[in] mpd : material property description
+     * \param[in] fd  : mfront file description
+     */
+    void writeSrcFile(const MaterialPropertyDescription& mpd,
+                      const FileDescription& fd) const;
 
-  /*!
-   * \param[in] mpd : material property description
-   * \param[in] fd  : mfront file description
-   */
-  void writeSrcFile(const MaterialPropertyDescription& mpd, const FileDescription& fd) const;
-
-};  // end of MfrontPleiadesLawInterface
+  };  // end of MfrontPleiadesLawInterface
 
 }  // end of namespace mfront
 

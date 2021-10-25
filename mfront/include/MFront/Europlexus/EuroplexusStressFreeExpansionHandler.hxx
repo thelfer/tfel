@@ -1,24 +1,24 @@
-/*! 
- * \file   mfront/include/MFront/Europlexus/EuroplexusStressFreeExpansionHandler.hxx
+/*!
+ * \file
+ * mfront/include/MFront/Europlexus/EuroplexusStressFreeExpansionHandler.hxx
  * \brief
  * \author Thomas Helfer
  * \brief  05 mars 2014
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_MFRONT_EPX_EPXSTRESSFREEEXPANSIONHANDLER_HXX
-#define LIB_MFRONT_EPX_EPXSTRESSFREEEXPANSIONHANDLER_HXX 
+#define LIB_MFRONT_EPX_EPXSTRESSFREEEXPANSIONHANDLER_HXX
 
-#include"MFront/Europlexus/Europlexus.hxx"
-#include"MFront/Europlexus/EuroplexusConfig.hxx"
+#include "MFront/Europlexus/Europlexus.hxx"
+#include "MFront/Europlexus/EuroplexusConfig.hxx"
 
-namespace epx
-{
+namespace epx {
 
   /*!
    * standard handler of stress free expansion handler for small
@@ -34,11 +34,12 @@ namespace epx
    * \param[in] d      : spatial dimension
    */
   MFRONT_EPX_VISIBILITY_EXPORT void
-  EuroplexusStandardSmallStrainStressFreeExpansionHandler(EuroplexusReal * const,
-							  EuroplexusReal * const,
-							  const EuroplexusReal *const,
-							  const EuroplexusReal *const,
-							  const EuroplexusInt);
+  EuroplexusStandardSmallStrainStressFreeExpansionHandler(
+      EuroplexusReal *const,
+      EuroplexusReal *const,
+      const EuroplexusReal *const,
+      const EuroplexusReal *const,
+      const EuroplexusInt);
   /*!
    * \brief handler of stress free expansion handler for behaviours
    * based on logarithmic strains
@@ -53,13 +54,13 @@ namespace epx
    * \param[in] d      : spatial dimension
    */
   MFRONT_EPX_VISIBILITY_EXPORT void
-  EuroplexusLogarithmicStrainStressFreeExpansionHandler(EuroplexusReal * const,
-							EuroplexusReal * const,
-							const EuroplexusReal *const,
-							const EuroplexusReal *const,
-							const EuroplexusInt);
+  EuroplexusLogarithmicStrainStressFreeExpansionHandler(
+      EuroplexusReal *const,
+      EuroplexusReal *const,
+      const EuroplexusReal *const,
+      const EuroplexusReal *const,
+      const EuroplexusInt);
 
-} // end of namespace epx
+}  // end of namespace epx
 
 #endif /* LIB_MFRONT_EPX_EPXSTRESSFREEEXPANSIONHANDLER_HXX */
-

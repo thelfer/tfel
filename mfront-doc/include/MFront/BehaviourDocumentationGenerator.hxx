@@ -1,30 +1,30 @@
-/*! 
+/*!
  * \file  BehaviourDocumentationGenerator.hxx
  * \brief
  * \author Thomas Helfer
  * \date   04 mars 2015
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_MFRONT_BEHAVIOURDOCUMENTATIONGENERATOR_H
-#define LIB_MFRONT_BEHAVIOURDOCUMENTATIONGENERATOR_H 
+#define LIB_MFRONT_BEHAVIOURDOCUMENTATIONGENERATOR_H
 
-#include<string>
-#include<vector>
-#include<memory>
-#include<utility>
-#include<functional>
+#include <string>
+#include <vector>
+#include <memory>
+#include <utility>
+#include <functional>
 
-#include"TFEL/Utilities/ArgumentParserBase.hxx"
-#include"TFEL/Material/ModellingHypothesis.hxx"
-#include"MFront/MFrontBase.hxx"
+#include "TFEL/Utilities/ArgumentParserBase.hxx"
+#include "TFEL/Material/ModellingHypothesis.hxx"
+#include "MFront/MFrontBase.hxx"
 
-namespace mfront{
+namespace mfront {
 
   // forward declaration
   struct AbstractBehaviourDSL;
@@ -38,63 +38,59 @@ namespace mfront{
    * behaviour implementation
    */
   struct BehaviourDocumentationGenerator
-    : public tfel::utilities::ArgumentParserBase<BehaviourDocumentationGenerator>,
-      public MFrontBase
-  {
+      : public tfel::utilities::ArgumentParserBase<
+            BehaviourDocumentationGenerator>,
+        public MFrontBase {
     /*!
-     * type of documentation to be generated 
+     * type of documentation to be generated
      */
-    enum OutputType{
-      FULL,
-      WEB
-    };
+    enum OutputType { FULL, WEB };
     /*!
-     * build a BehaviourDocumentationGenerator object based on command line arguments
-     * \param[in] argc : number of command line arguments
-     * \param[in] argv : command line arguments
-     * \param[in] d    : behaviour domain specific language
-     * \param[in] f    : behaviour domain specific language
+     * build a BehaviourDocumentationGenerator object based on command line
+     * arguments \param[in] argc : number of command line arguments \param[in]
+     * argv : command line arguments \param[in] d    : behaviour domain specific
+     * language \param[in] f    : behaviour domain specific language
      */
-    BehaviourDocumentationGenerator(const int, const char *const *const,
-				    std::shared_ptr<AbstractBehaviourDSL>,
-				    const std::string&);
+    BehaviourDocumentationGenerator(const int,
+                                    const char *const *const,
+                                    std::shared_ptr<AbstractBehaviourDSL>,
+                                    const std::string &);
     //! treat the requests
     void exe();
     //! destructor
     ~BehaviourDocumentationGenerator();
-  private:
+
+   private:
     //! ArgumentParserBase must be a friend
-    friend struct tfel::utilities::ArgumentParserBase<BehaviourDocumentationGenerator>;
+    friend struct tfel::utilities::ArgumentParserBase<
+        BehaviourDocumentationGenerator>;
     //! \brief register call-backs associated with command line arguments
     virtual void registerCommandLineCallBacks();
     //! return the current argument
-    virtual const tfel::utilities::Argument&
-    getCurrentCommandLineArgument() const override final;
+    virtual const tfel::utilities::Argument &getCurrentCommandLineArgument()
+        const override final;
     //! treat an unknown argument
     virtual void treatWeb();
     //! treat an unknown argument
     virtual void treatUnknownArgument() final;
     //! get the version description
-    virtual std::string
-    getVersionDescription() const override final;
+    virtual std::string getVersionDescription() const override final;
     //! get the usage description
-    virtual std::string
-    getUsageDescription() const override final;
-    virtual void writeWebOutput(std::ostream&,
-				const BehaviourDescription&,
-				const FileDescription&) const;
-    virtual void writeFullOutput(std::ostream&,
-				 const BehaviourDescription&,
-				 const FileDescription&) const;
+    virtual std::string getUsageDescription() const override final;
+    virtual void writeWebOutput(std::ostream &,
+                                const BehaviourDescription &,
+                                const FileDescription &) const;
+    virtual void writeFullOutput(std::ostream &,
+                                 const BehaviourDescription &,
+                                 const FileDescription &) const;
     //! abstract behaviour dsl
     std::shared_ptr<AbstractBehaviourDSL> dsl;
     //! file name
-    std::string file;    
+    std::string file;
     //! type of ouput
     OutputType otype;
-  }; // end of struct BehaviourDocumentationGenerator
+  };  // end of struct BehaviourDocumentationGenerator
 
-} // end of namespace mfront
+}  // end of namespace mfront
 
 #endif /* LIB_MFRONT_BEHAVIOURDOCUMENTATIONGENERATOR_H */
-

@@ -60,15 +60,16 @@ namespace tfel {
 
       TFEL_MATH_INLINE ST2toST2TransposeExpr(A l) : a(l) {}
 
-      TFEL_MATH_INLINE NumType operator()(const IndexType i, const IndexType j) const {
+      TFEL_MATH_INLINE NumType operator()(const IndexType i,
+                                          const IndexType j) const {
         return this->a(j, i);
       }  // end of operator()
       //! storage for the object
       ArgumentStorage<A> a;
 
      private:
-      TFEL_STATIC_ASSERT(
-          (tfel::meta::Implements<typename std::decay<A>::type, ST2toST2Concept>::cond));
+      TFEL_STATIC_ASSERT((tfel::meta::Implements<typename std::decay<A>::type,
+                                                 ST2toST2Concept>::cond));
     };
 
   }  // end of  namespace math
