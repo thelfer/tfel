@@ -38,8 +38,7 @@ namespace mfront {
       const FileDescription&,
       const std::string& name) const {
     if (mb.getSymmetryType() == mfront::ORTHOTROPIC) {
-      if (!mb.hasAttribute(
-              AbaqusInterface::orthotropyManagementPolicy)) {
+      if (!mb.hasAttribute(AbaqusInterface::orthotropyManagementPolicy)) {
         out << "MFRONT_SHAREDOBJ unsigned short "
             << i.getFunctionNameBasis(name)
             << "_OrthotropyManagementPolicy = 0u;\n\n";
@@ -72,8 +71,8 @@ namespace mfront {
       tfel::raise_if(b,
                      "AbaqusSymbolsGenerator::writeBehaviourTypeSymbols: " + m);
     };
-    out << "MFRONT_SHAREDOBJ unsigned short "
-        << i.getFunctionNameBasis(name) << "_BehaviourType = ";
+    out << "MFRONT_SHAREDOBJ unsigned short " << i.getFunctionNameBasis(name)
+        << "_BehaviourType = ";
     if (mb.getBehaviourType() ==
         BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) {
       if ((AbaqusInterfaceBase::hasFiniteStrainStrategy(mb)) &&
@@ -99,8 +98,8 @@ namespace mfront {
       tfel::raise_if(
           b, "AbaqusSymbolsGenerator::writeBehaviourKinematicSymbols: " + m);
     };
-    out << "MFRONT_SHAREDOBJ unsigned short "
-        << i.getFunctionNameBasis(name) << "_BehaviourKinematic = ";
+    out << "MFRONT_SHAREDOBJ unsigned short " << i.getFunctionNameBasis(name)
+        << "_BehaviourKinematic = ";
     if (mb.getBehaviourType() ==
         BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) {
       if (AbaqusInterfaceBase::hasFiniteStrainStrategy(mb)) {
@@ -116,7 +115,7 @@ namespace mfront {
     }
   }  // end of AbaqusSymbolsGenerator::writeBehaviourKinematicSymbols
 
-  bool AbaqusSymbolsGenerator::handleStrainMeasure() const{
+  bool AbaqusSymbolsGenerator::handleStrainMeasure() const {
     return true;
   }  // end of AbaqusSymbolsGenerator::handleStrainMeasure
 

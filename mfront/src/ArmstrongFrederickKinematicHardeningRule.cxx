@@ -23,8 +23,8 @@ namespace mfront {
 
   namespace bbrick {
 
-    std::vector<OptionDescription> ArmstrongFrederickKinematicHardeningRule::getOptions()
-        const {
+    std::vector<OptionDescription>
+    ArmstrongFrederickKinematicHardeningRule::getOptions() const {
       auto opts = KinematicHardeningRuleBase::getOptions();
       opts.emplace_back("D", "back-strain callback coefficient",
                         OptionDescription::MATERIALPROPERTY);

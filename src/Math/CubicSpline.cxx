@@ -1,70 +1,62 @@
-/*! 
+/*!
  * \file  src/Math/CubicSpline.cxx
  * \brief
  * \author Thomas Helfer
  * \brief 12 avr 2011
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
-#include"TFEL/Math/CubicSpline.hxx"
+#include "TFEL/Math/CubicSpline.hxx"
 
-namespace tfel
-{
+namespace tfel {
 
-  namespace math
-  {
+  namespace math {
 
-    const char*
-    CubicSplineUninitialised::what() const noexcept
-    {
+    const char* CubicSplineUninitialised::what() const noexcept {
       return "CubicSpline : undefined collocation points";
-    } // end of CubicSplineUninitialised::what
+    }  // end of CubicSplineUninitialised::what
 
     CubicSplineUninitialised::~CubicSplineUninitialised() noexcept = default;
 
-    const char*
-    CubicSplineNullPivot::what() const noexcept
-    {
+    const char* CubicSplineNullPivot::what() const noexcept {
       return "CubicSpline : null pivot";
-    } // end of CubicSplineNullPivot::what
+    }  // end of CubicSplineNullPivot::what
 
     CubicSplineNullPivot::~CubicSplineNullPivot() noexcept = default;
 
-    const char*
-    CubicSplineInvalidAbscissaVectorSize::what() const noexcept
-    {
+    const char* CubicSplineInvalidAbscissaVectorSize::what() const noexcept {
       return "CubicSpline : abscissa size is smaller than 1";
-    } // end of CubicSplineInvalidAbscissaVectorSize::what
-    
-    CubicSplineInvalidAbscissaVectorSize::~CubicSplineInvalidAbscissaVectorSize() noexcept = default;
+    }  // end of CubicSplineInvalidAbscissaVectorSize::what
 
-    const char*
-    CubicSplineInvalidOrdinateVectorSize::what() const noexcept
-    {
+    CubicSplineInvalidAbscissaVectorSize::
+        ~CubicSplineInvalidAbscissaVectorSize() noexcept = default;
+
+    const char* CubicSplineInvalidOrdinateVectorSize::what() const noexcept {
       return "CubicSpline : ordinate size is smaller than 1";
-    } // end of CubicSplineInvalidOrdinateVectorSize::what
+    }  // end of CubicSplineInvalidOrdinateVectorSize::what
 
-    CubicSplineInvalidOrdinateVectorSize::~CubicSplineInvalidOrdinateVectorSize() noexcept = default;
-    
-    const char* CubicSplineInvalidInputs::what() const noexcept
-    {
-      return "CubicSpline : abscissa and ordinate vectors don't have the same size";
-    } // end of CubicSplineInvalidInputs::what
+    CubicSplineInvalidOrdinateVectorSize::
+        ~CubicSplineInvalidOrdinateVectorSize() noexcept = default;
+
+    const char* CubicSplineInvalidInputs::what() const noexcept {
+      return "CubicSpline : abscissa and ordinate vectors don't have the same "
+             "size";
+    }  // end of CubicSplineInvalidInputs::what
 
     CubicSplineInvalidInputs::~CubicSplineInvalidInputs() noexcept = default;
 
-    const char* CubicSplineUnorderedAbscissaVector::what() const noexcept
-    {
+    const char* CubicSplineUnorderedAbscissaVector::what() const noexcept {
       return "CubicSpline : abscissa vector is not ordered";
-    } // end of CubicSplineUnorderedAbscissaVector::what
+    }  // end of CubicSplineUnorderedAbscissaVector::what
 
-    CubicSplineUnorderedAbscissaVector::~CubicSplineUnorderedAbscissaVector() noexcept = default;
+    CubicSplineUnorderedAbscissaVector::
+        ~CubicSplineUnorderedAbscissaVector() noexcept = default;
 
-  } // end of namespace math
+  }  // end of namespace math
 
-} // end of namespace tfel
+}  // end of namespace tfel

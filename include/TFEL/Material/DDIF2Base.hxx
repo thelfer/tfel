@@ -156,21 +156,20 @@ namespace tfel {
        * matrix.
        */
       template <typename Stensor2Type1, typename Stensor, typename real>
-      static TFEL_VISIBILITY_LOCAL void treatFracture(
-          Stensor2Type1&,
-          real&,
-          real&,
-          const real,
-          const real,
-          const real,
-          const Stensor&,
-          const Stensor&,
-          const real,
-          const real,
-          const real,
-          const real,
-          const real,
-          const real = real(0));
+      static TFEL_VISIBILITY_LOCAL void treatFracture(Stensor2Type1&,
+                                                      real&,
+                                                      real&,
+                                                      const real,
+                                                      const real,
+                                                      const real,
+                                                      const Stensor&,
+                                                      const Stensor&,
+                                                      const real,
+                                                      const real,
+                                                      const real,
+                                                      const real,
+                                                      const real,
+                                                      const real = real(0));
       /*!
        * \brief function used to define the equations associated with fracture
        * in explicit integration.

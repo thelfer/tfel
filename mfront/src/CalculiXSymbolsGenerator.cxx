@@ -28,7 +28,8 @@ namespace mfront {
       const BehaviourDescription& mb,
       const std::string& name) const {
     auto throw_if = [](const bool b, const std::string& m) {
-      tfel::raise_if(b, "CalculiXSymbolsGenerator::writexxBehaviourTypeSymbols: " + m);
+      tfel::raise_if(
+          b, "CalculiXSymbolsGenerator::writexxBehaviourTypeSymbols: " + m);
     };
     out << "MFRONT_SHAREDOBJ unsigned short " << i.getFunctionNameBasis(name)
         << "_BehaviourType = ";
@@ -54,7 +55,8 @@ namespace mfront {
       const std::string& name) const {
     auto throw_if = [](const bool b, const std::string& m) {
       tfel::raise_if(
-          b, "CalculiXSymbolsGenerator::writexxBehaviourKinematicSymbols: " + m);
+          b,
+          "CalculiXSymbolsGenerator::writexxBehaviourKinematicSymbols: " + m);
     };
     out << "MFRONT_SHAREDOBJ unsigned short " << i.getFunctionNameBasis(name)
         << "_BehaviourKinematic = ";
@@ -82,7 +84,7 @@ namespace mfront {
       const Hypothesis) const {
   }  // end of CalculiXSymbolsGenerator::writeAdditionalSymbols
 
-  bool CalculiXSymbolsGenerator::handleStrainMeasure() const{
+  bool CalculiXSymbolsGenerator::handleStrainMeasure() const {
     return true;
   }  // end of CalculiXSymbolsGenerator::handleStrainMeasure
 

@@ -70,16 +70,16 @@ namespace mfront {
       std::array<MaterialProperty, 3u> rp;
       //! fracture energy
       std::array<MaterialProperty, 3u> gc;
-     /*!
-      * \brief if true, the implicit resolution is first performed with a null
-      * time step.
-      */
+      /*!
+       * \brief if true, the implicit resolution is first performed with a null
+       * time step.
+       */
       bool firstConvergeOnDamage = true;
       //! handle pressure on crack surface
       bool pr = false;
-};  // end of struct DDIF2StressPotential
+    };  // end of struct DDIF2StressPotential
 
-}  // end of namespace bbrick
+  }  // end of namespace bbrick
 
 }  // end of namespace mfront
 

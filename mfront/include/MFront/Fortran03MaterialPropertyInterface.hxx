@@ -3,27 +3,25 @@
  * \brief  This file declares the Fortran03MaterialPropertyInterface class.
  * \author Thomas Helfer
  * \date   1 décembre 2008
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_MFRONTFORTRAN03LAWINTERFACE_HXX
-#define LIB_MFRONTFORTRAN03LAWINTERFACE_HXX 
+#define LIB_MFRONTFORTRAN03LAWINTERFACE_HXX
 
-#include"MFront/CMaterialPropertyInterfaceBase.hxx"
+#include "MFront/CMaterialPropertyInterfaceBase.hxx"
 
-namespace mfront{
+namespace mfront {
 
   struct Fortran03MaterialPropertyInterface
-    : public CMaterialPropertyInterfaceBase
-  {
-    static std::string 
-    getName();
-    
+      : public CMaterialPropertyInterfaceBase {
+    static std::string getName();
+
     Fortran03MaterialPropertyInterface();
     /*!
      * \param[in] k  : keyword treated
@@ -34,44 +32,43 @@ namespace mfront{
      * treated by the interface. The second entry is an iterator after
      * the last token treated.
      */
-    virtual std::pair<bool,tokens_iterator>
-    treatKeyword(const std::string&,
-		 const std::vector<std::string>&,
-		 tokens_iterator,
-		 const tokens_iterator) override;
+    virtual std::pair<bool, tokens_iterator> treatKeyword(
+        const std::string&,
+        const std::vector<std::string>&,
+        tokens_iterator,
+        const tokens_iterator) override;
     /*!
      * \brief : fill the target descripton
      * \param[out] d   : target description
      * \param[in]  mpd : material property description
      */
-    virtual void getTargetsDescription(TargetsDescription&,
-				       const MaterialPropertyDescription&) const override;
+    virtual void getTargetsDescription(
+        TargetsDescription&, const MaterialPropertyDescription&) const override;
     /*!
      * \brief generate the output files
      * \param[in] mpd : material property description
      * \param[in] fd  : mfront file description
      */
     virtual void writeOutputFiles(const MaterialPropertyDescription&,
-				  const FileDescription&) const override;
+                                  const FileDescription&) const override;
     /*!
      * \param[out] os:  output file stream
      * \param[in]  mpd: material property description
      */
-    virtual void writeInterfaceSymbol(std::ostream&,
-				      const MaterialPropertyDescription&) const override;
+    virtual void writeInterfaceSymbol(
+        std::ostream&, const MaterialPropertyDescription&) const override;
     //! destructor
     ~Fortran03MaterialPropertyInterface() override;
-        
-  private:
-    
+
+   private:
     void writeParameterList(std::ostream&,
-			    const VariableDescriptionContainer&) const override;
+                            const VariableDescriptionContainer&) const override;
 
-    void writeInterfaceSpecificVariables(std::ostream&,
-					 const VariableDescriptionContainer&) const override;
+    void writeInterfaceSpecificVariables(
+        std::ostream&, const VariableDescriptionContainer&) const override;
 
-    void writeSrcPreprocessorDirectives(std::ostream&,
-					const MaterialPropertyDescription&) const override;
+    void writeSrcPreprocessorDirectives(
+        std::ostream&, const MaterialPropertyDescription&) const override;
 
     void writeBeginHeaderNamespace(std::ostream&) const override;
 
@@ -85,38 +82,33 @@ namespace mfront{
      * \param const std::string&, name of the material
      * \param const std::string&, name of the class
      */
-    virtual std::string
-    getHeaderFileName(const std::string&,
-		      const std::string&) const override;
+    virtual std::string getHeaderFileName(const std::string&,
+                                          const std::string&) const override;
 
     /*!
      * \param const std::string&, name of the material
      * \param const std::string&, name of the class
      */
-    virtual std::string
-    getSrcFileName(const std::string&,
-		   const std::string&) const override;
+    virtual std::string getSrcFileName(const std::string&,
+                                       const std::string&) const override;
     /*!
-     * \param[in] mpd: material property description 
+     * \param[in] mpd: material property description
      */
-    virtual std::string
-    getFunctionName(const MaterialPropertyDescription&) const override;
+    virtual std::string getFunctionName(
+        const MaterialPropertyDescription&) const override;
     /*!
-     * \param[in] mpd: material property description 
+     * \param[in] mpd: material property description
      */
-    virtual std::string
-    getCheckBoundsFunctionName(const MaterialPropertyDescription&) const override;
+    virtual std::string getCheckBoundsFunctionName(
+        const MaterialPropertyDescription&) const override;
 
-    virtual bool
-    requiresCheckBoundsFunction() const override;
+    virtual bool requiresCheckBoundsFunction() const override;
 
-  private:
-
+   private:
     std::string module;
-    
-  }; // end of Fortran03MaterialPropertyInterface
 
-} // end of namespace mfront
+  };  // end of Fortran03MaterialPropertyInterface
+
+}  // end of namespace mfront
 
 #endif /* LIB_MFRONTFORTRAN03LAWINTERFACE_HXX */
-

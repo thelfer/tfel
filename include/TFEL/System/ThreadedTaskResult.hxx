@@ -1,36 +1,35 @@
 /*!
  * \file   ThreadedTaskResult.hxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   19 juin 2016
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_TFEL_SYSTEM_THREADEDTASKRESULT_HXX
 #define LIB_TFEL_SYSTEM_THREADEDTASKRESULT_HXX
 
-#include<exception>
-#include<type_traits>
-#include"TFEL/Config/TFELConfig.hxx"
+#include <exception>
+#include <type_traits>
+#include "TFEL/Config/TFELConfig.hxx"
 
-namespace tfel{
+namespace tfel {
 
-  namespace system{
+  namespace system {
 
     //! non-template base class of the ThreadedTaskResult class
-    struct TFELSYSTEM_VISIBILITY_EXPORT ThreadedTaskResultBase
-    {
-    protected:
+    struct TFELSYSTEM_VISIBILITY_EXPORT ThreadedTaskResultBase {
+     protected:
       //! thr
       TFEL_NORETURN static void throwBadCastException();
       //! thr
       TFEL_NORETURN static void throwNullException();
-    }; // end of struct ThreadedTaskResultBase
+    };  // end of struct ThreadedTaskResultBase
     /*!
      * \brief a class standing for the result of a taks
      *
@@ -38,17 +37,15 @@ namespace tfel{
      * std::optional (not available in C++11), but it also stores an
      * std::exception_ptr if .
      */
-    template<typename T>
-    struct ThreadedTaskResult
-      : public ThreadedTaskResultBase
-    {
+    template <typename T>
+    struct ThreadedTaskResult : public ThreadedTaskResultBase {
       //! \brief default constructor
       TFEL_INLINE ThreadedTaskResult();
       /*!
        * \brief constructor of T
        * \param[in] args: arguments to T constructor
        */
-      template<typename... Args>
+      template <typename... Args>
       TFEL_INLINE ThreadedTaskResult(Args&&...);
       /*!
        * \brief constructor of T
@@ -71,27 +68,28 @@ namespace tfel{
       //! \brief throw the catched exception
 #ifndef _MSC_VER
       TFEL_NORETURN TFEL_INLINE void rethrow();
-#else /* _MSC_VER */
+#else  /* _MSC_VER */
       TFEL_INLINE void rethrow();
 #endif /* _MSC_VER */
-	  //! \brief conversion to bool
-      TFEL_INLINE operator bool () const;
+       //! \brief conversion to bool
+      TFEL_INLINE operator bool() const;
       //! \brief conversion to underlying type
-      TFEL_INLINE T& operator* ();
+      TFEL_INLINE T& operator*();
       //! \brief conversion to underlying type
-      TFEL_INLINE const T& operator* () const;
+      TFEL_INLINE const T& operator*() const;
       //! \brief conversion to underlying type
-      TFEL_INLINE T* operator-> ();
+      TFEL_INLINE T* operator->();
       //! \brief conversion to underlying type
-      TFEL_INLINE const T* operator-> () const;
+      TFEL_INLINE const T* operator->() const;
       //! \brief destructor
       TFEL_INLINE ~ThreadedTaskResult();
-    private:
+
+     private:
       /*!
        * build an object
        * \param[in] args: arguments to the constructor
        */
-      template<typename... Args>
+      template <typename... Args>
       TFEL_INLINE void build(Args&&...);
       //! \brief clear the underlying object destructor
       TFEL_INLINE void clear();
@@ -102,16 +100,15 @@ namespace tfel{
       //! \brief if true, the ThreadedTaskResult contains a value
       bool initialized = false;
       //! \brief storage of the underlying value
-      typename std::aligned_storage<sizeof(T),alignof(T)>::type storage;
+      typename std::aligned_storage<sizeof(T), alignof(T)>::type storage;
       //! exception ptr thrown during the task
       std::exception_ptr eptr;
     };
 
     //! Partial specialisation for non-returning tasks
-    template<>
+    template <>
     struct TFELSYSTEM_VISIBILITY_EXPORT ThreadedTaskResult<void>
-      : public ThreadedTaskResultBase
-    {
+        : public ThreadedTaskResultBase {
       //! \brief default constructor
       ThreadedTaskResult();
       //! \brief move constructor
@@ -127,18 +124,19 @@ namespace tfel{
       //! \brief throw the catched exception
       TFEL_NORETURN void rethrow();
       //! \brief conversion to bool
-      operator bool () const;
+      operator bool() const;
       //! \brief destructor
       ~ThreadedTaskResult();
-    private:
+
+     private:
       //! exception ptr thrown during the task
       std::exception_ptr eptr;
     };
 
-  } // end of namespace system
+  }  // end of namespace system
 
-} // end of namespace tfel
+}  // end of namespace tfel
 
-#include"TFEL/System/ThreadedTaskResult.ixx"
+#include "TFEL/System/ThreadedTaskResult.ixx"
 
 #endif /* LIB_TFEL_SYSTEM_THREADEDTASKRESULT_HXX */

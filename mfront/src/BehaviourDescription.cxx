@@ -719,7 +719,8 @@ namespace mfront {
                  (this->getBehaviourType() !=
                   BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR),
              "only finite and strain behaviour are supported");
-    this->setAttribute(BehaviourDescription::requiresStiffnessTensor, false,false);
+    this->setAttribute(BehaviourDescription::requiresStiffnessTensor, false,
+                       false);
     throw_if(!this->elasticMaterialProperties.empty(),
              "elastic material property already declared");
     auto lemps =
@@ -983,8 +984,7 @@ namespace mfront {
     return this->mvariables;
   }  // end of BehaviourDescription::getMainVariables
 
-  Gradient& BehaviourDescription::getGradient(
-      const std::string& n) {
+  Gradient& BehaviourDescription::getGradient(const std::string& n) {
     using value_type = std::pair<Gradient, ThermodynamicForce>;
     const auto p =
         std::find_if(this->mvariables.begin(), this->mvariables.end(),
@@ -1446,8 +1446,9 @@ namespace mfront {
     if (this->hypotheses.empty()) {
       if ((this->stypeIsDefined) &&
           (this->getSymmetryType() == mfront::ORTHOTROPIC) &&
-          (this->oacIsDefined) && (this->getOrthotropicAxesConvention() ==
-                                   OrthotropicAxesConvention::PLATE)) {
+          (this->oacIsDefined) &&
+          (this->getOrthotropicAxesConvention() ==
+           OrthotropicAxesConvention::PLATE)) {
         for (const auto h : mh) {
           throw_if((h != ModellingHypothesis::TRIDIMENSIONAL) &&
                        (h != ModellingHypothesis::PLANESTRESS) &&
@@ -2542,7 +2543,7 @@ namespace mfront {
                     "' is not strictly positive");
       }
     }
-  } // end of checkIsStrictlyPositive
+  }  // end of checkIsStrictlyPositive
 
   void checkIsStrictlyNegative(
       const BehaviourDescription::MaterialProperty& mp) {
@@ -2553,6 +2554,6 @@ namespace mfront {
                     "' is not strictly negative");
       }
     }
-  } // end of checkIsStrictlyNegative
+  }  // end of checkIsStrictlyNegative
 
 }  // end of namespace mfront

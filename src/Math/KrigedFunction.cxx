@@ -1,70 +1,66 @@
-/*! 
+/*!
  * \file  src/Math/KrigedFunction.cxx
  * \brief
  * \author Thomas Helfer
  * \brief 02 fév 2010
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
-#include<sstream>
-#include<stdexcept>
+#include <sstream>
+#include <stdexcept>
 
-#include"TFEL/Raise.hxx"
-#include"TFEL/Math/Parser/KrigedFunction.hxx"
+#include "TFEL/Raise.hxx"
+#include "TFEL/Math/Parser/KrigedFunction.hxx"
 
-namespace tfel
-{
+namespace tfel {
 
-  namespace math
-  {
+  namespace math {
 
-    namespace parser
-    {
-      
-      void
-      KrigedFunctionBase::throwUnimplementedDifferentiateFunctionException()
-      {
-	raise("KrigedFunctionBase::"
-	      "throwUnimplementedDifferentiateFunctionException: "
-	      "unimplemented feature");
-      } // end of KrigedFunctionBase::throwUnimplementedDifferentiateFunctionException
+    namespace parser {
 
       void
-      KrigedFunctionBase::throwInvalidCreateFunctionByChangingParametersIntoVariables()
-      {
-	raise("KrigedFunctionException::"
-	      "throwInvalidCreateFunctionByChangingParametersIntoVariables: "
-	      "invalid call");
-      } // end of KrigedFunctionBase::throwInvalidCreateFunctionByChangingParametersIntoVariables()
+      KrigedFunctionBase::throwUnimplementedDifferentiateFunctionException() {
+        raise(
+            "KrigedFunctionBase::"
+            "throwUnimplementedDifferentiateFunctionException: "
+            "unimplemented feature");
+      }  // end of
+         // KrigedFunctionBase::throwUnimplementedDifferentiateFunctionException
 
-      void
-      KrigedFunctionBase::throwInvalidIndexException(const std::vector<double>::size_type i,
-						     const unsigned short N)
-      {
-	raise("KrigedFunctionBase::"
-	      "throwInvalidIndexException: "
-	      "invalid index ("+std::to_string(i)+" > "+
-	      std::to_string(N)+")");
-      } // end of KrigedFunctionBase::throwInvalidIndexException
-      
-      template<>
-      void
-      KrigedFunction<1u>::setVariableValue(const std::vector<double>::size_type i,
-					   const double v_)
-      {
-	if(i>0){
-	  KrigedFunctionBase::throwInvalidIndexException(i,0);
-	}
-	this->v = v_;
-      } // end of KrigedFunction<1u>::setVariableValue
+      void KrigedFunctionBase::
+          throwInvalidCreateFunctionByChangingParametersIntoVariables() {
+        raise(
+            "KrigedFunctionException::"
+            "throwInvalidCreateFunctionByChangingParametersIntoVariables: "
+            "invalid call");
+      }  // end of
+         // KrigedFunctionBase::throwInvalidCreateFunctionByChangingParametersIntoVariables()
 
-    } // end of namespace parser
+      void KrigedFunctionBase::throwInvalidIndexException(
+          const std::vector<double>::size_type i, const unsigned short N) {
+        raise(
+            "KrigedFunctionBase::"
+            "throwInvalidIndexException: "
+            "invalid index (" +
+            std::to_string(i) + " > " + std::to_string(N) + ")");
+      }  // end of KrigedFunctionBase::throwInvalidIndexException
 
-  } // end of namespace math
+      template <>
+      void KrigedFunction<1u>::setVariableValue(
+          const std::vector<double>::size_type i, const double v_) {
+        if (i > 0) {
+          KrigedFunctionBase::throwInvalidIndexException(i, 0);
+        }
+        this->v = v_;
+      }  // end of KrigedFunction<1u>::setVariableValue
 
-} // end of namespace tfel
+    }  // end of namespace parser
+
+  }  // end of namespace math
+
+}  // end of namespace tfel

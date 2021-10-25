@@ -29,7 +29,7 @@ namespace std {
     s << v;
     return s.str();
   }
-}
+}  // namespace std
 #endif /* defined __CYGWIN__ &&  (!defined _GLIBCXX_USE_C99) */
 
 namespace mfront {
@@ -38,27 +38,29 @@ namespace mfront {
     if (t == LibraryDescription::SHARED_LIBRARY) {
       return "shared library";
     }
-    tfel::raise_if(t != LibraryDescription::MODULE, "convert: unsupported library type");
+    tfel::raise_if(t != LibraryDescription::MODULE,
+                   "convert: unsupported library type");
     return "module";
   }  // end of to string
 
   void mergeLibraryDescription(LibraryDescription& d,
                                const LibraryDescription& s) {
-    tfel::raise_if(
-        (d.name != s.name) || (d.prefix != s.prefix) || (d.suffix != s.suffix) ||
-            (d.type != s.type),
-        "mergeLibraryDescription : "
-        "can't merge description of library' " +
-            d.name +
-            "' ("
-            "prefix: '" +
-            d.prefix + "', " + "suffix: '" + d.suffix + "', " + "type: '" + convert(d.type) +
-            "')"
-            "and description of library '" +
-            s.name +
-            "' ("
-            "prefix: '" +
-            s.prefix + "', " + "suffix: '" + s.suffix + "', " + "type: '" + convert(s.type) + "')");
+    tfel::raise_if((d.name != s.name) || (d.prefix != s.prefix) ||
+                       (d.suffix != s.suffix) || (d.type != s.type),
+                   "mergeLibraryDescription : "
+                   "can't merge description of library' " +
+                       d.name +
+                       "' ("
+                       "prefix: '" +
+                       d.prefix + "', " + "suffix: '" + d.suffix + "', " +
+                       "type: '" + convert(d.type) +
+                       "')"
+                       "and description of library '" +
+                       s.name +
+                       "' ("
+                       "prefix: '" +
+                       s.prefix + "', " + "suffix: '" + s.suffix + "', " +
+                       "type: '" + convert(s.type) + "')");
     if (!d.install_path.empty()) {
       if (d.install_path != s.install_path) {
         getLogStream() << "mergeLibraryDescription : "
@@ -81,8 +83,8 @@ namespace mfront {
     insert_if(d.deps, s.deps);
   }  // end of mergeLibraryDescription
 
-  const char* LibraryDescription::getDefaultLibraryPrefix(const TargetSystem s,
-                                                          const LibraryType) noexcept {
+  const char* LibraryDescription::getDefaultLibraryPrefix(
+      const TargetSystem s, const LibraryType) noexcept {
     if (s == CYGWIN) {
       return "cyg";
     }
@@ -93,8 +95,8 @@ namespace mfront {
 #endif
   }
 
-  const char* LibraryDescription::getDefaultLibrarySuffix(const TargetSystem s,
-                                                          const LibraryType l) noexcept {
+  const char* LibraryDescription::getDefaultLibrarySuffix(
+      const TargetSystem s, const LibraryType l) noexcept {
     auto error = [] {
       tfel::raise(
           "LibraryDescription::getDefaultLibrarySuffix : "
@@ -136,7 +138,10 @@ namespace mfront {
                                          const std::string& p,
                                          const std::string& s,
                                          const LibraryType t)
-      : name(n), prefix(p), suffix(s), type(t) {}  // end of LibraryDescription::LibraryDescription
+      : name(n),
+        prefix(p),
+        suffix(s),
+        type(t) {}  // end of LibraryDescription::LibraryDescription
 
   LibraryDescription::LibraryDescription(const LibraryDescription&) = default;
   LibraryDescription::LibraryDescription(LibraryDescription&&) = default;
@@ -185,7 +190,9 @@ namespace mfront {
        const tfel::utilities::CxxTokenizer::const_iterator pe) {
     using tfel::utilities::CxxTokenizer;
     const auto f = "read<LibraryDescription>";
-    auto error = [&f](const std::string& m) { tfel::raise(std::string{f} + ": " + m); };
+    auto error = [&f](const std::string& m) {
+      tfel::raise(std::string{f} + ": " + m);
+    };
     LibraryDescription::LibraryType type = LibraryDescription::SHARED_LIBRARY;
     auto btype = false;
     auto name = std::string{};
@@ -205,7 +212,7 @@ namespace mfront {
     CxxTokenizer::readSpecifiedToken(f, "{", c, pe);
     CxxTokenizer::checkNotEndOfLine(f, c, pe);
     auto get_string = [&c, pe, &error, &f](std::string& s,
-					   const char* const e) {
+                                           const char* const e) {
       if (!s.empty()) {
         error(std::string(e) + " multiply defined");
       }
@@ -216,7 +223,7 @@ namespace mfront {
     };
     auto get_vector = [&c, pe, &error, &f](std::vector<std::string>& v,
                                            const char* const e) {
-      if(!v.empty()){
+      if (!v.empty()) {
         error("library member '" + std::string(e) + "' multiply defined");
       }
       ++c;

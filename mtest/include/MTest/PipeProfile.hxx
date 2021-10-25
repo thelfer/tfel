@@ -1,40 +1,38 @@
 /*!
  * \file   PipeProfile.hxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   14 déc. 2015
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_MTEST_PIPEPROFILE_HXX
 #define LIB_MTEST_PIPEPROFILE_HXX
 
-#include<iosfwd>
-#include"MTest/PipeProfile.hxx"
+#include <iosfwd>
+#include "MTest/PipeProfile.hxx"
 
-namespace mtest{
+namespace mtest {
 
   // forward declaration
   struct CurrentState;
-  
+
   /*!
    * structure in charge of reporting strain, stresses or internal
    * state variables profiles.
    */
-  struct PipeProfile
-  {
+  struct PipeProfile {
     /*!
      * put the requested value(s) in the output stream
      * \param[out] os: output stream
      * \param[in]  s:  current state
      */
-    virtual void report(std::ostream&,
-			const CurrentState&) const = 0;
+    virtual void report(std::ostream&, const CurrentState&) const = 0;
     //! destructor
     virtual ~PipeProfile();
   };
@@ -42,9 +40,7 @@ namespace mtest{
   /*!
    * structure in charge of reporting stresses.
    */
-  struct PipeStressProfile
-    : public PipeProfile
-  {
+  struct PipeStressProfile : public PipeProfile {
     //! default constructor
     PipeStressProfile();
     /*!
@@ -57,11 +53,11 @@ namespace mtest{
      * \param[out] os: output stream
      * \param[in]  s:  current state
      */
-    void report(std::ostream&,
-		const CurrentState&) const override;
+    void report(std::ostream&, const CurrentState&) const override;
     //! destructor
     ~PipeStressProfile() override;
-  private:
+
+   private:
     bool all;
     unsigned short c;
   };
@@ -69,9 +65,7 @@ namespace mtest{
   /*!
    * structure in charge of reporting strains.
    */
-  struct PipeStrainProfile
-    : public PipeProfile
-  {
+  struct PipeStrainProfile : public PipeProfile {
     //! default constructor
     PipeStrainProfile();
     /*!
@@ -84,11 +78,11 @@ namespace mtest{
      * \param[out] os: output stream
      * \param[in]  s:  current state
      */
-    void report(std::ostream&,
-		const CurrentState&) const override;
+    void report(std::ostream&, const CurrentState&) const override;
     //! destructor
     ~PipeStrainProfile() override;
-  private:
+
+   private:
     bool all;
     unsigned short c;
   };
@@ -96,9 +90,7 @@ namespace mtest{
   /*!
    * structure in charge of reporting internal state variables.
    */
-  struct PipeInternalStateVariableProfile
-    : public PipeProfile
-  {
+  struct PipeInternalStateVariableProfile : public PipeProfile {
     //! default constructor
     PipeInternalStateVariableProfile();
     /*!
@@ -111,15 +103,15 @@ namespace mtest{
      * \param[out] os: output stream
      * \param[in]  s:  current state
      */
-    void report(std::ostream&,
-		const CurrentState&) const override;
+    void report(std::ostream&, const CurrentState&) const override;
     //! destructor
     ~PipeInternalStateVariableProfile() override;
-  private:
+
+   private:
     bool all;
     unsigned short c;
   };
-  
-}
+
+}  // namespace mtest
 
 #endif /* LIB_MTEST_PIPEPROFILE_HXX */

@@ -19,7 +19,8 @@ namespace tfel {
   namespace material {
 
     template <typename StressStensor>
-    Cazacu2004StressType<StressStensor> computeCazacu2004OrthotropicStressCriterion(
+    Cazacu2004StressType<StressStensor>
+    computeCazacu2004OrthotropicStressCriterion(
         const StressStensor& sig,
         const J2OCoefficients<StressStensor>& a,
         const J3OCoefficients<StressStensor>& b,
@@ -72,7 +73,8 @@ namespace tfel {
       const auto dnb = 1 / (4 * std::sqrt(J2O)) * (dJ2O ^ dJ2O) +
                        (std::sqrt(J2O) / 2) * d2J2O - (c / 3) * d2J3O;
       const auto n = tfel::math::eval(iseq * iseq * nb);
-      return std::make_tuple(seq, n, tfel::math::eval(iseq * (-2 * (n ^ n) + iseq * dnb)));
+      return std::make_tuple(
+          seq, n, tfel::math::eval(iseq * (-2 * (n ^ n) + iseq * dnb)));
     }  // end of computeCazacu2004OrthotropicStressCriterionSecondDerivative
 
   }  // end of namespace material

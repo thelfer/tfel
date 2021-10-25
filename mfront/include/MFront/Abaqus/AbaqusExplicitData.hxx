@@ -1,37 +1,36 @@
 /*!
  * \file   AbaqusExplicitData.hxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   29 mars 2016
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_MFRONT_ABAQUS_ABAQUSEXPLICITDATA_HXX
 #define LIB_MFRONT_ABAQUS_ABAQUSEXPLICITDATA_HXX
 
-#include"TFEL/Math/General/StridedRandomAccessIterator.hxx"
-#include"TFEL/Math/General/DifferenceRandomAccessIterator.hxx"
-#include"TFEL/Material/OutOfBoundsPolicy.hxx"
+#include "TFEL/Math/General/StridedRandomAccessIterator.hxx"
+#include "TFEL/Math/General/DifferenceRandomAccessIterator.hxx"
+#include "TFEL/Material/OutOfBoundsPolicy.hxx"
 
-namespace abaqus{
+namespace abaqus {
 
-  template<typename T>
-  struct AbaqusExplicitData{
+  template <typename T>
+  struct AbaqusExplicitData {
     //! a simple alias
     using const_iterator = const T*;
     //! a simple alias
-    using strided_iterator =
-      tfel::math::StridedRandomAccessIterator<T*>;
+    using strided_iterator = tfel::math::StridedRandomAccessIterator<T*>;
     //! a simple alias
     using strided_const_iterator =
-      tfel::math::StridedRandomAccessIterator< const T*>;
+        tfel::math::StridedRandomAccessIterator<const T*>;
     using diff_strided_const_iterator =
-      tfel::math::DifferenceRandomAccessIterator<strided_const_iterator>;
+        tfel::math::DifferenceRandomAccessIterator<strided_const_iterator>;
     //! time increment
     const T dt;
     //! material properties
@@ -56,8 +55,8 @@ namespace abaqus{
     T& enerInelasNew;
     //! out of bounds policy
     const tfel::material::OutOfBoundsPolicy policy;
-  }; // end of struct AbaqusExplicitData
-  
-} // end of namespace abaqus
+  };  // end of struct AbaqusExplicitData
+
+}  // end of namespace abaqus
 
 #endif /* LIB_MFRONT_ABAQUS_ABAQUSEXPLICITDATA_HXX */

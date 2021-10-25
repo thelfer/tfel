@@ -3,26 +3,24 @@
  * \brief  This file declares the CMaterialPropertyInterface class
  * \author Thomas Helfer
  * \date   06 mai 2008
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_CMATERIALPROPERTYINTERFACE_HXX
-#define LIB_CMATERIALPROPERTYINTERFACE_HXX 
+#define LIB_CMATERIALPROPERTYINTERFACE_HXX
 
-#include"MFront/CMaterialPropertyInterfaceBase.hxx"
+#include "MFront/CMaterialPropertyInterfaceBase.hxx"
 
-namespace mfront{
+namespace mfront {
 
-  struct CMaterialPropertyInterface
-    : public CMaterialPropertyInterfaceBase
-  {
+  struct CMaterialPropertyInterface : public CMaterialPropertyInterfaceBase {
     static std::string getName();
-    
+
     CMaterialPropertyInterface();
     /*!
      * \param[in] k  : keyword treated
@@ -33,35 +31,34 @@ namespace mfront{
      * treated by the interface. The second entry is an iterator after
      * the last token treated.
      */
-    std::pair<bool,tokens_iterator>
-    treatKeyword(const std::string&,
-		 const std::vector<std::string>&,
-		 tokens_iterator,
-		 const tokens_iterator) override;
+    std::pair<bool, tokens_iterator> treatKeyword(
+        const std::string&,
+        const std::vector<std::string>&,
+        tokens_iterator,
+        const tokens_iterator) override;
     /*!
      * \brief : fill the target descripton
      * \param[out] d   : target description
      * \param[in]  mpd : material property description
      */
-    void getTargetsDescription(TargetsDescription&,
-			       const MaterialPropertyDescription&) const override;
+    void getTargetsDescription(
+        TargetsDescription&, const MaterialPropertyDescription&) const override;
     /*!
      * \param[out] os:  output file stream
      * \param[in]  mpd: material property description
      */
-    void writeInterfaceSymbol(std::ostream&,
-			      const MaterialPropertyDescription&) const override;
+    void writeInterfaceSymbol(
+        std::ostream&, const MaterialPropertyDescription&) const override;
     //! destructor
     ~CMaterialPropertyInterface() override;
-        
-  protected:
 
+   protected:
     /*!
      * \return the name of the generated library
      * \param[in] mpd: material property description
      */
-    virtual std::string
-    getGeneratedLibraryName(const MaterialPropertyDescription&) const;
+    virtual std::string getGeneratedLibraryName(
+        const MaterialPropertyDescription&) const;
 
     virtual void writeBeginHeaderNamespace(std::ostream&) const override;
 
@@ -74,35 +71,31 @@ namespace mfront{
      * \param[in] m: material name
      * \param[in] c: class name
      */
-    virtual std::string
-    getHeaderFileName(const std::string&,
-		      const std::string&) const override;
+    virtual std::string getHeaderFileName(const std::string&,
+                                          const std::string&) const override;
     /*!
      * \param[in] m: material name
      * \param[in] c: class name
      */
-    virtual std::string
-    getSrcFileName(const std::string&,
-		   const std::string&) const override;
+    virtual std::string getSrcFileName(const std::string&,
+                                       const std::string&) const override;
     /*!
      * \param[in] mpd: material property description
      */
-    virtual std::string
-    getFunctionName(const MaterialPropertyDescription&) const override;
+    virtual std::string getFunctionName(
+        const MaterialPropertyDescription&) const override;
 
     /*!
      * \param[in] mpd: material property description
      */
-    virtual std::string
-    getCheckBoundsFunctionName(const MaterialPropertyDescription&) const override;
+    virtual std::string getCheckBoundsFunctionName(
+        const MaterialPropertyDescription&) const override;
     /*!
      * \return true if a check bounds function is required
      */
-    virtual bool
-    requiresCheckBoundsFunction() const override;
-  }; // end of CMaterialPropertyInterface
+    virtual bool requiresCheckBoundsFunction() const override;
+  };  // end of CMaterialPropertyInterface
 
-} // end of namespace mfront
+}  // end of namespace mfront
 
 #endif /* LIB_CMATERIALPROPERTYINTERFACE_HXX */
-

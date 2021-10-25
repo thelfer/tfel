@@ -57,8 +57,7 @@ namespace tfel {
      * \param[in] c: c coefficient
      */
     template <typename StressStensor>
-    Drucker1949StressType<StressStensor>
-    computeDrucker1949StressCriterion(
+    Drucker1949StressType<StressStensor> computeDrucker1949StressCriterion(
         const StressStensor&, const Drucker1949BaseType<StressStensor>);
     /*!
      * \brief compute the Drucker1949 yield stress and the its first derivative

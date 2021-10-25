@@ -55,7 +55,8 @@ namespace mfront {
       }
       return ds.get<tfel::utilities::DataStructure>();
     };  // end of getDataStructure
-    auto getStressPotential = [&d,&getDataStructure,&raise, this](const char* const n) {
+    auto getStressPotential = [&d, &getDataStructure, &raise,
+                               this](const char* const n) {
       if (d.count(n) != 0) {
         const auto ds = getDataStructure(n, d.at(n));
         if (this->stress_potential != nullptr) {

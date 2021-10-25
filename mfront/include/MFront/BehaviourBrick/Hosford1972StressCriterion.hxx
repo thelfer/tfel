@@ -61,6 +61,7 @@ namespace mfront {
       bool isNormalDeviatoric() const override;
       //! destructor
       ~Hosford1972StressCriterion() override;
+
      protected:
       //! \brief hosford exponent
       BehaviourDescription::MaterialProperty a;

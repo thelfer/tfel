@@ -1,6 +1,6 @@
 /*!
  * \file   mfront/src/InstallPath.cxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   06/03/2019
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
@@ -45,5 +45,4 @@ namespace mfront {
     return {};
   }  // end of getInstallPath
 
-}  // end of InstallPrefix
-
+}  // namespace mfront

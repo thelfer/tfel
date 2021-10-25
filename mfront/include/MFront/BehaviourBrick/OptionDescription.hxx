@@ -29,8 +29,8 @@ namespace tfel {
   namespace glossary {
     // forward declaration
     struct GlossaryEntry;
-  }  // end of glossary
-}
+  }  // namespace glossary
+}  // namespace tfel
 
 namespace mfront {
 

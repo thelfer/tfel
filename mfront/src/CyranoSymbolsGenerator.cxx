@@ -36,11 +36,11 @@ namespace mfront {
       const BehaviourDescription& mb,
       const std::string& name) const {
     auto throw_if = [](const bool b, const std::string& m) {
-      tfel::raise_if(
-          b, "CyranoSymbolsGenerator::writeBehaviourTypeSymbols: " + m);
+      tfel::raise_if(b,
+                     "CyranoSymbolsGenerator::writeBehaviourTypeSymbols: " + m);
     };
-    out << "MFRONT_SHAREDOBJ unsigned short "
-        << i.getFunctionNameBasis(name) << "_BehaviourType = ";
+    out << "MFRONT_SHAREDOBJ unsigned short " << i.getFunctionNameBasis(name)
+        << "_BehaviourType = ";
     if (mb.getBehaviourType() ==
         BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) {
       if (mb.isStrainMeasureDefined()) {
@@ -71,13 +71,12 @@ namespace mfront {
       const std::string& name) const {
     auto throw_if = [](const bool b, const std::string& m) {
       if (b) {
-        tfel::raise(
-            "CyranoSymbolsGenerator::writeBehaviourKinematicSymbols: " +
-            m);
+        tfel::raise("CyranoSymbolsGenerator::writeBehaviourKinematicSymbols: " +
+                    m);
       }
     };
-    out << "MFRONT_SHAREDOBJ unsigned short "
-        << i.getFunctionNameBasis(name) << "_BehaviourKinematic = ";
+    out << "MFRONT_SHAREDOBJ unsigned short " << i.getFunctionNameBasis(name)
+        << "_BehaviourKinematic = ";
     if (mb.getBehaviourType() ==
         BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) {
       if (mb.isStrainMeasureDefined()) {
@@ -101,7 +100,7 @@ namespace mfront {
     }
   }  // end of CyranoSymbolsGenerator::writeBehaviourKinematicSymbols
 
-  bool CyranoSymbolsGenerator::handleStrainMeasure() const{
+  bool CyranoSymbolsGenerator::handleStrainMeasure() const {
     return true;
   }  // end of CyranoSymbolsGenerator::handleStrainMeasure
 

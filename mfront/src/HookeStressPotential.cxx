@@ -115,8 +115,9 @@ namespace mfront {
                 m += "this->sigzz+this->dsigzz,";
                 m += "real(1),this->epsilon);\n";
                 m += "const StressStensor prediction_stress = ";
-                m += "("+lambda+") * trace(prediction_strain) * Stensor::Id() + ";
-                m += "2 * ("+mu+") * prediction_strain;\n";
+                m += "(" + lambda +
+                     ") * trace(prediction_strain) * Stensor::Id() + ";
+                m += "2 * (" + mu + ") * prediction_strain;\n";
                 m += "return prediction_stress;\n";
               } else {
                 m += "StressStensor prediction_stress;\n";
@@ -275,8 +276,8 @@ namespace mfront {
       using tfel::glossary::Glossary;
       const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
       if (getVerboseMode() >= VERBOSE_DEBUG) {
-        getLogStream()
-            << "HookeStressPotential::declareComputeStressForIsotropicBehaviour: begin\n";
+        getLogStream() << "HookeStressPotential::"
+                          "declareComputeStressForIsotropicBehaviour: begin\n";
       }
       CodeBlock smts;
       CodeBlock sets;
@@ -324,8 +325,8 @@ namespace mfront {
       bd.setCode(uh, BehaviourData::ComputeFinalStress, sets,
                  BehaviourData::CREATE, BehaviourData::AT_BEGINNING, false);
       if (getVerboseMode() >= VERBOSE_DEBUG) {
-        getLogStream()
-            << "HookeStressPotential::declareComputeStressForIsotropicBehaviour: end\n";
+        getLogStream() << "HookeStressPotential::"
+                          "declareComputeStressForIsotropicBehaviour: end\n";
       }
     }  // end of HookeStressPotential::declareComputeStressForIsotropicBehaviour
 

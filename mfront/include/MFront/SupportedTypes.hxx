@@ -3,44 +3,41 @@
  * \brief  This file declares the SupportedTypes class
  * \author Thomas Helfer
  * \date   12 Jan 2007
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_MFRONT_SUPPORTEDTYPES_HXX
-#define LIB_MFRONT_SUPPORTEDTYPES_HXX 
+#define LIB_MFRONT_SUPPORTEDTYPES_HXX
 
-#include<map>
-#include<string>
-#include<vector>
+#include <map>
+#include <string>
+#include <vector>
 
-#include"TFEL/Material/ModellingHypothesis.hxx"
-#include"MFront/MFrontConfig.hxx"
+#include "TFEL/Material/ModellingHypothesis.hxx"
+#include "MFront/MFrontConfig.hxx"
 
-namespace mfront
-{
+namespace mfront {
 
   //! class handling all type variables types supported by MFront
-  struct MFRONT_VISIBILITY_EXPORT SupportedTypes
-  {
+  struct MFRONT_VISIBILITY_EXPORT SupportedTypes {
     //! limit for small array support
-#if defined _WIN32 || defined _WIN64 ||defined __CYGWIN__
+#if defined _WIN32 || defined _WIN64 || defined __CYGWIN__
     static const int ArraySizeLimit = 10u;
-#else 
+#else
     static constexpr int ArraySizeLimit = 10u;
 #endif /* LIB_TFEL_SYSTEM_EXTERNALFUNCTIONSPROTOTYPES_HXX */
     //! type of variable supported
-    enum TypeFlag{Scalar,TVector,Stensor,Tensor};
+    enum TypeFlag { Scalar, TVector, Stensor, Tensor };
     /*!
      * class handling the size of a variable or a set of variables as
      * a function of the variables' type and the modelling hypothesis
      */
-    struct MFRONT_VISIBILITY_EXPORT TypeSize
-    {
+    struct MFRONT_VISIBILITY_EXPORT TypeSize {
       //! a simple alias
       using Hypothesis = tfel::material::ModellingHypothesis::Hypothesis;
       //! constructor
@@ -56,8 +53,7 @@ namespace mfront
        * \param[in] c: symmetric tensor size
        * \param[in] d: (unsymmetric) tensor size
        */
-      TypeSize(const int,const int,
-	       const int,const int);
+      TypeSize(const int, const int, const int, const int);
       //! assignement
       TypeSize& operator=(const TypeSize&);
       //! move assignement
@@ -95,22 +91,21 @@ namespace mfront
        * equal to one
        */
       bool isOne() const;
-    private:
+
+     private:
       //! ouptut operator
-      friend std::ostream& 
-      operator<< (std::ostream&, const TypeSize&);
+      friend std::ostream& operator<<(std::ostream&, const TypeSize&);
       //! scalar part
-      int scalarSize  = 0;
+      int scalarSize = 0;
       //! vector part
       int tvectorSize = 0;
       //! symmetric tensor part
       int stensorSize = 0;
       //! (un)symmetric tensor part
-      int tensorSize  = 0;
-    }; // end of class SupportedTypes::TypeSize
+      int tensorSize = 0;
+    };  // end of class SupportedTypes::TypeSize
     //! \return a list of type names associated with type flags
-    static const std::map<std::string,TypeFlag>&
-    getTypeFlags();
+    static const std::map<std::string, TypeFlag>& getTypeFlags();
     /*!
      * \return the flag associated with the given type
      * \param[in] t : type
@@ -136,23 +131,21 @@ namespace mfront
      * \param[in] t : variable type
      * \param[in] a : array size
      */
-    static TypeSize getTypeSize(const std::string&,
-				const unsigned short);
+    static TypeSize getTypeSize(const std::string&, const unsigned short);
 
     std::string getTimeDerivativeType(const std::string&) const;
     //! desctructor
     virtual ~SupportedTypes();
 
-  }; // end of class SupportedTypes
+  };  // end of class SupportedTypes
 
   /*!
    * \brief convert to string
    * \param[in] s: type size
    */
-  MFRONT_VISIBILITY_EXPORT std::string
-  to_string(const SupportedTypes::TypeSize&);
-  
-} // end of namespace mfront
+  MFRONT_VISIBILITY_EXPORT std::string to_string(
+      const SupportedTypes::TypeSize&);
+
+}  // end of namespace mfront
 
 #endif /* LIB_MFRONT_SUPPORTEDTYPES_HXX */
-

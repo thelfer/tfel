@@ -3,27 +3,26 @@
  * \brief  This file declares the VariableDescriptionBase class
  * \author Thomas Helfer
  * \date   17 Jan 2007
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_MFRONT_VARIABLEDESCRIPTIONBASE_HXX
 #define LIB_MFRONT_VARIABLEDESCRIPTIONBASE_HXX
 
-#include<map>
-#include<vector>
-#include<string>
-#include<initializer_list>
+#include <map>
+#include <vector>
+#include <string>
+#include <initializer_list>
 
-#include"MFront/MFrontConfig.hxx"
-#include"MFront/VariableAttribute.hxx"
+#include "MFront/MFrontConfig.hxx"
+#include "MFront/VariableAttribute.hxx"
 
-namespace mfront
-{
+namespace mfront {
 
   /*!
    * \brief structure standing for a variable.
@@ -31,8 +30,7 @@ namespace mfront
    * This variable is considered as an array if arraySize is greater
    * than 1.
    */
-  struct MFRONT_VISIBILITY_EXPORT VariableDescriptionBase
-  {
+  struct MFRONT_VISIBILITY_EXPORT VariableDescriptionBase {
     //! default constructor
     VariableDescriptionBase();
     //! copy constructor
@@ -40,11 +38,9 @@ namespace mfront
     //! move constructor
     VariableDescriptionBase(VariableDescriptionBase&&);
     //! move operator
-    VariableDescriptionBase&
-    operator=(VariableDescriptionBase&&);
+    VariableDescriptionBase& operator=(VariableDescriptionBase&&);
     //! assignement operator
-    VariableDescriptionBase&
-    operator=(const VariableDescriptionBase&);
+    VariableDescriptionBase& operator=(const VariableDescriptionBase&);
     /*!
      * Constructor
      * \param[in] t : variable type
@@ -54,9 +50,9 @@ namespace mfront
      * \param[in] l : line number
      */
     VariableDescriptionBase(const std::string&,
-			    const std::string&,
-			    const unsigned short,
-			    const size_t);
+                            const std::string&,
+                            const unsigned short,
+                            const size_t);
     //! destructor
     ~VariableDescriptionBase();
     //! type of the variable
@@ -72,8 +68,8 @@ namespace mfront
     unsigned short arraySize;
     //! line at wich the variable has been declared
     size_t lineNumber;
-  }; // end of struct VariableDescriptionBase
+  };  // end of struct VariableDescriptionBase
 
-} // end of namespace mfront
+}  // end of namespace mfront
 
 #endif /* LIB_MFRONT_VARIABLEDESCRIPTIONBASE_HXX */

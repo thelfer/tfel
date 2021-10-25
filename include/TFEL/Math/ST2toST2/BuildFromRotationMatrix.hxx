@@ -92,7 +92,7 @@ namespace tfel {
        * \brief partial specialisation in 3D
        */
       template <typename T>
-      struct BuildFromRotationMatrix<3u,T> {
+      struct BuildFromRotationMatrix<3u, T> {
         /*!
          * \return the st2tost2 that has the same effect as applying
          * the rotation

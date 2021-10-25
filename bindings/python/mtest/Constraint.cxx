@@ -20,7 +20,7 @@
 
 static mtest::ConstraintOptions makeConstraintOptions(
     const boost::python::tuple a, const boost::python::dict d) {
-  tfel::raise_if(boost::python::len(a)!=0, "no unamed argument expected");
+  tfel::raise_if(boost::python::len(a) != 0, "no unamed argument expected");
   const auto keys = d.keys();
   const auto values = d.values();
   boost::python::stl_input_iterator<boost::python::object> pk(keys);

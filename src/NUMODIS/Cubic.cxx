@@ -1,14 +1,14 @@
 /*!
- * \file   src/NUMODIS/Cubic.cxx  
- * \brief    
+ * \file   src/NUMODIS/Cubic.cxx
+ * \brief
  * \author Laurent Dupuy
  * \date   9/06/2017
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #include <algorithm>
@@ -19,14 +19,12 @@
 #include "NUMODIS/IBurgers.hxx"
 #include "NUMODIS/GSystem.hxx"
 
-namespace numodis
-{
+namespace numodis {
 
   Cubic::Cubic(Cubic&&) = default;
 
   Cubic::Cubic(const Cubic&) = default;
 
-  
   //===============================================================
   // Cubic::Symmetry
   //---------------------------------------------------------------
@@ -38,61 +36,53 @@ namespace numodis
   */
   //===============================================================
   std::vector<int> Cubic::Symmetry(int k,
-				   const std::vector<int>& indices) const
-  {
-
+                                   const std::vector<int>& indices) const {
     // permutation
     int p = k % 6;
     std::vector<int> permutation(3);
-    for(std::vector<int>::size_type i=0; i!=3; i++)
-      permutation[i] = ( p/3==0 ? (i+p)%3 : (p-i)%3 );
+    for (std::vector<int>::size_type i = 0; i != 3; i++)
+      permutation[i] = (p / 3 == 0 ? (i + p) % 3 : (p - i) % 3);
 
     // signes
-    int s= k / 6;
+    int s = k / 6;
 
     std::vector<int> symmetry(3);
-    symmetry[0] = ( s/4==0     ? indices[permutation[0]] : -indices[permutation[0]] );
-    symmetry[1] = ( (s/2)%2==0 ? indices[permutation[1]] : -indices[permutation[1]] );
-    symmetry[2] = ( s%2==0     ? indices[permutation[2]] : -indices[permutation[2]] );
+    symmetry[0] =
+        (s / 4 == 0 ? indices[permutation[0]] : -indices[permutation[0]]);
+    symmetry[1] =
+        ((s / 2) % 2 == 0 ? indices[permutation[1]] : -indices[permutation[1]]);
+    symmetry[2] =
+        (s % 2 == 0 ? indices[permutation[2]] : -indices[permutation[2]]);
 
     return symmetry;
-    
+  }
+
+  int Cubic::ScalProduct(const IPlane& iplane, const IBurgers& iburgers) const {
+    return numodis::math::iScalProduct(iplane.getIndex(), iburgers.getIndex());
   }
 
   int Cubic::ScalProduct(const IPlane& iplane,
-			 const IBurgers& iburgers) const
-  {
-    return numodis::math::iScalProduct(iplane.getIndex(),iburgers.getIndex());
-  }
-  
-
-  int Cubic::ScalProduct(const IPlane& iplane,
-			 const IDirection& idirection) const
-  {
-    return numodis::math::iScalProduct(iplane.getIndex(),idirection.getIndex());
-  }
-  
-  int Cubic::getNsymmetries() const
-  {
-    return 48;
+                         const IDirection& idirection) const {
+    return numodis::math::iScalProduct(iplane.getIndex(),
+                                       idirection.getIndex());
   }
 
-  
+  int Cubic::getNsymmetries() const { return 48; }
+
   //===============================================================
   // Cubic::Symmetry
   //---------------------------------------------------------------
-  //! Compute a symmetric glide system 
+  //! Compute a symmetric glide system
   //---------------------------------------------------------------
   /*!
     \param k rank of the symmetry
     \return symmetric glide system
   */
   //===============================================================
-  GSystem Cubic::Symmetry(int k,
-			  const GSystem& gsystem) const
-  {
-    return GSystem(IBurgers(this->Symmetry(k,gsystem.getIBurgers().getIndex())),
-		   IPlane(this->Symmetry(k,gsystem.getIPlane().getIndex())));
+  GSystem Cubic::Symmetry(int k, const GSystem& gsystem) const {
+    return GSystem(
+        IBurgers(this->Symmetry(k, gsystem.getIBurgers().getIndex())),
+        IPlane(this->Symmetry(k, gsystem.getIPlane().getIndex())));
   }
 
   //===============================================================
@@ -107,16 +97,13 @@ namespace numodis
 
   */
   //===============================================================
-  Cubic::Cubic()
-  {
-
+  Cubic::Cubic() {
     //------
     // name
     //------
     _name = "Cubic";
 
     Init();
-
   }
 
   //===============================================================
@@ -124,72 +111,68 @@ namespace numodis
   //---------------------------------------------------------------
   //! Initialize the parameters required to handle cubic crystals
   //===============================================================
-  void Cubic::Init()
-  {
+  void Cubic::Init() {
     //    _ra0=1.0/_a0;
     //----------------------
     // basis initialization
     //----------------------
-    _alattice.resize(3,Vect3());
+    _alattice.resize(3, Vect3());
     _alattice[0][0] = 1.0;
     _alattice[1][1] = 1.0;
     _alattice[2][2] = 1.0;
-    
-    _blattice.resize(3,Vect3());
+
+    _blattice.resize(3, Vect3());
     _blattice[0][0] = 1.0;
     _blattice[1][1] = 1.0;
     _blattice[2][2] = 1.0;
 
-    _plattice.resize(3,Vect3());
+    _plattice.resize(3, Vect3());
     _plattice[0][0] = 1.0;
     _plattice[1][1] = 1.0;
     _plattice[2][2] = 1.0;
   }
 
-  Vect3 Cubic::direction(const IDirection& idirection) const
-  {
+  Vect3 Cubic::direction(const IDirection& idirection) const {
     //-------------------------------------
     // conversion to Crystallo coordinates
     //-------------------------------------
     Vect3 xdirection;
-    xdirection[0]=idirection.getIndex()[0]*_alattice[0][0];
-    xdirection[1]=idirection.getIndex()[1]*_alattice[1][1];
-    xdirection[2]=idirection.getIndex()[2]*_alattice[2][2];
+    xdirection[0] = idirection.getIndex()[0] * _alattice[0][0];
+    xdirection[1] = idirection.getIndex()[1] * _alattice[1][1];
+    xdirection[2] = idirection.getIndex()[2] * _alattice[2][2];
     //--------------------------
     // convert to a unit vector
     //--------------------------
     xdirection.Normalize();
     return xdirection;
-  } // end of Cubic::direction
-  
-  Vect3 Cubic::burgers_vector(const IBurgers& iburgers) const
-  {
+  }  // end of Cubic::direction
+
+  Vect3 Cubic::burgers_vector(const IBurgers& iburgers) const {
     //-------------------------------------
     // conversion to Crystallo coordinates
     //-------------------------------------
     Vect3 xburgers;
-    xburgers[0]=iburgers.getIndex()[0]*_blattice[0][0];
-    xburgers[1]=iburgers.getIndex()[1]*_blattice[1][1];
-    xburgers[2]=iburgers.getIndex()[2]*_blattice[2][2];
+    xburgers[0] = iburgers.getIndex()[0] * _blattice[0][0];
+    xburgers[1] = iburgers.getIndex()[1] * _blattice[1][1];
+    xburgers[2] = iburgers.getIndex()[2] * _blattice[2][2];
     return xburgers;
   }
-  
-  Vect3 Cubic::normal(const IPlane& iplane) const
-  {
+
+  Vect3 Cubic::normal(const IPlane& iplane) const {
     //-------------------------------------
     // conversion to Crystallo coordinates
     //-------------------------------------
     Vect3 xdirection;
-    xdirection[0]=iplane.getIndex()[0]*_plattice[0][0];
-    xdirection[1]=iplane.getIndex()[1]*_plattice[1][1];
-    xdirection[2]=iplane.getIndex()[2]*_plattice[2][2];
+    xdirection[0] = iplane.getIndex()[0] * _plattice[0][0];
+    xdirection[1] = iplane.getIndex()[1] * _plattice[1][1];
+    xdirection[2] = iplane.getIndex()[2] * _plattice[2][2];
     //--------------------------
     // convert to a unit vector
     //--------------------------
     xdirection.Normalize();
     return xdirection;
   }
-  
+
   //===========================================================
   // Cubic::Norm2
   //-----------------------------------------------------------
@@ -200,11 +183,11 @@ namespace numodis
     \return squared magnitude (unitless)
   */
   //===========================================================
-  double Cubic::Norm2(const IBurgers& iburgers) const
-  {
-    return iburgers[0]*iburgers[0]+iburgers[1]*iburgers[1]+iburgers[2]*iburgers[2];
+  double Cubic::Norm2(const IBurgers& iburgers) const {
+    return iburgers[0] * iburgers[0] + iburgers[1] * iburgers[1] +
+           iburgers[2] * iburgers[2];
   }
-    
+
   //===========================================================
   // Cubic::CrossProduct
   //-----------------------------------------------------------
@@ -217,11 +200,10 @@ namespace numodis
   */
   //===========================================================
   void Cubic::CrossProduct(const IPlane& iplane1,
-			   const IPlane& iplane2,
-			   IDirection& idirection) const
-  {
+                           const IPlane& iplane2,
+                           IDirection& idirection) const {
     std::vector<int> d(3);
-    numodis::math::iCrossProduct(iplane1.getIndex(),iplane2.getIndex(),d);
+    numodis::math::iCrossProduct(iplane1.getIndex(), iplane2.getIndex(), d);
     idirection.setIDirection(d);
   }
 
@@ -242,12 +224,12 @@ namespace numodis
   */
   //===========================================================
   void Cubic::CrossProduct(const IBurgers& iburgers,
-			   const IDirection& idirection,
-			   IPlane& iplane) const
-  {
+                           const IDirection& idirection,
+                           IPlane& iplane) const {
     std::vector<int> gplane(3);
 
-    numodis::math::iCrossProduct(iburgers.getIndex(),idirection.getIndex(),gplane);
+    numodis::math::iCrossProduct(iburgers.getIndex(), idirection.getIndex(),
+                                 gplane);
 
     iplane.setIPlane(gplane);
   }
@@ -270,12 +252,12 @@ namespace numodis
   */
   //===========================================================
   void Cubic::CrossProduct(const IDirection& idirection0,
-			   const IDirection& idirection1,
-			   IDirection& idirection2) const
-  {
+                           const IDirection& idirection1,
+                           IDirection& idirection2) const {
     std::vector<int> dir2(3);
 
-    numodis::math::iCrossProduct(idirection0.getIndex(),idirection1.getIndex(),dir2);
+    numodis::math::iCrossProduct(idirection0.getIndex(), idirection1.getIndex(),
+                                 dir2);
 
     idirection2.setIDirection(dir2);
   }
@@ -292,9 +274,7 @@ namespace numodis
   */
   //===============================================================
   bool Cubic::SamePlaneFamily(const IPlane& iplane0,
-			      const IPlane& iplane1) const
-  {
-
+                              const IPlane& iplane1) const {
     // sign changes are allowed for cubic crystals
     std::vector<int> ipl0sorted(numodis::math::abs(iplane0.getIndex()));
     std::vector<int> ipl1sorted(numodis::math::abs(iplane1.getIndex()));
@@ -304,8 +284,7 @@ namespace numodis
     numodis::math::iSortVector3FirstValue(ipl1sorted);
 
     // compare the glide planes
-    return numodis::math::iCollinear(ipl0sorted,ipl1sorted);
-
+    return numodis::math::iCollinear(ipl0sorted, ipl1sorted);
   }
 
   //===============================================================
@@ -320,24 +299,20 @@ namespace numodis
   */
   //===============================================================
   bool Cubic::SameBurgersFamily(const IBurgers& iburgers0,
-				const IBurgers& iburgers1) const
-  {
-
+                                const IBurgers& iburgers1) const {
     // sign changes are allowed for cubic crystals
-    std::vector<int> ibur0sorted=numodis::math::abs(iburgers0.getIndex());
-    std::vector<int> ibur1sorted=numodis::math::abs(iburgers1.getIndex());
+    std::vector<int> ibur0sorted = numodis::math::abs(iburgers0.getIndex());
+    std::vector<int> ibur1sorted = numodis::math::abs(iburgers1.getIndex());
 
     // indices permatutions are allowed for cubic crystals
     numodis::math::iSortVector3FirstValue(ibur0sorted);
     numodis::math::iSortVector3FirstValue(ibur1sorted);
 
     // compare the Burgers vectors
-    for(unsigned i=0; i!=3; i++)
-      if(ibur0sorted[i]!=ibur1sorted[i])
-	return false;
+    for (unsigned i = 0; i != 3; i++)
+      if (ibur0sorted[i] != ibur1sorted[i]) return false;
 
     return true;
-
   }
 
   //===============================================================
@@ -365,28 +340,25 @@ namespace numodis
   */
   //===============================================================
   bool Cubic::SameGlideSystem(const IPlane& iplane0,
-			      const IBurgers& iburgers0,
-			      const IPlane& iplane1,
-			      const IBurgers& iburgers1) const
-  {
-
+                              const IBurgers& iburgers0,
+                              const IPlane& iplane1,
+                              const IBurgers& iburgers1) const {
     //-----------------------------------------------
     // 1st test: is iburgers1 contained in iplane1?
     //-----------------------------------------------
-    if(numodis::math::iScalProduct(iplane1.getIndex(),iburgers1.getIndex())!=0)
+    if (numodis::math::iScalProduct(iplane1.getIndex(), iburgers1.getIndex()) !=
+        0)
       return false;
 
     //-----------------------------
     // 2nd test: same glide plane?
     //-----------------------------
-    if(!this->SamePlaneFamily(iplane0,iplane1))
-      return false;
+    if (!this->SamePlaneFamily(iplane0, iplane1)) return false;
 
     //-------------------------------
     // 3rd test: same Burgers vector
     //-------------------------------
-    return this->SameBurgersFamily(iburgers0,iburgers1);
-
+    return this->SameBurgersFamily(iburgers0, iburgers1);
   }
 
   //=====================================================================
@@ -405,10 +377,9 @@ namespace numodis
 
   */
   //=====================================================================
-  void Cubic::GenerateEquivalentIndices(const std::vector<int>& ind0,
-					std::vector<std::vector<int> >& equivalent) const
-  {
-
+  void Cubic::GenerateEquivalentIndices(
+      const std::vector<int>& ind0,
+      std::vector<std::vector<int>>& equivalent) const {
     //----------------
     // initialization
     //----------------
@@ -419,66 +390,58 @@ namespace numodis
     // absolute values of the indices
     //--------------------------------
     std::vector<int> indices(3);
-    for(unsigned i=0; i<3; i++)
-      indices[i]=abs(ind0[i]);
+    for (unsigned i = 0; i < 3; i++) indices[i] = abs(ind0[i]);
 
     //--------------------
     // sort these indices
     //--------------------
-    sort(indices.begin(),indices.end());
+    sort(indices.begin(), indices.end());
 
     //-------------------------------
     // consider all the permutations
     //-------------------------------
     std::vector<int> permutation(3);
     std::vector<unsigned> nonzero(3);
-    do
-      {
+    do {
+      // count (and store the indices of) the non-nuls terms
+      unsigned count = 0;
+      for (unsigned i = 0; i < 3; i++)
+        if (indices[i] != 0) nonzero[count++] = i;
 
-	// count (and store the indices of) the non-nuls terms
-	unsigned count=0;
-	for(unsigned i=0; i<3; i++)
-	  if(indices[i]!=0)
-	    nonzero[count++]=i;
+      // 1st possibility
+      for (unsigned i = 0; i < 3; i++) permutation[i] = indices[i];
+      equivalent.push_back(permutation);
 
-	// 1st possibility
-	for(unsigned i=0; i<3; i++)
-	  permutation[i]=indices[i];
-	equivalent.push_back(permutation);
+      // add other possibilities if necessary
+      switch (count) {
+        case 2:  // 2 indices are different from 0 => 2 possibilities must be
+                 // considered
 
-	// add other possibilities if necessary
-	switch(count)
-	  {
+          // 2nd plane
+          permutation[nonzero[1]] = -permutation[nonzero[1]];
+          equivalent.push_back(permutation);
 
-	  case 2: // 2 indices are different from 0 => 2 possibilities must be considered
+          break;
 
-	    // 2nd plane
-	    permutation[nonzero[1]]=-permutation[nonzero[1]];
-	    equivalent.push_back(permutation);
+        case 3:  // 3 indices are different from 0 => 4 possibilities must be
+                 // considered
 
-	    break;
+          // 2nd plane
+          permutation[2] = -permutation[2];
+          equivalent.push_back(permutation);
 
-	  case 3: // 3 indices are different from 0 => 4 possibilities must be considered
+          // 3rd plane
+          permutation[1] = -permutation[1];
+          equivalent.push_back(permutation);
 
-	    // 2nd plane
-	    permutation[2]=-permutation[2];
-	    equivalent.push_back(permutation);
+          // 4th plane
+          permutation[2] = -permutation[2];
+          equivalent.push_back(permutation);
 
-	    // 3rd plane
-	    permutation[1]=-permutation[1];
-	    equivalent.push_back(permutation);
-
-	    // 4th plane
-	    permutation[2]=-permutation[2];
-	    equivalent.push_back(permutation);
-
-	    break;
-
-	  }
-
+          break;
       }
-    while(next_permutation(indices.begin(),indices.end()));
 
+    } while (next_permutation(indices.begin(), indices.end()));
   }
 
   //===============================================================
@@ -491,36 +454,30 @@ namespace numodis
     \param v a vector orthonal to u (output)
   */
   //===============================================================
-  void Cubic::GenerateOrthogonalVector(const IPlane& u,
-				       IDirection& v) const
-  {
-
+  void Cubic::GenerateOrthogonalVector(const IPlane& u, IDirection& v) const {
     //---------------
     // intialization
     //---------------
-    int norm2=0;
+    int norm2 = 0;
     std::vector<int> vrandom(3);
 
     //--------------------
     // while not found...
     //--------------------
-    while(norm2==0)
-      {
+    while (norm2 == 0) {
+      // generate a random vector
+      for (unsigned i = 0; i < 3; i++) vrandom[i] = rand();
 
-	// generate a random vector
-	for(unsigned i=0; i<3; i++)
-	  vrandom[i]=rand();
+      // compute a vector normal to plane and vrandom
+      CrossProduct(IPlane(vrandom), u, v);
 
-	// compute a vector normal to plane and vrandom
-	CrossProduct(IPlane(vrandom),u,v);
-
-	// norm of this vector
-	norm2=v.getIndex()[0]*v.getIndex()[0]+v.getIndex()[1]*v.getIndex()[1]+v.getIndex()[2]*v.getIndex()[2];
-
-      }
-
+      // norm of this vector
+      norm2 = v.getIndex()[0] * v.getIndex()[0] +
+              v.getIndex()[1] * v.getIndex()[1] +
+              v.getIndex()[2] * v.getIndex()[2];
+    }
   }
 
   Cubic::~Cubic() = default;
-  
-} // end of namespace numodis
+
+}  // end of namespace numodis

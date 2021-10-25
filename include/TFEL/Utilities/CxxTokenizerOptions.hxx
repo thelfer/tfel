@@ -80,10 +80,10 @@ namespace tfel {
       bool dotAsSeparator = true;
       //! treat `-` as a separator
       bool minusAsSeparator = true;
-    }; // end of struct CxxTokenizerOptions
+    };  // end of struct CxxTokenizerOptions
 
-  } // end of namespace utilities
+  }  // end of namespace utilities
 
-} // end of namespace tfel
+}  // end of namespace tfel
 
 #endif /* LIB_TFEL_UTILITIES_CXXTOKENIZEROPTIONS_HXX */

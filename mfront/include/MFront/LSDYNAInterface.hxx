@@ -67,9 +67,9 @@ namespace mfront {
     std::string getInterfaceName() const override;
     std::string getModellingHypothesisTest(const Hypothesis) const override;
     void writeBehaviourConstructorHeader(std::ostream&,
-					 const BehaviourDescription&,
-					 const Hypothesis,
-					 const std::string&) const override;
+                                         const BehaviourDescription&,
+                                         const Hypothesis,
+                                         const std::string&) const override;
     void writeBehaviourDataConstructor(
         std::ostream&,
         const Hypothesis,

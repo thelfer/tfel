@@ -1,18 +1,18 @@
 /*!
  * \file   mfront/include/MFront/Cyrano/Cyrano.hxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   21 fév 2014
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_TFEL_CYRANO_MFRONT_CYRANO_HXX
-#define LIB_TFEL_CYRANO_MFRONT_CYRANO_HXX 
+#define LIB_TFEL_CYRANO_MFRONT_CYRANO_HXX
 
 #ifndef TFEL_CYRANO_INLINE
 #define TFEL_CYRANO_INLINE inline
@@ -22,7 +22,7 @@
 #define TFEL_CYRANO_INLINE2 inline
 #endif /* LIB_TFEL_CYRANO_MFRONT_CYRANO_HXX */
 
-namespace cyrano{
+namespace cyrano {
 
 #if CYRANO_ARCH == 64
 #ifdef _WIN64
@@ -33,7 +33,7 @@ namespace cyrano{
 #elif CYRANO_ARCH == 32
   using CyranoInt = int;
 #else
-  #error "cyrano : unsupported machine type"
+#error "cyrano : unsupported machine type"
 #endif /* LIB_TFEL_CYRANO_MFRONT_CYRANO_HXX */
 
   using CyranoReal = double;
@@ -56,7 +56,6 @@ namespace cyrano{
                                               const CyranoReal *const,
                                               const CyranoReal *const);
 
-} // end of namespace cyrano
+}  // end of namespace cyrano
 
 #endif /* LIB_TFEL_CYRANO_MFRONT_CYRANO_HXX */
-

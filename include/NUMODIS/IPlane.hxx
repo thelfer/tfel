@@ -1,14 +1,14 @@
 /*!
- * \file   include/NUMODIS/IPlane.hxx  
- * \brief    
+ * \file   include/NUMODIS/IPlane.hxx
+ * \brief
  * \author Laurent Dupuy
  * \date   9/06/2017
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef NUMEODIS_IPLANE_HXX
@@ -17,17 +17,14 @@
 #include "NUMODIS/Config.hxx"
 #include "NUMODIS/Math/Utilities.hxx"
 
-namespace numodis
-{
+namespace numodis {
 
   //===============================================================
   // Class IPlane
   //---------------------------------------------------------------
   //! IPlane handles the indices of a critallographic plane
   //===============================================================
-  struct TFELNUMODIS_VISIBILITY_EXPORT IPlane
-  {
-
+  struct TFELNUMODIS_VISIBILITY_EXPORT IPlane {
     IPlane(IPlane&&);
 
     IPlane(const IPlane&);
@@ -43,9 +40,7 @@ namespace numodis
     //-----------------------------------------------------------
     /*! \param nindices number of indices used to store n      */
     //===========================================================
-    IPlane(const unsigned nindices=3)
-      :_index(nindices,0)
-    {}
+    IPlane(const unsigned nindices = 3) : _index(nindices, 0) {}
 
     //===========================================================
     // IPlane::IPlane
@@ -54,12 +49,10 @@ namespace numodis
     //-----------------------------------------------------------
     /*! \param iplane index of the glide plane                */
     //===========================================================
-    explicit IPlane(const std::vector<int>& iplane):_index(iplane)
-    {
-      int gcd=numodis::math::GCD(_index);
-      if(gcd!=0)
-	for(unsigned i=0; i!=_index.size(); i++)
-	  _index[i]/=gcd;
+    explicit IPlane(const std::vector<int>& iplane) : _index(iplane) {
+      int gcd = numodis::math::GCD(_index);
+      if (gcd != 0)
+        for (unsigned i = 0; i != _index.size(); i++) _index[i] /= gcd;
     }
 
     //===========================================================
@@ -69,15 +62,13 @@ namespace numodis
     //-----------------------------------------------------------
     /*! \param iplane index of the glide plane                */
     //===========================================================
-    void setIPlane(const std::vector<int>& iplane)
-    {
-      int gcd=numodis::math::GCD(iplane);
-      if(gcd!=0)
-	for(unsigned i=0; i!=iplane.size(); i++)
-	  _index[i]=iplane[i]/gcd;
+    void setIPlane(const std::vector<int>& iplane) {
+      int gcd = numodis::math::GCD(iplane);
+      if (gcd != 0)
+        for (unsigned i = 0; i != iplane.size(); i++)
+          _index[i] = iplane[i] / gcd;
       else
-	for(unsigned i=0; i!=iplane.size(); i++)
-	  _index[i]=iplane[i];
+        for (unsigned i = 0; i != iplane.size(); i++) _index[i] = iplane[i];
     }
 
     //=============================================================
@@ -87,8 +78,7 @@ namespace numodis
     //-------------------------------------------------------------
     /*! \param pln normal to the plane                           */
     //=============================================================
-    void getIndex(std::vector<int>& pln) const
-    { pln=_index; }
+    void getIndex(std::vector<int>& pln) const { pln = _index; }
 
     //=============================================================
     // IPlane::getIndex
@@ -97,8 +87,7 @@ namespace numodis
     //-------------------------------------------------------------
     /*! \return reference on the index of the plane              */
     //=============================================================
-    const std::vector<int>& getIndex() const
-    { return _index; }
+    const std::vector<int>& getIndex() const { return _index; }
 
     //=============================================================
     // IPlane::Operator[]
@@ -110,11 +99,9 @@ namespace numodis
       \return iplane[i]
     */
     //=============================================================
-    int operator[](const size_type i) const
-    { return this->_index[i]; }
+    int operator[](const size_type i) const { return this->_index[i]; }
 
-    int& operator[](const size_type i)
-    { return this->_index[i]; }
+    int& operator[](const size_type i) { return this->_index[i]; }
 
     //=============================================================
     // IPlane::getNindices
@@ -123,8 +110,7 @@ namespace numodis
     //-------------------------------------------------------------
     /*! \return number of indices                                */
     //=============================================================
-    long unsigned int getNindices() const
-    { return _index.size(); }
+    long unsigned int getNindices() const { return _index.size(); }
 
     //=============================================================
     // IPlane::IsNull
@@ -133,53 +119,44 @@ namespace numodis
     //-------------------------------------------------------------
     /*! \return true if only zero                                */
     //=============================================================
-    bool IsNull() const
-    {
-      for(unsigned i=0; i<_index.size(); i++)
-	if(_index[i]!=0)
-	  return false;
+    bool IsNull() const {
+      for (unsigned i = 0; i < _index.size(); i++)
+        if (_index[i] != 0) return false;
       return true;
     }
 
-    TFELNUMODIS_VISIBILITY_EXPORT friend std::ostream&
-    operator << (std::ostream& os,
-		 const IPlane& iplane);
+    TFELNUMODIS_VISIBILITY_EXPORT friend std::ostream& operator<<(
+        std::ostream& os, const IPlane& iplane);
 
-    TFELNUMODIS_VISIBILITY_EXPORT friend bool
-    operator==(const IPlane& lhs,
-	       const IPlane& rhs);
+    TFELNUMODIS_VISIBILITY_EXPORT friend bool operator==(const IPlane& lhs,
+                                                         const IPlane& rhs);
 
-    TFELNUMODIS_VISIBILITY_EXPORT friend bool
-    operator!=(const IPlane& lhs,
-	       const IPlane& rhs);
+    TFELNUMODIS_VISIBILITY_EXPORT friend bool operator!=(const IPlane& lhs,
+                                                         const IPlane& rhs);
 
-    TFELNUMODIS_VISIBILITY_EXPORT friend bool
-    operator<(const IPlane& lhs,
-	      const IPlane& rhs);
+    TFELNUMODIS_VISIBILITY_EXPORT friend bool operator<(const IPlane& lhs,
+                                                        const IPlane& rhs);
 
-    TFELNUMODIS_VISIBILITY_EXPORT friend int
-    PlaneCoincide(const IPlane& lhs,
-		  const IPlane& rhs);
+    TFELNUMODIS_VISIBILITY_EXPORT friend int PlaneCoincide(const IPlane& lhs,
+                                                           const IPlane& rhs);
 
-  protected:
-
+   protected:
     //! index of the glide plane
     std::vector<int> _index;
-
   };
 
   TFELNUMODIS_VISIBILITY_EXPORT
-  bool operator==(const IPlane& lhs,const IPlane& rhs);
+  bool operator==(const IPlane& lhs, const IPlane& rhs);
 
   TFELNUMODIS_VISIBILITY_EXPORT
-  bool operator!=(const IPlane& lhs,const IPlane& rhs);
+  bool operator!=(const IPlane& lhs, const IPlane& rhs);
 
   TFELNUMODIS_VISIBILITY_EXPORT
-  bool operator<(const IPlane& lhs,const IPlane& rhs);
+  bool operator<(const IPlane& lhs, const IPlane& rhs);
 
   TFELNUMODIS_VISIBILITY_EXPORT
-  int PlaneCoincide(const IPlane& lhs,const IPlane& rhs);
+  int PlaneCoincide(const IPlane& lhs, const IPlane& rhs);
 
-} // end of namespace numodis
-  
+}  // end of namespace numodis
+
 #endif

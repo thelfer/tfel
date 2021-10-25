@@ -136,14 +136,14 @@ namespace mfront {
                                       const std::string&,
                                       const bool);
   /*!
-    * \brief complete the list of material properties.
-    * This method shall be called by the buildMaterialPropertiesList
-    * after that the mandatory material properties list have been
-    * filled.
-    * \param[out] mprops: list of material properties
-    * \param[in]  mb:     behaviour description
-    * \param[in]  h :    modelling hypothesis
-    */
+   * \brief complete the list of material properties.
+   * This method shall be called by the buildMaterialPropertiesList
+   * after that the mandatory material properties list have been
+   * filled.
+   * \param[out] mprops: list of material properties
+   * \param[in]  mb:     behaviour description
+   * \param[in]  h :    modelling hypothesis
+   */
   MFRONT_VISIBILITY_EXPORT
   void completeMaterialPropertiesList(
       std::vector<BehaviourMaterialProperty>&,

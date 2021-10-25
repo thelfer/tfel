@@ -67,7 +67,7 @@ namespace mfront {
     }
   }
 
-  bool CastemSymbolsGenerator::handleStrainMeasure() const{
+  bool CastemSymbolsGenerator::handleStrainMeasure() const {
     return true;
   }  // end of CastemSymbolsGenerator::handleStrainMeasure
 

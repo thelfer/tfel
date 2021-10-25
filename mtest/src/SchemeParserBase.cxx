@@ -684,8 +684,8 @@ namespace mtest {
   }
 
   void SchemeParserBase::registerCallBacks() {
-    auto add = [this](const char* n,const CallBack& c){
-      this->registerCallBack(n,c);
+    auto add = [this](const char* n, const CallBack& c) {
+      this->registerCallBack(n, c);
     };
     add(";", &SchemeParserBase::handleLonelySeparator);
     add("@Author", &SchemeParserBase::handleAuthor);

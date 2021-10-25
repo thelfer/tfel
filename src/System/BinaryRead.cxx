@@ -1,32 +1,29 @@
-/*! 
+/*!
  * \file  src/System/BinaryRead.cxx
  * \brief
  * \author Thomas Helfer
  * \brief 10 aoû 2010
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
-#include<unistd.h>
-#include"TFEL/System/BinaryRead.hxx"
+#include <unistd.h>
+#include "TFEL/System/BinaryRead.hxx"
 
-#define TFEL_SYSTEM_BINARY_READER_SRC(X)                               \
-    void BinaryReader< X >::exe(const int f,X& v)		       \
-    {                                                                  \
-      if(::read(f,static_cast<void*>(&v),sizeof(X))==-1){              \
-	systemCall::throwSystemError("BinaryReader<"#X">::exe",errno); \
-      }                                                                \
-    }
+#define TFEL_SYSTEM_BINARY_READER_SRC(X)                                \
+  void BinaryReader<X>::exe(const int f, X& v) {                        \
+    if (::read(f, static_cast<void*>(&v), sizeof(X)) == -1) {           \
+      systemCall::throwSystemError("BinaryReader<" #X ">::exe", errno); \
+    }                                                                   \
+  }
 
-namespace tfel
-{
+namespace tfel {
 
-  namespace system
-  {
+  namespace system {
 
     TFEL_SYSTEM_BINARY_READER_SRC(bool)
     TFEL_SYSTEM_BINARY_READER_SRC(unsigned char)
@@ -41,13 +38,12 @@ namespace tfel
     TFEL_SYSTEM_BINARY_READER_SRC(double)
     TFEL_SYSTEM_BINARY_READER_SRC(long double)
 
-    void BinaryReader<void*>::exe(const int f,void*& v)
-    {
-      if(::read(f,static_cast<void*>(&v),sizeof(void*))==-1){
-	systemCall::throwSystemError("BinaryReader<void*>::exe",errno);
+    void BinaryReader<void*>::exe(const int f, void*& v) {
+      if (::read(f, static_cast<void*>(&v), sizeof(void*)) == -1) {
+        systemCall::throwSystemError("BinaryReader<void*>::exe", errno);
       }
     }
-    
-  } // end of namespace system
 
-} // end of namespace tfel
+  }  // end of namespace system
+
+}  // end of namespace tfel

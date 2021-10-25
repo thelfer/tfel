@@ -50,11 +50,9 @@ namespace mfront {
       //! copy constructor (deleted)
       InelasticFlowFactory(const InelasticFlowFactory&) = delete;
       //! move assignement (deleted)
-      InelasticFlowFactory& operator=(InelasticFlowFactory&&) =
-          delete;
+      InelasticFlowFactory& operator=(InelasticFlowFactory&&) = delete;
       //! standard assignement(deleted)
-      InelasticFlowFactory& operator=(const InelasticFlowFactory&) =
-          delete;
+      InelasticFlowFactory& operator=(const InelasticFlowFactory&) = delete;
       //! \brief destructor
       ~InelasticFlowFactory();
       //! \brief generators

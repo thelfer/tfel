@@ -34,20 +34,20 @@ namespace tfel {
         for (size_type i = 0; i != N; ++i) {
           auto v = T(0);
           for (size_type j = 0; j != i; ++j) {
-            v += m(i,j) * x(j);
+            v += m(i, j) * x(j);
           }
-          if (std::abs(m(i,i)) < eps) {
+          if (std::abs(m(i, i)) < eps) {
             throw(LUNullPivot());
           }
           auto& xv = x(i);
           xv -= v;
-          xv /= m(i,i);
+          xv /= m(i, i);
         }
-	b(N - 1) = x(N - 1);
-	for (size_type i = N - 1, pi = N - 2; i != 0; --i, --pi) {
-	  auto v = T(0);
+        b(N - 1) = x(N - 1);
+        for (size_type i = N - 1, pi = N - 2; i != 0; --i, --pi) {
+          auto v = T(0);
           for (size_type j = i; j != N; ++j) {
-            v += m(pi,j) * b(j);
+            v += m(pi, j) * b(j);
           }
           b(pi) = x(pi) - v;
         }
@@ -56,21 +56,21 @@ namespace tfel {
           const size_type pi = p(i);
           auto v = T(0);
           for (size_type j = 0; j != i; ++j) {
-            v += m(pi,j) * x(p(j));
+            v += m(pi, j) * x(p(j));
           }
-          if (std::abs(m(pi,i)) < eps) {
+          if (std::abs(m(pi, i)) < eps) {
             throw(LUNullPivot());
           }
           auto& xv = x(pi);
           xv -= v;
-          xv /= m(pi,i);
+          xv /= m(pi, i);
         }
         b(N - 1) = x(p(N - 1));
-       for (size_type i = N - 1, pi2 = N - 2; i != 0; --i, --pi2) {
+        for (size_type i = N - 1, pi2 = N - 2; i != 0; --i, --pi2) {
           const size_type pi = p(pi2);
           auto v = T(0);
           for (size_type j = i; j != N; ++j) {
-            v += m(pi,j) * b(j);
+            v += m(pi, j) * b(j);
           }
           b(pi2) = x(pi) - v;
         }

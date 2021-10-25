@@ -1,23 +1,23 @@
-/*! 
+/*!
  * \file  mfront/include/MFront/NewtonRaphsonSolvers.hxx
  * \brief
  * \author Thomas Helfer
  * \brief 22 août 2014
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_MFRONT_MFRONTNEWTONRAPHSONSOLVERS_HXX
-#define LIB_MFRONT_MFRONTNEWTONRAPHSONSOLVERS_HXX 
+#define LIB_MFRONT_MFRONTNEWTONRAPHSONSOLVERS_HXX
 
 #include "MFront/NonLinearSystemSolverBase.hxx"
 #include "MFront/PowellDogLegAlgorithmBase.hxx"
 
-namespace mfront{
+namespace mfront {
 
   /*!
    * \brief base class for non linear system solver based on the
@@ -25,10 +25,8 @@ namespace mfront{
    * The Newton-Raphson algorithm can be coupled with the
    * PowellDogLegAlgorithm for increased robustness.
    */
-  struct MFrontNewtonRaphsonSolverBase
-    : public    NonLinearSystemSolverBase,
-      protected PowellDogLegAlgorithmBase
-  {
+  struct MFrontNewtonRaphsonSolverBase : public NonLinearSystemSolverBase,
+                                         protected PowellDogLegAlgorithmBase {
     //! a simple alias
     using NonLinearSystemSolverBase::CxxTokenizer;
     //! a simple alias
@@ -68,7 +66,8 @@ namespace mfront{
      * initialized to the identity matrix at the beginning of the
      * computeFdF method.
      */
-    bool requiresJacobianToBeReinitialisedToIdentityAtEachIterations() const override;
+    bool requiresJacobianToBeReinitialisedToIdentityAtEachIterations()
+        const override;
     /*!
      * \brief write the algorithm specific members
      * \param[in,out] md  : mechanical description
@@ -76,11 +75,11 @@ namespace mfront{
      * \param[in] p       : current position in file (after keyword)
      * \param[in] pe      : end of file
      */
-    std::pair<bool,tokens_iterator>
-    treatSpecificKeywords(BehaviourDescription&,
-			  const std::string&,
-			  const tokens_iterator,
-			  const tokens_iterator) override;
+    std::pair<bool, tokens_iterator> treatSpecificKeywords(
+        BehaviourDescription&,
+        const std::string&,
+        const tokens_iterator,
+        const tokens_iterator) override;
     /*!
      * \brief method called when all the user defined variables have been set.
      * \param[in,out] md  : mechanical description
@@ -96,8 +95,8 @@ namespace mfront{
      * \param[in] h   : modelling hypotheis
      */
     void writeSpecificInitializeMethodPart(std::ostream&,
-					   const BehaviourDescription&,
-					   const Hypothesis) const override;
+                                           const BehaviourDescription&,
+                                           const Hypothesis) const override;
     /*!
      * \brief write the algorithm specific members
      * \param[in] out : output file
@@ -105,8 +104,8 @@ namespace mfront{
      * \param[in] h   : modelling hypotheis
      */
     void writeSpecificMembers(std::ostream&,
-			      const BehaviourDescription&,
-			      const Hypothesis) const override;
+                              const BehaviourDescription&,
+                              const Hypothesis) const override;
     /*!
      * \brief write the resolution algorithm
      * \param[in] out : output file
@@ -114,9 +113,10 @@ namespace mfront{
      * \param[in] h   : modelling hypotheis
      */
     void writeResolutionAlgorithm(std::ostream&,
-				  const BehaviourDescription&,
-				  const Hypothesis) const override;
-  protected:
+                                  const BehaviourDescription&,
+                                  const Hypothesis) const override;
+
+   protected:
     /*!
      * destructor
      */
@@ -125,25 +125,23 @@ namespace mfront{
      * The derived class shall return true if the NewtonAlgorithm
      * shall be combined with the powell dog leg algorithm
      */
-    virtual bool
-    usesPowellDogLegAlgorithm() const = 0;
+    virtual bool usesPowellDogLegAlgorithm() const = 0;
     //! update jacobian period
     int jacobianUpdatePeriod;
-  }; // end of struct MFrontNewtonRaphsonSolverBase
+  };  // end of struct MFrontNewtonRaphsonSolverBase
 
   /*!
    * The standard Newton-Raphson Solver
    */
-  struct MFrontNewtonRaphsonSolver
-    : public MFrontNewtonRaphsonSolverBase
-  {
+  struct MFrontNewtonRaphsonSolver : public MFrontNewtonRaphsonSolverBase {
     /*!
      * \return true if the solver requires a numerical jacobian
      */
     bool requiresNumericalJacobian() const override;
     //! destructor
     ~MFrontNewtonRaphsonSolver() override;
-  protected:
+
+   protected:
     /*!
      * The derived class shall return true if the NewtonAlgorithm
      * shall be combined with the powell dog leg algorithm
@@ -155,15 +153,15 @@ namespace mfront{
    * The standard Newton-Raphson Solver
    */
   struct MFrontNewtonRaphsonNumericalJacobianSolver
-    : public MFrontNewtonRaphsonSolverBase
-  {
+      : public MFrontNewtonRaphsonSolverBase {
     /*!
      * \return true if the solver requires a numerical jacobian
      */
     bool requiresNumericalJacobian() const override;
     //! destructor
     ~MFrontNewtonRaphsonNumericalJacobianSolver() override;
-  protected:
+
+   protected:
     /*!
      * The derived class shall return true if the NewtonAlgorithm
      * shall be combined with the powell dog leg algorithm
@@ -175,8 +173,7 @@ namespace mfront{
    * The standard Newton-Raphson Solver
    */
   struct MFrontPowellDogLegNewtonRaphsonSolver
-    : public MFrontNewtonRaphsonSolverBase
-  {
+      : public MFrontNewtonRaphsonSolverBase {
     /*!
      * \return true if the solver requires a numerical jacobian
      */
@@ -185,7 +182,8 @@ namespace mfront{
      * destructor
      */
     ~MFrontPowellDogLegNewtonRaphsonSolver() override;
-  protected:
+
+   protected:
     /*!
      * The derived class shall return true if the PowellDogLegNewtonAlgorithm
      * shall be combined with the powell dog leg algorithm
@@ -197,15 +195,15 @@ namespace mfront{
    * The standard PowellDogLegNewton-Raphson Solver
    */
   struct MFrontPowellDogLegNewtonRaphsonNumericalJacobianSolver
-    : public MFrontNewtonRaphsonSolverBase
-  {
+      : public MFrontNewtonRaphsonSolverBase {
     /*!
      * \return true if the solver requires a numerical jacobian
      */
     bool requiresNumericalJacobian() const override;
     //! destructor
     ~MFrontPowellDogLegNewtonRaphsonNumericalJacobianSolver() override;
-  protected:
+
+   protected:
     /*!
      * The derived class shall return true if the PowellDogLegNewtonAlgorithm
      * shall be combined with the powell dog leg algorithm
@@ -213,7 +211,6 @@ namespace mfront{
     bool usesPowellDogLegAlgorithm() const override;
   };
 
-} // end of namespace mfront
+}  // end of namespace mfront
 
 #endif /* LIB_MFRONT_MFRONTNEWTONRAPHSONSOLVERS_HXX */
-

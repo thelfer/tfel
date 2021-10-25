@@ -105,7 +105,7 @@ namespace mfront {
         VariableDescription m(t, n, 1u, 0u);
         bd.addLocalVariable(h, m);
       }
-    } // end of declareParameterOrLocalVariable
+    }  // end of declareParameterOrLocalVariable
 
     void declareParameterOrLocalVariable(
         BehaviourDescription& bd,
@@ -117,9 +117,9 @@ namespace mfront {
           tfel::material::ModellingHypothesis::UNDEFINEDHYPOTHESIS;
       declareParameterOrLocalVariable(bd, mp, t, n);
       if (mp.is<BehaviourDescription::ConstantMaterialProperty>()) {
-        bd.setEntryName(h,n,en);
+        bd.setEntryName(h, n, en);
       }
-    } // end of declareParameterOrLocalVariable
+    }  // end of declareParameterOrLocalVariable
 
     void declareParameterOrLocalVariable(
         BehaviourDescription& bd,
@@ -133,7 +133,7 @@ namespace mfront {
       if (mp.is<BehaviourDescription::ConstantMaterialProperty>()) {
         bd.setGlossaryName(h, n, g);
       }
-    } // end of declareParameterOrLocalVariable
+    }  // end of declareParameterOrLocalVariable
 
     void checkOptionsNames(
         const std::map<std::string, tfel::utilities::Data>& d,
@@ -392,7 +392,7 @@ namespace mfront {
                      "computeElasticLimitInitialValue: "
                      "empty list of isotropic hardenings");
       if (ihrs.size() == 1) {
-        return ihrs[0]->computeElasticPrediction(fid,"");
+        return ihrs[0]->computeElasticPrediction(fid, "");
       }
       auto c = std::string{};
       auto R = std::string{};
@@ -438,26 +438,26 @@ namespace mfront {
                      "computeElasticAndDerivative: "
                      "empty list of isotropic hardenings");
       if (ihrs.size() == 1) {
-        return ihrs[0]->computeElasticLimitAndDerivative(fid,"");
+        return ihrs[0]->computeElasticLimitAndDerivative(fid, "");
       }
-     auto c = std::string{};
-     auto R = std::string{};
-     auto dR = std::string{};
-     for (decltype(ihrs.size()) i = 0; i != ihrs.size();) {
-       const auto id = std::to_string(i);
-       c += ihrs[i]->computeElasticLimitAndDerivative(fid, id);
-       const auto Ri = "R" + fid + "_" + id;
-       const auto dRi = "d" + Ri + "_ddp" + fid;
-       R += Ri;
-       dR += dRi;
-       if (++i != ihrs.size()) {
-         R += " + ";
-         dR += " + ";
-       }
-     }
-     c += "const auto R" + fid + " = " + R + ";\n";
-     c += "const auto dR" + fid + "_ddp" + fid + " = " + dR + ";\n";
-     return c;
+      auto c = std::string{};
+      auto R = std::string{};
+      auto dR = std::string{};
+      for (decltype(ihrs.size()) i = 0; i != ihrs.size();) {
+        const auto id = std::to_string(i);
+        c += ihrs[i]->computeElasticLimitAndDerivative(fid, id);
+        const auto Ri = "R" + fid + "_" + id;
+        const auto dRi = "d" + Ri + "_ddp" + fid;
+        R += Ri;
+        dR += dRi;
+        if (++i != ihrs.size()) {
+          R += " + ";
+          dR += " + ";
+        }
+      }
+      c += "const auto R" + fid + " = " + R + ";\n";
+      c += "const auto dR" + fid + "_ddp" + fid + " = " + dR + ";\n";
+      return c;
     }  // end of computeElasticLimitAndDerivative
 
   }  // end of namespace bbrick

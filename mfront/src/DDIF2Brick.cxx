@@ -23,7 +23,7 @@ namespace mfront {
                          const DataMap& d)
       : BehaviourBrickBase(dsl_, mb_) {
     auto& spf = mfront::bbrick::StressPotentialFactory::getFactory();
-    this->ddif2= spf.generate("DDIF2");
+    this->ddif2 = spf.generate("DDIF2");
     this->ddif2->initialize(this->bd, this->dsl, d);
   }  // end of DDIF2Brick::DDIF2Brick
 

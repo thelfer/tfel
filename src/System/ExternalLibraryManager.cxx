@@ -42,10 +42,11 @@ namespace tfel {
       const DWORD error = GetLastError();
       if (error) {
         LPVOID lpMsgBuf;
-        DWORD bufLen = FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM |
-                                         FORMAT_MESSAGE_IGNORE_INSERTS,
-                                     nullptr, error, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
-                                     (LPTSTR)&lpMsgBuf, 0, nullptr);
+        DWORD bufLen = FormatMessage(
+            FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM |
+                FORMAT_MESSAGE_IGNORE_INSERTS,
+            nullptr, error, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
+            (LPTSTR)&lpMsgBuf, 0, nullptr);
         if (bufLen) {
           LPCSTR lpMsgStr = (LPTSTR)lpMsgBuf;
           std::string result(lpMsgStr, lpMsgStr + bufLen);
@@ -69,10 +70,12 @@ namespace tfel {
 #endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
     }  // end of  getErrorMessage
 
-    static void ExternalLibraryManagerCheckModellingHypothesisName(const std::string& h) {
+    static void ExternalLibraryManagerCheckModellingHypothesisName(
+        const std::string& h) {
       raise_if(!((h == "AxisymmetricalGeneralisedPlaneStrain") ||
-                 (h == "AxisymmetricalGeneralisedPlaneStress") || (h == "Axisymmetrical") ||
-                 (h == "PlaneStress") || (h == "PlaneStrain") || (h == "GeneralisedPlaneStrain") ||
+                 (h == "AxisymmetricalGeneralisedPlaneStress") ||
+                 (h == "Axisymmetrical") || (h == "PlaneStress") ||
+                 (h == "PlaneStrain") || (h == "GeneralisedPlaneStrain") ||
                  (h == "Tridimensional")),
                "ExternalLibraryManagerCheckModellingHypothesisName : "
                "invalid or unsupported hypothesis '" +
@@ -116,7 +119,8 @@ namespace tfel {
       return r;
     }  // end of decomposeVariableName
 
-    ExternalLibraryManager& ExternalLibraryManager::getExternalLibraryManager() {
+    ExternalLibraryManager&
+    ExternalLibraryManager::getExternalLibraryManager() {
       static ExternalLibraryManager elm;
       return elm;
     }  // end of ExternalLibraryManager::getExternalLibraryManager()
@@ -153,7 +157,8 @@ namespace tfel {
         }
         return std::equal(s2, s2 + ls2, s1.begin() + (s1.size() - ls2));
       };  // end of ends_with
-#if (defined(macintosh) || defined(Macintosh) || (defined(__APPLE__) && defined(__MACH__)))
+#if (defined(macintosh) || defined(Macintosh) || \
+     (defined(__APPLE__) && defined(__MACH__)))
       const char* const ext = ".dylib";
 #elif (defined(_WIN32) || defined(_WIN64) || defined(__CYGWIN__))
       const char* const ext = ".dll";
@@ -270,9 +275,11 @@ namespace tfel {
       return p->second;
     }  // end of ExternalLibraryManager::loadLibrary
 
-    std::vector<std::string> ExternalLibraryManager::getEntryPoints(const std::string& l) {
+    std::vector<std::string> ExternalLibraryManager::getEntryPoints(
+        const std::string& l) {
       auto ends_with = [](const std::string& s1, const std::string& s2) {
-        return ((s1.size() >= s2.size()) && (std::equal(s2.rbegin(), s2.rend(), s1.rbegin())));
+        return ((s1.size() >= s2.size()) &&
+                (std::equal(s2.rbegin(), s2.rend(), s1.rbegin())));
       };  // end of ends_with
       auto r = std::vector<std::string>{};
       auto lib = try_open(l);
@@ -292,8 +299,8 @@ namespace tfel {
       return r;
     }  // end of ExternalLibraryManager::getEntryPoints
 
-    unsigned short ExternalLibraryManager::getMaterialKnowledgeType(const std::string& l,
-                                                                    const std::string& f) {
+    unsigned short ExternalLibraryManager::getMaterialKnowledgeType(
+        const std::string& l, const std::string& f) {
       auto throw_if = [l, f](const bool c, const std::string& m) {
         raise_if(c, "ExternalLibraryManager::getMaterialKnowledgeType: " + m);
       };
@@ -312,7 +319,8 @@ namespace tfel {
       return 2u;
     }  // end of ExternalLibraryManager::getMaterialKnowledgeType
 
-    bool ExternalLibraryManager::contains(const std::string& l, const std::string& s) {
+    bool ExternalLibraryManager::contains(const std::string& l,
+                                          const std::string& s) {
       const auto lib = this->loadLibrary(l);
 #if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__)
       int (*p)() = (int (*)())::GetProcAddress(lib, s.c_str());
@@ -323,11 +331,13 @@ namespace tfel {
 #endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
     }  // end of ExternalLibraryManager::contains
 
-    std::string ExternalLibraryManager::getSource(const std::string& l, const std::string& f) {
+    std::string ExternalLibraryManager::getSource(const std::string& l,
+                                                  const std::string& f) {
       auto s = std::string{};
       const auto lib = this->loadLibrary(l);
 #if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__)
-      const auto p = (const char* const*)::GetProcAddress(lib, (f + "_src").c_str());
+      const auto p =
+          (const char* const*)::GetProcAddress(lib, (f + "_src").c_str());
 #else
       auto p = ::dlsym(lib, (f + "_src").c_str());
 #endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
@@ -341,10 +351,12 @@ namespace tfel {
       return s;
     }  // end of ExternalLibraryManager::getSource
 
-    std::string ExternalLibraryManager::getInterface(const std::string& l, const std::string& f) {
+    std::string ExternalLibraryManager::getInterface(const std::string& l,
+                                                     const std::string& f) {
       const auto lib = this->loadLibrary(l);
 #if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__)
-      const auto p = (const char* const*)::GetProcAddress(lib, (f + "_mfront_interface").c_str());
+      const auto p = (const char* const*)::GetProcAddress(
+          lib, (f + "_mfront_interface").c_str());
 #else
       const auto p = ::dlsym(lib, (f + "_mfront_interface").c_str());
 #endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
@@ -362,10 +374,12 @@ namespace tfel {
 #endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
     }  // end of ExternalLibraryManager::getInterface
 
-    std::string ExternalLibraryManager::getMaterial(const std::string& l, const std::string& f) {
+    std::string ExternalLibraryManager::getMaterial(const std::string& l,
+                                                    const std::string& f) {
       const auto lib = this->loadLibrary(l);
 #if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__)
-      const auto p = (const char* const*)::GetProcAddress(lib, (f + "_mfront_material").c_str());
+      const auto p = (const char* const*)::GetProcAddress(
+          lib, (f + "_mfront_material").c_str());
 #else
       const auto p = ::dlsym(lib, (f + "_mfront_material").c_str());
 #endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
@@ -379,10 +393,12 @@ namespace tfel {
 #endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
     }  // end of ExternalLibraryManager::getMaterial
 
-    std::string ExternalLibraryManager::getTFELVersion(const std::string& l, const std::string& f) {
+    std::string ExternalLibraryManager::getTFELVersion(const std::string& l,
+                                                       const std::string& f) {
       const auto lib = this->loadLibrary(l);
 #if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__)
-      const auto p = (const char* const*)::GetProcAddress(lib, (f + "_tfel_version").c_str());
+      const auto p = (const char* const*)::GetProcAddress(
+          lib, (f + "_tfel_version").c_str());
 #else
       const auto p = ::dlsym(lib, (f + "_tfel_version").c_str());
 #endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
@@ -396,11 +412,13 @@ namespace tfel {
 #endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
     }  // end of ExternalLibraryManager::getTFELVersion
 
-    std::vector<std::string> ExternalLibraryManager::getSupportedModellingHypotheses(
+    std::vector<std::string>
+    ExternalLibraryManager::getSupportedModellingHypotheses(
         const std::string& l, const std::string& f) {
       std::vector<std::string> h;
       const auto lib = this->loadLibrary(l);
-      const auto nb = ::tfel_getUnsignedShort(lib, (f + "_nModellingHypotheses").c_str());
+      const auto nb =
+          ::tfel_getUnsignedShort(lib, (f + "_nModellingHypotheses").c_str());
       char** res;
       raise_if(nb == -1,
                "ExternalLibraryManager::"
@@ -417,12 +435,14 @@ namespace tfel {
       return h;
     }  // end of ExternalLibraryManager::getSupportedModellingHypotheses
 
-    void ExternalLibraryManager::setOutOfBoundsPolicy(const std::string& l,
-                                                      const std::string& f,
-                                                      const tfel::material::OutOfBoundsPolicy p) {
+    void ExternalLibraryManager::setOutOfBoundsPolicy(
+        const std::string& l,
+        const std::string& f,
+        const tfel::material::OutOfBoundsPolicy p) {
       const auto lib = this->loadLibrary(l);
       int(TFEL_ADDCALL_PTR fct)(int);
-      fct = ::tfel_getSetOutOfBoundsPolicyFunction(lib, (f + "_setOutOfBoundsPolicy").c_str());
+      fct = ::tfel_getSetOutOfBoundsPolicyFunction(
+          lib, (f + "_setOutOfBoundsPolicy").c_str());
       raise_if(fct == nullptr,
                "ExternalLibraryManager::setOutOfBoundsPolicy: "
                "can't get the '" +
@@ -466,7 +486,8 @@ namespace tfel {
                                               const int v) {
       const auto lib = this->loadLibrary(l);
       int(TFEL_ADDCALL_PTR fct)(const char* const, const int);
-      fct = ::tfel_getSetIntegerParameterFunction(lib, (f + "_setIntegerParameter").c_str());
+      fct = ::tfel_getSetIntegerParameterFunction(
+          lib, (f + "_setIntegerParameter").c_str());
       raise_if(fct == nullptr,
                "ExternalLibraryManager::setParameter: "
                "can't get the '" +
@@ -483,8 +504,8 @@ namespace tfel {
                                               const unsigned short v) {
       const auto lib = this->loadLibrary(l);
       int(TFEL_ADDCALL_PTR fct)(const char* const, const unsigned short);
-      fct = ::tfel_getSetUnsignedShortParameterFunction(lib,
-                                                        (f + "_setUnsignedShortParameter").c_str());
+      fct = ::tfel_getSetUnsignedShortParameterFunction(
+          lib, (f + "_setUnsignedShortParameter").c_str());
       raise_if(fct == nullptr,
                "ExternalLibraryManager::setParameter: "
                "can't get the '" +
@@ -502,9 +523,11 @@ namespace tfel {
                                               const double v) {
       const auto lib = this->loadLibrary(l);
       int(TFEL_ADDCALL_PTR fct)(const char* const, const double);
-      fct = ::tfel_getSetParameterFunction(lib, (f + "_" + h + "_setParameter").c_str());
+      fct = ::tfel_getSetParameterFunction(
+          lib, (f + "_" + h + "_setParameter").c_str());
       if (fct == nullptr) {
-        fct = ::tfel_getSetParameterFunction(lib, (f + "_setParameter").c_str());
+        fct =
+            ::tfel_getSetParameterFunction(lib, (f + "_setParameter").c_str());
       }
       raise_if(fct == nullptr,
                "ExternalLibraryManager::setParameter: "
@@ -523,10 +546,11 @@ namespace tfel {
                                               const int v) {
       const auto lib = this->loadLibrary(l);
       int(TFEL_ADDCALL_PTR fct)(const char* const, const int);
-      fct = ::tfel_getSetIntegerParameterFunction(lib,
-                                                  (f + "_" + h + "_setIntegerParameter").c_str());
+      fct = ::tfel_getSetIntegerParameterFunction(
+          lib, (f + "_" + h + "_setIntegerParameter").c_str());
       if (fct == nullptr) {
-        fct = ::tfel_getSetIntegerParameterFunction(lib, (f + "_setIntegerParameter").c_str());
+        fct = ::tfel_getSetIntegerParameterFunction(
+            lib, (f + "_setIntegerParameter").c_str());
       }
       raise_if(fct == nullptr,
                "ExternalLibraryManager::setParameter: "
@@ -561,10 +585,11 @@ namespace tfel {
                    f + "_setParameter' function failed");
     }  // end of ExternalLibraryManager::setParameter
 
-    double ExternalLibraryManager::getRealParameterDefaultValue(const std::string& l,
-                                                                const std::string& f,
-                                                                const std::string& h,
-                                                                const std::string& p) {
+    double ExternalLibraryManager::getRealParameterDefaultValue(
+        const std::string& l,
+        const std::string& f,
+        const std::string& h,
+        const std::string& p) {
       const auto lib = this->loadLibrary(l);
       const auto pn = decomposeVariableName(p);
       const auto n1 = f + "_" + h + "_" + pn + "_ParameterDefaultValue";
@@ -579,10 +604,11 @@ namespace tfel {
       return tfel_getDouble(lib, n2.c_str());
     }  // end of ExternalLibraryManager::getRealParameterDefaultValue
 
-    int ExternalLibraryManager::getIntegerParameterDefaultValue(const std::string& l,
-                                                                const std::string& f,
-                                                                const std::string& h,
-                                                                const std::string& p) {
+    int ExternalLibraryManager::getIntegerParameterDefaultValue(
+        const std::string& l,
+        const std::string& f,
+        const std::string& h,
+        const std::string& p) {
       const auto lib = this->loadLibrary(l);
       const auto pn = decomposeVariableName(p);
       const auto n1 = f + "_" + h + "_" + pn + "_ParameterDefaultValue";
@@ -597,14 +623,19 @@ namespace tfel {
       return tfel_getInteger(lib, n2.c_str());
     }  // end of ExternalLibraryManager::getIntegerParameterDefaultValue
 
-    unsigned short ExternalLibraryManager::getUnsignedShortParameterDefaultValue(
-        const std::string& l, const std::string& f, const std::string& h, const std::string& p) {
+    unsigned short
+    ExternalLibraryManager::getUnsignedShortParameterDefaultValue(
+        const std::string& l,
+        const std::string& f,
+        const std::string& h,
+        const std::string& p) {
       const auto lib = this->loadLibrary(l);
       const auto pn = decomposeVariableName(p);
       const auto n1 = f + "_" + h + "_" + pn + "_ParameterDefaultValue";
       auto res = ::tfel_getUnsignedShort(lib, n1.c_str());
       if (res < 0) {
-        res = ::tfel_getUnsignedShort(lib, (f + "_" + pn + "_ParameterDefaultValue").c_str());
+        res = ::tfel_getUnsignedShort(
+            lib, (f + "_" + pn + "_ParameterDefaultValue").c_str());
         raise_if(res < 0,
                  "ExternalLibraryManager::"
                  "getUnsignedShortParameterDefaultValue: "
@@ -623,8 +654,8 @@ namespace tfel {
       const auto n2 = f + "_" + h + "_" + vn + "_UpperBound";
       const auto n3 = f + "_" + vn + "_LowerBound";
       const auto n4 = f + "_" + vn + "_UpperBound";
-      return ((this->contains(l, n1)) || (this->contains(l, n2)) || (this->contains(l, n3)) ||
-              (this->contains(l, n4)));
+      return ((this->contains(l, n1)) || (this->contains(l, n2)) ||
+              (this->contains(l, n3)) || (this->contains(l, n4)));
     }  // end of ExternalLibraryManager::hasBounds
 
     bool ExternalLibraryManager::hasLowerBound(const std::string& l,
@@ -692,8 +723,8 @@ namespace tfel {
       const auto n2 = f + "_" + h + "_" + vn + "_UpperPhysicalBound";
       const auto n3 = f + "_" + vn + "_LowerPhysicalBound";
       const auto n4 = f + "_" + vn + "_UpperPhysicalBound";
-      return ((this->contains(l, n1)) || (this->contains(l, n2)) || (this->contains(l, n3)) ||
-              (this->contains(l, n4)));
+      return ((this->contains(l, n1)) || (this->contains(l, n2)) ||
+              (this->contains(l, n3)) || (this->contains(l, n4)));
     }  // end of ExternalLibraryManager::hasPhysicalBounds
 
     bool ExternalLibraryManager::hasLowerPhysicalBound(const std::string& l,
@@ -716,10 +747,11 @@ namespace tfel {
       return ((this->contains(l, n1)) || (this->contains(l, n2)));
     }  // end of ExternalLibraryManager::hasUpperPhysicalBound
 
-    long double ExternalLibraryManager::getLowerPhysicalBound(const std::string& l,
-                                                              const std::string& f,
-                                                              const std::string& h,
-                                                              const std::string& n) {
+    long double ExternalLibraryManager::getLowerPhysicalBound(
+        const std::string& l,
+        const std::string& f,
+        const std::string& h,
+        const std::string& n) {
       const auto lib = this->loadLibrary(l);
       const auto vn = decomposeVariableName(n);
       const auto n1 = f + "_" + h + "_" + vn + "_LowerPhysicalBound";
@@ -734,10 +766,11 @@ namespace tfel {
       return tfel_getLongDouble(lib, n2.c_str());
     }  // end of ExternalLibraryManager::getLowerPhysicalBound
 
-    long double ExternalLibraryManager::getUpperPhysicalBound(const std::string& l,
-                                                              const std::string& f,
-                                                              const std::string& h,
-                                                              const std::string& n) {
+    long double ExternalLibraryManager::getUpperPhysicalBound(
+        const std::string& l,
+        const std::string& f,
+        const std::string& h,
+        const std::string& n) {
       const auto lib = this->loadLibrary(l);
       const auto vn = decomposeVariableName(n);
       const auto n1 = f + "_" + h + "_" + vn + "_UpperPhysicalBound";
@@ -755,7 +788,8 @@ namespace tfel {
     unsigned short ExternalLibraryManager::getCastemFunctionNumberOfVariables(
         const std::string& l, const std::string& f) {
       const auto lib = this->loadLibrary(l);
-      const auto res = ::tfel_getCastemFunctionNumberOfVariables(lib, f.c_str());
+      const auto res =
+          ::tfel_getCastemFunctionNumberOfVariables(lib, f.c_str());
       raise_if(res < 0,
                "ExternalLibraryManager::getCastemFunctionNumberOfVariables: "
                "number of variables could not be read (" +
@@ -763,9 +797,8 @@ namespace tfel {
       return static_cast<unsigned short>(res);
     }
 
-    bool ExternalLibraryManager::getUMATRequiresStiffnessTensor(const std::string& l,
-                                                                const std::string& f,
-                                                                const std::string& h) {
+    bool ExternalLibraryManager::getUMATRequiresStiffnessTensor(
+        const std::string& l, const std::string& f, const std::string& h) {
       ExternalLibraryManagerCheckModellingHypothesisName(h);
       int res;
       const auto lib = this->loadLibrary(l);
@@ -786,14 +819,16 @@ namespace tfel {
       return false;
     }  // end of ExternalLibraryManager::getUMATRequiresStiffnessTensor
 
-    bool ExternalLibraryManager::getUMATRequiresThermalExpansionCoefficientTensor(
+    bool
+    ExternalLibraryManager::getUMATRequiresThermalExpansionCoefficientTensor(
         const std::string& l, const std::string& f, const std::string& h) {
       ExternalLibraryManagerCheckModellingHypothesisName(h);
       auto lib = this->loadLibrary(l);
-      auto res =
-          ::tfel_getUMATRequiresThermalExpansionCoefficientTensor(lib, (f + "_" + h).c_str());
+      auto res = ::tfel_getUMATRequiresThermalExpansionCoefficientTensor(
+          lib, (f + "_" + h).c_str());
       if (res < 0) {
-        res = ::tfel_getUMATRequiresThermalExpansionCoefficientTensor(lib, f.c_str());
+        res = ::tfel_getUMATRequiresThermalExpansionCoefficientTensor(
+            lib, f.c_str());
       }
       raise_if(res < 0,
                "ExternalLibraryManager::"
@@ -808,12 +843,14 @@ namespace tfel {
                "getUMATRequiresThermalExpansionCoefficientTensor: "
                "invalid returned value");
       return false;
-    }  // end of ExternalLibraryManager::getUMATRequiresThermalExpansionCoefficientTensor
+    }  // end of
+       // ExternalLibraryManager::getUMATRequiresThermalExpansionCoefficientTensor
 
-    bool ExternalLibraryManager::checkIfAsterBehaviourSavesTangentOperator(const std::string& l,
-                                                                           const std::string& f) {
+    bool ExternalLibraryManager::checkIfAsterBehaviourSavesTangentOperator(
+        const std::string& l, const std::string& f) {
       const auto lib = this->loadLibrary(l);
-      const auto res = ::tfel_checkIfAsterBehaviourSavesTangentOperator(lib, f.c_str());
+      const auto res =
+          ::tfel_checkIfAsterBehaviourSavesTangentOperator(lib, f.c_str());
       raise_if(res < 0,
                "ExternalLibraryManager::"
                "checkIfAsterBehaviourSaveTangentOperator: "
@@ -827,10 +864,11 @@ namespace tfel {
                "checkIfAsterBehaviourSaveTangentOperator: "
                "invalid returned value");
       return false;
-    }  // end of ExternalLibraryManager::checkIfAsterBehaviourSaveTangentOperator
+    }  // end of
+       // ExternalLibraryManager::checkIfAsterBehaviourSaveTangentOperator
 
-    unsigned short ExternalLibraryManager::getAsterFiniteStrainFormulation(const std::string& l,
-                                                                           const std::string& f) {
+    unsigned short ExternalLibraryManager::getAsterFiniteStrainFormulation(
+        const std::string& l, const std::string& f) {
       const auto lib = this->loadLibrary(l);
       const auto s = f + "_FiniteStrainFormulation";
       const auto res = ::tfel_getUnsignedShort(lib, s.c_str());
@@ -847,8 +885,8 @@ namespace tfel {
     }  // end of ExternalLibraryManager::getAsterFiniteStrainFormulation
 
     AsterIntegrationErrorMessageFctPtr
-    ExternalLibraryManager::getAsterIntegrationErrorMessageFunction(const std::string& l,
-                                                                    const std::string& f) {
+    ExternalLibraryManager::getAsterIntegrationErrorMessageFunction(
+        const std::string& l, const std::string& f) {
       const auto lib = this->loadLibrary(l);
       const auto s = f + "_getIntegrationErrorMessage";
       return ::tfel_getAsterIntegrationErrorMessage(lib, s.c_str());
@@ -878,9 +916,10 @@ namespace tfel {
       return vars;
     }  // end of ExternalLibraryManager::getCastemFunctionVariables
 
-    void ExternalLibraryManager::getCastemFunctionVariables(std::vector<std::string>& vars,
-                                                            const std::string& l,
-                                                            const std::string& f) {
+    void ExternalLibraryManager::getCastemFunctionVariables(
+        std::vector<std::string>& vars,
+        const std::string& l,
+        const std::string& f) {
       const auto lib = this->loadLibrary(l);
       unsigned short nb = this->getCastemFunctionNumberOfVariables(l, f);
       char** res = ::tfel_getCastemFunctionVariables(lib, f.c_str());
@@ -894,20 +933,19 @@ namespace tfel {
       }
     }  // end of ExternalLibraryManager::getCastemFunctionVariables
 
-    GenericBehaviourFctPtr ExternalLibraryManager::getGenericBehaviourFunction(const std::string& l,
-                                                           const std::string& f) {
+    GenericBehaviourFctPtr ExternalLibraryManager::getGenericBehaviourFunction(
+        const std::string& l, const std::string& f) {
       const auto lib = this->loadLibrary(l);
       const auto fct = ::tfel_getGenericBehaviourFunction(lib, f.c_str());
       raise_if(fct == nullptr,
                "ExternalLibraryManager::getGenericBehaviourFunction: "
                "could not load generic gehaviour function '" +
-	       f + "' (" + getErrorMessage() + ")");
+                   f + "' (" + getErrorMessage() + ")");
       return fct;
     }
 
-    
-    CyranoFctPtr ExternalLibraryManager::getCyranoFunction(const std::string& l,
-                                                           const std::string& f) {
+    CyranoFctPtr ExternalLibraryManager::getCyranoFunction(
+        const std::string& l, const std::string& f) {
       const auto lib = this->loadLibrary(l);
       const auto fct = ::tfel_getCyranoFunction(lib, f.c_str());
       raise_if(fct == nullptr,
@@ -920,10 +958,11 @@ namespace tfel {
       return fct;
     }
 
-    AbaqusFctPtr ExternalLibraryManager::getAbaqusExternalBehaviourFunction(const std::string& l,
-                                                                            const std::string& f) {
+    AbaqusFctPtr ExternalLibraryManager::getAbaqusExternalBehaviourFunction(
+        const std::string& l, const std::string& f) {
       const auto lib = this->loadLibrary(l);
-      const auto fct = ::tfel_getAbaqusExternalBehaviourFunction(lib, f.c_str());
+      const auto fct =
+          ::tfel_getAbaqusExternalBehaviourFunction(lib, f.c_str());
       raise_if(fct == nullptr,
                "ExternalLibraryManager::getAbaqusExternalBehaviourFunction: "
                "could not load Abaqus external behaviour '" +
@@ -934,8 +973,8 @@ namespace tfel {
       return fct;
     }
 
-    AnsysFctPtr ExternalLibraryManager::getAnsysExternalBehaviourFunction(const std::string& l,
-                                                                          const std::string& f) {
+    AnsysFctPtr ExternalLibraryManager::getAnsysExternalBehaviourFunction(
+        const std::string& l, const std::string& f) {
       const auto lib = this->loadLibrary(l);
       const auto fct = ::tfel_getAnsysExternalBehaviourFunction(lib, f.c_str());
       raise_if(fct == nullptr,
@@ -948,10 +987,12 @@ namespace tfel {
       return fct;
     }
 
-    AbaqusExplicitFctPtr ExternalLibraryManager::getAbaqusExplicitExternalBehaviourFunction(
+    AbaqusExplicitFctPtr
+    ExternalLibraryManager::getAbaqusExplicitExternalBehaviourFunction(
         const std::string& l, const std::string& f) {
       const auto lib = this->loadLibrary(l);
-      const auto fct = ::tfel_getAbaqusExplicitExternalBehaviourFunction(lib, f.c_str());
+      const auto fct =
+          ::tfel_getAbaqusExplicitExternalBehaviourFunction(lib, f.c_str());
       raise_if(fct == nullptr,
                "ExternalLibraryManager::"
                "getAbaqusExplicitExternalBehaviourFunction: "
@@ -976,10 +1017,11 @@ namespace tfel {
       return fct;
     }
 
-    CastemFctPtr ExternalLibraryManager::getCastemExternalBehaviourFunction(const std::string& l,
-                                                                            const std::string& f) {
+    CastemFctPtr ExternalLibraryManager::getCastemExternalBehaviourFunction(
+        const std::string& l, const std::string& f) {
       const auto lib = this->loadLibrary(l);
-      const auto fct = ::tfel_getCastemExternalBehaviourFunction(lib, f.c_str());
+      const auto fct =
+          ::tfel_getCastemExternalBehaviourFunction(lib, f.c_str());
       raise_if(fct == nullptr,
                "ExternalLibraryManager::"
                "getCastemExternalBehaviourFunction: "
@@ -1005,8 +1047,8 @@ namespace tfel {
       return fct;
     }
 
-    EuroplexusFctPtr ExternalLibraryManager::getEuroplexusFunction(const std::string& l,
-                                                                   const std::string& f) {
+    EuroplexusFctPtr ExternalLibraryManager::getEuroplexusFunction(
+        const std::string& l, const std::string& f) {
       const auto lib = this->loadLibrary(l);
       const auto fct = ::tfel_getEuroplexusFunction(lib, f.c_str());
       raise_if(fct == nullptr,
@@ -1024,24 +1066,25 @@ namespace tfel {
                                               const std::string& f,
                                               const std::string& h,
                                               const std::string& n) {
-      if(!h.empty()){
-	ExternalLibraryManagerCheckModellingHypothesisName(h);
+      if (!h.empty()) {
+        ExternalLibraryManagerCheckModellingHypothesisName(h);
       }
       const auto lib = this->loadLibrary(l);
       auto nb = -1;
-      if(!h.empty()){
-	nb = ::tfel_getUnsignedShort(lib, (f + "_" + h + "_n" + n).c_str());
+      if (!h.empty()) {
+        nb = ::tfel_getUnsignedShort(lib, (f + "_" + h + "_n" + n).c_str());
       }
       if (nb == -1) {
-	nb = ::tfel_getUnsignedShort(lib, (f + "_n" + n).c_str());
+        nb = ::tfel_getUnsignedShort(lib, (f + "_n" + n).c_str());
       }
       raise_if(nb == -1,
                "ExternalLibraryManager::getUMATNames: "
                "number of variables names could not be read "
-               "(" + getErrorMessage() + ")");
+               "(" +
+                   getErrorMessage() + ")");
       char** res = nullptr;
-      if(!h.empty()){
-	res = ::tfel_getArrayOfStrings(lib, (f + "_" + h + '_' + n).c_str());
+      if (!h.empty()) {
+        res = ::tfel_getArrayOfStrings(lib, (f + "_" + h + '_' + n).c_str());
       }
       if (res == nullptr) {
         res = ::tfel_getArrayOfStrings(lib, (f + '_' + n).c_str());
@@ -1049,7 +1092,8 @@ namespace tfel {
       raise_if(res == nullptr,
                "ExternalLibraryManager::getUMATNames: "
                "variables names could not be read "
-               "(" + getErrorMessage() + ")");
+               "(" +
+                   getErrorMessage() + ")");
       std::copy(res, res + nb, std::back_inserter(vars));
     }  // end of ExternalLibraryManager::getUMATNames
 
@@ -1058,63 +1102,74 @@ namespace tfel {
                                               const std::string& f,
                                               const std::string& h,
                                               const std::string& n) {
-      if(!h.empty()){
-	ExternalLibraryManagerCheckModellingHypothesisName(h);
+      if (!h.empty()) {
+        ExternalLibraryManagerCheckModellingHypothesisName(h);
       }
       const auto lib = this->loadLibrary(l);
       auto nb = -1;
-      if(!h.empty()){
-	nb = ::tfel_getUnsignedShort(lib, (f + "_" + h + "_n" + n).c_str());
+      if (!h.empty()) {
+        nb = ::tfel_getUnsignedShort(lib, (f + "_" + h + "_n" + n).c_str());
       }
       if (nb == -1) {
-	nb = ::tfel_getUnsignedShort(lib, (f + "_n" + n).c_str());
+        nb = ::tfel_getUnsignedShort(lib, (f + "_n" + n).c_str());
       }
       raise_if(nb == -1,
                "ExternalLibraryManager::getUMATTypes: "
                "number of variables names could not be read "
-               "(" + getErrorMessage() + ")");
+               "(" +
+                   getErrorMessage() + ")");
       int* res = nullptr;
-      if(!h.empty()){
-	res = ::tfel_getArrayOfInts(lib, (f + "_" + h + '_' + n+"Types").c_str());
+      if (!h.empty()) {
+        res = ::tfel_getArrayOfInts(lib,
+                                    (f + "_" + h + '_' + n + "Types").c_str());
       }
       if (res == nullptr) {
-        res = ::tfel_getArrayOfInts(lib, (f + '_' + n+"Types").c_str());
+        res = ::tfel_getArrayOfInts(lib, (f + '_' + n + "Types").c_str());
       }
       raise_if(res == nullptr,
                "ExternalLibraryManager::getUMATTypes: "
                "variables names could not be read "
-               "(" + getErrorMessage() + ")");
+               "(" +
+                   getErrorMessage() + ")");
       std::copy(res, res + nb, std::back_inserter(types));
     }  // end of ExternalLibraryManager::getUMATTypes
-    
-    bool ExternalLibraryManager::isUMATBehaviourUsableInPurelyImplicitResolution(
+
+    bool
+    ExternalLibraryManager::isUMATBehaviourUsableInPurelyImplicitResolution(
         const std::string& l, const std::string& f, const std::string& h) {
       ExternalLibraryManagerCheckModellingHypothesisName(h);
       const auto lib = this->loadLibrary(l);
-      int b = ::tfel_getBool(lib, (f + "_" + h + "_UsableInPurelyImplicitResolution").c_str());
+      int b = ::tfel_getBool(
+          lib, (f + "_" + h + "_UsableInPurelyImplicitResolution").c_str());
       if (b == -1) {
-        b = ::tfel_getBool(lib, (f + "_UsableInPurelyImplicitResolution").c_str());
+        b = ::tfel_getBool(lib,
+                           (f + "_UsableInPurelyImplicitResolution").c_str());
       }
       if (b == -1) {
         return false;
       }
       return (b == 1);
-    }  // end of ExternalLibraryManager::isUMATBehaviourUsableInPurelyImplicitResolution
+    }  // end of
+       // ExternalLibraryManager::isUMATBehaviourUsableInPurelyImplicitResolution
 
-    bool ExternalLibraryManager::checkIfUMATBehaviourUsesGenericPlaneStressAlgorithm(
+    bool
+    ExternalLibraryManager::checkIfUMATBehaviourUsesGenericPlaneStressAlgorithm(
         const std::string& l, const std::string& f) {
       const auto lib = this->loadLibrary(l);
-      const auto b = ::tfel_getBool(lib, (f + "_UsesGenericPlaneStressAlgorithm").c_str());
+      const auto b =
+          ::tfel_getBool(lib, (f + "_UsesGenericPlaneStressAlgorithm").c_str());
       if (b == -1) {
         return false;
       }
       return b == 1;
-    }  // end of ExternalLibraryManager::checkIfUMATBehaviourUsesGenericPlaneStressAlgorithm
+    }  // end of
+       // ExternalLibraryManager::checkIfUMATBehaviourUsesGenericPlaneStressAlgorithm
 
-    unsigned short ExternalLibraryManager::getUMATBehaviourType(const std::string& l,
-                                                                const std::string& f) {
+    unsigned short ExternalLibraryManager::getUMATBehaviourType(
+        const std::string& l, const std::string& f) {
       const auto lib = this->loadLibrary(l);
-      const auto u = ::tfel_getUnsignedShort(lib, (f + "_BehaviourType").c_str());
+      const auto u =
+          ::tfel_getUnsignedShort(lib, (f + "_BehaviourType").c_str());
       raise_if(u == -1,
                "ExternalLibraryManager::getUMATBehaviourType: "
                "behaviour type could not be read (" +
@@ -1122,10 +1177,11 @@ namespace tfel {
       return static_cast<unsigned short>(u);
     }  // end of ExternalLibraryManager::getUMATBehaviourType
 
-    unsigned short ExternalLibraryManager::getUMATBehaviourKinematic(const std::string& l,
-                                                                     const std::string& f) {
+    unsigned short ExternalLibraryManager::getUMATBehaviourKinematic(
+        const std::string& l, const std::string& f) {
       const auto lib = this->loadLibrary(l);
-      const auto u = ::tfel_getUnsignedShort(lib, (f + "_BehaviourKinematic").c_str());
+      const auto u =
+          ::tfel_getUnsignedShort(lib, (f + "_BehaviourKinematic").c_str());
       raise_if(u == -1,
                "ExternalLibraryManager::getUMATBehaviourKinematic: "
                "behaviour type could not be read (" +
@@ -1133,10 +1189,11 @@ namespace tfel {
       return static_cast<unsigned short>(u);
     }  // end of ExternalLibraryManager::getUMATBehaviourKinematic
 
-    unsigned short ExternalLibraryManager::getUMATSymmetryType(const std::string& l,
-                                                               const std::string& f) {
+    unsigned short ExternalLibraryManager::getUMATSymmetryType(
+        const std::string& l, const std::string& f) {
       const auto lib = this->loadLibrary(l);
-      const auto u = ::tfel_getUnsignedShort(lib, (f + "_SymmetryType").c_str());
+      const auto u =
+          ::tfel_getUnsignedShort(lib, (f + "_SymmetryType").c_str());
       raise_if(u == -1,
                "ExternalLibraryManager::getUMATSymmetryType: "
                "symmetry type could not be read (" +
@@ -1144,18 +1201,21 @@ namespace tfel {
       return static_cast<unsigned short>(u);
     }  // end of ExternalLibraryManager::getUMATSymmetryType
 
-    unsigned short ExternalLibraryManager::getUMATElasticSymmetryType(const std::string& l,
-                                                                      const std::string& f) {
+    unsigned short ExternalLibraryManager::getUMATElasticSymmetryType(
+        const std::string& l, const std::string& f) {
       const auto lib = this->loadLibrary(l);
-      const auto u = ::tfel_getUnsignedShort(lib, (f + "_ElasticSymmetryType").c_str());
+      const auto u =
+          ::tfel_getUnsignedShort(lib, (f + "_ElasticSymmetryType").c_str());
       raise_if(u == -1,
                "ExternalLibraryManager::getUMATElasticSymmetryType: "
                "elastic symmetry type could not be read "
-               "(" + getErrorMessage() + ")");
+               "(" +
+                   getErrorMessage() + ")");
       return static_cast<unsigned short>(u);
     }  // end of ExternalLibraryManager::getUMATElasticSymmetryType
 
-    std::vector<std::string> ExternalLibraryManager::getUMATMaterialPropertiesNames(
+    std::vector<std::string>
+    ExternalLibraryManager::getUMATMaterialPropertiesNames(
         const std::string& l, const std::string& f, const std::string& h) {
       std::vector<std::string> vars;
       this->getUMATNames(vars, l, f, h, "MaterialProperties");
@@ -1169,11 +1229,12 @@ namespace tfel {
       return names;
     }  // end of ExternalLibraryManager::getUMATGradientsNames
 
-    std::vector<std::string> ExternalLibraryManager::getUMATDrivingVariablesNames(
-        const std::string& l, const std::string& f) {
-      return this->getUMATGradientsNames(l,f);
+    std::vector<std::string>
+    ExternalLibraryManager::getUMATDrivingVariablesNames(const std::string& l,
+                                                         const std::string& f) {
+      return this->getUMATGradientsNames(l, f);
     }  // end of ExternalLibraryManager::getUMATDrivingVariablesNames
-    
+
     std::vector<int> ExternalLibraryManager::getUMATGradientsTypes(
         const std::string& l, const std::string& f) {
       std::vector<int> types;
@@ -1183,10 +1244,11 @@ namespace tfel {
 
     std::vector<int> ExternalLibraryManager::getUMATDrivingVariablesTypes(
         const std::string& l, const std::string& f) {
-      return this->getUMATGradientsTypes(l,f);
-    } // end of ExternalLibraryManager::getUMATDrivingVariablesTypes
-    
-    std::vector<std::string> ExternalLibraryManager::getUMATThermodynamicForcesNames(
+      return this->getUMATGradientsTypes(l, f);
+    }  // end of ExternalLibraryManager::getUMATDrivingVariablesTypes
+
+    std::vector<std::string>
+    ExternalLibraryManager::getUMATThermodynamicForcesNames(
         const std::string& l, const std::string& f) {
       std::vector<std::string> names;
       this->getUMATNames(names, l, f, "", "ThermodynamicForces");
@@ -1200,45 +1262,45 @@ namespace tfel {
       return types;
     }  // end of ExternalLibraryManager::getUMATThermodynamicForcesTypes
 
-    std::vector<std::string> ExternalLibraryManager::getUMATInternalStateVariablesNames(
+    std::vector<std::string>
+    ExternalLibraryManager::getUMATInternalStateVariablesNames(
         const std::string& l, const std::string& f, const std::string& h) {
       std::vector<std::string> vars;
       this->getUMATNames(vars, l, f, h, "InternalStateVariables");
       return vars;
     }  // end of ExternalLibraryManager::getUMATInternalStateVariablesNames
-    
+
     std::vector<int> ExternalLibraryManager::getUMATInternalStateVariablesTypes(
         const std::string& l, const std::string& f, const std::string& h) {
       std::vector<int> types;
-      this->getUMATTypes(types,l,f,h,"InternalStateVariables");
+      this->getUMATTypes(types, l, f, h, "InternalStateVariables");
       return types;
     }  // end of ExternalLibraryManager::getUMATInternalVariablesTypes
 
-    std::vector<std::string> ExternalLibraryManager::getUMATExternalStateVariablesNames(
+    std::vector<std::string>
+    ExternalLibraryManager::getUMATExternalStateVariablesNames(
         const std::string& l, const std::string& f, const std::string& h) {
       std::vector<std::string> vars;
       this->getUMATNames(vars, l, f, h, "ExternalStateVariables");
       return vars;
     }  // end of ExternalLibraryManager::getUMATMaterialPropertiesNames
 
-    std::vector<std::string> ExternalLibraryManager::getUMATParametersNames(const std::string& l,
-                                                                            const std::string& f,
-                                                                            const std::string& h) {
+    std::vector<std::string> ExternalLibraryManager::getUMATParametersNames(
+        const std::string& l, const std::string& f, const std::string& h) {
       std::vector<std::string> names;
       this->getUMATNames(names, l, f, h, "Parameters");
       return names;
     }  // end of ExternalLibraryManager::getUMATMaterialPropertiesNames
 
-    std::vector<int> ExternalLibraryManager::getUMATParametersTypes(const std::string& l,
-                                                                    const std::string& f,
-                                                                    const std::string& h) {
+    std::vector<int> ExternalLibraryManager::getUMATParametersTypes(
+        const std::string& l, const std::string& f, const std::string& h) {
       std::vector<int> types;
-      this->getUMATTypes(types,l,f,h,"Parameters");
+      this->getUMATTypes(types, l, f, h, "Parameters");
       return types;
     }  // end of ExternalLibraryManager::getUMATInternalVariablesTypes
 
-    CastemFunctionPtr ExternalLibraryManager::getCastemFunction(const std::string& l,
-                                                                const std::string& f) {
+    CastemFunctionPtr ExternalLibraryManager::getCastemFunction(
+        const std::string& l, const std::string& f) {
       const auto lib = this->loadLibrary(l);
       auto fct = ::tfel_getCastemFunction(lib, f.c_str());
       raise_if(fct == nullptr,
@@ -1391,8 +1453,8 @@ namespace tfel {
       return fct;
     }
 
-    CFunction10Ptr ExternalLibraryManager::getCFunction10(const std::string& l,
-                                                          const std::string& f) {
+    CFunction10Ptr ExternalLibraryManager::getCFunction10(
+        const std::string& l, const std::string& f) {
       const auto lib = this->loadLibrary(l);
       const auto fct = ::tfel_getCFunction10(lib, f.c_str());
       raise_if(fct == nullptr,
@@ -1405,8 +1467,8 @@ namespace tfel {
       return fct;
     }
 
-    CFunction11Ptr ExternalLibraryManager::getCFunction11(const std::string& l,
-                                                          const std::string& f) {
+    CFunction11Ptr ExternalLibraryManager::getCFunction11(
+        const std::string& l, const std::string& f) {
       const auto lib = this->loadLibrary(l);
       const auto fct = ::tfel_getCFunction11(lib, f.c_str());
       raise_if(fct == nullptr,
@@ -1419,8 +1481,8 @@ namespace tfel {
       return fct;
     }
 
-    CFunction12Ptr ExternalLibraryManager::getCFunction12(const std::string& l,
-                                                          const std::string& f) {
+    CFunction12Ptr ExternalLibraryManager::getCFunction12(
+        const std::string& l, const std::string& f) {
       const auto lib = this->loadLibrary(l);
       const auto fct = ::tfel_getCFunction12(lib, f.c_str());
       raise_if(fct == nullptr,
@@ -1433,8 +1495,8 @@ namespace tfel {
       return fct;
     }
 
-    CFunction13Ptr ExternalLibraryManager::getCFunction13(const std::string& l,
-                                                          const std::string& f) {
+    CFunction13Ptr ExternalLibraryManager::getCFunction13(
+        const std::string& l, const std::string& f) {
       const auto lib = this->loadLibrary(l);
       const auto fct = ::tfel_getCFunction13(lib, f.c_str());
       raise_if(fct == nullptr,
@@ -1447,8 +1509,8 @@ namespace tfel {
       return fct;
     }
 
-    CFunction14Ptr ExternalLibraryManager::getCFunction14(const std::string& l,
-                                                          const std::string& f) {
+    CFunction14Ptr ExternalLibraryManager::getCFunction14(
+        const std::string& l, const std::string& f) {
       const auto lib = this->loadLibrary(l);
       const auto fct = ::tfel_getCFunction14(lib, f.c_str());
       raise_if(fct == nullptr,
@@ -1461,8 +1523,8 @@ namespace tfel {
       return fct;
     }
 
-    CFunction15Ptr ExternalLibraryManager::getCFunction15(const std::string& l,
-                                                          const std::string& f) {
+    CFunction15Ptr ExternalLibraryManager::getCFunction15(
+        const std::string& l, const std::string& f) {
       const auto lib = this->loadLibrary(l);
       const auto fct = ::tfel_getCFunction15(lib, f.c_str());
       raise_if(fct == nullptr,
@@ -1475,8 +1537,8 @@ namespace tfel {
       return fct;
     }
 
-    FortranFunction0Ptr ExternalLibraryManager::getFortranFunction0(const std::string& l,
-                                                                    const std::string& f) {
+    FortranFunction0Ptr ExternalLibraryManager::getFortranFunction0(
+        const std::string& l, const std::string& f) {
       const auto lib = this->loadLibrary(l);
       const auto fct = ::tfel_getFortranFunction0(lib, f.c_str());
       raise_if(fct == nullptr,
@@ -1489,8 +1551,8 @@ namespace tfel {
       return fct;
     }
 
-    FortranFunction1Ptr ExternalLibraryManager::getFortranFunction1(const std::string& l,
-                                                                    const std::string& f) {
+    FortranFunction1Ptr ExternalLibraryManager::getFortranFunction1(
+        const std::string& l, const std::string& f) {
       const auto lib = this->loadLibrary(l);
       const auto fct = ::tfel_getFortranFunction1(lib, f.c_str());
       raise_if(fct == nullptr,
@@ -1503,8 +1565,8 @@ namespace tfel {
       return fct;
     }
 
-    FortranFunction2Ptr ExternalLibraryManager::getFortranFunction2(const std::string& l,
-                                                                    const std::string& f) {
+    FortranFunction2Ptr ExternalLibraryManager::getFortranFunction2(
+        const std::string& l, const std::string& f) {
       const auto lib = this->loadLibrary(l);
       const auto fct = ::tfel_getFortranFunction2(lib, f.c_str());
       raise_if(fct == nullptr,
@@ -1517,8 +1579,8 @@ namespace tfel {
       return fct;
     }
 
-    FortranFunction3Ptr ExternalLibraryManager::getFortranFunction3(const std::string& l,
-                                                                    const std::string& f) {
+    FortranFunction3Ptr ExternalLibraryManager::getFortranFunction3(
+        const std::string& l, const std::string& f) {
       const auto lib = this->loadLibrary(l);
       const auto fct = ::tfel_getFortranFunction3(lib, f.c_str());
       raise_if(fct == nullptr,
@@ -1531,8 +1593,8 @@ namespace tfel {
       return fct;
     }
 
-    FortranFunction4Ptr ExternalLibraryManager::getFortranFunction4(const std::string& l,
-                                                                    const std::string& f) {
+    FortranFunction4Ptr ExternalLibraryManager::getFortranFunction4(
+        const std::string& l, const std::string& f) {
       const auto lib = this->loadLibrary(l);
       const auto fct = ::tfel_getFortranFunction4(lib, f.c_str());
       raise_if(fct == nullptr,
@@ -1545,8 +1607,8 @@ namespace tfel {
       return fct;
     }
 
-    FortranFunction5Ptr ExternalLibraryManager::getFortranFunction5(const std::string& l,
-                                                                    const std::string& f) {
+    FortranFunction5Ptr ExternalLibraryManager::getFortranFunction5(
+        const std::string& l, const std::string& f) {
       const auto lib = this->loadLibrary(l);
       const auto fct = ::tfel_getFortranFunction5(lib, f.c_str());
       raise_if(fct == nullptr,
@@ -1559,8 +1621,8 @@ namespace tfel {
       return fct;
     }
 
-    FortranFunction6Ptr ExternalLibraryManager::getFortranFunction6(const std::string& l,
-                                                                    const std::string& f) {
+    FortranFunction6Ptr ExternalLibraryManager::getFortranFunction6(
+        const std::string& l, const std::string& f) {
       const auto lib = this->loadLibrary(l);
       const auto fct = ::tfel_getFortranFunction6(lib, f.c_str());
       raise_if(fct == nullptr,
@@ -1573,8 +1635,8 @@ namespace tfel {
       return fct;
     }
 
-    FortranFunction7Ptr ExternalLibraryManager::getFortranFunction7(const std::string& l,
-                                                                    const std::string& f) {
+    FortranFunction7Ptr ExternalLibraryManager::getFortranFunction7(
+        const std::string& l, const std::string& f) {
       const auto lib = this->loadLibrary(l);
       const auto fct = ::tfel_getFortranFunction7(lib, f.c_str());
       raise_if(fct == nullptr,
@@ -1587,8 +1649,8 @@ namespace tfel {
       return fct;
     }
 
-    FortranFunction8Ptr ExternalLibraryManager::getFortranFunction8(const std::string& l,
-                                                                    const std::string& f) {
+    FortranFunction8Ptr ExternalLibraryManager::getFortranFunction8(
+        const std::string& l, const std::string& f) {
       const auto lib = this->loadLibrary(l);
       const auto fct = ::tfel_getFortranFunction8(lib, f.c_str());
       raise_if(fct == nullptr,
@@ -1601,8 +1663,8 @@ namespace tfel {
       return fct;
     }
 
-    FortranFunction9Ptr ExternalLibraryManager::getFortranFunction9(const std::string& l,
-                                                                    const std::string& f) {
+    FortranFunction9Ptr ExternalLibraryManager::getFortranFunction9(
+        const std::string& l, const std::string& f) {
       const auto lib = this->loadLibrary(l);
       const auto fct = ::tfel_getFortranFunction9(lib, f.c_str());
       raise_if(fct == nullptr,
@@ -1615,8 +1677,8 @@ namespace tfel {
       return fct;
     }
 
-    FortranFunction10Ptr ExternalLibraryManager::getFortranFunction10(const std::string& l,
-                                                                      const std::string& f) {
+    FortranFunction10Ptr ExternalLibraryManager::getFortranFunction10(
+        const std::string& l, const std::string& f) {
       const auto lib = this->loadLibrary(l);
       const auto fct = ::tfel_getFortranFunction10(lib, f.c_str());
       raise_if(fct == nullptr,
@@ -1629,8 +1691,8 @@ namespace tfel {
       return fct;
     }
 
-    FortranFunction11Ptr ExternalLibraryManager::getFortranFunction11(const std::string& l,
-                                                                      const std::string& f) {
+    FortranFunction11Ptr ExternalLibraryManager::getFortranFunction11(
+        const std::string& l, const std::string& f) {
       const auto lib = this->loadLibrary(l);
       const auto fct = ::tfel_getFortranFunction11(lib, f.c_str());
       raise_if(fct == nullptr,
@@ -1643,8 +1705,8 @@ namespace tfel {
       return fct;
     }
 
-    FortranFunction12Ptr ExternalLibraryManager::getFortranFunction12(const std::string& l,
-                                                                      const std::string& f) {
+    FortranFunction12Ptr ExternalLibraryManager::getFortranFunction12(
+        const std::string& l, const std::string& f) {
       const auto lib = this->loadLibrary(l);
       const auto fct = ::tfel_getFortranFunction12(lib, f.c_str());
       raise_if(fct == nullptr,
@@ -1657,8 +1719,8 @@ namespace tfel {
       return fct;
     }
 
-    FortranFunction13Ptr ExternalLibraryManager::getFortranFunction13(const std::string& l,
-                                                                      const std::string& f) {
+    FortranFunction13Ptr ExternalLibraryManager::getFortranFunction13(
+        const std::string& l, const std::string& f) {
       const auto lib = this->loadLibrary(l);
       const auto fct = ::tfel_getFortranFunction13(lib, f.c_str());
       raise_if(fct == nullptr,
@@ -1671,8 +1733,8 @@ namespace tfel {
       return fct;
     }
 
-    FortranFunction14Ptr ExternalLibraryManager::getFortranFunction14(const std::string& l,
-                                                                      const std::string& f) {
+    FortranFunction14Ptr ExternalLibraryManager::getFortranFunction14(
+        const std::string& l, const std::string& f) {
       const auto lib = this->loadLibrary(l);
       const auto fct = ::tfel_getFortranFunction14(lib, f.c_str());
       raise_if(fct == nullptr,
@@ -1685,8 +1747,8 @@ namespace tfel {
       return fct;
     }
 
-    FortranFunction15Ptr ExternalLibraryManager::getFortranFunction15(const std::string& l,
-                                                                      const std::string& f) {
+    FortranFunction15Ptr ExternalLibraryManager::getFortranFunction15(
+        const std::string& l, const std::string& f) {
       const auto lib = this->loadLibrary(l);
       const auto fct = ::tfel_getFortranFunction15(lib, f.c_str());
       raise_if(fct == nullptr,

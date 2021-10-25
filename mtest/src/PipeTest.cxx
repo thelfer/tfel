@@ -598,8 +598,8 @@ namespace mtest {
       // if(!this->s_t0.empty()){
       // 	// we should be able to give a profile to do this
       // 	throw(std::runtime_error("PipeTest::initializeCurrentState: "
-      // 				 "initialisation of stress is not supported
-      // yet"));
+      // 				 "initialisation of stress is not
+      // supported yet"));
       // 	// std::copy(this->s_t0.begin(),this->s_t0.end(),cs.s0.begin());
       // }
 

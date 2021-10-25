@@ -36,40 +36,40 @@ namespace mfront {
         const BehaviourDescription&) const override;
     void writeInterfaceSpecificIncludes(
         std::ostream&, const BehaviourDescription&) const override;
-    void endTreatment(
-        const BehaviourDescription&,
-        const FileDescription&) const override;
-    void getTargetsDescription(
-        TargetsDescription&,
-        const BehaviourDescription&) override;
+    void endTreatment(const BehaviourDescription&,
+                      const FileDescription&) const override;
+    void getTargetsDescription(TargetsDescription&,
+                               const BehaviourDescription&) override;
 
     void writeBehaviourConstructorHeader(std::ostream&,
-					 const BehaviourDescription&,
-					 const Hypothesis,
-					 const std::string&) const override;
+                                         const BehaviourDescription&,
+                                         const Hypothesis,
+                                         const std::string&) const override;
     void writeBehaviourConstructorBody(std::ostream&,
-				       const BehaviourDescription&,
-				       const Hypothesis) const override;
+                                       const BehaviourDescription&,
+                                       const Hypothesis) const override;
 
-    void writeBehaviourDataConstructor(std::ostream&,
-				       const Hypothesis,
-				       const BehaviourDescription&) const override;
-    void writeIntegrationDataConstructor(std::ostream&,
-					 const Hypothesis,
-					 const BehaviourDescription&) const override;
-    void writeBehaviourDataMainVariablesSetters(std::ostream&,
-						const BehaviourDescription&) const override;
-    void  writeIntegrationDataMainVariablesSetters(std::ostream&,
-						   const BehaviourDescription&) const override;
+    void writeBehaviourDataConstructor(
+        std::ostream&,
+        const Hypothesis,
+        const BehaviourDescription&) const override;
+    void writeIntegrationDataConstructor(
+        std::ostream&,
+        const Hypothesis,
+        const BehaviourDescription&) const override;
+    void writeBehaviourDataMainVariablesSetters(
+        std::ostream&, const BehaviourDescription&) const override;
+    void writeIntegrationDataMainVariablesSetters(
+        std::ostream&, const BehaviourDescription&) const override;
 
     void exportMechanicalData(std::ostream&,
-			      const Hypothesis,
-			      const BehaviourDescription&) const override;
+                              const Hypothesis,
+                              const BehaviourDescription&) const override;
 
     std::string getFunctionNameBasis(const std::string&) const override;
 
     virtual std::string getLibraryName(const BehaviourDescription&) const;
-    
+
     //! destructor
     ~GenericBehaviourInterface() override;
 
@@ -79,7 +79,7 @@ namespace mfront {
      * \param[in] base name for the function to be generated
      */
     virtual std::string getFunctionNameForHypothesis(const std::string&,
-						     const Hypothesis) const;
+                                                     const Hypothesis) const;
     /*!
      * \brief write the generation of an MTest file for the given hypothesis
      * \param[out] out: output stream

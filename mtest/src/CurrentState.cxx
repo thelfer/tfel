@@ -33,7 +33,8 @@ namespace mtest {
   CurrentState::~CurrentState() noexcept = default;
 
   void allocate(CurrentState& s, const std::shared_ptr<const Behaviour>& b) {
-    tfel::raise_if(s.behaviour != nullptr, "mtest::allocate: state already allocated");
+    tfel::raise_if(s.behaviour != nullptr,
+                   "mtest::allocate: state already allocated");
     s.behaviour = b;
     const auto mpnames = s.behaviour->getMaterialPropertiesNames();
     const auto esvnames = s.behaviour->getExternalStateVariablesNames();
@@ -116,7 +117,8 @@ namespace mtest {
     tfel::raise_if(s.behaviour == nullptr,
                    "mtest::computeThermalExpanstion: "
                    "uninitialised state");
-    tfel::raise_if((s.esv0.size() != esvnames.size()) || (s.desv.size() != esvnames.size()),
+    tfel::raise_if((s.esv0.size() != esvnames.size()) ||
+                       (s.desv.size() != esvnames.size()),
                    "computeExternalStateVariables:"
                    "CurrentState variable was not "
                    "initialized appropriately");
@@ -176,13 +178,15 @@ namespace mtest {
     const auto pev2 = evm.find(a1);
     const auto pev3 = evm.find(a2);
     const auto pev4 = evm.find(a3);
-    if ((pev == evm.end()) || ((pev2 == evm.end()) || (pev3 == evm.end()) || (pev4 == evm.end()))) {
+    if ((pev == evm.end()) ||
+        ((pev2 == evm.end()) || (pev3 == evm.end()) || (pev4 == evm.end()))) {
       return;
     }
-    tfel::raise_if((pev2 == evm.end()) || (pev3 == evm.end()) || (pev4 == evm.end()),
-                   "computeThermalExpansion: at least one "
-                   "of the three thermal expansion coefficient is "
-                   "defined and at least one is not");
+    tfel::raise_if(
+        (pev2 == evm.end()) || (pev3 == evm.end()) || (pev4 == evm.end()),
+        "computeThermalExpansion: at least one "
+        "of the three thermal expansion coefficient is "
+        "defined and at least one is not");
     const auto& T_ev = *(pev->second);
     const auto& a1_ev = *(pev2->second);
     const auto& a2_ev = *(pev3->second);
@@ -205,7 +209,8 @@ namespace mtest {
       se_th0[2u] = a3_ev(t) * (T_ev(t) - s.Tref);
       se_th1[2u] = a3_ev(t + dt) * (T_ev(t + dt) - s.Tref);
       // backward rotation matrix
-      const auto brm = transpose(s.behaviour->getRotationMatrix(s.mprops1, s.r));
+      const auto brm =
+          transpose(s.behaviour->getRotationMatrix(s.mprops1, s.r));
       se_th0.changeBasis(brm);
       se_th1.changeBasis(brm);
       const auto ss = tfel::math::getStensorSize(d);
@@ -232,7 +237,9 @@ namespace mtest {
     s.de1 = s.de0;
   }
 
-  void setInternalStateVariableValue(CurrentState& s, const std::string& n, const real v) {
+  void setInternalStateVariableValue(CurrentState& s,
+                                     const std::string& n,
+                                     const real v) {
     setInternalStateVariableValue(s, n, v, -1);
     setInternalStateVariableValue(s, n, v, 0);
     setInternalStateVariableValue(s, n, v, 1);
@@ -257,7 +264,8 @@ namespace mtest {
              "internal state variable '" +
                  n + "'");
     const auto pos = s.behaviour->getInternalStateVariablePosition(n);
-    throw_if((s.iv_1.size() <= pos) || (s.iv0.size() <= pos) || (s.iv1.size() <= pos),
+    throw_if((s.iv_1.size() <= pos) || (s.iv0.size() <= pos) ||
+                 (s.iv1.size() <= pos),
              "invalid size for state variables (bad initialization)");
     auto& iv = [&s, throw_if, d]() -> tfel::math::vector<mtest::real>& {
       throw_if((d != 1) && (d != 0) && (d != -1), "invalid depth");
@@ -308,9 +316,9 @@ namespace mtest {
     }();
     throw_if(v.size() != size, "bad number of values");
     const auto pos = s.behaviour->getInternalStateVariablePosition(n);
-    throw_if(
-        (s.iv_1.size() < pos + size) || (s.iv0.size() < pos + size) || (s.iv1.size() < pos + size),
-        "invalid size for state variables (bad initialization)");
+    throw_if((s.iv_1.size() < pos + size) || (s.iv0.size() < pos + size) ||
+                 (s.iv1.size() < pos + size),
+             "invalid size for state variables (bad initialization)");
     auto& iv = [&s, throw_if, d]() -> tfel::math::vector<mtest::real>& {
       throw_if((d != 1) && (d != 0) && (d != -1), "invalid depth");
       if (d == -1) {

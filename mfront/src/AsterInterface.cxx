@@ -50,7 +50,8 @@ namespace mfront {
 
   std::string AsterInterface::getName() { return "aster"; }
 
-  std::string AsterInterface::getLibraryName(const BehaviourDescription& mb) const {
+  std::string AsterInterface::getLibraryName(
+      const BehaviourDescription& mb) const {
     if (mb.getLibrary().empty()) {
       if (!mb.getMaterialName().empty()) {
         return "Aster" + mb.getMaterialName();
@@ -102,18 +103,22 @@ namespace mfront {
           bd, this->readBooleanValue(key, current, end));
       return {true, current};
     } else if (key == "@AsterCompareToNumericalTangentOperator") {
-      this->compareToNumericalTangentOperator = this->readBooleanValue(key, current, end);
+      this->compareToNumericalTangentOperator =
+          this->readBooleanValue(key, current, end);
       return make_pair(true, current);
     } else if ((key == "@AsterTangentOperatorComparisonCriterium") ||
                (key == "@AsterTangentOperatorComparisonCriterion")) {
-      throw_if(!this->compareToNumericalTangentOperator,
-               "comparison to tangent operator is not enabled at this stage.\n"
-               "Use the @AsterCompareToNumericalTangentOperator directive before "
-               "@AsterTangentOperatorComparisonCriterion");
+      throw_if(
+          !this->compareToNumericalTangentOperator,
+          "comparison to tangent operator is not enabled at this stage.\n"
+          "Use the @AsterCompareToNumericalTangentOperator directive before "
+          "@AsterTangentOperatorComparisonCriterion");
       throw_if(current == end, "unexpected end of file");
-      this->tangentOperatorComparisonCriterion = CxxTokenizer::readDouble(current, end);
+      this->tangentOperatorComparisonCriterion =
+          CxxTokenizer::readDouble(current, end);
       throw_if(current == end, "unexpected end of file");
-      throw_if(current->value != ";", "expected ';', read '" + current->value + "'");
+      throw_if(current->value != ";",
+               "expected ';', read '" + current->value + "'");
       ++(current);
       return {true, current};
     } else if (key == "@AsterStrainPerturbationValue") {
@@ -124,11 +129,11 @@ namespace mfront {
       throw_if(current == end, "unexpected end of file");
       this->strainPerturbationValue = CxxTokenizer::readDouble(current, end);
       throw_if(current == end, "unexpected end of file");
-      throw_if(current->value != ";", "expected ';', read '" + current->value + "'");
+      throw_if(current->value != ";",
+               "expected ';', read '" + current->value + "'");
       ++(current);
       return {true, current};
     } else if (key == "@AsterSaveTangentOperator") {
-
       bd.setAttribute(AsterInterface::saveTangentOperator,
                       this->readBooleanValue(key, current, end), false);
       return {true, current};
@@ -136,7 +141,8 @@ namespace mfront {
       this->errorReport = this->readBooleanValue(key, current, end);
       return {true, current};
     } else if (key == "@AsterFiniteStrainFormulation") {
-      throw_if(bd.getBehaviourType() != BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR,
+      throw_if(bd.getBehaviourType() !=
+                   BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR,
                "the '@AsterFiniteStrainFormulation' is only valid "
                "for finite strain behaviour");
       const auto s = current->value;
@@ -145,20 +151,22 @@ namespace mfront {
                         std::string(AsterInterface::simo_miehe), false);
       } else if ((s == "GROT_GDEP") || (s == "TotalLagrangian")) {
         bd.setAttribute(AsterInterface::finiteStrainFormulation,
-                        std::string(AsterInterface::grot_gdep),false);
+                        std::string(AsterInterface::grot_gdep), false);
       } else {
         throw_if(true, "invalid finite strain formuluation '" + s + "'");
       }
       ++(current);
       throw_if(current == end, "unexpected end of file");
-      throw_if(current->value != ";", "expected ';', read '" + current->value + "'");
+      throw_if(current->value != ";",
+               "expected ';', read '" + current->value + "'");
       ++(current);
       return {true, current};
     }
     return {false, current};
   }  // end of treatKeyword
 
-  std::set<AsterInterface::Hypothesis> AsterInterface::getModellingHypothesesToBeTreated(
+  std::set<AsterInterface::Hypothesis>
+  AsterInterface::getModellingHypothesesToBeTreated(
       const BehaviourDescription& mb) const {
     // treatment
     std::set<Hypothesis> h;
@@ -179,12 +187,13 @@ namespace mfront {
     if (bh.find(ModellingHypothesis::TRIDIMENSIONAL) != bh.end()) {
       h.insert(ModellingHypothesis::TRIDIMENSIONAL);
     }
-    tfel::raise_if(h.empty(),
-                   "AsterInterfaceModellingHypothesesToBeTreated: "
-                   "no hypotheses selected. This means that the given beahviour "
-                   "can't be used neither in 'AxisymmetricalGeneralisedPlaneStrain' "
-                   "nor in 'AxisymmetricalGeneralisedPlaneStress', so it does not "
-                   "make sense to use the Aster interface");
+    tfel::raise_if(
+        h.empty(),
+        "AsterInterfaceModellingHypothesesToBeTreated: "
+        "no hypotheses selected. This means that the given beahviour "
+        "can't be used neither in 'AxisymmetricalGeneralisedPlaneStrain' "
+        "nor in 'AxisymmetricalGeneralisedPlaneStress', so it does not "
+        "make sense to use the Aster interface");
     return h;
   }  // end of AsterInterface::getModellingHypothesesToBeTreated
 
@@ -196,16 +205,20 @@ namespace mfront {
     auto throw_if = [](const bool b, const std::string& m) {
       tfel::raise_if(b, "AsterInterface::endTreatment : " + m);
     };
-    throw_if(!((mb.getBehaviourType() == BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) ||
-               (mb.getBehaviourType() == BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR) ||
-               (mb.getBehaviourType() == BehaviourDescription::COHESIVEZONEMODEL)),
-             "AsterInterface::endTreatment : "
-             "the aster interface only supports "
-             "small and finite strain behaviours "
-             "and cohesive zone models");
+    throw_if(
+        !((mb.getBehaviourType() ==
+           BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) ||
+          (mb.getBehaviourType() ==
+           BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR) ||
+          (mb.getBehaviourType() == BehaviourDescription::COHESIVEZONEMODEL)),
+        "AsterInterface::endTreatment : "
+        "the aster interface only supports "
+        "small and finite strain behaviours "
+        "and cohesive zone models");
     if ((this->compareToNumericalTangentOperator) ||
         (mb.getAttribute<bool>(AsterInterface::saveTangentOperator, false))) {
-      throw_if(mb.getBehaviourType() != BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR,
+      throw_if(mb.getBehaviourType() !=
+                   BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR,
                "unsupported feature @AsterSaveTangentOperator "
                "and @AsterCompareToNumericalTangentOperator : "
                "those are only valid for small strain beahviours");
@@ -229,8 +242,8 @@ namespace mfront {
 
     out << "/*!\n";
     out << "* \\file   " << header << '\n';
-    out << "* \\brief  This file declares the aster interface for the " << mb.getClassName()
-        << " behaviour law\n";
+    out << "* \\brief  This file declares the aster interface for the "
+        << mb.getClassName() << " behaviour law\n";
     out << "* \\author " << fd.authorName << '\n';
     out << "* \\date   " << fd.date << '\n';
     out << "*/\n\n";
@@ -257,7 +270,8 @@ namespace mfront {
     out << "namespace aster{\n\n";
 
     if (!mb.areAllMechanicalDataSpecialised(mhs)) {
-      this->writeAsterBehaviourTraits(out, mb, ModellingHypothesis::UNDEFINEDHYPOTHESIS);
+      this->writeAsterBehaviourTraits(out, mb,
+                                      ModellingHypothesis::UNDEFINEDHYPOTHESIS);
     }
     for (const auto& h : mhs) {
       if (mb.hasSpecialisedMechanicalData(h)) {
@@ -300,16 +314,16 @@ namespace mfront {
         << "const aster::AsterInt  *const," /*< nombre de variables internes */
         << "const aster::AsterReal *const," /*< propriétés du matériaux */
         << "const aster::AsterInt  *const," /*< nombre de propriétés matériaux
-                                                */
+                                             */
         << "const aster::AsterReal *const," /*< matrice de passage du repère
                                                 local
                                                 de l'élement fini massif au
                                                 repère géneral
                                                 du maillage */
-        << "aster::AsterReal *const,"       /*< rapport entre le nouveau pas de temps
-                                                suggeré et le pas de temps donné en
-                                                entrée */
-        << "const aster::AsterInt  *const"  /*< type de modélisation */
+        << "aster::AsterReal *const," /*< rapport entre le nouveau pas de temps
+                                          suggeré et le pas de temps donné en
+                                          entrée */
+        << "const aster::AsterInt  *const" /*< type de modélisation */
         << ");\n\n";
 
     out << "MFRONT_SHAREDOBJ void\naster" << makeLowerCase(name) << "("
@@ -332,16 +346,16 @@ namespace mfront {
         << "const aster::AsterInt  *const," /*< nombre de variables internes */
         << "const aster::AsterReal *const," /*< propriétés du matériaux */
         << "const aster::AsterInt  *const," /*< nombre de propriétés matériaux
-                                                */
+                                             */
         << "const aster::AsterReal *const," /*< matrice de passage du repère
                                                 local
                                                 de l'élement fini massif au
                                                 repère géneral
                                                 du maillage */
-        << "aster::AsterReal *const,"       /*< rapport entre le nouveau pas de temps
-                                                suggeré et le pas de temps donné en
-                                                entrée */
-        << "const aster::AsterInt  *const"  /*< type de modélisation */
+        << "aster::AsterReal *const," /*< rapport entre le nouveau pas de temps
+                                          suggeré et le pas de temps donné en
+                                          entrée */
+        << "const aster::AsterInt  *const" /*< type de modélisation */
         << ");\n\n";
 
     out << "#ifdef __cplusplus\n";
@@ -355,11 +369,14 @@ namespace mfront {
     throw_if(!out, "could not open file '" + src + "'");
 
     const auto sfeh = [&mb, &throw_if] {
-      if (mb.getBehaviourType() == BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) {
+      if (mb.getBehaviourType() ==
+          BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) {
         return "aster::AsterStandardSmallStrainStressFreeExpansionHandler";
-      } else if (mb.getBehaviourType() == BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR) {
+      } else if (mb.getBehaviourType() ==
+                 BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR) {
         return "nullptr";
-      } else if (mb.getBehaviourType() == BehaviourDescription::COHESIVEZONEMODEL) {
+      } else if (mb.getBehaviourType() ==
+                 BehaviourDescription::COHESIVEZONEMODEL) {
         return "nullptr";
       } else {
         throw_if(true,
@@ -371,8 +388,8 @@ namespace mfront {
 
     out << "/*!\n";
     out << "* \\file   " << src << '\n';
-    out << "* \\brief  This file implements the aster interface for the " << mb.getClassName()
-        << " behaviour law\n";
+    out << "* \\brief  This file implements the aster interface for the "
+        << mb.getClassName() << " behaviour law\n";
     out << "* \\author " << fd.authorName << '\n';
     out << "* \\date   " << fd.date << '\n';
     out << "*/\n\n";
@@ -415,7 +432,8 @@ namespace mfront {
     this->writeSetParametersFunctionsImplementations(out, mb, name);
     this->writeSetOutOfBoundsPolicyFunctionImplementation(out, name);
 
-    out << "char *" << this->getFunctionNameBasis(name) << "_getIntegrationErrorMessage(){\n"
+    out << "char *" << this->getFunctionNameBasis(name)
+        << "_getIntegrationErrorMessage(){\n"
         << "#if (defined __GNUC__) && (!defined __clang__) && "
            "(!defined __INTEL_COMPILER) && (!defined __PGI)\n"
         << "#if __GNUC__ * 10000+__GNUC_MINOR__ * 100 <  40800\n"
@@ -427,17 +445,21 @@ namespace mfront {
         << "static thread_local char msg[128];\n"
         << "#endif /* (defined __GNUC__) ...*/\n"
         << "return msg;\n"
-        << "} // end of " << this->getFunctionNameBasis(name) << "_getIntegrationErrorMessage\n\n";
+        << "} // end of " << this->getFunctionNameBasis(name)
+        << "_getIntegrationErrorMessage\n\n";
 
     string dv0;
     string dv1;
-    if (mb.getBehaviourType() == BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) {
+    if (mb.getBehaviourType() ==
+        BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) {
       dv0 = "STRAN";
       dv1 = "DSTRAN";
-    } else if (mb.getBehaviourType() == BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR) {
+    } else if (mb.getBehaviourType() ==
+               BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR) {
       dv0 = "F0";
       dv1 = "F1";
-    } else if (mb.getBehaviourType() == BehaviourDescription::COHESIVEZONEMODEL) {
+    } else if (mb.getBehaviourType() ==
+               BehaviourDescription::COHESIVEZONEMODEL) {
       dv0 = "U0";
       dv1 = "DU";
     } else {
@@ -450,16 +472,16 @@ namespace mfront {
         << name << "("
         << "aster::AsterReal *const STRESS," /*< tenseur des contraintes */
         << "aster::AsterReal *const STATEV," /*< variables internes */
-        << "aster::AsterReal *const DDSOE,"  /*< matrice jacobienne du modèle */
+        << "aster::AsterReal *const DDSOE," /*< matrice jacobienne du modèle */
         << "const aster::AsterReal *const " << dv0
         << "," /*< tenseur des déformations totales au début du pas */
         << "const aster::AsterReal *const " << dv1
         << "," /*< tenseur des incréments de déformation totale */
-        << "const aster::AsterReal *const DTIME,"  /*< incrément de temps */
-        << "const aster::AsterReal *const TEMP,"   /*< température au début du pas
-                                                       */
-        << "const aster::AsterReal *const DTEMP,"  /*< incrément de température
-                                                       */
+        << "const aster::AsterReal *const DTIME," /*< incrément de temps */
+        << "const aster::AsterReal *const TEMP," /*< température au début du pas
+                                                  */
+        << "const aster::AsterReal *const DTEMP," /*< incrément de température
+                                                   */
         << "const aster::AsterReal *const PREDEF," /*< variables externes au
                                                        début du pas */
         << "const aster::AsterReal *const DPRED,"  /*< incréments des variables
@@ -468,7 +490,7 @@ namespace mfront {
                                                        tenseur des contraintes */
         << "const aster::AsterInt  *const NSTATV," /*< nombre de variables
                                                        internes */
-        << "const aster::AsterReal *const PROPS,"  /*< propriétés du matériaux */
+        << "const aster::AsterReal *const PROPS," /*< propriétés du matériaux */
         << "const aster::AsterInt  *const NPROPS," /*< nombre de propriétés
                                                        matériaux */
         << "const aster::AsterReal *const DROT,"   /*< matrice de passage du
@@ -476,14 +498,15 @@ namespace mfront {
                                                        de l'élement fini massif au
                                                        repère géneral
                                                        du maillage */
-        << "aster::AsterReal *const PNEWDT,"       /*< rapport entre le nouveau pas de
-                                                       temps
-                                                       suggeré et le pas de temps donné
-                                                       en entrée */
-        << "const aster::AsterInt *const NUMMOD"   /*< type de modélisation */
+        << "aster::AsterReal *const PNEWDT," /*< rapport entre le nouveau pas de
+                                                 temps
+                                                 suggeré et le pas de temps
+                                                donné en entrée */
+        << "const aster::AsterInt *const NUMMOD" /*< type de modélisation */
         << ")\n";
     out << "{\n";
-    out << "char * msg = " << this->getFunctionNameBasis(name) << "_getIntegrationErrorMessage();\n";
+    out << "char * msg = " << this->getFunctionNameBasis(name)
+        << "_getIntegrationErrorMessage();\n";
     if (((getDebugMode()) || (this->compareToNumericalTangentOperator) ||
          (mb.getAttribute<bool>(AsterInterface::saveTangentOperator, false))) &&
         (!this->shallGenerateMTestFileOnFailure(mb))) {
@@ -510,16 +533,19 @@ namespace mfront {
     }
     if (!mb.getAttribute<bool>(AsterInterface::saveTangentOperator, false)) {
       out << "if(aster::AsterInterface<tfel::material::" << mb.getClassName()
-          << ">::exe(msg,NTENS,DTIME,DROT,DDSOE," << dv0 << "," << dv1 << ",TEMP,DTEMP,PROPS,NPROPS,"
-          << "PREDEF,DPRED,STATEV,NSTATV,STRESS,NUMMOD," << this->getFunctionNameBasis(name)
-          << "_getOutOfBoundsPolicy()," << sfeh << ")!=0){\n";
-      this->generateMTestFile2(out,mb, mb.getBehaviourType(), name, "");
+          << ">::exe(msg,NTENS,DTIME,DROT,DDSOE," << dv0 << "," << dv1
+          << ",TEMP,DTEMP,PROPS,NPROPS,"
+          << "PREDEF,DPRED,STATEV,NSTATV,STRESS,NUMMOD,"
+          << this->getFunctionNameBasis(name) << "_getOutOfBoundsPolicy(),"
+          << sfeh << ")!=0){\n";
+      this->generateMTestFile2(out, mb, mb.getBehaviourType(), name, "");
       out << "*PNEWDT = -1.;\n";
       out << "return;\n";
       out << "}\n";
     } else {
       out << "if(*(NSTATV)<(*NTENS)*(*NTENS)){\n"
-          << "std::cerr << \"aster" << makeLowerCase(name) << ": invalid number of state variables "
+          << "std::cerr << \"aster" << makeLowerCase(name)
+          << ": invalid number of state variables "
           << "(can't save tangent operator)\" << std::endl;\n"
           << "*PNEWDT = -1.;\n"
           << "return;\n"
@@ -527,9 +553,11 @@ namespace mfront {
           << "aster::AsterInt nNSTATV = "
              "std::max(*(NSTATV)-(*NTENS)*(*NTENS),aster::AsterInt(1));\n"
           << "if(aster::AsterInterface<tfel::material::" << mb.getClassName()
-          << ">::exe(msg,NTENS,DTIME,DROT,DDSOE," << dv0 << "," << dv1 << ",TEMP,DTEMP,PROPS,NPROPS,"
-          << "PREDEF,DPRED,STATEV,&nNSTATV,STRESS,NUMMOD," << this->getFunctionNameBasis(name)
-          << "_getOutOfBoundsPolicy()," << sfeh << ")!=0){\n";
+          << ">::exe(msg,NTENS,DTIME,DROT,DDSOE," << dv0 << "," << dv1
+          << ",TEMP,DTEMP,PROPS,NPROPS,"
+          << "PREDEF,DPRED,STATEV,&nNSTATV,STRESS,NUMMOD,"
+          << this->getFunctionNameBasis(name) << "_getOutOfBoundsPolicy(),"
+          << sfeh << ")!=0){\n";
       this->generateMTestFile2(out, mb, mb.getBehaviourType(), name, "");
       out << "*PNEWDT = -1.;\n"
           << "return;\n"
@@ -573,14 +601,18 @@ namespace mfront {
           << "D[0] = 0.;\n";
       if (!mb.getAttribute<bool>(AsterInterface::saveTangentOperator, false)) {
         out << "if(aster::AsterInterface<tfel::material::" << mb.getClassName()
-            << ">::exe(nullptr,NTENS,DTIME,DROT,&D[0],STRAN,&deto[0],TEMP,DTEMP,PROPS,NPROPS,"
-            << "PREDEF,DPRED,&sv[0],NSTATV,&sigf[0],NUMMOD," << this->getFunctionNameBasis(name)
-            << "_getOutOfBoundsPolicy()," << sfeh << ")!=0){\n";
+            << ">::exe(nullptr,NTENS,DTIME,DROT,&D[0],STRAN,&deto[0],TEMP,"
+               "DTEMP,PROPS,NPROPS,"
+            << "PREDEF,DPRED,&sv[0],NSTATV,&sigf[0],NUMMOD,"
+            << this->getFunctionNameBasis(name) << "_getOutOfBoundsPolicy(),"
+            << sfeh << ")!=0){\n";
       } else {
         out << "if(aster::AsterInterface<tfel::material::" << mb.getClassName()
-            << ">::exe(nullptr,NTENS,DTIME,DROT,&D[0],STRAN,&deto[0],TEMP,DTEMP,PROPS,NPROPS,"
-            << "PREDEF,DPRED,&sv[0],&nNSTATV,&sigf[0],NUMMOD," << this->getFunctionNameBasis(name)
-            << "_getOutOfBoundsPolicy()," << sfeh << ")!=0){\n";
+            << ">::exe(nullptr,NTENS,DTIME,DROT,&D[0],STRAN,&deto[0],TEMP,"
+               "DTEMP,PROPS,NPROPS,"
+            << "PREDEF,DPRED,&sv[0],&nNSTATV,&sigf[0],NUMMOD,"
+            << this->getFunctionNameBasis(name) << "_getOutOfBoundsPolicy(),"
+            << sfeh << ")!=0){\n";
       }
       out << "return;\n"
           << "}\n"
@@ -591,19 +623,24 @@ namespace mfront {
           << "D[0] = 0.;\n";
       if (!mb.getAttribute<bool>(AsterInterface::saveTangentOperator, false)) {
         out << "if(aster::AsterInterface<tfel::material::" << mb.getClassName()
-            << ">::exe(nullptr,NTENS,DTIME,DROT,&D[0],STRAN,&deto[0],TEMP,DTEMP,PROPS,NPROPS,"
-            << "PREDEF,DPRED,&sv[0],NSTATV,&sigb[0],NUMMOD," << this->getFunctionNameBasis(name)
-            << "_getOutOfBoundsPolicy()," << sfeh << ")!=0){\n";
+            << ">::exe(nullptr,NTENS,DTIME,DROT,&D[0],STRAN,&deto[0],TEMP,"
+               "DTEMP,PROPS,NPROPS,"
+            << "PREDEF,DPRED,&sv[0],NSTATV,&sigb[0],NUMMOD,"
+            << this->getFunctionNameBasis(name) << "_getOutOfBoundsPolicy(),"
+            << sfeh << ")!=0){\n";
       } else {
         out << "if(aster::AsterInterface<tfel::material::" << mb.getClassName()
-            << ">::exe(nullptr,NTENS,DTIME,DROT,&D[0],STRAN,&deto[0],TEMP,DTEMP,PROPS,NPROPS,"
-            << "PREDEF,DPRED,&sv[0],&nNSTATV,&sigb[0],NUMMOD," << this->getFunctionNameBasis(name)
-            << "_getOutOfBoundsPolicy()," << sfeh << ")!=0){\n";
+            << ">::exe(nullptr,NTENS,DTIME,DROT,&D[0],STRAN,&deto[0],TEMP,"
+               "DTEMP,PROPS,NPROPS,"
+            << "PREDEF,DPRED,&sv[0],&nNSTATV,&sigb[0],NUMMOD,"
+            << this->getFunctionNameBasis(name) << "_getOutOfBoundsPolicy(),"
+            << sfeh << ")!=0){\n";
       }
       out << "return;\n"
           << "}\n"
           << "for(j=0;j!=*NTENS;++j){\n"
-          << "nD[j*(*NTENS)+i] = (sigf[j]-sigb[j])/(2.*" << this->strainPerturbationValue << ");\n"
+          << "nD[j*(*NTENS)+i] = (sigf[j]-sigb[j])/(2.*"
+          << this->strainPerturbationValue << ");\n"
           << "}\n"
           << "}\n"
           << "// comparison\n"
@@ -641,16 +678,16 @@ namespace mfront {
         << this->getFunctionNameBasis(name) << "("
         << "aster::AsterReal *const STRESS," /*< tenseur des contraintes */
         << "aster::AsterReal *const STATEV," /*< variables internes */
-        << "aster::AsterReal *const DDSOE,"  /*< matrice jacobienne du modèle */
+        << "aster::AsterReal *const DDSOE," /*< matrice jacobienne du modèle */
         << "const aster::AsterReal *const " << dv0
         << "," /*< tenseur des déformations totales au début du pas */
         << "const aster::AsterReal *const " << dv1
         << "," /*< tenseur des incréments de déformation totale */
-        << "const aster::AsterReal *const DTIME,"  /*< incrément de temps */
-        << "const aster::AsterReal *const TEMP,"   /*< température au début du pas
-                                                       */
-        << "const aster::AsterReal *const DTEMP,"  /*< incrément de température
-                                                       */
+        << "const aster::AsterReal *const DTIME," /*< incrément de temps */
+        << "const aster::AsterReal *const TEMP," /*< température au début du pas
+                                                  */
+        << "const aster::AsterReal *const DTEMP," /*< incrément de température
+                                                   */
         << "const aster::AsterReal *const PREDEF," /*< variables externes au
                                                        début du pas */
         << "const aster::AsterReal *const DPRED,"  /*< incréments des variables
@@ -659,7 +696,7 @@ namespace mfront {
                                                        tenseur des contraintes */
         << "const aster::AsterInt  *const NSTATV," /*< nombre de variables
                                                        internes */
-        << "const aster::AsterReal *const PROPS,"  /*< propriétés du matériaux */
+        << "const aster::AsterReal *const PROPS," /*< propriétés du matériaux */
         << "const aster::AsterInt  *const NPROPS," /*< nombre de propriétés
                                                        matériaux */
         << "const aster::AsterReal *const DROT,"   /*< matrice de passage du
@@ -667,21 +704,23 @@ namespace mfront {
                                                        de l'élement fini massif au
                                                        repère géneral
                                                        du maillage */
-        << "aster::AsterReal *const PNEWDT,"       /*< rapport entre le nouveau pas de
-                                                       temps
-                                                       suggeré et le pas de temps donné
-                                                       en entrée */
-        << "const aster::AsterInt *const NUMMOD"   /*< type de modélisation */
+        << "aster::AsterReal *const PNEWDT," /*< rapport entre le nouveau pas de
+                                                 temps
+                                                 suggeré et le pas de temps
+                                                donné en entrée */
+        << "const aster::AsterInt *const NUMMOD" /*< type de modélisation */
         << ")\n"
         << "{\n"
-        << name << "(STRESS,STATEV,DDSOE," << dv0 << "," << dv1 << ",DTIME,TEMP,DTEMP,\n"
+        << name << "(STRESS,STATEV,DDSOE," << dv0 << "," << dv1
+        << ",DTIME,TEMP,DTEMP,\n"
         << "PREDEF,DPRED,NTENS,NSTATV,PROPS,NPROPS,DROT,PNEWDT,NUMMOD);\n"
         << "}\n\n";
     out << "} // end of extern \"C\"\n";
     out.close();
   }  // end of AsterInterface::endTreatment
 
-  void AsterInterface::writeMTestFileGeneratorSetModellingHypothesis(std::ostream& out) const {
+  void AsterInterface::writeMTestFileGeneratorSetModellingHypothesis(
+      std::ostream& out) const {
     out << "ModellingHypothesis::Hypothesis h;\n"
         << "if( *NUMMOD == 2u ){\n"
         << "  h = ModellingHypothesis::GENERALISEDPLANESTRAIN;\n"
@@ -699,8 +738,8 @@ namespace mfront {
         << "mg.setModellingHypothesis(h);\n";
   }  // end of AsterInterface::writeMTestFileGeneratorSetModellingHypothesis
 
-  void AsterInterface::writeInterfaceSpecificIncludes(std::ostream& out,
-                                                      const BehaviourDescription&) const {
+  void AsterInterface::writeInterfaceSpecificIncludes(
+      std::ostream& out, const BehaviourDescription&) const {
     out << "#include\"MFront/Aster/Aster.hxx\"\n\n";
   }  // end of AsterInterface::writeInterfaceSpecificIncludes
 
@@ -711,7 +750,8 @@ namespace mfront {
     const auto lib = AsterInterface::getLibraryName(bd);
     const auto name = bd.getLibrary() + bd.getClassName();
     const auto tfel_config = tfel::getTFELConfigExecutableName();
-    insert_if(d[lib].cppflags, "$(shell " + tfel_config + " --cppflags --compiler-flags)");
+    insert_if(d[lib].cppflags,
+              "$(shell " + tfel_config + " --cppflags --compiler-flags)");
 #if ASTER_ARCH == 64
     insert_if(d[lib].cppflags, "-DASTER_ARCH=64");
 #elif ASTER_ARCH == 32
@@ -719,22 +759,27 @@ namespace mfront {
 #else
 #error "AsterInterface::getGlobalIncludes : unsuported architecture"
 #endif
-    insert_if(d[lib].include_directories, "$(shell " + tfel_config + " --include-path)");
+    insert_if(d[lib].include_directories,
+              "$(shell " + tfel_config + " --include-path)");
     insert_if(d[lib].sources, "aster" + name + ".cxx");
     d.headers.push_back("MFront/Aster/aster" + name + ".hxx");
-    insert_if(d[lib].link_libraries, tfel::getLibraryInstallName("AsterInterface"));
+    insert_if(d[lib].link_libraries,
+              tfel::getLibraryInstallName("AsterInterface"));
     if (this->shallGenerateMTestFileOnFailure(bd)) {
-      insert_if(d[lib].link_libraries, tfel::getLibraryInstallName("MTestFileGenerator"));
+      insert_if(d[lib].link_libraries,
+                tfel::getLibraryInstallName("MTestFileGenerator"));
     }
-    insert_if(d[lib].link_directories, "$(shell " + tfel_config + " --library-path)");
+    insert_if(d[lib].link_directories,
+              "$(shell " + tfel_config + " --library-path)");
 #if __cplusplus >= 201703L
     insert_if(d[lib].link_libraries, "$(shell " + tfel_config +
                                          " --library-dependency "
                                          "--material --mfront-profiling)");
 #else  /* __cplusplus < 201703L */
-    insert_if(d[lib].link_libraries, "$(shell " + tfel_config +
-                                         " --library-dependency "
-                                         "--material --mfront-profiling --physical-constants)");
+    insert_if(d[lib].link_libraries,
+              "$(shell " + tfel_config +
+                  " --library-dependency "
+                  "--material --mfront-profiling --physical-constants)");
 #endif /* __cplusplus < 201703L */
     // insert_if(d[lib].epts,name);
     insert_if(d[lib].epts, this->getFunctionNameBasis(name));
@@ -766,7 +811,8 @@ namespace mfront {
     if (h == ModellingHypothesis::UNDEFINEDHYPOTHESIS) {
       out << "H";
     } else {
-      out << "tfel::material::ModellingHypothesis::" << ModellingHypothesis::toUpperCaseString(h);
+      out << "tfel::material::ModellingHypothesis::"
+          << ModellingHypothesis::toUpperCaseString(h);
     }
     out << ",Type,";
     if (mb.useQt()) {
@@ -776,16 +822,22 @@ namespace mfront {
     }
     out << "> >\n{\n";
     out << "//! behaviour type\n";
-    if (mb.getBehaviourType() == BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) {
-      out << "static " << constexpr_c << " AsterBehaviourType btype = "
-                                         "aster::STANDARDSTRAINBASEDBEHAVIOUR;"
-                                         "\n";
-    } else if (mb.getBehaviourType() == BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR) {
-      out << "static " << constexpr_c << " AsterBehaviourType btype = "
-                                         "aster::STANDARDFINITESTRAINBEHAVIOUR;"
-                                         "\n";
-    } else if (mb.getBehaviourType() == BehaviourDescription::COHESIVEZONEMODEL) {
-      out << "static " << constexpr_c << " AsterBehaviourType btype = aster::COHESIVEZONEMODEL;\n";
+    if (mb.getBehaviourType() ==
+        BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) {
+      out << "static " << constexpr_c
+          << " AsterBehaviourType btype = "
+             "aster::STANDARDSTRAINBASEDBEHAVIOUR;"
+             "\n";
+    } else if (mb.getBehaviourType() ==
+               BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR) {
+      out << "static " << constexpr_c
+          << " AsterBehaviourType btype = "
+             "aster::STANDARDFINITESTRAINBEHAVIOUR;"
+             "\n";
+    } else if (mb.getBehaviourType() ==
+               BehaviourDescription::COHESIVEZONEMODEL) {
+      out << "static " << constexpr_c
+          << " AsterBehaviourType btype = aster::COHESIVEZONEMODEL;\n";
     } else {
       throw_if(true, "unsupported behaviour type");
     }
@@ -795,47 +847,60 @@ namespace mfront {
           << " unsigned short N = "
              "tfel::material::ModellingHypothesisToSpaceDimension<H>::value;\n";
     } else {
-      out << "static " << constexpr_c << " unsigned short N = "
-                                         "tfel::material::ModellingHypothesisToSpaceDimension<"
-          << "tfel::material::ModellingHypothesis::" << ModellingHypothesis::toUpperCaseString(h)
-          << ">::value;\n";
+      out << "static " << constexpr_c
+          << " unsigned short N = "
+             "tfel::material::ModellingHypothesisToSpaceDimension<"
+          << "tfel::material::ModellingHypothesis::"
+          << ModellingHypothesis::toUpperCaseString(h) << ">::value;\n";
     }
     out << "// tiny vector size\n";
     out << "static " << constexpr_c << " unsigned short TVectorSize = N;\n";
     out << "// symmetric tensor size\n";
-    out << "static " << constexpr_c << " unsigned short StensorSize = "
-                                       "tfel::math::StensorDimeToSize<N>::"
-                                       "value;\n";
+    out << "static " << constexpr_c
+        << " unsigned short StensorSize = "
+           "tfel::math::StensorDimeToSize<N>::"
+           "value;\n";
     out << "// tensor size\n";
-    out << "static " << constexpr_c << " unsigned short TensorSize  = "
-                                       "tfel::math::TensorDimeToSize<N>::value;"
-                                       "\n";
+    out << "static " << constexpr_c
+        << " unsigned short TensorSize  = "
+           "tfel::math::TensorDimeToSize<N>::value;"
+           "\n";
     out << "// size of the driving variable array\n";
-    out << "static " << constexpr_c << " unsigned short GradientSize = " << mvs.first
-        << ";\n";
+    out << "static " << constexpr_c
+        << " unsigned short GradientSize = " << mvs.first << ";\n";
     out << "// size of the thermodynamic force variable array (STRESS)\n";
     out << "static " << constexpr_c
-        << " unsigned short ThermodynamicForceVariableSize = " << mvs.second << ";\n";
+        << " unsigned short ThermodynamicForceVariableSize = " << mvs.second
+        << ";\n";
     if (this->errorReport) {
-      out << "static " << constexpr_c << " AsterErrorReportPolicy "
-                                         "errorReportPolicy = "
-                                         "ASTER_WRITEONSTDOUT;\n";
+      out << "static " << constexpr_c
+          << " AsterErrorReportPolicy "
+             "errorReportPolicy = "
+             "ASTER_WRITEONSTDOUT;\n";
     } else {
-      out << "static " << constexpr_c << " AsterErrorReportPolicy "
-                                         "errorReportPolicy = "
-                                         "ASTER_NOERRORREPORT;\n";
+      out << "static " << constexpr_c
+          << " AsterErrorReportPolicy "
+             "errorReportPolicy = "
+             "ASTER_NOERRORREPORT;\n";
     }
-    if (mb.getAttribute(BehaviourDescription::requiresUnAlteredStiffnessTensor, false)) {
-      out << "static " << constexpr_c << " bool requiresUnAlteredStiffnessTensor = true;\n";
+    if (mb.getAttribute(BehaviourDescription::requiresUnAlteredStiffnessTensor,
+                        false)) {
+      out << "static " << constexpr_c
+          << " bool requiresUnAlteredStiffnessTensor = true;\n";
     } else {
-      out << "static " << constexpr_c << " bool requiresUnAlteredStiffnessTensor = false;\n";
+      out << "static " << constexpr_c
+          << " bool requiresUnAlteredStiffnessTensor = false;\n";
     }
     if (mb.getAttribute(BehaviourDescription::requiresStiffnessTensor, false)) {
-      out << "static " << constexpr_c << " bool requiresStiffnessTensor = true;\n";
+      out << "static " << constexpr_c
+          << " bool requiresStiffnessTensor = true;\n";
     } else {
-      out << "static " << constexpr_c << " bool requiresStiffnessTensor = false;\n";
+      out << "static " << constexpr_c
+          << " bool requiresStiffnessTensor = false;\n";
     }
-    if (mb.getAttribute(BehaviourDescription::requiresThermalExpansionCoefficientTensor, false)) {
+    if (mb.getAttribute(
+            BehaviourDescription::requiresThermalExpansionCoefficientTensor,
+            false)) {
       out << "static " << constexpr_c
           << " bool requiresThermalExpansionCoefficientTensor = true;\n";
     } else {
@@ -843,17 +908,21 @@ namespace mfront {
           << " bool requiresThermalExpansionCoefficientTensor = false;\n";
     }
     if (mb.getSymmetryType() == mfront::ISOTROPIC) {
-      out << "static " << constexpr_c << " AsterSymmetryType type = aster::ISOTROPIC;\n";
+      out << "static " << constexpr_c
+          << " AsterSymmetryType type = aster::ISOTROPIC;\n";
     } else if (mb.getSymmetryType() == mfront::ORTHOTROPIC) {
-      out << "static " << constexpr_c << " AsterSymmetryType type = aster::ORTHOTROPIC;\n";
+      out << "static " << constexpr_c
+          << " AsterSymmetryType type = aster::ORTHOTROPIC;\n";
     } else {
       throw_if(true,
                "unsupported behaviour type. "
                "The aster interface only support isotropic or "
                "orthotropic behaviour at this time.");
     }
-    out << "static " << constexpr_c << " AsterFiniteStrainFormulation afsf = aster::";
-    if (mb.getBehaviourType() == BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR) {
+    out << "static " << constexpr_c
+        << " AsterFiniteStrainFormulation afsf = aster::";
+    if (mb.getBehaviourType() ==
+        BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR) {
       if (!mb.hasAttribute(AsterInterface::finiteStrainFormulation)) {
         out << "SIMO_MIEHE;\n";
       } else {
@@ -880,16 +949,22 @@ namespace mfront {
       msize += SupportedTypes::getTypeSize(m.type, m.arraySize);
       msize -= mprops.second;
     }
-    out << "static " << constexpr_c << " unsigned short material_properties_nb = " << msize
-        << ";\n";
+    out << "static " << constexpr_c
+        << " unsigned short material_properties_nb = " << msize << ";\n";
     if (mb.getElasticSymmetryType() == mfront::ISOTROPIC) {
-      out << "static " << constexpr_c << " AsterSymmetryType etype = aster::ISOTROPIC;\n";
-      if (mb.getAttribute(BehaviourDescription::requiresStiffnessTensor, false)) {
-        out << "static " << constexpr_c << " unsigned short elasticPropertiesOffset = 2u;\n";
+      out << "static " << constexpr_c
+          << " AsterSymmetryType etype = aster::ISOTROPIC;\n";
+      if (mb.getAttribute(BehaviourDescription::requiresStiffnessTensor,
+                          false)) {
+        out << "static " << constexpr_c
+            << " unsigned short elasticPropertiesOffset = 2u;\n";
       } else {
-        out << "static " << constexpr_c << " unsigned short elasticPropertiesOffset = 0u;\n";
+        out << "static " << constexpr_c
+            << " unsigned short elasticPropertiesOffset = 0u;\n";
       }
-      if (mb.getAttribute(BehaviourDescription::requiresThermalExpansionCoefficientTensor, false)) {
+      if (mb.getAttribute(
+              BehaviourDescription::requiresThermalExpansionCoefficientTensor,
+              false)) {
         out << "static " << constexpr_c
             << " unsigned short thermalExpansionPropertiesOffset = 1u;\n";
       } else {
@@ -897,14 +972,20 @@ namespace mfront {
             << " unsigned short thermalExpansionPropertiesOffset = 0u;\n";
       }
     } else if (mb.getElasticSymmetryType() == mfront::ORTHOTROPIC) {
-      out << "static " << constexpr_c << " AsterSymmetryType etype = aster::ORTHOTROPIC;\n";
-      if (mb.getAttribute(BehaviourDescription::requiresStiffnessTensor, false)) {
-        out << "static " << constexpr_c << " unsigned short elasticPropertiesOffset "
+      out << "static " << constexpr_c
+          << " AsterSymmetryType etype = aster::ORTHOTROPIC;\n";
+      if (mb.getAttribute(BehaviourDescription::requiresStiffnessTensor,
+                          false)) {
+        out << "static " << constexpr_c
+            << " unsigned short elasticPropertiesOffset "
             << "= AsterOrthotropicElasticPropertiesOffset<N>::value;\n";
       } else {
-        out << "static " << constexpr_c << " unsigned short elasticPropertiesOffset = 0u;\n";
+        out << "static " << constexpr_c
+            << " unsigned short elasticPropertiesOffset = 0u;\n";
       }
-      if (mb.getAttribute(BehaviourDescription::requiresThermalExpansionCoefficientTensor, false)) {
+      if (mb.getAttribute(
+              BehaviourDescription::requiresThermalExpansionCoefficientTensor,
+              false)) {
         out << "static " << constexpr_c
             << " unsigned short thermalExpansionPropertiesOffset = 3u;\n";
       } else {
@@ -921,12 +1002,15 @@ namespace mfront {
   }
 
   std::map<UMATInterfaceBase::Hypothesis, std::string>
-  AsterInterface::gatherModellingHypothesesAndTests(const BehaviourDescription& mb) const {
+  AsterInterface::gatherModellingHypothesesAndTests(
+      const BehaviourDescription& mb) const {
     auto res = std::map<Hypothesis, std::string>{};
     if ((mb.getSymmetryType() == mfront::ORTHOTROPIC) &&
-        ((mb.getAttribute(BehaviourDescription::requiresStiffnessTensor, false)) ||
-         (mb.getAttribute(BehaviourDescription::requiresThermalExpansionCoefficientTensor,
-                          false)))) {
+        ((mb.getAttribute(BehaviourDescription::requiresStiffnessTensor,
+                          false)) ||
+         (mb.getAttribute(
+             BehaviourDescription::requiresThermalExpansionCoefficientTensor,
+             false)))) {
       for (const auto& h : this->getModellingHypothesesToBeTreated(mb)) {
         res.insert({h, this->getModellingHypothesisTest(h)});
       }
@@ -935,7 +1019,8 @@ namespace mfront {
     return UMATInterfaceBase::gatherModellingHypothesesAndTests(mb);
   }  // end of AsterInterface::gatherModellingHypothesesAndTests
 
-  std::string AsterInterface::getModellingHypothesisTest(const Hypothesis h) const {
+  std::string AsterInterface::getModellingHypothesisTest(
+      const Hypothesis h) const {
     if (h == ModellingHypothesis::GENERALISEDPLANESTRAIN) {
       return "*NUMMOD == 2u";
     } else if (h == ModellingHypothesis::AXISYMMETRICAL) {

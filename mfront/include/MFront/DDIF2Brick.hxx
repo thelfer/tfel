@@ -24,7 +24,7 @@ namespace mfront {
 
     // forward declaration
     struct StressPotential;
-  }
+  }  // namespace bbrick
 
   /*!
    * This brick provides the DDIF2 damage behaviour as a basis to build complex

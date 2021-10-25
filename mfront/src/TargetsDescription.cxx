@@ -25,10 +25,11 @@ namespace mfront {
   TargetsDescription::TargetsDescription(TargetsDescription&&) = default;
   TargetsDescription::~TargetsDescription() = default;
 
-  LibraryDescription& TargetsDescription::operator()(const std::string& n,
-                                                     const std::string& pr,
-                                                     const std::string& s,
-                                                     const LibraryDescription::LibraryType t) {
+  LibraryDescription& TargetsDescription::operator()(
+      const std::string& n,
+      const std::string& pr,
+      const std::string& s,
+      const LibraryDescription::LibraryType t) {
     auto throw_if = [](const bool b, const std::string& msg) {
       tfel::raise_if(b, "TargetsDescription::operator(): " + msg);
     };
@@ -56,8 +57,10 @@ namespace mfront {
     return l;
   }
 
-  LibraryDescription& TargetsDescription::operator()(const std::string& n, const std::string& p) {
-    const auto s = LibraryDescription::getDefaultLibrarySuffix(this->system, this->libraryType);
+  LibraryDescription& TargetsDescription::operator()(const std::string& n,
+                                                     const std::string& p) {
+    const auto s = LibraryDescription::getDefaultLibrarySuffix(
+        this->system, this->libraryType);
     return this->operator()(n, p, s, this->libraryType);
   }  // end of TargetsDescription::operator()
 
@@ -73,15 +76,18 @@ namespace mfront {
     const auto e = this->libraries.end();
     const auto p = std::find_if(b, e, c);
     if (p == e) {
-      const auto pr = LibraryDescription::getDefaultLibraryPrefix(this->system, this->libraryType);
-      const auto s = LibraryDescription::getDefaultLibrarySuffix(this->system, this->libraryType);
+      const auto pr = LibraryDescription::getDefaultLibraryPrefix(
+          this->system, this->libraryType);
+      const auto s = LibraryDescription::getDefaultLibrarySuffix(
+          this->system, this->libraryType);
       this->libraries.emplace_back(n, pr, s, this->libraryType);
       return this->libraries.back();
     }
     return *p;
   }  // end of TargetsDescription::operator[]
 
-  const LibraryDescription& TargetsDescription::operator[](const std::string& n) const {
+  const LibraryDescription& TargetsDescription::operator[](
+      const std::string& n) const {
     auto c = [&n](const LibraryDescription& l) { return l.name == n; };
     const auto b = this->libraries.begin();
     const auto e = this->libraries.end();
@@ -93,9 +99,13 @@ namespace mfront {
     return *p;
   }  // end of TargetsDescription::operator[]
 
-  TargetsDescription::iterator TargetsDescription::begin() { return this->libraries.begin(); }
+  TargetsDescription::iterator TargetsDescription::begin() {
+    return this->libraries.begin();
+  }
 
-  TargetsDescription::iterator TargetsDescription::end() { return this->libraries.end(); }
+  TargetsDescription::iterator TargetsDescription::end() {
+    return this->libraries.end();
+  }
 
   TargetsDescription::const_iterator TargetsDescription::begin() const {
     return this->libraries.cbegin();
@@ -170,11 +180,16 @@ namespace mfront {
       const tfel::utilities::CxxTokenizer::const_iterator pe) {
     using tfel::utilities::CxxTokenizer;
     const auto f = "read<TargetsDescription>";
-    auto error = [&f](const std::string& m) { tfel::raise(std::string{f} + ": " + m); };
+    auto error = [&f](const std::string& m) {
+      tfel::raise(std::string{f} + ": " + m);
+    };
     auto get_vector = [&f](
-        std::vector<std::string>& v, tfel::utilities::CxxTokenizer::const_iterator& pc,
-        const tfel::utilities::CxxTokenizer::const_iterator e, const std::string& n) {
-      tfel::raise_if(!v.empty(), std::string{f} + ": library member '" + n + "' multiply defined");
+                          std::vector<std::string>& v,
+                          tfel::utilities::CxxTokenizer::const_iterator& pc,
+                          const tfel::utilities::CxxTokenizer::const_iterator e,
+                          const std::string& n) {
+      tfel::raise_if(!v.empty(), std::string{f} + ": library member '" + n +
+                                     "' multiply defined");
       auto c = pc;
       CxxTokenizer::readSpecifiedToken(f, ":", c, e);
       v = read<std::vector<std::string>>(c, e);

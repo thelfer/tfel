@@ -1,21 +1,21 @@
-/*! 
+/*!
  * \file   mfront/include/MFront/Cyrano/CyranoStressFreeExpansionHandler.hxx
  * \brief
  * \author Thomas Helfer
  * \brief  04 mars 2014
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_MFRONT_CYRANO_CYRANOSTRESSFREEEXPANSIONHANDLER_HXX
-#define LIB_MFRONT_CYRANO_CYRANOSTRESSFREEEXPANSIONHANDLER_HXX 
+#define LIB_MFRONT_CYRANO_CYRANOSTRESSFREEEXPANSIONHANDLER_HXX
 
-#include"MFront/Cyrano/Cyrano.hxx"
-#include"MFront/Cyrano/CyranoConfig.hxx"
+#include "MFront/Cyrano/Cyrano.hxx"
+#include "MFront/Cyrano/CyranoConfig.hxx"
 
 namespace cyrano {
 
@@ -35,13 +35,13 @@ namespace cyrano {
    * \param[in] s1    : stress free expansion at end of the time
    *                     step (TFEL conventions)
    */
-  MFRONT_CYRANO_VISIBILITY_EXPORT void CyranoStandardSmallStrainStressFreeExpansionHandler(
-      CyranoReal *const,
-      CyranoReal *const,
-      const CyranoReal *const,
-      const CyranoReal *const,
-      const CyranoReal *const,
-      const CyranoReal *const);
+  MFRONT_CYRANO_VISIBILITY_EXPORT void
+  CyranoStandardSmallStrainStressFreeExpansionHandler(CyranoReal *const,
+                                                      CyranoReal *const,
+                                                      const CyranoReal *const,
+                                                      const CyranoReal *const,
+                                                      const CyranoReal *const,
+                                                      const CyranoReal *const);
   /*!
    * \brief handler of stress free expansion handler for logarithmic strains
    * \param[out] em : mechanical deformation at the beginning of the time
@@ -57,15 +57,14 @@ namespace cyrano {
    * \param[in] s1    : stress free expansion at end of the time
    *                     step (TFEL conventions)
    */
-  MFRONT_CYRANO_VISIBILITY_EXPORT void CyranoLogarithmicStrainStressFreeExpansionHandler(
-      CyranoReal *const,
-      CyranoReal *const,
-      const CyranoReal *const,
-      const CyranoReal *const,
-      const CyranoReal *const,
-      const CyranoReal *const);
+  MFRONT_CYRANO_VISIBILITY_EXPORT void
+  CyranoLogarithmicStrainStressFreeExpansionHandler(CyranoReal *const,
+                                                    CyranoReal *const,
+                                                    const CyranoReal *const,
+                                                    const CyranoReal *const,
+                                                    const CyranoReal *const,
+                                                    const CyranoReal *const);
 
-} // end of namespace cyrano
+}  // end of namespace cyrano
 
 #endif /* LIB_MFRONT_CYRANO_CYRANOSTRESSFREEEXPANSIONHANDLER_HXX */
-

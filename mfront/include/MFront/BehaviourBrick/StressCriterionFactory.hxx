@@ -50,11 +50,9 @@ namespace mfront {
       //! copy constructor (deleted)
       StressCriterionFactory(const StressCriterionFactory&) = delete;
       //! move assignement (deleted)
-      StressCriterionFactory& operator=(StressCriterionFactory&&) =
-          delete;
+      StressCriterionFactory& operator=(StressCriterionFactory&&) = delete;
       //! standard assignement(deleted)
-      StressCriterionFactory& operator=(const StressCriterionFactory&) =
-          delete;
+      StressCriterionFactory& operator=(const StressCriterionFactory&) = delete;
       //! \brief destructor
       ~StressCriterionFactory();
       //! \brief generators

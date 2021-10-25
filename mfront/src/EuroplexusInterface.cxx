@@ -726,9 +726,8 @@ namespace mfront {
       std::ostream& os, const BehaviourDescription& mb) const {
     const auto iprefix = makeUpperCase(this->getInterfaceName());
     SupportedTypes::TypeSize ov, of;
-    os << "void set" << iprefix
-       << "BehaviourDataGradients(const Type* const " << iprefix
-       << "stran)\n"
+    os << "void set" << iprefix << "BehaviourDataGradients(const Type* const "
+       << iprefix << "stran)\n"
        << "{\n";
     for (const auto& v : mb.getMainVariables()) {
       this->writeBehaviourDataGradientSetter(os, v.first, ov);
@@ -930,13 +929,15 @@ namespace mfront {
         << "//! behaviour type\n";
     if (mb.getBehaviourType() ==
         BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) {
-      out << "static " << constexpr_c << " EuroplexusBehaviourType btype = "
-                                         "epx::STANDARDSTRAINBASEDBEHAVIOUR;\n";
+      out << "static " << constexpr_c
+          << " EuroplexusBehaviourType btype = "
+             "epx::STANDARDSTRAINBASEDBEHAVIOUR;\n";
     } else if (mb.getBehaviourType() ==
                BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR) {
-      out << "static " << constexpr_c << " EuroplexusBehaviourType btype = "
-                                         "epx::STANDARDFINITESTRAINBEHAVIOUR;"
-                                         "\n";
+      out << "static " << constexpr_c
+          << " EuroplexusBehaviourType btype = "
+             "epx::STANDARDFINITESTRAINBEHAVIOUR;"
+             "\n";
     } else {
       tfel::raise(
           "EuroplexusInterface::writeEuroplexusBehaviourTraits : "

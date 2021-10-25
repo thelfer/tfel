@@ -78,11 +78,12 @@ namespace mtest {
     tfel::raise("mfront::getTensorSize: invalid dimension");
   }
 
-  void SingleStructureSchemeParser::handleHandleThermalExpansion(SingleStructureScheme& t,
-                                                                 tokens_iterator& p) {
+  void SingleStructureSchemeParser::handleHandleThermalExpansion(
+      SingleStructureScheme& t, tokens_iterator& p) {
     bool b;
-    this->checkNotEndOfLine("SingleStructureSchemeParser::handleHandleThermalExpansion", p,
-                            this->tokens.end());
+    this->checkNotEndOfLine(
+        "SingleStructureSchemeParser::handleHandleThermalExpansion", p,
+        this->tokens.end());
     if (p->value == "true") {
       b = true;
     } else if (p->value == "false") {
@@ -94,26 +95,29 @@ namespace mtest {
           p->value + "'");
     }
     ++p;
-    this->readSpecifiedToken("SingleStructureSchemeParser::handleHandleThermalExpansion", ";", p,
-                             this->tokens.end());
+    this->readSpecifiedToken(
+        "SingleStructureSchemeParser::handleHandleThermalExpansion", ";", p,
+        this->tokens.end());
     t.setHandleThermalExpansion(b);
   }
 
-  void SingleStructureSchemeParser::handleBehaviour(SingleStructureScheme& t, tokens_iterator& p) {
+  void SingleStructureSchemeParser::handleBehaviour(SingleStructureScheme& t,
+                                                    tokens_iterator& p) {
     auto i = std::string{};  // interface
     auto w = std::string{};  // wrapper
-    this->checkNotEndOfLine("SingleStructureSchemeParser::handleBehaviour", p, this->tokens.end());
+    this->checkNotEndOfLine("SingleStructureSchemeParser::handleBehaviour", p,
+                            this->tokens.end());
     if (p->value == "<") {
-      this->readSpecifiedToken("SingleStructureSchemeParser::handleBehaviour", "<", p,
-                               this->tokens.end());
+      this->readSpecifiedToken("SingleStructureSchemeParser::handleBehaviour",
+                               "<", p, this->tokens.end());
       this->checkNotEndOfLine("SingleStructureSchemeParser::handleBehaviour", p,
                               this->tokens.end());
-      if((p->value == "generic") || (p->value == "Generic")){
-	i = "Generic";
+      if ((p->value == "generic") || (p->value == "Generic")) {
+        i = "Generic";
       }
 #ifdef HAVE_CASTEM
-      if ((p->value == "umat") || (p->value == "castem") || (p->value == "Castem") ||
-          (p->value == "Cast3M")) {
+      if ((p->value == "umat") || (p->value == "castem") ||
+          (p->value == "Castem") || (p->value == "Cast3M")) {
         i = "castem";
       }
       if (p->value == "mistral") {
@@ -130,7 +134,7 @@ namespace mtest {
       }
 #endif /* HAVE_ASTER */
 #ifdef HAVE_EUROPLEXUS
-      if((p->value=="europlexus")||(p->value=="epx")){
+      if ((p->value == "europlexus") || (p->value == "epx")) {
         i = p->value;
       }
 #endif /* HAVE_EUROPLEXUS */
@@ -151,39 +155,41 @@ namespace mtest {
       }
 #endif /* HAVE_ANSYS */
 #ifdef HAVE_CYRANO
-      if(p->value=="cyrano"){
+      if (p->value == "cyrano") {
         i = p->value;
       }
 #endif /* HAVE_CYRANO */
 #ifdef HAVE_CALCULIX
-      if((p->value=="calculix")||(p->value=="CalculiX")){
+      if ((p->value == "calculix") || (p->value == "CalculiX")) {
         i = "CalculiX";
       }
 #endif /* HAVE_CALCULIX */
       tfel::raise_if(i.empty(),
-		     "SingleStructureSchemeParser::handleBehaviour: "
-		     "unknown interface '"+p->value+"'");
+                     "SingleStructureSchemeParser::handleBehaviour: "
+                     "unknown interface '" +
+                         p->value + "'");
       ++p;
-      this->checkNotEndOfLine("SingleStructureSchemeParser::handleBehaviour",p,
-			      this->tokens.end());
-      if(p->value==","){
-        this->readSpecifiedToken("SingleStructureSchemeParser::handleBehaviour", ",", p,
-                                 this->tokens.end());
+      this->checkNotEndOfLine("SingleStructureSchemeParser::handleBehaviour", p,
+                              this->tokens.end());
+      if (p->value == ",") {
+        this->readSpecifiedToken("SingleStructureSchemeParser::handleBehaviour",
+                                 ",", p, this->tokens.end());
         w = p->value;
         ++p;
       }
-      this->readSpecifiedToken("SingleStructureSchemeParser::handleBehaviour",">",p,
-			       this->tokens.end());
+      this->readSpecifiedToken("SingleStructureSchemeParser::handleBehaviour",
+                               ">", p, this->tokens.end());
     }
     const auto& l = this->readString(p, this->tokens.end());
     const auto& f = this->readString(p, this->tokens.end());
-    this->checkNotEndOfLine("SingleStructureSchemeParser::handleBehaviour", p, this->tokens.end());
+    this->checkNotEndOfLine("SingleStructureSchemeParser::handleBehaviour", p,
+                            this->tokens.end());
     tfel::utilities::Data d;
     if (p->value == "{") {
       d = tfel::utilities::Data::read(p, this->tokens.end());
     }
-    this->readSpecifiedToken("SingleStructureSchemeParser::handleBehaviour", ";", p,
-                             this->tokens.end());
+    this->readSpecifiedToken("SingleStructureSchemeParser::handleBehaviour",
+                             ";", p, this->tokens.end());
     mfront::getLogStream() << l << " " << f << std::endl;
     if (w.empty()) {
       t.setBehaviour(i, l, f, d);
@@ -192,16 +198,19 @@ namespace mtest {
     }
   }  // end of SingleStructureSchemeParser::handleBehaviour
 
-  void SingleStructureSchemeParser::handleMaterialProperty(SingleStructureScheme& t,
-                                                           tokens_iterator& p) {
+  void SingleStructureSchemeParser::handleMaterialProperty(
+      SingleStructureScheme& t, tokens_iterator& p) {
     using namespace std;
     using namespace tfel::utilities;
     string i;
-    this->readSpecifiedToken("SingleStructureSchemeParser::handleMaterialProperty", "<", p,
-                             this->tokens.end());
-    this->checkNotEndOfLine("SingleStructureSchemeParser::handleMaterialProperty", p,
-                            this->tokens.end());
-    if ((p->value == "constant") || (p->value == "castem") || (p->value == "function")) {
+    this->readSpecifiedToken(
+        "SingleStructureSchemeParser::handleMaterialProperty", "<", p,
+        this->tokens.end());
+    this->checkNotEndOfLine(
+        "SingleStructureSchemeParser::handleMaterialProperty", p,
+        this->tokens.end());
+    if ((p->value == "constant") || (p->value == "castem") ||
+        (p->value == "function")) {
       i = p->value;
     } else {
       tfel::raise(
@@ -210,13 +219,15 @@ namespace mtest {
           p->value + "'");
     }
     ++p;
-    this->readSpecifiedToken("SingleStructureSchemeParser::handleMaterialProperty", ">", p,
-                             this->tokens.end());
+    this->readSpecifiedToken(
+        "SingleStructureSchemeParser::handleMaterialProperty", ">", p,
+        this->tokens.end());
     const auto& n = this->readString(p, this->tokens.end());
     if (i == "constant") {
       shared_ptr<Evolution> mpev;
-      this->checkNotEndOfLine("SingleStructureSchemeParser::handleMaterialProperty", p,
-                              this->tokens.end());
+      this->checkNotEndOfLine(
+          "SingleStructureSchemeParser::handleMaterialProperty", p,
+          this->tokens.end());
       const real v = this->readDouble(t, p);
       mpev = shared_ptr<Evolution>(new ConstantEvolution(v));
       t.setMaterialProperty(n, mpev, true);
@@ -229,7 +240,8 @@ namespace mtest {
       shared_ptr<Evolution> mpev;
       const string l = this->readString(p, this->tokens.end());
       const string f = this->readString(p, this->tokens.end());
-      mpev = shared_ptr<Evolution>(new CastemEvolution(l, f, t.getEvolutions()));
+      mpev =
+          shared_ptr<Evolution>(new CastemEvolution(l, f, t.getEvolutions()));
       t.setMaterialProperty(n, mpev, true);
     } else {
       tfel::raise(
@@ -237,15 +249,17 @@ namespace mtest {
           "unknown interface '" +
           i + "'");
     }
-    this->readSpecifiedToken("SingleStructureSchemeParser::handleMaterialProperty", ";", p,
-                             this->tokens.end());
+    this->readSpecifiedToken(
+        "SingleStructureSchemeParser::handleMaterialProperty", ";", p,
+        this->tokens.end());
   }
 
-  void SingleStructureSchemeParser::handleOutOfBoundsPolicy(SingleStructureScheme& t,
-                                                            tokens_iterator& p) {
+  void SingleStructureSchemeParser::handleOutOfBoundsPolicy(
+      SingleStructureScheme& t, tokens_iterator& p) {
     const std::string& s = this->readString(p, this->tokens.end());
-    this->readSpecifiedToken("SingleStructureSchemeParser::handlePredictionPolicy", ";", p,
-                             this->tokens.end());
+    this->readSpecifiedToken(
+        "SingleStructureSchemeParser::handlePredictionPolicy", ";", p,
+        this->tokens.end());
     if (s == "None") {
       t.setOutOfBoundsPolicy(tfel::material::None);
     } else if (s == "Warning") {
@@ -260,34 +274,37 @@ namespace mtest {
     }
   }  // end of SingleStructureSchemeParser::handleOutOfBoundsPolicy
 
-  void SingleStructureSchemeParser::handleParameter(SingleStructureScheme& t, tokens_iterator& p) {
+  void SingleStructureSchemeParser::handleParameter(SingleStructureScheme& t,
+                                                    tokens_iterator& p) {
     const auto n = this->readString(p, this->tokens.end());
     const real v = this->readDouble(t, p);
     t.setParameter(n, v);
-    this->readSpecifiedToken("SingleStructureSchemeParser::handleParameter", ";", p,
-                             this->tokens.end());
+    this->readSpecifiedToken("SingleStructureSchemeParser::handleParameter",
+                             ";", p, this->tokens.end());
   }  // end of SingleStructureSchemeParser::handleParameter
 
-  void SingleStructureSchemeParser::handleIntegerParameter(SingleStructureScheme& t,
-                                                           tokens_iterator& p) {
+  void SingleStructureSchemeParser::handleIntegerParameter(
+      SingleStructureScheme& t, tokens_iterator& p) {
     const auto n = this->readString(p, this->tokens.end());
     const int v = this->readInt(p, this->tokens.end());
     t.setIntegerParameter(n, v);
-    this->readSpecifiedToken("SingleStructureSchemeParser::handleIntegerParameter", ";", p,
-                             this->tokens.end());
+    this->readSpecifiedToken(
+        "SingleStructureSchemeParser::handleIntegerParameter", ";", p,
+        this->tokens.end());
   }  // end of SingleStructureSchemeParser::handleIntegerParameter
 
-  void SingleStructureSchemeParser::handleUnsignedIntegerParameter(SingleStructureScheme& t,
-                                                                   tokens_iterator& p) {
+  void SingleStructureSchemeParser::handleUnsignedIntegerParameter(
+      SingleStructureScheme& t, tokens_iterator& p) {
     const auto n = this->readString(p, this->tokens.end());
     const auto v = this->readUnsignedInt(p, this->tokens.end());
     t.setUnsignedIntegerParameter(n, v);
-    this->readSpecifiedToken("SingleStructureSchemeParser::handleUnsignedIntegerParameter", ";", p,
-                             this->tokens.end());
+    this->readSpecifiedToken(
+        "SingleStructureSchemeParser::handleUnsignedIntegerParameter", ";", p,
+        this->tokens.end());
   }  // end of SingleStructureSchemeParser::handleUnsignedIntegerParameteru
 
-  void SingleStructureSchemeParser::handleInternalStateVariable(SingleStructureScheme& t,
-                                                                tokens_iterator& p) {
+  void SingleStructureSchemeParser::handleInternalStateVariable(
+      SingleStructureScheme& t, tokens_iterator& p) {
     using namespace std;
     shared_ptr<Behaviour> b(t.getBehaviour());
     const string& n = this->readString(p, this->tokens.end());
@@ -307,13 +324,15 @@ namespace mtest {
       if (type == 0) {
         uniform = p->value != "{";
       } else {
-        tfel::raise_if(p->value != "{",
-                       "SingleStructureSchemeParser::handleInternalStateVariable: "
-                       "unexpected token '" +
-                           n + "'");
+        tfel::raise_if(
+            p->value != "{",
+            "SingleStructureSchemeParser::handleInternalStateVariable: "
+            "unexpected token '" +
+                n + "'");
         ++p;
-        this->checkNotEndOfLine("SingleStructureSchemeParser::handleInternalStateVariable", p,
-                                this->tokens.end());
+        this->checkNotEndOfLine(
+            "SingleStructureSchemeParser::handleInternalStateVariable", p,
+            this->tokens.end());
         uniform = p->value != "{";
         --p;
       }
@@ -325,36 +344,40 @@ namespace mtest {
           this->setInternalStateVariableValue(t, p, *pn);
         }
       } else {
-        this->readSpecifiedToken("SingleStructureSchemeParser::handleInternalStateVariable", "{", p,
-                                 this->tokens.end());
+        this->readSpecifiedToken(
+            "SingleStructureSchemeParser::handleInternalStateVariable", "{", p,
+            this->tokens.end());
         vector<string>::const_iterator pn;
         for (pn = ivs.begin(); pn != ivs.end();) {
           this->setInternalStateVariableValue(t, p, *pn);
           if (++pn != ivs.end()) {
-            this->readSpecifiedToken("SingleStructureSchemeParser::handleInternalStateVariable",
-                                     ",", p, this->tokens.end());
+            this->readSpecifiedToken(
+                "SingleStructureSchemeParser::handleInternalStateVariable", ",",
+                p, this->tokens.end());
           }
         }
-        this->readSpecifiedToken("SingleStructureSchemeParser::handleInternalStateVariable", "}", p,
-                                 this->tokens.end());
+        this->readSpecifiedToken(
+            "SingleStructureSchemeParser::handleInternalStateVariable", "}", p,
+            this->tokens.end());
       }
     }
-    this->readSpecifiedToken("SingleStructureSchemeParser::handleInternalStateVariable", ";", p,
-                             this->tokens.end());
+    this->readSpecifiedToken(
+        "SingleStructureSchemeParser::handleInternalStateVariable", ";", p,
+        this->tokens.end());
   }
 
-  void SingleStructureSchemeParser::handleExternalStateVariable(SingleStructureScheme& t,
-                                                                tokens_iterator& p) {
+  void SingleStructureSchemeParser::handleExternalStateVariable(
+      SingleStructureScheme& t, tokens_iterator& p) {
     const auto& evt = this->readEvolutionType(p);
     const auto& n = this->readString(p, this->tokens.end());
     t.setExternalStateVariable(n, this->parseEvolution(t, evt, p), true);
-    this->readSpecifiedToken("SingleStructureSchemeParser::handleExternalStateVariable", ";", p,
-                             this->tokens.end());
+    this->readSpecifiedToken(
+        "SingleStructureSchemeParser::handleExternalStateVariable", ";", p,
+        this->tokens.end());
   }
 
-  void SingleStructureSchemeParser::setInternalStateVariableValue(SingleStructureScheme& t,
-                                                                  tokens_iterator& p,
-                                                                  const std::string& n) {
+  void SingleStructureSchemeParser::setInternalStateVariableValue(
+      SingleStructureScheme& t, tokens_iterator& p, const std::string& n) {
     using namespace std;
     const int type = t.getBehaviour()->getInternalStateVariableType(n);
     if (type == 0) {
@@ -384,33 +407,43 @@ namespace mtest {
   }  // end of SingleStructureSchemeParser::registerCallBack
 
   void SingleStructureSchemeParser::registerCallBacks() {
-    this->registerCallBack("@Behaviour", &SingleStructureSchemeParser::handleBehaviour);
-    this->registerCallBack("@MaterialProperty",
-                           &SingleStructureSchemeParser::handleMaterialProperty);
-    this->registerCallBack("@InternalStateVariable",
-                           &SingleStructureSchemeParser::handleInternalStateVariable);
-    this->registerCallBack("@ExternalStateVariable",
-                           &SingleStructureSchemeParser::handleExternalStateVariable);
-    this->registerCallBack("@OutOfBoundsPolicy",
-                           &SingleStructureSchemeParser::handleOutOfBoundsPolicy);
-    this->registerCallBack("@Parameter", &SingleStructureSchemeParser::handleParameter);
-    this->registerCallBack("@IntegerParameter",
-                           &SingleStructureSchemeParser::handleIntegerParameter);
-    this->registerCallBack("@UnsignedIntegerParameter",
-                           &SingleStructureSchemeParser::handleUnsignedIntegerParameter);
-    this->registerCallBack("@HandleThermalExpansion",
-                           &SingleStructureSchemeParser::handleHandleThermalExpansion);
+    this->registerCallBack("@Behaviour",
+                           &SingleStructureSchemeParser::handleBehaviour);
+    this->registerCallBack(
+        "@MaterialProperty",
+        &SingleStructureSchemeParser::handleMaterialProperty);
+    this->registerCallBack(
+        "@InternalStateVariable",
+        &SingleStructureSchemeParser::handleInternalStateVariable);
+    this->registerCallBack(
+        "@ExternalStateVariable",
+        &SingleStructureSchemeParser::handleExternalStateVariable);
+    this->registerCallBack(
+        "@OutOfBoundsPolicy",
+        &SingleStructureSchemeParser::handleOutOfBoundsPolicy);
+    this->registerCallBack("@Parameter",
+                           &SingleStructureSchemeParser::handleParameter);
+    this->registerCallBack(
+        "@IntegerParameter",
+        &SingleStructureSchemeParser::handleIntegerParameter);
+    this->registerCallBack(
+        "@UnsignedIntegerParameter",
+        &SingleStructureSchemeParser::handleUnsignedIntegerParameter);
+    this->registerCallBack(
+        "@HandleThermalExpansion",
+        &SingleStructureSchemeParser::handleHandleThermalExpansion);
   }  // end of SingleStructureSchemeParser::registerCallBacks
 
-  bool SingleStructureSchemeParser::treatKeyword(SingleStructureScheme& t, tokens_iterator& p) {
+  bool SingleStructureSchemeParser::treatKeyword(SingleStructureScheme& t,
+                                                 tokens_iterator& p) {
     auto pc = this->callbacks.find(p->value);
     if (pc == this->callbacks.end()) {
       return false;
     }
     if (mfront::getVerboseMode() >= mfront::VERBOSE_DEBUG) {
       auto& log = mfront::getLogStream();
-      log << "SingleStructureSchemeParser::execute : treating keyword '" << p->value
-          << "' at line '" << p->line << "'\n";
+      log << "SingleStructureSchemeParser::execute : treating keyword '"
+          << p->value << "' at line '" << p->line << "'\n";
     }
     ++p;
     auto line = p->line;
@@ -426,7 +459,8 @@ namespace mtest {
     return true;
   }  // end of SingleStructureSchemeParser::treatKeyword
 
-  std::vector<std::string> SingleStructureSchemeParser::getKeyWordsList() const {
+  std::vector<std::string> SingleStructureSchemeParser::getKeyWordsList()
+      const {
     auto keys = std::vector<std::string>{};
     for (const auto& k : this->callbacks) {
       keys.push_back(k.first);

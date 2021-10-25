@@ -1,37 +1,34 @@
-/*! 
+/*!
  * \file   mfront/include/MFront/ModelDescription.hxx
  * \brief
  * \author Thomas Helfer
  * \brief  12 jun 2010
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_MFRONT_MODELDESCRIPTION_HXX
-#define LIB_MFRONT_MODELDESCRIPTION_HXX 
+#define LIB_MFRONT_MODELDESCRIPTION_HXX
 
-#include<set>
-#include<map>
-#include<string>
+#include <set>
+#include <map>
+#include <string>
 
-#include"MFront/MFrontConfig.hxx"
-#include"MFront/VariableDescription.hxx"
-#include"MFront/StaticVariableDescription.hxx"
-#include"MFront/VariableBoundsDescription.hxx"
+#include "MFront/MFrontConfig.hxx"
+#include "MFront/VariableDescription.hxx"
+#include "MFront/StaticVariableDescription.hxx"
+#include "MFront/VariableBoundsDescription.hxx"
 
-namespace mfront
-{
+namespace mfront {
 
   //! Class describing a model
-  struct MFRONT_VISIBILITY_EXPORT ModelDescription
-  {
+  struct MFRONT_VISIBILITY_EXPORT ModelDescription {
     //! a model may contain several function
-    struct MFRONT_VISIBILITY_EXPORT Function
-    {
+    struct MFRONT_VISIBILITY_EXPORT Function {
       //! default constructor
       Function();
       //! copy constructor
@@ -53,7 +50,7 @@ namespace mfront
       //! list of parameters used by the function
       std::set<std::string> parameters;
       //! depths of each variables
-      std::map<std::string,unsigned short> depths;
+      std::map<std::string, unsigned short> depths;
       //! name of the function
       std::string name;
       //! body of the function
@@ -63,13 +60,13 @@ namespace mfront
       unsigned int line = 0u;
       //! if true, the body of the function uses the time increment dt
       bool useTimeIncrement = false;
-    }; // end of struct MFrontData::Function
+    };  // end of struct MFrontData::Function
     /*!
      * \brief decompose a variable name to get the basis and the depth
      * of the variable
      */
-    std::pair<std::string,unsigned short>
-    decomposeVariableName(const std::string&) const;
+    std::pair<std::string, unsigned short> decomposeVariableName(
+        const std::string&) const;
     //! defaut constructor
     ModelDescription();
     //! copy constructor
@@ -84,22 +81,19 @@ namespace mfront
      * \return the variable description with the given name
      * \param[in] n: variable name
      */
-    const VariableDescription&
-    getVariableDescription(const std::string&) const;
+    const VariableDescription& getVariableDescription(const std::string&) const;
     /*!
-     * \brief associate a glossary name to a variable 
+     * \brief associate a glossary name to a variable
      * \param[in] v: variable name
      * \param[in] g: glossary name
      */
-    void setGlossaryName(const std::string&,
-			 const std::string&);
+    void setGlossaryName(const std::string&, const std::string&);
     /*!
-     * \brief associate a glossary name to a variable 
+     * \brief associate a glossary name to a variable
      * \param[in] v: variable name
      * \param[in] g: glossary name
      */
-    void setEntryName(const std::string&,
-		      const std::string&);
+    void setEntryName(const std::string&, const std::string&);
     /*!
      * \brief add a material law
      * \param[in] m : added material law name
@@ -143,7 +137,7 @@ namespace mfront
     std::string className;
     //! additionnal header files
     std::string includes;
-    //!specific sources
+    //! specific sources
     std::string sources;
     //! private code
     std::string privateCode;
@@ -184,7 +178,8 @@ namespace mfront
     bool isNameReserved(const std::string&) const;
     //! \return the list of reserved names
     std::set<std::string>& getReservedNames();
-  protected:
+
+   protected:
     /*!
      * check that a variable exists
      * \param[in] v: variable name
@@ -192,20 +187,21 @@ namespace mfront
     void checkVariableExistence(const std::string&) const;
     //! \return the list of reserved names
     const std::set<std::string>& getReservedNames() const;
-  private:
+
+   private:
     /*!
      * \return the variable description with the given name
      * \param[in] n: variable name
      */
     VariableDescription& getVariableDescription(const std::string&);
     //! set glossary names
-    std::map<std::string,std::string> glossaryNames;
+    std::map<std::string, std::string> glossaryNames;
     //! entry names
-    std::map<std::string,std::string> entryNames;
+    std::map<std::string, std::string> entryNames;
     //! list of reserved names
     std::set<std::string> reservedNames;
-  }; // end of struct ModelDescription
+  };  // end of struct ModelDescription
 
-} // end of namespace mfront
+}  // end of namespace mfront
 
 #endif /* LIB_MFRONT_MODELDESCRIPTION_HXX */

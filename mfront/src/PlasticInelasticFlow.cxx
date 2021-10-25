@@ -64,7 +64,7 @@ namespace mfront {
         const auto dR_ddp = "dR" + id + "_ddp" + id;
         const auto dfp_ddp = "dfp" + id + "_ddp" + id;
         c += computeElasticLimitAndDerivative(this->ihrs, id);
-        c += fp + " = (" + seq + "-" + R + ")/("+snf+");\n";
+        c += fp + " = (" + seq + "-" + R + ")/(" + snf + ");\n";
         c += sp.computeDerivatives(bd, "strain", "p" + id,
                                    dseq_ds + "/(" + snf + ")",
                                    this->sc->isNormalDeviatoric());
@@ -87,7 +87,7 @@ namespace mfront {
         }
       } else {
         c += computeElasticLimit(this->ihrs, id);
-        c += fp + " = (" + seq + "-" + R + ")/("+snf+");\n";
+        c += fp + " = (" + seq + "-" + R + ")/(" + snf + ");\n";
       }
       return c;
     }  // end of PlasticInelasticFlow::buildFlowImplicitEquations

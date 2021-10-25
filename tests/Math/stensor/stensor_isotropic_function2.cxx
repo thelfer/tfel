@@ -43,7 +43,8 @@ struct StensorIsotropicFunctionDerivativeTest2 final
   template <unsigned short N>
   void test(const tfel::math::stensor<N, double>& v) {
     using size_type = typename tfel::math::stensor<N, double>::size_type;
-    constexpr const auto jes = tfel::math::stensor<N, double>::FSESJACOBIEIGENSOLVER;
+    constexpr const auto jes =
+        tfel::math::stensor<N, double>::FSESJACOBIEIGENSOLVER;
     constexpr const double eps = 1.e-8;
 #if (defined __INTEL_COMPILER)
     const auto K = tfel::math::st2tost2<N, double>::K();
@@ -54,7 +55,7 @@ struct StensorIsotropicFunctionDerivativeTest2 final
     constexpr const auto n = 0.3;
     constexpr const auto m = E / (2 * (1 + n));
     constexpr const auto rm = 0.6;
-    constexpr const double prec = 4.e-9*E;
+    constexpr const double prec = 4.e-9 * E;
     auto f = [](const double x) -> double { return x > 0 ? x : 0; };
     auto df = [](const double x) -> double {
       return std::abs(x) < 1.e-12 ? 0.5 : ((x < 0) ? 0 : 1);
@@ -85,8 +86,8 @@ struct StensorIsotropicFunctionDerivativeTest2 final
         if (std::abs(d(i, j) - nd(i, j)) > prec) {
           std::cout << i << " " << j << " " << d(i, j) << " " << nd(i, j) << " "
                     << std::abs(d(i, j) - nd(i, j)) << std::endl;
-         }
-         TFEL_TESTS_ASSERT(std::abs(d(i, j) - nd(i, j)) < prec);
+        }
+        TFEL_TESTS_ASSERT(std::abs(d(i, j) - nd(i, j)) < prec);
       }
     }
   }

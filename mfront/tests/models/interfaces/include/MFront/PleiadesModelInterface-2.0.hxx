@@ -1,14 +1,15 @@
 /*!
- * \file   mfront/tests/models/interfaces/include/MFront/PleiadesModelInterface-2.0.hxx
+ * \file
+ * mfront/tests/models/interfaces/include/MFront/PleiadesModelInterface-2.0.hxx
  * \brief  This file declares the PleiadesModelInterface class
  * \author Thomas Helfer
  * \date   10 Nov 2006
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_MFRONT_PLEIADESMODELINTERFACE_HXX
@@ -23,16 +24,16 @@ namespace mfront {
    * \brief Implements a interface for the `PLEIADES 2.0` kernel.
    */
   struct PleiadesModelInterface : public AbstractModelInterface {
-    //!default constructor
+    //! default constructor
     PleiadesModelInterface();
     //! \return the name of the interface
     static std::string getName(void);
 
-    std::pair<bool, TokensContainer::const_iterator>
-    treatKeyword(const std::string&,
-		 const std::vector<std::string>&,
-		 TokensContainer::const_iterator,
-		 const TokensContainer::const_iterator) override;
+    std::pair<bool, TokensContainer::const_iterator> treatKeyword(
+        const std::string&,
+        const std::vector<std::string>&,
+        TokensContainer::const_iterator,
+        const TokensContainer::const_iterator) override;
     /*! declare reserved names. Those are variables used internally
      * that may conflicts with user variables
      * \param[in] n : reserved names
@@ -44,14 +45,14 @@ namespace mfront {
      * \param data  : PleiadesModel data
      */
     void writeOutputFiles(const FileDescription&,
-			  const ModelDescription&) override;
+                          const ModelDescription&) override;
 
     void getTargetsDescription(TargetsDescription&,
-			       const ModelDescription&) override;
+                               const ModelDescription&) override;
     //! destructor
     ~PleiadesModelInterface() override;
 
-  };// end of class PleiadesModelInterface
+  };  // end of class PleiadesModelInterface
 
 }  // end of namespace mfront
 

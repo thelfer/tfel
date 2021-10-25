@@ -1,88 +1,88 @@
 /*!
  * \file   mfront/src/InitInterfaces.cxx
- * \brief  
- * 
+ * \brief
+ *
  * \author Thomas Helfer
  * \date   12 sep 2008
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
-#include"MFront/BehaviourInterfaceProxy.hxx"
-#include"MFront/MaterialPropertyInterfaceProxy.hxx"
-#include"MFront/ModelInterfaceProxy.hxx"
+#include "MFront/BehaviourInterfaceProxy.hxx"
+#include "MFront/MaterialPropertyInterfaceProxy.hxx"
+#include "MFront/ModelInterfaceProxy.hxx"
 
-#include"MFront/MFrontMaterialPropertyInterface.hxx"
-#include"MFront/GenericBehaviourInterface.hxx"
-#include"MFront/CMaterialPropertyInterface.hxx"
-#include"MFront/ExcelMaterialPropertyInterface.hxx"
-#include"MFront/ExcelMaterialPropertyInternalInterface.hxx"
+#include "MFront/MFrontMaterialPropertyInterface.hxx"
+#include "MFront/GenericBehaviourInterface.hxx"
+#include "MFront/CMaterialPropertyInterface.hxx"
+#include "MFront/ExcelMaterialPropertyInterface.hxx"
+#include "MFront/ExcelMaterialPropertyInternalInterface.hxx"
 
 #ifdef HAVE_FORTRAN
-#include"MFront/FortranMaterialPropertyInterface.hxx"
-#include"MFront/Fortran03MaterialPropertyInterface.hxx"
+#include "MFront/FortranMaterialPropertyInterface.hxx"
+#include "MFront/Fortran03MaterialPropertyInterface.hxx"
 #endif /* HAVE_FORTRAN */
 
-#include"MFront/CppMaterialPropertyInterface.hxx"
-#include"MFront/CppTestMaterialPropertyInterface.hxx"
-#include"MFront/OctaveMaterialPropertyInterface.hxx"
+#include "MFront/CppMaterialPropertyInterface.hxx"
+#include "MFront/CppTestMaterialPropertyInterface.hxx"
+#include "MFront/OctaveMaterialPropertyInterface.hxx"
 
 #ifdef HAVE_PYTHON
-#include"MFront/PythonMaterialPropertyInterface.hxx"
+#include "MFront/PythonMaterialPropertyInterface.hxx"
 #endif /* HAVE_PYTHON */
 
 #ifdef HAVE_JAVA
-#include"MFront/JavaMaterialPropertyInterface.hxx"
+#include "MFront/JavaMaterialPropertyInterface.hxx"
 #endif /* HAVE_JAVA */
 
 #ifdef HAVE_GNUPLOT
-#include"MFront/GnuplotMaterialPropertyInterface.hxx"
+#include "MFront/GnuplotMaterialPropertyInterface.hxx"
 #endif
 
 #ifdef HAVE_CASTEM
-#include"MFront/CastemMaterialPropertyInterface.hxx"
-#include"MFront/CastemInterface.hxx"
+#include "MFront/CastemMaterialPropertyInterface.hxx"
+#include "MFront/CastemInterface.hxx"
 #endif
 
 #ifdef HAVE_CYRANO
-#include"MFront/CyranoInterface.hxx"
+#include "MFront/CyranoInterface.hxx"
 #endif
 
 #ifdef HAVE_ASTER
-#include"MFront/AsterInterface.hxx"
+#include "MFront/AsterInterface.hxx"
 #endif
 
 #ifdef HAVE_ABAQUS
-#include"MFront/AbaqusInterface.hxx"
-#include"MFront/AbaqusExplicitInterface.hxx"
+#include "MFront/AbaqusInterface.hxx"
+#include "MFront/AbaqusExplicitInterface.hxx"
 #endif
 
 #ifdef HAVE_ANSYS
-#include"MFront/AnsysInterface.hxx"
+#include "MFront/AnsysInterface.hxx"
 #endif
 
 #ifdef HAVE_EUROPLEXUS
-#include"MFront/EuroplexusInterface.hxx"
+#include "MFront/EuroplexusInterface.hxx"
 #endif
 
 #ifdef HAVE_CALCULIX
-#include"MFront/CalculiXInterface.hxx"
+#include "MFront/CalculiXInterface.hxx"
 #endif
 
 #ifdef HAVE_LSDYNA
-#include"MFront/LSDYNAInterface.hxx"
+#include "MFront/LSDYNAInterface.hxx"
 #endif /* HAVE_LSDYNA */
 
 #ifdef HAVE_ZMAT
-#include"MFront/ZMATInterface.hxx"
+#include "MFront/ZMATInterface.hxx"
 #endif /* HAVE_ZMAT */
 
-#include"MFront/MFrontModelInterface.hxx"
-#include"MFront/InitInterfaces.hxx"
+#include "MFront/MFrontModelInterface.hxx"
+#include "MFront/InitInterfaces.hxx"
 
 namespace mfront {
 
@@ -90,47 +90,57 @@ namespace mfront {
     MaterialPropertyInterfaceProxy<CMaterialPropertyInterface> cLawProxy;
 
 #ifdef HAVE_FORTRAN
-    MaterialPropertyInterfaceProxy<FortranMaterialPropertyInterface>   fLawProxy;
-    MaterialPropertyInterfaceProxy<Fortran03MaterialPropertyInterface> f03LawProxy;
+    MaterialPropertyInterfaceProxy<FortranMaterialPropertyInterface> fLawProxy;
+    MaterialPropertyInterfaceProxy<Fortran03MaterialPropertyInterface>
+        f03LawProxy;
 #endif /* HAVE_FORTRAN */
 
-    MaterialPropertyInterfaceProxy<MFrontMaterialPropertyInterface>  mLawProxy;
+    MaterialPropertyInterfaceProxy<MFrontMaterialPropertyInterface> mLawProxy;
 
-    MaterialPropertyInterfaceProxy<ExcelMaterialPropertyInternalInterface> excelInternalLawProxy;
+    MaterialPropertyInterfaceProxy<ExcelMaterialPropertyInternalInterface>
+        excelInternalLawProxy;
 
-    MaterialPropertyInterfaceProxy<ExcelMaterialPropertyInterface> excelLawProxy(ExcelMaterialPropertyInterface::getName(),
-										 ExcelMaterialPropertyInternalInterface::getName());
+    MaterialPropertyInterfaceProxy<ExcelMaterialPropertyInterface>
+        excelLawProxy(ExcelMaterialPropertyInterface::getName(),
+                      ExcelMaterialPropertyInternalInterface::getName());
 
-    constexpr const char * cppLawNames [6] = {"c++","C++",
-					      "cxx","Cxx",
-					      "cpp","Cpp"};
-    MaterialPropertyInterfaceProxy<CppMaterialPropertyInterface> cppLawProxy(cppLawNames,cppLawNames+6);
+    constexpr const char* cppLawNames[6] = {"c++", "C++", "cxx",
+                                            "Cxx", "cpp", "Cpp"};
+    MaterialPropertyInterfaceProxy<CppMaterialPropertyInterface> cppLawProxy(
+        cppLawNames, cppLawNames + 6);
 
-    MaterialPropertyInterfaceProxy<CppTestMaterialPropertyInterface> cppTestLawProxy(CppTestMaterialPropertyInterface::getName(),
-    										     CppMaterialPropertyInterface::getName());
+    MaterialPropertyInterfaceProxy<CppTestMaterialPropertyInterface>
+        cppTestLawProxy(CppTestMaterialPropertyInterface::getName(),
+                        CppMaterialPropertyInterface::getName());
 
 #ifdef HAVE_GNUPLOT
-    MaterialPropertyInterfaceProxy<GnuplotMaterialPropertyInterface> gnuplotLawProxy(GnuplotMaterialPropertyInterface::getName(),
-										     CppTestMaterialPropertyInterface::getName());
+    MaterialPropertyInterfaceProxy<GnuplotMaterialPropertyInterface>
+        gnuplotLawProxy(GnuplotMaterialPropertyInterface::getName(),
+                        CppTestMaterialPropertyInterface::getName());
 #endif /* HAVE_GNUPLOT */
 
-    MaterialPropertyInterfaceProxy<OctaveMaterialPropertyInterface> octaveLawProxy;
+    MaterialPropertyInterfaceProxy<OctaveMaterialPropertyInterface>
+        octaveLawProxy;
 
 #ifdef HAVE_PYTHON
-    constexpr const char * pythonNames[2] = {"python","Python"};
-    MaterialPropertyInterfaceProxy<PythonMaterialPropertyInterface> pythonLawProxy(pythonNames,pythonNames+2);
+    constexpr const char* pythonNames[2] = {"python", "Python"};
+    MaterialPropertyInterfaceProxy<PythonMaterialPropertyInterface>
+        pythonLawProxy(pythonNames, pythonNames + 2);
 #endif /* HAVE_PYTHON */
 
 #ifdef HAVE_JAVA
-    constexpr const char * javaNames[2] = {"java","Java"};
-    MaterialPropertyInterfaceProxy<JavaMaterialPropertyInterface> javaLawProxy(javaNames,javaNames+2);
+    constexpr const char* javaNames[2] = {"java", "Java"};
+    MaterialPropertyInterfaceProxy<JavaMaterialPropertyInterface> javaLawProxy(
+        javaNames, javaNames + 2);
 #endif /* HAVE_JAVA */
 
 #ifdef HAVE_CASTEM
-    constexpr const char * castemINames[3] = {"castem","Castem","Cast3M"};
-    MaterialPropertyInterfaceProxy<CastemMaterialPropertyInterface> castemLawProxy(castemINames,castemINames+3);
-    constexpr const char * castemBNames[3] = {"umat","Castem","Cast3M"};
-    BehaviourInterfaceProxy<CastemInterface> umatProxy(castemBNames,castemBNames+3);
+    constexpr const char* castemINames[3] = {"castem", "Castem", "Cast3M"};
+    MaterialPropertyInterfaceProxy<CastemMaterialPropertyInterface>
+        castemLawProxy(castemINames, castemINames + 3);
+    constexpr const char* castemBNames[3] = {"umat", "Castem", "Cast3M"};
+    BehaviourInterfaceProxy<CastemInterface> umatProxy(castemBNames,
+                                                       castemBNames + 3);
 #endif /* HAVE_CASTEM */
 
 #ifdef HAVE_CYRANO
@@ -142,14 +152,14 @@ namespace mfront {
 #endif /* HAVE_ASTER */
 
 #ifdef HAVE_ABAQUS
-    BehaviourInterfaceProxy<AbaqusInterface>         abaqusProxy;
+    BehaviourInterfaceProxy<AbaqusInterface> abaqusProxy;
     BehaviourInterfaceProxy<AbaqusExplicitInterface> abaqusExplicitProxy;
 #endif /* HAVE_ABAQUS */
 
 #ifdef HAVE_ANSYS
-    BehaviourInterfaceProxy<AnsysInterface>         ansysProxy;
+    BehaviourInterfaceProxy<AnsysInterface> ansysProxy;
 #endif /* HAVE_ANSYS */
-    
+
 #ifdef HAVE_EUROPLEXUS
     BehaviourInterfaceProxy<EuroplexusInterface> europlexusProxy;
 #endif /* HAVE_EUROPLEXUS */
@@ -157,7 +167,7 @@ namespace mfront {
 #ifdef HAVE_CALCULIX
     BehaviourInterfaceProxy<CalculiXInterface> ccxProxy;
 #endif /* HAVE_CALCULIX */
-    
+
 #ifdef HAVE_ZMAT
     BehaviourInterfaceProxy<ZMATInterface> zmatProxy;
 #endif /* HAVE_ZMAT */
@@ -169,7 +179,7 @@ namespace mfront {
     BehaviourInterfaceProxy<GenericBehaviourInterface> gbProxy;
 
     ModelInterfaceProxy<MFrontModelInterface> mmi;
-    
-  } // end of initInterfaces()
 
-} // end of namespace mfront
+  }  // end of initInterfaces()
+
+}  // end of namespace mfront

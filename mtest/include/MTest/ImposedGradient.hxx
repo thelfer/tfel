@@ -31,8 +31,7 @@ namespace mtest {
   /*!
    * Impose the value of a driving variable component
    */
-  struct MTEST_VISIBILITY_EXPORT ImposedGradient final
-      : public ConstraintBase {
+  struct MTEST_VISIBILITY_EXPORT ImposedGradient final : public ConstraintBase {
     /*!
      * constructor
      * \param[in] b : behaviour
@@ -40,15 +39,14 @@ namespace mtest {
      * \param[in] s : driving variable evolution
      */
     ImposedGradient(const Behaviour&,
-                           const std::string&,
-                           const std::shared_ptr<Evolution>);
+                    const std::string&,
+                    const std::shared_ptr<Evolution>);
     /*!
      * constructor
      * \param[in] c : component
      * \param[in] s : driving variable evolution
      */
-    ImposedGradient(const unsigned short c,
-                           const std::shared_ptr<Evolution>);
+    ImposedGradient(const unsigned short c, const std::shared_ptr<Evolution>);
     /*!
      * \return the number of Lagrange Multipliers
      * associated with this contraint

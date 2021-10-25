@@ -1,31 +1,31 @@
-/*! 
+/*!
  * \file  include/TFEL/Math/Matrix/tmatrix_const_submatrix_view.hxx
  * \brief
  * \author Thomas Helfer
  * \brief 27 déc. 2012
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_TFEL_MATH_TMATRIX_CONST_SUBMATRIX_VIEW_HXX
-#define LIB_TFEL_MATH_TMATRIX_CONST_SUBMATRIX_VIEW_HXX 
+#define LIB_TFEL_MATH_TMATRIX_CONST_SUBMATRIX_VIEW_HXX
 
-namespace tfel
-{
+namespace tfel {
 
-  namespace math
-  {
+  namespace math {
 
-    template<unsigned short N,unsigned short M,
-	     unsigned short I,unsigned short J,
-	     unsigned short R,unsigned short C,
-	     typename T>
-    struct tmatrix_const_submatrix_view_expr
-    {
+    template <unsigned short N,
+              unsigned short M,
+              unsigned short I,
+              unsigned short J,
+              unsigned short R,
+              unsigned short C,
+              typename T>
+    struct tmatrix_const_submatrix_view_expr {
       //! a simple typedef to the tmatrix runtime properties
       /*
        * This is a MatrixConcept requirement.
@@ -74,9 +74,9 @@ namespace tfel
       /*!
        * constructor
        * \param[in] m_ : the underlying matrix
-       */      
+       */
       TFEL_MATH_INLINE
-      tmatrix_const_submatrix_view_expr(const tmatrix<N,M,T>&);
+      tmatrix_const_submatrix_view_expr(const tmatrix<N, M, T>&);
       //! Return the RunTimeProperties of the tmatrix.
       /*
        * This is a MatrixConcept requirement.
@@ -84,8 +84,7 @@ namespace tfel
        * the tmatrix
        */
       TFEL_MATH_INLINE
-      RunTimeProperties
-      getRunTimeProperties() const;
+      RunTimeProperties getRunTimeProperties() const;
       /*!
        * \brief index operator.
        * This is a matrix concept requirement.
@@ -94,37 +93,35 @@ namespace tfel
        * \return a reference to the ith element of the submatrix.
        */
       TFEL_MATH_INLINE
-      const T& 
-      operator()(const unsigned short,
-		 const unsigned short) const;
+      const T& operator()(const unsigned short, const unsigned short) const;
 
-    private:
-      
+     private:
       //! reference to the underlying matrix
-      const tmatrix<N,M,T>& m;
-
+      const tmatrix<N, M, T>& m;
     };
 
-    template<unsigned short N,unsigned short M,
-	     unsigned short I,unsigned short J,
-	     unsigned short R,unsigned short C,
-	     typename T>
+    template <unsigned short N,
+              unsigned short M,
+              unsigned short I,
+              unsigned short J,
+              unsigned short R,
+              unsigned short C,
+              typename T>
     struct tmatrix_const_submatrix_view
-      : public Expr<tmatrix<R,C,T>, tmatrix_const_submatrix_view_expr<N,M,I,J,R,C,T> >
-    {
+        : public Expr<tmatrix<R, C, T>,
+                      tmatrix_const_submatrix_view_expr<N, M, I, J, R, C, T>> {
       /*!
        * constructor
        * \param[in] m_ : the underlying matrix
-       */      
+       */
       TFEL_MATH_INLINE
-      tmatrix_const_submatrix_view(const tmatrix<N,M,T>&);
+      tmatrix_const_submatrix_view(const tmatrix<N, M, T>&);
     };
 
-  } // end of namespace math
-  
-} // end of namespace tfel
+  }  // end of namespace math
 
-#include"TFEL/Math/Matrix/tmatrix_const_submatrix_view.ixx"
+}  // end of namespace tfel
+
+#include "TFEL/Math/Matrix/tmatrix_const_submatrix_view.ixx"
 
 #endif /* LIB_TFEL_MATH_TMATRIX_CONST_SUBMATRIX_VIEW_HXX */
-

@@ -28,9 +28,9 @@ namespace mfront {
   namespace bbrick {
 
     void ViscoplasticFlowBase::initialize(BehaviourDescription& bd,
-                                         AbstractBehaviourDSL& dsl,
-                                         const std::string& id,
-                                         const DataMap& d) {
+                                          AbstractBehaviourDSL& dsl,
+                                          const std::string& id,
+                                          const DataMap& d) {
       using namespace tfel::glossary;
       constexpr const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
       InelasticFlowBase::initialize(bd, dsl, id, d);
@@ -69,10 +69,10 @@ namespace mfront {
                id + "*dR" + id + "_ddp" + id + ";\n";
           auto kid = decltype(khrs.size()){};
           for (const auto& khr : khrs) {
-            c +=
-                khr->computeDerivatives("p", "(this->dt)*dvp" + id + "_dseqe" +
-                                                 id + "*dseq" + id + "_ds" + id,
-                                        id, std::to_string(kid));
+            c += khr->computeDerivatives("p",
+                                         "(this->dt)*dvp" + id + "_dseqe" + id +
+                                             "*dseq" + id + "_ds" + id,
+                                         id, std::to_string(kid));
             ++kid;
           }
         } else {
@@ -90,10 +90,10 @@ namespace mfront {
                                      this->sc->isNormalDeviatoric());
           auto kid = decltype(khrs.size()){};
           for (const auto& khr : khrs) {
-            c +=
-                khr->computeDerivatives("p", "(this->dt)*dvp" + id + "_dseqe" +
-                                                 id + "*dseq" + id + "_ds" + id,
-                                        id, std::to_string(kid));
+            c += khr->computeDerivatives("p",
+                                         "(this->dt)*dvp" + id + "_dseqe" + id +
+                                             "*dseq" + id + "_ds" + id,
+                                         id, std::to_string(kid));
             ++kid;
           }
         } else {

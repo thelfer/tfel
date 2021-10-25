@@ -83,7 +83,9 @@ namespace tfel {
        * \param aliasName   : command line argument alias
        * \param f           : callback
        */
-      virtual void registerCallBack(const std::string&, const std::string&, const CallBack&);
+      virtual void registerCallBack(const std::string&,
+                                    const std::string&,
+                                    const CallBack&);
       //! \brief parse arguments using registred methods.
       virtual void parseArguments();
       //! destructor

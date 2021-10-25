@@ -34,7 +34,7 @@ namespace mfront {
      * \return true if a finite strain strategy has been set up
      * \param[in] bd: behaviour description
      */
-    static bool hasFiniteStrainStrategy(const BehaviourDescription&);
+    static bool hasFiniteStrainStrategy(const BehaviourDescription &);
     /*!
      * \param[in,out] mb: behaviour description
      * \param[in] k  : keyword treated

@@ -42,7 +42,7 @@ namespace mfront {
       std::vector<OptionDescription> getOptions() const override;
       //! destructor
       ~StressCriterionBase() override;
-    }; // end of StressCriterionBase
+    };  // end of StressCriterionBase
 
   }  // end of namespace bbrick
 

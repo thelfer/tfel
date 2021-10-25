@@ -75,7 +75,7 @@ static void MTest_setConstraint(mtest::MTest& t,
   auto& b = *(t.getBehaviour());
   auto sev = mtest::make_evolution(v);
   auto sc = std::make_shared<Constraint>(b, n, sev);
-  mtest::applyConstraintOptions(*sc,opts);
+  mtest::applyConstraintOptions(*sc, opts);
   t.addEvolution(n, sev, false, true);
   t.addConstraint(sc);
 }  // end of MTest_setConstraint
@@ -211,7 +211,7 @@ static void MTest_setImposedThermodynamicForce1b(
     const std::string& n,
     const mtest::real& v,
     const mtest::ConstraintOptions& opts) {
-  MTest_setConstraint<mtest::ImposedThermodynamicForce>(t, n, v,opts);
+  MTest_setConstraint<mtest::ImposedThermodynamicForce>(t, n, v, opts);
 }  // end of MTest_setImposedThermodynamicForce1b
 
 static void MTest_setImposedThermodynamicForce2(
@@ -255,7 +255,7 @@ static void MTest_setImposedStress1b(mtest::MTest& t,
       "MTest::handleImposedStress : "
       "the setImposedStress method is only valid "
       "for small and finite strain behaviours");
-  MTest_setImposedThermodynamicForce1b(t, n, v,opts);
+  MTest_setImposedThermodynamicForce1b(t, n, v, opts);
 }
 
 static void MTest_setImposedStress2(
@@ -271,7 +271,7 @@ static void MTest_setImposedStress2(
       "the setImposedStress method is only valid "
       "for small and finite strain behaviours");
   MTest_setImposedThermodynamicForce2(t, n, v);
-} // end of MTest_setImposedStress2
+}  // end of MTest_setImposedStress2
 
 static void MTest_setImposedStress2b(
     mtest::MTest& t,
@@ -287,11 +287,11 @@ static void MTest_setImposedStress2b(
       "the setImposedStress method is only valid "
       "for small and finite strain behaviours");
   MTest_setImposedThermodynamicForce2b(t, n, v, opts);
-} // end of MTest_setImposedStress2b
+}  // end of MTest_setImposedStress2b
 
 static void MTest_setImposedCohesiveForce1(mtest::MTest& t,
-                                          const std::string& n,
-                                          const mtest::real& v) {
+                                           const std::string& n,
+                                           const mtest::real& v) {
   using namespace tfel::material;
   const auto b = t.getBehaviourType();
   tfel::raise_if(b != MechanicalBehaviourBase::COHESIVEZONEMODEL,
@@ -299,7 +299,7 @@ static void MTest_setImposedCohesiveForce1(mtest::MTest& t,
                  "the setImposedCohesiveForce method is only valid "
                  "for small strain behaviours");
   MTest_setImposedThermodynamicForce1(t, n, v);
-} // end of MTest_setImposedCohesiveForce1
+}  // end of MTest_setImposedCohesiveForce1
 
 static void MTest_setImposedCohesiveForce1b(
     mtest::MTest& t,
@@ -313,7 +313,7 @@ static void MTest_setImposedCohesiveForce1b(
                  "the setImposedCohesiveForce method is only valid "
                  "for small strain behaviours");
   MTest_setImposedThermodynamicForce1b(t, n, v, opts);
-} // end of MTest_setImposedCohesiveForce1b
+}  // end of MTest_setImposedCohesiveForce1b
 
 static void MTest_setImposedCohesiveForce2(
     mtest::MTest& t,
@@ -326,7 +326,7 @@ static void MTest_setImposedCohesiveForce2(
                  "the setImposedCohesiveForce method is only valid "
                  "for small strain behaviours");
   MTest_setImposedThermodynamicForce2(t, n, v);
-} // end of MTest_setImposedCohesiveForce2
+}  // end of MTest_setImposedCohesiveForce2
 
 static void MTest_setImposedCohesiveForce2b(
     mtest::MTest& t,
@@ -340,7 +340,7 @@ static void MTest_setImposedCohesiveForce2b(
                  "the setImposedCohesiveForce method is only valid "
                  "for small strain behaviours");
   MTest_setImposedThermodynamicForce2b(t, n, v, opts);
-} // end of MTest_setImposedCohesiveForce2b
+}  // end of MTest_setImposedCohesiveForce2b
 
 static void MTest_setNonLinearConstraint1(mtest::MTest& t,
                                           const std::string& f,
@@ -369,7 +369,7 @@ static void MTest_setNonLinearConstraint1(mtest::MTest& t,
         "MTest::setNonLinearConstraint: "
         "invalid normalisation policy");
   }
-} // end of MTest_setNonLinearConstraint1
+}  // end of MTest_setNonLinearConstraint1
 
 static void MTest_setNonLinearConstraint1b(
     mtest::MTest& t,
@@ -386,7 +386,7 @@ static void MTest_setNonLinearConstraint1b(
     const auto p = mtest::NonLinearConstraint::DRIVINGVARIABLECONSTRAINT;
     auto c = std::make_shared<mtest::NonLinearConstraint>(
         *(t.getBehaviour()), f, t.getEvolutions(), p);
-    mtest::applyConstraintOptions(*c,opts);
+    mtest::applyConstraintOptions(*c, opts);
     t.addConstraint(c);
   } else if ((np == "ThermodynamicForce") ||
              ((np == "Stress") && ((b == MB::STANDARDSTRAINBASEDBEHAVIOUR) ||
@@ -395,26 +395,25 @@ static void MTest_setNonLinearConstraint1b(
     const auto p = mtest::NonLinearConstraint::THERMODYNAMICFORCECONSTRAINT;
     auto c = std::make_shared<mtest::NonLinearConstraint>(
         *(t.getBehaviour()), f, t.getEvolutions(), p);
-    mtest::applyConstraintOptions(*c,opts);
+    mtest::applyConstraintOptions(*c, opts);
     t.addConstraint(c);
   } else {
     tfel::raise(
         "MTest::setNonLinearConstraint: "
         "invalid normalisation policy");
   }
-} // end of MTest_setNonLinearConstraint1b
+}  // end of MTest_setNonLinearConstraint1b
 
 static void MTest_setImposedGradient1(mtest::MTest& t,
-                                            const std::string& n,
-                                            const mtest::real& v) {
+                                      const std::string& n,
+                                      const mtest::real& v) {
   MTest_setConstraint<mtest::ImposedGradient>(t, n, v);
 }  // end of MTest_setImposedGradient1
 
-static void MTest_setImposedGradient1b(
-    mtest::MTest& t,
-    const std::string& n,
-    const mtest::real& v,
-    const mtest::ConstraintOptions& opts) {
+static void MTest_setImposedGradient1b(mtest::MTest& t,
+                                       const std::string& n,
+                                       const mtest::real& v,
+                                       const mtest::ConstraintOptions& opts) {
   MTest_setConstraint<mtest::ImposedGradient>(t, n, v, opts);
 }  // end of MTest_setImposedGradient1b
 
@@ -434,8 +433,8 @@ static void MTest_setImposedGradient2b(
 }  // end of MTest_setImposedGradient2b
 
 static void MTest_setImposedStrain1(mtest::MTest& t,
-                                   const std::string& n,
-                                   const mtest::real& v) {
+                                    const std::string& n,
+                                    const mtest::real& v) {
   using namespace tfel::material;
   const auto b = t.getBehaviourType();
   tfel::raise_if(
@@ -447,7 +446,7 @@ static void MTest_setImposedStrain1(mtest::MTest& t,
       "the setImposedStrain method is only valid "
       "for small strain behaviours");
   MTest_setImposedGradient1(t, n, v);
-} // end of MTest_setImposedStrain1
+}  // end of MTest_setImposedStrain1
 
 static void MTest_setImposedStrain1b(mtest::MTest& t,
                                      const std::string& n,
@@ -464,7 +463,7 @@ static void MTest_setImposedStrain1b(mtest::MTest& t,
       "the setImposedStrain method is only valid "
       "for small strain behaviours");
   MTest_setImposedGradient1b(t, n, v, opts);
-} // end of MTest_setImposedStrain1b
+}  // end of MTest_setImposedStrain1b
 
 static void MTest_setImposedStrain2(
     mtest::MTest& t,
@@ -481,7 +480,7 @@ static void MTest_setImposedStrain2(
                  "the setImposedStrain method is only valid "
                  "for small strain behaviours");
   MTest_setImposedGradient2(t, n, v);
-} // end of MTest_setImposedStrain2
+}  // end of MTest_setImposedStrain2
 
 static void MTest_setImposedStrain2b(
     mtest::MTest& t,
@@ -498,8 +497,8 @@ static void MTest_setImposedStrain2b(
                  "MTest::handleImposedStrain: "
                  "the setImposedStrain method is only valid "
                  "for small strain behaviours");
-  MTest_setImposedGradient2b(t, n, v,opts);
-} // end of MTest_setImposedStrain2b
+  MTest_setImposedGradient2b(t, n, v, opts);
+}  // end of MTest_setImposedStrain2b
 
 static void MTest_setImposedDeformationGradient1(mtest::MTest& t,
                                                  const std::string& n,
@@ -528,8 +527,8 @@ static void MTest_setImposedDeformationGradient1b(
                  "MTest::setImposedDeformationGradient: "
                  "the setImposedDeformationGradient method is only valid "
                  "for finite strain behaviours");
-  MTest_setImposedGradient1b(t, n, v,opts);
-} // end of MTest_setImposedDeformationGradient1b
+  MTest_setImposedGradient1b(t, n, v, opts);
+}  // end of MTest_setImposedDeformationGradient1b
 
 static void MTest_setImposedDeformationGradient2(
     mtest::MTest& t,
@@ -544,7 +543,7 @@ static void MTest_setImposedDeformationGradient2(
                  "the setImposedDeformationGradient method is only valid "
                  "for finite strain behaviours");
   MTest_setImposedGradient2(t, n, v);
-} //end of MTest_setImposedDeformationGradient2
+}  // end of MTest_setImposedDeformationGradient2
 
 static void MTest_setImposedDeformationGradient2b(
     mtest::MTest& t,
@@ -559,12 +558,12 @@ static void MTest_setImposedDeformationGradient2b(
                  "MTestParser::setImposedDeformationGradient: "
                  "the setImposedDeformationGradient method is only valid "
                  "for finite strain behaviours");
-  MTest_setImposedGradient2b(t, n, v,opts);
-} //end of MTest_setImposedDeformationGradient2b
+  MTest_setImposedGradient2b(t, n, v, opts);
+}  // end of MTest_setImposedDeformationGradient2b
 
 static void MTest_setImposedOpeningDisplacement1(mtest::MTest& t,
-                                                const std::string& n,
-                                                const mtest::real& v) {
+                                                 const std::string& n,
+                                                 const mtest::real& v) {
   using namespace tfel::material;
   tfel::raise_if(
       t.getBehaviourType() != MechanicalBehaviourBase::COHESIVEZONEMODEL,
@@ -572,7 +571,7 @@ static void MTest_setImposedOpeningDisplacement1(mtest::MTest& t,
       "the setImposedOpeningDisplacement method is only valid "
       "for small strain behaviours");
   MTest_setImposedGradient1(t, n, v);
-} // end of MTest_setImposedOpeningDisplacement1
+}  // end of MTest_setImposedOpeningDisplacement1
 
 static void MTest_setImposedOpeningDisplacement1b(
     mtest::MTest& t,
@@ -586,7 +585,7 @@ static void MTest_setImposedOpeningDisplacement1b(
       "the setImposedOpeningDisplacement method is only valid "
       "for small strain behaviours");
   MTest_setImposedGradient1b(t, n, v, opts);
-} // end of MTest_setImposedOpeningDisplacement1b
+}  // end of MTest_setImposedOpeningDisplacement1b
 
 static void MTest_setImposedOpeningDisplacement2(
     mtest::MTest& t,
@@ -599,7 +598,7 @@ static void MTest_setImposedOpeningDisplacement2(
       "the setImposedOpeningDisplacement method is only valid "
       "for small strain behaviours");
   MTest_setImposedGradient2(t, n, v);
-} // end of MTest_setImposedOpeningDisplacement2
+}  // end of MTest_setImposedOpeningDisplacement2
 
 static void MTest_setImposedOpeningDisplacement2b(
     mtest::MTest& t,
@@ -612,8 +611,8 @@ static void MTest_setImposedOpeningDisplacement2b(
       "MTestParser::setImposedOpeningDisplacement : "
       "the setImposedOpeningDisplacement method is only valid "
       "for small strain behaviours");
-  MTest_setImposedGradient2b(t, n, v,opts);
-} // end of MTest_setImposedOpeningDisplacement2b
+  MTest_setImposedGradient2b(t, n, v, opts);
+}  // end of MTest_setImposedOpeningDisplacement2b
 
 static mtest::MTestCurrentState MTestCurrentState_copy(
     const mtest::MTestCurrentState& src) {
@@ -936,7 +935,8 @@ void declareMTest() {
       .def("setStrain", MTest_setStrain)
       .def("setDeformationGradient", MTest_setDeformationGradient)
       .def("setOpeningDisplacement", MTest_setOpeningDisplacement)
-      .def("setThermodynamicForcesInitialValues", &MTest::setThermodynamicForcesInitialValues)
+      .def("setThermodynamicForcesInitialValues",
+           &MTest::setThermodynamicForcesInitialValues)
       .def("setCohesiveForce", MTest_setCohesiveForce)
       .def("setStress", MTest_setStress)
       .def("setGradientEpsilon", &MTest::setGradientEpsilon)
@@ -946,74 +946,82 @@ void declareMTest() {
       .def("setThermodynamicForceEpsilon", &MTest::setThermodynamicForceEpsilon)
       .def("setStressEpsilon", MTest_setStressEpsilon)
       .def("setCohesiveForceEpsilon", MTest_setCohesiveForceEpsilon)
-      .def("setImposedStress", MTest_setImposedStress1, (arg("name"), "values"),
-           "This method specify the constant evolution of a stresses "
-           "component.\n"
-           "* The first parameter (string) is the name of the choosen "
-           "stresses component. The allowed components (see the "
-           "'setModellingHypothesis' method) are:\n"
-           "- 'AxisymmetricalGeneralisedPlaneStrain' : SRR SZZ STT\n"
-           "- 'Axisymmetrical'                       : SRR SZZ STT SRZ\n"
-           "- 'PlaneStress'                          : SXX SYY SXY\n"
-           "- 'PlaneStrain'                          : SXX SYY SZZ SXY\n"
-           "- 'GeneralisedPlaneStrain'               : SXX SYY SZZ SXY\n"
-           "- 'Tridimensional'                       : SXX SYY SZZ SXY SXZ SYZ\n"
-           "* The second parameter (double) is the constant value "
-           "of the selected stresses component.")
-      .def("setImposedStress", MTest_setImposedStress1b, (arg("name"), "values", "options"),
-           "This method specify the constant evolution of a stresses "
-           "component.\n"
-           "* The first parameter (string) is the name of the choosen "
-           "stresses component. The allowed components (see the "
-           "'setModellingHypothesis' method) are:\n"
-           "- 'AxisymmetricalGeneralisedPlaneStrain' : SRR SZZ STT\n"
-           "- 'Axisymmetrical'                       : SRR SZZ STT SRZ\n"
-           "- 'PlaneStress'                          : SXX SYY SXY\n"
-           "- 'PlaneStrain'                          : SXX SYY SZZ SXY\n"
-           "- 'GeneralisedPlaneStrain'               : SXX SYY SZZ SXY\n"
-           "- 'Tridimensional'                       : SXX SYY SZZ SXY SXZ SYZ\n"
-           "* The second parameter (double) is the constant value "
-           "of the selected stresses component.")
-      .def("setImposedStress", MTest_setImposedStress2, (arg("name"), "values"),
-           "This method specify the linear evolution of a stresses component.\n"
-           "* The first parameter (string) is the name of the choosen "
-           "stresses component. The allowed components (see the "
-           "'setModellingHypothesis' method) are:\n"
-           "- 'AxisymmetricalGeneralisedPlaneStrain' : SRR SZZ STT\n"
-           "- 'Axisymmetrical'                       : SRR SZZ STT SRZ\n"
-           "- 'PlaneStress'                          : SXX SYY SXY\n"
-           "- 'PlaneStrain'                          : SXX SYY SZZ SXY\n"
-           "- 'GeneralisedPlaneStrain'               : SXX SYY SZZ SXY\n"
-           "- 'Tridimensional'                       : SXX SYY SZZ SXY SXZ SYZ\n"
-           "* The second parameter (map<double, double>) specify "
-           "a linear evolution: the associative array of time-value "
-           "is used to perform an interpolation. That interpolation "
-           "is only performed between the minimum and maximum times "
-           "given in the array. Should a time be out of the array, "
-           "the returned value will be the one from the nearest "
-           "association available.")
-      .def("setImposedStress", MTest_setImposedStress2b, (arg("name"), "values", "options"),
-           "This method specify the linear evolution of a stresses component.\n"
-           "* The first parameter (string) is the name of the choosen "
-           "stresses component. The allowed components (see the "
-           "'setModellingHypothesis' method) are:\n"
-           "- 'AxisymmetricalGeneralisedPlaneStrain' : SRR SZZ STT\n"
-           "- 'Axisymmetrical'                       : SRR SZZ STT SRZ\n"
-           "- 'PlaneStress'                          : SXX SYY SXY\n"
-           "- 'PlaneStrain'                          : SXX SYY SZZ SXY\n"
-           "- 'GeneralisedPlaneStrain'               : SXX SYY SZZ SXY\n"
-           "- 'Tridimensional'                       : SXX SYY SZZ SXY SXZ SYZ\n"
-           "* The second parameter (map<double, double>) specify "
-           "a linear evolution: the associative array of time-value "
-           "is used to perform an interpolation. That interpolation "
-           "is only performed between the minimum and maximum times "
-           "given in the array. Should a time be out of the array, "
-           "the returned value will be the one from the nearest "
-           "association available.")
-      .def("setImposedCohesiveForce", MTest_setImposedCohesiveForce1, (arg("name"), "values"))
+      .def(
+          "setImposedStress", MTest_setImposedStress1, (arg("name"), "values"),
+          "This method specify the constant evolution of a stresses "
+          "component.\n"
+          "* The first parameter (string) is the name of the choosen "
+          "stresses component. The allowed components (see the "
+          "'setModellingHypothesis' method) are:\n"
+          "- 'AxisymmetricalGeneralisedPlaneStrain' : SRR SZZ STT\n"
+          "- 'Axisymmetrical'                       : SRR SZZ STT SRZ\n"
+          "- 'PlaneStress'                          : SXX SYY SXY\n"
+          "- 'PlaneStrain'                          : SXX SYY SZZ SXY\n"
+          "- 'GeneralisedPlaneStrain'               : SXX SYY SZZ SXY\n"
+          "- 'Tridimensional'                       : SXX SYY SZZ SXY SXZ SYZ\n"
+          "* The second parameter (double) is the constant value "
+          "of the selected stresses component.")
+      .def(
+          "setImposedStress", MTest_setImposedStress1b,
+          (arg("name"), "values", "options"),
+          "This method specify the constant evolution of a stresses "
+          "component.\n"
+          "* The first parameter (string) is the name of the choosen "
+          "stresses component. The allowed components (see the "
+          "'setModellingHypothesis' method) are:\n"
+          "- 'AxisymmetricalGeneralisedPlaneStrain' : SRR SZZ STT\n"
+          "- 'Axisymmetrical'                       : SRR SZZ STT SRZ\n"
+          "- 'PlaneStress'                          : SXX SYY SXY\n"
+          "- 'PlaneStrain'                          : SXX SYY SZZ SXY\n"
+          "- 'GeneralisedPlaneStrain'               : SXX SYY SZZ SXY\n"
+          "- 'Tridimensional'                       : SXX SYY SZZ SXY SXZ SYZ\n"
+          "* The second parameter (double) is the constant value "
+          "of the selected stresses component.")
+      .def(
+          "setImposedStress", MTest_setImposedStress2, (arg("name"), "values"),
+          "This method specify the linear evolution of a stresses component.\n"
+          "* The first parameter (string) is the name of the choosen "
+          "stresses component. The allowed components (see the "
+          "'setModellingHypothesis' method) are:\n"
+          "- 'AxisymmetricalGeneralisedPlaneStrain' : SRR SZZ STT\n"
+          "- 'Axisymmetrical'                       : SRR SZZ STT SRZ\n"
+          "- 'PlaneStress'                          : SXX SYY SXY\n"
+          "- 'PlaneStrain'                          : SXX SYY SZZ SXY\n"
+          "- 'GeneralisedPlaneStrain'               : SXX SYY SZZ SXY\n"
+          "- 'Tridimensional'                       : SXX SYY SZZ SXY SXZ SYZ\n"
+          "* The second parameter (map<double, double>) specify "
+          "a linear evolution: the associative array of time-value "
+          "is used to perform an interpolation. That interpolation "
+          "is only performed between the minimum and maximum times "
+          "given in the array. Should a time be out of the array, "
+          "the returned value will be the one from the nearest "
+          "association available.")
+      .def(
+          "setImposedStress", MTest_setImposedStress2b,
+          (arg("name"), "values", "options"),
+          "This method specify the linear evolution of a stresses component.\n"
+          "* The first parameter (string) is the name of the choosen "
+          "stresses component. The allowed components (see the "
+          "'setModellingHypothesis' method) are:\n"
+          "- 'AxisymmetricalGeneralisedPlaneStrain' : SRR SZZ STT\n"
+          "- 'Axisymmetrical'                       : SRR SZZ STT SRZ\n"
+          "- 'PlaneStress'                          : SXX SYY SXY\n"
+          "- 'PlaneStrain'                          : SXX SYY SZZ SXY\n"
+          "- 'GeneralisedPlaneStrain'               : SXX SYY SZZ SXY\n"
+          "- 'Tridimensional'                       : SXX SYY SZZ SXY SXZ SYZ\n"
+          "* The second parameter (map<double, double>) specify "
+          "a linear evolution: the associative array of time-value "
+          "is used to perform an interpolation. That interpolation "
+          "is only performed between the minimum and maximum times "
+          "given in the array. Should a time be out of the array, "
+          "the returned value will be the one from the nearest "
+          "association available.")
+      .def("setImposedCohesiveForce", MTest_setImposedCohesiveForce1,
+           (arg("name"), "values"))
       .def("setImposedCohesiveForce", MTest_setImposedCohesiveForce1b,
            (arg("name"), "values", "options"))
-      .def("setImposedCohesiveForce", MTest_setImposedCohesiveForce2, (arg("name"), "values"))
+      .def("setImposedCohesiveForce", MTest_setImposedCohesiveForce2,
+           (arg("name"), "values"))
       .def("setImposedCohesiveForce", MTest_setImposedCohesiveForce2b,
            (arg("name"), "values", "options"))
       .def("setImposedThermodynamicForce", MTest_setImposedThermodynamicForce1,
@@ -1048,32 +1056,35 @@ void declareMTest() {
            "- `ThermodynamicForce`, `Stress`, `CohesiveForce` "
            "stating that the constraint is of the order "
            "of magnitude of the thermodynamic force'\n")
-      .def("setImposedStrain", MTest_setImposedStrain1, (arg("name"), "values"),
-           "This method specify the constant evolution of a strains component.\n"
-           "* The first parameter (string) is the name of the choosen "
-           "strains component. The allowed components (see the "
-           "'setModellingHypothesis' method) are:\n"
-           "- AxisymmetricalGeneralisedPlaneStrain : ERR EZZ ETT\n"
-           "- Axisymmetrical                       : ERR EZZ ETT ERZ\n"
-           "- PlaneStress                          : EXX EYY EZZ EXY\n"
-           "- PlaneStrain                          : EXX EYY     EXY\n"
-           "- GeneralisedPlaneStrain               : EXX EYY EZZ EXY\n"
-           "- Tridimensional                       :  EXX EYY EZZ EXY EXZ EYZ\n"
-           "* The second parameter (double) is the constant value "
-           "of the selected strains component.")
-      .def("setImposedStrain", MTest_setImposedStrain1b, (arg("name"), "values", "options"),
-           "This method specify the constant evolution of a strains component.\n"
-           "* The first parameter (string) is the name of the choosen "
-           "strains component. The allowed components (see the "
-           "'setModellingHypothesis' method) are:\n"
-           "- AxisymmetricalGeneralisedPlaneStrain : ERR EZZ ETT\n"
-           "- Axisymmetrical                       : ERR EZZ ETT ERZ\n"
-           "- PlaneStress                          : EXX EYY EZZ EXY\n"
-           "- PlaneStrain                          : EXX EYY     EXY\n"
-           "- GeneralisedPlaneStrain               : EXX EYY EZZ EXY\n"
-           "- Tridimensional                       :  EXX EYY EZZ EXY EXZ EYZ\n"
-           "* The second parameter (double) is the constant value "
-           "of the selected strains component.")
+      .def(
+          "setImposedStrain", MTest_setImposedStrain1, (arg("name"), "values"),
+          "This method specify the constant evolution of a strains component.\n"
+          "* The first parameter (string) is the name of the choosen "
+          "strains component. The allowed components (see the "
+          "'setModellingHypothesis' method) are:\n"
+          "- AxisymmetricalGeneralisedPlaneStrain : ERR EZZ ETT\n"
+          "- Axisymmetrical                       : ERR EZZ ETT ERZ\n"
+          "- PlaneStress                          : EXX EYY EZZ EXY\n"
+          "- PlaneStrain                          : EXX EYY     EXY\n"
+          "- GeneralisedPlaneStrain               : EXX EYY EZZ EXY\n"
+          "- Tridimensional                       :  EXX EYY EZZ EXY EXZ EYZ\n"
+          "* The second parameter (double) is the constant value "
+          "of the selected strains component.")
+      .def(
+          "setImposedStrain", MTest_setImposedStrain1b,
+          (arg("name"), "values", "options"),
+          "This method specify the constant evolution of a strains component.\n"
+          "* The first parameter (string) is the name of the choosen "
+          "strains component. The allowed components (see the "
+          "'setModellingHypothesis' method) are:\n"
+          "- AxisymmetricalGeneralisedPlaneStrain : ERR EZZ ETT\n"
+          "- Axisymmetrical                       : ERR EZZ ETT ERZ\n"
+          "- PlaneStress                          : EXX EYY EZZ EXY\n"
+          "- PlaneStrain                          : EXX EYY     EXY\n"
+          "- GeneralisedPlaneStrain               : EXX EYY EZZ EXY\n"
+          "- Tridimensional                       :  EXX EYY EZZ EXY EXZ EYZ\n"
+          "* The second parameter (double) is the constant value "
+          "of the selected strains component.")
       .def("setImposedStrain", MTest_setImposedStrain2, (arg("name"), "values"),
            "This method specify the linear evolution of a strains component.\n"
            "* The first parameter (string) is the name of the choosen "
@@ -1092,7 +1103,8 @@ void declareMTest() {
            "given in the array. Should a time be out of the array, "
            "the returned value will be the one from the nearest "
            "association available.")
-      .def("setImposedStrain", MTest_setImposedStrain2b, (arg("name"), "values", "options"),
+      .def("setImposedStrain", MTest_setImposedStrain2b,
+           (arg("name"), "values", "options"),
            "This method specify the linear evolution of a strains component.\n"
            "* The first parameter (string) is the name of the choosen "
            "strains component. The allowed components (see the "
@@ -1110,8 +1122,8 @@ void declareMTest() {
            "given in the array. Should a time be out of the array, "
            "the returned value will be the one from the nearest "
            "association available.")
-      .def("setImposedDeformationGradient", MTest_setImposedDeformationGradient1,
-           (arg("name"), "values"),
+      .def("setImposedDeformationGradient",
+           MTest_setImposedDeformationGradient1, (arg("name"), "values"),
            "This method specify the constant evolution of a deformation "
            "gradient component.\n"
            "* The first parameter (string) is the name of the choosen "
@@ -1126,7 +1138,8 @@ void declareMTest() {
            "FZX FYZ FZY\n"
            "* The second parameter (double) is the constant value "
            "of the selected deformation gradient component.")
-      .def("setImposedDeformationGradient", MTest_setImposedDeformationGradient1b,
+      .def("setImposedDeformationGradient",
+           MTest_setImposedDeformationGradient1b,
            (arg("name"), "values", "options"),
            "This method specify the constant evolution of a deformation "
            "gradient component.\n"
@@ -1142,8 +1155,8 @@ void declareMTest() {
            "FZX FYZ FZY\n"
            "* The second parameter (double) is the constant value "
            "of the selected deformation gradient component.")
-      .def("setImposedDeformationGradient", MTest_setImposedDeformationGradient2,
-           (arg("name"), "values"),
+      .def("setImposedDeformationGradient",
+           MTest_setImposedDeformationGradient2, (arg("name"), "values"),
            "This method specify the linear evolution of a deformation "
            "gradient component.\n"
            "* The first parameter (string) is the name of the choosen "
@@ -1163,7 +1176,8 @@ void declareMTest() {
            "given in the array. Should a time be out of the array, "
            "the returned value will be the one from the nearest "
            "association available.")
-      .def("setImposedDeformationGradient", MTest_setImposedDeformationGradient2b,
+      .def("setImposedDeformationGradient",
+           MTest_setImposedDeformationGradient2b,
            (arg("name"), "values", "options"),
            "This method specify the linear evolution of a deformation "
            "gradient component.\n"
@@ -1184,18 +1198,22 @@ void declareMTest() {
            "given in the array. Should a time be out of the array, "
            "the returned value will be the one from the nearest "
            "association available.")
-      .def("setImposedOpeningDisplacement", MTest_setImposedOpeningDisplacement1,
-           (arg("name"), "values"))
-      .def("setImposedOpeningDisplacement", MTest_setImposedOpeningDisplacement1b,
+      .def("setImposedOpeningDisplacement",
+           MTest_setImposedOpeningDisplacement1, (arg("name"), "values"))
+      .def("setImposedOpeningDisplacement",
+           MTest_setImposedOpeningDisplacement1b,
            (arg("name"), "values", "options"))
-      .def("setImposedOpeningDisplacement", MTest_setImposedOpeningDisplacement2,
-           (arg("name"), "values"))
-      .def("setImposedOpeningDisplacement", MTest_setImposedOpeningDisplacement2b,
+      .def("setImposedOpeningDisplacement",
+           MTest_setImposedOpeningDisplacement2, (arg("name"), "values"))
+      .def("setImposedOpeningDisplacement",
+           MTest_setImposedOpeningDisplacement2b,
            (arg("name"), "values", "options"))
-      .def("setImposedGradient", MTest_setImposedGradient1, (arg("name"), "values"))
+      .def("setImposedGradient", MTest_setImposedGradient1,
+           (arg("name"), "values"))
       .def("setImposedGradient", MTest_setImposedGradient1b,
            (arg("name"), "values", "options"))
-      .def("setImposedGradient", MTest_setImposedGradient2, (arg("name"), "values"))
+      .def("setImposedGradient", MTest_setImposedGradient2,
+           (arg("name"), "values"))
       .def("setImposedGradient", MTest_setImposedGradient2b,
            (arg("name"), "values", "options"))
       .def("setScalarInternalStateVariableInitialValue",
@@ -1225,14 +1243,16 @@ void declareMTest() {
            "- result to be tested (strain, stress, internal state variable)\n"
            "- formulae giving the analytical solution\n"
            "- test criterion\n")
-      .def("addReferenceFileComparisonTest", MTest_addReferenceFileComparisonTest1,
+      .def("addReferenceFileComparisonTest",
+           MTest_addReferenceFileComparisonTest1,
            "Add a test comparing the results to the one given in a reference "
            "file:\n"
            "- result to be tested (strain, stress, internal state variable)\n"
            "- file name\n"
            "- column number\n"
            "- test criterion\n")
-      .def("addReferenceFileComparisonTest", MTest_addReferenceFileComparisonTest2,
+      .def("addReferenceFileComparisonTest",
+           MTest_addReferenceFileComparisonTest2,
            "Add a test comparing the results to the one given in a reference "
            "file:\n"
            "- result to be tested (strain, stress, internal state variable)\n"
@@ -1245,8 +1265,10 @@ void declareMTest() {
       .def("addUserDefinedPostProcessing", &MTest::addUserDefinedPostProcessing,
            "add a new user defined post-processing.\n"
            "- the first argument is the name of the output file\n"
-           "- the second argument gives a list of post-processings as an array of "
-           "  strings. Those strings defines formulae which are evaluated at the end "
+           "- the second argument gives a list of post-processings as an array "
+           "of "
+           "  strings. Those strings defines formulae which are evaluated at "
+           "the end "
            "  of the time step. Those formulae may depend on:\n"
            "    - the behaviour' driving variable\n"
            "    - the behaviour' thermodynamic forces\n"
@@ -1254,4 +1276,4 @@ void declareMTest() {
            "    - the behaviour' external state variables\n"
            "    - any evolution defined in the input file\n");
 
-  }  // end of declareExternalLibraryManager
+}  // end of declareExternalLibraryManager

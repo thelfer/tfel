@@ -1,6 +1,6 @@
 /*!
  * \file   Drucker1949YieldCriterion.ixx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   10/05/2018
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
@@ -14,15 +14,14 @@
 #ifndef LIB_TFEL_MATERIAL_DRUCKER1949YIELDCRITERION_IXX
 #define LIB_TFEL_MATERIAL_DRUCKER1949YIELDCRITERION_IXX
 
-#include<cmath>
+#include <cmath>
 
 namespace tfel {
 
   namespace material {
 
     template <typename StressStensor>
-    Drucker1949StressType<StressStensor>
-    computeDrucker1949StressCriterion(
+    Drucker1949StressType<StressStensor> computeDrucker1949StressCriterion(
         const StressStensor& sig, const Drucker1949BaseType<StressStensor> c) {
       using real = Drucker1949BaseType<StressStensor>;
       constexpr const auto e = real(1) / 6;
@@ -60,8 +59,9 @@ namespace tfel {
         const auto n = eval(dseq_dJ2 * dJ2 + dseq_dJ3 * dJ3);
         return std::make_tuple(seq, n);
       }
-      return std::make_tuple(Drucker1949StressType<StressStensor>{stress{0}},
-			     Drucker1949StressNormalType<StressStensor>{real{0}});
+      return std::make_tuple(
+          Drucker1949StressType<StressStensor>{stress{0}},
+          Drucker1949StressNormalType<StressStensor>{real{0}});
     }  // end of computeDrucker1949StressCriterionNormal
 
     template <typename StressStensor>
@@ -89,7 +89,7 @@ namespace tfel {
         const auto J3_2 = J3 * J3;
         const auto J3_4 = J3_2 * J3_2;
         const auto& dJ2 = s;
-        const auto d2J2 = tfel::math::st2tost2<N,real>::K();
+        const auto d2J2 = tfel::math::st2tost2<N, real>::K();
         const auto dJ3 = computeJ3Derivative(sig);
         const auto d2J3 = computeJ3SecondDerivative(sig);
         const auto s6 = J2_3 - c * J3_2;
@@ -112,14 +112,14 @@ namespace tfel {
                              d2seq_dJ3dJ3 * (dJ3 ^ dJ3) + dseq_dJ3 * d2J3);
         return std::make_tuple(seq, n, dn);
       }
-      return std::make_tuple(Drucker1949StressType<StressStensor>{stress{0}},
-			     Drucker1949StressNormalType<StressStensor>{real{0}},
-			     Drucker1949StressSecondDerivativeType<StressStensor>{istress{0}});
+      return std::make_tuple(
+          Drucker1949StressType<StressStensor>{stress{0}},
+          Drucker1949StressNormalType<StressStensor>{real{0}},
+          Drucker1949StressSecondDerivativeType<StressStensor>{istress{0}});
     }  // end of computeDrucker1949StressCriterionSecondDerivative
 
   }  // end of namespace material
 
 }  // end of namespace tfel
-
 
 #endif /* LIB_TFEL_MATERIAL_DRUCKER1949YIELDCRITERION_IXX */

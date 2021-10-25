@@ -1,40 +1,38 @@
 /*!
  * \file   mfront/include/MFront/IsotropicBehaviourDSLBase.hxx
- * \brief  
- * 
+ * \brief
+ *
  * \author Thomas Helfer
  * \date   01 jui 2007
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_MFRONTISOTROPICBEHAVIOURPARSERBASE_HXX
-#define LIB_MFRONTISOTROPICBEHAVIOURPARSERBASE_HXX 
+#define LIB_MFRONTISOTROPICBEHAVIOURPARSERBASE_HXX
 
-#include<string>
+#include <string>
 
-#include"MFront/MFrontConfig.hxx"
-#include"MFront/BehaviourDSLBase.hxx"
+#include "MFront/MFrontConfig.hxx"
+#include "MFront/BehaviourDSLBase.hxx"
 
-namespace mfront{
+namespace mfront {
 
   struct MFRONT_VISIBILITY_EXPORT IsotropicBehaviourDSLBase
-    : public BehaviourDSLBase<IsotropicBehaviourDSLBase>
-  {
+      : public BehaviourDSLBase<IsotropicBehaviourDSLBase> {
     IsotropicBehaviourDSLBase();
 
     ~IsotropicBehaviourDSLBase() override;
 
-  protected:
-
+   protected:
     void treatExternalStateVariable() override;
 
     void completeVariableDeclaration() override;
-    
+
     void endsInputFileProcessing() override;
 
     /*!
@@ -55,22 +53,22 @@ namespace mfront{
      * `@ModellingHypothesis` or `@ModellingHypotheses` keywords.
      */
     bool isModellingHypothesisSupported(const Hypothesis) const override;
-    
+
     void writeBehaviourParserSpecificIncludes(std::ostream&) const override;
 
     void writeBehaviourParserSpecificTypedefs(std::ostream&) const override;
 
-    void writeBehaviourLocalVariablesInitialisation(std::ostream&,
-						    const Hypothesis) const override;
+    void writeBehaviourLocalVariablesInitialisation(
+        std::ostream&, const Hypothesis) const override;
 
-    void writeBehaviourComputePredictionOperator(std::ostream&,
-						 const Hypothesis) const override;
+    void writeBehaviourComputePredictionOperator(
+        std::ostream&, const Hypothesis) const override;
 
     void writeBehaviourComputeTangentOperator(std::ostream&,
-					      const Hypothesis) const override;
-    
+                                              const Hypothesis) const override;
+
     virtual double getDefaultThetaValue() const;
-    
+
     virtual void treatFlowRule();
 
     virtual void treatTheta();
@@ -79,17 +77,15 @@ namespace mfront{
 
     virtual void treatIterMax();
 
-    virtual std::string
-    flowRuleVariableModifier(const Hypothesis,
-			     const std::string&,const bool);
+    virtual std::string flowRuleVariableModifier(const Hypothesis,
+                                                 const std::string&,
+                                                 const bool);
 
-  private:
-
+   private:
     friend struct BehaviourDSLBase<IsotropicBehaviourDSLBase>;
 
-  }; // end of class IsotropicBehaviourDSLBase
+  };  // end of class IsotropicBehaviourDSLBase
 
-} // end of namespace MFront
+}  // namespace mfront
 
 #endif /* LIB_MFRONTISOTROPICBEHAVIOURPARSERBASE_HXX */
-

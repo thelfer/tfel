@@ -172,20 +172,20 @@ namespace mtest {
       const EvolutionManager& evm,
       const int stype,
       const Hypothesis h) {
-    auto setOptionalMaterialPropertyDefaultValue = [&mp, &evm](
-        const std::string& n, const real v) {
-      if (evm.find(n) == evm.end()) {
-        if (mfront::getVerboseMode() >= mfront::VERBOSE_LEVEL2) {
-          auto& log = mfront::getLogStream();
-          log << "setOptionalMaterialPropertiesDefaultValues : "
-              << "set material property '" << n << "' to default value\n";
-        }
-        tfel::raise_if(!mp.insert({n, make_evolution(v)}).second,
-                       "setOptionalMaterialPropertiesDefaultValues: "
-                       "default value for material property '" +
-                           n + "' already declared");
-      }
-    };
+    auto setOptionalMaterialPropertyDefaultValue =
+        [&mp, &evm](const std::string& n, const real v) {
+          if (evm.find(n) == evm.end()) {
+            if (mfront::getVerboseMode() >= mfront::VERBOSE_LEVEL2) {
+              auto& log = mfront::getLogStream();
+              log << "setOptionalMaterialPropertiesDefaultValues : "
+                  << "set material property '" << n << "' to default value\n";
+            }
+            tfel::raise_if(!mp.insert({n, make_evolution(v)}).second,
+                           "setOptionalMaterialPropertiesDefaultValues: "
+                           "default value for material property '" +
+                               n + "' already declared");
+          }
+        };
     auto throw_if = [](const bool b, const std::string& msg) {
       tfel::raise_if(b,
                      "CastemUmatStandardBehaviour::"

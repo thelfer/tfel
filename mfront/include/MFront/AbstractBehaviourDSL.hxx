@@ -1,29 +1,29 @@
 /*!
  * \file   mfront/include/MFront/AbstractBehaviourDSL.hxx
- * \brief  
- * 
+ * \brief
+ *
  * \author Thomas Helfer
  * \date   October 23, 2014
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_MFRONT_ABSTRACTBEHAVIOURDSL_HXX
-#define LIB_MFRONT_ABSTRACTBEHAVIOURDSL_HXX 
+#define LIB_MFRONT_ABSTRACTBEHAVIOURDSL_HXX
 
-#include<memory>
-#include<iosfwd>
-#include"MFront/MFrontConfig.hxx"
-#include"TFEL/Material/ModellingHypothesis.hxx"
+#include <memory>
+#include <iosfwd>
+#include "MFront/MFrontConfig.hxx"
+#include "TFEL/Material/ModellingHypothesis.hxx"
 
-#include"MFront/AbstractDSL.hxx"
-#include"MFront/BehaviourDescription.hxx"
+#include "MFront/AbstractDSL.hxx"
+#include "MFront/BehaviourDescription.hxx"
 
-namespace mfront{
+namespace mfront {
 
   // forward declaration
   struct MaterialPropertyDescription;
@@ -32,22 +32,19 @@ namespace mfront{
    * Interface class for all domain specific languages.
    */
   struct MFRONT_VISIBILITY_EXPORT AbstractBehaviourDSL
-    : public virtual AbstractDSL
-  {
+      : public virtual AbstractDSL {
     //! a simple alias
-    using MaterialPropertyInput =
-      BehaviourDescription::MaterialPropertyInput;
+    using MaterialPropertyInput = BehaviourDescription::MaterialPropertyInput;
     //! constructor
     AbstractBehaviourDSL() = default;
     //! a simple alias
     using ModellingHypothesis = tfel::material::ModellingHypothesis;
     //! a simple alias
-    using Hypothesis =  ModellingHypothesis::Hypothesis;
+    using Hypothesis = ModellingHypothesis::Hypothesis;
     //! \return the target of the dsl
     DSLTarget getTargetType() const override final;
     //! \return the behaviour description
-    virtual const BehaviourDescription&
-    getBehaviourDescription() const = 0;
+    virtual const BehaviourDescription& getBehaviourDescription() const = 0;
     /*!
      * \return the list of hypothesis a priori supported by
      * the parser.
@@ -56,8 +53,7 @@ namespace mfront{
      * supported, the user must use the `@ModellingHypothesis` or
      * `@ModellingHypotheses` keywords.
      */
-    virtual std::set<Hypothesis>
-    getDefaultModellingHypotheses() const = 0;
+    virtual std::set<Hypothesis> getDefaultModellingHypotheses() const = 0;
     /*!
      * \brief write the call to a material property
      * \param[out] out: output stream
@@ -67,10 +63,10 @@ namespace mfront{
      * For example, if we want to evaluate the variable name 'V' at
      * the end of the time step, we could make f return V+dV
      */
-    virtual void
-    writeMaterialPropertyEvaluation(std::ostream&,
-				    const BehaviourDescription::MaterialProperty&,
-				    std::function<std::string(const MaterialPropertyInput&)>&) const = 0;
+    virtual void writeMaterialPropertyEvaluation(
+        std::ostream&,
+        const BehaviourDescription::MaterialProperty&,
+        std::function<std::string(const MaterialPropertyInput&)>&) const = 0;
     /*!
      * \brief This function handles a material property treated as a
      * dependency of the current file.
@@ -107,13 +103,11 @@ namespace mfront{
      * enable this modelling hypothesis by calling explicitely
      * `@ModellingHypothesis` or `@ModellingHypotheses` keywords.
      */
-    virtual bool
-    isModellingHypothesisSupported(const Hypothesis) const = 0;
+    virtual bool isModellingHypothesisSupported(const Hypothesis) const = 0;
     //! destructor
     ~AbstractBehaviourDSL() override;
   };
 
-} // end of namespace mfront
+}  // end of namespace mfront
 
 #endif /* LIB_MFRONT_ABSTRACTBEHAVIOURDSL_HXX */
-

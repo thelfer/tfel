@@ -39,7 +39,8 @@ namespace mtest {
   struct BehaviourWorkSpace;
 
   //! A simple wrapper around mechanical behaviours
-  struct MTEST_VISIBILITY_EXPORT Behaviour : std::enable_shared_from_this<Behaviour> {
+  struct MTEST_VISIBILITY_EXPORT Behaviour
+      : std::enable_shared_from_this<Behaviour> {
     //! a simple alias
     using Parameters = tfel::utilities::Data;
     //! a simple alias
@@ -47,16 +48,16 @@ namespace mtest {
     //! a simple alias
     using Hypothesis = ModellingHypothesis::Hypothesis;
     //! a simple alias
-    using BehaviourType = tfel::material::MechanicalBehaviourBase::BehaviourType;
+    using BehaviourType =
+        tfel::material::MechanicalBehaviourBase::BehaviourType;
     //! a simple alias
     using Kinematic = tfel::material::MechanicalBehaviourBase::Kinematic;
     //! \return the modelling hypothesis
     virtual Hypothesis getHypothesis() const = 0;
     /*!
-     * \brief This function set a material property to its default value if it not already declared
-     * \param[out] mp  : evolution manager where
-     * \param[in]  evm : evolution manager
-     * \param[in]  n   : material property name
+     * \brief This function set a material property to its default value if it
+     * not already declared \param[out] mp  : evolution manager where \param[in]
+     * evm : evolution manager \param[in]  n   : material property name
      * \param[in]  v   : default value
      */
     static void setOptionalMaterialPropertyDefaultValue(EvolutionManager&,
@@ -80,15 +81,18 @@ namespace mtest {
     virtual BehaviourType getBehaviourType() const = 0;
     //! \return the type of the behaviour
     virtual Kinematic getBehaviourKinematic() const = 0;
-    //! \return the size of a vector able to contain all the components of the driving variables
+    //! \return the size of a vector able to contain all the components of the
+    //! driving variables
     virtual unsigned short getGradientsSize() const = 0;
     /*!
      * \param[out] v : initial values of the driving variables
      * \note : the vector shall have been correctly allocated
      */
-    virtual void getGradientsDefaultInitialValues(tfel::math::vector<real>&) const = 0;
+    virtual void getGradientsDefaultInitialValues(
+        tfel::math::vector<real>&) const = 0;
     /*!
-     * \return the size of a vector able to contain all the components of the thermodynamic forces
+     * \return the size of a vector able to contain all the components of the
+     * thermodynamic forces
      */
     virtual unsigned short getThermodynamicForcesSize() const = 0;
     /*!
@@ -110,15 +114,18 @@ namespace mtest {
     /*!
      * \return the components of the thermodynamic forces
      */
-    virtual std::vector<std::string> getThermodynamicForcesComponents() const = 0;
+    virtual std::vector<std::string> getThermodynamicForcesComponents()
+        const = 0;
     /*!
      * \param[in] c : component
      */
-    virtual unsigned short getGradientComponentPosition(const std::string&) const = 0;
+    virtual unsigned short getGradientComponentPosition(
+        const std::string&) const = 0;
     /*!
      * \param[in] c : component
      */
-    virtual unsigned short getThermodynamicForceComponentPosition(const std::string&) const = 0;
+    virtual unsigned short getThermodynamicForceComponentPosition(
+        const std::string&) const = 0;
     /*!
      * \return the type of the behaviour
      * 0 means that the behaviour is isotropic.
@@ -145,35 +152,40 @@ namespace mtest {
      * \param[out] mp  : evolution manager where
      * \param[in]  evm : evolution manager
      */
-    virtual void setOptionalMaterialPropertiesDefaultValues(EvolutionManager&,
-                                                            const EvolutionManager&) const = 0;
+    virtual void setOptionalMaterialPropertiesDefaultValues(
+        EvolutionManager&, const EvolutionManager&) const = 0;
     //! \return the names of internal variables
     virtual std::vector<std::string> getInternalStateVariablesNames() const = 0;
     //! \return expand the names of internal variables
-    virtual std::vector<std::string> expandInternalStateVariablesNames() const = 0;
+    virtual std::vector<std::string> expandInternalStateVariablesNames()
+        const = 0;
     /*!
      * \return the size of the array of internal variables
      */
     virtual size_t getInternalStateVariablesSize() const = 0;
     //! \return the descriptions the internal variables
-    virtual std::vector<std::string> getInternalStateVariablesDescriptions() const = 0;
+    virtual std::vector<std::string> getInternalStateVariablesDescriptions()
+        const = 0;
     //! \return the type of an internal variable
-    virtual unsigned short getInternalStateVariableType(const std::string&) const = 0;
+    virtual unsigned short getInternalStateVariableType(
+        const std::string&) const = 0;
     /*!
      * \return the position of an internal variable
      * \param[in] n : internal variable name
      */
-    virtual unsigned short getInternalStateVariablePosition(const std::string&) const = 0;
+    virtual unsigned short getInternalStateVariablePosition(
+        const std::string&) const = 0;
     //! \return the names of external variables
     virtual std::vector<std::string> getExternalStateVariablesNames() const = 0;
     //! \return the size of the array of exernal variables
-    virtual size_t  getExternalStateVariablesSize() const =0;
+    virtual size_t getExternalStateVariablesSize() const = 0;
     //! \return the names of floating point parameters
     virtual std::vector<std::string> getParametersNames() const = 0;
     //! \return the names of integer parameters
     virtual std::vector<std::string> getIntegerParametersNames() const = 0;
     //! \return the names of unsigned short parameters
-    virtual std::vector<std::string> getUnsignedShortParametersNames() const = 0;
+    virtual std::vector<std::string> getUnsignedShortParametersNames()
+        const = 0;
     /*!
      * \return the default value of a parameter
      * \param[in] p: parameter name
@@ -188,12 +200,14 @@ namespace mtest {
      * \return the default value of an integer parameter
      * \param[in] p: parameter name
      */
-    virtual unsigned short getUnsignedShortParameterDefaultValue(const std::string&) const = 0;
+    virtual unsigned short getUnsignedShortParameterDefaultValue(
+        const std::string&) const = 0;
     /*!
      * \brief set the out of bounds policy
      * \param[in] p : policy selected
      */
-    virtual void setOutOfBoundsPolicy(const tfel::material::OutOfBoundsPolicy) const = 0;
+    virtual void setOutOfBoundsPolicy(
+        const tfel::material::OutOfBoundsPolicy) const = 0;
     /*!
      * \return true if the given variable has bounds
      * \param[in] v: variable name
@@ -261,7 +275,8 @@ namespace mtest {
      * \param[in] n : name of the parameter
      * \param[in] v : value
      */
-    virtual void setUnsignedIntegerParameter(const std::string&, const unsigned short) const = 0;
+    virtual void setUnsignedIntegerParameter(const std::string&,
+                                             const unsigned short) const = 0;
     /*!
      * \brief allocate workspace
      * \param[out] wk : behaviour workspace
@@ -279,7 +294,8 @@ namespace mtest {
      * interface
      */
     virtual tfel::math::tmatrix<3u, 3u, real> getRotationMatrix(
-        const tfel::math::vector<real>&, const tfel::math::tmatrix<3u, 3u, real>&) const = 0;
+        const tfel::math::vector<real>&,
+        const tfel::math::tmatrix<3u, 3u, real>&) const = 0;
     /*!
      * \brief execute the packaging step. This victious step is done
      * at the beginning of the computation.
@@ -298,9 +314,10 @@ namespace mtest {
      * \param[in]  s     : current state
      * \param[in]  ktype : type of the stiffness matrix
      */
-    virtual std::pair<bool, real> computePredictionOperator(BehaviourWorkSpace&,
-                                                            const CurrentState&,
-                                                            const StiffnessMatrixType) const = 0;
+    virtual std::pair<bool, real> computePredictionOperator(
+        BehaviourWorkSpace&,
+        const CurrentState&,
+        const StiffnessMatrixType) const = 0;
     /*!
      * \brief integrate the mechanical behaviour over the time step
      * \return a pair. The first member is true if the integration was
@@ -311,10 +328,11 @@ namespace mtest {
      * \param[in]     dt    : time increment
      * \param[in]     ktype : type of the stiffness matrix
      */
-    virtual std::pair<bool, real> integrate(CurrentState&,
-                                            BehaviourWorkSpace&,
-                                            const real,
-                                            const StiffnessMatrixType) const = 0;
+    virtual std::pair<bool, real> integrate(
+        CurrentState&,
+        BehaviourWorkSpace&,
+        const real,
+        const StiffnessMatrixType) const = 0;
     //! destructor
     virtual ~Behaviour();
   };  // end of struct Behaviour
@@ -328,15 +346,16 @@ namespace mtest {
    * \param[in] b: behaviour
    * \param[in] n: variable name
    */
-  MTEST_VISIBILITY_EXPORT bool isBehaviourVariable(const Behaviour&, const std::string&);
+  MTEST_VISIBILITY_EXPORT bool isBehaviourVariable(const Behaviour&,
+                                                   const std::string&);
   /*!
    * \return an object able to extract a specific value from the
    * current state
    * \param[in] b: behaviour
    * \param[in] n: variable name
    */
-  MTEST_VISIBILITY_EXPORT std::function<real(const CurrentState&)> buildValueExtractor(
-      const Behaviour&, const std::string&);
+  MTEST_VISIBILITY_EXPORT std::function<real(const CurrentState&)>
+  buildValueExtractor(const Behaviour&, const std::string&);
 
 }  // end of namespace mtest
 

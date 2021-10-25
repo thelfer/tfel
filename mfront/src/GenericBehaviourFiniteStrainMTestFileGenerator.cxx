@@ -35,8 +35,8 @@ namespace mfront {
   GenericBehaviourFiniteStrainMTestFileGenerator::writeBehaviourDeclaration(
       std::ostream& os) const {
 #if defined _WIN32 || defined _WIN64 || defined __CYGWIN__
-    os << "@Behaviour<generic> '" << this->library
-       << ".dll' '" << this->behaviour << "';" << std::endl;
+    os << "@Behaviour<generic> '" << this->library << ".dll' '"
+       << this->behaviour << "';" << std::endl;
 #else
     os << "@Behaviour<generic> '" << this->library << ".so' '"
        << this->behaviour << "';" << std::endl;

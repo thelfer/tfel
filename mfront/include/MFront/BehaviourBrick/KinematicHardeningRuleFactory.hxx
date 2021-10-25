@@ -25,7 +25,8 @@ namespace mfront {
      */
     struct KinematicHardeningRuleFactory {
       //! a simple alias
-      using Generator = std::function<std::shared_ptr<KinematicHardeningRule>()>;
+      using Generator =
+          std::function<std::shared_ptr<KinematicHardeningRule>()>;
       //! \return the uniq instance of the class
       static KinematicHardeningRuleFactory& getFactory();
       //! \brief return the list of kinematic hardening rules

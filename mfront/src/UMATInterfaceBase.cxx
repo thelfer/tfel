@@ -78,8 +78,9 @@ namespace mfront {
       if (!o.isNull()) {
         out << "this->sig.exportTab(" << a << "+" << o << ");\n";
       } else {
-        out << "this->sig.exportTab(" << a << ""
-                                              ");\n";
+        out << "this->sig.exportTab(" << a
+            << ""
+               ");\n";
       }
     } else if ((flag == SupportedTypes::TVector) ||
                (flag == SupportedTypes::Tensor)) {
@@ -349,7 +350,8 @@ namespace mfront {
     const auto abdv = this->getBehaviourDataConstructorAdditionalVariables();
     const auto aidv = this->getIntegrationDataConstructorAdditionalVariables();
     out << "/*\n"
-        << " * \\brief constructor for the " << this->getInterfaceName() << " interface\n"
+        << " * \\brief constructor for the " << this->getInterfaceName()
+        << " interface\n"
         << " * \\param[in] " << iprefix << "dt_: time increment\n"
         << " * \\param[in] " << iprefix << "T_: temperature\n";
     if (this->isTemperatureIncrementSupported()) {
@@ -463,12 +465,12 @@ namespace mfront {
     }
   }  // end of UMATInterfaceBase::writeBehaviourConstructorHeader
 
-  void UMATInterfaceBase::writeBehaviourConstructorBody(std::ostream&,
-							const BehaviourDescription&,
-							const Hypothesis) const {
-  } // end of UMATInterfaceBase::writeBehaviourConstructorBody
-  
-  void UMATInterfaceBase::writeMaterialPropertiesInitializersInBehaviourDataConstructorI(
+  void UMATInterfaceBase::writeBehaviourConstructorBody(
+      std::ostream&, const BehaviourDescription&, const Hypothesis) const {
+  }  // end of UMATInterfaceBase::writeBehaviourConstructorBody
+
+  void UMATInterfaceBase::
+      writeMaterialPropertiesInitializersInBehaviourDataConstructorI(
           std::ostream& f,
           bool& first,
           const Hypothesis h,
@@ -483,8 +485,7 @@ namespace mfront {
         continue;
       }
       const auto n = prefix + mp.name + suffix;
-      const auto& m =
-	findBehaviourMaterialProperty(i, mp.getExternalName());
+      const auto& m = findBehaviourMaterialProperty(i, mp.getExternalName());
       auto offset = m.offset;
       offset -= ioffset;
       if (!first) {
@@ -518,12 +519,12 @@ namespace mfront {
           const std::string& src,
           const std::string& prefix,
           const std::string& suffix) const {
-    for (const auto& mp : mb.getBehaviourData(h).getMaterialProperties()){
+    for (const auto& mp : mb.getBehaviourData(h).getMaterialProperties()) {
       if (mp.arraySize == 1u) {
         continue;
       }
-      const auto& m = findBehaviourMaterialProperty(
-          i, mb.getExternalName(h, mp.name));
+      const auto& m =
+          findBehaviourMaterialProperty(i, mb.getExternalName(h, mp.name));
       const auto flag = SupportedTypes::getTypeFlag(mp.type);
       SupportedTypes::TypeSize offset = m.offset;
       offset -= ioffset;
@@ -598,7 +599,8 @@ namespace mfront {
     const auto& persistentVarsHolder = d.getPersistentVariables();
     const auto& externalStateVarsHolder = d.getExternalStateVariables();
     out << "/*\n"
-        << " * \\brief constructor for the " << this->getInterfaceName() << " interface\n"
+        << " * \\brief constructor for the " << this->getInterfaceName()
+        << " interface\n"
         << " * \\param[in] " << iprefix << "T_: temperature\n"
         << " * \\param[in] " << iprefix << "mat: material properties\n"
         << " * \\param[in] " << iprefix << "int_vars: state variables\n";
@@ -681,7 +683,8 @@ namespace mfront {
     const auto iprefix = makeUpperCase(this->getInterfaceName());
     const auto& externalStateVarsHolder = d.getExternalStateVariables();
     out << "/*\n"
-        << " * \\brief constructor for the " << this->getInterfaceName() << " interface\n"
+        << " * \\brief constructor for the " << this->getInterfaceName()
+        << " interface\n"
         << " * \\param[in] " + iprefix + "dt_: time increment\n";
     if (this->isTemperatureIncrementSupported()) {
       out << " * \\param[in] " + iprefix + "dT_: temperature increment\n";
@@ -739,9 +742,8 @@ namespace mfront {
       std::ostream& os, const BehaviourDescription& mb) const {
     const auto iprefix = makeUpperCase(this->getInterfaceName());
     SupportedTypes::TypeSize ov, of;
-    os << "void set" << iprefix
-       << "BehaviourDataGradients(const Type* const " << iprefix
-       << "stran)\n"
+    os << "void set" << iprefix << "BehaviourDataGradients(const Type* const "
+       << iprefix << "stran)\n"
        << "{\n";
     for (const auto& v : mb.getMainVariables()) {
       this->writeBehaviourDataGradientSetter(os, v.first, ov);
@@ -869,9 +871,8 @@ namespace mfront {
       std::ostream& os, const BehaviourDescription& mb) const {
     const auto iprefix = makeUpperCase(this->getInterfaceName());
     SupportedTypes::TypeSize ov;
-    os << "void set" << iprefix
-       << "IntegrationDataGradients(const Type* const " << iprefix
-       << "dstran)\n"
+    os << "void set" << iprefix << "IntegrationDataGradients(const Type* const "
+       << iprefix << "dstran)\n"
        << "{\n";
     for (const auto& v : mb.getMainVariables()) {
       this->writeIntegrationDataGradientSetter(os, v.first, ov);

@@ -531,7 +531,8 @@ namespace mfront {
           "orthotropic behaviours");
       // if (getVerboseMode() >= VERBOSE_DEBUG) {
       //   getLogStream() << "HookeStressPotentialBase::"
-      //                     "declareComputeStressForOrthotropicBehaviour: end\n";
+      //                     "declareComputeStressForOrthotropicBehaviour:
+      //                     end\n";
       // }
     }  // end of
        // HookeStressPotentialBase::declareComputeStressForOrthotropicBehaviour
@@ -644,7 +645,7 @@ namespace mfront {
           c += "this->sebdata.szz = ";
           c += "(" + lambda + "+2*(" + mu + "))*(this->eel(1)+this->deel(1))";
           c += " + ";
-          c += "(" + lambda +")*(this->eel(0)+this->deel(0)+";
+          c += "(" + lambda + ")*(this->eel(0)+this->deel(0)+";
           c += "this->eel(2)+this->deel(2));\n";
           if ((bd.isStrainMeasureDefined()) &&
               (bd.getStrainMeasure() == BehaviourDescription::HENCKY)) {

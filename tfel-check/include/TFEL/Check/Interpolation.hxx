@@ -6,12 +6,12 @@
  *
  *  \class Interpolation
  *  \brief Abstract mother class for Spline-, Linear- or No- Interpolation
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights 
- * reserved. 
- * This project is publicly released under either the GNU GPL Licence 
- * or the CECILL-A licence. A copy of thoses licences are delivered 
- * with the sources of TFEL. CEA or EDF may also distribute this 
- * project under specific licensing conditions. 
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #ifndef LIB_TFELCHECK_INTERPOLATION_HXX
@@ -22,13 +22,11 @@
 #include <memory>
 #include "TFEL/Check/TFELCheckConfig.hxx"
 
-namespace tfel{
+namespace tfel {
 
-  namespace check{
+  namespace check {
 
-    struct TFELCHECK_VISIBILITY_EXPORT Interpolation
-    {
-
+    struct TFELCHECK_VISIBILITY_EXPORT Interpolation {
       Interpolation();
       Interpolation(Interpolation&&);
       Interpolation(const Interpolation&);
@@ -36,13 +34,14 @@ namespace tfel{
       Interpolation& operator=(const Interpolation&);
       virtual ~Interpolation();
       /*!
-       * \brief stores the values of abscissa and ordinate and does the interpolation
+       * \brief stores the values of abscissa and ordinate and does the
+       * interpolation
        *
        * \param[in] times
        * \param[in] values
        */
       virtual void interpolate(const std::vector<double>&,
-			       const std::vector<double>&) = 0;
+                               const std::vector<double>&) = 0;
 
       /*!
        * \brief returns the value at time in parameter
@@ -62,16 +61,16 @@ namespace tfel{
       /*!
        * \brief check if interpolation is usable or not
        *
-       * \return true if interpolation type is other than None, otherwise returns false
+       * \return true if interpolation type is other than None, otherwise
+       * returns false
        */
       virtual bool isConform() const = 0;
 
       virtual std::shared_ptr<Interpolation> clone() const = 0;
-
     };
 
-  } // end of namespace check
+  }  // end of namespace check
 
-} // end of namespace tfel
+}  // end of namespace tfel
 
 #endif /* LIB_TFELCHECK_INTERPOLATION_HXX */

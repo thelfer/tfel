@@ -665,8 +665,9 @@ namespace mfront {
     this->readSpecifiedToken(
         "ImplicitDSLBase::MaximumIncrementValuePerIteration", ";");
     this->mb.addParameter(
-        h, VariableDescription("real", "maximum_increment_value_per_iteration",
-                               1u, 0u),
+        h,
+        VariableDescription("real", "maximum_increment_value_per_iteration", 1u,
+                            0u),
         BehaviourData::ALREADYREGISTRED);
     this->mb.setParameterDefaultValue(
         h, "maximum_increment_value_per_iteration", value);
@@ -891,8 +892,9 @@ namespace mfront {
                  "numerically computed jacobian blocks can only be "
                  "used with solver using an analytical jacobian "
                  "(or an approximation of it");
-        auto decompose = [throw_if](
-            const std::string& jb) -> std::pair<std::string, std::string> {
+        auto decompose =
+            [throw_if](
+                const std::string& jb) -> std::pair<std::string, std::string> {
           throw_if(jb.empty(), "empty jacobian block");
           throw_if(jb.size() < 6, "invalid jacobian block '" + jb + "'");
           throw_if(jb[0] != 'd', "invalid jacobian block '" + jb + "'");

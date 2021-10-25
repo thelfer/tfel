@@ -38,7 +38,7 @@ namespace mfront {
     }  // end of StressCriterionFactory::getRegistredStressCriteria
 
     void StressCriterionFactory::addGenerator(const std::string& n,
-                                                 const Generator& g) {
+                                              const Generator& g) {
       if (!this->generators.insert({n, g}).second) {
         tfel::raise(
             "StressCriterionFactory::addGenerator: "
@@ -114,7 +114,7 @@ namespace mfront {
       this->addGenerator("Barlat 2004", []() {
         return std::make_shared<bbrick::Barlat2004StressCriterion>();
       });
-    } // end of StressCriterionFactory::StressCriterionFactory
+    }  // end of StressCriterionFactory::StressCriterionFactory
 
     StressCriterionFactory::~StressCriterionFactory() = default;
 

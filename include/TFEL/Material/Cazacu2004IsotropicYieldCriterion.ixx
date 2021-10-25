@@ -1,6 +1,6 @@
 /*!
  * \file   Cazacu2004IsotropicYieldCriterion.ixx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   10/05/2018
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
@@ -14,7 +14,7 @@
 #ifndef LIB_TFEL_MATERIAL_CAZACU2004ISOTROPICYIELDCRITERION_IXX
 #define LIB_TFEL_MATERIAL_CAZACU2004ISOTROPICYIELDCRITERION_IXX
 
-#include<cmath>
+#include <cmath>
 
 namespace tfel {
 
@@ -65,7 +65,7 @@ namespace tfel {
       const auto seq = std::cbrt(tfel::math::power<3>(std::sqrt(J2)) - c * J3);
       const auto iseq = 1 / std::max(seq, seps);
       // the derivative of J2 is s
-      const auto d2J2 = tfel::math::st2tost2<N,real>::K();
+      const auto d2J2 = tfel::math::st2tost2<N, real>::K();
       const auto dJ3 = tfel::math::computeDeviatorDeterminantDerivative(sig);
       const auto d2J3 =
           tfel::math::computeDeviatorDeterminantSecondDerivative(sig);
@@ -74,12 +74,12 @@ namespace tfel {
       const auto dnb = 1 / (4 * std::sqrt(J2)) * (s ^ s) +
                        (std::sqrt(J2) / 2) * d2J2 - (c / 3) * d2J3;
       const auto n = tfel::math::eval(iseq * iseq * nb);
-      return std::make_tuple(seq, n, tfel::math::eval(iseq * (-2 * (n ^ n) + iseq * dnb)));
+      return std::make_tuple(
+          seq, n, tfel::math::eval(iseq * (-2 * (n ^ n) + iseq * dnb)));
     }  // end of computeCazacu2004IsotropicStressCriterionSecondDerivative
 
   }  // end of namespace material
 
 }  // end of namespace tfel
-
 
 #endif /* LIB_TFEL_MATERIAL_CAZACU2004ISOTROPICYIELDCRITERION_IXX */

@@ -94,7 +94,7 @@ namespace mfront {
        */
       template <typename Behaviour>
       static void exe(MFront_GB_BehaviourData& d, const Behaviour& b) {
-	*(d.s1.stored_energy) = *(d.s0.stored_energy);
+        *(d.s1.stored_energy) = *(d.s0.stored_energy);
         b.computeInternalEnergy(*(d.s1.stored_energy));
       }
     };  // end of struct InternalEnergyComputer
@@ -107,7 +107,7 @@ namespace mfront {
        */
       template <typename Behaviour>
       static void exe(MFront_GB_BehaviourData& d, const Behaviour& b) {
-	*(d.s1.dissipated_energy) = *(d.s0.dissipated_energy);
+        *(d.s1.dissipated_energy) = *(d.s0.dissipated_energy);
         b.computeDissipatedEnergy(*(d.s1.dissipated_energy));
       }  // end of exe
     };   // end of struct DissipatedEnergyComputer
@@ -144,7 +144,7 @@ namespace mfront {
       Behaviour b(d);
       b.setOutOfBoundsPolicy(p);
       try {
-	b.initialize();
+        b.initialize();
         b.checkBounds();
         if (d.K[0] < -0.25) {
           return computePredictionOperator(b, d, f);

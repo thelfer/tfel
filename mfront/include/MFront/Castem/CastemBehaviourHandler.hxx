@@ -48,13 +48,15 @@ namespace castem {
     typedef tfel::material::TangentOperatorTraits<
         MechanicalBehaviourBase::STANDARDFINITESTRAINBEHAVIOUR>
         TangentOperatorTraits;
-    static constexpr TangentOperatorTraits::SMFlag value = TangentOperatorTraits::C_TRUESDELL;
+    static constexpr TangentOperatorTraits::SMFlag value =
+        TangentOperatorTraits::C_TRUESDELL;
   };
 
   template <>
   struct CastemTangentOperatorFlag<castem::COHESIVEZONEMODEL> {
     typedef tfel::material::MechanicalBehaviourBase MechanicalBehaviourBase;
-    typedef tfel::material::TangentOperatorTraits<MechanicalBehaviourBase::COHESIVEZONEMODEL>
+    typedef tfel::material::TangentOperatorTraits<
+        MechanicalBehaviourBase::COHESIVEZONEMODEL>
         TangentOperatorTraits;
     static constexpr TangentOperatorTraits::SMFlag value =
         TangentOperatorTraits::STANDARDTANGENTOPERATOR;
@@ -113,16 +115,19 @@ namespace castem {
    * \tparam H:         modelling hypothesis
    * \tparam Behaviour: behaviour class
    */
-  template <CastemBehaviourType type,
-            tfel::material::ModellingHypothesis::Hypothesis H,
-            template <tfel::material::ModellingHypothesis::Hypothesis, typename, bool>
-            class Behaviour>
-  struct TFEL_VISIBILITY_LOCAL CastemBehaviourHandler : public CastemInterfaceExceptions {
+  template <
+      CastemBehaviourType type,
+      tfel::material::ModellingHypothesis::Hypothesis H,
+      template <tfel::material::ModellingHypothesis::Hypothesis, typename, bool>
+      class Behaviour>
+  struct TFEL_VISIBILITY_LOCAL CastemBehaviourHandler
+      : public CastemInterfaceExceptions {
     /*!
      * structure in charge of checking the thermal expansion
      * coefficient is zero
      */
-    struct CheckThermalExpansionCoefficientIsNull : public CastemInterfaceExceptions {
+    struct CheckThermalExpansionCoefficientIsNull
+        : public CastemInterfaceExceptions {
       /*!
        * \param[in] a : thermal expansion coefficient
        */
@@ -131,7 +136,8 @@ namespace castem {
         typedef Behaviour<H, CastemReal, false> BV;
         typedef MechanicalBehaviourTraits<BV> Traits;
         if (std::abs(a) > std::numeric_limits<CastemReal>::min()) {
-          CastemInterfaceExceptions::throwThermalExpansionCoefficientShallBeNull(Traits::getName());
+          CastemInterfaceExceptions::
+              throwThermalExpansionCoefficientShallBeNull(Traits::getName());
         }
       }
     };
@@ -139,7 +145,8 @@ namespace castem {
      * structure in charge of not checking the thermal expansion
      * coefficient is zero
      */
-    struct DontCheckThermalExpansionCoefficientIsNull : public CastemInterfaceExceptions {
+    struct DontCheckThermalExpansionCoefficientIsNull
+        : public CastemInterfaceExceptions {
       /*!
        * \param[in] a : thermal expansion
        */
@@ -160,7 +167,8 @@ namespace castem {
       typedef tfel::material::ModellingHypothesisToSpaceDimension<H>
           ModellingHypothesisToSpaceDimension;
       // spatial dimension
-      static constexpr unsigned short N = ModellingHypothesisToSpaceDimension::value;
+      static constexpr unsigned short N =
+          ModellingHypothesisToSpaceDimension::value;
       /*!
        * \param[out] bData  : behaviour data
        * \param[out] iData  : integration data
@@ -172,11 +180,12 @@ namespace castem {
        * \param[in]  sfeh   : function handling the stress-free expansion
        *                      at the beginning of the time step
        */
-      TFEL_CASTEM_INLINE static void exe(BData &bData,
-                                         IData &iData,
-                                         const CastemReal *const STRAN,
-                                         const CastemReal *const DSTRAN,
-                                         const StressFreeExpansionHandler &sfeh) {
+      TFEL_CASTEM_INLINE static void exe(
+          BData &bData,
+          IData &iData,
+          const CastemReal *const STRAN,
+          const CastemReal *const DSTRAN,
+          const StressFreeExpansionHandler &sfeh) {
         using Traits = tfel::material::MechanicalBehaviourTraits<BV>;
         using StressFreeExpansionType = typename BV::StressFreeExpansionType;
         CastemReal dv0[CastemTraits<BV>::GradientSize];
@@ -207,12 +216,13 @@ namespace castem {
        * \param[in]  sfeh   : function handling the stress-free expansion
        *                      at the beginning of the time step
        */
-      TFEL_CASTEM_INLINE static void exe(BV &b,
-                                         const CastemReal *const STRAN,
-                                         const CastemReal *const DSTRAN,
-                                         const StressFreeExpansionHandler &sfeh) {
-        using tfel::fsalgo::copy;
+      TFEL_CASTEM_INLINE static void exe(
+          BV &b,
+          const CastemReal *const STRAN,
+          const CastemReal *const DSTRAN,
+          const StressFreeExpansionHandler &sfeh) {
         using std::pair;
+        using tfel::fsalgo::copy;
         using tfel::material::MechanicalBehaviourTraits;
         typedef MechanicalBehaviourTraits<BV> Traits;
         typedef typename BV::StressFreeExpansionType StressFreeExpansionType;
@@ -288,11 +298,12 @@ namespace castem {
     struct TFEL_VISIBILITY_LOCAL StiffnessTensorInitializer {
       typedef Behaviour<H, CastemReal, false> BV;
       typedef typename BV::BehaviourData BData;
-      TFEL_CASTEM_INLINE static void exe(BData &data, const CastemReal *const props) {
+      TFEL_CASTEM_INLINE static void exe(BData &data,
+                                         const CastemReal *const props) {
         typedef CastemTraits<BV> Traits;
         const bool buas = Traits::requiresUnAlteredStiffnessTensor;
-        CastemComputeStiffnessTensor<type, H, Traits::stype, buas>::exe(data.getStiffnessTensor(),
-                                                                        props);
+        CastemComputeStiffnessTensor<type, H, Traits::stype, buas>::exe(
+            data.getStiffnessTensor(), props);
       }  // end of exe
     };   // end of struct StiffnessTensorInitializer
 
@@ -303,9 +314,11 @@ namespace castem {
     struct TFEL_VISIBILITY_LOCAL ThermalExpansionCoefficientTensorInitializer {
       typedef Behaviour<H, CastemReal, false> BV;
       typedef typename BV::BehaviourData BData;
-      TFEL_CASTEM_INLINE static void exe(BData &data, const CastemReal *const props) {
-        CastemComputeThermalExpansionCoefficientTensor<type, H, CastemTraits<BV>::stype>::exe(
-            props, data.getThermalExpansionCoefficientTensor());
+      TFEL_CASTEM_INLINE static void exe(BData &data,
+                                         const CastemReal *const props) {
+        CastemComputeThermalExpansionCoefficientTensor<
+            type, H, CastemTraits<BV>::stype>::
+            exe(props, data.getThermalExpansionCoefficientTensor());
       }  // end of exe
     };   // end of struct ThermalExpansionCoefficientTensorInitializer
 
@@ -337,7 +350,8 @@ namespace castem {
                                const CastemReal *const,
                                const CastemReal *const,
                                const tfel::material::OutOfBoundsPolicy,
-                               const StressFreeExpansionHandler &) {}  // end of Error
+                               const StressFreeExpansionHandler &) {
+      }  // end of Error
 
       TFEL_CASTEM_INLINE void exe(CastemReal *const,
                                   CastemReal *const,
@@ -345,9 +359,10 @@ namespace castem {
                                   CastemReal *const) {
         using namespace std;
         using namespace tfel::material;
-        typedef MechanicalBehaviourTraits<Behaviour<H, CastemReal, false>> Traits;
-        throw(CastemInvalidDimension(Traits::getName(),
-                                     ModellingHypothesisToSpaceDimension<H>::value));
+        typedef MechanicalBehaviourTraits<Behaviour<H, CastemReal, false>>
+            Traits;
+        throw(CastemInvalidDimension(
+            Traits::getName(), ModellingHypothesisToSpaceDimension<H>::value));
         return;
       }  // end of Error::exe
 
@@ -357,12 +372,15 @@ namespace castem {
               const bool ba>  // requires ThermalExpansionCoefficientTensor
     struct TFEL_VISIBILITY_LOCAL IntegratorWithTimeStepping {
       //! A simple alias
-      typedef typename std::conditional<bs, StiffnessTensorInitializer, DoNothingInitializer>::type
-          SInitializer;
+      typedef
+          typename std::conditional<bs,
+                                    StiffnessTensorInitializer,
+                                    DoNothingInitializer>::type SInitializer;
       //! A simple alias
-      typedef typename std::conditional<ba,
-                                        ThermalExpansionCoefficientTensorInitializer,
-                                        DoNothingInitializer>::type AInitializer;
+      typedef typename std::conditional<
+          ba,
+          ThermalExpansionCoefficientTensorInitializer,
+          DoNothingInitializer>::type AInitializer;
 
       TFEL_CASTEM_INLINE
       IntegratorWithTimeStepping(const CastemReal *const DTIME_,
@@ -409,11 +427,13 @@ namespace castem {
             Traits::hasPredictionOperator, StandardPredictionOperatorComputer,
             PredictionOperatorIsNotAvalaible>::type PredictionOperatorComputer;
         typedef typename std::conditional<
-            Traits::hasStressFreeExpansion, GradientInitialiserWithStressFreeExpansion,
+            Traits::hasStressFreeExpansion,
+            GradientInitialiserWithStressFreeExpansion,
             GradientInitialiserWithoutStressFreeExpansion>::type DVInitializer;
-        typedef typename std::conditional<Traits::isConsistentTangentOperatorSymmetric,
-                                          SymmetricConsistentTangentOperatorComputer,
-                                          GeneralConsistentTangentOperatorComputer>::type
+        typedef typename std::conditional<
+            Traits::isConsistentTangentOperatorSymmetric,
+            SymmetricConsistentTangentOperatorComputer,
+            GeneralConsistentTangentOperatorComputer>::type
             ConsistentTangentOperatorHandler;
         const typename BV::SMFlag smflag =
             CastemTangentOperatorFlag<CastemTraits<BV>::btype>::value;
@@ -428,8 +448,8 @@ namespace castem {
           throwInvalidDDSDDEException(Traits::getName(), *DDSDDE);
         }
         BV behaviour(this->DTIME, this->TEMP, this->DTEMP,
-                     this->PROPS + CastemTraits<BV>::propertiesOffset, this->STATEV, this->PREDEF,
-                     this->DPRED);
+                     this->PROPS + CastemTraits<BV>::propertiesOffset,
+                     this->STATEV, this->PREDEF, this->DPRED);
         SInitializer::exe(behaviour, PROPS);
         AInitializer::exe(behaviour, PROPS);
         DVInitializer::exe(behaviour, STRAN, DSTRAN, sfeh);
@@ -437,7 +457,8 @@ namespace castem {
         behaviour.initialize();
         behaviour.setOutOfBoundsPolicy(this->policy);
         behaviour.checkBounds();
-        const auto r = PredictionOperatorComputer::exe(behaviour, smflag, smtype);
+        const auto r =
+            PredictionOperatorComputer::exe(behaviour, smflag, smtype);
         if (r == BV::FAILURE) {
           throwPredictionComputationFailedException(Traits::getName());
         }
@@ -451,14 +472,17 @@ namespace castem {
         using namespace tfel::material;
         typedef MechanicalBehaviourTraits<BV> Traits;
         typedef typename std::conditional<
-            Traits::hasStressFreeExpansion, GradientInitialiserWithStressFreeExpansion,
+            Traits::hasStressFreeExpansion,
+            GradientInitialiserWithStressFreeExpansion,
             GradientInitialiserWithoutStressFreeExpansion>::type DVInitializer;
         typedef typename std::conditional<
             Traits::hasConsistentTangentOperator,
-            typename std::conditional<Traits::isConsistentTangentOperatorSymmetric,
-                                      SymmetricConsistentTangentOperatorComputer,
-                                      GeneralConsistentTangentOperatorComputer>::type,
-            ConsistentTangentOperatorIsNotAvalaible>::type ConsistentTangentOperatorHandler;
+            typename std::conditional<
+                Traits::isConsistentTangentOperatorSymmetric,
+                SymmetricConsistentTangentOperatorComputer,
+                GeneralConsistentTangentOperatorComputer>::type,
+            ConsistentTangentOperatorIsNotAvalaible>::type
+            ConsistentTangentOperatorHandler;
         const typename BV::SMFlag smflag =
             CastemTangentOperatorFlag<CastemTraits<BV>::btype>::value;
         typename BV::SMType smtype = BV::NOSTIFFNESSREQUESTED;
@@ -475,8 +499,8 @@ namespace castem {
           throwInvalidDDSDDEException(Traits::getName(), *ddsdde);
         }
         BV behaviour(this->DTIME, this->TEMP, this->DTEMP,
-                     this->PROPS + CastemTraits<BV>::propertiesOffset, this->STATEV, this->PREDEF,
-                     this->DPRED);
+                     this->PROPS + CastemTraits<BV>::propertiesOffset,
+                     this->STATEV, this->PREDEF, this->DPRED);
         auto r = BV::SUCCESS;
         try {
           SInitializer::exe(behaviour, PROPS);
@@ -502,7 +526,8 @@ namespace castem {
                 r = BV::FAILURE;
               } else {
                 if ((*pnewdt < 1) &&
-                    (std::abs(*pnewdt - 1) > 10 * std::numeric_limits<CastemReal>::min())) {
+                    (std::abs(*pnewdt - 1) >
+                     10 * std::numeric_limits<CastemReal>::min())) {
                   r = BV::UNRELIABLE_RESULTS;
                 }
               }
@@ -518,7 +543,8 @@ namespace castem {
           r = BV::FAILURE;
         }
         if ((r == BV::FAILURE) ||
-            ((r == BV::UNRELIABLE_RESULTS) && (CastemTraits<BV>::doSubSteppingOnInvalidResults))) {
+            ((r == BV::UNRELIABLE_RESULTS) &&
+             (CastemTraits<BV>::doSubSteppingOnInvalidResults))) {
           this->integrate2(stress, statev, ddsdde, pnewdt, smtype);
         } else {
           behaviour.CASTEMexportStateData(stress, statev);
@@ -528,24 +554,29 @@ namespace castem {
         }
       }
 
-      void integrate2(CastemReal *const stress,
-                      CastemReal *const statev,
-                      CastemReal *const ddsdde,
-                      CastemReal *const pnewdt,
-                      const typename Behaviour<H, CastemReal, false>::SMType smtype) {
+      void integrate2(
+          CastemReal *const stress,
+          CastemReal *const statev,
+          CastemReal *const ddsdde,
+          CastemReal *const pnewdt,
+          const typename Behaviour<H, CastemReal, false>::SMType smtype) {
         using namespace tfel::material;
         typedef MechanicalBehaviourTraits<BV> Traits;
         typedef typename std::conditional<
-            Traits::hasStressFreeExpansion, GradientInitialiserWithStressFreeExpansion,
+            Traits::hasStressFreeExpansion,
+            GradientInitialiserWithStressFreeExpansion,
             GradientInitialiserWithoutStressFreeExpansion>::type DVInitializer;
         typedef typename std::conditional<
             Traits::hasConsistentTangentOperator,
-            typename std::conditional<Traits::isConsistentTangentOperatorSymmetric,
-                                      SymmetricConsistentTangentOperatorComputer,
-                                      GeneralConsistentTangentOperatorComputer>::type,
-            ConsistentTangentOperatorIsNotAvalaible>::type ConsistentTangentOperatorHandler;
-        BData bData(this->TEMP, this->PROPS + CastemTraits<BV>::propertiesOffset, this->STATEV,
-                    this->PREDEF);
+            typename std::conditional<
+                Traits::isConsistentTangentOperatorSymmetric,
+                SymmetricConsistentTangentOperatorComputer,
+                GeneralConsistentTangentOperatorComputer>::type,
+            ConsistentTangentOperatorIsNotAvalaible>::type
+            ConsistentTangentOperatorHandler;
+        BData bData(this->TEMP,
+                    this->PROPS + CastemTraits<BV>::propertiesOffset,
+                    this->STATEV, this->PREDEF);
         IData iData(this->DTIME, this->DTEMP, this->DPRED);
         SInitializer::exe(bData, this->PROPS);
         AInitializer::exe(bData, this->PROPS);
@@ -554,9 +585,11 @@ namespace castem {
         iData.scale(bData, 0.5);
         unsigned int subSteps = 1u;
         unsigned int iterations = 2u;
-        const auto smflag = CastemTangentOperatorFlag<CastemTraits<BV>::btype>::value;
+        const auto smflag =
+            CastemTangentOperatorFlag<CastemTraits<BV>::btype>::value;
         *pnewdt = 0.5;
-        while ((iterations != 0) && (subSteps != CastemTraits<BV>::maximumSubStepping)) {
+        while ((iterations != 0) &&
+               (subSteps != CastemTraits<BV>::maximumSubStepping)) {
           typename BV::IntegrationResult result;
           BV behaviour(bData, iData);
           auto tsf = std::pair<bool, CastemReal>{};
@@ -584,8 +617,9 @@ namespace castem {
 #endif
             result = BV::FAILURE;
           }
-          if ((result == BV::SUCCESS) || ((result == BV::UNRELIABLE_RESULTS) &&
-                                          (!CastemTraits<BV>::doSubSteppingOnInvalidResults))) {
+          if ((result == BV::SUCCESS) ||
+              ((result == BV::UNRELIABLE_RESULTS) &&
+               (!CastemTraits<BV>::doSubSteppingOnInvalidResults))) {
             --(iterations);
             *pnewdt *= tsf.second;
             behaviour.checkBounds();
@@ -611,7 +645,8 @@ namespace castem {
             *pnewdt *= 0.5;
           }
         }
-        if ((subSteps == CastemTraits<BV>::maximumSubStepping) && (iterations != 0)) {
+        if ((subSteps == CastemTraits<BV>::maximumSubStepping) &&
+            (iterations != 0)) {
           throwMaximumNumberOfSubSteppingReachedException(Traits::getName());
         }
       }  // end of integrate
@@ -638,12 +673,15 @@ namespace castem {
     template <const bool bs,  // requires StiffnessTensor
               const bool ba>  // requires ThermalExpansionCoefficientTensor
     struct TFEL_VISIBILITY_LOCAL Integrator {
-      typedef typename std::conditional<bs, StiffnessTensorInitializer, DoNothingInitializer>::type
-          SInitializer;
+      typedef
+          typename std::conditional<bs,
+                                    StiffnessTensorInitializer,
+                                    DoNothingInitializer>::type SInitializer;
 
-      typedef typename std::conditional<ba,
-                                        ThermalExpansionCoefficientTensorInitializer,
-                                        DoNothingInitializer>::type AInitializer;
+      typedef typename std::conditional<
+          ba,
+          ThermalExpansionCoefficientTensorInitializer,
+          DoNothingInitializer>::type AInitializer;
 
       TFEL_CASTEM_INLINE Integrator(const CastemReal *const DTIME,
                                     const CastemReal *const STRAN,
@@ -668,7 +706,8 @@ namespace castem {
         using namespace tfel::material;
         typedef MechanicalBehaviourTraits<BV> Traits;
         typedef typename std::conditional<
-            Traits::hasStressFreeExpansion, GradientInitialiserWithStressFreeExpansion,
+            Traits::hasStressFreeExpansion,
+            GradientInitialiserWithStressFreeExpansion,
             GradientInitialiserWithoutStressFreeExpansion>::type DVInitializer;
         SInitializer::exe(this->behaviour, PROPS);
         AInitializer::exe(this->behaviour, PROPS);
@@ -687,10 +726,12 @@ namespace castem {
         typedef MechanicalBehaviourTraits<BV> Traits;
         typedef typename std::conditional<
             Traits::hasConsistentTangentOperator,
-            typename std::conditional<Traits::isConsistentTangentOperatorSymmetric,
-                                      SymmetricConsistentTangentOperatorComputer,
-                                      GeneralConsistentTangentOperatorComputer>::type,
-            ConsistentTangentOperatorIsNotAvalaible>::type ConsistentTangentOperatorHandler;
+            typename std::conditional<
+                Traits::isConsistentTangentOperatorSymmetric,
+                SymmetricConsistentTangentOperatorComputer,
+                GeneralConsistentTangentOperatorComputer>::type,
+            ConsistentTangentOperatorIsNotAvalaible>::type
+            ConsistentTangentOperatorHandler;
         typedef typename std::conditional<
             Traits::hasPredictionOperator, StandardPredictionOperatorComputer,
             PredictionOperatorIsNotAvalaible>::type PredictionOperatorComputer;
@@ -702,11 +743,14 @@ namespace castem {
         const typename BV::SMFlag smflag =
             CastemTangentOperatorFlag<CastemTraits<BV>::btype>::value;
         if ((-3.25 < *DDSDDE) && (*DDSDDE < -2.75)) {
-          r = PredictionOperatorComputer::exe(this->behaviour, smflag, BV::TANGENTOPERATOR);
+          r = PredictionOperatorComputer::exe(this->behaviour, smflag,
+                                              BV::TANGENTOPERATOR);
         } else if ((-2.25 < *DDSDDE) && (*DDSDDE < -1.75)) {
-          r = PredictionOperatorComputer::exe(this->behaviour, smflag, BV::SECANTOPERATOR);
+          r = PredictionOperatorComputer::exe(this->behaviour, smflag,
+                                              BV::SECANTOPERATOR);
         } else if ((-1.25 < *DDSDDE) && (*DDSDDE < -0.75)) {
-          r = PredictionOperatorComputer::exe(this->behaviour, smflag, BV::ELASTIC);
+          r = PredictionOperatorComputer::exe(this->behaviour, smflag,
+                                              BV::ELASTIC);
         } else {
           typename BV::SMType smtype = BV::NOSTIFFNESSREQUESTED;
           if ((-0.25 < *DDSDDE) && (*DDSDDE < 0.25)) {
@@ -734,7 +778,8 @@ namespace castem {
                 r = BV::FAILURE;
               } else {
                 if ((*PNEWDT < 1) &&
-                    (std::abs(*PNEWDT - 1) > 10 * std::numeric_limits<CastemReal>::min())) {
+                    (std::abs(*PNEWDT - 1) >
+                     10 * std::numeric_limits<CastemReal>::min())) {
                   r = BV::UNRELIABLE_RESULTS;
                 }
               }
@@ -790,7 +835,8 @@ namespace castem {
     struct ConsistentTangentOperatorIsNotAvalaible {
       typedef Behaviour<H, CastemReal, false> BV;
       typedef tfel::material::MechanicalBehaviourTraits<BV> Traits;
-      const static unsigned short N = tfel::material::ModellingHypothesisToSpaceDimension<H>::value;
+      const static unsigned short N =
+          tfel::material::ModellingHypothesisToSpaceDimension<H>::value;
       static void exe(BV &, CastemReal *const) {
         throwConsistentTangentOperatorIsNotAvalaible(Traits::getName());
       }  // end of exe
@@ -798,22 +844,27 @@ namespace castem {
 
     struct ConsistentTangentOperatorComputer {
       typedef Behaviour<H, CastemReal, false> BV;
-      const static unsigned short N = tfel::material::ModellingHypothesisToSpaceDimension<H>::value;
+      const static unsigned short N =
+          tfel::material::ModellingHypothesisToSpaceDimension<H>::value;
       static void exe(const BV &bv, CastemReal *const DDSDDE) {
         using TangentOperatorType =
-            typename CastemTangentOperatorType<CastemTraits<BV>::btype, N>::type;
+            typename CastemTangentOperatorType<CastemTraits<BV>::btype,
+                                               N>::type;
         using TangentOperatorViewType =
-            typename CastemTangentOperatorType<CastemTraits<BV>::btype, N>::view_type;
+            typename CastemTangentOperatorType<CastemTraits<BV>::btype,
+                                               N>::view_type;
         TangentOperatorViewType Dt{DDSDDE};
         Dt = static_cast<const TangentOperatorType &>(bv.getTangentOperator());
-        // l'opérateur tangent contient des sqrt(2) en petites et grandes transformations...
+        // l'opérateur tangent contient des sqrt(2) en petites et grandes
+        // transformations...
         CastemTangentOperator::normalize(Dt);
       }  // end of exe
     };
 
     struct SymmetricConsistentTangentOperatorComputer {
       typedef Behaviour<H, CastemReal, false> BV;
-      const static unsigned short N = tfel::material::ModellingHypothesisToSpaceDimension<H>::value;
+      const static unsigned short N =
+          tfel::material::ModellingHypothesisToSpaceDimension<H>::value;
       static void exe(const BV &bv, CastemReal *const DDSDDE) {
         ConsistentTangentOperatorComputer::exe(bv, DDSDDE);
       }  // end of exe
@@ -821,11 +872,13 @@ namespace castem {
 
     struct GeneralConsistentTangentOperatorComputer {
       typedef Behaviour<H, CastemReal, false> BV;
-      const static unsigned short N = tfel::material::ModellingHypothesisToSpaceDimension<H>::value;
+      const static unsigned short N =
+          tfel::material::ModellingHypothesisToSpaceDimension<H>::value;
       static void exe(const BV &bv, CastemReal *const DDSDDE) {
         using namespace tfel::math;
         using TangentOperatorViewType =
-            typename CastemTangentOperatorType<CastemTraits<BV>::btype, N>::view_type;
+            typename CastemTangentOperatorType<CastemTraits<BV>::btype,
+                                               N>::view_type;
         ConsistentTangentOperatorComputer::exe(bv, DDSDDE);
         TangentOperatorViewType Dt{DDSDDE};
         // les conventions fortran....
@@ -843,7 +896,8 @@ namespace castem {
       const auto is_defined_ = Traits::is_defined;
       // Test if the nb of properties matches Behaviour requirements
       if ((NPROPS != NPROPS_) && is_defined_) {
-        throwUnMatchedNumberOfMaterialProperties(Traits::getName(), NPROPS_, NPROPS);
+        throwUnMatchedNumberOfMaterialProperties(Traits::getName(), NPROPS_,
+                                                 NPROPS);
       }
     }  // end of checkNPROPS
 
@@ -855,7 +909,8 @@ namespace castem {
       const auto is_defined_ = Traits::is_defined;
       // Test if the nb of state variables matches Behaviour requirements
       if ((NSTATV_ != NSTATV) && is_defined_) {
-        throwUnMatchedNumberOfStateVariables(Traits::getName(), NSTATV_, NSTATV);
+        throwUnMatchedNumberOfStateVariables(Traits::getName(), NSTATV_,
+                                             NSTATV);
       }
     }  // end of checkNSTATV
 

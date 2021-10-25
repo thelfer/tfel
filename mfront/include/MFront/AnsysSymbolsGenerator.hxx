@@ -27,25 +27,24 @@ namespace mfront {
     //! constructor
     AnsysSymbolsGenerator();
     void writeAdditionalSymbols(std::ostream &,
-				      const StandardBehaviourInterface &,
-                                      const BehaviourDescription &,
-                                      const FileDescription &,
-                                      const std::string &,
-                                      const Hypothesis) const override;
+                                const StandardBehaviourInterface &,
+                                const BehaviourDescription &,
+                                const FileDescription &,
+                                const std::string &,
+                                const Hypothesis) const override;
     void writeBehaviourTypeSymbols(std::ostream &,
-                                         const StandardBehaviourInterface &,
-                                         const BehaviourDescription &,
-                                         const std::string &) const override;
-    void writeBehaviourKinematicSymbols(
-        std::ostream &,
-        const StandardBehaviourInterface &,
-        const BehaviourDescription &,
-        const std::string &) const override;
+                                   const StandardBehaviourInterface &,
+                                   const BehaviourDescription &,
+                                   const std::string &) const override;
+    void writeBehaviourKinematicSymbols(std::ostream &,
+                                        const StandardBehaviourInterface &,
+                                        const BehaviourDescription &,
+                                        const std::string &) const override;
     void writeSpecificSymbols(std::ostream &,
-                                    const StandardBehaviourInterface &,
-                                    const BehaviourDescription &,
-                                    const FileDescription &,
-                                    const std::string &) const override;
+                              const StandardBehaviourInterface &,
+                              const BehaviourDescription &,
+                              const FileDescription &,
+                              const std::string &) const override;
     bool handleStrainMeasure() const override;
     //! destructor
     ~AnsysSymbolsGenerator() override;

@@ -1,6 +1,6 @@
 /*!
  * \file   mfront/src/KinematicHardeningRule.cxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   15/03/2018
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
@@ -13,7 +13,7 @@
 
 #include "MFront/BehaviourBrick/KinematicHardeningRule.hxx"
 
-namespace mfront{
+namespace mfront {
 
   namespace bbrick {
 
@@ -21,7 +21,7 @@ namespace mfront{
                                                       const std::string& fid,
                                                       const std::string& kid) {
       if (kid.empty()) {
-        return "khr_"+n + fid;
+        return "khr_" + n + fid;
       }
       return "khr_" + n + fid + '_' + kid;
     }  // end of KinematicHardeningRule::getVariableId

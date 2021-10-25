@@ -30,7 +30,7 @@ namespace tfel {
     struct map_to_python_dict {
       static PyObject* convert(const std::map<K, V>& v) {
         boost::python::dict d;
-        for (const auto& kv: v) {
+        for (const auto& kv : v) {
           d[kv.first] = kv.second;
         }
         return boost::python::incref(d.ptr());

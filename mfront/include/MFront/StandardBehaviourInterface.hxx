@@ -30,7 +30,7 @@ namespace mfront {
       : public AbstractBehaviourInterface,
         public SupportedTypes {
     //! attribute used to store if an MTest file shall be generated
-    static const char* const generateMTestFileAttribute;
+    static const char *const generateMTestFileAttribute;
     //! a simple alias
     using ModellingHypothesis = tfel::material::ModellingHypothesis;
     //! a simple alias
@@ -38,7 +38,7 @@ namespace mfront {
     // constructor
     StandardBehaviourInterface();
     bool isBehaviourConstructorRequired(
-        const Hypothesis, const BehaviourDescription&) const override;
+        const Hypothesis, const BehaviourDescription &) const override;
     /*!
      * \return the basis for the function(s)' names implementing the
      * behaviour
@@ -65,7 +65,7 @@ namespace mfront {
      * by `getInterfaceName`, and the name of the behaviour.
      * \param[in] bd: behaviour description
      */
-    virtual std::string getHeaderGuard(const BehaviourDescription&) const;
+    virtual std::string getHeaderGuard(const BehaviourDescription &) const;
     /*!
      * \return a pair which first member gives the position of the
      * material properties in the values given through the interface
@@ -84,32 +84,37 @@ namespace mfront {
      * visibility of the generated functions.
      * \param[out] out: output file
      */
-    virtual void writeVisibilityDefines(std::ostream&) const;
+    virtual void writeVisibilityDefines(std::ostream &) const;
 
     virtual void writeSetOutOfBoundsPolicyFunctionDeclaration(
-        std::ostream&, const std::string&) const;
+        std::ostream &, const std::string &) const;
 
     virtual void writeGetOutOfBoundsPolicyFunctionImplementation(
-        std::ostream&, const std::string&) const;
+        std::ostream &, const std::string &) const;
 
     virtual void writeSetOutOfBoundsPolicyFunctionImplementation(
-        std::ostream&, const std::string&) const;
+        std::ostream &, const std::string &) const;
 
     virtual void writeSetParametersFunctionsDeclarations(
-        std::ostream&, const BehaviourDescription&, const std::string&) const;
+        std::ostream &,
+        const BehaviourDescription &,
+        const std::string &) const;
     /*!
      * \brief generate the implementations of the functions allowing
      * to modify the parameters of a behaviour.
      * \param[out] out: output stream
      */
-    virtual void writeSetParametersFunctionsImplementations(std::ostream&, const BehaviourDescription&,const std::string&) const;
+    virtual void writeSetParametersFunctionsImplementations(
+        std::ostream &,
+        const BehaviourDescription &,
+        const std::string &) const;
     /*!
      * \brief set an attribute stating that a `MTest` file shall be generated on
      * integration failure.
      * \param[in,out] bd: behavour description
      * \param[in] b: attribute value
      */
-    virtual void setGenerateMTestFileOnFailureAttribute(BehaviourDescription&,
+    virtual void setGenerateMTestFileOnFailureAttribute(BehaviourDescription &,
                                                         const bool) const;
     /*!
      * \return if a behaviour shall generate a `MTest` file
@@ -117,7 +122,7 @@ namespace mfront {
      * \param[in] bd: behavour description
      */
     virtual bool shallGenerateMTestFileOnFailure(
-        const BehaviourDescription&) const;
+        const BehaviourDescription &) const;
     /*!
      * \return a pair. If the first entry is true, the "axial strain"
      * was found and the second contains its offset
@@ -125,7 +130,7 @@ namespace mfront {
      */
     virtual std::pair<bool, SupportedTypes::TypeSize>
     checkIfAxialStrainIsDefinedAndGetItsOffset(
-        const BehaviourDescription&) const;
+        const BehaviourDescription &) const;
     /*!
      * \brief extract a boolean value from the current token
      * \param[in] key: currently treated keyword

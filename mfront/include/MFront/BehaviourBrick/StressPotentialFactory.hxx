@@ -53,11 +53,9 @@ namespace mfront {
       //! copy constructor (deleted)
       StressPotentialFactory(const StressPotentialFactory&) = delete;
       //! move assignement (deleted)
-      StressPotentialFactory& operator=(StressPotentialFactory&&) =
-          delete;
+      StressPotentialFactory& operator=(StressPotentialFactory&&) = delete;
       //! standard assignement(deleted)
-      StressPotentialFactory& operator=(const StressPotentialFactory&) =
-          delete;
+      StressPotentialFactory& operator=(const StressPotentialFactory&) = delete;
       //! \brief destructor
       ~StressPotentialFactory();
       //! \brief generators

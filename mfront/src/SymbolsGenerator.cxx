@@ -201,8 +201,8 @@ namespace mfront {
     const auto fn = i.getFunctionNameBasis(name);
     out << "MFRONT_SHAREDOBJ unsigned short " << fn
         << "_nMainVariables = " << nmvs << ";\n";
-    out << "MFRONT_SHAREDOBJ unsigned short " << fn
-        << "_nGradients = " << nmvs << ";\n\n";
+    out << "MFRONT_SHAREDOBJ unsigned short " << fn << "_nGradients = " << nmvs
+        << ";\n\n";
     this->writeArrayOfIntsSymbol(out, fn + "_GradientsTypes", dvtypes);
     this->writeArrayOfStringsSymbol(out, fn + "_Gradients", dvnames);
     out << "MFRONT_SHAREDOBJ unsigned short " << fn
@@ -483,8 +483,8 @@ namespace mfront {
         const auto f = SupportedTypes::getTypeFlag(p.type);
         throw_if(f != SupportedTypes::Scalar,
                  "unsupported paramaeter type '" + p.type + "'");
-	const auto prec = out.precision();
-	out.precision(14);
+        const auto prec = out.precision();
+        out.precision(14);
         if (p.arraySize == 1u) {
           out << "MFRONT_SHAREDOBJ double " << this->getSymbolName(i, name, h)
               << "_" << p.getExternalName() << "_ParameterDefaultValue"
@@ -499,7 +499,7 @@ namespace mfront {
                 << ";\n\n";
           }
         }
-	out.precision(prec);
+        out.precision(prec);
       }
     }
   }  // end of SymbolsGenerator::writeParameterDefaultValueSymbols
