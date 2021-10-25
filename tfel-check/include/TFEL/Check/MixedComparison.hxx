@@ -25,15 +25,14 @@
 
 namespace tfel::check {
 
-    struct TFELCHECK_VISIBILITY_EXPORT MixedComparison final
-        : public Comparison {
-      //! constructor
-      MixedComparison();
-      void compare() override;
-      //! destructor
-      ~MixedComparison() override;
-    };
+  struct TFELCHECK_VISIBILITY_EXPORT MixedComparison final : public Comparison {
+    //! constructor
+    MixedComparison();
+    void compare() override;
+    //! destructor
+    ~MixedComparison() override;
+  };
 
-  }  // end of namespace tfel::check
+}  // end of namespace tfel::check
 
 #endif /* LIB_TFELCHECK_MIXEDCOMPARISON_HXX */

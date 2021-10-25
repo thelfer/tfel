@@ -529,7 +529,7 @@ namespace mfront {
     const auto& f =
         NonLinearSystemSolverFactory::getNonLinearSystemSolverFactory();
     this->setNonLinearSolver(f.getSolver(s), s);
-  } // end of setNonLinearSolver
+  }  // end of setNonLinearSolver
 
   void ImplicitDSLBase::treatAlgorithm() {
     if (this->solver != nullptr) {
@@ -2514,9 +2514,9 @@ namespace mfront {
       writeMaterialLaws(os, this->mb.getMaterialLaws());
       writeVariablesOffsets(os, d.getIntegrationVariables());
       declareViewsFromArrayOfVariables(
-        os, d.getIntegrationVariables(),
-        [](const std::string& n) { return "delta_d" + n; }, "this->delta_zeros",
-        this->mb.useQt());
+          os, d.getIntegrationVariables(),
+          [](const std::string& n) { return "delta_d" + n; },
+          "this->delta_zeros", this->mb.useQt());
     }
     NonLinearSystemSolverBase::writeLimitsOnIncrementValues(
         os, this->mb, h, "this->delta_zeros");
@@ -2541,9 +2541,9 @@ namespace mfront {
       writeMaterialLaws(os, this->mb.getMaterialLaws());
       writeVariablesOffsets(os, d.getIntegrationVariables());
       declareViewsFromArrayOfVariables(
-        os, d.getIntegrationVariables(),
-        [](const std::string& n) { return "delta_d" + n; }, "this->delta_zeros",
-        this->mb.useQt());
+          os, d.getIntegrationVariables(),
+          [](const std::string& n) { return "delta_d" + n; },
+          "this->delta_zeros", this->mb.useQt());
       os << this->mb.getCodeBlock(h, BehaviourData::RejectCurrentCorrection)
                 .code
          << "\n";
@@ -2642,8 +2642,8 @@ namespace mfront {
                                              "TinyMatrixSolve", "lu");
     }
     os << "mfront_success = "
-       << this->solver->getExternalAlgorithmClassName(this->mb, h) <<
-        "::solveLinearSystem(mfront_matrix, mfront_vector);\n";
+       << this->solver->getExternalAlgorithmClassName(this->mb, h)
+       << "::solveLinearSystem(mfront_matrix, mfront_vector);\n";
     if (mb.getAttribute(BehaviourData::profiling, false)) {
       writeStandardPerformanceProfilingEnd(os);
     }

@@ -21,7 +21,8 @@ namespace tfel::math {
 
   template <typename UnitType, typename ValueType, typename OwnershipPolicy>
   std::ostream& operator<<(
-      std::ostream& os, const Quantity<UnitType, ValueType, OwnershipPolicy>& q) {
+      std::ostream& os,
+      const Quantity<UnitType, ValueType, OwnershipPolicy>& q) {
     os << q.getValue();
     return os;
   }

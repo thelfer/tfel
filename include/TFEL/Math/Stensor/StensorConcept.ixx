@@ -57,18 +57,18 @@ namespace tfel::math {
     auto square = [](const auto x) { return x * x; };
     const auto tr = one_third * trace(s);
     if constexpr (N == 1u) {
-      return power<1,2>(cste * (square(s(0) - tr) +  //
-				square(s(1) - tr) +  //
-				square(s(2) - tr)));
+      return power<1, 2>(cste * (square(s(0) - tr) +  //
+                                 square(s(1) - tr) +  //
+                                 square(s(2) - tr)));
     } else if constexpr (N == 2u) {
-      return power<1,2>(cste * (square(s(0) - tr) +  //
-				square(s(1) - tr) +  //
-				square(s(2) - tr) + square(s(3))));
+      return power<1, 2>(cste * (square(s(0) - tr) +  //
+                                 square(s(1) - tr) +  //
+                                 square(s(2) - tr) + square(s(3))));
     } else if constexpr (N == 3u) {
-      return power<1,2>(cste * (square(s(0) - tr) +  //
-				square(s(1) - tr) +  //
-				square(s(2) - tr) +  //
-				square(s(3)) + square(s(4)) + square(s(5))));
+      return power<1, 2>(cste * (square(s(0) - tr) +  //
+                                 square(s(1) - tr) +  //
+                                 square(s(2) - tr) +  //
+                                 square(s(3)) + square(s(4)) + square(s(5))));
     }
   }  // end of sigmaeq
 

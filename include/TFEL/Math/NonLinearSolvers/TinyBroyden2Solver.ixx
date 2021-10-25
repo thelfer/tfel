@@ -26,7 +26,8 @@ namespace tfel::math {
     // updating jacobian invert
     const auto delta_fzeros = eval(this->fzeros - this->fzeros_1);
     const tvector<N, NumericType> c2 = this->inv_jacobian * delta_fzeros;
-    const tvector<N, NumericType> c3 = (this->delta_zeros) * (this->inv_jacobian);
+    const tvector<N, NumericType> c3 =
+        (this->delta_zeros) * (this->inv_jacobian);
     const auto nc = c3 | delta_fzeros;
     if (tfel::math::ieee754::fpclassify(nc) != FP_ZERO) {
       this->inv_jacobian += ((this->delta_zeros - c2) ^ (c3)) / nc;
@@ -40,7 +41,7 @@ namespace tfel::math {
     this->delta_zeros = -(this->inv_jacobian) * (this->fzeros);
     this->fzeros_1 = this->fzeros;
     return true;
-  } // end of computeNewCorrection
+  }  // end of computeNewCorrection
 
 }  // end of namespace tfel::math
 

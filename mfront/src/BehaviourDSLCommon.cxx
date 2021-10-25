@@ -2315,9 +2315,8 @@ namespace mfront {
     using namespace tfel::material;
     using namespace tfel::utilities;
     if (this->mb.getMainVariables().empty()) {
-      this->throwRuntimeError(
-          "BehaviourDSLCommon::treatTangentOperator",
-          "no thermodynamic force defined");
+      this->throwRuntimeError("BehaviourDSLCommon::treatTangentOperator",
+                              "no thermodynamic force defined");
     }
     CodeBlockOptions o;
     this->readCodeBlockOptions(o, true);
@@ -6461,9 +6460,7 @@ namespace mfront {
 
   void BehaviourDSLCommon::writeBehaviourTraitsSpecialisation(
       std::ostream& os, const Hypothesis h, const bool b) const {
-    auto boolean = [](const bool bv) {
-      return bv ? "true" : "false";
-    };
+    auto boolean = [](const bool bv) { return bv ? "true" : "false"; };
     auto get_boolean_attribute = [boolean, &b, &h,
                                   this](const char* const attribute) {
       if (b) {
@@ -6605,7 +6602,8 @@ namespace mfront {
     os << "static constexpr bool hasPredictionOperator = "
        << get_boolean_attribute(BehaviourData::hasPredictionOperator) << ";\n";
     os << "static constexpr bool hasAPrioriTimeStepScalingFactor = "
-       << get_boolean_attribute(BehaviourData::hasAPrioriTimeStepScalingFactor) << ";\n";
+       << get_boolean_attribute(BehaviourData::hasAPrioriTimeStepScalingFactor)
+       << ";\n";
     // internal enery
     os << "static constexpr bool hasComputeInternalEnergy = "
        << has_code(BehaviourData::ComputeInternalEnergy) << ";\n";
@@ -8391,9 +8389,8 @@ namespace mfront {
     using namespace tfel::material;
     using namespace tfel::utilities;
     if (this->mb.getMainVariables().empty()) {
-      this->throwRuntimeError(
-          "BehaviourDSLCommon::treatTangentOperator",
-          "no thermodynamic force defined");
+      this->throwRuntimeError("BehaviourDSLCommon::treatTangentOperator",
+                              "no thermodynamic force defined");
     }
     CodeBlockOptions o;
     this->readCodeBlockOptions(o, true);

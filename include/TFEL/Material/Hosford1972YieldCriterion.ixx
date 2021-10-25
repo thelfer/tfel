@@ -171,7 +171,8 @@ namespace tfel::material {
                   d2Psi_dvp2[3] * (n1 ^ n0) + d2Psi_dvp2[5] * (n1 ^ n2) +
                   d2Psi_dvp2[2] * (n2 ^ n2) + d2Psi_dvp2[4] * (n2 ^ n0) +
                   d2Psi_dvp2[5] * (n2 ^ n1);
-      if ((tfel::math::abs(vp(0) - vp(1)) < e) && (tfel::math::abs(vp(0) - vp(2)) < e)) {
+      if ((tfel::math::abs(vp(0) - vp(1)) < e) &&
+          (tfel::math::abs(vp(0) - vp(2)) < e)) {
         d2Psi_ds2 +=
             (((d2Psi_dvp2[0] + d2Psi_dvp2[1] - 2 * d2Psi_dvp2[3]) / 2) *
                  (n01 ^ n01) +

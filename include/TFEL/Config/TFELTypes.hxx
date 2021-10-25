@@ -78,7 +78,7 @@ namespace tfel::config {
     using energydensity = T;
     using speed = T;
     using thermalconductivity = T;
-  }; // end of ScalarTypes<T, false>
+  };  // end of ScalarTypes<T, false>
 
   /*!
    * \class Types

@@ -49,8 +49,9 @@ namespace tfel::math {
           return tfel::math::abs(ve);
         } else {
           return tfel::fsalgo::accumulate<N>::exe(
-              eval(ve).begin(), Scalar(0),
-              [](const auto& a, const auto& b) { return tfel::math::abs(a) + b; });
+              eval(ve).begin(), Scalar(0), [](const auto& a, const auto& b) {
+                return tfel::math::abs(a) + b;
+              });
         }
       }();
       if (e < 0.01 * (this->epsilon)) {

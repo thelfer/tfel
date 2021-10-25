@@ -169,12 +169,10 @@ namespace mfront {
      // Fortran03MaterialPropertyInterface::writeSrcPreprocessorDirectives
 
   void Fortran03MaterialPropertyInterface::writeBeginHeaderNamespace(
-      std::ostream&) const {
-  }  // end of writeBeginHeaderNamespace
+      std::ostream&) const {}  // end of writeBeginHeaderNamespace
 
   void Fortran03MaterialPropertyInterface::writeEndHeaderNamespace(
-      std::ostream&) const {
-  }  // end of writeEndHeaderNamespace()
+      std::ostream&) const {}  // end of writeEndHeaderNamespace()
 
   void Fortran03MaterialPropertyInterface::writeBeginSrcNamespace(
       std::ostream& os) const {

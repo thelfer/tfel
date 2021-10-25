@@ -19,12 +19,12 @@
 
 namespace tfel::tests {
 
-    template <typename TestType>
-    template <typename... Arguments>
-    TestProxy<TestType>::TestProxy(const std::string& n, Arguments&&... a) {
-      auto& tm = TestManager::getTestManager();
-      tm.addTest(n, std::make_shared<TestType>(std::forward<Arguments>(a)...));
-    }  // end of TestProxy<T>::TestProxy
+  template <typename TestType>
+  template <typename... Arguments>
+  TestProxy<TestType>::TestProxy(const std::string& n, Arguments&&... a) {
+    auto& tm = TestManager::getTestManager();
+    tm.addTest(n, std::make_shared<TestType>(std::forward<Arguments>(a)...));
+  }  // end of TestProxy<T>::TestProxy
 
 }  // end of namespace tfel::tests
 

@@ -221,7 +221,7 @@ namespace tfel::math {
            BinaryOperationResult<TensorType1, TensorType2, OpDotProduct>>())),
       BinaryOperationResult<TensorType1, TensorType2, OpDotProduct>>
   operator|(const TensorType1&, const TensorType2&);
-  
+
 }  // end of namespace tfel::math
 
 #include "TFEL/Math/Tensor/TensorConceptOperations.ixx"

@@ -29,8 +29,7 @@ MaterialPropertyDescription_getParameters(
   return md.parameters;
 }
 
-static const mfront::VariableDescription&
-MaterialPropertyDescription_getOutput(
+static const mfront::VariableDescription& MaterialPropertyDescription_getOutput(
     const mfront::MaterialPropertyDescription& md) {
   return md.output;
 }

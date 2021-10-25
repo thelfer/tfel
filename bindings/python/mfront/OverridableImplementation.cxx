@@ -71,19 +71,18 @@ void declareOverridableImplementation() {
            },
            "override the name of the behaviour  (fails if the source file does "
            "not describe a behaviour)")
-      .def(
-          "overrideModelName",
-          +[](mfront::OverridableImplementation& i, const std::string& a) {
-            if (i.getTargetType() != mfront::AbstractDSL::MODELDSL) {
-              tfel::raise(
-                  "overrideModelName: invalid call (the DSL does not describe "
-                  "a model");
-            }
-            i.setOverridenValue<mfront::OverridableImplementation::
-                                    MATERIAL_KNOWLEDGE_IDENTIFIER>(a);
-          },
-          "override the name of the model (fails if the source file does not "
-          "describe a model)")
+      .def("overrideModelName",
+           +[](mfront::OverridableImplementation& i, const std::string& a) {
+             if (i.getTargetType() != mfront::AbstractDSL::MODELDSL) {
+               tfel::raise(
+                   "overrideModelName: invalid call (the DSL does not describe "
+                   "a model");
+             }
+             i.setOverridenValue<mfront::OverridableImplementation::
+                                     MATERIAL_KNOWLEDGE_IDENTIFIER>(a);
+           },
+           "override the name of the model (fails if the source file does not "
+           "describe a model)")
       .def("overrideByAParameter",
            &mfront::OverridableImplementation::overrideByAParameter,
            "override a variable by the given parameter");

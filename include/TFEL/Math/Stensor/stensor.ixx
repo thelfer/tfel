@@ -38,8 +38,8 @@ namespace tfel::math {
                    base_type<T>>::value,
       void>
   stensor<N, T>::importVoigt(const InputIterator p) {
-    tfel::fsalgo::transform<3u>::exe(p, this->begin(),
-                                     [](const auto& value) { return T(value); });
+    tfel::fsalgo::transform<3u>::exe(
+        p, this->begin(), [](const auto& value) { return T(value); });
     if constexpr (N == 2) {
       constexpr auto icste = Cste<T>::isqrt2;
       this->v[3] = T(p[3]) * icste;
@@ -86,9 +86,9 @@ namespace tfel::math {
 
   template <unsigned short N, typename T>
   void stensor<N, T>::exportTab(base_type<T>* const p) const {
-    tfel::fsalgo::transform<3u>::exe(
-        this->cbegin(), p,
-        [](const auto& value) { return base_type_cast(value); });
+    tfel::fsalgo::transform<3u>::exe(this->cbegin(), p, [](const auto& value) {
+      return base_type_cast(value);
+    });
     if constexpr (N == 2) {
       constexpr auto icste = Cste<T>::isqrt2;
       p[3] = base_type_cast(this->v[3]) * icste;
@@ -740,7 +740,8 @@ namespace tfel::math {
                         numeric_type<StensorType>>::cond)),
                    stensor<1u, numeric_type<StensorType>>>
   absolute_value(const StensorType& s, const bool) {
-    return {tfel::math::abs(s(0)), tfel::math::abs(s(1)), tfel::math::abs(s(2))};
+    return {tfel::math::abs(s(0)), tfel::math::abs(s(1)),
+            tfel::math::abs(s(2))};
   }
 
   template <typename StensorType>
@@ -759,8 +760,9 @@ namespace tfel::math {
     tmatrix<3u, 3u, base> m;
     stensor<getSpaceDimension<StensorType>(), NumType> s(s_);
     s.computeEigenVectors(vp, m, b);
-    return Stensor::buildFromEigenValuesAndVectors(
-        tfel::math::abs(vp(0)), tfel::math::abs(vp(1)), tfel::math::abs(vp(2)), m);
+    return Stensor::buildFromEigenValuesAndVectors(tfel::math::abs(vp(0)),
+                                                   tfel::math::abs(vp(1)),
+                                                   tfel::math::abs(vp(2)), m);
   }
 
   template <typename StensorType>

@@ -24,59 +24,59 @@
 
 namespace tfel::tests {
 
+  /*!
+   * \brief a class handling test suites
+   */
+  struct TFELTESTS_VISIBILITY_EXPORT TestSuite {
+    //! a simple alias
+    using TestPtr = std::shared_ptr<Test>;
+    //! \brief Default constructor
+    TestSuite();
     /*!
-     * \brief a class handling test suites
+     * \brief Constructor
+     * \param[in] n: name of the function
      */
-    struct TFELTESTS_VISIBILITY_EXPORT TestSuite {
-      //! a simple alias
-      using TestPtr = std::shared_ptr<Test>;
-      //! \brief Default constructor
-      TestSuite();
-      /*!
-       * \brief Constructor
-       * \param[in] n: name of the function
-       */
-      TestSuite(const std::string&);
-      /*!
-       * \brief constructor
-       * \param[in] n: name of the function
-       */
-      TestSuite(const char* const);
-      //! \return the name of the test
-      std::string name() const;
-      /*!
-       * \brief add a new test
-       * \param t: test to be added
-       */
-      void add(const TestPtr&);
-      /*!
-       * \brief execute the test suite
-       * \param  o: test output
-       * \return tests global results
-       */
-      TestResult execute(TestOutput&);
-      /*!
-       * \brief execute the test suite
-       * \return tests global results
-       */
-      TestResult execute();
-      //! \brief destructor
-      ~TestSuite();
+    TestSuite(const std::string&);
+    /*!
+     * \brief constructor
+     * \param[in] n: name of the function
+     */
+    TestSuite(const char* const);
+    //! \return the name of the test
+    std::string name() const;
+    /*!
+     * \brief add a new test
+     * \param t: test to be added
+     */
+    void add(const TestPtr&);
+    /*!
+     * \brief execute the test suite
+     * \param  o: test output
+     * \return tests global results
+     */
+    TestResult execute(TestOutput&);
+    /*!
+     * \brief execute the test suite
+     * \return tests global results
+     */
+    TestResult execute();
+    //! \brief destructor
+    ~TestSuite();
 
-     private:
-      //! \brief move constructor (disabled)
-      TestSuite(TestSuite&&) = delete;
-      //! \brief copy constructor (disabled)
-      TestSuite(const TestSuite&) = delete;
-      //! \brief move assignement operator (disabled)
-      TestSuite& operator=(TestSuite&&) = delete;
-      //! \brief assignement operator (disabled)
-      TestSuite& operator=(const TestSuite&) = delete;
-      //! list of all tests
-      std::vector<TestPtr> tests;
-      //! name of test suite (may be empty)
-      const std::string sname;
-    };  // end of struct TestSuite
+   private:
+    //! \brief move constructor (disabled)
+    TestSuite(TestSuite&&) = delete;
+    //! \brief copy constructor (disabled)
+    TestSuite(const TestSuite&) = delete;
+    //! \brief move assignement operator (disabled)
+    TestSuite& operator=(TestSuite&&) = delete;
+    //! \brief assignement operator (disabled)
+    TestSuite& operator=(const TestSuite&) = delete;
+    //! list of all tests
+    std::vector<TestPtr> tests;
+    //! name of test suite (may be empty)
+    const std::string sname;
+  };  // end of struct TestSuite
 
 }  // end of namespace tfel::tests
 

@@ -79,6 +79,7 @@ namespace tfel::math {
     bool computeNewCorrection();
     //!
     bool computeLevenbergMarquardtCorrection();
+
    protected:
     //! \brief jacobian matrix
     tmatrix<N, N, NumericType> jacobian;

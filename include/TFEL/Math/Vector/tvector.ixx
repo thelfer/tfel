@@ -26,7 +26,7 @@ namespace tfel::math {
   template <unsigned short N, typename T>
   tvector<N, T>::tvector(const fsarray<N, T>& src) {
     tfel::fsalgo::copy<N>::exe(src.begin(), this->v);
-  } // end of tvector
+  }  // end of tvector
 
   template <unsigned short N, typename T>
   template <typename InputIterator>

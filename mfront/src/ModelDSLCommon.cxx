@@ -122,7 +122,7 @@ namespace mfront {
   }  // end of addStaticVariableDescription
 
   std::map<std::string, int> ModelDSLCommon::getIntegerConstants() const {
-    auto r= std::map<std::string, int>{};
+    auto r = std::map<std::string, int>{};
     for (const auto& v : this->md.staticVars) {
       if (v.type == "int") {
         r.insert({v.name, v.value});

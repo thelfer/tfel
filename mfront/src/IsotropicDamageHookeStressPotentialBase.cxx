@@ -443,7 +443,8 @@ namespace mfront::bbrick {
             "  computeAlteredElasticStiffness<hypothesis, stress>::exe(Dt," +
             lambda + "," + mu + ");\n";
         to.code += "} else if(smt==SECANTOPERATOR){\n";
-        to.code += "  computeAlteredElasticStiffness<hypothesis, stress>::exe(Dt,";
+        to.code +=
+            "  computeAlteredElasticStiffness<hypothesis, stress>::exe(Dt,";
         to.code += "(1-min(this->d,this->damage_thresold)) * (" + lambda + "),";
         to.code += "(1-min(this->d,this->damage_thresold)) * (" + mu + "));\n";
         if (idsl.getSolver().usesJacobian()) {
@@ -453,7 +454,8 @@ namespace mfront::bbrick {
           to.code += "Stensor  Jd;\n";
           to.code += "getPartialJacobianInvert(Je,Jd);\n";
           to.code +=
-              "  computeElasticStiffness<N, stress>::exe(IsotropicDamageHooke," +
+              "  computeElasticStiffness<N, "
+              "stress>::exe(IsotropicDamageHooke," +
               lambda + "," + mu + ");\n";
           to.code +=
               "  Dt = (1-min(this->d,this->damage_thresold)) * "

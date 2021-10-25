@@ -61,8 +61,8 @@ namespace mfront {
   }  // end of getTinyVectorTypeAliases
 
   std::vector<std::string> getStensorTypeAliases() {
-    return {"Stensor", "StressStensor", "StressRateStensor", "StrainStensor",
-            "StrainRateStensor", "FrequencyStensor"};
+    return {"Stensor",       "StressStensor",     "StressRateStensor",
+            "StrainStensor", "StrainRateStensor", "FrequencyStensor"};
   }
 
   std::vector<std::string> getTensorTypeAliases() {

@@ -44,7 +44,7 @@ struct QtRefTest final : public tfel::tests::TestCase {
     this->test8();
     this->test9();
     return this->result;
-  } // end of execute
+  }  // end of execute
   void test1() {
     using namespace tfel::math;
     constexpr qt<Mass> m3 = []() constexpr {
@@ -105,7 +105,7 @@ struct QtRefTest final : public tfel::tests::TestCase {
     TFEL_TESTS_STATIC_ASSERT(my_abs(m3.getValue() - 100.) < 1.e-14);
   }  // end of test5
   void test6() {
-#if (not defined __INTEL_COMPILER) && (not defined __clang__) 
+#if (not defined __INTEL_COMPILER) && (not defined __clang__)
     using namespace tfel::math;
     using strain = qt<NoUnit>;
     constexpr auto eeps = strain{1e-14};
@@ -124,14 +124,15 @@ struct QtRefTest final : public tfel::tests::TestCase {
   void test7() {
     using namespace tfel::math;
     constexpr auto eps = 1e-14;
-    constexpr auto value = [] ()constexpr {
+    constexpr auto value = []() constexpr {
       constexpr qt<Mass> m(100.);
       constexpr qt<Acceleration> a(2);
       auto vf = double{};
       auto f = qt_ref<Force>(vf);
       f = m * a;
       return vf;
-    }();
+    }
+    ();
     TFEL_TESTS_STATIC_ASSERT(my_abs(value - 200.) < eps);
   }
   void test8() {

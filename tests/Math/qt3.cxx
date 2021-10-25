@@ -38,7 +38,7 @@ struct QtRefTest final : public tfel::tests::TestCase {
     this->test2();
     this->test3();
     return this->result;
-  } // end of execute
+  }  // end of execute
   void test1() {
     using namespace tfel::math;
     TFEL_TESTS_STATIC_ASSERT(
@@ -52,38 +52,38 @@ struct QtRefTest final : public tfel::tests::TestCase {
     TFEL_TESTS_STATIC_ASSERT(
         (std::is_same_v<double, ViewStorageType<stensor<3u, qt<Mass>>>>));
   }
-   void test2() {
-#if (not defined __INTEL_COMPILER) && (not defined __clang__) 
-     using namespace tfel::math;
-     constexpr auto eps = double{1e-14};
-     constexpr auto s = []() constexpr -> stensor<3, qt<Stress, double>> {
-       double stress_values[6] = {0, 1, 2, 3, 4, 5};
-       return map<stensor<3, qt<Stress>>>(stress_values);
-     }
-     ();
-     TFEL_TESTS_STATIC_ASSERT(my_abs(s[0].getValue()) < eps);
-     TFEL_TESTS_STATIC_ASSERT(my_abs(s[1].getValue() - 1) < eps);
-     TFEL_TESTS_STATIC_ASSERT(my_abs(s[2].getValue() - 2) < eps);
-     TFEL_TESTS_STATIC_ASSERT(my_abs(s[3].getValue() - 3) < eps);
-     TFEL_TESTS_STATIC_ASSERT(my_abs(s[4].getValue() - 4) < eps);
-     TFEL_TESTS_STATIC_ASSERT(my_abs(s[5].getValue() - 5) < eps);
+  void test2() {
+#if (not defined __INTEL_COMPILER) && (not defined __clang__)
+    using namespace tfel::math;
+    constexpr auto eps = double{1e-14};
+    constexpr auto s = []() constexpr->stensor<3, qt<Stress, double>> {
+      double stress_values[6] = {0, 1, 2, 3, 4, 5};
+      return map<stensor<3, qt<Stress>>>(stress_values);
+    }
+    ();
+    TFEL_TESTS_STATIC_ASSERT(my_abs(s[0].getValue()) < eps);
+    TFEL_TESTS_STATIC_ASSERT(my_abs(s[1].getValue() - 1) < eps);
+    TFEL_TESTS_STATIC_ASSERT(my_abs(s[2].getValue() - 2) < eps);
+    TFEL_TESTS_STATIC_ASSERT(my_abs(s[3].getValue() - 3) < eps);
+    TFEL_TESTS_STATIC_ASSERT(my_abs(s[4].getValue() - 4) < eps);
+    TFEL_TESTS_STATIC_ASSERT(my_abs(s[5].getValue() - 5) < eps);
 #endif /* (not defined __INTEL_COMPILER) && (not defined __clang__) */
-   }  // end of test2
-   void test3() {
-     using namespace tfel::math;
-     using stress = qt<Stress, double>;
-     constexpr auto eps = double{1e-14};
-     auto sig = stensor<3u, stress>{stress{0}, stress{1}, stress{2},
-				    stress{3}, stress{4}, stress{5}};
-     double stress_values[6];
-     map<stensor<3u, qt<Stress, double>>>(stress_values) = sig;
-     TFEL_TESTS_ASSERT(my_abs(stress_values[0]) < eps);
-     TFEL_TESTS_ASSERT(my_abs(stress_values[1] - 1) < eps);
-     TFEL_TESTS_ASSERT(my_abs(stress_values[2] - 2) < eps);
-     TFEL_TESTS_ASSERT(my_abs(stress_values[3] - 3) < eps);
-     TFEL_TESTS_ASSERT(my_abs(stress_values[4] - 4) < eps);
-     TFEL_TESTS_ASSERT(my_abs(stress_values[5] - 5) < eps);
-   }  // end of test3
+  }    // end of test2
+  void test3() {
+    using namespace tfel::math;
+    using stress = qt<Stress, double>;
+    constexpr auto eps = double{1e-14};
+    auto sig = stensor<3u, stress>{stress{0}, stress{1}, stress{2},
+                                   stress{3}, stress{4}, stress{5}};
+    double stress_values[6];
+    map<stensor<3u, qt<Stress, double>>>(stress_values) = sig;
+    TFEL_TESTS_ASSERT(my_abs(stress_values[0]) < eps);
+    TFEL_TESTS_ASSERT(my_abs(stress_values[1] - 1) < eps);
+    TFEL_TESTS_ASSERT(my_abs(stress_values[2] - 2) < eps);
+    TFEL_TESTS_ASSERT(my_abs(stress_values[3] - 3) < eps);
+    TFEL_TESTS_ASSERT(my_abs(stress_values[4] - 4) < eps);
+    TFEL_TESTS_ASSERT(my_abs(stress_values[5] - 5) < eps);
+  }  // end of test3
 };
 
 TFEL_TESTS_GENERATE_PROXY(QtRefTest, "QtRefTest");

@@ -21,9 +21,8 @@ namespace tfel::math {
 
   // Serialisation operator
   template <class TensorType>
-  std::enable_if_t<implementsTensorConcept<TensorType>(),
-		   std::ostream&>
-  operator<<(std::ostream& os, const TensorType& s){
+  std::enable_if_t<implementsTensorConcept<TensorType>(), std::ostream&>
+  operator<<(std::ostream& os, const TensorType& s) {
     constexpr auto size =
         TensorDimeToSize<getSpaceDimension<TensorType>()>::value;
     os << "[ ";

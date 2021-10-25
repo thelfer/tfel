@@ -1,7 +1,7 @@
 @Parser PleiadesModel;
 @Model SiCSwellingModelTest;
 @Author Helfer Thomas;
-@Date 05 Déc.2007;
+@Date 05 Déc .2007;
 
 @LocalParameter TabString domains;
 domains.setDefaultValue("MATRIX", "CLADDING");

@@ -177,6 +177,7 @@ namespace tfel::math {
                                       B,
                                       OpMinus> {
     struct DummyHandle {};
+
    public:
     using Result =
         result_type<EvaluationResult<A>, EvaluationResult<B>, OpMinus>;

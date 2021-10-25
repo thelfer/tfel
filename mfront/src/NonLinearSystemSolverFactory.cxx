@@ -52,15 +52,12 @@ namespace mfront {
     this->registerSolver(
         "PowellDogLeg_NewtonRaphson",
         buildSolverConstructor<PowellDogLegNewtonRaphsonSolver>);
-    this->registerSolver(
-        "PowellDogLeg_NewtonRaphson_NumericalJacobian",
-        buildSolverConstructor<
-            PowellDogLegNewtonRaphsonNumericalJacobianSolver>);
-    this->registerSolver("Broyden",
-                         buildSolverConstructor<BroydenSolver>);
-    this->registerSolver(
-        "PowellDogLeg_Broyden",
-        buildSolverConstructor<PowellDogLegBroydenSolver>);
+    this->registerSolver("PowellDogLeg_NewtonRaphson_NumericalJacobian",
+                         buildSolverConstructor<
+                             PowellDogLegNewtonRaphsonNumericalJacobianSolver>);
+    this->registerSolver("Broyden", buildSolverConstructor<BroydenSolver>);
+    this->registerSolver("PowellDogLeg_Broyden",
+                         buildSolverConstructor<PowellDogLegBroydenSolver>);
     this->registerSolver("Broyden2",
                          buildSolverConstructor<SecondBroydenSolver>);
     this->registerSolver("LevenbergMarquardt",

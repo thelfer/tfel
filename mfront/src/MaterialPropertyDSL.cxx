@@ -158,7 +158,7 @@ namespace mfront {
   }  // end of addStaticVariableDescription
 
   std::map<std::string, int> MaterialPropertyDSL::getIntegerConstants() const {
-    auto r= std::map<std::string, int>{};
+    auto r = std::map<std::string, int>{};
     for (const auto& v : this->md.staticVars) {
       if (v.type == "int") {
         r.insert({v.name, v.value});
@@ -639,7 +639,7 @@ namespace mfront {
       return false;
     }
     return *(this->md.use_qt);
-  } // end of useQt
+  }  // end of useQt
 
   void MaterialPropertyDSL::disableQuantitiesUsageIfNotAlreadySet() {
     if (!this->md.use_qt.has_value()) {

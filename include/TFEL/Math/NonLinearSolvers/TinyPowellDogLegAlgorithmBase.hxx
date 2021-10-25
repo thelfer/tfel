@@ -1,6 +1,6 @@
 /*!
  * \file   include/TFEL/Math/NonLinearSolvers/TinyPowellDogLegAlgorithmBase.hxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   06/07/2021
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
@@ -56,7 +56,7 @@ namespace tfel::math {
     if (tfel::math::abs(g) < N * radius) {
       const auto c0 = radius * radius;
       const auto c1 = (g | g);
-      const auto c2 = - delta_zeros | g;
+      const auto c2 = -delta_zeros | g;
       const auto c3 = delta_zeros | delta_zeros;
       const auto c4 = (c2 - c0) * (c2 - c0) + (c3 - c0) * (c0 - c1);
       const auto alpha =
@@ -69,6 +69,6 @@ namespace tfel::math {
     delta_zeros = -g;
   }  // end of applyPowellDogLegAlgorithm
 
-} // end of namespace tfel::math
+}  // end of namespace tfel::math
 
 #endif /* LIB_TFEL_MATH_TINYPOWELLDOGLEGALGORITHMBASE_HXX */

@@ -287,9 +287,7 @@ namespace mtest {
     evm.insert({n, make_evolution(v)});
   }  // end of setCurrentPosition
 
-  PipeTest::PipeTest() {
-    insert(*(this->evm), "r", 0);
-  }  // end of PipeTest
+  PipeTest::PipeTest() { insert(*(this->evm), "r", 0); }  // end of PipeTest
 
   void PipeTest::setInnerRadius(const real r) {
     if (this->mesh.outer_radius > 0) {
@@ -597,8 +595,8 @@ namespace mtest {
       // if(!this->s_t0.empty()){
       // 	// we should be able to give a profile to do this
       // 	throw(std::runtime_error("PipeTest::initializeCurrentState: "
-      // 				 "initialisation of stress is not supported
-      // yet"));
+      // 				 "initialisation of stress is not
+      // supported yet"));
       // 	// std::copy(this->s_t0.begin(),this->s_t0.end(),cs.s0.begin());
       // }
 
@@ -631,9 +629,7 @@ namespace mtest {
     }
   }  // end of initializeCurrentState
 
-  std::string PipeTest::name() const {
-    return "pipe test";
-  }  // end of name
+  std::string PipeTest::name() const { return "pipe test"; }  // end of name
 
   std::string PipeTest::classname() const { return "MTest"; }
 
@@ -1373,7 +1369,7 @@ namespace mtest {
                    "axial loading undefined");
     return this->al;
   }  // end of setAxialLoading
-  
+
   void PipeTest::setRadialLoading(const PipeTest::RadialLoading t) {
     tfel::raise_if(this->rl != DEFAULTLOADINGTYPE,
                    "PipeTest::setRadialLoading: "
@@ -1387,7 +1383,7 @@ namespace mtest {
                    "radial loading undefined");
     return this->rl;
   }  // end of getRadialLoading
-  
+
   void PipeTest::setElementType(const PipeMesh::ElementType ph) {
     tfel::raise_if(this->mesh.etype != PipeMesh::DEFAULT,
                    "PipeTest::setElementType: "

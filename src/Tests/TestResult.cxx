@@ -31,8 +31,7 @@ namespace tfel::tests {
                          const std::string_view e)
       : description(c),
         failure_description(b ? "" : e),
-	status(b)
-  {}  // end of TestResult::TestResult
+        status(b) {}  // end of TestResult::TestResult
 
   bool TestResult::success() const {
     return this->status;

@@ -79,7 +79,8 @@ namespace tfel::math {
           }
         }
         if (piv != i) {
-          if (!((tfel::math::abs(m(i, i)) > c * cmax) && (tfel::math::abs(m(i, i)) > eps))) {
+          if (!((tfel::math::abs(m(i, i)) > c * cmax) &&
+                (tfel::math::abs(m(i, i)) > eps))) {
             d *= -1;
             p.swap(piv, i);
           }

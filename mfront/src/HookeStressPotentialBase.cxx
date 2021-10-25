@@ -697,9 +697,10 @@ namespace mfront::bbrick {
         const std::string lambda =
             b ? "this->sebdata.lambda" : "this->lambda_tdt";
         const std::string mu = b ? "this->sebdata.mu" : "this->mu_tdt";
-        to.code += "computeAlteredElasticStiffness<hypothesis, NumericType>::exe(Dt," +
-                   residual_factor + " * ( " + lambda + "), " +
-                   residual_factor + " * (" + mu + "));\n";
+        to.code +=
+            "computeAlteredElasticStiffness<hypothesis, NumericType>::exe(Dt," +
+            residual_factor + " * ( " + lambda + "), " + residual_factor +
+            " * (" + mu + "));\n";
       } else if (bd.getElasticSymmetryType() == mfront::ORTHOTROPIC) {
         tfel::raise_if(
             !bd.getAttribute<bool>(

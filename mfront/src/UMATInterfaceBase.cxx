@@ -400,8 +400,8 @@ namespace mfront {
     out << ")\n";
     if (mb.useQt()) {
       out << ": " << mb.getClassName()
-          << "BehaviourData<hypothesis, NumericType,use_qt>(" << iprefix << "T_,"
-          << iprefix << "mat,\n"
+          << "BehaviourData<hypothesis, NumericType,use_qt>(" << iprefix
+          << "T_," << iprefix << "mat,\n"
           << iprefix + "int_vars";
       if (this->areExternalStateVariablesSupported()) {
         out << "," << iprefix << "ext_vars";
@@ -413,8 +413,9 @@ namespace mfront {
         out << "," << iprefix << v.first;
       }
       out << "),\n"
-          << mb.getClassName() << "IntegrationData<hypothesis, NumericType,use_qt>("
-          << iprefix << "dt_";
+          << mb.getClassName()
+          << "IntegrationData<hypothesis, NumericType,use_qt>(" << iprefix
+          << "dt_";
       if (this->isTemperatureIncrementSupported()) {
         out << "," << iprefix << "dT_";
       }
@@ -443,8 +444,9 @@ namespace mfront {
         out << "," << iprefix << v.first;
       }
       out << "),\n"
-          << mb.getClassName() << "IntegrationData<hypothesis, NumericType,false>("
-          << iprefix << "dt_";
+          << mb.getClassName()
+          << "IntegrationData<hypothesis, NumericType,false>(" << iprefix
+          << "dt_";
       if (this->isTemperatureIncrementSupported()) {
         out << "," << iprefix << "dT_";
       }
@@ -616,7 +618,8 @@ namespace mfront {
     }
     out << " */\n"
         << mb.getClassName() << "BehaviourData"
-        << "(const NumericType* const " << iprefix << "T_,const NumericType* const";
+        << "(const NumericType* const " << iprefix
+        << "T_,const NumericType* const";
     if (!mp.empty()) {
       out << " " << iprefix << "mat,\n";
     } else {
@@ -740,8 +743,9 @@ namespace mfront {
       std::ostream& os, const BehaviourDescription& mb) const {
     const auto iprefix = makeUpperCase(this->getInterfaceName());
     SupportedTypes::TypeSize ov, of;
-    os << "void set" << iprefix << "BehaviourDataGradients(const NumericType* const "
-       << iprefix << "stran)\n"
+    os << "void set" << iprefix
+       << "BehaviourDataGradients(const NumericType* const " << iprefix
+       << "stran)\n"
        << "{\n";
     for (const auto& v : mb.getMainVariables()) {
       this->writeBehaviourDataGradientSetter(os, v.first, ov);
@@ -749,8 +753,8 @@ namespace mfront {
     }
     os << "}\n\n";
     os << "void set" << iprefix
-       << "BehaviourDataThermodynamicForces(const NumericType* const " << iprefix
-       << "stress_)\n"
+       << "BehaviourDataThermodynamicForces(const NumericType* const "
+       << iprefix << "stress_)\n"
        << "{\n";
     for (const auto& v : mb.getMainVariables()) {
       this->writeBehaviourDataThermodynamicForceSetter(os, v.second, of);
@@ -869,8 +873,9 @@ namespace mfront {
       std::ostream& os, const BehaviourDescription& mb) const {
     const auto iprefix = makeUpperCase(this->getInterfaceName());
     SupportedTypes::TypeSize ov;
-    os << "void set" << iprefix << "IntegrationDataGradients(const NumericType* const "
-       << iprefix << "dstran)\n"
+    os << "void set" << iprefix
+       << "IntegrationDataGradients(const NumericType* const " << iprefix
+       << "dstran)\n"
        << "{\n";
     for (const auto& v : mb.getMainVariables()) {
       this->writeIntegrationDataGradientSetter(os, v.first, ov);
@@ -1158,9 +1163,11 @@ namespace mfront {
           }
           out << "}\n";
           if (flag == SupportedTypes::SCALAR) {
-            ivoffset += SupportedTypes::TypeSize(v.arraySize, SupportedTypes::SCALAR);
+            ivoffset +=
+                SupportedTypes::TypeSize(v.arraySize, SupportedTypes::SCALAR);
           } else {
-            ivoffset += SupportedTypes::TypeSize(v.arraySize, SupportedTypes::STENSOR);
+            ivoffset +=
+                SupportedTypes::TypeSize(v.arraySize, SupportedTypes::STENSOR);
           }
         } else {
           for (unsigned short i = 0; i != v.arraySize; ++i) {

@@ -26,21 +26,21 @@
 
 namespace tfel::check {
 
-    struct TFELCHECK_VISIBILITY_EXPORT NoInterpolation : public Interpolation {
-      NoInterpolation();
-      NoInterpolation(NoInterpolation&&);
-      NoInterpolation(const NoInterpolation&);
-      NoInterpolation& operator=(NoInterpolation&&);
-      NoInterpolation& operator=(const NoInterpolation&);
-      void interpolate(const std::vector<double>&,
-                       const std::vector<double>&) override;
-      double getValue(const double) const override;
-      std::string getType() const override;
-      bool isConform() const override;
-      std::shared_ptr<Interpolation> clone() const override;
-      ~NoInterpolation() override;
-    };
+  struct TFELCHECK_VISIBILITY_EXPORT NoInterpolation : public Interpolation {
+    NoInterpolation();
+    NoInterpolation(NoInterpolation&&);
+    NoInterpolation(const NoInterpolation&);
+    NoInterpolation& operator=(NoInterpolation&&);
+    NoInterpolation& operator=(const NoInterpolation&);
+    void interpolate(const std::vector<double>&,
+                     const std::vector<double>&) override;
+    double getValue(const double) const override;
+    std::string getType() const override;
+    bool isConform() const override;
+    std::shared_ptr<Interpolation> clone() const override;
+    ~NoInterpolation() override;
+  };
 
-  }  // end of namespace tfel::check
+}  // end of namespace tfel::check
 
 #endif /* LIB_TFELCHECK_NOINTERPOLATION_HXX */

@@ -44,11 +44,12 @@ namespace mfront {
     this->mb.setGlossaryName(h, "eel", "ElasticStrain");
     this->mb.setGlossaryName(h, "p", "EquivalentViscoplasticStrain");
     // default local vars
-    this->mb.addLocalVariable(h, VariableDescription("strainrate", "f", 1u, 0u));
+    this->mb.addLocalVariable(h,
+                              VariableDescription("strainrate", "f", 1u, 0u));
     this->mb.addLocalVariable(
-        h, VariableDescription("tfel::math::derivative_type<strainrate, stress>",
-                               "\u2202f\u2215\u2202\u03C3\u2091", "df_dseq", 1u,
-                               0u));
+        h, VariableDescription(
+               "tfel::math::derivative_type<strainrate, stress>",
+               "\u2202f\u2215\u2202\u03C3\u2091", "df_dseq", 1u, 0u));
     this->mb.addLocalVariable(
         h, VariableDescription("StressStensor", "se", 1u, 0u));
     this->mb.addLocalVariable(
@@ -110,7 +111,8 @@ namespace mfront {
     writeMaterialLaws(os, this->mb.getMaterialLaws());
     os << this->mb.getCode(h, BehaviourData::FlowRule) << "return true;\n}\n\n"
        << "bool NewtonIntegration(){\n"
-       << "constexpr auto newton_epsilon = 100*std::numeric_limits<strain>::epsilon();\n"
+       << "constexpr auto newton_epsilon = "
+          "100*std::numeric_limits<strain>::epsilon();\n"
        << "bool converged=false;\n"
        << "strain newton_f;\n"
        << "strain newton_df;\n"
@@ -259,7 +261,8 @@ namespace mfront {
        << "using tfel::material::computeElasticStiffness;\n"
        << "using tfel::math::st2tost2;\n"
        << "if(smt==CONSISTENTTANGENTOPERATOR){\n"
-       << "computeElasticStiffness<N, NumericType>::exe(this->Dt,this->lambda_tdt,this-"
+       << "computeElasticStiffness<N, "
+          "NumericType>::exe(this->Dt,this->lambda_tdt,this-"
           ">mu_tdt);\n"
        << "if(this->seq_e > real(0.01)*(this->young) *std::numeric_limits<"
           "real>::epsilon()){\n"
@@ -272,7 +275,8 @@ namespace mfront {
           "(this->n)));\n"
        << "}\n"
        << "} else if((smt==ELASTIC)||(smt==SECANTOPERATOR)){\n"
-       << "computeElasticStiffness<N, NumericType>::exe(this->Dt,this->lambda_tdt,this-"
+       << "computeElasticStiffness<N, "
+          "NumericType>::exe(this->Dt,this->lambda_tdt,this-"
           ">mu_tdt);\n"
        << "} else {\n"
        << "return false;"

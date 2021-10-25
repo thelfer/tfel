@@ -127,7 +127,8 @@ namespace mfront {
     }();
     const auto& ivs = d.getIntegrationVariables();
     const auto n = ivs.getTypeSize();
-    out << "tfel::math::tmatrix<" << n << "," << n << ",real> tjacobian(this->jacobian);\n"
+    out << "tfel::math::tmatrix<" << n << "," << n
+        << ",real> tjacobian(this->jacobian);\n"
         << "tfel::math::tvector<" << n << ",real> tfzeros(this->fzeros);\n"
         << "tfel::math::tvector<" << n << ",real> zeros_safe(this->zeros);\n";
     bool first = true;
@@ -261,9 +262,11 @@ namespace mfront {
               << "df" << v1.name << "_dd" << v2.name << "-"
               << "ndf" << v1.name << "_dd" << v2.name
               << ") << \" \" << jacobian_error << '\\n';\n"
-              << "std::cout << \"df" << v1.name << "_dd" << v2.name << " :\\n\" << "
+              << "std::cout << \"df" << v1.name << "_dd" << v2.name
+              << " :\\n\" << "
               << "df" << v1.name << "_dd" << v2.name << " << '\\n';\n"
-              << "std::cout << \"ndf" << v1.name << "_dd" << v2.name << " :\\n\" << "
+              << "std::cout << \"ndf" << v1.name << "_dd" << v2.name
+              << " :\\n\" << "
               << "ndf" << v1.name << "_dd" << v2.name << " << '\\n';\n"
               << "std::cout << \"df" << v1.name << "_dd" << v2.name << " - ndf"
               << v1.name << "_dd" << v2.name << " :\\n\" << "

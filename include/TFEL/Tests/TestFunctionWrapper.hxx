@@ -21,45 +21,45 @@
 
 namespace tfel::tests {
 
+  /*!
+   * \brief A simple wrapper around test functions.
+   * \param f : function to be wrapped
+   */
+  template <bool (*f)()>
+  struct TestFunctionWrapper final : public Test {
     /*!
-     * \brief A simple wrapper around test functions.
-     * \param f : function to be wrapped
+     * \brief constructor
+     * \param[in] g: group of the test
+     * \param[in] n: name  of the function
      */
-    template <bool (*f)()>
-    struct TestFunctionWrapper final : public Test {
-      /*!
-       * \brief constructor
-       * \param[in] g: group of the test
-       * \param[in] n: name  of the function
-       */
-      TestFunctionWrapper(const std::string&, const std::string&);
-      /*!
-       * \brief constructor
-       * \param[in] n: name of the function
-       */
-      TestFunctionWrapper(const char* const);
-      //! \return the name of the test function
-      std::string name() const override;
-      //! \return the name of the test function
-      std::string classname() const override;
-      /*!
-       * \brief execute test
-       * \return the results of the test
-       */
-      TestResult execute() override;
-      //! destructor
-      ~TestFunctionWrapper() override;
+    TestFunctionWrapper(const std::string&, const std::string&);
+    /*!
+     * \brief constructor
+     * \param[in] n: name of the function
+     */
+    TestFunctionWrapper(const char* const);
+    //! \return the name of the test function
+    std::string name() const override;
+    //! \return the name of the test function
+    std::string classname() const override;
+    /*!
+     * \brief execute test
+     * \return the results of the test
+     */
+    TestResult execute() override;
+    //! destructor
+    ~TestFunctionWrapper() override;
 
-     private:
-      //! copy constructor (disabled)
-      TestFunctionWrapper(const TestFunctionWrapper&) = delete;
-      //! assignement operator (disabled)
-      TestFunctionWrapper& operator=(const TestFunctionWrapper&) = delete;
-      //! name of test group
-      const std::string gname;
-      //! name of function
-      const std::string fname;
-    };  // end of struct TestFunctionWrapper
+   private:
+    //! copy constructor (disabled)
+    TestFunctionWrapper(const TestFunctionWrapper&) = delete;
+    //! assignement operator (disabled)
+    TestFunctionWrapper& operator=(const TestFunctionWrapper&) = delete;
+    //! name of test group
+    const std::string gname;
+    //! name of function
+    const std::string fname;
+  };  // end of struct TestFunctionWrapper
 
 }  // end of namespace tfel::tests
 

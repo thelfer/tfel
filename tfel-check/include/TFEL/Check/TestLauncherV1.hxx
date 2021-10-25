@@ -34,71 +34,70 @@
 
 namespace tfel::check {
 
-    struct TFELCHECK_VISIBILITY_EXPORT TestLauncherV1
-        : public tfel::utilities::CxxTokenizer {
-      TestLauncherV1(const std::string&, const PCLogger&);
-      bool execute();
-      //! \brief destructor
-      ~TestLauncherV1() override;
+  struct TFELCHECK_VISIBILITY_EXPORT TestLauncherV1
+      : public tfel::utilities::CxxTokenizer {
+    TestLauncherV1(const std::string&, const PCLogger&);
+    bool execute();
+    //! \brief destructor
+    ~TestLauncherV1() override;
 
-     private:
-      typedef void (TestLauncherV1::*CallBack)();
+   private:
+    typedef void (TestLauncherV1::*CallBack)();
 
-      //! list of all tokens of the file, sorted by line
-      std::vector<std::vector<tfel::utilities::Token>> tokens;
-      std::vector<std::vector<tfel::utilities::Token>>::const_iterator line;
-      std::vector<tfel::utilities::Token>::const_iterator current;
-      //! list of files comparison to be made
-      std::vector<Test> comparisons;
-      std::map<std::string, CallBack> callBacks;
-      std::string logfile;
-      PCLogger log;         /**!< logfile output stream */
-      PCLogger glog;        /**!< global logfile output stream */
-      std::string file;     /**!< file containing pleiades-check commands */
-      std::string testname; /**!< test name based on file name */
-      std::vector<std::string> commands;
-      std::vector<std::string> meshCommands;
-      std::string XMLResult; /**!< string containing testcase result, Junit
-                                formatted. */
-      double prec;
-      double precision2;
-      std::shared_ptr<Comparison>
-          comparison; /**!< the type of comparison of the test (absolute,
-                         relative...) */
-      tms timeStart, timeStop; /**!< tms struct used by ClockAction */
-      std::shared_ptr<Interpolation>
-          interpolation; /**!< the interpolation chosen */
-      std::shared_ptr<Column>
-          ci; /**!< the column used for interpolation (abscissa)*/
-      std::shared_ptr<Interpolation>
-          integralInterpolation; /**!< the interpolation chosen for the
-                                    integration*/
-      std::shared_ptr<Column>
-          colIntegralInterpolated; /**!< the column used for integration
-                                      interpolation (abscissa)*/
+    //! list of all tokens of the file, sorted by line
+    std::vector<std::vector<tfel::utilities::Token>> tokens;
+    std::vector<std::vector<tfel::utilities::Token>>::const_iterator line;
+    std::vector<tfel::utilities::Token>::const_iterator current;
+    //! list of files comparison to be made
+    std::vector<Test> comparisons;
+    std::map<std::string, CallBack> callBacks;
+    std::string logfile;
+    PCLogger log;         /**!< logfile output stream */
+    PCLogger glog;        /**!< global logfile output stream */
+    std::string file;     /**!< file containing pleiades-check commands */
+    std::string testname; /**!< test name based on file name */
+    std::vector<std::string> commands;
+    std::vector<std::string> meshCommands;
+    std::string XMLResult; /**!< string containing testcase result, Junit
+                              formatted. */
+    double prec;
+    double precision2;
+    std::shared_ptr<Comparison> comparison; /**!< the type of comparison of the
+                                               test (absolute, relative...) */
+    tms timeStart, timeStop; /**!< tms struct used by ClockAction */
+    std::shared_ptr<Interpolation>
+        interpolation; /**!< the interpolation chosen */
+    std::shared_ptr<Column>
+        ci; /**!< the column used for interpolation (abscissa)*/
+    std::shared_ptr<Interpolation>
+        integralInterpolation; /**!< the interpolation chosen for the
+                                  integration*/
+    std::shared_ptr<Column>
+        colIntegralInterpolated; /**!< the column used for integration
+                                    interpolation (abscissa)*/
 
-      bool allowLessResults; /**!< true if user allows to interpolate ref */
-      void registerCallBack(const std::string&, const CallBack&);
-      //! analyse the input file
-      void analyseInputFile();
-      void treatTest();
-      void treatPrecision();
-      void treatCommand();
-      void treatMeshCommand();
-      void treatEnvironment();
-      void treatTestType();
-      void treatInterpolation();
+    bool allowLessResults; /**!< true if user allows to interpolate ref */
+    void registerCallBack(const std::string&, const CallBack&);
+    //! analyse the input file
+    void analyseInputFile();
+    void treatTest();
+    void treatPrecision();
+    void treatCommand();
+    void treatMeshCommand();
+    void treatEnvironment();
+    void treatTestType();
+    void treatInterpolation();
 
-      enum ClockEventType {
-        START,
-        STOP,
-        GET
-      }; /**!< ClockAction supported event. */
-      double ClockAction(ClockEventType clockevent);
-      std::map<std::string, std::string> environments;
-    };
-    // end of struct TestLauncherV1
+    enum ClockEventType {
+      START,
+      STOP,
+      GET
+    }; /**!< ClockAction supported event. */
+    double ClockAction(ClockEventType clockevent);
+    std::map<std::string, std::string> environments;
+  };
+  // end of struct TestLauncherV1
 
-  }  // end of namespace tfel::check
+}  // end of namespace tfel::check
 
 #endif /* LIB_TFEL_CHECK_TESTLAUNCHERV1_HXX */

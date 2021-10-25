@@ -1,6 +1,6 @@
 /*!
  * \file   ComputeNumericalDerivativeTest.cxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   11/10/2021
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
@@ -67,7 +67,8 @@ struct ComputeNumericalDerivativeTest final : public tfel::tests::TestCase {
   }
 };
 
-TFEL_TESTS_GENERATE_PROXY(ComputeNumericalDerivativeTest, "ComputeNumericalDerivativeTest");
+TFEL_TESTS_GENERATE_PROXY(ComputeNumericalDerivativeTest,
+                          "ComputeNumericalDerivativeTest");
 
 /* coverity [UNCAUGHT_EXCEPT]*/
 int main() {
@@ -76,5 +77,3 @@ int main() {
   m.addXMLTestOutput("ComputeNumericalDerivativeTest.xml");
   return m.execute().success() ? EXIT_SUCCESS : EXIT_FAILURE;
 }
-
-

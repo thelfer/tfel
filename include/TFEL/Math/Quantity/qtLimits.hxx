@@ -23,7 +23,8 @@ namespace std {
    * \brief partial specialisation for quantities
    */
   template <typename UnitType, typename ValueType, typename OwnershipPolicy>
-  struct numeric_limits<tfel::math::Quantity<UnitType, ValueType, OwnershipPolicy>> {
+  struct numeric_limits<
+      tfel::math::Quantity<UnitType, ValueType, OwnershipPolicy>> {
     static constexpr bool is_specialized =
         numeric_limits<ValueType>::is_specialized;
 
@@ -74,7 +75,8 @@ namespace std {
       return tfel::math::qt<UnitType, ValueType>(
           numeric_limits<ValueType>::epsilon());
     }
-    static constexpr tfel::math::qt<UnitType, ValueType> round_error() noexcept {
+    static constexpr tfel::math::qt<UnitType, ValueType>
+    round_error() noexcept {
       return tfel::math::qt<UnitType, ValueType>(
           numeric_limits<ValueType>::round_error());
     }

@@ -22,85 +22,85 @@
 
 namespace tfel::check {
 
+  /*!
+   * \brief configurations are organized as a tree.
+   *
+   * All modifications to the configuration of the root of the tree
+   * are made to the subtrees, called here the subordinates.
+   *
+   * The `ConfigurationManaoger` is build in such a way that each
+   * change to the root configuration is propagated to all the
+   * subordinates.
+   */
+  struct TFELCHECK_VISIBILITY_EXPORT ConfigurationManager {
+    //! \brief default constructor
+    ConfigurationManager();
     /*!
-     * \brief configurations are organized as a tree.
-     *
-     * All modifications to the configuration of the root of the tree
-     * are made to the subtrees, called here the subordinates.
-     *
-     * The `ConfigurationManaoger` is build in such a way that each
-     * change to the root configuration is propagated to all the
-     * subordinates.
+     * \brief constructor from a configuration.
+     * \param[in] src: configuration
      */
-    struct TFELCHECK_VISIBILITY_EXPORT ConfigurationManager {
-      //! \brief default constructor
-      ConfigurationManager();
-      /*!
-       * \brief constructor from a configuration.
-       * \param[in] src: configuration
-       */
-      ConfigurationManager(const Configuration&);
-      //! \brief move constructor
-      ConfigurationManager(ConfigurationManager&&);
-      //! \brief copy constructor
-      ConfigurationManager(const ConfigurationManager&);
-      //! \brief move assignement
-      ConfigurationManager& operator=(ConfigurationManager&&);
-      //! \brief standard assignement
-      ConfigurationManager& operator=(const ConfigurationManager&);
-      /*!
-       * \return the configuration manager assocatied with the given
-       * directory.
-       * \param[in] n: directory name
-       */
-      ConfigurationManager& getConfigurationManager(const std::string&);
-      /*!
-       * \return the configuration associated at the specified
-       * location.
-       * \param[in] d: relative directory
-       */
-      const Configuration& getConfiguration(const std::string&) const;
-      //! \return the configuration associated at the root of the tree
-      const Configuration& getConfiguration() const;
-      /*!
-       * \brief add a new substitution
-       * \param[in] s1: string to be substituted
-       * \param[in] s2: substitution string
-       */
-      void addSubstitution(const std::string&, const std::string&);
-      /*!
-       * \brief add a new component
-       * \param[in] c: component
-       */
-      void addComponent(const std::string&);
-
-     private:
-      /*!
-       * \brief decompose a path in two parts: the first level and the rest.
-       * \param[in] l: location
-       * \return a pair which contains the first level and the rest of the
-       * location
-       */
-      static std::pair<std::string, std::string> extract(const std::string&);
-      /*!
-       * \brief modify the current configuration and those of the subdirectories
-       * \param[in] f: function applying the modification
-       */
-      void modify(std::function<void(Configuration&)>);
-      //! current configuration
-      Configuration configuration;
-      //! \brief list of subordinates
-      std::map<std::string, ConfigurationManager> subordinates;
-    };  // end of ConfigurationManager
-
+    ConfigurationManager(const Configuration&);
+    //! \brief move constructor
+    ConfigurationManager(ConfigurationManager&&);
+    //! \brief copy constructor
+    ConfigurationManager(const ConfigurationManager&);
+    //! \brief move assignement
+    ConfigurationManager& operator=(ConfigurationManager&&);
+    //! \brief standard assignement
+    ConfigurationManager& operator=(const ConfigurationManager&);
     /*!
-     * \brief parse a configuration file.
-     * \param[in,out] c: configuration
-     * \param[in]     n: file name
+     * \return the configuration manager assocatied with the given
+     * directory.
+     * \param[in] n: directory name
      */
-    TFELCHECK_VISIBILITY_EXPORT void parse(ConfigurationManager&,
-                                           const std::string&);
+    ConfigurationManager& getConfigurationManager(const std::string&);
+    /*!
+     * \return the configuration associated at the specified
+     * location.
+     * \param[in] d: relative directory
+     */
+    const Configuration& getConfiguration(const std::string&) const;
+    //! \return the configuration associated at the root of the tree
+    const Configuration& getConfiguration() const;
+    /*!
+     * \brief add a new substitution
+     * \param[in] s1: string to be substituted
+     * \param[in] s2: substitution string
+     */
+    void addSubstitution(const std::string&, const std::string&);
+    /*!
+     * \brief add a new component
+     * \param[in] c: component
+     */
+    void addComponent(const std::string&);
 
-  }  // end of namespace tfel::check
+   private:
+    /*!
+     * \brief decompose a path in two parts: the first level and the rest.
+     * \param[in] l: location
+     * \return a pair which contains the first level and the rest of the
+     * location
+     */
+    static std::pair<std::string, std::string> extract(const std::string&);
+    /*!
+     * \brief modify the current configuration and those of the subdirectories
+     * \param[in] f: function applying the modification
+     */
+    void modify(std::function<void(Configuration&)>);
+    //! current configuration
+    Configuration configuration;
+    //! \brief list of subordinates
+    std::map<std::string, ConfigurationManager> subordinates;
+  };  // end of ConfigurationManager
+
+  /*!
+   * \brief parse a configuration file.
+   * \param[in,out] c: configuration
+   * \param[in]     n: file name
+   */
+  TFELCHECK_VISIBILITY_EXPORT void parse(ConfigurationManager&,
+                                         const std::string&);
+
+}  // end of namespace tfel::check
 
 #endif /* LIB_TFEL_CHECK_CONFIGURATIONMANAGER_HXX */

@@ -147,12 +147,10 @@ namespace mfront {
   }  // end of writeSrcPreprocessorDirectives
 
   void FortranMaterialPropertyInterface::writeBeginHeaderNamespace(
-      std::ostream&) const {
-  }  // end of writeBeginHeaderNamespace
+      std::ostream&) const {}  // end of writeBeginHeaderNamespace
 
   void FortranMaterialPropertyInterface::writeEndHeaderNamespace(
-      std::ostream&) const {
-  }  // end of writeEndHeaderNamespace
+      std::ostream&) const {}  // end of writeEndHeaderNamespace
 
   void FortranMaterialPropertyInterface::writeBeginSrcNamespace(
       std::ostream& os) const {
@@ -179,7 +177,7 @@ namespace mfront {
 
   bool FortranMaterialPropertyInterface::requiresCheckBoundsFunction() const {
     return false;
-  } // end of requiresCheckBoundsFunction
+  }  // end of requiresCheckBoundsFunction
 
   std::string FortranMaterialPropertyInterface::getCheckBoundsFunctionName(
       const MaterialPropertyDescription& mpd) const {

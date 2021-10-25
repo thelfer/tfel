@@ -104,7 +104,8 @@ namespace tfel::material {
     // const auto d = sqrt(b * b - 4) auto x0 = c / b;  // iseq * omfd;
     const auto SdS = [seq, pr, f, iomf, p](const istress x) {
       const auto e = std::exp(3 * p.qR * pr * iomf * tfel::math::abs(x) / 2);
-      const auto S = seq * iomf * tfel::math::abs(x) + 2 * f * (p.DR / 3) * e - 1;
+      const auto S =
+          seq * iomf * tfel::math::abs(x) + 2 * f * (p.DR / 3) * e - 1;
       const auto dS = seq * iomf + f * p.qR * p.DR * iomf * pr * e;
       return std::make_tuple(S, dS);
     };

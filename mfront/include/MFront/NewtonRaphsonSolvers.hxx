@@ -52,6 +52,7 @@ namespace mfront {
     void writeSpecificMembers(std::ostream&,
                               const BehaviourDescription&,
                               const Hypothesis) const override;
+
    protected:
     //! \brief destructor
     ~NewtonRaphsonSolverBase() override;
@@ -68,8 +69,7 @@ namespace mfront {
   };
 
   //! \brief the standard Newton-Raphson solver with a numerical jacobian
-  struct NewtonRaphsonNumericalJacobianSolver
-      : public NewtonRaphsonSolverBase {
+  struct NewtonRaphsonNumericalJacobianSolver : public NewtonRaphsonSolverBase {
     std::vector<std::string> getSpecificHeaders() const override;
     std::string getExternalAlgorithmClassName(const BehaviourDescription&,
                                               const Hypothesis) const override;
@@ -82,9 +82,8 @@ namespace mfront {
    * \brief the standard Newton-Raphson Solver coupled with a Powell' dog leg
    * algorithm.
    */
-  struct PowellDogLegNewtonRaphsonSolver
-      : public NewtonRaphsonSolverBase,
-        protected PowellDogLegAlgorithmBase  {
+  struct PowellDogLegNewtonRaphsonSolver : public NewtonRaphsonSolverBase,
+                                           protected PowellDogLegAlgorithmBase {
     using Hypothesis = NewtonRaphsonSolverBase::Hypothesis;
     //! a simple alias
     using NonLinearSystemSolverBase::CxxTokenizer;

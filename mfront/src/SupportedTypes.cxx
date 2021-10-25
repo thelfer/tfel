@@ -374,7 +374,7 @@ namespace mfront {
     const auto oflag = SupportedTypes::getTypeFlag(
         SupportedTypes::getTypeInformation(type, TypeParsingOptions()));
     return oflag.has_value();
-  } // end of SupportedTypes::hasTypeFlag
+  }  // end of SupportedTypes::hasTypeFlag
 
   std::optional<SupportedTypes::TypeFlag> SupportedTypes::getTypeFlag(
       const TypeInformation& t) {

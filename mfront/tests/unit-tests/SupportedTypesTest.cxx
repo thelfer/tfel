@@ -111,7 +111,8 @@ struct SupportedTypesTest final : public tfel::tests::TestCase {
     for (const auto& m :
          {pair{"tvector<N,real>", mfront::SupportedTypes::TVECTOR},
           pair{"tensor<N,real>", mfront::SupportedTypes::TENSOR},
-          pair{"tfel::math::stensor<N,real>", mfront::SupportedTypes::STENSOR}}) {
+          pair{"tfel::math::stensor<N,real>",
+               mfront::SupportedTypes::STENSOR}}) {
       check("result_type<" + m.first + "," + m.first + ",OpPlus>", m.second);
       check("result_type<" + m.first + ",stress,OpMult>", m.second);
     }

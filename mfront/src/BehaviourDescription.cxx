@@ -2792,7 +2792,7 @@ namespace mfront {
     if (!this->use_qt.has_value()) {
       this->use_qt = false;
     }
-  } // end of disableQuantitiesUsageIfNotAlreadySet
+  }  // end of disableQuantitiesUsageIfNotAlreadySet
 
   void BehaviourDescription::reserveName(const Hypothesis h,
                                          const std::string& n) {

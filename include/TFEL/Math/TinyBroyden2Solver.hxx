@@ -32,7 +32,8 @@ namespace tfel::math {
    * 1. Set the values of `epsilon` and `iterMax` data members and the initial
    * guess of the unknowns, i.e. by setting the value of the `zeros` data
    * member.
-   * 2. Initialize the invert of the jacobian matrix, i.e. the jacobian data member
+   * 2. Initialize the invert of the jacobian matrix, i.e. the jacobian data
+   * member
    * 3. Provide a method called `computeResidual` which must computes
    * the residual, i.e. the data member `fzeros` using the current estimate of
    * the solution, i.e. the data member `zeros`.

@@ -1,6 +1,6 @@
 /*!
  * \file   MaterialProperty.hxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   10/08/2021
  * This project is publicly released under either the GNU GPL Licence
@@ -59,7 +59,7 @@ namespace mtest {
     virtual void setParameter(const std::string&, const real) = 0;
     //! \brief destructor
     virtual ~MaterialProperty();
-  }; // end of MaterialProperty
+  };  // end of MaterialProperty
 
   /*!
    * \return the value of a material property for the given arguments

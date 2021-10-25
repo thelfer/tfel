@@ -288,7 +288,7 @@ namespace mfront {
        << "#include\"TFEL/Config/TFELTypes.hxx\"\n"
        << "#include\"TFEL/Math/General/IEEE754.hxx\"\n\n";
     if (useQuantities(mpd)) {
-      os << "#include\"TFEL/Math/qt.hxx\"\n\n" 
+      os << "#include\"TFEL/Math/qt.hxx\"\n\n"
          << "#include\"TFEL/Math/Quantity/qtIO.hxx\"\n\n";
     }
     if (!mpd.includes.empty()) {

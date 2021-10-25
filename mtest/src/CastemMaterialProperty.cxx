@@ -1,6 +1,6 @@
 /*!
  * \file   mtest/src/CastemMaterialProperty.cxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   10/08/2021
  * This project is publicly released under either the GNU GPL Licence
@@ -39,4 +39,4 @@ namespace mtest {
 
   CastemMaterialProperty::~CastemMaterialProperty() = default;
 
-} // end of namespace mtest
+}  // end of namespace mtest

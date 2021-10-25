@@ -1,6 +1,6 @@
 /*!
  * \file   include/TFEL/Math/NonLinearSolvers/TinyNonLinearSolverBase.ixx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   02/07/2021
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
@@ -64,7 +64,7 @@ namespace tfel::math {
     auto& child = static_cast<Child&>(*this);
     child.reportBeginningOfResolution();
     this->iter =
-      typename TinyNonLinearSolverBase<N, NumericType,Child>::size_type{};
+        typename TinyNonLinearSolverBase<N, NumericType, Child>::size_type{};
     this->is_delta_zeros_defined = false;
     child.executeInitialisationTaskBeforeResolution();
     while (this->iter != this->iterMax) {
@@ -94,7 +94,7 @@ namespace tfel::math {
       tfel::math::tvector<N, NumericType>& v) const noexcept {
     return TinyMatrixSolve<N, NumericType, false>::exe(m, v);
   }  // end of solveLinearSystem
- 
+
 }  // end of namespace tfel::math
 
 #endif /* LIB_TFEL_MATH_NONLINEARSOLVERS_TINYNONLINEARSOLVERBASE_IXX */

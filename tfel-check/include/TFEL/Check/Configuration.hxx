@@ -22,33 +22,33 @@
 
 namespace tfel::check {
 
+  /*!
+   * \brief a data structure used to define a test environment.
+   */
+  struct TFELCHECK_VISIBILITY_EXPORT Configuration {
+    //! \brief default constructor
+    Configuration();
+    //! \brief move constructor
+    Configuration(Configuration&&);
+    //! \brief copy constructor
+    Configuration(const Configuration&);
+    //! \brief move assignement
+    Configuration& operator=(Configuration&&);
+    //! \brief standard assignement
+    Configuration& operator=(const Configuration&);
+    //! \brief list of subordinates
+    std::vector<std::string> available_components;
     /*!
-     * \brief a data structure used to define a test environment.
+     * \brief substitutions applied to `.check` files.
+     *
+     * For every {key,value} pair, every occurence of @key@ is
+     * replaced by value.
      */
-    struct TFELCHECK_VISIBILITY_EXPORT Configuration {
-      //! \brief default constructor
-      Configuration();
-      //! \brief move constructor
-      Configuration(Configuration&&);
-      //! \brief copy constructor
-      Configuration(const Configuration&);
-      //! \brief move assignement
-      Configuration& operator=(Configuration&&);
-      //! \brief standard assignement
-      Configuration& operator=(const Configuration&);
-      //! \brief list of subordinates
-      std::vector<std::string> available_components;
-      /*!
-       * \brief substitutions applied to `.check` files.
-       *
-       * For every {key,value} pair, every occurence of @key@ is
-       * replaced by value.
-       */
-      std::map<std::string, std::string> substitutions;
-      //! global logger
-      PCLogger log;
-    };  // end of struct Configuration
+    std::map<std::string, std::string> substitutions;
+    //! global logger
+    PCLogger log;
+  };  // end of struct Configuration
 
-  }  // end of namespace tfel::check
+}  // end of namespace tfel::check
 
 #endif /* LIB_TFEL_CHECK_CONFIGURATION_HXX */

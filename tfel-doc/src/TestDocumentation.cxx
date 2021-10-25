@@ -16,19 +16,18 @@
 
 namespace tfel::utilities {
 
-    TestDocumentation::TestDocumentation() = default;
+  TestDocumentation::TestDocumentation() = default;
 
-    TestDocumentation::TestDocumentation(const TestDocumentation&) = default;
+  TestDocumentation::TestDocumentation(const TestDocumentation&) = default;
 
-    TestDocumentation::TestDocumentation(TestDocumentation&&) = default;
+  TestDocumentation::TestDocumentation(TestDocumentation&&) = default;
 
-    TestDocumentation& TestDocumentation::operator=(const TestDocumentation&) =
-        default;
+  TestDocumentation& TestDocumentation::operator=(const TestDocumentation&) =
+      default;
 
-    TestDocumentation& TestDocumentation::operator=(TestDocumentation&&) =
-        default;
+  TestDocumentation& TestDocumentation::operator=(TestDocumentation&&) =
+      default;
 
-    TestDocumentation::~TestDocumentation() = default;
+  TestDocumentation::~TestDocumentation() = default;
 
-  }  // end of namespace tfel::utilities
-
+}  // end of namespace tfel::utilities

@@ -19,30 +19,30 @@
 
 namespace tfel::tests {
 
-    //! \brief base class for tests' outputs
-    struct TestOutput {
-      /*!
-       * \brief begin a new test suite
-       * \param[in] n: name of the test suite
-       */
-      virtual void beginTestSuite(const std::string&) = 0;
-      /*!
-       * \brief add a new test
-       * \param[in] n: group  of the test
-       * \param[in] n: name   of the test
-       * \param[in] r: result of the test
-       */
-      virtual void addTest(const std::string&,
-                           const std::string&,
-                           const TestResult&) = 0;
-      /*!
-       * \brief end a test suite
-       * \param[in] r: (global) result of the test suite
-       */
-      virtual void endTestSuite(const TestResult&) = 0;
-      //! \bried destructor
-      virtual ~TestOutput();
-    };  // end of struct TestOutput
+  //! \brief base class for tests' outputs
+  struct TestOutput {
+    /*!
+     * \brief begin a new test suite
+     * \param[in] n: name of the test suite
+     */
+    virtual void beginTestSuite(const std::string&) = 0;
+    /*!
+     * \brief add a new test
+     * \param[in] n: group  of the test
+     * \param[in] n: name   of the test
+     * \param[in] r: result of the test
+     */
+    virtual void addTest(const std::string&,
+                         const std::string&,
+                         const TestResult&) = 0;
+    /*!
+     * \brief end a test suite
+     * \param[in] r: (global) result of the test suite
+     */
+    virtual void endTestSuite(const TestResult&) = 0;
+    //! \bried destructor
+    virtual ~TestOutput();
+  };  // end of struct TestOutput
 
 }  // end of namespace tfel::tests
 

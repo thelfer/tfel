@@ -161,7 +161,8 @@ namespace tfel::material {
           cste;
       d2Psi_ds2 = d2Psi_dvp2[0] * (n0 ^ n0) + d2Psi_dvp2[1] * (n1 ^ n1) +
                   d2Psi_dvp2[2] * (n2 ^ n2);
-      if ((tfel::math::abs(vp(0) - vp(1)) < e) && (tfel::math::abs(vp(0) - vp(2)) < e)) {
+      if ((tfel::math::abs(vp(0) - vp(1)) < e) &&
+          (tfel::math::abs(vp(0) - vp(2)) < e)) {
         d2Psi_ds2 += (((d2Psi_dvp2[0] + d2Psi_dvp2[1]) / 2) * (n01 ^ n01) +
                       ((d2Psi_dvp2[0] + d2Psi_dvp2[2]) / 2) * (n02 ^ n02) +
                       ((d2Psi_dvp2[1] + d2Psi_dvp2[2]) / 2) * (n12 ^ n12));
@@ -212,10 +213,14 @@ namespace tfel::material {
     const auto s = deviator(sig);
     const auto vp = s.template computeEigenValues<es>() * iseq;
     return seq *
-           std::pow(std::pow(tfel::math::abs(tfel::math::abs(vp[0]) - k * vp[0]), a) +
-                        std::pow(tfel::math::abs(tfel::math::abs(vp[1]) - k * vp[1]), a) +
-                        std::pow(tfel::math::abs(tfel::math::abs(vp[2]) - k * vp[2]), a),
-                    1 / real(a));
+           std::pow(
+               std::pow(tfel::math::abs(tfel::math::abs(vp[0]) - k * vp[0]),
+                        a) +
+                   std::pow(tfel::math::abs(tfel::math::abs(vp[1]) - k * vp[1]),
+                            a) +
+                   std::pow(tfel::math::abs(tfel::math::abs(vp[2]) - k * vp[2]),
+                            a),
+               1 / real(a));
   }  // end of computeCazacu2006IsotropicYieldStress
 
   template <typename StressStensor,
@@ -295,9 +300,10 @@ namespace tfel::material {
     // eigenvalues are normalised by the Von Mises stress to avoid
     // overflow
     const auto rvp = vp * iseq;
-    const real Psi_a = (std::pow(tfel::math::abs(tfel::math::abs(vp[0]) - k * vp[0]), a) +
-                        std::pow(tfel::math::abs(tfel::math::abs(vp[1]) - k * vp[1]), a) +
-                        std::pow(tfel::math::abs(tfel::math::abs(vp[2]) - k * vp[2]), a));
+    const real Psi_a =
+        (std::pow(tfel::math::abs(tfel::math::abs(vp[0]) - k * vp[0]), a) +
+         std::pow(tfel::math::abs(tfel::math::abs(vp[1]) - k * vp[1]), a) +
+         std::pow(tfel::math::abs(tfel::math::abs(vp[2]) - k * vp[2]), a));
     // Cazacu equivalent stress
     const real Psi = seq * std::pow(Psi_a, 1 / real(a));
     // For the derivatives, the stress eigenvalues are normalised by
@@ -322,7 +328,8 @@ namespace tfel::material {
     // const auto cste = (a-1)/Psi;
     // const tfel::math::tvector<6u,istress> d2Psi_dsvp2 =
     // 	{cste*( (drvp2_am2[0]+drvp2_am2[1])/2-dPsi_dsvp[0]*dPsi_dsvp[0]), //
-    // s1s1 	 cste*( (drvp2_am2[0]+drvp2_am2[2])/2-dPsi_dsvp[1]*dPsi_dsvp[1]),
+    // s1s1 	 cste*(
+    // (drvp2_am2[0]+drvp2_am2[2])/2-dPsi_dsvp[1]*dPsi_dsvp[1]),
     // // s2s2 	 cste*(
     // (drvp2_am2[1]+drvp2_am2[2])/2-dPsi_dsvp[2]*dPsi_dsvp[2]), // s3s3
     // cste*(-(drvp2_am2[0])/2-dPsi_dsvp[0]*dPsi_dsvp[1]), // s1s2

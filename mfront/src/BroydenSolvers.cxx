@@ -56,8 +56,7 @@ namespace mfront {
 
   BroydenSolverBase::~BroydenSolverBase() = default;
 
-  std::vector<std::string> BroydenSolver::getSpecificHeaders()
-      const {
+  std::vector<std::string> BroydenSolver::getSpecificHeaders() const {
     return {"TFEL/Math/TinyBroydenSolver.hxx"};
   }  // end of getSpecificHeaders
 
@@ -77,7 +76,7 @@ namespace mfront {
                                        const std::string&,
                                        const tokens_iterator p,
                                        const tokens_iterator) {
-    return {false,p};
+    return {false, p};
   }  // end of treatSpecificKeywords
 
   void BroydenSolver::completeVariableDeclaration(BehaviourDescription&) const {

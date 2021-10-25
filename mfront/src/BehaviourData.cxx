@@ -382,14 +382,14 @@ namespace mfront {
   }  // end of addStaticVariable
 
   std::map<std::string, int> BehaviourData::getIntegerConstants() const {
-    auto r= std::map<std::string, int>{};
+    auto r = std::map<std::string, int>{};
     for (const auto& v : this->staticVariables) {
       if (v.type == "int") {
         r.insert({v.name, v.value});
       }
     }
     return r;
-  } // end of getIntegerConstants
+  }  // end of getIntegerConstants
 
   int BehaviourData::getIntegerConstant(const std::string& n) const {
     for (const auto& v : this->staticVariables) {

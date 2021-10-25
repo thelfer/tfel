@@ -21,12 +21,12 @@
 
 namespace tfel::check {
 
-    struct TFELCHECK_VISIBILITY_EXPORT AreaComparison : public Comparison {
-      AreaComparison();
-      void compare() override;
-      ~AreaComparison() override;
-    };
+  struct TFELCHECK_VISIBILITY_EXPORT AreaComparison : public Comparison {
+    AreaComparison();
+    void compare() override;
+    ~AreaComparison() override;
+  };
 
-  }  // end of namespace tfel::check
+}  // end of namespace tfel::check
 
 #endif /* LIB_TFELCHECK_AREACOMPARISON_HXX */

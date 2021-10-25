@@ -49,7 +49,7 @@ namespace mfront {
     std::shared_ptr<AbstractDSL> dsl;
     std::string library, dslName;
     tfel::utilities::CxxTokenizer file;
-    auto dsl_options = std::map<std::string, tfel::utilities::Data> {};
+    auto dsl_options = std::map<std::string, tfel::utilities::Data>{};
     if (tfel::utilities::starts_with(f, "madnex:")) {
 #ifdef MFRONT_HAVE_MADNEX
       const auto path = decomposeImplementationPathInMadnexFile(f);

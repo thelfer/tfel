@@ -1,6 +1,6 @@
 /*!
  * \file   tests/Material/Lame.cxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   22/06/2021
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
@@ -32,8 +32,7 @@ static constexpr T my_abs(const T& v) noexcept {
 
 struct LameTest final : public tfel::tests::TestCase {
   LameTest()
-      : tfel::tests::TestCase("TFEL/Material", "Lame") {
-  }  // end of LameTest
+      : tfel::tests::TestCase("TFEL/Material", "Lame") {}  // end of LameTest
   tfel::tests::TestResult execute() override {
     this->template test1<float, false>();
     this->template test1<double, false>();
@@ -60,7 +59,7 @@ struct LameTest final : public tfel::tests::TestCase {
     TFEL_TESTS_STATIC_ASSERT(my_abs(l - l_ref) < eps);
     TFEL_TESTS_STATIC_ASSERT(my_abs(m - m_ref) < eps);
   }
-}; // end of struct LameTest
+};  // end of struct LameTest
 
 TFEL_TESTS_GENERATE_PROXY(LameTest, "Lame");
 

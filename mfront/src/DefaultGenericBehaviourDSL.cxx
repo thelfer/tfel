@@ -46,7 +46,8 @@ namespace mfront {
   }  // end of DefaultGenericBehaviourDSL::DefaultGenericBehaviourDSL
 
   std::string DefaultGenericBehaviourDSL::getDescription() {
-    return "this parser is the most generic one as it does not make any restriction "
+    return "this parser is the most generic one as it does not make any "
+           "restriction "
            "on the behaviour or the integration method that may be used";
   }  // end of DefaultGenericBehaviourDSL::getDescription
 
@@ -57,8 +58,7 @@ namespace mfront {
   BehaviourDSLDescription
   DefaultGenericBehaviourDSL::getBehaviourDSLDescription() const {
     auto d = BehaviourDSLDescription{};
-    d.behaviourType =
-        tfel::material::MechanicalBehaviourBase::GENERALBEHAVIOUR;
+    d.behaviourType = tfel::material::MechanicalBehaviourBase::GENERALBEHAVIOUR;
     d.integrationScheme = IntegrationScheme::USERDEFINEDSCHEME;
     d.typicalCodeBlocks = {BehaviourData::ComputePredictionOperator,
                            BehaviourData::Integrator,

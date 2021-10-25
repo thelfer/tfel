@@ -579,20 +579,20 @@ namespace mfront {
     //         << " * \\brief constructor for the LS-DYNA interface\n"
     //         << " * \\param[in] " << iprefix << "d : data\n"
     //         << " */\n"
-    //         << mb.getClassName() << "(const lsdyna::LSDYNAData<NumericType>& " <<
-    //         iprefix
+    //         << mb.getClassName() << "(const lsdyna::LSDYNAData<NumericType>&
+    //         " << iprefix
     //         << "d)\n";
     //     if (mb.useQt()) {
     //       out << ": " << mb.getClassName()
-    //           << "BehaviourData<hypothesis, NumericType,use_qt>(" << iprefix <<
-    //           "d),\n"
+    //           << "BehaviourData<hypothesis, NumericType,use_qt>(" << iprefix
+    //           << "d),\n"
     //           << mb.getClassName() <<
     //           "IntegrationData<hypothesis, NumericType,use_qt>("
     //           << iprefix << "d)\n";
     //     } else {
     //       out << ": " << mb.getClassName()
-    //           << "BehaviourData<hypothesis, NumericType,false>(" << iprefix <<
-    //           "d),\n"
+    //           << "BehaviourData<hypothesis, NumericType,false>(" << iprefix
+    //           << "d),\n"
     //           << mb.getClassName() <<
     //           "IntegrationData<hypothesis, NumericType,false>("
     //           << iprefix << "d)\n";
@@ -616,7 +616,8 @@ namespace mfront {
     //         << " * \\param[in] " << iprefix << "d : data\n"
     //         << " */\n"
     //         << mb.getClassName() << "BehaviourData"
-    //         << "(const lsdyna::LSDYNAData<NumericType>& " << iprefix << "d)\n: ";
+    //         << "(const lsdyna::LSDYNAData<NumericType>& " << iprefix <<
+    //         "d)\n: ";
     //     bool first = true;
     //     this->writeMaterialPropertiesInitializersInBehaviourDataConstructorI(
     //         out, first, h, mb, mprops.first, mprops.second, iprefix +
@@ -769,7 +770,8 @@ namespace mfront {
     const auto iprefix = makeUpperCase(this->getInterfaceName());
     if (!ivs.empty()) {
       out << "void exportStateData("
-          << "Stensor& " << iprefix + "s, const lsdyna::LSDYNAData<NumericType>& "
+          << "Stensor& "
+          << iprefix + "s, const lsdyna::LSDYNAData<NumericType>& "
           << iprefix + "d) const\n";
     } else {
       out << "void exportStateData("

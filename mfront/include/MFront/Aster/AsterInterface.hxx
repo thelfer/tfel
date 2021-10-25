@@ -96,9 +96,7 @@ namespace aster {
         const AsterInt *const NUMMOD,
         const tfel::material::OutOfBoundsPolicy op,
         const StressFreeExpansionHandler &sfeh) {
-      using namespace tfel::meta;
       using namespace tfel::material;
-      typedef ModellingHypothesis ModellingHypothesis;
       if (*NUMMOD == 2u) {
         /*!
          * L'hypothèse de déformations planes généralisées n'est pas
@@ -108,62 +106,59 @@ namespace aster {
          */
         using BV = Behaviour<ModellingHypothesis::GENERALISEDPLANESTRAIN,
                              AsterReal, false>;
-        using MTraits = MechanicalBehaviourTraits<BV>;
-        using Traits = AsterTraits<BV>;
-        const bool is_defined_ = MTraits::is_defined;
-        typedef typename std::conditional<
-            is_defined_,
+        constexpr auto is_defined = MechanicalBehaviourTraits<BV>::is_defined;
+        using Handler = std::conditional_t<
+            is_defined,
             CallBehaviour<ModellingHypothesis::GENERALISEDPLANESTRAIN>,
-            Behaviour2DWrapper<Traits::btype,
-                               ModellingHypothesis::GENERALISEDPLANESTRAIN>>::
-            type Handler;
+            Behaviour2DWrapper<AsterTraits<BV>::btype,
+                               ModellingHypothesis::GENERALISEDPLANESTRAIN>>;
         return Handler::exe(emsg, NTENS, DTIME, DROT, DDSOE, STRAN, DSTRAN,
                             TEMP, DTEMP, PROPS, NPROPS, PREDEF, DPRED, STATEV,
                             NSTATV, STRESS, op, sfeh);
       } else if (*NUMMOD == 4u) {
-        typedef Behaviour<ModellingHypothesis::AXISYMMETRICAL, AsterReal, false>
-            BV;
-        typedef MechanicalBehaviourTraits<BV> MTraits;
-        typedef AsterTraits<BV> Traits;
-        const bool is_defined_ = MTraits::is_defined;
-        typedef typename std::conditional<
-            is_defined_, CallBehaviour<ModellingHypothesis::AXISYMMETRICAL>,
-            Behaviour2DWrapper<Traits::btype,
-                               ModellingHypothesis::AXISYMMETRICAL>>::type
-            Handler;
+        using BV =
+            Behaviour<ModellingHypothesis::AXISYMMETRICAL, AsterReal, false>;
+        constexpr auto is_defined = MechanicalBehaviourTraits<BV>::is_defined;
+        using Handler = std::conditional_t<
+            is_defined, CallBehaviour<ModellingHypothesis::AXISYMMETRICAL>,
+            Behaviour2DWrapper<AsterTraits<BV>::btype,
+                               ModellingHypothesis::AXISYMMETRICAL>>;
         return Handler::exe(emsg, NTENS, DTIME, DROT, DDSOE, STRAN, DSTRAN,
                             TEMP, DTEMP, PROPS, NPROPS, PREDEF, DPRED, STATEV,
                             NSTATV, STRESS, op, sfeh);
       } else if (*NUMMOD == 5u) {
-        typedef Behaviour<ModellingHypothesis::PLANESTRESS, AsterReal, false>
-            BV;
-        typedef MechanicalBehaviourTraits<BV> MTraits;
-        typedef AsterTraits<BV> Traits;
-        const bool is_defined_ = MTraits::is_defined;
-        typedef typename std::conditional<
-            is_defined_, CallBehaviour<ModellingHypothesis::PLANESTRESS>,
-            Behaviour2DWrapper<Traits::btype,
-                               ModellingHypothesis::PLANESTRESS>>::type Handler;
+        using BV =
+            Behaviour<ModellingHypothesis::PLANESTRESS, AsterReal, false>;
+        constexpr auto is_defined = MechanicalBehaviourTraits<BV>::is_defined;
+        using Handler = std::conditional_t<
+            is_defined, CallBehaviour<ModellingHypothesis::PLANESTRESS>,
+            Behaviour2DWrapper<AsterTraits<BV>::btype,
+                               ModellingHypothesis::PLANESTRESS>>;
         return Handler::exe(emsg, NTENS, DTIME, DROT, DDSOE, STRAN, DSTRAN,
                             TEMP, DTEMP, PROPS, NPROPS, PREDEF, DPRED, STATEV,
                             NSTATV, STRESS, op, sfeh);
       } else if (*NUMMOD == 6u) {
-        typedef Behaviour<ModellingHypothesis::PLANESTRAIN, AsterReal, false>
-            BV;
-        typedef MechanicalBehaviourTraits<BV> MTraits;
-        typedef AsterTraits<BV> Traits;
-        const bool is_defined_ = MTraits::is_defined;
-        typedef typename std::conditional<
-            is_defined_, CallBehaviour<ModellingHypothesis::PLANESTRAIN>,
-            Behaviour2DWrapper<Traits::btype,
-                               ModellingHypothesis::PLANESTRAIN>>::type Handler;
+        using BV =
+            Behaviour<ModellingHypothesis::PLANESTRAIN, AsterReal, false>;
+        constexpr auto is_defined = MechanicalBehaviourTraits<BV>::is_defined;
+        using Handler = std::conditional_t<
+            is_defined, CallBehaviour<ModellingHypothesis::PLANESTRAIN>,
+            Behaviour2DWrapper<AsterTraits<BV>::btype,
+                               ModellingHypothesis::PLANESTRAIN>>;
         return Handler::exe(emsg, NTENS, DTIME, DROT, DDSOE, STRAN, DSTRAN,
                             TEMP, DTEMP, PROPS, NPROPS, PREDEF, DPRED, STATEV,
                             NSTATV, STRESS, op, sfeh);
       } else if (*NUMMOD == 3u) {
-        return CallBehaviour<ModellingHypothesis::TRIDIMENSIONAL>::exe(
-            emsg, NTENS, DTIME, DROT, DDSOE, STRAN, DSTRAN, TEMP, DTEMP, PROPS,
-            NPROPS, PREDEF, DPRED, STATEV, NSTATV, STRESS, op, sfeh);
+        using BV =
+            Behaviour<ModellingHypothesis::TRIDIMENSIONAL, AsterReal, false>;
+        constexpr bool is_defined = MechanicalBehaviourTraits<BV>::is_defined;
+        if constexpr (is_defined) {
+          return CallBehaviour<ModellingHypothesis::TRIDIMENSIONAL>::exe(
+              emsg, NTENS, DTIME, DROT, DDSOE, STRAN, DSTRAN, TEMP, DTEMP,
+              PROPS, NPROPS, PREDEF, DPRED, STATEV, NSTATV, STRESS, op, sfeh);
+        } else {
+          return -2;
+        }
       } else {
         AsterInterfaceExceptions::displayUnsupportedHypothesisMessage();
         return -2;
@@ -196,7 +191,6 @@ namespace aster {
           AsterReal *const STRESS,
           const tfel::material::OutOfBoundsPolicy op,
           const StressFreeExpansionHandler &sfeh) {
-        using namespace tfel::meta;
         using namespace tfel::math;
         using namespace tfel::material;
         using tfel::fsalgo::copy;
@@ -244,8 +238,6 @@ namespace aster {
           AsterReal *const STRESS,
           const tfel::material::OutOfBoundsPolicy op,
           const StressFreeExpansionHandler &sfeh) {
-        using namespace std;
-        using namespace tfel::meta;
         using namespace tfel::math;
         using namespace tfel::material;
         using tfel::fsalgo::copy;
@@ -344,55 +336,55 @@ namespace aster {
           }
         };
         try {
-          typedef typename std::conditional<
+          using Handler = std::conditional_t<
               AsterTraits::type == aster::ISOTROPIC,
               AsterIsotropicBehaviourHandler<AsterTraits::btype, H, Behaviour>,
               AsterOrthotropicBehaviourHandler<AsterTraits::btype, H,
-                                               Behaviour>>::type Handler;
+                                               Behaviour>>;
           Handler::exe(DTIME, DROT, DDSOE, STRAN, DSTRAN, TEMP, DTEMP, PROPS,
                        NPROPS, PREDEF, DPRED, STATEV, NSTATV, STRESS, op, sfeh);
         } catch (const AsterException &e) {
           getErrorMessage(e.what());
-          if (AsterTraits::errorReportPolicy != ASTER_NOERRORREPORT) {
+          if constexpr (AsterTraits::errorReportPolicy != ASTER_NOERRORREPORT) {
             AsterInterfaceExceptions::treatAsterException(Traits::getName(), e);
           }
           return -2;
         } catch (const tfel::material::OutOfBoundsException &e) {
           getErrorMessage(e.what());
-          if (AsterTraits::errorReportPolicy != ASTER_NOERRORREPORT) {
+          if constexpr (AsterTraits::errorReportPolicy != ASTER_NOERRORREPORT) {
             AsterInterfaceExceptions::treatMaterialException(Traits::getName(),
                                                              e);
           }
           return -3;
         } catch (const tfel::material::DivergenceException &e) {
           getErrorMessage(e.what());
-          if (AsterTraits::errorReportPolicy != ASTER_NOERRORREPORT) {
+          if constexpr (AsterTraits::errorReportPolicy != ASTER_NOERRORREPORT) {
             AsterInterfaceExceptions::treatTFELException(Traits::getName(), e);
           }
           return -4;
         } catch (const tfel::material::MaterialException &e) {
           getErrorMessage(e.what());
-          if (AsterTraits::errorReportPolicy != ASTER_NOERRORREPORT) {
+          if constexpr (AsterTraits::errorReportPolicy != ASTER_NOERRORREPORT) {
             AsterInterfaceExceptions::treatStandardException(Traits::getName(),
                                                              e);
           }
           return -5;
         } catch (const tfel::exception::TFELException &e) {
           getErrorMessage(e.what());
-          if (AsterTraits::errorReportPolicy != ASTER_NOERRORREPORT) {
+          if constexpr (AsterTraits::errorReportPolicy != ASTER_NOERRORREPORT) {
             AsterInterfaceExceptions::treatTFELException(Traits::getName(), e);
           }
           return -6;
         } catch (const std::exception &e) {
           getErrorMessage(e.what());
-          if (AsterTraits::errorReportPolicy != ASTER_NOERRORREPORT) {
+          if constexpr (AsterTraits::errorReportPolicy != ASTER_NOERRORREPORT) {
             AsterInterfaceExceptions::treatStandardException(Traits::getName(),
                                                              e);
           }
           return -7;
         } catch (...) {
           getErrorMessage("unknown exception");
-          if (AsterTraits::errorReportPolicy != ASTER_NOERRORREPORT) {
+          if constexpr (AsterTraits::errorReportPolicy != ASTER_NOERRORREPORT) {
             AsterInterfaceExceptions::treatUnknownException(Traits::getName());
           }
           return -8;

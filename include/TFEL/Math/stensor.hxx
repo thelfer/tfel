@@ -124,14 +124,16 @@ namespace tfel::math {
     // inheriting GenericFixedSizeArray' access operators
     using GenericFixedSizeArrayBase::operator[];
     using GenericFixedSizeArrayBase::operator();
-    //! \brief import from external memory location which uses Voigt notations for strains
+    //! \brief import from external memory location which uses Voigt notations
+    //! for strains
     template <typename InputIterator>
     TFEL_MATH_INLINE2 std::enable_if_t<
         std::is_same<typename std::iterator_traits<InputIterator>::value_type,
                      base_type<ValueType>>::value,
         void>
     importVoigt(const InputIterator);
-    //! \brief import from external memory location which uses Voigt notations for stresses
+    //! \brief import from external memory location which uses Voigt notations
+    //! for stresses
     template <typename InputIterator>
     TFEL_MATH_INLINE2 std::enable_if_t<
         std::is_same<typename std::iterator_traits<InputIterator>::value_type,
@@ -145,7 +147,8 @@ namespace tfel::math {
                      base_type<ValueType>>::value,
         void>
     import(const InputIterator);
-    //! \brief export to external memory location using Voigt notations for stresses
+    //! \brief export to external memory location using Voigt notations for
+    //! stresses
     void exportTab(base_type<ValueType>* const) const;
     //! \brief write to external memory location
     void write(base_type<ValueType>* const) const;

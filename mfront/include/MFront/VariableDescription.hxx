@@ -74,9 +74,9 @@ namespace mfront {
      * \param[in] l: line number
      */
     VariableDescription(const std::string&,
-        const std::string&,
-        const unsigned short,
-        const size_t);
+                        const std::string&,
+                        const unsigned short,
+                        const size_t);
     /*!
      * \brief constructor
      * \param[in] t: variable type
@@ -87,10 +87,10 @@ namespace mfront {
      * \param[in] l: line number
      */
     VariableDescription(const std::string&,
-        const std::string&,
-        const std::string&,
-        const unsigned short,
-        const size_t);
+                        const std::string&,
+                        const std::string&,
+                        const unsigned short,
+                        const size_t);
     /*!
      * \brief insert a new attribute
      * \param[in] n : name

@@ -23,13 +23,13 @@
 
 namespace tfel::check {
 
-    struct TFELCHECK_VISIBILITY_EXPORT RelativeComparison final
-        : public Comparison {
-      RelativeComparison();
-      void compare() override;
-      ~RelativeComparison() override;
-    };
+  struct TFELCHECK_VISIBILITY_EXPORT RelativeComparison final
+      : public Comparison {
+    RelativeComparison();
+    void compare() override;
+    ~RelativeComparison() override;
+  };
 
-  }  // end of namespace tfel::check
+}  // end of namespace tfel::check
 
 #endif /* LIB_TFELCHECK_RELATIVECOMPARISON_HXX */

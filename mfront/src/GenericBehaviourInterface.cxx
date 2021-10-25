@@ -1550,9 +1550,9 @@ namespace mfront {
       }
       return "TensorSize";
     };
-    auto init = [&os, this](
-                    SupportedTypes::TypeSize& o, const VariableDescription& v,
-                    const std::string& n, const std::string& src) {
+    auto init = [&os, this](SupportedTypes::TypeSize& o,
+                            const VariableDescription& v, const std::string& n,
+                            const std::string& src) {
       const auto f = this->getTypeFlag(v.type);
       if (f == SupportedTypes::SCALAR) {
         os << "this->" << n << " = mgb_d." << src << "[" << o << "];\n";
@@ -2029,10 +2029,9 @@ namespace mfront {
       }
       return "TensorSize";
     };
-    auto export_variable = [this, &bd, &os](
-                               const VariableDescription& v,
-                               const char* const dest,
-                               const SupportedTypes::TypeSize o) {
+    auto export_variable = [this, &bd, &os](const VariableDescription& v,
+                                            const char* const dest,
+                                            const SupportedTypes::TypeSize o) {
       auto do_export = [this, &bd, &v, &os, &dest](
                            const SupportedTypes::TypeSize offset,
                            const auto& n) {

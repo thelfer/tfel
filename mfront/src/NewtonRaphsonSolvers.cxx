@@ -34,8 +34,7 @@ namespace mfront {
     return false;
   }  // end of allowsJacobianInitialisation
 
-  bool NewtonRaphsonSolverBase::allowsJacobianInvertInitialisation()
-      const {
+  bool NewtonRaphsonSolverBase::allowsJacobianInvertInitialisation() const {
     return false;
   }  // end of allowsJacobianInvertInitialisation
 
@@ -65,8 +64,7 @@ namespace mfront {
 
   NewtonRaphsonSolverBase::~NewtonRaphsonSolverBase() = default;
 
-  std::vector<std::string> NewtonRaphsonSolver::getSpecificHeaders()
-      const {
+  std::vector<std::string> NewtonRaphsonSolver::getSpecificHeaders() const {
     return {"TFEL/Math/TinyNewtonRaphsonSolver.hxx"};
   }  // end of NewtonRaphsonSolverBase::getSpecificHeaders
 
@@ -76,9 +74,7 @@ namespace mfront {
         bd, h, "TinyNewtonRaphsonSolver");
   }  // end of getExternalAlgorithmClassName
 
-  bool NewtonRaphsonSolver::requiresNumericalJacobian() const {
-    return false;
-  }
+  bool NewtonRaphsonSolver::requiresNumericalJacobian() const { return false; }
 
   NewtonRaphsonSolver::~NewtonRaphsonSolver() = default;
 
@@ -94,28 +90,25 @@ namespace mfront {
         bd, h, "TinyNewtonRaphsonSolver");
   }  // end of getExternalAlgorithmClassName
 
-  bool NewtonRaphsonNumericalJacobianSolver::requiresNumericalJacobian()
-      const {
+  bool NewtonRaphsonNumericalJacobianSolver::requiresNumericalJacobian() const {
     return true;
   }
 
   NewtonRaphsonNumericalJacobianSolver::
       ~NewtonRaphsonNumericalJacobianSolver() = default;
 
-  std::vector<std::string>
-  PowellDogLegNewtonRaphsonSolver::getSpecificHeaders() const {
+  std::vector<std::string> PowellDogLegNewtonRaphsonSolver::getSpecificHeaders()
+      const {
     return {"TFEL/Math/TinyPowellDogLegNewtonRaphsonSolver.hxx"};
   }  // end of NewtonRaphsonSolverBase::getSpecificHeaders
 
-  std::string
-  PowellDogLegNewtonRaphsonSolver::getExternalAlgorithmClassName(
+  std::string PowellDogLegNewtonRaphsonSolver::getExternalAlgorithmClassName(
       const BehaviourDescription& bd, const Hypothesis h) const {
     return NonLinearSystemSolverBase::buildExternalAlgorithmClassName(
         bd, h, "TinyPowellDogLegNewtonRaphsonSolver");
   }  // end of getExternalAlgorithmClassName
 
-  bool PowellDogLegNewtonRaphsonSolver::requiresNumericalJacobian()
-      const {
+  bool PowellDogLegNewtonRaphsonSolver::requiresNumericalJacobian() const {
     return false;
   }
 
@@ -147,12 +140,10 @@ namespace mfront {
     PowellDogLegAlgorithmBase::completeVariableDeclaration(bd);
   }
 
-  PowellDogLegNewtonRaphsonSolver::
-      ~PowellDogLegNewtonRaphsonSolver() = default;
+  PowellDogLegNewtonRaphsonSolver::~PowellDogLegNewtonRaphsonSolver() = default;
 
   std::vector<std::string>
-  PowellDogLegNewtonRaphsonNumericalJacobianSolver::getSpecificHeaders()
-      const {
+  PowellDogLegNewtonRaphsonNumericalJacobianSolver::getSpecificHeaders() const {
     return {"TFEL/Math/TinyPowellDogLegNewtonRaphsonSolver.hxx"};
   }  // end of NewtonRaphsonSolverBase::getSpecificHeaders
 
@@ -187,13 +178,15 @@ namespace mfront {
     PowellDogLegAlgorithmBase::initializeNumericalParameters(os, sn);
   }  // end of initializeNumericalParameters
 
-  bool PowellDogLegNewtonRaphsonNumericalJacobianSolver::
-      requiresNumericalJacobian() const {
+  bool
+  PowellDogLegNewtonRaphsonNumericalJacobianSolver::requiresNumericalJacobian()
+      const {
     return true;
   }
 
-  void PowellDogLegNewtonRaphsonNumericalJacobianSolver::
-      completeVariableDeclaration(BehaviourDescription& bd) const {
+  void
+  PowellDogLegNewtonRaphsonNumericalJacobianSolver::completeVariableDeclaration(
+      BehaviourDescription& bd) const {
     PowellDogLegAlgorithmBase::completeVariableDeclaration(bd);
   }
 

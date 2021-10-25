@@ -1,6 +1,6 @@
 /*!
  * \file   mfront/src/UserDefinedNonLinearSystemSolver.cxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   09/09/2021
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
@@ -115,7 +115,7 @@ namespace mfront {
   bool UserDefinedNonLinearSystemSolver::allowsJacobianInvertInitialisation()
       const {
     return this->allows_jacobian_invert_initialisation;
-}  // end of allowsJacobianInvertInitialisation
+  }  // end of allowsJacobianInvertInitialisation
 
   bool UserDefinedNonLinearSystemSolver::
       requiresJacobianToBeReinitialisedToIdentityAtEachIterations() const {
@@ -147,4 +147,3 @@ namespace mfront {
       default;
 
 }  // end of namespace mfront
-

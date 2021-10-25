@@ -62,7 +62,7 @@ namespace mtest {
         s.computeStiffnessMatrixAndResidual(scs, wk.K, wk.r, t, dt, o.ktype);
     if (!r.first) {
       return r;
-      }
+    }
     s.postConvergence(scs, t, dt, scs.period);
     return r;
   }  // end of iterate2

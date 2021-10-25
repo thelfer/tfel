@@ -31,8 +31,8 @@ namespace mfront {
            "methods.";
   }  // end of getDescription
 
-  BehaviourDSLDescription
-  RungeKuttaModelDSL::getBehaviourDSLDescription() const {
+  BehaviourDSLDescription RungeKuttaModelDSL::getBehaviourDSLDescription()
+      const {
     auto d = mfront::getDefaultStrainBasedBehaviourDSLDescription();
     d.integrationScheme = IntegrationScheme::EXPLICITSCHEME;
     d.typicalCodeBlocks = {BehaviourData::ComputeDerivative};
@@ -40,7 +40,6 @@ namespace mfront {
     return d;
   }  // end of getBehaviourDSLDescription
 
-  RungeKuttaModelDSL::~RungeKuttaModelDSL() noexcept =
-      default;
+  RungeKuttaModelDSL::~RungeKuttaModelDSL() noexcept = default;
 
 }  // end of namespace mfront

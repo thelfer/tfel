@@ -242,7 +242,7 @@ namespace std {
 
 }  // namespace std
 
-namespace tfel::math{
+namespace tfel::math {
 
   /*!
    * \brief partial specialisation of `std::get` for
@@ -269,6 +269,6 @@ namespace tfel::math{
     return v[i];
   }  // end of get
 
-} // end of namespace tfel::math
+}  // end of namespace tfel::math
 
 #endif /* LIB_TFEL_MATH_FSARRAY_HXX */

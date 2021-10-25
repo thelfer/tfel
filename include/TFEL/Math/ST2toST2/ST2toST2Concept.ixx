@@ -87,7 +87,7 @@ namespace tfel::math {
     const auto r = LUDecomp<false>::exe(m, p);
     if (!r.first) {
       return {};
-      }
+    }
     auto v = base_type<real>{1};
     for (const index_type<ST2toST2Type> i = 0; i != ts; ++i) {
       v *= m(i, i);

@@ -46,7 +46,8 @@ int main() {
   v.push_back("p0");
   v.push_back("p1");
   auto test = std::make_shared<Evaluator>(v, "p1*exp(p0*cos(x*x))");
-  LevenbergMarquardt<LevenbergMarquardtEvaluatorWrapper> levmar(LevenbergMarquardtEvaluatorWrapper(test, 1u, 2u));
+  LevenbergMarquardt<LevenbergMarquardtEvaluatorWrapper> levmar(
+      LevenbergMarquardtEvaluatorWrapper(test, 1u, 2u));
   vector<double> x(1u);
   vector<double> p(2u);
   unsigned short i;

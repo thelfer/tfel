@@ -98,8 +98,8 @@ namespace mfront {
    * variable name.
    * \param[in] v: variable
    */
-    MFRONT_VISIBILITY_EXPORT const std::string& displayName(
-        const VariableDescriptionBase&);
+  MFRONT_VISIBILITY_EXPORT const std::string& displayName(
+      const VariableDescriptionBase&);
 
 }  // end of namespace mfront
 

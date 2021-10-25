@@ -229,8 +229,8 @@ namespace mfront {
           if (flag == SupportedTypes::SCALAR) {
             if (mb.useQt()) {
               out << "ZMATstatev"
-                  << "[" << currentOffset << "] = base_type_cast(this->" << v.name
-                  << ");\n";
+                  << "[" << currentOffset << "] = base_type_cast(this->"
+                  << v.name << ");\n";
             } else {
               out << "ZMATstatev"
                   << "[" << currentOffset << "] = this->" << v.name << ";\n";
@@ -631,16 +631,19 @@ namespace mfront {
       case BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR:
         if (mb.useQt()) {
           out << ": " << mb.getClassName()
-              << "BehaviourData<hypothesis, NumericType,use_qt>(ZMATsig,ZMATeto,"
+              << "BehaviourData<hypothesis, "
+                 "NumericType,use_qt>(ZMATsig,ZMATeto,"
                  "ZMATmprops,ZMATdata,ZMATT_pos,ZMATevs_pos),\n";
-          out << mb.getClassName() << "IntegrationData<hypothesis, NumericType,use_qt>("
+          out << mb.getClassName()
+              << "IntegrationData<hypothesis, NumericType,use_qt>("
               << "ZMATdeto,ZMATdata,ZMATT_pos,ZMATevs_pos,"
               << "ZMATdt)";
         } else {
           out << ": " << mb.getClassName()
               << "BehaviourData<hypothesis, NumericType,false>(ZMATsig,ZMATeto,"
                  "ZMATmprops,ZMATdata,ZMATT_pos,ZMATevs_pos),\n";
-          out << mb.getClassName() << "IntegrationData<hypothesis, NumericType,false>("
+          out << mb.getClassName()
+              << "IntegrationData<hypothesis, NumericType,false>("
               << "ZMATdeto,ZMATdata,ZMATT_pos,ZMATevs_pos,"
               << "ZMATdt)";
         }
@@ -650,14 +653,16 @@ namespace mfront {
           out << ": " << mb.getClassName()
               << "BehaviourData<hypothesis, NumericType,use_qt>(ZMATsig,ZMATF0,"
                  "ZMATmprops,ZMATdata,ZMATT_pos,ZMATevs_pos),\n";
-          out << mb.getClassName() << "IntegrationData<hypothesis, NumericType,use_qt>("
+          out << mb.getClassName()
+              << "IntegrationData<hypothesis, NumericType,use_qt>("
               << "ZMATF1,ZMATdata,ZMATT_pos,ZMATevs_pos,"
               << "ZMATdt)";
         } else {
           out << ": " << mb.getClassName()
               << "BehaviourData<hypothesis, NumericType,false>(ZMATsig,ZMATF0,"
                  "ZMATmprops,ZMATdata,ZMATT_pos,ZMATevs_pos),\n";
-          out << mb.getClassName() << "IntegrationData<hypothesis, NumericType,false>("
+          out << mb.getClassName()
+              << "IntegrationData<hypothesis, NumericType,false>("
               << "ZMATF1,ZMATdata,ZMATT_pos,ZMATevs_pos,"
               << "ZMATdt)";
         }

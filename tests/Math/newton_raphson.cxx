@@ -80,10 +80,8 @@ struct NewtonRaphsonSolver2
 };   // end of struct NewtonRaphsonSolver2
 
 struct NewtonRaphsonSolver3
-    : public tfel::math::TinyNewtonRaphsonSolver<
-          2u,
-          double,
-          NewtonRaphsonSolver3> {
+    : public tfel::math::
+          TinyNewtonRaphsonSolver<2u, double, NewtonRaphsonSolver3> {
   NewtonRaphsonSolver3() {
     this->zeros = {0.5, 0.5};
     this->epsilon = 1.e-14;

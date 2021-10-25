@@ -25,7 +25,7 @@ namespace tfel::math {
     }
     this->delta_zeros = -(this->fzeros);
     return true;
-  } // end of computeNewCorrection
+  }  // end of computeNewCorrection
 
 }  // end of namespace tfel::math
 

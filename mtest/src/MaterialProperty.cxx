@@ -1,6 +1,6 @@
 /*!
  * \file   mtest/src/MaterialProperty.cxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   10/08/2021
  * This project is publicly released under either the GNU GPL Licence
@@ -34,7 +34,7 @@ namespace mtest {
 
   real getValue(MaterialProperty& mp,
                 const std::map<std::string, real>& args,
-                const bool b){
+                const bool b) {
     if (!b) {
       if (args.size() != mp.getNumberOfVariables()) {
         tfel::raise("mtest::getValue: invalid number of arguments");
@@ -44,7 +44,7 @@ namespace mtest {
       mp.setVariableValue(a.first, a.second);
     }
     return mp.getValue();
-  } // end of getValue
+  }  // end of getValue
 
   real getValue(MaterialProperty& mp, const std::vector<real>& values) {
     if (values.size() != mp.getNumberOfVariables()) {
@@ -56,7 +56,7 @@ namespace mtest {
     return mp.getValue();
   }  // end of getValue
 
-  real getValue(MaterialProperty& mp, const real v){
+  real getValue(MaterialProperty& mp, const real v) {
     if (mp.getNumberOfVariables() != 1u) {
       tfel::raise("mtest::getValue: invalid number of arguments");
     }
@@ -71,4 +71,4 @@ namespace mtest {
     return mp.getValue();
   }
 
-} // end of namespace mtest
+}  // end of namespace mtest

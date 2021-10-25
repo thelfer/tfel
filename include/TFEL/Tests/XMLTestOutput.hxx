@@ -22,54 +22,54 @@
 
 namespace tfel::tests {
 
+  /*!
+   * \brief Instances of this class reports tests' outputs in an
+   * XML file in the JUnit format.
+   */
+  struct TFELTESTS_VISIBILITY_EXPORT XMLTestOutput final : public TestOutput {
     /*!
-     * \brief Instances of this class reports tests' outputs in an
-     * XML file in the JUnit format.
+     * \brief constructor
+     * \param[in] o: output file name
      */
-    struct TFELTESTS_VISIBILITY_EXPORT XMLTestOutput final : public TestOutput {
-      /*!
-       * \brief constructor
-       * \param[in] o: output file name
-       */
-      XMLTestOutput(const std::string&);
-      /*!
-       * \brief begin a new test suite
-       * \param[in] n: name of the test suite
-       */
-      void beginTestSuite(const std::string&) override;
-      /*!
-       * \brief add a new test
-       * \param[in] g: group  of the test
-       * \param[in] n: name   of the test
-       * \param[in] r: result of the test
-       */
-      void addTest(const std::string&,
-                   const std::string&,
-                   const TestResult&) override;
-      /*!
-       * End a test suite
-       * \param[in] r: (global) result of the test suite
-       */
-      void endTestSuite(const TestResult&) override;
-      //! Destructor
-      ~XMLTestOutput() override;
+    XMLTestOutput(const std::string&);
+    /*!
+     * \brief begin a new test suite
+     * \param[in] n: name of the test suite
+     */
+    void beginTestSuite(const std::string&) override;
+    /*!
+     * \brief add a new test
+     * \param[in] g: group  of the test
+     * \param[in] n: name   of the test
+     * \param[in] r: result of the test
+     */
+    void addTest(const std::string&,
+                 const std::string&,
+                 const TestResult&) override;
+    /*!
+     * End a test suite
+     * \param[in] r: (global) result of the test suite
+     */
+    void endTestSuite(const TestResult&) override;
+    //! Destructor
+    ~XMLTestOutput() override;
 
-     private:
-      /*!
-       * \param r: result to be treated
-       */
-      TFEL_VISIBILITY_LOCAL void treatTest(const TestResult&);
-      //! \brief copy constructor (disabled)
-      XMLTestOutput(const XMLTestOutput&) = delete;
-      //! \brief assignement operator (disabled)
-      XMLTestOutput& operator=(const XMLTestOutput&) = delete;
-      //! output stream
-      std::ofstream os;
-      //! output file name
-      std::string file;
-      //! number of test suite treated
-      unsigned short testsuite;
-    };  // end of struct XMLTestOutput
+   private:
+    /*!
+     * \param r: result to be treated
+     */
+    TFEL_VISIBILITY_LOCAL void treatTest(const TestResult&);
+    //! \brief copy constructor (disabled)
+    XMLTestOutput(const XMLTestOutput&) = delete;
+    //! \brief assignement operator (disabled)
+    XMLTestOutput& operator=(const XMLTestOutput&) = delete;
+    //! output stream
+    std::ofstream os;
+    //! output file name
+    std::string file;
+    //! number of test suite treated
+    unsigned short testsuite;
+  };  // end of struct XMLTestOutput
 
 }  // end of namespace tfel::tests
 

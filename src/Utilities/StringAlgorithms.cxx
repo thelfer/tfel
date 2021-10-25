@@ -40,8 +40,7 @@ namespace tfel::utilities {
     return res;
   }  // end of tokenize
 
-  std::vector<std::string> tokenize(std::string_view s,
-                                    std::string_view d) {
+  std::vector<std::string> tokenize(std::string_view s, std::string_view d) {
     std::vector<std::string> res;
     const auto sl = s.length();
     const auto dl = d.length();

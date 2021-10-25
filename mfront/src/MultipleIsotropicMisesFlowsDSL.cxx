@@ -243,7 +243,8 @@ namespace mfront {
            << "this->df_dseq" << n << ","
            << "this->df_dp" << n << ");\n";
         os << "const auto surf = (this->f" << n << ")/(this->young);\n";
-        os << "if(((surf > strain(newton_epsilon)) && ((vdp(" << n << "))>=NumericType(0)))||"
+        os << "if(((surf > strain(newton_epsilon)) && ((vdp(" << n
+           << "))>=NumericType(0)))||"
            << "((vdp(" << n << ")) > newton_epsilon)){";
         os << "newton_f(" << n << ")  = surf;\n";
         for (p2 = this->flows.begin(), n2 = 0; p2 != this->flows.end();
@@ -504,7 +505,9 @@ namespace mfront {
       this->mb.addLocalVariable(
           h, VariableDescription("strainrate", f.str(), 1u, 0u));
       this->mb.addLocalVariable(
-          h, VariableDescription("tfel::math::derivative_type<strainrate,stress>", df_dseq.str(), 1u, 0u));
+          h,
+          VariableDescription("tfel::math::derivative_type<strainrate,stress>",
+                              df_dseq.str(), 1u, 0u));
       flow.flow = FlowHandler::CreepFlow;
     } else if (this->current->value == "StrainHardeningCreep") {
       std::ostringstream p;
@@ -601,7 +604,8 @@ namespace mfront {
        << "using namespace std;\n"
        << "using tfel::material::computeElasticStiffness;\n"
        << "if((smt==ELASTIC)||(smt==SECANTOPERATOR)){\n"
-       << "computeElasticStiffness<N, NumericType>::exe(this->Dt,this->lambda,this->mu)"
+       << "computeElasticStiffness<N, "
+          "NumericType>::exe(this->Dt,this->lambda,this->mu)"
           ";\n"
        << "return true;\n"
        << "}\n"

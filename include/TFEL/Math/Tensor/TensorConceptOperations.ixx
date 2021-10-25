@@ -16,7 +16,7 @@
 #define LIB_TFEL_MATH_TENSORCONCEPTOPERATIONSIXX
 
 namespace tfel::math {
-  
+
   template <typename TensorType1, typename TensorType2>
   std::enable_if_t<
       ((implementsTensorConcept<TensorType1>()) &&

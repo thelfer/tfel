@@ -359,15 +359,24 @@ namespace tfel::material {
     const auto rvp1b = tfel::math::eval(vp1 / d.Phi);
     const auto rvp2b = tfel::math::eval(vp2 / d.Phi);
     const tfel::math::tvector<9u, real> drvpb_am2 = {
-        real(std::pow(tfel::math::abs(rvp1b[0] - rvp2b[0]), a - 2)),   // s'1-s''1
-        real(std::pow(tfel::math::abs(rvp1b[0] - rvp2b[1]), a - 2)),   // s'1-s''2
-        real(std::pow(tfel::math::abs(rvp1b[0] - rvp2b[2]), a - 2)),   // s'1-s''3
-        real(std::pow(tfel::math::abs(rvp1b[1] - rvp2b[0]), a - 2)),   // s'2-s''1
-        real(std::pow(tfel::math::abs(rvp1b[1] - rvp2b[1]), a - 2)),   // s'2-s''2
-        real(std::pow(tfel::math::abs(rvp1b[1] - rvp2b[2]), a - 2)),   // s'2-s''3
-        real(std::pow(tfel::math::abs(rvp1b[2] - rvp2b[0]), a - 2)),   // s'3-s''1
-        real(std::pow(tfel::math::abs(rvp1b[2] - rvp2b[1]), a - 2)),   // s'3-s''2
-        real(std::pow(tfel::math::abs(rvp1b[2] - rvp2b[2]), a - 2))};  // s'3-s''3
+        real(
+            std::pow(tfel::math::abs(rvp1b[0] - rvp2b[0]), a - 2)),  // s'1-s''1
+        real(
+            std::pow(tfel::math::abs(rvp1b[0] - rvp2b[1]), a - 2)),  // s'1-s''2
+        real(
+            std::pow(tfel::math::abs(rvp1b[0] - rvp2b[2]), a - 2)),  // s'1-s''3
+        real(
+            std::pow(tfel::math::abs(rvp1b[1] - rvp2b[0]), a - 2)),  // s'2-s''1
+        real(
+            std::pow(tfel::math::abs(rvp1b[1] - rvp2b[1]), a - 2)),  // s'2-s''2
+        real(
+            std::pow(tfel::math::abs(rvp1b[1] - rvp2b[2]), a - 2)),  // s'2-s''3
+        real(
+            std::pow(tfel::math::abs(rvp1b[2] - rvp2b[0]), a - 2)),  // s'3-s''1
+        real(
+            std::pow(tfel::math::abs(rvp1b[2] - rvp2b[1]), a - 2)),  // s'3-s''2
+        real(std::pow(tfel::math::abs(rvp1b[2] - rvp2b[2]),
+                      a - 2))};  // s'3-s''3
     d.dPhi_dsvp1 = {((rvp1b[0] - rvp2b[0]) * drvpb_am2[0] +
                      (rvp1b[0] - rvp2b[1]) * drvpb_am2[1] +
                      (rvp1b[0] - rvp2b[2]) * drvpb_am2[2]) /

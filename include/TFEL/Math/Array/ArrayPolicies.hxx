@@ -41,7 +41,8 @@ namespace tfel::math {
     static constexpr auto isMakeConstReferenceTrivial = true;
     //! \brief make a const_reference from a const reference to a base type
     static constexpr typename StandardArrayPolicy::const_reference
-    make_const_reference(const typename StandardArrayPolicy::storage_type& v) noexcept {
+    make_const_reference(
+        const typename StandardArrayPolicy::storage_type& v) noexcept {
       return v;
     }
     //!

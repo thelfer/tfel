@@ -1430,7 +1430,7 @@ namespace tfel::system {
              "(" +
                  getErrorMessage() + ")");
     return std::vector<std::string>(res, res + nb);
-  } // end of getArrayOfStrings
+  }  // end of getArrayOfStrings
 
   void ExternalLibraryManager::getUMATNames(std::vector<std::string>& vars,
                                             const std::string& l,

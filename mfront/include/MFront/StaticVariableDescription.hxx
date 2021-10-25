@@ -38,9 +38,9 @@ namespace mfront {
      * \param[in] value_      : value
      */
     StaticVariableDescription(const std::string&,
-        const std::string&,
-        const unsigned int,
-        const StaticVariableValueType);
+                              const std::string&,
+                              const unsigned int,
+                              const StaticVariableValueType);
     /*!
      * \brief constructor
      * \param[in] type_          : variable type
@@ -50,10 +50,10 @@ namespace mfront {
      * \param[in] value_         : value
      */
     StaticVariableDescription(const std::string&,
-        const std::string&,
-        const std::string&,
-        const unsigned int,
-        const StaticVariableValueType);
+                              const std::string&,
+                              const std::string&,
+                              const unsigned int,
+                              const StaticVariableValueType);
     //! \brief move constructor
     StaticVariableDescription(StaticVariableDescription&&);
     //! \brief copy constructor

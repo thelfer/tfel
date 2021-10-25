@@ -271,7 +271,8 @@ namespace tfel::material {
   };  // end of struct ComputeAlteredElasticStiffnessBase
 
   template <typename T>
-  struct ComputeAlteredElasticStiffnessBase<ModellingHypothesis::PLANESTRESS, T> {
+  struct ComputeAlteredElasticStiffnessBase<ModellingHypothesis::PLANESTRESS,
+                                            T> {
     static void exe(
         typename tfel::config::Types<2u, T, true>::StiffnessTensor& D,
         const typename tfel::config::Types<2u, T, true>::stress lambda,
@@ -314,7 +315,7 @@ namespace tfel::material {
    */
   template <ModellingHypothesis::Hypothesis H, typename T>
   struct computeAlteredElasticStiffness
-      : ComputeAlteredElasticStiffnessBase<H,tfel::math::base_type<T>> {
+      : ComputeAlteredElasticStiffnessBase<H, tfel::math::base_type<T>> {
   };  // end of struct computeAlteredElasticStiffness
 
 }  // end of namespace tfel::material

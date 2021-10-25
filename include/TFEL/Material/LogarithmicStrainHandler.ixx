@@ -848,7 +848,8 @@ namespace tfel::material {
   bool LogarithmicStrainHandler<3u, StressType>::areEigenValuesEqual(
       const tfel::math::tvector<3u, real>& vp) {
     return ((tfel::math::abs(vp(1) - vp(0)) < eps) &&
-            (tfel::math::abs(vp(1) - vp(2)) < eps) && (tfel::math::abs(vp(2) - vp(0)) < eps));
+            (tfel::math::abs(vp(1) - vp(2)) < eps) &&
+            (tfel::math::abs(vp(2) - vp(0)) < eps));
   }  // end of areEigenValuesEqual
 
   template <typename StressType>
@@ -862,7 +863,8 @@ namespace tfel::material {
                              "this method shall not be called if all "
                              "eigen values are equal."));
     }
-    if ((tfel::math::abs(vp(1) - vp(0)) > eps) && (tfel::math::abs(vp(1) - vp(2)) > eps) &&
+    if ((tfel::math::abs(vp(1) - vp(0)) > eps) &&
+        (tfel::math::abs(vp(1) - vp(2)) > eps) &&
         (tfel::math::abs(vp(2) - vp(0)) > eps)) {
       // all eigenvalues are different
       return 3;

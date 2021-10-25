@@ -72,14 +72,15 @@ namespace tfel::math::ieee754 {
       return bint.c[0] != 1;
     }();
     if (!le) {
-      tfel::reportContractViolation("tfel::math::ieee754::fpclassify: "
-				    "unsupported long double representation");
+      tfel::reportContractViolation(
+          "tfel::math::ieee754::fpclassify: "
+          "unsupported long double representation");
     }
     union {
       long double f;
       struct {
-	uint64_t m;
-	uint16_t se;
+        uint64_t m;
+        uint16_t se;
       } i;
     } u = {x};
     int e = u.i.se & 0x7fff;

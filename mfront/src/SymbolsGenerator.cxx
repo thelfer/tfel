@@ -548,7 +548,7 @@ namespace mfront {
     const auto& d = mb.getBehaviourData(h);
     const auto n = this->getSymbolName(i, name, h);
     mfront::writeBoundsSymbols(os, n, d.getMaterialProperties());
-    mfront::writeBoundsSymbols(os, n,d.getPersistentVariables());
+    mfront::writeBoundsSymbols(os, n, d.getPersistentVariables());
     mfront::writeBoundsSymbols(os, n, d.getExternalStateVariables());
     mfront::writeBoundsSymbols(os, n, d.getParameters());
   }  // end of writeBoundsSymbols

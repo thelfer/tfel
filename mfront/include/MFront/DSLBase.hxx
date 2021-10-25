@@ -314,8 +314,7 @@ namespace mfront {
     //! \brief disable the usage of quantities if not already set
     virtual void disableQuantitiesUsageIfNotAlreadySet() = 0;
     //! \brief return the type parsing options used by the DSL
-    virtual SupportedTypes::TypeParsingOptions
-    getTypeParsingOptions() const;
+    virtual SupportedTypes::TypeParsingOptions getTypeParsingOptions() const;
     //! \brief read a C++ type
     std::string readType();
     //! \brief read a C++ type if present

@@ -49,11 +49,11 @@ namespace tfel::math {
     //! \brief default constructor
     TinyPowellDogLegBroydenSolver() = default;
     //! \brief default constructor
-    TinyPowellDogLegBroydenSolver(
-        TinyPowellDogLegBroydenSolver&) noexcept = default;
+    TinyPowellDogLegBroydenSolver(TinyPowellDogLegBroydenSolver&) noexcept =
+        default;
     //! \brief default constructor
-    TinyPowellDogLegBroydenSolver(
-        TinyPowellDogLegBroydenSolver&&) noexcept = default;
+    TinyPowellDogLegBroydenSolver(TinyPowellDogLegBroydenSolver&&) noexcept =
+        default;
     //! \brief default constructor
     TinyPowellDogLegBroydenSolver& operator=(
         TinyPowellDogLegBroydenSolver&&) noexcept = default;

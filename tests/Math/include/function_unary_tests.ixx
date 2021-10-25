@@ -26,14 +26,14 @@
   static_cast<void>(0)
 
 template <typename VectorType>
-std::enable_if_t<tfel::math::implementsVectorConcept<VectorType>(),void>
+std::enable_if_t<tfel::math::implementsVectorConcept<VectorType>(), void>
 function(const VectorType& x) {
   std::cout << x(0) << " " << x(1) << " " << x(2) << std::endl;
   std::cout << "------" << std::endl;
 }
 
 template <typename VectorType>
-std::enable_if_t<tfel::math::implementsVectorConcept<VectorType>(),void>
+std::enable_if_t<tfel::math::implementsVectorConcept<VectorType>(), void>
 function(const VectorType& x,
          const tfel::math::numeric_type<VectorType> v0,
          const tfel::math::numeric_type<VectorType> v1,
@@ -51,14 +51,14 @@ function(const VectorType& x,
 }
 
 template <typename MatrixType>
-std::enable_if_t<tfel::math::implementsMatrixConcept<MatrixType>(),void>
+std::enable_if_t<tfel::math::implementsMatrixConcept<MatrixType>(), void>
 function(const MatrixType& x,
-	 const tfel::math::numeric_type<MatrixType> v0,
-	 const tfel::math::numeric_type<MatrixType> v1,
-	 const tfel::math::numeric_type<MatrixType> v2,
-	 const tfel::math::numeric_type<MatrixType> v3,
-	 const tfel::math::numeric_type<MatrixType> eps,
-	 const unsigned int test_number) {
+         const tfel::math::numeric_type<MatrixType> v0,
+         const tfel::math::numeric_type<MatrixType> v1,
+         const tfel::math::numeric_type<MatrixType> v2,
+         const tfel::math::numeric_type<MatrixType> v3,
+         const tfel::math::numeric_type<MatrixType> eps,
+         const unsigned int test_number) {
 #ifdef TFEL_VERBOSE
   std::cout << "Test : " << test_number << std::endl;
 #else
@@ -71,7 +71,7 @@ function(const MatrixType& x,
 }
 
 template <typename StensorType>
-std::enable_if_t<tfel::math::implementsStensorConcept<StensorType>(),void>
+std::enable_if_t<tfel::math::implementsStensorConcept<StensorType>(), void>
 function(const StensorType& x) {
   std::cout << x(0) << " " << x(1) << " " << x(2) << std::endl;
   std::cout << "------" << std::endl;

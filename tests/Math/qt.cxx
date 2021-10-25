@@ -80,9 +80,7 @@ struct qtTest final : public tfel::tests::TestCase {
     using namespace tfel::math;
     using time = qt<Time, double>;
     auto time_value = double(1);
-    auto getTime = [&time_value] () -> double & {
-		     return time_value;
-		   };
+    auto getTime = [&time_value]() -> double& { return time_value; };
     auto t = time(getTime());
     TFEL_TESTS_ASSERT(my_abs(t.getValue() - 1) < 1.e-14);
   }

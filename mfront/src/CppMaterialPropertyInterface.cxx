@@ -302,7 +302,7 @@ namespace mfront {
         << "using namespace std;\n";
     writeMaterialLaws(src, mpd.materialLaws);
     writeStaticVariables(src, mpd.staticVars, fd.fileName);
-    for (const auto& i : mpd.inputs){
+    for (const auto& i : mpd.inputs) {
       if (useQuantities(mpd)) {
         src << "const auto " << i.name << " = "  //
             << i.type << "(mfront_" << i.name << ");\n";

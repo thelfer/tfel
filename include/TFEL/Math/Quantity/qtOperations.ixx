@@ -16,7 +16,7 @@
 
 namespace tfel::math {
 
-#define TFEL_MATH_QT_SCALAR_OPERATIONS_IMPL(X)                                       \
+#define TFEL_MATH_QT_SCALAR_OPERATIONS_IMPL(X)                                 \
                                                                                \
   template <typename UnitType, typename ValueType, typename OwnershipPolicy>   \
   constexpr qt<NoUnit, typename tfel::typetraits::Promote<ValueType, X>::type> \
@@ -100,7 +100,6 @@ namespace tfel::math {
         result;                                                                \
     return result(b / (a.getValue()));                                         \
   }
-
 
   TFEL_MATH_QT_SCALAR_OPERATIONS_IMPL(unsigned short)
   TFEL_MATH_QT_SCALAR_OPERATIONS_IMPL(unsigned int)

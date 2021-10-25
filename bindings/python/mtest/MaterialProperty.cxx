@@ -36,9 +36,10 @@ MaterialProperty_getMaterialProperty2(const std::string& l,
 }  // end of getMaterialProperty2
 
 static mtest::real MaterialProperty_getValue(
-    mtest::MaterialProperty& mp, const std::map<std::string, mtest::real>& values) {
+    mtest::MaterialProperty& mp,
+    const std::map<std::string, mtest::real>& values) {
   return mtest::getValue(mp, values);
-} // end of MaterialProperty_getValue
+}  // end of MaterialProperty_getValue
 
 void declareMaterialProperty() {
   using boost::python::class_;
@@ -77,27 +78,20 @@ void declareMaterialProperty() {
            "return the names of the arguments of the function")
       .def("getParametersNames", &MaterialProperty::getParametersNames,
            "return the names of the parameters of the function")
-      .def("setVariableValue", setValue1,
-           "set the value of a variable")
-      .def("setVariableValue", setValue2,
-           "set the value of a variable")
+      .def("setVariableValue", setValue1, "set the value of a variable")
+      .def("setVariableValue", setValue2, "set the value of a variable")
       .def("setParameter", &MaterialProperty::setParameter,
            "set the value of a parameter")
       .def("getValue", &MaterialProperty::getValue,
            "evaluate the material property")
-      .def("getValue", getValue1,
-           "evaluate the material property")
+      .def("getValue", getValue1, "evaluate the material property")
       .def("getValue", &MaterialProperty_getValue,
            "evaluate the material property")
-      .def("__call__", getValue1,
-           "evaluate the material property")
+      .def("__call__", getValue1, "evaluate the material property")
       .def("__call__", MaterialProperty_getValue,
            "evaluate the material property")
-      .def("__call__", getValue2,
-           "evaluate the material property")
-      .def("__call__", getValue3,
-           "evaluate the material property")
-      .def("__call__", getValue4,
-           "evaluate the material property");
+      .def("__call__", getValue2, "evaluate the material property")
+      .def("__call__", getValue3, "evaluate the material property")
+      .def("__call__", getValue4, "evaluate the material property");
 
 }  // end of declareMaterialProperty()

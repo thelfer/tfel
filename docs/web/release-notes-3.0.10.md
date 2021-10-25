@@ -27,3 +27,11 @@ For more details, see <https://github.com/thelfer/tfel/issues/17>.
 
 For more details, see <https://github.com/thelfer/tfel/issues/16>.
 
+## Issue #14: [aster interface] The 3D modelling hypothesis must always be defined
+
+Behaviours restricted to 2D hypotheses could not compile with the
+`aster` interface as the 3D modelling hypothesis was always expected to
+be supported.
+
+For more details, see <https://github.com/thelfer/tfel/issues/14>.
+

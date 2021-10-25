@@ -22,7 +22,6 @@
 
 namespace mfront {
 
-
   bool useQuantities(const MaterialPropertyDescription& mpd) {
     if (mpd.use_qt.has_value()) {
       return *(mpd.use_qt);
@@ -53,7 +52,7 @@ namespace mfront {
          << "typename tfel::config::ScalarTypes<" << numeric_type << ", "
          << use_qt << ">::" << a << ";\n";
     }
-  } // end of writeScalarStandardTypedefs
+  }  // end of writeScalarStandardTypedefs
 
   const VariableDescription&
   MaterialPropertyDescription::getVariableDescription(

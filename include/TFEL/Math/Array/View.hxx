@@ -30,7 +30,7 @@
 namespace tfel::math::internals {
 
   template <typename T>
-  struct MakeViewReference{
+  struct MakeViewReference {
     //! \brief result of the metafunction
     using type = T&;
   };
@@ -42,7 +42,7 @@ namespace tfel::math::internals {
   };
 
   template <typename T>
-  struct MakeConstViewReference{
+  struct MakeConstViewReference {
     //! \brief result of the metafunction
     using type = const T&;
   };
@@ -81,10 +81,12 @@ namespace tfel::math {
     using storage_type = std::
         conditional_t<isQuantity<ValueType>(), base_type<ValueType>, ValueType>;
     //!
-    static constexpr auto isMakeConstReferenceTrivial = !isQuantity<ValueType>();
+    static constexpr auto isMakeConstReferenceTrivial =
+        !isQuantity<ValueType>();
     //! \brief make a const_reference from a const reference to a base type
     static constexpr typename ViewArrayPolicy::const_reference
-    make_const_reference(const typename ViewArrayPolicy::storage_type& v) noexcept {
+    make_const_reference(
+        const typename ViewArrayPolicy::storage_type& v) noexcept {
       if constexpr (isQuantity<ValueType>()) {
         using const_qt_reference = typename ViewArrayPolicy::const_reference;
         return const_qt_reference{v};
@@ -108,7 +110,6 @@ namespace tfel::math {
     using IndexingPolicy = IndexingPolicyType;
   };
 
-
   //! \brief a simple alias
   template <typename MappedType, typename IndexingPolicyType>
   using selectViewArrayBase = std::conditional_t<
@@ -130,164 +131,157 @@ namespace tfel::math {
               View<MappedType, IndexingPolicyType>,
               ViewArrayPolicy<numeric_type<MappedType>, IndexingPolicyType>>>>;
 
-    //! \brief 
-    template <typename MappedType>
-    using ViewStorageType = std::conditional_t<
-        isQuantity<numeric_type<std::remove_cv_t<MappedType>>>(),
-        base_type<numeric_type<std::remove_cv_t<MappedType>>>,
-        numeric_type<std::remove_cv_t<MappedType>>>;
-    //! \brief 
-    template <typename MappedType>
-    using ViewDataPointerType =
-        std::conditional_t<std::is_const_v<MappedType>,
-                           const ViewStorageType<MappedType>*,
-                           ViewStorageType<MappedType>*>;
-    //! \brief
-    template <typename MappedType>
-    using ViewConstDataPointerType = const ViewStorageType<MappedType>*;
+  //! \brief
+  template <typename MappedType>
+  using ViewStorageType = std::conditional_t<
+      isQuantity<numeric_type<std::remove_cv_t<MappedType>>>(),
+      base_type<numeric_type<std::remove_cv_t<MappedType>>>,
+      numeric_type<std::remove_cv_t<MappedType>>>;
+  //! \brief
+  template <typename MappedType>
+  using ViewDataPointerType =
+      std::conditional_t<std::is_const_v<MappedType>,
+                         const ViewStorageType<MappedType>*,
+                         ViewStorageType<MappedType>*>;
+  //! \brief
+  template <typename MappedType>
+  using ViewConstDataPointerType = const ViewStorageType<MappedType>*;
+
+  /*!
+   * \brief view of an object from a continuous memory area
+   * \tparam MappedType: type of the object mapped to the memory area
+   */
+  template <typename MappedType, typename IndexingPolicyType>
+  struct View : ConceptRebind<typename ComputeObjectTag<MappedType>::type,
+                              View<MappedType, IndexingPolicyType>>::type,
+                selectViewArrayBase<MappedType, IndexingPolicyType> {
+    //
+    static_assert(
+        checkIndexingPoliciesCompatiblity<typename MappedType::indexing_policy,
+                                          IndexingPolicyType>(),
+        "the indexing policy of the view is not compatible with the "
+        "indexing policy of the mapped type");
+    //
+    static constexpr bool is_const = std::is_const_v<MappedType>;
+    //
+    static constexpr auto hasFixedSizes = IndexingPolicyType::hasFixedSizes;
+    //! \brief a simple alias
+    using data_pointer_type = ViewDataPointerType<MappedType>;
+    //! \brief a simple alias
+    using const_data_pointer_type = ViewConstDataPointerType<MappedType>;
+    //! \brief default constructor
+    explicit constexpr View(const data_pointer_type p) noexcept
+        : data_pointer(p) {
+      static_assert(hasFixedSizes, "invalid constructor call");
+    }  // end of View
+    //! \brief default constructor
+    explicit constexpr View(const data_pointer_type p,
+                            const IndexingPolicyType& i) noexcept
+        : selectViewArrayBase<MappedType, IndexingPolicyType>(i),
+          data_pointer(p) {
+      static_assert(!hasFixedSizes, "invalid constructor call");
+    }  // end of View
+
+    //! \brief copy constructor
+    constexpr View(const View&) noexcept = default;
+    //! \brief move constructor
+    constexpr View(View&&) noexcept = default;
+    //! \brief assignement operator
+    constexpr View& operator=(const View& src) noexcept {
+      static_assert(!is_const, "invalid constructor call");
+      //       checkIndexingPoliciesRuntimeCompatiblity(this->getIndexingPolicy(),
+      //                                                src.getIndexingPolicy());
+      this->assign(src);
+      return *this;
+    }
+    //! \brief move assigment
+    constexpr View& operator=(View&& src) noexcept {
+      static_assert(!is_const, "invalid constructor call");
+      //       checkIndexingPoliciesRuntimeCompatiblity(this->getIndexingPolicy(),
+      //                                                src.getIndexingPolicy());
+      this->assign(src);
+      return *this;
+    }
+    // exposing MutableFixedSizeArrayBase' assignement operators
+    using selectViewArrayBase<MappedType, IndexingPolicyType>::operator=;
+    using selectViewArrayBase<MappedType, IndexingPolicyType>::operator[];
+    using selectViewArrayBase<MappedType, IndexingPolicyType>::operator();
+    //! \return a pointer to the underlying array serving as element storage.
+    constexpr data_pointer_type data() noexcept {
+      static_assert(!is_const, "invalid call");
+      return this->data_pointer;
+    }  // end of data
+
+    //! \return a pointer to the underlying array serving as element storage.
+    constexpr const_data_pointer_type data() const noexcept {
+      return this->data_pointer;
+    }  // end of data
 
     /*!
-     * \brief view of an object from a continuous memory area
-     * \tparam MappedType: type of the object mapped to the memory area
+     * \brief assign values values from an other array
+     * \param[in] src: array to be assigned
      */
-    template <typename MappedType, typename IndexingPolicyType>
-    struct View : ConceptRebind<typename ComputeObjectTag<MappedType>::type,
-                                View<MappedType, IndexingPolicyType>>::type,
-                  selectViewArrayBase<MappedType, IndexingPolicyType> {
-      //
-      static_assert(
-          checkIndexingPoliciesCompatiblity<
-              typename MappedType::indexing_policy,
-              IndexingPolicyType>(),
-          "the indexing policy of the view is not compatible with the "
-          "indexing policy of the mapped type");
-      //
-      static constexpr bool is_const = std::is_const_v<MappedType>;
-      //
-      static constexpr auto hasFixedSizes = IndexingPolicyType::hasFixedSizes;
-      //! \brief a simple alias
-      using data_pointer_type = ViewDataPointerType<MappedType>;
-      //! \brief a simple alias
-      using const_data_pointer_type = ViewConstDataPointerType<MappedType>;
-      //! \brief default constructor
-      explicit constexpr View(const data_pointer_type p) noexcept
-          : data_pointer(p) {
-        static_assert(hasFixedSizes, "invalid constructor call");
-      }  // end of View
-      //! \brief default constructor
-      explicit constexpr View(const data_pointer_type p,
-                              const IndexingPolicyType& i) noexcept
-          : selectViewArrayBase<MappedType, IndexingPolicyType>(i),
-            data_pointer(p) {
-        static_assert(!hasFixedSizes, "invalid constructor call");
-      }  // end of View
+    template <typename OtherArray>
+    constexpr std::enable_if_t<isAssignableTo<OtherArray, MappedType>(), View&>
+    operator=(const OtherArray& src) {
+      static_assert(!is_const, "invalid call");
+      //       checkIndexingPoliciesRuntimeCompatiblity(this->getIndexingPolicy(),
+      //                                                src.getIndexingPolicy());
+      this->assign(src);
+      return *this;
+    }
+    //
+    template <typename OtherArray>
+    constexpr std::enable_if_t<isAssignableTo<OtherArray, MappedType>(), View&>
+    operator+=(const OtherArray& src) {
+      static_assert(!is_const, "invalid call");
+      //       checkIndexingPoliciesRuntimeCompatiblity(this->getIndexingPolicy(),
+      //                                                src.getIndexingPolicy());
+      this->addAndAssign(src);
+      return *this;
+    }
+    //
+    template <typename OtherArray>
+    constexpr std::enable_if_t<isAssignableTo<OtherArray, MappedType>(), View&>
+    operator-=(const OtherArray& src) {
+      static_assert(!is_const, "invalid call");
+      //       checkIndexingPoliciesRuntimeCompatiblity(this->getIndexingPolicy(),
+      //                                                src.getIndexingPolicy());
+      this->substractAndAssign(src);
+      return *this;
+    }
+    //
+    template <typename ValueType2>
+    constexpr std::enable_if_t<
+        isAssignableTo<
+            BinaryOperationResult<ValueType2, numeric_type<MappedType>, OpMult>,
+            numeric_type<MappedType>>(),
+        View&>
+    operator*=(const ValueType2& s) noexcept {
+      static_assert(!is_const, "invalid call");
+      selectViewArrayBase<MappedType, IndexingPolicyType>::multiplyByScalar(s);
+      return *this;
+    }  // end of operator*=
+       //
+    template <typename ValueType2>
+    constexpr std::enable_if_t<
+        isAssignableTo<
+            BinaryOperationResult<numeric_type<MappedType>, ValueType2, OpDiv>,
+            numeric_type<MappedType>>(),
+        View&>
+    operator/=(const ValueType2& s) noexcept {
+      static_assert(!is_const, "invalid call");
+      selectViewArrayBase<MappedType, IndexingPolicyType>::multiplyByScalar(1 /
+                                                                            s);
+      return *this;
+    }  // end of operator/=
 
-      //! \brief copy constructor
-      constexpr View(const View&) noexcept = default;
-      //! \brief move constructor
-      constexpr View(View&&) noexcept = default;
-      //! \brief assignement operator
-      constexpr View& operator=(const View& src) noexcept {
-        static_assert(!is_const, "invalid constructor call");
-        //       checkIndexingPoliciesRuntimeCompatiblity(this->getIndexingPolicy(),
-        //                                                src.getIndexingPolicy());
-        this->assign(src);
-        return *this;
-      }
-      //! \brief move assigment
-      constexpr View& operator=(View&& src) noexcept {
-        static_assert(!is_const, "invalid constructor call");
-        //       checkIndexingPoliciesRuntimeCompatiblity(this->getIndexingPolicy(),
-        //                                                src.getIndexingPolicy());
-        this->assign(src);
-        return *this;
-      }
-      // exposing MutableFixedSizeArrayBase' assignement operators
-      using selectViewArrayBase<MappedType, IndexingPolicyType>::operator=;
-      using selectViewArrayBase<MappedType, IndexingPolicyType>::operator[];
-      using selectViewArrayBase<MappedType, IndexingPolicyType>::operator();
-      //! \return a pointer to the underlying array serving as element storage.
-      constexpr data_pointer_type data() noexcept {
-        static_assert(!is_const, "invalid call");
-        return this->data_pointer;
-      }  // end of data
+    //! \brief destructor
+    ~View() noexcept = default;
 
-      //! \return a pointer to the underlying array serving as element storage.
-      constexpr const_data_pointer_type data() const noexcept {
-        return this->data_pointer;
-      }  // end of data
-
-      /*!
-       * \brief assign values values from an other array
-       * \param[in] src: array to be assigned
-       */
-      template <typename OtherArray>
-      constexpr std::enable_if_t<isAssignableTo<OtherArray, MappedType>(),
-                                 View&>
-      operator=(const OtherArray& src) {
-        static_assert(!is_const, "invalid call");
-        //       checkIndexingPoliciesRuntimeCompatiblity(this->getIndexingPolicy(),
-        //                                                src.getIndexingPolicy());
-        this->assign(src);
-        return *this;
-      }
-      //
-      template <typename OtherArray>
-      constexpr std::enable_if_t<isAssignableTo<OtherArray, MappedType>(),
-                                 View&>
-      operator+=(const OtherArray& src) {
-        static_assert(!is_const, "invalid call");
-        //       checkIndexingPoliciesRuntimeCompatiblity(this->getIndexingPolicy(),
-        //                                                src.getIndexingPolicy());
-        this->addAndAssign(src);
-        return *this;
-      }
-      //
-      template <typename OtherArray>
-      constexpr std::enable_if_t<isAssignableTo<OtherArray, MappedType>(),
-                                 View&>
-      operator-=(const OtherArray& src) {
-        static_assert(!is_const, "invalid call");
-        //       checkIndexingPoliciesRuntimeCompatiblity(this->getIndexingPolicy(),
-        //                                                src.getIndexingPolicy());
-        this->substractAndAssign(src);
-        return *this;
-      }
-      //
-      template <typename ValueType2>
-      constexpr std::enable_if_t<
-          isAssignableTo<BinaryOperationResult<ValueType2,
-                                               numeric_type<MappedType>,
-                                               OpMult>,
-                         numeric_type<MappedType>>(),
-          View&>
-      operator*=(const ValueType2& s) noexcept {
-        static_assert(!is_const, "invalid call");
-        selectViewArrayBase<MappedType, IndexingPolicyType>::multiplyByScalar(
-            s);
-        return *this;
-      }  // end of operator*=
-         //
-      template <typename ValueType2>
-      constexpr std::enable_if_t<
-          isAssignableTo<BinaryOperationResult<numeric_type<MappedType>,
-                                               ValueType2,
-                                               OpDiv>,
-                         numeric_type<MappedType>>(),
-          View&>
-      operator/=(const ValueType2& s) noexcept {
-        static_assert(!is_const, "invalid call");
-        selectViewArrayBase<MappedType, IndexingPolicyType>::multiplyByScalar(
-            1 / s);
-        return *this;
-      }  // end of operator/=
-
-      //! \brief destructor
-      ~View() noexcept = default;
-
-     protected:
-      //! \brief pointer to the memory buffer
-      const data_pointer_type data_pointer;
+   protected:
+    //! \brief pointer to the memory buffer
+    const data_pointer_type data_pointer;
   };  // end of struct View
 
   /*!

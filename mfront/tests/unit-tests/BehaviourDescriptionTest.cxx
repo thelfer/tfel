@@ -39,9 +39,9 @@ struct BehaviourDescriptionTest final : public tfel::tests::TestCase {
       TFEL_TESTS_CHECK_THROW(bd.declareAsASmallStrainStandardBehaviour(),
                              std::runtime_error);
       TFEL_TESTS_CHECK_THROW(bd.declareAsAFiniteStrainStandardBehaviour(true),
-			     std::runtime_error);
+                             std::runtime_error);
       TFEL_TESTS_CHECK_THROW(bd.declareAsACohesiveZoneModel(),
-			     std::runtime_error);
+                             std::runtime_error);
     }
     this->test2(&BehaviourDescription::declareAsACohesiveZoneModel);
     this->test3(&BehaviourDescription::addMaterialProperty);

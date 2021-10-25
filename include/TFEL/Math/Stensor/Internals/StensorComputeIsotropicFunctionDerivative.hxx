@@ -187,7 +187,8 @@ namespace tfel::math::internals {
       using stensor = tfel::math::stensor<3u, real>;
       using st2tost2 = tfel::math::st2tost2<3u, real>;
       constexpr base cste = Cste<base>::sqrt2;
-      if ((tfel::math::abs(vp(0) - vp(1)) < eps) && (tfel::math::abs(vp(0) - vp(2)) < eps)) {
+      if ((tfel::math::abs(vp(0) - vp(1)) < eps) &&
+          (tfel::math::abs(vp(0) - vp(2)) < eps)) {
         const auto dfm = (df[0] + df[1] + df[2]) / 3;
         d = st2tost2::Id() * dfm;
       } else if (tfel::math::abs(vp(0) - vp(1)) < eps) {

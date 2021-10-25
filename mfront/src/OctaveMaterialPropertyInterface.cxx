@@ -135,7 +135,7 @@ namespace mfront {
     if (useQuantities(mpd)) {
       out << "#include\"TFEL/Math/qt.hxx\"\n"
           << "#include\"TFEL/Math/Quantity/qtIO.hxx\"\n";
-    } 
+    }
     out << "#include<octave/oct.h>\n\n";
     if (!mpd.includes.empty()) {
       out << mpd.includes << "\n\n";

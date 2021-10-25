@@ -26,8 +26,7 @@
 #include "TFEL/Math/TinyBroydenSolver.hxx"
 
 struct BroydenSolver
-    : public tfel::math::
-          TinyBroydenSolver<2u, double, BroydenSolver> {
+    : public tfel::math::TinyBroydenSolver<2u, double, BroydenSolver> {
   BroydenSolver() {
     this->zeros = {1., 2.};
     this->epsilon = 1.e-14;
@@ -89,7 +88,7 @@ struct TinyBroydenSolverTest final : public tfel::tests::TestCase {
 
   void test2() {
     using namespace tfel::math;
-    const auto x0 = tvector<2u,double>{1., 2.};
+    const auto x0 = tvector<2u, double>{1., 2.};
     auto A = tmatrix<2u, 2u, double>{1, 2,  //
                                      2, 16};
     const auto [b, x] = broyden<2, double, f2>(x0, A, 1.e-15, 20);
@@ -102,12 +101,12 @@ struct TinyBroydenSolverTest final : public tfel::tests::TestCase {
 
   void test3() {
     using namespace tfel::math;
-    const auto x0 = tvector<2u,double>{1.5, -0.5};
+    const auto x0 = tvector<2u, double>{1.5, -0.5};
     const auto [b, x] = broyden<2, double, f2>(x0, 1.e-11, 20);
     TFEL_TESTS_ASSERT(b);
     const auto vf = f2(x);
     TFEL_TESTS_ASSERT(norm(vf) < 1.e-11);
-    TFEL_TESTS_ASSERT(abs(x(0)-2) < 1.e-11);
+    TFEL_TESTS_ASSERT(abs(x(0) - 2) < 1.e-11);
     TFEL_TESTS_ASSERT(abs(x(1)) < 1.e-11);
   }
 
@@ -120,8 +119,7 @@ struct TinyBroydenSolverTest final : public tfel::tests::TestCase {
   }
 };
 
-TFEL_TESTS_GENERATE_PROXY(TinyBroydenSolverTest,
-                          "TinyBroydenSolverTest");
+TFEL_TESTS_GENERATE_PROXY(TinyBroydenSolverTest, "TinyBroydenSolverTest");
 
 /* coverity [UNCAUGHT_EXCEPT]*/
 int main() {

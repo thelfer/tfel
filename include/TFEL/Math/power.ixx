@@ -192,14 +192,12 @@ namespace tfel::math::internals {
 namespace tfel::math {
 
   template <int N, typename T>
-  constexpr std::enable_if_t<std::is_floating_point_v<T>, T> power(
-      const T x) {
+  constexpr std::enable_if_t<std::is_floating_point_v<T>, T> power(const T x) {
     return tfel::math::internals::PowerImplSelector<N, 1u>::type::exe(x);
   }
 
   template <int N, unsigned int D, typename T>
-  constexpr std::enable_if_t<std::is_floating_point_v<T>, T> power(
-      const T x) {
+  constexpr std::enable_if_t<std::is_floating_point_v<T>, T> power(const T x) {
     return tfel::math::internals::PowerImplSelector<N, D>::type::exe(x);
   }
 

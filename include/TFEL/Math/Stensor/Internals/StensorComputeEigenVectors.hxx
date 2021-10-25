@@ -286,8 +286,7 @@ namespace tfel::math::internals {
       using tfel::math::tvector;
       static_assert(tfel::typetraits::IsFundamentalNumericType<T>::cond);
       static_assert(tfel::typetraits::IsReal<T>::cond);
-      constexpr const auto rel_prec =
-          100 * std::numeric_limits<T>::epsilon();
+      constexpr const auto rel_prec = 100 * std::numeric_limits<T>::epsilon();
       StensorComputeEigenValues<3u>::exe(s, vp(0), vp(1), vp(2), b);
       const auto tr = (s[0] + s[1] + s[2]) / 3;
       auto ms = T(0);

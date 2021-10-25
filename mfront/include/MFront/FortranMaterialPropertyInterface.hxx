@@ -48,7 +48,7 @@ namespace mfront {
     void writeBeginSrcNamespace(std::ostream&) const override;
     void writeEndSrcNamespace(std::ostream&) const override;
     std::string getHeaderFileName(const std::string&,
-                                          const std::string&) const override;
+                                  const std::string&) const override;
     std::string getSrcFileName(const std::string&,
                                const std::string&) const override;
     std::string getFunctionName(

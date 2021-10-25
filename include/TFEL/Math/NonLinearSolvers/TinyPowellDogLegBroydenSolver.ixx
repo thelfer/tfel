@@ -35,8 +35,8 @@ namespace tfel::math {
   }  // end of updateOrCheckJacobian
 
   template <unsigned short N, typename NumericType, typename Child>
-  bool TinyPowellDogLegBroydenSolver<N, NumericType, Child>::
-      computeNewCorrection() {
+  bool
+  TinyPowellDogLegBroydenSolver<N, NumericType, Child>::computeNewCorrection() {
     auto& child = static_cast<Child&>(*this);
     child.updateOrCheckJacobian();
     auto tmp_jacobian = this->jacobian;

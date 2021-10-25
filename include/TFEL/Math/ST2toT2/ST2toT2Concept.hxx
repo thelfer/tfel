@@ -33,6 +33,7 @@ namespace tfel::math {
   template <class T>
   struct ST2toT2Concept {
     typedef ST2toT2Tag ConceptTag;
+
    protected:
     ST2toT2Concept() = default;
     ST2toT2Concept(ST2toT2Concept&&) = default;

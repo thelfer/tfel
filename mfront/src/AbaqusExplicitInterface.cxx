@@ -543,18 +543,23 @@ namespace mfront {
         << " * \\brief constructor for the abaqus explicit interface\n"
         << " * \\param[in] " << iprefix << "d : data\n"
         << " */\n"
-        << mb.getClassName() << "(const abaqus::AbaqusExplicitData<NumericType>& "
-        << iprefix << "d)\n";
+        << mb.getClassName()
+        << "(const abaqus::AbaqusExplicitData<NumericType>& " << iprefix
+        << "d)\n";
     if (mb.useQt()) {
       out << ": " << mb.getClassName()
-          << "BehaviourData<hypothesis, NumericType,use_qt>(" << iprefix << "d),\n"
-          << mb.getClassName() << "IntegrationData<hypothesis, NumericType,use_qt>("
-          << iprefix << "d)\n";
+          << "BehaviourData<hypothesis, NumericType,use_qt>(" << iprefix
+          << "d),\n"
+          << mb.getClassName()
+          << "IntegrationData<hypothesis, NumericType,use_qt>(" << iprefix
+          << "d)\n";
     } else {
       out << ": " << mb.getClassName()
-          << "BehaviourData<hypothesis, NumericType,false>(" << iprefix << "d),\n"
-          << mb.getClassName() << "IntegrationData<hypothesis, NumericType,false>("
-          << iprefix << "d)\n";
+          << "BehaviourData<hypothesis, NumericType,false>(" << iprefix
+          << "d),\n"
+          << mb.getClassName()
+          << "IntegrationData<hypothesis, NumericType,false>(" << iprefix
+          << "d)\n";
     }
     if (!initStateVarsIncrements.empty()) {
       out << ",\n" << initStateVarsIncrements;
@@ -575,7 +580,8 @@ namespace mfront {
         << " * \\param[in] " << iprefix << "d : data\n"
         << " */\n"
         << mb.getClassName() << "BehaviourData"
-        << "(const abaqus::AbaqusExplicitData<NumericType>& " << iprefix << "d)\n: ";
+        << "(const abaqus::AbaqusExplicitData<NumericType>& " << iprefix
+        << "d)\n: ";
     bool first = true;
     this->writeMaterialPropertiesInitializersInBehaviourDataConstructorI(
         out, first, h, mb, mprops.first, mprops.second, iprefix + "d.props", "",
@@ -731,7 +737,8 @@ namespace mfront {
     } else {
       out << "void exportStateData("
           << "Stensor& "
-          << iprefix + "s, const abaqus::AbaqusExplicitData<NumericType>&) const\n";
+          << iprefix +
+                 "s, const abaqus::AbaqusExplicitData<NumericType>&) const\n";
     }
     out << "{\n"
         << "using namespace tfel::math;\n"

@@ -109,20 +109,20 @@
 
 namespace tfel::tests {
 
+  /*!
+   * \brief proxy class for automatic registration of tests
+   * \tparam TestType: type of the test to be registred
+   */
+  template <typename TestType>
+  struct TFEL_VISIBILITY_LOCAL TestProxy {
     /*!
-     * \brief proxy class for automatic registration of tests
-     * \tparam TestType: type of the test to be registred
+     * \brief Default constructor
+     * \param[in] n: test suite name
+     * \param[in] a: test argument
      */
-    template <typename TestType>
-    struct TFEL_VISIBILITY_LOCAL TestProxy {
-      /*!
-       * \brief Default constructor
-       * \param[in] n: test suite name
-       * \param[in] a: test argument
-       */
-      template <typename... Arguments>
-      TestProxy(const std::string&, Arguments&&...);
-    };  // end of struct Test
+    template <typename... Arguments>
+    TestProxy(const std::string&, Arguments&&...);
+  };  // end of struct Test
 
 }  // end of namespace tfel::tests
 

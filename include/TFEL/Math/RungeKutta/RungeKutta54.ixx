@@ -53,7 +53,7 @@ namespace tfel::math {
     while (t < this->tf - (this->dt) / 2) {
       const auto k1 = this->dt * child.computeF(t, this->y);
       auto t_ = t + (this->dt) / 4;
-      auto y_ = eval(this->y +  k1 / 4);
+      auto y_ = eval(this->y + k1 / 4);
       const auto k2 = this->dt * child.computeF(t_, y_);
       t_ = t + 0.375 * (this->dt);
       y_ = this->y + 0.09375 * (k1 + 3 * k2);
@@ -71,16 +71,17 @@ namespace tfel::math {
            cste_1859_4104 * k4 - cste_11_40 * k5;
       const auto k6 = this->dt * child.computeF(t_, y_);
       // error
-      const auto ve = cste_1_360 * k1 - cste_128_4275 * k3 - cste_2197_75240 * k4 +
-                      cste_1_50 * k5 + cste_2_55 * k6;
+      const auto ve = cste_1_360 * k1 - cste_128_4275 * k3 -
+                      cste_2197_75240 * k4 + cste_1_50 * k5 + cste_2_55 * k6;
       // error norm
       auto e = [&ve] {
         if constexpr (N == 1) {
           return tfel::math::abs(ve);
         } else {
           return tfel::fsalgo::accumulate<N>::exe(
-              eval(ve).begin(), Scalar(0),
-              [](const auto& a, const auto& b) { return tfel::math::abs(a) + b; });
+              eval(ve).begin(), Scalar(0), [](const auto& a, const auto& b) {
+                return tfel::math::abs(a) + b;
+              });
         }
       }();
       assert(e >= 0.);
