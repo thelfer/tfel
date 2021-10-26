@@ -17,6 +17,8 @@ secPrefixTemplate: "$$i$$"
 eqnPrefixTemplate: "($$i$$)"
 ---
 
+Version 3.0.10 was released on October, 26th 2021.
+
 # Issues fixed
 
 ## Issue #17: [mtest]  Unsupported degenerated case when defining the rotation matrix using Miller' indices
