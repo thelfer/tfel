@@ -20,6 +20,10 @@ eqnPrefixTemplate: "($$i$$)"
 The page describes the new functionalities of Version 3.4.3 of the
 `TFEL` project.
 
+This version was released on October 26, 2021 along with
+`TFEL-3.0.10`, `TFEL-3.1.10`, `TFEL-3.2.7` and `TFEL-3.3.3` and
+inherits from the issues fixed in those releases.
+
 # New features of `MFront`
 
 ## Ability to implement point-wise models as a particular case of generic behaviours{#sec:tfel-3.4.3:mfront:point_wise_models}
