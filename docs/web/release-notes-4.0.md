@@ -34,6 +34,13 @@ eqnPrefixTemplate: "($$i$$)"
 \newcommand{\absvalue}[1]{{\left|#1\right|}}
 \newcommand{\sigmaeq}{\sigma_{\mathrm{eq}}}
 
+The page describes the new functionalities of Version 4.0 of the
+`TFEL` project.
+
+This version was released on October 26, 2021 along with
+`TFEL-3.0.10`, `TFEL-3.1.10`, `TFEL-3.2.7`, `TFEL-3.3.3` and
+`TFEL-3.4.3` and inherits from the issues fixed in those releases.
+
 # Known incompatibilities
  
 - Material properties now define a list of aliases to scalar types that
