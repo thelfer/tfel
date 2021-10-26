@@ -89,6 +89,7 @@ EXTRA_DIST=CMakeLists.txt					      \
 	   ./release-notes-3.3.md				      \
 	   ./release-notes-3.3.1.md				      \
 	   ./release-notes-3.3.2.md				      \
+	   ./release-notes-3.3.3.md				      \
 	   ./release-notes-3.4.md				      \
 	   ./release-notes-3.4.1.md				      \
 	   ./release-notes-3.4.2.md				      \
