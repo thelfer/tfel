@@ -20,6 +20,7 @@ nocite: |
     @gelebart_grain_2021
     @seidlhofer_compressible_2021
     @hure_yield_2021
+    @shokeir_extension_2021
     @jacquet_elasto-visco-plastic_2020
     @dambrosi_homogenization_2020
     @dambrosi_detection_2020

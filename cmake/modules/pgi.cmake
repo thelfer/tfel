@@ -1,6 +1,6 @@
-tfel_enable_cxx_compiler_flag(OPTIMISATION_FLAGS_MARCH "fast")
+tfel_add_cxx_compiler_flag_if_available(OPTIMISATION_FLAGS_MARCH "fast")
 if(NOT enable-fast-math)
-  tfel_enable_cxx_compiler_flag(OPTIMISATION_FLAGS  "Kieee")
+  tfel_add_cxx_compiler_flag_if_available(OPTIMISATION_FLAGS  "Kieee")
 endif(NOT enable-fast-math)
 
 set(OPTIMISATION_FLAGS "-DTFEL_NO_RUNTIME_CHECK_BOUNDS ${OPTIMISATION_FLAGS}")

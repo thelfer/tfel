@@ -1,6 +1,6 @@
 include(cmake/modules/common-compiler-flags.cmake)
-tfel_enable_cxx_compiler_flag(OPTIMISATION_FLAGS "fno-fast-stdlib")
-tfel_enable_cxx_compiler_flag(OPTIMISATION_FLAGS "march=auto")
+tfel_add_cxx_compiler_flag_if_available(OPTIMISATION_FLAGS "fno-fast-stdlib")
+tfel_add_cxx_compiler_flag_if_available(OPTIMISATION_FLAGS "march=auto")
 
 set(OPTIMISATION_FLAGS "-DTFEL_NO_RUNTIME_CHECK_BOUNDS ${OPTIMISATION_FLAGS}")
 
