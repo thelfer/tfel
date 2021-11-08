@@ -964,7 +964,6 @@ are required:
 
 # Applications
 
-
 ![Simulated residual topography after a Berkovich indentation test in a
 single crystal. The values are normalized by the residual indentation
 depth
@@ -986,5 +985,24 @@ This model is treated by the Ansys finite element solver. The results of
 this simulation are reported on Figure
 @fig:single_crystal:Berkovich_indentation which represents the simulated
 residual topography.
+
+# Usage in `code_aster`
+
+Based on this tutorial, Nicolò Grilli (University of Bristol) published
+a series of three videos showing in details how to make single and
+polycrystal simulations with `MFront` and `code_aster`:
+
+- <https://www.youtube.com/watch?v=GXVZwzprhBI>
+- <https://www.youtube.com/watch?v=evNhkEcntaU>
+- <https://www.youtube.com/watch?v=OAnJmMTGhE4>
+
+The series adresses several advanced topics regarding the interface
+between code_ater and MFront:
+
+- handling orthotropy,
+- postprocessing of the internal state variables,
+- etc...
+
+which can be very handy for a lot of users.
 
 # References
