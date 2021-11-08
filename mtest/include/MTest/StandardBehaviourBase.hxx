@@ -45,6 +45,9 @@ namespace mtest {
   //! \brief A class to handle standard mechanical behaviours
   struct StandardBehaviourBase : public Behaviour,
                                  public StandardBehaviourDescription {
+    static std::vector<std::string> getStensorComponentsSuffixes(const Hypothesis);
+    static std::vector<std::string> getVectorComponentsSuffixes(const Hypothesis);
+    static std::vector<std::string> getTensorComponentsSuffixes(const Hypothesis);
     /*!
      * \param[in] h : modelling hypothesis
      * \param[in] l : library name

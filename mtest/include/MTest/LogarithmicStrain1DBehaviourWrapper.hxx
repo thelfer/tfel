@@ -15,28 +15,22 @@
 #define LIB_MTEST_LOGARITHMICSTRAIN1DBEHAVIOURWRAPPER_HXX
 
 #include <memory>
-#include "MTest/Behaviour.hxx"
+#include "MTest/BehaviourWrapperBase.hxx"
 
 namespace mtest {
 
-  //! A simple wrapper around mechanical behaviours
-  struct LogarithmicStrain1DBehaviourWrapper : public Behaviour {
+  /*!
+   * \brief a simple wrapper around a small strain behaviour which turns a small
+   * strain behaviour into a finite strain behaviour in the logarithmic strain
+   * framework using the ETO-PK1 kinematic assumption under the axisymmetrical
+   * generalised plane strain modelling hypothesis.
+   */
+  struct LogarithmicStrain1DBehaviourWrapper : public BehaviourWrapperBase {
     /*!
-     * \brief This function set a material property to its default value if it
-     * not already declared \param[out] mp  : evolution manager where \param[in]
-     * evm : evolution manager \param[in]  n   : material property name
-     * \param[in]  v   : default value
-     */
-    static void setOptionalMaterialPropertyDefaultValue(EvolutionManager&,
-                                                        const EvolutionManager&,
-                                                        const std::string&,
-                                                        const real);
-    /*!
-     * constructor
+     * \brief constructor
      * \param[in] wb : wrapped behaviour
      */
     LogarithmicStrain1DBehaviourWrapper(const std::shared_ptr<Behaviour>&);
-    std::string getBehaviourName() const override;
     Hypothesis getHypothesis() const override;
     BehaviourType getBehaviourType() const override;
     Kinematic getBehaviourKinematic() const override;
@@ -53,15 +47,9 @@ namespace mtest {
         const std::string&) const override;
     unsigned short getThermodynamicForceComponentPosition(
         const std::string&) const override;
-    unsigned short getSymmetryType() const override;
     size_t getTangentOperatorArraySize() const override;
     std::vector<std::pair<std::string, std::string>> getTangentOperatorBlocks()
         const override;
-    std::vector<std::string> getMaterialPropertiesNames() const override;
-    size_t getMaterialPropertiesSize() const override;
-    std::vector<std::string> getOptionalMaterialProperties() const override;
-    void setOptionalMaterialPropertiesDefaultValues(
-        EvolutionManager&, const EvolutionManager&) const override;
     std::vector<std::string> getInternalStateVariablesNames() const override;
     std::vector<std::string> expandInternalStateVariablesNames() const override;
     size_t getInternalStateVariablesSize() const override;
@@ -71,33 +59,7 @@ namespace mtest {
         const std::string&) const override;
     unsigned short getInternalStateVariablePosition(
         const std::string&) const override;
-    std::vector<std::string> getExternalStateVariablesNames() const override;
-    size_t getExternalStateVariablesSize() const override;
-    std::vector<std::string> getParametersNames() const override;
-    std::vector<std::string> getIntegerParametersNames() const override;
-    std::vector<std::string> getUnsignedShortParametersNames() const override;
-    double getRealParameterDefaultValue(const std::string&) const override;
-    int getIntegerParameterDefaultValue(const std::string&) const override;
-    unsigned short getUnsignedShortParameterDefaultValue(
-        const std::string&) const override;
-    void setOutOfBoundsPolicy(
-        const tfel::material::OutOfBoundsPolicy) const override;
-    bool hasBounds(const std::string&) const override;
-    bool hasLowerBound(const std::string&) const override;
-    bool hasUpperBound(const std::string&) const override;
-    long double getLowerBound(const std::string&) const override;
-    long double getUpperBound(const std::string&) const override;
-    bool hasPhysicalBounds(const std::string&) const override;
-    bool hasLowerPhysicalBound(const std::string&) const override;
-    bool hasUpperPhysicalBound(const std::string&) const override;
-    long double getLowerPhysicalBound(const std::string&) const override;
-    long double getUpperPhysicalBound(const std::string&) const override;
-    void setParameter(const std::string&, const real) const override;
-    void setIntegerParameter(const std::string&, const int) const override;
-    void setUnsignedIntegerParameter(const std::string&,
-                                     const unsigned short) const override;
     void allocate(BehaviourWorkSpace&) const override;
-    StiffnessMatrixType getDefaultStiffnessMatrixType() const override;
     tfel::math::tmatrix<3u, 3u, real> getRotationMatrix(
         const tfel::math::vector<real>&,
         const tfel::math::tmatrix<3u, 3u, real>&) const override;
@@ -110,12 +72,8 @@ namespace mtest {
                                     BehaviourWorkSpace&,
                                     const real,
                                     const StiffnessMatrixType) const override;
-    //! destructor
+    //! \brief destructor
     ~LogarithmicStrain1DBehaviourWrapper() override;
-
-   private:
-    //! wrapped behaviour
-    std::shared_ptr<Behaviour> b;
   };  // end of struct LogarithmicStrain1DBehaviourWrapper
 
 }  // end of namespace mtest

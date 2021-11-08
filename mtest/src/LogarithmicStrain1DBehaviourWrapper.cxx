@@ -41,7 +41,7 @@ namespace mtest {
 
   LogarithmicStrain1DBehaviourWrapper::LogarithmicStrain1DBehaviourWrapper(
       const std::shared_ptr<Behaviour>& wb)
-      : b(wb) {
+      : BehaviourWrapperBase(wb) {
     using tfel::material::MechanicalBehaviourBase;
     const auto h = this->b->getHypothesis();
     tfel::raise_if(
@@ -56,10 +56,6 @@ namespace mtest {
                    "LogarithmicStrain1DBehaviourWrapper: "
                    "the underlying behaviour must be small strain");
   }
-
-  std::string LogarithmicStrain1DBehaviourWrapper::getBehaviourName() const {
-    return this->b->getBehaviourName();
-  }  // end of getBehaviourName()
 
   LogarithmicStrain1DBehaviourWrapper::Hypothesis
   LogarithmicStrain1DBehaviourWrapper::getHypothesis() const {
@@ -140,31 +136,6 @@ namespace mtest {
     return this->b->getTangentOperatorBlocks();
   }  // end of getTangentOperatorBlocks()
 
-  unsigned short LogarithmicStrain1DBehaviourWrapper::getSymmetryType() const {
-    return this->b->getSymmetryType();
-  }  // end of getSymmetryType
-
-  size_t LogarithmicStrain1DBehaviourWrapper::getMaterialPropertiesSize()
-      const {
-    return this->b->getMaterialPropertiesSize();
-  }  // end of getMaterialPropertiesSize
-
-  std::vector<std::string>
-  LogarithmicStrain1DBehaviourWrapper::getMaterialPropertiesNames() const {
-    return this->b->getMaterialPropertiesNames();
-  }  // end of getMaterialPropertiesNames
-
-  std::vector<std::string>
-  LogarithmicStrain1DBehaviourWrapper::getOptionalMaterialProperties() const {
-    return {};
-  }  // end of getOptionalMaterialProperties()
-
-  void LogarithmicStrain1DBehaviourWrapper::
-      setOptionalMaterialPropertiesDefaultValues(
-          EvolutionManager& mp, const EvolutionManager& evm) const {
-    return this->b->setOptionalMaterialPropertiesDefaultValues(mp, evm);
-  }  // end of setOptionalMaterialPropertiesDefaultValues
-
   std::vector<std::string>
   LogarithmicStrain1DBehaviourWrapper::getInternalStateVariablesNames() const {
     return this->b->getInternalStateVariablesNames();
@@ -199,126 +170,10 @@ namespace mtest {
     return this->b->getInternalStateVariablePosition(n);
   }  // end of getInternalStateVariablePosition
 
-  std::vector<std::string>
-  LogarithmicStrain1DBehaviourWrapper::getExternalStateVariablesNames() const {
-    return this->b->getExternalStateVariablesNames();
-  }  // end of getExternalStateVariablesNames
-
-  size_t LogarithmicStrain1DBehaviourWrapper::getExternalStateVariablesSize()
-      const {
-    return this->b->getExternalStateVariablesSize();
-  }  // end of getExternalStateVariablesSize
-
-  std::vector<std::string>
-  LogarithmicStrain1DBehaviourWrapper::getParametersNames() const {
-    return this->b->getParametersNames();
-  }  // end of getParametersNames
-
-  std::vector<std::string>
-  LogarithmicStrain1DBehaviourWrapper::getIntegerParametersNames() const {
-    return this->b->getIntegerParametersNames();
-  }  // end of getIntegerParametersNames
-
-  std::vector<std::string>
-  LogarithmicStrain1DBehaviourWrapper::getUnsignedShortParametersNames() const {
-    return this->b->getUnsignedShortParametersNames();
-  }  // end of getUnsignedShortParametersNames
-
-  double LogarithmicStrain1DBehaviourWrapper::getRealParameterDefaultValue(
-      const std::string& p) const {
-    return this->b->getRealParameterDefaultValue(p);
-  }
-
-  int LogarithmicStrain1DBehaviourWrapper::getIntegerParameterDefaultValue(
-      const std::string& p) const {
-    return this->b->getIntegerParameterDefaultValue(p);
-  }
-
-  unsigned short
-  LogarithmicStrain1DBehaviourWrapper::getUnsignedShortParameterDefaultValue(
-      const std::string& p) const {
-    return this->b->getUnsignedShortParameterDefaultValue(p);
-  }
-
-  void LogarithmicStrain1DBehaviourWrapper::setOutOfBoundsPolicy(
-      const tfel::material::OutOfBoundsPolicy p) const {
-    return this->b->setOutOfBoundsPolicy(p);
-  }  // end of setOutOfBoundsPolicy
-
-  bool LogarithmicStrain1DBehaviourWrapper::hasBounds(
-      const std::string& v) const {
-    return this->b->hasBounds(v);
-  }  // end of hasBounds
-
-  bool LogarithmicStrain1DBehaviourWrapper::hasLowerBound(
-      const std::string& v) const {
-    return this->b->hasLowerBound(v);
-  }  // end of hasLowerBound
-
-  bool LogarithmicStrain1DBehaviourWrapper::hasUpperBound(
-      const std::string& v) const {
-    return this->b->hasUpperBound(v);
-  }  // end of hasUpperBound
-
-  long double LogarithmicStrain1DBehaviourWrapper::getLowerBound(
-      const std::string& v) const {
-    return this->b->getLowerBound(v);
-  }  // end of getLowerBound
-
-  long double LogarithmicStrain1DBehaviourWrapper::getUpperBound(
-      const std::string& v) const {
-    return this->b->getUpperBound(v);
-  }  // end of getUpperBound
-
-  bool LogarithmicStrain1DBehaviourWrapper::hasPhysicalBounds(
-      const std::string& v) const {
-    return this->b->hasPhysicalBounds(v);
-  }  // end of hasPhysicalBounds
-
-  bool LogarithmicStrain1DBehaviourWrapper::hasLowerPhysicalBound(
-      const std::string& v) const {
-    return this->b->hasLowerPhysicalBound(v);
-  }  // end of hasLowerPhysicalBound
-
-  bool LogarithmicStrain1DBehaviourWrapper::hasUpperPhysicalBound(
-      const std::string& v) const {
-    return this->b->hasUpperPhysicalBound(v);
-  }  // end of hasUpperPhysicalBound
-
-  long double LogarithmicStrain1DBehaviourWrapper::getLowerPhysicalBound(
-      const std::string& v) const {
-    return this->b->getLowerPhysicalBound(v);
-  }  // end of getLowerPhysicalBound
-
-  long double LogarithmicStrain1DBehaviourWrapper::getUpperPhysicalBound(
-      const std::string& v) const {
-    return this->b->getUpperPhysicalBound(v);
-  }  // end of getUpperPhysicalBound
-
-  void LogarithmicStrain1DBehaviourWrapper::setParameter(const std::string& n,
-                                                         const real v) const {
-    this->b->setParameter(n, v);
-  }  // end of setParameter
-
-  void LogarithmicStrain1DBehaviourWrapper::setIntegerParameter(
-      const std::string& n, const int v) const {
-    this->b->setIntegerParameter(n, v);
-  }  // end of setIntegerParameter
-
-  void LogarithmicStrain1DBehaviourWrapper::setUnsignedIntegerParameter(
-      const std::string& n, const unsigned short v) const {
-    this->b->setUnsignedIntegerParameter(n, v);
-  }  // end of setUnsignedIntegerParameter
-
   void LogarithmicStrain1DBehaviourWrapper::allocate(
       BehaviourWorkSpace& wk) const {
     this->b->allocate(wk);
   }  // end of allocate
-
-  StiffnessMatrixType
-  LogarithmicStrain1DBehaviourWrapper::getDefaultStiffnessMatrixType() const {
-    return this->b->getDefaultStiffnessMatrixType();
-  }  // end of getDefaultStiffnessMatrixType
 
   tfel::math::tmatrix<3u, 3u, real>
   LogarithmicStrain1DBehaviourWrapper::getRotationMatrix(

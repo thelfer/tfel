@@ -27,8 +27,9 @@ libTFELMTest_la_SOURCES =                               \
 			  CyranoEvolution.cxx                       \
 			  FunctionEvolution.cxx                     \
 			  Behaviour.cxx                             \
-			  BehaviourWorkSpace.cxx                    \
+			  BehaviourWrapperBase.cxx                  \
 			  LogarithmicStrain1DBehaviourWrapper.cxx   \
+			  BehaviourWorkSpace.cxx                    \
 			  GenericBehaviour.cxx                      \
 			  StandardBehaviourBase.cxx                 \
 			  UmatNormaliseTangentOperator.cxx          \

@@ -72,6 +72,83 @@ namespace mtest {
     ExternalBehaviourData::operator=(ExternalBehaviourDescription(l, b, h));
   }  // end of StandardBehaviourDescription::StandardBehaviourDescription
 
+  std::vector<std::string> StandardBehaviourBase::getVectorComponentsSuffixes(
+      const Hypothesis h) {
+    if (h == ModellingHypothesis::TRIDIMENSIONAL) {
+      return {"X", "Y", "Z"};
+    } else if ((h == ModellingHypothesis::PLANESTRAIN) ||
+               (h == ModellingHypothesis::PLANESTRESS) ||
+               (h == ModellingHypothesis::GENERALISEDPLANESTRAIN)) {
+      return {"X", "Y"};
+    } else if (h == ModellingHypothesis::AXISYMMETRICAL) {
+      return {"R", "Z"};
+    } else if ((h ==
+                ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN) ||
+               (h ==
+                ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS)) {
+      return {"R"};
+    }
+    tfel::raise(
+        "StandardBehaviourBase::VectorComponentsSuffixes: "
+        "unsupported modelling hypothesis");
+  }
+
+  std::vector<std::string> StandardBehaviourBase::getStensorComponentsSuffixes(
+      const Hypothesis h) {
+    auto c = std::vector<std::string>{};
+    if ((h == ModellingHypothesis::TRIDIMENSIONAL) ||
+        (h == ModellingHypothesis::PLANESTRAIN) ||
+        (h == ModellingHypothesis::PLANESTRESS) ||
+        (h == ModellingHypothesis::GENERALISEDPLANESTRAIN)) {
+      c.insert(c.end(), {"XX", "YY", "ZZ", "XY"});
+      if (h == ModellingHypothesis::TRIDIMENSIONAL) {
+        c.insert(c.end(), {"XZ", "YZ"});
+      }
+    } else if ((h == ModellingHypothesis::AXISYMMETRICAL) ||
+               (h ==
+                ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN) ||
+               (h ==
+                ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS)) {
+      c.insert(c.end(), {"RR", "ZZ", "TT"});
+      if (h == ModellingHypothesis::AXISYMMETRICAL) {
+        c.push_back("RZ");
+      }
+    } else {
+      tfel::raise(
+          "StandardBehaviourBase::getStensorComponentsSuffixes: "
+          "unsupported modelling hypothesis");
+    }
+    return c;
+  }  // end of StandardBehaviourBase::getStensorComponentsSuffixes
+
+  std::vector<std::string> StandardBehaviourBase::getTensorComponentsSuffixes(
+      const Hypothesis h) {
+    auto c = std::vector<std::string>{};
+    if ((h == ModellingHypothesis::TRIDIMENSIONAL) ||
+        (h == ModellingHypothesis::PLANESTRAIN) ||
+        (h == ModellingHypothesis::PLANESTRESS) ||
+        (h == ModellingHypothesis::GENERALISEDPLANESTRAIN)) {
+      c.insert(c.end(), {"XX", "YY", "ZZ", "XY", "YX"});
+      if (h == ModellingHypothesis::TRIDIMENSIONAL) {
+        c.insert(c.end(), {"XZ", "ZX", "YZ", "ZY"});
+      }
+    } else if ((h == ModellingHypothesis::AXISYMMETRICAL) ||
+               (h ==
+                ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN) ||
+               (h ==
+                ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS)) {
+      c.insert(c.end(), {"RR", "ZZ", "TT"});
+      if (h == ModellingHypothesis::AXISYMMETRICAL) {
+        c.insert(c.end(), {"RZ", "ZR"});
+      }
+    } else {
+      tfel::raise(
+          "StandardBehaviourBase::getTensorComponentsSuffixes: "
+          "unsupported modelling hypothesis");
+    }
+    return c;
+  }  // end of StandardBehaviourBase::getTensorComponentsSuffixes
+
   StandardBehaviourBase::StandardBehaviourBase(const Hypothesis h,
                                                const std::string& l,
                                                const std::string& b)
@@ -337,84 +414,22 @@ namespace mtest {
         "unsupported behaviour type");
   }  // end of StandardBehaviourBase::getThermodynamicForcesSize
 
-  std::vector<std::string> StandardBehaviourBase::getStensorComponentsSuffixes()
-      const {
-    const auto h = this->getHypothesis();
-    auto c = std::vector<std::string>{};
-    if ((h == ModellingHypothesis::TRIDIMENSIONAL) ||
-        (h == ModellingHypothesis::PLANESTRAIN) ||
-        (h == ModellingHypothesis::PLANESTRESS) ||
-        (h == ModellingHypothesis::GENERALISEDPLANESTRAIN)) {
-      c.insert(c.end(), {"XX", "YY", "ZZ", "XY"});
-      if (h == ModellingHypothesis::TRIDIMENSIONAL) {
-        c.insert(c.end(), {"XZ", "YZ"});
-      }
-    } else if ((h == ModellingHypothesis::AXISYMMETRICAL) ||
-               (h ==
-                ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN) ||
-               (h ==
-                ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS)) {
-      c.insert(c.end(), {"RR", "ZZ", "TT"});
-      if (h == ModellingHypothesis::AXISYMMETRICAL) {
-        c.push_back("RZ");
-      }
-    } else {
-      tfel::raise(
-          "StandardBehaviourBase::getGradientsComponents: "
-          "unsupported modelling hypothesis");
-    }
-    return c;
-  }  // end of StandardBehaviourBase::getStensorComponentsSuffixes
-
   std::vector<std::string> StandardBehaviourBase::getVectorComponentsSuffixes()
       const {
     const auto h = this->getHypothesis();
-    if (h == ModellingHypothesis::TRIDIMENSIONAL) {
-      return {"X", "Y", "Z"};
-    } else if ((h == ModellingHypothesis::PLANESTRAIN) ||
-               (h == ModellingHypothesis::PLANESTRESS) ||
-               (h == ModellingHypothesis::GENERALISEDPLANESTRAIN)) {
-      return {"X", "Y"};
-    } else if (h == ModellingHypothesis::AXISYMMETRICAL) {
-      return {"R", "Z"};
-    } else if ((h ==
-                ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN) ||
-               (h ==
-                ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS)) {
-      return {"R"};
-    }
-    tfel::raise(
-        "StandardBehaviourBase::VectorComponentsSuffixes: "
-        "unsupported modelling hypothesis");
+    return StandardBehaviourBase::getVectorComponentsSuffixes(h);
   }  // end of StandardBehaviourBase::getVectorComponentsSuffixes
+
+  std::vector<std::string> StandardBehaviourBase::getStensorComponentsSuffixes()
+      const {
+    const auto h = this->getHypothesis();
+    return StandardBehaviourBase::getStensorComponentsSuffixes(h);
+  }  // end of StandardBehaviourBase::getStensorComponentsSuffixes
 
   std::vector<std::string> StandardBehaviourBase::getTensorComponentsSuffixes()
       const {
     const auto h = this->getHypothesis();
-    auto c = std::vector<std::string>{};
-    if ((h == ModellingHypothesis::TRIDIMENSIONAL) ||
-        (h == ModellingHypothesis::PLANESTRAIN) ||
-        (h == ModellingHypothesis::PLANESTRESS) ||
-        (h == ModellingHypothesis::GENERALISEDPLANESTRAIN)) {
-      c.insert(c.end(), {"XX", "YY", "ZZ", "XY", "YX"});
-      if (h == ModellingHypothesis::TRIDIMENSIONAL) {
-        c.insert(c.end(), {"XZ", "ZX", "YZ", "ZY"});
-      }
-    } else if ((h == ModellingHypothesis::AXISYMMETRICAL) ||
-               (h ==
-                ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN) ||
-               (h ==
-                ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS)) {
-      c.insert(c.end(), {"RR", "ZZ", "TT"});
-      if (h == ModellingHypothesis::AXISYMMETRICAL) {
-        c.insert(c.end(), {"RZ", "ZR"});
-      }
-    } else {
-      tfel::raise(
-          "StandardBehaviourBase::getTensorComponentsSuffixes: "
-          "unsupported modelling hypothesis");
-    }
-    return c;
+    return StandardBehaviourBase::getTensorComponentsSuffixes(h);
   }  // end of StandardBehaviourBase::getTensorComponentsSuffixes
 
   std::vector<std::string> StandardBehaviourBase::getGradientsComponents()

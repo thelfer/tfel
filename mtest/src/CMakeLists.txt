@@ -21,8 +21,9 @@ set(TFELMTest_SOURCES
   CyranoEvolution.cxx
   FunctionEvolution.cxx
   Behaviour.cxx
-  BehaviourWorkSpace.cxx
+  BehaviourWrapperBase.cxx
   LogarithmicStrain1DBehaviourWrapper.cxx
+  BehaviourWorkSpace.cxx
   StandardBehaviourBase.cxx
   GenericBehaviour.cxx
   UmatNormaliseTangentOperator.cxx
