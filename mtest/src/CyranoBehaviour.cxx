@@ -80,7 +80,7 @@ namespace mtest {
     wk.ne.resize(3u);
     wk.ns.resize(3u);
     wk.nivs.resize(nstatev);
-    mtest::allocate(wk.cs, this->shared_from_this());
+    this->allocateCurrentState(wk.cs);
   }
 
   tfel::math::tmatrix<3u, 3u, real> CyranoBehaviour::getRotationMatrix(

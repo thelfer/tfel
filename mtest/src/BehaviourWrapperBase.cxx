@@ -1,8 +1,8 @@
 /*!
- * \file   BehaviourWrapperBase.cxx
+ * \file   mtest/src/BehaviourWrapperBase.cxx
  * \brief
  * \author Thomas Helfer
- * \date   28 déc. 2015
+ * \date   8/11/2021
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence
@@ -11,13 +11,24 @@
  * project under specific licensing conditions.
  */
 
+#include "TFEL/Raise.hxx"
 #include "MTest/BehaviourWrapperBase.hxx"
 
 namespace mtest {
 
   BehaviourWrapperBase::BehaviourWrapperBase(
       const std::shared_ptr<Behaviour>& wb)
-      : b(wb) {} // end of BehaviourWrapperBase
+      : b(wb) {
+    if (b == nullptr) {
+      tfel::raise(
+          "BehaviourWrapperBase::BehaviourWrapperBase: "
+          "invalid behaviour");
+    }
+  }  // end of BehaviourWrapperBase
+
+  void BehaviourWrapperBase::allocateCurrentState(CurrentState& s) const{
+    this->b->allocateCurrentState(s);
+  } // end of BehaviourWrapperBase::allocateCurrentState
 
   std::string BehaviourWrapperBase::getBehaviourName() const {
     return this->b->getBehaviourName();

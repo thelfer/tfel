@@ -299,7 +299,12 @@ namespace mtest {
      * \brief allocate workspace
      * \param[out] wk : behaviour workspace
      */
-    virtual void allocate(BehaviourWorkSpace&) const = 0;
+    virtual void allocateWorkSpace(BehaviourWorkSpace&) const = 0;
+    /*!
+     * \brief allocate current state
+     * \param[out] cs : current state
+     */
+    virtual void allocateCurrentState(CurrentState&) const = 0;
     /*!
      * \return the default type of stiffness matrix used by the behaviour
      */

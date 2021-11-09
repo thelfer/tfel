@@ -22,6 +22,7 @@
 #include "TFEL/Raise.hxx"
 #include "MFront/MFrontLogStream.hxx"
 #include "MTest/LogarithmicStrain1DBehaviourWrapper.hxx"
+#include "MTest/SmallStrainTridimensionalBehaviourWrapper.hxx"
 #include "MTest/Behaviour.hxx"
 #include "MTest/StudyCurrentState.hxx"
 #include "MTest/StructureCurrentState.hxx"
@@ -138,9 +139,15 @@ namespace mtest {
     if (this->hypothesis == ModellingHypothesis::UNDEFINEDHYPOTHESIS) {
       this->setDefaultModellingHypothesis();
     }
-    auto bp = Behaviour::getBehaviour(i, l, f, d, this->hypothesis);
     if (w == "LogarithmicStrain1D") {
+      auto bp = Behaviour::getBehaviour(i, l, f, d, this->hypothesis);
       auto wp = std::make_shared<LogarithmicStrain1DBehaviourWrapper>(bp);
+      this->setBehaviour(wp);
+    } else if (w == "SmallStrainTridimensionalBehaviourWrapper") {
+      auto bp = Behaviour::getBehaviour(i, l, f, d,
+                                        ModellingHypothesis::TRIDIMENSIONAL);
+      auto wp = std::make_shared<SmallStrainTridimensionalBehaviourWrapper>(
+          bp, this->hypothesis);
       this->setBehaviour(wp);
     } else {
       tfel::raise("SingleStructureScheme::setBehaviour: unknown wrapper '" + w +

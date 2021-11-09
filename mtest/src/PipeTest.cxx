@@ -573,7 +573,7 @@ namespace mtest {
     this->b->getGradientsDefaultInitialValues(e0);
     // intial values of stresses
     for (auto& cs : ss.istates) {
-      mtest::allocate(cs, this->b);
+      this->b->allocateCurrentState(cs);
       std::copy(e0.begin(), e0.end(), cs.e0.begin());
       std::copy(e0.begin(), e0.end(), cs.e1.begin());
       std::fill(cs.e_th0.begin(), cs.e_th0.end(), real(0));

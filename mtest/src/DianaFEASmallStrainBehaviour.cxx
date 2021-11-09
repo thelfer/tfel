@@ -67,7 +67,7 @@ namespace mtest {
     wk.ns.resize(nth);
     wk.nivs.resize(nstatev);
     wk.mps.resize(this->mpnames.size());
-    mtest::allocate(wk.cs, this->shared_from_this());
+    this->allocateCurrentState(wk.cs);
   }  // end of DianaFEASmallStrainBehaviour::allocate
 
   tfel::math::tmatrix<3u, 3u, real>

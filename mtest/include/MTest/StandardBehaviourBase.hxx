@@ -58,6 +58,7 @@ namespace mtest {
                           const std::string&);
     //! \param[in] umb: behaviour description
     StandardBehaviourBase(const StandardBehaviourDescription&);
+    void allocateCurrentState(CurrentState&) const override;
     std::string getBehaviourName() const override;
     Hypothesis getHypothesis() const override;
     BehaviourType getBehaviourType() const override;

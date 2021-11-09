@@ -32,48 +32,6 @@ namespace mtest {
 
   CurrentState::~CurrentState() noexcept = default;
 
-  void allocate(CurrentState& s, const std::shared_ptr<const Behaviour>& b) {
-    tfel::raise_if(s.behaviour != nullptr,
-                   "mtest::allocate: state already allocated");
-    s.behaviour = b;
-    const auto mpnames = s.behaviour->getMaterialPropertiesNames();
-    const auto esvnames = s.behaviour->getExternalStateVariablesNames();
-    // clear
-    s.s_1.clear();
-    s.s0.clear();
-    s.s1.clear();
-    s.e0.clear();
-    s.e1.clear();
-    s.e_th0.clear();
-    s.e_th1.clear();
-    s.mprops1.clear();
-    s.iv_1.clear();
-    s.iv0.clear();
-    s.iv1.clear();
-    s.esv0.clear();
-    s.desv.clear();
-    // resizing and initialization
-    const auto ndv = b->getGradientsSize();
-    const auto nth = b->getThermodynamicForcesSize();
-    s.s_1.resize(nth, 0.);
-    s.s0.resize(nth, 0.);
-    s.s1.resize(nth, 0.);
-    s.e0.resize(ndv, 0.);
-    s.e1.resize(ndv, 0.);
-    s.e_th0.resize(ndv, 0.);
-    s.e_th1.resize(ndv, 0.);
-    s.mprops1.resize(mpnames.size());
-    s.iv_1.resize(b->getInternalStateVariablesSize(), 0.);
-    s.iv0.resize(s.iv_1.size(), 0.);
-    s.iv1.resize(s.iv0.size(), 0.);
-    s.se0 = 0;
-    s.se1 = 0;
-    s.de0 = 0;
-    s.de1 = 0;
-    s.esv0.resize(esvnames.size(), 0.);
-    s.desv.resize(esvnames.size(), 0.);
-  }
-
   void computeMaterialProperties(CurrentState& s,
                                  const EvolutionManager& evm,
                                  const EvolutionManager& dvm,

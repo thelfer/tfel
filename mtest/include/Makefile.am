@@ -31,6 +31,7 @@ nobase_include_HEADERS = MTest/Config.hxx	                         \
 			 MTest/ReferenceFileComparisonTest.hxx           \
 			 MTest/Behaviour.hxx                             \
 			 MTest/BehaviourWrapperBase.hxx                  \
+			 MTest/SmallStrainTridimensionalBehaviourWrapper.hxx \
 			 MTest/LogarithmicStrain1DBehaviourWrapper.hxx   \
 			 MTest/BehaviourWorkSpace.hxx                    \
 			 MTest/StandardBehaviourBase.hxx                 \

@@ -32,6 +32,7 @@ namespace mtest {
      */
     BehaviourWrapperBase(const std::shared_ptr<Behaviour>&);
     //
+    void allocateCurrentState(CurrentState&) const override;
     std::string getBehaviourName() const override;
     unsigned short getSymmetryType() const override;
     StiffnessMatrixType getDefaultStiffnessMatrixType() const override;

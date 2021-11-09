@@ -22,6 +22,7 @@ set(TFELMTest_SOURCES
   FunctionEvolution.cxx
   Behaviour.cxx
   BehaviourWrapperBase.cxx
+  SmallStrainTridimensionalBehaviourWrapper.cxx
   LogarithmicStrain1DBehaviourWrapper.cxx
   BehaviourWorkSpace.cxx
   StandardBehaviourBase.cxx

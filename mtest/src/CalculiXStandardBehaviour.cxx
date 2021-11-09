@@ -92,7 +92,7 @@ namespace mtest {
     wk.ne.resize(ndv);
     wk.ns.resize(nth);
     wk.nivs.resize(nstatev);
-    mtest::allocate(wk.cs, this->shared_from_this());
+    this->allocateCurrentState(wk.cs);
   }  // end of CalculiXStandardBehaviour::allocate
 
   StiffnessMatrixType CalculiXStandardBehaviour::getDefaultStiffnessMatrixType()

@@ -29,6 +29,7 @@ libTFELMTest_la_SOURCES =                               \
 			  Behaviour.cxx                             \
 			  BehaviourWrapperBase.cxx                  \
 			  LogarithmicStrain1DBehaviourWrapper.cxx   \
+			  SmallStrainTridimensionalBehaviourWrapper.cxx \
 			  BehaviourWorkSpace.cxx                    \
 			  GenericBehaviour.cxx                      \
 			  StandardBehaviourBase.cxx                 \

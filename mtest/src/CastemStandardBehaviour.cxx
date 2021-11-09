@@ -179,7 +179,7 @@ namespace mtest {
     } else {
       wk.mps.resize(this->mpnames.size());
     }
-    mtest::allocate(wk.cs, this->shared_from_this());
+    this->allocateCurrentState(wk.cs);
   }  // end of CastemStandardBehaviour::allocate
 
   StiffnessMatrixType CastemStandardBehaviour::getDefaultStiffnessMatrixType()

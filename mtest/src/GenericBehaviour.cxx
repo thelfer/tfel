@@ -191,7 +191,7 @@ namespace mtest {
       }
     }
     this->mpnames.insert(this->mpnames.begin(), mps.begin(), mps.end());
-  }  // end of GenericBehaviour::GenericBehaviour
+  }  // end of GenericBehaviour
 
   GenericBehaviour::GenericBehaviour(
       const Hypothesis h,
@@ -244,7 +244,7 @@ namespace mtest {
         }
       }
     }
-  }  // end of GenericBehaviour::GenericBehaviour
+  }  // end of GenericBehaviour
 
   void GenericBehaviour::allocate(BehaviourWorkSpace& wk) const {
     const auto ndv = this->getGradientsSize();
@@ -294,7 +294,7 @@ namespace mtest {
       wk.e1.resize(ndv);
       wk.s0.resize(nth);
     }
-    mtest::allocate(wk.cs, this->shared_from_this());
+    this->allocateCurrentState(wk.cs);
     if (this->btype == 2u) {
       if (this->stress_measure == PK1) {
         wk.pk0.resize(ndv);
@@ -304,7 +304,7 @@ namespace mtest {
         wk.S1.resize(ndv);
       }
     }
-  }  // end f GenericBehaviour::allocate
+  }  // end of allocate
 
   void GenericBehaviour::getGradientsDefaultInitialValues(
       tfel::math::vector<real>& v) const {
@@ -313,7 +313,7 @@ namespace mtest {
       // finite strain behaviour
       v[0] = v[1] = v[2] = real(1);
     }
-  }  // end of GenericBehaviour::setGradientsDefaultInitialValue
+  }  // end of setGradientsDefaultInitialValue
 
   std::pair<bool, real> GenericBehaviour::computePredictionOperator(
       BehaviourWorkSpace& wk,
@@ -321,7 +321,7 @@ namespace mtest {
       const StiffnessMatrixType ktype) const {
     wk.cs = s;
     return this->call_behaviour(wk.kt, wk.cs, wk, real(1), ktype, false);
-  }  // end of GenericBehaviour::computePredictionOperator
+  }  // end of computePredictionOperator
 
   std::pair<bool, real> GenericBehaviour::integrate(
       CurrentState& s,
@@ -329,7 +329,7 @@ namespace mtest {
       const real dt,
       const StiffnessMatrixType ktype) const {
     return this->call_behaviour(wk.k, s, wk, dt, ktype, true);
-  }  // end of GenericBehaviour::integrate
+  }  // end of integrate
 
   std::pair<bool, real> GenericBehaviour::call_behaviour(
       tfel::math::matrix<real>& Kt,
@@ -584,7 +584,7 @@ namespace mtest {
       }
     }
     return {true, rdt};
-  }  // end of GenericBehaviour::call_behaviour
+  }  // end of call_behaviour
 
   void GenericBehaviour::executeFiniteStrainBehaviourStressPreProcessing(
       BehaviourWorkSpace& wk, mfront::gb::BehaviourData& d) const {
@@ -804,27 +804,26 @@ namespace mtest {
           "GenericBehaviour::call_behaviour: "
           "internal error, unexpected tangent operator type");
     }
-  }  // end of
-  // GenericBehaviour::executeFiniteStrainBehaviourTangentOperatorPostProcessing
+  }  // end of executeFiniteStrainBehaviourTangentOperatorPostProcessing
 
   tfel::math::tmatrix<3u, 3u, real> GenericBehaviour::getRotationMatrix(
       const tfel::math::vector<real>&,
       const tfel::math::tmatrix<3u, 3u, real>& r) const {
     return r;
-  }  // end of GenericBehaviour::getRotationMatrix
+  }  // end of getRotationMatrix
 
   std::vector<std::string> GenericBehaviour::getOptionalMaterialProperties()
       const {
     return {};
-  }  // end of GenericBehaviour::getOptionalMaterialProperties
+  }  // end of getOptionalMaterialProperties
 
   void GenericBehaviour::setOptionalMaterialPropertiesDefaultValues(
       EvolutionManager&, const EvolutionManager&) const {
-  }  // end of GenericBehaviour::setOptionalMaterialPropertiesDefaultValues
+  }  // end of setOptionalMaterialPropertiesDefaultValues
 
   StiffnessMatrixType GenericBehaviour::getDefaultStiffnessMatrixType() const {
     return StiffnessMatrixType::CONSISTENTTANGENTOPERATOR;
-  }  // end of GenericBehaviour::getDefaultStiffnessMatrixType
+  }  // end of getDefaultStiffnessMatrixType
 
   GenericBehaviour::~GenericBehaviour() = default;
 
