@@ -65,7 +65,7 @@ namespace mtest {
         const tfel::math::vector<real>&,
         const tfel::math::tmatrix<3u, 3u, real>&) const override;
 
-    void allocate(BehaviourWorkSpace&) const override;
+    void allocateWorkSpace(BehaviourWorkSpace&) const override;
     //! destructor
     ~GenericBehaviour() override;
 

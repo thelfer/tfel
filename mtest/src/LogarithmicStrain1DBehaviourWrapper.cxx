@@ -170,10 +170,10 @@ namespace mtest {
     return this->b->getInternalStateVariablePosition(n);
   }  // end of getInternalStateVariablePosition
 
-  void LogarithmicStrain1DBehaviourWrapper::allocate(
+  void LogarithmicStrain1DBehaviourWrapper::allocateWorkSpace(
       BehaviourWorkSpace& wk) const {
-    this->b->allocate(wk);
-  }  // end of allocate
+    this->b->allocateWorkSpace(wk);
+  }  // end of allocateWorkSpace
 
   tfel::math::tmatrix<3u, 3u, real>
   LogarithmicStrain1DBehaviourWrapper::getRotationMatrix(

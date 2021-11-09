@@ -51,7 +51,7 @@ namespace mtest {
     tfel::raise(
         "AbaqusExplicitBehaviour::getHypothesisSuffix: "
         "invalid hypothesis.");
-  }  // end of AbaqusExplicitBehaviour::getHypothesisSuffix
+  }  // end of getHypothesisSuffix
 
   std::string AbaqusExplicitBehaviour::extractBehaviourName(
       const std::string& b, const Hypothesis h) {
@@ -168,9 +168,9 @@ namespace mtest {
       const tfel::math::vector<real>&,
       const tfel::math::tmatrix<3u, 3u, real>& r) const {
     return r;
-  }  // end of AbaqusExplicitBehaviour::getRotationMatrix
+  }  // end of getRotationMatrix
 
-  void AbaqusExplicitBehaviour::allocate(BehaviourWorkSpace& wk) const {
+  void AbaqusExplicitBehaviour::allocateWorkSpace(BehaviourWorkSpace& wk) const {
     const auto ndv = this->getGradientsSize();
     const auto nth = this->getThermodynamicForcesSize();
     wk.D.resize(nth, nth);
@@ -180,7 +180,7 @@ namespace mtest {
                   real(0));
     wk.evs.resize(this->evnames.size());
     this->allocateCurrentState(wk.cs);
-  }  // end of AbaqusExplicitBehaviour::allocate
+  }  // end of allocateWorkSpace
 
   StiffnessMatrixType AbaqusExplicitBehaviour::getDefaultStiffnessMatrixType()
       const {
@@ -588,7 +588,7 @@ namespace mtest {
                   ModellingHypothesis::toString(h) + ")");
     }
     return {true, real(1)};
-  }  // end of AbaqusExplicitBehaviour::integrate
+  }  // end of integrate
 
   AbaqusExplicitBehaviour::~AbaqusExplicitBehaviour() = default;
 

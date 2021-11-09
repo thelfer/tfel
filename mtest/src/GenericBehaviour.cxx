@@ -246,7 +246,7 @@ namespace mtest {
     }
   }  // end of GenericBehaviour
 
-  void GenericBehaviour::allocate(BehaviourWorkSpace& wk) const {
+  void GenericBehaviour::allocateWorkSpace(BehaviourWorkSpace& wk) const {
     const auto ndv = this->getGradientsSize();
     const auto nth = this->getThermodynamicForcesSize();
     const auto nstatev = this->getInternalStateVariablesSize();
@@ -304,7 +304,7 @@ namespace mtest {
         wk.S1.resize(ndv);
       }
     }
-  }  // end of allocate
+  }  // end of allocateWorkSpace
 
   void GenericBehaviour::getGradientsDefaultInitialValues(
       tfel::math::vector<real>& v) const {

@@ -1,0 +1,57 @@
+@Author Thomas Helfer;
+@Date 28/07/2018;
+
+@ModellingHypothesis 'AxisymmetricalGeneralisedPlaneStrain';
+@XMLOutputFile @xml_output@;
+@PredictionPolicy 'LinearPrediction';
+@MaximumNumberOfSubSteps 1;
+@Behaviour<
+    generic,
+    SmallStrainTridimensionalBehaviourWrapper> @library@ 'ImplicitNorton';
+
+@MaterialProperty<constant> 'YoungModulus'     150.e9;
+@MaterialProperty<constant> 'PoissonRatio'       0.3;
+
+@Real 'sxx' 20e6;
+@ImposedStress 'SRR' 'sxx';
+// Initial value of the elastic strain
+@Real 'EELRR0' 0.00013333333333333333;
+@Real 'EELZZ0' -0.00004;
+@InternalStateVariable 'ElasticStrainXX' 'EELRR0';
+@InternalStateVariable 'ElasticStrainYY' 'EELZZ0';
+@InternalStateVariable 'ElasticStrainZZ' 'EELZZ0';
+@InternalStateVariable 'ElasticStrainXY'  0.;
+@InternalStateVariable 'ElasticStrainXZ'  0.;
+@InternalStateVariable 'ElasticStrainYZ'  0.;
+// Initial value of the total strain
+@Strain {'EELRR0','EELZZ0','EELZZ0'};
+// Initial value of the total stresses
+@Stress{'sxx', 0., 0.};
+
+@ExternalStateVariable 'Temperature' 293.15;
+
+@Times {0.,3600 in 20};
+
+// tests on strains
+// note: EquivalentViscoplasticStrain is known at 1.e-12 (defaut value
+// for @StrainEpsilon), thus we may expect the strain to be known at
+// '3.6*1.e-9'. If pratice, things are a bit better but not much
+// better.
+@Real 'A' 8.e-67;
+@Real 'E' 8.2;
+@Test<function> 'ERR' 'EELRR0+A*SRR**E*t'     1.e-9;
+@Test<function> 'ETT' 'EELZZ0-0.5*A*SRR**E*t' 1.e-10;
+@Test<function> 'EZZ' 'EELZZ0-0.5*A*SRR**E*t' 1.e-10;
+// tests on internal state variables
+@Test<function> 'ElasticStrainXX' 'EELRR0'  1.e-12;
+@Test<function> 'ElasticStrainYY' 'EELZZ0'  1.e-12;
+@Test<function> 'ElasticStrainZZ' 'EELZZ0'  1.e-12;
+@Test<function> 'ElasticStrainXY' '0.'      1.e-12;
+@Test<function> 'ElasticStrainXZ' '0.'      1.e-12;
+@Test<function> 'ElasticStrainYZ' '0.'      1.e-12;
+@Test<function> 'p'               'A*SRR**E*t' 1.e-12;
+// this test is a bit paranoiac since SRR is imposed
+@Test<function> 'SRR' 'SRR'     1.e-3;
+// check that the mechanical equilibrium is satisfied
+@Test<function> 'STT' '0.'      1.e-3;
+@Test<function> 'SZZ' '0.'      1.e-3;

@@ -68,7 +68,7 @@ namespace mtest {
     this->mpnames.insert(this->mpnames.begin(), tmp.begin(), tmp.end());
   }
 
-  void CyranoBehaviour::allocate(BehaviourWorkSpace& wk) const {
+  void CyranoBehaviour::allocateWorkSpace(BehaviourWorkSpace& wk) const {
     const auto nstatev = this->getInternalStateVariablesSize();
     wk.D.resize(3u, 3u);
     wk.kt.resize(3u, 3u);

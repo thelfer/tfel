@@ -146,6 +146,7 @@ EXTRA_DIST = CMakeLists.txt                                                     
              implicitnorton2.mtest                                                     \
              implicitnorton5.mtest                                                     \
              implicitnorton6.mtest                                                     \
+             implicitnorton-smallstraintridimensionbehaviourwrapper.mtest              \
              chaboche.mtest                                                            \
              chaboche2.mtest							       \
              axialgrowth.mtest							       \

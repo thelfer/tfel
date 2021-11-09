@@ -50,7 +50,7 @@ namespace mtest {
      * \brief allocate internal workspace
      * \param[out] wk : behaviour workspace
      */
-    virtual void allocate(BehaviourWorkSpace&) const override;
+    virtual void allocateWorkSpace(BehaviourWorkSpace&) const override;
     /*!
      * \param[out] v : initial values of the driving variables
      */

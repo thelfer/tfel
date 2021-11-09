@@ -52,7 +52,7 @@ namespace mtest {
      * \brief allocate internal workspace
      * \param[out] wk : workspace
      */
-    void allocate(BehaviourWorkSpace&) const override;
+    void allocateWorkSpace(BehaviourWorkSpace&) const override;
     /*!
      * \return the default type of stiffness matrix used by the behaviour
      */

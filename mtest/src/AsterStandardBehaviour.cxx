@@ -103,7 +103,7 @@ namespace mtest {
       const tfel::math::vector<real>&,
       const tfel::math::tmatrix<3u, 3u, real>& r) const {
     return r;
-  }  // end of AsterStandardBehaviour::getRotationMatrix
+  }  // end of getRotationMatrix
 
   size_t AsterStandardBehaviour::getInternalStateVariablesSize() const {
     size_t s(0);
@@ -125,7 +125,7 @@ namespace mtest {
       }
     }
     return s + StandardBehaviourBase::getInternalStateVariablesSize();
-  }  // end of AsterStandardBehaviour::getInternalStateVariablesSize() const
+  }  // end of getInternalStateVariablesSize() const
 
   std::vector<std::string>
   AsterStandardBehaviour::getInternalStateVariablesDescriptions() const {
@@ -156,9 +156,9 @@ namespace mtest {
       }
     }
     return desc;
-  }  // end of AsterStandardBehaviour::getInternalStateVariablesDescriptions
+  }  // end of getInternalStateVariablesDescriptions
 
-  void AsterStandardBehaviour::allocate(BehaviourWorkSpace& wk) const {
+  void AsterStandardBehaviour::allocateWorkSpace(BehaviourWorkSpace& wk) const {
     const auto ndv = this->getGradientsSize();
     const auto nth = this->getThermodynamicForcesSize();
     const auto nstatev = this->getInternalStateVariablesSize();
@@ -173,7 +173,7 @@ namespace mtest {
     wk.ns.resize(nth);
     wk.nivs.resize(nstatev);
     this->allocateCurrentState(wk.cs);
-  }  // end of AsterStandardBehaviour::allocate
+  }  // end of allocateWorkSpace
 
   StiffnessMatrixType AsterStandardBehaviour::getDefaultStiffnessMatrixType()
       const {
@@ -197,7 +197,7 @@ namespace mtest {
       const real dt,
       const StiffnessMatrixType ktype) const {
     return this->call_behaviour(wk.k, s, wk, dt, ktype, true);
-  }  // end of AsterStandardBehaviour::integrate
+  }  // end of integrate
 
   AsterStandardBehaviour::~AsterStandardBehaviour() = default;
 

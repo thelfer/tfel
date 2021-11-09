@@ -68,7 +68,7 @@ namespace mtest {
     tfel::raise("CastemCohesiveZoneModel::getRotationMatrix: invalid call");
   }  // end of CastemCohesiveZoneModel::getRotationMatrix
 
-  void CastemCohesiveZoneModel::allocate(BehaviourWorkSpace& wk) const {
+  void CastemCohesiveZoneModel::allocateWorkSpace(BehaviourWorkSpace& wk) const {
     const auto ndv = this->getGradientsSize();
     const auto nth = this->getThermodynamicForcesSize();
     const auto nstatev = this->getInternalStateVariablesSize();

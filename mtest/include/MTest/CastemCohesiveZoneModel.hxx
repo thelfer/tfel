@@ -39,7 +39,7 @@ namespace mtest {
         const tfel::math::tmatrix<3u, 3u, real>&) const override;
     virtual void getGradientsDefaultInitialValues(
         tfel::math::vector<real>&) const override;
-    void allocate(BehaviourWorkSpace&) const override;
+    void allocateWorkSpace(BehaviourWorkSpace&) const override;
     StiffnessMatrixType getDefaultStiffnessMatrixType() const override;
     std::pair<bool, real> computePredictionOperator(
         BehaviourWorkSpace&,

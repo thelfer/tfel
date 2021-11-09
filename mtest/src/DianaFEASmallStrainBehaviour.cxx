@@ -52,9 +52,9 @@ namespace mtest {
       tmp.push_back("ThermalExpansion");
     }
     this->mpnames.insert(this->mpnames.begin(), tmp.begin(), tmp.end());
-  }  // end of DianaFEASmallStrainBehaviour::DianaFEASmallStrainBehaviour
+  }  // end of DianaFEASmallStrainBehaviour
 
-  void DianaFEASmallStrainBehaviour::allocate(BehaviourWorkSpace& wk) const {
+  void DianaFEASmallStrainBehaviour::allocateWorkSpace(BehaviourWorkSpace& wk) const {
     const auto ndv = this->getGradientsSize();
     const auto nth = this->getThermodynamicForcesSize();
     const auto nstatev = this->getInternalStateVariablesSize();
@@ -68,24 +68,24 @@ namespace mtest {
     wk.nivs.resize(nstatev);
     wk.mps.resize(this->mpnames.size());
     this->allocateCurrentState(wk.cs);
-  }  // end of DianaFEASmallStrainBehaviour::allocate
+  }  // end of allocateWorkSpace
 
   tfel::math::tmatrix<3u, 3u, real>
   DianaFEASmallStrainBehaviour::getRotationMatrix(
       const tfel::math::vector<real>&,
       const tfel::math::tmatrix<3u, 3u, real>& r) const {
     return r;
-  }  // end of DianaFEASmallStrainBehaviour::getRotationMatrix
+  }  // end of getRotationMatrix
 
   StiffnessMatrixType
   DianaFEASmallStrainBehaviour::getDefaultStiffnessMatrixType() const {
     return StiffnessMatrixType::CONSISTENTTANGENTOPERATOR;
-  }  // end of DianaFEASmallStrainBehaviour::getDefaultStiffnessMatrixType
+  }  // end of getDefaultStiffnessMatrixType
 
   void DianaFEASmallStrainBehaviour::getGradientsDefaultInitialValues(
       tfel::math::vector<real>& v) const {
     std::fill(v.begin(), v.end(), real(0));
-  }  // end of DianaFEASmallStrainBehaviour::setGradientsDefaultInitialValue
+  }  // end of setGradientsDefaultInitialValue
 
   std::pair<bool, real> DianaFEASmallStrainBehaviour::computePredictionOperator(
       BehaviourWorkSpace& wk,
@@ -93,7 +93,7 @@ namespace mtest {
       const StiffnessMatrixType ktype) const {
     wk.cs = s;
     return this->call_behaviour(wk.kt, wk.cs, wk, real(1), ktype, false);
-  }  // end of DianaFEASmallStrainBehaviour::computePredictionOperator
+  }  // end of computePredictionOperator
 
   std::pair<bool, real> DianaFEASmallStrainBehaviour::integrate(
       CurrentState& s,
@@ -101,7 +101,7 @@ namespace mtest {
       const real dt,
       const StiffnessMatrixType ktype) const {
     return this->call_behaviour(wk.k, s, wk, dt, ktype, true);
-  }  // end of DianaFEASmallStrainBehaviour::integrate
+  }  // end of integrate
 
   std::pair<bool, real> DianaFEASmallStrainBehaviour::call_behaviour(
       tfel::math::matrix<real>& Kt,
@@ -169,7 +169,7 @@ namespace mtest {
       s.s1(i) *= sqrt2;
     }
     return {true, std::numeric_limits<DianaFEAReal>::max()};
-  }  // end of DianaFEASmallStrainBehaviour::integrate
+  }  // end of integrate
 
   std::vector<std::string>
   DianaFEASmallStrainBehaviour::getOptionalMaterialProperties() const {
@@ -180,7 +180,7 @@ namespace mtest {
           "unsupported symmetry type");
     }
     return std::vector<std::string>(1u, "ThermalExpansion");
-  }  // end of DianaFEASmallStrainBehaviour::getOptionalMaterialProperties
+  }  // end of getOptionalMaterialProperties
 
   void DianaFEASmallStrainBehaviour::setOptionalMaterialPropertiesDefaultValues(
       EvolutionManager& mp, const EvolutionManager& evm) const {

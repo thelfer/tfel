@@ -90,7 +90,7 @@ namespace mtest {
      * \brief allocate internal workspace
      * \param[out] wk : behaviour workspace
      */
-    void allocate(BehaviourWorkSpace&) const override;
+    void allocateWorkSpace(BehaviourWorkSpace&) const override;
     //! destructor
     ~AsterStandardBehaviour() override;
 

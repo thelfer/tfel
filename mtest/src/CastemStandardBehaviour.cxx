@@ -106,7 +106,7 @@ namespace mtest {
       setMaterialProperties(
           *this, h, CastemInterfaceVersion::LEGACY_CASTEM_INTERFACE_VERSION);
     }
-  }  // end of CastemStandardBehaviour::CastemStandardBehaviour
+  }  // end of CastemStandardBehaviour
 
   CastemStandardBehaviour::CastemStandardBehaviour(
       const StandardBehaviourDescription& umb)
@@ -115,7 +115,7 @@ namespace mtest {
         tfel::system::ExternalLibraryManager::getExternalLibraryManager();
     this->fct =
         elm.getCastemExternalBehaviourFunction(this->library, this->behaviour);
-  }  // end of CastemStandardBehaviour::CastemStandardBehaviour
+  }  // end of CastemStandardBehaviour
 
   tfel::math::tmatrix<3u, 3u, real> CastemStandardBehaviour::getRotationMatrix(
       const tfel::math::vector<real>& mp,
@@ -160,9 +160,9 @@ namespace mtest {
       nr(2, 2) = nr(0, 0) * nr(1, 1) - nr(0, 1) * nr(1, 0);
     }
     return nr;
-  }  // end of CastemStandardBehaviour::getRotationMatrix
+  }  // end of getRotationMatrix
 
-  void CastemStandardBehaviour::allocate(BehaviourWorkSpace& wk) const {
+  void CastemStandardBehaviour::allocateWorkSpace(BehaviourWorkSpace& wk) const {
     const auto ndv = this->getGradientsSize();
     const auto nth = this->getThermodynamicForcesSize();
     const auto nstatev = this->getInternalStateVariablesSize();
@@ -180,12 +180,12 @@ namespace mtest {
       wk.mps.resize(this->mpnames.size());
     }
     this->allocateCurrentState(wk.cs);
-  }  // end of CastemStandardBehaviour::allocate
+  }  // end of allocateWorkSpace
 
   StiffnessMatrixType CastemStandardBehaviour::getDefaultStiffnessMatrixType()
       const {
     return StiffnessMatrixType::ELASTICSTIFNESSFROMMATERIALPROPERTIES;
-  }  // end of CastemStandardBehaviour::getDefaultStiffnessMatrixType
+  }  // end of getDefaultStiffnessMatrixType
 
   std::vector<std::string>
   CastemStandardBehaviour::getOptionalMaterialProperties() const {
@@ -245,7 +245,7 @@ namespace mtest {
       omps.push_back("ReferenceTemperatureForThermalExpansion");
     }
     return omps;
-  }  // end of CastemStandardBehaviour::getOptionalMaterialProperties
+  }  // end of getOptionalMaterialProperties
 
   void CastemStandardBehaviour::setOptionalMaterialPropertiesDefaultValues(
       EvolutionManager& mp, const EvolutionManager& evm) const {
@@ -478,7 +478,7 @@ namespace mtest {
           "temporary material properties vector was not allocated properly");
       std::copy(s.mprops1.begin(), s.mprops1.end(), wk.mps.begin());
     }
-  }  // end of CastemStandardBehaviour::buildMaterialProperties
+  }  // end of buildMaterialProperties
 
   CastemInterfaceVersion CastemStandardBehaviour::getCastemInterfaceVersion()
       const {

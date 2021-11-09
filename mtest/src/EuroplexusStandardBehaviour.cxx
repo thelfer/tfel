@@ -102,9 +102,9 @@ namespace mtest {
       const tfel::math::vector<real>&,
       const tfel::math::tmatrix<3u, 3u, real>& r) const {
     return r;
-  }  // end of EuroplexusStandardBehaviour::getRotationMatrix
+  }  // end of getRotationMatrix
 
-  void EuroplexusStandardBehaviour::allocate(BehaviourWorkSpace& wk) const {
+  void EuroplexusStandardBehaviour::allocateWorkSpace(BehaviourWorkSpace& wk) const {
     const auto ndv = this->getGradientsSize();
     const auto nth = this->getThermodynamicForcesSize();
     const auto nstatev = this->getInternalStateVariablesSize();
@@ -118,7 +118,7 @@ namespace mtest {
     wk.ns.resize(nth);
     wk.nivs.resize(nstatev);
     this->allocateCurrentState(wk.cs);
-  }  // end of EuroplexusStandardBehaviour::allocate
+  }  // end of allocateWorkSpace
 
   StiffnessMatrixType
   EuroplexusStandardBehaviour::getDefaultStiffnessMatrixType() const {
@@ -142,7 +142,7 @@ namespace mtest {
       const real dt,
       const StiffnessMatrixType ktype) const {
     return this->call_behaviour(wk.k, s, wk, dt, ktype, true);
-  }  // end of EuroplexusStandardBehaviour::integrate
+  }  // end of integrate
 
   EuroplexusStandardBehaviour::~EuroplexusStandardBehaviour() {}
 

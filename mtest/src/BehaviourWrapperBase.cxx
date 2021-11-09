@@ -28,7 +28,7 @@ namespace mtest {
 
   void BehaviourWrapperBase::allocateCurrentState(CurrentState& s) const{
     this->b->allocateCurrentState(s);
-  } // end of BehaviourWrapperBase::allocateCurrentState
+  } // end of allocateCurrentState
 
   std::string BehaviourWrapperBase::getBehaviourName() const {
     return this->b->getBehaviourName();

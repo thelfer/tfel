@@ -231,10 +231,10 @@ namespace mtest {
     return static_cast<unsigned short>(p - isvnames.begin());
   }  // end of getInternalStateVariablePosition
 
-  void SmallStrainTridimensionalBehaviourWrapper::allocate(
+  void SmallStrainTridimensionalBehaviourWrapper::allocateWorkSpace(
       BehaviourWorkSpace& wk) const {
-    this->b->allocate(wk);
-  }  // end of allocate
+    this->b->allocateWorkSpace(wk);
+  }  // end of allocateWorkSpace
 
   tfel::math::tmatrix<3u, 3u, real>
   SmallStrainTridimensionalBehaviourWrapper::getRotationMatrix(
@@ -271,7 +271,6 @@ namespace mtest {
       BehaviourWorkSpace& wk,
       const real dt,
       const StiffnessMatrixType ktype) const {
-    std::cout << "s0: " << s.s0.size() << '\n';
     const auto r = this->b->integrate(s, wk, dt, ktype);
     if ((r.first) && (ktype != StiffnessMatrixType::NOSTIFFNESS)) {
       projectTangenOperator(wk.kt.data(), this->hypothesis);

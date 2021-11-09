@@ -43,7 +43,7 @@ namespace mtest {
      * \brief allocate internal workspace
      * \param[out] wk : work space
      */
-    void allocate(BehaviourWorkSpace&) const override;
+    void allocateWorkSpace(BehaviourWorkSpace&) const override;
     //! destructor
     ~AsterFiniteStrainBehaviour() override;
 

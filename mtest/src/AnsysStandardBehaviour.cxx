@@ -41,7 +41,7 @@ namespace mtest {
     tfel::raise(
         "AnsysStandardBehaviour::getHypothesisSuffix: "
         "invalid hypothesis.");
-  }  // end of AnsysStandardBehaviour::getHypothesisSuffix
+  }  // end of getHypothesisSuffix
 
   std::string AnsysStandardBehaviour::extractBehaviourName(const std::string& b,
                                                            const Hypothesis h) {
@@ -126,9 +126,9 @@ namespace mtest {
       const tfel::math::vector<real>&,
       const tfel::math::tmatrix<3u, 3u, real>& r) const {
     return r;
-  }  // end of AnsysStandardBehaviour::getRotationMatrix
+  }  // end of getRotationMatrix
 
-  void AnsysStandardBehaviour::allocate(BehaviourWorkSpace& wk) const {
+  void AnsysStandardBehaviour::allocateWorkSpace(BehaviourWorkSpace& wk) const {
     const auto ndv = this->getGradientsSize();
     const auto nth = this->getThermodynamicForcesSize();
     const auto nstatev = this->getInternalStateVariablesSize();
@@ -143,7 +143,7 @@ namespace mtest {
     wk.ns.resize(nth);
     wk.nivs.resize(nstatev);
     this->allocateCurrentState(wk.cs);
-  }  // end of AnsysStandardBehaviour::allocate
+  }  // end of allocateWorkSpace
 
   StiffnessMatrixType AnsysStandardBehaviour::getDefaultStiffnessMatrixType()
       const {
@@ -167,7 +167,7 @@ namespace mtest {
       const real dt,
       const StiffnessMatrixType ktype) const {
     return this->call_behaviour(wk.k, s, wk, dt, ktype, true);
-  }  // end of AnsysStandardBehaviour::integrate
+  }  // end of integrate
 
   std::vector<std::string>::size_type
   AnsysStandardBehaviour::getOrthototropicAxesOffset() const {
@@ -178,7 +178,7 @@ namespace mtest {
                    "AnsysStandardBehaviour::getOrthototropicAxesOffset: "
                    "orthotropic axes not found");
     return static_cast<std::vector<std::string>::size_type>(p - b);
-  }  // end of AnsysStandardBehaviour::getOrthototropicAxesOffset
+  }  // end of getOrthototropicAxesOffset
 
   std::vector<std::string>
   AnsysStandardBehaviour::getOptionalMaterialProperties() const {
@@ -198,7 +198,7 @@ namespace mtest {
       }
     }
     return omps;
-  }  // end of AnsysStandardBehaviour::getOptionalMaterialProperties
+  }  // end of getOptionalMaterialProperties
 
   void AnsysStandardBehaviour::setOptionalMaterialPropertiesDefaultValues(
       EvolutionManager& mp, const EvolutionManager& evm) const {

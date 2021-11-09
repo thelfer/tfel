@@ -41,7 +41,7 @@ namespace mtest {
      */
     CastemStandardBehaviour(const StandardBehaviourDescription&);
     StiffnessMatrixType getDefaultStiffnessMatrixType() const override;
-    void allocate(BehaviourWorkSpace&) const override;
+    void allocateWorkSpace(BehaviourWorkSpace&) const override;
     tfel::math::tmatrix<3u, 3u, real> getRotationMatrix(
         const tfel::math::vector<real>&,
         const tfel::math::tmatrix<3u, 3u, real>&) const override;

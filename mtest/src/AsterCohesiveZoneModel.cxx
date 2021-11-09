@@ -51,7 +51,7 @@ namespace mtest {
     tfel::raise("AsterCohesiveZoneModel::getRotationMatrix: invalid call");
   }  // end of AsterCohesiveZoneModel::getRotationMatrix
 
-  void AsterCohesiveZoneModel::allocate(BehaviourWorkSpace& wk) const {
+  void AsterCohesiveZoneModel::allocateWorkSpace(BehaviourWorkSpace& wk) const {
     const auto ndv = this->getGradientsSize();
     const auto nth = this->getThermodynamicForcesSize();
     const auto nstatev = this->getInternalStateVariablesSize();

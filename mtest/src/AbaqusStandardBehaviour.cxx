@@ -42,7 +42,7 @@ namespace mtest {
     tfel::raise(
         "AbaqusStandardBehaviour::getHypothesisSuffix: "
         "invalid hypothesis.");
-  }  // end of AbaqusStandardBehaviour::getHypothesisSuffix
+  }  // end of getHypothesisSuffix
 
   std::string AbaqusStandardBehaviour::extractBehaviourName(
       const std::string& b, const Hypothesis h) {
@@ -150,9 +150,9 @@ namespace mtest {
       const tfel::math::vector<real>&,
       const tfel::math::tmatrix<3u, 3u, real>& r) const {
     return r;
-  }  // end of AbaqusStandardBehaviour::getRotationMatrix
+  }  // end of getRotationMatrix
 
-  void AbaqusStandardBehaviour::allocate(BehaviourWorkSpace& wk) const {
+  void AbaqusStandardBehaviour::allocateWorkSpace(BehaviourWorkSpace& wk) const {
     const auto ndv = this->getGradientsSize();
     const auto nth = this->getThermodynamicForcesSize();
     const auto nstatev = this->getInternalStateVariablesSize();
@@ -167,7 +167,7 @@ namespace mtest {
     wk.ns.resize(nth);
     wk.nivs.resize(nstatev);
     this->allocateCurrentState(wk.cs);
-  }  // end of AbaqusStandardBehaviour::allocate
+  }  // end of allocateWorkSpace
 
   StiffnessMatrixType AbaqusStandardBehaviour::getDefaultStiffnessMatrixType()
       const {
@@ -191,7 +191,7 @@ namespace mtest {
       const real dt,
       const StiffnessMatrixType ktype) const {
     return this->call_behaviour(wk.k, s, wk, dt, ktype, true);
-  }  // end of AbaqusStandardBehaviour::integrate
+  }  // end of integrate
 
   AbaqusStandardBehaviour::~AbaqusStandardBehaviour() = default;
 

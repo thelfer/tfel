@@ -78,9 +78,9 @@ namespace mtest {
       const tfel::math::vector<real>&,
       const tfel::math::tmatrix<3u, 3u, real>& r) const {
     return r;
-  }  // end of CalculiXStandardBehaviour::getRotationMatrix
+  }  // end of getRotationMatrix
 
-  void CalculiXStandardBehaviour::allocate(BehaviourWorkSpace& wk) const {
+  void CalculiXStandardBehaviour::allocateWorkSpace(BehaviourWorkSpace& wk) const {
     const auto ndv = this->getGradientsSize();
     const auto nth = this->getThermodynamicForcesSize();
     const auto nstatev = this->getInternalStateVariablesSize();
@@ -93,7 +93,7 @@ namespace mtest {
     wk.ns.resize(nth);
     wk.nivs.resize(nstatev);
     this->allocateCurrentState(wk.cs);
-  }  // end of CalculiXStandardBehaviour::allocate
+  }  // end of allocateWorkSpace
 
   StiffnessMatrixType CalculiXStandardBehaviour::getDefaultStiffnessMatrixType()
       const {
@@ -117,7 +117,7 @@ namespace mtest {
       const real dt,
       const StiffnessMatrixType ktype) const {
     return this->call_behaviour(wk.k, s, wk, dt, ktype, true);
-  }  // end of CalculiXStandardBehaviour::integrate
+  }  // end of integrate
 
   tfel::math::st2tost2<3u, real>
   CalculiXStandardBehaviour::convertTangentOperator(const real* const D) const {
@@ -145,7 +145,7 @@ namespace mtest {
     K(4, 5) = K(5, 4) = D[19] * 2;
     K(5, 5) = D[20] * 2;
     return K;
-  }  // end of CalculiXStandardBehaviour::convertTangentOperator
+  }  // end of convertTangentOperator
 
   CalculiXStandardBehaviour::~CalculiXStandardBehaviour() = default;
 

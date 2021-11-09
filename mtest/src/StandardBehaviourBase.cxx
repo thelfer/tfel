@@ -110,7 +110,7 @@ namespace mtest {
     s.de1 = 0;
     s.esv0.resize(esvnames.size(), 0.);
     s.desv.resize(esvnames.size(), 0.);
-  } // end of allocateCurrentState
+  } // end of allocateWorkSpaceCurrentState
 
   std::vector<std::string> StandardBehaviourBase::getVectorComponentsSuffixes(
       const Hypothesis h) {
