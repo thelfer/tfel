@@ -15,6 +15,7 @@
 #define LIB_MTEST_LOGARITHMICSTRAIN1DBEHAVIOURWRAPPER_HXX
 
 #include <memory>
+#include "MTest/Config.hxx"
 #include "MTest/BehaviourWrapperBase.hxx"
 
 namespace mtest {
@@ -25,7 +26,8 @@ namespace mtest {
    * framework using the ETO-PK1 kinematic assumption under the axisymmetrical
    * generalised plane strain modelling hypothesis.
    */
-  struct LogarithmicStrain1DBehaviourWrapper : public BehaviourWrapperBase {
+  struct MTEST_VISIBILITY_EXPORT LogarithmicStrain1DBehaviourWrapper
+      : public BehaviourWrapperBase {
     /*!
      * \brief constructor
      * \param[in] wb : wrapped behaviour

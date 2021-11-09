@@ -15,6 +15,7 @@
 #define LIB_MTEST_SMALLSTRAINTRIDIMENSIONALBEHAVIOURWRAPPER_HXX
 
 #include <memory>
+#include "MTest/Config.hxx"
 #include "MTest/BehaviourWrapperBase.hxx"
 
 namespace mtest {
@@ -23,7 +24,7 @@ namespace mtest {
    * \brief a wrapper around a small strain tridimensional behaviour to restrict
    * it to a given modelling hypothesis.
    */
-  struct SmallStrainTridimensionalBehaviourWrapper
+  struct MTEST_VISIBILITY_EXPORT SmallStrainTridimensionalBehaviourWrapper
       : public BehaviourWrapperBase {
     /*!
      * \brief constructor
