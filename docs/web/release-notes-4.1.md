@@ -84,6 +84,33 @@ b2 = mtest.Behaviour(wrapper = 'SmallStrainTridimensionalBehaviourWrapper',
 print(b2.getInternalStateVariablesNames())
 ~~~~
 
+## A more flexible declaration of the rotation matrix {#sec:tfel_4.1:mtest:rotation_matrix}
+
+The `@RotationMatrix` keyword now has a `Direction` option which now let
+the user specify:
+
+- a \(2D\) vector giving the first direction of orthotropy in modelling
+  hypotheses of space dimension \(2\).
+- two \(3D\) vectors giving respectively the first and second directions
+  of orthotropy under the tridimensional modelling hypothesis.
+
+The given vectors are not required to be normalised. In the \(3D\) case,
+the second vector is not required to be orthogonal to the first one. If
+not, the second direction of orthotropy is deduced from the second
+vector by removing its projection along the first one.
+
+### Usage
+
+~~~~{.cpp}
+// using direction in 2D
+@RotationMatrix<Direction> {0,1};
+~~~~
+
+~~~~{.cpp}
+// using directions in 3D
+@RotationMatrix<Direction> {{0,1,0},{1,0,0}};
+~~~~
+
 # Improvements to the `mtest` `python` module
 
 ## Support of named arguments in the constructor of the `Behaviour` class {#sec:tfel_4.1:pymtest:behaviour_constructor}
@@ -111,7 +138,7 @@ b = mtest.Behaviour(library = 'src/libBehaviour.so',
 
 # Issues fixed
 
-## Issue #20: Declaration of a behaviour wrapper in python module
+## Issue #20: [mtest] Declaration of a behaviour wrapper in python module
 
 As described in Section @sec:tfel_4.1:pymtest:behaviour_constructor,
 named parameters are now supported in the constructor of the `Behaviour`
@@ -132,7 +159,7 @@ Currently, two behaviours wrappers are available:
 
 For more details, see : <https://github.com/thelfer/tfel/issues/20>
 
-## Issue #18: Usage of a `3D` behaviour in `ptest`
+## Issue #18: [mtest] Usage of a `3D` behaviour in `ptest`
 
 Thanks the `SmallStrainTridimensionalBehaviourWrapper` class detailled
 in Section
@@ -142,6 +169,13 @@ hypotheses: generalised plane strain, plane strain, axisymmetrical
 generalised plane strain.
 
 For more details, see : <https://github.com/thelfer/tfel/issues/18>
+
+## Issue #15: [mtest] New option for the declaration of the rotation matrix in `MTest`
+
+This option is described in depth in Section
+@sec:tfel_4.1:mtest:rotation_matrix.
+
+For more details, see : <https://github.com/thelfer/tfel/issues/15>
 
 <!--
 # References
