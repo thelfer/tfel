@@ -160,6 +160,8 @@ EXTRA_DIST = CMakeLists.txt                                                     
              isotropiclinearswelling2.mtest					       \
              isotropicvolumeswelling.mtest					       \
              isotropicvolumeswelling2.mtest					       \
+             orthotropicelasticity.mtest			   		           \
+             orthotropicelasticity-2.mtest			 	           \
              orthotropicelasticity6-9.mtest					       \
              orthotropicelasticity6-8.mtest					       \
              orthotropicelasticity6-7.mtest					       \

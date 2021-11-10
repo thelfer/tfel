@@ -41,6 +41,7 @@
 #include <stdexcept>
 
 #include "TFEL/Raise.hxx"
+#include "TFEL/Math/General/IEEE754.hxx"
 #include "TFEL/Utilities/TerminalColors.hxx"
 #include "TFEL/Utilities/GenTypeBase.hxx"
 #include "MFront/MFrontLogStream.hxx"
@@ -474,7 +475,7 @@ namespace mtest {
       r(2, 1) = -sinthe * cospsi;
       r(2, 2) = costhe;
     };
-    enum { STANDARD, EULER, MILLER } choice = STANDARD;
+    enum { STANDARD, EULER, MILLER, DIRECTION} choice = STANDARD;
     this->checkNotEndOfLine("MTestParser::handleRotationMatrix", p,
                             this->tokens.end());
     if (p->value == "<") {
@@ -487,6 +488,8 @@ namespace mtest {
         choice = EULER;
       } else if (p->value == "Miller") {
         choice = MILLER;
+      } else if (p->value == "Direction") {
+        choice = DIRECTION;
       } else {
         tfel::raise(
             "MTestParser::handleRotationMatrix: "
@@ -515,7 +518,7 @@ namespace mtest {
       if ((h == 0) && (k == 0) && (l == 0)) {
         tfel::raise(
             "MTestParser::handleRotationMatrix: "
-            "invalide Miller indices");
+            "invalid Miller indices");
       }
       const auto s = std::sqrt(static_cast<real>(h * h + k * k + l * l));
       const auto nx = static_cast<real>(h) / s;
@@ -553,6 +556,63 @@ namespace mtest {
                                  this->tokens.end());
       }
       from_euler(rm, v[0], v[1], v[2]);
+    } else if (choice == DIRECTION) {
+      const auto n = t.getDimension();
+      if (n == 2) {
+        std::vector<real> v(2);
+        this->readArrayOfSpecifiedSize(v, t, p);
+        const auto nv = std::sqrt(v[0] * v[0] + v[1] * v[1]);
+        if (tfel::math::ieee754::fpclassify(nv) == FP_ZERO) {
+          tfel::raise(
+              "MTestParser::handleRotationMatrix: "
+              "invalid direction");
+        }
+        v[0] /= nv;
+        v[1] /= nv;
+        rm = {v[0],    -v[1],   real(0),  //
+              v[1],    v[0],    real(0),  //
+              real(0), real(0), real(1)};
+      } else if (n == 3) {
+        std::vector<real> v1(3);
+        std::vector<real> v2(3);
+        this->readSpecifiedToken("MTestParser::handleRotationMatrix", "{", p,
+                                 this->tokens.end());
+        this->readArrayOfSpecifiedSize(v1, t, p);
+        this->readSpecifiedToken("MTestParser::handleRotationMatrix", ",", p,
+                                 this->tokens.end());
+        this->readArrayOfSpecifiedSize(v2, t, p);
+        this->readSpecifiedToken("MTestParser::handleRotationMatrix", "}", p,
+                                 this->tokens.end());
+        const auto nv1 = std::sqrt(v1[0] * v1[0] + v1[1] * v1[1] + v1[2] * v1[2]);
+        if (tfel::math::ieee754::fpclassify(nv1) == FP_ZERO) {
+          tfel::raise(
+              "MTestParser::handleRotationMatrix: "
+              "invalid directions");
+        }
+        v1[0] /= nv1;
+        v1[1] /= nv1;
+        v1[2] /= nv1;
+        const auto a = v1[0] * v2[0] + v1[1] * v2[1] + v1[2] * v2[2];
+        v2[0] -= a * v1[0];
+        v2[1] -= a * v1[1];
+        v2[2] -= a * v1[2];
+        const auto nv2 = std::sqrt(v2[0] * v2[0] + v2[1] * v2[1] + v2[2] * v2[2]);
+        if (tfel::math::ieee754::fpclassify(nv2) == FP_ZERO) {
+          tfel::raise(
+              "MTestParser::handleRotationMatrix: "
+              "invalid directions");
+        }
+        v2[0] /= nv2;
+        v2[1] /= nv2;
+        v2[2] /= nv2;
+        rm = {v1[0], v2[0], v1[1] * v2[2] - v1[2] * v2[1],  //
+              v1[1], v2[1], v1[2] * v2[0] - v1[0] * v2[2],  //
+              v1[2], v2[2], v1[0] * v2[1] - v1[1] * v2[0]};
+      } else {
+        tfel::raise(
+            "MTestParser::handleRotationMatrix: "
+            "the `Direction` option is only valid in 2D or 3D");
+      }
     } else {
       // standard choice
       this->readSpecifiedToken("MTestParser::handleRotationMatrix", "{", p,
