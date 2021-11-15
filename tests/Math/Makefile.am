@@ -18,6 +18,7 @@ test_PROGRAMS = IndexingPoliciesTest             \
 		qt                                       \
 		qt2                                      \
 		qt3                                      \
+		qt4                                      \
 		CubicRoots                               \
 		conj                                     \
 		lu                                       \
@@ -99,6 +100,7 @@ derivative_view_SOURCES       = derivative_view.cxx
 qt_SOURCES                    = qt.cxx
 qt2_SOURCES                   = qt2.cxx
 qt3_SOURCES                   = qt3.cxx
+qt4_SOURCES                   = qt4.cxx
 hill_SOURCES                  = hill.cxx
 CubicRoots_SOURCES            = CubicRoots.cxx
 conj_SOURCES                  = conj.cxx                 

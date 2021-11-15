@@ -44,7 +44,7 @@ function(test_pymtest_bv file library)
       PYTHONPATH=${PROJECT_BINARY_DIR}/bindings/python
       MTEST_BEHAVIOUR_LIBRARY=${library})      
   endif(CMAKE_CONFIGURATION_TYPES)
-endfunction(test_pymtest_mp)
+endfunction(test_pymtest_bv)
 
 if(HAVE_ASTER)
   test_pymfront(test1)

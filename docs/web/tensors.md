@@ -287,7 +287,7 @@ The Frobenius inner product \(\tns{a}\,\colon\,\tns{b}\) of two tensors
 \tns{a}\,\colon\,\tns{b}=\trace{\transpose{\tns{a}}\,\dot\,\tns{b}}=\sum_{i,j}a_{ij}b_{ij}
 \]
 
-This operation is implemented in `TFEL/Math` using the `^` operator,
+This operation is implemented in `TFEL/Math` using the `|` operator,
 as follows:
 
 ~~~~{.cpp}
