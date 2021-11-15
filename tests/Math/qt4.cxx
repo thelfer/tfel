@@ -39,6 +39,7 @@ struct StensorQtTest final : public tfel::tests::TestCase {
   void test1() {
     using namespace tfel::math;
     using real = qt<NoUnit, double>;
+    constexpr const auto eps = real{1e-14};
     constexpr stensor<3u, real> s = -stensor<3u, real>::Id();
     TFEL_TESTS_STATIC_ASSERT(my_abs(s[0].getValue() + 1) < eps);
     TFEL_TESTS_STATIC_ASSERT(my_abs(s[1].getValue() + 1) < eps);
