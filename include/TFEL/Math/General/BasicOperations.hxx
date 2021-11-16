@@ -120,8 +120,8 @@ namespace tfel {
        */
       template <typename T1, typename T2>
       static TFEL_MATH_INLINE auto apply(T1&& a, T2&& b)
-          -> BinaryOperationHandler<decltype(a), decltype(b), OpPlus> {
-        return std::forward<T1>(a) + std::forward<T2>(b);
+          -> decltype(std::forward<T1>(a) + std::forward<T2>(b)){
+     return std::forward<T1>(a) + std::forward<T2>(b);
       }
     };
 
@@ -132,7 +132,7 @@ namespace tfel {
        */
       template <typename T1, typename T2>
       static TFEL_MATH_INLINE auto apply(T1&& a, T2&& b)
-          -> BinaryOperationHandler<decltype(a), decltype(b), OpMinus> {
+          -> decltype(std::forward<T1>(a) - std::forward<T2>(b)) {
         return std::forward<T1>(a) - std::forward<T2>(b);
       }
 
@@ -145,7 +145,7 @@ namespace tfel {
        */
       template <typename T1, typename T2>
       static TFEL_MATH_INLINE auto apply(T1&& a, T2&& b)
-          -> BinaryOperationHandler<decltype(a), decltype(b), OpMult> {
+          -> decltype(std::forward<T1>(a) * std::forward<T2>(b)) {
         return std::forward<T1>(a) * std::forward<T2>(b);
       }
     };  // end of OpMult
@@ -157,7 +157,7 @@ namespace tfel {
        */
       template <typename T1, typename T2>
       static TFEL_MATH_INLINE auto apply(T1&& a, T2&& b)
-          -> BinaryOperationHandler<decltype(a), decltype(b), OpDiv> {
+          -> decltype(std::forward<T1>(a) / std::forward<T2>(b)){
         return std::forward<T1>(a) / std::forward<T2>(b);
       }
     };  // end of OpDiv
@@ -165,7 +165,7 @@ namespace tfel {
     struct OpNeg {
       template <typename T1>
       static TFEL_MATH_INLINE auto apply(T1&& a)
-          -> UnaryOperationHandler<decltype(a), OpNeg> {
+          -> decltype(-std::forward<T1>(a)) {
         return -std::forward<T1>(a);
       }
     };
