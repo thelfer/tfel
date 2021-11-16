@@ -83,6 +83,15 @@ namespace tfel {
 
   namespace math {
 
+    template <typename UnitType, typename ValueType>   
+    struct UnaryResultType_<
+      ScalarTag,
+      UnaryOperatorTag,
+      qt<UnitType, ValueType>,OpNeg> {
+      //! \brief result
+      using type = qt<UnitType, typename UnaryResultType<ValueType, OpNeg>::type>;
+    }; // end of struct UnaryResultType_
+
     /*!
      * \brief Partial specialisation for addition of two qt having the same unit
      * \see   ResultType

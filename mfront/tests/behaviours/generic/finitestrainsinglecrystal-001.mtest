@@ -9,7 +9,9 @@
 @XMLOutputFile @xml_output@;
 @MaximumNumberOfSubSteps 1;
 @PredictionPolicy 'LinearPrediction';
-@Behaviour<generic> @library@ 'FiniteStrainSingleCrystal';
+@Behaviour<generic> @library@ 'FiniteStrainSingleCrystal'  {
+  stress_measure : @stress_measure@, tangent_operator : @tangent_operator@
+};
 
 @Real 'young' 208000.;
 @Real 'nu'    0.3;
