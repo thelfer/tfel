@@ -35,22 +35,20 @@ struct Expr2Test final : public tfel::tests::TestCase {
       : tfel::tests::TestCase("TFEL/Math", "Expr2Test") {
   }  // end of Expr2Test()
   tfel::tests::TestResult execute() override {
-    using namespace std;
     using namespace tfel::math;
     using vector = tvector<3u, double>;
     using res = BinaryOperationResult<vector, vector, OpPlus>;
     using handler = BinaryOperationHandler<vector, vector, OpPlus>;
     TFEL_TESTS_STATIC_ASSERT(
-        (isBinaryOperationResultTypeValid<vector, vector, OpPlus>::value));
-    TFEL_TESTS_STATIC_ASSERT((is_same<res, vector>::value));
+        (isBinaryOperationResultTypeValid<vector, vector, OpPlus>()));
+    TFEL_TESTS_STATIC_ASSERT((std::is_same_v<res, vector>));
     TFEL_TESTS_STATIC_ASSERT((
-        is_same<handler,
-                Expr<vector, BinaryOperation<vector, vector, OpPlus>>>::value));
+        std::is_same_v<handler,
+                Expr<vector, BinaryOperation<vector, vector, OpPlus>>>));
     using res2 = BinaryOperationResult<vector, res, OpPlus>;
     TFEL_TESTS_STATIC_ASSERT(
-        (isBinaryOperationResultTypeValid<vector, res, OpPlus>::value));
-    TFEL_TESTS_STATIC_ASSERT((is_same<res2, vector>::value));
-
+        (isBinaryOperationResultTypeValid<vector, res, OpPlus>));
+    TFEL_TESTS_STATIC_ASSERT((std::is_same_v<res2, vector>));
     return this->result;
   }
   ~Expr2Test() override = default;

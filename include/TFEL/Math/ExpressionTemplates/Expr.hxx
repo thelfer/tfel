@@ -136,8 +136,7 @@ namespace tfel::math {
             Op> {
       static_assert(
           isUnaryOperationResultTypeValid<
-              tfel::meta::result_of<argument_storage_type, Indexes...>,
-              Op>::value,
+              tfel::meta::result_of<argument_storage_type, Indexes...>, Op>(),
           "invalid call to unary operation operator()");
       return Op::apply(this->a(i...));
     }  // end of operator()
@@ -190,7 +189,7 @@ namespace tfel::math {
       static_assert(
           isBinaryOperationResultTypeValid<
               tfel::meta::result_of<lhs_storage_type, size_type>,
-              tfel::meta::result_of<rhs_storage_type, size_type>, Op>::value,
+              tfel::meta::result_of<rhs_storage_type, size_type>, Op>(),
           "invalid call to unary operation operator[]");
       return Op::apply(this->a(i), this->b(i));
     }
@@ -214,7 +213,7 @@ namespace tfel::math {
       static_assert(
           isBinaryOperationResultTypeValid<
               tfel::meta::result_of<lhs_storage_type, Indexes...>,
-              tfel::meta::result_of<rhs_storage_type, Indexes...>, Op>::value,
+              tfel::meta::result_of<rhs_storage_type, Indexes...>, Op>(),
           "invalid call to binary operation operator()");
       return Op::apply(this->a(i...), this->b(i...));
     }  // end of operator()
@@ -268,7 +267,7 @@ namespace tfel::math {
       static_assert(
           isBinaryOperationResultTypeValid<
               std::add_lvalue_reference_t<lhs_storage_type>,
-              tfel::meta::result_of<rhs_storage_type, size_type>, Op>::value,
+              tfel::meta::result_of<rhs_storage_type, size_type>, Op>(),
           "invalid call");
       return Op::apply(this->a, this->b(i));
     }
@@ -288,7 +287,7 @@ namespace tfel::math {
       static_assert(
           isBinaryOperationResultTypeValid<
               std::add_lvalue_reference_t<lhs_storage_type>,
-              tfel::meta::result_of<rhs_storage_type, Indexes...>, Op>::value,
+              tfel::meta::result_of<rhs_storage_type, Indexes...>, Op>(),
           "invalid call");
       return Op::apply(this->a, this->b(i...));
     }  // end of operator()
@@ -342,7 +341,7 @@ namespace tfel::math {
       static_assert(
           isBinaryOperationResultTypeValid<
               tfel::meta::result_of<lhs_storage_type, size_type>,
-              std::add_lvalue_reference_t<rhs_storage_type>, Op>::value,
+              std::add_lvalue_reference_t<rhs_storage_type>, Op>(),
           "invalid call");
       return Op::apply(this->a(i), this->b);
     }
@@ -362,7 +361,7 @@ namespace tfel::math {
       static_assert(
           isBinaryOperationResultTypeValid<
               tfel::meta::result_of<lhs_storage_type, Indexes...>,
-              std::add_lvalue_reference_t<rhs_storage_type>, Op>::value,
+              std::add_lvalue_reference_t<rhs_storage_type>, Op>(),
           "invalid call");
       return Op::apply(this->a(i...), this->b);
     }  // end of operator()

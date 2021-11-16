@@ -83,7 +83,7 @@ namespace tfel::math {
     using StensA = EvaluationResult<A>;
 
    public:
-    typedef typename UnaryResultType<StensA, OpNeg>::type Result;
+    using Result = typename UnaryResultType<StensA, OpNeg>::type;
     using Handle = std::conditional_t<isInvalid<Result>(),
                                       DummyHandle,
                                       Expr<Result, UnaryOperation<A, OpNeg>>>;

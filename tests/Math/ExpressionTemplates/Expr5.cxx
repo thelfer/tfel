@@ -35,7 +35,6 @@ struct Expr5Test final : public tfel::tests::TestCase {
       : tfel::tests::TestCase("TFEL/Math", "Expr5Test") {
   }  // end of Expr5Test()
   tfel::tests::TestResult execute() override {
-    using namespace std;
     using namespace tfel::math;
     using tvector = tvector<3u, int>;
     using res = BinaryOperationResult<const tvector&, const tvector&, OpMinus>;
@@ -47,18 +46,18 @@ struct Expr5Test final : public tfel::tests::TestCase {
     const tvector v1{3, 4, 5};
     const tvector v2{7, 3, 2};
     const auto expr = v1 - v2;
-    TFEL_TESTS_STATIC_ASSERT((is_same<res, tvector>::value));
+    TFEL_TESTS_STATIC_ASSERT((std::is_same_v<res, tvector>));
     TFEL_TESTS_STATIC_ASSERT(
-        (is_same<decltype(expr)::lhs_type, const tvector&>::value));
+        (std::is_same_v<decltype(expr)::lhs_type, const tvector&>));
     TFEL_TESTS_STATIC_ASSERT(
-        (is_same<decltype(expr)::lhs_storage_type, const tvector&>::value));
+        (std::is_same_v<decltype(expr)::lhs_storage_type, const tvector&>));
     TFEL_TESTS_STATIC_ASSERT(
-        (is_same<decltype(expr)::rhs_type, const tvector&>::value));
+        (std::is_same_v<decltype(expr)::rhs_type, const tvector&>));
     TFEL_TESTS_STATIC_ASSERT(
-        (is_same<decltype(expr)::rhs_storage_type, const tvector&>::value));
+        (std::is_same_v<decltype(expr)::rhs_storage_type, const tvector&>));
     TFEL_TESTS_STATIC_ASSERT(
-        (is_same<decltype(expr)::result_type, tvector>::value));
-    TFEL_TESTS_STATIC_ASSERT((is_same<decltype(expr), const handler>::value));
+        (std::is_same_v<decltype(expr)::result_type, tvector>));
+    TFEL_TESTS_STATIC_ASSERT((std::is_same_v<decltype(expr), const handler>));
     TFEL_TESTS_ASSERT(abs(expr(0) + 4) == 0);
     TFEL_TESTS_ASSERT(abs(expr(1) - 1) == 0);
     TFEL_TESTS_ASSERT(abs(expr(2) - 3) == 0);
@@ -67,10 +66,10 @@ struct Expr5Test final : public tfel::tests::TestCase {
     TFEL_TESTS_ASSERT(abs(v3(1) - 1) == 0);
     TFEL_TESTS_ASSERT(abs(v3(2) - 3) == 0);
     const auto expr2 = v1 + expr;
-    TFEL_TESTS_STATIC_ASSERT((is_same<res2, tvector>::value));
+    TFEL_TESTS_STATIC_ASSERT((std::is_same_v<res2, tvector>));
     TFEL_TESTS_STATIC_ASSERT(
-        (isBinaryOperationResultTypeValid<tvector, handler, OpPlus>::value));
-    TFEL_TESTS_STATIC_ASSERT((is_same<decltype(expr2), const handler2>::value));
+        (isBinaryOperationResultTypeValid<tvector, handler, OpPlus>()));
+    TFEL_TESTS_STATIC_ASSERT((std::is_same_v<decltype(expr2), const handler2>));
     TFEL_TESTS_ASSERT(abs(expr2(0) + 1) == 0);
     TFEL_TESTS_ASSERT(abs(expr2(1) - 5) == 0);
     TFEL_TESTS_ASSERT(abs(expr2(2) - 8) == 0);

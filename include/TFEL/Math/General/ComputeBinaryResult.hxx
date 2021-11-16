@@ -241,9 +241,10 @@ namespace tfel::math {
    * is valid
    */
   template <typename T1, typename T2, typename Op>
-  using isBinaryOperationResultTypeValid = std::integral_constant<
-      bool,
-      !tfel::typetraits::IsInvalid<BinaryOperationResult<T1, T2, Op>>::cond>;
+  constexpr bool isBinaryOperationResultTypeValid(){
+    return !tfel::typetraits::IsInvalid<
+        BinaryOperationResult<T1, T2, Op>>::cond;
+  }
   //! \brief an alias of the handler of an binary operation
   template <typename T1, typename T2, typename Op>
   using BinaryOperationHandler =

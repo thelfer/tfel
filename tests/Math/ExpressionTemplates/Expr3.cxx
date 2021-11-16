@@ -36,58 +36,57 @@ struct Expr3Test final : public tfel::tests::TestCase {
       : tfel::tests::TestCase("TFEL/Math", "Expr3Test") {
   }  // end of Expr3Test()
   tfel::tests::TestResult execute() override {
-    using namespace std;
     using namespace tfel::math;
     using tfel::math::vector;
     using tvector = tvector<3u, double>;
     using stensor = stensor<3u, double>;
     using svector = vector<stensor>;
     TFEL_TESTS_STATIC_ASSERT(
-        (isBinaryOperationResultTypeValid<int, double, OpMult>::value));
+        (isBinaryOperationResultTypeValid<int, double, OpMult>()));
     TFEL_TESTS_STATIC_ASSERT(
-        (is_same<ResultType<int, double, OpMult>::type, double>::value));
+        (std::is_same_v<ResultType<int, double, OpMult>::type, double>));
     using res2 = ResultType<int, stensor, OpMult>::type;
     TFEL_TESTS_STATIC_ASSERT(
-        (isBinaryOperationResultTypeValid<int, stensor, OpMult>::value));
-    TFEL_TESTS_STATIC_ASSERT((is_same<res2, stensor>::value));
+        (isBinaryOperationResultTypeValid<int, stensor, OpMult>()));
+    TFEL_TESTS_STATIC_ASSERT((std::is_same_v<res2, stensor>));
     using res3 = ResultType<int, svector, OpMult>::type;
     TFEL_TESTS_STATIC_ASSERT(
-        (isBinaryOperationResultTypeValid<int, svector, OpMult>::value));
-    TFEL_TESTS_STATIC_ASSERT((is_same<res3, svector>::value));
+        (isBinaryOperationResultTypeValid<int, svector, OpMult>()));
+    TFEL_TESTS_STATIC_ASSERT((std::is_same_v<res3, svector>));
     TFEL_TESTS_STATIC_ASSERT(
-        (is_same<MathObjectTraits<svector>::NumType, stensor>::value));
+        (std::is_same_v<MathObjectTraits<svector>::NumType, stensor>));
     TFEL_TESTS_STATIC_ASSERT(
-        (is_same<MathObjectTraits<svector>::NumType, stensor>::value));
+        (std::is_same_v<MathObjectTraits<svector>::NumType, stensor>));
     TFEL_TESTS_STATIC_ASSERT(
-        (is_same<stensor,
-                 ResultType<int, svector, OpMult>::type::value_type>::value));
+        (std::is_same_v<stensor,
+                        ResultType<int, svector, OpMult>::type::value_type>));
     using handle = ComputeBinaryResult<int, svector, OpMult>::Handle;
     TFEL_TESTS_STATIC_ASSERT(
-        (is_same<Expr<svector, ScalarObjectOperation<int, svector, OpMult>>,
-                 handle>::value));
+        (std::is_same_v<
+            Expr<svector, ScalarObjectOperation<int, svector, OpMult>>,
+            handle>));
+    TFEL_TESTS_STATIC_ASSERT((
+        std::is_same_v<tvector, ResultType<tvector&, tvector, OpPlus>::TypeA>));
     TFEL_TESTS_STATIC_ASSERT(
-        (is_same_v<tvector, ResultType<tvector&, tvector, OpPlus>::TypeA>));
+        (std::is_same_v<tvector,
+                        ResultType<const tvector&, tvector, OpPlus>::TypeA>));
     TFEL_TESTS_STATIC_ASSERT(
-        (is_same_v<tvector,
-                   ResultType<const tvector&, tvector, OpPlus>::TypeA>));
+        (std::is_same_v<tvector, ResultType<const tvector&, const tvector&,
+                                            OpPlus>::TypeB>));
     TFEL_TESTS_STATIC_ASSERT(
-        (is_same_v<tvector,
-                   ResultType<const tvector&, const tvector&, OpPlus>::TypeB>));
+        (std::is_same_v<tvector, ComputeBinaryOperationHandler<
+                                     VectorTag, VectorTag, tvector, tvector,
+                                     OpPlus>::Result>));
     TFEL_TESTS_STATIC_ASSERT(
-        (is_same_v<tvector,
-                   ComputeBinaryOperationHandler<VectorTag, VectorTag, tvector,
-                                                 tvector, OpPlus>::Result>));
+        (isBinaryOperationResultTypeValid<tvector, tvector, OpPlus>()));
     TFEL_TESTS_STATIC_ASSERT(
-        (isBinaryOperationResultTypeValid<tvector, tvector, OpPlus>::value));
-    TFEL_TESTS_STATIC_ASSERT(
-        (isBinaryOperationResultTypeValid<tvector&, tvector&, OpPlus>::value));
+        (isBinaryOperationResultTypeValid<tvector&, tvector&, OpPlus>()));
     TFEL_TESTS_STATIC_ASSERT(
         (isBinaryOperationResultTypeValid<const tvector, const tvector,
-                                          OpPlus>::value));
+                                          OpPlus>()));
     TFEL_TESTS_STATIC_ASSERT(
         (isBinaryOperationResultTypeValid<const tvector&, const tvector&,
-                                          OpPlus>::value));
-
+                                          OpPlus>()));
     return this->result;
   }
   ~Expr3Test() override = default;

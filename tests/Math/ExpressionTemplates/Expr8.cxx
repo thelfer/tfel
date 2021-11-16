@@ -78,7 +78,7 @@ struct Expr8Test final : public tfel::tests::TestCase {
 #ifndef _MSC_VER
     TFEL_TESTS_STATIC_ASSERT(
         (isBinaryOperationResultTypeValid<const stensor&, const handler&,
-                                          OpMinus>::value));
+                                          OpMinus>()));
 #endif
     const auto expr2 = s1 - expr;
     TFEL_TESTS_ASSERT(std::abs(expr2(0) + 1) < eps);

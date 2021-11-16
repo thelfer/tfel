@@ -73,7 +73,6 @@ struct ExprTest final : public tfel::tests::TestCase {
   ExprTest()
       : tfel::tests::TestCase("TFEL/Math", "ExprTest") {}  // end of ExprTest()
   tfel::tests::TestResult execute() override {
-    using namespace std;
     using namespace tfel::math;
     using handler =
         decltype(std::declval<MyVector>() + std::declval<MyVector>());
@@ -83,7 +82,7 @@ struct ExprTest final : public tfel::tests::TestCase {
     TFEL_TESTS_STATIC_ASSERT(
         tfel::math::internals::HasConceptTag<MyVector>::value);
     TFEL_TESTS_STATIC_ASSERT(
-        (isBinaryOperationResultTypeValid<MyVector, MyVector, OpPlus>::value));
+        (isBinaryOperationResultTypeValid<MyVector, MyVector, OpPlus>()));
     TFEL_TESTS_STATIC_ASSERT(
         (std::is_same<typename ResultType<MyVector, MyVector, OpPlus>::type,
                       MyVector>::value));
@@ -94,22 +93,22 @@ struct ExprTest final : public tfel::tests::TestCase {
         (std::is_same<BinaryOperationHandler<MyVector, MyVector, OpPlus>,
                       Expr<MyVector, BinaryOperation<MyVector, MyVector,
                                                      OpPlus>>>::value));
-    TFEL_TESTS_STATIC_ASSERT((std::is_same<typename handler::lhs_storage_type,
-                                           const MyVector>::value));
-    TFEL_TESTS_STATIC_ASSERT((std::is_same<typename handler::rhs_storage_type,
-                                           const MyVector>::value));
-    TFEL_TESTS_STATIC_ASSERT((std::is_same<typename handler2::lhs_storage_type,
-                                           const MyVector>::value));
-    TFEL_TESTS_STATIC_ASSERT((std::is_same<typename handler2::rhs_storage_type,
-                                           const MyVector&>::value));
-    TFEL_TESTS_STATIC_ASSERT((std::is_same<typename handler3::lhs_storage_type,
-                                           const MyVector&>::value));
-    TFEL_TESTS_STATIC_ASSERT((std::is_same<typename handler3::rhs_storage_type,
-                                           const MyVector>::value));
-    TFEL_TESTS_STATIC_ASSERT((std::is_same<typename handler4::lhs_storage_type,
-                                           const MyVector&>::value));
-    TFEL_TESTS_STATIC_ASSERT((std::is_same<typename handler4::rhs_storage_type,
-                                           const MyVector&>::value));
+    TFEL_TESTS_STATIC_ASSERT(
+        (std::is_same_v<typename handler::lhs_storage_type, const MyVector>));
+    TFEL_TESTS_STATIC_ASSERT(
+        (std::is_same_v<typename handler::rhs_storage_type, const MyVector>));
+    TFEL_TESTS_STATIC_ASSERT(
+        (std::is_same_v<typename handler2::lhs_storage_type, const MyVector>));
+    TFEL_TESTS_STATIC_ASSERT(
+        (std::is_same_v<typename handler2::rhs_storage_type, const MyVector&>));
+    TFEL_TESTS_STATIC_ASSERT(
+        (std::is_same_v<typename handler3::lhs_storage_type, const MyVector&>));
+    TFEL_TESTS_STATIC_ASSERT(
+        (std::is_same_v<typename handler3::rhs_storage_type, const MyVector>));
+    TFEL_TESTS_STATIC_ASSERT(
+        (std::is_same_v<typename handler4::lhs_storage_type, const MyVector&>));
+    TFEL_TESTS_STATIC_ASSERT(
+        (std::is_same_v<typename handler4::rhs_storage_type, const MyVector&>));
     constexpr MyVector a{{0, 2, 0}};
     constexpr MyVector b{{4, 0, 1}};
     auto c = a + b;

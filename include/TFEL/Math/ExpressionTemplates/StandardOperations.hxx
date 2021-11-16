@@ -37,7 +37,9 @@ namespace tfel::math {
    */
   template <typename T1>
   constexpr auto operator-(T1&& a) -> std::enable_if_t<
-      isUnaryOperationResultTypeValid<decltype(a), OpNeg>::value,
+      ((!isScalar<T1>()) &&
+       (isUnaryOperationResultTypeValid<decltype(a), OpNeg>()) &&
+       (!isInvalid<UnaryOperationHandler<decltype(a), OpNeg>>())),
       UnaryOperationHandler<decltype(a), OpNeg>> {
     return UnaryOperationHandler<decltype(a), OpNeg>(std::forward<T1>(a));
   }
@@ -59,9 +61,8 @@ namespace tfel::math {
    */
   template <typename T1, typename T2>
   constexpr auto operator+(T1&& a, T2&& b) -> std::enable_if_t<
-      isBinaryOperationResultTypeValid<decltype(a), decltype(b), OpPlus>::
-              value &&
-          (!((isScalar<T1>()) && (isScalar<T2>()))),
+      ((isBinaryOperationResultTypeValid<decltype(a), decltype(b), OpPlus>()) &&
+       (!((isScalar<T1>()) && (isScalar<T2>())))),
       BinaryOperationHandler<decltype(a), decltype(b), OpPlus>> {
     return BinaryOperationHandler<decltype(a), decltype(b), OpPlus>(
         std::forward<T1>(a), std::forward<T2>(b));
@@ -84,9 +85,10 @@ namespace tfel::math {
    */
   template <typename T1, typename T2>
   constexpr auto operator-(T1&& a, T2&& b) -> std::enable_if_t<
-      isBinaryOperationResultTypeValid<decltype(a), decltype(b), OpMinus>::
-              value &&
-          (!((isScalar<T1>()) && (isScalar<T2>()))),
+      ((isBinaryOperationResultTypeValid<decltype(a),
+                                         decltype(b),
+                                         OpMinus>()) &&
+       (!((isScalar<T1>()) && (isScalar<T2>())))),
       BinaryOperationHandler<decltype(a), decltype(b), OpMinus>> {
     return BinaryOperationHandler<decltype(a), decltype(b), OpMinus>(
         std::forward<T1>(a), std::forward<T2>(b));
@@ -109,9 +111,8 @@ namespace tfel::math {
    */
   template <typename T1, typename T2>
   constexpr auto operator*(T1&& a, T2&& b) -> std::enable_if_t<
-      isBinaryOperationResultTypeValid<decltype(a), decltype(b), OpMult>::
-              value &&
-          (!((isScalar<T1>()) && (isScalar<T2>()))),
+      ((isBinaryOperationResultTypeValid<decltype(a), decltype(b), OpMult>()) &&
+       (!((isScalar<T1>()) && (isScalar<T2>())))),
       BinaryOperationHandler<decltype(a), decltype(b), OpMult>> {
     return BinaryOperationHandler<decltype(a), decltype(b), OpMult>(
         std::forward<T1>(a), std::forward<T2>(b));
@@ -134,9 +135,8 @@ namespace tfel::math {
    */
   template <typename T1, typename T2>
   constexpr auto operator/(T1&& a, T2&& b) -> std::enable_if_t<
-      isBinaryOperationResultTypeValid<decltype(a), decltype(b), OpDiv>::
-              value &&
-          (!((isScalar<T1>()) && (isScalar<T2>()))),
+      ((isBinaryOperationResultTypeValid<decltype(a), decltype(b), OpDiv>()) &&
+       (!((isScalar<T1>()) && (isScalar<T2>())))),
       BinaryOperationHandler<decltype(a), decltype(b), OpDiv>> {
     return BinaryOperationHandler<decltype(a), decltype(b), OpDiv>(
         std::forward<T1>(a), std::forward<T2>(b));
@@ -159,10 +159,10 @@ namespace tfel::math {
    */
   template <typename T1, typename T2>
   constexpr auto operator^(T1&& a, T2&& b) -> std::enable_if_t<
-      isBinaryOperationResultTypeValid<decltype(a),
-                                       decltype(b),
-                                       OpDiadicProduct>::value &&
-          (!((isScalar<T1>()) && (isScalar<T2>()))),
+      ((isBinaryOperationResultTypeValid<decltype(a),
+                                         decltype(b),
+                                         OpDiadicProduct>()) &&
+       (!((isScalar<T1>()) && (isScalar<T2>())))),
       BinaryOperationHandler<decltype(a), decltype(b), OpDiadicProduct>> {
     return BinaryOperationHandler<decltype(a), decltype(b), OpDiadicProduct>(
         std::forward<T1>(a), std::forward<T2>(b));

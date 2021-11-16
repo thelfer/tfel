@@ -27,17 +27,19 @@ namespace tfel::math {
     using Handle = tfel::meta::InvalidType;
   };
 
-  //! Partial Specialisation of ComputeUnaryResult_ for scalars
+  //! \brief partial specialisation of ComputeUnaryResult_ for scalars
   template <typename A, typename TagOp, typename Op>
   struct ComputeUnaryResult_<ScalarTag, TagOp, A, Op> {
     typedef std::decay_t<A> A_;
-    typedef typename UnaryResultType<A_, Op>::type Result;
-    typedef typename UnaryResultType<A_, Op>::type Handle;
-  };
+    //! \brief
+    using Result = typename UnaryResultType<A_, Op>::type;
+    //! \brief no specific handlers for scalars
+    using Handle = typename UnaryResultType<A_, Op>::type;
+  }; // end of struct ComputeUnaryResult_
 
   template <typename A, typename Op>
   class ComputeUnaryResult {
-    //! a simple alias
+    //! \brief a simple alias
     typedef std::decay_t<A> A_;
     typedef typename ComputeObjectTag<A_>::type TagA;
     typedef typename ComputeObjectTag<Op>::type TagOp;
@@ -47,17 +49,17 @@ namespace tfel::math {
     typedef typename ComputeUnaryResult_<TagA, TagOp, A, Op>::Handle Handle;
   };
 
-  //! an alias for the result of an unary operation
+  //! \brief an alias for the result of an unary operation
   template <typename T1, typename Op>
   using UnaryOperationResult = typename ComputeUnaryResult<T1, Op>::Result;
-  //! an alias of the handler of an unary operation
+  //! \brief an alias of the handler of an unary operation
   template <typename T1, typename Op>
   using UnaryOperationHandler = typename ComputeUnaryResult<T1, Op>::Handle;
-  //! an alias
+  //! \brief an alias
   template <typename T1, typename Op>
-  using isUnaryOperationResultTypeValid = std::integral_constant<
-      bool,
-      !tfel::typetraits::IsInvalid<UnaryOperationResult<T1, Op>>::cond>;
+  constexpr bool isUnaryOperationResultTypeValid() {
+    return !tfel::typetraits::IsInvalid<UnaryOperationResult<T1, Op>>::cond;
+  } // end of isUnaryOperationResultTypeValid
 
 }  // end of namespace tfel::math
 

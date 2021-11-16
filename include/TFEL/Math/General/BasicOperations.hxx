@@ -71,8 +71,7 @@
    * \see   UnaryResultType                                                   \
    */                                                                         \
   template <>                                                                 \
-  struct UnaryComputeBinaryOperationResult<ScalarTag, UnaryOperatorTag, X,    \
-                                           OpNeg> {                           \
+  struct ComputeUnaryOperationResult<ScalarTag, UnaryOperatorTag, X, OpNeg> { \
     typedef tfel::typetraits::Promote<X, short>::type type;                   \
   };                                                                          \
   /*!                                                                         \
@@ -80,8 +79,8 @@
    * \see   UnaryResultType                                                   \
    */                                                                         \
   template <>                                                                 \
-  struct UnaryComputeBinaryOperationResult<ScalarTag, UnaryOperatorTag,       \
-                                           Complex<X>, OpNeg> {               \
+  struct ComputeUnaryOperationResult<ScalarTag, UnaryOperatorTag, Complex<X>, \
+                                     OpNeg> {                                 \
     typedef tfel::typetraits::Promote<Complex<X>, Complex<short>>::type type; \
   }
 
@@ -120,7 +119,7 @@ namespace tfel ::math {
      */
     template <typename T1, typename T2>
     static constexpr auto apply(T1&& a, T2&& b)
-        -> BinaryOperationHandler<decltype(a), decltype(b), OpPlus> {
+        -> decltype(std::forward<T1>(a) + std::forward<T2>(b)) {
       return std::forward<T1>(a) + std::forward<T2>(b);
     }
   };
@@ -132,7 +131,7 @@ namespace tfel ::math {
      */
     template <typename T1, typename T2>
     static constexpr auto apply(T1&& a, T2&& b)
-        -> BinaryOperationHandler<decltype(a), decltype(b), OpMinus> {
+        -> decltype(std::forward<T1>(a) - std::forward<T2>(b)) {
       return std::forward<T1>(a) - std::forward<T2>(b);
     }
 
@@ -145,7 +144,7 @@ namespace tfel ::math {
      */
     template <typename T1, typename T2>
     static constexpr auto apply(T1&& a, T2&& b)
-        -> BinaryOperationHandler<decltype(a), decltype(b), OpMult> {
+        -> decltype(std::forward<T1>(a) * std::forward<T2>(b)) {
       return std::forward<T1>(a) * std::forward<T2>(b);
     }
   };  // end of OpMult
@@ -157,7 +156,7 @@ namespace tfel ::math {
      */
     template <typename T1, typename T2>
     static constexpr auto apply(T1&& a, T2&& b)
-        -> BinaryOperationHandler<decltype(a), decltype(b), OpDiv> {
+        -> decltype(std::forward<T1>(a) / std::forward<T2>(b)) {
       return std::forward<T1>(a) / std::forward<T2>(b);
     }
   };  // end of OpDiv
@@ -165,7 +164,7 @@ namespace tfel ::math {
   struct OpNeg {
     template <typename T1>
     static constexpr auto apply(T1&& a)
-        -> UnaryOperationHandler<decltype(a), OpNeg> {
+        -> decltype(-std::forward<T1>(a)) {
       return -std::forward<T1>(a);
     }
   };

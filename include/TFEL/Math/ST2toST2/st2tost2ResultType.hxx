@@ -25,7 +25,7 @@ namespace tfel::math {
    */
   template <unsigned short N, typename T>
   class UnaryResultType<st2tost2<N, T>, OpNeg> {
-    typedef typename UnaryResultType<T, OpNeg>::type ResBase_;
+    using ResBase_ = typename UnaryResultType<T, OpNeg>::type;
 
    public:
     using type = std::conditional_t<isInvalid<ResBase_>(),

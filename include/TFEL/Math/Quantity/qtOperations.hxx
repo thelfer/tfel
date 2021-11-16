@@ -261,6 +261,17 @@
             const Quantity<UnitType, ValueType, OwnershipPolicy>&) noexcept
 
 namespace tfel::math {
+
+  template <typename UnitType, typename ValueType, typename OwnershipPolicy>
+  struct ComputeUnaryOperationResult<
+      ScalarTag,
+      UnaryOperatorTag,
+      Quantity<UnitType, ValueType, OwnershipPolicy>,
+      OpNeg> {
+    //! \brief result
+    using type = qt<UnitType, typename UnaryResultType<ValueType, OpNeg>::type>;
+  }; // end of struct ComputeUnaryOperationResult
+
   /*!
    * \brief Partial specialisation for addition of two qt having the same unit
    * \see   ResultType
