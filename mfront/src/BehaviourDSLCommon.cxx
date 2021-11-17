@@ -6134,12 +6134,8 @@ namespace mfront {
              << "\"\n";
         }
       }
-      if (v.type == "int") {
-        os << "static constexpr " << v.type << " " << v.name << " = " << v.value
-           << ";\n";
-      } else {
-        os << "static const " << v.type << " " << v.name << ";\n";
-      }
+      os << "static constexpr auto " << v.name << " = "  //
+         << v.type << "{" << v.value << "};\n";
     }
     os << '\n';
   }
@@ -7918,67 +7914,77 @@ namespace mfront {
        << "#include\"" << this->getBehaviourFileName() << "\"\n\n";
   }  // end of writeSrcFileHeader()
 
-  void BehaviourDSLCommon::writeSrcFileStaticVariables(
-      std::ostream& os, const Hypothesis h) const {
-    const auto& md = this->mb.getBehaviourData(h);
-    const auto m = "tfel::material::ModellingHypothesis::" +
-                   ModellingHypothesis::toUpperCaseString(h);
-    this->checkSrcFile(os);
-    for (const auto& v : md.getStaticVariables()) {
-      if (v.type == "int") {
-        continue;
-      }
-      if (this->mb.useQt()) {
-        os << "template<>\n";
-        os << "const " << this->mb.getClassName() << "<" << m
-           << ",float,true>::" << v.type << '\n'
-           << this->mb.getClassName() << "<" << m << ",float,true>::" << v.name
-           << " = " << this->mb.getClassName() << "<" << m
-           << ",float,true>::" << v.type << "(static_cast<float>(" << v.value
-           << "));\n\n";
-      }
-      os << "template<>\n";
-      os << "const " << this->mb.getClassName() << "<" << m
-         << ",float,false>::" << v.type << '\n'
-         << this->mb.getClassName() << "<" << m << ",float,false>::" << v.name
-         << " = " << this->mb.getClassName() << "<" << m
-         << ",float,false>::" << v.type << "(static_cast<float>(" << v.value
-         << "));\n\n";
-      if (this->mb.useQt()) {
-        os << "template<>\n";
-        os << "const " << this->mb.getClassName() << "<" << m
-           << ",double,true>::" << v.type << '\n'
-           << this->mb.getClassName() << "<" << m << ",double,true>::" << v.name
-           << " = " << this->mb.getClassName() << "<" << m
-           << ",double,true>::" << v.type << "(static_cast<double>(" << v.value
-           << "));\n\n";
-      }
-      os << "template<>\n";
-      os << "const " << this->mb.getClassName() << "<" << m
-         << ",double,false>::" << v.type << '\n'
-         << this->mb.getClassName() << "<" << m << ",double,false>::" << v.name
-         << " = " << this->mb.getClassName() << "<" << m
-         << ",double,false>::" << v.type << "(static_cast<double>(" << v.value
-         << "));\n\n";
-      if (this->mb.useQt()) {
-        os << "template<>\n";
-        os << "const " << this->mb.getClassName() << "<" << m
-           << ",long double,true>::" << v.type << '\n'
-           << this->mb.getClassName() << "<" << m
-           << ",long double,true>::" << v.name << " = "
-           << this->mb.getClassName() << "<" << m
-           << ",long double,true>::" << v.type << "(static_cast<long double>("
-           << v.value << "));\n\n";
-      }
-      os << "template<>\n";
-      os << "const " << this->mb.getClassName() << "<" << m
-         << ",long double,false>::" << v.type << '\n'
-         << this->mb.getClassName() << "<" << m
-         << ",long double,false>::" << v.name << " = "
-         << this->mb.getClassName() << "<" << m
-         << ",long double,false>::" << v.type << "(static_cast<long double>("
-         << v.value << "));\n\n";
-    }
+  void BehaviourDSLCommon::writeSrcFileStaticVariables(std::ostream&,
+                                                       const Hypothesis) const {
+    //     const auto& md = this->mb.getBehaviourData(h);
+    //     const auto m = "tfel::material::ModellingHypothesis::" +
+    //                    ModellingHypothesis::toUpperCaseString(h);
+    //     this->checkSrcFile(os);
+    //     for (const auto& v : md.getStaticVariables()) {
+    //       if (v.type == "int") {
+    //         continue;
+    //       }
+    //       if (this->mb.useQt()) {
+    //         os << "template<>\n";
+    //         os << "const " << this->mb.getClassName() << "<" << m
+    //            << ",float,true>::" << v.type << '\n'
+    //            << this->mb.getClassName() << "<" << m << ",float,true>::" <<
+    //            v.name
+    //            << " = " << this->mb.getClassName() << "<" << m
+    //            << ",float,true>::" << v.type << "(static_cast<float>(" <<
+    //            v.value
+    //            << "));\n\n";
+    //       }
+    //       os << "template<>\n";
+    //       os << "const " << this->mb.getClassName() << "<" << m
+    //          << ",float,false>::" << v.type << '\n'
+    //          << this->mb.getClassName() << "<" << m << ",float,false>::" <<
+    //          v.name
+    //          << " = " << this->mb.getClassName() << "<" << m
+    //          << ",float,false>::" << v.type << "(static_cast<float>(" <<
+    //          v.value
+    //          << "));\n\n";
+    //       if (this->mb.useQt()) {
+    //         os << "template<>\n";
+    //         os << "const " << this->mb.getClassName() << "<" << m
+    //            << ",double,true>::" << v.type << '\n'
+    //            << this->mb.getClassName() << "<" << m << ",double,true>::" <<
+    //            v.name
+    //            << " = " << this->mb.getClassName() << "<" << m
+    //            << ",double,true>::" << v.type << "(static_cast<double>(" <<
+    //            v.value
+    //            << "));\n\n";
+    //       }
+    //       os << "template<>\n";
+    //       os << "const " << this->mb.getClassName() << "<" << m
+    //          << ",double,false>::" << v.type << '\n'
+    //          << this->mb.getClassName() << "<" << m << ",double,false>::" <<
+    //          v.name
+    //          << " = " << this->mb.getClassName() << "<" << m
+    //          << ",double,false>::" << v.type << "(static_cast<double>(" <<
+    //          v.value
+    //          << "));\n\n";
+    //       if (this->mb.useQt()) {
+    //         os << "template<>\n";
+    //         os << "const " << this->mb.getClassName() << "<" << m
+    //            << ",long double,true>::" << v.type << '\n'
+    //            << this->mb.getClassName() << "<" << m
+    //            << ",long double,true>::" << v.name << " = "
+    //            << this->mb.getClassName() << "<" << m
+    //            << ",long double,true>::" << v.type << "(static_cast<long
+    //            double>("
+    //            << v.value << "));\n\n";
+    //       }
+    //       os << "template<>\n";
+    //       os << "const " << this->mb.getClassName() << "<" << m
+    //          << ",long double,false>::" << v.type << '\n'
+    //          << this->mb.getClassName() << "<" << m
+    //          << ",long double,false>::" << v.name << " = "
+    //          << this->mb.getClassName() << "<" << m
+    //          << ",long double,false>::" << v.type << "(static_cast<long
+    //          double>("
+    //          << v.value << "));\n\n";
+    //     }
   }  // end of writeSrcFileStaticVariables
 
   void BehaviourDSLCommon::writeSrcFileUserDefinedCode(std::ostream& os) const {
