@@ -138,6 +138,10 @@ b = mtest.Behaviour(library = 'src/libBehaviour.so',
 
 # Issues fixed
 
+## Issue #26: Don't use explicit instanciation for static variables
+
+For more details, see : <https://github.com/thelfer/tfel/issues/26>
+
 ## Issue #20: [mtest] Declaration of a behaviour wrapper in python module
 
 As described in Section @sec:tfel_4.1:pymtest:behaviour_constructor,
