@@ -38,8 +38,10 @@
 
 namespace mfront {
 
-  static void display_variable(const mfront::VariableDescription& v) {
+  static void display_variable(const mfront::VariableDescription& v,
+                               const std::string& spaces = std::string{}) {
     const auto& n = v.getExternalName();
+    std::cout << spaces;
     if (n == v.name) {
       std::cout << "- " << displayName(v);
     } else {
@@ -311,7 +313,13 @@ namespace mfront {
          " the selected modelling hypothesis"},
         {"--parameters-file",
          "display the name of a text file which can be used to modify the "
-         "default value of the parameters"}};
+         "default value of the parameters"},
+        {"--post-processing-variables",
+         "show the post-processing variables for the selected "
+         "modelling hypothesis"},
+        {"--post-processings",
+         "show the list of available post-processings for the selected "
+         "modelling hypothesis"}};
     for (const auto& q : sq) {
       Parser::registerNewCallBack(q.first, &BehaviourQuery::treatStandardQuery,
                                   q.second);
@@ -769,6 +777,11 @@ namespace mfront {
           "auxiliary-state-variables",
           this->generateVariablesListQuery<
               &BehaviourData::getAuxiliaryStateVariables>());
+    } else if (qn == "--post-processing-variables") {
+      this->queries.emplace_back(
+          "post-processing-variables",
+          this->generateVariablesListQuery<
+              &BehaviourData::getPostProcessingVariables>());
     } else if (qn == "--external-state-variables") {
       this->queries.emplace_back(
           "external-state-variables",
@@ -817,6 +830,31 @@ namespace mfront {
                                    cout << "- " << n << '\n';
                                  }
                                }});
+    } else if (qn == "--post-processings") {
+      this->queries.push_back(
+          {"post-processings",
+           [](const FileDescription&, const BehaviourDescription& d,
+              const Hypothesis h) {
+             for (const auto& p : d.getBehaviourData(h).getPostProcessings()) {
+               const auto& c = p.second;
+               cout << "- " << p.first << ": ";
+               if (!c.description.empty()) {
+                 cout << c.description;
+               } else {
+                 cout << "no description available";
+               }
+               if (hasAttribute<std::vector<VariableDescription>>(
+                       c, CodeBlock::used_postprocessing_variables)) {
+                 const auto& pvariables =
+                     getAttribute<std::vector<VariableDescription>>(
+                         c, CodeBlock::used_postprocessing_variables);
+                 std::cout << ". Modified post-processing variables are:\n";
+                 for (const auto& v : pvariables) {
+                   display_variable(v, "  ");
+                 }
+               }
+             }
+           }});
     } else if (qn == "--parameters-file") {
       this->queries.push_back(
           {"parameters-file",

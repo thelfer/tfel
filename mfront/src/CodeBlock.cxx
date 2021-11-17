@@ -28,6 +28,8 @@ namespace mfront {
           "external_state_variables";
   const char* const CodeBlock::used_jacobian_invert_blocks =
       "used_jacobian_invert_blocks";
+  const char* const CodeBlock::used_postprocessing_variables =
+      "used_postprocessing_variables";
 
   void CodeBlock::throwUnmatchedAttributeType(const std::string& n) {
     tfel::raise(

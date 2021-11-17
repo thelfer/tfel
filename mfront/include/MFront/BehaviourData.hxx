@@ -35,9 +35,7 @@ namespace mfront {
   // forward declaration
   struct ModelDescription;
 
-  /*!
-   * This structure gathers various behaviour characteristic
-   */
+  //! \brief this structure gathers various behaviour characteristic
   struct MFRONT_VISIBILITY_EXPORT BehaviourData : private SupportedTypes {
     /*
      * normalised code block names
@@ -511,30 +509,74 @@ namespace mfront {
      * \param[in] n : name
      */
     bool isMemberUsedInCodeBlocks(const std::string&) const;
-
+    /*!
+     * \return if the given name is the name of a material property
+     * \param[in] n: name
+     */
     bool isMaterialPropertyName(const std::string&) const;
-
+    /*!
+     * \return if the given name is the name of a local variable
+     * \param[in] n: name
+     */
     bool isLocalVariableName(const std::string&) const;
-
+    /*!
+     * \return if the given name is the name of a persistent variable
+     * \param[in] n: name
+     */
     bool isPersistentVariableName(const std::string&) const;
-
+    /*!
+     * \return if the given name is the name of an integration variable
+     * \param[in] n: name
+     */
     bool isIntegrationVariableName(const std::string&) const;
-
+    /*!
+     * \return if the given name is the name of the increment of an integration
+     * variable
+     * \param[in] n: name
+     */
     bool isIntegrationVariableIncrementName(const std::string&) const;
-
+    /*!
+     * \return if the given name is the name of a state variable
+     * \param[in] n: name
+     */
     bool isStateVariableName(const std::string&) const;
-
+    /*!
+     * \return if the given name is the name of the increment of a state
+     * variable
+     * \param[in] n: name
+     */
     bool isStateVariableIncrementName(const std::string&) const;
-
+    /*!
+     * \return if the given name is the name of an auxiliary state variable
+     * \param[in] n: name
+     */
     bool isAuxiliaryStateVariableName(const std::string&) const;
-
+    /*!
+     * \return if the given name is the name of a post-processing variable
+     * \param[in] n: name
+     */
     bool isPostProcessingVariableName(const std::string&) const;
-
+    /*!
+     * \return if the given name is the name of an external state variable
+     * \param[in] n: name
+     */
     bool isExternalStateVariableName(const std::string&) const;
-
+    /*!
+     * \return if the given name is the name of the increment of an external
+     * state variable
+     * \param[in] n: name
+     */
     bool isExternalStateVariableIncrementName(const std::string&) const;
-
+    /*!
+     * \return if the given name is the name of a parameter
+     * \param[in] n: name
+     */
     bool isParameterName(const std::string&) const;
+    /*!
+     * \return if the given name is the name of a post-processing variable
+     * \param[in] n: name
+     */
+    bool isPostProcessingName(const std::string&) const;
     /*!
      * \return true if the given name is the one of a static variable
      * \param[in] n : name
@@ -673,10 +715,16 @@ namespace mfront {
      * \param[in] s : members
      */
     void appendToMembers(const std::string&);
-    /*!
-     * \return the material additional members
-     */
+    //! \return the material additional members
     std::string getMembers() const;
+    /*!
+     * \brief add a new post-processing
+     * \param[in] n: name of the post-processing
+     * \param[in] c: code block associated with the post-processing
+     */
+    void addPostProcessing(const std::string&, const CodeBlock&);
+    //! \return the registred post-processings
+    const std::map<std::string, CodeBlock>& getPostProcessings() const;
     /*!
      * \brief append the given code to the members
      * \param[in] s : members
@@ -1044,6 +1092,8 @@ namespace mfront {
     std::set<std::string> pupirv;
     //! \brief registred code blocks
     std::map<std::string, CodeBlocksAggregator> cblocks;
+    //! \brief registred post-processings
+    std::map<std::string, CodeBlock> postprocessings;
     //! \brief registred material properties
     VariableDescriptionContainer materialProperties;
     //! \brief registred persistent variables

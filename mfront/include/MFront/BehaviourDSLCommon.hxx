@@ -617,6 +617,8 @@ namespace mfront {
     void treatPrivate() override;
     //! \brief treat the `@Members` keyword
     void treatMembers() override;
+    //! \brief treat the `@PostProcessing` keyword
+    virtual void treatPostProcessing();
     //! \brief treat the `@StrainMeasure` keyword
     virtual void treatStrainMeasure();
     /*!
@@ -699,6 +701,8 @@ namespace mfront {
     virtual void treatAuxiliaryStateVariable();
     //! \brief handle the `@ExternalStateVariable` keyword
     virtual void treatExternalStateVariable();
+    //! \brief handle the `@PostProcessingVariable` keyword
+    virtual void treatPostProcessingVariable();
     //! \brief treat the `@MinimalTimeStepScalingFactor` keyword
     virtual void treatMinimalTimeStepScalingFactor();
     //! \brief treat the `@MaximalTimeStepScalingFactor` keyword

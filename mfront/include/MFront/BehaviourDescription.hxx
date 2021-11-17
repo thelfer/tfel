@@ -2,7 +2,7 @@
  * \file  mfront/include/MFront/BehaviourDescription.hxx
  * \brief
  * \author Thomas Helfer
- * \brief 07 mars 2014
+ * \brief 07/03/2014
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence
@@ -306,6 +306,13 @@ namespace mfront {
      * data
      */
     void appendToPrivateCode(const Hypothesis, const std::string&, const bool);
+    /*!
+     * \brief add the given post-processing
+     * \param[in] h: hypothesis
+     * \param[in] n: name of the post-processing
+     * \param[in] c: code associated with the post-processing
+     */
+    void addPostProcessing(const Hypothesis, const std::string&, const CodeBlock&);
     /*!
      * \return the material private code
      * \param[in] h: hypothesis
@@ -1139,6 +1146,12 @@ namespace mfront {
      * \param[in] n: name
      */
     bool isParameterName(const Hypothesis, const std::string&) const;
+    /*!
+     * \return true if the given name is the name of post-processing variable
+     * \param[in] h: modelling hypothesis
+     * \param[in] n: name
+     */
+    bool isPostProcessingName(const Hypothesis, const std::string&) const;
     /*!
      * \param[in] h: modelling hypothesis
      * \param[in] n: parameter name

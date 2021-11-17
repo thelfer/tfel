@@ -215,6 +215,9 @@ namespace mfront {
     add("@SpeedOfSound", &BehaviourDSLCommon::treatSpeedOfSound);
     add("@DislocationsMeanFreePathInteractionMatrix",
         &BehaviourDSLCommon::treatDislocationsMeanFreePathInteractionMatrix);
+    add("@PostProcessingVariable",
+        &BehaviourDSLCommon::treatPostProcessingVariable);
+    add("@PostProcessing", &BehaviourDSLCommon::treatPostProcessing);
   }  // end of BehaviourDSLCommon
 
   std::string BehaviourDSLCommon::getMaterialKnowledgeIdentifier() const {
@@ -2212,6 +2215,54 @@ namespace mfront {
     }
   }  // end of treatStrainMeasure
 
+  void BehaviourDSLCommon::treatPostProcessing() {
+    auto hs = std::set<Hypothesis>{};
+    this->readHypothesesList(hs);
+    this->checkNotEndOfFile("BehaviourDSLCommon::treatPostProcessing");
+    const auto pname = this->current->value;
+    if(!this->isValidIdentifier(pname)){
+      this->throwRuntimeError(
+          "BehaviourDSLCommon::treatPostProcessing",
+          "invalid post-processing name (read '" + pname + "').");
+    }
+    ++(this->current);
+    this->checkNotEndOfFile("BehaviourDSLCommon::treatPostProcessing");
+    const auto beg = this->current;
+    for (const auto& h : hs) {
+      const auto& d = this->mb.getBehaviourData(h);
+      const auto& pvariables = d.getPostProcessingVariables();
+      auto used_post_processing_variables = std::vector<VariableDescription>{};
+      this->current = beg;
+      CodeBlockParserOptions o;
+      o.mn = d.getRegistredMembersNames();
+      o.smn = d.getRegistredStaticMembersNames();
+      o.qualifyStaticVariables = true;
+      o.qualifyMemberVariables = true;
+      o.analyser = std::make_shared<StandardWordAnalyser>(
+          h, [&used_post_processing_variables, &pvariables](
+                 CodeBlock&, const Hypothesis, const std::string& w) {
+            if (pvariables.contains(w)) {
+              const auto p = std::find_if(
+                  used_post_processing_variables.begin(),
+                  used_post_processing_variables.end(),
+                  [&w](const VariableDescription& v) { return v.name == w; });
+              if (p == used_post_processing_variables.end()) {
+                used_post_processing_variables.push_back(
+                    pvariables.getVariable(w));
+              }
+            }
+          });
+      o.modifier = std::make_shared<StandardVariableModifier>(
+          h, [this](const Hypothesis hv, const std::string& v, const bool b) {
+            return this->standardModifier(hv, v, b);
+          });
+      auto c = this->readNextBlock(o);
+      c.attributes[CodeBlock::used_postprocessing_variables] =
+          used_post_processing_variables;
+      this->mb.addPostProcessing(h, pname, c);
+    }
+  }  // end of treatPostProcessing
+
   void BehaviourDSLCommon::treatPrivate() {
     auto hs = std::set<Hypothesis>{};
     this->readHypothesesList(hs);
@@ -2230,7 +2281,7 @@ namespace mfront {
           });
       this->mb.appendToPrivateCode(h, this->readNextBlock(o).code, true);
     }
-  }  // end of void BehaviourDSLCommon::treatPrivate
+  }  // end of treatPrivate
 
   void BehaviourDSLCommon::treatMembers() {
     auto hs = std::set<Hypothesis>{};
@@ -2743,6 +2794,7 @@ namespace mfront {
             (this->mb.isLocalVariableName(h, n)) ||
             (this->mb.isStaticVariableName(h, n)) ||
             (this->mb.isParameterName(h, n)) ||
+            (this->mb.isPostProcessingVariableName(h, n)) ||
             (this->mb.isIntegrationVariableName(h, n)));
   }  // end of isCallableVariable
 
@@ -3325,8 +3377,9 @@ namespace mfront {
   void BehaviourDSLCommon::treatAuxiliaryStateVariable() {
     VarContainer v;
     auto h = std::set<Hypothesis>{};
-    this->readVariableList(
-        v, h, &BehaviourDescription::addAuxiliaryStateVariables, true);
+
+    //     this->readVariableList(
+    //         v, h, &BehaviourDescription::addAuxiliaryStateVariables, true);
   }  // end of treatAuxiliaryStateVariable
 
   void BehaviourDSLCommon::treatExternalStateVariable() {
@@ -3335,6 +3388,16 @@ namespace mfront {
     this->readVariableList(
         v, h, &BehaviourDescription::addExternalStateVariables, true);
   }  // end of treatExternalStateVariable()
+
+  void BehaviourDSLCommon::treatPostProcessingVariable() {
+    auto v = VariableDescriptionContainer{};
+    auto hypotheses = std::set<Hypothesis>{};
+    this->readHypothesesList(hypotheses);
+    this->readVarList(v, true);
+    for (const auto& h : hypotheses) {
+      this->mb.addPostProcessingVariables(h, v);
+    }
+  }  // end of treatPostProcessingVariable()
 
   void BehaviourDSLCommon::treatBounds() {
     auto hs = std::set<Hypothesis>{};
