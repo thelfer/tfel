@@ -314,6 +314,7 @@ namespace mtest {
     md.ivtypes.resize(md.ivnames.size(), 0);
     md.evnames.emplace_back("Temperature");
     md.evnames.emplace_back("FI");
+    md.evtypes.resize(md.evnames.size(), 0);
     return md;
   }
 

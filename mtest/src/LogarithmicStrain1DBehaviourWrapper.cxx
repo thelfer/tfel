@@ -170,6 +170,34 @@ namespace mtest {
     return this->b->getInternalStateVariablePosition(n);
   }  // end of getInternalStateVariablePosition
 
+  std::vector<std::string>
+  LogarithmicStrain1DBehaviourWrapper::getExternalStateVariablesNames() const {
+    return this->b->getExternalStateVariablesNames();
+  }  // end of getExternalStateVariablesNames
+
+  std::vector<std::string>
+  LogarithmicStrain1DBehaviourWrapper::expandExternalStateVariablesNames()
+      const {
+    return this->b->expandExternalStateVariablesNames();
+  }  // end of expandExternalStateVariablesNames
+
+  size_t LogarithmicStrain1DBehaviourWrapper::getExternalStateVariablesSize()
+      const {
+    return this->b->getExternalStateVariablesSize();
+  }  // end of getExternalStateVariablesSize
+
+  unsigned short
+  LogarithmicStrain1DBehaviourWrapper::getExternalStateVariableType(
+      const std::string& n) const {
+    return this->b->getExternalStateVariableType(n);
+  }  // end of getExternalStateVariableType
+
+  unsigned short
+  LogarithmicStrain1DBehaviourWrapper::getExternalStateVariablePosition(
+      const std::string& n) const {
+    return this->b->getExternalStateVariablePosition(n);
+  }  // end of getExternalStateVariablePosition
+
   void LogarithmicStrain1DBehaviourWrapper::allocateWorkSpace(
       BehaviourWorkSpace& wk) const {
     this->b->allocateWorkSpace(wk);

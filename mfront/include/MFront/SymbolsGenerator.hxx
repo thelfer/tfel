@@ -416,7 +416,6 @@ namespace mfront {
         const BehaviourDescription &,
         const std::string &,
         const Hypothesis) const;
-
     /*!
      * \param[out] f    : output stream
      * \param[in] i    : standard behaviour interface
@@ -433,6 +432,22 @@ namespace mfront {
                                     const Hypothesis &,
                                     const std::vector<std::string> &,
                                     const std::string &) const;
+    /*!
+     * \brief write a symbol containing the types of a list of variables
+     * \param[out] out: output stream
+     * \param[in]  i: standard behaviour interface
+     * \param[in]  name: name of the umat function
+     * \param[in]  h: modelling hypothesis
+     * \param[in]  variables: variables to be treated
+     * \param[in]  variables_identifier: class of variable treated used as the
+     * name for the generated symbol (for example,  'InternalStateVariables')
+     */
+    virtual void writeVariablesTypesSymbol(std::ostream &,
+                                           const StandardBehaviourInterface &,
+                                           const std::string &,
+                                           const Hypothesis,
+                                           const VariableDescriptionContainer &,
+                                           const std::string &) const;
     /*!
      * \param[out] f: output stream
      * \param[in]  s: symbol name

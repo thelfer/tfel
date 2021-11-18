@@ -177,9 +177,7 @@ namespace mtest {
     //! \return expand the names of internal variables
     virtual std::vector<std::string> expandInternalStateVariablesNames()
         const = 0;
-    /*!
-     * \return the size of the array of internal variables
-     */
+    //! \return the size of the array of internal variables
     virtual size_t getInternalStateVariablesSize() const = 0;
     //! \return the descriptions the internal variables
     virtual std::vector<std::string> getInternalStateVariablesDescriptions()
@@ -197,6 +195,18 @@ namespace mtest {
     virtual std::vector<std::string> getExternalStateVariablesNames() const = 0;
     //! \return the size of the array of exernal variables
     virtual size_t getExternalStateVariablesSize() const = 0;
+    //! \return expand the names of external variables
+    virtual std::vector<std::string> expandExternalStateVariablesNames()
+        const = 0;
+    //! \return the type of an external variable
+    virtual unsigned short getExternalStateVariableType(
+        const std::string&) const = 0;
+    /*!
+     * \return the position of an external variable
+     * \param[in] n : external variable name
+     */
+    virtual unsigned short getExternalStateVariablePosition(
+        const std::string&) const = 0;
     //! \return the names of floating point parameters
     virtual std::vector<std::string> getParametersNames() const = 0;
     //! \return the names of integer parameters
@@ -395,6 +405,14 @@ namespace mtest {
    */
   MTEST_VISIBILITY_EXPORT size_t getVariablesSize(const std::vector<int>&,
                                                   const Behaviour::Hypothesis);
+  /*!
+   * \brief return the components of a variable
+   * \param[in] b: behaviour
+   * \param[in] n: name of the variable
+   * \param[in] t: type of the variable
+   */
+  MTEST_VISIBILITY_EXPORT std::vector<std::string> getVariableComponents(
+      const Behaviour&, const std::string&, const int);
 
 }  // end of namespace mtest
 

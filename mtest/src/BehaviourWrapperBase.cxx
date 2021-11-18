@@ -65,16 +65,6 @@ namespace mtest {
   }  // end of setOptionalMaterialPropertiesDefaultValues
 
   std::vector<std::string>
-  BehaviourWrapperBase::getExternalStateVariablesNames() const {
-    return this->b->getExternalStateVariablesNames();
-  }  // end of getExternalStateVariablesNames
-
-  size_t BehaviourWrapperBase::getExternalStateVariablesSize()
-      const {
-    return this->b->getExternalStateVariablesSize();
-  }  // end of getExternalStateVariablesSize
-
-  std::vector<std::string>
   BehaviourWrapperBase::getParametersNames() const {
     return this->b->getParametersNames();
   }  // end of getParametersNames

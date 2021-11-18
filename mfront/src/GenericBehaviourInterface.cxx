@@ -1725,7 +1725,8 @@ namespace mfront {
       const auto flag = SupportedTypes::getTypeFlag(v.type);
       if (bd.useDynamicallyAllocatedVector(v.arraySize)) {
         os << "this->" << v.name << ".resize(" << v.arraySize << ");\n";
-        os << "for(unsigned short idx=0;idx!=" << v.arraySize << ";++idx){\n";
+        os << "for(unsigned short idx=0; idx != " << v.arraySize
+           << "; ++idx){\n";
         switch (flag) {
           case SupportedTypes::SCALAR:
             os << "this->" << v.name << "[idx] = " << src << "["
@@ -1958,14 +1959,10 @@ namespace mfront {
        << ": dt(mgb_d.dt)";
     auto o = SupportedTypes::TypeSize{};
     for (const auto& ev : evs) {
-      if (ev.arraySize != 1u) {
+      if ((ev.arraySize != 1u) ||
+          (SupportedTypes::getTypeFlag(ev.type) != SupportedTypes::SCALAR)) {
         o += this->getTypeSize(ev.type, ev.arraySize);
         continue;
-      }
-      if (SupportedTypes::getTypeFlag(ev.type) != SupportedTypes::SCALAR) {
-        tfel::raise(
-            "GenericBehaviourInterface::writeIntegrationDataConstructor: "
-            "internal error, tag unsupported");
       }
       os << ",\nd" << ev.name << "(mgb_d.s1.external_state_variables[" << o
          << "]-"
@@ -1975,29 +1972,41 @@ namespace mfront {
     os << "\n{\n";
     o = SupportedTypes::TypeSize{};
     for (const auto& ev : evs) {
-      if (ev.arraySize == 1u) {
+      if ((ev.arraySize == 1u) &&
+          (SupportedTypes::getTypeFlag(ev.type) == SupportedTypes::SCALAR)) {
         o += this->getTypeSize(ev.type, ev.arraySize);
         continue;
       }
-      if (SupportedTypes::getTypeFlag(ev.type) != SupportedTypes::SCALAR) {
-        tfel::raise(
-            "GenericBehaviourInterface::writeIntegrationDataConstructor: "
-            "internal error, tag unsupported");
-      }
-      if (bd.useDynamicallyAllocatedVector(ev.arraySize)) {
-        os << "this->d" << ev.name << ".resize(" << ev.arraySize << ");\n";
-        os << "for(unsigned short idx=0;idx!=" << ev.arraySize << ";++idx){\n";
-        os << "this->d" << ev.name << "[idx] = "
-           << "mgb_d.s1.external_state_variables[" << o << "+idx] - "
-           << "mgb_d.s0.external_state_variables[" << o << "+idx];\n";
-        os << "}\n";
-        o += this->getTypeSize(ev.type, ev.arraySize);
+      if (ev.arraySize == 1u) {
+        os << "this->d" << ev.name << " = "
+           << "tfel::math::map<" << ev.type
+           << ">(mgb_d.s1.external_state_variables + " << o << ")"
+           << " - tfel::math::map<" << ev.type
+           << ">(mgb_d.s0.external_state_variables + " << o << ");\n";
       } else {
-        for (int index = 0; index != ev.arraySize; ++index) {
-          os << "this->d" << ev.name << "[" << index << "] = "
-             << "mgb_d.s1.external_state_variables[" << o << "] - "
-             << "mgb_d.s0.external_state_variables[" << o << "];\n";
-          o += SupportedTypes::getTypeSize(ev.type, 1u);
+        if (bd.useDynamicallyAllocatedVector(ev.arraySize)) {
+          const auto s = this->getTypeSize(ev.type, 1u);
+          os << "this->d" << ev.name << ".resize(" << ev.arraySize << ");\n";
+          os << "for(unsigned short idx=0; idx != " << ev.arraySize
+             << "; ++idx){\n";
+          os << "this->d" << ev.name << "[idx] = "
+             << "tfel::math::map<" << ev.type
+             << ">(mgb_d.s1.external_state_variables + " << o << " + idx * "
+             << s << ")"
+             << " - tfel::math::map<" << ev.type
+             << ">(mgb_d.s0.external_state_variables + " << o << " + idx * "
+             << s << ");\n";
+          os << "}\n";
+          o += this->getTypeSize(ev.type, ev.arraySize);
+        } else {
+          for (int index = 0; index != ev.arraySize; ++index) {
+            os << "this->d" << ev.name << "[" << index << "] = "
+               << "tfel::math::map<" << ev.type
+               << ">(mgb_d.s1.external_state_variables + " << o << ") - "
+               << "tfel::math::map<" << ev.type
+               << ">(mgb_d.s0.external_state_variables + " << o << ");\n";
+            o += SupportedTypes::getTypeSize(ev.type, 1u);
+          }
         }
       }
     }

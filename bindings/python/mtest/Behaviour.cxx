@@ -267,6 +267,20 @@ void declareBehaviour() {
       .def("getExternalStateVariablesNames",
            &Behaviour::getExternalStateVariablesNames,
            "Return the names of the external state variables")
+      .def("expandExternalStateVariablesNames",
+           &Behaviour::expandExternalStateVariablesNames,
+           "Return the names of the external state variables, taking "
+           "into account the suffixes for vectors, symmetric "
+           "tensors and tensors")
+      .def("getExternalStateVariableType",
+           &Behaviour::getExternalStateVariableType,
+           "Return the type of an external variable:\n"
+           "- 0 means that the external state variable is a scalar\n"
+           "- 1 means that the external state variable is a symmetric tensor\n"
+           "- 3 means that the external state variable is a tensor\n")
+      .def("getExternalStateVariablePosition",
+           &Behaviour::getExternalStateVariablePosition,
+           "Return the external state variable position")
       .def("getParametersNames", &Behaviour::getParametersNames,
            "Return the names of the floating point parameters")
       .def("getIntegerParametersNames", &Behaviour::getIntegerParametersNames,

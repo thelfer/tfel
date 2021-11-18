@@ -841,6 +841,20 @@ namespace tfel::system {
     std::vector<std::string> getUMATExternalStateVariablesNames(
         const std::string&, const std::string&, const std::string&);
     /*!
+     * A type is associated to an integer as follows:
+     * - 0: scalar
+     * - 1: symmetric tensor
+     * - 2: vector (size of the space dimension)
+     * - 3: unsymmetric tensor
+     *
+     * \param[in] l : name of the library
+     * \param[in] f : law name
+     * \param[in] h : modelling hypothesis
+     */
+    std::vector<int> getUMATExternalStateVariablesTypes(const std::string&,
+                                                        const std::string&,
+                                                        const std::string&);
+    /*!
      * \param[in] l : name of the library
      * \param[in] f : law name
      * \param[in] h : modelling hypothesis

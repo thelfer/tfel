@@ -410,11 +410,49 @@ namespace mtest {
       SingleStructureScheme& t, tokens_iterator& p) {
     const auto& evt = this->readEvolutionType(p);
     const auto& n = this->readString(p, this->tokens.end());
-    t.setExternalStateVariable(n, this->parseEvolution(t, evt, p), true);
+    const auto& b = t.getBehaviour();
+    const auto esvs = t.getBehaviour()->getExternalStateVariablesNames();
+    const auto esvs2 = t.getBehaviour()->expandExternalStateVariablesNames();
+    const auto p1 = std::find(esvs.begin(), esvs.end(), n);
+    const auto p2 = std::find(esvs2.begin(), esvs2.end(), n);
+    const auto b1 = p1 != esvs.end();
+    const auto b2 = p2 != esvs.end();
+    if (b1) {
+      // full name of the external state variable
+      const auto type = t.getBehaviour()->getExternalStateVariableType(n);
+      if (type == 0) {
+        t.setExternalStateVariable(n, this->parseEvolution(t, evt, p), true);
+      } else {
+        const auto& components =
+            getVariableComponents(*(t.getBehaviour()), n, type);
+        this->readSpecifiedToken(
+            "SingleStructureSchemeParser::handleInternalStateVariable", "{", p,
+            this->tokens.end());
+        for (auto pc = components.begin(); pc != components.end(); ) {
+          t.setExternalStateVariable(*pc, this->parseEvolution(t, evt, p), true);
+          if (++pc != components.end()) {
+            this->readSpecifiedToken(
+                "SingleStructureSchemeParser::handleInternalStateVariable", ",",
+                p, this->tokens.end());
+          }
+        }
+        this->readSpecifiedToken(
+            "SingleStructureSchemeParser::handleInternalStateVariable", "}", p,
+            this->tokens.end());
+      }
+    } else if (b2){
+      // components
+      t.setExternalStateVariable(n, this->parseEvolution(t, evt, p), true);
+    } else {
+      tfel::raise(
+          "SingleStructureSchemeParser::handleExternalStateVariable: "
+          "unknown external state '" +
+          n + "'");
+    }
     this->readSpecifiedToken(
         "SingleStructureSchemeParser::handleExternalStateVariable", ";", p,
         this->tokens.end());
-  }
+  } // end of handleExternalStateVariable
 
   void SingleStructureSchemeParser::setInternalStateVariableValue(
       SingleStructureScheme& t, tokens_iterator& p, const std::string& n) {

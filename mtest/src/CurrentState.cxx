@@ -77,7 +77,7 @@ namespace mtest {
                    "uninitialised state");
     tfel::raise_if((s.esv0.size() != esvnames.size()) ||
                        (s.desv.size() != esvnames.size()),
-                   "computeExternalStateVariables:"
+                   "computeExternalStateVariables: "
                    "CurrentState variable was not "
                    "initialized appropriately");
     std::vector<real>::size_type i = 0;

@@ -361,4 +361,39 @@ namespace mtest {
     return s;
   }  // end of getVariablesSize
 
+  std::vector<std::string> getVariableComponents(const Behaviour& b,
+                                                 const std::string& n,
+                                                 const int t) {
+    auto components = std::vector<std::string>{};
+    if (t == 0) {
+      components.push_back(n);
+    } else if (t == 1) {
+      //! suffixes of stensor components
+      const auto& sexts = b.getStensorComponentsSuffixes();
+      for (decltype(sexts.size()) s = 0; s != sexts.size(); ++s) {
+        const auto vn = n + sexts[s];
+        components.push_back(vn);
+      }
+    } else if (t == 2) {
+      //! suffixes for vectors
+      const auto& exts = b.getVectorComponentsSuffixes();
+      for (decltype(exts.size()) s = 0; s != exts.size(); ++s) {
+        const auto vn = n + exts[s];
+        components.push_back(vn);
+      }
+    } else if (t == 3) {
+      //! suffixes for tensors
+      const auto& exts = b.getTensorComponentsSuffixes();
+      for (decltype(exts.size()) s = 0; s != exts.size(); ++s) {
+        const auto vn = n + exts[s];
+        components.push_back(vn);
+      }
+    } else {
+      tfel::raise(
+          "getVariableComponents: unsupported variable type for variable '" +
+          n + "'");
+    }
+    return components;
+  }  // end of StandardBehaviourBase::getVariableComponents
+
 }  // end of namespace mtest

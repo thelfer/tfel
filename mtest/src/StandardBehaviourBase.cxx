@@ -75,7 +75,7 @@ namespace mtest {
   void StandardBehaviourBase::allocateCurrentState(CurrentState& s) const {
     s.behaviour = this->shared_from_this();
     const auto mpnames = this->getMaterialPropertiesNames();
-    const auto esvnames = this->getExternalStateVariablesNames();
+    const auto esvnames = this->expandExternalStateVariablesNames();
     // clear
     s.s_1.clear();
     s.s0.clear();
@@ -198,6 +198,7 @@ namespace mtest {
                    "unsupported behaviour type "
                    "(neither isotropic nor orthotropic)");
     this->evnames.insert(this->evnames.begin(), "Temperature");
+    this->evtypes.insert(this->evtypes.begin(), 0);
   }  // end of StandardBehaviourBase
 
   StandardBehaviourBase::StandardBehaviourBase(
@@ -576,29 +577,10 @@ namespace mtest {
   StandardBehaviourBase::expandInternalStateVariablesNames() const {
     auto ivfullnames = std::vector<std::string>{};
     for (const auto& n : this->ivnames) {
-      const auto t = this->getInternalStateVariableType(n);
-      if (t == 0) {
-        ivfullnames.push_back(n);
-      } else if (t == 1) {
-        //! suffixes of stensor components
-        const auto& sexts = this->getStensorComponentsSuffixes();
-        for (decltype(sexts.size()) s = 0; s != sexts.size(); ++s) {
-          const auto vn = n + sexts[s];
-          ivfullnames.push_back(vn);
-        }
-      } else if (t == 3) {
-        //! suffixes f stensor components
-        const auto& exts = this->getTensorComponentsSuffixes();
-        for (decltype(exts.size()) s = 0; s != exts.size(); ++s) {
-          const auto vn = n + exts[s];
-          ivfullnames.push_back(vn);
-        }
-      } else {
-        tfel::raise(
-            "StandardBehaviourBase::expandInternalStateVariablesNames: "
-            "unsupported variable type for variable '" +
-            n + "'");
-      }
+      const auto components = getVariableComponents(
+          *this, n, this->getInternalStateVariableType(n));
+      ivfullnames.insert(ivfullnames.end(), components.begin(),
+                         components.end());
     }
     return ivfullnames;
   }
@@ -607,6 +589,18 @@ namespace mtest {
   StandardBehaviourBase::getExternalStateVariablesNames() const {
     return this->evnames;
   }
+
+  std::vector<std::string>
+  StandardBehaviourBase::expandExternalStateVariablesNames() const {
+    auto evfullnames = std::vector<std::string>{};
+    for (const auto& n : this->evnames) {
+      const auto components = getVariableComponents(
+          *this, n, this->getExternalStateVariableType(n));
+      evfullnames.insert(evfullnames.end(), components.begin(),
+                         components.end());
+    }
+    return evfullnames;
+  } // end of expandExternalStateVariablesNames
 
   std::vector<std::string> StandardBehaviourBase::getParametersNames() const {
     return this->pnames;
@@ -651,8 +645,89 @@ namespace mtest {
   }  // end of getInternalStateVariablesSize
 
   size_t StandardBehaviourBase::getExternalStateVariablesSize() const {
-    return this->evnames.size();
+    return getVariablesSize(this->evtypes, this->getHypothesis());
   }  // end of getExternalStateVariablesSize
+
+  unsigned short StandardBehaviourBase::getExternalStateVariableType(
+      const std::string& n) const {
+    auto p = find(this->evnames.begin(), this->evnames.end(), n);
+    tfel::raise_if(p == this->evnames.end(),
+                   "StandardBehaviourBase::getExternalStateVariableType: "
+                   "no external variable named '" +
+                       n + "' declared");
+    tfel::raise_if(this->evnames.size() != this->evtypes.size(),
+                   "StandardBehaviourBase::getExternalStateVariableType: "
+                   "the number of external variables names and "
+                   "the number of external variables types do not match");
+    const auto t = this->evtypes[p - this->evnames.begin()];
+    if (t == 0) {
+      return 0u;
+    } else if (t == 1) {
+      return 1u;
+    } else if (t == 3) {
+      return 3u;
+    }
+    tfel::raise(
+        "StandardBehaviourBase::getExternalStateVariableType: "
+        "unsupported external variable type");
+  }
+
+  unsigned short StandardBehaviourBase::getExternalStateVariablePosition(
+      const std::string& n) const {
+    auto throw_if = [](const bool c, const std::string& m) {
+      tfel::raise_if(
+          c, "StandardBehaviourBase::getExternalStateVariablePosition: " + m);
+    };
+    const auto h = this->getHypothesis();
+    auto p = find(this->evnames.begin(), this->evnames.end(), n);
+    throw_if(p == this->evnames.end(),
+             "no external variable named '" + n + "' declared");
+    throw_if(this->evnames.size() != this->evtypes.size(),
+             "the number of external variables names and "
+             "the number of external variables types do not match");
+    std::vector<std::string>::size_type i = 0;
+    std::vector<std::string>::size_type ie = p - this->evnames.begin();
+    unsigned short s = 0;
+    while (i != ie) {
+      int t = this->evtypes[i];
+      if (t == 0) {
+        s += 1;
+      } else if (t == 1) {
+        if ((h == ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN) ||
+            (h == ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS)) {
+          s += 3;
+        } else if ((h == ModellingHypothesis::AXISYMMETRICAL) ||
+                   (h == ModellingHypothesis::PLANESTRESS) ||
+                   (h == ModellingHypothesis::PLANESTRAIN) ||
+                   (h == ModellingHypothesis::GENERALISEDPLANESTRAIN)) {
+          s += 4;
+        } else if (h == ModellingHypothesis::TRIDIMENSIONAL) {
+          s += 6;
+        } else {
+          throw_if(true, "invalid dimension");
+        }
+      } else if (t == 3) {
+        if ((h == ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN) ||
+            (h == ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS)) {
+          s += 3;
+        } else if ((h == ModellingHypothesis::AXISYMMETRICAL) ||
+                   (h == ModellingHypothesis::PLANESTRESS) ||
+                   (h == ModellingHypothesis::PLANESTRAIN) ||
+                   (h == ModellingHypothesis::GENERALISEDPLANESTRAIN)) {
+          s += 5;
+        } else if (h == ModellingHypothesis::TRIDIMENSIONAL) {
+          s += 9;
+        } else {
+          throw_if(true, "invalid dimension");
+        }
+      } else {
+        throw_if(true, "unsupported external variable type");
+      }
+      ++i;
+    }
+    return s;
+  }
+
 
   std::vector<std::string>
   StandardBehaviourBase::getInternalStateVariablesDescriptions() const {

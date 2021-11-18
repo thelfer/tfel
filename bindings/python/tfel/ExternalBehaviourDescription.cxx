@@ -39,6 +39,11 @@ static std::vector<int> get_ivs_types(
   return d.ivtypes;
 }
 
+static std::vector<int> get_evs_types(
+    const tfel::system::ExternalBehaviourDescription& d) {
+  return d.ivtypes;
+}
+
 static std::vector<std::string> get_evs(
     const tfel::system::ExternalBehaviourDescription& d) {
   return d.evnames;
@@ -60,6 +65,7 @@ void declareExternalBehaviourDescription() {
       .add_property("ivnames", &get_ivs)
       .add_property("ivtypes", &get_ivs_types)
       .add_property("evnames", &get_evs)
+      .add_property("evtypes", &get_evs_types)
       .def_readonly("tfel_version", &ExternalBehaviourDescription::tfel_version)
       .def_readonly("build_id", &ExternalBehaviourDescription::build_id)
       .def_readonly("source", &ExternalBehaviourDescription::source)
