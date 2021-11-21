@@ -6,6 +6,7 @@ configure_file("${PROJECT_SOURCE_DIR}/mfront/tests/behaviours/references/PolyCry
 set(mfront_tests_SOURCES
   MaterialPropertiesBoundsCheck
   ExternalStateVariablesBoundsCheck
+  TensorialExternalStateVariableTest
   Tvergaard
   Elasticity
   Elasticity2
@@ -411,6 +412,7 @@ test_aster(rusinekklepaczko_ssrt)
 test_aster(johnsoncook_ssrt)
 test_aster(parametertest)
 test_aster(parametertest2)
+test_aster(tensorialexternalstatevariabletest)
 
 if(enable-python-bindings)
   test_aster_python(xx)

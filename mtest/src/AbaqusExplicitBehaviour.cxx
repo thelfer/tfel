@@ -178,7 +178,7 @@ namespace mtest {
     wk.k.resize(nth, ndv);
     wk.mps.resize(this->mpnames.size() == 0 ? 1u : this->mpnames.size(),
                   real(0));
-    wk.evs.resize(this->evnames.size());
+    wk.evs.resize(this->getExternalStateVariablesSize());
     this->allocateCurrentState(wk.cs);
   }  // end of allocateWorkSpace
 

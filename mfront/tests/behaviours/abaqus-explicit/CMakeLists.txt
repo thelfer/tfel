@@ -1,4 +1,5 @@
 set(mfront_tests_SOURCES
+  TensorialExternalStateVariableTest
   FiniteRotationSmallStrainElasticity
   SaintVenantKirchhoffElasticity
   SaintVenantKirchhoffElasticity2
@@ -197,3 +198,4 @@ test_abaqus_explicit(orthotropicswelling)
 test_abaqus_explicit(orthotropicswelling2)
 test_abaqus_explicit(axialgrowth)
 test_abaqus_explicit(implicitsimomieheelastoplasticity)
+test_abaqus_explicit(tensorialexternalstatevariabletest)

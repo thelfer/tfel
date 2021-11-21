@@ -58,28 +58,6 @@ namespace mtest {
     }
   }  // end of selectVariables
 
-  static unsigned short getSTensorSize(const unsigned short d) {
-    if (d == 1) {
-      return 3;
-    } else if (d == 2) {
-      return 4;
-    } else if (d == 3) {
-      return 6;
-    }
-    tfel::raise("mfront::getSTensorSize: invalid dimension");
-  }
-
-  static unsigned short getTensorSize(const unsigned short d) {
-    if (d == 1) {
-      return 3;
-    } else if (d == 2) {
-      return 5;
-    } else if (d == 3) {
-      return 9;
-    }
-    tfel::raise("mfront::getTensorSize: invalid dimension");
-  }
-
   void SingleStructureSchemeParser::handleHandleThermalExpansion(
       SingleStructureScheme& t, tokens_iterator& p) {
     bool b;
@@ -204,7 +182,6 @@ namespace mtest {
     }
     this->readSpecifiedToken("SingleStructureSchemeParser::handleBehaviour",
                              ";", p, this->tokens.end());
-    mfront::getLogStream() << l << " " << f << std::endl;
     if (w.empty()) {
       t.setBehaviour(i, l, f, d);
     } else {
@@ -377,9 +354,8 @@ namespace mtest {
         --p;
       }
       if (uniform) {
-        std::vector<std::string>::const_iterator pn;
         const tokens_iterator p2 = p;
-        for (pn = ivs.begin(); pn != ivs.end(); ++pn) {
+        for (auto pn = ivs.begin(); pn != ivs.end(); ++pn) {
           p = p2;
           this->setInternalStateVariableValue(t, p, *pn);
         }
@@ -387,8 +363,7 @@ namespace mtest {
         this->readSpecifiedToken(
             "SingleStructureSchemeParser::handleInternalStateVariable", "{", p,
             this->tokens.end());
-        std::vector<std::string>::const_iterator pn;
-        for (pn = ivs.begin(); pn != ivs.end();) {
+        for (auto pn = ivs.begin(); pn != ivs.end();) {
           this->setInternalStateVariableValue(t, p, *pn);
           if (++pn != ivs.end()) {
             this->readSpecifiedToken(
@@ -404,7 +379,7 @@ namespace mtest {
     this->readSpecifiedToken(
         "SingleStructureSchemeParser::handleInternalStateVariable", ";", p,
         this->tokens.end());
-  }
+  } // end of handleInternalStateVariable
 
   void SingleStructureSchemeParser::handleExternalStateVariable(
       SingleStructureScheme& t, tokens_iterator& p) {
@@ -426,18 +401,18 @@ namespace mtest {
         const auto& components =
             getVariableComponents(*(t.getBehaviour()), n, type);
         this->readSpecifiedToken(
-            "SingleStructureSchemeParser::handleInternalStateVariable", "{", p,
+            "SingleStructureSchemeParser::handleExternalStateVariable", "{", p,
             this->tokens.end());
         for (auto pc = components.begin(); pc != components.end(); ) {
           t.setExternalStateVariable(*pc, this->parseEvolution(t, evt, p), true);
           if (++pc != components.end()) {
             this->readSpecifiedToken(
-                "SingleStructureSchemeParser::handleInternalStateVariable", ",",
+                "SingleStructureSchemeParser::handleExternalStateVariable", ",",
                 p, this->tokens.end());
           }
         }
         this->readSpecifiedToken(
-            "SingleStructureSchemeParser::handleInternalStateVariable", "}", p,
+            "SingleStructureSchemeParser::handleExternalStateVariable", "}", p,
             this->tokens.end());
       }
     } else if (b2){
@@ -456,27 +431,18 @@ namespace mtest {
 
   void SingleStructureSchemeParser::setInternalStateVariableValue(
       SingleStructureScheme& t, tokens_iterator& p, const std::string& n) {
-    const auto type = t.getBehaviour()->getInternalStateVariableType(n);
+    const auto& b = *(t.getBehaviour());
+    const auto type = b.getInternalStateVariableType(n);
     if (type == 0) {
-      t.setScalarInternalStateVariableInitialValue(n, this->readDouble(t, p));
-    } else if (type == 1) {
-      const unsigned short N = getSTensorSize(t.getDimension());
-      std::vector<real> v(N);
-      this->readArrayOfSpecifiedSize(v, t, p);
-      t.setStensorInternalStateVariableInitialValues(n, v);
-    } else if (type == 3) {
-      const unsigned short N = getTensorSize(t.getDimension());
-      std::vector<real> v(N);
-      this->readArrayOfSpecifiedSize(v, t, p);
-      t.setTensorInternalStateVariableInitialValues(n, v);
+      t.setInternalStateVariableInitialValue(n, this->readDouble(t, p));
     } else {
-      tfel::raise(
-          "SingleStructureSchemeParser::setInternalStateVariableValue : "
-          "unsupported state variable type for "
-          "internal state variable '" +
-          n + "'");
+      const auto s = getVariableSize(b.getInternalStateVariableType(n),
+                                     b.getHypothesis());
+      std::vector<real> v(s);
+      this->readArrayOfSpecifiedSize(v, t, p);
+      t.setInternalStateVariableInitialValue(n, v);
     }
-  }
+  } // end of setInternalStateVariableValue
 
   void SingleStructureSchemeParser::registerCallBack(
       const std::string& k, const SingleStructureSchemeParser::CallBack& p) {

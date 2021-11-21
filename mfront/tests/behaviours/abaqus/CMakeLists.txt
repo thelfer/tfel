@@ -6,6 +6,7 @@ configure_file("${PROJECT_SOURCE_DIR}/mfront/tests/behaviours/references/PolyCry
 set(mfront_tests_SOURCES
   MaterialPropertiesBoundsCheck
   ExternalStateVariablesBoundsCheck
+  TensorialExternalStateVariableTest
   Elasticity
   Elasticity2
   Elasticity3
@@ -428,3 +429,4 @@ if((NOT WIN32) AND (NOT CYGWIN) AND (NOT MSYS))
   test_abaqus(parametertest)
   test_abaqus(parametertest2)
 endif((NOT WIN32) AND (NOT CYGWIN) AND (NOT MSYS))
+test_abaqus(tensorialexternalstatevariabletest)

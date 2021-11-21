@@ -2296,78 +2296,28 @@ namespace mfront {
 
   void BehaviourDescription::requiresTVectorOrVectorIncludes(
       bool& b1, bool& b2, const BehaviourData& bd) const {
-    for (const auto& v : bd.getMaterialProperties()) {
-      if (v.arraySize > 1) {
-        if (this->useDynamicallyAllocatedVector(v.arraySize)) {
-          b2 = true;
-        } else {
+    auto update = [this, &b1, &b2](const auto& variables) {
+      const auto& flags = SupportedTypes::getTypeFlags();
+      for (const auto& v : variables) {
+        const auto pf = flags.find(v.type);
+        if (pf->second == SupportedTypes::TVECTOR) {
           b1 = true;
         }
-      }
-      if (b1 && b2) {
-        return;
-      }
-    }
-    for (const auto& v : bd.getIntegrationVariables()) {
-      if (v.arraySize > 1) {
-        if (this->useDynamicallyAllocatedVector(v.arraySize)) {
-          b2 = true;
-        } else {
-          b1 = true;
+        if (v.arraySize > 1) {
+          if (this->useDynamicallyAllocatedVector(v.arraySize)) {
+            b2 = true;
+          } else {
+            b1 = true;
+          }
         }
       }
-      if (b1 && b2) {
-        return;
-      }
-    }
-    for (const auto& v : bd.getStateVariables()) {
-      if (v.arraySize > 1) {
-        if (this->useDynamicallyAllocatedVector(v.arraySize)) {
-          b2 = true;
-        } else {
-          b1 = true;
-        }
-      }
-      if (b1 && b2) {
-        return;
-      }
-    }
-    for (const auto& v : bd.getAuxiliaryStateVariables()) {
-      if (v.arraySize > 1) {
-        if (this->useDynamicallyAllocatedVector(v.arraySize)) {
-          b2 = true;
-        } else {
-          b1 = true;
-        }
-      }
-      if (b1 && b2) {
-        return;
-      }
-    }
-    for (const auto& v : bd.getLocalVariables()) {
-      if (v.arraySize > 1) {
-        if (this->useDynamicallyAllocatedVector(v.arraySize)) {
-          b2 = true;
-        } else {
-          b1 = true;
-        }
-      }
-      if (b1 && b2) {
-        return;
-      }
-    }
-    for (const auto& v : bd.getExternalStateVariables()) {
-      if (v.arraySize > 1) {
-        if (this->useDynamicallyAllocatedVector(v.arraySize)) {
-          b2 = true;
-        } else {
-          b1 = true;
-        }
-      }
-      if (b1 && b2) {
-        return;
-      }
-    }
+    };
+    update(bd.getMaterialProperties());
+    update(bd.getIntegrationVariables());
+    update(bd.getStateVariables());
+    update(bd.getAuxiliaryStateVariables());
+    update(bd.getLocalVariables());
+    update(bd.getExternalStateVariables());
   }  // end of BehaviourData::requiresTVectorOrVectorIncludes
 
   void BehaviourDescription::requiresTVectorOrVectorIncludes(bool& b1,

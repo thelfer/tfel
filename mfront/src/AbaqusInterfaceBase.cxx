@@ -622,6 +622,12 @@ namespace mfront {
                                         const std::string& n) const {
     if (SupportedTypes::getTypeFlag(v.type) == SupportedTypes::SCALAR) {
       out << i++ << ", " << n << '\n';
+    } else if (SupportedTypes::getTypeFlag(v.type) == SupportedTypes::TVECTOR) {
+      out << i++ << ", " << n << "_1\n";
+      out << i++ << ", " << n << "_2\n";
+      if (h == ModellingHypothesis::TRIDIMENSIONAL) {
+        out << i++ << ", " << n << "_3\n";
+      }
     } else if (SupportedTypes::getTypeFlag(v.type) == SupportedTypes::STENSOR) {
       out << i++ << ", " << n << "_11\n";
       out << i++ << ", " << n << "_22\n";

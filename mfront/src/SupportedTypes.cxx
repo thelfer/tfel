@@ -598,7 +598,10 @@ namespace mfront {
     }
     //
     tfel::raise(
-        "SupportedTypes::getTypeSize: can't determine of size of given type");
+        "SupportedTypes::getTypeSize: "
+        "can't determine of size of given type "
+        "('" +
+        t.type + "')");
   }  // end of getTypeSize
 
   std::string SupportedTypes::getTimeDerivativeType(

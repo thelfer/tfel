@@ -1681,18 +1681,14 @@ namespace mfront {
         } else {
           os << v.name << "(" << src << "[" << eo << "+" << o << "])";
         }
-      } else if ((flag == SupportedTypes::TVECTOR) ||
-                 (flag == SupportedTypes::STENSOR) ||
-                 (flag == SupportedTypes::TENSOR)) {
-        if (eo.empty()) {
-          os << v.name << "(&" << src << "[" << o << "])";
-        } else {
-          os << v.name << "(&" << src << "[" << eo << " " << o << "])";
-        }
       } else {
-        tfel::raise(
-            "GenericBehaviourInterface::writeBehaviourDataConstructor: "
-            "internal error, tag unsupported");
+        if (eo.empty()) {
+          os << v.name << "(tfel::math::map<" << v.type << ">(" << src << " + "
+             << o << "))";
+        } else {
+          os << v.name << "(tfel::math::map<" << v.type << ">(" << src << " + "
+             << eo << " " << o << "))";
+        }
       }
       first = false;
     };  // end of wvi
@@ -1727,56 +1723,23 @@ namespace mfront {
         os << "this->" << v.name << ".resize(" << v.arraySize << ");\n";
         os << "for(unsigned short idx=0; idx != " << v.arraySize
            << "; ++idx){\n";
-        switch (flag) {
-          case SupportedTypes::SCALAR:
-            os << "this->" << v.name << "[idx] = " << src << "["
-               << get_offset(o) << "+idx];\n";
-            break;
-          case SupportedTypes::TVECTOR:
-            os << "tfel::fsalgo::copy<TVectorSize>::exe(&" << src << "["
-               << get_offset(o) << "+idx*TVectorSize],this->" << v.name
-               << "[idx].begin());\n";
-            break;
-          case SupportedTypes::STENSOR:
-            os << "this->" << v.name << "[idx].import(&" << src << "["
-               << get_offset(o) << "+idx*StensorSize]);\n";
-            break;
-          case SupportedTypes::TENSOR:
-            os << "tfel::fsalgo::copy<TensorSize>::exe(&" << src << "["
-               << get_offset(o) << "+idx*TensorSize],this->" << v.name
-               << "[idx].begin());\n";
-            break;
-          default:
-            tfel::raise(
-                "GenericBehaviourInterface::writeBehaviourDataConstructor: "
-                "internal error, tag unsupported");
+        if (flag == SupportedTypes::SCALAR) {
+          os << "this->" << v.name << "[idx] = " << src << "[" << get_offset(o)
+             << "+idx];\n";
+        } else {
+          os << "this->" << v.name << "[idx] = tfel::math::map<" << v.type
+             << ">(" << src << " + " << get_offset(o) << "+idx * "
+             << SupportedTypes::getTypeSize(v.type, 1u) << ");\n";
         }
         os << "}\n";
       } else {
-        for (int index = 0; index != v.arraySize; ++index) {
-          switch (flag) {
-            case SupportedTypes::SCALAR:
-              os << "this->" << v.name << "[" << index << "] = " << src << "["
-                 << get_offset(o) << "];\n";
-              break;
-            case SupportedTypes::TVECTOR:
-              os << "tfel::fsalgo::copy<TVectorSize>::exe(&" << src << "["
-                 << get_offset(o) << "],this->" << v.name << "[" << index
-                 << "].begin());\n";
-              break;
-            case SupportedTypes::STENSOR:
-              os << "this->" << v.name << "[" << index << "].import(&" << src
-                 << "[" << get_offset(o) << "]);\n";
-              break;
-            case SupportedTypes::TENSOR:
-              os << "tfel::fsalgo::copy<TensorSize>::exe(&" << src << "["
-                 << get_offset(o) << "],"
-                 << "this->" << v.name << "[" << index << "].begin());\n";
-              break;
-            default:
-              tfel::raise(
-                  "GenericBehaviourInterface::writeBehaviourDataConstructor: "
-                  "internal error, tag unsupported");
+        for (unsigned short index = 0; index != v.arraySize; ++index) {
+          if (flag == SupportedTypes::SCALAR) {
+            os << "this->" << v.name << "[" << index << "] = " << src << "["
+               << get_offset(o) << "];\n";
+          } else {
+            os << "this->" << v.name << "[" << index << "] = tfel::math::map<"
+               << v.type << ">(" << src << " + " << get_offset(o) << ");\n";
           }
           o += SupportedTypes::getTypeSize(v.type, 1u);
         }
@@ -1983,6 +1946,7 @@ namespace mfront {
            << ">(mgb_d.s1.external_state_variables + " << o << ")"
            << " - tfel::math::map<" << ev.type
            << ">(mgb_d.s0.external_state_variables + " << o << ");\n";
+        o += this->getTypeSize(ev.type, ev.arraySize);
       } else {
         if (bd.useDynamicallyAllocatedVector(ev.arraySize)) {
           const auto s = this->getTypeSize(ev.type, 1u);
@@ -2025,19 +1989,6 @@ namespace mfront {
       std::ostream& os,
       const Hypothesis h,
       const BehaviourDescription& bd) const {
-    auto vsize = [](const SupportedTypes::TypeFlag f) {
-      if (f == SupportedTypes::TVECTOR) {
-        return "TVectorSize";
-      } else if (f == SupportedTypes::STENSOR) {
-        return "StensorSize";
-      } else if (f != SupportedTypes::TENSOR) {
-        tfel::raise(
-            "GenericBehaviourInterface::writeBehaviourDataMainVariablesSetters:"
-            " "
-            "invalid variable type");
-      }
-      return "TensorSize";
-    };
     auto export_variable = [this, &bd, &os](const VariableDescription& v,
                                             const char* const dest,
                                             const SupportedTypes::TypeSize o) {

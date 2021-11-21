@@ -833,6 +833,7 @@ AC_OUTPUT([debug.sh Makefile Doxyfile docs/Makefile docs/tfel/Makefile
 	   mfront/tests/behaviours/aster/asterrusinekklepaczko_ssrt.mtest
 	   mfront/tests/behaviours/aster/asterparametertest.mtest
 	   mfront/tests/behaviours/aster/asterparametertest2.mtest
+	   mfront/tests/behaviours/aster/astertensorialexternalstatevariabletest.mtest
 	   mfront/tests/behaviours/epx/Makefile
 	   mfront/tests/behaviours/epx/epxsaintvenantkirchhoffelasticity-uniaxialloading-sig11-2D.mtest
 	   mfront/tests/behaviours/epx/epxsaintvenantkirchhoffelasticity-uniaxialloading-sig22-2D.mtest
@@ -916,6 +917,7 @@ AC_OUTPUT([debug.sh Makefile Doxyfile docs/Makefile docs/tfel/Makefile
 	   mfront/tests/behaviours/epx/epxorthotropicswelling.mtest
 	   mfront/tests/behaviours/epx/epxorthotropicswelling2.mtest
 	   mfront/tests/behaviours/epx/epxaxialgrowth.mtest
+     	   mfront/tests/behaviours/epx/epxtensorialexternalstatevariabletest.mtest
 	   mfront/tests/behaviours/abaqus/Makefile
 	   mfront/tests/behaviours/abaqus/abaqusmaterialpropertiesboundscheck.mtest
 	   mfront/tests/behaviours/abaqus/abaqusmaterialpropertiesboundscheck2.mtest
@@ -1120,6 +1122,7 @@ AC_OUTPUT([debug.sh Makefile Doxyfile docs/Makefile docs/tfel/Makefile
 	   mfront/tests/behaviours/abaqus/abaqusmieheapellambrechtlogarithmicstrainelasticity-shear-FZY-3D.mtest
 	   mfront/tests/behaviours/abaqus/abaqusparametertest.mtest
 	   mfront/tests/behaviours/abaqus/abaqusparametertest2.mtest
+  	   mfront/tests/behaviours/abaqus/abaqustensorialexternalstatevariabletest.mtest
 	   mfront/tests/behaviours/abaqus-explicit/Makefile
 	   mfront/tests/behaviours/abaqus-explicit/abaqusexplicitsaintvenantkirchhoffelasticity-uniaxialloading-sig11-2D.mtest
 	   mfront/tests/behaviours/abaqus-explicit/abaqusexplicitsaintvenantkirchhoffelasticity-uniaxialloading-sig22-2D.mtest
@@ -1219,6 +1222,7 @@ AC_OUTPUT([debug.sh Makefile Doxyfile docs/Makefile docs/tfel/Makefile
 	   mfront/tests/behaviours/abaqus-explicit/abaqusexplicitorthotropicswelling2.mtest
 	   mfront/tests/behaviours/abaqus-explicit/abaqusexplicitaxialgrowth.mtest
 	   mfront/tests/behaviours/abaqus-explicit/abaqusexplicitimplicitsimomieheelastoplasticity.mtest
+  	   mfront/tests/behaviours/abaqus-explicit/abaqusexplicittensorialexternalstatevariabletest.mtest
 	   mfront/tests/behaviours/ansys/Makefile
 	   mfront/tests/behaviours/ansys/ansyselasticity.mtest
 	   mfront/tests/behaviours/ansys/ansyselasticity2.mtest
@@ -2326,6 +2330,7 @@ AC_OUTPUT([debug.sh Makefile Doxyfile docs/Makefile docs/tfel/Makefile
 	   mfront/tests/behaviours/cyrano/cyranoaxialgrowth4.mtest
 	   mfront/tests/behaviours/cyrano/cyranoparametertest.mtest
 	   mfront/tests/behaviours/cyrano/cyranoparametertest2.mtest
+	   mfront/tests/behaviours/cyrano/cyranotensorialexternalstatevariabletest.mtest
 	   mfront/tests/behaviours/cyrano/cyranoelasticmaterialpropertiesboundschecktest.mtest
 	   mfront/tests/behaviours/cyrano/cyranotemperatureupdateonsubsteppingcheck.mtest
 	   mfront/tests/behaviours/cyrano/cyranologarithmicstrainstandardelasticity.mtest

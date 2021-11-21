@@ -460,6 +460,15 @@ namespace mfront {
         << "! \\date   " << fd.date << '\n'
         << "!\n";
     for (const auto& h : this->getModellingHypothesesToBeTreated(mb)) {
+      auto display = [&h, &out, &throw_if](const SupportedTypes::TypeFlag f) {
+        const auto s = SupportedTypes::TypeSize(f, 1u);
+        for (int c = 0; c != s.getValueForModellingHypothesis(h);) {
+          out << " ???";
+          if (++c != s.getValueForModellingHypothesis(h)) {
+            out << " ";
+          }
+        }
+      };
       const auto& d = mb.getBehaviourData(h);
       out << "\n!! " << ModellingHypothesis::toString(h) << " example\n"
           << "MFRONT\n";
@@ -482,29 +491,6 @@ namespace mfront {
       out << "!! internal state variables\n";
       out << "!! by default, internal state variables are set to zero\n";
       for (const auto& iv : d.getPersistentVariables()) {
-        auto display = [&h, &out, &throw_if](const SupportedTypes::TypeFlag f) {
-          if (f == SupportedTypes::SCALAR) {
-            out << " ???";
-          } else if (f == SupportedTypes::STENSOR) {
-            if (h == ModellingHypothesis::TRIDIMENSIONAL) {
-              out << " ??? ??? ??? ??? ??? ???";
-            } else if ((h == ModellingHypothesis::AXISYMMETRICAL) ||
-                       (h == ModellingHypothesis::PLANESTRAIN) ||
-                       (h == ModellingHypothesis::PLANESTRESS)) {
-              out << " ??? ??? ??? ???";
-            }
-          } else if (f == SupportedTypes::TENSOR) {
-            if (h == ModellingHypothesis::TRIDIMENSIONAL) {
-              out << " ??? ??? ??? ??? ??? ??? ??? ??? ???";
-            } else if ((h == ModellingHypothesis::AXISYMMETRICAL) ||
-                       (h == ModellingHypothesis::PLANESTRAIN) ||
-                       (h == ModellingHypothesis::PLANESTRESS)) {
-              out << " ??? ??? ??? ??? ???";
-            }
-          } else {
-            throw_if(true, "unsupported state variable type");
-          }
-        };
         if (iv.arraySize == 1u) {
           out << "!! IVAR '" << d.getExternalName(iv.name) << "' ";
           display(SupportedTypes::getTypeFlag(iv.type));
@@ -520,15 +506,13 @@ namespace mfront {
       }
       out << "!! external state variables\n";
       for (const auto& e : d.getExternalStateVariables()) {
-        throw_if(SupportedTypes::getTypeFlag(e.type) != SupportedTypes::SCALAR,
-                 "external state variable '" + e.name +
-                     "' is not a scalar. This is not supported yet");
         if (e.arraySize == 1u) {
           out << "EVAR '" << d.getExternalName(e.name) << "' ???\n";
         } else {
           for (unsigned short i = 0; i != e.arraySize; ++i) {
-            out << "EVAR '" << d.getExternalName(e.name) << '[' << i
-                << "]' ???\n";
+            out << "EVAR '" << d.getExternalName(e.name) << '[' << i << "]' ";
+            display(SupportedTypes::getTypeFlag(e.type));
+            out << "\n";
           }
         }
       }

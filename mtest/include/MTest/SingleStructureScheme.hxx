@@ -125,17 +125,36 @@ namespace mtest {
      * \brief set the inital value of a scalar variable
      * \param[in] v : value
      */
+    virtual void setInternalStateVariableInitialValue(const std::string&,
+                                                      const real);
+    /*!
+     * \brief set the inital values of an internal state variable
+     * \param[in] n: name
+     * \param[in] v: values
+     */
+    virtual void setInternalStateVariableInitialValue(const std::string&,
+                                                      const std::vector<real>&);
+    /*!
+     * \brief set the inital value of a scalar variable
+     * \param[in] n: name
+     * \param[in] v : value
+     * \deprecated {replaced by `setInternalStateVariableInitialValue`}
+     */
     virtual void setScalarInternalStateVariableInitialValue(const std::string&,
                                                             const real);
     /*!
      * \brief set the inital values of a symetric tensor variable
+     * \param[in] n: name
      * \param[in] v : values
+     * \deprecated {replaced by `setInternalStateVariableInitialValue`}
      */
     virtual void setStensorInternalStateVariableInitialValues(
         const std::string&, const std::vector<real>&);
     /*!
      * \brief set the inital values of a tensor variable
+     * \param[in] n: name
      * \param[in] v : values
+     * \deprecated {replaced by `setInternalStateVariableInitialValue`}
      */
     virtual void setTensorInternalStateVariableInitialValues(
         const std::string&, const std::vector<real>&);

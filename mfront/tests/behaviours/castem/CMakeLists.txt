@@ -9,6 +9,7 @@ set(mfront_tests_SOURCES
   MaterialPropertiesBoundsCheck
   StateVariablesBoundsCheck
   ExternalStateVariablesBoundsCheck
+  TensorialExternalStateVariableTest
   Elasticity
   Elasticity2
   Elasticity3
@@ -725,6 +726,7 @@ test_castem(computethermalexpansion2)
 test_castem(computethermalexpansion3)
 test_castem(parametertest)
 test_castem(parametertest2)
+test_castem(tensorialexternalstatevariabletest)
 
 test_castem(elasticmaterialpropertiesboundschecktest
   NO_XML_OUTPUT WILL_FAIL)

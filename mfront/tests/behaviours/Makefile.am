@@ -187,7 +187,8 @@ MFRONTS= DDIF2.mfront                                                      \
      MiehePhaseFieldDisplacementDeviatoricSplit.mfront                 \
      ode_default.mfront                                                \
      ode_rk54.mfront                                                   \
-     ode_implicit.mfront
+     ode_implicit.mfront                                               \
+     TensorialExternalStateVariableTest.mfront
 
 testsdir = $(pkgdatadir)/mfront/tests/behaviours
 tests_DATA = $(MFRONTS)

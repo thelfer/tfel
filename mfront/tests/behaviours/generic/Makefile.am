@@ -246,4 +246,5 @@ EXTRA_DIST = CMakeLists.txt                                                     
              ThermoElasticity.mtest                                                    \
              ode_default.mtest                                                         \
              ode_implicit.mtest                                                        \
-             ode_rk54.mtest
+             ode_rk54.mtest                                                            \
+             TensorialExternalStateVariableTest.mtest

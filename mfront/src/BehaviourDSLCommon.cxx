@@ -3642,6 +3642,56 @@ namespace mfront {
        << makeUpperCase(this->mb.getClassName()) << "_BEHAVIOUR_DATA_HXX */\n";
   }
 
+  static bool hasVariableOfType(const BehaviourData& bd,
+                                const SupportedTypes::TypeFlag f) {
+    auto update = [f](const auto& variables) {
+      const auto& flags = SupportedTypes::getTypeFlags();
+      for (const auto& v : variables) {
+        const auto pf = flags.find(v.type);
+        if (pf == flags.end()) {
+          continue;
+        }
+        if (pf->second == f) {
+          return true;
+        }
+      }
+      return false;
+    };
+    if ((update(bd.getMaterialProperties())) ||
+        (update(bd.getIntegrationVariables())) ||
+        (update(bd.getStateVariables())) ||
+        (update(bd.getAuxiliaryStateVariables())) ||
+//        (update(bd.getLocalVariables())) ||
+        (update(bd.getExternalStateVariables())) ||
+        (update(bd.getPostProcessingVariables()))) {
+      return true;
+    }
+    return false;
+  }  // end of hasVariableOfType
+
+  static bool hasVariableOfType(const BehaviourDescription& bd,
+                                const SupportedTypes::TypeFlag f) {
+    using ModellingHypothesis = BehaviourDescription::ModellingHypothesis;
+    for (const auto& mv : bd.getMainVariables()) {
+      if (mv.first.getTypeFlag() == f) {
+        return true;
+      }
+      if (mv.second.getTypeFlag() == f) {
+        return true;
+      }
+    }
+    if (!bd.areAllMechanicalDataSpecialised()) {
+      return hasVariableOfType(
+          bd.getBehaviourData(ModellingHypothesis::UNDEFINEDHYPOTHESIS), f);
+    }
+    for (const auto& h : bd.getDistinctModellingHypotheses()){
+      if (hasVariableOfType(bd.getBehaviourData(h), f)) {
+        return true;
+      }
+    }
+    return false;
+  }  // end of requiresTVectorOrVectorIncludes
+
   void BehaviourDSLCommon::writeBehaviourDataStandardTFELIncludes(
       std::ostream& os) const {
     auto b1 = false;
@@ -3678,25 +3728,32 @@ namespace mfront {
     if (b2) {
       os << "#include\"TFEL/Math/vector.hxx\"\n";
     }
-    os << "#include\"TFEL/Math/stensor.hxx\"\n"
-       << "#include\"TFEL/Math/Stensor/StensorConceptIO.hxx\"\n"
-       << "#include\"TFEL/Math/tmatrix.hxx\"\n"
-       << "#include\"TFEL/Math/Matrix/tmatrixIO.hxx\"\n"
-       << "#include\"TFEL/Math/st2tost2.hxx\"\n"
-       << "#include\"TFEL/Math/ST2toST2/ST2toST2ConceptIO.hxx\"\n";
+    os << "#include\"TFEL/Math/tmatrix.hxx\"\n"
+       << "#include\"TFEL/Math/Matrix/tmatrixIO.hxx\"\n";
+    if (hasVariableOfType(this->mb, SupportedTypes::STENSOR)) {
+      os << "#include\"TFEL/Math/stensor.hxx\"\n"
+         << "#include\"TFEL/Math/Stensor/StensorConceptIO.hxx\"\n"
+         << "#include\"TFEL/Math/st2tost2.hxx\"\n"
+         << "#include\"TFEL/Math/ST2toST2/ST2toST2ConceptIO.hxx\"\n";
+    }
+    if (hasVariableOfType(this->mb, SupportedTypes::TENSOR)) {
+      os << "#include\"TFEL/Math/tensor.hxx\"\n"
+         << "#include\"TFEL/Math/Tensor/TensorConceptIO.hxx\"\n"
+         << "#include\"TFEL/Math/t2tot2.hxx\"\n"
+         << "#include\"TFEL/Math/T2toT2/T2toT2ConceptIO.hxx\"\n";
+    }
+    if ((hasVariableOfType(this->mb, SupportedTypes::STENSOR)) &&
+        (hasVariableOfType(this->mb, SupportedTypes::TENSOR))) {
+      os << "#include\"TFEL/Math/t2tost2.hxx\"\n"
+         << "#include\"TFEL/Math/T2toST2/T2toST2ConceptIO.hxx\"\n"
+         << "#include\"TFEL/Math/st2tot2.hxx\"\n"
+         << "#include\"TFEL/Math/ST2toT2/ST2toT2ConceptIO.hxx\"\n";
+    }
     if ((this->mb.getBehaviourType() ==
          BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR) ||
         (this->mb.getBehaviourType() ==
          BehaviourDescription::GENERALBEHAVIOUR)) {
-      os << "#include\"TFEL/Math/tensor.hxx\"\n"
-         << "#include\"TFEL/Math/Tensor/TensorConceptIO.hxx\"\n"
-         << "#include\"TFEL/Math/t2tot2.hxx\"\n"
-         << "#include\"TFEL/Math/T2toT2/T2toT2ConceptIO.hxx\"\n"
-         << "#include\"TFEL/Math/t2tost2.hxx\"\n"
-         << "#include\"TFEL/Math/T2toST2/T2toST2ConceptIO.hxx\"\n"
-         << "#include\"TFEL/Math/st2tot2.hxx\"\n"
-         << "#include\"TFEL/Math/ST2toT2/ST2toT2ConceptIO.hxx\"\n"
-         << "#include\"TFEL/Math/ST2toST2/ConvertToTangentModuli.hxx\"\n"
+      os << "#include\"TFEL/Math/ST2toST2/ConvertToTangentModuli.hxx\"\n"
          << "#include\"TFEL/Math/ST2toST2/"
             "ConvertSpatialModuliToKirchhoffJaumanRateModuli.hxx\"\n"
          << "#include\"TFEL/Material/"

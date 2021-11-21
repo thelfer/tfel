@@ -34,25 +34,8 @@ namespace mtest {
       }
       c.push_back(n);
     };
-    if (t == 0) {
-      push_back(v);
-    } else if (t == 1) {
-      for (const auto& e : b.getStensorComponentsSuffixes()) {
-        push_back(v + e);
-      }
-    } else if (t == 2) {
-      for (const auto& e : b.getVectorComponentsSuffixes()) {
-        push_back(v + e);
-      }
-    } else if (t == 3) {
-      for (const auto& e : b.getTensorComponentsSuffixes()) {
-        push_back(v + e);
-      }
-    } else {
-      tfel::raise(
-          "StandardBehaviourBase::getGradientsComponents: "
-          "unsupported type for variable '" +
-          v + "'");
+    for (const auto& component : getVariableComponents(b, v, t)) {
+      push_back(component);
     }
   }  // end of updateComponentsList
 
@@ -74,8 +57,6 @@ namespace mtest {
 
   void StandardBehaviourBase::allocateCurrentState(CurrentState& s) const {
     s.behaviour = this->shared_from_this();
-    const auto mpnames = this->getMaterialPropertiesNames();
-    const auto esvnames = this->expandExternalStateVariablesNames();
     // clear
     s.s_1.clear();
     s.s0.clear();
@@ -100,7 +81,7 @@ namespace mtest {
     s.e1.resize(ndv, 0.);
     s.e_th0.resize(ndv, 0.);
     s.e_th1.resize(ndv, 0.);
-    s.mprops1.resize(mpnames.size());
+    s.mprops1.resize(this->getMaterialPropertiesNames().size());
     s.iv_1.resize(this->getInternalStateVariablesSize(), 0.);
     s.iv0.resize(s.iv_1.size(), 0.);
     s.iv1.resize(s.iv0.size(), 0.);
@@ -108,6 +89,7 @@ namespace mtest {
     s.se1 = 0;
     s.de0 = 0;
     s.de1 = 0;
+    const auto esvnames = this->expandExternalStateVariablesNames();
     s.esv0.resize(esvnames.size(), 0.);
     s.desv.resize(esvnames.size(), 0.);
   } // end of allocateWorkSpaceCurrentState
@@ -659,14 +641,7 @@ namespace mtest {
                    "StandardBehaviourBase::getExternalStateVariableType: "
                    "the number of external variables names and "
                    "the number of external variables types do not match");
-    const auto t = this->evtypes[p - this->evnames.begin()];
-    if (t == 0) {
-      return 0u;
-    } else if (t == 1) {
-      return 1u;
-    } else if (t == 3) {
-      return 3u;
-    }
+    return this->evtypes[p - this->evnames.begin()];
     tfel::raise(
         "StandardBehaviourBase::getExternalStateVariableType: "
         "unsupported external variable type");
@@ -687,42 +662,9 @@ namespace mtest {
              "the number of external variables types do not match");
     std::vector<std::string>::size_type i = 0;
     std::vector<std::string>::size_type ie = p - this->evnames.begin();
-    unsigned short s = 0;
+    unsigned short s = 0u;
     while (i != ie) {
-      int t = this->evtypes[i];
-      if (t == 0) {
-        s += 1;
-      } else if (t == 1) {
-        if ((h == ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN) ||
-            (h == ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS)) {
-          s += 3;
-        } else if ((h == ModellingHypothesis::AXISYMMETRICAL) ||
-                   (h == ModellingHypothesis::PLANESTRESS) ||
-                   (h == ModellingHypothesis::PLANESTRAIN) ||
-                   (h == ModellingHypothesis::GENERALISEDPLANESTRAIN)) {
-          s += 4;
-        } else if (h == ModellingHypothesis::TRIDIMENSIONAL) {
-          s += 6;
-        } else {
-          throw_if(true, "invalid dimension");
-        }
-      } else if (t == 3) {
-        if ((h == ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN) ||
-            (h == ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS)) {
-          s += 3;
-        } else if ((h == ModellingHypothesis::AXISYMMETRICAL) ||
-                   (h == ModellingHypothesis::PLANESTRESS) ||
-                   (h == ModellingHypothesis::PLANESTRAIN) ||
-                   (h == ModellingHypothesis::GENERALISEDPLANESTRAIN)) {
-          s += 5;
-        } else if (h == ModellingHypothesis::TRIDIMENSIONAL) {
-          s += 9;
-        } else {
-          throw_if(true, "invalid dimension");
-        }
-      } else {
-        throw_if(true, "unsupported external variable type");
-      }
+      s += getVariableSize(this->evtypes[i], h);
       ++i;
     }
     return s;
@@ -731,7 +673,6 @@ namespace mtest {
 
   std::vector<std::string>
   StandardBehaviourBase::getInternalStateVariablesDescriptions() const {
-    const auto h = this->getHypothesis();
     std::vector<std::string> desc;
     tfel::raise_if(
         this->ivnames.size() != this->ivtypes.size(),
@@ -743,74 +684,21 @@ namespace mtest {
     for (; p != this->ivtypes.end(); ++p, ++pn) {
       if (*p == 0) {
         desc.push_back(*pn);
-      } else if (*p == 1) {
-        // symmetric tensor
-        desc.push_back("first  component of internal variable '" + *pn + "'");
-        desc.push_back("second component of internal variable '" + *pn + "'");
-        desc.push_back("third  component of internal variable '" + *pn + "'");
-        if (!((h ==
-               ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN) ||
-              (h ==
-               ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS))) {
-          if ((h == ModellingHypothesis::AXISYMMETRICAL) ||
-              (h == ModellingHypothesis::PLANESTRESS) ||
-              (h == ModellingHypothesis::PLANESTRAIN) ||
-              (h == ModellingHypothesis::GENERALISEDPLANESTRAIN)) {
-            desc.push_back("fourth  component of internal variable '" + *pn +
-                           "'");
-          } else if (h == ModellingHypothesis::TRIDIMENSIONAL) {
-            desc.push_back("fourth  component of internal variable '" + *pn +
-                           "'");
-            desc.push_back("fifth   component of internal variable '" + *pn +
-                           "'");
-            desc.push_back("sixth   component of internal variable '" + *pn +
-                           "'");
-          } else {
-            tfel::raise(
-                "StandardBehaviourBase::getInternalStateVariablesDescriptions: "
-                "invalid modelling hypothesis");
-          }
-        }
-      } else if (*p == 3) {
-        // unsymmetric tensor
-        desc.push_back("first  component of internal variable '" + *pn + "'");
-        desc.push_back("second component of internal variable '" + *pn + "'");
-        desc.push_back("third  component of internal variable '" + *pn + "'");
-        if (!((h ==
-               ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN) ||
-              (h ==
-               ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS))) {
-          if ((h == ModellingHypothesis::AXISYMMETRICAL) ||
-              (h == ModellingHypothesis::PLANESTRESS) ||
-              (h == ModellingHypothesis::PLANESTRAIN) ||
-              (h == ModellingHypothesis::GENERALISEDPLANESTRAIN)) {
-            desc.push_back("fourth  component of internal variable '" + *pn +
-                           "'");
-            desc.push_back("fifth   component of internal variable '" + *pn +
-                           "'");
-          } else if (h == ModellingHypothesis::TRIDIMENSIONAL) {
-            desc.push_back("fourth  component of internal variable '" + *pn +
-                           "'");
-            desc.push_back("fifth   component of internal variable '" + *pn +
-                           "'");
-            desc.push_back("sixth   component of internal variable '" + *pn +
-                           "'");
-            desc.push_back("seventh component of internal variable '" + *pn +
-                           "'");
-            desc.push_back("eighth  component of internal variable '" + *pn +
-                           "'");
-            desc.push_back("ninth   component of internal variable '" + *pn +
-                           "'");
-          } else {
-            tfel::raise(
-                "StandardBehaviourBase::getInternalStateVariablesDescriptions: "
-                "invalid modelling hypothesis");
-          }
-        }
       } else {
-        tfel::raise(
-            "StandardBehaviourBase::getInternalStateVariablesDescriptions: "
-            "unsupported variable type");
+        std::vector<std::string> nc = getVariableComponents(*this, *pn, *p);
+        for (std::vector<std::string>::size_type i = 0; i != nc.size(); ++i) {
+          const auto number = [&i]() -> std::string {
+            const char* nvalues[9] = {"first",   "second", "third",
+                                      "fourth",  "fifth",  "sixth",
+                                      "seventh", "eight",  "ninth"};
+            if (i < 9) {
+              return nvalues[i];
+            }
+            return std::to_string(i) + "th";
+          }();
+          desc.push_back(number + " component of internal variable '" + *pn +
+                         "' (" + nc[i] + ")");
+        }
       }
     }
     return desc;
@@ -827,17 +715,7 @@ namespace mtest {
                    "StandardBehaviourBase::getInternalStateVariableType: "
                    "the number of internal variables names and "
                    "the number of internal variables types do not match");
-    const auto t = this->ivtypes[p - this->ivnames.begin()];
-    if (t == 0) {
-      return 0u;
-    } else if (t == 1) {
-      return 1u;
-    } else if (t == 3) {
-      return 3u;
-    }
-    tfel::raise(
-        "StandardBehaviourBase::getInternalStateVariableType: "
-        "unsupported internal variable type");
+    return this->ivtypes[p - this->ivnames.begin()];
   }
 
   unsigned short StandardBehaviourBase::getInternalStateVariablePosition(
@@ -855,42 +733,9 @@ namespace mtest {
              "the number of internal variables types do not match");
     std::vector<std::string>::size_type i = 0;
     std::vector<std::string>::size_type ie = p - this->ivnames.begin();
-    unsigned short s = 0;
+    unsigned short s = 0u;
     while (i != ie) {
-      int t = this->ivtypes[i];
-      if (t == 0) {
-        s += 1;
-      } else if (t == 1) {
-        if ((h == ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN) ||
-            (h == ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS)) {
-          s += 3;
-        } else if ((h == ModellingHypothesis::AXISYMMETRICAL) ||
-                   (h == ModellingHypothesis::PLANESTRESS) ||
-                   (h == ModellingHypothesis::PLANESTRAIN) ||
-                   (h == ModellingHypothesis::GENERALISEDPLANESTRAIN)) {
-          s += 4;
-        } else if (h == ModellingHypothesis::TRIDIMENSIONAL) {
-          s += 6;
-        } else {
-          throw_if(true, "invalid dimension");
-        }
-      } else if (t == 3) {
-        if ((h == ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN) ||
-            (h == ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS)) {
-          s += 3;
-        } else if ((h == ModellingHypothesis::AXISYMMETRICAL) ||
-                   (h == ModellingHypothesis::PLANESTRESS) ||
-                   (h == ModellingHypothesis::PLANESTRAIN) ||
-                   (h == ModellingHypothesis::GENERALISEDPLANESTRAIN)) {
-          s += 5;
-        } else if (h == ModellingHypothesis::TRIDIMENSIONAL) {
-          s += 9;
-        } else {
-          throw_if(true, "invalid dimension");
-        }
-      } else {
-        throw_if(true, "unsupported internal variable type");
-      }
+      s += getVariableSize(this->ivtypes[i], h);
       ++i;
     }
     return s;
