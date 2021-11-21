@@ -21,7 +21,7 @@
 namespace tfel::math {
 
   /*!
-   * \class UnaryComputeBinaryOperationResult
+   * \class ComputeUnaryOperationResult
    * \brief A helper class for UnaryResultType.
    * This default version returns InvalidType both for
    * Result and Handle.
@@ -35,10 +35,10 @@ namespace tfel::math {
    * \see ComputeObjectTag.
    */
   template <typename TagA, typename TagOp, typename A, typename Op>
-  struct UnaryComputeBinaryOperationResult {
+  struct ComputeUnaryOperationResult {
     //! result of the binary operation.
     typedef tfel::meta::InvalidType type;
-  };  // end of UnaryComputeBinaryOperationResult
+  };  // end of ComputeUnaryOperationResult
 
   /*!
    * \class UnaryResultType
@@ -61,10 +61,9 @@ namespace tfel::math {
     typedef typename ComputeObjectTag<Op>::type TagOp;
 
    public:
-    //! result
-    typedef
-        typename UnaryComputeBinaryOperationResult<TagA, TagOp, A_, Op>::type
-            type;
+    //! \brief result
+    using type =
+        typename ComputeUnaryOperationResult<TagA, TagOp, A_, Op>::type;
   };  // end of UnaryResultType
 
   //! \brief a simple alias

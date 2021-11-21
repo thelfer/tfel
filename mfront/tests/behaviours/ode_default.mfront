@@ -9,5 +9,5 @@
 @Parameter real theta = 0.5;
 
 @Integrator{
-  dx += -dt * A * x / (1 + A * theta * dt);
+  dx = -dt * A * x / (1 + A * theta * dt);
 }

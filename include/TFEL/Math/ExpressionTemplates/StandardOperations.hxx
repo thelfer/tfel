@@ -37,7 +37,9 @@ namespace tfel::math {
    */
   template <typename T1>
   constexpr auto operator-(T1&& a) -> std::enable_if_t<
-      isUnaryOperationResultTypeValid<decltype(a), OpNeg>::value,
+      ((!isScalar<T1>()) &&
+       (isUnaryOperationResultTypeValid<decltype(a), OpNeg>::value) &&
+       (!isInvalid<UnaryOperationHandler<decltype(a), OpNeg>>())),
       UnaryOperationHandler<decltype(a), OpNeg>> {
     return UnaryOperationHandler<decltype(a), OpNeg>(std::forward<T1>(a));
   }
