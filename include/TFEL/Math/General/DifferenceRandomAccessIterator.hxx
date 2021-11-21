@@ -93,7 +93,7 @@ namespace tfel {
        */
       using value_type = typename traits::value_type;
       //! \brief STL requirement
-      using reference = typename traits::reference;
+      using reference = proxy;
       //! \brief STL requirement
       using pointer = typename traits::pointer;
       //! \brief STL requirement
