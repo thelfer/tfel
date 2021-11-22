@@ -5305,10 +5305,11 @@ namespace mfront {
         out << "tfel::material::computeIsotropicStiffnessTensor<hypothesis,"
                "StiffnessTensorAlterationCharacteristic::"
                "ALTERED"
-            << ">(" << D << ",";
+            << ">(" << D << ", ";
       }
+      out << "stress(";
       this->writeMaterialPropertyEvaluation(out, emps[0], f);
-      out << ",\n";
+      out << "), \n";
       this->writeMaterialPropertyEvaluation(out, emps[1], f);
       out << ");\n";
     } else if (this->mb.getElasticSymmetryType() == mfront::ORTHOTROPIC) {
@@ -5354,11 +5355,18 @@ namespace mfront {
         }
       }
       for (decltype(emps.size()) i = 0; i != emps.size();) {
-        this->writeMaterialPropertyEvaluation(out, emps[i], f);
+        if ((i == 0) || (i == 1) || (i == 2) ||  //
+            (i == 6) || (i == 7) || (i == 8)) {
+          out << "stress(";
+          this->writeMaterialPropertyEvaluation(out, emps[i], f);
+          out << ")";
+        } else {
+          this->writeMaterialPropertyEvaluation(out, emps[i], f);
+        }
         if (++i != emps.size()) {
           out << ",\n";
         }
-      }
+        }
       out << ");\n";
     } else {
       this->throwRuntimeError(
@@ -5435,7 +5443,7 @@ namespace mfront {
     } else if (!((m.is<BehaviourDescription::ConstantMaterialProperty>()) ||
                  (m.is<BehaviourDescription::AnalyticMaterialProperty>()))) {
       this->throwRuntimeError(
-          "BehaviourDSLCommon::writeMaterialPropertyEvaluation",
+          "BehaviourDSLCommon::writeMaterialPropertyCheckBoundsEvaluation",
           "unsupported material property type");
     }
   }  // end of writeMaterialPropertyEvaluation
