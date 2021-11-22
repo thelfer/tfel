@@ -5250,8 +5250,9 @@ namespace mfront {
                "ALTERED"
             << ">(" << D << ",";
       }
+      out << "stress(";
       this->writeMaterialPropertyEvaluation(out, emps[0], f);
-      out << ",\n";
+      out << "), \n";
       this->writeMaterialPropertyEvaluation(out, emps[1], f);
       out << ");\n";
     } else if (this->mb.getElasticSymmetryType() == mfront::ORTHOTROPIC) {
@@ -5297,7 +5298,14 @@ namespace mfront {
         }
       }
       for (decltype(emps.size()) i = 0; i != emps.size();) {
-        this->writeMaterialPropertyEvaluation(out, emps[i], f);
+        if ((i == 0) || (i == 1) || (i == 2) ||  //
+            (i == 6) || (i == 7) || (i == 8)) {
+          out << "stress(";
+          this->writeMaterialPropertyEvaluation(out, emps[i], f);
+          out << ")";
+        } else {
+          this->writeMaterialPropertyEvaluation(out, emps[i], f);
+        }
         if (++i != emps.size()) {
           out << ",\n";
         }

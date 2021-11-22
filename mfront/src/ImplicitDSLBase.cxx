@@ -1579,9 +1579,9 @@ namespace mfront {
         this->writeMaterialPropertyCheckBoundsEvaluation(os, emps[1], mts);
       }
       if (!emps[0].is<BehaviourDescription::ConstantMaterialProperty>()) {
-        os << "this->young = ";
+        os << "this->young = stress(";
         this->writeMaterialPropertyEvaluation(os, emps[0], mts);
-        os << ";\n";
+        os << ");\n";
       }
       if (!emps[1].is<BehaviourDescription::ConstantMaterialProperty>()) {
         os << "this->nu = ";
@@ -1592,9 +1592,9 @@ namespace mfront {
       os << "this->mu=computeMu(young,nu);\n";
       if (!this->mb.isMaterialPropertyConstantDuringTheTimeStep(emps[0])) {
         this->writeMaterialPropertyCheckBoundsEvaluation(os, emps[0], ets);
-        os << "this->young_tdt=";
+        os << "this->young_tdt = stress(";
         this->writeMaterialPropertyEvaluation(os, emps[0], ets);
-        os << ";\n";
+        os << ");\n";
       } else {
         os << "this->young_tdt  = this->young;\n";
       }
