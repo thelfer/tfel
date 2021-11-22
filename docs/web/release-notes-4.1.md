@@ -138,6 +138,20 @@ b = mtest.Behaviour(library = 'src/libBehaviour.so',
 
 # Issues fixed
 
+## Issue #39: [tfel-config] Add query associated with python bindings support
+
+`tfel-config` now supports an command line option named
+`--python-bindings-support` which displays true if `python` bindings are
+available, `false` otherwise.
+
+## Issue #38: [tfel-config] Add query associated with MADNEX support
+
+`tfel-config` now supports an command line option named
+`--madnex-support` which displays true if `madnex` files are supported,
+`false` otherwise.
+
+For more details, see : <https://github.com/thelfer/tfel/issues/38>
+
 ## Issue #36: [mfront] Improved support for `MTest` file generation (all kind of state variables)
 
 In previous versions, only scalar and symmetric tensors state variables

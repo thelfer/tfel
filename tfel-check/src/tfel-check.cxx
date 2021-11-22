@@ -71,7 +71,7 @@ namespace tfel::check {
     c.addComponent("tfel::python");
     c.addComponent("mfront::python");
 #endif
-#ifdef TFEL_MADNEX
+#ifdef TFEL_HAVE_MADNEX
     c.addComponent("tfel::madnex");
 #endif
     // registring mfront interface
