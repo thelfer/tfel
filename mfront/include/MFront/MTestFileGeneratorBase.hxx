@@ -89,16 +89,27 @@ namespace mfront {
                                           const SupportedTypes::TypeFlag,
                                           const real* const);
     /*!
-     * \brief add the value of an external state variable at the given time
-     * \param[in] n : external state variable name
-     * \param[in] t : time
-     * \param[in] v : value
+     * \brief add the value of an external state variable
+     * \param[in] n: external state variable name
+     * \param[in] f: variable type
+     * \param[in] t: initial time
+     * \param[in] v0: initial values
+     * \param[in] t: final time
+     * \param[in] v1: final values or the increment values
+     * \param[in] increment_provided: boolean stating if v1 holds the final
+     * values and the increment values
      */
-    virtual void addExternalStateVariableValue(const std::string&,
-                                               const real,
-                                               const real);
-
+    virtual void addExternalStateVariable(const std::string&,
+                                          const SupportedTypes::TypeFlag,
+                                          const real,
+                                          const real* const,
+                                          const real,
+                                          const real* const,
+                                          const bool);
     virtual void generate(const std::string&) const;
+    //! \return the size of a variable
+    virtual unsigned short getVariableSize(
+        const SupportedTypes::TypeFlag&) const;
     //! \return the size of an tiny vector
     virtual unsigned short getTVectorSize() const;
     //! \return the size of an stensor
@@ -156,9 +167,7 @@ namespace mfront {
      * \param[in] os : output stream
      */
     virtual void writeGradients(std::ostream&) const = 0;
-    /*!
-     * \brief structure representing an internal state variable
-     */
+    //! \brief structure representing an internal state variable
     struct InternalStateVariable {
       InternalStateVariable() = default;
       InternalStateVariable(InternalStateVariable&&) = default;
@@ -171,23 +180,40 @@ namespace mfront {
       //! \brief type of the variable
       SupportedTypes::TypeFlag type;
       //! \brief initial value
-      real values[9];
+      std::vector<real> values;
     };  // end of struct InternalStateVariable
-    //! modelling hypothesis
+    //! \brief structure representing an internal state variable
+    struct ExternalStateVariable {
+      ExternalStateVariable() = default;
+      ExternalStateVariable(ExternalStateVariable&&) = default;
+      ExternalStateVariable(const ExternalStateVariable&) = default;
+      ExternalStateVariable& operator=(ExternalStateVariable&&) = default;
+      ExternalStateVariable& operator=(const ExternalStateVariable&) = default;
+      ~ExternalStateVariable();
+      //! \brief name
+      std::string name;
+      //! \brief type of the variable
+      SupportedTypes::TypeFlag type;
+      //! \brief initial value
+      std::pair<real, std::vector<real>> initial_values;
+      //! \brief final value
+      std::pair<real, std::vector<real>> final_values;
+    };  // end of struct ExternalStateVariable
+    //! \brief modelling hypothesis
     Hypothesis hypothesis;
-    //! real time step
+    //! \brief real time step
     std::set<real> times;
-    //! internal state variable
-    std::vector<InternalStateVariable> ivs;
-    //! values of the material properties
+    //! \brief values of the material properties
     std::map<std::string, real> mps;
-    //! values of the external state variables
-    std::map<std::string, std::map<real, real>> evs;
-    //! if true handles thermal expansion
+    //! \brief internal state variable
+    std::vector<InternalStateVariable> ivs;
+    //! \brief values of the external state variables
+    std::vector<ExternalStateVariable> evs;
+    //! \brief if true handles thermal expansion
     bool handleThermalExpansion;
-    //! flag true if the rotation matrix is defined
+    //! \brief flag true if the rotation matrix is defined
     bool hasRotationMatrix;
-    //! rotation matrix
+    //! \brief rotation matrix
     real m[9u];
   };
 

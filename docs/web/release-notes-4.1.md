@@ -138,6 +138,15 @@ b = mtest.Behaviour(library = 'src/libBehaviour.so',
 
 # Issues fixed
 
+## Issue #36: [mfront] Improved support for `MTest` file generation (all kind of state variables)
+
+In previous versions, only scalar and symmetric tensors state variables
+were supported when generation `MTest` file on integration failure.
+
+All kind of state variables are now supported.
+
+For more details, see : <https://github.com/thelfer/tfel/issues/36>
+
 ## Issue #28: [mtest] Support of tensorial external state variables
 
 The `Behaviour` class has new methods:
@@ -163,6 +172,10 @@ state variables components by components or an array as follows:
 
 For more details, see : <https://github.com/thelfer/tfel/issues/28>
 
+## Issue #28: [mtest] Support of tensorial external state variables
+
+For more details, see : <https://github.com/thelfer/tfel/issues/28>
+
 ## Issue #27: [mfront] Better support of tensorial external state variables
 
 The type of the external state variables are now exported.
@@ -171,6 +184,8 @@ The type of the external state variables are now exported.
   `getUMATExternalStateVariablesTypes` (wrapped in `python`)
 - `ExternalBehaviourDescription` has a new method called `evtypes`
   (wrapped in `python`)
+
+Generation of `MTest` file also supports tensor external state variables.
 
 For more details, see : <https://github.com/thelfer/tfel/issues/27>
 
