@@ -11,8 +11,8 @@
  * project under specific licensing conditions.
  */
 
-#ifndef LIB_MFRONT_BEHAVIOURQUERY_H
-#define LIB_MFRONT_BEHAVIOURQUERY_H
+#ifndef LIB_MFRONT_BEHAVIOURQUERY_HXX
+#define LIB_MFRONT_BEHAVIOURQUERY_HXX
 
 #include <string>
 #include <vector>
@@ -23,6 +23,7 @@
 #include "TFEL/Utilities/ArgumentParserBase.hxx"
 #include "TFEL/Material/ModellingHypothesis.hxx"
 #include "MFront/MFrontBase.hxx"
+#include "MFront/QueryHandlerBase.hxx"
 
 namespace mfront {
 
@@ -38,12 +39,13 @@ namespace mfront {
   struct VariableDescriptionContainer;
 
   /*!
-   * Class used by the mfront-query tool to extract information from
+   * \brief class used by the mfront-query tool to extract information from
    * behaviour implementation
    */
   struct BehaviourQuery final
       : public tfel::utilities::ArgumentParserBase<BehaviourQuery>,
-        public MFrontBase {
+        public MFrontBase,
+        public QueryHandlerBase {
     /*!
      * build a BehaviourQuery object based on command line arguments
      * \param[in] argc : number of command line arguments
@@ -55,67 +57,70 @@ namespace mfront {
                    const char* const* const,
                    std::shared_ptr<AbstractBehaviourDSL>,
                    const std::string&);
-    //! treat the requests
+    //! \brief treat the requests
     virtual void exe();
-    //! destructor
+    //! \brief destructor
     ~BehaviourQuery() override;
+   protected:
+    //
+    std::shared_ptr<const AbstractDSL> getDSL() const override;
 
    private:
-    //! a simple alias
+    //! \brief a simple alias
     using ModellingHypothesis = tfel::material::ModellingHypothesis;
-    //! a simple alias
+    //! \brief a simple alias
     using Hypothesis = ModellingHypothesis::Hypothesis;
-    //! a simple alias
+    //! \brief a simple alias
     using query = std::function<void(
         const FileDescription&, const BehaviourDescription&, const Hypothesis)>;
-    //! a simple alias
+    //! \brief a simple alias
     using query2 = std::function<void(const FileDescription&,
                                       const BehaviourDescription&)>;
-    //! ArgumentParserBase must be a friend
+    //! \brief ArgumentParserBase must be a friend
     friend struct tfel::utilities::ArgumentParserBase<BehaviourQuery>;
-    //! \brief register call-backs associated with command line arguments
+    //! \brief \brief register call-backs associated with command line arguments
     virtual void registerCommandLineCallBacks();
-    //! return the current argument
+    //! \brief return the current argument
     const tfel::utilities::Argument& getCurrentCommandLineArgument()
         const override final;
-    //! treat a standard query
+    //! \brief treat a standard query
     virtual void treatStandardQuery() final;
-    //! treat a standard query (an option to the command line
-    //! triggering the query is required)
+    //! \brief treat a standard query (an option to the command line
+    //! \brief triggering the query is required)
     virtual void treatStandardQuery2() final;
-    //! treat the "--generated-sources" query
+    //! \brief treat the "--generated-sources" query
     virtual void treatGeneratedSources() final;
-    //! treat the "--cppflags" query
+    //! \brief treat the "--cppflags" query
     virtual void treatCppFlags() final;
-    //! treat the "--generated-headers" query
+    //! \brief treat the "--generated-headers" query
     virtual void treatGeneratedHeaders() final;
-    //! treat the "--libraries-dependencies" query
+    //! \brief treat the "--libraries-dependencies" query
     virtual void treatLibrariesDependencies() final;
-    //! treat the "--specific-targets" query
+    //! \brief treat the "--specific-targets" query
     virtual void treatSpecificTargets() final;
-    //! treat the "--modelling-hypothesis" command line argument
+    //! \brief treat the "--modelling-hypothesis" command line argument
     virtual void treatModellingHypothesis() final;
-    //! treat an unknown argument
+    //! \brief treat an unknown argument
     void treatUnknownArgument() override final;
-    //! get the version description
+    //! \brief get the version description
     std::string getVersionDescription() const override final;
-    //! get the usage description
+    //! \brief get the usage description
     std::string getUsageDescription() const override final;
-    //! \return a query that show a list of variables
+    //! \brief \return a query that show a list of variables
     template <const VariableDescriptionContainer& (BehaviourData::*m)() const>
     query generateVariablesListQuery();
-    //! all the registred queries
+    //! \brief all the registred queries
     std::vector<std::pair<std::string, query>> queries;
-    //! all the registred queries
+    //! \brief all the registred queries
     std::vector<std::pair<std::string, query2>> queries2;
-    //! abstract behaviour dsl
+    //! \brief abstract behaviour dsl
     std::shared_ptr<AbstractBehaviourDSL> dsl;
-    //! file name
+    //! \brief file name
     std::string file;
-    //! modelling hypothesis
+    //! \brief modelling hypothesis
     Hypothesis hypothesis = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
   };  // end of struct BehaviourQuery
 
 }  // end of namespace mfront
 
-#endif /* LIB_MFRONT_BEHAVIOURQUERY_H */
+#endif /* LIB_MFRONT_BEHAVIOURQUERY_HXX */

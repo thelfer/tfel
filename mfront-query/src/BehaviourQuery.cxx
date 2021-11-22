@@ -165,9 +165,13 @@ namespace mfront {
     this->finalizeArgumentsParsing();
     // registring interfaces
     if (!this->interfaces.empty()) {
-      dsl->setInterfaces(this->interfaces);
+      this->dsl->setInterfaces(this->interfaces);
     }
-  }  // end of BehaviourQuery::BehaviourQuery
+  }  // end of BehaviourQuery
+
+  std::shared_ptr<const AbstractDSL> BehaviourQuery::getDSL() const {
+    return this->dsl;
+  } // end of getDSL
 
   void BehaviourQuery::registerCommandLineCallBacks() {
     using Parser = tfel::utilities::ArgumentParserBase<BehaviourQuery>;
@@ -355,7 +359,7 @@ namespace mfront {
     }
     Parser::registerNewCallBack("--generated-sources",
                                 &BehaviourQuery::treatGeneratedSources,
-                                "show all the generated sources");
+                                "show all the generated sources", true);
     Parser::registerNewCallBack("--generated-headers",
                                 &BehaviourQuery::treatGeneratedHeaders,
                                 "show all the generated headers");
@@ -367,7 +371,7 @@ namespace mfront {
     Parser::registerNewCallBack("--specific-targets",
                                 &BehaviourQuery::treatSpecificTargets,
                                 "show all the specific targets");
-  }  // end of BehaviourQuery::registerCommandLineCallBacks
+  }  // end of registerCommandLineCallBacks
 
   void BehaviourQuery::treatStandardQuery() {
     using namespace tfel::utilities;
@@ -1110,71 +1114,40 @@ namespace mfront {
   }
 
   void BehaviourQuery::treatGeneratedSources() {
-    auto ldsl = this->dsl;
-    auto q = [ldsl](const FileDescription&, const BehaviourDescription&) {
-      for (const auto& l : ldsl->getTargetsDescription().libraries) {
-        std::cout << l.name << " : ";  //< library
-        std::copy(l.sources.begin(), l.sources.end(),
-                  std::ostream_iterator<std::string>(std::cout, " "));
-        std::cout << '\n';
-      }
-    };
-    this->queries2.push_back({"generated-sources", q});
-  }  // end of BehaviourQuery::treatGeneratedSources
+    auto q = this->generateGeneratedSourcesQuery(
+        this->getCurrentCommandLineArgument().getOption());
+    this->queries2.push_back(
+        {"generated-sources",
+         [q](const FileDescription&, const BehaviourDescription&) { q(); }});
+  }  // end of treatGeneratedSources
 
   void BehaviourQuery::treatGeneratedHeaders() {
-    auto ldsl = this->dsl;
-    auto q = [ldsl](const FileDescription&, const BehaviourDescription&) {
-      const auto headers = ldsl->getTargetsDescription().headers;
-      std::copy(headers.begin(), headers.end(),
-                std::ostream_iterator<std::string>(std::cout, " "));
-      std::cout << '\n';
-    };
-    this->queries2.push_back({"generated-headers", q});
-  }  // end of BehaviourQuery::treatGeneratedHeaders
+    auto q = this->generateGeneratedHeadersQuery();
+    this->queries2.push_back(
+        {"generated-headers",
+         [q](const FileDescription&, const BehaviourDescription&) { q(); }});
+  }  // end of treatGeneratedHeaders
 
   void BehaviourQuery::treatCppFlags() {
-    auto ldsl = this->dsl;
-    auto q = [ldsl](const FileDescription&, const BehaviourDescription&) {
-      for (const auto& l : ldsl->getTargetsDescription().libraries) {
-        std::cout << l.name << " : ";
-        std::copy(l.cppflags.begin(), l.cppflags.end(),
-                  std::ostream_iterator<std::string>(std::cout, " "));
-        std::cout << '\n';
-      }
-    };
-    this->queries2.push_back({"cppflags", q});
-  }  // end of BehaviourQuery::treatCppFlags
+    auto q = this->generateCppFlagsQuery();
+    this->queries2.push_back(
+        {"cppflags",
+         [q](const FileDescription&, const BehaviourDescription&) { q(); }});
+  }  // end of treatCppFlags
 
   void BehaviourQuery::treatLibrariesDependencies() {
-    auto ldsl = this->dsl;
-    auto q = [ldsl](const FileDescription&, const BehaviourDescription&) {
-      for (const auto& l : ldsl->getTargetsDescription().libraries) {
-        std::cout << l.name << " : ";
-        std::copy(l.ldflags.begin(), l.ldflags.end(),
-                  std::ostream_iterator<std::string>(std::cout, " "));
-        std::cout << '\n';
-      }
-    };
-    this->queries2.push_back({"libraries-dependencies", q});
-  }  // end of BehaviourQuery::treatLibrariesDependencies
+    auto q = this->generateLibrariesDependenciesQuery();
+    this->queries2.push_back(
+        {"libraries-dependencies",
+         [q](const FileDescription&, const BehaviourDescription&) { q(); }});
+  }  // end of treatLibrariesDependencies
 
   void BehaviourQuery::treatSpecificTargets() {
-    auto ldsl = this->dsl;
-    auto l = [ldsl](const FileDescription&, const BehaviourDescription&) {
-      const auto targets = ldsl->getTargetsDescription().specific_targets;
-      for (const auto& t : targets) {
-        std::cout << t.first << " : ";
-        std::copy(t.second.deps.begin(), t.second.deps.end(),
-                  std::ostream_iterator<std::string>(std::cout, " "));
-        std::cout << '\n' << "> rule : ";
-        std::copy(t.second.cmds.begin(), t.second.cmds.end(),
-                  std::ostream_iterator<std::string>(std::cout, "\n> rule : "));
-        std::cout << '\n';
-      }
-    };
-    this->queries2.push_back({"specific-targets", l});
-  }  // end of BehaviourQuery::treatSpecificTargets
+    auto q = this->generateSpecificTargetsQuery();
+    this->queries2.push_back(
+        {"specific-targets",
+         [q](const FileDescription&, const BehaviourDescription&) { q(); }});
+  }  // end of treatSpecificTargets
 
   void BehaviourQuery::treatModellingHypothesis() {
     const auto& o = this->getCurrentCommandLineArgument().getOption();
@@ -1186,7 +1159,7 @@ namespace mfront {
                    "BehaviourQuery::treatModellingHypothesis: "
                    "modelling hypothesis already defined");
     this->hypothesis = ModellingHypothesis::fromString(o);
-  }  // end of BehaviourQuery::treatModellingHypothesis
+  }  // end of treatModellingHypothesis
 
   void BehaviourQuery::exe() {
     using namespace std;
@@ -1241,7 +1214,7 @@ namespace mfront {
       }
       q.second(fd, d);
     }
-  }  // end of BehaviourQuery::exe
+  }  // end of exe
 
   const tfel::utilities::Argument&
   BehaviourQuery::getCurrentCommandLineArgument() const {

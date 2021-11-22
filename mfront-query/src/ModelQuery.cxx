@@ -36,9 +36,13 @@ namespace mfront {
     this->finalizeArgumentsParsing();
     // registring interfaces
     if (!this->interfaces.empty()) {
-      dsl->setInterfaces(this->interfaces);
+      this->dsl->setInterfaces(this->interfaces);
     }
-  }  // end of ModelQuery::ModelQuery
+  }  // end of ModelQuery
+
+  std::shared_ptr<const AbstractDSL> ModelQuery::getDSL() const {
+    return this->dsl;
+  } // end of getDSL
 
   void ModelQuery::registerCommandLineCallBacks() {
     using Parser = tfel::utilities::ArgumentParserBase<ModelQuery>;
@@ -97,7 +101,7 @@ namespace mfront {
     }
     Parser::registerNewCallBack("--generated-sources",
                                 &ModelQuery::treatGeneratedSources,
-                                "show all the generated sources");
+                                "show all the generated sources", true);
     Parser::registerNewCallBack("--generated-headers",
                                 &ModelQuery::treatGeneratedHeaders,
                                 "show all the generated headers");
@@ -113,7 +117,7 @@ namespace mfront {
                              CallBack("do not display errors using "
                                       "a message box (windows only)",
                                       [] {}, false));
-  }  // end of ModelQuery::registerCommandLineCallBacks
+  }  // end of registerCommandLineCallBacks
 
   void ModelQuery::treatStandardQuery() {
     const auto& qn = this->getCurrentCommandLineArgument().as_string();
@@ -188,74 +192,43 @@ namespace mfront {
           "unsupported query '" +
           qn + "'");
     }
-  }  // end of ModelQuery::treatStandardQuery
+  }  // end of treatStandardQuery
 
   void ModelQuery::treatGeneratedSources() {
-    auto ldsl = this->dsl;
-    auto q = [ldsl](const FileDescription&, const ModelDescription&) {
-      for (const auto& l : ldsl->getTargetsDescription().libraries) {
-        std::cout << l.name << " : ";  //< library
-        std::copy(std::begin(l.sources), std::end(l.sources),
-                  std::ostream_iterator<std::string>(std::cout, " "));
-        std::cout << std::endl;
-      }
-    };
-    this->queries.push_back({"generated-sources", q});
-  }  // end of ModelQuery::treatGeneratedSources
+    auto q = this->generateGeneratedSourcesQuery(
+        this->getCurrentCommandLineArgument().getOption());
+    this->queries.push_back(
+        {"generated-sources",
+         [q](const FileDescription&, const ModelDescription&) { q(); }});
+  }  // end of treatGeneratedSources
 
   void ModelQuery::treatGeneratedHeaders() {
-    auto ldsl = this->dsl;
-    auto q = [ldsl](const FileDescription&, const ModelDescription&) {
-      const auto headers = ldsl->getTargetsDescription().headers;
-      std::copy(std::begin(headers), std::end(headers),
-                std::ostream_iterator<std::string>(std::cout, " "));
-      std::cout << std::endl;
-    };
-    this->queries.push_back({"generated-headers", q});
-  }  // end of ModelQuery::treatGeneratedHeaders
+    auto q = this->generateGeneratedHeadersQuery();
+    this->queries.push_back(
+        {"generated-headers",
+         [q](const FileDescription&, const ModelDescription&) { q(); }});
+  }  // end of treatGeneratedHeaders
 
   void ModelQuery::treatCppFlags() {
-    auto ldsl = this->dsl;
-    auto q = [ldsl](const FileDescription&, const ModelDescription&) {
-      for (const auto& l : ldsl->getTargetsDescription().libraries) {
-        std::cout << l.name << " : ";
-        std::copy(std::begin(l.cppflags), std::end(l.cppflags),
-                  std::ostream_iterator<std::string>(std::cout, " "));
-        std::cout << std::endl;
-      }
-    };
-    this->queries.push_back({"cppflags", q});
-  }  // end of ModelQuery::treatCppFlags
+    auto q = this->generateCppFlagsQuery();
+    this->queries.push_back(
+        {"cppflags",
+         [q](const FileDescription&, const ModelDescription&) { q(); }});
+  }  // end of treatCppFlags
 
   void ModelQuery::treatLibrariesDependencies() {
-    auto ldsl = this->dsl;
-    auto q = [ldsl](const FileDescription&, const ModelDescription&) {
-      for (const auto& l : ldsl->getTargetsDescription().libraries) {
-        std::cout << l.name << ": ";
-        std::copy(std::begin(l.ldflags), std::end(l.ldflags),
-                  std::ostream_iterator<std::string>(std::cout, " "));
-        std::cout << std::endl;
-      }
-    };
-    this->queries.push_back({"libraries-dependencies", q});
-  }  // end of ModelQuery::treatLibrariesDependencies
+    auto q = this->generateLibrariesDependenciesQuery();
+    this->queries.push_back(
+        {"libraries-dependencies",
+         [q](const FileDescription&, const ModelDescription&) { q(); }});
+  }  // end of treatLibrariesDependencies
 
   void ModelQuery::treatSpecificTargets() {
-    auto ldsl = this->dsl;
-    auto l = [ldsl](const FileDescription&, const ModelDescription&) {
-      const auto targets = ldsl->getTargetsDescription().specific_targets;
-      for (const auto& t : targets) {
-        std::cout << t.first << " : ";
-        std::copy(std::begin(t.second.deps), std::end(t.second.deps),
-                  std::ostream_iterator<std::string>(std::cout, " "));
-        std::cout << std::endl << "> rule : ";
-        std::copy(std::begin(t.second.cmds), std::end(t.second.cmds),
-                  std::ostream_iterator<std::string>(std::cout, "\n> rule : "));
-        std::cout << std::endl;
-      }
-    };
-    this->queries.push_back({"specific-targets", l});
-  }  // end of ModelQuery::treatSpecificTargets
+    auto q = this->generateSpecificTargetsQuery();
+    this->queries.push_back(
+        {"specific-targets",
+         [q](const FileDescription&, const ModelDescription&) { q(); }});
+  }  // end of treatSpecificTargets
 
   void ModelQuery::exe() {
     if (getVerboseMode() >= VERBOSE_LEVEL2) {
@@ -272,7 +245,7 @@ namespace mfront {
       }
       q.second(fd, d);
     }
-  }  // end of ModelQuery::exe
+  }  // end of exe
 
   const tfel::utilities::Argument& ModelQuery::getCurrentCommandLineArgument()
       const {

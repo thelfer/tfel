@@ -14,7 +14,9 @@ endif
 
 bin_PROGRAMS = mfront-query
 
-mfront_query_SOURCES = mfront-query.cxx          \
+mfront_query_SOURCES =      \
+  mfront-query.cxx          \
+  QueryHandlerBase.cxx      \
 		       MaterialPropertyQuery.cxx \
 		       BehaviourQuery.cxx        \
 		       ModelQuery.cxx
