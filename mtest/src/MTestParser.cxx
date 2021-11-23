@@ -801,8 +801,8 @@ namespace mtest {
                              this->tokens.end());
     auto sc = std::make_shared<ImposedGradient>(*(t.getBehaviour()), c, sev);
     applyConstraintOptions(*(sc.get()), opts);
-    t.addEvolution(c, sev, false, true);
     t.addConstraint(sc);
+    t.addEvolution(c, sev, false, true);
   }  // end of MTestParser::handleImposedGradient
 
   void MTestParser::handleStrain(MTest& t, tokens_iterator& p) {
