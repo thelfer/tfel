@@ -750,8 +750,8 @@ namespace mtest {
         std::make_shared<ImposedDrivingVariable>(*(t.getBehaviour()), c, sev);
     this->readSpecifiedToken("MTestParser::handleImposedDrivingVariable", ";",
                              p, this->tokens.end());
-    t.addEvolution(c, sev, false, true);
     t.addConstraint(sc);
+    t.addEvolution(c, sev, false, true);
   }  // end of MTestParser::handleImposedDrivingVariable
 
   void MTestParser::handleStrain(MTest& t, tokens_iterator& p) {
