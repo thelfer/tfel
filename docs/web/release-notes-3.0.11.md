@@ -20,6 +20,10 @@ eqnPrefixTemplate: "($$i$$)"
 
 # Issues fixed
 
+## Issue #43: [mtest] Prevent declaration of boundary conditions after the call to completeInitialisation
+
+For more details, see <https://github.com/thelfer/tfel/issues/43>.
+
 ## Issue #29: [TFELMath] Fix definition of reference in DifferenceRandomAccessIterator
 
 For more details, see <https://github.com/thelfer/tfel/issues/21>.

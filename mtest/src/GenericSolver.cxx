@@ -163,6 +163,14 @@ namespace mtest {
         }
         log << '\n';
       }
+      if (mfront::getVerboseMode() >= mfront::VERBOSE_DEBUG) {
+        auto& log = mfront::getLogStream();
+        log << "residual :\n";
+        for (size_type i = 0; i != wk.r.size(); ++i) {
+          log << wk.r(i) << " ";
+        }
+        log << '\n';
+      }
       wk.du = wk.r;
       setRoundingMode();
       LUSolve::exe(wk.K, wk.du, wk.x, wk.p_lu);
