@@ -1,4 +1,5 @@
 set(mfront_tests_SOURCES
+  TensorialExternalStateVariableTest
   SaintVenantKirchhoffElasticity
   SaintVenantKirchhoffElasticity2
   SaintVenantKirchhoffElasticity3
@@ -190,3 +191,4 @@ test_epx(mieheapellambrechtlogarithmicstrainnortoncreep-uniaxialloading-3-2D)
 test_epx(orthotropicswelling)
 test_epx(orthotropicswelling2)
 test_epx(axialgrowth)
+test_epx(tensorialexternalstatevariabletest)

@@ -231,6 +231,53 @@ namespace mtest {
     return static_cast<unsigned short>(p - isvnames.begin());
   }  // end of getInternalStateVariablePosition
 
+  std::vector<std::string>
+  SmallStrainTridimensionalBehaviourWrapper::getExternalStateVariablesNames()
+      const {
+    return this->b->expandExternalStateVariablesNames();
+  }  // end of getExternalStateVariablesNames
+  
+  std::vector<std::string>
+  SmallStrainTridimensionalBehaviourWrapper::expandExternalStateVariablesNames()
+      const {
+    return this->b->expandExternalStateVariablesNames();
+  }  // end of expandExternalStateVariablesNames
+  
+  size_t
+  SmallStrainTridimensionalBehaviourWrapper::getExternalStateVariablesSize()
+      const {
+    return this->b->expandExternalStateVariablesNames().size();
+  }  // end of getExternalStateVariablesSize
+
+  unsigned short
+  SmallStrainTridimensionalBehaviourWrapper::getExternalStateVariableType(
+      const std::string& n) const {
+    const auto esvnames = this->getExternalStateVariablesNames();
+    if (std::find(esvnames.begin(), esvnames.end(), n) == esvnames.end()) {
+      tfel::raise(
+          "SmallStrainTridimensionalBehaviourWrapper::"
+          "getExternalStateVariableType: "
+          "invalid state variable '" +
+          n + "'");
+    }
+    return 0;
+  }  // end of getExternalStateVariableType
+
+  unsigned short
+  SmallStrainTridimensionalBehaviourWrapper::getExternalStateVariablePosition(
+      const std::string& n) const {
+    const auto esvnames = this->getExternalStateVariablesNames();
+    const auto p = std::find(esvnames.begin(), esvnames.end(), n);
+    if (p == esvnames.end()) {
+      tfel::raise(
+          "SmallStrainTridimensionalBehaviourWrapper::"
+          "getExternalStateVariablePosition: "
+          "invalid state variable '" +
+          n + "'");
+    }
+    return static_cast<unsigned short>(p - esvnames.begin());
+  }  // end of getExternalStateVariablePosition
+
   void SmallStrainTridimensionalBehaviourWrapper::allocateWorkSpace(
       BehaviourWorkSpace& wk) const {
     this->b->allocateWorkSpace(wk);

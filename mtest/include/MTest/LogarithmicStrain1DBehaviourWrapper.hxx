@@ -61,6 +61,14 @@ namespace mtest {
         const std::string&) const override;
     unsigned short getInternalStateVariablePosition(
         const std::string&) const override;
+    //
+    std::vector<std::string> getExternalStateVariablesNames() const override;
+    std::vector<std::string> expandExternalStateVariablesNames() const override;
+    size_t getExternalStateVariablesSize() const override;
+    unsigned short getExternalStateVariableType(
+        const std::string&) const override;
+    unsigned short getExternalStateVariablePosition(
+        const std::string&) const override;
     void allocateWorkSpace(BehaviourWorkSpace&) const override;
     tfel::math::tmatrix<3u, 3u, real> getRotationMatrix(
         const tfel::math::vector<real>&,

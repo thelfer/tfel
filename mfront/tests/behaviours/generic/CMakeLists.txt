@@ -17,6 +17,7 @@ set(mfront_tests_SOURCES
   MaterialPropertiesBoundsCheck
   StateVariablesBoundsCheck
   ExternalStateVariablesBoundsCheck
+  TensorialExternalStateVariableTest
   Elasticity
   Elasticity2
   Elasticity3
@@ -757,4 +758,4 @@ test_generic(ThermoElasticity)
 test_generic(ode_default ode_default.ref)
 test_generic(ode_implicit ode_implicit.ref)
 test_generic(ode_rk54 ode_rk54.ref)
-
+test_generic(TensorialExternalStateVariableTest)

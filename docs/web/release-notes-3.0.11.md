@@ -20,7 +20,11 @@ eqnPrefixTemplate: "($$i$$)"
 
 # Issues fixed
 
-## [TFELMath] Fix support for negation of tensors based on quantitites
+## Issue #29: [TFELMath] Fix definition of reference in DifferenceRandomAccessIterator
+
+For more details, see <https://github.com/thelfer/tfel/issues/21>.
+
+## Issue #21: [TFELMath] Fix support for negation of tensors based on quantitites
 
 The following code did not compile:
 

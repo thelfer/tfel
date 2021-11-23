@@ -61,9 +61,13 @@ namespace mfront {
     this->finalizeArgumentsParsing();
     // registring interfaces
     if (!this->interfaces.empty()) {
-      dsl->setInterfaces(this->interfaces);
+      this->dsl->setInterfaces(this->interfaces);
     }
-  }  // end of MaterialPropertyQuery::MaterialPropertyQuery
+  }  // end of MaterialPropertyQuery
+
+  std::shared_ptr<const AbstractDSL> MaterialPropertyQuery::getDSL() const {
+    return this->dsl;
+  }  // end of getDSL
 
   void MaterialPropertyQuery::registerCommandLineCallBacks() {
     using Parser = tfel::utilities::ArgumentParserBase<MaterialPropertyQuery>;
@@ -136,7 +140,7 @@ namespace mfront {
         "display the default value of a parameter", true);
     Parser::registerNewCallBack("--generated-sources",
                                 &MaterialPropertyQuery::treatGeneratedSources,
-                                "show all the generated sources");
+                                "show all the generated sources", true);
     Parser::registerNewCallBack("--generated-headers",
                                 &MaterialPropertyQuery::treatGeneratedHeaders,
                                 "show all the generated headers");
@@ -150,7 +154,7 @@ namespace mfront {
     Parser::registerNewCallBack("--specific-targets",
                                 &MaterialPropertyQuery::treatSpecificTargets,
                                 "show all the specific targets");
-  }  // end of MaterialPropertyQuery::registerCommandLineCallBacks
+  }  // end of registerCommandLineCallBacks
 
   void MaterialPropertyQuery::treatParameterDefaultValue() {
     const auto& q = this->getCurrentCommandLineArgument();
@@ -178,7 +182,7 @@ namespace mfront {
                p->getAttribute<double>(VariableDescription::defaultValue);
            std::cout << pv << '\n';
          }});
-  }  // end of MaterialPropertyQuery::treatParameterDefaultValue
+  }  // end of treatParameterDefaultValue
 
   void MaterialPropertyQuery::treatStandardQuery() {
     using namespace std;
@@ -243,79 +247,43 @@ namespace mfront {
           "unsupported query '" +
           qn + "'");
     }
-  }  // end of MaterialPropertyQuery::treatStandardQuery
+  }  // end of treatStandardQuery
 
   void MaterialPropertyQuery::treatGeneratedSources() {
-    auto ldsl = this->dsl;
-    auto q = [ldsl](const FileDescription&,
-                    const MaterialPropertyDescription&) {
-      for (const auto& l : ldsl->getTargetsDescription().libraries) {
-        std::cout << l.name << " : ";  //< library
-        std::copy(std::begin(l.sources), std::end(l.sources),
-                  std::ostream_iterator<std::string>(std::cout, " "));
-        std::cout << std::endl;
-      }
-    };
-    this->queries.push_back({"generated-sources", q});
-  }  // end of MaterialPropertyQuery::treatGeneratedSources
+    auto q = this->generateGeneratedSourcesQuery(
+        this->getCurrentCommandLineArgument().getOption());
+    this->queries.push_back(
+        {"generated-sources",
+         [q](const FileDescription&, const MaterialPropertyDescription&) { q(); }});
+  }  // end of treatGeneratedSources
 
   void MaterialPropertyQuery::treatGeneratedHeaders() {
-    auto ldsl = this->dsl;
-    auto q = [ldsl](const FileDescription&,
-                    const MaterialPropertyDescription&) {
-      const auto headers = ldsl->getTargetsDescription().headers;
-      std::copy(std::begin(headers), std::end(headers),
-                std::ostream_iterator<std::string>(std::cout, " "));
-      std::cout << std::endl;
-    };
-    this->queries.push_back({"generated-headers", q});
-  }  // end of MaterialPropertyQuery::treatGeneratedHeaders
+    auto q = this->generateGeneratedHeadersQuery();
+    this->queries.push_back({"generated-headers",
+                             [q](const FileDescription&,
+                                 const MaterialPropertyDescription&) { q(); }});
+  }  // end of treatGeneratedHeaders
 
   void MaterialPropertyQuery::treatCppFlags() {
-    auto ldsl = this->dsl;
-    auto q = [ldsl](const FileDescription&,
-                    const MaterialPropertyDescription&) {
-      for (const auto& l : ldsl->getTargetsDescription().libraries) {
-        std::cout << l.name << " : ";
-        std::copy(std::begin(l.cppflags), std::end(l.cppflags),
-                  std::ostream_iterator<std::string>(std::cout, " "));
-        std::cout << std::endl;
-      }
-    };
-    this->queries.push_back({"cppflags", q});
-  }  // end of MaterialPropertyQuery::treatCppFlags
+    auto q = this->generateCppFlagsQuery();
+    this->queries.push_back(
+        {"cppflags", [q](const FileDescription&,
+                         const MaterialPropertyDescription&) { q(); }});
+  }  // end of treatCppFlags
 
   void MaterialPropertyQuery::treatLibrariesDependencies() {
-    auto ldsl = this->dsl;
-    auto q = [ldsl](const FileDescription&,
-                    const MaterialPropertyDescription&) {
-      for (const auto& l : ldsl->getTargetsDescription().libraries) {
-        std::cout << l.name << ": ";
-        std::copy(std::begin(l.ldflags), std::end(l.ldflags),
-                  std::ostream_iterator<std::string>(std::cout, " "));
-        std::cout << std::endl;
-      }
-    };
-    this->queries.push_back({"libraries-dependencies", q});
-  }  // end of MaterialPropertyQuery::treatLibrariesDependencies
+    auto q = this->generateLibrariesDependenciesQuery();
+    this->queries.push_back({"libraries-dependencies",
+                             [q](const FileDescription&,
+                                 const MaterialPropertyDescription&) { q(); }});
+  }  // end of treatLibrariesDependencies
 
   void MaterialPropertyQuery::treatSpecificTargets() {
-    auto ldsl = this->dsl;
-    auto l = [ldsl](const FileDescription&,
-                    const MaterialPropertyDescription&) {
-      const auto targets = ldsl->getTargetsDescription().specific_targets;
-      for (const auto& t : targets) {
-        std::cout << t.first << " : ";
-        std::copy(std::begin(t.second.deps), std::end(t.second.deps),
-                  std::ostream_iterator<std::string>(std::cout, " "));
-        std::cout << std::endl << "> rule : ";
-        std::copy(std::begin(t.second.cmds), std::end(t.second.cmds),
-                  std::ostream_iterator<std::string>(std::cout, "\n> rule : "));
-        std::cout << std::endl;
-      }
-    };
-    this->queries.push_back({"specific-targets", l});
-  }  // end of MaterialPropertyQuery::treatSpecificTargets
+    auto q = this->generateSpecificTargetsQuery();
+    this->queries.push_back(
+        {"specific-targets", [q](const FileDescription&,
+                                 const MaterialPropertyDescription&) { q(); }});
+  }  // end of treatSpecificTargets
 
   void MaterialPropertyQuery::exe() {
     if (getVerboseMode() >= VERBOSE_LEVEL2) {
@@ -332,7 +300,7 @@ namespace mfront {
       }
       q.second(fd, d);
     }
-  }  // end of MaterialPropertyQuery::exe
+  }  // end of exe
 
   const tfel::utilities::Argument&
   MaterialPropertyQuery::getCurrentCommandLineArgument() const {

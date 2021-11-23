@@ -40,7 +40,7 @@ endif(TFEL_APPEND_SUFFIX)
 install(TARGETS tfel-check DESTINATION bin
   COMPONENT core)
 
-if(HAVE_MADNEX)
+if(TFEL_HAVE_MADNEX)
   target_compile_definitions(tfel-check
-    PUBLIC TFEL_MADNEX)
-endif(HAVE_MADNEX)
+    PUBLIC TFEL_HAVE_MADNEX)
+endif(TFEL_HAVE_MADNEX)

@@ -1276,6 +1276,20 @@ namespace mfront {
     const auto& persistentVarsHolder = d.getPersistentVariables();
     const auto& externalStateVarsHolder = d.getExternalStateVariables();
     const auto mprops = this->buildMaterialPropertiesList(bd, h);
+    auto as_string = [](const SupportedTypes::TypeFlag& f) {
+      if (f == SupportedTypes::SCALAR) {
+        return "SupportedTypes::SCALAR";
+      } else if (f == SupportedTypes::TVECTOR) {
+        return "SupportedTypes::TVECTOR";
+      } else if (f == SupportedTypes::STENSOR) {
+        return "SupportedTypes::STENSOR";
+      } else if (f == SupportedTypes::TENSOR) {
+        return "SupportedTypes::TENSOR";
+      }
+      tfel::raise(
+          "GenericBehaviourInterface::generateMTestFile: "
+          "unsupported type flag");
+    };
     const auto fs = [&bd] {
       if (bd.getBehaviourType() ==
           BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) {
@@ -1358,117 +1372,61 @@ namespace mfront {
       auto flag = SupportedTypes::getTypeFlag(v.type);
       const auto& ivname = d.getExternalName(v.name);
       if (v.arraySize == 1u) {
-        if (flag == SupportedTypes::SCALAR) {
-          out << "mg.addInternalStateVariable(\"" << ivname
-              << "\",SupportedTypes::SCALAR,&(d->s0.internal_state_variables["
-              << ivoffset << "]));\n";
-          ivoffset += SupportedTypes::TypeSize(SupportedTypes::SCALAR);
-        } else {
-          out << "mg.addInternalStateVariable(\"" << ivname
-              << "\",SupportedTypes::STENSOR,&(d->s0.internal_state_variables["
-              << ivoffset << "]));\n";
-          ivoffset += SupportedTypes::TypeSize(SupportedTypes::STENSOR);
-        }
+          out << "mg.addInternalStateVariable(\"" << ivname << "\","
+              << as_string(flag) << ","
+              << "&(d->s0.internal_state_variables[" << ivoffset << "]));\n";
+          ivoffset += SupportedTypes::TypeSize(flag);
       } else {
         if (v.arraySize >= SupportedTypes::ArraySizeLimit) {
           out << "for(unsigned short i=0;i!=" << v.arraySize << ";++i){\n";
           out << "auto name =  \"" << ivname
               << "[\" + std::to_string(i)+ \"]\";\n";
-          if (flag == SupportedTypes::SCALAR) {
-            out << "mg.addInternalStateVariable(name,SupportedTypes::SCALAR,&"
-                   "d->s0.internal_state_variables["
-                << ivoffset << "]+i);\n";
-          } else {
-            out << "mg.addInternalStateVariable(name,SupportedTypes::STENSOR,"
-                   "&"
-                   "d->s0.internal_state_variables["
-                << ivoffset << "]+i);\n";
-          }
+          out << "mg.addInternalStateVariable(name," << as_string(flag)
+              << ",&d->s0.internal_state_variables[" << ivoffset << "]+i);\n";
           out << "}\n";
-          if (flag == SupportedTypes::SCALAR) {
-            ivoffset +=
-                SupportedTypes::TypeSize(v.arraySize, SupportedTypes::SCALAR);
-          } else {
-            ivoffset +=
-                SupportedTypes::TypeSize(v.arraySize, SupportedTypes::STENSOR);
-          }
+          ivoffset += SupportedTypes::TypeSize(v.arraySize, flag);
         } else {
           for (unsigned short i = 0; i != v.arraySize; ++i) {
-            if (flag == SupportedTypes::SCALAR) {
-              out << "mg.addInternalStateVariable(\"" << ivname << "[" << i
-                  << "]\",SupportedTypes::SCALAR,&(d->s0.internal_state_"
-                     "variables["
-                  << ivoffset << "]));\n";
-              ivoffset += SupportedTypes::TypeSize(SupportedTypes::SCALAR);
-            } else {
-              out << "mg.addInternalStateVariable(\"" << ivname << "[" << i
-                  << "]\",SupportedTypes::STENSOR,&(d->s0.internal_state_"
-                     "variables["
-                  << ivoffset << "]));\n";
-              ivoffset += SupportedTypes::TypeSize(SupportedTypes::STENSOR);
-            }
+            out << "mg.addInternalStateVariable(\"" << ivname << "[" << i
+                << "]\"," << as_string(flag)
+                << ",&(d->s0.internal_state_variables[" << ivoffset << "]));\n";
+            ivoffset += SupportedTypes::TypeSize(flag);
           }
         }
       }
     }
-    auto p = externalStateVarsHolder.begin();
-    for (offset = 0; p != externalStateVarsHolder.end(); ++p) {
-      auto flag = SupportedTypes::getTypeFlag(p->type);
-      tfel::raise_if(flag != SupportedTypes::SCALAR,
-                     "GenericBehaviourInterface::generateMTestFile: "
-                     "unsupported external state variable type "
-                     "in mtest file generation");
-      const auto& evname = d.getExternalName(p->name);
-      if (p->arraySize == 1u) {
-        if (offset == 0) {
-          out << "mg.addExternalStateVariableValue(\"" << evname
-              << "\",0,*(d->s0.external_state_variables));\n"
-              << "mg.addExternalStateVariableValue(\"" << evname
-              << "\",dt,*(d->s1.external_state_variables));\n";
-        } else {
-          out << "mg.addExternalStateVariableValue(\"" << evname
-              << "\",0,*(d->s0.external_state_variables+" << offset << "));\n"
-              << "mg.addExternalStateVariableValue(\"" << evname
-              << "\",dt,*(d->s1.external_state_variables+" << offset << "));\n";
-        }
-        ++offset;
+    SupportedTypes::TypeSize evoffset;
+    for (const auto& ev : externalStateVarsHolder) {
+      auto flag = SupportedTypes::getTypeFlag(ev.type);
+      const auto& evname = d.getExternalName(ev.name);
+      if (ev.arraySize == 1u) {
+        out << "mg.addExternalStateVariable(\"" << evname << "\","
+            << as_string(flag) << ", "
+            << "0,d->s0.external_state_variables + " << evoffset << ", "
+            << "dt,d->s1.external_state_variables + " << evoffset << ", "
+            << "false);\n";
+        evoffset += SupportedTypes::TypeSize(flag);
       } else {
-        if (p->arraySize >= SupportedTypes::ArraySizeLimit) {
-          out << "for(unsigned short i=0;i!=" << p->arraySize << ";++i){\n";
-          out << "auto name = \"" << evname
+        if (ev.arraySize >= SupportedTypes::ArraySizeLimit) {
+          out << "for(unsigned short i=0;i!=" << ev.arraySize << ";++i){\n";
+          out << "const auto name = \"" << evname
               << "[\" +std::to_string(i)+\"]\";\n";
-          if (offset == 0) {
-            out << "mg.addExternalStateVariableValue(name,0,*(d->s0.external_"
-                   "state_variables+i));\n"
-                   "mg.addExternalStateVariableValue(name,dt,*(d->s1."
-                   "external_state_variables+i));\n";
-          } else {
-            out << "mg.addExternalStateVariableValue(name,"
-                   "0,*(d->s0.external_state_variables+"
-                << offset << "+i));\n";
-            out << "mg.addExternalStateVariableValue(name,"
-                   "dt,*(d->s1.external_state_variables+"
-                << offset << "+i));\n";
-          }
+          out << "mg.addExternalStateVariable(name, "  //
+              << as_string(flag) << ", "
+              << "0,d->s0.external_state_variables + " << evoffset << " + i, "
+              << "dt, d->s1.external_state_variables + " << evoffset << " + i, "
+              << "false);\n";
           out << "}\n";
-          offset += p->arraySize;
+          evoffset += SupportedTypes::TypeSize(ev.arraySize, flag);
         } else {
-          for (unsigned short i = 0; i != p->arraySize; ++i, ++offset) {
-            if (offset == 0) {
-              out << "mg.addExternalStateVariableValue(\"" << evname << "[" << i
-                  << "]\",0,*(d->s0.external_state_variables));\n"
-                  << "mg.addExternalStateVariableValue(\"" << evname << "[" << i
-                  << "]\",dt,*(d->s1.external_state_variables));\n";
-            } else {
-              out << "mg.addExternalStateVariableValue(\"" << evname << "[" << i
-                  << "]\","
-                     "0,*(d->s0.external_state_variables+"
-                  << offset << "));\n"
-                  << "mg.addExternalStateVariableValue(\"" << evname << "[" << i
-                  << "]\","
-                     "dt,*(d->s1.external_state_variables+"
-                  << offset << "))\n";
-            }
+          for (unsigned short i = 0; i != ev.arraySize; ++i) {
+            out << "mg.addExternalStateVariable("
+                << "\"" << evname << "[" << i << "]\", "  //
+                << as_string(flag) << ", "
+                << "0, d->s0.external_state_variables + " << evoffset << ", "
+                << "dt, d->s1.external_state_variables + " << evoffset << ", "
+                << "false);\n";
+            evoffset += SupportedTypes::TypeSize(flag);
           }
         }
       }
@@ -1681,18 +1639,14 @@ namespace mfront {
         } else {
           os << v.name << "(" << src << "[" << eo << "+" << o << "])";
         }
-      } else if ((flag == SupportedTypes::TVECTOR) ||
-                 (flag == SupportedTypes::STENSOR) ||
-                 (flag == SupportedTypes::TENSOR)) {
-        if (eo.empty()) {
-          os << v.name << "(&" << src << "[" << o << "])";
-        } else {
-          os << v.name << "(&" << src << "[" << eo << " " << o << "])";
-        }
       } else {
-        tfel::raise(
-            "GenericBehaviourInterface::writeBehaviourDataConstructor: "
-            "internal error, tag unsupported");
+        if (eo.empty()) {
+          os << v.name << "(tfel::math::map<" << v.type << ">(" << src << " + "
+             << o << "))";
+        } else {
+          os << v.name << "(tfel::math::map<" << v.type << ">(" << src << " + "
+             << eo << " " << o << "))";
+        }
       }
       first = false;
     };  // end of wvi
@@ -1725,57 +1679,25 @@ namespace mfront {
       const auto flag = SupportedTypes::getTypeFlag(v.type);
       if (bd.useDynamicallyAllocatedVector(v.arraySize)) {
         os << "this->" << v.name << ".resize(" << v.arraySize << ");\n";
-        os << "for(unsigned short idx=0;idx!=" << v.arraySize << ";++idx){\n";
-        switch (flag) {
-          case SupportedTypes::SCALAR:
-            os << "this->" << v.name << "[idx] = " << src << "["
-               << get_offset(o) << "+idx];\n";
-            break;
-          case SupportedTypes::TVECTOR:
-            os << "tfel::fsalgo::copy<TVectorSize>::exe(&" << src << "["
-               << get_offset(o) << "+idx*TVectorSize],this->" << v.name
-               << "[idx].begin());\n";
-            break;
-          case SupportedTypes::STENSOR:
-            os << "this->" << v.name << "[idx].import(&" << src << "["
-               << get_offset(o) << "+idx*StensorSize]);\n";
-            break;
-          case SupportedTypes::TENSOR:
-            os << "tfel::fsalgo::copy<TensorSize>::exe(&" << src << "["
-               << get_offset(o) << "+idx*TensorSize],this->" << v.name
-               << "[idx].begin());\n";
-            break;
-          default:
-            tfel::raise(
-                "GenericBehaviourInterface::writeBehaviourDataConstructor: "
-                "internal error, tag unsupported");
+        os << "for(unsigned short idx=0; idx != " << v.arraySize
+           << "; ++idx){\n";
+        if (flag == SupportedTypes::SCALAR) {
+          os << "this->" << v.name << "[idx] = " << src << "[" << get_offset(o)
+             << "+idx];\n";
+        } else {
+          os << "this->" << v.name << "[idx] = tfel::math::map<" << v.type
+             << ">(" << src << " + " << get_offset(o) << "+idx * "
+             << SupportedTypes::getTypeSize(v.type, 1u) << ");\n";
         }
         os << "}\n";
       } else {
-        for (int index = 0; index != v.arraySize; ++index) {
-          switch (flag) {
-            case SupportedTypes::SCALAR:
-              os << "this->" << v.name << "[" << index << "] = " << src << "["
-                 << get_offset(o) << "];\n";
-              break;
-            case SupportedTypes::TVECTOR:
-              os << "tfel::fsalgo::copy<TVectorSize>::exe(&" << src << "["
-                 << get_offset(o) << "],this->" << v.name << "[" << index
-                 << "].begin());\n";
-              break;
-            case SupportedTypes::STENSOR:
-              os << "this->" << v.name << "[" << index << "].import(&" << src
-                 << "[" << get_offset(o) << "]);\n";
-              break;
-            case SupportedTypes::TENSOR:
-              os << "tfel::fsalgo::copy<TensorSize>::exe(&" << src << "["
-                 << get_offset(o) << "],"
-                 << "this->" << v.name << "[" << index << "].begin());\n";
-              break;
-            default:
-              tfel::raise(
-                  "GenericBehaviourInterface::writeBehaviourDataConstructor: "
-                  "internal error, tag unsupported");
+        for (unsigned short index = 0; index != v.arraySize; ++index) {
+          if (flag == SupportedTypes::SCALAR) {
+            os << "this->" << v.name << "[" << index << "] = " << src << "["
+               << get_offset(o) << "];\n";
+          } else {
+            os << "this->" << v.name << "[" << index << "] = tfel::math::map<"
+               << v.type << ">(" << src << " + " << get_offset(o) << ");\n";
           }
           o += SupportedTypes::getTypeSize(v.type, 1u);
         }
@@ -1958,14 +1880,10 @@ namespace mfront {
        << ": dt(mgb_d.dt)";
     auto o = SupportedTypes::TypeSize{};
     for (const auto& ev : evs) {
-      if (ev.arraySize != 1u) {
+      if ((ev.arraySize != 1u) ||
+          (SupportedTypes::getTypeFlag(ev.type) != SupportedTypes::SCALAR)) {
         o += this->getTypeSize(ev.type, ev.arraySize);
         continue;
-      }
-      if (SupportedTypes::getTypeFlag(ev.type) != SupportedTypes::SCALAR) {
-        tfel::raise(
-            "GenericBehaviourInterface::writeIntegrationDataConstructor: "
-            "internal error, tag unsupported");
       }
       os << ",\nd" << ev.name << "(mgb_d.s1.external_state_variables[" << o
          << "]-"
@@ -1975,29 +1893,42 @@ namespace mfront {
     os << "\n{\n";
     o = SupportedTypes::TypeSize{};
     for (const auto& ev : evs) {
-      if (ev.arraySize == 1u) {
+      if ((ev.arraySize == 1u) &&
+          (SupportedTypes::getTypeFlag(ev.type) == SupportedTypes::SCALAR)) {
         o += this->getTypeSize(ev.type, ev.arraySize);
         continue;
       }
-      if (SupportedTypes::getTypeFlag(ev.type) != SupportedTypes::SCALAR) {
-        tfel::raise(
-            "GenericBehaviourInterface::writeIntegrationDataConstructor: "
-            "internal error, tag unsupported");
-      }
-      if (bd.useDynamicallyAllocatedVector(ev.arraySize)) {
-        os << "this->d" << ev.name << ".resize(" << ev.arraySize << ");\n";
-        os << "for(unsigned short idx=0;idx!=" << ev.arraySize << ";++idx){\n";
-        os << "this->d" << ev.name << "[idx] = "
-           << "mgb_d.s1.external_state_variables[" << o << "+idx] - "
-           << "mgb_d.s0.external_state_variables[" << o << "+idx];\n";
-        os << "}\n";
+      if (ev.arraySize == 1u) {
+        os << "this->d" << ev.name << " = "
+           << "tfel::math::map<" << ev.type
+           << ">(mgb_d.s1.external_state_variables + " << o << ")"
+           << " - tfel::math::map<" << ev.type
+           << ">(mgb_d.s0.external_state_variables + " << o << ");\n";
         o += this->getTypeSize(ev.type, ev.arraySize);
       } else {
-        for (int index = 0; index != ev.arraySize; ++index) {
-          os << "this->d" << ev.name << "[" << index << "] = "
-             << "mgb_d.s1.external_state_variables[" << o << "] - "
-             << "mgb_d.s0.external_state_variables[" << o << "];\n";
-          o += SupportedTypes::getTypeSize(ev.type, 1u);
+        if (bd.useDynamicallyAllocatedVector(ev.arraySize)) {
+          const auto s = this->getTypeSize(ev.type, 1u);
+          os << "this->d" << ev.name << ".resize(" << ev.arraySize << ");\n";
+          os << "for(unsigned short idx=0; idx != " << ev.arraySize
+             << "; ++idx){\n";
+          os << "this->d" << ev.name << "[idx] = "
+             << "tfel::math::map<" << ev.type
+             << ">(mgb_d.s1.external_state_variables + " << o << " + idx * "
+             << s << ")"
+             << " - tfel::math::map<" << ev.type
+             << ">(mgb_d.s0.external_state_variables + " << o << " + idx * "
+             << s << ");\n";
+          os << "}\n";
+          o += this->getTypeSize(ev.type, ev.arraySize);
+        } else {
+          for (int index = 0; index != ev.arraySize; ++index) {
+            os << "this->d" << ev.name << "[" << index << "] = "
+               << "tfel::math::map<" << ev.type
+               << ">(mgb_d.s1.external_state_variables + " << o << ") - "
+               << "tfel::math::map<" << ev.type
+               << ">(mgb_d.s0.external_state_variables + " << o << ");\n";
+            o += SupportedTypes::getTypeSize(ev.type, 1u);
+          }
         }
       }
     }
@@ -2016,19 +1947,6 @@ namespace mfront {
       std::ostream& os,
       const Hypothesis h,
       const BehaviourDescription& bd) const {
-    auto vsize = [](const SupportedTypes::TypeFlag f) {
-      if (f == SupportedTypes::TVECTOR) {
-        return "TVectorSize";
-      } else if (f == SupportedTypes::STENSOR) {
-        return "StensorSize";
-      } else if (f != SupportedTypes::TENSOR) {
-        tfel::raise(
-            "GenericBehaviourInterface::writeBehaviourDataMainVariablesSetters:"
-            " "
-            "invalid variable type");
-      }
-      return "TensorSize";
-    };
     auto export_variable = [this, &bd, &os](const VariableDescription& v,
                                             const char* const dest,
                                             const SupportedTypes::TypeSize o) {

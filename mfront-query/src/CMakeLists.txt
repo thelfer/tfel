@@ -1,5 +1,6 @@
 # mfront-query
 add_executable(mfront-query mfront-query.cxx
+  QueryHandlerBase.cxx
   MaterialPropertyQuery.cxx
   BehaviourQuery.cxx
   ModelQuery.cxx)
@@ -14,12 +15,12 @@ if(TFEL_APPEND_SUFFIX)
     PROPERTIES OUTPUT_NAME "mfront-query-${TFEL_SUFFIX}")
 endif(TFEL_APPEND_SUFFIX)
 
-if(HAVE_MADNEX)
+if(TFEL_HAVE_MADNEX)
   target_compile_definitions(mfront-query
     PUBLIC MFRONT_QUERY_HAVE_MADNEX)
   target_link_libraries(mfront-query
     PRIVATE madnex::Madnex)
-endif(HAVE_MADNEX)
+endif(TFEL_HAVE_MADNEX)
 
 install(TARGETS mfront-query DESTINATION bin
   COMPONENT mfront)

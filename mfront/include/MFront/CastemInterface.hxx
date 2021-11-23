@@ -100,6 +100,12 @@ namespace mfront {
 
     static std::string treatScalar(const std::string &, const unsigned short);
 
+    static std::string treatTVector(const Hypothesis, const std::string &);
+
+    static std::string treatTVector(const Hypothesis,
+                                    const std::string &,
+                                    const unsigned short);
+
     static std::string treatStensor(const Hypothesis, const std::string &);
 
     static std::string treatStensor(const Hypothesis,

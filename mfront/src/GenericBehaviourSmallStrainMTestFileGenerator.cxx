@@ -28,8 +28,7 @@ namespace mfront {
     std::fill(this->eto0, this->eto0 + 6, 0.);
     std::fill(this->eto1, this->eto1 + 6, 0.);
     std::fill(this->stress, this->stress + 6, 0.);
-  }  // end of
-     // GenericBehaviourSmallStrainMTestFileGenerator::GenericBehaviourSmallStrainMTestFileGenerator
+  }  // end of GenericBehaviourSmallStrainMTestFileGenerator
 
   void GenericBehaviourSmallStrainMTestFileGenerator::writeBehaviourDeclaration(
       std::ostream& os) const {
@@ -40,25 +39,22 @@ namespace mfront {
     os << "@Behaviour<generic> '" << this->library << ".so' '"
        << this->behaviour << "';" << std::endl;
 #endif
-  }  // end of
-     // GenericBehaviourSmallStrainMTestFileGenerator::writeBehaviourDeclaration
+  }  // end of writeBehaviourDeclaration
 
   void GenericBehaviourSmallStrainMTestFileGenerator::
       setStrainTensorAtTheBeginningOfTheTimeStep(const double* const e) {
     std::copy(e, e + this->getStensorSize(), this->eto0);
-  }  // end of
-     // GenericBehaviourSmallStrainMTestFileGenerator::setStrainTensorAtTheBeginningOfTheTimeStep
+  }  // end of setStrainTensorAtTheBeginningOfTheTimeStep
 
   void GenericBehaviourSmallStrainMTestFileGenerator::
       setStrainTensorAtTheEndOfTheTimeStep(const double* const e) {
     std::copy(e, e + this->getStensorSize(), this->eto1);
-  }  // end of
-     // GenericBehaviourSmallStrainMTestFileGenerator::setStrainTensorAtTheEndOfTheTimeStep
+  }  // end of setStrainTensorAtTheEndOfTheTimeStep
 
   void GenericBehaviourSmallStrainMTestFileGenerator::setStressTensor(
       const double* const s) {
     std::copy(s, s + this->getStensorSize(), this->stress);
-  }  // end of GenericBehaviourSmallStrainMTestFileGenerator::setStressTensor
+  }  // end of setStressTensor
 
   void GenericBehaviourSmallStrainMTestFileGenerator::writeGradients(
       std::ostream& os) const {
@@ -99,7 +95,7 @@ namespace mfront {
       }
     }
     os << '\n';
-  }  // end of GenericBehaviourSmallStrainMTestFileGenerator::writeGradients
+  }  // end of writeGradients
 
   GenericBehaviourSmallStrainMTestFileGenerator::
       ~GenericBehaviourSmallStrainMTestFileGenerator() = default;

@@ -158,6 +158,7 @@ namespace mtest {
     }
     evnames.insert(evnames.begin(), "Temperature");
     md.evnames = evnames;
+    md.evtypes = std::vector<int>(evnames.size(), 0);
     std::shared_ptr<Behaviour> ptr;
     if (t == 1u) {
       ptr = std::make_shared<CastemUmatSmallStrainBehaviour>(md, mname);

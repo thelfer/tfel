@@ -45,9 +45,12 @@ namespace mtest {
   //! \brief A class to handle standard mechanical behaviours
   struct StandardBehaviourBase : public Behaviour,
                                  public StandardBehaviourDescription {
-    static std::vector<std::string> getStensorComponentsSuffixes(const Hypothesis);
-    static std::vector<std::string> getVectorComponentsSuffixes(const Hypothesis);
-    static std::vector<std::string> getTensorComponentsSuffixes(const Hypothesis);
+    static std::vector<std::string> getStensorComponentsSuffixes(
+        const Hypothesis);
+    static std::vector<std::string> getVectorComponentsSuffixes(
+        const Hypothesis);
+    static std::vector<std::string> getTensorComponentsSuffixes(
+        const Hypothesis);
     /*!
      * \param[in] h : modelling hypothesis
      * \param[in] l : library name
@@ -91,6 +94,11 @@ namespace mtest {
         const std::string&) const override;
     std::vector<std::string> getExternalStateVariablesNames() const override;
     size_t getExternalStateVariablesSize() const override;
+    std::vector<std::string> expandExternalStateVariablesNames() const override;
+    unsigned short getExternalStateVariableType(
+        const std::string&) const override;
+    unsigned short getExternalStateVariablePosition(
+        const std::string&) const override;
     std::vector<std::string> getParametersNames() const override;
     std::vector<std::string> getIntegerParametersNames() const override;
     std::vector<std::string> getUnsignedShortParametersNames() const override;

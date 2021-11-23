@@ -1057,6 +1057,20 @@ namespace mfront {
       const std::string& name,
       const std::string& suffix,
       const Hypothesis h) const {
+    auto as_string = [](const SupportedTypes::TypeFlag& f) {
+      if (f == SupportedTypes::SCALAR) {
+        return "SupportedTypes::SCALAR";
+      } else if (f == SupportedTypes::TVECTOR) {
+        return "SupportedTypes::TVECTOR";
+      } else if (f == SupportedTypes::STENSOR) {
+        return "SupportedTypes::STENSOR";
+      } else if (f == SupportedTypes::TENSOR) {
+        return "SupportedTypes::TENSOR";
+      }
+      tfel::raise(
+          "GenericBehaviourInterface::generateMTestFile: "
+          "unsupported type flag");
+    };
     const auto& d = bd.getBehaviourData(h);
     const auto& persistentVarsHolder = d.getPersistentVariables();
     const auto& externalStateVarsHolder = d.getExternalStateVariables();
@@ -1109,7 +1123,7 @@ namespace mfront {
       auto flag = SupportedTypes::getTypeFlag(m.type);
       tfel::raise_if(flag != SupportedTypes::SCALAR,
                      "UMATInterfaceBase::generateFile2: "
-                     "unsupported external state variable type "
+                     "unsupported material property type "
                      "in mtest file generation");
       if (m.arraySize == 1u) {
         if (offset == 0) {
@@ -1136,118 +1150,63 @@ namespace mfront {
       auto flag = SupportedTypes::getTypeFlag(v.type);
       const auto& ivname = d.getExternalName(v.name);
       if (v.arraySize == 1u) {
-        if (flag == SupportedTypes::SCALAR) {
-          out << "mg.addInternalStateVariable(\"" << ivname
-              << "\",SupportedTypes::SCALAR,&mg_STATEV[" << ivoffset << "]);\n";
-          ivoffset += SupportedTypes::TypeSize(SupportedTypes::SCALAR);
-        } else {
-          out << "mg.addInternalStateVariable(\"" << ivname
-              << "\",SupportedTypes::STENSOR,&mg_STATEV[" << ivoffset
-              << "]);\n";
-          ivoffset += SupportedTypes::TypeSize(SupportedTypes::STENSOR);
-        }
+        out << "mg.addInternalStateVariable(\"" << ivname << "\" , "
+            << as_string(flag) << ", "  //
+            << "mg_STATEV.data() + " << ivoffset << ");\n";
+        ivoffset += SupportedTypes::TypeSize(flag);
       } else {
         if (v.arraySize >= SupportedTypes::ArraySizeLimit) {
-          out << "for(unsigned short i=0;i!=" << v.arraySize << ";++i){\n";
+          out << "for(unsigned short i=0; i!= " << v.arraySize << "; ++i){\n";
           out << "auto name =  \"" << ivname
               << "[\" + std::to_string(i)+ \"]\";\n";
-          if (flag == SupportedTypes::SCALAR) {
-            out << "mg.addInternalStateVariable(name,SupportedTypes::SCALAR,&"
-                   "mg_STATEV["
-                << ivoffset << "]+i);\n";
-          } else {
-            out << "mg.addInternalStateVariable(name,SupportedTypes::STENSOR,"
-                   "&"
-                   "mg_STATEV["
-                << ivoffset << "]+i);\n";
-          }
+          out << "mg.addInternalStateVariable(name, "  //
+              << as_string(flag) << ", "               //
+              << "mg_STATEV.data() + " << ivoffset << " + i);\n";
           out << "}\n";
-          if (flag == SupportedTypes::SCALAR) {
-            ivoffset +=
-                SupportedTypes::TypeSize(v.arraySize, SupportedTypes::SCALAR);
-          } else {
-            ivoffset +=
-                SupportedTypes::TypeSize(v.arraySize, SupportedTypes::STENSOR);
-          }
+          ivoffset += SupportedTypes::TypeSize(v.arraySize, flag);
         } else {
           for (unsigned short i = 0; i != v.arraySize; ++i) {
-            if (flag == SupportedTypes::SCALAR) {
-              out << "mg.addInternalStateVariable(\"" << ivname << "[" << i
-                  << "]\",SupportedTypes::SCALAR,&mg_STATEV[" << ivoffset
-                  << "]);\n";
-              ivoffset += SupportedTypes::TypeSize(SupportedTypes::SCALAR);
-            } else {
-              out << "mg.addInternalStateVariable(\"" << ivname << "[" << i
-                  << "]\",SupportedTypes::STENSOR,&mg_STATEV[" << ivoffset
-                  << "]);\n";
-              ivoffset += SupportedTypes::TypeSize(SupportedTypes::STENSOR);
-            }
+            out << "mg.addInternalStateVariable("
+                << "\"" << ivname << "[" << i << "]\", "  //
+                << as_string(flag) << ", " //
+                << "mg_STATEV.data() + " << ivoffset << ");\n";
+            ivoffset += SupportedTypes::TypeSize(flag);
           }
         }
       }
     }
-    out << "mg.addExternalStateVariableValue(\"Temperature\",0.,*TEMP);\n";
-    out << "mg.addExternalStateVariableValue(\"Temperature\",dt,*TEMP+*DTEMP)"
-           ";"
-           "\n";
-    auto p = std::next(externalStateVarsHolder.begin());
-    for (offset = 0; p != externalStateVarsHolder.end(); ++p) {
+    out << "mg.addExternalStateVariable(\"Temperature\", "
+        << as_string(SupportedTypes::SCALAR)
+        << ", 0., TEMP, dt, DTEMP, true);\n";
+    SupportedTypes::TypeSize evoffset;
+    for (auto p = std::next(externalStateVarsHolder.begin());
+         p != externalStateVarsHolder.end(); ++p) {
       auto flag = SupportedTypes::getTypeFlag(p->type);
-      tfel::raise_if(flag != SupportedTypes::SCALAR,
-                     "UMATInterfaceBase::generateFile2: "
-                     "unsupported external state variable type "
-                     "in mtest file generation");
       const auto& evname = d.getExternalName(p->name);
       if (p->arraySize == 1u) {
-        if (offset == 0) {
-          out << "mg.addExternalStateVariableValue(\"" << evname
-              << "\",0,*PREDEF);\n";
-          out << "mg.addExternalStateVariableValue(\"" << evname
-              << "\",dt,*PREDEF+*DPRED);\n";
-        } else {
-          out << "mg.addExternalStateVariableValue(\"" << evname
-              << "\",0,*(PREDEF+" << offset << "));\n";
-          out << "mg.addExternalStateVariableValue(\"" << evname
-              << "\",dt,*(PREDEF+" << offset << ")+*(DPRED+" << offset
-              << "));\n";
-        }
-        ++offset;
+        out << "mg.addExternalStateVariable(\"" << evname << "\", "
+            << as_string(flag) << ", "
+            << "0, PREDEF+" << evoffset << ", "
+            << "dt, DPRED+" << evoffset << ", true);\n";
+        evoffset += SupportedTypes::TypeSize(flag);
       } else {
         if (p->arraySize >= SupportedTypes::ArraySizeLimit) {
           out << "for(unsigned short i=0;i!=" << p->arraySize << ";++i){\n";
-          out << "auto name = \"" << evname
+          out << "const auto name = \"" << evname
               << "[\" +std::to_string(i)+\"]\";\n";
-          if (offset == 0) {
-            out << "mg.addExternalStateVariableValue(name,0,*(PREDEF+i));\n";
-            out << "mg.addExternalStateVariableValue(name,"
-                   "dt,*(PREDEF+i)+*(DPRED+i));\n";
-          } else {
-            out << "mg.addExternalStateVariableValue(name,"
-                   "0,*(PREDEF+"
-                << offset << "+i));\n";
-            out << "mg.addExternalStateVariableValue(name,"
-                   "dt,*(PREDEF+"
-                << offset << "+i)+*(DPRED+" << offset << "+i));\n";
-          }
+          out << "mg.addExternalStateVariable(name," << as_string(flag) << ", "
+              << "0, PREDEF + " << offset << " + i, "
+              << "dt, DPRED + " << offset << " + i, true);\n";
           out << "}\n";
-          offset += p->arraySize;
+          evoffset += SupportedTypes::TypeSize(p->arraySize, flag);
         } else {
-          for (unsigned short i = 0; i != p->arraySize; ++i, ++offset) {
-            if (offset == 0) {
-              out << "mg.addExternalStateVariableValue(\"" << evname << "[" << i
-                  << "]\",0,*PREDEF);\n";
-              out << "mg.addExternalStateVariableValue(\"" << evname << "[" << i
-                  << "]\",dt,*PREDEF+*DPRED);\n";
-            } else {
-              out << "mg.addExternalStateVariableValue(\"" << evname << "[" << i
-                  << "]\","
-                     "0,*(PREDEF+"
-                  << offset << "));\n";
-              out << "mg.addExternalStateVariableValue(\"" << evname << "[" << i
-                  << "]\","
-                     "dt,*(PREDEF+"
-                  << offset << ")+*(DPRED+" << offset << "));\n";
-            }
+          for (unsigned short i = 0; i != p->arraySize; ++i) {
+            out << "mg.addExternalStateVariable("
+                << "\"" << evname << "[" << i << "]\", "  //
+                << as_string(flag) << ", "
+                << "0, PREDEF+" << evoffset << ", "
+                << "dt, DPRED+" << evoffset << ", true);\n";
+            evoffset += SupportedTypes::TypeSize(flag);
           }
         }
       }

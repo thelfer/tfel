@@ -22,6 +22,7 @@
 
 #include "TFEL/Utilities/ArgumentParserBase.hxx"
 #include "MFront/MFrontBase.hxx"
+#include "MFront/QueryHandlerBase.hxx"
 
 namespace mfront {
 
@@ -40,7 +41,8 @@ namespace mfront {
    */
   struct MaterialPropertyQuery final
       : public tfel::utilities::ArgumentParserBase<MaterialPropertyQuery>,
-        public MFrontBase {
+        public MFrontBase,
+        public QueryHandlerBase {
     /*!
      * build a MaterialPropertyQuery object based on command line arguments
      * \param[in] argc : number of command line arguments
@@ -63,7 +65,9 @@ namespace mfront {
                                      const MaterialPropertyDescription &)>;
     //! \brief ArgumentParserBase must be a friend
     friend struct tfel::utilities::ArgumentParserBase<MaterialPropertyQuery>;
-    //! \brief \brief register call-backs associated with command line arguments
+    //
+    std::shared_ptr<const AbstractDSL> getDSL() const override;
+    //! \brief register call-backs associated with command line arguments
     virtual void registerCommandLineCallBacks();
     //! \brief return the current argument
     const tfel::utilities::Argument &getCurrentCommandLineArgument()

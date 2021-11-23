@@ -10,6 +10,9 @@ is specified, the `evolution` option is choosen.
 After the option, the name of the external state variable, which shall
 be given as string, is expected.
 
+The `@ExternalStateVariable` allows to define tensorial external state
+variables components by components (see example below).
+
 ## `evolution` option
 
 If the `evolution` option has been selected, the user may specify a
@@ -67,3 +70,14 @@ column.
 @ExternalStateVariable<function> 'Temperature' 'T0+(T1-T0)*t**2';
 ~~~~~~~~
 
+~~~~{.cxx}
+// Definition of an symmetric tensor external state variable
+@ExternalStateVariable<function> 'g' {'0', '1', '2', '3 * t', '4', '5 * t'};
+// Definition of an symmetric tensor external state variable components by components
+@ExternalStateVariable<function> 'g2XX'  '0';
+@ExternalStateVariable<function> 'g2YY'  '2';
+@ExternalStateVariable<function> 'g2ZZ'  't';
+@ExternalStateVariable<function> 'g2XY'  '3';
+@ExternalStateVariable<function> 'g2XZ'  '4';
+@ExternalStateVariable<function> 'g2YZ'  '5*t';
+~~~~

@@ -85,6 +85,7 @@ namespace tfel::system {
     this->ivnames = elm.getUMATInternalStateVariablesNames(l, f, h);
     this->ivtypes = elm.getUMATInternalStateVariablesTypes(l, f, h);
     this->evnames = elm.getUMATExternalStateVariablesNames(l, f, h);
+    this->evtypes = elm.getUMATExternalStateVariablesTypes(l, f, h);
     // parameters
     const auto pn = elm.getUMATParametersNames(l, f, h);
     const auto pt = elm.getUMATParametersTypes(l, f, h);

@@ -1579,28 +1579,28 @@ namespace mfront {
         this->writeMaterialPropertyCheckBoundsEvaluation(os, emps[1], mts);
       }
       if (!emps[0].is<BehaviourDescription::ConstantMaterialProperty>()) {
-        os << "this->young = ";
+        os << "this->young = stress(";
         this->writeMaterialPropertyEvaluation(os, emps[0], mts);
-        os << ";\n";
+        os << ");\n";
       }
       if (!emps[1].is<BehaviourDescription::ConstantMaterialProperty>()) {
         os << "this->nu = ";
         this->writeMaterialPropertyEvaluation(os, emps[1], mts);
         os << ";\n";
       }
-      os << "this->lambda=computeLambda(young,nu);\n";
-      os << "this->mu=computeMu(young,nu);\n";
+      os << "this->lambda = computeLambda(young,nu);\n";
+      os << "this->mu = computeMu(young,nu);\n";
       if (!this->mb.isMaterialPropertyConstantDuringTheTimeStep(emps[0])) {
         this->writeMaterialPropertyCheckBoundsEvaluation(os, emps[0], ets);
-        os << "this->young_tdt=";
+        os << "this->young_tdt = stress(";
         this->writeMaterialPropertyEvaluation(os, emps[0], ets);
-        os << ";\n";
+        os << ");\n";
       } else {
         os << "this->young_tdt  = this->young;\n";
       }
       if (!this->mb.isMaterialPropertyConstantDuringTheTimeStep(emps[1])) {
         this->writeMaterialPropertyCheckBoundsEvaluation(os, emps[1], ets);
-        os << "this->nu_tdt=";
+        os << "this->nu_tdt = ";
         this->writeMaterialPropertyEvaluation(os, emps[1], ets);
         os << ";\n";
       } else {
@@ -1647,7 +1647,7 @@ namespace mfront {
            MaterialPropertyInput::AUXILIARYSTATEVARIABLEFROMEXTERNALMODEL) ||
           (i.category == MaterialPropertyInput::STATEVARIABLE) ||
           (i.category == MaterialPropertyInput::EXTERNALSTATEVARIABLE)) {
-        return "this->" + i.name + "+(this->theta)*(this->d" + i.name + ')';
+        return "this->" + i.name + " + (this->theta) * (this->d" + i.name + ')';
       } else if ((i.category == MaterialPropertyInput::MATERIALPROPERTY) ||
                  (i.category == MaterialPropertyInput::PARAMETER)) {
         return "this->" + i.name;
@@ -1725,20 +1725,20 @@ namespace mfront {
       if (this->mb.isMaterialPropertyDependantOnStateVariables(emps[0])) {
         this->writeMaterialPropertyCheckBoundsEvaluation(os, emps[0], mts);
         this->writeMaterialPropertyCheckBoundsEvaluation(os, emps[0], ets);
-        os << "this->young=stress(";
+        os << "this->young = stress(";
         this->writeMaterialPropertyEvaluation(os, emps[0], mts);
         os << ");\n";
-        os << "this->young_tdt=stress(";
+        os << "this->young_tdt = stress(";
         this->writeMaterialPropertyEvaluation(os, emps[0], ets);
         os << ");\n";
       }
       if (this->mb.isMaterialPropertyDependantOnStateVariables(emps[1])) {
         this->writeMaterialPropertyCheckBoundsEvaluation(os, emps[1], mts);
         this->writeMaterialPropertyCheckBoundsEvaluation(os, emps[1], ets);
-        os << "this->nu=";
+        os << "this->nu = ";
         this->writeMaterialPropertyEvaluation(os, emps[1], mts);
         os << ";\n";
-        os << "this->nu_tdt=";
+        os << "this->nu_tdt = ";
         this->writeMaterialPropertyEvaluation(os, emps[1], ets);
         os << ";\n";
       }

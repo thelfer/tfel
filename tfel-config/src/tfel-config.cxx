@@ -408,12 +408,32 @@ int main(const int argc, const char* const* const argv) {
     registerCallBack("--cxx-standard", [] { std::cout << "17"; },
                      "print the version of the C++ standard "
                      "used to compile TFEL.");
-    registerCallBack("--licence", &treatLicences, "print tfel licences.");
+    registerCallBack("--licence", &treatLicences, "print TFEL licences.");
+    registerCallBack(
+        "--python-bindings-support",
+        [] {
+#ifdef TFEL_PYTHON_BINDINGS
+          std::cout << "true ";
+#else /* TFEL_PYTHON_BINDINGS */
+          std::cout << "false ";
+#endif /* TFEL_PYTHON_BINDINGS */
+        },
+        "print the python binding are supported (display `true` or `false`).");
 #ifdef TFEL_PYTHON_BINDINGS
     registerCallBack(
         "--python-version", [] { std::cout << PYTHON_VERSION << " "; },
         "print the python version used to build the python bindings.");
 #endif /* TFEL_PYTHON_BINDINGS */
+    registerCallBack(
+        "--madnex-support",
+        [] {
+#ifdef TFEL_HAVE_MADNEX
+          std::cout << "true ";
+#else
+          std::cout << "false ";
+#endif
+        },
+        "print if mandex support is enabled (display `true` or `false`).");
 
     if (argc == 1) {
       treatHelp();

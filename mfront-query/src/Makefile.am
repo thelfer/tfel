@@ -14,10 +14,12 @@ endif
 
 bin_PROGRAMS = mfront-query
 
-mfront_query_SOURCES = mfront-query.cxx          \
-		       MaterialPropertyQuery.cxx \
-		       BehaviourQuery.cxx        \
-		       ModelQuery.cxx
+mfront_query_SOURCES =      \
+  mfront-query.cxx          \
+  QueryHandlerBase.cxx      \
+  MaterialPropertyQuery.cxx \
+  BehaviourQuery.cxx        \
+  ModelQuery.cxx
 
 mfront_query_LDADD = -L$(top_builddir)/mfront/src -lTFELMFront -lMFrontLogStream \
                      -L$(top_builddir)/src/Glossary -lTFELGlossary   \

@@ -426,6 +426,35 @@ namespace mfront {
     }
   }  // end of UMATInterface::writeMaterialPropertiesSymbol
 
+  void SymbolsGenerator::writeVariablesTypesSymbol(
+      std::ostream& out,
+      const StandardBehaviourInterface& i,
+      const std::string& name,
+      const Hypothesis h,
+      const VariableDescriptionContainer& variables,
+      const std::string& variables_identifier) const {
+    if (!variables.empty()) {
+      out << "MFRONT_SHAREDOBJ int " << this->getSymbolName(i, name, h) << "_"
+          << variables_identifier << "Types [] = {";
+      for (auto p = variables.begin(); p != variables.end();) {
+        const auto t = getVariableTypeId(*p);
+        for (unsigned short is = 0; is != p->arraySize;) {
+          out << t;
+          if (++is != p->arraySize) {
+            out << ",";
+          }
+        }
+        if (++p != variables.end()) {
+          out << ",";
+        }
+      }
+      out << "};\n\n";
+    } else {
+      out << "MFRONT_SHAREDOBJ const int * " << this->getSymbolName(i, name, h)
+          << "_" << variables_identifier << "Types  = nullptr;\n\n";
+    }
+  }  // end of writeVariablesTypesSymbol
+
   void SymbolsGenerator::writeStateVariablesSymbols(
       std::ostream& out,
       const StandardBehaviourInterface& i,
@@ -442,27 +471,8 @@ namespace mfront {
     mb.getExternalNames(stateVariablesNames, h, persistentVarsHolder);
     this->writeExternalNames(out, i, name, h, stateVariablesNames,
                              "InternalStateVariables");
-    if (!persistentVarsHolder.empty()) {
-      out << "MFRONT_SHAREDOBJ int " << this->getSymbolName(i, name, h)
-          << "_InternalStateVariablesTypes [] = {";
-      for (auto p = persistentVarsHolder.begin();
-           p != persistentVarsHolder.end();) {
-        const auto t = getVariableTypeId(*p);
-        for (unsigned short is = 0; is != p->arraySize;) {
-          out << t;
-          if (++is != p->arraySize) {
-            out << ",";
-          }
-        }
-        if (++p != persistentVarsHolder.end()) {
-          out << ",";
-        }
-      }
-      out << "};\n\n";
-    } else {
-      out << "MFRONT_SHAREDOBJ const int * " << this->getSymbolName(i, name, h)
-          << "_InternalStateVariablesTypes = nullptr;\n\n";
-    }
+    this->writeVariablesTypesSymbol(out, i, name, h, persistentVarsHolder,
+                                    "InternalStateVariables");
   }  // end of writeStateVariablesSymbols
 
   void SymbolsGenerator::writeExternalStateVariablesSymbols(
@@ -472,13 +482,15 @@ namespace mfront {
       const std::string& name,
       const Hypothesis h) const {
     const auto& d = mb.getBehaviourData(h);
-    auto evs = d.getExternalStateVariables();
+    auto esvs = d.getExternalStateVariables();
     // removing the temperature
-    evs.erase(evs.begin());
+    esvs.erase(esvs.begin());
     out << "MFRONT_SHAREDOBJ unsigned short " << this->getSymbolName(i, name, h)
-        << "_nExternalStateVariables = " << evs.getNumberOfVariables() << ";\n";
-    this->writeExternalNames(out, i, name, h, mb.getExternalNames(h, evs),
+        << "_nExternalStateVariables = " << esvs.getNumberOfVariables()
+        << ";\n";
+    this->writeExternalNames(out, i, name, h, mb.getExternalNames(h, esvs),
                              "ExternalStateVariables");
+    this->writeVariablesTypesSymbol(out, i, name, h, esvs, "ExternalStateVariables");
   }  // end of writeExternalStateVariablesSymbols
 
   void SymbolsGenerator::writeParametersSymbols(

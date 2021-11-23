@@ -11,8 +11,6 @@
  * project under specific licensing conditions.
  */
 
-#include <iostream>
-
 #include <fstream>
 #include <iterator>
 #include <stdexcept>
@@ -35,6 +33,9 @@ namespace std {
 namespace mfront {
 
   MTestFileGeneratorBase::InternalStateVariable::~InternalStateVariable() =
+      default;
+
+  MTestFileGeneratorBase::ExternalStateVariable::~ExternalStateVariable() =
       default;
 
   unsigned int MTestFileGeneratorBase::getIdentifier() {
@@ -103,41 +104,54 @@ namespace mfront {
   void MTestFileGeneratorBase::addInternalStateVariable(
       const std::string& n,
       const SupportedTypes::TypeFlag f,
-      const MTestFileGeneratorBase::real* const v) {
+      const real* const v) {
     for (const auto& iv : this->ivs) {
       tfel::raise_if(iv.name == n,
                      "MTestFileGeneratorBase::addInternalStateVariable: "
                      "variable already declared '" +
                          n + "'");
     }
+    const auto s = this->getVariableSize(f);
     InternalStateVariable iv;
     iv.name = n;
     iv.type = f;
-    if (iv.type == SupportedTypes::SCALAR) {
-      iv.values[0] = v[0];
-    } else if (iv.type == SupportedTypes::STENSOR) {
-      std::copy(v, v + this->getStensorSize(), iv.values);
-    } else {
-      tfel::raise(
-          "MTestFileGeneratorBase::addInternalStateVariable : "
-          "unsupported type for variable '" +
-          n + "'");
-    }
+    iv.values.resize(s);
+    std::copy(v, v + s, iv.values.begin());
     this->ivs.push_back(iv);
   }  // end of MTestFileGeneratorBase::addInternalStateVariable
 
-  void MTestFileGeneratorBase::addExternalStateVariableValue(
+  void MTestFileGeneratorBase::addExternalStateVariable(
       const std::string& n,
-      const MTestFileGeneratorBase::real t,
-      const MTestFileGeneratorBase::real v) {
-    tfel::raise_if(!this->evs[n].insert({t, v}).second,
-                   "MTestFileGeneratorBase::addExternalStateVariableValue: "
-                   "time '" +
-                       std::to_string(t) +
-                       "' already defined "
-                       "for variable '" +
-                       n + "'");
-  }  // end of MTestFileGeneratorBase::addValue
+      const SupportedTypes::TypeFlag f,
+      const real t0,
+      const real* const v0,
+      const real t1,
+      const real* const v1,
+      const bool increment_provided) {
+    for (const auto& ev : this->evs) {
+      tfel::raise_if(ev.name == n,
+                     "MTestFileGeneratorBase::addExternalStateVariable: "
+                     "variable already declared '" +
+                         n + "'");
+    }
+    const auto s = this->getVariableSize(f);
+    ExternalStateVariable ev;
+    ev.name = n;
+    ev.type = f;
+    ev.initial_values.first = t0;
+    ev.final_values.first = t1;
+    ev.initial_values.second.resize(s);
+    ev.final_values.second.resize(s);
+    std::copy(v0, v0 + s, ev.initial_values.second.begin());
+    if (increment_provided) {
+      for (size_t i = 0; i != s; ++i) {
+        ev.final_values.second[i] = v0[i] + v1[i];
+      }
+    } else {
+      std::copy(v1, v1 + s, ev.final_values.second.begin());
+    }
+    this->evs.push_back(ev);
+  }  // end of MTestFileGeneratorBase::addExternalStateVariable
 
   void MTestFileGeneratorBase::generate(const std::string& n) const {
     std::ofstream file(n + "-" + std::to_string(getIdentifier()) + ".mtest");
@@ -224,19 +238,16 @@ namespace mfront {
       os.precision(14);
       if (iv.type == SupportedTypes::SCALAR) {
         os << iv.values[0] << ";\n";
-      } else if (iv.type == SupportedTypes::STENSOR) {
+      } else {
+        const auto s = this->getVariableSize(iv.type);
         os << "{";
-        for (unsigned short i = 0; i != this->getStensorSize();) {
+        for (unsigned short i = 0; i != s;) {
           os << iv.values[i];
-          if (++i != this->getStensorSize()) {
+          if (++i != s) {
             os << ",";
           }
         }
         os << "};\n";
-      } else {
-        tfel::raise(
-            "MTestFileGeneratorBase::writeInternalStateVariables : "
-            "unsupported internal state variable type");
       }
     }
     os << '\n';
@@ -249,23 +260,25 @@ namespace mfront {
     }
     os << "// External state variables\n";
     for (const auto& ev : this->evs) {
-      const auto& n = ev.first;
-      const auto& v = ev.second;
-      if (v.size() == 1) {
-        os.precision(14);
-        os << "@ExternalStateVariable '" << n << "' " << v.begin()->second
-           << ";\n";
+      const auto& n = ev.name;
+      os.precision(14);
+      os << "@ExternalStateVariable<evolution> '" << n << "' {";
+      if (ev.type == SupportedTypes::SCALAR) {
+        os << ev.initial_values.first << " : " << ev.initial_values.second[0]
+           << ", " << ev.final_values.first << " : "
+           << ev.final_values.second[0];
       } else {
-        os.precision(14);
-        os << "@ExternalStateVariable<evolution> '" << n << "' {";
-        for (auto pv = v.begin(); pv != v.end();) {
-          os << pv->first << " : " << pv->second;
-          if (++pv != v.end()) {
-            os << ",\n";
+        const auto& s = ev.initial_values.second.size();
+        for (size_t i = 0; i != s; ++i) {
+          if (i != 0) {
+            os << ", ";
           }
+          os << "{" << ev.initial_values.first << " : "
+             << ev.initial_values.second[i] << ", " << ev.final_values.first
+             << " : " << ev.final_values.second[i] << "}";
         }
-        os << "};\n";
       }
+      os << "};\n";
     }
     os << '\n';
   }  // end of MTestFileGeneratorBase::writeExternalStateVariables
@@ -364,6 +377,22 @@ namespace mfront {
     }
     return n;
   }
+
+  unsigned short MTestFileGeneratorBase::getVariableSize(
+      const SupportedTypes::TypeFlag& f) const {
+    if (f == SupportedTypes::SCALAR) {
+      return 1u;
+    } else if (f == SupportedTypes::TVECTOR) {
+      return this->getTVectorSize();
+    } else if (f == SupportedTypes::STENSOR) {
+      return this->getStensorSize();
+    } else if (f == SupportedTypes::TENSOR) {
+      return this->getTensorSize();
+    }
+    tfel::raise(
+        "MTestFileGeneratorBase::getVariableSize: "
+        "unsupported variable type");
+  }  // end of MTestFileGeneratorBase::getVariableSize
 
   unsigned short MTestFileGeneratorBase::getTVectorSize() const {
     using namespace tfel::material;

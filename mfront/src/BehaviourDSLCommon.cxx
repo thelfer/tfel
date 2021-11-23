@@ -3705,6 +3705,56 @@ namespace mfront {
        << makeUpperCase(this->mb.getClassName()) << "_BEHAVIOUR_DATA_HXX */\n";
   }
 
+  static bool hasVariableOfType(const BehaviourData& bd,
+                                const SupportedTypes::TypeFlag f) {
+    auto update = [f](const auto& variables) {
+      const auto& flags = SupportedTypes::getTypeFlags();
+      for (const auto& v : variables) {
+        const auto pf = flags.find(v.type);
+        if (pf == flags.end()) {
+          continue;
+        }
+        if (pf->second == f) {
+          return true;
+        }
+      }
+      return false;
+    };
+    if ((update(bd.getMaterialProperties())) ||
+        (update(bd.getIntegrationVariables())) ||
+        (update(bd.getStateVariables())) ||
+        (update(bd.getAuxiliaryStateVariables())) ||
+//        (update(bd.getLocalVariables())) ||
+        (update(bd.getExternalStateVariables())) ||
+        (update(bd.getPostProcessingVariables()))) {
+      return true;
+    }
+    return false;
+  }  // end of hasVariableOfType
+
+  static bool hasVariableOfType(const BehaviourDescription& bd,
+                                const SupportedTypes::TypeFlag f) {
+    using ModellingHypothesis = BehaviourDescription::ModellingHypothesis;
+    for (const auto& mv : bd.getMainVariables()) {
+      if (mv.first.getTypeFlag() == f) {
+        return true;
+      }
+      if (mv.second.getTypeFlag() == f) {
+        return true;
+      }
+    }
+    if (!bd.areAllMechanicalDataSpecialised()) {
+      return hasVariableOfType(
+          bd.getBehaviourData(ModellingHypothesis::UNDEFINEDHYPOTHESIS), f);
+    }
+    for (const auto& h : bd.getDistinctModellingHypotheses()){
+      if (hasVariableOfType(bd.getBehaviourData(h), f)) {
+        return true;
+      }
+    }
+    return false;
+  }  // end of requiresTVectorOrVectorIncludes
+
   void BehaviourDSLCommon::writeBehaviourDataStandardTFELIncludes(
       std::ostream& os) const {
     auto b1 = false;
@@ -3741,25 +3791,32 @@ namespace mfront {
     if (b2) {
       os << "#include\"TFEL/Math/vector.hxx\"\n";
     }
-    os << "#include\"TFEL/Math/stensor.hxx\"\n"
-       << "#include\"TFEL/Math/Stensor/StensorConceptIO.hxx\"\n"
-       << "#include\"TFEL/Math/tmatrix.hxx\"\n"
-       << "#include\"TFEL/Math/Matrix/tmatrixIO.hxx\"\n"
-       << "#include\"TFEL/Math/st2tost2.hxx\"\n"
-       << "#include\"TFEL/Math/ST2toST2/ST2toST2ConceptIO.hxx\"\n";
+    os << "#include\"TFEL/Math/tmatrix.hxx\"\n"
+       << "#include\"TFEL/Math/Matrix/tmatrixIO.hxx\"\n";
+    if (hasVariableOfType(this->mb, SupportedTypes::STENSOR)) {
+      os << "#include\"TFEL/Math/stensor.hxx\"\n"
+         << "#include\"TFEL/Math/Stensor/StensorConceptIO.hxx\"\n"
+         << "#include\"TFEL/Math/st2tost2.hxx\"\n"
+         << "#include\"TFEL/Math/ST2toST2/ST2toST2ConceptIO.hxx\"\n";
+    }
+    if (hasVariableOfType(this->mb, SupportedTypes::TENSOR)) {
+      os << "#include\"TFEL/Math/tensor.hxx\"\n"
+         << "#include\"TFEL/Math/Tensor/TensorConceptIO.hxx\"\n"
+         << "#include\"TFEL/Math/t2tot2.hxx\"\n"
+         << "#include\"TFEL/Math/T2toT2/T2toT2ConceptIO.hxx\"\n";
+    }
+    if ((hasVariableOfType(this->mb, SupportedTypes::STENSOR)) &&
+        (hasVariableOfType(this->mb, SupportedTypes::TENSOR))) {
+      os << "#include\"TFEL/Math/t2tost2.hxx\"\n"
+         << "#include\"TFEL/Math/T2toST2/T2toST2ConceptIO.hxx\"\n"
+         << "#include\"TFEL/Math/st2tot2.hxx\"\n"
+         << "#include\"TFEL/Math/ST2toT2/ST2toT2ConceptIO.hxx\"\n";
+    }
     if ((this->mb.getBehaviourType() ==
          BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR) ||
         (this->mb.getBehaviourType() ==
          BehaviourDescription::GENERALBEHAVIOUR)) {
-      os << "#include\"TFEL/Math/tensor.hxx\"\n"
-         << "#include\"TFEL/Math/Tensor/TensorConceptIO.hxx\"\n"
-         << "#include\"TFEL/Math/t2tot2.hxx\"\n"
-         << "#include\"TFEL/Math/T2toT2/T2toT2ConceptIO.hxx\"\n"
-         << "#include\"TFEL/Math/t2tost2.hxx\"\n"
-         << "#include\"TFEL/Math/T2toST2/T2toST2ConceptIO.hxx\"\n"
-         << "#include\"TFEL/Math/st2tot2.hxx\"\n"
-         << "#include\"TFEL/Math/ST2toT2/ST2toT2ConceptIO.hxx\"\n"
-         << "#include\"TFEL/Math/ST2toST2/ConvertToTangentModuli.hxx\"\n"
+      os << "#include\"TFEL/Math/ST2toST2/ConvertToTangentModuli.hxx\"\n"
          << "#include\"TFEL/Math/ST2toST2/"
             "ConvertSpatialModuliToKirchhoffJaumanRateModuli.hxx\"\n"
          << "#include\"TFEL/Material/"
@@ -5311,10 +5368,11 @@ namespace mfront {
         out << "tfel::material::computeIsotropicStiffnessTensor<hypothesis,"
                "StiffnessTensorAlterationCharacteristic::"
                "ALTERED"
-            << ">(" << D << ",";
+            << ">(" << D << ", ";
       }
+      out << "stress(";
       this->writeMaterialPropertyEvaluation(out, emps[0], f);
-      out << ",\n";
+      out << "), \n";
       this->writeMaterialPropertyEvaluation(out, emps[1], f);
       out << ");\n";
     } else if (this->mb.getElasticSymmetryType() == mfront::ORTHOTROPIC) {
@@ -5360,11 +5418,18 @@ namespace mfront {
         }
       }
       for (decltype(emps.size()) i = 0; i != emps.size();) {
-        this->writeMaterialPropertyEvaluation(out, emps[i], f);
+        if ((i == 0) || (i == 1) || (i == 2) ||  //
+            (i == 6) || (i == 7) || (i == 8)) {
+          out << "stress(";
+          this->writeMaterialPropertyEvaluation(out, emps[i], f);
+          out << ")";
+        } else {
+          this->writeMaterialPropertyEvaluation(out, emps[i], f);
+        }
         if (++i != emps.size()) {
           out << ",\n";
         }
-      }
+        }
       out << ");\n";
     } else {
       this->throwRuntimeError(
@@ -5441,7 +5506,7 @@ namespace mfront {
     } else if (!((m.is<BehaviourDescription::ConstantMaterialProperty>()) ||
                  (m.is<BehaviourDescription::AnalyticMaterialProperty>()))) {
       this->throwRuntimeError(
-          "BehaviourDSLCommon::writeMaterialPropertyEvaluation",
+          "BehaviourDSLCommon::writeMaterialPropertyCheckBoundsEvaluation",
           "unsupported material property type");
     }
   }  // end of writeMaterialPropertyEvaluation
@@ -6197,12 +6262,8 @@ namespace mfront {
              << "\"\n";
         }
       }
-      if (v.type == "int") {
-        os << "static constexpr " << v.type << " " << v.name << " = " << v.value
-           << ";\n";
-      } else {
-        os << "static const " << v.type << " " << v.name << ";\n";
-      }
+      os << "static constexpr auto " << v.name << " = "  //
+         << v.type << "{" << v.value << "};\n";
     }
     os << '\n';
   }
@@ -7981,67 +8042,77 @@ namespace mfront {
        << "#include\"" << this->getBehaviourFileName() << "\"\n\n";
   }  // end of writeSrcFileHeader()
 
-  void BehaviourDSLCommon::writeSrcFileStaticVariables(
-      std::ostream& os, const Hypothesis h) const {
-    const auto& md = this->mb.getBehaviourData(h);
-    const auto m = "tfel::material::ModellingHypothesis::" +
-                   ModellingHypothesis::toUpperCaseString(h);
-    this->checkSrcFile(os);
-    for (const auto& v : md.getStaticVariables()) {
-      if (v.type == "int") {
-        continue;
-      }
-      if (this->mb.useQt()) {
-        os << "template<>\n";
-        os << "const " << this->mb.getClassName() << "<" << m
-           << ",float,true>::" << v.type << '\n'
-           << this->mb.getClassName() << "<" << m << ",float,true>::" << v.name
-           << " = " << this->mb.getClassName() << "<" << m
-           << ",float,true>::" << v.type << "(static_cast<float>(" << v.value
-           << "));\n\n";
-      }
-      os << "template<>\n";
-      os << "const " << this->mb.getClassName() << "<" << m
-         << ",float,false>::" << v.type << '\n'
-         << this->mb.getClassName() << "<" << m << ",float,false>::" << v.name
-         << " = " << this->mb.getClassName() << "<" << m
-         << ",float,false>::" << v.type << "(static_cast<float>(" << v.value
-         << "));\n\n";
-      if (this->mb.useQt()) {
-        os << "template<>\n";
-        os << "const " << this->mb.getClassName() << "<" << m
-           << ",double,true>::" << v.type << '\n'
-           << this->mb.getClassName() << "<" << m << ",double,true>::" << v.name
-           << " = " << this->mb.getClassName() << "<" << m
-           << ",double,true>::" << v.type << "(static_cast<double>(" << v.value
-           << "));\n\n";
-      }
-      os << "template<>\n";
-      os << "const " << this->mb.getClassName() << "<" << m
-         << ",double,false>::" << v.type << '\n'
-         << this->mb.getClassName() << "<" << m << ",double,false>::" << v.name
-         << " = " << this->mb.getClassName() << "<" << m
-         << ",double,false>::" << v.type << "(static_cast<double>(" << v.value
-         << "));\n\n";
-      if (this->mb.useQt()) {
-        os << "template<>\n";
-        os << "const " << this->mb.getClassName() << "<" << m
-           << ",long double,true>::" << v.type << '\n'
-           << this->mb.getClassName() << "<" << m
-           << ",long double,true>::" << v.name << " = "
-           << this->mb.getClassName() << "<" << m
-           << ",long double,true>::" << v.type << "(static_cast<long double>("
-           << v.value << "));\n\n";
-      }
-      os << "template<>\n";
-      os << "const " << this->mb.getClassName() << "<" << m
-         << ",long double,false>::" << v.type << '\n'
-         << this->mb.getClassName() << "<" << m
-         << ",long double,false>::" << v.name << " = "
-         << this->mb.getClassName() << "<" << m
-         << ",long double,false>::" << v.type << "(static_cast<long double>("
-         << v.value << "));\n\n";
-    }
+  void BehaviourDSLCommon::writeSrcFileStaticVariables(std::ostream&,
+                                                       const Hypothesis) const {
+    //     const auto& md = this->mb.getBehaviourData(h);
+    //     const auto m = "tfel::material::ModellingHypothesis::" +
+    //                    ModellingHypothesis::toUpperCaseString(h);
+    //     this->checkSrcFile(os);
+    //     for (const auto& v : md.getStaticVariables()) {
+    //       if (v.type == "int") {
+    //         continue;
+    //       }
+    //       if (this->mb.useQt()) {
+    //         os << "template<>\n";
+    //         os << "const " << this->mb.getClassName() << "<" << m
+    //            << ",float,true>::" << v.type << '\n'
+    //            << this->mb.getClassName() << "<" << m << ",float,true>::" <<
+    //            v.name
+    //            << " = " << this->mb.getClassName() << "<" << m
+    //            << ",float,true>::" << v.type << "(static_cast<float>(" <<
+    //            v.value
+    //            << "));\n\n";
+    //       }
+    //       os << "template<>\n";
+    //       os << "const " << this->mb.getClassName() << "<" << m
+    //          << ",float,false>::" << v.type << '\n'
+    //          << this->mb.getClassName() << "<" << m << ",float,false>::" <<
+    //          v.name
+    //          << " = " << this->mb.getClassName() << "<" << m
+    //          << ",float,false>::" << v.type << "(static_cast<float>(" <<
+    //          v.value
+    //          << "));\n\n";
+    //       if (this->mb.useQt()) {
+    //         os << "template<>\n";
+    //         os << "const " << this->mb.getClassName() << "<" << m
+    //            << ",double,true>::" << v.type << '\n'
+    //            << this->mb.getClassName() << "<" << m << ",double,true>::" <<
+    //            v.name
+    //            << " = " << this->mb.getClassName() << "<" << m
+    //            << ",double,true>::" << v.type << "(static_cast<double>(" <<
+    //            v.value
+    //            << "));\n\n";
+    //       }
+    //       os << "template<>\n";
+    //       os << "const " << this->mb.getClassName() << "<" << m
+    //          << ",double,false>::" << v.type << '\n'
+    //          << this->mb.getClassName() << "<" << m << ",double,false>::" <<
+    //          v.name
+    //          << " = " << this->mb.getClassName() << "<" << m
+    //          << ",double,false>::" << v.type << "(static_cast<double>(" <<
+    //          v.value
+    //          << "));\n\n";
+    //       if (this->mb.useQt()) {
+    //         os << "template<>\n";
+    //         os << "const " << this->mb.getClassName() << "<" << m
+    //            << ",long double,true>::" << v.type << '\n'
+    //            << this->mb.getClassName() << "<" << m
+    //            << ",long double,true>::" << v.name << " = "
+    //            << this->mb.getClassName() << "<" << m
+    //            << ",long double,true>::" << v.type << "(static_cast<long
+    //            double>("
+    //            << v.value << "));\n\n";
+    //       }
+    //       os << "template<>\n";
+    //       os << "const " << this->mb.getClassName() << "<" << m
+    //          << ",long double,false>::" << v.type << '\n'
+    //          << this->mb.getClassName() << "<" << m
+    //          << ",long double,false>::" << v.name << " = "
+    //          << this->mb.getClassName() << "<" << m
+    //          << ",long double,false>::" << v.type << "(static_cast<long
+    //          double>("
+    //          << v.value << "));\n\n";
+    //     }
   }  // end of writeSrcFileStaticVariables
 
   void BehaviourDSLCommon::writeSrcFileUserDefinedCode(std::ostream& os) const {

@@ -4,6 +4,11 @@ target_include_directories(tfel-config
   PRIVATE ${PROJECT_BINARY_DIR}/tfel-config/include
   PRIVATE ${PROJECT_SOURCE_DIR}/include)
 
+if(TFEL_HAVE_MADNEX)
+  target_compile_definitions(tfel-config
+    PUBLIC TFEL_HAVE_MADNEX)
+endif(TFEL_HAVE_MADNEX)
+
 if(WIN32 AND enable-static)
   set_target_properties(tfel-config PROPERTIES COMPILE_FLAGS "-DTFEL_STATIC_BUILD")
   set_target_properties(tfel-config PROPERTIES LINK_FLAGS "-static-libgcc -static") 

@@ -138,6 +138,75 @@ b = mtest.Behaviour(library = 'src/libBehaviour.so',
 
 # Issues fixed
 
+## Issue #39: [tfel-config] Add query associated with python bindings support
+
+`tfel-config` now supports an command line option named
+`--python-bindings-support` which displays true if `python` bindings are
+available, `false` otherwise.
+
+## Issue #38: [tfel-config] Add query associated with MADNEX support
+
+`tfel-config` now supports an command line option named
+`--madnex-support` which displays true if `madnex` files are supported,
+`false` otherwise.
+
+For more details, see : <https://github.com/thelfer/tfel/issues/38>
+
+## Issue #36: [mfront] Improved support for `MTest` file generation (all kind of state variables)
+
+In previous versions, only scalar and symmetric tensors state variables
+were supported when generation `MTest` file on integration failure.
+
+All kind of state variables are now supported.
+
+For more details, see : <https://github.com/thelfer/tfel/issues/36>
+
+## Issue #28: [mtest] Support of tensorial external state variables
+
+The `Behaviour` class has new methods:
+
+- `expandExternalStateVariablesNames` (wrapped in python)
+- `getExternalStateVariableType`  (wrapped in python)
+- `getExternalStateVariablePosition` (wrapped in python)
+
+The `@ExternalStateVariable` now allows to define tensorial external
+state variables components by components or an array as follows:
+
+~~~~{.cpp}
+// Definition of an symmetric tensor external state variable
+@ExternalStateVariable<function> "g" {"0", "1", "2", "3 * t", "4", "5 * t"};
+// Definition of an symmetric tensor external state variable components by components
+@ExternalStateVariable<function> "g2XX"  "0";
+@ExternalStateVariable<function> "g2YY"  "2";
+@ExternalStateVariable<function> "g2ZZ"  "t";
+@ExternalStateVariable<function> "g2XY"  "3";
+@ExternalStateVariable<function> "g2XZ"  "4";
+@ExternalStateVariable<function> "g2YZ"  "5*t";
+~~~~
+
+For more details, see : <https://github.com/thelfer/tfel/issues/28>
+
+## Issue #28: [mtest] Support of tensorial external state variables
+
+For more details, see : <https://github.com/thelfer/tfel/issues/28>
+
+## Issue #27: [mfront] Better support of tensorial external state variables
+
+The type of the external state variables are now exported.
+
+- `ExternalLibraryManager` has a new method called
+  `getUMATExternalStateVariablesTypes` (wrapped in `python`)
+- `ExternalBehaviourDescription` has a new method called `evtypes`
+  (wrapped in `python`)
+
+Generation of `MTest` file also supports tensor external state variables.
+
+For more details, see : <https://github.com/thelfer/tfel/issues/27>
+
+## Issue #26: Don't use explicit instanciation for static variables
+
+For more details, see : <https://github.com/thelfer/tfel/issues/26>
+
 ## Issue #20: [mtest] Declaration of a behaviour wrapper in python module
 
 As described in Section @sec:tfel_4.1:pymtest:behaviour_constructor,

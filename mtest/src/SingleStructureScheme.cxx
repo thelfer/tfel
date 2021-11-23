@@ -37,8 +37,8 @@ namespace mtest {
                               const std::string& type) {
     for (const auto& n : names) {
       if (m.find(n) == m.end()) {
-        tfel::raise("no '" + type +
-                    "' named "
+        tfel::raise("no " + type +
+                    " named "
                     "'" +
                     n + "' declared");
       }
@@ -104,7 +104,7 @@ namespace mtest {
     tfel::raise_if(this->b == nullptr,
                    "SingleStructureScheme::setExternalStateVariable: "
                    "no behaviour defined");
-    const auto& evsnames = this->b->getExternalStateVariablesNames();
+    const auto& evsnames = this->b->expandExternalStateVariablesNames();
     tfel::raise_if(find(evsnames.begin(), evsnames.end(), n) == evsnames.end(),
                    "SingleStructureScheme::setExternalStateVariable: "
                    "the behaviour does not declare an "
@@ -166,7 +166,7 @@ namespace mtest {
     this->checkBehaviourConsistency(bp);
     this->b = bp;
     this->declareVariables(this->b->getMaterialPropertiesNames(), true);
-    this->declareVariables(this->b->getExternalStateVariablesNames(), true);
+    this->declareVariables(this->b->expandExternalStateVariablesNames(), true);
     this->ivfullnames = this->b->expandInternalStateVariablesNames();
     for (const auto& n : this->ivfullnames) {
       this->declareVariable(n, true);
@@ -242,7 +242,7 @@ namespace mtest {
     SchemeBase::completeInitialisation();
     // check if material properties and external state variables are declared
     const auto mpnames = this->b->getMaterialPropertiesNames();
-    const auto esvnames = this->b->getExternalStateVariablesNames();
+    const auto esvnames = this->b->expandExternalStateVariablesNames();
     this->b->setOptionalMaterialPropertiesDefaultValues(*(this->dmpv),
                                                         *(this->evm));
     checkIfDeclared(mpnames, *(this->evm), *(this->dmpv), "material property");
@@ -268,7 +268,7 @@ namespace mtest {
     return this->b->getDefaultStiffnessMatrixType();
   }  // end of SingleStructureScheme::getDefaultStiffnessMatrixType
 
-  void SingleStructureScheme::setScalarInternalStateVariableInitialValue(
+  void SingleStructureScheme::setInternalStateVariableInitialValue(
       const std::string& n, const real v) {
     tfel::raise_if(
         this->b == nullptr,
@@ -294,68 +294,46 @@ namespace mtest {
     this->iv_t0[pos] = v;
   }
 
-  void SingleStructureScheme::setStensorInternalStateVariableInitialValues(
+  void SingleStructureScheme::setInternalStateVariableInitialValue(
       const std::string& n, const std::vector<real>& v) {
     tfel::raise_if(
         this->b == nullptr,
-        "SingleStructureScheme::setStensorInternalStateVariableInitialValue: "
+        "SingleStructureScheme::setInternalStateVariableInitialValue: "
         "no behaviour defined");
     const auto& ivsnames = this->b->getInternalStateVariablesNames();
     tfel::raise_if(
         std::find(ivsnames.begin(), ivsnames.end(), n) == ivsnames.end(),
-        "SingleStructureScheme::setStensorInternalStateVariableInitialValue: "
+        "SingleStructureScheme::setInternalStateVariableInitialValue: "
         "the behaviour don't declare an internal "
         "state variable named '" +
             n + "'");
-    const auto type = this->b->getInternalStateVariableType(n);
     const auto pos = this->b->getInternalStateVariablePosition(n);
-    tfel::raise_if(type != 1,
-                   "SingleStructureScheme::"
-                   "setStensorInternalStateVariableInitialValue: "
-                   "internal state variable '" +
-                       n + "' is not defined");
-    const auto N = tfel::material::getStensorSize(this->hypothesis);
+    const auto s = getVariableSize(this->b->getInternalStateVariableType(n),
+                                   this->b->getHypothesis());
     tfel::raise_if(
-        v.size() != N,
-        "SingleStructureScheme::setStensorInternalStateVariableInitialValues: "
+        v.size() != s,
+        "SingleStructureScheme::setInternalStateVariableInitialValue: "
         "invalid values size");
-    if (this->iv_t0.size() < pos + N) {
-      this->iv_t0.resize(pos + N, 0.);
+    if (this->iv_t0.size() < pos + s) {
+      this->iv_t0.resize(pos + s, 0.);
     }
     std::copy(v.begin(), v.end(), this->iv_t0.begin() + pos);
-  }  // end of
-     // SingleStructureScheme::setStensorInternalStateVariableInitialValue
+  } // end of setInternalStateVariableInitialValue
+
+  void SingleStructureScheme::setScalarInternalStateVariableInitialValue(
+      const std::string& n, const real v) {
+    this->setInternalStateVariableInitialValue(n, v);
+  }
+
+  void SingleStructureScheme::setStensorInternalStateVariableInitialValues(
+      const std::string& n, const std::vector<real>& v) {
+    this->setInternalStateVariableInitialValue(n, v);
+  }  // end of setStensorInternalStateVariableInitialValue
 
   void SingleStructureScheme::setTensorInternalStateVariableInitialValues(
       const std::string& n, const std::vector<real>& v) {
-    tfel::raise_if(
-        this->b == nullptr,
-        "SingleStructureScheme::setTensorInternalStateVariableInitialValue: "
-        "no behaviour defined");
-    const auto& ivsnames = this->b->getInternalStateVariablesNames();
-    tfel::raise_if(
-        std::find(ivsnames.begin(), ivsnames.end(), n) == ivsnames.end(),
-        "SingleStructureScheme::setTensorInternalStateVariableInitialValue: "
-        "the behaviour does not declare an internal state "
-        "variable named '" +
-            n + "'");
-    const auto type = this->b->getInternalStateVariableType(n);
-    const auto pos = this->b->getInternalStateVariablePosition(n);
-    tfel::raise_if(
-        type != 3,
-        "SingleStructureScheme::setTensorInternalStateVariableInitialValue: "
-        "internal state variable '" +
-            n + "' is not defined");
-    const auto N = tfel::material::getTensorSize(this->hypothesis);
-    tfel::raise_if(
-        v.size() != N,
-        "SingleStructureScheme::setTensorInternalStateVariableInitialValues: "
-        "invalid values size");
-    if (this->iv_t0.size() < pos + N) {
-      this->iv_t0.resize(pos + N, 0.);
-    }
-    copy(v.begin(), v.end(), this->iv_t0.begin() + pos);
-  }  // end of SingleStructureScheme::setTensorInternalStateVariableInitialValue
+    this->setInternalStateVariableInitialValue(n, v);
+  }  // end of setTensorInternalStateVariableInitialValues
 
   void SingleStructureScheme::prepare(StudyCurrentState& state,
                                       const real t,
@@ -369,7 +347,7 @@ namespace mtest {
       computeMaterialProperties(s, *(this->evm), *(this->dmpv),
                                 this->b->getMaterialPropertiesNames(), t, dt);
       computeExternalStateVariables(
-          s, *(this->evm), this->b->getExternalStateVariablesNames(), t, dt);
+          s, *(this->evm), this->b->expandExternalStateVariablesNames(), t, dt);
       // thermal expansion
       if ((this->handleThermalExpansion) &&
           ((this->b->getBehaviourType() ==

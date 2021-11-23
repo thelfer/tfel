@@ -483,12 +483,12 @@ if(UNIX)
 else(UNIX)
 endif(UNIX)
 
-if(HAVE_MADNEX)
+if(TFEL_HAVE_MADNEX)
   target_compile_definitions(TFELMFront
     PUBLIC MFRONT_HAVE_MADNEX)
   target_link_libraries(TFELMFront
     PRIVATE madnex::Madnex)
-endif(HAVE_MADNEX)
+endif(TFEL_HAVE_MADNEX)
 
 # MFront
 

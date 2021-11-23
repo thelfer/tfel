@@ -41,8 +41,6 @@ namespace mtest {
     std::vector<std::string> getOptionalMaterialProperties() const override;
     void setOptionalMaterialPropertiesDefaultValues(
         EvolutionManager&, const EvolutionManager&) const override;
-    std::vector<std::string> getExternalStateVariablesNames() const override;
-    size_t getExternalStateVariablesSize() const override;
     std::vector<std::string> getParametersNames() const override;
     std::vector<std::string> getIntegerParametersNames() const override;
     std::vector<std::string> getUnsignedShortParametersNames() const override;

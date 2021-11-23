@@ -237,6 +237,8 @@ void declareExternalLibraryManager() {
            &ELM::getUMATInternalStateVariablesTypes)
       .def("getUMATExternalStateVariablesNames",
            &ELM::getUMATExternalStateVariablesNames)
+      .def("getUMATExternalStateVariablesTypes",
+           &ELM::getUMATExternalStateVariablesTypes)
       .def("getUMATRequiresStiffnessTensor",
            &ELM::getUMATRequiresStiffnessTensor)
       .def("getUMATRequiresThermalExpansionCoefficientTensor",

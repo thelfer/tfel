@@ -1,6 +1,7 @@
 set(mfront_tests_SOURCES
   MaterialPropertiesBoundsCheck
   ExternalStateVariablesBoundsCheck
+  TensorialExternalStateVariableTest
   Elasticity
   Elasticity2
   Elasticity3
@@ -225,6 +226,7 @@ test_cyrano(orthotropicswelling)
 test_cyrano(orthotropicswelling2)
 test_cyrano(parametertest)
 test_cyrano(parametertest2)
+test_cyrano(tensorialexternalstatevariabletest)
 
 test_cyrano(elasticity_LogarithmicStrain-uniaxialloading-1-1D)
 test_cyrano(elasticity_LogarithmicStrain-uniaxialloading-2-1D)

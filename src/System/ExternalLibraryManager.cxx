@@ -1694,6 +1694,13 @@ namespace tfel::system {
     return vars;
   }  // end of getUMATMaterialPropertiesNames
 
+  std::vector<int> ExternalLibraryManager::getUMATExternalStateVariablesTypes(
+      const std::string& l, const std::string& f, const std::string& h) {
+    std::vector<int> types;
+    this->getUMATTypes(types, l, f, h, "ExternalStateVariables");
+    return types;
+  }  // end of getUMATExternalVariablesTypes
+
   std::vector<std::string> ExternalLibraryManager::getUMATParametersNames(
       const std::string& l, const std::string& f, const std::string& h) {
     std::vector<std::string> names;
