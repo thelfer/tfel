@@ -111,6 +111,10 @@ namespace mtest {
   std::string MTest::classname() const { return "MTest"; }
 
   void MTest::addConstraint(const std::shared_ptr<Constraint> c) {
+    tfel::raise_if(this->initialisationFinished,
+                   "MTest::addConstraint: "
+                   "constraints can't be added after that "
+                   "the `completeInitialisation` method has not been called");
     this->constraints.push_back(c);
   }
 
