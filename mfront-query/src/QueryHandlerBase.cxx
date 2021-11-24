@@ -1,6 +1,6 @@
 /*!
  * \file    mfront-query/src/QueryHandlerBase.cxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   22/11/2021
  */
@@ -12,7 +12,7 @@
 #include "MFront/TargetsDescription.hxx"
 #include "MFront/QueryHandlerBase.hxx"
 
-namespace mfront{
+namespace mfront {
 
   QueryHandlerBase::QueryHandlerBase() = default;
 
@@ -24,14 +24,29 @@ namespace mfront{
                   "Valid options are 'sorted-by-libraries' and 'unsorted'");
     }
     return [ldsl = this->getDSL(), o]() {
+      const auto& libraries = ldsl->getTargetsDescription().libraries;
+      auto write_sources = [&libraries](const LibraryDescription& l) {
+        std::copy(l.sources.begin(), l.sources.end(),
+                  std::ostream_iterator<std::string>(std::cout, " "));
+        for (const auto d : l.deps) {
+          const auto pd = std::find_if(
+              libraries.begin(), libraries.end(),
+              [&d](const LibraryDescription& lib) { return lib.name == d; });
+          if (pd != libraries.end()) {
+            std::copy(pd->sources.begin(), pd->sources.end(),
+                      std::ostream_iterator<std::string>(std::cout, " "));
+          }
+        }
+      };
       if ((o.empty()) || (o == "sorted-by-libraries")) {
-        for (const auto& l : ldsl->getTargetsDescription().libraries) {
+        for (const auto& l : libraries) {
           if (l.name == "MFrontMaterialLaw") {
+            // The MFrontMaterialLaw is used internally and shall be visible to
+            // the end user
             continue;
           }
           std::cout << l.name << " : ";  //< library
-          std::copy(l.sources.begin(), l.sources.end(),
-                    std::ostream_iterator<std::string>(std::cout, " "));
+          write_sources(l);
           std::cout << '\n';
         }
       } else {
@@ -39,8 +54,7 @@ namespace mfront{
           if (l.name == "MFrontMaterialLaw") {
             continue;
           }
-          std::copy(l.sources.begin(), l.sources.end(),
-                    std::ostream_iterator<std::string>(std::cout, " "));
+          write_sources(l);
         }
         std::cout << '\n';
       }
@@ -62,7 +76,8 @@ namespace mfront{
     };
   }  // end of generateSpecificTargetsQuery
 
-  std::function<void()> QueryHandlerBase::generateLibrariesDependenciesQuery() const{
+  std::function<void()> QueryHandlerBase::generateLibrariesDependenciesQuery()
+      const {
     return [ldsl = this->getDSL()] {
       for (const auto& l : ldsl->getTargetsDescription().libraries) {
         if (l.name == "MFrontMaterialLaw") {
@@ -76,7 +91,7 @@ namespace mfront{
     };
   }  // end of generateLibrariesDependenciesQuery
 
-  std::function<void()> QueryHandlerBase::generateCppFlagsQuery() const{
+  std::function<void()> QueryHandlerBase::generateCppFlagsQuery() const {
     return [ldsl = this->getDSL()] {
       for (const auto& l : ldsl->getTargetsDescription().libraries) {
         if (l.name == "MFrontMaterialLaw") {
@@ -102,4 +117,4 @@ namespace mfront{
 
   QueryHandlerBase::~QueryHandlerBase() = default;
 
-} // end of namespace mfront
+}  // end of namespace mfront
