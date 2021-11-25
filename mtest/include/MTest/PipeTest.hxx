@@ -57,6 +57,7 @@ namespace mtest {
       DEFAULTLOADINGTYPE,
       TIGHTPIPE,
       IMPOSEDPRESSURE,
+      IMPOSEDINNERRADIUS,
       IMPOSEDOUTERRADIUS
     };  // end of enum AxialLoading
     //! a simple alias
@@ -156,6 +157,11 @@ namespace mtest {
     virtual RadialLoading getRadialLoading() const;
     /*!
      * \brief set the inner radius evolution
+     * \param[in] p : radius evolution
+     */
+    virtual void setInnerRadiusEvolution(std::shared_ptr<Evolution>);
+    /*!
+     * \brief set the outer radius evolution
      * \param[in] p : radius evolution
      */
     virtual void setOuterRadiusEvolution(std::shared_ptr<Evolution>);
@@ -458,6 +464,8 @@ namespace mtest {
     PipeMesh mesh;
     //! user defined gas equation of state
     std::unique_ptr<GasEquationOfState> gseq;
+    //! inner radius evolution
+    std::shared_ptr<Evolution> irev;
     //! outer radius evolution
     std::shared_ptr<Evolution> orev;
     //! axial growth evolution
