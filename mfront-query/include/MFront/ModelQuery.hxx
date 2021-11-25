@@ -19,10 +19,7 @@
 #include <memory>
 #include <utility>
 #include <functional>
-
-#include "TFEL/Utilities/ArgumentParserBase.hxx"
 #include "MFront/QueryHandlerBase.hxx"
-#include "MFront/MFrontBase.hxx"
 
 namespace mfront {
 
@@ -40,61 +37,45 @@ namespace mfront {
    * model implementation
    */
   struct ModelQuery final
-      : public tfel::utilities::ArgumentParserBase<ModelQuery>,
-        public MFrontBase,
-        public QueryHandlerBase {
+      : public QueryHandlerBase {
     /*!
      * build a ModelQuery object based on command line arguments
      * \param[in] argc : number of command line arguments
      * \param[in] argv : command line arguments
-     * \param[in] d    : behaviour domain specific language
-     * \param[in] f    : behaviour domain specific language
+     * \param[in] d    : domain specific language
+     * \param[in] f    : mfront file
      */
     ModelQuery(const int,
                const char *const *const,
                std::shared_ptr<ModelDSL>,
                const std::string &);
-    //! treat the requests
+    //! \brief treat the requests
     virtual void exe();
-    //! destructor
+    //! \brief destructor
     ~ModelQuery() override;
 
-   private:
-    //! a simple alias
-    using query =
-        std::function<void(const FileDescription &, const ModelDescription &)>;
-    //! ArgumentParserBase must be a friend
-    friend struct tfel::utilities::ArgumentParserBase<ModelQuery>;
+   protected:
     //
     std::shared_ptr<const AbstractDSL> getDSL() const override;
-    //! \brief register call-backs associated with command line arguments
-    virtual void registerCommandLineCallBacks();
-    //! return the current argument
-    const tfel::utilities::Argument &getCurrentCommandLineArgument()
-        const override final;
-    //! treat the "--generated-sources" query
-    virtual void treatGeneratedSources() final;
-    //! treat the "--cppflags" query
-    virtual void treatCppFlags() final;
-    //! treat the "--generated-headers" query
-    virtual void treatGeneratedHeaders() final;
-    //! treat the "--libraries-dependencies" query
-    virtual void treatLibrariesDependencies() final;
-    //! treat the "--specific-targets" query
-    virtual void treatSpecificTargets() final;
-    //! treat a standard query
+    void registerCommandLineCallBacks() override;
+
+   private:
+    //! \brief a simple alias
+    using query =
+        std::function<void(const FileDescription &, const ModelDescription &)>;
+    //
+    void treatGeneratedSources() override final;
+    void treatCppFlags() override final;
+    void treatGeneratedHeaders() override final;
+    void treatLibrariesDependencies() override final;
+    void treatSpecificTargets() override final;
+    //! \brief treat a standard query
     virtual void treatStandardQuery() final;
-    //! treat an unknown argument
-    void treatUnknownArgument() override final;
-    //! get the version description
-    std::string getVersionDescription() const override final;
-    //! get the usage description
-    std::string getUsageDescription() const override final;
-    //! all the registred queries
+    //! \brief all the registred queries
     std::vector<std::pair<std::string, query>> queries;
-    //! abstract behaviour dsl
+    //! \brief abstract behaviour dsl
     std::shared_ptr<ModelDSL> dsl;
-    //! file name
+    //! \brief file name
     std::string file;
   };  // end of struct ModelQuery
 
