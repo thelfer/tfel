@@ -34,10 +34,10 @@ namespace mfront {
   struct MFRONT_VISIBILITY_EXPORT MFront
       : public tfel::utilities::ArgumentParserBase<MFront>,
         public MFrontBase {
-    //! constructor
+    //! \brief constructor
     MFront();
     /*!
-     * constructor
+     * \brief constructor
      * \param[in] argc : number of command line arguments
      * \param[in] argv : command line arguments
      */
@@ -48,11 +48,9 @@ namespace mfront {
      * \return the target's description
      */
     virtual TargetsDescription treatFile(const std::string &) const;
-    /*!
-     * \brief execute MFront process
-     */
+    //! \brief execute MFront process
     virtual void exe();
-    //! destructor
+    //! \brief destructor
     ~MFront() override;
 
    protected:

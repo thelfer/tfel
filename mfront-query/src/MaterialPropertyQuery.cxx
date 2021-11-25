@@ -19,7 +19,6 @@
 #include "TFEL/Glossary/GlossaryEntry.hxx"
 #include "MFront/MaterialPropertyDSL.hxx"
 #include "MFront/MFrontLogStream.hxx"
-#include "MFront/MFrontHeader.hxx"
 #include "MFront/MaterialPropertyQuery.hxx"
 
 namespace mfront {
@@ -53,9 +52,7 @@ namespace mfront {
       const char* const* const argv,
       std::shared_ptr<MaterialPropertyDSL> d,
       const std::string& f)
-      : tfel::utilities::ArgumentParserBase<MaterialPropertyQuery>(argc, argv),
-        dsl(d),
-        file(f) {
+      : QueryHandlerBase(argc, argv), dsl(d), file(f) {
     this->registerCommandLineCallBacks();
     this->parseArguments();
     this->finalizeArgumentsParsing();
@@ -70,58 +67,7 @@ namespace mfront {
   }  // end of getDSL
 
   void MaterialPropertyQuery::registerCommandLineCallBacks() {
-    using Parser = tfel::utilities::ArgumentParserBase<MaterialPropertyQuery>;
-    Parser::registerNewCallBack("--verbose",
-                                &MaterialPropertyQuery::treatVerbose,
-                                "set verbose output", true);
-    Parser::registerNewCallBack("--unicode-output",
-                                &MaterialPropertyQuery::treatUnicodeOutput,
-                                "allow/disallow unicode output", true);
-    Parser::registerNewCallBack(
-        "--include", "-I", &MaterialPropertyQuery::treatSearchPath,
-        "add a new path at the beginning of the search paths", true);
-    Parser::registerNewCallBack(
-        "--search-path", &MaterialPropertyQuery::treatSearchPath,
-        "add a new path at the beginning of the search paths", true);
-    Parser::registerNewCallBack("--install-path",
-                                &MaterialPropertyQuery::treatInstallPath,
-                                "set the installation directory", true);
-    Parser::registerNewCallBack("--install-prefix",
-                                &MaterialPropertyQuery::treatInstallPath,
-                                "set the installation directory "
-                                "(same as --install-path)",
-                                true);
-    Parser::registerNewCallBack("--debug", &MaterialPropertyQuery::treatDebug,
-                                "set debug mode");
-    Parser::registerNewCallBack("--warning", "-W",
-                                &MaterialPropertyQuery::treatWarning,
-                                "print warnings");
-    Parser::registerNewCallBack("--pedantic",
-                                &MaterialPropertyQuery::treatPedantic,
-                                "print pedantic warning message");
-    Parser::registerNewCallBack("--interface",
-                                &MaterialPropertyQuery::treatInterface,
-                                "define an interface", true);
-    Parser::registerCallBack("--no-gui",
-                             CallBack("do not display errors using "
-                                      "a message box (windows only)",
-                                      [] {}, false));
-#ifdef MFRONT_HAVE_MADNEX
-    Parser::registerNewCallBack("--material",
-                                &MaterialPropertyQuery::treatMaterialIdentifier,
-                                "specify a material identifier", true);
-    Parser::registerNewCallBack(
-        "--material-property",
-        &MaterialPropertyQuery::treatMaterialPropertyIdentifier,
-        "specify a material property identifier (can be a regular expression)",
-        true);
-    Parser::registerNewCallBack(
-        "--behaviour", &MaterialPropertyQuery::treatBehaviourIdentifier,
-        "specify a behaviour identifier (can be a regular expression)", true);
-    Parser::registerNewCallBack(
-        "--model", &MaterialPropertyQuery::treatModelIdentifier,
-        "specify a model identifier (can be a regular expression)", true);
-#endif /* MFRONT_HAVE_MADNEX */
+    QueryHandlerBase::registerCommandLineCallBacks();
     // standard queries
     const std::vector<std::pair<const char*, const char*>> sq = {
         {"--author", "show the author name"},
@@ -131,29 +77,13 @@ namespace mfront {
         {"--library", "show the library name"},
         {"--parameters", "show the list of parameters"}};
     for (const auto& q : sq) {
-      Parser::registerNewCallBack(
-          q.first, &MaterialPropertyQuery::treatStandardQuery, q.second);
+      this->registerCallBack(
+          q.first,
+          CallBack(q.second, [this] { this->treatStandardQuery(); }, false));
     }
-    Parser::registerNewCallBack(
+    this->registerCallBack(
         "--parameter-default-value",
-        &MaterialPropertyQuery::treatParameterDefaultValue,
-        "display the default value of a parameter", true);
-    Parser::registerNewCallBack("--generated-sources",
-                                &MaterialPropertyQuery::treatGeneratedSources,
-                                "show all the generated sources", true);
-    Parser::registerNewCallBack("--generated-headers",
-                                &MaterialPropertyQuery::treatGeneratedHeaders,
-                                "show all the generated headers");
-    Parser::registerNewCallBack("--cppflags",
-                                &MaterialPropertyQuery::treatCppFlags,
-                                "show all the global headers");
-    Parser::registerNewCallBack(
-        "--libraries-dependencies",
-        &MaterialPropertyQuery::treatLibrariesDependencies,
-        "show all the libraries dependencies");
-    Parser::registerNewCallBack("--specific-targets",
-                                &MaterialPropertyQuery::treatSpecificTargets,
-                                "show all the specific targets");
+        CallBack("display the default value of a parameter", [this] { this->treatParameterDefaultValue(); }, true));
   }  // end of registerCommandLineCallBacks
 
   void MaterialPropertyQuery::treatParameterDefaultValue() {
@@ -301,35 +231,6 @@ namespace mfront {
       q.second(fd, d);
     }
   }  // end of exe
-
-  const tfel::utilities::Argument&
-  MaterialPropertyQuery::getCurrentCommandLineArgument() const {
-    return *(this->currentArgument);
-  }
-
-  void MaterialPropertyQuery::treatUnknownArgument() {
-    if (!MFrontBase::treatUnknownArgumentBase()) {
-#if !(defined _WIN32 || defined _WIN64 || defined __CYGWIN__)
-      ArgumentParserBase<MaterialPropertyQuery>::treatUnknownArgument();
-#else
-      const auto& a = static_cast<const std::string&>(
-          this->getCurrentCommandLineArgument());
-      std::cerr << "mfront : unsupported option '" << a << "'\n";
-      ::exit(EXIT_FAILURE);
-#endif /* __CYGWIN__ */
-    }
-  }
-
-  std::string MaterialPropertyQuery::getVersionDescription() const {
-    return MFrontHeader::getHeader();
-  }
-
-  std::string MaterialPropertyQuery::getUsageDescription() const {
-    auto usage = std::string("Usage: ");
-    usage += this->programName;
-    usage += " [options] [files]";
-    return usage;
-  }
 
   MaterialPropertyQuery::~MaterialPropertyQuery() = default;
 
