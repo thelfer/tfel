@@ -1,5 +1,5 @@
 /*!
- * \file   PipeTest.cxx
+ * \file   mtest/src/PipeTest.cxx
  * \brief
  * \author Thomas Helfer
  * \date   24 nov. 2015
@@ -434,6 +434,10 @@ namespace mtest {
       tfel::raise_if(this->orev == nullptr,
                      "PipeTest::completeInitialisation: "
                      "the outer radius evolution must be defined");
+    } else if (this->rl == IMPOSEDINNERRADIUS) {
+      tfel::raise_if(this->irev == nullptr,
+                     "PipeTest::completeInitialisation: "
+                     "the inner radius evolution must be defined");
     } else {
       if ((this->rl != TIGHTPIPE) && (this->al != IMPOSEDAXIALFORCE) &&
           (this->al != IMPOSEDAXIALGROWTH)) {
@@ -460,7 +464,8 @@ namespace mtest {
                    "# fourth column : inner radius displacement\n"
                    "# fifth  column : outer radius displacement\n"
                    "# sixth  column : axial displacement\n";
-      if ((this->rl == IMPOSEDOUTERRADIUS) || (this->rl == TIGHTPIPE)) {
+      if ((this->rl == IMPOSEDINNERRADIUS) ||
+          (this->rl == IMPOSEDOUTERRADIUS) || (this->rl == TIGHTPIPE)) {
         this->out << "# " << c << "th column : inner pressure\n";
         ++c;
       }
@@ -676,7 +681,8 @@ namespace mtest {
       // integrating over the loading path
       auto pt = this->times.begin();
       auto pt2 = pt + 1;
-      if (this->rl == IMPOSEDOUTERRADIUS) {
+      if ((this->rl == IMPOSEDINNERRADIUS) ||
+          (this->rl == IMPOSEDOUTERRADIUS)) {
         state.addEvolution("InnerPressure",
                            std::shared_ptr<Evolution>(new LPIEvolution(
                                {*pt, *pt2}, {real(0), real(0)})));
@@ -722,7 +728,7 @@ namespace mtest {
                          const real ti,
                          const real te) const {
     using vector = std::vector<real>;
-    if (this->rl == IMPOSEDOUTERRADIUS) {
+    if ((this->rl == IMPOSEDINNERRADIUS) || (this->rl == IMPOSEDOUTERRADIUS)) {
       if (!state.containsEvolution("InnerPressure")) {
         // first call with this study state
         state.addEvolution("InnerPressure",
@@ -789,7 +795,8 @@ namespace mtest {
       auto& F = state.getEvolution("AxialForce");
       F.setValue(t + dt, F(t));
     }
-    if ((this->rl == IMPOSEDOUTERRADIUS) || (this->rl == TIGHTPIPE)) {
+    if ((this->rl == IMPOSEDINNERRADIUS) || (this->rl == IMPOSEDOUTERRADIUS) ||
+        (this->rl == TIGHTPIPE)) {
       auto& Pi = state.getEvolution("InnerPressure");
       Pi.setValue(t + dt, Pi(t));
     }
@@ -847,7 +854,7 @@ namespace mtest {
     // axial strain
     const auto& ezz = state.u1[n];
     /* external forces */
-    if ((this->rl == IMPOSEDOUTERRADIUS) ||
+    if ((this->rl == IMPOSEDINNERRADIUS) || (this->rl == IMPOSEDOUTERRADIUS) ||
         ((this->rl == IMPOSEDPRESSURE) && (this->inner_pressure != nullptr))) {
       const auto Pi = (this->rl == IMPOSEDPRESSURE)
                           ? (*(this->inner_pressure))(t + dt)
@@ -1076,6 +1083,14 @@ namespace mtest {
       const real cue = *(state.u1.rbegin() + 1);
       ok = ok && (std::abs(cue - iue) < Re * this->options.eeps);
     }
+    if (this->rl == IMPOSEDINNERRADIUS) {
+      const auto Ri = this->mesh.inner_radius;
+      // imposed displacement
+      const real iu = (*(this->irev))(t + dt) - Ri;
+      // computed displacement
+      const real cu = state.u1[0];
+      ok = ok && (std::abs(cu - iu) < Ri * this->options.eeps);
+    }
     if (this->al == IMPOSEDAXIALGROWTH) {
       // imposed axial growth
       const real iag = (*(this->axial_growth))(t + dt);
@@ -1123,6 +1138,19 @@ namespace mtest {
         cd.push_back(msg.str());
       }
     }
+    if (this->rl == IMPOSEDINNERRADIUS) {
+      const auto Ri = this->mesh.inner_radius;
+      // imposed displacement
+      const real iu = (*(this->irev))(t + dt) - Ri;
+      // computed displacement
+      const real cu = state.u1[0];
+      if (std::abs(cu - iu) > Ri * o.eeps) {
+        std::ostringstream msg;
+        msg << "test on imposed outer radius (error : " << std::abs(cu - iu)
+            << ", criterion value : " << Ri * o.eeps << ")";
+        cd.push_back(msg.str());
+      }
+    }
     if (this->al == IMPOSEDAXIALGROWTH) {
       // imposed axial growth
       const real iag = (*(this->axial_growth))(t + dt);
@@ -1157,7 +1185,8 @@ namespace mtest {
                                           const real t,
                                           const real dt) const {
     constexpr real pi = 3.14159265358979323846;
-    if ((this->rl != IMPOSEDOUTERRADIUS) && (this->al != IMPOSEDAXIALGROWTH)) {
+    if ((this->rl != IMPOSEDINNERRADIUS) && (this->rl != IMPOSEDOUTERRADIUS) &&
+        (this->al != IMPOSEDAXIALGROWTH)) {
       return;
     }
     // temporary vector
@@ -1194,6 +1223,33 @@ namespace mtest {
       // current inner pressure value
       const real cv = Pi(t + dt);
       Pi.setValue(t + dt, cv - (cue - iue) / due_dp);
+    }
+    if (this->rl == IMPOSEDINNERRADIUS) {
+      // inner radius
+      const auto Ri = this->mesh.inner_radius;
+      // imposed displacement
+      const real iu = (*(this->irev))(t + dt) - Ri;
+      // computed external displacement
+      const real cu = state.u1[0];
+      std::fill(du.begin(), du.end(), real(0));
+      // du first contains dFe_dp
+      const auto Ri_ = (this->hpp) ? Ri : Ri + state.u1[0];
+      if (this->hpp) {
+        du(0) += 2 * pi * Ri_;
+      } else {
+        du(0) += 2 * pi * (1 + ezz) * Ri_;
+      }
+      if (this->al == ENDCAPEFFECT) {
+        du(n) += pi * Ri_ * Ri_;
+      }
+      setRoundingMode();
+      tfel::math::LUSolve::back_substitute(wk.K, du, wk.x, wk.p_lu);
+      setRoundingMode();
+      const real du_dp = du[0];
+      auto& Pi = state.getEvolution("InnerPressure");
+      // current inner pressure value
+      const real cv = Pi(t + dt);
+      Pi.setValue(t + dt, cv - (cu - iu) / du_dp);
     }
     if (this->al == IMPOSEDAXIALGROWTH) {
       // imposed axial growth
@@ -1435,6 +1491,17 @@ namespace mtest {
     this->axial_growth = f;
   }  // end of setAxialGrowthEvolution
 
+  void PipeTest::setInnerRadiusEvolution(std::shared_ptr<Evolution> e) {
+    auto throw_if = [](const bool c, const std::string& m) {
+      tfel::raise_if(c, "PipeTest::setInnerRadiusEvolution: " + m);
+    };
+    throw_if(this->rl != IMPOSEDINNERRADIUS,
+             "inner radius evolution can be set "
+             "only if the loading type is 'ImposedInnerRadius'");
+    throw_if(this->irev != nullptr, "inner radius evolution already set");
+    this->irev = e;
+  }  // end of setInnerRadiusEvolution
+
   void PipeTest::setOuterRadiusEvolution(std::shared_ptr<Evolution> e) {
     auto throw_if = [](const bool c, const std::string& m) {
       tfel::raise_if(c, "PipeTest::setOuterRadiusEvolution: " + m);
@@ -1442,7 +1509,7 @@ namespace mtest {
     throw_if(this->rl != IMPOSEDOUTERRADIUS,
              "outer radius evolution can be set "
              "only if the loading type is 'ImposedOuterRadius'");
-    throw_if(this->orev != nullptr, "axial force evolution already set");
+    throw_if(this->orev != nullptr, "outer radius evolution already set");
     this->orev = e;
   }  // end of setOuterRadiusEvolution
 
@@ -1499,7 +1566,8 @@ namespace mtest {
       const auto Re = this->mesh.outer_radius;
       this->out << t << " " << Ri + u1[0] << " " << Re + u1[n - 1] << " "
                 << u1[0] << " " << u1[n - 1] << " " << u1[n];
-      if ((this->rl == IMPOSEDOUTERRADIUS) || (this->rl == TIGHTPIPE)) {
+      if ((this->rl == IMPOSEDOUTERRADIUS) ||
+          (this->rl == IMPOSEDINNERRADIUS) || (this->rl == TIGHTPIPE)) {
         this->out << " " << state.getEvolution("InnerPressure")(t);
       }
       if (this->al == IMPOSEDAXIALGROWTH) {

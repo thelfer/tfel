@@ -235,6 +235,8 @@ namespace mtest {
                            &PipeTestParser::handleAxialForceEvolution);
     this->registerCallBack("@AxialGrowthEvolution",
                            &PipeTestParser::handleAxialGrowthEvolution);
+    this->registerCallBack("@InnerRadiusEvolution",
+                           &PipeTestParser::handleInnerRadiusEvolution);
     this->registerCallBack("@OuterRadiusEvolution",
                            &PipeTestParser::handleOuterRadiusEvolution);
     this->registerCallBack("@FillingPressure",
@@ -268,6 +270,8 @@ namespace mtest {
       t.setRadialLoading(mtest::PipeTest::IMPOSEDPRESSURE);
     } else if (h == "TightPipe") {
       t.setRadialLoading(mtest::PipeTest::TIGHTPIPE);
+    } else if (h == "ImposedInnerRadius") {
+      t.setRadialLoading(mtest::PipeTest::IMPOSEDINNERRADIUS);
     } else if (h == "ImposedOuterRadius") {
       t.setRadialLoading(mtest::PipeTest::IMPOSEDOUTERRADIUS);
     } else {
@@ -417,6 +421,18 @@ namespace mtest {
                             this->tokens.end());
     this->readSpecifiedToken("PipeTestParser::handleOuterPressureEvolution",
                              ";", p, this->tokens.end());
+  }
+
+  void PipeTestParser::handleInnerRadiusEvolution(PipeTest& t,
+                                                  tokens_iterator& p) {
+    const auto& evt = this->readEvolutionType(p);
+    this->checkNotEndOfLine("PipeTestParser::handleInnerRadiusEvolution", p,
+                            this->tokens.end());
+    t.setInnerRadiusEvolution(this->parseEvolution(t, evt, p));
+    this->checkNotEndOfLine("PipeTestParser::handleInnerRadiusEvolution", p,
+                            this->tokens.end());
+    this->readSpecifiedToken("PipeTestParser::handleInnerRadiusEvolution", ";",
+                             p, this->tokens.end());
   }
 
   void PipeTestParser::handleOuterRadiusEvolution(PipeTest& t,

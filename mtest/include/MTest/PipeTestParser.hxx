@@ -130,6 +130,12 @@ namespace mtest {
      */
     virtual void handleOuterPressureEvolution(PipeTest&, tokens_iterator&);
     /*!
+     * \brief handle the `@InnerRadiusEvolution` keyword
+     * \param[out]    t: test
+     * \param[in,out] p: position in the input file
+     */
+    virtual void handleInnerRadiusEvolution(PipeTest&, tokens_iterator&);
+    /*!
      * \brief handle the `@OuterRadiusEvolution` keyword
      * \param[out]    t: test
      * \param[in,out] p: position in the input file
