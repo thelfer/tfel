@@ -9,5 +9,6 @@ EXTRA_DIST=CMakeLists.txt                                        \
 	   references/nortonpipe1D-stresses-quadratic.ref        \
 	   references/orthotropic-elastic-profile-quadratic.ref  \
 	   references/elasticity-linear-profile.ref              \
+	   references/elasticity-imposedinnerradius-linear-profile.ref \
 	   references/elasticity-quadratic-profile.ref
 

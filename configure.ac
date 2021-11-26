@@ -10,7 +10,7 @@ AC_CANONICAL_HOST
 AC_CANONICAL_TARGET
 
 # Automake specific stuff
-AM_INIT_AUTOMAKE([foreign dist-bzip2 tar-ustar subdir-objects subdir-objects subdir-objects subdir-objects subdir-objects subdir-objects subdir-objects subdir-objects subdir-objects subdir-objects])
+AM_INIT_AUTOMAKE([foreign dist-bzip2 tar-ustar subdir-objects])
 m4_ifdef([AM_SILENT_RULES],[AM_SILENT_RULES([yes])])
 
 # ok, this is ugly, but is sufficient for our needs
@@ -2828,6 +2828,7 @@ AC_OUTPUT([debug.sh Makefile Doxyfile docs/Makefile docs/tfel/Makefile
 	   mtest/tests/ptest/Makefile
 	   mtest/tests/ptest/castem/Makefile
 	   mtest/tests/ptest/castem/castemelasticity-linear.ptest
+	   mtest/tests/ptest/castem/castemelasticity-imposedinnerradius-linear.ptest
 	   mtest/tests/ptest/castem/castemelasticity-quadratic.ptest
 	   mtest/tests/ptest/castem/castemisotropic-elastic2-linear.ptest
 	   mtest/tests/ptest/castem/castemisotropic-elastic2-quadratic.ptest
