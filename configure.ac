@@ -2832,6 +2832,7 @@ AC_OUTPUT([debug.sh Makefile Doxyfile docs/Makefile docs/tfel/Makefile
 	   mtest/tests/ptest/Makefile
 	   mtest/tests/ptest/castem/Makefile
 	   mtest/tests/ptest/castem/castemelasticity-linear.ptest
+	   mtest/tests/ptest/castem/castemelasticity-imposedinnerradius-linear.ptest
 	   mtest/tests/ptest/castem/castemelasticity-quadratic.ptest
 	   mtest/tests/ptest/castem/castemisotropic-elastic2-linear.ptest
 	   mtest/tests/ptest/castem/castemisotropic-elastic2-quadratic.ptest
