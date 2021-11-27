@@ -49,8 +49,10 @@ namespace mfront {
     virtual const tfel::utilities::Argument& getCurrentCommandLineArgument()
         const = 0;
     virtual bool treatUnknownArgumentBase();
-    //! \brief method that must be called once all the arguments have been
-    //! parsed
+    /*!
+     * \brief method that must be called once all the arguments have been
+     * parsed
+     */
     virtual void finalizeArgumentsParsing();
     //! \brief treat the `--verbose` command line option
     virtual void treatVerbose();

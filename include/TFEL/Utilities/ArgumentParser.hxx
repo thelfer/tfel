@@ -40,19 +40,19 @@ namespace tfel::utilities {
        * \param[in] b : true if the callback requires an option
        */
       CallBack(const std::string&, const std::function<void()>&, const bool);
-      //! move constructor
+      //! \brief move constructor
       CallBack(CallBack&&);
-      //! copy constructor (deleted)
+      //! \brief copy constructor (deleted)
       CallBack(const CallBack&);
-      //! move assignement
+      //! \brief move assignement
       CallBack& operator=(CallBack&&) = delete;
-      //! assignement
+      //! \brief assignement
       CallBack& operator=(const CallBack&) = delete;
-      //! description
+      //! \brief description
       const std::string d;
-      //! action performed
+      //! \brief action performed
       std::function<void()> c;
-      //! flag, true if the callback has an option
+      //! \brief flag, true if the callback has an option
       const bool hasOption = false;
     };
     //! default constructor

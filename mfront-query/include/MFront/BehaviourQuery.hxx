@@ -20,9 +20,7 @@
 #include <utility>
 #include <functional>
 
-#include "TFEL/Utilities/ArgumentParserBase.hxx"
 #include "TFEL/Material/ModellingHypothesis.hxx"
-#include "MFront/MFrontBase.hxx"
 #include "MFront/QueryHandlerBase.hxx"
 
 namespace mfront {
@@ -43,9 +41,7 @@ namespace mfront {
    * behaviour implementation
    */
   struct BehaviourQuery final
-      : public tfel::utilities::ArgumentParserBase<BehaviourQuery>,
-        public MFrontBase,
-        public QueryHandlerBase {
+      : public QueryHandlerBase {
     /*!
      * build a BehaviourQuery object based on command line arguments
      * \param[in] argc : number of command line arguments
@@ -65,6 +61,7 @@ namespace mfront {
    protected:
     //
     std::shared_ptr<const AbstractDSL> getDSL() const override;
+    void registerCommandLineCallBacks() override;
 
    private:
     //! \brief a simple alias
@@ -77,37 +74,20 @@ namespace mfront {
     //! \brief a simple alias
     using query2 = std::function<void(const FileDescription&,
                                       const BehaviourDescription&)>;
-    //! \brief ArgumentParserBase must be a friend
-    friend struct tfel::utilities::ArgumentParserBase<BehaviourQuery>;
-    //! \brief \brief register call-backs associated with command line arguments
-    virtual void registerCommandLineCallBacks();
-    //! \brief return the current argument
-    const tfel::utilities::Argument& getCurrentCommandLineArgument()
-        const override final;
     //! \brief treat a standard query
     virtual void treatStandardQuery() final;
     //! \brief treat a standard query (an option to the command line
     //! \brief triggering the query is required)
     virtual void treatStandardQuery2() final;
-    //! \brief treat the "--generated-sources" query
-    virtual void treatGeneratedSources() final;
-    //! \brief treat the "--cppflags" query
-    virtual void treatCppFlags() final;
-    //! \brief treat the "--generated-headers" query
-    virtual void treatGeneratedHeaders() final;
-    //! \brief treat the "--libraries-dependencies" query
-    virtual void treatLibrariesDependencies() final;
-    //! \brief treat the "--specific-targets" query
-    virtual void treatSpecificTargets() final;
+    //
+    void treatGeneratedSources() override final;
+    void treatCppFlags() override final;
+    void treatGeneratedHeaders() override final;
+    void treatLibrariesDependencies() override final;
+    void treatSpecificTargets() override final;
     //! \brief treat the "--modelling-hypothesis" command line argument
     virtual void treatModellingHypothesis() final;
-    //! \brief treat an unknown argument
-    void treatUnknownArgument() override final;
-    //! \brief get the version description
-    std::string getVersionDescription() const override final;
-    //! \brief get the usage description
-    std::string getUsageDescription() const override final;
-    //! \brief \return a query that show a list of variables
+    //! \return a query that show a list of variables
     template <const VariableDescriptionContainer& (BehaviourData::*m)() const>
     query generateVariablesListQuery();
     //! \brief all the registred queries

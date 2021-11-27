@@ -20,6 +20,22 @@ eqnPrefixTemplate: "($$i$$)"
 The page describes the new functionalities of Version 3.4.4 of the
 `TFEL` project.
 
+# New feature of `mtest`
+
+## Imposed inner radius loading in pipe modelling
+
+`PTest` now supports imposing the evolution of the inner radius of the pipe.
+
+### Example of usage
+
+The following code shows how to impose the evolution of the inner radius
+of the pipe:
+
+~~~~{.cxx}
+@RadialLoading 'ImposedInnerRadius';
+@InnerRadiusEvolution{0 : 4.2e-3, 1 : 4.3e-3};
+~~~~
+
 # New features of `mfront-query`
 
 ## Better `--generated-sources` query {#sec:tfel-3.4.4:mfront-query:generated_sources}
@@ -29,6 +45,8 @@ The `--generated-sources` query can now have an option:
 - `sorted-by-libraries` (default): which returns the sources to be
   generated associated with each library
 - `unsorted`: which returns all the sources to be generated
+
+This option may be used in conjunction with the `--nomelt` option.
 
 # Issues solved
 

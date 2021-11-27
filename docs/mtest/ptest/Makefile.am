@@ -2,6 +2,8 @@ PTEST_DOCS = AxialForceEvolution.md  \
 	     AxialGrowthEvolution.md     \
 	     AxialLoading.md             \
 	     DisplacementEpsilon.md      \
+	     InnerRadiusEvolution.md     \
+	     OuterRadiusEvolution.md     \
 	     RadialLoading.md            \
 	     ResidualEpsilon.md
 

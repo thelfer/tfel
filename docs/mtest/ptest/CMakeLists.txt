@@ -13,6 +13,8 @@ install_ptest(AxialForceEvolution)
 install_ptest(AxialGrowthEvolution)
 install_ptest(AxialLoading)
 install_ptest(DisplacementEpsilon)
+install_ptest(InnerRadiusEvolution)
+install_ptest(OuterRadiusEvolution)
 install_ptest(RadialLoading)
 install_ptest(ResidualEpsilon)
 

@@ -1,5 +1,5 @@
 /*!
- * \file   MakefileGenerator.cxx
+ * \file   mfront/src/MakefileGenerator.cxx
  * \brief
  * \author Thomas Helfer
  * \date   16/08/2015

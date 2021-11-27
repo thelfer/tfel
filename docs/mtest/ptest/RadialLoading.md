@@ -15,6 +15,8 @@ allowed:
       curent temperature and enclosed volume.
 - `ImposedOuterRadius`: the evolution of the outer radius is specified
   by the user. See the `@OuterRadiusEvolution` keyword for details.
+- `ImposedInnerRadius`: the evolution of the inner radius is specified
+  by the user. See the `@InnerRadiusEvolution` keyword for details.
 
 ## Example
 
