@@ -173,7 +173,7 @@ namespace mtest {
     [[noreturn]] static void throwAlreadyDeclaredParameterException(
         const std::string&);
     /*!
-     * study parameters
+     * \brief study parameters
      */
     std::map<std::string, StudyParameter> parameters;
     /*!
@@ -182,7 +182,7 @@ namespace mtest {
      */
     std::map<std::string, std::shared_ptr<StructureCurrentState>> s;
     /*!
-     * evolutions
+     * \brief evolutions
      */
     std::map<std::string, std::shared_ptr<Evolution>> evs;
   };  // end of struct StudyCurrentState

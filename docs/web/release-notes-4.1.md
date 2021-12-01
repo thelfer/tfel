@@ -22,6 +22,45 @@ The page describes the new functionalities of Version 4.1 of the
 
 # `MTest` improvements
 
+## Support for a boundary condition modelling the effet of a mandrel in pipe modelling {#sec:tfel_4.1:mtest:mandrel}
+
+The effect of a non-deformable mandrel located inside the pipe can be
+modelled by defining the evolution of its radius \(R_{m}\) using the
+`@MandrelRadiusEvolution` keyword. The inner radius \(R_{i}\) will then
+satisfy the following unilateral boundary condition:
+
+\[
+R_{i} - R_{m} \geq 0
+\]
+
+This boundary condition is imposed by using a Lagrange multiplier. Its
+value is given by the contact pressure in the output file. The total
+pressure applied to the inner surface of the pipe is given by the sum of
+the imposed pressure (if any) and the contact pressure. Only the imposed
+inner pressure is used to compute the end cap effect.
+
+This boundary condition is not compatible with:
+
+- boundary conditions imposing the evolution of the inner radius of the
+  pipe or the outer radius of the pipe.
+- the modelling of a tight pipe. 
+
+### Axial binding
+
+If the evolution of the axial growth of the mandrel is defined using the
+`@MandrelAxialGrowthEvolution` keyword, an axial binding between the
+mandrel and the pipe is assumed, i.e. the difference between the axial
+growth of the pipe \(\varepsilon^{p}_{zz}\) and the axial growth of the
+mandrel \(\varepsilon^{p}_{zz}\) is assumed to be constant to its value
+when the contact between the mandrel and the pipe is detected:
+
+\[
+\varepsilon^{p}_{zz}-\varepsilon^{m}_{zz}=\textrm{Cste}
+\]
+
+This axial boundary condition is not compatible with the boundary
+condition imposing the evolution of the axial growth of the pipe.
+
 ## Wrappers around `3D` behaviours {#sec:tfel_4.1:mtest:small_strain_tridimensional_behaviour_wrapper}
 
 The `SmallStrainTridimensionalBehaviourWrapper` class allows to wrap a
@@ -138,11 +177,19 @@ b = mtest.Behaviour(library = 'src/libBehaviour.so',
 
 # Issues fixed
 
+## Issue #44: [mtest] Add support for a boundary condition modelling the effet of a mandrel in pipe modelling
+
+The feature is described in Section @sec:tfel_4.1:mtest:mandrel.
+
+For more details, see : <https://github.com/thelfer/tfel/issues/38>
+
 ## Issue #39: [tfel-config] Add query associated with python bindings support
 
 `tfel-config` now supports an command line option named
 `--python-bindings-support` which displays true if `python` bindings are
 available, `false` otherwise.
+
+For more details, see : <https://github.com/thelfer/tfel/issues/38>
 
 ## Issue #38: [tfel-config] Add query associated with MADNEX support
 

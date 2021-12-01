@@ -38,11 +38,9 @@ namespace mtest {
   // forward declaration
   struct GasEquationOfState;
 
-  /*!
-   * a study describing mechanical tests on pipes
-   */
+  //! \brief a study describing mechanical tests on pipes
   struct MTEST_VISIBILITY_EXPORT PipeTest : public SingleStructureScheme {
-    //! how the pipe is modelled
+    //! \brief type of axial loading
     enum AxialLoading {
       DEFAULTAXIALLOADING,
       ENDCAPEFFECT,
@@ -50,7 +48,7 @@ namespace mtest {
       IMPOSEDAXIALGROWTH,
       NONE
     };  // end of enum AxialLoading
-    //! how the pipe is modelled
+    //! \brief type of radial loading
     enum RadialLoading {
       DEFAULTLOADINGTYPE,
       TIGHTPIPE,
@@ -58,7 +56,7 @@ namespace mtest {
       IMPOSEDINNERRADIUS,
       IMPOSEDOUTERRADIUS
     };  // end of enum AxialLoading
-    //! a simple alias
+    //! \brief a simple alias
     using size_type = tfel::math::vector<real>::size_type;
     /*!
      * \brief base class for tests
@@ -78,10 +76,10 @@ namespace mtest {
        * \return the results of the test
        */
       virtual tfel::tests::TestResult getResults() const = 0;
-      //! desctructor
+      //! \brief desctructor
       virtual ~UTest();
     };  // end of struct UnitTest
-    //! default constructor
+    //! \brief default constructor
     PipeTest();
     /*!
      * \return the name of the test
@@ -91,7 +89,7 @@ namespace mtest {
      * \return the group of the test
      */
     std::string classname() const override;
-    //! return the mesh
+    //! \brief return the mesh
     const PipeMesh& getMesh() const;
     /*!
      * \brief integrate the behaviour along the loading path
@@ -139,8 +137,18 @@ namespace mtest {
      * \param[in] al: axial loading
      */
     virtual void setAxialLoading(const AxialLoading);
-    //! \return the axial loading
+    //! \brief \return the axial loading
     virtual AxialLoading getAxialLoading() const;
+    /*!
+     * \brief set the evolution of the radius of the mandrel
+     * \param[in] r : evolution of the mandrel' radius 
+     */
+    virtual void setMandrelRadiusEvolution(std::shared_ptr<Evolution>);
+    /*!
+     * \brief set the evolution of the axial growth of the mandrel
+     * \param[in] ag : evolution of the axial growth
+     */
+    virtual void setMandrelAxialGrowthEvolution(std::shared_ptr<Evolution>);
     /*!
      * \brief set the inner pressure evolution
      * \param[in] p : pressure evolution
@@ -151,7 +159,7 @@ namespace mtest {
      * \param[in] t: radial loading type
      */
     virtual void setRadialLoading(const RadialLoading);
-    //! \return the radial loading type
+    //! \brief \return the radial loading type
     virtual RadialLoading getRadialLoading() const;
     /*!
      * \brief set the inner radius evolution
@@ -300,7 +308,7 @@ namespace mtest {
      * \param[in] dt: time increment
      * \return a boolean saying if all convergence criteria are met
      */
-    bool checkConvergence(const StudyCurrentState&,
+    bool checkConvergence(StudyCurrentState&,
                           const tfel::math::vector<real>&,
                           const tfel::math::vector<real>&,
                           const SolverOptions&,
@@ -424,7 +432,7 @@ namespace mtest {
      */
     virtual void addOutput(const std::string&, const std::string&);
     void completeInitialisation() override;
-    //! destructor
+    //! \brief destructor
     ~PipeTest() override;
 
    protected:
@@ -436,7 +444,7 @@ namespace mtest {
     void checkBehaviourConsistency(const std::shared_ptr<Behaviour>&) override;
 
    private:
-    //! a simple alias
+    //! \brief a simple alias
     using ModellingHypothesis = tfel::material::ModellingHypothesis;
     /*!
      * \brief set the position of the Gauss point in the evolution
@@ -445,47 +453,51 @@ namespace mtest {
      */
     void setGaussPointPositionForEvolutionsEvaluation(
         const CurrentState&) const override;
-    //! description of an additional
+    //! \brief description of an additional
     struct AdditionalOutput {
-      //! description
+      //! \brief description
       std::string d;
-      //! functor
+      //! \brief functor
       std::function<void(std::ostream&, const StudyCurrentState&)> f;
     };
-    //! additional outputs
+    //! \brief additional outputs
     std::vector<AdditionalOutput> aoutputs;
-    //! list of tests
+    //! \brief list of tests
     std::vector<std::shared_ptr<UTest>> tests;
-    //! registred profile
+    //! \brief registred profile
     std::vector<PipeProfileHandler> profiles;
-    //! mesh data
+    //! \brief mesh data
     PipeMesh mesh;
-    //! user defined gas equation of state
+    //! \brief user defined gas equation of state
     std::unique_ptr<GasEquationOfState> gseq;
-    //! inner radius evolution
-    std::shared_ptr<Evolution> irev;
-    //! outer radius evolution
-    std::shared_ptr<Evolution> orev;
-    //! axial growth evolution
-    std::shared_ptr<Evolution> axial_growth;
-    //! axial force evolution
-    std::shared_ptr<Evolution> axial_force;
-    //! inner pressure
-    std::shared_ptr<Evolution> inner_pressure;
-    //! outer pressure
-    std::shared_ptr<Evolution> outer_pressure;
-    //! initial number of moles (tight pipe modelling)
+    //! \brief inner radius evolution
+    std::shared_ptr<Evolution> inner_radius_evolution;
+    //! \brief outer radius evolution
+    std::shared_ptr<Evolution> outer_radius_evolution;
+    //! \brief axial growth evolution
+    std::shared_ptr<Evolution> axial_growth_evolution;
+    //! \brief evolution of the radius of the mandrel
+    std::shared_ptr<Evolution> mandrel_radius_evolution;
+    //! \brief mandrel axial growth evolution
+    std::shared_ptr<Evolution> mandrel_axial_growth_evolution;
+    //! \brief axial force evolution
+    std::shared_ptr<Evolution> axial_force_evolution;
+    //! \brief inner pressure
+    std::shared_ptr<Evolution> inner_pressure_evolution;
+    //! \brief outer pressure
+    std::shared_ptr<Evolution> outer_pressure_evolution;
+    //! \brief initial number of moles (tight pipe modelling)
     real n0 = -1;
-    //! initial pressure (tight pipe modelling)
+    //! \brief initial pressure (tight pipe modelling)
     real P0 = -1;
-    //! initial temperature (tight pipe modelling)
+    //! \brief initial temperature (tight pipe modelling)
     real T0 = -1;
-    //! pipe modelling hypothesis
+    //! \brief pipe modelling hypothesis
     RadialLoading rl = DEFAULTLOADINGTYPE;
-    //! axial modelling hypothesis
+    //! \brief axial modelling hypothesis
     AxialLoading al = DEFAULTAXIALLOADING;
-    //! element type
-    //! small strain hypothesis
+    //! \brief element type
+    //! \brief small strain hypothesis
     bool hpp = false;
   };  // end of struct PipeTest
 
