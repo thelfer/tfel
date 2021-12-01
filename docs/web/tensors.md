@@ -554,6 +554,32 @@ I_{3} &= \det\paren{\a}
 \right.
 \]
 
+## Cauchy-Green tensor and derivative
+
+The `computeRightCauchyGreenTensor` computes the right Cauchy-Green
+symmetric tensor \(\tenseur{C}\) associated with a non symmetric tensor
+\(\tns{F}\):
+
+\[
+\tenseur{C}=\transpose{\tns{F}}\,\cdot\,\tns{F}
+\]
+
+The derivative of \(\tenseur{C}\) with respect to \(\tns{F}\) can be
+computed using the `t2tost2::dCdF` static method.`
+
+## Left Cauchy-Green tensor and derivative
+
+The `computeLeftCauchyGreenTensor` computes the left Cauchy-Green
+symmetric tensor \(\tenseur{B}\) associated with a non symmetric tensor
+\(\tns{F}\):
+
+\[
+\tenseur{B}=\tns{F}\,\cdot\,\transpose{\tns{F}}
+\]
+
+The derivative of \(\tenseur{B}\) with respect to \(\tns{F}\) can be
+computed using the `t2tost2::dBdF` static method.`
+
 ### Computation
 
 \(I_{1}\) can be computed thanks to `trace` function as follows:
