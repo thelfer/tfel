@@ -3377,9 +3377,8 @@ namespace mfront {
   void BehaviourDSLCommon::treatAuxiliaryStateVariable() {
     VarContainer v;
     auto h = std::set<Hypothesis>{};
-
-    //     this->readVariableList(
-    //         v, h, &BehaviourDescription::addAuxiliaryStateVariables, true);
+    this->readVariableList(
+        v, h, &BehaviourDescription::addAuxiliaryStateVariables, true);
   }  // end of treatAuxiliaryStateVariable
 
   void BehaviourDSLCommon::treatExternalStateVariable() {
