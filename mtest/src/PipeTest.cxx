@@ -409,7 +409,7 @@ namespace mtest {
     }
     if (this->mandrel_axial_growth_evolution != nullptr) {
       tfel::raise_if(
-          this->mandrel_radius_evolution != nullptr,
+          this->mandrel_radius_evolution == nullptr,
           "PipeTest::completeInitialisation: "
           "defining the axial growth evolution of the mandrel is meaningless "
           "if the evolution of the mandrel radius is not");
