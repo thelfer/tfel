@@ -141,6 +141,21 @@ namespace mfront {
          [q](const FileDescription&, const ModelDescription&) { q(); }});
   }  // end of treatGeneratedSources
 
+  void ModelQuery::treatSpecificTargetGeneratedSources() {
+    auto q = this->generateSpecificTargetGeneratedSourcesQuery(
+        this->getCurrentCommandLineArgument().getOption());
+    this->queries.push_back(
+        {"specific-target-generated-sources",
+         [q](const FileDescription&, const ModelDescription&) { q(); }});
+  }  // end of treatSpecificTargetGeneratedSources
+
+  void ModelQuery::treatAllSpecificTargetsGeneratedSources() {
+    auto q = this->generateAllSpecificTargetsGeneratedSourcesQuery();
+    this->queries.push_back(
+        {"all-specific-targets-generated-sources",
+         [q](const FileDescription&, const ModelDescription&) { q(); }});
+  }  // end of treatAllSpecificTargetsGeneratedSources
+
   void ModelQuery::treatGeneratedHeaders() {
     auto q = this->generateGeneratedHeadersQuery();
     this->queries.push_back(

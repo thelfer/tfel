@@ -43,12 +43,12 @@ namespace mfront {
     SpecificTargetDescription& operator=(SpecificTargetDescription&&);
     //! \brief destructor
     ~SpecificTargetDescription();
-    // //! \brief  name
-    // const std::string name;
     //! \brief sources
     std::vector<std::string> sources;
-    //!\ brief  dependencies to other targets
+    //!\ brief dependencies to other targets
     std::vector<std::string> deps;
+    //!\ brief dependencies to MFront generated libraries
+    std::vector<std::string> libraries;
     //! \brief commands
     std::vector<std::string> cmds;
   };  // end of struct SpecificTargetDescription

@@ -152,6 +152,7 @@ namespace mfront {
       write(os, target.second.deps, "dependencies");
       write(os, target.second.cmds, "commands");
       write(os, target.second.sources, "sources");
+      write(os, target.second.libraries, "libraries");
       os << "};\n";
     }
     os << "};\n";
@@ -204,6 +205,7 @@ namespace mfront {
         auto deps = std::vector<std::string>{};
         auto cmds = std::vector<std::string>{};
         auto sources = std::vector<std::string>{};
+        auto libraries = std::vector<std::string>{};
         ++c;
         CxxTokenizer::readSpecifiedToken(f, ":", c, pe);
         CxxTokenizer::readSpecifiedToken(f, "{", c, pe);
@@ -225,6 +227,9 @@ namespace mfront {
           } else if (c->value == "sources") {
             ++c;
             get_vector(sources, c, pe, "sources");
+          } else if (c->value == "libraries") {
+            ++c;
+            get_vector(libraries, c, pe, "libraries");
           } else {
             error("unsupported tag '" + c->value +
                   "' "
@@ -243,6 +248,7 @@ namespace mfront {
         std::swap(st.deps, deps);
         std::swap(st.cmds, cmds);
         std::swap(st.sources, sources);
+        std::swap(st.libraries, libraries);
       } else {
         error("unsupported tag '" + c->value + "'");
       }

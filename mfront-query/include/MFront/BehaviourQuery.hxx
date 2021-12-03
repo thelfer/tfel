@@ -81,6 +81,8 @@ namespace mfront {
     virtual void treatStandardQuery2() final;
     //
     void treatGeneratedSources() override final;
+    void treatSpecificTargetGeneratedSources() override final;
+    void treatAllSpecificTargetsGeneratedSources() override final;
     void treatCppFlags() override final;
     void treatGeneratedHeaders() override final;
     void treatLibrariesDependencies() override final;
