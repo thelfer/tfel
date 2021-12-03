@@ -65,6 +65,8 @@ namespace mfront {
                                      const MaterialPropertyDescription &)>;
     //
     void treatGeneratedSources() override final;
+    void treatSpecificTargetGeneratedSources() override final;
+    void treatAllSpecificTargetsGeneratedSources() override final;
     void treatCppFlags() override final;
     void treatGeneratedHeaders() override final;
     void treatLibrariesDependencies() override final;

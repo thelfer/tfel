@@ -99,6 +99,16 @@ namespace mfront {
                  [this] {
       this->treatGeneratedSources(); }, true));
     this->registerCallBack(
+        "--specific-target-generated-sources",
+        CallBack(
+            "show all the generated sources associated with as specific target",
+            [this] { this->treatSpecificTargetGeneratedSources(); }, true));
+    this->registerCallBack(
+        "--all-specific-targets-generated-sources",
+        CallBack(
+            "show all the generated sources associated specific targets",
+            [this] { this->treatAllSpecificTargetsGeneratedSources(); }, false));
+    this->registerCallBack(
         "--generated-headers",
         CallBack("show all the generated headers",
                  [this] {
@@ -130,11 +140,13 @@ namespace mfront {
                   "Valid options are 'sorted-by-libraries' and 'unsorted'");
     }
     auto ldsl = this->getDSL();
-    return [ldsl, o] {
+    auto lmelt_sources = this->melt_sources;
+    return [ldsl, lmelt_sources, o] {
       const auto& libraries = ldsl->getTargetsDescription().libraries;
-      auto write_sources = [&libraries](const LibraryDescription& l) {
+      auto write_sources = [lmelt_sources, &libraries](const LibraryDescription& l) {
         std::copy(l.sources.begin(), l.sources.end(),
                   std::ostream_iterator<std::string>(std::cout, " "));
+        if (lmelt_sources) {
         for (const auto d : l.deps) {
           const auto pd = std::find_if(
               libraries.begin(), libraries.end(),
@@ -143,6 +155,7 @@ namespace mfront {
             std::copy(pd->sources.begin(), pd->sources.end(),
                       std::ostream_iterator<std::string>(std::cout, " "));
           }
+        }
         }
       };
       if ((o.empty()) || (o == "sorted-by-libraries")) {
@@ -167,6 +180,74 @@ namespace mfront {
       }
     };
   }  // end of generateGeneratedSourcesQuery
+
+  static std::vector<std::string> getSpecificTargetSources(
+      const TargetsDescription& td,
+      const SpecificTargetDescription& t,
+      const bool melt_sources) {
+    auto sources = std::vector<std::string>{};
+    std::copy(t.sources.begin(), t.sources.end(), std::back_inserter(sources));
+    if (melt_sources) {
+      const auto& libraries = td.libraries;
+      for (const auto& d : t.libraries) {
+        const auto pd = std::find_if(
+            libraries.begin(), libraries.end(),
+            [&d](const LibraryDescription& lib) { return lib.name == d; });
+        if (pd != libraries.end()) {
+          std::copy(pd->sources.begin(), pd->sources.end(),
+                    std::back_inserter(sources));
+        }
+      }
+    }
+    return sources;
+  }
+
+  std::function<void()> QueryHandlerBase::generateSpecificTargetGeneratedSourcesQuery(
+      const std::string& n) const {
+    if (!n.empty()){
+      tfel::raise(
+          "QueryHandlerBase::generateSpecificTargetGeneratedSourcesQuery: "
+          "no option given for command line argument "
+          "'--specific-target-generated-sources'. "
+          "Expected specific target name");
+    }
+    auto ldsl = this->getDSL();
+    auto lmelt_sources = this->melt_sources;
+    return [ldsl, lmelt_sources, n] {
+      const auto& targets = ldsl->getTargetsDescription().specific_targets;
+      const auto p = targets.find(n);
+      if (p == targets.end()) {
+        tfel::raise(
+            "QueryHandlerBase::generateSpecificTargetGeneratedSourcesQuery: "
+            "no specific target named '" +
+            n + "'");
+      }
+      const auto sources = getSpecificTargetSources(
+          ldsl->getTargetsDescription(), p->second, lmelt_sources);
+      std::copy(sources.begin(), sources.end(),
+                std::ostream_iterator<std::string>(std::cout, " "));
+      std::cout << '\n';
+    };
+  }  // end of generateSpecificTargetGeneratedSourcesQuery
+
+  std::function<void()>
+  QueryHandlerBase::generateAllSpecificTargetsGeneratedSourcesQuery() const {
+    auto ldsl = this->getDSL();
+    auto lmelt_sources = this->melt_sources;
+    return [ldsl, lmelt_sources] {
+      const auto& targets = ldsl->getTargetsDescription().specific_targets;
+      for (const auto& t : targets) {
+        if ((t.first == "all") || (t.first == "clean")) {
+          continue;
+        }
+        const auto sources = getSpecificTargetSources(
+            ldsl->getTargetsDescription(), t.second, lmelt_sources);
+        std::copy(sources.begin(), sources.end(),
+                  std::ostream_iterator<std::string>(std::cout, " "));
+      }
+      std::cout << '\n';
+    };
+  }  // end of generateAllSpecificTargetsGeneratedSourcesQuery
 
   std::function<void()> QueryHandlerBase::generateSpecificTargetsQuery() const {
     auto ldsl = this->getDSL();
