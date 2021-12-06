@@ -15,6 +15,7 @@ eqnPrefixTemplate: "($$i$$)"
 nocite: |
     @singh_irradiation_2021
     @guo_nspfem2d_2021
+    @li_large-deformation_2021
     @reymond_thermo-mechanical_2021
     @liang_micromechanical_2021
     @gelebart_grain_2021

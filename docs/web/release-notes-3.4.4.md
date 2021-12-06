@@ -63,7 +63,6 @@ argument is used.
 
 # Issues solved
 
-
 ## Issue #49: [mfront-query] query sources related to specific targets
 
 See Section
