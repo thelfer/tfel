@@ -457,10 +457,10 @@ namespace mfront {
                                                 const RegistrationStatus s) {
     this->addVariable(this->auxiliaryStateVariables, v, s, false);
     if (s == FORCEREGISTRATION) {
-      this->addVariable(this->persistentVariables, v, ALREADYREGISTRED, true,
+      this->addVariable(this->persistentVariables, v, ALREADYREGISTRED, false,
                         true);
     } else {
-      this->addVariable(this->persistentVariables, v, ALREADYREGISTRED, true);
+      this->addVariable(this->persistentVariables, v, ALREADYREGISTRED, false);
     }
   }  // end of BehaviourData::addAuxiliaryStateVariable
 
@@ -923,6 +923,12 @@ namespace mfront {
                                   const RegistrationStatus s,
                                   const bool bi,
                                   const bool b) {
+    if ((v.hasGlossaryName()) && (v.hasEntryName())) {
+      tfel::raise(
+          "BehaviourData::addVariable: "
+          "variable '" +
+          v.name + "' declares a glossary name and an entry name.");
+    }
     if ((!b) && (s != FORCEREGISTRATION)) {
       if ((this->hasAttribute(BehaviourData::allowsNewUserDefinedVariables)) &&
           (!this->getAttribute<bool>(
@@ -931,8 +937,7 @@ namespace mfront {
         tfel::raise_if(
             cbn.empty(),
             "BehaviourData::addVariable: can't add variable '" + v.name +
-                "', "
-                "no more variable can be defined. This may mean that "
+                "', no more variable can be defined. This may mean that "
                 "the parser does not expect you to add variables");
         auto cbs = std::string{};
         for (const auto& n : cbn) {
@@ -940,30 +945,77 @@ namespace mfront {
         }
         tfel::raise(
             "BehaviourData::addVariable: can't add variable '" + v.name +
-            "', "
-            "no more variable can be defined. This may mean that "
+            "', no more variable can be defined. This may mean that "
             "you already declared a block of code (or that the dsl "
             "does not expect you to add variables for whatever reason). "
-            "This is the list of "
-            "code blocks defined :" +
+            "This is the list of code blocks defined :" +
             cbs);
       }
     }
     if (s == ALREADYREGISTRED) {
       checkAlreadyRegistred(this->reservedNames, v.name);
+      if (bi) {
+        checkAlreadyRegistred(this->membersNames, "d" + v.name);
+      }
+      c.push_back(v);
+      if (v.hasGlossaryName()) {
+        const auto pe = this->entryNames.find(v.name);
+        if (pe != this->entryNames.end()) {
+          tfel::raise(
+              "BehaviourData::addVariable: "
+              "already registred variable '" +
+              v.name + "' with entry name '" + pe->second +
+              "' now declares '" + v.getExternalName() + "' as glossary name");
+        }
+        const auto p = this->glossaryNames.find(v.name);
+        if (p == this->glossaryNames.end()) {
+	  this->setGlossaryName(v.name, v.getExternalName());
+        } else {
+          if (p->second != v.getExternalName()) {
+            tfel::raise(
+                "BehaviourData::addVariable: "
+                "unmatched glossary names for already registred variable '" +
+                v.name + "' (" + p->second + " vs " + v.getExternalName() +
+                ")");
+          }
+        }
+      }
+      if (v.hasEntryName()) {
+        const auto pg = this->glossaryNames.find(v.name);
+        if (pg != this->glossaryNames.end()) {
+          tfel::raise(
+              "BehaviourData::addVariable: "
+              "already registred variable '" +
+              v.name + "' with glossary name '" + pg->second +
+              "' now declares '" + v.getExternalName() + "' as entry name");
+        }
+        const auto p = this->entryNames.find(v.name);
+        if (p == this->entryNames.end()) {
+	  this->setEntryName(v.name, v.getExternalName());
+        } else {
+          if (p->second != v.getExternalName()) {
+            tfel::raise(
+                "BehaviourData::addVariable: "
+                "unmatched entry names for already registred variable '" +
+                v.name + "' (" + p->second + " vs " + v.getExternalName() +
+                ")");
+          }
+        }
+      }
     } else {
+      // Unregistred variable
       this->registerMemberName(v.name);
       if (bi) {
         this->registerMemberName("d" + v.name);
       }
+      c.push_back(v);
+      if (v.hasGlossaryName()) {
+	this->setGlossaryName(v.name, v.getExternalName());
+      }
+      if (v.hasEntryName()) {
+	this->setEntryName(v.name, v.getExternalName());
+      }
     }
-    if (v.hasGlossaryName()) {
-      this->glossaryNames.insert({v.name, v.getExternalName()});
-    }
-    if (v.hasEntryName()) {
-      this->entryNames.insert({v.name, v.getExternalName()});
-    }
-    c.push_back(v);
   }  // end of BehaviourData::addVariable
 
   void BehaviourData::reserveName(const std::string& n) {
@@ -1328,7 +1380,16 @@ namespace mfront {
     auto set_glossary_name = [&n, &g,
                               &treated](VariableDescriptionContainer& c) {
       if (c.contains(n)) {
-        c.getVariable(n).setGlossaryName(g);
+	auto& v = c.getVariable(n);
+	if(v.hasGlossaryName()){
+	  if(v.getExternalName() != g){
+	    tfel::raise("BehaviourData::setGlossaryName: "
+			"inconsistent glossary name for "
+			"variable '"+v.name+"'");
+	  }
+	} else {
+	  v.setGlossaryName(g);
+	}
         treated = true;
       }
     };
@@ -1371,7 +1432,16 @@ namespace mfront {
     bool treated = false;
     auto set_entry_name = [&n, &e, &treated](VariableDescriptionContainer& c) {
       if (c.contains(n)) {
-        c.getVariable(n).setEntryName(e);
+	auto& v = c.getVariable(n);
+	if(v.hasEntryName()){
+	  if(v.getExternalName() != e){
+	    tfel::raise("BehaviourData::setEntryName: "
+			"inconsistent entry name for "
+			"variable '"+v.name+"'");
+	  }
+	} else {
+	  v.setEntryName(e);
+	}
         treated = true;
       }
     };
