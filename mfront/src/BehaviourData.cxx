@@ -460,10 +460,10 @@ namespace mfront {
                                                 const RegistrationStatus s) {
     this->addVariable(this->auxiliaryStateVariables, v, s, false);
     if (s == FORCEREGISTRATION) {
-      this->addVariable(this->persistentVariables, v, ALREADYREGISTRED, true,
+      this->addVariable(this->persistentVariables, v, ALREADYREGISTRED, false,
                         true);
     } else {
-      this->addVariable(this->persistentVariables, v, ALREADYREGISTRED, true);
+      this->addVariable(this->persistentVariables, v, ALREADYREGISTRED, false);
     }
   }  // end of BehaviourData::addAuxiliaryStateVariable
 
@@ -926,6 +926,12 @@ namespace mfront {
                                   const RegistrationStatus s,
                                   const bool bi,
                                   const bool b) {
+    if ((v.hasGlossaryName()) && (v.hasEntryName())) {
+      tfel::raise(
+          "BehaviourData::addVariable: "
+          "variable '" +
+          v.name + "' declares a glossary name and an entry name.");
+    }
     if ((!b) && (s != FORCEREGISTRATION)) {
       if ((this->hasAttribute(BehaviourData::allowsNewUserDefinedVariables)) &&
           (!this->getAttribute<bool>(
@@ -957,7 +963,61 @@ namespace mfront {
       if (!v.symbolic_form.empty()) {
         checkAlreadyRegistred(this->reservedNames, v.symbolic_form);
       }
+      if (bi) {
+        checkAlreadyRegistred(this->membersNames, "d" + v.name);
+        if (!v.symbolic_form.empty()) {
+          checkAlreadyRegistred(this->reservedNames,
+                                "\u0394" + v.symbolic_form);
     } else {
+          checkAlreadyRegistred(this->reservedNames, "\u0394" + v.name);
+        }
+      }
+      if (v.hasGlossaryName()) {
+        const auto pe = this->entryNames.find(v.name);
+        if (pe != this->entryNames.end()) {
+          tfel::raise(
+              "BehaviourData::addVariable: "
+              "already registred variable '" +
+              v.name + "' with entry name '" + pe->second +
+              "' now declares '" + v.getExternalName() + "' as glossary name");
+        }
+        const auto p = this->glossaryNames.find(v.name);
+        if (p == this->glossaryNames.end()) {
+          this->registerGlossaryName(v.name, v.getExternalName());
+        } else {
+          if (p->second != v.getExternalName()) {
+            tfel::raise(
+                "BehaviourData::addVariable: "
+                "unmatched glossary names for already registred variable '" +
+                v.name + "' (" + p->second + " vs " + v.getExternalName() +
+                ")");
+          }
+        }
+      }
+      if (v.hasEntryName()) {
+        const auto pg = this->glossaryNames.find(v.name);
+        if (pg != this->glossaryNames.end()) {
+          tfel::raise(
+              "BehaviourData::addVariable: "
+              "already registred variable '" +
+              v.name + "' with glossary name '" + pg->second +
+              "' now declares '" + v.getExternalName() + "' as entry name");
+        }
+        const auto p = this->entryNames.find(v.name);
+        if (p == this->entryNames.end()) {
+          this->registerEntryName(v.name, v.getExternalName());
+        } else {
+          if (p->second != v.getExternalName()) {
+            tfel::raise(
+                "BehaviourData::addVariable: "
+                "unmatched entry names for already registred variable '" +
+                v.name + "' (" + p->second + " vs " + v.getExternalName() +
+                ")");
+          }
+        }
+      }
+    } else {
+      // Unregistred variable
       this->registerMemberName(v.name);
       if (!v.symbolic_form.empty()) {
         this->reserveName(v.symbolic_form);
@@ -970,12 +1030,12 @@ namespace mfront {
           this->reserveName("\u0394" + v.name);
         }
       }
-    }
     if (v.hasGlossaryName()) {
-      this->glossaryNames.insert({v.name, v.getExternalName()});
+        this->registerGlossaryName(v.name, v.getExternalName());
     }
     if (v.hasEntryName()) {
-      this->entryNames.insert({v.name, v.getExternalName()});
+        this->registerEntryName(v.name, v.getExternalName());
+      }
     }
     c.push_back(v);
   }  // end of BehaviourData::addVariable

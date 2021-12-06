@@ -251,7 +251,7 @@ namespace mfront {
       opts.emplace_back(
           "relative_value_for_the_equivalent_stress_lower_bound",
           "Relative value used to define a lower bound "
-          "for the equilavent stress. For isotropic parameters, "
+          "for the equivalent stress. For isotropic parameters, "
           "this lower bound will be equal to this value multiplied "
           "by the Young modulus. For orthotropic materials, this lower "
           "bound will be this value multiplied by the first component "
@@ -360,14 +360,20 @@ namespace mfront {
       update(this->gto, "generic_tangent_operator");
       update(this->gpo, "generic_tangent_operator");
       if (this->pss) {
-        bd.registerMemberName(ModellingHypothesis::UNDEFINEDHYPOTHESIS,
-                              "etozz");
-        bd.registerMemberName(ModellingHypothesis::UNDEFINEDHYPOTHESIS,
-                              "detozz");
-        bd.registerMemberName(ModellingHypothesis::UNDEFINEDHYPOTHESIS,
-                              "sigzz");
-        bd.registerMemberName(ModellingHypothesis::UNDEFINEDHYPOTHESIS,
-                              "dsigzz");
+      bd.registerMemberName(ModellingHypothesis::UNDEFINEDHYPOTHESIS, "etozz");
+      bd.registerMemberName(ModellingHypothesis::UNDEFINEDHYPOTHESIS, "detozz");
+      bd.reserveName(ModellingHypothesis::UNDEFINEDHYPOTHESIS,
+                     "\u0394etozz");
+      //       bd.setGlossaryName(ModellingHypothesis::UNDEFINEDHYPOTHESIS,
+      //       "etozz",
+      //                          tfel::glossary::Glossary::AxialStrain);
+      bd.registerMemberName(ModellingHypothesis::UNDEFINEDHYPOTHESIS, "sigzz");
+      bd.registerMemberName(ModellingHypothesis::UNDEFINEDHYPOTHESIS, "dsigzz");
+      bd.reserveName(ModellingHypothesis::UNDEFINEDHYPOTHESIS,
+                     "\u0394sigzz");
+      //       bd.setGlossaryName(ModellingHypothesis::UNDEFINEDHYPOTHESIS,
+      //       "sigzz",
+      //                          tfel::glossary::Glossary::AxialStress);
         bd.reserveName(ModellingHypothesis::UNDEFINEDHYPOTHESIS,
                        "prediction_stress");
         bd.reserveName(ModellingHypothesis::UNDEFINEDHYPOTHESIS,
@@ -447,7 +453,7 @@ namespace mfront {
       VariableDescription seps("real", seps_n, 1u, 0u);
       seps.description =
           "Relative value used to define a lower bound "
-          "for the equilavent stress. For isotropic parameters, "
+          "for the equivalent stress. For isotropic parameters, "
           "this lower bound will be equal to this value multiplied "
           "by the Young modulus. For orthotropic materials, this lower "
           "bound will be this value multiplied by the first component "
@@ -554,15 +560,13 @@ namespace mfront {
         if (bmh.count(agps) != 0) {
           VariableDescription etozz("strain", "etozz", 1u, 0u);
           etozz.description = "axial strain";
+        etozz.setGlossaryName(tfel::glossary::Glossary::AxialStrain);
           bd.addStateVariable(agps, etozz, BehaviourData::ALREADYREGISTRED);
-          bd.setGlossaryName(agps, "etozz",
-                             tfel::glossary::Glossary::AxialStrain);
           VariableDescription sigzz("strain", "sigzz", 1u, 0u);
-          etozz.description = "axial stress";
+        sigzz.description = "axial stress";
+        sigzz.setGlossaryName(tfel::glossary::Glossary::AxialStress);
           bd.addExternalStateVariable(agps, sigzz,
                                       BehaviourData::ALREADYREGISTRED);
-          bd.setGlossaryName(agps, "sigzz",
-                             tfel::glossary::Glossary::AxialStress);
           d.addVariable(agps, {"stress", "szz"});
           if ((bd.isStrainMeasureDefined()) &&
               (bd.getStrainMeasure() == BehaviourDescription::HENCKY)) {
