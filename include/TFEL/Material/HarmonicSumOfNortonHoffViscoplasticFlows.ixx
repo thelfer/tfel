@@ -14,7 +14,7 @@
 #ifndef LIB_TFEL_MATERIAL_HARMONICSUMOFNORTONHOFFVISCOPLASTICFLOWS_IXX
 #define LIB_TFEL_MATERIAL_HARMONICSUMOFNORTONHOFFVISCOPLASTICFLOWS_IXX
 
-#include "TFEL/Math/tvector.hxx"
+#include "TFEL/Math/fsarray.hxx"
 
 namespace tfel::material {
 
@@ -53,9 +53,9 @@ namespace tfel::material {
             typename real>
   strainrate
   computeEquivalentStrainRateOfHarmonicSumOfNortonHoffViscoplasticFlows(
-      const tfel::math::tvector<N, strainrate>& A,
-      const tfel::math::tvector<N, stress>& K,
-      const tfel::math::tvector<N, real>& n,
+      const tfel::math::fsarray<N, strainrate>& A,
+      const tfel::math::fsarray<N, stress>& K,
+      const tfel::math::fsarray<N, real>& n,
       const stress seq) {
     if (!(seq > stress(0))) {
       return strainrate(0);
@@ -76,9 +76,9 @@ namespace tfel::material {
       strainrate,
       tfel::math::BinaryOperationResult<strainrate, stress, tfel::math::OpDiv>>
   computeEquivalentStrainRateAndDerivativeOfHarmonicSumOfNortonHoffViscoplasticFlows(
-      const tfel::math::tvector<N, strainrate>& A,
-      const tfel::math::tvector<N, stress>& K,
-      const tfel::math::tvector<N, real>& n,
+      const tfel::math::fsarray<N, strainrate>& A,
+      const tfel::math::fsarray<N, stress>& K,
+      const tfel::math::fsarray<N, real>& n,
       const stress seq) {
     using dtype = tfel::math::BinaryOperationResult<strainrate, stress,
                                                     tfel::math::OpDiv>;

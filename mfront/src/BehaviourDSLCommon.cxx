@@ -6026,7 +6026,7 @@ namespace mfront {
         }
       } else {
         os << "this->" << p.name << " = "
-           << "tfel::math::map<tfel::math::tvector<" << p.arraySize << ", "
+           << "tfel::math::map<tfel::math::fsarray<" << p.arraySize << ", "
            << p.type << ">>(" << getter << "." << p.name << ".data());\n";
         //         if (this->mb.useQt()) {
         //           os << "tfel::fsalgo::transform<" << p.arraySize <<
@@ -6117,7 +6117,7 @@ namespace mfront {
       if (v.arraySize == 1) {
         os << v.type << " " << v.name << ";\n";
       } else {
-        os << "tfel::math::tvector<" << v.arraySize << "," << v.type << "> "
+        os << "tfel::math::fsarray<" << v.arraySize << "," << v.type << "> "
            << v.name << ";\n";
       }
     }
@@ -6717,7 +6717,7 @@ namespace mfront {
           if (p.arraySize == 1) {
             os << "double " << p.name << ";\n";
           } else {
-            os << "tfel::math::tvector<" << p.arraySize << ",double> " << p.name
+            os << "tfel::math::fsarray<" << p.arraySize << ",double> " << p.name
                << ";\n";
           }
         }
