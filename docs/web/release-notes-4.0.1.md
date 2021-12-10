@@ -19,6 +19,17 @@ eqnPrefixTemplate: "($$i$$)"
 
 # Issues fixed
 
+## Issue #54: [mfront] Inconsistent declaration of array of parameters as `tvector`
+
+`TFEL-4.0` changed the type of all array to fsarray, except for arrays of
+parameters.
+
+For more details, see <https://github.com/thelfer/tfel/issues/54>.
+
+## Issue #53: [mfront] HarmonicSumOfNortonHoffViscoplasticFlows is broken in `TFEL-4.0`
+
+For more details, see <https://github.com/thelfer/tfel/issues/53>.
+
 ## Issue #37: [mfront] `@ElasticMaterialProperties` is broken when using quantities
 
 For more details, see <https://github.com/thelfer/tfel/issues/37>.
