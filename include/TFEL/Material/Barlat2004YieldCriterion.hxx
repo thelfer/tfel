@@ -194,7 +194,7 @@ namespace tfel::material {
    */
   template <unsigned short N, typename real>
   tfel::math::st2tost2<N, real> makeBarlatLinearTransformation(
-      const tfel::math::tvector<9u, real>&);
+      const tfel::math::fsarray<9u, real>&);
   /*!
    * \tparam H: modelling hypothesis
    * \tparam c: orthotropic axis convention
@@ -296,7 +296,7 @@ namespace tfel::material {
             OrthotropicAxesConvention,
             typename real>
   tfel::math::st2tost2<ModellingHypothesisToSpaceDimension<H>::value, real>
-  makeBarlatLinearTransformation(const tfel::math::tvector<9u, real>&);
+  makeBarlatLinearTransformation(const tfel::math::fsarray<9u, real>&);
   /*!
    * \brief This function computes the Barlat yield stress.
    * The Barlat yield stress is defined by:
