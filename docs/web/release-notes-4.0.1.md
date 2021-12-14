@@ -19,6 +19,10 @@ eqnPrefixTemplate: "($$i$$)"
 
 # Issues fixed
 
+## Issue #56: [TFELMath] The CublicSpline methods do not compile if TFEL/Math/vector.hxx is included
+
+For more details, see <https://github.com/thelfer/tfel/issues/56>
+
 ## Issue #54: [mfront] Inconsistent declaration of array of parameters as `tvector`
 
 `TFEL-4.0` changed the type of all array to fsarray, except for arrays of
