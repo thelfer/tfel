@@ -242,7 +242,6 @@ namespace tfel::math::internals {
                                                     NumType& vp2,
                                                     const NumType* const v,
                                                     const bool) {
-      constexpr auto icste = Cste<real>::isqrt2;
       auto sm = StensorEigenSolverBase<3u, NumType>::as_base_matrix(v);
       auto vp = tvector<3u, real>{};
       FSESAnalyticalSymmetricEigensolver3x3<real>::computeEigenValues(vp, sm);
@@ -260,7 +259,6 @@ namespace tfel::math::internals {
                                                      tmatrix<3u, 3u, real>& m,
                                                      const NumType* const v,
                                                      const bool) {
-      constexpr auto icste = Cste<real>::isqrt2;
       auto sm = StensorEigenSolverBase<3u, NumType>::as_base_matrix(v);
       auto vp2 = tvector<3u, real>{};
       FSESAnalyticalSymmetricEigensolver3x3<real>::computeEigenVectors(vp2, m,
@@ -363,7 +361,6 @@ namespace tfel::math::internals {
                                                     NumType& vp2,
                                                     const NumType* const v,
                                                     const bool) {
-      constexpr auto icste = Cste<real>::isqrt2;
       auto sm = StensorEigenSolverBase<3u, NumType>::as_base_matrix(v);
       auto vp = tvector<3u, real>{};
       auto m = tmatrix<3u, 3u>{};
@@ -423,7 +420,6 @@ namespace tfel::math::internals {
                                                     NumType& vp2,
                                                     const NumType* const v,
                                                     const bool) {
-      constexpr auto icste = Cste<real>::isqrt2;
       auto vp = tvector<3u, real>{};
       auto sm = StensorEigenSolverBase<3u, NumType>::as_base_matrix(v);
       auto m = tmatrix<3u, 3u>{};
@@ -442,7 +438,6 @@ namespace tfel::math::internals {
                                                      tmatrix<3u, 3u, real>& m,
                                                      const NumType* const v,
                                                      const bool) {
-      constexpr auto icste = Cste<real>::isqrt2;
       auto vp2 = tvector<3u, real>{};
       auto sm = StensorEigenSolverBase<3u, NumType>::as_base_matrix(v);
       fses::syevd3(m, vp2, sm);
@@ -485,7 +480,6 @@ namespace tfel::math::internals {
                                                     NumType& vp2,
                                                     const NumType* const v,
                                                     const bool) {
-      constexpr auto icste = Cste<real>::isqrt2;
       auto sm = StensorEigenSolverBase<3u, NumType>::as_base_matrix(v);
       auto vp = tvector<3u, real>{};
       fses::syevc3(vp, sm);
@@ -503,7 +497,6 @@ namespace tfel::math::internals {
                                                      tmatrix<3u, 3u, real>& m,
                                                      const NumType* const v,
                                                      const bool) {
-      constexpr auto icste = Cste<real>::isqrt2;
       auto sm = StensorEigenSolverBase<3u, NumType>::as_base_matrix(v);
       auto vp2 = tvector<3u, real>{};
       fses::syevh3(m, vp2, sm);

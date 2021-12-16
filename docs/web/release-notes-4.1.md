@@ -177,6 +177,10 @@ b = mtest.Behaviour(library = 'src/libBehaviour.so',
 
 # Issues fixed
 
+## Issue #57: [gallery] Mistakes in the Drucker Prager Cap model of the gallery
+
+For more details, see : <https://github.com/thelfer/tfel/issues/57>
+
 ## Issue #44: [mtest] Add support for a boundary condition modelling the effet of a mandrel in pipe modelling
 
 The feature is described in Section @sec:tfel_4.1:mtest:mandrel.
