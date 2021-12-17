@@ -820,7 +820,7 @@ The derivatives of the \(f_{p}\) are trivial:
 +
 \Delta\,p^{c}\,\trace{\mts{\tenseur{n}^{c}}}
 }\\
-&+\paren{1-\mts{f}}\,
+&-\paren{1-\mts{f}}\,
 \paren{
 \Delta\,p^{\mathrm{DP}}\,\trace{\deriv{\mts{\tenseur{n}^{\mathrm{DP}}}}{\Delta\,f}}
 +
