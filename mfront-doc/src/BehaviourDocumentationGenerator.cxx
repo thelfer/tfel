@@ -183,10 +183,37 @@ namespace mfront {
         pd->type = pv->type;
         pd->externalName = d.getExternalName(pv->name);
       } else {
-        tfel::raise_if((pd->name != pv->name) || (pd->type != pv->type) ||
-                           (pd->externalName != d.getExternalName(pv->name)) ||
-                           (pd->arraySize != pv->arraySize),
-                       "getData : inconsistent data across "
+        const auto uncompatible = [&d, &pd, &pv] {
+          if ((pd->name != pv->name) ||
+              (pd->externalName != d.getExternalName(pv->name)) ||
+              (pd->arraySize != pv->arraySize)) {
+            return true;
+          }
+          if(pd->type != pv->type){
+            if (!((tfel::utilities::starts_with(pd->type, "struct")) &&
+                  (tfel::utilities::starts_with(pv->type, "struct")))) {
+              return true;
+            }
+          }
+          return false;
+        }();
+        //         if (uncompatible) {
+        //           auto display = [](const auto a, const auto b) {
+        //             if (a != b) {
+        //               std::cout << "'" << a << "' '" << b << "' (failed)" <<
+        //               std::endl;
+        //             } else {
+        //               std::cout << "'" << a << "' '" << b << "' (ok)" <<
+        //               std::endl;
+        //             }
+        //           };
+        //           display(pd->name, pv->name);
+        //           display(pd->type, pv->type);
+        //           display(pd->externalName, d.getExternalName(pv->name));
+        //           display(pd->arraySize, pv->arraySize);
+        //         }
+        tfel::raise_if(uncompatible,
+                       "getData: inconsistent data across "
                        "hypothesis for variable '" +
                            pd->name + "'");
       }

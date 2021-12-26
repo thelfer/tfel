@@ -19,6 +19,16 @@ eqnPrefixTemplate: "($$i$$)"
 
 # Issues fixed
 
-## [mfront] Defining a gradient with external name "Temperature" do not trigger an error
+## Issue #58: [mfront-doc] skip tests on internal data structure in the getData method
+
+`mfront-doc` may fail to process files when two data members with the
+same name are defined in two specializations of the behaviour (for two
+different modelling hypotheses) have different types (among other
+checks). However, this check is too restrictive for internal data
+structures and this special case now treated properly.
+
+For more details, see <https://github.com/thelfer/tfel/issues/58>.
+
+## Issue #51: [mfront] Defining a gradient with external name "Temperature" do not trigger an error
 
 For more details, see <https://github.com/thelfer/tfel/issues/51>.
