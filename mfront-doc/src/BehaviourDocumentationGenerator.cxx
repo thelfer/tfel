@@ -38,9 +38,10 @@ namespace mfront {
     return p->second;
   }
 
-  static std::string getCodeBlocksDocumentation(
-      const BehaviourDescription& mb) {
+  static std::string getCodeBlocksDocumentation(const BehaviourDescription& mb,
+                                                const bool standalone) {
     using tfel::material::ModellingHypothesis;
+    const auto* const basic_title_level = standalone ? "" : "#";
     std::ostringstream out;
     const auto& mh = mb.getModellingHypotheses();
     const auto& dh = mb.getDistinctModellingHypotheses();
@@ -51,10 +52,11 @@ namespace mfront {
       for (const auto& n : cn) {
         const auto& c = d.getCodeBlock(n);
         if (!c.description.empty()) {
-          out << "### " << n << " description\n" << c.description << "\n\n";
+          out << basic_title_level << "## " << n << " description\n"  //
+              << c.description << "\n\n";
         }
         if (getVerboseMode() >= VERBOSE_DEBUG) {
-          out << "### " << n << " listing\n"
+          out << basic_title_level << "## " << n << " listing\n"
               << '\n'
               << "~~~~~~~ {.cpp}\n"
               << c.code << '\n'
@@ -79,12 +81,12 @@ namespace mfront {
           }
           if (print) {
             if (!c.description.empty()) {
-              out << "### " << cn_pcn << " description("
+              out << basic_title_level << "## " << cn_pcn << " description("
                   << ModellingHypothesis::toString(h) << ")\n"
                   << c.description << "\n\n";
             }
             if (getVerboseMode() >= VERBOSE_DEBUG) {
-              out << "### " << cn_pcn << " listing ("
+              out << basic_title_level << "## " << cn_pcn << " listing ("
                   << ModellingHypothesis::toString(h) << ")\n"
                   << '\n'
                   << "~~~~~~~ {.cpp} \n"
@@ -296,11 +298,13 @@ namespace mfront {
                         const BehaviourDescription& mb,
                         const std::string& title,
                         const std::vector<Data>& data,
+                        const bool standalone,
                         const std::string& language = "english") {
     using namespace tfel::material;
     if (data.empty()) {
       return;
     }
+    const auto* const basic_title_level = standalone ? "" : "#";
     auto translations =
         std::map<std::string, std::map<std::string, std::string>>{};
     auto& en = translations["english"];
@@ -332,7 +336,8 @@ namespace mfront {
       const auto& cn = d.getCodeBlockNames();
       cbnames.insert(cn.begin(), cn.end());
     }
-    os << "###  " << title << "\n\n";
+    os << basic_title_level  //
+       << "##  " << title << "\n\n";
     for (const auto& d : data) {
       os << "* " << d.externalName << ":\n";
       if (d.externalName != d.name) {
@@ -493,13 +498,18 @@ namespace mfront {
     Parser::registerNewCallBack(
         "--search-path", &BehaviourDocumentationGenerator::treatSearchPath,
         "add a new path at the beginning of the search paths", true);
+    Parser::registerCallBack(
+        "--standalone",
+        CallBack("generate a standalone document (false by default)",
+                 [this] { this->standalone = true; }, false));
     Parser::registerNewCallBack("--web",
                                 &BehaviourDocumentationGenerator::treatWeb,
                                 "output a web version of the file");
     Parser::registerCallBack(
         "--std-output", "--",
         CallBack("print the output ont the standard output stream",
-                 [this] { this->std_output = true; }, false));
+                 [this] {
+      this->std_output = true; }, false));
   }  // end of BehaviourDocumentationGenerator::registerCommandLineCallBacks
 
   void BehaviourDocumentationGenerator::treatUnknownArgument() {
@@ -552,7 +562,7 @@ namespace mfront {
       log << "BehaviourDocumentationGenerator::exe : begin\n";
     }
     std::ofstream output_file;
-    std::ostream& out = [&output_file, &mb, this]() -> std::ostream& {
+    auto& out = [&output_file, &mb, this]() -> std::ostream& {
       if (this->std_output) {
         return std::cout;
       }
@@ -590,11 +600,6 @@ namespace mfront {
       const BehaviourDescription& mb,
       const FileDescription& fd) const {
     using namespace tfel::utilities;
-    std::ifstream f(this->file);
-    tfel::raise_if(!f,
-                   "BehaviourDocumentationGenerator::writeWebOutput: "
-                   "can't open file '" +
-                       this->file + "'");
     out << "# " << mb.getClassName() << " behaviour description\n\n"
         << "* file   : " << fd.fileName << '\n'
         << "* author : ";
@@ -610,7 +615,7 @@ namespace mfront {
       out << "(unspecified)";
     }
     if (mb.hasAttribute(BehaviourData::algorithm)) {
-      out << "* algorithme: "
+      out << "* algorithm: "
           << mb.getAttribute<std::string>(BehaviourData::algorithm) << '\n';
     }
     out << "\n\n";
@@ -626,6 +631,12 @@ namespace mfront {
     } else {
       out << "No description specified";
     }
+    //
+    std::ifstream f(this->file);
+    tfel::raise_if(!f,
+                   "BehaviourDocumentationGenerator::writeWebOutput: "
+                   "can't open file '" +
+                       this->file + "'");
     out << '\n'
         << "## Source code\n"
         << '\n'
@@ -639,22 +650,41 @@ namespace mfront {
       std::ostream& out,
       const BehaviourDescription& mb,
       const FileDescription& fd) const {
-    using namespace std;
     using namespace tfel::utilities;
     using namespace tfel::material;
-    out << "# " << mb.getClassName() << " behaviour description\n\n"
-        << "* file   : " << fd.fileName << '\n'
-        << "* author : ";
-    if (!fd.authorName.empty()) {
-      out << fd.authorName << '\n';
+    const auto* const basic_title_level = this->standalone ? "" : "#";
+    if (this->standalone) {
+      out << "---\n"
+          << "title: Description of behaviour " << mb.getClassName() << '\n';
+      if (!fd.authorName.empty()) {
+        out << "author: " << fd.authorName << '\n';
+      }
+      if (!fd.date.empty()) {
+        out << "date: " << fd.date << '\n';
+      }
+      out << "lang: en-EN\n"
+          << "link-citations: true\n"
+          << "colorlinks: true\n"
+          << "figPrefixTemplate: $$i$$\n"
+          << "tblPrefixTemplate: $$i$$\n"
+          << "secPrefixTemplate: $$i$$\n"
+          << "eqnPrefixTemplate: ($$i$$)\n"
+          << "---";
     } else {
-      out << "(unspecified)\n";
-    }
-    out << "* date   : ";
-    if (!fd.date.empty()) {
-      out << fd.date;
-    } else {
-      out << "(unspecified)";
+      out << "# " << mb.getClassName() << " behaviour description\n\n"
+          << "* file: " << fd.fileName << '\n'
+          << "* author: ";
+      if (!fd.authorName.empty()) {
+        out << fd.authorName << '\n';
+      } else {
+        out << "(unspecified)\n";
+      }
+      out << "* date: ";
+      if (!fd.date.empty()) {
+        out << fd.date;
+      } else {
+        out << "(unspecified)";
+      }
     }
     out << "\n\n";
     if (!fd.description.empty()) {
@@ -666,44 +696,51 @@ namespace mfront {
           out << l << '\n';
         }
       }
-    } else {
-      out << "No description specified";
-    }
-    out << "\n\n"
-        << "### List of supported Hypotheses\n\n";
-    const auto& mh = mb.getModellingHypotheses();
-    const auto& dh = mb.getDistinctModellingHypotheses();
-    for (const auto& h : mh) {
-      out << "* " << ModellingHypothesis::toString(h);
-      if (dh.find(h) != dh.end()) {
-        out << ", specialised";
+      } else {
+        out << "No description specified";
+      }
+      out << "\n\n"
+          << basic_title_level << "## List of supported Hypotheses\n\n";
+      const auto& mh = mb.getModellingHypotheses();
+      const auto& dh = mb.getDistinctModellingHypotheses();
+      for (const auto& h : mh) {
+        out << "* " << ModellingHypothesis::toString(h);
+        if (dh.find(h) != dh.end()) {
+          out << ", specialised";
+        }
+        out << '\n';
+      }
+      out << '\n'  //
+          << basic_title_level << "# Variables\n\n";
+      printData(out, mb, "Material properties",
+                getData(mb, &BehaviourData::getMaterialProperties),
+                this->standalone);
+      out << '\n';
+      printData(out, mb, "State variables",
+                getData(mb, &BehaviourData::getPersistentVariables),
+                this->standalone);
+      out << '\n';
+      printData(out, mb, "External state variables",
+                getData(mb, &BehaviourData::getExternalStateVariables),
+                this->standalone);
+      out << '\n';
+      if (mb.hasParameters()) {
+        printData(out, mb, "Parameters",
+                  getData(mb, &BehaviourData::getParameters),
+                this->standalone);
       }
       out << '\n';
-    }
-    out << '\n' << "## Variables\n\n" << '\n';
-    printData(out, mb, "Material properties",
-              getData(mb, &BehaviourData::getMaterialProperties));
-    out << '\n';
-    printData(out, mb, "State variables",
-              getData(mb, &BehaviourData::getPersistentVariables));
-    out << '\n';
-    printData(out, mb, "External state variables",
-              getData(mb, &BehaviourData::getExternalStateVariables));
-    out << '\n';
-    if (mb.hasParameters()) {
-      printData(out, mb, "Parameters",
-                getData(mb, &BehaviourData::getParameters));
-    }
-    out << '\n';
-    printData(out, mb, "Local variables",
-              getData(mb, &BehaviourData::getLocalVariables));
-    out << '\n';
-    const auto code = getCodeBlocksDocumentation(mb);
-    if (!code.empty() != 0) {
-      out << "## Code documentation\n\n" << code << '\n';
-    }
-
-  }  // end of BehaviourDocumentationGenerator::writeFullOutput
+      printData(out, mb, "Local variables",
+                getData(mb, &BehaviourData::getLocalVariables),
+                this->standalone);
+      out << '\n';
+      const auto code = getCodeBlocksDocumentation(mb, this->standalone);
+      if (!code.empty() != 0) {
+        out << basic_title_level  //
+            << "# Code documentation\n\n"
+            << code << '\n';
+      }
+    }  // end of BehaviourDocumentationGenerator::writeFullOutput
 
   BehaviourDocumentationGenerator::~BehaviourDocumentationGenerator() = default;
 

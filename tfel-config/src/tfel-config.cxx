@@ -84,6 +84,7 @@ static void listOptions(std::ostream&);
 [[noreturn]] static void treatLicences();
 
 static CallBacksContainer callBacksContainer;
+static bool quiet_failure = false;
 static bool compilerflags = false;
 static bool debugflags = false;
 static bool oflags0 = false;
@@ -240,8 +241,10 @@ static void listOptions(std::ostream& os) {
 }  // end of treatHelp
 
 [[noreturn]] static void treatUnknownOption(const std::string& o) {
-  std::cerr << "unknown option " << o << std::endl;
-  listOptions(std::cerr);
+  if (!quiet_failure) {
+    std::cerr << "unknown option " << o << std::endl;
+    listOptions(std::cerr);
+  }
   std::exit(EXIT_FAILURE);
 }  // end of treatUnknownOption
 
@@ -297,6 +300,8 @@ int main(const int argc, const char* const* const argv) {
   try {
 #endif /* __CYGWIN__ */
 
+    registerCallBack("--quiet-failure", [] { /*do nothing*/ },
+                     "quietly fails without error message");
     registerCallBack("--compiler-flags", [] { compilerflags = true; },
                      "return TFEL's recommended compiler flags.");
     registerCallBack("--debug-flags", [] { debugflags = true; },
@@ -434,9 +439,19 @@ int main(const int argc, const char* const* const argv) {
 #endif
         },
         "print if mandex support is enabled (display `true` or `false`).");
+    registerCallBack("--mfront-doc-has-standalone-option",
+                     [] { std::cout << "true "; },
+                     "print if mfront-doc has the standalone option");
 
     if (argc == 1) {
       treatHelp();
+    }
+
+    const std::string qa = "--quiet-failure";
+    for (auto p2 = argv + 1; p2 != argv + argc; ++p2) {
+      if (qa == *p2) {
+        quiet_failure = true;
+      }
     }
 
     for (auto p2 = argv + 1; p2 != argv + argc; ++p2) {

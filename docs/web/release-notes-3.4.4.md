@@ -63,6 +63,22 @@ argument is used.
 
 # Issues solved
 
+## Issue #62: [tfel-config] add a `--quiet-failure` option
+
+In case of errors, `tfel-config` with the the `--quiet-failure` option
+just fails without displaying all the available options nor error
+message.
+
+For more details, see <https://github.com/thelfer/tfel/issues/62>.
+
+## Issue #59: [mfront-doc] add a standalone option
+
+By default, the generated markdown uses a section to describe a
+behaviour. Using the `--standalone` option, `mfront-doc` generates a
+standalone document.
+
+For more details, see <https://github.com/thelfer/tfel/issues/59>.
+
 ## Issue #49: [mfront-query] query sources related to specific targets
 
 See Section

@@ -22,9 +22,7 @@
 
 namespace tfel::utilities {
 
-  /*!
-   * class used to parser command line arguments
-   */
+  //! \brief class used to parser command line arguments
   struct TFELUTILITIES_VISIBILITY_EXPORT ArgumentParser {
     /*!
      * \brief structure describing an action to be performed when a
