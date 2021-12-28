@@ -89,8 +89,15 @@ namespace mfront {
     std::string file;
     //! type of ouput
     OutputType otype;
-    //! generate output on standard output
+    //! \brief generate output on standard output
     bool std_output = false;
+    /*!
+     * \brief boolean whose meaning is the following:
+     * - if true, the generated documentation is contained in a whole document.
+     * - if false, the generated documentation is contained in a section meant
+     *   to be included in a bigger document.
+     */
+    bool standalone = false;
   };  // end of struct BehaviourDocumentationGenerator
 
 }  // end of namespace mfront
