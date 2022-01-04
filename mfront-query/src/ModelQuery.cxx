@@ -45,6 +45,8 @@ namespace mfront {
     QueryHandlerBase::registerCommandLineCallBacks();
     // standard queries
     const std::vector<std::pair<const char*, const char*>> sq = {
+        {"--model-name", "show the model name"},
+        {"--class-name", "show the class name"},
         {"--author", "show the author name"},
         {"--description", "show the file description"},
         {"--date", "show the file implementation date"},
@@ -60,7 +62,17 @@ namespace mfront {
 
   void ModelQuery::treatStandardQuery() {
     const auto& qn = this->getCurrentCommandLineArgument().as_string();
-    if (qn == "--author") {
+    if (qn == "--model-name") {
+      this->queries.push_back({"model-name", [](const FileDescription&,
+                                                const ModelDescription& mpd) {
+                                 std::cout << mpd.modelName << std::endl;
+                               }});
+    } else if (qn == "--class-name") {
+      this->queries.push_back({"class-name", [](const FileDescription&,
+                                                const ModelDescription& mpd) {
+                                 std::cout << mpd.className << std::endl;
+                               }});
+    } else if (qn == "--author") {
       this->queries.push_back(
           {"author", [](const FileDescription& fd, const ModelDescription&) {
              const auto& a = fd.authorName;

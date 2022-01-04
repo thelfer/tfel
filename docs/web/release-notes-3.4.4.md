@@ -65,13 +65,18 @@ argument is used.
 
 ## Issue #64: [mfront-query] Add a query for the class name
 
-`mfront-query` now has a `--class-name` query.
+`mfront-query` now has a `--class-name` query which works for material
+properties, behaviours and models.
 
 For more details, see <https://github.com/thelfer/tfel/issues/64>.
 
 ## Issue #63: [mfront-query] Add a query for the behaviour name
 
-`mfront-query` now has a `--behaviour-name` query.
+`mfront-query` now has:
+
+- a `--law-name` query for material properties.
+- a `--behaviour-name` query for behaviours.
+- a `--model-name` query for models.
 
 For more details, see <https://github.com/thelfer/tfel/issues/63>.
 
