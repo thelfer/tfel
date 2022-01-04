@@ -261,6 +261,10 @@ namespace mfront {
     }
   }  // end of exe
 
+  void MaterialPropertyQuery::treatDSLTarget() {
+    std::cout << "material property" << std::endl;
+  }  // end of treatDSLTarget
+
   MaterialPropertyQuery::~MaterialPropertyQuery() = default;
 
 }  // end of namespace mfront

@@ -63,6 +63,14 @@ argument is used.
 
 # Issues solved
 
+## Issue #68: [mfront-query] Add a `--dsl-target` option
+
+`mfront-query` now have `--dsl-target` option which returns the kind of
+material knowledge described by a file (material property, behaviour, or
+model).
+
+For more details, see <https://github.com/thelfer/tfel/issues/68>.
+
 ## Issue #67: [mfront-query] Add a `--has-model-query` option enhancement
 
 `mfront-query` now have `--has-model-query` option that can be used as
