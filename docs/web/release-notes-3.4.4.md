@@ -63,6 +63,18 @@ argument is used.
 
 # Issues solved
 
+## Issue #64: [mfront-query] Add a query for the class name
+
+`mfront-query` now has a `--class-name` query.
+
+For more details, see <https://github.com/thelfer/tfel/issues/64>.
+
+## Issue #63: [mfront-query] Add a query for the behaviour name
+
+`mfront-query` now has a `--behaviour-name` query.
+
+For more details, see <https://github.com/thelfer/tfel/issues/63>.
+
 ## Issue #62: [tfel-config] add a `--quiet-failure` option
 
 In case of errors, `tfel-config` with the the `--quiet-failure` option
