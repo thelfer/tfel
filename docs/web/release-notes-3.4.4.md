@@ -65,10 +65,10 @@ argument is used.
 
 ## Issue #67: [mfront-query] Add a `--has-model-query` option enhancement
 
-`mfront-query` now have `--has-model-query` option that can be used
-has follows:
+`mfront-query` now have `--has-model-query` option that can be used as
+follows:
 
-~~~~{.cxx}
+~~~~{.bash}
 $ mfront-query --has-model-query=class-name
 ~~~~
 
@@ -78,10 +78,10 @@ For more details, see <https://github.com/thelfer/tfel/issues/67>.
 ￼
 ## Issue #66: [mfront-query] Add a `--has-material-property-query` option enhancement
 
-`mfront-query` now have `--has-material-property-query` option that can be used
-has follows:
+`mfront-query` now have `--has-material-property-query` option that can
+be used as follows:
 
-~~~~{.cxx}
+~~~~{.bash}
 $ mfront-query --has-material-property-query=class-name
 ~~~~
 
@@ -92,9 +92,9 @@ For more details, see <https://github.com/thelfer/tfel/issues/66>.
 ## Issue #65: [mfront-query] Add a `--has-behaviour-query` option enhancement
 
 `mfront-query` now have `--has-behaviour-query` option that can be used
-has follows:
+as follows:
 
-~~~~{.cxx}
+~~~~{.bash}
 $ mfront-query --has-behaviour-query=class-name
 ~~~~
 
