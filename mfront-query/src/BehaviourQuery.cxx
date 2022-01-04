@@ -1184,6 +1184,10 @@ namespace mfront {
     }
   }  // end of exe
 
+  void BehaviourQuery::treatDSLTarget() {
+    std::cout << "behaviour" << std::endl;
+  }  // end of treatDSLTarget
+
   BehaviourQuery::~BehaviourQuery() = default;
 
 }  // end of namespace mfront

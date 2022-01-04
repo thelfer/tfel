@@ -57,6 +57,11 @@ namespace mfront {
                                 &QueryHandlerBase::treatUnicodeOutput,
                                 "allow/disallow unicode output", true);
     this->registerNewCallBack(
+        "--dsl-target", &QueryHandlerBase::treatDSLTarget,
+        "get the kind of material knowledge treated by the dsl (material "
+        "property, behaviour, or model)",
+        false);
+    this->registerNewCallBack(
         "--include", "-I", &QueryHandlerBase::treatSearchPath,
         "add a new path at the beginning of the search paths", true);
     this->registerNewCallBack(

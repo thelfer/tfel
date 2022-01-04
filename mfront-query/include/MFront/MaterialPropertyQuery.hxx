@@ -71,6 +71,7 @@ namespace mfront {
     void treatGeneratedHeaders() override final;
     void treatLibrariesDependencies() override final;
     void treatSpecificTargets() override final;
+    void treatDSLTarget() override final;
     //! \brief treat the "--parameter-default-value" query
     virtual void treatParameterDefaultValue() final;
     //! \brief treat a standard query

@@ -213,6 +213,10 @@ namespace mfront {
     }
   }  // end of exe
 
+  void ModelQuery::treatDSLTarget() {
+    std::cout << "model" << std::endl;
+  }  // end of treatDSLTarget
+
   ModelQuery::~ModelQuery() = default;
 
 }  // end of namespace mfront

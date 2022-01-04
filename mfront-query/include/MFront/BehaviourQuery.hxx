@@ -87,6 +87,7 @@ namespace mfront {
     void treatGeneratedHeaders() override final;
     void treatLibrariesDependencies() override final;
     void treatSpecificTargets() override final;
+    void treatDSLTarget() override final;
     //! \brief treat the "--modelling-hypothesis" command line argument
     virtual void treatModellingHypothesis() final;
     //! \return a query that show a list of variables

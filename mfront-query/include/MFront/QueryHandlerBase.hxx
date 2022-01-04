@@ -91,6 +91,8 @@ namespace mfront {
     virtual void treatLibrariesDependencies() = 0;
     //! \brief treat the "--specific-targets" query
     virtual void treatSpecificTargets() = 0;
+    //! \brief treat the "--dsl-target" query
+    virtual void treatDSLTarget() = 0;
     /*!
      * \brief optional flags stating if sources of library dependencies must be
      * concateneted with the sources of the library
