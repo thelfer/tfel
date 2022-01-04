@@ -1,5 +1,5 @@
 /*!
- * \file  mfront-query.cxx
+ * \file  mfront-query/src/mfront-query.cxx
  * \brief
  * \author Thomas Helfer
  * \date   04 mars 2015
@@ -143,6 +143,30 @@ static void listModels(const mfront::PathSpecifier& p) {
 
 #endif /* MFRONT_QUERY_HAVE_MADNEX */
 
+static void treatHasQuery(
+    const tfel::utilities::ArgumentParser::CallBacksContainer& callBacks,
+    const std::string& arg,
+    const std::string& cmd) {
+  if (!tfel::utilities::starts_with(arg, cmd)) {
+    tfel::raise("treatHasQuery: invalid call (internal error)");
+  }
+  const auto l = cmd.size();
+  if (arg.size() < l + 2) {
+    tfel::raise("treatHasQuery: invalid argument ('" + std::string{arg} + "')");
+  }
+  if (arg[l] != '=') {
+    tfel::raise("treatHasQuery: invalid argument ('" + std::string{arg} + "')");
+  }
+  const auto c = "--"+std::string{arg.substr(l + 1)};
+  if (tfel::utilities::starts_with(c, "--")) {
+    if (callBacks.find(c) != callBacks.end()) {
+      std::cout << "true" << std::endl;
+      return;
+    }
+  }
+  std::cout << "false" << std::endl;
+} // end of treatHasQuery
+
 /* coverity [UNCAUGHT_EXCEPT]*/
 int main(const int argc, const char* const* const argv) {
   using namespace mfront;
@@ -204,16 +228,32 @@ int main(const int argc, const char* const* const argv) {
       } else if (a == "--usage") {
         std::cout << "Usage : " << argv[0] << " [options] [files]\n";
         std::exit(EXIT_SUCCESS);
+      } else if (tfel::utilities::starts_with(a, "--has-material-property-query")) {
+        const char* args[1] = {argv[0]};
+        std::shared_ptr<MaterialPropertyDSL> b;
+        auto bq = std::make_shared<MaterialPropertyQuery>(1, args, b, "");
+        treatHasQuery(bq->getRegistredCallBacks(), a,
+                      "--has-material-property-query");
       } else if (a == "--help-material-property-queries-list") {
         const char* args[2] = {argv[0], "--help"};
         std::shared_ptr<MaterialPropertyDSL> b;
         auto bq = std::make_shared<MaterialPropertyQuery>(2, args, b, "");
         std::exit(EXIT_SUCCESS);
+      } else if (tfel::utilities::starts_with(a, "--has-behaviour-query")) {
+        const char* args[1] = {argv[0]};
+        std::shared_ptr<AbstractBehaviourDSL> b;
+        auto bq = std::make_shared<BehaviourQuery>(1, args, b, "");
+        treatHasQuery(bq->getRegistredCallBacks(), a, "--has-behaviour-query");
       } else if (a == "--help-behaviour-queries-list") {
         const char* args[2] = {argv[0], "--help"};
         std::shared_ptr<AbstractBehaviourDSL> b;
         auto bq = std::make_shared<BehaviourQuery>(2, args, b, "");
         std::exit(EXIT_SUCCESS);
+      } else if (tfel::utilities::starts_with(a, "--has-model-query")) {
+        const char* args[1] = {argv[0]};
+        std::shared_ptr<ModelDSL> b;
+        auto bq = std::make_shared<ModelQuery>(1, args, b, "");
+        treatHasQuery(bq->getRegistredCallBacks(), a, "--has-model-query");
       } else if (a == "--help-model-queries-list") {
         const char* args[2] = {argv[0], "--help"};
         std::shared_ptr<ModelDSL> b;
