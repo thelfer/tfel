@@ -70,6 +70,8 @@ namespace mfront {
     QueryHandlerBase::registerCommandLineCallBacks();
     // standard queries
     const std::vector<std::pair<const char*, const char*>> sq = {
+        {"--law-name", "show the law name"},
+        {"--class-name", "show the class name"},
         {"--author", "show the author name"},
         {"--description", "show the file description"},
         {"--date", "show the file implementation date"},
@@ -118,7 +120,19 @@ namespace mfront {
     using namespace std;
     const auto& q = this->getCurrentCommandLineArgument();
     const auto& qn = q.as_string();
-    if (qn == "--author") {
+    if (qn == "--law-name") {
+      this->queries.push_back(
+          {"law-name",
+           [](const FileDescription&, const MaterialPropertyDescription& mpd) {
+             cout << mpd.law << endl;
+           }});
+    } else if (qn == "--class-name") {
+      this->queries.push_back(
+          {"class-name",
+           [](const FileDescription&, const MaterialPropertyDescription& mpd) {
+             cout << mpd.className << endl;
+           }});
+    } else if (qn == "--author") {
       this->queries.push_back(
           {"author",
            [](const FileDescription& fd, const MaterialPropertyDescription&) {
