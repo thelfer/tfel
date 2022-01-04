@@ -179,6 +179,8 @@ namespace mfront {
                  [this] { this->treatModellingHypothesis(); }, true));
     // standard queries
     const std::vector<std::pair<const char*, const char*>> sq = {
+        {"--behaviour-name", "show the behaviour name"},
+        {"--class-name", "show the class name"},
         {"--author", "show the author name"},
         {"--description", "show the file description"},
         {"--date", "show the file implementation date"},
@@ -318,7 +320,19 @@ namespace mfront {
     using tfel::material::ModellingHypothesis;
     const auto& q = this->getCurrentCommandLineArgument();
     const auto& qn = q.as_string();
-    if (qn == "--author") {
+    if (qn == "--class-name") {
+      this->queries2.push_back(
+          {"class-name",
+           [](const FileDescription&, const BehaviourDescription& bd) {
+             cout << bd.getClassName() << '\n';
+           }});
+    } else if (qn == "--behaviour-name") {
+      this->queries2.push_back(
+          {"behaviour-name",
+           [](const FileDescription&, const BehaviourDescription& bd) {
+             cout << bd.getBehaviourName() << '\n';
+           }});
+    } else if (qn == "--author") {
       this->queries2.push_back({"author", [](const FileDescription& fd,
                                              const BehaviourDescription&) {
                                   const auto& a = fd.authorName;
