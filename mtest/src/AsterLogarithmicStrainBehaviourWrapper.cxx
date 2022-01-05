@@ -308,6 +308,15 @@ namespace mtest {
     return this->b->getExternalStateVariablePosition(n);
   }  // end of getExternalStateVariablePosition
 
+  void AsterLogarithmicStrainBehaviourWrapper::allocateCurrentState(CurrentState& s) const{
+    BehaviourWrapperBase::allocateCurrentState(s);
+    const auto ndv = this->getGradientsSize();
+    s.e0.resize(ndv, 0.);
+    s.e1.resize(ndv, 0.);
+    s.e_th0.resize(ndv, 0.);
+    s.e_th1.resize(ndv, 0.);
+  } // end of allocateCurrentState
+
   void AsterLogarithmicStrainBehaviourWrapper::allocateWorkSpace(
       BehaviourWorkSpace& wk) const {
     const auto ndv = this->getGradientsSize();
