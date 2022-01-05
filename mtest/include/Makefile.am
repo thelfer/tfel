@@ -32,25 +32,26 @@ nobase_include_HEADERS = MTest/Config.hxx	                         \
 			 MTest/Behaviour.hxx                             \
 			 MTest/BehaviourWrapperBase.hxx                  \
 			 MTest/SmallStrainTridimensionalBehaviourWrapper.hxx \
-			 MTest/LogarithmicStrain1DBehaviourWrapper.hxx   \
-			 MTest/BehaviourWorkSpace.hxx                    \
-			 MTest/StandardBehaviourBase.hxx                 \
-			 MTest/GenericBehaviour.hxx                      \
-			 MTest/UmatNormaliseTangentOperator.hxx          \
-             MTest/CastemInterfaceVersion.hxx                \
-             MTest/CastemStandardBehaviour.hxx               \
-			 MTest/CastemSmallStrainBehaviour.hxx            \
-			 MTest/CastemFiniteStrainBehaviour.hxx           \
-			 MTest/CastemFiniteStrainBehaviour2.hxx          \
-			 MTest/CastemCohesiveZoneModel.hxx               \
-			 MTest/MistralBehaviour.hxx                      \
-			 MTest/CastemUmatStandardBehaviour.hxx           \
-			 MTest/CastemUmatSmallStrainBehaviour.hxx        \
-			 MTest/CastemUmatFiniteStrainBehaviour.hxx       \
-			 MTest/AsterStandardBehaviour.hxx                \
-			 MTest/AsterSmallStrainBehaviour.hxx             \
-			 MTest/AsterFiniteStrainBehaviour.hxx            \
-			 MTest/AsterCohesiveZoneModel.hxx                \
+			 MTest/LogarithmicStrain1DBehaviourWrapper.hxx       \
+			 MTest/BehaviourWorkSpace.hxx                        \
+			 MTest/StandardBehaviourBase.hxx                     \
+			 MTest/GenericBehaviour.hxx                          \
+			 MTest/UmatNormaliseTangentOperator.hxx              \
+             MTest/CastemInterfaceVersion.hxx                    \
+             MTest/CastemStandardBehaviour.hxx                   \
+			 MTest/CastemSmallStrainBehaviour.hxx                \
+			 MTest/CastemFiniteStrainBehaviour.hxx               \
+			 MTest/CastemFiniteStrainBehaviour2.hxx              \
+			 MTest/CastemCohesiveZoneModel.hxx                   \
+			 MTest/MistralBehaviour.hxx                          \
+			 MTest/CastemUmatStandardBehaviour.hxx               \
+			 MTest/CastemUmatSmallStrainBehaviour.hxx            \
+			 MTest/CastemUmatFiniteStrainBehaviour.hxx           \
+			 MTest/AsterStandardBehaviour.hxx                    \
+			 MTest/AsterSmallStrainBehaviour.hxx                 \
+			 MTest/AsterFiniteStrainBehaviour.hxx                \
+			 MTest/AsterCohesiveZoneModel.hxx                    \
+			 MTest/AsterLogarithmicStrainBehaviourWrapper.hxx    \
 			 MTest/EuroplexusStandardBehaviour.hxx           \
 			 MTest/EuroplexusFiniteStrainBehaviour.hxx       \
 			 MTest/AbaqusStandardBehaviour.hxx               \

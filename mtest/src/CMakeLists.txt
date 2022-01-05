@@ -97,6 +97,7 @@ set(TFELMTest_SOURCES
     AsterSmallStrainBehaviour.cxx
     AsterFiniteStrainBehaviour.cxx
     AsterCohesiveZoneModel.cxx
+    AsterLogarithmicStrainBehaviourWrapper.cxx
     ${TFELMTest_SOURCES})
 set(TFELMTest_LDADD
     AsterInterface

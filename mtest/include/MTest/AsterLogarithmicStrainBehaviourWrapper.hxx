@@ -1,8 +1,8 @@
 /*!
- * \file   LogarithmicStrain1DBehaviourWrapper.hxx
+ * \file   mtest/include/MTest/AsterLogarithmicStrainBehaviourWrapper.hxx
  * \brief
  * \author Thomas Helfer
- * \date   28/12/2015
+ * \date   04/01/2022
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence
@@ -11,28 +11,28 @@
  * project under specific licensing conditions.
  */
 
-#ifndef LIB_MTEST_LOGARITHMICSTRAIN1DBEHAVIOURWRAPPER_HXX
-#define LIB_MTEST_LOGARITHMICSTRAIN1DBEHAVIOURWRAPPER_HXX
+#ifndef LIB_MTEST_ASTERLOGARITHMICSTRAINBEHAVIOURWRAPPER_HXX
+#define LIB_MTEST_ASTERLOGARITHMICSTRAINBEHAVIOURWRAPPER_HXX
 
-#include <memory>
-#include "MTest/Config.hxx"
 #include "MTest/BehaviourWrapperBase.hxx"
 
 namespace mtest {
 
+  // forward declaration
+  struct AsterSmallStrainBehaviour;
+
   /*!
-   * \brief a simple wrapper around a small strain behaviour which turns a small
-   * strain behaviour into a finite strain behaviour in the logarithmic strain
-   * framework using the ETO-PK1 kinematic assumption under the axisymmetrical
-   * generalised plane strain modelling hypothesis.
+   * \brief behaviour wrapper used to handle behaviours using the logarithmic
+   * strain framework. The wrapped behaviour appears as a standard finite strain
+   * behaviour to `MTest`.
    */
-  struct MTEST_VISIBILITY_EXPORT LogarithmicStrain1DBehaviourWrapper
-      : public BehaviourWrapperBase {
+  struct AsterLogarithmicStrainBehaviourWrapper : public BehaviourWrapperBase {
     /*!
      * \brief constructor
      * \param[in] wb : wrapped behaviour
      */
-    LogarithmicStrain1DBehaviourWrapper(const std::shared_ptr<Behaviour>&);
+    AsterLogarithmicStrainBehaviourWrapper(
+        const std::shared_ptr<AsterSmallStrainBehaviour>&);
     Hypothesis getHypothesis() const override;
     BehaviourType getBehaviourType() const override;
     Kinematic getBehaviourKinematic() const override;
@@ -83,9 +83,28 @@ namespace mtest {
                                     const real,
                                     const StiffnessMatrixType) const override;
     //! \brief destructor
-    ~LogarithmicStrain1DBehaviourWrapper() override;
-  };  // end of struct LogarithmicStrain1DBehaviourWrapper
+    virtual ~AsterLogarithmicStrainBehaviourWrapper() override;
+
+   private:
+    /*!
+     * \brief integrate the mechanical behaviour over the time step
+     * \return a pair. The first member is true if the integration was
+     * successfull, false otherwise. The second member contains a time
+     * step scaling factor.
+     * \param[out/in] s     : current state
+     * \param[out]    wk    : behaviour workspace
+     * \param[in]     dt    : time increment
+     * \param[in]     ktype : type of the stiffness matrix
+     */
+    template <unsigned N>
+    TFEL_VISIBILITY_LOCAL std::pair<bool, real> do_integrate(
+        CurrentState&,
+        BehaviourWorkSpace&,
+        const real,
+        const StiffnessMatrixType) const;
+
+  };  // end of struct AsterLogarithmicStrainBehaviourWrapper
 
 }  // end of namespace mtest
 
-#endif /* LIB_MTEST_LOGARITHMICSTRAIN1DBEHAVIOURWRAPPER_HXX */
+#endif /* LIB_MTEST_ASTERLOGARITHMICSTRAINBEHAVIOURWRAPPER_HXX */
