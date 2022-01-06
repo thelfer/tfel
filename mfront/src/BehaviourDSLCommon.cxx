@@ -1844,7 +1844,7 @@ namespace mfront {
           << " * \\param[in] i: slip system family\n"
           << " * \\param[in] j: local slip system index\n"
           << " */\n"
-          << "constexpr unsigned short offset(const unsigned short,\nconst "
+          << "unsigned short offset(const unsigned short,\nconst "
              "unsigned short) const;\n";
       for (size_type i = 0; i != nb; ++i) {
         out << "/*!\n"
@@ -1852,7 +1852,7 @@ namespace mfront {
             << "th family\n"
             << " * \\param[in] i: local slip system index\n"
             << " */\n"
-            << "constexpr unsigned short offset" << i
+            << "unsigned short offset" << i
             << "(const unsigned short) const;\n";
       }
     }
@@ -2011,7 +2011,7 @@ namespace mfront {
     out << "} // end of " << cn << "::" << cn << "\n\n";
     if (nb != 1u) {
       out << "template<typename real>\n"
-          << "constexpr unsigned short\n"
+          << "unsigned short\n"
           << cn << "<real>::offset(const unsigned short i,\n"
           << "const unsigned short j\n) const{\n"
           << "const auto oi = [&i]() -> unsigned short{\n"
@@ -2043,7 +2043,7 @@ namespace mfront {
           << "} // end of offset\n\n";
       for (size_type i = 0; i != nb; ++i) {
         out << "template<typename real>\n"
-            << "constexpr unsigned short\n"
+            << "unsigned short\n"
             << cn << "<real>::offset" << i
             << "(const unsigned short i) const{\n";
         if (i != 0) {
