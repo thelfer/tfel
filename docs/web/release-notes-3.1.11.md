@@ -19,6 +19,14 @@ eqnPrefixTemplate: "($$i$$)"
 
 # Issues fixed
 
+## Issue #71: [mfront] Single-crystal behaviours fails to compile with `intel/oneapi` (2021.1 and 2021.5) with `TFEL-3.4.3`
+
+The `offset` methods of the generated class handling the slips system
+were declared `constexpr`, but their implementations was not supported
+in `C++-11` (only `C++-14`).
+
+For more details, see <https://github.com/thelfer/tfel/issues/71>.
+
 ## Issue #58: [mfront-doc] skip tests on internal data structure in the getData method
 
 `mfront-doc` may fail to process files when two data members with the
