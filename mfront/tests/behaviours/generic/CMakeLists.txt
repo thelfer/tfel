@@ -225,13 +225,18 @@ endif(WIN32)
 
 function(set_generic_test_properties test)
   foreach(rm ${IEEE754_ROUNDING_MODES})
+    set(dependencies )
+    list(APPEND dependencies MFrontGenericBehaviours)
+    list(APPEND dependencies mtest)
+    if(HAVE_CASTEM)
+      list(APPEND dependencies MFrontMaterialProperties-castem)
+    endif(HAVE_CASTEM)
     if((CMAKE_HOST_WIN32) AND (NOT MSYS))
       set_property(TEST ${test}
-        PROPERTY DEPENDS "MFrontGenericBehaviours MFrontMaterialProperties-castem mtest"
+        PROPERTY DEPENDS ${dependencies}
         PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:TFELMTest>\;$<TARGET_FILE_DIR:TFELMFront>\;$<TARGET_FILE_DIR:MFrontLogStream>\;$<TARGET_FILE_DIR:TFELMaterial>\;$<TARGET_FILE_DIR:TFELNUMODIS>\;$<TARGET_FILE_DIR:TFELMathParser>\;$<TARGET_FILE_DIR:TFELGlossary>\;$<TARGET_FILE_DIR:TFELSystem>\;$<TARGET_FILE_DIR:TFELUtilities>\;$<TARGET_FILE_DIR:TFELException>\;$<TARGET_FILE_DIR:TFELTests>\;$<TARGET_FILE_DIR:TFELConfig>\;$<TARGET_FILE_DIR:TFELUnicodeSupport>\;$ENV{PATH}")
     elseif((CMAKE_HOST_WIN32) AND (NOT MSYS))
-      set_property(TEST ${test}
-        PROPERTY DEPENDS "MFrontGenericBehaviours MFrontMaterialProperties-castem mtest")
+      set_property(TEST ${test} PROPERTY DEPENDS ${dependencies})
     endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
   endforeach(rm ${IEEE754_ROUNDING_MODES})
 endfunction(set_generic_test_properties)
@@ -239,11 +244,11 @@ endfunction(set_generic_test_properties)
 function(install_generic_test_file file)
   if(TFEL_APPEND_SUFFIX)
     install(FILES ${file}
-      DESTINATION "share/doc/mfront-${TFEL_SUFFIX}/tests/behaviours/bricks/StandardElastoViscoPlasticity/castem"
+      DESTINATION "share/doc/mfront-${TFEL_SUFFIX}/tests/behaviours/generic"
       COMPONENT mtest)
   else(TFEL_APPEND_SUFFIX)
     install(FILES ${file}
-      DESTINATION "share/doc/mfront/tests/behaviours/bricks/StandardElastoViscoPlasticity/castem"
+      DESTINATION "share/doc/mfront/tests/behaviours/generic"
       COMPONENT mtest)
   endif(TFEL_APPEND_SUFFIX)
 endfunction(install_generic_test_file)

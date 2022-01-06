@@ -1,0 +1,33 @@
+/*! 
+ * \file   elasticity19.mtest
+ * \brief
+ * \author Helfer Thomas
+ * \brief  09 avril 2013
+ */
+
+@Behaviour<aster> @library@ 'asterelasticity2';
+
+@Real 'E'  150.e9;
+@Real 'nu'   0.3333;
+@Real 'a'    2.e-5;
+@Real 'Tref' 293.15;
+@MaterialProperty<constant> 'YoungModulus'     'E';
+@MaterialProperty<constant> 'PoissonRatio'     'nu';
+
+@ExternalStateVariable 'Temperature' {0:293.15,3600.:800};
+
+@ImposedStrain 'EXX' 0.;
+@ImposedStrain 'EYY' 0.;
+@ImposedStrain 'EZZ' 0.;
+@ImposedStrain 'EXY' 0.;
+@ImposedStrain 'EXZ' 0.;
+@ImposedStrain 'EYZ' 0.;
+
+@Times {0.,3600 in 20};
+
+@Test<function> 'SXX' '-E/(1-2*nu)*a*(Temperature-Tref)'  1.e-3;
+@Test<function> 'SYY' '-E/(1-2*nu)*a*(Temperature-Tref)'  1.e-3;
+@Test<function> 'SZZ' '-E/(1-2*nu)*a*(Temperature-Tref)'  1.e-3;
+@Test<function> 'SXY' '0.'                1.e-3;
+@Test<function> 'SXZ' '0.'                1.e-3;
+@Test<function> 'SYZ' '0.'                1.e-3;
