@@ -150,6 +150,21 @@ vector by removing its projection along the first one.
 @RotationMatrix<Direction> {{0,1,0},{1,0,0}};
 ~~~~
 
+## Wrapper around behaviours written in the logarithmic strain framework generated with the `aster` interface {#sec:tfel_4.1:mtest:aster_logarithmic_strain_wrapper}
+
+Behaviours written in the logarithmic strain framework and generated
+with the `aster` interface were not handled by `MTest` because the
+logarithmic strain framework is treated by `code_aster` and not by the
+`aster` interface.
+
+However, this is an issue for users using `MTest` for the identification
+of the behaviour, as described in [Issue
+#55](https://github.com/thelfer/tfel/issues/55).
+
+`MTest` now automatically wraps the behaviour to handle those
+behaviours. The wrapper handles the pre and post-processing steps around
+the behaviour integration.
+
 # Improvements to the `mtest` `python` module
 
 ## Support of named arguments in the constructor of the `Behaviour` class {#sec:tfel_4.1:pymtest:behaviour_constructor}
@@ -176,6 +191,13 @@ b = mtest.Behaviour(library = 'src/libBehaviour.so',
 ~~~~
 
 # Issues fixed
+
+## Issue #55: [mtest] Creation of a wrapper around behaviours written in the logarithmic strain framework generated with the `aster` interface
+
+The wrapper is described in Section
+@sec:tfel_4.1:mtest:aster_logarithmic_strain_wrapper.
+
+For more details, see : <https://github.com/thelfer/tfel/issues/55>
 
 ## Issue #57: [gallery] Mistakes in the Drucker Prager Cap model of the gallery
 

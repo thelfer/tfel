@@ -11,6 +11,9 @@ set(mfront_tests_SOURCES
   Elasticity
   Elasticity2
   Elasticity3
+  LogarithmicStrainElasticity
+  LogarithmicStrainElasticity2
+  LogarithmicStrainElasticity3
   OrthotropicElastic
   OrthotropicElastic2
   OrthotropicCreep
@@ -36,6 +39,7 @@ set(mfront_tests_SOURCES
   ImplicitNorton_Broyden2
   ImplicitNorton_LevenbergMarquardt
   ImplicitNorton_NumericallyComputedJacobianBlocks
+  LogarithmicStrainNortonCreep
   EllipticCreep
   StrainHardeningCreep
   Mazars
@@ -396,6 +400,42 @@ test_aster(johnsoncook_ssrt REFERENCE_FILE johnson-cook_ssrt.ref)
 test_aster(parametertest)
 test_aster(parametertest2)
 test_aster(tensorialexternalstatevariabletest)
+
+test_aster(mieheapellambrechtlogarithmicstrainelasticity2-uniaxialloading-1-2D)
+test_aster(mieheapellambrechtlogarithmicstrainelasticity2-uniaxialloading-1-3D)
+test_aster(mieheapellambrechtlogarithmicstrainelasticity2-uniaxialloading-2-2D)
+test_aster(mieheapellambrechtlogarithmicstrainelasticity2-uniaxialloading-2-3D)
+test_aster(mieheapellambrechtlogarithmicstrainelasticity2-uniaxialloading-3-2D)
+test_aster(mieheapellambrechtlogarithmicstrainelasticity2-uniaxialloading-3-3D)
+test_aster(mieheapellambrechtlogarithmicstrainelasticity3-uniaxialloading-1-3D)
+test_aster(mieheapellambrechtlogarithmicstrainelasticity3-uniaxialloading-2-3D)
+test_aster(mieheapellambrechtlogarithmicstrainelasticity3-uniaxialloading-3-3D)
+test_aster(mieheapellambrechtlogarithmicstrainelasticity-shear-2D
+           REFERENCE_FILE logarithmicstrainelasticity-shear.ref)
+test_aster(mieheapellambrechtlogarithmicstrainelasticity-shear-FXY-3D
+           REFERENCE_FILE logarithmicstrainelasticity-shear.ref)
+test_aster(mieheapellambrechtlogarithmicstrainelasticity-shear-FXZ-3D
+           REFERENCE_FILE logarithmicstrainelasticity-shear.ref)
+test_aster(mieheapellambrechtlogarithmicstrainelasticity-shear-FYX-3D
+           REFERENCE_FILE logarithmicstrainelasticity-shear.ref)
+test_aster(mieheapellambrechtlogarithmicstrainelasticity-shear-FYZ-3D
+           REFERENCE_FILE logarithmicstrainelasticity-shear.ref)
+test_aster(mieheapellambrechtlogarithmicstrainelasticity-shear-FZX-3D
+           REFERENCE_FILE logarithmicstrainelasticity-shear.ref)
+test_aster(mieheapellambrechtlogarithmicstrainelasticity-shear-FZY-3D
+           REFERENCE_FILE logarithmicstrainelasticity-shear.ref)
+test_aster(mieheapellambrechtlogarithmicstrainelasticity-uniaxialloading-1-2D)
+test_aster(mieheapellambrechtlogarithmicstrainelasticity-uniaxialloading-1-3D)
+test_aster(mieheapellambrechtlogarithmicstrainelasticity-uniaxialloading-2-2D)
+test_aster(mieheapellambrechtlogarithmicstrainelasticity-uniaxialloading-2-3D)
+test_aster(mieheapellambrechtlogarithmicstrainelasticity-uniaxialloading-3-2D)
+test_aster(mieheapellambrechtlogarithmicstrainelasticity-uniaxialloading-3-3D)
+test_aster(mieheapellambrechtlogarithmicstrainnortoncreep-uniaxialloading-1-3D
+           REFERENCE_FILE logarithmicstrainnortoncreepuniaxialtesting.ref)
+test_aster(mieheapellambrechtlogarithmicstrainnortoncreep-uniaxialloading-2-3D
+           REFERENCE_FILE logarithmicstrainnortoncreepuniaxialtesting.ref)
+test_aster(mieheapellambrechtlogarithmicstrainnortoncreep-uniaxialloading-3-3D
+           REFERENCE_FILE logarithmicstrainnortoncreepuniaxialtesting.ref)
 
 if(enable-python-bindings)
   test_aster_python(xx)
