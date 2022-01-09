@@ -96,7 +96,7 @@ The dots \(\ldots\) means that the behaviour may also depend of
 external state variables evolutions with time, namely the temperature,
 the irradiation damage, and so on.
 
-## Isotropic $J_{2}$ plastic/vsicplastic behaviours. Example of finite strain pre- and post-processing
+## Isotropic $J_{2}$ plastic/viscoplastic behaviours. Example of finite strain pre- and post-processing
 
 \(4\) domain specific languages address the case of small strain
 isotropic \(J_{2}\) plastic and/or viscoplastic behaviours which are
