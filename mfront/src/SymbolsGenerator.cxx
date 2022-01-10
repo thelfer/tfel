@@ -515,7 +515,7 @@ namespace mfront {
       const BehaviourDescription& mb,
       const std::string& name,
       const Hypothesis h) const {
-    if (!areParametersTreatedAsStaticVariables(mb)) {
+    if (areParametersTreatedAsStaticVariables(mb)) {
       return;
     }
     auto throw_if = [](const bool b, const std::string& m) {
