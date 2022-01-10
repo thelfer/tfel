@@ -52,6 +52,10 @@ namespace mfront {
   struct MFRONT_VISIBILITY_EXPORT DSLBase
       : public virtual AbstractDSL,
         public tfel::utilities::CxxTokenizer {
+    //! \brief standard option name
+    static const char* const parametersAsStaticVariablesOption;
+    //! \return a validator for the options passed to the DSL
+    static tfel::utilities::DataMapValidator getDSLOptionsValidator();
     //! \return the file description associated with the treated file
     const FileDescription& getFileDescription() const override final;
     /*!
@@ -154,8 +158,11 @@ namespace mfront {
     };  // end of CodeBlockParserOptions
     //! \return a list of names that shall be reserved
     static std::vector<std::string> getDefaultReservedNames();
-    //! \brief constructor
-    DSLBase();
+    /*!
+     * \brief constructor
+     * \param[in] opts: options passed to the DSL
+     */
+    DSLBase(const DSLOptions&);
     /*!
      * \brief register a name.
      * \param[in] n : name

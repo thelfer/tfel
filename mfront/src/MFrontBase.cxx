@@ -105,28 +105,27 @@ namespace mfront {
       ++pt;
     }
     if (found) {
+      auto& lm = ExternalLibraryManager::getExternalLibraryManager();
       try {
         if (!library.empty()) {
-          auto& lm = ExternalLibraryManager::getExternalLibraryManager();
           lm.loadLibrary(library);
         }
-        dsl = dslFactory.createNewParser(dslName);
-      } catch (std::runtime_error& r) {
-        std::ostringstream msg;
-        msg << "MFrontBase::getDSL : error while loading dsl " << dslName
-            << " (" << r.what() << ")\n";
-        msg << "Available dsls:\n";
-        const auto& dsls = dslFactory.getRegistredParsers();
-        std::copy(dsls.begin(), dsls.end(),
-                  std::ostream_iterator<std::string>(msg, " "));
-        tfel::raise(msg.str());
+      } catch (std::exception& e) {
+        tfel::raise("MFrontBase::getDSL : error while loading library '" +
+                    library + "'\n" + std::string(e.what()));
+      }
+      try {
+        dsl = dslFactory.createNewDSL(dslName, dsl_options);
+      } catch(std::exception& e){
+        tfel::raise("MFrontBase::getDSL : error while creating DSL '" +
+                    dslName + "'\n" + std::string(e.what()));
       }
     } else {
       if (getVerboseMode() >= VERBOSE_LEVEL2) {
         getLogStream()
             << "MFrontBase::getDSL : no dsl specified, using default\n";
       }
-      dsl = dslFactory.createNewParser(DefaultDSL::getName());
+      dsl = dslFactory.createNewDSL(DefaultDSL::getName());
     }
     if (tfel::utilities::starts_with(f, "madnex:")) {
 #ifdef MFRONT_HAVE_MADNEX
@@ -163,7 +162,7 @@ namespace mfront {
 #endif /* HAVE_MANDEX */
     }
     return dsl;
-  }  // end of MFrontBase::getAbstractDSL
+  }  // end of getDSL
 
   MFrontBase::MFrontBase() {
     using namespace tfel::system;

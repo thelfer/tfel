@@ -21,7 +21,8 @@
 
 namespace mfront {
 
-  DefaultGenericBehaviourDSL::DefaultGenericBehaviourDSL() {
+  DefaultGenericBehaviourDSL::DefaultGenericBehaviourDSL(const DSLOptions& opts)
+      : DefaultDSLBase(opts) {
     this->mb.setDSLName("DefaultGenericBehaviour");
     this->mb.declareAsGenericBehaviour();
     this->registerNewCallBack("@Gradient",

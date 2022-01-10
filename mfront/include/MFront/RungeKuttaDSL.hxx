@@ -29,8 +29,12 @@ namespace mfront {
     static std::string getDescription();
     //! \return a description of the DSL
     BehaviourDSLDescription getBehaviourDSLDescription() const override;
-    //! constructor
-    RungeKuttaDSL();
+    /*!
+     * \brief constructor
+     *\param[in] opts: options passed to the DSL
+     */
+    RungeKuttaDSL(const DSLOptions&);
+    //
     std::string getCodeBlockTemplate(
         const std::string&,
         const MFrontTemplateGenerationOptions&) const override;

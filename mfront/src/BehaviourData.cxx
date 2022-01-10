@@ -159,13 +159,6 @@ namespace mfront {
                                            "already specified");
   }
 
-  void BehaviourData::throwUndefinedAttribute(const std::string& n) {
-    tfel::raise(
-        "BehaviourData::getAttribute: "
-        "no attribute named '" +
-        n + "'");
-  }  // end of throwUndefinedAttribute
-
   BehaviourData::CodeBlocksAggregator::CodeBlocksAggregator() = default;
 
   bool BehaviourData::CodeBlocksAggregator::isMutable() const {
@@ -1504,43 +1497,6 @@ namespace mfront {
                        n + "'");
     return p->second;
   }  // end of getUnsignedShortParameterDefaultValue
-
-  void BehaviourData::setAttribute(const std::string& n,
-                                   const BehaviourAttribute& a,
-                                   const bool b) {
-    auto throw_if = [](const bool c, const std::string& m) {
-      tfel::raise_if(c, "BehaviourData::setAttribute: " + m);
-    };
-    auto p = this->attributes.find(n);
-    if (p != this->attributes.end()) {
-      throw_if(a.getTypeIndex() != p->second.getTypeIndex(),
-               "attribute already exists with a different type");
-    }
-    if (!this->attributes.insert({n, a}).second) {
-      throw_if(!b, "attribute '" + n + "' already declared");
-    }
-  }  // end of setAttribute
-
-  void BehaviourData::updateAttribute(const std::string& n,
-                                      const BehaviourAttribute& a) {
-    auto throw_if = [](const bool c, const std::string& m) {
-      tfel::raise_if(c, "BehaviourData::updateAttribute: " + m);
-    };
-    auto p = this->attributes.find(n);
-    throw_if(p == this->attributes.end(), "unknown attribute '" + n + "'");
-    throw_if(a.getTypeIndex() != p->second.getTypeIndex(),
-             "attribute already exists with a different type");
-    p->second = a;
-  }  // end of setAttribute
-
-  bool BehaviourData::hasAttribute(const std::string& n) const {
-    return this->attributes.count(n) != 0u;
-  }  // end of hasAttribute
-
-  const std::map<std::string, BehaviourAttribute>&
-  BehaviourData::getAttributes() const {
-    return this->attributes;
-  }  // end of getAttributes
 
   std::vector<std::string> BehaviourData::getCodeBlockNames() const {
     auto names = std::vector<std::string>{};

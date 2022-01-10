@@ -15,7 +15,9 @@
 
 namespace mfront {
 
-  ImplicitGenericBehaviourDSL::ImplicitGenericBehaviourDSL() {
+  ImplicitGenericBehaviourDSL::ImplicitGenericBehaviourDSL(
+      const DSLOptions& opts)
+      : ImplicitDSLBase(opts) {
     this->mb.setDSLName("ImplicitGenericBehaviour");
     this->mb.declareAsGenericBehaviour();
     this->registerNewCallBack("@Gradient",

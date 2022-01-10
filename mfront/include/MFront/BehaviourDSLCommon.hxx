@@ -174,8 +174,12 @@ namespace mfront {
       //! list of untreated options
       std::vector<tfel::utilities::Token> untreated;
     };
-    //! \brief constructor
-    BehaviourDSLCommon();
+    /*!
+     * \brief constructor
+     * \param[in] opts: options passed to the DSL
+     */
+    BehaviourDSLCommon(const DSLOptions&);
+    //
     bool useQt() const override;
     void disableQuantitiesUsageIfNotAlreadySet() override;
     std::string getClassName() const override;

@@ -38,7 +38,9 @@ namespace mfront {
   /*!
    * This structure gathers various behaviour characteristic
    */
-  struct MFRONT_VISIBILITY_EXPORT BehaviourData : private SupportedTypes {
+  struct MFRONT_VISIBILITY_EXPORT BehaviourData
+      : public BehaviourAttributesHandler,
+        private SupportedTypes {
     /*
      * normalised code block names
      * \note code block name begins with an upper case
@@ -723,29 +725,6 @@ namespace mfront {
      */
     bool hasCode(const std::string&) const;
     /*!
-     * \brief insert a new attribute
-     * \param[in] n : name
-     * \param[in] a : attribute
-     * \param[in] b : don't throw if the the
-     *                attribute already exists.
-     *                The attribute is left unchanged.
-     *                However the type of the attribute is checked.
-     */
-    void setAttribute(const std::string&,
-                      const BehaviourAttribute&,
-                      const bool);
-    /*!
-     * \brief update an existing new attribute
-     * \param[in] n: name
-     * \param[in] a: attribute
-     */
-    void updateAttribute(const std::string&, const BehaviourAttribute&);
-    /*!
-     * \return true if an attribute with the given name as been registred
-     * \param[in] n : name
-     */
-    bool hasAttribute(const std::string&) const;
-    /*!
      * \return true a glossary was associated with the given
      * variable.
      * \param[in] v  : variable name
@@ -851,29 +830,6 @@ namespace mfront {
     void setPhysicalBounds(const std::string&,
                            const unsigned short,
                            const VariableBoundsDescription&);
-    /*!
-     * \return the attribute with the given name
-     * \param[in] n : name
-     */
-    template <typename T>
-    typename std::enable_if<
-        tfel::meta::TLCountNbrOfT<T, BehaviourAttributeTypes>::value == 1,
-        T&>::type
-    getAttribute(const std::string&);
-    /*!
-     * \return the attribute with the given name
-     * \param[in] n : name
-     */
-    template <typename T>
-    typename std::enable_if<
-        tfel::meta::TLCountNbrOfT<T, BehaviourAttributeTypes>::value == 1,
-        const T&>::type
-    getAttribute(const std::string&) const;
-    /*!
-     * \return all the attribute registred
-     * \param[in] n : name
-     */
-    const std::map<std::string, BehaviourAttribute>& getAttributes() const;
     /*!
      * reserve the given name
      * \param[in] n : variable name
@@ -1006,11 +962,6 @@ namespace mfront {
       mutable bool is_mutable = true;
     };
     /*!
-     * \brief throw an exception saying that no attribute with the given name
-     * exists
-     */
-    [[noreturn]] static void throwUndefinedAttribute(const std::string&);
-    /*!
      * check that the given name has been registred as a variable name
      * \param[in] n : variable name
      * \note an exception is thrown is the given name is not found
@@ -1076,8 +1027,6 @@ namespace mfront {
     std::vector<StressFreeExpansionDescription> sfeds;
     //! \brief overriding parameters
     std::map<std::string, double> overriding_parameters;
-    //! \brief behaviour attributes
-    std::map<std::string, BehaviourAttribute> attributes;
     //! \brief private code
     std::string privateCode;
     //! \brief class members
@@ -1102,7 +1051,5 @@ namespace mfront {
   };  // end of struct BehaviourData
 
 }  // end of namespace mfront
-
-#include "MFront/BehaviourData.ixx"
 
 #endif /* LIB_MFRONT_BEHAVIOURDATA_HXX */

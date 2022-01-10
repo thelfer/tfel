@@ -25,13 +25,15 @@ namespace mfront {
     static std::string getName();
     //! \brief default constructor
     static std::string getDescription();
-    //! \brief copy constructor
-    IsotropicStrainHardeningMisesCreepDSL();
-
+    /*!
+     * \brief constructor
+     *\param[in] opts: options passed to the DSL
+     */
+    IsotropicStrainHardeningMisesCreepDSL(const DSLOptions&);
+    //
     std::string getCodeBlockTemplate(
         const std::string&,
         const MFrontTemplateGenerationOptions&) const override;
-
     void endsInputFileProcessing() override;
     //! \brief destructor
     ~IsotropicStrainHardeningMisesCreepDSL() override;

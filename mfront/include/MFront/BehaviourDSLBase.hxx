@@ -31,8 +31,11 @@ namespace mfront {
    protected:
     //! \brief a simple alias
     using MemberFuncPtr = void (Child::*)();
-    //! \brief constructor
-    BehaviourDSLBase();
+    /*!
+     * \brief constructor
+     * \param[in] opts: options passed to the DSL
+     */
+    BehaviourDSLBase(const DSLOptions&);
     /*!
      * \brief associate a call-back to a member function of the derived class
      * (using CRTP).

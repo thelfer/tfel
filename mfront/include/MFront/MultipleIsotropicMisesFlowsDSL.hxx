@@ -17,7 +17,6 @@
 
 #include <vector>
 #include <string>
-
 #include "MFront/IsotropicBehaviourDSLBase.hxx"
 
 namespace mfront {
@@ -27,8 +26,11 @@ namespace mfront {
     static std::string getName();
     //! \brief return a short description of the DSL
     static std::string getDescription();
-    //! \brief default constructor
-    MultipleIsotropicMisesFlowsDSL();
+    /*!
+     * \brief constructor
+     *\param[in] opts: options passed to the DSL
+     */
+    MultipleIsotropicMisesFlowsDSL(const DSLOptions&);
 
     BehaviourDSLDescription getBehaviourDSLDescription() const override;
 

@@ -21,7 +21,8 @@
 
 namespace mfront {
 
-  DefaultModelDSL::DefaultModelDSL() {
+  DefaultModelDSL::DefaultModelDSL(const DSLOptions& opts)
+      : DefaultDSLBase(opts) {
     this->mb.setDSLName("DefaultModel");
     this->mb.declareAsGenericBehaviour();
     this->disableCallBack("@Behaviour");

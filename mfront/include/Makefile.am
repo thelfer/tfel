@@ -66,8 +66,8 @@ nobase_include_HEADERS= MFront/MFront.hxx                                     \
 			MFront/NonLinearSystemSolverFactory.hxx                           \
 			MFront/UserDefinedNonLinearSystemSolver.hxx                       \
 			MFront/BehaviourAttribute.hxx                                     \
+			MFront/BehaviourAttribute.ixx                                     \
 			MFront/BehaviourData.hxx                                          \
-			MFront/BehaviourData.ixx                                          \
 			MFront/BehaviourDescription.hxx                                   \
 			MFront/BehaviourDescription.ixx                                   \
 			MFront/BehaviourSymmetryType.hxx                                  \

@@ -64,7 +64,7 @@ namespace mfront {
     return tfel::utilities::CxxTokenizer::isValidIdentifier(n, false);
   }
 
-  ModelDSLCommon::ModelDSLCommon() {
+  ModelDSLCommon::ModelDSLCommon(const DSLOptions& opts) : DSLBase(opts) {
     this->reserveName("dt");
     this->reserveName("\u0394t");
     for (const auto& v : DSLBase::getDefaultReservedNames()) {

@@ -22,8 +22,11 @@ namespace mfront {
    * \brief Implementation of a model using explicit algorithms
    */
   struct RungeKuttaModelDSL : public RungeKuttaDSLBase {
-    //! \brief constructor
-    RungeKuttaModelDSL();
+    /*!
+     * \brief constructor
+     *\param[in] opts: options passed to the DSL
+     */
+    RungeKuttaModelDSL(const DSLOptions&);
     //! \return the name of the DSL
     static std::string getName();
     //! \return a description of the DSL

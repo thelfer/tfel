@@ -30,10 +30,13 @@ namespace mfront {
     static std::string getName();
     //! \brief return a short description of the DSL
     static std::string getDescription();
-    //! \return a description of the DSL
+    /*!
+     * \brief constructor
+     *\param[in] opts: options passed to the DSL
+     */
+    ImplicitDSL(const DSLOptions&);
+    //
     BehaviourDSLDescription getBehaviourDSLDescription() const override;
-    //! \brief  constructor
-    ImplicitDSL();
     std::string getCodeBlockTemplate(
         const std::string&,
         const MFrontTemplateGenerationOptions&) const override;

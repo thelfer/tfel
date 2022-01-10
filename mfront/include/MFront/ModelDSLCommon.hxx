@@ -40,8 +40,12 @@ namespace mfront {
    * \brief base class for domain specific languages for models
    */
   struct MFRONT_VISIBILITY_EXPORT ModelDSLCommon : public DSLBase {
-    //! \brief constructor
-    ModelDSLCommon();
+    /*!
+     * \brief constructor
+     *\param[in] opts: options passed to the DSL
+     */
+    ModelDSLCommon(const DSLOptions&);
+    //
     DSLTarget getTargetType() const override final;
     std::string getMaterialKnowledgeIdentifier() const override;
     std::string getMaterialName() const override;

@@ -21,7 +21,7 @@
 
 namespace mfront {
 
-  DefaultDSL::DefaultDSL() {
+  DefaultDSL::DefaultDSL(const DSLOptions& opts) : DefaultDSLBase(opts) {
     this->mb.setDSLName("Default");
     this->mb.declareAsASmallStrainStandardBehaviour();
   }

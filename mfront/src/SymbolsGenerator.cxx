@@ -499,9 +499,14 @@ namespace mfront {
       const BehaviourDescription& mb,
       const std::string& name,
       const Hypothesis h) const {
-    mfront::writeParametersDeclarationSymbols(
-        out, this->getSymbolName(i, name, h),
-        mb.getBehaviourData(h).getParameters());
+    if (!areParametersTreatedAsStaticVariables(mb)) {
+      mfront::writeParametersDeclarationSymbols(
+          out, this->getSymbolName(i, name, h),
+          mb.getBehaviourData(h).getParameters());
+    } else {
+      mfront::writeParametersDeclarationSymbols(
+          out, this->getSymbolName(i, name, h), {});
+    }
   }  // end of writeParametersSymbols
 
   void SymbolsGenerator::writeParameterDefaultValueSymbols(
@@ -510,6 +515,9 @@ namespace mfront {
       const BehaviourDescription& mb,
       const std::string& name,
       const Hypothesis h) const {
+    if (!areParametersTreatedAsStaticVariables(mb)) {
+      return;
+    }
     auto throw_if = [](const bool b, const std::string& m) {
       tfel::raise_if(
           b, "SymbolsGenerator::writeParameterDefaultValueSymbols: " + m);
@@ -562,7 +570,9 @@ namespace mfront {
     mfront::writeBoundsSymbols(os, n, d.getMaterialProperties());
     mfront::writeBoundsSymbols(os, n, d.getPersistentVariables());
     mfront::writeBoundsSymbols(os, n, d.getExternalStateVariables());
-    mfront::writeBoundsSymbols(os, n, d.getParameters());
+    if (!areParametersTreatedAsStaticVariables(mb)) {
+      mfront::writeBoundsSymbols(os, n, d.getParameters());
+    }
   }  // end of writeBoundsSymbols
 
   void SymbolsGenerator::writePhysicalBoundsSymbols(
@@ -576,7 +586,9 @@ namespace mfront {
     mfront::writePhysicalBoundsSymbols(os, n, d.getMaterialProperties());
     mfront::writePhysicalBoundsSymbols(os, n, d.getPersistentVariables());
     mfront::writePhysicalBoundsSymbols(os, n, d.getExternalStateVariables());
-    mfront::writePhysicalBoundsSymbols(os, n, d.getParameters());
+    if (!areParametersTreatedAsStaticVariables(mb)) {
+      mfront::writePhysicalBoundsSymbols(os, n, d.getParameters());
+    }
   }  // end of writePhysicalBoundsSymbols
 
   void SymbolsGenerator::writeRequirementsSymbols(

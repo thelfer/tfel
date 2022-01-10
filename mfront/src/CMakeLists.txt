@@ -71,6 +71,7 @@ set(TFELMFront_SOURCES
     LawFunction.cxx
     MaterialPropertyDescription.cxx
     MaterialPropertyParametersHandler.cxx
+    BehaviourAttribute.cxx
     BehaviourData.cxx
     BehaviourDescription.cxx
     VariableDescriptionBase.cxx

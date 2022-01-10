@@ -24,6 +24,9 @@ namespace mfront {
     return "this parser is used to define simple material models";
   }  // end of ModelDSL::getDescription
 
+  ModelDSL::ModelDSL(const DSLOptions& opts)
+      : ModelDSLBase<ModelDSL>(opts) {}  // end of ModelDSL
+
   void ModelDSL::setInterfaces(const std::set<std::string>& f) {
     ModelDSLCommon::setInterfaces(f);
     for (const auto& i : this->interfaces) {
@@ -34,5 +37,7 @@ namespace mfront {
   ModelDescription ModelDSL::getModelDescription() const {
     return this->md;
   }  // end of ModelDSL::getModelDescription
+
+  ModelDSL::~ModelDSL() = default;
 
 }  // end of namespace mfront

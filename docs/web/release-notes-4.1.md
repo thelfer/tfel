@@ -20,6 +20,27 @@ eqnPrefixTemplate: "($$i$$)"
 The page describes the new functionalities of Version 4.1 of the
 `TFEL` project.
 
+# `MFront` improvements
+
+## Global options to domain specific languages
+
+Domain specific language can have global options which can modify the
+default behaviour of `MFront`.
+
+### Treat parameters as static variables
+
+The boolean option `parameters_as_static_variables` modifies the way
+parameters are treated.
+
+By default, `MFront` behaves as if this option was set to `false`.
+
+If `true`, the parameters will be treated as static variables. In
+particular, the values of the parameters can not be changed as runtime.
+From the solver point of view, the behaviour does not declare any
+parameter.
+
+### Automatic declaration of the temperature as an external state variable for behaviours
+
 # `MTest` improvements
 
 ## Support for a boundary condition modelling the effet of a mandrel in pipe modelling {#sec:tfel_4.1:mtest:mandrel}

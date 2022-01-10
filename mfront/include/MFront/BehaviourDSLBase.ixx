@@ -24,7 +24,8 @@
 namespace mfront {
 
   template <typename Child>
-  BehaviourDSLBase<Child>::BehaviourDSLBase() = default;
+  BehaviourDSLBase<Child>::BehaviourDSLBase(const DSLOptions& opts)
+      : BehaviourDSLCommon(opts) {}  // end of BehaviourDSLBase
 
   template <typename Child>
   void BehaviourDSLBase<Child>::registerNewCallBack(const std::string& k,

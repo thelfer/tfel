@@ -41,8 +41,11 @@ namespace mfront {
     static std::string getName();
     //! \return a description of the parser
     static std::string getDescription();
-    //! \brief default constructor
-    MaterialPropertyDSL();
+    /*!
+     * \brief constructor
+     *\param[in] opts: options passed to the DSL
+     */
+    MaterialPropertyDSL(const DSLOptions&);
 
     DSLTarget getTargetType() const override final;
     std::string getMaterialKnowledgeIdentifier() const override;

@@ -29,6 +29,9 @@
 
 namespace mfront {
 
+  const char* const BehaviourDescription::parametersAsStaticVariables =
+      "parametersAsStaticVariables";
+
   static MaterialPropertyDescription buildMaterialPropertyDescription(
       const BehaviourDescription::ConstantMaterialProperty& mp,
       const BehaviourDescription& bd,
@@ -3166,5 +3169,10 @@ namespace mfront {
     const auto hn = BehaviourDescription::ModellingHypothesis::toString(h);
     return bd.getClassName() + hn + "-parameters.txt";
   }  // end of getParametersFileName
+
+  bool areParametersTreatedAsStaticVariables(const BehaviourDescription& bd) {
+    return bd.getAttribute<bool>(
+        BehaviourDescription::parametersAsStaticVariables, false);
+  } // end of areParametersTreatedAsStaticVariables
 
 }  // end of namespace mfront

@@ -38,7 +38,9 @@ namespace mfront {
            "mises stress";
   }  // end of getDescription
 
-  MultipleIsotropicMisesFlowsDSL::MultipleIsotropicMisesFlowsDSL() {
+  MultipleIsotropicMisesFlowsDSL::MultipleIsotropicMisesFlowsDSL(
+      const DSLOptions& opts)
+      : IsotropicBehaviourDSLBase(opts) {
     const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     this->mb.setDSLName("MultipleIsotropicMisesFlows");
     // Default state vars

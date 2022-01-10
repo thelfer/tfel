@@ -31,7 +31,8 @@ namespace mfront {
     return "IsotropicMisesCreep";
   }
 
-  IsotropicMisesCreepDSL::IsotropicMisesCreepDSL() {
+  IsotropicMisesCreepDSL::IsotropicMisesCreepDSL(const DSLOptions& opts)
+      : IsotropicBehaviourDSLBase(opts) {
     const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     this->mb.setDSLName("IsotropicMisesCreepDSL");
     // Default state vars

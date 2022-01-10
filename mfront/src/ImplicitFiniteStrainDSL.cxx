@@ -15,7 +15,8 @@
 
 namespace mfront {
 
-  ImplicitFiniteStrainDSL::ImplicitFiniteStrainDSL() {
+  ImplicitFiniteStrainDSL::ImplicitFiniteStrainDSL(const DSLOptions& opts)
+      : ImplicitDSLBase(opts) {
     this->mb.setDSLName("ImplicitFiniteStrain");
     this->mb.declareAsAFiniteStrainStandardBehaviour(false);
     this->registerNewCallBack(

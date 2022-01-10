@@ -27,8 +27,11 @@ namespace mfront {
   //! \brief Base class for all parser based on an implicit scheme
   struct MFRONT_VISIBILITY_EXPORT ImplicitDSLBase
       : public BehaviourDSLBase<ImplicitDSLBase> {
-    //! \brief constructor
-    ImplicitDSLBase();
+    /*!
+     * \brief constructor
+     *\param[in] opts: options passed to the DSL
+     */
+    ImplicitDSLBase(const DSLOptions&);
     /*!
      * \return the solver used to integrate the mechanical behaviour
      * \throw this methods throws is the solver is not defined yet.

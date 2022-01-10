@@ -56,6 +56,9 @@ namespace std {
 
 namespace mfront {
 
+  const char* const DSLBase::parametersAsStaticVariablesOption =
+      "parameters_as_static_variables";
+
   bool isValidMaterialName(const std::string& n) {
     return tfel::utilities::CxxTokenizer::isValidIdentifier(n, true);
   }
@@ -63,6 +66,12 @@ namespace mfront {
   bool isValidLibraryName(const std::string& n) {
     return tfel::utilities::CxxTokenizer::isValidIdentifier(n, true);
   }
+
+  tfel::utilities::DataMapValidator DSLBase::getDSLOptionsValidator() {
+    auto v = tfel::utilities::DataMapValidator{};
+    v.addDataTypeValidator<bool>(DSLBase::parametersAsStaticVariablesOption);
+    return v;
+  }  // end of getDSLOptionsValidator
 
   DSLBase::VariableModifier::~VariableModifier() = default;
 
@@ -72,7 +81,7 @@ namespace mfront {
 
   DSLBase::CodeBlockParserOptions::~CodeBlockParserOptions() noexcept = default;
 
-  DSLBase::DSLBase() {
+  DSLBase::DSLBase(const DSLOptions&) {
     this->addSeparator("\u2297");
     this->addSeparator("\u22C5");
   }  // end of DSLBase::DSLBase
@@ -885,7 +894,8 @@ namespace mfront {
   std::shared_ptr<MaterialPropertyDescription>
   DSLBase::handleMaterialPropertyDescription(const std::string& f) {
     // getting informations the source files
-    MaterialPropertyDSL mp;
+#pragma message("forward appropriate options")
+    MaterialPropertyDSL mp({});
     try {
       MFrontMaterialPropertyInterface minterface;
       const auto& path = SearchPathsHandler::search(f);

@@ -56,7 +56,8 @@ namespace mfront {
     return tfel::utilities::CxxTokenizer::isValidIdentifier(n, false);
   }
 
-  MaterialPropertyDSL::MaterialPropertyDSL() {
+  MaterialPropertyDSL::MaterialPropertyDSL(const DSLOptions& opts)
+      : DSLBase(opts) {
     // Call Back
     this->registerNewCallBack(";", &MaterialPropertyDSL::treatLonelySeparator);
     this->registerNewCallBack("@UseQt", &MaterialPropertyDSL::treatUseQt);

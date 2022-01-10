@@ -23,7 +23,8 @@
 
 namespace mfront {
 
-  IsotropicBehaviourDSLBase::IsotropicBehaviourDSLBase() {
+  IsotropicBehaviourDSLBase::IsotropicBehaviourDSLBase(const DSLOptions& opts)
+      : BehaviourDSLBase<IsotropicBehaviourDSLBase>(opts) {
     const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     this->reserveName("NewtonIntegration");
     // main variables

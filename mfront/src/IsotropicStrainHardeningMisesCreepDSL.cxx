@@ -31,8 +31,9 @@ namespace mfront {
            "and s the equivalent mises stress";
   }  // end of IsotropicStrainHardeningMisesCreepDSL::getDescription
 
-  IsotropicStrainHardeningMisesCreepDSL::
-      IsotropicStrainHardeningMisesCreepDSL() {
+  IsotropicStrainHardeningMisesCreepDSL::IsotropicStrainHardeningMisesCreepDSL(
+      const DSLOptions& opts)
+      : IsotropicBehaviourDSLBase(opts) {
     const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     this->mb.setDSLName("IsotropicStrainHardeningMisesCreep");
     // Default state vars

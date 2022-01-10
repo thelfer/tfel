@@ -19,8 +19,12 @@
 namespace mfront {
 
   struct DefaultDSLBase : public BehaviourDSLBase<DefaultDSLBase> {
-    //! \brief default constructor
-    DefaultDSLBase();
+    /*!
+     * \brief constructor
+     *\param[in] opts: options passed to the DSL
+     */
+    DefaultDSLBase(const DSLOptions&);
+    //
     std::string getCodeBlockTemplate(
         const std::string&,
         const MFrontTemplateGenerationOptions&) const override;

@@ -27,10 +27,13 @@ namespace mfront {
     static std::string getName();
     //! \brief return a short description of the DSL
     static std::string getDescription();
-    //! \return a description of the DSL
+    /*!
+     * \brief constructor
+     *\param[in] opts: options passed to the DSL
+     */
+    DefaultCZMDSL(const DSLOptions&);
+    //
     BehaviourDSLDescription getBehaviourDSLDescription() const override;
-    //! \brief  constructor
-    DefaultCZMDSL();
     //! \brief  destructor
     ~DefaultCZMDSL() override;
 

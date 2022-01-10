@@ -83,7 +83,8 @@ namespace mfront {
     }
   }  // end of declareViewsFromArrayOfVariables
 
-  ImplicitDSLBase::ImplicitDSLBase() {
+  ImplicitDSLBase::ImplicitDSLBase(const DSLOptions& opts)
+      : BehaviourDSLBase<ImplicitDSLBase>(opts) {
     constexpr auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     // dynamically allocated vectors are not yet allowed in implicit
     // parsers

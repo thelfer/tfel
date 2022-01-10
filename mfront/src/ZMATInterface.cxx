@@ -1096,7 +1096,9 @@ namespace mfront {
     }
     for (const auto h : hypotheses) {
       if (mb.isModellingHypothesisSupported(h)) {
-        this->writeParametersInitialisation(out, mb, h);
+        if (!areParametersTreatedAsStaticVariables(mb)) {
+          this->writeParametersInitialisation(out, mb, h);
+        }
       }
     }
     out << "INTEGRATION_RESULT*\n"

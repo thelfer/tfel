@@ -43,9 +43,12 @@ namespace mfront {
   }
 
   template <typename DSLType>
-  std::shared_ptr<AbstractDSL> DSLProxy<DSLType>::createDSL() {
-    return std::make_shared<DSLType>();
-  }
+  std::shared_ptr<AbstractDSL> DSLProxy<DSLType>::createDSL(
+      const AbstractDSL::DSLOptions& opts) {
+    const auto& opts_validator = DSLType::getDSLOptionsValidator();
+    opts_validator.validate(opts);
+    return std::make_shared<DSLType>(opts);
+  }  // end of createDSL
 
 }  // end of namespace mfront
 

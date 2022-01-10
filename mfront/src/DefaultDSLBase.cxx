@@ -23,7 +23,8 @@
 
 namespace mfront {
 
-  DefaultDSLBase::DefaultDSLBase() {
+  DefaultDSLBase::DefaultDSLBase(const DSLOptions& opts)
+      : BehaviourDSLBase<DefaultDSLBase>(opts) {
     this->mb.setIntegrationScheme(BehaviourDescription::USERDEFINEDSCHEME);
     this->registerNewCallBack("@ProvidesTangentOperator",
                               &DefaultDSLBase::treatProvidesTangentOperator);

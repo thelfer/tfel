@@ -216,6 +216,11 @@ mfront_behaviour_check_library(MFrontGenericBehaviours2 generic
   ImplicitNorton7
   ImplicitOrthotropicCreep3)
 
+mfront_behaviour_check_library(MFrontGenericBehaviours3 generic
+  ElasticityParametersAsStaticVariables
+  RungeKuttaElasticityParametersAsStaticVariables
+  ImplicitElasticityParametersAsStaticVariables)
+
 if(WIN32)
   if(${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU")
     set_target_properties(MFrontGenericBehaviours

@@ -1,0 +1,39 @@
+@DSL RungeKutta{parameters_as_static_variables : true};
+@Behaviour RungeKuttaElasticityParametersAsStaticVariables;
+@Author Thomas Helfer;
+@Date 10 / 01 / 2022;
+
+@Algorithm rk42;
+@Epsilon 1.e-14;
+
+@MaterialProperty stress young;
+young.setGlossaryName("YoungModulus");
+@MaterialProperty real nu;
+nu.setGlossaryName("PoissonRatio");
+
+@LocalVariable stress lambda, mu;
+
+@InitLocalVariables {
+  lambda = computeLambda(young, nu);
+  mu = computeMu(young, nu);
+}
+
+@PredictionOperator {
+  static_cast<void>(smt);  // remove unused variable warning
+  Dt = lambda * Stensor4::IxI() + 2 * mu * Stensor4::Id();
+}
+
+@ComputeStress {
+  constexpr auto id = StrainStensor::Id();
+  sig = lambda * trace(eel) * id + 2 * mu * eel;
+}
+
+@Derivative {
+  deel = deto;
+}
+
+@TangentOperator {
+  static_cast<void>(smt);  // remove unused variable warning
+  Dt = lambda * Stensor4::IxI() + 2 * mu * Stensor4::Id();
+}
+

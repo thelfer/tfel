@@ -344,4 +344,53 @@ namespace tfel::utilities {
     return apply<DataComparator>(lhs, rhs);
   }
 
+  DataMapValidator::DataMapValidator() = default;
+  DataMapValidator::DataMapValidator(DataMapValidator&&) = default;
+  DataMapValidator::DataMapValidator(const DataMapValidator&) = default;
+  DataMapValidator& DataMapValidator::operator=(DataMapValidator&&) = default;
+  DataMapValidator& DataMapValidator::operator=(const DataMapValidator&) =
+      default;
+
+  DataMapValidator& DataMapValidator::addDataValidator(const std::string& k,
+                                                       const DataValidator& f) {
+    this->validators[k].push_back(f);
+    return *this;
+  }  // end of addDataValidator
+
+  void DataMapValidator::validate(const std::map<std::string, Data>& m) const {
+    for (const auto& [k, v] : m) {
+      const auto pvs = this->validators.find(k);
+      if (pvs == this->validators.end()) {
+        auto msg =
+            "DataMapValidator::validate: "
+            "invalid key '" +
+            k + "'.";
+        if (!this->validators.empty()) {
+          msg += "\nValid keys are:";
+          for (const auto kv : this->validators) {
+            msg += "\n- '" + kv.first + "'";
+          }
+        }
+        tfel::raise(msg);
+      }
+      for (const auto& validator : pvs->second) {
+        try {
+          validator(v);
+        } catch (std::exception& e) {
+          tfel::raise(
+              "DataMapValidator::validate: "
+              "invalid value for key '" +
+              k + "' (" + std::string(e.what()) + ")");
+        } catch (...){
+          tfel::raise(
+              "DataMapValidator::validate: "
+              "invalid value for key '" +
+              k + "' (unhandled exception was thrown)");
+        }
+      }
+    }
+  }
+
+  DataMapValidator::~DataMapValidator() = default;
+
 }  // end of namespace tfel::utilities

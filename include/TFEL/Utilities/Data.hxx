@@ -109,10 +109,9 @@ namespace tfel::utilities {
     using CallBack = std::function<void(const Data&)>;
     //! constructor from a value
     template <typename T1,
-              typename std::enable_if<
-                  tfel::meta::TLCountNbrOfT<typename std::decay<T1>::type,
-                                            DataTypes>::value == 1,
-                  bool>::type = true>
+              std::enable_if_t<tfel::meta::TLCountNbrOfT<std::decay_t<T1>,
+                                                         DataTypes>::value == 1,
+                               bool> = true>
     TFEL_INLINE Data(T1&& v) : GenTypeBase<DataTypes>(std::forward<T1>(v)) {}
     /*!
      * \brief read a JSON-like structure
@@ -182,7 +181,7 @@ namespace tfel::utilities {
     ~Data();
   };  // end of struct Data
 
-  //! comparison operator
+  //! \brief comparison operator
   TFELUTILITIES_VISIBILITY_EXPORT bool operator==(const Data&, const Data&);
 
   /*!
@@ -199,6 +198,41 @@ namespace tfel::utilities {
    */
   template <typename T>
   bool is_convertible(const Data&);
+
+  /*!
+   * \brief an helper structure used to validate a data map.
+   */
+  struct TFELUTILITIES_VISIBILITY_EXPORT DataMapValidator {
+    //! \brief function used to validate a
+    using DataValidator = std::function<void(const Data&)>;
+    //! \brief constructor
+    DataMapValidator();
+    //! \brief move constructor
+    DataMapValidator(DataMapValidator&&);
+    //! \brief move constructor
+    DataMapValidator(const DataMapValidator&);
+    //! \brief move assignement
+    DataMapValidator& operator=(DataMapValidator&&);
+    //! \brief standard assignement
+    DataMapValidator& operator=(const DataMapValidator&);
+    //!
+    DataMapValidator& addDataValidator(const std::string&,
+                                       const DataValidator&);
+    //!
+    template <typename T1>
+    std::enable_if_t<
+        tfel::meta::TLCountNbrOfT<std::decay_t<T1>, DataTypes>::value == 1,
+        DataMapValidator&>
+    addDataTypeValidator(const std::string& k);
+    //! \brief validate a data-map
+    void validate(const std::map<std::string, Data>&) const;
+    //! \brief destructor
+    ~DataMapValidator();
+
+   private:
+    //! \brief validators, sorted by keywords
+    std::map<std::string, std::vector<DataValidator>> validators;
+  };
 
 }  // end of namespace tfel::utilities
 

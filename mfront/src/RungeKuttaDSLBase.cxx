@@ -217,7 +217,8 @@ namespace mfront {
     }
   }  // end of writeExternalVariablesCurrentValues2
 
-  RungeKuttaDSLBase::RungeKuttaDSLBase() {
+  RungeKuttaDSLBase::RungeKuttaDSLBase(const DSLOptions& opts)
+      : BehaviourDSLBase<RungeKuttaDSLBase>(opts) {
     this->useStateVarTimeDerivative = true;
     // parameters
     this->reserveName("dtmin");

@@ -19,7 +19,7 @@
 #include <set>
 #include <vector>
 #include <string>
-
+#include "TFEL/Utilities/Data.hxx"
 #include "MFront/MFrontConfig.hxx"
 
 namespace mfront {
@@ -35,6 +35,8 @@ namespace mfront {
    * Interface class for all domain specific languages.
    */
   struct MFRONT_VISIBILITY_EXPORT AbstractDSL {
+    //! \brief a simple alias
+    using DSLOptions = std::map<std::string, tfel::utilities::Data>;
     //! list of dsl targets
     enum DSLTarget {
       MATERIALPROPERTYDSL,

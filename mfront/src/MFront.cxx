@@ -603,7 +603,7 @@ namespace mfront {
     tfel::raise_if(o.empty(),
                    "MFront::treatHelpCommandsList: "
                    "no parser name given");
-    std::shared_ptr<AbstractDSL> p{f.createNewParser(o)};
+    const auto p = f.createNewDSL(o);
     std::vector<std::string> keys;
     p->getKeywordsList(keys);
     for (auto& k : keys) {
@@ -621,7 +621,7 @@ namespace mfront {
                    "MFront::treatHelpCommandsList: "
                    "no parser name given");
     auto keys = std::vector<std::string>{};
-    f.createNewParser(o)->getKeywordsList(keys);
+    f.createNewDSL(o)->getKeywordsList(keys);
     std::cout << "% `" << o << "` keywords\n\n";
     for (const auto& k : keys) {
       const auto fp = getDocumentationFilePath(o, k.substr(1));
@@ -664,7 +664,7 @@ namespace mfront {
                    "MFront::treatHelpCommand: "
                    "ill-formed argument, expected "
                    "'parser:@keyword'");
-    auto p = f.createNewParser(pn);
+    auto p = f.createNewDSL(pn);
     std::vector<std::string> keys;
     p->getKeywordsList(keys);
     tfel::raise_if(std::find(keys.begin(), keys.end(), k) == keys.end(),
