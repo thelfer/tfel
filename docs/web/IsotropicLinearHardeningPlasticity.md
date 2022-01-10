@@ -360,13 +360,13 @@ can be obtained thanks in closed form:
   \(\deriv{\tsigma}{\Delta\,\tepsilonto}\).
 
 In this case, an appropriate domain specific language is the
-`DefaultDSL`:
+`Default`:
 
 ~~~~{.cxx}
-@DSL DefaultDSL;
+@DSL Default;
 ~~~~
 
-Contrary to other DSLs, the `DefaultDSL` does not provide a built-in
+Contrary to other DSLs, the `Default` does not provide a built-in
 support for a given integration scheme.
 
 ## Name of the behaviour
@@ -421,7 +421,7 @@ names](glossary.html) which are meant to:
 
 > **Increments of the state variables**
 > 
-> The `DefaultDSL` automatically declares the increments of those
+> The `Default` automatically declares the increments of those
 > variables, called respectively `deel` and `dp`. The user is free to use
 > those increments or to directly update the values of the state variables.
 > 
@@ -491,9 +491,9 @@ block.
 
 ### Computation of the consistent tangent operator
 
-The `DefaultDSL` DSL allows to compute the consistent tangent operator
-inside the `@Integrator` code block or in a dedicated code block name
-`@TangentOperator`.
+The `Default` DSL allows to compute the consistent tangent operator
+either inside the `@Integrator` code block or in a dedicated code block
+name `@TangentOperator`.
 
 The first choice is simplier and more efficient for the considered
 implementation, but this requires to explicitely state that the
@@ -518,7 +518,7 @@ as follows:
   const auto mu     = computeMu(young, nu);
 ~~~~
 
-### Elastic laoding
+### Elastic loading
 
 The next lines assume a purely elastic loading and:
 
@@ -566,12 +566,23 @@ using Equation @eq:isotropic_linear_harderning:normal_value:
     const auto n      = eval(3 * se / (2 * seq_e));
 ~~~~
 
+> **The `eval` function**
+> 
+> `TFEL/Math` uses expression templates to perform lazy evaluations of
+> most tensorial operations. See [its documentation](tfel-math.html) for
+> details.
+> 
+> The eval function evaluates an expression to get its results. We could
+> have removed it here, but the normal is used multiple times, so we
+> choose to evaluate it once.
+
 #### Update of the state variables
 
 The increment of the equivalent plastic strain is computed using
 Equation @eq:isotropic_linear_harderning:dp:
 
 ~~~~{.cxx}
+    const auto cste   = 1 / (H + 3 * mu);
     dp   = (seq_e - s0 - H * p) * cste;
 ~~~~
 
@@ -579,7 +590,7 @@ The value of the equivalent plastic strain will be updated automatically
 after the `@Integrator` code block.
 
 Once the equivalent plastic strain is known, the elastic strain can be
-correction using the split of the strain (Equation
+corrected using the split of the strain (Equation
 @eq:isotropic_linear_harderning:strain_slip):
 
 ~~~~{.cxx}
@@ -588,7 +599,7 @@ correction using the split of the strain (Equation
 
 #### Update of the consistent tangent operator
 
-The consistent tangent operator can be correction using
+The consistent tangent operator can be corrected using
 Equation @eq:isotropic_linear_harderning:consistent_tangent_operator:
 
 ~~~~{.cxx}
