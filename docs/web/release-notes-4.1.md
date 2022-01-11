@@ -301,6 +301,14 @@ For more details, see : <https://github.com/thelfer/tfel/issues/27>
 
 For more details, see : <https://github.com/thelfer/tfel/issues/26>
 
+## Issue #23: [mfront] Remove usage of C++ reserved variables names
+
+Some exported variables used to contain a double underscore in their
+names. Such names are reserved by the C++ standard for internal use by
+the compilers.
+
+For more details, see : <https://github.com/thelfer/tfel/issues/23>
+
 ## Issue #20: [mtest] Declaration of a behaviour wrapper in python module
 
 As described in Section @sec:tfel_4.1:pymtest:behaviour_constructor,
