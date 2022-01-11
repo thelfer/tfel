@@ -2484,7 +2484,7 @@ namespace mfront {
 
   void BehaviourDescription::setAttribute(const Hypothesis h,
                                           const std::string& n,
-                                          const BehaviourAttribute& a,
+                                          const MaterialKnowledgeDescriptionAttribute& a,
                                           const bool b) {
     if (h == ModellingHypothesis::UNDEFINEDHYPOTHESIS) {
       this->d.setAttribute(n, a, b);
@@ -2499,7 +2499,7 @@ namespace mfront {
 
   void BehaviourDescription::updateAttribute(const Hypothesis h,
                                              const std::string& n,
-                                             const BehaviourAttribute& a) {
+                                             const MaterialKnowledgeDescriptionAttribute& a) {
     if (h == ModellingHypothesis::UNDEFINEDHYPOTHESIS) {
       this->d.updateAttribute(n, a);
       for (const auto& md : this->sd) {
@@ -2713,33 +2713,6 @@ namespace mfront {
       }
     }
   }  // end of setPhysicalBounds
-
-  void BehaviourDescription::setAttribute(const std::string& n,
-                                          const BehaviourAttribute& a,
-                                          const bool b) {
-    if (b) {
-      auto p = this->attributes.find(n);
-      if (p != this->attributes.end()) {
-        tfel::raise_if(a.getTypeIndex() != p->second.getTypeIndex(),
-                       "BehaviourDescription::setAttribute: "
-                       "attribute already exists with a different type");
-        return;
-      }
-    }
-    tfel::raise_if(!this->attributes.insert({n, a}).second,
-                   "BehaviourDescription::setAttribute: "
-                   "attribute '" +
-                       n + "' already declared");
-  }  // end of setAttribute
-
-  bool BehaviourDescription::hasAttribute(const std::string& n) const {
-    return this->attributes.count(n) != 0u;
-  }  // end of hasAttribute
-
-  const std::map<std::string, BehaviourAttribute>&
-  BehaviourDescription::getAttributes() const {
-    return this->attributes;
-  }  // end of getAttributes
 
   void BehaviourDescription::disableQuantitiesUsageIfNotAlreadySet() const {
     if (!this->use_qt.has_value()) {

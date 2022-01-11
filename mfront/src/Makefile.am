@@ -23,6 +23,7 @@ endif # TFEL_WIN
 libTFELMFront_la_SOURCES = MFront.cxx                                     \
 			   MFrontBase.cxx                                             \
 			   PathSpecifier.cxx                                          \
+               MaterialKnowledgeDescriptionAttribute.cxx                  \
 			   MFrontUtilities.cxx                                        \
 			   GeneratorOptions.cxx                                       \
 			   CMakeGenerator.cxx                                         \
@@ -48,7 +49,6 @@ libTFELMFront_la_SOURCES = MFront.cxx                                     \
 		           LawFunction.cxx                                        \
 		           MaterialPropertyDescription.cxx                        \
 			   MaterialPropertyParametersHandler.cxx                  \
-                   BehaviourAttribute.cxx                                 \
 		           BehaviourData.cxx                                      \
 		           BehaviourDescription.cxx                               \
 			   VariableDescriptionBase.cxx                            \

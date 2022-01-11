@@ -45,6 +45,7 @@ target_link_libraries(MTestFileGenerator
 set(TFELMFront_SOURCES
     MFront.cxx
     MFrontBase.cxx
+    MaterialKnowledgeDescriptionAttribute.cxx
     PathSpecifier.cxx
     MFrontUtilities.cxx
     GeneratorOptions.cxx
@@ -71,7 +72,6 @@ set(TFELMFront_SOURCES
     LawFunction.cxx
     MaterialPropertyDescription.cxx
     MaterialPropertyParametersHandler.cxx
-    BehaviourAttribute.cxx
     BehaviourData.cxx
     BehaviourDescription.cxx
     VariableDescriptionBase.cxx

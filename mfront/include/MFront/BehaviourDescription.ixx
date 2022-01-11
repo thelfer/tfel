@@ -34,42 +34,6 @@ namespace mfront {
     return bdata.template getAttribute<T>(n);
   }
 
-  template <typename T>
-  typename std::enable_if<
-      tfel::meta::TLCountNbrOfT<T, BehaviourAttributeTypes>::value == 1,
-      T&>::type
-  BehaviourDescription::getAttribute(const std::string& n) {
-    auto p = this->attributes.find(n);
-    if (p == this->attributes.end()) {
-      p = this->attributes.insert({n, BehaviourAttribute(T())}).first;
-    }
-    return p->second.template get<T>();
-  }  // end of BehaviourDescription::getAttribute
-
-  template <typename T>
-  typename std::enable_if<
-      tfel::meta::TLCountNbrOfT<T, BehaviourAttributeTypes>::value == 1,
-      const T&>::type
-  BehaviourDescription::getAttribute(const std::string& n) const {
-    const auto p = this->attributes.find(n);
-    if (p == this->attributes.end()) {
-      BehaviourDescription::throwUndefinedAttribute(n);
-    }
-    return p->second.template get<T>();
-  }  // end of BehaviourDescription::getAttribute
-
-  template <typename T>
-  typename std::enable_if<
-      tfel::meta::TLCountNbrOfT<T, BehaviourAttributeTypes>::value == 1,
-      T>::type
-  BehaviourDescription::getAttribute(const std::string& n, const T& v) const {
-    const auto p = this->attributes.find(n);
-    if (p == this->attributes.end()) {
-      return v;
-    }
-    return p->second.template get<T>();
-  }  // end of BehaviourDescription::getAttribute
-
 }  // end of namespace mfront
 
 #endif /* LIB_MFRONT_BEHAVIOURDESCRIPTION_IXX */

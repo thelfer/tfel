@@ -31,10 +31,10 @@
 #include "MFront/MFrontConfig.hxx"
 #include "MFront/CodeBlock.hxx"
 #include "MFront/SupportedTypes.hxx"
-#include "MFront/BehaviourAttribute.hxx"
 #include "MFront/BehaviourData.hxx"
 #include "MFront/BehaviourSymmetryType.hxx"
 #include "MFront/IntegrationScheme.hxx"
+#include "MFront/MaterialKnowledgeDescriptionAttribute.hxx"
 
 namespace mfront {
 
@@ -56,7 +56,7 @@ namespace mfront {
    */
   struct MFRONT_VISIBILITY_EXPORT BehaviourDescription
       : public tfel::material::MechanicalBehaviourBase,
-        public BehaviourAttributesHandler,
+        public MaterialKnowledgeDescriptionAttributesHandler,
         public SupportedTypes {
     //! \brief attribute name
     static const char* const parametersAsStaticVariables;
@@ -200,6 +200,56 @@ struct ConstantMaterialProperty {
     BehaviourDescription();
     //! copy constructor
     BehaviourDescription(const BehaviourDescription&);
+    //
+    using MaterialKnowledgeDescriptionAttributesHandler::hasAttribute;
+    using MaterialKnowledgeDescriptionAttributesHandler::setAttribute;
+    using MaterialKnowledgeDescriptionAttributesHandler::updateAttribute;
+    using MaterialKnowledgeDescriptionAttributesHandler::getAttribute;
+    /*!
+     * \brief set a mechanical attribute
+     * \param[in] h: modelling hypothesis
+     * \param[in] n: name
+     * \param[in] a: attribute
+     * \param[in] b: don't throw if the the
+     *                attribute already exists.
+     *                The attribute is left unchanged.
+     *                However the type of the attribute is checked.
+     */
+    void setAttribute(const Hypothesis,
+                      const std::string&,
+                      const MaterialKnowledgeDescriptionAttribute&,
+                      const bool = false);
+    /*!
+     * \brief update an attribute
+     * \param[in] h: modelling hypothesis
+     * \param[in] n: name
+     * \param[in] a: attribute
+     */
+    void updateAttribute(const Hypothesis,
+                         const std::string&,
+                         const MaterialKnowledgeDescriptionAttribute&);
+    /*!
+     * \return a mechanical attribute
+     * \param[in] h: modelling hypothesis
+     * \param[in] n: name
+     */
+    template <typename T>
+    const T& getAttribute(const Hypothesis, const std::string&) const;
+    /*!
+     * \return a mechanical attribute if it exists or the default
+     * value
+     * \param[in] h: modelling hypothesis
+     * \param[in] n: name
+     * \param[in] v: default value
+     */
+    template <typename T>
+    T getAttribute(const Hypothesis, const std::string&, const T&) const;
+    /*!
+     * \return true an attribute with the given name has been declared
+     * \param[in] h: modelling hypothesis
+     * \param[in] n: name
+     */
+    bool hasAttribute(const Hypothesis, const std::string&) const;
     /*!
      * \brief return true if the behaviour description allows the
      * declaration of user defined variables
@@ -1389,51 +1439,6 @@ struct ConstantMaterialProperty {
      */
     bool hasCode(const Hypothesis, const std::string&) const;
     /*!
-     * \brief set a mechanical attribute
-     * \param[in] h: modelling hypothesis
-     * \param[in] n: name
-     * \param[in] a: attribute
-     * \param[in] b: don't throw if the the
-     *                attribute already exists.
-     *                The attribute is left unchanged.
-     *                However the type of the attribute is checked.
-     */
-    void setAttribute(const Hypothesis,
-                      const std::string&,
-                      const BehaviourAttribute&,
-                      const bool = false);
-    /*!
-     * \brief update an attribute
-     * \param[in] h: modelling hypothesis
-     * \param[in] n: name
-     * \param[in] a: attribute
-     */
-    void updateAttribute(const Hypothesis,
-                         const std::string&,
-                         const BehaviourAttribute&);
-    /*!
-     * \return a mechanical attribute
-     * \param[in] h: modelling hypothesis
-     * \param[in] n: name
-     */
-    template <typename T>
-    const T& getAttribute(const Hypothesis, const std::string&) const;
-    /*!
-     * \return a mechanical attribute if it exists or the default
-     * value
-     * \param[in] h: modelling hypothesis
-     * \param[in] n: name
-     * \param[in] v: default value
-     */
-    template <typename T>
-    T getAttribute(const Hypothesis, const std::string&, const T&) const;
-    /*!
-     * \return true an attribute with the given name has been declared
-     * \param[in] h: modelling hypothesis
-     * \param[in] n: name
-     */
-    bool hasAttribute(const Hypothesis, const std::string&) const;
-    /*!
      * \return true a parameter with the given name has been declared
      * \param[in] h: modelling hypothesis
      * \param[in] n: name
@@ -1451,55 +1456,6 @@ struct ConstantMaterialProperty {
      * parameter.
      */
     bool hasParameters() const;
-    /*!
-     * \brief insert a new attribute
-     * \param[in] n: name
-     * \param[in] a: attribute
-     * \param[in] b: don't throw if the the
-     *                attribute already exists.
-     *                The attribute is left unchanged.
-     *                However the type of the attribute is checked.
-     */
-    void setAttribute(const std::string&,
-                      const BehaviourAttribute&,
-                      const bool);
-    /*!
-     * \return true if an attribute with the given name as been registred
-     * \param[in] n: name
-     */
-    bool hasAttribute(const std::string&) const;
-    /*!
-     * \return the attribute with the given name
-     * \param[in] n: name
-     */
-    template <typename T>
-    typename std::enable_if<
-        tfel::meta::TLCountNbrOfT<T, BehaviourAttributeTypes>::value == 1,
-        T&>::type
-    getAttribute(const std::string&);
-    /*!
-     * \return the attribute with the given name
-     * \param[in] n: name
-     */
-    template <typename T>
-    typename std::enable_if<
-        tfel::meta::TLCountNbrOfT<T, BehaviourAttributeTypes>::value == 1,
-        const T&>::type
-    getAttribute(const std::string&) const;
-    /*!
-     * \return the attribute with the given name
-     * \param[in] n: name
-     */
-    template <typename T>
-    typename std::enable_if<
-        tfel::meta::TLCountNbrOfT<T, BehaviourAttributeTypes>::value == 1,
-        T>::type
-    getAttribute(const std::string&, const T&) const;
-    /*!
-     * \return all the attribute registred
-     * \param[in] n: name
-     */
-    const std::map<std::string, BehaviourAttribute>& getAttributes() const;
     /*!
      * reserve the given name
      * \param[in] h: hypothesis
@@ -1806,8 +1762,6 @@ struct ConstantMaterialProperty {
     void checkModellingHypothesis(const Hypothesis) const;
     //! a simple alias
     typedef std::shared_ptr<BehaviourData> MBDPtr;
-    //! behaviour attributes
-    std::map<std::string, BehaviourAttribute> attributes;
     //! behaviour name
     std::string behaviour;
     //! dsl name

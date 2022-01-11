@@ -1,5 +1,5 @@
 /*!
- * \file   mfront/src/BehaviourAttribute.cxx
+ * \file   mfront/src/MaterialKnowledgeDescriptionAttribute.cxx
  * \brief    
  * \author Thomas Helfer
  * \date   10/01/2022
@@ -12,22 +12,22 @@
  */
 
 #include "TFEL/Raise.hxx"
-#include "MFront/BehaviourAttribute.hxx"
+#include "MFront/MaterialKnowledgeDescriptionAttribute.hxx"
 
 namespace mfront{
 
-  void BehaviourAttributesHandler::throwUndefinedAttribute(const std::string& n) {
+  void MaterialKnowledgeDescriptionAttributesHandler::throwUndefinedAttribute(const std::string& n) {
     tfel::raise(
-        "BehaviourAttributesHandler::getAttribute: "
+        "MaterialKnowledgeDescriptionAttributesHandler::getAttribute: "
         "no attribute named '" +
         n + "'");
   }  // end of throwUndefinedAttribute
 
-  void BehaviourAttributesHandler::setAttribute(const std::string& n,
-                                   const BehaviourAttribute& a,
+  void MaterialKnowledgeDescriptionAttributesHandler::setAttribute(const std::string& n,
+                                   const MaterialKnowledgeDescriptionAttribute& a,
                                    const bool b) {
     auto throw_if = [](const bool c, const std::string& m) {
-      tfel::raise_if(c, "BehaviourAttributesHandler::setAttribute: " + m);
+      tfel::raise_if(c, "MaterialKnowledgeDescriptionAttributesHandler::setAttribute: " + m);
     };
     auto p = this->attributes.find(n);
     if (p != this->attributes.end()) {
@@ -39,24 +39,24 @@ namespace mfront{
     }
   }  // end of setAttribute
 
-  void BehaviourAttributesHandler::updateAttribute(const std::string& n,
-                                      const BehaviourAttribute& a) {
+  void MaterialKnowledgeDescriptionAttributesHandler::updateAttribute(const std::string& n,
+                                      const MaterialKnowledgeDescriptionAttribute& a) {
     auto throw_if = [](const bool c, const std::string& m) {
-      tfel::raise_if(c, "BehaviourAttributesHandler::updateAttribute: " + m);
+      tfel::raise_if(c, "MaterialKnowledgeDescriptionAttributesHandler::updateAttribute: " + m);
     };
     auto p = this->attributes.find(n);
     throw_if(p == this->attributes.end(), "unknown attribute '" + n + "'");
     throw_if(a.getTypeIndex() != p->second.getTypeIndex(),
              "attribute already exists with a different type");
     p->second = a;
-  }  // end of setAttribute
+  }  // end of setMaterialKnowledgeDescriptionAttribute
 
-  bool BehaviourAttributesHandler::hasAttribute(const std::string& n) const {
+  bool MaterialKnowledgeDescriptionAttributesHandler::hasAttribute(const std::string& n) const {
     return this->attributes.count(n) != 0u;
   }  // end of hasAttribute
 
-  const std::map<std::string, BehaviourAttribute>&
-  BehaviourAttributesHandler::getAttributes() const {
+  const std::map<std::string, MaterialKnowledgeDescriptionAttribute>&
+  MaterialKnowledgeDescriptionAttributesHandler::getAttributes() const {
     return this->attributes;
   }  // end of getAttributes
 

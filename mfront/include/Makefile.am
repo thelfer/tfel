@@ -6,6 +6,8 @@ nobase_include_HEADERS= MFront/MFront.hxx                                     \
 			MFront/MFrontBase.hxx                                             \
 			MFront/MFrontUtilities.hxx                                        \
 			MFront/MFrontUtilities.ixx                                        \
+			MFront/MaterialKnowledgeDescriptionAttribute.hxx                  \
+			MFront/MaterialKnowledgeDescriptionAttribute.ixx                  \
 			MFront/PathSpecifier.hxx                                          \
 			MFront/GeneratorOptions.hxx                                       \
 			MFront/CMakeGenerator.hxx                                         \
@@ -65,8 +67,6 @@ nobase_include_HEADERS= MFront/MFront.hxx                                     \
 			MFront/NonLinearSystemSolverBase.hxx                              \
 			MFront/NonLinearSystemSolverFactory.hxx                           \
 			MFront/UserDefinedNonLinearSystemSolver.hxx                       \
-			MFront/BehaviourAttribute.hxx                                     \
-			MFront/BehaviourAttribute.ixx                                     \
 			MFront/BehaviourData.hxx                                          \
 			MFront/BehaviourDescription.hxx                                   \
 			MFront/BehaviourDescription.ixx                                   \

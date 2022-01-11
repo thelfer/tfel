@@ -1,5 +1,5 @@
 /*!
- * \file  mfront/include/MFront/BehaviourAttribute.hxx
+ * \file  mfront/include/MFront/MaterialKnowledgeDescriptionAttribute.hxx
  * \brief
  * \author Thomas Helfer
  * \brief 19 mars 2014
@@ -11,8 +11,8 @@
  * project under specific licensing conditions.
  */
 
-#ifndef LIB_MFRONT_BEHAVIOURATTRIBUTE_HXX
-#define LIB_MFRONT_BEHAVIOURATTRIBUTE_HXX
+#ifndef LIB_MFRONT_MATERIALKNOWLEDGEDESCRIPTIONATTRIBUTE_HXX
+#define LIB_MFRONT_MATERIALKNOWLEDGEDESCRIPTIONATTRIBUTE_HXX
 
 #include <map>
 #include <string>
@@ -24,19 +24,24 @@
 namespace mfront {
 
   //! \brief types that can be stored in a behaviour attribute
-  using BehaviourAttributeTypes =
+  using MaterialKnowledgeDescriptionAttributeTypes =
       tfel::meta::GenerateTypeList<bool,
                                    unsigned short,
                                    std::string,
                                    std::vector<std::string>>::type;
   //! \brief a class storing mechanical behaviour attribute
-  using BehaviourAttribute =
-      tfel::utilities::GenTypeBase<BehaviourAttributeTypes>;
+  using MaterialKnowledgeDescriptionAttribute =
+      tfel::utilities::GenTypeBase<MaterialKnowledgeDescriptionAttributeTypes>;
 
+  template<typename T>
+  constexpr bool isMaterialKnowledgeDescriptionAttributeType(){
+    return tfel::meta::TLCountNbrOfT<T, MaterialKnowledgeDescriptionAttributeTypes>::value == 1; ;
+  } // end of isMaterialKnowledgeDescriptionAttributeType
+  
   /*!
    * \brief an helper structure to handle behaviours' attributes.
    */
-  struct  MFRONT_VISIBILITY_EXPORT BehaviourAttributesHandler {
+  struct MFRONT_VISIBILITY_EXPORT MaterialKnowledgeDescriptionAttributesHandler {
     /*!
      * \brief throw an exception saying that no attribute with the given name
      * exists
@@ -52,14 +57,14 @@ namespace mfront {
      *                However the type of the attribute is checked.
      */
     void setAttribute(const std::string&,
-                      const BehaviourAttribute&,
+                      const MaterialKnowledgeDescriptionAttribute&,
                       const bool);
     /*!
      * \brief update an existing new attribute
      * \param[in] n: name
      * \param[in] a: attribute
      */
-    void updateAttribute(const std::string&, const BehaviourAttribute&);
+    void updateAttribute(const std::string&, const MaterialKnowledgeDescriptionAttribute&);
     /*!
      * \return true if an attribute with the given name as been registred
      * \param[in] n : name
@@ -71,7 +76,7 @@ namespace mfront {
      */
     template <typename T>
     typename std::enable_if<
-        tfel::meta::TLCountNbrOfT<T, BehaviourAttributeTypes>::value == 1,
+        isMaterialKnowledgeDescriptionAttributeType<T>(),
         T&>::type
     getAttribute(const std::string&);
     /*!
@@ -80,22 +85,31 @@ namespace mfront {
      */
     template <typename T>
     typename std::enable_if<
-        tfel::meta::TLCountNbrOfT<T, BehaviourAttributeTypes>::value == 1,
+        isMaterialKnowledgeDescriptionAttributeType<T>(),
         const T&>::type
     getAttribute(const std::string&) const;
+    /*!
+     * \return the attribute with the given name
+     * \param[in] n: name
+     */
+    template <typename T>
+    typename std::enable_if<
+        isMaterialKnowledgeDescriptionAttributeType<T>(),
+        T>::type
+    getAttribute(const std::string&, const T&) const;
     /*!
      * \return all the attribute registred
      * \param[in] n : name
      */
-    const std::map<std::string, BehaviourAttribute>& getAttributes() const;
+    const std::map<std::string, MaterialKnowledgeDescriptionAttribute>& getAttributes() const;
 
    protected:
     //! \brief behaviour attributes
-    std::map<std::string, BehaviourAttribute> attributes;
-  };  // end of struct BehaviourAttributeHandler
+    std::map<std::string, MaterialKnowledgeDescriptionAttribute> attributes;
+  };  // end of struct MaterialKnowledgeDescriptionAttributesHandler
 
 }  // end of namespace mfront
 
-#include "MFront/BehaviourAttribute.ixx"
+#include "MFront/MaterialKnowledgeDescriptionAttribute.ixx"
 
-#endif /* LIB_MFRONT_BEHAVIOURATTRIBUTE_HXX */
+#endif /* LIB_MFRONT_MATERIALKNOWLEDGEDESCRIPTIONATTRIBUTE_HXX */
