@@ -3670,7 +3670,7 @@ namespace mfront {
         (update(bd.getIntegrationVariables())) ||
         (update(bd.getStateVariables())) ||
         (update(bd.getAuxiliaryStateVariables())) ||
-//        (update(bd.getLocalVariables())) ||
+        //        (update(bd.getLocalVariables())) ||
         (update(bd.getExternalStateVariables())) ||
         (update(bd.getPostProcessingVariables()))) {
       return true;
@@ -3693,7 +3693,7 @@ namespace mfront {
       return hasVariableOfType(
           bd.getBehaviourData(ModellingHypothesis::UNDEFINEDHYPOTHESIS), f);
     }
-    for (const auto& h : bd.getDistinctModellingHypotheses()){
+    for (const auto& h : bd.getDistinctModellingHypotheses()) {
       if (hasVariableOfType(bd.getBehaviourData(h), f)) {
         return true;
       }
@@ -5375,7 +5375,7 @@ namespace mfront {
         if (++i != emps.size()) {
           out << ",\n";
         }
-        }
+      }
       out << ");\n";
     } else {
       this->throwRuntimeError(
@@ -6078,7 +6078,7 @@ namespace mfront {
     this->checkBehaviourFile(os);
     const auto& d = this->mb.getBehaviourData(h);
     for (const auto& p : d.getParameters()) {
-      if (use_static_variables){
+      if (use_static_variables) {
         if (!p.getAttribute<bool>(
                 VariableDescription::variableDeclaredInBaseClass, false)) {
           continue;
@@ -6254,7 +6254,7 @@ namespace mfront {
       }
     }
     os << '\n';
-  } // end of writeBehaviourParameters
+  }  // end of writeBehaviourParameters
 
   void BehaviourDSLCommon::writeBehaviourPolicyVariable(
       std::ostream& os) const {

@@ -83,7 +83,7 @@ namespace mfront::bbrick {
     bd.reserveName(uh, "seqe" + id + "_K");
     bd.reserveName(uh, "exp_seqe" + id + "_K");
     bd.reserveName(uh, "sinh_seqe" + id + "_K");
-    bd.reserveName(uh, "sinh_seqe" + id + "_K__n_1");
+    bd.reserveName(uh, "sinh_seqe" + id + "_K_n_1");
     bd.reserveName(uh, "cosh_seqe" + id + "_K");
   }  // end of initialize
 
@@ -192,12 +192,12 @@ namespace mfront::bbrick {
     c += "const auto cosh_seqe" + id + "_K = ";
     c += "(exp_seqe" + id + "_K+1/exp_seqe" + id + "_K)/2;\n";
     if (!this->n.empty()) {
-      c += "const auto sinh_seqe" + id + "_K__n_1 = ";
+      c += "const auto sinh_seqe" + id + "_K_n_1 = ";
       c += "std::pow(sinh_seqe" + id + "_K," + E_n + "-1);\n";
       c += "const auto vp" + id + " = ";
-      c += A_n + " * sinh_seqe" + id + "_K__n_1 * sinh_seqe" + id + "_K;\n";
+      c += A_n + " * sinh_seqe" + id + "_K_n_1 * sinh_seqe" + id + "_K;\n";
       c += "const auto dvp" + id + "_dseqe" + id + " = ";
-      c += "(" + E_n + ") * " + A_n + "*sinh_seqe" + id + "_K__n_1 * ";
+      c += "(" + E_n + ") * " + A_n + "*sinh_seqe" + id + "_K_n_1 * ";
       c += "cosh_seqe" + id + "_K/(" + K_n + ");\n";
     } else {
       c += "const auto vp" + id + " = ";

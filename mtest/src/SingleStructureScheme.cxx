@@ -318,7 +318,7 @@ namespace mtest {
       this->iv_t0.resize(pos + s, 0.);
     }
     std::copy(v.begin(), v.end(), this->iv_t0.begin() + pos);
-  } // end of setInternalStateVariableInitialValue
+  }  // end of setInternalStateVariableInitialValue
 
   void SingleStructureScheme::setScalarInternalStateVariableInitialValue(
       const std::string& n, const real v) {

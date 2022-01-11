@@ -2482,10 +2482,11 @@ namespace mfront {
     return this->getBehaviourData(h).hasCode(n);
   }  // end of getCode
 
-  void BehaviourDescription::setAttribute(const Hypothesis h,
-                                          const std::string& n,
-                                          const MaterialKnowledgeDescriptionAttribute& a,
-                                          const bool b) {
+  void BehaviourDescription::setAttribute(
+      const Hypothesis h,
+      const std::string& n,
+      const MaterialKnowledgeDescriptionAttribute& a,
+      const bool b) {
     if (h == ModellingHypothesis::UNDEFINEDHYPOTHESIS) {
       this->d.setAttribute(n, a, b);
       for (const auto& md : this->sd) {
@@ -2497,9 +2498,10 @@ namespace mfront {
     }
   }  // end of setAttribute
 
-  void BehaviourDescription::updateAttribute(const Hypothesis h,
-                                             const std::string& n,
-                                             const MaterialKnowledgeDescriptionAttribute& a) {
+  void BehaviourDescription::updateAttribute(
+      const Hypothesis h,
+      const std::string& n,
+      const MaterialKnowledgeDescriptionAttribute& a) {
     if (h == ModellingHypothesis::UNDEFINEDHYPOTHESIS) {
       this->d.updateAttribute(n, a);
       for (const auto& md : this->sd) {
@@ -3146,6 +3148,6 @@ namespace mfront {
   bool areParametersTreatedAsStaticVariables(const BehaviourDescription& bd) {
     return bd.getAttribute<bool>(
         BehaviourDescription::parametersAsStaticVariables, false);
-  } // end of areParametersTreatedAsStaticVariables
+  }  // end of areParametersTreatedAsStaticVariables
 
 }  // end of namespace mfront

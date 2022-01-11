@@ -1,5 +1,5 @@
 /*!
- * \file   mfront/include/MFront/include/MaterialKnowledgeDescriptionAttribute.ixx
+ * \file mfront/include/MFront/include/MaterialKnowledgeDescriptionAttribute.ixx
  * \brief
  * \author Thomas Helfer
  * \date   10/01/2022
@@ -17,9 +17,8 @@
 namespace mfront {
 
   template <typename T>
-  typename std::enable_if<
-      isMaterialKnowledgeDescriptionAttributeType<T>(),
-      T&>::type
+  typename std::enable_if<isMaterialKnowledgeDescriptionAttributeType<T>(),
+                          T&>::type
   MaterialKnowledgeDescriptionAttributesHandler::getAttribute(
       const std::string& n) {
     auto p = this->attributes.find(n);
@@ -32,9 +31,8 @@ namespace mfront {
   }  // end of getAttribute
 
   template <typename T>
-  typename std::enable_if<
-      isMaterialKnowledgeDescriptionAttributeType<T>(),
-      const T&>::type
+  typename std::enable_if<isMaterialKnowledgeDescriptionAttributeType<T>(),
+                          const T&>::type
   MaterialKnowledgeDescriptionAttributesHandler::getAttribute(
       const std::string& n) const {
     auto p = this->attributes.find(n);
@@ -45,17 +43,17 @@ namespace mfront {
   }  // end of getAttribute
 
   template <typename T>
-  typename std::enable_if<
-      isMaterialKnowledgeDescriptionAttributeType<T>(),
-       T>::type
-  MaterialKnowledgeDescriptionAttributesHandler::getAttribute(const std::string& n, const T& v) const {
+  typename std::enable_if<isMaterialKnowledgeDescriptionAttributeType<T>(),
+                          T>::type
+  MaterialKnowledgeDescriptionAttributesHandler::getAttribute(
+      const std::string& n, const T& v) const {
     auto p = this->attributes.find(n);
     if (p == this->attributes.end()) {
       return v;
     }
     return p->second.template get<T>();
   }  // end of getAttribute
-  
+
 }  // end of namespace mfront
 
 #endif /* LIB_MFRONT_MATERIALKNOWLEDGEDESCRIPTIONATTRIBUTE_IXX */

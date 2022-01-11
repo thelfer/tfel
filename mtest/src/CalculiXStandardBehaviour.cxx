@@ -80,7 +80,8 @@ namespace mtest {
     return r;
   }  // end of getRotationMatrix
 
-  void CalculiXStandardBehaviour::allocateWorkSpace(BehaviourWorkSpace& wk) const {
+  void CalculiXStandardBehaviour::allocateWorkSpace(
+      BehaviourWorkSpace& wk) const {
     const auto ndv = this->getGradientsSize();
     const auto nth = this->getThermodynamicForcesSize();
     const auto nstatev = this->getInternalStateVariablesSize();

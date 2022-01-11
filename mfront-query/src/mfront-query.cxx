@@ -157,7 +157,7 @@ static void treatHasQuery(
   if (arg[l] != '=') {
     tfel::raise("treatHasQuery: invalid argument ('" + std::string{arg} + "')");
   }
-  const auto c = "--"+std::string{arg.substr(l + 1)};
+  const auto c = "--" + std::string{arg.substr(l + 1)};
   if (tfel::utilities::starts_with(c, "--")) {
     if (callBacks.find(c) != callBacks.end()) {
       std::cout << "true" << std::endl;
@@ -165,7 +165,7 @@ static void treatHasQuery(
     }
   }
   std::cout << "false" << std::endl;
-} // end of treatHasQuery
+}  // end of treatHasQuery
 
 /* coverity [UNCAUGHT_EXCEPT]*/
 int main(const int argc, const char* const* const argv) {
@@ -228,7 +228,8 @@ int main(const int argc, const char* const* const argv) {
       } else if (a == "--usage") {
         std::cout << "Usage : " << argv[0] << " [options] [files]\n";
         std::exit(EXIT_SUCCESS);
-      } else if (tfel::utilities::starts_with(a, "--has-material-property-query")) {
+      } else if (tfel::utilities::starts_with(
+                     a, "--has-material-property-query")) {
         const char* args[1] = {argv[0]};
         std::shared_ptr<MaterialPropertyDSL> b;
         auto bq = std::make_shared<MaterialPropertyQuery>(1, args, b, "");

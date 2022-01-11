@@ -141,7 +141,7 @@ namespace mtest {
     virtual AxialLoading getAxialLoading() const;
     /*!
      * \brief set the evolution of the radius of the mandrel
-     * \param[in] r : evolution of the mandrel' radius 
+     * \param[in] r : evolution of the mandrel' radius
      */
     virtual void setMandrelRadiusEvolution(std::shared_ptr<Evolution>);
     /*!

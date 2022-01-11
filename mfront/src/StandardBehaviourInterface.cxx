@@ -160,7 +160,7 @@ namespace mfront {
       std::ostream& out,
       const BehaviourDescription& mb,
       const std::string& name) const {
-    if (areParametersTreatedAsStaticVariables(mb)){
+    if (areParametersTreatedAsStaticVariables(mb)) {
       return;
     }
     const auto mh = mb.getDistinctModellingHypotheses();
@@ -201,7 +201,7 @@ namespace mfront {
       std::ostream& out,
       const BehaviourDescription& mb,
       const std::string& name) const {
-    if (areParametersTreatedAsStaticVariables(mb)){
+    if (areParametersTreatedAsStaticVariables(mb)) {
       return;
     }
     const auto mh = mb.getDistinctModellingHypotheses();

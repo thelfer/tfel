@@ -163,8 +163,7 @@ namespace tfel ::math {
 
   struct OpNeg {
     template <typename T1>
-    static constexpr auto apply(T1&& a)
-        -> decltype(-std::forward<T1>(a)) {
+    static constexpr auto apply(T1&& a) -> decltype(-std::forward<T1>(a)) {
       return -std::forward<T1>(a);
     }
   };

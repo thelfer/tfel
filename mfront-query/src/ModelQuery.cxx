@@ -39,7 +39,7 @@ namespace mfront {
 
   std::shared_ptr<const AbstractDSL> ModelQuery::getDSL() const {
     return this->dsl;
-  } // end of getDSL
+  }  // end of getDSL
 
   void ModelQuery::registerCommandLineCallBacks() {
     QueryHandlerBase::registerCommandLineCallBacks();

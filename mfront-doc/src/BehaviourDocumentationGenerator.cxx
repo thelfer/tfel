@@ -191,7 +191,7 @@ namespace mfront {
               (pd->arraySize != pv->arraySize)) {
             return true;
           }
-          if(pd->type != pv->type){
+          if (pd->type != pv->type) {
             if (!((tfel::utilities::starts_with(pd->type, "struct")) &&
                   (tfel::utilities::starts_with(pv->type, "struct")))) {
               return true;
@@ -508,8 +508,7 @@ namespace mfront {
     Parser::registerCallBack(
         "--std-output", "--",
         CallBack("print the output ont the standard output stream",
-                 [this] {
-      this->std_output = true; }, false));
+                 [this] { this->std_output = true; }, false));
   }  // end of BehaviourDocumentationGenerator::registerCommandLineCallBacks
 
   void BehaviourDocumentationGenerator::treatUnknownArgument() {
@@ -696,51 +695,48 @@ namespace mfront {
           out << l << '\n';
         }
       }
-      } else {
-        out << "No description specified";
-      }
-      out << "\n\n"
-          << basic_title_level << "## List of supported Hypotheses\n\n";
-      const auto& mh = mb.getModellingHypotheses();
-      const auto& dh = mb.getDistinctModellingHypotheses();
-      for (const auto& h : mh) {
-        out << "* " << ModellingHypothesis::toString(h);
-        if (dh.find(h) != dh.end()) {
-          out << ", specialised";
-        }
-        out << '\n';
-      }
-      out << '\n'  //
-          << basic_title_level << "# Variables\n\n";
-      printData(out, mb, "Material properties",
-                getData(mb, &BehaviourData::getMaterialProperties),
-                this->standalone);
-      out << '\n';
-      printData(out, mb, "State variables",
-                getData(mb, &BehaviourData::getPersistentVariables),
-                this->standalone);
-      out << '\n';
-      printData(out, mb, "External state variables",
-                getData(mb, &BehaviourData::getExternalStateVariables),
-                this->standalone);
-      out << '\n';
-      if (mb.hasParameters()) {
-        printData(out, mb, "Parameters",
-                  getData(mb, &BehaviourData::getParameters),
-                this->standalone);
+    } else {
+      out << "No description specified";
+    }
+    out << "\n\n" << basic_title_level << "## List of supported Hypotheses\n\n";
+    const auto& mh = mb.getModellingHypotheses();
+    const auto& dh = mb.getDistinctModellingHypotheses();
+    for (const auto& h : mh) {
+      out << "* " << ModellingHypothesis::toString(h);
+      if (dh.find(h) != dh.end()) {
+        out << ", specialised";
       }
       out << '\n';
-      printData(out, mb, "Local variables",
-                getData(mb, &BehaviourData::getLocalVariables),
-                this->standalone);
-      out << '\n';
-      const auto code = getCodeBlocksDocumentation(mb, this->standalone);
-      if (!code.empty() != 0) {
-        out << basic_title_level  //
-            << "# Code documentation\n\n"
-            << code << '\n';
-      }
-    }  // end of BehaviourDocumentationGenerator::writeFullOutput
+    }
+    out << '\n'  //
+        << basic_title_level << "# Variables\n\n";
+    printData(out, mb, "Material properties",
+              getData(mb, &BehaviourData::getMaterialProperties),
+              this->standalone);
+    out << '\n';
+    printData(out, mb, "State variables",
+              getData(mb, &BehaviourData::getPersistentVariables),
+              this->standalone);
+    out << '\n';
+    printData(out, mb, "External state variables",
+              getData(mb, &BehaviourData::getExternalStateVariables),
+              this->standalone);
+    out << '\n';
+    if (mb.hasParameters()) {
+      printData(out, mb, "Parameters",
+                getData(mb, &BehaviourData::getParameters), this->standalone);
+    }
+    out << '\n';
+    printData(out, mb, "Local variables",
+              getData(mb, &BehaviourData::getLocalVariables), this->standalone);
+    out << '\n';
+    const auto code = getCodeBlocksDocumentation(mb, this->standalone);
+    if (!code.empty() != 0) {
+      out << basic_title_level  //
+          << "# Code documentation\n\n"
+          << code << '\n';
+    }
+  }  // end of BehaviourDocumentationGenerator::writeFullOutput
 
   BehaviourDocumentationGenerator::~BehaviourDocumentationGenerator() = default;
 

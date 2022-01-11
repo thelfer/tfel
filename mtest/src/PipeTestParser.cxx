@@ -452,29 +452,29 @@ namespace mtest {
   }
 
   void PipeTestParser::handleMandrelRadiusEvolution(PipeTest& t,
-                                                  tokens_iterator& p) {
+                                                    tokens_iterator& p) {
     const auto& evt = this->readEvolutionType(p);
     this->checkNotEndOfLine("PipeTestParser::handleMandrelRadiusEvolution", p,
                             this->tokens.end());
     t.setMandrelRadiusEvolution(this->parseEvolution(t, evt, p));
     this->checkNotEndOfLine("PipeTestParser::handleMandrelRadiusEvolution", p,
                             this->tokens.end());
-    this->readSpecifiedToken("PipeTestParser::handleMandrelRadiusEvolution", ";",
-                             p, this->tokens.end());
+    this->readSpecifiedToken("PipeTestParser::handleMandrelRadiusEvolution",
+                             ";", p, this->tokens.end());
   }  // end of handleMandrelRadiusEvolution
 
   void PipeTestParser::handleMandrelAxialGrowthEvolution(PipeTest& t,
-                                                  tokens_iterator& p) {
+                                                         tokens_iterator& p) {
     const auto& evt = this->readEvolutionType(p);
-    this->checkNotEndOfLine("PipeTestParser::handleMandrelAxialGrowthEvolution", p,
-                            this->tokens.end());
+    this->checkNotEndOfLine("PipeTestParser::handleMandrelAxialGrowthEvolution",
+                            p, this->tokens.end());
     t.setMandrelAxialGrowthEvolution(this->parseEvolution(t, evt, p));
-    this->checkNotEndOfLine("PipeTestParser::handleMandrelAxialGrowthEvolution", p,
-                            this->tokens.end());
-    this->readSpecifiedToken("PipeTestParser::handleMandrelAxialGrowthEvolution", ";",
-                             p, this->tokens.end());
-  } // end of handleMandrelAxialGrowthEvolution
-
+    this->checkNotEndOfLine("PipeTestParser::handleMandrelAxialGrowthEvolution",
+                            p, this->tokens.end());
+    this->readSpecifiedToken(
+        "PipeTestParser::handleMandrelAxialGrowthEvolution", ";", p,
+        this->tokens.end());
+  }  // end of handleMandrelAxialGrowthEvolution
 
   void PipeTestParser::handleAxialForceEvolution(PipeTest& t,
                                                  tokens_iterator& p) {

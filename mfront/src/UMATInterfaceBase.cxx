@@ -1168,7 +1168,7 @@ namespace mfront {
           for (unsigned short i = 0; i != v.arraySize; ++i) {
             out << "mg.addInternalStateVariable("
                 << "\"" << ivname << "[" << i << "]\", "  //
-                << as_string(flag) << ", " //
+                << as_string(flag) << ", "                //
                 << "mg_STATEV.data() + " << ivoffset << ");\n";
             ivoffset += SupportedTypes::TypeSize(flag);
           }

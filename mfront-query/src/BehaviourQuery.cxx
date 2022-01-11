@@ -168,7 +168,7 @@ namespace mfront {
 
   std::shared_ptr<const AbstractDSL> BehaviourQuery::getDSL() const {
     return this->dsl;
-  } // end of getDSL
+  }  // end of getDSL
 
   void BehaviourQuery::registerCommandLineCallBacks() {
     QueryHandlerBase::registerCommandLineCallBacks();

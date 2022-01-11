@@ -33,15 +33,18 @@ namespace mfront {
   using MaterialKnowledgeDescriptionAttribute =
       tfel::utilities::GenTypeBase<MaterialKnowledgeDescriptionAttributeTypes>;
 
-  template<typename T>
-  constexpr bool isMaterialKnowledgeDescriptionAttributeType(){
-    return tfel::meta::TLCountNbrOfT<T, MaterialKnowledgeDescriptionAttributeTypes>::value == 1; ;
-  } // end of isMaterialKnowledgeDescriptionAttributeType
-  
+  template <typename T>
+  constexpr bool isMaterialKnowledgeDescriptionAttributeType() {
+    return tfel::meta::TLCountNbrOfT<
+               T, MaterialKnowledgeDescriptionAttributeTypes>::value == 1;
+    ;
+  }  // end of isMaterialKnowledgeDescriptionAttributeType
+
   /*!
    * \brief an helper structure to handle behaviours' attributes.
    */
-  struct MFRONT_VISIBILITY_EXPORT MaterialKnowledgeDescriptionAttributesHandler {
+  struct MFRONT_VISIBILITY_EXPORT
+      MaterialKnowledgeDescriptionAttributesHandler {
     /*!
      * \brief throw an exception saying that no attribute with the given name
      * exists
@@ -64,7 +67,8 @@ namespace mfront {
      * \param[in] n: name
      * \param[in] a: attribute
      */
-    void updateAttribute(const std::string&, const MaterialKnowledgeDescriptionAttribute&);
+    void updateAttribute(const std::string&,
+                         const MaterialKnowledgeDescriptionAttribute&);
     /*!
      * \return true if an attribute with the given name as been registred
      * \param[in] n : name
@@ -75,33 +79,31 @@ namespace mfront {
      * \param[in] n : name
      */
     template <typename T>
-    typename std::enable_if<
-        isMaterialKnowledgeDescriptionAttributeType<T>(),
-        T&>::type
+    typename std::enable_if<isMaterialKnowledgeDescriptionAttributeType<T>(),
+                            T&>::type
     getAttribute(const std::string&);
     /*!
      * \return the attribute with the given name
      * \param[in] n : name
      */
     template <typename T>
-    typename std::enable_if<
-        isMaterialKnowledgeDescriptionAttributeType<T>(),
-        const T&>::type
+    typename std::enable_if<isMaterialKnowledgeDescriptionAttributeType<T>(),
+                            const T&>::type
     getAttribute(const std::string&) const;
     /*!
      * \return the attribute with the given name
      * \param[in] n: name
      */
     template <typename T>
-    typename std::enable_if<
-        isMaterialKnowledgeDescriptionAttributeType<T>(),
-        T>::type
+    typename std::enable_if<isMaterialKnowledgeDescriptionAttributeType<T>(),
+                            T>::type
     getAttribute(const std::string&, const T&) const;
     /*!
      * \return all the attribute registred
      * \param[in] n : name
      */
-    const std::map<std::string, MaterialKnowledgeDescriptionAttribute>& getAttributes() const;
+    const std::map<std::string, MaterialKnowledgeDescriptionAttribute>&
+    getAttributes() const;
 
    protected:
     //! \brief behaviour attributes

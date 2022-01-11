@@ -95,15 +95,15 @@ namespace mfront {
       GREENLAGRANGE,
       HENCKY
     };  // end of enum StrainMeasure
-    /*!
-     * \brief this structure holds the value of a constant material
-     * property
-     */
-struct ConstantMaterialProperty {
-  //! parameter name associated with the material property
-  std::string name;
-  //! default value for the constant material property
-  double value;
+        /*!
+         * \brief this structure holds the value of a constant material
+         * property
+         */
+    struct ConstantMaterialProperty {
+      //! parameter name associated with the material property
+      std::string name;
+      //! default value for the constant material property
+      double value;
     };
     /*!
      * \brief this structure holds the value of a material
@@ -201,10 +201,10 @@ struct ConstantMaterialProperty {
     //! copy constructor
     BehaviourDescription(const BehaviourDescription&);
     //
+    using MaterialKnowledgeDescriptionAttributesHandler::getAttribute;
     using MaterialKnowledgeDescriptionAttributesHandler::hasAttribute;
     using MaterialKnowledgeDescriptionAttributesHandler::setAttribute;
     using MaterialKnowledgeDescriptionAttributesHandler::updateAttribute;
-    using MaterialKnowledgeDescriptionAttributesHandler::getAttribute;
     /*!
      * \brief set a mechanical attribute
      * \param[in] h: modelling hypothesis

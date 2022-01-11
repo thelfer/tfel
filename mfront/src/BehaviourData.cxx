@@ -1090,8 +1090,8 @@ namespace mfront {
           tfel::raise(
               "BehaviourData::addVariable: "
               "already registred variable '" +
-              v.name + "' with entry name '" + pe->second +
-              "' now declares '" + v.getExternalName() + "' as glossary name");
+              v.name + "' with entry name '" + pe->second + "' now declares '" +
+              v.getExternalName() + "' as glossary name");
         }
         const auto p = this->glossaryNames.find(v.name);
         if (p == this->glossaryNames.end()) {

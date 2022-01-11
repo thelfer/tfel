@@ -362,15 +362,13 @@ namespace mfront::bbrick {
     if (this->pss) {
       bd.registerMemberName(ModellingHypothesis::UNDEFINEDHYPOTHESIS, "etozz");
       bd.registerMemberName(ModellingHypothesis::UNDEFINEDHYPOTHESIS, "detozz");
-      bd.reserveName(ModellingHypothesis::UNDEFINEDHYPOTHESIS,
-                     "\u0394etozz");
+      bd.reserveName(ModellingHypothesis::UNDEFINEDHYPOTHESIS, "\u0394etozz");
       //       bd.setGlossaryName(ModellingHypothesis::UNDEFINEDHYPOTHESIS,
       //       "etozz",
       //                          tfel::glossary::Glossary::AxialStrain);
       bd.registerMemberName(ModellingHypothesis::UNDEFINEDHYPOTHESIS, "sigzz");
       bd.registerMemberName(ModellingHypothesis::UNDEFINEDHYPOTHESIS, "dsigzz");
-      bd.reserveName(ModellingHypothesis::UNDEFINEDHYPOTHESIS,
-                     "\u0394sigzz");
+      bd.reserveName(ModellingHypothesis::UNDEFINEDHYPOTHESIS, "\u0394sigzz");
       //       bd.setGlossaryName(ModellingHypothesis::UNDEFINEDHYPOTHESIS,
       //       "sigzz",
       //                          tfel::glossary::Glossary::AxialStress);

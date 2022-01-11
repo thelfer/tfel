@@ -149,10 +149,12 @@ void declareBehaviour() {
            "- f(std::string): function\n"
            "- d(tfel::utilities::Data): parameters\n"
            "- h(tfel::material::ModellingHypothesis): modelling hypothesis\n")
-      .def("__init__", bp::make_constructor(getBehaviour1, bp::default_call_policies(),
-               (bp::arg("interface") = "", bp::arg("library"), bp::arg("function"),
-                bp::arg("parameters"), bp::arg("hypothesis"),
-                bp::arg("wrapper") = "")),
+      .def("__init__",
+           bp::make_constructor(
+               getBehaviour1, bp::default_call_policies(),
+               (bp::arg("interface") = "", bp::arg("library"),
+                bp::arg("function"), bp::arg("parameters"),
+                bp::arg("hypothesis"), bp::arg("wrapper") = "")),
            "This constructor has the following arguments:\n"
            "- i(std::string): interface\n"
            "- l(std::string): library\n"
@@ -166,10 +168,10 @@ void declareBehaviour() {
            "- f(std::string): function\n"
            "- h(tfel::material::ModellingHypothesis): modelling hypothesis\n")
       .def("__init__",
-           bp::make_constructor(
-               getBehaviour3, bp::default_call_policies(),
-               (bp::arg("interface") = "", bp::arg("library"), bp::arg("function"),
-                bp::arg("hypothesis"), bp::arg("wrapper") = "")),
+           bp::make_constructor(getBehaviour3, bp::default_call_policies(),
+                                (bp::arg("interface") = "", bp::arg("library"),
+                                 bp::arg("function"), bp::arg("hypothesis"),
+                                 bp::arg("wrapper") = "")),
            "This constructor has the following arguments:\n"
            "- i(std::string): interface\n"
            "- l(std::string): library\n"

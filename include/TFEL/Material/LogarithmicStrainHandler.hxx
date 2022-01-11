@@ -185,6 +185,7 @@ namespace tfel::material {
    protected:
     //! deformation gradient
     DeformationGradient F;
+
    private:
     /*!
      * \brief half the logarithm of the eigenvalues of the right

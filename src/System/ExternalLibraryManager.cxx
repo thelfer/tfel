@@ -104,7 +104,7 @@ namespace tfel::system {
     ++p;
     throw_if(p == pe, "unexpected end of string 'n'");
     throw_if(!std::isdigit(*p), "unexpected a digit 'n'");
-    r += "__";
+    r += "_mfront_index_";
     while ((p != pe) && (std::isdigit(*p))) {
       r.push_back(*p);
       ++p;
@@ -113,7 +113,6 @@ namespace tfel::system {
     throw_if(*p != ']', "invalid variable name '" + n + "'");
     ++p;
     throw_if(p != pe, "invalid variable name '" + n + "'");
-    r += "__";
     return r;
   }  // end of decomposeVariableName
 

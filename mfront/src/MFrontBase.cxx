@@ -116,7 +116,7 @@ namespace mfront {
       }
       try {
         dsl = dslFactory.createNewDSL(dslName, dsl_options);
-      } catch(std::exception& e){
+      } catch (std::exception& e) {
         tfel::raise("MFrontBase::getDSL : error while creating DSL '" +
                     dslName + "'\n" + std::string(e.what()));
       }

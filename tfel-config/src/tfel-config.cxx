@@ -419,8 +419,8 @@ int main(const int argc, const char* const* const argv) {
         [] {
 #ifdef TFEL_PYTHON_BINDINGS
           std::cout << "true ";
-#else /* TFEL_PYTHON_BINDINGS */
-          std::cout << "false ";
+#else  /* TFEL_PYTHON_BINDINGS */
+        std::cout << "false ";
 #endif /* TFEL_PYTHON_BINDINGS */
         },
         "print the python binding are supported (display `true` or `false`).");
@@ -435,7 +435,7 @@ int main(const int argc, const char* const* const argv) {
 #ifdef TFEL_HAVE_MADNEX
           std::cout << "true ";
 #else
-          std::cout << "false ";
+        std::cout << "false ";
 #endif
         },
         "print if mandex support is enabled (display `true` or `false`).");

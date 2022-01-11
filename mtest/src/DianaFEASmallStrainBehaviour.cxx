@@ -54,7 +54,8 @@ namespace mtest {
     this->mpnames.insert(this->mpnames.begin(), tmp.begin(), tmp.end());
   }  // end of DianaFEASmallStrainBehaviour
 
-  void DianaFEASmallStrainBehaviour::allocateWorkSpace(BehaviourWorkSpace& wk) const {
+  void DianaFEASmallStrainBehaviour::allocateWorkSpace(
+      BehaviourWorkSpace& wk) const {
     const auto ndv = this->getGradientsSize();
     const auto nth = this->getThermodynamicForcesSize();
     const auto nstatev = this->getInternalStateVariablesSize();

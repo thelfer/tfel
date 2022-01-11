@@ -16,12 +16,15 @@
 #include "MFront/MaterialKnowledgeDescriptionAttribute.hxx"
 
 template <typename T>
-static void add_def(boost::python::class_<mfront::MaterialKnowledgeDescriptionAttribute>& w,
-                    const std::string& n) {
+static void add_def(
+    boost::python::class_<mfront::MaterialKnowledgeDescriptionAttribute>& w,
+    const std::string& n) {
   using namespace boost::python;
   using namespace mfront;
-  bool (MaterialKnowledgeDescriptionAttribute::*is_ptr)() const = &MaterialKnowledgeDescriptionAttribute::is<T>;
-  const T& (MaterialKnowledgeDescriptionAttribute::*get_ptr)() const = &MaterialKnowledgeDescriptionAttribute::get<T>;
+  bool (MaterialKnowledgeDescriptionAttribute::*is_ptr)() const =
+      &MaterialKnowledgeDescriptionAttribute::is<T>;
+  const T& (MaterialKnowledgeDescriptionAttribute::*get_ptr)() const =
+      &MaterialKnowledgeDescriptionAttribute::get<T>;
   w.def(("is" + n).c_str(), is_ptr)
       .def(("get" + n).c_str(), get_ptr,
            return_value_policy<copy_const_reference>());
@@ -33,7 +36,8 @@ void declareMaterialKnowledgeDescriptionAttribute() {
   using namespace boost::python;
   using namespace mfront;
   using namespace tfel::python;
-  class_<MaterialKnowledgeDescriptionAttribute> w("MaterialKnowledgeDescriptionAttribute");
+  class_<MaterialKnowledgeDescriptionAttribute> w(
+      "MaterialKnowledgeDescriptionAttribute");
   add_def<bool>(w, "Bool");
   add_def<unsigned short>(w, "UnsignedShort");
   add_def<std::string>(w, "String");

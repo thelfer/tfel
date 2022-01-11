@@ -85,7 +85,8 @@ namespace mfront {
     }
     this->registerCallBack(
         "--parameter-default-value",
-        CallBack("display the default value of a parameter", [this] { this->treatParameterDefaultValue(); }, true));
+        CallBack("display the default value of a parameter",
+                 [this] { this->treatParameterDefaultValue(); }, true));
   }  // end of registerCommandLineCallBacks
 
   void MaterialPropertyQuery::treatParameterDefaultValue() {
@@ -196,9 +197,9 @@ namespace mfront {
   void MaterialPropertyQuery::treatGeneratedSources() {
     auto q = this->generateGeneratedSourcesQuery(
         this->getCurrentCommandLineArgument().getOption());
-    this->queries.push_back(
-        {"generated-sources",
-         [q](const FileDescription&, const MaterialPropertyDescription&) { q(); }});
+    this->queries.push_back({"generated-sources",
+                             [q](const FileDescription&,
+                                 const MaterialPropertyDescription&) { q(); }});
   }  // end of treatGeneratedSources
 
   void MaterialPropertyQuery::treatSpecificTargetGeneratedSources() {

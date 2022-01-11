@@ -761,7 +761,7 @@ namespace mtest {
                          const real te) const {
     using vector = std::vector<real>;
     if ((this->rl == IMPOSEDINNERRADIUS) || (this->rl == IMPOSEDOUTERRADIUS) ||
-          (this->mandrel_radius_evolution != nullptr)) {
+        (this->mandrel_radius_evolution != nullptr)) {
       if (!state.containsEvolution("InnerPressure")) {
         // first call with this study state
         state.addEvolution("InnerPressure",
@@ -830,7 +830,7 @@ namespace mtest {
           "MandrelContactStateAtBeginningOfTimeStep", true);
       auto& active = state.getParameter<bool>("MandrelContactState", true);
       if (state.containsParameter("MandrelContactStateAtEndOfTimeStep")) {
-        active_bts = active = 
+        active_bts = active =
             state.getParameter<bool>("MandrelContactStateAtEndOfTimeStep");
       } else {
         active_bts = active = false;
@@ -929,7 +929,7 @@ namespace mtest {
       impose_inner_pressure(Pi, 0);
     }
     if (this->mandrel_radius_evolution != nullptr) {
-      if(state.getParameter<bool>("MandrelContactState")){
+      if (state.getParameter<bool>("MandrelContactState")) {
         if ((this->rl == IMPOSEDPRESSURE) &&
             (this->inner_pressure_evolution != nullptr)) {
           const auto Pi = (*(this->inner_pressure_evolution))(t + dt);
@@ -1182,8 +1182,8 @@ namespace mtest {
     if (this->mandrel_axial_growth_evolution != nullptr) {
       if (state.getParameter<bool>(
               "MandrelContactStateAtBeginningOfTimeStep")) {
-        const auto dezz0 = state.getParameter<real>(
-            "ImposedAxialGrowthIncrement");
+        const auto dezz0 =
+            state.getParameter<real>("ImposedAxialGrowthIncrement");
         // imposed axial growth
         const real iag =
             (*(this->mandrel_axial_growth_evolution))(t + dt) + dezz0;
@@ -1287,8 +1287,8 @@ namespace mtest {
     if (this->mandrel_axial_growth_evolution != nullptr) {
       if (state.getParameter<bool>(
               "MandrelContactStateAtBeginningOfTimeStep")) {
-        const auto dezz0 = state.getParameter<real>(
-            "ImposedAxialGrowthIncrement");
+        const auto dezz0 =
+            state.getParameter<real>("ImposedAxialGrowthIncrement");
         const auto iag =
             (*(this->mandrel_axial_growth_evolution))(t + dt) + dezz0;
         handle_imposed_axial_growth(iag);
@@ -1386,7 +1386,7 @@ namespace mtest {
       impose_inner_radius(iu);
     }
     if (this->mandrel_radius_evolution != nullptr) {
-      if(state.getParameter<bool>("MandrelContactState")){
+      if (state.getParameter<bool>("MandrelContactState")) {
         const auto Rm = (*(this->mandrel_radius_evolution))(t + dt);
         impose_inner_radius(Rm - Ri);
       }
@@ -1412,8 +1412,8 @@ namespace mtest {
     if (this->mandrel_axial_growth_evolution != nullptr) {
       if (state.getParameter<bool>(
               "MandrelContactStateAtBeginningOfTimeStep")) {
-        const auto dezz0 = state.getParameter<real>(
-            "ImposedAxialGrowthIncrement");
+        const auto dezz0 =
+            state.getParameter<real>("ImposedAxialGrowthIncrement");
         // imposed axial growth
         const auto iag =
             (*(this->mandrel_axial_growth_evolution))(t + dt) + dezz0;
@@ -1428,8 +1428,8 @@ namespace mtest {
                                  const unsigned int p) const {
     // updating mandrel contact state
     if (this->mandrel_radius_evolution != nullptr) {
-      const auto& active_bts =
-          state.getParameter<bool>("MandrelContactStateAtBeginningOfTimeStep", true);
+      const auto& active_bts = state.getParameter<bool>(
+          "MandrelContactStateAtBeginningOfTimeStep", true);
       auto& active_ets =
           state.getParameter<bool>("MandrelContactStateAtEndOfTimeStep", true);
       active_ets = state.getParameter<bool>("MandrelContactState");
@@ -1625,11 +1625,11 @@ namespace mtest {
 
   void PipeTest::setMandrelRadiusEvolution(std::shared_ptr<Evolution> r) {
     this->mandrel_radius_evolution = r;
-  } // end of setMandrelRadiusEvolution
+  }  // end of setMandrelRadiusEvolution
 
   void PipeTest::setMandrelAxialGrowthEvolution(std::shared_ptr<Evolution> ag) {
     this->mandrel_axial_growth_evolution = ag;
-  } // end of setMandrelAxialGrowthEvolution
+  }  // end of setMandrelAxialGrowthEvolution
 
   void PipeTest::setInnerPressureEvolution(std::shared_ptr<Evolution> p) {
     auto throw_if = [](const bool c, const std::string& m) {

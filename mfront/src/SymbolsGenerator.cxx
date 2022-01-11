@@ -490,7 +490,8 @@ namespace mfront {
         << ";\n";
     this->writeExternalNames(out, i, name, h, mb.getExternalNames(h, esvs),
                              "ExternalStateVariables");
-    this->writeVariablesTypesSymbol(out, i, name, h, esvs, "ExternalStateVariables");
+    this->writeVariablesTypesSymbol(out, i, name, h, esvs,
+                                    "ExternalStateVariables");
   }  // end of writeExternalStateVariablesSymbols
 
   void SymbolsGenerator::writeParametersSymbols(
@@ -550,7 +551,7 @@ namespace mfront {
         } else {
           for (unsigned short is = 0; is != p.arraySize; ++is) {
             os << "MFRONT_SHAREDOBJ double " << n << "_" << p.getExternalName()
-               << "__" << is << "___ParameterDefaultValue = "
+               << "_mfront_index_" << is << "_ParameterDefaultValue = "
                << mb.getFloattingPointParameterDefaultValue(h, p.name, is)
                << ";\n\n";
           }

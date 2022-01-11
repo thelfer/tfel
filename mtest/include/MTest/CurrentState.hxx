@@ -63,7 +63,8 @@ namespace mtest {
     ~CurrentState() noexcept;
     //! \brief behaviour
     std::shared_ptr<const Behaviour> behaviour;
-    //! \brief thermodynamic forces at the beginning of the previous of the time step
+    //! \brief thermodynamic forces at the beginning of the previous of the time
+    //! step
     tfel::math::vector<real> s_1;
     //! \brief thermodynamic forces at the beginning of the time step
     tfel::math::vector<real> s0;

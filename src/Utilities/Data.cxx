@@ -381,7 +381,7 @@ namespace tfel::utilities {
               "DataMapValidator::validate: "
               "invalid value for key '" +
               k + "' (" + std::string(e.what()) + ")");
-        } catch (...){
+        } catch (...) {
           tfel::raise(
               "DataMapValidator::validate: "
               "invalid value for key '" +

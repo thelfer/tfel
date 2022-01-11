@@ -1,6 +1,6 @@
 /*!
  * \file   mfront/src/MaterialKnowledgeDescriptionAttribute.cxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   10/01/2022
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
@@ -14,20 +14,24 @@
 #include "TFEL/Raise.hxx"
 #include "MFront/MaterialKnowledgeDescriptionAttribute.hxx"
 
-namespace mfront{
+namespace mfront {
 
-  void MaterialKnowledgeDescriptionAttributesHandler::throwUndefinedAttribute(const std::string& n) {
+  void MaterialKnowledgeDescriptionAttributesHandler::throwUndefinedAttribute(
+      const std::string& n) {
     tfel::raise(
         "MaterialKnowledgeDescriptionAttributesHandler::getAttribute: "
         "no attribute named '" +
         n + "'");
   }  // end of throwUndefinedAttribute
 
-  void MaterialKnowledgeDescriptionAttributesHandler::setAttribute(const std::string& n,
-                                   const MaterialKnowledgeDescriptionAttribute& a,
-                                   const bool b) {
+  void MaterialKnowledgeDescriptionAttributesHandler::setAttribute(
+      const std::string& n,
+      const MaterialKnowledgeDescriptionAttribute& a,
+      const bool b) {
     auto throw_if = [](const bool c, const std::string& m) {
-      tfel::raise_if(c, "MaterialKnowledgeDescriptionAttributesHandler::setAttribute: " + m);
+      tfel::raise_if(
+          c,
+          "MaterialKnowledgeDescriptionAttributesHandler::setAttribute: " + m);
     };
     auto p = this->attributes.find(n);
     if (p != this->attributes.end()) {
@@ -39,10 +43,13 @@ namespace mfront{
     }
   }  // end of setAttribute
 
-  void MaterialKnowledgeDescriptionAttributesHandler::updateAttribute(const std::string& n,
-                                      const MaterialKnowledgeDescriptionAttribute& a) {
+  void MaterialKnowledgeDescriptionAttributesHandler::updateAttribute(
+      const std::string& n, const MaterialKnowledgeDescriptionAttribute& a) {
     auto throw_if = [](const bool c, const std::string& m) {
-      tfel::raise_if(c, "MaterialKnowledgeDescriptionAttributesHandler::updateAttribute: " + m);
+      tfel::raise_if(
+          c,
+          "MaterialKnowledgeDescriptionAttributesHandler::updateAttribute: " +
+              m);
     };
     auto p = this->attributes.find(n);
     throw_if(p == this->attributes.end(), "unknown attribute '" + n + "'");
@@ -51,7 +58,8 @@ namespace mfront{
     p->second = a;
   }  // end of setMaterialKnowledgeDescriptionAttribute
 
-  bool MaterialKnowledgeDescriptionAttributesHandler::hasAttribute(const std::string& n) const {
+  bool MaterialKnowledgeDescriptionAttributesHandler::hasAttribute(
+      const std::string& n) const {
     return this->attributes.count(n) != 0u;
   }  // end of hasAttribute
 
@@ -60,4 +68,4 @@ namespace mfront{
     return this->attributes;
   }  // end of getAttributes
 
-} // end of namespace mfront
+}  // end of namespace mfront

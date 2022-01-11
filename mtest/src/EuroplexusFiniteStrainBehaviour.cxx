@@ -39,7 +39,8 @@ namespace mtest {
     v[0] = v[1] = v[2] = real(1);
   }
 
-  void EuroplexusFiniteStrainBehaviour::allocateWorkSpace(BehaviourWorkSpace& wk) const {
+  void EuroplexusFiniteStrainBehaviour::allocateWorkSpace(
+      BehaviourWorkSpace& wk) const {
     EuroplexusStandardBehaviour::allocateWorkSpace(wk);
     wk.D.resize(6u, 9u);
   }
