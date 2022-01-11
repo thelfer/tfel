@@ -63,7 +63,7 @@ void declareAbstractBehaviourDSL();
 void declareBehaviourSymmetryType();
 void declareVariableBoundsDescription();
 void declareVariableDescription();
-void declareBehaviourAttribute();
+void declareMaterialKnowledgeDescriptionAttribute();
 void declareBehaviourData();
 void declareMaterialPropertyDescription();
 void declareBehaviourDescription();
@@ -113,7 +113,7 @@ BOOST_PYTHON_MODULE(_mfront) {
   declareMaterialPropertyDescription();
   // behaviours
   declareAbstractBehaviourDSL();
-  declareBehaviourAttribute();
+  declareMaterialKnowledgeDescriptionAttribute();
   declareVariableBoundsDescription();
   declareVariableDescription();
   declareBehaviourData();
