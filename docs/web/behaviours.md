@@ -134,7 +134,7 @@ f\paren{\sigmaeq,p}=\sigmaeq-H\,p-\sigma_{0} \leq 0
 \]
 
 where \(\sigmaeq\) is the Von Mises stress, \(p\) the equivalent
-plastic strain, \(R\) the isotropic hardening slope and \(\sigma_{0}\)
+plastic strain, \(H\) the isotropic hardening slope and \(\sigma_{0}\)
 the initial elasticity limit.
 
 The generated code represent a total amount of \(1\,512\) lines of
