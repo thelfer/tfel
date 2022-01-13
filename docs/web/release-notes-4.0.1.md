@@ -19,6 +19,10 @@ eqnPrefixTemplate: "($$i$$)"
 
 # Issues fixed
 
+## Issue #77: [mfront] The type `TypeParsingOptions` is not explicitely exported which leads to an error in `gcc` under `Windows`
+
+For more details, see <https://github.com/thelfer/tfel/issues/77>
+
 ## Issue #56: [TFELMath] The CublicSpline methods do not compile if TFEL/Math/vector.hxx is included
 
 For more details, see <https://github.com/thelfer/tfel/issues/56>
