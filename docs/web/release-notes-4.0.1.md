@@ -19,6 +19,10 @@ eqnPrefixTemplate: "($$i$$)"
 
 # Issues fixed
 
+## Issue #78: [TFELMath] missing `const` qualifier in the implementation of the `map` function for immutable views
+
+For more details, see <https://github.com/thelfer/tfel/issues/78>
+
 ## Issue #77: [mfront] The type `TypeParsingOptions` is not explicitely exported which leads to an error in `gcc` under `Windows`
 
 For more details, see <https://github.com/thelfer/tfel/issues/77>
