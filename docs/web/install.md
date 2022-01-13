@@ -60,7 +60,7 @@ is described in the following pages:
 - [Installation based on `cmake` and `MinGW` (as packaged with `Cast3M` `2017`)](install-windows-Cast3M2017.html). This
   tutorial can easily be adapted to other versions of `MinGW`, without
   requiring `Cast3M` to be installed.
-- [Installation based on `MSYS`](install-windows-msys.html).
+- [Installation on [Windows](http://windows.microsoft.com) in the [`MSYS2`](https://www.msys2.org/) environment](install-windows-msys.html).
 
 The creation of binary packages are detailled [here](packages.html). 
 
