@@ -337,13 +337,13 @@ namespace tfel::math {
   template <typename ScalarType>
   std::enable_if_t<isScalar<ScalarType>(), scalar_view<const ScalarType>>  //
   map(const base_type<ScalarType>* const p) {
-    return scalar_view<ScalarType>(*p);
+    return scalar_view<const ScalarType>(*p);
   }  // end of map
 
   template <typename ScalarType>
   std::enable_if_t<isScalar<ScalarType>(), scalar_view<const ScalarType>>  //
   map(const base_type<ScalarType>& v) {
-    return scalar_view<ScalarType>(v);
+    return scalar_view<const ScalarType>(v);
   }  // end of map
 
   /*!
