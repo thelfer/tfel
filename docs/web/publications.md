@@ -13,6 +13,7 @@ eqnPrefixTemplate: "($$i$$)"
 
 ---
 nocite: |
+    @seidlhofer_hygro-coupled_2022
     @kafle_numerical_2022
     @singh_irradiation_2021
     @guo_nspfem2d_2021
