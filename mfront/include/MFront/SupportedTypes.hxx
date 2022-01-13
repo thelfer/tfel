@@ -227,7 +227,7 @@ namespace mfront {
      * \brief a small structure which allows to configure how type can be
      * parsed.
      */
-    struct TypeParsingOptions {
+    struct MFRONT_VISIBILITY_EXPORT TypeParsingOptions {
       TypeParsingOptions();
       TypeParsingOptions(TypeParsingOptions&&);
       TypeParsingOptions(const TypeParsingOptions&);
