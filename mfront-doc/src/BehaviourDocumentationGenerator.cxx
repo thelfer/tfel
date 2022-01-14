@@ -370,7 +370,11 @@ namespace mfront {
                << map_at(l, "default value for") + " " +
                       ModellingHypothesis::toString(h) + ": ";
           }
-          if (d.type == "real") {
+          if (d.type == "int") {
+            os << mb.getIntegerParameterDefaultValue(h, d.name);
+          } else if (d.type == "ushort") {
+            os << mb.getUnsignedShortParameterDefaultValue(h, d.name);
+          } else {
             const auto& p =
                 mb.getBehaviourData(h).getParameters().getVariable(d.name);
             if (p.arraySize == 1u) {
@@ -383,10 +387,7 @@ namespace mfront {
                 }
               }
             }
-          } else if (d.type == "int") {
-            os << mb.getIntegerParameterDefaultValue(h, d.name);
-          } else {
-            os << mb.getUnsignedShortParameterDefaultValue(h, d.name);
+
           }
           os << '\n';
         }

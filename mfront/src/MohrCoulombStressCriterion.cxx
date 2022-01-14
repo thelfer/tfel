@@ -202,7 +202,7 @@ namespace mfront {
       }
       if (r == FLOWCRITERION) {
 #if __cplusplus >= 201703L
-        code += "const auto [seq" + id + ", n" + id + ", dn" + id + "_ds" + id +
+        code += "const auto [seqf" + id + ", n" + id + ", dn" + id + "_ds" + id +
                 "] = ";
         code += "computeMohrCoulombStressCriterionSecondDerivative(this->" +
                 pn + ", s" + id + ");\n";
