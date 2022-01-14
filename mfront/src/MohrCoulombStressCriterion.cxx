@@ -169,7 +169,7 @@ namespace mfront::bbrick {
     }
     if (r == FLOWCRITERION) {
       code += "const auto ";
-      code += "[seq" + id + ", n" + id + ", dn" + id + "_ds" + id + "] = ";
+      code += "[seqf" + id + ", n" + id + ", dn" + id + "_ds" + id + "] = ";
       code += "computeMohrCoulombStressCriterionSecondDerivative(this->" + pn +
               ", s" + id + ");\n";
     }
