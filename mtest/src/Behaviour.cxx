@@ -74,9 +74,9 @@ namespace mtest {
       if (d.empty()) {
         return;
       }
-      throw_if(!d.is<std::map<std::string, Parameters>>(),
+      throw_if(!d.is<tfel::utilities::DataMap>(),
                "unsupported parameters type");
-      const auto& p = d.get<std::map<std::string, Parameters>>();
+      const auto& p = d.get<tfel::utilities::DataMap>();
       throw_if(!p.empty(), "no parameter expected");
     };
     auto& elm =
@@ -87,9 +87,9 @@ namespace mtest {
       if (d.empty()) {
         b = std::make_shared<GenericBehaviour>(h, l, f);
       } else {
-        throw_if(!d.is<std::map<std::string, Parameters>>(),
+        throw_if(!d.is<Behaviour::ParametersMap>(),
                  "unsupported parameters type");
-        const auto& p = d.get<std::map<std::string, Parameters>>();
+        const auto& p = d.get<Behaviour::ParametersMap>();
         b = std::make_shared<GenericBehaviour>(h, l, f, p);
       }
     } else {

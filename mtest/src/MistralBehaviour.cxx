@@ -49,11 +49,9 @@ namespace mtest {
     md.behaviour = f;
     md.btype = 1u;
     md.kinematic = 1u;
-    throw_if(
-        !parameters.is<std::map<std::string, MistralBehaviour::Parameters>>(),
-        "invalid parameters type");
-    const auto mp =
-        parameters.get<std::map<std::string, MistralBehaviour::Parameters>>();
+    throw_if(!parameters.is<tfel::utilities::DataMap>(),
+             "invalid parameters type");
+    const auto mp = parameters.get<tfel::utilities::DataMap>();
     auto get_int_parameter = [&mp, &throw_if](const std::string& n) {
       auto p = mp.find(n);
       if (p == mp.end()) {

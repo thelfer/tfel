@@ -27,6 +27,8 @@ namespace tfel::utilities {
 
   // forward declaration
   struct Data;
+  //! \brief a simple alias
+  using DataMap = std::map<std::string, Data, std::less<>>;
 
   /*!
    * \brief a structure in charge of containing a complex data structure.
@@ -47,7 +49,7 @@ namespace tfel::utilities {
     //! name of the structure
     std::string name;
     //! name of the structure
-    std::map<std::string, Data> data;
+    DataMap data;
   };  // end of struct DataStructure
 
   struct TFELUTILITIES_VISIBILITY_EXPORT DataParsingOptions {
@@ -74,7 +76,7 @@ namespace tfel::utilities {
                                                  std::string,
                                                  std::vector<Data>,
                                                  std::map<double, double>,
-                                                 std::map<std::string, Data>,
+                                                 DataMap,
                                                  DataStructure>::type;
 
   namespace internals {
@@ -225,7 +227,7 @@ namespace tfel::utilities {
         DataMapValidator&>
     addDataTypeValidator(const std::string& k);
     //! \brief validate a data-map
-    void validate(const std::map<std::string, Data>&) const;
+    void validate(const DataMap&) const;
     //! \brief destructor
     ~DataMapValidator();
 

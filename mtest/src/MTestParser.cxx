@@ -985,7 +985,7 @@ namespace mtest {
       return {};
     }
     const auto d = tfel::utilities::Data::read_map(p, this->tokens.end())
-                       .get<std::map<std::string, tfel::utilities::Data>>();
+                       .get<tfel::utilities::DataMap>();
     ConstraintOptions opts;
     for (const auto& kv : d) {
       if (kv.first == "active") {

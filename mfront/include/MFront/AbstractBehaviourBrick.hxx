@@ -26,6 +26,8 @@
 namespace tfel::utilities {
   // forward declaration
   struct Data;
+  //! \brief a simple alias
+  using DataMap = std::map<std::string, Data, std::less<>>;
 }  // end of namespace tfel::utilities
 
 namespace mfront {
@@ -45,13 +47,13 @@ namespace mfront {
    * behaviour.
    */
   struct AbstractBehaviourBrick {
-    //! a simple alias
+    //! \brief a simple alias
     using ModellingHypothesis = tfel::material::ModellingHypothesis;
-    //! a simple alias
+    //! \brief a simple alias
     using Hypothesis = ModellingHypothesis::Hypothesis;
-    //! a simple alias
+    //! \brief a simple alias
     using CxxTokenizer = tfel::utilities::CxxTokenizer;
-    //! a simple alias
+    //! \brief a simple alias
     using tokens_iterator = CxxTokenizer::const_iterator;
     /*!
      * Object used to pass parameters to BehaviourBricks constructor
@@ -59,12 +61,12 @@ namespace mfront {
      * The value is the parameter value.
      */
     using Parameters = std::map<std::string, std::string>;
-    //! a simple alias
+    //! \brief a simple alias
     using Parameter = Parameters::value_type;
-    //! a simple alias
+    //! \brief a simple alias
     using Data = tfel::utilities::Data;
-    //! a simple alias
-    using DataMap = std::map<std::string, Data>;
+    //! \brief a simple alias
+    using DataMap = tfel::utilities::DataMap;
     //! \brief return the name of the brick
     virtual std::string getName() const = 0;
     //! \return a description of the brick

@@ -43,7 +43,7 @@ namespace tfel::utilities {
       default;
   DataParsingOptions::~DataParsingOptions() = default;
 
-  static void read_map(std::map<std::string, Data>& r,
+  static void read_map(DataMap& r,
                        CxxTokenizer::const_iterator& p,
                        const CxxTokenizer::const_iterator pe,
                        const DataParsingOptions& o) {
@@ -183,7 +183,7 @@ namespace tfel::utilities {
     CxxTokenizer::readSpecifiedToken("Data::read_map", "{", c, pe);
     CxxTokenizer::checkNotEndOfLine("Data::read", c, pe);
     if (c->value == "}") {
-      return std::map<std::string, Data>{};
+      return DataMap{};
     }
     if (c->flag == Token::Number) {
       p = c;
@@ -210,7 +210,7 @@ namespace tfel::utilities {
       CxxTokenizer::readSpecifiedToken("Data::read_map", "}", p, pe);
       return values;
     }
-    std::map<std::string, Data> r;
+    DataMap r;
     tfel::utilities::read_map(r, p, pe, opts);
     return std::move(r);
   }
@@ -318,8 +318,8 @@ namespace tfel::utilities {
       }
       return e;
     }  // end of apply
-    static bool apply(const std::map<std::string, Data>& v1,
-                      const std::map<std::string, Data>& v2) {
+    static bool apply(const DataMap& v1,
+                      const DataMap& v2) {
       bool e = true;
       if (v1.size() != v2.size()) {
         return false;
@@ -357,7 +357,7 @@ namespace tfel::utilities {
     return *this;
   }  // end of addDataValidator
 
-  void DataMapValidator::validate(const std::map<std::string, Data>& m) const {
+  void DataMapValidator::validate(const DataMap& m) const {
     for (const auto& [k, v] : m) {
       const auto pvs = this->validators.find(k);
       if (pvs == this->validators.end()) {

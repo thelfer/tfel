@@ -66,7 +66,7 @@ namespace mfront::bbrick {
       default;
   OptionDescription::~OptionDescription() = default;
 
-  void check(const std::map<std::string, tfel::utilities::Data>& dv,
+  void check(const tfel::utilities::DataMap& dv,
              const std::vector<OptionDescription>& ov) {
     auto get_opt = [&ov](const std::string& n) {
       const auto p = std::find_if(
@@ -135,7 +135,7 @@ namespace mfront::bbrick {
         }
         break;
       case OptionDescription::DATAMAP:
-        throw_if(!d.is<std::map<std::string, tfel::utilities::Data>>());
+        throw_if(!d.is<tfel::utilities::DataMap>());
         break;
       case OptionDescription::DATASTRUCTURE:
         throw_if(!((d.is<tfel::utilities::DataStructure>()) ||

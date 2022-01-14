@@ -94,8 +94,8 @@ namespace tfel::utilities::internals {
       auto throw_if = [](const bool b, const std::string& msg) {
         tfel::raise_if(b, "convert<std::map<std::string,T>>: " + msg);
       };
-      throw_if(!d.is<std::map<std::string, Data>>(), "invalid data type");
-      const auto& m = d.get<std::map<std::string, Data>>();
+      throw_if(!d.is<DataMap>(), "invalid data type");
+      const auto& m = d.get<DataMap>();
       auto r = std::map<std::string, T>{};
       for (const auto& e : m) {
         r.insert({e.first, tfel::utilities::convert<T>(e.second)});
@@ -103,10 +103,10 @@ namespace tfel::utilities::internals {
       return r;
     }  // end of exe
     static bool is_convertible(const Data& d) {
-      if (!d.is<std::map<std::string, tfel::utilities::Data>>()) {
+      if (!d.is<tfel::utilities::DataMap>()) {
         return false;
       }
-      const auto& vd = d.get<std::map<std::string, tfel::utilities::Data>>();
+      const auto& vd = d.get<tfel::utilities::DataMap>();
       for (const auto& w : vd) {
         if (!tfel::utilities::is_convertible<T>(w.second)) {
           return false;

@@ -40,7 +40,7 @@ namespace mtest {
     GenericBehaviour(const Hypothesis,
                      const std::string&,
                      const std::string&,
-                     const std::map<std::string, Parameters>&);
+                     const ParametersMap&);
 
     void getGradientsDefaultInitialValues(
         tfel::math::vector<real>&) const override;

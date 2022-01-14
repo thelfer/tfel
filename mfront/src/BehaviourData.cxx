@@ -324,10 +324,6 @@ namespace mfront {
   BehaviourData::BehaviourData() {
     this->registerMemberName("dt");
     this->reserveName("\u0394t");  // symbolic value
-    // treating the temperature
-    auto T = VariableDescription{"temperature", "T", 1u, 0u};
-    T.setGlossaryName("Temperature");
-    this->addExternalStateVariable(T, UNREGISTRED);
   }  // end of BehaviourData()
 
   BehaviourData::BehaviourData(const BehaviourData&) = default;

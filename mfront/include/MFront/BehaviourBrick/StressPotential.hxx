@@ -26,6 +26,8 @@
 namespace tfel::utilities {
   // forward declaration
   struct Data;
+  //! \brief a simple alias
+  using DataMap = std::map<std::string, Data, std::less<>>;
 }  // end of namespace tfel::utilities
 
 namespace mfront {
@@ -41,7 +43,7 @@ namespace mfront::bbrick {
   //! \brief class describing the computation of the stress.
   struct MFRONT_VISIBILITY_EXPORT StressPotential {
     //! \brief a simple alias
-    using DataMap = std::map<std::string, tfel::utilities::Data>;
+    using DataMap = tfel::utilities::DataMap;
     //! \brief a simple alias
     using ModellingHypothesis = tfel::material::ModellingHypothesis;
     //! \brief a simple alias

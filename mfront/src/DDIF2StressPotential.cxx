@@ -61,7 +61,7 @@ namespace mfront::bbrick {
       const std::string& vn,
       const std::string& vt,
       const std::string& en,
-      const std::map<std::string, tfel::utilities::Data>& d,
+      const tfel::utilities::DataMap& d,
       const bool b) {
     using ConstantMaterialProperty =
         BehaviourDescription::ConstantMaterialProperty;

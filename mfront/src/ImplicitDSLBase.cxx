@@ -545,7 +545,6 @@ namespace mfront {
     if (s == "UserDefined") {
       const auto d = [this] {
         using namespace tfel::utilities;
-        using DataMap = std::map<std::string, Data>;
         DataParsingOptions o;
         o.allowMultipleKeysInMap = true;
         const auto opts =

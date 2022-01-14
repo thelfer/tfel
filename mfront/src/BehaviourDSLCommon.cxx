@@ -2186,9 +2186,9 @@ namespace mfront {
     const auto opts = [this] {
       if (this->current->value == "{") {
         return tfel::utilities::Data::read(this->current, this->tokens.end())
-            .get<std::map<std::string, tfel::utilities::Data>>();
+            .get<tfel::utilities::DataMap>();
       }
-      return std::map<std::string, tfel::utilities::Data>{};
+      return tfel::utilities::DataMap{};
     }();
     this->readSpecifiedToken("BehaviourDSLCommon::treatStrainMeasure", ";");
     for (const auto& o : opts) {
@@ -2305,7 +2305,6 @@ namespace mfront {
     }();
     const auto d = [this] {
       using namespace tfel::utilities;
-      using DataMap = std::map<std::string, Data>;
       if ((this->current != this->tokens.end()) &&
           (this->current->value == "{")) {
         DataParsingOptions o;
@@ -2421,7 +2420,6 @@ namespace mfront {
     using namespace tfel::utilities;
     using ExternalMFrontMaterialProperty =
         BehaviourDescription::ExternalMFrontMaterialProperty;
-    using DataMap = std::map<std::string, Data>;
     const std::string m("BehaviourDSLCommon::treatComputeThermalExpansion");
     const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     const auto n = "thermal_expansion_reference_temperature";

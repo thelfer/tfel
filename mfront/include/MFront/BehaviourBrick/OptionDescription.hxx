@@ -24,6 +24,8 @@
 namespace tfel::utilities {
   // forward declaration
   struct Data;
+  //! \brief a simple alias
+  using DataMap = std::map<std::string, Data, std::less<>>;
 }  // end of namespace tfel::utilities
 
 namespace tfel::glossary {
@@ -141,7 +143,7 @@ namespace mfront::bbrick {
    * \param[in] ov: list of options
    */
   MFRONT_VISIBILITY_EXPORT void check(
-      const std::map<std::string, tfel::utilities::Data>&,
+      const tfel::utilities::DataMap&,
       const std::vector<OptionDescription>&);
   /*!
    * \brief check that the given data has a type compatible with the given

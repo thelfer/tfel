@@ -36,7 +36,7 @@ namespace mfront {
    */
   struct MFRONT_VISIBILITY_EXPORT AbstractDSL {
     //! \brief a simple alias
-    using DSLOptions = std::map<std::string, tfel::utilities::Data>;
+    using DSLOptions = tfel::utilities::DataMap;
     //! list of dsl targets
     enum DSLTarget {
       MATERIALPROPERTYDSL,

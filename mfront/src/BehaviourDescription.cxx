@@ -398,13 +398,19 @@ namespace mfront {
       BehaviourDescription::requiresThermalExpansionCoefficientTensor =
           "requiresThermalExpansionCoefficientTensor";
 
-  BehaviourDescription::BehaviourDescription() = default;
+  BehaviourDescription::BehaviourDescription() {
+    constexpr auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+    // treating the temperature
+    auto T = VariableDescription{"temperature", "T", 1u, 0u};
+    T.setGlossaryName("Temperature");
+    this->addExternalStateVariable(h, T, BehaviourData::UNREGISTRED);
+  }  // end of BehaviourDescription
 
   BehaviourDescription::BehaviourDescription(const BehaviourDescription&) =
       default;
 
   bool BehaviourDescription::allowsNewUserDefinedVariables() const {
-    const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+    constexpr auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     return this->getAttribute(h, BehaviourData::allowsNewUserDefinedVariables,
                               true);
   }  // end of allowNewsUserDefinedVariables

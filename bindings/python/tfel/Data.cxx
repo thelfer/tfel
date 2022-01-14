@@ -38,8 +38,8 @@ static boost::python::object convert_data_to_python_object(
     return object(d.get<std::string>());
   } else if (d.is<std::vector<Data>>()) {
     return object(d.get<std::vector<Data>>());
-  } else if (d.is<std::map<std::string, Data>>()) {
-    return object(d.get<std::map<std::string, Data>>());
+  } else if (d.is<DataMap>()) {
+    return object(d.get<DataMap>());
   }
   tfel::raise(
       "convert_data_to_python_object: "
@@ -96,10 +96,10 @@ void declareData() {
   data_add_def<double>(w, "Double");
   data_add_def<std::string>(w, "String");
   data_add_def<std::vector<Data>>(w, "DataVector");
-  data_add_def<std::map<std::string, Data>>(w, "DataMap");
+  data_add_def<DataMap>(w, "DataMap");
 
-  class_<std::map<std::string, Data>>("DataMap").def(
-      map_indexing_suite<std::map<std::string, Data>>());
+  class_<DataMap>("DataMap").def(
+      map_indexing_suite<DataMap>());
   class_<std::vector<Data>>("DataVector")
       .def(vector_indexing_suite<std::vector<Data>>());
 }

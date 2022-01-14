@@ -22,6 +22,8 @@
 namespace tfel::utilities {
   // forward declaration
   struct Data;
+  //! \brief a simple alias
+  using DataMap = std::map<std::string, Data, std::less<>>;
 }  // end of namespace tfel::utilities
 
 namespace mfront {
@@ -40,11 +42,11 @@ namespace mfront::bbrick {
 
   //! \brief class describing an inelastic flow.
   struct MFRONT_VISIBILITY_EXPORT PorosityNucleationModel {
-    //! a simple alias
+    //! \brief a simple alias
     using Data = tfel::utilities::Data;
-    //! a simple alias
-    using DataMap = std::map<std::string, Data>;
-    //! a simple alias
+    //! \brief a simple alias
+    using DataMap = tfel::utilities::DataMap;
+    //! \brief a simple alias
     using ModellingHypothesis = tfel::material::ModellingHypothesis;
     /*!
      * \return the name of a variable from a base name and the nucleation

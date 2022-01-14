@@ -49,7 +49,7 @@ namespace mfront {
     std::shared_ptr<AbstractDSL> dsl;
     std::string library, dslName;
     tfel::utilities::CxxTokenizer file;
-    auto dsl_options = std::map<std::string, tfel::utilities::Data>{};
+    auto dsl_options = tfel::utilities::DataMap{};
     if (tfel::utilities::starts_with(f, "madnex:")) {
 #ifdef MFRONT_HAVE_MADNEX
       const auto path = decomposeImplementationPathInMadnexFile(f);
@@ -87,9 +87,8 @@ namespace mfront {
         throw_if(pt == pte, "unexpected end of file (exepected dsl name)");
         if (pt->value == "{") {
           const auto o = tfel::utilities::DataParsingOptions{};
-          dsl_options =
-              tfel::utilities::Data::read(pt, pte, o)
-                  .get<std::map<std::string, tfel::utilities::Data>>();
+          dsl_options = tfel::utilities::Data::read(pt, pte, o)
+                            .get<tfel::utilities::DataMap>();
         }
         if (pt->value != ";") {
           library = pt->value;
