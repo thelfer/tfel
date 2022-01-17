@@ -241,7 +241,7 @@ namespace tfel::utilities {
    * \brief throw an exception stating that the parameter type is not the
    * expected one.
    */
-  TFELUTILITIES_VISIBILITY_EXPORT [[noreturn]] void raiseUnmatchedDataType(
+  [[noreturn]] TFELUTILITIES_VISIBILITY_EXPORT void raiseUnmatchedDataType(
       const std::string_view);
   /*!
    * \return true if the given data exists

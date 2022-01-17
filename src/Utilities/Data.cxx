@@ -367,7 +367,7 @@ namespace tfel::utilities {
             k + "'.";
         if (!this->validators.empty()) {
           msg += "\nValid keys are:";
-          for (const auto kv : this->validators) {
+          for (const auto& kv : this->validators) {
             msg += "\n- '" + kv.first + "'";
           }
         }
