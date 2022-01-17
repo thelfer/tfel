@@ -69,6 +69,13 @@ namespace std {
 
 namespace mfront {
 
+  tfel::utilities::DataMapValidator
+  BehaviourDSLCommon::getDSLOptionsValidator() {
+    return DSLBase::getDSLOptionsValidator().addDataTypeValidator<bool>(
+        BehaviourDescription::
+            automaticDeclarationOfTheTemperatureAsFirstExternalStateVariable);
+  }  // end of getDSLOptionsValidator
+
   BehaviourDSLCommon::StandardVariableModifier::StandardVariableModifier(
       const Hypothesis h, const FunctionType f)
       : hypothesis(h),
@@ -101,7 +108,11 @@ namespace mfront {
   BehaviourDSLCommon::BehaviourDSLCommon(const DSLOptions& opts)
       : DSLBase(opts),
         useStateVarTimeDerivative(false),
-        explicitlyDeclaredUsableInPurelyImplicitResolution(false) {
+        explicitlyDeclaredUsableInPurelyImplicitResolution(false),
+        mb(tfel::utilities::extract(
+            opts,
+            {BehaviourDescription::
+                 automaticDeclarationOfTheTemperatureAsFirstExternalStateVariable})) {
     using MemberFunc = void (BehaviourDSLCommon::*)();
     //
     if (opts.count(DSLBase::parametersAsStaticVariablesOption) != 0) {

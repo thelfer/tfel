@@ -25,6 +25,11 @@
 
 namespace mfront {
 
+  static bool shallRemoveTemperatureFromExternalStateVariables(
+      const BehaviourDescription& bd) {
+    return bd.isTemperatureDefinedAsTheFirstExternalStateVariable();
+  }  // end of shallRemoveTemperatureFromExternalStateVariables
+
   static int getVariableTypeId(const VariableDescription& v) {
     switch (SupportedTypes::getTypeFlag(v.type)) {
       case SupportedTypes::SCALAR:
@@ -75,6 +80,8 @@ namespace mfront {
     this->writeSymmetryTypeSymbols(out, i, bd, name);
     this->writeElasticSymmetryTypeSymbols(out, i, bd, name);
     this->writeSpecificSymbols(out, i, bd, fd, name);
+    this->writeTemperatureRemovedFromExternalStateVariablesSymbol(out, i, bd,
+                                                                  name);
   }
 
   void SymbolsGenerator::writeEntryPointSymbol(
@@ -313,6 +320,20 @@ namespace mfront {
         << "_ComputesDissipatedEnergy = " << b << ";\n\n";
   }  // end of writeComputesDissipatedEnergySymbol
 
+  void SymbolsGenerator::writeTemperatureRemovedFromExternalStateVariablesSymbol(
+      std::ostream& out,
+      const StandardBehaviourInterface& i,
+      const BehaviourDescription& bd,
+      const std::string& name) const {
+    if (shallRemoveTemperatureFromExternalStateVariables(bd)) {
+      out << "MFRONT_SHAREDOBJ unsigned short " << i.getFunctionNameBasis(name)
+          << "_TemperatureRemovedFromExternalStateVariables = 1u;\n";
+    } else {
+      out << "MFRONT_SHAREDOBJ unsigned short " << i.getFunctionNameBasis(name)
+          << "_TemperatureRemovedFromExternalStateVariables = 0u;\n";
+    }
+  }  // end of writeTemperatureRemovedFromExternalStateVariablesSymbol
+
   void SymbolsGenerator::writeSpecificSymbols(std::ostream&,
                                               const StandardBehaviourInterface&,
                                               const BehaviourDescription&,
@@ -483,8 +504,10 @@ namespace mfront {
       const Hypothesis h) const {
     const auto& d = mb.getBehaviourData(h);
     auto esvs = d.getExternalStateVariables();
-    // removing the temperature
-    esvs.erase(esvs.begin());
+    if (shallRemoveTemperatureFromExternalStateVariables(mb)) {
+      // removing the temperature
+      esvs.erase(esvs.begin());
+    }
     out << "MFRONT_SHAREDOBJ unsigned short " << this->getSymbolName(i, name, h)
         << "_nExternalStateVariables = " << esvs.getNumberOfVariables()
         << ";\n";

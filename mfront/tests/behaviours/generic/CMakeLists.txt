@@ -43,6 +43,7 @@ set(mfront_tests_SOURCES
   Plasticity2
   Plasticity3
   Plasticity4
+  PlasticityWithoutAutomaticTemperatureDeclaration
   LogarithmicStrainPlasticity
   LogarithmicStrainPlasticity2
   DruckerPrager
@@ -436,6 +437,7 @@ test_generic(perfectplasticity)
 test_generic(plasticity plasticity.ref)
 test_generic(plasticity2)
 test_generic(plasticity3)
+test_generic(plasticity_without_temperature_declaration plasticity.ref)
 # test_generic(ddif2)
 # test_generic(ddif2-2)
 # test_generic(ddif2-3)

@@ -393,4 +393,44 @@ namespace tfel::utilities {
 
   DataMapValidator::~DataMapValidator() = default;
 
+  void raiseUnmatchedDataType(const std::string_view n) {
+    tfel::raise(
+        "raiseUnmatchedDataType: "
+        "the type of data '" +
+        std::string{n} + "'is not the expected one");
+  }  // end of raiseUnmatchedParameterType
+
+  const Data& get(const DataMap& m, std::string_view n){
+    const auto i = m.find(n);
+    if (i == m.end()) {
+      auto msg = std::string{"Datas::get: parameter '"};
+      msg += n;
+      msg += "' is not declared";
+      tfel::raise(msg);
+    }
+    return i->second;
+  }
+
+  Data get_if(const DataMap& m, std::string_view n, const Data& v) {
+    if (contains(m, n)) {
+      return get(m, n);
+    }
+    return v;
+  }  // end of get
+
+  bool contains(const DataMap& p, std::string_view n) {
+    return p.find(n) != p.end();
+  }  // end of contains
+
+  DataMap extract(const DataMap& m, const std::vector<std::string>& names) {
+    auto r = DataMap();
+    for (const auto& n : names) {
+      const auto p = m.find(n);
+      if (p != m.end()) {
+        r.insert(*p);
+      }
+    }
+    return r;
+  }
+
 }  // end of namespace tfel::utilities

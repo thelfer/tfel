@@ -29,6 +29,25 @@ namespace mfront {
 
   UMATInterfaceBase::UMATInterfaceBase() = default;
 
+  void
+  UMATInterfaceBase::checkIfTemperatureIsDefinedAsTheFirstExternalStateVariable(
+      const BehaviourDescription& bd) const {
+    if (!bd.isTemperatureDefinedAsTheFirstExternalStateVariable()) {
+      const auto v = this->getInterfaceVersion();
+      auto msg = std::string{};
+      msg +=
+          "UMATInterfaceBase::"
+          "checkIfTemperatureIsDefinedAsTheFirstExternalStateVariable: "
+          "the temperature must be defined as the first external state "
+          "variable for interface '" +
+          this->getInterfaceName() + "'";
+      if (!v.empty()) {
+        msg += " version '" + v + "'";
+      }
+      tfel::raise(msg);
+    }
+  }  // end of checkIfTemperatureIsDefinedAsTheFirstExternalStateVariable
+
   void UMATInterfaceBase::exportMechanicalData(
       std::ostream& out,
       const Hypothesis h,

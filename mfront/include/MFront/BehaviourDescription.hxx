@@ -21,6 +21,7 @@
 #include <optional>
 
 #include "TFEL/Utilities/GenTypeBase.hxx"
+#include "TFEL/Utilities/Data.hxx"
 #include "TFEL/Math/tvector.hxx"
 #include "TFEL/Material/CrystalStructure.hxx"
 #include "TFEL/Material/SlipSystemsDescription.hxx"
@@ -58,38 +59,41 @@ namespace mfront {
       : public tfel::material::MechanicalBehaviourBase,
         public MaterialKnowledgeDescriptionAttributesHandler,
         public SupportedTypes {
+    //! \brief standard option and attribute name
+    static const char* const
+        automaticDeclarationOfTheTemperatureAsFirstExternalStateVariable;
     //! \brief attribute name
     static const char* const parametersAsStaticVariables;
-    //! a simple alias
+    //! \brief a simple alias
     using ModellingHypothesis = tfel::material::ModellingHypothesis;
-    //! a simple alias
+    //! \brief a simple alias
     using Hypothesis = ModellingHypothesis::Hypothesis;
-    //! a simple alias
+    //! \brief a simple alias
     using CrystalStructure = tfel::material::CrystalStructure;
-    //! a simple alias
+    //! \brief a simple alias
     using SlipSystemsDescription = tfel::material::SlipSystemsDescription;
-    //! a simple alias
+    //! \brief a simple alias
     using SlipSystem = SlipSystemsDescription::system;
-    //! a simple alias
+    //! \brief a simple alias
     using InteractionMatrixStructure =
         SlipSystemsDescription::InteractionMatrixStructure;
-    //! a simple alias
+    //! \brief a simple alias
     using OrthotropicAxesConvention = tfel::material::OrthotropicAxesConvention;
-    //! a simple alias
+    //! \brief a simple alias
     using Mode = BehaviourData::Mode;
-    //! a simple alias
+    //! \brief a simple alias
     using Position = BehaviourData::Position;
-    //! validation tatus
+    //! \brief validation tatus
     enum VerificationStatus {
       UNVERIFIED,
       VERIFIED
     };  // end of VerificationStatus
-    //! validation tatus
+    //! \brief validation tatus
     enum ValidationStatus {
       UNVALIDATED,
       VALIDATED
     };  // end of ValidationStatus
-    //! Strain measure
+    //! \brief Strain measure
     enum StrainMeasure {
       LINEARISED,
       GREENLAGRANGE,
@@ -100,9 +104,9 @@ namespace mfront {
          * property
          */
     struct ConstantMaterialProperty {
-      //! parameter name associated with the material property
+      //! \brief parameter name associated with the material property
       std::string name;
-      //! default value for the constant material property
+      //! \brief default value for the constant material property
       double value;
     };
     /*!
@@ -110,9 +114,9 @@ namespace mfront {
      * property defined through an analytic expression
      */
     struct AnalyticMaterialProperty {
-      //! return the list of the variables
+      //! \return the list of the variables
       std::vector<std::string> getVariablesNames() const;
-      //! description of a material property
+      //! \brief description of a material property
       std::string f;
     };  // end of AnalyticMaterialProperty
         /*!
@@ -120,15 +124,15 @@ namespace mfront {
          * property defined through an mfront file
          */
     struct ExternalMFrontMaterialProperty {
-      //! description of a material property
+      //! \brief description of a material property
       std::shared_ptr<MaterialPropertyDescription> mpd;
     };
-    //! list of supported material properties types
+    //! \brief list of supported material properties types
     using MaterialPropertyTypes =
         tfel::meta::GenerateTypeList<ConstantMaterialProperty,
                                      AnalyticMaterialProperty,
                                      ExternalMFrontMaterialProperty>::type;
-    //! a simple alias
+    //! \brief a simple alias
     using StressFreeExpansionDescription =
         BehaviourData::StressFreeExpansionDescription;
     /*!
@@ -141,28 +145,28 @@ namespace mfront {
      * \brief structure used to defined a Hill tensor
      */
     struct HillTensor {
-      //! name of the Hill tensor
+      //! \brief name of the Hill tensor
       std::string name;
-      //! symbolic name of the Hill tensor
+      //! \brief symbolic name of the Hill tensor
       std::string symbolic_form;
-      //! Hill coeffients
+      //! \brief Hill coeffients
       std::vector<MaterialProperty> c;
     };  // end of struct HillTensor
-    //! a simple alias
+    //! \brief a simple alias
     using IntegrationScheme = mfront::IntegrationScheme;
-    //! a simple alias for backward compatibility
+    //! \brief a simple alias for backward compatibility
     static constexpr IntegrationScheme IMPLICITSCHEME =
         IntegrationScheme::IMPLICITSCHEME;
-    //! a simple alias for backward compatibility
+    //! \brief a simple alias for backward compatibility
     static constexpr IntegrationScheme EXPLICITSCHEME =
         IntegrationScheme::EXPLICITSCHEME;
-    //! a simple alias for backward compatibility
+    //! \brief a simple alias for backward compatibility
     static constexpr IntegrationScheme SPECIFICSCHEME =
         IntegrationScheme::SPECIFICSCHEME;
-    //! a simple alias for backward compatibility
+    //! \brief a simple alias for backward compatibility
     static constexpr IntegrationScheme USERDEFINEDSCHEME =
         IntegrationScheme::USERDEFINEDSCHEME;
-    //! a simple alias for backward compatibility
+    //! \brief a simple alias for backward compatibility
     static constexpr IntegrationScheme UNDEFINEDINTEGRATIONSCHEME =
         IntegrationScheme::UNDEFINEDINTEGRATIONSCHEME;
     /*!
@@ -170,11 +174,11 @@ namespace mfront {
      * property
      */
     struct MaterialPropertyInput {
-      //! variable name
+      //! \brief variable name
       std::string name;
-      //! external name
+      //! \brief external name
       std::string ename;
-      //! variable type
+      //! \brief variable type
       enum Category {
         TEMPERATURE,
         MATERIALPROPERTY,
@@ -186,19 +190,24 @@ namespace mfront {
       };
       Category category;
     };  // end of struct MaterialPropertyInput
-    //! attribute name
+    //! \brief attribute name
     static const char* const requiresStiffnessTensor;
-    //! attribute name
+    //! \brief attribute name
     static const char* const computesStiffnessTensor;
-    //! attribute name
+    //! \brief attribute name
     static const char* const requiresUnAlteredStiffnessTensor;
-    //! attribute name
+    //! \brief attribute name
     static const char* const requiresThermalExpansionCoefficientTensor;
-    //! attribute name
+    //! \brief attribute name
     static const char* const setRequireThermalExpansionCoefficientTensor;
-    //! constructor
+    //! \brief default constructor
     BehaviourDescription();
-    //! copy constructor
+    /*!
+     * \brief constructor
+     * \param[in] opts: options
+     */
+    BehaviourDescription(const tfel::utilities::DataMap&);
+    //! \brief copy constructor
     BehaviourDescription(const BehaviourDescription&);
     //
     using MaterialKnowledgeDescriptionAttributesHandler::getAttribute;
@@ -853,6 +862,11 @@ namespace mfront {
         const Hypothesis,
         const VariableDescription&,
         const BehaviourData::RegistrationStatus = BehaviourData::UNREGISTRED);
+    /*!
+     * \return if the temperature is defined as the first external state
+     * variable for all modelling hypotheses
+     */
+    bool isTemperatureDefinedAsTheFirstExternalStateVariable() const;
     /*!
      * \brief add external state variables
      * \param[in] h: modelling hypothesis

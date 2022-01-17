@@ -20,6 +20,43 @@ eqnPrefixTemplate: "($$i$$)"
 The page describes the new functionalities of Version 4.1 of the
 `TFEL` project.
 
+# `TFEL/System` improvements
+
+## Improvement to the `ExternalLibraryManager` class
+
+### The `hasTemperatureBeenRemovedFromExternalStateVariables` method
+
+In previous versions of `MFront`, the temperature was automatically
+defined as the first external state variable by domain specific
+languages handling behaviours.
+
+By conventions, for consistency with behaviour interfaces derived from
+the `Abaqus`' `UMAT` interface, the temperature was removed from the
+list of external state variables exported by the behaviour. This list
+can be retrieved using the `getUMATExternalStateVariablesNames` method
+of the `ExternalLibraryManager` class.
+
+Following Issue #50 (see Sections
+@sec:tfel:mfront:global_options:temperature_as_first_external_state_variable
+and @sec:tfel:4.1:issue:50), this automatic declaration is now optional.
+
+For backward compatibility, the `getUMATExternalStateVariablesNames` method
+still return the list of external state variables without the
+temperature. To know if the temperature was removed, the user must call
+the `hasTemperatureBeenRemovedFromExternalStateVariables` method.
+
+In pratice, if the `hasTemperatureBeenRemovedFromExternalStateVariables`
+method returns `true`, the full list of external state variables is
+given by the temperature followed by the list of external state
+variables returned by the `getUMATExternalStateVariablesNames` method.
+
+## Improvements to the `ExternalBehaviourDescription` class
+
+The `ExternalBehaviourDescription` class now have
+`hasTemperatureBeenRemovedFromExternalStateVariables` boolean public
+data member which states if the temperature was removed from the list of
+external state variables.
+
 # `MFront` improvements
 
 ## Global options to domain specific languages
@@ -30,7 +67,11 @@ default behaviour of `MFront`.
 ### Treat parameters as static variables
 
 The boolean option `parameters_as_static_variables` modifies the way
-parameters are treated.
+parameters are treated. This option can be declared as follows:
+
+~~~~{.cxx}
+@DSL Default{parameters_as_static_variables : true};
+~~~~
 
 By default, `MFront` behaves as if this option was set to `false`.
 
@@ -39,7 +80,36 @@ particular, the values of the parameters can not be changed as runtime.
 From the solver point of view, the behaviour does not declare any
 parameter.
 
-### Automatic declaration of the temperature as an external state variable for behaviours
+### Automatic declaration of the temperature as the first external state variable for behaviours {#sec:tfel:mfront:global_options:temperature_as_first_external_state_variable}
+
+In previous versions of `MFront`, the temperature was automatically
+defined as the first external state variable by domain specific
+languages handling behaviours, as this is required by most behaviour
+interfaces derived from `Abaqus`' `UMAT` interface.
+
+This automatic declaration can now be disabled using the
+`automatically_declare_temperature_as_first_external_state_variable`
+boolean option, as follows:
+
+~~~~{.cxx}
+@DSL IsotropicPlasticMisesFlow{
+  automatically_declare_temperature_as_first_external_state_variable : false
+};
+~~~~
+
+By default, `MFront` behaves as if this option was set to `true`.
+Currently, only the generic interface supports behaviours which do not
+declare the temperature a the first external state variable.
+
+#### Special case of specialized domain specific languages
+
+`IsotropicMisesCreep`, `IsotropicMisesPlasticFlow`,
+`IsotropicStrainHardeningMisesCreep` and `MultipleIsotropicMisesFlows`
+domain specific languages used to automatically declare the temperature
+at the middle of the time step in a local variable named `T_`. This
+declaration is disabled if the
+`automatically_declare_temperature_as_first_external_state_variable`
+option is set to `false`.
 
 # `MTest` improvements
 
@@ -223,6 +293,13 @@ For more details, see : <https://github.com/thelfer/tfel/issues/55>
 ## Issue #57: [gallery] Mistakes in the Drucker Prager Cap model of the gallery
 
 For more details, see : <https://github.com/thelfer/tfel/issues/57>
+
+## Issue #50: [mfront] Options to avoid the automatic declaration of the temperature as an external state variable {sec:tfel:4.1:issue:50}
+
+This option is described in depth in Section
+@sec:tfel:mfront:global_options:temperature_as_first_external_state_variable.
+
+For more details, see : <https://github.com/thelfer/tfel/issues/50>
 
 ## Issue #44: [mtest] Add support for a boundary condition modelling the effet of a mandrel in pipe modelling
 

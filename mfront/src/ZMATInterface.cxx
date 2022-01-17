@@ -807,6 +807,19 @@ namespace mfront {
     auto throw_if = [](const bool b, const std::string& m) {
       tfel::raise_if(b, "ZMATInterface::endTreatment: " + m);
     };
+    if (!mb.isTemperatureDefinedAsTheFirstExternalStateVariable()) {
+      const auto v = this->getInterfaceVersion();
+      auto msg = std::string{};
+      msg +=
+          "ZMATInterface::endTreatment:"
+          "the temperature must be defined as the first external state "
+          "variable for interface '" +
+          this->getInterfaceName() + "'";
+      if (!v.empty()) {
+        msg += " version '" + v + "'";
+      }
+      tfel::raise(msg);
+    }
     systemCall::mkdir("include/MFront");
     systemCall::mkdir("include/MFront/ZMAT");
     systemCall::mkdir("zmat");

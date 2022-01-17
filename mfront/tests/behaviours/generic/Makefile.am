@@ -111,6 +111,7 @@ EXTRA_DIST = CMakeLists.txt                                                     
              plasticity.mtest                                                          \
              plasticity2.mtest                                                         \
              plasticity3.mtest                                                         \
+             plasticity_without_temperature_declaration.mtest                          \
              saintvenantkirchhoffelasticity-uniaxialloading-sig11-1D.mtest             \
              saintvenantkirchhoffelasticity-uniaxialloading-sig22-1D.mtest             \
              saintvenantkirchhoffelasticity-uniaxialloading-sig33-1D.mtest             \

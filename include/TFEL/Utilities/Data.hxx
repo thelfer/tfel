@@ -19,6 +19,7 @@
 #include <vector>
 #include <utility>
 #include <functional>
+#include <string_view>
 #include "TFEL/Config/TFELConfig.hxx"
 #include "TFEL/Utilities/GenTypeBase.hxx"
 #include "TFEL/Utilities/CxxTokenizer.hxx"
@@ -235,6 +236,70 @@ namespace tfel::utilities {
     //! \brief validators, sorted by keywords
     std::map<std::string, std::vector<DataValidator>> validators;
   };
+
+  /*!
+   * \brief throw an exception stating that the parameter type is not the
+   * expected one.
+   */
+  TFELUTILITIES_VISIBILITY_EXPORT [[noreturn]] void raiseUnmatchedDataType(
+      const std::string_view);
+  /*!
+   * \return true if the given data exists
+   * \param[in] m: data map
+   * \param[in] n: name
+   */
+  TFELUTILITIES_VISIBILITY_EXPORT bool contains(const DataMap&,
+                                                std::string_view);
+  /*!
+   * \return true if the given data has the given type
+   * \param[in] m: data map
+   * \param[in] n: name
+   * \throws if the data does not exists
+   */
+  template <typename ResultType>
+  bool is(const DataMap&, std::string_view);
+  /*!
+   * \return the data associated with the given name
+   * \param[in] m: data map
+   * \param[in] n: name
+   */
+  TFELUTILITIES_VISIBILITY_EXPORT const Data& get(const DataMap&,
+                                                  std::string_view);
+  /*!
+   * \return value of the data
+   * \tparam ResultType: expected type of the data
+   * \param[in] m: data map
+   * \param[in] n: name
+   * \throws if the data does not exists or does not have the good type.
+   */
+  template <typename ResultType>
+  const ResultType& get(const DataMap&, std::string_view);
+  /*!
+   * \return value of the data if present, a default value otherwise
+   * \tparam ResultType: expected type of the data
+   * \param[in] m: data map
+   * \param[in] n: name
+   * \param[in] v: default value
+   * \throws if the data exists but does not have the good type.
+   */
+  template <typename ResultType>
+  ResultType get_if(const DataMap&, std::string_view, const ResultType&);
+  /*!
+   * \return value of the data if present, a default value otherwise
+   * \param[in] m: data map
+   * \param[in] n: name
+   * \param[in] v: default value
+   */
+  TFELUTILITIES_VISIBILITY_EXPORT Data get_if(const DataMap&,
+                                              std::string_view,
+                                              const Data&);
+  /*!
+   * \return a data map containing only data with the given names
+   * \param[in] m: data map
+   * \param[in] names: list of names of data to be extracted
+   */
+  TFELUTILITIES_VISIBILITY_EXPORT DataMap
+  extract(const DataMap&, const std::vector<std::string>&);
 
 }  // end of namespace tfel::utilities
 

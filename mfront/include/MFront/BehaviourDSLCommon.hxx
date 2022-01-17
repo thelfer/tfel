@@ -50,6 +50,8 @@ namespace mfront {
       : public virtual AbstractBehaviourDSL,
         public DSLBase,
         public SupportedTypes {
+    //! \return a validator for the options passed to the DSL
+    static tfel::utilities::DataMapValidator getDSLOptionsValidator();
     //! a simple alias
     using Hook = std::function<void()>;
     //! a simple alias

@@ -192,6 +192,11 @@ namespace tfel::system {
      * caller must provide the thermal expansion coefficients tensor
      */
     bool requiresThermalExpansionCoefficientTensor = false;
+    /*!
+     * \brief a boolean stating if the temperature was removed from the list of
+     * declared external state variables.
+     */
+    bool hasTemperatureBeenRemovedFromExternalStateVariables = true;
   };
 
   /*!

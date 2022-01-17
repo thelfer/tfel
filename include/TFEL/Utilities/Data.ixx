@@ -142,6 +142,29 @@ namespace tfel::utilities {
     return tfel::utilities::internals::DataConvertor<T>::is_convertible(d);
   }  // end of convert
 
+  template <typename ResultType>
+  bool is(const DataMap& m, std::string_view n) {
+    const auto& v = get(m, n);
+    return v.template is<ResultType>();
+  }  // end of is
+
+  template <typename ResultType>
+  const ResultType& get(const DataMap& m, std::string_view n) {
+    const auto& v = get(m, n);
+    if (!v.template is<ResultType>()) {
+      raiseUnmatchedDataType(n);
+    }
+    return get<ResultType>(v);
+  }  // end of get
+
+  template <typename ResultType>
+  ResultType get_if(const DataMap& m, std::string_view n, const ResultType& v) {
+    if (contains(m, n)) {
+      return get<ResultType>(m, n);
+    }
+    return v;
+  }  // end of get
+
 }  // end of namespace tfel::utilities
 
 #endif /* LIB_TFEL_UTILITIES_DATA_IXX */

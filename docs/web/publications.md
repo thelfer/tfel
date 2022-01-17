@@ -17,6 +17,7 @@ nocite: |
     @kafle_numerical_2022
     @singh_irradiation_2021
     @guo_nspfem2d_2021
+    @parise_etude_2021
     @li_large-deformation_2021
     @reymond_thermo-mechanical_2021
     @liang_micromechanical_2021
@@ -93,6 +94,7 @@ nocite: |
 	@saouma16:_effec
 	@honorio_multiscale_2016
 	@blanc_characterization_2015
+	@helfer_licos_2015
 	@helfer_implantation_2015
 	@helfer_extension_2015
 	@helfer_introducing_2015

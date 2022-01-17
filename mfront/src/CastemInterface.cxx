@@ -725,6 +725,7 @@ namespace mfront {
     auto throw_if = [](const bool b, const std::string& m) {
       tfel::raise_if(b, "CastemInterface::endTreatment: " + m);
     };
+    this->checkIfTemperatureIsDefinedAsTheFirstExternalStateVariable(mb);
     // get the modelling hypotheses to be treated
     const auto& mhs = this->getModellingHypothesesToBeTreated(mb);
     // some consistency checks

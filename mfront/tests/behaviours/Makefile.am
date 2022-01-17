@@ -33,6 +33,7 @@ MFRONTS= DDIF2.mfront                                                      \
 	 Plasticity2.mfront                                                \
 	 Plasticity3.mfront                                                \
 	 Plasticity4.mfront                                                \
+     PlasticityWithoutAutomaticTemperatureDeclaration.mfront           \
 	 DruckerPrager.mfront                                              \
          Norton.mfront                                                     \
          Norton2.mfront                                                    \

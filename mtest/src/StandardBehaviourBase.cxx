@@ -17,6 +17,7 @@
 #include "TFEL/Math/tmatrix.hxx"
 #include "TFEL/Math/st2tost2.hxx"
 #include "TFEL/System/ExternalLibraryManager.hxx"
+#include "MFront/MFrontLogStream.hxx"
 #include "MTest/BehaviourWorkSpace.hxx"
 #include "MTest/StandardBehaviourBase.hxx"
 
@@ -179,8 +180,10 @@ namespace mtest {
                    "StandardBehaviourBase::StandardBehaviourBase: "
                    "unsupported behaviour type "
                    "(neither isotropic nor orthotropic)");
-    this->evnames.insert(this->evnames.begin(), "Temperature");
-    this->evtypes.insert(this->evtypes.begin(), 0);
+    if (this->hasTemperatureBeenRemovedFromExternalStateVariables) {
+      this->evnames.insert(this->evnames.begin(), "Temperature");
+      this->evtypes.insert(this->evtypes.begin(), 0);
+    }
   }  // end of StandardBehaviourBase
 
   StandardBehaviourBase::StandardBehaviourBase(

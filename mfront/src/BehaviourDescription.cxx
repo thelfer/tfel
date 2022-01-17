@@ -32,6 +32,10 @@ namespace mfront {
   const char* const BehaviourDescription::parametersAsStaticVariables =
       "parametersAsStaticVariables";
 
+  const char* const BehaviourDescription::
+      automaticDeclarationOfTheTemperatureAsFirstExternalStateVariable =
+          "automatically_declare_temperature_as_first_external_state_variable";
+
   static MaterialPropertyDescription buildMaterialPropertyDescription(
       const BehaviourDescription::ConstantMaterialProperty& mp,
       const BehaviourDescription& bd,
@@ -400,10 +404,26 @@ namespace mfront {
 
   BehaviourDescription::BehaviourDescription() {
     constexpr auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
-    // treating the temperature
+    const auto* const Topt = BehaviourDescription::
+        automaticDeclarationOfTheTemperatureAsFirstExternalStateVariable;
     auto T = VariableDescription{"temperature", "T", 1u, 0u};
     T.setGlossaryName("Temperature");
     this->addExternalStateVariable(h, T, BehaviourData::UNREGISTRED);
+    this->setAttribute(Topt, true, false);
+  }  // end of BehaviourDescription
+
+  BehaviourDescription::BehaviourDescription(const tfel::utilities::DataMap& opts) {
+    constexpr auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+    // treating the temperature
+    const auto* const Topt = BehaviourDescription::
+        automaticDeclarationOfTheTemperatureAsFirstExternalStateVariable;
+    const auto bT = tfel::utilities::get_if<bool>(opts, Topt, true);
+    this->setAttribute(Topt, bT, false);
+    if (bT) {
+      auto T = VariableDescription{"temperature", "T", 1u, 0u};
+      T.setGlossaryName("Temperature");
+      this->addExternalStateVariable(h, T, BehaviourData::UNREGISTRED);
+    }
   }  // end of BehaviourDescription
 
   BehaviourDescription::BehaviourDescription(const BehaviourDescription&) =
@@ -2015,6 +2035,29 @@ namespace mfront {
     mptr f = &BehaviourData::addAuxiliaryStateVariable;
     this->addVariable(h, v, s, f);
   }
+
+  bool
+  BehaviourDescription::isTemperatureDefinedAsTheFirstExternalStateVariable()
+      const {
+    const auto mhs = this->getDistinctModellingHypotheses();
+    for (const auto h : mhs) {
+      const auto& esvs = this->getBehaviourData(h).getExternalStateVariables();
+      if (esvs.empty()) {
+        return false;
+      }
+      if (esvs[0].getExternalName() != tfel::glossary::Glossary::Temperature) {
+        return false;
+      }
+      if (SupportedTypes::getTypeFlag(esvs[0].type) !=
+          SupportedTypes::SCALAR) {
+        return false;
+      }
+      if ((esvs[0].type != "temperature") && (esvs[0].type != "real")) {
+        return false;
+      }
+    }
+    return true;
+  }  // end of isTemperatureDefinedAsTheFirstExternalStateVariable
 
   void BehaviourDescription::addExternalStateVariables(
       const Hypothesis h,

@@ -84,6 +84,7 @@ namespace mfront {
     auto throw_if = [](const bool b, const std::string& m) {
       tfel::raise_if(b, "ComsolInterface::endTreatment: " + m);
     };
+    this->checkIfTemperatureIsDefinedAsTheFirstExternalStateVariable(bd);
     throw_if(bd.getBehaviourType() !=
                  BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR,
              "the comsol interface only supports strain based behaviours");

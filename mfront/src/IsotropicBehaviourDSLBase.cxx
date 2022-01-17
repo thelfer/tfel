@@ -39,8 +39,12 @@ namespace mfront {
     this->reserveName("\u03B8");
     this->reserveName("iterMax");
     // intermediate temperature
-    this->mb.addLocalVariable(h,
-                              VariableDescription("temperature", "T_", 1u, 0u));
+    const auto* const Topt = BehaviourDescription::
+        automaticDeclarationOfTheTemperatureAsFirstExternalStateVariable;
+    if (this->mb.getAttribute<bool>(Topt)) {
+      const auto T_ = VariableDescription("temperature", "T_", 1u, 0u);
+      this->mb.addLocalVariable(h, T_);
+    }
     // Call Back
     this->registerNewCallBack(
         "@UsableInPurelyImplicitResolution",
@@ -301,14 +305,18 @@ namespace mfront {
       auto& log = getLogStream();
       log << "IsotropicBehaviourDSLBase::endsInputFileProcessing: begin\n";
     }
-    // temperature at the midle of the time step
-    CodeBlock initLocalVars;
-    initLocalVars.code = "this->T_ = this->T+(" + this->getClassName() +
-                         "::theta)*(this->dT);\n";
-    this->mb.setCode(ModellingHypothesis::UNDEFINEDHYPOTHESIS,
-                     BehaviourData::BeforeInitializeLocalVariables,
-                     initLocalVars, BehaviourData::CREATEORAPPEND,
-                     BehaviourData::BODY);
+    const auto* const Topt = BehaviourDescription::
+        automaticDeclarationOfTheTemperatureAsFirstExternalStateVariable;
+    if (this->mb.getAttribute<bool>(Topt)) {
+      // temperature at the midle of the time step
+      CodeBlock initLocalVars;
+      initLocalVars.code = "this->T_ = this->T + (" + this->getClassName() +
+                           "::theta) * (this->dT);\n";
+      this->mb.setCode(ModellingHypothesis::UNDEFINEDHYPOTHESIS,
+                       BehaviourData::BeforeInitializeLocalVariables,
+                       initLocalVars, BehaviourData::CREATEORAPPEND,
+                       BehaviourData::BODY);
+    }
     if (getVerboseMode() >= VERBOSE_DEBUG) {
       auto& log = getLogStream();
       log << "IsotropicBehaviourDSLBase::endsInputFileProcessing: end\n";

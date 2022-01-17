@@ -89,6 +89,19 @@ namespace mfront {
      * \param[in] out  : output file
      * \param[in] i    : standard behaviour interface
      * \param[in] mb   : behaviour description
+     * \param[in] name : name of the behaviour as defined by the interface
+     *                   (generally taking into account the material
+     *                    and the behaviour name)
+     */
+    void writeTemperatureRemovedFromExternalStateVariablesSymbol(
+        std::ostream &,
+        const StandardBehaviourInterface &,
+        const BehaviourDescription &,
+        const std::string &) const;
+    /*!
+     * \param[in] out  : output file
+     * \param[in] i    : standard behaviour interface
+     * \param[in] mb   : behaviour description
      * \param[in] fd   : file description
      * \param[in] name : name of the behaviour as defined by the interface
      *                   (generally taking into account the material

@@ -298,6 +298,7 @@ namespace mfront {
     auto throw_if = [](const bool b, const std::string& m) {
       tfel::raise_if(b, "LSDYNAInterface::endTreatment: " + m);
     };
+    this->checkIfTemperatureIsDefinedAsTheFirstExternalStateVariable(mb);
     //    checkOrthotropyManagementPolicyConsistency(mb);
     throw_if(!((mb.getBehaviourType() ==
                 BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) ||

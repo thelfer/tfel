@@ -14,6 +14,7 @@
 #ifndef LIB_MFRONT_MFRONTUMATINTERFACEBASE_HXX
 #define LIB_MFRONT_MFRONTUMATINTERFACEBASE_HXX
 
+#include <string_view>
 #include "TFEL/Utilities/CxxTokenizer.hxx"
 #include "MFront/VariableDescription.hxx"
 #include "MFront/BehaviourDescription.hxx"
@@ -41,12 +42,24 @@ namespace mfront {
    */
   struct MFRONT_VISIBILITY_EXPORT UMATInterfaceBase
       : public StandardBehaviourInterface {
-    //! constructor
+    //! \brief constructor
     UMATInterfaceBase();
 
     void exportMechanicalData(std::ostream&,
                               const Hypothesis,
                               const BehaviourDescription&) const override;
+    /*!
+     * This method check of the temperature is defined as the first external
+     * state variable. If this is not the case, an exception is thrown.
+     *
+     * \note The temperature must be defined as the first external state
+     * variable in many interfaces.
+     *
+     * \param[in] bd: behaviour description
+     * \param[in] i: interface name
+     */
+    void checkIfTemperatureIsDefinedAsTheFirstExternalStateVariable(
+        const BehaviourDescription&) const;
     /*!
      * \param[out] f      : output file
      * \param[out] first  : true if not initializer has been declared yet
