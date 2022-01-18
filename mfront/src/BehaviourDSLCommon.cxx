@@ -237,6 +237,17 @@ namespace mfront {
         &BehaviourDSLCommon::treatDislocationsMeanFreePathInteractionMatrix);
   }  // end of BehaviourDSLCommon
 
+  std::vector<AbstractDSL::DSLOptionDescription>
+  BehaviourDSLCommon::getDSLOptions() const {
+    auto opts = DSLBase::getDSLOptions();
+    opts.push_back(
+        {BehaviourDescription::
+             automaticDeclarationOfTheTemperatureAsFirstExternalStateVariable,
+         "boolean stating if the temperature shall be automatically declared as "
+         "an external state variable"});
+    return opts;
+  }  // end of getDSLOptions
+
   AbstractDSL::DSLOptions BehaviourDSLCommon::buildDSLOptions() const {
     return {{DSLBase::parametersAsStaticVariablesOption,
              this->mb.getAttribute<bool>(

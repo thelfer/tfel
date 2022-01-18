@@ -56,12 +56,9 @@ namespace mfront {
     static const char* const parametersAsStaticVariablesOption;
     //! \return a validator for the options passed to the DSL
     static tfel::utilities::DataMapValidator getDSLOptionsValidator();
-    //! \return the file description associated with the treated file
+    //
+    std::vector<DSLOptionDescription> getDSLOptions() const override;
     const FileDescription& getFileDescription() const override final;
-    /*!
-     * \return the target description
-     * \note This method shall be called *after* the analyseFile method
-     */
     const TargetsDescription& getTargetsDescription() const override;
     /*!
      * \brief open a file and add given external instructions at the

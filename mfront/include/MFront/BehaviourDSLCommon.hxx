@@ -182,6 +182,7 @@ namespace mfront {
      */
     BehaviourDSLCommon(const DSLOptions&);
     //
+    std::vector<DSLOptionDescription> getDSLOptions() const override;
     DSLOptions buildDSLOptions() const override;
     bool useQt() const override;
     void disableQuantitiesUsageIfNotAlreadySet() override;

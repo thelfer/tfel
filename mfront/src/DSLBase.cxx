@@ -87,6 +87,13 @@ namespace mfront {
     this->addSeparator("\u22C5");
   }  // end of DSLBase::DSLBase
 
+  std::vector<AbstractDSL::DSLOptionDescription> DSLBase::getDSLOptions()
+      const {
+    return {{DSLBase::parametersAsStaticVariablesOption,
+             "boolean stating if the parameter shall be treated as static "
+             "variables"}};
+  }
+
   std::vector<std::string> DSLBase::getDefaultReservedNames() {
     auto names = std::vector<std::string>{};
     // names of the c++ standard

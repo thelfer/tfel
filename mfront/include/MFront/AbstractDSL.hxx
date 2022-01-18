@@ -42,7 +42,16 @@ namespace mfront {
       MATERIALPROPERTYDSL,
       BEHAVIOURDSL,
       MODELDSL
-    };  // end of DSLTarget
+    };
+    /*!
+     * \brief structure used to describe a DSL option
+     */
+    struct DSLOptionDescription {
+      std::string name;
+      std::string description;
+    };  // end of struct DSLOptionDescription
+    //! \return the list of options accepted by the DSL
+    virtual std::vector<DSLOptionDescription> getDSLOptions() const = 0;
     //! \return the target of the dsl
     virtual DSLTarget getTargetType() const = 0;
     //! \return the file description associated with the treated file

@@ -102,6 +102,8 @@ namespace mfront {
 
     virtual void treatListParsers();
 
+    virtual void treatListDSLOptions();
+
     virtual void registerArgumentCallBacks();
 
     virtual void analyseTargetsFile();

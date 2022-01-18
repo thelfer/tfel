@@ -144,6 +144,18 @@ $ mfront --obuild --interface=generic                          \
     Plasticity.mfront
 ~~~~
 
+### Retrieving the list of options associated with a domain specific language {#sec:tfel_4.1:mfront:list_dsl_options}
+
+The list of options associated with a domain specific language can be
+retrieved using the `--list-dsl-options` command line argument as
+follows:
+
+~~~~{.bash}
+$ mfront --list-dsl-options=RungeKutta
+- parameters_as_static_variables: boolean stating if the parameter shall be treated as static variables.
+- automatically_declare_temperature_as_first_external_state_variable: boolean stating if the temperature shall be automatically declared as an external state variable.
+~~~~
+
 
 # `MTest` improvements
 
@@ -317,10 +329,16 @@ b = mtest.Behaviour(library = 'src/libBehaviour.so',
 
 # Issues fixed
 
+## Issue #83: [mfront] Add a command line argument to retrieve the list of options associated with a domain specific language
+
+This feature is described in Section
+@sec:tfel_4.1:mfront:list_dsl_options.
+
+For more details, see : <https://github.com/thelfer/tfel/issues/82>
 
 ## Issue #82: [mfront] Ability to define DSL options on the command line
 
-The wrapper is described in Section
+This feature is described in Section
 @sec:tfel_4.1:mfront:global_dsl_options.
 
 For more details, see : <https://github.com/thelfer/tfel/issues/82>

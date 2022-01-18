@@ -251,8 +251,21 @@ namespace mfront {
                 << ".\n";
       ++p;
     }
-    exit(EXIT_SUCCESS);
+    std::exit(EXIT_SUCCESS);
   }  // end of MFront::treatListParsers
+
+  void MFront::treatListDSLOptions() {
+    auto& f = DSLFactory::getDSLFactory();
+    auto dsl = f.createNewDSL(this->currentArgument->getOption());
+    for (const auto& o : dsl->getDSLOptions()) {
+      auto tmp = "- " + o.name;
+      if (tmp.size() <= 32) {
+        tmp.insert(tmp.size(), 32 - tmp.size(), ' ');
+      }
+      std::cout << tmp << ": " << o.description << ".\n";
+    }
+    std::exit(EXIT_SUCCESS);
+  }  // end of treatListDSLOptions
 
   void MFront::treatSilentBuild() {
     const auto& o = this->currentArgument->getOption();
@@ -313,6 +326,9 @@ namespace mfront {
                               "(deprecated, use --list-dsl)");
     this->registerNewCallBack("--list-dsl", &MFront::treatListParsers,
                               "list all available domain specific languages");
+    this->registerNewCallBack(
+        "--list-dsl-options", &MFront::treatListDSLOptions,
+        "list the options associated with a domain specific language", true);
     this->registerNewCallBack(
         "--dsl-option", &MFront::treatDSLOption,
         "allow to define options passed to domain specific languages", true);
