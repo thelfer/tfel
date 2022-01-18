@@ -17,16 +17,17 @@
 #include <set>
 #include <map>
 #include <string>
-
 #include "MFront/MFrontConfig.hxx"
 #include "MFront/VariableDescription.hxx"
 #include "MFront/StaticVariableDescription.hxx"
 #include "MFront/VariableBoundsDescription.hxx"
+#include "MFront/MaterialKnowledgeDescriptionAttribute.hxx"
 
 namespace mfront {
 
-  //! Class describing a model
-  struct MFRONT_VISIBILITY_EXPORT ModelDescription {
+  //! \brief class describing a model
+  struct MFRONT_VISIBILITY_EXPORT ModelDescription
+      : public MaterialKnowledgeDescriptionAttributesHandler {
     //! a model may contain several function
     struct MFRONT_VISIBILITY_EXPORT Function {
       //! default constructor

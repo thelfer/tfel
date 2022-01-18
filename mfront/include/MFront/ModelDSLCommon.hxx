@@ -59,6 +59,7 @@ namespace mfront {
     ~ModelDSLCommon() override;
 
    protected:
+    DSLOptions buildDSLOptions() const override;
     void disableQuantitiesUsageIfNotAlreadySet() override;
     bool useQt() const override;
     void reserveName(const std::string&) override;

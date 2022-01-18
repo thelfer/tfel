@@ -301,6 +301,18 @@ namespace tfel::utilities {
   TFELUTILITIES_VISIBILITY_EXPORT DataMap
   extract(const DataMap&, const std::vector<std::string>&);
 
+  /*!
+   * \return the data map resulting from the merge of two data maps.
+   * \param[in] m1: first data map
+   * \param[in] m2: second data map
+   * \param[in] b: boolean stating if multiple data definition are allowed. If
+   * so, the resulting map will contain the value of the first data map.
+   * Otherwise, an exception is thrown.
+   */
+  TFELUTILITIES_VISIBILITY_EXPORT DataMap merge(const DataMap&,
+                                                const DataMap&,
+                                                const bool);
+
 }  // end of namespace tfel::utilities
 
 #include "TFEL/Utilities/Data.ixx"

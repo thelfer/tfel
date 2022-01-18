@@ -488,6 +488,27 @@ namespace mfront {
     Parser::registerNewCallBack("--verbose",
                                 &BehaviourDocumentationGenerator::treatVerbose,
                                 "set verbose output", true);
+    this->registerNewCallBack(
+        "--dsl-option", &BehaviourDocumentationGenerator::treatDSLOption,
+        "allow to define options passed to domain specific languages", true);
+    this->registerNewCallBack(
+        "--material-property-dsl-option",
+        &BehaviourDocumentationGenerator::treatMaterialPropertyDSLOption,
+        "allow to define options passed to domain specific languages related "
+        "to material properties",
+        true);
+    this->registerNewCallBack(
+        "--behaviour-dsl-option",
+        &BehaviourDocumentationGenerator::treatBehaviourDSLOption,
+        "allow to define options passed to domain specific languages related "
+        "to behaviours",
+        true);
+    this->registerNewCallBack(
+        "--model-dsl-option",
+        &BehaviourDocumentationGenerator::treatModelDSLOption,
+        "allow to define options passed to domain specific languages related "
+        "to models",
+        true);
     Parser::registerNewCallBack(
         "--unicode-output",
         &BehaviourDocumentationGenerator::treatUnicodeOutput,

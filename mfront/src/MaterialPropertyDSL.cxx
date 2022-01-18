@@ -96,7 +96,21 @@ namespace mfront {
       this->reserveName(v);
     }
     this->reserveName("params");
+    //
+    if (opts.count(DSLBase::parametersAsStaticVariablesOption) != 0) {
+      const auto b =
+          opts.at(DSLBase::parametersAsStaticVariablesOption).get<bool>();
+      this->md.setAttribute(
+          MaterialPropertyDescription::parametersAsStaticVariables, b, false);
+    }
   }  // end of MaterialPropertyDSL()
+
+  AbstractDSL::DSLOptions MaterialPropertyDSL::buildDSLOptions() const {
+    return {
+        {DSLBase::parametersAsStaticVariablesOption,
+         this->md.getAttribute<bool>(
+             MaterialPropertyDescription::parametersAsStaticVariables, false)}};
+  }  // end of buildDSLOptions
 
   AbstractDSL::DSLTarget MaterialPropertyDSL::getTargetType() const {
     return MATERIALPROPERTYDSL;

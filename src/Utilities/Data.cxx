@@ -433,4 +433,19 @@ namespace tfel::utilities {
     return r;
   }
 
+  DataMap merge(const DataMap& m1, const DataMap& m2, const bool b) {
+    auto r = m1;
+    if (b) {
+      r.insert(m2.begin(), m2.end());
+    } else {
+      for (const auto& kv : m2) {
+        if (!r.insert(kv).second) {
+          tfel::raise("merge: value associated with key '" + kv.first +
+                      "' already defined");
+        }
+      }
+    }
+    return r;
+  }
+
 }  // end of namespace tfel::utilities

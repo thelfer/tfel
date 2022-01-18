@@ -16,6 +16,9 @@
 
 namespace mfront {
 
+  const char* const MaterialKnowledgeDescriptionAttributesHandler::
+      parametersAsStaticVariables = "parametersAsStaticVariables";
+
   void MaterialKnowledgeDescriptionAttributesHandler::throwUndefinedAttribute(
       const std::string& n) {
     tfel::raise(

@@ -182,6 +182,7 @@ namespace mfront {
      */
     BehaviourDSLCommon(const DSLOptions&);
     //
+    DSLOptions buildDSLOptions() const override;
     bool useQt() const override;
     void disableQuantitiesUsageIfNotAlreadySet() override;
     std::string getClassName() const override;

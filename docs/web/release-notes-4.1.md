@@ -59,10 +59,10 @@ external state variables.
 
 # `MFront` improvements
 
-## Global options to domain specific languages
+## Options to domain specific languages
 
-Domain specific language can have global options which can modify the
-default behaviour of `MFront`.
+Domain specific language can have options which can modify their
+default behaviour.
 
 ### Treat parameters as static variables
 
@@ -79,6 +79,12 @@ If `true`, the parameters will be treated as static variables. In
 particular, the values of the parameters can not be changed as runtime.
 From the solver point of view, the behaviour does not declare any
 parameter.
+
+If the current domain specific language calls other domain specific
+languages (for example, a behaviour calling an external material
+property), the value of this option is automatically passed to those
+domain specific languages (unless superceeded by global options, as
+detailled in Section @sec:tfel_4.1:mfront:global_dsl_options).
 
 ### Automatic declaration of the temperature as the first external state variable for behaviours {#sec:tfel:mfront:global_options:temperature_as_first_external_state_variable}
 
@@ -110,6 +116,34 @@ at the middle of the time step in a local variable named `T_`. This
 declaration is disabled if the
 `automatically_declare_temperature_as_first_external_state_variable`
 option is set to `false`.
+
+### Defining global options from the command line {#sec:tfel_4.1:mfront:global_dsl_options}
+
+Options passed to domain specific languages can be defined globally
+using one of the following command line arguments:
+
+- `--dsl-option`, which allows to define an option for all domain
+  specific languages.
+- `--material-property-dsl-option`, which allows to define an option for
+  all domain specific languages related to material properties.
+- `--behaviour-dsl-option`, which allows to define an option for all
+  domain specific languages related to behaviours.
+- `--model-dsl-option`, which allows to define an option for all domain
+  specific languages related to models.
+
+The options defined by command line arguments are merged with the
+options defined inside the `MFront` file. In case of conflicts, an
+option defined on the command-line overwrites the option defined in the
+`MFront` file.
+
+#### Example of usage
+
+~~~~{.cxx}
+$ mfront --obuild --interface=generic                          \
+    --behaviour-dsl-option=parameters_as_static_variables:true \
+    Plasticity.mfront
+~~~~
+
 
 # `MTest` improvements
 
@@ -283,6 +317,14 @@ b = mtest.Behaviour(library = 'src/libBehaviour.so',
 
 # Issues fixed
 
+
+## Issue #82: [mfront] Ability to define DSL options on the command line
+
+The wrapper is described in Section
+@sec:tfel_4.1:mfront:global_dsl_options.
+
+For more details, see : <https://github.com/thelfer/tfel/issues/82>
+
 ## Issue #55: [mtest] Creation of a wrapper around behaviours written in the logarithmic strain framework generated with the `aster` interface
 
 The wrapper is described in Section
@@ -294,7 +336,7 @@ For more details, see : <https://github.com/thelfer/tfel/issues/55>
 
 For more details, see : <https://github.com/thelfer/tfel/issues/57>
 
-## Issue #50: [mfront] Options to avoid the automatic declaration of the temperature as an external state variable {sec:tfel:4.1:issue:50}
+## Issue #50: [mfront] Options to avoid the automatic declaration of the temperature as an external state variable {#sec:tfel:4.1:issue:50}
 
 This option is described in depth in Section
 @sec:tfel:mfront:global_options:temperature_as_first_external_state_variable.

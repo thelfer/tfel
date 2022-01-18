@@ -45,6 +45,8 @@ namespace mfront {
    */
   struct MFRONT_VISIBILITY_EXPORT
       MaterialKnowledgeDescriptionAttributesHandler {
+    //! \brief attribute name
+    static const char* const parametersAsStaticVariables;
     /*!
      * \brief throw an exception saying that no attribute with the given name
      * exists

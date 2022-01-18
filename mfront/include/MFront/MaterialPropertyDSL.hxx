@@ -70,8 +70,11 @@ namespace mfront {
     ~MaterialPropertyDSL() override;
 
    protected:
+    //
     typedef void (MaterialPropertyDSL::*MemberFuncPtr)();
     typedef std::map<std::string, MemberFuncPtr> CallBackContainer;
+    //
+    DSLOptions buildDSLOptions() const override;
     std::map<std::string, int> getIntegerConstants() const override;
     bool useQt() const override;
     void disableQuantitiesUsageIfNotAlreadySet() override;

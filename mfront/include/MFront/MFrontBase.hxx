@@ -29,7 +29,7 @@ namespace mfront {
   struct AbstractDSL;
 
   /*!
-   * \brief Base class for the MFront and MFrontQuery classes
+   * \brief base class for the MFront and MFrontQuery classes
    */
   struct MFRONT_VISIBILITY_EXPORT MFrontBase {
     /*!
@@ -65,6 +65,14 @@ namespace mfront {
      * option
      */
     virtual void treatInstallPath();
+    //! \brief treat the `--dsl-option` command line option
+    virtual void treatDSLOption();
+    //! \brief treat the `--material-property-dsl-option` command line option
+    virtual void treatMaterialPropertyDSLOption();
+    //! \brief treat the `--behaviour-dsl-option` command line option
+    virtual void treatBehaviourDSLOption();
+    //! \brief treat the `--model-dsl-option` command line option
+    virtual void treatModelDSLOption();
     //! \brief treat the `--warning` command line option
     virtual void treatWarning();
     //! \brief treat the `--debug` command line option

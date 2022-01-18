@@ -39,6 +39,7 @@
 #include "MFront/MFrontLogStream.hxx"
 #include "MFront/MFrontMaterialPropertyInterface.hxx"
 #include "MFront/StaticVariableDescription.hxx"
+#include "MFront/GlobalDomainSpecificLanguageOptionsManager.hxx"
 #include "MFront/MaterialPropertyDSL.hxx"
 
 // fixing a bug on current glibc++ cygwin versions (19/08/2015)
@@ -893,9 +894,12 @@ namespace mfront {
 
   std::shared_ptr<MaterialPropertyDescription>
   DSLBase::handleMaterialPropertyDescription(const std::string& f) {
-    // getting informations the source files
-#pragma message("forward appropriate options")
-    MaterialPropertyDSL mp({});
+    // getting informations the source file
+    const auto& global_options =
+        GlobalDomainSpecificLanguageOptionsManager::get();
+    auto mp = MaterialPropertyDSL{
+        tfel::utilities::merge(global_options.getMaterialPropertyDSLOptions(),
+                               this->buildDSLOptions(), true)};
     try {
       MFrontMaterialPropertyInterface minterface;
       const auto& path = SearchPathsHandler::search(f);
@@ -929,7 +933,7 @@ namespace mfront {
     }
     const auto& m = mp.getMaterialPropertyDescription();
     return std::make_shared<MaterialPropertyDescription>(m);
-  }  // end of DSLBase::handleMaterialLaw
+  }  // end of DSLBase::handleMaterialPropertyDescription
 
   void DSLBase::treatMaterialLaw() {
     const auto vfiles =

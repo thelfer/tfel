@@ -29,9 +29,6 @@
 
 namespace mfront {
 
-  const char* const BehaviourDescription::parametersAsStaticVariables =
-      "parametersAsStaticVariables";
-
   const char* const BehaviourDescription::
       automaticDeclarationOfTheTemperatureAsFirstExternalStateVariable =
           "automatically_declare_temperature_as_first_external_state_variable";

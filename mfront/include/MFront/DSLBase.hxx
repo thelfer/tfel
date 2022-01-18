@@ -163,6 +163,8 @@ namespace mfront {
      * \param[in] opts: options passed to the DSL
      */
     DSLBase(const DSLOptions&);
+    // \return options for child DSL (DSL called by this DSL)
+    virtual DSLOptions buildDSLOptions() const = 0;
     /*!
      * \brief register a name.
      * \param[in] n : name

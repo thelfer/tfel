@@ -52,6 +52,7 @@
 #include "MFront/MaterialPropertyDescription.hxx"
 #include "MFront/ModelDSL.hxx"
 #include "MFront/MFrontModelInterface.hxx"
+#include "MFront/GlobalDomainSpecificLanguageOptionsManager.hxx"
 #include "MFront/BehaviourDSLCommon.hxx"
 
 // fixing a bug on current glibc++ cygwin versions (19/08/2015)
@@ -107,12 +108,12 @@ namespace mfront {
 
   BehaviourDSLCommon::BehaviourDSLCommon(const DSLOptions& opts)
       : DSLBase(opts),
-        useStateVarTimeDerivative(false),
-        explicitlyDeclaredUsableInPurelyImplicitResolution(false),
         mb(tfel::utilities::extract(
             opts,
             {BehaviourDescription::
-                 automaticDeclarationOfTheTemperatureAsFirstExternalStateVariable})) {
+                 automaticDeclarationOfTheTemperatureAsFirstExternalStateVariable})),
+        useStateVarTimeDerivative(false),
+        explicitlyDeclaredUsableInPurelyImplicitResolution(false) {
     using MemberFunc = void (BehaviourDSLCommon::*)();
     //
     if (opts.count(DSLBase::parametersAsStaticVariablesOption) != 0) {
@@ -235,6 +236,12 @@ namespace mfront {
     add("@DislocationsMeanFreePathInteractionMatrix",
         &BehaviourDSLCommon::treatDislocationsMeanFreePathInteractionMatrix);
   }  // end of BehaviourDSLCommon
+
+  AbstractDSL::DSLOptions BehaviourDSLCommon::buildDSLOptions() const {
+    return {{DSLBase::parametersAsStaticVariablesOption,
+             this->mb.getAttribute<bool>(
+                 BehaviourDescription::parametersAsStaticVariables, false)}};
+  }  // end of buildDSLOptions
 
   std::string BehaviourDSLCommon::getMaterialKnowledgeIdentifier() const {
     if (this->mb.isBehaviourNameDefined()) {
@@ -926,10 +933,12 @@ namespace mfront {
       getLogStream() << "BehaviourDSLCommon::getModelDescription: "
                      << "treating file '" << f << "'\n";
     }
-    // getting informations the source files
+    const auto& global_options =
+        GlobalDomainSpecificLanguageOptionsManager::get();
     const auto path = SearchPathsHandler::search(f);
-#pragma message("forward appropriate options")
-    ModelDSL dsl({});
+    auto dsl = ModelDSL{tfel::utilities::merge(
+        global_options.getModelDSLOptions(), this->buildDSLOptions(), true)};
+    // getting informations the source files
     try {
       dsl.setInterfaces({"mfront"});
       dsl.analyseFile(path, {}, {});

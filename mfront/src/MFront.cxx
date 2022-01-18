@@ -313,6 +313,25 @@ namespace mfront {
                               "(deprecated, use --list-dsl)");
     this->registerNewCallBack("--list-dsl", &MFront::treatListParsers,
                               "list all available domain specific languages");
+    this->registerNewCallBack(
+        "--dsl-option", &MFront::treatDSLOption,
+        "allow to define options passed to domain specific languages", true);
+    this->registerNewCallBack(
+        "--material-property-dsl-option",
+        &MFront::treatMaterialPropertyDSLOption,
+        "allow to define options passed to domain specific languages related "
+        "to material properties",
+        true);
+    this->registerNewCallBack(
+        "--behaviour-dsl-option", &MFront::treatBehaviourDSLOption,
+        "allow to define options passed to domain specific languages related "
+        "to behaviours",
+        true);
+    this->registerNewCallBack(
+        "--model-dsl-option", &MFront::treatModelDSLOption,
+        "allow to define options passed to domain specific languages related "
+        "to models",
+        true);
 #ifdef MFRONT_HAVE_MADNEX
     this->registerNewCallBack("--material", &MFront::treatMaterialIdentifier,
                               "specify a material identifier", true);
