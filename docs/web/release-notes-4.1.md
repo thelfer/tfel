@@ -156,7 +156,6 @@ $ mfront --list-dsl-options=RungeKutta
 - automatically_declare_temperature_as_first_external_state_variable: boolean stating if the temperature shall be automatically declared as an external state variable.
 ~~~~
 
-
 # `MTest` improvements
 
 ## Support for a boundary condition modelling the effet of a mandrel in pipe modelling {#sec:tfel_4.1:mtest:mandrel}
