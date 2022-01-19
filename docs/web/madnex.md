@@ -144,7 +144,7 @@ The `--list-materials` returns the list of all materials in a `MFront`
 file:
 
 ~~~~{.bash}
-$ `mfront-query` --list-materials file.madnex
+$ mfront-query --list-materials file.madnex
 ~~~~
 
 ### Listing of all material properties, all behaviours or all models

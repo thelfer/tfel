@@ -43,6 +43,9 @@ of the pipe:
 The `--list-materials` returns the list of materials for which material
 knowledge is defined inside a [`madnex file`](madnex.html).
 
+If a material knowledge is not associated to a material, the special
+identifier `<none>` is returned.
+
 ## Better `--list-material-properties` query {#sec:tfel-3.4.4:mfront-query:list_materials_properties}
 
 The `--list-material-properties` query can now have an option:
@@ -91,6 +94,22 @@ specific targets are also displayed, unless the `--nomelt` command line
 argument is used.
 
 # Issues solved
+
+## Issue #87: Better `--list-material-properties`, `--list-behaviours` and `--list-models queries`
+
+Theses features are described in Sections
+@sec:tfel-3.4.4:mfront-query:list_materials_properties,
+@sec:tfel-3.4.4:mfront-query:list_behaviours and
+@sec:tfel-3.4.4:mfront-query:list_models.
+
+For more details, see : <https://github.com/thelfer/tfel/issues/87>
+
+## Issue #86: [mfront-query] new `--list-materials` query
+
+This feature is described in Section
+@sec:tfel-3.4.4:mfront-query:list_materials.
+
+For more details, see : <https://github.com/thelfer/tfel/issues/86>
 
 ## Issue #85: [mfront] Support for the `.mdnx` file extension for `madnex` files
 
