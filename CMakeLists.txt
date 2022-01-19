@@ -149,7 +149,7 @@ option(enable-portable-build "produce binary that can be shared between various 
 option(enable-madnex "enable madnex file support in mfront (see https://github.com/thelfer/madnex)" OFF)
 if(enable-madnex)
   find_package(Madnex REQUIRED)
-  set(HAVE_MADNEX ON)
+  set(TFEL_HAVE_MADNEX ON)
 endif(enable-madnex)
 
 # fortran (placed before compiler detection)
