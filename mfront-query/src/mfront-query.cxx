@@ -1,5 +1,5 @@
 /*!
- * \file  mfront-query.cxx
+ * \file  mfront-query/src/mfront-query.cxx
  * \brief
  * \author Thomas Helfer
  * \date   04 mars 2015
@@ -21,10 +21,12 @@
 #endif /* small */
 #endif /* __CYGWIN__ */
 
+#include <string>
 #include <cstdlib>
 #include <cstring>
 #include <iostream>
 #include <stdexcept>
+#include <string_view>
 
 #ifdef MFRONT_HAVE_MADNEX
 #include "Madnex/MFrontDataBase.hxx"
@@ -53,6 +55,17 @@ using GetAvailableImplementationsPtr1 = std::vector<std::string> (
 using GetAvailableImplementationsPtr2 =
     std::map<std::string, std::vector<std::string>> (
         madnex::MFrontDataBase::*)() const;
+
+static bool checkMadnexFileExtension(const mfront::PathSpecifier& p){
+  const auto ext = [p]() -> std::string {
+    const auto pos = p.file.find(".");
+    if (pos != std::string::npos) {
+      return p.file.substr(pos + 1);
+    }
+    return "";
+  }();
+  return (ext == "madnex") || (ext == "mdnx") || (ext == "edf");
+} // end of checkMadnexFileExtension
 
 static void listImplementations(const mfront::PathSpecifier& p,
                                 const std::string& itypes,
@@ -83,7 +96,7 @@ static void listImplementations(const mfront::PathSpecifier& p,
     }
     return "";
   }();
-  if ((ext != "madnex") && (ext != "edf")) {
+  if (!checkMadnexFileExtension(p)) {
     tfel::raise("mfront-query: listing " + itypes +
                 " is only supported for madnex files");
   }
@@ -141,6 +154,46 @@ static void listModels(const mfront::PathSpecifier& p) {
   listImplementations(p, "models", m1, m2);
 }  // end of listModels
 
+static void listMaterials(const mfront::PathSpecifier& p) {
+  if (!checkMadnexFileExtension(p)) {
+    tfel::raise(
+        "mfront-query: listing materials is only supported for madnex files");
+  }
+  auto d = madnex::MFrontDataBase{p.file};
+  auto first = true;
+  auto display = [&first](std::string_view m) {
+    if (!first) {
+      std::cout << " ";
+      first = false;
+    }
+    std::cout << m;
+  };
+  for (const auto& m : d.getMaterialsList()) {
+    display(m);
+  }
+  // looking for material knowledge associated with no materials.
+  auto none = false;
+  auto check =
+      [&none](const std::map<std::string, std::vector<std::string>>& impls) {
+        if (none) {
+          return;
+        }
+        for (const auto& kv : impls) {
+          if (kv.first.empty()) {
+            none = true;
+            return;
+          }
+        }
+      };
+  check(d.getAvailableMaterialProperties());
+  check(d.getAvailableBehaviours());
+  check(d.getAvailableModels());
+  if (none) {
+    display("<none>");
+  }
+  std::cout << '\n';
+}  // end of listMaterials
+
 #endif /* MFRONT_QUERY_HAVE_MADNEX */
 
 /* coverity [UNCAUGHT_EXCEPT]*/
@@ -165,6 +218,7 @@ int main(const int argc, const char* const* const argv) {
     auto path_specifiers = std::vector<mfront::PathSpecifier>{};
     auto queries_arguments = std::vector<const char*>{};
 #ifdef MFRONT_QUERY_HAVE_MADNEX
+    auto list_materials = false;
     auto list_material_properties = false;
     auto list_behaviours = false;
     auto list_models = false;
@@ -204,22 +258,9 @@ int main(const int argc, const char* const* const argv) {
       } else if (a == "--usage") {
         std::cout << "Usage : " << argv[0] << " [options] [files]\n";
         std::exit(EXIT_SUCCESS);
-      } else if (a == "--help-material-property-queries-list") {
-        const char* args[2] = {argv[0], "--help"};
-        std::shared_ptr<MaterialPropertyDSL> b;
-        auto bq = std::make_shared<MaterialPropertyQuery>(2, args, b, "");
-        std::exit(EXIT_SUCCESS);
-      } else if (a == "--help-behaviour-queries-list") {
-        const char* args[2] = {argv[0], "--help"};
-        std::shared_ptr<AbstractBehaviourDSL> b;
-        auto bq = std::make_shared<BehaviourQuery>(2, args, b, "");
-        std::exit(EXIT_SUCCESS);
-      } else if (a == "--help-model-queries-list") {
-        const char* args[2] = {argv[0], "--help"};
-        std::shared_ptr<ModelDSL> b;
-        auto bq = std::make_shared<ModelQuery>(2, args, b, "");
-        std::exit(EXIT_SUCCESS);
 #ifdef MFRONT_QUERY_HAVE_MADNEX
+      } else if (a == "--list-materials") {
+        list_materials = true;
       } else if (a == "--list-material-properties") {
         list_material_properties = true;
       } else if (a == "--list-behaviours") {
@@ -227,6 +268,8 @@ int main(const int argc, const char* const* const argv) {
       } else if (a == "--list-models") {
         list_models = true;
 #if (defined _WIN32) || (defined _WIN64)
+      } else if (a == "/list-materials") {
+        list_materials = true;
       } else if (a == "/list-material-properties") {
         list_material_properties = true;
       } else if (a == "/list-behaviours") {
@@ -242,13 +285,18 @@ int main(const int argc, const char* const* const argv) {
     mfront::finalizePathSpecifierArgumentsParsing(path_specifiers,
                                                   current_path_specifier);
 #ifdef MFRONT_QUERY_HAVE_MADNEX
-    if (list_material_properties || list_behaviours || list_models) {
+    if (list_materials || list_material_properties ||  //
+        list_behaviours || list_models) {
       tfel::raise_if(
           queries_arguments.size() != 1u,
-          "specifying queries with the --list-material-properties, "
+          "specifying queries with the "
+          "--list-materials, --list-material-properties, "
           "--list-behaviour or --list-models argument is not supported");
     }
     for (const auto& p : path_specifiers) {
+      if (list_materials) {
+        listMaterials(p);
+      }
       if (list_material_properties) {
         listMaterialProperties(p);
       }
@@ -259,7 +307,8 @@ int main(const int argc, const char* const* const argv) {
         listModels(p);
       }
     }
-    if (list_material_properties || list_behaviours || list_models) {
+    if (list_materials || list_material_properties ||  //
+        list_behaviours || list_models) {
       std::exit(EXIT_SUCCESS);
     }
 #endif /* MFRONT_QUERY_HAVE_MADNEX */

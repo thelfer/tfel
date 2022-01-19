@@ -148,7 +148,7 @@ namespace mfront {
       return "";
     }();
 #ifdef MFRONT_HAVE_MADNEX
-    if ((ext == "madnex") || (ext == "edf")) {
+    if ((ext == "madnex") || (ext == "mdnx") || (ext == "edf")) {
       writeMadnexFile(i, f);
     } else {
       tfel::raise("write: unsupported file extension '" + ext + "'");
