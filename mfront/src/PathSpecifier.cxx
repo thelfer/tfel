@@ -261,7 +261,7 @@ namespace mfront {
       }
       return "";
     }();
-    if ((ext == "madnex") || (ext == "edf")) {
+    if ((ext == "madnex") || (ext == "mdnx") || (ext == "edf")) {
 #ifdef MFRONT_HAVE_MADNEX
       inputs = getImplementationsPathsInMadnexFiles(
           f, material_identifier, material_property_identifier,
