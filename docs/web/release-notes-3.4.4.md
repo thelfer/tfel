@@ -38,6 +38,35 @@ of the pipe:
 
 # New features of `mfront-query`
 
+## New `--list-materials` query {#sec:tfel-3.4.4:mfront-query:list_materials}
+
+The `--list-materials` returns the list of materials for which material
+knowledge is defined inside a [`madnex file`](madnex.html).
+
+## Better `--list-material-properties` query {#sec:tfel-3.4.4:mfront-query:list_materials_properties}
+
+The `--list-material-properties` query can now have an option:
+
+- `sorted-by-materials` (default): which returns the material properties sorted
+  by materials
+- `unsorted`: which returns all the material properties to be generated
+
+## Better `--list-behaviours` query {#sec:tfel-3.4.4:mfront-query:list_behaviours}
+
+The `--list-behaviours` query can now have an option:
+
+- `sorted-by-materials` (default): which returns the behaviours sorted
+  by materials
+- `unsorted`: which returns all the behaviours to be generated
+
+## Better `--list-models` query {#sec:tfel-3.4.4:mfront-query:list_models}
+
+The `--list-models` query can now have an option:
+
+- `sorted-by-materials` (default): which returns the models sorted
+  by materials
+- `unsorted`: which returns all the models to be generated
+
 ## Better `--generated-sources` query {#sec:tfel-3.4.4:mfront-query:generated_sources}
 
 The `--generated-sources` query can now have an option:
@@ -62,6 +91,10 @@ specific targets are also displayed, unless the `--nomelt` command line
 argument is used.
 
 # Issues solved
+
+## Issue #85: [mfront] Support for the `.mdnx` file extension for `madnex` files
+
+For more details, see : <https://github.com/thelfer/tfel/issues/85>
 
 ## Issue #68: [mfront-query] Add a `--dsl-target` option
 

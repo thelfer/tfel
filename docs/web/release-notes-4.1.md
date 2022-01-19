@@ -328,10 +328,6 @@ b = mtest.Behaviour(library = 'src/libBehaviour.so',
 
 # Issues fixed
 
-## Issue #85: [mfront] Support for the `.mdnx` file extension for `madnex` files
-
-For more details, see : <https://github.com/thelfer/tfel/issues/85>
-
 ## Issue #83: [mfront] Add a command line argument to retrieve the list of options associated with a domain specific language
 
 This feature is described in Section
