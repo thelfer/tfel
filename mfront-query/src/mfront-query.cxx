@@ -83,7 +83,7 @@ static void listImplementations(const mfront::PathSpecifier& p,
     }
     return "";
   }();
-  if ((ext != "madnex") && (ext != "edf")) {
+  if ((ext != "madnex") && (ext != "edf") && (ext != "mdnx")) {
     tfel::raise("mfront-query: listing " + itypes +
                 " is only supported for madnex files");
   }
