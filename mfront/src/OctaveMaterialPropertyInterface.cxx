@@ -196,9 +196,8 @@ namespace mfront {
       }
     }
     // parameters
-    if (!mpd.parameters.empty()) {
-      writeAssignMaterialPropertyParameters(out, mpd, name, "double", "octave");
-    }
+    writeAssignMaterialPropertyParameters(out, mpd, name, "real", "octave");
+    //
     if (useQuantities(mpd)) {
       out << "auto " << mpd.output.name << " = " << mpd.output.type << "{};\n";
     } else {

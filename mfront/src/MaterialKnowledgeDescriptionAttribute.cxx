@@ -71,4 +71,11 @@ namespace mfront {
     return this->attributes;
   }  // end of getAttributes
 
+  bool areParametersTreatedAsStaticVariables(
+      const MaterialKnowledgeDescriptionAttributesHandler& h) {
+    return h.getAttribute<bool>(MaterialKnowledgeDescriptionAttributesHandler::
+                                    parametersAsStaticVariables,
+                                false);
+  }  // end of areParametersTreatedAsStaticVariables
+
 }  // end of namespace mfront

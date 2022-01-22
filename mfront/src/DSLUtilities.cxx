@@ -88,6 +88,10 @@ namespace mfront {
   void writeParametersSymbols(std::ostream& os,
                               const std::string& n,
                               const MaterialPropertyDescription& mpd) {
+    if (areParametersTreatedAsStaticVariables(mpd)) {
+      writeParametersDeclarationSymbols(os, n, {});
+      return;
+    }
     writeParametersDeclarationSymbols(os, n, mpd.parameters);
     writeParametersDefaultValuesSymbols(os, n, mpd.parameters);
     writeBoundsSymbols(os, n, mpd.parameters);

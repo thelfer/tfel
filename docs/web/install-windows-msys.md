@@ -29,16 +29,22 @@ provides a convenient shell which is far more easier to use than the
 To build `TFEL`, one may need to install the following tools:
 
 ~~~~{.bash}
-$ pacman -S base-devel gcc git cmake
+$ pacman -S base-devel gcc cmake
 ~~~~
+
+# Installing the official package
+
+~~~~{.bash}
+$ pacman -S mingw-w64-x86_64-tfel
+~~~~
+
+# Compiling `TFEL`
 
 `git` may be required if you want to work on the development branch:
 
 ~~~~{.bash}
 $ pacman -S git
 ~~~~
-
-# Compiling `TFEL`
 
 Compiling `TFEL` is merely a simple as opening a new `MSYS2` session
 and following the instructions given on the
@@ -50,6 +56,14 @@ For example:
 $ cmake [path to TFEL sources] [options]
 $ make
 ~~~~~~~~~~~~~~~~~~~~~~
+
+## Running the tests
+
+~~~~ {#testing .bash}
+$ source env.sh
+$ make check
+~~~~~~~~~~~~~~~~~~~~~~
+
 
 # Usage
 

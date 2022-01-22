@@ -25,7 +25,8 @@ namespace mfront {
       const std::string& n,
       const std::string& t,
       const std::string& i) {
-    if (mpd.parameters.empty()) {
+    if ((areParametersTreatedAsStaticVariables(mpd)) ||
+        (mpd.parameters.empty())) {
       return;
     }
     os << "namespace " << i << "{\n\n"
@@ -144,20 +145,33 @@ namespace mfront {
       const std::string& n,
       const std::string& t,
       const std::string& i) {
-    if (useQuantities(mpd)) {
+    if (areParametersTreatedAsStaticVariables(mpd)) {
       for (const auto& p : mpd.parameters) {
-        os << "const auto " << p.name << " = " << p.type << "(" << i
-           << "::" << n << "MaterialPropertyHandler::get" << n
-           << "MaterialPropertyHandler()." << p.name << ");\n";
+        const auto pv =
+            p.getAttribute<double>(VariableDescription::defaultValue);
+        os << "constexpr auto " << p.name << " = ";
+        if (useQuantities(mpd)) {
+          os << p.type << "(" << pv << ");\n";
+        } else {
+          os << t << "(" << pv << ");\n";
+        }
       }
     } else {
-      for (const auto& p : mpd.parameters) {
-        os << "const " << t << " " << p.name << " = " << i << "::" << n
-           << "MaterialPropertyHandler::get" << n
-           << "MaterialPropertyHandler()." << p.name << ";\n";
+      if (useQuantities(mpd)) {
+        for (const auto& p : mpd.parameters) {
+          os << "const auto " << p.name << " = " << p.type << "(" << i
+             << "::" << n << "MaterialPropertyHandler::get" << n
+             << "MaterialPropertyHandler()." << p.name << ");\n";
+        }
+      } else {
+        for (const auto& p : mpd.parameters) {
+          os << "const " << t << " " << p.name << " = " << i << "::" << n
+             << "MaterialPropertyHandler::get" << n
+             << "MaterialPropertyHandler()." << p.name << ";\n";
+        }
       }
     }
-  }
+  } // end of writeAssignMaterialPropertyParameters
 
   std::string getMaterialPropertyParametersHandlerClassName(
       const std::string& n) {

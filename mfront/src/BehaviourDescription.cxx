@@ -3191,9 +3191,4 @@ namespace mfront {
     return bd.getClassName() + hn + "-parameters.txt";
   }  // end of getParametersFileName
 
-  bool areParametersTreatedAsStaticVariables(const BehaviourDescription& bd) {
-    return bd.getAttribute<bool>(
-        BehaviourDescription::parametersAsStaticVariables, false);
-  }  // end of areParametersTreatedAsStaticVariables
-
 }  // end of namespace mfront

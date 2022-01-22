@@ -1878,15 +1878,6 @@ namespace mfront {
     tfel::utilities::GenType<bool> areDynamicallyAllocatedVectorsAllowed_;
   };  // end of struct BehaviourDescription
   /*!
-   * \brief this function returns the value of the
-   * `BehaviourDescription::parametersAsStaticVariables` attribute if it is
-   * defined, `false` otherwise.
-   * \brief return if the parameters are treated as static variables.
-   * \param[in] bd: behaviour description
-   */
-  MFRONT_VISIBILITY_EXPORT bool areParametersTreatedAsStaticVariables(
-      const BehaviourDescription&);
-  /*!
    * \return the name of a text file allowing the change the name of the
    * parameters of the given behaviour
    * \param[in] bd: behaviour description

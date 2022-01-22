@@ -112,6 +112,16 @@ namespace mfront {
     std::map<std::string, MaterialKnowledgeDescriptionAttribute> attributes;
   };  // end of struct MaterialKnowledgeDescriptionAttributesHandler
 
+  /*!
+   * \brief this function returns the value of the
+   * `MaterialKnowledgeDescriptionAttributesHandler::parametersAsStaticVariables`
+   * attribute if it is defined, `false` otherwise.
+   * \return if the parameters are treated as static variables.
+   * \param[in] h: attribute handler
+   */
+  MFRONT_VISIBILITY_EXPORT bool areParametersTreatedAsStaticVariables(
+      const MaterialKnowledgeDescriptionAttributesHandler&);
+
 }  // end of namespace mfront
 
 #include "MFront/MaterialKnowledgeDescriptionAttribute.ixx"
