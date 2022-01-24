@@ -29,6 +29,8 @@ namespace mfront {
     //! \brief attribute name
     static const char* const parametersAsStaticVariables;
     //! \brief attribute name
+    static const char* const initializeParametersFromFile;
+    //! \brief attribute name
     static const char* const buildIdentifier;
     /*!
      * \brief throw an exception saying that no attribute with the given name
@@ -96,9 +98,18 @@ namespace mfront {
    * `MaterialKnowledgeDescription::parametersAsStaticVariables`
    * attribute if it is defined, `false` otherwise.
    * \return if the parameters are treated as static variables.
-   * \param[in] h: attribute handler
+   * \param[in] d: material knowledge description
    */
   MFRONT_VISIBILITY_EXPORT bool areParametersTreatedAsStaticVariables(
+      const MaterialKnowledgeDescription&);
+  /*!
+   * \brief this function returns the value of the
+   * `MaterialKnowledgeDescription::initializeParametersFromFile`
+   * attribute if it is defined, `false` otherwise.
+   * \return if the initialization of parameters from a file shall be allowed.
+   * \param[in] d: material knowledge description
+   */
+  MFRONT_VISIBILITY_EXPORT bool allowsParametersInitializationFromFile(
       const MaterialKnowledgeDescription&);
 
 }  // end of namespace mfront

@@ -18,6 +18,8 @@ namespace mfront {
 
   const char* const MaterialKnowledgeDescription::parametersAsStaticVariables =
       "parametersAsStaticVariables";
+  const char* const MaterialKnowledgeDescription::initializeParametersFromFile =
+      "initializeParametersFromFile";
   const char* const MaterialKnowledgeDescription::buildIdentifier =
       "buildIdentifier";
 
@@ -66,9 +68,15 @@ namespace mfront {
   }  // end of getAttributes
 
   bool areParametersTreatedAsStaticVariables(
-      const MaterialKnowledgeDescription& h) {
-    return h.getAttribute<bool>(
+      const MaterialKnowledgeDescription& d) {
+    return d.getAttribute<bool>(
         MaterialKnowledgeDescription::parametersAsStaticVariables, false);
   }  // end of areParametersTreatedAsStaticVariables
+
+  bool allowsParametersInitializationFromFile(
+      const MaterialKnowledgeDescription& d) {
+    return d.getAttribute<bool>(
+        MaterialKnowledgeDescription::initializeParametersFromFile, true);
+  }  // end of allowsParametersInitializationFromFile
 
 }  // end of namespace mfront

@@ -6124,15 +6124,15 @@ namespace mfront {
                     p.name + "'");
           }
           if (p.arraySize == 1u) {
-            os << "this->" << p.name << " = "
+            os << "this->" << p.name << " = " << p.type << "("
                << this->mb.getFloattingPointParameterDefaultValue(h, p.name)
-               << ";\n";
+               << ");\n";
           } else {
             for (unsigned short i = 0; i != p.arraySize; ++i) {
-              os << "this->" << p.name << "[" << i << "] = "
+              os << "this->" << p.name << "[" << i << "] = " << p.type << "("
                  << this->mb.getFloattingPointParameterDefaultValue(h, p.name,
                                                                     i)
-                 << ";\n";
+                 << ");\n";
             }
           }
         }
@@ -6251,15 +6251,17 @@ namespace mfront {
                     p.name + "'");
           }
           if (p.arraySize == 1u) {
-            os << p.type << " " << p.name << " = "
+            os << p.type << " " << p.name << " = " << p.type << "("
                << this->mb.getFloattingPointParameterDefaultValue(h, p.name)
-               << ";\n";
+               << ");\n";
           } else {
             os << "tfel::math::fsarray<" << p.arraySize << ", " << p.type
                << "> " << p.name << " = {";
             for (unsigned short i = 0; i != p.arraySize;) {
-              os << this->mb.getFloattingPointParameterDefaultValue(h, p.name,
-                                                                    i);
+              os << p.type << "("
+                 << this->mb.getFloattingPointParameterDefaultValue(h, p.name,
+                                                                    i)
+                 << ")";
               if (++i != p.arraySize) {
                 os << ", ";
               }
@@ -6921,14 +6923,16 @@ namespace mfront {
        << cname << "();\n\n"
        << cname << "(const " << cname << "&);\n\n"
        << cname << "&\n"
-       << "operator=(const " << cname << "&);\n"
-       << "/*!\n"
-       << " * \\brief read the parameters from the given file\n"
-       << " * \\param[out] pi : parameters initializer\n"
-       << " * \\param[in]  fn : file name\n"
-       << " */\n"
-       << "static void readParameters(" << cname << "&,const char* const);\n"
-       << "};\n\n";
+       << "operator=(const " << cname << "&);\n";
+    if (allowsParametersInitializationFromFile(this->mb)) {
+      os << "/*!\n"
+         << " * \\brief read the parameters from the given file\n"
+         << " * \\param[out] pi : parameters initializer\n"
+         << " * \\param[in]  fn : file name\n"
+         << " */\n"
+         << "static void readParameters(" << cname << "&,const char* const);\n";
+    }
+    os << "};\n\n";
   }  // end of writeBehaviourParametersInitializer
 
   void BehaviourDSLCommon::writeBehaviourParserSpecificInitializeMethodPart(
@@ -8212,12 +8216,14 @@ namespace mfront {
         }
       }
     }
-    os << "// Reading parameters from a file\n";
-    os << cname << "::readParameters(*this,\""
-       << getParametersFileName(this->mb) << "\");\n";
-    if (h != ModellingHypothesis::UNDEFINEDHYPOTHESIS) {
+    if (allowsParametersInitializationFromFile(this->mb)) {
+      os << "// Reading parameters from a file\n";
       os << cname << "::readParameters(*this,\""
-         << getParametersFileName(this->mb, h) << "\");\n";
+         << getParametersFileName(this->mb) << "\");\n";
+      if (h != ModellingHypothesis::UNDEFINEDHYPOTHESIS) {
+        os << cname << "::readParameters(*this,\""
+           << getParametersFileName(this->mb, h) << "\");\n";
+      }
     }
     os << "}\n\n";
     auto write_if = [&os](bool& b) {
@@ -8342,112 +8348,115 @@ namespace mfront {
          << "}\n"
          << "}\n\n";
     }
-    if (rp2) {
-      BehaviourDSLCommon_writeConverter(os, cname, "double", "Double");
-    }
-    if (ip2) {
-      BehaviourDSLCommon_writeConverter(os, cname, "int", "Int");
-    }
-    if (up2) {
-      BehaviourDSLCommon_writeConverter(os, cname, "unsigned short",
-                                        "UnsignedShort");
-    }
-    os << "void\n" << cname << "::readParameters(" << cname << "&";
-    if (rp2 || ip2 || up2) {
-      os << " pi";
-    }
-    os << ",const char* const fn)"
-       << "{\n"
-       << "auto tokenize = [](const std::string& line){\n"
-       << "std::istringstream tokenizer(line);\n"
-       << "std::vector<std::string> tokens;\n"
-       << "std::copy(std::istream_iterator<std::string>(tokenizer),\n"
-       << "std::istream_iterator<std::string>(),\n"
-       << "std::back_inserter(tokens));\n"
-       << "return tokens;\n"
-       << "};\n"
-       << "std::ifstream f(fn);\n"
-       << "if(!f){\n"
-       << "return;\n"
-       << "}\n"
-       << "size_t ln = 1u;\n"
-       << "while(!f.eof()){\n"
-       << "auto line = std::string{};\n"
-       << "std::getline(f,line);\n"
-       << "auto tokens = tokenize(line);\n"
-       << "auto throw_if = [ln,line,fn](const bool c,const std::string& m){\n"
-       << "tfel::raise_if(c,\"" << cname << "::readParameters: \"\n"
-       << "\"error at line '\"+std::to_string(ln)+\"' \"\n"
-       << "\"while reading parameter file '\"+std::string(fn)+\"'\"\n"
-       << "\"(\"+m+\")\");\n"
-       << "};\n"
-       << "if(tokens.empty()){\n"
-       << "continue;\n"
-       << "}\n"
-       << "if(tokens[0][0]=='#'){\n"
-       << "continue;\n"
-       << "}\n"
-       << "throw_if(tokens.size()!=2u,\"invalid number of tokens\");\n";
-    bool first = true;
-    for (const auto& p : this->mb.getBehaviourData(h).getParameters()) {
-      const auto b = ((h == ModellingHypothesis::UNDEFINEDHYPOTHESIS) ||
-                      ((h != ModellingHypothesis::UNDEFINEDHYPOTHESIS) &&
-                       (!this->mb.hasParameter(
-                           ModellingHypothesis::UNDEFINEDHYPOTHESIS, p.name))));
-      auto write = [this, &os, &p, &b, &dcname, &cname](const std::string& vn,
-                                                        const std::string& en) {
-        os << "\"" << en << "\"==tokens[0]){\n";
-        if (b) {
-          os << "pi." << vn << " = ";
-          if (p.type == "int") {
-            os << cname << "::getInt(tokens[0],tokens[1]);\n";
-          } else if (p.type == "ushort") {
-            os << cname << "::getUnsignedShort(tokens[0],tokens[1]);\n";
-          } else {
-            const auto f = SupportedTypes::getTypeFlag(p.type);
-            if (f != SupportedTypes::SCALAR) {
-              this->throwRuntimeError(
-                  "BehaviourDSLCommon::writeSrcFileParametersInitializer",
-                  "invalid parameter type '" + p.type + "'");
+    if (allowsParametersInitializationFromFile(this->mb)) {
+      if (rp2) {
+        BehaviourDSLCommon_writeConverter(os, cname, "double", "Double");
+      }
+      if (ip2) {
+        BehaviourDSLCommon_writeConverter(os, cname, "int", "Int");
+      }
+      if (up2) {
+        BehaviourDSLCommon_writeConverter(os, cname, "unsigned short",
+                                          "UnsignedShort");
+      }
+      os << "void\n" << cname << "::readParameters(" << cname << "&";
+      if (rp2 || ip2 || up2) {
+        os << " pi";
+      }
+      os << ",const char* const fn)"
+         << "{\n"
+         << "auto tokenize = [](const std::string& line){\n"
+         << "std::istringstream tokenizer(line);\n"
+         << "std::vector<std::string> tokens;\n"
+         << "std::copy(std::istream_iterator<std::string>(tokenizer),\n"
+         << "std::istream_iterator<std::string>(),\n"
+         << "std::back_inserter(tokens));\n"
+         << "return tokens;\n"
+         << "};\n"
+         << "std::ifstream f(fn);\n"
+         << "if(!f){\n"
+         << "return;\n"
+         << "}\n"
+         << "size_t ln = 1u;\n"
+         << "while(!f.eof()){\n"
+         << "auto line = std::string{};\n"
+         << "std::getline(f,line);\n"
+         << "auto tokens = tokenize(line);\n"
+         << "auto throw_if = [ln,line,fn](const bool c,const std::string& m){\n"
+         << "tfel::raise_if(c,\"" << cname << "::readParameters: \"\n"
+         << "\"error at line '\"+std::to_string(ln)+\"' \"\n"
+         << "\"while reading parameter file '\"+std::string(fn)+\"'\"\n"
+         << "\"(\"+m+\")\");\n"
+         << "};\n"
+         << "if(tokens.empty()){\n"
+         << "continue;\n"
+         << "}\n"
+         << "if(tokens[0][0]=='#'){\n"
+         << "continue;\n"
+         << "}\n"
+         << "throw_if(tokens.size()!=2u,\"invalid number of tokens\");\n";
+      bool first = true;
+      for (const auto& p : this->mb.getBehaviourData(h).getParameters()) {
+        const auto b =
+            ((h == ModellingHypothesis::UNDEFINEDHYPOTHESIS) ||
+             ((h != ModellingHypothesis::UNDEFINEDHYPOTHESIS) &&
+              (!this->mb.hasParameter(ModellingHypothesis::UNDEFINEDHYPOTHESIS,
+                                      p.name))));
+        auto write = [this, &os, &p, &b, &dcname, &cname](
+                         const std::string& vn, const std::string& en) {
+          os << "\"" << en << "\"==tokens[0]){\n";
+          if (b) {
+            os << "pi." << vn << " = ";
+            if (p.type == "int") {
+              os << cname << "::getInt(tokens[0],tokens[1]);\n";
+            } else if (p.type == "ushort") {
+              os << cname << "::getUnsignedShort(tokens[0],tokens[1]);\n";
+            } else {
+              const auto f = SupportedTypes::getTypeFlag(p.type);
+              if (f != SupportedTypes::SCALAR) {
+                this->throwRuntimeError(
+                    "BehaviourDSLCommon::writeSrcFileParametersInitializer",
+                    "invalid parameter type '" + p.type + "'");
+              }
+              os << cname << "::getDouble(tokens[0],tokens[1]);\n";
             }
-            os << cname << "::getDouble(tokens[0],tokens[1]);\n";
-          }
-        } else {
-          os << dcname << "::get().set(\"" << en << "\",\n";
-          if (p.type == "int") {
-            os << dcname << "::getInt(tokens[0],tokens[1])";
-          } else if (p.type == "ushort") {
-            os << dcname << "::getUnsignedShort(tokens[0],tokens[1])";
           } else {
-            const auto f = SupportedTypes::getTypeFlag(p.type);
-            if (f != SupportedTypes::SCALAR) {
-              this->throwRuntimeError(
-                  "BehaviourDSLCommon::writeSrcFileParametersInitializer",
-                  "invalid parameter type '" + p.type + "'");
+            os << dcname << "::get().set(\"" << en << "\",\n";
+            if (p.type == "int") {
+              os << dcname << "::getInt(tokens[0],tokens[1])";
+            } else if (p.type == "ushort") {
+              os << dcname << "::getUnsignedShort(tokens[0],tokens[1])";
+            } else {
+              const auto f = SupportedTypes::getTypeFlag(p.type);
+              if (f != SupportedTypes::SCALAR) {
+                this->throwRuntimeError(
+                    "BehaviourDSLCommon::writeSrcFileParametersInitializer",
+                    "invalid parameter type '" + p.type + "'");
+              }
+              os << dcname << "::getDouble(tokens[0],tokens[1])";
             }
-            os << dcname << "::getDouble(tokens[0],tokens[1])";
+            os << ");\n";
           }
-          os << ");\n";
-        }
-      };
-      if (p.arraySize == 1u) {
-        write_if(first);
-        write(p.name, this->mb.getExternalName(h, p.name));
-      } else {
-        for (unsigned short i = 0; i != p.arraySize; ++i) {
-          const auto vn = p.name + '[' + std::to_string(i) + ']';
-          const auto en = this->mb.getExternalName(h, p.name) + '[' +
-                          std::to_string(i) + ']';
+        };
+        if (p.arraySize == 1u) {
           write_if(first);
-          write(vn, en);
+          write(p.name, this->mb.getExternalName(h, p.name));
+        } else {
+          for (unsigned short i = 0; i != p.arraySize; ++i) {
+            const auto vn = p.name + '[' + std::to_string(i) + ']';
+            const auto en = this->mb.getExternalName(h, p.name) + '[' +
+                            std::to_string(i) + ']';
+            write_if(first);
+            write(vn, en);
+          }
         }
       }
+      os << "} else {\n"
+         << "throw_if(true,\"invalid parameter '\"+tokens[0]+\"'\");\n"
+         << "}\n"
+         << "}\n"
+         << "}\n\n";
     }
-    os << "} else {\n"
-       << "throw_if(true,\"invalid parameter '\"+tokens[0]+\"'\");\n"
-       << "}\n"
-       << "}\n"
-       << "}\n\n";
   }  // end of writeSrcFileParametersInitializer
 
   void BehaviourDSLCommon::writeSrcFileBehaviourProfiler(

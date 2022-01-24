@@ -60,6 +60,9 @@ namespace mfront {
   const char* const DSLBase::parametersAsStaticVariablesOption =
       "parameters_as_static_variables";
 
+  const char* const DSLBase::initializeParametersFromFileOption =
+      "initialize_parameters_from_file";
+
   const char* const DSLBase::buildIdentifierOption = "build_identifier";
 
   bool isValidMaterialName(const std::string& n) {
@@ -73,6 +76,7 @@ namespace mfront {
   tfel::utilities::DataMapValidator DSLBase::getDSLOptionsValidator() {
     auto v = tfel::utilities::DataMapValidator{};
     v.addDataTypeValidator<bool>(DSLBase::parametersAsStaticVariablesOption);
+    v.addDataTypeValidator<bool>(DSLBase::initializeParametersFromFileOption);
     v.addDataTypeValidator<std::string>(DSLBase::buildIdentifierOption);
     return v;
   }  // end of getDSLOptionsValidator
@@ -94,6 +98,13 @@ namespace mfront {
                      b, false);
     }
     //
+    if (opts.count(DSLBase::initializeParametersFromFileOption) != 0) {
+      const auto b =
+          opts.at(DSLBase::initializeParametersFromFileOption).get<bool>();
+      d.setAttribute(MaterialKnowledgeDescription::initializeParametersFromFile,
+                     b, false);
+    }
+    //
     if (opts.count(DSLBase::buildIdentifierOption) != 0) {
       const auto id =
           opts.at(DSLBase::buildIdentifierOption).get<std::string>();
@@ -105,10 +116,14 @@ namespace mfront {
       const MaterialKnowledgeDescription& d) {
     const auto parameters_opt = d.getAttribute<bool>(
         MaterialKnowledgeDescription::parametersAsStaticVariables, false);
+    const auto parameters_from_file_opt = d.getAttribute<bool>(
+        MaterialKnowledgeDescription::initializeParametersFromFile, true);
     const auto build_id = d.getAttribute<std::string>(
         MaterialKnowledgeDescription::buildIdentifier, "");
-    return {{DSLBase::parametersAsStaticVariablesOption, parameters_opt},
-            {DSLBase::buildIdentifierOption, build_id}};
+    return {
+        {DSLBase::parametersAsStaticVariablesOption, parameters_opt},
+        {DSLBase::initializeParametersFromFileOption, parameters_from_file_opt},
+        {DSLBase::buildIdentifierOption, build_id}};
   }  // end of buildCommonOptions
 
   DSLBase::DSLBase(const DSLOptions&) {

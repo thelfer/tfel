@@ -125,6 +125,17 @@ By default, `MFront` behaves as if this option was set to `true`.
 Currently, only the generic interface supports behaviours which do not
 declare the temperature a the first external state variable.
 
+#### Disable initialization of parameters from text file {#sec:tfel:mfront:global_options:initialize_parameters_from_file}
+
+By default, parameters may be initialized from a text file in the
+current directory, if this text file exists. This feature is implemented
+and enabled by default for behaviours. For material properties, this
+feature is implemented by some interfaces (`Cast3M`, `Cyrano`, `Octave`,
+`Python`).
+
+This behaviour can now be changed by using the
+`initialize_parameters_from_file` boolean option.
+
 #### Special case of specialized domain specific languages
 
 `IsotropicMisesCreep`, `IsotropicMisesPlasticFlow`,
@@ -345,6 +356,13 @@ b = mtest.Behaviour(library = 'src/libBehaviour.so',
 ~~~~
 
 # Issues fixed
+
+## Issue 94: [mfront] Add option to disable initialization of parameters from text file
+
+This feature is described in Section
+@sec:tfel:mfront:global_options:initialize_parameters_from_file.
+
+For more details, see : <https://github.com/thelfer/tfel/issues/94>.
 
 ## Issue 91: [mfront] define build identifier using options
 
