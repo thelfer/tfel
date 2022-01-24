@@ -13,34 +13,34 @@
 
 #include <boost/python.hpp>
 #include "TFEL/Python/MapConverter.hxx"
-#include "MFront/MaterialKnowledgeDescriptionAttribute.hxx"
+#include "MFront/MaterialKnowledgeAttribute.hxx"
 
 template <typename T>
 static void add_def(
-    boost::python::class_<mfront::MaterialKnowledgeDescriptionAttribute>& w,
+    boost::python::class_<mfront::MaterialKnowledgeAttribute>& w,
     const std::string& n) {
   using namespace boost::python;
   using namespace mfront;
-  bool (MaterialKnowledgeDescriptionAttribute::*is_ptr)() const =
-      &MaterialKnowledgeDescriptionAttribute::is<T>;
-  const T& (MaterialKnowledgeDescriptionAttribute::*get_ptr)() const =
-      &MaterialKnowledgeDescriptionAttribute::get<T>;
+  bool (MaterialKnowledgeAttribute::*is_ptr)() const =
+      &MaterialKnowledgeAttribute::is<T>;
+  const T& (MaterialKnowledgeAttribute::*get_ptr)() const =
+      &MaterialKnowledgeAttribute::get<T>;
   w.def(("is" + n).c_str(), is_ptr)
       .def(("get" + n).c_str(), get_ptr,
            return_value_policy<copy_const_reference>());
 }
 
-void declareMaterialKnowledgeDescriptionAttribute();
+void declareMaterialKnowledgeAttribute();
 
-void declareMaterialKnowledgeDescriptionAttribute() {
+void declareMaterialKnowledgeAttribute() {
   using namespace boost::python;
   using namespace mfront;
   using namespace tfel::python;
-  class_<MaterialKnowledgeDescriptionAttribute> w(
-      "MaterialKnowledgeDescriptionAttribute");
+  class_<MaterialKnowledgeAttribute> w(
+      "MaterialKnowledgeAttribute");
   add_def<bool>(w, "Bool");
   add_def<unsigned short>(w, "UnsignedShort");
   add_def<std::string>(w, "String");
 
-  initializeMapConverter<std::string, MaterialKnowledgeDescriptionAttribute>();
+  initializeMapConverter<std::string, MaterialKnowledgeAttribute>();
 }

@@ -26,6 +26,7 @@
 #include "MFront/MFrontDebugMode.hxx"
 #include "MFront/DSLUtilities.hxx"
 #include "MFront/StaticVariableDescription.hxx"
+#include "MFront/MaterialKnowledgeDescription.hxx"
 #include "MFront/MaterialPropertyDescription.hxx"
 #include "MFront/MaterialPropertyParametersHandler.hxx"
 #include "MFront/SymbolsGenerator.hxx"
@@ -320,6 +321,20 @@ namespace mfront {
     out.precision(prec);
   }  // end of writeVariablesBoundsSymbols
 
+  void writeBuildIdentifierSymbol(std::ostream& os,
+                                  const std::string& n,
+                                  const MaterialKnowledgeDescription& d) {
+    const auto* const build_id = std::getenv("TFEL_BUILD_ID");
+    os << "MFRONT_SHAREDOBJ const char* \n" << n << "_build_id =";
+    if (build_id != nullptr) {
+      os << '\"' << build_id << "\";\n\n";
+      return;
+    }
+    const auto bid = d.getAttribute<std::string>(
+        MaterialKnowledgeDescription::buildIdentifier, "");
+    os << "\"" << bid << "\";\n\n";
+  }  // end of writeBuildIdentifierSymbols
+
   void writeEntryPointSymbol(std::ostream& out, const std::string& n) {
     writeEntryPointSymbol(out, n, n);
   }  // end of writeEntryPointSymbols
@@ -327,13 +342,6 @@ namespace mfront {
   void writeEntryPointSymbol(std::ostream& out,
                              const std::string& n,
                              const std::string& n2) {
-    const auto* const build_id = std::getenv("TFEL_BUILD_ID");
-    if (build_id != nullptr) {
-      out << "MFRONT_SHAREDOBJ const char* \n"
-          << n << "_build_id = \"" << build_id << "\";\n\n";
-    } else {
-      out << "MFRONT_SHAREDOBJ const char* \n" << n << "_build_id = \"\";\n\n";
-    }
     out << "MFRONT_SHAREDOBJ const char* \n"
         << n << "_mfront_ept = \"" << n2 << "\";\n\n";
   }  // end of writeEntryPointSymbols

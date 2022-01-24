@@ -35,7 +35,7 @@
 #include "MFront/BehaviourData.hxx"
 #include "MFront/BehaviourSymmetryType.hxx"
 #include "MFront/IntegrationScheme.hxx"
-#include "MFront/MaterialKnowledgeDescriptionAttribute.hxx"
+#include "MFront/MaterialKnowledgeDescription.hxx"
 
 namespace mfront {
 
@@ -57,7 +57,7 @@ namespace mfront {
    */
   struct MFRONT_VISIBILITY_EXPORT BehaviourDescription
       : public tfel::material::MechanicalBehaviourBase,
-        public MaterialKnowledgeDescriptionAttributesHandler,
+        public MaterialKnowledgeDescription,
         public SupportedTypes {
     //! \brief standard option and attribute name
     static const char* const
@@ -208,10 +208,10 @@ namespace mfront {
     //! \brief copy constructor
     BehaviourDescription(const BehaviourDescription&);
     //
-    using MaterialKnowledgeDescriptionAttributesHandler::getAttribute;
-    using MaterialKnowledgeDescriptionAttributesHandler::hasAttribute;
-    using MaterialKnowledgeDescriptionAttributesHandler::setAttribute;
-    using MaterialKnowledgeDescriptionAttributesHandler::updateAttribute;
+    using MaterialKnowledgeDescription::getAttribute;
+    using MaterialKnowledgeDescription::hasAttribute;
+    using MaterialKnowledgeDescription::setAttribute;
+    using MaterialKnowledgeDescription::updateAttribute;
     /*!
      * \brief set a mechanical attribute
      * \param[in] h: modelling hypothesis
@@ -224,7 +224,7 @@ namespace mfront {
      */
     void setAttribute(const Hypothesis,
                       const std::string&,
-                      const MaterialKnowledgeDescriptionAttribute&,
+                      const MaterialKnowledgeAttribute&,
                       const bool = false);
     /*!
      * \brief update an attribute
@@ -234,7 +234,7 @@ namespace mfront {
      */
     void updateAttribute(const Hypothesis,
                          const std::string&,
-                         const MaterialKnowledgeDescriptionAttribute&);
+                         const MaterialKnowledgeAttribute&);
     /*!
      * \return a mechanical attribute
      * \param[in] h: modelling hypothesis

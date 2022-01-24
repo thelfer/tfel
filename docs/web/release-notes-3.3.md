@@ -295,15 +295,15 @@ example).
 
 Specifying a build identifier proposes a solution for this issue. During
 building the shared libraries, developers may now specify a build
-identifier using the TFEL_BUILD_ID environment variable. This identifier
-is meant to be only known by the developers of the code and is hidden to
-end users. At runtime, when calling a shared library, the code can
-retrieve its build identifier, if any, and can check if it matches the
-identifier defined by the developers. If not, it may indicate a conflict
-exists with a previous versions of the shared library or that the end
-user wants to test a new material property or a new mechanical
-behaviour. In both cases, the code will report that results are
-unreliable and not coverered by the code specifications.
+identifier using the `TFEL_BUILD_ID` environment variable. This
+identifier is meant to be only known by the developers of the code and
+is hidden to end users. At runtime, when calling a shared library, the
+code can retrieve its build identifier, if any, and can check if it
+matches the identifier defined by the developers. If not, it may
+indicate a conflict exists with a previous versions of the shared
+library or that the end user wants to test a new material property or a
+new mechanical behaviour. In both cases, the code will report that
+results are unreliable and not coverered by the code specifications.
 
 ## Parameters can now be declared with a type
 

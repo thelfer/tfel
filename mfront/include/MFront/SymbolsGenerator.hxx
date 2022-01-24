@@ -21,11 +21,10 @@
 
 namespace mfront {
 
-  // forward declaration
+  // forward declarations
   struct StandardBehaviourInterface;
-  // forward declaration
+  struct MaterialKnowledgeDescription;
   struct BehaviourDescription;
-  // forward declaration
   struct FileDescription;
 
   /*!
@@ -48,6 +47,16 @@ namespace mfront {
     virtual std::string getSymbolName(const StandardBehaviourInterface &,
                                       const std::string &,
                                       const Hypothesis) const;
+    /*!
+     * \param[in] out: output file
+     * \param[in] i: standard behaviour interface
+     * \param[in] d: material knowledge description
+     * \param[in] n: name of the entry point
+     */
+    virtual void writeBuildIdentifierSymbol(std::ostream &,
+                                            const StandardBehaviourInterface &,
+                                            const BehaviourDescription&,
+                                            const std::string &) const;
     /*!
      * \param[in] out: output file
      * \param[in] i    : standard behaviour interface

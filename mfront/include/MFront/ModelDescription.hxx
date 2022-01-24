@@ -21,13 +21,13 @@
 #include "MFront/VariableDescription.hxx"
 #include "MFront/StaticVariableDescription.hxx"
 #include "MFront/VariableBoundsDescription.hxx"
-#include "MFront/MaterialKnowledgeDescriptionAttribute.hxx"
+#include "MFront/MaterialKnowledgeDescription.hxx"
 
 namespace mfront {
 
   //! \brief class describing a model
   struct MFRONT_VISIBILITY_EXPORT ModelDescription
-      : public MaterialKnowledgeDescriptionAttributesHandler {
+      : public MaterialKnowledgeDescription {
     //! a model may contain several function
     struct MFRONT_VISIBILITY_EXPORT Function {
       //! default constructor

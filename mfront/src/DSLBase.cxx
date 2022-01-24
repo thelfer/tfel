@@ -60,6 +60,8 @@ namespace mfront {
   const char* const DSLBase::parametersAsStaticVariablesOption =
       "parameters_as_static_variables";
 
+  const char* const DSLBase::buildIdentifierOption = "build_identifier";
+
   bool isValidMaterialName(const std::string& n) {
     return tfel::utilities::CxxTokenizer::isValidIdentifier(n, true);
   }
@@ -71,6 +73,7 @@ namespace mfront {
   tfel::utilities::DataMapValidator DSLBase::getDSLOptionsValidator() {
     auto v = tfel::utilities::DataMapValidator{};
     v.addDataTypeValidator<bool>(DSLBase::parametersAsStaticVariablesOption);
+    v.addDataTypeValidator<std::string>(DSLBase::buildIdentifierOption);
     return v;
   }  // end of getDSLOptionsValidator
 
@@ -82,6 +85,32 @@ namespace mfront {
 
   DSLBase::CodeBlockParserOptions::~CodeBlockParserOptions() noexcept = default;
 
+  void DSLBase::handleDSLOptions(MaterialKnowledgeDescription& d,
+                                 const DSLOptions& opts) {
+    if (opts.count(DSLBase::parametersAsStaticVariablesOption) != 0) {
+      const auto b =
+          opts.at(DSLBase::parametersAsStaticVariablesOption).get<bool>();
+      d.setAttribute(MaterialKnowledgeDescription::parametersAsStaticVariables,
+                     b, false);
+    }
+    //
+    if (opts.count(DSLBase::buildIdentifierOption) != 0) {
+      const auto id =
+          opts.at(DSLBase::buildIdentifierOption).get<std::string>();
+      d.setAttribute(MaterialKnowledgeDescription::buildIdentifier, id, false);
+    }
+  }  // end of DSLBase::handleDSLOptions
+
+  AbstractDSL::DSLOptions DSLBase::buildCommonDSLOptions(
+      const MaterialKnowledgeDescription& d) {
+    const auto parameters_opt = d.getAttribute<bool>(
+        MaterialKnowledgeDescription::parametersAsStaticVariables, false);
+    const auto build_id = d.getAttribute<std::string>(
+        MaterialKnowledgeDescription::buildIdentifier, "");
+    return {{DSLBase::parametersAsStaticVariablesOption, parameters_opt},
+            {DSLBase::buildIdentifierOption, build_id}};
+  }  // end of buildCommonOptions
+
   DSLBase::DSLBase(const DSLOptions&) {
     this->addSeparator("\u2297");
     this->addSeparator("\u22C5");
@@ -91,8 +120,11 @@ namespace mfront {
       const {
     return {{DSLBase::parametersAsStaticVariablesOption,
              "boolean stating if the parameter shall be treated as static "
-             "variables"}};
-  }
+             "variables"},
+            {DSLBase::buildIdentifierOption,
+             "string specifying a build identifier. This option shall only be "
+             "specified on the command line"}};
+  } // end of getDSLOptions
 
   std::vector<std::string> DSLBase::getDefaultReservedNames() {
     auto names = std::vector<std::string>{};

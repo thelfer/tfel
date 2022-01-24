@@ -86,6 +86,24 @@ property), the value of this option is automatically passed to those
 domain specific languages (unless superceeded by global options, as
 detailled in Section @sec:tfel_4.1:mfront:global_dsl_options).
 
+### Specifying a build identifier {#sec:tfel:mfront:global_options:build_identifier}
+
+In previous versions, a build identifier could be specified using the
+`TFEL_BUILD_ID` environment variable.
+
+The `build_identifier` option is another way of specifying the build
+identifier, as follows:
+
+~~~~{.cxx}
+@DSL IsotropicPlasticMisesFlow{
+  build_identifier : "Cyrano-3.4"
+};
+~~~~
+
+However, the `build_identifier` is not meant to be directly specified in
+the `MFront` source file. It shall rather be defined on the command line
+(see Section @sec:tfel_4.1:mfront:global_dsl_options).
+
 ### Automatic declaration of the temperature as the first external state variable for behaviours {#sec:tfel:mfront:global_options:temperature_as_first_external_state_variable}
 
 In previous versions of `MFront`, the temperature was automatically
@@ -328,43 +346,50 @@ b = mtest.Behaviour(library = 'src/libBehaviour.so',
 
 # Issues fixed
 
+## Issue 91: [mfront] define build identifier using options
+
+This feature is described in Section
+@sec:tfel:mfront:global_options:build_identifier.
+
+For more details, see : <https://github.com/thelfer/tfel/issues/91>.
+
 ## Issue #83: [mfront] Add a command line argument to retrieve the list of options associated with a domain specific language
 
 This feature is described in Section
 @sec:tfel_4.1:mfront:list_dsl_options.
 
-For more details, see : <https://github.com/thelfer/tfel/issues/83>
+For more details, see : <https://github.com/thelfer/tfel/issues/83>.
 
 ## Issue #82: [mfront] Ability to define DSL options on the command line
 
 This feature is described in Section
 @sec:tfel_4.1:mfront:global_dsl_options.
 
-For more details, see : <https://github.com/thelfer/tfel/issues/82>
+For more details, see : <https://github.com/thelfer/tfel/issues/82>.
 
 ## Issue #55: [mtest] Creation of a wrapper around behaviours written in the logarithmic strain framework generated with the `aster` interface
 
 The wrapper is described in Section
 @sec:tfel_4.1:mtest:aster_logarithmic_strain_wrapper.
 
-For more details, see : <https://github.com/thelfer/tfel/issues/55>
+For more details, see : <https://github.com/thelfer/tfel/issues/55>.
 
 ## Issue #57: [gallery] Mistakes in the Drucker Prager Cap model of the gallery
 
-For more details, see : <https://github.com/thelfer/tfel/issues/57>
+For more details, see : <https://github.com/thelfer/tfel/issues/57>.
 
 ## Issue #50: [mfront] Options to avoid the automatic declaration of the temperature as an external state variable {#sec:tfel:4.1:issue:50}
 
 This option is described in depth in Section
 @sec:tfel:mfront:global_options:temperature_as_first_external_state_variable.
 
-For more details, see : <https://github.com/thelfer/tfel/issues/50>
+For more details, see : <https://github.com/thelfer/tfel/issues/50>.
 
 ## Issue #44: [mtest] Add support for a boundary condition modelling the effet of a mandrel in pipe modelling
 
 The feature is described in Section @sec:tfel_4.1:mtest:mandrel.
 
-For more details, see : <https://github.com/thelfer/tfel/issues/38>
+For more details, see : <https://github.com/thelfer/tfel/issues/38>.
 
 ## Issue #39: [tfel-config] Add query associated with python bindings support
 
@@ -372,7 +397,7 @@ For more details, see : <https://github.com/thelfer/tfel/issues/38>
 `--python-bindings-support` which displays true if `python` bindings are
 available, `false` otherwise.
 
-For more details, see : <https://github.com/thelfer/tfel/issues/38>
+For more details, see : <https://github.com/thelfer/tfel/issues/38>.
 
 ## Issue #38: [tfel-config] Add query associated with MADNEX support
 
@@ -380,7 +405,7 @@ For more details, see : <https://github.com/thelfer/tfel/issues/38>
 `--madnex-support` which displays true if `madnex` files are supported,
 `false` otherwise.
 
-For more details, see : <https://github.com/thelfer/tfel/issues/38>
+For more details, see : <https://github.com/thelfer/tfel/issues/38>.
 
 ## Issue #36: [mfront] Improved support for `MTest` file generation (all kind of state variables)
 
@@ -389,7 +414,7 @@ were supported when generation `MTest` file on integration failure.
 
 All kind of state variables are now supported.
 
-For more details, see : <https://github.com/thelfer/tfel/issues/36>
+For more details, see : <https://github.com/thelfer/tfel/issues/36>.
 
 ## Issue #28: [mtest] Support of tensorial external state variables
 
@@ -414,11 +439,11 @@ state variables components by components or an array as follows:
 @ExternalStateVariable<function> "g2YZ"  "5*t";
 ~~~~
 
-For more details, see : <https://github.com/thelfer/tfel/issues/28>
+For more details, see : <https://github.com/thelfer/tfel/issues/28>.
 
 ## Issue #28: [mtest] Support of tensorial external state variables
 
-For more details, see : <https://github.com/thelfer/tfel/issues/28>
+For more details, see : <https://github.com/thelfer/tfel/issues/28>.
 
 ## Issue #27: [mfront] Better support of tensorial external state variables
 
@@ -431,11 +456,11 @@ The type of the external state variables are now exported.
 
 Generation of `MTest` file also supports tensor external state variables.
 
-For more details, see : <https://github.com/thelfer/tfel/issues/27>
+For more details, see : <https://github.com/thelfer/tfel/issues/27>.
 
 ## Issue #26: Don't use explicit instanciation for static variables
 
-For more details, see : <https://github.com/thelfer/tfel/issues/26>
+For more details, see : <https://github.com/thelfer/tfel/issues/26>.
 
 ## Issue #23: [mfront] Remove usage of C++ reserved variables names
 
@@ -443,7 +468,7 @@ Some exported variables used to contain a double underscore in their
 names. Such names are reserved by the C++ standard for internal use by
 the compilers.
 
-For more details, see : <https://github.com/thelfer/tfel/issues/23>
+For more details, see : <https://github.com/thelfer/tfel/issues/23>.
 
 ## Issue #20: [mtest] Declaration of a behaviour wrapper in python module
 
@@ -464,7 +489,7 @@ Currently, two behaviours wrappers are available:
   hypotheses: axisymmetrical generalised plane strain, plane strain,
   axisymmetry.
 
-For more details, see : <https://github.com/thelfer/tfel/issues/20>
+For more details, see : <https://github.com/thelfer/tfel/issues/20>.
 
 ## Issue #18: [mtest] Usage of a `3D` behaviour in `ptest`
 
@@ -475,14 +500,14 @@ tridimensional behaviours can be used under the following modelling
 hypotheses: generalised plane strain, plane strain, axisymmetrical
 generalised plane strain.
 
-For more details, see : <https://github.com/thelfer/tfel/issues/18>
+For more details, see : <https://github.com/thelfer/tfel/issues/18>.
 
 ## Issue #15: [mtest] New option for the declaration of the rotation matrix in `MTest`
 
 This option is described in depth in Section
 @sec:tfel_4.1:mtest:rotation_matrix.
 
-For more details, see : <https://github.com/thelfer/tfel/issues/15>
+For more details, see : <https://github.com/thelfer/tfel/issues/15>.
 
 <!--
 # References

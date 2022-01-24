@@ -46,7 +46,7 @@ set(TFELMFront_SOURCES
     MFront.cxx
     MFrontBase.cxx
     GlobalDomainSpecificLanguageOptionsManager.cxx
-    MaterialKnowledgeDescriptionAttribute.cxx
+    MaterialKnowledgeDescription.cxx
     PathSpecifier.cxx
     MFrontUtilities.cxx
     GeneratorOptions.cxx

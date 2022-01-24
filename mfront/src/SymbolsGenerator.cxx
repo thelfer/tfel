@@ -66,6 +66,7 @@ namespace mfront {
       const FileDescription& fd,
       const std::set<Hypothesis>& mhs,
       const std::string& name) const {
+    this->writeBuildIdentifierSymbol(out, i, bd, name);
     this->writeEntryPointSymbol(out, i, name);
     this->writeTFELVersionSymbol(out, i, name);
     this->writeMaterialSymbol(out, i, bd, name);
@@ -83,6 +84,14 @@ namespace mfront {
     this->writeTemperatureRemovedFromExternalStateVariablesSymbol(out, i, bd,
                                                                   name);
   }
+
+  void SymbolsGenerator::writeBuildIdentifierSymbol(
+      std::ostream& out,
+      const StandardBehaviourInterface& i,
+      const BehaviourDescription& d,
+      const std::string& n) const {
+    mfront::writeBuildIdentifierSymbol(out, i.getFunctionNameBasis(n), d);
+  }  // end of writeBuildIdentifierSymbol
 
   void SymbolsGenerator::writeEntryPointSymbol(
       std::ostream& out,

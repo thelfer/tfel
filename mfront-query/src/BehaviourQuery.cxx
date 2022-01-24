@@ -61,7 +61,7 @@ namespace mfront {
     std::cout << '\n';
   }  // end of display_variable
 
-  static const MaterialKnowledgeDescriptionAttribute& getAttribute(
+  static const MaterialKnowledgeAttribute& getAttribute(
       const std::string& n,
       const BehaviourDescription& d,
       const tfel::material::ModellingHypothesis::Hypothesis h) {

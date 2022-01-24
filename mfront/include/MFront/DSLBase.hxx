@@ -32,7 +32,8 @@
 
 namespace mfront {
 
-  // forward declaration
+  // forward declarations
+  struct MaterialKnowledgeDescription;
   struct MaterialPropertyDescription;
 
   /*!
@@ -54,6 +55,8 @@ namespace mfront {
         public tfel::utilities::CxxTokenizer {
     //! \brief standard option name
     static const char* const parametersAsStaticVariablesOption;
+    //! \brief standard option name
+    static const char* const buildIdentifierOption;
     //! \return a validator for the options passed to the DSL
     static tfel::utilities::DataMapValidator getDSLOptionsValidator();
     //
@@ -155,6 +158,19 @@ namespace mfront {
     };  // end of CodeBlockParserOptions
     //! \return a list of names that shall be reserved
     static std::vector<std::string> getDefaultReservedNames();
+    /*!
+     * \brief handle DSL options
+     * \param[in] d: material knowledge description
+     * \param[in] opts: options
+     */
+    static void handleDSLOptions(MaterialKnowledgeDescription&,
+                                 const DSLOptions&);
+    /*!
+     * \brief extract common options
+     * \param[in] d: material knowledge description
+     */
+    static DSLOptions buildCommonDSLOptions(
+        const MaterialKnowledgeDescription&);
     /*!
      * \brief constructor
      * \param[in] opts: options passed to the DSL

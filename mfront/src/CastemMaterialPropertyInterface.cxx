@@ -353,6 +353,7 @@ namespace mfront {
 
     writeVariablesNamesSymbol(out, name, mpd);
     writeVariablesBoundsSymbols(out, name, mpd);
+    writeBuildIdentifierSymbol(out, name, mpd);
     writeEntryPointSymbol(out, name);
     writeTFELVersionSymbol(out, name);
     writeInterfaceSymbol(out, name, "Castem");

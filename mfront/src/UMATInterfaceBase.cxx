@@ -363,6 +363,7 @@ namespace mfront {
       const BehaviourDescription& mb,
       const Hypothesis,
       const std::string& initStateVarsIncrements) const {
+    this->checkIfTemperatureIsDefinedAsTheFirstExternalStateVariable(mb);
     const auto iprefix = makeUpperCase(this->getInterfaceName());
     const auto av = this->getBehaviourConstructorsAdditionalVariables();
     const auto abdv = this->getBehaviourDataConstructorAdditionalVariables();
@@ -602,13 +603,13 @@ namespace mfront {
         }
       }
     }
-  }  // end of
-     // UMATInterfaceBase::writeMaterialPropertiesInitializersInBehaviourDataConstructorII
+  }  // end of writeMaterialPropertiesInitializersInBehaviourDataConstructorII
 
   void UMATInterfaceBase::writeBehaviourDataConstructor(
       std::ostream& out,
       const Hypothesis h,
       const BehaviourDescription& mb) const {
+    this->checkIfTemperatureIsDefinedAsTheFirstExternalStateVariable(mb);
     const auto av = this->getBehaviourConstructorsAdditionalVariables();
     const auto abdv = this->getBehaviourDataConstructorAdditionalVariables();
     const auto& d = mb.getBehaviourData(h);
@@ -697,6 +698,7 @@ namespace mfront {
       std::ostream& out,
       const Hypothesis h,
       const BehaviourDescription& mb) const {
+    this->checkIfTemperatureIsDefinedAsTheFirstExternalStateVariable(mb);
     const auto av = this->getBehaviourConstructorsAdditionalVariables();
     const auto aidv = this->getIntegrationDataConstructorAdditionalVariables();
     const auto& d = mb.getBehaviourData(h);

@@ -1,5 +1,5 @@
 /*!
- * \file   mfront/src/MaterialKnowledgeDescriptionAttribute.cxx
+ * \file   mfront/src/MaterialKnowledgeDescription.cxx
  * \brief
  * \author Thomas Helfer
  * \date   10/01/2022
@@ -12,29 +12,27 @@
  */
 
 #include "TFEL/Raise.hxx"
-#include "MFront/MaterialKnowledgeDescriptionAttribute.hxx"
+#include "MFront/MaterialKnowledgeDescription.hxx"
 
 namespace mfront {
 
-  const char* const MaterialKnowledgeDescriptionAttributesHandler::
-      parametersAsStaticVariables = "parametersAsStaticVariables";
+  const char* const MaterialKnowledgeDescription::parametersAsStaticVariables =
+      "parametersAsStaticVariables";
+  const char* const MaterialKnowledgeDescription::buildIdentifier =
+      "buildIdentifier";
 
-  void MaterialKnowledgeDescriptionAttributesHandler::throwUndefinedAttribute(
+  void MaterialKnowledgeDescription::throwUndefinedAttribute(
       const std::string& n) {
     tfel::raise(
-        "MaterialKnowledgeDescriptionAttributesHandler::getAttribute: "
+        "MaterialKnowledgeDescription::getAttribute: "
         "no attribute named '" +
         n + "'");
   }  // end of throwUndefinedAttribute
 
-  void MaterialKnowledgeDescriptionAttributesHandler::setAttribute(
-      const std::string& n,
-      const MaterialKnowledgeDescriptionAttribute& a,
-      const bool b) {
+  void MaterialKnowledgeDescription::setAttribute(
+      const std::string& n, const MaterialKnowledgeAttribute& a, const bool b) {
     auto throw_if = [](const bool c, const std::string& m) {
-      tfel::raise_if(
-          c,
-          "MaterialKnowledgeDescriptionAttributesHandler::setAttribute: " + m);
+      tfel::raise_if(c, "MaterialKnowledgeDescription::setAttribute: " + m);
     };
     auto p = this->attributes.find(n);
     if (p != this->attributes.end()) {
@@ -46,36 +44,31 @@ namespace mfront {
     }
   }  // end of setAttribute
 
-  void MaterialKnowledgeDescriptionAttributesHandler::updateAttribute(
-      const std::string& n, const MaterialKnowledgeDescriptionAttribute& a) {
+  void MaterialKnowledgeDescription::updateAttribute(
+      const std::string& n, const MaterialKnowledgeAttribute& a) {
     auto throw_if = [](const bool c, const std::string& m) {
-      tfel::raise_if(
-          c,
-          "MaterialKnowledgeDescriptionAttributesHandler::updateAttribute: " +
-              m);
+      tfel::raise_if(c, "MaterialKnowledgeDescription::updateAttribute: " + m);
     };
     auto p = this->attributes.find(n);
     throw_if(p == this->attributes.end(), "unknown attribute '" + n + "'");
     throw_if(a.getTypeIndex() != p->second.getTypeIndex(),
              "attribute already exists with a different type");
     p->second = a;
-  }  // end of setMaterialKnowledgeDescriptionAttribute
+  }  // end of setMaterialKnowledgeAttribute
 
-  bool MaterialKnowledgeDescriptionAttributesHandler::hasAttribute(
-      const std::string& n) const {
+  bool MaterialKnowledgeDescription::hasAttribute(const std::string& n) const {
     return this->attributes.count(n) != 0u;
   }  // end of hasAttribute
 
-  const std::map<std::string, MaterialKnowledgeDescriptionAttribute>&
-  MaterialKnowledgeDescriptionAttributesHandler::getAttributes() const {
+  const std::map<std::string, MaterialKnowledgeAttribute>&
+  MaterialKnowledgeDescription::getAttributes() const {
     return this->attributes;
   }  // end of getAttributes
 
   bool areParametersTreatedAsStaticVariables(
-      const MaterialKnowledgeDescriptionAttributesHandler& h) {
-    return h.getAttribute<bool>(MaterialKnowledgeDescriptionAttributesHandler::
-                                    parametersAsStaticVariables,
-                                false);
+      const MaterialKnowledgeDescription& h) {
+    return h.getAttribute<bool>(
+        MaterialKnowledgeDescription::parametersAsStaticVariables, false);
   }  // end of areParametersTreatedAsStaticVariables
 
 }  // end of namespace mfront

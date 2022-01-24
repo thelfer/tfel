@@ -24,16 +24,17 @@
 #include "MFront/MFrontConfig.hxx"
 #include "TFEL/Glossary/Forward/Glossary.hxx"
 #include "MFront/MaterialKnowledgeType.hxx"
-#include "MFront/StaticVariableDescription.hxx"
-#include "MFront/VariableDescription.hxx"
 
 namespace mfront {
 
-  // forward declaration
+  // forward declarations
+  struct VariableDescription;
+  struct VariableDescriptionContainer;
+  struct VariableBoundsDescription;
   struct StaticVariableDescription;
-  // forward declaration
+  struct StaticVariableDescriptionContainer;
+  struct MaterialKnowledgeDescription;
   struct MaterialPropertyDescription;
-  // forward declaration
   struct BehaviourDescription;
 
   /*!
@@ -121,6 +122,14 @@ namespace mfront {
       const std::string&,
       const mfront::MaterialPropertyDescription&);
 
+  /*!
+   * \brief write a symbol associated with the build identifier.
+   * \param[out] os: output stream
+   * \param[in]  n: entry point name
+   * \param[out] d: description
+   */
+  MFRONT_VISIBILITY_EXPORT void writeBuildIdentifierSymbol(
+      std::ostream&, const std::string&, const MaterialKnowledgeDescription&);
   /*!
    * \brief write a specific symbol stating that a given name entry
    * point (`C`-like function for example) has been created using

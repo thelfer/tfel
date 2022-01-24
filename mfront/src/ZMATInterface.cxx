@@ -144,6 +144,24 @@ namespace mfront {
 
   std::string ZMATInterface::getInterfaceVersion() const { return ""; }
 
+  void ZMATInterface::checkIfTemperatureIsDefinedAsTheFirstExternalStateVariable(
+      const BehaviourDescription& bd) const {
+    if (!bd.isTemperatureDefinedAsTheFirstExternalStateVariable()) {
+      const auto v = this->getInterfaceVersion();
+      auto msg = std::string{};
+      msg +=
+          "ZMATInterface::"
+          "checkIfTemperatureIsDefinedAsTheFirstExternalStateVariable: "
+          "the temperature must be defined as the first external state "
+          "variable";
+      if (!v.empty()) {
+        msg += " in interface version '" + v + "'";
+      }
+      tfel::raise(msg);
+    }
+  }  // end of checkIfTemperatureIsDefinedAsTheFirstExternalStateVariable
+
+
   std::pair<bool, ZMATInterface::tokens_iterator> ZMATInterface::treatKeyword(
       BehaviourDescription&,
       const std::string& key,
@@ -326,6 +344,7 @@ namespace mfront {
       const Hypothesis h,
       const BehaviourDescription& mb) const {
     using namespace std;
+    this->checkIfTemperatureIsDefinedAsTheFirstExternalStateVariable(mb);
     const auto& d = mb.getBehaviourData(h);
     const auto& mps = d.getMaterialProperties();
     const auto& ivs = d.getPersistentVariables();
@@ -688,6 +707,7 @@ namespace mfront {
     auto throw_if = [](const bool c, const std::string& m) {
       tfel::raise_if(c, "ZMATInterface::writeIntegrationDataConstructor: " + m);
     };
+    this->checkIfTemperatureIsDefinedAsTheFirstExternalStateVariable(mb);
     const auto& d = mb.getBehaviourData(h);
     auto evs = d.getExternalStateVariables();
     // removing the temperature
@@ -802,31 +822,18 @@ namespace mfront {
   void ZMATInterface::endTreatment(const BehaviourDescription& mb,
                                    const FileDescription& fd) const {
     using namespace std;
-    using namespace tfel::system;
     using namespace tfel::material;
-    auto throw_if = [](const bool b, const std::string& m) {
-      tfel::raise_if(b, "ZMATInterface::endTreatment: " + m);
-    };
-    if (!mb.isTemperatureDefinedAsTheFirstExternalStateVariable()) {
-      const auto v = this->getInterfaceVersion();
-      auto msg = std::string{};
-      msg +=
-          "ZMATInterface::endTreatment:"
-          "the temperature must be defined as the first external state "
-          "variable for interface '" +
-          this->getInterfaceName() + "'";
-      if (!v.empty()) {
-        msg += " version '" + v + "'";
-      }
-      tfel::raise(msg);
-    }
-    systemCall::mkdir("include/MFront");
-    systemCall::mkdir("include/MFront/ZMAT");
-    systemCall::mkdir("zmat");
-    const std::array<Hypothesis, 3u> hypotheses = {
+    constexpr std::array<Hypothesis, 3u> hypotheses = {
         ModellingHypothesis::TRIDIMENSIONAL,
         ModellingHypothesis::GENERALISEDPLANESTRAIN,
         ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN};
+    auto throw_if = [](const bool b, const std::string& m) {
+      tfel::raise_if(b, "ZMATInterface::endTreatment: " + m);
+    };
+    this->checkIfTemperatureIsDefinedAsTheFirstExternalStateVariable(mb);
+    tfel::system::systemCall::mkdir("include/MFront");
+    tfel::system::systemCall::mkdir("include/MFront/ZMAT");
+    tfel::system::systemCall::mkdir("zmat");
     const auto name = mb.getLibrary() + mb.getClassName();
     const auto headerFileName = "ZMAT" + name + ".hxx";
     const auto srcFileName = "ZMAT" + name + ".cxx";
@@ -1028,6 +1035,7 @@ namespace mfront {
         << '\n';
     writeExportDirectives(out);
     const auto zcn = "ZMAT" + mb.getClassName();
+    writeBuildIdentifierSymbol(out, zcn, mb);
     writeEntryPointSymbol(out, zcn);
     writeTFELVersionSymbol(out, zcn);
     writeMaterialSymbol(out, zcn, mb.getMaterialName());

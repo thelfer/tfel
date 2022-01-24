@@ -2531,7 +2531,7 @@ namespace mfront {
   void BehaviourDescription::setAttribute(
       const Hypothesis h,
       const std::string& n,
-      const MaterialKnowledgeDescriptionAttribute& a,
+      const MaterialKnowledgeAttribute& a,
       const bool b) {
     if (h == ModellingHypothesis::UNDEFINEDHYPOTHESIS) {
       this->d.setAttribute(n, a, b);
@@ -2547,7 +2547,7 @@ namespace mfront {
   void BehaviourDescription::updateAttribute(
       const Hypothesis h,
       const std::string& n,
-      const MaterialKnowledgeDescriptionAttribute& a) {
+      const MaterialKnowledgeAttribute& a) {
     if (h == ModellingHypothesis::UNDEFINEDHYPOTHESIS) {
       this->d.updateAttribute(n, a);
       for (const auto& md : this->sd) {

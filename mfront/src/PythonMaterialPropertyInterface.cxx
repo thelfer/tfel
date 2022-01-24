@@ -336,6 +336,7 @@ namespace mfront {
     writeVariablesBoundsSymbols(srcFile, name, mpd);
 
     // mfront metadata
+    writeBuildIdentifierSymbol(srcFile, name, mpd);
     writeEntryPointSymbol(srcFile, name);
     writeTFELVersionSymbol(srcFile, name);
     writeInterfaceSymbol(srcFile, name, "Python");

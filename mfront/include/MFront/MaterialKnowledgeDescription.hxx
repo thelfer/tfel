@@ -1,5 +1,5 @@
 /*!
- * \file  mfront/include/MFront/MaterialKnowledgeDescriptionAttribute.hxx
+ * \file  mfront/include/MFront/MaterialKnowledgeDescription.hxx
  * \brief
  * \author Thomas Helfer
  * \brief 19 mars 2014
@@ -11,42 +11,25 @@
  * project under specific licensing conditions.
  */
 
-#ifndef LIB_MFRONT_MATERIALKNOWLEDGEDESCRIPTIONATTRIBUTE_HXX
-#define LIB_MFRONT_MATERIALKNOWLEDGEDESCRIPTIONATTRIBUTE_HXX
+#ifndef LIB_MFRONT_MATERIALKNOWLEDGEDESCRIPTION_HXX
+#define LIB_MFRONT_MATERIALKNOWLEDGEDESCRIPTION_HXX
 
 #include <map>
 #include <string>
 #include <vector>
-#include "TFEL/Metaprogramming/GenerateTypeList.hxx"
-#include "TFEL/Utilities/GenTypeBase.hxx"
 #include "MFront/MFrontConfig.hxx"
+#include "MFront/MaterialKnowledgeAttribute.hxx"
 
 namespace mfront {
 
-  //! \brief types that can be stored in a behaviour attribute
-  using MaterialKnowledgeDescriptionAttributeTypes =
-      tfel::meta::GenerateTypeList<bool,
-                                   unsigned short,
-                                   std::string,
-                                   std::vector<std::string>>::type;
-  //! \brief a class storing mechanical behaviour attribute
-  using MaterialKnowledgeDescriptionAttribute =
-      tfel::utilities::GenTypeBase<MaterialKnowledgeDescriptionAttributeTypes>;
-
-  template <typename T>
-  constexpr bool isMaterialKnowledgeDescriptionAttributeType() {
-    return tfel::meta::TLCountNbrOfT<
-               T, MaterialKnowledgeDescriptionAttributeTypes>::value == 1;
-    ;
-  }  // end of isMaterialKnowledgeDescriptionAttributeType
-
   /*!
-   * \brief an helper structure to handle behaviours' attributes.
+   * \brief base class for the description of material knowledge
    */
-  struct MFRONT_VISIBILITY_EXPORT
-      MaterialKnowledgeDescriptionAttributesHandler {
+  struct MFRONT_VISIBILITY_EXPORT MaterialKnowledgeDescription {
     //! \brief attribute name
     static const char* const parametersAsStaticVariables;
+    //! \brief attribute name
+    static const char* const buildIdentifier;
     /*!
      * \brief throw an exception saying that no attribute with the given name
      * exists
@@ -62,15 +45,14 @@ namespace mfront {
      *                However the type of the attribute is checked.
      */
     void setAttribute(const std::string&,
-                      const MaterialKnowledgeDescriptionAttribute&,
+                      const MaterialKnowledgeAttribute&,
                       const bool);
     /*!
      * \brief update an existing new attribute
      * \param[in] n: name
      * \param[in] a: attribute
      */
-    void updateAttribute(const std::string&,
-                         const MaterialKnowledgeDescriptionAttribute&);
+    void updateAttribute(const std::string&, const MaterialKnowledgeAttribute&);
     /*!
      * \return true if an attribute with the given name as been registred
      * \param[in] n : name
@@ -81,49 +63,46 @@ namespace mfront {
      * \param[in] n : name
      */
     template <typename T>
-    typename std::enable_if<isMaterialKnowledgeDescriptionAttributeType<T>(),
-                            T&>::type
-    getAttribute(const std::string&);
+    std::enable_if_t<isMaterialKnowledgeAttributeType<T>(), T&> getAttribute(
+        const std::string&);
     /*!
      * \return the attribute with the given name
      * \param[in] n : name
      */
     template <typename T>
-    typename std::enable_if<isMaterialKnowledgeDescriptionAttributeType<T>(),
-                            const T&>::type
+    std::enable_if_t<isMaterialKnowledgeAttributeType<T>(), const T&>
     getAttribute(const std::string&) const;
     /*!
      * \return the attribute with the given name
      * \param[in] n: name
      */
     template <typename T>
-    typename std::enable_if<isMaterialKnowledgeDescriptionAttributeType<T>(),
-                            T>::type
+    std::enable_if_t<isMaterialKnowledgeAttributeType<T>(), T>
     getAttribute(const std::string&, const T&) const;
     /*!
      * \return all the attribute registred
      * \param[in] n : name
      */
-    const std::map<std::string, MaterialKnowledgeDescriptionAttribute>&
-    getAttributes() const;
+    const std::map<std::string, MaterialKnowledgeAttribute>& getAttributes()
+        const;
 
    protected:
     //! \brief behaviour attributes
-    std::map<std::string, MaterialKnowledgeDescriptionAttribute> attributes;
-  };  // end of struct MaterialKnowledgeDescriptionAttributesHandler
+    std::map<std::string, MaterialKnowledgeAttribute> attributes;
+  };  // end of struct MaterialKnowledgeDescription
 
   /*!
    * \brief this function returns the value of the
-   * `MaterialKnowledgeDescriptionAttributesHandler::parametersAsStaticVariables`
+   * `MaterialKnowledgeDescription::parametersAsStaticVariables`
    * attribute if it is defined, `false` otherwise.
    * \return if the parameters are treated as static variables.
    * \param[in] h: attribute handler
    */
   MFRONT_VISIBILITY_EXPORT bool areParametersTreatedAsStaticVariables(
-      const MaterialKnowledgeDescriptionAttributesHandler&);
+      const MaterialKnowledgeDescription&);
 
 }  // end of namespace mfront
 
-#include "MFront/MaterialKnowledgeDescriptionAttribute.ixx"
+#include "MFront/MaterialKnowledgeDescription.ixx"
 
-#endif /* LIB_MFRONT_MATERIALKNOWLEDGEDESCRIPTIONATTRIBUTE_HXX */
+#endif /* LIB_MFRONT_MATERIALKNOWLEDGEDESCRIPTION_HXX */

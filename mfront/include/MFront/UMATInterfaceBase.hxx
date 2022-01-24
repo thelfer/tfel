@@ -56,7 +56,6 @@ namespace mfront {
      * variable in many interfaces.
      *
      * \param[in] bd: behaviour description
-     * \param[in] i: interface name
      */
     void checkIfTemperatureIsDefinedAsTheFirstExternalStateVariable(
         const BehaviourDescription&) const;

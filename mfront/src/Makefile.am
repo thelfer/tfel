@@ -24,7 +24,7 @@ libTFELMFront_la_SOURCES = MFront.cxx                                     \
 			   MFrontBase.cxx                                             \
 			   PathSpecifier.cxx                                          \
                GlobalDomainSpecificLanguageOptionsManager.cxx              \
-               MaterialKnowledgeDescriptionAttribute.cxx                  \
+               MaterialKnowledgeDescription.cxx                           \
 			   MFrontUtilities.cxx                                        \
 			   GeneratorOptions.cxx                                       \
 			   CMakeGenerator.cxx                                         \

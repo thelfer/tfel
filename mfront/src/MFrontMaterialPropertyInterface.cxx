@@ -116,6 +116,10 @@ namespace mfront {
     return this->getFunctionName(mpd) + "_checkBounds";
   }  // end of MFrontMaterialPropertyInterface::getCheckBoundsFunctionName
 
+  void MFrontMaterialPropertyInterface::writeBuildIdentifierSymbol(
+      std::ostream&, const MaterialPropertyDescription&) const {
+  }  // end of MFrontMaterialPropertyInterface::writeBuildIdentifierSymbol
+
   void MFrontMaterialPropertyInterface::writeEntryPointSymbol(
       std::ostream&, const MaterialPropertyDescription&) const {
   }  // end of MFrontMaterialPropertyInterface::writeEntryPointSymbol

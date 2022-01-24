@@ -66,12 +66,7 @@ namespace mfront {
 
   ModelDSLCommon::ModelDSLCommon(const DSLOptions& opts) : DSLBase(opts) {
     //
-    if (opts.count(DSLBase::parametersAsStaticVariablesOption) != 0) {
-      const auto b =
-          opts.at(DSLBase::parametersAsStaticVariablesOption).get<bool>();
-      this->md.setAttribute(ModelDescription::parametersAsStaticVariables, b,
-                            false);
-    }
+    DSLBase::handleDSLOptions(this->md, opts);
     //
     this->reserveName("dt");
     this->reserveName("\u0394t");
@@ -81,9 +76,7 @@ namespace mfront {
   }
 
   AbstractDSL::DSLOptions ModelDSLCommon::buildDSLOptions() const {
-    return {{DSLBase::parametersAsStaticVariablesOption,
-             this->md.getAttribute<bool>(
-                 ModelDescription::parametersAsStaticVariables, false)}};
+    return DSLBase::buildCommonDSLOptions(this->md);
   }  // end of buildDSLOptions
 
   std::string ModelDSLCommon::getMaterialKnowledgeIdentifier() const {

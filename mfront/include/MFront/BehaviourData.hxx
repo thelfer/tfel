@@ -28,7 +28,7 @@
 #include "MFront/SupportedTypes.hxx"
 #include "MFront/VariableDescription.hxx"
 #include "MFront/StaticVariableDescription.hxx"
-#include "MFront/MaterialKnowledgeDescriptionAttribute.hxx"
+#include "MFront/MaterialKnowledgeDescription.hxx"
 
 namespace mfront {
 
@@ -39,7 +39,7 @@ namespace mfront {
    * This structure gathers various behaviour characteristic
    */
   struct MFRONT_VISIBILITY_EXPORT BehaviourData
-      : public MaterialKnowledgeDescriptionAttributesHandler,
+      : public MaterialKnowledgeDescription,
         private SupportedTypes {
     /*
      * normalised code block names

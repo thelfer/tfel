@@ -7,8 +7,9 @@ nobase_include_HEADERS= MFront/MFront.hxx                                     \
 			MFront/MFrontBase.hxx                                             \
 			MFront/MFrontUtilities.hxx                                        \
 			MFront/MFrontUtilities.ixx                                        \
-			MFront/MaterialKnowledgeDescriptionAttribute.hxx                  \
-			MFront/MaterialKnowledgeDescriptionAttribute.ixx                  \
+			MFront/MaterialKnowledgeAttribute.hxx                             \
+			MFront/MaterialKnowledgeDescription.hxx                           \
+			MFront/MaterialKnowledgeDescription.ixx                           \
 			MFront/PathSpecifier.hxx                                          \
 			MFront/GeneratorOptions.hxx                                       \
 			MFront/CMakeGenerator.hxx                                         \

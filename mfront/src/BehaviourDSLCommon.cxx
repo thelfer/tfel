@@ -114,16 +114,12 @@ namespace mfront {
                  automaticDeclarationOfTheTemperatureAsFirstExternalStateVariable})),
         useStateVarTimeDerivative(false),
         explicitlyDeclaredUsableInPurelyImplicitResolution(false) {
-    using MemberFunc = void (BehaviourDSLCommon::*)();
     //
-    if (opts.count(DSLBase::parametersAsStaticVariablesOption) != 0) {
-      const auto b =
-          opts.at(DSLBase::parametersAsStaticVariablesOption).get<bool>();
-      this->mb.setAttribute(BehaviourDescription::parametersAsStaticVariables,
-                            b, false);
-    }
+    using MemberFunc = void (BehaviourDSLCommon::*)();
+    constexpr auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+    //
+    DSLBase::handleDSLOptions(this->mb, opts);
     // By default, a behaviour can be used in a purely implicit resolution
-    const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     this->mb.setUsableInPurelyImplicitResolution(h, true);
     // reserve names
     for (const auto& n : DSLBase::getDefaultReservedNames()) {
@@ -249,9 +245,7 @@ namespace mfront {
   }  // end of getDSLOptions
 
   AbstractDSL::DSLOptions BehaviourDSLCommon::buildDSLOptions() const {
-    return {{DSLBase::parametersAsStaticVariablesOption,
-             this->mb.getAttribute<bool>(
-                 BehaviourDescription::parametersAsStaticVariables, false)}};
+    return DSLBase::buildCommonDSLOptions(this->mb);
   }  // end of buildDSLOptions
 
   std::string BehaviourDSLCommon::getMaterialKnowledgeIdentifier() const {
