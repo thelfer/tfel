@@ -64,7 +64,7 @@ external state variables.
 Domain specific language can have options which can modify their
 default behaviour.
 
-### Treat parameters as static variables
+### Treat parameters as static variables {#sec:tfel:mfront:global_options:parameters_as_static_variables}
 
 The boolean option `parameters_as_static_variables` modifies the way
 parameters are treated. This option can be declared as follows:
@@ -469,6 +469,13 @@ names. Such names are reserved by the C++ standard for internal use by
 the compilers.
 
 For more details, see : <https://github.com/thelfer/tfel/issues/23>.
+
+## Issue #22 : [mfront] Option to treat parameters as static variables
+
+This option is described in depth in Section
+@sec:tfel:mfront:global_options:parameters_as_static_variables.
+
+For more details, see : <https://github.com/thelfer/tfel/issues/22>.
 
 ## Issue #20: [mtest] Declaration of a behaviour wrapper in python module
 
