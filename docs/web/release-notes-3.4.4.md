@@ -71,6 +71,23 @@ of the pipe:
 
 # New features of `mfront-query`
 
+## New `--list-implementation-paths` query {#sec:tfel-3.4.4:mfront-query:list_implementation_paths}
+
+The `--list-implementation-paths` query returns explicit paths to
+material knowledge in a `madnex` file. This query has two options:
+
+- `sorted-by-files` (default): the implementations paths are preceded by
+  the `madnex` file name.
+- `unsorted`: the implementations paths are not preceded by the `madnex`
+  file name.
+
+~~~~{.bash}
+$ mfront-query --list-implementation-paths=unsorted --all-behaviours Plasticity.mdnx
+madnex:Plasticity.mdnx:behaviour::Plasticity
+~~~~
+
+See also Section @sec:tfel-3.4.4:mfront:mandex_full_path.
+
 ## New `--list-materials` query {#sec:tfel-3.4.4:mfront-query:list_materials}
 
 The `--list-materials` returns the list of materials for which material
@@ -128,12 +145,19 @@ argument is used.
 
 # Issues solved
 
+## Issue #98: [mfront-query] add query to retrieve all implementation paths
+
+This feature is described in Section
+@sec:tfel-3.4.4:mfront-query:list_implementation_paths
+
+For more details, see : <https://github.com/thelfer/tfel/issues/98>
+
 ## Issue #97: [mfront] Allow to specify the full path to a material knowledge (material property, behaviour, model) in a `madnex` file on the command line
 
 This feature is described in Section
 @sec:tfel-3.4.4:mfront:mandex_full_path.
 
-For more details, see : <https://github.com/thelfer/tfel/issues/96>
+For more details, see : <https://github.com/thelfer/tfel/issues/97>
 
 ## Issue #96: [mfront] Add support to the `--all-material-properties`, `--all-behaviours`, `--all-models` to the `parsePathSpecifierArguments`  function for consistency with `mfront`
 
