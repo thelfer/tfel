@@ -269,6 +269,38 @@ namespace mfront {
       const std::string& behaviour_identifier,
       const std::string& model_identifier) {
     auto inputs = std::vector<std::string>{};
+    if (tfel::utilities::starts_with(f, "madnex:")) {
+#ifdef MFRONT_HAVE_MADNEX
+      // full path specifier
+      auto check = [](const std::string& s, const char* const t) {
+        if (s.empty()) {
+          return;
+        }
+        tfel::raise(
+            "getImplementationsPaths: specifiying a " + std::string(t) +
+            "' identifier is not valid when specifying a full path specifier");
+      };
+      check(material_identifier, "material");
+      check(material_property_identifier, "material property");
+      check(behaviour_identifier, "behaviour");
+      check(model_identifier, "model");
+      const auto details = tfel::utilities::tokenize(f, ':');
+      auto raise_if = [&f](const bool b) {
+        if (b) {
+          tfel::raise(
+              "decomposeImplementationPathInMadnexFile: "
+              "invalid path '" +
+              f + "'");
+        }
+      };
+      raise_if((details.size() != 5) && (details.size() != 4));
+#else /* MFRONT_HAVE_MADNEX */
+      tfel::raise(
+          "getImplementationsPaths: "
+          "madnex support has not been enabled");
+#endif /* MFRONT_HAVE_MADNEX */
+      return {f};
+    }
     // file extensions
     const auto ext = [&f]() -> std::string {
       const auto p = f.find(".");

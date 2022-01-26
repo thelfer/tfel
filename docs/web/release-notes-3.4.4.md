@@ -20,7 +20,40 @@ eqnPrefixTemplate: "($$i$$)"
 The page describes the new functionalities of Version 3.4.4 of the
 `TFEL` project.
 
-# New feature of `mtest`
+# New features of `mfront`
+
+## Alternative way to select a single material knowledge (material property, behaviour, model) in a `madnex` file {#sec:tfel-3.4.4:mfront:mandex_full_path}
+
+`mfront`, `mfront-query` and `mfront-doc` now allow to select a specific
+material knowledge inside a `madnex` file using the following syntax:
+
+~~~~
+madnex:<file>:<type>:<material>:<name>
+~~~~
+
+where:
+
+- `<file>` is the path to the `madnex` file.
+- `<type>` is the type of the material knowledge (`material_property`,
+  `behaviour` or `model`).
+- `<material>` is the name of the material considered. This name can be
+  empty or `<none>` if the considered material knowledge is not
+  associated to a material.
+- `<name>` is the name of theconsidered material knowledge.
+
+### Example of usage
+
+~~~~{.bash}
+$ mfront --obuild --interface=generic madnex:Plasticity.mdnx:behaviour::Plasticity
+~~~~
+
+or, equivalently:
+
+~~~~{.bash}
+$ mfront --obuild --interface=generic madnex:Plasticity.mdnx:behaviour:"<none>":Plasticity
+~~~~
+
+# New features of `mtest`
 
 ## Imposed inner radius loading in pipe modelling
 
@@ -94,6 +127,13 @@ specific targets are also displayed, unless the `--nomelt` command line
 argument is used.
 
 # Issues solved
+
+## Issue #97: [mfront] Allow to specify the full path to a material knowledge (material property, behaviour, model) in a `madnex` file on the command line
+
+This feature is described in Section
+@sec:tfel-3.4.4:mfront:mandex_full_path.
+
+For more details, see : <https://github.com/thelfer/tfel/issues/96>
 
 ## Issue #96: [mfront] Add support to the `--all-material-properties`, `--all-behaviours`, `--all-models` to the `parsePathSpecifierArguments`  function for consistency with `mfront`
 

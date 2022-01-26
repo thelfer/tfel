@@ -89,6 +89,37 @@ $ mfront --obuild --interface=generic --material=<material_id> --all-behaviours 
 The material name `<none>` has a special meaning here: it allows the
 selection of implementations that not associated with a material.
 
+## Alternative way to select a single material knowledge (material property, behaviour, model) in a `madnex` file {#sec:tfel-3.4.4:mfront:mandex_full_path}
+
+`mfront`, `mfront-query` and `mfront-doc` now allow to select a specific
+material knowledge inside a `madnex` file using the following syntax:
+
+~~~~
+madnex:<file>:<type>:<material>:<name>
+~~~~
+
+where:
+
+- `<file>` is the path to the `madnex` file.
+- `<type>` is the type of the material knowledge (`material_property`,
+  `behaviour` or `model`).
+- `<material>` is the name of the material considered. This name can be
+  empty or `<none>` if the considered material knowledge is not
+  associated to a material.
+- `<name>` is the name of theconsidered material knowledge.
+
+### Example of usage
+
+~~~~{.bash}
+$ mfront --obuild --interface=generic madnex:Plasticity.mdnx:behaviour::Plasticity
+~~~~
+
+or, equivalently:
+
+~~~~{.bash}
+$ mfront --obuild --interface=generic madnex:Plasticity.mdnx:behaviour:"<none>":Plasticity
+~~~~
+
 # `mfront` python module
 
 The `mfront` python module is fully described here:

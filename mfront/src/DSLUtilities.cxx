@@ -577,7 +577,7 @@ namespace mfront {
   decomposeImplementationPathInMadnexFile(const std::string& p) {
     using result_type =
         std::tuple<std::string, std::string, std::string, std::string>;
-    std::vector<std::string> details = tfel::utilities::tokenize(p, ':');
+    const auto details = tfel::utilities::tokenize(p, ':');
     auto raise_if = [&p](const bool b) {
       if (b) {
         tfel::raise("decomposeImplementationPathInMadnexFile: invalid path '" +
@@ -589,8 +589,9 @@ namespace mfront {
       return result_type{std::move(details[1]), std::move(details[2]), "",
                          std::move(details[3])};
     }
+    const auto mid = details[3] == "<none>" ? "" : details[3];
     return result_type{std::move(details[1]), std::move(details[2]),
-                       std::move(details[3]), std::move(details[4])};
+                       std::move(mid), std::move(details[4])};
   }  // end of decomposeImplementationPathInMadnexFile
 
 #endif /* MFRONT_HAVE_MADNEX */
