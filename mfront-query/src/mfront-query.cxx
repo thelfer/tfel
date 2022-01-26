@@ -67,6 +67,55 @@ static bool checkMadnexFileExtension(const mfront::PathSpecifier& p){
   return (ext == "madnex") || (ext == "mdnx") || (ext == "edf");
 } // end of checkMadnexFileExtension
 
+static void listImplementations1(const mfront::PathSpecifier& p,
+                                 const std::string& itypes,
+                                 const std::vector<std::string>& impls) {
+  if (!impls.empty()) {
+    if (p.material_identifier == "<none>") {
+      std::cout << "- " + itypes + " associated with no material:\n";
+    } else {
+      std::cout << "- " + itypes + " associated with material '" +
+                       p.material_identifier + "':\n";
+    }
+    for (const auto& i : impls) {
+      std::cout << "    - " << i << '\n';
+    }
+  }
+}
+
+static void listImplementations2(
+    const std::string& itypes,
+    const std::map<std::string, std::vector<std::string>>&
+        impls_sorted_by_materials) {
+  for (const auto& impls : impls_sorted_by_materials) {
+    if (impls.first.empty()) {
+      std::cout << "- " + itypes + " associated with no material:\n";
+    } else {
+      std::cout << "- " + itypes + " associated with material '" + impls.first +
+                       "':\n";
+    }
+    for (const auto& i : impls.second) {
+      std::cout << "    - " << i << '\n';
+    }
+  }
+}
+
+static void listImplementations3(
+    const std::map<std::string, std::vector<std::string>>&
+        impls_sorted_by_materials) {
+  for (const auto& impls : impls_sorted_by_materials) {
+    bool first = true;
+    for (const auto& i : impls.second) {
+      if (!first) {
+        std::cout << " ";
+      }
+      first = false;
+      std::cout << i;
+    }
+    std::cout << '\n';
+  }
+}
+
 static void listImplementations(const mfront::PathSpecifier& p,
                                 const std::string& itypes,
                                 const GetAvailableImplementationsPtr1 m1,
@@ -106,42 +155,12 @@ static void listImplementations(const mfront::PathSpecifier& p,
   if (!p.material_identifier.empty()) {
       const auto impls = (d.*m1)(
           p.material_identifier == "<none>" ? "" : p.material_identifier);
-    if (!impls.empty()) {
-      if (p.material_identifier == "<none>") {
-        std::cout << "- " + itypes + " associated with no material:\n";
+      listImplementations1(p, itypes, impls);
       } else {
-        std::cout << "- " + itypes + " associated with material '" +
-                         p.material_identifier + "':\n";
-      }
-      for (const auto& i : impls) {
-        std::cout << "    - " << i << '\n';
-      }
+      listImplementations2(itypes, (d.*m2)());
     }
   } else {
-    for (const auto& impls : (d.*m2)()) {
-      if (impls.first.empty()) {
-        std::cout << "- " + itypes + " associated with no material:\n";
-      } else {
-        std::cout << "- " + itypes + " associated with material '" +
-                         impls.first + "':\n";
-      }
-      for (const auto& i : impls.second) {
-        std::cout << "    - " << i << '\n';
-      }
-      }
-    }
-  } else {
-    for (const auto& impls : (d.*m2)()) {
-      bool first = true;
-      for (const auto& i : impls.second) {
-        if (!first) {
-          std::cout << " ";
-        }
-        first = false;
-        std::cout << i;
-      }
-      std::cout << '\n';
-    }
+    listImplementations3((d.*m2)());
   }
 }  // end of listImplementations
 
@@ -212,6 +231,36 @@ static void listMaterials(const mfront::PathSpecifier& p) {
   std::cout << '\n';
 }  // end of listMaterials
 
+static void listImplementationPaths(const mfront::PathSpecifier& p,
+                                    const bool sorted_by_files) {
+  if (!checkMadnexFileExtension(p)) {
+    tfel::raise(
+        "mfront-query: listing implementation paths is only supported for "
+        "madnex files");
+  }
+  auto d = madnex::MFrontDataBase{p.file};
+  auto first = true;
+  auto display = [&first](std::string_view path) {
+    if (!first) {
+      std::cout << " ";
+    }
+    first = false;
+    std::cout << path;
+  };
+  const auto paths = getImplementationsPaths(p);
+  if (sorted_by_files) {
+    std::cout << "- " << p.file << ": ";
+  }
+  for (const auto& path : paths) {
+    display(path);
+  }
+  std::cout << '\n';
+}  // end of listMaterials
+
+#endif /* MFRONT_QUERY_HAVE_MADNEX */
+
+#ifdef MFRONT_QUERY_HAVE_MADNEX
+
 static bool treatListMaterialKnowledge(bool& b,
                                        bool& sorted,
                                        const char* const opt,
@@ -240,6 +289,34 @@ static bool treatListMaterialKnowledge(bool& b,
   return b;
 }  // end of treatListMaterialKnowledge
 
+static bool treatListImplementationPathsOption(bool& b,
+                                               bool& sorted,
+                                               const char* const opt,
+                                               const std::string& arg) {
+  if (tfel::utilities::starts_with(arg, opt)) {
+    if (b) {
+      tfel::raise("mfront-query: " + std::string{opt} + " multiply defined");
+    }
+    const auto o = std::string_view(arg).substr(std::strlen(opt));
+    if (!o.empty()) {
+      if (o == "=sorted-by-files") {
+        sorted = true;
+      } else if (o == "=unsorted") {
+        sorted = false;
+      } else {
+        tfel::raise(
+            "mfront-query: "
+            "invalid command line argument '" +
+            arg + "'");
+      }
+    } else {
+      sorted = true;
+    }
+    b = true;
+  }
+  return b;
+}  // end of treatListImplementationPathsOption
+
 #endif /* MFRONT_QUERY_HAVE_MADNEX */
 
 /* coverity [UNCAUGHT_EXCEPT]*/
@@ -265,6 +342,8 @@ int main(const int argc, const char* const* const argv) {
     auto queries_arguments = std::vector<const char*>{};
 #ifdef MFRONT_QUERY_HAVE_MADNEX
     auto list_materials = false;
+    auto list_implementation_paths = false;
+    auto sort_implementation_paths_list = true;
     auto list_material_properties = false;
     auto sort_material_properties_list = true;
     auto list_behaviours = false;
@@ -295,10 +374,17 @@ int main(const int argc, const char* const* const argv) {
                   << "specify a material (regular expression)\n"
                   << "--material-property                   : "
                   << "specify a material property (regular expression)\n"
+                  << "--all-material-properties             : "
+                  << "select all material properties (equivalent to "
+                     "--material-property='.+')\n"
                   << "--behaviour                           : "
                   << "specify a behaviour (regular expression)\n"
+                  << "--all-behaviours                      : "
+                  << "select all behaviours (equivalent to --behaviour='.+')\n"
                   << "--model                           : "
-                  << "specify a model (regular expression)\n";
+                  << "specify a model (regular expression)\n"
+                  << "--all-models                      : "
+                  << "select all models (equivalent to --model='.+')\n";
 #endif /* MFRONT_QUERY_HAVE_MADNEX */
         std::exit(EXIT_SUCCESS);
       } else if ((a == "--version") || (a == "-v")) {
@@ -308,6 +394,9 @@ int main(const int argc, const char* const* const argv) {
         std::cout << "Usage : " << argv[0] << " [options] [files]\n";
         std::exit(EXIT_SUCCESS);
 #ifdef MFRONT_QUERY_HAVE_MADNEX
+      } else if (treatListImplementationPathsOption(
+                     list_implementation_paths, sort_implementation_paths_list,
+                     "--list-implementation-paths", a)) {
       } else if (a == "--list-materials") {
         list_materials = true;
       } else if (treatListMaterialKnowledge(list_material_properties,
@@ -321,6 +410,9 @@ int main(const int argc, const char* const* const argv) {
 #if (defined _WIN32) || (defined _WIN64)
       } else if (a == "/list-materials") {
         list_materials = true;
+      } else if (treatListImplementationPathsOption(
+                     list_implementation_paths, sort_implementation_paths_list,
+                     "/list-implementation-paths", a)) {
       } else if (treatListMaterialKnowledge(list_material_properties,
                                             sort_material_properties_list,
                                             "/list-material-properties", a)) {
@@ -339,12 +431,20 @@ int main(const int argc, const char* const* const argv) {
                                                   current_path_specifier);
 #ifdef MFRONT_QUERY_HAVE_MADNEX
     if (list_materials || list_material_properties ||  //
-        list_behaviours || list_models) {
+        list_behaviours || list_models || list_implementation_paths) {
       tfel::raise_if(
           queries_arguments.size() != 1u,
           "specifying queries with the "
           "--list-materials, --list-material-properties, "
           "--list-behaviour or --list-models argument is not supported");
+    }
+    if ((list_materials || list_material_properties ||  //
+         list_behaviours || list_models) &&
+        (list_implementation_paths)) {
+      tfel::raise(
+          "specifying --list-paths can be combined with --list-materials, "
+          "--list-material-properties, "
+          "--list-behaviour or --list-models");
     }
     for (const auto& p : path_specifiers) {
       if (list_materials) {
@@ -359,9 +459,12 @@ int main(const int argc, const char* const* const argv) {
       if (list_models) {
         listModels(p, sort_models_list);
       }
+      if (list_implementation_paths) {
+        listImplementationPaths(p, sort_implementation_paths_list);
+      }
     }
     if (list_materials || list_material_properties ||  //
-        list_behaviours || list_models) {
+        list_behaviours || list_models || list_implementation_paths) {
       std::exit(EXIT_SUCCESS);
     }
 #endif /* MFRONT_QUERY_HAVE_MADNEX */
