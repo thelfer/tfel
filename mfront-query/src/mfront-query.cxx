@@ -28,10 +28,10 @@
 #include <stdexcept>
 #include <string_view>
 
-#ifdef MFRONT_HAVE_MADNEX
+#ifdef MFRONT_QUERY_HAVE_MADNEX
 #include "Madnex/MFrontDataBase.hxx"
 #include "Madnex/MFrontImplementation.hxx"
-#endif /* MFRONT_HAVE_MADNEX */
+#endif /* MFRONT_QUERY_HAVE_MADNEX */
 
 #include "TFEL/Raise.hxx"
 #include "TFEL/Utilities/StringAlgorithms.hxx"
@@ -323,10 +323,16 @@ int main(const int argc, const char* const* const argv) {
                   << "specify a material (regular expression)\n"
                   << "--material-property                   : "
                   << "specify a material property (regular expression)\n"
+                  << "--all-material-properties             : "
+                  << "select all material properties (equivalent to --material-property='.+')\n"
                   << "--behaviour                           : "
                   << "specify a behaviour (regular expression)\n"
+                  << "--all-behaviours                      : "
+                  << "select all behaviours (equivalent to --behaviour='.+')\n"
                   << "--model                           : "
-                  << "specify a model (regular expression)\n";
+                  << "specify a model (regular expression)\n"
+                  << "--all-models                      : "
+                  << "select all models (equivalent to --model='.+')\n";
 #endif /* MFRONT_QUERY_HAVE_MADNEX */
         std::exit(EXIT_SUCCESS);
       } else if ((a == "--version") || (a == "-v")) {

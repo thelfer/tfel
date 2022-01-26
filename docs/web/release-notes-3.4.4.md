@@ -95,6 +95,10 @@ argument is used.
 
 # Issues solved
 
+## Issue #96: [mfront] Add support to the `--all-material-properties`, `--all-behaviours`, `--all-models` to the `parsePathSpecifierArguments`  function for consistency with `mfront`
+
+For more details, see : <https://github.com/thelfer/tfel/issues/96>
+
 ## Issue #87: Better `--list-material-properties`, `--list-behaviours` and `--list-models queries`
 
 Theses features are described in Sections
