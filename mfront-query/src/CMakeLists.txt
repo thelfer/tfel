@@ -24,5 +24,3 @@ endif(TFEL_HAVE_MADNEX)
 
 install(TARGETS mfront-query DESTINATION bin
   COMPONENT mfront)
-
-
