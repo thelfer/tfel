@@ -176,8 +176,10 @@ namespace mfront::gb {
      */
     template <typename Behaviour>
     static void exe(mfront_gb_BehaviourData& d, const Behaviour& b) {
-      *(d.s1.stored_energy) = *(d.s0.stored_energy);
-      b.computeInternalEnergy(*(d.s1.stored_energy));
+      using stress = typename Behaviour::stress;
+      auto e = stress{*(d.s0.stored_energy)};
+      b.computeInternalEnergy(e);
+      tfel::math::map<stress>(*(d.s1.stored_energy)) = e;
     }
   };  // end of struct InternalEnergyComputer
   //! structure in charge of calling the computeDissipatedEnergy method
@@ -189,8 +191,10 @@ namespace mfront::gb {
      */
     template <typename Behaviour>
     static void exe(mfront_gb_BehaviourData& d, const Behaviour& b) {
-      *(d.s1.dissipated_energy) = *(d.s0.dissipated_energy);
-      b.computeDissipatedEnergy(*(d.s1.dissipated_energy));
+      using stress = typename Behaviour::stress;
+      auto e = stress{*(d.s0.dissipated_energy)};
+      b.computeDissipatedEnergy(e);
+      tfel::math::map<stress>(*(d.s1.dissipated_energy)) = e;
     }  // end of exe
   };   // end of struct DissipatedEnergyComputer
   //! place holder for tag dispatching
