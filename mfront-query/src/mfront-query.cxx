@@ -430,14 +430,6 @@ int main(const int argc, const char* const* const argv) {
     mfront::finalizePathSpecifierArgumentsParsing(path_specifiers,
                                                   current_path_specifier);
 #ifdef MFRONT_QUERY_HAVE_MADNEX
-    if (list_materials || list_material_properties ||  //
-        list_behaviours || list_models || list_implementation_paths) {
-      tfel::raise_if(
-          queries_arguments.size() != 1u,
-          "specifying queries with the "
-          "--list-materials, --list-material-properties, "
-          "--list-behaviour or --list-models argument is not supported");
-    }
     if ((list_materials || list_material_properties ||  //
          list_behaviours || list_models) &&
         (list_implementation_paths)) {
