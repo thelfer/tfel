@@ -4792,7 +4792,7 @@ namespace mfront {
        << "* \\brief Update the internal energy at end of the time step\n"
        << "* \\param[in] Psi_s: internal energy at end of the time step\n"
        << "*/\n"
-       << "void computeInternalEnergy(real& Psi_s) const";
+       << "void computeInternalEnergy(stress& Psi_s) const";
     if (this->mb.hasCode(h, BehaviourData::ComputeInternalEnergy)) {
       os << "{\n"
          << "using namespace std;\n"
@@ -4801,7 +4801,7 @@ namespace mfront {
       os << this->mb.getCode(h, BehaviourData::ComputeInternalEnergy)
          << "\n}\n\n";
     } else {
-      os << "\n{\nPsi_s=0;\n}\n\n";
+      os << "\n{\nPsi_s=stress{0};\n}\n\n";
     }
   }  // end of writeBehaviourComputeInternalEnergy
 
@@ -4811,7 +4811,7 @@ namespace mfront {
        << "* \\brief Update the dissipated energy at end of the time step\n"
        << "* \\param[in] Psi_d: dissipated energy at end of the time step\n"
        << "*/\n"
-       << "void computeDissipatedEnergy(real& Psi_d) const";
+       << "void computeDissipatedEnergy(stress& Psi_d) const";
     if (this->mb.hasCode(h, BehaviourData::ComputeDissipatedEnergy)) {
       os << "{\n"
          << "using namespace std;\n"
@@ -4820,7 +4820,7 @@ namespace mfront {
       os << this->mb.getCode(h, BehaviourData::ComputeDissipatedEnergy)
          << "\n}\n\n";
     } else {
-      os << "\n{\nPsi_d=0;\n}\n\n";
+      os << "\n{\nPsi_d=stress{0};\n}\n\n";
     }
   }  // end of writeBehaviourComputeDissipatedEnergy
 

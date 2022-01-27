@@ -23,6 +23,10 @@ eqnPrefixTemplate: "($$i$$)"
 
 For more details, see <https://github.com/thelfer/tfel/issues/102>
 
+## Issue #101: [mfront] [generic interface] The computation of stored and dissipated energies fails to compile if quantities are used bug generic interface mfront
+
+For more details, see <https://github.com/thelfer/tfel/issues/101>
+
 ## Issue #78: [TFELMath] missing `const` qualifier in the implementation of the `map` function for immutable views
 
 For more details, see <https://github.com/thelfer/tfel/issues/78>
