@@ -111,6 +111,7 @@ namespace mfront {
           "(use the @FlowRule directive)");
     }
     os << "bool computeFlow(){\n"
+       << "using namespace std;\n"
        << "using namespace tfel::math;\n"
        << "using namespace tfel::material;\n"
        << "using std::vector;\n";
