@@ -19,6 +19,10 @@ eqnPrefixTemplate: "($$i$$)"
 
 # Issues fixed
 
+## Issue #102: [mfront] Missing `using namespace std;` in the body of the `computeFlow` method of the `IsotropicStrainHardeningMisesCreep` DSL
+
+For more details, see <https://github.com/thelfer/tfel/issues/102>
+
 ## Issue #78: [TFELMath] missing `const` qualifier in the implementation of the `map` function for immutable views
 
 For more details, see <https://github.com/thelfer/tfel/issues/78>
