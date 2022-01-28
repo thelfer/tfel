@@ -16,6 +16,8 @@
 
 #include <memory>
 #include <functional>
+#include "TFEL/Utilities/ArgumentParserBase.hxx"
+#include "MFront/MFrontBase.hxx"
 
 namespace mfront {
 
@@ -24,17 +26,49 @@ namespace mfront {
   struct FileDescription;
 
   //! \brief base class for queries handler
-  struct QueryHandlerBase {
-    QueryHandlerBase();
+  struct QueryHandlerBase
+      : public tfel::utilities::ArgumentParserBase<QueryHandlerBase>,
+        public MFrontBase {
+    /*!
+     * \brief default constructor
+     * \param[in] argc: number of command line arguments
+     * \param[in] argv: command line arguments
+     */
+    QueryHandlerBase(const int, const char *const *const);
     //! \brief destructor
     virtual ~QueryHandlerBase();
 
    protected:
+    //! \brief ArgumentParserBase must be a friend
+    friend struct tfel::utilities::ArgumentParserBase<QueryHandlerBase>;
+    const tfel::utilities::Argument &getCurrentCommandLineArgument()
+        const override final;
+    void treatUnknownArgument() override final;
+    std::string getVersionDescription() const override final;
+    std::string getUsageDescription() const override final;
+    //! \brief register call-backs associated with command line arguments
+    virtual void registerCommandLineCallBacks();
     //! \return the abstract domain specific language
     virtual std::shared_ptr<const AbstractDSL> getDSL() const = 0;
-    //! \return an object handling the `--generated-sources` query
+    /*!
+     * \return an object handling the `--generated-sources` query
+     * \param[in] o: option passed the query
+     */
     virtual std::function<void()> generateGeneratedSourcesQuery(
         const std::string&) const;
+    /*!
+     * \return an object handling the `--specific-target-generated-sources`
+     * query.
+     * \param[in] n: name of the specific target
+     */
+    virtual std::function<void()> generateSpecificTargetGeneratedSourcesQuery(
+        const std::string &) const;
+    /*!
+     * \return an object handling the `--all-specific-targets-generated-sources`
+     * query.
+     */
+    virtual std::function<void()>
+    generateAllSpecificTargetsGeneratedSourcesQuery() const;
     //! \return an object handling the `--generated-headers` query
     virtual std::function<void()> generateGeneratedHeadersQuery() const;
     //! \return an object handling the `--specific-targets` query
@@ -43,6 +77,27 @@ namespace mfront {
     virtual std::function<void()> generateLibrariesDependenciesQuery() const;
     //! \return an object handling the `--cppflags` query
     virtual std::function<void()> generateCppFlagsQuery() const;
+    //! \brief treat the "--generated-sources" query
+    virtual void treatGeneratedSources() = 0;
+    //! \brief treat the "--specific-target-generated-sources" query
+    virtual void treatSpecificTargetGeneratedSources() = 0;
+    //! \brief treat the "--all-specific-targets-generated-sources" query
+    virtual void treatAllSpecificTargetsGeneratedSources() = 0;
+    //! \brief treat the "--cppflags" query
+    virtual void treatCppFlags() = 0;
+    //! \brief treat the "--generated-headers" query
+    virtual void treatGeneratedHeaders() = 0;
+    //! \brief treat the "--libraries-dependencies" query
+    virtual void treatLibrariesDependencies() = 0;
+    //! \brief treat the "--specific-targets" query
+    virtual void treatSpecificTargets() = 0;
+    //! \brief treat the "--dsl-target" query
+    virtual void treatDSLTarget() = 0;
+    /*!
+     * \brief optional flags stating if sources of library dependencies must be
+     * concateneted with the sources of the library
+     */
+    bool melt_sources = true;
   };  // end of struct QueryHandlerBase
 
 }  // end of namespace mfront

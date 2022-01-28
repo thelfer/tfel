@@ -38,6 +38,10 @@ namespace mfront {
     TargetsDescription(const TargetsDescription&);
     TargetsDescription(TargetsDescription&&);
     ~TargetsDescription();
+    //! a simple alias
+    using iterator = std::vector<LibraryDescription>::iterator;
+    //! a simple alias
+    using const_iterator = std::vector<LibraryDescription>::const_iterator;
     /*!
      * \return the library description associated with the given
      * library name or a newly created one if non existed.

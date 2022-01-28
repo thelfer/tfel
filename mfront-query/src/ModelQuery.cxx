@@ -19,7 +19,6 @@
 #include "TFEL/Utilities/StringAlgorithms.hxx"
 #include "MFront/ModelDSL.hxx"
 #include "MFront/MFrontLogStream.hxx"
-#include "MFront/MFrontHeader.hxx"
 #include "MFront/ModelQuery.hxx"
 
 namespace mfront {
@@ -28,9 +27,7 @@ namespace mfront {
                          const char* const* const argv,
                          std::shared_ptr<ModelDSL> d,
                          const std::string& f)
-      : tfel::utilities::ArgumentParserBase<ModelQuery>(argc, argv),
-        dsl(d),
-        file(f) {
+      : QueryHandlerBase(argc, argv), dsl(d), file(f) {
     this->registerCommandLineCallBacks();
     this->parseArguments();
     this->finalizeArgumentsParsing();
@@ -45,50 +42,11 @@ namespace mfront {
   } // end of getDSL
 
   void ModelQuery::registerCommandLineCallBacks() {
-    using Parser = tfel::utilities::ArgumentParserBase<ModelQuery>;
-    Parser::registerNewCallBack("--verbose", &ModelQuery::treatVerbose,
-                                "set verbose output", true);
-    Parser::registerNewCallBack("--unicode-output",
-                                &ModelQuery::treatUnicodeOutput,
-                                "allow/disallow unicode output", true);
-    Parser::registerNewCallBack(
-        "--include", "-I", &ModelQuery::treatSearchPath,
-        "add a new path at the beginning of the search paths", true);
-    Parser::registerNewCallBack(
-        "--search-path", &ModelQuery::treatSearchPath,
-        "add a new path at the beginning of the search paths", true);
-    Parser::registerNewCallBack("--install-path", &ModelQuery::treatInstallPath,
-                                "set the installation directory", true);
-    Parser::registerNewCallBack("--install-prefix",
-                                &ModelQuery::treatInstallPath,
-                                "set the installation directory "
-                                "(same as --install-path)",
-                                true);
-    Parser::registerNewCallBack("--debug", &ModelQuery::treatDebug,
-                                "set debug mode");
-    Parser::registerNewCallBack("--warning", "-W", &ModelQuery::treatWarning,
-                                "print warnings");
-    Parser::registerNewCallBack("--pedantic", &ModelQuery::treatPedantic,
-                                "print pedantic warning message");
-    Parser::registerNewCallBack("--interface", &ModelQuery::treatInterface,
-                                "define an interface", true);
-#ifdef MFRONT_HAVE_MADNEX
-    Parser::registerNewCallBack("--material",
-                                &ModelQuery::treatMaterialIdentifier,
-                                "specify a material identifier", true);
-    Parser::registerNewCallBack(
-        "--material-property", &ModelQuery::treatMaterialPropertyIdentifier,
-        "specify a material property identifier (can be a regular expression)",
-        true);
-    Parser::registerNewCallBack(
-        "--behaviour", &ModelQuery::treatBehaviourIdentifier,
-        "specify a behaviour identifier (can be a regular expression)", true);
-    Parser::registerNewCallBack(
-        "--model", &ModelQuery::treatModelIdentifier,
-        "specify a model identifier (can be a regular expression)", true);
-#endif /* MFRONT_HAVE_MADNEX */
+    QueryHandlerBase::registerCommandLineCallBacks();
     // standard queries
     const std::vector<std::pair<const char*, const char*>> sq = {
+        {"--model-name", "show the model name"},
+        {"--class-name", "show the class name"},
         {"--author", "show the author name"},
         {"--description", "show the file description"},
         {"--date", "show the file implementation date"},
@@ -96,32 +54,25 @@ namespace mfront {
         {"--library", "show the library name"},
         {"--outputs", "show model outputs"}};
     for (const auto& q : sq) {
-      Parser::registerNewCallBack(q.first, &ModelQuery::treatStandardQuery,
-                                  q.second);
+      this->registerCallBack(
+          q.first,
+          CallBack(q.second, [this] { this->treatStandardQuery(); }, false));
     }
-    Parser::registerNewCallBack("--generated-sources",
-                                &ModelQuery::treatGeneratedSources,
-                                "show all the generated sources", true);
-    Parser::registerNewCallBack("--generated-headers",
-                                &ModelQuery::treatGeneratedHeaders,
-                                "show all the generated headers");
-    Parser::registerNewCallBack("--cppflags", &ModelQuery::treatCppFlags,
-                                "show all the global headers");
-    Parser::registerNewCallBack("--libraries-dependencies",
-                                &ModelQuery::treatLibrariesDependencies,
-                                "show all the libraries dependencies");
-    Parser::registerNewCallBack("--specific-targets",
-                                &ModelQuery::treatSpecificTargets,
-                                "show all the specific targets");
-    Parser::registerCallBack("--no-gui",
-                             CallBack("do not display errors using "
-                                      "a message box (windows only)",
-                                      [] {}, false));
-  }  // end of registerCommandLineCallBacks
+      }  // end of registerCommandLineCallBacks
 
   void ModelQuery::treatStandardQuery() {
     const auto& qn = this->getCurrentCommandLineArgument().as_string();
-    if (qn == "--author") {
+    if (qn == "--model-name") {
+      this->queries.push_back({"model-name", [](const FileDescription&,
+                                                const ModelDescription& mpd) {
+                                 std::cout << mpd.modelName << std::endl;
+                               }});
+    } else if (qn == "--class-name") {
+      this->queries.push_back({"class-name", [](const FileDescription&,
+                                                const ModelDescription& mpd) {
+                                 std::cout << mpd.className << std::endl;
+                               }});
+    } else if (qn == "--author") {
       this->queries.push_back(
           {"author", [](const FileDescription& fd, const ModelDescription&) {
              const auto& a = fd.authorName;
@@ -202,6 +153,21 @@ namespace mfront {
          [q](const FileDescription&, const ModelDescription&) { q(); }});
   }  // end of treatGeneratedSources
 
+  void ModelQuery::treatSpecificTargetGeneratedSources() {
+    auto q = this->generateSpecificTargetGeneratedSourcesQuery(
+        this->getCurrentCommandLineArgument().getOption());
+    this->queries.push_back(
+        {"specific-target-generated-sources",
+         [q](const FileDescription&, const ModelDescription&) { q(); }});
+  }  // end of treatSpecificTargetGeneratedSources
+
+  void ModelQuery::treatAllSpecificTargetsGeneratedSources() {
+    auto q = this->generateAllSpecificTargetsGeneratedSourcesQuery();
+    this->queries.push_back(
+        {"all-specific-targets-generated-sources",
+         [q](const FileDescription&, const ModelDescription&) { q(); }});
+  }  // end of treatAllSpecificTargetsGeneratedSources
+
   void ModelQuery::treatGeneratedHeaders() {
     auto q = this->generateGeneratedHeadersQuery();
     this->queries.push_back(
@@ -247,34 +213,9 @@ namespace mfront {
     }
   }  // end of exe
 
-  const tfel::utilities::Argument& ModelQuery::getCurrentCommandLineArgument()
-      const {
-    return *(this->currentArgument);
-  }
-
-  void ModelQuery::treatUnknownArgument() {
-    if (!MFrontBase::treatUnknownArgumentBase()) {
-#if !(defined _WIN32 || defined _WIN64 || defined __CYGWIN__)
-      ArgumentParserBase<ModelQuery>::treatUnknownArgument();
-#else
-      const auto& a = static_cast<const std::string&>(
-          this->getCurrentCommandLineArgument());
-      std::cerr << "mfront : unsupported option '" << a << "'\n";
-      ::exit(EXIT_FAILURE);
-#endif /* __CYGWIN__ */
-    }
-  }
-
-  std::string ModelQuery::getVersionDescription() const {
-    return MFrontHeader::getHeader();
-  }
-
-  std::string ModelQuery::getUsageDescription() const {
-    auto usage = std::string("Usage: ");
-    usage += this->programName;
-    usage += " [options] [files]";
-    return usage;
-  }
+  void ModelQuery::treatDSLTarget() {
+    std::cout << "model" << std::endl;
+  }  // end of treatDSLTarget
 
   ModelQuery::~ModelQuery() = default;
 

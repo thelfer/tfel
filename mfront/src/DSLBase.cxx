@@ -1186,18 +1186,26 @@ namespace mfront {
       l.ldflags.insert(l.ldflags.end(), this->ldflags.begin(),
                        this->ldflags.end());
     }
+    // merging auxiliary target description
+    auto atd = TargetsDescription();
     for (const auto& t : this->atds) {
-      for (const auto& al : t.libraries) {
+      mergeTargetsDescription(atd, t, false);
+    }
+    // adding dependencies to main targets
+    for (const auto& al : atd.libraries) {
         for (auto& l : this->td.libraries) {
           if (l.name != al.name) {
             insert_if(l.deps, al.name);
           }
         }
+      for (auto& tg : this->td.specific_targets) {
+        if ((tg.first == "all") || (tg.first == "clean")) {
+          continue;
+        }
+        insert_if(tg.second.libraries, al.name);
       }
     }
-    for (const auto& t : this->atds) {
-      mergeTargetsDescription(this->td, t, false);
-    }
+    mergeTargetsDescription(this->td, atd, false);
     this->ldflags.clear();
     this->atds.clear();
   }  // end of DSLBase::completeTargetsDescription()

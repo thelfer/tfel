@@ -28,7 +28,6 @@
 #include "TFEL/Utilities/StringAlgorithms.hxx"
 #include "TFEL/Glossary/Glossary.hxx"
 #include "TFEL/Glossary/GlossaryEntry.hxx"
-#include "MFront/MFrontHeader.hxx"
 #include "MFront/MFrontLogStream.hxx"
 #include "MFront/AbstractBehaviourDSL.hxx"
 #include "MFront/FileDescription.hxx"
@@ -157,9 +156,7 @@ namespace mfront {
                                  const char* const* const argv,
                                  std::shared_ptr<AbstractBehaviourDSL> d,
                                  const std::string& f)
-      : tfel::utilities::ArgumentParserBase<BehaviourQuery>(argc, argv),
-        dsl(d),
-        file(f) {
+      : QueryHandlerBase(argc, argv), dsl(d), file(f) {
     this->registerCommandLineCallBacks();
     this->parseArguments();
     this->finalizeArgumentsParsing();
@@ -174,60 +171,16 @@ namespace mfront {
   } // end of getDSL
 
   void BehaviourQuery::registerCommandLineCallBacks() {
-    using Parser = tfel::utilities::ArgumentParserBase<BehaviourQuery>;
-    Parser::registerNewCallBack("--verbose", &BehaviourQuery::treatVerbose,
-                                "set verbose output", true);
-    Parser::registerNewCallBack("--verbose", &BehaviourQuery::treatVerbose,
-                                "set verbose output", true);
-    Parser::registerNewCallBack("--unicode-output",
-                                &BehaviourQuery::treatUnicodeOutput,
-                                "allow/disallow unicode output", true);
-    Parser::registerNewCallBack(
-        "--include", "-I", &BehaviourQuery::treatSearchPath,
-        "add a new path at the beginning of the search paths", true);
-    Parser::registerNewCallBack("--install-path",
-                                &BehaviourQuery::treatInstallPath,
-                                "set the installation directory", true);
-    Parser::registerNewCallBack("--install-prefix",
-                                &BehaviourQuery::treatInstallPath,
-                                "set the installation directory "
-                                "(same as --install-path)",
-                                true);
-    Parser::registerNewCallBack(
-        "--search-path", &BehaviourQuery::treatSearchPath,
-        "add a new path at the beginning of the search paths", true);
-    Parser::registerNewCallBack("--debug", &BehaviourQuery::treatDebug,
-                                "set debug mode");
-    Parser::registerNewCallBack(
-        "--warning", "-W", &BehaviourQuery::treatWarning, "print warnings");
-    Parser::registerNewCallBack("--pedantic", &BehaviourQuery::treatPedantic,
-                                "print pedantic warning message");
-    Parser::registerNewCallBack("--interface", &BehaviourQuery::treatInterface,
-                                "define an interface", true);
-    Parser::registerNewCallBack("--modelling-hypothesis",
-                                &BehaviourQuery::treatModellingHypothesis,
-                                "select a modelling hypothesis", true);
-    Parser::registerCallBack("--no-gui",
-                             CallBack("do not display errors using "
-                                      "a message box (windows only)",
-                                      [] {}, false));
-#ifdef MFRONT_HAVE_MADNEX
-    Parser::registerNewCallBack("--material",
-                                &BehaviourQuery::treatMaterialIdentifier,
-                                "specify a material identifier", true);
-    Parser::registerNewCallBack(
-        "--material-property", &BehaviourQuery::treatMaterialPropertyIdentifier,
-        "specify a material property identifier (can be a regular expression)",
-        true);
-    Parser::registerNewCallBack(
-        "--behaviour", &BehaviourQuery::treatBehaviourIdentifier,
-        "specify a behaviour identifier (can be a regular expression)", true);
-    Parser::registerNewCallBack(
-        "--model", &BehaviourQuery::treatModelIdentifier,
-        "specify a model identifier (can be a regular expression)", true);
-#endif /* MFRONT_HAVE_MADNEX */
+    QueryHandlerBase::registerCommandLineCallBacks();
+    //
+    this->registerCallBack(
+        "--modelling-hypothesis",
+        CallBack("select a modelling hypothesis",
+                 [this] { this->treatModellingHypothesis(); }, true));
     // standard queries
     const std::vector<std::pair<const char*, const char*>> sq = {
+        {"--behaviour-name", "show the behaviour name"},
+        {"--class-name", "show the class name"},
         {"--author", "show the author name"},
         {"--description", "show the file description"},
         {"--date", "show the file implementation date"},
@@ -317,8 +270,9 @@ namespace mfront {
          "display the name of a text file which can be used to modify the "
          "default value of the parameters"}};
     for (const auto& q : sq) {
-      Parser::registerNewCallBack(q.first, &BehaviourQuery::treatStandardQuery,
-                                  q.second);
+      this->registerCallBack(
+          q.first,
+          CallBack(q.second, [this] { this->treatStandardQuery(); }, false));
     }
     const std::vector<std::pair<const char*, const char*>> sq2 = {
         {"--attribute-type", "display an attribute type"},
@@ -354,23 +308,10 @@ namespace mfront {
         {"--physical-bounds-value",
          "show the bounds value associated as a range"}};
     for (const auto& q : sq2) {
-      Parser::registerNewCallBack(q.first, &BehaviourQuery::treatStandardQuery2,
-                                  q.second, true);
+      this->registerCallBack(
+          q.first,
+          CallBack(q.second, [this] { this->treatStandardQuery2(); }, true));
     }
-    Parser::registerNewCallBack("--generated-sources",
-                                &BehaviourQuery::treatGeneratedSources,
-                                "show all the generated sources", true);
-    Parser::registerNewCallBack("--generated-headers",
-                                &BehaviourQuery::treatGeneratedHeaders,
-                                "show all the generated headers");
-    Parser::registerNewCallBack("--cppflags", &BehaviourQuery::treatCppFlags,
-                                "show all the global headers");
-    Parser::registerNewCallBack("--libraries-dependencies",
-                                &BehaviourQuery::treatLibrariesDependencies,
-                                "show all the libraries dependencies");
-    Parser::registerNewCallBack("--specific-targets",
-                                &BehaviourQuery::treatSpecificTargets,
-                                "show all the specific targets");
   }  // end of registerCommandLineCallBacks
 
   void BehaviourQuery::treatStandardQuery() {
@@ -379,7 +320,19 @@ namespace mfront {
     using tfel::material::ModellingHypothesis;
     const auto& q = this->getCurrentCommandLineArgument();
     const auto& qn = q.as_string();
-    if (qn == "--author") {
+    if (qn == "--class-name") {
+      this->queries2.push_back(
+          {"class-name",
+           [](const FileDescription&, const BehaviourDescription& bd) {
+             cout << bd.getClassName() << '\n';
+           }});
+    } else if (qn == "--behaviour-name") {
+      this->queries2.push_back(
+          {"behaviour-name",
+           [](const FileDescription&, const BehaviourDescription& bd) {
+             cout << bd.getBehaviourName() << '\n';
+           }});
+    } else if (qn == "--author") {
       this->queries2.push_back({"author", [](const FileDescription& fd,
                                              const BehaviourDescription&) {
                                   const auto& a = fd.authorName;
@@ -1121,6 +1074,21 @@ namespace mfront {
          [q](const FileDescription&, const BehaviourDescription&) { q(); }});
   }  // end of treatGeneratedSources
 
+  void BehaviourQuery::treatSpecificTargetGeneratedSources() {
+    auto q = this->generateSpecificTargetGeneratedSourcesQuery(
+        this->getCurrentCommandLineArgument().getOption());
+    this->queries2.push_back(
+        {"specific-target-generated-sources",
+         [q](const FileDescription&, const BehaviourDescription&) { q(); }});
+  }  // end of treatSpecificTargetGeneratedSources
+
+  void BehaviourQuery::treatAllSpecificTargetsGeneratedSources() {
+    auto q = this->generateAllSpecificTargetsGeneratedSourcesQuery();
+    this->queries2.push_back(
+        {"all-specific-targets-generated-sources",
+         [q](const FileDescription&, const BehaviourDescription&) { q(); }});
+  }  // end of treatAllSpecificTargetsGeneratedSources
+
   void BehaviourQuery::treatGeneratedHeaders() {
     auto q = this->generateGeneratedHeadersQuery();
     this->queries2.push_back(
@@ -1216,31 +1184,9 @@ namespace mfront {
     }
   }  // end of exe
 
-  const tfel::utilities::Argument&
-  BehaviourQuery::getCurrentCommandLineArgument() const {
-    return *(this->currentArgument);
-  }
-
-  void BehaviourQuery::treatUnknownArgument() {
-    if (!MFrontBase::treatUnknownArgumentBase()) {
-#if !(defined _WIN32 || defined _WIN64 || defined __CYGWIN__)
-      ArgumentParserBase<BehaviourQuery>::treatUnknownArgument();
-#else
-      const auto& a = static_cast<const std::string&>(
-          this->getCurrentCommandLineArgument());
-      std::cerr << "mfront : unsupported option '" << a << "'\n";
-      ::exit(EXIT_FAILURE);
-#endif /* __CYGWIN__ */
-    }
-  }
-
-  std::string BehaviourQuery::getVersionDescription() const {
-    return MFrontHeader::getHeader();
-  }
-
-  std::string BehaviourQuery::getUsageDescription() const {
-    return "Usage: " + this->programName + " [options] [files]";
-  }
+  void BehaviourQuery::treatDSLTarget() {
+    std::cout << "behaviour" << std::endl;
+  }  // end of treatDSLTarget
 
   BehaviourQuery::~BehaviourQuery() = default;
 

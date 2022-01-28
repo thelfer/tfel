@@ -22,9 +22,7 @@
 
 namespace tfel::utilities {
 
-  /*!
-   * class used to parser command line arguments
-   */
+  //! \brief class used to parser command line arguments
   struct TFELUTILITIES_VISIBILITY_EXPORT ArgumentParser {
     /*!
      * \brief structure describing an action to be performed when a
@@ -40,22 +38,24 @@ namespace tfel::utilities {
        * \param[in] b : true if the callback requires an option
        */
       CallBack(const std::string&, const std::function<void()>&, const bool);
-      //! move constructor
+      //! \brief move constructor
       CallBack(CallBack&&);
-      //! copy constructor (deleted)
+      //! \brief copy constructor (deleted)
       CallBack(const CallBack&);
-      //! move assignement
+      //! \brief move assignement
       CallBack& operator=(CallBack&&) = delete;
-      //! assignement
+      //! \brief assignement
       CallBack& operator=(const CallBack&) = delete;
-      //! description
+      //! \brief description
       const std::string d;
-      //! action performed
+      //! \brief action performed
       std::function<void()> c;
-      //! flag, true if the callback has an option
+      //! \brief flag, true if the callback has an option
       const bool hasOption = false;
     };
-    //! default constructor
+    //! \brief a simple alias
+    using CallBacksContainer = std::map<std::string, CallBack>;
+    //! \brief default constructor
     ArgumentParser();
     /*!
      * \brief constructor
@@ -86,15 +86,15 @@ namespace tfel::utilities {
                                   const CallBack&);
     //! \brief parse arguments using registred methods.
     virtual void parseArguments();
+    //! \return the list of registred callbacks
+    const CallBacksContainer& getRegistredCallBacks() const;
     //! destructor
     virtual ~ArgumentParser();
 
    protected:
-    //! a simple alias
-    using CallBacksContainer = std::map<std::string, CallBack>;
-    //! a simple alias
+    //! \brief a simple alias
     using AliasContainer = std::map<std::string, std::string>;
-    //! a simple alias
+    //! \brief a simple alias
     using ArgsContainer = std::vector<Argument>;
     /*!
      * \brief register a default callbacks
@@ -132,25 +132,25 @@ namespace tfel::utilities {
      * argument
      */
     virtual void treatVersion();
-    //! container of all the call-backs
+    //! \brief container of all the call-backs
     CallBacksContainer callBacksContainer;
-    //! container of all the alias
+    //! \brief container of all the alias
     AliasContainer alias;
-    //! container of all the command line arguments
+    //! \brief container of all the command line arguments
     ArgsContainer args;
-    //! an iterator to the argument being treated
+    //! \brief an iterator to the argument being treated
     ArgsContainer::iterator currentArgument;
-    //! program name
+    //! \brief program name
     std::string programName;
 
    private:
-    //! copy constructor
+    //! \brief copy constructor
     ArgumentParser(const ArgumentParser&) = delete;
-    //! move constructor
+    //! \brief move constructor
     ArgumentParser(ArgumentParser&&) = delete;
-    //! standard assignement
+    //! \brief standard assignement
     ArgumentParser& operator=(const ArgumentParser&) = delete;
-    //! move assignement
+    //! \brief move assignement
     ArgumentParser& operator=(ArgumentParser&&) = delete;
     //! \brief replaces aliases by their usual names
     virtual void replaceAliases();
