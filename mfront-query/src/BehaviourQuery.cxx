@@ -63,7 +63,7 @@ namespace mfront {
     std::cout << '\n';
   }  // end of display_variable
 
-  static const BehaviourAttribute& getAttribute(
+  static const MaterialKnowledgeAttribute& getAttribute(
       const std::string& n,
       const BehaviourDescription& d,
       const tfel::material::ModellingHypothesis::Hypothesis h) {
@@ -170,7 +170,7 @@ namespace mfront {
 
   std::shared_ptr<const AbstractDSL> BehaviourQuery::getDSL() const {
     return this->dsl;
-  } // end of getDSL
+  }  // end of getDSL
 
   void BehaviourQuery::registerCommandLineCallBacks() {
     QueryHandlerBase::registerCommandLineCallBacks();
@@ -181,6 +181,8 @@ namespace mfront {
                  [this] { this->treatModellingHypothesis(); }, true));
     // standard queries
     const std::vector<std::pair<const char*, const char*>> sq = {
+        {"--behaviour-name", "show the behaviour name"},
+        {"--class-name", "show the class name"},
         {"--author", "show the author name"},
         {"--description", "show the file description"},
         {"--date", "show the file implementation date"},
@@ -326,7 +328,19 @@ namespace mfront {
     using tfel::material::ModellingHypothesis;
     const auto& q = this->getCurrentCommandLineArgument();
     const auto& qn = q.as_string();
-    if (qn == "--author") {
+    if (qn == "--class-name") {
+      this->queries2.push_back(
+          {"class-name",
+           [](const FileDescription&, const BehaviourDescription& bd) {
+             cout << bd.getClassName() << '\n';
+           }});
+    } else if (qn == "--behaviour-name") {
+      this->queries2.push_back(
+          {"behaviour-name",
+           [](const FileDescription&, const BehaviourDescription& bd) {
+             cout << bd.getBehaviourName() << '\n';
+           }});
+    } else if (qn == "--author") {
       this->queries2.push_back({"author", [](const FileDescription& fd,
                                              const BehaviourDescription&) {
                                   const auto& a = fd.authorName;
@@ -1098,6 +1112,21 @@ namespace mfront {
          [q](const FileDescription&, const BehaviourDescription&) { q(); }});
   }  // end of treatGeneratedSources
 
+  void BehaviourQuery::treatSpecificTargetGeneratedSources() {
+    auto q = this->generateSpecificTargetGeneratedSourcesQuery(
+        this->getCurrentCommandLineArgument().getOption());
+    this->queries2.push_back(
+        {"specific-target-generated-sources",
+         [q](const FileDescription&, const BehaviourDescription&) { q(); }});
+  }  // end of treatSpecificTargetGeneratedSources
+
+  void BehaviourQuery::treatAllSpecificTargetsGeneratedSources() {
+    auto q = this->generateAllSpecificTargetsGeneratedSourcesQuery();
+    this->queries2.push_back(
+        {"all-specific-targets-generated-sources",
+         [q](const FileDescription&, const BehaviourDescription&) { q(); }});
+  }  // end of treatAllSpecificTargetsGeneratedSources
+
   void BehaviourQuery::treatGeneratedHeaders() {
     auto q = this->generateGeneratedHeadersQuery();
     this->queries2.push_back(
@@ -1192,6 +1221,10 @@ namespace mfront {
       q.second(fd, d);
     }
   }  // end of exe
+
+  void BehaviourQuery::treatDSLTarget() {
+    std::cout << "behaviour" << std::endl;
+  }  // end of treatDSLTarget
 
   BehaviourQuery::~BehaviourQuery() = default;
 

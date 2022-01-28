@@ -1,8 +1,8 @@
 /*!
- * \file   LogarithmicStrainHandler.ixx
+ * \file   include/TFEL/Material/LogarithmicStrainHandler.ixx
  * \brief
  * \author Thomas Helfer
- * \date   25 juin 2017
+ * \date   25/06/2017
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence
@@ -11,8 +11,8 @@
  * project under specific licensing conditions.
  */
 
-#ifndef LIB_TFEL_MATH_LOGARITHMICSTRAINHANDLER_IXX
-#define LIB_TFEL_MATH_LOGARITHMICSTRAINHANDLER_IXX
+#ifndef LIB_TFEL_MATERIAL_LOGARITHMICSTRAINHANDLER_IXX
+#define LIB_TFEL_MATERIAL_LOGARITHMICSTRAINHANDLER_IXX
 
 #include <cmath>
 #include "TFEL/Math/st2tost2.hxx"
@@ -198,6 +198,12 @@ namespace tfel::material {
   }  // end of convertToCauchyStressTruesdellRateTangentModuli
 
   template <typename StressType>
+  const typename LogarithmicStrainHandler<1u, StressType>::DeformationGradient&
+  LogarithmicStrainHandler<1u, StressType>::getDeformationGradient() const {
+    return this->F;
+  }  // end of getDeformationGradient
+
+  template <typename StressType>
   LogarithmicStrainHandler<2u, StressType>::LogarithmicStrainHandler(
       const Setting c, const DeformationGradient& F1, const bool b)
       : LogarithmicStrainHandler(Builder(c, F1, b), c, F1) {
@@ -244,8 +250,8 @@ namespace tfel::material {
   LogarithmicStrainHandler<2u, StressType>::LogarithmicStrainHandler(
       Builder&& src, const Setting c, const DeformationGradient& F1)
       : LogarithmicStrainHandlerBase(c),
-        p(src.p),
         F(F1),
+        p(src.p),
         m(src.m),
         vp(src.vp),
         e(src.e) {}  // end of LogarithmicStrainHandler
@@ -472,8 +478,7 @@ namespace tfel::material {
       this->convertTangentModuli(Kr, Ks, T, N, M);
       return Kr;
     }
-  }  // end of
-     // LogarithmicStrainHandler<2u,StressType>::convertToSpatialTangentModuli
+  }  // end of convertToSpatialTangentModuli
 
   template <typename StressType>
   typename LogarithmicStrainHandler<2u, StressType>::TangentOperator
@@ -496,8 +501,7 @@ namespace tfel::material {
     this->convertTangentModuli(Kr, Ks, T, N, M);
     Kr /= tfel::math::det(this->F);
     return Kr;
-  }  // end of
-     // LogarithmicStrainHandler<2u,StressType>::convertToCauchyStressTruesdellRateTangentModuli
+  }  // end of convertToCauchyStressTruesdellRateTangentModuli
 
   template <typename StressType>
   void LogarithmicStrainHandler<2u, StressType>::
@@ -539,8 +543,7 @@ namespace tfel::material {
     t.importTab(T);
     k = this->convertToCauchyStressTruesdellRateTangentModuli(k, t);
     to_abaqus();
-  }  // end of
-     // LogarithmicStrainHandler<2u,StressType>::convertToCauchyStressTruesdellRateTangentModuli
+  }  // end of convertToCauchyStressTruesdellRateTangentModuli
 
   template <typename StressType>
   typename LogarithmicStrainHandler<2u, StressType>::TangentOperator
@@ -562,8 +565,7 @@ namespace tfel::material {
     this->convertTangentModuli(Kr, Ks, T, N, M);
     return convert<FSTOBase::ABAQUS, FSTOBase::SPATIAL_MODULI>(Kr, F0, this->F,
                                                                sig);
-  }  // end of
-     // LogarithmicStrainHandler<2u,StressType>::convertToAbaqusTangentModuli
+  }  // end of convertToAbaqusTangentModuli
 
   template <typename StressType>
   void LogarithmicStrainHandler<2u, StressType>::convertToAbaqusTangentModuli(
@@ -604,15 +606,19 @@ namespace tfel::material {
     t.importTab(T);
     k = this->convertToAbaqusTangentModuli(k, t);
     to_abaqus();
-  }  // end of
-     // LogarithmicStrainHandler<2u,StressType>::convertToAbaqusTangentModuli
+  }  // end of convertToAbaqusTangentModuli
+
+  template <typename StressType>
+  const typename LogarithmicStrainHandler<2u, StressType>::DeformationGradient&
+  LogarithmicStrainHandler<2u, StressType>::getDeformationGradient() const {
+    return this->F;
+  }  // end of getDeformationGradient
 
   template <typename StressType>
   LogarithmicStrainHandler<3u, StressType>::LogarithmicStrainHandler(
       const Setting c, const DeformationGradient& F1)
       : LogarithmicStrainHandler(Builder(c, F1), c, F1) {
-  }  // end of
-     // LogarithmicStrainHandler<3u,StressTupe>::LogarithmicStrainHandler
+  }  // end of LogarithmicStrainHandler
 
   template <typename StressType>
   LogarithmicStrainHandler<3u, StressType>::Builder::Builder(
@@ -686,8 +692,8 @@ namespace tfel::material {
   LogarithmicStrainHandler<3u, StressType>::LogarithmicStrainHandler(
       Builder&& src, const Setting c, const DeformationGradient& F1)
       : LogarithmicStrainHandlerBase(c),
-        p(src.p),
         F(F1),
+        p(src.p),
         m(src.m),
         vp(src.vp),
         e(src.e) {}  // end of LogarithmicStrainHandler
@@ -1253,6 +1259,12 @@ namespace tfel::material {
     to_abaqus();
   }  // end of convertToAbaqusTangentModuli
 
+  template <typename StressType>
+  const typename LogarithmicStrainHandler<3u, StressType>::DeformationGradient&
+  LogarithmicStrainHandler<3u, StressType>::getDeformationGradient() const {
+    return this->F;
+  }  // end of getDeformationGradient
+
 }  // end of namespace tfel::material
 
-#endif /* LIB_TFEL_MATH_LOGARITHMICSTRAINHANDLER_IXX */
+#endif /* LIB_TFEL_MATERIAL_LOGARITHMICSTRAINHANDLER_IXX */

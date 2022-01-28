@@ -36,8 +36,7 @@ namespace mfront {
    * \brief class used by the mfront-query tool to extract information from
    * model implementation
    */
-  struct ModelQuery final
-      : public QueryHandlerBase {
+  struct ModelQuery final : public QueryHandlerBase {
     /*!
      * build a ModelQuery object based on command line arguments
      * \param[in] argc : number of command line arguments
@@ -65,10 +64,13 @@ namespace mfront {
         std::function<void(const FileDescription &, const ModelDescription &)>;
     //
     void treatGeneratedSources() override final;
+    void treatSpecificTargetGeneratedSources() override final;
+    void treatAllSpecificTargetsGeneratedSources() override final;
     void treatCppFlags() override final;
     void treatGeneratedHeaders() override final;
     void treatLibrariesDependencies() override final;
     void treatSpecificTargets() override final;
+    void treatDSLTarget() override final;
     //! \brief treat a standard query
     virtual void treatStandardQuery() final;
     //! \brief all the registred queries

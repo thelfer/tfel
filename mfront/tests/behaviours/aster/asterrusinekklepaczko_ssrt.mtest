@@ -1,0 +1,21 @@
+@Author Guillaume Michal;
+@Date 29/06/2017;
+@Description
+{
+  Test of the Rusinek-Klepaczko law.
+
+  > "Constitutive relations in 3-D for"
+  > "a wide range of strain rates and"
+  > "temperatures - Application to mild steels"
+  > "A. Rusinek, R. Zaera and J. R. Klepaczko"
+  > "Int. J. of Solids and Structures, Vol. 44, 5611-5634, 2007"
+
+  Duplicate of Figure 8b.
+};
+
+@Behaviour<aster> @library@ 'asterrusinekklepaczko_ssrt';
+@ExternalStateVariable 'Temperature' 300.;
+@ImposedStrain 'EXX' {0.: 0., 250.:0.25, 250.00075:1.};
+@Times {0., 250. in 500, 250.00075 in 500};
+
+@Test<file> @reference_file@ {'SXX':8} 1.e-3; 

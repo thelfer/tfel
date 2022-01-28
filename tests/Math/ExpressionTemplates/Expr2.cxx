@@ -44,7 +44,7 @@ struct Expr2Test final : public tfel::tests::TestCase {
     TFEL_TESTS_STATIC_ASSERT((std::is_same_v<res, vector>));
     TFEL_TESTS_STATIC_ASSERT((
         std::is_same_v<handler,
-                Expr<vector, BinaryOperation<vector, vector, OpPlus>>>));
+                       Expr<vector, BinaryOperation<vector, vector, OpPlus>>>));
     using res2 = BinaryOperationResult<vector, res, OpPlus>;
     TFEL_TESTS_STATIC_ASSERT(
         (isBinaryOperationResultTypeValid<vector, res, OpPlus>));

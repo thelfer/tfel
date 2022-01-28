@@ -43,6 +43,7 @@ set(mfront_tests_SOURCES
   Plasticity2
   Plasticity3
   Plasticity4
+  PlasticityWithoutAutomaticTemperatureDeclaration
   LogarithmicStrainPlasticity
   LogarithmicStrainPlasticity2
   DruckerPrager
@@ -216,6 +217,11 @@ mfront_behaviour_check_library(MFrontGenericBehaviours2 generic
   ImplicitNorton7
   ImplicitOrthotropicCreep3)
 
+mfront_behaviour_check_library(MFrontGenericBehaviours3 generic
+  ElasticityParametersAsStaticVariables
+  RungeKuttaElasticityParametersAsStaticVariables
+  ImplicitElasticityParametersAsStaticVariables)
+
 if(WIN32)
   if(${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU")
     set_target_properties(MFrontGenericBehaviours
@@ -225,13 +231,18 @@ endif(WIN32)
 
 function(set_generic_test_properties test)
   foreach(rm ${IEEE754_ROUNDING_MODES})
+    set(dependencies )
+    list(APPEND dependencies MFrontGenericBehaviours)
+    list(APPEND dependencies mtest)
+    if(HAVE_CASTEM)
+      list(APPEND dependencies MFrontMaterialProperties-castem)
+    endif(HAVE_CASTEM)
     if((CMAKE_HOST_WIN32) AND (NOT MSYS))
       set_property(TEST ${test}
-        PROPERTY DEPENDS "MFrontGenericBehaviours MFrontMaterialProperties-castem mtest"
+        PROPERTY DEPENDS ${dependencies}
         PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:TFELMTest>\;$<TARGET_FILE_DIR:TFELMFront>\;$<TARGET_FILE_DIR:MFrontLogStream>\;$<TARGET_FILE_DIR:TFELMaterial>\;$<TARGET_FILE_DIR:TFELNUMODIS>\;$<TARGET_FILE_DIR:TFELMathParser>\;$<TARGET_FILE_DIR:TFELGlossary>\;$<TARGET_FILE_DIR:TFELSystem>\;$<TARGET_FILE_DIR:TFELUtilities>\;$<TARGET_FILE_DIR:TFELException>\;$<TARGET_FILE_DIR:TFELTests>\;$<TARGET_FILE_DIR:TFELConfig>\;$<TARGET_FILE_DIR:TFELUnicodeSupport>\;$ENV{PATH}")
     elseif((CMAKE_HOST_WIN32) AND (NOT MSYS))
-      set_property(TEST ${test}
-        PROPERTY DEPENDS "MFrontGenericBehaviours MFrontMaterialProperties-castem mtest")
+      set_property(TEST ${test} PROPERTY DEPENDS ${dependencies})
     endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
   endforeach(rm ${IEEE754_ROUNDING_MODES})
 endfunction(set_generic_test_properties)
@@ -239,11 +250,11 @@ endfunction(set_generic_test_properties)
 function(install_generic_test_file file)
   if(TFEL_APPEND_SUFFIX)
     install(FILES ${file}
-      DESTINATION "share/doc/mfront-${TFEL_SUFFIX}/tests/behaviours/bricks/StandardElastoViscoPlasticity/castem"
+      DESTINATION "share/doc/mfront-${TFEL_SUFFIX}/tests/behaviours/generic"
       COMPONENT mtest)
   else(TFEL_APPEND_SUFFIX)
     install(FILES ${file}
-      DESTINATION "share/doc/mfront/tests/behaviours/bricks/StandardElastoViscoPlasticity/castem"
+      DESTINATION "share/doc/mfront/tests/behaviours/generic"
       COMPONENT mtest)
   endif(TFEL_APPEND_SUFFIX)
 endfunction(install_generic_test_file)
@@ -262,40 +273,22 @@ function(test_generic test_arg)
   endforeach(_ARG ${ARGN})
   set(file "${CMAKE_CURRENT_SOURCE_DIR}/${test_arg}.mtest")
   foreach(rm ${IEEE754_ROUNDING_MODES})
-    if(NOT _REFERENCE_FILE)
-      if(HAVE_CASTEM)
-	add_test(NAME generic-${test_arg}_${rm}_mtest
-  	  COMMAND mtest --rounding-direction-mode=${rm}
-          --verbose=level0 --xml-output=${_XML_OUTPUT}
-          --result-file-output=false
-          --@library@="$<TARGET_FILE:MFrontGenericBehaviours>"
-	  --@mplibrary@="$<TARGET_FILE:MFrontMaterialProperties-castem>"
-          --@xml_output@="${test_arg}-${rm}.xml" ${file})
-      else(HAVE_CASTEM)
-	add_test(NAME generic-${test_arg}_${rm}_mtest
-  	  COMMAND mtest --rounding-direction-mode=${rm}
-          --verbose=level0 --xml-output=${_XML_OUTPUT}
-          --result-file-output=false
-          --@library@="$<TARGET_FILE:MFrontGenericBehaviours>"
-          --@xml_output@="${test_arg}-${rm}.xml" ${file})
-      endif(HAVE_CASTEM)
-    else(NOT _REFERENCE_FILE)
+    set(mtest_args )
+    list(APPEND mtest_args --rounding-direction-mode=${rm})
+    list(APPEND mtest_args --verbose=level0)
+    list(APPEND mtest_args --xml-output=${_XML_OUTPUT})
+    list(APPEND mtest_args --@library@="$<TARGET_FILE:MFrontGenericBehaviours>")
+    list(APPEND mtest_args --@xml_output@="${test_arg}-${rm}.xml")
+    list(APPEND mtest_args ${file})
+    if(HAVE_CASTEM)
+      list(APPEND mtest_args --@mplibrary@="$<TARGET_FILE:MFrontMaterialProperties-castem>")
+    endif(HAVE_CASTEM)
+    if(_REFERENCE_FILE)
       set(rfile "${top_srcdir}/mfront/tests/behaviours/references/${_REFERENCE_FILE}")
-      if(HAVE_CASTEM)
-	add_test(NAME generic-${test_arg}_${rm}_mtest
-          COMMAND mtest --rounding-direction-mode=${rm} --verbose=level0 --xml-output=${_XML_OUTPUT} --result-file-output=false
-          --@library@="$<TARGET_FILE:MFrontGenericBehaviours>"
-	  --@mplibrary@="$<TARGET_FILE:MFrontMaterialProperties-castem>"
-          --@xml_output@="${test_arg}-${rm}.xml"
-          --@reference_file@="${rfile}" ${file})
-      else(HAVE_CASTEM)
-	add_test(NAME generic-${test_arg}_${rm}_mtest
-          COMMAND mtest --rounding-direction-mode=${rm} --verbose=level0 --xml-output=${_XML_OUTPUT} --result-file-output=false
-          --@library@="$<TARGET_FILE:MFrontGenericBehaviours>"
-          --@xml_output@="${test_arg}-${rm}.xml"
-          --@reference_file@="${rfile}" ${file})
-      endif(HAVE_CASTEM)
-    endif(NOT _REFERENCE_FILE)
+      list(APPEND mtest_args --@reference_file@="${rfile}")
+    endif(_REFERENCE_FILE)
+    add_test(NAME generic-${test_arg}_${rm}_mtest
+             COMMAND mtest ${mtest_args})
     if(_WILL_FAIL)
       set_tests_properties(generic-${test_arg}_${rm}_mtest
 	PROPERTIES WILL_FAIL true)
@@ -444,6 +437,7 @@ test_generic(perfectplasticity)
 test_generic(plasticity plasticity.ref)
 test_generic(plasticity2)
 test_generic(plasticity3)
+test_generic(plasticity_without_temperature_declaration plasticity.ref)
 # test_generic(ddif2)
 # test_generic(ddif2-2)
 # test_generic(ddif2-3)

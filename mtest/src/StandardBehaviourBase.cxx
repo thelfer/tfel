@@ -17,6 +17,7 @@
 #include "TFEL/Math/tmatrix.hxx"
 #include "TFEL/Math/st2tost2.hxx"
 #include "TFEL/System/ExternalLibraryManager.hxx"
+#include "MFront/MFrontLogStream.hxx"
 #include "MTest/BehaviourWorkSpace.hxx"
 #include "MTest/StandardBehaviourBase.hxx"
 
@@ -92,7 +93,7 @@ namespace mtest {
     const auto esvnames = this->expandExternalStateVariablesNames();
     s.esv0.resize(esvnames.size(), 0.);
     s.desv.resize(esvnames.size(), 0.);
-  } // end of allocateWorkSpaceCurrentState
+  }  // end of allocateWorkSpaceCurrentState
 
   std::vector<std::string> StandardBehaviourBase::getVectorComponentsSuffixes(
       const Hypothesis h) {
@@ -179,8 +180,10 @@ namespace mtest {
                    "StandardBehaviourBase::StandardBehaviourBase: "
                    "unsupported behaviour type "
                    "(neither isotropic nor orthotropic)");
-    this->evnames.insert(this->evnames.begin(), "Temperature");
-    this->evtypes.insert(this->evtypes.begin(), 0);
+    if (this->hasTemperatureBeenRemovedFromExternalStateVariables) {
+      this->evnames.insert(this->evnames.begin(), "Temperature");
+      this->evtypes.insert(this->evtypes.begin(), 0);
+    }
   }  // end of StandardBehaviourBase
 
   StandardBehaviourBase::StandardBehaviourBase(
@@ -582,7 +585,7 @@ namespace mtest {
                          components.end());
     }
     return evfullnames;
-  } // end of expandExternalStateVariablesNames
+  }  // end of expandExternalStateVariablesNames
 
   std::vector<std::string> StandardBehaviourBase::getParametersNames() const {
     return this->pnames;
@@ -669,7 +672,6 @@ namespace mtest {
     }
     return s;
   }
-
 
   std::vector<std::string>
   StandardBehaviourBase::getInternalStateVariablesDescriptions() const {

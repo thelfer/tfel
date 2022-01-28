@@ -149,6 +149,7 @@ namespace mfront {
     // mfront metadata
     writeVariablesNamesSymbol(out, name, mpd);
     writeVariablesBoundsSymbols(out, name, mpd);
+    writeBuildIdentifierSymbol(out, name, mpd);
     writeEntryPointSymbol(out, name);
     writeTFELVersionSymbol(out, name);
     writeInterfaceSymbol(out, name, "Octave");
@@ -196,9 +197,8 @@ namespace mfront {
       }
     }
     // parameters
-    if (!mpd.parameters.empty()) {
-      writeAssignMaterialPropertyParameters(out, mpd, name, "double", "octave");
-    }
+    writeAssignMaterialPropertyParameters(out, mpd, name, "real", "octave");
+    //
     if (useQuantities(mpd)) {
       out << "auto " << mpd.output.name << " = " << mpd.output.type << "{};\n";
     } else {

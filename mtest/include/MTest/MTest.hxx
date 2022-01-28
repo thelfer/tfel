@@ -190,7 +190,7 @@ namespace mtest {
      * \param[in] dt: time increment
      * \return a boolean saying if all convergence criteria are met
      */
-    bool checkConvergence(const StudyCurrentState&,
+    bool checkConvergence(StudyCurrentState&,
                           const tfel::math::vector<real>&,
                           const tfel::math::vector<real>&,
                           const SolverOptions&,

@@ -834,6 +834,23 @@ namespace tfel::system {
                                                         const std::string&,
                                                         const std::string&);
     /*!
+     * \return if the temperature has been removed for the external state
+     * variables. This is the default behaviour of `MFront`
+     * \param[in] l : name of the library
+     * \param[in] f : law name
+     */
+    bool hasTemperatureBeenRemovedFromExternalStateVariables(
+        const std::string&, const std::string&);
+    /*!
+     * \return the list of the external state variables.
+     *
+     * \note by convention, the temperature is generally not included in this
+     * list when it is declared as the first external state variable, as it is
+     * treated specifically by the `UMAT` interface. The user may thus need to
+     * call the `hasTemperatureBeenRemovedFromExternalStateVariables` method to
+     * see if the temperature was indeed removed from the list of external state
+     * variables.
+     *
      * \param[in] l : name of the library
      * \param[in] f : law name
      * \param[in] h : modelling hypothesis

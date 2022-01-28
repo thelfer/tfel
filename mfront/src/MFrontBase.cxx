@@ -36,6 +36,7 @@
 #include "MFront/DefaultDSL.hxx"
 #include "MFront/DSLFactory.hxx"
 #include "MFront/PathSpecifier.hxx"
+#include "MFront/GlobalDomainSpecificLanguageOptionsManager.hxx"
 #include "MFront/MFrontBase.hxx"
 
 namespace mfront {
@@ -45,11 +46,13 @@ namespace mfront {
     auto throw_if = [](const bool b, const std::string& m) {
       tfel::raise_if(b, "MFrontBase::getDSL: " + m);
     };
+    const auto& global_options =
+        GlobalDomainSpecificLanguageOptionsManager::get();
     auto& dslFactory = DSLFactory::getDSLFactory();
     std::shared_ptr<AbstractDSL> dsl;
     std::string library, dslName;
     tfel::utilities::CxxTokenizer file;
-    auto dsl_options = std::map<std::string, tfel::utilities::Data>{};
+    auto dsl_options = tfel::utilities::DataMap{};
     if (tfel::utilities::starts_with(f, "madnex:")) {
 #ifdef MFRONT_HAVE_MADNEX
       const auto path = decomposeImplementationPathInMadnexFile(f);
@@ -87,9 +90,8 @@ namespace mfront {
         throw_if(pt == pte, "unexpected end of file (exepected dsl name)");
         if (pt->value == "{") {
           const auto o = tfel::utilities::DataParsingOptions{};
-          dsl_options =
-              tfel::utilities::Data::read(pt, pte, o)
-                  .get<std::map<std::string, tfel::utilities::Data>>();
+          dsl_options = tfel::utilities::Data::read(pt, pte, o)
+                            .get<tfel::utilities::DataMap>();
         }
         if (pt->value != ";") {
           library = pt->value;
@@ -105,28 +107,48 @@ namespace mfront {
       ++pt;
     }
     if (found) {
+      auto& lm = ExternalLibraryManager::getExternalLibraryManager();
       try {
         if (!library.empty()) {
-          auto& lm = ExternalLibraryManager::getExternalLibraryManager();
           lm.loadLibrary(library);
         }
-        dsl = dslFactory.createNewParser(dslName);
-      } catch (std::runtime_error& r) {
-        std::ostringstream msg;
-        msg << "MFrontBase::getDSL : error while loading dsl " << dslName
-            << " (" << r.what() << ")\n";
-        msg << "Available dsls:\n";
-        const auto& dsls = dslFactory.getRegistredParsers();
-        std::copy(dsls.begin(), dsls.end(),
-                  std::ostream_iterator<std::string>(msg, " "));
-        tfel::raise(msg.str());
+      } catch (std::exception& e) {
+        tfel::raise("MFrontBase::getDSL : error while loading library '" +
+                    library + "'\n" + std::string(e.what()));
+      }
+      try {
+        // first try to get the target type of the DSL
+        dsl = dslFactory.createNewDSL(dslName, dsl_options);
+        const auto t = dsl->getTargetType();
+        if (t == AbstractDSL::MATERIALPROPERTYDSL) {
+          dsl = dslFactory.createNewDSL(
+              dslName, tfel::utilities::merge(
+                           global_options.getMaterialPropertyDSLOptions(),
+                           dsl_options, true));
+        } else if (t == AbstractDSL::BEHAVIOURDSL) {
+          dsl = dslFactory.createNewDSL(
+              dslName,
+              tfel::utilities::merge(global_options.getBehaviourDSLOptions(),
+                                     dsl_options, true));
+        } else if (t == AbstractDSL::MODELDSL) {
+          dsl = dslFactory.createNewDSL(
+              dslName,
+              tfel::utilities::merge(global_options.getModelDSLOptions(),
+                                     dsl_options, true));
+        } else {
+          tfel::raise("MFrontBase::getDSL: unsupported DSL target type");
+        }
+      } catch (std::exception& e) {
+        tfel::raise("MFrontBase::getDSL: error while creating DSL '" +
+                    dslName + "'\n" + std::string(e.what()));
       }
     } else {
       if (getVerboseMode() >= VERBOSE_LEVEL2) {
         getLogStream()
             << "MFrontBase::getDSL : no dsl specified, using default\n";
       }
-      dsl = dslFactory.createNewParser(DefaultDSL::getName());
+      dsl = dslFactory.createNewDSL(DefaultDSL::getName(),
+                                    global_options.getBehaviourDSLOptions());
     }
     if (tfel::utilities::starts_with(f, "madnex:")) {
 #ifdef MFRONT_HAVE_MADNEX
@@ -163,7 +185,7 @@ namespace mfront {
 #endif /* HAVE_MANDEX */
     }
     return dsl;
-  }  // end of MFrontBase::getAbstractDSL
+  }  // end of getDSL
 
   MFrontBase::MFrontBase() {
     using namespace tfel::system;
@@ -193,7 +215,7 @@ namespace mfront {
     check(this->material_property_identifier, "material property");
     check(this->behaviour_identifier, "behaviour");
     check(this->model_identifier, "model");
-  }  // end of MFrontBase::finalizeArgumentsParsing
+  }  // end of finalizeArgumentsParsing
 
   void MFrontBase::treatMaterialIdentifier() {
     auto& o = this->getCurrentCommandLineArgument().getOption();
@@ -204,7 +226,7 @@ namespace mfront {
                    "MFrontBase::treatMaterialIdentifier: "
                    "material identifier already specified");
     this->material_identifier = o;
-  }  // end of MFrontBase::treatMaterialIdentifier
+  }  // end of treatMaterialIdentifier
 
   void MFrontBase::treatMaterialPropertyIdentifier() {
     auto& o = this->getCurrentCommandLineArgument().getOption();
@@ -223,7 +245,7 @@ namespace mfront {
                    "can't specify a behaviour identifier and "
                    "a model identifier");
     this->material_property_identifier = o;
-  }  // end of MFrontBase::treatMaterialPropertyIdentifier
+  }  // end of treatMaterialPropertyIdentifier
 
   void MFrontBase::treatAllMaterialProperties() {
     tfel::raise_if(!this->material_property_identifier.empty(),
@@ -238,7 +260,7 @@ namespace mfront {
                    "can't specify a behaviour identifier and "
                    "a model identifier");
     this->material_property_identifier = ".+";
-  }  // end of MFrontBase::treatAllMaterialProperties
+  }  // end of treatAllMaterialProperties
 
   void MFrontBase::treatBehaviourIdentifier() {
     auto& o = this->getCurrentCommandLineArgument().getOption();
@@ -257,7 +279,7 @@ namespace mfront {
                    "can't specify a behaviour identifier and "
                    "a model identifier");
     this->behaviour_identifier = o;
-  }  // end of MFrontBase::treatBehaviourIdentifier
+  }  // end of treatBehaviourIdentifier
 
   void MFrontBase::treatAllBehaviours() {
     tfel::raise_if(!this->behaviour_identifier.empty(),
@@ -272,7 +294,7 @@ namespace mfront {
                    "can't specify a behaviour identifier and "
                    "a model identifier");
     this->behaviour_identifier = ".+";
-  }  // end of MFrontBase::treatAllBehaviours
+  }  // end of treatAllBehaviours
 
   void MFrontBase::treatModelIdentifier() {
     auto& o = this->getCurrentCommandLineArgument().getOption();
@@ -291,7 +313,7 @@ namespace mfront {
                    "can't specify a model identifier and "
                    "a behaviour identifier");
     this->model_identifier = o;
-  }  // end of MFrontBase::treatModelIdentifier
+  }  // end of treatModelIdentifier
 
   void MFrontBase::treatAllModels() {
     tfel::raise_if(!this->model_identifier.empty(),
@@ -306,7 +328,7 @@ namespace mfront {
                    "can't specify a model identifier and "
                    "a behaviour identifier");
     this->model_identifier = ".+";
-  }  // end of MFrontBase::treatAllModels
+  }  // end of treatAllModels
 
   void MFrontBase::treatSearchPath() {
     const auto& o = this->getCurrentCommandLineArgument().getOption();
@@ -374,7 +396,7 @@ namespace mfront {
     this->behaviour_identifier.clear();
     this->model_identifier.clear();
     return true;
-  }  // end of MFrontBase::treatUnknownArgument
+  }  // end of treatUnknownArgument
 
   void MFrontBase::treatVerbose() {
     const auto& o = this->getCurrentCommandLineArgument().getOption();
@@ -383,7 +405,7 @@ namespace mfront {
     } else {
       setVerboseMode(o);
     }
-  }  // end of MFrontBase::treatVerbose
+  }  // end of treatVerbose
 
   void MFrontBase::treatUnicodeOutput() {
     const auto& o = this->getCurrentCommandLineArgument().getOption();
@@ -401,17 +423,54 @@ namespace mfront {
             o + "'");
       }
     }
-  }  // end of MFrontBase::treatUnicodeOutput
+  }  // end of treatUnicodeOutput
 
   void MFrontBase::treatInstallPath() {
     setInstallPath(this->getCurrentCommandLineArgument().getOption());
-  }  // end of MFrontBase::treatInstallPath
+  }  // end of treatInstallPath
 
   void MFrontBase::treatPedantic() { setPedanticMode(true); }
 
   void MFrontBase::treatWarning() {}
 
   void MFrontBase::treatDebug() { setDebugMode(true); }
+
+  static std::pair<std::string, std::string> slipDSLOption(
+      const std::string& o) {
+    std::vector<std::string> tokens = tfel::utilities::tokenize(o, ':');
+    if (tokens.size() != 2u) {
+      tfel::raise("slip_dsl_option: invalid DSL option '" + o + "'");
+    }
+    return {tokens[0], tokens[1]};
+  } // end of slipDSLOption
+
+  void MFrontBase::treatDSLOption() {
+    auto& g = GlobalDomainSpecificLanguageOptionsManager::get();
+    const auto& kv =
+        slipDSLOption(this->getCurrentCommandLineArgument().getOption());
+    g.addDSLOption(kv.first, kv.second);
+  }  // end of treatDSLOption
+
+  void MFrontBase::treatMaterialPropertyDSLOption() {
+    auto& g = GlobalDomainSpecificLanguageOptionsManager::get();
+    const auto& kv =
+        slipDSLOption(this->getCurrentCommandLineArgument().getOption());
+    g.addMaterialPropertyDSLOption(kv.first, kv.second);
+  }  // end of treatMaterialPropertyDSLOption
+
+  void MFrontBase::treatBehaviourDSLOption() {
+    auto& g = GlobalDomainSpecificLanguageOptionsManager::get();
+    const auto& kv =
+        slipDSLOption(this->getCurrentCommandLineArgument().getOption());
+    g.addBehaviourDSLOption(kv.first, kv.second);
+  }  // end of treatBehaviourDSLOption
+
+  void MFrontBase::treatModelDSLOption() {
+    auto& g = GlobalDomainSpecificLanguageOptionsManager::get();
+    const auto& kv =
+        slipDSLOption(this->getCurrentCommandLineArgument().getOption());
+    g.addModelDSLOption(kv.first, kv.second);
+  }  // end of treatModelDSLOption
 
   void MFrontBase::setInterface(const std::string& i) {
     tfel::raise_if(!this->interfaces.insert(i).second,
@@ -420,7 +479,7 @@ namespace mfront {
                        i +
                        "' has "
                        "already been specified");
-  }  // end of MFrontBase::setInterface
+  }  // end of setInterface
 
   void MFrontBase::treatInterface() {
     auto throw_if = [](const bool b, const std::string& m) {
@@ -432,7 +491,7 @@ namespace mfront {
       throw_if(i.empty(), "empty interface specified.");
       this->setInterface(i);
     }
-  }  // end of MFrontBase::treatInterface
+  }  // end of treatInterface
 
   MFrontBase::~MFrontBase() = default;
 

@@ -1,8 +1,8 @@
 /*!
- * \file   LogarithmicStrainHandler.hxx
+ * \file   include/TFEL/Utilities/LogarithmicStrainHandler.hxx
  * \brief
  * \author Thomas Helfer
- * \date   25 juin 2017
+ * \date   25/06/2017
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence
@@ -11,8 +11,8 @@
  * project under specific licensing conditions.
  */
 
-#ifndef LIB_TFEL_MATH_LOGARITHMICSTRAINHANDLER_HXX
-#define LIB_TFEL_MATH_LOGARITHMICSTRAINHANDLER_HXX
+#ifndef LIB_TFEL_MATERIAL_LOGARITHMICSTRAINHANDLER_HXX
+#define LIB_TFEL_MATERIAL_LOGARITHMICSTRAINHANDLER_HXX
 
 #include "TFEL/Math/tensor.hxx"
 #include "TFEL/Math/tvector.hxx"
@@ -58,7 +58,7 @@ namespace tfel::material {
 
   /*!
    * \brief partial specialisation of the `LogarithmicStrainHandler`
-   * class for 3D.
+   * class for 1D.
    */
   template <typename StressType>
   struct LogarithmicStrainHandler<1u, StressType>
@@ -179,10 +179,14 @@ namespace tfel::material {
      */
     void convertToCauchyStressTruesdellRateTangentModuli(
         stress *const, const stress *const) const;
+    //! \brief return the deformation gradient
+    const DeformationGradient &getDeformationGradient() const;
 
-   private:
+   protected:
     //! deformation gradient
     DeformationGradient F;
+
+   private:
     /*!
      * \brief half the logarithm of the eigenvalues of the right
      * Cauchy Green tensor
@@ -333,6 +337,12 @@ namespace tfel::material {
      * Abaqus/Standard conventions.
      */
     void convertToAbaqusTangentModuli(stress *const, const stress *const) const;
+    //! \brief return the deformation gradient
+    const DeformationGradient &getDeformationGradient() const;
+
+   protected:
+    //! deformation gradient
+    DeformationGradient F;
 
    private:
     /*!
@@ -406,8 +416,6 @@ namespace tfel::material {
      * right Cauchy-Green tensor
      */
     const tfel::math::st2tost2<2u, real> p;
-    //! deformation gradient
-    DeformationGradient F;
     //! eigenvectors of the right Cauchy-Green tensor
     const tfel::math::tmatrix<3u, 3u, real> m;
     //! eigenvalues of the right Cauchy-Green tensor
@@ -546,6 +554,12 @@ namespace tfel::material {
      * Abaqus/Standard conventions.
      */
     void convertToAbaqusTangentModuli(stress *const, const stress *const) const;
+    //! \brief return the deformation gradient
+    const DeformationGradient &getDeformationGradient() const;
+
+   protected:
+    //! deformation gradient
+    const DeformationGradient F;
 
    private:
     //! \return true if all eigenvalues are equal
@@ -626,8 +640,6 @@ namespace tfel::material {
      * right Cauchy-Green tensor
      */
     const tfel::math::st2tost2<3u, real> p;
-    //! deformation gradient
-    const DeformationGradient F;
     //! eigenvectors of the right Cauchy-Green tensor
     const tfel::math::tmatrix<3u, 3u, real> m;
     //! eigenvalues of the right Cauchy-Green tensor
@@ -640,4 +652,4 @@ namespace tfel::material {
 
 #include "TFEL/Material/LogarithmicStrainHandler.ixx"
 
-#endif /* LIB_TFEL_MATH_LOGARITHMICSTRAINHANDLER_HXX */
+#endif /* LIB_TFEL_MATERIAL_LOGARITHMICSTRAINHANDLER_HXX */

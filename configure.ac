@@ -10,7 +10,7 @@ AC_CANONICAL_HOST
 AC_CANONICAL_TARGET
 
 # Automake specific stuff
-AM_INIT_AUTOMAKE([foreign dist-bzip2 tar-ustar subdir-objects])
+AM_INIT_AUTOMAKE([foreign dist-bzip2 tar-ustar subdir-objects subdir-objects subdir-objects])
 m4_ifdef([AM_SILENT_RULES],[AM_SILENT_RULES([yes])])
 
 # ok, this is ugly, but is sufficient for our needs
@@ -655,185 +655,6 @@ AC_OUTPUT([debug.sh Makefile Doxyfile docs/Makefile docs/tfel/Makefile
 	   mfront/tests/behaviours/Makefile
 	   mfront/tests/behaviours/unit-tests/Makefile
 	   mfront/tests/behaviours/aster/Makefile
-	   mfront/tests/behaviours/aster/astermaterialpropertiesboundscheck.mtest
-	   mfront/tests/behaviours/aster/astermaterialpropertiesboundscheck2.mtest
-	   mfront/tests/behaviours/aster/astermaterialpropertiesboundscheck3.mtest
-	   mfront/tests/behaviours/aster/astermaterialpropertiesboundscheck4.mtest
-	   mfront/tests/behaviours/aster/astermaterialpropertiesboundscheck5.mtest
-	   mfront/tests/behaviours/aster/astermaterialpropertiesboundscheck6.mtest
-	   mfront/tests/behaviours/aster/asterexternalstatevariablesboundscheck.mtest
-	   mfront/tests/behaviours/aster/asterexternalstatevariablesboundscheck2.mtest
-	   mfront/tests/behaviours/aster/asterexternalstatevariablesboundscheck3.mtest
-	   mfront/tests/behaviours/aster/asterexternalstatevariablesboundscheck4.mtest
-	   mfront/tests/behaviours/aster/asterexternalstatevariablesboundscheck5.mtest
-	   mfront/tests/behaviours/aster/asterelasticity.mtest
-	   mfront/tests/behaviours/aster/asterelasticity2.mtest
-	   mfront/tests/behaviours/aster/asterelasticity3.mtest
-	   mfront/tests/behaviours/aster/asterelasticity4.mtest
-	   mfront/tests/behaviours/aster/asterelasticity5.mtest
-	   mfront/tests/behaviours/aster/asterelasticity6.mtest
-	   mfront/tests/behaviours/aster/asterelasticity7.mtest
-	   mfront/tests/behaviours/aster/asterelasticity8.mtest
-	   mfront/tests/behaviours/aster/asterelasticity9.mtest
-	   mfront/tests/behaviours/aster/asterelasticity10.mtest
-	   mfront/tests/behaviours/aster/asterelasticity11.mtest
-	   mfront/tests/behaviours/aster/asterelasticity12.mtest
-	   mfront/tests/behaviours/aster/asterelasticity13.mtest
-	   mfront/tests/behaviours/aster/asterelasticity14.mtest
-	   mfront/tests/behaviours/aster/asterelasticity15.mtest
-	   mfront/tests/behaviours/aster/asterelasticity16.mtest
-	   mfront/tests/behaviours/aster/asterelasticity18.mtest
-	   mfront/tests/behaviours/aster/asterelasticity19.mtest
-	   mfront/tests/behaviours/aster/asterelasticity20.mtest
-	   mfront/tests/behaviours/aster/asterelasticity21.mtest
-	   mfront/tests/behaviours/aster/asterelasticity22.mtest
-	   mfront/tests/behaviours/aster/asterelasticity23.mtest
-	   mfront/tests/behaviours/aster/asterelasticity24.mtest
-	   mfront/tests/behaviours/aster/asterelasticity25.mtest
-	   mfront/tests/behaviours/aster/asterelasticity26.mtest
-	   mfront/tests/behaviours/aster/asterelasticity27.mtest
-	   mfront/tests/behaviours/aster/asterelasticity33.mtest
-	   mfront/tests/behaviours/aster/astermazars.mtest
-	   mfront/tests/behaviours/aster/astermazars2.mtest
-	   mfront/tests/behaviours/aster/asterunilateralmazars.mtest
-	   mfront/tests/behaviours/aster/asterlorentz.mtest
-	   mfront/tests/behaviours/aster/asterlorentz2.mtest
-	   mfront/tests/behaviours/aster/asternorton.mtest
-	   mfront/tests/behaviours/aster/asternorton2.mtest
-	   mfront/tests/behaviours/aster/asterstressrelaxation.mtest
-	   mfront/tests/behaviours/aster/asterorthotropiccreep.mtest
-	   mfront/tests/behaviours/aster/asterorthotropiccreep-rk42.mtest
-	   mfront/tests/behaviours/aster/asterorthotropiccreep-rkCastem.mtest
-	   mfront/tests/behaviours/aster/asterimplicitnorton.mtest
-	   mfront/tests/behaviours/aster/asterimplicitnorton2.mtest
-	   mfront/tests/behaviours/aster/asterimplicitnorton3.mtest
-	   mfront/tests/behaviours/aster/asterimplicitnorton_broyden.mtest
-	   mfront/tests/behaviours/aster/asterimplicitnorton_broyden2.mtest
-	   mfront/tests/behaviours/aster/asterimplicitnorton_levenbergmarquardt.mtest
-	   mfront/tests/behaviours/aster/asterimplicitnorton_numericallycomputedjacobianblocks.mtest
-	   mfront/tests/behaviours/aster/asterimplicitorthotropiccreep.mtest
-	   mfront/tests/behaviours/aster/asterellipticcreep.mtest
-	   mfront/tests/behaviours/aster/asterplasticity.mtest
-	   mfront/tests/behaviours/aster/asterstrainhardeningcreep.mtest
-	   mfront/tests/behaviours/aster/asterplasisocin.mtest
-	   mfront/tests/behaviours/aster/asterviscoplasisocin.mtest
-	   mfront/tests/behaviours/aster/asterchaboche.mtest
-	   mfront/tests/behaviours/aster/asterchaboche2.mtest
-	   mfront/tests/behaviours/aster/asterviscochaboche.mtest
-	   mfront/tests/behaviours/aster/asterviscochaboche-memo-nrad.py
-	   mfront/tests/behaviours/aster/asterxx.py
-	   mfront/tests/behaviours/aster/astermonocrystal.mtest
-	   mfront/tests/behaviours/aster/astermonocrystal-2.mtest
-	   mfront/tests/behaviours/aster/asterimplicitmonocrystal.mtest
-	   mfront/tests/behaviours/aster/asterimplicitmonocrystal-2.mtest
-	   mfront/tests/behaviours/aster/astermonocrystal_dd_cfc.mtest
-	   mfront/tests/behaviours/aster/astermonocrystal_dd_cfc_numericaljacobian.mtest
-	   mfront/tests/behaviours/aster/astermonocrystal_dd_cfc_irradiation.mtest
-	   mfront/tests/behaviours/aster/astermonocrystal_dd_cc.mtest
-	   mfront/tests/behaviours/aster/astermonocrystal_dd_cc_numericaljacobian.mtest
-	   mfront/tests/behaviours/aster/astermonocrystal_dd_cc_irradiation.mtest
-	   mfront/tests/behaviours/aster/astermonocrystal_dd_cc_irradiation_numericaljacobian.mtest
-	   mfront/tests/behaviours/aster/asterpolycrystals.mtest
-	   mfront/tests/behaviours/aster/asterpolycrystals_dd_cc.mtest
-	   mfront/tests/behaviours/aster/asterpolycrystals_dd_cfc.mtest
-	   mfront/tests/behaviours/aster/asterimplicithayhurst.mtest
-	   mfront/tests/behaviours/aster/asterburger.mtest
-	   mfront/tests/behaviours/aster/asterageingburger.mtest
-	   mfront/tests/behaviours/aster/astergursontvergaardneedlemanplasticflow.mtest
-	   mfront/tests/behaviours/aster/astergursontvergaardneedlemanviscoplasticflow.mtest
-	   mfront/tests/behaviours/aster/asteranistropiclemaitreviscoplasticbehaviour.mtest
-	   mfront/tests/behaviours/aster/astertvergaard.mtest
-	   mfront/tests/behaviours/aster/astersaintvenantkirchhoffelasticity-uniaxialloading-sig11-2D.mtest
-	   mfront/tests/behaviours/aster/astersaintvenantkirchhoffelasticity-uniaxialloading-sig22-2D.mtest
-	   mfront/tests/behaviours/aster/astersaintvenantkirchhoffelasticity-uniaxialloading-sig33-2D.mtest
-	   mfront/tests/behaviours/aster/astersaintvenantkirchhoffelasticity-uniaxialloading-sig11-3D.mtest
-	   mfront/tests/behaviours/aster/astersaintvenantkirchhoffelasticity-uniaxialloading-sig22-3D.mtest
-	   mfront/tests/behaviours/aster/astersaintvenantkirchhoffelasticity-uniaxialloading-sig33-3D.mtest
-	   mfront/tests/behaviours/aster/astersaintvenantkirchhoffelasticity-uniaxialloading-1-2D.mtest
-	   mfront/tests/behaviours/aster/astersaintvenantkirchhoffelasticity-uniaxialloading-2-2D.mtest
-	   mfront/tests/behaviours/aster/astersaintvenantkirchhoffelasticity-uniaxialloading-3-2D.mtest
-	   mfront/tests/behaviours/aster/astersaintvenantkirchhoffelasticity-shear-1-2D.mtest
-	   mfront/tests/behaviours/aster/astersaintvenantkirchhoffelasticity-shear-2-2D.mtest
-	   mfront/tests/behaviours/aster/astersaintvenantkirchhoffelasticity-uniaxialloading-1-3D.mtest
-	   mfront/tests/behaviours/aster/astersaintvenantkirchhoffelasticity-uniaxialloading-2-3D.mtest
-	   mfront/tests/behaviours/aster/astersaintvenantkirchhoffelasticity-uniaxialloading-3-3D.mtest
-	   mfront/tests/behaviours/aster/astersaintvenantkirchhoffelasticity-shear-1-3D.mtest
-	   mfront/tests/behaviours/aster/astersaintvenantkirchhoffelasticity-shear-2-3D.mtest
-	   mfront/tests/behaviours/aster/astersaintvenantkirchhoffelasticity-shear-3-3D.mtest
-	   mfront/tests/behaviours/aster/astersaintvenantkirchhoffelasticity-shear-4-3D.mtest
-	   mfront/tests/behaviours/aster/astersaintvenantkirchhoffelasticity-shear-5-3D.mtest
-	   mfront/tests/behaviours/aster/astersaintvenantkirchhoffelasticity-shear-6-3D.mtest
-	   mfront/tests/behaviours/aster/astersaintvenantkirchhoffelasticitytotallagrangian-uniaxialloading-sig11-2D.mtest
-	   mfront/tests/behaviours/aster/astersaintvenantkirchhoffelasticitytotallagrangian-uniaxialloading-sig22-2D.mtest
-	   mfront/tests/behaviours/aster/astersaintvenantkirchhoffelasticitytotallagrangian-uniaxialloading-sig33-2D.mtest
-	   mfront/tests/behaviours/aster/astersaintvenantkirchhoffelasticitytotallagrangian-uniaxialloading-sig11-3D.mtest
-	   mfront/tests/behaviours/aster/astersaintvenantkirchhoffelasticitytotallagrangian-uniaxialloading-sig22-3D.mtest
-	   mfront/tests/behaviours/aster/astersaintvenantkirchhoffelasticitytotallagrangian-uniaxialloading-sig33-3D.mtest
-	   mfront/tests/behaviours/aster/astersaintvenantkirchhoffelasticitytotallagrangian-uniaxialloading-1-2D.mtest
-	   mfront/tests/behaviours/aster/astersaintvenantkirchhoffelasticitytotallagrangian-uniaxialloading-2-2D.mtest
-	   mfront/tests/behaviours/aster/astersaintvenantkirchhoffelasticitytotallagrangian-uniaxialloading-3-2D.mtest
-	   mfront/tests/behaviours/aster/astersaintvenantkirchhoffelasticitytotallagrangian-shear-1-2D.mtest
-	   mfront/tests/behaviours/aster/astersaintvenantkirchhoffelasticitytotallagrangian-shear-2-2D.mtest
-	   mfront/tests/behaviours/aster/astersaintvenantkirchhoffelasticitytotallagrangian-uniaxialloading-1-3D.mtest
-	   mfront/tests/behaviours/aster/astersaintvenantkirchhoffelasticitytotallagrangian-uniaxialloading-2-3D.mtest
-	   mfront/tests/behaviours/aster/astersaintvenantkirchhoffelasticitytotallagrangian-uniaxialloading-3-3D.mtest
-	   mfront/tests/behaviours/aster/astersaintvenantkirchhoffelasticitytotallagrangian-shear-1-3D.mtest
-	   mfront/tests/behaviours/aster/astersaintvenantkirchhoffelasticitytotallagrangian-shear-2-3D.mtest
-	   mfront/tests/behaviours/aster/astersaintvenantkirchhoffelasticitytotallagrangian-shear-3-3D.mtest
-	   mfront/tests/behaviours/aster/astersaintvenantkirchhoffelasticitytotallagrangian-shear-4-3D.mtest
-	   mfront/tests/behaviours/aster/astersaintvenantkirchhoffelasticitytotallagrangian-shear-5-3D.mtest
-	   mfront/tests/behaviours/aster/astersaintvenantkirchhoffelasticitytotallagrangian-shear-6-3D.mtest
-	   mfront/tests/behaviours/aster/astersaintvenantkirchhoffelasticity2-uniaxialloading-1-2D.mtest
-	   mfront/tests/behaviours/aster/astersaintvenantkirchhoffelasticity2-uniaxialloading-2-2D.mtest
-	   mfront/tests/behaviours/aster/astersaintvenantkirchhoffelasticity2-uniaxialloading-3-2D.mtest
-	   mfront/tests/behaviours/aster/astersaintvenantkirchhoffelasticity2-shear-1-2D.mtest
-	   mfront/tests/behaviours/aster/astersaintvenantkirchhoffelasticity2-shear-2-2D.mtest
-	   mfront/tests/behaviours/aster/astersaintvenantkirchhoffelasticity2-uniaxialloading-1-3D.mtest
-	   mfront/tests/behaviours/aster/astersaintvenantkirchhoffelasticity2-uniaxialloading-2-3D.mtest
-	   mfront/tests/behaviours/aster/astersaintvenantkirchhoffelasticity2-uniaxialloading-3-3D.mtest
-	   mfront/tests/behaviours/aster/astersaintvenantkirchhoffelasticity2-shear-1-3D.mtest
-	   mfront/tests/behaviours/aster/astersaintvenantkirchhoffelasticity2-shear-2-3D.mtest
-	   mfront/tests/behaviours/aster/astersaintvenantkirchhoffelasticity2-shear-3-3D.mtest
-	   mfront/tests/behaviours/aster/astersaintvenantkirchhoffelasticity2-shear-4-3D.mtest
-	   mfront/tests/behaviours/aster/astersaintvenantkirchhoffelasticity2-shear-5-3D.mtest
-	   mfront/tests/behaviours/aster/astersaintvenantkirchhoffelasticity2-shear-6-3D.mtest
-	   mfront/tests/behaviours/aster/astersaintvenantkirchhoffelasticity3-uniaxialloading-1-2D.mtest
-	   mfront/tests/behaviours/aster/astersaintvenantkirchhoffelasticity3-uniaxialloading-2-2D.mtest
-	   mfront/tests/behaviours/aster/astersaintvenantkirchhoffelasticity3-uniaxialloading-3-2D.mtest
-	   mfront/tests/behaviours/aster/astersaintvenantkirchhoffelasticity3-shear-1-2D.mtest
-	   mfront/tests/behaviours/aster/astersaintvenantkirchhoffelasticity3-shear-2-2D.mtest
-	   mfront/tests/behaviours/aster/astersaintvenantkirchhoffelasticity3-uniaxialloading-1-3D.mtest
-	   mfront/tests/behaviours/aster/astersaintvenantkirchhoffelasticity3-uniaxialloading-2-3D.mtest
-	   mfront/tests/behaviours/aster/astersaintvenantkirchhoffelasticity3-uniaxialloading-3-3D.mtest
-	   mfront/tests/behaviours/aster/astersaintvenantkirchhoffelasticity3-shear-1-3D.mtest
-	   mfront/tests/behaviours/aster/astersaintvenantkirchhoffelasticity3-shear-2-3D.mtest
-	   mfront/tests/behaviours/aster/astersaintvenantkirchhoffelasticity3-shear-3-3D.mtest
-	   mfront/tests/behaviours/aster/astersaintvenantkirchhoffelasticity3-shear-4-3D.mtest
-	   mfront/tests/behaviours/aster/astersaintvenantkirchhoffelasticity3-shear-5-3D.mtest
-	   mfront/tests/behaviours/aster/astersaintvenantkirchhoffelasticity3-shear-6-3D.mtest
-	   mfront/tests/behaviours/aster/asterfinitestrainsinglecrystal-001.mtest
-	   mfront/tests/behaviours/aster/asterfinitestrainsinglecrystal-012.mtest
-	   mfront/tests/behaviours/aster/asterfinitestrainsinglecrystal-012-2.mtest
-	   mfront/tests/behaviours/aster/asterfinitestrainsinglecrystal-159.mtest
-	   mfront/tests/behaviours/aster/asterfinitestrainsinglecrystal_numericaljacobian-001.mtest
-	   mfront/tests/behaviours/aster/asterfinitestrainsinglecrystal_numericaljacobian-012.mtest
-	   mfront/tests/behaviours/aster/asterfinitestrainsinglecrystal_numericaljacobian-012-2.mtest
-	   mfront/tests/behaviours/aster/asterfinitestrainsinglecrystal_numericaljacobian-159.mtest
-	   mfront/tests/behaviours/aster/asterdruckerprager.mtest
-	   mfront/tests/behaviours/aster/asterdruckerprager2.mtest
-	   mfront/tests/behaviours/aster/astercomputestressfreeexpansion.mtest
-	   mfront/tests/behaviours/aster/asterisotropiclinearswelling.mtest
-	   mfront/tests/behaviours/aster/asterisotropicvolumeswelling.mtest
-	   mfront/tests/behaviours/aster/asterorthotropicswelling.mtest
-	   mfront/tests/behaviours/aster/asterorthotropicswelling2.mtest
-	   mfront/tests/behaviours/aster/asterorthotropicswelling3.mtest
-	   mfront/tests/behaviours/aster/asteraxialgrowth.mtest
-	   mfront/tests/behaviours/aster/asteraxialgrowth2.mtest
-	   mfront/tests/behaviours/aster/asterjohnsoncook_ssrt.mtest
-	   mfront/tests/behaviours/aster/asterrusinekklepaczko_ssrt.mtest
-	   mfront/tests/behaviours/aster/asterparametertest.mtest
-	   mfront/tests/behaviours/aster/asterparametertest2.mtest
-	   mfront/tests/behaviours/aster/astertensorialexternalstatevariabletest.mtest
 	   mfront/tests/behaviours/epx/Makefile
 	   mfront/tests/behaviours/epx/epxsaintvenantkirchhoffelasticity-uniaxialloading-sig11-2D.mtest
 	   mfront/tests/behaviours/epx/epxsaintvenantkirchhoffelasticity-uniaxialloading-sig22-2D.mtest
@@ -2833,6 +2654,7 @@ AC_OUTPUT([debug.sh Makefile Doxyfile docs/Makefile docs/tfel/Makefile
 	   mtest/tests/ptest/castem/Makefile
 	   mtest/tests/ptest/castem/castemelasticity-linear.ptest
 	   mtest/tests/ptest/castem/castemelasticity-imposedinnerradius-linear.ptest
+	   mtest/tests/ptest/castem/castemelasticity-imposedmandrelradius-linear.ptest
 	   mtest/tests/ptest/castem/castemelasticity-quadratic.ptest
 	   mtest/tests/ptest/castem/castemisotropic-elastic2-linear.ptest
 	   mtest/tests/ptest/castem/castemisotropic-elastic2-quadratic.ptest

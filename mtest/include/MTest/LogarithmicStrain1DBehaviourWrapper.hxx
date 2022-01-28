@@ -2,7 +2,7 @@
  * \file   LogarithmicStrain1DBehaviourWrapper.hxx
  * \brief
  * \author Thomas Helfer
- * \date   28 déc. 2015
+ * \date   28/12/2015
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence

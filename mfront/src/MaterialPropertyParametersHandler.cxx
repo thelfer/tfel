@@ -25,7 +25,8 @@ namespace mfront {
       const std::string& n,
       const std::string& t,
       const std::string& i) {
-    if (mpd.parameters.empty()) {
+    if ((areParametersTreatedAsStaticVariables(mpd)) ||
+        (mpd.parameters.empty())) {
       return;
     }
     os << "namespace " << i << "{\n\n"
@@ -63,66 +64,69 @@ namespace mfront {
         }
       }
     }
-    os << "\n{\n"
-       << "auto tokenize = [](const std::string& line){\n"
-       << "  std::istringstream tokenizer(line);\n"
-       << "  std::vector<std::string> tokens;\n"
-       << "  std::copy(std::istream_iterator<std::string>(tokenizer),\n"
-       << "  	  std::istream_iterator<std::string>(),\n"
-       << "  	  std::back_inserter(tokens));\n"
-       << "  return tokens;\n"
-       << "};\n"
-       << "std::ifstream pfile(\"" << n << "-parameters.txt\");\n"
-       << "if(!pfile){\n"
-       << "this->ok=true;\n"
-       << "return;\n"
-       << "}\n"
-       << "size_t ln = 1u;\n"
-       << "while(!pfile.eof()){\n"
-       << "  auto line = std::string{};\n"
-       << "  std::getline(pfile,line);\n"
-       << "  auto tokens = tokenize(line);\n"
-       << "  auto set_msg = [this,ln,line](const std::string& m){\n"
-       << "    this->msg = \"" << n << "MaterialPropertyHandler::\"\n"
-       << "    \"" << n << "MaterialPropertyHandler: \"\n"
-       << "    \"error at line '\"+std::to_string(ln)+\"' \"\n"
-       << "    \"while reading parameter file '" << n << "-parameters.txt'\"\n"
-       << "    \" (\"+m+\")\";\n"
-       << "  };\n"
-       << "  if(tokens.empty()){\n"
-       << "    continue;\n"
-       << "  }\n"
-       << "  if(tokens[0][0]=='#'){\n"
-       << "    continue;\n"
-       << "  }\n"
-       << "  if(tokens.size()!=2u){\n"
-       << "    set_msg(\"invalid number of tokens\");\n"
-       << "    return;\n"
-       << "  }\n"
-       << "  double pvalue;\n"
-       << "  try {\n"
-       << "    pvalue = std::stod(tokens[1]);\n"
-       << "  } catch(...){\n"
-       << "    set_msg(\"can't convert '\"+tokens[1]+\"' to floating point "
-          "value\");\n"
-       << "    return;\n"
-       << "  }\n";
-    bool first = true;
-    for (const auto& p : mpd.parameters) {
-      if (!first) {
-        os << " else ";
+    os << "\n{\n";
+    if (allowsParametersInitializationFromFile(mpd)) {
+      os << "auto tokenize = [](const std::string& line){\n"
+         << "  std::istringstream tokenizer(line);\n"
+         << "  std::vector<std::string> tokens;\n"
+         << "  std::copy(std::istream_iterator<std::string>(tokenizer),\n"
+         << "  	  std::istream_iterator<std::string>(),\n"
+         << "  	  std::back_inserter(tokens));\n"
+         << "  return tokens;\n"
+         << "};\n"
+         << "std::ifstream pfile(\"" << n << "-parameters.txt\");\n"
+         << "if(!pfile){\n"
+         << "this->ok=true;\n"
+         << "return;\n"
+         << "}\n"
+         << "size_t ln = 1u;\n"
+         << "while(!pfile.eof()){\n"
+         << "  auto line = std::string{};\n"
+         << "  std::getline(pfile,line);\n"
+         << "  auto tokens = tokenize(line);\n"
+         << "  auto set_msg = [this,ln,line](const std::string& m){\n"
+         << "    this->msg = \"" << n << "MaterialPropertyHandler::\"\n"
+         << "    \"" << n << "MaterialPropertyHandler: \"\n"
+         << "    \"error at line '\"+std::to_string(ln)+\"' \"\n"
+         << "    \"while reading parameter file '" << n
+         << "-parameters.txt'\"\n"
+         << "    \" (\"+m+\")\";\n"
+         << "  };\n"
+         << "  if(tokens.empty()){\n"
+         << "    continue;\n"
+         << "  }\n"
+         << "  if(tokens[0][0]=='#'){\n"
+         << "    continue;\n"
+         << "  }\n"
+         << "  if(tokens.size()!=2u){\n"
+         << "    set_msg(\"invalid number of tokens\");\n"
+         << "    return;\n"
+         << "  }\n"
+         << "  double pvalue;\n"
+         << "  try {\n"
+         << "    pvalue = std::stod(tokens[1]);\n"
+         << "  } catch(...){\n"
+         << "    set_msg(\"can't convert '\"+tokens[1]+\"' to floating point "
+            "value\");\n"
+         << "    return;\n"
+         << "  }\n";
+      bool first = true;
+      for (const auto& p : mpd.parameters) {
+        if (!first) {
+          os << " else ";
+        }
+        os << "if(tokens[0]==\"" << p.getExternalName() << "\"){\n"
+           << "this->" << p.name << " = pvalue;\n"
+           << "}";
+        first = false;
       }
-      os << "if(tokens[0]==\"" << p.getExternalName() << "\"){\n"
-         << "this->" << p.name << " = pvalue;\n"
-         << "}";
-      first = false;
+      os << "else {\n"
+         << "set_msg(\"invalid parameter '\"+tokens[0]+\"'\");\n"
+         << "return;\n"
+         << "}\n"
+         << "}\n";
     }
-    os << "else {\n"
-       << "set_msg(\"invalid parameter '\"+tokens[0]+\"'\");\n"
-       << "return;\n"
-       << "}\n"
-       << "}\n"
-       << "this->ok=true;\n"
+    os << "this->ok=true;\n"
        << "}\n"
        << "#if __cplusplus > 199711L\n"
        << n << "MaterialPropertyHandler(" << n
@@ -144,20 +148,33 @@ namespace mfront {
       const std::string& n,
       const std::string& t,
       const std::string& i) {
-    if (useQuantities(mpd)) {
+    if (areParametersTreatedAsStaticVariables(mpd)) {
       for (const auto& p : mpd.parameters) {
-        os << "const auto " << p.name << " = " << p.type << "(" << i
-           << "::" << n << "MaterialPropertyHandler::get" << n
-           << "MaterialPropertyHandler()." << p.name << ");\n";
+        const auto pv =
+            p.getAttribute<double>(VariableDescription::defaultValue);
+        os << "constexpr auto " << p.name << " = ";
+        if (useQuantities(mpd)) {
+          os << p.type << "(" << pv << ");\n";
+        } else {
+          os << t << "(" << pv << ");\n";
+        }
       }
     } else {
-      for (const auto& p : mpd.parameters) {
-        os << "const " << t << " " << p.name << " = " << i << "::" << n
-           << "MaterialPropertyHandler::get" << n
-           << "MaterialPropertyHandler()." << p.name << ";\n";
+      if (useQuantities(mpd)) {
+        for (const auto& p : mpd.parameters) {
+          os << "const auto " << p.name << " = " << p.type << "(" << i
+             << "::" << n << "MaterialPropertyHandler::get" << n
+             << "MaterialPropertyHandler()." << p.name << ");\n";
+        }
+      } else {
+        for (const auto& p : mpd.parameters) {
+          os << "const " << t << " " << p.name << " = " << i << "::" << n
+             << "MaterialPropertyHandler::get" << n
+             << "MaterialPropertyHandler()." << p.name << ";\n";
+        }
       }
     }
-  }
+  } // end of writeAssignMaterialPropertyParameters
 
   std::string getMaterialPropertyParametersHandlerClassName(
       const std::string& n) {

@@ -64,13 +64,20 @@ namespace mfront {
     return tfel::utilities::CxxTokenizer::isValidIdentifier(n, false);
   }
 
-  ModelDSLCommon::ModelDSLCommon() {
+  ModelDSLCommon::ModelDSLCommon(const DSLOptions& opts) : DSLBase(opts) {
+    //
+    DSLBase::handleDSLOptions(this->md, opts);
+    //
     this->reserveName("dt");
     this->reserveName("\u0394t");
     for (const auto& v : DSLBase::getDefaultReservedNames()) {
       this->reserveName(v);
     }
   }
+
+  AbstractDSL::DSLOptions ModelDSLCommon::buildDSLOptions() const {
+    return DSLBase::buildCommonDSLOptions(this->md);
+  }  // end of buildDSLOptions
 
   std::string ModelDSLCommon::getMaterialKnowledgeIdentifier() const {
     return this->md.className;

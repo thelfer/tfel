@@ -332,6 +332,7 @@ namespace mfront {
                 BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR)),
              "the calculix interface only supports small and "
              "finite strain behaviours");
+    this->checkIfTemperatureIsDefinedAsTheFirstExternalStateVariable(mb);
     checkFiniteStrainStrategyDefinitionConsistency(mb);
     // the only supported modelling hypothesis
     constexpr auto h = ModellingHypothesis::TRIDIMENSIONAL;

@@ -18,20 +18,24 @@
 #include <vector>
 #include <string>
 #include <memory>
-
+#include <functional>
+#include "TFEL/Utilities/Data.hxx"
 #include "MFront/MFrontConfig.hxx"
 #include "MFront/AbstractDSL.hxx"
 
 namespace mfront {
 
+  /*!
+   * \brief an abstract factory for the domain specific languages supported by
+   * `MFront` implemented using the singleton pattern.
+   */
   struct MFRONT_VISIBILITY_EXPORT DSLFactory {
     //! \brief a simple alias
-    using DSLCreator = std::shared_ptr<AbstractDSL> (*)();
+    using DSLGenerator = std::function<std::shared_ptr<AbstractDSL>(
+        const AbstractDSL::DSLOptions&)>;
     //! \brief a simple alias
-    using ParserCreator = DSLCreator;
-    //! \brief a simple alias
-    using DescriptionPtr = std::string (*)();
-    //!\brief return the uniq instance of the `DSLFactory` class.
+    using DescriptionGenerator = std::function<std::string()>;
+    //!\brief return the unique instance of the `DSLFactory` class.
     static DSLFactory& getDSLFactory();
     /*!
      * \return the list of all registred DSLs.
@@ -39,34 +43,48 @@ namespace mfront {
      */
     std::vector<std::string> getRegistredDSLs(const bool = true) const;
 
-    void registerDSLCreator(const std::string&, DSLCreator, DescriptionPtr);
-
     void registerDSLAlias(const std::string&, const std::string&);
 
     std::string getDSLDescription(const std::string&) const;
-
-    std::shared_ptr<AbstractDSL> createNewDSL(const std::string&) const;
+    /*!
+     * \return an instance of the DSL with the given name
+     * \param[in] n: name of the DSL to be generated
+     */
+    std::shared_ptr<AbstractDSL> createNewDSL(
+        const std::string&, const AbstractDSL::DSLOptions& = {}) const;
+    /*!
+     * \return an instance of the DSL with the given name
+     * \param[in] n: name of the DSL to be generated
+     */
+    [[deprecated]] std::shared_ptr<AbstractDSL> createNewParser(
+        const std::string&, const AbstractDSL::DSLOptions& = {}) const;
 
     std::vector<std::string> getRegistredParsers(const bool = true) const;
+    /*!
+     * \brief register a new DSL generator
+     */
+    void registerDSLCreator(const std::string&,
+                            DSLGenerator,
+                            DescriptionGenerator);
 
-    void registerParserCreator(const std::string&,
-                               ParserCreator,
-                               DescriptionPtr);
+    [[deprecated]] void registerParserCreator(const std::string&,
+                                              DSLGenerator,
+                                              DescriptionGenerator);
 
     std::string getParserDescription(const std::string&) const;
-
-    std::shared_ptr<AbstractDSL> createNewParser(const std::string&) const;
-    //! destructor
+    //! \brief destructor
     ~DSLFactory();
 
    private:
+    //! \brief list of generators
+    std::map<std::string, DSLGenerator> generators;
+    //! \brief list of aliases
     std::map<std::string, std::vector<std::string>> aliases;
-    std::map<std::string, DSLCreator> creators;
-    std::map<std::string, DescriptionPtr> descriptions;
-
+    //! \brief list of descriptions
+    std::map<std::string, DescriptionGenerator> descriptions;
+    //! \brief default constructor
     TFEL_VISIBILITY_LOCAL
     DSLFactory();
-
   };  // end of struct DSLFactory
 
 }  // end of namespace mfront

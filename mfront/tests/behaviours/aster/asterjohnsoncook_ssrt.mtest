@@ -1,0 +1,7 @@
+@Author Guillaume Michal;
+@Date 21/06/2017;
+@Behaviour<aster> @library@ 'asterjohnsoncook_ssrt';
+@ExternalStateVariable 'Temperature' 300.;
+@ImposedStrain 'EXX' {0.: 0., 6.666e-6 : 0.8}; // Monotic loading
+@Times {0., 6.666e-6 in 100};
+@Test<file> @reference_file@ {'SXX':8} 1.e-3; 

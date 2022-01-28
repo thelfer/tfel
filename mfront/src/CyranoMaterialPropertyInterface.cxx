@@ -337,6 +337,7 @@ namespace mfront {
 
     writeVariablesNamesSymbol(os, name, mpd);
     writeVariablesBoundsSymbols(os, name, mpd);
+    writeBuildIdentifierSymbol(os, name, mpd);
     writeEntryPointSymbol(os, name);
     writeTFELVersionSymbol(os, name);
     writeInterfaceSymbol(os, name, "Cyrano");
@@ -413,7 +414,7 @@ namespace mfront {
        << "return std::nan(\"invalid number of arguments\");\n"
        << "}\n";
     // parameters
-    if (!params.empty()) {
+    if ((!areParametersTreatedAsStaticVariables(mpd)) && (!params.empty())) {
       const auto hn = getMaterialPropertyParametersHandlerClassName(name);
       os << "if(!cyrano::" << hn << "::get" << hn << "().ok){\n"
          << "cyrano_output_status->status = -6;\n"
@@ -423,8 +424,9 @@ namespace mfront {
          << "return std::nan(cyrano::" << name << "MaterialPropertyHandler::get"
          << name << "MaterialPropertyHandler().msg.c_str());\n"
          << "}\n";
-      writeAssignMaterialPropertyParameters(os, mpd, name, "double", "cyrano");
     }
+    writeAssignMaterialPropertyParameters(os, mpd, name, "real", "cyrano");
+    //
     if (!mpd.inputs.empty()) {
       auto p3 = mpd.inputs.begin();
       for (auto i = 0u; p3 != mpd.inputs.end(); ++p3, ++i) {

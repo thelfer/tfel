@@ -336,6 +336,7 @@ namespace mfront {
     writeVariablesBoundsSymbols(srcFile, name, mpd);
 
     // mfront metadata
+    writeBuildIdentifierSymbol(srcFile, name, mpd);
     writeEntryPointSymbol(srcFile, name);
     writeTFELVersionSymbol(srcFile, name);
     writeInterfaceSymbol(srcFile, name, "Python");
@@ -356,16 +357,16 @@ namespace mfront {
             << "  return nullptr;\n"
             << "};\n";
     // parameters
-    if (!mpd.parameters.empty()) {
+    if ((!areParametersTreatedAsStaticVariables(mpd)) &&
+        (!mpd.parameters.empty())) {
       const auto hn = getMaterialPropertyParametersHandlerClassName(name);
       srcFile << "if(!python::" << hn << "::get" << hn << "().ok){\n"
               << "return throwPythonRuntimeException(python::" << name
               << "MaterialPropertyHandler::get" << name
               << "MaterialPropertyHandler().msg);\n"
               << "}\n";
-      writeAssignMaterialPropertyParameters(srcFile, mpd, name, "double",
-                                            "python");
     }
+    writeAssignMaterialPropertyParameters(srcFile, mpd, name, "real", "python");
     for (const auto& i : inputs) {
       if (useQuantities(mpd)) {
         srcFile << "auto " << i.name << " = " << i.type << " {};\n";

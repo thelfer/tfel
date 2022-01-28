@@ -2,6 +2,7 @@ add_subdirectory(umatxx)
 add_subdirectory(mtest)
 
 mfront_python_module(_mfront mfront.cxx
+  MaterialKnowledgeDescriptionAttribute.cxx
   AbstractDSL.cxx
   FileDescription.cxx
   TargetsDescription.cxx
@@ -13,7 +14,6 @@ mfront_python_module(_mfront mfront.cxx
   AbstractBehaviourDSL.cxx
   VariableBoundsDescription.cxx
   VariableDescription.cxx
-  BehaviourAttribute.cxx
   BehaviourData.cxx
   BehaviourSymmetryType
   BehaviourDescription.cxx

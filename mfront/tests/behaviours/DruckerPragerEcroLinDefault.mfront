@@ -13,16 +13,16 @@ young.setGlossaryName("YoungModulus");
 @MaterialProperty real nu;
 nu.setGlossaryName("PoissonRatio");
 
-@MaterialProperty real a ;
-@MaterialProperty real p_ult ;
-@MaterialProperty real sy ;
-@MaterialProperty real H ;
+@MaterialProperty real a;
+@MaterialProperty real p_ult;
+@MaterialProperty real sy;
+@MaterialProperty real H;
 
 @ProvidesSymmetricTangentOperator;
 
 @StateVariable real p;
-@StateVariable real pvol ;
-@StateVariable real indic ;
+@StateVariable real pvol;
+@StateVariable real indic;
 
 @LocalVariable stress K;
 @LocalVariable stress lambda;
@@ -31,71 +31,69 @@ nu.setGlossaryName("PoissonRatio");
 @LocalVariable stress i1el;
 @LocalVariable stress seqel;
 @LocalVariable stress Rpel;
-@LocalVariable real Dp ;
-@LocalVariable real ind ;
-
+@LocalVariable real Dp;
+@LocalVariable real ind;
 
 /* Initialize Lame coefficients */
-@InitLocalVariables{
-  lambda = computeLambda(young,nu);
-  mu     = computeMu(young,nu);
-  K      = lambda+(2*mu)/3;
+@InitLocalVariables {
+  lambda = computeLambda(young, nu);
+  mu = computeMu(young, nu);
+  K = lambda + (2 * mu) / 3;
   // elastic prediction
-  StressStensor sigel(sig + lambda*trace(deto)*Stensor::Id()+2*mu*(deto));
-  i1el  = trace(sigel);
+  StressStensor sigel(sig + lambda * trace(deto) * Stensor::Id() +
+                      2 * mu * (deto));
+  i1el = trace(sigel);
   seqel = sigmaeq(sigel);
-  Rpel  = sy + H* min(p, p_ult) ;
-  Fel   = a*i1el + seqel - Rpel ;
-} 
+  Rpel = sy + H * min(p, p_ult);
+  Fel = a * i1el + seqel - Rpel;
+}
 
-@Integrator{
-  ind=0;
-  Dp=0.;
-  Stensor deel(0.) ;
-  if(Fel > 0){
-     const stress seq_ = sigmaeq(sig);
-     StrainStensor np_(real(0));
-     StrainStensor n_(real(0));
-     if(seq_>1.e-10*young){
-          ind=1 ;
-          n_ = 3/(2*seq_)*deviator(sig);
-          Dp = Fel /(3.*mu+9.*K*a*a+H) ;
-          // verification finale
-          if ((p+Dp) > p_ult) {
-              Dp =  Fel/(3.*mu+9.*K*a*a) ;
-          }
-     } else {
-          // projection au sommet        
-          ind = 2 ;
-          Dp = (a*i1el - Rpel) /(9.*K*a*a+H) ;            
-          // verification finale
-          if ((p+Dp) > p_ult) {
-              Dp = (a*i1el-Rpel)/(9.*K*a*a) ;
-          }
-     }
-     np_ = a*StrainStensor::Id()+n_;
-     deel -= Dp*np_;
-   }
-   deel += deto ;
+@Integrator {
+  ind = 0;
+  Dp = 0.;
+  Stensor deel(0.);
+  if (Fel > 0) {
+    const stress seq_ = sigmaeq(sig);
+    StrainStensor np_(real(0));
+    StrainStensor n_(real(0));
+    if (seq_ > 1.e-10 * young) {
+      ind = 1;
+      n_ = 3 / (2 * seq_) * deviator(sig);
+      Dp = Fel / (3. * mu + 9. * K * a * a + H);
+      // verification finale
+      if ((p + Dp) > p_ult) {
+        Dp = Fel / (3. * mu + 9. * K * a * a);
+      }
+    } else {
+      // projection au sommet
+      ind = 2;
+      Dp = (a * i1el - Rpel) / (9. * K * a * a + H);
+      // verification finale
+      if ((p + Dp) > p_ult) {
+        Dp = (a * i1el - Rpel) / (9. * K * a * a);
+      }
+    }
+    np_ = a * StrainStensor::Id() + n_;
+    deel -= Dp * np_;
+  }
+  deel += deto;
 
-   real    tr = trace(deel);
-   sig += lambda*tr*Stensor::Id()+2*mu*deel;
-  
-   p += Dp ;
-   pvol += deto(0)-deel(0) +deto(1)-deel(1)+ deto(2)-deel(2) ;
-   indic = ind ;
-  
-  if(computeTangentOperator_){
+  real tr = trace(deel);
+  sig += lambda * tr * Stensor::Id() + 2 * mu * deel;
+
+  p += Dp;
+  pvol += deto(0) - deel(0) + deto(1) - deel(1) + deto(2) - deel(2);
+  indic = ind;
+
+  if (computeTangentOperator_) {
     StiffnessTensor Hooke;
-    computeAlteredElasticStiffness<hypothesis,Type>::exe(Hooke,lambda,mu);
-    if(smt==ELASTIC){
-      Dt=Hooke;
-    } else if(smt==SECANTOPERATOR){
+    computeAlteredElasticStiffness<hypothesis, Type>::exe(Hooke, lambda, mu);
+    if (smt == ELASTIC) {
+      Dt = Hooke;
+    } else if (smt == SECANTOPERATOR) {
       Dt = Hooke;
     } else {
       Dt = Hooke;
     }
   }
 }
-
-

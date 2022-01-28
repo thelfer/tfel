@@ -94,8 +94,8 @@ namespace tfel::utilities::internals {
       auto throw_if = [](const bool b, const std::string& msg) {
         tfel::raise_if(b, "convert<std::map<std::string,T>>: " + msg);
       };
-      throw_if(!d.is<std::map<std::string, Data>>(), "invalid data type");
-      const auto& m = d.get<std::map<std::string, Data>>();
+      throw_if(!d.is<DataMap>(), "invalid data type");
+      const auto& m = d.get<DataMap>();
       auto r = std::map<std::string, T>{};
       for (const auto& e : m) {
         r.insert({e.first, tfel::utilities::convert<T>(e.second)});
@@ -103,10 +103,10 @@ namespace tfel::utilities::internals {
       return r;
     }  // end of exe
     static bool is_convertible(const Data& d) {
-      if (!d.is<std::map<std::string, tfel::utilities::Data>>()) {
+      if (!d.is<tfel::utilities::DataMap>()) {
         return false;
       }
-      const auto& vd = d.get<std::map<std::string, tfel::utilities::Data>>();
+      const auto& vd = d.get<tfel::utilities::DataMap>();
       for (const auto& w : vd) {
         if (!tfel::utilities::is_convertible<T>(w.second)) {
           return false;
@@ -120,6 +120,18 @@ namespace tfel::utilities::internals {
 
 namespace tfel::utilities {
 
+  template <typename T1>
+  std::enable_if_t<
+      tfel::meta::TLCountNbrOfT<std::decay_t<T1>, DataTypes>::value == 1,
+      DataMapValidator&>
+  DataMapValidator::addDataTypeValidator(const std::string& k) {
+    return this->addDataValidator(k, [](const Data& d) {
+      if (!d.template is<T1>()) {
+        tfel::raise("invalid type");
+      }
+    });
+  }  // end of addDataTypeValidator
+
   template <typename T>
   T convert(const Data& d) {
     return tfel::utilities::internals::DataConvertor<T>::exe(d);
@@ -129,6 +141,29 @@ namespace tfel::utilities {
   bool is_convertible(const Data& d) {
     return tfel::utilities::internals::DataConvertor<T>::is_convertible(d);
   }  // end of convert
+
+  template <typename ResultType>
+  bool is(const DataMap& m, std::string_view n) {
+    const auto& v = get(m, n);
+    return v.template is<ResultType>();
+  }  // end of is
+
+  template <typename ResultType>
+  const ResultType& get(const DataMap& m, std::string_view n) {
+    const auto& v = get(m, n);
+    if (!v.template is<ResultType>()) {
+      raiseUnmatchedDataType(n);
+    }
+    return get<ResultType>(v);
+  }  // end of get
+
+  template <typename ResultType>
+  ResultType get_if(const DataMap& m, std::string_view n, const ResultType& v) {
+    if (contains(m, n)) {
+      return get<ResultType>(m, n);
+    }
+    return v;
+  }  // end of get
 
 }  // end of namespace tfel::utilities
 

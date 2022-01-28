@@ -40,8 +40,7 @@ namespace mfront {
    * \brief class used by the mfront-query tool to extract information from
    * behaviour implementation
    */
-  struct BehaviourQuery final
-      : public QueryHandlerBase {
+  struct BehaviourQuery final : public QueryHandlerBase {
     /*!
      * build a BehaviourQuery object based on command line arguments
      * \param[in] argc : number of command line arguments
@@ -81,10 +80,13 @@ namespace mfront {
     virtual void treatStandardQuery2() final;
     //
     void treatGeneratedSources() override final;
+    void treatSpecificTargetGeneratedSources() override final;
+    void treatAllSpecificTargetsGeneratedSources() override final;
     void treatCppFlags() override final;
     void treatGeneratedHeaders() override final;
     void treatLibrariesDependencies() override final;
     void treatSpecificTargets() override final;
+    void treatDSLTarget() override final;
     //! \brief treat the "--modelling-hypothesis" command line argument
     virtual void treatModellingHypothesis() final;
     //! \return a query that show a list of variables

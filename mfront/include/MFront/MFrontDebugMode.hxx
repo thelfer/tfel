@@ -11,8 +11,8 @@
  * project under specific licensing conditions.
  */
 
-#ifndef LIB_MFRONTDEBUGMODE_HXX
-#define LIB_MFRONTDEBUGMODE_HXX
+#ifndef LIB_MFRONT_MFRONTDEBUGMODE_HXX
+#define LIB_MFRONT_MFRONTDEBUGMODE_HXX
 
 #include "MFront/MFrontConfig.hxx"
 
@@ -31,4 +31,4 @@ namespace mfront {
 
 }  // namespace mfront
 
-#endif /* LIB_MFRONTDEBUGMODE_HXX */
+#endif /* LIB_MFRONT_MFRONTDEBUGMODE_HXX */

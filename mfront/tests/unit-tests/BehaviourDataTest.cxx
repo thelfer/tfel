@@ -275,12 +275,11 @@ struct BehaviourDataTest final : public tfel::tests::TestCase {
     TFEL_TESTS_ASSERT(bd.isStateVariableName("p"));
     TFEL_TESTS_ASSERT(bd.isStateVariableIncrementName("dp"));
     const auto r = bd.getVariablesNames();
-    TFEL_TESTS_ASSERT(r.size() == 5);
+    TFEL_TESTS_ASSERT(r.size() == 4);
     TFEL_TESTS_ASSERT(r.find("young") != r.end());
     TFEL_TESTS_ASSERT(r.find("nu") != r.end());
     TFEL_TESTS_ASSERT(r.find("p") != r.end());
     TFEL_TESTS_ASSERT(r.find("seq") != r.end());
-    TFEL_TESTS_ASSERT(r.find("T") != r.end());
   }
 
   void test3() {

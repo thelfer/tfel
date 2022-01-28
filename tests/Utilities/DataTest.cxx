@@ -43,7 +43,7 @@ struct DataTest final : public tfel::tests::TestCase {
         "}");
     auto c = t.begin();
     const auto d = Data::read(c, t.end());
-    const auto m = d.get<std::map<std::string, Data>>();
+    const auto m = d.get<DataMap>();
     TFEL_TESTS_ASSERT(m.size() == 4u);
     TFEL_TESTS_ASSERT(m.count("value") == 1u);
     TFEL_TESTS_ASSERT(m.count("value2") == 1u);
@@ -68,8 +68,8 @@ struct DataTest final : public tfel::tests::TestCase {
     TFEL_TESTS_ASSERT(vd.at(1).get<std::string>() == "test");
     TFEL_TESTS_ASSERT(vd.at(2).is<double>());
     TFEL_TESTS_ASSERT(std::abs(vd.at(2).get<double>() + 3.14159) < 1.e-14);
-    TFEL_TESTS_ASSERT((vd.at(3).is<std::map<std::string, Data>>()));
-    const auto& md = vd.at(3).get<std::map<std::string, Data>>();
+    TFEL_TESTS_ASSERT((vd.at(3).is<DataMap>()));
+    const auto& md = vd.at(3).get<DataMap>();
     TFEL_TESTS_ASSERT(md.size() == 2u);
     TFEL_TESTS_ASSERT(md.count("key1") == 1u);
     TFEL_TESTS_ASSERT(md.count("key2") == 1u);

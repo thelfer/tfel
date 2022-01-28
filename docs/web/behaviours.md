@@ -1,6 +1,15 @@
-% Mechanical behaviours in MFront
-% Helfer Thomas
-% October 15, 2014
+---
+title: Mechanical behaviours in MFront
+author: Thomas Helfer, Jérémy Hure, Mohamed Shokeir
+date: 15/10/2014
+lang: en-EN
+link-citations: true
+colorlinks: true
+figPrefixTemplate: "$$i$$"
+tblPrefixTemplate: "$$i$$"
+secPrefixTemplate: "$$i$$"
+eqnPrefixTemplate: "($$i$$)"
+---
 
 \newcommand{\tenseur}[1]{\underline{#1}}
 \newcommand{\tenseurq}[1]{\underline{\mathbf{#1}}}
@@ -84,7 +93,6 @@ At each time step, the following resolution procedure is used:
   (see @simo_consistent_1985) which is used to estimate a more
   accurate displacement field.
 
-
 A mechanical behaviour can thus be viewed as functional:
 
 \[
@@ -96,14 +104,15 @@ The dots \(\ldots\) means that the behaviour may also depend of
 external state variables evolutions with time, namely the temperature,
 the irradiation damage, and so on.
 
-## Isotropic $J_{2}$ plastic/vsicplastic behaviours. Example of finite strain pre- and post-processing
+## Isotropic $J_{2}$ plastic/viscoplastic behaviours. Example of finite strain pre- and post-processing
 
 \(4\) domain specific languages address the case of small strain
 isotropic \(J_{2}\) plastic and/or viscoplastic behaviours which are
 of common use and for which efficient implicit scalar radial return
 mapping algorithms exist (see @simo_computational_1998).
 
-The following listing shows  how a simple plastic behaviour can be implemented:
+The following listing shows how a simple plastic behaviour can be
+implemented:
 
 ~~~~ {#Plasticity .cpp .numberLines}
 @DSL IsotropicPlasticMisesFlow; //< domain specific language
@@ -119,11 +128,13 @@ The following listing shows  how a simple plastic behaviour can be implemented:
 
 The plastic behaviour is governed by the following yield
 surface (see @besson_mecanique_2001;@chaboche_mecanique_2009):
+
 \[
 f\paren{\sigmaeq,p}=\sigmaeq-H\,p-\sigma_{0} \leq 0
 \]
+
 where \(\sigmaeq\) is the Von Mises stress, \(p\) the equivalent
-plastic strain, \(R\) the isotropic hardening slope and \(\sigma_{0}\)
+plastic strain, \(H\) the isotropic hardening slope and \(\sigma_{0}\)
 the initial elasticity limit.
 
 The generated code represent a total amount of \(1\,512\) lines of
@@ -134,13 +145,14 @@ The generated code represent a total amount of \(1\,512\) lines of
   plane stress, generalised plane strain, axisymmetry, tridimensional)
   thanks to template metaprogramming and template specialisations. An
   small overview of the programming techniques used can be found
-  in~\ref{sec:tfel-library}.
+  in the description of the [TFEL/Math library](tfel-math.html).
 2. the computation of the prediction operator;
 3. meta-data about the required material properties, the number of
   states variables, etc... that can be retrieved dynamically (For the
-  sake of simplicity, no glossary name was specified in this
-  example). This mechanism is used by \pleiades{} applications to
-  appropriately call the behaviour;
+  sake of simplicity, no glossary name was specified in this example).
+  This mechanism is typically used by solvers based on the [`MGIS`
+  libray](https://thelfer.github.io/mgis/web/index.html) appropriately
+  call the behaviour;
 4. the computation of a tangent matrix operator (various choice are
   possible: elastic, secant, consistent);
 5. dynamically loadable functions allowing the user to change various
@@ -287,6 +299,10 @@ declared.
 
 ## Implicit integration
 
+This section provides a very coarse overview of the `Implicit` domain
+specific language. The reader can refer to [this
+page](implicit-dsl.html) for a comprehensive description.
+
 If the evolution of the state variables, grouped into a single vector
 \(Y\) whose components \(Y_{i}\) may be scalars or symmetric tensors,
 is given by the following system of differential equations:
@@ -352,36 +368,35 @@ surface when plastic loading occurs.
 
 ### Available algorithms
 
-Several algorithms are available to solve
-the previous implicit system:
+Several algorithms are available to solve the previous implicit system:
 
-- `NewtonRaphson` is the standard Newton-\-Raph\-son algorithm:
-\[
-\Delta\,Y^{\paren{n+1}}=\Delta\,Y^{\paren{n}}-J^{-1}\,.\,F\paren{\Delta\,Y^{\paren{n}}}
-\]
-The user must explicitly compute the jacobian matrix, which
-constitutes the main difficulty of this method. For debugging
-purposes, `MFront` may generate the comparison of each block of the
-jacobian matrix with a numerical approximation.
+- `NewtonRaphson` is the standard Newton-Raphson algorithm:
+  \[
+  \Delta\,Y^{\paren{n+1}}=\Delta\,Y^{\paren{n}}-J^{-1}\,.\,F\paren{\Delta\,Y^{\paren{n}}}
+  \]
+  The user must explicitly compute the jacobian matrix, which constitutes
+  the main difficulty of this method. For debugging purposes, `MFront` may
+  generate the comparison of each block of the jacobian matrix with a
+  numerical approximation.
 - `NewtonRaphson_NumericalJacobian` is a variation of the standard
-\nom{Newton-\-Raphson} algorithm using a jacobian matrix computed by a
-second order finite difference. Writing behaviour implementations
-using this algorithm is as easy as using the \nom{Runge-Kutta} domain
-specific languages. It can be considered as a first step toward an
-implicit implementation with an analytical jacobian matrix.
+  Newton-Raphson algorithm using a jacobian matrix computed by a second
+  order finite difference. Writing behaviour implementations using this
+  algorithm is as easy as using the domain specific languages based on
+  `RungeKutta` algorithm. It can be considered as a first step toward an
+  implicit implementation with an analytical jacobian matrix.
 - `Broyden` algorithms which do not require to computation of the
-jacobian matrix: these algorithms update an approximation of the
-jacobian matrix (first Broyden algorithm) or its inverse (second
-Broyden algorithm) at each iteration. The first Broyden
-algorithm can sometimes be interesting as one may compute analitically
-some part of the jacobian matrix and let the algorithm compute the
-other parts. If the computation of those other parts takes a
-significant amount of CPU time, this algorithm can in same cases
-outperfom the {\tt Newton\-Raphson} algorithm.
-- `PowellDogLeg_XX}` algorithm, where `XX` is one of the previous
-algorithm. Those trust-region algorithms implements the classical
-Powell dogleg method [see @chen_modification_1981] to improve the
-robustness of the resolution.
+  jacobian matrix: these algorithms update an approximation of the
+  jacobian matrix (first Broyden algorithm) or its inverse (second
+  Broyden algorithm) at each iteration. The first Broyden algorithm can
+  sometimes be interesting as one may compute analitically some part of
+  the jacobian matrix and let the algorithm compute the other parts. If
+  the computation of those other parts takes a significant amount of CPU
+  time, this algorithm can in same cases outperfom the Newton-Raphson
+  algorithm.
+- `PowellDogLeg_XX` algorithm, where `XX` is one of the previous
+  algorithm. Those trust-region algorithms implements the classical
+  Powell dogleg method [see @chen_modification_1981] to improve the
+  robustness of the resolution.
 
 ### Consistent tangent operator
 

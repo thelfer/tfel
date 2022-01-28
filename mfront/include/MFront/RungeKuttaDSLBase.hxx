@@ -22,14 +22,16 @@ namespace mfront {
   struct RungeKuttaDSLBase : public BehaviourDSLBase<RungeKuttaDSLBase> {
     //! return a generic description of DSL based on this class
     static std::string getDescription();
-    //! constructor
-    RungeKuttaDSLBase();
-
+    /*!
+     * \brief constructor
+     *\param[in] opts: options passed to the DSL
+     */
+    RungeKuttaDSLBase(const DSLOptions&);
+    //
     std::string getCodeBlockTemplate(
         const std::string&,
         const MFrontTemplateGenerationOptions&) const override;
-
-    //! destructor
+    //! \brief destructor
     ~RungeKuttaDSLBase() override;
 
    protected:

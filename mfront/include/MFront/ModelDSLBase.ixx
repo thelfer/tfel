@@ -153,7 +153,8 @@ namespace mfront {
   }  // end of registerNewCallBack
 
   template <typename Child>
-  ModelDSLBase<Child>::ModelDSLBase() {
+  ModelDSLBase<Child>::ModelDSLBase(const DSLOptions& opts)
+      : ModelDSLCommon(opts) {
     this->registerDefaultCallBacks();
   }
 

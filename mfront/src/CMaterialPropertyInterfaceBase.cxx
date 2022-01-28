@@ -220,6 +220,11 @@ namespace mfront {
     }
   }
 
+  void CMaterialPropertyInterfaceBase::writeBuildIdentifierSymbol(
+      std::ostream& os, const MaterialPropertyDescription& mpd) const {
+    mfront::writeBuildIdentifierSymbol(os, this->getFunctionName(mpd), mpd);
+  }  // end of writeBuildIdentifierSymbol
+
   void CMaterialPropertyInterfaceBase::writeEntryPointSymbol(
       std::ostream& os, const MaterialPropertyDescription& mpd) const {
     mfront::writeEntryPointSymbol(os, this->getFunctionName(mpd));
@@ -301,6 +306,7 @@ namespace mfront {
     this->writeSrcPreprocessorDirectives(os, mpd);
     this->writeVariablesNamesSymbol(os, name, mpd);
     this->writeVariablesBoundsSymbols(os, name, mpd);
+    this->writeBuildIdentifierSymbol(os, mpd);
     this->writeEntryPointSymbol(os, mpd);
     this->writeTFELVersionSymbol(os, mpd);
     this->writeInterfaceSymbol(os, mpd);

@@ -10,26 +10,26 @@ mfrontdir = @pythondir@/mfront
 mfront_PYTHON = __init__.py
 
 mfront_LTLIBRARIES = _mfront.la
-_mfront_la_SOURCES = mfront.cxx                \
-		     AbstractDSL.cxx                   \
-		     FileDescription.cxx               \
-		     TargetsDescription.cxx            \
-		     CompiledTargetDescriptionBase.cxx \
-		     LibraryDescription.cxx            \
-		     DSLFactory.cxx                    \
-		     VariableBoundsDescription.cxx     \
-		     VariableDescription.cxx           \
-		     MaterialPropertyDSL.cxx           \
-		     MaterialPropertyDescription.cxx   \
-		     AbstractBehaviourDSL.cxx          \
-		     BehaviourAttribute.cxx            \
-		     BehaviourData.cxx                 \
-		     BehaviourSymmetryType.cxx         \
-		     BehaviourDescription.cxx          \
-		     SearchPathsHandler.cxx            \
-		     GeneratorOptions.cxx              \
-		     MakefileGenerator.cxx             \
-		     CMakeGenerator.cxx                \
+_mfront_la_SOURCES = mfront.cxx                                \
+		     MaterialKnowledgeDescriptionAttribute.cxx \
+		     AbstractDSL.cxx                           \
+		     FileDescription.cxx                       \
+		     TargetsDescription.cxx                    \
+		     CompiledTargetDescriptionBase.cxx         \
+		     LibraryDescription.cxx                    \
+		     DSLFactory.cxx                            \
+		     VariableBoundsDescription.cxx             \
+		     VariableDescription.cxx                   \
+		     MaterialPropertyDSL.cxx                   \
+		     MaterialPropertyDescription.cxx           \
+		     AbstractBehaviourDSL.cxx                  \
+		     BehaviourData.cxx                         \
+		     BehaviourSymmetryType.cxx                 \
+		     BehaviourDescription.cxx                  \
+		     SearchPathsHandler.cxx                    \
+		     GeneratorOptions.cxx                      \
+		     MakefileGenerator.cxx                     \
+		     CMakeGenerator.cxx                        \
 		     OverridableImplementation.cxx
 
 _mfront_la_LDFLAGS = -module

@@ -142,6 +142,18 @@ namespace mtest {
      */
     virtual void handleOuterRadiusEvolution(PipeTest&, tokens_iterator&);
     /*!
+     * \brief handle the `@MandrelRadiusEvolution` keyword
+     * \param[out]    t: test
+     * \param[in,out] p: position in the input file
+     */
+    virtual void handleMandrelRadiusEvolution(PipeTest&, tokens_iterator&);
+    /*!
+     * \brief handle the `@MandrelAxialGrowthEvolution` keyword
+     * \param[out]    t: test
+     * \param[in,out] p: position in the input file
+     */
+    virtual void handleMandrelAxialGrowthEvolution(PipeTest&, tokens_iterator&);
+    /*!
      * \brief handle the `@AxialForceEvolution` keyword
      * \param[out]    t: test
      * \param[in,out] p: position in the input file

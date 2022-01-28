@@ -24,6 +24,8 @@
 namespace tfel::utilities {
   // forward declaration
   struct Data;
+  //! \brief a simple alias
+  using DataMap = std::map<std::string, Data, std::less<>>;
 }  // end of namespace tfel::utilities
 
 namespace mfront {
@@ -64,17 +66,17 @@ namespace mfront {
         STRESSANDFLOWCRITERION  //! the criterion is used to predict the flow
                                 //! intensity and the flow direction
       };
-      //! a simple alias
+      //! \brief a simple alias
       using Data = tfel::utilities::Data;
-      //! a simple alias
-      using DataMap = std::map<std::string, Data>;
-      //! a simple alias
+      //! \brief a simple alias
+      using DataMap = tfel::utilities::DataMap;
+      //! \brief a simple alias
       using ModellingHypothesis = tfel::material::ModellingHypothesis;
-      //! a simple alias
+      //! \brief a simple alias
       using Hypothesis = ModellingHypothesis::Hypothesis;
       //! \brief a simple alias
       using BehaviourSymmetry = mfront::BehaviourSymmetryType;
-      //! a simple alias
+      //! \brief a simple alias
       using MaterialProperty = BehaviourDescription::MaterialProperty;
       /*!
        * \return the name of a variable from a base name and the flow id.

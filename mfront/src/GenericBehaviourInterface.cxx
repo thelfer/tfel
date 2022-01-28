@@ -1372,10 +1372,10 @@ namespace mfront {
       auto flag = SupportedTypes::getTypeFlag(v.type);
       const auto& ivname = d.getExternalName(v.name);
       if (v.arraySize == 1u) {
-          out << "mg.addInternalStateVariable(\"" << ivname << "\","
-              << as_string(flag) << ","
-              << "&(d->s0.internal_state_variables[" << ivoffset << "]));\n";
-          ivoffset += SupportedTypes::TypeSize(flag);
+        out << "mg.addInternalStateVariable(\"" << ivname << "\","
+            << as_string(flag) << ","
+            << "&(d->s0.internal_state_variables[" << ivoffset << "]));\n";
+        ivoffset += SupportedTypes::TypeSize(flag);
       } else {
         if (v.arraySize >= SupportedTypes::ArraySizeLimit) {
           out << "for(unsigned short i=0;i!=" << v.arraySize << ";++i){\n";

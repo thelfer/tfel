@@ -45,9 +45,9 @@ namespace mtest {
     } else {
       md.kinematic = 3u;
     }
-    throw_if(!p.is<std::map<std::string, tfel::utilities::Data>>(),
+    throw_if(!p.is<tfel::utilities::DataMap>(),
              "invalid parameters type");
-    const auto& mp = p.get<std::map<std::string, tfel::utilities::Data>>();
+    const auto& mp = p.get<tfel::utilities::DataMap>();
     //! name or number of the behaviour
     std::string mname(16, ' ');
     throw_if((mp.count("FCT_LOI") == 1u) && (mp.count("NUME_LOI") == 1u),

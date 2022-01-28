@@ -187,7 +187,7 @@ namespace tfel::check {
      *    the command output to the expected value.
      */
     auto parseCommandOptions =
-        [&c](const std::map<std::string, tfel::utilities::Data>& options) {
+        [&c](const tfel::utilities::DataMap& options) {
           for (const auto& o : options) {
             if (o.first == "expected_output") {
               if (!o.second.is<std::string>()) {

@@ -15,7 +15,8 @@
 
 namespace mfront {
 
-  RungeKuttaFiniteStrainDSL::RungeKuttaFiniteStrainDSL() {
+  RungeKuttaFiniteStrainDSL::RungeKuttaFiniteStrainDSL(const DSLOptions& opts)
+      : RungeKuttaDSLBase(opts) {
     this->mb.setDSLName("RungeKuttaFiniteStrain");
     this->mb.declareAsAFiniteStrainStandardBehaviour(true);
     this->registerNewCallBack(

@@ -33,6 +33,7 @@ MFRONTS= DDIF2.mfront                                                      \
 	 Plasticity2.mfront                                                \
 	 Plasticity3.mfront                                                \
 	 Plasticity4.mfront                                                \
+     PlasticityWithoutAutomaticTemperatureDeclaration.mfront           \
 	 DruckerPrager.mfront                                              \
          Norton.mfront                                                     \
          Norton2.mfront                                                    \
@@ -188,7 +189,10 @@ MFRONTS= DDIF2.mfront                                                      \
      ode_default.mfront                                                \
      ode_rk54.mfront                                                   \
      ode_implicit.mfront                                               \
-     TensorialExternalStateVariableTest.mfront
+     TensorialExternalStateVariableTest.mfront                         \
+     ElasticityParametersAsStaticVariables.mfront                      \
+     RungeKuttaElasticityParametersAsStaticVariables.mfront            \
+     ImplicitElasticityParametersAsStaticVariables.mfront
 
 testsdir = $(pkgdatadir)/mfront/tests/behaviours
 tests_DATA = $(MFRONTS)

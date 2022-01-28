@@ -15,7 +15,9 @@
 
 namespace mfront {
 
-  RungeKuttaGenericBehaviourDSL::RungeKuttaGenericBehaviourDSL() {
+  RungeKuttaGenericBehaviourDSL::RungeKuttaGenericBehaviourDSL(
+      const DSLOptions& opts)
+      : RungeKuttaDSLBase(opts) {
     this->mb.setDSLName("RungeKuttaGenericBehaviour");
     this->mb.declareAsGenericBehaviour();
     this->registerNewCallBack("@Gradient",

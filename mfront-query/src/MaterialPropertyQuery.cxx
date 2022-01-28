@@ -70,6 +70,8 @@ namespace mfront {
     QueryHandlerBase::registerCommandLineCallBacks();
     // standard queries
     const std::vector<std::pair<const char*, const char*>> sq = {
+        {"--law-name", "show the law name"},
+        {"--class-name", "show the class name"},
         {"--author", "show the author name"},
         {"--description", "show the file description"},
         {"--date", "show the file implementation date"},
@@ -83,7 +85,8 @@ namespace mfront {
     }
     this->registerCallBack(
         "--parameter-default-value",
-        CallBack("display the default value of a parameter", [this] { this->treatParameterDefaultValue(); }, true));
+        CallBack("display the default value of a parameter",
+                 [this] { this->treatParameterDefaultValue(); }, true));
   }  // end of registerCommandLineCallBacks
 
   void MaterialPropertyQuery::treatParameterDefaultValue() {
@@ -118,7 +121,19 @@ namespace mfront {
     using namespace std;
     const auto& q = this->getCurrentCommandLineArgument();
     const auto& qn = q.as_string();
-    if (qn == "--author") {
+    if (qn == "--law-name") {
+      this->queries.push_back(
+          {"law-name",
+           [](const FileDescription&, const MaterialPropertyDescription& mpd) {
+             cout << mpd.law << endl;
+           }});
+    } else if (qn == "--class-name") {
+      this->queries.push_back(
+          {"class-name",
+           [](const FileDescription&, const MaterialPropertyDescription& mpd) {
+             cout << mpd.className << endl;
+           }});
+    } else if (qn == "--author") {
       this->queries.push_back(
           {"author",
            [](const FileDescription& fd, const MaterialPropertyDescription&) {
@@ -182,10 +197,25 @@ namespace mfront {
   void MaterialPropertyQuery::treatGeneratedSources() {
     auto q = this->generateGeneratedSourcesQuery(
         this->getCurrentCommandLineArgument().getOption());
-    this->queries.push_back(
-        {"generated-sources",
-         [q](const FileDescription&, const MaterialPropertyDescription&) { q(); }});
+    this->queries.push_back({"generated-sources",
+                             [q](const FileDescription&,
+                                 const MaterialPropertyDescription&) { q(); }});
   }  // end of treatGeneratedSources
+
+  void MaterialPropertyQuery::treatSpecificTargetGeneratedSources() {
+    auto q = this->generateSpecificTargetGeneratedSourcesQuery(
+        this->getCurrentCommandLineArgument().getOption());
+    this->queries.push_back({"specific-target-generated-sources",
+                             [q](const FileDescription&,
+                                 const MaterialPropertyDescription&) { q(); }});
+  }  // end of treatSpecificTargetGeneratedSources
+
+  void MaterialPropertyQuery::treatAllSpecificTargetsGeneratedSources() {
+    auto q = this->generateAllSpecificTargetsGeneratedSourcesQuery();
+    this->queries.push_back({"all-specific-targets-generated-sources",
+                             [q](const FileDescription&,
+                                 const MaterialPropertyDescription&) { q(); }});
+  }  // end of treatAllSpecificTargetsGeneratedSources
 
   void MaterialPropertyQuery::treatGeneratedHeaders() {
     auto q = this->generateGeneratedHeadersQuery();
@@ -231,6 +261,10 @@ namespace mfront {
       q.second(fd, d);
     }
   }  // end of exe
+
+  void MaterialPropertyQuery::treatDSLTarget() {
+    std::cout << "material property" << std::endl;
+  }  // end of treatDSLTarget
 
   MaterialPropertyQuery::~MaterialPropertyQuery() = default;
 

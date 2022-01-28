@@ -52,6 +52,7 @@
 #include "MFront/MaterialPropertyDescription.hxx"
 #include "MFront/ModelDSL.hxx"
 #include "MFront/MFrontModelInterface.hxx"
+#include "MFront/GlobalDomainSpecificLanguageOptionsManager.hxx"
 #include "MFront/BehaviourDSLCommon.hxx"
 
 // fixing a bug on current glibc++ cygwin versions (19/08/2015)
@@ -68,6 +69,13 @@ namespace std {
 #endif /* defined __CYGWIN__ &&  (!defined _GLIBCXX_USE_C99) */
 
 namespace mfront {
+
+  tfel::utilities::DataMapValidator
+  BehaviourDSLCommon::getDSLOptionsValidator() {
+    return DSLBase::getDSLOptionsValidator().addDataTypeValidator<bool>(
+        BehaviourDescription::
+            automaticDeclarationOfTheTemperatureAsFirstExternalStateVariable);
+  }  // end of getDSLOptionsValidator
 
   BehaviourDSLCommon::StandardVariableModifier::StandardVariableModifier(
       const Hypothesis h, const FunctionType f)
@@ -98,12 +106,20 @@ namespace mfront {
     return tfel::utilities::CxxTokenizer::isValidIdentifier(n, false);
   }
 
-  BehaviourDSLCommon::BehaviourDSLCommon()
-      : useStateVarTimeDerivative(false),
+  BehaviourDSLCommon::BehaviourDSLCommon(const DSLOptions& opts)
+      : DSLBase(opts),
+        mb(tfel::utilities::extract(
+            opts,
+            {BehaviourDescription::
+                 automaticDeclarationOfTheTemperatureAsFirstExternalStateVariable})),
+        useStateVarTimeDerivative(false),
         explicitlyDeclaredUsableInPurelyImplicitResolution(false) {
+    //
     using MemberFunc = void (BehaviourDSLCommon::*)();
+    constexpr auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+    //
+    DSLBase::handleDSLOptions(this->mb, opts);
     // By default, a behaviour can be used in a purely implicit resolution
-    const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     this->mb.setUsableInPurelyImplicitResolution(h, true);
     // reserve names
     for (const auto& n : DSLBase::getDefaultReservedNames()) {
@@ -219,6 +235,21 @@ namespace mfront {
         &BehaviourDSLCommon::treatPostProcessingVariable);
     add("@PostProcessing", &BehaviourDSLCommon::treatPostProcessing);
   }  // end of BehaviourDSLCommon
+
+  std::vector<AbstractDSL::DSLOptionDescription>
+  BehaviourDSLCommon::getDSLOptions() const {
+    auto opts = DSLBase::getDSLOptions();
+    opts.push_back(
+        {BehaviourDescription::
+             automaticDeclarationOfTheTemperatureAsFirstExternalStateVariable,
+         "boolean stating if the temperature shall be automatically declared as "
+         "an external state variable"});
+    return opts;
+  }  // end of getDSLOptions
+
+  AbstractDSL::DSLOptions BehaviourDSLCommon::buildDSLOptions() const {
+    return DSLBase::buildCommonDSLOptions(this->mb);
+  }  // end of buildDSLOptions
 
   std::string BehaviourDSLCommon::getMaterialKnowledgeIdentifier() const {
     if (this->mb.isBehaviourNameDefined()) {
@@ -910,9 +941,12 @@ namespace mfront {
       getLogStream() << "BehaviourDSLCommon::getModelDescription: "
                      << "treating file '" << f << "'\n";
     }
-    // getting informations the source files
+    const auto& global_options =
+        GlobalDomainSpecificLanguageOptionsManager::get();
     const auto path = SearchPathsHandler::search(f);
-    ModelDSL dsl;
+    auto dsl = ModelDSL{tfel::utilities::merge(
+        global_options.getModelDSLOptions(), this->buildDSLOptions(), true)};
+    // getting informations the source files
     try {
       dsl.setInterfaces({"mfront"});
       dsl.analyseFile(path, {}, {});
@@ -2180,9 +2214,9 @@ namespace mfront {
     const auto opts = [this] {
       if (this->current->value == "{") {
         return tfel::utilities::Data::read(this->current, this->tokens.end())
-            .get<std::map<std::string, tfel::utilities::Data>>();
+            .get<tfel::utilities::DataMap>();
       }
-      return std::map<std::string, tfel::utilities::Data>{};
+      return tfel::utilities::DataMap{};
     }();
     this->readSpecifiedToken("BehaviourDSLCommon::treatStrainMeasure", ";");
     for (const auto& o : opts) {
@@ -2347,7 +2381,6 @@ namespace mfront {
     }();
     const auto d = [this] {
       using namespace tfel::utilities;
-      using DataMap = std::map<std::string, Data>;
       if ((this->current != this->tokens.end()) &&
           (this->current->value == "{")) {
         DataParsingOptions o;
@@ -2463,7 +2496,6 @@ namespace mfront {
     using namespace tfel::utilities;
     using ExternalMFrontMaterialProperty =
         BehaviourDescription::ExternalMFrontMaterialProperty;
-    using DataMap = std::map<std::string, Data>;
     const std::string m("BehaviourDSLCommon::treatComputeThermalExpansion");
     const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     const auto n = "thermal_expansion_reference_temperature";
@@ -3723,7 +3755,7 @@ namespace mfront {
         (update(bd.getIntegrationVariables())) ||
         (update(bd.getStateVariables())) ||
         (update(bd.getAuxiliaryStateVariables())) ||
-//        (update(bd.getLocalVariables())) ||
+        //        (update(bd.getLocalVariables())) ||
         (update(bd.getExternalStateVariables())) ||
         (update(bd.getPostProcessingVariables()))) {
       return true;
@@ -3746,7 +3778,7 @@ namespace mfront {
       return hasVariableOfType(
           bd.getBehaviourData(ModellingHypothesis::UNDEFINEDHYPOTHESIS), f);
     }
-    for (const auto& h : bd.getDistinctModellingHypotheses()){
+    for (const auto& h : bd.getDistinctModellingHypotheses()) {
       if (hasVariableOfType(bd.getBehaviourData(h), f)) {
         return true;
       }
@@ -4822,7 +4854,7 @@ namespace mfront {
        << "* \\brief Update the internal energy at end of the time step\n"
        << "* \\param[in] Psi_s: internal energy at end of the time step\n"
        << "*/\n"
-       << "void computeInternalEnergy(real& Psi_s) const";
+       << "void computeInternalEnergy(stress& Psi_s) const";
     if (this->mb.hasCode(h, BehaviourData::ComputeInternalEnergy)) {
       os << "{\n"
          << "using namespace std;\n"
@@ -4831,7 +4863,7 @@ namespace mfront {
       os << this->mb.getCode(h, BehaviourData::ComputeInternalEnergy)
          << "\n}\n\n";
     } else {
-      os << "\n{\nPsi_s=0;\n}\n\n";
+      os << "\n{\nPsi_s=stress{0};\n}\n\n";
     }
   }  // end of writeBehaviourComputeInternalEnergy
 
@@ -4841,7 +4873,7 @@ namespace mfront {
        << "* \\brief Update the dissipated energy at end of the time step\n"
        << "* \\param[in] Psi_d: dissipated energy at end of the time step\n"
        << "*/\n"
-       << "void computeDissipatedEnergy(real& Psi_d) const";
+       << "void computeDissipatedEnergy(stress& Psi_d) const";
     if (this->mb.hasCode(h, BehaviourData::ComputeDissipatedEnergy)) {
       os << "{\n"
          << "using namespace std;\n"
@@ -4850,7 +4882,7 @@ namespace mfront {
       os << this->mb.getCode(h, BehaviourData::ComputeDissipatedEnergy)
          << "\n}\n\n";
     } else {
-      os << "\n{\nPsi_d=0;\n}\n\n";
+      os << "\n{\nPsi_d=stress{0};\n}\n\n";
     }
   }  // end of writeBehaviourComputeDissipatedEnergy
 
@@ -5428,7 +5460,7 @@ namespace mfront {
         if (++i != emps.size()) {
           out << ",\n";
         }
-        }
+      }
       out << ");\n";
     } else {
       this->throwRuntimeError(
@@ -6126,40 +6158,66 @@ namespace mfront {
   void BehaviourDSLCommon::writeBehaviourParameterInitialisation(
       std::ostream& os, const Hypothesis h) const {
     constexpr auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+    const auto use_static_variables =
+        areParametersTreatedAsStaticVariables(this->mb);
     this->checkBehaviourFile(os);
     const auto& d = this->mb.getBehaviourData(h);
     for (const auto& p : d.getParameters()) {
-      const auto getter = [this, h, &p] {
-        if ((h == uh) || (this->mb.hasParameter(uh, p.name))) {
-          return this->mb.getClassName() + "ParametersInitializer::get()";
+      if (use_static_variables) {
+        if (!p.getAttribute<bool>(
+                VariableDescription::variableDeclaredInBaseClass, false)) {
+          continue;
         }
-        return this->mb.getClassName() + ModellingHypothesis::toString(h) +
-               "ParametersInitializer::get()";
-      }();
-      if (p.arraySize == 1u) {
-        os << "this->" << p.name << " = ";
-        if (this->mb.useQt()) {
-          os << p.type << "(" << getter << "." << p.name << ");\n";
+        if (p.type == "int") {
+          os << "this->" << p.name << " = "
+             << this->mb.getIntegerParameterDefaultValue(h, p.name) << ";\n";
+        } else if (p.type == "ushort") {
+          os << "this->" << p.name << " = "
+             << this->mb.getUnsignedShortParameterDefaultValue(h, p.name)
+             << ";\n";
         } else {
-          os << getter << "." << p.name << ";\n";
+          const auto f = SupportedTypes::getTypeFlag(p.type);
+          if (f != SupportedTypes::SCALAR) {
+            this->throwRuntimeError(
+                "BehaviourDSLCommon::writeBehaviourParameterInitialisation",
+                "unsupported parameter type '" + p.type +
+                    "' "
+                    "for parameter '" +
+                    p.name + "'");
+          }
+          if (p.arraySize == 1u) {
+            os << "this->" << p.name << " = " << p.type << "("
+               << this->mb.getFloattingPointParameterDefaultValue(h, p.name)
+               << ");\n";
+          } else {
+            for (unsigned short i = 0; i != p.arraySize; ++i) {
+              os << "this->" << p.name << "[" << i << "] = " << p.type << "("
+                 << this->mb.getFloattingPointParameterDefaultValue(h, p.name,
+                                                                    i)
+                 << ");\n";
+            }
+          }
         }
       } else {
-        os << "this->" << p.name << " = "
-           << "tfel::math::map<tfel::math::tvector<" << p.arraySize << ", "
-           << p.type << ">>(" << getter << "." << p.name << ".data());\n";
-        //         if (this->mb.useQt()) {
-        //           os << "tfel::fsalgo::transform<" << p.arraySize <<
-        //           ">::exe("  //
-        //              << getter << "." << p.name << ".begin(), "    //
-        //              << "this->" << p.name << ".begin(), " //
-        //              << "[](const auto& parameter_value){"
-        //              << "return " << p.type << "(parameter_value);\n"
-        //              << "});\n";
-        //         } else {
-        //           os << "tfel::fsalgo::copy<" << p.arraySize << ">::exe("
-        //              << getter << "." << p.name << ".begin(),this->"
-        //              << p.name << ".begin());\n";
-        //         }
+        const auto getter = [this, h, &p] {
+          if ((h == uh) || (this->mb.hasParameter(uh, p.name))) {
+            return this->mb.getClassName() + "ParametersInitializer::get()";
+          }
+          return this->mb.getClassName() + ModellingHypothesis::toString(h) +
+                 "ParametersInitializer::get()";
+        }();
+        if (p.arraySize == 1u) {
+          os << "this->" << p.name << " = ";
+          if (this->mb.useQt()) {
+            os << p.type << "(" << getter << "." << p.name << ");\n";
+          } else {
+            os << getter << "." << p.name << ";\n";
+          }
+        } else {
+          os << "this->" << p.name << " = "
+             << "tfel::math::map<tfel::math::fsarray<" << p.arraySize << ", "
+             << p.type << ">>(" << getter << "." << p.name << ".data());\n";
+        }
       }
     }
   }  // end of writeBehaviourParameterInitialisation
@@ -6221,27 +6279,69 @@ namespace mfront {
   void BehaviourDSLCommon::writeBehaviourParameters(std::ostream& os,
                                                     const Hypothesis h) const {
     this->checkBehaviourFile(os);
+    const auto use_static_variables =
+        areParametersTreatedAsStaticVariables(this->mb);
     const auto& d = this->mb.getBehaviourData(h);
-    for (const auto& v : d.getParameters()) {
-      if (v.getAttribute<bool>(VariableDescription::variableDeclaredInBaseClass,
+    for (const auto& p : d.getParameters()) {
+      if (p.getAttribute<bool>(VariableDescription::variableDeclaredInBaseClass,
                                false)) {
         continue;
       }
       if (!getDebugMode()) {
-        if (v.lineNumber != 0u) {
-          os << "#line " << v.lineNumber << " \"" << this->fd.fileName
+        if (p.lineNumber != 0u) {
+          os << "#line " << p.lineNumber << " \"" << this->fd.fileName
              << "\"\n";
         }
       }
-      if (v.arraySize == 1) {
-        os << v.type << " " << v.name << ";\n";
+      if (use_static_variables) {
+        os << "static constexpr ";
+        if (p.type == "int") {
+          os << "int " << p.name << " = "
+             << this->mb.getIntegerParameterDefaultValue(h, p.name) << ";\n";
+        } else if (p.type == "ushort") {
+          os << "unsigned short " << p.name << " = "
+             << this->mb.getUnsignedShortParameterDefaultValue(h, p.name)
+             << ";\n";
+        } else {
+          const auto f = SupportedTypes::getTypeFlag(p.type);
+          if (f != SupportedTypes::SCALAR) {
+            this->throwRuntimeError(
+                "BehaviourDSLCommon::writeSrcFileParametersInitializer",
+                "unsupported parameter type '" + p.type +
+                    "' "
+                    "for parameter '" +
+                    p.name + "'");
+          }
+          if (p.arraySize == 1u) {
+            os << p.type << " " << p.name << " = " << p.type << "("
+               << this->mb.getFloattingPointParameterDefaultValue(h, p.name)
+               << ");\n";
+          } else {
+            os << "tfel::math::fsarray<" << p.arraySize << ", " << p.type
+               << "> " << p.name << " = {";
+            for (unsigned short i = 0; i != p.arraySize;) {
+              os << p.type << "("
+                 << this->mb.getFloattingPointParameterDefaultValue(h, p.name,
+                                                                    i)
+                 << ")";
+              if (++i != p.arraySize) {
+                os << ", ";
+              }
+            }
+            os << "};\n";
+          }
+        }
       } else {
-        os << "tfel::math::tvector<" << v.arraySize << "," << v.type << "> "
-           << v.name << ";\n";
+        if (p.arraySize == 1) {
+          os << p.type << " " << p.name << ";\n";
+        } else {
+          os << "tfel::math::fsarray<" << p.arraySize << "," << p.type << "> "
+             << p.name << ";\n";
+        }
       }
     }
     os << '\n';
-  }
+  }  // end of writeBehaviourParameters
 
   void BehaviourDSLCommon::writeBehaviourPolicyVariable(
       std::ostream& os) const {
@@ -6765,7 +6865,8 @@ namespace mfront {
 
   void BehaviourDSLCommon::writeBehaviourParametersInitializers(
       std::ostream& os) const {
-    if (!this->mb.hasParameters()) {
+    if ((areParametersTreatedAsStaticVariables(this->mb)) ||
+        (!this->mb.hasParameters())) {
       return;
     }
     auto mh = this->mb.getDistinctModellingHypotheses();
@@ -6779,6 +6880,11 @@ namespace mfront {
 
   void BehaviourDSLCommon::writeBehaviourParametersInitializer(
       std::ostream& os, const Hypothesis h) const {
+    // useless and paranoid test
+    if ((areParametersTreatedAsStaticVariables(this->mb)) ||
+        (!this->mb.hasParameters())) {
+      return;
+    }
     const auto& md = this->mb.getBehaviourData(h);
     const auto& params = md.getParameters();
     std::string cname(this->mb.getClassName());
@@ -6832,7 +6938,7 @@ namespace mfront {
           if (p.arraySize == 1) {
             os << "double " << p.name << ";\n";
           } else {
-            os << "tfel::math::tvector<" << p.arraySize << ",double> " << p.name
+            os << "tfel::math::fsarray<" << p.arraySize << ",double> " << p.name
                << ";\n";
           }
         }
@@ -6879,14 +6985,16 @@ namespace mfront {
        << cname << "();\n\n"
        << cname << "(const " << cname << "&);\n\n"
        << cname << "&\n"
-       << "operator=(const " << cname << "&);\n"
-       << "/*!\n"
-       << " * \\brief read the parameters from the given file\n"
-       << " * \\param[out] pi : parameters initializer\n"
-       << " * \\param[in]  fn : file name\n"
-       << " */\n"
-       << "static void readParameters(" << cname << "&,const char* const);\n"
-       << "};\n\n";
+       << "operator=(const " << cname << "&);\n";
+    if (allowsParametersInitializationFromFile(this->mb)) {
+      os << "/*!\n"
+         << " * \\brief read the parameters from the given file\n"
+         << " * \\param[out] pi : parameters initializer\n"
+         << " * \\param[in]  fn : file name\n"
+         << " */\n"
+         << "static void readParameters(" << cname << "&,const char* const);\n";
+    }
+    os << "};\n\n";
   }  // end of writeBehaviourParametersInitializer
 
   void BehaviourDSLCommon::writeBehaviourParserSpecificInitializeMethodPart(
@@ -8043,75 +8151,6 @@ namespace mfront {
 
   void BehaviourDSLCommon::writeSrcFileStaticVariables(std::ostream&,
                                                        const Hypothesis) const {
-    //     const auto& md = this->mb.getBehaviourData(h);
-    //     const auto m = "tfel::material::ModellingHypothesis::" +
-    //                    ModellingHypothesis::toUpperCaseString(h);
-    //     this->checkSrcFile(os);
-    //     for (const auto& v : md.getStaticVariables()) {
-    //       if (v.type == "int") {
-    //         continue;
-    //       }
-    //       if (this->mb.useQt()) {
-    //         os << "template<>\n";
-    //         os << "const " << this->mb.getClassName() << "<" << m
-    //            << ",float,true>::" << v.type << '\n'
-    //            << this->mb.getClassName() << "<" << m << ",float,true>::" <<
-    //            v.name
-    //            << " = " << this->mb.getClassName() << "<" << m
-    //            << ",float,true>::" << v.type << "(static_cast<float>(" <<
-    //            v.value
-    //            << "));\n\n";
-    //       }
-    //       os << "template<>\n";
-    //       os << "const " << this->mb.getClassName() << "<" << m
-    //          << ",float,false>::" << v.type << '\n'
-    //          << this->mb.getClassName() << "<" << m << ",float,false>::" <<
-    //          v.name
-    //          << " = " << this->mb.getClassName() << "<" << m
-    //          << ",float,false>::" << v.type << "(static_cast<float>(" <<
-    //          v.value
-    //          << "));\n\n";
-    //       if (this->mb.useQt()) {
-    //         os << "template<>\n";
-    //         os << "const " << this->mb.getClassName() << "<" << m
-    //            << ",double,true>::" << v.type << '\n'
-    //            << this->mb.getClassName() << "<" << m << ",double,true>::" <<
-    //            v.name
-    //            << " = " << this->mb.getClassName() << "<" << m
-    //            << ",double,true>::" << v.type << "(static_cast<double>(" <<
-    //            v.value
-    //            << "));\n\n";
-    //       }
-    //       os << "template<>\n";
-    //       os << "const " << this->mb.getClassName() << "<" << m
-    //          << ",double,false>::" << v.type << '\n'
-    //          << this->mb.getClassName() << "<" << m << ",double,false>::" <<
-    //          v.name
-    //          << " = " << this->mb.getClassName() << "<" << m
-    //          << ",double,false>::" << v.type << "(static_cast<double>(" <<
-    //          v.value
-    //          << "));\n\n";
-    //       if (this->mb.useQt()) {
-    //         os << "template<>\n";
-    //         os << "const " << this->mb.getClassName() << "<" << m
-    //            << ",long double,true>::" << v.type << '\n'
-    //            << this->mb.getClassName() << "<" << m
-    //            << ",long double,true>::" << v.name << " = "
-    //            << this->mb.getClassName() << "<" << m
-    //            << ",long double,true>::" << v.type << "(static_cast<long
-    //            double>("
-    //            << v.value << "));\n\n";
-    //       }
-    //       os << "template<>\n";
-    //       os << "const " << this->mb.getClassName() << "<" << m
-    //          << ",long double,false>::" << v.type << '\n'
-    //          << this->mb.getClassName() << "<" << m
-    //          << ",long double,false>::" << v.name << " = "
-    //          << this->mb.getClassName() << "<" << m
-    //          << ",long double,false>::" << v.type << "(static_cast<long
-    //          double>("
-    //          << v.value << "));\n\n";
-    //     }
   }  // end of writeSrcFileStaticVariables
 
   void BehaviourDSLCommon::writeSrcFileUserDefinedCode(std::ostream& os) const {
@@ -8124,7 +8163,9 @@ namespace mfront {
 
   void BehaviourDSLCommon::writeSrcFileParametersInitializers(
       std::ostream& os) const {
-    if (!this->mb.hasParameters()) {
+    // useless and paranoid test
+    if ((areParametersTreatedAsStaticVariables(this->mb)) ||
+        (!this->mb.hasParameters())) {
       return;
     }
     auto hs = this->mb.getDistinctModellingHypotheses();
@@ -8157,6 +8198,11 @@ namespace mfront {
 
   void BehaviourDSLCommon::writeSrcFileParametersInitializer(
       std::ostream& os, const Hypothesis h) const {
+    // useless and paranoid test
+    if ((areParametersTreatedAsStaticVariables(this->mb)) ||
+        (!this->mb.hasParameters())) {
+      return;
+    }
     this->checkBehaviourFile(os);
     // treating the default case
     bool rp = false;   // real    parameter found
@@ -8232,12 +8278,14 @@ namespace mfront {
         }
       }
     }
-    os << "// Reading parameters from a file\n";
-    os << cname << "::readParameters(*this,\""
-       << getParametersFileName(this->mb) << "\");\n";
-    if (h != ModellingHypothesis::UNDEFINEDHYPOTHESIS) {
+    if (allowsParametersInitializationFromFile(this->mb)) {
+      os << "// Reading parameters from a file\n";
       os << cname << "::readParameters(*this,\""
-         << getParametersFileName(this->mb, h) << "\");\n";
+         << getParametersFileName(this->mb) << "\");\n";
+      if (h != ModellingHypothesis::UNDEFINEDHYPOTHESIS) {
+        os << cname << "::readParameters(*this,\""
+           << getParametersFileName(this->mb, h) << "\");\n";
+      }
     }
     os << "}\n\n";
     auto write_if = [&os](bool& b) {
@@ -8362,112 +8410,115 @@ namespace mfront {
          << "}\n"
          << "}\n\n";
     }
-    if (rp2) {
-      BehaviourDSLCommon_writeConverter(os, cname, "double", "Double");
-    }
-    if (ip2) {
-      BehaviourDSLCommon_writeConverter(os, cname, "int", "Int");
-    }
-    if (up2) {
-      BehaviourDSLCommon_writeConverter(os, cname, "unsigned short",
-                                        "UnsignedShort");
-    }
-    os << "void\n" << cname << "::readParameters(" << cname << "&";
-    if (rp2 || ip2 || up2) {
-      os << " pi";
-    }
-    os << ",const char* const fn)"
-       << "{\n"
-       << "auto tokenize = [](const std::string& line){\n"
-       << "std::istringstream tokenizer(line);\n"
-       << "std::vector<std::string> tokens;\n"
-       << "std::copy(std::istream_iterator<std::string>(tokenizer),\n"
-       << "std::istream_iterator<std::string>(),\n"
-       << "std::back_inserter(tokens));\n"
-       << "return tokens;\n"
-       << "};\n"
-       << "std::ifstream f(fn);\n"
-       << "if(!f){\n"
-       << "return;\n"
-       << "}\n"
-       << "size_t ln = 1u;\n"
-       << "while(!f.eof()){\n"
-       << "auto line = std::string{};\n"
-       << "std::getline(f,line);\n"
-       << "auto tokens = tokenize(line);\n"
-       << "auto throw_if = [ln,line,fn](const bool c,const std::string& m){\n"
-       << "tfel::raise_if(c,\"" << cname << "::readParameters: \"\n"
-       << "\"error at line '\"+std::to_string(ln)+\"' \"\n"
-       << "\"while reading parameter file '\"+std::string(fn)+\"'\"\n"
-       << "\"(\"+m+\")\");\n"
-       << "};\n"
-       << "if(tokens.empty()){\n"
-       << "continue;\n"
-       << "}\n"
-       << "if(tokens[0][0]=='#'){\n"
-       << "continue;\n"
-       << "}\n"
-       << "throw_if(tokens.size()!=2u,\"invalid number of tokens\");\n";
-    bool first = true;
-    for (const auto& p : this->mb.getBehaviourData(h).getParameters()) {
-      const auto b = ((h == ModellingHypothesis::UNDEFINEDHYPOTHESIS) ||
-                      ((h != ModellingHypothesis::UNDEFINEDHYPOTHESIS) &&
-                       (!this->mb.hasParameter(
-                           ModellingHypothesis::UNDEFINEDHYPOTHESIS, p.name))));
-      auto write = [this, &os, &p, &b, &dcname, &cname](const std::string& vn,
-                                                        const std::string& en) {
-        os << "\"" << en << "\"==tokens[0]){\n";
-        if (b) {
-          os << "pi." << vn << " = ";
-          if (p.type == "int") {
-            os << cname << "::getInt(tokens[0],tokens[1]);\n";
-          } else if (p.type == "ushort") {
-            os << cname << "::getUnsignedShort(tokens[0],tokens[1]);\n";
-          } else {
-            const auto f = SupportedTypes::getTypeFlag(p.type);
-            if (f != SupportedTypes::SCALAR) {
-              this->throwRuntimeError(
-                  "BehaviourDSLCommon::writeSrcFileParametersInitializer",
-                  "invalid parameter type '" + p.type + "'");
+    if (allowsParametersInitializationFromFile(this->mb)) {
+      if (rp2) {
+        BehaviourDSLCommon_writeConverter(os, cname, "double", "Double");
+      }
+      if (ip2) {
+        BehaviourDSLCommon_writeConverter(os, cname, "int", "Int");
+      }
+      if (up2) {
+        BehaviourDSLCommon_writeConverter(os, cname, "unsigned short",
+                                          "UnsignedShort");
+      }
+      os << "void\n" << cname << "::readParameters(" << cname << "&";
+      if (rp2 || ip2 || up2) {
+        os << " pi";
+      }
+      os << ",const char* const fn)"
+         << "{\n"
+         << "auto tokenize = [](const std::string& line){\n"
+         << "std::istringstream tokenizer(line);\n"
+         << "std::vector<std::string> tokens;\n"
+         << "std::copy(std::istream_iterator<std::string>(tokenizer),\n"
+         << "std::istream_iterator<std::string>(),\n"
+         << "std::back_inserter(tokens));\n"
+         << "return tokens;\n"
+         << "};\n"
+         << "std::ifstream f(fn);\n"
+         << "if(!f){\n"
+         << "return;\n"
+         << "}\n"
+         << "size_t ln = 1u;\n"
+         << "while(!f.eof()){\n"
+         << "auto line = std::string{};\n"
+         << "std::getline(f,line);\n"
+         << "auto tokens = tokenize(line);\n"
+         << "auto throw_if = [ln,line,fn](const bool c,const std::string& m){\n"
+         << "tfel::raise_if(c,\"" << cname << "::readParameters: \"\n"
+         << "\"error at line '\"+std::to_string(ln)+\"' \"\n"
+         << "\"while reading parameter file '\"+std::string(fn)+\"'\"\n"
+         << "\"(\"+m+\")\");\n"
+         << "};\n"
+         << "if(tokens.empty()){\n"
+         << "continue;\n"
+         << "}\n"
+         << "if(tokens[0][0]=='#'){\n"
+         << "continue;\n"
+         << "}\n"
+         << "throw_if(tokens.size()!=2u,\"invalid number of tokens\");\n";
+      bool first = true;
+      for (const auto& p : this->mb.getBehaviourData(h).getParameters()) {
+        const auto b =
+            ((h == ModellingHypothesis::UNDEFINEDHYPOTHESIS) ||
+             ((h != ModellingHypothesis::UNDEFINEDHYPOTHESIS) &&
+              (!this->mb.hasParameter(ModellingHypothesis::UNDEFINEDHYPOTHESIS,
+                                      p.name))));
+        auto write = [this, &os, &p, &b, &dcname, &cname](
+                         const std::string& vn, const std::string& en) {
+          os << "\"" << en << "\"==tokens[0]){\n";
+          if (b) {
+            os << "pi." << vn << " = ";
+            if (p.type == "int") {
+              os << cname << "::getInt(tokens[0],tokens[1]);\n";
+            } else if (p.type == "ushort") {
+              os << cname << "::getUnsignedShort(tokens[0],tokens[1]);\n";
+            } else {
+              const auto f = SupportedTypes::getTypeFlag(p.type);
+              if (f != SupportedTypes::SCALAR) {
+                this->throwRuntimeError(
+                    "BehaviourDSLCommon::writeSrcFileParametersInitializer",
+                    "invalid parameter type '" + p.type + "'");
+              }
+              os << cname << "::getDouble(tokens[0],tokens[1]);\n";
             }
-            os << cname << "::getDouble(tokens[0],tokens[1]);\n";
-          }
-        } else {
-          os << dcname << "::get().set(\"" << en << "\",\n";
-          if (p.type == "int") {
-            os << dcname << "::getInt(tokens[0],tokens[1])";
-          } else if (p.type == "ushort") {
-            os << dcname << "::getUnsignedShort(tokens[0],tokens[1])";
           } else {
-            const auto f = SupportedTypes::getTypeFlag(p.type);
-            if (f != SupportedTypes::SCALAR) {
-              this->throwRuntimeError(
-                  "BehaviourDSLCommon::writeSrcFileParametersInitializer",
-                  "invalid parameter type '" + p.type + "'");
+            os << dcname << "::get().set(\"" << en << "\",\n";
+            if (p.type == "int") {
+              os << dcname << "::getInt(tokens[0],tokens[1])";
+            } else if (p.type == "ushort") {
+              os << dcname << "::getUnsignedShort(tokens[0],tokens[1])";
+            } else {
+              const auto f = SupportedTypes::getTypeFlag(p.type);
+              if (f != SupportedTypes::SCALAR) {
+                this->throwRuntimeError(
+                    "BehaviourDSLCommon::writeSrcFileParametersInitializer",
+                    "invalid parameter type '" + p.type + "'");
+              }
+              os << dcname << "::getDouble(tokens[0],tokens[1])";
             }
-            os << dcname << "::getDouble(tokens[0],tokens[1])";
+            os << ");\n";
           }
-          os << ");\n";
-        }
-      };
-      if (p.arraySize == 1u) {
-        write_if(first);
-        write(p.name, this->mb.getExternalName(h, p.name));
-      } else {
-        for (unsigned short i = 0; i != p.arraySize; ++i) {
-          const auto vn = p.name + '[' + std::to_string(i) + ']';
-          const auto en = this->mb.getExternalName(h, p.name) + '[' +
-                          std::to_string(i) + ']';
+        };
+        if (p.arraySize == 1u) {
           write_if(first);
-          write(vn, en);
+          write(p.name, this->mb.getExternalName(h, p.name));
+        } else {
+          for (unsigned short i = 0; i != p.arraySize; ++i) {
+            const auto vn = p.name + '[' + std::to_string(i) + ']';
+            const auto en = this->mb.getExternalName(h, p.name) + '[' +
+                            std::to_string(i) + ']';
+            write_if(first);
+            write(vn, en);
+          }
         }
       }
+      os << "} else {\n"
+         << "throw_if(true,\"invalid parameter '\"+tokens[0]+\"'\");\n"
+         << "}\n"
+         << "}\n"
+         << "}\n\n";
     }
-    os << "} else {\n"
-       << "throw_if(true,\"invalid parameter '\"+tokens[0]+\"'\");\n"
-       << "}\n"
-       << "}\n"
-       << "}\n\n";
   }  // end of writeSrcFileParametersInitializer
 
   void BehaviourDSLCommon::writeSrcFileBehaviourProfiler(

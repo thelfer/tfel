@@ -33,6 +33,7 @@
 #include "MTest/AsterSmallStrainBehaviour.hxx"
 #include "MTest/AsterFiniteStrainBehaviour.hxx"
 #include "MTest/AsterCohesiveZoneModel.hxx"
+#include "MTest/AsterLogarithmicStrainBehaviourWrapper.hxx"
 #endif /* HAVE_ASTER  */
 #ifdef HAVE_EUROPLEXUS
 #include "MTest/EuroplexusFiniteStrainBehaviour.hxx"
@@ -73,9 +74,9 @@ namespace mtest {
       if (d.empty()) {
         return;
       }
-      throw_if(!d.is<std::map<std::string, Parameters>>(),
+      throw_if(!d.is<tfel::utilities::DataMap>(),
                "unsupported parameters type");
-      const auto& p = d.get<std::map<std::string, Parameters>>();
+      const auto& p = d.get<tfel::utilities::DataMap>();
       throw_if(!p.empty(), "no parameter expected");
     };
     auto& elm =
@@ -86,9 +87,9 @@ namespace mtest {
       if (d.empty()) {
         b = std::make_shared<GenericBehaviour>(h, l, f);
       } else {
-        throw_if(!d.is<std::map<std::string, Parameters>>(),
+        throw_if(!d.is<Behaviour::ParametersMap>(),
                  "unsupported parameters type");
-        const auto& p = d.get<std::map<std::string, Parameters>>();
+        const auto& p = d.get<Behaviour::ParametersMap>();
         b = std::make_shared<GenericBehaviour>(h, l, f, p);
       }
     } else {
@@ -150,9 +151,14 @@ namespace mtest {
       const auto type = elm.getUMATBehaviourType(l, f);
       if (type == 1u) {
         const auto ktype = elm.getUMATBehaviourKinematic(l, f);
-        throw_if((ktype != 0u) && (ktype != 1u),
-                 "unsupported behaviour kinematic");
-        b = std::make_shared<AsterSmallStrainBehaviour>(h, l, f);
+        if (ktype == 6u) {
+          auto wb = std::make_shared<AsterSmallStrainBehaviour>(h, l, f);
+          b = std::make_shared<AsterLogarithmicStrainBehaviourWrapper>(wb);
+        } else {
+          throw_if((ktype != 0u) && (ktype != 1u),
+                   "unsupported behaviour kinematic");
+          b = std::make_shared<AsterSmallStrainBehaviour>(h, l, f);
+        }
       } else if (type == 2u) {
         b = std::make_shared<AsterFiniteStrainBehaviour>(h, l, f);
       } else if (type == 3u) {

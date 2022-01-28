@@ -1,0 +1,29 @@
+@Behaviour<aster> @library@ 'asterageingburger';
+
+@MaterialProperty<constant> 'YoungModulus' 31000. ; 
+@MaterialProperty<constant> 'PoissonRatio'    0.2 ;    
+
+@MaterialProperty<constant> 'KRS'   1.956e+5 ;   
+@MaterialProperty<constant> 'NRS'   4.797e+10 ; 
+@MaterialProperty<constant> 'NIS'   1.570e+5 ;
+@MaterialProperty<constant> 'KRD'   5.0E4 ;
+@MaterialProperty<constant> 'NRD'   1.0E10;
+@MaterialProperty<constant> 'NID'   1.0E5 ;
+@MaterialProperty<constant> 'Alpha'   1.0 ;
+@MaterialProperty<constant> 'Ea_R'   0 ;
+@MaterialProperty<constant> 'Tref'   20 ;
+@MaterialProperty<constant> 'NFD'   5.8E9;
+@MaterialProperty<constant> 'Cini'  1.;
+
+@ExternalStateVariable 'Temperature' 20;
+@ExternalStateVariable 'C' 1.;
+
+@Real 't1' '28.*3600.*24.' ;
+@Real 't2' 't1+3600' ;
+@Real 'tf' '3600*24*800' ;
+
+@ImposedStress 'SZZ' {0.: 0., 't1' : 0., 't2' : -1., 'tf' : -1.};
+
+@Times {0., 't1' in 1, 't2' in 100, 'tf'  in 100 };
+
+@Test<file> @reference_file@ {'EZZ':4} 1.e-8 ; 

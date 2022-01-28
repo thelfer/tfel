@@ -6,8 +6,8 @@ except ImportError:
 import tfel.material
 import mtest
 
-class BehaviourConstructors(unittest.TestCase):
 
+class BehaviourConstructors(unittest.TestCase):
     def test1(self):
         h = tfel.material.ModellingHypothesis.TRIDIMENSIONAL
         l = os.environ['MTEST_BEHAVIOUR_LIBRARY']
@@ -21,24 +21,25 @@ class BehaviourConstructors(unittest.TestCase):
 
     def test3(self):
         l = os.environ['MTEST_BEHAVIOUR_LIBRARY']
-        b = mtest.Behaviour(interface = 'generic',
-                            library = l,
-                            function = 'ImplicitNorton',
-                            hypothesis = 'PlaneStrain')
+        b = mtest.Behaviour(interface='generic',
+                            library=l,
+                            function='ImplicitNorton',
+                            hypothesis='PlaneStrain')
         self.checkBehaviour(b)
 
     def test4(self):
         l = os.environ['MTEST_BEHAVIOUR_LIBRARY']
-        b = mtest.Behaviour(library = l,
-                            function = 'ImplicitNorton',
-                            hypothesis = 'PlaneStrain')
+        b = mtest.Behaviour(library=l,
+                            function='ImplicitNorton',
+                            hypothesis='PlaneStrain')
         self.checkBehaviour(b)
-        
+
     def checkBehaviour(self, b):
         isvs = b.getInternalStateVariablesNames()
         self.assertTrue(len(isvs) == 2)
         self.assertTrue(isvs[0] == 'ElasticStrain')
         self.assertTrue(isvs[1] == 'p')
-        
+
+
 if __name__ == '__main__':
     unittest.main()

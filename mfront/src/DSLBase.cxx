@@ -39,6 +39,7 @@
 #include "MFront/MFrontLogStream.hxx"
 #include "MFront/MFrontMaterialPropertyInterface.hxx"
 #include "MFront/StaticVariableDescription.hxx"
+#include "MFront/GlobalDomainSpecificLanguageOptionsManager.hxx"
 #include "MFront/MaterialPropertyDSL.hxx"
 
 // fixing a bug on current glibc++ cygwin versions (19/08/2015)
@@ -56,6 +57,14 @@ namespace std {
 
 namespace mfront {
 
+  const char* const DSLBase::parametersAsStaticVariablesOption =
+      "parameters_as_static_variables";
+
+  const char* const DSLBase::initializeParametersFromFileOption =
+      "initialize_parameters_from_file";
+
+  const char* const DSLBase::buildIdentifierOption = "build_identifier";
+
   bool isValidMaterialName(const std::string& n) {
     return tfel::utilities::CxxTokenizer::isValidIdentifier(n, true);
   }
@@ -63,6 +72,14 @@ namespace mfront {
   bool isValidLibraryName(const std::string& n) {
     return tfel::utilities::CxxTokenizer::isValidIdentifier(n, true);
   }
+
+  tfel::utilities::DataMapValidator DSLBase::getDSLOptionsValidator() {
+    auto v = tfel::utilities::DataMapValidator{};
+    v.addDataTypeValidator<bool>(DSLBase::parametersAsStaticVariablesOption);
+    v.addDataTypeValidator<bool>(DSLBase::initializeParametersFromFileOption);
+    v.addDataTypeValidator<std::string>(DSLBase::buildIdentifierOption);
+    return v;
+  }  // end of getDSLOptionsValidator
 
   DSLBase::VariableModifier::~VariableModifier() = default;
 
@@ -72,10 +89,57 @@ namespace mfront {
 
   DSLBase::CodeBlockParserOptions::~CodeBlockParserOptions() noexcept = default;
 
-  DSLBase::DSLBase() {
+  void DSLBase::handleDSLOptions(MaterialKnowledgeDescription& d,
+                                 const DSLOptions& opts) {
+    if (opts.count(DSLBase::parametersAsStaticVariablesOption) != 0) {
+      const auto b =
+          opts.at(DSLBase::parametersAsStaticVariablesOption).get<bool>();
+      d.setAttribute(MaterialKnowledgeDescription::parametersAsStaticVariables,
+                     b, false);
+    }
+    //
+    if (opts.count(DSLBase::initializeParametersFromFileOption) != 0) {
+      const auto b =
+          opts.at(DSLBase::initializeParametersFromFileOption).get<bool>();
+      d.setAttribute(MaterialKnowledgeDescription::initializeParametersFromFile,
+                     b, false);
+    }
+    //
+    if (opts.count(DSLBase::buildIdentifierOption) != 0) {
+      const auto id =
+          opts.at(DSLBase::buildIdentifierOption).get<std::string>();
+      d.setAttribute(MaterialKnowledgeDescription::buildIdentifier, id, false);
+    }
+  }  // end of DSLBase::handleDSLOptions
+
+  AbstractDSL::DSLOptions DSLBase::buildCommonDSLOptions(
+      const MaterialKnowledgeDescription& d) {
+    const auto parameters_opt = d.getAttribute<bool>(
+        MaterialKnowledgeDescription::parametersAsStaticVariables, false);
+    const auto parameters_from_file_opt = d.getAttribute<bool>(
+        MaterialKnowledgeDescription::initializeParametersFromFile, true);
+    const auto build_id = d.getAttribute<std::string>(
+        MaterialKnowledgeDescription::buildIdentifier, "");
+    return {
+        {DSLBase::parametersAsStaticVariablesOption, parameters_opt},
+        {DSLBase::initializeParametersFromFileOption, parameters_from_file_opt},
+        {DSLBase::buildIdentifierOption, build_id}};
+  }  // end of buildCommonOptions
+
+  DSLBase::DSLBase(const DSLOptions&) {
     this->addSeparator("\u2297");
     this->addSeparator("\u22C5");
   }  // end of DSLBase::DSLBase
+
+  std::vector<AbstractDSL::DSLOptionDescription> DSLBase::getDSLOptions()
+      const {
+    return {{DSLBase::parametersAsStaticVariablesOption,
+             "boolean stating if the parameter shall be treated as static "
+             "variables"},
+            {DSLBase::buildIdentifierOption,
+             "string specifying a build identifier. This option shall only be "
+             "specified on the command line"}};
+  } // end of getDSLOptions
 
   std::vector<std::string> DSLBase::getDefaultReservedNames() {
     auto names = std::vector<std::string>{};
@@ -884,8 +948,12 @@ namespace mfront {
 
   std::shared_ptr<MaterialPropertyDescription>
   DSLBase::handleMaterialPropertyDescription(const std::string& f) {
-    // getting informations the source files
-    MaterialPropertyDSL mp;
+    // getting informations the source file
+    const auto& global_options =
+        GlobalDomainSpecificLanguageOptionsManager::get();
+    auto mp = MaterialPropertyDSL{
+        tfel::utilities::merge(global_options.getMaterialPropertyDSLOptions(),
+                               this->buildDSLOptions(), true)};
     try {
       MFrontMaterialPropertyInterface minterface;
       const auto& path = SearchPathsHandler::search(f);
@@ -919,7 +987,7 @@ namespace mfront {
     }
     const auto& m = mp.getMaterialPropertyDescription();
     return std::make_shared<MaterialPropertyDescription>(m);
-  }  // end of DSLBase::handleMaterialLaw
+  }  // end of DSLBase::handleMaterialPropertyDescription
 
   void DSLBase::treatMaterialLaw() {
     const auto vfiles =
@@ -1186,18 +1254,26 @@ namespace mfront {
       l.ldflags.insert(l.ldflags.end(), this->ldflags.begin(),
                        this->ldflags.end());
     }
+    // merging auxiliary target description
+    auto atd = TargetsDescription();
     for (const auto& t : this->atds) {
-      for (const auto& al : t.libraries) {
-        for (auto& l : this->td.libraries) {
-          if (l.name != al.name) {
-            insert_if(l.deps, al.name);
-          }
+      mergeTargetsDescription(atd, t, false);
+    }
+    // adding dependencies to main targets
+    for (const auto& al : atd.libraries) {
+      for (auto& l : this->td.libraries) {
+        if (l.name != al.name) {
+          insert_if(l.deps, al.name);
         }
       }
+      for (auto& tg : this->td.specific_targets) {
+        if ((tg.first == "all") || (tg.first == "clean")) {
+          continue;
+        }
+        insert_if(tg.second.libraries, al.name);
+      }
     }
-    for (const auto& t : this->atds) {
-      mergeTargetsDescription(this->td, t, false);
-    }
+    mergeTargetsDescription(this->td, atd, false);
     this->ldflags.clear();
     this->atds.clear();
   }  // end of DSLBase::completeTargetsDescription()

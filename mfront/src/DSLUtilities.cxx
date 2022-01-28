@@ -26,6 +26,7 @@
 #include "MFront/MFrontDebugMode.hxx"
 #include "MFront/DSLUtilities.hxx"
 #include "MFront/StaticVariableDescription.hxx"
+#include "MFront/MaterialKnowledgeDescription.hxx"
 #include "MFront/MaterialPropertyDescription.hxx"
 #include "MFront/MaterialPropertyParametersHandler.hxx"
 #include "MFront/SymbolsGenerator.hxx"
@@ -88,6 +89,10 @@ namespace mfront {
   void writeParametersSymbols(std::ostream& os,
                               const std::string& n,
                               const MaterialPropertyDescription& mpd) {
+    if (areParametersTreatedAsStaticVariables(mpd)) {
+      writeParametersDeclarationSymbols(os, n, {});
+      return;
+    }
     writeParametersDeclarationSymbols(os, n, mpd.parameters);
     writeParametersDefaultValuesSymbols(os, n, mpd.parameters);
     writeBoundsSymbols(os, n, mpd.parameters);
@@ -240,9 +245,10 @@ namespace mfront {
           if (!v.hasBounds(idx)) {
             continue;
           }
-          mfront::writeBoundsSymbol(
-              os, n, v.getExternalName() + "__" + std::to_string(idx) + "__",
-              "", v.getBounds(idx));
+          mfront::writeBoundsSymbol(os, n,
+                                    v.getExternalName() + "_mfront_index_" +
+                                        std::to_string(idx) + "_",
+                                    "", v.getBounds(idx));
         }
       }
     }
@@ -266,9 +272,10 @@ namespace mfront {
           if (!v.hasPhysicalBounds(idx)) {
             continue;
           }
-          mfront::writeBoundsSymbol(
-              os, n, v.getExternalName() + "__" + std::to_string(idx) + "__",
-              "Physical", v.getPhysicalBounds(idx));
+          mfront::writeBoundsSymbol(os, n,
+                                    v.getExternalName() + "_mfront_index_" +
+                                        std::to_string(idx) + "_",
+                                    "Physical", v.getPhysicalBounds(idx));
         }
       }
     }
@@ -297,22 +304,36 @@ namespace mfront {
           if (!v.hasBounds(idx)) {
             continue;
           }
-          writeBoundsSymbol(
-              out, name,
-              v.getExternalName() + "__" + std::to_string(idx) + "__", "",
-              v.getBounds(idx));
+          writeBoundsSymbol(out, name,
+                            v.getExternalName() + "_mfront_index_" +
+                                std::to_string(idx) + "_",
+                            "", v.getBounds(idx));
           if (!v.hasPhysicalBounds(idx)) {
             continue;
           }
-          writeBoundsSymbol(
-              out, name,
-              v.getExternalName() + "__" + std::to_string(idx) + "__",
-              "Physical", v.getPhysicalBounds(idx));
+          writeBoundsSymbol(out, name,
+                            v.getExternalName() + "_mfront_index_" +
+                                std::to_string(idx) + "_",
+                            "Physical", v.getPhysicalBounds(idx));
         }
       }
     }
     out.precision(prec);
   }  // end of writeVariablesBoundsSymbols
+
+  void writeBuildIdentifierSymbol(std::ostream& os,
+                                  const std::string& n,
+                                  const MaterialKnowledgeDescription& d) {
+    const auto* const build_id = std::getenv("TFEL_BUILD_ID");
+    os << "MFRONT_SHAREDOBJ const char* \n" << n << "_build_id =";
+    if (build_id != nullptr) {
+      os << '\"' << build_id << "\";\n\n";
+      return;
+    }
+    const auto bid = d.getAttribute<std::string>(
+        MaterialKnowledgeDescription::buildIdentifier, "");
+    os << "\"" << bid << "\";\n\n";
+  }  // end of writeBuildIdentifierSymbols
 
   void writeEntryPointSymbol(std::ostream& out, const std::string& n) {
     writeEntryPointSymbol(out, n, n);
@@ -321,13 +342,6 @@ namespace mfront {
   void writeEntryPointSymbol(std::ostream& out,
                              const std::string& n,
                              const std::string& n2) {
-    const auto* const build_id = std::getenv("TFEL_BUILD_ID");
-    if (build_id != nullptr) {
-      out << "MFRONT_SHAREDOBJ const char* \n"
-          << n << "_build_id = \"" << build_id << "\";\n\n";
-    } else {
-      out << "MFRONT_SHAREDOBJ const char* \n" << n << "_build_id = \"\";\n\n";
-    }
     out << "MFRONT_SHAREDOBJ const char* \n"
         << n << "_mfront_ept = \"" << n2 << "\";\n\n";
   }  // end of writeEntryPointSymbols
@@ -563,7 +577,7 @@ namespace mfront {
   decomposeImplementationPathInMadnexFile(const std::string& p) {
     using result_type =
         std::tuple<std::string, std::string, std::string, std::string>;
-    std::vector<std::string> details = tfel::utilities::tokenize(p, ':');
+    const auto details = tfel::utilities::tokenize(p, ':');
     auto raise_if = [&p](const bool b) {
       if (b) {
         tfel::raise("decomposeImplementationPathInMadnexFile: invalid path '" +
@@ -575,8 +589,9 @@ namespace mfront {
       return result_type{std::move(details[1]), std::move(details[2]), "",
                          std::move(details[3])};
     }
+    const auto mid = details[3] == "<none>" ? "" : details[3];
     return result_type{std::move(details[1]), std::move(details[2]),
-                       std::move(details[3]), std::move(details[4])};
+                       std::move(mid), std::move(details[4])};
   }  // end of decomposeImplementationPathInMadnexFile
 
 #endif /* MFRONT_HAVE_MADNEX */

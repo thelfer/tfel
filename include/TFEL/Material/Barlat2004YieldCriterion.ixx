@@ -172,7 +172,7 @@ namespace tfel::material {
 
   template <unsigned short N, typename real>
   tfel::math::st2tost2<N, real> makeBarlatLinearTransformation(
-      const tfel::math::tvector<9u, real>& c) {
+      const tfel::math::fsarray<9u, real>& c) {
     return makeOrthotropicStressLinearTransformation<N, real>(c);
   }  // end of makeBarlatLinearTransformation
 
@@ -197,7 +197,7 @@ namespace tfel::material {
             OrthotropicAxesConvention oac,
             typename real>
   tfel::math::st2tost2<ModellingHypothesisToSpaceDimension<H>::value, real>
-  makeBarlatLinearTransformation(const tfel::math::tvector<9u, real>& c) {
+  makeBarlatLinearTransformation(const tfel::math::fsarray<9u, real>& c) {
     return makeOrthotropicStressLinearTransformation<H, oac, real>(c);
   }  // end of makeBarlatLinearTransformation
 

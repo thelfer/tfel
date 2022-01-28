@@ -15,7 +15,7 @@
 
 namespace mfront {
 
-  ImplicitDSLII::ImplicitDSLII() {
+  ImplicitDSLII::ImplicitDSLII(const DSLOptions& opts) : ImplicitDSLBase(opts) {
     this->mb.declareAsASmallStrainStandardBehaviour();
     this->registerNewCallBack("@ComputeStress",
                               &ImplicitDSLII::treatComputeThermodynamicForces);

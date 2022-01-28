@@ -31,8 +31,9 @@ namespace mfront {
            "and s the equivalent mises stress";
   }  // end of IsotropicStrainHardeningMisesCreepDSL::getDescription
 
-  IsotropicStrainHardeningMisesCreepDSL::
-      IsotropicStrainHardeningMisesCreepDSL() {
+  IsotropicStrainHardeningMisesCreepDSL::IsotropicStrainHardeningMisesCreepDSL(
+      const DSLOptions& opts)
+      : IsotropicBehaviourDSLBase(opts) {
     const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     this->mb.setDSLName("IsotropicStrainHardeningMisesCreep");
     // Default state vars
@@ -111,6 +112,7 @@ namespace mfront {
           "(use the @FlowRule directive)");
     }
     os << "bool computeFlow(){\n"
+       << "using namespace std;\n"
        << "using namespace tfel::math;\n"
        << "using namespace tfel::material;\n"
        << "using std::vector;\n";

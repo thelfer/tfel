@@ -15,7 +15,8 @@
 
 namespace mfront {
 
-  RungeKuttaDSL::RungeKuttaDSL() {
+  RungeKuttaDSL::RungeKuttaDSL(const DSLOptions& opts)
+      : RungeKuttaDSLBase(opts) {
     const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     this->mb.setDSLName("RungeKutta");
     // input variables

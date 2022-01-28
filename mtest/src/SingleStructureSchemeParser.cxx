@@ -379,7 +379,7 @@ namespace mtest {
     this->readSpecifiedToken(
         "SingleStructureSchemeParser::handleInternalStateVariable", ";", p,
         this->tokens.end());
-  } // end of handleInternalStateVariable
+  }  // end of handleInternalStateVariable
 
   void SingleStructureSchemeParser::handleExternalStateVariable(
       SingleStructureScheme& t, tokens_iterator& p) {
@@ -403,8 +403,9 @@ namespace mtest {
         this->readSpecifiedToken(
             "SingleStructureSchemeParser::handleExternalStateVariable", "{", p,
             this->tokens.end());
-        for (auto pc = components.begin(); pc != components.end(); ) {
-          t.setExternalStateVariable(*pc, this->parseEvolution(t, evt, p), true);
+        for (auto pc = components.begin(); pc != components.end();) {
+          t.setExternalStateVariable(*pc, this->parseEvolution(t, evt, p),
+                                     true);
           if (++pc != components.end()) {
             this->readSpecifiedToken(
                 "SingleStructureSchemeParser::handleExternalStateVariable", ",",
@@ -415,7 +416,7 @@ namespace mtest {
             "SingleStructureSchemeParser::handleExternalStateVariable", "}", p,
             this->tokens.end());
       }
-    } else if (b2){
+    } else if (b2) {
       // components
       t.setExternalStateVariable(n, this->parseEvolution(t, evt, p), true);
     } else {
@@ -427,7 +428,7 @@ namespace mtest {
     this->readSpecifiedToken(
         "SingleStructureSchemeParser::handleExternalStateVariable", ";", p,
         this->tokens.end());
-  } // end of handleExternalStateVariable
+  }  // end of handleExternalStateVariable
 
   void SingleStructureSchemeParser::setInternalStateVariableValue(
       SingleStructureScheme& t, tokens_iterator& p, const std::string& n) {
@@ -436,13 +437,13 @@ namespace mtest {
     if (type == 0) {
       t.setInternalStateVariableInitialValue(n, this->readDouble(t, p));
     } else {
-      const auto s = getVariableSize(b.getInternalStateVariableType(n),
-                                     b.getHypothesis());
+      const auto s =
+          getVariableSize(b.getInternalStateVariableType(n), b.getHypothesis());
       std::vector<real> v(s);
       this->readArrayOfSpecifiedSize(v, t, p);
       t.setInternalStateVariableInitialValue(n, v);
     }
-  } // end of setInternalStateVariableValue
+  }  // end of setInternalStateVariableValue
 
   void SingleStructureSchemeParser::registerCallBack(
       const std::string& k, const SingleStructureSchemeParser::CallBack& p) {

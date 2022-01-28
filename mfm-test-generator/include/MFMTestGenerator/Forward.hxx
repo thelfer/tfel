@@ -20,6 +20,8 @@ namespace tfel::utilities {
 
   // forward declaration
   struct Data;
+  //! \brief a simple alias
+  using DataMap = std::map<std::string, Data, std::less<>>;
 
 }  // end of namespace tfel::utilities
 
@@ -28,7 +30,7 @@ namespace mfmtg {
   //! \brief a simple alias
   using TestCaseParameter = tfel::utilities::Data;
   //! \brief a structure holding all the parameters of a test case.
-  using TestCaseParameters = std::map<std::string, TestCaseParameter>;
+  using TestCaseParameters = tfel::utilities::DataMap;
 
   // forward declaration
   struct Evolution;

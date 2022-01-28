@@ -19,6 +19,7 @@
 #include <vector>
 #include <utility>
 #include <functional>
+#include <string_view>
 #include "TFEL/Config/TFELConfig.hxx"
 #include "TFEL/Utilities/GenTypeBase.hxx"
 #include "TFEL/Utilities/CxxTokenizer.hxx"
@@ -27,6 +28,8 @@ namespace tfel::utilities {
 
   // forward declaration
   struct Data;
+  //! \brief a simple alias
+  using DataMap = std::map<std::string, Data, std::less<>>;
 
   /*!
    * \brief a structure in charge of containing a complex data structure.
@@ -47,7 +50,7 @@ namespace tfel::utilities {
     //! name of the structure
     std::string name;
     //! name of the structure
-    std::map<std::string, Data> data;
+    DataMap data;
   };  // end of struct DataStructure
 
   struct TFELUTILITIES_VISIBILITY_EXPORT DataParsingOptions {
@@ -74,7 +77,7 @@ namespace tfel::utilities {
                                                  std::string,
                                                  std::vector<Data>,
                                                  std::map<double, double>,
-                                                 std::map<std::string, Data>,
+                                                 DataMap,
                                                  DataStructure>::type;
 
   namespace internals {
@@ -109,10 +112,9 @@ namespace tfel::utilities {
     using CallBack = std::function<void(const Data&)>;
     //! constructor from a value
     template <typename T1,
-              typename std::enable_if<
-                  tfel::meta::TLCountNbrOfT<typename std::decay<T1>::type,
-                                            DataTypes>::value == 1,
-                  bool>::type = true>
+              std::enable_if_t<tfel::meta::TLCountNbrOfT<std::decay_t<T1>,
+                                                         DataTypes>::value == 1,
+                               bool> = true>
     TFEL_INLINE Data(T1&& v) : GenTypeBase<DataTypes>(std::forward<T1>(v)) {}
     /*!
      * \brief read a JSON-like structure
@@ -182,7 +184,7 @@ namespace tfel::utilities {
     ~Data();
   };  // end of struct Data
 
-  //! comparison operator
+  //! \brief comparison operator
   TFELUTILITIES_VISIBILITY_EXPORT bool operator==(const Data&, const Data&);
 
   /*!
@@ -199,6 +201,117 @@ namespace tfel::utilities {
    */
   template <typename T>
   bool is_convertible(const Data&);
+
+  /*!
+   * \brief an helper structure used to validate a data map.
+   */
+  struct TFELUTILITIES_VISIBILITY_EXPORT DataMapValidator {
+    //! \brief function used to validate a
+    using DataValidator = std::function<void(const Data&)>;
+    //! \brief constructor
+    DataMapValidator();
+    //! \brief move constructor
+    DataMapValidator(DataMapValidator&&);
+    //! \brief move constructor
+    DataMapValidator(const DataMapValidator&);
+    //! \brief move assignement
+    DataMapValidator& operator=(DataMapValidator&&);
+    //! \brief standard assignement
+    DataMapValidator& operator=(const DataMapValidator&);
+    //!
+    DataMapValidator& addDataValidator(const std::string&,
+                                       const DataValidator&);
+    //!
+    template <typename T1>
+    std::enable_if_t<
+        tfel::meta::TLCountNbrOfT<std::decay_t<T1>, DataTypes>::value == 1,
+        DataMapValidator&>
+    addDataTypeValidator(const std::string& k);
+    //! \brief validate a data-map
+    void validate(const DataMap&) const;
+    //! \brief destructor
+    ~DataMapValidator();
+
+   private:
+    //! \brief validators, sorted by keywords
+    std::map<std::string, std::vector<DataValidator>> validators;
+  };
+
+  /*!
+   * \brief throw an exception stating that the parameter type is not the
+   * expected one.
+   */
+  [[noreturn]] TFELUTILITIES_VISIBILITY_EXPORT void raiseUnmatchedDataType(
+      const std::string_view);
+  /*!
+   * \return true if the given data exists
+   * \param[in] m: data map
+   * \param[in] n: name
+   */
+  TFELUTILITIES_VISIBILITY_EXPORT bool contains(const DataMap&,
+                                                std::string_view);
+  /*!
+   * \return true if the given data has the given type
+   * \param[in] m: data map
+   * \param[in] n: name
+   * \throws if the data does not exists
+   */
+  template <typename ResultType>
+  bool is(const DataMap&, std::string_view);
+  /*!
+   * \return the data associated with the given name
+   * \param[in] m: data map
+   * \param[in] n: name
+   */
+  TFELUTILITIES_VISIBILITY_EXPORT const Data& get(const DataMap&,
+                                                  std::string_view);
+  /*!
+   * \return value of the data
+   * \tparam ResultType: expected type of the data
+   * \param[in] m: data map
+   * \param[in] n: name
+   * \throws if the data does not exists or does not have the good type.
+   */
+  template <typename ResultType>
+  const ResultType& get(const DataMap&, std::string_view);
+  /*!
+   * \return value of the data if present, a default value otherwise
+   * \tparam ResultType: expected type of the data
+   * \param[in] m: data map
+   * \param[in] n: name
+   * \param[in] v: default value
+   * \throws if the data exists but does not have the good type.
+   */
+  template <typename ResultType>
+  ResultType get_if(const DataMap&, std::string_view, const ResultType&);
+  /*!
+   * \return value of the data if present, a default value otherwise
+   * \param[in] m: data map
+   * \param[in] n: name
+   * \param[in] v: default value
+   */
+  TFELUTILITIES_VISIBILITY_EXPORT Data get_if(const DataMap&,
+                                              std::string_view,
+                                              const Data&);
+  /*!
+   * \return a data map containing only data with the given names
+   * \param[in] m: data map
+   * \param[in] names: list of names of data to be extracted
+   */
+  TFELUTILITIES_VISIBILITY_EXPORT DataMap
+  extract(const DataMap&, const std::vector<std::string>&);
+
+  /*!
+   * \return the data map resulting from the merge of two data maps.
+   * \param[in] m1: first data map
+   * \param[in] m2: second data map
+   * \param[in] b: boolean stating if multiple data definition are allowed. If
+   * so, the resulting map will contain the value of the first data map.
+   * Otherwise, an exception is thrown.
+   */
+  TFELUTILITIES_VISIBILITY_EXPORT DataMap merge(const DataMap&,
+                                                const DataMap&,
+                                                const bool);
 
 }  // end of namespace tfel::utilities
 

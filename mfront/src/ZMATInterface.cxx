@@ -144,6 +144,24 @@ namespace mfront {
 
   std::string ZMATInterface::getInterfaceVersion() const { return ""; }
 
+  void ZMATInterface::checkIfTemperatureIsDefinedAsTheFirstExternalStateVariable(
+      const BehaviourDescription& bd) const {
+    if (!bd.isTemperatureDefinedAsTheFirstExternalStateVariable()) {
+      const auto v = this->getInterfaceVersion();
+      auto msg = std::string{};
+      msg +=
+          "ZMATInterface::"
+          "checkIfTemperatureIsDefinedAsTheFirstExternalStateVariable: "
+          "the temperature must be defined as the first external state "
+          "variable";
+      if (!v.empty()) {
+        msg += " in interface version '" + v + "'";
+      }
+      tfel::raise(msg);
+    }
+  }  // end of checkIfTemperatureIsDefinedAsTheFirstExternalStateVariable
+
+
   std::pair<bool, ZMATInterface::tokens_iterator> ZMATInterface::treatKeyword(
       BehaviourDescription&,
       const std::string& key,
@@ -326,6 +344,7 @@ namespace mfront {
       const Hypothesis h,
       const BehaviourDescription& mb) const {
     using namespace std;
+    this->checkIfTemperatureIsDefinedAsTheFirstExternalStateVariable(mb);
     const auto& d = mb.getBehaviourData(h);
     const auto& mps = d.getMaterialProperties();
     const auto& ivs = d.getPersistentVariables();
@@ -688,6 +707,7 @@ namespace mfront {
     auto throw_if = [](const bool c, const std::string& m) {
       tfel::raise_if(c, "ZMATInterface::writeIntegrationDataConstructor: " + m);
     };
+    this->checkIfTemperatureIsDefinedAsTheFirstExternalStateVariable(mb);
     const auto& d = mb.getBehaviourData(h);
     auto evs = d.getExternalStateVariables();
     // removing the temperature
@@ -802,18 +822,18 @@ namespace mfront {
   void ZMATInterface::endTreatment(const BehaviourDescription& mb,
                                    const FileDescription& fd) const {
     using namespace std;
-    using namespace tfel::system;
     using namespace tfel::material;
-    auto throw_if = [](const bool b, const std::string& m) {
-      tfel::raise_if(b, "ZMATInterface::endTreatment: " + m);
-    };
-    systemCall::mkdir("include/MFront");
-    systemCall::mkdir("include/MFront/ZMAT");
-    systemCall::mkdir("zmat");
-    const std::array<Hypothesis, 3u> hypotheses = {
+    constexpr std::array<Hypothesis, 3u> hypotheses = {
         ModellingHypothesis::TRIDIMENSIONAL,
         ModellingHypothesis::GENERALISEDPLANESTRAIN,
         ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN};
+    auto throw_if = [](const bool b, const std::string& m) {
+      tfel::raise_if(b, "ZMATInterface::endTreatment: " + m);
+    };
+    this->checkIfTemperatureIsDefinedAsTheFirstExternalStateVariable(mb);
+    tfel::system::systemCall::mkdir("include/MFront");
+    tfel::system::systemCall::mkdir("include/MFront/ZMAT");
+    tfel::system::systemCall::mkdir("zmat");
     const auto name = mb.getLibrary() + mb.getClassName();
     const auto headerFileName = "ZMAT" + name + ".hxx";
     const auto srcFileName = "ZMAT" + name + ".cxx";
@@ -1015,6 +1035,7 @@ namespace mfront {
         << '\n';
     writeExportDirectives(out);
     const auto zcn = "ZMAT" + mb.getClassName();
+    writeBuildIdentifierSymbol(out, zcn, mb);
     writeEntryPointSymbol(out, zcn);
     writeTFELVersionSymbol(out, zcn);
     writeMaterialSymbol(out, zcn, mb.getMaterialName());
@@ -1096,7 +1117,9 @@ namespace mfront {
     }
     for (const auto h : hypotheses) {
       if (mb.isModellingHypothesisSupported(h)) {
-        this->writeParametersInitialisation(out, mb, h);
+        if (!areParametersTreatedAsStaticVariables(mb)) {
+          this->writeParametersInitialisation(out, mb, h);
+        }
       }
     }
     out << "INTEGRATION_RESULT*\n"
@@ -1426,8 +1449,6 @@ namespace mfront {
       const ZMATInterface::Hypothesis h) const {
     using namespace std;
     const auto& d = mb.getBehaviourData(h);
-    const auto& params = d.getParameters();
-    const auto pnames = d.getExternalNames(params);
     out << "void\n"
         << "ZMAT" << mb.getClassName() << "::initializeParameters"
         << getSpaceDimensionSuffix(h) << "(ASCII_FILE& file){\n"
@@ -1436,35 +1457,20 @@ namespace mfront {
         << "if(str[0]=='*'){\n"
         << "file.back();\n"
         << "break;\n";
-    auto p = params.begin();
-    auto pn = pnames.begin();
-    for (; p != params.end(); ++p, ++pn) {
-      if ((p->type == "int") || (p->type == "ushort")) {
-        out << "} else if(str==\"" << *pn << "\"){\n";
-        if (p->type == "int") {
-          out << "const int value=file.getint();\n";
-        } else {
-          out << "const unsigned short value=static_cast<unsigned "
-                 "short>(file.getint());\n";
-        }
-        if (mb.hasParameter(ModellingHypothesis::UNDEFINEDHYPOTHESIS,
-                            p->name)) {
-          out << "tfel::material::" << mb.getClassName()
-              << "ParametersInitializer::get()." << p->name << " = value;\n";
-        } else {
-          out << "tfel::material::" << mb.getClassName()
-              << ModellingHypothesis::toString(h)
-              << "ParametersInitializer::get()." << p->name << " = value;\n";
-        }
-      } else {
-        const auto f = SupportedTypes::getTypeFlag(p->type);
-        tfel::raise_if(f != SupportedTypes::SCALAR,
-                       "ZMATInterface::writeParametersInitialisation: "
-                       "unsupported type '" +
-                           p->type + "' for parameter '" + p->name + "'");
-        if (p->arraySize == 1u) {
+    if (!areParametersTreatedAsStaticVariables(mb)) {
+      const auto& params = d.getParameters();
+      const auto pnames = d.getExternalNames(params);
+      auto p = params.begin();
+      auto pn = pnames.begin();
+      for (; p != params.end(); ++p, ++pn) {
+        if ((p->type == "int") || (p->type == "ushort")) {
           out << "} else if(str==\"" << *pn << "\"){\n";
-          out << "const double value=file.getdouble();\n";
+          if (p->type == "int") {
+            out << "const int value=file.getint();\n";
+          } else {
+            out << "const unsigned short value=static_cast<unsigned "
+                   "short>(file.getint());\n";
+          }
           if (mb.hasParameter(ModellingHypothesis::UNDEFINEDHYPOTHESIS,
                               p->name)) {
             out << "tfel::material::" << mb.getClassName()
@@ -1475,19 +1481,40 @@ namespace mfront {
                 << "ParametersInitializer::get()." << p->name << " = value;\n";
           }
         } else {
-          for (unsigned short i = 0; i != p->arraySize; ++i) {
-            out << "} else if(str==\"" << *pn << "[" << i << "]\"){\n";
+          const auto f = SupportedTypes::getTypeFlag(p->type);
+          tfel::raise_if(f != SupportedTypes::SCALAR,
+                         "ZMATInterface::writeParametersInitialisation: "
+                         "unsupported type '" +
+                             p->type + "' for parameter '" + p->name + "'");
+          if (p->arraySize == 1u) {
+            out << "} else if(str==\"" << *pn << "\"){\n";
             out << "const double value=file.getdouble();\n";
             if (mb.hasParameter(ModellingHypothesis::UNDEFINEDHYPOTHESIS,
                                 p->name)) {
               out << "tfel::material::" << mb.getClassName()
-                  << "ParametersInitializer::get()." << p->name << "[" << i
-                  << "] = value;\n";
+                  << "ParametersInitializer::get()." << p->name
+                  << " = value;\n";
             } else {
               out << "tfel::material::" << mb.getClassName()
                   << ModellingHypothesis::toString(h)
-                  << "ParametersInitializer::get()." << p->name << "[" << i
-                  << "] = value;\n";
+                  << "ParametersInitializer::get()." << p->name
+                  << " = value;\n";
+            }
+          } else {
+            for (unsigned short i = 0; i != p->arraySize; ++i) {
+              out << "} else if(str==\"" << *pn << "[" << i << "]\"){\n";
+              out << "const double value=file.getdouble();\n";
+              if (mb.hasParameter(ModellingHypothesis::UNDEFINEDHYPOTHESIS,
+                                  p->name)) {
+                out << "tfel::material::" << mb.getClassName()
+                    << "ParametersInitializer::get()." << p->name << "[" << i
+                    << "] = value;\n";
+              } else {
+                out << "tfel::material::" << mb.getClassName()
+                    << ModellingHypothesis::toString(h)
+                    << "ParametersInitializer::get()." << p->name << "[" << i
+                    << "] = value;\n";
+              }
             }
           }
         }

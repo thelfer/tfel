@@ -19,6 +19,7 @@
 #include <string>
 #include <vector>
 #include <iosfwd>
+#include <string_view>
 
 #include "TFEL/Config/TFELConfig.hxx"
 #include "TFEL/Utilities/Token.hxx"
@@ -33,11 +34,11 @@ namespace tfel::utilities {
   struct TFELUTILITIES_VISIBILITY_EXPORT CxxTokenizer
       : protected CxxTokenizerOptions {
     //! a simple alias
-    typedef std::vector<Token> TokensContainer;
+    using TokensContainer = std::vector<Token>;
     //! a simple alias
-    typedef TokensContainer::const_iterator const_iterator;
+    using const_iterator = TokensContainer::const_iterator;
     //! a simple alias
-    typedef TokensContainer::size_type size_type;
+    using size_type = TokensContainer::size_type;
     /*!
      * \return true if the given string is a valid variable name.
      * \param[in] s : variable name

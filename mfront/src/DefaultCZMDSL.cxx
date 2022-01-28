@@ -21,7 +21,7 @@
 
 namespace mfront {
 
-  DefaultCZMDSL::DefaultCZMDSL() {
+  DefaultCZMDSL::DefaultCZMDSL(const DSLOptions& opts) : DefaultDSLBase(opts) {
     const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     this->mb.setDSLName("DefaultCZM");
     this->mb.declareAsACohesiveZoneModel();

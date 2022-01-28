@@ -15,7 +15,7 @@
 
 namespace mfront {
 
-  ImplicitDSL::ImplicitDSL() {
+  ImplicitDSL::ImplicitDSL(const DSLOptions& opts) : ImplicitDSLBase(opts) {
     const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     this->mb.setDSLName("Implicit");
     // input variables

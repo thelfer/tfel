@@ -170,7 +170,8 @@ namespace mtest {
     return r;
   }  // end of getRotationMatrix
 
-  void AbaqusExplicitBehaviour::allocateWorkSpace(BehaviourWorkSpace& wk) const {
+  void AbaqusExplicitBehaviour::allocateWorkSpace(
+      BehaviourWorkSpace& wk) const {
     const auto ndv = this->getGradientsSize();
     const auto nth = this->getThermodynamicForcesSize();
     wk.D.resize(nth, nth);

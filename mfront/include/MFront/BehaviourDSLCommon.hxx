@@ -50,6 +50,8 @@ namespace mfront {
       : public virtual AbstractBehaviourDSL,
         public DSLBase,
         public SupportedTypes {
+    //! \return a validator for the options passed to the DSL
+    static tfel::utilities::DataMapValidator getDSLOptionsValidator();
     //! a simple alias
     using Hook = std::function<void()>;
     //! a simple alias
@@ -174,8 +176,14 @@ namespace mfront {
       //! list of untreated options
       std::vector<tfel::utilities::Token> untreated;
     };
-    //! \brief constructor
-    BehaviourDSLCommon();
+    /*!
+     * \brief constructor
+     * \param[in] opts: options passed to the DSL
+     */
+    BehaviourDSLCommon(const DSLOptions&);
+    //
+    std::vector<DSLOptionDescription> getDSLOptions() const override;
+    DSLOptions buildDSLOptions() const override;
     bool useQt() const override;
     void disableQuantitiesUsageIfNotAlreadySet() override;
     std::string getClassName() const override;

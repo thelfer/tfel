@@ -29,10 +29,10 @@ namespace mfront {
     //! \return the description of the dsl
     static std::string getDescription();
     /*!
-     * \brief add interfaces used for generating output files
-     * \param[in] i: list of interfaces
+     * \brief constructor
+     *\param[in] opts: options passed to the DSL
      */
-    virtual void setInterfaces(const std::set<std::string>&) override;
+    ModelDSL(const DSLOptions&);
     /*!
      * \return a copy of the description of the model treated by the
      * dsl.
@@ -40,6 +40,10 @@ namespace mfront {
      * method.
      */
     virtual ModelDescription getModelDescription() const;
+    //
+    void setInterfaces(const std::set<std::string>&) override;
+    //! \brief destructor
+    virtual ~ModelDSL();
   };  // end of ModelDSL
 
 }  // end of namespace mfront

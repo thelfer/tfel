@@ -316,6 +316,7 @@ namespace mfront {
     auto throw_if = [](const bool b, const std::string& m) {
       tfel::raise_if(b, "AbaqusInterface::endTreatment: " + m);
     };
+    this->checkIfTemperatureIsDefinedAsTheFirstExternalStateVariable(mb);
     AbaqusInterfaceBase::checkFiniteStrainStrategyDefinitionConsistency(mb);
     throw_if(!((mb.getBehaviourType() ==
                 BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) ||

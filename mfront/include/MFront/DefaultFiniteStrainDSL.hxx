@@ -24,10 +24,13 @@ namespace mfront {
     static std::string getName();
     //! \return a short description of the DSL
     static std::string getDescription();
-    //! \return a description of the DSL
+    /*!
+     * \brief constructor
+     *\param[in] opts: options passed to the DSL
+     */
+    DefaultFiniteStrainDSL(const DSLOptions&);
+    //
     BehaviourDSLDescription getBehaviourDSLDescription() const override;
-    //! constructor
-    DefaultFiniteStrainDSL();
     //! \brief destructor
     ~DefaultFiniteStrainDSL() override;
 

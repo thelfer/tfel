@@ -25,6 +25,11 @@
 
 namespace mfront {
 
+  static bool shallRemoveTemperatureFromExternalStateVariables(
+      const BehaviourDescription& bd) {
+    return bd.isTemperatureDefinedAsTheFirstExternalStateVariable();
+  }  // end of shallRemoveTemperatureFromExternalStateVariables
+
   static int getVariableTypeId(const VariableDescription& v) {
     switch (SupportedTypes::getTypeFlag(v.type)) {
       case SupportedTypes::SCALAR:
@@ -61,6 +66,7 @@ namespace mfront {
       const FileDescription& fd,
       const std::set<Hypothesis>& mhs,
       const std::string& name) const {
+    this->writeBuildIdentifierSymbol(out, i, bd, name);
     this->writeEntryPointSymbol(out, i, name);
     this->writeTFELVersionSymbol(out, i, name);
     this->writeMaterialSymbol(out, i, bd, name);
@@ -75,7 +81,17 @@ namespace mfront {
     this->writeSymmetryTypeSymbols(out, i, bd, name);
     this->writeElasticSymmetryTypeSymbols(out, i, bd, name);
     this->writeSpecificSymbols(out, i, bd, fd, name);
+    this->writeTemperatureRemovedFromExternalStateVariablesSymbol(out, i, bd,
+                                                                  name);
   }
+
+  void SymbolsGenerator::writeBuildIdentifierSymbol(
+      std::ostream& out,
+      const StandardBehaviourInterface& i,
+      const BehaviourDescription& d,
+      const std::string& n) const {
+    mfront::writeBuildIdentifierSymbol(out, i.getFunctionNameBasis(n), d);
+  }  // end of writeBuildIdentifierSymbol
 
   void SymbolsGenerator::writeEntryPointSymbol(
       std::ostream& out,
@@ -313,6 +329,20 @@ namespace mfront {
         << "_ComputesDissipatedEnergy = " << b << ";\n\n";
   }  // end of writeComputesDissipatedEnergySymbol
 
+  void SymbolsGenerator::writeTemperatureRemovedFromExternalStateVariablesSymbol(
+      std::ostream& out,
+      const StandardBehaviourInterface& i,
+      const BehaviourDescription& bd,
+      const std::string& name) const {
+    if (shallRemoveTemperatureFromExternalStateVariables(bd)) {
+      out << "MFRONT_SHAREDOBJ unsigned short " << i.getFunctionNameBasis(name)
+          << "_TemperatureRemovedFromExternalStateVariables = 1u;\n";
+    } else {
+      out << "MFRONT_SHAREDOBJ unsigned short " << i.getFunctionNameBasis(name)
+          << "_TemperatureRemovedFromExternalStateVariables = 0u;\n";
+    }
+  }  // end of writeTemperatureRemovedFromExternalStateVariablesSymbol
+
   void SymbolsGenerator::writeSpecificSymbols(std::ostream&,
                                               const StandardBehaviourInterface&,
                                               const BehaviourDescription&,
@@ -483,14 +513,17 @@ namespace mfront {
       const Hypothesis h) const {
     const auto& d = mb.getBehaviourData(h);
     auto esvs = d.getExternalStateVariables();
-    // removing the temperature
-    esvs.erase(esvs.begin());
+    if (shallRemoveTemperatureFromExternalStateVariables(mb)) {
+      // removing the temperature
+      esvs.erase(esvs.begin());
+    }
     out << "MFRONT_SHAREDOBJ unsigned short " << this->getSymbolName(i, name, h)
         << "_nExternalStateVariables = " << esvs.getNumberOfVariables()
         << ";\n";
     this->writeExternalNames(out, i, name, h, mb.getExternalNames(h, esvs),
                              "ExternalStateVariables");
-    this->writeVariablesTypesSymbol(out, i, name, h, esvs, "ExternalStateVariables");
+    this->writeVariablesTypesSymbol(out, i, name, h, esvs,
+                                    "ExternalStateVariables");
   }  // end of writeExternalStateVariablesSymbols
 
   void SymbolsGenerator::writeParametersSymbols(
@@ -499,9 +532,14 @@ namespace mfront {
       const BehaviourDescription& mb,
       const std::string& name,
       const Hypothesis h) const {
-    mfront::writeParametersDeclarationSymbols(
-        out, this->getSymbolName(i, name, h),
-        mb.getBehaviourData(h).getParameters());
+    if (!areParametersTreatedAsStaticVariables(mb)) {
+      mfront::writeParametersDeclarationSymbols(
+          out, this->getSymbolName(i, name, h),
+          mb.getBehaviourData(h).getParameters());
+    } else {
+      mfront::writeParametersDeclarationSymbols(
+          out, this->getSymbolName(i, name, h), {});
+    }
   }  // end of writeParametersSymbols
 
   void SymbolsGenerator::writeParameterDefaultValueSymbols(
@@ -510,6 +548,9 @@ namespace mfront {
       const BehaviourDescription& mb,
       const std::string& name,
       const Hypothesis h) const {
+    if (areParametersTreatedAsStaticVariables(mb)) {
+      return;
+    }
     auto throw_if = [](const bool b, const std::string& m) {
       tfel::raise_if(
           b, "SymbolsGenerator::writeParameterDefaultValueSymbols: " + m);
@@ -542,7 +583,7 @@ namespace mfront {
         } else {
           for (unsigned short is = 0; is != p.arraySize; ++is) {
             os << "MFRONT_SHAREDOBJ double " << n << "_" << p.getExternalName()
-               << "__" << is << "___ParameterDefaultValue = "
+               << "_mfront_index_" << is << "_ParameterDefaultValue = "
                << mb.getFloattingPointParameterDefaultValue(h, p.name, is)
                << ";\n\n";
           }
@@ -562,7 +603,9 @@ namespace mfront {
     mfront::writeBoundsSymbols(os, n, d.getMaterialProperties());
     mfront::writeBoundsSymbols(os, n, d.getPersistentVariables());
     mfront::writeBoundsSymbols(os, n, d.getExternalStateVariables());
-    mfront::writeBoundsSymbols(os, n, d.getParameters());
+    if (!areParametersTreatedAsStaticVariables(mb)) {
+      mfront::writeBoundsSymbols(os, n, d.getParameters());
+    }
   }  // end of writeBoundsSymbols
 
   void SymbolsGenerator::writePhysicalBoundsSymbols(
@@ -576,7 +619,9 @@ namespace mfront {
     mfront::writePhysicalBoundsSymbols(os, n, d.getMaterialProperties());
     mfront::writePhysicalBoundsSymbols(os, n, d.getPersistentVariables());
     mfront::writePhysicalBoundsSymbols(os, n, d.getExternalStateVariables());
-    mfront::writePhysicalBoundsSymbols(os, n, d.getParameters());
+    if (!areParametersTreatedAsStaticVariables(mb)) {
+      mfront::writePhysicalBoundsSymbols(os, n, d.getParameters());
+    }
   }  // end of writePhysicalBoundsSymbols
 
   void SymbolsGenerator::writeRequirementsSymbols(

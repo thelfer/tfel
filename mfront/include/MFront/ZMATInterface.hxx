@@ -84,6 +84,14 @@ namespace mfront {
     ~ZMATInterface() override;
 
    protected:
+
+    /*!
+     * This method check of the temperature is defined as the first external
+     * state variable. If this is not the case, an exception is thrown.
+     * \param[in] bd: behaviour description
+     */
+    void checkIfTemperatureIsDefinedAsTheFirstExternalStateVariable(
+        const BehaviourDescription&) const;
     /*!
      * \brief write behaviour initialisation for the given hypothesis
      * \param[out] out : output file

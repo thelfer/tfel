@@ -23,19 +23,30 @@
 
 namespace mfront {
 
+  /*!
+   * \brief structure used to register a DSL generator
+   * \tparam DSLType: type of the DSL generated
+   */
   template <typename DSLType>
   struct DSLProxy {
+    //! \brief default constructor
     DSLProxy();
     /*!
+     * \brief constructor
      * \param[in] a: alternative name for the DSL
      */
     DSLProxy(const std::string&);
     /*!
+     * \brief constructor
      * \param[in] aliases: alternative names for the DSL
      */
     DSLProxy(const std::vector<std::string>&);
-
-    static std::shared_ptr<AbstractDSL> createDSL();
+    /*!
+     * \brief generate an intance of the DSL
+     * \param[in] opts: options passed to the DSL constructor
+     */
+    static std::shared_ptr<AbstractDSL> createDSL(
+        const AbstractDSL::DSLOptions&);
   };
 
 }  // end of namespace mfront

@@ -108,10 +108,11 @@ libTFELMTest_la_LIBADD  += -L$(top_builddir)/mfront/src -lCastemInterface
 endif
 
 if HAVE_ASTER
-libTFELMTest_la_SOURCES += AsterStandardBehaviour.cxx    \
-			   AsterSmallStrainBehaviour.cxx \
-			   AsterFiniteStrainBehaviour.cxx \
-			   AsterCohesiveZoneModel.cxx
+libTFELMTest_la_SOURCES += AsterStandardBehaviour.cxx     \
+			   AsterSmallStrainBehaviour.cxx              \
+			   AsterFiniteStrainBehaviour.cxx             \
+			   AsterCohesiveZoneModel.cxx                 \
+			   AsterLogarithmicStrainBehaviourWrapper.cxx
 libTFELMTest_la_LIBADD  += -L$(top_builddir)/mfront/src -lAsterInterface
 endif
 

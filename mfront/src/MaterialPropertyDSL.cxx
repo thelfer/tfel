@@ -56,7 +56,10 @@ namespace mfront {
     return tfel::utilities::CxxTokenizer::isValidIdentifier(n, false);
   }
 
-  MaterialPropertyDSL::MaterialPropertyDSL() {
+  MaterialPropertyDSL::MaterialPropertyDSL(const DSLOptions& opts)
+      : DSLBase(opts) {
+    //
+    DSLBase::handleDSLOptions(this->md, opts);
     // Call Back
     this->registerNewCallBack(";", &MaterialPropertyDSL::treatLonelySeparator);
     this->registerNewCallBack("@UseQt", &MaterialPropertyDSL::treatUseQt);
@@ -96,6 +99,10 @@ namespace mfront {
     }
     this->reserveName("params");
   }  // end of MaterialPropertyDSL()
+
+  AbstractDSL::DSLOptions MaterialPropertyDSL::buildDSLOptions() const {
+    return DSLBase::buildCommonDSLOptions(this->md);
+  }  // end of buildDSLOptions
 
   AbstractDSL::DSLTarget MaterialPropertyDSL::getTargetType() const {
     return MATERIALPROPERTYDSL;

@@ -36,6 +36,37 @@ namespace mfront {
   bool parsePathSpecifierArguments(std::vector<PathSpecifier>& paths,
                                    PathSpecifier& s,
                                    const std::string& a) {
+    auto get_substring_view = [&a](const char* const r) {
+      return std::string_view{a}.substr(std::strlen(r));
+    };
+    auto set_material_property_identifier = [&s](std::string_view n) {
+      tfel::raise_if(!s.material_property_identifier.empty(),
+                     "parsePathSpecifierArguments: "
+                     "material property multiply defined");
+      tfel::raise_if(n.empty(),
+                     "parsePathSpecifierArguments: "
+                     "empty material property specified");
+      s.material_property_identifier = n;
+    };
+    auto set_behaviour_identifier = [&s](std::string_view n) {
+      tfel::raise_if(!s.behaviour_identifier.empty(),
+                     "parsePathSpecifierArguments: "
+                     "behaviour multiply defined");
+      tfel::raise_if(n.empty(),
+                     "parsePathSpecifierArguments: "
+                     "empty behaviour specified");
+      s.behaviour_identifier = n;
+    };
+    auto set_model_identifier = [&s](std::string_view n) {
+      tfel::raise_if(!s.model_identifier.empty(),
+                     "parsePathSpecifierArguments: "
+                     "model multiply defined");
+      tfel::raise_if(n.empty(),
+                     "parsePathSpecifierArguments: "
+                     "empty model specified");
+      s.model_identifier = n;
+    };
+
     if (a[0] != '-') {
       s.file = a;
       paths.push_back(s);
@@ -48,53 +79,38 @@ namespace mfront {
       tfel::raise_if(s.material_identifier.empty(),
                      "parsePathSpecifierArguments: "
                      "empty material name specified");
+    } else if (a == "--all-material-properties") {
+      set_material_property_identifier(".+");
     } else if (tfel::utilities::starts_with(a, "--material-property=")) {
-      tfel::raise_if(!s.material_property_identifier.empty(),
-                     "parsePathSpecifierArguments: "
-                     "material property multiply defined");
-      s.material_property_identifier =
-          a.substr(std::strlen("--material-property="));
-      tfel::raise_if(s.material_property_identifier.empty(),
-                     "parsePathSpecifierArguments: "
-                     "empty material property specified");
+      set_material_property_identifier(
+          get_substring_view("--material-property="));
+    } else if (a == "--all-behaviours") {
+      set_behaviour_identifier(".+");
     } else if (tfel::utilities::starts_with(a, "--behaviour=")) {
-      tfel::raise_if(!s.behaviour_identifier.empty(),
-                     "parsePathSpecifierArguments: "
-                     "behaviour multiply defined");
-      s.behaviour_identifier = a.substr(std::strlen("--behaviour="));
-      tfel::raise_if(s.behaviour_identifier.empty(),
-                     "parsePathSpecifierArguments: "
-                     "empty behaviour specified");
+      set_behaviour_identifier(get_substring_view("--behaviour="));
+    } else if (a == "--all-models") {
+      set_model_identifier(".+");
     } else if (tfel::utilities::starts_with(a, "--model=")) {
-      tfel::raise_if(!s.model_identifier.empty(),
-                     "parsePathSpecifierArguments: "
-                     "model multiply defined");
-      s.model_identifier = a.substr(std::strlen("--model="));
-      tfel::raise_if(s.model_identifier.empty(),
-                     "parsePathSpecifierArguments: "
-                     "empty model specified");
+      set_model_identifier(get_substring_view("--model="));
 #if (defined _WIN32) || (defined _WIN64)
     } else if (tfel::utilities::starts_with(a, "/material=")) {
       s.material_identifier = a.substr(std::strlen("/material="));
       tfel::raise_if(s.material_identifier.empty(),
                      "parsePathSpecifierArguments: "
                      "empty material name specified");
+    } else if (a == "/all-material-properties") {
+      set_material_property_identifier(".+");
     } else if (tfel::utilities::starts_with(a, "/material-property=")) {
-      s.material_property_identifier =
-          a.substr(std::strlen("/material-property="));
-      tfel::raise_if(s.material_property_identifier.empty(),
-                     "parsePathSpecifierArguments: "
-                     "empty material property specified");
+      set_material_property_identifier(
+          get_substring_view("/material-property="));
+    } else if (a == "/all-behaviours") {
+      set_behaviour_identifier(".+");
     } else if (tfel::utilities::starts_with(a, "/behaviour=")) {
-      s.behaviour_identifier = a.substr(std::strlen("/behaviour="));
-      tfel::raise_if(s.behaviour_identifier.empty(),
-                     "parsePathSpecifierArguments: "
-                     "empty behaviour specified");
+      set_behaviour_identifier(get_substring_view("/behaviour="));
+    } else if (a == "/all-models") {
+      set_model_identifier(".+");
     } else if (tfel::utilities::starts_with(a, "/model=")) {
-      s.model_identifier = a.substr(std::strlen("/model="));
-      tfel::raise_if(s.model_identifier.empty(),
-                     "parsePathSpecifierArguments: "
-                     "empty model specified");
+      set_model_identifier(get_substring_view("/model="));
 #endif /* (defined _WIN32) || (defined _WIN64)*/
     } else {
       return false;
@@ -253,6 +269,38 @@ namespace mfront {
       const std::string& behaviour_identifier,
       const std::string& model_identifier) {
     auto inputs = std::vector<std::string>{};
+    if (tfel::utilities::starts_with(f, "madnex:")) {
+#ifdef MFRONT_HAVE_MADNEX
+      // full path specifier
+      auto check = [](const std::string& s, const char* const t) {
+        if (s.empty()) {
+          return;
+        }
+        tfel::raise(
+            "getImplementationsPaths: specifiying a " + std::string(t) +
+            "' identifier is not valid when specifying a full path specifier");
+      };
+      check(material_identifier, "material");
+      check(material_property_identifier, "material property");
+      check(behaviour_identifier, "behaviour");
+      check(model_identifier, "model");
+      const auto details = tfel::utilities::tokenize(f, ':');
+      auto raise_if = [&f](const bool b) {
+        if (b) {
+          tfel::raise(
+              "decomposeImplementationPathInMadnexFile: "
+              "invalid path '" +
+              f + "'");
+        }
+      };
+      raise_if((details.size() != 5) && (details.size() != 4));
+#else /* MFRONT_HAVE_MADNEX */
+      tfel::raise(
+          "getImplementationsPaths: "
+          "madnex support has not been enabled");
+#endif /* MFRONT_HAVE_MADNEX */
+      return {f};
+    }
     // file extensions
     const auto ext = [&f]() -> std::string {
       const auto p = f.find(".");
@@ -261,7 +309,7 @@ namespace mfront {
       }
       return "";
     }();
-    if ((ext == "madnex") || (ext == "edf")) {
+    if ((ext == "madnex") || (ext == "mdnx") || (ext == "edf")) {
 #ifdef MFRONT_HAVE_MADNEX
       inputs = getImplementationsPathsInMadnexFiles(
           f, material_identifier, material_property_identifier,

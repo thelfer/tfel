@@ -146,7 +146,8 @@ namespace mtest {
     v[0] = v[1] = v[2] = real(1);
   }
 
-  void AsterFiniteStrainBehaviour::allocateWorkSpace(BehaviourWorkSpace& wk) const {
+  void AsterFiniteStrainBehaviour::allocateWorkSpace(
+      BehaviourWorkSpace& wk) const {
     AsterStandardBehaviour::allocateWorkSpace(wk);
     if (this->afsf == 1u) {
       wk.D.resize(6u, 9u);

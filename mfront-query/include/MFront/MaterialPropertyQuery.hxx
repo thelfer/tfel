@@ -36,8 +36,7 @@ namespace mfront {
    * \brief class used by the mfront-query tool to extract information from
    * the implementation of a material property
    */
-  struct MaterialPropertyQuery final
-      : public QueryHandlerBase {
+  struct MaterialPropertyQuery final : public QueryHandlerBase {
     /*!
      * build a MaterialPropertyQuery object based on command line arguments
      * \param[in] argc : number of command line arguments
@@ -65,10 +64,13 @@ namespace mfront {
                                      const MaterialPropertyDescription &)>;
     //
     void treatGeneratedSources() override final;
+    void treatSpecificTargetGeneratedSources() override final;
+    void treatAllSpecificTargetsGeneratedSources() override final;
     void treatCppFlags() override final;
     void treatGeneratedHeaders() override final;
     void treatLibrariesDependencies() override final;
     void treatSpecificTargets() override final;
+    void treatDSLTarget() override final;
     //! \brief treat the "--parameter-default-value" query
     virtual void treatParameterDefaultValue() final;
     //! \brief treat a standard query

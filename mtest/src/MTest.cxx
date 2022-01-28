@@ -805,7 +805,7 @@ namespace mtest {
     return MTest_getErrorNorm(du, ndv);
   }  // end of MTest::getErrorNorm
 
-  bool MTest::checkConvergence(const StudyCurrentState& state,
+  bool MTest::checkConvergence(StudyCurrentState& state,
                                const tfel::math::vector<real>& du,
                                const tfel::math::vector<real>& r,
                                const SolverOptions& o,

@@ -16,7 +16,7 @@
 
 #include <tuple>
 #include "TFEL/Math/General/ComputeBinaryResult.hxx"
-#include "TFEL/Math/tvector.hxx"
+#include "TFEL/Math/fsarray.hxx"
 
 namespace tfel::material {
 
@@ -38,9 +38,9 @@ namespace tfel::material {
             typename real>
   strainrate
   computeEquivalentStrainRateOfHarmonicSumOfNortonHoffViscoplasticFlows(
-      const tfel::math::tvector<N, strainrate>&,
-      const tfel::math::tvector<N, stress>&,
-      const tfel::math::tvector<N, real>&,
+      const tfel::math::fsarray<N, strainrate>&,
+      const tfel::math::fsarray<N, stress>&,
+      const tfel::math::fsarray<N, real>&,
       const stress);
   /*!
    * \return the equivalent strain rate associated given by the harmonic sum
@@ -63,9 +63,9 @@ namespace tfel::material {
       strainrate,
       tfel::math::BinaryOperationResult<strainrate, stress, tfel::math::OpDiv>>
   computeEquivalentStrainRateAndDerivativeOfHarmonicSumOfNortonHoffViscoplasticFlows(
-      const tfel::math::tvector<N, strainrate>&,
-      const tfel::math::tvector<N, stress>&,
-      const tfel::math::tvector<N, real>&,
+      const tfel::math::fsarray<N, strainrate>&,
+      const tfel::math::fsarray<N, stress>&,
+      const tfel::math::fsarray<N, real>&,
       const stress);
   /*!
    * \return the equivalent strain rate associated with a Norton-Hoff

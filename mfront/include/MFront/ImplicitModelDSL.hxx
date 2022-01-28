@@ -22,8 +22,11 @@ namespace mfront {
    * \brief Implementation of a generic model
    */
   struct ImplicitModelDSL : public ImplicitDSLBase {
-    //! \brief constructor
-    ImplicitModelDSL();
+    /*!
+     * \brief constructor
+     *\param[in] opts: options passed to the DSL
+     */
+    ImplicitModelDSL(const DSLOptions&);
     //! \return the name of the DSL
     static std::string getName();
     //! \return a description of the DSL

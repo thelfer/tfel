@@ -27,9 +27,12 @@ namespace mfront {
     static std::string getName();
     //! \return a description of the DSL
     static std::string getDescription();
-    //! \brief default constructor
-    DefaultGenericBehaviourDSL();
-    //! \return a description of the DSL
+    /*!
+     * \brief constructor
+     *\param[in] opts: options passed to the DSL
+     */
+    DefaultGenericBehaviourDSL(const DSLOptions&);
+    //
     BehaviourDSLDescription getBehaviourDSLDescription() const override;
     //! \brief destructor
     ~DefaultGenericBehaviourDSL() override;

@@ -251,8 +251,21 @@ namespace mfront {
                 << ".\n";
       ++p;
     }
-    exit(EXIT_SUCCESS);
+    std::exit(EXIT_SUCCESS);
   }  // end of MFront::treatListParsers
+
+  void MFront::treatListDSLOptions() {
+    auto& f = DSLFactory::getDSLFactory();
+    auto dsl = f.createNewDSL(this->currentArgument->getOption());
+    for (const auto& o : dsl->getDSLOptions()) {
+      auto tmp = "- " + o.name;
+      if (tmp.size() <= 32) {
+        tmp.insert(tmp.size(), 32 - tmp.size(), ' ');
+      }
+      std::cout << tmp << ": " << o.description << ".\n";
+    }
+    std::exit(EXIT_SUCCESS);
+  }  // end of treatListDSLOptions
 
   void MFront::treatSilentBuild() {
     const auto& o = this->currentArgument->getOption();
@@ -313,6 +326,28 @@ namespace mfront {
                               "(deprecated, use --list-dsl)");
     this->registerNewCallBack("--list-dsl", &MFront::treatListParsers,
                               "list all available domain specific languages");
+    this->registerNewCallBack(
+        "--list-dsl-options", &MFront::treatListDSLOptions,
+        "list the options associated with a domain specific language", true);
+    this->registerNewCallBack(
+        "--dsl-option", &MFront::treatDSLOption,
+        "allow to define options passed to domain specific languages", true);
+    this->registerNewCallBack(
+        "--material-property-dsl-option",
+        &MFront::treatMaterialPropertyDSLOption,
+        "allow to define options passed to domain specific languages related "
+        "to material properties",
+        true);
+    this->registerNewCallBack(
+        "--behaviour-dsl-option", &MFront::treatBehaviourDSLOption,
+        "allow to define options passed to domain specific languages related "
+        "to behaviours",
+        true);
+    this->registerNewCallBack(
+        "--model-dsl-option", &MFront::treatModelDSLOption,
+        "allow to define options passed to domain specific languages related "
+        "to models",
+        true);
 #ifdef MFRONT_HAVE_MADNEX
     this->registerNewCallBack("--material", &MFront::treatMaterialIdentifier,
                               "specify a material identifier", true);
@@ -603,7 +638,7 @@ namespace mfront {
     tfel::raise_if(o.empty(),
                    "MFront::treatHelpCommandsList: "
                    "no parser name given");
-    std::shared_ptr<AbstractDSL> p{f.createNewParser(o)};
+    const auto p = f.createNewDSL(o);
     std::vector<std::string> keys;
     p->getKeywordsList(keys);
     for (auto& k : keys) {
@@ -621,7 +656,7 @@ namespace mfront {
                    "MFront::treatHelpCommandsList: "
                    "no parser name given");
     auto keys = std::vector<std::string>{};
-    f.createNewParser(o)->getKeywordsList(keys);
+    f.createNewDSL(o)->getKeywordsList(keys);
     std::cout << "% `" << o << "` keywords\n\n";
     for (const auto& k : keys) {
       const auto fp = getDocumentationFilePath(o, k.substr(1));
@@ -664,7 +699,7 @@ namespace mfront {
                    "MFront::treatHelpCommand: "
                    "ill-formed argument, expected "
                    "'parser:@keyword'");
-    auto p = f.createNewParser(pn);
+    auto p = f.createNewDSL(pn);
     std::vector<std::string> keys;
     p->getKeywordsList(keys);
     tfel::raise_if(std::find(keys.begin(), keys.end(), k) == keys.end(),

@@ -19,6 +19,37 @@ eqnPrefixTemplate: "($$i$$)"
 
 # Issues fixed
 
+## Issue #102: [mfront] Missing `using namespace std;` in the body of the `computeFlow` method of the `IsotropicStrainHardeningMisesCreep` DSL
+
+For more details, see <https://github.com/thelfer/tfel/issues/102>
+
+## Issue #101: [mfront] [generic interface] The computation of stored and dissipated energies fails to compile if quantities are used bug generic interface mfront
+
+For more details, see <https://github.com/thelfer/tfel/issues/101>
+
+## Issue #78: [TFELMath] missing `const` qualifier in the implementation of the `map` function for immutable views
+
+For more details, see <https://github.com/thelfer/tfel/issues/78>
+
+## Issue #77: [mfront] The type `TypeParsingOptions` is not explicitely exported which leads to an error in `gcc` under `Windows`
+
+For more details, see <https://github.com/thelfer/tfel/issues/77>
+
+## Issue #56: [TFELMath] The CublicSpline methods do not compile if TFEL/Math/vector.hxx is included
+
+For more details, see <https://github.com/thelfer/tfel/issues/56>
+
+## Issue #54: [mfront] Inconsistent declaration of array of parameters as `tvector`
+
+`TFEL-4.0` changed the type of all array to fsarray, except for arrays of
+parameters.
+
+For more details, see <https://github.com/thelfer/tfel/issues/54>.
+
+## Issue #53: [mfront] HarmonicSumOfNortonHoffViscoplasticFlows is broken in `TFEL-4.0`
+
+For more details, see <https://github.com/thelfer/tfel/issues/53>.
+
 ## Issue #37: [mfront] `@ElasticMaterialProperties` is broken when using quantities
 
 For more details, see <https://github.com/thelfer/tfel/issues/37>.

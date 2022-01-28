@@ -162,7 +162,8 @@ namespace mtest {
     return nr;
   }  // end of getRotationMatrix
 
-  void CastemStandardBehaviour::allocateWorkSpace(BehaviourWorkSpace& wk) const {
+  void CastemStandardBehaviour::allocateWorkSpace(
+      BehaviourWorkSpace& wk) const {
     const auto ndv = this->getGradientsSize();
     const auto nth = this->getThermodynamicForcesSize();
     const auto nstatev = this->getInternalStateVariablesSize();

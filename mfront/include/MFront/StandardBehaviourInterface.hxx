@@ -39,6 +39,7 @@ namespace mfront {
     StandardBehaviourInterface();
     bool isBehaviourConstructorRequired(
         const Hypothesis, const BehaviourDescription &) const override;
+    //
     std::string getInterfaceVersion() const override;
     /*!
      * \return the basis for the function(s)' names implementing the

@@ -17,7 +17,6 @@
 
 #include <map>
 #include <string>
-
 #include "MFront/DSLBase.hxx"
 #include "MFront/ModelDSLCommon.hxx"
 
@@ -63,8 +62,11 @@ namespace mfront {
    protected:
     typedef void (Child::*MemberFuncPtr)();
     typedef std::map<std::string, MemberFuncPtr> CallBackContainer;
-
-    ModelDSLBase();
+    /*!
+     * \brief constructor
+     *\param[in] opts: options passed to the DSL
+     */
+    ModelDSLBase(const DSLOptions&);
 
     virtual void analyse();
 

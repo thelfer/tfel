@@ -193,11 +193,10 @@ namespace mtest {
     this->mpnames.insert(this->mpnames.begin(), mps.begin(), mps.end());
   }  // end of GenericBehaviour
 
-  GenericBehaviour::GenericBehaviour(
-      const Hypothesis h,
-      const std::string& l,
-      const std::string& b,
-      const std::map<std::string, Parameters>& params)
+  GenericBehaviour::GenericBehaviour(const Hypothesis h,
+                                     const std::string& l,
+                                     const std::string& b,
+                                     const ParametersMap& params)
       : GenericBehaviour(h, l, b) {
     if (params.empty()) {
       return;

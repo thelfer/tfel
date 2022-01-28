@@ -25,6 +25,7 @@
 #include "MFront/VariableDescription.hxx"
 #include "MFront/StaticVariableDescription.hxx"
 #include "MFront/VariableBoundsDescription.hxx"
+#include "MFront/MaterialKnowledgeDescription.hxx"
 
 namespace mfront {
 
@@ -32,7 +33,8 @@ namespace mfront {
   struct FileDescription;
 
   //! structure describing a material property
-  struct MFRONT_VISIBILITY_EXPORT MaterialPropertyDescription {
+  struct MFRONT_VISIBILITY_EXPORT MaterialPropertyDescription
+      : public MaterialKnowledgeDescription {
     //! default constructor
     MaterialPropertyDescription();
     //! copy constructor

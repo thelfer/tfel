@@ -6,23 +6,25 @@ except ImportError:
 import tfel.material
 import mtest
 
-class SmallStrainTridimensionalBehaviourWrapper(unittest.TestCase):
 
+class SmallStrainTridimensionalBehaviourWrapper(unittest.TestCase):
     def test(self):
         l = os.environ['MTEST_BEHAVIOUR_LIBRARY']
-        b = mtest.Behaviour(interface = 'generic',
-                            library = l,
-                            function = 'ImplicitNorton',
-                            hypothesis = 'PlaneStrain',
-                            wrapper = 'SmallStrainTridimensionalBehaviourWrapper')
+        b = mtest.Behaviour(
+            interface='generic',
+            library=l,
+            function='ImplicitNorton',
+            hypothesis='PlaneStrain',
+            wrapper='SmallStrainTridimensionalBehaviourWrapper')
         self.checkBehaviour(b)
-        
+
     def test2(self):
         l = os.environ['MTEST_BEHAVIOUR_LIBRARY']
-        b = mtest.Behaviour(wrapper = 'SmallStrainTridimensionalBehaviourWrapper',
-                            library = l,
-                            function = 'ImplicitNorton',
-                            hypothesis = 'PlaneStrain')
+        b = mtest.Behaviour(
+            wrapper='SmallStrainTridimensionalBehaviourWrapper',
+            library=l,
+            function='ImplicitNorton',
+            hypothesis='PlaneStrain')
         self.checkBehaviour(b)
 
     def checkBehaviour(self, b):
@@ -35,6 +37,7 @@ class SmallStrainTridimensionalBehaviourWrapper(unittest.TestCase):
         self.assertTrue(isvs[4] == 'ElasticStrainXZ')
         self.assertTrue(isvs[5] == 'ElasticStrainYZ')
         self.assertTrue(isvs[6] == 'p')
+
 
 if __name__ == '__main__':
     unittest.main()

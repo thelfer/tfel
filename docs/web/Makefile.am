@@ -79,6 +79,7 @@ EXTRA_DIST=CMakeLists.txt					      \
 	   ./release-notes-3.1.8.md				      \
 	   ./release-notes-3.1.9.md				      \
 	   ./release-notes-3.1.10.md				      \
+	   ./release-notes-3.1.11.md				      \
 	   ./release-notes-3.2.md				      \
 	   ./release-notes-3.2.1.md				      \
 	   ./release-notes-3.2.2.md				      \
@@ -91,6 +92,7 @@ EXTRA_DIST=CMakeLists.txt					      \
 	   ./release-notes-3.3.1.md				      \
 	   ./release-notes-3.3.2.md				      \
 	   ./release-notes-3.3.3.md				      \
+	   ./release-notes-3.3.4.md				      \
 	   ./release-notes-3.4.md				      \
 	   ./release-notes-3.4.1.md				      \
 	   ./release-notes-3.4.2.md				      \
@@ -199,12 +201,6 @@ EXTRA_DIST=CMakeLists.txt					      \
 	   ./img/HureCast3M2014.png			              \
 	   ./img/CodeAster2015Flyer.png			              \
 	   ./img/Configuration.png			              \
-	   ./img/mingw-get1.png			                      \
-	   ./img/mingw-get1.xcf			                      \
-	   ./img/mingw-get2.png			                      \
-	   ./img/mingw-get2.xcf			                      \
-	   ./img/mingw-get3.png			                      \
-	   ./img/mingw-get3.xcf			                      \
 	   ./img/Win64.xcf			                      \
 	   ./img/Win64.png			                      \
 	   ./img/Interfaces.svg			                      \

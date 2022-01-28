@@ -258,6 +258,7 @@ namespace mfront {
     auto throw_if = [](const bool b, const std::string& m) {
       tfel::raise_if(b, "AbaqusExplicitInterface::endTreatment: " + m);
     };
+    this->checkIfTemperatureIsDefinedAsTheFirstExternalStateVariable(mb);
     AbaqusInterfaceBase::checkFiniteStrainStrategyDefinitionConsistency(mb);
     AbaqusInterfaceBase::checkOrthotropyManagementPolicyConsistency(mb);
     throw_if(!((mb.getBehaviourType() ==

@@ -15,7 +15,8 @@
 
 namespace mfront {
 
-  RungeKuttaModelDSL::RungeKuttaModelDSL() {
+  RungeKuttaModelDSL::RungeKuttaModelDSL(const DSLOptions& opts)
+      : RungeKuttaDSLBase(opts) {
     this->mb.setDSLName("RungeKuttaModel");
     this->mb.declareAsGenericBehaviour();
     this->disableCallBack("@Behaviour");

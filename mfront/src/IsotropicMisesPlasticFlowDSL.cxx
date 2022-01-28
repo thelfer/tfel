@@ -33,7 +33,9 @@ namespace mfront {
            "equivalent mises stress";
   }  // end of IsotropicMisesPlasticFlowDSL::getDescription
 
-  IsotropicMisesPlasticFlowDSL::IsotropicMisesPlasticFlowDSL() {
+  IsotropicMisesPlasticFlowDSL::IsotropicMisesPlasticFlowDSL(
+      const DSLOptions& opts)
+      : IsotropicBehaviourDSLBase(opts) {
     const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     this->mb.setDSLName("IsotropicMisesPlasticFlow");
     // Default state vars

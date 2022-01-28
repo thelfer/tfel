@@ -225,6 +225,11 @@ namespace tfel::utilities {
     }
   }  // end of ArgumentParser::parseArguments
 
+  const ArgumentParser::CallBacksContainer&
+  ArgumentParser::getRegistredCallBacks() const {
+    return this->callBacksContainer;
+  }  // end of getRegistredCallBacks
+
   ArgumentParser::~ArgumentParser() = default;
 
 }  // end of namespace tfel::utilities

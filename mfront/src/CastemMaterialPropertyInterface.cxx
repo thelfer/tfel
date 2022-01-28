@@ -279,12 +279,15 @@ namespace mfront {
         << name << "("
         << "const double * const"
         << ");\n\n";
-    if (!mpd.parameters.empty()) {
+    //
+    if ((!areParametersTreatedAsStaticVariables(mpd)) &&
+        (!mpd.parameters.empty())) {
       out << "MFRONT_SHAREDOBJ int\n"
           << name << "_setParameter(const char *const,"
           << "const double"
           << ");\n\n";
     }
+    //
     out << "#ifdef __cplusplus\n"
         << "} // end of extern \"C\"\n"
         << "#endif /* __cplusplus */\n\n"
@@ -341,13 +344,16 @@ namespace mfront {
       out << includes << "\n\n";
     }
     out << "#include\"" << name << "-castem.hxx\"\n\n";
+    //
     writeMaterialPropertyParametersHandler(out, mpd, name, "double", "castem");
+    //
     out << "#ifdef __cplusplus\n"
         << "extern \"C\"{\n"
         << "#endif /* __cplusplus */\n\n";
 
     writeVariablesNamesSymbol(out, name, mpd);
     writeVariablesBoundsSymbols(out, name, mpd);
+    writeBuildIdentifierSymbol(out, name, mpd);
     writeEntryPointSymbol(out, name);
     writeTFELVersionSymbol(out, name);
     writeInterfaceSymbol(out, name, "Castem");
@@ -360,7 +366,7 @@ namespace mfront {
         << tfel::utilities::tokenize(file, tfel::system::dirSeparator()).back()
         << "\";\n\n";
 
-    if (!params.empty()) {
+    if ((!areParametersTreatedAsStaticVariables(mpd)) && (!params.empty())) {
       const auto hn = getMaterialPropertyParametersHandlerClassName(name);
       out << "MFRONT_SHAREDOBJ int\n"
           << name << "_setParameter(const char *const p,"
@@ -385,15 +391,16 @@ namespace mfront {
     out << ")\n{\n";
     writeBeginningOfMaterialPropertyBody(out, mpd, fd, "double", true);
     // parameters
-    if (!params.empty()) {
+    if ((!areParametersTreatedAsStaticVariables(mpd)) && (!params.empty())) {
       const auto hn = getMaterialPropertyParametersHandlerClassName(name);
       out << "if(!castem::" << hn << "::get" << hn << "().ok){\n"
           << "return std::nan(castem::" << name
           << "MaterialPropertyHandler::get" << name
           << "MaterialPropertyHandler().msg.c_str());\n"
           << "}\n";
-      writeAssignMaterialPropertyParameters(out, mpd, name, "double", "castem");
     }
+    writeAssignMaterialPropertyParameters(out, mpd, name, "real", "castem");
+    //
     if (!mpd.inputs.empty()) {
       auto p3 = mpd.inputs.begin();
       for (auto i = 0u; p3 != mpd.inputs.end(); ++p3, ++i) {

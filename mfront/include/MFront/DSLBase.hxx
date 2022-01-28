@@ -32,7 +32,8 @@
 
 namespace mfront {
 
-  // forward declaration
+  // forward declarations
+  struct MaterialKnowledgeDescription;
   struct MaterialPropertyDescription;
 
   /*!
@@ -52,12 +53,17 @@ namespace mfront {
   struct MFRONT_VISIBILITY_EXPORT DSLBase
       : public virtual AbstractDSL,
         public tfel::utilities::CxxTokenizer {
-    //! \return the file description associated with the treated file
+    //! \brief standard option name
+    static const char* const parametersAsStaticVariablesOption;
+    //! \brief standard option name
+    static const char* const initializeParametersFromFileOption;
+    //! \brief standard option name
+    static const char* const buildIdentifierOption;
+    //! \return a validator for the options passed to the DSL
+    static tfel::utilities::DataMapValidator getDSLOptionsValidator();
+    //
+    std::vector<DSLOptionDescription> getDSLOptions() const override;
     const FileDescription& getFileDescription() const override final;
-    /*!
-     * \return the target description
-     * \note This method shall be called *after* the analyseFile method
-     */
     const TargetsDescription& getTargetsDescription() const override;
     /*!
      * \brief open a file and add given external instructions at the
@@ -154,8 +160,26 @@ namespace mfront {
     };  // end of CodeBlockParserOptions
     //! \return a list of names that shall be reserved
     static std::vector<std::string> getDefaultReservedNames();
-    //! \brief constructor
-    DSLBase();
+    /*!
+     * \brief handle DSL options
+     * \param[in] d: material knowledge description
+     * \param[in] opts: options
+     */
+    static void handleDSLOptions(MaterialKnowledgeDescription&,
+                                 const DSLOptions&);
+    /*!
+     * \brief extract common options
+     * \param[in] d: material knowledge description
+     */
+    static DSLOptions buildCommonDSLOptions(
+        const MaterialKnowledgeDescription&);
+    /*!
+     * \brief constructor
+     * \param[in] opts: options passed to the DSL
+     */
+    DSLBase(const DSLOptions&);
+    // \return options for child DSL (DSL called by this DSL)
+    virtual DSLOptions buildDSLOptions() const = 0;
     /*!
      * \brief register a name.
      * \param[in] n : name

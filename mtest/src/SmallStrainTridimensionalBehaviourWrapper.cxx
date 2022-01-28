@@ -184,13 +184,13 @@ namespace mtest {
       const {
     return this->b->expandInternalStateVariablesNames();
   }  // end of getInternalStateVariablesNames
-  
+
   std::vector<std::string>
   SmallStrainTridimensionalBehaviourWrapper::expandInternalStateVariablesNames()
       const {
     return this->b->expandInternalStateVariablesNames();
   }  // end of expandInternalStateVariablesNames
-  
+
   size_t
   SmallStrainTridimensionalBehaviourWrapper::getInternalStateVariablesSize()
       const {
@@ -236,13 +236,13 @@ namespace mtest {
       const {
     return this->b->expandExternalStateVariablesNames();
   }  // end of getExternalStateVariablesNames
-  
+
   std::vector<std::string>
   SmallStrainTridimensionalBehaviourWrapper::expandExternalStateVariablesNames()
       const {
     return this->b->expandExternalStateVariablesNames();
   }  // end of expandExternalStateVariablesNames
-  
+
   size_t
   SmallStrainTridimensionalBehaviourWrapper::getExternalStateVariablesSize()
       const {

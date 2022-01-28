@@ -14,6 +14,7 @@
 #include <vector>
 #include <string>
 #include <utility>
+#include <iterator>
 #include <stdexcept>
 #include <algorithm>
 
@@ -32,7 +33,7 @@ namespace mfront {
 
   std::vector<std::string> DSLFactory::getRegistredDSLs(const bool b) const {
     auto res = std::vector<std::string>{};
-    for (const auto& p : this->creators) {
+    for (const auto& p : this->generators) {
       res.push_back(p.first);
     }
     if (b) {
@@ -43,16 +44,16 @@ namespace mfront {
       }
     }
     return res;
-  }  // end of DSLFactory::getRegistredDSLs()
+  }  // end of getRegistredDSLs()
 
   void DSLFactory::registerDSLCreator(const std::string& n,
-                                      const DSLFactory::DSLCreator f,
-                                      const DSLFactory::DescriptionPtr f2) {
+                                      const DSLGenerator f,
+                                      const DescriptionGenerator f2) {
     auto raise = [&n] {
       tfel::raise("DSLFactory::registerDSLCreator: a DSL named '" + n +
                   "' has already been registred");
     };
-    if (!this->creators.insert({n, f}).second) {
+    if (!this->generators.insert({n, f}).second) {
       raise();
     }
     for (const auto& as : this->aliases) {
@@ -64,17 +65,17 @@ namespace mfront {
     if (!this->descriptions.insert({n, f2}).second) {
       raise();
     }
-  }  // end of DSLFactory::registerDSLCreator
+  }  // end of registerDSLCreator
 
   void DSLFactory::registerDSLAlias(const std::string& n,
                                     const std::string& a) {
     auto raise = [](const std::string& m) {
       tfel::raise("DSLFactory::registerAlias: " + m);
     };
-    if (this->creators.find(n) == this->creators.end()) {
+    if (this->generators.find(n) == this->generators.end()) {
       tfel::raise("no DSL named '" + n + "' registred");
     }
-    if (this->creators.find(a) != this->creators.end()) {
+    if (this->generators.find(a) != this->generators.end()) {
       tfel::raise("a DSL named '" + a + "' has already been registred");
     }
     for (const auto& as : this->aliases) {
@@ -84,10 +85,10 @@ namespace mfront {
       }
     }
     this->aliases[n].push_back(a);
-  }  // end of DSLFactory::registerDSLAlias
+  }  // end of registerDSLAlias
 
   std::shared_ptr<AbstractDSL> DSLFactory::createNewDSL(
-      const std::string& n) const {
+      const std::string& n, const AbstractDSL::DSLOptions& opts) const {
     const auto rn = [this, &n]() -> const std::string& {
       for (const auto& as : this->aliases) {
         if (std::find(as.second.cbegin(), as.second.cend(), n) !=
@@ -97,16 +98,25 @@ namespace mfront {
       }
       return n;
     }();
-    auto p = this->creators.find(rn);
-    if (p == this->creators.end()) {
-      tfel::raise(
+    const auto p = this->generators.find(rn);
+    if (p == this->generators.end()) {
+      auto msg =
           "DSLFactory::createNewDSL: "
           "no DSL named '" +
-          n + "'");
+          n + "'.\nAvailable dsls are:";
+      for (const auto dsl : this->getRegistredParsers()) {
+        msg += " " + dsl;
+      }
+      tfel::raise(msg);
     }
     auto c = p->second;
-    return c();
-  }  // end of DSLFactory::createNewDSL
+    return c(opts);
+  }  // end of createNewDSL
+
+  std::shared_ptr<AbstractDSL> DSLFactory::createNewParser(
+      const std::string& n, const AbstractDSL::DSLOptions& opts) const {
+    return this->createNewDSL(n, opts);
+  }  // end of createNewParser
 
   std::string DSLFactory::getDSLDescription(const std::string& n) const {
     const auto rn = [this, &n]() -> const std::string& {
@@ -127,26 +137,21 @@ namespace mfront {
     }
     auto c = p->second;
     return c();
-  }  // end of DSLFactory::getDSLDescription
+  }  // end of getDSLDescription
 
   std::vector<std::string> DSLFactory::getRegistredParsers(const bool b) const {
     return this->getRegistredDSLs(b);
-  }  // end of DSLFactory::getRegistredParsers()
+  }  // end of getRegistredParsers()
 
   void DSLFactory::registerParserCreator(const std::string& n,
-                                         const DSLFactory::ParserCreator f,
-                                         const DSLFactory::DescriptionPtr f2) {
+                                         const DSLGenerator f,
+                                         const DescriptionGenerator f2) {
     this->registerDSLCreator(n, f, f2);
-  }  // end of DSLFactory::registerParserCreator
+  }  // end of registerParserCreator
 
   std::string DSLFactory::getParserDescription(const std::string& n) const {
     return this->getDSLDescription(n);
-  }  // end of DSLFactory::getParserDescription
-
-  std::shared_ptr<AbstractDSL> DSLFactory::createNewParser(
-      const std::string& n) const {
-    return this->createNewDSL(n);
-  }
+  }  // end of getParserDescription
 
   DSLFactory::~DSLFactory() = default;
 

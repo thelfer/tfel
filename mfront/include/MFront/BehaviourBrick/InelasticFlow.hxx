@@ -22,6 +22,8 @@
 namespace tfel::utilities {
   // forward declaration
   struct Data;
+  //! \brief a simple alias
+  using DataMap = std::map<std::string, Data, std::less<>>;
 }  // end of namespace tfel::utilities
 
 namespace mfront {
@@ -46,15 +48,15 @@ namespace mfront::bbrick {
 
   //! \brief class describing an inelastic flow.
   struct MFRONT_VISIBILITY_EXPORT InelasticFlow {
-    //! a simple alias
+    //! \brief a simple alias
     using Data = tfel::utilities::Data;
-    //! a simple alias
-    using DataMap = std::map<std::string, Data>;
-    //! a simple alias
+    //! \brief a simple alias
+    using DataMap = tfel::utilities::DataMap;
+    //! \brief a simple alias
     using ModellingHypothesis = tfel::material::ModellingHypothesis;
-    //! a simple alias
+    //! \brief a simple alias
     using Hypothesis = ModellingHypothesis::Hypothesis;
-    //! a simple alias
+    //! \brief a simple alias
     using MaterialPropertyInput = BehaviourDescription::MaterialPropertyInput;
     /*!
      * \param[in,out] bd: behaviour description

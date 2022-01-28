@@ -44,6 +44,8 @@ namespace mtest {
     //! a simple alias
     using Parameters = tfel::utilities::Data;
     //! a simple alias
+    using ParametersMap = tfel::utilities::DataMap;
+    //! a simple alias
     using ModellingHypothesis = tfel::material::ModellingHypothesis;
     //! a simple alias
     using Hypothesis = ModellingHypothesis::Hypothesis;

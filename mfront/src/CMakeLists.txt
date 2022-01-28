@@ -45,6 +45,8 @@ target_link_libraries(MTestFileGenerator
 set(TFELMFront_SOURCES
     MFront.cxx
     MFrontBase.cxx
+    GlobalDomainSpecificLanguageOptionsManager.cxx
+    MaterialKnowledgeDescription.cxx
     PathSpecifier.cxx
     MFrontUtilities.cxx
     GeneratorOptions.cxx

@@ -29,6 +29,10 @@
 
 namespace mfront {
 
+  const char* const BehaviourDescription::
+      automaticDeclarationOfTheTemperatureAsFirstExternalStateVariable =
+          "automatically_declare_temperature_as_first_external_state_variable";
+
   static MaterialPropertyDescription buildMaterialPropertyDescription(
       const BehaviourDescription::ConstantMaterialProperty& mp,
       const BehaviourDescription& bd,
@@ -395,13 +399,35 @@ namespace mfront {
       BehaviourDescription::requiresThermalExpansionCoefficientTensor =
           "requiresThermalExpansionCoefficientTensor";
 
-  BehaviourDescription::BehaviourDescription() = default;
+  BehaviourDescription::BehaviourDescription() {
+    constexpr auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+    const auto* const Topt = BehaviourDescription::
+        automaticDeclarationOfTheTemperatureAsFirstExternalStateVariable;
+    auto T = VariableDescription{"temperature", "T", 1u, 0u};
+    T.setGlossaryName("Temperature");
+    this->addExternalStateVariable(h, T, BehaviourData::UNREGISTRED);
+    this->setAttribute(Topt, true, false);
+  }  // end of BehaviourDescription
+
+  BehaviourDescription::BehaviourDescription(const tfel::utilities::DataMap& opts) {
+    constexpr auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+    // treating the temperature
+    const auto* const Topt = BehaviourDescription::
+        automaticDeclarationOfTheTemperatureAsFirstExternalStateVariable;
+    const auto bT = tfel::utilities::get_if<bool>(opts, Topt, true);
+    this->setAttribute(Topt, bT, false);
+    if (bT) {
+      auto T = VariableDescription{"temperature", "T", 1u, 0u};
+      T.setGlossaryName("Temperature");
+      this->addExternalStateVariable(h, T, BehaviourData::UNREGISTRED);
+    }
+  }  // end of BehaviourDescription
 
   BehaviourDescription::BehaviourDescription(const BehaviourDescription&) =
       default;
 
   bool BehaviourDescription::allowsNewUserDefinedVariables() const {
-    const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+    constexpr auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     return this->getAttribute(h, BehaviourData::allowsNewUserDefinedVariables,
                               true);
   }  // end of allowNewsUserDefinedVariables
@@ -2013,6 +2039,29 @@ namespace mfront {
     this->addVariable(h, v, s, f);
   }
 
+  bool
+  BehaviourDescription::isTemperatureDefinedAsTheFirstExternalStateVariable()
+      const {
+    const auto mhs = this->getDistinctModellingHypotheses();
+    for (const auto h : mhs) {
+      const auto& esvs = this->getBehaviourData(h).getExternalStateVariables();
+      if (esvs.empty()) {
+        return false;
+      }
+      if (esvs[0].getExternalName() != tfel::glossary::Glossary::Temperature) {
+        return false;
+      }
+      if (SupportedTypes::getTypeFlag(esvs[0].type) !=
+          SupportedTypes::SCALAR) {
+        return false;
+      }
+      if ((esvs[0].type != "temperature") && (esvs[0].type != "real")) {
+        return false;
+      }
+    }
+    return true;
+  }  // end of isTemperatureDefinedAsTheFirstExternalStateVariable
+
   void BehaviourDescription::addExternalStateVariables(
       const Hypothesis h,
       const VariableDescriptionContainer& v,
@@ -2490,10 +2539,11 @@ namespace mfront {
     return this->getBehaviourData(h).hasCode(n);
   }  // end of getCode
 
-  void BehaviourDescription::setAttribute(const Hypothesis h,
-                                          const std::string& n,
-                                          const BehaviourAttribute& a,
-                                          const bool b) {
+  void BehaviourDescription::setAttribute(
+      const Hypothesis h,
+      const std::string& n,
+      const MaterialKnowledgeAttribute& a,
+      const bool b) {
     if (h == ModellingHypothesis::UNDEFINEDHYPOTHESIS) {
       this->d.setAttribute(n, a, b);
       for (const auto& md : this->sd) {
@@ -2505,9 +2555,10 @@ namespace mfront {
     }
   }  // end of setAttribute
 
-  void BehaviourDescription::updateAttribute(const Hypothesis h,
-                                             const std::string& n,
-                                             const BehaviourAttribute& a) {
+  void BehaviourDescription::updateAttribute(
+      const Hypothesis h,
+      const std::string& n,
+      const MaterialKnowledgeAttribute& a) {
     if (h == ModellingHypothesis::UNDEFINEDHYPOTHESIS) {
       this->d.updateAttribute(n, a);
       for (const auto& md : this->sd) {
@@ -2721,33 +2772,6 @@ namespace mfront {
       }
     }
   }  // end of setPhysicalBounds
-
-  void BehaviourDescription::setAttribute(const std::string& n,
-                                          const BehaviourAttribute& a,
-                                          const bool b) {
-    if (b) {
-      auto p = this->attributes.find(n);
-      if (p != this->attributes.end()) {
-        tfel::raise_if(a.getTypeIndex() != p->second.getTypeIndex(),
-                       "BehaviourDescription::setAttribute: "
-                       "attribute already exists with a different type");
-        return;
-      }
-    }
-    tfel::raise_if(!this->attributes.insert({n, a}).second,
-                   "BehaviourDescription::setAttribute: "
-                   "attribute '" +
-                       n + "' already declared");
-  }  // end of setAttribute
-
-  bool BehaviourDescription::hasAttribute(const std::string& n) const {
-    return this->attributes.count(n) != 0u;
-  }  // end of hasAttribute
-
-  const std::map<std::string, BehaviourAttribute>&
-  BehaviourDescription::getAttributes() const {
-    return this->attributes;
-  }  // end of getAttributes
 
   void BehaviourDescription::disableQuantitiesUsageIfNotAlreadySet() const {
     if (!this->use_qt.has_value()) {

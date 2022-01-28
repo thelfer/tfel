@@ -32,6 +32,26 @@ static boost::python::tuple PipeTest_computeMinimumAndMaximumValues(
   return boost::python::make_tuple(r.first, r.second);
 }  // end of PipeTest_computeMinimumAndMaximumValues
 
+static void PipeTest_setMandrelRadiusEvolution(mtest::PipeTest& t,
+                                               const mtest::real& v) {
+  t.setMandrelRadiusEvolution(mtest::make_evolution(v));
+}  // end of PipeTest_setMandrelRadiusEvolution
+
+static void PipeTest_setMandrelRadiusEvolution2(
+    mtest::PipeTest& t, const std::map<mtest::real, mtest::real>& v) {
+  t.setMandrelRadiusEvolution(mtest::make_evolution(v));
+}  // end of PipeTest_setMandrelRadiusEvolution
+
+static void PipeTest_setMandrelAxialGrowthEvolution(mtest::PipeTest& t,
+                                                    const mtest::real& v) {
+  t.setMandrelAxialGrowthEvolution(mtest::make_evolution(v));
+}  // end of PipeTest_setMandrelAxialGrowthEvolution
+
+static void PipeTest_setMandrelAxialGrowthEvolution2(
+    mtest::PipeTest& t, const std::map<mtest::real, mtest::real>& v) {
+  t.setMandrelAxialGrowthEvolution(mtest::make_evolution(v));
+}  // end of PipeTest_setMandrelAxialGrowthEvolution
+
 static void PipeTest_setInnerPressureEvolution(mtest::PipeTest& t,
                                                const mtest::real& v) {
   t.setInnerPressureEvolution(mtest::make_evolution(v));
@@ -162,6 +182,30 @@ void declarePipeTest() {
       .def("setInnerPressureEvolution", &PipeTest_setInnerPressureEvolution2)
       .def("setOuterPressureEvolution", &PipeTest_setOuterPressureEvolution)
       .def("setOuterPressureEvolution", &PipeTest_setOuterPressureEvolution2)
+      .def("setMandrelRadiusEvolution", &PipeTest_setMandrelRadiusEvolution,
+           "This method specify the value of the radius of the mandrel.")
+      .def("setMandrelRadiusEvolution", &PipeTest_setMandrelRadiusEvolution2,
+           "This method specify the linear evolution of the radius of the "
+           "mandrel.\n"
+           "* The parameter (map<double, double>) specify a linear "
+           "evolution: the associative array of time-value is used "
+           "to perform an interpolation. That interpolation is only "
+           "performed between the minimum and maximum times given "
+           "in the array. Should a time be out of the array, the returned "
+           "value will be the one from the nearest association available.")
+      .def("setMandrelAxialGrowthEvolution",
+           &PipeTest_setMandrelAxialGrowthEvolution,
+           "This method specify the value of the axial growth of the mandrel.")
+      .def("setMandrelAxialGrowthEvolution",
+           &PipeTest_setMandrelAxialGrowthEvolution2,
+           "This method specify the linear evolution of the mandra axial "
+           "growth.\n"
+           "* The parameter (map<double, double>) specify a linear "
+           "evolution: the associative array of time-value is used "
+           "to perform an interpolation. That interpolation is only "
+           "performed between the minimum and maximum times given "
+           "in the array. Should a time be out of the array, the returned "
+           "value will be the one from the nearest association available.")
       .def("setAxialForceEvolution", &PipeTest_setAxialForceEvolution,
            "This method specify the constant evolution of the axial force.\n"
            "* The parameter (double) is the constant evolution value.")

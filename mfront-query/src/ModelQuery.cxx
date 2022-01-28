@@ -39,12 +39,14 @@ namespace mfront {
 
   std::shared_ptr<const AbstractDSL> ModelQuery::getDSL() const {
     return this->dsl;
-  } // end of getDSL
+  }  // end of getDSL
 
   void ModelQuery::registerCommandLineCallBacks() {
     QueryHandlerBase::registerCommandLineCallBacks();
     // standard queries
     const std::vector<std::pair<const char*, const char*>> sq = {
+        {"--model-name", "show the model name"},
+        {"--class-name", "show the class name"},
         {"--author", "show the author name"},
         {"--description", "show the file description"},
         {"--date", "show the file implementation date"},
@@ -60,7 +62,17 @@ namespace mfront {
 
   void ModelQuery::treatStandardQuery() {
     const auto& qn = this->getCurrentCommandLineArgument().as_string();
-    if (qn == "--author") {
+    if (qn == "--model-name") {
+      this->queries.push_back({"model-name", [](const FileDescription&,
+                                                const ModelDescription& mpd) {
+                                 std::cout << mpd.modelName << std::endl;
+                               }});
+    } else if (qn == "--class-name") {
+      this->queries.push_back({"class-name", [](const FileDescription&,
+                                                const ModelDescription& mpd) {
+                                 std::cout << mpd.className << std::endl;
+                               }});
+    } else if (qn == "--author") {
       this->queries.push_back(
           {"author", [](const FileDescription& fd, const ModelDescription&) {
              const auto& a = fd.authorName;
@@ -141,6 +153,21 @@ namespace mfront {
          [q](const FileDescription&, const ModelDescription&) { q(); }});
   }  // end of treatGeneratedSources
 
+  void ModelQuery::treatSpecificTargetGeneratedSources() {
+    auto q = this->generateSpecificTargetGeneratedSourcesQuery(
+        this->getCurrentCommandLineArgument().getOption());
+    this->queries.push_back(
+        {"specific-target-generated-sources",
+         [q](const FileDescription&, const ModelDescription&) { q(); }});
+  }  // end of treatSpecificTargetGeneratedSources
+
+  void ModelQuery::treatAllSpecificTargetsGeneratedSources() {
+    auto q = this->generateAllSpecificTargetsGeneratedSourcesQuery();
+    this->queries.push_back(
+        {"all-specific-targets-generated-sources",
+         [q](const FileDescription&, const ModelDescription&) { q(); }});
+  }  // end of treatAllSpecificTargetsGeneratedSources
+
   void ModelQuery::treatGeneratedHeaders() {
     auto q = this->generateGeneratedHeadersQuery();
     this->queries.push_back(
@@ -185,6 +212,10 @@ namespace mfront {
       q.second(fd, d);
     }
   }  // end of exe
+
+  void ModelQuery::treatDSLTarget() {
+    std::cout << "model" << std::endl;
+  }  // end of treatDSLTarget
 
   ModelQuery::~ModelQuery() = default;
 

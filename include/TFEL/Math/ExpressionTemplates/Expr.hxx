@@ -338,11 +338,10 @@ namespace tfel::math {
      * array-like access operator
      */
     constexpr value_type operator[](const size_type i) const {
-      static_assert(
-          isBinaryOperationResultTypeValid<
-              tfel::meta::result_of<lhs_storage_type, size_type>,
-              std::add_lvalue_reference_t<rhs_storage_type>, Op>(),
-          "invalid call");
+      static_assert(isBinaryOperationResultTypeValid<
+                        tfel::meta::result_of<lhs_storage_type, size_type>,
+                        std::add_lvalue_reference_t<rhs_storage_type>, Op>(),
+                    "invalid call");
       return Op::apply(this->a(i), this->b);
     }
     /*!
@@ -358,11 +357,10 @@ namespace tfel::math {
         std::add_lvalue_reference_t<rhs_storage_type>,
         Op>
     operator()(const Indexes... i) const {
-      static_assert(
-          isBinaryOperationResultTypeValid<
-              tfel::meta::result_of<lhs_storage_type, Indexes...>,
-              std::add_lvalue_reference_t<rhs_storage_type>, Op>(),
-          "invalid call");
+      static_assert(isBinaryOperationResultTypeValid<
+                        tfel::meta::result_of<lhs_storage_type, Indexes...>,
+                        std::add_lvalue_reference_t<rhs_storage_type>, Op>(),
+                    "invalid call");
       return Op::apply(this->a(i...), this->b);
     }  // end of operator()
    protected:

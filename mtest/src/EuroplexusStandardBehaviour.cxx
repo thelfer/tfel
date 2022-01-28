@@ -104,7 +104,8 @@ namespace mtest {
     return r;
   }  // end of getRotationMatrix
 
-  void EuroplexusStandardBehaviour::allocateWorkSpace(BehaviourWorkSpace& wk) const {
+  void EuroplexusStandardBehaviour::allocateWorkSpace(
+      BehaviourWorkSpace& wk) const {
     const auto ndv = this->getGradientsSize();
     const auto nth = this->getThermodynamicForcesSize();
     const auto nstatev = this->getInternalStateVariablesSize();

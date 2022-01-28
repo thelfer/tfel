@@ -82,6 +82,7 @@ endmacro(castemptest)
 
 castemptest(elasticity-linear)
 castemptest(elasticity-imposedinnerradius-linear)
+castemptest(elasticity-imposedmandrelradius-linear)
 castemptest(elasticity-quadratic)
 castemptest(isotropic-elastic-linear)
 castemptest(isotropic-elastic-quadratic)

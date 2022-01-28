@@ -1,11 +1,15 @@
 ## Makefile.am -- Process this file with automake to produce a Makefile.in file.
 
 nobase_include_HEADERS= MFront/MFront.hxx                                     \
+			MFront/GlobalDomainSpecificLanguageOptionsManager.hxx             \
 			MFront/InstallPath.hxx                                            \
 			MFront/MaterialKnowledgeType.hxx                                  \
 			MFront/MFrontBase.hxx                                             \
 			MFront/MFrontUtilities.hxx                                        \
 			MFront/MFrontUtilities.ixx                                        \
+			MFront/MaterialKnowledgeAttribute.hxx                             \
+			MFront/MaterialKnowledgeDescription.hxx                           \
+			MFront/MaterialKnowledgeDescription.ixx                           \
 			MFront/PathSpecifier.hxx                                          \
 			MFront/GeneratorOptions.hxx                                       \
 			MFront/CMakeGenerator.hxx                                         \
@@ -65,9 +69,7 @@ nobase_include_HEADERS= MFront/MFront.hxx                                     \
 			MFront/NonLinearSystemSolverBase.hxx                              \
 			MFront/NonLinearSystemSolverFactory.hxx                           \
 			MFront/UserDefinedNonLinearSystemSolver.hxx                       \
-			MFront/BehaviourAttribute.hxx                                     \
 			MFront/BehaviourData.hxx                                          \
-			MFront/BehaviourData.ixx                                          \
 			MFront/BehaviourDescription.hxx                                   \
 			MFront/BehaviourDescription.ixx                                   \
 			MFront/BehaviourSymmetryType.hxx                                  \

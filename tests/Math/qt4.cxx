@@ -33,7 +33,8 @@ static constexpr T my_abs(const T& v) noexcept {
 }
 
 struct StensorQtTest final : public tfel::tests::TestCase {
-  StensorQtTest() : tfel::tests::TestCase("TFEL/Math", "qt4") {}  // end of qtTest
+  StensorQtTest()
+      : tfel::tests::TestCase("TFEL/Math", "qt4") {}  // end of qtTest
   tfel::tests::TestResult execute() override {
     this->test1();
     this->test2();

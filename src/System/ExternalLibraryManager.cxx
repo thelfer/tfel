@@ -104,7 +104,7 @@ namespace tfel::system {
     ++p;
     throw_if(p == pe, "unexpected end of string 'n'");
     throw_if(!std::isdigit(*p), "unexpected a digit 'n'");
-    r += "__";
+    r += "_mfront_index_";
     while ((p != pe) && (std::isdigit(*p))) {
       r.push_back(*p);
       ++p;
@@ -113,14 +113,13 @@ namespace tfel::system {
     throw_if(*p != ']', "invalid variable name '" + n + "'");
     ++p;
     throw_if(p != pe, "invalid variable name '" + n + "'");
-    r += "__";
     return r;
   }  // end of decomposeVariableName
 
   ExternalLibraryManager& ExternalLibraryManager::getExternalLibraryManager() {
     static ExternalLibraryManager elm;
     return elm;
-  }  // end of getExternalLibraryManager()
+  }  // end of getExternalLibraryManager
 
   ExternalLibraryManager::ExternalLibraryManager() = default;
 
@@ -1685,6 +1684,22 @@ namespace tfel::system {
     this->getUMATTypes(types, l, f, h, "InternalStateVariables");
     return types;
   }  // end of getUMATInternalVariablesTypes
+
+  bool
+  ExternalLibraryManager::hasTemperatureBeenRemovedFromExternalStateVariables(
+      const std::string& l, const std::string& f) {
+    const auto lib = this->loadLibrary(l);
+    const auto s = f + "_TemperatureRemovedFromExternalStateVariables";
+    const auto u = ::tfel_getUnsignedShort(lib, s.c_str());
+    if (u == -1) {
+      tfel::raise(
+          "ExternalLibraryManager::"
+          "hasTemperatureBeenRemovedFromExternalStateVariables: "
+          "undefined symbol '" +
+          s + "'");
+    }
+    return u == 1;
+  }  // end of hasTemperatureBeenRemovedFromExternalStateVariables
 
   std::vector<std::string>
   ExternalLibraryManager::getUMATExternalStateVariablesNames(

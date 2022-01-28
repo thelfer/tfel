@@ -29,6 +29,25 @@ namespace mfront {
 
   UMATInterfaceBase::UMATInterfaceBase() = default;
 
+  void
+  UMATInterfaceBase::checkIfTemperatureIsDefinedAsTheFirstExternalStateVariable(
+      const BehaviourDescription& bd) const {
+    if (!bd.isTemperatureDefinedAsTheFirstExternalStateVariable()) {
+      const auto v = this->getInterfaceVersion();
+      auto msg = std::string{};
+      msg +=
+          "UMATInterfaceBase::"
+          "checkIfTemperatureIsDefinedAsTheFirstExternalStateVariable: "
+          "the temperature must be defined as the first external state "
+          "variable for interface '" +
+          this->getInterfaceName() + "'";
+      if (!v.empty()) {
+        msg += " version '" + v + "'";
+      }
+      tfel::raise(msg);
+    }
+  }  // end of checkIfTemperatureIsDefinedAsTheFirstExternalStateVariable
+
   void UMATInterfaceBase::exportMechanicalData(
       std::ostream& out,
       const Hypothesis h,
@@ -344,6 +363,7 @@ namespace mfront {
       const BehaviourDescription& mb,
       const Hypothesis,
       const std::string& initStateVarsIncrements) const {
+    this->checkIfTemperatureIsDefinedAsTheFirstExternalStateVariable(mb);
     const auto iprefix = makeUpperCase(this->getInterfaceName());
     const auto av = this->getBehaviourConstructorsAdditionalVariables();
     const auto abdv = this->getBehaviourDataConstructorAdditionalVariables();
@@ -583,13 +603,13 @@ namespace mfront {
         }
       }
     }
-  }  // end of
-     // UMATInterfaceBase::writeMaterialPropertiesInitializersInBehaviourDataConstructorII
+  }  // end of writeMaterialPropertiesInitializersInBehaviourDataConstructorII
 
   void UMATInterfaceBase::writeBehaviourDataConstructor(
       std::ostream& out,
       const Hypothesis h,
       const BehaviourDescription& mb) const {
+    this->checkIfTemperatureIsDefinedAsTheFirstExternalStateVariable(mb);
     const auto av = this->getBehaviourConstructorsAdditionalVariables();
     const auto abdv = this->getBehaviourDataConstructorAdditionalVariables();
     const auto& d = mb.getBehaviourData(h);
@@ -678,6 +698,7 @@ namespace mfront {
       std::ostream& out,
       const Hypothesis h,
       const BehaviourDescription& mb) const {
+    this->checkIfTemperatureIsDefinedAsTheFirstExternalStateVariable(mb);
     const auto av = this->getBehaviourConstructorsAdditionalVariables();
     const auto aidv = this->getIntegrationDataConstructorAdditionalVariables();
     const auto& d = mb.getBehaviourData(h);
@@ -1168,7 +1189,7 @@ namespace mfront {
           for (unsigned short i = 0; i != v.arraySize; ++i) {
             out << "mg.addInternalStateVariable("
                 << "\"" << ivname << "[" << i << "]\", "  //
-                << as_string(flag) << ", " //
+                << as_string(flag) << ", "                //
                 << "mg_STATEV.data() + " << ivoffset << ");\n";
             ivoffset += SupportedTypes::TypeSize(flag);
           }

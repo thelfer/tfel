@@ -24,15 +24,16 @@ namespace mfront {
 
   struct MFRONT_VISIBILITY_EXPORT IsotropicBehaviourDSLBase
       : public BehaviourDSLBase<IsotropicBehaviourDSLBase> {
-    //! \brief default constructor
-    IsotropicBehaviourDSLBase();
-
+    /*!
+     * \brief constructor
+     *\param[in] opts: options passed to the DSL
+     */
+    IsotropicBehaviourDSLBase(const DSLOptions&);
+    //
     BehaviourDSLDescription getBehaviourDSLDescription() const override;
-
     void getSymbols(std::map<std::string, std::string>&,
                     const Hypothesis,
                     const std::string&) override;
-
     //! \brief destructor
     ~IsotropicBehaviourDSLBase() override;
 

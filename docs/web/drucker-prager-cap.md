@@ -817,10 +817,10 @@ The derivatives of the \(f_{p}\) are trivial:
 \theta\,
 \paren{
 \Delta\,p^{\mathrm{DP}}\,\trace{\mts{\tenseur{n}^{\mathrm{DP}}}}
--
++
 \Delta\,p^{c}\,\trace{\mts{\tenseur{n}^{c}}}
 }\\
-&+\paren{1-\mts{f}}\,
+&-\paren{1-\mts{f}}\,
 \paren{
 \Delta\,p^{\mathrm{DP}}\,\trace{\deriv{\mts{\tenseur{n}^{\mathrm{DP}}}}{\Delta\,f}}
 +
@@ -836,8 +836,8 @@ The derivatives of the \(f_{p}\) are trivial:
 -\paren{1-\mts{f}}\,
 \tenseur{I}\,\colon\,
 \paren{
-\deriv{\tenseur{n}^{\mathrm{DP}}}{\Delta\,\tepsilonel}+
-\deriv{\tenseur{n}^{c}}{\Delta\,\tepsilonel}
+\Delta\,p^{\mathrm{DP}}\,\deriv{\tenseur{n}^{\mathrm{DP}}}{\Delta\,\tepsilonel}+
+\Delta\,p^{\mathrm{c}}\,\deriv{\tenseur{n}^{c}}{\Delta\,\tepsilonel}
 }\\
 \end{aligned}
 \right.

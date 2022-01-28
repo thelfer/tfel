@@ -21,6 +21,7 @@
 #include <optional>
 
 #include "TFEL/Utilities/GenTypeBase.hxx"
+#include "TFEL/Utilities/Data.hxx"
 #include "TFEL/Math/tvector.hxx"
 #include "TFEL/Material/CrystalStructure.hxx"
 #include "TFEL/Material/SlipSystemsDescription.hxx"
@@ -31,10 +32,10 @@
 #include "MFront/MFrontConfig.hxx"
 #include "MFront/CodeBlock.hxx"
 #include "MFront/SupportedTypes.hxx"
-#include "MFront/BehaviourAttribute.hxx"
 #include "MFront/BehaviourData.hxx"
 #include "MFront/BehaviourSymmetryType.hxx"
 #include "MFront/IntegrationScheme.hxx"
+#include "MFront/MaterialKnowledgeDescription.hxx"
 
 namespace mfront {
 
@@ -56,37 +57,41 @@ namespace mfront {
    */
   struct MFRONT_VISIBILITY_EXPORT BehaviourDescription
       : public tfel::material::MechanicalBehaviourBase,
+        public MaterialKnowledgeDescription,
         public SupportedTypes {
-    //! a simple alias
+    //! \brief standard option and attribute name
+    static const char* const
+        automaticDeclarationOfTheTemperatureAsFirstExternalStateVariable;
+    //! \brief a simple alias
     using ModellingHypothesis = tfel::material::ModellingHypothesis;
-    //! a simple alias
+    //! \brief a simple alias
     using Hypothesis = ModellingHypothesis::Hypothesis;
-    //! a simple alias
+    //! \brief a simple alias
     using CrystalStructure = tfel::material::CrystalStructure;
-    //! a simple alias
+    //! \brief a simple alias
     using SlipSystemsDescription = tfel::material::SlipSystemsDescription;
-    //! a simple alias
+    //! \brief a simple alias
     using SlipSystem = SlipSystemsDescription::system;
-    //! a simple alias
+    //! \brief a simple alias
     using InteractionMatrixStructure =
         SlipSystemsDescription::InteractionMatrixStructure;
-    //! a simple alias
+    //! \brief a simple alias
     using OrthotropicAxesConvention = tfel::material::OrthotropicAxesConvention;
-    //! a simple alias
+    //! \brief a simple alias
     using Mode = BehaviourData::Mode;
-    //! a simple alias
+    //! \brief a simple alias
     using Position = BehaviourData::Position;
-    //! validation tatus
+    //! \brief validation tatus
     enum VerificationStatus {
       UNVERIFIED,
       VERIFIED
     };  // end of VerificationStatus
-    //! validation tatus
+    //! \brief validation tatus
     enum ValidationStatus {
       UNVALIDATED,
       VALIDATED
     };  // end of ValidationStatus
-    //! Strain measure
+    //! \brief Strain measure
     enum StrainMeasure {
       LINEARISED,
       GREENLAGRANGE,
@@ -97,9 +102,9 @@ namespace mfront {
          * property
          */
     struct ConstantMaterialProperty {
-      //! parameter name associated with the material property
+      //! \brief parameter name associated with the material property
       std::string name;
-      //! default value for the constant material property
+      //! \brief default value for the constant material property
       double value;
     };
     /*!
@@ -107,9 +112,9 @@ namespace mfront {
      * property defined through an analytic expression
      */
     struct AnalyticMaterialProperty {
-      //! return the list of the variables
+      //! \return the list of the variables
       std::vector<std::string> getVariablesNames() const;
-      //! description of a material property
+      //! \brief description of a material property
       std::string f;
     };  // end of AnalyticMaterialProperty
         /*!
@@ -117,15 +122,15 @@ namespace mfront {
          * property defined through an mfront file
          */
     struct ExternalMFrontMaterialProperty {
-      //! description of a material property
+      //! \brief description of a material property
       std::shared_ptr<MaterialPropertyDescription> mpd;
     };
-    //! list of supported material properties types
+    //! \brief list of supported material properties types
     using MaterialPropertyTypes =
         tfel::meta::GenerateTypeList<ConstantMaterialProperty,
                                      AnalyticMaterialProperty,
                                      ExternalMFrontMaterialProperty>::type;
-    //! a simple alias
+    //! \brief a simple alias
     using StressFreeExpansionDescription =
         BehaviourData::StressFreeExpansionDescription;
     /*!
@@ -138,28 +143,28 @@ namespace mfront {
      * \brief structure used to defined a Hill tensor
      */
     struct HillTensor {
-      //! name of the Hill tensor
+      //! \brief name of the Hill tensor
       std::string name;
-      //! symbolic name of the Hill tensor
+      //! \brief symbolic name of the Hill tensor
       std::string symbolic_form;
-      //! Hill coeffients
+      //! \brief Hill coeffients
       std::vector<MaterialProperty> c;
     };  // end of struct HillTensor
-    //! a simple alias
+    //! \brief a simple alias
     using IntegrationScheme = mfront::IntegrationScheme;
-    //! a simple alias for backward compatibility
+    //! \brief a simple alias for backward compatibility
     static constexpr IntegrationScheme IMPLICITSCHEME =
         IntegrationScheme::IMPLICITSCHEME;
-    //! a simple alias for backward compatibility
+    //! \brief a simple alias for backward compatibility
     static constexpr IntegrationScheme EXPLICITSCHEME =
         IntegrationScheme::EXPLICITSCHEME;
-    //! a simple alias for backward compatibility
+    //! \brief a simple alias for backward compatibility
     static constexpr IntegrationScheme SPECIFICSCHEME =
         IntegrationScheme::SPECIFICSCHEME;
-    //! a simple alias for backward compatibility
+    //! \brief a simple alias for backward compatibility
     static constexpr IntegrationScheme USERDEFINEDSCHEME =
         IntegrationScheme::USERDEFINEDSCHEME;
-    //! a simple alias for backward compatibility
+    //! \brief a simple alias for backward compatibility
     static constexpr IntegrationScheme UNDEFINEDINTEGRATIONSCHEME =
         IntegrationScheme::UNDEFINEDINTEGRATIONSCHEME;
     /*!
@@ -167,11 +172,11 @@ namespace mfront {
      * property
      */
     struct MaterialPropertyInput {
-      //! variable name
+      //! \brief variable name
       std::string name;
-      //! external name
+      //! \brief external name
       std::string ename;
-      //! variable type
+      //! \brief variable type
       enum Category {
         TEMPERATURE,
         MATERIALPROPERTY,
@@ -183,20 +188,75 @@ namespace mfront {
       };
       Category category;
     };  // end of struct MaterialPropertyInput
-    //! attribute name
+    //! \brief attribute name
     static const char* const requiresStiffnessTensor;
-    //! attribute name
+    //! \brief attribute name
     static const char* const computesStiffnessTensor;
-    //! attribute name
+    //! \brief attribute name
     static const char* const requiresUnAlteredStiffnessTensor;
-    //! attribute name
+    //! \brief attribute name
     static const char* const requiresThermalExpansionCoefficientTensor;
-    //! attribute name
+    //! \brief attribute name
     static const char* const setRequireThermalExpansionCoefficientTensor;
-    //! constructor
+    //! \brief default constructor
     BehaviourDescription();
-    //! copy constructor
+    /*!
+     * \brief constructor
+     * \param[in] opts: options
+     */
+    BehaviourDescription(const tfel::utilities::DataMap&);
+    //! \brief copy constructor
     BehaviourDescription(const BehaviourDescription&);
+    //
+    using MaterialKnowledgeDescription::getAttribute;
+    using MaterialKnowledgeDescription::hasAttribute;
+    using MaterialKnowledgeDescription::setAttribute;
+    using MaterialKnowledgeDescription::updateAttribute;
+    /*!
+     * \brief set a mechanical attribute
+     * \param[in] h: modelling hypothesis
+     * \param[in] n: name
+     * \param[in] a: attribute
+     * \param[in] b: don't throw if the the
+     *                attribute already exists.
+     *                The attribute is left unchanged.
+     *                However the type of the attribute is checked.
+     */
+    void setAttribute(const Hypothesis,
+                      const std::string&,
+                      const MaterialKnowledgeAttribute&,
+                      const bool = false);
+    /*!
+     * \brief update an attribute
+     * \param[in] h: modelling hypothesis
+     * \param[in] n: name
+     * \param[in] a: attribute
+     */
+    void updateAttribute(const Hypothesis,
+                         const std::string&,
+                         const MaterialKnowledgeAttribute&);
+    /*!
+     * \return a mechanical attribute
+     * \param[in] h: modelling hypothesis
+     * \param[in] n: name
+     */
+    template <typename T>
+    const T& getAttribute(const Hypothesis, const std::string&) const;
+    /*!
+     * \return a mechanical attribute if it exists or the default
+     * value
+     * \param[in] h: modelling hypothesis
+     * \param[in] n: name
+     * \param[in] v: default value
+     */
+    template <typename T>
+    T getAttribute(const Hypothesis, const std::string&, const T&) const;
+    /*!
+     * \return true an attribute with the given name has been declared
+     * \param[in] h: modelling hypothesis
+     * \param[in] n: name
+     */
+    bool hasAttribute(const Hypothesis, const std::string&) const;
     /*!
      * \brief return true if the behaviour description allows the
      * declaration of user defined variables
@@ -808,6 +868,11 @@ namespace mfront {
         const VariableDescription&,
         const BehaviourData::RegistrationStatus = BehaviourData::UNREGISTRED);
     /*!
+     * \return if the temperature is defined as the first external state
+     * variable for all modelling hypotheses
+     */
+    bool isTemperatureDefinedAsTheFirstExternalStateVariable() const;
+    /*!
      * \brief add external state variables
      * \param[in] h: modelling hypothesis
      * \param[in] v: external state variables added
@@ -1399,51 +1464,6 @@ namespace mfront {
      */
     bool hasCode(const Hypothesis, const std::string&) const;
     /*!
-     * \brief set a mechanical attribute
-     * \param[in] h: modelling hypothesis
-     * \param[in] n: name
-     * \param[in] a: attribute
-     * \param[in] b: don't throw if the the
-     *                attribute already exists.
-     *                The attribute is left unchanged.
-     *                However the type of the attribute is checked.
-     */
-    void setAttribute(const Hypothesis,
-                      const std::string&,
-                      const BehaviourAttribute&,
-                      const bool = false);
-    /*!
-     * \brief update an attribute
-     * \param[in] h: modelling hypothesis
-     * \param[in] n: name
-     * \param[in] a: attribute
-     */
-    void updateAttribute(const Hypothesis,
-                         const std::string&,
-                         const BehaviourAttribute&);
-    /*!
-     * \return a mechanical attribute
-     * \param[in] h: modelling hypothesis
-     * \param[in] n: name
-     */
-    template <typename T>
-    const T& getAttribute(const Hypothesis, const std::string&) const;
-    /*!
-     * \return a mechanical attribute if it exists or the default
-     * value
-     * \param[in] h: modelling hypothesis
-     * \param[in] n: name
-     * \param[in] v: default value
-     */
-    template <typename T>
-    T getAttribute(const Hypothesis, const std::string&, const T&) const;
-    /*!
-     * \return true an attribute with the given name has been declared
-     * \param[in] h: modelling hypothesis
-     * \param[in] n: name
-     */
-    bool hasAttribute(const Hypothesis, const std::string&) const;
-    /*!
      * \return true a parameter with the given name has been declared
      * \param[in] h: modelling hypothesis
      * \param[in] n: name
@@ -1461,55 +1481,6 @@ namespace mfront {
      * parameter.
      */
     bool hasParameters() const;
-    /*!
-     * \brief insert a new attribute
-     * \param[in] n: name
-     * \param[in] a: attribute
-     * \param[in] b: don't throw if the the
-     *                attribute already exists.
-     *                The attribute is left unchanged.
-     *                However the type of the attribute is checked.
-     */
-    void setAttribute(const std::string&,
-                      const BehaviourAttribute&,
-                      const bool);
-    /*!
-     * \return true if an attribute with the given name as been registred
-     * \param[in] n: name
-     */
-    bool hasAttribute(const std::string&) const;
-    /*!
-     * \return the attribute with the given name
-     * \param[in] n: name
-     */
-    template <typename T>
-    typename std::enable_if<
-        tfel::meta::TLCountNbrOfT<T, BehaviourAttributeTypes>::value == 1,
-        T&>::type
-    getAttribute(const std::string&);
-    /*!
-     * \return the attribute with the given name
-     * \param[in] n: name
-     */
-    template <typename T>
-    typename std::enable_if<
-        tfel::meta::TLCountNbrOfT<T, BehaviourAttributeTypes>::value == 1,
-        const T&>::type
-    getAttribute(const std::string&) const;
-    /*!
-     * \return the attribute with the given name
-     * \param[in] n: name
-     */
-    template <typename T>
-    typename std::enable_if<
-        tfel::meta::TLCountNbrOfT<T, BehaviourAttributeTypes>::value == 1,
-        T>::type
-    getAttribute(const std::string&, const T&) const;
-    /*!
-     * \return all the attribute registred
-     * \param[in] n: name
-     */
-    const std::map<std::string, BehaviourAttribute>& getAttributes() const;
     /*!
      * reserve the given name
      * \param[in] h: hypothesis
@@ -1816,8 +1787,6 @@ namespace mfront {
     void checkModellingHypothesis(const Hypothesis) const;
     //! a simple alias
     typedef std::shared_ptr<BehaviourData> MBDPtr;
-    //! behaviour attributes
-    std::map<std::string, BehaviourAttribute> attributes;
     //! behaviour name
     std::string behaviour;
     //! dsl name
@@ -1921,7 +1890,6 @@ namespace mfront {
      */
     tfel::utilities::GenType<bool> areDynamicallyAllocatedVectorsAllowed_;
   };  // end of struct BehaviourDescription
-
   /*!
    * \return the name of a text file allowing the change the name of the
    * parameters of the given behaviour

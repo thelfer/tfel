@@ -66,6 +66,12 @@ namespace mfront {
     virtual void writeEndHeaderNamespace(std::ostream&) const = 0;
     /*!
      * \param[out] os:  output file stream
+     * \param[out] mpd: material property description
+     */
+    virtual void writeBuildIdentifierSymbol(
+        std::ostream&, const MaterialPropertyDescription&) const;
+    /*!
+     * \param[out] os:  output file stream
      * \param[in]  mpd: material property description
      */
     virtual void writeEntryPointSymbol(

@@ -251,7 +251,7 @@ namespace mtest {
     tfel::raise_if(dt < 0,
                    "GenericSolver::execute: "
                    "negative time step");
-    // almost bone
+    // almost one
     constexpr real aone = 1 - 10 * std::numeric_limits<real>::epsilon();
     bool end = false;
     if (o.dynamic_time_step_scaling) {

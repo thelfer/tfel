@@ -15,7 +15,8 @@
 
 namespace mfront {
 
-  ImplicitModelDSL::ImplicitModelDSL() {
+  ImplicitModelDSL::ImplicitModelDSL(const DSLOptions& opts)
+      : ImplicitDSLBase(opts) {
     this->mb.setDSLName("ImplicitModel");
     this->mb.declareAsGenericBehaviour();
     this->disableCallBack("@Behaviour");

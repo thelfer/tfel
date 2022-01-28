@@ -475,7 +475,7 @@ namespace mtest {
       r(2, 1) = -sinthe * cospsi;
       r(2, 2) = costhe;
     };
-    enum { STANDARD, EULER, MILLER, DIRECTION} choice = STANDARD;
+    enum { STANDARD, EULER, MILLER, DIRECTION } choice = STANDARD;
     this->checkNotEndOfLine("MTestParser::handleRotationMatrix", p,
                             this->tokens.end());
     if (p->value == "<") {
@@ -583,7 +583,8 @@ namespace mtest {
         this->readArrayOfSpecifiedSize(v2, t, p);
         this->readSpecifiedToken("MTestParser::handleRotationMatrix", "}", p,
                                  this->tokens.end());
-        const auto nv1 = std::sqrt(v1[0] * v1[0] + v1[1] * v1[1] + v1[2] * v1[2]);
+        const auto nv1 =
+            std::sqrt(v1[0] * v1[0] + v1[1] * v1[1] + v1[2] * v1[2]);
         if (tfel::math::ieee754::fpclassify(nv1) == FP_ZERO) {
           tfel::raise(
               "MTestParser::handleRotationMatrix: "
@@ -596,7 +597,8 @@ namespace mtest {
         v2[0] -= a * v1[0];
         v2[1] -= a * v1[1];
         v2[2] -= a * v1[2];
-        const auto nv2 = std::sqrt(v2[0] * v2[0] + v2[1] * v2[1] + v2[2] * v2[2]);
+        const auto nv2 =
+            std::sqrt(v2[0] * v2[0] + v2[1] * v2[1] + v2[2] * v2[2]);
         if (tfel::math::ieee754::fpclassify(nv2) == FP_ZERO) {
           tfel::raise(
               "MTestParser::handleRotationMatrix: "
@@ -983,7 +985,7 @@ namespace mtest {
       return {};
     }
     const auto d = tfel::utilities::Data::read_map(p, this->tokens.end())
-                       .get<std::map<std::string, tfel::utilities::Data>>();
+                       .get<tfel::utilities::DataMap>();
     ConstraintOptions opts;
     for (const auto& kv : d) {
       if (kv.first == "active") {

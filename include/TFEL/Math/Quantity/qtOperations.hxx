@@ -270,7 +270,7 @@ namespace tfel::math {
       OpNeg> {
     //! \brief result
     using type = qt<UnitType, typename UnaryResultType<ValueType, OpNeg>::type>;
-  }; // end of struct ComputeUnaryOperationResult
+  };  // end of struct ComputeUnaryOperationResult
 
   /*!
    * \brief Partial specialisation for addition of two qt having the same unit

@@ -1,10 +1,12 @@
-PTEST_DOCS = AxialForceEvolution.md  \
-	     AxialGrowthEvolution.md     \
-	     AxialLoading.md             \
-	     DisplacementEpsilon.md      \
-	     InnerRadiusEvolution.md     \
-	     OuterRadiusEvolution.md     \
-	     RadialLoading.md            \
+PTEST_DOCS = AxialForceEvolution.md     \
+	     AxialGrowthEvolution.md        \
+	     AxialLoading.md                \
+	     DisplacementEpsilon.md         \
+	     InnerRadiusEvolution.md        \
+	     OuterRadiusEvolution.md        \
+	     MandrelRadiusEvolution.md      \
+	     MandrelAxialGrowthEvolution.md \
+	     RadialLoading.md               \
 	     ResidualEpsilon.md
 
 ptestdocdir   = $(datadir)/doc/mtest/ptest

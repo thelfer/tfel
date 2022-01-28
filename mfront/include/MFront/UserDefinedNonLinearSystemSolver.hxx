@@ -22,7 +22,7 @@ namespace mfront {
   //! \brief class for user defined non linear system solvers
   struct UserDefinedNonLinearSystemSolver : public NonLinearSystemSolverBase {
     //! \brief
-    using DataMap = std::map<std::string, tfel::utilities::Data>;
+    using DataMap = tfel::utilities::DataMap;
     /*!
      * \brief constructor
      */

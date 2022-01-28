@@ -43,7 +43,7 @@ namespace tfel::utilities {
       default;
   DataParsingOptions::~DataParsingOptions() = default;
 
-  static void read_map(std::map<std::string, Data>& r,
+  static void read_map(DataMap& r,
                        CxxTokenizer::const_iterator& p,
                        const CxxTokenizer::const_iterator pe,
                        const DataParsingOptions& o) {
@@ -183,7 +183,7 @@ namespace tfel::utilities {
     CxxTokenizer::readSpecifiedToken("Data::read_map", "{", c, pe);
     CxxTokenizer::checkNotEndOfLine("Data::read", c, pe);
     if (c->value == "}") {
-      return std::map<std::string, Data>{};
+      return DataMap{};
     }
     if (c->flag == Token::Number) {
       p = c;
@@ -210,7 +210,7 @@ namespace tfel::utilities {
       CxxTokenizer::readSpecifiedToken("Data::read_map", "}", p, pe);
       return values;
     }
-    std::map<std::string, Data> r;
+    DataMap r;
     tfel::utilities::read_map(r, p, pe, opts);
     return std::move(r);
   }
@@ -318,8 +318,8 @@ namespace tfel::utilities {
       }
       return e;
     }  // end of apply
-    static bool apply(const std::map<std::string, Data>& v1,
-                      const std::map<std::string, Data>& v2) {
+    static bool apply(const DataMap& v1,
+                      const DataMap& v2) {
       bool e = true;
       if (v1.size() != v2.size()) {
         return false;
@@ -342,6 +342,110 @@ namespace tfel::utilities {
       return true;
     }
     return apply<DataComparator>(lhs, rhs);
+  }
+
+  DataMapValidator::DataMapValidator() = default;
+  DataMapValidator::DataMapValidator(DataMapValidator&&) = default;
+  DataMapValidator::DataMapValidator(const DataMapValidator&) = default;
+  DataMapValidator& DataMapValidator::operator=(DataMapValidator&&) = default;
+  DataMapValidator& DataMapValidator::operator=(const DataMapValidator&) =
+      default;
+
+  DataMapValidator& DataMapValidator::addDataValidator(const std::string& k,
+                                                       const DataValidator& f) {
+    this->validators[k].push_back(f);
+    return *this;
+  }  // end of addDataValidator
+
+  void DataMapValidator::validate(const DataMap& m) const {
+    for (const auto& [k, v] : m) {
+      const auto pvs = this->validators.find(k);
+      if (pvs == this->validators.end()) {
+        auto msg =
+            "DataMapValidator::validate: "
+            "invalid key '" +
+            k + "'.";
+        if (!this->validators.empty()) {
+          msg += "\nValid keys are:";
+          for (const auto& kv : this->validators) {
+            msg += "\n- '" + kv.first + "'";
+          }
+        }
+        tfel::raise(msg);
+      }
+      for (const auto& validator : pvs->second) {
+        try {
+          validator(v);
+        } catch (std::exception& e) {
+          tfel::raise(
+              "DataMapValidator::validate: "
+              "invalid value for key '" +
+              k + "' (" + std::string(e.what()) + ")");
+        } catch (...) {
+          tfel::raise(
+              "DataMapValidator::validate: "
+              "invalid value for key '" +
+              k + "' (unhandled exception was thrown)");
+        }
+      }
+    }
+  }
+
+  DataMapValidator::~DataMapValidator() = default;
+
+  void raiseUnmatchedDataType(const std::string_view n) {
+    tfel::raise(
+        "raiseUnmatchedDataType: "
+        "the type of data '" +
+        std::string{n} + "'is not the expected one");
+  }  // end of raiseUnmatchedParameterType
+
+  const Data& get(const DataMap& m, std::string_view n){
+    const auto i = m.find(n);
+    if (i == m.end()) {
+      auto msg = std::string{"Datas::get: parameter '"};
+      msg += n;
+      msg += "' is not declared";
+      tfel::raise(msg);
+    }
+    return i->second;
+  }
+
+  Data get_if(const DataMap& m, std::string_view n, const Data& v) {
+    if (contains(m, n)) {
+      return get(m, n);
+    }
+    return v;
+  }  // end of get
+
+  bool contains(const DataMap& p, std::string_view n) {
+    return p.find(n) != p.end();
+  }  // end of contains
+
+  DataMap extract(const DataMap& m, const std::vector<std::string>& names) {
+    auto r = DataMap();
+    for (const auto& n : names) {
+      const auto p = m.find(n);
+      if (p != m.end()) {
+        r.insert(*p);
+      }
+    }
+    return r;
+  }
+
+  DataMap merge(const DataMap& m1, const DataMap& m2, const bool b) {
+    auto r = m1;
+    if (b) {
+      r.insert(m2.begin(), m2.end());
+    } else {
+      for (const auto& kv : m2) {
+        if (!r.insert(kv).second) {
+          tfel::raise("merge: value associated with key '" + kv.first +
+                      "' already defined");
+        }
+      }
+    }
+    return r;
   }
 
 }  // end of namespace tfel::utilities
