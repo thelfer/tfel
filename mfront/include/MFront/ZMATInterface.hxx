@@ -76,6 +76,9 @@ namespace mfront {
         const BehaviourDescription&) const override;
     void writeIntegrationDataMainVariablesSetters(
         std::ostream&, const BehaviourDescription&) const override;
+    void writeBehaviourPostProcessings(std::ostream&,
+                                       const BehaviourDescription&,
+                                       const Hypothesis) const override;
     void endTreatment(const BehaviourDescription&,
                       const FileDescription&) const override;
     void getTargetsDescription(TargetsDescription&,

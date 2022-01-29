@@ -31,16 +31,19 @@ namespace mfront {
         public SupportedTypes {
     //! attribute used to store if an MTest file shall be generated
     static const char *const generateMTestFileAttribute;
-    //! a simple alias
+    //! \brief a simple alias
     using ModellingHypothesis = tfel::material::ModellingHypothesis;
-    //! a simple alias
+    //! \brief a simple alias
     using Hypothesis = ModellingHypothesis::Hypothesis;
-    // constructor
+    //! \brief constructor
     StandardBehaviourInterface();
-    bool isBehaviourConstructorRequired(
-        const Hypothesis, const BehaviourDescription &) const override;
     //
     std::string getInterfaceVersion() const override;
+    bool isBehaviourConstructorRequired(
+        const Hypothesis, const BehaviourDescription &) const override;
+    void writeBehaviourPostProcessings(std::ostream&,
+                                       const BehaviourDescription&,
+                                       const Hypothesis) const override;
     /*!
      * \return the basis for the function(s)' names implementing the
      * behaviour
@@ -152,7 +155,7 @@ namespace mfront {
     virtual bool readBooleanValue(const std::string &,
                                   tokens_iterator &,
                                   const tokens_iterator) const;
-    //! destructor
+    //! \brief destructor
     ~StandardBehaviourInterface() override;
   };  // end of struct StandardBehaviourInterface
 

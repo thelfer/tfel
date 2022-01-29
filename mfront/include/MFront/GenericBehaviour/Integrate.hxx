@@ -91,6 +91,7 @@ namespace mfront::gb {
                              const tfel::math::t2tot2<N, StressType>& K) {
     tfel::math::map<tfel::math::t2tot2<N, StressType>>(v) = K;
   }  // end of exportTangentOperator
+
   /*!
    * \brief export the tangent operator used by standard small
    * strain behaviours.
@@ -330,6 +331,41 @@ namespace mfront::gb {
     }
     return rdt < time(0.99) ? 0 : 1;
   }  // end of integrate
+
+  template <typename Behaviour, void (Behaviour::*m)()>
+  void initialize(mfront_gb_BehaviourData& d,
+                  const real* const variables,
+                  const tfel::material::OutOfBoundsPolicy p) {
+    Behaviour b(d);
+    b.setOutOfBoundsPolicy(p);
+    b.initialize();
+    b.checkBounds();
+    (b.*m)();
+    b.exportStateData(d.s1);
+  }  // end of executePostProcessing
+
+  template <typename Behaviour, void (Behaviour::*m)(const real* const)>
+  void initialize(mfront_gb_BehaviourData& d,
+                  const real* const variables,
+                  const tfel::material::OutOfBoundsPolicy p) {
+    Behaviour b(d);
+    b.setOutOfBoundsPolicy(p);
+    b.initialize();
+    b.checkBounds();
+    (b.*m)(variables);
+    b.exportStateData(d.s1);
+  }  // end of executePostProcessing
+
+  template <typename Behaviour, void (Behaviour::*m)(real* const)>
+  void executePostProcessing(real* const post_processing_variables,
+                             const mfront_gb_BehaviourData& d,
+                             const tfel::material::OutOfBoundsPolicy p) {
+    Behaviour b(d);
+    b.setOutOfBoundsPolicy(p);
+    b.initialize();
+    b.checkBounds();
+    (b.*m)(post_processing_variables);
+  }  // end of executePostProcessing
 
 }  // end of namespace mfront::gb
 

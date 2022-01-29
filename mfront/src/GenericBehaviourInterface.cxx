@@ -16,6 +16,7 @@
 #include "TFEL/Raise.hxx"
 #include "TFEL/Config/GetInstallPath.hxx"
 #include "TFEL/System/System.hxx"
+#include "MFront/DSLUtilities.hxx"
 #include "MFront/FileDescription.hxx"
 #include "MFront/LibraryDescription.hxx"
 #include "MFront/TargetsDescription.hxx"
@@ -928,7 +929,7 @@ namespace mfront {
 
   std::string GenericBehaviourInterface::getInterfaceName() const {
     return "Generic";
-  }  // end of GenericBehaviourInterface::getInterfaceName
+  }  // end of getInterfaceName
 
   std::pair<bool, GenericBehaviourInterface::tokens_iterator>
   GenericBehaviourInterface::treatKeyword(BehaviourDescription& bd,
@@ -958,13 +959,13 @@ namespace mfront {
       return {true, current};
     }
     return {false, current};
-  }  // end of GenericBehaviourInterface::treatKeyword
+  }  // end of treatKeyword
 
   std::set<GenericBehaviourInterface::Hypothesis>
   GenericBehaviourInterface::getModellingHypothesesToBeTreated(
       const BehaviourDescription& bd) const {
     return bd.getModellingHypotheses();
-  }  // end of GenericBehaviourInterface::getModellingHypothesesToBeTreated
+  }  // end of getModellingHypothesesToBeTreated
 
   void GenericBehaviourInterface::writeInterfaceSpecificIncludes(
       std::ostream& os, const BehaviourDescription& bd) const {
@@ -973,7 +974,7 @@ namespace mfront {
     if (bd.getAttribute(BehaviourDescription::requiresStiffnessTensor, false)) {
       os << "#include \"MFront/GenericBehaviour/ComputeStiffnessTensor.hxx\"\n";
     }
-  }  // end of GenericBehaviourInterface::writeInterfaceSpecificIncludes
+  }  // end of writeInterfaceSpecificIncludes
 
   void GenericBehaviourInterface::getTargetsDescription(
       TargetsDescription& d, const BehaviourDescription& bd) {
@@ -999,7 +1000,7 @@ namespace mfront {
     for (const auto h : this->getModellingHypothesesToBeTreated(bd)) {
       insert_if(l.epts, this->getFunctionNameForHypothesis(name, h));
     }
-  }  // end of GenericBehaviourInterface::getTargetsDescription
+  }  // end of getTargetsDescription
 
   void GenericBehaviourInterface::endTreatment(
       const BehaviourDescription& bd, const FileDescription& fd) const {
@@ -1044,12 +1045,23 @@ namespace mfront {
     this->writeSetParametersFunctionsDeclarations(out, bd, name);
 
     for (const auto h : mhs) {
+      const auto& d = bd.getBehaviourData(h);
       const auto f = this->getFunctionNameForHypothesis(name, h);
       out << "/*!\n"
           << " * \\param[in,out] d: material data\n"
           << " */\n"
           << "MFRONT_SHAREDOBJ int " << f
           << "(mfront_gb_BehaviourData* const);\n\n";
+      // postprocessings
+      for (const auto& p : d.getPostProcessings()) {
+        out << "/*!\n"
+            << " * \\param[out] values: results of the postprocessing\n"
+            << " * \\param[in] d: material data\n"
+            << " */\n"
+            << "MFRONT_SHAREDOBJ void " << f << "_" << p.first
+            << "(mfront_gb_real* const\n,"
+            << "const mfront_gb_BehaviourData* const);\n\n";
+      }
     }
 
     out << "#ifdef __cplusplus\n"
@@ -1262,11 +1274,38 @@ namespace mfront {
       out << "return r;\n"
           << "} // end of " << f << "\n\n";
     }
+    // postprocessings
+    for (const auto h : mhs) {
+      const auto& d = bd.getBehaviourData(h);
+      const auto f = this->getFunctionNameForHypothesis(name, h);
+      // postprocessings
+      for (const auto& p : d.getPostProcessings()) {
+        out << "MFRONT_SHAREDOBJ void " << f << "_" << p.first
+            << "(mfront_gb_real* const values,\n"
+            << "const mfront_gb_BehaviourData* const d){\n"
+            << "using namespace tfel::material;\n"
+            << "using real = mfront::gb::real;\n"
+            << "constexpr auto h = ModellingHypothesis::"
+            << ModellingHypothesis::toUpperCaseString(h) << ";\n";
+        if (bd.useQt()) {
+          out << "using Behaviour = " << bd.getClassName()
+              << "<h,real,true>;\n";
+        } else {
+          out << "using Behaviour = " << bd.getClassName()
+              << "<h,real,false>;\n";
+        }
+        out << "mfront::gb::executePostProcessing<Behaviour,&Behaviour::execute"
+            << p.first << "PostProcessing>(values,*d"
+            << ", " << name << "_getOutOfBoundsPolicy());\n";
+        out << "}\n";
+      }
+    }
+    //
     out << "#ifdef __cplusplus\n"
         << "}\n"
         << "#endif /* __cplusplus */\n\n";
     out.close();
-  }  // end of GenericBehaviourInterface::endTreatment
+  }  // end of endTreatment
 
   void GenericBehaviourInterface::generateMTestFile(
       std::ostream& out,
@@ -1435,7 +1474,7 @@ namespace mfront {
         << "static_cast<void>(TVectorSize); // remove gcc warning\n"
         << "static_cast<void>(StensorSize); // remove gcc warning\n"
         << "static_cast<void>(TensorSize);  // remove gcc warning\n";
-  }  // end of GenericBehaviourInterface::generateMTestFile
+  }  // end of generateMTestFile
 
   std::string GenericBehaviourInterface::getLibraryName(
       const BehaviourDescription& bd) const {
@@ -1447,17 +1486,17 @@ namespace mfront {
       }
     }
     return bd.getLibrary() + "-generic";
-  }  // end of GenericBehaviourInterface::getLibraryName
+  }  // end of getLibraryName
 
   std::string GenericBehaviourInterface::getFunctionNameBasis(
       const std::string& n) const {
     return n;
-  }  // end of GenericBehaviourInterface::getFunctionName
+  }  // end of getFunctionName
 
   std::string GenericBehaviourInterface::getFunctionNameForHypothesis(
       const std::string& n, const Hypothesis h) const {
     return n + "_" + ModellingHypothesis::toString(h);
-  }  // end of GenericBehaviourInterface::getFunctionNameForHypothesis
+  }  // end of getFunctionNameForHypothesis
 
   void GenericBehaviourInterface::writeBehaviourConstructorHeader(
       std::ostream& os,
@@ -1484,7 +1523,7 @@ namespace mfront {
     if (!initStateVarsIncrements.empty()) {
       os << ",\n" << initStateVarsIncrements;
     }
-  }  // end of GenericBehaviourInterface::writeBehaviourConstructorHeader
+  }  // end of writeBehaviourConstructorHeader
 
   void GenericBehaviourInterface::writeBehaviourConstructorBody(
       std::ostream& os,
@@ -1617,7 +1656,7 @@ namespace mfront {
         }
       }
     }
-  }  // end of GenericBehaviourInterface::writeBehaviourConstructorBody
+  }  // end of writeBehaviourConstructorBody
 
   void GenericBehaviourInterface::writeBehaviourDataConstructor(
       std::ostream& os,
@@ -1863,7 +1902,7 @@ namespace mfront {
       os << ";\n";
     }
     os << "}\n\n";
-  }  // end of GenericBehaviourInterface::writeBehaviourDataConstructor
+  }  // end of writeBehaviourDataConstructor
 
   void GenericBehaviourInterface::writeIntegrationDataConstructor(
       std::ostream& os,
@@ -1933,11 +1972,11 @@ namespace mfront {
       }
     }
     os << "}\n\n";
-  }  // end of GenericBehaviourInterface::writeIntegrationDataConstructor
+  }  // end of writeIntegrationDataConstructor
 
   void GenericBehaviourInterface::writeBehaviourDataMainVariablesSetters(
       std::ostream&, const BehaviourDescription&) const {
-  }  // end of GenericBehaviourInterface::writeBehaviourDataMainVariablesSetters
+  }  // end of writeBehaviourDataMainVariablesSetters
 
   void GenericBehaviourInterface::writeIntegrationDataMainVariablesSetters(
       std::ostream&, const BehaviourDescription&) const {}  // end of
@@ -2002,7 +2041,49 @@ namespace mfront {
       o += SupportedTypes::getTypeSize(iv.type, iv.arraySize);
     }
     os << "} // end of exportStateData\n\n";
-  }  // end of GenericBehaviourInterface::exportMechanicalData
+  }  // end of exportMechanicalData
+
+  void GenericBehaviourInterface::writeBehaviourPostProcessings(
+      std::ostream& os,
+      const BehaviourDescription& bd,
+      const Hypothesis h) const {
+    auto initializeVariablesFromArrayOfValues =
+        [&os](const std::vector<VariableDescription>& variables) {
+          auto o = SupportedTypes::TypeSize{};
+          for (const auto& v : variables) {
+            if (v.arraySize == 1u) {
+              if (v.getTypeFlag() == SupportedTypes::SCALAR) {
+                os << "auto&& " << v.name;
+              } else {
+                os << "auto " << v.name;
+              }
+              os << " = tfel::math::map<" << v.type
+                 << ">(mfront_postprocessing_outputs + " << o << ");\n";
+            } else {
+              os << "auto " << v.name
+                 << " = tfel::math::map_array<tfel::math::fsarray<"
+                 << v.arraySize << "," << v.type
+                 << ">>(mfront_postprocessing_outputs + " << o << ");\n";
+            }
+            o += v.getTypeSize();
+          }
+        };
+    const auto& d = bd.getBehaviourData(h);
+    for (const auto& [n, c] : d.getPostProcessings()) {
+      const auto& postprocessing_variables =
+          c.attributes.at(CodeBlock::used_postprocessing_variables)
+              .get<std::vector<VariableDescription>>();
+      os << "void execute" << n << "PostProcessing(NumericType* const "
+         << "mfront_postprocessing_outputs){\n"
+         << "using namespace std;\n"
+         << "using namespace tfel::math;\n"
+         << "using namespace tfel::material;\n";
+      writeMaterialLaws(os, bd.getMaterialLaws());
+      initializeVariablesFromArrayOfValues(postprocessing_variables);
+      os << c.code << '\n'
+         << "} // end of execute" << n << "PostProcessing\n\n";
+    }
+  }  // end of writeBehaviourPostProcessings
 
   void GenericBehaviourInterface::writeStrainMeasureCommonPreProcessing1(
       std::ostream& out, const Hypothesis h) const {
@@ -2019,7 +2100,7 @@ namespace mfront {
         << ",F0.begin());\n";
     out << "tfel::fsalgo::copy<" << ts << ">::exe(d->s1.gradients"
         << ",F1.begin());\n";
-  }  // end of GenericBehaviourInterface::writeStrainMeasureCommonPreProcessing1
+  }  // end of writeStrainMeasureCommonPreProcessing1
 
   void
   GenericBehaviourInterface::writeStandardFiniteStrainBehaviourPreProcessing(
@@ -2093,8 +2174,7 @@ namespace mfront {
           << "d->s1.thermodynamic_forces = s1.begin();\n";
     }
     out << "}\n";
-  }  // end of
-  // GenericBehaviourInterface::writeStandardFiniteStrainBehaviourPreProcessing
+  }  // end of writeStandardFiniteStrainBehaviourPreProcessing
 
   void GenericBehaviourInterface::writeGreenLagrangeStrainMeasurePreProcessing(
       std::ostream& out,
@@ -2161,8 +2241,7 @@ namespace mfront {
         << "  std::exit(-1);\n"
         << "}\n";
     this->writeStrainMeasureCommonPreProcessing2(out, "S");
-  }  // end of
-  // GenericBehaviourInterface::writeGreenLagrangeStrainMeasurePreProcessing
+  }  // end of writeGreenLagrangeStrainMeasurePreProcessing
 
   void GenericBehaviourInterface::writeHenckyStrainMeasurePreProcessing(
       std::ostream& out,
@@ -2224,8 +2303,7 @@ namespace mfront {
         << "  std::exit(-1);\n"
         << "}\n";
     this->writeStrainMeasureCommonPreProcessing2(out, "T");
-  }  // end of
-     // GenericBehaviourInterface::writeHenckyStrainMeasurePreProcessing
+  }  // end of writeHenckyStrainMeasurePreProcessing
 
   void GenericBehaviourInterface::writeStrainMeasureCommonPreProcessing2(
       std::ostream& out, const std::string& ss) const {
@@ -2244,8 +2322,7 @@ namespace mfront {
         << "d->K = K.begin();\n"
         << "const auto bp = K(0,0) < -0.5;\n"
         << "const auto bk = K(0,0) > 0.5;\n";
-  }  // end of
-     // GenericBehaviourInterface::writeStrainMeasureCommonPreProcessing2
+  }  // end of writeStrainMeasureCommonPreProcessing2
 
   void
   GenericBehaviourInterface::writeStandardFiniteStrainBehaviourPostProcessing(

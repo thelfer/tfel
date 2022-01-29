@@ -49,7 +49,6 @@ namespace mfront {
                       const FileDescription&) const override;
     void getTargetsDescription(TargetsDescription&,
                                const BehaviourDescription&) override;
-
     void writeBehaviourConstructorHeader(std::ostream&,
                                          const BehaviourDescription&,
                                          const Hypothesis,
@@ -57,7 +56,6 @@ namespace mfront {
     void writeBehaviourConstructorBody(std::ostream&,
                                        const BehaviourDescription&,
                                        const Hypothesis) const override;
-
     void writeBehaviourDataConstructor(
         std::ostream&,
         const Hypothesis,
@@ -70,11 +68,12 @@ namespace mfront {
         std::ostream&, const BehaviourDescription&) const override;
     void writeIntegrationDataMainVariablesSetters(
         std::ostream&, const BehaviourDescription&) const override;
-
     void exportMechanicalData(std::ostream&,
                               const Hypothesis,
                               const BehaviourDescription&) const override;
-
+    void writeBehaviourPostProcessings(std::ostream&,
+                                       const BehaviourDescription&,
+                                       const Hypothesis) const override;
     std::string getFunctionNameBasis(const std::string&) const override;
 
     virtual std::string getLibraryName(const BehaviourDescription&) const;
@@ -85,7 +84,7 @@ namespace mfront {
     virtual std::string getFunctionNameForHypothesis(const std::string&,
                                                      const Hypothesis) const;
 
-    //! destructor
+    //! \brief destructor
     ~GenericBehaviourInterface() override;
 
    protected:

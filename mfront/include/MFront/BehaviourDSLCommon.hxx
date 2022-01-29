@@ -1103,10 +1103,12 @@ namespace mfront {
         const BehaviourDescription::HillTensor&,
         std::function<std::string(const MaterialPropertyInput&)>&) const;
     /*!
-     * \brief write the initalize method . This method is called after that
-     * the main variables were set.
+     * \brief write the initalize methods.
+     *
+     * It always create an `initialize` method which contains `.
+     * This method is called after that the main variables were set.
      */
-    virtual void writeBehaviourInitializeMethod(std::ostream&,
+    virtual void writeBehaviourInitializeMethods(std::ostream&,
                                                 const Hypothesis) const;
     /*!
      * write part of the constructor specific to the parser
@@ -1195,6 +1197,9 @@ namespace mfront {
 
     virtual void writeBehaviourUpdateExternalStateVariables(
         std::ostream&, const Hypothesis) const;
+
+    virtual void writeBehaviourPostProcessings(std::ostream&,
+                                               const Hypothesis) const;
 
     virtual void writeBehaviourOutputOperator(std::ostream&,
                                               const Hypothesis) const;

@@ -819,6 +819,11 @@ namespace mfront {
     // handled by the constructors
   }
 
+  void ZMATInterface::writeBehaviourPostProcessings(std::ostream&,
+                                                    const BehaviourDescription&,
+                                                    const Hypothesis) const {
+  }  // end of writeBehaviourPostProcessings
+
   void ZMATInterface::endTreatment(const BehaviourDescription& mb,
                                    const FileDescription& fd) const {
     using namespace std;

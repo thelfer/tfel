@@ -2291,6 +2291,7 @@ namespace mfront {
             return this->standardModifier(hv, v, b);
           });
       auto c = this->readNextBlock(o);
+      auto& log = getLogStream();
       c.attributes[CodeBlock::used_postprocessing_variables] =
           used_post_processing_variables;
       this->mb.addPostProcessing(h, pname, c);
@@ -6088,7 +6089,7 @@ namespace mfront {
     os << "}\n\n";
   }  // end of writeBehaviourComputeStressFreeExpansion
 
-  void BehaviourDSLCommon::writeBehaviourInitializeMethod(
+  void BehaviourDSLCommon::writeBehaviourInitializeMethods(
       std::ostream& os, const Hypothesis h) const {
     this->checkBehaviourFile(os);
     os << "/*!\n"
@@ -6518,6 +6519,13 @@ namespace mfront {
     }
     os << "}\n\n";
   }
+
+  void BehaviourDSLCommon::writeBehaviourPostProcessings(
+      std::ostream& os, const Hypothesis h) const {
+    for (const auto& i : this->interfaces) {
+      i.second->writeBehaviourPostProcessings(os, this->mb, h);
+    }
+  }  // end of writeBehaviourPostProcessings
 
   void BehaviourDSLCommon::writeBehaviourIncludes(std::ostream& os) const {
     this->checkBehaviourFile(os);
@@ -7058,7 +7066,7 @@ namespace mfront {
     os << "public:\n\n";
     this->writeBehaviourConstructors(os, h);
     this->writeBehaviourComputeStressFreeExpansion(os, h);
-    this->writeBehaviourInitializeMethod(os, h);
+    this->writeBehaviourInitializeMethods(os, h);
     this->writeBehaviourSetOutOfBoundsPolicy(os);
     this->writeBehaviourGetModellingHypothesis(os);
     this->writeBehaviourCheckBounds(os, h);
@@ -7073,6 +7081,7 @@ namespace mfront {
     this->writeBehaviourComputeSpeedOfSound(os, h);
     this->writeBehaviourGetTangentOperator(os);
     this->writeBehaviourUpdateExternalStateVariables(os, h);
+    this->writeBehaviourPostProcessings(os, h);
     this->writeBehaviourDestructor(os);
     this->checkBehaviourFile(os);
     os << "private:\n\n";
