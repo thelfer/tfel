@@ -145,7 +145,7 @@ namespace mfront {
     virtual void writeIntegrationDataConstructor(
         std::ostream&, const Hypothesis, const BehaviourDescription&) const = 0;
     /*!
-     * write the behaviour constructor associated with the law
+     * \brief write the setters associated with the main variables
      * \param[in] behaviourFile : output file
      * \param[in] mb            : behaviour description
      */

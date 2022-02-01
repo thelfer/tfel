@@ -168,13 +168,17 @@ nobase_include_HEADERS= MFront/MFront.hxx                                     \
 			MFront/BehaviourBrick/Chaboche2012KinematicHardeningRule.hxx       \
 			MFront/BehaviourBrick/BurletCailletaudKinematicHardeningRule.hxx   \
 			MFront/BehaviourBrick/KinematicHardeningRuleFactory.hxx            \
+			MFront/GenericBehaviour/GenericBehaviourTraits.hxx                 \
 			MFront/GenericBehaviour/Types.h                                    \
 			MFront/GenericBehaviour/Types.hxx                                  \
-                        MFront/GenericBehaviour/State.h                                    \
+            MFront/GenericBehaviour/State.h                                    \
 			MFront/GenericBehaviour/State.hxx                                  \
 			MFront/GenericBehaviour/BehaviourData.h                            \
 			MFront/GenericBehaviour/BehaviourData.hxx                          \
 			MFront/GenericBehaviour/Integrate.hxx                              \
+			MFront/GenericBehaviour/StandardFiniteStrainBehaviourIntegrate.hxx \
+			MFront/GenericBehaviour/GreenLagrangeStrainIntegrate.hxx           \
+			MFront/GenericBehaviour/LogarithmicStrainIntegrate.hxx             \
 			MFront/GenericBehaviour/ComputeStiffnessTensor.hxx                 \
 			MFront/GenericBehaviour/ComputeStiffnessTensor.ixx                 \
 			MFront/LocalDataStructure.hxx

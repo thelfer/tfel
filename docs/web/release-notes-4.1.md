@@ -185,6 +185,9 @@ $ mfront --list-dsl-options=RungeKutta
 - automatically_declare_temperature_as_first_external_state_variable: boolean stating if the temperature shall be automatically declared as an external state variable.
 ~~~~
 
+## Post-processing of behaviours
+
+
 # `MTest` improvements
 
 ## Support for a boundary condition modelling the effet of a mandrel in pipe modelling {#sec:tfel_4.1:mtest:mandrel}
@@ -353,6 +356,25 @@ for the `PlaneStrain` modelling hypothesis:
 b = mtest.Behaviour(library = 'src/libBehaviour.so',
                     function = 'ImplicitNorton',
                     hypothesis = 'PlaneStrain')
+~~~~
+
+# `mfront-query` improvements
+
+## List of post-processings
+
+### Example of usage
+
+~~~~{.bash}
+$ mfront-query --post-processings Elasticity.mfront 
+- PrincipalStrain: compute the principal strain. Modified post-processing variables are:
+  - PrincipalStrain (εᵖ)
+~~~~
+
+## List of post-processing variables
+
+~~~~{.bash}
+$ mfront-query --post-processing-variables Elasticity.mfront 
+- PrincipalStrain (εᵖ)
 ~~~~
 
 # Issues fixed

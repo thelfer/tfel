@@ -3535,6 +3535,7 @@ namespace mfront {
     this->reserveName("behaviourData");
     this->reserveName("time_scaling_factor");
     this->reserveName("mp_bounds_check_status");
+    this->reserveName("initial_state");
   }  // end of registerDefaultVarNames
 
   bool BehaviourDSLCommon::useQt() const {

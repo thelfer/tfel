@@ -41,6 +41,7 @@ namespace mfront {
     std::string getInterfaceVersion() const override;
     bool isBehaviourConstructorRequired(
         const Hypothesis, const BehaviourDescription &) const override;
+    //
     void writeBehaviourPostProcessings(std::ostream&,
                                        const BehaviourDescription&,
                                        const Hypothesis) const override;
