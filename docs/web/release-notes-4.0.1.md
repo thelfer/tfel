@@ -27,6 +27,10 @@ For more details, see <https://github.com/thelfer/tfel/issues/102>
 
 For more details, see <https://github.com/thelfer/tfel/issues/101>
 
+## Issue #81: [TFELMaterial] The Mohr-Coulomb stress criterion is broken after pull request `#5`
+
+For more details, see <https://github.com/thelfer/tfel/issues/81>
+
 ## Issue #78: [TFELMath] missing `const` qualifier in the implementation of the `map` function for immutable views
 
 For more details, see <https://github.com/thelfer/tfel/issues/78>
