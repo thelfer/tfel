@@ -107,7 +107,7 @@ namespace tfel::material {
                    -real(1)),
           real(1));
       const auto term1 = p.cos_lodeT - isqrt3 * p.sin_angle * p.sin_lodeT;
-      const auto term2 = sign * p.sin_lodeT + isqrt3 * sin_angle * p.cos_lodeT;
+      const auto term2 = sign * p.sin_lodeT + isqrt3 * p.sin_angle * p.cos_lodeT;
       const auto term3 = 18. * p.cos_3_lodeT * p.cos_3_lodeT * p.cos_3_lodeT;
 
       const auto B =
@@ -115,7 +115,7 @@ namespace tfel::material {
       const auto C =
           (-p.cos_3_lodeT * term1 - 3. * sign * p.sin_3_lodeT * term2) / term3;
 
-      const auto A = -isqrt3 * sin_angle * sign * p.sin_lodeT -
+      const auto A = -isqrt3 * p.sin_angle * sign * p.sin_lodeT -
                      B * sign * p.sin_3_lodeT -
                      C * p.sin_3_lodeT * p.sin_3_lodeT + p.cos_lodeT;
       return A + B * sin_3_lode + C * sin_3_lode * sin_3_lode;
@@ -154,6 +154,7 @@ namespace tfel::material {
     const auto sin_lode = std::sin(lode);
     const auto cos_3_lode = std::cos(3 * lode);
     const auto sin_3_lode = arg;
+    const auto sin_6_lode = std::sin(6 * lode);
     const auto tan_3_lode = std::tan(3 * lode);
     auto K = real{0};
     auto dK_dlode = real{1};
@@ -167,7 +168,7 @@ namespace tfel::material {
                    -real(1)),
           real(1));
       const auto term1 = p.cos_lodeT - isqrt3 * p.sin_angle * p.sin_lodeT;
-      const auto term2 = sign * p.sin_lodeT + isqrt3 * sin_angle * p.cos_lodeT;
+      const auto term2 = sign * p.sin_lodeT + isqrt3 * p.sin_angle * p.cos_lodeT;
       const auto term3 = 18. * p.cos_3_lodeT * p.cos_3_lodeT * p.cos_3_lodeT;
 
       const auto B =
@@ -175,7 +176,7 @@ namespace tfel::material {
       const auto C =
           (-p.cos_3_lodeT * term1 - 3. * sign * p.sin_3_lodeT * term2) / term3;
 
-      const auto A = -isqrt3 * sin_angle * sign * p.sin_lodeT -
+      const auto A = -isqrt3 * p.sin_angle * sign * p.sin_lodeT -
                      B * sign * p.sin_3_lodeT -
                      C * p.sin_3_lodeT * p.sin_3_lodeT + p.cos_lodeT;
       return {A + B * sin_3_lode + C * sin_3_lode * sin_3_lode,
@@ -227,6 +228,8 @@ namespace tfel::material {
     const auto cos_3_lode = std::cos(3 * lode);
     const auto sin_3_lode = arg;
     const auto tan_3_lode = std::tan(3 * lode);
+    const auto sin_6_lode = std::sin(6 * lode);
+    const auto cos_6_lode = std::cos(6 * lode);
     auto K = real{};
     auto dK_dlode = real{};
     auto d2K_d2lode = real{};
@@ -241,7 +244,7 @@ namespace tfel::material {
                    -real(1)),
           real(1));
       const auto term1 = p.cos_lodeT - isqrt3 * p.sin_angle * p.sin_lodeT;
-      const auto term2 = sign * p.sin_lodeT + isqrt3 * sin_angle * p.cos_lodeT;
+      const auto term2 = sign * p.sin_lodeT + isqrt3 * p.sin_angle * p.cos_lodeT;
       const auto term3 = 18. * p.cos_3_lodeT * p.cos_3_lodeT * p.cos_3_lodeT;
 
       const auto B =
@@ -249,11 +252,11 @@ namespace tfel::material {
       const auto C =
           (-p.cos_3_lodeT * term1 - 3. * sign * p.sin_3_lodeT * term2) / term3;
 
-      const auto A = -isqrt3 * sin_angle * sign * p.sin_lodeT -
+      const auto A = -isqrt3 * p.sin_angle * sign * p.sin_lodeT -
                      B * sign * p.sin_3_lodeT -
                      C * p.sin_3_lodeT * p.sin_3_lodeT + p.cos_lodeT;
       return {A + B * sin_3_lode + C * sin_3_lode * sin_3_lode,
-              3. * B * cos_3_lode + 3. * C * sin_6_lode};
+              3. * B * cos_3_lode + 3. * C * sin_6_lode, -9. * B * sin_3_lode + 18. * C * cos_6_lode};
     }();
     // flow direction
     const auto dJ3 = tfel::math::computeDeviatorDeterminantDerivative(sig);
