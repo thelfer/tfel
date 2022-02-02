@@ -368,6 +368,9 @@ namespace tfel::system {
   typedef int(TFEL_ADDCALL_PTR GenericBehaviourInitializeFctPtr)(
       ::mfront_gb_BehaviourData *const);
   //! \brief a simple alias.
+  typedef int(TFEL_ADDCALL_PTR GenericBehaviourPostProcessingFctPtr)(
+      ::mfront_gb_real *const, ::mfront_gb_BehaviourData *const);
+  //! \brief a simple alias.
   typedef void(TFEL_ADDCALL_PTR GenericBehaviourRotateGradientsFctPtr)(
       ::mfront_gb_real *const,
       const ::mfront_gb_real *const,

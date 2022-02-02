@@ -47,6 +47,70 @@ As the time of writting this notice, the following dsl's are available:
 - `RungeKutta`: this parser provides a generic integrator based on one
   of the many Runge-Kutta algorithm.
 
+## DSL options
+
+A DSL' behaviour may be changed using options defined either in the
+`MFront` file using a JSON-like syntax or as a command line
+argument.
+
+The options related to a specific `DSL` can be retrieved using the
+`--list-dsl-options` command line argument, as follows:
+
+~~~~{.bash}
+$ mfront --list-dsl-options=Model
+- parameters_as_static_variables: boolean stating if the parameter shall be treated as static variables.
+- build_identifier              : string specifying a build identifier. This option shall only be specified on the command line.
+~~~~
+
+### Defining `DSL` options in the MFront file
+
+Options can be passed to a DSL as follows:
+
+~~~~{.cxx}
+@DSL Default{
+  parameters_as_static_variables : true
+};
+~~~~
+
+### Defining `DSL` options on the command line:
+
+`MFront` have various command line arguments to define options passed to DSLs:
+
+- `--dsl-option`, which allows to define options passed to domain
+  specific languages.
+- `--behaviour-dsl-option`, which allows to define options passed to
+  domain specific languages related to behaviours.
+- `--material-property-dsl-option`, which allows to define options
+  passed to domain specific languages related to material properties.
+- `--model-dsl-option`, which allows to define options passed to domain
+  specific languages related to models.
+
+For example, the `--dsl-option` can be used as follows:
+
+~~~~{.bash}
+$ mfront --obuild --interface=cyrano --dsl-option=build_identifier:\"Cyrano-3.2\" Elasticity.mfront
+~~~~
+
+This example illustrates that special care must be taken when defining
+an option expecting a string value.
+
+### Options common to all DSLs
+
+The following options are available for all DSLs:
+
+- `build_identifier`, which must be associated to a string value.
+  However, the `build_identifier` is not meant to be directly specified
+  in the `MFront` source file. It shall rather be defined on the command
+  line.
+- `parameters_as_static_variables`, which states if parameters shall
+  be treated as static variables.
+
+### Options common to all DSLs related to behaviours
+
+- `automatically_declare_temperature_as_first_external_state_variable`:
+  boolean stating if the temperature shall be automatically declared as
+  an external state variable.
+
 ## Example
 
 ~~~~{.cpp}

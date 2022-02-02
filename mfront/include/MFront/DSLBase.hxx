@@ -116,18 +116,18 @@ namespace mfront {
     };  // end of struct WordAnalyser
     //! \brief options passed to the readNextBlock member
     struct CodeBlockParserOptions {
-      //! default constructor
+      //! \brief default constructor
       CodeBlockParserOptions();
-      //! move constructor
+      //! \brief move constructor
       CodeBlockParserOptions(CodeBlockParserOptions&&) = default;
-      //! copy constructor
+      //! \brief copy constructor
       CodeBlockParserOptions(const CodeBlockParserOptions&) = default;
-      //! move assignement
+      //! \brief move assignement
       CodeBlockParserOptions& operator=(CodeBlockParserOptions&&) = default;
-      //! standard assignement
+      //! \brief standard assignement
       CodeBlockParserOptions& operator=(const CodeBlockParserOptions&) =
           default;
-      //! destructor
+      //! \brief destructor
       ~CodeBlockParserOptions() noexcept;
       /*!
        * \brief list of known symbols.
@@ -135,27 +135,27 @@ namespace mfront {
        * The value is the mangled of the variable.
        */
       std::map<std::string, std::string> symbols;
-      //! member names
+      //! \brief member names
       std::set<std::string> mn;
-      //! static member names
+      //! \brief static member names
       std::set<std::string> smn;
-      //! modifier applied to variables
+      //! \brief modifier applied to variables
       std::shared_ptr<VariableModifier> modifier;
-      //! analyser applied to variables
+      //! \brief analyser applied to variables
       std::shared_ptr<WordAnalyser> analyser;
-      //! delimeter marking the beginning of the block to be read
+      //! \brief delimeter marking the beginning of the block to be read
       std::string delim1 = "{";
-      //! delimeter marking the end of the block to be read
+      //! \brief delimeter marking the end of the block to be read
       std::string delim2 = "}";
-      //! if this member is true, the class name will be added in
-      //! front of variables names
+      //! \brief if this member is true, the class name will be added in
+      //! \brief front of variables names
       bool qualifyStaticVariables = false;
-      //! if this member is true, the "this->" prefix will be added in
-      //! front of variables names
+      //! \brief if this member is true, the "this->" prefix will be added in
+      //! \brief front of variables names
       bool qualifyMemberVariables = false;
-      //! if true, the semi-colon will be allowed
+      //! \brief if true, the semi-colon will be allowed
       bool allowSemiColon = true;
-      //! if true, line number will be registred
+      //! \brief if true, line number will be registred
       bool registerLine = true;
     };  // end of CodeBlockParserOptions
     //! \return a list of names that shall be reserved

@@ -301,6 +301,7 @@ namespace mfront {
     this->writeBoundsSymbols(out, i, bd, name, h);
     this->writePhysicalBoundsSymbols(out, i, bd, name, h);
     this->writeRequirementsSymbols(out, i, bd, name, h);
+    this->writePostProcessingsSymbols(out, i, bd, name, h);
     this->writeAdditionalSymbols(out, i, bd, fd, name, h);
     this->writeComputesInternalEnergySymbol(out, i, bd, name, h);
     this->writeComputesDissipatedEnergySymbol(out, i, bd, name, h);
@@ -525,6 +526,13 @@ namespace mfront {
     this->writeVariablesTypesSymbol(out, i, name, h, esvs,
                                     "ExternalStateVariables");
   }  // end of writeExternalStateVariablesSymbols
+
+  void SymbolsGenerator::writePostProcessingsSymbols(
+      std::ostream&,
+      const StandardBehaviourInterface&,
+      const BehaviourDescription&,
+      const std::string&,
+      const Hypothesis) const {}  // end of writePostProcessingsSymbols
 
   void SymbolsGenerator::writeParametersSymbols(
       std::ostream& out,

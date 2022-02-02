@@ -33,10 +33,12 @@ namespace mfront {
         std::string,
         std::vector<VariableDescription>,
         std::vector<std::pair<VariableDescription, VariableDescription>>>;
-    //! standard attribute name
+    //! \brief standard attribute name
     static const char* const requires_jacobian_decomposition;
-    //! standard attribute name
+    //! \brief standard attribute name
     static const char* const uses_get_partial_jacobian_invert;
+    //! \brief standard attribute name
+    static const char* const used_postprocessing_variables;
     /*!
      * \brief name of an attribute associated with the use of the
      * `getIntegrationVariablesDerivatives_X` method where `X` is
@@ -44,10 +46,10 @@ namespace mfront {
      * The attribute stores the list of X's.
      */
     static const char* const used_get_integration_variables_derivatives;
-    //! standard attribute name
+    //! \brief standard attribute name
     static const char* const
         used_implicit_equations_derivatives_with_respect_to_gradients_or_external_state_variables;
-    //! standard attribute name
+    //! \brief standard attribute name
     static const char* const used_jacobian_invert_blocks;
     /*!
      * \brief raise an exception stating that an attribute has not the expected
@@ -69,17 +71,17 @@ namespace mfront {
     CodeBlock& operator=(CodeBlock&&);
     //! \brief standard assignement
     CodeBlock& operator=(const CodeBlock&);
-    //! destructor
+    //! \brief destructor
     ~CodeBlock();
-    //! code
+    //! \brief code
     std::string code;
-    //! description
+    //! \brief description
     std::string description;
-    //! static members used in the block
+    //! \brief static members used in the block
     std::set<std::string> staticMembers;
-    //! members used in the block
+    //! \brief members used in the block
     std::set<std::string> members;
-    //! variable attributes
+    //! \brief variable attributes
     std::map<std::string, Attribute> attributes;
   };  // end of struct CodeBlock
 

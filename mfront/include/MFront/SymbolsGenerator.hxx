@@ -55,7 +55,7 @@ namespace mfront {
      */
     virtual void writeBuildIdentifierSymbol(std::ostream &,
                                             const StandardBehaviourInterface &,
-                                            const BehaviourDescription&,
+                                            const BehaviourDescription &,
                                             const std::string &) const;
     /*!
      * \param[in] out: output file
@@ -300,9 +300,9 @@ namespace mfront {
     /*!
      * \param[in] out  : output file
      * \param[in] i    : standard behaviour interface
+     * \param[in] mb   : behaviour description
      * \param[in] name : name of the behaviour
      * \param[in] h    : modelling hypothesis
-     * \param[in] mb   : behaviour description
      */
     virtual void writeExternalStateVariablesSymbols(
         std::ostream &,
@@ -313,15 +313,27 @@ namespace mfront {
     /*!
      * \param[in] out  : output file
      * \param[in] i    : standard behaviour interface
+     * \param[in] mb   : behaviour description
      * \param[in] name : name of the behaviour
      * \param[in] h    : modelling hypothesis
-     * \param[in] mb   : behaviour description
      */
     virtual void writeParametersSymbols(std::ostream &,
                                         const StandardBehaviourInterface &,
                                         const BehaviourDescription &,
                                         const std::string &,
                                         const Hypothesis) const;
+    /*!
+     * \param[in] out  : output file
+     * \param[in] i    : standard behaviour interface
+     * \param[in] mb   : behaviour description
+     * \param[in] name : name of the behaviour
+     * \param[in] h    : modelling hypothesis
+     */
+    virtual void writePostProcessingsSymbols(std::ostream &,
+                                             const StandardBehaviourInterface &,
+                                             const BehaviourDescription &,
+                                             const std::string &,
+                                             const Hypothesis) const;
     /*!
      * \param[in] out  : output file
      * \param[in] i    : standard behaviour interface
@@ -455,6 +467,15 @@ namespace mfront {
                                     const std::vector<std::string> &,
                                     const std::string &) const;
     /*!
+     * \return if the interface treats the strain measure internally or if the
+     * strain measure is handled by the calling code.
+     */
+    virtual bool handleStrainMeasure() const = 0;
+    //! \brief destructor
+    virtual ~SymbolsGenerator();
+
+   protected:
+    /*!
      * \brief write a symbol containing the types of a list of variables
      * \param[out] out: output stream
      * \param[in]  i: standard behaviour interface
@@ -487,13 +508,6 @@ namespace mfront {
     virtual void writeArrayOfIntsSymbol(std::ostream &,
                                         const std::string &,
                                         const std::vector<int> &) const;
-    /*!
-     * \return if the interface treats the strain measure internally or if the
-     * strain measure is handled by the calling code.
-     */
-    virtual bool handleStrainMeasure() const = 0;
-    //! \brief destructor
-    virtual ~SymbolsGenerator();
 
   };  // end of struct SymbolsGenerator
 

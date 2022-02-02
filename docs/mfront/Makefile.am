@@ -48,7 +48,7 @@ MFRONT_DOCS = AdditionalConvergenceChecks.md                            \
 	      IterMax.md                                                \
 	      JacobianComparisonCriterion.md                            \
 	      JacobianComparisonCriterium.md                            \
-              Library.md                                                \
+          Library.md                                                \
 	      Link.md                                                   \
 	      LocalVar.md                                               \
 	      Material.md                                               \
@@ -63,6 +63,8 @@ MFRONT_DOCS = AdditionalConvergenceChecks.md                            \
 	      Parser.md                                                 \
 	      PerturbationValueForNumericalJacobianComputation.md       \
 	      PhysicalBounds.md                                         \
+	      PostProcessing.md                                         \
+	      PostProcessingVariable.md                                 \
 	      ProcessNewCorrection.md                                   \
 	      ProcessNewEstimate.md                                     \
 	      Private.md                                                \

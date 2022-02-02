@@ -1,5 +1,5 @@
 /*!
- * \file   MFront/GenericBehaviour/Integrate.hxx
+ * \file   mfront/include/MFront/GenericBehaviour/Integrate.hxx
  * \brief
  * \author Thomas Helfer
  * \date   03/07/2018
@@ -14,6 +14,7 @@
 #ifndef LIB_MFRONT_GENERICBEHAVIOUR_INTEGRATE_HXX
 #define LIB_MFRONT_GENERICBEHAVIOUR_INTEGRATE_HXX
 
+#include <cstdlib>
 #include <cstring>
 #include <algorithm>
 #include "TFEL/Raise.hxx"
@@ -24,9 +25,62 @@
 #include "TFEL/Material/OutOfBoundsPolicy.hxx"
 #include "TFEL/Material/MechanicalBehaviourTraits.hxx"
 #include "TFEL/Material/FiniteStrainBehaviourTangentOperator.hxx"
+#include "MFront/GenericBehaviour/Types.hxx"
 #include "MFront/GenericBehaviour/BehaviourData.h"
 
 namespace mfront::gb {
+
+  /*!
+   * \brief enumeration of the stress measure supported by the generic behaviour
+   * interface for finite strain behaviours
+   */
+  enum struct StressMeasure {
+    PK1,                    //!< \brief First Piola-Kirchhoff stress
+    PK2,                    //!< \brief Second Piola-Kirchhoff stress
+    CAUCHY,                 //!< \brief Cauchy stress
+    INVALID_STRESS_MEASURE  //!< \brief invalid value
+  };
+  /*!
+   * \return the stress measure selected by the caller of the behaviour for
+   * finite strain behaviours.
+   * \param[in] K: initial values of the consistent tangent operator.
+   */
+  inline StressMeasure getStressMeasure(const real* const K) {
+    if (K[1] < 0.5) {
+      return StressMeasure::CAUCHY;
+    } else if (K[1] < 1.5) {
+      return StressMeasure::PK2;
+    } else if (K[1] < 2.5) {
+      return StressMeasure::PK1;
+    }
+    return StressMeasure::INVALID_STRESS_MEASURE;
+  }  // end of getStressMeasure
+
+  //! \brief a simple alias
+  using FiniteStrainTangentOperator =
+      tfel::material::FiniteStrainBehaviourTangentOperatorBase::Flag;
+  /*!
+   * \return the tangent operator selected by the caller of the behaviour for
+   * finite strain behaviours.
+   * \param[in] K: initial values of the consistent tangent operator.
+   * \note FiniteStrainTangentOperator::C_TRUESDELL is returned to signal an
+   * error.
+   */
+  inline FiniteStrainTangentOperator getTangentOperator(const real* const K) {
+    if ((K[0] > -0.5) && (K[0] < 0.5)) {
+      // no stiffness requested,
+      // returned value is meaningless
+      return FiniteStrainTangentOperator::DSIG_DF;
+    }
+    if (K[2] < 0.5) {
+      return FiniteStrainTangentOperator::DSIG_DF;
+    } else if (K[2] < 1.5) {
+      return FiniteStrainTangentOperator::DS_DEGL;
+    } else if (K[2] < 2.5) {
+      return FiniteStrainTangentOperator::DPK1_DF;
+    }
+    return FiniteStrainTangentOperator::C_TRUESDELL;
+  }  // end of getTangentOperator
 
   /*!
    * \brief export the tangent operator used by some generic behaviours.
@@ -91,6 +145,7 @@ namespace mfront::gb {
                              const tfel::math::t2tot2<N, StressType>& K) {
     tfel::math::map<tfel::math::t2tot2<N, StressType>>(v) = K;
   }  // end of exportTangentOperator
+
   /*!
    * \brief export the tangent operator used by standard small
    * strain behaviours.
@@ -223,7 +278,7 @@ namespace mfront::gb {
    * an exception is thrown.
    * \param[in] d: behaviour data
    */
-  inline void reportIntegrationFailure(mfront_gb_BehaviourData& d) {
+  inline void reportFailureByException(mfront_gb_BehaviourData& d) {
     try {
       throw;
     } catch (std::exception& e) {
@@ -231,7 +286,7 @@ namespace mfront::gb {
     } catch (...) {
       reportError(d, "unknown exception");
     }
-  }  // end of reportIntegrationFailure
+  }  // end of reportFailureByException
 
   /*!
    * \brief integrate the behaviour over a time step
@@ -324,12 +379,80 @@ namespace mfront::gb {
             b.computeSpeedOfSound(massdensity(*(d.s1.mass_density)));
       }
     } catch (...) {
-      reportIntegrationFailure(d);
+      reportFailureByException(d);
       rdt = b.getMinimalTimeStepScalingFactor();
       return -1;
     }
     return rdt < time(0.99) ? 0 : 1;
   }  // end of integrate
+
+  template <typename Behaviour, void (Behaviour::*m)()>
+  void initialize(mfront_gb_BehaviourData& d,
+                  const real* const variables,
+                  const tfel::material::OutOfBoundsPolicy p) {
+    Behaviour b(d);
+    b.setOutOfBoundsPolicy(p);
+    b.initialize();
+    b.checkBounds();
+    (b.*m)();
+    b.exportStateData(d.s1);
+  }  // end of executePostProcessing
+
+  template <typename Behaviour, void (Behaviour::*m)(const real* const)>
+  void initialize(mfront_gb_BehaviourData& d,
+                  const real* const variables,
+                  const tfel::material::OutOfBoundsPolicy p) {
+    Behaviour b(d);
+    b.setOutOfBoundsPolicy(p);
+    b.initialize();
+    b.checkBounds();
+    (b.*m)(variables);
+    b.exportStateData(d.s1);
+  }  // end of executePostProcessing
+
+  /*!
+   * \brief execute the given post-processing
+   * \tparam Behaviour: class describing the post-processing.
+   * \tparam m: method implementing the post-processing.
+   * \param[out] post_processing_variables: pointer to the values of the
+   * post-processing variables.
+   * \param[in] d: behaviour data.
+   * \param[in] p: out of bounds policy.
+   */
+  template <typename Behaviour,
+            void (Behaviour::*m)(real* const,
+                                 const typename Behaviour::BehaviourData&)>
+  int executePostProcessing(real* const post_processing_variables,
+                            mfront_gb_BehaviourData& d,
+                            const tfel::material::OutOfBoundsPolicy p) {
+    try {
+      // create an object containing the intial state
+      // Here, we can't initialize an `Behaviour::BehaviourData` as it would not
+      // initialize the stress
+      Behaviour initial_state(d);
+      // a little trick to initialize the behaviour with the thermodynamic
+      // forces and internal state variables at the end of the time step
+      auto* const thermodynamic_forces_old = d.s0.thermodynamic_forces;
+      auto* const internal_state_variables_old = d.s0.internal_state_variables;
+      d.s0.thermodynamic_forces = d.s1.thermodynamic_forces;
+      //
+      Behaviour b(d);
+      b.setOutOfBoundsPolicy(p);
+      // This call sets the values of the gradients and external state variables
+      // at the end of the time step
+      b.updateExternalStateVariables();
+      //
+      d.s0.thermodynamic_forces = thermodynamic_forces_old;
+      d.s0.internal_state_variables = internal_state_variables_old;
+      //
+      b.initialize();
+      (b.*m)(post_processing_variables, initial_state);
+    } catch (...) {
+      reportFailureByException(d);
+      return -1;
+    }
+    return EXIT_SUCCESS;
+  }  // end of executePostProcessing
 
 }  // end of namespace mfront::gb
 

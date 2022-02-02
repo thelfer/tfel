@@ -5,6 +5,9 @@ date: 21/11/2017
 lang: en-EN
 link-citations: true
 colorlinks: true
+geometry:
+  - margin=2cm
+papersize: a4
 figPrefixTemplate: "$$i$$"
 tblPrefixTemplate: "$$i$$"
 secPrefixTemplate: "$$i$$"

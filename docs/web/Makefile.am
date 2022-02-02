@@ -102,6 +102,8 @@ EXTRA_DIST=CMakeLists.txt					      \
 	   ./release-notes-4.0.1.md				      \
 	   ./release-notes-4.1.md				      \
 	   ./hyperelasticity.md				              \
+       ./initializers.md                          \
+       ./post-processings.md                    \
 	   ./search.md				              \
 	   ./signorini.md				              \
 	   ./ogden.md				                      \

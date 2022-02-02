@@ -133,12 +133,12 @@ namespace mfront {
 
   std::vector<AbstractDSL::DSLOptionDescription> DSLBase::getDSLOptions()
       const {
-    return {{DSLBase::parametersAsStaticVariablesOption,
-             "boolean stating if the parameter shall be treated as static "
-             "variables"},
-            {DSLBase::buildIdentifierOption,
-             "string specifying a build identifier. This option shall only be "
-             "specified on the command line"}};
+    return {
+        {DSLBase::parametersAsStaticVariablesOption,
+         "boolean stating if parameters shall be treated as static variables"},
+        {DSLBase::buildIdentifierOption,
+         "string specifying a build identifier. This option shall only be "
+         "specified on the command line"}};
   } // end of getDSLOptions
 
   std::vector<std::string> DSLBase::getDefaultReservedNames() {

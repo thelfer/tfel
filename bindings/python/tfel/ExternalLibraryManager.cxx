@@ -245,6 +245,12 @@ void declareExternalLibraryManager() {
            &ELM::getUMATRequiresThermalExpansionCoefficientTensor)
       .def("checkIfAsterBehaviourSaveTangentOperator",
            &ELM::checkIfAsterBehaviourSavesTangentOperator)
+      .def("getGenericBehaviourPostProcessingFunctions",
+           &ELM::getGenericBehaviourPostProcessingFunctions)
+      .def("getGenericBehaviourPostProcessingFunctionOutputs",
+           &ELM::getGenericBehaviourPostProcessingFunctionOutputs)
+      .def("getGenericBehaviourPostProcessingFunctionOutputsTypes",
+           &ELM::getGenericBehaviourPostProcessingFunctionOutputsTypes)
       .def("getMaterialPropertyVariables",
            static_cast<std::vector<std::string> (ELM::*)(const std::string&,
                                                          const std::string&)>(

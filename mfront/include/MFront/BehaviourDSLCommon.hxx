@@ -625,6 +625,8 @@ namespace mfront {
     void treatPrivate() override;
     //! \brief treat the `@Members` keyword
     void treatMembers() override;
+    //! \brief treat the `@PostProcessing` keyword
+    virtual void treatPostProcessing();
     //! \brief treat the `@StrainMeasure` keyword
     virtual void treatStrainMeasure();
     /*!
@@ -707,6 +709,8 @@ namespace mfront {
     virtual void treatAuxiliaryStateVariable();
     //! \brief handle the `@ExternalStateVariable` keyword
     virtual void treatExternalStateVariable();
+    //! \brief handle the `@PostProcessingVariable` keyword
+    virtual void treatPostProcessingVariable();
     //! \brief treat the `@MinimalTimeStepScalingFactor` keyword
     virtual void treatMinimalTimeStepScalingFactor();
     //! \brief treat the `@MaximalTimeStepScalingFactor` keyword
@@ -1099,10 +1103,12 @@ namespace mfront {
         const BehaviourDescription::HillTensor&,
         std::function<std::string(const MaterialPropertyInput&)>&) const;
     /*!
-     * \brief write the initalize method . This method is called after that
-     * the main variables were set.
+     * \brief write the initalize methods.
+     *
+     * It always create an `initialize` method which contains `.
+     * This method is called after that the main variables were set.
      */
-    virtual void writeBehaviourInitializeMethod(std::ostream&,
+    virtual void writeBehaviourInitializeMethods(std::ostream&,
                                                 const Hypothesis) const;
     /*!
      * write part of the constructor specific to the parser
@@ -1191,6 +1197,9 @@ namespace mfront {
 
     virtual void writeBehaviourUpdateExternalStateVariables(
         std::ostream&, const Hypothesis) const;
+
+    virtual void writeBehaviourPostProcessings(std::ostream&,
+                                               const Hypothesis) const;
 
     virtual void writeBehaviourOutputOperator(std::ostream&,
                                               const Hypothesis) const;

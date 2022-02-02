@@ -1082,6 +1082,61 @@ namespace tfel::system {
     return fct;
   }  // end of getGenericBehaviourInitializeFunctions
 
+  std::vector<std::string>
+  ExternalLibraryManager::getGenericBehaviourPostProcessingFunctions(
+      const std::string& l, const std::string& f, const std::string& h) {
+    auto pfcts = std::vector<std::string>{};
+    this->getUMATNames(pfcts, l, f, h, "PostProcessings");
+    return pfcts;
+  }  // end of getGenericBehaviourPostProcessingFunctions
+
+  std::vector<std::string>
+  ExternalLibraryManager::getGenericBehaviourPostProcessingFunctionOutputs(
+      const std::string& l,
+      const std::string& f,
+      const std::string& h,
+      const std::string& p) {
+    auto outputs = std::vector<std::string>{};
+    this->getUMATNames(outputs, l, f, h, "PostProcessing_" + p + "_Outputs");
+    return outputs;
+  }  // end of getGenericBehaviourPostProcessingFunctionOutputs
+
+  std::vector<int>
+  ExternalLibraryManager::getGenericBehaviourPostProcessingFunctionOutputsTypes(
+      const std::string& l,
+      const std::string& f,
+      const std::string& h,
+      const std::string& p) {
+    auto otypes = std::vector<int>{};
+    this->getUMATTypes(otypes, l, f, h, "PostProcessing_" + p + "_Outputs");
+    return otypes;
+  }  // end of getGenericBehaviourPostProcessingFunctionOutputsTypes
+
+  GenericBehaviourPostProcessingFctPtr
+  ExternalLibraryManager::getGenericBehaviourPostProcessingFunction(
+      const std::string& l,
+      const std::string& f,
+      const std::string& h,
+      const std::string& i) {
+    const auto lib = this->loadLibrary(l);
+    if (!h.empty()) {
+      const auto fct = ::tfel_getGenericBehaviourPostProcessingFunction(
+          lib, (f + "_" + h + "_PostProcessing_" + i).c_str());
+      if (fct != nullptr) {
+        return fct;
+      }
+    }
+    const auto fct = ::tfel_getGenericBehaviourPostProcessingFunction(
+        lib, (f + "_PostProcessing_" + i).c_str());
+    raise_if(
+        fct == nullptr,
+        "ExternalLibraryManager::getGenericBehaviourPostProcessingFunction: "
+        "could not load post-processing function '" +
+            i + "' for generic behaviour function '" + f + "' (" +
+            getErrorMessage() + ")");
+    return fct;
+  }  // end of getGenericBehaviourPostProcessingFunction
+
   GenericBehaviourRotateGradientsFctPtr
   ExternalLibraryManager::getGenericBehaviourRotateGradientsFunction(
       const std::string& l, const std::string& f) {

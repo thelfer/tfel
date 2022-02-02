@@ -231,6 +231,9 @@ namespace mfront {
     add("@SpeedOfSound", &BehaviourDSLCommon::treatSpeedOfSound);
     add("@DislocationsMeanFreePathInteractionMatrix",
         &BehaviourDSLCommon::treatDislocationsMeanFreePathInteractionMatrix);
+    add("@PostProcessingVariable",
+        &BehaviourDSLCommon::treatPostProcessingVariable);
+    add("@PostProcessing", &BehaviourDSLCommon::treatPostProcessing);
   }  // end of BehaviourDSLCommon
 
   std::vector<AbstractDSL::DSLOptionDescription>
@@ -2246,6 +2249,55 @@ namespace mfront {
     }
   }  // end of treatStrainMeasure
 
+  void BehaviourDSLCommon::treatPostProcessing() {
+    auto hs = std::set<Hypothesis>{};
+    this->readHypothesesList(hs);
+    this->checkNotEndOfFile("BehaviourDSLCommon::treatPostProcessing");
+    const auto pname = this->current->value;
+    if(!this->isValidIdentifier(pname)){
+      this->throwRuntimeError(
+          "BehaviourDSLCommon::treatPostProcessing",
+          "invalid post-processing name (read '" + pname + "').");
+    }
+    ++(this->current);
+    this->checkNotEndOfFile("BehaviourDSLCommon::treatPostProcessing");
+    const auto beg = this->current;
+    for (const auto& h : hs) {
+      const auto& d = this->mb.getBehaviourData(h);
+      const auto& pvariables = d.getPostProcessingVariables();
+      auto used_post_processing_variables = std::vector<VariableDescription>{};
+      this->current = beg;
+      CodeBlockParserOptions o;
+      o.mn = d.getRegistredMembersNames();
+      o.smn = d.getRegistredStaticMembersNames();
+      o.qualifyStaticVariables = true;
+      o.qualifyMemberVariables = true;
+      o.analyser = std::make_shared<StandardWordAnalyser>(
+          h, [&used_post_processing_variables, &pvariables](
+                 CodeBlock&, const Hypothesis, const std::string& w) {
+            if (pvariables.contains(w)) {
+              const auto p = std::find_if(
+                  used_post_processing_variables.begin(),
+                  used_post_processing_variables.end(),
+                  [&w](const VariableDescription& v) { return v.name == w; });
+              if (p == used_post_processing_variables.end()) {
+                used_post_processing_variables.push_back(
+                    pvariables.getVariable(w));
+              }
+            }
+          });
+      o.modifier = std::make_shared<StandardVariableModifier>(
+          h, [this](const Hypothesis hv, const std::string& v, const bool b) {
+            return this->standardModifier(hv, v, b);
+          });
+      auto c = this->readNextBlock(o);
+      c.attributes[CodeBlock::used_postprocessing_variables] =
+          used_post_processing_variables;
+      this->mb.addPostProcessing(h, pname, c);
+      this->mb.registerMemberName(h, "execute" + pname + "PostProcessing");
+    }
+  }  // end of treatPostProcessing
+
   void BehaviourDSLCommon::treatPrivate() {
     auto hs = std::set<Hypothesis>{};
     this->readHypothesesList(hs);
@@ -2264,7 +2316,7 @@ namespace mfront {
           });
       this->mb.appendToPrivateCode(h, this->readNextBlock(o).code, true);
     }
-  }  // end of void BehaviourDSLCommon::treatPrivate
+  }  // end of treatPrivate
 
   void BehaviourDSLCommon::treatMembers() {
     auto hs = std::set<Hypothesis>{};
@@ -2775,6 +2827,7 @@ namespace mfront {
             (this->mb.isLocalVariableName(h, n)) ||
             (this->mb.isStaticVariableName(h, n)) ||
             (this->mb.isParameterName(h, n)) ||
+            (this->mb.isPostProcessingVariableName(h, n)) ||
             (this->mb.isIntegrationVariableName(h, n)));
   }  // end of isCallableVariable
 
@@ -3368,6 +3421,16 @@ namespace mfront {
         v, h, &BehaviourDescription::addExternalStateVariables, true);
   }  // end of treatExternalStateVariable()
 
+  void BehaviourDSLCommon::treatPostProcessingVariable() {
+    auto v = VariableDescriptionContainer{};
+    auto hypotheses = std::set<Hypothesis>{};
+    this->readHypothesesList(hypotheses);
+    this->readVarList(v, true);
+    for (const auto& h : hypotheses) {
+      this->mb.addPostProcessingVariables(h, v);
+    }
+  }  // end of treatPostProcessingVariable()
+
   void BehaviourDSLCommon::treatBounds() {
     auto hs = std::set<Hypothesis>{};
     this->readHypothesesList(hs);
@@ -3472,6 +3535,7 @@ namespace mfront {
     this->reserveName("behaviourData");
     this->reserveName("time_scaling_factor");
     this->reserveName("mp_bounds_check_status");
+    this->reserveName("initial_state");
   }  // end of registerDefaultVarNames
 
   bool BehaviourDSLCommon::useQt() const {
@@ -6026,7 +6090,7 @@ namespace mfront {
     os << "}\n\n";
   }  // end of writeBehaviourComputeStressFreeExpansion
 
-  void BehaviourDSLCommon::writeBehaviourInitializeMethod(
+  void BehaviourDSLCommon::writeBehaviourInitializeMethods(
       std::ostream& os, const Hypothesis h) const {
     this->checkBehaviourFile(os);
     os << "/*!\n"
@@ -6456,6 +6520,13 @@ namespace mfront {
     }
     os << "}\n\n";
   }
+
+  void BehaviourDSLCommon::writeBehaviourPostProcessings(
+      std::ostream& os, const Hypothesis h) const {
+    for (const auto& i : this->interfaces) {
+      i.second->writeBehaviourPostProcessings(os, this->mb, h);
+    }
+  }  // end of writeBehaviourPostProcessings
 
   void BehaviourDSLCommon::writeBehaviourIncludes(std::ostream& os) const {
     this->checkBehaviourFile(os);
@@ -6996,7 +7067,7 @@ namespace mfront {
     os << "public:\n\n";
     this->writeBehaviourConstructors(os, h);
     this->writeBehaviourComputeStressFreeExpansion(os, h);
-    this->writeBehaviourInitializeMethod(os, h);
+    this->writeBehaviourInitializeMethods(os, h);
     this->writeBehaviourSetOutOfBoundsPolicy(os);
     this->writeBehaviourGetModellingHypothesis(os);
     this->writeBehaviourCheckBounds(os, h);
@@ -7011,6 +7082,7 @@ namespace mfront {
     this->writeBehaviourComputeSpeedOfSound(os, h);
     this->writeBehaviourGetTangentOperator(os);
     this->writeBehaviourUpdateExternalStateVariables(os, h);
+    this->writeBehaviourPostProcessings(os, h);
     this->writeBehaviourDestructor(os);
     this->checkBehaviourFile(os);
     os << "private:\n\n";

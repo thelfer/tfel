@@ -71,6 +71,10 @@ namespace mfront {
     return mhs.find(h) != mhs.end();
   }  // end of isBehaviourConstructorRequired
 
+  void StandardBehaviourInterface::writeBehaviourPostProcessings(
+      std::ostream&, const BehaviourDescription&, const Hypothesis) const {
+  }  // end of writeBehaviourPostProcessings
+
   std::string StandardBehaviourInterface::getHeaderGuard(
       const BehaviourDescription& mb) const {
     const auto& m = mb.getMaterialName();

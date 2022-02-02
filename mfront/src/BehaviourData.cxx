@@ -656,6 +656,10 @@ namespace mfront {
     return this->getParameters().contains(n);
   }  // end of isParameterName
 
+  bool BehaviourData::isPostProcessingName(const std::string& n) const {
+    return this->getPostProcessingVariables().contains(n);
+  }  // end of isPostProcessingName
+
   const VariableDescriptionContainer& BehaviourData::getMaterialProperties()
       const {
     return this->materialProperties;
@@ -1685,6 +1689,19 @@ namespace mfront {
       }
     }
   }  // end of appendToPrivateCode
+
+  void BehaviourData::addPostProcessing(const std::string& n,
+                                        const CodeBlock& c) {
+    if (!this->postprocessings.insert({n, c}).second) {
+      tfel::raise("BehaviourData::addPostProcessing: post-processing '" + n +
+                  "' already declared");
+    }
+  }  // end of addPostProcessing
+
+  const std::map<std::string, CodeBlock>& BehaviourData::getPostProcessings()
+      const {
+    return this->postprocessings;
+  }  // end of getPostProcessings
 
   std::string BehaviourData::getPrivateCode() const {
     return this->privateCode;

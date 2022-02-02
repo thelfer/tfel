@@ -747,6 +747,12 @@ namespace mfront {
     this->callBehaviourData(h, &BehaviourData::appendToPrivateCode, c, b);
   }  // end of appendToPrivateCode
 
+  void BehaviourDescription::addPostProcessing(const Hypothesis h,
+                                                 const std::string& n,
+                                                 const CodeBlock& c) {
+    this->callBehaviourData(h, &BehaviourData::addPostProcessing, n, c, true);
+  }  // end of addPostProcessing
+
   std::string BehaviourDescription::getPrivateCode(const Hypothesis h) const {
     return this->getBehaviourData(h).getPrivateCode();
   }  // end of getPrivateCode
@@ -2467,6 +2473,11 @@ namespace mfront {
                                              const std::string& v) const {
     return this->getData(h, &BehaviourData::isParameterName, v);
   }  // end of isParameterName
+
+  bool BehaviourDescription::isPostProcessingName(const Hypothesis h,
+                                             const std::string& v) const {
+    return this->getData(h, &BehaviourData::isPostProcessingName, v);
+  }  // end of isPostProcessingName
 
   bool BehaviourDescription::isStaticVariableName(const Hypothesis h,
                                                   const std::string& n) const {
