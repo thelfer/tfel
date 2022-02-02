@@ -196,6 +196,13 @@ int(TFEL_ADDCALL_PTR tfel_getGenericBehaviourInitializeFunction(
                                                                              f);
 }  // end of tfel_getGenericBehaviourFunction
 
+int(TFEL_ADDCALL_PTR tfel_getGenericBehaviourPostProcessingFunction(
+    LibraryHandlerPtr l,
+    const char *const f))(mfront_gb_real* const, struct mfront_gb_BehaviourData *const) {
+  return (int(TFEL_ADDCALL_PTR)(
+      mfront_gb_real *const, struct mfront_gb_BehaviourData *const))dlsym(l, f);
+}  // end of tfel_getGenericBehaviourFunction
+
 void(TFEL_ADDCALL_PTR tfel_getGenericBehaviourRotateGradientsFunction(
     LibraryHandlerPtr l, const char *const f))(mfront_gb_real *const,
                                                const mfront_gb_real *const,

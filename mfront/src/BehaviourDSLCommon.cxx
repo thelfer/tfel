@@ -2291,10 +2291,10 @@ namespace mfront {
             return this->standardModifier(hv, v, b);
           });
       auto c = this->readNextBlock(o);
-      auto& log = getLogStream();
       c.attributes[CodeBlock::used_postprocessing_variables] =
           used_post_processing_variables;
       this->mb.addPostProcessing(h, pname, c);
+      this->mb.registerMemberName(h, "execute" + pname + "PostProcessing");
     }
   }  // end of treatPostProcessing
 

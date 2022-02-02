@@ -1058,9 +1058,8 @@ namespace mfront {
             << " * \\param[out] values: results of the postprocessing\n"
             << " * \\param[in] d: material data\n"
             << " */\n"
-            << "MFRONT_SHAREDOBJ int " << f << "_" << p.first
-            << "(mfront_gb_real* const\n,"
-            << "mfront_gb_BehaviourData* const);\n\n";
+            << "MFRONT_SHAREDOBJ int " << f << "_PostProcessing_" << p.first
+            << "(mfront_gb_real* const, mfront_gb_BehaviourData* const);\n\n";
       }
     }
 
@@ -1299,7 +1298,7 @@ namespace mfront {
       const auto f = this->getFunctionNameForHypothesis(name, h);
       // postprocessings
       for (const auto& p : d.getPostProcessings()) {
-        out << "MFRONT_SHAREDOBJ int " << f << "_" << p.first
+        out << "MFRONT_SHAREDOBJ int " << f << "_PostProcessing_" << p.first
             << "(mfront_gb_real* const values,\n"
             << "mfront_gb_BehaviourData* const d){\n"
             << "using namespace tfel::material;\n"

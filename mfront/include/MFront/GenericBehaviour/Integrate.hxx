@@ -278,7 +278,7 @@ namespace mfront::gb {
    * an exception is thrown.
    * \param[in] d: behaviour data
    */
-  inline void reportIntegrationFailure(mfront_gb_BehaviourData& d) {
+  inline void reportFailureByException(mfront_gb_BehaviourData& d) {
     try {
       throw;
     } catch (std::exception& e) {
@@ -286,7 +286,7 @@ namespace mfront::gb {
     } catch (...) {
       reportError(d, "unknown exception");
     }
-  }  // end of reportIntegrationFailure
+  }  // end of reportFailureByException
 
   /*!
    * \brief integrate the behaviour over a time step
@@ -379,7 +379,7 @@ namespace mfront::gb {
             b.computeSpeedOfSound(massdensity(*(d.s1.mass_density)));
       }
     } catch (...) {
-      reportIntegrationFailure(d);
+      reportFailureByException(d);
       rdt = b.getMinimalTimeStepScalingFactor();
       return -1;
     }
@@ -425,24 +425,32 @@ namespace mfront::gb {
   int executePostProcessing(real* const post_processing_variables,
                             mfront_gb_BehaviourData& d,
                             const tfel::material::OutOfBoundsPolicy p) {
-    // create an object containing the intial state
-    // Here, we can't initialize an `Behaviour::BehaviourData` as it would not
-    // initialize the stress
-    Behaviour initial_state(d);
-    // a little trick to initialize the behaviour with the thermodynamic forces
-    // and internal state variables at the end of the time step
-    auto* const thermodynamic_forces_old = d.s0.thermodynamic_forces;
-    auto* const internal_state_variables_old = d.s0.internal_state_variables;
-    d.s0.thermodynamic_forces = d.s1.thermodynamic_forces;
-    //
-    Behaviour b(d);
-    //
-    d.s0.thermodynamic_forces = thermodynamic_forces_old;
-    d.s0.internal_state_variables = internal_state_variables_old;
-    //
-    b.setOutOfBoundsPolicy(p);
-    b.initialize();
-    (b.*m)(post_processing_variables, initial_state);
+    try {
+      // create an object containing the intial state
+      // Here, we can't initialize an `Behaviour::BehaviourData` as it would not
+      // initialize the stress
+      Behaviour initial_state(d);
+      // a little trick to initialize the behaviour with the thermodynamic
+      // forces and internal state variables at the end of the time step
+      auto* const thermodynamic_forces_old = d.s0.thermodynamic_forces;
+      auto* const internal_state_variables_old = d.s0.internal_state_variables;
+      d.s0.thermodynamic_forces = d.s1.thermodynamic_forces;
+      //
+      Behaviour b(d);
+      b.setOutOfBoundsPolicy(p);
+      // This call sets the values of the gradients and external state variables
+      // at the end of the time step
+      b.updateExternalStateVariables();
+      //
+      d.s0.thermodynamic_forces = thermodynamic_forces_old;
+      d.s0.internal_state_variables = internal_state_variables_old;
+      //
+      b.initialize();
+      (b.*m)(post_processing_variables, initial_state);
+    } catch (...) {
+      reportFailureByException(d);
+      return -1;
+    }
     return EXIT_SUCCESS;
   }  // end of executePostProcessing
 

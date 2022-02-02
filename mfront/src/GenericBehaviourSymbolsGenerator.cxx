@@ -168,13 +168,16 @@ namespace mfront {
     this->writeArrayOfStringsSymbol(os, fn + "_PostProcessings",
                                     postprocessings);
     for (const auto& [p, c] : d.getPostProcessings()) {
-      const auto s = p + "PostProcessing_PostProcessingVariables";
+      const auto s = "PostProcessing_" + p + "_Outputs";
       const auto& postprocessing_variables =
           c.attributes.at(CodeBlock::used_postprocessing_variables)
               .get<std::vector<VariableDescription>>();
       auto variables = VariableDescriptionContainer{};
       variables.insert(variables.end(), postprocessing_variables.begin(),
                        postprocessing_variables.end());
+      os << "MFRONT_SHAREDOBJ unsigned short "
+         << this->getSymbolName(i, name, h) << "_n" << s << " = "
+         << variables.getNumberOfVariables() << ";\n";
       this->writeExternalNames(os, i, name, h, variables.getExternalNames(), s);
       this->writeVariablesTypesSymbol(os, i, name, h, variables, s);
     }

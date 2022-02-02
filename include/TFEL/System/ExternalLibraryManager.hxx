@@ -498,6 +498,52 @@ namespace tfel::system {
     GenericBehaviourFctPtr getGenericBehaviourFunction(const std::string&,
                                                        const std::string&);
     /*!
+     * \return the post-processings associated with a behaviour generated
+     * through the `generic` interface.
+     * \param[in] l: name of the library
+     * \param[in] b: behaviour name
+     * \param[in] h: modelling hypothesis
+     */
+    std::vector<std::string> getGenericBehaviourPostProcessingFunctions(
+        const std::string&, const std::string&, const std::string&);
+    /*!
+     * \return the post-processing function
+     * \param[in] l: name of the library
+     * \param[in] f: function name
+     * \param[in] h: modelling hypothesis
+     * \param[in] p: post-processing function name
+     */
+    GenericBehaviourPostProcessingFctPtr
+    getGenericBehaviourPostProcessingFunction(const std::string&,
+                                              const std::string&,
+                                              const std::string&,
+                                              const std::string&);
+    /*!
+     * \return the outputs of a post-processing function
+     * \param[in] l: name of the library
+     * \param[in] f: function name
+     * \param[in] h: modelling hypothesis
+     * \param[in] p: post-processing function name
+     */
+    std::vector<std::string> getGenericBehaviourPostProcessingFunctionOutputs(
+        const std::string&,
+        const std::string&,
+        const std::string&,
+        const std::string&);
+    /*!
+     * \return the types of the outputs of a post-processing function
+     * \param[in] l: name of the library
+     * \param[in] f: function name
+     * \param[in] h: modelling hypothesis
+     * \param[in] p: post-processing function name
+     */
+    std::vector<int>
+    getGenericBehaviourPostProcessingFunctionOutputsTypes(
+        const std::string&,
+        const std::string&,
+        const std::string&,
+        const std::string&);
+    /*!
      * \brief return a function used for rotate the gradients from
      * the global frame to the material frame.
      * \param[in] l: name of the library
