@@ -368,6 +368,7 @@ namespace mfront {
      * - `IntegrationVariables`
      * - `StateVariables`
      * - `AuxiliaryStateVariables`
+     * - `InitializeFunctionVariables`
      * - `PostProcessingVariables`
      * - `ExternalStateVariables`
      * - `Parameters`
@@ -383,6 +384,8 @@ namespace mfront {
     const VariableDescriptionContainer& getStateVariables() const;
     //! \return all auxiliary state variables
     const VariableDescriptionContainer& getAuxiliaryStateVariables() const;
+    //! \return all initialize variables
+    const VariableDescriptionContainer& getInitializeFunctionVariables() const;
     //! \return all post-processing variables
     const VariableDescriptionContainer& getPostProcessingVariables() const;
     //! \return all external state variables
@@ -436,6 +439,12 @@ namespace mfront {
     const VariableDescription& getAuxiliaryStateVariableDescription(
         const std::string&) const;
     /*!
+     * \return the initialize variable associated with the given name
+     * \param[in] n: name
+     */
+    const VariableDescription& getInitializeFunctionVariableDescription(
+        const std::string&) const;
+    /*!
      * \return the post-processing variable associated with the given name
      * \param[in] n: name
      */
@@ -466,6 +475,11 @@ namespace mfront {
      */
     const VariableDescription&
     getAuxiliaryStateVariableDescriptionByExternalName(
+        const std::string&) const;
+    /*!
+     * \param[in] n: external name
+     */
+    const VariableDescription& getInitializeFunctionVariableDescriptionByExternalName(
         const std::string&) const;
     /*!
      * \param[in] n: external name
@@ -556,6 +570,11 @@ namespace mfront {
      */
     bool isAuxiliaryStateVariableName(const std::string&) const;
     /*!
+     * \return if the given name is the name of an initialize variable
+     * \param[in] n: name
+     */
+    bool isInitializeFunctionVariableName(const std::string&) const;
+    /*!
      * \return if the given name is the name of a post-processing variable
      * \param[in] n: name
      */
@@ -576,11 +595,6 @@ namespace mfront {
      * \param[in] n: name
      */
     bool isParameterName(const std::string&) const;
-    /*!
-     * \return if the given name is the name of a post-processing variable
-     * \param[in] n: name
-     */
-    bool isPostProcessingName(const std::string&) const;
     /*!
      * \return true if the given name is the one of a static variable
      * \param[in] n : name
@@ -616,6 +630,11 @@ namespace mfront {
      */
     void addAuxiliaryStateVariable(const VariableDescription&,
                                    const RegistrationStatus);
+    /*!
+     * \brief add an initialize variable
+     * \param[in] v : variable description
+     */
+    void addInitializeFunctionVariable(const VariableDescription&);
     /*!
      * \brief add a post-processing variable
      * \param[in] v : variable description
@@ -721,6 +740,14 @@ namespace mfront {
     void appendToMembers(const std::string&);
     //! \return the material additional members
     std::string getMembers() const;
+    /*!
+     * \brief add a new initialize function
+     * \param[in] n: name of the initialize function
+     * \param[in] c: code block associated with the initialize function
+     */
+    void addInitializeFunction(const std::string&, const CodeBlock&);
+    //! \return the registred initialize functions
+    const std::map<std::string, CodeBlock>& getInitializeFunctions() const;
     /*!
      * \brief add a new post-processing
      * \param[in] n: name of the post-processing
@@ -1045,6 +1072,8 @@ namespace mfront {
     std::set<std::string> pupirv;
     //! \brief registred code blocks
     std::map<std::string, CodeBlocksAggregator> cblocks;
+    //! \brief registred initialize functions
+    std::map<std::string, CodeBlock> initialize_functions;
     //! \brief registred post-processings
     std::map<std::string, CodeBlock> postprocessings;
     //! \brief registred material properties
@@ -1063,6 +1092,8 @@ namespace mfront {
     VariableDescriptionContainer localVariables;
     //! \brief parameters of the behaviour
     VariableDescriptionContainer parameters;
+    //! \brief registred initialize variables
+    VariableDescriptionContainer initializeVariables;
     //! \brief registred post-processing variables
     VariableDescriptionContainer postProcessingVariables;
     //! \brief default value for floatting point paramerters

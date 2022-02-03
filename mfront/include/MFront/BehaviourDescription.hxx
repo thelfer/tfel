@@ -367,12 +367,23 @@ namespace mfront {
      */
     void appendToPrivateCode(const Hypothesis, const std::string&, const bool);
     /*!
+     * \brief add the given initialize function
+     * \param[in] h: hypothesis
+     * \param[in] n: name of the initialize function
+     * \param[in] c: code associated with the initialize function
+     */
+    void addInitializeFunction(const Hypothesis,
+                               const std::string&,
+                               const CodeBlock&);
+    /*!
      * \brief add the given post-processing
      * \param[in] h: hypothesis
      * \param[in] n: name of the post-processing
      * \param[in] c: code associated with the post-processing
      */
-    void addPostProcessing(const Hypothesis, const std::string&, const CodeBlock&);
+    void addPostProcessing(const Hypothesis,
+                           const std::string&,
+                           const CodeBlock&);
     /*!
      * \return the material private code
      * \param[in] h: hypothesis
@@ -899,6 +910,27 @@ namespace mfront {
         const VariableDescription&,
         const BehaviourData::RegistrationStatus = BehaviourData::UNREGISTRED);
     /*!
+     * \brief add initialize  variables
+     * \param[in] h: modelling hypothesis
+     * \param[in] v: initialize  variables added
+     * \param[in] s: registration status
+     *
+     * \note if h is UNDEFINEDHYPOTHESIS, add the initialize
+     * variables to the default data and to all the specialisations
+     */
+    void addInitializeFunctionVariables(const Hypothesis,
+                                const VariableDescriptionContainer&);
+    /*!
+     * \brief add an initialize variable
+     * \param[in] h: modelling hypothesis
+     * \param[in] v: auxiliary state variable added
+     * \param[in] s: registration status
+     *
+     * \note if h is UNDEFINEDHYPOTHESIS, add the given initialize
+     * variable to the default data and to all the specialisations
+     */
+    void addInitializeFunctionVariable(const Hypothesis, const VariableDescription&);
+    /*!
      * \brief add post-processing variables
      * \param[in] h: modelling hypothesis
      * \param[in] v: post-processing variables added
@@ -915,8 +947,8 @@ namespace mfront {
      * \param[in] v: auxiliary state variable added
      * \param[in] s: registration status
      *
-     * \note if h is UNDEFINEDHYPOTHESIS, add the auxiliary state
-     * variables to the default data and to all the specialisations
+     * \note if h is UNDEFINEDHYPOTHESIS, add the post-processing
+     * variable to the default data and to all the specialisations
      */
     void addPostProcessingVariable(const Hypothesis,
                                    const VariableDescription&);
@@ -1092,14 +1124,6 @@ namespace mfront {
     bool isExternalStateVariableIncrementName(const Hypothesis,
                                               const std::string&) const;
     /*!
-     * \return true if the given name is the one of a post-processing
-     * variable.
-     * \param[in] h: modelling hypothesis
-     * \param[in] n: name
-     */
-    bool isPostProcessingVariableName(const Hypothesis,
-                                      const std::string&) const;
-    /*!
      * \return true if the given name is the one of a static variable
      * \param[in] h: modelling hypothesis
      * \param[in] n: name
@@ -1212,11 +1236,18 @@ namespace mfront {
      */
     bool isParameterName(const Hypothesis, const std::string&) const;
     /*!
+     * \return true if the given name is the name of initialize variable
+     * \param[in] h: modelling hypothesis
+     * \param[in] n: name
+     */
+    bool isInitializeFunctionVariableName(const Hypothesis, const std::string&) const;
+    /*!
      * \return true if the given name is the name of post-processing variable
      * \param[in] h: modelling hypothesis
      * \param[in] n: name
      */
-    bool isPostProcessingName(const Hypothesis, const std::string&) const;
+    bool isPostProcessingVariableName(const Hypothesis,
+                                      const std::string&) const;
     /*!
      * \param[in] h: modelling hypothesis
      * \param[in] n: parameter name

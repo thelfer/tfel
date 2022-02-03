@@ -71,6 +71,10 @@ namespace mfront {
     return mhs.find(h) != mhs.end();
   }  // end of isBehaviourConstructorRequired
 
+  void StandardBehaviourInterface::writeBehaviourInitializeFunctions(
+      std::ostream&, const BehaviourDescription&, const Hypothesis) const {
+  }  // end of writeBehaviourInitializeFunctions
+
   void StandardBehaviourInterface::writeBehaviourPostProcessings(
       std::ostream&, const BehaviourDescription&, const Hypothesis) const {
   }  // end of writeBehaviourPostProcessings

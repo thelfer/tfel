@@ -231,6 +231,9 @@ namespace mfront {
     add("@SpeedOfSound", &BehaviourDSLCommon::treatSpeedOfSound);
     add("@DislocationsMeanFreePathInteractionMatrix",
         &BehaviourDSLCommon::treatDislocationsMeanFreePathInteractionMatrix);
+    add("@InitializeFunctionVariable",
+        &BehaviourDSLCommon::treatInitializeFunctionVariable);
+    add("@InitializeFunction", &BehaviourDSLCommon::treatInitializeFunction);
     add("@PostProcessingVariable",
         &BehaviourDSLCommon::treatPostProcessingVariable);
     add("@PostProcessing", &BehaviourDSLCommon::treatPostProcessing);
@@ -242,7 +245,8 @@ namespace mfront {
     opts.push_back(
         {BehaviourDescription::
              automaticDeclarationOfTheTemperatureAsFirstExternalStateVariable,
-         "boolean stating if the temperature shall be automatically declared as "
+         "boolean stating if the temperature shall be automatically declared "
+         "as "
          "an external state variable"});
     return opts;
   }  // end of getDSLOptions
@@ -2254,7 +2258,7 @@ namespace mfront {
     this->readHypothesesList(hs);
     this->checkNotEndOfFile("BehaviourDSLCommon::treatPostProcessing");
     const auto pname = this->current->value;
-    if(!this->isValidIdentifier(pname)){
+    if (!this->isValidIdentifier(pname)) {
       this->throwRuntimeError(
           "BehaviourDSLCommon::treatPostProcessing",
           "invalid post-processing name (read '" + pname + "').");
@@ -2297,6 +2301,56 @@ namespace mfront {
       this->mb.registerMemberName(h, "execute" + pname + "PostProcessing");
     }
   }  // end of treatPostProcessing
+
+  void BehaviourDSLCommon::treatInitializeFunction() {
+    auto hs = std::set<Hypothesis>{};
+    this->readHypothesesList(hs);
+    this->checkNotEndOfFile("BehaviourDSLCommon::treatInitializeFunction");
+    const auto iname = this->current->value;
+    if (!this->isValidIdentifier(iname)) {
+      this->throwRuntimeError(
+          "BehaviourDSLCommon::treatInitializeFunction",
+          "invalid post-processing name (read '" + iname + "').");
+    }
+    ++(this->current);
+    this->checkNotEndOfFile("BehaviourDSLCommon::treatInitializeFunction");
+    const auto beg = this->current;
+    for (const auto& h : hs) {
+      const auto& d = this->mb.getBehaviourData(h);
+      const auto& pvariables = d.getInitializeFunctionVariables();
+      auto used_initialize_function_variables =
+          std::vector<VariableDescription>{};
+      this->current = beg;
+      CodeBlockParserOptions o;
+      o.mn = d.getRegistredMembersNames();
+      o.smn = d.getRegistredStaticMembersNames();
+      o.qualifyStaticVariables = true;
+      o.qualifyMemberVariables = true;
+      o.analyser = std::make_shared<StandardWordAnalyser>(
+          h, [&used_initialize_function_variables, &pvariables](
+                 CodeBlock&, const Hypothesis, const std::string& w) {
+            if (pvariables.contains(w)) {
+              const auto p = std::find_if(
+                  used_initialize_function_variables.begin(),
+                  used_initialize_function_variables.end(),
+                  [&w](const VariableDescription& v) { return v.name == w; });
+              if (p == used_initialize_function_variables.end()) {
+                used_initialize_function_variables.push_back(
+                    pvariables.getVariable(w));
+              }
+            }
+          });
+      o.modifier = std::make_shared<StandardVariableModifier>(
+          h, [this](const Hypothesis hv, const std::string& v, const bool b) {
+            return this->standardModifier(hv, v, b);
+          });
+      auto c = this->readNextBlock(o);
+      c.attributes[CodeBlock::used_initialize_function_variables] =
+          used_initialize_function_variables;
+      this->mb.addInitializeFunction(h, iname, c);
+      this->mb.registerMemberName(h, "execute" + iname + "InitializeFunction");
+    }
+  }  // end of treatInitializeFunction
 
   void BehaviourDSLCommon::treatPrivate() {
     auto hs = std::set<Hypothesis>{};
@@ -2827,6 +2881,7 @@ namespace mfront {
             (this->mb.isLocalVariableName(h, n)) ||
             (this->mb.isStaticVariableName(h, n)) ||
             (this->mb.isParameterName(h, n)) ||
+            (this->mb.isInitializeFunctionVariableName(h, n)) ||
             (this->mb.isPostProcessingVariableName(h, n)) ||
             (this->mb.isIntegrationVariableName(h, n)));
   }  // end of isCallableVariable
@@ -3421,6 +3476,16 @@ namespace mfront {
         v, h, &BehaviourDescription::addExternalStateVariables, true);
   }  // end of treatExternalStateVariable()
 
+  void BehaviourDSLCommon::treatInitializeFunctionVariable() {
+    auto v = VariableDescriptionContainer{};
+    auto hypotheses = std::set<Hypothesis>{};
+    this->readHypothesesList(hypotheses);
+    this->readVarList(v, true);
+    for (const auto& h : hypotheses) {
+      this->mb.addInitializeFunctionVariables(h, v);
+    }
+  }  // end of treatInitializeFunctionVariable()
+
   void BehaviourDSLCommon::treatPostProcessingVariable() {
     auto v = VariableDescriptionContainer{};
     auto hypotheses = std::set<Hypothesis>{};
@@ -3759,6 +3824,7 @@ namespace mfront {
         (update(bd.getAuxiliaryStateVariables())) ||
         //        (update(bd.getLocalVariables())) ||
         (update(bd.getExternalStateVariables())) ||
+        (update(bd.getInitializeFunctionVariables())) ||
         (update(bd.getPostProcessingVariables()))) {
       return true;
     }
@@ -6521,6 +6587,13 @@ namespace mfront {
     os << "}\n\n";
   }
 
+  void BehaviourDSLCommon::writeBehaviourInitializeFunctions(
+      std::ostream& os, const Hypothesis h) const {
+    for (const auto& i : this->interfaces) {
+      i.second->writeBehaviourInitializeFunctions(os, this->mb, h);
+    }
+  }  // end of writeBehaviourInitializeFunctions
+
   void BehaviourDSLCommon::writeBehaviourPostProcessings(
       std::ostream& os, const Hypothesis h) const {
     for (const auto& i : this->interfaces) {
@@ -7066,6 +7139,7 @@ namespace mfront {
     // from this point, all is public
     os << "public:\n\n";
     this->writeBehaviourConstructors(os, h);
+    this->writeBehaviourInitializeFunctions(os, h);
     this->writeBehaviourComputeStressFreeExpansion(os, h);
     this->writeBehaviourInitializeMethods(os, h);
     this->writeBehaviourSetOutOfBoundsPolicy(os);

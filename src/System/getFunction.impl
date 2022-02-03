@@ -191,8 +191,10 @@ int(TFEL_ADDCALL_PTR tfel_getGenericBehaviourFunction(LibraryHandlerPtr l,
 
 int(TFEL_ADDCALL_PTR tfel_getGenericBehaviourInitializeFunction(
     LibraryHandlerPtr l,
-    const char *const f))(struct mfront_gb_BehaviourData *const) {
-  return (int(TFEL_ADDCALL_PTR)(struct mfront_gb_BehaviourData *const))dlsym(l,
+    const char *const f))(const mfront_gb_real *const,
+                          struct mfront_gb_BehaviourData *const) {
+  return (int(TFEL_ADDCALL_PTR)(const mfront_gb_real *const,
+                                struct mfront_gb_BehaviourData *const))dlsym(l,
                                                                              f);
 }  // end of tfel_getGenericBehaviourFunction
 

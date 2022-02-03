@@ -329,6 +329,19 @@ namespace mfront {
      * \param[in] name : name of the behaviour
      * \param[in] h    : modelling hypothesis
      */
+    virtual void writeInitializeFunctionsSymbols(
+        std::ostream &,
+        const StandardBehaviourInterface &,
+        const BehaviourDescription &,
+        const std::string &,
+        const Hypothesis) const;
+    /*!
+     * \param[in] out  : output file
+     * \param[in] i    : standard behaviour interface
+     * \param[in] mb   : behaviour description
+     * \param[in] name : name of the behaviour
+     * \param[in] h    : modelling hypothesis
+     */
     virtual void writePostProcessingsSymbols(std::ostream &,
                                              const StandardBehaviourInterface &,
                                              const BehaviourDescription &,

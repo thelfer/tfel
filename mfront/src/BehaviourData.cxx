@@ -543,6 +543,20 @@ namespace mfront {
     this->postProcessingVariables.push_back(v);
   }  // end of addPostProcessingVariable
 
+  void BehaviourData::addInitializeFunctionVariable(const VariableDescription& v) {
+    this->reserveName(v.name);
+    if (!v.symbolic_form.empty()) {
+      this->reserveName(v.symbolic_form);
+    }
+    if (v.hasGlossaryName()) {
+      this->glossaryNames.insert({v.name, v.getExternalName()});
+    }
+    if (v.hasEntryName()) {
+      this->entryNames.insert({v.name, v.getExternalName()});
+    }
+    this->initializeVariables.push_back(v);
+  }  // end of addInitializeFunctionVariable
+
   void BehaviourData::addExternalStateVariable(const VariableDescription& v,
                                                const RegistrationStatus s) {
     this->addVariable(this->externalStateVariables, v, s, true);
@@ -633,10 +647,6 @@ namespace mfront {
     return this->getAuxiliaryStateVariables().contains(n);
   }  // end of isAuxiliaryStateVariableName
 
-  bool BehaviourData::isPostProcessingVariableName(const std::string& n) const {
-    return this->getPostProcessingVariables().contains(n);
-  }  // end of isPostProcessingVariableName
-
   bool BehaviourData::isExternalStateVariableName(const std::string& n) const {
     return this->getExternalStateVariables().contains(n);
   }  // end of isExternalStateVariableName
@@ -656,9 +666,13 @@ namespace mfront {
     return this->getParameters().contains(n);
   }  // end of isParameterName
 
-  bool BehaviourData::isPostProcessingName(const std::string& n) const {
+  bool BehaviourData::isInitializeFunctionVariableName(const std::string& n) const {
+    return this->getInitializeFunctionVariables().contains(n);
+  }  // end of isInitializeFunctionVariableName
+
+  bool BehaviourData::isPostProcessingVariableName(const std::string& n) const {
     return this->getPostProcessingVariables().contains(n);
-  }  // end of isPostProcessingName
+  }  // end of isPostProcessingVariableName
 
   const VariableDescriptionContainer& BehaviourData::getMaterialProperties()
       const {
@@ -705,6 +719,8 @@ namespace mfront {
       m = &BehaviourData::getAuxiliaryStateVariables;
     } else if (t == "PostProcessingVariable") {
       m = &BehaviourData::getPostProcessingVariables;
+    } else if (t == "InitializeFunctionVariable") {
+      m = &BehaviourData::getInitializeFunctionVariables;
     } else if (t == "ExternalStateVariable") {
       m = &BehaviourData::getExternalStateVariables;
     } else if (t == "Parameter") {
@@ -731,6 +747,11 @@ namespace mfront {
   BehaviourData::getAuxiliaryStateVariables() const {
     return this->auxiliaryStateVariables;
   }  // end of getAuxiliaryStateVariables
+
+  const VariableDescriptionContainer& BehaviourData::getInitializeFunctionVariables()
+      const {
+    return this->initializeVariables;
+  }  // end of getInitializeFunctionVariables
 
   const VariableDescriptionContainer&
   BehaviourData::getPostProcessingVariables() const {
@@ -1690,6 +1711,21 @@ namespace mfront {
     }
   }  // end of appendToPrivateCode
 
+  void BehaviourData::addInitializeFunction(const std::string& n,
+                                            const CodeBlock& c) {
+    if (!this->initialize_functions.insert({n, c}).second) {
+      tfel::raise(
+          "BehaviourData::addInitializeFunction: "
+          "initialize function '" +
+          n + "' already declared");
+    }
+  }  // end of addInitialize
+
+  const std::map<std::string, CodeBlock>& BehaviourData::getInitializeFunctions()
+      const {
+    return this->initialize_functions;
+  }  // end of getInitializeFuntions
+
   void BehaviourData::addPostProcessing(const std::string& n,
                                         const CodeBlock& c) {
     if (!this->postprocessings.insert({n, c}).second) {
@@ -1842,6 +1878,7 @@ namespace mfront {
     mfront::getSymbols(symbols, this->externalStateVariables);
     mfront::getSymbols(symbols, this->localVariables);
     mfront::getSymbols(symbols, this->parameters);
+    mfront::getSymbols(symbols, this->initializeVariables);
     mfront::getSymbols(symbols, this->postProcessingVariables);
   }  // end of getSymbols
 

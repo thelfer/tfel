@@ -245,6 +245,12 @@ void declareExternalLibraryManager() {
            &ELM::getUMATRequiresThermalExpansionCoefficientTensor)
       .def("checkIfAsterBehaviourSaveTangentOperator",
            &ELM::checkIfAsterBehaviourSavesTangentOperator)
+      .def("getGenericBehaviourInitializeFunctions",
+           &ELM::getGenericBehaviourInitializeFunctions)
+      .def("getGenericBehaviourInitializeFunctionOutputs",
+           &ELM::getGenericBehaviourInitializeFunctionOutputs)
+      .def("getGenericBehaviourInitializeFunctionOutputsTypes",
+           &ELM::getGenericBehaviourInitializeFunctionOutputsTypes)
       .def("getGenericBehaviourPostProcessingFunctions",
            &ELM::getGenericBehaviourPostProcessingFunctions)
       .def("getGenericBehaviourPostProcessingFunctionOutputs",

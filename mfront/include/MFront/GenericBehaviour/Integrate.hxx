@@ -386,30 +386,6 @@ namespace mfront::gb {
     return rdt < time(0.99) ? 0 : 1;
   }  // end of integrate
 
-  template <typename Behaviour, void (Behaviour::*m)()>
-  void initialize(mfront_gb_BehaviourData& d,
-                  const real* const variables,
-                  const tfel::material::OutOfBoundsPolicy p) {
-    Behaviour b(d);
-    b.setOutOfBoundsPolicy(p);
-    b.initialize();
-    b.checkBounds();
-    (b.*m)();
-    b.exportStateData(d.s1);
-  }  // end of executePostProcessing
-
-  template <typename Behaviour, void (Behaviour::*m)(const real* const)>
-  void initialize(mfront_gb_BehaviourData& d,
-                  const real* const variables,
-                  const tfel::material::OutOfBoundsPolicy p) {
-    Behaviour b(d);
-    b.setOutOfBoundsPolicy(p);
-    b.initialize();
-    b.checkBounds();
-    (b.*m)(variables);
-    b.exportStateData(d.s1);
-  }  // end of executePostProcessing
-
   /*!
    * \brief execute the given post-processing
    * \tparam Behaviour: class describing the post-processing.
@@ -419,17 +395,55 @@ namespace mfront::gb {
    * \param[in] d: behaviour data.
    * \param[in] p: out of bounds policy.
    */
+  template <typename Behaviour, void (Behaviour::*m)(const real* const)>
+  int executeInitializeFunction(mfront_gb_BehaviourData& d,
+                                const real* const initialize_variables,
+                                const tfel::material::OutOfBoundsPolicy p) {
+    try {
+      //
+      auto* const gradients_old = d.s1.gradients;
+      auto* const material_properties_old = d.s1.material_properties;
+      auto* const external_state_variables_old = d.s1.external_state_variables;
+      d.s1.gradients = d.s0.gradients;
+      d.s1.material_properties = d.s0.material_properties;
+      d.s1.external_state_variables = d.s0.external_state_variables;
+      //
+      Behaviour b(d);
+      b.setOutOfBoundsPolicy(p);
+      //
+      d.s1.gradients = gradients_old;
+      d.s1.material_properties = material_properties_old;
+      d.s1.external_state_variables = external_state_variables_old;
+      //
+      b.initialize();
+      (b.*m)(initialize_variables);
+      b.exportStateData(d.s1);
+    } catch (...) {
+      reportFailureByException(d);
+      return -1;
+    }
+    return EXIT_SUCCESS;
+  }  // end of executeInitializeFunction
+
+  /*!
+   * \brief execute the given post-processing
+   * \tparam Behaviour: class describing the post-processing.
+   * \tparam m: method implementing the post-processing.
+   * \tparam use_initial_state: boolean stating if the postprocessing uses
+   * the initial state of the material.
+   * \param[out] post_processing_variables: pointer to the values of the
+   * post-processing variables.
+   * \param[in] d: behaviour data.
+   * \param[in] p: out of bounds policy.
+   */
   template <typename Behaviour,
             void (Behaviour::*m)(real* const,
-                                 const typename Behaviour::BehaviourData&)>
+                                 const typename Behaviour::BehaviourData&),
+            const bool use_initial_state>
   int executePostProcessing(real* const post_processing_variables,
                             mfront_gb_BehaviourData& d,
                             const tfel::material::OutOfBoundsPolicy p) {
     try {
-      // create an object containing the intial state
-      // Here, we can't initialize an `Behaviour::BehaviourData` as it would not
-      // initialize the stress
-      Behaviour initial_state(d);
       // a little trick to initialize the behaviour with the thermodynamic
       // forces and internal state variables at the end of the time step
       auto* const thermodynamic_forces_old = d.s0.thermodynamic_forces;
@@ -446,7 +460,16 @@ namespace mfront::gb {
       d.s0.internal_state_variables = internal_state_variables_old;
       //
       b.initialize();
-      (b.*m)(post_processing_variables, initial_state);
+      if constexpr (use_initial_state) {
+        // create an object containing the intial state
+        // Here, we can't initialize an `Behaviour::BehaviourData` as it would
+        // not initialize the gradients
+        Behaviour initial_state(d);
+        (b.*m)(post_processing_variables, initial_state);
+      } else {
+        (b.*m)(post_processing_variables,
+               *(static_cast<const BehaviourData*>(nullptr)));
+      }
     } catch (...) {
       reportFailureByException(d);
       return -1;

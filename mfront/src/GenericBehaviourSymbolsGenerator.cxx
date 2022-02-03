@@ -151,6 +151,39 @@ namespace mfront {
     }
   }  // end of GenericBehaviourSymbolsGenerator::writeTangentOperatorSymbols
 
+  void GenericBehaviourSymbolsGenerator::writeInitializeFunctionsSymbols(
+      std::ostream& os,
+      const StandardBehaviourInterface& i,
+      const BehaviourDescription& bd,
+      const std::string& name,
+      const Hypothesis h) const {
+    const auto& d = bd.getBehaviourData(h);
+    const auto fn = this->getSymbolName(i, name, h);
+    auto initializes = std::vector<std::string>{};
+    for (const auto& p : d.getInitializeFunctions()) {
+      initializes.push_back(p.first);
+    }
+    os << "MFRONT_SHAREDOBJ unsigned short " << fn
+       << "_nInitializeFunctions= " << initializes.size() << ";\n\n";
+    this->writeArrayOfStringsSymbol(os, fn + "_InitializeFunctions",
+                                    initializes);
+    for (const auto& [p, c] : d.getInitializeFunctions()) {
+      const auto s = "InitializeFunction_" + p + "_Outputs";
+      const auto& initialize_function_variables =
+          c.attributes.at(CodeBlock::used_initialize_function_variables)
+              .get<std::vector<VariableDescription>>();
+      auto variables = VariableDescriptionContainer{};
+      variables.insert(variables.end(), initialize_function_variables.begin(),
+                       initialize_function_variables.end());
+      os << "MFRONT_SHAREDOBJ unsigned short "
+         << this->getSymbolName(i, name, h) << "_n" << s << " = "
+         << variables.getNumberOfVariables() << ";\n";
+      this->writeExternalNames(os, i, name, h, variables.getExternalNames(), s);
+      this->writeVariablesTypesSymbol(os, i, name, h, variables, s);
+    }
+    os << "\n";
+  }  // end of writeInitializeFunctionsSymbols
+
   void GenericBehaviourSymbolsGenerator::writePostProcessingsSymbols(
       std::ostream& os,
       const StandardBehaviourInterface& i,

@@ -38,6 +38,8 @@ namespace mfront {
     //! \brief standard attribute name
     static const char* const uses_get_partial_jacobian_invert;
     //! \brief standard attribute name
+    static const char* const used_initialize_function_variables;
+    //! \brief standard attribute name
     static const char* const used_postprocessing_variables;
     /*!
      * \brief name of an attribute associated with the use of the

@@ -42,6 +42,9 @@ namespace mfront {
     bool isBehaviourConstructorRequired(
         const Hypothesis, const BehaviourDescription &) const override;
     //
+    void writeBehaviourInitializeFunctions(std::ostream &,
+                                           const BehaviourDescription &,
+                                           const Hypothesis) const override;
     void writeBehaviourPostProcessings(std::ostream&,
                                        const BehaviourDescription&,
                                        const Hypothesis) const override;

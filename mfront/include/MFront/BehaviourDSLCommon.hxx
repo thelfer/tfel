@@ -625,6 +625,8 @@ namespace mfront {
     void treatPrivate() override;
     //! \brief treat the `@Members` keyword
     void treatMembers() override;
+    //! \brief treat the `@InitializeFunction` keyword
+    virtual void treatInitializeFunction();
     //! \brief treat the `@PostProcessing` keyword
     virtual void treatPostProcessing();
     //! \brief treat the `@StrainMeasure` keyword
@@ -709,6 +711,8 @@ namespace mfront {
     virtual void treatAuxiliaryStateVariable();
     //! \brief handle the `@ExternalStateVariable` keyword
     virtual void treatExternalStateVariable();
+    //! \brief handle the `@InitializeFunctionVariable` keyword
+    virtual void treatInitializeFunctionVariable();
     //! \brief handle the `@PostProcessingVariable` keyword
     virtual void treatPostProcessingVariable();
     //! \brief treat the `@MinimalTimeStepScalingFactor` keyword
@@ -1197,6 +1201,9 @@ namespace mfront {
 
     virtual void writeBehaviourUpdateExternalStateVariables(
         std::ostream&, const Hypothesis) const;
+
+    virtual void writeBehaviourInitializeFunctions(std::ostream&,
+                                                   const Hypothesis) const;
 
     virtual void writeBehaviourPostProcessings(std::ostream&,
                                                const Hypothesis) const;

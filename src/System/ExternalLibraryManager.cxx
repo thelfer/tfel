@@ -1044,21 +1044,37 @@ namespace tfel::system {
     return fct;
   }
 
-  std::map<std::string, GenericBehaviourInitializeFctPtr>
+  std::vector<std::string>
   ExternalLibraryManager::getGenericBehaviourInitializeFunctions(
       const std::string& l, const std::string& f, const std::string& h) {
-    auto initialize_functions =
-        std::map<std::string, GenericBehaviourInitializeFctPtr>();
-    auto ifcts = std::vector<std::string>{};
-    this->getUMATNames(ifcts, l, f, h, "InitializeFunctions");
-    for (const auto& ifct : ifcts) {
-      initialize_functions[ifct] =
-          this->getGenericBehaviourInitializeFunction(l, f, h, ifct);
-    }
-    return initialize_functions;
+    auto pfcts = std::vector<std::string>{};
+    this->getUMATNames(pfcts, l, f, h, "InitializeFunctions");
+    return pfcts;
   }  // end of getGenericBehaviourInitializeFunctions
 
-  GenericBehaviourInitializeFctPtr
+  std::vector<std::string>
+  ExternalLibraryManager::getGenericBehaviourInitializeFunctionOutputs(
+      const std::string& l,
+      const std::string& f,
+      const std::string& h,
+      const std::string& p) {
+    auto outputs = std::vector<std::string>{};
+    this->getUMATNames(outputs, l, f, h, "InitializeFunction_" + p + "_Outputs");
+    return outputs;
+  }  // end of getGenericBehaviourInitializeFunctionOutputs
+
+  std::vector<int>
+  ExternalLibraryManager::getGenericBehaviourInitializeFunctionOutputsTypes(
+      const std::string& l,
+      const std::string& f,
+      const std::string& h,
+      const std::string& p) {
+    auto otypes = std::vector<int>{};
+    this->getUMATTypes(otypes, l, f, h, "InitializeFunction_" + p + "_Outputs");
+    return otypes;
+  }  // end of getGenericBehaviourInitializeFunctionOutputsTypes
+
+  GenericBehaviourInitializeFunctionPtr
   ExternalLibraryManager::getGenericBehaviourInitializeFunction(
       const std::string& l,
       const std::string& f,
@@ -1067,20 +1083,21 @@ namespace tfel::system {
     const auto lib = this->loadLibrary(l);
     if (!h.empty()) {
       const auto fct = ::tfel_getGenericBehaviourInitializeFunction(
-          lib, (f + "_" + h + "_Initialize_" + i).c_str());
+          lib, (f + "_" + h + "_InitializeFunction_" + i).c_str());
       if (fct != nullptr) {
         return fct;
       }
     }
     const auto fct = ::tfel_getGenericBehaviourInitializeFunction(
-        lib, (f + "_Initialize_" + i).c_str());
-    raise_if(fct == nullptr,
-             "ExternalLibraryManager::getGenericBehaviourInitializeFunction: "
-             "could not load initialize function '" +
-                 i + "' for generic behaviour function '" + f + "' (" +
-                 getErrorMessage() + ")");
+        lib, (f + "_InitializeFunction_" + i).c_str());
+    raise_if(
+        fct == nullptr,
+        "ExternalLibraryManager::getGenericBehaviourInitializeFunction: "
+        "could not load post-processing function '" +
+            i + "' for generic behaviour function '" + f + "' (" +
+            getErrorMessage() + ")");
     return fct;
-  }  // end of getGenericBehaviourInitializeFunctions
+  }  // end of getGenericBehaviourInitializeFunction
 
   std::vector<std::string>
   ExternalLibraryManager::getGenericBehaviourPostProcessingFunctions(

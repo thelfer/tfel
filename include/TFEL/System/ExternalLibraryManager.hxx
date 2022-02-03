@@ -485,18 +485,55 @@ namespace tfel::system {
     /*!
      * \param[in] l: name of the library
      * \param[in] f: function name
-     * \param[in] h: modelling hypothesis
-     */
-    std::map<std::string, GenericBehaviourInitializeFctPtr>
-    getGenericBehaviourInitializeFunctions(const std::string&,
-                                           const std::string&,
-                                           const std::string&);
-    /*!
-     * \param[in] l: name of the library
-     * \param[in] f: function name
      */
     GenericBehaviourFctPtr getGenericBehaviourFunction(const std::string&,
                                                        const std::string&);
+    /*!
+     * \return the post-processings associated with a behaviour generated
+     * through the `generic` interface.
+     * \param[in] l: name of the library
+     * \param[in] b: behaviour name
+     * \param[in] h: modelling hypothesis
+     */
+    std::vector<std::string> getGenericBehaviourInitializeFunctions(
+        const std::string&, const std::string&, const std::string&);
+    /*!
+     * \return the post-processing function
+     * \param[in] l: name of the library
+     * \param[in] f: function name
+     * \param[in] h: modelling hypothesis
+     * \param[in] p: post-processing function name
+     */
+    GenericBehaviourInitializeFunctionPtr getGenericBehaviourInitializeFunction(
+        const std::string&,
+        const std::string&,
+        const std::string&,
+        const std::string&);
+    /*!
+     * \return the outputs of a post-processing function
+     * \param[in] l: name of the library
+     * \param[in] f: function name
+     * \param[in] h: modelling hypothesis
+     * \param[in] p: post-processing function name
+     */
+    std::vector<std::string> getGenericBehaviourInitializeFunctionOutputs(
+        const std::string&,
+        const std::string&,
+        const std::string&,
+        const std::string&);
+    /*!
+     * \return the types of the outputs of a post-processing function
+     * \param[in] l: name of the library
+     * \param[in] f: function name
+     * \param[in] h: modelling hypothesis
+     * \param[in] p: post-processing function name
+     */
+    std::vector<int>
+    getGenericBehaviourInitializeFunctionOutputsTypes(
+        const std::string&,
+        const std::string&,
+        const std::string&,
+        const std::string&);
     /*!
      * \return the post-processings associated with a behaviour generated
      * through the `generic` interface.
@@ -1329,17 +1366,6 @@ namespace tfel::system {
                                             const std::string&,
                                             const std::string&,
                                             const std::string&);
-    /*!
-     * \param[in] l: name of the library
-     * \param[in] f: function name
-     * \param[in] h: modelling hypothesis
-     * \param[in] i: initialize function name
-     */
-    TFEL_VISIBILITY_LOCAL GenericBehaviourInitializeFctPtr
-    getGenericBehaviourInitializeFunction(const std::string&,
-                                          const std::string&,
-                                          const std::string&,
-                                          const std::string&);
 
 #if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__)
     std::map<std::string, HINSTANCE__*> librairies;

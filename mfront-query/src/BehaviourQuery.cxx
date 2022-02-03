@@ -271,6 +271,12 @@ namespace mfront {
         {"--parameters-file",
          "display the name of a text file which can be used to modify the "
          "default value of the parameters"},
+        {"--initialize-function-variables",
+         "show the initialize function variables for the selected "
+         "modelling hypothesis"},
+        {"--initialize-functions",
+         "show the list of available initialize functions for the selected "
+         "modelling hypothesis"},
         {"--post-processing-variables",
          "show the post-processing variables for the selected "
          "modelling hypothesis"},
@@ -734,6 +740,11 @@ namespace mfront {
           "auxiliary-state-variables",
           this->generateVariablesListQuery<
               &BehaviourData::getAuxiliaryStateVariables>());
+    } else if (qn == "--initialize-function-variables") {
+      this->queries.emplace_back(
+          "initialize-function-variables",
+          this->generateVariablesListQuery<
+              &BehaviourData::getInitializeFunctionVariables>());
     } else if (qn == "--post-processing-variables") {
       this->queries.emplace_back(
           "post-processing-variables",
@@ -787,6 +798,36 @@ namespace mfront {
                                    cout << "- " << n << '\n';
                                  }
                                }});
+    } else if (qn == "--initialize-functions") {
+      this->queries.push_back(
+          {"initialize-functions",
+           [](const FileDescription&, const BehaviourDescription& d,
+              const Hypothesis h) {
+             for (const auto& p :
+                  d.getBehaviourData(h).getInitializeFunctions()) {
+               const auto& c = p.second;
+               cout << "- " << p.first << ": ";
+               if (!c.description.empty()) {
+                 cout << c.description << ".";
+               } else {
+                 cout << "no description available.";
+               }
+               if (hasAttribute<std::vector<VariableDescription>>(
+                       c, CodeBlock::used_initialize_function_variables)) {
+                 const auto& ivariables =
+                     getAttribute<std::vector<VariableDescription>>(
+                         c, CodeBlock::used_initialize_function_variables);
+                 if (!ivariables.empty()) {
+                   std::cout << "Expected initialize function variables are:\n";
+                   for (const auto& v : ivariables) {
+                     display_variable(v, "  ");
+                   }
+                 } else {
+                   std::cout << '\n';
+                 }
+               }
+             }
+           }});
     } else if (qn == "--post-processings") {
       this->queries.push_back(
           {"post-processings",

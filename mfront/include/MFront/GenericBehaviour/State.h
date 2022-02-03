@@ -51,7 +51,7 @@ typedef struct {
   //! \brief value of the gradients
   const mfront_gb_real* gradients;
   //! \brief values of the thermodynamic_forces
-  mfront_gb_real* thermodynamic_forces;
+  const mfront_gb_real* thermodynamic_forces;
   //! \brief volumetric mass density in the reference configuration
   const mfront_gb_real* mass_density;
   //! \brief values of the material properties

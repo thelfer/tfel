@@ -527,6 +527,13 @@ namespace mfront {
                                     "ExternalStateVariables");
   }  // end of writeExternalStateVariablesSymbols
 
+  void SymbolsGenerator::writeInitializeFunctionsSymbols(
+      std::ostream&,
+      const StandardBehaviourInterface&,
+      const BehaviourDescription&,
+      const std::string&,
+      const Hypothesis) const {}  // end of writeInitializeFunctionsSymbols
+
   void SymbolsGenerator::writePostProcessingsSymbols(
       std::ostream&,
       const StandardBehaviourInterface&,

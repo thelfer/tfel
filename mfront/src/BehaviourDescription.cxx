@@ -747,6 +747,12 @@ namespace mfront {
     this->callBehaviourData(h, &BehaviourData::appendToPrivateCode, c, b);
   }  // end of appendToPrivateCode
 
+  void BehaviourDescription::addInitializeFunction(const Hypothesis h,
+                                                 const std::string& n,
+                                                 const CodeBlock& c) {
+    this->callBehaviourData(h, &BehaviourData::addInitializeFunction, n, c, true);
+  }  // end of addInitializeFunction
+
   void BehaviourDescription::addPostProcessing(const Hypothesis h,
                                                  const std::string& n,
                                                  const CodeBlock& c) {
@@ -2084,6 +2090,25 @@ namespace mfront {
     this->addVariable(h, v, s, f);
   }
 
+  void BehaviourDescription::addInitializeFunctionVariables(
+      const Hypothesis h, const VariableDescriptionContainer& v) {
+    for (const auto& ppv : v) {
+      this->addInitializeFunctionVariable(h, ppv);
+    }
+  }  // end of addInitializeFunctionVariables
+
+  void BehaviourDescription::addInitializeFunctionVariable(
+      const Hypothesis h, const VariableDescription& v) {
+    if (h == ModellingHypothesis::UNDEFINEDHYPOTHESIS) {
+      this->d.addInitializeFunctionVariable(v);
+      for (auto& md : this->sd) {
+        md.second->addInitializeFunctionVariable(v);
+      }
+    } else {
+      this->getBehaviourData2(h).addInitializeFunctionVariable(v);
+    }
+  }  // end of addInitializeFunctionVariable
+
   void BehaviourDescription::addPostProcessingVariables(
       const Hypothesis h, const VariableDescriptionContainer& v) {
     for (const auto& ppv : v) {
@@ -2464,20 +2489,20 @@ namespace mfront {
         h, &BehaviourData::isExternalStateVariableIncrementName, n);
   }  // end of isExternalStateVariableIncrementName
 
-  bool BehaviourDescription::isPostProcessingVariableName(
-      const Hypothesis h, const std::string& n) const {
-    return this->getData(h, &BehaviourData::isPostProcessingVariableName, n);
-  }  // end of isPostProcessingVariableName
-
   bool BehaviourDescription::isParameterName(const Hypothesis h,
                                              const std::string& v) const {
     return this->getData(h, &BehaviourData::isParameterName, v);
   }  // end of isParameterName
 
-  bool BehaviourDescription::isPostProcessingName(const Hypothesis h,
-                                             const std::string& v) const {
-    return this->getData(h, &BehaviourData::isPostProcessingName, v);
-  }  // end of isPostProcessingName
+  bool BehaviourDescription::isInitializeFunctionVariableName(
+      const Hypothesis h, const std::string& v) const {
+    return this->getData(h, &BehaviourData::isInitializeFunctionVariableName, v);
+  }  // end of isInitializeFunctionVariableName
+
+  bool BehaviourDescription::isPostProcessingVariableName(
+      const Hypothesis h, const std::string& v) const {
+    return this->getData(h, &BehaviourData::isPostProcessingVariableName, v);
+  }  // end of isPostProcessingVariableName
 
   bool BehaviourDescription::isStaticVariableName(const Hypothesis h,
                                                   const std::string& n) const {

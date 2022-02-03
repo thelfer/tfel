@@ -152,7 +152,16 @@ namespace mfront {
     virtual void writeIntegrationDataMainVariablesSetters(
         std::ostream&, const BehaviourDescription&) const = 0;
     /*!
-     * \brief write the post-processings associated with the given
+     * \brief write the initialize functions
+     * \param[in] os: output stream
+     * \param[in] bd: behaviour description
+     * \param[in] h: modelling hypothesis
+     */
+    virtual void writeBehaviourInitializeFunctions(std::ostream&,
+                                                   const BehaviourDescription&,
+                                                   const Hypothesis) const = 0;
+    /*!
+     * \brief write the post-processings
      * \param[in] os: output stream
      * \param[in] bd: behaviour description
      * \param[in] h: modelling hypothesis

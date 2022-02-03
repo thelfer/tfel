@@ -44,6 +44,11 @@ namespace mfront {
                                      const StandardBehaviourInterface &,
                                      const BehaviourDescription &,
                                      const std::string &) const override;
+    void writeInitializeFunctionsSymbols(std::ostream &,
+                                         const StandardBehaviourInterface &,
+                                         const BehaviourDescription &,
+                                         const std::string &,
+                                         const Hypothesis) const override;
     void writePostProcessingsSymbols(std::ostream &,
                                      const StandardBehaviourInterface &,
                                      const BehaviourDescription &,

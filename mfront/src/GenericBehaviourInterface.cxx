@@ -1047,6 +1047,16 @@ namespace mfront {
     for (const auto h : mhs) {
       const auto& d = bd.getBehaviourData(h);
       const auto f = this->getFunctionNameForHypothesis(name, h);
+      // initialize function
+      for (const auto& p : d.getInitializeFunctions()) {
+        out << "/*!\n"
+            << " * \\param[in] values: inputs of the initialize function\n"
+            << " * \\param[in] d: material data\n"
+            << " */\n"
+            << "MFRONT_SHAREDOBJ int " << f << "_InitializeFunction_" << p.first
+            << "(const mfront_gb_real* const, mfront_gb_BehaviourData* "
+               "const);\n\n";
+      }
       out << "/*!\n"
           << " * \\param[in,out] d: material data\n"
           << " */\n"
@@ -1090,7 +1100,6 @@ namespace mfront {
         << "#include\"TFEL/Material/OutOfBoundsPolicy.hxx\"\n"
         << "#include\"TFEL/Math/t2tot2.hxx\"\n"
         << "#include\"TFEL/Math/t2tost2.hxx\"\n";
-
 
     if (is_finite_strain_through_strain_measure) {
       out << "#include\"TFEL/Material/"
@@ -1230,7 +1239,59 @@ namespace mfront {
     this->writeSetParametersFunctionsImplementations(out, bd, name);
     // behaviour implementations
     for (const auto h : mhs) {
+      const auto& d = bd.getBehaviourData(h);
       const auto f = this->getFunctionNameForHypothesis(name, h);
+      // initialize functions
+      for (const auto& p : d.getInitializeFunctions()) {
+        out << "MFRONT_SHAREDOBJ int " << f << "_InitializeFunction_" << p.first
+            << "(const mfront_gb_real* const values,\n"
+            << "mfront_gb_BehaviourData* const d){\n"
+            << "using namespace tfel::material;\n"
+            << "using real = mfront::gb::real;\n"
+            << "constexpr auto h = ModellingHypothesis::"
+            << ModellingHypothesis::toUpperCaseString(h) << ";\n";
+        if (bd.useQt()) {
+          out << "using Behaviour = " << bd.getClassName()
+              << "<h,real,true>;\n";
+        } else {
+          out << "using Behaviour = " << bd.getClassName()
+              << "<h,real,false>;\n";
+        }
+        auto call_initialize_function =
+            "executeInitializeFunction<Behaviour,  &Behaviour::execute" +
+            p.first + "InitializeFunction>(" + "*d, values, " + name +
+            "_getOutOfBoundsPolicy())";
+        if ((type == BehaviourDescription::GENERALBEHAVIOUR) ||
+            (type == BehaviourDescription::COHESIVEZONEMODEL)) {
+          out << "const auto r = mfront::gb::" << call_initialize_function
+              << ";\n";
+        } else if (type == BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) {
+          if (is_finite_strain_through_strain_measure) {
+            const auto ms = bd.getStrainMeasure();
+            if (ms == BehaviourDescription::GREENLAGRANGE) {
+              out << "const auto r = mfront::gb::green_lagrange_strain::"
+                  << call_initialize_function << ";\n";
+            } else if (ms == BehaviourDescription::HENCKY) {
+              out << "const auto r = mfront::gb::logarithmic_strain::"
+                  << call_initialize_function << ";\n";
+            } else {
+              raise("unsupported strain measure");
+            }
+          } else {
+            out << "const auto r = mfront::gb::" << call_initialize_function
+                << ";\n";
+          }
+        } else if (type ==
+                   BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR) {
+          out << "const auto r = mfront::gb::finite_strain::"
+              << call_initialize_function << ";\n";
+        } else {
+          raise("unsupported behaviour type");
+        }
+        out << "return r;\n"
+            << "}\n\n";
+      }
+      // behaviour integration
       out << "MFRONT_SHAREDOBJ int " << f
           << "(mfront_gb_BehaviourData* const d){\n"
           << "using namespace tfel::material;\n";
@@ -1252,7 +1313,6 @@ namespace mfront {
       if (this->shallGenerateMTestFileOnFailure(bd)) {
         out << "using mfront::SupportedTypes;\n";
       }
-      // behaviour integration
       if ((type == BehaviourDescription::GENERALBEHAVIOUR) ||
           (type == BehaviourDescription::COHESIVEZONEMODEL)) {
         out << "const auto r = mfront::gb::integrate<Behaviour>(*d, "
@@ -1314,7 +1374,7 @@ namespace mfront {
         }
         auto call_post_processing =
             "executePostProcessing<Behaviour,  &Behaviour::execute" + p.first +
-            "PostProcessing>(" + "values, *d, " + name +
+            "PostProcessing, true>(" + "values, *d, " + name +
             "_getOutOfBoundsPolicy())";
         if ((type == BehaviourDescription::GENERALBEHAVIOUR) ||
             (type == BehaviourDescription::COHESIVEZONEMODEL)) {
@@ -1869,14 +1929,14 @@ namespace mfront {
     auto oth = SupportedTypes::TypeSize{};
     for (const auto& mv : bd.getMainVariables()) {
       const auto& th = mv.second;
-     if(th.arraySize != 1){
-       tfel::raise(
-           "GenericBehaviourInterface::writeBehaviourConstructorBody: "
-           "arrays of thermodynamic forces are not supported");
-     }
-     GenericBehaviourInterface_initializeVariable(
-         os, oth, th, th.name, "mgb_d.s0.thermodynamic_forces");
-     oth += SupportedTypes::getTypeSize(th.type, th.arraySize);
+      if (th.arraySize != 1) {
+        tfel::raise(
+            "GenericBehaviourInterface::writeBehaviourConstructorBody: "
+            "arrays of thermodynamic forces are not supported");
+      }
+      GenericBehaviourInterface_initializeVariable(
+          os, oth, th, th.name, "mgb_d.s0.thermodynamic_forces");
+      oth += SupportedTypes::getTypeSize(th.type, th.arraySize);
     }
     //
     for (const auto& mp : d.getMaterialProperties()) {
@@ -2104,6 +2164,54 @@ namespace mfront {
     }
     os << "} // end of exportStateData\n\n";
   }  // end of exportMechanicalData
+
+  void GenericBehaviourInterface::writeBehaviourInitializeFunctions(
+      std::ostream& os,
+      const BehaviourDescription& bd,
+      const Hypothesis h) const {
+    auto initializeVariablesFromArrayOfValues =
+        [&os](const std::vector<VariableDescription>& variables) {
+          auto o = SupportedTypes::TypeSize{};
+          for (const auto& v : variables) {
+            if (v.arraySize == 1u) {
+              if (v.getTypeFlag() == SupportedTypes::SCALAR) {
+                os << "const auto&& " << v.name;
+              } else {
+                os << "const auto " << v.name;
+              }
+              os << " = tfel::math::map<const " << v.type
+                 << ">(mfront_initialize_function _inputs + " << o << ");\n";
+            } else {
+              os << "const auto " << v.name
+                 << " = tfel::math::map_array<const tfel::math::fsarray<"
+                 << v.arraySize << "," << v.type
+                 << ">>(mfront_initialize_function_inputs + " << o << ");\n";
+            }
+            o += v.getTypeSize();
+          }
+        };
+    const auto& d = bd.getBehaviourData(h);
+    for (const auto& [n, c] : d.getInitializeFunctions()) {
+      const auto& initialize_function_variables =
+          c.attributes.at(CodeBlock::used_initialize_function_variables)
+              .get<std::vector<VariableDescription>>();
+      os << "void execute" << n << "InitializeFunction(const NumericType* const ";
+      if (!initialize_function_variables.empty()) {
+        os << "){\n";
+      } else {
+        os << "mfront_initialize_function_inputs){\n";
+      }
+      os << "using namespace std;\n"
+         << "using namespace tfel::math;\n"
+         << "using namespace tfel::material;\n";
+      writeMaterialLaws(os, bd.getMaterialLaws());
+      if (!initialize_function_variables.empty()) {
+        initializeVariablesFromArrayOfValues(initialize_function_variables);
+      }
+      os << c.code << '\n'
+         << "} // end of execute" << n << "InitializeFunction\n\n";
+    }
+  }  // end of writeBehaviourInitializeFunctions
 
   void GenericBehaviourInterface::writeBehaviourPostProcessings(
       std::ostream& os,

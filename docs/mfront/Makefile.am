@@ -38,6 +38,8 @@ MFRONT_DOCS = AdditionalConvergenceChecks.md                            \
 	      Includes.md                                               \
 	      InitLocalVars.md                                          \
 	      InitLocalVariables.md                                     \
+	      InitializeFunction.md                               \
+	      InitializeFunctionVariable.md                               \
 	      InitializeLocalVariables.md                               \
 	      InteractionMatrix.md                                      \
 	      IntegrationVariable.md                                    \

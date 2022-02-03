@@ -819,6 +819,10 @@ namespace mfront {
     // handled by the constructors
   }
 
+  void ZMATInterface::writeBehaviourInitializeFunctions(
+      std::ostream&, const BehaviourDescription&, const Hypothesis) const {
+  }  // end of writeBehaviourInitializeFunctions
+
   void ZMATInterface::writeBehaviourPostProcessings(std::ostream&,
                                                     const BehaviourDescription&,
                                                     const Hypothesis) const {
