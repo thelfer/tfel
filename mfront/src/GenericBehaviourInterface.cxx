@@ -2175,12 +2175,12 @@ namespace mfront {
           for (const auto& v : variables) {
             if (v.arraySize == 1u) {
               if (v.getTypeFlag() == SupportedTypes::SCALAR) {
-                os << "const auto&& " << v.name;
+                os << "auto&& " << v.name;
               } else {
                 os << "const auto " << v.name;
               }
-              os << " = tfel::math::map<const " << v.type
-                 << ">(mfront_initialize_function _inputs + " << o << ");\n";
+              os << " = tfel::math::map<" << v.type
+                 << ">(mfront_initialize_function_inputs + " << o << ");\n";
             } else {
               os << "const auto " << v.name
                  << " = tfel::math::map_array<const tfel::math::fsarray<"
@@ -2197,9 +2197,9 @@ namespace mfront {
               .get<std::vector<VariableDescription>>();
       os << "void execute" << n << "InitializeFunction(const NumericType* const ";
       if (!initialize_function_variables.empty()) {
-        os << "){\n";
-      } else {
         os << "mfront_initialize_function_inputs){\n";
+      } else {
+        os << "){\n";
       }
       os << "using namespace std;\n"
          << "using namespace tfel::math;\n"

@@ -510,26 +510,26 @@ namespace tfel::system {
         const std::string&,
         const std::string&);
     /*!
-     * \return the outputs of a post-processing function
+     * \return the inputs of a initialize function function
      * \param[in] l: name of the library
      * \param[in] f: function name
      * \param[in] h: modelling hypothesis
-     * \param[in] p: post-processing function name
+     * \param[in] p: initialize function function name
      */
-    std::vector<std::string> getGenericBehaviourInitializeFunctionOutputs(
+    std::vector<std::string> getGenericBehaviourInitializeFunctionInputs(
         const std::string&,
         const std::string&,
         const std::string&,
         const std::string&);
     /*!
-     * \return the types of the outputs of a post-processing function
+     * \return the types of the inputs of a initialize function function
      * \param[in] l: name of the library
      * \param[in] f: function name
      * \param[in] h: modelling hypothesis
-     * \param[in] p: post-processing function name
+     * \param[in] p: initialize function function name
      */
     std::vector<int>
-    getGenericBehaviourInitializeFunctionOutputsTypes(
+    getGenericBehaviourInitializeFunctionInputsTypes(
         const std::string&,
         const std::string&,
         const std::string&,

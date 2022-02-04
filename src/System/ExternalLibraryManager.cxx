@@ -1053,26 +1053,26 @@ namespace tfel::system {
   }  // end of getGenericBehaviourInitializeFunctions
 
   std::vector<std::string>
-  ExternalLibraryManager::getGenericBehaviourInitializeFunctionOutputs(
+  ExternalLibraryManager::getGenericBehaviourInitializeFunctionInputs(
       const std::string& l,
       const std::string& f,
       const std::string& h,
       const std::string& p) {
     auto outputs = std::vector<std::string>{};
-    this->getUMATNames(outputs, l, f, h, "InitializeFunction_" + p + "_Outputs");
+    this->getUMATNames(outputs, l, f, h, "InitializeFunction_" + p + "_Inputs");
     return outputs;
-  }  // end of getGenericBehaviourInitializeFunctionOutputs
+  }  // end of getGenericBehaviourInitializeFunctionInputs
 
   std::vector<int>
-  ExternalLibraryManager::getGenericBehaviourInitializeFunctionOutputsTypes(
+  ExternalLibraryManager::getGenericBehaviourInitializeFunctionInputsTypes(
       const std::string& l,
       const std::string& f,
       const std::string& h,
       const std::string& p) {
     auto otypes = std::vector<int>{};
-    this->getUMATTypes(otypes, l, f, h, "InitializeFunction_" + p + "_Outputs");
+    this->getUMATTypes(otypes, l, f, h, "InitializeFunction_" + p + "_Inputs");
     return otypes;
-  }  // end of getGenericBehaviourInitializeFunctionOutputsTypes
+  }  // end of getGenericBehaviourInitializeFunctionInputsTypes
 
   GenericBehaviourInitializeFunctionPtr
   ExternalLibraryManager::getGenericBehaviourInitializeFunction(

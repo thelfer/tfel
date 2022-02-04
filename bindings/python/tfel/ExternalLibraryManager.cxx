@@ -247,10 +247,10 @@ void declareExternalLibraryManager() {
            &ELM::checkIfAsterBehaviourSavesTangentOperator)
       .def("getGenericBehaviourInitializeFunctions",
            &ELM::getGenericBehaviourInitializeFunctions)
-      .def("getGenericBehaviourInitializeFunctionOutputs",
-           &ELM::getGenericBehaviourInitializeFunctionOutputs)
-      .def("getGenericBehaviourInitializeFunctionOutputsTypes",
-           &ELM::getGenericBehaviourInitializeFunctionOutputsTypes)
+      .def("getGenericBehaviourInitializeFunctionInputs",
+           &ELM::getGenericBehaviourInitializeFunctionInputs)
+      .def("getGenericBehaviourInitializeFunctionInputsTypes",
+           &ELM::getGenericBehaviourInitializeFunctionInputsTypes)
       .def("getGenericBehaviourPostProcessingFunctions",
            &ELM::getGenericBehaviourPostProcessingFunctions)
       .def("getGenericBehaviourPostProcessingFunctionOutputs",
