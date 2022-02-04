@@ -21,7 +21,7 @@
 #include "TFEL/FSAlgorithm/FSAlgorithm.hxx"
 
 template <class T>
-struct count : public std::unary_function<T, void> {
+struct count {
   count() : c(0) {}
   void operator()(const T&) { ++c; }
   int c;

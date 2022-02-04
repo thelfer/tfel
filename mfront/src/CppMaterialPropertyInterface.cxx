@@ -123,7 +123,6 @@ namespace mfront {
            << "#include<cmath>\n"
            << "#include<algorithm>\n"
            << "#include<stdexcept>\n"
-           << "#include<functional>\n\n"
            << "#include\"TFEL/Config/TFELTypes.hxx\"\n";
     if (useQuantities(mpd)) {
       header << "#include\"TFEL/Math/qt.hxx\"\n"
@@ -135,13 +134,6 @@ namespace mfront {
     writeExportDirectives(header);
     header << "namespace mfront\n{\n\n"
            << "struct MFRONT_SHAREDOBJ " << name << '\n';
-    if (!mpd.inputs.empty()) {
-      if (mpd.inputs.size() == 1) {
-        header << ": std::unary_function<double,double>\n";
-      } else if (mpd.inputs.size() == 2) {
-        header << ": std::binary_function<double,double,double>\n";
-      }
-    }
     header << "{\n\n";
     if (mpd.inputs.empty()) {
       header << "//! nested typedef to make " << name

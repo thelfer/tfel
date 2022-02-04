@@ -15,7 +15,6 @@
 #define LIB_TFEL_MATH_ABS_HXX
 
 #include <cmath>
-#include <functional>
 #include <type_traits>
 #include "TFEL/Config/TFELConfig.hxx"
 #include "TFEL/TypeTraits/AbsType.hxx"
@@ -47,7 +46,11 @@ namespace tfel::math {
    * \brief a basic functor accumulating the absolute value of a container
    */
   template <typename T>
-  struct AbsSum : public std::unary_function<T, void> {
+  struct AbsSum {
+    //! \brief a simple alias
+    using argument_type = T;
+    //! \brief a simple alias
+    using result_type = void;
     //! \param [in] v : initial value
     AbsSum(const T& v = T()) : result(v) {}  // end of AbsSum
     /*!

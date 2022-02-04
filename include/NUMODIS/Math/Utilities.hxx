@@ -26,7 +26,6 @@
 #include <cmath>
 #include <vector>
 #include <cstdlib>
-#include <functional>
 #include "NUMODIS/Config.hxx"
 #include "NUMODIS/Vect3.hxx"
 
@@ -272,7 +271,11 @@ namespace numodis {
     //! Calculate the absolute value
     //===============================================================
     template <class TYPE>
-    struct Abs : public std::unary_function<TYPE, void> {
+    struct Abs {
+      //! \brief a simple alias
+      using argument_type = TYPE;
+      //! \brief a simple alias
+      using result_type = void;
       //! defines the absolute value function of x
       /*! \param x input value */
       void operator()(TYPE& x) { x = (x >= 0 ? x : -x); }
