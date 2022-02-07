@@ -39,6 +39,47 @@ namespace tfel::math {
    * \brief partial specialisation of the `DerivativeTypeDispatcher`
    * metafunction.
    */
+  template <typename ST2toT2Type, typename ScalarType>
+  struct DerivativeTypeDispatcher<ST2toT2Tag,
+                                  ScalarTag,
+                                  ST2toT2Type,
+                                  ScalarType> {
+    static_assert(implementsST2toT2Concept<ST2toT2Type>(),
+                  "template argument ST2toT2Type is not a st2tot2");
+    static_assert(isScalar<ScalarType>(),
+                  "template argument ScalarType is not a scalar");
+    static_assert(isScalar<numeric_type<ST2toT2Type>>(),
+                  "the st2tot2 type does not hold a scalar");
+    //! \brief result
+    using type =
+        st2tot2<getSpaceDimension<ST2toT2Type>(),
+                derivative_type<numeric_type<ST2toT2Type>, ScalarType>>;
+  };  // end of struct DerivativeTypeDispatcher
+  /*!
+   * \brief partial specialisation of the `DerivativeTypeDispatcher`
+   * metafunction.
+   */
+  template <typename ScalarType, typename ST2toT2Type>
+  struct DerivativeTypeDispatcher<ScalarTag,
+                                  ST2toT2Tag,
+                                  ScalarType,
+                                  ST2toT2Type> {
+    static_assert(implementsST2toT2Concept<ST2toT2Type>(),
+                  "template argument ST2toT2Type is not a st2tot2");
+    static_assert(isScalar<ScalarType>(),
+                  "template argument ScalarType is not a scalar");
+    static_assert(isScalar<numeric_type<ST2toT2Type>>(),
+                  "the st2tot2 type does not hold a scalar");
+    //! \brief result
+    using type =
+        st2tot2<getSpaceDimension<ST2toT2Type>(),
+                derivative_type<ScalarType, numeric_type<ST2toT2Type>>>;
+  };  // end of struct DerivativeTypeDispatcher
+
+  /*!
+   * \brief partial specialisation of the `DerivativeTypeDispatcher`
+   * metafunction.
+   */
   template <typename TensorType1, typename StensorType2>
   struct DerivativeTypeDispatcher<TensorTag,
                                   StensorTag,

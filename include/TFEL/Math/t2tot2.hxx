@@ -22,6 +22,7 @@
 #include "TFEL/Math/General/MathObjectTraits.hxx"
 #include "TFEL/Math/General/BasicOperations.hxx"
 #include "TFEL/Math/General/EmptyRunTimeProperties.hxx"
+#include "TFEL/Math/General/DerivativeType.hxx"
 #include "TFEL/Math/Array/GenericFixedSizeArray.hxx"
 #include "TFEL/Math/Array/View.hxx"
 #include "TFEL/Math/Forward/t2tot2.hxx"
@@ -40,6 +41,45 @@ namespace tfel::math {
   // forward declaration
   template <unsigned short N>
   struct TensorProductRightDerivativeExpr;
+
+  /*!
+   * \brief partial specialisation of the `DerivativeTypeDispatcher`
+   * metafunction.
+   */
+  template <typename T2toT2Type, typename ScalarType>
+  struct DerivativeTypeDispatcher<T2toT2Tag,
+                                  ScalarTag,
+                                  T2toT2Type,
+                                  ScalarType> {
+    static_assert(implementsT2toT2Concept<T2toT2Type>(),
+                  "template argument T2toT2Type is not a t2tot2");
+    static_assert(isScalar<ScalarType>(),
+                  "template argument ScalarType is not a scalar");
+    static_assert(isScalar<numeric_type<T2toT2Type>>(),
+                  "the t2tot2 type does not hold a scalar");
+    //! \brief result
+    using type = t2tot2<getSpaceDimension<T2toT2Type>(),
+                        derivative_type<numeric_type<T2toT2Type>, ScalarType>>;
+  };  // end of struct DerivativeTypeDispatcher
+  /*!
+   * \brief partial specialisation of the `DerivativeTypeDispatcher`
+   * metafunction.
+   */
+  template <typename ScalarType, typename T2toT2Type>
+  struct DerivativeTypeDispatcher<ScalarTag,
+                                  T2toT2Tag,
+                                  ScalarType,
+                                  T2toT2Type> {
+    static_assert(implementsT2toT2Concept<T2toT2Type>(),
+                  "template argument T2toT2Type is not a t2tot2");
+    static_assert(isScalar<ScalarType>(),
+                  "template argument ScalarType is not a scalar");
+    static_assert(isScalar<numeric_type<T2toT2Type>>(),
+                  "the t2tot2 type does not hold a scalar");
+    //! \brief result
+    using type = t2tot2<getSpaceDimension<T2toT2Type>(),
+                        derivative_type<ScalarType, numeric_type<T2toT2Type>>>;
+  };  // end of struct DerivativeTypeDispatcher
 
   /*!
    * \brief partial specialisation of the `DerivativeTypeDispatcher`
