@@ -7644,46 +7644,12 @@ namespace mfront {
             displayName(v2) + "' (of type '" + v2.type + "') is not supported");
       };
       const auto bn = this->mb.getTangentOperatorBlockName(b);
-      if (v1.getTypeFlag() == SupportedTypes::SCALAR) {
-        if (v2.getTypeFlag() == SupportedTypes::SCALAR) {
-          os << "real& " << bn << ";\n";
-        } else if (v2.getTypeFlag() == SupportedTypes::STENSOR) {
-          os << "tfel::math::StensorView<N,real> " << bn << ";\n";
-        } else if (v2.getTypeFlag() == SupportedTypes::TENSOR) {
-          os << "tfel::math::TensorView<N,real> " << bn << ";\n";
-        } else {
-          throw_unsupported_block();
-        }
-      } else if (v1.getTypeFlag() == SupportedTypes::TVECTOR) {
-        if (v2.getTypeFlag() == SupportedTypes::SCALAR) {
-          os << "tfel::math::TVectorView<N,real> " << bn << ";\n";
-        } else if (v2.getTypeFlag() == SupportedTypes::TVECTOR) {
-          os << "tfel::math::TMatrixView<N,N,real> " << bn << ";\n";
-        } else {
-          throw_unsupported_block();
-        }
-      } else if (v1.getTypeFlag() == SupportedTypes::STENSOR) {
-        if (v2.getTypeFlag() == SupportedTypes::SCALAR) {
-          os << "tfel::math::StensorView<N,real> " << bn << ";\n";
-        } else if (v2.getTypeFlag() == SupportedTypes::STENSOR) {
-          os << "tfel::math::ST2toST2View<N,real> " << bn << ";\n";
-        } else if (v2.getTypeFlag() == SupportedTypes::TENSOR) {
-          os << "tfel::math::ST2toT2View<N,real> " << bn << ";\n";
-        } else {
-          throw_unsupported_block();
-        }
-      } else if (v1.getTypeFlag() == SupportedTypes::TENSOR) {
-        if (v2.getTypeFlag() == SupportedTypes::SCALAR) {
-          os << "tfel::math::TensorView<N,real> " << bn << ";\n";
-        } else if (v2.getTypeFlag() == SupportedTypes::STENSOR) {
-          os << "tfel::math::T2toST2View<N,real> " << bn << ";\n";
-        } else if (v2.getTypeFlag() == SupportedTypes::TENSOR) {
-          os << "tfel::math::T2toT2View<N,real> " << bn << ";\n";
-        } else {
-          throw_unsupported_block();
-        }
+      if ((v1.getTypeFlag() == SupportedTypes::SCALAR) &&
+          (v2.getTypeFlag() == SupportedTypes::SCALAR)) {
+        os << "real& " << bn << ";\n";
       } else {
-        throw_unsupported_block();
+        os << "tfel::math::View<tfel::math::derivative_type<" << v1.type << ","
+           << v2.type << ">> " << bn << ";\n";
       }
     }
   }  // end of writeBehaviourTangentOperator()

@@ -50,6 +50,47 @@ namespace tfel::math {
    * \brief partial specialisation of the `DerivativeTypeDispatcher`
    * metafunction.
    */
+  template <typename ST2toST2Type, typename ScalarType>
+  struct DerivativeTypeDispatcher<ST2toST2Tag,
+                                  ScalarTag,
+                                  ST2toST2Type,
+                                  ScalarType> {
+    static_assert(implementsST2toST2Concept<ST2toST2Type>(),
+                  "template argument ST2toST2Type is not a st2tost2");
+    static_assert(isScalar<ScalarType>(),
+                  "template argument ScalarType is not a scalar");
+    static_assert(isScalar<numeric_type<ST2toST2Type>>(),
+                  "the st2tost2 type does not hold a scalar");
+    //! \brief result
+    using type =
+        st2tost2<getSpaceDimension<ST2toST2Type>(),
+                 derivative_type<numeric_type<ST2toST2Type>, ScalarType>>;
+  };  // end of struct DerivativeTypeDispatcher
+  /*!
+   * \brief partial specialisation of the `DerivativeTypeDispatcher`
+   * metafunction.
+   */
+  template <typename ScalarType, typename ST2toST2Type>
+  struct DerivativeTypeDispatcher<ScalarTag,
+                                  ST2toST2Tag,
+                                  ScalarType,
+                                  ST2toST2Type> {
+    static_assert(implementsST2toST2Concept<ST2toST2Type>(),
+                  "template argument ST2toST2Type is not a st2tost2");
+    static_assert(isScalar<ScalarType>(),
+                  "template argument ScalarType is not a scalar");
+    static_assert(isScalar<numeric_type<ST2toST2Type>>(),
+                  "the st2tost2 type does not hold a scalar");
+    //! \brief result
+    using type =
+        st2tost2<getSpaceDimension<ST2toST2Type>(),
+                 derivative_type<ScalarType, numeric_type<ST2toST2Type>>>;
+  };  // end of struct DerivativeTypeDispatcher
+
+  /*!
+   * \brief partial specialisation of the `DerivativeTypeDispatcher`
+   * metafunction.
+   */
   template <typename StensorType1, typename StensorType2>
   struct DerivativeTypeDispatcher<StensorTag,
                                   StensorTag,

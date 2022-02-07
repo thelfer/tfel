@@ -25,6 +25,7 @@
 #include "TFEL/Math/General/Abs.hxx"
 #include "TFEL/Math/General/BasicOperations.hxx"
 #include "TFEL/Math/General/EmptyRunTimeProperties.hxx"
+#include "TFEL/Math/General/DerivativeType.hxx"
 #include "TFEL/Math/Array/GenericFixedSizeArray.hxx"
 #include "TFEL/Math/Array/View.hxx"
 #include "TFEL/Math/Array/ViewsArray.hxx"
@@ -44,6 +45,39 @@ namespace tfel::math {
     static constexpr bool cond =
         isScalar<T2>() && std::is_same<result_type<T, T2, OpMult>, T>::value;
   };  // end of struct IsTVectorScalarOperationValid
+
+  /*!
+   * \brief partial specialisation of the `DerivativeTypeDispatcher`
+   * metafunction.
+   */
+  template <unsigned short N, typename TVectorNumericType, typename ScalarType>
+  struct DerivativeTypeDispatcher<VectorTag,
+                                  ScalarTag,
+                                  tvector<N, TVectorNumericType>,
+                                  ScalarType> {
+    static_assert(isScalar<ScalarType>(),
+                  "template argument ScalarType is not a scalar");
+    static_assert(isScalar<TVectorNumericType>(),
+                  "template argument TVectorNumericType is not a scalar");
+    //! \brief result
+    using type = tvector<N, derivative_type<TVectorNumericType, ScalarType>>;
+  };  // end of struct DerivativeTypeDispatcher
+  /*!
+   * \brief partial specialisation of the `DerivativeTypeDispatcher`
+   * metafunction.
+   */
+  template <typename ScalarType, unsigned short N, typename TVectorNumericType>
+  struct DerivativeTypeDispatcher<ScalarTag,
+                                  VectorTag,
+                                  ScalarType,
+                                  tvector<N, TVectorNumericType>> {
+    static_assert(isScalar<ScalarType>(),
+                  "template argument ScalarType is not a scalar");
+    static_assert(isScalar<TVectorNumericType>(),
+                  "template argument TVectorNumericType is not a scalar");
+    //! \brief result
+    using type = tvector<N, derivative_type<ScalarType, TVectorNumericType>>;
+  };  // end of struct DerivativeTypeDispatcher
 
   template <unsigned short N, typename ValueType = double>
   struct tvector : VectorConcept<tvector<N, ValueType>>,

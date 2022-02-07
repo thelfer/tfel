@@ -19,6 +19,17 @@ eqnPrefixTemplate: "($$i$$)"
 
 # Issues fixed
 
+## Issue #105: [TFELMath] Missing specialisations of the `DerivativeTypeDispatcher` class
+
+Many specialisations of the `DerivativeTypeDispatcher` class are missing:
+
+- specialisations for the derivatives of a `tvector` with respect to a scalar
+- specialisations for the derivatives of a `tmatrix` with respect to a scalar
+- specialisations for the derivatives of a `tvector` with respect to a `tvector`
+- etc...
+
+For more details, see <https://github.com/thelfer/tfel/issues/105>
+
 ## Issue #102: [mfront] Missing `using namespace std;` in the body of the `computeFlow` method of the `IsotropicStrainHardeningMisesCreep` DSL
 
 For more details, see <https://github.com/thelfer/tfel/issues/102>

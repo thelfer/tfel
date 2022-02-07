@@ -21,6 +21,7 @@
 #include "TFEL/Math/General/MathObjectTraits.hxx"
 #include "TFEL/Math/General/BasicOperations.hxx"
 #include "TFEL/Math/General/EmptyRunTimeProperties.hxx"
+#include "TFEL/Math/General/DerivativeType.hxx"
 #include "TFEL/Math/Array/GenericFixedSizeArray.hxx"
 #include "TFEL/Math/Array/View.hxx"
 #include "TFEL/Math/Matrix/MatrixConcept.hxx"
@@ -173,6 +174,68 @@ namespace tfel::math::internals {
 }  // end of namespace tfel::math::internals
 
 namespace tfel::math {
+
+  /*!
+   * \brief partial specialisation of the `DerivativeTypeDispatcher`
+   * metafunction.
+   */
+  template <unsigned short N,
+            unsigned short M,
+            typename TMatrixNumericType,
+            typename ScalarType>
+  struct DerivativeTypeDispatcher<MatrixTag,
+                                  ScalarTag,
+                                  tmatrix<N, M, TMatrixNumericType>,
+                                  ScalarType> {
+    static_assert(isScalar<ScalarType>(),
+                  "template argument ScalarType is not a scalar");
+    static_assert(isScalar<TMatrixNumericType>(),
+                  "template argument TMatrixNumericType is not a scalar");
+    //! \brief result
+    using type = tmatrix<N, M, derivative_type<TMatrixNumericType, ScalarType>>;
+  };  // end of struct DerivativeTypeDispatcher
+  /*!
+   * \brief partial specialisation of the `DerivativeTypeDispatcher`
+   * metafunction.
+   */
+  template <typename ScalarType,
+            unsigned short N,
+            unsigned short M,
+            typename TMatrixNumericType>
+  struct DerivativeTypeDispatcher<ScalarTag,
+                                  MatrixTag,
+                                  ScalarType,
+                                  tmatrix<N, M, TMatrixNumericType>> {
+    static_assert(isScalar<ScalarType>(),
+                  "template argument ScalarType is not a scalar");
+    static_assert(isScalar<TMatrixNumericType>(),
+                  "template argument TMatrixNumericType is not a scalar");
+    //! \brief result
+    using type = tmatrix<N, M, derivative_type<ScalarType, TMatrixNumericType>>;
+  };  // end of struct DerivativeTypeDispatcher
+
+  /*!
+   * \brief partial specialisation of the `DerivativeTypeDispatcher`
+   * metafunction.
+   */
+  template <unsigned short N1,
+            typename TVectorNumericTypeType1,
+            unsigned short N2,
+            typename TVectorNumericTypeType2>
+  struct DerivativeTypeDispatcher<VectorTag,
+                                  VectorTag,
+                                  tvector<N1, TVectorNumericTypeType1>,
+                                  tvector<N2, TVectorNumericTypeType2>> {
+    static_assert(isScalar<TVectorNumericTypeType1>(),
+                  "the first tensor type does not hold a scalar");
+    static_assert(isScalar<TVectorNumericTypeType2>(),
+                  "the second tensor type does not hold a scalar");
+    //! \brief result
+    using type = tmatrix<
+        N1,
+        N2,
+        derivative_type<TVectorNumericTypeType1, TVectorNumericTypeType2>>;
+  };  // end of struct DerivativeTypeDispatcher
 
   template <unsigned short N, unsigned short M, typename ValueType = double>
   struct tmatrix
