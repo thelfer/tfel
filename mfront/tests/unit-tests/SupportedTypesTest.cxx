@@ -35,6 +35,8 @@ struct SupportedTypesTest final : public tfel::tests::TestCase {
     this->test2();
     this->test3();
     this->test4();
+    this->test5();
+    this->test6();
     return this->result;
   }  // end of execute
 
@@ -150,6 +152,56 @@ struct SupportedTypesTest final : public tfel::tests::TestCase {
     check("result_type<stensor<1u,real>,stensor<1u,real>,OpPlus>",
           SupportedTypes::TypeSize(3, SupportedTypes::SCALAR));
     check_throw("result_type<stensor<1u,real>,stensor<2u,real>,OpPlus>");
+  }
+  void test5() {
+    using mfront::SupportedTypes;
+    auto check = [this](const SupportedTypes::TypeFlag& v1,
+                        const SupportedTypes::TypeFlag& v2) {
+      TFEL_TESTS_CHECK_EQUAL(v1, v2);
+    };
+    check(SupportedTypes::getTypeFlag("tvector<3u,strain>"),
+          SupportedTypes::TVECTOR);
+  }
+  void test6() {
+    using mfront::SupportedTypes;
+    constexpr auto mid = 4 + (2 << 3);
+    constexpr auto sid = 4 + (1 << 3) + (1 << 8);
+    auto check = [this](const std::string_view v1, const int v2) {
+      const auto id = SupportedTypes::getTypeIdentifier(v1);
+      TFEL_TESTS_CHECK_EQUAL(id, v2);
+    };
+    check("strain", 0);
+    check("stress", 0);
+    //
+    check("StrainStensor", 1);    
+    //
+    check("tvector<N,stress>", 2);
+    check("tvector<3u,strain>", 2 + (3 << 3));
+    check("TVector", 2);
+    //
+    check("Tensor", 3);    
+    //
+    check("st2tost2<N,stress>", sid);
+    check("StiffnessTensor", sid);
+    //
+    check("t2tost2<N,stress>", 4 + (1 << 3) + (3 << 8));
+    //
+    check("tmatrix<N, N, stress>", 4 + (2 << 3) + (2 << 8));
+    check("tmatrix<3u, 2u, stress>",
+          4 + ((2 + (3 << 3)) << 3) + ((2 + (2 << 3)) << 8));
+    // 
+    check("derivative_type<tvector<N,stress>,stress>", mid);
+    check("derivative_type<stensor<N,stress>, stensor<N,stress>>",
+          4 + (1 << 3) + (1 << 8));
+    //
+    check("tvector<3u, st2tost2<N,stress>>",
+          5 + (1 << 3) + (3 << 6) + (sid << 13));
+    check("fsarray<3u, st2tost2<N,stress>>",
+          5 + (1 << 3) + (3 << 6) + (sid << 13));
+    check("tmatrix<3u, 2u, st2tost2<N,stress>>",
+          5 + (2 << 3) + (3 << 6) + (2 << 13) + (sid << 20));
+    check("fsarray<8, derivative_type<tvector<N,stress>,stress>>",
+          5 + (1 << 3) + (8 << 6) + (mid << 13));
   }
 };
 

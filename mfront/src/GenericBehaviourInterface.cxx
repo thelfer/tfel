@@ -504,13 +504,14 @@ namespace mfront {
         static_cast<size_type>(o.getValueForModellingHypothesis(h));
     auto args =
         WriteRotationFunctionArgument{os, h, v.name, variable_offset, ao};
-    if (SupportedTypes::getTypeFlag(v.type) == SupportedTypes::SCALAR) {
-    } else if (SupportedTypes::getTypeFlag(v.type) == SupportedTypes::TVECTOR) {
+    const auto f = SupportedTypes::getTypeFlag(v.type);
+    if (f == SupportedTypes::SCALAR) {
+    } else if (f == SupportedTypes::TVECTOR) {
       os << "std::cerr << \"rotation of vector is unsupported\";\n"
          << "std::exit(-1);\n";
-    } else if (SupportedTypes::getTypeFlag(v.type) == SupportedTypes::STENSOR) {
+    } else if (f == SupportedTypes::STENSOR) {
       writeStensorRotation(args);
-    } else if (SupportedTypes::getTypeFlag(v.type) == SupportedTypes::TENSOR) {
+    } else if (f == SupportedTypes::TENSOR) {
       writeTensorRotation(args);
     } else {
       tfel::raise("writeVariableRotation: unsupported variable type");
@@ -705,63 +706,53 @@ namespace mfront {
         const auto to_name = "d" + v1.name + "_d" + v2.name;
         auto args =
             WriteRotationFunctionArgument{os, h, to_name, o, array_offset};
-        if (SupportedTypes::getTypeFlag(v1.type) == SupportedTypes::SCALAR) {
-          if (SupportedTypes::getTypeFlag(v2.type) == SupportedTypes::SCALAR) {
-          } else if (SupportedTypes::getTypeFlag(v2.type) ==
-                     SupportedTypes::TVECTOR) {
+        const auto f1 = SupportedTypes::getTypeFlag(v1.type);
+        const auto f2 = SupportedTypes::getTypeFlag(v2.type);
+        if (f1 == SupportedTypes::SCALAR) {
+          if (f2 == SupportedTypes::SCALAR) {
+          } else if (f2 == SupportedTypes::TVECTOR) {
             os << "std::cerr << \"" << f << ": \"\n"
                << "          << \"unsupported tangent operator type\";\n"
                << "std::exit(-1);\n";
-          } else if (SupportedTypes::getTypeFlag(v2.type) ==
-                     SupportedTypes::STENSOR) {
+          } else if (f2 == SupportedTypes::STENSOR) {
             writeStensorRotation(args);
-          } else if (SupportedTypes::getTypeFlag(v2.type) ==
-                     SupportedTypes::TENSOR) {
+          } else if (f2 == SupportedTypes::TENSOR) {
             writeTensorRotation(args);
           } else {
             os << "std::cerr << \"" << f << ": \"\n"
                << "          << \"unsupported gradient type\";\n"
                << "std::exit(-1);\n";
           }
-        } else if (SupportedTypes::getTypeFlag(v1.type) ==
-                   SupportedTypes::TVECTOR) {
+        } else if (f1 == SupportedTypes::TVECTOR) {
           os << "std::cerr << \"" << f << ": \"\n"
              << "          << \"unsupported tangent operator type\";\n"
              << "std::exit(-1);\n";
-        } else if (SupportedTypes::getTypeFlag(v1.type) ==
-                   SupportedTypes::STENSOR) {
-          if (SupportedTypes::getTypeFlag(v2.type) == SupportedTypes::SCALAR) {
+        } else if (f1 == SupportedTypes::STENSOR) {
+          if (f2 == SupportedTypes::SCALAR) {
             writeStensorRotation(args);
-          } else if (SupportedTypes::getTypeFlag(v2.type) ==
-                     SupportedTypes::TVECTOR) {
+          } else if (f2 == SupportedTypes::TVECTOR) {
             os << "std::cerr << \"" << f << ": \"\n"
                << "          << \"unsupported tangent operator type\";\n"
                << "std::exit(-1);\n";
-          } else if (SupportedTypes::getTypeFlag(v2.type) ==
-                     SupportedTypes::STENSOR) {
+          } else if (f2 == SupportedTypes::STENSOR) {
             writeST2toST2Rotation(args);
-          } else if (SupportedTypes::getTypeFlag(v2.type) ==
-                     SupportedTypes::TENSOR) {
+          } else if (f2 == SupportedTypes::TENSOR) {
             writeT2toST2Rotation(args);
           } else {
             os << "std::cerr << \"" << f << ": \"\n"
                << "          << \"unsupported gradient type\";\n"
                << "std::exit(-1);\n";
           }
-        } else if (SupportedTypes::getTypeFlag(v1.type) ==
-                   SupportedTypes::TENSOR) {
-          if (SupportedTypes::getTypeFlag(v2.type) == SupportedTypes::SCALAR) {
+        } else if (f1 == SupportedTypes::TENSOR) {
+          if (f2 == SupportedTypes::SCALAR) {
             writeTensorRotation(args);
-          } else if (SupportedTypes::getTypeFlag(v2.type) ==
-                     SupportedTypes::TVECTOR) {
+          } else if (f2 == SupportedTypes::TVECTOR) {
             os << "std::cerr << \"" << f << ": \"\n"
                << "          << \"unsupported tangent operator type\";\n"
                << "std::exit(-1);\n";
-          } else if (SupportedTypes::getTypeFlag(v2.type) ==
-                     SupportedTypes::STENSOR) {
+          } else if (f2 == SupportedTypes::STENSOR) {
             writeST2toT2Rotation(args);
-          } else if (SupportedTypes::getTypeFlag(v2.type) ==
-                     SupportedTypes::TENSOR) {
+          } else if (f2 == SupportedTypes::TENSOR) {
             writeT2toT2Rotation(args);
           } else {
             os << "std::cerr << \"" << f << ": \"\n"
@@ -1485,11 +1476,10 @@ namespace mfront {
           << "mg.setStressTensor(d->s0.thermodynamic_forces);\n";
     }
     for (const auto& m : mprops.first) {
-      const auto flag = SupportedTypes::getTypeFlag(m.type);
-      tfel::raise_if(flag != SupportedTypes::SCALAR,
+      tfel::raise_if(!m.isScalar(),
                      "GenericBehaviourInterface::generateMTestFile: "
-                     "unsupported external state variable type "
-                     "in mtest file generation");
+                     "unsupported material property  type '" +
+                         m.type + "' in mtest file generation");
       if (m.arraySize == 1u) {
         if (offset == 0) {
           out << "mg.addMaterialProperty(\"" << m.name
@@ -1636,8 +1626,7 @@ namespace mfront {
       const VariableDescription& v,
       const std::string& n,
       const std::string& src) {
-    const auto f = SupportedTypes::getTypeFlag(v.type);
-    if (f == SupportedTypes::SCALAR) {
+    if (v.isScalar()) {
       os << "this->" << n << " = " << src << "[" << o << "];\n";
     } else {
       os << "this-> " << n << " = tfel::math::map<" << v.type << ">(";
@@ -1662,16 +1651,6 @@ namespace mfront {
       }
     };
     // setting driving variables and thermodynamic forces
-    auto vsize = [&throw_if](const SupportedTypes::TypeFlag f) {
-      if (f == SupportedTypes::TVECTOR) {
-        return "TVectorSize";
-      } else if (f == SupportedTypes::STENSOR) {
-        return "StensorSize";
-      } else if (f != SupportedTypes::TENSOR) {
-        throw_if(true, "invalid variable type");
-      }
-      return "TensorSize";
-    };
     const auto type = bd.getBehaviourType();
     auto odv = SupportedTypes::TypeSize{};
     auto oth = SupportedTypes::TypeSize{};
@@ -1681,14 +1660,14 @@ namespace mfront {
       throw_if(dv.arraySize != 1, "arrays of gradients are not supported");
       throw_if(th.arraySize != 1,
                "arrays of thermodynamic forces are not supported");
+      const auto s = SupportedTypes::getTypeSize(dv.type, dv.arraySize);
       // driving variable
       const auto dvname =
           Gradient::isIncrementKnown(dv) ? dv.name : dv.name + "0";
       GenericBehaviourInterface_initializeVariable(os, odv, dv, dvname,
                                                    "mgb_d.s0.gradients");
       if (!Gradient::isIncrementKnown(dv)) {
-        const auto f = this->getTypeFlag(dv.type);
-        if (f == SupportedTypes::SCALAR) {
+        if (dv.isScalar()) {
           if (bd.useQt()) {
             os << "this->" << dv.name << "1 = " << dv.type
                << "(mgb_d.s1.gradients[" << odv << "]);\n";
@@ -1697,7 +1676,6 @@ namespace mfront {
                << "];\n";
           }
         } else {
-          const auto s = vsize(f);
           if (!odv.isNull()) {
             os << "tfel::fsalgo::copy<" << s << ">::exe("
                << "mgb_d.s1.gradients+" << odv << ","
@@ -1709,13 +1687,11 @@ namespace mfront {
           }
         }
       } else {
-        const auto f = this->getTypeFlag(dv.type);
-        if (f == SupportedTypes::SCALAR) {
+        if (dv.isScalar()) {
           os << "this->d" << dv.name << " = "
              << "mgb_d.s1.gradients[" << odv << "] - "
              << "mgb_d.s0.gradients[" << odv << "];\n";
         } else {
-          const auto s = vsize(f);
           if (!odv.isNull()) {
             os << "tfel::fsalgo::transform<" << s << ">::exe("
                << "mgb_d.s1.gradients+" << odv << ","
@@ -1729,7 +1705,7 @@ namespace mfront {
           }
         }
       }
-      odv += SupportedTypes::getTypeSize(dv.type, dv.arraySize);
+      odv += s;
     }
     if (bd.requiresStressFreeExpansionTreatment(h)) {
       os << "std::pair<StressFreeExpansionType,StressFreeExpansionType> "
@@ -1779,8 +1755,7 @@ namespace mfront {
         return;
       }
       os << (first ? "\n: " : ",\n");
-      const auto flag = SupportedTypes::getTypeFlag(v.type);
-      if (flag == SupportedTypes::SCALAR) {
+      if (v.isScalar()) {
         if (eo.empty()) {
           os << v.name << "(" << src << "[" << o << "])";
         } else {
@@ -1823,12 +1798,11 @@ namespace mfront {
       if (v.arraySize == 1u) {
         return;
       }
-      const auto flag = SupportedTypes::getTypeFlag(v.type);
       if (bd.useDynamicallyAllocatedVector(v.arraySize)) {
         os << "this->" << v.name << ".resize(" << v.arraySize << ");\n";
         os << "for(unsigned short idx=0; idx != " << v.arraySize
            << "; ++idx){\n";
-        if (flag == SupportedTypes::SCALAR) {
+        if (v.isScalar()) {
           os << "this->" << v.name << "[idx] = " << src << "[" << get_offset(o)
              << "+idx];\n";
         } else {
@@ -1839,7 +1813,7 @@ namespace mfront {
         os << "}\n";
       } else {
         for (unsigned short index = 0; index != v.arraySize; ++index) {
-          if (flag == SupportedTypes::SCALAR) {
+          if (v.isScalar()) {
             os << "this->" << v.name << "[" << index << "] = " << src << "["
                << get_offset(o) << "];\n";
           } else {
@@ -2041,8 +2015,7 @@ namespace mfront {
        << ": dt(mgb_d.dt)";
     auto o = SupportedTypes::TypeSize{};
     for (const auto& ev : evs) {
-      if ((ev.arraySize != 1u) ||
-          (SupportedTypes::getTypeFlag(ev.type) != SupportedTypes::SCALAR)) {
+      if ((ev.arraySize != 1u) || (!ev.isScalar())) {
         o += this->getTypeSize(ev.type, ev.arraySize);
         continue;
       }
@@ -2054,8 +2027,7 @@ namespace mfront {
     os << "\n{\n";
     o = SupportedTypes::TypeSize{};
     for (const auto& ev : evs) {
-      if ((ev.arraySize == 1u) &&
-          (SupportedTypes::getTypeFlag(ev.type) == SupportedTypes::SCALAR)) {
+      if ((ev.arraySize == 1u) && (ev.isScalar())) {
         o += this->getTypeSize(ev.type, ev.arraySize);
         continue;
       }
@@ -2114,8 +2086,7 @@ namespace mfront {
       auto do_export = [this, &bd, &v, &os, &dest](
                            const SupportedTypes::TypeSize offset,
                            const auto& n) {
-        const auto f = this->getTypeFlag(v.type);
-        if (f == SupportedTypes::SCALAR) {
+        if (v.isScalar()) {
           if (bd.useQt()) {
             os << "mbg_s1." << dest << "[" << offset << "] = "
                << "tfel::math::base_type_cast(" << n << ");\n";
@@ -2195,7 +2166,8 @@ namespace mfront {
       const auto& initialize_function_variables =
           c.attributes.at(CodeBlock::used_initialize_function_variables)
               .get<std::vector<VariableDescription>>();
-      os << "void execute" << n << "InitializeFunction(const NumericType* const ";
+      os << "void execute" << n
+         << "InitializeFunction(const NumericType* const ";
       if (!initialize_function_variables.empty()) {
         os << "mfront_initialize_function_inputs){\n";
       } else {

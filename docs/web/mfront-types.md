@@ -192,9 +192,6 @@ argument. For example:
 @LocalVariable inverse_type<time> f;
 ~~~~
 
-
- 
-
 ## The `result_type` alias
 
 `result_type` is an alias to the result of a binary operation. 
@@ -270,5 +267,78 @@ other mathematical objects.
 
 ## Fourth order tensor types of the `st2tost2` type
 
-- `Stensor4`: 
-- `StiffnessTensor`: 
+- `Stensor4`: fourth order tensor type for the current modelling
+  hypothesis holding the current numeric type (no unit).
+- `StiffnessTensor`: fourth order tensor type for the current modelling
+  hypothesis holding stress values.
+
+# Encoding types of variables in exported metadata
+
+For most interfaces, `MFront` exports metadata describing the types of
+the tensorial variables used by a behaviour, notably for behaviours.
+
+Those metadata can be retrieved by various methods of the
+`ExternalLibraryManager` class, such as:
+`getGenericBehaviourInitializeFunctionInputsTypes`,
+`getGenericBehaviourPostProcessingFunctionOutputsTypes`,
+`getUMATGradientsTypes`, `getUMATThermodynamicForcesTypes`, etc.
+
+The types of those variables are encoded as integers.
+
+Those integers shall be intepreted as follows:
+
+- the three first bits, converted in an integer, gives the type of
+  variable:
+  - `0` denotes a scalar
+  - `1` denotes a symmetric tensor
+  - `2` denotes a vector
+  - `3` denotes an unsymmetric tensor
+  - `4` denotes a derivative function
+  - `5` denotes an array of objects
+- For tensorial objects, the two next bits, converted in an integer,
+  gives the space dimension of the variable:
+  - `0` indicates that the space dimension depends on the modelling
+    hypothesis considered.
+  - `1` indicates that the object has a space dimension of `1`,
+    indepently of the modelling hypothesis considered.
+  - `2` indicates that the object has a space dimension of `2`,
+    indepently of the modelling hypothesis considered. 
+  - `3` indicates that the object has a space dimension of `3`,
+    indepently of the modelling hypothesis considered.
+- Concerning a derivative function, the next bits encodes the type of
+  function and the bits after the type of the variables with respect to
+  which the function is derivated.
+- Concerning an array of object, the next three bits encode the arity of
+  the array (number of dimensions) and then the sizes of array along
+  each dimension, each size being encoding in seven bits. The next bits
+  the type of the object hold.
+
+## Example
+
+- `0` denotes a scalar
+- `17` denotes a two-dimensional symmetric tensor 
+
+## Special case of higher order tensors
+
+Higher order tensors are defined as derivative of lower order tensors.
+
+For example, the fourth order tensor of type `t2tost2<N,real>`
+(derivative of a symmetric tensor with respect to an unsymmetric tensor)
+is associated with identifier `780` as `780 = 4 + (1 << 3) + (3 << 8)`.
+
+## Special case for tiny vectors
+
+Tiny vectors defined by `tvector<D, value_type>` are encoded as:
+
+- a tensorial object, if `D` is compatible with the size of a tensorial
+  object (i.e. `D` has the value `N` or if `D` has an integer value in
+  the range `[1;3]`) and if `value_type` is a scalar type.
+- an array otherwise.
+
+## Special case of tiny matrices
+
+Tiny matrices defined by `tmatrix<N, M, value_type>` are encoded as:
+
+- derivative of two tiny vectors, if `N` and `M` can represent the size
+  of a tensorial object and if `value_type` is a scalar type.
+- an bi-dimensional array otherwise.

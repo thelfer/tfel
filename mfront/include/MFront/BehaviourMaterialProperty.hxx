@@ -64,6 +64,8 @@ namespace mfront {
         default;
     BehaviourMaterialProperty& operator=(BehaviourMaterialProperty&&) = default;
     ~BehaviourMaterialProperty();
+    //! \return if the material property is scalar
+    bool isScalar() const;
     /*!
      *  Type of the variable.
      *  If the variable has been declared as an array (see below),

@@ -3734,9 +3734,7 @@ namespace mfront {
         } else {
           f << "d" << n << "(" << t << "(0))";
         }
-      } else if ((flag == SupportedTypes::TVECTOR) ||
-                 (flag == SupportedTypes::STENSOR) ||
-                 (flag == SupportedTypes::TENSOR)) {
+      } else {
         const auto traits = "MathObjectTraits<" + t + ">";
         if (v.arraySize == 1u) {
           f << "d" << n << "(typename tfel::math::" + traits + "::NumType(0))";
@@ -3749,10 +3747,6 @@ namespace mfront {
               << "(typename tfel::math::" + traits + "::NumType(0)))";
           }
         }
-      } else {
-        this->throwRuntimeError(
-            "BehaviourDSLCommon::getIntegrationVariablesIncrementsInitializers",
-            "internal error, tag unsupported");
       }
     }
     return f.str();
@@ -7634,15 +7628,6 @@ namespace mfront {
       if ((v1.arraySize != 1u) || (v2.arraySize != 1u)) {
         break;
       }
-      auto throw_unsupported_block = [&v1, &v2] {
-        tfel::raise(
-            "BehaviourDSLCommon::writeBehaviourTangentOperator:"
-            "tangent operator blocks associated with "
-            "the derivative of '" +  //
-            displayName(v1) +
-            "' (of type '" + v1.type + "') with respect to '" +  //
-            displayName(v2) + "' (of type '" + v2.type + "') is not supported");
-      };
       const auto bn = this->mb.getTangentOperatorBlockName(b);
       if ((v1.getTypeFlag() == SupportedTypes::SCALAR) &&
           (v2.getTypeFlag() == SupportedTypes::SCALAR)) {
