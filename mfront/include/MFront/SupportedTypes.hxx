@@ -275,15 +275,48 @@ namespace mfront {
         const std::string_view,
         const TypeParsingOptions& = TypeParsingOptions());
     /*!
-     * \return the flag associated with the given type
+     * \return if the given type is associated with a flag
      * \param[in] t : type
      */
     static bool hasTypeFlag(const std::string_view);
+    /*!
+     * \return if the given type describes a scalar
+     * \param[in] t : type
+     */
+    static bool isScalarType(const std::string_view);
     /*!
      * \return the flag associated with the given type
      * \param[in] t : type
      */
     static TypeFlag getTypeFlag(const std::string_view);
+    /*!
+     * \return a integer encoding the type of a tensorial variable
+     * \param[in] t : type
+     *
+     * Those integers shall be intepreted as follows:
+     *
+     * - the three first bits, converted in an integer, gives the type of
+     *   variable:
+     *   - `0` denotes a scalar
+     *   - `1` denotes a symmetric tensor
+     *   - `2` denotes a vector
+     *   - `3` denotes an unsymmetric tensor
+     *   - `4` denotes a derivative function
+     * - For tensorial objects, the two next bits, converted in an integer,
+     *   gives the space dimension of the variable:
+     *   - `0` indicates that the space dimension depends on the modelling
+     *     hypothesis considered.
+     *   - `1` indicates that the object has a space dimension of `1`,
+     *     indepently of the modelling hypothesis considered.
+     *   - `2` indicates that the object has a space dimension of `2`,
+     *     indepently of the modelling hypothesis considered.
+     *   - `3` indicates that the object has a space dimension of `3`,
+     *     indepently of the modelling hypothesis considered.
+     * - Concerning a derivative function, the next bits encodes the type of
+     *   the function and the bits after the type of the variables with respect
+     *   to which the function is derivated.
+     */
+    static int getTypeIdentifier(const std::string_view);
     /*!
      * \return the size of a type (i.e. the number of values hold)
      * \note this method is only meaningful for TFEL mathematical objects.
@@ -323,10 +356,20 @@ namespace mfront {
       std::optional<std::vector<TemplateArgument>> template_arguments;
     };
     /*!
+     * \return if the given type describes a scalar
+     * \param[in] t : type
+     */
+    static bool isScalarType(const TypeInformation&);
+    /*!
      * \return the flag associated with the given type
      * \param[in] t : type
      */
     static std::optional<TypeFlag> getTypeFlag(const TypeInformation&);
+    /*!
+     * \return a integer encoding the type of a tensorial variable and the number of bits used for the encoding
+     * \param[in] t : type
+     */
+    static std::pair<int, int> getTypeIdentifier(const TypeInformation&);
     /*!
      * \return the size of a type (i.e. the number of values hold)
      * \param[in] t : type information
@@ -354,12 +397,18 @@ namespace mfront {
     static void checkNumberOfTemplateArguments(const TypeInformation&,
                                                const std::size_t);
     /*!
+     * \return the number of values hold by an object or the space dimension
+     * \param[in] size: integer template argument
+     */
+    static int getSizeOrSpaceDimension(
+        const TypeInformation::IntegerTemplateArgument&);
+    /*!
      * \return the space dimension of the tensorial object (0 if it depends on
      * the context of instanciation, 1 for an 1D tensor, 2 for a 2D tensor, 3
      * for a 3D tensor)
+     * \param[in] t: type description
      */
-    static unsigned short getTensorialObjectSpaceDimension(
-        const TypeInformation&);
+    static int getTensorialObjectSpaceDimension(const TypeInformation&);
     /*!
      * \brief analyse the template arguments of a tensorial object
      * \param[in] t: type information

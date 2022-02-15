@@ -58,6 +58,14 @@ namespace mfront {
   VariableDescription& VariableDescription::operator=(
       const VariableDescription&) = default;
 
+  bool VariableDescription::isScalar() const {
+    return SupportedTypes::isScalarType(this->type);
+  }  // end of isScalar
+
+  int VariableDescription::getVariableTypeIdentifier() const {
+    return SupportedTypes::getTypeIdentifier(this->type);
+  } // end of getVariableTypeIdentifier
+
   void VariableDescription::setGlossaryName(const std::string& g) {
     using tfel::glossary::Glossary;
     auto throw_if = [](const bool b, const std::string& m) {

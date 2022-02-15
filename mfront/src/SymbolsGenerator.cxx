@@ -25,25 +25,6 @@
 
 namespace mfront {
 
-  static int getVariableTypeId(const VariableDescription& v) {
-    switch (SupportedTypes::getTypeFlag(v.type)) {
-      case SupportedTypes::SCALAR:
-        return 0;
-      case SupportedTypes::STENSOR:
-        return 1;
-      case SupportedTypes::TVECTOR:
-        return 2;
-      case SupportedTypes::TENSOR:
-        return 3;
-      default:
-        tfel::raise(
-            "getVariableTypeId: "
-            "internal error, tag unsupported for "
-            "variable '" +
-            v.name + "'");
-    }
-  }  // end of getVariableTypeId
-
   std::string SymbolsGenerator::getSymbolName(
       const StandardBehaviourInterface& i,
       const std::string& n,
@@ -125,9 +106,9 @@ namespace mfront {
             th.name + "'");
       }
       const auto dvname = dv.getExternalName();
-      const auto dvtype = getVariableTypeId(dv);
+      const auto dvtype = dv.getVariableTypeIdentifier();
       const auto thname = th.getExternalName();
-      const auto thtype = getVariableTypeId(th);
+      const auto thtype = th.getVariableTypeIdentifier();
       if (dvname == "Strain") {
         if (thname != "Stress") {
           tfel::raise(
@@ -447,7 +428,7 @@ namespace mfront {
           << "_InternalStateVariablesTypes [] = {";
       for (auto p = persistentVarsHolder.begin();
            p != persistentVarsHolder.end();) {
-        const auto t = getVariableTypeId(*p);
+        const auto t = p->getVariableTypeIdentifier();
         for (unsigned short is = 0; is != p->arraySize;) {
           out << t;
           if (++is != p->arraySize) {

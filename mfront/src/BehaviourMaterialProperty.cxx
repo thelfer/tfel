@@ -34,6 +34,10 @@ namespace mfront {
         dummy(d) {
   }  // end olf BehaviourMaterialProperty::BehaviourMaterialProperty
 
+  bool BehaviourMaterialProperty::isScalar() const {
+    return SupportedTypes::isScalarType(this->type);
+  }  // end of isScalar
+
   BehaviourMaterialProperty::~BehaviourMaterialProperty() = default;
 
   const BehaviourMaterialProperty& findBehaviourMaterialProperty(
