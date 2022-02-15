@@ -696,7 +696,7 @@ namespace mtest {
             if (i < 9) {
               return nvalues[i];
             }
-            return std::to_string(i) + "th";
+            return std::to_string(i + 1) + "th";
           }();
           desc.push_back(number + " component of internal variable '" + *pn +
                          "' (" + nc[i] + ")");

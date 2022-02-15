@@ -624,6 +624,10 @@ $ mfront-query --post-processing-variables Elasticity.mfront
 
 # Issues fixed
 
+## Issue #108: [mtest] Support for extended types in MTest
+
+For more details, see : <https://github.com/thelfer/tfel/issues/108>.
+
 ## Issue 94: [mfront] Add option to disable initialization of parameters from text file
 
 This feature is described in Section

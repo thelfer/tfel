@@ -11,6 +11,8 @@
  * project under specific licensing conditions.
  */
 
+#include <bitset>
+#include <climits>
 #include <ostream>
 #include <stdexcept>
 #include "TFEL/Raise.hxx"
@@ -59,6 +61,226 @@
 #ifdef HAVE_DIANAFEA
 #include "MTest/DianaFEASmallStrainBehaviour.hxx"
 #endif /* HAVE_DIANAFEA  */
+
+namespace mtest::internals {
+
+  static int extractAndShift(int& v, const std::size_t s) {
+    using bits = std::bitset<sizeof(int) * CHAR_BIT>;
+    const auto m = (bits{}.set() << s).flip();
+    bits value(v);
+    const auto r = value & m;
+    value >>= s;
+    v = static_cast<int>(value.to_ulong());
+    return static_cast<int>(r.to_ulong());
+  }  // end of extractAndShift
+
+  static size_t getVariableSize(int&, const Behaviour::Hypothesis);
+
+  static size_t getTinyVectorVariableSize(int& v,
+                                          const Behaviour::Hypothesis h) {
+    // tiny vector
+    const auto N = extractAndShift(v, 2);
+    if (N < 0) {
+      tfel::raise("invalid tensorial object dimension");
+    }
+    if (N == 0) {
+      return tfel::material::getSpaceDimension(h);
+    } else if (N > 3) {
+      tfel::raise("invalid space dimension");
+    }
+    return static_cast<size_t>(N);
+  }  // end of getVariableSize
+
+  static size_t getSymmetricTensorVariableSize(int& v,
+                                               const Behaviour::Hypothesis h) {
+    const auto N = extractAndShift(v, 2);
+    if (N == 0) {
+      return tfel::material::getStensorSize(h);
+    } else if (N == 1) {
+      return 3u;
+    } else if (N == 2) {
+      return 4u;
+    } else if (N == 3) {
+      return 6u;
+    } else {
+      tfel::raise("invalid space dimension");
+    }
+  }  // end of getSymmetricTensorVariableSize
+
+  static size_t getUnSymmetricTensorVariableSize(
+      int& v, const Behaviour::Hypothesis h) {
+    const auto N = extractAndShift(v, 2);
+    if (N == 0) {
+      return tfel::material::getTensorSize(h);
+    } else if (N == 1) {
+      return 3u;
+    } else if (N == 2) {
+      return 5u;
+    } else if (N == 3) {
+      return 9u;
+    } else {
+      tfel::raise("invalid space dimension");
+    }
+  }  // end of getUnSymmetricTensorVariableSize
+
+  static size_t getArrayVariableSize(int& v, const Behaviour::Hypothesis h) {
+    // number of dimension of the array
+    const auto a = extractAndShift(v, 3);
+    if (a == 0) {
+      tfel::raise("invalid array arity");
+    }
+    auto n = size_t{1};
+    for (int i = 0; i != a; ++i) {
+      const auto d = extractAndShift(v, 7);
+      if (d < 1) {
+        tfel::raise("invalid array dimension");
+      }
+      n *= d;
+    }
+    return n * getVariableSize(v, h);
+  }  // end of getArrayVariableSize
+
+  static size_t getVariableSize(int& v, const Behaviour::Hypothesis h) {
+    const auto type = extractAndShift(v, 3);
+    if (type == 0) {
+      return 1u;
+    } else if (type == 1) {
+      return getSymmetricTensorVariableSize(v, h);
+    } else if (type == 2) {
+      return getTinyVectorVariableSize(v, h);
+    } else if (type == 3) {
+      return getUnSymmetricTensorVariableSize(v, h);
+    } else if (type == 4) {
+      // derivative type
+      const auto s1 = getVariableSize(v, h);
+      const auto s2 = getVariableSize(v, h);
+      return s1 * s2;
+    } else if (type != 5) {
+      tfel::raise("unsupported variable type");
+    }
+    return getArrayVariableSize(v, h);
+  }
+
+  static std::vector<std::string> getVariableComponents(int&, const Behaviour&);
+
+  static std::vector<std::string> getTinyVectorVariableComponents(
+      int& v, const Behaviour& b) {
+    // tiny vector
+    const auto N = extractAndShift(v, 2);
+    if (N == 0) {
+      return b.getVectorComponentsSuffixes();
+    } else if (N == 1) {
+      return {"X"};
+    } else if (N == 2) {
+      return {"X", "Y"};
+    } else if (N == 3) {
+      return {"X", "Y", "Z"};
+    } else {
+      tfel::raise("invalid space dimension");
+    }
+  }  // end of getVariableComponents
+
+  static std::vector<std::string> getSymmetricTensorVariableComponents(
+      int& v, const Behaviour& b) {
+    const auto N = extractAndShift(v, 2);
+    if (N == 0) {
+      return b.getStensorComponentsSuffixes();
+    } else if (N == 1) {
+      return {"XX", "YY", "ZZ"};
+    } else if (N == 2) {
+      return {"XX", "YY", "ZZ", "XY"};
+    } else if (N == 3) {
+      return {"XX", "YY", "ZZ", "XY", "XZ", "YZ"};
+    } else {
+      tfel::raise("invalid space dimension");
+    }
+  }  // end of getSymmetricTensorVariableComponents
+
+  static std::vector<std::string> getUnSymmetricTensorVariableComponents(
+      int& v, const Behaviour& b) {
+    const auto N = extractAndShift(v, 2);
+    if (N == 0) {
+      return b.getTensorComponentsSuffixes();
+    } else if (N == 1) {
+      return {"XX", "YY", "ZZ"};
+    } else if (N == 2) {
+      return {"XX", "YY", "ZZ", "XY", "YX"};
+    } else if (N == 3) {
+      return {"XX", "YY", "ZZ", "XY", "YX", "XZ", "ZX", "YZ", "ZY"};
+    } else {
+      tfel::raise("invalid space dimension");
+    }
+  }  // end of getUnSymmetricTensorVariableComponents
+
+  static std::vector<std::string> getArrayVariableComponents(
+      int& v, const Behaviour& b) {
+    // number of dimension of the array
+    const auto a = extractAndShift(v, 3);
+    if (a == 0) {
+      tfel::raise("invalid array arity");
+    }
+    auto components = std::vector<std::string>{};
+    for (int i = 0; i != a; ++i) {
+      const auto d = extractAndShift(v, 7);
+      if (d < 1) {
+        tfel::raise("invalid array dimension");
+      }
+      auto ncomponents = std::vector<std::string>{};
+      if (components.empty()) {
+        for (int j = 0; j != d; ++j) {
+          ncomponents.push_back('[' + std::to_string(d) + ']');
+        }
+      } else {
+        for (const auto c : components) {
+          for (int j = 0; j != d; ++j) {
+            ncomponents.push_back(c + '[' + std::to_string(d) + ']');
+          }
+        }
+      }
+      components.swap(ncomponents);
+    }
+    const auto vcomponents = getVariableComponents(v, b);
+    if (vcomponents.empty()) {
+      return components;
+    }
+    auto ncomponents = std::vector<std::string>{};
+    for (const auto c1 : components) {
+      for (const auto c2 : vcomponents) {
+        ncomponents.push_back(c1 + c2);
+      }
+    }
+    return ncomponents;
+  }  // end of getArrayVariableComponents
+
+  std::vector<std::string> getVariableComponents(int& v,
+                                                 const mtest::Behaviour& b) {
+    const auto type = extractAndShift(v, 3);
+    if (type == 0) {
+      return {};
+    } else if (type == 1) {
+      return getSymmetricTensorVariableComponents(v, b);
+    } else if (type == 2) {
+      return getTinyVectorVariableComponents(v, b);
+    } else if (type == 3) {
+      return getUnSymmetricTensorVariableComponents(v, b);
+    } else if (type == 4) {
+      // derivative type
+      const auto components1 = getVariableComponents(v, b);
+      const auto components2 = getVariableComponents(v, b);
+      auto components = std::vector<std::string>{};
+      for (const auto c1 : components1) {
+        for (const auto c2 : components2) {
+          components.push_back(c1 + c2);
+        }
+      }
+      return components;
+    } else if (type != 5) {
+      tfel::raise("unsupported variable type");
+    }
+    return getArrayVariableComponents(v, b);
+  }  // end of getVariableComponents
+
+}  // namespace mtest::internals
 
 namespace mtest {
 
@@ -346,16 +568,13 @@ namespace mtest {
   }  // end of buildValueExtractor
 
   size_t getVariableSize(const int t, const Behaviour::Hypothesis h) {
-    if (t == 0) {
-      return 1;
-    } else if (t == 1) {
-      return tfel::material::getStensorSize(h);
-    } else if (t == 2) {
-      return tfel::material::getSpaceDimension(h);
-    } else if (t != 3) {
-      tfel::raise("getVariablesSize: unsupported variable type");
+    auto id = t;
+    const auto s = mtest::internals::getVariableSize(id, h);
+    if (id != 0) {
+      tfel::raise("getVariableSize: invalid type identifier '" +
+                  std::to_string(t) + "'");
     }
-    return tfel::material::getTensorSize(h);
+    return s;
   }  // end of getVariableSize
 
   size_t getVariablesSize(const std::vector<int>& types,
@@ -370,36 +589,19 @@ namespace mtest {
   std::vector<std::string> getVariableComponents(const Behaviour& b,
                                                  const std::string& n,
                                                  const int t) {
-    auto components = std::vector<std::string>{};
-    if (t == 0) {
-      components.push_back(n);
-    } else if (t == 1) {
-      //! suffixes of stensor components
-      const auto& sexts = b.getStensorComponentsSuffixes();
-      for (decltype(sexts.size()) s = 0; s != sexts.size(); ++s) {
-        const auto vn = n + sexts[s];
-        components.push_back(vn);
-      }
-    } else if (t == 2) {
-      //! suffixes for vectors
-      const auto& exts = b.getVectorComponentsSuffixes();
-      for (decltype(exts.size()) s = 0; s != exts.size(); ++s) {
-        const auto vn = n + exts[s];
-        components.push_back(vn);
-      }
-    } else if (t == 3) {
-      //! suffixes for tensors
-      const auto& exts = b.getTensorComponentsSuffixes();
-      for (decltype(exts.size()) s = 0; s != exts.size(); ++s) {
-        const auto vn = n + exts[s];
-        components.push_back(vn);
-      }
-    } else {
-      tfel::raise(
-          "getVariableComponents: unsupported variable type for variable '" +
-          n + "'");
+    auto id = t;
+    auto components = mtest::internals::getVariableComponents(id, b);
+    if (id != 0) {
+      tfel::raise("getVariableSize: invalid type identifier '" +
+                  std::to_string(t) + "'");
+    }
+    if (components.empty()) {
+      return {n};
+    }
+    for (auto& c : components) {
+      c = n + c;
     }
     return components;
-  }  // end of StandardBehaviourBase::getVariableComponents
+  }  // end of getVariableComponents
 
 }  // end of namespace mtest

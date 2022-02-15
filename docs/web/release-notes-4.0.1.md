@@ -101,6 +101,8 @@ Tiny matrices defined by `tmatrix<N, M, value_type>` are encoded as:
   of a tensorial object and if `value_type` is a scalar type.
 - an bi-dimensional array otherwise.
 
+For more details, see : <https://github.com/thelfer/tfel/issues/108>.
+
 ## Issue #105: [TFELMath] Missing specialisations of the `DerivativeTypeDispatcher` class
 
 Many specialisations of the `DerivativeTypeDispatcher` class are missing:
