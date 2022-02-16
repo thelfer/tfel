@@ -160,15 +160,15 @@ namespace mfront {
     const auto& d = bd.getBehaviourData(h);
     const auto fn = this->getSymbolName(i, name, h);
     auto initializes = std::vector<std::string>{};
-    for (const auto& p : d.getInitializeFunctions()) {
-      initializes.push_back(p.first);
+    for (const auto& ifct : d.getInitializeFunctions()) {
+      initializes.push_back(ifct.first);
     }
     os << "MFRONT_SHAREDOBJ unsigned short " << fn
-       << "_nInitializeFunctions= " << initializes.size() << ";\n\n";
+       << "_nInitializeFunctions = " << initializes.size() << ";\n\n";
     this->writeArrayOfStringsSymbol(os, fn + "_InitializeFunctions",
                                     initializes);
     for (const auto& [p, c] : d.getInitializeFunctions()) {
-      const auto s = "InitializeFunction_" + p + "_Outputs";
+      const auto s = "InitializeFunction_" + p + "_Inputs";
       const auto& initialize_function_variables =
           c.attributes.at(CodeBlock::used_initialize_function_variables)
               .get<std::vector<VariableDescription>>();
@@ -218,19 +218,12 @@ namespace mfront {
   }  // end of writePostProcessingsSymbols
 
   void GenericBehaviourSymbolsGenerator::writeAdditionalSymbols(
-      std::ostream& os,
-      const StandardBehaviourInterface& i,
-      const BehaviourDescription& bd,
+      std::ostream&,
+      const StandardBehaviourInterface&,
+      const BehaviourDescription&,
       const FileDescription&,
-      const std::string& name,
-      const Hypothesis h) const {
-    const auto& d = bd.getBehaviourData(h);
-    const auto fn = this->getSymbolName(i, name, h);
-    const auto ifcts = d.getUserDefinedInitializeCodeBlocksNames();
-    os << "MFRONT_SHAREDOBJ unsigned short " << fn
-       << "_nInitializeFunctions= " << ifcts.size() << ";\n\n";
-    this->writeArrayOfStringsSymbol(os, fn + "_InitializeFunctions", ifcts);
-    os << "\n";
+      const std::string&,
+      const Hypothesis) const {
   }  // end of GenericBehaviourSymbolsGenerator::writeAdditionalSymbols
 
   bool GenericBehaviourSymbolsGenerator::handleStrainMeasure() const {

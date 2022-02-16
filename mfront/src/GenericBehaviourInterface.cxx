@@ -1045,8 +1045,8 @@ namespace mfront {
             << " * \\param[in] d: material data\n"
             << " */\n"
             << "MFRONT_SHAREDOBJ int " << f << "_InitializeFunction_" << p.first
-            << "(const mfront_gb_real* const, mfront_gb_BehaviourData* "
-               "const);\n\n";
+            << "(mfront_gb_BehaviourData* const,\n"
+            << " const mfront_gb_real* const);\n\n";
       }
       out << "/*!\n"
           << " * \\param[in,out] d: material data\n"
@@ -1235,8 +1235,8 @@ namespace mfront {
       // initialize functions
       for (const auto& p : d.getInitializeFunctions()) {
         out << "MFRONT_SHAREDOBJ int " << f << "_InitializeFunction_" << p.first
-            << "(const mfront_gb_real* const values,\n"
-            << "mfront_gb_BehaviourData* const d){\n"
+            << "(mfront_gb_BehaviourData* const d,\n"
+            << "const mfront_gb_real* const values){\n"
             << "using namespace tfel::material;\n"
             << "using real = mfront::gb::real;\n"
             << "constexpr auto h = ModellingHypothesis::"

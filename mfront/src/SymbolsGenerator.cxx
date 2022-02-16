@@ -282,6 +282,7 @@ namespace mfront {
     this->writeBoundsSymbols(out, i, bd, name, h);
     this->writePhysicalBoundsSymbols(out, i, bd, name, h);
     this->writeRequirementsSymbols(out, i, bd, name, h);
+    this->writeInitializeFunctionsSymbols(out, i, bd, name, h);
     this->writePostProcessingsSymbols(out, i, bd, name, h);
     this->writeAdditionalSymbols(out, i, bd, fd, name, h);
     this->writeComputesInternalEnergySymbol(out, i, bd, name, h);

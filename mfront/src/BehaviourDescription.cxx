@@ -748,8 +748,8 @@ namespace mfront {
   }  // end of appendToPrivateCode
 
   void BehaviourDescription::addInitializeFunction(const Hypothesis h,
-                                                 const std::string& n,
-                                                 const CodeBlock& c) {
+                                                   const std::string& n,
+                                                   const CodeBlock& c) {
     this->callBehaviourData(h, &BehaviourData::addInitializeFunction, n, c, true);
   }  // end of addInitializeFunction
 
