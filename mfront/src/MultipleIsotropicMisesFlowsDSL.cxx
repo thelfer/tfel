@@ -348,13 +348,9 @@ namespace mfront {
     for (auto p = this->flows.begin(); p != this->flows.end(); ++p, ++n) {
       os << "error += tfel::math::abs(newton_f(" << n << "));\n";
     }
-    os << "auto jacobian_inversion_succeeded = true;"
-       << "try{\n"
+    os << "auto jacobian_inversion_succeeded = "
        << "tfel::math::TinyMatrixSolve<" << this->flows.size()
-       << ", NumericType>::exe(newton_df,newton_f);\n"
-       << "} catch(tfel::math::LUException&){\n"
-       << "jacobian_inversion_succeeded = false;\n"
-       << "}\n"
+       << ", NumericType, false>::exe(newton_df,newton_f);\n"
        << "if(jacobian_inversion_succeeded){\n"
        << "vdp -= newton_f;\n"
        << "} else {\n "

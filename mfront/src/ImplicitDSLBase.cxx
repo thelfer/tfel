@@ -248,17 +248,16 @@ namespace mfront {
               if (v2.arraySize == 1u) {
                 i += j + " " + op + " ;\n";
               } else {
-                i += "for(unsigned short i = 0; i != " +
-                     std::to_string(v2.arraySize) + ";++i){\n";
+                i += "for(ushort i = 0; i != " + std::to_string(v2.arraySize) +
+                     ";++i){\n";
                 i += j + "(i) " + op + " ;\n";
                 i += "}\n";
               }
             }
           }
         } else {
-          i +=
-              "for(unsigned short i = 0; i != " + std::to_string(v1.arraySize) +
-              ";++i){\n";
+          i += "for(ushort i = 0; i != " + std::to_string(v1.arraySize) +
+               ";++i){\n";
           i += "f" + v1n + "(i) += ;\n";
           i += "// jacobian blocks\n";
           if ((this->solver != nullptr) && (this->solver->usesJacobian())) {
@@ -271,8 +270,8 @@ namespace mfront {
               if (v2.arraySize == 1u) {
                 i += j + "(i) " + op + " ;\n";
               } else {
-                i += "for(unsigned short j = 0; j != " +
-                     std::to_string(v2.arraySize) + ";++j){\n";
+                i += "for(ushort j = 0; j != " + std::to_string(v2.arraySize) +
+                     ";++j){\n";
                 i += j + "(i,j) " + op + " ;\n";
                 i += "}\n";
               }
@@ -1243,7 +1242,7 @@ namespace mfront {
       }
     }
     if (!this->mb.hasParameter(uh, "iterMax")) {
-      unsigned short iterMax = 100u;
+      ushort iterMax = 100u;
       VariableDescription v("ushort", "iterMax", 1u, 0u);
       v.description = "maximum number of iterations allowed";
       this->mb.addParameter(uh, v, BehaviourData::ALREADYREGISTRED);
@@ -1474,24 +1473,25 @@ namespace mfront {
          << d.matrix_name << ");\n";
     } else if ((v1.arraySize != 1u) && (v2.arraySize == 1u)) {
       os << "auto " << d.derivative_name << " = [&" << d.matrix_name
-         << "](const unsigned short idx){\n"
+         << "](const ushort mfront_idx){\n"
          << "return tfel::math::map_derivative<" << v1.type << ", " << v2.type
-         << ">(" << d.matrix_name << ", " << dr << " + idx * "
+         << ">(" << d.matrix_name << ", " << dr << " + mfront_idx * "
          << this->getTypeSize(v1.type, 1u) << ", " << dc << ");\n"
          << "};\n";
     } else if ((v1.arraySize == 1u) && (v2.arraySize != 1u)) {
       os << "auto " << d.derivative_name << " = [&" << d.matrix_name
-         << "](const unsigned short idx){\n"
+         << "](const ushort mfront_idx){\n"
          << "return tfel::math::map_derivative<" << v1.type << ", " << v2.type
-         << ">(" << d.matrix_name << ", " << dr << ", " << dc << " + idx * "
-         << this->getTypeSize(v2.type, 1u) << ");\n"
+         << ">(" << d.matrix_name << ", " << dr << ", " << dc
+         << " + mfront_idx * " << this->getTypeSize(v2.type, 1u) << ");\n"
          << "};\n";
     } else {
       os << "auto " << d.derivative_name << " = [&" << d.matrix_name
-         << "](const unsigned short idx, const unsigned short idx2){\n"
+         << "](const ushort mfront_idx, const ushort "
+            "mfront_idx2){\n"
          << "return tfel::math::map_derivative<" << v1.type << ", " << v2.type
-         << ">(" << d.matrix_name << ", " << dr << " + idx * "
-         << this->getTypeSize(v1.type, 1u) << ", " << dc << " + idx2 * "
+         << ">(" << d.matrix_name << ", " << dr << " + mfront_idx * "
+         << this->getTypeSize(v1.type, 1u) << ", " << dc << " + mfront_idx2 * "
          << this->getTypeSize(v2.type, 1u) << ");\n"
          << "};\n";
     }
@@ -1774,17 +1774,17 @@ namespace mfront {
                << v.type << "," << v2.type << "> "
                << "df" << v.name << "_dd" << v2.name << "(tfel::math::tmatrix<"
                << n3 << "," << n3 << ", NumericType>& tjacobian,"
-               << "const unsigned short idx){\n"
+               << "const ushort mfront_idx){\n"
                << "return tfel::math::map_derivative<" << v.type << ","
-               << v2.type << ">(tjacobian, " << n << " + idx * ("
+               << v2.type << ">(tjacobian, " << n << " + mfront_idx * ("
                << this->getTypeSize(v.type, 1u) << "), " << n2 << ");\n"
                << "}\n\n";
             os << "tfel::math::derivative_view_from_tiny_matrix<" << n3 << ", "
                << v.type << "," << v2.type << "> "
                << "df" << v.name << "_dd" << v2.name
-               << "(const unsigned short idx){\n"
+               << "(const ushort mfront_idx){\n"
                << "return tfel::math::map_derivative<" << v.type << ","
-               << v2.type << ">(this->jacobian, " << n << " + idx * ("
+               << v2.type << ">(this->jacobian, " << n << " + mfront_idx * ("
                << this->getTypeSize(v.type, 1u) << "), " << n2 << ");\n"
                << "}\n\n";
           } else if ((v.arraySize == 1u) && (v2.arraySize != 1u)) {
@@ -1792,40 +1792,44 @@ namespace mfront {
                << v.type << "," << v2.type << "> "
                << "df" << v.name << "_dd" << v2.name << "(tfel::math::tmatrix<"
                << n3 << "," << n3 << ", NumericType>& tjacobian,"
-               << "const unsigned short idx){\n"
+               << "const ushort mfront_idx){\n"
                << "return tfel::math::map_derivative<" << v.type << ","
-               << v2.type << ">(tjacobian, " << n << ", " << n2 << " + idx * ("
-               << this->getTypeSize(v2.type, 1u) << "));\n"
+               << v2.type << ">(tjacobian, " << n << ", " << n2
+               << " + mfront_idx * (" << this->getTypeSize(v2.type, 1u)
+               << "));\n"
                << "}\n\n";
             os << "tfel::math::derivative_view_from_tiny_matrix<" << n3 << ", "
                << v.type << "," << v2.type << "> "
                << "df" << v.name << "_dd" << v2.name
-               << "(const unsigned short idx){\n"
+               << "(const ushort mfront_idx){\n"
                << "return tfel::math::map_derivative<" << v.type << ","
                << v2.type << ">(this->jacobian, " << n << ", " << n2
-               << " + idx * (" << this->getTypeSize(v2.type, 1u) << "));\n"
+               << " + mfront_idx * (" << this->getTypeSize(v2.type, 1u)
+               << "));\n"
                << "}\n\n";
           } else {
             os << "tfel::math::derivative_view_from_tiny_matrix<" << n3 << ", "
                << v.type << "," << v2.type << "> "
                << "df" << v.name << "_dd" << v2.name << "(tfel::math::tmatrix<"
                << n3 << "," << n3 << ", NumericType>& tjacobian,"
-               << "const unsigned short idx, "
-               << "const unsigned short idx2){\n"
+               << "const ushort mfront_idx, "
+               << "const ushort mfront_idx2){\n"
                << "return tfel::math::map_derivative<" << v.type << ","
-               << v2.type << ">(tjacobian, " << n << " + idx * ("
-               << this->getTypeSize(v.type, 1u) << "), " << n2 << " + idx2 * ("
-               << this->getTypeSize(v2.type, 1u) << "));\n"
+               << v2.type << ">(tjacobian, " << n << " + mfront_idx * ("
+               << this->getTypeSize(v.type, 1u) << "), " << n2
+               << " + mfront_idx2 * (" << this->getTypeSize(v2.type, 1u)
+               << "));\n"
                << "}\n\n";
             os << "tfel::math::derivative_view_from_tiny_matrix<" << n3 << ", "
                << v.type << "," << v2.type << "> "
                << "df" << v.name << "_dd" << v2.name
-               << "(const unsigned short idx, "
-               << "const unsigned short idx2){\n"
+               << "(const ushort mfront_idx, "
+               << "const ushort mfront_idx2){\n"
                << "return tfel::math::map_derivative<" << v.type << ","
-               << v2.type << ">(this->jacobian, " << n << " + idx * ("
-               << this->getTypeSize(v.type, 1u) << "), " << n2 << " + idx2 * ("
-               << this->getTypeSize(v2.type, 1u) << "));\n"
+               << v2.type << ">(this->jacobian, " << n << " + mfront_idx * ("
+               << this->getTypeSize(v.type, 1u) << "), " << n2
+               << " + mfront_idx2 * (" << this->getTypeSize(v2.type, 1u)
+               << "));\n"
                << "}\n\n";
           }
           n2 += this->getTypeSize(v2.type, v2.arraySize);
@@ -1914,8 +1918,10 @@ namespace mfront {
     const auto& cb = this->mb.getCodeBlock(h, n);
     if (getAttribute(cb, CodeBlock::requires_jacobian_decomposition, false)) {
       os << "TinyPermutation<" << nivs << "> jacobian_permutation;\n"
-         << "TinyMatrixSolve<" << nivs << ", NumericType>"
-         << "::decomp(this->jacobian,jacobian_permutation);\n";
+         << "if(!TinyMatrixSolve<" << nivs << ", NumericType, false>"
+         << "::decomp(this->jacobian,jacobian_permutation)){\n"
+         << "return false;\n"
+         << "}\n";
     }
     if (hasAttribute<std::vector<Derivative>>(
             cb, CodeBlock::used_jacobian_invert_blocks)) {
@@ -1928,11 +1934,15 @@ namespace mfront {
          << "std::fill(jacobian_invert.begin(), jacobian_invert.end(), "
             "NumericType(0));\n"
          << "for(typename tfel::math::tmatrix<" << nivs << ", " << nivs
-         << ", NumericType>::size_type idx=0;idx != " << nivs << "; ++idx){\n"
-         << "jacobian_invert(idx, idx) = NumericType(1);\n"
+         << ", NumericType>::size_type mfront_idx=0; mfront_idx != " << nivs
+         << "; ++mfront_idx){\n"
+         << "jacobian_invert(mfront_idx, mfront_idx) = NumericType(1);\n"
          << "}\n"
-         << "TinyMatrixSolve<" << nivs << ", NumericType>::back_substitute("
-         << "this->jacobian, jacobian_permutation, jacobian_invert);\n";
+         << "if(!TinyMatrixSolve<" << nivs
+         << ", NumericType, false>::back_substitute("
+         << "this->jacobian, jacobian_permutation, jacobian_invert)){\n"
+         << "return false;\n"
+         << "}\n";
       auto cr = SupportedTypes::TypeSize{};  // current row
       auto cc = SupportedTypes::TypeSize{};  // current column
       for (const auto& iv1 : isvs) {
@@ -1979,11 +1989,13 @@ namespace mfront {
          << "GetPartialJacobianInvert(" << this->mb.getClassName()
          << "& mfront_behaviour_argument,\n"
          << "const tfel::math::TinyPermutation<" << nivs
-         << ">& mfront_permutation_argument)\n"
+         << ">& mfront_permutation_argument,\n"
+         << "bool& mfront_success_argument)\n"
          << ": mfront_get_partial_jacobian_invert_behaviour("
          << "mfront_behaviour_argument),\n"
          << "mfront_get_partial_jacobian_invert_permutation("
-         << "mfront_permutation_argument)\n"
+         << "mfront_permutation_argument),\n"
+         << "mfront_success_reference(mfront_success_argument)"
          << "{}\n";
       for (size_type i = 0; i != isvs.size(); ++i) {
         os << "void operator()(";
@@ -1996,7 +2008,7 @@ namespace mfront {
           }
         }
         os << "){\n"
-           << "this->mfront_get_partial_jacobian_invert_behaviour."
+           << "if(!this->mfront_get_partial_jacobian_invert_behaviour."
            << "computePartialJacobianInvert("
            << "this->mfront_get_partial_jacobian_invert_permutation, ";
         for (size_type i2 = 0; i2 <= i;) {
@@ -2006,7 +2018,9 @@ namespace mfront {
             os << ",\n";
           }
         }
-        os << ");\n"
+        os << ")){\n"
+           << "this->mfront_success_reference = false;"
+           << "};\n"
            << "}\n";
       }
       os << "private:\n"
@@ -2014,9 +2028,11 @@ namespace mfront {
          << "mfront_get_partial_jacobian_invert_behaviour;\n"
          << "const tfel::math::TinyPermutation<" << nivs << ">& "
          << "mfront_get_partial_jacobian_invert_permutation;\n"
+         << "bool& mfront_success_reference;\n"
          << "}; // end of struct GetPartialJacobianInvert\n"
          << "GetPartialJacobianInvert "
-            "getPartialJacobianInvert(*this, jacobian_permutation);\n";
+            "getPartialJacobianInvert(*this, jacobian_permutation, "
+            "mfront_success);\n";
     }
     const auto attr = CodeBlock::
         used_implicit_equations_derivatives_with_respect_to_gradients_or_external_state_variables;
@@ -2125,10 +2141,12 @@ namespace mfront {
            << "GetIntegrationVariablesDerivatives_" << givd.name << "("
            << this->mb.getClassName() << "& b,\n"
            << "const tfel::math::TinyPermutation<" << nivs << ">& p,\n"
-           << rhs_type << "& v)\n"
+           << rhs_type << "& v,\n"
+           << "bool& mfront_success_argument)\n"
            << ": behaviour(b),\n"
            << "permutation(p)\n,"
-           << "rhs(v)\n"
+           << "rhs(v),\n"
+           << "mfront_success_reference(mfront_success_argument)\n"
            << "{}\n";
         for (size_type i = 0; i != isvs.size(); ++i) {
           os << "void operator()(";
@@ -2143,9 +2161,12 @@ namespace mfront {
           }
           os << "){\n"
              << rhs_type << " lhs(-(this->rhs));\n"
-             << "tfel::math::TinyMatrixSolve<" << nivs << ", NumericType>"
+             << "if(!tfel::math::TinyMatrixSolve<" << nivs
+             << ", NumericType, false>"
              << "::back_substitute(this->behaviour.jacobian, "
-             << "this->permutation, lhs);\n";
+             << "this->permutation, lhs)){\n"
+             << "this->mfront_success_reference=false;\n"
+             << "}\n";
           auto cr = SupportedTypes::TypeSize{};  // current row
           for (size_type i2 = 0; i2 <= i; ++i2) {
             const auto& v = isvs[i2];
@@ -2171,10 +2192,12 @@ namespace mfront {
                  << v.name << "_dd" << givd.name << "_view;\n";
             } else {
               os << "for(typename " << rhs_type
-                 << "::size_type idx; idx!=" << v.arraySize << "; ++idx){\n"
+                 << "::size_type mfront_idx; mfront_idx !=" << v.arraySize
+                 << "; ++mfront_idx){\n"
                  << "integration_variable_derivative_d" << v.name << "_dd"
-                 << givd.name << "(idx) = integration_variable_derivative_d"
-                 << v.name << "_dd" << givd.name << "_view(idx);"
+                 << givd.name
+                 << "(mfront_idx) = integration_variable_derivative_d" << v.name
+                 << "_dd" << givd.name << "_view(mfront_idx);"
                  << "}\n";
             }
           }
@@ -2185,10 +2208,11 @@ namespace mfront {
            << "const tfel::math::TinyPermutation<" << nivs
            << ">& permutation;\n"
            << rhs_type << "& rhs;\n"
+           << "bool& mfront_success_reference;\n"
            << "};\n"
            << "GetIntegrationVariablesDerivatives_" << givd.name << " "
            << "getIntegrationVariablesDerivatives_" << givd.name
-           << "(*this, jacobian_permutation," << m << ");\n";
+           << "(*this, jacobian_permutation," << m << ", mfront_success);\n";
       }
     }
     //
@@ -2204,7 +2228,7 @@ namespace mfront {
     const auto v2 = VariableDescription{"StrainStensor", "\u03B5\u1D57\u1D52",
                                         "eto", 1u, 0u};
     for (size_type i = 0; i != isvs.size(); ++i) {
-      os << "void\ncomputePartialJacobianInvert("
+      os << "[[nodiscard]] bool\ncomputePartialJacobianInvert("
             "const tfel::math::TinyPermutation<"
          << n << ">& jacobian_permutation, ";
       for (size_type i2 = 0; i2 <= i;) {
@@ -2218,25 +2242,29 @@ namespace mfront {
       os << ")\n"
          << "{\n"
          << "using namespace tfel::math;\n"
-         << "for(unsigned short idx=0;idx!=StensorSize;++idx){\n"
+         << "for(ushort mfront_idx=0; mfront_idx !=StensorSize; "
+            "++mfront_idx){\n"
          << "tvector<" << n << ", NumericType> vect_e(NumericType(0));\n"
-         << "vect_e(idx) = NumericType(1);\n"
-         << "TinyMatrixSolve<" << n << ", NumericType>"
-         << "::back_substitute(this->jacobian,jacobian_permutation,"
-            "vect_e);\n";
+         << "vect_e(mfront_idx) = NumericType(1);\n"
+         << "if(!TinyMatrixSolve<" << n << ", NumericType, false>"
+         << "::back_substitute(this->jacobian, "
+         << "jacobian_permutation, vect_e)){\n"
+         << "return false;\n"
+         << "}\n";
       SupportedTypes::TypeSize n2;
       for (size_type i2 = 0; i2 <= i; ++i2) {
         const auto& v = d.getIntegrationVariables()[i2];
         const auto flag = SupportedTypes::getTypeFlag(v.type);
         if (flag == SupportedTypes::SCALAR) {
           if (v.arraySize == 1u) {
-            os << "partial_jacobian_" << v.name << "(idx)=vect_e(" << n2
+            os << "partial_jacobian_" << v.name << "(mfront_idx)=vect_e(" << n2
                << ");\n";
           } else {
-            os << "for(unsigned short idx2=0;idx2!=" << v.arraySize
-               << ";++idx2){\n"
-               << "partial_jacobian_" << v.name << "(idx2)(idx)=vect_e(" << n2
-               << "+idx2);\n"
+            os << "for(ushort mfront_idx2=0; mfront_idx2!=" << v.arraySize
+               << "; ++mfront_idx2){\n"
+               << "partial_jacobian_" << v.name
+               << "(mfront_idx2)(mfront_idx)=vect_e(" << n2
+               << "+mfront_idx2);\n"
                << "}\n";
           }
           n2 += this->getTypeSize(v.type, v.arraySize);
@@ -2244,19 +2272,23 @@ namespace mfront {
                    (flag == SupportedTypes::STENSOR) ||
                    (flag == SupportedTypes::TENSOR)) {
           if (v.arraySize == 1u) {
-            os << "for(unsigned short idx2=" << n2;
-            os << ";idx2!=";
+            os << "for(ushort mfront_idx2=" << n2;
+            os << "; mfront_idx2!=";
             n2 += this->getTypeSize(v.type, v.arraySize);
-            os << n2 << ";++idx2){\n";
-            os << "partial_jacobian_" << v.name << "(idx2,idx)=vect_e(idx2);\n";
+            os << n2 << "; ++mfront_idx2){\n";
+            os << "partial_jacobian_" << v.name
+               << "(mfront_idx2,mfront_idx)=vect_e(mfront_idx2);\n";
             os << "}\n";
           } else {
             const auto size = this->getTypeSize(v.type, 1u);
-            os << "for(unsigned short idx2=0; idx2!=" << v.arraySize
-               << ";++idx2){\n"
-               << "for(unsigned short idx3=0;idx3!= " << size << ";++idx3){\n"
-               << "partial_jacobian_" << v.name << "(idx2)(idx3,idx) = "
-               << "vect_e(" << n2 << "+ idx3 + idx2 * " << size << ");\n"
+            os << "for(ushort mfront_idx2=0; mfront_idx2!=" << v.arraySize
+               << "; ++mfront_idx2){\n"
+               << "for(ushort mfront_idx3=0; mfront_idx3!= " << size
+               << "; ++mfront_idx3){\n"
+               << "partial_jacobian_" << v.name
+               << "(mfront_idx2)(mfront_idx3,mfront_idx) = "
+               << "vect_e(" << n2 << "+ mfront_idx3 + mfront_idx2 * " << size
+               << ");\n"
                << "}\n"
                << "}\n";
             n2 += this->getTypeSize(v.type, v.arraySize);
@@ -2276,7 +2308,8 @@ namespace mfront {
           os << "partial_jacobian_" << v.name << " /= " << nf << ";\n";
         }
       }
-      os << "}\n\n";
+      os << "return true;\n"
+         << "}\n\n";
     }
   }  // end of writeComputePartialJacobianInvert
 
@@ -2295,15 +2328,16 @@ namespace mfront {
        << "tvector<" << n << ", NumericType> tfzeros(this->fzeros);\n"
        << "tmatrix<" << n << "," << n
        << ", NumericType> tjacobian(this->jacobian);\n"
-       << "for(unsigned short idx = 0; idx!= " << n << ";++idx){\n"
-       << "this->zeros(idx) -= this->numerical_jacobian_epsilon;\n";
+       << "for(ushort mfront_idx = 0; mfront_idx != " << n
+       << "; ++mfront_idx){\n"
+       << "this->zeros(mfront_idx) -= this->numerical_jacobian_epsilon;\n";
     if (this->mb.hasCode(h, BehaviourData::ComputeThermodynamicForces)) {
       os << "this->computeThermodynamicForces();\n";
     }
     os << "this->computeFdF(true);\n"
        << "this->zeros = tzeros;\n"
        << "tvector<" << n << ", NumericType> tfzeros2(this->fzeros);\n"
-       << "this->zeros(idx) += this->numerical_jacobian_epsilon;\n";
+       << "this->zeros(mfront_idx) += this->numerical_jacobian_epsilon;\n";
     if (this->mb.hasCode(h, BehaviourData::ComputeThermodynamicForces)) {
       os << "this->computeThermodynamicForces();\n";
     }
@@ -2311,8 +2345,9 @@ namespace mfront {
        << "this->fzeros = "
           "(this->fzeros-tfzeros2) / (2 * "
           "(this->numerical_jacobian_epsilon));\n"
-       << "for(unsigned short idx2 = 0; idx2!= " << n << ";++idx2){\n"
-       << "njacobian(idx2,idx) = this->fzeros(idx2);\n"
+       << "for(ushort mfront_idx2 = 0; mfront_idx2!= " << n
+       << "; ++mfront_idx2){\n"
+       << "njacobian(mfront_idx2,mfront_idx) = this->fzeros(mfront_idx2);\n"
        << "}\n"
        << "this->zeros    = tzeros;\n"
        << "this->fzeros   = tfzeros;\n"
@@ -2703,9 +2738,10 @@ namespace mfront {
          << "std::fill(this->jacobian.begin(),this->jacobian.end(), "
             "NumericType(0))"
             ";\n"
-         << "for(unsigned short idx = 0; idx != "
-         << mfront::getTypeSize(d.getIntegrationVariables()) << "; ++idx){\n"
-         << "this->jacobian(idx, idx) = NumericType(1);\n"
+         << "for(ushort mfront_idx = 0; mfront_idx != "
+         << mfront::getTypeSize(d.getIntegrationVariables())
+         << "; ++mfront_idx){\n"
+         << "this->jacobian(mfront_idx, mfront_idx) = NumericType(1);\n"
          << "}\n";
     }
     os << "// setting f values to zeros\n"
@@ -2745,25 +2781,26 @@ namespace mfront {
                 const auto& vnf = this->mb.getAttribute<std::string>(
                     h, v2.name + "_normalisation_factor");
                 if ((v.arraySize != 1u) && (v2.arraySize != 1u)) {
-                  os << "for(unsigned short idx=0;idx!=" << v.arraySize
-                     << ";++idx){\n";
-                  os << "for(unsigned short idx2=0;idx2!=" << v2.arraySize
-                     << ";++idx2){\n";
+                  os << "for(ushort mfront_idx=0; mfront_idx !=" << v.arraySize
+                     << "; ++mfront_idx){\n";
+                  os << "for(ushort mfront_idx2=0; mfront_idx2!="
+                     << v2.arraySize << "; ++mfront_idx2){\n";
                   os << "df" << v.name << "_dd" << v2.name
-                     << "(idx,idx2) *= " << vnf << "/(" << fnf << ");\n";
+                     << "(mfront_idx,mfront_idx2) *= " << vnf << "/(" << fnf
+                     << ");\n";
                   os << "}\n";
                   os << "}\n";
                 } else if ((v.arraySize != 1u) && (v2.arraySize == 1u)) {
-                  os << "for(unsigned short idx=0;idx!=" << v.arraySize
-                     << ";++idx){\n";
-                  os << "df" << v.name << "_dd" << v2.name << "(idx) *= " << vnf
-                     << "/(" << fnf << ");\n";
+                  os << "for(ushort mfront_idx=0; mfront_idx !=" << v.arraySize
+                     << "; ++mfront_idx){\n";
+                  os << "df" << v.name << "_dd" << v2.name
+                     << "(mfront_idx) *= " << vnf << "/(" << fnf << ");\n";
                   os << "}\n";
                 } else if ((v.arraySize == 1u) && (v2.arraySize != 1u)) {
-                  os << "for(unsigned short idx=0;idx!=" << v2.arraySize
-                     << ";++idx){\n";
-                  os << "df" << v.name << "_dd" << v2.name << "(idx) *= " << vnf
-                     << "/(" << fnf << ");\n";
+                  os << "for(ushort mfront_idx=0; mfront_idx !=" << v2.arraySize
+                     << "; ++mfront_idx){\n";
+                  os << "df" << v.name << "_dd" << v2.name
+                     << "(mfront_idx) *= " << vnf << "/(" << fnf << ");\n";
                   os << "}\n";
                 } else if ((v.arraySize == 1u) && (v2.arraySize == 1u)) {
                   os << "df" << v.name << "_dd" << v2.name << " *= " << vnf
@@ -2771,24 +2808,25 @@ namespace mfront {
                 }
               } else {
                 if ((v.arraySize != 1u) && (v2.arraySize != 1u)) {
-                  os << "for(unsigned short idx=0;idx!=" << v.arraySize
-                     << ";++idx){\n";
-                  os << "for(unsigned short idx2=0;idx2!=" << v2.arraySize
-                     << ";++idx2){\n";
-                  os << "df" << v.name << "_dd" << v2.name << "(idx,idx2) *= "
+                  os << "for(ushort mfront_idx=0; mfront_idx !=" << v.arraySize
+                     << "; ++mfront_idx){\n";
+                  os << "for(ushort mfront_idx2=0; mfront_idx2!="
+                     << v2.arraySize << "; ++mfront_idx2){\n";
+                  os << "df" << v.name << "_dd" << v2.name
+                     << "(mfront_idx,mfront_idx2) *= "
                      << "NumericType(1)/(" << fnf << ");\n";
                   os << "}\n";
                   os << "}\n";
                 } else if ((v.arraySize != 1u) && (v2.arraySize == 1u)) {
-                  os << "for(unsigned short idx=0;idx!=" << v.arraySize
-                     << ";++idx){\n";
-                  os << "df" << v.name << "_dd" << v2.name << "(idx) *= "
+                  os << "for(ushort mfront_idx=0; mfront_idx !=" << v.arraySize
+                     << "; ++mfront_idx){\n";
+                  os << "df" << v.name << "_dd" << v2.name << "(mfront_idx) *= "
                      << "NumericType(1)/(" << fnf << ");\n";
                   os << "}\n";
                 } else if ((v.arraySize == 1u) && (v2.arraySize != 1u)) {
-                  os << "for(unsigned short idx=0;idx!=" << v2.arraySize
-                     << ";++idx){\n";
-                  os << "df" << v.name << "_dd" << v2.name << "(idx) *= "
+                  os << "for(ushort mfront_idx=0; mfront_idx !=" << v2.arraySize
+                     << "; ++mfront_idx){\n";
+                  os << "df" << v.name << "_dd" << v2.name << "(mfront_idx) *= "
                      << "NumericType(1)/(" << fnf << ");\n";
                   os << "}\n";
                 } else if ((v.arraySize == 1u) && (v2.arraySize == 1u)) {
@@ -2801,25 +2839,25 @@ namespace mfront {
                 const auto& vnf = this->mb.getAttribute<std::string>(
                     h, v2.name + "_normalisation_factor");
                 if ((v.arraySize != 1u) && (v2.arraySize != 1u)) {
-                  os << "for(unsigned short idx=0;idx!=" << v.arraySize
-                     << ";++idx){\n";
-                  os << "for(unsigned short idx2=0;idx2!=" << v2.arraySize
-                     << ";++idx2){\n";
+                  os << "for(ushort mfront_idx=0; mfront_idx !=" << v.arraySize
+                     << "; ++mfront_idx){\n";
+                  os << "for(ushort mfront_idx2=0; mfront_idx2!="
+                     << v2.arraySize << "; ++mfront_idx2){\n";
                   os << "df" << v.name << "_dd" << v2.name
-                     << "(idx,idx2) *= " << vnf << ";\n";
+                     << "(mfront_idx,mfront_idx2) *= " << vnf << ";\n";
                   os << "}\n";
                   os << "}\n";
                 } else if ((v.arraySize != 1u) && (v2.arraySize == 1u)) {
-                  os << "for(unsigned short idx=0;idx!=" << v.arraySize
-                     << ";++idx){\n";
-                  os << "df" << v.name << "_dd" << v2.name << "(idx) *= " << vnf
-                     << ";\n";
+                  os << "for(ushort mfront_idx=0; mfront_idx !=" << v.arraySize
+                     << "; ++mfront_idx){\n";
+                  os << "df" << v.name << "_dd" << v2.name
+                     << "(mfront_idx) *= " << vnf << ";\n";
                   os << "}\n";
                 } else if ((v.arraySize == 1u) && (v2.arraySize != 1u)) {
-                  os << "for(unsigned short idx=0;idx!=" << v2.arraySize
-                     << ";++idx){\n";
-                  os << "df" << v.name << "_dd" << v2.name << "(idx) *= " << vnf
-                     << ";\n";
+                  os << "for(ushort mfront_idx=0; mfront_idx !=" << v2.arraySize
+                     << "; ++mfront_idx){\n";
+                  os << "df" << v.name << "_dd" << v2.name
+                     << "(mfront_idx) *= " << vnf << ";\n";
                   os << "}\n";
                 } else if ((v.arraySize == 1u) && (v2.arraySize == 1u)) {
                   os << "df" << v.name << "_dd" << v2.name << " *= " << vnf
@@ -2924,8 +2962,8 @@ namespace mfront {
           os << "tfel::math::View<" << v.type << "> d" << v.name << ";\n";
         }
       } else {
-        os << "tfel::math::ViewsFixedSizeVector<" << v.type
-           << ", unsigned short, " << v.arraySize << "> d" << v.name << ";\n";
+        os << "tfel::math::ViewsFixedSizeVector<" << v.type << ", ushort, "
+           << v.arraySize << "> d" << v.name << ";\n";
       }
     }
     os << '\n';

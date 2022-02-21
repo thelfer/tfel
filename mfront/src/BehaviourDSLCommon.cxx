@@ -3945,10 +3945,10 @@ namespace mfront {
       std::ostream& os) const {
     this->checkBehaviourDataFile(os);
     os << "static constexpr unsigned short TVectorSize = N;\n"
-       << "typedef tfel::math::StensorDimeToSize<N> StensorDimeToSize;\n"
+       << "using StensorDimeToSize = tfel::math::StensorDimeToSize<N>;\n"
        << "static constexpr unsigned short StensorSize = "
        << "StensorDimeToSize::value;\n"
-       << "typedef tfel::math::TensorDimeToSize<N> TensorDimeToSize;\n"
+       << "using TensorDimeToSize = tfel::math::TensorDimeToSize<N>;\n"
        << "static constexpr unsigned short TensorSize = "
        << "TensorDimeToSize::value;\n\n";
     this->writeTypeAliases(os);
@@ -7405,12 +7405,14 @@ namespace mfront {
                << "using namespace std;\n"
                << "using namespace tfel::math;\n"
                << "using std::vector;\n";
+            os << "auto mfront_success = true;\n";
             writeMaterialLaws(os, this->mb.getMaterialLaws());
             this->writeBehaviourComputeTangentOperatorBody(
                 os, h,
                 std::string(BehaviourData::ComputeTangentOperator) + "-" +
                     ktype);
-            os << "}\n\n";
+            os << "return mfront_success;\n"
+               << "}\n\n";
           } else {
             if ((h ==
                  ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS) ||
@@ -7495,17 +7497,19 @@ namespace mfront {
            << "using namespace std;\n"
            << "using namespace tfel::math;\n"
            << "using std::vector;\n";
+        os << "auto mfront_success = true;\n";
         writeMaterialLaws(os, this->mb.getMaterialLaws());
         this->writeBehaviourComputeTangentOperatorBody(
             os, h, BehaviourData::ComputeTangentOperator);
-        os << "}\n\n";
+        os << "return mfront_success;\n"
+           << "}\n\n";
       }
     }
   }  // end of writeBehaviourComputeTangentOperator
 
   void BehaviourDSLCommon::writeBehaviourComputeTangentOperatorBody(
       std::ostream& os, const Hypothesis h, const std::string& n) const {
-    os << this->mb.getCode(h, n) << '\n' << "return true;\n";
+    os << this->mb.getCode(h, n) << '\n';
   }  // end of writeBehaviourComputeTangentOperatorBody
 
   void BehaviourDSLCommon::writeBehaviourGetTangentOperator(

@@ -268,7 +268,7 @@ See Section
 description of the `--specific-target-generated-sources` and
 `--all-specific-targets-generated-source` queries.
 
-For more details, see <https://github.com/thelfer/tfel/issues/40>.
+For more details, see <https://github.com/thelfer/tfel/issues/49>.
 
 ## Issue #40: [mfront-query] return all the generated sources (not sorted by library)
 
