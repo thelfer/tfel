@@ -23,19 +23,18 @@ namespace dianafea {
     return u;
   }  // end of getDianaFEAOutOfBoundsPolicy
 
-  DianaFEAOutOfBoundsPolicy::DianaFEAOutOfBoundsPolicy()
-      : policy(tfel::material::None) {
-    const char* const p = ::getenv("DIANAFEA_OUT_OF_BOUNDS_POLICY");
-    if (p != nullptr) {
-      if (strcmp(p, "STRICT") == 0) {
+  DianaFEAOutOfBoundsPolicy::DianaFEAOutOfBoundsPolicy() {
+    const char* const pe = ::getenv("DIANAFEA_OUT_OF_BOUNDS_POLICY");
+    if (pe != nullptr) {
+      if (strcmp(pe, "STRICT") == 0) {
         this->policy = tfel::material::Strict;
-      } else if (strcmp(p, "WARNING") == 0) {
+      } else if (strcmp(pe, "WARNING") == 0) {
         this->policy = tfel::material::Warning;
       }
     }
   }  // end of DianaFEAOutOfBoundsPolicy::DianaFEAOutOfBoundsPolicy
 
-  tfel::material::OutOfBoundsPolicy
+  std::optional<tfel::material::OutOfBoundsPolicy>
   DianaFEAOutOfBoundsPolicy::getOutOfBoundsPolicy() const {
     return this->policy;
   }  // end of DianaFEAOutOfBoundsPolicy::getOutOfBoundsPolicy

@@ -31,7 +31,7 @@ namespace mfront {
 
   const char* const BehaviourDescription::
       automaticDeclarationOfTheTemperatureAsFirstExternalStateVariable =
-          "automatically_declare_temperature_as_first_external_state_variable";
+          "automatic_declaration_of_the_temperature_as_first_external_state_variable";
 
   static MaterialPropertyDescription buildMaterialPropertyDescription(
       const BehaviourDescription::ConstantMaterialProperty& mp,
@@ -409,7 +409,8 @@ namespace mfront {
     this->setAttribute(Topt, true, false);
   }  // end of BehaviourDescription
 
-  BehaviourDescription::BehaviourDescription(const tfel::utilities::DataMap& opts) {
+  BehaviourDescription::BehaviourDescription(
+      const tfel::utilities::DataMap& opts) {
     constexpr auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     // treating the temperature
     const auto* const Topt = BehaviourDescription::
@@ -750,12 +751,13 @@ namespace mfront {
   void BehaviourDescription::addInitializeFunction(const Hypothesis h,
                                                    const std::string& n,
                                                    const CodeBlock& c) {
-    this->callBehaviourData(h, &BehaviourData::addInitializeFunction, n, c, true);
+    this->callBehaviourData(h, &BehaviourData::addInitializeFunction, n, c,
+                            true);
   }  // end of addInitializeFunction
 
   void BehaviourDescription::addPostProcessing(const Hypothesis h,
-                                                 const std::string& n,
-                                                 const CodeBlock& c) {
+                                               const std::string& n,
+                                               const CodeBlock& c) {
     this->callBehaviourData(h, &BehaviourData::addPostProcessing, n, c, true);
   }  // end of addPostProcessing
 
@@ -2057,8 +2059,7 @@ namespace mfront {
       if (esvs[0].getExternalName() != tfel::glossary::Glossary::Temperature) {
         return false;
       }
-      if (SupportedTypes::getTypeFlag(esvs[0].type) !=
-          SupportedTypes::SCALAR) {
+      if (SupportedTypes::getTypeFlag(esvs[0].type) != SupportedTypes::SCALAR) {
         return false;
       }
       if ((esvs[0].type != "temperature") && (esvs[0].type != "real")) {
@@ -2496,7 +2497,8 @@ namespace mfront {
 
   bool BehaviourDescription::isInitializeFunctionVariableName(
       const Hypothesis h, const std::string& v) const {
-    return this->getData(h, &BehaviourData::isInitializeFunctionVariableName, v);
+    return this->getData(h, &BehaviourData::isInitializeFunctionVariableName,
+                         v);
   }  // end of isInitializeFunctionVariableName
 
   bool BehaviourDescription::isPostProcessingVariableName(
@@ -2564,11 +2566,10 @@ namespace mfront {
     return this->getBehaviourData(h).hasCode(n);
   }  // end of getCode
 
-  void BehaviourDescription::setAttribute(
-      const Hypothesis h,
-      const std::string& n,
-      const MaterialKnowledgeAttribute& a,
-      const bool b) {
+  void BehaviourDescription::setAttribute(const Hypothesis h,
+                                          const std::string& n,
+                                          const MaterialKnowledgeAttribute& a,
+                                          const bool b) {
     if (h == ModellingHypothesis::UNDEFINEDHYPOTHESIS) {
       this->d.setAttribute(n, a, b);
       for (const auto& md : this->sd) {

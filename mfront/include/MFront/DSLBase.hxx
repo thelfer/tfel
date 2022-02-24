@@ -54,6 +54,8 @@ namespace mfront {
       : public virtual AbstractDSL,
         public tfel::utilities::CxxTokenizer {
     //! \brief standard option name
+    static const char* const defaultOutOfBoundsPolicyOption;
+    //! \brief standard option name
     static const char* const parametersAsStaticVariablesOption;
     //! \brief standard option name
     static const char* const initializeParametersFromFileOption;

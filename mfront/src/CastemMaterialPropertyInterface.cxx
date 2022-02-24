@@ -157,55 +157,61 @@ namespace mfront {
   }  // end of writePhysicalBounds
 
   static void writeBounds(std::ostream& out,
+                          const MaterialPropertyDescription& d,
                           const std::string& name,
                           const VariableDescription& v) {
     if (!v.hasBounds()) {
       return;
     }
+    const auto default_policy = getDefaultOutOfBoundsPolicyAsUpperCaseString(d);
+    const auto get_policy =
+        "const char * const mfront_policy = "
+        "[]{\n"
+        " const auto* const p= "
+        " ::getenv(\"CASTEM_OUT_OF_BOUNDS_POLICY\");\n"
+        " if(p == nullptr){\n"
+        " return \"" +
+        default_policy +
+        "\";\n"
+        " }\n"
+        " return p;\n"
+        "}();\n";
     const auto& b = v.getBounds();
     if (b.boundsType == VariableBoundsDescription::LOWER) {
       out << "if(" << v.name << " < " << v.type << "(" << b.lowerBound
           << ")){\n"
-          << "const char * const policy = "
-          << "::getenv(\"CASTEM_OUT_OF_BOUNDS_POLICY\");\n"
-          << "if(policy!=nullptr){\n"
-          << "if(strcmp(policy,\"STRICT\")==0){\n"
+          << get_policy  //
+          << "if(::strcmp(mfront_policy,\"STRICT\")==0){\n"
           << "return nan(\"" << name << ": " << v.name
           << " is out of bounds.\");\n"
-          << "} else if (strcmp(policy,\"WARNING\")==0){\n"
+          << "} else if (::strcmp(mfront_policy,\"WARNING\")==0){\n"
           << "cerr << \"" << name << ": " << v.name
           << " is below its lower bound (\"\n << " << v.name << " << \"<"
           << b.lowerBound << ").\\n\";\n"
-          << "}\n"
           << "}\n"
           << "}\n";
     } else if (b.boundsType == VariableBoundsDescription::UPPER) {
       out << "if(" << v.name << " > " << v.type << "(" << b.upperBound
           << ")){\n"
-          << "const char * const policy = "
-          << "::getenv(\"CASTEM_OUT_OF_BOUNDS_POLICY\");\n"
-          << "if(policy!=nullptr){\n"
-          << "if(strcmp(policy,\"STRICT\")==0){\n"
+          << get_policy  //
+          << "if(::strcmp(mfront_policy,\"STRICT\")==0){\n"
           << "cerr << \"" << name << ": " << v.name
           << " is over its upper bound (\"\n << " << v.name << " << \">"
           << b.upperBound << ").\\n\";\n"
           << "return nan(\"" << name << ": " << v.name
           << " is out of bounds.\");\n"
-          << "} else if (strcmp(policy,\"WARNING\")==0){\n"
+          << "} else if (::strcmp(mfront_policy,\"WARNING\")==0){\n"
           << "cerr << \"" << name << ": " << v.name
           << " is over its upper bound (\"\n << " << v.name << " << \">"
           << b.upperBound << ").\\n\";\n"
-          << "}\n"
           << "}\n"
           << "}\n";
     } else {
       out << "if((" << v.name << " < " << v.type << "(" << b.lowerBound
           << "))||"
           << "(" << v.name << " > " << v.type << "(" << b.upperBound << "))){\n"
-          << "const char * const policy = "
-          << "::getenv(\"CASTEM_OUT_OF_BOUNDS_POLICY\");\n"
-          << "if(policy!=nullptr){\n"
-          << "if(strcmp(policy,\"STRICT\")==0){\n"
+          << get_policy  //
+          << "if(::strcmp(mfront_policy,\"STRICT\")==0){\n"
           << "if(" << v.name << " < " << v.type << "(" << b.lowerBound
           << ")){\n"
           << "cerr << \"" << name << ": " << v.name
@@ -218,7 +224,7 @@ namespace mfront {
           << "}\n"
           << "return nan(\"" << name << ": " << v.name
           << " is out of bounds.\");\n"
-          << "} else if (strcmp(policy,\"WARNING\")==0){\n"
+          << "} else if (::strcmp(mfront_policy,\"WARNING\")==0){\n"
           << "if(" << v.name << " < " << v.type << "(" << b.lowerBound
           << ")){\n"
           << "cerr << \"" << name << ": " << v.name
@@ -228,7 +234,6 @@ namespace mfront {
           << "cerr << \"" << name << ": " << v.name
           << " is over its upper bound (\"\n << " << v.name << " << \">"
           << b.upperBound << ").\\n\";\n"
-          << "}\n"
           << "}\n"
           << "}\n"
           << "}\n";
@@ -429,7 +434,7 @@ namespace mfront {
     if (hasBounds(mpd.inputs)) {
       out << "// treating standard bounds\n";
       for (const auto& i : mpd.inputs) {
-        writeBounds(out, name, i);
+        writeBounds(out, mpd, name, i);
       }
     }
     if ((hasPhysicalBounds(mpd.inputs)) || (hasBounds(mpd.inputs))) {
@@ -444,7 +449,7 @@ namespace mfront {
       }
       if (mpd.output.hasBounds()) {
         out << "// treating bounds\n";
-        writeBounds(out, name, mpd.output);
+        writeBounds(out, mpd, name, mpd.output);
       }
       out << "#endif /* NO_CASTEM_BOUNDS_CHECK */\n";
     }

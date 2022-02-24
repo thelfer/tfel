@@ -1148,7 +1148,7 @@ namespace mfront {
 
     out << "#include\"MFront/GenericBehaviour/" << header << "\"\n\n";
 
-    this->writeGetOutOfBoundsPolicyFunctionImplementation(out, name);
+    this->writeGetOutOfBoundsPolicyFunctionImplementation(out, bd, name);
 
     // behaviour traits
     out << "namespace mfront::gb{\n\n";

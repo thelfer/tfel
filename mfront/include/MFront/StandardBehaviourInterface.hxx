@@ -99,7 +99,9 @@ namespace mfront {
         std::ostream &, const std::string &) const;
 
     virtual void writeGetOutOfBoundsPolicyFunctionImplementation(
-        std::ostream &, const std::string &) const;
+        std::ostream &,
+        const BehaviourDescription &,
+        const std::string &) const;
 
     virtual void writeSetOutOfBoundsPolicyFunctionImplementation(
         std::ostream &, const std::string &) const;

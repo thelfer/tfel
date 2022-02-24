@@ -132,15 +132,16 @@ namespace mfront {
 
   void
   StandardBehaviourInterface::writeGetOutOfBoundsPolicyFunctionImplementation(
-      std::ostream& out, const std::string& name) const {
+      std::ostream& out,
+      const BehaviourDescription& bd,
+      const std::string& name) const {
     out << "static tfel::material::OutOfBoundsPolicy&\n"
         << this->getFunctionNameBasis(name) << "_getOutOfBoundsPolicy(){\n"
-        << "using namespace tfel::material;\n"
-        << "static OutOfBoundsPolicy policy = None;\n"
+        << "static auto policy = tfel::material::"  ///
+        << getDefaultOutOfBoundsPolicyAsString(bd) << ";\n"
         << "return policy;\n"
         << "}\n\n";
-  }  // end of
-     // StandardBehaviourInterface::writeGetOutOfBoundsPolicyFunctionImplementation
+  }  // end of writeGetOutOfBoundsPolicyFunctionImplementation
 
   void
   StandardBehaviourInterface::writeSetOutOfBoundsPolicyFunctionImplementation(

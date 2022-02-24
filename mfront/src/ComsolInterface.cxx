@@ -199,7 +199,7 @@ namespace mfront {
     //         << "#include\"MFront/Comsol/ComsolInterface.hxx\"\n\n"
     out << "#include\"MFront/Comsol/comsol" << name << ".hxx\"\n\n";
     //
-    this->writeGetOutOfBoundsPolicyFunctionImplementation(out, name);
+    this->writeGetOutOfBoundsPolicyFunctionImplementation(out, bd, name);
 
     out << "extern \"C\"{\n\n";
     //

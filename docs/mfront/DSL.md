@@ -104,10 +104,13 @@ The following options are available for all DSLs:
   line.
 - `parameters_as_static_variables`, which states if parameters shall
   be treated as static variables.
+- `default_out_of_bounds_policy`, which selects the default out of
+  bounds policy. Allowed values ar `None` (the default), `Warning` or
+  `Strict`.
 
 ### Options common to all DSLs related to behaviours
 
-- `automatically_declare_temperature_as_first_external_state_variable`:
+- `automatic_declaration_of_the_temperature_as_first_external_state_variable`:
   boolean stating if the temperature shall be automatically declared as
   an external state variable.
 

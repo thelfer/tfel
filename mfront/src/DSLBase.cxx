@@ -57,6 +57,9 @@ namespace std {
 
 namespace mfront {
 
+  const char* const DSLBase::defaultOutOfBoundsPolicyOption =
+      "default_out_of_bounds_policy";
+
   const char* const DSLBase::parametersAsStaticVariablesOption =
       "parameters_as_static_variables";
 
@@ -75,6 +78,7 @@ namespace mfront {
 
   tfel::utilities::DataMapValidator DSLBase::getDSLOptionsValidator() {
     auto v = tfel::utilities::DataMapValidator{};
+    v.addDataTypeValidator<std::string>(DSLBase::defaultOutOfBoundsPolicyOption);
     v.addDataTypeValidator<bool>(DSLBase::parametersAsStaticVariablesOption);
     v.addDataTypeValidator<bool>(DSLBase::initializeParametersFromFileOption);
     v.addDataTypeValidator<std::string>(DSLBase::buildIdentifierOption);
@@ -91,6 +95,12 @@ namespace mfront {
 
   void DSLBase::handleDSLOptions(MaterialKnowledgeDescription& d,
                                  const DSLOptions& opts) {
+    if (opts.count(DSLBase::defaultOutOfBoundsPolicyOption) != 0) {
+      const auto opt =
+          opts.at(DSLBase::defaultOutOfBoundsPolicyOption).get<std::string>();
+      d.setAttribute(MaterialKnowledgeDescription::defaultOutOfBoundsPolicy,
+                     opt, false);
+    }
     if (opts.count(DSLBase::parametersAsStaticVariablesOption) != 0) {
       const auto b =
           opts.at(DSLBase::parametersAsStaticVariablesOption).get<bool>();
@@ -114,16 +124,16 @@ namespace mfront {
 
   AbstractDSL::DSLOptions DSLBase::buildCommonDSLOptions(
       const MaterialKnowledgeDescription& d) {
-    const auto parameters_opt = d.getAttribute<bool>(
-        MaterialKnowledgeDescription::parametersAsStaticVariables, false);
-    const auto parameters_from_file_opt = d.getAttribute<bool>(
-        MaterialKnowledgeDescription::initializeParametersFromFile, true);
+    const auto policy = d.getAttribute<std::string>(
+        MaterialKnowledgeDescription::defaultOutOfBoundsPolicy, "None");
     const auto build_id = d.getAttribute<std::string>(
         MaterialKnowledgeDescription::buildIdentifier, "");
-    return {
-        {DSLBase::parametersAsStaticVariablesOption, parameters_opt},
-        {DSLBase::initializeParametersFromFileOption, parameters_from_file_opt},
-        {DSLBase::buildIdentifierOption, build_id}};
+    return {{DSLBase::defaultOutOfBoundsPolicyOption, policy},
+            {DSLBase::parametersAsStaticVariablesOption,
+             areParametersTreatedAsStaticVariables(d)},
+            {DSLBase::initializeParametersFromFileOption,
+             allowsParametersInitializationFromFile(d)},
+            {DSLBase::buildIdentifierOption, build_id}};
   }  // end of buildCommonOptions
 
   DSLBase::DSLBase(const DSLOptions&) {

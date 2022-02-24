@@ -17,6 +17,8 @@
 #include <map>
 #include <string>
 #include <vector>
+#include <string_view>
+#include "TFEL/Material/OutOfBoundsPolicy.hxx"
 #include "MFront/MFrontConfig.hxx"
 #include "MFront/MaterialKnowledgeAttribute.hxx"
 
@@ -26,6 +28,8 @@ namespace mfront {
    * \brief base class for the description of material knowledge
    */
   struct MFRONT_VISIBILITY_EXPORT MaterialKnowledgeDescription {
+    //! \brief standard option and attribute name
+    static const char* const defaultOutOfBoundsPolicy;
     //! \brief attribute name
     static const char* const parametersAsStaticVariables;
     //! \brief attribute name
@@ -36,7 +40,7 @@ namespace mfront {
      * \brief throw an exception saying that no attribute with the given name
      * exists
      */
-    [[noreturn]] static void throwUndefinedAttribute(const std::string&);
+    [[noreturn]] static void throwUndefinedAttribute(const std::string_view);
     /*!
      * \brief insert a new attribute
      * \param[in] n : name
@@ -54,45 +58,79 @@ namespace mfront {
      * \param[in] n: name
      * \param[in] a: attribute
      */
-    void updateAttribute(const std::string&, const MaterialKnowledgeAttribute&);
+    void updateAttribute(const std::string_view,
+                         const MaterialKnowledgeAttribute&);
     /*!
      * \return true if an attribute with the given name as been registred
      * \param[in] n : name
      */
-    bool hasAttribute(const std::string&) const;
+    bool hasAttribute(const std::string_view) const;
     /*!
      * \return the attribute with the given name
      * \param[in] n : name
      */
     template <typename T>
     std::enable_if_t<isMaterialKnowledgeAttributeType<T>(), T&> getAttribute(
-        const std::string&);
+        const std::string_view);
     /*!
      * \return the attribute with the given name
      * \param[in] n : name
      */
     template <typename T>
     std::enable_if_t<isMaterialKnowledgeAttributeType<T>(), const T&>
-    getAttribute(const std::string&) const;
+    getAttribute(const std::string_view) const;
     /*!
      * \return the attribute with the given name
      * \param[in] n: name
      */
     template <typename T>
-    std::enable_if_t<isMaterialKnowledgeAttributeType<T>(), T>
-    getAttribute(const std::string&, const T&) const;
+    std::enable_if_t<isMaterialKnowledgeAttributeType<T>(), T> getAttribute(
+        const std::string_view, const T&) const;
     /*!
      * \return all the attribute registred
      * \param[in] n : name
      */
-    const std::map<std::string, MaterialKnowledgeAttribute>& getAttributes()
-        const;
+    const std::map<std::string, MaterialKnowledgeAttribute, std::less<>>&
+    getAttributes() const;
 
    protected:
     //! \brief behaviour attributes
-    std::map<std::string, MaterialKnowledgeAttribute> attributes;
+    std::map<std::string, MaterialKnowledgeAttribute, std::less<>> attributes;
   };  // end of struct MaterialKnowledgeDescription
 
+  /*!
+   * \brief set the default out of bounds policy
+   * \param[out] d: material knowledge description
+   * \param[in] policy: out of bounds policy
+   */
+  MFRONT_VISIBILITY_EXPORT tfel::material::OutOfBoundsPolicy
+  setDefaultOutOfBoundsPolicy(const MaterialKnowledgeDescription&,
+                              const std::string&);
+  /*!
+   * \brief this function returns the value of the
+   * `MaterialKnowledgeDescription::defaultOutOfBoundsPolicy`
+   * attribute if it is defined, `tfel::material::None` otherwise.
+   * \param[in] d: material knowledge description
+   */
+  MFRONT_VISIBILITY_EXPORT tfel::material::OutOfBoundsPolicy
+  getDefaultOutOfBoundsPolicy(const MaterialKnowledgeDescription&);
+  /*!
+   * \brief this function returns the value of the
+   * `MaterialKnowledgeDescription::defaultOutOfBoundsPolicy`
+   * attribute if it is defined, `None` otherwise.
+   * \param[in] d: material knowledge description
+   */
+  MFRONT_VISIBILITY_EXPORT std::string getDefaultOutOfBoundsPolicyAsString(
+      const MaterialKnowledgeDescription&);
+  /*!
+   * \brief this function returns the value of the
+   * `MaterialKnowledgeDescription::defaultOutOfBoundsPolicy`
+   * attribute if it is defined, `NONE` otherwise.
+   * \param[in] d: material knowledge description
+   */
+  MFRONT_VISIBILITY_EXPORT std::string
+  getDefaultOutOfBoundsPolicyAsUpperCaseString(
+      const MaterialKnowledgeDescription&);
   /*!
    * \brief this function returns the value of the
    * `MaterialKnowledgeDescription::parametersAsStaticVariables`
@@ -105,7 +143,7 @@ namespace mfront {
   /*!
    * \brief this function returns the value of the
    * `MaterialKnowledgeDescription::initializeParametersFromFile`
-   * attribute if it is defined, `false` otherwise.
+   * attribute if it is defined, `true` otherwise.
    * \return if the initialization of parameters from a file shall be allowed.
    * \param[in] d: material knowledge description
    */

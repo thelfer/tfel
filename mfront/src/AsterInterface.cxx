@@ -410,7 +410,7 @@ namespace mfront {
     out << "#include\"MFront/Aster/AsterInterface.hxx\"\n\n";
     out << "#include\"MFront/Aster/aster" << name << ".hxx\"\n\n";
 
-    this->writeGetOutOfBoundsPolicyFunctionImplementation(out, name);
+    this->writeGetOutOfBoundsPolicyFunctionImplementation(out, mb, name);
 
     out << "extern \"C\"{\n\n";
 

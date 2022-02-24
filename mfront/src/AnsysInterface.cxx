@@ -897,7 +897,7 @@ namespace mfront {
         << "#include\"MFront/Ansys/AnsysInterface.hxx\"\n\n"
         << "#include\"MFront/Ansys/ansys" << name << ".hxx\"\n\n";
 
-    this->writeGetOutOfBoundsPolicyFunctionImplementation(out, name);
+    this->writeGetOutOfBoundsPolicyFunctionImplementation(out, mb, name);
 
     out << "extern \"C\"{\n\n";
 

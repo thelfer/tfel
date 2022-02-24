@@ -386,7 +386,7 @@ namespace mfront {
         << "#include\"MFront/Abaqus/AbaqusExplicitInterface.hxx\"\n\n"
         << "#include\"MFront/Abaqus/abaqusexplicit" << name << ".hxx\"\n\n";
 
-    this->writeGetOutOfBoundsPolicyFunctionImplementation(out, name);
+    this->writeGetOutOfBoundsPolicyFunctionImplementation(out, mb, name);
 
     if (ppolicy == "ThreadPool") {
       out << "static size_t getAbaqusExplicitNumberOfThreads(){\n"

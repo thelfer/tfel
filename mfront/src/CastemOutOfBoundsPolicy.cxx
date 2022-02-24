@@ -23,19 +23,18 @@ namespace castem {
     return u;
   }  // end of getCastemOutOfBoundsPolicy
 
-  CastemOutOfBoundsPolicy::CastemOutOfBoundsPolicy()
-      : policy(tfel::material::None) {
-    const char* const p = ::getenv("CASTEM_OUT_OF_BOUNDS_POLICY");
-    if (p != nullptr) {
-      if (strcmp(p, "STRICT") == 0) {
+  CastemOutOfBoundsPolicy::CastemOutOfBoundsPolicy() {
+    const char* const pe = ::getenv("CASTEM_OUT_OF_BOUNDS_POLICY");
+    if (pe != nullptr) {
+      if (strcmp(pe, "STRICT") == 0) {
         this->policy = tfel::material::Strict;
-      } else if (strcmp(p, "WARNING") == 0) {
+      } else if (strcmp(pe, "WARNING") == 0) {
         this->policy = tfel::material::Warning;
       }
     }
   }  // end of CastemOutOfBoundsPolicy::CastemOutOfBoundsPolicy
 
-  tfel::material::OutOfBoundsPolicy
+  std::optional<tfel::material::OutOfBoundsPolicy>
   CastemOutOfBoundsPolicy::getOutOfBoundsPolicy() const {
     return this->policy;
   }  // end of CastemOutOfBoundsPolicy::getOutOfBoundsPolicy

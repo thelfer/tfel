@@ -413,79 +413,81 @@ namespace mfront {
             continue;
           }
           const auto& b = i.getBounds();
+          const auto default_policy =
+              getDefaultOutOfBoundsPolicyAsUpperCaseString(mpd);
+          const auto get_policy =
+              "const char * const mfront_policy = "
+              "[]{\n"
+              " const auto* const p= "
+              " ::getenv(\"OUT_OF_BOUNDS_POLICY\");\n"
+              " if(p == nullptr){\n"
+              " return \"" +
+              default_policy +
+              "\";\n"
+              " }\n"
+              " return p;\n"
+              "}();\n";
           if (b.boundsType == VariableBoundsDescription::LOWER) {
             src << "if(" << i.name << " < " << b.lowerBound << "){\n"
-                << "const char * const policy = "
-                << "::getenv(\"OUT_OF_BOUNDS_POLICY\");\n"
-                << "if(policy!=nullptr){\n"
-                << "if(strcmp(policy,\"STRICT\")==0){\n"
+                << get_policy  //
+                << "if(::strcmp(mfront_policy,\"STRICT\")==0){\n"
                 << "ostringstream msg;\n"
                 << "msg << \"" << name << " : " << i.name
                 << " is below its lower bound \";\n"
                 << "msg << \"(\" << " << i.name << " << \" < " << b.lowerBound
                 << ")\";\n"
                 << "tfel::raise<range_error>(msg.str());\n"
-                << "} else if(strcmp(policy,\"WARNING\")==0){\n"
+                << "} else if(::strcmp(mfront_policy,\"WARNING\")==0){\n"
                 << "cerr << \"" << i.name << " is below its lower bound \";\n"
                 << "cerr << \"(\" << " << i.name << " << \" < " << b.lowerBound
                 << ")\\n\";\n"
-                << "}\n"
                 << "}\n"
                 << "}\n";
           } else if (b.boundsType == VariableBoundsDescription::UPPER) {
             src << "if(" << i.name << " > " << b.upperBound << "){\n"
-                << "const char * const policy = "
-                << "::getenv(\"OUT_OF_BOUNDS_POLICY\");\n"
-                << "if(policy!=nullptr){\n"
-                << "if(strcmp(policy,\"STRICT\")==0){\n"
+                << get_policy  //
+                << "if(::strcmp(mfront_policy,\"STRICT\")==0){\n"
                 << "ostringstream msg;\n"
                 << "msg << \"" << name << " : " << i.name
                 << " is beyond its upper bound \";\n"
                 << "msg << \"(\" << " << i.name << " << \" > " << b.upperBound
                 << ")\";\n"
                 << "tfel::raise<range_error>(msg.str());\n"
-                << "} else if(strcmp(policy,\"WARNING\")==0){\n"
+                << "} else if(::strcmp(mfront_policy,\"WARNING\")==0){\n"
                 << "cerr << \"" << i.name << " is beyond its upper bound \";\n"
                 << "cerr << \"(\" << " << i.name << " << \" > " << b.upperBound
                 << ")\\n\";\n"
                 << "}\n"
-                << "}\n"
                 << "}\n";
           } else {
             src << "if(" << i.name << " < " << b.lowerBound << "){\n"
-                << "const char * const policy = "
-                << "::getenv(\"OUT_OF_BOUNDS_POLICY\");\n"
-                << "if(policy!=nullptr){\n"
-                << "if(strcmp(policy,\"STRICT\")==0){\n"
+                << get_policy  //
+                << "if(::strcmp(mfront_policy,\"STRICT\")==0){\n"
                 << "ostringstream msg;\n"
                 << "msg << \"" << name << " : " << i.name
                 << " is below its lower bound \";\n"
                 << "msg << \"(\" << " << i.name << " << \" < " << b.lowerBound
                 << ")\";\n"
                 << "tfel::raise<range_error>(msg.str());\n"
-                << "} else if(strcmp(policy,\"WARNING\")==0){\n"
+                << "} else if(::strcmp(mfront_policy,\"WARNING\")==0){\n"
                 << "cerr << \"" << i.name << " is below its lower bound \";\n"
                 << "cerr << \"(\" << " << i.name << " << \" < " << b.lowerBound
                 << ")\\n\";\n"
                 << "}\n"
                 << "}\n"
-                << "}\n"
                 << "if(" << i.name << " > " << b.upperBound << "){\n"
-                << "const char * const policy = "
-                << "::getenv(\"OUT_OF_BOUNDS_POLICY\");\n"
-                << "if(policy!=nullptr){\n"
-                << "if(strcmp(policy,\"STRICT\")==0){\n"
+                << get_policy  //
+                << "if(::strcmp(mfront_policy,\"STRICT\")==0){\n"
                 << "ostringstream msg;\n"
                 << "msg << \"" << name << " : " << i.name
                 << " is beyond its upper bound \";\n"
                 << "msg << \"(\" << " << i.name << " << \" > " << b.upperBound
                 << ")\";\n"
                 << "tfel::raise<range_error>(msg.str());\n"
-                << "} else if(strcmp(policy,\"WARNING\")==0){\n"
+                << "} else if(::strcmp(mfront_policy,\"WARNING\")==0){\n"
                 << "cerr << \"" << i.name << " is beyond its upper bound \";\n"
                 << "cerr << \"(\" << " << i.name << " << \" > " << b.upperBound
                 << ")\\n\";\n"
-                << "}\n"
                 << "}\n"
                 << "}\n";
           }

@@ -23,20 +23,18 @@ namespace cyrano {
     return u;
   }  // end of getCyranoOutOfBoundsPolicy
 
-  CyranoOutOfBoundsPolicy::CyranoOutOfBoundsPolicy()
-      : policy(tfel::material::None) {
-    using namespace tfel::material;
-    const char* const p = ::getenv("CYRANO_OUT_OF_BOUNDS_POLICY");
-    if (p != nullptr) {
-      if (strcmp(p, "STRICT") == 0) {
-        this->policy = Strict;
-      } else if (strcmp(p, "WARNING") == 0) {
-        this->policy = Warning;
+  CyranoOutOfBoundsPolicy::CyranoOutOfBoundsPolicy() {
+    const char* const pe = ::getenv("CYRANO_OUT_OF_BOUNDS_POLICY");
+    if (pe != nullptr) {
+      if (strcmp(pe, "STRICT") == 0) {
+        this->policy = tfel::material::Strict;
+      } else if (strcmp(pe, "WARNING") == 0) {
+        this->policy = tfel::material::Warning;
       }
     }
   }  // end of CyranoOutOfBoundsPolicy::CyranoOutOfBoundsPolicy
 
-  tfel::material::OutOfBoundsPolicy
+  std::optional<tfel::material::OutOfBoundsPolicy>
   CyranoOutOfBoundsPolicy::getOutOfBoundsPolicy() const {
     return this->policy;
   }  // end of CyranoOutOfBoundsPolicy::getOutOfBoundsPolicy

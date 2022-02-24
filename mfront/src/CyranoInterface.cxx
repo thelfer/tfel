@@ -78,31 +78,31 @@ namespace mfront {
       lib = "Cyrano" + mb.getLibrary();
     }
     return lib;
-  }  // end of CyranoInterface::getLibraryName
+  }  // end of getLibraryName
 
   std::string CyranoInterface::getInterfaceName() const {
     return "Cyrano";
-  }  // end of CyranoInterface::getInterfaceName
+  }  // end of getInterfaceName
 
   std::string CyranoInterface::getFunctionNameBasis(
       const std::string& n) const {
     return "cyrano" + makeLowerCase(n);
-  }  // end of CyranoInterface::getLibraryName
+  }  // end of getLibraryName
 
   std::string CyranoInterface::getBehaviourName(
       const std::string& library, const std::string& className) const {
     return library + className;
-  }  // end of CyranoInterface::getBehaviourName
+  }  // end of getBehaviourName
 
   std::string CyranoInterface::getUmatFunctionName(
       const std::string& library, const std::string& className) const {
     return "cyrano" + makeLowerCase(this->getBehaviourName(library, className));
-  }  // end of CyranoInterface::getUmatFunctionName
+  }  // end of getUmatFunctionName
 
   CyranoInterface::CyranoInterface()
       : useTimeSubStepping(false),
         doSubSteppingOnInvalidResults(false),
-        maximumSubStepping(0u) {}  // end of CyranoInterface::CyranoInterface
+        maximumSubStepping(0u) {}  // end of CyranoInterface
 
   std::pair<bool, CyranoInterface::tokens_iterator>
   CyranoInterface::treatKeyword(BehaviourDescription& bd,
@@ -183,21 +183,27 @@ namespace mfront {
         "nor in 'AxisymmetricalGeneralisedPlaneStress', so it does not "
         "make sense to use the Cyrano interface");
     return h;
-  }  // end of CyranoInterface::getModellingHypothesesToBeTreated
+  }  // end of getModellingHypothesesToBeTreated
 
   void CyranoInterface::writeGetOutOfBoundsPolicyFunctionImplementation(
-      std::ostream& out, const std::string& name) const {
+      std::ostream& out,
+      const BehaviourDescription& bd,
+      const std::string& name) const {
     out << "static tfel::material::OutOfBoundsPolicy&\n"
         << this->getFunctionNameBasis(name) << "_getOutOfBoundsPolicy(){\n"
-        << "using namespace cyrano;\n"
-        << "using namespace tfel::material;\n"
-        << "static OutOfBoundsPolicy policy = "
-           "CyranoOutOfBoundsPolicy::getCyranoOutOfBoundsPolicy()."
-           "getOutOfBoundsPolicy();\n"
+        << "static auto policy = []{\n"
+        << "  const auto p = "
+        << "  cyrano::CyranoOutOfBoundsPolicy::getCyranoOutOfBoundsPolicy()."
+        << "  getOutOfBoundsPolicy();\n"
+        << "  if(p.has_value()){\n"
+        << "    return *p;\n"
+        << "  }\n"
+        << "  return tfel::material::"  //
+        << getDefaultOutOfBoundsPolicyAsString(bd) << ";\n"
+        << "}();\n"
         << "return policy;\n"
         << "}\n\n";
-  }  // end of
-     // MFrontCyranoInterface::writeGetOutOfBoundsPolicyFunctionImplementation
+  }  // end of writeGetOutOfBoundsPolicyFunctionImplementation
 
   void CyranoInterface::endTreatment(const BehaviourDescription& mb,
                                      const FileDescription& fd) const {
@@ -350,7 +356,7 @@ namespace mfront {
     out << "#include\"MFront/Cyrano/CyranoStressFreeExpansionHandler.hxx\"\n";
     out << "#include\"MFront/Cyrano/cyrano" << name << ".hxx\"\n\n";
 
-    this->writeGetOutOfBoundsPolicyFunctionImplementation(out, name);
+    this->writeGetOutOfBoundsPolicyFunctionImplementation(out, mb, name);
 
     out << "extern \"C\"{\n\n";
 
@@ -383,7 +389,7 @@ namespace mfront {
     }
     out << "} // end of extern \"C\"\n";
     out.close();
-  }  // end of CyranoInterface::endTreatment
+  }  // end of endTreatment
 
   void CyranoInterface::writeMTestFileGeneratorSetModellingHypothesis(
       std::ostream& out) const {
@@ -436,7 +442,7 @@ namespace mfront {
         i.getLibraryDescription(d, l, themp);
       }
     }
-  }  // end of CyranoInterface::getTargetsDescription(TargetsDescription&)
+  }  // end of getTargetsDescription(TargetsDescription&)
 
   void CyranoInterface::writeInterfaceSpecificIncludes(
       std::ostream& out, const BehaviourDescription&) const {
@@ -488,7 +494,7 @@ namespace mfront {
         << "      cyrano::CyranoReal *const,const cyrano::CyranoInt  *const,\n"
         << "      cyrano::CyranoReal *const,const cyrano::CyranoInt  *const,\n"
         << "      cyrano::CyranoInt *const);\n\n";
-  }  // end of CyranoInterface::writeCyranoFunctionDeclaration
+  }  // end of writeCyranoFunctionDeclaration
 
   static void writeSecondaryCyranoFunction(std::ostream& out,
                                            const std::string& fname,
@@ -566,7 +572,7 @@ namespace mfront {
     }
     out << "}\n\n";
     writeSecondaryCyranoFunction(out, this->getFunctionNameBasis(n), n);
-  }  // end of CyranoInterface::writeStandardCyranoFunction
+  }  // end of writeStandardCyranoFunction
 
   void CyranoInterface::writeLogarithmicStrainCyranoFunction(
       std::ostream& out,
@@ -786,7 +792,7 @@ namespace mfront {
     }
     out << "}\n\n";
     writeSecondaryCyranoFunction(out, this->getFunctionNameBasis(n), n);
-  }  // end of CyranoInterface::writeLogarithmicStrainCyranoFunction
+  }  // end of writeLogarithmicStrainCyranoFunction
 
   void CyranoInterface::writeCyranoBehaviourTraits(
       std::ostream& out,
@@ -986,7 +992,7 @@ namespace mfront {
           "orthotropic behaviour at this time.");
     }
     out << "}; // end of class CyranoTraits\n\n";
-  }  // end of CyranoInterface::writeCyranoBehaviourTraits
+  }  // end of writeCyranoBehaviourTraits
 
   std::string CyranoInterface::getModellingHypothesisTest(
       const Hypothesis h) const {

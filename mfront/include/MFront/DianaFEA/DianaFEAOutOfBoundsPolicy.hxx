@@ -14,6 +14,7 @@
 #ifndef LIB_TFEL_MFRONT_DIANAFEAOUTOFBOUNDSPOLICY_HXX
 #define LIB_TFEL_MFRONT_DIANAFEAOUTOFBOUNDSPOLICY_HXX
 
+#include <optional>
 #include "MFront/DianaFEA/DianaFEAConfig.hxx"
 #include "TFEL/Material/OutOfBoundsPolicy.hxx"
 
@@ -21,13 +22,16 @@ namespace dianafea {
 
   struct MFRONT_DIANAFEA_VISIBILITY_EXPORT DianaFEAOutOfBoundsPolicy {
     static const DianaFEAOutOfBoundsPolicy& getDianaFEAOutOfBoundsPolicy();
-    tfel::material::OutOfBoundsPolicy getOutOfBoundsPolicy() const;
+    std::optional<tfel::material::OutOfBoundsPolicy> getOutOfBoundsPolicy() const;
 
    private:
     DianaFEAOutOfBoundsPolicy();
-    DianaFEAOutOfBoundsPolicy(const DianaFEAOutOfBoundsPolicy&);
-    DianaFEAOutOfBoundsPolicy& operator=(const DianaFEAOutOfBoundsPolicy&);
-    tfel::material::OutOfBoundsPolicy policy;
+    DianaFEAOutOfBoundsPolicy(DianaFEAOutOfBoundsPolicy&&) = delete;
+    DianaFEAOutOfBoundsPolicy(const DianaFEAOutOfBoundsPolicy&) = delete;
+    DianaFEAOutOfBoundsPolicy& operator=(DianaFEAOutOfBoundsPolicy&&) = delete;
+    DianaFEAOutOfBoundsPolicy& operator=(const DianaFEAOutOfBoundsPolicy&) =
+        delete;
+    std::optional<tfel::material::OutOfBoundsPolicy> policy;
   };  // end of struct DianaFEAOutOfBounds
 
 }  // end of namespace dianafea

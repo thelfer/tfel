@@ -436,7 +436,7 @@ namespace mfront {
         << "#include\"MFront/CalculiX/CalculiXInterface.hxx\"\n\n"
         << "#include\"MFront/CalculiX/calculix" << name << ".hxx\"\n\n";
 
-    this->writeGetOutOfBoundsPolicyFunctionImplementation(out, name);
+    this->writeGetOutOfBoundsPolicyFunctionImplementation(out, mb, name);
 
     out << "extern \"C\"{\n\n";
 

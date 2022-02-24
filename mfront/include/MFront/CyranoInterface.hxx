@@ -35,43 +35,21 @@ namespace mfront {
     static std::string getName();
 
     CyranoInterface();
-
+    //
     void writeGetOutOfBoundsPolicyFunctionImplementation(
-        std::ostream&, const std::string&) const override;
-    /*!
-     * write interface specific includes
-     * \param[in] out : output file
-     * \param[in] mb  : mechanical behaviour description
-     */
+        std::ostream &,
+        const BehaviourDescription &,
+        const std::string &) const override;
     void writeInterfaceSpecificIncludes(
         std::ostream&, const BehaviourDescription&) const override;
-    /*!
-     * \param[in,out] bd: behaviour description
-     * \param[in] k:  keyword treated
-     * \param[in] i:  list of interfaces to which the keyword is restricted
-     * \param[in] p:  iterator to the current token
-     * \param[in] pe: iterator past the end of the file
-     * \return a pair. The first entry is true if the keyword was
-     * treated by the interface. The second entry is an iterator after
-     * the last token treated.
-     */
     std::pair<bool, tokens_iterator> treatKeyword(
         BehaviourDescription&,
         const std::string&,
         const std::vector<std::string>&,
         tokens_iterator,
         const tokens_iterator) override;
-    /*!
-     * \brief write output files
-     * \param[in] mb        : mechanical behaviour description
-     * \param[in] fd        : mfront file description
-     */
     void endTreatment(const BehaviourDescription&,
                       const FileDescription&) const override;
-    /*!
-     * \param[out] d  : target description
-     * \param[out] bd : behaviour description
-     */
     void getTargetsDescription(TargetsDescription&,
                                const BehaviourDescription&) override;
     //! destructor
@@ -96,7 +74,6 @@ namespace mfront {
 
     virtual void writeCyranoFunctionDeclaration(std::ostream&,
                                                 const std::string&) const;
-
     /*!
      * \brief write the standard cyrano function
      * \param[in] out : ouptut file
@@ -132,13 +109,9 @@ namespace mfront {
                                             const Hypothesis) const;
 
     std::string getModellingHypothesisTest(const Hypothesis) const override;
-    /*!
-     * \return the list of modelling hypotheses treated by the interface
-     * \param[in] mb : behaviour description
-     */
     std::set<Hypothesis> getModellingHypothesesToBeTreated(
         const BehaviourDescription&) const override;
-
+    //
     bool useTimeSubStepping;
 
     bool doSubSteppingOnInvalidResults;

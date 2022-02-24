@@ -176,30 +176,41 @@ namespace mfront {
   }
 
   static void writeBounds(std::ostream& out,
+                          const MaterialPropertyDescription& mpd,
                           const std::string& name,
                           const VariableDescription& v) {
     if (!v.hasBounds()) {
       return;
     }
     const auto& b = v.getBounds();
+    const auto default_policy = getDefaultOutOfBoundsPolicyAsUpperCaseString(mpd);
+    const auto get_policy =
+        "const char * const mfront_policy = "
+        "[]{\n"
+        " const auto* const p= "
+        " ::getenv(\"PYTHON_OUT_OF_BOUNDS_POLICY\");\n"
+        " if(p == nullptr){\n"
+        " return \"" +
+        default_policy +
+        "\";\n"
+        " }\n"
+        " return p;\n"
+        "}();\n";
     if ((b.boundsType == VariableBoundsDescription::LOWER) ||
         (b.boundsType == VariableBoundsDescription::LOWERANDUPPER)) {
       out << "if(" << v.name << " < " << v.type << "(" << b.lowerBound
           << ")){\n"
-          << "policy = "
-          << "::getenv(\"PYTHON_OUT_OF_BOUNDS_POLICY\");\n"
-          << "if(policy!=nullptr){\n"
-          << "if((strcmp(policy,\"STRICT\")==0)||"
-          << "(strcmp(policy,\"WARNING\")==0)){\n"
+          << get_policy  //
+          << "if((::strcmp(mfront_policy,\"STRICT\")==0)||"
+          << "(::strcmp(mfront_policy,\"WARNING\")==0)){\n"
           << "ostringstream msg;\n"
           << "msg << \"" << name << " : " << v.name
           << " is below its lower bound (\"\n << " << v.name << " << \"<"
           << b.lowerBound << ").\";\n"
-          << "if(strcmp(policy,\"STRICT\")==0){\n"
+          << "if(::strcmp(mfront_policy,\"STRICT\")==0){\n"
           << "return throwPythonRuntimeException(msg.str());\n"
           << "} else {\n"
           << "fprintf(stderr,\"%s\\n\",msg.str().c_str());\n"
-          << "}\n"
           << "}\n"
           << "}\n"
           << "}\n";
@@ -208,20 +219,17 @@ namespace mfront {
         (b.boundsType == VariableBoundsDescription::LOWERANDUPPER)) {
       out << "if(" << v.name << " > " << v.type << "(" << b.upperBound
           << ")){\n"
-          << "policy = "
-          << "::getenv(\"PYTHON_OUT_OF_BOUNDS_POLICY\");\n"
-          << "if(policy!=nullptr){\n"
-          << "if((strcmp(policy,\"STRICT\")==0)||"
-          << "(strcmp(policy,\"WARNING\")==0)){\n"
+          << get_policy  //
+          << "if((::strcmp(mfront_policy,\"STRICT\")==0)||"
+          << "(::strcmp(mfront_policy,\"WARNING\")==0)){\n"
           << "ostringstream msg;\n"
           << "msg << \"" << name << " : " << v.name
           << " is over its upper bound (\"\n << " << v.name << " << \">"
           << b.upperBound << ").\";\n"
-          << "if(strcmp(policy,\"STRICT\")==0){\n"
+          << "if(::strcmp(mfront_policy,\"STRICT\")==0){\n"
           << "return throwPythonRuntimeException(msg.str());\n"
           << "} else {\n"
           << "fprintf(stderr,\"%s\\n\",msg.str().c_str());\n"
-          << "}\n"
           << "}\n"
           << "}\n"
           << "}\n";
@@ -408,7 +416,7 @@ namespace mfront {
       if (hasBounds(mpd.inputs)) {
         srcFile << "// treating standard bounds\n";
         for (const auto& i : mpd.inputs) {
-          writeBounds(srcFile, name, i);
+          writeBounds(srcFile, mpd, name, i);
         }
       }
       srcFile << "#endif /* PYTHON_NO_BOUNDS_CHECK */\n";
@@ -433,7 +441,7 @@ namespace mfront {
       }
       if (hasBounds(mpd.output)) {
         srcFile << "// treating standard bounds\n";
-        writeBounds(srcFile, name, mpd.output);
+        writeBounds(srcFile, mpd, name, mpd.output);
       }
       srcFile << "#endif /* PYTHON_NO_BOUNDS_CHECK */\n";
     }

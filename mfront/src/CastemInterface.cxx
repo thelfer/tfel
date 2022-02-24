@@ -288,7 +288,7 @@ namespace mfront {
 
   std::string CastemInterface::getInterfaceName() const {
     return "Castem";
-  }  // end of CastemInterface::getInterfaceName
+  }  // end of getInterfaceName
 
   std::string CastemInterface::getLibraryName(
       const BehaviourDescription& mb) const {
@@ -300,22 +300,22 @@ namespace mfront {
       }
     }
     return "Umat" + mb.getLibrary();
-  }  // end of CastemInterface::getLibraryName
+  }  // end of getLibraryName
 
   std::string CastemInterface::getFunctionNameBasis(
       const std::string& name) const {
     return "umat" + makeLowerCase(name);
-  }  // end of CastemInterface::getLibraryName
+  }  // end of getLibraryName
 
   std::string CastemInterface::getBehaviourName(
       const BehaviourDescription& mb) const {
     return mb.getLibrary() + mb.getClassName();
-  }  // end of CastemInterface::getBehaviourName
+  }  // end of getBehaviourName
 
   std::string CastemInterface::getUmatFunctionName(
       const BehaviourDescription& mb) const {
     return "umat" + makeLowerCase(this->getBehaviourName(mb));
-  }  // end of CastemInterface::getUmatFunctionName
+  }  // end of getUmatFunctionName
 
   std::pair<bool, CastemInterface::tokens_iterator>
   CastemInterface::treatKeyword(BehaviourDescription& bd,
@@ -692,21 +692,27 @@ namespace mfront {
       return this->usesGenericPlaneStressAlgorithm(mb);
     }
     return false;
-  }  // end of CastemInterface::isModellingHypothesisSupported
+  }  // end of isModellingHypothesisSupported
 
   void CastemInterface::writeGetOutOfBoundsPolicyFunctionImplementation(
-      std::ostream& out, const std::string& name) const {
+      std::ostream& out,
+      const BehaviourDescription& bd,
+      const std::string& name) const {
     out << "static tfel::material::OutOfBoundsPolicy&\n"
         << this->getFunctionNameBasis(name) << "_getOutOfBoundsPolicy(){\n"
-        << "using namespace castem;\n"
-        << "using namespace tfel::material;\n"
-        << "static OutOfBoundsPolicy policy = "
-           "CastemOutOfBoundsPolicy::getCastemOutOfBoundsPolicy()."
-           "getOutOfBoundsPolicy();\n"
+        << "static auto policy = []{\n"
+        << "  const auto p = "
+        << "  castem::CastemOutOfBoundsPolicy::getCastemOutOfBoundsPolicy()."
+        << "  getOutOfBoundsPolicy();\n"
+        << "  if(p.has_value()){\n"
+        << "    return *p;\n"
+        << "  }\n"
+        << "  return tfel::material::"  //
+        << getDefaultOutOfBoundsPolicyAsString(bd) << ";\n"
+        << "}();\n"
         << "return policy;\n"
         << "}\n\n";
-  }  // end of
-     // MFrontCastemInterface::writeGetOutOfBoundsPolicyFunctionImplementation
+  }  // end of writeGetOutOfBoundsPolicyFunctionImplementation
 
   void CastemInterface::writeSetOutOfBoundsPolicyFunctionImplementation2(
       std::ostream& out,
@@ -950,7 +956,7 @@ namespace mfront {
         << "#include\"TFEL/Material/" << mb.getClassName() << ".hxx\"\n"
         << "#include\"MFront/Castem/umat" << name << ".hxx\"\n\n";
 
-    this->writeGetOutOfBoundsPolicyFunctionImplementation(out, name);
+    this->writeGetOutOfBoundsPolicyFunctionImplementation(out, mb, name);
 
     out << "extern \"C\"{\n\n";
 
@@ -1591,7 +1597,7 @@ namespace mfront {
          BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR)) {
       this->generateInputFileExample(mb, fd);
     }
-  }  // end of CastemInterface::endTreatment
+  }  // end of endTreatment
 
   void CastemInterface::writeMTestFileGeneratorSetModellingHypothesis(
       std::ostream& out) const {
@@ -1601,7 +1607,7 @@ namespace mfront {
   void CastemInterface::writeInterfaceSpecificIncludes(
       std::ostream& out, const BehaviourDescription&) const {
     out << "#include\"MFront/Castem/Castem.hxx\"\n\n";
-  }  // end of CastemInterface::writeInterfaceSpecificIncludes
+  }  // end of writeInterfaceSpecificIncludes
 
   void CastemInterface::getTargetsDescription(TargetsDescription& d,
                                               const BehaviourDescription& bd) {
@@ -1701,7 +1707,7 @@ namespace mfront {
         i.getLibraryDescription(d, l, themp);
       }
     }
-  }  // end of CastemInterface::getTargetsDescription
+  }  // end of getTargetsDescription
 
   std::vector<BehaviourMaterialProperty>
   CastemInterface::getDefaultMaterialPropertiesList(
@@ -1944,14 +1950,14 @@ namespace mfront {
       completeMaterialPropertiesList(mprops, mb, h);
     }
     return res;
-  }  // end of CastemInterface::buildMaterialPropertiesList
+  }  // end of buildMaterialPropertiesList
 
   void CastemInterface::writeCastemFunctionDeclaration(
       std::ostream& out, const std::string& name) const {
     out << "MFRONT_SHAREDOBJ void\n" << this->getFunctionNameBasis(name);
     writeUMATArguments(out);
     out << ";\n\n";
-  }  // end of CastemInterface::writeCastemFunctionDeclaration
+  }  // end of writeCastemFunctionDeclaration
 
   bool CastemInterface::writeInitializeAxialStrain(
       std::ostream& out, const BehaviourDescription& mb, const char c) const {
@@ -1991,7 +1997,7 @@ namespace mfront {
       }
     }
     return true;
-  }  // end of CastemInterface::writeInitializeAxialStrain
+  }  // end of writeInitializeAxialStrain
 
   void CastemInterface::writeFiniteStrainStrategiesPlaneStressSpecificCall(
       std::ostream& out,
@@ -2513,7 +2519,7 @@ namespace mfront {
       }
     }
     out << buffer << '\n';
-  }  // end of CastemInterface::writeGibianeInstruction
+  }  // end of writeGibianeInstruction
 
   void CastemInterface::generateInputFileExampleForHypothesis(
       std::ostream& out,
@@ -2676,7 +2682,7 @@ namespace mfront {
     mi << ";";
     writeGibianeInstruction(out, mi.str());
     out << '\n';
-  }  // end of CastemInterface::generateInputFileExampleForHypothesis
+  }  // end of generateInputFileExampleForHypothesis
 
   void CastemInterface::generateInputFileExample(
       const BehaviourDescription& bd, const FileDescription& fd) const {
@@ -2767,7 +2773,7 @@ namespace mfront {
           out, bd, ModellingHypothesis::PLANESTRESS);
     }
     out.close();
-  }  // end of CastemInterface::generateInputFileExample
+  }  // end of generateInputFileExample
 
   std::string CastemInterface::getMaterialPropertiesOffsetForBehaviourTraits(
       const BehaviourDescription& mb) const {
@@ -2970,7 +2976,7 @@ namespace mfront {
           "orthotropic behaviour at this time.");
     }
     out << "}; // end of class CastemTraits\n\n";
-  }  // end of CastemInterface::writeCastemBehaviourTraits
+  }  // end of writeCastemBehaviourTraits
 
   std::map<UMATInterfaceBase::Hypothesis, std::string>
   CastemInterface::gatherModellingHypothesesAndTests(
@@ -2984,7 +2990,7 @@ namespace mfront {
       return res;
     }
     return UMATInterfaceBase::gatherModellingHypothesesAndTests(mb);
-  }  // end of CastemInterface::gatherModellingHypothesesAndTests
+  }  // end of gatherModellingHypothesesAndTests
 
   std::string CastemInterface::getModellingHypothesisTest(
       const Hypothesis h) const {

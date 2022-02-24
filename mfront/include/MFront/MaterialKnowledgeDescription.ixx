@@ -18,11 +18,11 @@ namespace mfront {
 
   template <typename T>
   std::enable_if_t<isMaterialKnowledgeAttributeType<T>(), T&>
-  MaterialKnowledgeDescription::getAttribute(const std::string& n) {
+  MaterialKnowledgeDescription::getAttribute(const std::string_view n) {
     auto p = this->attributes.find(n);
     if (p == this->attributes.end()) {
       p = this->attributes
-              .insert({n, MaterialKnowledgeAttribute(T())})
+              .insert({std::string{n}, MaterialKnowledgeAttribute(T())})
               .first;
     }
     return p->second.template get<T>();
@@ -30,7 +30,7 @@ namespace mfront {
 
   template <typename T>
   std::enable_if_t<isMaterialKnowledgeAttributeType<T>(), const T&>
-  MaterialKnowledgeDescription::getAttribute(const std::string& n) const {
+  MaterialKnowledgeDescription::getAttribute(const std::string_view n) const {
     const auto p = this->attributes.find(n);
     if (p == this->attributes.end()) {
       MaterialKnowledgeDescription::throwUndefinedAttribute(n);
@@ -40,7 +40,7 @@ namespace mfront {
 
   template <typename T>
   std::enable_if_t<isMaterialKnowledgeAttributeType<T>(), T>
-  MaterialKnowledgeDescription::getAttribute(const std::string& n,
+  MaterialKnowledgeDescription::getAttribute(const std::string_view n,
                                              const T& v) const {
     const auto p = this->attributes.find(n);
     if (p == this->attributes.end()) {

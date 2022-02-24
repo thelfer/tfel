@@ -1,5 +1,5 @@
 @DSL IsotropicPlasticMisesFlow{
-  automatically_declare_temperature_as_first_external_state_variable : false
+  automatic_declaration_of_the_temperature_as_first_external_state_variable : false
 };
            
 @Behaviour PlasticityWithoutAutomaticTemperatureDeclaration;

@@ -432,7 +432,7 @@ namespace mfront {
     //         << "#include\"MFront/LSDYNA/lsdyna" << name <<
     //         ".hxx\"\n\n";
     //
-    //     this->writeGetOutOfBoundsPolicyFunctionImplementation(out,
+    //     this->writeGetOutOfBoundsPolicyFunctionImplementation(out, mb,
     //     name);
     //
     //     if (ppolicy == "ThreadPool") {

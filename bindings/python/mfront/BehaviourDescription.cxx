@@ -159,6 +159,11 @@ static std::string getStrainMeasure(const mfront::BehaviourDescription& d) {
   return "Hencky";
 }  // end of getStrainMeasure
 
+bool BehaviourDescription_hasAttribute(const mfront::BehaviourDescription& d,
+                                       const std::string& s) {
+  return d.hasAttribute(s);
+}  // end of
+
 void declareBehaviourDescription();
 void declareBehaviourDescription() {
   using namespace boost::python;
@@ -190,10 +195,7 @@ void declareBehaviourDescription() {
       .def("setModellingHypotheses", setModellingHypotheses2)
       .def("getBehaviourData", &BehaviourDescription::getBehaviourData,
            return_internal_reference<>())
-      .def(
-          "hasAttribute",
-          static_cast<bool (BehaviourDescription::*)(const std::string&) const>(
-              &BehaviourDescription::hasAttribute))
+      .def("hasAttribute", &BehaviourDescription_hasAttribute)
       .def("getSymmetryType", &BehaviourDescription::getSymmetryType)
       .def("getElasticSymmetryType",
            &BehaviourDescription::getElasticSymmetryType)

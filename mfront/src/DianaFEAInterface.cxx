@@ -92,7 +92,7 @@ namespace mfront {
 
   std::string DianaFEAInterface::getInterfaceName() const {
     return "DianaFEA";
-  }  // end of DianaFEAInterface::getInterfaceName
+  }  // end of getInterfaceName
 
   std::pair<bool, DianaFEAInterface::tokens_iterator>
   DianaFEAInterface::treatKeyword(BehaviourDescription& bd,
@@ -122,7 +122,7 @@ namespace mfront {
       return {true, current};
     }
     return {false, current};
-  }  // end of DianaFEAInterface::treatKeyword
+  }  // end of treatKeyword
 
   void DianaFEAInterface::endTreatment(const BehaviourDescription& bd,
                                        const FileDescription& fd) const {
@@ -232,7 +232,7 @@ namespace mfront {
         << "#include\"MFront/DianaFEA/DianaFEAInterface.hxx\"\n\n"
         << "#include\"MFront/DianaFEA/DianaFEA" << name << ".hxx\"\n\n";
 
-    this->writeGetOutOfBoundsPolicyFunctionImplementation(out, name);
+    this->writeGetOutOfBoundsPolicyFunctionImplementation(out, bd, name);
 
     out << "extern \"C\"{\n\n";
 
@@ -264,13 +264,13 @@ namespace mfront {
         << "} // end of extern \"C\"\n";
     out.close();
     this->writeInputFileExample(bd, fd, true);
-  }  // end of DianaFEAInterface::endTreatment
+  }  // end of endTreatment
 
   void DianaFEAInterface::writeInterfaceSpecificIncludes(
       std::ostream& out, const BehaviourDescription&) const {
     out << "#include\"MFront/DianaFEA/DianaFEA.hxx\"\n"
         << "#include\"MFront/DianaFEA/DianaFEAConvert.hxx\"\n\n";
-  }  // end of DianaFEAInterface::writeInterfaceSpecificIncludes
+  }  // end of writeInterfaceSpecificIncludes
 
   void DianaFEAInterface::writeBehaviourDataGradientSetter(
       std::ostream& os,
@@ -287,7 +287,7 @@ namespace mfront {
       os << "dianafea::ImportGradients<hypothesis>::exe(this->" << v.name
          << "0," << iprefix << "stran);\n";
     }
-  }  // end of DianaFEAInterface::writeBehaviourDataGradientSetter
+  }  // end of writeBehaviourDataGradientSetter
 
   void DianaFEAInterface::writeIntegrationDataGradientSetter(
       std::ostream& os,
@@ -305,7 +305,7 @@ namespace mfront {
       os << "dianafea::ImportGradients<hypothesis>::exe(this->" << v.name
          << "1," << iprefix << "dstran);\n";
     }
-  }  // end of DianaFEAInterface::writeIntegrationDataGradientSetter
+  }  // end of writeIntegrationDataGradientSetter
 
   void DianaFEAInterface::writeBehaviourDataThermodynamicForceSetter(
       std::ostream& os,
@@ -325,7 +325,7 @@ namespace mfront {
           "DianaFEAInterface::writeBehaviourDataMainVariablesSetters : "
           "unsupported forces type");
     }
-  }  // end of DianaFEAInterface::writeBehaviourDataThermodynamicForceSetter
+  }  // end of writeBehaviourDataThermodynamicForceSetter
 
   void DianaFEAInterface::exportThermodynamicForce(
       std::ostream& out,
@@ -347,7 +347,7 @@ namespace mfront {
           "DianaFEAInterface::exportThermodynamicForce: "
           "unsupported forces type");
     }
-  }  // end of DianaFEAInterface::exportThermodynamicForce
+  }  // end of exportThermodynamicForce
 
   void DianaFEAInterface::getTargetsDescription(
       TargetsDescription& d, const BehaviourDescription& bd) {
@@ -373,7 +373,7 @@ namespace mfront {
                                     " --library-dependency "
                                     "--material --mfront-profiling)");
     insert_if(l.epts, this->getFunctionNameBasis(name));
-  }  // end of DianaFEAInterface::getTargetsDescription
+  }  // end of getTargetsDescription
 
   std::string DianaFEAInterface::getLibraryName(
       const BehaviourDescription& bd) const {
@@ -385,12 +385,12 @@ namespace mfront {
       }
     }
     return this->getInterfaceName() + bd.getLibrary();
-  }  // end of DianaFEAInterface::getLibraryName
+  }  // end of getLibraryName
 
   std::string DianaFEAInterface::getFunctionNameBasis(
       const std::string& name) const {
     return name;
-  }  // end of DianaFEAInterface::getFunctionName
+  }  // end of getFunctionName
 
   std::set<DianaFEAInterface::Hypothesis>
   DianaFEAInterface::getModellingHypothesesToBeTreated(
@@ -401,7 +401,7 @@ namespace mfront {
                    "the 'Tridimensional' hypothesis is not supported, "
                    "which is required for the DianaFEA interface");
     return {ModellingHypothesis::TRIDIMENSIONAL};
-  }  // end of DianaFEAInterface::getModellingHypothesesToBeTreated
+  }  // end of getModellingHypothesesToBeTreated
 
   void DianaFEAInterface::writeBehaviourTraits(
       std::ostream& out, const BehaviourDescription& bd) const {
@@ -576,7 +576,7 @@ namespace mfront {
       return res;
     }
     return UMATInterfaceBase::gatherModellingHypothesesAndTests(bd);
-  }  // end of DianaFEAInterface::gatherModellingHypothesesAndTests
+  }  // end of gatherModellingHypothesesAndTests
 
   std::string DianaFEAInterface::getModellingHypothesisTest(
       const Hypothesis h) const {
@@ -586,39 +586,45 @@ namespace mfront {
     tfel::raise(
         "DianaFEAInterface::getModellingHypothesisTest : "
         "unsupported modelling hypothesis");
-  }  // end of DianaFEAInterface::gatherModellingHypothesesAndTests
+  }  // end of gatherModellingHypothesesAndTests
 
   bool DianaFEAInterface::areExternalStateVariablesSupported() const {
     return false;
-  }  // end of DianaFEAInterface::areExternalStateVariablesSupported()
+  }  // end of areExternalStateVariablesSupported()
 
   bool DianaFEAInterface::isTemperatureIncrementSupported() const {
     return true;
-  }  // end of DianaFEAInterface::isTemperatureIncrementSupported()
+  }  // end of isTemperatureIncrementSupported()
 
   void DianaFEAInterface::writeGetOutOfBoundsPolicyFunctionImplementation(
-      std::ostream& out, const std::string& name) const {
+      std::ostream& out,
+      const BehaviourDescription& bd,
+      const std::string& name) const {
     out << "static tfel::material::OutOfBoundsPolicy&\n"
         << this->getFunctionNameBasis(name) << "_getOutOfBoundsPolicy(){\n"
-        << "using namespace dianafea;\n"
-        << "using namespace tfel::material;\n"
-        << "static OutOfBoundsPolicy policy = "
-           "DianaFEAOutOfBoundsPolicy::getDianaFEAOutOfBoundsPolicy()."
-           "getOutOfBoundsPolicy();\n"
+        << "static auto policy = []{\n"
+        << "  const auto p = "
+        << "  dianafea::DianaFEAOutOfBoundsPolicy::getDianaFEAOutOfBoundsPolicy()."
+        << "  getOutOfBoundsPolicy();\n"
+        << "  if(p.has_value()){\n"
+        << "  return *p;\n"
+        << "  }\n"
+        << "  return tfel::material::"  //
+        << getDefaultOutOfBoundsPolicyAsString(bd) << ";\n"
+        << "}();\n"
         << "return policy;\n"
         << "}\n\n";
-  }  // end of
-     // MFrontDianaFEAInterface::writeGetOutOfBoundsPolicyFunctionImplementation
+  }  // end of writeGetOutOfBoundsPolicyFunctionImplementation
 
   void DianaFEAInterface::writeMTestFileGeneratorSetModellingHypothesis(
       std::ostream& out) const {
     out << "mg.setModellingHypothesis(ModellingHypothesis::TRIDIMENSIONAL);\n";
-  }  // end of DianaFEAInterface::writeMTestFileGeneratorSetModellingHypothesis
+  }  // end of writeMTestFileGeneratorSetModellingHypothesis
 
   void DianaFEAInterface::writeInputFileExample(const BehaviourDescription&,
                                                 const FileDescription&,
                                                 const bool) const {
-  }  // end of DianaFEAInterface::writeInputFileExample
+  }  // end of writeInputFileExample
 
   DianaFEAInterface::~DianaFEAInterface() = default;
 

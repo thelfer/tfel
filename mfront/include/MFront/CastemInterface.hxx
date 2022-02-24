@@ -144,7 +144,9 @@ namespace mfront {
         std::ostream &) const override;
 
     void writeGetOutOfBoundsPolicyFunctionImplementation(
-        std::ostream &, const std::string &) const override;
+        std::ostream &,
+        const BehaviourDescription &,
+        const std::string &) const override;
     /*!
      * \brief write the set out of bounds policy function for an alias behaviour
      * \param[out] out   : output stream

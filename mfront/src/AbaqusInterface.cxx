@@ -490,7 +490,7 @@ namespace mfront {
         << "#include\"MFront/Abaqus/AbaqusInterface.hxx\"\n\n"
         << "#include\"MFront/Abaqus/abaqus" << name << ".hxx\"\n\n";
 
-    this->writeGetOutOfBoundsPolicyFunctionImplementation(out, name);
+    this->writeGetOutOfBoundsPolicyFunctionImplementation(out, mb, name);
 
     out << "extern \"C\"{\n\n";
     AbaqusSymbolsGenerator sg;

@@ -14,6 +14,7 @@
 #ifndef LIB_TFEL_MFRONT_CYRANOOUTOFBOUNDSPOLICY_HXX
 #define LIB_TFEL_MFRONT_CYRANOOUTOFBOUNDSPOLICY_HXX
 
+#include <optional>
 #include "MFront/Cyrano/CyranoConfig.hxx"
 #include "TFEL/Material/OutOfBoundsPolicy.hxx"
 
@@ -21,13 +22,16 @@ namespace cyrano {
 
   struct MFRONT_CYRANO_VISIBILITY_EXPORT CyranoOutOfBoundsPolicy {
     static const CyranoOutOfBoundsPolicy& getCyranoOutOfBoundsPolicy();
-    tfel::material::OutOfBoundsPolicy getOutOfBoundsPolicy() const;
+    std::optional<tfel::material::OutOfBoundsPolicy> getOutOfBoundsPolicy()
+        const;
 
    private:
     CyranoOutOfBoundsPolicy();
-    CyranoOutOfBoundsPolicy(const CyranoOutOfBoundsPolicy&);
-    CyranoOutOfBoundsPolicy& operator=(const CyranoOutOfBoundsPolicy&);
-    tfel::material::OutOfBoundsPolicy policy;
+    CyranoOutOfBoundsPolicy(CyranoOutOfBoundsPolicy&&) = delete;
+    CyranoOutOfBoundsPolicy(const CyranoOutOfBoundsPolicy&) = delete;
+    CyranoOutOfBoundsPolicy& operator=(CyranoOutOfBoundsPolicy&&) = delete;
+    CyranoOutOfBoundsPolicy& operator=(const CyranoOutOfBoundsPolicy&) = delete;
+    std::optional<tfel::material::OutOfBoundsPolicy> policy;
   };  // end of struct CyranoOutOfBounds
 
 }  // end of namespace cyrano

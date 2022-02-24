@@ -389,7 +389,7 @@ namespace mfront {
         << "#include\"MFront/Europlexus/EuroplexusInterface.hxx\"\n\n"
         << "#include\"MFront/Europlexus/europlexus" << name << ".hxx\"\n\n";
 
-    this->writeGetOutOfBoundsPolicyFunctionImplementation(out, name);
+    this->writeGetOutOfBoundsPolicyFunctionImplementation(out, mb, name);
 
     out << "extern \"C\"{\n\n";
 
