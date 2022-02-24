@@ -1225,7 +1225,7 @@ namespace mfront {
     }
 
     writeRotationFunctionsImplementations(out, *this, bd, name);
-    this->writeSetOutOfBoundsPolicyFunctionImplementation(out, name);
+    this->writeSetOutOfBoundsPolicyFunctionImplementation(out, bd, name);
     // parameters
     this->writeSetParametersFunctionsImplementations(out, bd, name);
     // behaviour implementations

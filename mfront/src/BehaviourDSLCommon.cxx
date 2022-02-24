@@ -6780,7 +6780,6 @@ namespace mfront {
     SupportedTypes::TypeSize coefSize;
     SupportedTypes::TypeSize stateVarsSize;
     SupportedTypes::TypeSize externalStateVarsSize;
-    SupportedTypes::TypeSize externalStateVarsSize2;
     if (b) {
       const auto& d = this->mb.getBehaviourData(h);
       for (const auto& m : d.getMaterialProperties()) {
@@ -6792,9 +6791,6 @@ namespace mfront {
       for (const auto& v : d.getExternalStateVariables()) {
         externalStateVarsSize += this->getTypeSize(v.type, v.arraySize);
       }
-      externalStateVarsSize2 = externalStateVarsSize;
-      externalStateVarsSize2 -=
-          SupportedTypes::TypeSize(SupportedTypes::SCALAR);
     }
     os << "/*!\n"
        << "* Partial specialisation for " << this->mb.getClassName() << ".\n"
@@ -6886,11 +6882,26 @@ namespace mfront {
     os << "static constexpr size_type material_properties_nb = " << coefSize
        << ";\n"
        << "static constexpr size_type internal_variables_nb  = "
-       << stateVarsSize << ";\n"
-       << "static constexpr size_type external_variables_nb  = "
-       << externalStateVarsSize << ";\n"
-       << "static constexpr size_type external_variables_nb2 = "
-       << externalStateVarsSize2 << ";\n";
+       << stateVarsSize << ";\n";
+    if (this->mb.getAttribute(
+            BehaviourDescription::
+                automaticDeclarationOfTheTemperatureAsFirstExternalStateVariable,
+            true)) {
+      SupportedTypes::TypeSize externalStateVarsSize2 = externalStateVarsSize;
+      if (b) {
+        externalStateVarsSize2 -=
+            SupportedTypes::TypeSize(SupportedTypes::SCALAR);
+      }
+      os << "static constexpr size_type external_variables_nb  = "
+         << externalStateVarsSize << ";\n"
+         << "static constexpr size_type external_variables_nb2 = "
+         << externalStateVarsSize2 << ";\n";
+    } else {
+      os << "static constexpr size_type external_variables_nb  = "
+         << externalStateVarsSize << ";\n"
+         << "static constexpr size_type external_variables_nb2 = "
+         << externalStateVarsSize << ";\n";
+    }
     os << "static constexpr bool hasConsistentTangentOperator = "
        << get_boolean_attribute(BehaviourData::hasConsistentTangentOperator)
        << ";\n";

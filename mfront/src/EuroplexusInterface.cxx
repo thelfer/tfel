@@ -348,8 +348,8 @@ namespace mfront {
         << "extern \"C\"{\n"
         << "#endif /* __cplusplus */\n\n";
 
-    this->writeSetOutOfBoundsPolicyFunctionDeclaration(out, name);
     this->writeSetParametersFunctionsDeclarations(out, mb, name);
+    this->writeSetOutOfBoundsPolicyFunctionDeclaration(out, name);
 
     out << "MFRONT_SHAREDOBJ void\n" << this->getFunctionNameBasis(name);
     writeEPXArguments(out);
@@ -406,7 +406,7 @@ namespace mfront {
     }
 
     this->writeSetParametersFunctionsImplementations(out, mb, name);
-    this->writeSetOutOfBoundsPolicyFunctionImplementation(out, name);
+    this->writeSetOutOfBoundsPolicyFunctionImplementation(out, mb, name);
 
     out << "MFRONT_SHAREDOBJ void\n" << this->getFunctionNameBasis(name);
     writeEPXArgumentsII(out);

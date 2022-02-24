@@ -30,6 +30,8 @@ namespace mfront {
   struct MFRONT_VISIBILITY_EXPORT MaterialKnowledgeDescription {
     //! \brief standard option and attribute name
     static const char* const defaultOutOfBoundsPolicy;
+    //! \brief standard option name
+    static const char* const runtimeModificationOfTheOutOfBoundsPolicy;
     //! \brief attribute name
     static const char* const parametersAsStaticVariables;
     //! \brief attribute name
@@ -130,6 +132,14 @@ namespace mfront {
    */
   MFRONT_VISIBILITY_EXPORT std::string
   getDefaultOutOfBoundsPolicyAsUpperCaseString(
+      const MaterialKnowledgeDescription&);
+  /*!
+   * \brief this function returns the value of the
+   * `MaterialKnowledgeDescription::runtimeModificationOfTheOutOfBoundsPolicy`
+   * attribute if it is defined, `true` otherwise.
+   * \param[in] d: material knowledge description
+   */
+  MFRONT_VISIBILITY_EXPORT bool allowRuntimeModificationOfTheOutOfBoundsPolicy(
       const MaterialKnowledgeDescription&);
   /*!
    * \brief this function returns the value of the

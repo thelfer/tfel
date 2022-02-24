@@ -18,6 +18,9 @@ namespace mfront {
 
   const char* const MaterialKnowledgeDescription::defaultOutOfBoundsPolicy =
       "default_out_of_bounds_policy";
+  const char* const
+      MaterialKnowledgeDescription::runtimeModificationOfTheOutOfBoundsPolicy =
+          "runtime_modification_of_the_out_of_bounds_policy";
   const char* const MaterialKnowledgeDescription::parametersAsStaticVariables =
       "parametersAsStaticVariables";
   const char* const MaterialKnowledgeDescription::initializeParametersFromFile =
@@ -132,6 +135,12 @@ namespace mfront {
           policy + "'");
     }
   }  // end of getDefaultOutOfBoundsPolicyAsString
+
+  bool allowRuntimeModificationOfTheOutOfBoundsPolicy(
+      const MaterialKnowledgeDescription& d) {
+    return d.getAttribute<bool>(
+        MaterialKnowledgeDescription::parametersAsStaticVariables, true);
+  } // end of allowRuntimeModificationOfTheOutOfBoundsPolicy
 
   bool areParametersTreatedAsStaticVariables(
       const MaterialKnowledgeDescription& d) {

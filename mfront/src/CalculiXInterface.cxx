@@ -395,8 +395,8 @@ namespace mfront {
         << "extern \"C\"{\n"
         << "#endif /* __cplusplus */\n\n";
 
-    this->writeSetOutOfBoundsPolicyFunctionDeclaration(out, name);
     this->writeSetParametersFunctionsDeclarations(out, mb, name);
+    this->writeSetOutOfBoundsPolicyFunctionDeclaration(out, name);
 
     out << "MFRONT_SHAREDOBJ void\n" << this->getFunctionNameBasis(name);
     writeArguments(out);
@@ -445,7 +445,7 @@ namespace mfront {
     sg.generateSymbols(out, *this, mb, fd, name, h);
 
     this->writeSetParametersFunctionsImplementations(out, mb, name);
-    this->writeSetOutOfBoundsPolicyFunctionImplementation(out, name);
+    this->writeSetOutOfBoundsPolicyFunctionImplementation(out, mb, name);
 
     if (mb.getBehaviourType() ==
         BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) {

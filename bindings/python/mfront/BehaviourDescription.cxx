@@ -159,8 +159,8 @@ static std::string getStrainMeasure(const mfront::BehaviourDescription& d) {
   return "Hencky";
 }  // end of getStrainMeasure
 
-bool BehaviourDescription_hasAttribute(const mfront::BehaviourDescription& d,
-                                       const std::string& s) {
+static bool BehaviourDescription_hasAttribute(const mfront::BehaviourDescription& d,
+					      const std::string& s) {
   return d.hasAttribute(s);
 }  // end of
 

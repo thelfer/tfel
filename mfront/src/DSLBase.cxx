@@ -59,10 +59,10 @@ namespace mfront {
 
   const char* const DSLBase::defaultOutOfBoundsPolicyOption =
       "default_out_of_bounds_policy";
-
+  const char* const DSLBase::runtimeModificationOfTheOutOfBoundsPolicyOption =
+      "runtime_modification_of_the_out_of_bounds_policy";
   const char* const DSLBase::parametersAsStaticVariablesOption =
       "parameters_as_static_variables";
-
   const char* const DSLBase::initializeParametersFromFileOption =
       "initialize_parameters_from_file";
 
@@ -78,7 +78,10 @@ namespace mfront {
 
   tfel::utilities::DataMapValidator DSLBase::getDSLOptionsValidator() {
     auto v = tfel::utilities::DataMapValidator{};
-    v.addDataTypeValidator<std::string>(DSLBase::defaultOutOfBoundsPolicyOption);
+    v.addDataTypeValidator<std::string>(
+        DSLBase::defaultOutOfBoundsPolicyOption);
+    v.addDataTypeValidator<bool>(
+        DSLBase::runtimeModificationOfTheOutOfBoundsPolicyOption);
     v.addDataTypeValidator<bool>(DSLBase::parametersAsStaticVariablesOption);
     v.addDataTypeValidator<bool>(DSLBase::initializeParametersFromFileOption);
     v.addDataTypeValidator<std::string>(DSLBase::buildIdentifierOption);
@@ -100,6 +103,15 @@ namespace mfront {
           opts.at(DSLBase::defaultOutOfBoundsPolicyOption).get<std::string>();
       d.setAttribute(MaterialKnowledgeDescription::defaultOutOfBoundsPolicy,
                      opt, false);
+    }
+    if (opts.count(DSLBase::runtimeModificationOfTheOutOfBoundsPolicyOption) !=
+        0) {
+      const auto b =
+          opts.at(DSLBase::runtimeModificationOfTheOutOfBoundsPolicyOption)
+              .get<bool>();
+      d.setAttribute(MaterialKnowledgeDescription::
+                         runtimeModificationOfTheOutOfBoundsPolicy,
+                     b, false);
     }
     if (opts.count(DSLBase::parametersAsStaticVariablesOption) != 0) {
       const auto b =
@@ -129,6 +141,8 @@ namespace mfront {
     const auto build_id = d.getAttribute<std::string>(
         MaterialKnowledgeDescription::buildIdentifier, "");
     return {{DSLBase::defaultOutOfBoundsPolicyOption, policy},
+            {DSLBase::runtimeModificationOfTheOutOfBoundsPolicyOption,
+             allowRuntimeModificationOfTheOutOfBoundsPolicy(d)},
             {DSLBase::parametersAsStaticVariablesOption,
              areParametersTreatedAsStaticVariables(d)},
             {DSLBase::initializeParametersFromFileOption,
@@ -143,13 +157,22 @@ namespace mfront {
 
   std::vector<AbstractDSL::DSLOptionDescription> DSLBase::getDSLOptions()
       const {
-    return {
-        {DSLBase::parametersAsStaticVariablesOption,
-         "boolean stating if parameters shall be treated as static variables"},
-        {DSLBase::buildIdentifierOption,
-         "string specifying a build identifier. This option shall only be "
-         "specified on the command line"}};
-  } // end of getDSLOptions
+    return {{DSLBase::defaultOutOfBoundsPolicyOption,
+             "string specifying the default out of bounds policy. Allowed "
+             "values are `None`, `Warning`, `Strict`"},
+            {DSLBase::runtimeModificationOfTheOutOfBoundsPolicyOption,
+             "boolean stating if the runtime modification of the out of bounds "
+             "policy is allowed"},
+            {DSLBase::parametersAsStaticVariablesOption,
+             "boolean stating if parameters shall be treated as static "
+             "variables"},
+            {DSLBase::initializeParametersFromFileOption,
+             "boolean stating if the values of parameters can be changed from "
+             "an external file"},
+            {DSLBase::buildIdentifierOption,
+             "string specifying a build identifier. This option shall only be "
+             "specified on the command line"}};
+  }  // end of getDSLOptions
 
   std::vector<std::string> DSLBase::getDefaultReservedNames() {
     auto names = std::vector<std::string>{};

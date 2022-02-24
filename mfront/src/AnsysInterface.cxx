@@ -849,8 +849,8 @@ namespace mfront {
         << "extern \"C\"{\n"
         << "#endif /* __cplusplus */\n\n";
 
-    this->writeSetOutOfBoundsPolicyFunctionDeclaration(out, name);
     this->writeSetParametersFunctionsDeclarations(out, mb, name);
+    this->writeSetOutOfBoundsPolicyFunctionDeclaration(out, name);
 
     for (const auto h : mhs) {
       out << "MFRONT_SHAREDOBJ void\n"
@@ -914,7 +914,7 @@ namespace mfront {
     }
 
     this->writeSetParametersFunctionsImplementations(out, mb, name);
-    this->writeSetOutOfBoundsPolicyFunctionImplementation(out, name);
+    this->writeSetOutOfBoundsPolicyFunctionImplementation(out, mb, name);
 
     for (const auto h : mhs) {
       if (mb.getBehaviourType() ==

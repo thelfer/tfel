@@ -412,21 +412,32 @@ namespace mfront {
           if (!i.hasBounds()) {
             continue;
           }
+          if ((!allowRuntimeModificationOfTheOutOfBoundsPolicy(mpd)) &&
+              (getDefaultOutOfBoundsPolicy(mpd) == tfel::material::None)) {
+            continue;
+          }
           const auto& b = i.getBounds();
           const auto default_policy =
               getDefaultOutOfBoundsPolicyAsUpperCaseString(mpd);
-          const auto get_policy =
-              "const char * const mfront_policy = "
-              "[]{\n"
-              " const auto* const p= "
-              " ::getenv(\"OUT_OF_BOUNDS_POLICY\");\n"
-              " if(p == nullptr){\n"
-              " return \"" +
-              default_policy +
-              "\";\n"
-              " }\n"
-              " return p;\n"
-              "}();\n";
+          const auto get_policy = [&mpd] {
+            const auto default_policy =
+                getDefaultOutOfBoundsPolicyAsUpperCaseString(mpd);
+            if (allowRuntimeModificationOfTheOutOfBoundsPolicy(mpd)) {
+              return "const char * const mfront_policy = "
+                     "[]{\n"
+                     " const auto* const p= "
+                     " ::getenv(\"OUT_OF_BOUNDS_POLICY\");\n"
+                     " if(p == nullptr){\n"
+                     " return \"" +
+                     default_policy +
+                     "\";\n"
+                     " }\n"
+                     " return p;\n"
+                     "}();\n";
+            }
+            return "const char * const mfront_policy = \"" +  //
+                   default_policy + "\";\n";
+          }();
           if (b.boundsType == VariableBoundsDescription::LOWER) {
             src << "if(" << i.name << " < " << b.lowerBound << "){\n"
                 << get_policy  //

@@ -460,7 +460,7 @@ namespace mfront {
     //     }
     //
     //     this->writeSetParametersFunctionsImplementations(out, name, mb);
-    //     this->writeSetOutOfBoundsPolicyFunctionImplementation(out,
+    //     this->writeSetOutOfBoundsPolicyFunctionImplementation(out, mb,
     //     name);
     //
     //     for (const auto h : mh) {

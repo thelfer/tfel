@@ -196,23 +196,33 @@ namespace mfront {
                           const MaterialPropertyDescription& mpd,
                           const std::string& name,
                           const VariableDescription& v) {
+    if ((!allowRuntimeModificationOfTheOutOfBoundsPolicy(mpd)) &&
+        (getDefaultOutOfBoundsPolicy(mpd) == tfel::material::None)) {
+      return;
+    }
     if (!v.hasBounds()) {
       return;
     }
     const auto& b = v.getBounds();
     const auto default_policy = getDefaultOutOfBoundsPolicyAsUpperCaseString(mpd);
-    const auto get_policy =
-        "const char * const mfront_policy = "
-        "[]{\n"
-        " const auto* const p= "
-        " ::getenv(\"JAVA_OUT_OF_BOUNDS_POLICY\");\n"
-        " if(p == nullptr){\n"
-        " return \"" +
-        default_policy +
-        "\";\n"
-        " }\n"
-        " return p;\n"
-        "}();\n";
+    const auto get_policy = [&mpd] {
+      const auto default_policy =
+          getDefaultOutOfBoundsPolicyAsUpperCaseString(mpd);
+      if (allowRuntimeModificationOfTheOutOfBoundsPolicy(mpd)) {
+        return "const char * const mfront_policy = "
+               "[]{\n"
+               " const auto* const p= "
+               " ::getenv(\"JAVA_OUT_OF_BOUNDS_POLICY\");\n"
+               " if(p == nullptr){\n"
+               " return \"" +
+               default_policy +
+               "\";\n"
+               " }\n"
+               " return p;\n"
+               "}();\n";
+      }
+      return "const char * const mfront_policy = \"" + default_policy + "\";\n";
+    }();
     if ((b.boundsType == VariableBoundsDescription::LOWER) ||
         (b.boundsType == VariableBoundsDescription::LOWERANDUPPER)) {
       out << "if(" << v.name << " < " << v.type << "(" << b.lowerBound

@@ -698,6 +698,15 @@ namespace mfront {
       std::ostream& out,
       const BehaviourDescription& bd,
       const std::string& name) const {
+    if ((!allowRuntimeModificationOfTheOutOfBoundsPolicy(bd)) &&
+        (getDefaultOutOfBoundsPolicy(bd) == tfel::material::None)) {
+      out << "static constexpr tfel::material::OutOfBoundsPolicy\n"
+          << this->getFunctionNameBasis(name) << "_getOutOfBoundsPolicy(){\n"
+          << "return tfel::material::"  //
+          << getDefaultOutOfBoundsPolicyAsString(bd) << ";\n"
+          << "}\n\n";
+      return;
+    }
     out << "static tfel::material::OutOfBoundsPolicy&\n"
         << this->getFunctionNameBasis(name) << "_getOutOfBoundsPolicy(){\n"
         << "static auto policy = []{\n"
@@ -1374,7 +1383,7 @@ namespace mfront {
     }
 
     this->writeSetParametersFunctionsImplementations(out, mb, name);
-    this->writeSetOutOfBoundsPolicyFunctionImplementation(out, name);
+    this->writeSetOutOfBoundsPolicyFunctionImplementation(out, mb, name);
     if ((mb.getBehaviourType() ==
          BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) &&
         (areFiniteStrainStrategiesDefined(mb))) {

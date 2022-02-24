@@ -190,8 +190,8 @@ namespace mfront {
         << "extern \"C\"{\n"
         << "#endif /* __cplusplus */\n\n";
 
-    this->writeSetOutOfBoundsPolicyFunctionDeclaration(out, name);
     this->writeSetParametersFunctionsDeclarations(out, bd, name);
+    this->writeSetOutOfBoundsPolicyFunctionDeclaration(out, name);
 
     out << "MFRONT_SHAREDOBJ void\n" << this->getFunctionNameBasis(name);
     writeArguments(out);
@@ -241,7 +241,7 @@ namespace mfront {
     sg.generateSymbols(out, *this, bd, fd, name, h);
 
     this->writeSetParametersFunctionsImplementations(out, bd, name);
-    this->writeSetOutOfBoundsPolicyFunctionImplementation(out, name);
+    this->writeSetOutOfBoundsPolicyFunctionImplementation(out, bd, name);
 
     // implementation body
     out << "MFRONT_SHAREDOBJ void\n" << this->getFunctionNameBasis(name);
@@ -600,11 +600,21 @@ namespace mfront {
       std::ostream& out,
       const BehaviourDescription& bd,
       const std::string& name) const {
+    if ((!allowRuntimeModificationOfTheOutOfBoundsPolicy(bd)) &&
+        (getDefaultOutOfBoundsPolicy(bd) == tfel::material::None)) {
+      out << "static constexpr tfel::material::OutOfBoundsPolicy\n"
+          << this->getFunctionNameBasis(name) << "_getOutOfBoundsPolicy(){\n"
+          << "return tfel::material::"  //
+          << getDefaultOutOfBoundsPolicyAsString(bd) << ";\n"
+          << "}\n\n";
+      return;
+    }
     out << "static tfel::material::OutOfBoundsPolicy&\n"
         << this->getFunctionNameBasis(name) << "_getOutOfBoundsPolicy(){\n"
         << "static auto policy = []{\n"
         << "  const auto p = "
-        << "  dianafea::DianaFEAOutOfBoundsPolicy::getDianaFEAOutOfBoundsPolicy()."
+        << "  dianafea::DianaFEAOutOfBoundsPolicy::"
+        << "  getDianaFEAOutOfBoundsPolicy()."
         << "  getOutOfBoundsPolicy();\n"
         << "  if(p.has_value()){\n"
         << "  return *p;\n"

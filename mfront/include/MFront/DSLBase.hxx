@@ -56,6 +56,8 @@ namespace mfront {
     //! \brief standard option name
     static const char* const defaultOutOfBoundsPolicyOption;
     //! \brief standard option name
+    static const char* const runtimeModificationOfTheOutOfBoundsPolicyOption;
+    //! \brief standard option name
     static const char* const parametersAsStaticVariablesOption;
     //! \brief standard option name
     static const char* const initializeParametersFromFileOption;

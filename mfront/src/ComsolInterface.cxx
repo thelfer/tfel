@@ -139,8 +139,8 @@ namespace mfront {
         << "extern \"C\"{\n"
         << "#endif /* __cplusplus */\n\n";
 
-    this->writeSetOutOfBoundsPolicyFunctionDeclaration(out, name);
     this->writeSetParametersFunctionsDeclarations(out, bd, name);
+    this->writeSetOutOfBoundsPolicyFunctionDeclaration(out, name);
 
     if (!d.getPersistentVariables().empty()) {
       out << "MFRONT_SHAREDOBJ int\n"
@@ -208,7 +208,7 @@ namespace mfront {
     //     sg.generateSymbols(out, *this, mb, fd, name, h);
     //
     this->writeSetParametersFunctionsImplementations(out, bd, name);
-    this->writeSetOutOfBoundsPolicyFunctionImplementation(out, name);
+    this->writeSetOutOfBoundsPolicyFunctionImplementation(out, bd, name);
 
     if (!d.getPersistentVariables().empty()) {
       out << "MFRONT_SHAREDOBJ int\n"

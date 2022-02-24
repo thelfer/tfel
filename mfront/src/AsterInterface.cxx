@@ -427,7 +427,7 @@ namespace mfront {
     }
 
     this->writeSetParametersFunctionsImplementations(out, mb, name);
-    this->writeSetOutOfBoundsPolicyFunctionImplementation(out, name);
+    this->writeSetOutOfBoundsPolicyFunctionImplementation(out, mb, name);
 
     out << "char *" << this->getFunctionNameBasis(name)
         << "_getIntegrationErrorMessage(){\n"

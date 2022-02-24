@@ -135,17 +135,34 @@ namespace mfront {
       std::ostream& out,
       const BehaviourDescription& bd,
       const std::string& name) const {
-    out << "static tfel::material::OutOfBoundsPolicy&\n"
-        << this->getFunctionNameBasis(name) << "_getOutOfBoundsPolicy(){\n"
-        << "static auto policy = tfel::material::"  ///
-        << getDefaultOutOfBoundsPolicyAsString(bd) << ";\n"
-        << "return policy;\n"
-        << "}\n\n";
+    if (allowRuntimeModificationOfTheOutOfBoundsPolicy(bd)){
+      out << "static tfel::material::OutOfBoundsPolicy&\n"
+          << this->getFunctionNameBasis(name) << "_getOutOfBoundsPolicy(){\n"
+          << "static auto policy = tfel::material::"  //
+          << getDefaultOutOfBoundsPolicyAsString(bd) << ";\n"
+          << "return policy;\n"
+          << "}\n\n";
+    } else {
+      out << "static constexpr tfel::material::OutOfBoundsPolicy\n"
+          << this->getFunctionNameBasis(name) << "_getOutOfBoundsPolicy(){\n"
+          << "return tfel::material::"  //
+          << getDefaultOutOfBoundsPolicyAsString(bd) << ";\n"
+          << "}\n\n";
+    }
   }  // end of writeGetOutOfBoundsPolicyFunctionImplementation
 
   void
   StandardBehaviourInterface::writeSetOutOfBoundsPolicyFunctionImplementation(
-      std::ostream& out, const std::string& name) const {
+      std::ostream& out,
+      const BehaviourDescription& bd,
+      const std::string& name) const {
+    if (!allowRuntimeModificationOfTheOutOfBoundsPolicy(bd)){
+      out << "MFRONT_SHAREDOBJ void\n"
+          << this->getFunctionNameBasis(name)
+          << "_setOutOfBoundsPolicy(const int){\n"
+          << "}\n\n";
+      return;
+    }
     out << "MFRONT_SHAREDOBJ void\n"
         << this->getFunctionNameBasis(name)
         << "_setOutOfBoundsPolicy(const int p){\n"
