@@ -198,7 +198,7 @@ feature is implemented by some interfaces (`Cast3M`, `Cyrano`, `Octave`,
 This behaviour can now be changed by using the
 `parameters_initialization_from_file` boolean option.
 
-### Specifying the default out of bounds policy
+### Specifying the default out of bounds policy {#sec:tfel:mfront:global_options:default_out_of_bounds_policy}
 
 In previous versions, the default out of bound policy was
 `tfel::material::None`, which meant that nothing is done when a variable
@@ -208,7 +208,7 @@ This behaviour can now be changed by using the
 `default_out_of_bounds_policy` string option which can take the values
 `None`, `Warning` or `Strict`.
 
-### Disabling runtime change of the out of bounds policy
+### Disabling runtime change of the out of bounds policy {#sec:tfel:mfront:global_options:out_of_bounds_policy_runtime_modification}
 
 The `out_of_bounds_policy_runtime_modification` boolean option states if
 the out of bounds policy can be changed at runtime. By default, this
@@ -641,7 +641,21 @@ $ mfront-query --post-processing-variables Elasticity.mfront
 
 # Issues fixed
 
+## Issue #125: [mfront] Remove behaviour sources if not needed
+
+For more details, see : <https://github.com/thelfer/tfel/issues/125>.
+
+## Issue #124: [mfront] Add DSL option to disable runtime change of the out of bound policy
+
+This feature is described in Section
+@sec:tfel:mfront:global_options:out_of_bounds_policy_runtime_modification.
+
+For more details, see : <https://github.com/thelfer/tfel/issues/124>.
+
 ## Issue #123: [mfront] Add DSL option to change the default out of bounds policy
+
+This feature is described in Section
+@sec:tfel:mfront:global_options:default_out_of_bounds_policy.
 
 For more details, see : <https://github.com/thelfer/tfel/issues/123>.
 
