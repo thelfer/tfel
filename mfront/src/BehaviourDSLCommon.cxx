@@ -1166,6 +1166,15 @@ namespace mfront {
     return "TFEL/Material/" + this->mb.getClassName() + "IntegrationData.hxx";
   }  // end of getIntegrationDataFileName
 
+  bool BehaviourDSLCommon::isSrcFileRequired() const {
+    const auto profiling =
+        this->mb.getAttribute(BehaviourData::profiling, false);
+    const auto parameters =
+        ((this->mb.hasParameters()) &&
+         (!areParametersTreatedAsStaticVariables(this->mb)));
+    return profiling || parameters;
+  }  // end of isSrcFileRequired
+
   std::string BehaviourDSLCommon::getSrcFileName() const {
     return this->mb.getClassName() + ".cxx";
   }  // end of getSrcFileName
@@ -1182,8 +1191,10 @@ namespace mfront {
     for (const auto& i : this->interfaces) {
       i.second->getTargetsDescription(this->td, this->mb);
     }
-    for (auto& l : this->td.libraries) {
-      insert_if(this->td.getLibrary(l.name).sources, this->getSrcFileName());
+    if (this->isSrcFileRequired()) {
+      for (auto& l : this->td.libraries) {
+        insert_if(this->td.getLibrary(l.name).sources, this->getSrcFileName());
+      }
     }
     insert_if(this->td.headers, this->getBehaviourFileName());
     insert_if(this->td.headers, this->getBehaviourDataFileName());
@@ -1586,11 +1597,9 @@ namespace mfront {
                                     this->getBehaviourDataFileName());
     std::ofstream integrationDataFile("include/" +
                                       this->getIntegrationDataFileName());
-    std::ofstream srcFile("src/" + this->getSrcFileName());
     behaviourFile.precision(14);
     behaviourDataFile.precision(14);
     integrationDataFile.precision(14);
-    srcFile.precision(14);
     if (!behaviourFile) {
       this->throwRuntimeError("BehaviourDSLCommon::generateOutputFiles",
                               "unable to open '" +
@@ -1609,12 +1618,6 @@ namespace mfront {
       this->throwRuntimeError("BehaviourDSLCommon::generateOutputFiles",
                               "unable to open '" +
                                   this->getIntegrationDataFileName() +
-                                  "' "
-                                  "for writing output file");
-    }
-    if (!srcFile) {
-      this->throwRuntimeError("BehaviourDSLCommon::generateOutputFiles",
-                              "unable to open '" + this->getSrcFileName() +
                                   "' "
                                   "for writing output file");
     }
@@ -1673,11 +1676,23 @@ namespace mfront {
     this->writeIntegrationDataFileEnd(integrationDataFile);
     this->writeBehaviourFileEnd(behaviourFile);
     // Generating behaviour's source file
-    if (getVerboseMode() >= VERBOSE_DEBUG) {
-      auto& log = getLogStream();
-      log << "BehaviourDSLCommon::generateOutputFiles : writing source file\n";
+    if (this->isSrcFileRequired()) {
+      std::ofstream srcFile("src/" + this->getSrcFileName());
+      if (!srcFile) {
+        this->throwRuntimeError("BehaviourDSLCommon::generateOutputFiles",
+                                "unable to open '" + this->getSrcFileName() +
+                                    "' "
+                                    "for writing output file");
+      }
+      srcFile.precision(14);
+      if (getVerboseMode() >= VERBOSE_DEBUG) {
+        auto& log = getLogStream();
+        log << "BehaviourDSLCommon::generateOutputFiles : writing source "
+               "file\n";
+      }
+      this->writeSrcFile(srcFile);
+      srcFile.close();
     }
-    this->writeSrcFile(srcFile);
     // calling the interfaces
     for (const auto& i : this->interfaces) {
       if (getVerboseMode() >= VERBOSE_DEBUG) {
@@ -1690,7 +1705,6 @@ namespace mfront {
     behaviourFile.close();
     behaviourDataFile.close();
     integrationDataFile.close();
-    srcFile.close();
   }
 
   void BehaviourDSLCommon::generateSlipSystemsFiles() {
@@ -6378,7 +6392,7 @@ namespace mfront {
           const auto f = SupportedTypes::getTypeFlag(p.type);
           if (f != SupportedTypes::SCALAR) {
             this->throwRuntimeError(
-                "BehaviourDSLCommon::writeSrcFileParametersInitializer",
+                "BehaviourDSLCommon::writeBehaviourParameters",
                 "unsupported parameter type '" + p.type +
                     "' "
                     "for parameter '" +
@@ -8214,10 +8228,6 @@ namespace mfront {
        << "#include\"" << this->getBehaviourFileName() << "\"\n\n";
   }  // end of writeSrcFileHeader()
 
-  void BehaviourDSLCommon::writeSrcFileStaticVariables(std::ostream&,
-                                                       const Hypothesis) const {
-  }  // end of writeSrcFileStaticVariables
-
   void BehaviourDSLCommon::writeSrcFileUserDefinedCode(std::ostream& os) const {
     this->checkSrcFile(os);
     const auto& s = this->mb.getSources();
@@ -8606,11 +8616,6 @@ namespace mfront {
     this->writeNamespaceBegin(os);
     this->writeSrcFileBehaviourProfiler(os);
     this->writeSrcFileParametersInitializers(os);
-    // modelling hypotheses handled by the behaviour
-    const auto& mh = this->mb.getModellingHypotheses();
-    for (const auto& h : mh) {
-      this->writeSrcFileStaticVariables(os, h);
-    }
     this->writeNamespaceEnd(os);
   }  // end of writeSrcFile
 

@@ -184,6 +184,7 @@ namespace mfront {
     //
     std::vector<DSLOptionDescription> getDSLOptions() const override;
     DSLOptions buildDSLOptions() const override;
+
     bool useQt() const override;
     void disableQuantitiesUsageIfNotAlreadySet() override;
     std::string getClassName() const override;
@@ -194,6 +195,14 @@ namespace mfront {
     void appendToSources(const std::string&) override;
 
     std::set<Hypothesis> getModellingHypothesesToBeTreated() const;
+
+    /*!
+     * \return if the generation of the source file is required
+     *
+     * The source file contains implementations of functions common to all
+     * interfaces.
+     */
+    virtual bool isSrcFileRequired() const;
 
     virtual void analyse();
 
@@ -1113,7 +1122,7 @@ namespace mfront {
      * This method is called after that the main variables were set.
      */
     virtual void writeBehaviourInitializeMethods(std::ostream&,
-                                                const Hypothesis) const;
+                                                 const Hypothesis) const;
     /*!
      * write part of the constructor specific to the parser
      * \param[in] h : modelling hypothesis
@@ -1251,8 +1260,6 @@ namespace mfront {
     virtual void writeSrcFileParametersInitializer(std::ostream&,
                                                    const Hypothesis) const;
 
-    virtual void writeSrcFileStaticVariables(std::ostream&,
-                                             const Hypothesis) const;
     /*!
      * \brief write the source file
      */
