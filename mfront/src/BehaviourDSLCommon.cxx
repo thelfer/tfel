@@ -1172,7 +1172,8 @@ namespace mfront {
     const auto parameters =
         ((this->mb.hasParameters()) &&
          (!areParametersTreatedAsStaticVariables(this->mb)));
-    return profiling || parameters;
+    const auto user_defined_sources = !this->mb.getSources().empty();
+    return profiling || parameters || user_defined_sources;
   }  // end of isSrcFileRequired
 
   std::string BehaviourDSLCommon::getSrcFileName() const {

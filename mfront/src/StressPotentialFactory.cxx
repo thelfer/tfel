@@ -9,6 +9,7 @@
 #include "MFront/MFrontUtilities.hxx"
 #include "MFront/BehaviourBrick/HookeStressPotential.hxx"
 #include "MFront/BehaviourBrick/DDIF2StressPotential.hxx"
+#include "MFront/BehaviourBrick/CamClayStressPotential.hxx"
 #include "MFront/BehaviourBrick/IsotropicDamageHookeStressPotential.hxx"
 #include "MFront/BehaviourBrick/StressPotentialFactory.hxx"
 
@@ -52,6 +53,9 @@ namespace mfront::bbrick {
     });
     this->addGenerator("DDIF2", [] {
       return std::make_shared<bbrick::DDIF2StressPotential>();
+    });
+    this->addGenerator("CamClay", [] {
+      return std::make_shared<bbrick::CamClayStressPotential>();
     });
     this->addGenerator("IsotropicDamage", [] {
       return std::make_shared<bbrick::IsotropicDamageHookeStressPotential>();

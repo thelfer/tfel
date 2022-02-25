@@ -1,8 +1,8 @@
 /*!
- * \file  DDIF2StressPotential.cxx
+ * \file  mfront/src/DDIF2StressPotential.cxx
  * \brief
  * \author Thomas Helfer
- * \date   20 oct. 2014
+ * \date   20/11/2014
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence

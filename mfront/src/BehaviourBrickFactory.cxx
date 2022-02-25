@@ -21,6 +21,7 @@
 #include "MFront/StandardElasticityBrick.hxx"
 #include "MFront/StandardElastoViscoPlasticityBrick.hxx"
 #include "MFront/DDIF2Brick.hxx"
+#include "MFront/CamClayBrick.hxx"
 #include "MFront/FiniteStrainSingleCrystalBrick.hxx"
 
 namespace mfront {
@@ -62,6 +63,9 @@ namespace mfront {
     add("DDIF2", BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR,
         BehaviourDescription::IMPLICITSCHEME,
         buildBehaviourBrickConstructor<DDIF2Brick>);
+    add("CamClay", BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR,
+        BehaviourDescription::IMPLICITSCHEME,
+        buildBehaviourBrickConstructor<CamClayBrick>);
     add("StandardElasticity",
         BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR,
         BehaviourDescription::IMPLICITSCHEME,

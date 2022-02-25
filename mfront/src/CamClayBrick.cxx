@@ -1,8 +1,8 @@
 /*!
- * \file  DDIF2Brick.cxx
+ * \file  mfront/src/CamClayBrick.cxx
  * \brief
  * \author Thomas Helfer
- * \date   20 oct. 2014
+ * \date   25/02/2022
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence
@@ -14,21 +14,22 @@
 #include "MFront/BehaviourBrick/OptionDescription.hxx"
 #include "MFront/BehaviourBrick/StressPotential.hxx"
 #include "MFront/BehaviourBrick/StressPotentialFactory.hxx"
-#include "MFront/DDIF2Brick.hxx"
+#include "MFront/CamClayBrick.hxx"
 
 namespace mfront {
 
-  DDIF2Brick::DDIF2Brick(AbstractBehaviourDSL& dsl_, BehaviourDescription& mb_)
+  CamClayBrick::CamClayBrick(AbstractBehaviourDSL& dsl_,
+                             BehaviourDescription& mb_)
       : BehaviourBrickBase(dsl_, mb_) {
     auto& spf = mfront::bbrick::StressPotentialFactory::getFactory();
-    this->ddif2 = spf.generate("DDIF2");
-  }  // end of DDIF2Brick
+    this->ddif2 = spf.generate("CamClay");
+  }  // end of CamClayBrick
 
-  std::string DDIF2Brick::getName() const {
-    return "DDIF2";
+  std::string CamClayBrick::getName() const {
+    return "CamClay";
   }  // end of getName
 
-  BehaviourBrickDescription DDIF2Brick::getDescription() const {
+  BehaviourBrickDescription CamClayBrick::getDescription() const {
     auto d = BehaviourBrickDescription{};
     d.behaviourType =
         tfel::material::MechanicalBehaviourBase::STANDARDSTRAINBASEDBEHAVIOUR;
@@ -42,28 +43,28 @@ namespace mfront {
     return d;
   }  // end of getDescription
 
-  std::vector<bbrick::OptionDescription> DDIF2Brick::getOptions(
+  std::vector<bbrick::OptionDescription> CamClayBrick::getOptions(
       const bool b) const {
     return this->ddif2->getOptions(this->bd, b);
   }  // end of getOptions
 
-  void DDIF2Brick::initialize(const Parameters&, const DataMap& d) {
+  void CamClayBrick::initialize(const Parameters&, const DataMap& d) {
     this->ddif2->initialize(this->bd, this->dsl, d);
   }  // end of initialize
 
-  void DDIF2Brick::completeVariableDeclaration() const {
+  void CamClayBrick::completeVariableDeclaration() const {
     this->ddif2->completeVariableDeclaration(this->bd, this->dsl);
   }  // end of completeVariableDeclaration
 
-  void DDIF2Brick::endTreatment() const {
+  void CamClayBrick::endTreatment() const {
     this->ddif2->endTreatment(this->bd, this->dsl);
   }  // end of endTreatment
 
   std::vector<tfel::material::ModellingHypothesis::Hypothesis>
-  DDIF2Brick::getSupportedModellingHypotheses() const {
+  CamClayBrick::getSupportedModellingHypotheses() const {
     return this->ddif2->getSupportedModellingHypotheses(this->bd, this->dsl);
   }  // end of getSupportedModellingHypothesis
 
-  DDIF2Brick::~DDIF2Brick() = default;
+  CamClayBrick::~CamClayBrick() = default;
 
 }  // end of namespace mfront

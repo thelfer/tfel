@@ -135,6 +135,7 @@ set(TFELMFront_SOURCES
     StandardElasticityBrick.cxx
     StandardElastoViscoPlasticityBrick.cxx
     DDIF2Brick.cxx
+    CamClayBrick.cxx
     FiniteStrainSingleCrystalBrick.cxx
     LocalDataStructure.cxx
     PerformanceProfiling.cxx
@@ -163,6 +164,7 @@ set(TFELMFront_SOURCES
     IsotropicDamageHookeStressPotentialBase.cxx
     IsotropicDamageHookeStressPotential.cxx
     DDIF2StressPotential.cxx
+    CamClayStressPotential.cxx
     StressPotentialFactory.cxx
     InelasticFlow.cxx
     InelasticFlowFactory.cxx

@@ -120,6 +120,7 @@ nobase_include_HEADERS= MFront/MFront.hxx                                     \
 			MFront/BehaviourBrick/DDIF2StressPotential.hxx                               \
 			MFront/BehaviourBrick/IsotropicDamageHookeStressPotentialBase.hxx            \
 			MFront/BehaviourBrick/IsotropicDamageHookeStressPotential.hxx                \
+			MFront/BehaviourBrick/CamClayStressPotential.hxx                             \
 			MFront/BehaviourBrick/StressPotentialFactory.hxx                             \
 			MFront/BehaviourBrick/InelasticFlowFactory.hxx                               \
 			MFront/BehaviourBrick/InelasticFlow.hxx                                      \
@@ -184,7 +185,7 @@ nobase_include_HEADERS= MFront/MFront.hxx                                     \
 			MFront/LocalDataStructure.hxx
 
 
-nobase_noinst_HEADERS = MFront/IsotropicBehaviourDSLBase.hxx                          \
+nobase_noinst_HEADERS = MFront/IsotropicBehaviourDSLBase.hxx              \
 			MFront/IsotropicMisesCreepDSL.hxx                             \
 			MFront/IsotropicStrainHardeningMisesCreepDSL.hxx              \
 			MFront/IsotropicMisesPlasticFlowDSL.hxx                       \
@@ -194,10 +195,11 @@ nobase_noinst_HEADERS = MFront/IsotropicBehaviourDSLBase.hxx                    
 			MFront/RungeKuttaFiniteStrainDSL.hxx                          \
 			MFront/RungeKuttaGenericBehaviourDSL.hxx                      \
 			MFront/RungeKuttaModelDSL.hxx                                 \
-			MFront/PerformanceProfiling.hxx			              \
+			MFront/PerformanceProfiling.hxx			                    \
 			MFront/StandardElasticityBrick.hxx                            \
 			MFront/StandardElastoViscoPlasticityBrick.hxx                 \
 			MFront/DDIF2Brick.hxx                                         \
+			MFront/CamClayBrick.hxx                                       \
 			MFront/FiniteStrainSingleCrystalBrick.hxx                     \
 			MFront/NewtonRaphsonSolvers.hxx			              \
 			MFront/BroydenSolvers.hxx				      \
