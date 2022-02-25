@@ -1,0 +1,43 @@
+@DSL Default{
+  default_out_of_bounds_policy : "Strict",
+  out_of_bounds_policy_runtime_modification : false,
+  parameters_as_static_variables : true,
+  parameters_initialization_from_file : false,
+  automatic_declaration_of_the_temperature_as_first_external_state_variable: true
+};
+
+@Behaviour DSLOptionsTest;
+@Author Thomas Helfer;
+@Description{
+  This behaviour is meant to tests the compilation
+  of a behaviour using all avaiable DSL options
+}
+
+// Material properties
+@MaterialProperty stress young;
+young.setGlossaryName("YoungModulus");
+@MaterialProperty real   nu;
+nu.setGlossaryName("PoissonRatio");
+
+// Lame Coefficients
+@LocalVariable stress lambda,mu;
+
+@InitLocalVariables{
+  lambda = computeLambda(young,nu);
+  mu = computeMu(young,nu);
+}
+
+@PredictionOperator{
+  static_cast<void>(smt); // remove unused variable warning
+  Dt = lambda*Stensor4::IxI()+2*mu*Stensor4::Id();
+}
+
+@Integrator{
+  const auto e = eto + deto;
+  sig = lambda * trace(e) * StrainStensor::Id() + 2 * mu * (e);
+}
+
+@TangentOperator {
+  static_cast<void>(smt); // remove unused variable warning
+  Dt = lambda * Stensor4::IxI() + 2 * mu * Stensor4::Id();
+}

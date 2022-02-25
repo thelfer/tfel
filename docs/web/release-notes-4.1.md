@@ -187,7 +187,7 @@ declaration is disabled if the
 `automatic_declaration_of_the_temperature_as_first_external_state_variable`
 option is set to `false`.
 
-### Disabling initialization of parameters from text file {#sec:tfel:mfront:global_options:initialize_parameters_from_file}
+### Disabling initialization of parameters from text file {#sec:tfel:mfront:global_options:parameters_initialization_from_file}
 
 By default, parameters may be initialized from a text file in the
 current directory, if this text file exists. This feature is implemented
@@ -196,7 +196,7 @@ feature is implemented by some interfaces (`Cast3M`, `Cyrano`, `Octave`,
 `Python`).
 
 This behaviour can now be changed by using the
-`initialize_parameters_from_file` boolean option.
+`parameters_initialization_from_file` boolean option.
 
 ### Specifying the default out of bounds policy
 
@@ -207,6 +207,15 @@ is out of its bound.
 This behaviour can now be changed by using the
 `default_out_of_bounds_policy` string option which can take the values
 `None`, `Warning` or `Strict`.
+
+### Disabling runtime change of the out of bounds policy
+
+The `out_of_bounds_policy_runtime_modification` boolean option states if
+the out of bounds policy can be changed at runtime. By default, this
+option is `true`.
+
+If `true`, many interfaces (`Cast3M`, `Python`, `Java`, etc..) uses
+environment variables to modify the out of bounds policy.
 
 ### Defining global options from the command line {#sec:tfel_4.1:mfront:global_dsl_options}
 
@@ -647,7 +656,7 @@ For more details, see : <https://github.com/thelfer/tfel/issues/108>.
 ## Issue 94: [mfront] Add option to disable initialization of parameters from text file
 
 This feature is described in Section
-@sec:tfel:mfront:global_options:initialize_parameters_from_file.
+@sec:tfel:mfront:global_options:parameters_initialization_from_file.
 
 For more details, see : <https://github.com/thelfer/tfel/issues/94>.
 

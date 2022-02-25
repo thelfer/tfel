@@ -60,11 +60,11 @@ namespace mfront {
   const char* const DSLBase::defaultOutOfBoundsPolicyOption =
       "default_out_of_bounds_policy";
   const char* const DSLBase::runtimeModificationOfTheOutOfBoundsPolicyOption =
-      "runtime_modification_of_the_out_of_bounds_policy";
+      "out_of_bounds_policy_runtime_modification";
   const char* const DSLBase::parametersAsStaticVariablesOption =
       "parameters_as_static_variables";
-  const char* const DSLBase::initializeParametersFromFileOption =
-      "initialize_parameters_from_file";
+  const char* const DSLBase::initializationFromFileOption =
+      "parameters_initialization_from_file";
 
   const char* const DSLBase::buildIdentifierOption = "build_identifier";
 
@@ -83,7 +83,7 @@ namespace mfront {
     v.addDataTypeValidator<bool>(
         DSLBase::runtimeModificationOfTheOutOfBoundsPolicyOption);
     v.addDataTypeValidator<bool>(DSLBase::parametersAsStaticVariablesOption);
-    v.addDataTypeValidator<bool>(DSLBase::initializeParametersFromFileOption);
+    v.addDataTypeValidator<bool>(DSLBase::initializationFromFileOption);
     v.addDataTypeValidator<std::string>(DSLBase::buildIdentifierOption);
     return v;
   }  // end of getDSLOptionsValidator
@@ -120,9 +120,9 @@ namespace mfront {
                      b, false);
     }
     //
-    if (opts.count(DSLBase::initializeParametersFromFileOption) != 0) {
+    if (opts.count(DSLBase::initializationFromFileOption) != 0) {
       const auto b =
-          opts.at(DSLBase::initializeParametersFromFileOption).get<bool>();
+          opts.at(DSLBase::initializationFromFileOption).get<bool>();
       d.setAttribute(MaterialKnowledgeDescription::initializeParametersFromFile,
                      b, false);
     }
@@ -145,7 +145,7 @@ namespace mfront {
              allowRuntimeModificationOfTheOutOfBoundsPolicy(d)},
             {DSLBase::parametersAsStaticVariablesOption,
              areParametersTreatedAsStaticVariables(d)},
-            {DSLBase::initializeParametersFromFileOption,
+            {DSLBase::initializationFromFileOption,
              allowsParametersInitializationFromFile(d)},
             {DSLBase::buildIdentifierOption, build_id}};
   }  // end of buildCommonOptions
@@ -166,7 +166,7 @@ namespace mfront {
             {DSLBase::parametersAsStaticVariablesOption,
              "boolean stating if parameters shall be treated as static "
              "variables"},
-            {DSLBase::initializeParametersFromFileOption,
+            {DSLBase::initializationFromFileOption,
              "boolean stating if the values of parameters can be changed from "
              "an external file"},
             {DSLBase::buildIdentifierOption,

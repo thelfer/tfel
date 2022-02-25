@@ -20,13 +20,13 @@ namespace mfront {
       "default_out_of_bounds_policy";
   const char* const
       MaterialKnowledgeDescription::runtimeModificationOfTheOutOfBoundsPolicy =
-          "runtime_modification_of_the_out_of_bounds_policy";
+          "out_of_bounds_policy_runtime_modification";
   const char* const MaterialKnowledgeDescription::parametersAsStaticVariables =
-      "parametersAsStaticVariables";
+      "parameters_as_static_variables";
   const char* const MaterialKnowledgeDescription::initializeParametersFromFile =
-      "initializeParametersFromFile";
+      "parameters_initialization_from_file";
   const char* const MaterialKnowledgeDescription::buildIdentifier =
-      "buildIdentifier";
+      "build_identifier";
 
   void MaterialKnowledgeDescription::throwUndefinedAttribute(
       const std::string_view n) {

@@ -218,6 +218,7 @@ mfront_behaviour_check_library(MFrontGenericBehaviours2 generic
   ImplicitOrthotropicCreep3)
 
 mfront_behaviour_check_library(MFrontGenericBehaviours3 generic
+  DSLOptionsTest
   ElasticityParametersAsStaticVariables
   RungeKuttaElasticityParametersAsStaticVariables
   ImplicitElasticityParametersAsStaticVariables)

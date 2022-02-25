@@ -50,6 +50,7 @@ endif(HAVE_DIANAFEA)
 
 configure_file(PolyCrystals_DD_CC.mfront PolyCrystals_DD_CC.mfront.in @ONLY)
 
+install_mfront_data(tests/behaviours DSLOptionsTest.mfront)
 install_mfront_data(tests/behaviours MaterialPropertiesBoundsCheck.mfront)
 install_mfront_data(tests/behaviours StateVariablesBoundsCheck.mfront)
 install_mfront_data(tests/behaviours ExternalStateVariablesBoundsCheck.mfront)

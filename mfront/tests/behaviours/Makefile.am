@@ -6,7 +6,8 @@ SUBDIRS = unit-tests bricks generic                       \
 	  abaqus abaqus-explicit uanderson fanderson      \
           ansys calculix dianafea
 
-MFRONTS= DDIF2.mfront                                                      \
+MFRONTS= DSLOptionsTest.mfront                                             \
+         DDIF2.mfront                                                      \
          MaterialPropertiesBoundsCheck.mfront                              \
 	 StateVariablesBoundsCheck.mfront                                  \
 	 ExternalStateVariablesBoundsCheck.mfront                          \

@@ -138,6 +138,7 @@ set(mfront_SOURCES
   T91MartensiticSteel_YoungModulus_ROUX2007)
 
 mfront_dependencies(MFrontMaterialProperties
+  MaterialLawDSLOptionsTest
   VanadiumAlloy_YoungModulus_SRMA
   VanadiumAlloy_PoissonRatio_SRMA)
 mfront_check_library(MFrontMaterialProperties c "" ${mfront_SOURCES})
@@ -147,6 +148,7 @@ target_include_directories(MFrontMaterialProperties
 
 if(HAVE_CASTEM)
   mfront_dependencies(MFrontMaterialProperties-castem
+    MaterialLawDSLOptionsTest
     VanadiumAlloy_YoungModulus_SRMA
     VanadiumAlloy_PoissonRatio_SRMA)
   mfront_check_library(MFrontMaterialProperties-castem castem "castem" ${mfront_SOURCES})
@@ -161,6 +163,7 @@ if(HAVE_CASTEM)
 endif(HAVE_CASTEM)
 
 mfront_dependencies(MFrontMaterialProperties-cxx
+  MaterialLawDSLOptionsTest
   VanadiumAlloy_YoungModulus_SRMA
   VanadiumAlloy_PoissonRatio_SRMA)
 mfront_check_library(MFrontMaterialProperties-cxx cxx cxx ${mfront_SOURCES})
@@ -175,6 +178,7 @@ endif(WIN32)
 
 if(HAVE_FORTRAN)
   mfront_dependencies(MFrontMaterialProperties-fortran
+    MaterialLawDSLOptionsTest
     VanadiumAlloy_YoungModulus_SRMA
     VanadiumAlloy_PoissonRatio_SRMA)
   mfront_check_library(MFrontMaterialProperties-fortran fortran "fortran" ${mfront_SOURCES})

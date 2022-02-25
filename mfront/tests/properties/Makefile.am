@@ -1,7 +1,8 @@
 # AUTOMAKE_OPTIONS = subdir-objects
 SUBDIRS = interfaces
 
-mfronts = ErrnoHandlingCheck.mfront                            \
+mfronts = MaterialLawDSLOptionsTest.mfront                 \
+      ErrnoHandlingCheck.mfront                            \
 	  VanadiumAlloy_YoungModulus_SRMA.mfront               \
 	  VanadiumAlloy_PoissonRatio_SRMA.mfront               \
 	  VanadiumAlloy_ShearModulus_SRMA.mfront               \

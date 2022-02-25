@@ -1,4 +1,5 @@
-  mfront_behaviour_check_library(MFrontDianaFEABehaviours dianafea
+mfront_behaviour_check_library(MFrontDianaFEABehaviours dianafea
+  DSLOptionsTest
   MaterialPropertiesBoundsCheck
   StateVariablesBoundsCheck
   Elasticity

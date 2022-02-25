@@ -5101,11 +5101,18 @@ namespace mfront {
       std::ostream& os) const {
     this->checkBehaviourFile(os);
     os << "/*!\n"
-       << "* \\brief set the policy for \"out of bounds\" conditions\n"
-       << "*/\n"
-       << "void\nsetOutOfBoundsPolicy(const OutOfBoundsPolicy policy_value){\n"
-       << "this->policy = policy_value;\n"
-       << "} // end of setOutOfBoundsPolicy\n\n";
+       << " * \\brief set the policy for \"out of bounds\" conditions\n"
+       << " */\n";
+    if (allowRuntimeModificationOfTheOutOfBoundsPolicy(this->mb)) {
+      os << "void\n"
+         << "setOutOfBoundsPolicy(const OutOfBoundsPolicy policy_value){\n"
+         << "  this->policy = policy_value;\n"
+         << "} // end of setOutOfBoundsPolicy\n\n";
+    } else {
+      os << "void\n"
+         << "setOutOfBoundsPolicy(const OutOfBoundsPolicy) const {\n"
+         << "} // end of setOutOfBoundsPolicy\n\n";
+    }
   }  // end of writeBehaviourSetOutOfBoundsPolicy
 
   static void writeBoundsChecks(std::ostream& os,
@@ -5233,18 +5240,21 @@ namespace mfront {
     };
     const auto& md = this->mb.getBehaviourData(h);
     this->checkBehaviourFile(os);
-    os << "/*!\n"
-       << "* \\brief check bounds\n"
-       << "*/\n"
+    os << "//! \\brief check physical bounds and standard bounds\n"
        << "void checkBounds() const{\n";
     write_physical_bounds(md.getMaterialProperties(), false);
     write_physical_bounds(md.getPersistentVariables(), false);
     write_physical_bounds(md.getExternalStateVariables(), true);
     write_physical_bounds(md.getLocalVariables(), false);
-    write_bounds(md.getMaterialProperties(), false);
-    write_bounds(md.getPersistentVariables(), false);
-    write_bounds(md.getExternalStateVariables(), true);
-    write_bounds(md.getLocalVariables(), false);
+    const auto check_bounds =
+        !((!allowRuntimeModificationOfTheOutOfBoundsPolicy(this->mb)) &&
+          (getDefaultOutOfBoundsPolicy(this->mb) == tfel::material::None));
+    if (check_bounds) {
+      write_bounds(md.getMaterialProperties(), false);
+      write_bounds(md.getPersistentVariables(), false);
+      write_bounds(md.getExternalStateVariables(), true);
+      write_bounds(md.getLocalVariables(), false);
+    }
     os << "} // end of checkBounds\n\n";
   }  // end of writeBehaviourCheckBounds
 
@@ -6405,12 +6415,17 @@ namespace mfront {
     os << '\n';
   }  // end of writeBehaviourParameters
 
-  void BehaviourDSLCommon::writeBehaviourPolicyVariable(
+  void BehaviourDSLCommon::writeBehaviourOutOfBoundsPolicyVariable(
       std::ostream& os) const {
     this->checkBehaviourFile(os);
-    os << "//! policy for treating out of bounds conditions\n"
-       << "OutOfBoundsPolicy policy = None;\n";
-  }  // end of writeBehaviourPolicyVariable
+    const auto p = getDefaultOutOfBoundsPolicyAsString(this->mb);
+    os << "//! policy for treating out of bounds conditions\n";
+    if (allowRuntimeModificationOfTheOutOfBoundsPolicy(this->mb)) {
+      os << "OutOfBoundsPolicy policy = tfel::material::" << p << ";\n\n";
+    } else {
+      os << "static constexpr auto policy = tfel::material::" << p << ";\n\n";
+    }
+  }  // end of writeBehaviourOutOfBoundsPolicyVariable
 
   void BehaviourDSLCommon::writeBehaviourStaticVariables(
       std::ostream& os, const Hypothesis h) const {
@@ -7167,7 +7182,7 @@ namespace mfront {
     os << "private:\n\n";
     this->writeBehaviourComputeAPrioriTimeStepScalingFactorII(os, h);
     this->writeBehaviourComputeAPosterioriTimeStepScalingFactorII(os, h);
-    this->writeBehaviourPolicyVariable(os);
+    this->writeBehaviourOutOfBoundsPolicyVariable(os);
     this->writeBehaviourClassEnd(os);
     this->writeBehaviourOutputOperator(os, h);
   }

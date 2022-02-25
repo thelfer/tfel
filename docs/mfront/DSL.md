@@ -98,21 +98,28 @@ an option expecting a string value.
 
 The following options are available for all DSLs:
 
-- `build_identifier`, which must be associated to a string value.
-  However, the `build_identifier` is not meant to be directly specified
-  in the `MFront` source file. It shall rather be defined on the command
-  line.
-- `parameters_as_static_variables`, which states if parameters shall
-  be treated as static variables.
-- `default_out_of_bounds_policy`, which selects the default out of
-  bounds policy. Allowed values ar `None` (the default), `Warning` or
+- `build_identifier` (string), which must be associated to a string
+  value. However, the `build_identifier` is not meant to be directly
+  specified in the `MFront` source file. It shall rather be defined on
+  the command line.
+- `parameters_as_static_variables` (boolean), which states if parameters
+  shall be treated as static variables.
+- `parameters_initialization_from_file` (boolean), which states if
+  parameters can be modified from a external state file. This feature is
+  only implemented by a few interfaces and is enabled by default.
+- `default_out_of_bounds_policy` (string), which selects the default out
+  of bounds policy. Allowed values ar `None` (the default), `Warning` or
   `Strict`.
+- `out_of_bounds_policy_runtime_modification` (boolean), which states if
+  the out of bounds policy can be changed at runtime. By default, this
+  option is `true`.
+
 
 ### Options common to all DSLs related to behaviours
 
-- `automatic_declaration_of_the_temperature_as_first_external_state_variable`:
-  boolean stating if the temperature shall be automatically declared as
-  an external state variable.
+- `automatic_declaration_of_the_temperature_as_first_external_state_variable`
+  (boolean), which states if the temperature shall be automatically
+  declared as an external state variable.
 
 ## Example
 

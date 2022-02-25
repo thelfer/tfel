@@ -1,0 +1,25 @@
+@DSL MaterialLaw{
+  default_out_of_bounds_policy : "Strict",
+  out_of_bounds_policy_runtime_modification : false,
+  parameters_as_static_variables : true,
+  parameters_initialization_from_file : false
+};
+@Law    MaterialLawDSLOptionsTest;
+@Author Thomas Helfer;
+@Date   25/02/2022;
+@UseQt true;
+
+@Output stress E;
+E.setGlossaryName("YoungModulus");
+
+@Input temperature T;
+T.setGlossaryName("Temperature");
+@PhysicalBounds T in [0:*[;
+@Bounds T in [300: 600];
+
+@Parameter stress E0 = 7.8e+10;
+@Parameter temperature Ta = 1500;
+
+@Function{
+  E = E0 * exp(-T / Ta);
+}

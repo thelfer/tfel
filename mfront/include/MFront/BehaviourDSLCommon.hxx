@@ -968,7 +968,7 @@ namespace mfront {
 
     virtual void writeBehaviourClassEnd(std::ostream&) const;
 
-    virtual void writeBehaviourPolicyVariable(std::ostream&) const;
+    virtual void writeBehaviourOutOfBoundsPolicyVariable(std::ostream&) const;
 
     virtual void writeBehaviourSetOutOfBoundsPolicy(std::ostream&) const;
 

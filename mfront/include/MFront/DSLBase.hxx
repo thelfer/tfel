@@ -60,7 +60,7 @@ namespace mfront {
     //! \brief standard option name
     static const char* const parametersAsStaticVariablesOption;
     //! \brief standard option name
-    static const char* const initializeParametersFromFileOption;
+    static const char* const initializationFromFileOption;
     //! \brief standard option name
     static const char* const buildIdentifierOption;
     //! \return a validator for the options passed to the DSL
