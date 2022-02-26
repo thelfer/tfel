@@ -30,3 +30,10 @@ nu.setGlossaryName("PoissonRatio");
   static_cast<void>(smt);  // remove unused variable warning
   Dt = lambda * Stensor4::IxI() + 2 * mu * Stensor4::Id();
 }
+
+// defining a source just to generate a source file. Otherwise, this would lead
+// to an error because the `mfront_behaviour_check_library` function used by
+// TFEL' cmake infrastructure does not support when no sources are generated
+@Sources {
+  static void f(){};
+}
