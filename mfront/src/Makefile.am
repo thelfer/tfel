@@ -124,19 +124,20 @@ libTFELMFront_la_SOURCES = MFront.cxx                                     \
 		           StandardElasticityBrick.cxx                            \
 		           StandardElastoViscoPlasticityBrick.cxx                 \
 		           DDIF2Brick.cxx                                         \
-		           CamClayBrick.cxx                                         \
+		           CamClayBrick.cxx                                       \
 			   FiniteStrainSingleCrystalBrick.cxx                        \
 		           LocalDataStructure.cxx                                 \
 		           BehaviourBrickFactory.cxx                              \
-		           BehaviourMaterialProperty.cxx                               \
+		           BehaviourMaterialProperty.cxx                          \
 		           StandardBehaviourInterface.cxx                         \
-                           UMATInterfaceBase.cxx                                  \
+                           UMATInterfaceBase.cxx                          \
 		           SymbolsGenerator.cxx                                   \
 		           GenericBehaviourInterface.cxx                          \
 		           GenericBehaviourSymbolsGenerator.cxx                   \
 		           OptionDescription.cxx                                  \
 		           BrickUtilities.cxx                                     \
 		           StressPotential.cxx                                    \
+		           StressPotentialBase.cxx                                \
 		           HookeStressPotentialBase.cxx                           \
 		           HookeStressPotential.cxx                               \
 		           IsotropicDamageHookeStressPotentialBase.cxx            \

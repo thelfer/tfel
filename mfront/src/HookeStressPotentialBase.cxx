@@ -25,82 +25,6 @@
 
 namespace mfront::bbrick {
 
-  static std::string findIfParameterOrMaterialPropertyIsUniformelyDefined(
-      const BehaviourDescription& bd,
-      const std::string& g,
-      const std::string& t) {
-    const auto r = [&bd, &g]() -> std::pair<VariableDescription, bool> {
-      for (const auto h : bd.getDistinctModellingHypotheses()) {
-        const auto& d = bd.getBehaviourData(h);
-        if (d.isGlossaryNameUsed(g)) {
-          const auto& v = d.getVariableDescriptionByExternalName(g);
-          if (d.isMaterialPropertyName(v.name)) {
-            return {v, true};
-          }
-          if (!d.isParameterName(v.name)) {
-            tfel::raise(
-                "findIfParameterOrMaterialPropertyIsUniformelyDefined: "
-                "Variable '" +
-                displayName(v) + "' with the glossary name '" + g +
-                "' is neither a material property nor a parameter.");
-          }
-          return {v, false};
-        }
-      }
-      return {VariableDescription{}, false};
-    }();
-    if (r.first.name.empty()) {
-      return "";
-    }
-    // uniformity check
-    for (const auto h : bd.getDistinctModellingHypotheses()) {
-      const auto& d = bd.getBehaviourData(h);
-      if (r.second) {
-        if (!d.isMaterialPropertyName(r.first.name)) {
-          tfel::raise(
-              "findIfParameterOrMaterialPropertyIsUniformelyDefined: "
-              "Variable '" +
-              displayName(r.first) +
-              "' is not defined as a material property for all " +
-              "modelling hypothesis.");
-        }
-      } else {
-        if (!d.isParameterName(r.first.name)) {
-          tfel::raise(
-              "findIfParameterOrMaterialPropertyIsUniformelyDefined: "
-              "Variable '" +
-              displayName(r.first) +
-              "' is not defined as a parameter for all " +
-              "modelling hypothesis.");
-        }
-      }
-      const auto& v = d.getVariableDescriptionByExternalName(g);
-      if ((!v.hasGlossaryName()) || (v.getExternalName() != g)) {
-        tfel::raise(
-            "findIfParameterOrMaterialPropertyIsUniformelyDefined: "
-            "Variable '" +
-            displayName(v) + "' is not associated with the glossary name '" +
-            g + "' for all modelling hypotheses.");
-      }
-      if (v.type != t) {
-        if (SupportedTypes::getTypeFlag(v.type) !=
-            SupportedTypes::getTypeFlag(t)) {
-          tfel::raise(
-              "findIfParameterOrMaterialPropertyIsUniformelyDefined: "
-              "Variable '" +
-              displayName(v) + "' is not of type '" + t +
-              "' as expected (is a '" + v.type + "').");
-        } else {
-          auto& log = getLogStream();
-          log << "findIfParameterOrMaterialPropertyIsUniformelyDefined: "
-              << "inconsistent type for variable '" << displayName(v) << "' ('"
-              << v.type << "' vs '" << t << "')\n";
-        }
-      }
-    }
-    return r.first.name;
-  }  // end of findIfParameterOrMaterialPropertyIsUniformelyDefined
-
   const char* const HookeStressPotentialBase::residualStiffnessFactor =
       "residual_stiffness_factor";
 
@@ -108,10 +32,9 @@ namespace mfront::bbrick {
 
   std::vector<OptionDescription>
   HookeStressPotentialBase::getIsotropicBehaviourOptions() {
-    using tfel::glossary::Glossary;
-    std::vector<OptionDescription> opts;
+    auto opts = std::vector<OptionDescription>{};
     opts.emplace_back(
-        "young_modulus", Glossary::YoungModulus,
+        "young_modulus", tfel::glossary::Glossary::YoungModulus,
         OptionDescription::MATERIALPROPERTY,
         std::vector<std::string>{"poisson_ratio"},
         std::vector<std::string>{
@@ -119,30 +42,25 @@ namespace mfront::bbrick {
             "poisson_ratio12", "poisson_ratio23", "poisson_ratio13",
             "shear_modulus12", "shear_modulus23", "shear_modulus13"});
     opts.emplace_back(
-        "poisson_ratio", Glossary::PoissonRatio,
+        "poisson_ratio", tfel::glossary::Glossary::PoissonRatio,
         OptionDescription::MATERIALPROPERTY,
         std::vector<std::string>{"young_modulus"},
         std::vector<std::string>{
             "young_modulus1", "young_modulus2", "young_modulus3",
             "poisson_ratio12", "poisson_ratio23", "poisson_ratio13",
             "shear_modulus12", "shear_modulus23", "shear_modulus13"});
-    opts.emplace_back(
-        "thermal_expansion", Glossary::ThermalExpansion,
-        OptionDescription::MATERIALPROPERTY, std::vector<std::string>{},
-        std::vector<std::string>{"thermal_expansion1", "thermal_expansion2",
-                                 "thermal_expansion3"});
-    opts.emplace_back("thermal_expansion_reference_temperature",
-                      "reference temperature for the thermal expansion",
-                      OptionDescription::REAL);
+    for (const auto& o :
+         StressPotentialBase::getIsotropicThermalExpansionOptions()) {
+      opts.push_back(o);
+    }
     return opts;
-  }  // end of HookeStressPotentialBase::getIsotropicBehaviourOptions()
+  }  // end of getIsotropicBehaviourOptions
 
   std::vector<OptionDescription> HookeStressPotentialBase::
       getOrthotropicBehaviourElasticMaterialPropertiesOptions() {
-    using tfel::glossary::Glossary;
-    std::vector<OptionDescription> opts;
+    auto opts = std::vector<OptionDescription>{};
     opts.emplace_back(
-        "young_modulus1", Glossary::YoungModulus1,
+        "young_modulus1", tfel::glossary::Glossary::YoungModulus1,
         OptionDescription::MATERIALPROPERTY,
         std::vector<std::string>{"young_modulus2", "young_modulus3",
                                  "poisson_ratio12", "poisson_ratio23",
@@ -150,7 +68,7 @@ namespace mfront::bbrick {
                                  "shear_modulus23", "shear_modulus13"},
         std::vector<std::string>{"young_modulus", "poisson_ratio"});
     opts.emplace_back(
-        "young_modulus2", Glossary::YoungModulus2,
+        "young_modulus2", tfel::glossary::Glossary::YoungModulus2,
         OptionDescription::MATERIALPROPERTY,
         std::vector<std::string>{"young_modulus1", "young_modulus3",
                                  "poisson_ratio12", "poisson_ratio23",
@@ -158,7 +76,7 @@ namespace mfront::bbrick {
                                  "shear_modulus23", "shear_modulus13"},
         std::vector<std::string>{"young_modulus", "poisson_ratio"});
     opts.emplace_back(
-        "young_modulus3", Glossary::YoungModulus3,
+        "young_modulus3", tfel::glossary::Glossary::YoungModulus3,
         OptionDescription::MATERIALPROPERTY,
         std::vector<std::string>{"young_modulus1", "young_modulus2",
                                  "poisson_ratio12", "poisson_ratio23",
@@ -166,7 +84,7 @@ namespace mfront::bbrick {
                                  "shear_modulus23", "shear_modulus13"},
         std::vector<std::string>{"young_modulus", "poisson_ratio"});
     opts.emplace_back(
-        "poisson_ratio12", Glossary::PoissonRatio12,
+        "poisson_ratio12", tfel::glossary::Glossary::PoissonRatio12,
         OptionDescription::MATERIALPROPERTY,
         std::vector<std::string>{"young_modulus1", "young_modulus2",
                                  "young_modulus3", "poisson_ratio23",
@@ -174,7 +92,7 @@ namespace mfront::bbrick {
                                  "shear_modulus23", "shear_modulus13"},
         std::vector<std::string>{"young_modulus", "poisson_ratio"});
     opts.emplace_back(
-        "poisson_ratio23", Glossary::PoissonRatio23,
+        "poisson_ratio23", tfel::glossary::Glossary::PoissonRatio23,
         OptionDescription::MATERIALPROPERTY,
         std::vector<std::string>{"young_modulus1", "young_modulus2",
                                  "young_modulus3", "poisson_ratio12",
@@ -182,7 +100,7 @@ namespace mfront::bbrick {
                                  "shear_modulus23", "shear_modulus13"},
         std::vector<std::string>{"young_modulus", "poisson_ratio"});
     opts.emplace_back(
-        "poisson_ratio13", Glossary::PoissonRatio13,
+        "poisson_ratio13", tfel::glossary::Glossary::PoissonRatio13,
         OptionDescription::MATERIALPROPERTY,
         std::vector<std::string>{"young_modulus1", "young_modulus2",
                                  "young_modulus3", "poisson_ratio12",
@@ -190,7 +108,7 @@ namespace mfront::bbrick {
                                  "shear_modulus23", "shear_modulus13"},
         std::vector<std::string>{"young_modulus", "poisson_ratio"});
     opts.emplace_back(
-        "shear_modulus12", Glossary::ShearModulus12,
+        "shear_modulus12", tfel::glossary::Glossary::ShearModulus12,
         OptionDescription::MATERIALPROPERTY,
         std::vector<std::string>{"young_modulus1", "young_modulus2",
                                  "young_modulus3", "poisson_ratio12",
@@ -198,7 +116,7 @@ namespace mfront::bbrick {
                                  "shear_modulus23", "shear_modulus13"},
         std::vector<std::string>{"young_modulus", "poisson_ratio"});
     opts.emplace_back(
-        "shear_modulus23", Glossary::ShearModulus23,
+        "shear_modulus23", tfel::glossary::Glossary::ShearModulus23,
         OptionDescription::MATERIALPROPERTY,
         std::vector<std::string>{"young_modulus1", "young_modulus2",
                                  "young_modulus3", "poisson_ratio12",
@@ -206,7 +124,7 @@ namespace mfront::bbrick {
                                  "shear_modulus12", "shear_modulus13"},
         std::vector<std::string>{"young_modulus", "poisson_ratio"});
     opts.emplace_back(
-        "shear_modulus13", Glossary::ShearModulus13,
+        "shear_modulus13", tfel::glossary::Glossary::ShearModulus13,
         OptionDescription::MATERIALPROPERTY,
         std::vector<std::string>{"young_modulus1", "young_modulus2",
                                  "young_modulus3", "poisson_ratio12",
@@ -214,55 +132,33 @@ namespace mfront::bbrick {
                                  "shear_modulus12", "shear_modulus23"},
         std::vector<std::string>{"young_modulus", "poisson_ratio"});
     return opts;
-  }  // end of
-     // HookeStressPotentialBase::getOrthotropicBehaviourElasticMaterialPropertiesOptions
+  }  // end of getOrthotropicBehaviourElasticMaterialPropertiesOptions
 
   std::vector<OptionDescription>
   HookeStressPotentialBase::getOrthotropicBehaviourOptions() {
-    using tfel::glossary::Glossary;
     auto opts = HookeStressPotentialBase::
         getOrthotropicBehaviourElasticMaterialPropertiesOptions();
-    opts.emplace_back(
-        "thermal_expansion1", Glossary::ThermalExpansion1,
-        OptionDescription::MATERIALPROPERTY,
-        std::vector<std::string>{"thermal_expansion2", "thermal_expansion3"},
-        std::vector<std::string>{"thermal_expansion"});
-    opts.emplace_back(
-        "thermal_expansion2", Glossary::ThermalExpansion2,
-        OptionDescription::MATERIALPROPERTY,
-        std::vector<std::string>{"thermal_expansion1", "thermal_expansion3"},
-        std::vector<std::string>{"thermal_expansion"});
-    opts.emplace_back(
-        "thermal_expansion3", Glossary::ThermalExpansion3,
-        OptionDescription::MATERIALPROPERTY,
-        std::vector<std::string>{"thermal_expansion1", "thermal_expansion2"},
-        std::vector<std::string>{"thermal_expansion"});
+    for (const auto& o :
+         StressPotentialBase::getOrthotropicThermalExpansionOptions()) {
+      opts.push_back(o);
+    }
     return opts;
-  }  // end of HookeStressPotentialBase::getOrthotropicBehaviourOptions()
+  }  // end of getOrthotropicBehaviourOptions()
 
   std::vector<OptionDescription> HookeStressPotentialBase::getGeneralOptions() {
-    using tfel::glossary::Glossary;
-    auto opts = std::vector<OptionDescription>{};
+    auto opts = StressPotentialBase::getGeneralOptions();
     opts.emplace_back("plane_stress_support", "", OptionDescription::BOOLEAN);
     opts.emplace_back("generic_tangent_operator", "",
                       OptionDescription::BOOLEAN);
     opts.emplace_back("generic_prediction_operator", "",
                       OptionDescription::BOOLEAN);
-    opts.emplace_back(
-        "relative_value_for_the_equivalent_stress_lower_bound",
-        "Relative value used to define a lower bound "
-        "for the equivalent stress. For isotropic parameters, "
-        "this lower bound will be equal to this value multiplied "
-        "by the Young modulus. For orthotropic materials, this lower "
-        "bound will be this value multiplied by the first component "
-        "of the stiffness tensor.",
-        OptionDescription::REAL);
     return opts;
-  }  // end of HookeStressPotentialBase::getGeneralOptions()
+  }  // end of getGeneralOptions()
 
   std::vector<OptionDescription> HookeStressPotentialBase::getOptions(
       const BehaviourDescription& bd, const bool b) const {
-    auto opts = std::vector<OptionDescription>{};
+    auto opts =
+        StressPotentialBase::getThermalExpansionReferenceTemperatureOption();
     if (b || ((!b) && (bd.getSymmetryType() == mfront::ISOTROPIC))) {
       const auto oopts =
           HookeStressPotentialBase::getIsotropicBehaviourOptions();
@@ -278,7 +174,7 @@ namespace mfront::bbrick {
       opts.insert(opts.end(), gopts.begin(), gopts.end());
     }
     return opts;
-  }  // end of HookeStressPotentialBase::getOptions()
+  }  // end of getOptions
 
   void HookeStressPotentialBase::initialize(BehaviourDescription& bd,
                                             AbstractBehaviourDSL& dsl,
@@ -289,13 +185,6 @@ namespace mfront::bbrick {
       tfel::raise_if(
           b, "HookeStressPotentialBase::HookeStressPotentialBase: " + m);
     };
-    auto check = [&d](const char* const n) {
-      if (d.count(n) == 0) {
-        tfel::raise(
-            "HookeStressPotentialBase::HookeStressPotentialBase: entry '" +
-            std::string(n) + "' is not defined");
-      }
-    };
     auto check_not = [&d](const char* const n) {
       if (d.count(n) != 0) {
         tfel::raise(
@@ -303,46 +192,6 @@ namespace mfront::bbrick {
             std::string(n) + "' shall not be defined");
       }
     };
-    auto get_mp = [&dsl, &d, check](const char* const n) {
-      check(n);
-      return getBehaviourDescriptionMaterialProperty(dsl, n, d.at(n));
-    };
-    auto addTi = [&bd, &d]() {
-      const auto n = "initial_geometry_reference_temperature";
-      const auto v = [&d, &n] {
-        if (d.count(n) != 0) {
-          return d.at(n).get<double>();
-        } else {
-          return 293.15;
-        }
-      }();
-      VariableDescription Ti("temperature", n, 1u, 0u);
-      Ti.description =
-          "value of the temperature when the initial geometry was measured";
-      bd.addParameter(uh, Ti, BehaviourData::ALREADYREGISTRED);
-      bd.setParameterDefaultValue(uh, n, v);
-      bd.setEntryName(uh, n, "ReferenceTemperatureForInitialGeometry");
-    };  // end of addTi
-    auto addTref = [&bd, &d]() {
-      const auto n = "thermal_expansion_reference_temperature";
-      const auto v = [&d, &n] {
-        if (d.count(n) != 0) {
-          const auto Tref = d.at(n);
-          if (Tref.is<int>()) {
-            return static_cast<double>(Tref.get<int>());
-          }
-          return Tref.get<double>();
-        } else {
-          return 293.15;
-        }
-      }();
-      VariableDescription Tref("temperature", n, 1u, 0u);
-      Tref.description =
-          "reference value for the the thermal expansion coefficient";
-      bd.addParameter(uh, Tref, BehaviourData::ALREADYREGISTRED);
-      bd.setParameterDefaultValue(uh, n, v);
-      bd.setEntryName(uh, n, "ThermalExpansionReferenceTemperature");
-    };  // end of addTref
     // options
     auto update = [throw_if, &d](bool& b, const char* n) {
       if (d.count(n) != 0) {
@@ -354,6 +203,8 @@ namespace mfront::bbrick {
     };
     // checking options
     mfront::bbrick::check(d, this->getOptions(bd, true));
+    //
+    StressPotentialBase::initialize(bd, dsl, d);
     // reserve some specific variables
     bd.reserveName(ModellingHypothesis::UNDEFINEDHYPOTHESIS, "sebdata");
     update(this->pss, "plane_stress_support");
@@ -363,15 +214,9 @@ namespace mfront::bbrick {
       bd.registerMemberName(ModellingHypothesis::UNDEFINEDHYPOTHESIS, "etozz");
       bd.registerMemberName(ModellingHypothesis::UNDEFINEDHYPOTHESIS, "detozz");
       bd.reserveName(ModellingHypothesis::UNDEFINEDHYPOTHESIS, "\u0394etozz");
-      //       bd.setGlossaryName(ModellingHypothesis::UNDEFINEDHYPOTHESIS,
-      //       "etozz",
-      //                          tfel::glossary::Glossary::AxialStrain);
       bd.registerMemberName(ModellingHypothesis::UNDEFINEDHYPOTHESIS, "sigzz");
       bd.registerMemberName(ModellingHypothesis::UNDEFINEDHYPOTHESIS, "dsigzz");
       bd.reserveName(ModellingHypothesis::UNDEFINEDHYPOTHESIS, "\u0394sigzz");
-      //       bd.setGlossaryName(ModellingHypothesis::UNDEFINEDHYPOTHESIS,
-      //       "sigzz",
-      //                          tfel::glossary::Glossary::AxialStress);
       bd.reserveName(ModellingHypothesis::UNDEFINEDHYPOTHESIS,
                      "prediction_stress");
       bd.reserveName(ModellingHypothesis::UNDEFINEDHYPOTHESIS,
@@ -394,7 +239,8 @@ namespace mfront::bbrick {
       check_not("young_modulus23");
       check_not("young_modulus13");
       std::vector<BehaviourDescription::MaterialProperty> emps = {
-          get_mp("young_modulus"), get_mp("poisson_ratio")};
+          StressPotentialBase::getMaterialProperty(dsl, d, "young_modulus"),
+          StressPotentialBase::getMaterialProperty(dsl, d, "poisson_ratio")};
       bd.setElasticMaterialProperties(emps);
     } else if ((d.count("young_modulus1") != 0) ||
                (d.count("young_modulus2") != 0) ||
@@ -405,59 +251,25 @@ namespace mfront::bbrick {
                (d.count("shear_modulus12") != 0) ||
                (d.count("shear_modulus23") != 0) ||
                (d.count("shear_modulus13") != 0)) {
+      check_not("young_modulus");
+      check_not("poisson_ratio");
       std::vector<BehaviourDescription::MaterialProperty> emps = {
-          get_mp("young_modulus1"),  get_mp("young_modulus2"),
-          get_mp("young_modulus3"),  get_mp("poisson_ratio12"),
-          get_mp("poisson_ratio23"), get_mp("poisson_ratio13"),
-          get_mp("shear_modulus12"), get_mp("shear_modulus23"),
-          get_mp("shear_modulus13")};
+          StressPotentialBase::getMaterialProperty(dsl, d, "young_modulus1"),
+          StressPotentialBase::getMaterialProperty(dsl, d, "young_modulus2"),
+          StressPotentialBase::getMaterialProperty(dsl, d, "young_modulus3"),
+          StressPotentialBase::getMaterialProperty(dsl, d, "poisson_ratio12"),
+          StressPotentialBase::getMaterialProperty(dsl, d, "poisson_ratio23"),
+          StressPotentialBase::getMaterialProperty(dsl, d, "poisson_ratio13"),
+          StressPotentialBase::getMaterialProperty(dsl, d, "shear_modulus12"),
+          StressPotentialBase::getMaterialProperty(dsl, d, "shear_modulus23"),
+          StressPotentialBase::getMaterialProperty(dsl, d, "shear_modulus13")};
       bd.setElasticMaterialProperties(emps);
       bd.setAttribute(BehaviourDescription::computesStiffnessTensor, true,
                       false);
       bd.setAttribute(BehaviourDescription::requiresUnAlteredStiffnessTensor,
                       true, false);
     }
-    if (d.count("thermal_expansion") != 0) {
-      check_not("thermal_expansion1");
-      check_not("thermal_expansion2");
-      check_not("thermal_expansion3");
-      addTi();
-      addTref();
-      bd.setThermalExpansionCoefficient(get_mp("thermal_expansion"));
-    } else if ((d.count("thermal_expansion1") != 0) ||
-               (d.count("thermal_expansion2") != 0) ||
-               (d.count("thermal_expansion3") != 0)) {
-      addTi();
-      addTref();
-      bd.setThermalExpansionCoefficients(get_mp("thermal_expansion1"),
-                                         get_mp("thermal_expansion2"),
-                                         get_mp("thermal_expansion3"));
-    }
-    // relative stress criterion
-    const auto seps_n = "relative_value_for_the_equivalent_stress_lower_bound";
-    const auto seps_v = [&d, seps_n]() -> double {
-      if (d.count(seps_n) != 0) {
-        const auto seps_d = d.at(seps_n);
-        if (seps_d.is<int>()) {
-          return static_cast<double>(seps_d.get<int>());
-        }
-        return seps_d.get<double>();
-      }
-      return 1.e-12;
-    }();
-    VariableDescription seps("real", seps_n, 1u, 0u);
-    seps.description =
-        "Relative value used to define a lower bound "
-        "for the equivalent stress. For isotropic parameters, "
-        "this lower bound will be equal to this value multiplied "
-        "by the Young modulus. For orthotropic materials, this lower "
-        "bound will be this value multiplied by the first component "
-        "of the stiffness tensor.";
-    bd.addParameter(uh, seps, BehaviourData::UNREGISTRED);
-    bd.setParameterDefaultValue(uh, seps_n, seps_v);
-    bd.setEntryName(uh, seps_n,
-                    "RelativeValueForTheEquivalentStressLowerBoundDefinition");
-  }  // end of HookeStressPotentialBase::initialize
+  }  // end of initialize
 
   std::string HookeStressPotentialBase::getName() const {
     return "Hooke";
@@ -621,7 +433,7 @@ namespace mfront::bbrick {
       getLogStream()
           << "HookeStressPotentialBase::completeVariableDeclaration: end\n";
     }
-  }  // end of HookeStressPotentialBase::completeVariableDeclaration
+  }  // end of completeVariableDeclaration
 
   void HookeStressPotentialBase::endTreatment(
       BehaviourDescription& bd, const AbstractBehaviourDSL& dsl) const {
@@ -673,7 +485,7 @@ namespace mfront::bbrick {
     if (getVerboseMode() >= VERBOSE_DEBUG) {
       getLogStream() << "HookeStressPotentialBase::endTreatment: end\n";
     }
-  }  // end of HookeStressPotentialBase::endTreatment
+  }  // end of endTreatment
 
   void HookeStressPotentialBase::addBrokenOperatorSupport(
       BehaviourDescription& bd, const std::string& c) const {
@@ -728,18 +540,18 @@ namespace mfront::bbrick {
     to.code += "} // end of if(" + broken_test + ")\n";
     bd.setCode(ModellingHypothesis::UNDEFINEDHYPOTHESIS, c, to,
                BehaviourData::CREATEORAPPEND, BehaviourData::AT_BEGINNING);
-  }  // end of HookeStressPotentialBase::addBrokenOperatorSupport
+  }  // end of addBrokenOperatorSupport
 
   void HookeStressPotentialBase::addBrokenPredictionOperatorSupport(
       BehaviourDescription& bd) const {
     this->addBrokenOperatorSupport(bd,
                                    BehaviourData::ComputePredictionOperator);
-  }  // end of HookeStressPotentialBase::addBrokenPredictionOperatorSupport
+  }  // end of addBrokenPredictionOperatorSupport
 
   void HookeStressPotentialBase::addBrokenTangentOperatorSupport(
       BehaviourDescription& bd) const {
     this->addBrokenOperatorSupport(bd, BehaviourData::ComputeTangentOperator);
-  }  // end of HookeStressPotentialBase::addBrokenPredictionOperatorSupport
+  }  // end of addBrokenPredictionOperatorSupport
 
   void HookeStressPotentialBase::declareComputeStressForOrthotropicBehaviour(
       BehaviourDescription&) const {
@@ -1049,7 +861,7 @@ namespace mfront::bbrick {
       }
     }
     return mh;
-  }  // end of HookeStressPotentialBase::getSupportedModellingHypothesis
+  }  // end of getSupportedModellingHypothesis
 
   void HookeStressPotentialBase::computeElasticPrediction(
       BehaviourDescription& bd) const {
@@ -1058,7 +870,7 @@ namespace mfront::bbrick {
     bd.setCode(ModellingHypothesis::UNDEFINEDHYPOTHESIS,
                BehaviourData::BeforeInitializeLocalVariables, i,
                BehaviourData::CREATEORAPPEND, BehaviourData::AT_BEGINNING);
-  }  // end of HookeStressPotentialBase::computeElasticPrediction
+  }  // end of computeElasticPrediction
 
   std::string HookeStressPotentialBase::getStressNormalisationFactor(
       const BehaviourDescription& bd) const {
@@ -1075,7 +887,7 @@ namespace mfront::bbrick {
       return "this->" + yg;
     }
     return "this->young";
-  }  // end of HookeStressPotentialBase::getStressNormalisationFactor
+  }  // end of getStressNormalisationFactor
 
   std::string HookeStressPotentialBase::getEquivalentStressLowerBound(
       const BehaviourDescription& bd) const {

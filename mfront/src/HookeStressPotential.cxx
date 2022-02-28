@@ -564,7 +564,7 @@ namespace mfront::bbrick {
       } else {
         tfel::raise(
             "HookeStressPotential::generateImplicitEquationDerivatives: "
-            "unsupported elastic symmetry type");
+            "unsupported variable type");
       }
     } else {
       if (bd.getElasticSymmetryType() == mfront::ISOTROPIC) {
@@ -580,7 +580,7 @@ namespace mfront::bbrick {
           } else {
             tfel::raise(
                 "HookeStressPotential::generateImplicitEquationDerivatives: "
-                "unsupported elastic symmetry type");
+                "unsupported variable type");
           }
         } else {
           if (vf == SupportedTypes::SCALAR) {
@@ -592,7 +592,7 @@ namespace mfront::bbrick {
           } else {
             tfel::raise(
                 "HookeStressPotential::generateImplicitEquationDerivatives: "
-                "unsupported elastic symmetry type");
+                "unsupported variable type");
           }
         }
       } else if (bd.getElasticSymmetryType() == mfront::ORTHOTROPIC) {
@@ -609,7 +609,7 @@ namespace mfront::bbrick {
         } else {
           tfel::raise(
               "HookeStressPotential::generateImplicitEquationDerivatives: "
-              "unsupported elastic symmetry type");
+              "unsupported variable type");
         }
       } else {
         tfel::raise(

@@ -1,5 +1,5 @@
 /*!
- * \file   StressPotential.hxx
+ * \file   mfront/include/MFront/BehaviourBrick/StressPotential.hxx
  * \brief
  * \author Thomas Helfer
  * \date   20/03/2018

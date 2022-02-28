@@ -115,6 +115,7 @@ nobase_include_HEADERS= MFront/MFront.hxx                                     \
 			MFront/BehaviourBrick/BrickUtilities.ixx                                     \
 			MFront/BehaviourBrick/PorosityEvolutionAlgorithm.hxx                         \
 			MFront/BehaviourBrick/StressPotential.hxx                                    \
+			MFront/BehaviourBrick/StressPotentialBase.hxx                                \
 			MFront/BehaviourBrick/HookeStressPotentialBase.hxx                           \
 			MFront/BehaviourBrick/HookeStressPotential.hxx                               \
 			MFront/BehaviourBrick/DDIF2StressPotential.hxx                               \

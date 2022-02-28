@@ -42,13 +42,15 @@ namespace mfront::bbrick {
 
   std::vector<CamClayStressPotential::Hypothesis>
   CamClayStressPotential::getSupportedModellingHypotheses(
-      const BehaviourDescription&, const AbstractBehaviourDSL&) const {
-    return {};
-  } // end of getSupportedModellingHypotheses
+      const BehaviourDescription&, const AbstractBehaviourDSL& dsl) const {
+    const auto dmh = dsl.getDefaultModellingHypotheses();
+    std::vector<Hypothesis> mh(dmh.begin(), dmh.end());
+    return mh;
+  }  // end of getSupportedModellingHypotheses
 
   void CamClayStressPotential::initialize(BehaviourDescription& bd,
-                                        AbstractBehaviourDSL& dsl,
-                                        const DataMap& d) {
+                                          AbstractBehaviourDSL& dsl,
+                                          const DataMap& d) {
   }  // end CamClayStressPotential
 
   void CamClayStressPotential::completeVariableDeclaration(
@@ -71,14 +73,34 @@ namespace mfront::bbrick {
   std::vector<
       std::tuple<std::string, std::string, mfront::SupportedTypes::TypeFlag>>
   CamClayStressPotential::getStressDerivatives(
-      const BehaviourDescription& bd) const {}  // end of getStressDerivatives
+      const BehaviourDescription&) const {
+    auto r = std::vector<std::tuple<std::string, std::string,
+                                    mfront::SupportedTypes::TypeFlag>>{};
+    r.push_back(std::make_tuple("theta * dsig_deel", std::string("eel"),
+                                SupportedTypes::STENSOR));
+    return r;
+  }  // end of getStressDerivatives
 
   std::string CamClayStressPotential::generateImplicitEquationDerivatives(
-      const BehaviourDescription&,
-      const std::string&,
-      const std::string&,
-      const std::string&,
-      const bool) const {}  // end of generateImplicitEquationDerivatives
+      const BehaviourDescription& bd,
+      const std::string& t,
+      const std::string& v,
+      const std::string& dfv_ds,
+      const bool b) const {
+    auto c = std::string{};
+    const auto vf = SupportedTypes::getTypeFlag(t);
+    c = "df" + v + "_ddeel += ";
+    if (vf == SupportedTypes::SCALAR) {
+      c += "(this->theta) * ((" + dfv_ds + ") | (this->dsig_deel));\n";
+    } else if (vf == SupportedTypes::STENSOR) {
+      c += "(this->theta) * (" + dfv_ds + ") * (this->dsig_deel);\n";
+    } else {
+      tfel::raise(
+          "HookeStressPotential::generateImplicitEquationDerivatives: "
+          "unsupported variable type");
+    }
+    return c;
+}  // end of generateImplicitEquationDerivatives
 
   void CamClayStressPotential::computeElasticPrediction(
       BehaviourDescription&) const {}  // end of computeElasticPrediction

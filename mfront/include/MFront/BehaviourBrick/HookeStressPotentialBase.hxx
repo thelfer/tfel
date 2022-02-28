@@ -3,12 +3,19 @@
  * \brief
  * \author Thomas Helfer
  * \date   20/03/2018
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
+ * <!-- Local IspellDict: english -->
  */
 
 #ifndef LIB_MFRONT_BEHAVIOURBRICK_HOOKESTRESSPOTENTIALBASE_HXX
 #define LIB_MFRONT_BEHAVIOURBRICK_HOOKESTRESSPOTENTIALBASE_HXX
 
-#include "MFront/BehaviourBrick/StressPotential.hxx"
+#include "MFront/BehaviourBrick/StressPotentialBase.hxx"
 
 namespace mfront {
 
@@ -21,7 +28,7 @@ namespace mfront {
      * \brief class describing the computation of the stress through the
      * standard Hooke law.
      */
-    struct HookeStressPotentialBase : StressPotential {
+    struct HookeStressPotentialBase : StressPotentialBase {
       //! \brief name of the parameter holding the factor used to determine the
       //! residual stiffness
       static const char* const residualStiffnessFactor;

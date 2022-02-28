@@ -71,7 +71,7 @@ namespace mfront::bbrick {
       tfel::raise(
           "getBehaviourDescriptionMaterialProperty: "
           "unsupported data type for material property '" +
-          n + "'");
+          std::string{n} + "'");
     }
     const auto mp = d.get<std::string>();
     if (tfel::utilities::ends_with(mp, ".mfront")) {
