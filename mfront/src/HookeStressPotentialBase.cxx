@@ -180,7 +180,6 @@ namespace mfront::bbrick {
                                             AbstractBehaviourDSL& dsl,
                                             const DataMap& d) {
     using tfel::glossary::Glossary;
-    constexpr auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     auto throw_if = [](const bool b, const std::string& m) {
       tfel::raise_if(
           b, "HookeStressPotentialBase::HookeStressPotentialBase: " + m);
@@ -292,18 +291,7 @@ namespace mfront::bbrick {
     // modelling hypotheses supported by the behaviour
     const auto bmh = bd.getModellingHypotheses();
     // elastic strain
-    const auto b = bd.checkVariableExistence("eel");
-    if (b.first) {
-      throw_if(!b.second,
-               "'eel' is not declared for all specialisation of the behaviour");
-      bd.checkVariableExistence("eel", "IntegrationVariable");
-      bd.checkVariableGlossaryName("eel", Glossary::ElasticStrain);
-    } else {
-      VariableDescription eel("StrainStensor", "εᵉˡ", "eel", 1u, 0u);
-      eel.description = "elastic strain";
-      bd.addStateVariable(uh, eel);
-      bd.setGlossaryName(uh, "eel", Glossary::ElasticStrain);
-    }
+    StressPotentialBase::declareElasticStrainIfRequired(bd);
     // treating material properties and stress computation
     if ((bd.getAttribute(BehaviourDescription::requiresStiffnessTensor,
                          false)) ||

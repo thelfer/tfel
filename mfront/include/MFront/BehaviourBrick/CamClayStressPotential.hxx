@@ -15,14 +15,14 @@
 #ifndef LIB_MFRONT_BEHAVIOURBRICK_CAMCLAYSTRESSPOTENTIAL_HXX
 #define LIB_MFRONT_BEHAVIOURBRICK_CAMCLAYSTRESSPOTENTIAL_HXX
 
-#include "MFront/BehaviourBrick/StressPotential.hxx"
+#include "MFront/BehaviourBrick/StressPotentialBase.hxx"
 
 namespace mfront::bbrick {
 
   /*!
    * \brief Implement a modified version of the Cam-Clay stress potential
    */
-  struct CamClayStressPotential : public StressPotential {
+  struct CamClayStressPotential : public StressPotentialBase {
     //! \brief default constructor
     CamClayStressPotential();
     //

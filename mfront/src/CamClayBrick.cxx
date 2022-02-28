@@ -22,7 +22,7 @@ namespace mfront {
                              BehaviourDescription& mb_)
       : BehaviourBrickBase(dsl_, mb_) {
     auto& spf = mfront::bbrick::StressPotentialFactory::getFactory();
-    this->ddif2 = spf.generate("CamClay");
+    this->ccsp = spf.generate("CamClay");
   }  // end of CamClayBrick
 
   std::string CamClayBrick::getName() const {
@@ -45,24 +45,24 @@ namespace mfront {
 
   std::vector<bbrick::OptionDescription> CamClayBrick::getOptions(
       const bool b) const {
-    return this->ddif2->getOptions(this->bd, b);
+    return this->ccsp->getOptions(this->bd, b);
   }  // end of getOptions
 
   void CamClayBrick::initialize(const Parameters&, const DataMap& d) {
-    this->ddif2->initialize(this->bd, this->dsl, d);
+    this->ccsp->initialize(this->bd, this->dsl, d);
   }  // end of initialize
 
   void CamClayBrick::completeVariableDeclaration() const {
-    this->ddif2->completeVariableDeclaration(this->bd, this->dsl);
+    this->ccsp->completeVariableDeclaration(this->bd, this->dsl);
   }  // end of completeVariableDeclaration
 
   void CamClayBrick::endTreatment() const {
-    this->ddif2->endTreatment(this->bd, this->dsl);
+    this->ccsp->endTreatment(this->bd, this->dsl);
   }  // end of endTreatment
 
   std::vector<tfel::material::ModellingHypothesis::Hypothesis>
   CamClayBrick::getSupportedModellingHypotheses() const {
-    return this->ddif2->getSupportedModellingHypotheses(this->bd, this->dsl);
+    return this->ccsp->getSupportedModellingHypotheses(this->bd, this->dsl);
   }  // end of getSupportedModellingHypothesis
 
   CamClayBrick::~CamClayBrick() = default;

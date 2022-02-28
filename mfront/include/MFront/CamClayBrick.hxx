@@ -48,7 +48,7 @@ namespace mfront {
     ~CamClayBrick() override;
 
    protected:
-    std::shared_ptr<bbrick::StressPotential> ddif2;
+    std::shared_ptr<bbrick::StressPotential> ccsp;
   };  // end of struct CamClayBrick
 
 }  // end of namespace mfront

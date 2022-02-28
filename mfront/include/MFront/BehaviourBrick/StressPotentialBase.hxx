@@ -20,7 +20,9 @@
 namespace mfront::bbrick {
 
   /*!
-   * \brief a base class gathering various helper methods for stress potentials
+   * \brief a base class gathering various helper methods for stress potentials.
+   *
+   * This class also handles treatment of the thermal expansion.
    */
   struct StressPotentialBase : StressPotential {
     //
@@ -112,6 +114,10 @@ namespace mfront::bbrick {
      */
     static BehaviourDescription::MaterialProperty getMaterialProperty(
         AbstractBehaviourDSL&, const DataMap&, const std::string&);
+    /*!
+     *
+     */
+    static void declareElasticStrainIfRequired(BehaviourDescription&);
 
   };  // end of struct StressPotentialBase
 

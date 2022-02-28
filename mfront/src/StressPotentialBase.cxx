@@ -270,6 +270,27 @@ namespace mfront::bbrick {
   }  // end of
      // declareRelativeValueForTheEquivalentStressLowerBoundDefinitionParameter
 
+  void StressPotentialBase::declareElasticStrainIfRequired(
+      BehaviourDescription& bd) {
+    using namespace tfel::glossary;
+    constexpr auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+    const auto b = bd.checkVariableExistence("eel");
+    if (b.first) {
+      if(!b.second){
+        tfel::raise(
+            "StressPotentialBase::declareElasticStrainIfRequired: "
+            "'eel' is not declared for all specialisation of the behaviour");
+        bd.checkVariableExistence("eel", "IntegrationVariable");
+        bd.checkVariableGlossaryName("eel", Glossary::ElasticStrain);
+      }
+    } else {
+      VariableDescription eel("StrainStensor", "εᵉˡ", "eel", 1u, 0u);
+      eel.description = "elastic strain";
+      bd.addStateVariable(uh, eel);
+      bd.setGlossaryName(uh, "eel", Glossary::ElasticStrain);
+    }
+  }  // end of declaredElasticStrainIfRequired
+
   StressPotentialBase::~StressPotentialBase() = default;
 
-  }  // end of namespace mfront::bbrick
+}  // end of namespace mfront::bbrick
