@@ -242,4 +242,61 @@ i.overrideAuthor("John Mac Enroe")
 mfront.write(i, "Plasticity.madnex")
 ~~~~
 
+# Storing an `MTest` file in a `madnex` file
+
+## `C++` Application Programming Interface (API)
+
+The `TFELMTest` library exposes a data structure named `TestDescription` which
+describes an `MTest` file and two functions called respectively
+`loadMTestFileContent` and `write`.
+
+### The `TestDescription` data structure
+
+The `TestDescription` data structure exposes the following data members:
+
+- `author`, which describes the author of the test.
+- `date`, which describes the date at which the test has been created.
+- `description`, which describes a description of the test.
+- `behaviour`, name of the behaviour to which the test is associated.
+  This data member is required to export the file in the `madnex` file
+  format.
+- `material`, name of the material to which the test is associated. This
+  data member can be empty.
+- `content`, content of the `MTest` file. This content can be filled
+  from an existing `MTest` file using the `loadMTestFileContent`
+  function.
+
+### The `loadMTestFileContent` function
+
+The `loadMTestFileContent` function loads the content of an `MTest` file
+and stores it in the `content` data member of a `TestDescription` data
+structure.
+
+### The `write` function
+
+The `write` function exports an `MTest` test, described by a
+`TestDescription` data structure, to a file.
+
+The file format is deduced from the extension of the file.
+
+Currently, only extensions associated with the [`madnex` file
+format](https://github.com/thelfer/madnex) are supported if `TFEL` is
+compiled with support of this file format. Those extensions are: `mdnx`,
+`madnex` (deprecated) or `edf` (experimental data file, deprecated).
+Note that the behaviour member of the metadata must be specified for
+export in the `madnex` file format.
+
+## `Python` Application Programming Interface (API)
+
+The `mtest` `python` module reflects the `C++` API and exposes the
+`TestDescription` data structure and the `loadMTestFileContent` and
+`write` functions.
+
+### Example of usage
+
+The following example shows how to store an existing `MTest` file to a
+`madnex` file:
+
+
+
 # References

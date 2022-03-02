@@ -80,6 +80,10 @@ namespace mfront {
 #ifdef MFRONT_HAVE_MADNEX
   static std::string getSourceFileContent(const std::string& f) {
     std::ifstream file(f);
+    if (!file) {
+      tfel::raise("mfront::getSourceFileContent: can't open file '" +
+                  std::string{f} + "'");
+    }
     std::ostringstream s;
     s << file.rdbuf();
     return s.str();

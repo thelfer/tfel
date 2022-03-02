@@ -29,6 +29,7 @@ void declareStructureCurrentState();
 void declareStudyCurrentState();
 void declareSolverWorkSpace();
 void declareMFrontLogStream();
+void declareMTestFileExport();
 
 BOOST_PYTHON_MODULE(_mtest) {
   boost::python::enum_<mtest::StiffnessUpdatingPolicy>(
@@ -71,6 +72,7 @@ BOOST_PYTHON_MODULE(_mtest) {
   declarePipeMesh();
   declarePipeTest();
   declareMFrontLogStream();
+  declareMTestFileExport();
 
   void (*ptr)(const std::string&) = mtest::setRoundingMode;
   void (*ptr2)() = mtest::setRoundingMode;
