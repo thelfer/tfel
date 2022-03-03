@@ -63,9 +63,15 @@ namespace mtest {
 
   static void writeMadnexFile(const TestDescription& d,
                               const std::string_view f) {
+    if (!d.scheme.empty()) {
+      if ((d.scheme != "mtest") && (d.scheme != "ptest")) {
+        tfel::raise("writeMadnexFile: invalid scheme '" + d.scheme + "'");
+      }
+    }
     madnex::MTestTest e;
     e.name = d.name;
     e.test = d.content;
+    e.scheme = d.scheme;
     e.metadata.author = d.author;
     e.metadata.date = d.date;
     e.metadata.description = d.description;
@@ -77,10 +83,9 @@ namespace mtest {
       auto r = file.getRoot();
       if (!material.empty()) {
         return createGroups(
-            r, {"MFront", material, "Behaviours", bid, "MTestTests" + d.name});
+            r, {"MFront", material, "Behaviours", bid, "MTestTests"});
       }
-      return createGroups(r,
-                          {"MFront", "Behaviours", bid, "MTestTests", d.name});
+      return createGroups(r, {"MFront", "Behaviours", bid, "MTestTests"});
     }();
     madnex::write(g, e);
   }  // end of writeMadnexFile

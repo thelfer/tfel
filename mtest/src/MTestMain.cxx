@@ -28,6 +28,14 @@
 #endif /* small */
 #endif
 
+#ifdef MTEST_HAVE_MADNEX
+#include "Madnex/Config.hxx"
+#endif /* MTEST_HAVE_MADNEX */
+
+#ifdef MADNEX_MTEST_TEST_SUPPORT
+#include "Madnex/MTestTest.hxx"
+#endif
+
 #include "TFEL/Raise.hxx"
 #include "TFEL/Tests/TestManager.hxx"
 #include "TFEL/Tests/XMLTestOutput.hxx"
@@ -82,12 +90,18 @@ namespace mtest {
     std::string getVersionDescription() const override;
     std::string getUsageDescription() const override;
     void registerArgumentCallBacks();
-    //! input files
+    //! \brief input files
     std::vector<std::string> inputs;
-    //! external commands
+    //! \brief external commands
     std::vector<std::string> ecmds;
-    //! substitutions
+    //! \brief substitutions
     std::map<std::string, std::string> substitutions;
+    //! \brief material name (only useful for madnex files)
+    std::string material;
+    //! \brief material name (required for madnex files)
+    std::string behaviour;
+    //! \brief test name (required for madnex files)
+    std::string test;
     // xml output
     bool xml_output = false;
     // generate result file
@@ -157,6 +171,23 @@ namespace mtest {
         "Random:     Rounding mode is randomly changed at various "
         "stage of the compution.",
         true);
+    this->registerCallBack(
+        "--behaviour", "-b",
+        CallBack(
+            "set the behaviour",
+            [this] { this->behaviour = this->currentArgument->getOption(); },
+            true));
+    this->registerCallBack(
+        "--material", "-m",
+        CallBack(
+            "set the material",
+            [this] { this->material = this->currentArgument->getOption(); },
+            true));
+    this->registerCallBack(
+        "--test", "-t",
+        CallBack("set the test name",
+                 [this] { this->test = this->currentArgument->getOption(); },
+                 true));
 #if !(defined _WIN32 || defined _WIN64 || defined __CYGWIN__)
     this->registerNewCallBack(
         "--backtrace", "-bt", &MTestMain::treatBacktrace,
@@ -396,8 +427,21 @@ namespace mtest {
       PipeTestParser().execute(*t, f, e, s);
       return std::move(t);
     };
-    using namespace tfel::tests;
-    auto& tm = TestManager::getTestManager();
+    auto getMandexPath = [this](const std::string& i) {
+      if (this->behaviour.empty()) {
+        tfel::raise(
+            "MTestMain::execute: no behaviour specified. "
+            "This is required when using a madnex file");
+      }
+      if (this->test.empty()) {
+        tfel::raise(
+            "MTestMain::execute: no test specified. "
+            "This is required when using a madnex file");
+      }
+      return "madnex:" + i + ":" + this->material + ":" +  //
+             this->behaviour + ":" + this->test;
+    };
+    auto& tm = tfel::tests::TestManager::getTestManager();
     for (const auto& i : this->inputs) {
       std::string tname;
       std::string ext;
@@ -421,15 +465,74 @@ namespace mtest {
                      "invalid input file name '" +
                          i + "'");
       auto t = std::shared_ptr<SchemeBase>{};
-      if (this->scheme == MTEST) {
-        t = mtest(i, this->ecmds, this->substitutions);
-      } else if (this->scheme == PTEST) {
-        t = ptest(i, this->ecmds, this->substitutions);
-      } else if (this->scheme == DEFAULT) {
-        if (ext == ".ptest") {
-          t = ptest(i, this->ecmds, this->substitutions);
+      if ((ext == ".madnex") || (ext == ".mdnx") || (ext == ".edf")) {
+#ifdef MADNEX_MTEST_TEST_SUPPORT
+        const auto path = getMandexPath(i);
+        const auto test_scheme = madnex::getMTestTestScheme(
+            i, this->material, this->behaviour, this->test);
+        if (!test_scheme.empty()) {
+          if ((test_scheme != "mtest") && (test_scheme != "ptest")) {
+            tfel::raise("MTestMain::execute: invalid scheme");
+          }
+        }
+        if (this->scheme == MTEST) {
+          if ((!test_scheme.empty()) && (test_scheme != "mtest")) {
+            tfel::raise(
+                "MTestMain::execute: the scheme specified on the command line "
+                "does not match the scheme declared by the test");
+          }
+          t = mtest(path, this->ecmds, this->substitutions);
+        } else if (this->scheme == PTEST) {
+          if ((!test_scheme.empty()) && (test_scheme != "mtest")) {
+            tfel::raise(
+                "MTestMain::execute: the scheme specified on the command line "
+                "does not match the scheme declared by the test");
+          }
+          t = ptest(path, this->ecmds, this->substitutions);
         } else {
+          if (test_scheme.empty()) {
+            tfel::raise(
+                "MTestMain::execute: "
+                "the scheme must be specified using the --scheme command "
+                "line argument when using a madnex file");
+          }
+          if (test_scheme == "mtest") {
+            t = mtest(path, this->ecmds, this->substitutions);
+          } else {
+            t = ptest(path, this->ecmds, this->substitutions);
+          }
+        }
+#else  /* MADNEX_MTEST_TEST_SUPPORT */
+        tfel::raise(
+            "MTestMain::execute: "
+            "madnex support is not available");
+#endif /* MADNEX_MTEST_TEST_SUPPORT */
+      } else {
+        if (!this->material.empty()) {
+          tfel::raise(
+              "MTestMain::execute: specifying a material is only "
+              "meaningful when using a madnex file");
+        }
+        if (!this->behaviour.empty()) {
+          tfel::raise(
+              "MTestMain::execute: specifying a behaviour is only "
+              "meaningful when using a madnex file");
+        }
+        if (!this->test.empty()) {
+          tfel::raise(
+              "MTestMain::execute: specifying a test is only "
+              "meaningful when using a madnex file");
+        }
+        if (this->scheme == MTEST) {
           t = mtest(i, this->ecmds, this->substitutions);
+        } else if (this->scheme == PTEST) {
+          t = ptest(i, this->ecmds, this->substitutions);
+        } else if (this->scheme == DEFAULT) {
+          if (ext == ".ptest") {
+            t = ptest(i, this->ecmds, this->substitutions);
+          } else {
+            t = mtest(i, this->ecmds, this->substitutions);
+          }
         }
       }
       if (this->result_file_output) {
@@ -444,11 +547,12 @@ namespace mtest {
       }
       tm.addTest("MTest/" + tname, t);
       if (this->xml_output) {
-        std::shared_ptr<TestOutput> o;
+        std::shared_ptr<tfel::tests::TestOutput> o;
         if (!t->isXMLOutputFileNameDefined()) {
-          o = std::make_shared<XMLTestOutput>(tname + ".xml");
+          o = std::make_shared<tfel::tests::XMLTestOutput>(tname + ".xml");
         } else {
-          o = std::make_shared<XMLTestOutput>(t->getXMLOutputFileName());
+          o = std::make_shared<tfel::tests::XMLTestOutput>(
+              t->getXMLOutputFileName());
         }
         tm.addTestOutput("MTest/" + tname, o);
       }

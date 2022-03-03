@@ -213,6 +213,11 @@ else(WIN32 AND enable-static)
   target_link_libraries(mtest TFELMTest TFELSystem TFELUtilities TFELTests)
 endif(WIN32 AND enable-static)
 
+if(TFEL_HAVE_MADNEX)
+  target_compile_definitions(mtest PUBLIC MTEST_HAVE_MADNEX)
+  target_link_libraries(mtest PRIVATE madnex::Madnex)
+endif(TFEL_HAVE_MADNEX)
+
 if(TFEL_APPEND_SUFFIX)
   set_target_properties(mtest
     PROPERTIES OUTPUT_NAME "mtest-${TFEL_SUFFIX}")

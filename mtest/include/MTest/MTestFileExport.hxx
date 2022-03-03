@@ -38,6 +38,8 @@ namespace mtest {
     ~TestDescription() noexcept;
     //! \brief name of the test
     std::string name;
+    //! \brief scheme of the `MTest` file (`mtest` or `ptest`)
+    std::string scheme;
     //! \brief author of the test
     std::string author;
     //! \brief date at which the test has been created
