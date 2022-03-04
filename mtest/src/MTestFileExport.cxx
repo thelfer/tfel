@@ -28,8 +28,8 @@
 
 namespace mtest {
 
-  static std::string getSourceFileContent(const std::string_view f) {
-    std::ifstream file(std::string{f});
+  static std::string getSourceFileContent(const std::string& f) {
+    std::ifstream file(f);
     if (!file) {
       tfel::raise("mtest::getSourceFileContent: can't open file '" +
                   std::string{f} + "'");
@@ -46,7 +46,7 @@ namespace mtest {
   TestDescription& TestDescription::operator=(const TestDescription&) = default;
   TestDescription::~TestDescription() noexcept = default;
 
-  void loadMTestFileContent(TestDescription& d, const std::string_view f) {
+  void loadMTestFileContent(TestDescription& d, const std::string& f) {
     d.content = getSourceFileContent(f);
   }  // end of loadMTestFileContent
 
@@ -61,8 +61,7 @@ namespace mtest {
     return cg;
   }  // end of names
 
-  static void writeMadnexFile(const TestDescription& d,
-                              const std::string_view f) {
+  static void writeMadnexFile(const TestDescription& d, const std::string& f) {
     if (!d.scheme.empty()) {
       if ((d.scheme != "mtest") && (d.scheme != "ptest")) {
         tfel::raise("writeMadnexFile: invalid scheme '" + d.scheme + "'");
@@ -75,7 +74,13 @@ namespace mtest {
     e.metadata.author = d.author;
     e.metadata.date = d.date;
     e.metadata.description = d.description;
-    auto file = madnex::File(std::string{f}, H5F_ACC_TRUNC);
+    auto file = [&f] {
+      std::ifstream infile(f);
+      if (infile.good()) {
+        return madnex::File(f, H5F_ACC_RDWR);
+      }
+      return madnex::File(f, H5F_ACC_TRUNC);
+    }();
     auto g = [&file, &d] {
       const auto& material = d.material;
       const auto& bid = d.behaviour;
@@ -92,7 +97,7 @@ namespace mtest {
 
 #endif /* MADNEX_MTEST_TEST_SUPPORT */
 
-  void write(const TestDescription& d, const std::string_view f) {
+  void write(const TestDescription& d, const std::string& f) {
     const auto ext = [&f]() -> std::string {
       const auto p = f.find(".");
       if (p != std::string::npos) {

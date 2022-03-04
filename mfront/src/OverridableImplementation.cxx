@@ -129,7 +129,13 @@ namespace mfront {
       }
       return "Models";
     }();
-    auto file = madnex::File(f, H5F_ACC_TRUNC);
+    auto file = [&f] {
+      std::ifstream infile(f);
+      if (infile.good()) {
+        return madnex::File(f, H5F_ACC_RDWR);
+      }
+      return madnex::File(f, H5F_ACC_TRUNC);
+    }();
     auto r = file.getRoot();
     madnex::createGroup(r, "MFront");
     auto g = madnex::Group();
@@ -140,27 +146,27 @@ namespace mfront {
       g = madnex::createGroup(r, "MFront/" + mkt);
     }
     madnex::write(g, impl);
-  }    // end of writeMadnexFile
+        }  // end of writeMadnexFile
 #endif /* MFRONT_HAVE_MADNEX */
 
-  void write(const OverridableImplementation& i, const std::string& f) {
-    const auto ext = [&f]() -> std::string {
-      const auto p = f.find(".");
-      if (p != std::string::npos) {
-        return f.substr(p + 1);
-      }
-      return "";
-    }();
+    void
+    write(const OverridableImplementation& i, const std::string& f) {
+        const auto ext = [&f]() -> std::string {
+          const auto p = f.find(".");
+          if (p != std::string::npos) {
+            return f.substr(p + 1);
+          }
+          return "";
+        }();
 #ifdef MFRONT_HAVE_MADNEX
-    if ((ext == "madnex") || (ext == "mdnx") || (ext == "edf")) {
-      writeMadnexFile(i, f);
-    } else {
-      tfel::raise("write: unsupported file extension '" + ext + "'");
-    }
+        if ((ext == "madnex") || (ext == "mdnx") || (ext == "edf")) {
+          writeMadnexFile(i, f);
+        } else {
+          tfel::raise("write: unsupported file extension '" + ext + "'");
+        }
 #else  /* MFRONT_HAVE_MADNEX */
     static_cast<void>(i);
     tfel::raise("write: unsupported file extension '" + ext + "'");
 #endif /* MFRONT_HAVE_MADNEX */
-  }    // end of write
-
-}  // end of namespace mfront
+    }  // end of write
+    }    // end of namespace mfront

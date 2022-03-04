@@ -15,7 +15,6 @@
 #define LIB_MTEST_MTESTFILEEXPORT_HXX
 
 #include <string>
-#include <string_view>
 #include "MTest/Config.hxx"
 
 namespace mtest {
@@ -61,7 +60,7 @@ namespace mtest {
    * \param[in] f: output file path
    */
   MTEST_VISIBILITY_EXPORT void loadMTestFileContent(TestDescription&,
-                                                    const std::string_view);
+                                                    const std::string&);
   /*!
    * \brief write an `MTest` test to a file.
    *
@@ -78,7 +77,7 @@ namespace mtest {
    * \param[in] f: output file path
    */
   MTEST_VISIBILITY_EXPORT void write(const TestDescription&,
-                                     const std::string_view);
+                                     const std::string&);
 
 }  // end of namespace mtest
 

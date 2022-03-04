@@ -159,6 +159,58 @@ dsl = mfront.getDSL(paths[0])
 dsl.analyseFile(paths[0])
 ~~~~
 
+# `mtest` usage
+
+## Executing a test stored in a `madnex` file
+
+To execute a test stored in a `madnex` file, the user must specify:
+
+- the name of the `madnex` file
+- the name of the test using the `--test` (or `-t`) command line
+  argument.
+- the name of the behaviour to which the test is associated using the
+  `--behaviour` (or `-b`) command line argument.
+- the name of the material is the behaviour to which the test is
+  associated is associated with a material using the `--material` (or
+  `-m`) command line argument. If the material is not specified, or if
+  the special material name `<none>` is used, the behaviour associated
+  with the test is assumed not associated with any material.
+
+Note that the `--test` (or `-t`) command line argument can accept
+regular expressions to select as set of tests.
+
+### Example of usage
+
+The following example executes the `UniaxialTensileTest` test 
+associated with the `Plasticity` behaviour (and not attached to any
+material) using the behaviour `cyranoplasticity` compiled with the
+`cyrano` interface in a shared library `libCyranoBehaviours.so` located
+in the `src` subdirectory and stored in the `Plasticity.mdnx` file:
+
+~~~~{.bash}
+$ mtest  --behaviour=Plasticity --test=UniaxialTensileTest        \
+         --@interface@=cyrano --@behaviour@="'cyranoplasticity'"  \
+         --@library@="'src/libCyranoBehaviours.so'"               \
+         Plasticity.mdnx
+~~~~
+
+## Execution all tests associated with a behaviour stored in a `madnex` file
+
+The user can execute all tests associated with a behaviour using the
+`--all-tests` command line arguments. The user must specify the name of
+the behaviour (using the `--behaviour` (or `-b`) command line argument)
+and optionally the name of the material (using the `--material` (or
+`-m`) command line argument).
+
+~~~~{.bash}
+$ mtest  --behaviour=Plasticity --@interface@=cyrano \
+         --@behaviour@="'cyranoplasticity'"          \
+         --@library@="'src/libCyranoBehaviours.so'"  \ 
+         --all-tests Plasticity.mdnx                 \
+~~~~
+
+The `--all-tests` command line argument is equivalent to `--test=".+"`.
+
 # `mfront-query` usage
 
 ## Options specific to `madnex` files
@@ -189,14 +241,14 @@ The following options are available:
 A typical call is as follows:
 
 ~~~~{.bash}
-$ `mfront-query` --list-behaviours file.madnex
+$ mfront-query --list-behaviours file.madnex
 ~~~~
 
 The previous options are affected by the the definition of a material,
 as follows:
 
 ~~~~{.bash}
-$ `mfront-query` --material=<material_id> --list-behaviours file.madnex
+$ mfront-query --material=<material_id> --list-behaviours file.madnex
 ~~~~
 
 ## Querying information about implementation, options specific to `madnex` files
@@ -214,6 +266,28 @@ Here, `behaviour_id` can be a regular expression.
 For material properties and models, the `--material-property` and
 `--model` options have a similar role than the `--behaviour` option for
 behaviours.
+
+### List of `MTest` tests associated with a behaviour in a `madnex` file
+
+The `--list-behaviour-mtest-tests` command line argument can be used to
+display the list of tests associated with a behaviour in a `madnex`
+file.
+
+Optionnally, this command line argument accept the options
+`sorted-by-behaviours` or `unsorted` (see the examples below).
+
+#### Examples of usage
+
+~~~~{.cxx}
+$ mfront-query --list-behaviour-mtest-tests --test=".+Tensile.+" Plasticity.mdnx
+- tests associated with behaviour Plasticity
+    - UniaxialTensileTest
+~~~~
+
+~~~~{.cxx}
+$ mfront-query --list-behaviour-mtest-tests=unsorted --test=".+Tensile.+" Plasticity.mdnx
+UniaxialTensileTest
+~~~~
 
 # Storing an `MFront` file in a `madnex` file
 
@@ -297,6 +371,31 @@ The `mtest` `python` module reflects the `C++` API and exposes the
 The following example shows how to store an existing `MTest` file to a
 `madnex` file:
 
+~~~~{.python}
+import mtest
 
+d = mtest.TestDescription()
+d.author = 'John Doe'
+d.date = '01/03/2022'
+d.name = 'UniaxialTensileTest'
+d.scheme = 'mtest'
+d.behaviour = 'Plasticity'
+mtest.loadMTestFileContent(d, 'Plasticity.mtest')
+
+mtest.write(d,'Plasticity.mdnx')
+~~~~
+
+## Best practices
+
+We highly recommend to use the following substitution variables when
+defining the test:
+
+- `@interface@`, which is meant to be replaced by the interface to be
+  used. This is very handy if the test can be run for different
+  interfaces
+- `@library@`, which is meant to be replaced by the path to the shared
+  library containing the tested behaviour.
+- `@behaviour@`, which contains the name of the function implementing
+  the behaviour for the considered interface.
 
 # References

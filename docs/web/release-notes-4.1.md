@@ -403,29 +403,36 @@ The `TFELMTest` library exposes a data structure named `TestDescription` which
 describes an `MTest` file and two functions called respectively
 `loadMTestFileContent` and `write`.
 
-#### The `TestDescription` data structure
+This data structure and functions are exported in `python`, as described
+in Section @sec:tfel:4.1:python:mtest:export_mtest_file. Section
+@sec:tfel:4.1:python:mtest:export_mtest_file:usage provides an example
+of use.
+
+#### The `TestDescription` data structure {#sec:tfel:4.1:mtest:TestDescription}
 
 The `TestDescription` data structure exposes the following data members:
 
 - `author`, which describes the author of the test.
 - `date`, which describes the date at which the test has been created.
+- `scheme`, which describes the type of test. Valid values are `mtest`
+  and `ptest`.
 - `description`, which describes a description of the test.
 - `behaviour`, name of the behaviour to which the test is associated.
-  This data member is required to export the file in the `madnex` file
-  format.
+  This data member is **required** to export the file in the `madnex`
+  file format.
 - `material`, name of the material to which the test is associated. This
   data member can be empty.
 - `content`, content of the `MTest` file. This content can be filled
   from an existing `MTest` file using the `loadMTestFileContent`
   function.
 
-#### The `loadMTestFileContent` function
+#### The `loadMTestFileContent` function {#sec:tfel:4.1:mtest:loadMTestFileContent}
 
 The `loadMTestFileContent` function loads the content of an `MTest` file
 and stores it in the `content` data member of a `TestDescription` data
 structure.
 
-#### The `write` function
+#### The `write` function {#sec:tfel:4.1:mtest:write}
 
 The `write` function exports an `MTest` test, described by a
 `TestDescription` data structure, to a file.
@@ -438,6 +445,69 @@ compiled with support of this file format. Those extensions are: `mdnx`,
 `madnex` (deprecated) or `edf` (experimental data file, deprecated).
 Note that the behaviour member of the metadata must be specified for
 export in the `madnex` file format.
+
+#### Best practices
+
+We highly recommend to use the following substitution variables when
+defining the test:
+
+- `@interface@`, which is meant to be replaced by the interface to be
+  used. This is very handy if the test can be run for different
+  interfaces
+- `@library@`, which is meant to be replaced by the path to the shared
+  library containing the tested behaviour.
+- `@behaviour@`, which contains the name of the function implementing
+  the behaviour for the considered interface.
+
+### Executing a test stored in a `madnex` file
+
+To execute a test stored in a `madnex` file, the user must specify:
+
+- the name of the `madnex` file
+- the name of the test using the `--test` (or `-t`) command line
+  argument.
+- the name of the behaviour to which the test is associated using the
+  `--behaviour` (or `-b`) command line argument.
+- the name of the material is the behaviour to which the test is
+  associated is associated with a material using the `--material` (or
+  `-m`) command line argument. If the material is not specified, or if
+  the special material name `<none>` is used, the behaviour associated
+  with the test is assumed not associated with any material.
+
+Note that the `--test` (or `-t`) command line argument can accept
+regular expressions to select as set of tests.
+
+#### Example of usage
+
+The following example executes the UniaxialTensileTest` test 
+associated with the `Plasticity` behaviour (and not attached to any
+material) using the behaviour `cyranoplasticity` compiled with the
+`cyrano` interface in a shared library `libCyranoBehaviours.so` located
+in the `src` subdirectory and stored in the `Plasticity.mdnx` file:
+
+~~~~{.bash}
+$ mtest  --behaviour=Plasticity --test=UniaxialTensileTest        \
+         --@interface@=cyrano --@behaviour@="'cyranoplasticity'"  \
+         --@library@="'src/libCyranoBehaviours.so'"               \
+         Plasticity.mdnx
+~~~~
+
+### Execution all tests associated with a behaviour stored in a `madnex` file
+
+The user can execute all tests associated with a behaviour using the
+`--all-tests` command line arguments. The user must specify the name of
+the behaviour (using the `--behaviour` (or `-b`) command line argument)
+and optionally the name of the material (using the `--material` (or
+`-m`) command line argument).
+
+~~~~{.bash}
+$ mtest  --behaviour=Plasticity --@interface@=cyrano \
+         --@behaviour@="'cyranoplasticity'"          \
+         --@library@="'src/libCyranoBehaviours.so'"  \ 
+         --all-tests Plasticity.mdnx                 \
+~~~~
+
+The `--all-tests` command line argument is equivalent to `--test=".+"`.
 
 ## Support for a boundary condition modelling the effet of a mandrel in pipe modelling {#sec:tfel_4.1:mtest:mandrel}
 
@@ -643,6 +713,30 @@ b = mtest.Behaviour(library = 'src/libBehaviour.so',
                     hypothesis = 'PlaneStrain')
 ~~~~
 
+## Exporting an `MTest`test to a `madnex` file {#sec:tfel:4.1:python:mtest:export_mtest_file}
+
+The `TestDescription` data structure (see Section
+@sec:tfel:4.1:mtest:TestDescription) and the `loadMTestFileContent` and
+`write` functions (see Sections @sec:tfel:4.1:mtest:loadMTestFileContent
+and @sec:tfel:4.1:mtest:write) are exposed in the `mtest` `python`
+module.
+
+### Example of usage {#sec:tfel:4.1:python:mtest:export_mtest_file:usage}
+
+~~~~{.python}
+import mtest
+
+d = mtest.TestDescription()
+d.author = 'John Doe'
+d.date = '01/03/2022'
+d.name = 'UniaxialTensileTest'
+d.scheme = 'mtest'
+d.behaviour = 'Plasticity'
+mtest.loadMTestFileContent(d, 'Plasticity.mtest')
+
+mtest.write(d,'Plasticity.mdnx')
+~~~~
+
 # `mfront-query` improvements
 
 ## New behaviour queries
@@ -681,6 +775,28 @@ retrieved using the `--post-processing-variables` query, as follows:
 ~~~~{.bash}
 $ mfront-query --post-processing-variables Elasticity.mfront 
 - PrincipalStrain (εᵖ)
+~~~~
+
+### List of `MTest` tests associated with a behaviour in a `madnex` file
+
+The `--list-behaviour-mtest-tests` command line argument can be used to
+display the list of tests associated with a behaviour in a `madnex`
+file.
+
+Optionnally, this command line argument accept the options
+`sorted-by-behaviours` or `unsorted` (see the examples below).
+
+#### Examples of usage
+
+~~~~{.cxx}
+$ mfront-query --list-behaviour-mtest-tests --test=".+Tensile.+" Plasticity.mdnx
+- tests associated with behaviour Plasticity
+    - UniaxialTensileTest
+~~~~
+
+~~~~{.cxx}
+$ mfront-query --list-behaviour-mtest-tests=unsorted --test=".+Tensile.+" Plasticity.mdnx
+UniaxialTensileTest
 ~~~~
 
 # Issues fixed

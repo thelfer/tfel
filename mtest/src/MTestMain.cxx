@@ -11,12 +11,13 @@
  * project under specific licensing conditions.
  */
 
-#include <iostream>
+#include <cfenv>
+#include <regex>
+#include <string>
+#include <vector>
 #include <cstdlib>
 #include <utility>
-#include <vector>
-#include <string>
-#include <cfenv>
+#include <iostream>
 
 #if defined _WIN32 || defined _WIN64
 #ifndef NOMINMAX
@@ -33,6 +34,7 @@
 #endif /* MTEST_HAVE_MADNEX */
 
 #ifdef MADNEX_MTEST_TEST_SUPPORT
+#include "Madnex/DataBase.hxx"
 #include "Madnex/MTestTest.hxx"
 #endif
 
@@ -90,6 +92,16 @@ namespace mtest {
     std::string getVersionDescription() const override;
     std::string getUsageDescription() const override;
     void registerArgumentCallBacks();
+    /*!
+     * \brief add a single test and defines the output files
+     * \param[in] t: pointer to the test
+     * \param[in] n: name of the test
+     */
+    void addTest(std::shared_ptr<SchemeBase>, const std::string&);
+    std::shared_ptr<SchemeBase> createMTestTest(const std::string&);
+    std::shared_ptr<SchemeBase> createPTestTest(const std::string&);
+    void treatMadnexInputFile(const std::string&);
+    void treatStandardInputFile(const std::string&);
     //! \brief input files
     std::vector<std::string> inputs;
     //! \brief external commands
@@ -108,7 +120,7 @@ namespace mtest {
     bool result_file_output = true;
     // generate residual file
     bool residual_file_output = false;
-  };
+    };
 
   MTestMain::MTestMain(const int argc, const char* const* const argv)
       : tfel::utilities::ArgumentParserBase<MTestMain>(argc, argv) {
@@ -171,23 +183,46 @@ namespace mtest {
         "Random:     Rounding mode is randomly changed at various "
         "stage of the compution.",
         true);
-    this->registerCallBack(
-        "--behaviour", "-b",
-        CallBack(
-            "set the behaviour",
-            [this] { this->behaviour = this->currentArgument->getOption(); },
-            true));
-    this->registerCallBack(
-        "--material", "-m",
-        CallBack(
-            "set the material",
-            [this] { this->material = this->currentArgument->getOption(); },
-            true));
-    this->registerCallBack(
-        "--test", "-t",
-        CallBack("set the test name",
-                 [this] { this->test = this->currentArgument->getOption(); },
-                 true));
+    auto treatBehaviour = [this] {
+      if (!this->behaviour.empty()) {
+        tfel::raise(
+            "MTestMain::treatBehaviour: "
+            "no option given");
+      }
+      this->behaviour = this->currentArgument->getOption();
+    };
+    auto treatMaterial = [this] {
+      if (!this->material.empty()) {
+        tfel::raise(
+            "MTestMain::treatMaterial: "
+            "no option given");
+      }
+      this->material = this->currentArgument->getOption();
+    };
+    auto treatTest = [this] {
+      if (!this->test.empty()) {
+        tfel::raise(
+            "MTestMain::treatTest: "
+            "no option given");
+      }
+      this->test = this->currentArgument->getOption();
+    };
+    auto treatAllTests = [this] {
+      if (!this->test.empty()) {
+        tfel::raise(
+            "MTestMain::treatTest: "
+            "no option given");
+      }
+      this->test = ".+";
+    };
+    this->registerCallBack("--behaviour", "-b",
+                           CallBack("set the behaviour", treatBehaviour, true));
+    this->registerCallBack("--material", "-m",
+                           CallBack("set the material", treatMaterial, true));
+    this->registerCallBack("--test", "-t",
+                           CallBack("set the test name", treatTest, true));
+    this->registerCallBack("--all-tests",
+                           CallBack("select all tests", treatAllTests, false));
 #if !(defined _WIN32 || defined _WIN64 || defined __CYGWIN__)
     this->registerNewCallBack(
         "--backtrace", "-bt", &MTestMain::treatBacktrace,
@@ -413,154 +448,196 @@ namespace mtest {
   }
 
   int MTestMain::execute() {
-    auto mtest = [](const std::string& f, const std::vector<std::string>& e,
-                    const std::map<std::string, std::string>& s)
-        -> std::shared_ptr<SchemeBase> {
-      auto t = std::make_shared<MTest>();
-      t->readInputFile(f, e, s);
-      return std::move(t);
-    };
-    auto ptest = [](const std::string& f, const std::vector<std::string>& e,
-                    const std::map<std::string, std::string>& s)
-        -> std::shared_ptr<SchemeBase> {
-      auto t = std::make_shared<PipeTest>();
-      PipeTestParser().execute(*t, f, e, s);
-      return std::move(t);
-    };
-    auto getMandexPath = [this](const std::string& i) {
-      if (this->behaviour.empty()) {
-        tfel::raise(
-            "MTestMain::execute: no behaviour specified. "
-            "This is required when using a madnex file");
-      }
-      if (this->test.empty()) {
-        tfel::raise(
-            "MTestMain::execute: no test specified. "
-            "This is required when using a madnex file");
-      }
-      return "madnex:" + i + ":" + this->material + ":" +  //
-             this->behaviour + ":" + this->test;
-    };
-    auto& tm = tfel::tests::TestManager::getTestManager();
     for (const auto& i : this->inputs) {
-      std::string tname;
-      std::string ext;
-      const auto pos = i.rfind('.');
-      if (pos != std::string::npos) {
-        tname = i.substr(0, pos);
-        ext = i.substr(pos);
-      } else {
-        tname = i;
-      }
-      tfel::raise_if(tname.back() == '/',
-                     "MTestMain::execute: "
-                     "invalid input file name '" +
-                         i + "'");
-      const auto pos2 = tname.rfind('/');
-      if (pos2 != std::string::npos) {
-        tname = tname.substr(pos2 + 1);
-      }
-      tfel::raise_if(tname.empty(),
-                     "MTestMain::execute: "
-                     "invalid input file name '" +
-                         i + "'");
-      auto t = std::shared_ptr<SchemeBase>{};
+      const auto ext = [&i]() -> std::string {
+        const auto pos = i.rfind('.');
+        if (pos != std::string::npos) {
+          return i.substr(pos);
+        }
+        return "";
+      }();
       if ((ext == ".madnex") || (ext == ".mdnx") || (ext == ".edf")) {
-#ifdef MADNEX_MTEST_TEST_SUPPORT
-        const auto path = getMandexPath(i);
-        const auto test_scheme = madnex::getMTestTestScheme(
-            i, this->material, this->behaviour, this->test);
-        if (!test_scheme.empty()) {
-          if ((test_scheme != "mtest") && (test_scheme != "ptest")) {
-            tfel::raise("MTestMain::execute: invalid scheme");
-          }
-        }
-        if (this->scheme == MTEST) {
-          if ((!test_scheme.empty()) && (test_scheme != "mtest")) {
-            tfel::raise(
-                "MTestMain::execute: the scheme specified on the command line "
-                "does not match the scheme declared by the test");
-          }
-          t = mtest(path, this->ecmds, this->substitutions);
-        } else if (this->scheme == PTEST) {
-          if ((!test_scheme.empty()) && (test_scheme != "mtest")) {
-            tfel::raise(
-                "MTestMain::execute: the scheme specified on the command line "
-                "does not match the scheme declared by the test");
-          }
-          t = ptest(path, this->ecmds, this->substitutions);
-        } else {
-          if (test_scheme.empty()) {
-            tfel::raise(
-                "MTestMain::execute: "
-                "the scheme must be specified using the --scheme command "
-                "line argument when using a madnex file");
-          }
-          if (test_scheme == "mtest") {
-            t = mtest(path, this->ecmds, this->substitutions);
-          } else {
-            t = ptest(path, this->ecmds, this->substitutions);
-          }
-        }
-#else  /* MADNEX_MTEST_TEST_SUPPORT */
-        tfel::raise(
-            "MTestMain::execute: "
-            "madnex support is not available");
-#endif /* MADNEX_MTEST_TEST_SUPPORT */
+        this->treatMadnexInputFile(i);
       } else {
-        if (!this->material.empty()) {
-          tfel::raise(
-              "MTestMain::execute: specifying a material is only "
-              "meaningful when using a madnex file");
-        }
-        if (!this->behaviour.empty()) {
-          tfel::raise(
-              "MTestMain::execute: specifying a behaviour is only "
-              "meaningful when using a madnex file");
-        }
-        if (!this->test.empty()) {
-          tfel::raise(
-              "MTestMain::execute: specifying a test is only "
-              "meaningful when using a madnex file");
-        }
-        if (this->scheme == MTEST) {
-          t = mtest(i, this->ecmds, this->substitutions);
-        } else if (this->scheme == PTEST) {
-          t = ptest(i, this->ecmds, this->substitutions);
-        } else if (this->scheme == DEFAULT) {
-          if (ext == ".ptest") {
-            t = ptest(i, this->ecmds, this->substitutions);
-          } else {
-            t = mtest(i, this->ecmds, this->substitutions);
-          }
-        }
+        this->treatStandardInputFile(i);
       }
-      if (this->result_file_output) {
-        if (!t->isOutputFileNameDefined()) {
-          t->setOutputFileName(tname + ".res");
-        }
-      }
-      if (this->residual_file_output) {
-        if (!t->isResidualFileNameDefined()) {
-          t->setResidualFileName(tname + "-residual.res");
-        }
-      }
-      tm.addTest("MTest/" + tname, t);
-      if (this->xml_output) {
-        std::shared_ptr<tfel::tests::TestOutput> o;
-        if (!t->isXMLOutputFileNameDefined()) {
-          o = std::make_shared<tfel::tests::XMLTestOutput>(tname + ".xml");
-        } else {
-          o = std::make_shared<tfel::tests::XMLTestOutput>(
-              t->getXMLOutputFileName());
-        }
-        tm.addTestOutput("MTest/" + tname, o);
-      }
-      tm.addTestOutput("MTest/" + tname, std::cout);
     }
+    auto& tm = tfel::tests::TestManager::getTestManager();
     const auto r = tm.execute();
     return r.success() ? EXIT_SUCCESS : EXIT_FAILURE;
-  }
+  } // end of execute
+
+  std::shared_ptr<SchemeBase> MTestMain::createMTestTest(
+      const std::string& path) {
+    auto t = std::make_shared<MTest>();
+    t->readInputFile(path, this->ecmds, this->substitutions);
+    return t;
+  } // end of createMTestTest
+
+  std::shared_ptr<SchemeBase> MTestMain::createPTestTest(
+      const std::string& path) {
+    auto t = std::make_shared<PipeTest>();
+    PipeTestParser().execute(*t, path, this->ecmds, this->substitutions);
+    return t;
+  }  // end of createPTestTest
+
+  void MTestMain::treatMadnexInputFile(const std::string& i) {
+#ifdef MADNEX_MTEST_TEST_SUPPORT
+    const auto path = [this, &i](const auto t) {
+      return "madnex:" + i + ":" + this->material + ":" +  //
+             this->behaviour + ":" + t;
+    };
+    if (this->behaviour.empty()) {
+      tfel::raise(
+          "MTestMain::treatMadnexInputFile: no behaviour specified. "
+          "This is required when using a madnex file");
+    }
+    if (this->test.empty()) {
+      tfel::raise(
+          "MTestMain::treatMadnexInputFile: no test specified. "
+          "This is required when using a madnex file");
+    }
+    madnex::DataBase d(i);
+    std::regex r(this->test);
+    auto found = false;
+    for (const auto& tname :
+         d.getAvailableMTestTests(this->material, this->behaviour)) {
+      if (!std::regex_match(tname, r)) {
+        continue;
+      }
+      found = true;
+      auto t = std::shared_ptr<SchemeBase>{};
+      const auto test_scheme =
+          madnex::getMTestTestScheme(i, this->material, this->behaviour, tname);
+      if (!test_scheme.empty()) {
+        if ((test_scheme != "mtest") && (test_scheme != "ptest")) {
+          tfel::raise("MTestMain::treatMadnexInputFile: invalid scheme");
+        }
+      }
+      if (this->scheme == MTEST) {
+        if ((!test_scheme.empty()) && (test_scheme != "mtest")) {
+          tfel::raise(
+              "MTestMain::treatMadnexInputFile: the scheme specified on the "
+              "command line does not match the scheme declared by the test");
+        }
+        t = this->createMTestTest(path(tname));
+      } else if (this->scheme == PTEST) {
+        if ((!test_scheme.empty()) && (test_scheme != "ptest")) {
+          tfel::raise(
+              "MTestMain::treatMadnexInputFile: the scheme specified on the "
+              "command line does not match the scheme declared by the test");
+        }
+        t = this->createPTestTest(path(tname));
+      } else {
+        if (test_scheme.empty()) {
+          tfel::raise(
+              "MTestMain::treatMadnexInputFile: "
+              "the scheme must be specified using the --scheme command "
+              "line argument when using a madnex file");
+        }
+        if (test_scheme == "mtest") {
+          t = this->createMTestTest(path(tname));
+        } else {
+          t = this->createPTestTest(path(tname));
+        }
+      }
+      this->addTest(t, tname);
+    }
+    if (!found) {
+      tfel::raise(
+          "MTestMain::treatMadnexInputFile: "
+          "no test matches regular expression "
+          "'" +
+          this->test + "'");
+    }
+#else  /* MADNEX_MTEST_TEST_SUPPORT */
+    tfel::raise(
+        "MTestMain::treatMadnexInputFile: "
+        "madnex support is not available");
+#endif /* MADNEX_MTEST_TEST_SUPPORT */
+  }    // end of treatMadnexInputFile
+
+  void MTestMain::treatStandardInputFile(const std::string& i) {
+    if (!this->material.empty()) {
+      tfel::raise(
+          "MTestMain::treatStandardInputFile: specifying a material is only "
+          "meaningful when using a madnex file");
+    }
+    if (!this->behaviour.empty()) {
+      tfel::raise(
+          "MTestMain::treatStandardInputFile: specifying a behaviour is only "
+          "meaningful when using a madnex file");
+    }
+    if (!this->test.empty()) {
+      tfel::raise(
+          "MTestMain::treatStandardInputFile: specifying a test is only "
+          "meaningful when using a madnex file");
+    }
+    const auto pos = i.rfind('.');
+    auto tname = i.substr(0, pos);
+    tfel::raise_if(tname.back() == '/',
+                   "MTestMain::treatStandardInputFile: "
+                   "invalid input file name '" +
+                       i + "'");
+    const auto pos2 = tname.rfind('/');
+    if (pos2 != std::string::npos) {
+      tname = tname.substr(pos2 + 1);
+    }
+#ifdef _WIN32
+    const auto pos3 = tname.rfind('\\');
+    if (pos3 != std::string::npos) {
+      tname = tname.substr(pos3 + 1);
+    }
+#endif /* _WIN32 */
+    tfel::raise_if(tname.empty(),
+                   "MTestMain::treatStandardInputFile: "
+                   "invalid input file name '" +
+                       i + "'");
+    if (this->scheme == MTEST) {
+      this->addTest(this->createMTestTest(i), tname);
+    } else if (this->scheme == PTEST) {
+      this->addTest(this->createPTestTest(i), tname);
+    } else if (this->scheme == DEFAULT) {
+      const auto ext = [&i, &pos]() -> std::string {
+        if (pos != std::string::npos) {
+          return i.substr(pos);
+        }
+        return "";
+      }();
+      if (ext == ".ptest") {
+        this->addTest(this->createPTestTest(i), tname);
+      } else {
+        this->addTest(this->createMTestTest(i), tname);
+      }
+    }
+  }  // end of treatStandardInputFile
+
+  void MTestMain::addTest(std::shared_ptr<SchemeBase> t, const std::string& n) {
+    auto& tm = tfel::tests::TestManager::getTestManager();
+    if (this->result_file_output) {
+      if (!t->isOutputFileNameDefined()) {
+        t->setOutputFileName(n + ".res");
+      }
+    }
+    if (this->residual_file_output) {
+      if (!t->isResidualFileNameDefined()) {
+        t->setResidualFileName(n + "-residual.res");
+      }
+    }
+    tm.addTest("MTest/" + n, t);
+    if (this->xml_output) {
+      std::shared_ptr<tfel::tests::TestOutput> o;
+      if (!t->isXMLOutputFileNameDefined()) {
+        o = std::make_shared<tfel::tests::XMLTestOutput>(n + ".xml");
+      } else {
+        o = std::make_shared<tfel::tests::XMLTestOutput>(
+            t->getXMLOutputFileName());
+      }
+      tm.addTestOutput("MTest/" + n, o);
+    }
+    tm.addTestOutput("MTest/" + n, std::cout);
+  } // end of addTest
+
   MTestMain::~MTestMain() = default;
 
 }  // end of namespace mtest

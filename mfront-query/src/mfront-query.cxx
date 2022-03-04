@@ -21,6 +21,7 @@
 #endif /* small */
 #endif /* __CYGWIN__ */
 
+#include <regex>
 #include <string>
 #include <cstdlib>
 #include <cstring>
@@ -139,13 +140,6 @@ static void listImplementations(const mfront::PathSpecifier& p,
         "is not meaningful when listing " +
         itypes);
   }
-  const auto ext = [p]() -> std::string {
-    const auto pos = p.file.find(".");
-    if (pos != std::string::npos) {
-      return p.file.substr(pos + 1);
-    }
-    return "";
-  }();
   if (!checkMadnexFileExtension(p)) {
     tfel::raise("mfront-query: listing " + itypes +
                 " is only supported for madnex files");
@@ -257,6 +251,82 @@ static void listImplementationPaths(const mfront::PathSpecifier& p,
   std::cout << '\n';
 }  // end of listMaterials
 
+static std::vector<std::string> filter(const std::vector<std::string>& values,
+                                       const std::string& rvalue) {
+  std::regex r(rvalue);
+  auto results = std::vector<std::string>{};
+  std::copy_if(values.begin(), values.end(), std::back_inserter(results),
+               [&r](const std::string& n) { return std::regex_match(n, r); });
+  return results;
+} // end of filter
+
+static void listBehaviourMTestTests(const mfront::PathSpecifier& p,
+                                    const bool sorted_by_behaviours,
+                                    const std::string& test_specifier) {
+  if (!p.material_property_identifier.empty()) {
+    tfel::raise(
+        "mfront-query: specifying a material property "
+        "is not meaningful when listing mtest tests");
+  }
+  if (!p.model_identifier.empty()) {
+    tfel::raise(
+        "mfront-query: specifying a model "
+        "is not meaningful when listing mtest tests");
+  }
+  if (!checkMadnexFileExtension(p)) {
+    tfel::raise(
+        "mfront-query: listing mtest tests "
+        "is only supported for madnex files");
+  }
+  auto d = madnex::DataBase{p.file};
+  const auto materials = [&p, &d] {
+    if ((!p.material_identifier.empty()) &&
+        (p.material_identifier != "<none>")) {
+      return filter(d.getMaterialsList(), p.material_identifier);
+    }
+    return std::vector<std::string>{p.material_identifier};
+  }();
+  for (const auto& m : materials) {
+    const auto behaviours = [&p, &m, &d] {
+      if ((!m.empty()) && (m != "<none>")) {
+        if (p.behaviour_identifier.empty()) {
+          return d.getAvailableBehaviours(m);
+        }
+        return filter(d.getAvailableBehaviours(m), p.behaviour_identifier);
+      }
+      return d.getAvailableBehaviours("");
+    }();
+    for (const auto& b : behaviours) {
+      const auto tests = [&test_specifier, &d, &m, &b] {
+        if (test_specifier.empty()) {
+          return d.getAvailableMTestTests(m, b);
+        }
+        return filter(d.getAvailableMTestTests(m, b), test_specifier);
+      }();
+      if (tests.empty()) {
+        continue;
+      }
+      if (sorted_by_behaviours) {
+        std::cout << "- tests associated with behaviour " << b;
+        if ((!m.empty()) && (m != "<none>")) {
+         std::cout << " associated with material " << m;
+        }
+        std::cout << '\n';
+        for (const auto& t : tests) {
+          std::cout << "    - " << t << '\n';
+        }
+      } else {
+        for (const auto& t : tests) {
+          std::cout << t << " ";
+        }
+      }
+    }
+  }
+  if (!sorted_by_behaviours) {
+    std::cout << '\n';
+  }
+}  // end of listBehaviourMTestTests
+
 #endif /* MFRONT_QUERY_HAVE_MADNEX */
 
 static void treatHasQuery(
@@ -286,9 +356,9 @@ static void treatHasQuery(
 #ifdef MFRONT_QUERY_HAVE_MADNEX
 
 static bool treatListMaterialKnowledge(bool& b,
-                            bool& sorted,
-                            const char* const opt,
-                            const std::string& arg) {
+                                       bool& sorted,
+                                       const char* const opt,
+                                       const std::string& arg) {
   if (tfel::utilities::starts_with(arg, opt)) {
     if (b) {
       tfel::raise("mfront-query: " + std::string{opt} + " multiply defined");
@@ -301,7 +371,6 @@ static bool treatListMaterialKnowledge(bool& b,
         sorted = false;
       } else {
         tfel::raise(
-            "mfront-query: "
             "invalid command line argument '" +
             arg + "'");
       }
@@ -309,8 +378,9 @@ static bool treatListMaterialKnowledge(bool& b,
       sorted = true;
     }
     b = true;
+    return true;
   }
-  return b;
+  return false;
 }  // end of treatListMaterialKnowledge
 
 static bool treatListImplementationPathsOption(bool& b,
@@ -329,7 +399,6 @@ static bool treatListImplementationPathsOption(bool& b,
         sorted = false;
       } else {
         tfel::raise(
-            "mfront-query: "
             "invalid command line argument '" +
             arg + "'");
       }
@@ -337,9 +406,38 @@ static bool treatListImplementationPathsOption(bool& b,
       sorted = true;
     }
     b = true;
+    return true;
   }
-  return b;
+  return false;
 }  // end of treatListImplementationPathsOption
+
+static bool treatListBehaviourMTestTestsOptions(bool& b,
+                                                bool& sorted,
+                                                const char* const opt,
+                                                const std::string& arg) {
+  if (tfel::utilities::starts_with(arg, opt)) {
+    if (b) {
+      tfel::raise("mfront-query: " + std::string{opt} + " multiply defined");
+    }
+    const auto o = std::string_view(arg).substr(std::strlen(opt));
+    if (!o.empty()) {
+      if (o == "=sorted-by-behaviours") {
+        sorted = true;
+      } else if (o == "=unsorted") {
+        sorted = false;
+      } else {
+        tfel::raise(
+            "invalid command line argument '" +
+            arg + "'");
+      }
+    } else {
+      sorted = true;
+    }
+    b = true;
+    return true;
+  }
+  return false;
+}  // end of treatListBehaviourMTestTestsOptions
 
 #endif /* MFRONT_QUERY_HAVE_MADNEX */
 
@@ -372,10 +470,26 @@ int main(const int argc, const char* const* const argv) {
     auto sort_material_properties_list = true;
     auto list_behaviours = false;
     auto sort_behaviours_list = true;
+    auto list_behaviour_mtest_tests = false;
+    auto sort_behaviour_mtest_tests_list = true;
     auto list_models = false;
     auto sort_models_list = true;
+    std::string test;
+    auto treatTest = [&test](const std::string_view& a) {
+      if (a[0] != '=') {
+        return false;
+      }
+      if (!test.empty()) {
+        tfel::raise("test specifier already set");
+      }
+      if (a.size() == 1) {
+        tfel::raise("empty test specifier");
+      }
+      test = a.substr(1);
+      return true;
+    };
 #endif /* MFRONT_QUERY_HAVE_MADNEX */
-    queries_arguments.push_back(argv[0]);
+                     queries_arguments.push_back(argv[0]);
     for (auto arg = argv + 1; arg != argv + argc; ++arg) {
       const auto a = std::string{*arg};
       if (mfront::parsePathSpecifierArguments(path_specifiers,
@@ -400,14 +514,31 @@ int main(const int argc, const char* const* const argv) {
                   << "specify a material property (regular expression)\n"
                   << "--all-material-properties             : "
                   << "select all material properties (equivalent to "
-                     "--material-property='.+')\n"
+                  << "--material-property='.+')\n"
+                  << "--list-implementation-paths           : "
+                  << "list all implementation paths associated with a set of "
+                  << "material properties, behaviours or models in a "
+                  << "madnex file.\n"
+                  << "--list-materials                      : "
+                  << "list all materials in a madnex file\n"
+                  << "--list-material-properties            : "
+                  << "list all material propertiess in a madnex `file\n"
+                  << "--list-behaviours                     : "
+                  << "list all behaviours in a madnex file\n"
+                  << "--list-behaviour-mtest-tests          : "
+                  << "list all the mtest tests associated with a set of "
+                  << "behaviours in a madnex file\n"
+                  << "--list-models                         : "
+                  << "list all models in a madnex file\n"
                   << "--behaviour                           : "
                   << "specify a behaviour (regular expression)\n"
+                  << "--test: "
+                  << "specify a test (regular expression)\n"
                   << "--all-behaviours                      : "
                   << "select all behaviours (equivalent to --behaviour='.+')\n"
-                  << "--model                           : "
+                  << "--model                               : "
                   << "specify a model (regular expression)\n"
-                  << "--all-models                      : "
+                  << "--all-models                          : "
                   << "select all models (equivalent to --model='.+')\n";
 #endif /* MFRONT_QUERY_HAVE_MADNEX */
         std::exit(EXIT_SUCCESS);
@@ -456,11 +587,17 @@ int main(const int argc, const char* const* const argv) {
       } else if (a == "--list-materials") {
         list_materials = true;
       } else if (treatListMaterialKnowledge(list_material_properties,
-                                 sort_material_properties_list,
-                                 "--list-material-properties", a)) {
+                                            sort_material_properties_list,
+                                            "--list-material-properties", a)) {
       } else if (treatListMaterialKnowledge(list_behaviours,
                                             sort_behaviours_list,
-                                 "--list-behaviours", a)) {
+                                            "--list-behaviours", a)) {
+      } else if (treatListBehaviourMTestTestsOptions(
+                     list_behaviour_mtest_tests,
+                     sort_behaviour_mtest_tests_list,
+                     "--list-behaviour-mtest-tests", a)) {
+      } else if ((tfel::utilities::starts_with(a, "--test")) &&
+                 (treatTest(a.substr(strlen("--test"))))) {
       } else if (treatListMaterialKnowledge(list_models, sort_models_list,
                                             "--list-models", a)) {
 #if (defined _WIN32) || (defined _WIN64)
@@ -470,11 +607,18 @@ int main(const int argc, const char* const* const argv) {
                      list_implementation_paths, sort_implementation_paths_list,
                      "/list-implementation-paths", a)) {
       } else if (treatListMaterialKnowledge(list_material_properties,
-                                 sort_material_properties_list,
-                                 "/list-material-properties", a)) {
+                                            sort_material_properties_list,
+                                            "/list-material-properties", a)) {
       } else if (treatListMaterialKnowledge(list_behaviours,
                                             sort_behaviours_list,
-                                 "/list-behaviours", a)) {
+                                            "/list-behaviours", a)) {
+      } else if ((tfel::utilities::starts_with(a, "/test")) &&
+                 (treatTest(a.substr(strlen("/test"))))) {
+        treatTest(a.substr(strlen("/test")));
+      } else if (treatListBehaviourMTestTestsOptions(
+                     list_behaviour_mtest_tests,
+                     sort_behaviour_mtest_tests_list,
+                     "/list-behaviour-mtest-tests", a)) {
       } else if (treatListMaterialKnowledge(list_models, sort_models_list,
                                             "/list-models", a)) {
 #endif /* (defined _WIN32) || (defined _WIN64)*/
@@ -487,12 +631,31 @@ int main(const int argc, const char* const* const argv) {
                                                   current_path_specifier);
 #ifdef MFRONT_QUERY_HAVE_MADNEX
     if ((list_materials || list_material_properties ||  //
-         list_behaviours || list_models) &&
+         list_behaviours || list_models || list_behaviour_mtest_tests) &&
         (list_implementation_paths)) {
       tfel::raise(
-          "specifying --list-paths can be combined with --list-materials, "
-          "--list-material-properties, "
-          "--list-behaviour or --list-models");
+          "specifying --list-implementation-paths can't be combined "
+          "with --list-materials, --list-material-properties, "
+          "--list-behaviour, --list-behaviour-mtest-tests or --list-models");
+    }
+    if ((!test.empty()) && (!list_behaviour_mtest_tests)) {
+      tfel::raise(
+          "using --test is only meaningful with "
+          "--list_behaviour_mtest_tests");
+    }
+    if (list_materials || list_material_properties ||     //
+        list_behaviours || list_behaviour_mtest_tests ||  //
+        list_models || list_implementation_paths) {
+      if (queries_arguments.size() != 1u) {
+        for (const auto& a : queries_arguments) {
+          std::cout << "a: " << a << '\n';
+        }
+        tfel::raise(
+            "specifying queries with with --list-materials, "
+            "--list-material-properties, --list-behaviour, "
+            "--list-behaviour-mtest-tests, --list-models or "
+            "--list-implementation-paths is not allowed");
+      }
     }
     for (const auto& p : path_specifiers) {
       if (list_materials) {
@@ -510,9 +673,13 @@ int main(const int argc, const char* const* const argv) {
       if (list_implementation_paths) {
         listImplementationPaths(p, sort_implementation_paths_list);
       }
+      if (list_behaviour_mtest_tests) {
+        listBehaviourMTestTests(p, sort_behaviour_mtest_tests_list, test);
+      }
     }
-    if (list_materials || list_material_properties ||  //
-        list_behaviours || list_models || list_implementation_paths) {
+    if (list_materials || list_material_properties ||     //
+        list_behaviours || list_behaviour_mtest_tests ||  //
+        list_models || list_implementation_paths) {
       std::exit(EXIT_SUCCESS);
     }
 #endif /* MFRONT_QUERY_HAVE_MADNEX */
