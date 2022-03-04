@@ -80,6 +80,10 @@ namespace mfront {
 #ifdef MFRONT_HAVE_MADNEX
   static std::string getSourceFileContent(const std::string& f) {
     std::ifstream file(f);
+    if (!file) {
+      tfel::raise("mfront::getSourceFileContent: can't open file '" +
+                  std::string{f} + "'");
+    }
     std::ostringstream s;
     s << file.rdbuf();
     return s.str();
@@ -125,7 +129,13 @@ namespace mfront {
       }
       return "Models";
     }();
-    auto file = madnex::File(f, H5F_ACC_TRUNC);
+    auto file = [&f] {
+      std::ifstream infile(f);
+      if (infile.good()) {
+        return madnex::File(f, H5F_ACC_RDWR);
+      }
+      return madnex::File(f, H5F_ACC_TRUNC);
+    }();
     auto r = file.getRoot();
     madnex::createGroup(r, "MFront");
     auto g = madnex::Group();
@@ -139,7 +149,8 @@ namespace mfront {
   }    // end of writeMadnexFile
 #endif /* MFRONT_HAVE_MADNEX */
 
-  void write(const OverridableImplementation& i, const std::string& f) {
+    void
+    write(const OverridableImplementation& i, const std::string& f) {
     const auto ext = [&f]() -> std::string {
       const auto p = f.find(".");
       if (p != std::string::npos) {

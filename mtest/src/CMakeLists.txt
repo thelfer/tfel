@@ -1,4 +1,5 @@
 set(TFELMTest_SOURCES
+  MTestFileExport.cxx
   MaterialProperty.cxx
   MaterialPropertyBase.cxx
   CastemMaterialProperty.cxx
@@ -171,6 +172,13 @@ target_include_directories(TFELMTest
 
 target_link_libraries(TFELMTest PUBLIC ${TFELMTest_LDADD})
 
+if(TFEL_HAVE_MADNEX)
+  target_compile_definitions(TFELMTest
+    PUBLIC MTEST_HAVE_MADNEX)
+  target_link_libraries(TFELMTest
+    PRIVATE madnex::Madnex)
+endif(TFEL_HAVE_MADNEX)
+
 add_executable(mtest MTestMain.cxx)
 if(WIN32 AND enable-static)
   set(mtest_static_link_libraries
@@ -202,6 +210,11 @@ if(WIN32 AND enable-static)
 else(WIN32 AND enable-static)
   target_link_libraries(mtest TFELMTest TFELSystem TFELUtilities TFELTests)
 endif(WIN32 AND enable-static)
+
+if(TFEL_HAVE_MADNEX)
+  target_compile_definitions(mtest PUBLIC MTEST_HAVE_MADNEX)
+  target_link_libraries(mtest PRIVATE madnex::Madnex)
+endif(TFEL_HAVE_MADNEX)
 
 if(TFEL_APPEND_SUFFIX)
   set_target_properties(mtest

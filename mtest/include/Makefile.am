@@ -1,5 +1,6 @@
 nobase_include_HEADERS = MTest/Config.hxx	                         \
 			 MTest/Types.hxx	                         \
+			 MTest/MTestFileExport.hxx                              \
 			 MTest/MaterialProperty.hxx                             \
 			 MTest/MaterialPropertyBase.hxx                             \
 			 MTest/CastemMaterialProperty.hxx                             \

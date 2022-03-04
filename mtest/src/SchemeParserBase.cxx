@@ -13,10 +13,20 @@
 
 #include <iostream>
 #include <sstream>
+
+#ifdef MTEST_HAVE_MADNEX
+#include "Madnex/Config.hxx"
+#endif /* MTEST_HAVE_MADNEX */
+
+#ifdef MADNEX_MTEST_TEST_SUPPORT
+#include "Madnex/MTestTest.hxx"
+#endif
+
 #include "TFEL/Raise.hxx"
 #include "TFEL/Config/GetInstallPath.hxx"
 #include "TFEL/UnicodeSupport/UnicodeSupport.hxx"
 #include "TFEL/Utilities/TextData.hxx"
+#include "TFEL/Utilities/StringAlgorithms.hxx"
 #include "TFEL/System/ExternalLibraryManager.hxx"
 #include "TFEL/Math/Parser/ExternalCastemFunction.hxx"
 #include "TFEL/Math/Parser/ConstantExternalFunction.hxx"
@@ -27,11 +37,53 @@
 #include "MTest/FunctionEvolution.hxx"
 #include "MTest/SchemeParserBase.hxx"
 
+#ifdef MADNEX_MTEST_TEST_SUPPORT
+
+  static std::tuple<std::string,  // file
+                    std::string,  // material
+                    std::string,  // behaviour
+                    std::string>  // test
+  decomposeMadnexPath(const std::string& p) {
+    using result_type =
+        std::tuple<std::string, std::string, std::string, std::string>;
+    const auto details = tfel::utilities::tokenize(p, ':');
+    if ((details.size() != 4) && (details.size() != 5)) {
+      tfel::raise("decomposeMadnexPath: invalid path '" + p + "'");
+    }
+    if (details.size() == 4) {
+      return result_type{std::move(details[1]), "", std::move(details[2]),
+                         std::move(details[3])};
+    }
+    const auto mid = details[2] == "<none>" ? "" : details[2];
+    return result_type{std::move(details[1]), std::move(mid),
+                       std::move(details[3]), std::move(details[4])};
+  }  // end of decomposeMadnexPath
+
+#endif /* MADNEX_MTEST_TEST_SUPPORT */
+
 namespace mtest {
 
   SchemeParserBase::SchemeParserBase()
       : externalFunctions(new ExternalFunctionManager) {
   }  // end of SchemeParserBase::SchemeParserBase
+
+  void SchemeParserBase::openFile(const std::string& f) {
+    this->file = f;
+    this->treatCharAsString(true);
+    if (tfel::utilities::starts_with(f, "madnex:")) {
+#ifdef MADNEX_MTEST_TEST_SUPPORT
+      const auto path = decomposeMadnexPath(f);
+      const auto test =
+          madnex::getMTestTest(std::get<0>(path), std::get<1>(path),
+                               std::get<2>(path), std::get<3>(path));
+      CxxTokenizer::parseString(test.test);
+#else  /* MADNEX_MTEST_TEST_SUPPORT */
+      tfel::raise("DSLBase::openFile: madnex support was not enabled");
+#endif /* MADNEX_MTEST_TEST_SUPPORT */
+    } else {
+      CxxTokenizer::openFile(f);
+    }
+  }  // end of openFile
 
   std::string SchemeParserBase::getDocumentationFilePath(
       const std::string& s, const std::string& k) const {
