@@ -8,6 +8,7 @@ bin_PROGRAMS  = mtest
 mtest_SOURCES = MTestMain.cxx
 
 libTFELMTest_la_SOURCES =                               \
+              MTestFileExport.cxx                       \
               MaterialProperty.cxx                      \
               MaterialPropertyBase.cxx                  \
               CastemMaterialProperty.cxx                \
