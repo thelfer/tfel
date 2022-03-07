@@ -509,6 +509,24 @@ $ mtest  --behaviour=Plasticity --@interface@=cyrano \
 
 The `--all-tests` command line argument is equivalent to `--test=".+"`.
 
+### Alternative way to select a single test in a `madnex` file
+
+`mtest` allows to select a test inside a `madnex` file using the
+following path syntax:
+
+~~~~
+madnex:<file>:<material>:<behaviour>:<test>
+~~~~
+
+where:
+
+- `<file>` is the path to the `madnex` file.
+- `<material>` is the name of the material considered. This name can be
+  empty or `<none>` if the considered test is not
+  associated to a material.
+- `<behaviour>` is the name of the behaviour
+- `<test>` is the name of the test
+
 ## Support for a boundary condition modelling the effet of a mandrel in pipe modelling {#sec:tfel_4.1:mtest:mandrel}
 
 The effect of a non-deformable mandrel located inside the pipe can be

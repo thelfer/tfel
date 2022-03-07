@@ -91,7 +91,7 @@ selection of implementations that not associated with a material.
 
 ## Alternative way to select a single material knowledge (material property, behaviour, model) in a `madnex` file {#sec:tfel-3.4.4:mfront:mandex_full_path}
 
-`mfront`, `mfront-query` and `mfront-doc` now allow to select a specific
+`mfront`, `mfront-query` and `mfront-doc` allow to select a specific
 material knowledge inside a `madnex` file using the following syntax:
 
 ~~~~
@@ -210,6 +210,24 @@ $ mtest  --behaviour=Plasticity --@interface@=cyrano \
 ~~~~
 
 The `--all-tests` command line argument is equivalent to `--test=".+"`.
+
+## Alternative way to select a single test in a `madnex` file
+
+`mtest` allows to select a test inside a `madnex` file using the
+following path syntax:
+
+~~~~
+madnex:<file>:<material>:<behaviour>:<test>
+~~~~
+
+where:
+
+- `<file>` is the path to the `madnex` file.
+- `<material>` is the name of the material considered. This name can be
+  empty or `<none>` if the considered test is not
+  associated to a material.
+- `<behaviour>` is the name of the behaviour
+- `<test>` is the name of the test
 
 # `mfront-query` usage
 

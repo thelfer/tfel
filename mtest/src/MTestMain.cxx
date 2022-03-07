@@ -100,6 +100,16 @@ namespace mtest {
     void addTest(std::shared_ptr<SchemeBase>, const std::string&);
     std::shared_ptr<SchemeBase> createMTestTest(const std::string&);
     std::shared_ptr<SchemeBase> createPTestTest(const std::string&);
+    /*!
+     * \param[in] file_name: file name
+     * \param[in] material_name: name of the material
+     * \param[in] behaviour_name: name of the behaviour
+     * \param[in] test_name: name of the test
+     */
+    void appendTestFromMadnexFile(const std::string&,
+                                  const std::string&,
+                                  const std::string&,
+                                  const std::string&);
     void treatMadnexInputFile(const std::string&);
     void treatStandardInputFile(const std::string&);
     //! \brief input files
@@ -456,10 +466,14 @@ namespace mtest {
         }
         return "";
       }();
-      if ((ext == ".madnex") || (ext == ".mdnx") || (ext == ".edf")) {
+      if (tfel::utilities::starts_with(i, "madnex:")) {
         this->treatMadnexInputFile(i);
       } else {
-        this->treatStandardInputFile(i);
+        if ((ext == ".madnex") || (ext == ".mdnx") || (ext == ".edf")) {
+          this->treatMadnexInputFile(i);
+        } else {
+          this->treatStandardInputFile(i);
+        }
       }
     }
     auto& tm = tfel::tests::TestManager::getTestManager();
@@ -481,12 +495,73 @@ namespace mtest {
     return t;
   }  // end of createPTestTest
 
+  void MTestMain::appendTestFromMadnexFile(const std::string& file_name,
+                                           const std::string& material_name,
+                                           const std::string& behaviour_name,
+                                           const std::string& test_name) {
+    const auto path = "madnex:" +                              //
+                      file_name + ":" + material_name + ":" +  //
+                      behaviour_name + ":" + test_name;
+    auto t = std::shared_ptr<SchemeBase>{};
+    const auto test_scheme = madnex::getMTestTestScheme(
+        file_name, material_name, behaviour_name, test_name);
+    if (!test_scheme.empty()) {
+      if ((test_scheme != "mtest") && (test_scheme != "ptest")) {
+        tfel::raise("MTestMain::appendTestFromMadnexFile: invalid scheme");
+      }
+    }
+    if (this->scheme == MTEST) {
+      if ((!test_scheme.empty()) && (test_scheme != "mtest")) {
+        tfel::raise(
+            "MTestMain::appendTestFromMadnexFile: the scheme specified on the "
+            "command line does not match the scheme declared by the test");
+      }
+      t = this->createMTestTest(path);
+    } else if (this->scheme == PTEST) {
+      if ((!test_scheme.empty()) && (test_scheme != "ptest")) {
+        tfel::raise(
+            "MTestMain::appendTestFromMadnexFile: the scheme specified on the "
+            "command line does not match the scheme declared by the test");
+      }
+      t = this->createPTestTest(path);
+    } else {
+      if (test_scheme.empty()) {
+        tfel::raise(
+            "MTestMain::appendTestFromMadnexFile: "
+            "the scheme must be specified using the --scheme command "
+            "line argument when using a madnex file");
+      }
+      if (test_scheme == "mtest") {
+        t = this->createMTestTest(path);
+      } else {
+        t = this->createPTestTest(path);
+      }
+    }
+    this->addTest(t, test_name);
+  }  // end of appendTestFromMadnexFile
+
   void MTestMain::treatMadnexInputFile(const std::string& i) {
 #ifdef MADNEX_MTEST_TEST_SUPPORT
-    const auto path = [this, &i](const auto t) {
-      return "madnex:" + i + ":" + this->material + ":" +  //
-             this->behaviour + ":" + t;
-    };
+    if (tfel::utilities::starts_with(i, "madnex:")) {
+      const auto [f, m, b, t] = [&i] {
+        const auto details = tfel::utilities::tokenize(i, ':');
+        if ((details.size() != 4u) && ((details.size() != 5u))) {
+          tfel::raise(
+              "MTestMain::treatMadnexInputFile: "
+              "invalid path '" +
+              i + "'");
+        }
+        if (details.size() == 4u) {
+          return std::make_tuple(std::move(details[1]), std::string{},
+                                 std::move(details[2]), std::move(details[3]));
+        }
+        const auto material_name = details[2] == "<none>" ? "" : details[2];
+        return std::make_tuple(std::move(details[1]), std::move(material_name),
+                               std::move(details[3]), std::move(details[4]));
+      }();
+      this->appendTestFromMadnexFile(f, m, b, t);
+      return;
+    }
     if (this->behaviour.empty()) {
       tfel::raise(
           "MTestMain::treatMadnexInputFile: no behaviour specified. "
@@ -500,48 +575,14 @@ namespace mtest {
     madnex::DataBase d(i);
     std::regex r(this->test);
     auto found = false;
+    const auto m = this->material == "<none>" ? "" : this->material;
     for (const auto& tname :
          d.getAvailableMTestTests(this->material, this->behaviour)) {
       if (!std::regex_match(tname, r)) {
         continue;
       }
       found = true;
-      auto t = std::shared_ptr<SchemeBase>{};
-      const auto test_scheme =
-          madnex::getMTestTestScheme(i, this->material, this->behaviour, tname);
-      if (!test_scheme.empty()) {
-        if ((test_scheme != "mtest") && (test_scheme != "ptest")) {
-          tfel::raise("MTestMain::treatMadnexInputFile: invalid scheme");
-        }
-      }
-      if (this->scheme == MTEST) {
-        if ((!test_scheme.empty()) && (test_scheme != "mtest")) {
-          tfel::raise(
-              "MTestMain::treatMadnexInputFile: the scheme specified on the "
-              "command line does not match the scheme declared by the test");
-        }
-        t = this->createMTestTest(path(tname));
-      } else if (this->scheme == PTEST) {
-        if ((!test_scheme.empty()) && (test_scheme != "ptest")) {
-          tfel::raise(
-              "MTestMain::treatMadnexInputFile: the scheme specified on the "
-              "command line does not match the scheme declared by the test");
-        }
-        t = this->createPTestTest(path(tname));
-      } else {
-        if (test_scheme.empty()) {
-          tfel::raise(
-              "MTestMain::treatMadnexInputFile: "
-              "the scheme must be specified using the --scheme command "
-              "line argument when using a madnex file");
-        }
-        if (test_scheme == "mtest") {
-          t = this->createMTestTest(path(tname));
-        } else {
-          t = this->createPTestTest(path(tname));
-        }
-      }
-      this->addTest(t, tname);
+      this->appendTestFromMadnexFile(i, this->material, this->behaviour, tname);
     }
     if (!found) {
       tfel::raise(
@@ -640,7 +681,7 @@ namespace mtest {
 
   MTestMain::~MTestMain() = default;
 
-}  // end of namespace mtest
+  }  // end of namespace mtest
 
 /* coverity [UNCAUGHT_EXCEPT]*/
 int main(const int argc, const char* const* const argv) {

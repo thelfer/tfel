@@ -643,20 +643,6 @@ int main(const int argc, const char* const* const argv) {
           "using --test is only meaningful with "
           "--list_behaviour_mtest_tests");
     }
-    if (list_materials || list_material_properties ||     //
-        list_behaviours || list_behaviour_mtest_tests ||  //
-        list_models || list_implementation_paths) {
-      if (queries_arguments.size() != 1u) {
-        for (const auto& a : queries_arguments) {
-          std::cout << "a: " << a << '\n';
-        }
-        tfel::raise(
-            "specifying queries with with --list-materials, "
-            "--list-material-properties, --list-behaviour, "
-            "--list-behaviour-mtest-tests, --list-models or "
-            "--list-implementation-paths is not allowed");
-      }
-    }
     for (const auto& p : path_specifiers) {
       if (list_materials) {
         listMaterials(p);
@@ -676,11 +662,12 @@ int main(const int argc, const char* const* const argv) {
       if (list_behaviour_mtest_tests) {
         listBehaviourMTestTests(p, sort_behaviour_mtest_tests_list, test);
       }
-    }
-    if (list_materials || list_material_properties ||     //
-        list_behaviours || list_behaviour_mtest_tests ||  //
-        list_models || list_implementation_paths) {
-      std::exit(EXIT_SUCCESS);
+      //
+      if (list_materials || list_material_properties ||     //
+          list_behaviours || list_behaviour_mtest_tests ||  //
+          list_models || list_implementation_paths) {
+        std::exit(EXIT_SUCCESS);
+      }
     }
 #endif /* MFRONT_QUERY_HAVE_MADNEX */
     //

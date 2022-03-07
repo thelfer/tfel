@@ -1208,8 +1208,11 @@ namespace mfront {
     this->hypothesis = ModellingHypothesis::fromString(o);
   }  // end of treatModellingHypothesis
 
+  std::size_t BehaviourQuery::getNumberOfQueriesToBeTreated() {
+    return this->queries.size() + this->queries2.size();
+  }  // end of getNumberOfQueriesToBeTreated
+
   void BehaviourQuery::exe() {
-    using namespace std;
     if (getVerboseMode() >= VERBOSE_LEVEL2) {
       getLogStream() << "Treating file '" << this->file << "'\n";
     }
@@ -1221,7 +1224,7 @@ namespace mfront {
     if (!this->queries.empty()) {
       if (this->hypothesis == ModellingHypothesis::UNDEFINEDHYPOTHESIS) {
         if (d.areAllMechanicalDataSpecialised()) {
-          ostringstream msg;
+          std::ostringstream msg;
           const auto& mh = d.getModellingHypotheses();
           if (mh.size() == 1u) {
             this->hypothesis = *(mh.begin());
