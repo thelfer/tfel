@@ -201,7 +201,7 @@ namespace mfront {
                   b ? "this->sebdata.lambda" : "this->lambda";
               const std::string mu = b ? "this->sebdata.mu" : "this->mu";
               m += "StressStensor prediction_stress;\n";
-              m += "StressStensor prediction_strain = "
+              m += "StrainStensor prediction_strain = "
                    "this->eel+(this->theta)*this->deto;\n";
               m += "prediction_stress(0) = 2*(" + mu + ")*((" + lambda + ")/(" +
                    lambda + "+2*(" + mu +
@@ -256,7 +256,7 @@ namespace mfront {
         m += "}\n";
         bd.appendToMembers(h, m, false);
       }
-    }  // end of HookeStressPotential::declareComputeElasticPredictionMethod
+    }  // end of declareComputeElasticPredictionMethod
 
     void HookeStressPotential::declareComputeStressWhenStiffnessTensorIsDefined(
         BehaviourDescription& bd) const {
@@ -377,14 +377,15 @@ namespace mfront {
           const std::string mu = b ? "this->sebdata.mu" : "this->mu_tdt";
           to.code =
               "if((smt==ELASTIC)||(smt==SECANTOPERATOR)){\n"
-              "  computeAlteredElasticStiffness<hypothesis,Type>::exe(Dt," +
+              "computeAlteredElasticStiffness<hypothesis, "
+              "stress>::exe(Dt," +
               lambda + "," + mu + ");\n";
           if (idsl.getSolver().usesJacobian()) {
             to.code +=
                 "} else if (smt==CONSISTENTTANGENTOPERATOR){\n"
                 "  StiffnessTensor Hooke;\n"
                 "  Stensor4 Je;\n"
-                "  computeElasticStiffness<N,Type>::exe(Hooke," +
+                "computeElasticStiffness<N, stress>::exe(Hooke," +
                 lambda + "," + mu +
                 ");\n"
                 "  getPartialJacobianInvert(Je);\n"
@@ -482,7 +483,7 @@ namespace mfront {
           to.code =
               "if((smt==ELASTIC)||(smt==SECANTOPERATOR)){\n"
               "  "
-              "computeAlteredElasticStiffness<hypothesis,Type>::exe(Dt," +
+              "computeAlteredElasticStiffness<hypothesis, stress>::exe(Dt," +
               lambda + "," + mu +
               ");\n"
               "} else {\n"
@@ -548,7 +549,7 @@ namespace mfront {
       r.push_back(
           std::make_tuple(d, std::string("eel"), SupportedTypes::STENSOR));
       return r;
-    }  // end of HookeStressPotential::getStressDerivatives
+    }  // end of getStressDerivatives
 
     std::string HookeStressPotential::generateImplicitEquationDerivatives(
         const BehaviourDescription& bd,
@@ -625,7 +626,7 @@ namespace mfront {
         }
       }
       return c;
-    }  // end of HookeStressPotential::generateImplicitEquationDerivatives
+    }  // end of generateImplicitEquationDerivatives
 
     HookeStressPotential::~HookeStressPotential() = default;
 

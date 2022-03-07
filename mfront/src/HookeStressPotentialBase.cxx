@@ -287,7 +287,7 @@ namespace mfront {
                                               AbstractBehaviourDSL& dsl,
                                               const DataMap& d) {
       using tfel::glossary::Glossary;
-      constexpr const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+      constexpr auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
       auto throw_if = [](const bool b, const std::string& m) {
         tfel::raise_if(
             b, "HookeStressPotentialBase::HookeStressPotentialBase: " + m);
@@ -310,7 +310,7 @@ namespace mfront {
         check(n);
         return getBehaviourDescriptionMaterialProperty(dsl, n, d.at(n));
       };
-      auto addTi = [&bd, &d, uh]() {
+      auto addTi = [&bd, &d]() {
         const auto n = "initial_geometry_reference_temperature";
         const auto v = [&d, &n] {
           if (d.count(n) != 0) {
@@ -326,7 +326,7 @@ namespace mfront {
         bd.setParameterDefaultValue(uh, n, v);
         bd.setEntryName(uh, n, "ReferenceTemperatureForInitialGeometry");
       };  // end of addTi
-      auto addTref = [&bd, &d, uh]() {
+      auto addTref = [&bd, &d]() {
         const auto n = "thermal_expansion_reference_temperature";
         const auto v = [&d, &n] {
           if (d.count(n) != 0) {
@@ -363,20 +363,22 @@ namespace mfront {
       update(this->gto, "generic_tangent_operator");
       update(this->gpo, "generic_tangent_operator");
       if (this->pss) {
-      bd.registerMemberName(ModellingHypothesis::UNDEFINEDHYPOTHESIS, "etozz");
-      bd.registerMemberName(ModellingHypothesis::UNDEFINEDHYPOTHESIS, "detozz");
-      bd.reserveName(ModellingHypothesis::UNDEFINEDHYPOTHESIS,
-                     "\u0394etozz");
-      //       bd.setGlossaryName(ModellingHypothesis::UNDEFINEDHYPOTHESIS,
-      //       "etozz",
-      //                          tfel::glossary::Glossary::AxialStrain);
-      bd.registerMemberName(ModellingHypothesis::UNDEFINEDHYPOTHESIS, "sigzz");
-      bd.registerMemberName(ModellingHypothesis::UNDEFINEDHYPOTHESIS, "dsigzz");
-      bd.reserveName(ModellingHypothesis::UNDEFINEDHYPOTHESIS,
-                     "\u0394sigzz");
-      //       bd.setGlossaryName(ModellingHypothesis::UNDEFINEDHYPOTHESIS,
-      //       "sigzz",
-      //                          tfel::glossary::Glossary::AxialStress);
+        bd.registerMemberName(ModellingHypothesis::UNDEFINEDHYPOTHESIS,
+                              "etozz");
+        bd.registerMemberName(ModellingHypothesis::UNDEFINEDHYPOTHESIS,
+                              "detozz");
+        bd.reserveName(ModellingHypothesis::UNDEFINEDHYPOTHESIS, "\u0394etozz");
+        //       bd.setGlossaryName(ModellingHypothesis::UNDEFINEDHYPOTHESIS,
+        //       "etozz",
+        //                          tfel::glossary::Glossary::AxialStrain);
+        bd.registerMemberName(ModellingHypothesis::UNDEFINEDHYPOTHESIS,
+                              "sigzz");
+        bd.registerMemberName(ModellingHypothesis::UNDEFINEDHYPOTHESIS,
+                              "dsigzz");
+        bd.reserveName(ModellingHypothesis::UNDEFINEDHYPOTHESIS, "\u0394sigzz");
+        //       bd.setGlossaryName(ModellingHypothesis::UNDEFINEDHYPOTHESIS,
+        //       "sigzz",
+        //                          tfel::glossary::Glossary::AxialStress);
         bd.reserveName(ModellingHypothesis::UNDEFINEDHYPOTHESIS,
                        "prediction_stress");
         bd.reserveName(ModellingHypothesis::UNDEFINEDHYPOTHESIS,
@@ -562,17 +564,17 @@ namespace mfront {
         if (bmh.count(agps) != 0) {
           VariableDescription etozz("strain", "etozz", 1u, 0u);
           etozz.description = "axial strain";
-        etozz.setGlossaryName(tfel::glossary::Glossary::AxialStrain);
+          etozz.setGlossaryName(tfel::glossary::Glossary::AxialStrain);
           bd.addStateVariable(agps, etozz, BehaviourData::ALREADYREGISTRED);
-          VariableDescription sigzz("strain", "sigzz", 1u, 0u);
-        sigzz.description = "axial stress";
-        sigzz.setGlossaryName(tfel::glossary::Glossary::AxialStress);
+          VariableDescription sigzz("stress", "sigzz", 1u, 0u);
+          sigzz.description = "axial stress";
+          sigzz.setGlossaryName(tfel::glossary::Glossary::AxialStress);
           bd.addExternalStateVariable(agps, sigzz,
                                       BehaviourData::ALREADYREGISTRED);
           d.addVariable(agps, {"stress", "szz"});
           if ((bd.isStrainMeasureDefined()) &&
               (bd.getStrainMeasure() == BehaviourDescription::HENCKY)) {
-            d.addVariable(agps, {"stress", "exp_etozz"});
+            d.addVariable(agps, {"strain", "exp_etozz"});
           }
         }
         if (bmh.count(ps) != 0) {
@@ -609,7 +611,7 @@ namespace mfront {
       }
       bd.addLocalDataStructure(d, BehaviourData::ALREADYREGISTRED);
       // look if the broken variable has defined
-      const auto has_broken = [&bd, &uh] {
+      const auto has_broken = [&bd] {
         const auto& bdata = bd.getBehaviourData(uh);
         const auto& asvs = bdata.getAuxiliaryStateVariables();
         const auto& esvs = bdata.getExternalStateVariables();
@@ -640,7 +642,7 @@ namespace mfront {
     void HookeStressPotentialBase::endTreatment(
         BehaviourDescription& bd, const AbstractBehaviourDSL& dsl) const {
       // modelling hypotheses supported by the behaviour
-      constexpr const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+      constexpr auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
       const auto bmh = bd.getModellingHypotheses();
       if (getVerboseMode() >= VERBOSE_DEBUG) {
         getLogStream() << "HookeStressPotentialBase::endTreatment: begin\n";
