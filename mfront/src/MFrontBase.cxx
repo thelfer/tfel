@@ -387,16 +387,20 @@ namespace mfront {
     if (starts_with(an, "-")) {
       return false;
     }
+    this->addInputPaths(an);
+    return true;
+  }  // end of treatUnknownArgument
+
+  void MFrontBase::addInputPaths(const std::string& p) {
     const auto paths = getImplementationsPaths(
-        an, this->material_identifier, this->material_property_identifier,
+        p, this->material_identifier, this->material_property_identifier,
         this->behaviour_identifier, this->model_identifier);
     this->inputs.insert(paths.begin(), paths.end());
     this->material_identifier.clear();
     this->material_property_identifier.clear();
     this->behaviour_identifier.clear();
     this->model_identifier.clear();
-    return true;
-  }  // end of treatUnknownArgument
+  } // end of addInputPaths
 
   void MFrontBase::treatVerbose() {
     const auto& o = this->getCurrentCommandLineArgument().getOption();

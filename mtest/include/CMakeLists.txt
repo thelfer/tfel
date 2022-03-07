@@ -1,5 +1,6 @@
 install_mtest_header(MTest Config.hxx)
 install_mtest_header(MTest Types.hxx)
+install_mtest_header(MTest MTestFileExport.hxx)
 install_mtest_header(MTest MaterialProperty.hxx)
 install_mtest_header(MTest MaterialPropertyBase.hxx)
 install_mtest_header(MTest CastemMaterialProperty.hxx)

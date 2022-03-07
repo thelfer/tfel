@@ -145,6 +145,10 @@ argument is used.
 
 # Issues solved
 
+## Issue #131: [mfront] The content of a madnex files is erased when writting an overridable implementation 
+
+For more details, see : <https://github.com/thelfer/tfel/issues/131>
+
 ## Issue #98: [mfront-query] add query to retrieve all implementation paths
 
 This feature is described in Section

@@ -352,7 +352,7 @@ namespace mfront::bbrick {
         etozz.description = "axial strain";
         etozz.setGlossaryName(tfel::glossary::Glossary::AxialStrain);
         bd.addStateVariable(agps, etozz, BehaviourData::ALREADYREGISTRED);
-        VariableDescription sigzz("strain", "sigzz", 1u, 0u);
+        VariableDescription sigzz("stress", "sigzz", 1u, 0u);
         sigzz.description = "axial stress";
         sigzz.setGlossaryName(tfel::glossary::Glossary::AxialStress);
         bd.addExternalStateVariable(agps, sigzz,
@@ -360,7 +360,7 @@ namespace mfront::bbrick {
         d.addVariable(agps, {"stress", "szz"});
         if ((bd.isStrainMeasureDefined()) &&
             (bd.getStrainMeasure() == BehaviourDescription::HENCKY)) {
-          d.addVariable(agps, {"stress", "exp_etozz"});
+          d.addVariable(agps, {"strain", "exp_etozz"});
         }
       }
       if (bmh.count(ps) != 0) {

@@ -1,8 +1,8 @@
 /*!
- * \file  bindings/python/mfront/MTest.cxx
+ * \file  bindings/python/mtest/MTest.cxx
  * \brief
  * \author Thomas Helfer
- * \brief 20 sept. 2013
+ * \date 20/09/2013
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence

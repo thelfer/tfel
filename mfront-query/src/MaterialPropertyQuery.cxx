@@ -245,6 +245,10 @@ namespace mfront {
                                  const MaterialPropertyDescription&) { q(); }});
   }  // end of treatSpecificTargets
 
+  std::size_t MaterialPropertyQuery::getNumberOfQueriesToBeTreated() {
+    return this->queries.size();
+  }  // end of getNumberOfQueriesToBeTreated
+
   void MaterialPropertyQuery::exe() {
     if (getVerboseMode() >= VERBOSE_LEVEL2) {
       getLogStream() << "Treating file '" << this->file << "'" << std::endl;
@@ -254,7 +258,7 @@ namespace mfront {
     const auto& fd = this->dsl->getFileDescription();
     const auto& d = this->dsl->getMaterialPropertyDescription();
     // treating the queries
-    for (const auto& q : queries) {
+    for (const auto& q : this->queries) {
       if (getVerboseMode() >= VERBOSE_LEVEL2) {
         getLogStream() << "Treating query '" << q.first << "'\n";
       }

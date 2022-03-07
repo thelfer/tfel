@@ -89,7 +89,7 @@ can be retrieved using the `getUMATExternalStateVariablesNames` method
 of the `ExternalLibraryManager` class.
 
 Following Issue #50 (see Sections
-@sec:tfel:mfront:global_options:temperature_as_first_external_state_variable
+@sec:tfel:4.1:mfront:global_options:temperature_as_first_external_state_variable
 and @sec:tfel:4.1:issue:50), this automatic declaration is now optional.
 
 For backward compatibility, the `getUMATExternalStateVariablesNames` method
@@ -116,7 +116,7 @@ external state variables.
 Domain specific language can have options which can modify their
 default behaviour.
 
-### Treat parameters as static variables {#sec:tfel:mfront:global_options:parameters_as_static_variables}
+### Treat parameters as static variables {#sec:tfel:4.1:mfront:global_options:parameters_as_static_variables}
 
 The boolean option `parameters_as_static_variables` modifies the way
 parameters are treated. This option can be declared as follows:
@@ -138,7 +138,7 @@ property), the value of this option is automatically passed to those
 domain specific languages (unless superceeded by global options, as
 detailled in Section @sec:tfel_4.1:mfront:global_dsl_options).
 
-### Specifying a build identifier {#sec:tfel:mfront:global_options:build_identifier}
+### Specifying a build identifier {#sec:tfel:4.1:mfront:global_options:build_identifier}
 
 In previous versions, a build identifier could be specified using the
 `TFEL_BUILD_ID` environment variable.
@@ -156,7 +156,7 @@ However, the `build_identifier` is not meant to be directly specified in
 the `MFront` source file. It shall rather be defined on the command line
 (see Section @sec:tfel_4.1:mfront:global_dsl_options).
 
-### Automatic declaration of the temperature as the first external state variable for behaviours {#sec:tfel:mfront:global_options:temperature_as_first_external_state_variable}
+### Automatic declaration of the temperature as the first external state variable for behaviours {#sec:tfel:4.1:mfront:global_options:temperature_as_first_external_state_variable}
 
 In previous versions of `MFront`, the temperature was automatically
 defined as the first external state variable by domain specific
@@ -187,7 +187,7 @@ declaration is disabled if the
 `automatic_declaration_of_the_temperature_as_first_external_state_variable`
 option is set to `false`.
 
-### Disabling initialization of parameters from text file {#sec:tfel:mfront:global_options:parameters_initialization_from_file}
+### Disabling initialization of parameters from text file {#sec:tfel:4.1:mfront:global_options:parameters_initialization_from_file}
 
 By default, parameters may be initialized from a text file in the
 current directory, if this text file exists. This feature is implemented
@@ -198,7 +198,7 @@ feature is implemented by some interfaces (`Cast3M`, `Cyrano`, `Octave`,
 This behaviour can now be changed by using the
 `parameters_initialization_from_file` boolean option.
 
-### Specifying the default out of bounds policy {#sec:tfel:mfront:global_options:default_out_of_bounds_policy}
+### Specifying the default out of bounds policy {#sec:tfel:4.1:mfront:global_options:default_out_of_bounds_policy}
 
 In previous versions, the default out of bound policy was
 `tfel::material::None`, which meant that nothing is done when a variable
@@ -208,7 +208,7 @@ This behaviour can now be changed by using the
 `default_out_of_bounds_policy` string option which can take the values
 `None`, `Warning` or `Strict`.
 
-### Disabling runtime change of the out of bounds policy {#sec:tfel:mfront:global_options:out_of_bounds_policy_runtime_modification}
+### Disabling runtime change of the out of bounds policy {#sec:tfel:4.1:mfront:global_options:out_of_bounds_policy_runtime_modification}
 
 The `out_of_bounds_policy_runtime_modification` boolean option states if
 the out of bounds policy can be changed at runtime. By default, this
@@ -394,6 +394,138 @@ dedicated post-processing and in a post-processing computing the
 principal strains and the strain eigen vectors.
 
 # `MTest` improvements
+
+## Support for `madnex` file {#sec:tfel:4.1:mtest:madnex_support}
+
+### Exporting an `MTest` test to a `madnex` file
+
+The `TFELMTest` library exposes a data structure named `TestDescription` which
+describes an `MTest` file and two functions called respectively
+`loadMTestFileContent` and `write`.
+
+This data structure and functions are exported in `python`, as described
+in Section @sec:tfel:4.1:python:mtest:export_mtest_file. Section
+@sec:tfel:4.1:python:mtest:export_mtest_file:usage provides an example
+of use.
+
+#### The `TestDescription` data structure {#sec:tfel:4.1:mtest:TestDescription}
+
+The `TestDescription` data structure exposes the following data members:
+
+- `author`, which describes the author of the test.
+- `date`, which describes the date at which the test has been created.
+- `scheme`, which describes the type of test. Valid values are `mtest`
+  and `ptest`.
+- `description`, which describes a description of the test.
+- `behaviour`, name of the behaviour to which the test is associated.
+  This data member is **required** to export the file in the `madnex`
+  file format.
+- `material`, name of the material to which the test is associated. This
+  data member can be empty.
+- `content`, content of the `MTest` file. This content can be filled
+  from an existing `MTest` file using the `loadMTestFileContent`
+  function.
+
+#### The `loadMTestFileContent` function {#sec:tfel:4.1:mtest:loadMTestFileContent}
+
+The `loadMTestFileContent` function loads the content of an `MTest` file
+and stores it in the `content` data member of a `TestDescription` data
+structure.
+
+#### The `write` function {#sec:tfel:4.1:mtest:write}
+
+The `write` function exports an `MTest` test, described by a
+`TestDescription` data structure, to a file.
+
+The file format is deduced from the extension of the file.
+
+Currently, only extensions associated with the [`madnex` file
+format](https://github.com/thelfer/madnex) are supported if `TFEL` is
+compiled with support of this file format. Those extensions are: `mdnx`,
+`madnex` (deprecated) or `edf` (experimental data file, deprecated).
+Note that the behaviour member of the metadata must be specified for
+export in the `madnex` file format.
+
+#### Best practices
+
+We highly recommend to use the following substitution variables when
+defining the test:
+
+- `@interface@`, which is meant to be replaced by the interface to be
+  used. This is very handy if the test can be run for different
+  interfaces
+- `@library@`, which is meant to be replaced by the path to the shared
+  library containing the tested behaviour.
+- `@behaviour@`, which contains the name of the function implementing
+  the behaviour for the considered interface.
+
+### Executing a test stored in a `madnex` file
+
+To execute a test stored in a `madnex` file, the user must specify:
+
+- the name of the `madnex` file
+- the name of the test using the `--test` (or `-t`) command line
+  argument.
+- the name of the behaviour to which the test is associated using the
+  `--behaviour` (or `-b`) command line argument.
+- the name of the material is the behaviour to which the test is
+  associated is associated with a material using the `--material` (or
+  `-m`) command line argument. If the material is not specified, or if
+  the special material name `<none>` is used, the behaviour associated
+  with the test is assumed not associated with any material.
+
+Note that the `--test` (or `-t`) command line argument can accept
+regular expressions to select as set of tests.
+
+#### Example of usage
+
+The following example executes the UniaxialTensileTest` test 
+associated with the `Plasticity` behaviour (and not attached to any
+material) using the behaviour `cyranoplasticity` compiled with the
+`cyrano` interface in a shared library `libCyranoBehaviours.so` located
+in the `src` subdirectory and stored in the `Plasticity.mdnx` file:
+
+~~~~{.bash}
+$ mtest  --behaviour=Plasticity --test=UniaxialTensileTest        \
+         --@interface@=cyrano --@behaviour@="'cyranoplasticity'"  \
+         --@library@="'src/libCyranoBehaviours.so'"               \
+         Plasticity.mdnx
+~~~~
+
+### Execution all tests associated with a behaviour stored in a `madnex` file
+
+The user can execute all tests associated with a behaviour using the
+`--all-tests` command line arguments. The user must specify the name of
+the behaviour (using the `--behaviour` (or `-b`) command line argument)
+and optionally the name of the material (using the `--material` (or
+`-m`) command line argument).
+
+~~~~{.bash}
+$ mtest  --behaviour=Plasticity --@interface@=cyrano \
+         --@behaviour@="'cyranoplasticity'"          \
+         --@library@="'src/libCyranoBehaviours.so'"  \ 
+         --all-tests Plasticity.mdnx                 \
+~~~~
+
+The `--all-tests` command line argument is equivalent to `--test=".+"`.
+
+### Alternative way to select a single test in a `madnex` file
+
+`mtest` allows to select a test inside a `madnex` file using the
+following path syntax:
+
+~~~~
+madnex:<file>:<material>:<behaviour>:<test>
+~~~~
+
+where:
+
+- `<file>` is the path to the `madnex` file.
+- `<material>` is the name of the material considered. This name can be
+  empty or `<none>` if the considered test is not
+  associated to a material.
+- `<behaviour>` is the name of the behaviour
+- `<test>` is the name of the test
 
 ## Support for a boundary condition modelling the effet of a mandrel in pipe modelling {#sec:tfel_4.1:mtest:mandrel}
 
@@ -599,6 +731,30 @@ b = mtest.Behaviour(library = 'src/libBehaviour.so',
                     hypothesis = 'PlaneStrain')
 ~~~~
 
+## Exporting an `MTest`test to a `madnex` file {#sec:tfel:4.1:python:mtest:export_mtest_file}
+
+The `TestDescription` data structure (see Section
+@sec:tfel:4.1:mtest:TestDescription) and the `loadMTestFileContent` and
+`write` functions (see Sections @sec:tfel:4.1:mtest:loadMTestFileContent
+and @sec:tfel:4.1:mtest:write) are exposed in the `mtest` `python`
+module.
+
+### Example of usage {#sec:tfel:4.1:python:mtest:export_mtest_file:usage}
+
+~~~~{.python}
+import mtest
+
+d = mtest.TestDescription()
+d.author = 'John Doe'
+d.date = '01/03/2022'
+d.name = 'UniaxialTensileTest'
+d.scheme = 'mtest'
+d.behaviour = 'Plasticity'
+mtest.loadMTestFileContent(d, 'Plasticity.mtest')
+
+mtest.write(d,'Plasticity.mdnx')
+~~~~
+
 # `mfront-query` improvements
 
 ## New behaviour queries
@@ -639,6 +795,28 @@ $ mfront-query --post-processing-variables Elasticity.mfront
 - PrincipalStrain (εᵖ)
 ~~~~
 
+### List of `MTest` tests associated with a behaviour in a `madnex` file
+
+The `--list-behaviour-mtest-tests` command line argument can be used to
+display the list of tests associated with a behaviour in a `madnex`
+file.
+
+Optionnally, this command line argument accept the options
+`sorted-by-behaviours` or `unsorted` (see the examples below).
+
+#### Examples of usage
+
+~~~~{.cxx}
+$ mfront-query --list-behaviour-mtest-tests --test=".+Tensile.+" Plasticity.mdnx
+- tests associated with behaviour Plasticity
+    - UniaxialTensileTest
+~~~~
+
+~~~~{.cxx}
+$ mfront-query --list-behaviour-mtest-tests=unsorted --test=".+Tensile.+" Plasticity.mdnx
+UniaxialTensileTest
+~~~~
+
 # Issues fixed
 
 ## Issue #125: [mfront] Remove behaviour sources if not needed
@@ -648,20 +826,26 @@ For more details, see : <https://github.com/thelfer/tfel/issues/125>.
 ## Issue #124: [mfront] Add DSL option to disable runtime change of the out of bound policy
 
 This feature is described in Section
-@sec:tfel:mfront:global_options:out_of_bounds_policy_runtime_modification.
+@sec:tfel:4.1:mfront:global_options:out_of_bounds_policy_runtime_modification.
 
 For more details, see : <https://github.com/thelfer/tfel/issues/124>.
 
 ## Issue #123: [mfront] Add DSL option to change the default out of bounds policy
 
 This feature is described in Section
-@sec:tfel:mfront:global_options:default_out_of_bounds_policy.
+@sec:tfel:4.1:mfront:global_options:default_out_of_bounds_policy.
 
 For more details, see : <https://github.com/thelfer/tfel/issues/123>.
 
 ## Issue #122: [mfront] remove usage of exceptions in the computeTangentOperator method generated by the `Implicit` DSL
 
 For more details, see : <https://github.com/thelfer/tfel/issues/122>.
+
+## Issue #111: [mtest] Support for `madnex` file
+
+This feature is described in depth in Section @sec:tfel:4.1:mtest:madnex_support.
+
+For more details, see : <https://github.com/thelfer/tfel/issues/111>.
 
 ## Issue #108: [mtest] Support for extended types in MTest
 
@@ -670,14 +854,14 @@ For more details, see : <https://github.com/thelfer/tfel/issues/108>.
 ## Issue 94: [mfront] Add option to disable initialization of parameters from text file
 
 This feature is described in Section
-@sec:tfel:mfront:global_options:parameters_initialization_from_file.
+@sec:tfel:4.1:mfront:global_options:parameters_initialization_from_file.
 
 For more details, see : <https://github.com/thelfer/tfel/issues/94>.
 
 ## Issue 91: [mfront] define build identifier using options
 
 This feature is described in Section
-@sec:tfel:mfront:global_options:build_identifier.
+@sec:tfel:4.1:mfront:global_options:build_identifier.
 
 For more details, see : <https://github.com/thelfer/tfel/issues/91>.
 
@@ -709,7 +893,7 @@ For more details, see : <https://github.com/thelfer/tfel/issues/57>.
 ## Issue #50: [mfront] Options to avoid the automatic declaration of the temperature as an external state variable {#sec:tfel:4.1:issue:50}
 
 This option is described in depth in Section
-@sec:tfel:mfront:global_options:temperature_as_first_external_state_variable.
+@sec:tfel:4.1:mfront:global_options:temperature_as_first_external_state_variable.
 
 For more details, see : <https://github.com/thelfer/tfel/issues/50>.
 
@@ -727,7 +911,7 @@ available, `false` otherwise.
 
 For more details, see : <https://github.com/thelfer/tfel/issues/39>.
 
-## Issue #38: [tfel-config] Add query associated with MADNEX support
+## Issue #38: [tfel-config] Add query associated with `madnex` support
 
 `tfel-config` now supports an command line option named
 `--madnex-support` which displays true if `madnex` files are supported,
@@ -815,7 +999,7 @@ For more details, see : <https://github.com/thelfer/tfel/issues/23>.
 ## Issue #22 : [mfront] Option to treat parameters as static variables
 
 This option is described in depth in Section
-@sec:tfel:mfront:global_options:parameters_as_static_variables.
+@sec:tfel:4.1:mfront:global_options:parameters_as_static_variables.
 
 For more details, see : <https://github.com/thelfer/tfel/issues/22>.
 

@@ -72,8 +72,6 @@ namespace mtest {
                             const std::string& f,
                             const std::vector<std::string>& ecmds,
                             const std::map<std::string, std::string>& s) {
-    this->file = f;
-    this->treatCharAsString(true);
     this->openFile(f);
     this->stripComments();
     // substitutions
@@ -105,7 +103,7 @@ namespace mtest {
                           tokenizer.end());
     }
     this->execute(t);
-  }
+  }  // end of execute
 
   void MTestParser::execute(MTest& t) {
     auto p = this->tokens.cbegin();

@@ -48,6 +48,8 @@ namespace mfront {
                const char *const *const,
                std::shared_ptr<ModelDSL>,
                const std::string &);
+    //! \brief return the number of queries to be treated
+    std::size_t getNumberOfQueriesToBeTreated();
     //! \brief treat the requests
     virtual void exe();
     //! \brief destructor

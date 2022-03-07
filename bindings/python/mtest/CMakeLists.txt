@@ -1,5 +1,6 @@
 mtest_python_module(_mtest
   pymtest.cxx
+  MTestFileExport.cxx
   MaterialProperty.cxx
   Behaviour.cxx
   SchemeBase.cxx

@@ -28,7 +28,7 @@ namespace mtest {
   struct Evolution;
 
   struct MTEST_VISIBILITY_EXPORT SchemeParserBase
-      : public tfel::utilities::CxxTokenizer {
+      : protected tfel::utilities::CxxTokenizer {
     //! \brief a simple alias
     using tokens_iterator = TokensContainer::const_iterator;
     //! \brief constructor
@@ -37,6 +37,8 @@ namespace mtest {
     ~SchemeParserBase() override;
 
    protected:
+    //
+    void openFile(const std::string&);
     /*!
      * \brief allow an lonely ';'
      * \param[in,out] p : position in the input file

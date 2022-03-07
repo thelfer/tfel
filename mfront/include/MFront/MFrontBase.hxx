@@ -51,9 +51,26 @@ namespace mfront {
     virtual bool treatUnknownArgumentBase();
     /*!
      * \brief method that must be called once all the arguments have been
-     * parsed
+     * parsed.
+     *
+     * \note This methods checks that the `material_identifier`,
+     * `material_property_identifier`, `behaviour_identifier` and
+     * `model_identifier` members are empty. If not, it means that those
+     * identifiers have been defined after the last input files.
+     *
+     * \see the `addInputPaths` method for details
      */
     virtual void finalizeArgumentsParsing();
+    /*!
+     * \brief append paths generated from the given argument to the input files
+     * \param[in] p: path generator
+     *
+     * \note for `madnex` files, the path are generated using the information
+     * provided by the `material_identifier`, `material_property_identifier`,
+     * `behaviour_identifier` and `model_identifier` members. Those members are
+     * cleared after the treatment.
+     */
+    virtual void addInputPaths(const std::string&);
     //! \brief treat the `--verbose` command line option
     virtual void treatVerbose();
     //! \brief treat the `--unicode-output` command line option

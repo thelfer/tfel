@@ -16,6 +16,7 @@ nocite: |
     @li_influence_2022
     @seidlhofer_hygro-coupled_2022
     @kafle_numerical_2022
+    @elabdi:tel-03247723
     @singh_irradiation_2021
     @guo_nspfem2d_2021
     @parise_etude_2021
@@ -32,6 +33,7 @@ nocite: |
     @parisio_model_2020
     @garcia_effect_2020
     @deng_slope_2020
+    @masson_modified_2020
     @helfer_assisted_2020
     @bleyer_small-strain_2020
     @bleyer_multiphase_2020
