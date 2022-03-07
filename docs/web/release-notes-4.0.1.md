@@ -19,6 +19,10 @@ eqnPrefixTemplate: "($$i$$)"
 
 # Issues fixed
 
+## Issue #132: [mfront] Quantities support in the `StandardElasticity` brick when plane stress support is enabled
+
+For more details, see <https://github.com/thelfer/tfel/issues/132>
+
 ## Issue #106: [mfront] Exported metadata about types can be wrong with the new type declaration adopted in `TFEL-4.0`
 
 ### Description of the issue
@@ -101,7 +105,7 @@ Tiny matrices defined by `tmatrix<N, M, value_type>` are encoded as:
   of a tensorial object and if `value_type` is a scalar type.
 - an bi-dimensional array otherwise.
 
-For more details, see : <https://github.com/thelfer/tfel/issues/108>.
+For more details, see : <https://github.com/thelfer/tfel/issues/106>.
 
 ## Issue #105: [TFELMath] Missing specialisations of the `DerivativeTypeDispatcher` class
 
