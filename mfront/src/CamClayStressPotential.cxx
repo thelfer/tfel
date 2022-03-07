@@ -52,7 +52,7 @@ namespace mfront::bbrick {
                                           AbstractBehaviourDSL& dsl,
                                           const DataMap& d) {
     StressPotentialBase::initialize(bd, dsl, d);
-  }  // end CamClayStressPotential
+  }  // end of initialize
 
   void CamClayStressPotential::completeVariableDeclaration(
       BehaviourDescription& bd, const AbstractBehaviourDSL& dsl) const {
@@ -68,7 +68,7 @@ namespace mfront::bbrick {
       getLogStream()
           << "CamClayStressPotential::completeVariableDeclaration: end\n";
     }
-  }
+  } // end of completeVariableDeclaration
 
   void CamClayStressPotential::endTreatment(BehaviourDescription& bd,
                                             const AbstractBehaviourDSL&) const {
@@ -153,23 +153,29 @@ namespace mfront::bbrick {
           "unsupported variable type");
     }
     return c;
-}  // end of generateImplicitEquationDerivatives
+  }  // end of generateImplicitEquationDerivatives
 
   void CamClayStressPotential::computeElasticPrediction(
       BehaviourDescription&) const {}  // end of computeElasticPrediction
 
   std::string CamClayStressPotential::getStressNormalisationFactor(
       const BehaviourDescription&) const {
+    return "this->young";
   }  // end of getStressNormalisationFactor
 
   std::string CamClayStressPotential::getEquivalentStressLowerBound(
       const BehaviourDescription&) const {
-
+    return "(this->relative_value_for_the_equivalent_stress_lower_bound)"
+           " * " +
+           this->getStressNormalisationFactor(bd);
   }  // end of getEquivalentStressLowerBound
 
   std::vector<OptionDescription> CamClayStressPotential::getOptions(
       const BehaviourDescription& bd, const bool b) const {
-    auto opts = std::vector<OptionDescription>{};//StressPotentialBase::getOptions(bd, b);
+    auto opts = StressPotentialBase::getGeneralOptions();
+    const auto th_opts =
+        StressPotentialBase::getIsotropicThermalExpansionOptions();
+    std::copy(th_opts.begin(), th_opts.end(), std::back_inserter(opts));
     return opts;
   }  // end of getOptions
 
