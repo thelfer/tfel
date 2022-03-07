@@ -81,8 +81,7 @@ namespace mfront {
     } else if (a == "--all-material-properties") {
       set_material_property_identifier(".+");
     } else if (tfel::utilities::starts_with(a, "--material-property=")) {
-      set_material_property_identifier(
-          get_substring("--material-property="));
+      set_material_property_identifier(get_substring("--material-property="));
     } else if (a == "--all-behaviours") {
       set_behaviour_identifier(".+");
     } else if (tfel::utilities::starts_with(a, "--behaviour=")) {
@@ -100,8 +99,7 @@ namespace mfront {
     } else if (a == "/all-material-properties") {
       set_material_property_identifier(".+");
     } else if (tfel::utilities::starts_with(a, "/material-property=")) {
-      set_material_property_identifier(
-          get_substring("/material-property="));
+      set_material_property_identifier(get_substring("/material-property="));
     } else if (a == "/all-behaviours") {
       set_behaviour_identifier(".+");
     } else if (tfel::utilities::starts_with(a, "/behaviour=")) {
@@ -293,7 +291,7 @@ namespace mfront {
         }
       };
       raise_if((details.size() != 5) && (details.size() != 4));
-#else /* MFRONT_HAVE_MADNEX */
+#else  /* MFRONT_HAVE_MADNEX */
       tfel::raise(
           "getImplementationsPaths: "
           "madnex support has not been enabled");

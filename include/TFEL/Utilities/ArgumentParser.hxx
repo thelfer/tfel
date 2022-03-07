@@ -20,7 +20,7 @@
 #include "TFEL/Config/TFELConfig.hxx"
 #include "TFEL/Utilities/Argument.hxx"
 
-namespace tfel{
+namespace tfel {
 
   namespace utilities {
 
@@ -88,8 +88,8 @@ namespace tfel{
                                     const CallBack&);
       //! \brief parse arguments using registred methods.
       virtual void parseArguments();
-    //! \return the list of registred callbacks
-    const CallBacksContainer& getRegistredCallBacks() const;
+      //! \return the list of registred callbacks
+      const CallBacksContainer& getRegistredCallBacks() const;
       //! destructor
       virtual ~ArgumentParser();
 

@@ -52,10 +52,10 @@ namespace mfront {
 
   void QueryHandlerBase::registerCommandLineCallBacks() {
     this->registerNewCallBack("--verbose", &QueryHandlerBase::treatVerbose,
-                                "set verbose output", true);
+                              "set verbose output", true);
     this->registerNewCallBack("--unicode-output",
-                                &QueryHandlerBase::treatUnicodeOutput,
-                                "allow/disallow unicode output", true);
+                              &QueryHandlerBase::treatUnicodeOutput,
+                              "allow/disallow unicode output", true);
     this->registerNewCallBack(
         "--dsl-target", &QueryHandlerBase::treatDSLTarget,
         "get the kind of material knowledge treated by the dsl (material "
@@ -67,28 +67,30 @@ namespace mfront {
     this->registerNewCallBack(
         "--search-path", &QueryHandlerBase::treatSearchPath,
         "add a new path at the beginning of the search paths", true);
-    this->registerNewCallBack("--install-path", &QueryHandlerBase::treatInstallPath,
-                                "set the installation directory", true);
+    this->registerNewCallBack("--install-path",
+                              &QueryHandlerBase::treatInstallPath,
+                              "set the installation directory", true);
     this->registerNewCallBack("--install-prefix",
-                                &QueryHandlerBase::treatInstallPath,
-                                "set the installation directory "
-                                "(same as --install-path)",
-                                true);
+                              &QueryHandlerBase::treatInstallPath,
+                              "set the installation directory "
+                              "(same as --install-path)",
+                              true);
     this->registerCallBack(
         "--nomelt", CallBack("don't melt librairies sources",
                              [this] { this->melt_sources = false; }, false));
-    this->registerNewCallBack("--warning", "-W", &QueryHandlerBase::treatWarning,
-                                "print warnings");
+    this->registerNewCallBack(
+        "--warning", "-W", &QueryHandlerBase::treatWarning, "print warnings");
     this->registerNewCallBack("--pedantic", &QueryHandlerBase::treatPedantic,
-                                "print pedantic warning message");
+                              "print pedantic warning message");
     this->registerNewCallBack("--interface", &QueryHandlerBase::treatInterface,
-                                "define an interface", true);
+                              "define an interface", true);
 #ifdef MFRONT_HAVE_MADNEX
     this->registerNewCallBack("--material",
-                                &QueryHandlerBase::treatMaterialIdentifier,
-                                "specify a material identifier", true);
+                              &QueryHandlerBase::treatMaterialIdentifier,
+                              "specify a material identifier", true);
     this->registerNewCallBack(
-        "--material-property", &QueryHandlerBase::treatMaterialPropertyIdentifier,
+        "--material-property",
+        &QueryHandlerBase::treatMaterialPropertyIdentifier,
         "specify a material property identifier (can be a regular expression)",
         true);
     this->registerNewCallBack(
@@ -101,8 +103,7 @@ namespace mfront {
     this->registerCallBack(
         "--generated-sources",
         CallBack("show all the generated sources",
-                 [this] {
-      this->treatGeneratedSources(); }, true));
+                 [this] { this->treatGeneratedSources(); }, true));
     this->registerCallBack(
         "--specific-target-generated-sources",
         CallBack(
@@ -110,28 +111,24 @@ namespace mfront {
             [this] { this->treatSpecificTargetGeneratedSources(); }, true));
     this->registerCallBack(
         "--all-specific-targets-generated-sources",
-        CallBack(
-            "show all the generated sources associated specific targets",
-            [this] { this->treatAllSpecificTargetsGeneratedSources(); }, false));
+        CallBack("show all the generated sources associated specific targets",
+                 [this] { this->treatAllSpecificTargetsGeneratedSources(); },
+                 false));
     this->registerCallBack(
         "--generated-headers",
         CallBack("show all the generated headers",
-                 [this] {
-      this->treatGeneratedHeaders(); }, false));
+                 [this] { this->treatGeneratedHeaders(); }, false));
     this->registerCallBack("--cppflags",
                            CallBack("show all the global headers",
-                                    [this] {
-      this->treatCppFlags(); }, false));
+                                    [this] { this->treatCppFlags(); }, false));
     this->registerCallBack(
         "--libraries-dependencies",
         CallBack("show all the libraries dependencies",
-                 [this] {
-      this->treatLibrariesDependencies(); }, false));
+                 [this] { this->treatLibrariesDependencies(); }, false));
     this->registerCallBack(
         "--specific-targets",
         CallBack("show all the specific targets",
-                 [this] {
-      this->treatSpecificTargets(); }, false));
+                 [this] { this->treatSpecificTargets(); }, false));
     this->registerCallBack("--no-gui", CallBack("do not display errors using "
                                                 "a message box (windows only)",
                                                 [] {}, false));
@@ -148,19 +145,20 @@ namespace mfront {
     auto lmelt_sources = this->melt_sources;
     return [ldsl, lmelt_sources, o] {
       const auto& libraries = ldsl->getTargetsDescription().libraries;
-      auto write_sources = [lmelt_sources, &libraries](const LibraryDescription& l) {
+      auto write_sources = [lmelt_sources,
+                            &libraries](const LibraryDescription& l) {
         std::copy(l.sources.begin(), l.sources.end(),
                   std::ostream_iterator<std::string>(std::cout, " "));
         if (lmelt_sources) {
-        for (const auto d : l.deps) {
-          const auto pd = std::find_if(
-              libraries.begin(), libraries.end(),
-              [&d](const LibraryDescription& lib) { return lib.name == d; });
-          if (pd != libraries.end()) {
-            std::copy(pd->sources.begin(), pd->sources.end(),
-                      std::ostream_iterator<std::string>(std::cout, " "));
+          for (const auto d : l.deps) {
+            const auto pd = std::find_if(
+                libraries.begin(), libraries.end(),
+                [&d](const LibraryDescription& lib) { return lib.name == d; });
+            if (pd != libraries.end()) {
+              std::copy(pd->sources.begin(), pd->sources.end(),
+                        std::ostream_iterator<std::string>(std::cout, " "));
+            }
           }
-        }
         }
       };
       if ((o.empty()) || (o == "sorted-by-libraries")) {
@@ -207,9 +205,10 @@ namespace mfront {
     return sources;
   }
 
-  std::function<void()> QueryHandlerBase::generateSpecificTargetGeneratedSourcesQuery(
+  std::function<void()>
+  QueryHandlerBase::generateSpecificTargetGeneratedSourcesQuery(
       const std::string& n) const {
-    if (!n.empty()){
+    if (!n.empty()) {
       tfel::raise(
           "QueryHandlerBase::generateSpecificTargetGeneratedSourcesQuery: "
           "no option given for command line argument "

@@ -149,8 +149,7 @@ namespace mfront {
   }    // end of writeMadnexFile
 #endif /* MFRONT_HAVE_MADNEX */
 
-    void
-    write(const OverridableImplementation& i, const std::string& f) {
+  void write(const OverridableImplementation& i, const std::string& f) {
     const auto ext = [&f]() -> std::string {
       const auto p = f.find(".");
       if (p != std::string::npos) {

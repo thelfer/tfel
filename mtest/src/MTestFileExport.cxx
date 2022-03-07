@@ -61,8 +61,7 @@ namespace mtest {
     return cg;
   }  // end of names
 
-  static void writeMadnexFile(const TestDescription& d,
-                              const std::string& f) {
+  static void writeMadnexFile(const TestDescription& d, const std::string& f) {
     if (!d.scheme.empty()) {
       if ((d.scheme != "mtest") && (d.scheme != "ptest")) {
         tfel::raise("writeMadnexFile: invalid scheme '" + d.scheme + "'");

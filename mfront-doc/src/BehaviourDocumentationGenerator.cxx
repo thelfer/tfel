@@ -187,11 +187,11 @@ namespace mfront {
       } else {
         const auto uncompatible = [&d, &pd, &pv] {
           if ((pd->name != pv->name) ||
-                           (pd->externalName != d.getExternalName(pv->name)) ||
+              (pd->externalName != d.getExternalName(pv->name)) ||
               (pd->arraySize != pv->arraySize)) {
             return true;
           }
-          if(pd->type != pv->type){
+          if (pd->type != pv->type) {
             if (!((tfel::utilities::starts_with(pd->type, "struct")) &&
                   (tfel::utilities::starts_with(pv->type, "struct")))) {
               return true;
@@ -387,7 +387,6 @@ namespace mfront {
                 }
               }
             }
-
           }
           os << '\n';
         }
@@ -671,20 +670,20 @@ namespace mfront {
           << "eqnPrefixTemplate: ($$i$$)\n"
           << "---";
     } else {
-    out << "# " << mb.getClassName() << " behaviour description\n\n"
-        << "* file   : " << fd.fileName << '\n'
-        << "* author : ";
-    if (!fd.authorName.empty()) {
-      out << fd.authorName << '\n';
-    } else {
-      out << "(unspecified)\n";
-    }
-    out << "* date   : ";
-    if (!fd.date.empty()) {
-      out << fd.date;
-    } else {
-      out << "(unspecified)";
-    }
+      out << "# " << mb.getClassName() << " behaviour description\n\n"
+          << "* file   : " << fd.fileName << '\n'
+          << "* author : ";
+      if (!fd.authorName.empty()) {
+        out << fd.authorName << '\n';
+      } else {
+        out << "(unspecified)\n";
+      }
+      out << "* date   : ";
+      if (!fd.date.empty()) {
+        out << fd.date;
+      } else {
+        out << "(unspecified)";
+      }
     }
     out << "\n\n";
     if (!fd.description.empty()) {
@@ -699,8 +698,7 @@ namespace mfront {
     } else {
       out << "No description specified";
     }
-    out << "\n\n"
-          << basic_title_level << "## List of supported Hypotheses\n\n";
+    out << "\n\n" << basic_title_level << "## List of supported Hypotheses\n\n";
     const auto& mh = mb.getModellingHypotheses();
     const auto& dh = mb.getDistinctModellingHypotheses();
     for (const auto& h : mh) {
@@ -710,35 +708,33 @@ namespace mfront {
       }
       out << '\n';
     }
-      out << '\n'  //
-          << basic_title_level << "# Variables\n\n";
+    out << '\n'  //
+        << basic_title_level << "# Variables\n\n";
     printData(out, mb, "Material properties",
-                getData(mb, &BehaviourData::getMaterialProperties),
-                this->standalone);
+              getData(mb, &BehaviourData::getMaterialProperties),
+              this->standalone);
     out << '\n';
     printData(out, mb, "State variables",
-                getData(mb, &BehaviourData::getPersistentVariables),
-                this->standalone);
+              getData(mb, &BehaviourData::getPersistentVariables),
+              this->standalone);
     out << '\n';
     printData(out, mb, "External state variables",
-                getData(mb, &BehaviourData::getExternalStateVariables),
-                this->standalone);
+              getData(mb, &BehaviourData::getExternalStateVariables),
+              this->standalone);
     out << '\n';
     if (mb.hasParameters()) {
       printData(out, mb, "Parameters",
-                  getData(mb, &BehaviourData::getParameters),
-                this->standalone);
+                getData(mb, &BehaviourData::getParameters), this->standalone);
     }
     out << '\n';
     printData(out, mb, "Local variables",
-                getData(mb, &BehaviourData::getLocalVariables),
-                this->standalone);
+              getData(mb, &BehaviourData::getLocalVariables), this->standalone);
     out << '\n';
-      const auto code = getCodeBlocksDocumentation(mb, this->standalone);
+    const auto code = getCodeBlocksDocumentation(mb, this->standalone);
     if (!code.empty() != 0) {
-        out << basic_title_level  //
-            << "# Code documentation\n\n"
-            << code << '\n';
+      out << basic_title_level  //
+          << "# Code documentation\n\n"
+          << code << '\n';
     }
 
   }  // end of BehaviourDocumentationGenerator::writeFullOutput

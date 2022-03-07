@@ -29,15 +29,15 @@ namespace tfel {
       using Handle = tfel::meta::InvalidType;
     };
 
-  //! \brief partial specialisation of ComputeUnaryResult_ for scalars
+    //! \brief partial specialisation of ComputeUnaryResult_ for scalars
     template <typename A, typename TagOp, typename Op>
     struct ComputeUnaryResult_<ScalarTag, TagOp, A, Op> {
       using A_ = typename std::decay<A>::type;
-    //! \brief
-    using Result = typename UnaryResultType<A_, Op>::type;
-    //! \brief no specific handlers for scalars
-    using Handle = typename UnaryResultType<A_, Op>::type;
-  }; // end of struct ComputeUnaryResult_
+      //! \brief
+      using Result = typename UnaryResultType<A_, Op>::type;
+      //! \brief no specific handlers for scalars
+      using Handle = typename UnaryResultType<A_, Op>::type;
+    };  // end of struct ComputeUnaryResult_
 
     template <typename A, typename Op>
     class ComputeUnaryResult {

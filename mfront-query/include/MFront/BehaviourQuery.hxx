@@ -40,8 +40,7 @@ namespace mfront {
    * \brief class used by the mfront-query tool to extract information from
    * behaviour implementation
    */
-  struct BehaviourQuery final
-      : public QueryHandlerBase {
+  struct BehaviourQuery final : public QueryHandlerBase {
     /*!
      * build a BehaviourQuery object based on command line arguments
      * \param[in] argc : number of command line arguments

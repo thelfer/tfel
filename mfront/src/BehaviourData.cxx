@@ -1030,7 +1030,7 @@ namespace mfront {
         if (!v.symbolic_form.empty()) {
           checkAlreadyRegistred(this->reservedNames,
                                 "\u0394" + v.symbolic_form);
-    } else {
+        } else {
           checkAlreadyRegistred(this->reservedNames, "\u0394" + v.name);
         }
       }
@@ -1040,8 +1040,8 @@ namespace mfront {
           tfel::raise(
               "BehaviourData::addVariable: "
               "already registred variable '" +
-              v.name + "' with entry name '" + pe->second +
-              "' now declares '" + v.getExternalName() + "' as glossary name");
+              v.name + "' with entry name '" + pe->second + "' now declares '" +
+              v.getExternalName() + "' as glossary name");
         }
         const auto p = this->glossaryNames.find(v.name);
         if (p == this->glossaryNames.end()) {
@@ -1093,10 +1093,10 @@ namespace mfront {
         }
       }
 
-    if (v.hasGlossaryName()) {
+      if (v.hasGlossaryName()) {
         this->registerGlossaryName(v.name, v.getExternalName());
-    }
-    if (v.hasEntryName()) {
+      }
+      if (v.hasEntryName()) {
         this->registerEntryName(v.name, v.getExternalName());
       }
     }

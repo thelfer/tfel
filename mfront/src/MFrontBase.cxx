@@ -370,7 +370,7 @@ namespace mfront {
     this->material_property_identifier.clear();
     this->behaviour_identifier.clear();
     this->model_identifier.clear();
-  } // end of addInputPaths
+  }  // end of addInputPaths
 
   void MFrontBase::treatVerbose() {
     const auto& o = this->getCurrentCommandLineArgument().getOption();

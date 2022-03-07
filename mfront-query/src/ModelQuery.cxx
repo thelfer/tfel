@@ -39,7 +39,7 @@ namespace mfront {
 
   std::shared_ptr<const AbstractDSL> ModelQuery::getDSL() const {
     return this->dsl;
-  } // end of getDSL
+  }  // end of getDSL
 
   void ModelQuery::registerCommandLineCallBacks() {
     QueryHandlerBase::registerCommandLineCallBacks();
@@ -205,7 +205,7 @@ namespace mfront {
     const auto& fd = this->dsl->getFileDescription();
     const auto& d = this->dsl->getModelDescription();
     // treating the queries
-    for (const auto& q : queries) {
+    for (const auto& q : this->queries) {
       if (getVerboseMode() >= VERBOSE_LEVEL2) {
         getLogStream() << "Treating query '" << q.first << "'\n";
       }

@@ -168,7 +168,7 @@ namespace mfront {
 
   std::shared_ptr<const AbstractDSL> BehaviourQuery::getDSL() const {
     return this->dsl;
-  } // end of getDSL
+  }  // end of getDSL
 
   void BehaviourQuery::registerCommandLineCallBacks() {
     QueryHandlerBase::registerCommandLineCallBacks();
@@ -1130,7 +1130,6 @@ namespace mfront {
   }  // end of treatModellingHypothesis
 
   void BehaviourQuery::exe() {
-    using namespace std;
     if (getVerboseMode() >= VERBOSE_LEVEL2) {
       getLogStream() << "Treating file '" << this->file << "'\n";
     }
@@ -1142,7 +1141,7 @@ namespace mfront {
     if (!this->queries.empty()) {
       if (this->hypothesis == ModellingHypothesis::UNDEFINEDHYPOTHESIS) {
         if (d.areAllMechanicalDataSpecialised()) {
-          ostringstream msg;
+          std::ostringstream msg;
           const auto& mh = d.getModellingHypotheses();
           if (mh.size() == 1u) {
             this->hypothesis = *(mh.begin());

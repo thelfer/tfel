@@ -48,9 +48,11 @@ namespace tfel {
     // struct Expr<t2tost2<N,T>,
     // 			T2toST2FromTinyMatrixView2Expr<N,Mn,Mm,In,Im,T> >
     // 	: public T2toST2Concept<Expr<t2tost2<N,T>,
-    // 					      T2toST2FromTinyMatrixView2Expr<N,Mn,Mm,In,Im,T> >
+    // 					      T2toST2FromTinyMatrixView2Expr<N,Mn,Mm,In,Im,T>
+    // >
     // >, 	  public t2tost2_base<Expr<t2tost2<N,T>,
-    // 					    T2toST2FromTinyMatrixView2Expr<N,Mn,Mm,In,Im,T> >
+    // 					    T2toST2FromTinyMatrixView2Expr<N,Mn,Mm,In,Im,T>
+    // >
     // >
 
     // {

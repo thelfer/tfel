@@ -1251,17 +1251,17 @@ namespace mfront {
     }
     // adding dependencies to main targets
     for (const auto& al : atd.libraries) {
-        for (auto& l : this->td.libraries) {
-          if (l.name != al.name) {
-            insert_if(l.deps, al.name);
-          }
+      for (auto& l : this->td.libraries) {
+        if (l.name != al.name) {
+          insert_if(l.deps, al.name);
         }
+      }
       for (auto& tg : this->td.specific_targets) {
         if ((tg.first == "all") || (tg.first == "clean")) {
           continue;
-      }
+        }
         insert_if(tg.second.libraries, al.name);
-    }
+      }
     }
     mergeTargetsDescription(this->td, atd, false);
     this->ldflags.clear();

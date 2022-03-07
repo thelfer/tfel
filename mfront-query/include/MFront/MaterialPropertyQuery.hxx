@@ -36,8 +36,7 @@ namespace mfront {
    * \brief class used by the mfront-query tool to extract information from
    * the implementation of a material property
    */
-  struct MaterialPropertyQuery final
-      : public QueryHandlerBase {
+  struct MaterialPropertyQuery final : public QueryHandlerBase {
     /*!
      * build a MaterialPropertyQuery object based on command line arguments
      * \param[in] argc : number of command line arguments
