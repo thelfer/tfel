@@ -100,6 +100,10 @@ namespace mtest {
     void addTest(std::shared_ptr<SchemeBase>, const std::string&);
     std::shared_ptr<SchemeBase> createMTestTest(const std::string&);
     std::shared_ptr<SchemeBase> createPTestTest(const std::string&);
+    void treatMadnexInputFile(const std::string&);
+    void treatStandardInputFile(const std::string&);
+
+#ifdef MADNEX_MTEST_TEST_SUPPORT
     /*!
      * \param[in] file_name: file name
      * \param[in] material_name: name of the material
@@ -110,8 +114,8 @@ namespace mtest {
                                   const std::string&,
                                   const std::string&,
                                   const std::string&);
-    void treatMadnexInputFile(const std::string&);
-    void treatStandardInputFile(const std::string&);
+#endif /* MADNEX_MTEST_TEST_SUPPORT */
+
     //! \brief input files
     std::vector<std::string> inputs;
     //! \brief external commands
@@ -495,6 +499,7 @@ namespace mtest {
     return t;
   }  // end of createPTestTest
 
+#ifdef MADNEX_MTEST_TEST_SUPPORT
   void MTestMain::appendTestFromMadnexFile(const std::string& file_name,
                                            const std::string& material_name,
                                            const std::string& behaviour_name,
@@ -539,6 +544,7 @@ namespace mtest {
     }
     this->addTest(t, test_name);
   }  // end of appendTestFromMadnexFile
+#endif /* MADNEX_MTEST_TEST_SUPPORT */
 
   void MTestMain::treatMadnexInputFile(const std::string& i) {
 #ifdef MADNEX_MTEST_TEST_SUPPORT
