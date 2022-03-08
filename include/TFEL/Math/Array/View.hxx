@@ -304,6 +304,17 @@ namespace tfel::math {
     using type = std::remove_cv_t<MappedType>;
   };  // end of struct ResultOfEvaluation
 
+  /*!
+   * \brief evaluate a view
+   * \return the evaluated object
+   * \param[in] v: view
+   */
+  template <typename MappedType, typename ArrayPolicy>
+  EvaluationResult<View<MappedType, ArrayPolicy>> eval(
+      const View<MappedType, ArrayPolicy>& v) {
+    return v;
+  }  // end of eval
+
   //! \brief view to a scalar
   template <typename ScalarType>
   using scalar_view = std::conditional_t<
