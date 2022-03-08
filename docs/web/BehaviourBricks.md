@@ -49,8 +49,6 @@ name of the brick. This name can be given as a string.
 };
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-
-
 # List of available bricks
 
 The following brick are available:
@@ -66,6 +64,11 @@ The following brick are available:
   potential](HookeStressPotential.html). In particular, all options passed to
   the `StandardElasticity` brick are indeed forwarded to the underlying
   Hooke stress potential.
-- the [`DDIF2` brick](DDIF2Brick.html)
-- the [`StandardElastoViscoplasticity` brick](StandardElastoViscoPlasticityBrick.html)
-- [`FiniteStrainSingleCrystal`](finitestrainsinglecrystal.html)
+- the [`DDIF2` brick](DDIF2Brick.html). This brick is based in the
+  [`DDIF2` stress potential](DDIF2StressPotential.html).
+- the [`StandardElastoViscoplasticity` brick](StandardElastoViscoPlasticityBrick.html).
+- the `CamClayElasticity` brick. This brick is based on the [`CamClay`
+  stress potential](CamClayStressPotential.html). In particular, all
+  options passed to the `CamClayElasticity` brick are indeed forwarded
+  to the underlying `CamClay` stress potential.
+- the [`FiniteStrainSingleCrystal` brick](finitestrainsinglecrystal.html).

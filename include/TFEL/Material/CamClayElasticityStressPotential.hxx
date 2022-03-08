@@ -34,7 +34,10 @@ namespace tfel::material {
    * \param[in] nu: poisson ratio
    * \param[in] p_min: pressure threshold
    */
-  template <typename StrainStensorType, typename stress, typename real>
+  template <typename StrainStensorType,
+            typename real,
+            typename istress,
+            typename stress>
   std::tuple<
       tfel::math::stensor<tfel::math::getSpaceDimension<StrainStensorType>(),
                           stress>,
@@ -42,7 +45,7 @@ namespace tfel::material {
                            stress>>
   computeCamClayElasticity(const StrainStensorType&,
                            const real,
-                           const stress,
+                           const istress,
                            const real,
                            const stress);
   /*!
@@ -64,8 +67,9 @@ namespace tfel::material {
   template <typename StressStensorType,
             typename StrainStensorType,
             typename StrainStensorType2,
-            typename stress,
-            typename real>
+            typename real,
+            typename istress,
+            typename stress>
   std::tuple<
       tfel::math::stensor<tfel::math::getSpaceDimension<StressStensorType>(),
                           stress>,
@@ -75,7 +79,7 @@ namespace tfel::material {
                              const StrainStensorType&,
                              const StrainStensorType2&,
                              const real,
-                             const stress,
+                             const istress,
                              const real,
                              const stress);
   /*!
@@ -88,7 +92,10 @@ namespace tfel::material {
    * \param[in] mu: shear modulus
    * \param[in] p_min: pressure threshold
    */
-  template <typename StrainStensorType, typename stress, typename real>
+  template <typename StrainStensorType,
+            typename real,
+            typename istress,
+            typename stress>
   std::tuple<
       tfel::math::stensor<tfel::math::getSpaceDimension<StrainStensorType>(),
                           stress>,

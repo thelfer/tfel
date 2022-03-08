@@ -176,6 +176,7 @@ pandoc_html(ExtendingStandardElastoViscoPlasticityBrick-StressCriterion "--toc" 
 pandoc_html(ExtendingStandardElastoViscoPlasticityBrick-PorousStressCriterion "--toc" "--toc-depth=2"  "--number-sections")
 pandoc_html(HookeStressPotential "--toc" "--toc-depth=2")
 pandoc_html(DDIF2StressPotential "--toc" "--toc-depth=2")
+pandoc_html(CamClayStressPotential "--toc" "--toc-depth=2" "--number-sections")
 pandoc_html(ExplicitBerveillerZaouiPolyCrystals "--toc" "--toc-depth=2")
 pandoc_html(Burger_EDF_CIWAP_2021 "--toc" "--toc-depth=2")
 

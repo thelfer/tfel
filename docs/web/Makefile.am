@@ -132,6 +132,7 @@ EXTRA_DIST=CMakeLists.txt					      \
        ./ExtendingStandardElastoViscoPlasticityBrick-PorousStressCriterion.md \
 	   ./HookeStressPotential.md				     \
 	   ./DDIF2StressPotential.md				     \
+	   ./CamClayStressPotential.md				     \
 	   ./DefaultCZMDSL-keywords.md				      \
 	   ./DefaultDSL-keywords.md				      \
 	   ./DefaultFiniteStrainDSL-keywords.md			      \
