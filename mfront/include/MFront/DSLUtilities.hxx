@@ -20,8 +20,10 @@
 #include <iosfwd>
 #include <vector>
 #include <string>
+#include <functional>
 
 #include "MFront/MFrontConfig.hxx"
+#include "MFront/BehaviourDescription.hxx"
 #include "TFEL/Glossary/Forward/Glossary.hxx"
 #include "MFront/MaterialKnowledgeType.hxx"
 
@@ -35,7 +37,6 @@ namespace mfront {
   struct StaticVariableDescriptionContainer;
   struct MaterialKnowledgeDescription;
   struct MaterialPropertyDescription;
-  struct BehaviourDescription;
 
   /*!
    * \return a list of standard types defined in the `tfel::config::Type` type
@@ -293,6 +294,24 @@ namespace mfront {
   void writeArrayOfStringsSymbol(std::ostream&,
                                  const std::string&,
                                  const std::vector<std::string>&);
+  /*!
+   * \return a modifier suitable for evaluating a material property at
+   * \(t+\theta\,dt\).
+   * \param[in] bd: behaviour description
+   */
+  MFRONT_VISIBILITY_EXPORT std::function<
+      std::string(const BehaviourDescription::MaterialPropertyInput &)>
+  getMiddleOfTimeStepModifier(const BehaviourDescription &);
+
+  /*!
+   * \return a modifier suitable for evaluating a material property at
+   * \(t+dt\).
+   * \param[in] bd: behaviour description
+   */
+  MFRONT_VISIBILITY_EXPORT
+  std::function<
+      std::string(const BehaviourDescription::MaterialPropertyInput &)>
+  getEndOfTimeStepModifier(const BehaviourDescription &);
 
 #ifdef MFRONT_HAVE_MADNEX
 

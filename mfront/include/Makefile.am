@@ -200,7 +200,7 @@ nobase_noinst_HEADERS = MFront/IsotropicBehaviourDSLBase.hxx              \
 			MFront/StandardElasticityBrick.hxx                            \
 			MFront/StandardElastoViscoPlasticityBrick.hxx                 \
 			MFront/DDIF2Brick.hxx                                         \
-			MFront/CamClayBrick.hxx                                       \
+			MFront/CamClayElasticityBrick.hxx                             \
 			MFront/FiniteStrainSingleCrystalBrick.hxx                     \
 			MFront/NewtonRaphsonSolvers.hxx			              \
 			MFront/BroydenSolvers.hxx				      \

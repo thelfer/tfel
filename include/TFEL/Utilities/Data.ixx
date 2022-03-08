@@ -46,13 +46,13 @@ namespace tfel::utilities::internals {
    */
   template <>
   struct DataConvertor<double> {
-    static double exe(const Data& d) {
+    static inline double exe(const Data& d) {
       if (d.is<int>()) {
         return d.get<int>();
       }
       return d.get<double>();
     }
-    static bool is_convertible(const Data& d) {
+    static inline bool is_convertible(const Data& d) {
       return d.is<int>() || d.is<double>();
     }
   };  // end of struct DataConvertor

@@ -12,30 +12,11 @@
 #include "TFEL/Glossary/GlossaryEntry.hxx"
 #include "TFEL/Utilities/StringAlgorithms.hxx"
 #include "TFEL/Material/ModellingHypothesis.hxx"
+#include "MFront/DSLUtilities.hxx"
 #include "MFront/BehaviourBrick/IsotropicHardeningRule.hxx"
 #include "MFront/BehaviourBrick/BrickUtilities.hxx"
 
 namespace mfront::bbrick {
-
-  std::function<std::string(const BehaviourDescription::MaterialPropertyInput&)>
-  getMiddleOfTimeStepModifier(const BehaviourDescription& bd) {
-    using MaterialPropertyInput = BehaviourDescription::MaterialPropertyInput;
-    return [&bd](const MaterialPropertyInput& i) -> std::string {
-      if ((i.category == MaterialPropertyInput::TEMPERATURE) ||
-          (i.category ==
-           MaterialPropertyInput::AUXILIARYSTATEVARIABLEFROMEXTERNALMODEL) ||
-          (i.category == MaterialPropertyInput::EXTERNALSTATEVARIABLE)) {
-        return "this->" + i.name + "+(this->theta)*(this->d" + i.name + ')';
-      } else if ((i.category == MaterialPropertyInput::MATERIALPROPERTY) ||
-                 (i.category == MaterialPropertyInput::PARAMETER)) {
-        return "this->" + i.name;
-      } else if (i.category == MaterialPropertyInput::STATICVARIABLE) {
-        return bd.getClassName() + "::" + i.name;
-      } else {
-        tfel::raise("unsupported input type for variable '" + i.name + "'");
-      }
-    };
-  }  // end of getMiddleOfTimeStepModifier
 
   std::string generateMaterialPropertyInitializationCode(
       const AbstractBehaviourDSL& dsl,
@@ -44,7 +25,7 @@ namespace mfront::bbrick {
       const BehaviourDescription::MaterialProperty& mp) {
     auto c = std::string{};
     if (!mp.is<BehaviourDescription::ConstantMaterialProperty>()) {
-      auto mts = getMiddleOfTimeStepModifier(bd);
+      auto mts = mfront::getMiddleOfTimeStepModifier(bd);
       std::ostringstream mps;
       mps << "this->" + n + " = ";
       dsl.writeMaterialPropertyEvaluation(mps, mp, mts);
@@ -53,6 +34,32 @@ namespace mfront::bbrick {
     }
     return c;
   }  // end of generateMaterialPropertyInitializationCode
+
+  std::string generateMaterialPropertyInitializationCode(
+      const AbstractBehaviourDSL& dsl,
+      const BehaviourDescription& bd,
+      const std::string& n_mts,
+      const std::string& n_ets,
+      const BehaviourDescription::MaterialProperty& mp) {
+    auto c = std::string{};
+    if (!mp.is<BehaviourDescription::ConstantMaterialProperty>()) {
+      c = generateMaterialPropertyInitializationCode(dsl, bd, n_mts, mp);
+      if (!bd.isMaterialPropertyConstantDuringTheTimeStep(mp)) {
+        auto ets = mfront::getEndOfTimeStepModifier(bd);
+        std::ostringstream mps;
+        mps << "this->" + n_ets + " = ";
+        dsl.writeMaterialPropertyEvaluation(mps, mp, ets);
+        mps << ";\n";
+        c += mps.str();
+      } else {
+        c = "this->" + n_ets + " = this->" + n_mts + ";\n";
+      }
+    } else {
+      c = "this->" + n_ets + " = this->" + n_mts + ";\n";
+    }
+    return c;
+  }  // end of generateMaterialPropertyInitializationCode
+
 
   BehaviourDescription::MaterialProperty
   getBehaviourDescriptionMaterialProperty(AbstractBehaviourDSL& dsl,
@@ -88,18 +95,33 @@ namespace mfront::bbrick {
   void declareParameterOrLocalVariable(
       BehaviourDescription& bd,
       BehaviourDescription::MaterialProperty& mp,
+      const VariableDescription& v) {
+    constexpr auto h = tfel::material::ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+    if (mp.is<BehaviourDescription::ConstantMaterialProperty>()) {
+      auto& cmp = mp.get<BehaviourDescription::ConstantMaterialProperty>();
+      cmp.name = v.name;
+      // declare associated parameter
+      bd.addParameter(h, v);
+      bd.setParameterDefaultValue(h, v.name, cmp.value);
+    } else {
+      bd.addLocalVariable(h, v);
+    }
+  }  // end of declareParameterOrLocalVariable
+
+  void declareParameterOrLocalVariable(
+      BehaviourDescription& bd,
+      BehaviourDescription::MaterialProperty& mp,
       const std::string& t,
       const std::string& n) {
     constexpr auto h = tfel::material::ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+    VariableDescription m(t, n, 1u, 0u);
     if (mp.is<BehaviourDescription::ConstantMaterialProperty>()) {
       auto& cmp = mp.get<BehaviourDescription::ConstantMaterialProperty>();
       cmp.name = n;
       // declare associated parameter
-      VariableDescription m(t, n, 1u, 0u);
       bd.addParameter(h, m);
       bd.setParameterDefaultValue(h, n, cmp.value);
     } else {
-      VariableDescription m(t, n, 1u, 0u);
       bd.addLocalVariable(h, m);
     }
   }  // end of declareParameterOrLocalVariable

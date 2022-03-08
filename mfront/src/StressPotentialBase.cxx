@@ -24,6 +24,7 @@ namespace mfront::bbrick {
   void StressPotentialBase::initialize(BehaviourDescription& bd,
                                        AbstractBehaviourDSL& dsl,
                                        const DataMap& d) {
+    mfront::bbrick::check(d, this->getOptions(bd, true));
     StressPotentialBase::handleThermalExpansionOptions(bd, dsl, d);
     StressPotentialBase::
         declareRelativeValueForTheEquivalentStressLowerBoundDefinitionParameter(

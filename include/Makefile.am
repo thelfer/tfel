@@ -37,6 +37,8 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Material/OrthotropicPlasticity.hxx	                                                     \
 			TFEL/Material/OrthotropicPlasticity.ixx	                                                     \
 			TFEL/Material/Lame.hxx			                                                     \
+			TFEL/Material/CamClayElasticityStressPotential.hxx                                           \
+			TFEL/Material/CamClayElasticityStressPotential.ixx                                           \
 			TFEL/Material/Hill.hxx			                                                     \
 			TFEL/Material/Hill.ixx			                                                     \
 			TFEL/Material/Hosford1972YieldCriterion.hxx	                                             \

@@ -70,7 +70,7 @@ namespace tfel::utilities {
     bool allowMultipleKeysInMap = false;
   };  // end of struct DataParsingOptions
 
-  //! list of all type handled by the Data structure
+  //! \brief list of all types handled by the Data structure
   using DataTypes = tfel::meta::GenerateTypeList<bool,
                                                  int,
                                                  double,

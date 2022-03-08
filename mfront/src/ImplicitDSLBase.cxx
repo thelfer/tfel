@@ -1499,43 +1499,8 @@ namespace mfront {
 
   void ImplicitDSLBase::writeBehaviourLocalVariablesInitialisation(
       std::ostream& os, const Hypothesis h) const {
-    using Modifier = std::function<std::string(const MaterialPropertyInput&)>;
-    Modifier mts = [this](const MaterialPropertyInput& i) -> std::string {
-      if ((i.category == MaterialPropertyInput::TEMPERATURE) ||
-          (i.category ==
-           MaterialPropertyInput::AUXILIARYSTATEVARIABLEFROMEXTERNALMODEL) ||
-          (i.category == MaterialPropertyInput::EXTERNALSTATEVARIABLE)) {
-        return "this->" + i.name + "+(this->theta)*(this->d" + i.name + ')';
-      } else if ((i.category == MaterialPropertyInput::MATERIALPROPERTY) ||
-                 (i.category == MaterialPropertyInput::STATEVARIABLE) ||
-                 (i.category == MaterialPropertyInput::PARAMETER)) {
-        return "this->" + i.name;
-      } else if (i.category == MaterialPropertyInput::STATICVARIABLE) {
-        return this->mb.getClassName() + "::" + i.name;
-      } else {
-        this->throwRuntimeError(
-            "ImplicitDSLBase::writeBehaviourLocalVariablesInitialisation",
-            "unsupported input type for variable '" + i.name + "'");
-      }
-    };
-    Modifier ets = [this](const MaterialPropertyInput& i) -> std::string {
-      if ((i.category == MaterialPropertyInput::TEMPERATURE) ||
-          (i.category ==
-           MaterialPropertyInput::AUXILIARYSTATEVARIABLEFROMEXTERNALMODEL) ||
-          (i.category == MaterialPropertyInput::EXTERNALSTATEVARIABLE)) {
-        return "this->" + i.name + "+this->d" + i.name;
-      } else if ((i.category == MaterialPropertyInput::MATERIALPROPERTY) ||
-                 (i.category == MaterialPropertyInput::STATEVARIABLE) ||
-                 (i.category == MaterialPropertyInput::PARAMETER)) {
-        return "this->" + i.name;
-      } else if (i.category == MaterialPropertyInput::STATICVARIABLE) {
-        return this->mb.getClassName() + "::" + i.name;
-      } else {
-        this->throwRuntimeError(
-            "ImplicitDSLBase::writeBehaviourLocalVariablesInitialisation",
-            "unsupported input type for variable '" + i.name + "'");
-      }
-    };
+    auto mts = getMiddleOfTimeStepModifier(this->mb);
+    auto ets = getEndOfTimeStepModifier(this->mb);
     if (this->mb.getAttribute(BehaviourDescription::computesStiffnessTensor,
                               false)) {
       os << "// updating the stiffness tensor at the middle of the time "

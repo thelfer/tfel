@@ -124,7 +124,7 @@ libTFELMFront_la_SOURCES = MFront.cxx                                     \
 		           StandardElasticityBrick.cxx                            \
 		           StandardElastoViscoPlasticityBrick.cxx                 \
 		           DDIF2Brick.cxx                                         \
-		           CamClayBrick.cxx                                       \
+		           CamClayElasticityBrick.cxx                             \
 			   FiniteStrainSingleCrystalBrick.cxx                        \
 		           LocalDataStructure.cxx                                 \
 		           BehaviourBrickFactory.cxx                              \

@@ -1,5 +1,5 @@
 /*!
- * \file   mfront/include/MFront/CamClayBrick.hxx
+ * \file   mfront/include/MFront/CamClayElasticityBrick.hxx
  * \brief
  * \author Thomas Helfer
  * \date   25/02/2022
@@ -11,8 +11,8 @@
  * project under specific licensing conditions.
  */
 
-#ifndef LIB_MFRONT_CAMCLAYBRICKBEHAVIOURBRICK_HXX
-#define LIB_MFRONT_CAMCLAYBRICKBEHAVIOURBRICK_HXX
+#ifndef LIB_MFRONT_CAMCLAYELASTICITYBRICKBEHAVIOURBRICK_HXX
+#define LIB_MFRONT_CAMCLAYELASTICITYBRICKBEHAVIOURBRICK_HXX
 
 #include <memory>
 #include "MFront/BehaviourBrickBase.hxx"
@@ -29,13 +29,13 @@ namespace mfront {
    * This brick provides a brick based on the Cam-Clay non linear elastic
    * behaviour.
    */
-  struct CamClayBrick : public BehaviourBrickBase {
+  struct CamClayElasticityBrick : public BehaviourBrickBase {
     /*!
      * \brief constructor
      * \param[in] dsl_ : calling domain specific language
      * \param[in] bd_  : mechanical behaviour description
      */
-    CamClayBrick(AbstractBehaviourDSL&, BehaviourDescription&);
+    CamClayElasticityBrick(AbstractBehaviourDSL&, BehaviourDescription&);
     std::string getName() const override;
     BehaviourBrickDescription getDescription() const override;
     std::vector<bbrick::OptionDescription> getOptions(
@@ -44,13 +44,13 @@ namespace mfront {
     std::vector<Hypothesis> getSupportedModellingHypotheses() const override;
     void completeVariableDeclaration() const override;
     void endTreatment() const override;
-    //! destructor
-    ~CamClayBrick() override;
+    //! \brief destructor
+    ~CamClayElasticityBrick() override;
 
    protected:
     std::shared_ptr<bbrick::StressPotential> ccsp;
-  };  // end of struct CamClayBrick
+  };  // end of struct CamClayElasticityBrick
 
 }  // end of namespace mfront
 
-#endif /* LIB_MFRONT_CAMCLAYBRICKBEHAVIOURBRICK_H */
+#endif /* LIB_MFRONT_CAMCLAYELASTICITYBRICKBEHAVIOURBRICK_HXX */

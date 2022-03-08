@@ -135,7 +135,7 @@ set(TFELMFront_SOURCES
     StandardElasticityBrick.cxx
     StandardElastoViscoPlasticityBrick.cxx
     DDIF2Brick.cxx
-    CamClayBrick.cxx
+    CamClayElasticityBrick.cxx
     FiniteStrainSingleCrystalBrick.cxx
     LocalDataStructure.cxx
     PerformanceProfiling.cxx

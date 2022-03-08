@@ -22,6 +22,7 @@
 #include "TFEL/Utilities/Data.hxx"
 #include "TFEL/Glossary/GlossaryEntry.hxx"
 #include "MFront/MFrontConfig.hxx"
+#include "MFront/DSLUtilities.hxx"
 #include "MFront/AbstractBehaviourDSL.hxx"
 #include "MFront/BehaviourDescription.hxx"
 
@@ -30,14 +31,6 @@ namespace mfront::bbrick {
   // forward declaration
   struct IsotropicHardeningRule;
 
-  /*!
-   * \return a modifier suitable for evaluating a material property at
-   * \(t+\theta\,dt\).
-   * \param[in] bd: behaviour description
-   */
-  MFRONT_VISIBILITY_EXPORT std::function<
-      std::string(const BehaviourDescription::MaterialPropertyInput &)>
-  getMiddleOfTimeStepModifier(const BehaviourDescription &);
   /*!
    * \brief check that the options names are in a given set
    * of keys.
@@ -74,8 +67,19 @@ namespace mfront::bbrick {
    */
   MFRONT_VISIBILITY_EXPORT BehaviourDescription::MaterialProperty
   getBehaviourDescriptionMaterialProperty(AbstractBehaviourDSL &,
-                                          const std::string&,
+                                          const std::string &,
                                           const tfel::utilities::Data &);
+  /*!
+   * \brief declare a parameter or a local variable used to store the
+   * evaluation of the material property.
+   * \param[out] bd: behaviour description
+   * \param[in,out] mp: material property
+   * \param[in] v: variable description
+   */
+  MFRONT_VISIBILITY_EXPORT void declareParameterOrLocalVariable(
+      BehaviourDescription &,
+      BehaviourDescription::MaterialProperty &,
+      const VariableDescription &);
   /*!
    * \brief declare a parameter or a local variable used to store the
    * evaluation of the material property.
@@ -196,6 +200,24 @@ namespace mfront::bbrick {
   generateMaterialPropertyInitializationCode(
       const AbstractBehaviourDSL &,
       const BehaviourDescription &,
+      const std::string &,
+      const BehaviourDescription::MaterialProperty &);
+  /*!
+   * \return the code initializing the variable containing the material
+   * property value at \(t+\theta\,dt\) and \(t+dt\).
+   * \param[in] dsl: abstract behaviour dsl.
+   * \param[in] bd: behaviour description
+   * \param[in] n_mts: name of the variable storing the material property value
+   * at the middle of the time step.
+   * \param[in] n_ets: name of the variable storing the  material property value
+   * at the end of the time step.
+   * \param[in] mp: material property description.
+   */
+  MFRONT_VISIBILITY_EXPORT std::string
+  generateMaterialPropertyInitializationCode(
+      const AbstractBehaviourDSL &,
+      const BehaviourDescription &,
+      const std::string &,
       const std::string &,
       const BehaviourDescription::MaterialProperty &);
   /*!

@@ -571,6 +571,47 @@ namespace mfront {
     symbols.insert({s, r});
   }  // end of addSymbol
 
+  std::function<std::string(const BehaviourDescription::MaterialPropertyInput&)>
+  getMiddleOfTimeStepModifier(const BehaviourDescription& bd) {
+    using MaterialPropertyInput = BehaviourDescription::MaterialPropertyInput;
+    return [&bd](const MaterialPropertyInput& i) -> std::string {
+      if ((i.category == MaterialPropertyInput::TEMPERATURE) ||
+          (i.category ==
+           MaterialPropertyInput::AUXILIARYSTATEVARIABLEFROMEXTERNALMODEL) ||
+          (i.category == MaterialPropertyInput::EXTERNALSTATEVARIABLE)) {
+        return "this->" + i.name + "+(this->theta)*(this->d" + i.name + ')';
+      } else if ((i.category == MaterialPropertyInput::MATERIALPROPERTY) ||
+                 (i.category == MaterialPropertyInput::PARAMETER)) {
+        return "this->" + i.name;
+      } else if (i.category == MaterialPropertyInput::STATICVARIABLE) {
+        return bd.getClassName() + "::" + i.name;
+      } else {
+        tfel::raise("unsupported input type for variable '" + i.name + "'");
+      }
+    };
+  }  // end of getMiddleOfTimeStepModifier
+
+  std::function<std::string(const BehaviourDescription::MaterialPropertyInput&)>
+  getEndOfTimeStepModifier(const BehaviourDescription& bd) {
+    using MaterialPropertyInput = BehaviourDescription::MaterialPropertyInput;
+    return [&bd](const MaterialPropertyInput& i) -> std::string {
+      if ((i.category == MaterialPropertyInput::TEMPERATURE) ||
+          (i.category ==
+           MaterialPropertyInput::AUXILIARYSTATEVARIABLEFROMEXTERNALMODEL) ||
+          (i.category == MaterialPropertyInput::EXTERNALSTATEVARIABLE)) {
+        return "this->" + i.name + "+this->d" + i.name;
+      } else if ((i.category == MaterialPropertyInput::MATERIALPROPERTY) ||
+                 (i.category == MaterialPropertyInput::STATEVARIABLE) ||
+                 (i.category == MaterialPropertyInput::PARAMETER)) {
+        return "this->" + i.name;
+      } else if (i.category == MaterialPropertyInput::STATICVARIABLE) {
+        return bd.getClassName() + "::" + i.name;
+      } else {
+        tfel::raise("unsupported input type for variable '" + i.name + "'");
+      }
+    };
+  } // end of getEndOfTimeStepModifier()
+
 #ifdef MFRONT_HAVE_MADNEX
 
   std::tuple<std::string, std::string, std::string, std::string>
