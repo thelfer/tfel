@@ -85,9 +85,12 @@ namespace tfel::math {
     if constexpr (N == 1u) {
       return Result{s(0) - tr, s(1) - tr, s(2) - tr};
     } else if constexpr (N == 2u) {
-      return Result{s(0) - tr, s(1) - tr, s(2) - tr, s(3)};
+      using NumType = numeric_type<StensorType>;
+      return Result{s(0) - tr, s(1) - tr, s(2) - tr, NumType(s(3))};
     } else if constexpr (N == 3u) {
-      return Result{s(0) - tr, s(1) - tr, s(2) - tr, s(3), s(4), s(5)};
+      using NumType = numeric_type<StensorType>;
+      return Result{s(0) - tr,     s(1) - tr,     s(2) - tr,
+                    NumType(s(3)), NumType(s(4)), NumType(s(5))};
     }
   }  // end of deviator
 
