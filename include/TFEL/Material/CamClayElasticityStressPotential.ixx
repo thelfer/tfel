@@ -18,7 +18,6 @@ namespace tfel::material {
 
   template <typename StrainStensorType,
             typename real,
-            typename istress,
             typename stress>
   std::tuple<
       tfel::math::stensor<tfel::math::getSpaceDimension<StrainStensorType>(),
@@ -27,7 +26,7 @@ namespace tfel::material {
                            stress>>
   computeCamClayElasticity(const StrainStensorType& eel,
                            const real e0,
-                           const istress kappa,
+                           const real kappa,
                            const real nu,
                            const stress p_min) {
     constexpr auto N = tfel::math::getSpaceDimension<StrainStensorType>();
@@ -59,7 +58,6 @@ namespace tfel::material {
             typename StrainStensorType,
             typename StrainStensorType2,
             typename real,
-            typename istress,
             typename stress>
   std::tuple<
       tfel::math::stensor<tfel::math::getSpaceDimension<StressStensorType>(),
@@ -70,7 +68,7 @@ namespace tfel::material {
                              const StrainStensorType& eel,
                              const StrainStensorType2& deel,
                              const real e0,
-                             const istress kappa,
+                             const real kappa,
                              const real nu,
                              const stress p_min) {
     constexpr auto N = tfel::math::getSpaceDimension<StressStensorType>();
@@ -100,7 +98,6 @@ namespace tfel::material {
 
   template <typename StrainStensorType,
             typename real,
-            typename istress,
             typename stress>
   std::tuple<
       tfel::math::stensor<tfel::math::getSpaceDimension<StrainStensorType>(),
@@ -109,7 +106,7 @@ namespace tfel::material {
                            stress>>
   computeCamClayElasticityIII(const StrainStensorType& eel,
                               const real e0,
-                              const istress kappa,
+                              const real kappa,
                               const stress mu,
                               const stress p_min) {
     constexpr auto N = tfel::math::getSpaceDimension<StrainStensorType>();

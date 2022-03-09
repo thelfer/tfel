@@ -425,6 +425,7 @@ namespace mfront::bbrick {
 
   void HookeStressPotentialBase::endTreatment(
       BehaviourDescription& bd, const AbstractBehaviourDSL& dsl) const {
+    StressPotentialBase::endTreatment(bd, dsl);
     // modelling hypotheses supported by the behaviour
     constexpr auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     const auto bmh = bd.getModellingHypotheses();

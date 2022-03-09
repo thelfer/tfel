@@ -76,7 +76,7 @@ namespace mfront::bbrick {
       if (!this->R0.empty()) {
         c += " + ";
       }
-      c += "(this->" + Hn + ")*(this->p" + fid + ")";
+      c += "(this->" + Hn + ") * (this->p" + fid + ")";
     }
     return c + ";\n";
   }  // end of computeElasticPrediction
@@ -123,7 +123,7 @@ namespace mfront::bbrick {
       if (!this->R0.empty()) {
         c += " + ";
       }
-      c += "(this->" + Hn + ")*";
+      c += "(this->" + Hn + ") * ";
       c += "(this->" + pn + "+(this->theta)*(this->d" + pn + "));\n";
       c += "const auto " + dR + " = this->" + Hn + ";\n";
     } else {

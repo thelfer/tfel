@@ -31,7 +31,13 @@ eqnPrefixTemplate: "($$i$$)"
 \newcommand{\ets}[1]{{\left.#1\right|_{t+\Delta\,t}}}
 
 This document describes the `CamClay` stress potential based on the
-`Cam-Clay` non linear elastic behaviours.
+`Cam-Clay` non linear elastic behaviours. The `CamClay` stress potential
+is the basis of the `CamClayElasticity` brick.
+
+The `CamClay` stress potential provides:
+
+- automatic computation of the consistent tangent operator.
+- a method called `computeElasticPrediction`.
 
 # Description
 
@@ -57,7 +63,9 @@ follows:
 \[
 K\paren{p} = \Frac{1+e_{0}}{\kappa}\,p
 \]{#eq:mfront:camclay:bulk_modulus}
-where the hydrostatic is assumed strictly positive.
+where the hydrostatic pressure is assumed strictly positive and where
+\(e_{0}\) and \(\kappa\) denotes repectively the initial void ratio and
+the unloading/reloading slope of the material.
 
 ## Hydrostatic pressure threshold
 

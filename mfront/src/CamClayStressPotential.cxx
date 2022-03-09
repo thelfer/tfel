@@ -159,7 +159,7 @@ namespace mfront::bbrick {
     treat_option("initial_void_ratio", "real", "mfront_ccb_e0",
                  "InitialVoidRatio", false);
     // unloading / reloading slope
-    treat_option("unloading_reloading_slope", "stress", "mfront_ccb_kappa",
+    treat_option("unloading_reloading_slope", "real", "mfront_ccb_kappa",
                  "UnloadingReloadingSlope", false);
     // Pressure threshold
     treat_option("pressure_threshold", "stress", "mfront_ccb_pmin",
@@ -244,9 +244,8 @@ namespace mfront::bbrick {
     // stress computations
     auto m = std::string {}; // elastic prediction
     m = "StressStensor computeElasticPrediction() const{\n"
-        "auto mfront_elastic_prediction = StressStensor{};\n"
-        "auto mfront_dummy_stress_derivative = "
-        "tfel::math::st2tost2<N,stress>{};\n";
+        "StressStensor mfront_elastic_prediction;\n"
+        "tfel::math::st2tost2<N,stress> mfront_dummy_stress_derivative; \n";
     CodeBlock s_mts;  // computeThermodynamicForces at the middle of time step
     CodeBlock s_ets;  // computeThermodynamicForces at the end of  time step
     if (deduce_shear_modulus_from_poisson_ratio) {
@@ -358,6 +357,7 @@ namespace mfront::bbrick {
 
   void CamClayStressPotential::endTreatment(
       BehaviourDescription& bd, const AbstractBehaviourDSL& dsl) const {
+    StressPotentialBase::endTreatment(bd, dsl);
     // modelling hypotheses supported by the behaviour
     constexpr auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     const auto bmh = bd.getModellingHypotheses();
@@ -447,13 +447,13 @@ namespace mfront::bbrick {
 
   std::string CamClayStressPotential::getStressNormalisationFactor(
       const BehaviourDescription&) const {
-    return "1 / (this->mfront_ccb_kappa_ets)";
+    return "(this->mfront_ccb_pmin) / (this->mfront_ccb_kappa_ets)";
   }  // end of getStressNormalisationFactor
 
   std::string CamClayStressPotential::getEquivalentStressLowerBound(
       const BehaviourDescription&) const {
     return "((this->relative_value_for_the_equivalent_stress_lower_bound)"
-           " / (this->mfront_ccb_kappa_ets))";
+           " * (this->mfront_ccb_pmin) / (this->mfront_ccb_kappa_ets))";
   }  // end of getEquivalentStressLowerBound
 
   CamClayStressPotential::~CamClayStressPotential() = default;

@@ -310,7 +310,7 @@ namespace mfront {
     os << "this->se=2*(this->mu)*(tfel::math::deviator(this->eel+("
        << this->mb.getClassName() << "::theta)*(this->deto)));\n"
        << "this->seq_e = sigmaeq(this->se);\n"
-       << "if(this->seq_e> 0.01 * (this->young) * "
+       << "if(this->seq_e> strain(1e-2) * (this->young) * "
        << "std::numeric_limits<NumericType>::epsilon()){\n"
        << "this->n = 3 * (this->se)/(2 * this->seq_e);\n"
        << "} else {\n"

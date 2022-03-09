@@ -31,6 +31,20 @@ namespace mfront::bbrick {
             bd, d);
   }  // end of initialize
 
+  void StressPotentialBase::endTreatment(BehaviourDescription& bd,
+                                         const AbstractBehaviourDSL& dsl) const {
+    const auto mhs = this->getSupportedModellingHypotheses(bd, dsl);
+    for (const auto h : bd.getModellingHypotheses()) {
+      if (std::find(mhs.begin(), mhs.end(), h) == mhs.end()) {
+        tfel::raise(
+            "StressPotentialBase::endTreatment: "
+            "modelling hypotesis '" +
+            ModellingHypothesis::toString(h) + "' is not supported by the '" +
+            this->getName() + "' stress potential");
+      }
+    }
+  }  // end of endTreatment
+
   std::vector<OptionDescription> StressPotentialBase::getGeneralOptions() {
     return {{"relative_value_for_the_equivalent_stress_lower_bound",
              "Relative value used to define a lower bound "

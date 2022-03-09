@@ -36,7 +36,6 @@ namespace tfel::material {
    */
   template <typename StrainStensorType,
             typename real,
-            typename istress,
             typename stress>
   std::tuple<
       tfel::math::stensor<tfel::math::getSpaceDimension<StrainStensorType>(),
@@ -45,7 +44,7 @@ namespace tfel::material {
                            stress>>
   computeCamClayElasticity(const StrainStensorType&,
                            const real,
-                           const istress,
+                           const real,
                            const real,
                            const stress);
   /*!
@@ -68,7 +67,6 @@ namespace tfel::material {
             typename StrainStensorType,
             typename StrainStensorType2,
             typename real,
-            typename istress,
             typename stress>
   std::tuple<
       tfel::math::stensor<tfel::math::getSpaceDimension<StressStensorType>(),
@@ -79,7 +77,7 @@ namespace tfel::material {
                              const StrainStensorType&,
                              const StrainStensorType2&,
                              const real,
-                             const istress,
+                             const real,
                              const real,
                              const stress);
   /*!
@@ -94,7 +92,6 @@ namespace tfel::material {
    */
   template <typename StrainStensorType,
             typename real,
-            typename istress,
             typename stress>
   std::tuple<
       tfel::math::stensor<tfel::math::getSpaceDimension<StrainStensorType>(),
@@ -103,7 +100,7 @@ namespace tfel::material {
                            stress>>
   computeCamClayElasticityIII(const StrainStensorType&,
                               const real,
-                              const stress,
+                              const real,
                               const stress,
                               const stress);
 

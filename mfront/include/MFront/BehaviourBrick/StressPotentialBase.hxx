@@ -29,6 +29,8 @@ namespace mfront::bbrick {
     void initialize(BehaviourDescription&,
                     AbstractBehaviourDSL&,
                     const DataMap&) override;
+    void endTreatment(BehaviourDescription&,
+                      const AbstractBehaviourDSL&) const override;
     //! \brief destructor
     ~StressPotentialBase() override;
 

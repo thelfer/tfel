@@ -19,6 +19,18 @@ eqnPrefixTemplate: "($$i$$)"
 
 # Issues fixed
 
+## Issue #137: [mfront] The plastic inelastic flow is not compatible with quantities bug mfront
+
+For more details, see <https://github.com/thelfer/tfel/issues/137>.
+
+## Issue #136: [TFEL/Math] deviator function does not work on view on symmetric tensors using on quantities bug tfel-math
+
+For more details, see <https://github.com/thelfer/tfel/issues/136>.
+
+## Issue #135: [TFEL/Math] eval on views enhancement tfel-math
+
+For more details, see <https://github.com/thelfer/tfel/issues/135>.
+
 ## Issue #132: [mfront] Quantities support in the `StandardElasticity` brick when plane stress support is enabled
 
 For more details, see <https://github.com/thelfer/tfel/issues/132>
