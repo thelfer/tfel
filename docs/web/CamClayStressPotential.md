@@ -70,7 +70,7 @@ the unloading/reloading slope of the material.
 ## Hydrostatic pressure threshold
 
 Equation @eq:mfront:camclay:bulk_modulus is only valid if the the
-hydrostatic is strictly positive. To ensure this, a threshold
+hydrostatic pressure is strictly positive. To ensure this, a threshold
 \(p_{\min}\) is introduced.
 
 Below this threshold, the behaviour is assumed linear, as follows:

@@ -1,3 +1,3 @@
 SUBDIRS=StandardElasticity FiniteStrainSingleCrystal DDIF2 \
-        StandardElastoViscoPlasticity
+        StandardElastoViscoPlasticity CamClayElasticity
 EXTRA_DIST=CMakeLists.txt

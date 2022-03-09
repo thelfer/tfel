@@ -1,0 +1,7 @@
+mfront_behaviour_brick_check_library(MFrontGenericCamClayElasticityBrickBehaviours
+  CamClayElasticity generic
+  CamClayElasticity CamClayElasticity_qt
+  CamClayElasticity2 CamClayElasticity2_qt
+  CamClayElasticity3 CamClayElasticity3_qt
+  CamClayElasticity4 CamClayElasticity4_qt
+  CamClayElasticity5 CamClayElasticity5_qt)

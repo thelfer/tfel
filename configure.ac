@@ -1151,6 +1151,8 @@ AC_OUTPUT([debug.sh Makefile Doxyfile docs/Makefile docs/tfel/Makefile
 	   mfront/tests/behaviours/bricks/FiniteStrainSingleCrystal/aster/Makefile
 	   mfront/tests/behaviours/bricks/DDIF2/Makefile
 	   mfront/tests/behaviours/bricks/DDIF2/castem/Makefile
+	   mfront/tests/behaviours/bricks/CamClayElasticity/Makefile
+	   mfront/tests/behaviours/bricks/CamClayElasticity/generic/Makefile
 	   mfront/tests/behaviours/bricks/StandardElastoViscoPlasticity/Makefile
 	   mfront/tests/behaviours/bricks/StandardElastoViscoPlasticity/castem/Makefile
 	   mfront/tests/behaviours/bricks/StandardElastoViscoPlasticity/generic/Makefile

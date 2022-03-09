@@ -1,0 +1,13 @@
+add_subdirectory(generic)
+
+install_mfront_data(tests/behaviours/bricks/CamClayElasticity CamClayElasticity.mfront)
+install_mfront_data(tests/behaviours/bricks/CamClayElasticity CamClayElasticity_qt.mfront)
+install_mfront_data(tests/behaviours/bricks/CamClayElasticity CamClayElasticity2.mfront)
+install_mfront_data(tests/behaviours/bricks/CamClayElasticity CamClayElasticity2_qt.mfront)
+install_mfront_data(tests/behaviours/bricks/CamClayElasticity CamClayElasticity3.mfront)
+install_mfront_data(tests/behaviours/bricks/CamClayElasticity CamClayElasticity3_qt.mfront)
+install_mfront_data(tests/behaviours/bricks/CamClayElasticity CamClayElasticity4.mfront)
+install_mfront_data(tests/behaviours/bricks/CamClayElasticity CamClayElasticity4_qt.mfront)
+install_mfront_data(tests/behaviours/bricks/CamClayElasticity CamClayElasticity5.mfront)
+install_mfront_data(tests/behaviours/bricks/CamClayElasticity CamClayElasticity5_qt.mfront)
+

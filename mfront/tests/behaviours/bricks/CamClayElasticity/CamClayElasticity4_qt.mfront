@@ -1,0 +1,13 @@
+@DSL Implicit;
+@Behaviour CamClayElasticity4_qt;
+@Author Thomas Helfer;
+@Date 08 / 03 / 2022;
+
+@UseQt true;
+
+@Algorithm NewtonRaphson;
+@Epsilon 1.e-14;
+@Theta 1;
+
+// all the material coefficients are declared as material properties
+@Brick CamClayElasticity{deduce_shear_modulus_from_poisson_ratio : true};

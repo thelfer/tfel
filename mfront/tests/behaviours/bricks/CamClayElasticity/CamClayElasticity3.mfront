@@ -1,0 +1,15 @@
+@DSL Implicit;
+@Behaviour CamClayElasticity3;
+@Author Thomas Helfer;
+@Date 08 / 03 / 2022;
+
+@Algorithm NewtonRaphson;
+@Epsilon 1.e-14;
+@Theta 1;
+
+@Brick CamClayElasticity{
+  unloading_reloading_slope : 0.01,
+  initial_void_ratio : 0.5,
+  shear_modulus: 100,
+  pressure_threshold : 1
+};
