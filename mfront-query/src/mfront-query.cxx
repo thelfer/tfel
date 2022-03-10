@@ -260,9 +260,11 @@ static std::vector<std::string> filter(const std::vector<std::string>& values,
   return results;
 } // end of filter
 
-static void listBehaviourMTestTests(const mfront::PathSpecifier& p,
-                                    const bool sorted_by_behaviours,
-                                    const std::string& test_specifier) {
+template <std::vector<std::string> (madnex::DataBase::*getAvailableTests)(
+    const std::string&, const std::string&) const>
+static void listBehaviourTests(const mfront::PathSpecifier& p,
+                               const bool sorted_by_behaviours,
+                               const std::string& test_specifier) {
   if (!p.material_property_identifier.empty()) {
     tfel::raise(
         "mfront-query: specifying a material property "
@@ -299,9 +301,9 @@ static void listBehaviourMTestTests(const mfront::PathSpecifier& p,
     for (const auto& b : behaviours) {
       const auto tests = [&test_specifier, &d, &m, &b] {
         if (test_specifier.empty()) {
-          return d.getAvailableMTestTests(m, b);
+          return ((d.*getAvailableTests)(m, b));
         }
-        return filter(d.getAvailableMTestTests(m, b), test_specifier);
+        return filter(((d.*getAvailableTests)(m, b)), test_specifier);
       }();
       if (tests.empty()) {
         continue;
@@ -325,7 +327,37 @@ static void listBehaviourMTestTests(const mfront::PathSpecifier& p,
   if (!sorted_by_behaviours) {
     std::cout << '\n';
   }
-}  // end of listBehaviourMTestTests
+}  // end of listBehaviourTests
+
+static void listBehaviourMTestTests(const mfront::PathSpecifier& p,
+                                    const bool sorted_by_behaviours,
+                                    const std::string& test_specifier) {
+#ifdef MADNEX_MTEST_TEST_SUPPORT
+  using MemberType = std::vector<std::string> (madnex::DataBase::*)(
+      const std::string&, const std::string&) const;
+  constexpr MemberType ptr = &madnex::DataBase::getAvailableMTestTests;
+  listBehaviourTests<ptr>(p, sorted_by_behaviours, test_specifier);
+#else /* MADNEX_MTEST_TEST_SUPPORT */
+  tfel::raise("mfront-query: mtest tests are not supported by the madnex library");
+#endif /* MADNEX_MTEST_TEST_SUPPORT */
+} // end of listBehaviourMTestTests
+
+static void listBehaviourMFMTestGeneratorTests(
+    const mfront::PathSpecifier& p,
+    const bool sorted_by_behaviours,
+    const std::string& test_specifier) {
+#ifdef MADNEX_MFM_TEST_GENERATOR_TEST_SUPPORT
+  using MemberType = std::vector<std::string> (madnex::DataBase::*)(
+      const std::string&, const std::string&) const;
+  constexpr MemberType ptr =
+      &madnex::DataBase::getAvailableMFMTestGeneratorTests;
+  listBehaviourTests<ptr>(p, sorted_by_behaviours, test_specifier);
+#else  /* MADNEX_MFM_TEST_GENERATOR_TEST_SUPPORT */
+  tfel::raise(
+      "mfront-query: mfm-test-generator tests are not supported by the madnex "
+      "library");
+#endif /* MADNEX_MFM_TEST_GENERATOR_TEST_SUPPORT */
+}  // end of listBehaviourMFMTestGeneratorTests
 
 #endif /* MFRONT_QUERY_HAVE_MADNEX */
 
@@ -411,7 +443,7 @@ static bool treatListImplementationPathsOption(bool& b,
   return false;
 }  // end of treatListImplementationPathsOption
 
-static bool treatListBehaviourMTestTestsOptions(bool& b,
+static bool treatListBehaviourTestsOptions(bool& b,
                                                 bool& sorted,
                                                 const char* const opt,
                                                 const std::string& arg) {
@@ -437,7 +469,7 @@ static bool treatListBehaviourMTestTestsOptions(bool& b,
     return true;
   }
   return false;
-}  // end of treatListBehaviourMTestTestsOptions
+}  // end of treatListBehaviourTestsOptions
 
 #endif /* MFRONT_QUERY_HAVE_MADNEX */
 
@@ -472,6 +504,8 @@ int main(const int argc, const char* const* const argv) {
     auto sort_behaviours_list = true;
     auto list_behaviour_mtest_tests = false;
     auto sort_behaviour_mtest_tests_list = true;
+    auto list_behaviour_mfm_test_generator_tests = false;
+    auto sort_behaviour_mfm_test_generator_tests_list = true;
     auto list_models = false;
     auto sort_models_list = true;
     std::string test;
@@ -592,10 +626,14 @@ int main(const int argc, const char* const* const argv) {
       } else if (treatListMaterialKnowledge(list_behaviours,
                                             sort_behaviours_list,
                                             "--list-behaviours", a)) {
-      } else if (treatListBehaviourMTestTestsOptions(
+      } else if (treatListBehaviourTestsOptions(
                      list_behaviour_mtest_tests,
                      sort_behaviour_mtest_tests_list,
                      "--list-behaviour-mtest-tests", a)) {
+      } else if (treatListBehaviourTestsOptions(
+                     list_behaviour_mfm_test_generator_tests,
+                     sort_behaviour_mfm_test_generator_tests_list,
+                     "--list-behaviour-mfm-test-generator-tests", a)) {
       } else if ((tfel::utilities::starts_with(a, "--test")) &&
                  (treatTest(a.substr(strlen("--test"))))) {
       } else if (treatListMaterialKnowledge(list_models, sort_models_list,
@@ -615,10 +653,14 @@ int main(const int argc, const char* const* const argv) {
       } else if ((tfel::utilities::starts_with(a, "/test")) &&
                  (treatTest(a.substr(strlen("/test"))))) {
         treatTest(a.substr(strlen("/test")));
-      } else if (treatListBehaviourMTestTestsOptions(
+      } else if (treatListBehaviourTestsOptions(
                      list_behaviour_mtest_tests,
                      sort_behaviour_mtest_tests_list,
                      "/list-behaviour-mtest-tests", a)) {
+      } else if (treatListBehaviourTestsOptions(
+                     list_behaviour_mfm_test_generator_tests,
+                     sort_behaviour_mfm_test_generator_tests_list,
+                     "/list-behaviour-mfm-test-generator-tests", a)) {
       } else if (treatListMaterialKnowledge(list_models, sort_models_list,
                                             "/list-models", a)) {
 #endif /* (defined _WIN32) || (defined _WIN64)*/
@@ -631,17 +673,23 @@ int main(const int argc, const char* const* const argv) {
                                                   current_path_specifier);
 #ifdef MFRONT_QUERY_HAVE_MADNEX
     if ((list_materials || list_material_properties ||  //
-         list_behaviours || list_models || list_behaviour_mtest_tests) &&
+         list_behaviours || list_models || list_behaviour_mtest_tests ||
+         list_behaviour_mfm_test_generator_tests) &&
         (list_implementation_paths)) {
       tfel::raise(
           "specifying --list-implementation-paths can't be combined "
           "with --list-materials, --list-material-properties, "
           "--list-behaviour, --list-behaviour-mtest-tests or --list-models");
     }
-    if ((!test.empty()) && (!list_behaviour_mtest_tests)) {
-      tfel::raise(
-          "using --test is only meaningful with "
-          "--list_behaviour_mtest_tests");
+    if (!test.empty()){
+      if ((!list_behaviour_mtest_tests) &&
+          (!list_behaviour_mfm_test_generator_tests)) {
+        tfel::raise(
+            "using --test is only meaningful with "
+            "--list_behaviour_mtest_tests or "
+            "--list_behaviour_mfm_test_generator_tests "
+            "command line arguments");
+      }
     }
     for (const auto& p : path_specifiers) {
       if (list_materials) {
@@ -662,9 +710,14 @@ int main(const int argc, const char* const* const argv) {
       if (list_behaviour_mtest_tests) {
         listBehaviourMTestTests(p, sort_behaviour_mtest_tests_list, test);
       }
+      if (list_behaviour_mfm_test_generator_tests) {
+        listBehaviourMFMTestGeneratorTests(
+            p, sort_behaviour_mfm_test_generator_tests_list, test);
+      }
       //
       if (list_materials || list_material_properties ||     //
           list_behaviours || list_behaviour_mtest_tests ||  //
+          list_behaviour_mfm_test_generator_tests ||        //
           list_models || list_implementation_paths) {
         std::exit(EXIT_SUCCESS);
       }

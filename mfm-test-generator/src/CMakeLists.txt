@@ -13,7 +13,8 @@ mfmtg_library(MFMTestGenerator
   UniaxialTensileTest.cxx
   ClosedPipeTest.cxx
   MTestInputFileGenerators.cxx
-  LicosInputFileGenerators.cxx)
+  LicosInputFileGenerators.cxx
+  MFMTestGeneratorFileExport.cxx)
 target_include_directories(MFMTestGenerator
    PUBLIC 
    $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/mfm-test-generator/include>

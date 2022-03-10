@@ -670,6 +670,73 @@ of the behaviour, as described in [Issue
 behaviours. The wrapper handles the pre and post-processing steps around
 the behaviour integration.
 
+# `mfm-test-generator` improvements
+
+## Support for `madnex` file {#sec:tfel:4.1:mfmtg:madnex_support}
+
+### Exporting an `mfm-test-generator` test to a `madnex` file
+
+The `MFMTestGenerator` library exposes a data structure named
+`TestDescription` which describes an `mfm-test-generator` file and two
+functions called respectively `loadMFMTestGeneratorFileContent` and
+`write`.
+
+This data structure and functions are exported in `python`, as described
+in Section @sec:tfel:4.1:python:mfmtg:export_mfmtg_file. Section
+@sec:tfel:4.1:python:mfmtg:export_mfmtg_file:usage provides an example
+of use.
+
+#### The `TestDescription` data structure {#sec:tfel:4.1:mfmtg:TestDescription}
+
+The `TestDescription` data structure exposes the following data members:
+
+- `author`, which describes the author of the test.
+- `date`, which describes the date at which the test has been created.
+- `scheme`, which describes the type of test. Valid values are `mtest`
+  and `ptest`.
+- `description`, which describes a description of the test.
+- `behaviour`, name of the behaviour to which the test is associated.
+  This data member is **required** to export the file in the `madnex`
+  file format.
+- `material`, name of the material to which the test is associated. This
+  data member can be empty.
+- `content`, content of the `mfm-test-generator` file. This content can
+  be filled from an existing `mfm-test-generator` file using the
+  `loadMFMTestGeneratorFileContent` function.
+
+#### The `loadMFMTestGeneratorFileContent` function {#sec:tfel:4.1:mfmtg:loadMFMTestGeneratorFileContent}
+
+The `loadMFMTestGeneratorFileContent` function loads the content of an
+`mfm_test_generator` file and stores it in the `content` data member of
+a `TestDescription` data structure.
+
+#### The `write` function {#sec:tfel:4.1:mfmtg:write}
+
+The `write` function exports an `mfm_test_generator` test, described by
+a `TestDescription` data structure, to a file.
+
+The file format is deduced from the extension of the file.
+
+Currently, only extensions associated with the [`madnex` file
+format](https://github.com/thelfer/madnex) are supported if `TFEL` is
+compiled with support of this file format. Those extensions are: `mdnx`,
+`madnex` (deprecated) or `edf` (experimental data file, deprecated).
+Note that the behaviour member of the metadata must be specified for
+export in the `madnex` file format.
+
+#### Best practices
+
+We highly recommend to use the following substitution variables when
+defining the test:
+
+- `@interface@`, which is meant to be replaced by the interface to be
+  used. This is very handy if the test can be run for different
+  interfaces
+- `@library@`, which is meant to be replaced by the path to the shared
+  library containing the tested behaviour.
+- `@behaviour@`, which contains the name of the function implementing
+  the behaviour for the considered interface.
+
 # Improvements to the `python` bindings 
 
 ## Improvements to the `TFEL/System` `python` module
@@ -755,6 +822,32 @@ mtest.loadMTestFileContent(d, 'Plasticity.mtest')
 mtest.write(d,'Plasticity.mdnx')
 ~~~~
 
+## The `mfm_test_generator` python module
+
+### Exporting an `mfm-test-generator` test to a `madnex` file {#sec:tfel:4.1:python:mfmtg:export_mfmtg_file}
+
+The `TestDescription` data structure (see Section
+@sec:tfel:4.1:mfmtg:TestDescription) and the
+`loadMFMTestGeneratorFileContent` and `write` functions (see Sections
+@sec:tfel:4.1:mfmtg:loadMFMTestGeneratorFileContent and
+@sec:tfel:4.1:mfmtg:write) are exposed in the `mfm_test_generator`
+`python` module.
+
+### Example of usage {#sec:tfel:4.1:python:mfmtg:export_mfmtg_file:usage}
+
+~~~~{.python}
+import mfm_test_generator
+
+d = mfm_test_generator.TestDescription()
+d.author = 'John Doe'
+d.date = '01/03/2022'
+d.name = 'UniaxialTensileTest'
+d.behaviour = 'Plasticity'
+mfm_test_generator.loadMFMTestGeneratorFileContent(d, 'Plasticity.mfmtg')
+
+mfm_test_generator.write(d,'Plasticity.mdnx')
+~~~~
+
 # `mfront-query` improvements
 
 ## New behaviour queries
@@ -815,6 +908,25 @@ $ mfront-query --list-behaviour-mtest-tests --test=".+Tensile.+" Plasticity.mdnx
 ~~~~{.cxx}
 $ mfront-query --list-behaviour-mtest-tests=unsorted --test=".+Tensile.+" Plasticity.mdnx
 UniaxialTensileTest
+~~~~
+
+### List of `mfm-test-generator` tests associated with a behaviour in a `madnex` file
+
+The `--list-behaviour-mfm-test-generator-tests` command line argument
+can be used to display the list of tests associated with a behaviour in
+a `madnex` file.
+
+Optionnally, this command line argument accept the options
+`sorted-by-behaviours` or `unsorted` (see the examples below).
+
+#### Examples of usage
+
+~~~~{.cxx}
+$ mfront-query --list-behaviour-mfm-test-generator-tests --test=".+Tensile.+" Plasticity.mdnx
+~~~~
+
+~~~~{.cxx}
+$ mfront-query --list-behaviour-mfm-test-generator-tests=unsorted --test=".+Tensile.+" Plasticity.mdnx
 ~~~~
 
 # Issues fixed

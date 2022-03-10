@@ -496,6 +496,15 @@ function(mtest_python_module name)
     PRIVATE "${PROJECT_SOURCE_DIR}/mfront/include")
 endfunction(mtest_python_module)
 
+function(mfm_test_generator_python_module name)
+  python_lib_module(${name} mfm_test_generator ${ARGN})
+  set(fullname "mfm_test_generator_${name}")
+  target_include_directories(py_${fullname}
+    PRIVATE "${PROJECT_SOURCE_DIR}/mfm-test-generator/include"
+    PRIVATE "${PROJECT_SOURCE_DIR}/mtest/include"
+    PRIVATE "${PROJECT_SOURCE_DIR}/mfront/include")
+endfunction(mfm_test_generator_python_module)
+
 function(tfel_python_script_base dir)
   if(${ARGC} LESS 1)
     message(FATAL_ERROR "tfel_python_script_base : no script specified")

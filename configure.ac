@@ -2731,6 +2731,8 @@ AC_OUTPUT([debug.sh Makefile Doxyfile docs/Makefile docs/tfel/Makefile
 	   bindings/python/mfront/umatxx/Behaviour.py
 	   bindings/python/mtest/Makefile
 	   bindings/python/mtest/__init__.py
+	   bindings/python/mfm_test_generator/Makefile
+	   bindings/python/mfm_test_generator/__init__.py
 	   bindings/python/include/Makefile
 	   bindings/python/tests/Makefile
 	   bindings/python/tests/pymfronttest1.py

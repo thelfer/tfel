@@ -17,7 +17,8 @@ libMFMTestGenerator_la_SOURCES  = \
    UniaxialTensileTest.cxx        \
    ClosedPipeTest.cxx             \
    MTestInputFileGenerators.cxx   \
-   LicosInputFileGenerators.cxx
+   LicosInputFileGenerators.cxx   \
+   MFMTestGeneratorFileExport.cxx
 
 libMFMTestGenerator_la_CPPFLAGS = $(AM_CPPFLAGS) -DMFMTestGenerator_EXPORTS
 if TFEL_WIN
