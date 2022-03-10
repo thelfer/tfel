@@ -47,8 +47,15 @@ namespace mfmtg {
                                         const char* const n) {
     const auto p = parameters.find(n);
     if (p == parameters.end()) {
-      tfel::raise("getParameterFromCString: no parameter named '" +
-                  std::string(n) + "'");
+      auto msg = "getParameterFromCString: no parameter named '" +
+                 std::string(n) + "'";
+      if (!parameters.empty()) {
+        msg += ". Available parameters are: ";
+        for (const auto& kv : parameters) {
+          msg += "\n- " + kv.first;
+        }
+      }
+      tfel::raise(msg);
     }
     return p->second;
   }  // end of getParameter

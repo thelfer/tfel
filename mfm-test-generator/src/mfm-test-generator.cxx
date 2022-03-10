@@ -68,14 +68,7 @@ namespace mfmtg {
 
     void execute() {
       for (const auto& i : this->input_files) {
-        try {
-          this->execute(i);
-        } catch (std::exception& e) {
-          message("Treatment of file '" + i + "' failed (" +
-                  std::string(e.what()) + ")");
-        } catch (...) {
-          message("Treatment of file '" + i + "' failed (unknown exception)");
-        }
+        this->execute(i);
       }
     }  // end of execute
 
@@ -264,11 +257,6 @@ namespace mfmtg {
                          "MFMTestGenerator::treatUnknownArgument: "
                          "no substitution given for pattern '" +
                              s1 + "'");
-          //           if (mfront::getVerboseMode() >= mfront::VERBOSE_LEVEL2) {
-          //             mfront::getLogStream() << "substituting '" << s1 << "'
-          //             by '" << s2
-          //                                    << "'\n";
-          //           }
           tfel::raise_if(!this->substitutions.insert({s1, s2}).second,
                          "MFMTestGenerator::treatUnknownArgument: "
                          "a substitution for '" +
@@ -331,17 +319,17 @@ namespace mfmtg {
 
     void treatStandardInputFile(const std::string& i) const {
 #ifdef MADNEX_MFM_TEST_GENERATOR_TEST_SUPPORT
-      if (this->test.empty()) {
+      if (!this->test.empty()) {
         tfel::raise(
             "MFMTestGenerator::treatStandardInputFile: "
             "specifying a test and a standard input file is not allowed");
       }
-      if (this->behaviour.empty()) {
+      if (!this->behaviour.empty()) {
         tfel::raise(
             "MFMTestGenerator::treatStandardInputFile: "
             "specifying a behaviour and a standard input file is not allowed");
       }
-      if (this->test.empty()) {
+      if (!this->test.empty()) {
         tfel::raise(
             "MFMTestGenerator::treatStandardInputFile: "
             "specifying a test and a standard input file is not allowed");
@@ -361,13 +349,23 @@ namespace mfmtg {
 #ifdef MADNEX_MFM_TEST_GENERATOR_TEST_SUPPORT
 
     void treatMadnexInputFile(const std::string& i) const {
+      if (this->behaviour.empty()) {
+        tfel::raise(
+            "MFMTestGenerator::treatMadnexInputFile: "
+            "no behaviour specified");
+      }
+      if (this->test.empty()) {
+        tfel::raise(
+            "MFMTestGenerator::treatMadnexInputFile: "
+            "no test specified");
+      }
       madnex::DataBase d(i);
       std::regex r(this->test);
       const auto m = this->material == "<none>" ? "" : this->material;
       auto tests = std::vector<std::string>{};
       for (const auto& tname : d.getAvailableMFMTestGeneratorTests(
                this->material, this->behaviour)) {
-        if (!std::regex_match(tname, r)) {
+        if (std::regex_match(tname, r)) {
           tests.push_back(tname);
         }
       }
@@ -384,17 +382,17 @@ namespace mfmtg {
     }  // end of treatMadnexInputFile
 
     void treatMadnexPath(const std::string& i) const {
-      if (this->test.empty()) {
+      if (!this->material.empty()) {
         tfel::raise(
             "MFMTestGenerator::treatMadnexPath: "
-            "specifying a test and a madnex path is not allowed");
+            "specifying a material and a madnex path is not allowed");
       }
-      if (this->behaviour.empty()) {
+      if (!this->behaviour.empty()) {
         tfel::raise(
             "MFMTestGenerator::treatMadnexPath: "
             "specifying a behaviour and a madnex path is not allowed");
       }
-      if (this->test.empty()) {
+      if (!this->test.empty()) {
         tfel::raise(
             "MFMTestGenerator::treatMadnexPath: "
             "specifying a test and a madnex path is not allowed");
@@ -485,12 +483,14 @@ namespace mfmtg {
     std::vector<std::string> ecmds;
     //! \brief substitutions
     std::map<std::string, std::string> substitutions;
+#ifdef MADNEX_MFM_TEST_GENERATOR_TEST_SUPPORT
     //! \brief material name (only useful for madnex files)
     std::string material;
     //! \brief material name (required for madnex files)
     std::string behaviour;
     //! \brief test name (required for madnex files)
     std::string test;
+#endif /* MADNEX_MFM_TEST_GENERATOR_TEST_SUPPORT */
   };  // end of MFMTestGenerator
 
 }  // end of namespace mfmtg

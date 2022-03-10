@@ -11,6 +11,7 @@
  * project under specific licensing conditions.
  */
 
+#include <iostream>
 #include <sstream>
 
 #ifdef MTEST_HAVE_MADNEX

@@ -140,16 +140,16 @@ author: "Thomas Helfer",
 date: "30/09/2019",
 description: "A first test case",
 behaviour: {
-  library: @library@
-  function : @behaviour@
+  library: @library@,
+  function : @behaviour@,
+  material_properties: { YoungModulus: 150e9,
+                         PoissonRatio: 0.3},
+  external_state_variables : { Temperature: 293.15 }
 },
 times : {0., 1.},
 imposed_strain : {
   times:{0, 1},
   values: {0,1.e-2}},
-material_properties: { YoungModulus: 150e9,
-                       PoissonRatio: 0.3},
-external_state_variables : { Temperature: 293.15 }
 ~~~~
 
 # The "ClosedPipeTest" test
