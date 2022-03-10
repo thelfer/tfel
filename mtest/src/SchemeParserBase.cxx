@@ -11,7 +11,6 @@
  * project under specific licensing conditions.
  */
 
-#include <iostream>
 #include <sstream>
 
 #ifdef MTEST_HAVE_MADNEX
@@ -118,7 +117,6 @@ namespace mtest {
                                                tokens_iterator& p) {
     mfront::getLogStream() << this->file << ":" << p->line << ":" << p->offset
                            << ": warning: extra ‘;’\n";
-    ++p;
   }  // end of SchemeParserBase::handleAuthor
 
   void SchemeParserBase::handleDate(SchemeBase& t, tokens_iterator& p) {
@@ -126,7 +124,6 @@ namespace mtest {
   }  // end of SchemeParserBase::handleDate
 
   void SchemeParserBase::handleDescription(SchemeBase& t, tokens_iterator& p) {
-    using namespace std;
     using namespace tfel::utilities;
     this->readSpecifiedToken("SchemeParserBase::handleDescription", "{", p,
                              this->tokens.end());
