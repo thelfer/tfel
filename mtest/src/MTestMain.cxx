@@ -122,19 +122,21 @@ namespace mtest {
     std::vector<std::string> ecmds;
     //! \brief substitutions
     std::map<std::string, std::string> substitutions;
+#ifdef MTEST_HAVE_MADNEX
     //! \brief material name (only useful for madnex files)
     std::string material;
     //! \brief material name (required for madnex files)
     std::string behaviour;
     //! \brief test name (required for madnex files)
     std::string test;
+#endif /* MTEST_HAVE_MADNEX */
     // xml output
     bool xml_output = false;
     // generate result file
     bool result_file_output = true;
     // generate residual file
     bool residual_file_output = false;
-    };
+  };
 
   MTestMain::MTestMain(const int argc, const char* const* const argv)
       : tfel::utilities::ArgumentParserBase<MTestMain>(argc, argv) {
@@ -197,29 +199,42 @@ namespace mtest {
         "Random:     Rounding mode is randomly changed at various "
         "stage of the compution.",
         true);
+#ifdef MTEST_HAVE_MADNEX
     auto treatBehaviour = [this] {
       if (!this->behaviour.empty()) {
-        tfel::raise(
-            "MTestMain::treatBehaviour: "
-            "no option given");
+        tfel::raise("MTestMain::treatBehaviour: behaviour already defined");
       }
-      this->behaviour = this->currentArgument->getOption();
+      const auto& o = this->currentArgument->getOption();
+      if (o.empty()) {
+        tfel::raise(
+            "MTestMain::treatBehaviour: no option given to "
+            "the --behaviour command line argument");
+      }
+      this->behaviour = o;
     };
     auto treatMaterial = [this] {
       if (!this->material.empty()) {
-        tfel::raise(
-            "MTestMain::treatMaterial: "
-            "no option given");
+        tfel::raise("MTestMain::treatMaterial: material already defined");
       }
-      this->material = this->currentArgument->getOption();
+      const auto& o = this->currentArgument->getOption();
+      if (o.empty()) {
+        tfel::raise(
+            "MTestMain::treatMaterial: no option given to "
+            "the --material command line argument");
+      }
+      this->material = o;
     };
     auto treatTest = [this] {
       if (!this->test.empty()) {
-        tfel::raise(
-            "MTestMain::treatTest: "
-            "no option given");
+        tfel::raise("MTestMain::treatTest: test already defined");
       }
-      this->test = this->currentArgument->getOption();
+      const auto& o = this->currentArgument->getOption();
+      if (o.empty()) {
+        tfel::raise(
+            "MTestMain::treatTest: no option given to "
+            "the --test command line argument");
+      }
+      this->test = o;
     };
     auto treatAllTests = [this] {
       if (!this->test.empty()) {
@@ -237,6 +252,17 @@ namespace mtest {
                            CallBack("set the test name", treatTest, true));
     this->registerCallBack("--all-tests",
                            CallBack("select all tests", treatAllTests, false));
+#ifdef _WIN32
+    this->registerCallBack("/behaviour", "/b",
+                           CallBack("set the behaviour", treatBehaviour, true));
+    this->registerCallBack("/material", "/m",
+                           CallBack("set the material", treatMaterial, true));
+    this->registerCallBack("/test", "/t",
+                           CallBack("set the test name", treatTest, true));
+    this->registerCallBack("/all-tests",
+                           CallBack("select all tests", treatAllTests, false));
+#endif /* _WIN32 */
+#endif /* MTEST_HAVE_MADNEX */
 #if !(defined _WIN32 || defined _WIN64 || defined __CYGWIN__)
     this->registerNewCallBack(
         "--backtrace", "-bt", &MTestMain::treatBacktrace,
@@ -483,14 +509,14 @@ namespace mtest {
     auto& tm = tfel::tests::TestManager::getTestManager();
     const auto r = tm.execute();
     return r.success() ? EXIT_SUCCESS : EXIT_FAILURE;
-  } // end of execute
+  }  // end of execute
 
   std::shared_ptr<SchemeBase> MTestMain::createMTestTest(
       const std::string& path) {
     auto t = std::make_shared<MTest>();
     t->readInputFile(path, this->ecmds, this->substitutions);
     return t;
-  } // end of createMTestTest
+  }  // end of createMTestTest
 
   std::shared_ptr<SchemeBase> MTestMain::createPTestTest(
       const std::string& path) {
@@ -543,7 +569,7 @@ namespace mtest {
       }
     }
     this->addTest(t, test_name);
-  }  // end of appendTestFromMadnexFile
+  }    // end of appendTestFromMadnexFile
 #endif /* MADNEX_MTEST_TEST_SUPPORT */
 
   void MTestMain::treatMadnexInputFile(const std::string& i) {
@@ -598,6 +624,7 @@ namespace mtest {
           this->test + "'");
     }
 #else  /* MADNEX_MTEST_TEST_SUPPORT */
+    static_cast<void>(i);
     tfel::raise(
         "MTestMain::treatMadnexInputFile: "
         "madnex support is not available");
@@ -605,6 +632,7 @@ namespace mtest {
   }    // end of treatMadnexInputFile
 
   void MTestMain::treatStandardInputFile(const std::string& i) {
+#ifdef MTEST_HAVE_MADNEX
     if (!this->material.empty()) {
       tfel::raise(
           "MTestMain::treatStandardInputFile: specifying a material is only "
@@ -620,6 +648,7 @@ namespace mtest {
           "MTestMain::treatStandardInputFile: specifying a test is only "
           "meaningful when using a madnex file");
     }
+#endif /* MTEST_HAVE_MADNEX */
     const auto pos = i.rfind('.');
     auto tname = i.substr(0, pos);
     tfel::raise_if(tname.back() == '/',
@@ -683,11 +712,11 @@ namespace mtest {
       tm.addTestOutput("MTest/" + n, o);
     }
     tm.addTestOutput("MTest/" + n, std::cout);
-  } // end of addTest
+  }  // end of addTest
 
   MTestMain::~MTestMain() = default;
 
-  }  // end of namespace mtest
+}  // end of namespace mtest
 
 /* coverity [UNCAUGHT_EXCEPT]*/
 int main(const int argc, const char* const* const argv) {

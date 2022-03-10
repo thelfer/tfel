@@ -17,14 +17,28 @@ mfmtg_library(MFMTestGenerator
   MFMTestGeneratorFileExport.cxx)
 target_include_directories(MFMTestGenerator
    PUBLIC 
+   $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/include>
+   $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/mfront/include>
+   $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/mfront/include>
    $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/mfm-test-generator/include>
    $<INSTALL_INTERFACE:include>)
 target_link_libraries(MFMTestGenerator
-  TFELMTest MFrontLogStream TFELMaterial
+  PUBLIC
+  MFrontLogStream
+  TFELMTest TFELMaterial
   TFELSystem TFELUtilities)
 
+if(TFEL_HAVE_MADNEX)
+  target_compile_definitions(MFMTestGenerator
+    PUBLIC MFM_TEST_GENERATOR_HAVE_MADNEX)
+  target_link_libraries(MFMTestGenerator
+    PUBLIC madnex::Madnex)
+endif(TFEL_HAVE_MADNEX)
+
 add_executable(mfm-test-generator mfm-test-generator.cxx)
-target_link_libraries(mfm-test-generator MFMTestGenerator)
+target_link_libraries(mfm-test-generator
+ PRIVATE
+ MFMTestGenerator)
 if(TFEL_APPEND_SUFFIX)
   set_target_properties(mfm-test-generator
     PROPERTIES OUTPUT_NAME "mfm-test-generator-${TFEL_SUFFIX}")

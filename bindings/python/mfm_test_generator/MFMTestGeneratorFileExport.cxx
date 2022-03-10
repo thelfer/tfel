@@ -1,5 +1,5 @@
 /*!
- * \file  bindings/python/mtest/MFMTestGeneratorFileExport.cxx
+ * \file  bindings/python/mfm_test_generator/MFMTestGeneratorFileExport.cxx
  * \brief
  * \author Thomas Helfer
  * \date   01/03/2022
@@ -14,27 +14,27 @@
 #include <boost/python.hpp>
 #include "MFMTestGenerator/MFMTestGeneratorFileExport.hxx"
 
-static void mtest_write(const mtest::TestDescription& m, const std::string& f) {
-  mtest::write(m, f);
-}  // end of mtest_write
+static void mfmtg_write(const mfmtg::TestDescription& m, const std::string& f) {
+  mfmtg::write(m, f);
+}  // end of mfmtg_write
 
-static void mtest_loadMFMTestGeneratorFileContent(mtest::TestDescription& d,
+static void mfmtg_loadMFMTestGeneratorFileContent(mfmtg::TestDescription& d,
                                                   const std::string& f) {
-  mtest::loadMFMTestGeneratorFileContent(d, f);
-}  // end of mtest_loadMFMTestGeneratorFileContent
+  mfmtg::loadMFMTestGeneratorFileContent(d, f);
+}  // end of mfmtg_loadMFMTestGeneratorFileContent
 
 void declareMFMTestGeneratorFileExport() {
   //
-  boost::python::class_<mtest::TestDescription>("TestDescription")
-      .def_readwrite("name", &mtest::TestDescription::name)
-      .def_readwrite("author", &mtest::TestDescription::author)
-      .def_readwrite("date", &mtest::TestDescription::date)
-      .def_readwrite("description", &mtest::TestDescription::description)
-      .def_readwrite("behaviour", &mtest::TestDescription::behaviour)
-      .def_readwrite("material", &mtest::TestDescription::material);
+  boost::python::class_<mfmtg::TestDescription>("TestDescription")
+      .def_readwrite("name", &mfmtg::TestDescription::name)
+      .def_readwrite("author", &mfmtg::TestDescription::author)
+      .def_readwrite("date", &mfmtg::TestDescription::date)
+      .def_readwrite("description", &mfmtg::TestDescription::description)
+      .def_readwrite("behaviour", &mfmtg::TestDescription::behaviour)
+      .def_readwrite("material", &mfmtg::TestDescription::material);
   //
   boost::python::def("loadMFMTestGeneratorFileContent",
-                     mtest_loadMFMTestGeneratorFileContent);
-  boost::python::def("write", mtest_write);
+                     mfmtg_loadMFMTestGeneratorFileContent);
+  boost::python::def("write", mfmtg_write);
 
 }  // end of declareMFMTestGeneratorFileExport

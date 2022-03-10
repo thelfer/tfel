@@ -26,7 +26,7 @@
 #include "TFEL/Raise.hxx"
 #include "MFMTestGenerator/MFMTestGeneratorFileExport.hxx"
 
-namespace mtest {
+namespace mfmtg {
 
   static std::string getSourceFileContent(const std::string& f) {
     std::ifstream file(f);
@@ -62,11 +62,6 @@ namespace mtest {
   }  // end of names
 
   static void writeMadnexFile(const TestDescription& d, const std::string& f) {
-    if (!d.scheme.empty()) {
-      if ((d.scheme != "mtest") && (d.scheme != "ptest")) {
-        tfel::raise("writeMadnexFile: invalid scheme '" + d.scheme + "'");
-      }
-    }
     madnex::MFMTestGeneratorTest e;
     e.name = d.name;
     e.test = d.content;
@@ -116,4 +111,4 @@ namespace mtest {
 #endif /* MADNEX_MFM_TEST_GENERATOR_TEST_SUPPORT */
   }    // end of write
 
-}  // namespace mtest
+}  // namespace mfmtg

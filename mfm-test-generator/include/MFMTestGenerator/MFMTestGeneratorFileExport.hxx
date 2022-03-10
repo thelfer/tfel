@@ -1,5 +1,5 @@
 /*!
- * \file   mtest/include/MFMTestGenerator/MFMTestGeneratorFileExport.hxx
+ * \file   mfm-test-generator/include/MFMTestGenerator/MFMTestGeneratorFileExport.hxx
  * \brief
  * \author Thomas Helfer
  * \date   01/03/2022
@@ -17,7 +17,7 @@
 #include <string>
 #include "MFMTestGenerator/Config.hxx"
 
-namespace mtest {
+namespace mfmtg {
 
   /*!
    * \brief structure describing an mfm-test-generator file to be exported
@@ -77,6 +77,6 @@ namespace mtest {
   MFMTG_VISIBILITY_EXPORT void write(const TestDescription&,
                                      const std::string&);
 
-}  // end of namespace mtest
+}  // end of namespace mfmtg
 
 #endif /* LIB_MFM_TEST_GENERATOR_MFM_TEST_GENERATORFILEEXPORT_HXX */
