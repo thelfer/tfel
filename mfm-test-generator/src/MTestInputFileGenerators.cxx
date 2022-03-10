@@ -62,6 +62,7 @@ namespace mfmtg {
           }
         }
         os << "};\n";
+        return;
       } else if (!t.is<TimesFromFile>()) {
         tfel::raise(
             "mfmtg::mtest::writeTimes: "
@@ -117,9 +118,7 @@ namespace mfmtg {
       } else if (!e.is<std::map<double, double>>()) {
         tfel::raise("getEvolutionType: unsupported evolution type");
       }
-      Evolution ev;
-      ev.set(e.get<std::map<double, double>>());
-      writeEvolution(os, ev);
+      writeEvolution(os, e.get<std::map<double, double>>());
     }  // end of writeEvolution
 
     static std::string getEvolutionType(const Evolution& e) {
