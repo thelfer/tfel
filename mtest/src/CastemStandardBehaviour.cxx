@@ -106,7 +106,7 @@ namespace mtest {
       setMaterialProperties(
           *this, h, CastemInterfaceVersion::LEGACY_CASTEM_INTERFACE_VERSION);
     }
-  }  // end of CastemStandardBehaviour::CastemStandardBehaviour
+  }  // end of CastemStandardBehaviour
 
   CastemStandardBehaviour::CastemStandardBehaviour(
       const StandardBehaviourDescription& umb)
@@ -115,7 +115,7 @@ namespace mtest {
         tfel::system::ExternalLibraryManager::getExternalLibraryManager();
     this->fct =
         elm.getCastemExternalBehaviourFunction(this->library, this->behaviour);
-  }  // end of CastemStandardBehaviour::CastemStandardBehaviour
+  }  // end of CastemStandardBehaviour
 
   tfel::math::tmatrix<3u, 3u, real> CastemStandardBehaviour::getRotationMatrix(
       const tfel::math::vector<real>& mp,
@@ -160,7 +160,7 @@ namespace mtest {
       nr(2, 2) = nr(0, 0) * nr(1, 1) - nr(0, 1) * nr(1, 0);
     }
     return nr;
-  }  // end of CastemStandardBehaviour::getRotationMatrix
+  }  // end of getRotationMatrix
 
   void CastemStandardBehaviour::allocate(BehaviourWorkSpace& wk) const {
     const auto ndv = this->getGradientsSize();
@@ -185,7 +185,7 @@ namespace mtest {
   StiffnessMatrixType CastemStandardBehaviour::getDefaultStiffnessMatrixType()
       const {
     return StiffnessMatrixType::ELASTICSTIFNESSFROMMATERIALPROPERTIES;
-  }  // end of CastemStandardBehaviour::getDefaultStiffnessMatrixType
+  }  // end of getDefaultStiffnessMatrixType
 
   std::vector<std::string>
   CastemStandardBehaviour::getOptionalMaterialProperties() const {
@@ -203,7 +203,7 @@ namespace mtest {
     if (this->stype == 0) {
       append_if("YoungModulus");
       append_if("PoissonRatio");
-      append_if("ThermalExpansion");
+      omps.push_back("ThermalExpansion");
     } else if (this->stype == 1) {
       append_if("YoungModulus1");
       append_if("YoungModulus2");
