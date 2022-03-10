@@ -203,7 +203,7 @@ namespace mtest {
     if (this->stype == 0) {
       append_if("YoungModulus");
       append_if("PoissonRatio");
-      append_if("ThermalExpansion");
+      omps.push_back("ThermalExpansion");
     } else if (this->stype == 1) {
       append_if("YoungModulus1");
       append_if("YoungModulus2");
