@@ -20,6 +20,10 @@ eqnPrefixTemplate: "($$i$$)"
 
 # Issues fixed
 
+## Issue #140: [mtest] lonely separator is not correctly treated
+
+For more details, see <https://github.com/thelfer/tfel/issues/140>.
+
 ## Issue #43: [mtest] Prevent declaration of boundary conditions after the call to completeInitialisation
 
 For more details, see <https://github.com/thelfer/tfel/issues/43>.
