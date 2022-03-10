@@ -64,7 +64,6 @@ namespace mtest {
                                                tokens_iterator& p) {
     mfront::getLogStream() << this->file << ":" << p->line << ":" << p->offset
                            << ": warning: extra ‘;’\n";
-    ++p;
   }  // end of SchemeParserBase::handleAuthor
 
   void SchemeParserBase::handleDate(SchemeBase& t, tokens_iterator& p) {
