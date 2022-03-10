@@ -11,6 +11,7 @@
  * project under specific licensing conditions.
  */
 
+#include <cstring>
 #include <algorithm>
 #include "TFEL/Raise.hxx"
 #include "MTest/Behaviour.hxx"
@@ -21,7 +22,8 @@ namespace mfmtg {
 
   BehaviourData::BehaviourData(const TestCaseParameters& p,
                                const std::string& h)
-      : library(get(p, "library")),
+      : interface(get_if(p, "interface", "")),
+        library(get(p, "library")),
         function(get(p, "function")),
         hypothesis(h),
         // material properties are optional
@@ -32,7 +34,8 @@ namespace mfmtg {
             getEvolutions(p, "external_state_variables", false)) {
     // consistency checks
     const auto b = ::mtest::Behaviour::getBehaviour(
-        "", this->library, this->function, ::mtest::Behaviour::Parameters{},
+        this->interface, this->library, this->function,
+        ::mtest::Behaviour::Parameters{},
         tfel::material::ModellingHypothesis::fromString(this->hypothesis));
     const auto omps = b->getOptionalMaterialProperties();
     //
@@ -41,11 +44,20 @@ namespace mfmtg {
                               const char* const t) {
       for (const auto& n : names) {
         if (evs.count(n) == 0) {
+        if (std::strcmp(t, "material property") == 0) {
           if (std::find(omps.begin(), omps.end(), n) == omps.end()) {
             const auto type = std::string{t};
             tfel::raise("BehaviourData::BehaviourData: " + type + " '" + n +
                         "' is not defined when declaring "
                         "behaviour '" +
+                        this->function + "' in library '" + this->library +
+                        "'");
+          }
+        } else {
+          const auto type = std::string{t};
+          tfel::raise("BehaviourData::BehaviourData: " + type + " '" + n +
+                      "' is not defined when declaring "
+                      "behaviour '" +
                         this->function + "' in library '" + this->library +
                         "'");
           }

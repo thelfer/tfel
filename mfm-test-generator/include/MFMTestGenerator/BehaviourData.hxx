@@ -33,6 +33,8 @@ namespace mfmtg {
     BehaviourData(BehaviourData&&);
     //! \brief copy constructor
     BehaviourData(const BehaviourData&);
+    //! \brief interface used to generator the behaviour (optional)
+    const std::string interface;
     //! \brief path of the library in which the behaviour is implemented
     const std::string library;
     //! \brief function which implements the behaviour

@@ -14,6 +14,7 @@ nobase_include_HEADERS =                         \
   MFMTestGenerator/UniaxialTensileTest.hxx       \
   MFMTestGenerator/ClosedPipeTest.hxx            \
   MFMTestGenerator/MTestInputFileGenerators.hxx  \
-  MFMTestGenerator/LicosInputFileGenerators.hxx
+  MFMTestGenerator/LicosInputFileGenerators.hxx   \
+  MFMTestGenerator/MFMTestGeneratorFileExport.hxx
 
 EXTRA_DIST=CMakeLists.txt

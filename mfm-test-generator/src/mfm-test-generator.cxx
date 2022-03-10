@@ -11,9 +11,20 @@
  * project under specific licensing conditions.
  */
 
+#include <regex>
 #include <iostream>
 #include <algorithm>
 #include <stdexcept>
+
+#ifdef MFM_TEST_GENERATOR_HAVE_MADNEX
+#include "Madnex/Config.hxx"
+#endif /* MFM_TEST_GENERATOR_HAVE_MADNEX */
+
+#ifdef MADNEX_MFM_TEST_GENERATOR_TEST_SUPPORT
+#include "Madnex/DataBase.hxx"
+#include "Madnex/MFMTestGeneratorTest.hxx"
+#endif
+
 #include "TFEL/Raise.hxx"
 #include "TFEL/Utilities/CxxTokenizer.hxx"
 #include "TFEL/Utilities/Data.hxx"
@@ -57,14 +68,7 @@ namespace mfmtg {
 
     void execute() {
       for (const auto& i : this->input_files) {
-        try {
           this->execute(i);
-        } catch (std::exception& e) {
-          message("Treatment of file '" + i + "' failed (" +
-                  std::string(e.what()) + ")");
-        } catch (...) {
-          message("Treatment of file '" + i + "' failed (unknown exception)");
-        }
       }
     }  // end of execute
 
@@ -72,70 +76,47 @@ namespace mfmtg {
      * \param[in] i: input file
      */
     void execute(const std::string& i) {
-      message("Begin treatment of file '" + i + "'");
-      const auto opts = [] {
-        auto lopts = tfel::utilities::CxxTokenizerOptions{};
-        lopts.shallMergeStrings = true;
-        lopts.treatPreprocessorDirectives = false;
-        lopts.charAsString = true;
-        lopts.dotAsSeparator = false;
-        lopts.addCurlyBraces = true;
-        return lopts;
-      }();
-      const auto tokens = [this, &i, &opts] {
-        tfel::utilities::CxxTokenizer tokenizer(i, opts);
-        tokenizer.stripComments();
-        auto ltokens = std::vector<tfel::utilities::Token>{tokenizer.begin(),
-                                                           tokenizer.end()};
-        // substitutions
-        const auto pe = this->substitutions.end();
-        for (auto& token : ltokens) {
-          auto p = this->substitutions.find(token.value);
-          if (p != pe) {
-            token.value = p->second;
-            if (((p->second.front() == '\'') && (p->second.back() == '\'')) ||
-                ((p->second.front() == '"') && (p->second.back() == '"'))) {
-              token.flag = tfel::utilities::Token::String;
-            }
-          }
-        }
-        // treating external commands
-        for (const auto& c : this->ecmds) {
-          tfel::utilities::CxxTokenizer etokenizer(opts);
-          try {
-            etokenizer.parseString(c);
-          } catch (std::exception& e) {
+      if (tfel::utilities::starts_with(i, "madnex:")) {
+#ifdef MADNEX_MFM_TEST_GENERATOR_TEST_SUPPORT
+        this->treatMadnexPath(i);
+#else  /* MADNEX_MFM_TEST_GENERATOR_TEST_SUPPORT */
             tfel::raise(
                 "MFMTestGenerator::execute : "
-                "error while parsing external command "
-                "'" +
-                c + "'\n" + std::string(e.what()));
+            "madnex support is not enabled");
+#endif /* MADNEX_MFM_TEST_GENERATOR_TEST_SUPPORT */
           }
-          ltokens.insert(ltokens.begin(), etokenizer.begin(), etokenizer.end());
+      const auto ext = [&i]() -> std::string {
+        const auto pos = i.rfind('.');
+        if (pos != std::string::npos) {
+          return i.substr(pos);
         }
-        return ltokens;
+        return "";
       }();
-      auto p = tokens.begin();
-      const auto pe = tokens.end();
-      const auto d = TestCaseParameter::read(p, pe);
-      if (!d.is<TestCaseParameters>()) {
+      if ((ext == ".madnex") || (ext == ".mdnx") || (ext == ".edf")) {
+#ifdef MADNEX_MFM_TEST_GENERATOR_TEST_SUPPORT
+        this->treatMadnexInputFile(i);
+#else  /* MADNEX_MFM_TEST_GENERATOR_TEST_SUPPORT */
         tfel::raise(
             "MFMTestGenerator::execute: "
-            "invalid input file");
+            "madnex support is not enabled");
+#endif /* MADNEX_MFM_TEST_GENERATOR_TEST_SUPPORT */
       }
-      // name of the test case
-      const auto n = get<std::string>(d, "test_case");
-      const auto& atcf = AbstractTestCaseFactory::get();
-      const auto& ifgf = InputFileGeneratorFactory::get();
-      const auto test = atcf.generate(n, d);
-      for (const auto& t : this->targets) {
-        test->addInputFileGenerator(ifgf.get(n, t));
-      }
-      test->generate();
-      message("End treatment of file '" + i + "'");
+      this->treatStandardInputFile(i);
     }  // end of execute
 
    private:
+    //! \return the options used to parse a mfm-test-generator file
+    static tfel::utilities::CxxTokenizerOptions getInputFileParsingOptions() {
+      auto lopts = tfel::utilities::CxxTokenizerOptions{};
+      lopts.shallMergeStrings = true;
+      lopts.treatPreprocessorDirectives = false;
+      lopts.charAsString = true;
+      lopts.dotAsSeparator = false;
+      lopts.addCurlyBraces = true;
+      return lopts;
+    }  // end of getInputFileParsingOptions
+
+    //! \brief register the command line call backs
     void registerCommandLineCallBacks() {
       this->registerCallBack(
           "--verbose",
@@ -180,6 +161,70 @@ namespace mfmtg {
                      }
                    },
                    true));
+#ifdef MFM_TEST_GENERATOR_HAVE_MADNEX
+      auto treatBehaviour = [this] {
+        if (!this->behaviour.empty()) {
+          tfel::raise("mfm-test-generator: behaviour already defined");
+        }
+        const auto& o = this->currentArgument->getOption();
+        if (o.empty()) {
+          tfel::raise(
+              "mfm-test-generator: no option given to "
+              "the --behaviour command line argument");
+        }
+        this->behaviour = o;
+      };
+      auto treatMaterial = [this] {
+        if (!this->material.empty()) {
+          tfel::raise("mfm-test-generator: material already defined");
+        }
+        const auto& o = this->currentArgument->getOption();
+        if (o.empty()) {
+          tfel::raise(
+              "mfm-test-generator: no option given to "
+              "the --material command line argument");
+        }
+        this->material = o;
+      };
+      auto treatTest = [this] {
+        if (!this->test.empty()) {
+          tfel::raise("mfm-test-generator: test already defined");
+        }
+        const auto& o = this->currentArgument->getOption();
+        if (o.empty()) {
+          tfel::raise(
+              "mfm-test-generator: no option given to "
+              "the --test command line argument");
+        }
+        this->test = o;
+      };
+      auto treatAllTests = [this] {
+        if (!this->test.empty()) {
+          tfel::raise("mfm-test-generator: test already defined");
+        }
+        this->test = ".+";
+      };
+      this->registerCallBack(
+          "--behaviour", "-b",
+          CallBack("set the behaviour", treatBehaviour, true));
+      this->registerCallBack("--material", "-m",
+                             CallBack("set the material", treatMaterial, true));
+      this->registerCallBack("--test", "-t",
+                             CallBack("set the test name", treatTest, true));
+      this->registerCallBack(
+          "--all-tests", CallBack("select all tests", treatAllTests, false));
+#ifdef _WIN32
+      this->registerCallBack(
+          "/behaviour", "/b",
+          CallBack("set the behaviour", treatBehaviour, true));
+      this->registerCallBack("/material", "/m",
+                             CallBack("set the material", treatMaterial, true));
+      this->registerCallBack("/test", "/t",
+                             CallBack("set the test name", treatTest, true));
+      this->registerCallBack(
+          "/all-tests", CallBack("select all tests", treatAllTests, false));
+#endif /* _WIN32 */
+#endif /* MFM_TEST_GENERATOR_HAVE_MADNEX */
     }  // end of registerCommandLineCallBacks
 
     const tfel::utilities::Argument& getCurrentCommandLineArgument() const {
@@ -204,21 +249,16 @@ namespace mfmtg {
           const auto s1 = a.substr(2);
 #endif /* _WIN32 */
           tfel::raise_if(std::count(s1.begin(), s1.end(), '@') != 2,
-                         "MTestMain::treatUnknownArgument: "
+                         "MFMTestGenerator::treatUnknownArgument: "
                          "bas substitution pattern '" +
                              s1 + "'");
           const auto s2 = this->currentArgument->getOption();
           tfel::raise_if(s2.empty(),
-                         "MTestMain::treatUnknownArgument: "
+                         "MFMTestGenerator::treatUnknownArgument: "
                          "no substitution given for pattern '" +
                              s1 + "'");
-          //           if (mfront::getVerboseMode() >= mfront::VERBOSE_LEVEL2) {
-          //             mfront::getLogStream() << "substituting '" << s1 << "'
-          //             by '" << s2
-          //                                    << "'\n";
-          //           }
           tfel::raise_if(!this->substitutions.insert({s1, s2}).second,
-                         "MTestMain::treatUnknownArgument: "
+                         "MFMTestGenerator::treatUnknownArgument: "
                          "a substitution for '" +
                              s1 +
                              "' has "
@@ -249,21 +289,208 @@ namespace mfmtg {
       }
     }  // end of treatUnknownArgument
 
-    std::string getVersionDescription() const override { return "1.0"; }
+    std::string getVersionDescription() const override {
+      return "1.0";
+    }  // end of getVersionDescription
 
     std::string getUsageDescription() const override {
       return "Usage: " + this->programName + " [options] [files]";
+    }  // end of getUsageDescription
+
+    void treatTest(const std::vector<tfel::utilities::Token>& tokens) const {
+      auto p = tokens.begin();
+      const auto pe = tokens.end();
+      const auto d = TestCaseParameter::read(p, pe);
+      if (!d.is<TestCaseParameters>()) {
+        tfel::raise(
+            "MFMTestGenerator::execute: "
+            "invalid input file");
     }
+      // name of the test case
+      const auto n = get<std::string>(d, "test_case");
+      const auto& atcf = AbstractTestCaseFactory::get();
+      const auto& ifgf = InputFileGeneratorFactory::get();
+      const auto t = atcf.generate(n, d);
+      for (const auto& target : this->targets) {
+        t->addInputFileGenerator(ifgf.get(n, target));
+      }
+      t->generate();
+    }  // end of treatTest
+
+    void treatStandardInputFile(const std::string& i) const {
+#ifdef MADNEX_MFM_TEST_GENERATOR_TEST_SUPPORT
+      if (!this->test.empty()) {
+        tfel::raise(
+            "MFMTestGenerator::treatStandardInputFile: "
+            "specifying a test and a standard input file is not allowed");
+      }
+      if (!this->behaviour.empty()) {
+        tfel::raise(
+            "MFMTestGenerator::treatStandardInputFile: "
+            "specifying a behaviour and a standard input file is not allowed");
+      }
+      if (!this->test.empty()) {
+        tfel::raise(
+            "MFMTestGenerator::treatStandardInputFile: "
+            "specifying a test and a standard input file is not allowed");
+      }
+#endif /* MADNEX_MFM_TEST_GENERATOR_TEST_SUPPORT */
+      message("Begin treatment of file '" + i + "'");
+      const auto opts = getInputFileParsingOptions();
+      tfel::utilities::CxxTokenizer tokenizer(i, opts);
+      tokenizer.stripComments();
+      auto ltokens = std::vector<tfel::utilities::Token>{tokenizer.begin(),
+                                                         tokenizer.end()};
+      this->applySubstitutionsAndExternalCommands(ltokens, opts);
+      this->treatTest(ltokens);
+      message("End treatment of file '" + i + "'");
+    }  // end of treatStandardInputFile
+
+#ifdef MADNEX_MFM_TEST_GENERATOR_TEST_SUPPORT
+
+    void treatMadnexInputFile(const std::string& i) const {
+      if (this->behaviour.empty()) {
+        tfel::raise(
+            "MFMTestGenerator::treatMadnexInputFile: "
+            "no behaviour specified");
+      }
+      if (this->test.empty()) {
+        tfel::raise(
+            "MFMTestGenerator::treatMadnexInputFile: "
+            "no test specified");
+      }
+      madnex::DataBase d(i);
+      std::regex r(this->test);
+      const auto m = this->material == "<none>" ? "" : this->material;
+      auto tests = std::vector<std::string>{};
+      for (const auto& tname : d.getAvailableMFMTestGeneratorTests(
+               this->material, this->behaviour)) {
+        if (std::regex_match(tname, r)) {
+          tests.push_back(tname);
+        }
+      }
+      if (tests.empty()) {
+        tfel::raise(
+            "MFMTestGenerator::treatMadnexInputFile: "
+            "no test matches regular expression "
+            "'" +
+            this->test + "'");
+      }
+      for (const auto& t : tests) {
+        this->treatMadnexTest(this->material, this->behaviour, t, i);
+      }
+    }  // end of treatMadnexInputFile
+
+    void treatMadnexPath(const std::string& i) const {
+      if (!this->material.empty()) {
+        tfel::raise(
+            "MFMTestGenerator::treatMadnexPath: "
+            "specifying a material and a madnex path is not allowed");
+      }
+      if (!this->behaviour.empty()) {
+        tfel::raise(
+            "MFMTestGenerator::treatMadnexPath: "
+            "specifying a behaviour and a madnex path is not allowed");
+      }
+      if (!this->test.empty()) {
+        tfel::raise(
+            "MFMTestGenerator::treatMadnexPath: "
+            "specifying a test and a madnex path is not allowed");
+      }
+      const auto [f, m, b, t] = [&i] {
+        const auto details = tfel::utilities::tokenize(i, ':');
+        if ((details.size() != 4u) && ((details.size() != 5u))) {
+          tfel::raise(
+              "MFMTestGenerator::treatMadnexPath: "
+              "invalid path '" +
+              i + "'");
+        }
+        if (details.size() == 4u) {
+          return std::make_tuple(std::move(details[1]), std::string{},
+                                 std::move(details[2]), std::move(details[3]));
+        }
+        const auto material_name = details[2] == "<none>" ? "" : details[2];
+        return std::make_tuple(std::move(details[1]), std::move(material_name),
+                               std::move(details[3]), std::move(details[4]));
+      }();
+      this->treatMadnexTest(m, b, t, f);
+    }  // end of treatMadnexPath
+
+    void treatMadnexTest(const std::string& m,
+                         const std::string& b,
+                         const std::string& t,
+                         const std::string& f) const {
+      const auto test_description = [&] {
+        if ((m.empty()) || (m == "<none>")) {
+          return "test '" + t + "' associated with behaviour '" + b +
+                 "' in file '" + f + "'";
+        }
+        return "test '" + t + "' associated with behaviour '" + b +
+               "' of material '" + m + "' in file '" + f + "'";
+      }();
+      message("Begin treatment of " + test_description);
+      const auto mfm_test = madnex::getMFMTestGeneratorTest(f, m, b, t);
+      const auto opts = getInputFileParsingOptions();
+      tfel::utilities::CxxTokenizer tokenizer(opts);
+      tokenizer.parseString(mfm_test.test);
+      tokenizer.stripComments();
+      auto ltokens = std::vector<tfel::utilities::Token>{tokenizer.begin(),
+                                                         tokenizer.end()};
+      this->applySubstitutionsAndExternalCommands(ltokens, opts);
+      this->treatTest(ltokens);
+      message("End treatment of " + test_description);
+    }  // end of treatMadnexTest
+
+#endif /* MADNEX_MFM_TEST_GENERATOR_TEST_SUPPORT */
+
+    void applySubstitutionsAndExternalCommands(
+        std::vector<tfel::utilities::Token>& ltokens,
+        const tfel::utilities::CxxTokenizerOptions& opts) const {
+      // substitutions
+      const auto pe = this->substitutions.end();
+      for (auto& token : ltokens) {
+        auto p = this->substitutions.find(token.value);
+        if (p != pe) {
+          token.value = p->second;
+          if (((p->second.front() == '\'') && (p->second.back() == '\'')) ||
+              ((p->second.front() == '"') && (p->second.back() == '"'))) {
+            token.flag = tfel::utilities::Token::String;
+          }
+        }
+      }
+      // treating external commands
+      for (const auto& c : this->ecmds) {
+        tfel::utilities::CxxTokenizer etokenizer(opts);
+        try {
+          etokenizer.parseString(c);
+        } catch (std::exception& e) {
+          tfel::raise(
+              "MFMTestGenerator::execute : "
+              "error while parsing external command "
+              "'" +
+              c + "'\n" + std::string(e.what()));
+        }
+        ltokens.insert(ltokens.begin(), etokenizer.begin(), etokenizer.end());
+      }
+    }  // end of applySubstitutionsAndExternalCommands
 
    private:
-    //! list of input files
+    //! \brief list of input files
     std::vector<std::string> input_files;
-    //! list of targeted code
+    //! \brief list of targeted code
     std::vector<std::string> targets;
-    //! external commands
+    //! \brief external commands
     std::vector<std::string> ecmds;
-    //! substitutions
+    //! \brief substitutions
     std::map<std::string, std::string> substitutions;
+#ifdef MADNEX_MFM_TEST_GENERATOR_TEST_SUPPORT
+    //! \brief material name (only useful for madnex files)
+    std::string material;
+    //! \brief material name (required for madnex files)
+    std::string behaviour;
+    //! \brief test name (required for madnex files)
+    std::string test;
+#endif /* MADNEX_MFM_TEST_GENERATOR_TEST_SUPPORT */
   };  // end of MFMTestGenerator
 
 }  // end of namespace mfmtg
