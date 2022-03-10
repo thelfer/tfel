@@ -26,8 +26,7 @@ namespace mtest {
       const Hypothesis h) {
     return CastemUmatStandardBehaviour::buildCastemUmatStandardBehaviour(
         l, f, p, 1u, h);
-  }  // end of
-     // CastemUmatSmallStrainBehaviour::buildCastemUmatSmallStrainBehaviour
+  }  // end of buildCastemUmatSmallStrainBehaviour
 
   CastemUmatSmallStrainBehaviour::CastemUmatSmallStrainBehaviour(
       const StandardBehaviourDescription& bd, const std::string& cn)
@@ -37,27 +36,25 @@ namespace mtest {
         "CastemUmatSmallStrainBehaviour::CastemUmatSmallStrainBehaviour: "
         "invalid size for the material name");
     std::copy(cn.begin(), cn.end(), this->mname);
-  }  // end of CastemUmatSmallStrainBehaviour::CastemUmatSmallStrainBehaviour
+  }  // end of CastemUmatSmallStrainBehaviour
 
   std::vector<std::string>
   CastemUmatSmallStrainBehaviour::getOptionalMaterialProperties() const {
     return CastemUmatStandardBehaviour::getOptionalMaterialProperties(
         this->stype, this->getHypothesis());
-  }  // end of CastemUmatSmallStrainBehaviour::getOptionalMaterialProperties
+  }  // end of getOptionalMaterialProperties
 
   void
   CastemUmatSmallStrainBehaviour::setOptionalMaterialPropertiesDefaultValues(
       EvolutionManager& mp, const EvolutionManager& evm) const {
     CastemUmatStandardBehaviour::setOptionalMaterialPropertiesDefaultValues(
         mp, evm, this->stype, this->getHypothesis());
-  }  // end of
-     // CastemUmatSmallStrainBehaviour::setOptionalMaterialPropertiesDefaultValues
+  }  // end of setOptionalMaterialPropertiesDefaultValues
 
   const char*
   CastemUmatSmallStrainBehaviour::getBehaviourNameForUMATFunctionCall() const {
     return this->mname;
-  }  // end of
-     // CastemUmatSmallStrainBehaviour::getBehaviourNameForUMATFunctionCal
+  }  // end of getBehaviourNameForUMATFunctionCal
 
   CastemUmatSmallStrainBehaviour::~CastemUmatSmallStrainBehaviour() = default;
 
