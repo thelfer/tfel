@@ -62,6 +62,7 @@ namespace mfmtg {
           }
         }
         os << "};\n";
+        return;
       } else if (!t.is<TimesFromFile>()) {
         tfel::raise(
             "mfmtg::mtest::writeTimes: "
