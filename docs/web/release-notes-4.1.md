@@ -925,6 +925,25 @@ mfm_test_generator.write(d,'Plasticity.mdnx')
 
 # `mfront-query` improvements
 
+## General queries
+
+### List of dependencies of an `MFront` file
+
+The `--list-dependencies` query lists all the dependencies of an
+`MFront` file.
+
+If a dependency is encoded in a `madnex` file, an internal representation of
+the path to this dependency is returned (see example below).
+
+#### Example of usage
+
+~~~~{.bash}
+$ mfront-query --list-dependencies --search-path=generate   \
+               --madnex-search-path=MaterialProperties.mdnx \
+               Test.mfront 
+madnex:generate/MaterialProperties.mdnx:MaterialProperty::YoungModulusTest
+~~~~
+
 ## New behaviour queries
 
 ### List of initialize functions
@@ -1005,6 +1024,13 @@ $ mfront-query --list-behaviour-mfm-test-generator-tests=unsorted --test=".+Tens
 ~~~~
 
 # Issues fixed
+
+## Issue #144: [mfront-query] List dependencies of a `mfront` file
+
+This feature is described in Section
+@sec:tfel_4.1:mfront_query:list_dependencies.
+
+For more details, see : <https://github.com/thelfer/tfel/issues/144>.
 
 ## Issue #143: [mfront] Add the ability to append a madnex paths to the search paths 
 

@@ -94,10 +94,33 @@ namespace mfront {
      */
     const std::map<std::string, MaterialKnowledgeAttribute, std::less<>>&
     getAttributes() const;
+    /*!
+     * \brief add an external `MFront` file and the list of interfaces used to
+     * treat it.
+     *
+     * \param[in] f: full path to the external file
+     * \param[in] interfaces: list of interfaces used to treat the file
+     */
+    void addExternalMFrontFile(const std::string_view,
+                               const std::vector<std::string>&);
+    //! \return the external `MFront` files
+    const std::map<std::string,               // file path
+                   std::vector<std::string>,  // list of interfaces
+                   std::less<>>&
+    getExternalMFrontFiles() const;
 
    protected:
     //! \brief behaviour attributes
     std::map<std::string, MaterialKnowledgeAttribute, std::less<>> attributes;
+    /*!
+     * \brief external mfront files
+     * - key: mfront file name (full path)
+     * - value: list of interfaces to be used
+     * This list of external mfront files will be used to generate the
+     * associated sources.
+     */
+    std::map<std::string, std::vector<std::string>, std::less<>>
+        externalMFrontFiles;
   };  // end of struct MaterialKnowledgeDescription
 
   /*!
@@ -105,9 +128,8 @@ namespace mfront {
    * \param[out] d: material knowledge description
    * \param[in] policy: out of bounds policy
    */
-  MFRONT_VISIBILITY_EXPORT tfel::material::OutOfBoundsPolicy
-  setDefaultOutOfBoundsPolicy(const MaterialKnowledgeDescription&,
-                              const std::string&);
+  MFRONT_VISIBILITY_EXPORT void setDefaultOutOfBoundsPolicy(
+      const MaterialKnowledgeDescription&, const std::string&);
   /*!
    * \brief this function returns the value of the
    * `MaterialKnowledgeDescription::defaultOutOfBoundsPolicy`

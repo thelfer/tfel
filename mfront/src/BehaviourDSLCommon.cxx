@@ -769,6 +769,16 @@ namespace mfront {
     return this->mb;
   }  // end of getBehaviourDescription
 
+  MaterialKnowledgeDescription&
+  BehaviourDSLCommon::getMaterialKnowledgeDescription() {
+    return this->mb;
+  }  // end of getMaterialKnowledgeDescription
+
+  const MaterialKnowledgeDescription&
+  BehaviourDSLCommon::getMaterialKnowledgeDescription() const {
+    return this->mb;
+  }  // end of getMaterialKnowledgeDescription
+
   std::string BehaviourDSLCommon::getClassName() const {
     return this->mb.getClassName();
   }  // end of getClassName
@@ -965,7 +975,7 @@ namespace mfront {
         this->appendToIncludes("#include\"" + h + "\"");
       }
       this->atds.push_back(std::move(t));
-      this->externalMFrontFiles.insert({path, {"mfront"}});
+      this->mb.addExternalMFrontFile(path, {"mfront"});
     } catch (std::exception& e) {
       this->throwRuntimeError(
           "BehaviourDSLCommon::getModelDescription",
@@ -1622,7 +1632,7 @@ namespace mfront {
                                   "' "
                                   "for writing output file");
     }
-    for (const auto& em : this->externalMFrontFiles) {
+    for (const auto& em : this->mb.getExternalMFrontFiles()) {
       this->callMFront(em.second, {em.first});
     }
     auto write_classes = [this, &behaviourFile, &behaviourDataFile,

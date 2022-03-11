@@ -915,7 +915,8 @@ namespace mfront {
     this->readSpecifiedToken("DSLBase::treatMfront", "}");
     this->readSpecifiedToken("DSLBase::treatMfront", ";");
     for (const auto& f : vfiles) {
-      this->externalMFrontFiles.insert({f, vinterfaces});
+      this->getMaterialKnowledgeDescription().addExternalMFrontFile(
+          f, vinterfaces);
     }
   }  // end of DSLBase::treatMfront
 
@@ -1009,7 +1010,8 @@ namespace mfront {
           ".hxx\"");
       this->addMaterialLaw(mname);
       this->atds.push_back(std::move(t));
-      this->externalMFrontFiles.insert({path, {"mfront"}});
+      this->getMaterialKnowledgeDescription().addExternalMFrontFile(
+          path, {"mfront"});
     } catch (std::exception& e) {
       this->throwRuntimeError(
           "DSLBase::handleMaterialPropertyDescription",

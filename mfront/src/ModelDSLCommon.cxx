@@ -223,7 +223,7 @@ namespace mfront {
                               "no interface defined");
     }
     //! generating sources du to external material properties and models
-    for (const auto& em : this->externalMFrontFiles) {
+    for (const auto& em : this->md.getExternalMFrontFiles()) {
       this->callMFront(em.second, {em.first});
     }
     //! generating sources by the interfaces
@@ -931,6 +931,16 @@ namespace mfront {
   void ModelDSLCommon::appendToSources(const std::string& c) {
     this->md.appendToSources(c);
   }  // end of appendToSources
+
+  MaterialKnowledgeDescription&
+  ModelDSLCommon::getMaterialKnowledgeDescription() {
+    return this->md;
+  }  // end of getMaterialKnowledgeDescription
+
+  const MaterialKnowledgeDescription&
+  ModelDSLCommon::getMaterialKnowledgeDescription() const {
+    return this->md;
+  }  // end of getMaterialKnowledgeDescription
 
   ModelDSLCommon::~ModelDSLCommon() = default;
 

@@ -74,6 +74,9 @@ namespace mfront {
     typedef void (MaterialPropertyDSL::*MemberFuncPtr)();
     typedef std::map<std::string, MemberFuncPtr> CallBackContainer;
     //
+    MaterialKnowledgeDescription& getMaterialKnowledgeDescription() override;
+    const MaterialKnowledgeDescription& getMaterialKnowledgeDescription()
+        const override;
     DSLOptions buildDSLOptions() const override;
     std::map<std::string, int> getIntegerConstants() const override;
     bool useQt() const override;

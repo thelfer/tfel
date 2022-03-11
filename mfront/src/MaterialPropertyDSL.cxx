@@ -654,6 +654,16 @@ namespace mfront {
     }
   }  // end of disableQuantitiesUsageIfNotAlreadySet
 
+  MaterialKnowledgeDescription&
+  MaterialPropertyDSL::getMaterialKnowledgeDescription() {
+    return this->md;
+  }  // end of getMaterialKnowledgeDescription
+
+  const MaterialKnowledgeDescription&
+  MaterialPropertyDSL::getMaterialKnowledgeDescription() const {
+    return this->md;
+  }  // end of getMaterialKnowledgeDescription
+
   void MaterialPropertyDSL::reserveName(const std::string& n) {
     this->md.reserveName(n);
   }
@@ -673,7 +683,7 @@ namespace mfront {
     tfel::system::systemCall::mkdir("include");
     tfel::system::systemCall::mkdir("src");
     //! generating sources du to external material properties and models
-    for (const auto& em : this->externalMFrontFiles) {
+    for (const auto& em : this->md.getExternalMFrontFiles()) {
       this->callMFront(em.second, {em.first});
     }
     // calling interfaces

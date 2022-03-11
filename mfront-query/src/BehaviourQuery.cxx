@@ -187,6 +187,7 @@ namespace mfront {
         {"--description", "show the file description"},
         {"--date", "show the file implementation date"},
         {"--material", "show the material name"},
+        {"--list-dependencies", "list the MFront dependencies"},
         {"--library", "show the library name"},
         {"--type",
          "return the behaviour type\n"
@@ -383,6 +384,15 @@ namespace mfront {
                                   cout << (!m.empty() ? m : "(undefined)")
                                        << '\n';
                                 }});
+    } else if (qn == "--list-dependencies") {
+      this->queries2.push_back(
+          {"list-dependencies",
+           [](const FileDescription&, const BehaviourDescription& d) {
+             for (const auto& dep : d.getExternalMFrontFiles()) {
+               std::cout << dep.first << " ";
+             }
+             std::cout << std::endl;
+           }});
     } else if (qn == "--library") {
       this->queries2.push_back({"library", [](const FileDescription&,
                                               const BehaviourDescription& d) {

@@ -55,10 +55,14 @@ namespace mfront {
     void endsInputFileProcessing() override;
     void generateOutputFiles() override;
     void setInterfaces(const std::set<std::string>&) override;
-    //! destructor
+    //! \brief destructor
     ~ModelDSLCommon() override;
 
    protected:
+    //
+    MaterialKnowledgeDescription& getMaterialKnowledgeDescription() override;
+    const MaterialKnowledgeDescription& getMaterialKnowledgeDescription()
+        const override;
     DSLOptions buildDSLOptions() const override;
     void disableQuantitiesUsageIfNotAlreadySet() override;
     bool useQt() const override;

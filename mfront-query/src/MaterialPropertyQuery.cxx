@@ -77,7 +77,8 @@ namespace mfront {
         {"--date", "show the file implementation date"},
         {"--material", "show the material name"},
         {"--library", "show the library name"},
-        {"--parameters", "show the list of parameters"}};
+        {"--parameters", "show the list of parameters"},
+        {"--list-dependencies", "list the MFront dependencies"}};
     for (const auto& q : sq) {
       this->registerCallBack(
           q.first,
@@ -170,6 +171,15 @@ namespace mfront {
            [](const FileDescription&, const MaterialPropertyDescription& d) {
              const auto& m = d.material;
              cout << (!m.empty() ? m : "(undefined)") << endl;
+           }});
+    } else if (qn == "--list-dependencies") {
+      this->queries.push_back(
+          {"list-dependencies",
+           [](const FileDescription&, const MaterialPropertyDescription& d) {
+             for (const auto& dep : d.getExternalMFrontFiles()) {
+               std::cout << dep.first << " ";
+             }
+             std::cout << std::endl;
            }});
     } else if (qn == "--library") {
       this->queries.push_back(

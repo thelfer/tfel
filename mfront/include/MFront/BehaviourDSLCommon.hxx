@@ -101,11 +101,9 @@ namespace mfront {
     void addIntegrationVariables(const VariableDescriptionContainer&) override;
 
    protected:
-    //! a simple alias
+    //! \brief a simple alias
     using CallBack = std::function<void()>;
-    /*!
-     * \brief create a variable modifier from a method
-     */
+    //! \brief create a variable modifier from a method
     struct TFEL_VISIBILITY_LOCAL StandardVariableModifier final
         : public VariableModifier {
       //! a simple alias
@@ -182,6 +180,9 @@ namespace mfront {
      */
     BehaviourDSLCommon(const DSLOptions&);
     //
+    MaterialKnowledgeDescription& getMaterialKnowledgeDescription() override;
+    const MaterialKnowledgeDescription& getMaterialKnowledgeDescription()
+        const override;
     std::vector<DSLOptionDescription> getDSLOptions() const override;
     DSLOptions buildDSLOptions() const override;
 

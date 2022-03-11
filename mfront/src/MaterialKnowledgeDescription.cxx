@@ -11,6 +11,7 @@
  * project under specific licensing conditions.
  */
 
+#include <algorithm>
 #include "TFEL/Raise.hxx"
 #include "MFront/MaterialKnowledgeDescription.hxx"
 
@@ -78,6 +79,26 @@ namespace mfront {
   MaterialKnowledgeDescription::getAttributes() const {
     return this->attributes;
   }  // end of getAttributes
+
+  void MaterialKnowledgeDescription::addExternalMFrontFile(
+      const std::string_view f, const std::vector<std::string>& interfaces) {
+    const auto p = this->externalMFrontFiles.find(f);
+    if (p == this->externalMFrontFiles.end()) {
+      this->externalMFrontFiles.insert({std::string{f}, interfaces});
+    } else {
+      std::copy_if(interfaces.begin(), interfaces.end(),
+                   std::back_inserter(p->second),
+                   [&interfaces](const std::string& i) {
+                     return std::find(interfaces.begin(), interfaces.end(),
+                                      i) == interfaces.end();
+                   });
+    }
+  }  // end of addExternalMFrontFile
+
+  const std::map<std::string, std::vector<std::string>, std::less<>>&
+  MaterialKnowledgeDescription::getExternalMFrontFiles() const {
+    return this->externalMFrontFiles;
+  }  // end of getExternalMFrontFiles
 
   void setDefaultOutOfBoundsPolicy(MaterialKnowledgeDescription& d,
                                    const std::string& policy) {

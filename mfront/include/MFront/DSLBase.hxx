@@ -182,6 +182,11 @@ namespace mfront {
      * \param[in] opts: options passed to the DSL
      */
     DSLBase(const DSLOptions&);
+    //! \return the material knowledge description
+    virtual MaterialKnowledgeDescription& getMaterialKnowledgeDescription() = 0;
+    //! \return the material knowledge description
+    virtual const MaterialKnowledgeDescription&
+    getMaterialKnowledgeDescription() const = 0;
     // \return options for child DSL (DSL called by this DSL)
     virtual DSLOptions buildDSLOptions() const = 0;
     /*!
@@ -568,19 +573,11 @@ namespace mfront {
      * `completeTargetsDescription` method.
      */
     TargetsDescription td;
-    //! additional linker flags
+    //! \brief additional linker flags
     std::vector<std::string> ldflags;
-    //! auxiliary target descriptions
+    //! \brief auxiliary target descriptions
     std::vector<TargetsDescription> atds;
-    /*!
-     * \brief external mfront files
-     * - key: mfront file name (full path)
-     * - value: list of interfaces to be used
-     * This list of external mfront files will be used to generate the
-     * associated sources.
-     */
-    std::map<std::string, std::vector<std::string>> externalMFrontFiles;
-    //! current position in the input stream
+    //! \brief current position in the input stream
     TokensContainer::const_iterator current;
     /*!
      * \brief current comment
