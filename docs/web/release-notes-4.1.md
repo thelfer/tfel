@@ -393,7 +393,7 @@ post-processings. Typically, one may compute the principal strains in a
 dedicated post-processing and in a post-processing computing the
 principal strains and the strain eigen vectors.
 
-## Add a `madnex` file to the search paths
+## Add a `madnex` file to the search paths {#sec:tfel_4.1:mfront:madnex_search_paths}
 
 `MFront` files may depend on other `MFront` files. A `madnex` file can
 be used resolve those dependencies using the `--madnex-search-path`
@@ -1005,6 +1005,12 @@ $ mfront-query --list-behaviour-mfm-test-generator-tests=unsorted --test=".+Tens
 ~~~~
 
 # Issues fixed
+
+## Issue #143: [mfront] Add the ability to append a madnex paths to the search paths 
+
+This feature is described in Section @sec:tfel_4.1:mfront:madnex_search_paths.
+
+For more details, see : <https://github.com/thelfer/tfel/issues/143>.
 
 ## Issue #125: [mfront] Remove behaviour sources if not needed
 
