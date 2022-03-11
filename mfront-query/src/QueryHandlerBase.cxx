@@ -86,6 +86,9 @@ namespace mfront {
     this->registerNewCallBack(
         "--search-path", &QueryHandlerBase::treatSearchPath,
         "add a new path at the beginning of the search paths", true);
+    this->registerNewCallBack("--madnex-search-path",
+                              &QueryHandlerBase::treatMadnexSearchPath,
+                              "add a mandex file to the search paths", true);
     this->registerNewCallBack("--install-path",
                               &QueryHandlerBase::treatInstallPath,
                               "set the installation directory", true);

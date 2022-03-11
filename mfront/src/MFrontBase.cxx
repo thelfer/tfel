@@ -336,6 +336,14 @@ namespace mfront {
     SearchPathsHandler::addSearchPaths(o);
   }
 
+  void MFrontBase::treatMadnexSearchPath() {
+    const auto& o = this->getCurrentCommandLineArgument().getOption();
+    tfel::raise_if(o.empty(),
+                   "MFrontBase::treatMadnexSearchPath: "
+                   "no path given");
+    SearchPathsHandler::addMadnexSearchPath(o);
+  }
+
   bool MFrontBase::treatUnknownArgumentBase() {
     using tfel::utilities::starts_with;
     auto raise = [](const std::string& m) {

@@ -27,14 +27,20 @@ namespace tfel::utilities {
             (std::equal(s2.rbegin(), s2.rend(), s1.rbegin())));
   }  // end of ends_with
 
-  std::vector<std::string> tokenize(std::string_view s, const char c) {
+  std::vector<std::string> tokenize(std::string_view s,
+                                    const char c,
+                                    const bool keep_empty_strings) {
     std::vector<std::string> res;
     auto b = std::string::size_type{};
     auto e = s.find_first_of(c, b);
     while (std::string::npos != e || std::string::npos != b) {
       // Found a token, add it to the vector.
       res.push_back(std::string{s.substr(b, e - b)});
-      b = s.find_first_not_of(c, e);
+      if (keep_empty_strings) {
+        b = e == std::string::npos ? e : e + 1;
+      } else {
+        b = s.find_first_not_of(c, e);
+      }
       e = s.find_first_of(c, b);
     }
     return res;

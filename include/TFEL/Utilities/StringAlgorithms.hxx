@@ -37,12 +37,15 @@ namespace tfel::utilities {
   bool ends_with(std::string_view, std::string_view);
   /*!
    * split a string into tokens using the specified delimiter
-   * \param s : string to be splitted
-   * \param c : delimiter
+   * \param s: string to be splitted
+   * \param c: delimiter
+   * \param keep_empty_string:
    * \return the tokens
    */
   TFELUTILITIES_VISIBILITY_EXPORT
-  std::vector<std::string> tokenize(std::string_view, const char);
+  std::vector<std::string> tokenize(std::string_view,
+                                    const char,
+                                    const bool = false);
 
   /*!
    * split a string into tokens using the specified delimiter

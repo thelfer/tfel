@@ -398,16 +398,12 @@ namespace mfmtg {
             "specifying a test and a madnex path is not allowed");
       }
       const auto [f, m, b, t] = [&i] {
-        const auto details = tfel::utilities::tokenize(i, ':');
-        if ((details.size() != 4u) && ((details.size() != 5u))) {
+        const auto details = tfel::utilities::tokenize(i, ':', true);
+        if (details.size() != 5u) {
           tfel::raise(
               "MFMTestGenerator::treatMadnexPath: "
               "invalid path '" +
               i + "'");
-        }
-        if (details.size() == 4u) {
-          return std::make_tuple(std::move(details[1]), std::string{},
-                                 std::move(details[2]), std::move(details[3]));
         }
         const auto material_name = details[2] == "<none>" ? "" : details[2];
         return std::make_tuple(std::move(details[1]), std::move(material_name),

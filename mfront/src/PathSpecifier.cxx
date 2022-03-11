@@ -284,17 +284,14 @@ namespace mfront {
       check(material_property_identifier, "material property");
       check(behaviour_identifier, "behaviour");
       check(model_identifier, "model");
-      const auto details = tfel::utilities::tokenize(f, ':');
-      auto raise_if = [&f](const bool b) {
-        if (b) {
-          tfel::raise(
-              "decomposeImplementationPathInMadnexFile: "
-              "invalid path '" +
-              f + "'");
-        }
-      };
-      raise_if((details.size() != 5) && (details.size() != 4));
-#else /* MFRONT_HAVE_MADNEX */
+      const auto details = tfel::utilities::tokenize(f, ':', true);
+      if (details.size() != 5) {
+        tfel::raise(
+            "decomposeImplementationPathInMadnexFile: "
+            "invalid path '" +
+            f + "'");
+      }
+#else  /* MFRONT_HAVE_MADNEX */
       tfel::raise(
           "getImplementationsPaths: "
           "madnex support has not been enabled");

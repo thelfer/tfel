@@ -395,6 +395,9 @@ namespace mfront {
     this->registerNewCallBack(
         "--search-path", &MFront::treatSearchPath,
         "add a new path at the beginning of the search paths", true);
+    this->registerNewCallBack("--madnex-search-path",
+                              &MFront::treatMadnexSearchPath,
+                              "add a mandex file to the search paths", true);
     this->registerNewCallBack("--install-path", &MFront::treatInstallPath,
                               "set the installation directory", true);
     this->registerNewCallBack("--install-prefix", &MFront::treatInstallPath,
