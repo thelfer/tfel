@@ -462,7 +462,7 @@ associated with no material.
   the materials properties, associated to `Zircaloy4` to the search
   path.
 
-`### How `madnex` files are searched
+### How `madnex` files are searched
 
 The `madnex` files specified in `madnex` search paths are first search
 in the current directory, and then in the directories specified by the
