@@ -17,7 +17,7 @@
 #include <set>
 #include <string>
 #include <vector>
-
+#include "TFEL/Utilities/GenTypeBase.hxx"
 #include "MFront/MFrontConfig.hxx"
 
 namespace mfront {
@@ -44,6 +44,27 @@ namespace mfront {
      */
     static std::string search(const std::string&);
     /*!
+     * \brief append a madnex search path
+     *
+     * The path has one of the form:
+     *
+     * - `<file_path>`
+     * - `<file_path>:<material_id>`
+     * - `<file_path>:<material_id>:<mkt>`
+     *
+     * If the material identifier is not specified, all
+     * materials are selected, including the empty one.
+     *
+     * `<material_id>` can be a regular expression.
+     * `<material_id>` can also have the special value `<none>`.
+     *
+     * <mkt> can have one of the values `MaterialProperties`, `Behaviours` or
+     * `Models`.
+     *
+     * \param[in] p: path
+     */
+    static void addMadnexSearchPath(const std::string&);
+    /*!
      * \brief Add new search paths.
      *
      * Multiple paths are separated by commas under unices systems and
@@ -51,15 +72,27 @@ namespace mfront {
      * \param[in] p : new search paths
      */
     static void addSearchPaths(const std::string&);
-    /*!
-     * \return the list of the search paths
-     */
-    static const std::vector<std::string>& getSearchPaths();
+    //! \return the list of the search paths associated with directories
+    static std::vector<std::string> getSearchPaths();
 
    private:
-    /*!
-     * return the uniq instance of the class
-     */
+    //! \brief structure describing a path in a madnex file
+    struct MadnexPath {
+      //! \brief file path
+      std::string file_path;
+      //! \brief material
+      std::string material;
+      //! \brief type of material knowledge
+      enum MaterialKnowledgeType {
+        MADNEX_ALL,
+        MADNEX_MATERIAL_PROPERTY,
+        MADNEX_BEHAVIOUR,
+        MADNEX_MODEL
+      } mkt = MADNEX_ALL;
+    };
+    //! \brief a simple alias
+    using Path = tfel::utilities::GenType<std::string, MadnexPath>;
+    //! \return the unique instance of the class
     static TFEL_VISIBILITY_LOCAL SearchPathsHandler& getSearchPathsHandler();
     /*!
      * \brief default constructor
@@ -72,8 +105,10 @@ namespace mfront {
     SearchPathsHandler(SearchPathsHandler&&) = delete;
     SearchPathsHandler& operator=(const SearchPathsHandler&) = delete;
     SearchPathsHandler& operator=(SearchPathsHandler&&) = delete;
-    //! list of search paths
-    std::vector<std::string> paths;
+    //! \brief return the path to a madnex file
+    static std::string searchMadnexFile(const std::string&);
+    //! \brief list of search paths
+    std::vector<Path> paths;
   };  // end of struct SearchPathsHandler
 
 }  // namespace mfront

@@ -119,6 +119,82 @@ or, equivalently:
 ~~~~{.bash}
 $ mfront --obuild --interface=generic madnex:Plasticity.mdnx:behaviour:"<none>":Plasticity
 ~~~~
+
+## Add a `madnex` file to the search paths
+
+`MFront` files may depend on other `MFront` files. A `madnex` file can
+be used resolve those dependencies using the `--madnex-search-path`
+command line argument.
+
+### A first example
+
+Let us consider a `madnex` file containing the `YoungModulusTest`
+material property associated with no material and a file `Test.mfront`
+requiring to have access to this material property. For example, the
+`Test.mfront` may contain an instruction such as:
+
+~~~~{.cxx}
+@MaterialLaw "YoungModulusTest";
+~~~~
+
+The `Test.mfront` file can be compiled as follows:
+
+~~~~{.cxx}
+$ mfront --obuild --interface=generic                 `
+         --madnex-search-path=MaterialProperties.mdnx `
+         Test.mfront
+~~~~
+
+### `madnex` search paths
+
+Options to the `--madnex-search-path` can be decomposed as
+
+`<file_path>:<material_knowledge_type>:<material_identifier>`
+
+where `<material_knowledge_type>` and `<material_identifier>` are
+optionals, as in the previous example.
+
+#### Selecting a specific type of material kowledge
+
+`material_knowledge_type` may have one of the following values
+`material_property`, `behaviours` and `models`.
+
+If `material_knowledge_type` is not specified, materials properties,
+behaviours and models are all considered (in that order).
+
+#### About the material identifier
+
+The `<material_identifier>` is interpreted as a regular expression.
+
+The regular expression that selects material knowledge associated with
+all materials is `.+`, but this will exclude material knowledge
+associated with no material.
+
+The regular expression `.*` will select material knowledge associated to
+all material *and* material knowledge associated with no material. This
+is what happen if not `material_identifier` is specified.
+
+The special material identifier `<none>` selects only material knowledge
+associated with no material.
+
+#### Examples of madnex search paths
+
+- `MaterialProperties.mdnx`: appends all the materials properties,
+  behaviours, models associated to any materials or to no material to
+  the search path.
+- `MaterialProperties.mdnx:material_property`: appends all the
+  materials properties, associated to any materials or to no material to
+  the search path.
+- `MaterialProperties.mdnx:material_property:Zircaloy4`: appends all
+  the materials properties, associated to `Zircaloy4` to the search
+  path.
+
+### How `madnex` files are searched
+
+The `madnex` files specified in `madnex` search paths are first search
+in the current directory, and then in the directories specified by the
+`--search-path` command line arguments.
+
 # `mfront` python module
 
 The `mfront` python module is fully described here:

@@ -198,10 +198,9 @@ namespace mfront {
       }
       // adding the mfront search path to the include files
       if (!SearchPathsHandler::getSearchPaths().empty()) {
-        const auto& paths = SearchPathsHandler::getSearchPaths();
-        for (const auto& p : paths) {
-          if (std::find(r.begin(), r.end(), p) == r.end()) {
-            r.push_back(p);
+        for (const auto& dir : SearchPathsHandler::getSearchPaths()) {
+          if (std::find(r.begin(), r.end(), dir) == r.end()) {
+            r.push_back(dir);
           }
         }
       }

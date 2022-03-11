@@ -46,13 +46,9 @@ static std::tuple<std::string,  // file
 decomposeMadnexPath(const std::string& p) {
   using result_type =
       std::tuple<std::string, std::string, std::string, std::string>;
-  const auto details = tfel::utilities::tokenize(p, ':');
-  if ((details.size() != 4) && (details.size() != 5)) {
+    const auto details = tfel::utilities::tokenize(p, ':', true);
+    if (details.size() != 5) {
     tfel::raise("decomposeMadnexPath: invalid path '" + p + "'");
-  }
-  if (details.size() == 4) {
-    return result_type{std::move(details[1]), "", std::move(details[2]),
-                       std::move(details[3])};
   }
   const auto mid = details[2] == "<none>" ? "" : details[2];
   return result_type{std::move(details[1]), std::move(mid),

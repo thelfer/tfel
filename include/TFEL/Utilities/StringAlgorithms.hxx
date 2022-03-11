@@ -41,10 +41,13 @@ namespace tfel {
      * split a string into tokens using the specified delimiter
      * \param s : string to be splitted
      * \param c : delimiter
+   * \param keep_empty_string:
      * \return the tokens
      */
     TFELUTILITIES_VISIBILITY_EXPORT
-    std::vector<std::string> tokenize(const std::string&, const char);
+    std::vector<std::string> tokenize(const std::string&,
+                                      const char,
+                                      const bool = false);
 
     /*!
      * split a string into tokens using the specified delimiter

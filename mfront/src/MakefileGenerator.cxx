@@ -1,5 +1,5 @@
 /*!
- * \file   MakefileGenerator.cxx
+ * \file   mfront/src/MakefileGenerator.cxx
  * \brief
  * \author Thomas Helfer
  * \date   16/08/2015
@@ -259,14 +259,13 @@ namespace mfront {
     }
     // adding the mfront search path to the include files
     if (!SearchPathsHandler::getSearchPaths().empty()) {
-      const auto& paths = SearchPathsHandler::getSearchPaths();
       auto first = cppflags.empty();
-      for (const auto& path : paths) {
+      for (const auto& dir : SearchPathsHandler::getSearchPaths()) {
         if (!first) {
           m << "\\\n";
           first = false;
         }
-        m << "\t     -I" << path;
+        m << "\t     -I" << dir;
       }
     }
     //

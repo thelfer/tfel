@@ -498,6 +498,10 @@ namespace mfront {
     Parser::registerNewCallBack(
         "--search-path", &BehaviourDocumentationGenerator::treatSearchPath,
         "add a new path at the beginning of the search paths", true);
+    this->registerNewCallBack(
+        "--madnex-search-path",
+        &BehaviourDocumentationGenerator::treatMadnexSearchPath,
+        "add a mandex file to the search paths", true);
     Parser::registerCallBack(
         "--standalone",
         CallBack("generate a standalone document (false by default)",

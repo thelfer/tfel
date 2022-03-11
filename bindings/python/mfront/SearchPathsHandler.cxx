@@ -29,7 +29,6 @@ void declareSearchPathsHandler() {
            "search a file and return the path to it if found.")
       .staticmethod("search")
       .def("getSearchPaths", &SearchPathsHandler::getSearchPaths,
-           return_value_policy<copy_const_reference>(),
            "return all the registred search paths.")
       .staticmethod("getSearchPaths");
 

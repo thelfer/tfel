@@ -77,6 +77,8 @@ namespace mfront {
     virtual void treatUnicodeOutput();
     //! \brief treat the `--search-path` command line option
     virtual void treatSearchPath();
+    //! \brief treat the `--madnex-search-path` command line option
+    virtual void treatMadnexSearchPath();
     /*!
      * \brief treat the `--intall-path` (or `--install-prefix`) command line
      * option
