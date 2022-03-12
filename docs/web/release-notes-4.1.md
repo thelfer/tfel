@@ -468,7 +468,7 @@ The `madnex` files specified in `madnex` search paths are first search
 in the current directory, and then in the directories specified by the
 `--search-path` command line arguments.
 
-## Automatic declaration of a `madnex` input file as a `madnex` search path
+## Automatic declaration of a `madnex` input file as a `madnex` search path{#sec:tfel_4.1:mfront:automatic_madnex_file_search_path}
 
 When `MFront` uses a `madnex` input file, this file is automatically
 added to the `madnex` search path.
@@ -1044,6 +1044,13 @@ $ mfront-query --list-behaviour-mfm-test-generator-tests=unsorted --test=".+Tens
 ~~~~
 
 # Issues fixed
+
+## Issue #145: [mfront] Automatically add a madnex input file to the search paths 
+
+This feature is described in Section
+@sec:tfel_4.1:mfront:automatic_madnex_file_search_path.
+
+For more details, see : <https://github.com/thelfer/tfel/issues/145>.
 
 ## Issue #144: [mfront-query] List dependencies of a `mfront` file
 
