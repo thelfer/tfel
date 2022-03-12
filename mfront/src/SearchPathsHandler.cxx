@@ -259,6 +259,22 @@ namespace mfront {
     msf.paths.insert(msf.paths.begin(), npaths.begin(), npaths.end());
   }  // end of addSearchPaths
 
+  void SearchPathsHandler::addSearchPathsFromImplementationPaths(
+      const std::vector<std::string>& paths) {
+    for (const auto& path : paths) {
+      if (tfel::utilities::starts_with(path, "madnex:")) {
+#ifdef MFRONT_HAVE_MADNEX
+        const auto f =
+            std::get<0>(decomposeImplementationPathInMadnexFile(path));
+        SearchPathsHandler::addMadnexSearchPath(f);
+#else  /* MFRONT_HAVE_MADNEX */
+        tfel::raise(
+            "MFrontBase::addInputPaths: madnex support is not enabled");
+#endif /* MFRONT_HAVE_MADNEX */
+      }
+    }
+  }  // end of addSearchPathsFromImplementationPaths
+
   std::vector<std::string> SearchPathsHandler::getSearchPaths() {
     auto& msf = SearchPathsHandler::getSearchPathsHandler();
     auto directories = std::vector<std::string>{};

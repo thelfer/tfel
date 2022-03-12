@@ -72,6 +72,12 @@ namespace mfront {
      * \param[in] p : new search paths
      */
     static void addSearchPaths(const std::string&);
+    /*!
+     * \brief add search paths for implementations paths.
+     * \param[in] paths : implementation paths
+     */
+    static void addSearchPathsFromImplementationPaths(
+        const std::vector<std::string>&);
     //! \return the list of the search paths associated with directories
     static std::vector<std::string> getSearchPaths();
 

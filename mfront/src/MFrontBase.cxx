@@ -373,6 +373,7 @@ namespace mfront {
     const auto paths = getImplementationsPaths(
         p, this->material_identifier, this->material_property_identifier,
         this->behaviour_identifier, this->model_identifier);
+    SearchPathsHandler::addSearchPathsFromImplementationPaths(paths);
     this->inputs.insert(paths.begin(), paths.end());
     this->material_identifier.clear();
     this->material_property_identifier.clear();
