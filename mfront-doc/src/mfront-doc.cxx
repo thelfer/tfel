@@ -34,6 +34,7 @@
 #include "MFront/AbstractDSL.hxx"
 #include "MFront/AbstractBehaviourDSL.hxx"
 #include "MFront/PathSpecifier.hxx"
+#include "MFront/SearchPathsHandler.hxx"
 
 /* coverity [UNCAUGHT_EXCEPT]*/
 int main(const int argc, const char* const* const argv) {
@@ -71,6 +72,7 @@ int main(const int argc, const char* const* const argv) {
                                                   current_path_specifier);
     const auto implementations =
         mfront::getImplementationsPaths(path_specifiers);
+    SearchPathsHandler::addSearchPathsFromImplementationPaths(implementations);
     //
     auto bgens = std::vector<std::shared_ptr<BGen>>{};
     for (const auto& f : implementations) {

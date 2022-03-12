@@ -468,6 +468,26 @@ The `madnex` files specified in `madnex` search paths are first search
 in the current directory, and then in the directories specified by the
 `--search-path` command line arguments.
 
+## Automatic declaration of a `madnex` input file as a `madnex` search path
+
+When `MFront` uses a `madnex` input file, this file is automatically
+added to the `madnex` search path.
+
+### Example of usage
+
+Let us consider a file a `madnex` file containing a behaviour `Test` and
+a material property `YoungModulusTest` which is used by the `Test`
+behaviour, then the following instructions work as expected:
+
+~~~~{.bash}
+$ mfront --obuild --interface=aster --behaviour=Test Example.mdnx 
+Treating target : all
+The following libraries have been built :
+- libAsterBehaviour.so :  astertest
+$ mfront-query --list-dependencies --behaviour=Test Example.mdnx 
+madnex:Example.mdnx:MaterialProperty::YoungModulusTest 
+~~~~
+
 # `MTest` improvements
 
 ## Support for `madnex` file {#sec:tfel:4.1:mtest:madnex_support}

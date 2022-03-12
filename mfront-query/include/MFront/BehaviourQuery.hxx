@@ -46,7 +46,7 @@ namespace mfront {
      * \param[in] argc : number of command line arguments
      * \param[in] argv : command line arguments
      * \param[in] d    : behaviour domain specific language
-     * \param[in] f    : behaviour domain specific language
+     * \param[in] f    : input file
      */
     BehaviourQuery(const int,
                    const char* const* const,

@@ -31,6 +31,7 @@
 #include "TFEL/Raise.hxx"
 #include "TFEL/Utilities/StringAlgorithms.hxx"
 #include "TFEL/System/System.hxx"
+#include "MFront/DSLUtilities.hxx"
 #include "MFront/SearchPathsHandler.hxx"
 
 namespace mfront {
@@ -82,7 +83,7 @@ namespace mfront {
       }
     }
     tfel::raise(
-        "SearchPathsHandler::search: "
+        "SearchPathsHandler::searchMadnexFile: "
         "file '" +
         f + "' has not been found.");
   }  // namespace mfront
@@ -260,6 +261,22 @@ namespace mfront {
     }
     msf.paths.insert(msf.paths.begin(), npaths.begin(), npaths.end());
   }  // end of addSearchPaths
+
+  void SearchPathsHandler::addSearchPathsFromImplementationPaths(
+      const std::vector<std::string>& paths) {
+    for (const auto& path : paths) {
+      if (tfel::utilities::starts_with(path, "madnex:")) {
+#ifdef MFRONT_HAVE_MADNEX
+        const auto f =
+            std::get<0>(decomposeImplementationPathInMadnexFile(path));
+        SearchPathsHandler::addMadnexSearchPath(f);
+#else  /* MFRONT_HAVE_MADNEX */
+        tfel::raise(
+            "MFrontBase::addInputPaths: madnex support is not enabled");
+#endif /* MFRONT_HAVE_MADNEX */
+      }
+    }
+  }  // end of addSearchPathsFromImplementationPaths
 
   std::vector<std::string> SearchPathsHandler::getSearchPaths() {
     auto& msf = SearchPathsHandler::getSearchPathsHandler();

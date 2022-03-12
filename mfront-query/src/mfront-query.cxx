@@ -48,6 +48,7 @@
 #include "MFront/AbstractBehaviourDSL.hxx"
 #include "MFront/ModelDSL.hxx"
 #include "MFront/PathSpecifier.hxx"
+#include "MFront/SearchPathsHandler.hxx"
 
 #ifdef MFRONT_QUERY_HAVE_MADNEX
 
@@ -729,6 +730,7 @@ int main(const int argc, const char* const* const argv) {
     //
     const auto implementations =
         mfront::getImplementationsPaths(path_specifiers);
+    SearchPathsHandler::addSearchPathsFromImplementationPaths(implementations);
     //
     auto mpqueries = std::vector<std::shared_ptr<MaterialPropertyQuery>>{};
     auto bqueries = std::vector<std::shared_ptr<BehaviourQuery>>{};
