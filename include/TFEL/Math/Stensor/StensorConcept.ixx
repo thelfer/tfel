@@ -19,14 +19,14 @@
 namespace tfel::math {
 
   template <typename StensorType>
-  std::enable_if_t<implementsStensorConcept<StensorType>(),
-                   numeric_type<StensorType>>
+  constexpr std::enable_if_t<implementsStensorConcept<StensorType>(),
+                             numeric_type<StensorType>>
   trace(const StensorType& s) {
     return s(0) + s(1) + s(2);
   }
 
   template <typename StensorType>
-  std::enable_if_t<
+  constexpr std::enable_if_t<
       implementsStensorConcept<StensorType>(),
       typename tfel::typetraits::AbsType<numeric_type<StensorType>>::type>
   abs(const StensorType& s) {
@@ -46,8 +46,8 @@ namespace tfel::math {
   }  // end of abs
 
   template <typename StensorType>
-  std::enable_if_t<implementsStensorConcept<StensorType>(),
-                   numeric_type<StensorType>>
+  constexpr std::enable_if_t<implementsStensorConcept<StensorType>(),
+                             numeric_type<StensorType>>
   sigmaeq(const StensorType& s) {
     using real = base_type<numeric_type<StensorType>>;
     constexpr auto N = getSpaceDimension<StensorType>();
@@ -73,8 +73,8 @@ namespace tfel::math {
   }  // end of sigmaeq
 
   template <typename StensorType>
-  std::enable_if_t<implementsStensorConcept<StensorType>(),
-                   EvaluationResult<StensorType>>
+  constexpr std::enable_if_t<implementsStensorConcept<StensorType>(),
+                             EvaluationResult<StensorType>>
   deviator(const StensorType& s) {
     using Result = EvaluationResult<StensorType>;
     using real = base_type<numeric_type<StensorType>>;
@@ -92,7 +92,7 @@ namespace tfel::math {
   }  // end of deviator
 
   template <typename StensorResultType, typename StensorType>
-  std::enable_if_t<
+  constexpr std::enable_if_t<
       (implementsStensorConcept<StensorResultType>() &&
        implementsStensorConcept<StensorType>() &&
        isAssignableTo<typename ComputeUnaryResult<numeric_type<StensorType>,
@@ -128,7 +128,7 @@ namespace tfel::math {
   }  // end of ComputeDeterminantDerivative
 
   template <typename StensorResultType, typename StensorType>
-  std::enable_if_t<
+  constexpr std::enable_if_t<
       (implementsStensorConcept<StensorResultType>() &&
        implementsStensorConcept<StensorType>() &&
        isAssignableTo<typename ComputeUnaryResult<numeric_type<StensorType>,
@@ -168,7 +168,7 @@ namespace tfel::math {
     } else if constexpr (N == 3u) {
       using NumType = numeric_type<StensorType>;
       using real = base_type<NumType>;
-      constexpr const auto cste = Cste<real>::sqrt2;
+      constexpr auto cste = Cste<real>::sqrt2;
       dJ[0] = -(6 * s[5] * s[5] - 3 * s[4] * s[4] - 3 * s[3] * s[3] +
                 2 * s[2] * s[2] + (4 * s[0] - 8 * s[1]) * s[2] +
                 2 * s[1] * s[1] + 4 * s[0] * s[1] - 4 * s[0] * s[0]) /

@@ -39,10 +39,10 @@ namespace tfel::math {
     using ConceptTag = StensorTag;
 
    protected:
-    StensorConcept() = default;
-    StensorConcept(StensorConcept&&) = default;
-    StensorConcept(const StensorConcept&) = default;
-    StensorConcept& operator=(const StensorConcept&) = default;
+    constexpr StensorConcept() = default;
+    constexpr StensorConcept(StensorConcept&&) = default;
+    constexpr StensorConcept(const StensorConcept&) = default;
+    constexpr StensorConcept& operator=(const StensorConcept&) = default;
     ~StensorConcept() = default;
   };
 
@@ -84,7 +84,7 @@ namespace tfel::math {
    * \param[in] s: symmetric tensor
    */
   template <typename StensorType>
-  std::enable_if_t<
+  TFEL_HOST_DEVICE constexpr std::enable_if_t<
       implementsStensorConcept<StensorType>(),
       typename tfel::typetraits::AbsType<numeric_type<StensorType>>::type>
   abs(const StensorType&);
@@ -93,23 +93,26 @@ namespace tfel::math {
    * \param[in] s: symmetric tensor
    */
   template <typename StensorType>
-  TFEL_MATH_INLINE std::enable_if_t<implementsStensorConcept<StensorType>(),
-                                    numeric_type<StensorType>>
+  TFEL_HOST_DEVICE TFEL_MATH_INLINE constexpr std::enable_if_t<
+      implementsStensorConcept<StensorType>(),
+      numeric_type<StensorType>>
   trace(const StensorType&);
   /*!
    * \return the von Mises stress of a symmetric tensor
    * \param[in] s: symmetric tensor
    */
   template <typename StensorType>
-  TFEL_MATH_INLINE2 std::enable_if_t<implementsStensorConcept<StensorType>(),
-                                     numeric_type<StensorType>>
+  TFEL_HOST_DEVICE TFEL_MATH_INLINE2 constexpr std::enable_if_t<
+      implementsStensorConcept<StensorType>(),
+      numeric_type<StensorType>>
   sigmaeq(const StensorType&);
   /*!
    * \return the deviator of a symmetric tensor
    */
   template <typename StensorType>
-  std::enable_if_t<implementsStensorConcept<StensorType>(),
-                   EvaluationResult<StensorType>>
+  TFEL_HOST_DEVICE constexpr std::enable_if_t<
+      implementsStensorConcept<StensorType>(),
+      EvaluationResult<StensorType>>
   deviator(const StensorType&);
 
   /*!
@@ -117,7 +120,7 @@ namespace tfel::math {
    * dimension
    * \param[in] d: space dimension
    */
-  TFELMATH_VISIBILITY_EXPORT unsigned short getStensorSize(
+  TFEL_HOST TFELMATH_VISIBILITY_EXPORT unsigned short getStensorSize(
       const unsigned short);
   /*!
    * \brief compute the derivative of the determinant with respect
@@ -126,7 +129,7 @@ namespace tfel::math {
    * \param[in]  s: argument
    */
   template <typename StensorResultType, typename StensorType>
-  std::enable_if_t<
+  TFEL_HOST_DEVICE constexpr  std::enable_if_t<
       (implementsStensorConcept<StensorResultType>() &&
        implementsStensorConcept<StensorType>() &&
        isAssignableTo<typename ComputeUnaryResult<numeric_type<StensorType>,
@@ -141,7 +144,7 @@ namespace tfel::math {
    * \param[in]  s:  argument
    */
   template <typename StensorResultType, typename StensorType>
-  std::enable_if_t<
+  TFEL_HOST_DEVICE constexpr std::enable_if_t<
       (implementsStensorConcept<StensorResultType>() &&
        implementsStensorConcept<StensorType>() &&
        isAssignableTo<typename ComputeUnaryResult<numeric_type<StensorType>,

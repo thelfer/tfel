@@ -59,10 +59,10 @@ namespace tfel::math {
     const auto& child = static_cast<const Child&>(*this);
     const auto* const d = child.data();
     if constexpr (ArrayPolicyType::isMakeConstReferenceTrivial) {
-      return d[child.getIndex(static_cast<const size_type>(i)...)];
+      return d[child.getIndex(static_cast<size_type>(i)...)];
     } else {
       return ArrayPolicyType::make_const_reference(
-          d[child.getIndex(static_cast<const size_type>(i)...)]);
+          d[child.getIndex(static_cast<size_type>(i)...)]);
     }
   }  // end of operator[]
 
@@ -122,10 +122,10 @@ namespace tfel::math {
     auto& child = static_cast<Child&>(*this);
     auto* const d = child.data();
     if constexpr (ArrayPolicyType::isMakeReferenceTrivial) {
-      return d[child.getIndex(static_cast<const size_type>(i)...)];
+      return d[child.getIndex(static_cast<size_type>(i)...)];
     } else {
       return ArrayPolicyType::make_reference(
-          d[child.getIndex(static_cast<const size_type>(i)...)]);
+          d[child.getIndex(static_cast<size_type>(i)...)]);
     }
   }  // end of operator()
 

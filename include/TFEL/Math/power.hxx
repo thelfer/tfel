@@ -39,10 +39,12 @@ namespace tfel::math {
   };
 
   template <int N, typename T>
-  constexpr std::enable_if_t<std::is_floating_point_v<T>, T> power(const T);
+  TFEL_HOST_DEVICE constexpr std::enable_if_t<std::is_floating_point_v<T>, T>
+  power(const T);
 
   template <int N, unsigned int D, typename T>
-  constexpr std::enable_if_t<std::is_floating_point_v<T>, T> power(const T);
+  TFEL_HOST_DEVICE constexpr std::enable_if_t<std::is_floating_point_v<T>, T>
+  power(const T);
 
 }  // end of namespace tfel::math
 

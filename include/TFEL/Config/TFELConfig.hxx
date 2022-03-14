@@ -336,4 +336,30 @@
  */
 #define TFEL_CONSTEXPR constexpr
 
+#ifndef TFEL_DEVICE
+#ifdef __CUDACC__
+#define TFEL_DEVICE __device__
+#endif /* __CUDACC__ */
+#endif /* TFEL_DEVICE */
+
+#ifndef TFEL_HOST
+#ifdef __CUDACC__
+#define TFEL_HOST __host__
+#endif /* __CUDACC__ */
+#endif /* TFEL_HOST */
+
+#ifndef TFEL_DEVICE
+#define TFEL_DEVICE
+#endif /* TFEL_DEVICE */
+
+#ifndef TFEL_HOST
+#define TFEL_HOST
+#endif /* TFEL_HOST */
+
+#if defined(TFEL_HOST) && defined(TFEL_DEVICE)
+#define TFEL_HOST_DEVICE TFEL_DEVICE TFEL_HOST
+#else
+#define TFEL_HOST_DEVICE
+#endif
+
 #endif /* LIB_TFEL_CONFIG_HXX */
