@@ -36,6 +36,10 @@ name. If `@postprocessing@` be the name of a post-processing, `MFront`
 will automatically register `execute@postprocessing@PostProcessing` as a
 member name.
 
+# `TFEL/Config` improvements
+
+## The `TFEL_HOST`, `TFEL_DEVICE` and `TFEL_HOST_DEVICE` macros {#sec:tfel_4.1:tfel_config:device_specification}
+
 # `TFEL/System` improvements
 
 ## Improvement to the `ExternalLibraryManager` class
@@ -108,6 +112,18 @@ The `ExternalBehaviourDescription` class now have
 `hasTemperatureBeenRemovedFromExternalStateVariables` boolean public
 data member which states if the temperature was removed from the list of
 external state variables.
+
+# `TFEL/Math` improvements
+
+## Generalized usage of the `constexpr` keyword
+
+## Port to GPUs
+
+# `TFEL/Material` improvements
+
+## Generalized usage of the `constexpr` keyword {#sec:tfel_4.1:tfel_material:constexpr}
+
+## Port to GPUs {#sec:tfel_4.1:tfel_material:gpu}
 
 # `MFront` improvements
 
@@ -947,7 +963,7 @@ mfm_test_generator.write(d,'Plasticity.mdnx')
 
 ## General queries
 
-### List of dependencies of an `MFront` file
+### List of dependencies of an `MFront` file {#sec:tfel_4.1:mfront_query:list_dependencies}
 
 The `--list-dependencies` query lists all the dependencies of an
 `MFront` file.
@@ -1044,6 +1060,18 @@ $ mfront-query --list-behaviour-mfm-test-generator-tests=unsorted --test=".+Tens
 ~~~~
 
 # Issues fixed
+
+## Issue #150: [TFEL/Material] Add device specification
+
+See Sections @sec:tfel_4.1:tfel_config:device_specification and @sec:tfel_4.1:tfel_material:gpu.
+
+For more details, see : <https://github.com/thelfer/tfel/issues/150>.
+
+## Issue #148: [TFEL/Material] `constexpr` all the things
+
+See Section @sec:tfel_4.1:tfel_material:constexpr.
+
+For more details, see : <https://github.com/thelfer/tfel/issues/148>.
 
 ## Issue #145: [mfront] Automatically add a madnex input file to the search paths 
 
