@@ -139,13 +139,6 @@ static void listImplementations(const mfront::PathSpecifier& p,
         "is not meaningful when listing " +
         itypes);
   }
-  const auto ext = [p]() -> std::string {
-    const auto pos = p.file.find(".");
-    if (pos != std::string::npos) {
-      return p.file.substr(pos + 1);
-    }
-    return "";
-  }();
   if (!checkMadnexFileExtension(p)) {
     tfel::raise("mfront-query: listing " + itypes +
                 " is only supported for madnex files");
