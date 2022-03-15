@@ -33,9 +33,9 @@ namespace tfel::material {
      * \param[in] e: criterion used to check if two eigenvalues are equal
      */
     template <typename StressStensor>
-    typename std::enable_if<tfel::math::getSpaceDimension<StressStensor>() ==
-                                1u,
-                            void>::type
+    TFEL_HOST_DEVICE typename std::enable_if<
+        tfel::math::getSpaceDimension<StressStensor>() == 1u,
+        void>::type
     completeBaralatStressSecondDerivative(
         tfel::material::BarlatStressSecondDerivativeType<StressStensor>&,
         const tfel::math::
@@ -58,9 +58,9 @@ namespace tfel::material {
      * \param[in] e: criterion used to check if two eigenvalues are equal
      */
     template <typename StressStensor>
-    typename std::enable_if<tfel::math::getSpaceDimension<StressStensor>() ==
-                                2u,
-                            void>::type
+    TFEL_HOST_DEVICE typename std::enable_if<
+        tfel::math::getSpaceDimension<StressStensor>() == 2u,
+        void>::type
     completeBaralatStressSecondDerivative(
         tfel::material::BarlatStressSecondDerivativeType<StressStensor>&
             d2Phi_ds2,
@@ -101,9 +101,9 @@ namespace tfel::material {
      * \param[in] e: criterion used to check if two eigenvalues are equal
      */
     template <typename StressStensor>
-    typename std::enable_if<tfel::math::getSpaceDimension<StressStensor>() ==
-                                3u,
-                            void>::type
+    TFEL_HOST_DEVICE typename std::enable_if<
+        tfel::math::getSpaceDimension<StressStensor>() == 3u,
+        void>::type
     completeBaralatStressSecondDerivative(
         tfel::material::BarlatStressSecondDerivativeType<StressStensor>&
             d2Phi_ds2,
@@ -157,21 +157,22 @@ namespace tfel::material {
   }  // end namespace internals
 
   template <unsigned short N, typename real>
-  tfel::math::st2tost2<N, real> makeBarlatLinearTransformation(const real c12,
-                                                               const real c21,
-                                                               const real c13,
-                                                               const real c31,
-                                                               const real c23,
-                                                               const real c32,
-                                                               const real c44,
-                                                               const real c55,
-                                                               const real c66) {
+  constexpr tfel::math::st2tost2<N, real> makeBarlatLinearTransformation(
+      const real c12,
+      const real c21,
+      const real c13,
+      const real c31,
+      const real c23,
+      const real c32,
+      const real c44,
+      const real c55,
+      const real c66) {
     return makeOrthotropicStressLinearTransformation<N, real>(
         c12, c21, c13, c31, c23, c32, c44, c55, c66);
   }  // end of makeBarlatLinearTransformation
 
   template <unsigned short N, typename real>
-  tfel::math::st2tost2<N, real> makeBarlatLinearTransformation(
+  constexpr tfel::math::st2tost2<N, real> makeBarlatLinearTransformation(
       const tfel::math::fsarray<9u, real>& c) {
     return makeOrthotropicStressLinearTransformation<N, real>(c);
   }  // end of makeBarlatLinearTransformation
@@ -179,7 +180,8 @@ namespace tfel::material {
   template <ModellingHypothesis::Hypothesis H,
             OrthotropicAxesConvention c,
             typename real>
-  tfel::math::st2tost2<ModellingHypothesisToSpaceDimension<H>::value, real>
+  constexpr tfel::math::st2tost2<ModellingHypothesisToSpaceDimension<H>::value,
+                                 real>
   makeBarlatLinearTransformation(const real c12,
                                  const real c21,
                                  const real c13,
@@ -196,7 +198,8 @@ namespace tfel::material {
   template <ModellingHypothesis::Hypothesis H,
             OrthotropicAxesConvention oac,
             typename real>
-  tfel::math::st2tost2<ModellingHypothesisToSpaceDimension<H>::value, real>
+  constexpr tfel::math::st2tost2<ModellingHypothesisToSpaceDimension<H>::value,
+                                 real>
   makeBarlatLinearTransformation(const tfel::math::fsarray<9u, real>& c) {
     return makeOrthotropicStressLinearTransformation<H, oac, real>(c);
   }  // end of makeBarlatLinearTransformation

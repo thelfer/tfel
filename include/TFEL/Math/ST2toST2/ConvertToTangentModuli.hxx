@@ -61,7 +61,7 @@ namespace tfel::math {
   convertToTangentModuli(const T2toST2Type& K, const TensorType& F) {
     using res = result_type<numeric_type<T2toST2Type>, numeric_type<TensorType>,
                             OpMult>;
-    constexpr const auto icste2 = Cste<res>::isqrt2 / 2;
+    TFEL_HOST_DEVICE constexpr const auto icste2 = Cste<res>::isqrt2 / 2;
     st2tost2<2u, res> C;
     C(0, 0) = K(0, 0) * F(0) + K(0, 3) * F(3);
     C(0, 3) =
@@ -102,7 +102,7 @@ namespace tfel::math {
   convertToTangentModuli(const T2toST2Type& K, const TensorType& F) {
     using res = result_type<numeric_type<T2toST2Type>, numeric_type<TensorType>,
                             OpMult>;
-    constexpr const auto icste2 = Cste<res>::isqrt2 / 2;
+    TFEL_HOST_DEVICE constexpr const auto icste2 = Cste<res>::isqrt2 / 2;
     st2tost2<3u, res> C;
     C(0, 0) = K(0, 0) * F(0) + K(0, 3) * F(3) + K(0, 5) * F(5);
     C(0, 3) = (K(0, 0) * F(4) + K(0, 3) * F(1) + K(0, 5) * F(7) +

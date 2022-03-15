@@ -61,16 +61,16 @@ namespace tfel::material {
    * \f]
    */
   template <unsigned short N, typename real>
-  tfel::math::st2tost2<N, real> makeOrthotropicStressLinearTransformation(
-      const real,
-      const real,
-      const real,
-      const real,
-      const real,
-      const real,
-      const real,
-      const real,
-      const real);
+  TFEL_HOST_DEVICE constexpr tfel::math::st2tost2<N, real>
+  makeOrthotropicStressLinearTransformation(const real,
+                                            const real,
+                                            const real,
+                                            const real,
+                                            const real,
+                                            const real,
+                                            const real,
+                                            const real,
+                                            const real);
   /*!
    * \tparam N:    space dimension
    * \tparam real: numerical type
@@ -103,7 +103,8 @@ namespace tfel::material {
    * \f]
    */
   template <unsigned short N, typename real>
-  tfel::math::st2tost2<N, real> makeOrthotropicStressLinearTransformation(
+  TFEL_HOST_DEVICE constexpr tfel::math::st2tost2<N, real>
+  makeOrthotropicStressLinearTransformation(
       const tfel::math::tvector<9u, real>&);
   /*!
    * \tparam H: modelling hypothesis
@@ -154,16 +155,17 @@ namespace tfel::material {
   template <ModellingHypothesis::Hypothesis H,
             OrthotropicAxesConvention,
             typename real>
-  tfel::math::st2tost2<ModellingHypothesisToSpaceDimension<H>::value, real>
-  makeOrthotropicStressLinearTransformation(const real,
-                                            const real,
-                                            const real,
-                                            const real,
-                                            const real,
-                                            const real,
-                                            const real,
-                                            const real,
-                                            const real);
+  TFEL_HOST_DEVICE constexpr tfel::math::
+      st2tost2<ModellingHypothesisToSpaceDimension<H>::value, real>
+      makeOrthotropicStressLinearTransformation(const real,
+                                                const real,
+                                                const real,
+                                                const real,
+                                                const real,
+                                                const real,
+                                                const real,
+                                                const real,
+                                                const real);
   /*!
    * \tparam H: modelling hypothesis
    * \tparam oac: orthotropic axis convention
@@ -205,9 +207,10 @@ namespace tfel::material {
   template <ModellingHypothesis::Hypothesis H,
             OrthotropicAxesConvention,
             typename real>
-  tfel::math::st2tost2<ModellingHypothesisToSpaceDimension<H>::value, real>
-  makeOrthotropicStressLinearTransformation(
-      const tfel::math::tvector<9u, real>&);
+  TFEL_HOST_DEVICE constexpr tfel::math::
+      st2tost2<ModellingHypothesisToSpaceDimension<H>::value, real>
+      makeOrthotropicStressLinearTransformation(
+          const tfel::math::tvector<9u, real>&);
 
 }  // end of namespace tfel::material
 

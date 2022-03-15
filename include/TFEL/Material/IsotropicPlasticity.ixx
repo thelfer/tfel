@@ -18,7 +18,7 @@
 namespace tfel::material {
 
   template <typename StensorType>
-  typename std::enable_if<
+  constexpr typename std::enable_if<
       tfel::meta::Implements<StensorType, tfel::math::StensorConcept>::cond,
       tfel::math::stensor<tfel::math::getSpaceDimension<StensorType>(),
                           typename tfel::math::ComputeUnaryResult<
@@ -29,7 +29,7 @@ namespace tfel::material {
   }  // end of computeJ3Derivative
 
   template <typename StensorType>
-  typename std::enable_if<
+  constexpr typename std::enable_if<
       tfel::meta::Implements<StensorType, tfel::math::StensorConcept>::cond &&
           tfel::typetraits::IsScalar<
               tfel::math::numeric_type<StensorType>>::cond,

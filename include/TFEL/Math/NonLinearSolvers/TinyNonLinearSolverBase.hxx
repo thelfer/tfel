@@ -121,7 +121,7 @@ namespace tfel::math {
      * This method can be used to initialize some internal state, including
      * numerical parameters.
      */
-    constexpr void executeInitialisationTaskBeforeResolution() noexcept {}
+    TFEL_HOST_DEVICE constexpr void executeInitialisationTaskBeforeResolution() noexcept {}
     /*!
      * \brief this method is called at the beginning of the
      * `solveNonLinearSystem2` method.
@@ -130,7 +130,7 @@ namespace tfel::math {
      * This method can be used to initialize some internal state, including
      * numerical parameters.
      */
-    constexpr void
+    TFEL_HOST_DEVICE constexpr void
     executeInitialisationTaskBeforeBeginningOfCoreAlgorithm() noexcept {}
     //! \return the norm of the residual
     NumericType computeResidualNorm() const noexcept {
@@ -140,7 +140,7 @@ namespace tfel::math {
      * \brief check the convergence of the method
      * \param[in] e: current error
      */
-    constexpr bool checkConvergence(const NumericType e) const noexcept {
+    TFEL_HOST_DEVICE constexpr bool checkConvergence(const NumericType e) const noexcept {
       return e < this->epsilon;
     }
     /*!
@@ -163,40 +163,40 @@ namespace tfel::math {
      * `TinyNonLinearSolverBase`. It is only defined to name an appropriate
      * method which shall be used in derived class if required.
      */
-    constexpr void updateOrCheckJacobian() noexcept {}
+    TFEL_HOST_DEVICE constexpr void updateOrCheckJacobian() noexcept {}
     /*!
      * \brief method meant to set bounds on some components of the current
      * correction or to implement a line search or to implement static
      * decondensation.
      */
-    constexpr void processNewCorrection() noexcept {}
+    TFEL_HOST_DEVICE constexpr void processNewCorrection() noexcept {}
     /*!
      * \brief method called when the current correction is rejected.
      *
      * This can be used to cancel static decondensation.
      */
-    constexpr void rejectCurrentCorrection() noexcept {}
+    TFEL_HOST_DEVICE constexpr void rejectCurrentCorrection() noexcept {}
     /*!
      * \brief method meant to process the new estimate.
      *
      * This method may be called to apply bounds on the estimate.
      */
-    constexpr void processNewEstimate() noexcept {}
+    TFEL_HOST_DEVICE constexpr void processNewEstimate() noexcept {}
     //! \brief method called when the resolution begins
-    constexpr void reportBeginningOfResolution() const noexcept {}
+    TFEL_HOST_DEVICE constexpr void reportBeginningOfResolution() const noexcept {}
     //! \brief method called when the resolution succeeds
-    constexpr void reportSuccess() const noexcept {}
+    TFEL_HOST_DEVICE constexpr void reportSuccess() const noexcept {}
     //! \brief method called when the resolution fails
-    constexpr void reportFailure() const noexcept {}
+    TFEL_HOST_DEVICE constexpr void reportFailure() const noexcept {}
     //! \brief method called when the evaluation of the residual failed.
-    constexpr void reportInvalidResidualEvaluation() const noexcept {}
+    TFEL_HOST_DEVICE constexpr void reportInvalidResidualEvaluation() const noexcept {}
     //! \brief method called when the computation of a new correction failed.
-    constexpr void reportNewCorrectionComputationFailure() const noexcept {}
+    TFEL_HOST_DEVICE constexpr void reportNewCorrectionComputationFailure() const noexcept {}
     /*!
      * \brief method called after a standard Newton step
      * \param[in] e: error
      */
-    constexpr void reportStandardIteration(const NumericType) const noexcept {}
+    TFEL_HOST_DEVICE constexpr void reportStandardIteration(const NumericType) const noexcept {}
     //! \brief residual vector
     tvector<N, NumericType> fzeros;
     //! \brief current estimate of the unknowns

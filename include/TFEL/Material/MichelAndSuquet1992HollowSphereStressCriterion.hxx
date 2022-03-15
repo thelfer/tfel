@@ -88,7 +88,7 @@ namespace tfel::material {
    * \param[in] p: parameters
    */
   template <typename StressStensor>
-  std::ostream& operator<<(
+  TFEL_HOST std::ostream& operator<<(
       std::ostream&,
       const MichelAndSuquet1992HollowSphereStressCriterionParameters<
           StressStensor>&);
@@ -102,7 +102,7 @@ namespace tfel::material {
    * \param[in] seps: threshold for the equivalent stress.
    */
   template <typename StressStensor>
-  MichelAndSuquet1992HollowSphereStressType<StressStensor>
+  TFEL_HOST_DEVICE MichelAndSuquet1992HollowSphereStressType<StressStensor>
   computeMichelAndSuquet1992HollowSphereStress(
       const StressStensor&,
       const MichelAndSuquet1992HollowSpherePorosityType<StressStensor>,
@@ -118,7 +118,7 @@ namespace tfel::material {
    * \param[in] seps: threshold for the equivalent stress.
    */
   template <typename StressStensor>
-  std::tuple<
+  TFEL_HOST_DEVICE std::tuple<
       MichelAndSuquet1992HollowSphereStressType<StressStensor>,
       MichelAndSuquet1992HollowSphereStressNormalType<StressStensor>,
       MichelAndSuquet1992HollowSphereStressDerivativeWithRespectToPorosityType<
@@ -136,7 +136,7 @@ namespace tfel::material {
    * parameters \param[in] seps: threshold for the equivalent stress.
    */
   template <typename StressStensor>
-  std::tuple<
+  TFEL_HOST_DEVICE std::tuple<
       MichelAndSuquet1992HollowSphereStressType<StressStensor>,
       MichelAndSuquet1992HollowSphereStressNormalType<StressStensor>,
       MichelAndSuquet1992HollowSphereStressDerivativeWithRespectToPorosityType<

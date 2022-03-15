@@ -87,14 +87,14 @@ namespace tfel::math {
                          tfel::typetraits::base_type<numeric_type<T>>>;
   //! \brief cast the value to the base type
   template <typename T>
-  constexpr std::
+  TFEL_HOST_DEVICE constexpr std::
       enable_if_t<tfel::typetraits::IsFundamentalNumericType<T>::cond, T&>
       base_type_cast(T& v) noexcept {
     return v;
   }
   //! \brief cast the value to the base type
   template <typename T>
-  constexpr std::
+  TFEL_HOST_DEVICE constexpr std::
       enable_if_t<tfel::typetraits::IsFundamentalNumericType<T>::cond, const T&>
       base_type_cast(const T& v) noexcept {
     return v;
@@ -105,7 +105,7 @@ namespace tfel::math {
    * \tparam MathObjectType: math object
    */
   template <typename MathObjectType>
-  constexpr unsigned short getSpaceDimension() {
+  TFEL_HOST_DEVICE constexpr unsigned short getSpaceDimension() {
     return MathObjectTraits<std::decay_t<MathObjectType>>::dime;
   }  // end of getSpaceDimension
 
@@ -115,7 +115,7 @@ namespace tfel::math {
    * \tparam  B, second type
    */
   template <typename A, typename B>
-  constexpr bool isAssignableTo() {
+  TFEL_HOST_DEVICE constexpr bool isAssignableTo() {
     return tfel::typetraits::isAssignableTo<A, B>();
   }  // end of isAssignableTo
 
@@ -124,7 +124,7 @@ namespace tfel::math {
    * \tparam T: tested type
    */
   template <typename T>
-  constexpr auto isInvalid() {
+  TFEL_HOST_DEVICE constexpr auto isInvalid() {
     return tfel::typetraits::isInvalid<T>();
   }  // end of isInvalid
 
@@ -133,7 +133,7 @@ namespace tfel::math {
    * \tparam T: tested type
    */
   template <typename T>
-  constexpr auto isScalar() {
+  TFEL_HOST_DEVICE constexpr auto isScalar() {
     return tfel::typetraits::isScalar<T>();
   }  // end of isScalar
 

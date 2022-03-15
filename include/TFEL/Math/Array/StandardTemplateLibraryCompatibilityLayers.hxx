@@ -63,37 +63,37 @@ namespace tfel::math {
      */
     using const_reverse_iterator = std::reverse_iterator<const_iterator>;
     //!
-    constexpr const_reference front() const noexcept;
+    TFEL_HOST_DEVICE constexpr const_reference front() const noexcept;
     //!
-    constexpr const_reference back() const noexcept;
+    TFEL_HOST_DEVICE constexpr const_reference back() const noexcept;
     //! \return an const iterator to the first element of the array.
-    constexpr const_iterator begin() const noexcept;
+    TFEL_HOST_DEVICE constexpr const_iterator begin() const noexcept;
     //! \return an const iterator to the first element of the array.
-    constexpr const_iterator cbegin() const noexcept;
+    TFEL_HOST_DEVICE constexpr const_iterator cbegin() const noexcept;
     //! \return an const iterator after the last element of the array.
-    constexpr const_iterator end() const noexcept;
+    TFEL_HOST_DEVICE constexpr const_iterator end() const noexcept;
     //! \return an const iterator after the last element of the array.
-    constexpr const_iterator cend() const noexcept;
+    TFEL_HOST_DEVICE constexpr const_iterator cend() const noexcept;
     /*!
      * \return an const reverse iterator past the last element of the
      * array.
      */
-    constexpr const_reverse_iterator rbegin() const noexcept;
+    TFEL_HOST_DEVICE constexpr const_reverse_iterator rbegin() const noexcept;
     /*!
      * \return an const reverse iterator past the last element of the
      * array.
      */
-    constexpr const_reverse_iterator crbegin() const noexcept;
+    TFEL_HOST_DEVICE constexpr const_reverse_iterator crbegin() const noexcept;
     /*!
      * \return an const reverse iterator before the first element of the
      * array.
      */
-    constexpr const_reverse_iterator rend() const noexcept;
+    TFEL_HOST_DEVICE constexpr const_reverse_iterator rend() const noexcept;
     /*!
      * \return an const reverse iterator before the first element of the
      * array.
      */
-    constexpr const_reverse_iterator crend() const noexcept;
+    TFEL_HOST_DEVICE constexpr const_reverse_iterator crend() const noexcept;
   };  // end of struct ConstArrayWithContiguousDataSTLCompatibilityLayer
 
   template <typename Child, typename ArrayPolicy>
@@ -158,12 +158,12 @@ namespace tfel::math {
     using ConstArrayWithContiguousDataSTLCompatibilityLayer<Child,
                                                             ArrayPolicy>::front;
     //
-    constexpr reference front() noexcept;
+    TFEL_HOST_DEVICE constexpr reference front() noexcept;
     //
     using ConstArrayWithContiguousDataSTLCompatibilityLayer<Child,
                                                             ArrayPolicy>::back;
     //
-    constexpr reference back() noexcept;
+    TFEL_HOST_DEVICE constexpr reference back() noexcept;
     //
     using ConstArrayWithContiguousDataSTLCompatibilityLayer<Child,
                                                             ArrayPolicy>::begin;
@@ -171,9 +171,9 @@ namespace tfel::math {
     using ConstArrayWithContiguousDataSTLCompatibilityLayer<Child,
                                                             ArrayPolicy>::end;
     //! \return an iterator to the first element of the array
-    constexpr iterator begin() noexcept;
+    TFEL_HOST_DEVICE constexpr iterator begin() noexcept;
     //! \return an iterator after the last element of the array.
-    constexpr iterator end() noexcept;
+    TFEL_HOST_DEVICE constexpr iterator end() noexcept;
     //
     using ConstArrayWithContiguousDataSTLCompatibilityLayer<
         Child,
@@ -182,12 +182,12 @@ namespace tfel::math {
     using ConstArrayWithContiguousDataSTLCompatibilityLayer<Child,
                                                             ArrayPolicy>::rend;
     //! \return an reverse iterator to the last element of the array.
-    constexpr reverse_iterator rbegin() noexcept;
+    TFEL_HOST_DEVICE constexpr reverse_iterator rbegin() noexcept;
     /*!
      * \return an  reverse iterator before the first element of the
      * array.
      */
-    constexpr reverse_iterator rend() noexcept;
+    TFEL_HOST_DEVICE constexpr reverse_iterator rend() noexcept;
   };  // end of struct MutableArrayWithContiguousDataSTLCompatibilityLayer
 
   template <typename Child, typename ArrayPolicy>

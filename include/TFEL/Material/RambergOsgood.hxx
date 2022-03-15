@@ -65,12 +65,11 @@ namespace tfel::material {
    * \param[in]  Ag:   UniformElongation
    */
   template <typename T1, typename T2>
-  void computeRambergOsgoodParameters(
+  TFEL_HOST_DEVICE void computeRambergOsgoodParameters(
       T1& K, T1& n, const T2 E, const T2 Rp02, const T2 Rm, const T2 Ag) {
-    using namespace std;
-    n = log(500 * Ag) / log(Rm / Rp02);
-    K = 0.2e-2 * E * pow(Rp02 / E, 1 - n) / Rp02;
-  }
+    n = std::log(500 * Ag) / std::log(Rm / Rp02);
+    K = 0.2e-2 * E * std::pow(Rp02 / E, 1 - n) / Rp02;
+  } // end of computeRambergOsgoodParameters
 
 }  // end of namespace tfel::material
 

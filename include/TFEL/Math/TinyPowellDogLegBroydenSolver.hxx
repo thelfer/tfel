@@ -63,9 +63,9 @@ namespace tfel::math {
     //! \brief destructor
     ~TinyPowellDogLegBroydenSolver() noexcept = default;
     //! \brief update the jacobian matrix
-    void updateOrCheckJacobian();
+    TFEL_HOST_DEVICE void updateOrCheckJacobian();
     //! \brief compute a new correction to the unknowns
-    bool computeNewCorrection();
+    TFEL_HOST_DEVICE bool computeNewCorrection();
 
    protected:
     //! \brief approximation of the invert of the jacobian matrix

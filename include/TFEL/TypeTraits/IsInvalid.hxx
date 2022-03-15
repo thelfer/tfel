@@ -36,7 +36,7 @@ namespace tfel::typetraits {
 
   //! \brief a simple wrapper around `IsInvalid`
   template <typename T>
-  constexpr auto isInvalid() {
+  TFEL_HOST_DEVICE constexpr auto isInvalid() {
     return IsInvalid<std::decay_t<T>>::cond;
   }  // end of isInvalid
 

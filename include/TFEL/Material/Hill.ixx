@@ -28,24 +28,26 @@ namespace tfel::material {
 
     template <typename real>
     struct ComputeHillTensorBase<1u, real> {
-      static tfel::math::st2tost2<1u, real> hillTensor(const real F,
-                                                       const real G,
-                                                       const real H,
-                                                       const real,
-                                                       const real,
-                                                       const real) {
+      TFEL_HOST_DEVICE static constexpr tfel::math::st2tost2<1u, real>
+      hillTensor(const real F,
+                 const real G,
+                 const real H,
+                 const real,
+                 const real,
+                 const real) {
         return {F + H, -F, -H, -F, G + F, -G, -H, -G, H + G};
       }
     };  // end of struct HillTensor
 
     template <typename real>
     struct ComputeHillTensorBase<2u, real> {
-      static tfel::math::st2tost2<2u, real> hillTensor(const real F,
-                                                       const real G,
-                                                       const real H,
-                                                       const real L,
-                                                       const real,
-                                                       const real) {
+      TFEL_HOST_DEVICE static constexpr tfel::math::st2tost2<2u, real>
+      hillTensor(const real F,
+                 const real G,
+                 const real H,
+                 const real L,
+                 const real,
+                 const real) {
         constexpr auto zero = real{0};
         return {F + H, -F, -H,    zero, -F,   G + F, -G,   zero,
                 -H,    -G, H + G, zero, zero, zero,  zero, L};
@@ -54,12 +56,13 @@ namespace tfel::material {
 
     template <typename real>
     struct ComputeHillTensorBase<3u, real> {
-      static tfel::math::st2tost2<3u, real> hillTensor(const real F,
-                                                       const real G,
-                                                       const real H,
-                                                       const real L,
-                                                       const real M,
-                                                       const real N) {
+      TFEL_HOST_DEVICE static constexpr tfel::math::st2tost2<3u, real>
+      hillTensor(const real F,
+                 const real G,
+                 const real H,
+                 const real L,
+                 const real M,
+                 const real N) {
         constexpr auto zero = real{0};
         return {F + H, -F,   -H,   zero, zero, zero,  -F,   G + F, -G,
                 zero,  zero, zero, -H,   -G,   H + G, zero, zero,  zero,
@@ -108,12 +111,12 @@ namespace tfel::material {
        * \param[in] H_M: orthotropic coefficient
        * \param[in] H_N: orthotropic coefficient
        */
-      static TFEL_MATERIAL_INLINE result_type exe(const real H_F,
-                                                  const real H_G,
-                                                  const real H_H,
-                                                  const real H_L,
-                                                  const real H_M,
-                                                  const real H_N) {
+      TFEL_HOST_DEVICE static constexpr result_type exe(const real H_F,
+                                                        const real H_G,
+                                                        const real H_H,
+                                                        const real H_L,
+                                                        const real H_M,
+                                                        const real H_N) {
         return ComputeHillTensorBase<N, real>::hillTensor(H_F, H_G, H_H, H_L,
                                                           H_M, H_N);
       }  // end of exe
@@ -154,12 +157,12 @@ namespace tfel::material {
        * \param[in] H_M: orthotropic coefficient
        * \param[in] H_N: orthotropic coefficient
        */
-      static TFEL_MATERIAL_INLINE result_type exe(const real H_F,
-                                                  const real H_G,
-                                                  const real H_H,
-                                                  const real H_L,
-                                                  const real H_M,
-                                                  const real H_N) {
+      TFEL_HOST_DEVICE static constexpr result_type exe(const real H_F,
+                                                        const real H_G,
+                                                        const real H_H,
+                                                        const real H_L,
+                                                        const real H_M,
+                                                        const real H_N) {
         return ComputeHillTensorBase<N, real>::hillTensor(H_F, H_G, H_H, H_L,
                                                           H_M, H_N);
       }  // end of exe
@@ -188,12 +191,12 @@ namespace tfel::material {
        * \param[in] H_M: orthotropic coefficient
        * \param[in] H_N: orthotropic coefficient
        */
-      static TFEL_MATERIAL_INLINE result_type exe(const real H_F,
-                                                  const real H_G,
-                                                  const real H_H,
-                                                  const real H_L,
-                                                  const real H_M,
-                                                  const real H_N) {
+      TFEL_HOST_DEVICE static constexpr result_type exe(const real H_F,
+                                                        const real H_G,
+                                                        const real H_H,
+                                                        const real H_L,
+                                                        const real H_M,
+                                                        const real H_N) {
         return ComputeHillTensorBase<2u, real>::hillTensor(H_H, H_G, H_F, H_M,
                                                            H_L, H_N);
       }  // end of exe
@@ -222,12 +225,12 @@ namespace tfel::material {
        * \param[in] H_M: orthotropic coefficient
        * \param[in] H_N: orthotropic coefficient
        */
-      static TFEL_MATERIAL_INLINE result_type exe(const real H_F,
-                                                  const real H_G,
-                                                  const real H_H,
-                                                  const real H_L,
-                                                  const real H_M,
-                                                  const real H_N) {
+      TFEL_HOST_DEVICE static constexpr result_type exe(const real H_F,
+                                                        const real H_G,
+                                                        const real H_H,
+                                                        const real H_L,
+                                                        const real H_M,
+                                                        const real H_N) {
         return ComputeHillTensorBase<2u, real>::hillTensor(H_H, H_G, H_F, H_M,
                                                            H_L, H_N);
       }  // end of exe
@@ -257,12 +260,12 @@ namespace tfel::material {
        * \param[in] H_M: orthotropic coefficient
        * \param[in] H_N: orthotropic coefficient
        */
-      static TFEL_MATERIAL_INLINE result_type exe(const real H_F,
-                                                  const real H_G,
-                                                  const real H_H,
-                                                  const real H_L,
-                                                  const real H_M,
-                                                  const real H_N) {
+      TFEL_HOST_DEVICE static constexpr result_type exe(const real H_F,
+                                                        const real H_G,
+                                                        const real H_H,
+                                                        const real H_L,
+                                                        const real H_M,
+                                                        const real H_N) {
         return ComputeHillTensorBase<2u, real>::hillTensor(H_H, H_G, H_F, H_M,
                                                            H_L, H_N);
       }  // end of exe
@@ -292,12 +295,12 @@ namespace tfel::material {
        * \param[in] H_M: orthotropic coefficient
        * \param[in] H_N: orthotropic coefficient
        */
-      static TFEL_MATERIAL_INLINE result_type exe(const real H_F,
-                                                  const real H_G,
-                                                  const real H_H,
-                                                  const real H_L,
-                                                  const real H_M,
-                                                  const real H_N) {
+      TFEL_HOST_DEVICE static constexpr result_type exe(const real H_F,
+                                                        const real H_G,
+                                                        const real H_H,
+                                                        const real H_L,
+                                                        const real H_M,
+                                                        const real H_N) {
         return ComputeHillTensorBase<3u, real>::hillTensor(H_F, H_G, H_H, H_L,
                                                            H_M, H_N);
       }  // end of exe
@@ -325,12 +328,12 @@ namespace tfel::material {
        * \param[in] H_M: orthotropic coefficient
        * \param[in] H_N: orthotropic coefficient
        */
-      static TFEL_MATERIAL_INLINE result_type exe(const real H_F,
-                                                  const real H_G,
-                                                  const real H_H,
-                                                  const real H_L,
-                                                  const real H_M,
-                                                  const real H_N) {
+      TFEL_HOST_DEVICE static constexpr result_type exe(const real H_F,
+                                                        const real H_G,
+                                                        const real H_H,
+                                                        const real H_L,
+                                                        const real H_M,
+                                                        const real H_N) {
         return ComputeHillTensorBase<2u, real>::hillTensor(H_F, H_G, H_H, H_L,
                                                            H_M, H_N);
       }  // end of exe
@@ -358,12 +361,12 @@ namespace tfel::material {
        * \param[in] H_M: orthotropic coefficient
        * \param[in] H_N: orthotropic coefficient
        */
-      static TFEL_MATERIAL_INLINE result_type exe(const real H_F,
-                                                  const real H_G,
-                                                  const real H_H,
-                                                  const real H_L,
-                                                  const real H_M,
-                                                  const real H_N) {
+      TFEL_HOST_DEVICE static constexpr result_type exe(const real H_F,
+                                                        const real H_G,
+                                                        const real H_H,
+                                                        const real H_L,
+                                                        const real H_M,
+                                                        const real H_N) {
         return ComputeHillTensorBase<2u, real>::hillTensor(H_F, H_G, H_H, H_L,
                                                            H_M, H_N);
       }  // end of exe
@@ -392,12 +395,12 @@ namespace tfel::material {
        * \param[in] H_M: orthotropic coefficient
        * \param[in] H_N: orthotropic coefficient
        */
-      static TFEL_MATERIAL_INLINE result_type exe(const real H_F,
-                                                  const real H_G,
-                                                  const real H_H,
-                                                  const real H_L,
-                                                  const real H_M,
-                                                  const real H_N) {
+      TFEL_HOST_DEVICE static constexpr result_type exe(const real H_F,
+                                                        const real H_G,
+                                                        const real H_H,
+                                                        const real H_L,
+                                                        const real H_M,
+                                                        const real H_N) {
         return ComputeHillTensorBase<2u, real>::hillTensor(H_F, H_G, H_H, H_L,
                                                            H_M, H_N);
       }  // end of exe
@@ -406,24 +409,24 @@ namespace tfel::material {
   }  // end of namespace internals
 
   template <unsigned short N, typename real>
-  tfel::math::st2tost2<N, real> hillTensor(const real H_F,
-                                           const real H_G,
-                                           const real H_H,
-                                           const real H_L,
-                                           const real H_M,
-                                           const real H_N) {
+  constexpr tfel::math::st2tost2<N, real> hillTensor(const real H_F,
+                                                     const real H_G,
+                                                     const real H_H,
+                                                     const real H_L,
+                                                     const real H_M,
+                                                     const real H_N) {
     using namespace tfel::material::internals;
     return ComputeHillTensorBase<N, real>::hillTensor(H_F, H_G, H_H, H_L, H_M,
                                                       H_N);
   }
 
   template <unsigned short N, typename real>
-  tfel::math::st2tost2<N, real> makeHillTensor(const real H_F,
-                                               const real H_G,
-                                               const real H_H,
-                                               const real H_L,
-                                               const real H_M,
-                                               const real H_N) {
+  constexpr tfel::math::st2tost2<N, real> makeHillTensor(const real H_F,
+                                                         const real H_G,
+                                                         const real H_H,
+                                                         const real H_L,
+                                                         const real H_M,
+                                                         const real H_N) {
     using namespace tfel::material::internals;
     return ComputeHillTensorBase<N, real>::hillTensor(H_F, H_G, H_H, H_L, H_M,
                                                       H_N);
@@ -432,7 +435,8 @@ namespace tfel::material {
   template <ModellingHypothesis::Hypothesis H,
             OrthotropicAxesConvention c,
             typename real>
-  tfel::math::st2tost2<ModellingHypothesisToSpaceDimension<H>::value, real>
+  constexpr tfel::math::st2tost2<ModellingHypothesisToSpaceDimension<H>::value,
+                                 real>
   computeHillTensor(const real H_F,
                     const real H_G,
                     const real H_H,
@@ -446,7 +450,8 @@ namespace tfel::material {
   template <ModellingHypothesis::Hypothesis H,
             OrthotropicAxesConvention c,
             typename real>
-  tfel::math::st2tost2<ModellingHypothesisToSpaceDimension<H>::value, real>
+  constexpr tfel::math::st2tost2<ModellingHypothesisToSpaceDimension<H>::value,
+                                 real>
   makeHillTensor(const real H_F,
                  const real H_G,
                  const real H_H,

@@ -241,7 +241,7 @@ namespace tfel::math {
    * is valid
    */
   template <typename T1, typename T2, typename Op>
-  constexpr bool isBinaryOperationResultTypeValid() {
+  TFEL_HOST_DEVICE constexpr bool isBinaryOperationResultTypeValid() {
     return !tfel::typetraits::IsInvalid<
         BinaryOperationResult<T1, T2, Op>>::cond;
   }

@@ -39,11 +39,12 @@ namespace tfel::math {
     //!
     static constexpr auto unRollLoop = false;
     //! \brief constructor
-    constexpr RuntimeVectorIndexingPolicy() : data_size(0) {}
+    TFEL_HOST_DEVICE constexpr RuntimeVectorIndexingPolicy() : data_size(0) {}
     //! \brief constructor
-    constexpr RuntimeVectorIndexingPolicy(const size_type s) : data_size(s) {}
+    TFEL_HOST_DEVICE constexpr RuntimeVectorIndexingPolicy(const size_type s) : data_size(s) {}
     //! \brief constructor
-    constexpr RuntimeVectorIndexingPolicy(const std::array<size_type, 1u>& s)
+    TFEL_HOST_DEVICE constexpr RuntimeVectorIndexingPolicy(
+        const std::array<size_type, 1u>& s)
         : data_size(s[0]) {}
     //! \brief move constructor
     constexpr RuntimeVectorIndexingPolicy(RuntimeVectorIndexingPolicy&&) =
@@ -58,25 +59,25 @@ namespace tfel::math {
     constexpr RuntimeVectorIndexingPolicy& operator=(
         const RuntimeVectorIndexingPolicy&) = default;
     //! \return the minimal data size
-    constexpr size_type getUnderlyingArrayMinimalSize() const noexcept {
+    TFEL_HOST_DEVICE constexpr size_type getUnderlyingArrayMinimalSize() const noexcept {
       return this->size();
     }
     //!
-    constexpr size_type getIndex(const size_type i) const noexcept { return i; }
+    TFEL_HOST_DEVICE constexpr size_type getIndex(const size_type i) const noexcept { return i; }
     //!
-    constexpr size_type getIndex(const std::array<size_type, 1u>& i) const
+    TFEL_HOST_DEVICE constexpr size_type getIndex(const std::array<size_type, 1u>& i) const
         noexcept {
       return this->getIndex(i[0]);
     }
     /*!
      * \return the logical size of the array
      */
-    constexpr size_type size() const noexcept { return this->data_size; }
+    TFEL_HOST_DEVICE constexpr size_type size() const noexcept { return this->data_size; }
     /*!
      * \return the logical size of the array for the given dimension
      * \param[in] i: dimension
      */
-    constexpr size_type size(const size_type i) const noexcept {
+    TFEL_HOST_DEVICE constexpr size_type size(const size_type i) const noexcept {
       if (i != 0) {
         tfel::reportContractViolation(
             "RuntimeVectorIndexingPolicy: invalid dimension");
@@ -85,7 +86,7 @@ namespace tfel::math {
     }
 
     //!
-    constexpr RuntimeVectorIndexingPolicy getRowMajorIndexingPolicy() const {
+    TFEL_HOST_DEVICE constexpr RuntimeVectorIndexingPolicy getRowMajorIndexingPolicy() const {
       return RuntimeVectorIndexingPolicy(this->data_size);
     }
 
@@ -125,13 +126,13 @@ namespace tfel::math {
     //!
     using RowMajorIndexingPolicy = RuntimeRowMajorMatrixIndexingPolicy;
     //! \brief constructor
-    constexpr RuntimeRowMajorMatrixIndexingPolicy() : n_rows(0), n_columns(0) {}
+    TFEL_HOST_DEVICE constexpr RuntimeRowMajorMatrixIndexingPolicy() : n_rows(0), n_columns(0) {}
     //! \brief constructor
-    constexpr RuntimeRowMajorMatrixIndexingPolicy(const size_type r,
+    TFEL_HOST_DEVICE constexpr RuntimeRowMajorMatrixIndexingPolicy(const size_type r,
                                                   const size_type c)
         : n_rows(r), n_columns(c) {}
     //! \brief constructor
-    constexpr RuntimeRowMajorMatrixIndexingPolicy(
+    TFEL_HOST_DEVICE constexpr RuntimeRowMajorMatrixIndexingPolicy(
         const std::array<size_type, 2u>& sizes)
         : n_rows(sizes[0]), n_columns(sizes[1]) {}
     //! \brief move constructor
@@ -147,32 +148,32 @@ namespace tfel::math {
     constexpr RuntimeRowMajorMatrixIndexingPolicy& operator=(
         const RuntimeRowMajorMatrixIndexingPolicy&) = default;
     //!
-    constexpr size_type getIndex(const size_type i, const size_type j) const
+    TFEL_HOST_DEVICE constexpr size_type getIndex(const size_type i, const size_type j) const
         noexcept {
       return i * this->n_columns + j;
     }
     //!
-    constexpr size_type getIndex(const std::array<size_type, 2u> indices) const
+    TFEL_HOST_DEVICE constexpr size_type getIndex(const std::array<size_type, 2u> indices) const
         noexcept {
       return this->getIndex(indices[0], indices[1]);
     }
     //! \return the minimal data size
-    constexpr size_type getUnderlyingArrayMinimalSize() const noexcept {
+    TFEL_HOST_DEVICE constexpr size_type getUnderlyingArrayMinimalSize() const noexcept {
       return this->size();
     }
     //!
-    constexpr RuntimeRowMajorMatrixIndexingPolicy getRowMajorIndexingPolicy() {
+    TFEL_HOST_DEVICE constexpr RuntimeRowMajorMatrixIndexingPolicy getRowMajorIndexingPolicy() {
       return RuntimeRowMajorMatrixIndexingPolicy(*this);
     }  // end of getRowMajorIndexingPolicy
     //!
-    constexpr size_type size() const noexcept {
+    TFEL_HOST_DEVICE constexpr size_type size() const noexcept {
       return this->getNumberOfRows() * this->getNumberOfColumns();
     }
     /*!
      * \return the logical size of the array for the given dimension
      * \param[in] i: dimension
      */
-    constexpr size_type size(const size_type i) const noexcept {
+    TFEL_HOST_DEVICE constexpr size_type size(const size_type i) const noexcept {
       if (i > 1) {
         tfel::reportContractViolation(
             "FixedSizeMatrixIndexingPolicy: "
@@ -181,11 +182,11 @@ namespace tfel::math {
       return i == 0 ? this->getNumberOfRows() : this->getNumberOfColumns();
     }
     //! \return the number of rows
-    constexpr size_type getNumberOfRows() const noexcept {
+    TFEL_HOST_DEVICE constexpr size_type getNumberOfRows() const noexcept {
       return this->n_rows;
     }
     //! \return the number of cols
-    constexpr size_type getNumberOfColumns() const noexcept {
+    TFEL_HOST_DEVICE constexpr size_type getNumberOfColumns() const noexcept {
       return this->n_columns;
     }
 

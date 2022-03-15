@@ -47,7 +47,7 @@ namespace tfel::math {
    * \tparam VectorType: type tested
    */
   template <typename VectorType>
-  constexpr bool implementsVectorConcept() {
+  TFEL_HOST_DEVICE constexpr bool implementsVectorConcept() {
     return tfel::meta::implements<VectorType, VectorConcept>();
   }  // end of implementsVectorConcept
 

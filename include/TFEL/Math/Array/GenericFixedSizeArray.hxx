@@ -20,61 +20,63 @@
 #include "TFEL/Math/General/MathObjectTraits.hxx"
 #include "TFEL/Math/Array/MutableFixedSizeArrayBase.hxx"
 
-#define TFEL_MATH_FIXED_SIZE_ARRAY_DEFAULT_METHODS(X, Y)                  \
-  /*! \brief default constructor */                                       \
-  constexpr X() noexcept = default;                                       \
-  /*! \brief move constructor */                                          \
-  constexpr X(X&&) noexcept = default;                                    \
-  /*! \brief copy constructor */                                          \
-  constexpr X(const X&) noexcept = default;                               \
-  /*! \brief move assignement */                                          \
-  constexpr X& operator=(X&&) noexcept = default;                         \
-  /*! \brief standard assignement */                                      \
-  constexpr X& operator=(const X&) noexcept = default;                    \
-  /*!                                                                     \
-   * \brief constructor from a value                                      \
-   * \param[in] value: value used to initialize the array                 \
-   */                                                                     \
-  template <typename ValueType2,                                          \
-            typename std::enable_if<                                      \
-                isAssignableTo<ValueType2, typename X::value_type>(),     \
-                bool>::type = true>                                       \
-  constexpr explicit X(const ValueType2& value) noexcept : Y(value) {}    \
-  /*!                                                                     \
-   * \brief constructor from an initializer list                          \
-   * \param[in] values: values                                            \
-   */                                                                     \
-  template <typename ValueType2,                                          \
-            typename std::enable_if<                                      \
-                isAssignableTo<ValueType2, typename X::value_type>(),     \
-                bool>::type = true>                                       \
-  constexpr X(const std::initializer_list<ValueType2>& values) noexcept   \
-      : Y(values) {}                                                      \
-  /*!                                                                     \
-   * \brief copy constructor from an object assignable the X class.       \
-   * \param[in] src: source                                               \
-   *                                                                      \
-   * This is mostly used by expression objects and views.                 \
-   */                                                                     \
-  template <typename OtherArray,                                          \
-            typename std::enable_if<((isAssignableTo<OtherArray, X>()) && \
-                                     (!std::is_same_v<OtherArray, X>)),   \
-                                    bool>::type = true>                   \
-  constexpr X(const OtherArray& src) noexcept : Y(src) {}                 \
-  /*!                                                                     \
-   * \brief Default Constructor.                                          \
-   * \param const base_type<T>*                                           \
-   * const, pointer to a tabular used to initialise the components        \
-   * of the stensor. This tabular is left unchanged.                      \
-   */                                                                     \
-  template <                                                              \
-      typename InputIterator,                                             \
-      std::enable_if_t<std::is_same_v<typename std::iterator_traits<      \
-                                          InputIterator>::value_type,     \
-                                      base_type<typename X::value_type>>, \
-                       bool> = true>                                      \
-  constexpr explicit X(const InputIterator p) : Y(p) {}                   \
-  /* inheriting GenericFixedSizeArray' assignement operators */           \
+#define TFEL_MATH_FIXED_SIZE_ARRAY_DEFAULT_METHODS(X, Y)                   \
+  /*! \brief default constructor */                                        \
+  constexpr X() noexcept = default;                                        \
+  /*! \brief move constructor */                                           \
+  constexpr X(X&&) noexcept = default;                                     \
+  /*! \brief copy constructor */                                           \
+  constexpr X(const X&) noexcept = default;                                \
+  /*! \brief move assignement */                                           \
+  constexpr X& operator=(X&&) noexcept = default;                          \
+  /*! \brief standard assignement */                                       \
+  constexpr X& operator=(const X&) noexcept = default;                     \
+  /*!                                                                      \
+   * \brief constructor from a value                                       \
+   * \param[in] value: value used to initialize the array                  \
+   */                                                                      \
+  template <typename ValueType2,                                           \
+            typename std::enable_if<                                       \
+                isAssignableTo<ValueType2, typename X::value_type>(),      \
+                bool>::type = true>                                        \
+  TFEL_HOST_DEVICE constexpr explicit X(const ValueType2& value) noexcept  \
+      : Y(value) {}                                                        \
+  /*!                                                                      \
+   * \brief constructor from an initializer list                           \
+   * \param[in] values: values                                             \
+   */                                                                      \
+  template <typename ValueType2,                                           \
+            typename std::enable_if<                                       \
+                isAssignableTo<ValueType2, typename X::value_type>(),      \
+                bool>::type = true>                                        \
+  TFEL_HOST_DEVICE constexpr X(                                            \
+      const std::initializer_list<ValueType2>& values) noexcept            \
+      : Y(values) {}                                                       \
+  /*!                                                                      \
+   * \brief copy constructor from an object assignable the X class.        \
+   * \param[in] src: source                                                \
+   *                                                                       \
+   * This is mostly used by expression objects and views.                  \
+   */                                                                      \
+  template <typename OtherArray,                                           \
+            typename std::enable_if<((isAssignableTo<OtherArray, X>()) &&  \
+                                     (!std::is_same_v<OtherArray, X>)),    \
+                                    bool>::type = true>                    \
+  TFEL_HOST_DEVICE constexpr X(const OtherArray& src) noexcept : Y(src) {} \
+  /*!                                                                      \
+   * \brief Default Constructor.                                           \
+   * \param const base_type<T>*                                            \
+   * const, pointer to a tabular used to initialise the components         \
+   * of the stensor. This tabular is left unchanged.                       \
+   */                                                                      \
+  template <                                                               \
+      typename InputIterator,                                              \
+      std::enable_if_t<std::is_same_v<typename std::iterator_traits<       \
+                                          InputIterator>::value_type,      \
+                                      base_type<typename X::value_type>>,  \
+                       bool> = true>                                       \
+  TFEL_HOST_DEVICE constexpr explicit X(const InputIterator p) : Y(p) {}   \
+  /* inheriting GenericFixedSizeArray' assignement operators */            \
   using Y::operator=
 
 namespace tfel::math {
@@ -100,11 +102,11 @@ namespace tfel::math {
                   "specified container size is lower than "
                   "the minimal container size");
     //! \brief default constructor
-    constexpr GenericFixedSizeArray() noexcept;
+    TFEL_HOST_DEVICE constexpr GenericFixedSizeArray() noexcept;
     //! \brief copy constructor
-    constexpr GenericFixedSizeArray(const GenericFixedSizeArray&) noexcept;
+    TFEL_HOST_DEVICE constexpr GenericFixedSizeArray(const GenericFixedSizeArray&) noexcept;
     //! \brief move constructor
-    constexpr GenericFixedSizeArray(GenericFixedSizeArray&&) noexcept;
+    TFEL_HOST_DEVICE constexpr GenericFixedSizeArray(GenericFixedSizeArray&&) noexcept;
     // exposing assignement operators from MutableFixedSizeArrayBase
     /*!
      * \brief constructor from a value
@@ -115,7 +117,7 @@ namespace tfel::math {
                   isAssignableTo<ValueType,
                                  typename GenericFixedSizeArray::value_type>(),
                   bool>::type = true>
-    constexpr explicit GenericFixedSizeArray(const ValueType&) noexcept;
+    TFEL_HOST_DEVICE constexpr explicit GenericFixedSizeArray(const ValueType&) noexcept;
     /*!
      * \brief constructor from an initializer list
      * \param[in] values: values
@@ -125,7 +127,7 @@ namespace tfel::math {
                   isAssignableTo<ValueType2,
                                  typename GenericFixedSizeArray::value_type>(),
                   bool>::type = true>
-    constexpr GenericFixedSizeArray(
+    TFEL_HOST_DEVICE constexpr GenericFixedSizeArray(
         const std::initializer_list<ValueType2>& values) noexcept;
     /*!
      * \brief Default Constructor.
@@ -139,7 +141,7 @@ namespace tfel::math {
                       typename std::iterator_traits<InputIterator>::value_type,
                       base_type<typename GenericFixedSizeArray::value_type>>,
                   bool> = true>
-    constexpr explicit GenericFixedSizeArray(const InputIterator);
+    TFEL_HOST_DEVICE constexpr explicit GenericFixedSizeArray(const InputIterator);
     /*!
      * \brief copy constructor from an object assignable to the `Child` class.
      * \param[in] src: source
@@ -150,13 +152,13 @@ namespace tfel::math {
               typename std::enable_if<((isAssignableTo<OtherArray, Child>()) &&
                                        (!std::is_same_v<OtherArray, Child>)),
                                       bool>::type = true>
-    constexpr GenericFixedSizeArray(const OtherArray&) noexcept;
+    TFEL_HOST_DEVICE constexpr GenericFixedSizeArray(const OtherArray&) noexcept;
     /*!
      * \return the physical size used by the underlying array. This size must
      * be greater than than the logical number of elements contained in the
      * array which is returned by `IndexingPolicy::size`.
      */
-    constexpr typename GenericFixedSizeArray::size_type getContainerSize() const
+    TFEL_HOST_DEVICE constexpr typename GenericFixedSizeArray::size_type getContainerSize() const
         noexcept;
     // inheriting MutableFixedSizeArrayBase' assignement operator
     using MutableFixedSizeArrayBase<
@@ -168,19 +170,19 @@ namespace tfel::math {
      * \param[in] src: array to be assigned
      */
     template <typename OtherArray>
-    constexpr std::enable_if_t<isAssignableTo<OtherArray, Child>(), Child&>
+    TFEL_HOST_DEVICE constexpr std::enable_if_t<isAssignableTo<OtherArray, Child>(), Child&>
     operator=(const OtherArray&) noexcept;
     //
     template <typename OtherArray>
-    constexpr std::enable_if_t<isAssignableTo<OtherArray, Child>(), Child&>
+    TFEL_HOST_DEVICE constexpr std::enable_if_t<isAssignableTo<OtherArray, Child>(), Child&>
     operator+=(const OtherArray&) noexcept;
     //
     template <typename OtherArray>
-    constexpr std::enable_if_t<isAssignableTo<OtherArray, Child>(), Child&>
+    TFEL_HOST_DEVICE constexpr std::enable_if_t<isAssignableTo<OtherArray, Child>(), Child&>
     operator-=(const OtherArray&) noexcept;
     //
     template <typename ValueType2>
-    constexpr std::enable_if_t<
+    TFEL_HOST_DEVICE constexpr std::enable_if_t<
         isAssignableTo<
             BinaryOperationResult<ValueType2,
                                   typename GenericFixedSizeArray::value_type,
@@ -190,7 +192,7 @@ namespace tfel::math {
     operator*=(const ValueType2&) noexcept;
     //
     template <typename ValueType2>
-    constexpr std::enable_if_t<
+    TFEL_HOST_DEVICE constexpr std::enable_if_t<
         isAssignableTo<
             BinaryOperationResult<typename GenericFixedSizeArray::value_type,
                                   ValueType2,
@@ -199,17 +201,17 @@ namespace tfel::math {
         Child&>
     operator/=(const ValueType2&) noexcept;
     //! \return a pointer to the underlying array serving as element storage.
-    constexpr typename GenericFixedSizeArray::pointer data() noexcept;
+    TFEL_HOST_DEVICE constexpr typename GenericFixedSizeArray::pointer data() noexcept;
     //! \return a pointer to the underlying array serving as element storage.
-    constexpr typename GenericFixedSizeArray::const_pointer data() const
+    TFEL_HOST_DEVICE constexpr typename GenericFixedSizeArray::const_pointer data() const
         noexcept;
 
    protected:
     //! \brief assignement operator
-    constexpr GenericFixedSizeArray& operator=(
+    TFEL_HOST_DEVICE constexpr GenericFixedSizeArray& operator=(
         const GenericFixedSizeArray&) noexcept;
     //! \brief move assigment
-    constexpr GenericFixedSizeArray& operator=(
+    TFEL_HOST_DEVICE constexpr GenericFixedSizeArray& operator=(
         GenericFixedSizeArray&&) noexcept;
     //! \brief values holded
     typename ArrayPolicy::value_type v[N];

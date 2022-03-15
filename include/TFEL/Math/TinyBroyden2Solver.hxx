@@ -54,12 +54,12 @@ namespace tfel::math {
     TinyBroyden2Solver& operator=(TinyBroyden2Solver&&) noexcept = default;
     //! \brief default constructor
     TinyBroyden2Solver& operator=(const TinyBroyden2Solver&) noexcept = default;
+    //! \brief update the jacobian matrix
+    TFEL_HOST_DEVICE void updateOrCheckJacobian();
+    //! \brief compute a new correction to the unknowns
+    TFEL_HOST_DEVICE bool computeNewCorrection();
     //! \brief destructor
     ~TinyBroyden2Solver() noexcept = default;
-    //! \brief update the jacobian matrix
-    void updateOrCheckJacobian();
-    //! \brief compute a new correction to the unknowns
-    bool computeNewCorrection();
 
    protected:
     //! \brief residual of the previous iterations

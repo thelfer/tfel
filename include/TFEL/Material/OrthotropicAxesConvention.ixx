@@ -34,9 +34,9 @@ namespace tfel::material {
        * convert a symmetric tensor to the new convention
        */
       template <typename T>
-      static TFEL_MATERIAL_INLINE void convert(tfel::math::stensor<N, T>&) {
-      }  // end of convert
-    };   // end of struct OrthotropicAxesConventionConverter
+      TFEL_HOST_DEVICE static constexpr void convert(
+          tfel::math::stensor<N, T>&) {}  // end of convert
+    };  // end of struct OrthotropicAxesConventionConverter
 
     /*!
      * \brief an helper structure used in "*plane*" generalised
@@ -48,7 +48,8 @@ namespace tfel::material {
        * \param[in] s : the tensor to be converted
        */
       template <typename T>
-      static TFEL_MATERIAL_INLINE void convert(tfel::math::stensor<2u, T>& s) {
+      TFEL_HOST_DEVICE static constexpr void convert(
+          tfel::math::stensor<2u, T>& s) {
         std::swap(s[1], s[2]);
       }  // end of convert
     };
@@ -92,7 +93,7 @@ namespace tfel::material {
   template <ModellingHypothesis::Hypothesis mh,
             OrthotropicAxesConvention c,
             typename T>
-  void convertStressFreeExpansionStrain(
+  constexpr void convertStressFreeExpansionStrain(
       tfel::math::stensor<ModellingHypothesisToSpaceDimension<mh>::value, T>&
           s) {
     internals::OrthotropicAxesConventionConverter<mh, c>::convert(s);

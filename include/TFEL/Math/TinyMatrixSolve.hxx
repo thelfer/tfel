@@ -40,9 +40,10 @@ namespace tfel::math {
      * \param p   : permutation vector
      * \param eps : numerical parameter to detect null pivot
      */
-    static bool decomp(tmatrix<N, N, T>&,
-                       TinyPermutation<N>&,
-                       const T = 100 * std::numeric_limits<T>::min());
+    TFEL_HOST_DEVICE static bool decomp(
+        tmatrix<N, N, T>&,
+        TinyPermutation<N>&,
+        const T = 100 * std::numeric_limits<T>::min());
 
     /*!
      * \brief solve the linear system m.x = b once the matrix has been
@@ -52,10 +53,11 @@ namespace tfel::math {
      * \param b   : right member
      * \param eps : numerical parameter to detect null pivot
      */
-    static bool back_substitute(const tmatrix<N, N, T>&,
-                                const TinyPermutation<N>&,
-                                tvector<N, T>&,
-                                const T = 100 * std::numeric_limits<T>::min());
+    TFEL_HOST_DEVICE static bool back_substitute(
+        const tmatrix<N, N, T>&,
+        const TinyPermutation<N>&,
+        tvector<N, T>&,
+        const T = 100 * std::numeric_limits<T>::min());
     /*!
      * \brief solve the linear system m.x = b once the matrix has been
      * decomposed
@@ -65,10 +67,11 @@ namespace tfel::math {
      * \param eps : numerical parameter to detect null pivot
      */
     template <unsigned short M>
-    static bool back_substitute(const tmatrix<N, N, T>&,
-                                const TinyPermutation<N>&,
-                                tmatrix<N, M, T>&,
-                                const T = 100 * std::numeric_limits<T>::min());
+    TFEL_HOST_DEVICE static bool back_substitute(
+        const tmatrix<N, N, T>&,
+        const TinyPermutation<N>&,
+        tmatrix<N, M, T>&,
+        const T = 100 * std::numeric_limits<T>::min());
   };
 
   /*!
@@ -86,9 +89,10 @@ namespace tfel::math {
      * \note the matrix m is overwritten during computations
      * \note the right member is overwritten by the solution
      */
-    static bool exe(tmatrix<N, N, T>& m,
-                    tvector<N, T>&,
-                    const T = 100 * std::numeric_limits<T>::min());
+    TFEL_HOST_DEVICE static bool exe(tmatrix<N, N, T>& m,
+                                     tvector<N, T>&,
+                                     const T = 100 *
+                                               std::numeric_limits<T>::min());
     /*!
      * solve the linear system m.x = b
      * \param m   : matrix to be inverted
@@ -98,9 +102,10 @@ namespace tfel::math {
      * \note the right member is overwritten by the solution
      */
     template <unsigned short M>
-    static bool exe(tmatrix<N, N, T>& m,
-                    tmatrix<N, M, T>&,
-                    const T = 100 * std::numeric_limits<T>::min());
+    TFEL_HOST_DEVICE static bool exe(tmatrix<N, N, T>& m,
+                                     tmatrix<N, M, T>&,
+                                     const T = 100 *
+                                               std::numeric_limits<T>::min());
   };
 
   /*!
@@ -117,10 +122,10 @@ namespace tfel::math {
      * \param eps : numerical paramater to detect null pivot
      * \note the right member is overwritten by the solution
      */
-    static TFEL_MATH_INLINE2 bool exe(const tmatrix<1u, 1u, T>& m,
-                                      tvector<1u, T>&,
-                                      const T = 100 *
-                                                std::numeric_limits<T>::min());
+    TFEL_HOST_DEVICE static TFEL_MATH_INLINE2 bool exe(
+        const tmatrix<1u, 1u, T>& m,
+        tvector<1u, T>&,
+        const T = 100 * std::numeric_limits<T>::min());
     /*!
      * solve the linear system m.x = b
      * \param m   : matrix to be inverted
@@ -129,10 +134,10 @@ namespace tfel::math {
      * \note the right member is overwritten by the solution
      */
     template <unsigned short M>
-    static TFEL_MATH_INLINE2 bool exe(const tmatrix<1u, 1u, T>& m,
-                                      tmatrix<1u, M, T>&,
-                                      const T = 100 *
-                                                std::numeric_limits<T>::min());
+    TFEL_HOST_DEVICE static TFEL_MATH_INLINE2 bool exe(
+        const tmatrix<1u, 1u, T>& m,
+        tmatrix<1u, M, T>&,
+        const T = 100 * std::numeric_limits<T>::min());
   };
 
   /*!
@@ -149,10 +154,10 @@ namespace tfel::math {
      * \param eps : numerical paramater to detect null pivot
      * \note the right member is overwritten by the solution
      */
-    static TFEL_MATH_INLINE2 bool exe(const tmatrix<2u, 2u, T>& m,
-                                      tvector<2u, T>&,
-                                      const T = 100 *
-                                                std::numeric_limits<T>::min());
+    TFEL_HOST_DEVICE static TFEL_MATH_INLINE2 bool exe(
+        const tmatrix<2u, 2u, T>& m,
+        tvector<2u, T>&,
+        const T = 100 * std::numeric_limits<T>::min());
     /*!
      * solve the linear system m.x = b
      * \param m   : matrix to be inverted
@@ -161,10 +166,10 @@ namespace tfel::math {
      * \note the right member is overwritten by the solution
      */
     template <unsigned short M>
-    static TFEL_MATH_INLINE2 bool exe(const tmatrix<2u, 2u, T>& m,
-                                      tmatrix<2u, M, T>&,
-                                      const T = 100 *
-                                                std::numeric_limits<T>::min());
+    TFEL_HOST_DEVICE static TFEL_MATH_INLINE2 bool exe(
+        const tmatrix<2u, 2u, T>& m,
+        tmatrix<2u, M, T>&,
+        const T = 100 * std::numeric_limits<T>::min());
   };
 
   /*!
@@ -182,10 +187,10 @@ namespace tfel::math {
      * \note the right member is overwritten by the solution
      * \note the matrix is destroyed
      */
-    static TFEL_MATH_INLINE2 bool exe(const tmatrix<3u, 3u, T>& m,
-                                      tvector<3u, T>&,
-                                      const T = 100 *
-                                                std::numeric_limits<T>::min());
+    TFEL_HOST_DEVICE static TFEL_MATH_INLINE2 bool exe(
+        const tmatrix<3u, 3u, T>& m,
+        tvector<3u, T>&,
+        const T = 100 * std::numeric_limits<T>::min());
     /*!
      * \brief solve the linear system m.x = b
      * \param m   : matrix to be inverted
@@ -195,10 +200,10 @@ namespace tfel::math {
      * \note the matrix is destroyed
      */
     template <unsigned short M>
-    static TFEL_MATH_INLINE2 bool exe(const tmatrix<3u, 3u, T>& m,
-                                      tmatrix<3u, M, T>&,
-                                      const T = 100 *
-                                                std::numeric_limits<T>::min());
+    TFEL_HOST_DEVICE static TFEL_MATH_INLINE2 bool exe(
+        const tmatrix<3u, 3u, T>& m,
+        tmatrix<3u, M, T>&,
+        const T = 100 * std::numeric_limits<T>::min());
   };
 
 }  // end of namespace tfel::math

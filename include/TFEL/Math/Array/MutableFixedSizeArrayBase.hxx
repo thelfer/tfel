@@ -45,7 +45,7 @@ namespace tfel::math {
      * \tparam Function: type of the functor
      */
     template <typename Functor>
-    constexpr void iterate(const Functor&);
+    TFEL_HOST_DEVICE constexpr void iterate(const Functor&);
   };  // end of struct MutableFixedSizeArrayBase
 
 }  // end of namespace tfel::math

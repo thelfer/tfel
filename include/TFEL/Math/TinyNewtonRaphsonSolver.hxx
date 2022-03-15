@@ -58,10 +58,10 @@ namespace tfel::math {
     //! \brief default constructor
     TinyNewtonRaphsonSolver& operator=(
         const TinyNewtonRaphsonSolver&) noexcept = default;
+    //! \brief compute a new correction to the unknowns
+    TFEL_HOST_DEVICE bool computeNewCorrection();
     //! \brief destructor
     ~TinyNewtonRaphsonSolver() noexcept = default;
-    //! \brief compute a new correction to the unknowns
-    bool computeNewCorrection();
 
    protected:
     //! \brief jacobian matrix

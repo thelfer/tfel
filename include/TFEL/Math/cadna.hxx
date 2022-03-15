@@ -202,7 +202,7 @@ namespace tfel::typetraits {
   };
   template <typename T>
   struct IsFundamentalNumericType<cadna::numeric_type<T>> {
-    static const constexpr bool cond = std::is_floating_point<T>::value;
+    static const TFEL_HOST_DEVICE constexpr bool cond = std::is_floating_point<T>::value;
   };
   template <typename T>
   struct BaseType<cadna::numeric_type<T>> {

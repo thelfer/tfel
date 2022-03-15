@@ -97,13 +97,14 @@ namespace tfel::material {
    * \param[in] p: equivalent plastic strain (unused)
    */
   template <typename StressStensorType>
-  ChuNeedleman1980StressBasedNucleationModelRealType<StressStensorType>
-  computeChuNeedleman1980StressBasedNucleationModelPorosityRateFactor(
-      const ChuNeedleman1980StressBasedNucleationModelParameters<
-          StressStensorType>&,
-      const StressStensorType&,
-      const ChuNeedleman1980StressBasedNucleationModelRealType<
-          StressStensorType>&);
+  TFEL_HOST_DEVICE
+      ChuNeedleman1980StressBasedNucleationModelRealType<StressStensorType>
+      computeChuNeedleman1980StressBasedNucleationModelPorosityRateFactor(
+          const ChuNeedleman1980StressBasedNucleationModelParameters<
+              StressStensorType>&,
+          const StressStensorType&,
+          const ChuNeedleman1980StressBasedNucleationModelRealType<
+              StressStensorType>&);
 
   /*!
    * \brief computes the porosity rate factor \f$A_{n}\f$ as defined by
@@ -126,7 +127,7 @@ namespace tfel::material {
    * \param[in] p: equivalent plastic strain (unused)
    */
   template <typename StressStensorType>
-  std::tuple<
+  TFEL_HOST_DEVICE std::tuple<
       ChuNeedleman1980StressBasedNucleationModelRealType<StressStensorType>,
       ChuNeedleman1980StressBasedNucleationModeDerivativeType<
           StressStensorType>>

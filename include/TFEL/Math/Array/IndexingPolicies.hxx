@@ -27,7 +27,7 @@ namespace tfel::math {
    * \tparam Indices: list of indices types
    */
   template <typename IndexingPolicy, typename... Indices>
-  constexpr void checkIndicesValiditity() noexcept {
+  TFEL_HOST_DEVICE constexpr void checkIndicesValiditity() noexcept {
     static_assert(sizeof...(Indices) == IndexingPolicy::arity,
                   "invalid number of indices");
     static_assert(
@@ -50,7 +50,7 @@ namespace tfel::math {
     /*!
      * \return if the given indexing policies may *a priori* be compatible.
      */
-    static constexpr bool performCompileTimeCheck();
+    TFEL_HOST_DEVICE static constexpr bool performCompileTimeCheck();
     /*!
      * \return if the indexing policies have the same memory layouts.
      *
@@ -60,7 +60,7 @@ namespace tfel::math {
      * matrix stored in column-major format to a matrix having a row-major
      * format.
      */
-    static constexpr bool haveTheSameMemoryLayout();
+    TFEL_HOST_DEVICE static constexpr bool haveTheSameMemoryLayout();
     /*!
      * \return if the given policies are compatible at runtime time.
      * \pre this method is only meaningful if the `compileTimeCheck` method
@@ -70,8 +70,8 @@ namespace tfel::math {
      * \note This methods does nothing if both indexing policies have fixed size
      * (i.e. known at compile-time).
      */
-    static constexpr bool performRuntimeTimeCheck(const IndexingPolicy1&,
-                                                  const IndexingPolicy2&);
+    TFEL_HOST_DEVICE static constexpr bool performRuntimeTimeCheck(
+        const IndexingPolicy1&, const IndexingPolicy2&);
   };  // end of struct IndexingPoliciesCompatiblityCheck
 
   /*!
@@ -98,7 +98,7 @@ namespace tfel::math {
    * `IndexingPoliciesCompatiblityCheck::checkIndexingPoliciesCompatiblity`.
    */
   template <typename IndexingPolicy1, typename IndexingPolicy2>
-  constexpr bool checkIndexingPoliciesCompatiblity();
+  TFEL_HOST_DEVICE constexpr bool checkIndexingPoliciesCompatiblity();
   /*!
    * \return if two indexing policies have the same memory layout.
    * \tparam IndexingPolicy1: first indexing policy
@@ -107,7 +107,7 @@ namespace tfel::math {
    * `IndexingPoliciesCompatiblityCheck::haveTheSameMemoryLayout`.
    */
   template <typename IndexingPolicy1, typename IndexingPolicy2>
-  constexpr bool haveIndexingPoliciesTheSameMemoryLayout();
+  TFEL_HOST_DEVICE constexpr bool haveIndexingPoliciesTheSameMemoryLayout();
   /*!
    * \return if two indexing policies are compatible at runtime.
    * \tparam IndexingPolicy1: first indexing policy
@@ -118,7 +118,7 @@ namespace tfel::math {
    * `IndexingPoliciesCompatiblityCheck::runtimeTimeCheck`.
    */
   template <typename IndexingPolicy1, typename IndexingPolicy2>
-  constexpr bool areIndexingPoliciesCompatibleAtRunTime(const IndexingPolicy1&,
+  TFEL_HOST_DEVICE constexpr bool areIndexingPoliciesCompatibleAtRunTime(const IndexingPolicy1&,
                                                         const IndexingPolicy2&);
 
   /*!
@@ -132,7 +132,7 @@ namespace tfel::math {
    * if the two indexing policies are not compatible.
    */
   template <typename IndexingPolicy1, typename IndexingPolicy2>
-  constexpr void checkIndexingPoliciesRuntimeCompatiblity(
+  TFEL_HOST_DEVICE constexpr void checkIndexingPoliciesRuntimeCompatiblity(
       const IndexingPolicy1&, const IndexingPolicy2&);
 
   template <typename IndexingPolicy, typename... T, std::size_t... I>
@@ -148,7 +148,7 @@ namespace tfel::math {
    * \param[in] T: type checked
    */
   template <typename T>
-  constexpr bool hasIndexingPolicy();
+  TFEL_HOST_DEVICE constexpr bool hasIndexingPolicy();
 
 }  // end of namespace tfel::math
 

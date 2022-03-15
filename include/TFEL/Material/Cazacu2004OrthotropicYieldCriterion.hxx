@@ -45,7 +45,7 @@ namespace tfel::material {
    * \param[in] c: c coefficient
    */
   template <typename StressStensor>
-  Cazacu2004StressType<StressStensor>
+  TFEL_HOST_DEVICE Cazacu2004StressType<StressStensor>
   computeCazacu2004OrthotropicStressCriterion(
       const StressStensor&,
       const J2OCoefficients<StressStensor>&,
@@ -63,8 +63,8 @@ namespace tfel::material {
    *                  computation of the stress normal.
    */
   template <typename StressStensor>
-  std::tuple<Cazacu2004StressType<StressStensor>,
-             Cazacu2004StressNormalType<StressStensor>>
+  TFEL_HOST_DEVICE std::tuple<Cazacu2004StressType<StressStensor>,
+                              Cazacu2004StressNormalType<StressStensor>>
   computeCazacu2004OrthotropicStressCriterionNormal(
       const StressStensor&,
       const J2OCoefficients<StressStensor>&,
@@ -83,15 +83,16 @@ namespace tfel::material {
    *                  computation of the stress normal.
    */
   template <typename StressStensor>
-  std::tuple<Cazacu2004StressType<StressStensor>,
-             Cazacu2004StressNormalType<StressStensor>,
-             Cazacu2004StressSecondDerivativeType<StressStensor>>
-  computeCazacu2004OrthotropicStressCriterionSecondDerivative(
-      const StressStensor&,
-      const J2OCoefficients<StressStensor>&,
-      const J3OCoefficients<StressStensor>&,
-      const Cazacu2004BaseType<StressStensor>,
-      const Cazacu2004StressType<StressStensor>);
+  TFEL_HOST_DEVICE
+      std::tuple<Cazacu2004StressType<StressStensor>,
+                 Cazacu2004StressNormalType<StressStensor>,
+                 Cazacu2004StressSecondDerivativeType<StressStensor>>
+      computeCazacu2004OrthotropicStressCriterionSecondDerivative(
+          const StressStensor&,
+          const J2OCoefficients<StressStensor>&,
+          const J3OCoefficients<StressStensor>&,
+          const Cazacu2004BaseType<StressStensor>,
+          const Cazacu2004StressType<StressStensor>);
 
 }  // end of namespace tfel::material
 

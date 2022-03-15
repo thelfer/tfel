@@ -15,6 +15,7 @@
 #define LIB_TFEL_MATH_FORWARD_QT_HXX
 
 #include <type_traits>
+#include "TFEL/Config/TFELConfig.hxx"
 #include "TFEL/Metaprogramming/InvalidType.hxx"
 
 namespace tfel::math::internals {
@@ -343,13 +344,13 @@ namespace tfel::math {
                       ValueType>;
   //! \brief cast the value to the base type
   template <typename UnitType, typename ValueType, typename OwnershipPolicy>
-  constexpr ValueType& base_type_cast(
+  TFEL_HOST_DEVICE constexpr ValueType& base_type_cast(
       Quantity<UnitType, ValueType, OwnershipPolicy>& v) noexcept {
     return v.getValue();
   }
   //! \brief cast the value to the base type
   template <typename UnitType, typename ValueType, typename OwnershipPolicy>
-  constexpr const ValueType& base_type_cast(
+  TFEL_HOST_DEVICE constexpr const ValueType& base_type_cast(
       const Quantity<UnitType, ValueType, OwnershipPolicy>& v) noexcept {
     return v.getValue();
   }
@@ -366,7 +367,7 @@ namespace tfel::math {
   }  // end of namespace internals
 
   template <typename T>
-  constexpr auto isQuantity() {
+  TFEL_HOST_DEVICE constexpr auto isQuantity() {
     return tfel::math::internals::IsQuantity<std::decay_t<T>>::value;
   }
 

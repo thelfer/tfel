@@ -62,7 +62,7 @@ namespace tfel::typetraits {
    * \tparam T: type tested
    */
   template <typename T>
-  constexpr bool isFundamentalNumericType() {
+  TFEL_HOST_DEVICE constexpr bool isFundamentalNumericType() {
     return IsFundamentalNumericType<std::decay_t<T>>::cond;
   }
 

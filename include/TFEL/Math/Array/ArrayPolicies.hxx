@@ -72,7 +72,7 @@ namespace tfel::math {
    * \tparam ArrayPolicyType: the array policy
    */
   template <typename ArrayPolicyType>
-  constexpr bool hasArrayPolicyFixedSizes();
+  TFEL_HOST_DEVICE constexpr bool hasArrayPolicyFixedSizes();
 
   /*!
    * \return the logical size of the given array policy, i.e. the number of

@@ -394,7 +394,7 @@ namespace tfel::math {
             unsigned short J,
             unsigned short R,
             unsigned short C>
-  auto tmatrix<N, M, T>::submatrix_view() {
+  constexpr auto tmatrix<N, M, T>::submatrix_view() {
     static_assert(I < N, "invalid row index");
     static_assert(J < M, "invalid column index");
     static_assert(N >= I + R, "invalid number of rows for the submatrix");
@@ -409,7 +409,7 @@ namespace tfel::math {
             unsigned short J,
             unsigned short R,
             unsigned short C>
-  auto tmatrix<N, M, T>::submatrix_view() const {
+  constexpr auto tmatrix<N, M, T>::submatrix_view() const {
     static_assert(I < N, "invalid row index");
     static_assert(J < M, "invalid column index");
     static_assert(N >= I + R, "invalid number of rows for the submatrix");
@@ -422,7 +422,8 @@ namespace tfel::math {
 
   // template<unsigned short N,unsigned short M,typename T>
   template <unsigned short N, unsigned short M, typename T>
-  TFEL_MATH_INLINE2 tmatrix<M, N, T> transpose(const tmatrix<N, M, T>& m) {
+  constexpr tmatrix<M, N, T> transpose(
+      const tmatrix<N, M, T>& m) {
     tmatrix<M, N, T> tm;
     for (typename tmatrix<N, M, T>::size_type i = 0; i < N; ++i) {
       for (typename tmatrix<N, M, T>::size_type j = 0; j < M; ++j) {

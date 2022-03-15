@@ -63,7 +63,7 @@ namespace tfel::math {
     //! \brief destructor
     ~TinyPowellDogLegNewtonRaphsonSolver() noexcept = default;
     //! \brief compute a new correction to the unknowns
-    bool computeNewCorrection();
+    TFEL_HOST_DEVICE bool computeNewCorrection();
     //! \brief size of the trust region
     NumericType powell_dogleg_trust_region_size;
     //! \brief approximation of the invert of the jacobian matrix

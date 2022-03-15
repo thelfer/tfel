@@ -19,7 +19,7 @@ namespace tfel::math {
   template <typename TypeSize, TypeSize CurrentIndex, TypeSize FinalIndex>
   struct LoopUnRoller {
     template <typename Functor>
-    constexpr static void exe(Functor& f) {
+    TFEL_HOST_DEVICE constexpr static void exe(Functor& f) {
       f(CurrentIndex);
       if constexpr (CurrentIndex + 1 != FinalIndex) {
         LoopUnRoller<TypeSize, CurrentIndex + 1, FinalIndex>::exe(f);
@@ -33,7 +33,7 @@ namespace tfel::math {
             bool UnrollLoop = false>
   struct IterateOverMultipleIndices {
     template <typename Functor, typename GetSizeFunctor, typename... Indices>
-    constexpr static void exe(Functor& f,
+    TFEL_HOST_DEVICE constexpr static void exe(Functor& f,
                               const GetSizeFunctor g,
                               const Indices... indices) {
       auto iter = [&](const TypeSize i) {

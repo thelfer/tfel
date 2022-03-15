@@ -54,7 +54,7 @@ namespace tfel::math {
    * \tparam MatrixType: type tested
    */
   template <typename MatrixType>
-  constexpr bool implementsMatrixConcept() {
+  TFEL_HOST_DEVICE constexpr bool implementsMatrixConcept() {
     return tfel::meta::implements<MatrixType, MatrixConcept>();
   }  // end of implementsMatrixConcept
 

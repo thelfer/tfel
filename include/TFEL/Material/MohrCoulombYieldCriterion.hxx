@@ -65,17 +65,21 @@ namespace tfel::material {
      * \param[in] a_c: tension cuff-off parameter
      * \note angles are in radians, see `makeMohrCoulombParameters`
      */
-    MohrCoulombParameters(const stress, const real, const real, const stress);
+    TFEL_HOST_DEVICE MohrCoulombParameters(const stress,
+                                           const real,
+                                           const real,
+                                           const stress);
     //! \brief default constructor
-    MohrCoulombParameters();
+    TFEL_HOST_DEVICE MohrCoulombParameters();
     //! \brief move constructor
-    MohrCoulombParameters(MohrCoulombParameters&&);
+    TFEL_HOST_DEVICE MohrCoulombParameters(MohrCoulombParameters&&);
     //! \brief copy constructor
-    MohrCoulombParameters(const MohrCoulombParameters&);
+    TFEL_HOST_DEVICE MohrCoulombParameters(const MohrCoulombParameters&);
     //! \brief move assignement
-    MohrCoulombParameters& operator=(MohrCoulombParameters&&);
+    TFEL_HOST_DEVICE MohrCoulombParameters& operator=(MohrCoulombParameters&&);
     //! \brief standard assignement
-    MohrCoulombParameters& operator=(const MohrCoulombParameters&);
+    TFEL_HOST_DEVICE MohrCoulombParameters& operator=(
+        const MohrCoulombParameters&);
     //! \brief cohesion
     stress c;
     //! \brief friction angle or dilatancy angle
@@ -115,11 +119,11 @@ namespace tfel::material {
    */
   template <typename StressStensor,
             typename MohrCoulombParameters<StressStensor>::AngleUnit>
-  MohrCoulombParameters<StressStensor> makeMohrCoulombParameters(
-      const MohrCoulombStressType<StressStensor>,
-      const MohrCoulombBaseType<StressStensor>,
-      const MohrCoulombBaseType<StressStensor>,
-      const MohrCoulombStressType<StressStensor>);
+  TFEL_HOST_DEVICE MohrCoulombParameters<StressStensor>
+  makeMohrCoulombParameters(const MohrCoulombStressType<StressStensor>,
+                            const MohrCoulombBaseType<StressStensor>,
+                            const MohrCoulombBaseType<StressStensor>,
+                            const MohrCoulombStressType<StressStensor>);
   /*!
    * \return the equivalent stress
    * \tparam StressStensor: type of the stress tensor
@@ -127,8 +131,9 @@ namespace tfel::material {
    * \param[in] sig: stress tensor
    */
   template <typename StressStensor>
-  MohrCoulombStressType<StressStensor> computeMohrCoulombStressCriterion(
-      const MohrCoulombParameters<StressStensor>&, const StressStensor&);
+  TFEL_HOST_DEVICE MohrCoulombStressType<StressStensor>
+  computeMohrCoulombStressCriterion(const MohrCoulombParameters<StressStensor>&,
+                                    const StressStensor&);
   /*!
    * \brief compute the MohrCoulomb yield stress and its first derivative
    * \tparam StressStensor: type of the stress tensor
@@ -136,8 +141,8 @@ namespace tfel::material {
    * \param[in] sig: stress tensor
    */
   template <typename StressStensor>
-  std::tuple<MohrCoulombStressType<StressStensor>,
-             MohrCoulombStressNormalType<StressStensor>>
+  TFEL_HOST_DEVICE std::tuple<MohrCoulombStressType<StressStensor>,
+                              MohrCoulombStressNormalType<StressStensor>>
   computeMohrCoulombStressCriterionNormal(
       const MohrCoulombParameters<StressStensor>&, const StressStensor&);
   /*!
@@ -148,11 +153,12 @@ namespace tfel::material {
    * \param[in] sig: stress tensor
    */
   template <typename StressStensor>
-  std::tuple<MohrCoulombStressType<StressStensor>,
-             MohrCoulombStressNormalType<StressStensor>,
-             MohrCoulombStressSecondDerivativeType<StressStensor>>
-  computeMohrCoulombStressCriterionSecondDerivative(
-      const MohrCoulombParameters<StressStensor>&, const StressStensor&);
+  TFEL_HOST_DEVICE
+      std::tuple<MohrCoulombStressType<StressStensor>,
+                 MohrCoulombStressNormalType<StressStensor>,
+                 MohrCoulombStressSecondDerivativeType<StressStensor>>
+      computeMohrCoulombStressCriterionSecondDerivative(
+          const MohrCoulombParameters<StressStensor>&, const StressStensor&);
 
   /*!
    * \brief output stream operator
@@ -161,8 +167,8 @@ namespace tfel::material {
    * \note this is required to build `MFront` behaviours in `debug` mode
    */
   template <typename StressStensor>
-  std::ostream& operator<<(std::ostream&,
-                           const MohrCoulombParameters<StressStensor>&);
+  TFEL_HOST std::ostream& operator<<(
+      std::ostream&, const MohrCoulombParameters<StressStensor>&);
 
 }  // end of namespace tfel::material
 

@@ -62,7 +62,8 @@ namespace tfel::material {
    * \param[in] p: equivalent plastic strain
    */
   template <typename real>
-  real computePowerLawStrainBasedNucleationModelPorosityRateFactor(
+  TFEL_HOST_DEVICE real
+  computePowerLawStrainBasedNucleationModelPorosityRateFactor(
       const PowerLawStrainBasedNucleationModelParameters<real>&, const real);
 
   /*!
@@ -81,7 +82,7 @@ namespace tfel::material {
    * \param[in] p: equivalent plastic strain
    */
   template <typename real>
-  std::tuple<real, real>
+  TFEL_HOST_DEVICE std::tuple<real, real>
   computePowerLawStrainBasedNucleationModelPorosityRateFactorAndDerivative(
       const PowerLawStrainBasedNucleationModelParameters<real>&, const real);
 
@@ -101,7 +102,8 @@ namespace tfel::material {
    * \param[in] theta: parameter of the theta method.
    */
   template <typename real>
-  real computePowerLawStrainBasedNucleationModelPorosityIncrement(
+  TFEL_HOST_DEVICE real
+  computePowerLawStrainBasedNucleationModelPorosityIncrement(
       const PowerLawStrainBasedNucleationModelParameters<real>&,
       const real,
       const real,
@@ -126,7 +128,7 @@ namespace tfel::material {
    * \param[in] theta: parameter of the theta method.
    */
   template <typename real>
-  std::tuple<real, real>
+  TFEL_HOST_DEVICE std::tuple<real, real>
   computePowerLawStrainBasedNucleationModelPorosityIncrementAndDerivative(
       const PowerLawStrainBasedNucleationModelParameters<real>&,
       const real,

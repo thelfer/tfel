@@ -39,7 +39,7 @@ namespace tfel::math {
      * \return a reference to the data associated with the given index
      * \param[in] i: requested index
      */
-    constexpr typename ArrayPolicyType::const_reference operator[](
+    TFEL_HOST_DEVICE constexpr typename ArrayPolicyType::const_reference operator[](
         const typename ArrayPolicyType::IndexingPolicy::size_type) const
         noexcept;
     /*!
@@ -47,7 +47,7 @@ namespace tfel::math {
      * \return a reference to the data associated with the given indices
      * \param[in] i: requested indices
      */
-    constexpr typename ArrayPolicyType::const_reference operator[](
+    TFEL_HOST_DEVICE constexpr typename ArrayPolicyType::const_reference operator[](
         const std::array<typename ArrayPolicyType::IndexingPolicy::size_type,
                          ArrayPolicyType::IndexingPolicy::arity>&) const
         noexcept;
@@ -57,14 +57,14 @@ namespace tfel::math {
      * \param[in] i: requested indices
      */
     template <typename... Indices>
-    constexpr typename ArrayPolicyType::const_reference operator()(
+    TFEL_HOST_DEVICE constexpr typename ArrayPolicyType::const_reference operator()(
         const Indices...) const noexcept;
     /*!
      * \brief access operator
      * \return a reference to the data associated with the given indices
      * \param[in] i: requested indices
      */
-    constexpr typename ArrayPolicyType::const_reference operator()(
+    TFEL_HOST_DEVICE constexpr typename ArrayPolicyType::const_reference operator()(
         const std::array<typename ArrayPolicyType::IndexingPolicy::size_type,
                          ArrayPolicyType::IndexingPolicy::arity>&) const
         noexcept;
@@ -87,14 +87,14 @@ namespace tfel::math {
      * \return a reference to the data associated with the given index
      * \param[in] i: requested index
      */
-    constexpr typename ArrayPolicyType::reference operator[](
+    TFEL_HOST_DEVICE constexpr typename ArrayPolicyType::reference operator[](
         const typename ArrayPolicyType::IndexingPolicy::size_type i) noexcept;
     /*!
      * \brief access operator
      * \return a reference to the data associated with the given indices
      * \param[in] i: requested indices
      */
-    constexpr typename ArrayPolicyType::reference operator[](
+    TFEL_HOST_DEVICE constexpr typename ArrayPolicyType::reference operator[](
         const std::array<typename ArrayPolicyType::IndexingPolicy::size_type,
                          ArrayPolicyType::IndexingPolicy::arity>&) noexcept;
     /*!
@@ -103,14 +103,14 @@ namespace tfel::math {
      * \param[in] i: requested indices
      */
     template <typename... Indices>
-    constexpr typename ArrayPolicyType::reference operator()(
+    TFEL_HOST_DEVICE constexpr typename ArrayPolicyType::reference operator()(
         const Indices... i) noexcept;
     /*!
      * \brief access operator
      * \return a reference to the data associated with the given indices
      * \param[in] i: requested indices
      */
-    constexpr typename ArrayPolicyType::reference operator()(
+    TFEL_HOST_DEVICE constexpr typename ArrayPolicyType::reference operator()(
         const std::array<typename ArrayPolicyType::IndexingPolicy::size_type,
                          ArrayPolicyType::IndexingPolicy::arity>&) noexcept;
     /*!
@@ -118,7 +118,7 @@ namespace tfel::math {
      * \param[in] values: values to be assigned
      */
     template <typename ValueType>
-    constexpr std::enable_if_t<
+    TFEL_HOST_DEVICE constexpr std::enable_if_t<
         isAssignableTo<ValueType, typename ArrayPolicyType::value_type>(),
         Child&>
     operator=(const std::initializer_list<ValueType>&) noexcept;
@@ -130,7 +130,7 @@ namespace tfel::math {
      * of the sequence
      */
     template <typename ImportIndexingPolicy, typename InputIterator>
-    constexpr void import(const ImportIndexingPolicy&,
+    TFEL_HOST_DEVICE constexpr void import(const ImportIndexingPolicy&,
                           const InputIterator,
                           const InputIterator);
     /*!
@@ -138,7 +138,7 @@ namespace tfel::math {
      * \param[in] v: value
      */
     template <typename ValueType2>
-    constexpr std::enable_if_t<
+    TFEL_HOST_DEVICE constexpr std::enable_if_t<
         isAssignableTo<ValueType2, typename ArrayPolicyType::value_type>(),
         void>
     fill(const ValueType2&);
@@ -151,7 +151,7 @@ namespace tfel::math {
      * performed.
      */
     template <typename OtherArray>
-    constexpr void assign(const OtherArray&) noexcept;
+    TFEL_HOST_DEVICE constexpr void assign(const OtherArray&) noexcept;
     /*!
      * \tparam OtherArray: type of the given array
      * \brief add the values of the given array to the values of this array.
@@ -159,7 +159,7 @@ namespace tfel::math {
      * performed.
      */
     template <typename OtherArray>
-    constexpr void addAndAssign(const OtherArray&) noexcept;
+    TFEL_HOST_DEVICE constexpr void addAndAssign(const OtherArray&) noexcept;
     /*!
      * \tparam OtherArray: type of the given array
      * \brief substract the values of the given array to the values of this
@@ -168,13 +168,13 @@ namespace tfel::math {
      * are performed.
      */
     template <typename OtherArray>
-    constexpr void substractAndAssign(const OtherArray&) noexcept;
+    TFEL_HOST_DEVICE constexpr void substractAndAssign(const OtherArray&) noexcept;
     /*!
      * \brief multiplication by a scalar
      * \param[in] s: scalar value
      */
     template <typename ValueType2>
-    constexpr std::enable_if_t<
+    TFEL_HOST_DEVICE constexpr std::enable_if_t<
         isAssignableTo<
             BinaryOperationResult<ValueType2,
                                   typename ArrayPolicyType::value_type,

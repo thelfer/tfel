@@ -37,7 +37,7 @@ namespace tfel::material {
    * \param[in] q2  : \f$q_2\f$ parameter
    */
   template <typename T>
-  T computeFlowStressGTN(
+  TFEL_HOST_DEVICE T computeFlowStressGTN(
       const T seq, const T skk, const T fst, const T q1, const T q2) {
     auto square = [](const T& v) { return v * v; };
     auto sst = seq;

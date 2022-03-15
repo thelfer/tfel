@@ -45,7 +45,7 @@ namespace tfel::meta {
    * concept.
    */
   template <typename T, template <typename> class Concept>
-  constexpr bool implements() {
+  TFEL_HOST_DEVICE constexpr bool implements() {
     return Implements<T, Concept>::cond;
   }  // end of implements
 

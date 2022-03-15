@@ -90,7 +90,7 @@ namespace tfel::material {
    * \param[in] p: equivalent plastic strain
    */
   template <typename StressStensorType>
-  PowerLawStressBasedNucleationModelRealType<StressStensorType>
+  TFEL_HOST_DEVICE PowerLawStressBasedNucleationModelRealType<StressStensorType>
   computePowerLawStressBasedNucleationModelPorosityRateFactor(
       const PowerLawStressBasedNucleationModelParameters<StressStensorType>&,
       const StressStensorType&,
@@ -114,8 +114,9 @@ namespace tfel::material {
    * \param[in] p: equivalent plastic strain
    */
   template <typename StressStensorType>
-  std::tuple<PowerLawStressBasedNucleationModelRealType<StressStensorType>,
-             PowerLawStressBasedNucleationModeDerivativeType<StressStensorType>>
+  TFEL_HOST_DEVICE std::tuple<
+      PowerLawStressBasedNucleationModelRealType<StressStensorType>,
+      PowerLawStressBasedNucleationModeDerivativeType<StressStensorType>>
   computePowerLawStressBasedNucleationModelPorosityRateFactorAndDerivative(
       const PowerLawStressBasedNucleationModelParameters<StressStensorType>&,
       const StressStensorType&,

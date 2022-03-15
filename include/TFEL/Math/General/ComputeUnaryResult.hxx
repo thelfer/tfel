@@ -57,7 +57,7 @@ namespace tfel::math {
   using UnaryOperationHandler = typename ComputeUnaryResult<T1, Op>::Handle;
   //! \brief an alias
   template <typename T1, typename Op>
-  constexpr bool isUnaryOperationResultTypeValid() {
+  TFEL_HOST_DEVICE constexpr bool isUnaryOperationResultTypeValid() {
     return !tfel::typetraits::IsInvalid<UnaryOperationResult<T1, Op>>::cond;
   }  // end of isUnaryOperationResultTypeValid
 

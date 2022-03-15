@@ -51,7 +51,7 @@ namespace tfel::material {
    * \return the projection of the stresses on the \f$\pi\f$-plane
    */
   template <typename stress>
-  std::tuple<stress, stress> projectOnPiPlane(
+  TFEL_HOST_DEVICE std::tuple<stress, stress> projectOnPiPlane(
       const tfel::math::tvector<3u, stress>&);
   /*!
    * \brief this function project a stress state defined by the the
@@ -85,9 +85,9 @@ namespace tfel::material {
    * \return the projection of the stresses on the \f$\pi\f$-plane
    */
   template <typename stress>
-  std::tuple<stress, stress> projectOnPiPlane(const stress,
-                                              const stress,
-                                              const stress);
+  TFEL_HOST_DEVICE std::tuple<stress, stress> projectOnPiPlane(const stress,
+                                                               const stress,
+                                                               const stress);
   /*!
    * \brief this function project a stress state defined by the the
    * principal stress axes \f$\left(S_{0},S_{1},S_{2}\right)\f$ on
@@ -120,8 +120,8 @@ namespace tfel::material {
   template <typename StressStensor,
             tfel::math::stensor_common::EigenSolver es =
                 tfel::math::stensor_common::TFELEIGENSOLVER>
-  std::tuple<tfel::math::numeric_type<StressStensor>,
-             tfel::math::numeric_type<StressStensor>>
+  TFEL_HOST_DEVICE std::tuple<tfel::math::numeric_type<StressStensor>,
+                              tfel::math::numeric_type<StressStensor>>
   projectOnPiPlane(const StressStensor&);
   /*!
    * \brief this function returns the stress state
@@ -152,8 +152,8 @@ namespace tfel::material {
    * \f$\pi\f$-plane.
    */
   template <typename stress>
-  std::tuple<stress, stress, stress> buildFromPiPlane(const stress,
-                                                      const stress);
+  TFEL_HOST_DEVICE std::tuple<stress, stress, stress> buildFromPiPlane(
+      const stress, const stress);
 
 }  // end of namespace tfel::material
 

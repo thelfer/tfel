@@ -40,7 +40,7 @@ namespace tfel::typetraits {
    * \tparam  T: type to be tested.
    */
   template <typename T>
-  constexpr auto isUnaryOperator() {
+  TFEL_HOST_DEVICE constexpr auto isUnaryOperator() {
     return IsUnaryOperator<std::remove_cv_t<T>>::cond;
   }  // end of isUnaryOperator
 

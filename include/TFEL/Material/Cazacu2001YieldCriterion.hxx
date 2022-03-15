@@ -58,11 +58,11 @@ namespace tfel::material {
    * \param[in] c: c coefficient
    */
   template <typename StressStensor>
-  Cazacu2001StressType<StressStensor> computeCazacu2001StressCriterion(
-      const StressStensor&,
-      const J2OCoefficients<StressStensor>&,
-      const J3OCoefficients<StressStensor>&,
-      const Cazacu2001BaseType<StressStensor>);
+  TFEL_HOST_DEVICE Cazacu2001StressType<StressStensor>
+  computeCazacu2001StressCriterion(const StressStensor&,
+                                   const J2OCoefficients<StressStensor>&,
+                                   const J3OCoefficients<StressStensor>&,
+                                   const Cazacu2001BaseType<StressStensor>);
   /*!
    * \brief compute the Cazacu2001 yield stress and the its first derivative
    * \tparam StressStensor: type of the stress tensor
@@ -74,8 +74,8 @@ namespace tfel::material {
    *                  computation of the stress normal.
    */
   template <typename StressStensor>
-  std::tuple<Cazacu2001StressType<StressStensor>,
-             Cazacu2001StressNormalType<StressStensor>>
+  TFEL_HOST_DEVICE std::tuple<Cazacu2001StressType<StressStensor>,
+                              Cazacu2001StressNormalType<StressStensor>>
   computeCazacu2001StressCriterionNormal(
       const StressStensor&,
       const J2OCoefficients<StressStensor>&,
@@ -94,15 +94,16 @@ namespace tfel::material {
    *                  computation of the stress normal.
    */
   template <typename StressStensor>
-  std::tuple<Cazacu2001StressType<StressStensor>,
-             Cazacu2001StressNormalType<StressStensor>,
-             Cazacu2001StressSecondDerivativeType<StressStensor>>
-  computeCazacu2001StressCriterionSecondDerivative(
-      const StressStensor&,
-      const J2OCoefficients<StressStensor>&,
-      const J3OCoefficients<StressStensor>&,
-      const Cazacu2001BaseType<StressStensor>,
-      const Cazacu2001StressType<StressStensor>);
+  TFEL_HOST_DEVICE
+      std::tuple<Cazacu2001StressType<StressStensor>,
+                 Cazacu2001StressNormalType<StressStensor>,
+                 Cazacu2001StressSecondDerivativeType<StressStensor>>
+      computeCazacu2001StressCriterionSecondDerivative(
+          const StressStensor&,
+          const J2OCoefficients<StressStensor>&,
+          const J3OCoefficients<StressStensor>&,
+          const Cazacu2001BaseType<StressStensor>,
+          const Cazacu2001StressType<StressStensor>);
 
 }  // end of namespace tfel::material
 

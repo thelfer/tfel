@@ -19,16 +19,16 @@
 namespace tfel::math::constexpr_fct {
 
   /*!
-   * \brief compute the absolute value of a number using a constexpr
+   * \brief compute the absolute value of a number using a TFEL_HOST_DEVICE constexpr
    * function.
    */
   template <typename T>
-  constexpr T abs(const T v) {
+  TFEL_HOST_DEVICE constexpr T abs(const T v) {
     return (v < 0) ? -v : v;
   }
 
   template <typename T>
-  constexpr T sqrt_helper(const T x, const T g) {
+  TFEL_HOST_DEVICE constexpr T sqrt_helper(const T x, const T g) {
     return abs(g - x / g) < 2 * std::numeric_limits<T>::epsilon()
                ? g
                : sqrt_helper(x, (g + x / g) / T{2});
@@ -36,7 +36,7 @@ namespace tfel::math::constexpr_fct {
 
   /*!
    * \brief compute the square root of a number using the Heron
-   * algorithm using a constexpr function.
+   * algorithm using a TFEL_HOST_DEVICE constexpr function.
    *
    * This function is meant to compute some usefull constant such as
    * sqrt(2) and sqrt(3) at compile-time.
@@ -45,7 +45,7 @@ namespace tfel::math::constexpr_fct {
    * \pre std::numeric_limits<T>::epsilon must be defined
    */
   template <typename T>
-  constexpr T sqrt(const T v) {
+  TFEL_HOST_DEVICE constexpr T sqrt(const T v) {
     return sqrt_helper(v, T{1});
   }
 

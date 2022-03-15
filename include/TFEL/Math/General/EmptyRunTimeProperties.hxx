@@ -27,18 +27,18 @@ namespace tfel::math {
   struct EmptyRunTimeProperties {
     EmptyRunTimeProperties() = default;
     EmptyRunTimeProperties(const EmptyRunTimeProperties&) = default;
-    TFEL_MATH_INLINE constexpr EmptyRunTimeProperties(
+    TFEL_MATH_INLINE TFEL_HOST_DEVICE constexpr EmptyRunTimeProperties(
         const EmptyRunTimeProperties&, const EmptyRunTimeProperties&) {}
     EmptyRunTimeProperties(EmptyRunTimeProperties&&) = default;
     EmptyRunTimeProperties& operator=(const EmptyRunTimeProperties&) = default;
   };
 
-  inline constexpr bool operator==(const EmptyRunTimeProperties&,
+  inline TFEL_HOST_DEVICE constexpr bool operator==(const EmptyRunTimeProperties&,
                                    const EmptyRunTimeProperties&) {
     return true;
   }
 
-  inline constexpr bool operator!=(const EmptyRunTimeProperties&,
+  inline TFEL_HOST_DEVICE constexpr bool operator!=(const EmptyRunTimeProperties&,
                                    const EmptyRunTimeProperties&) {
     return false;
   }

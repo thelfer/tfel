@@ -31,7 +31,7 @@ namespace tfel::material {
         1u,
         StiffnessTensorAlterationCharacteristic::UNALTERED> {
       template <typename StressType, typename RealType>
-      static TFEL_MATERIAL_INLINE void exe(
+      TFEL_HOST_DEVICE static constexpr void exe(
           tfel::math::st2tost2<1u, StressType>& C,
           const StressType E,
           const RealType n) {
@@ -52,7 +52,7 @@ namespace tfel::material {
         1u,
         StiffnessTensorAlterationCharacteristic::ALTERED> {
       template <typename StressType, typename RealType>
-      static TFEL_MATERIAL_INLINE void exe(
+      TFEL_HOST_DEVICE static constexpr void exe(
           tfel::math::st2tost2<1u, StressType>& C,
           const StressType E,
           const RealType n)
@@ -76,7 +76,7 @@ namespace tfel::material {
         2u,
         StiffnessTensorAlterationCharacteristic::UNALTERED> {
       template <typename StressType, typename RealType>
-      static TFEL_MATERIAL_INLINE void exe(
+      TFEL_HOST_DEVICE static constexpr void exe(
           tfel::math::st2tost2<2u, StressType>& C,
           const StressType E,
           const RealType n) {
@@ -106,7 +106,7 @@ namespace tfel::material {
         2u,
         StiffnessTensorAlterationCharacteristic::ALTERED> {
       template <typename StressType, typename RealType>
-      static TFEL_MATERIAL_INLINE void exe(
+      TFEL_HOST_DEVICE static constexpr void exe(
           tfel::math::st2tost2<2u, StressType>& C,
           const StressType E,
           const RealType n)
@@ -133,7 +133,7 @@ namespace tfel::material {
     template <StiffnessTensorAlterationCharacteristic smt>
     struct ComputeIsotropicStiffnessTensorI<3u, smt> {
       template <typename StressType, typename RealType>
-      static TFEL_MATERIAL_INLINE void exe(
+      TFEL_HOST_DEVICE static constexpr void exe(
           tfel::math::st2tost2<3u, StressType>& C,
           const StressType E,
           const RealType n) {
@@ -166,7 +166,7 @@ namespace tfel::material {
         1u,
         StiffnessTensorAlterationCharacteristic::UNALTERED> {
       template <typename StressType, typename RealType>
-      static TFEL_MATERIAL_INLINE void exe(
+      TFEL_HOST_DEVICE static constexpr void exe(
           tfel::math::st2tost2<1u, StressType>& C,
           const StressType E1,
           const StressType E2,
@@ -203,7 +203,7 @@ namespace tfel::material {
         1u,
         StiffnessTensorAlterationCharacteristic::ALTERED> {
       template <typename StressType, typename RealType>
-      static TFEL_MATERIAL_INLINE void exe(
+      TFEL_HOST_DEVICE static constexpr void exe(
           tfel::math::st2tost2<1u, StressType>& C,
           const StressType E1,
           const StressType E2,
@@ -247,7 +247,7 @@ namespace tfel::material {
         2u,
         StiffnessTensorAlterationCharacteristic::UNALTERED> {
       template <typename StressType, typename RealType>
-      static TFEL_MATERIAL_INLINE void exe(
+      TFEL_HOST_DEVICE static constexpr void exe(
           tfel::math::st2tost2<2u, StressType>& C,
           const StressType E1,
           const StressType E2,
@@ -286,7 +286,7 @@ namespace tfel::material {
         2u,
         StiffnessTensorAlterationCharacteristic::ALTERED> {
       template <typename StressType, typename RealType>
-      static TFEL_MATERIAL_INLINE void exe(
+      TFEL_HOST_DEVICE static constexpr void exe(
           tfel::math::st2tost2<2u, StressType>& C,
           const StressType E1,
           const StressType E2,
@@ -329,7 +329,7 @@ namespace tfel::material {
     template <StiffnessTensorAlterationCharacteristic smt>
     struct ComputeOrthotropicStiffnessTensorI<3u, smt> {
       template <typename StressType, typename RealType>
-      static TFEL_MATERIAL_INLINE void exe(
+      TFEL_HOST_DEVICE static constexpr void exe(
           tfel::math::st2tost2<3u, StressType>& C,
           const StressType E1,
           const StressType E2,
@@ -462,7 +462,7 @@ namespace tfel::material {
                                              smt,
                                              OrthotropicAxesConvention::PIPE> {
       template <typename StressType, typename RealType>
-      static TFEL_MATERIAL_INLINE void exe(
+      TFEL_HOST_DEVICE static constexpr void exe(
           tfel::math::st2tost2<2u, StressType>& C,
           const StressType E1,
           const StressType E2,
@@ -490,7 +490,7 @@ namespace tfel::material {
                                              smt,
                                              OrthotropicAxesConvention::PIPE> {
       template <typename StressType, typename RealType>
-      static TFEL_MATERIAL_INLINE void exe(
+      TFEL_HOST_DEVICE static constexpr void exe(
           tfel::math::st2tost2<2u, StressType>& C,
           const StressType E1,
           const StressType E2,
@@ -520,7 +520,7 @@ namespace tfel::material {
         smt,
         OrthotropicAxesConvention::PIPE> {
       template <typename StressType, typename RealType>
-      static TFEL_MATERIAL_INLINE void exe(
+      TFEL_HOST_DEVICE static constexpr void exe(
           tfel::math::st2tost2<2u, StressType>& C,
           const StressType E1,
           const StressType E2,
@@ -541,7 +541,7 @@ namespace tfel::material {
 
   template <ModellingHypothesis::Hypothesis H>
   template <typename StressType>
-  void ComputeAlteredStiffnessTensor<H>::exe(
+  constexpr void ComputeAlteredStiffnessTensor<H>::exe(
       tfel::math::st2tost2<ModellingHypothesisToSpaceDimension<H>::value,
                            StressType>& Da,
       const tfel::math::st2tost2<ModellingHypothesisToSpaceDimension<H>::value,
@@ -550,7 +550,8 @@ namespace tfel::material {
   }
 
   template <typename StressType>
-  void ComputeAlteredStiffnessTensor<ModellingHypothesis::PLANESTRESS>::exe(
+  constexpr void
+  ComputeAlteredStiffnessTensor<ModellingHypothesis::PLANESTRESS>::exe(
       tfel::math::st2tost2<2u, StressType>& Da,
       const tfel::math::st2tost2<2u, StressType>& D) {
     Da(0, 0) = D(0, 0) - D(2, 0) / D(2, 2) * D(0, 2);
@@ -575,9 +576,10 @@ namespace tfel::material {
             StiffnessTensorAlterationCharacteristic smt,
             typename StressType,
             typename RealType>
-  void computeIsotropicStiffnessTensorII(tfel::math::st2tost2<N, StressType>& C,
-                                         const StressType E,
-                                         const RealType n) {
+  constexpr void computeIsotropicStiffnessTensorII(
+      tfel::math::st2tost2<N, StressType>& C,
+      const StressType E,
+      const RealType n) {
     tfel::material::internals::ComputeIsotropicStiffnessTensorI<N, smt>::exe(
         C, E, n);
   }
@@ -586,7 +588,7 @@ namespace tfel::material {
             StiffnessTensorAlterationCharacteristic smt,
             typename StressType,
             typename RealType>
-  void computeOrthotropicStiffnessTensorII(
+  constexpr void computeOrthotropicStiffnessTensorII(
       tfel::math::st2tost2<N, StressType>& C,
       const StressType E1,
       const StressType E2,
@@ -605,7 +607,7 @@ namespace tfel::material {
             StiffnessTensorAlterationCharacteristic smt,
             typename StressType,
             typename RealType>
-  void computeIsotropicStiffnessTensor(
+  constexpr void computeIsotropicStiffnessTensor(
       tfel::math::st2tost2<ModellingHypothesisToSpaceDimension<H>::value,
                            StressType>& C,
       const StressType E,
@@ -618,7 +620,7 @@ namespace tfel::material {
             StiffnessTensorAlterationCharacteristic smt,
             typename StressType,
             typename RealType>
-  void computeOrthotropicStiffnessTensor(
+  constexpr void computeOrthotropicStiffnessTensor(
       tfel::math::st2tost2<ModellingHypothesisToSpaceDimension<H>::value,
                            StressType>& C,
       const StressType E1,
@@ -639,7 +641,7 @@ namespace tfel::material {
             OrthotropicAxesConvention c,
             typename StressType,
             typename RealType>
-  void computeOrthotropicStiffnessTensor(
+  constexpr void computeOrthotropicStiffnessTensor(
       tfel::math::st2tost2<ModellingHypothesisToSpaceDimension<H>::value,
                            StressType>& C,
       const StressType E1,

@@ -18,15 +18,15 @@ namespace tfel::math {
 
   template <typename UnaryOperator, typename FirstArgument>
   struct MultiIndicesUnaryOperatorFunctor {
-    constexpr MultiIndicesUnaryOperatorFunctor(FirstArgument& a)
+    TFEL_HOST_DEVICE constexpr MultiIndicesUnaryOperatorFunctor(FirstArgument& a)
         : first_argument(a) {}  // end of MultiIndicesUnaryOperatorFunctor
-    constexpr MultiIndicesUnaryOperatorFunctor(const UnaryOperator& o,
+    TFEL_HOST_DEVICE constexpr MultiIndicesUnaryOperatorFunctor(const UnaryOperator& o,
                                                FirstArgument& a)
         : unary_operator(o),
           first_argument(a) {}  // end of MultiIndicesUnaryOperatorFunctor
 
     template <typename... Indices>
-    constexpr void operator()(const Indices... indices) const {
+    TFEL_HOST_DEVICE constexpr void operator()(const Indices... indices) const {
       unary_operator(this->first_argument(indices...));
     }  // end of operator()
    private:
@@ -35,13 +35,13 @@ namespace tfel::math {
   };
 
   template <typename UnaryOperator, typename FirstArgument>
-  constexpr MultiIndicesUnaryOperatorFunctor<UnaryOperator, FirstArgument>
+  TFEL_HOST_DEVICE constexpr MultiIndicesUnaryOperatorFunctor<UnaryOperator, FirstArgument>
   makeMultiIndicesUnaryOperatorFunctor(FirstArgument& a) {
     return MultiIndicesUnaryOperatorFunctor<UnaryOperator, FirstArgument>(a);
   }  // end of makeMultiIndicesUnaryOperatorFunctor
 
   template <typename UnaryOperator, typename FirstArgument>
-  constexpr MultiIndicesUnaryOperatorFunctor<UnaryOperator, FirstArgument>
+  TFEL_HOST_DEVICE constexpr MultiIndicesUnaryOperatorFunctor<UnaryOperator, FirstArgument>
   makeMultiIndicesUnaryOperatorFunctor(const UnaryOperator& o,
                                        FirstArgument& a) {
     return MultiIndicesUnaryOperatorFunctor<UnaryOperator, FirstArgument>(o, a);
@@ -51,11 +51,11 @@ namespace tfel::math {
             typename FirstArgument,
             typename SecondArgument>
   struct MultiIndicesBinaryOperatorFunctor {
-    constexpr MultiIndicesBinaryOperatorFunctor(FirstArgument& a,
+    TFEL_HOST_DEVICE constexpr MultiIndicesBinaryOperatorFunctor(FirstArgument& a,
                                                 SecondArgument& b)
         : first_argument(a),
           second_argument(b) {}  // end of MultiIndicesBinaryOperatorFunctor
-    constexpr MultiIndicesBinaryOperatorFunctor(const BinaryOperator& o,
+    TFEL_HOST_DEVICE constexpr MultiIndicesBinaryOperatorFunctor(const BinaryOperator& o,
                                                 FirstArgument& a,
                                                 const SecondArgument& b)
         : binary_operator(o),
@@ -63,7 +63,7 @@ namespace tfel::math {
           second_argument(b) {}  // end of MultiIndicesBinaryOperatorFunctor
 
     template <typename... Indices>
-    constexpr void operator()(const Indices... indices) const {
+    TFEL_HOST_DEVICE constexpr void operator()(const Indices... indices) const {
       binary_operator(this->first_argument(indices...),
                       this->second_argument(indices...));
     }  // end of operator()
@@ -76,7 +76,7 @@ namespace tfel::math {
   template <typename BinaryOperator,
             typename FirstArgument,
             typename SecondArgument>
-  constexpr MultiIndicesBinaryOperatorFunctor<BinaryOperator,
+  TFEL_HOST_DEVICE constexpr MultiIndicesBinaryOperatorFunctor<BinaryOperator,
                                               FirstArgument,
                                               SecondArgument>
   makeMultiIndicesBinaryOperatorFunctor(FirstArgument& a, SecondArgument& b) {
@@ -87,7 +87,7 @@ namespace tfel::math {
   template <typename BinaryOperator,
             typename FirstArgument,
             typename SecondArgument>
-  constexpr MultiIndicesBinaryOperatorFunctor<BinaryOperator,
+  TFEL_HOST_DEVICE constexpr MultiIndicesBinaryOperatorFunctor<BinaryOperator,
                                               FirstArgument,
                                               SecondArgument>
   makeMultiIndicesBinaryOperatorFunctor(const BinaryOperator& o,
@@ -106,7 +106,7 @@ namespace tfel::math {
     using const_reference =
         const typename std::iterator_traits<RandomAccessIterator>::reference;
     //! \brief default constructor
-    constexpr MultiIndicesRandomAccessInteratorWrapper(
+    TFEL_HOST_DEVICE constexpr MultiIndicesRandomAccessInteratorWrapper(
         const IndexingPolicy& policy, const RandomAccessIterator& p) noexcept
         : IndexingPolicy(policy), iterator(p) {}
     constexpr MultiIndicesRandomAccessInteratorWrapper(
@@ -121,7 +121,7 @@ namespace tfel::math {
      * \brief access iterator
      */
     template <typename... Indices>
-    constexpr const_reference operator()(const Indices... i) const noexcept {
+    TFEL_HOST_DEVICE constexpr const_reference operator()(const Indices... i) const noexcept {
       checkIndicesValiditity<IndexingPolicy, Indices...>();
       return this->iterator[this->getIndex(i...)];
     }

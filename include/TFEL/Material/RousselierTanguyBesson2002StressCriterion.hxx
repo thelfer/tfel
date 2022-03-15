@@ -99,7 +99,7 @@ namespace tfel::material {
    * \param[in] seps: threshold for the equivalent stress.
    */
   template <typename StressStensor>
-  RousselierTanguyBesson2002StressType<StressStensor>
+  TFEL_HOST_DEVICE RousselierTanguyBesson2002StressType<StressStensor>
   computeRousselierTanguyBesson2002Stress(
       const StressStensor&,
       const RousselierTanguyBesson2002PorosityType<StressStensor>,
@@ -115,7 +115,7 @@ namespace tfel::material {
    * \param[in] seps: threshold for the equivalent stress.
    */
   template <typename StressStensor>
-  std::tuple<
+  TFEL_HOST_DEVICE std::tuple<
       RousselierTanguyBesson2002StressType<StressStensor>,
       RousselierTanguyBesson2002StressNormalType<StressStensor>,
       RousselierTanguyBesson2002StressDerivativeWithRespectToPorosityType<
@@ -136,7 +136,7 @@ namespace tfel::material {
    * \param[in] seps: threshold for the equivalent stress.
    */
   template <typename StressStensor>
-  std::tuple<
+  TFEL_HOST_DEVICE std::tuple<
       RousselierTanguyBesson2002StressType<StressStensor>,
       RousselierTanguyBesson2002StressNormalType<StressStensor>,
       RousselierTanguyBesson2002StressDerivativeWithRespectToPorosityType<

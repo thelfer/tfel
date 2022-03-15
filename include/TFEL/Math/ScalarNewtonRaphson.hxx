@@ -56,7 +56,7 @@ namespace tfel::math {
             typename Criterion,
             typename NumericType,
             typename IndexType>
-  std::tuple<bool, NumericType, IndexType> scalarNewtonRaphson(
+  TFEL_HOST_DEVICE std::tuple<bool, NumericType, IndexType> scalarNewtonRaphson(
       const Function&, const Criterion&, const NumericType, const IndexType);
 
   /*!
@@ -77,7 +77,7 @@ namespace tfel::math {
             typename Criterion,
             typename NumericType,
             typename IndexType>
-  std::tuple<bool, NumericType, IndexType> scalarNewtonRaphson(
+  TFEL_HOST_DEVICE std::tuple<bool, NumericType, IndexType> scalarNewtonRaphson(
       const Function&,
       const Criterion&,
       const ScalarNewtonRaphsonParameters<NumericType, IndexType>&);

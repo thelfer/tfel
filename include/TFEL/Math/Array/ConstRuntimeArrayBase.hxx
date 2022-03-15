@@ -32,7 +32,7 @@ namespace tfel::math {
      * \brief contructor using the indexing policy
      * \param[in] i: indexing policy
      */
-    constexpr ConstRuntimeArrayBase(
+    TFEL_HOST_DEVICE constexpr ConstRuntimeArrayBase(
         const typename ArrayPolicyType::IndexingPolicy&);
     //! \brief move constructor
     constexpr ConstRuntimeArrayBase(ConstRuntimeArrayBase&&) = default;

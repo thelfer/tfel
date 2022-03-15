@@ -118,7 +118,7 @@ namespace tfel ::math {
      * \see ComputeBinaryResult.
      */
     template <typename T1, typename T2>
-    static constexpr auto apply(T1&& a, T2&& b)
+    TFEL_HOST_DEVICE static constexpr auto apply(T1&& a, T2&& b)
         -> decltype(std::forward<T1>(a) + std::forward<T2>(b)) {
       return std::forward<T1>(a) + std::forward<T2>(b);
     }
@@ -130,7 +130,7 @@ namespace tfel ::math {
      * \see ComputeBinaryResult.
      */
     template <typename T1, typename T2>
-    static constexpr auto apply(T1&& a, T2&& b)
+    TFEL_HOST_DEVICE static constexpr auto apply(T1&& a, T2&& b)
         -> decltype(std::forward<T1>(a) - std::forward<T2>(b)) {
       return std::forward<T1>(a) - std::forward<T2>(b);
     }
@@ -143,7 +143,7 @@ namespace tfel ::math {
      * \see ComputeBinaryResult
      */
     template <typename T1, typename T2>
-    static constexpr auto apply(T1&& a, T2&& b)
+    TFEL_HOST_DEVICE static constexpr auto apply(T1&& a, T2&& b)
         -> decltype(std::forward<T1>(a) * std::forward<T2>(b)) {
       return std::forward<T1>(a) * std::forward<T2>(b);
     }
@@ -155,7 +155,7 @@ namespace tfel ::math {
      * \see ComputeBinaryResult.
      */
     template <typename T1, typename T2>
-    static constexpr auto apply(T1&& a, T2&& b)
+    TFEL_HOST_DEVICE static constexpr auto apply(T1&& a, T2&& b)
         -> decltype(std::forward<T1>(a) / std::forward<T2>(b)) {
       return std::forward<T1>(a) / std::forward<T2>(b);
     }
@@ -163,7 +163,8 @@ namespace tfel ::math {
 
   struct OpNeg {
     template <typename T1>
-    static constexpr auto apply(T1&& a) -> decltype(-std::forward<T1>(a)) {
+    TFEL_HOST_DEVICE static constexpr auto apply(T1&& a)
+        -> decltype(-std::forward<T1>(a)) {
       return -std::forward<T1>(a);
     }
   };
@@ -176,9 +177,7 @@ namespace tfel ::math {
 
 namespace tfel::typetraits {
 
-  /*
-   * Partial Specialisation for OpNeg
-   */
+  //! \brief partial Specialisation for OpNeg
   template <>
   struct IsUnaryOperator<tfel::math::OpNeg> {
     static constexpr bool cond = true;
@@ -199,17 +198,19 @@ namespace tfel::math {
   TFEL_MATH_RESULT_TYPE(long double);
 
   template <typename T>
-  constexpr std::enable_if_t<tfel::typetraits::isScalar<T>() &&
-                                 (!tfel::typetraits::IsComplex<T>::cond),
-                             T>
+  TFEL_HOST_DEVICE constexpr std::enable_if_t<
+      tfel::typetraits::isScalar<T>() &&
+          (!tfel::typetraits::IsComplex<T>::cond),
+      T>
   conj(const T src) {
     return src;
   }
 
   template <typename T>
-  constexpr std::enable_if_t<tfel::typetraits::isScalar<T>() &&
-                                 (!tfel::typetraits::IsComplex<T>::cond),
-                             T>
+  TFEL_HOST_DEVICE constexpr std::enable_if_t<
+      tfel::typetraits::isScalar<T>() &&
+          (!tfel::typetraits::IsComplex<T>::cond),
+      T>
   real(const T src) {
     return src;
   }

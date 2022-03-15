@@ -57,7 +57,7 @@ namespace tfel::material {
    * \return an object of type st2tost2
    */
   template <unsigned short N, typename real>
-  tfel::math::st2tost2<N, real> hillTensor(
+  TFEL_HOST_DEVICE constexpr tfel::math::st2tost2<N, real> hillTensor(
       const real, const real, const real, const real, const real, const real);
   /*!
    * \brief an alias to the `hillTensor` function introduced for
@@ -96,7 +96,7 @@ namespace tfel::material {
    * \return an object of type st2tost2
    */
   template <unsigned short N, typename real>
-  tfel::math::st2tost2<N, real> makeHillTensor(
+  TFEL_HOST_DEVICE constexpr tfel::math::st2tost2<N, real> makeHillTensor(
       const real, const real, const real, const real, const real, const real);
   /*!
    * \brief compute the Hill tensor.
@@ -138,9 +138,14 @@ namespace tfel::material {
   template <ModellingHypothesis::Hypothesis H,
             OrthotropicAxesConvention c,
             typename real>
-  tfel::math::st2tost2<ModellingHypothesisToSpaceDimension<H>::value, real>
-  computeHillTensor(
-      const real, const real, const real, const real, const real, const real);
+  TFEL_HOST_DEVICE constexpr tfel::math::
+      st2tost2<ModellingHypothesisToSpaceDimension<H>::value, real>
+      computeHillTensor(const real,
+                        const real,
+                        const real,
+                        const real,
+                        const real,
+                        const real);
   /*!
    * \brief a simple alias to the `computeHillTensor` introduced by
    * consistency.
@@ -182,9 +187,14 @@ namespace tfel::material {
   template <ModellingHypothesis::Hypothesis H,
             OrthotropicAxesConvention c,
             typename real>
-  tfel::math::st2tost2<ModellingHypothesisToSpaceDimension<H>::value, real>
-  makeHillTensor(
-      const real, const real, const real, const real, const real, const real);
+  TFEL_HOST_DEVICE constexpr tfel::math::
+      st2tost2<ModellingHypothesisToSpaceDimension<H>::value, real>
+      makeHillTensor(const real,
+                     const real,
+                     const real,
+                     const real,
+                     const real,
+                     const real);
 
 }  // end of namespace tfel::material
 

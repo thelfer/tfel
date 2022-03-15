@@ -38,7 +38,7 @@ namespace tfel::math {
      * \tparam Function: type of the functor
      */
     template <typename Functor>
-    constexpr void iterate(const Functor&) const;
+    TFEL_HOST_DEVICE constexpr void iterate(const Functor&) const;
   };
 
 }  // namespace tfel::math

@@ -27,7 +27,7 @@ namespace tfel::math {
    * \param[in] s: value
    */
   template <typename NumericType>
-  constexpr std::enable_if_t<
+  TFEL_HOST_DEVICE constexpr std::enable_if_t<
       tfel::typetraits::isFundamentalNumericType<NumericType>(),
       NumericType>
   abs(const NumericType& s) noexcept {
@@ -56,7 +56,7 @@ namespace tfel::math {
     /*!
      * \brief add the absolute value of the argument to the result member
      */
-    constexpr void operator()(const T& v) noexcept { result += abs(v); }
+    TFEL_HOST_DEVICE constexpr void operator()(const T& v) noexcept { result += abs(v); }
 
     //! \brief result
     T result;

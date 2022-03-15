@@ -70,7 +70,8 @@ namespace tfel::material {
    * \param[in] p: equivalent plastic strain
    */
   template <typename real>
-  real computeChuNeedleman1980StrainBasedNucleationModelPorosityRateFactor(
+  TFEL_HOST_DEVICE real
+  computeChuNeedleman1980StrainBasedNucleationModelPorosityRateFactor(
       const ChuNeedleman1980StrainBasedNucleationModelParameters<real>&,
       const real);
 
@@ -96,7 +97,7 @@ namespace tfel::material {
    * \param[in] p: equivalent plastic strain
    */
   template <typename real>
-  std::tuple<real, real>
+  TFEL_HOST_DEVICE std::tuple<real, real>
   computeChuNeedleman1980StrainBasedNucleationModelPorosityRateFactorAndDerivative(
       const ChuNeedleman1980StrainBasedNucleationModelParameters<real>&,
       const real);
@@ -115,7 +116,8 @@ namespace tfel::material {
    * \param[in] p: equivalent plastic strain
    */
   template <typename real>
-  real computeChuNeedleman1980StrainBasedNucleationModelPorosityIncrement(
+  TFEL_HOST_DEVICE real
+  computeChuNeedleman1980StrainBasedNucleationModelPorosityIncrement(
       const ChuNeedleman1980StrainBasedNucleationModelParameters<real>&,
       const real);
 
@@ -134,7 +136,7 @@ namespace tfel::material {
    * \param[in] p: equivalent plastic strain
    */
   template <typename real>
-  std::tuple<real, real>
+  TFEL_HOST_DEVICE std::tuple<real, real>
   computeChuNeedleman1980StrainBasedNucleationModelPorosityIncrementAndDerivative(
       const ChuNeedleman1980StrainBasedNucleationModelParameters<real>&,
       const real);

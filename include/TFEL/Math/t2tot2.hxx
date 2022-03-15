@@ -126,14 +126,14 @@ namespace tfel::math {
      * system
      * \param[in] r : rotation matrix
      */
-    static t2tot2<N, base_type<ValueType>> fromRotationMatrix(
+    TFEL_HOST_DEVICE static t2tot2<N, base_type<ValueType>> fromRotationMatrix(
         const rotation_matrix<ValueType>&);
     /*!
      * \param[in] B : second tensor of the product
      * \return the left part of the derivative of a tensor product
      */
     template <typename TensorType>
-    static TFEL_MATH_INLINE std::enable_if_t<
+    TFEL_HOST_DEVICE static TFEL_MATH_INLINE std::enable_if_t<
         implementsTensorConcept<TensorType>() &&
             getSpaceDimension<TensorType>() == N &&
             isAssignableTo<numeric_type<TensorType>, ValueType>(),
@@ -145,7 +145,7 @@ namespace tfel::math {
      * \return the left part of the derivative of a tensor product
      */
     template <typename TensorType, typename T2toT2Type>
-    static TFEL_MATH_INLINE std::enable_if_t<
+    TFEL_HOST_DEVICE static TFEL_MATH_INLINE std::enable_if_t<
         implementsTensorConcept<TensorType>() &&
             implementsT2toT2Concept<T2toT2Type>() &&
             getSpaceDimension<TensorType>() == N &&
@@ -162,7 +162,7 @@ namespace tfel::math {
      * \return the right part of the derivative of a tensor product
      */
     template <typename TensorType>
-    static TFEL_MATH_INLINE std::enable_if_t<
+    TFEL_HOST_DEVICE static TFEL_MATH_INLINE std::enable_if_t<
         implementsTensorConcept<TensorType>() &&
             getSpaceDimension<TensorType>() == N &&
             isAssignableTo<numeric_type<TensorType>, ValueType>(),
@@ -174,7 +174,7 @@ namespace tfel::math {
      * \return the right part of the derivative of a tensor product
      */
     template <typename TensorType, typename T2toT2Type>
-    static TFEL_MATH_INLINE std::enable_if_t<
+    TFEL_HOST_DEVICE static TFEL_MATH_INLINE std::enable_if_t<
         implementsTensorConcept<TensorType>() &&
             implementsT2toT2Concept<T2toT2Type>() &&
             getSpaceDimension<TensorType>() == N &&
@@ -190,16 +190,17 @@ namespace tfel::math {
      * \return the derivative of the transpose of a tensor with respect of
      * this tensor
      */
-    static constexpr t2tot2<N, base_type<ValueType>> transpose_derivative();
+    TFEL_HOST_DEVICE static constexpr t2tot2<N, base_type<ValueType>>
+    transpose_derivative();
     //! \return the identity
-    static constexpr t2tot2<N, base_type<ValueType>> Id();
+    TFEL_HOST_DEVICE static constexpr t2tot2<N, base_type<ValueType>> Id();
     //! \return Id2^Id2, where Id2 is the identity tensor
-    static constexpr t2tot2<N, base_type<ValueType>> IxI();
+    TFEL_HOST_DEVICE static constexpr t2tot2<N, base_type<ValueType>> IxI();
     /*!
      * \return Id4-Id2^Id2/3, where Id4 is the identity of t2tot2 and
      * Id2 is the identity tensor
      */
-    static constexpr t2tot2<N, base_type<ValueType>> K();
+    TFEL_HOST_DEVICE static constexpr t2tot2<N, base_type<ValueType>> K();
     /*!
      * \brief constructor from a t2tost2
      * \param[in] v : values
@@ -210,7 +211,7 @@ namespace tfel::math {
                    (isAssignableTo<numeric_type<T2toST2Type>, ValueType>()) &&
                    (getSpaceDimension<T2toST2Type>() == N)),
                   bool> = true>
-    constexpr t2tot2(const T2toST2Type&);
+    TFEL_HOST_DEVICE constexpr t2tot2(const T2toST2Type&);
     //
     TFEL_MATH_FIXED_SIZE_ARRAY_DEFAULT_METHODS(t2tot2,
                                                GenericFixedSizeArrayBase);
@@ -219,7 +220,7 @@ namespace tfel::math {
     using GenericFixedSizeArrayBase::operator();
 
     template <typename InputIterator>
-    TFEL_MATH_INLINE2 void copy(const InputIterator src);
+    TFEL_HOST_DEVICE TFEL_MATH_INLINE2 void copy(const InputIterator src);
   };
 
   /*!
@@ -243,7 +244,7 @@ namespace tfel::math {
    * \param[in] r : rotation matrix
    */
   template <typename T2toT2Type>
-  TFEL_MATH_INLINE2 std::enable_if_t<
+  TFEL_HOST_DEVICE TFEL_MATH_INLINE2 std::enable_if_t<
       implementsT2toT2Concept<T2toT2Type>(),
       t2tot2<getSpaceDimension<T2toT2Type>(), numeric_type<T2toT2Type>>>
   change_basis(const T2toT2Type&,
@@ -254,7 +255,7 @@ namespace tfel::math {
    * \param[in] F : deformation gradient
    */
   template <typename TensorType>
-  TFEL_MATH_INLINE2 std::enable_if_t<
+  TFEL_HOST_DEVICE TFEL_MATH_INLINE2 std::enable_if_t<
       implementsTensorConcept<TensorType>(),
       t2tot2<getSpaceDimension<TensorType>(), numeric_type<TensorType>>>
   computeVelocityGradientDerivative(const TensorType&);
@@ -264,7 +265,7 @@ namespace tfel::math {
    * \param[in] F : deformation gradient
    */
   template <typename TensorType>
-  TFEL_MATH_INLINE2 std::enable_if_t<
+  TFEL_HOST_DEVICE TFEL_MATH_INLINE2 std::enable_if_t<
       implementsTensorConcept<TensorType>(),
       t2tot2<getSpaceDimension<TensorType>(), numeric_type<TensorType>>>
   computeSpinRateDerivative(const TensorType&);
@@ -274,17 +275,18 @@ namespace tfel::math {
    * \param[in] s: tensor
    */
   template <typename TensorType>
-  std::enable_if_t<
+  TFEL_HOST_DEVICE std::enable_if_t<
       implementsTensorConcept<TensorType>() &&
           isScalar<numeric_type<TensorType>>(),
       t2tot2<getSpaceDimension<TensorType>(), numeric_type<TensorType>>>
   computeDeterminantSecondDerivative(const TensorType&);
 
   template <typename T, typename T2toST2Type>
-  std::enable_if_t<((implementsT2toST2Concept<T2toST2Type>()) &&
-                    (isAssignableTo<numeric_type<T2toST2Type>, T>())),
-                   void>
-  convert(t2tot2<getSpaceDimension<T2toST2Type>(), T>&, const T2toST2Type&);
+  TFEL_HOST_DEVICE
+      std::enable_if_t<((implementsT2toST2Concept<T2toST2Type>()) &&
+                        (isAssignableTo<numeric_type<T2toST2Type>, T>())),
+                       void>
+      convert(t2tot2<getSpaceDimension<T2toST2Type>(), T>&, const T2toST2Type&);
 
 }  // end of namespace tfel::math
 

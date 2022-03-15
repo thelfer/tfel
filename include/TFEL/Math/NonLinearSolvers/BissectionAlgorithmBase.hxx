@@ -61,22 +61,22 @@ namespace tfel::math {
      * \param[in] f: value of the function associated current estimate of the
      * root
      */
-    void updateBounds(const NumericType&, const NumericType&);
+    TFEL_HOST_DEVICE void updateBounds(const NumericType&, const NumericType&);
     /*!
      * \brief apply the bissection algorithm to the next extimate of the root.
      * \param[in] x: current estimate of the root
      */
-    void iterate(NumericType&);
+    TFEL_HOST_DEVICE void iterate(NumericType&);
     /*!
      * \brief get an estimation of the root of the function
      * \param[out] x: estimate of the root of the function
      * \return a boolean stating if an estimate of the root has been given.
      */
-    bool getNextRootEstimate(NumericType&) const;
+    TFEL_HOST_DEVICE bool getNextRootEstimate(NumericType&) const;
     /*!
      * \brief return the current state of the bissection algorithm
      */
-    const BissectionAlgorithmData<NumericType>& getData() const;
+    TFEL_HOST_DEVICE const BissectionAlgorithmData<NumericType>& getData() const;
 
    private:
     /*!
@@ -84,7 +84,7 @@ namespace tfel::math {
      * \param[in] a: first number
      * \param[in] b: second number
      */
-    static bool haveSameSign(const NumericType, const NumericType);
+    TFEL_HOST_DEVICE static bool haveSameSign(const NumericType, const NumericType);
 
   };  // end of struct BissectionAlgorithmBase
 

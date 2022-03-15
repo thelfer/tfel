@@ -50,7 +50,7 @@ namespace tfel::math {
    * \tparam ArrayType: type tested
    */
   template <typename ArrayType>
-  constexpr bool implementsArrayConcept() {
+  TFEL_HOST_DEVICE constexpr bool implementsArrayConcept() {
     return tfel::meta::implements<ArrayType, ArrayConcept>();
   }  // end of implementsArrayConcept
 

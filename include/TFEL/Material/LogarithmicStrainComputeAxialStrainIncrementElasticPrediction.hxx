@@ -63,7 +63,7 @@ namespace tfel::material {
    * \return the elastic prediction of the axial stress.
    */
   template <typename stress>
-  tfel::typetraits::base_type<stress>
+  TFEL_HOST_DEVICE tfel::typetraits::base_type<stress>
   computeAxialStrainIncrementElasticPrediction(
       const stress,
       const stress,

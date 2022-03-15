@@ -26,7 +26,7 @@ namespace tfel::math {
   template <typename T>
   struct StensorSymmetricProductDerivative<1u, T> {
     template <typename StensorType>
-    static TFEL_MATH_INLINE
+    TFEL_HOST_DEVICE static TFEL_MATH_INLINE
         std::enable_if_t<implementsStensorConcept<StensorType>() &&
                              getSpaceDimension<StensorType>() == 1u &&
                              isAssignableTo<numeric_type<StensorType>, T>(),
@@ -41,7 +41,7 @@ namespace tfel::math {
   template <typename T>
   struct StensorSymmetricProductDerivative<2u, T> {
     template <typename StensorType>
-    static TFEL_MATH_INLINE
+    TFEL_HOST_DEVICE static TFEL_MATH_INLINE
         std::enable_if_t<implementsStensorConcept<StensorType>() &&
                              getSpaceDimension<StensorType>() == 2u &&
                              isAssignableTo<numeric_type<StensorType>, T>(),
@@ -58,7 +58,7 @@ namespace tfel::math {
   template <typename T>
   struct StensorSymmetricProductDerivative<3u, T> {
     template <typename StensorType>
-    static TFEL_MATH_INLINE
+    TFEL_HOST_DEVICE static TFEL_MATH_INLINE
         std::enable_if_t<implementsStensorConcept<StensorType>() &&
                              getSpaceDimension<StensorType>() == 3u &&
                              isAssignableTo<numeric_type<StensorType>, T>(),

@@ -128,7 +128,7 @@ namespace tfel::math {
      * with respect to the deformation gradient
      */
     template <typename TensorType>
-    static TFEL_MATH_INLINE std::enable_if_t<
+    TFEL_HOST_DEVICE static TFEL_MATH_INLINE std::enable_if_t<
         implementsTensorConcept<TensorType>() &&
             getSpaceDimension<TensorType>() == N &&
             isAssignableTo<numeric_type<TensorType>, ValueType>(),
@@ -140,7 +140,7 @@ namespace tfel::math {
      * with respect to the deformation gradient
      */
     template <typename TensorType>
-    static TFEL_MATH_INLINE std::enable_if_t<
+    TFEL_HOST_DEVICE static TFEL_MATH_INLINE std::enable_if_t<
         implementsTensorConcept<TensorType>() &&
             getSpaceDimension<TensorType>() == N &&
             isAssignableTo<numeric_type<TensorType>, ValueType>(),
@@ -154,11 +154,12 @@ namespace tfel::math {
     using GenericFixedSizeArrayBase::operator();
     //! \brief import values
     template <typename T2>
-    std::enable_if_t<std::is_convertible_v<T2, base_type<ValueType>>, void>
-    import(const T2* const);
+    TFEL_HOST_DEVICE
+        std::enable_if_t<std::is_convertible_v<T2, base_type<ValueType>>, void>
+        import(const T2* const);
 
     template <typename InputIterator>
-    TFEL_MATH_INLINE2 void copy(const InputIterator src);
+    TFEL_HOST_DEVICE TFEL_MATH_INLINE2 void copy(const InputIterator src);
   };
 
   /*!
@@ -182,18 +183,19 @@ namespace tfel::math {
    * \param[in] r: rotation matrix
    */
   template <typename T2toST2Type>
-  std::enable_if_t<((implementsT2toST2Concept<T2toST2Type>()) &&
-                    (getSpaceDimension<T2toST2Type>() == 1u)),
-                   t2tost2<1u, numeric_type<T2toST2Type>>>
-  change_basis(const T2toST2Type&,
-               const rotation_matrix<numeric_type<T2toST2Type>>&);
+  TFEL_HOST_DEVICE
+      std::enable_if_t<((implementsT2toST2Concept<T2toST2Type>()) &&
+                        (getSpaceDimension<T2toST2Type>() == 1u)),
+                       t2tost2<1u, numeric_type<T2toST2Type>>>
+      change_basis(const T2toST2Type&,
+                   const rotation_matrix<numeric_type<T2toST2Type>>&);
   /*!
    * \return change the basis of a 2D or 3D t2tost2
    * \param[in] s: t2tost2
    * \param[in] r: rotation matrix
    */
   template <typename T2toST2Type>
-  std::enable_if_t<
+  TFEL_HOST_DEVICE std::enable_if_t<
       ((implementsT2toST2Concept<T2toST2Type>()) &&
        (getSpaceDimension<T2toST2Type>() != 1u)),
       t2tost2<getSpaceDimension<T2toST2Type>(), numeric_type<T2toST2Type>>>
@@ -204,28 +206,31 @@ namespace tfel::math {
    * convert a t2tot2 tensor to a t2tost2
    */
   template <typename T2toT2Type>
-  TFEL_MATH_INLINE std::enable_if_t<((getSpaceDimension<T2toT2Type>() == 1u) &&
-                                     implementsT2toT2Concept<T2toT2Type>()),
-                                    t2tost2<1u, numeric_type<T2toT2Type>>>
-  convertToT2toST2(const T2toT2Type&);
+  TFEL_HOST_DEVICE TFEL_MATH_INLINE
+      std::enable_if_t<((getSpaceDimension<T2toT2Type>() == 1u) &&
+                        implementsT2toT2Concept<T2toT2Type>()),
+                       t2tost2<1u, numeric_type<T2toT2Type>>>
+      convertToT2toST2(const T2toT2Type&);
 
   /*!
    * convert a t2tot2 tensor to a t2tost2
    */
   template <typename T2toT2Type>
-  TFEL_MATH_INLINE std::enable_if_t<((getSpaceDimension<T2toT2Type>() == 2u) &&
-                                     implementsT2toT2Concept<T2toT2Type>()),
-                                    t2tost2<2u, numeric_type<T2toT2Type>>>
-  convertToT2toST2(const T2toT2Type&);
+  TFEL_HOST_DEVICE TFEL_MATH_INLINE
+      std::enable_if_t<((getSpaceDimension<T2toT2Type>() == 2u) &&
+                        implementsT2toT2Concept<T2toT2Type>()),
+                       t2tost2<2u, numeric_type<T2toT2Type>>>
+      convertToT2toST2(const T2toT2Type&);
 
   /*!
    * convert a t2tot2 tensor to a t2tost2
    */
   template <typename T2toT2Type>
-  TFEL_MATH_INLINE std::enable_if_t<((getSpaceDimension<T2toT2Type>() == 3u) &&
-                                     implementsT2toT2Concept<T2toT2Type>()),
-                                    t2tost2<3u, numeric_type<T2toT2Type>>>
-  convertToT2toST2(const T2toT2Type&);
+  TFEL_HOST_DEVICE TFEL_MATH_INLINE
+      std::enable_if_t<((getSpaceDimension<T2toT2Type>() == 3u) &&
+                        implementsT2toT2Concept<T2toT2Type>()),
+                       t2tost2<3u, numeric_type<T2toT2Type>>>
+      convertToT2toST2(const T2toT2Type&);
 
   /*!
    * \return compute the "derivative" of the rate of deformation
@@ -234,7 +239,7 @@ namespace tfel::math {
    * \param[in] F : deformation gradient
    */
   template <typename TensorType>
-  TFEL_MATH_INLINE2
+  TFEL_HOST_DEVICE TFEL_MATH_INLINE2
       std::enable_if_t<(implementsTensorConcept<TensorType>()) &&
                            (getSpaceDimension<TensorType>() == 1u),
                        t2tost2<1u, numeric_type<TensorType>>>
@@ -244,7 +249,7 @@ namespace tfel::math {
    * \param[in] F : deformation gradient
    */
   template <typename TensorType>
-  TFEL_MATH_INLINE2
+  TFEL_HOST_DEVICE TFEL_MATH_INLINE2
       std::enable_if_t<(implementsTensorConcept<TensorType>()) &&
                            (getSpaceDimension<TensorType>() == 2u),
                        t2tost2<2u, numeric_type<TensorType>>>
@@ -254,7 +259,7 @@ namespace tfel::math {
    * \param[in] F : deformation gradient
    */
   template <typename TensorType>
-  TFEL_MATH_INLINE2
+  TFEL_HOST_DEVICE TFEL_MATH_INLINE2
       std::enable_if_t<(implementsTensorConcept<TensorType>()) &&
                            (getSpaceDimension<TensorType>() == 1u),
                        t2tost2<1u, numeric_type<TensorType>>>
@@ -267,7 +272,7 @@ namespace tfel::math {
    * \param[in]  F:  deformation gradient
    */
   template <typename T2toST2Type, typename StensorType, typename TensorType>
-  std::enable_if_t<
+  TFEL_HOST_DEVICE std::enable_if_t<
       implementsT2toST2Concept<T2toST2Type>() &&
           implementsStensorConcept<StensorType>() &&
           implementsTensorConcept<TensorType>() &&
@@ -291,7 +296,7 @@ namespace tfel::math {
    * \param[in]  F:  deformation gradient
    */
   template <typename T2toST2Type, typename StensorType, typename TensorType>
-  std::enable_if_t<
+  TFEL_HOST_DEVICE std::enable_if_t<
       implementsT2toST2Concept<T2toST2Type>() &&
           implementsStensorConcept<StensorType>() &&
           implementsTensorConcept<TensorType>() &&

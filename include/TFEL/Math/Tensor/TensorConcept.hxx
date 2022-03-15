@@ -105,7 +105,7 @@ namespace tfel::math {
    * \tparam TensorType: type tested
    */
   template <typename TensorType>
-  constexpr bool implementsTensorConcept() {
+  TFEL_HOST_DEVICE constexpr bool implementsTensorConcept() {
     return tfel::meta::implements<TensorType, TensorConcept>();
   }  // end of implementsTensorConcept
 
@@ -153,7 +153,7 @@ namespace tfel::math {
   computeLeftCauchyGreenTensor(const TensorType&);
 
   //   template <typename TensorType>
-  //   constexpr std::enable_if_t<
+  //   TFEL_HOST_DEVICE constexpr std::enable_if_t<
   //       (implementsTensorConcept<TensorType>()) &&
   //           (tfel::typetraits::IsFundamentalNumericType<
   //               numeric_type<TensorType>>::cond),

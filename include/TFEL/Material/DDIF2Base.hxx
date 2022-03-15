@@ -68,11 +68,11 @@ namespace tfel::material {
               typename Stensor,
               typename strain,
               typename stress>
-    static DDIF2State determineState(const StressStensor&,
-                                     const Stensor&,
-                                     const strain&,
-                                     const stress&,
-                                     const stress&);
+    TFEL_HOST_DEVICE static DDIF2State determineState(const StressStensor&,
+                                                      const Stensor&,
+                                                      const strain&,
+                                                      const stress&,
+                                                      const stress&);
     /*!
      * \brief method called to build the implicit equations associated with
      * the crack strain.
@@ -100,20 +100,20 @@ namespace tfel::material {
               typename strain,
               typename stress,
               typename real>
-    static void buildImplicitEquation(strain&,
-                                      real&,
-                                      StensorView&,
-                                      const DDIF2State&,
-                                      const StressStensor&,
-                                      const Stensor&,
-                                      const strain&,
-                                      const strain&,
-                                      const strain&,
-                                      const stress&,
-                                      const stress&,
-                                      const stress&,
-                                      const stress&,
-                                      const stress&);
+    TFEL_HOST_DEVICE static void buildImplicitEquation(strain&,
+                                                       real&,
+                                                       StensorView&,
+                                                       const DDIF2State&,
+                                                       const StressStensor&,
+                                                       const Stensor&,
+                                                       const strain&,
+                                                       const strain&,
+                                                       const strain&,
+                                                       const stress&,
+                                                       const stress&,
+                                                       const stress&,
+                                                       const stress&,
+                                                       const stress&);
     /*!
      * \brief method called after the convergence of the behaviour integration
      * to see if the predicted state is consistent with the solution found
@@ -140,81 +140,84 @@ namespace tfel::material {
               typename Stensor,
               typename strain,
               typename stress>
-    static bool checkStateConsistency(DDIF2State&,
-                                      const StressStensor&,
-                                      const Stensor&,
-                                      const strain&,
-                                      const strain&,
-                                      const stress&,
-                                      const stress&,
-                                      const strain&);
+    TFEL_HOST_DEVICE static bool checkStateConsistency(DDIF2State&,
+                                                       const StressStensor&,
+                                                       const Stensor&,
+                                                       const strain&,
+                                                       const strain&,
+                                                       const stress&,
+                                                       const stress&,
+                                                       const strain&);
 
     /*!
      * \brief class used to update the implicit equation and the jacobian
      * matrix.
      */
     template <typename Stensor2Type1, typename Stensor, typename real>
-    static TFEL_VISIBILITY_LOCAL void treatFracture(Stensor2Type1&,
-                                                    real&,
-                                                    real&,
-                                                    const real,
-                                                    const real,
-                                                    const real,
-                                                    const Stensor&,
-                                                    const Stensor&,
-                                                    const real,
-                                                    const real,
-                                                    const real,
-                                                    const real,
-                                                    const real,
-                                                    const real = real(0));
+    TFEL_HOST_DEVICE static TFEL_VISIBILITY_LOCAL void treatFracture(
+        Stensor2Type1&,
+        real&,
+        real&,
+        const real,
+        const real,
+        const real,
+        const Stensor&,
+        const Stensor&,
+        const real,
+        const real,
+        const real,
+        const real,
+        const real,
+        const real = real(0));
     /*!
      * \brief function used to define the equations associated with fracture
      * in explicit integration.
      */
     template <typename real>
-    static TFEL_VISIBILITY_LOCAL void rk(tfel::math::tmatrix<3, 3, real>&,
-                                         tfel::math::tvector<3, real>&,
-                                         real&,
-                                         const real,
-                                         const real,
-                                         const real,
-                                         const real,
-                                         const real,
-                                         const real,
-                                         const real,
-                                         const unsigned short,
-                                         const unsigned short,
-                                         const unsigned short);
+    TFEL_HOST_DEVICE static TFEL_VISIBILITY_LOCAL void rk(
+        tfel::math::tmatrix<3, 3, real>&,
+        tfel::math::tvector<3, real>&,
+        real&,
+        const real,
+        const real,
+        const real,
+        const real,
+        const real,
+        const real,
+        const real,
+        const unsigned short,
+        const unsigned short,
+        const unsigned short);
 
     template <typename real>
-    static TFEL_VISIBILITY_LOCAL void cart2cyl(tfel::math::stensor<1u, real>&,
-                                               const real);
+    TFEL_HOST_DEVICE static TFEL_VISIBILITY_LOCAL void cart2cyl(
+        tfel::math::stensor<1u, real>&, const real);
 
     template <typename real>
-    static TFEL_VISIBILITY_LOCAL void cart2cyl(tfel::math::stensor<2u, real>&,
-                                               const real);
+    TFEL_HOST_DEVICE static TFEL_VISIBILITY_LOCAL void cart2cyl(
+        tfel::math::stensor<2u, real>&, const real);
 
     template <typename real>
-    static TFEL_VISIBILITY_LOCAL void cart2cyl(tfel::math::stensor<3u, real>&,
-                                               const real);
+    TFEL_HOST_DEVICE static TFEL_VISIBILITY_LOCAL void cart2cyl(
+        tfel::math::stensor<3u, real>&, const real);
 
     template <typename real>
-    static TFEL_VISIBILITY_LOCAL void cyl2cart(tfel::math::stensor<1u, real>&,
-                                               const real);
+    TFEL_HOST_DEVICE static TFEL_VISIBILITY_LOCAL void cyl2cart(
+        tfel::math::stensor<1u, real>&, const real);
 
     template <typename real>
-    static TFEL_VISIBILITY_LOCAL void cyl2cart(tfel::math::stensor<2u, real>&,
-                                               const real);
+    TFEL_HOST_DEVICE static TFEL_VISIBILITY_LOCAL void cyl2cart(
+        tfel::math::stensor<2u, real>&, const real);
 
     template <typename real>
-    static TFEL_VISIBILITY_LOCAL void cyl2cart(tfel::math::stensor<3u, real>&,
-                                               const real);
+    TFEL_HOST_DEVICE static TFEL_VISIBILITY_LOCAL void cyl2cart(
+        tfel::math::stensor<3u, real>&, const real);
 
     template <typename real>
-    static TFEL_VISIBILITY_LOCAL void invmat(tfel::math::tmatrix<3, 3, real>&,
-                                             tfel::math::tmatrix<3, 3, real>&,
-                                             tfel::math::tvector<3, real>&);
+    TFEL_HOST_DEVICE static TFEL_VISIBILITY_LOCAL void invmat(
+        tfel::math::tmatrix<3, 3, real>&,
+        tfel::math::tmatrix<3, 3, real>&,
+        tfel::math::tvector<3, real>&);
 
 #ifndef _MSC_VER
     //! small parameter which guarantees that Ef is finite

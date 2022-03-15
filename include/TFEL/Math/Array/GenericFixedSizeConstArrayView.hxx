@@ -24,17 +24,17 @@ namespace tfel::math {
             GenericFixedSizeConstArrayView<ArrayPolicy>,
             ArrayPolicy> {
     //! \brief default constructor
-    constexpr GenericFixedSizeConstArrayView(
+    TFEL_HOST_DEVICE constexpr GenericFixedSizeConstArrayView(
         const typename ArrayPolicy::value_type* const p) noexcept
         : data_values(p) {}
     //! \brief copy constructor
-    constexpr GenericFixedSizeConstArrayView(
+    TFEL_HOST_DEVICE constexpr GenericFixedSizeConstArrayView(
         const GenericFixedSizeConstArrayView&) noexcept = default;
     //! \brief move constructor
-    constexpr GenericFixedSizeConstArrayView(
+    TFEL_HOST_DEVICE constexpr GenericFixedSizeConstArrayView(
         GenericFixedSizeConstArrayView&&) noexcept = default;
     //! \return a pointer to the underlying array serving as element storage.
-    constexpr typename GenericFixedSizeConstArrayView::const_pointer data()
+    TFEL_HOST_DEVICE constexpr typename GenericFixedSizeConstArrayView::const_pointer data()
         const noexcept {
       return this->data_values;
     }  // end of data

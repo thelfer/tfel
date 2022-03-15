@@ -170,12 +170,12 @@ namespace tfel::math {
     //! \brief a simple alias
     using const_data_pointer_type = ViewConstDataPointerType<MappedType>;
     //! \brief default constructor
-    explicit constexpr View(const data_pointer_type p) noexcept
+    explicit TFEL_HOST_DEVICE constexpr View(const data_pointer_type p) noexcept
         : data_pointer(p) {
       static_assert(hasFixedSizes, "invalid constructor call");
     }  // end of View
     //! \brief default constructor
-    explicit constexpr View(const data_pointer_type p,
+    explicit TFEL_HOST_DEVICE constexpr View(const data_pointer_type p,
                             const IndexingPolicyType& i) noexcept
         : selectViewArrayBase<MappedType, IndexingPolicyType>(i),
           data_pointer(p) {
@@ -187,7 +187,7 @@ namespace tfel::math {
     //! \brief move constructor
     constexpr View(View&&) noexcept = default;
     //! \brief assignement operator
-    constexpr View& operator=(const View& src) noexcept {
+    TFEL_HOST_DEVICE constexpr View& operator=(const View& src) noexcept {
       static_assert(!is_const, "invalid constructor call");
       //       checkIndexingPoliciesRuntimeCompatiblity(this->getIndexingPolicy(),
       //                                                src.getIndexingPolicy());
@@ -195,7 +195,7 @@ namespace tfel::math {
       return *this;
     }
     //! \brief move assigment
-    constexpr View& operator=(View&& src) noexcept {
+    TFEL_HOST_DEVICE constexpr View& operator=(View&& src) noexcept {
       static_assert(!is_const, "invalid constructor call");
       //       checkIndexingPoliciesRuntimeCompatiblity(this->getIndexingPolicy(),
       //                                                src.getIndexingPolicy());
@@ -207,13 +207,13 @@ namespace tfel::math {
     using selectViewArrayBase<MappedType, IndexingPolicyType>::operator[];
     using selectViewArrayBase<MappedType, IndexingPolicyType>::operator();
     //! \return a pointer to the underlying array serving as element storage.
-    constexpr data_pointer_type data() noexcept {
+    TFEL_HOST_DEVICE constexpr data_pointer_type data() noexcept {
       static_assert(!is_const, "invalid call");
       return this->data_pointer;
     }  // end of data
 
     //! \return a pointer to the underlying array serving as element storage.
-    constexpr const_data_pointer_type data() const noexcept {
+    TFEL_HOST_DEVICE constexpr const_data_pointer_type data() const noexcept {
       return this->data_pointer;
     }  // end of data
 
@@ -222,7 +222,7 @@ namespace tfel::math {
      * \param[in] src: array to be assigned
      */
     template <typename OtherArray>
-    constexpr std::enable_if_t<isAssignableTo<OtherArray, MappedType>(), View&>
+    TFEL_HOST_DEVICE constexpr std::enable_if_t<isAssignableTo<OtherArray, MappedType>(), View&>
     operator=(const OtherArray& src) {
       static_assert(!is_const, "invalid call");
       //       checkIndexingPoliciesRuntimeCompatiblity(this->getIndexingPolicy(),
@@ -232,7 +232,7 @@ namespace tfel::math {
     }
     //
     template <typename OtherArray>
-    constexpr std::enable_if_t<isAssignableTo<OtherArray, MappedType>(), View&>
+    TFEL_HOST_DEVICE constexpr std::enable_if_t<isAssignableTo<OtherArray, MappedType>(), View&>
     operator+=(const OtherArray& src) {
       static_assert(!is_const, "invalid call");
       //       checkIndexingPoliciesRuntimeCompatiblity(this->getIndexingPolicy(),
@@ -242,7 +242,7 @@ namespace tfel::math {
     }
     //
     template <typename OtherArray>
-    constexpr std::enable_if_t<isAssignableTo<OtherArray, MappedType>(), View&>
+    TFEL_HOST_DEVICE constexpr std::enable_if_t<isAssignableTo<OtherArray, MappedType>(), View&>
     operator-=(const OtherArray& src) {
       static_assert(!is_const, "invalid call");
       //       checkIndexingPoliciesRuntimeCompatiblity(this->getIndexingPolicy(),
@@ -252,7 +252,7 @@ namespace tfel::math {
     }
     //
     template <typename ValueType2>
-    constexpr std::enable_if_t<
+    TFEL_HOST_DEVICE constexpr std::enable_if_t<
         isAssignableTo<
             BinaryOperationResult<ValueType2, numeric_type<MappedType>, OpMult>,
             numeric_type<MappedType>>(),
@@ -264,7 +264,7 @@ namespace tfel::math {
     }  // end of operator*=
        //
     template <typename ValueType2>
-    constexpr std::enable_if_t<
+    TFEL_HOST_DEVICE constexpr std::enable_if_t<
         isAssignableTo<
             BinaryOperationResult<numeric_type<MappedType>, ValueType2, OpDiv>,
             numeric_type<MappedType>>(),
@@ -323,25 +323,29 @@ namespace tfel::math {
       tfel::meta::InvalidType>;
 
   template <typename ScalarType>
-  std::enable_if_t<isScalar<ScalarType>(), scalar_view<ScalarType>> map(
-      base_type<ScalarType>* const p) {
+  TFEL_HOST_DEVICE constexpr std::enable_if_t<isScalar<ScalarType>(),
+                                              scalar_view<ScalarType>>
+  map(base_type<ScalarType>* const p) {
     return scalar_view<ScalarType>(*p);
   }  // end of map
 
   template <typename ScalarType>
-  std::enable_if_t<isScalar<ScalarType>(), scalar_view<ScalarType>> map(
-      base_type<ScalarType>& v) {
+  TFEL_HOST_DEVICE constexpr std::enable_if_t<isScalar<ScalarType>(),
+                                              scalar_view<ScalarType>>
+  map(base_type<ScalarType>& v) {
     return scalar_view<ScalarType>(v);
   }  // end of map
 
   template <typename ScalarType>
-  std::enable_if_t<isScalar<ScalarType>(), scalar_view<const ScalarType>>  //
+  TFEL_HOST_DEVICE constexpr std::enable_if_t<isScalar<ScalarType>(),
+                                              scalar_view<const ScalarType>>  //
   map(const base_type<ScalarType>* const p) {
     return scalar_view<const ScalarType>(*p);
   }  // end of map
 
   template <typename ScalarType>
-  std::enable_if_t<isScalar<ScalarType>(), scalar_view<const ScalarType>>  //
+  TFEL_HOST_DEVICE constexpr std::enable_if_t<isScalar<ScalarType>(),
+                                              scalar_view<const ScalarType>>  //
   map(const base_type<ScalarType>& v) {
     return scalar_view<const ScalarType>(v);
   }  // end of map
@@ -353,7 +357,7 @@ namespace tfel::math {
    */
   template <typename MappedType,
             typename IndexingPolicyType = typename MappedType::indexing_policy>
-  constexpr std::enable_if_t<
+  TFEL_HOST_DEVICE constexpr std::enable_if_t<
       ((!std::is_const_v<MappedType>)&&(!isScalar<MappedType>()) &&
        (std::remove_cv_t<MappedType>::hasFixedSizes)),
       View<MappedType, IndexingPolicyType>>
@@ -364,7 +368,7 @@ namespace tfel::math {
   template <typename MappedType,
             typename IndexingPolicyType =
                 typename std::remove_cv_t<MappedType>::indexing_policy>
-  constexpr std::enable_if_t<
+  TFEL_HOST_DEVICE constexpr std::enable_if_t<
       ((!isScalar<MappedType>()) &&
        (std::remove_cv_t<MappedType>::indexing_policy::hasFixedSizes)),
       View<const MappedType, IndexingPolicyType>>
@@ -400,7 +404,7 @@ namespace tfel::math {
   template <typename MappedType,
             typename... Args,
             typename IndexingPolicyType = typename MappedType::indexing_policy>
-  constexpr std::enable_if_t<
+  TFEL_HOST_DEVICE constexpr std::enable_if_t<
       ((!std::is_const_v<MappedType>)&&(!IndexingPolicyType::hasFixedSizes) &&
        (checkIndexingPoliciesCompatiblity<
            IndexingPolicyType,
@@ -419,7 +423,7 @@ namespace tfel::math {
             typename... Args,
             typename IndexingPolicyType =
                 typename std::remove_cv_t<MappedType>::indexing_policy>
-  constexpr std::enable_if_t<
+  TFEL_HOST_DEVICE constexpr std::enable_if_t<
       ((!std::remove_cv_t<MappedType>::indexing_policy::hasFixedSizes) &&
        (checkIndexingPoliciesCompatiblity<
            IndexingPolicyType,

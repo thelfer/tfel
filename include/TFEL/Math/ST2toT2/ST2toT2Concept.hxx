@@ -48,7 +48,7 @@ namespace tfel::math {
    * \tparam ST2toT2Type: type tested
    */
   template <typename ST2toT2Type>
-  constexpr bool implementsST2toT2Concept() {
+  TFEL_HOST_DEVICE constexpr bool implementsST2toT2Concept() {
     return tfel::meta::implements<ST2toT2Type, ST2toT2Concept>();
   }  // end of implementsST2toT2Concept
 

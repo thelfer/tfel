@@ -61,7 +61,7 @@ namespace tfel::math {
      * \param[in] x : value
      */
     template <typename T>
-    static TFEL_MATH_INLINE T cbrt(const T x) {
+    static TFEL_HOST_DEVICE TFEL_MATH_INLINE T cbrt(const T x) {
       constexpr const auto one_third = T(1) / T(3);
       if (x < 0) {
         return -std::pow(-x, one_third);
@@ -88,20 +88,20 @@ namespace tfel::math {
      * - x2 and x3 contain the real part of the two other roots
      */
     template <typename T>
-    static TFEL_MATH_INLINE2 std::enable_if_t<
+    TFEL_HOST_DEVICE static TFEL_MATH_INLINE2 std::enable_if_t<
         tfel::typetraits::IsReal<T>::cond &&
             tfel::typetraits::IsFundamentalNumericType<T>::cond,
         unsigned short>
     find_roots(
         T& x1, T& x2, T& x3, const T a3, const T a2, const T a1, const T a0) {
-      constexpr const auto C_1_2 = T{1} / T{2};
-      constexpr const auto C_1_3 = T{1} / T{3};
-      constexpr const auto C_2_3 = T{2} * C_1_3;
-      constexpr const auto C_m1_27 = T{-1} / T{27};
-      constexpr const auto C_2_27 = T{2} / T{27};
-      constexpr const auto C_27_2 = T{27} / T{2};
-      constexpr const auto C_3SQRT3_2 = Cste<T>::sqrt3 * T(3) / T(2);
-      constexpr const auto C_SQRT3_3 = Cste<T>::sqrt3 * C_1_3;
+      constexpr auto C_1_2 = T{1} / T{2};
+      constexpr auto C_1_3 = T{1} / T{3};
+      constexpr auto C_2_3 = T{2} * C_1_3;
+      constexpr auto C_m1_27 = T{-1} / T{27};
+      constexpr auto C_2_27 = T{2} / T{27};
+      constexpr auto C_27_2 = T{27} / T{2};
+      constexpr auto C_3SQRT3_2 = Cste<T>::sqrt3 * T(3) / T(2);
+      constexpr auto C_SQRT3_3 = Cste<T>::sqrt3 * C_1_3;
       const T prec = 100 * std::numeric_limits<T>::min();
       if (tfel::math::abs(a3) <= prec) {
         return 0u;
@@ -203,7 +203,7 @@ namespace tfel::math {
      *                  refine the roots found
      */
     template <typename T>
-    static TFEL_MATH_INLINE2 std::enable_if_t<
+    TFEL_HOST_DEVICE static TFEL_MATH_INLINE2 std::enable_if_t<
         tfel::typetraits::IsReal<T>::cond &&
             tfel::typetraits::IsFundamentalNumericType<T>::cond,
         unsigned short>
@@ -228,7 +228,8 @@ namespace tfel::math {
 
    protected:
     template <typename T>
-    static void improve(T& vp, const T a3, const T a2, const T a1, const T a0) {
+    TFEL_HOST_DEVICE static void improve(
+        T& vp, const T a3, const T a2, const T a1, const T a0) {
       using integer = unsigned short;
       auto f = [&a3, &a2, &a1, &a0](const T x) {
         return ((a3 * x + a2) * x + a1) * x + a0;
@@ -236,12 +237,12 @@ namespace tfel::math {
       auto df = [&a3, &a2, &a1](const T x) {
         return (3 * a3 * x + 2 * a2) * x + a1;
       };
-      constexpr const auto emin = std::numeric_limits<T>::min();
-      constexpr const auto eps = std::numeric_limits<T>::epsilon();
+      constexpr auto emin = std::numeric_limits<T>::min();
+      constexpr auto eps = std::numeric_limits<T>::epsilon();
+      constexpr integer iter_max = 50;
       const auto prec = 10 * std::max(emin, tfel::math::abs(vp) * eps);
       auto x = vp;
       auto dfv = df(x);
-      constexpr integer iter_max = 50;
       if (tfel::math::abs(dfv) < 100 * emin) {
         return;
       }

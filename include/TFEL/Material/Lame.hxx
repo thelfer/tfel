@@ -31,8 +31,8 @@ namespace tfel::material {
    * \brief compute the first Lame's coefficient
    */
   template <typename NumericType>
-  constexpr NumericType computeLambda(const NumericType& young,
-                                      const NumericType& nu) noexcept {
+  TFEL_HOST_DEVICE constexpr NumericType computeLambda(
+      const NumericType& young, const NumericType& nu) noexcept {
     return nu * young / ((1 + nu) * (1 - 2 * nu));
   }
 
@@ -40,7 +40,8 @@ namespace tfel::material {
    * \brief compute the first Lame's coefficient
    */
   template <typename NumericType>
-  constexpr tfel::math::qt<tfel::math::Stress, NumericType> computeLambda(
+  TFEL_HOST_DEVICE constexpr tfel::math::qt<tfel::math::Stress, NumericType>
+  computeLambda(
       const tfel::math::qt<tfel::math::Stress, NumericType>& young,
       const tfel::math::qt<tfel::math::NoUnit, NumericType>& nu) noexcept {
     return nu * young / ((1 + nu) * (1 - 2 * nu));
@@ -50,8 +51,8 @@ namespace tfel::material {
    * \brief compute the second Lame's coefficient
    */
   template <typename NumericType>
-  constexpr NumericType computeMu(const NumericType& young,
-                                  const NumericType& nu) noexcept {
+  TFEL_HOST_DEVICE constexpr NumericType computeMu(
+      const NumericType& young, const NumericType& nu) noexcept {
     return young / (2 * (1 + nu));
   }
 
@@ -59,9 +60,9 @@ namespace tfel::material {
    * \brief compute the second Lame's coefficient
    */
   template <typename NumericType>
-  constexpr tfel::math::qt<tfel::math::Stress, NumericType> computeMu(
-      const tfel::math::qt<tfel::math::Stress, NumericType>& young,
-      const tfel::math::qt<tfel::math::NoUnit, NumericType>& nu) {
+  TFEL_HOST_DEVICE constexpr tfel::math::qt<tfel::math::Stress, NumericType>
+  computeMu(const tfel::math::qt<tfel::math::Stress, NumericType>& young,
+            const tfel::math::qt<tfel::math::NoUnit, NumericType>& nu) {
     return young / (2 * (1 + nu));
   }
 
@@ -81,7 +82,7 @@ namespace tfel::material {
    */
   template <typename T>
   struct ComputeElasticStiffnessBase<1u, T> {
-    static void exe(
+    TFEL_HOST_DEVICE static constexpr void exe(
         typename tfel::config::Types<1u, T, true>::StiffnessTensor& D,
         const typename tfel::config::Types<1u, T, true>::stress lambda,
         const typename tfel::config::Types<1u, T, true>::stress mu) {
@@ -92,7 +93,7 @@ namespace tfel::material {
       D(0, 1) = D(0, 2) = D(1, 2) = lambda;
       D(1, 0) = D(2, 0) = D(2, 1) = lambda;
     }
-    static void exe(
+    TFEL_HOST_DEVICE static constexpr void exe(
         typename tfel::config::Types<1u, T, false>::StiffnessTensor& D,
         const typename tfel::config::Types<1u, T, false>::stress lambda,
         const typename tfel::config::Types<1u, T, false>::stress mu) {
@@ -110,7 +111,7 @@ namespace tfel::material {
    */
   template <typename T>
   struct ComputeElasticStiffnessBase<2u, T> {
-    static void exe(
+    TFEL_HOST_DEVICE static constexpr void exe(
         typename tfel::config::Types<2u, T, true>::StiffnessTensor& D,
         const typename tfel::config::Types<2u, T, true>::stress lambda,
         const typename tfel::config::Types<2u, T, true>::stress mu) {
@@ -127,7 +128,7 @@ namespace tfel::material {
       D(3, 3) = G;
     }
 
-    static void exe(
+    TFEL_HOST_DEVICE static constexpr void exe(
         typename tfel::config::Types<2u, T, false>::StiffnessTensor& D,
         const typename tfel::config::Types<2u, T, false>::stress lambda,
         const typename tfel::config::Types<2u, T, false>::stress mu) {
@@ -150,7 +151,7 @@ namespace tfel::material {
    */
   template <typename T>
   struct ComputeElasticStiffnessBase<3u, T> {
-    static void exe(
+    TFEL_HOST_DEVICE static constexpr void exe(
         typename tfel::config::Types<3u, T, true>::StiffnessTensor& D,
         const typename tfel::config::Types<3u, T, true>::stress lambda,
         const typename tfel::config::Types<3u, T, true>::stress mu) {
@@ -174,7 +175,7 @@ namespace tfel::material {
       D(5, 5) = G;
     }
 
-    static void exe(
+    TFEL_HOST_DEVICE static constexpr void exe(
         typename tfel::config::Types<3u, T, false>::StiffnessTensor& D,
         const typename tfel::config::Types<3u, T, false>::stress lambda,
         const typename tfel::config::Types<3u, T, false>::stress mu) {
@@ -242,7 +243,7 @@ namespace tfel::material {
   struct ComputeAlteredElasticStiffnessBase<
       ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS,
       T> {
-    static void exe(
+    TFEL_HOST_DEVICE static constexpr void exe(
         typename tfel::config::Types<1u, T, true>::StiffnessTensor& D,
         const typename tfel::config::Types<1u, T, true>::stress lambda,
         const typename tfel::config::Types<1u, T, true>::stress mu) {
@@ -255,7 +256,7 @@ namespace tfel::material {
       D(1, 1) = D1;
       D(2, 2) = D(0, 2) = D(1, 2) = D(2, 0) = D(2, 1) = stress(T(0));
     }
-    static void exe(
+    TFEL_HOST_DEVICE static constexpr void exe(
         typename tfel::config::Types<1u, T, false>::StiffnessTensor& D,
         const typename tfel::config::Types<1u, T, false>::stress lambda,
         const typename tfel::config::Types<1u, T, false>::stress mu) {
@@ -273,7 +274,7 @@ namespace tfel::material {
   template <typename T>
   struct ComputeAlteredElasticStiffnessBase<ModellingHypothesis::PLANESTRESS,
                                             T> {
-    static void exe(
+    TFEL_HOST_DEVICE static constexpr void exe(
         typename tfel::config::Types<2u, T, true>::StiffnessTensor& D,
         const typename tfel::config::Types<2u, T, true>::stress lambda,
         const typename tfel::config::Types<2u, T, true>::stress mu) {
@@ -288,7 +289,7 @@ namespace tfel::material {
       D(0, 2) = D(0, 3) = D(1, 2) = D(1, 3) = D(2, 0) = D(2, 1) = stress(T(0));
       D(2, 2) = D(2, 3) = D(3, 0) = D(3, 1) = D(3, 2) = stress(T(0));
     }
-    static void exe(
+    TFEL_HOST_DEVICE static constexpr void exe(
         typename tfel::config::Types<2u, T, false>::StiffnessTensor& D,
         const typename tfel::config::Types<2u, T, false>::stress lambda,
         const typename tfel::config::Types<2u, T, false>::stress mu) {

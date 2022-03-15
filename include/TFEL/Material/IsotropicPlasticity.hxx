@@ -44,7 +44,7 @@ namespace tfel::material {
    * `tfel::math::computeDeviatorDeterminantDerivative` function.
    */
   template <typename StensorType>
-  typename std::enable_if<
+  TFEL_HOST_DEVICE constexpr typename std::enable_if<
       tfel::meta::Implements<StensorType, tfel::math::StensorConcept>::cond,
       tfel::math::stensor<tfel::math::getSpaceDimension<StensorType>(),
                           typename tfel::math::ComputeUnaryResult<
@@ -74,7 +74,7 @@ namespace tfel::material {
    * function.
    */
   template <typename StensorType>
-  typename std::enable_if<
+  TFEL_HOST_DEVICE constexpr typename std::enable_if<
       tfel::meta::Implements<StensorType, tfel::math::StensorConcept>::cond &&
           tfel::typetraits::IsScalar<
               tfel::math::numeric_type<StensorType>>::cond,

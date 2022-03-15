@@ -100,7 +100,7 @@ namespace tfel::material {
   template <ModellingHypothesis::Hypothesis mh,
             OrthotropicAxesConvention c,
             typename T>
-  void convertStressFreeExpansionStrain(
+  TFEL_HOST_DEVICE constexpr void convertStressFreeExpansionStrain(
       tfel::math::stensor<ModellingHypothesisToSpaceDimension<mh>::value, T>&);
 
 }  // end of namespace tfel::material

@@ -73,11 +73,11 @@ namespace tfel::material {
             typename CazacuExponentType,
             tfel::math::stensor_common::EigenSolver =
                 tfel::math::stensor_common::TFELEIGENSOLVER>
-  CazacuStressType<StressStensor> computeCazacu2006IsotropicStress(
-      const StressStensor&,
-      const CazacuExponentType,
-      const CazacuBaseType<StressTensor>,
-      const CazacuStressType<StressStensor>);
+  TFEL_HOST_DEVICE CazacuStressType<StressStensor>
+  computeCazacu2006IsotropicStress(const StressStensor&,
+                                   const CazacuExponentType,
+                                   const CazacuBaseType<StressTensor>,
+                                   const CazacuStressType<StressStensor>);
   /*!
    * \brief compute the Cazacu yield stress and the its first derivative
    * \tparam StressStensor: type of the stress tensor
@@ -93,8 +93,8 @@ namespace tfel::material {
             typename CazacuExponentType,
             tfel::math::stensor_common::EigenSolver =
                 tfel::math::stensor_common::TFELEIGENSOLVER>
-  std::tuple<CazacuStressType<StressStensor>,
-             CazacuStressNormalType<StressStensor>>
+  TFEL_HOST_DEVICE std::tuple<CazacuStressType<StressStensor>,
+                              CazacuStressNormalType<StressStensor>>
   computeCazacu2006IsotropicStressNormal(const StressStensor&,
                                          const CazacuExponentType,
                                          const CazacuBaseType<StressTensor>,
@@ -114,9 +114,9 @@ namespace tfel::material {
             typename CazacuExponentType,
             tfel::math::stensor_common::EigenSolver =
                 tfel::math::stensor_common::TFELEIGENSOLVER>
-  std::tuple<CazacuStressType<StressStensor>,
-             CazacuStressNormalType<StressStensor>,
-             CazacuStressSecondDerivativeType<StressStensor>>
+  TFEL_HOST_DEVICE std::tuple<CazacuStressType<StressStensor>,
+                              CazacuStressNormalType<StressStensor>,
+                              CazacuStressSecondDerivativeType<StressStensor>>
   computeCazacu2006IsotropicStressSecondDerivative(
       const StressStensor&,
       const CazacuExponentType,

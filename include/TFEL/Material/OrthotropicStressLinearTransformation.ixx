@@ -54,15 +54,16 @@ namespace tfel::material {
        * \see tfel::material::makeOrthotropicStressLinearTransformation
        */
       template <typename real>
-      static tfel::math::st2tost2<1u, real> exe(const real c12,
-                                                const real c21,
-                                                const real c13,
-                                                const real c31,
-                                                const real c23,
-                                                const real c32,
-                                                const real,
-                                                const real,
-                                                const real) {
+      TFEL_HOST_DEVICE static constexpr tfel::math::st2tost2<1u, real> exe(
+          const real c12,
+          const real c21,
+          const real c13,
+          const real c31,
+          const real c23,
+          const real c32,
+          const real,
+          const real,
+          const real) {
         return {(c13 + c12) / 3,     (c13 - 2 * c12) / 3, (c12 - 2 * c13) / 3,
                 (c23 - 2 * c21) / 3, (c23 + c21) / 3,     (c21 - 2 * c23) / 3,
                 (c32 - 2 * c31) / 3, (c31 - 2 * c32) / 3, (c32 + c31) / 3};
@@ -88,15 +89,16 @@ namespace tfel::material {
        * \see tfel::material::makeOrthotropicStressLinearTransformation
        */
       template <typename real>
-      static tfel::math::st2tost2<2u, real> exe(const real c12,
-                                                const real c21,
-                                                const real c13,
-                                                const real c31,
-                                                const real c23,
-                                                const real c32,
-                                                const real c44,
-                                                const real,
-                                                const real) {
+      TFEL_HOST_DEVICE static constexpr tfel::math::st2tost2<2u, real> exe(
+          const real c12,
+          const real c21,
+          const real c13,
+          const real c31,
+          const real c23,
+          const real c32,
+          const real c44,
+          const real,
+          const real) {
         constexpr const auto zero = real{0};
         return {(c13 + c12) / 3,
                 (c13 - 2 * c12) / 3,
@@ -136,15 +138,16 @@ namespace tfel::material {
        * \see tfel::material::makeOrthotropicStressLinearTransformation
        */
       template <typename real>
-      static tfel::math::st2tost2<3u, real> exe(const real c12,
-                                                const real c21,
-                                                const real c13,
-                                                const real c31,
-                                                const real c23,
-                                                const real c32,
-                                                const real c44,
-                                                const real c55,
-                                                const real c66) {
+      TFEL_HOST_DEVICE static constexpr tfel::math::st2tost2<3u, real> exe(
+          const real c12,
+          const real c21,
+          const real c13,
+          const real c31,
+          const real c23,
+          const real c32,
+          const real c44,
+          const real c55,
+          const real c66) {
         constexpr const auto zero = real{0};
         return {(c13 + c12) / 3,
                 (c13 - 2 * c12) / 3,
@@ -247,15 +250,16 @@ namespace tfel::material {
        * \see tfel::material::makeOrthotropicStressLinearTransformation
        */
       template <typename real>
-      static tfel::math::st2tost2<2u, real> exe(const real c12,
-                                                const real c21,
-                                                const real c13,
-                                                const real c31,
-                                                const real c23,
-                                                const real c32,
-                                                const real c44,
-                                                const real c55,
-                                                const real c66) {
+      TFEL_HOST_DEVICE static constexpr tfel::math::st2tost2<2u, real> exe(
+          const real c12,
+          const real c21,
+          const real c13,
+          const real c31,
+          const real c23,
+          const real c32,
+          const real c44,
+          const real c55,
+          const real c66) {
         return OrthotropicStressLinearTransformation<2u>::exe(
             c13, c31, c12, c21, c32, c23, c55, c44, c66);
       }  // end of exe
@@ -286,15 +290,16 @@ namespace tfel::material {
        * \see tfel::material::makeOrthotropicStressLinearTransformation
        */
       template <typename real>
-      static tfel::math::st2tost2<2u, real> exe(const real c12,
-                                                const real c21,
-                                                const real c13,
-                                                const real c31,
-                                                const real c23,
-                                                const real c32,
-                                                const real c44,
-                                                const real c55,
-                                                const real c66) {
+      TFEL_HOST_DEVICE static constexpr tfel::math::st2tost2<2u, real> exe(
+          const real c12,
+          const real c21,
+          const real c13,
+          const real c31,
+          const real c23,
+          const real c32,
+          const real c44,
+          const real c55,
+          const real c66) {
         return OrthotropicStressLinearTransformation<2u>::exe(
             c13, c31, c12, c21, c32, c23, c55, c44, c66);
       }  // end of exe
@@ -326,15 +331,16 @@ namespace tfel::material {
        * \see tfel::material::makeOrthotropicStressLinearTransformation
        */
       template <typename real>
-      static tfel::math::st2tost2<2u, real> exe(const real c12,
-                                                const real c21,
-                                                const real c13,
-                                                const real c31,
-                                                const real c23,
-                                                const real c32,
-                                                const real c44,
-                                                const real c55,
-                                                const real c66) {
+      TFEL_HOST_DEVICE static constexpr tfel::math::st2tost2<2u, real> exe(
+          const real c12,
+          const real c21,
+          const real c13,
+          const real c31,
+          const real c23,
+          const real c32,
+          const real c44,
+          const real c55,
+          const real c66) {
         return OrthotropicStressLinearTransformation<2u>::exe(
             c13, c31, c12, c21, c32, c23, c55, c44, c66);
       }  // end of exe
@@ -392,22 +398,23 @@ namespace tfel::material {
   }  // end of namespace internals
 
   template <unsigned short N, typename real>
-  tfel::math::st2tost2<N, real> makeOrthotropicStressLinearTransformation(
-      const real c12,
-      const real c21,
-      const real c13,
-      const real c31,
-      const real c23,
-      const real c32,
-      const real c44,
-      const real c55,
-      const real c66) {
+  constexpr tfel::math::st2tost2<N, real>
+  makeOrthotropicStressLinearTransformation(const real c12,
+                                            const real c21,
+                                            const real c13,
+                                            const real c31,
+                                            const real c23,
+                                            const real c32,
+                                            const real c44,
+                                            const real c55,
+                                            const real c66) {
     return internals::OrthotropicStressLinearTransformation<N>::exe(
         c12, c21, c13, c31, c23, c32, c44, c55, c66);
   }  // end of makeOrthotropicStressLinearTransformationType
 
   template <unsigned short N, typename real>
-  tfel::math::st2tost2<N, real> makeOrthotropicStressLinearTransformation(
+  constexpr tfel::math::st2tost2<N, real>
+  makeOrthotropicStressLinearTransformation(
       const tfel::math::tvector<9u, real>& c) {
     return internals::OrthotropicStressLinearTransformation<N>::exe(
         c[0], c[1], c[2], c[3], c[4], c[5], c[6], c[7], c[8]);
@@ -416,7 +423,8 @@ namespace tfel::material {
   template <ModellingHypothesis::Hypothesis H,
             OrthotropicAxesConvention c,
             typename real>
-  tfel::math::st2tost2<ModellingHypothesisToSpaceDimension<H>::value, real>
+  constexpr tfel::math::st2tost2<ModellingHypothesisToSpaceDimension<H>::value,
+                                 real>
   makeOrthotropicStressLinearTransformation(const real c12,
                                             const real c21,
                                             const real c13,
@@ -433,7 +441,8 @@ namespace tfel::material {
   template <ModellingHypothesis::Hypothesis H,
             OrthotropicAxesConvention oac,
             typename real>
-  tfel::math::st2tost2<ModellingHypothesisToSpaceDimension<H>::value, real>
+  constexpr tfel::math::st2tost2<ModellingHypothesisToSpaceDimension<H>::value,
+                                 real>
   makeOrthotropicStressLinearTransformation(
       const tfel::math::tvector<9u, real>& c) {
     return internals::OrthotropicStressLinearTransformationII<H, oac>::exe(

@@ -152,15 +152,16 @@ namespace tfel::material {
        * \endcode
        */
   template <unsigned short N, typename real>
-  tfel::math::st2tost2<N, real> makeBarlatLinearTransformation(const real,
-                                                               const real,
-                                                               const real,
-                                                               const real,
-                                                               const real,
-                                                               const real,
-                                                               const real,
-                                                               const real,
-                                                               const real);
+  TFEL_HOST_DEVICE constexpr tfel::math::st2tost2<N, real>
+  makeBarlatLinearTransformation(const real,
+                                 const real,
+                                 const real,
+                                 const real,
+                                 const real,
+                                 const real,
+                                 const real,
+                                 const real,
+                                 const real);
   /*!
    * \tparam N:    space dimension
    * \tparam real: numerical type
@@ -193,8 +194,8 @@ namespace tfel::material {
    * \f]
    */
   template <unsigned short N, typename real>
-  tfel::math::st2tost2<N, real> makeBarlatLinearTransformation(
-      const tfel::math::fsarray<9u, real>&);
+  TFEL_HOST_DEVICE constexpr tfel::math::st2tost2<N, real>
+  makeBarlatLinearTransformation(const tfel::math::fsarray<9u, real>&);
   /*!
    * \tparam H: modelling hypothesis
    * \tparam c: orthotropic axis convention
@@ -244,16 +245,17 @@ namespace tfel::material {
   template <ModellingHypothesis::Hypothesis H,
             OrthotropicAxesConvention,
             typename real>
-  tfel::math::st2tost2<ModellingHypothesisToSpaceDimension<H>::value, real>
-  makeBarlatLinearTransformation(const real,
-                                 const real,
-                                 const real,
-                                 const real,
-                                 const real,
-                                 const real,
-                                 const real,
-                                 const real,
-                                 const real);
+  TFEL_HOST_DEVICE constexpr tfel::math::
+      st2tost2<ModellingHypothesisToSpaceDimension<H>::value, real>
+      makeBarlatLinearTransformation(const real,
+                                     const real,
+                                     const real,
+                                     const real,
+                                     const real,
+                                     const real,
+                                     const real,
+                                     const real,
+                                     const real);
   /*!
    * \tparam H: modelling hypothesis
    * \tparam oac: orthotropic axis convention
@@ -295,8 +297,9 @@ namespace tfel::material {
   template <ModellingHypothesis::Hypothesis H,
             OrthotropicAxesConvention,
             typename real>
-  tfel::math::st2tost2<ModellingHypothesisToSpaceDimension<H>::value, real>
-  makeBarlatLinearTransformation(const tfel::math::fsarray<9u, real>&);
+  TFEL_HOST_DEVICE constexpr tfel::math::
+      st2tost2<ModellingHypothesisToSpaceDimension<H>::value, real>
+      makeBarlatLinearTransformation(const tfel::math::fsarray<9u, real>&);
   /*!
    * \brief This function computes the Barlat yield stress.
    * The Barlat yield stress is defined by:
@@ -390,7 +393,7 @@ namespace tfel::material {
             typename BarlatExponentType,
             tfel::math::stensor_common::EigenSolver =
                 tfel::math::stensor_common::TFELEIGENSOLVER>
-  BarlatStressType<StressStensor> computeBarlatStress(
+  TFEL_HOST_DEVICE BarlatStressType<StressStensor> computeBarlatStress(
       const StressStensor&,
       const BarlatLinearTransformationType<StressStensor>&,
       const BarlatLinearTransformationType<StressStensor>&,
@@ -413,8 +416,8 @@ namespace tfel::material {
             typename BarlatExponentType,
             tfel::math::stensor_common::EigenSolver =
                 tfel::math::stensor_common::TFELEIGENSOLVER>
-  std::tuple<BarlatStressType<StressStensor>,
-             BarlatStressNormalType<StressStensor>>
+  TFEL_HOST_DEVICE std::tuple<BarlatStressType<StressStensor>,
+                              BarlatStressNormalType<StressStensor>>
   computeBarlatStressNormal(
       const StressStensor&,
       const BarlatLinearTransformationType<StressStensor>&,
@@ -435,12 +438,13 @@ namespace tfel::material {
    * \see `computeBarlatStress`
    */
   template <typename StressStensor, typename BarlatExponentType>
-  BarlatStressAndDerivativesWithRespectToEigenvalues<StressStensor>
-  computeBarlatStressSecondDerivative(
-      const tfel::math::tvector<3u, BarlatStressType<StressStensor>>&,
-      const tfel::math::tvector<3u, BarlatStressType<StressStensor>>&,
-      const BarlatStressType<StressStensor>,
-      const BarlatExponentType);
+  TFEL_HOST_DEVICE
+      BarlatStressAndDerivativesWithRespectToEigenvalues<StressStensor>
+      computeBarlatStressSecondDerivative(
+          const tfel::math::tvector<3u, BarlatStressType<StressStensor>>&,
+          const tfel::math::tvector<3u, BarlatStressType<StressStensor>>&,
+          const BarlatStressType<StressStensor>,
+          const BarlatExponentType);
   /*!
    * \brief compute the Barlat yield stress and its first and second
    * derivatives
@@ -459,9 +463,9 @@ namespace tfel::material {
             typename BarlatExponentType,
             tfel::math::stensor_common::EigenSolver =
                 tfel::math::stensor_common::TFELEIGENSOLVER>
-  std::tuple<BarlatStressType<StressStensor>,
-             BarlatStressNormalType<StressStensor>,
-             BarlatStressSecondDerivativeType<StressStensor>>
+  TFEL_HOST_DEVICE std::tuple<BarlatStressType<StressStensor>,
+                              BarlatStressNormalType<StressStensor>,
+                              BarlatStressSecondDerivativeType<StressStensor>>
   computeBarlatStressSecondDerivative(
       const StressStensor&,
       const BarlatLinearTransformationType<StressStensor>&,

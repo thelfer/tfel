@@ -18,7 +18,7 @@
 namespace tfel::material {
 
   template <typename StensorType>
-  typename std::enable_if<
+  constexpr typename std::enable_if<
       tfel::meta::Implements<StensorType, tfel::math::StensorConcept>::cond,
       tfel::math::UnaryOperationResult<tfel::math::numeric_type<StensorType>,
                                        tfel::math::Power<2>>>::type
@@ -27,7 +27,7 @@ namespace tfel::material {
   }
 
   template <typename StensorType>
-  typename std::enable_if<
+  constexpr typename std::enable_if<
       tfel::meta::Implements<StensorType, tfel::math::StensorConcept>::cond &&
           tfel::math::getSpaceDimension<StensorType>() == 1u,
       tfel::math::UnaryOperationResult<tfel::math::numeric_type<StensorType>,
@@ -46,7 +46,7 @@ namespace tfel::material {
   }  // end of computeJ2O
 
   template <typename StensorType>
-  typename std::enable_if<
+  constexpr typename std::enable_if<
       tfel::meta::Implements<StensorType, tfel::math::StensorConcept>::cond &&
           tfel::math::getSpaceDimension<StensorType>() == 2u,
       tfel::math::UnaryOperationResult<tfel::math::numeric_type<StensorType>,
@@ -66,7 +66,7 @@ namespace tfel::material {
   }  // end of computeJ2O
 
   template <typename StensorType>
-  typename std::enable_if<
+  constexpr typename std::enable_if<
       tfel::meta::Implements<StensorType, tfel::math::StensorConcept>::cond &&
           tfel::math::getSpaceDimension<StensorType>() == 3u,
       tfel::math::UnaryOperationResult<tfel::math::numeric_type<StensorType>,
@@ -86,7 +86,7 @@ namespace tfel::material {
   }  // end of computeJ2O
 
   template <typename StensorType>
-  typename std::enable_if<
+  constexpr typename std::enable_if<
       tfel::meta::Implements<StensorType, tfel::math::StensorConcept>::cond,
       tfel::math::stensor<tfel::math::getSpaceDimension<StensorType>(),
                           tfel::math::numeric_type<StensorType>>>::type
@@ -96,7 +96,7 @@ namespace tfel::material {
   }  // end of computeJ2ODerivative
 
   template <typename StensorType>
-  typename std::enable_if<
+  constexpr typename std::enable_if<
       tfel::meta::Implements<StensorType, tfel::math::StensorConcept>::cond &&
           tfel::math::getSpaceDimension<StensorType>() == 1u,
       tfel::math::stensor<tfel::math::getSpaceDimension<StensorType>(),
@@ -114,7 +114,7 @@ namespace tfel::material {
   }  // end of computeJ2ODerivative
 
   template <typename StensorType>
-  typename std::enable_if<
+  constexpr typename std::enable_if<
       tfel::meta::Implements<StensorType, tfel::math::StensorConcept>::cond &&
           tfel::math::getSpaceDimension<StensorType>() == 2u,
       tfel::math::stensor<tfel::math::getSpaceDimension<StensorType>(),
@@ -132,7 +132,7 @@ namespace tfel::material {
   }  // end of computeJ2ODerivative
 
   template <typename StensorType>
-  typename std::enable_if<
+  constexpr typename std::enable_if<
       tfel::meta::Implements<StensorType, tfel::math::StensorConcept>::cond &&
           tfel::math::getSpaceDimension<StensorType>() == 3u,
       tfel::math::stensor<tfel::math::getSpaceDimension<StensorType>(),
@@ -153,7 +153,7 @@ namespace tfel::material {
   }  // end of computeJ2ODerivative
 
   template <typename StensorType>
-  typename std::enable_if<
+  constexpr typename std::enable_if<
       tfel::meta::Implements<StensorType, tfel::math::StensorConcept>::cond,
       tfel::math::st2tost2<tfel::math::getSpaceDimension<StensorType>(),
                            tfel::math::BinaryOperationResult<
@@ -166,7 +166,7 @@ namespace tfel::material {
   }  // end of computeJ2OSecondDerivative
 
   template <typename StensorType>
-  typename std::enable_if<
+  constexpr typename std::enable_if<
       tfel::meta::Implements<StensorType, tfel::math::StensorConcept>::cond &&
           tfel::math::getSpaceDimension<StensorType>() == 1u,
       tfel::math::st2tost2<tfel::math::getSpaceDimension<StensorType>(),
@@ -186,7 +186,7 @@ namespace tfel::material {
   }  // end of computeJ2OSecondDerivative
 
   template <typename StensorType>
-  typename std::enable_if<
+  constexpr typename std::enable_if<
       tfel::meta::Implements<StensorType, tfel::math::StensorConcept>::cond &&
           tfel::math::getSpaceDimension<StensorType>() == 2u,
       tfel::math::st2tost2<tfel::math::getSpaceDimension<StensorType>(),
@@ -210,7 +210,7 @@ namespace tfel::material {
   }  // end of computeJ2OSecondDerivative
 
   template <typename StensorType>
-  typename std::enable_if<
+  constexpr typename std::enable_if<
       tfel::meta::Implements<StensorType, tfel::math::StensorConcept>::cond &&
           tfel::math::getSpaceDimension<StensorType>() == 3u,
       tfel::math::st2tost2<tfel::math::getSpaceDimension<StensorType>(),
@@ -236,7 +236,7 @@ namespace tfel::material {
   }  // end of computeJ2OSecondDerivative
 
   template <typename StensorType>
-  typename std::enable_if<
+  constexpr typename std::enable_if<
       tfel::meta::Implements<StensorType, tfel::math::StensorConcept>::cond,
       tfel::math::UnaryOperationResult<tfel::math::numeric_type<StensorType>,
                                        tfel::math::Power<3>>>::type
@@ -246,7 +246,7 @@ namespace tfel::material {
   }
 
   template <typename StensorType>
-  typename std::enable_if<
+  constexpr typename std::enable_if<
       tfel::meta::Implements<StensorType, tfel::math::StensorConcept>::cond &&
           tfel::math::getSpaceDimension<StensorType>() == 1u,
       tfel::math::UnaryOperationResult<tfel::math::numeric_type<StensorType>,
@@ -273,7 +273,7 @@ namespace tfel::material {
   }
 
   template <typename StensorType>
-  typename std::enable_if<
+  constexpr typename std::enable_if<
       tfel::meta::Implements<StensorType, tfel::math::StensorConcept>::cond &&
           tfel::math::getSpaceDimension<StensorType>() == 2u,
       tfel::math::UnaryOperationResult<tfel::math::numeric_type<StensorType>,
@@ -303,7 +303,7 @@ namespace tfel::material {
   }
 
   template <typename StensorType>
-  typename std::enable_if<
+  constexpr typename std::enable_if<
       tfel::meta::Implements<StensorType, tfel::math::StensorConcept>::cond &&
           tfel::math::getSpaceDimension<StensorType>() == 3u,
       tfel::math::UnaryOperationResult<tfel::math::numeric_type<StensorType>,
@@ -340,7 +340,7 @@ namespace tfel::material {
   }
 
   template <typename StensorType>
-  typename std::enable_if<
+  constexpr typename std::enable_if<
       tfel::meta::Implements<StensorType, tfel::math::StensorConcept>::cond,
       tfel::math::stensor<tfel::math::getSpaceDimension<StensorType>(),
                           tfel::math::UnaryOperationResult<
@@ -353,7 +353,7 @@ namespace tfel::material {
   }  // end of computeJ3ODerivative
 
   template <typename StensorType>
-  typename std::enable_if<
+  constexpr typename std::enable_if<
       tfel::meta::Implements<StensorType, tfel::math::StensorConcept>::cond &&
           tfel::math::getSpaceDimension<StensorType>() == 1u,
       tfel::math::stensor<tfel::math::getSpaceDimension<StensorType>(),
@@ -393,7 +393,7 @@ namespace tfel::material {
   }  // end of computeJ3ODerivative
 
   template <typename StensorType>
-  typename std::enable_if<
+  constexpr typename std::enable_if<
       tfel::meta::Implements<StensorType, tfel::math::StensorConcept>::cond &&
           tfel::math::getSpaceDimension<StensorType>() == 2u,
       tfel::math::stensor<tfel::math::getSpaceDimension<StensorType>(),
@@ -437,7 +437,7 @@ namespace tfel::material {
   }  // end of computeJ3ODerivative
 
   template <typename StensorType>
-  typename std::enable_if<
+  constexpr typename std::enable_if<
       tfel::meta::Implements<StensorType, tfel::math::StensorConcept>::cond &&
           tfel::math::getSpaceDimension<StensorType>() == 3u,
       tfel::math::stensor<tfel::math::getSpaceDimension<StensorType>(),
@@ -491,7 +491,7 @@ namespace tfel::material {
   }  // end of computeJ3ODerivative
 
   template <typename StensorType>
-  typename std::enable_if<
+  constexpr typename std::enable_if<
       tfel::meta::Implements<StensorType, tfel::math::StensorConcept>::cond,
       tfel::math::st2tost2<tfel::math::getSpaceDimension<StensorType>(),
                            tfel::math::numeric_type<StensorType>>>::type
@@ -502,7 +502,7 @@ namespace tfel::material {
   }  // end of computeJ3OSecondDerivative
 
   template <typename StensorType>
-  typename std::enable_if<
+  constexpr typename std::enable_if<
       tfel::meta::Implements<StensorType, tfel::math::StensorConcept>::cond &&
           tfel::math::getSpaceDimension<StensorType>() == 1u,
       tfel::math::st2tost2<tfel::math::getSpaceDimension<StensorType>(),
@@ -543,7 +543,7 @@ namespace tfel::material {
   }  // end of computeJ3OSecondDerivative
 
   template <typename StensorType>
-  typename std::enable_if<
+  constexpr typename std::enable_if<
       tfel::meta::Implements<StensorType, tfel::math::StensorConcept>::cond &&
           tfel::math::getSpaceDimension<StensorType>() == 2u,
       tfel::math::st2tost2<tfel::math::getSpaceDimension<StensorType>(),
@@ -591,7 +591,7 @@ namespace tfel::material {
   }  // end of computeJ3OSecondDerivative
 
   template <typename StensorType>
-  typename std::enable_if<
+  constexpr typename std::enable_if<
       tfel::meta::Implements<StensorType, tfel::math::StensorConcept>::cond &&
           tfel::math::getSpaceDimension<StensorType>() == 3u,
       tfel::math::st2tost2<tfel::math::getSpaceDimension<StensorType>(),

@@ -64,21 +64,21 @@ namespace tfel::math {
      * \brief this method is called at the beginning of the
      * `solveNonLinearSystem` method.
      */
-    constexpr void executeInitialisationTaskBeforeResolution() noexcept {
+    TFEL_HOST_DEVICE constexpr void executeInitialisationTaskBeforeResolution() noexcept {
       this->levmar_mu = this->levmar_mu0;
     }
     /*!
      * \brief this method is called at the beginning of the
      * `solveNonLinearSystem2` method.
      */
-    constexpr void
+    TFEL_HOST_DEVICE constexpr void
     executeInitialisationTaskBeforeBeginningOfCoreAlgorithm() noexcept {
       this->levmar_first = true;
     }
     //! \brief compute a new correction to the unknowns
-    bool computeNewCorrection();
+    TFEL_HOST_DEVICE bool computeNewCorrection();
     //!
-    bool computeLevenbergMarquardtCorrection();
+    TFEL_HOST_DEVICE bool computeLevenbergMarquardtCorrection();
 
    protected:
     //! \brief jacobian matrix

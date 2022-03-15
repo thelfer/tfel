@@ -95,7 +95,7 @@ namespace tfel::math {
      * compatibility.
      * \param[in] src: object to be copied
      */
-    tvector(const fsarray<N, ValueType>&);
+    TFEL_HOST_DEVICE tvector(const fsarray<N, ValueType>&);
     // inheriting GenericFixedSizeArray' access operators
     using GenericFixedSizeArrayBase::operator[];
     using GenericFixedSizeArrayBase::operator();
@@ -105,13 +105,13 @@ namespace tfel::math {
      * to be copied.
      */
     template <typename InputIterator>
-    TFEL_MATH_INLINE void copy(const InputIterator src);
+    TFEL_HOST_DEVICE TFEL_MATH_INLINE void copy(const InputIterator src);
     /*!
      * \brief create a slice
      * \param[in] I : the starting index
      */
     template <unsigned short I>
-    constexpr auto slice();
+    TFEL_HOST_DEVICE constexpr auto slice();
     /*!
      * \brief create a slice
      * \param[in] I : the starting index
@@ -120,7 +120,7 @@ namespace tfel::math {
      * vector, so this vector shall not be destroyed before the slice
      */
     template <unsigned short I, unsigned short J>
-    constexpr auto slice();
+    TFEL_HOST_DEVICE constexpr auto slice();
     /*!
      * \brief create a slice (const version)
      * \param[in] I : the starting index
@@ -128,7 +128,7 @@ namespace tfel::math {
      * vector, so this vector shall not be destroyed before the slice
      */
     template <unsigned short I>
-    constexpr auto slice() const;
+    TFEL_HOST_DEVICE constexpr auto slice() const;
     /*!
      * \brief create a slice (const version)
      * \param[in] I : the starting index
@@ -137,7 +137,7 @@ namespace tfel::math {
      * vector, so this vector shall not be destroyed before the slice
      */
     template <unsigned short I, unsigned short J>
-    constexpr auto slice() const;
+    TFEL_HOST_DEVICE constexpr auto slice() const;
   };  // end of tvector
 
   /*!
@@ -161,39 +161,41 @@ namespace tfel::math {
    * \param[in] x: inital value
    */
   template <typename F, typename T, unsigned short N>
-  tvector<N, typename std::result_of<F(T)>::type> map(F, const tvector<N, T>&);
+  TFEL_HOST_DEVICE tvector<N, typename std::result_of<F(T)>::type> map(
+      F, const tvector<N, T>&);
   /*!
    * export the given vector to an array of the
    */
   template <unsigned short N, typename T, typename OutputIterator>
-  TFEL_MATH_INLINE2 std::enable_if_t<isScalar<T>(), void> exportToBaseTypeArray(
-      const tvector<N, T>&, OutputIterator);
+  TFEL_HOST_DEVICE TFEL_MATH_INLINE2 std::enable_if_t<isScalar<T>(), void>
+  exportToBaseTypeArray(const tvector<N, T>&, OutputIterator);
 
   template <unsigned short N, typename T>
-  auto abs(const tvector<N, T>& v);
+  TFEL_HOST_DEVICE auto abs(const tvector<N, T>& v);
 
   template <typename T>
-  constexpr tvector<1u, T> makeTVector1D(const T);
+  TFEL_HOST_DEVICE constexpr tvector<1u, T> makeTVector1D(const T);
 
   template <typename T>
-  constexpr tvector<2u, T> makeTVector2D(const T, const T);
+  TFEL_HOST_DEVICE constexpr tvector<2u, T> makeTVector2D(const T, const T);
 
   template <typename T>
-  constexpr tvector<3u, T> makeTVector3D(const T, const T, const T);
+  TFEL_HOST_DEVICE constexpr tvector<3u, T> makeTVector3D(const T, const T, const T);
 
   template <typename T>
-  constexpr tvector<3u, T> cross_product(const tvector<2u, T>&,
+  TFEL_HOST_DEVICE constexpr tvector<3u, T> cross_product(const tvector<2u, T>&,
                                          const tvector<2u, T>&);
 
   template <typename T>
-  constexpr tvector<3u, T> cross_product(const tvector<3u, T>&,
+  TFEL_HOST_DEVICE constexpr tvector<3u, T> cross_product(const tvector<3u, T>&,
                                          const tvector<3u, T>&);
 
   /*!
    * find a vector perpendicular to the second one
    */
   template <typename T>
-  void find_perpendicular_vector(tvector<3u, T>&, const tvector<3u, T>&);
+  TFEL_HOST_DEVICE void find_perpendicular_vector(tvector<3u, T>&,
+                                                  const tvector<3u, T>&);
 
   /*!
    * \brief create a slice from a tiny vector
@@ -202,7 +204,7 @@ namespace tfel::math {
    * vector, so this vector shall not be destroyed before the slice
    */
   template <unsigned short I, unsigned short N, typename T>
-  constexpr auto slice(tvector<N, T>&);
+  TFEL_HOST_DEVICE constexpr auto slice(tvector<N, T>&);
   /*!
    * \brief create a slice from a tiny vector
    * \param[in] v : vector
@@ -210,7 +212,7 @@ namespace tfel::math {
    * vector, so this vector shall not be destroyed before the slice
    */
   template <unsigned short I, unsigned short J, unsigned short N, typename T>
-  constexpr auto slice(tvector<N, T>&);
+  TFEL_HOST_DEVICE constexpr auto slice(tvector<N, T>&);
   /*!
    * \brief create a slice from a tiny vector
    * \param[in] v : vector
@@ -218,7 +220,7 @@ namespace tfel::math {
    * vector, so this vector shall not be destroyed before the slice
    */
   template <unsigned short I, unsigned short N, typename T>
-  constexpr auto slice(const tvector<N, T>&);
+  TFEL_HOST_DEVICE constexpr auto slice(const tvector<N, T>&);
   /*!
    * \brief create a slice from a tiny vector (const version)
    * \param[in] v : vector
@@ -226,7 +228,7 @@ namespace tfel::math {
    * vector, so this vector shall not be destroyed before the slice
    */
   template <unsigned short I, unsigned short J, unsigned short N, typename T>
-  constexpr auto slice(const tvector<N, T>&);
+  TFEL_HOST_DEVICE constexpr auto slice(const tvector<N, T>&);
 
   /*!
    * \brief create a view of a math object from a tiny vector
@@ -239,7 +241,7 @@ namespace tfel::math {
             typename IndexingPolicyType =
                 typename std::remove_cv_t<MappedType>::indexing_policy,
             unsigned short N>
-  constexpr std::enable_if_t<
+  TFEL_HOST_DEVICE constexpr std::enable_if_t<
       ((!isScalar<MappedType>()) && (IndexingPolicyType::hasFixedSizes) &&
        (checkIndexingPoliciesCompatiblity<
            IndexingPolicyType,
@@ -258,7 +260,7 @@ namespace tfel::math {
             typename IndexingPolicyType =
                 typename std::remove_cv_t<MappedType>::indexing_policy,
             unsigned short N>
-  constexpr std::enable_if_t<
+  TFEL_HOST_DEVICE constexpr std::enable_if_t<
       ((!isScalar<MappedType>()) && (IndexingPolicyType::hasFixedSizes) &&
        (checkIndexingPoliciesCompatiblity<
            IndexingPolicyType,
@@ -279,7 +281,7 @@ namespace tfel::math {
             typename IndexingPolicyType = typename MappedType::indexing_policy,
             unsigned short N,
             typename real>
-  constexpr std::enable_if_t<
+  TFEL_HOST_DEVICE constexpr std::enable_if_t<
       ((!std::is_const_v<MappedType>)&&(IndexingPolicyType::hasFixedSizes) &&
        (checkIndexingPoliciesCompatiblity<
            IndexingPolicyType,
@@ -301,7 +303,7 @@ namespace tfel::math {
                 typename std::remove_cv_t<MappedType>::indexing_policy,
             unsigned short N,
             typename real>
-  constexpr std::enable_if_t<
+  TFEL_HOST_DEVICE constexpr std::enable_if_t<
       ((IndexingPolicyType::hasFixedSizes) &&
        (checkIndexingPoliciesCompatiblity<
            IndexingPolicyType,
@@ -322,7 +324,7 @@ namespace tfel::math {
             unsigned short offset = 0u,
             unsigned short stride = getViewsArrayMinimalStride<MappedType>(),
             unsigned short N>
-  constexpr std::enable_if_t<
+  TFEL_HOST_DEVICE constexpr std::enable_if_t<
       !std::is_const_v<MappedType>,
       ViewsFixedSizeVector<MappedType, unsigned short, M, stride>>
   map(tvector<N, ViewsArrayNumericType<MappedType>>&);
@@ -340,7 +342,8 @@ namespace tfel::math {
             unsigned short offset = 0u,
             unsigned short stride = getViewsArrayMinimalStride<MappedType>(),
             unsigned short N>
-  constexpr auto map(const tvector<N, ViewsArrayNumericType<MappedType>>&);
+  TFEL_HOST_DEVICE constexpr auto map(
+      const tvector<N, ViewsArrayNumericType<MappedType>>&);
 
 }  // namespace tfel::math
 
@@ -390,7 +393,7 @@ namespace tfel::math {
    * \tparam ValueType: type hold by the tiny vector
    */
   template <std::size_t i, unsigned short N, typename ValueType>
-  constexpr std::tuple_element_t<i, tvector<N, ValueType>>& get(
+  TFEL_HOST_DEVICE constexpr std::tuple_element_t<i, tvector<N, ValueType>>& get(
       tvector<N, ValueType>& v) noexcept {
     return v[i];
   }  // end of get
@@ -402,7 +405,7 @@ namespace tfel::math {
    * \tparam ValueType: type hold by the tiny vector
    */
   template <std::size_t i, unsigned short N, typename ValueType>
-  constexpr const std::tuple_element_t<i, tvector<N, ValueType>>& get(
+  TFEL_HOST_DEVICE constexpr const std::tuple_element_t<i, tvector<N, ValueType>>& get(
       const tvector<N, ValueType>& v) noexcept {
     return v[i];
   }  // end of get

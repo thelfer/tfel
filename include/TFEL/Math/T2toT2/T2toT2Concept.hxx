@@ -49,7 +49,7 @@ namespace tfel::math {
    * \tparam T2toT2Type: type tested
    */
   template <typename T2toT2Type>
-  constexpr bool implementsT2toT2Concept() {
+  TFEL_HOST_DEVICE constexpr bool implementsT2toT2Concept() {
     return tfel::meta::implements<T2toT2Type, T2toT2Concept>();
   }  // end of implementsT2toT2Concept
 

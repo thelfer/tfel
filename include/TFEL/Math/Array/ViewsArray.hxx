@@ -130,7 +130,7 @@ namespace tfel::math {
     //! \brief type of the pointer to the underlying data
     using data_pointer_type = ViewsArrayDataPointerType<MappedType>;
     //! brief default constructor
-    explicit constexpr ViewsArray(const data_pointer_type p) noexcept
+    explicit TFEL_HOST_DEVICE constexpr ViewsArray(const data_pointer_type p) noexcept
         : data_pointer(p) {
       static_assert(MemoryIndexingPolicyType::hasFixedSizes, "invalid call");
     }
@@ -138,7 +138,7 @@ namespace tfel::math {
      * \brief constructor from an indexing policy
      * \param[in] p: indexing policy
      */
-    explicit constexpr ViewsArray(const data_pointer_type p,
+    explicit TFEL_HOST_DEVICE constexpr ViewsArray(const data_pointer_type p,
                                   const MemoryIndexingPolicyType& mp) noexcept
         : data_pointer(p), MemoryIndexingPolicyType(mp) {
       static_assert(!MemoryIndexingPolicyType::hasFixedSizes, "invalid call");
@@ -147,7 +147,7 @@ namespace tfel::math {
      * \brief constructor from an indexing policy
      * \param[in] s: size used to initialize the memory' index policy
      */
-    explicit constexpr ViewsArray(
+    explicit TFEL_HOST_DEVICE constexpr ViewsArray(
         const data_pointer_type p,
         const typename MemoryIndexingPolicyType::size_type s) noexcept
         : data_pointer(p), MemoryIndexingPolicyType(s) {
@@ -158,7 +158,7 @@ namespace tfel::math {
      * \brief constructor from an indexing policy
      * \param[in] msizes: sizes used to initialize the memory' index policy
      */
-    explicit constexpr ViewsArray(
+    explicit TFEL_HOST_DEVICE constexpr ViewsArray(
         const data_pointer_type p,
         const std::array<typename MemoryIndexingPolicyType::size_type,
                          MemoryIndexingPolicyType::arity>& msizes) noexcept
@@ -175,7 +175,7 @@ namespace tfel::math {
                                               MappedType,
                                               ViewIndexingPolicyType>;
     //! \brief access operator
-    constexpr typename ViewsArray::view_type operator[](
+    TFEL_HOST_DEVICE constexpr typename ViewsArray::view_type operator[](
         const typename MemoryIndexingPolicyType::size_type i) noexcept {
       static_assert(MemoryIndexingPolicyType::arity == 1u, "invalid call");
       static_assert(ViewIndexingPolicyType::hasFixedSizes, "invalid call");
@@ -187,7 +187,7 @@ namespace tfel::math {
       }
     }
     //! \brief access operator
-    constexpr typename ViewsArray::const_view_type operator[](
+    TFEL_HOST_DEVICE constexpr typename ViewsArray::const_view_type operator[](
         const typename MemoryIndexingPolicyType::size_type i) const noexcept {
       static_assert(MemoryIndexingPolicyType::arity == 1u, "invalid call");
       static_assert(ViewIndexingPolicyType::hasFixedSizes, "invalid call");
@@ -200,7 +200,7 @@ namespace tfel::math {
     }
     //! \brief access operator
     template <typename... Indices>
-    constexpr typename ViewsArray::view_type operator()(
+    TFEL_HOST_DEVICE constexpr typename ViewsArray::view_type operator()(
         const Indices... i) noexcept {
       static_assert(ViewIndexingPolicyType::hasFixedSizes, "invalid call");
       auto* const d = this->data_pointer + this->getIndex(i...);
@@ -212,7 +212,7 @@ namespace tfel::math {
     }
     //! \brief access operator
     template <typename... Indices>
-    constexpr typename ViewsArray::const_view_type operator()(
+    TFEL_HOST_DEVICE constexpr typename ViewsArray::const_view_type operator()(
         const Indices... i) const noexcept {
       static_assert(ViewIndexingPolicyType::hasFixedSizes, "invalid call");
       const auto* const d = this->data_pointer + this->getIndex(i...);
@@ -314,7 +314,7 @@ namespace tfel::math {
     }
     // \brief multiplication by a scalar
     template <typename ValueType2>
-    constexpr std::enable_if_t<
+    TFEL_HOST_DEVICE constexpr std::enable_if_t<
         ((isScalar<ValueType2>()) &&
          (isAssignableTo<BinaryOperationResult<MappedType, ValueType2, OpMult>,
                          MappedType>())),
@@ -340,7 +340,7 @@ namespace tfel::math {
     }  // end of operator*=
     // \brief division by a scalar
     template <typename ValueType2>
-    constexpr std::enable_if_t<
+    TFEL_HOST_DEVICE constexpr std::enable_if_t<
         ((isScalar<ValueType2>()) &&
          (isAssignableTo<BinaryOperationResult<MappedType, ValueType2, OpDiv>,
                          MappedType>())),

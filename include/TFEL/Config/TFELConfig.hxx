@@ -336,17 +336,14 @@
  */
 #define TFEL_CONSTEXPR constexpr
 
+#ifdef __CUDACC__
 #ifndef TFEL_DEVICE
-#ifdef __CUDACC__
 #define TFEL_DEVICE __device__
-#endif /* __CUDACC__ */
 #endif /* TFEL_DEVICE */
-
 #ifndef TFEL_HOST
-#ifdef __CUDACC__
 #define TFEL_HOST __host__
-#endif /* __CUDACC__ */
 #endif /* TFEL_HOST */
+#endif /* __CUDACC__ */
 
 #ifndef TFEL_DEVICE
 #define TFEL_DEVICE

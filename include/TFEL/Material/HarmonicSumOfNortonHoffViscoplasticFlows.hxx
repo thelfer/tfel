@@ -36,7 +36,7 @@ namespace tfel::material {
             typename strainrate,
             typename stress,
             typename real>
-  strainrate
+  TFEL_HOST_DEVICE strainrate
   computeEquivalentStrainRateOfHarmonicSumOfNortonHoffViscoplasticFlows(
       const tfel::math::fsarray<N, strainrate>&,
       const tfel::math::fsarray<N, stress>&,
@@ -59,7 +59,7 @@ namespace tfel::material {
             typename strainrate,
             typename stress,
             typename real>
-  std::tuple<
+  TFEL_HOST_DEVICE std::tuple<
       strainrate,
       tfel::math::BinaryOperationResult<strainrate, stress, tfel::math::OpDiv>>
   computeEquivalentStrainRateAndDerivativeOfHarmonicSumOfNortonHoffViscoplasticFlows(
@@ -79,7 +79,7 @@ namespace tfel::material {
    * \param[in] seq: effective equivalent stress.
    */
   template <typename strainrate, typename stress, typename real>
-  strainrate
+  TFEL_HOST_DEVICE strainrate
   computeEquivalentStrainRateOfHarmonicSumOfNortonHoffViscoplasticFlows(
       const strainrate, const stress, const real, const stress);
   /*!
@@ -94,7 +94,7 @@ namespace tfel::material {
    * \param[in] seq: effective equivalent stress.
    */
   template <typename strainrate, typename stress, typename real>
-  std::tuple<
+  TFEL_HOST_DEVICE std::tuple<
       strainrate,
       tfel::math::BinaryOperationResult<strainrate, stress, tfel::math::OpDiv>>
   computeEquivalentStrainRateAndDerivativeOfHarmonicSumOfNortonHoffViscoplasticFlows(

@@ -22,7 +22,7 @@
 #define TFEL_MATH_QT_SCALAR_OPERATIONS(X)                                      \
                                                                                \
   template <typename UnitType, typename ValueType, typename OwnershipPolicy>   \
-  constexpr bool operator<(                                                    \
+  TFEL_HOST_DEVICE constexpr bool operator<(                                                    \
       const Quantity<UnitType, ValueType, OwnershipPolicy>& a,                 \
       const X& b) noexcept {                                                   \
     static_assert(std::is_same_v<UnitType, NoUnit>,                            \
@@ -31,7 +31,7 @@
   }                                                                            \
                                                                                \
   template <typename UnitType, typename ValueType, typename OwnershipPolicy>   \
-  constexpr bool operator<(                                                    \
+  TFEL_HOST_DEVICE constexpr bool operator<(                                                    \
       const X& a,                                                              \
       const Quantity<UnitType, ValueType, OwnershipPolicy>& b) noexcept {      \
     static_assert(std::is_same_v<UnitType, NoUnit>,                            \
@@ -40,7 +40,7 @@
   }                                                                            \
                                                                                \
   template <typename UnitType, typename ValueType, typename OwnershipPolicy>   \
-  constexpr bool operator<=(                                                   \
+  TFEL_HOST_DEVICE constexpr bool operator<=(                                                   \
       const Quantity<UnitType, ValueType, OwnershipPolicy>& a,                 \
       const X& b) noexcept {                                                   \
     static_assert(std::is_same_v<UnitType, NoUnit>,                            \
@@ -49,7 +49,7 @@
   }                                                                            \
                                                                                \
   template <typename UnitType, typename ValueType, typename OwnershipPolicy>   \
-  constexpr bool operator<=(                                                   \
+  TFEL_HOST_DEVICE constexpr bool operator<=(                                                   \
       const X& a,                                                              \
       const Quantity<UnitType, ValueType, OwnershipPolicy>& b) noexcept {      \
     static_assert(std::is_same_v<UnitType, NoUnit>,                            \
@@ -58,7 +58,7 @@
   }                                                                            \
                                                                                \
   template <typename UnitType, typename ValueType, typename OwnershipPolicy>   \
-  constexpr bool operator>(                                                    \
+  TFEL_HOST_DEVICE constexpr bool operator>(                                                    \
       const Quantity<UnitType, ValueType, OwnershipPolicy>& a,                 \
       const X& b) noexcept {                                                   \
     static_assert(std::is_same_v<UnitType, NoUnit>,                            \
@@ -67,7 +67,7 @@
   }                                                                            \
                                                                                \
   template <typename UnitType, typename ValueType, typename OwnershipPolicy>   \
-  constexpr bool operator>(                                                    \
+  TFEL_HOST_DEVICE constexpr bool operator>(                                                    \
       const X& a,                                                              \
       const Quantity<UnitType, ValueType, OwnershipPolicy>& b) noexcept {      \
     static_assert(std::is_same_v<UnitType, NoUnit>,                            \
@@ -76,7 +76,7 @@
   }                                                                            \
                                                                                \
   template <typename UnitType, typename ValueType, typename OwnershipPolicy>   \
-  constexpr bool operator>=(                                                   \
+  TFEL_HOST_DEVICE constexpr bool operator>=(                                                   \
       const Quantity<UnitType, ValueType, OwnershipPolicy>& a,                 \
       const X& b) noexcept {                                                   \
     static_assert(std::is_same_v<UnitType, NoUnit>,                            \
@@ -85,7 +85,7 @@
   }                                                                            \
                                                                                \
   template <typename UnitType, typename ValueType, typename OwnershipPolicy>   \
-  constexpr bool operator>=(                                                   \
+  TFEL_HOST_DEVICE constexpr bool operator>=(                                                   \
       const X& a,                                                              \
       const Quantity<UnitType, ValueType, OwnershipPolicy>& b) noexcept {      \
     static_assert(std::is_same_v<UnitType, NoUnit>,                            \
@@ -94,7 +94,7 @@
   }                                                                            \
                                                                                \
   template <typename UnitType, typename ValueType, typename OwnershipPolicy>   \
-  constexpr bool operator==(                                                   \
+  TFEL_HOST_DEVICE constexpr bool operator==(                                                   \
       const Quantity<UnitType, ValueType, OwnershipPolicy>& a,                 \
       const X& b) noexcept {                                                   \
     static_assert(std::is_same_v<UnitType, NoUnit>,                            \
@@ -103,7 +103,7 @@
   }                                                                            \
                                                                                \
   template <typename UnitType, typename ValueType, typename OwnershipPolicy>   \
-  constexpr bool operator==(                                                   \
+  TFEL_HOST_DEVICE constexpr bool operator==(                                                   \
       const X& a,                                                              \
       const Quantity<UnitType, ValueType, OwnershipPolicy>& b) noexcept {      \
     static_assert(std::is_same_v<UnitType, NoUnit>,                            \
@@ -112,7 +112,7 @@
   }                                                                            \
                                                                                \
   template <typename UnitType, typename ValueType, typename OwnershipPolicy>   \
-  constexpr bool operator!=(                                                   \
+  TFEL_HOST_DEVICE constexpr bool operator!=(                                                   \
       const X& a,                                                              \
       const Quantity<UnitType, ValueType, OwnershipPolicy>& b) noexcept {      \
     static_assert(std::is_same_v<UnitType, NoUnit>,                            \
@@ -121,7 +121,7 @@
   }                                                                            \
                                                                                \
   template <typename UnitType, typename ValueType, typename OwnershipPolicy>   \
-  constexpr bool operator!=(                                                   \
+  TFEL_HOST_DEVICE constexpr bool operator!=(                                                   \
       const Quantity<UnitType, ValueType, OwnershipPolicy>& a,                 \
       const X& b) noexcept {                                                   \
     static_assert(std::is_same_v<UnitType, NoUnit>,                            \
@@ -149,12 +149,12 @@
   };                                                                           \
                                                                                \
   template <typename UnitType, typename ValueType, typename OwnershipPolicy>   \
-  constexpr qt<NoUnit, typename tfel::typetraits::Promote<ValueType, X>::type> \
+  TFEL_HOST_DEVICE constexpr qt<NoUnit, typename tfel::typetraits::Promote<ValueType, X>::type> \
   operator+(const Quantity<NoUnit, ValueType, OwnershipPolicy>&,               \
             const X&) noexcept;                                                \
                                                                                \
   template <typename UnitType, typename ValueType, typename OwnershipPolicy>   \
-  constexpr qt<NoUnit, typename tfel::typetraits::Promote<ValueType, X>::type> \
+  TFEL_HOST_DEVICE constexpr qt<NoUnit, typename tfel::typetraits::Promote<ValueType, X>::type> \
   operator+(const X&,                                                          \
             const Quantity<NoUnit, ValueType, OwnershipPolicy>&) noexcept;     \
                                                                                \
@@ -181,12 +181,12 @@
   };                                                                           \
                                                                                \
   template <typename UnitType, typename ValueType, typename OwnershipPolicy>   \
-  constexpr qt<NoUnit, typename tfel::typetraits::Promote<ValueType, X>::type> \
+  TFEL_HOST_DEVICE constexpr qt<NoUnit, typename tfel::typetraits::Promote<ValueType, X>::type> \
   operator-(const Quantity<NoUnit, ValueType, OwnershipPolicy>&,               \
             const X&) noexcept;                                                \
                                                                                \
   template <typename UnitType, typename ValueType, typename OwnershipPolicy>   \
-  constexpr qt<NoUnit, typename tfel::typetraits::Promote<ValueType, X>::type> \
+  TFEL_HOST_DEVICE constexpr qt<NoUnit, typename tfel::typetraits::Promote<ValueType, X>::type> \
   operator-(const X&,                                                          \
             const Quantity<NoUnit, ValueType, OwnershipPolicy>&) noexcept;     \
                                                                                \
@@ -213,13 +213,13 @@
   };                                                                           \
                                                                                \
   template <typename UnitType, typename ValueType, typename OwnershipPolicy>   \
-  constexpr qt<UnitType,                                                       \
+  TFEL_HOST_DEVICE constexpr qt<UnitType,                                                       \
                typename tfel::typetraits::Promote<ValueType, X>::type>         \
   operator*(const Quantity<UnitType, ValueType, OwnershipPolicy>&,             \
             const X&)noexcept;                                                 \
                                                                                \
   template <typename UnitType, typename ValueType, typename OwnershipPolicy>   \
-  constexpr qt<UnitType,                                                       \
+  TFEL_HOST_DEVICE constexpr qt<UnitType,                                                       \
                typename tfel::typetraits::Promote<ValueType, X>::type>         \
   operator*(const X&,                                                          \
             const Quantity<UnitType, ValueType, OwnershipPolicy>&)noexcept;    \
@@ -248,13 +248,13 @@
   };                                                                           \
                                                                                \
   template <typename UnitType, typename ValueType, typename OwnershipPolicy>   \
-  constexpr qt<UnitType,                                                       \
+  TFEL_HOST_DEVICE constexpr qt<UnitType,                                                       \
                typename tfel::typetraits::Promote<ValueType, X>::type>         \
   operator/(const Quantity<UnitType, ValueType, OwnershipPolicy>&,             \
             const X&) noexcept;                                                \
                                                                                \
   template <typename ValueType, typename UnitType, typename OwnershipPolicy>   \
-  constexpr qt<                                                                \
+  TFEL_HOST_DEVICE constexpr qt<                                                                \
       typename tfel::math::internals::SubstractUnit<NoUnit, UnitType>::type,   \
       typename tfel::typetraits::Promote<ValueType, X>::type>                  \
   operator/(const X&,                                                          \
@@ -295,7 +295,7 @@ namespace tfel::math {
             typename UnitType2,
             typename ValueType2,
             typename OwnershipPolicy2>
-  constexpr qt<UnitType,
+  TFEL_HOST_DEVICE constexpr qt<UnitType,
                typename tfel::typetraits::Promote<ValueType, ValueType2>::type>
   operator+(const Quantity<UnitType, ValueType, OwnershipPolicy>& a,
             const Quantity<UnitType2, ValueType2, OwnershipPolicy2>& b) {
@@ -328,7 +328,7 @@ namespace tfel::math {
             typename UnitType2,
             typename ValueType2,
             typename OwnershipPolicy2>
-  constexpr qt<UnitType,
+  TFEL_HOST_DEVICE constexpr qt<UnitType,
                typename tfel::typetraits::Promote<ValueType, ValueType2>::type>
   operator-(const Quantity<UnitType, ValueType, OwnershipPolicy>& a,
             const Quantity<UnitType2, ValueType2, OwnershipPolicy2>& b) {

@@ -42,7 +42,8 @@ namespace tfel::material {
   }  // end of MohrCoulombParameters<StressStensor>::MohrCoulombParameters
 
   template <typename StressStensor>
-  MohrCoulombParameters<StressStensor>::MohrCoulombParameters() = default;
+  MohrCoulombParameters<StressStensor>::MohrCoulombParameters() =
+      default;
 
   template <typename StressStensor>
   MohrCoulombParameters<StressStensor>::MohrCoulombParameters(
@@ -53,12 +54,14 @@ namespace tfel::material {
       const MohrCoulombParameters&) = default;
 
   template <typename StressStensor>
-  MohrCoulombParameters<StressStensor>& MohrCoulombParameters<StressStensor>::
-  operator=(MohrCoulombParameters&&) = default;
+  MohrCoulombParameters<StressStensor>&
+  MohrCoulombParameters<StressStensor>::operator=(MohrCoulombParameters&&) =
+      default;
 
   template <typename StressStensor>
-  MohrCoulombParameters<StressStensor>& MohrCoulombParameters<StressStensor>::
-  operator=(const MohrCoulombParameters&) = default;
+  MohrCoulombParameters<StressStensor>&
+  MohrCoulombParameters<StressStensor>::operator=(
+      const MohrCoulombParameters&) = default;
 
   template <typename StressStensor,
             typename MohrCoulombParameters<StressStensor>::AngleUnit u>
@@ -107,7 +110,8 @@ namespace tfel::material {
                    -real(1)),
           real(1));
       const auto term1 = p.cos_lodeT - isqrt3 * p.sin_angle * p.sin_lodeT;
-      const auto term2 = sign * p.sin_lodeT + isqrt3 * p.sin_angle * p.cos_lodeT;
+      const auto term2 =
+          sign * p.sin_lodeT + isqrt3 * p.sin_angle * p.cos_lodeT;
       const auto term3 = 18. * p.cos_3_lodeT * p.cos_3_lodeT * p.cos_3_lodeT;
 
       const auto B =
@@ -168,7 +172,8 @@ namespace tfel::material {
                    -real(1)),
           real(1));
       const auto term1 = p.cos_lodeT - isqrt3 * p.sin_angle * p.sin_lodeT;
-      const auto term2 = sign * p.sin_lodeT + isqrt3 * p.sin_angle * p.cos_lodeT;
+      const auto term2 =
+          sign * p.sin_lodeT + isqrt3 * p.sin_angle * p.cos_lodeT;
       const auto term3 = 18. * p.cos_3_lodeT * p.cos_3_lodeT * p.cos_3_lodeT;
 
       const auto B =
@@ -244,7 +249,8 @@ namespace tfel::material {
                    -real(1)),
           real(1));
       const auto term1 = p.cos_lodeT - isqrt3 * p.sin_angle * p.sin_lodeT;
-      const auto term2 = sign * p.sin_lodeT + isqrt3 * p.sin_angle * p.cos_lodeT;
+      const auto term2 =
+          sign * p.sin_lodeT + isqrt3 * p.sin_angle * p.cos_lodeT;
       const auto term3 = 18. * p.cos_3_lodeT * p.cos_3_lodeT * p.cos_3_lodeT;
 
       const auto B =
@@ -256,7 +262,8 @@ namespace tfel::material {
                      B * sign * p.sin_3_lodeT -
                      C * p.sin_3_lodeT * p.sin_3_lodeT + p.cos_lodeT;
       return {A + B * sin_3_lode + C * sin_3_lode * sin_3_lode,
-              3. * B * cos_3_lode + 3. * C * sin_6_lode, -9. * B * sin_3_lode + 18. * C * cos_6_lode};
+              3. * B * cos_3_lode + 3. * C * sin_6_lode,
+              -9. * B * sin_3_lode + 18. * C * cos_6_lode};
     }();
     // flow direction
     const auto dJ3 = tfel::math::computeDeviatorDeterminantDerivative(sig);

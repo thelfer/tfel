@@ -60,7 +60,7 @@ namespace tfel::math {
      * \param[in] args : arguments of Operation constructor
      */
     template <typename... Args>
-    constexpr explicit TFEL_MATH_INLINE Expr(Args&&... args)
+    TFEL_HOST_DEVICE constexpr explicit TFEL_MATH_INLINE Expr(Args&&... args)
         : Operation(std::forward<Args>(args)...) {}
     /*!
      * \brief array like access operator
@@ -68,7 +68,7 @@ namespace tfel::math {
      * \note This operator is always defined, even tough it might not be
      * valid
      */
-    constexpr value_type operator[](const size_type i) const {
+    TFEL_HOST_DEVICE constexpr value_type operator[](const size_type i) const {
       // may not be defined
       static_assert(tfel::meta::IsConstCallable<Expr, size_type>::cond,
                     "Expr is not callable");
@@ -80,7 +80,7 @@ namespace tfel::math {
      * \note This operator is always defined, even tough it might not be
      * valid
      */
-    constexpr value_type& operator[](const size_type i) {
+    TFEL_HOST_DEVICE constexpr value_type& operator[](const size_type i) {
       // may not be defined
       static_assert(
           std::is_same_v<decltype(Operation::operator()(i)), value_type&>,
@@ -121,7 +121,7 @@ namespace tfel::math {
     /*!
      * \param l : left argument of the unary operation
      */
-    constexpr Expr(T1 l) : a(l) {}  // end of Expr
+    TFEL_HOST_DEVICE constexpr Expr(T1 l) : a(l) {}  // end of Expr
     /*!
      * \brief multidimensional access operator
      */
@@ -181,11 +181,11 @@ namespace tfel::math {
      * \param l : left argument of the binary operation
      * \param r : right argument of the binary operation
      */
-    constexpr Expr(T1 l, T2 r) : a(l), b(r) {}  // end of Expr
+    TFEL_HOST_DEVICE constexpr Expr(T1 l, T2 r) : a(l), b(r) {}  // end of Expr
     /*!
      * array-like access operator
      */
-    constexpr value_type operator[](const size_type i) const {
+    TFEL_HOST_DEVICE constexpr value_type operator[](const size_type i) const {
       static_assert(
           isBinaryOperationResultTypeValid<
               tfel::meta::result_of<lhs_storage_type, size_type>,
@@ -197,7 +197,7 @@ namespace tfel::math {
      * multi-dimensional operator acces
      */
     template <typename... Indexes>
-    constexpr BinaryOperationHandler<
+    TFEL_HOST_DEVICE constexpr BinaryOperationHandler<
         std::conditional_t<
             std::is_lvalue_reference_v<
                 tfel::meta::result_of<lhs_storage_type, Indexes...>>,
@@ -259,11 +259,11 @@ namespace tfel::math {
      * \param l : left argument of the binary operation
      * \param r : right argument of the binary operation
      */
-    constexpr Expr(T1 l, T2 r) : a(l), b(r) {}  // end of Expr
+    TFEL_HOST_DEVICE constexpr Expr(T1 l, T2 r) : a(l), b(r) {}  // end of Expr
     /*!
      * \brief array-like access operator
      */
-    constexpr value_type operator[](const size_type i) const {
+    TFEL_HOST_DEVICE constexpr value_type operator[](const size_type i) const {
       static_assert(
           isBinaryOperationResultTypeValid<
               std::add_lvalue_reference_t<lhs_storage_type>,
@@ -275,7 +275,7 @@ namespace tfel::math {
      * \brief multi-dimensional operator acces
      */
     template <typename... Indexes>
-    constexpr BinaryOperationHandler<
+    TFEL_HOST_DEVICE constexpr BinaryOperationHandler<
         std::add_lvalue_reference_t<lhs_storage_type>,
         std::conditional_t<
             std::is_lvalue_reference_v<
@@ -333,11 +333,11 @@ namespace tfel::math {
      * \param l : left argument of the binary operation
      * \param r : right argument of the binary operation
      */
-    constexpr Expr(T1 l, T2 r) : a(l), b(r) {}  // end of Expr
+    TFEL_HOST_DEVICE constexpr Expr(T1 l, T2 r) : a(l), b(r) {}  // end of Expr
     /*!
      * array-like access operator
      */
-    constexpr value_type operator[](const size_type i) const {
+    TFEL_HOST_DEVICE constexpr value_type operator[](const size_type i) const {
       static_assert(isBinaryOperationResultTypeValid<
                         tfel::meta::result_of<lhs_storage_type, size_type>,
                         std::add_lvalue_reference_t<rhs_storage_type>, Op>(),
@@ -348,7 +348,7 @@ namespace tfel::math {
      * multi-dimensional operator acces
      */
     template <typename... Indexes>
-    constexpr BinaryOperationHandler<
+    TFEL_HOST_DEVICE constexpr BinaryOperationHandler<
         std::conditional_t<
             std::is_lvalue_reference_v<
                 tfel::meta::result_of<lhs_storage_type, Indexes...>>,
@@ -403,13 +403,13 @@ namespace tfel::math {
      * \param l : left argument of the binary operation
      * \param r : right argument of the binary operation
      */
-    constexpr Expr(T1 l, T2 r) : a(l), b(r) {}  // end of Expr
+    TFEL_HOST_DEVICE constexpr Expr(T1 l, T2 r) : a(l), b(r) {}  // end of Expr
     /*!
      * access operator
      * \param[in] i : row index
      * \param[in] i : column index
      */
-    constexpr BinaryOperationHandler<
+    TFEL_HOST_DEVICE constexpr BinaryOperationHandler<
         tfel::meta::result_of<lhs_storage_type, size_type>,
         tfel::meta::result_of<rhs_storage_type, size_type>,
         OpMult>

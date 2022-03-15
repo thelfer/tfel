@@ -107,7 +107,7 @@ namespace tfel::material {
    * \param[in] seps: threshold for the equivalent stress.
    */
   template <typename StressStensor>
-  GursonTvergaardNeedleman1982StressType<StressStensor>
+  TFEL_HOST_DEVICE GursonTvergaardNeedleman1982StressType<StressStensor>
   computeGursonTvergaardNeedleman1982Stress(
       const StressStensor&,
       const GursonTvergaardNeedleman1982PorosityType<StressStensor>,
@@ -124,7 +124,7 @@ namespace tfel::material {
    * \param[in] seps: threshold for the equivalent stress.
    */
   template <typename StressStensor>
-  std::tuple<
+  TFEL_HOST_DEVICE std::tuple<
       GursonTvergaardNeedleman1982StressType<StressStensor>,
       GursonTvergaardNeedleman1982StressNormalType<StressStensor>,
       GursonTvergaardNeedleman1982StressDerivativeWithRespectToPorosityType<
@@ -146,7 +146,7 @@ namespace tfel::material {
    * \param[in] seps: threshold for the equivalent stress.
    */
   template <typename StressStensor>
-  std::tuple<
+  TFEL_HOST_DEVICE std::tuple<
       GursonTvergaardNeedleman1982StressType<StressStensor>,
       GursonTvergaardNeedleman1982StressNormalType<StressStensor>,
       GursonTvergaardNeedleman1982StressDerivativeWithRespectToPorosityType<

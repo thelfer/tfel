@@ -30,10 +30,11 @@ namespace tfel::math {
    * \param[in] radius: trust region size
    */
   template <unsigned short N, typename NumericType>
-  void applyPowellDogLegAlgorithm(tvector<N, NumericType>& delta_zeros,
-                                  const tmatrix<N, N, NumericType>& jacobian,
-                                  const tvector<N, NumericType>& fzeros,
-                                  const NumericType radius) noexcept {
+  TFEL_HOST_DEVICE void applyPowellDogLegAlgorithm(
+      tvector<N, NumericType>& delta_zeros,
+      const tmatrix<N, N, NumericType>& jacobian,
+      const tvector<N, NumericType>& fzeros,
+      const NumericType radius) noexcept {
     if (tfel::math::abs(delta_zeros) < N * radius) {
       return;
     }

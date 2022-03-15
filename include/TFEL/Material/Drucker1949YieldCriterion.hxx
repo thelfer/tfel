@@ -55,8 +55,9 @@ namespace tfel::material {
    * \param[in] c: c coefficient
    */
   template <typename StressStensor>
-  Drucker1949StressType<StressStensor> computeDrucker1949StressCriterion(
-      const StressStensor&, const Drucker1949BaseType<StressStensor>);
+  TFEL_HOST_DEVICE Drucker1949StressType<StressStensor>
+  computeDrucker1949StressCriterion(const StressStensor&,
+                                    const Drucker1949BaseType<StressStensor>);
   /*!
    * \brief compute the Drucker1949 yield stress and the its first derivative
    * \tparam StressStensor: type of the stress tensor
@@ -66,8 +67,8 @@ namespace tfel::material {
    *                  computation of the stress normal.
    */
   template <typename StressStensor>
-  std::tuple<Drucker1949StressType<StressStensor>,
-             Drucker1949StressNormalType<StressStensor>>
+  TFEL_HOST_DEVICE std::tuple<Drucker1949StressType<StressStensor>,
+                              Drucker1949StressNormalType<StressStensor>>
   computeDrucker1949StressCriterionNormal(
       const StressStensor&,
       const Drucker1949BaseType<StressStensor>,
@@ -82,13 +83,14 @@ namespace tfel::material {
    *                  computation of the stress normal.
    */
   template <typename StressStensor>
-  std::tuple<Drucker1949StressType<StressStensor>,
-             Drucker1949StressNormalType<StressStensor>,
-             Drucker1949StressSecondDerivativeType<StressStensor>>
-  computeDrucker1949StressCriterionSecondDerivative(
-      const StressStensor&,
-      const Drucker1949BaseType<StressStensor>,
-      const Drucker1949StressType<StressStensor>);
+  TFEL_HOST_DEVICE
+      std::tuple<Drucker1949StressType<StressStensor>,
+                 Drucker1949StressNormalType<StressStensor>,
+                 Drucker1949StressSecondDerivativeType<StressStensor>>
+      computeDrucker1949StressCriterionSecondDerivative(
+          const StressStensor&,
+          const Drucker1949BaseType<StressStensor>,
+          const Drucker1949StressType<StressStensor>);
 
 }  // end of namespace tfel::material
 

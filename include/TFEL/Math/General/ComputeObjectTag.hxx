@@ -45,7 +45,7 @@ namespace tfel::math {
    * \param[in] T: type checked
    */
   template <typename T>
-  constexpr bool hasConceptTag();
+  TFEL_HOST_DEVICE constexpr bool hasConceptTag();
 
 }  // end of namespace tfel::math
 

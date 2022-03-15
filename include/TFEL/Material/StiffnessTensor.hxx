@@ -63,7 +63,7 @@ namespace tfel::material {
      * \param[in]  D  : unaltered stiffness
      */
     template <typename StressType>
-    static TFEL_MATERIAL_INLINE void exe(
+    TFEL_HOST_DEVICE static constexpr void exe(
         tfel::math::st2tost2<ModellingHypothesisToSpaceDimension<H>::value,
                              StressType>&,
         const tfel::math::st2tost2<
@@ -81,7 +81,7 @@ namespace tfel::material {
      * \param[in]  D  : unaltered stiffness
      */
     template <typename StressType>
-    static TFEL_MATERIAL_INLINE void exe(
+    TFEL_HOST_DEVICE static constexpr void exe(
         tfel::math::st2tost2<2u, StressType>&,
         const tfel::math::st2tost2<2u, StressType>&);
   };
@@ -95,7 +95,7 @@ namespace tfel::material {
             StiffnessTensorAlterationCharacteristic,
             typename StressType,
             typename RealType>
-  TFEL_MATERIAL_INLINE void computeIsotropicStiffnessTensorII(
+  TFEL_HOST_DEVICE constexpr void computeIsotropicStiffnessTensorII(
       tfel::math::st2tost2<N, StressType>&, const StressType, const RealType);
   /*!
    * \param[out] D: stiffness tensor
@@ -113,7 +113,7 @@ namespace tfel::material {
             StiffnessTensorAlterationCharacteristic,
             typename StressType,
             typename RealType>
-  TFEL_MATERIAL_INLINE void computeOrthotropicStiffnessTensorII(
+  TFEL_HOST_DEVICE constexpr void computeOrthotropicStiffnessTensorII(
       tfel::math::st2tost2<N, StressType>&,
       const StressType,
       const StressType,
@@ -134,7 +134,7 @@ namespace tfel::material {
             StiffnessTensorAlterationCharacteristic,
             typename StressType,
             typename RealType>
-  TFEL_MATERIAL_INLINE void computeIsotropicStiffnessTensor(
+  TFEL_HOST_DEVICE constexpr void computeIsotropicStiffnessTensor(
       tfel::math::st2tost2<ModellingHypothesisToSpaceDimension<H>::value,
                            StressType>&,
       const StressType,
@@ -155,7 +155,7 @@ namespace tfel::material {
             StiffnessTensorAlterationCharacteristic,
             typename StressType,
             typename RealType>
-  TFEL_MATERIAL_INLINE void computeOrthotropicStiffnessTensor(
+  TFEL_HOST_DEVICE constexpr void computeOrthotropicStiffnessTensor(
       tfel::math::st2tost2<ModellingHypothesisToSpaceDimension<H>::value,
                            StressType>&,
       const StressType,
@@ -185,7 +185,7 @@ namespace tfel::material {
             OrthotropicAxesConvention c,
             typename StressType,
             typename RealType>
-  TFEL_MATERIAL_INLINE void computeOrthotropicStiffnessTensor(
+  TFEL_HOST_DEVICE constexpr void computeOrthotropicStiffnessTensor(
       tfel::math::st2tost2<ModellingHypothesisToSpaceDimension<H>::value,
                            StressType>&,
       const StressType,

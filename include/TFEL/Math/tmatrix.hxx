@@ -251,20 +251,20 @@ namespace tfel::math {
     TFEL_MATH_FIXED_SIZE_ARRAY_DEFAULT_METHODS(tmatrix,
                                                GenericFixedSizeArrayBase);
     //! \return the identity matrix
-    static constexpr auto Id();
+    TFEL_HOST_DEVICE static constexpr auto Id();
     // inheriting GenericFixedSizeArray' access operators
     using GenericFixedSizeArrayBase::operator[];
     using GenericFixedSizeArrayBase::operator();
     //! return the number of columns of the matrix
-    constexpr unsigned short getNbCols() const;
+    TFEL_HOST_DEVICE constexpr unsigned short getNbCols() const;
     //! return the number of rows of the matrix
-    constexpr unsigned short getNbRows() const;
+    TFEL_HOST_DEVICE constexpr unsigned short getNbRows() const;
     /*!
      * \return a view of a row of this matrix
      * \param[in] I : row index
      */
     template <unsigned short I>
-    constexpr auto row_view();
+    TFEL_HOST_DEVICE constexpr auto row_view();
     /*!
      * \return a view of a slice of row of this matrix
      * \param[in] I : row index
@@ -272,13 +272,13 @@ namespace tfel::math {
      * \param[in] K : size of the slice
      */
     template <unsigned short I, unsigned short J, unsigned short K>
-    constexpr auto row_view();
+TFEL_HOST_DEVICE     constexpr auto row_view();
     /*!
      * \return a view of a row of this matrix
      * \param[in] I : row index
      */
     template <unsigned short I>
-    constexpr auto row_view() const;
+TFEL_HOST_DEVICE     constexpr auto row_view() const;
     /*!
      * \return a view of a slice of row of this matrix
      * \param[in] I : row index
@@ -286,13 +286,13 @@ namespace tfel::math {
      * \param[in] K : size of the slice
      */
     template <unsigned short I, unsigned short J, unsigned short K>
-    constexpr auto row_view() const;
+TFEL_HOST_DEVICE     constexpr auto row_view() const;
     /*!
      * \return a view of a column of this matrix
      * \param[in] I : column index
      */
     template <unsigned short I>
-    constexpr auto column_view();
+TFEL_HOST_DEVICE     constexpr auto column_view();
     /*!
      * \return a view of a slice of column of this matrix
      * \param[in] I : column index
@@ -300,7 +300,7 @@ namespace tfel::math {
      * \param[in] K : size of the slice
      */
     template <unsigned short I, unsigned short J, unsigned short K>
-    constexpr auto column_view();
+TFEL_HOST_DEVICE     constexpr auto column_view();
     /*!
      * \return a view of a slice of column of this matrix
      * \param[in] I : column index
@@ -308,13 +308,13 @@ namespace tfel::math {
      * \param[in] K : size of the slice
      */
     template <unsigned short I, unsigned short J, unsigned short K>
-    constexpr auto column_view() const;
+    TFEL_HOST_DEVICE constexpr auto column_view() const;
     /*!
      * \return a view of a column of this matrix
      * \param[in] I : column index
      */
     template <unsigned short I>
-    constexpr auto column_view() const;
+    TFEL_HOST_DEVICE constexpr auto column_view() const;
     /*!
      * \return a view of a sub matrix of this matrix
      * \param[in] I : submatrix row    starting index
@@ -326,7 +326,7 @@ namespace tfel::math {
               unsigned short J,
               unsigned short R,
               unsigned short C>
-    auto submatrix_view();
+    TFEL_HOST_DEVICE constexpr auto submatrix_view();
     /*!
      * \return a view of a sub matrix of this matrix
      * \param[in] I : submatrix row    starting index
@@ -338,14 +338,14 @@ namespace tfel::math {
               unsigned short J,
               unsigned short R,
               unsigned short C>
-    auto submatrix_view() const;
+    TFEL_HOST_DEVICE constexpr auto submatrix_view() const;
 
-    constexpr auto max() const;
+    TFEL_HOST_DEVICE constexpr auto max() const;
 
-    constexpr auto abs_max() const;
+    TFEL_HOST_DEVICE constexpr auto abs_max() const;
 
-    TFEL_MATH_INLINE2
-    void swap_rows(const unsigned short i, const unsigned short j);
+    TFEL_HOST_DEVICE TFEL_MATH_INLINE2 void swap_rows(const unsigned short i,
+                                                      const unsigned short j);
 
     /*!
      * copy the N*Mth elements following this argument.
@@ -353,7 +353,7 @@ namespace tfel::math {
      * to be copied.
      */
     template <typename InputIterator>
-    TFEL_MATH_INLINE2 void copy(const InputIterator);
+    TFEL_HOST_DEVICE TFEL_MATH_INLINE2 void copy(const InputIterator);
   };
 
   /*!
@@ -375,19 +375,20 @@ namespace tfel::math {
 
   // Transpose
   template <unsigned short N, unsigned short M, typename T>
-  TFEL_MATH_INLINE2 tmatrix<M, N, T> transpose(const tmatrix<N, M, T>&);
+  TFEL_HOST_DEVICE constexpr tmatrix<M, N, T> transpose(
+      const tmatrix<N, M, T>&);
 
   template <typename T, typename Operation>
-  constexpr auto det(const Expr<tmatrix<2, 2, T>, Operation>&);
+  TFEL_HOST_DEVICE constexpr auto det(const Expr<tmatrix<2, 2, T>, Operation>&);
 
   template <typename T>
-  constexpr auto det(const tmatrix<2, 2, T>&);
+TFEL_HOST_DEVICE   constexpr auto det(const tmatrix<2, 2, T>&);
 
   template <typename T, typename Operation>
-  constexpr auto det(const Expr<tmatrix<3, 3, T>, Operation>&);
+TFEL_HOST_DEVICE   constexpr auto det(const Expr<tmatrix<3, 3, T>, Operation>&);
 
   template <typename T>
-  constexpr auto det(const tmatrix<3, 3, T>&);
+TFEL_HOST_DEVICE   constexpr auto det(const tmatrix<3, 3, T>&);
 
   /*!
    * \brief a simple alias to a view type on a derivative in tiny
@@ -416,7 +417,7 @@ namespace tfel::math {
             typename VariableType,
             unsigned short N,
             unsigned short M>
-  constexpr derivative_view_from_tiny_matrix<M, FunctionType, VariableType>
+  TFEL_HOST_DEVICE constexpr derivative_view_from_tiny_matrix<M, FunctionType, VariableType>
   map_derivative(
       tmatrix<N,
               M,
@@ -436,7 +437,7 @@ namespace tfel::math {
             typename VariableType,
             unsigned short N,
             unsigned short M>
-  constexpr derivative_view_from_tiny_matrix<M, FunctionType, VariableType>
+  TFEL_HOST_DEVICE constexpr derivative_view_from_tiny_matrix<M, FunctionType, VariableType>
   map_derivative(
       tmatrix<N,
               M,

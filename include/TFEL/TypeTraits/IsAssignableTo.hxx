@@ -115,7 +115,7 @@ namespace tfel::typetraits {
    * \tparam  B, second type
    */
   template <typename A, typename B>
-  constexpr bool isAssignableTo() {
+  TFEL_HOST_DEVICE constexpr bool isAssignableTo() {
     return IsAssignableTo<std::remove_cv_t<A>, B>::cond;
   }  // end of isAssignableTo
 

@@ -93,7 +93,7 @@ namespace tfel::typetraits {
    * \tparam T: type tested
    */
   template <typename T>
-  constexpr bool isScalar() {
+  TFEL_HOST_DEVICE constexpr bool isScalar() {
     return IsScalar<std::decay_t<T>>::cond;
   }
 
