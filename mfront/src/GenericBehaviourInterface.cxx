@@ -1719,18 +1719,18 @@ namespace mfront {
             os << "this->eto  -= mgb_dl01_l0.first;\n"
                << "this->deto -= mgb_dl01_l0.second-mgb_dl01_l0.first;\n";
           } else if (ms == BehaviourDescription::HENCKY) {
-            os << "this->eto[0]  -= std::log(1+mgb_dl01_l0.first[0]);\n"
-               << "this->eto[1]  -= std::log(1+mgb_dl01_l0.first[1]);\n"
-               << "this->eto[2]  -= std::log(1+mgb_dl01_l0.first[2]);\n"
+            os << "this->eto[0]  -= strain(std::log(1+mgb_dl01_l0.first[0]));\n"
+               << "this->eto[1]  -= strain(std::log(1+mgb_dl01_l0.first[1]));\n"
+               << "this->eto[2]  -= strain(std::log(1+mgb_dl01_l0.first[2]));\n"
                << "this->deto[0] -= "
-                  "std::log((1+mgb_dl01_l0.second[0])/"
-                  "(1+mgb_dl01_l0.first[0]));\n"
+                  "strain(std::log((1+mgb_dl01_l0.second[0])/"
+                  "(1+mgb_dl01_l0.first[0])));\n"
                << "this->deto[1] -= "
-                  "std::log((1+mgb_dl01_l0.second[1])/"
-                  "(1+mgb_dl01_l0.first[1]));\n"
+                  "strain(std::log((1+mgb_dl01_l0.second[1])/"
+                  "(1+mgb_dl01_l0.first[1])));\n"
                << "this->deto[2] -= "
-                  "std::log((1+mgb_dl01_l0.second[2])/"
-                  "(1+mgb_dl01_l0.first[2]));\n";
+                  "strain(std::log((1+mgb_dl01_l0.second[2])/"
+                  "(1+mgb_dl01_l0.first[2])));\n";
           } else {
             throw_if(true, "unsupported finite strain strategy");
           }

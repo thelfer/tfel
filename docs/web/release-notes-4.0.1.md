@@ -19,6 +19,10 @@ eqnPrefixTemplate: "($$i$$)"
 
 # Issues fixed
 
+## Issue #153: [mfront] Computation of the thermal expansion with quantities leads to errors when the Hencky strain measure is used in the `generic` interface
+
+For more details, see <https://github.com/thelfer/tfel/issues/153>
+
 ## Issue #132: [mfront] Quantities support in the `StandardElasticity` brick when plane stress support is enabled
 
 For more details, see <https://github.com/thelfer/tfel/issues/132>
