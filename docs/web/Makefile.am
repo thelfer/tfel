@@ -35,6 +35,7 @@ EXTRA_DIST=CMakeLists.txt					      \
 	   ./packages.md					      \
 	   ./about.md						      \
 	   ./news.md						      \
+	   ./mfront-query.md                       \
 	   ./mfront-template.html				      \
 	   ./mfront-types.md                       \
 	   ./benchmark.md					      \
