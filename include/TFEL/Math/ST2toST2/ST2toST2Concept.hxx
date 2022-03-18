@@ -71,6 +71,22 @@ namespace tfel::math {
   abs(const ST2toST2Type&);
 
   /*!
+   * \brief compute de derivative of the push-forward of a symmetric
+   * second order tensor with respect to the deformation gradient, i.e.
+   * it computes the derivative of F . S . transpose(F) with respect to S
+   * assuming that F is constant
+   *
+   * \param[out] r: derivative of the push-forward symmetric tensor
+   * \param[in]  F: deformation gradient
+   */
+  template <typename ST2toST2ResultType, typename TensorType>
+  typename std::enable_if<implementsST2toST2Concept<ST2toST2ResultType>() &&
+                              implementsTensorConcept<TensorType>() &&
+                              tfel::typetraits::IsFundamentalNumericType<
+                                  numeric_type<TensorType>>::cond,
+                          void>::type
+  computePushForwardDerivative(ST2toST2ResultType&, const TensorType&);
+  /*!
    * \brief performs the push_forward of a st2tost2:
    * \[
    * Ct_{ijkl}=F_{im}F_{jn}F_{kp}F_{lq}C_{mnpq}

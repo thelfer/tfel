@@ -312,8 +312,74 @@ namespace tfel::math {
   computeKirchhoffStressDerivativeFromCauchyStressDerivative(const T2toST2Type&,
                                                              const StensorType&,
                                                              const TensorType&);
+  /*!
+   * \return the derivative of the push-forward of a symmetric
+   * second order tensor with respect to the deformation gradient
+   * knowing the value of this derivative in the initial
+   * configuration.
+   *
+   * This function is typically used to compute the derivative of
+   * the Kirchhoff stress tensor knowing the derivative of the second
+   * Piola-Kirschoff stress.
+   *
+   * \param[in]  : derivative of the orginal tensor
+   * \param[in]  : orginal tensor (second Piola-Kirschoff stress)
+   * \param[in]  : deformation gradient
+   */
+  template <typename T2toST2Type, typename StensorType, typename TensorType>
+  TFEL_HOST_DEVICE std::enable_if_t<
+      implementsT2toST2Concept<T2toST2Type>() &&
+          implementsStensorConcept<StensorType>() &&
+          implementsTensorConcept<TensorType>() &&
+          getSpaceDimension<StensorType>() ==
+              getSpaceDimension<T2toST2Type>() &&
+          getSpaceDimension<TensorType>() == getSpaceDimension<T2toST2Type>() &&
+          tfel::typetraits::IsFundamentalNumericType<
+              numeric_type<TensorType>>::cond,
+      t2tost2<getSpaceDimension<T2toST2Type>(),
+              typename ComputeBinaryResult<numeric_type<T2toST2Type>,
+                                           numeric_type<StensorType>,
+                                           OpPlus>::Result>>
+  computePushForwardDerivative(const T2toST2Type&,
+                               const StensorType&,
+                               const TensorType&);
+  /*!
+   * \brief compute de derivative of the push-forward of a symmetric
+   * second order tensor with respect to the deformation gradient
+   * knowing the value of this derivative in the initial
+   * configuration.
+   *
+   * This function is typically used to compute the derivative of
+   * the Kirchhoff stress tensor knowing the derivative of the second
+   * Piola-Kirschoff stress.
+   *
+   * \param[out] : derivative of the push-forward symmetric tensor
+   * \param[in]  : derivative of the orginal tensor
+   * \param[in]  : orginal tensor (second Piola-Kirschoff stress)
+   * \param[in]  : deformation gradient
+   */
+  template <typename T2toST2ResultType,
+            typename T2toST2Type,
+            typename StensorType,
+            typename TensorType>
+  TFEL_HOST_DEVICE typename std::enable_if<
+      implementsT2toST2Concept<T2toST2ResultType>() &&
+          implementsT2toST2Concept<T2toST2Type>() &&
+          implementsStensorConcept<StensorType>() &&
+          implementsTensorConcept<TensorType>() &&
+          tfel::typetraits::IsFundamentalNumericType<
+              numeric_type<TensorType>>::cond &&
+          isAssignableTo<typename ComputeBinaryResult<numeric_type<T2toST2Type>,
+                                                      numeric_type<StensorType>,
+                                                      OpPlus>::Result,
+                         numeric_type<T2toST2ResultType>>(),
+      void>::type
+  computePushForwardDerivative(T2toST2ResultType&,
+                               const T2toST2Type&,
+                               const StensorType&,
+                               const TensorType&);
 
-}  // end of namespace tfel::math
+  }  // end of namespace tfel::math
 
 namespace tfel::typetraits {
 

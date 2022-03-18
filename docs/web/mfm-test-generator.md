@@ -1,6 +1,18 @@
-% mfm-test-generator
-% Thomas Helfer
-% 02/10/2019
+---
+title: mfm-test-generator
+author: Thomas Helfer
+date: 02/10/2019
+lang: en-EN
+link-citations: true
+colorlinks: true
+geometry:
+  - margin=2cm
+papersize: a4
+figPrefixTemplate: "$$i$$"
+tblPrefixTemplate: "$$i$$"
+secPrefixTemplate: "$$i$$"
+eqnPrefixTemplate: "($$i$$)"
+---
 
 `mfm-test-generator` provides a way to generate input files for various
 targets (finite element solvers, fuel performance code, etc.) for

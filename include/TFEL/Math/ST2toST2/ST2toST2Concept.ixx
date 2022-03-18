@@ -95,6 +95,80 @@ namespace tfel::math {
     return r.second == 1 ? v : -v;
   }  // end of det
 
+  template <typename ST2toST2ResultType, typename TensorType>
+  typename std::enable_if<implementsST2toST2Concept<ST2toST2ResultType>() &&
+                              implementsTensorConcept<TensorType>() &&
+                              tfel::typetraits::IsFundamentalNumericType<
+                                  numeric_type<TensorType>>::cond,
+                          void>::type
+  computePushForwardDerivative(ST2toST2ResultType& r, const TensorType& F) {
+    constexpr auto N = getSpaceDimension<ST2toST2ResultType>();
+    static_assert(getSpaceDimension<TensorType>() == N);
+    using value_type = numeric_type<ST2toST2ResultType>;
+    if constexpr (N == 1u) {
+      constexpr auto zero = value_type{0};
+      r(0, 0) = F[0] * F[0];
+      r(1, 1) = F[1] * F[1];
+      r(2, 2) = F[2] * F[2];
+      r(1, 0) = r(2, 0) = r(0, 1) = zero;
+      r(2, 1) = r(0, 2) = r(1, 2) = zero;
+    } else if constexpr (N == 2u) {
+      constexpr auto zero = value_type{0};
+      constexpr auto cste = Cste<value_type>::sqrt2;
+      constexpr auto icste = Cste<value_type>::isqrt2;
+      r(0, 0) = F[0] * F[0];
+      r(1, 0) = F[4] * F[4];
+      r(3, 0) = F[0] * F[4] * cste;
+      r(0, 1) = F[3] * F[3];
+      r(1, 1) = F[1] * F[1];
+      r(3, 1) = F[1] * F[3] * cste;
+      r(2, 2) = F[2] * F[2];
+      r(0, 3) = (F[0] * F[3] + F[0] * F[3]) * icste;
+      r(1, 3) = (F[1] * F[4] + F[1] * F[4]) * icste;
+      r(3, 3) = F[0] * F[1]  + F[3] * F[4];
+      r(2, 1) = r(0, 2) = r(1, 2) = r(3, 2) = r(2, 3) = r(2, 0) = zero;
+    } else if constexpr (N == 3u) {
+      constexpr auto cste = Cste<value_type>::sqrt2;
+      constexpr auto icste = Cste<value_type>::isqrt2;
+      r(0, 0) = F[0] * F[0];
+      r(1, 0) = F[4] * F[4];
+      r(2, 0) = F[6] * F[6];
+      r(3, 0) = F[0] * F[4] * cste;
+      r(4, 0) = F[0] * F[6] * cste;
+      r(5, 0) = F[4] * F[6] * cste;
+      r(0, 1) = F[3] * F[3];
+      r(1, 1) = F[1] * F[1];
+      r(2, 1) = F[8] * F[8];
+      r(3, 1) = F[1] * F[3] * cste;
+      r(4, 1) = F[3] * F[8] * cste;
+      r(5, 1) = F[1] * F[8] * cste;
+      r(0, 2) = F[5] * F[5];
+      r(1, 2) = F[7] * F[7];
+      r(2, 2) = F[2] * F[2];
+      r(3, 2) = F[5] * F[7] * cste;
+      r(4, 2) = F[2] * F[5] * cste;
+      r(5, 2) = F[2] * F[7] * cste;
+      r(0, 3) = (F[0] * F[3] + F[0] * F[3]) * icste;
+      r(1, 3) = (F[1] * F[4] + F[1] * F[4]) * icste;
+      r(2, 3) = (F[6] * F[8] + F[6] * F[8]) * icste;
+      r(3, 3) = F[0] * F[1]  + F[3] * F[4];
+      r(4, 3) = F[0] * F[8]  + F[3] * F[6];
+      r(5, 3) = F[4] * F[8]  + F[1] * F[6];
+      r(0, 4) = (F[0] * F[5] + F[0] * F[5]) * icste;
+      r(1, 4) = (F[4] * F[7] + F[4] * F[7]) * icste;
+      r(2, 4) = (F[2] * F[6] + F[2] * F[6]) * icste;
+      r(3, 4) = F[4] * F[5] + F[0] * F[7];
+      r(4, 4) = F[5] * F[6] + F[0] * F[2];
+      r(5, 4) = F[6] * F[7] + F[2] * F[4];
+      r(0, 5) = 2 * F[3] * F[5] * icste;
+      r(1, 5) = 2 * F[1] * F[7] * icste;
+      r(2, 5) = 2 * F[2] * F[8] * icste;
+      r(3, 5) = F[3] * F[7] + F[1] * F[5];
+      r(4, 5) = F[5] * F[8] + F[2] * F[3];
+      r(5, 5) = F[7] * F[8] + F[1] * F[2];
+    }
+  }  // end of computePushForwardDerivative
+
 }  // namespace tfel::math
 
 #include "TFEL/Math/ST2toST2/ST2toST2ConceptPushForward.ixx"

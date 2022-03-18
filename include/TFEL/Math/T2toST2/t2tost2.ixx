@@ -269,6 +269,39 @@ namespace tfel::math {
     return r;
   }
 
+  template <typename T2toST2ResultType,
+            typename T2toST2Type,
+            typename StensorType,
+            typename TensorType>
+  typename std::enable_if<
+      implementsT2toST2Concept<T2toST2ResultType>() &&
+          implementsT2toST2Concept<T2toST2Type>() &&
+          implementsStensorConcept<StensorType>() &&
+          implementsTensorConcept<TensorType>() &&
+          tfel::typetraits::IsFundamentalNumericType<
+              numeric_type<TensorType>>::cond &&
+          isAssignableTo<typename ComputeBinaryResult<numeric_type<T2toST2Type>,
+                                                      numeric_type<StensorType>,
+                                                      OpPlus>::Result,
+                         numeric_type<T2toST2ResultType>>(),
+      void>::type
+  computePushForwardDerivative(T2toST2ResultType& dT_dF,
+                               const T2toST2Type& dS_dF,
+                               const StensorType& S,
+                               const TensorType& F) {
+    constexpr auto N = getSpaceDimension<T2toST2ResultType>();
+    static_assert(getSpaceDimension<T2toST2Type>() == N);
+    static_assert(getSpaceDimension<StensorType>() == N);
+    static_assert(getSpaceDimension<TensorType>() == N);
+    using value_type = numeric_type<T2toST2ResultType>;
+    using real = base_type<value_type>;
+    auto d1 = t2tost2<N, real>{};
+    computePushForwardDerivativeWithRespectToDeformationGradient(d1, S, F);
+    auto d2 = st2tost2<N, real>{};
+    computePushForwardDerivative(d2, F);
+    dT_dF = d1 + d2 * dS_dF;
+  }  // end of computePushForwardDerivative
+
   template <typename T2toST2Type, typename StensorType, typename TensorType>
   std::enable_if_t<
       implementsT2toST2Concept<T2toST2Type>() &&
