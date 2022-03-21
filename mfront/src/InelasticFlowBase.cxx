@@ -87,6 +87,10 @@ namespace mfront::bbrick {
     return opts;
   }  // end of getOptions()
 
+  void InelasticFlowBase::checkOptions(const DataMap& d) const {
+    mfront::bbrick::check(d, this->getOptions());
+  }  // end of checkOptions
+
   void InelasticFlowBase::initialize(BehaviourDescription& bd,
                                      AbstractBehaviourDSL& dsl,
                                      const std::string& id,
@@ -107,7 +111,7 @@ namespace mfront::bbrick {
       return ds.get<tfel::utilities::DataStructure>();
     };  // end of getDataStructure
     // checking options
-    mfront::bbrick::check(d, this->getOptions());
+    this->checkOptions(d);
     // parsing options
     for (const auto& e : d) {
       if (e.first == "criterion") {

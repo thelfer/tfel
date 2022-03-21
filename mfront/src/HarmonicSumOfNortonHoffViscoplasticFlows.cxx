@@ -122,7 +122,15 @@ namespace mfront::bbrick {
     }
   }  // end of HarmonicSumOfNortonHoffViscoplasticFlows::endTreatment
 
+  bool
+  HarmonicSumOfNortonHoffViscoplasticFlows::describesStrainHardeningExplicitly()
+      const {
+    return false;
+  }  // end of describesStrainHardeningExplicitly
+
   std::string HarmonicSumOfNortonHoffViscoplasticFlows::computeFlowRate(
+      const BehaviourDescription&,
+      const StressPotential&,
       const std::string& id) const {
     const auto seq = [this, &id] {
       if (this->ihrs.empty()) {
@@ -146,6 +154,8 @@ namespace mfront::bbrick {
 
   std::string
   HarmonicSumOfNortonHoffViscoplasticFlows::computeFlowRateAndDerivative(
+      const BehaviourDescription&,
+      const StressPotential&,
       const std::string& id) const {
     const auto seq = [this, &id] {
       if (this->ihrs.empty()) {

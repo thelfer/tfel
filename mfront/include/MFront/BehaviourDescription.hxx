@@ -317,8 +317,20 @@ namespace mfront {
     //! \return the class name
     const std::string& getClassName() const;
     /*!
+     * \return a class describing the input of a material property
+     * \param[in] n: variable name
+     * \param[in] b: if true, the modelling hypotheses must be
+     * defined. In this case, inputs are searched in the BehaviourData
+     * associed with each modelling hypothesis and consistency of the
+     * definition of each input is checked. If false, all inputs are
+     * searched in the root BehaviourData only (the one associated
+     * with UNDEFINEDHYPOTESIS).
+     */
+    MaterialPropertyInput getMaterialPropertyInput(const std::string&,
+                                                    const bool = true) const;
+    /*!
      * \return the inputs of a material property
-     * \param[in] i: list of variables used to evaluated the material
+     * \param[in] i: list of variables used to evaluate the material
      * property.
      * \param[in] b: if true, the modelling hypotheses must be
      * defined. In this case, inputs are searched in the BehaviourData
