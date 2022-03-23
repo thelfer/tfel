@@ -543,7 +543,7 @@ used. The user shall be warned that the automatic differentiation
 provided by the `tfel::math::Evaluator` class may result in inefficient
 code.
 
-### Example of usage
+#### Example of usage
 
 ~~~~{.cxx}
 @Parameter temperature Ta = 600;

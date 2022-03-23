@@ -97,6 +97,7 @@ libTFELMFront_la_SOURCES = MFront.cxx                                     \
 		           ImplicitFiniteStrainDSL.cxx                            \
 		           ImplicitGenericBehaviourDSL.cxx                        \
 		           ImplicitModelDSL.cxx                                   \
+		           ImplicitCZMDSL.cxx                                     \
 		           NonLinearSystemSolver.cxx                              \
 		           NonLinearSystemSolverBase.cxx                          \
 		           NonLinearSystemSolverFactory.cxx                       \

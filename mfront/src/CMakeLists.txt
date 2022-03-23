@@ -119,6 +119,7 @@ set(TFELMFront_SOURCES
     ImplicitFiniteStrainDSL.cxx
     ImplicitGenericBehaviourDSL.cxx
     ImplicitModelDSL.cxx
+    ImplicitCZMDSL.cxx
     NonLinearSystemSolver.cxx
     NonLinearSystemSolverBase.cxx
     NonLinearSystemSolverFactory.cxx

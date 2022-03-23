@@ -209,6 +209,7 @@ nobase_noinst_HEADERS = MFront/IsotropicBehaviourDSLBase.hxx                    
 			MFront/ImplicitDSL.hxx                                        \
 			MFront/ImplicitDSLII.hxx                                      \
 			MFront/ImplicitFiniteStrainDSL.hxx                            \
+			MFront/ImplicitCZMDSL.hxx                                     \
 			MFront/DefaultGenericBehaviourDSL.hxx                        \
 			MFront/DefaultModelDSL.hxx                        \
 			MFront/ImplicitGenericBehaviourDSL.hxx                        \

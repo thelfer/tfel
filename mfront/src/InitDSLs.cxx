@@ -36,6 +36,7 @@
 #include "MFront/ImplicitFiniteStrainDSL.hxx"
 #include "MFront/ImplicitGenericBehaviourDSL.hxx"
 #include "MFront/ImplicitModelDSL.hxx"
+#include "MFront/ImplicitCZMDSL.hxx"
 
 #include "MFront/ModelDSL.hxx"
 #include "MFront/InitDSLs.hxx"
@@ -72,6 +73,8 @@ namespace mfront {
       // CZM
       DSLProxy<DefaultCZMDSL> proxy100(
           std::vector<std::string>{"DefaultCZMParser", "DefaultCZM"});
+      DSLProxy<ImplicitCZMDSL> proxy101(
+          std::vector<std::string>{"ImplicitCZMParser", "ImplicitCZM"});
       // FiniteStrain
       DSLProxy<DefaultFiniteStrainDSL> proxy200(std::vector<std::string>{
           "DefaultFiniteStrain", "DefaultFiniteStrainParser"});
