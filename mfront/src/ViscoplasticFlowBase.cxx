@@ -70,7 +70,7 @@ namespace mfront::bbrick {
              id + ";\n";
       }
       if (this->describesStrainHardeningExplicitly()) {
-        c += "dfp" + id + "_ddp" + id + " += ";
+        c += "dfp" + id + "_ddp" + id + " -= ";
         c += "(this->dt) * dvp" + id + "_dp" + id + ";\n";
       }
       auto kid = decltype(khrs.size()){};
