@@ -343,7 +343,18 @@
 #ifndef TFEL_HOST
 #define TFEL_HOST __host__
 #endif /* TFEL_HOST */
+#ifdef __CUDA_ARCH__
+#define TFEL_NO_REPORT_CONTRACT_VIOLATION
+#endif /* __CUDA_ARCH__ */
 #endif /* __CUDACC__ */
+
+#ifdef SYCL_LANGUAGE_VERSION
+#ifdef __SYCL_DEVICE_ONLY__
+#ifndef /* TFEL_NO_REPORT_CONTRACT_VIOLATION */
+#define TFEL_NO_REPORT_CONTRACT_VIOLATION
+#endif /* TFEL_NO_REPORT_CONTRACT_VIOLATION */
+#endif /* __SYCL_DEVICE_ONLY__ */
+#endif /* SYCL_LANGUAGE_VERSION */
 
 #ifndef TFEL_DEVICE
 #define TFEL_DEVICE
@@ -353,10 +364,6 @@
 #define TFEL_HOST
 #endif /* TFEL_HOST */
 
-#if defined(TFEL_HOST) && defined(TFEL_DEVICE)
 #define TFEL_HOST_DEVICE TFEL_DEVICE TFEL_HOST
-#else
-#define TFEL_HOST_DEVICE
-#endif
 
 #endif /* LIB_TFEL_CONFIG_HXX */

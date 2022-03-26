@@ -12,6 +12,7 @@
  */
 
 #include <cstdlib>
+#include <iostream>
 #include "TFEL/Math/stensor.hxx"
 #include "TFEL/Math/tensor.hxx"
 #include "TFEL/Math/t2tost2.hxx"

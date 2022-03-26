@@ -40,6 +40,25 @@ member name.
 
 ## The `TFEL_HOST`, `TFEL_DEVICE` and `TFEL_HOST_DEVICE` macros {#sec:tfel_4.1:tfel_config:device_specification}
 
+The `TFEL_HOST` decorator can be used to mark functions that shall be
+used on the host.
+
+The `TFEL_DEVICE` decorator can be used to mark functions that shall be
+used on the device.
+
+The `TFEL_HOST_DEVICE` decorator can be used to mark functions that
+shall be used on the host and on the device.
+
+# `TFEL/Exceptions` improvements
+
+## Disabling `reportContractViolation` on GPUs {#sec:tfel_4.1:tfel_exception:reportContractViolation_gpu}
+
+The `TFEL_NO_REPORT_CONTRACT_VIOLATION` macro replaces the standard
+implementation of the `reportContractViolation` by a dummy version which
+does nothing.
+
+This macros is automatically defined with `CUDA` and `SYCL`.
+
 # `TFEL/System` improvements
 
 ## Improvement to the `ExternalLibraryManager` class
@@ -1060,6 +1079,12 @@ $ mfront-query --list-behaviour-mfm-test-generator-tests=unsorted --test=".+Tens
 ~~~~
 
 # Issues fixed
+
+## Issue #157: Disable `reportContractViolation` on GPUs
+
+See Section @sec:tfel_4.1:tfel_exception:reportContractViolation_gpu.
+
+For more details, see : <https://github.com/thelfer/tfel/issues/157>.
 
 ## Issue #150: [TFEL/Material] Add device specification
 

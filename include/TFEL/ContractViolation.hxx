@@ -14,7 +14,6 @@
 #ifndef LIB_TFEL_CONTRACTVIOLATION_HXX
 #define LIB_TFEL_CONTRACTVIOLATION_HXX
 
-#include <iostream>
 #include "TFEL/Config/TFELConfig.hxx"
 
 namespace tfel {
@@ -23,8 +22,13 @@ namespace tfel {
    * \brief report a contract violation
    * \param[in] msg: message
    */
+#ifndef TFEL_NO_REPORT_CONTRACT_VIOLATION
   [[noreturn]] TFEL_VISIBILITY_EXPORT void reportContractViolation(
       const char* const msg);
+#else /* TFEL_NO_REPORT_CONTRACT_VIOLATION */
+  TFEL_HOST_DEVICE constexpr void reportContractViolation(const char* const) {
+  }  // end of reportContractViolation
+#endif /* TFEL_NO_REPORT_CONTRACT_VIOLATION */
 
 }  // namespace tfel
 
