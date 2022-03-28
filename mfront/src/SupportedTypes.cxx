@@ -502,24 +502,6 @@ namespace mfront {
       }
       return treatArrayBase({std::get<int>(size)}, value_type);
     };
-    auto treatArray2D = [&t, &treatArrayBase]() -> std::pair<int, int> {
-      SupportedTypes::checkNumberOfTemplateArguments(t, 3u);
-      const auto& args = *(t.template_arguments);
-      const auto& s1 =
-          std::get<TypeInformation ::IntegerTemplateArgument>(args[0]);
-      const auto& s2 =
-          std::get<TypeInformation ::IntegerTemplateArgument>(args[1]);
-      const auto& value_type = std::get<TypeInformation>(args[2]);
-      if ((std::holds_alternative<std::string>(s1)) ||
-          (std::holds_alternative<std::string>(s2))) {
-        tfel::raise(
-            "SupportedTypes::getTypeIdentifier: "
-            "arrays whose dimension is not an integer are not supported. "
-            "Error while treating type '" +
-            SupportedTypes::encode(t) + "'");
-      }
-      return treatArrayBase({std::get<int>(s1), std::get<int>(s2)}, value_type);
-    };
     auto isST2toST2TypeAliases = [](const std::string_view type) {
       const auto types = mfront::getST2toST2TypeAliases();
       return std::find(types.begin(), types.end(), type) != types.end();
