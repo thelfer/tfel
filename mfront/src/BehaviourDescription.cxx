@@ -31,7 +31,8 @@ namespace mfront {
 
   const char* const BehaviourDescription::
       automaticDeclarationOfTheTemperatureAsFirstExternalStateVariable =
-          "automatic_declaration_of_the_temperature_as_first_external_state_variable";
+          "automatic_declaration_of_the_temperature_as_first_external_state_"
+          "variable";
 
   static MaterialPropertyDescription buildMaterialPropertyDescription(
       const BehaviourDescription::ConstantMaterialProperty& mp,
@@ -557,14 +558,12 @@ namespace mfront {
     return MaterialPropertyInput::STATICVARIABLE;
   }  // end of getMaterialPropertyInputCategory
 
-  std::vector<BehaviourDescription::MaterialPropertyInput>
-  BehaviourDescription::getMaterialPropertyInputs(
-      const std::vector<std::string>& i, const bool b) const {
+  BehaviourDescription::MaterialPropertyInput
+  BehaviourDescription::getMaterialPropertyInput(const std::string& v,
+                                                 const bool b) const {
     auto throw_if = [](const bool c, const std::string& m) {
-      tfel::raise_if(c,
-                     "BehaviourDescription::getMaterialPropertyInputs: " + m);
+      tfel::raise_if(c, "BehaviourDescription::getMaterialPropertyInput: " + m);
     };
-    auto inputs = std::vector<MaterialPropertyInput>{};
     const auto hs = [this, b,
                      throw_if]() -> std::set<BehaviourDescription::Hypothesis> {
       if (this->hypotheses.empty()) {
@@ -574,42 +573,48 @@ namespace mfront {
       }
       return this->getDistinctModellingHypotheses();
     }();
-    for (const auto& v : i) {
-      if (v == "T") {
-        inputs.push_back({"T", tfel::glossary::Glossary::Temperature,
-                          MaterialPropertyInput::TEMPERATURE});
-      } else {
-        const auto rh = *(hs.begin());
-        const auto t = this->getMaterialPropertyInputCategory(rh, v);
-        if (t == MaterialPropertyInput::STATICVARIABLE) {
-          for (const auto h : hs) {
-            throw_if(this->getMaterialPropertyInputCategory(h, v) != t,
-                     "the variable '" + v +
-                         "' belongs to two different "
-                         "categories in two distinct modelling hypotheses. "
-                         "This is not supported.");
-          }
-          inputs.push_back({v, v, t});
-        } else {
-          const auto vd = this->getBehaviourData(rh).getVariableDescription(v);
-          const auto en = vd.getExternalName();
-          for (const auto h : hs) {
-            const auto vd2 =
-                this->getBehaviourData(h).getVariableDescription(v);
-            throw_if(vd2.getExternalName() != en,
-                     "the variable '" + v +
-                         "' has two different "
-                         "external names in two distinct modelling hypotheses."
-                         "This is not supported.");
-            throw_if(this->getMaterialPropertyInputCategory(h, v) != t,
-                     "the variable '" + v +
-                         "' belongs to two different "
-                         "categories in two distinct modelling hypotheses. "
-                         "This is not supported.");
-          }
-          inputs.push_back({v, en, t});
+    if (v == "T") {
+      return {"T", tfel::glossary::Glossary::Temperature,
+              MaterialPropertyInput::TEMPERATURE};
+    } else {
+      const auto rh = *(hs.begin());
+      const auto t = this->getMaterialPropertyInputCategory(rh, v);
+      if (t == MaterialPropertyInput::STATICVARIABLE) {
+        for (const auto h : hs) {
+          throw_if(this->getMaterialPropertyInputCategory(h, v) != t,
+                   "the variable '" + v +
+                       "' belongs to two different "
+                       "categories in two distinct modelling hypotheses. "
+                       "This is not supported.");
         }
+        return {v, v, t};
+      } else {
+        const auto vd = this->getBehaviourData(rh).getVariableDescription(v);
+        const auto en = vd.getExternalName();
+        for (const auto h : hs) {
+          const auto vd2 = this->getBehaviourData(h).getVariableDescription(v);
+          throw_if(vd2.getExternalName() != en,
+                   "the variable '" + v +
+                       "' has two different "
+                       "external names in two distinct modelling hypotheses."
+                       "This is not supported.");
+          throw_if(this->getMaterialPropertyInputCategory(h, v) != t,
+                   "the variable '" + v +
+                       "' belongs to two different "
+                       "categories in two distinct modelling hypotheses. "
+                       "This is not supported.");
+        }
+        return {v, en, t};
       }
+    }
+  }  // end of getMaterialPropertyInput
+
+  std::vector<BehaviourDescription::MaterialPropertyInput>
+  BehaviourDescription::getMaterialPropertyInputs(
+      const std::vector<std::string>& i, const bool b) const {
+    auto inputs = std::vector<MaterialPropertyInput>{};
+    for (const auto& v : i) {
+      inputs.push_back(this->getMaterialPropertyInput(v, b));
     }
     return inputs;
   }  // end of getMaterialPropertyInputs
@@ -3168,7 +3173,8 @@ namespace mfront {
                                                     "ThermalExpansion3");
     } else {
       tfel::raise(
-          "BehaviourDescription::getThermalExpansionCoefficientsDescriptions: "
+          "BehaviourDescription::getThermalExpansionCoefficientsDescriptions:"
+          " "
           "invalid number of material properties");
     }
     return thempds;

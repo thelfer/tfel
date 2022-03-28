@@ -97,6 +97,12 @@ MFRONTS=StandardElastoViscoPlasticityTest1.mfront                         \
     ElasticContributionToPorosityGrowth.mfront                            \
     GursonTvergaardNeedleman1982.mfront                                   \
     RousselierTanguyBesson2002.mfront                                     \
+    UserDefinedViscoplasticityTest.mfront                                 \
+    UserDefinedViscoplasticityTest_nj.mfront                                 \
+    UserDefinedViscoplasticityTest2.mfront                                 \
+    UserDefinedViscoplasticityTest2_nj.mfront                                 \
+    UserDefinedViscoplasticityTest3.mfront                                 \
+    UserDefinedViscoplasticityTest3_nj.mfront                                 \
     references/standardelastoviscoplasticitynortontest7.ref               \
 	references/standardelastoviscoplasticitynortontest8_E.ref             \
 	references/standardelastoviscoplasticitynortontest8_S.ref             \
