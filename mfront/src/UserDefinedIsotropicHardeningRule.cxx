@@ -137,6 +137,7 @@ namespace mfront::bbrick {
       const std::string& fid,
       const std::string& id,
       const std::string& p) {
+    const auto mts = getMiddleOfTimeStepModifier(bd);
     auto m = std::map<std::string, std::string>{};
     m.insert({"p", p});
     for (const auto mp : mps) {
@@ -159,21 +160,21 @@ namespace mfront::bbrick {
       const BehaviourDescription& bd,
       const std::string& fid,
       const std::string& id) const {
-    const auto Rel = id.empty() ? "Rel" + fid : "Rel" + fid + "_" + id;
+    const auto Rel_id = id.empty() ? "Rel" + fid : "Rel" + fid + "_" + id;
     const auto m =
         getVariablesMap(this->R, this->mps, bd, fid, id, "this->p" + fid);
-    return "const auto " + Rel + " = " + this->R.getCxxFormula(m) + ";\n";
+    return "const auto " + Rel_id + " = " + this->R.getCxxFormula(m) + ";\n";
   }  // end of computeElasticPrediction
 
   std::string UserDefinedIsotropicHardeningRule::computeElasticLimit(
       const BehaviourDescription& bd,
       const std::string& fid,
       const std::string& id) const {
-    const auto R = id.empty() ? "R" + fid : "R" + fid + "_" + id;
+    const auto R_id = id.empty() ? "R" + fid : "R" + fid + "_" + id;
     const auto m = getVariablesMap(
         this->R, this->mps, bd, fid, id,
         "(this->p" + fid + "+(this->theta) * (this->dp" + fid + "))");
-    return "const auto " + R + " = " + this->R.getCxxFormula(m) + ";\n";
+    return "const auto " + R_id + " = " + this->R.getCxxFormula(m) + ";\n";
   }  // end of computeElasticLimit
 
   std::string
@@ -181,21 +182,41 @@ namespace mfront::bbrick {
       const BehaviourDescription& bd,
       const std::string& fid,
       const std::string& id) const {
-    //     const auto R = id.empty() ? "R" + fid : "R" + fid + "_" + id;
-    //     const auto dR = "d" + R + "_ddp" + fid;
-    //     const auto R0n = IsotropicHardeningRule::getVariableId("R0", fid,
-    //     id); const auto Rin = IsotropicHardeningRule::getVariableId("Rinf",
-    //     fid, id); const auto bn = IsotropicHardeningRule::getVariableId("b",
-    //     fid, id); return "const auto " + R + " = this->" + Rin + "+(this->" +
-    //     R0n +
-    //            "-this->" + Rin + ")*exp(-(this->" + bn + ")*(this->p" + fid +
-    //            "+(this->theta)*(this->dp" + fid +
-    //            ")));\n"  //
-    //            "const auto " +
-    //            dR +
-    //            " = "
-    //            "-(this->theta)*(this->" +
-    //            bn + ")*(" + R + "-(this->" + Rin + "));\n";
+    const auto R_id = id.empty() ? "R" + fid : "R" + fid + "_" + id;
+    const auto dR_id = "d" + R_id + "_ddp" + fid;
+    const auto m = getVariablesMap(
+        this->R, this->mps, bd, fid, id,
+        "(this->p" + fid + "+(this->theta) * (this->dp" + fid + "))");
+    const auto buildDerivativesVariablesMap =
+        [&m, &R_id](const tfel::math::Evaluator& df) {
+          auto r = std::map<std::string, std::string>{};
+          for (const auto& v : df.getVariablesNames()) {
+            if (v == "R") {
+              r.insert({"R", R_id});
+              continue;
+            }
+            if (m.count(v) == 0) {
+              tfel::raise(
+                  "UserDefinedViscoplasticFlow::computeFlowRateAndDerivative: "
+                  "internal error (unexpected variable '" +
+                  v + "' in derivative)");
+            }
+            r.insert({v, m.at(v)});
+          }
+          return r;
+        };
+    auto c = "const auto " + R_id + " = " + this->R.getCxxFormula(m) + ";\n";
+    c += "const auto " + dR_id + " = theta * ";
+    if (this->dR_dp.has_value()) {
+      c += this->dR_dp->getCxxFormula(
+               buildDerivativesVariablesMap(*(this->dR_dp)));
+    } else {
+      const auto dR = std::dynamic_pointer_cast<tfel::math::Evaluator>(
+          this->R.differentiate("p"));
+      c += dR->getCxxFormula(m);
+    }
+    c += ";\n";
+    return c;
   }  // end of computeElasticLimitAndDerivative
 
   UserDefinedIsotropicHardeningRule::~UserDefinedIsotropicHardeningRule() =
