@@ -417,8 +417,6 @@ namespace mfront {
             continue;
           }
           const auto& b = i.getBounds();
-          const auto default_policy =
-              getDefaultOutOfBoundsPolicyAsUpperCaseString(mpd);
           const auto get_policy = [&mpd] {
             const auto default_policy =
                 getDefaultOutOfBoundsPolicyAsUpperCaseString(mpd);
