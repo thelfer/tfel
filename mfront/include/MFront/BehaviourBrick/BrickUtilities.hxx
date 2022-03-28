@@ -503,27 +503,33 @@ namespace mfront {
                                                const std::vector<double> &);
     /*!
      * \brief generate the code that evaluates the initial elastic limit.
+     * \param[in] bd: behaviour description
      * \param[in] ihrs: list of isotropic hardening rules.
      * \param[in] fid: flow id
      */
     MFRONT_VISIBILITY_EXPORT std::string computeElasticLimitInitialValue(
+        const BehaviourDescription &,
         const std::vector<std::shared_ptr<IsotropicHardeningRule>> &,
         const std::string &);
     /*!
      * \brief generate the code that evaluates the elastic limit.
+     * \param[in] bd: behaviour description
      * \param[in] ihrs: list of isotropic hardening rules.
      * \param[in] fid: flow id
      */
     MFRONT_VISIBILITY_EXPORT std::string computeElasticLimit(
+        const BehaviourDescription &,
         const std::vector<std::shared_ptr<IsotropicHardeningRule>> &,
         const std::string &);
     /*!
      * \brief generate the code that evaluates the elastic limit and its
      * derivative with respect to the equivalent strain.
+     * \param[in] bd: behaviour description
      * \param[in] ihrs: list of isotropic hardening rules.
      * \param[in] fid: flow id
      */
     MFRONT_VISIBILITY_EXPORT std::string computeElasticLimitAndDerivative(
+        const BehaviourDescription &,
         const std::vector<std::shared_ptr<IsotropicHardeningRule>> &,
         const std::string &);
     /*!

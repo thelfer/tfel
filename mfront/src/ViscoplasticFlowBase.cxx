@@ -57,7 +57,7 @@ namespace mfront::bbrick {
     auto c = std::string{};
     if (b) {
       if (!this->ihrs.empty()) {
-        c += computeElasticLimitAndDerivative(this->ihrs, id);
+        c += computeElasticLimitAndDerivative(bd, this->ihrs, id);
       }
       c += this->computeFlowRateAndDerivative(id);
       c += "fp" + id + " -= (this->dt) * vp" + id + ";\n";
@@ -89,7 +89,7 @@ namespace mfront::bbrick {
       }
     } else {
       if (!this->ihrs.empty()) {
-        c += computeElasticLimit(this->ihrs, id);
+        c += computeElasticLimit(bd, this->ihrs, id);
       }
       c += this->computeFlowRate(id);
       c += "fp" + id + " -= (this->dt) * vp" + id + ";\n";
