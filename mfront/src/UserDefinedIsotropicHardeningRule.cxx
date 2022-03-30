@@ -187,29 +187,24 @@ namespace mfront::bbrick {
     const auto m = getVariablesMap(
         this->R, this->mps, bd, fid, id,
         "(this->p" + fid + "+(this->theta) * (this->dp" + fid + "))");
-    const auto buildDerivativesVariablesMap =
-        [&m, &R_id](const tfel::math::Evaluator& df) {
-          auto r = std::map<std::string, std::string>{};
-          for (const auto& v : df.getVariablesNames()) {
-            if (v == "R") {
-              r.insert({"R", R_id});
-              continue;
-            }
-            if (m.count(v) == 0) {
-              tfel::raise(
-                  "UserDefinedViscoplasticFlow::computeFlowRateAndDerivative: "
-                  "internal error (unexpected variable '" +
-                  v + "' in derivative)");
-            }
-            r.insert({v, m.at(v)});
-          }
-          return r;
-        };
     auto c = "const auto " + R_id + " = " + this->R.getCxxFormula(m) + ";\n";
     c += "const auto " + dR_id + " = theta * ";
     if (this->dR_dp.has_value()) {
-      c += this->dR_dp->getCxxFormula(
-               buildDerivativesVariablesMap(*(this->dR_dp)));
+      auto m2 = std::map<std::string, std::string>{};
+      for (const auto& v : this->dR_dp->getVariablesNames()) {
+        if (v == "R") {
+          m2.insert({"R", R_id});
+          continue;
+        }
+        if (m.count(v) == 0) {
+          tfel::raise(
+              "UserDefinedViscoplasticFlow::computeFlowRateAndDerivative: "
+              "internal error (unexpected variable '" +
+              v + "' in derivative)");
+        }
+        m2.insert({v, m.at(v)});
+      }
+      c += this->dR_dp->getCxxFormula(m2);
     } else {
       const auto dR = std::dynamic_pointer_cast<tfel::math::Evaluator>(
           this->R.differentiate("p"));

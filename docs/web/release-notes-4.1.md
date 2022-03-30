@@ -525,6 +525,52 @@ madnex:Example.mdnx:MaterialProperty::YoungModulusTest
 
 ## Improvements to the `StandardElastoViscoPlasticity` brick
 
+### User defined isotropic hardening rule
+
+The `UserDefined` isotropic hardening rule allows the user to specify
+the radius of the yield surface as a function of the equivalent plastic
+strain `p`.
+
+This function shall be given by a string option named `R` and must
+depend on `p`. The function may also depend on other variables. Let `A`
+be such a variable. The `UserDefined` isotropic hardening rule will look
+if an option named `A` has been given:
+
+- If this option exists, it will be interpreted as a material
+  coefficient as usal and this option can be a number, a formula or the
+  name of an external `MFront` file.
+- If this option does not exist, a suitable variable will be search in
+  the variables defined in the behaviour (static variables, parameters,
+  material properties, etc...).
+
+If required, the derivative of `R` with respect to `f` and `p` can be
+provided through the option `dR_dp`. The derivative `dR_dp` can depend
+on the variable `R`.
+
+If this derivative is not provided, automatic differentiation will be
+used. The user shall be warned that the automatic differentiation
+provided by the `tfel::math::Evaluator` class may result in inefficient
+code.
+
+#### Example of usage
+
+~~~~{.cxx}
+@Parameter stress R0 = 200e6;
+@Parameter stress Hy = 40e6;
+@Parameter real b = 100;
+
+@Brick StandardElastoViscoPlasticity{
+  stress_potential : "Hooke" {young_modulus : 150e9, poisson_ratio : 0.3},
+  inelastic_flow : "Plastic" {
+    criterion : "Mises",
+    isotropic_hardening : "UserDefined" {
+      R : "R0 + Hy * (1 - exp(-b * p))",     // Yield radius
+      dR_dp : "b * (R0 + Hy - R)"
+    }
+  }
+};
+~~~~
+
 ### New inelastic flow `UserDefinedViscoplasticity`
 
 The `UserDefinedViscoplasticity` inelastic flow allows the user to
@@ -536,7 +582,7 @@ where:
   where \(\phi\) is the stress criterion.
 - `p` is the equivalent viscoplastic strain.
 
-This function shall be given in a string option named `vp`. This
+This function shall be given by a string option named `vp`. This
 function must depend on `f`. Dependance to `p` is optional.
 
 The function may also depend on other variables. Let `A` be such a
@@ -562,7 +608,7 @@ used. The user shall be warned that the automatic differentiation
 provided by the `tfel::math::Evaluator` class may result in inefficient
 code.
 
-### Example of usage
+#### Example of usage
 
 ~~~~{.cxx}
 @Parameter temperature Ta = 600;
