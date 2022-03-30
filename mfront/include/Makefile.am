@@ -127,6 +127,7 @@ nobase_include_HEADERS= MFront/MFront.hxx                                     \
 			MFront/BehaviourBrick/ViscoplasticFlowBase.hxx                               \
 			MFront/BehaviourBrick/NortonHoffViscoplasticFlow.hxx                         \
 			MFront/BehaviourBrick/HyperbolicSineViscoplasticFlow.hxx                     \
+			MFront/BehaviourBrick/UserDefinedViscoplasticFlow.hxx                        \
 			MFront/BehaviourBrick/PlasticInelasticFlow.hxx                               \
 			MFront/BehaviourBrick/HarmonicSumOfNortonHoffViscoplasticFlows.hxx           \
 			MFront/BehaviourBrick/PorosityNucleationModelFactory.hxx                     \
@@ -208,6 +209,7 @@ nobase_noinst_HEADERS = MFront/IsotropicBehaviourDSLBase.hxx                    
 			MFront/ImplicitDSL.hxx                                        \
 			MFront/ImplicitDSLII.hxx                                      \
 			MFront/ImplicitFiniteStrainDSL.hxx                            \
+			MFront/ImplicitCZMDSL.hxx                                     \
 			MFront/DefaultGenericBehaviourDSL.hxx                        \
 			MFront/DefaultModelDSL.hxx                        \
 			MFront/ImplicitGenericBehaviourDSL.hxx                        \

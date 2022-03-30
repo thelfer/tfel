@@ -32,8 +32,6 @@ namespace mfront::bbrick {
     using namespace tfel::glossary;
     constexpr auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     InelasticFlowBase::initialize(bd, dsl, id, d);
-    // checking options
-    mfront::bbrick::check(d, this->getOptions());
     if (id.empty()) {
       addStateVariable(bd, "strain", "p",
                        Glossary::EquivalentViscoplasticStrain);
@@ -59,7 +57,7 @@ namespace mfront::bbrick {
       if (!this->ihrs.empty()) {
         c += computeElasticLimitAndDerivative(this->ihrs, id);
       }
-      c += this->computeFlowRateAndDerivative(id);
+      c += this->computeFlowRateAndDerivative(bd, sp, id);
       c += "fp" + id + " -= (this->dt) * vp" + id + ";\n";
       c += sp.generateImplicitEquationDerivatives(
           bd, "strain", "p" + id,
@@ -67,8 +65,13 @@ namespace mfront::bbrick {
               id,
           this->sc->isNormalDeviatoric());
       if (!this->ihrs.empty()) {
-        c += "dfp" + id + "_ddp" + id + " += (this->dt) * dvp" + id + "_dseqe" +
-             id + "*dR" + id + "_ddp" + id + ";\n";
+        c += "dfp" + id + "_ddp" + id + " += ";
+        c += "(this->dt) * dvp" + id + "_dseqe" + id + "*dR" + id + "_ddp" +
+             id + ";\n";
+      }
+      if (this->describesStrainHardeningExplicitly()) {
+        c += "dfp" + id + "_ddp" + id + " += ";
+        c += "(this->dt) * dvp" + id + "_dp" + id + ";\n";
       }
       auto kid = decltype(khrs.size()){};
       for (const auto& khr : khrs) {
@@ -91,7 +94,7 @@ namespace mfront::bbrick {
       if (!this->ihrs.empty()) {
         c += computeElasticLimit(this->ihrs, id);
       }
-      c += this->computeFlowRate(id);
+      c += this->computeFlowRate(bd, sp, id);
       c += "fp" + id + " -= (this->dt) * vp" + id + ";\n";
     }
     return c;

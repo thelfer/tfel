@@ -119,6 +119,7 @@ set(TFELMFront_SOURCES
     ImplicitFiniteStrainDSL.cxx
     ImplicitGenericBehaviourDSL.cxx
     ImplicitModelDSL.cxx
+    ImplicitCZMDSL.cxx
     NonLinearSystemSolver.cxx
     NonLinearSystemSolverBase.cxx
     NonLinearSystemSolverFactory.cxx
@@ -171,6 +172,7 @@ set(TFELMFront_SOURCES
     NortonHoffViscoplasticFlow.cxx
     HyperbolicSineViscoplasticFlow.cxx
     HarmonicSumOfNortonHoffViscoplasticFlows.cxx
+    UserDefinedViscoplasticFlow.cxx
     PlasticInelasticFlow.cxx
     PorosityNucleationModel.cxx
     PorosityNucleationModelFactory.cxx

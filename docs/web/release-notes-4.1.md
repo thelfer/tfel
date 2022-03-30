@@ -523,6 +523,65 @@ $ mfront-query --list-dependencies --behaviour=Test Example.mdnx
 madnex:Example.mdnx:MaterialProperty::YoungModulusTest 
 ~~~~
 
+## Improvements to the `StandardElastoViscoPlasticity` brick
+
+### New inelastic flow `UserDefinedViscoplasticity`
+
+The `UserDefinedViscoplasticity` inelastic flow allows the user to
+specify the viscoplastic strain rate `vp` as a function of `f` and `p`
+where:
+
+- `f` is the positive part of the
+  \(\phi\paren{\tsigma-\sum_{i}\tenseur{X}_{i}}-\sum_{i}R_{i}\paren{p}\)
+  where \(\phi\) is the stress criterion.
+- `p` is the equivalent viscoplastic strain.
+
+This function shall be given in a string option named `vp`. This
+function must depend on `f`. Dependance to `p` is optional.
+
+The function may also depend on other variables. Let `A` be such a
+variable. The `UserDefinedViscoplasticity` flow will look if an option
+named `A` has been given to the flow:
+
+
+- If this option exists, it will be interpreted as a material
+  coefficient as usal and this option can be a number, a formula or the
+  name of an external `MFront` file.
+- If this option does not exist, a suitable variable will be search in
+  the variables defined in the behaviour (static variables, parameters,
+  material properties, etc...).
+
+If required, the derivatives of `vp` with respect to `f` and `p` can be
+provided through the options `dvp_df` and `dvp_dp`. The derivatives
+`dvp_df` and `dvp_dp` can depend on two additional variables, `vp` and
+`seps`, which denotes the viscoplastic strain rate and a stress
+threshold.
+
+If those derivatives are not provided, automatic differentiation will be
+used. The user shall be warned that the automatic differentiation
+provided by the `tfel::math::Evaluator` class may result in inefficient
+code.
+
+#### Example of usage
+
+~~~~{.cxx}
+@Parameter temperature Ta = 600;
+@Parameter strain p0 = 1e-8;
+
+@Brick StandardElastoViscoPlasticity{
+  stress_potential : "Hooke" {young_modulus : 150e9, poisson_ratio : 0.3},
+  inelastic_flow : "UserDefinedViscoplasticity" {
+    criterion : "Mises",
+    E : 8.2,
+    A : "8e-67 * exp(- T / Ta)",
+    m : 0.32,
+    vp : "A * (f ** E) / ((p + p0) ** m)",
+    dvp_df : "E * vp / (max(f, seps))"
+    // dvp_dp is evaluated by automatic differentiation (which is not recommended)
+  }
+};
+~~~~
+
 # `MTest` improvements
 
 ## Support for `madnex` file {#sec:tfel:4.1:mtest:madnex_support}

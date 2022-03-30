@@ -103,7 +103,13 @@ namespace mfront::bbrick {
     }
   }  // end of endTreatment
 
+  bool NortonHoffViscoplasticFlow::describesStrainHardeningExplicitly() const {
+    return false;
+  }  // end of describesStrainHardeningExplicitly
+
   std::string NortonHoffViscoplasticFlow::computeFlowRate(
+      const BehaviourDescription&,
+      const StressPotential&,
       const std::string& id) const {
     auto c = std::string{};
     if (this->ihrs.empty()) {
@@ -130,6 +136,8 @@ namespace mfront::bbrick {
   }  // end of computeFlowRate
 
   std::string NortonHoffViscoplasticFlow::computeFlowRateAndDerivative(
+      const BehaviourDescription&,
+      const StressPotential&,
       const std::string& id) const {
     auto c = std::string{};
     if (this->ihrs.empty()) {

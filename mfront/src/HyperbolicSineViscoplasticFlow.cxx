@@ -123,7 +123,13 @@ namespace mfront::bbrick {
     }
   }  // end of KinematicHardeningRuleBase::endTreatment
 
+  bool HyperbolicSineViscoplasticFlow::describesStrainHardeningExplicitly() const {
+    return false;
+  }  // end of describesStrainHardeningExplicitly
+
   std::string HyperbolicSineViscoplasticFlow::computeFlowRate(
+      const BehaviourDescription&,
+      const StressPotential&,
       const std::string& id) const {
     auto c = std::string{};
     if (this->ihrs.empty()) {
@@ -160,6 +166,8 @@ namespace mfront::bbrick {
   }  // end of computeFlowRate
 
   std::string HyperbolicSineViscoplasticFlow::computeFlowRateAndDerivative(
+      const BehaviourDescription&,
+      const StressPotential&,
       const std::string& id) const {
     auto c = std::string{};
     const auto seq_n = "seq" + id;

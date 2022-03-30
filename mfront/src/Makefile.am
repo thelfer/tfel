@@ -97,6 +97,7 @@ libTFELMFront_la_SOURCES = MFront.cxx                                     \
 		           ImplicitFiniteStrainDSL.cxx                            \
 		           ImplicitGenericBehaviourDSL.cxx                        \
 		           ImplicitModelDSL.cxx                                   \
+		           ImplicitCZMDSL.cxx                                     \
 		           NonLinearSystemSolver.cxx                              \
 		           NonLinearSystemSolverBase.cxx                          \
 		           NonLinearSystemSolverFactory.cxx                       \
@@ -150,6 +151,7 @@ libTFELMFront_la_SOURCES = MFront.cxx                                     \
 		           HyperbolicSineViscoplasticFlow.cxx                     \
 		           PlasticInelasticFlow.cxx                               \
 		           HarmonicSumOfNortonHoffViscoplasticFlows.cxx           \
+		           UserDefinedViscoplasticFlow.cxx                        \
 		           PorosityNucleationModelFactory.cxx                     \
 		           PorosityNucleationModel.cxx                            \
 		           PorosityNucleationModelBase.cxx                        \

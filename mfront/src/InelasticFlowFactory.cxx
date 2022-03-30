@@ -17,6 +17,7 @@
 #include "MFront/BehaviourBrick/NortonHoffViscoplasticFlow.hxx"
 #include "MFront/BehaviourBrick/HyperbolicSineViscoplasticFlow.hxx"
 #include "MFront/BehaviourBrick/HarmonicSumOfNortonHoffViscoplasticFlows.hxx"
+#include "MFront/BehaviourBrick/UserDefinedViscoplasticFlow.hxx"
 #include "MFront/BehaviourBrick/InelasticFlowFactory.hxx"
 
 namespace mfront::bbrick {
@@ -65,6 +66,9 @@ namespace mfront::bbrick {
     });
     this->addGenerator("HyperbolicSine", []() {
       return std::make_shared<HyperbolicSineViscoplasticFlow>();
+    });
+    this->addGenerator("UserDefinedViscoplasticity", []() {
+      return std::make_shared<UserDefinedViscoplasticFlow>();
     });
     this->addGenerator(
         "Plastic", []() { return std::make_shared<PlasticInelasticFlow>(); });
