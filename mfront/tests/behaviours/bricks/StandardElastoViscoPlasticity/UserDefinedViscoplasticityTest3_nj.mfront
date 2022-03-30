@@ -1,0 +1,23 @@
+@DSL Implicit;
+@Behaviour UserDefinedViscoplasticityTest3_nj;
+@Author Thomas Helfer;
+@Date 25 / 03 / 2022;
+
+@Algorithm NewtonRaphson_NumericalJacobian;
+@PerturbationValueForNumericalJacobianComputation 1e-8;
+@Epsilon 1.e-14;
+@Theta 0.5;
+
+@Brick StandardElastoViscoPlasticity{
+  stress_potential : "Hooke" {young_modulus : 150e9, poisson_ratio : 0.3},
+  inelastic_flow : "UserDefinedViscoplasticity" {
+    criterion : "Mises",
+    A : 8.e-67,
+    En : 8.2,
+    Em : 2,
+    p0 : 1e-6,
+    vp : "A * f ** En / (max((p + p0), p0) ** Em)",
+    dvp_df : "En * vp / max(f, seps)",
+    dvp_dp : "-Em * vp / max((p + p0), p0)"
+  }
+};

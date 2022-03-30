@@ -67,7 +67,9 @@ namespace mfront::bbrick {
   }  // end of getOptions
 
   std::string PowerIsotropicHardeningRule::computeElasticPrediction(
-      const std::string& fid, const std::string& id) const {
+      const BehaviourDescription&,
+      const std::string& fid,
+      const std::string& id) const {
     const auto Rel = id.empty() ? "Rel" + fid : "Rel" + fid + "_" + id;
     const auto R0n = IsotropicHardeningRule::getVariableId("R0", fid, id);
     const auto nn = IsotropicHardeningRule::getVariableId("E", fid, id);
@@ -84,7 +86,9 @@ namespace mfront::bbrick {
   }  // end of computeElasticPrediction
 
   std::string PowerIsotropicHardeningRule::computeElasticLimit(
-      const std::string& fid, const std::string& id) const {
+      const BehaviourDescription&,
+      const std::string& fid,
+      const std::string& id) const {
     const auto R = id.empty() ? "R" + fid : "R" + fid + "_" + id;
     const auto R0n = IsotropicHardeningRule::getVariableId("R0", fid, id);
     const auto nn = IsotropicHardeningRule::getVariableId("E", fid, id);
@@ -92,17 +96,19 @@ namespace mfront::bbrick {
     auto c = "const auto " + R + " = (this->" + R0n + ")*";
     if (!this->p0.empty()) {
       const auto p0n = IsotropicHardeningRule::getVariableId("p0", fid, id);
-      c += "pow(max(this->" + pn + "+(this->theta)*(this->d" + pn + ")+this->" +
+      c += "pow(max(this->" + pn + "+(this->theta) * (this->d" + pn + ")+this->" +
            p0n + ",strain(0)),this->" + nn + ");\n";
     } else {
-      c += "pow(max(this->" + pn + "+(this->theta)*(this->d" + pn + "),";
+      c += "pow(max(this->" + pn + "+(this->theta) * (this->d" + pn + "),";
       c += "strain(0)),this->" + nn + ");\n";
     }
     return c;
   }  // end of computeElasticLimit
 
   std::string PowerIsotropicHardeningRule::computeElasticLimitAndDerivative(
-      const std::string& fid, const std::string& id) const {
+      const BehaviourDescription&,
+      const std::string& fid,
+      const std::string& id) const {
     const auto R = id.empty() ? "R" + fid : "R" + fid + "_" + id;
     const auto dR = "d" + R + "_ddp" + fid;
     const auto R0n = IsotropicHardeningRule::getVariableId("R0", fid, id);

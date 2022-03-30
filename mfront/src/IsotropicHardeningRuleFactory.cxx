@@ -17,6 +17,7 @@
 #include "MFront/BehaviourBrick/SwiftIsotropicHardeningRule.hxx"
 #include "MFront/BehaviourBrick/PowerIsotropicHardeningRule.hxx"
 #include "MFront/BehaviourBrick/LinearIsotropicHardeningRule.hxx"
+#include "MFront/BehaviourBrick/UserDefinedIsotropicHardeningRule.hxx"
 #include "MFront/BehaviourBrick/IsotropicHardeningRuleFactory.hxx"
 
 namespace mfront::bbrick {
@@ -66,6 +67,9 @@ namespace mfront::bbrick {
     });
     this->addGenerator("Voce", []() {
       return std::make_shared<bbrick::VoceIsotropicHardeningRule>();
+    });
+    this->addGenerator("UserDefined", []() {
+      return std::make_shared<bbrick::UserDefinedIsotropicHardeningRule>();
     });
   }  // end of IsotropicHardeningRuleFactory
 

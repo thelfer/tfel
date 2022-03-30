@@ -395,7 +395,7 @@ namespace mfront::bbrick {
         i.code += ");\n";
       }
       i.code += this->sc->computeElasticPrediction(id, bd, sp);
-      i.code += computeElasticLimitInitialValue(this->ihrs, id);
+      i.code += computeElasticLimitInitialValue(bd, this->ihrs, id);
       i.code += "this->bpl" + id + " = seqel" + id + " > Rel" + id + ";\n";
       bd.setCode(ModellingHypothesis::UNDEFINEDHYPOTHESIS,
                  BehaviourData::BeforeInitializeLocalVariables, i,
@@ -642,7 +642,7 @@ namespace mfront::bbrick {
       }
       acc.code += this->computeEffectiveStress(id);
       acc.code += this->sc->computeCriterion(id, bd, sp);
-      acc.code += computeElasticLimit(this->ihrs, id);
+      acc.code += computeElasticLimit(bd, this->ihrs, id);
       acc.code += "if(seq" + id + " > R" + id + ") {\n";
       acc.code += "converged = false;\n";
       acc.code += "this->bpl" + id + " = true;\n";

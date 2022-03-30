@@ -75,28 +75,35 @@ namespace mfront::bbrick {
     /*!
      * \brief return the code computing the initial radius.
      * The code defines a variable named "Rel"+fid+"_"+id
+     * \param[in] bd: behaviour description
      * \param[in] fid: flow id
      * \param[in] id: identifier
      */
-    virtual std::string computeElasticPrediction(const std::string&,
+    virtual std::string computeElasticPrediction(const BehaviourDescription&,
+                                                 const std::string&,
                                                  const std::string&) const = 0;
     /*!
      * \brief return the code computing the radius of the elastic limit.
      * The code defines a variable named "R"+fid+"_"+id
+     * \param[in] bd: behaviour description
      * \param[in] fid: flow id
      * \param[in] id: identifier
      */
-    virtual std::string computeElasticLimit(const std::string&,
+    virtual std::string computeElasticLimit(const BehaviourDescription&,
+                                            const std::string&,
                                             const std::string&) const = 0;
     /*!
      * \brief return the code computing the radius of the elastic limit.
      * The code defines two variables named "R"+fid+"_"+id and
      * "dR"+fid+"_"+id+"ddp"+fid+"_"+id.
+     * \param[in] bd: behaviour description
      * \param[in] fid: flow id
      * \param[in] id: identifier
      */
     virtual std::string computeElasticLimitAndDerivative(
-        const std::string&, const std::string&) const = 0;
+        const BehaviourDescription&,
+        const std::string&,
+        const std::string&) const = 0;
     /*!
      * \brief method called at the end of the input file processing
      * \param[in] dsl: abstract behaviour dsl

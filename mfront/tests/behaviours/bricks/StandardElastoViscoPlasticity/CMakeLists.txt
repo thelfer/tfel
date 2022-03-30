@@ -200,3 +200,11 @@ install_mfront_data(tests/behavioursbricks/StandardElastoViscoPlasticity
         GursonTvergaardNeedleman1982.mfront)
 install_mfront_data(tests/behavioursbricks/StandardElastoViscoPlasticity
         RousselierTanguyBesson2002.mfront)
+
+install_mfront_data(tests/behavioursbricks/StandardElastoViscoPlasticity
+        UserDefinedViscoplasticityTest.mfront)
+install_mfront_data(tests/behavioursbricks/StandardElastoViscoPlasticity
+        UserDefinedViscoplasticityTest2.mfront)
+install_mfront_data(tests/behavioursbricks/StandardElastoViscoPlasticity
+        UserDefinedViscoplasticityTest3.mfront)
+      

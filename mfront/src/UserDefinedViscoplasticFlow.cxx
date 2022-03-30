@@ -129,7 +129,7 @@ namespace mfront::bbrick {
           for (const auto& vn : variables) {
             msg += " " + vn;
           }
-          msg += "List of variables of the derivative '" + n + "':";
+          msg += "\nList of variables of the derivative '" + n + "':";
           for (const auto& vn : df_variables) {
             msg += " " + vn;
           }
@@ -186,18 +186,22 @@ namespace mfront::bbrick {
     const auto mts = getMiddleOfTimeStepModifier(bd);
     auto m = std::map<std::string, std::string>{};
     m.insert({"f", "mfront_udvf_f" + id});
-    m.insert({"p", "this->p" + id + " + " +  //
-                       bd.getClassName() + "::theta * (this->dp" + id + ")"});
     for (const auto mp : mps) {
       m.insert({mp.first, "this->" + mp.first + id});
     }
     const auto& variables = vp.getVariablesNames();
     for (const auto v : variables) {
-      if ((v == "f") || (v == "p") || (mps.count(v) != 0)) {
+      if ((v == "f") || (mps.count(v) != 0)) {
         continue;
       }
-      const auto i = bd.getMaterialPropertyInput(v, false);
-      m.insert({v, mts(i)});
+      if (v == "p") {
+        m.insert({"p", "this->p" + id + " + " +  //
+                           bd.getClassName() + "::theta * (this->dp" + id +
+                           ")"});
+      } else {
+        const auto i = bd.getMaterialPropertyInput(v, false);
+        m.insert({v, mts(i)});
+      }
     }
     return m;
   }  // end of getVariablesMap

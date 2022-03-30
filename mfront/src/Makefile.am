@@ -183,6 +183,7 @@ libTFELMFront_la_SOURCES = MFront.cxx                                     \
 		           PowerIsotropicHardeningRule.cxx                        \
 		           SwiftIsotropicHardeningRule.cxx                        \
 		           VoceIsotropicHardeningRule.cxx                         \
+		           UserDefinedIsotropicHardeningRule.cxx                  \
 		           IsotropicHardeningRuleFactory.cxx                      \
 		           KinematicHardeningRule.cxx                             \
 		           KinematicHardeningRuleBase.cxx                         \

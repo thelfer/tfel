@@ -16,48 +16,48 @@
 
 #include "MFront/BehaviourBrick/IsotropicHardeningRule.hxx"
 
-namespace mfront {
+namespace mfront::bbrick {
 
-  namespace bbrick {
-
-    /*!
-     * \brief class describing a Voce isotropic hardening rule
-     * \f[
-     * R\left(p\right)=R_{0}+\left(R_{\infty}-R_{0}\right)\,\exp\left(-b\,p\right)
-     * \f]
-     * where:
-     * - \f$R_{0}\f$ is the yield strength
-     * - \f$R_{inf}\f$ is the maximal yield strength
-     * - \f$b\f$ is a parameter
-     */
-    struct VoceIsotropicHardeningRule final : IsotropicHardeningRule {
-      void initialize(BehaviourDescription&,
-                      AbstractBehaviourDSL&,
+  /*!
+   * \brief class describing a Voce isotropic hardening rule
+   * \f[
+   * R\left(p\right)=R_{0}+\left(R_{\infty}-R_{0}\right)\,\exp\left(-b\,p\right)
+   * \f]
+   * where:
+   * - \f$R_{0}\f$ is the yield strength
+   * - \f$R_{inf}\f$ is the maximal yield strength
+   * - \f$b\f$ is a parameter
+   */
+  struct VoceIsotropicHardeningRule final : IsotropicHardeningRule {
+    void initialize(BehaviourDescription&,
+                    AbstractBehaviourDSL&,
+                    const std::string&,
+                    const std::string&,
+                    const DataMap&) override;
+    std::vector<OptionDescription> getOptions() const override;
+    std::string computeElasticPrediction(const BehaviourDescription&,
+                                         const std::string&,
+                                         const std::string&) const override;
+    std::string computeElasticLimit(const BehaviourDescription&,
+                                    const std::string&,
+                                    const std::string&) const override;
+    std::string computeElasticLimitAndDerivative(
+        const BehaviourDescription&,
+        const std::string&,
+        const std::string&) const override;
+    void endTreatment(BehaviourDescription&,
+                      const AbstractBehaviourDSL&,
                       const std::string&,
-                      const std::string&,
-                      const DataMap&) override;
-      std::vector<OptionDescription> getOptions() const override;
-      std::string computeElasticPrediction(const std::string&,
-                                           const std::string&) const override;
-      std::string computeElasticLimit(const std::string&,
-                                      const std::string&) const override;
-      std::string computeElasticLimitAndDerivative(
-          const std::string&, const std::string&) const override;
-      void endTreatment(BehaviourDescription&,
-                        const AbstractBehaviourDSL&,
-                        const std::string&,
-                        const std::string&) const override;
-      //! destructor
-      ~VoceIsotropicHardeningRule() override;
+                      const std::string&) const override;
+    //! \brief destructor
+    ~VoceIsotropicHardeningRule() override;
 
-     protected:
-      BehaviourDescription::MaterialProperty R0;
-      BehaviourDescription::MaterialProperty Rinf;
-      BehaviourDescription::MaterialProperty b;
-    };  // end of struct VoceIsotropicHardeningRule
+   protected:
+    BehaviourDescription::MaterialProperty R0;
+    BehaviourDescription::MaterialProperty Rinf;
+    BehaviourDescription::MaterialProperty b;
+  };  // end of struct VoceIsotropicHardeningRule
 
-  }  // end of namespace bbrick
-
-}  // end of namespace mfront
+}  // end of namespace mfront::bbrick
 
 #endif /* LIB_MFRONT_BEHAVIOURBRICK_VOCEISOTROPICHARDENINGRULE_HXX */

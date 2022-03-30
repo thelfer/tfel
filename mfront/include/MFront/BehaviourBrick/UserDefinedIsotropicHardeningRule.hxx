@@ -1,8 +1,8 @@
 /*!
- * \file   include/MFront/BehaviourBrick/PowerIsotropicHardeningRule.hxx
+ * \file   include/MFront/BehaviourBrick/UserDefinedIsotropicHardeningRule.hxx
  * \brief
  * \author Thomas Helfer
- * \date   13/02/2020
+ * \date   28/03/2022
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence
@@ -11,25 +11,16 @@
  * project under specific licensing conditions.
  */
 
-#ifndef LIB_MFRONT_BEHAVIOURBRICK_POWERISOTROPICHARDENINGRULE_HXX
-#define LIB_MFRONT_BEHAVIOURBRICK_POWERISOTROPICHARDENINGRULE_HXX
+#ifndef LIB_MFRONT_BEHAVIOURBRICK_USERDEFINEDISOTROPICHARDENINGRULE_HXX
+#define LIB_MFRONT_BEHAVIOURBRICK_USERDEFINEDISOTROPICHARDENINGRULE_HXX
 
+#include "TFEL/Math/Evaluator.hxx"
 #include "MFront/BehaviourBrick/IsotropicHardeningRule.hxx"
 
 namespace mfront::bbrick {
 
-  /*!
-   * \brief class describing a power isotropic hardening rule
-   * \f[
-   * R\left(p\right)=R_{0}\left(p+p_{0}\right)^{n}
-   * \f]
-   * where:
-   * - \f$R_{0}\f$ is the yield strength
-   * - \f$n\f$ is the exponent
-   * - \f$p_{0}\f$ is a parameter which avoids an infinite derivative of the
-   *   previous relation for \(p=0\) in \(n\leq 1\).
-   */
-  struct PowerIsotropicHardeningRule final : IsotropicHardeningRule {
+  //! \brief class describing an hardening rule defined by analytical expression
+  struct UserDefinedIsotropicHardeningRule final : IsotropicHardeningRule {
     void initialize(BehaviourDescription&,
                     AbstractBehaviourDSL&,
                     const std::string&,
@@ -51,20 +42,20 @@ namespace mfront::bbrick {
                       const std::string&,
                       const std::string&) const override;
     //! \brief destructor
-    ~PowerIsotropicHardeningRule() override;
+    ~UserDefinedIsotropicHardeningRule() override;
 
    protected:
-    //! \brief Coefficent of the power law (required)
-    BehaviourDescription::MaterialProperty R0;
+    //! \brief yield surface radius
+    tfel::math::Evaluator R;
     /*!
-     * \brief Numerical parameter to avoid infinite derivative if the power
-     * exponent is lower than \(1\).
+     * \brief derivative of the yield surface radius with respect to the
+     * equivalent plastic strain
      */
-    BehaviourDescription::MaterialProperty p0;
-    //! \brief Exponent of the power law (required)
-    BehaviourDescription::MaterialProperty n;
-  };  // end of struct PowerIsotropicHardeningRule
+    std::optional<tfel::math::Evaluator> dR_dp;
+    //! \brief material properties
+    std::map<std::string, BehaviourDescription::MaterialProperty> mps;
+  };  // end of struct UserDefinedIsotropicHardeningRule
 
 }  // end of namespace mfront::bbrick
 
-#endif /* LIB_MFRONT_BEHAVIOURBRICK_POWERISOTROPICHARDENINGRULE_HXX */
+#endif /* LIB_MFRONT_BEHAVIOURBRICK_USERDEFINEDISOTROPICHARDENINGRULE_HXX */

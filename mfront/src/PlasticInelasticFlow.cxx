@@ -139,7 +139,7 @@ namespace mfront::bbrick {
     if (b) {
       const auto dR_ddp = "dR" + id + "_ddp" + id;
       const auto dfp_ddp = "dfp" + id + "_ddp" + id;
-      c += computeElasticLimitAndDerivative(this->ihrs, id);
+      c += computeElasticLimitAndDerivative(bd, this->ihrs, id);
       c += damping;
       c += fp + " = (" + seq + "-" + R + ")/(" + snf + ");\n";
       c += sp.generateImplicitEquationDerivatives(
@@ -154,7 +154,7 @@ namespace mfront::bbrick {
            "));\n";
       c += "}\n";
       c += "} else {\n";
-      c += dfp_ddp + " = -(" + dR_ddp + ")/(" + snf + ");\n";
+      c += dfp_ddp + " = -(" + dR_ddp + ") / (" + snf + ");\n";
       c += "}\n";
       auto kid = decltype(khrs.size()){};
       for (const auto& khr : khrs) {
@@ -170,7 +170,7 @@ namespace mfront::bbrick {
         c += "(theta * d" + seq + "_d" + f.name + ")/(" + snf + ");\n";
       }
     } else {
-      c += computeElasticLimit(this->ihrs, id);
+      c += computeElasticLimit(bd, this->ihrs, id);
       c += damping;
       c += fp + " = (" + seq + "-" + R + ")/(" + snf + ");\n";
     }

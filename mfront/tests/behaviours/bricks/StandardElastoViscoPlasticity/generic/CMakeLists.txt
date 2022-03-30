@@ -98,6 +98,16 @@ mfront_behaviour_brick_check_library(MFrontStandardElastoViscoPlasticityBrickBeh
   GursonTvergaardNeedleman1982
   RousselierTanguyBesson2002)
 
+mfront_behaviour_brick_check_library(MFrontStandardElastoViscoPlasticityBrickBehaviours2
+  StandardElastoViscoPlasticity generic
+  UserDefinedViscoplasticityTest
+  UserDefinedViscoplasticityTest_nj
+  UserDefinedViscoplasticityTest2
+  UserDefinedViscoplasticityTest2_nj
+  UserDefinedViscoplasticityTest3
+  UserDefinedViscoplasticityTest3_nj)
+
+
 function(generictest_standardelastovicoplasticitybrick test_arg behaviour_name)
   set(_REFERENCE_FILE )
   set(_MODELLING_HYPOTHESES)
