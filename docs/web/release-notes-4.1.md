@@ -628,6 +628,11 @@ code.
 };
 ~~~~
 
+## New domain specific language `ImplicitCZMDSL`
+
+The domain specific language `ImplicitCZMDSL` allows to implement a
+cohesive zone model using an implicit scheme.
+
 # `MTest` improvements
 
 ## Support for `madnex` file {#sec:tfel:4.1:mtest:madnex_support}
