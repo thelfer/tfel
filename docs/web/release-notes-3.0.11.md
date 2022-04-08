@@ -20,6 +20,10 @@ eqnPrefixTemplate: "($$i$$)"
 
 # Issues fixed
 
+## Issue #159: Failing to generate input examples shall not stop mfront
+
+For more details, see <https://github.com/thelfer/tfel/issues/159>.
+
 ## Issue #140: [mtest] lonely separator is not correctly treated
 
 For more details, see <https://github.com/thelfer/tfel/issues/140>.
