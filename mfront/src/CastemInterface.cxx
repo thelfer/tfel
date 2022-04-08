@@ -2021,6 +2021,7 @@ namespace mfront {
 
   void CastemInterface::generateGibianeDeclaration(
       const BehaviourDescription& mb, const FileDescription& fd) const {
+try{
     using namespace std;
     using namespace tfel::system;
     std::map<ModellingHypothesis::Hypothesis, std::string> mo = {
@@ -2194,6 +2195,16 @@ namespace mfront {
       out << '\n';
     }
     out.close();
+    } catch (std::exception& e) {
+      if (getVerboseMode() > VERBOSE_QUIET) {
+        getLogStream() << e.what() << std::endl;
+      }
+    } catch (...) {
+      if (getVerboseMode() > VERBOSE_QUIET) {
+        getLogStream() << "CastemInterface::generateInputFileExample: "
+                       << "unknown exception thrown" << std::endl;
+      }
+    }
   }  // end of CastemInterface::generateGibianeDeclaration
 
   void CastemInterface::writeUMATBehaviourTraits(std::ostream& out,
