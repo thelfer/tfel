@@ -773,6 +773,7 @@ namespace mfront {
 
   void AnsysInterface::writeInputFileExample(const BehaviourDescription& mb,
                                              const FileDescription& fd) const {
+    try {
     auto throw_if = [](const bool c, const std::string& m) {
       tfel::raise_if(c, "AnsysInterface::writeInputFileExample: " + m);
     };
@@ -831,6 +832,16 @@ namespace mfront {
       out << "/com, Declaration of state variables\n"
           << "tb,state,<mat_id>,," << vsize << "\n"
           << "\n\n";
+    }
+    } catch (std::exception& e) {
+      if (getVerboseMode() > VERBOSE_QUIET) {
+        getLogStream() << e.what() << std::endl;
+      }
+    } catch (...) {
+      if (getVerboseMode() > VERBOSE_QUIET) {
+        getLogStream() << "AnsysInterface::generateInputFileExample: "
+                       << "unknown exception thrown" << std::endl;
+      }
     }
   }  // end of AnsysInterface::writeInputFileExample
 

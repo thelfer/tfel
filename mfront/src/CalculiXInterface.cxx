@@ -1401,6 +1401,7 @@ namespace mfront {
   void CalculiXInterface::writeInputFileExample(const BehaviourDescription& mb,
                                                 const FileDescription& fd,
                                                 const bool b) const {
+    try {
     auto throw_if = [](const bool c, const std::string& m) {
       tfel::raise_if(c, "CalculiXInterface::writeInputFileExample: " + m);
     };
@@ -1486,6 +1487,16 @@ namespace mfront {
       }
     }
     out << "\n\n";
+    } catch (std::exception& e) {
+      if (getVerboseMode() > VERBOSE_QUIET) {
+        getLogStream() << e.what() << std::endl;
+      }
+    } catch (...) {
+      if (getVerboseMode() > VERBOSE_QUIET) {
+        getLogStream() << "CalculiXInterface::generateInputFileExample: "
+                       << "unknown exception thrown" << std::endl;
+      }
+    }
   }  // end of CalculiXInterface::writeInputFileExample
 
   CalculiXInterface::~CalculiXInterface() = default;
