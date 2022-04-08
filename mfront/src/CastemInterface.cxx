@@ -442,6 +442,69 @@ namespace mfront {
     return "'" + makeUpperCase(s.substr(0, 2)) + std::to_string(a) + "'";
   }
 
+  std::string CastemInterface::treatTVector(const Hypothesis h,
+                                            const std::string& s) {
+    auto res = std::string{};
+    const auto s2 = makeUpperCase(s.substr(0, 2));
+    switch (h) {
+      case ModellingHypothesis::TRIDIMENSIONAL:
+        res = "'" + s2 + "X' " + "'" + s2 + "Y' " + "'" + s2 + "Z'";
+        break;
+      case ModellingHypothesis::AXISYMMETRICAL:
+        res = "'" + s2 + "R' " + "'" + s2 + "Z'";
+        break;
+      case ModellingHypothesis::PLANESTRAIN:
+      case ModellingHypothesis::PLANESTRESS:
+      case ModellingHypothesis::GENERALISEDPLANESTRAIN:
+        res = "'" + s2 + "X' " + "'" + s2 + "Y'";
+        break;
+      case ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN:
+        res = "'" + s2 + "R'";
+        break;
+      default:
+        auto msg = std::string{};
+        msg += "CastemInterface::treatTVector : unsupported hypothesis";
+        if (h != ModellingHypothesis::UNDEFINEDHYPOTHESIS) {
+          msg += " ('" + ModellingHypothesis::toString(h) + "')";
+        }
+        tfel::raise(msg);
+    }
+    return res;
+  }
+
+  std::string CastemInterface::treatTVector(const Hypothesis h,
+                                            const std::string& s,
+                                            const unsigned short a) {
+    auto res = std::string{};
+    std::ostringstream stmp;
+    stmp << a;
+    const auto s2 = makeUpperCase(s.substr(0, 1)) + stmp.str();
+    switch (h) {
+      case ModellingHypothesis::TRIDIMENSIONAL:
+        res = "'" + s2 + "X' " + "'" + s2 + "Y' " + "'" + s2 + "Z'";
+        break;
+      case ModellingHypothesis::AXISYMMETRICAL:
+        res = "'" + s2 + "R' " + "'" + s2 + "Z'";
+        break;
+      case ModellingHypothesis::PLANESTRAIN:
+      case ModellingHypothesis::PLANESTRESS:
+      case ModellingHypothesis::GENERALISEDPLANESTRAIN:
+        res = "'" + s2 + "X' " + "'" + s2 + "Y'";
+        break;
+      case ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN:
+        res = "'" + s2 + "R' " + "'" + s2 + "Z'";
+        break;
+      default:
+        auto msg = std::string{};
+        msg += "CastemInterface::treatTVector : unsupported hypothesis";
+        if (h != ModellingHypothesis::UNDEFINEDHYPOTHESIS) {
+          msg += " ('" + ModellingHypothesis::toString(h) + "')";
+        }
+        tfel::raise(msg);
+    }
+    return res;
+  }
+
   std::string CastemInterface::treatStensor(const Hypothesis h,
                                             const std::string& s) {
     auto res = std::string{};
@@ -2405,6 +2468,17 @@ namespace mfront {
             }
           }
         }
+      } else if (flag == SupportedTypes::TVECTOR) {
+        if (p->arraySize == 1) {
+          tmp += treatTVector(h, p->name);
+        } else {
+          for (unsigned short j = 0; j != p->arraySize;) {
+            tmp += treatTVector(h, p->name, j);
+            if (++j != p->arraySize) {
+              tmp += ' ';
+            }
+          }
+        }
       } else if (flag == SupportedTypes::STENSOR) {
         if (p->arraySize == 1) {
           tmp += treatStensor(h, p->name);
@@ -2623,6 +2697,7 @@ namespace mfront {
 
   void CastemInterface::generateInputFileExample(
       const BehaviourDescription& bd, const FileDescription& fd) const {
+    try {
     const auto name((!bd.getLibrary().empty())
                         ? bd.getLibrary() + bd.getClassName()
                         : bd.getClassName());
@@ -2710,6 +2785,16 @@ namespace mfront {
           out, bd, ModellingHypothesis::PLANESTRESS);
     }
     out.close();
+    } catch (std::exception& e) {
+      if (getVerboseMode() > VERBOSE_QUIET) {
+        getLogStream() << e.what() << std::endl;
+      }
+    } catch (...) {
+      if (getVerboseMode() > VERBOSE_QUIET) {
+        getLogStream() << "CastemInterface::generateInputFileExample: "
+                       << "unknown exception thrown" << std::endl;
+      }
+    }
   }  // end of CastemInterface::generateInputFileExample
 
   std::string CastemInterface::getMaterialPropertiesOffsetForBehaviourTraits(

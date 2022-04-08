@@ -14,6 +14,7 @@
 #include <fstream>
 #include "TFEL/Raise.hxx"
 #include "TFEL/System/System.hxx"
+#include "MFront/MFrontLogStream.hxx"
 #include "MFront/AmitexInterface.hxx"
 
 namespace mfront {
@@ -127,6 +128,7 @@ namespace mfront {
 
   void AmitexInterface::generateInputFileExample(const BehaviourDescription& bd,
                                                  const FileDescription&) const {
+    try {
     const auto name((!bd.getLibrary().empty())
                         ? bd.getLibrary() + bd.getClassName()
                         : bd.getClassName());
@@ -156,6 +158,16 @@ namespace mfront {
       this->generateInputFileExampleForHypothesis(out, bd, h);
     }
     out.close();
+    } catch (std::exception& e) {
+      if (getVerboseMode() > VERBOSE_QUIET) {
+        getLogStream() << e.what() << std::endl;
+      }
+    } catch (...) {
+      if (getVerboseMode() > VERBOSE_QUIET) {
+        getLogStream() << "AmitexInterface::generateInputFileExample: "
+                       << "unknown exception thrown" << std::endl;
+      }
+    }
   }  // end of generateInputFileExample
 
   AmitexInterface::~AmitexInterface() = default;
