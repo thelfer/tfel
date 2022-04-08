@@ -14,6 +14,7 @@
 #include <fstream>
 #include "TFEL/Raise.hxx"
 #include "TFEL/System/System.hxx"
+#include "MFront/MFrontLogStream.hxx"
 #include "MFront/AmitexInterface.hxx"
 
 namespace mfront {
@@ -127,35 +128,46 @@ namespace mfront {
 
   void AmitexInterface::generateInputFileExample(const BehaviourDescription& bd,
                                                  const FileDescription&) const {
-    const auto name((!bd.getLibrary().empty())
-                        ? bd.getLibrary() + bd.getClassName()
-                        : bd.getClassName());
-    const auto fileName("amitex/" + name + ".xml");
-    // opening output file
-    tfel::system::systemCall::mkdir("amitex");
-    std::ofstream out;
-    out.open(fileName);
-    tfel::raise_if(!out,
-                   "AmitexInterface::generateInputFileExample: "
-                   "could not open file '" +
-                       fileName + "'");
-    // header
-    out << "<!--\n"
-        << "    Simple template for use in AMITEX_FFTP.\n"
-        << "    \n"
-        << "    You may copy-paste those lines in your material.xml file\n"
-        << "    and adjust:\n\n"
-        << "    - the material number I,\n"
-        << "    - the path to the library (currently "
-        << this->getLibraryName(bd) << "),\n"
-        << "    - the coefficients and initial internal variables values\n"
-        << "      which are currently replaced by three dots.\n"
-        << "-->\n\n";
-    // loop over hypothesis
-    for (const auto& h : this->getModellingHypothesesToBeTreated(bd)) {
-      this->generateInputFileExampleForHypothesis(out, bd, h);
+    try {
+      const auto name((!bd.getLibrary().empty())
+                          ? bd.getLibrary() + bd.getClassName()
+                          : bd.getClassName());
+      const auto fileName("amitex/" + name + ".xml");
+      // opening output file
+      tfel::system::systemCall::mkdir("amitex");
+      std::ofstream out;
+      out.open(fileName);
+      tfel::raise_if(!out,
+                     "AmitexInterface::generateInputFileExample: "
+                     "could not open file '" +
+                         fileName + "'");
+      // header
+      out << "<!--\n"
+          << "    Simple template for use in AMITEX_FFTP.\n"
+          << "    \n"
+          << "    You may copy-paste those lines in your material.xml file\n"
+          << "    and adjust:\n\n"
+          << "    - the material number I,\n"
+          << "    - the path to the library (currently "
+          << this->getLibraryName(bd) << "),\n"
+          << "    - the coefficients and initial internal variables values\n"
+          << "      which are currently replaced by three dots.\n"
+          << "-->\n\n";
+      // loop over hypothesis
+      for (const auto& h : this->getModellingHypothesesToBeTreated(bd)) {
+        this->generateInputFileExampleForHypothesis(out, bd, h);
+      }
+      out.close();
+    } catch (std::exception& e) {
+      if (getVerboseMode() > VERBOSE_QUIET) {
+        getLogStream() << e.what() << std::endl;
+      }
+    } catch (...) {
+      if (getVerboseMode() > VERBOSE_QUIET) {
+        getLogStream() << "AmitexInterface::generateInputFileExample: "
+                       << "unknown exception thrown" << std::endl;
+      }
     }
-    out.close();
   }  // end of generateInputFileExample
 
   AmitexInterface::~AmitexInterface() = default;

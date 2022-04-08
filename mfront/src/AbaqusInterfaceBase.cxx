@@ -14,6 +14,7 @@
 #include <fstream>
 #include "TFEL/Raise.hxx"
 #include "MFront/DSLUtilities.hxx"
+#include "MFront/MFrontLogStream.hxx"
 #include "MFront/FileDescription.hxx"
 #include "MFront/AbaqusInterfaceBase.hxx"
 
@@ -480,6 +481,7 @@ namespace mfront {
       const BehaviourDescription& mb,
       const FileDescription& fd,
       const bool b) const {
+    try {
     auto throw_if = [](const bool c, const std::string& m) {
       tfel::raise_if(c, "AbaqusInterfaceBase::writeInputFileExample: " + m);
     };
@@ -613,6 +615,16 @@ namespace mfront {
       }
       out << "\n\n";
     }
+    } catch (std::exception& e) {
+      if (getVerboseMode() > VERBOSE_QUIET) {
+        getLogStream() << e.what() << std::endl;
+      }
+    } catch (...) {
+      if (getVerboseMode() > VERBOSE_QUIET) {
+        getLogStream() << "AbaqusInterfaceBase::generateInputFileExample: "
+                       << "unknown exception thrown" << std::endl;
+      }
+    }
   }  // end of AbaqusInterfaceBase::writeInputFileExample
 
   void AbaqusInterfaceBase::writeDepvar(std::ostream& out,
@@ -622,6 +634,12 @@ namespace mfront {
                                         const std::string& n) const {
     if (SupportedTypes::getTypeFlag(v.type) == SupportedTypes::SCALAR) {
       out << i++ << ", " << n << '\n';
+    } else if (SupportedTypes::getTypeFlag(v.type) == SupportedTypes::TVECTOR) {
+      out << i++ << ", " << n << "_1\n";
+      out << i++ << ", " << n << "_2\n";
+      if (h == ModellingHypothesis::TRIDIMENSIONAL) {
+        out << i++ << ", " << n << "_3\n";
+      }
     } else if (SupportedTypes::getTypeFlag(v.type) == SupportedTypes::STENSOR) {
       out << i++ << ", " << n << "_11\n";
       out << i++ << ", " << n << "_22\n";
