@@ -2575,6 +2575,7 @@ namespace mfront {
 
   void CastemInterface::generateGibianeDeclaration(
       const BehaviourDescription& bd, const FileDescription& fd) const {
+    try {
     const auto name((!bd.getLibrary().empty())
                         ? bd.getLibrary() + bd.getClassName()
                         : bd.getClassName());
@@ -2614,7 +2615,17 @@ namespace mfront {
           out, bd, ModellingHypothesis::PLANESTRESS);
     }
     out.close();
-  }  // end of CastemInterface::generateGibianeDeclaration
+    } catch (std::exception& e) {
+      if (getVerboseMode() > VERBOSE_QUIET) {
+        getLogStream() << e.what() << std::endl;
+      }
+    } catch (...) {
+      if (getVerboseMode() > VERBOSE_QUIET) {
+        getLogStream() << "CastemInterface::generateInputFileExample: "
+                       << "unknown exception thrown" << std::endl;
+      }
+    }
+  }  // end of CastemInterface::generateInputFileExample
 
   void CastemInterface::writeUMATBehaviourTraits(std::ostream& out,
                                                  const BehaviourDescription& mb,
