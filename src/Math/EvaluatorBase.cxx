@@ -42,7 +42,7 @@ namespace tfel {
           }
         }
         if (p != pe) {
-          if (*p == 'e') {
+          if ((*p == 'e') || (*p == 'E')) {
             ++p;
             if (p == pe) {
               --p;
