@@ -551,6 +551,7 @@ namespace tfel::math {
     this->expr->checkCyclicDependency(names);
   }  // end of Evaluator::checkCyclicDependency
 
+
   template <typename T>
   bool Evaluator::convert(const std::string& value) {
     std::istringstream is(value);
