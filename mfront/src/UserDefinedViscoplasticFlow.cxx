@@ -96,7 +96,7 @@ namespace mfront::bbrick {
       auto mp =
           getBehaviourDescriptionMaterialProperty(dsl, opt.first, opt.second);
       declareParameterOrLocalVariable(bd, mp, "real", opt.first + id);
-      this->mps.insert({opt.first + id, mp});
+      this->mps.insert({opt.first, mp});
     }
     for (const auto& v : variables) {
       if ((v == "f") || (v == "p") || (this->mps.count(v) != 0)) {
@@ -220,7 +220,7 @@ namespace mfront::bbrick {
     }
     c += "const auto vp" + id + " = [this, mfront_udvf_f" + id + "] {\n";
     c += "  if(mfront_udvf_f" + id + " >= stress{0}){\n";
-    c += "   return " + this->vp.getCxxFormula(m) + ";\n";
+    c += "   return strainrate{" + this->vp.getCxxFormula(m) + "};\n";
     c += "  }\n";
     c += "  return strainrate{0};\n";
     c += "}();\n";
@@ -264,7 +264,7 @@ namespace mfront::bbrick {
     }
     c += "const auto vp" + id + " = [this, mfront_udvf_f" + id + "] {\n";
     c += "  if(mfront_udvf_f" + id + " >= stress{0}){\n";
-    c += "   return " + this->vp.getCxxFormula(m) + ";\n";
+    c += "   return strainrate{" + this->vp.getCxxFormula(m) + "};\n";
     c += "  }\n";
     c += "  return strainrate{0};\n";
     c += "}();\n";
@@ -282,16 +282,16 @@ namespace mfront::bbrick {
     };
     c += "const auto dvp" + id + "_dseqe" + id + " = ";
     c += "[" + cl(this->dvp_df) + "] {\n";
-    c += "  if(mfront_udvf_f" + id + " >= stress{0}){";
-    c += "return ";
+    c += "  if(mfront_udvf_f" + id + " >= stress{0}){\n";
+    c += "return derivative_type<strainrate, stress>{";
     if (this->dvp_df.has_value()) {
       c += this->dvp_df->getCxxFormula(
                buildDerivativesVariablesMap(*(this->dvp_df))) +
-           ";\n";
+           "};\n";
     } else {
       const auto dvp = std::dynamic_pointer_cast<tfel::math::Evaluator>(
           this->vp.differentiate("f"));
-      c += dvp->getCxxFormula(m) + ";\n";
+      c += dvp->getCxxFormula(m) + "};\n";
     }
     c += "  }\n";
     c += "  return derivative_type<strainrate, stress>{0};\n";
@@ -299,16 +299,16 @@ namespace mfront::bbrick {
     if (this->describesStrainHardeningExplicitly()) {
       c += "const auto dvp" + id + "_dp" + id + " = ";
       c += "[" + cl(this->dvp_dp) + "] {\n";
-      c += "  if(mfront_udvf_f" + id + " >= stress{0}){";
-      c += "return ";
+      c += "  if(mfront_udvf_f" + id + " >= stress{0}){\n";
+      c += "return derivative_type<strainrate, strain>{";
       if (this->dvp_dp.has_value()) {
         c += this->dvp_dp->getCxxFormula(
                  buildDerivativesVariablesMap(*(this->dvp_dp))) +
-             ";\n";
+             "};\n";
       } else {
         const auto dvp = std::dynamic_pointer_cast<tfel::math::Evaluator>(
             this->vp.differentiate("p"));
-        c += dvp->getCxxFormula(m) + ";\n";
+        c += dvp->getCxxFormula(m) + "};\n";
       }
       c += "  }\n";
       c += "  return derivative_type<strainrate, strain>{0};\n";
