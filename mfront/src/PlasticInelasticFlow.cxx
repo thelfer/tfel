@@ -145,7 +145,7 @@ namespace mfront::bbrick {
       c += sp.generateImplicitEquationDerivatives(
           bd, "strain", "p" + id, dseq_ds + "/(" + snf + ")",
           this->sc->isNormalDeviatoric());
-      c += "if(seq<" + sp.getEquivalentStressLowerBound(bd) + "){\n";
+      c += "if(" + seq + " < " + sp.getEquivalentStressLowerBound(bd) + "){\n";
       c += "if(" + dR_ddp + " > stress(0)){\n";
       c += dfp_ddp + " = -1*std::max(real(1.e-12),(" + dR_ddp + ")/(" + snf +
            "));\n";
