@@ -239,14 +239,16 @@ $ CXX=icpc CC=icc FC=ifort F77=ifort cmake $srcdir -DCMAKE_BUILD_TYPE=Release -D
 
 ### Controlling the generation of the documentation
 
-Generation of the documentation can be controlled by the following options:
+Generation of the documentation can be controlled by the following
+boolean options:
 
-- `enable-doxygen-doc`,which enable the generation of the doxygen
-  documentation (disabled by default)
-- `disable-reference-doc`, which disable the reference documentation
-  generation (enabled by default if `latex` of `pandoc` is found)
-- `disable-website`, which disables the generation of the `TFEL`
-  website (enabled by default if `pandoc` is found)
+- `enable-doxygen-doc`, which enables or disables the generation of the
+  doxygen documentation (disabled by default)
+- `enable-reference-doc`, which enables or disables the reference
+  documentation generation (enabled by default if `latex` of `pandoc` is
+  found)
+- `enable-website`, which enables or disables the generation of the
+  `TFEL` website (enabled by default if `pandoc` is found)
 
 ### Localisation of the libraries
 
