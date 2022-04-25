@@ -19,6 +19,10 @@ eqnPrefixTemplate: "($$i$$)"
 
 # Issues fixed
 
+## Issue #168: [tfel-math] output operator is empty for views
+
+For more details, see <https://github.com/thelfer/tfel/issues/168>
+
 ## Issue #153: [mfront] Computation of the thermal expansion with quantities leads to errors when the Hencky strain measure is used in the `generic` interface
 
 For more details, see <https://github.com/thelfer/tfel/issues/153>
