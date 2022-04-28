@@ -107,14 +107,14 @@ namespace mfront::bbrick {
     }
     //
     auto add_derivative_if =
-        [this, &variables,
+        [&variables,
          &d](const std::string& n) -> std::optional<tfel::math::Evaluator> {
       if (d.count(n) == 0) {
         return {};
       }
       const auto df = tfel::math::Evaluator(d.at(n).get<std::string>());
       const auto df_variables = df.getVariablesNames();
-      for (const auto v : df_variables) {
+      for (const auto& v : df_variables) {
         if ((v == "vp") || (v == "seps")) {
           continue;
         }
@@ -162,7 +162,7 @@ namespace mfront::bbrick {
     ViscoplasticFlowBase::endTreatment(bd, dsl, sp, id);
     auto mts = getMiddleOfTimeStepModifier(bd);
     CodeBlock i;
-    for (const auto mp : mps) {
+    for (const auto& mp : mps) {
       i.code += generateMaterialPropertyInitializationCode(
           dsl, bd, mp.first + id, mp.second);
     }
@@ -186,11 +186,11 @@ namespace mfront::bbrick {
     const auto mts = getMiddleOfTimeStepModifier(bd);
     auto m = std::map<std::string, std::string>{};
     m.insert({"f", "mfront_udvf_f" + id});
-    for (const auto mp : mps) {
+    for (const auto& mp : mps) {
       m.insert({mp.first, "this->" + mp.first + id});
     }
     const auto& variables = vp.getVariablesNames();
-    for (const auto v : variables) {
+    for (const auto& v : variables) {
       if ((v == "f") || (mps.count(v) != 0)) {
         continue;
       }
@@ -231,7 +231,6 @@ namespace mfront::bbrick {
       const BehaviourDescription& bd,
       const StressPotential& sp,
       const std::string& id) const {
-    const auto& variables = this->vp.getVariablesNames();
     const auto m = getVariablesMap(this->vp, this->mps, bd, id);
     const auto buildDerivativesVariablesMap =
         [&m, &id, &sp, &bd](const tfel::math::Evaluator& df) {
@@ -269,7 +268,7 @@ namespace mfront::bbrick {
     c += "  return strainrate{0};\n";
     c += "}();\n";
     //
-    const auto cl = [this, &id](const auto& dv) {
+    const auto cl = [id](const auto& dv) {
       auto r = "this, mfront_udvf_f" + id;
       if (dv.has_value()) {
         const auto df_variables = dv->getVariablesNames();

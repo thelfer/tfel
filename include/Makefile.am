@@ -190,6 +190,8 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Math/Parser/BinaryOperator.ixx					                     \
 			TFEL/Math/Parser/Function.hxx      					                     \
 			TFEL/Math/Parser/Function.ixx      					                     \
+				TFEL/Math/Parser/PowerFunction.hxx      					            \
+			TFEL/Math/Parser/PowerFunction.ixx      					                \
 			TFEL/Math/Parser/Variable.hxx				        	                     \
 			TFEL/Math/Parser/ExternalCFunction.hxx                                                       \
 			TFEL/Math/Parser/ExternalCastemFunction.hxx                                                  \

@@ -17,7 +17,7 @@
 
 #include "TFEL/Config/TFELConfig.hxx"
 #include "TFEL/Math/Evaluator.hxx"
-#include "TFEL/Math/Parser/Function.hxx"
+#include "TFEL/Math/Parser/Expr.hxx"
 
 namespace tfel::math::parser {
 
@@ -38,29 +38,23 @@ namespace tfel::math::parser {
    * a base class which offers a default implementation of the
    * `differentiate` method
    */
-  struct EvaluatorFunctionBase : public Function {
-    //! constructor
+  struct EvaluatorFunctionBase : public Expr {
+    //! \brief constructor
     EvaluatorFunctionBase();
-    /*!
-     * \return a string representation of the evaluator suitable to
-     * be integrated in a C++ code.
-     * \param[in] m: a map used to change the names of the variables
-     */
     std::string getCxxFormula(const std::vector<std::string>&) const override;
-    /*!
-     * \brief default implementation of the `differentiate`
-     * method. This throws a `std::runtime_error` stating that
-     * no suitable implementation exists.
-     */
     std::shared_ptr<Expr> differentiate(
         const std::vector<double>::size_type,
         const std::vector<double>&) const override;
-    //! destructor
+    //! \brief destructor
     ~EvaluatorFunctionBase() override;
   };  // end of struct EvaluatorFunctionBase
 
   struct EvaluatorFunction1VBase : public EvaluatorFunctionBase {
     EvaluatorFunction1VBase(const std::shared_ptr<Expr>);
+    //
+    bool isConstant() const override;
+    bool dependsOnVariable(
+        const std::vector<double>::size_type) const override;
     void checkCyclicDependency(std::vector<std::string>&) const override;
     ~EvaluatorFunction1VBase() override;
 
@@ -73,6 +67,10 @@ namespace tfel::math::parser {
   struct EvaluatorFunction2VBase : public EvaluatorFunctionBase {
     EvaluatorFunction2VBase(const std::shared_ptr<Expr>,
                             const std::shared_ptr<Expr>);
+    //
+    bool isConstant() const override;
+    bool dependsOnVariable(
+        const std::vector<double>::size_type) const override;
     void checkCyclicDependency(std::vector<std::string>&) const override;
     ~EvaluatorFunction2VBase() override;
 
@@ -189,6 +187,10 @@ namespace tfel::math::parser {
       : public EvaluatorFunctionBase {
     EvaluatorFunctionNV(typename EvaluatorFunctionWrapper<N>::type,
                         const std::vector<std::shared_ptr<Expr>>&);
+    //
+    bool isConstant() const override;
+    bool dependsOnVariable(
+        const std::vector<double>::size_type) const override;
     double getValue() const override;
     std::shared_ptr<Expr> resolveDependencies(
         const std::vector<double>&) const override;
@@ -215,6 +217,10 @@ namespace tfel::math::parser {
     EvaluatorFunction1PNV(typename EvaluatorFunctionWrapper<N>::type1P,
                           const int,
                           const std::vector<std::shared_ptr<Expr>>&);
+    //
+    bool isConstant() const override;
+    bool dependsOnVariable(
+        const std::vector<double>::size_type) const override;
     double getValue() const override;
     std::shared_ptr<Expr> resolveDependencies(
         const std::vector<double>&) const override;
@@ -243,6 +249,10 @@ namespace tfel::math::parser {
                           const int,
                           const int,
                           const std::vector<std::shared_ptr<Expr>>&);
+    //
+    bool isConstant() const override;
+    bool dependsOnVariable(
+        const std::vector<double>::size_type) const override;
     double getValue() const override;
     std::shared_ptr<Expr> resolveDependencies(
         const std::vector<double>&) const override;
@@ -270,6 +280,10 @@ namespace tfel::math::parser {
     EvaluatorFunction1UPNV(typename EvaluatorFunctionWrapper<N>::type1UP,
                            const unsigned int,
                            const std::vector<std::shared_ptr<Expr>>&);
+    //
+    bool isConstant() const override;
+    bool dependsOnVariable(
+        const std::vector<double>::size_type) const override;
     double getValue() const override;
     std::shared_ptr<Expr> resolveDependencies(
         const std::vector<double>&) const override;
@@ -298,6 +312,10 @@ namespace tfel::math::parser {
                            const unsigned int n,
                            const unsigned int m,
                            const std::vector<std::shared_ptr<Expr>>&);
+    //
+    bool isConstant() const override;
+    bool dependsOnVariable(
+        const std::vector<double>::size_type) const override;
     double getValue() const override;
     std::shared_ptr<Expr> resolveDependencies(
         const std::vector<double>&) const override;

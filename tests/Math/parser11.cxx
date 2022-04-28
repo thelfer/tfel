@@ -41,12 +41,14 @@ struct ParserTest11 final : public tfel::tests::TestCase {
       this->check(f + "(x,y)", f + "(x,y)");
     }
     this->check("power<0>(x)", "1");
+    this->check("power<1>(x)", "x");
 #if !(defined _WIN32 || defined _WIN64 || defined __CYGWIN__)
-    for (int i = 1; i != 16; ++i) {
+    for (int i = 2; i != 16; ++i) {
       const auto p = "power<" + std::to_string(i) + ">";
       this->check(p + "(x)", "tfel::math::" + p + "(x)");
     }
 #endif /* !(defined _WIN32 || defined _WIN64 ||defined __CYGWIN__) */
+    this->check("x ** 17", "std::pow(x,17)");
     for (const std::string op : {"+", "-", "*", "/"}) {
       this->check("a" + op + "b", "(a)" + op + "(b)");
     }
@@ -60,8 +62,6 @@ struct ParserTest11 final : public tfel::tests::TestCase {
  private:
   void check(const std::string& f, const std::string& r) {
     tfel::math::Evaluator ev(f);
-    std::cout << ev.getCxxFormula() << std::endl;
-    std::cout << r << std::endl;
     TFEL_TESTS_ASSERT(ev.getCxxFormula() == r);
   }
 };

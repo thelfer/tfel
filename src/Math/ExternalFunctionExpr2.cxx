@@ -32,7 +32,26 @@ namespace tfel::math::parser {
              "(" +
                  std::to_string(this->args.size()) + " given, " +
                  std::to_string(f->getNumberOfVariables()) + " required)");
-  }  // end of ExternalFunctionExpr2::ExternalFunctionExpr2
+  }  // end of ExternalFunctionExpr2
+
+  bool ExternalFunctionExpr2::isConstant() const {
+    for (const auto& a : this->args) {
+      if (!a->isConstant()) {
+        return false;
+      }
+    }
+    return true;
+  }  // end of isConstant
+
+  bool ExternalFunctionExpr2::dependsOnVariable(
+      const std::vector<double>::size_type p) const {
+    for (const auto& a : this->args) {
+      if (a->dependsOnVariable(p)) {
+        return true;
+      }
+    }
+    return false;
+  }  // end of dependsOnVariable
 
   double ExternalFunctionExpr2::getValue() const {
     using namespace tfel::math::parser;
@@ -43,14 +62,14 @@ namespace tfel::math::parser {
       this->f->setVariableValue(i, val);
     }
     return this->f->getValue();
-  }  // end of ExternalFunctionExpr2::getValue
+  }  // end of getValue
 
   std::string ExternalFunctionExpr2::getCxxFormula(
       const std::vector<std::string>&) const {
     tfel::raise(
         "ExternalFunctionExpr2::getCxxFormula: "
         "unimplemented feature");
-  }  // end of ExternalFunctionExpr2::getCxxFormula
+  }  // end of getCxxFormula
 
   void ExternalFunctionExpr2::checkCyclicDependency(
       std::vector<std::string>& names) const {
@@ -61,16 +80,14 @@ namespace tfel::math::parser {
       (*p)->checkCyclicDependency(n);
       mergeVariablesNames(names, n);
     }
-  }  // end of ExternalFunctionExpr2::checkCyclicDependency
+  }  // end of checkCyclicDependency
 
   void ExternalFunctionExpr2::getParametersNames(
       std::set<std::string>& p) const {
     for (const auto& a : this->args) {
       a->getParametersNames(p);
     }
-  }  // end of
-     // ExternalFunctionExpr2::getParametersNames(std::set<std::string>&)
-     // const;
+  }  // end of getParametersNames
 
   std::shared_ptr<Expr> ExternalFunctionExpr2::differentiate(
       const std::vector<double>::size_type pos,
@@ -79,7 +96,7 @@ namespace tfel::math::parser {
     auto p = this->args.begin();
     unsigned short i = 0;
     if (this->args.empty()) {
-      return std::make_shared<Number>("0", 0.);
+      return Number::zero();
     }
     auto p3 = this->args.begin();
     auto p4 = nargs.begin();
@@ -102,7 +119,7 @@ namespace tfel::math::parser {
       ++i;
     }
     return df;
-  }  // end of ExternalFunctionExpr2::differentiate
+  }  // end of differentiate
 
   std::shared_ptr<Expr>
   ExternalFunctionExpr2::createFunctionByChangingParametersIntoVariables(
@@ -118,8 +135,7 @@ namespace tfel::math::parser {
           (*p)->createFunctionByChangingParametersIntoVariables(v, params, pos);
     }
     return std::make_shared<ExternalFunctionExpr2>(this->f, nargs);
-  }  // end of
-     // ExternalFunctionExpr2::createFunctionByChangingParametersIntoVariables
+  }  // end of createFunctionByChangingParametersIntoVariables
 
   std::shared_ptr<Expr> ExternalFunctionExpr2::clone(
       const std::vector<double>& v) const {
@@ -131,7 +147,7 @@ namespace tfel::math::parser {
       *p2 = (*p)->clone(v);
     }
     return std::make_shared<ExternalFunctionExpr2>(this->f, nargs);
-  }  // end of ExternalFunctionExpr2::clone
+  }  // end of clone
 
   std::shared_ptr<Expr> ExternalFunctionExpr2::resolveDependencies(
       const std::vector<double>& v) const {
@@ -144,7 +160,7 @@ namespace tfel::math::parser {
     }
     return std::make_shared<ExternalFunctionExpr2>(
         this->f->resolveDependencies(), nargs);
-  }  // end of ExternalFunctionExpr2::resolveDependencies
+  }  // end of resolveDependencies
 
   ExternalFunctionExpr2::~ExternalFunctionExpr2() = default;
 

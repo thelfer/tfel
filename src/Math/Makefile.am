@@ -61,6 +61,7 @@ libTFELMathParser_la_SOURCES = ExternalCFunction.cxx                         \
 			       EvaluatorFunction.cxx	                     \
 			       Evaluator.cxx	                             \
 			       Function.cxx	                             \
+			       PowerFunction.cxx	                         \
 			       Negation.cxx	                             \
 			       Number.cxx                                    \
 			       LevenbergMarquardtEvaluatorWrapper.cxx        \

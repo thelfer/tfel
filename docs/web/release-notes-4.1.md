@@ -138,6 +138,16 @@ external state variables.
 
 ## Port to GPUs
 
+# `TFEL/Math/Parser` improvements
+
+## Improved differentiation
+
+The differentiation of formula defined by the `Evaluator` class has been
+improved in several manner.
+
+For example, the derivation of the formula `2*sin(x)` would lead in
+previous versions in the following ev
+
 # `TFEL/Material` improvements
 
 ## Generalized usage of the `constexpr` keyword {#sec:tfel_4.1:tfel_material:constexpr}
@@ -1189,6 +1199,60 @@ $ mfront-query --list-behaviour-mfm-test-generator-tests=unsorted --test=".+Tens
 ~~~~
 
 # Issues fixed
+￼
+
+## Issue #172: [tfel-math-parser] Add the ability to derive the power function enhancement {#sec:tfel:4.1:issue:172}
+
+Previous versions of `TFEL/Math` did not implement the evaluation the
+derivative of the formula `power<N>(x)`. This is now implemented
+properly.
+
+For more details, see : <https://github.com/thelfer/tfel/issues/172>.
+
+## Issue #171: ￼[tfel-math-parser] Correct derivative of exponents bug
+
+The computation of the derivative of power functions lead to the
+following issues in previous versions of `TFEL`. The derivative of
+`a(x)**b(x)` with respect to `x` was computed as
+`(b(x)*a(x)**b(x)/a(x))*da(x)+log(a(x))*a(x)**b(x)*db(x)` where `da(x)`
+and `db(x)` denote the deriative of `a` and with respect to `x`.
+
+1. The first term `b(x)*a(x)**b(x)/a(x)*da(x)` is singular if `a(x)` is
+  null. This term is now computed as `b(x)*a(x)**(b(x)-1)*da(x)`.
+2. The second term `log(a(x))*a(x)**b(x)*db(x)` is singular if `a(x)` is
+  null although `log(a(x))*a(x)**b(x)` has a well defined limit as a
+  tends to zero. The new implementation takes this case into account.
+
+For more details, see : <https://github.com/thelfer/tfel/issues/171>.
+
+## Issue #170: [tfel-math-parser] Add support for integer exponent
+
+In previous versions, the formula `x**N` was evaluated using
+`std::pow(x,N)` even if `N` was an integer.
+
+This formula is now evaluated as:
+
+- `tfel::math::power<N>(x)` if `N` is in the ranges `[-16:-1]` or
+  `[2:16]`.
+- `x**0` is evaluated as `1`.
+- `x**1` is evaluated as `x`.
+- `std::pow(x,N)` otherwise.
+
+See also Issue 172.
+
+For more details, see : <https://github.com/thelfer/tfel/issues/170>.
+
+## Issue #169: [tfel-math-parser] Add feature to simplify formula
+
+### More efficient evaluation of derivatives
+
+In previous versions, the evaluation of derivatives of a formula could
+lead to inefficient evaluation tree. For example, the derivative of the
+formula `x+exp(y)` with respect to `x` was computed as `1+exp(y)*0`,
+which required a useless evaluation of `exp(y)`. Version 4.1 evaluates
+this derivative as `1`.
+
+For more details, see : <https://github.com/thelfer/tfel/issues/169>.
 
 ## Issue #157: Disable `reportContractViolation` on GPUs
 

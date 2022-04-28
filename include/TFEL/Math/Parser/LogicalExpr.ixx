@@ -24,19 +24,30 @@ namespace tfel::math::parser {
   template <typename Op>
   LogicalOperation<Op>::LogicalOperation(const std::shared_ptr<Expr> a_,
                                          const std::shared_ptr<Expr> b_)
-      : a(a_), b(b_) {}  // end of LogicalOperation::LogicalOperation
+      : a(a_), b(b_) {}  // end of LogicalOperation
+
+  template <typename Op>
+  bool LogicalOperation<Op>::isConstant() const {
+    return (this->a->isConstant()) && (this->b->isConstant());
+  }  // end of isConstant
+
+  template <typename Op>
+  bool LogicalOperation<Op>::dependsOnVariable(
+      const std::vector<double>::size_type p) const {
+    return this->a->dependsOnVariable(p) || this->b->dependsOnVariable(p);
+  }  // end of dependsOnVariable
 
   template <typename Op>
   bool LogicalOperation<Op>::getValue() const {
     return Op::apply(this->a->getValue(), this->b->getValue());
-  }  // end of LogicalOperation::getValue() const
+  }  // end of getValue
 
   template <typename Op>
   std::string LogicalOperation<Op>::getCxxFormula(
       const std::vector<std::string>& m) const {
     return Op::getCxxFormula(this->a->getCxxFormula(m),
                              this->b->getCxxFormula(m));
-  }  // end of LogicalOperation<Op>::getCxxFormula
+  }  // end of getCxxFormula
 
   template <typename Op>
   void LogicalOperation<Op>::checkCyclicDependency(
@@ -47,21 +58,21 @@ namespace tfel::math::parser {
     this->b->checkCyclicDependency(b_vars);
     mergeVariablesNames(vars, a_vars);
     mergeVariablesNames(vars, b_vars);
-  }  // end of LogicalOperation::checkCyclicDependency
+  }  // end of checkCyclicDependency
 
   template <typename Op>
   std::shared_ptr<LogicalExpr> LogicalOperation<Op>::resolveDependencies(
       const std::vector<double>& v) const {
     return std::make_shared<LogicalOperation<Op>>(
         this->a->resolveDependencies(v), this->b->resolveDependencies(v));
-  }  // end of LogicalOperation<Op>::resolveDependencies() const
+  }  // end of resolveDependencies() const
 
   template <typename Op>
   std::shared_ptr<LogicalExpr> LogicalOperation<Op>::clone(
       const std::vector<double>& v) const {
     return std::make_shared<LogicalOperation<Op>>(this->a->clone(v),
                                                   this->b->clone(v));
-  }  // end of LogicalOperation<Op>::clone
+  }  // end of clone
 
   template <typename Op>
   std::shared_ptr<LogicalExpr>
@@ -72,15 +83,14 @@ namespace tfel::math::parser {
     return std::make_shared<LogicalOperation<Op>>(
         this->a->createFunctionByChangingParametersIntoVariables(v, p, pos),
         this->b->createFunctionByChangingParametersIntoVariables(v, p, pos));
-  }  // end of
-     // LogicalOperation<Op>::createFunctionByChangingParametersIntoVariables
+  }  // end of createFunctionByChangingParametersIntoVariables
 
   template <typename Op>
   void LogicalOperation<Op>::getParametersNames(
       std::set<std::string>& p) const {
     this->a->getParametersNames(p);
     this->b->getParametersNames(p);
-  }  // end of LogicalOperation<Op>::getParametersNames
+  }  // end of getParametersNames
 
   template <typename Op>
   LogicalOperation<Op>::~LogicalOperation() = default;
@@ -89,20 +99,30 @@ namespace tfel::math::parser {
   LogicalBinaryOperation<Op>::LogicalBinaryOperation(
       const std::shared_ptr<LogicalExpr> a_,
       const std::shared_ptr<LogicalExpr> b_)
-      : a(a_),
-        b(b_) {}  // end of LogicalBinaryOperation::LogicalBinaryOperation
+      : a(a_), b(b_) {}  // end of LogicalBinaryOperation
+
+  template <typename Op>
+  bool LogicalBinaryOperation<Op>::isConstant() const {
+    return this->a->isConstant() && this->b->isConstant();
+  }  // end of isConstant
+
+  template <typename Op>
+  bool LogicalBinaryOperation<Op>::dependsOnVariable(
+      const std::vector<double>::size_type p) const {
+    return this->a->dependsOnVariable(p) || this->b->dependsOnVariable(p);
+  }  // end of dependsOnVariable
 
   template <typename Op>
   bool LogicalBinaryOperation<Op>::getValue() const {
     return Op::apply(this->a->getValue(), this->b->getValue());
-  }  // end of LogicalBinaryOperation::getValue() const
+  }  // end of getValue
 
   template <typename Op>
   std::string LogicalBinaryOperation<Op>::getCxxFormula(
       const std::vector<std::string>& m) const {
     return Op::getCxxFormula(this->a->getCxxFormula(m),
                              this->b->getCxxFormula(m));
-  }  // end of LogicalBinaryOperation::getCxxFormula() const
+  }  // end of getCxxFormula
 
   template <typename Op>
   void LogicalBinaryOperation<Op>::checkCyclicDependency(
@@ -113,28 +133,28 @@ namespace tfel::math::parser {
     this->b->checkCyclicDependency(b_vars);
     mergeVariablesNames(vars, a_vars);
     mergeVariablesNames(vars, b_vars);
-  }  // end of LogicalBinaryOperation::checkCyclicDependency
+  }  // end of checkCyclicDependency
 
   template <typename Op>
   void LogicalBinaryOperation<Op>::getParametersNames(
       std::set<std::string>& p) const {
     this->a->getParametersNames(p);
     this->b->getParametersNames(p);
-  }  // end of LogicalBinaryOperation<Op>::getParametersNames
+  }  // end of getParametersNames
 
   template <typename Op>
   std::shared_ptr<LogicalExpr> LogicalBinaryOperation<Op>::resolveDependencies(
       const std::vector<double>& v) const {
     return std::make_shared<LogicalBinaryOperation<Op>>(
         this->a->resolveDependencies(v), this->b->resolveDependencies(v));
-  }  // end of LogicalBinaryOperation<Op>::resolveDependencies() const
+  }  // end of resolveDependencies
 
   template <typename Op>
   std::shared_ptr<LogicalExpr> LogicalBinaryOperation<Op>::clone(
       const std::vector<double>& v) const {
     return std::make_shared<LogicalBinaryOperation<Op>>(this->a->clone(v),
                                                         this->b->clone(v));
-  }  // end of LogicalBinaryOperation<Op>::clone
+  }  // end of clone
 
   template <typename Op>
   std::shared_ptr<LogicalExpr>
@@ -145,8 +165,7 @@ namespace tfel::math::parser {
     return std::make_shared<LogicalBinaryOperation<Op>>(
         this->a->createFunctionByChangingParametersIntoVariables(v, p, pos),
         this->b->createFunctionByChangingParametersIntoVariables(v, p, pos));
-  }  // end of
-     // LogicalBinaryOperation<Op>::createFunctionByChangingParametersIntoVariables
+  }  // end of createFunctionByChangingParametersIntoVariables
 
   template <typename Op>
   LogicalBinaryOperation<Op>::~LogicalBinaryOperation() = default;

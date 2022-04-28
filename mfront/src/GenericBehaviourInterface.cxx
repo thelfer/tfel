@@ -2083,7 +2083,7 @@ namespace mfront {
     auto export_variable = [this, &bd, &os](const VariableDescription& v,
                                             const char* const dest,
                                             const SupportedTypes::TypeSize o) {
-      auto do_export = [this, &bd, &v, &os, &dest](
+      auto do_export = [&bd, &v, &os, &dest](
                            const SupportedTypes::TypeSize offset,
                            const auto& n) {
         if (v.isScalar()) {

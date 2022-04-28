@@ -23,8 +23,22 @@
 
 namespace tfel::math::parser {
 
+  /*!
+   * \brief base class resulting from the analysis of a formula.
+   */
   struct Expr {
+    /*!
+     * \return if the expression depends of the variable associated with the
+     * given position
+     * \param[in] p: position
+     */
+    virtual bool dependsOnVariable(
+        const std::vector<double>::size_type) const = 0;
+    //! \brief return if the expression is constant
+    virtual bool isConstant() const = 0;
+    //! \return the result of the evaluation of the expression
     virtual double getValue() const = 0;
+    //! \brief check if the expression does not lead to a cyclic dependency
     virtual void checkCyclicDependency(std::vector<std::string>&) const = 0;
     virtual std::shared_ptr<Expr> resolveDependencies(
         const std::vector<double>&) const = 0;
@@ -55,6 +69,14 @@ namespace tfel::math::parser {
   //! a simple helper function for checkCyclicDependency
   void mergeVariablesNames(std::vector<std::string>&,
                            const std::vector<std::string>&);
+
+  /*!
+   * \brief small utility function computing d1 * d2 if d2 is not equal to 1
+   * \param[in] d1: left term
+   * \param[in] d2: right term
+   */
+  std::shared_ptr<Expr> applyChainRule(const std::shared_ptr<Expr>,
+                                       const std::shared_ptr<Expr>);
 
 }  // end of namespace tfel::math::parser
 

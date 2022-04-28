@@ -39,6 +39,15 @@ namespace tfel::math::parser {
       const std::shared_ptr<Expr> e)
       : expr(e) {}  // end of EvaluatorFunction1VBase::EvaluatorFunction1VBase
 
+  bool EvaluatorFunction1VBase::isConstant() const {
+    return this->expr->isConstant();
+  }  // end of isConstant
+
+  bool EvaluatorFunction1VBase::dependsOnVariable(
+      const std::vector<double>::size_type p) const {
+    return this->expr->dependsOnVariable(p);
+  }  // end of dependsOnVariable
+
   void EvaluatorFunction1VBase::checkCyclicDependency(
       std::vector<std::string>& names) const {
     this->expr->checkCyclicDependency(names);
@@ -50,6 +59,15 @@ namespace tfel::math::parser {
       const std::shared_ptr<Expr> e1_, const std::shared_ptr<Expr> e2_)
       : e1(e1_),
         e2(e2_) {}  // end of EvaluatorFunction2VBase::EvaluatorFunction2VBase
+
+  bool EvaluatorFunction2VBase::isConstant() const {
+    return this->e1->isConstant() && this->e2->isConstant();
+  }  // end of isConstant
+
+  bool EvaluatorFunction2VBase::dependsOnVariable(
+      const std::vector<double>::size_type p) const {
+    return this->e1->dependsOnVariable(p) || this->e2->dependsOnVariable(p);
+  }  // end of dependsOnVariable
 
   void EvaluatorFunction2VBase::checkCyclicDependency(
       std::vector<std::string>& names) const {

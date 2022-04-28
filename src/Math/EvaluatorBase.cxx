@@ -27,6 +27,14 @@ namespace tfel::math::parser {
                                         const std::string::const_iterator pe) {
     std::string word;
     std::string::const_iterator b = p;
+    if (*p == '-') {
+      ++p;
+      if ((p == pe) || (!(isdigit(*p)))) {
+        tfel::raise(
+            "EvaluatorBase::readNumber: "
+            "invalid number");
+      }
+    }
     // reading decimal part
     while ((isdigit(*p)) && (p != pe)) {
       ++p;

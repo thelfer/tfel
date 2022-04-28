@@ -24,6 +24,13 @@ namespace tfel::math::parser {
                      const std::vector<double>::size_type p_)
       : v(v_), pos(p_) {}  // end of Variable::Variable
 
+  bool Variable::isConstant() const { return false; }  // end of isConstant
+
+  bool Variable::dependsOnVariable(
+      const std::vector<double>::size_type p) const {
+    return pos == p;
+  }  // end of dependsOnVariable
+
   double Variable::getValue() const {
     return this->v[this->pos];
   }  // end of Variable::getValue
@@ -45,9 +52,9 @@ namespace tfel::math::parser {
       const std::vector<double>::size_type dpos,
       const std::vector<double>&) const {
     if (dpos != this->pos) {
-      return std::shared_ptr<Expr>(new Number("0", 0.));
+      return Number::zero();
     }
-    return std::shared_ptr<Expr>(new Number("1", 1.));
+    return Number::one();
   }  // end of Variable::differentiate
 
   std::shared_ptr<Expr> Variable::clone(const std::vector<double>& v_) const {
@@ -70,5 +77,7 @@ namespace tfel::math::parser {
       const std::vector<double>& nv) const {
     return std::shared_ptr<Expr>(new Variable(nv, this->pos));
   }  // end of Variable::resolveDependencies
+
+  Variable::~Variable() = default;
 
 }  // end of namespace tfel::math::parser

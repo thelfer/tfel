@@ -36,7 +36,7 @@ namespace mfront {
      */
     QueryHandlerBase(const int, const char *const *const);
     //! \brief destructor
-    virtual ~QueryHandlerBase();
+    ~QueryHandlerBase() override;
 
    protected:
     //! \brief ArgumentParserBase must be a friend

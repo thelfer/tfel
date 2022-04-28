@@ -118,7 +118,7 @@ namespace mfront::bbrick {
     constexpr auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     auto mts = getMiddleOfTimeStepModifier(bd);
     CodeBlock i;
-    for (const auto mp : mps) {
+    for (const auto& mp : mps) {
       const auto mp_id =
           IsotropicHardeningRule::getVariableId(mp.first, fid, id);
       i.code +=
@@ -140,13 +140,13 @@ namespace mfront::bbrick {
     const auto mts = getMiddleOfTimeStepModifier(bd);
     auto m = std::map<std::string, std::string>{};
     m.insert({"p", p});
-    for (const auto mp : mps) {
+    for (const auto& mp : mps) {
       const auto mp_id =
           IsotropicHardeningRule::getVariableId(mp.first, fid, id);
       m.insert({mp.first, "this->" + mp_id});
     }
     const auto& variables = R.getVariablesNames();
-    for (const auto v : variables) {
+    for (const auto& v : variables) {
       if ((v == "p") || (mps.count(v) != 0)) {
         continue;
       }

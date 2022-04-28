@@ -102,8 +102,21 @@ namespace tfel::math::parser {
     static std::string getCxxFormula(const std::string&, const std::string&);
   };  // end of struct OpOr
 
+  /*!
+   * \brief structure representing a logical expression
+   */
   struct LogicalExpr {
+    //! \return the result of the evaluation of the logical expression
     virtual bool getValue() const = 0;
+    //! \brief return if the expression is constant
+    virtual bool isConstant() const = 0;
+    /*!
+     * \return if the expression depends of the variable associated with the
+     * given position
+     * \param[in] p: position
+     */
+    virtual bool dependsOnVariable(
+        const std::vector<double>::size_type) const = 0;
     /*!
      * \return a string representation of the evaluator suitable to
      * be integrated in a C++ code.
@@ -131,12 +144,10 @@ namespace tfel::math::parser {
   template <typename Op>
   struct TFEL_VISIBILITY_LOCAL LogicalOperation final : public LogicalExpr {
     LogicalOperation(const ExprPtr, const ExprPtr);
+    //
+    bool isConstant() const override;
+    bool dependsOnVariable(const std::vector<double>::size_type) const override;
     bool getValue() const override;
-    /*!
-     * \return a string representation of the evaluator suitable to
-     * be integrated in a C++ code.
-     * \param[in] m: a map used to change the names of the variables
-     */
     std::string getCxxFormula(const std::vector<std::string>&) const override;
     void checkCyclicDependency(std::vector<std::string>&) const override;
     LogicalExprPtr resolveDependencies(
@@ -161,12 +172,10 @@ namespace tfel::math::parser {
   struct TFEL_VISIBILITY_LOCAL LogicalBinaryOperation final
       : public LogicalExpr {
     LogicalBinaryOperation(LogicalExprPtr, LogicalExprPtr);
+    //
+    bool isConstant() const override;
+    bool dependsOnVariable(const std::vector<double>::size_type) const override;
     bool getValue() const override;
-    /*!
-     * \return a string representation of the evaluator suitable to
-     * be integrated in a C++ code.
-     * \param[in] m: a map used to change the names of the variables
-     */
     std::string getCxxFormula(const std::vector<std::string>&) const override;
     void checkCyclicDependency(std::vector<std::string>&) const override;
     LogicalExprPtr resolveDependencies(
@@ -189,12 +198,10 @@ namespace tfel::math::parser {
 
   struct TFEL_VISIBILITY_LOCAL NegLogicalExpression final : public LogicalExpr {
     NegLogicalExpression(LogicalExprPtr);
+    //
+    bool isConstant() const override;
+    bool dependsOnVariable(const std::vector<double>::size_type) const override;
     bool getValue() const override;
-    /*!
-     * \return a string representation of the evaluator suitable to
-     * be integrated in a C++ code.
-     * \param[in] m: a map used to change the names of the variables
-     */
     std::string getCxxFormula(const std::vector<std::string>&) const override;
     void checkCyclicDependency(std::vector<std::string>&) const override;
     LogicalExprPtr resolveDependencies(

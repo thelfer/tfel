@@ -19,13 +19,13 @@
 #include <iterator>
 #include <sstream>
 #include <cctype>
-
 #include "TFEL/Raise.hxx"
 #include "TFEL/PhysicalConstants.hxx"
 #include "TFEL/UnicodeSupport/UnicodeSupport.hxx"
 #include "TFEL/Math/power.hxx"
 #include "TFEL/Math/Evaluator.hxx"
 #include "TFEL/Math/Parser/Function.hxx"
+#include "TFEL/Math/Parser/PowerFunction.hxx"
 #include "TFEL/Math/Parser/BinaryFunction.hxx"
 
 namespace tfel::math {
@@ -52,14 +52,14 @@ namespace tfel::math {
       const std::vector<std::string>::const_iterator pe) {
     raise_if(p == pe, method + ": unexpected end of line" +
                           ((!error.empty()) ? " (" + error + ")" : ""));
-  }  // end of Evaluator::checkNotEndOfExpression
+  }  // end of checkNotEndOfExpression
 
   void Evaluator::checkNotEndOfExpression(
       const std::string& method,
       const std::vector<std::string>::const_iterator p,
       const std::vector<std::string>::const_iterator pe) {
     Evaluator::checkNotEndOfExpression(method, "", p, pe);
-  }  // end of Evaluator::checkNotEndOfExpression
+  }  // end of checkNotEndOfExpression
 
   void Evaluator::readSpecifiedToken(
       const std::string& method,
@@ -73,7 +73,7 @@ namespace tfel::math {
                               " (expected '" +
                               value + "')");
     ++p;
-  }  // end of Evaluator::readSpecifiedToken
+  }  // end of readSpecifiedToken
 
   unsigned short Evaluator::convertToUnsignedShort(const std::string& method,
                                                    const std::string& value) {
@@ -89,7 +89,7 @@ namespace tfel::math {
       tfel::raise(method + ": not read value from token '" + value + "'");
     }
     return u;
-  }  // end of Evaluator::convertToUnsignedShort
+  }  // end of convertToUnsignedShort
 
   unsigned int Evaluator::convertToUnsignedInt(const std::string& method,
                                                const std::string& value) {
@@ -105,23 +105,38 @@ namespace tfel::math {
       tfel::raise(method + ": not read value from token '" + value + "'");
     }
     return u;
-  }  // end of Evaluator::convertToUnsignedInt
+  }  // end of convertToUnsignedInt
+
+  bool Evaluator::isInteger(const std::string& value) {
+    if (value.empty()) {
+      return false;
+    }
+    auto p = value.begin();
+    const auto pe = value.end();
+    if ((p != pe) && (*p == '-')) {
+      ++p;
+    }
+    for (; p != pe; ++p) {
+      if (!isdigit(*p)) {
+        return false;
+      }
+    }
+    return true;
+  }  // end of isInteger
 
   int Evaluator::convertToInt(const std::string& method,
                               const std::string& value) {
-    std::istringstream converter(value);
-    for (const auto c : value) {
-      if (!isdigit(c)) {
-        tfel::raise(method + ": invalid entry");
-      }
+    if (!Evaluator::isInteger(value)) {
+      tfel::raise(method + ": invalid entry '" + value + "'");
     }
-    int u;
+    std::istringstream converter(value);
+    auto u = int{};
     converter >> u;
     if (!converter || (!converter.eof())) {
       tfel::raise(method + ": not read value from token '" + value + "'");
     }
     return u;
-  }  // end of Evaluator::convertToInt
+  }  // end of convertToInt
 
   unsigned short Evaluator::readUnsignedShortValue(
       const std::string& method,
@@ -132,7 +147,7 @@ namespace tfel::math {
     const auto nbr = convertToUnsignedShort(method, *p);
     ++p;
     return nbr;
-  }  // end of Evaluator::readUnsignedShortValue
+  }  // end of readUnsignedShortValue
 
   void Evaluator::checkParameterNumber(const std::vector<double>::size_type n,
                                        const std::vector<double>::size_type p) {
@@ -145,7 +160,7 @@ namespace tfel::math {
       }
       raise(msg);
     }
-  }  // end of Evaluator::checkParameterNubmer
+  }  // end of checkParameterNubmer
 
   void Evaluator::checkVariableNumber(const std::vector<double>::size_type n,
                                       const std::vector<double>::size_type p) {
@@ -158,7 +173,7 @@ namespace tfel::math {
       }
       raise(msg);
     }
-  }  // end of Evaluator::checkVariableNubmer
+  }  // end of checkVariableNubmer
 
   struct TFEL_VISIBILITY_LOCAL Evaluator::ExternalFunctionRegister {
     ExternalFunctionRegister() = default;
@@ -166,80 +181,88 @@ namespace tfel::math {
 
   Evaluator::ExternalFunctionRegister Evaluator::externalFunctionRegister;
 
-#if !(defined _WIN32 || defined _WIN64 || defined __CYGWIN__)
-  template <unsigned short N>
-  static std::shared_ptr<tfel::math::parser::Expr>
-  EvaluatorPowerFunctionGenerator(
-      const char* const n, const std::shared_ptr<tfel::math::parser::Expr> e) {
+  std::shared_ptr<tfel::math::parser::Expr>
+  Evaluator::makePowerFunctionExpression(
+      std::shared_ptr<tfel::math::parser::Expr> e, const int n) {
     using namespace tfel::math::parser;
-    using namespace tfel::math::stdfunctions;
-    return std::make_shared<StandardFunction<power<N>>>(n, e);
-  }  // end of EvaluatorPowerFunctionGenerator
-#endif
+    switch (n) {
+      case -1:
+        return std::make_shared<PowerFunction<-1>>(e);
+      case -2:
+        return std::make_shared<PowerFunction<-2>>(e);
+      case -3:
+        return std::make_shared<PowerFunction<-3>>(e);
+      case -4:
+        return std::make_shared<PowerFunction<-4>>(e);
+      case -5:
+        return std::make_shared<PowerFunction<-5>>(e);
+      case -6:
+        return std::make_shared<PowerFunction<-6>>(e);
+      case -7:
+        return std::make_shared<PowerFunction<-7>>(e);
+      case -8:
+        return std::make_shared<PowerFunction<-8>>(e);
+      case -9:
+        return std::make_shared<PowerFunction<-9>>(e);
+      case -10:
+        return std::make_shared<PowerFunction<-10>>(e);
+      case -11:
+        return std::make_shared<PowerFunction<-11>>(e);
+      case -12:
+        return std::make_shared<PowerFunction<-12>>(e);
+      case -13:
+        return std::make_shared<PowerFunction<-13>>(e);
+      case -14:
+        return std::make_shared<PowerFunction<-14>>(e);
+      case -15:
+        return std::make_shared<PowerFunction<-15>>(e);
+      case -16:
+        return std::make_shared<PowerFunction<-16>>(e);
+      case 0:
+        return Number::one();
+      case 1:
+        return std::make_shared<PowerFunction<1>>(e);
+      case 2:
+        return std::make_shared<PowerFunction<2>>(e);
+      case 3:
+        return std::make_shared<PowerFunction<3>>(e);
+      case 4:
+        return std::make_shared<PowerFunction<4>>(e);
+      case 5:
+        return std::make_shared<PowerFunction<5>>(e);
+      case 6:
+        return std::make_shared<PowerFunction<6>>(e);
+      case 7:
+        return std::make_shared<PowerFunction<7>>(e);
+      case 8:
+        return std::make_shared<PowerFunction<8>>(e);
+      case 9:
+        return std::make_shared<PowerFunction<9>>(e);
+      case 10:
+        return std::make_shared<PowerFunction<10>>(e);
+      case 11:
+        return std::make_shared<PowerFunction<11>>(e);
+      case 12:
+        return std::make_shared<PowerFunction<12>>(e);
+      case 13:
+        return std::make_shared<PowerFunction<13>>(e);
+      case 14:
+        return std::make_shared<PowerFunction<14>>(e);
+      case 15:
+        return std::make_shared<PowerFunction<15>>(e);
+      case 16:
+        return std::make_shared<PowerFunction<16>>(e);
+    }
+    return std::make_shared<GeneralPowerFunction>(e, n);
+  }  // end of makePowerFunctionExpression
 
   static std::shared_ptr<tfel::math::parser::Expr> EvaluatorTreatPower(
       const std::vector<std::string>& params,
       std::vector<std::shared_ptr<tfel::math::parser::Expr>>& args) {
-    using namespace tfel::math::parser;
-    unsigned short nbr;
     Evaluator::checkParameterNumber(1, params.size());
     Evaluator::checkVariableNumber(1, args.size());
-    nbr = Evaluator::convertToUnsignedShort("EvaluatorTreatPower", params[0]);
-    switch (nbr) {
-      case 0:
-        return std::make_shared<Number>("1", 1.);
-#if !(defined _WIN32 || defined _WIN64 || defined __CYGWIN__)
-      case 1:
-        return EvaluatorPowerFunctionGenerator<1>("tfel::math::power<1>",
-                                                  args[0]);
-      case 2:
-        return EvaluatorPowerFunctionGenerator<2>("tfel::math::power<2>",
-                                                  args[0]);
-      case 3:
-        return EvaluatorPowerFunctionGenerator<3>("tfel::math::power<3>",
-                                                  args[0]);
-      case 4:
-        return EvaluatorPowerFunctionGenerator<4>("tfel::math::power<4>",
-                                                  args[0]);
-      case 5:
-        return EvaluatorPowerFunctionGenerator<5>("tfel::math::power<5>",
-                                                  args[0]);
-      case 6:
-        return EvaluatorPowerFunctionGenerator<6>("tfel::math::power<6>",
-                                                  args[0]);
-      case 7:
-        return EvaluatorPowerFunctionGenerator<7>("tfel::math::power<7>",
-                                                  args[0]);
-      case 8:
-        return EvaluatorPowerFunctionGenerator<8>("tfel::math::power<8>",
-                                                  args[0]);
-      case 9:
-        return EvaluatorPowerFunctionGenerator<9>("tfel::math::power<9>",
-                                                  args[0]);
-      case 10:
-        return EvaluatorPowerFunctionGenerator<10>("tfel::math::power<10>",
-                                                   args[0]);
-      case 11:
-        return EvaluatorPowerFunctionGenerator<11>("tfel::math::power<11>",
-                                                   args[0]);
-      case 12:
-        return EvaluatorPowerFunctionGenerator<12>("tfel::math::power<12>",
-                                                   args[0]);
-      case 13:
-        return EvaluatorPowerFunctionGenerator<13>("tfel::math::power<13>",
-                                                   args[0]);
-      case 14:
-        return EvaluatorPowerFunctionGenerator<14>("tfel::math::power<14>",
-                                                   args[0]);
-      case 15:
-        return EvaluatorPowerFunctionGenerator<15>("tfel::math::power<15>",
-                                                   args[0]);
-      case 16:
-        return EvaluatorPowerFunctionGenerator<16>("tfel::math::power<16>",
-                                                   args[0]);
-#endif
-    }
-    raise("EvaluatorTreatPower: only exponent below 16 are supported");
+    auto nbr = Evaluator::convertToInt("EvaluatorTreatPower", params[0]);
+    return Evaluator::makePowerFunctionExpression(args[0], nbr);
   }  // end of EvaluatorTreatPower
 
   void Evaluator::treatDiff(std::vector<std::string>::const_iterator& p,
@@ -351,7 +374,7 @@ namespace tfel::math {
     }
     g->add(std::make_shared<Evaluator::TDifferentiatedFunctionExpr>(pev, args,
                                                                     pvar));
-  }  // end of Evaluator::treatDiff
+  }  // end of treatDiff
 
   void Evaluator::FunctionGeneratorManager::checkName(
       const std::string& name) const {
@@ -487,13 +510,13 @@ namespace tfel::math {
         makeBinaryFunctionGenerator<atan2>("atan2"),
     });
     this->extOpGenerators.insert({"power", EvaluatorTreatPower});
-  }  // end of Evaluator::FunctionGeneratorManager::FunctionGeneratorManager
+  }  // end of FunctionGeneratorManager::FunctionGeneratorManager
 
   Evaluator::FunctionGeneratorManager&
   Evaluator::getFunctionGeneratorManager() {
     static FunctionGeneratorManager m;
     return m;
-  }  // end of Evaluator::getFunctionGeneratorManager()
+  }  // end of getFunctionGeneratorManager()
 
   bool Evaluator::isValidIdentifier(const std::string& s) {
     const auto& f = Evaluator::getFunctionGeneratorManager();
@@ -514,26 +537,26 @@ namespace tfel::math {
       return false;
     }
     return true;
-  }  // end of Evaluator::isValidIdentifier
+  }  // end of isValidIdentifier
 
   double Evaluator::Heavyside(const double x) {
     return x < 0 ? 0 : 1;
-  }  // end of Evaluator::Heavyside
+  }  // end of Heavyside
 
   double Evaluator::max(const double a, const double b) {
     return std::max(a, b);
-  }  // end of Evaluator::max
+  }  // end of max
 
   double Evaluator::min(const double a, const double b) {
     return std::min(a, b);
-  }  // end of Evaluator::min
+  }  // end of min
 
   void Evaluator::checkCyclicDependency(std::vector<std::string>& names) const {
     raise_if(this->expr == nullptr,
              "Evaluator::checkCyclicDependency: "
              "uninitialized evaluator");
     this->expr->checkCyclicDependency(names);
-  }  // end of Evaluator::checkCyclicDependency
+  }  // end of checkCyclicDependency
 
   void Evaluator::checkCyclicDependency(const std::string& name) const {
     std::vector<std::string> names(1, name);
@@ -541,7 +564,7 @@ namespace tfel::math {
              "Evaluator::checkCyclicDependency: "
              "uninitialized evaluator");
     this->expr->checkCyclicDependency(names);
-  }  // end of Evaluator::checkCyclicDependency
+  }  // end of checkCyclicDependency
 
   void Evaluator::checkCyclicDependency() const {
     std::vector<std::string> names;
@@ -549,8 +572,7 @@ namespace tfel::math {
              "Evaluator::checkCyclicDependency: "
              "uninitialized evaluator");
     this->expr->checkCyclicDependency(names);
-  }  // end of Evaluator::checkCyclicDependency
-
+  }  // end of checkCyclicDependency
 
   template <typename T>
   bool Evaluator::convert(const std::string& value) {
@@ -562,42 +584,47 @@ namespace tfel::math {
 
   bool Evaluator::isNumber(const std::string& value) {
     return convert<double>(value);
-  }  // end of Evaluator::isNumber
+  }  // end of isNumber
 
   std::vector<std::string> Evaluator::analyseParameters(
       std::vector<std::string>::const_iterator& p,
       const std::vector<std::string>::const_iterator pe) {
-    std::vector<std::string> params;
-    checkNotEndOfExpression("Evaluator::analyseParameters", p, pe);
+    const std::string m = "Evaluator::analyseParameters";
+    auto params = std::vector<std::string>{};
+    checkNotEndOfExpression(m, p, pe);
     while (*p != ">") {
+      raise_if(*p == ",", m + ": unexpected token ','");
       // check parameter validity
-      for (const auto c : tfel::unicode::getMangledString(*p)) {
-        raise_if(!(isalpha(c) || isdigit(c)) || (c == '_') || (c == '-'),
-                 "Evaluator::analyseParameters: "
-                 "invalid parameter '" +
-                     *p + "'");
+      if (*p == "-") {
+        auto n = *p;
+        ++p;
+        Evaluator::checkNotEndOfExpression(m, p, pe);
+        for (const auto c : *p) {
+          raise_if(!isdigit(c), m + ": invalid parameter '" + *p + "'");
+        }
+        n += *p;
+        params.push_back(n);
+        ++p;
+      } else {
+        for (const auto c : tfel::unicode::getMangledString(*p)) {
+          raise_if(!(isalpha(c) || isdigit(c) || (c == '-')) || (c == '_'),
+                   m + ": invalid parameter '" + *p + "'");
+        }
+        params.push_back(*p);
+        ++p;
       }
-      params.push_back(*p);
-      ++p;
-      Evaluator::checkNotEndOfExpression("Evaluator::analyseParameters", p, pe);
+      Evaluator::checkNotEndOfExpression(m, p, pe);
       if (*p != ">") {
         raise_if(*p != ",",
-                 "Evaluator::analyseParameters: "
-                 "unexpected token '" +
-                     *p +
-                     "' "
-                     "(expected ',' or '>')");
+                 m + ": unexpected token '" + *p + "' (expected ',' or '>')");
 
         ++p;
-        Evaluator::checkNotEndOfExpression(
-            "Evaluator::"
-            "analyseParameters",
-            p, pe);
+        Evaluator::checkNotEndOfExpression(m, p, pe);
       }
     }
     ++p;
     return params;
-  }  // end of Evaluator::analyseParameters
+  }  // end of analyseParameters
 
   std::vector<std::shared_ptr<Evaluator::TExpr>> Evaluator::analyseArguments(
       const unsigned short nbr,
@@ -614,7 +641,7 @@ namespace tfel::math {
       res.push_back(this->treatGroup(p, pe, b, ")"));
     }
     return res;
-  }  // end of Evaluator::analyseArguments
+  }  // end of analyseArguments
 
   std::vector<std::shared_ptr<Evaluator::TExpr>> Evaluator::analyseArguments(
       std::vector<std::string>::const_iterator& p,
@@ -630,7 +657,7 @@ namespace tfel::math {
       res.push_back(this->treatGroup(p, pe, b, ")"));
     }
     return res;
-  }  // end of Evaluator::analyseArguments
+  }  // end of analyseArguments
 
   unsigned short Evaluator::countNumberOfArguments(
       std::vector<std::string>::const_iterator p,
@@ -666,7 +693,7 @@ namespace tfel::math {
           << " parenthesis were still opened";
     }
     raise(msg.str());
-  }  // end of Evaluator::analyseArguments
+  }  // end of analyseArguments
 
   std::pair<bool, std::vector<std::string>::const_iterator> Evaluator::search(
       std::vector<std::string>::const_iterator p,
@@ -701,7 +728,7 @@ namespace tfel::math {
       }
     }
     return {false, p};
-  }  // end of Evaluator::search
+  }  // end of search
 
   std::shared_ptr<Evaluator::TLogicalExpr> Evaluator::treatLogicalExpression(
       const std::vector<std::string>::const_iterator p,
@@ -744,7 +771,7 @@ namespace tfel::math {
           this->treatLogicalExpression(pb, pbe, b));
     }
     return this->treatLogicalExpression2(pb, pbe, b);
-  }  // end of Evaluator::treatLogicalExpression
+  }  // end of treatLogicalExpression
 
   std::vector<std::string>::const_iterator Evaluator::searchComparisonOperator(
       const std::vector<std::string>::const_iterator pb,
@@ -852,7 +879,7 @@ namespace tfel::math {
       raise(msg.str());
     }
     return po;
-  }  // end of Evaluator::searchComparisonOperator
+  }  // end of searchComparisonOperator
 
   std::shared_ptr<Evaluator::TLogicalExpr> Evaluator::treatLogicalExpression2(
       const std::vector<std::string>::const_iterator p,
@@ -881,7 +908,7 @@ namespace tfel::math {
         "Evaluator::treatLogicalExpression2 : "
         "unsupported logical operator '" +
         *plo + "'");
-  }  // end of Evaluator::treatLogicalExpression2
+  }  // end of treatLogicalExpression2
 
   std::shared_ptr<Evaluator::TExpr> Evaluator::treatGroup(
       std::vector<std::string>::const_iterator& p,
@@ -916,7 +943,7 @@ namespace tfel::math {
       return std::make_shared<TConditionalExpr>(l, lexpr, rexpr);
     }
     return this->treatGroup2(p, pe, b, s);
-  }  // end of Evaluator::treatGroup
+  }  // end of treatGroup
 
   std::shared_ptr<Evaluator::TExpr> Evaluator::treatGroup2(
       std::vector<std::string>::const_iterator& p,
@@ -957,7 +984,6 @@ namespace tfel::math {
         ++ps;
       }
     };  // end of checkIdentifier
-    // this must be captured du to a gcc 4.7 bug
     auto readVariableOrFunctionName =
         [&p, pe, checkIdentifier]() -> std::pair<unsigned int, std::string> {
       Evaluator::checkNotEndOfExpression("Evaluator::treatGroup2", p, pe);
@@ -1120,7 +1146,7 @@ namespace tfel::math {
              "unterminated group (group began with '" +
                  s + "').");
     return std::move(g);
-  }  // end of Evaluator::treatGroup2
+  }  // end of treatGroup2
 
   std::vector<double>::size_type Evaluator::registerVariable(
       const std::string& vname) {
@@ -1133,7 +1159,7 @@ namespace tfel::math {
     this->positions.insert({vname, pos});
     this->variables.resize(pos + 1u);
     return pos;
-  }  // end of Evaluator::registerVariable
+  }  // end of registerVariable
 
   void Evaluator::setVariableValue(const std::string& vname,
                                    const double value) {
@@ -1143,7 +1169,7 @@ namespace tfel::math {
              "variable '" +
                  vname + "' does not exist");
     this->variables[p->second] = value;
-  }  // end of Evaluator::setVariableValue
+  }  // end of setVariableValue
 
   void Evaluator::setVariableValue(const char* const vname,
                                    const double value) {
@@ -1153,7 +1179,7 @@ namespace tfel::math {
              "variable '" +
                  std::string(vname) + "' does not exist");
     this->variables[p->second] = value;
-  }  // end of Evaluator::setVariableValue
+  }  // end of setVariableValue
 
   void Evaluator::setVariableValue(const std::vector<double>::size_type pos,
                                    const double value) {
@@ -1172,7 +1198,7 @@ namespace tfel::math {
       raise(msg.str());
     }
     this->variables[pos] = value;
-  }  // end of Evaluator::setVariableValue
+  }  // end of setVariableValue
 
   std::string Evaluator::getCxxFormula(
       const std::map<std::string, std::string>& m) const {
@@ -1196,29 +1222,29 @@ namespace tfel::math {
       }
     }
     return this->expr->getCxxFormula(vn);
-  }  // end of Evaluator::getCxxFormula
+  }  // end of getCxxFormula
 
   double Evaluator::operator()(const std::map<std::string, double>& vs) {
     return this->getValue(vs);
-  }  // end of Evaluator::operator()
+  }  // end of operator()
 
   double Evaluator::getValue(const std::map<std::string, double>& vs) {
     for (const auto& v : vs) {
       this->setVariableValue(v.first, v.second);
     }
     return this->getValue();
-  }  // end of Evaluator::getValue
+  }  // end of getValue
 
   double Evaluator::getValue() const {
     raise_if(this->expr == nullptr,
              "Evaluator::getValue: "
              "uninitialized expression.");
     return this->expr->getValue();
-  }  // end of Evaluator::getValue
+  }  // end of getValue
 
   double Evaluator::operator()() const {
     return this->getValue();
-  }  // end of Evaluator::operator()
+  }  // end of operator()
 
   std::vector<std::string> Evaluator::getVariablesNames() const {
     auto res = std::vector<std::string>{};
@@ -1229,11 +1255,11 @@ namespace tfel::math {
       ++i;
     }
     return res;
-  }  // end of Evaluator::getVariablesNames
+  }  // end of getVariablesNames
 
   std::vector<double>::size_type Evaluator::getNumberOfVariables() const {
     return this->variables.size();
-  }  // end of Evaluator::getNumberOfVariables() const;
+  }  // end of getNumberOfVariables() const;
 
   void Evaluator::analyse(const std::string& f, const bool b) {
     try {
@@ -1264,7 +1290,7 @@ namespace tfel::math {
                                   p, pe);
     auto args = this->analyseArguments(p, pe, b);
     g->add(std::make_shared<TExternalFunctionExpr>(fn, args, this->manager));
-  }  // end of Evaluator::addExternalFunctionToGroup
+  }  // end of addExternalFunctionToGroup
 
   Evaluator::Evaluator() = default;
 
@@ -1274,7 +1300,7 @@ namespace tfel::math {
     if (src.expr != nullptr) {
       this->expr = src.expr->clone(this->variables);
     }
-  }  // end of Evaluator::Evaluator
+  }  // end of Evaluator
 
   Evaluator& Evaluator::operator=(const Evaluator& src) {
     if (this != &src) {
@@ -1288,36 +1314,36 @@ namespace tfel::math {
       }
     }
     return *this;
-  }  // end of Evaluator::Evaluator
+  }  // end of Evaluator
 
   Evaluator::Evaluator(const std::string& f) {
     this->setFunction(f);
-  }  // end of Evaluator::Evaluator
+  }  // end of Evaluator
 
   Evaluator::Evaluator(const std::vector<std::string>& vars,
                        const std::string& f) {
     this->setFunction(vars, f);
-  }  // end of Evaluator::Evaluator
+  }  // end of Evaluator
 
   Evaluator::Evaluator(
       const std::string& f,
       std::shared_ptr<tfel::math::parser::ExternalFunctionManager> m) {
     this->setFunction(f, m);
-  }  // end of Evaluator::Evaluator
+  }  // end of Evaluator
 
   Evaluator::Evaluator(
       const std::vector<std::string>& vars,
       const std::string& f,
       std::shared_ptr<tfel::math::parser::ExternalFunctionManager> m) {
     this->setFunction(vars, f, m);
-  }  // end of Evaluator::Evaluator
+  }  // end of Evaluator
 
   Evaluator::Evaluator(const double v) {
     std::ostringstream str;
     str.precision(15);
     str << v;
     this->expr = std::make_shared<parser::Number>(str.str(), v);
-  }  // end of Evaluator::Evaluator
+  }  // end of Evaluator
 
   void Evaluator::clear() {
     this->variables.clear();
@@ -1329,7 +1355,7 @@ namespace tfel::math {
   void Evaluator::setFunction(const std::string& f) {
     this->clear();
     this->analyse(f, false);
-  }  // end of Evaluator::setFunction
+  }  // end of setFunction
 
   void Evaluator::setFunction(const std::vector<std::string>& vars,
                               const std::string& f) {
@@ -1349,7 +1375,7 @@ namespace tfel::math {
       ++pos;
     }
     this->analyse(f, true);
-  }  // end of Evaluator::setFunction
+  }  // end of setFunction
 
   void Evaluator::setFunction(
       const std::string& f,
@@ -1357,14 +1383,14 @@ namespace tfel::math {
     this->clear();
     this->manager = m;
     this->analyse(f, false);
-  }  // end of Evaluator::setFunction
+  }  // end of setFunction
 
   void Evaluator::setFunction(
       const std::vector<std::string>& vars,
       const std::string& f,
       std::shared_ptr<tfel::math::parser::ExternalFunctionManager>& m) {
     auto throw_if = [](const bool c, const std::string& msg) {
-      raise_if(c, "Evaluator::treatGroup: " + msg);
+      raise_if(c, "Evaluator::setFunction: " + msg);
     };
     this->clear();
     this->manager = m;
@@ -1379,7 +1405,7 @@ namespace tfel::math {
       ++pos;
     }
     this->analyse(f, true);
-  }  // end of Evaluator::setFunction
+  }  // end of setFunction
 
   std::shared_ptr<tfel::math::parser::ExternalFunction>
   Evaluator::differentiate(const std::vector<double>::size_type pos) const {
@@ -1391,7 +1417,7 @@ namespace tfel::math {
     pev->positions = this->positions;
     if (this->variables.empty()) {
       // no variable
-      pev->expr = std::make_shared<parser::Number>("0", 0.);
+      pev->expr = tfel::math::parser::Number::zero();
     } else {
       if (pos >= this->variables.size()) {
         std::ostringstream msg;
@@ -1410,12 +1436,12 @@ namespace tfel::math {
       pev->expr = this->expr->differentiate(pos, pev->variables);
     }
     return std::move(pev);
-  }  // end of Evaluator::differentiate
+  }  // end of differentiate
 
   std::shared_ptr<tfel::math::parser::ExternalFunction>
   Evaluator::differentiate(const std::string& v) const {
     return this->differentiate(this->getVariablePosition(v));
-  }  // end of std::shared_ptr<ExternalFunction>
+  }  // end of differentiate
 
   std::shared_ptr<tfel::math::parser::ExternalFunction>
   Evaluator::resolveDependencies() const {
@@ -1423,17 +1449,17 @@ namespace tfel::math {
     auto f = std::make_shared<Evaluator>(*this);
     f->expr = f->expr->resolveDependencies(f->variables);
     return std::move(f);
-  }  // end of Evaluator::resolveDependencies() const
+  }  // end of resolveDependencies() const
 
   void Evaluator::removeDependencies() {
     this->checkCyclicDependency();
     this->expr = this->expr->resolveDependencies(this->variables);
-  }  // end of Evaluator::removeDependencies() const
+  }  // end of removeDependencies() const
 
   std::shared_ptr<tfel::math::parser::ExternalFunctionManager>
   Evaluator::getExternalFunctionManager() {
     return this->manager;
-  }  // end of Evaluator::getExternalFunctionManager
+  }  // end of getExternalFunctionManager
 
   std::vector<double>::size_type Evaluator::getVariablePosition(
       const std::string& name) const {
@@ -1443,7 +1469,7 @@ namespace tfel::math {
              "unknown variable '" +
                  name + "'");
     return p->second;
-  }  // end of Evaluator::getVariablePosition(const std::string&)
+  }  // end of getVariablePosition(const std::string&)
 
   std::shared_ptr<tfel::math::parser::ExternalFunction>
   Evaluator::createFunctionByChangingParametersIntoVariables(
@@ -1462,7 +1488,7 @@ namespace tfel::math {
       }
     }
     return this->createFunctionByChangingParametersIntoVariables(nparams);
-  }  // end of Evaluator::createFunctionByChangingParametersIntoVariables
+  }  // end of createFunctionByChangingParametersIntoVariables
 
   std::shared_ptr<tfel::math::parser::ExternalFunction>
   Evaluator::createFunctionByChangingParametersIntoVariables(
@@ -1498,14 +1524,14 @@ namespace tfel::math {
     pev->expr = this->expr->createFunctionByChangingParametersIntoVariables(
         pev->variables, params, pev->positions);
     return std::move(pev);
-  }  // end of Evaluator::createFunctionByChangingParametersIntoVariables
+  }  // end of createFunctionByChangingParametersIntoVariables
 
   void Evaluator::getParametersNames(std::set<std::string>& n) const {
     raise_if(this->expr == nullptr,
              "Evaluator::getParametersNames: "
              "uninitialized evaluator");
     return this->expr->getParametersNames(n);
-  }  // end of Evaluator::getParametersNames
+  }  // end of getParametersNames
 
   Evaluator::~Evaluator() = default;
 

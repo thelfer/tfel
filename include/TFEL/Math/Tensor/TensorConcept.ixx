@@ -215,14 +215,15 @@ namespace tfel::math {
               (t[2] * t[2] - 1) / 2};
     } else if constexpr (N == 2u) {
       constexpr auto icste = Cste<numeric_type<TensorType>>::isqrt2;
-      return {(t[0] * t[0] + t[4] * t[4] - 1) / 2,
-              (t[1] * t[1] + t[3] * t[3] - 1) / 2, (t[2] * t[2] - 1) / 2,
+      return {((t[0] * t[0] - 1) + t[4] * t[4]) / 2,
+              ((t[1] * t[1] - 1) + t[3] * t[3]) / 2,  //
+              (t[2] * t[2] - 1) / 2,                  //
               icste * (t[0] * t[3] + t[1] * t[4])};
     } else if constexpr (N == 3u) {
       constexpr auto icste = Cste<numeric_type<TensorType>>::isqrt2;
-      return {(t[0] * t[0] + t[4] * t[4] + t[6] * t[6] - 1) / 2,
-              (t[1] * t[1] + t[3] * t[3] + t[8] * t[8] - 1) / 2,
-              (t[2] * t[2] + t[5] * t[5] + t[7] * t[7] - 1) / 2,
+      return {((t[0] * t[0] - 1) + t[4] * t[4] + t[6] * t[6]) / 2,
+              ((t[1] * t[1] - 1) + t[3] * t[3] + t[8] * t[8]) / 2,
+              ((t[2] * t[2] - 1) + t[5] * t[5] + t[7] * t[7]) / 2,
               icste * (t[6] * t[8] + t[1] * t[4] + t[0] * t[3]),
               icste * (t[4] * t[7] + t[2] * t[6] + t[0] * t[5]),
               icste * (t[2] * t[8] + t[1] * t[7] + t[3] * t[5])};

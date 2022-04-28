@@ -231,7 +231,7 @@ namespace mtest::internals {
           ncomponents.push_back('[' + std::to_string(d) + ']');
         }
       } else {
-        for (const auto c : components) {
+        for (const auto& c : components) {
           for (int j = 0; j != d; ++j) {
             ncomponents.push_back(c + '[' + std::to_string(d) + ']');
           }
@@ -244,8 +244,8 @@ namespace mtest::internals {
       return components;
     }
     auto ncomponents = std::vector<std::string>{};
-    for (const auto c1 : components) {
-      for (const auto c2 : vcomponents) {
+    for (const auto& c1 : components) {
+      for (const auto& c2 : vcomponents) {
         ncomponents.push_back(c1 + c2);
       }
     }
@@ -268,8 +268,8 @@ namespace mtest::internals {
       const auto components1 = getVariableComponents(v, b);
       const auto components2 = getVariableComponents(v, b);
       auto components = std::vector<std::string>{};
-      for (const auto c1 : components1) {
-        for (const auto c2 : components2) {
+      for (const auto& c1 : components1) {
+        for (const auto& c2 : components2) {
           components.push_back(c1 + c2);
         }
       }

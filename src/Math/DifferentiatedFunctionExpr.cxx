@@ -35,7 +35,7 @@ namespace tfel::math::parser {
              "(" +
                  std::to_string(this->args.size()) + " given, " +
                  std::to_string(f->getNumberOfVariables()) + " required)");
-  }  // end of DifferentiatedFunctionExpr::DifferentiatedFunctionExpr
+  }  // end of DifferentiatedFunctionExpr
 
   std::shared_ptr<ExternalFunction> DifferentiatedFunctionExpr::getDerivative()
       const {
@@ -44,7 +44,26 @@ namespace tfel::math::parser {
       df = df->differentiate(p);
     }
     return df;
-  }  // end of DifferentiatedFunctionExpr::getDerivative
+  }  // end of getDerivative
+
+  bool DifferentiatedFunctionExpr::isConstant() const {
+    for (const auto& a : this->args) {
+      if (!a->isConstant()) {
+        return false;
+      }
+    }
+    return true;
+  }  // end of isConstant
+
+  bool DifferentiatedFunctionExpr::dependsOnVariable(
+      const std::vector<double>::size_type p) const {
+    for (const auto& a : this->args) {
+      if (a->dependsOnVariable(p)) {
+        return true;
+      }
+    }
+    return false;
+  }  // end of dependsOnVariable
 
   double DifferentiatedFunctionExpr::getValue() const {
     auto df = this->getDerivative();
@@ -55,14 +74,14 @@ namespace tfel::math::parser {
       ++i;
     }
     return df->getValue();
-  }  // end of DifferentiatedFunctionExpr::getValue
+  }  // end of getValue
 
   std::string DifferentiatedFunctionExpr::getCxxFormula(
       const std::vector<std::string>&) const {
     tfel::raise(
         "DifferentiatedFunctionExpr::getCxxFormula: "
         "unimplemented feature");
-  }  // end of DifferentiatedFunctionExpr::getCxxFormula
+  }  // end of getCxxFormula
 
   void DifferentiatedFunctionExpr::checkCyclicDependency(
       std::vector<std::string>& names) const {
@@ -73,7 +92,7 @@ namespace tfel::math::parser {
       a->checkCyclicDependency(n);
       mergeVariablesNames(names, n);
     }
-  }  // end of DifferentiatedFunctionExpr::checkCyclicDependency
+  }  // end of checkCyclicDependency
 
   std::shared_ptr<Expr> DifferentiatedFunctionExpr::differentiate(
       const std::vector<double>::size_type pos,
@@ -82,7 +101,7 @@ namespace tfel::math::parser {
     auto p = this->args.begin();
     unsigned short i = 0;
     if (args.empty()) {
-      return std::make_shared<Number>("0", 0.);
+      return Number::zero();
     }
     auto p4 = nargs.begin();
     for (const auto& a : this->args) {
@@ -106,7 +125,7 @@ namespace tfel::math::parser {
       ++i;
     }
     return df;
-  }  // end of DifferentiatedFunctionExpr::differentiate
+  }  // end of differentiate
 
   std::shared_ptr<Expr> DifferentiatedFunctionExpr::clone(
       const std::vector<double>& v) const {
@@ -117,7 +136,7 @@ namespace tfel::math::parser {
     }
     return std::make_shared<DifferentiatedFunctionExpr>(this->f, nargs,
                                                         this->pvar);
-  }  // end of DifferentiatedFunctionExpr::clone
+  }  // end of clone
 
   std::shared_ptr<Expr>
   DifferentiatedFunctionExpr::createFunctionByChangingParametersIntoVariables(
@@ -166,7 +185,7 @@ namespace tfel::math::parser {
     for (const auto& a : this->args) {
       a->getParametersNames(p);
     }
-  }  // end of DifferentiatedFunctionExpr::getParametersNames
+  }  // end of getParametersNames
 
   std::shared_ptr<Expr> DifferentiatedFunctionExpr::resolveDependencies(
       const std::vector<double>& v) const {
@@ -180,7 +199,7 @@ namespace tfel::math::parser {
     }
     return std::make_shared<ExternalFunctionExpr2>(this->getDerivative(),
                                                    nargs);
-  }  // end of DifferentiatedFunctionExpr::resolveDependencies
+  }  // end of resolveDependencies
 
   DifferentiatedFunctionExpr::~DifferentiatedFunctionExpr() = default;
 

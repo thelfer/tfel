@@ -96,7 +96,17 @@ namespace tfel::math {
                                                  const std::string&);
     static unsigned int convertToUnsignedInt(const std::string&,
                                              const std::string&);
+    static bool isInteger(const std::string&);
     static int convertToInt(const std::string&, const std::string&);
+    /*!
+     * \brief return an expression representing the power of the given argument
+     * with an integer exponent.
+     * \param[in] e: argument
+     * \param[in] n: exponent
+     */
+    static std::shared_ptr<tfel::math::parser::Expr>
+    makePowerFunctionExpression(std::shared_ptr<tfel::math::parser::Expr>,
+                                const int);
     /*!
      * \param const std::string&, function definition
      */

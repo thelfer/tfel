@@ -63,6 +63,7 @@ test_PROGRAMS = IndexingPoliciesTest             \
 		parser9                                  \
 		parser10                                 \
 		parser11                                 \
+		parser12                                 \
 		integerparser                            \
 		broyden                                  \
 		broyden2                                 \
@@ -313,6 +314,15 @@ parser10_LDADD = -L$(top_builddir)/src/Tests       \
 
 parser11_SOURCES               = parser11.cxx
 parser11_LDADD = -L$(top_builddir)/src/Tests       \
+		-L$(top_builddir)/src/Math         \
+	        -L$(top_builddir)/src/Utilities    \
+	        -L$(top_builddir)/src/Exception    \
+	        -lTFELMathParser -lTFELMathKriging \
+		-lTFELMath  -lTFELUtilities        \
+		-lTFELException	-lTFELTests
+
+parser12_SOURCES               = parser12.cxx
+parser12_LDADD = -L$(top_builddir)/src/Tests       \
 		-L$(top_builddir)/src/Math         \
 	        -L$(top_builddir)/src/Utilities    \
 	        -L$(top_builddir)/src/Exception    \

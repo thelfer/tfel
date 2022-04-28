@@ -53,16 +53,10 @@ namespace tfel::math::parser {
     StandardBinaryFunction(const char* const,
                            const std::shared_ptr<Expr>,
                            const std::shared_ptr<Expr>);
-    /*!
-     *\return the value resulting for the evaluation of the
-     * function and its arguments
-     */
+    //
+    bool isConstant() const override;
+    bool dependsOnVariable(const std::vector<double>::size_type) const override;
     double getValue() const override;
-    /*!
-     * \return a string representation of the evaluator suitable to
-     * be integrated in a C++ code.
-     * \param[in] m: a map used to change the names of the variables
-     */
     std::string getCxxFormula(const std::vector<std::string>&) const override;
     void checkCyclicDependency(std::vector<std::string>&) const override;
     std::shared_ptr<Expr> resolveDependencies(

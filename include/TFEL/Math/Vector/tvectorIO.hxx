@@ -25,9 +25,8 @@ namespace tfel::math {
 
   template <unsigned short N, typename T>
   std::ostream& operator<<(std::ostream& os, const tvector<N, T>& s) {
-    using copy = tfel::fsalgo::copy<N>;
     os << "( ";
-    copy::exe(s.begin(), std::ostream_iterator<T>(os, " "));
+    tfel::fsalgo::copy<N>::exe(s.begin(), std::ostream_iterator<T>(os, " "));
     os << ")";
     return os;
   }

@@ -22,12 +22,10 @@ namespace tfel::math::parser {
 
   struct Negation final : public Expr {
     Negation(const std::shared_ptr<Expr>);
+    //
+    bool isConstant() const override;
+    bool dependsOnVariable(const std::vector<double>::size_type) const override;
     double getValue() const override;
-    /*!
-     * \return a string representation of the evaluator suitable to
-     * be integrated in a C++ code.
-     * \param[in] m: a map used to change the names of the variables
-     */
     std::string getCxxFormula(const std::vector<std::string>&) const override;
     void checkCyclicDependency(std::vector<std::string>&) const override;
     std::shared_ptr<Expr> differentiate(

@@ -13,7 +13,8 @@
  */
 
 #include <algorithm>
-
+#include "TFEL/Math/General/IEEE754.hxx"
+#include "TFEL/Math/Parser/BinaryOperator.hxx"
 #include "TFEL/Math/Parser/Expr.hxx"
 
 namespace tfel::math::parser {
@@ -28,5 +29,16 @@ namespace tfel::math::parser {
       }
     }
   }  // end of mergeVariablesNames
+
+  std::shared_ptr<Expr> applyChainRule(const std::shared_ptr<Expr> d1,
+                                       const std::shared_ptr<Expr> d2) {
+    if (d2->isConstant()) {
+      const auto v = d2->getValue() - 1;
+      if (tfel::math::ieee754::fpclassify(v) == FP_ZERO) {
+        return d1;
+      }
+    }
+    return std::make_shared<BinaryOperation<OpMult>>(d1, d2);
+  }  // end of applyChainRule
 
 }  // end of namespace tfel::math::parser

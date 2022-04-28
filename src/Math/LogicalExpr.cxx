@@ -83,27 +83,36 @@ namespace tfel::math::parser {
 
   NegLogicalExpression::NegLogicalExpression(
       const std::shared_ptr<LogicalExpr> a_)
-      : a(a_) {}  // end of NegLogicalExpression::NegLogicalOperation
+      : a(a_) {}  // end of NegLogicalOperation
+
+  bool NegLogicalExpression::isConstant() const {
+    return this->a->isConstant();
+  }  // end of isConstant
+
+  bool NegLogicalExpression::dependsOnVariable(
+      const std::vector<double>::size_type p) const {
+    return this->a->dependsOnVariable(p);
+  }  // end of dependsOnVariable
 
   bool NegLogicalExpression::getValue() const {
     return !this->a->getValue();
-  }  // end of NegLogicalExpression::getValue() const
+  }  // end of getValue
 
   std::string NegLogicalExpression::getCxxFormula(
       const std::vector<std::string>& m) const {
     return "!(" + this->a->getCxxFormula(m) + ")";
-  }  // end of NegLogicalExpression::getCxxFormula
+  }  // end of getCxxFormula
 
   void NegLogicalExpression::checkCyclicDependency(
       std::vector<std::string>& names) const {
     this->a->checkCyclicDependency(names);
-  }  // end of NegLogicalExpression::checkCyclicDependency
+  }  // end of checkCyclicDependency
 
   std::shared_ptr<LogicalExpr> NegLogicalExpression::resolveDependencies(
       const std::vector<double>& v) const {
     return std::shared_ptr<LogicalExpr>(
         new NegLogicalExpression(this->a->resolveDependencies(v)));
-  }  // end of NegLogicalExpression::resolveDependencies() const
+  }  // end of resolveDependencies
 
   std::shared_ptr<LogicalExpr> NegLogicalExpression::clone(
       const std::vector<double>& v) const {
@@ -123,7 +132,7 @@ namespace tfel::math::parser {
   void NegLogicalExpression::getParametersNames(
       std::set<std::string>& p) const {
     this->a->getParametersNames(p);
-  }  // end of NegLogicalExpression::getParametersNames
+  }  // end of getParametersNames
 
   NegLogicalExpression::~NegLogicalExpression() = default;
 

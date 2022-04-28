@@ -641,8 +641,28 @@ namespace tfel::math::parser {
           (*p)->createFunctionByChangingParametersIntoVariables(v, params, pos);
     }
     return shared_ptr<Expr>(new EvaluatorFunctionNV<N>(this->f, nargs));
-  }  // end of
-     // EvaluatorFunctionNV<N>::createFunctionByChangingParametersIntoVariables
+  }  // end of createFunctionByChangingParametersIntoVariables
+
+  template <unsigned short N>
+  bool EvaluatorFunctionNV<N>::isConstant() const {
+    for (const auto& a : this->args) {
+      if (!a->isConstant()) {
+        return false;
+      }
+    }
+    return true;
+  }  // end of isConstant
+
+  template <unsigned short N>
+  bool EvaluatorFunctionNV<N>::dependsOnVariable(
+      const std::vector<double>::size_type p) const {
+    for (const auto& a : this->args) {
+      if (a->dependsOnVariable(p)) {
+        return true;
+      }
+    }
+    return false;
+  }  // end of dependsOnVariable
 
   template <unsigned short N>
   void EvaluatorFunctionNV<N>::checkCyclicDependency(
@@ -733,6 +753,27 @@ namespace tfel::math::parser {
   }  // end of EvaluatorFunction1PNV<N>::resolveDependencies const
 
   template <unsigned short N>
+  bool EvaluatorFunction1PNV<N>::isConstant() const {
+    for (const auto& a : this->args) {
+      if (!a->isConstant()) {
+        return false;
+      }
+    }
+    return true;
+  }  // end of isConstant
+
+  template <unsigned short N>
+  bool EvaluatorFunction1PNV<N>::dependsOnVariable(
+      const std::vector<double>::size_type p) const {
+    for (const auto& a : this->args) {
+      if (a->dependsOnVariable(p)) {
+        return true;
+      }
+    }
+    return false;
+  }  // end of dependsOnVariable
+
+  template <unsigned short N>
   void EvaluatorFunction1PNV<N>::checkCyclicDependency(
       std::vector<std::string>& names) const {
     using namespace std;
@@ -811,8 +852,28 @@ namespace tfel::math::parser {
     }
     return shared_ptr<Expr>(
         new EvaluatorFunction2PNV<N>(this->f, this->n, this->m, nargs));
-  }  // end of
-     // EvaluatorFunction2PNV<N>::createFunctionByChangingParametersIntoVariables
+  }  // end of createFunctionByChangingParametersIntoVariables
+
+  template <unsigned short N>
+  bool EvaluatorFunction2PNV<N>::isConstant() const {
+    for (const auto& a : this->args) {
+      if (!a->isConstant()) {
+        return false;
+      }
+    }
+    return true;
+  }  // end of isConstant
+
+  template <unsigned short N>
+  bool EvaluatorFunction2PNV<N>::dependsOnVariable(
+      const std::vector<double>::size_type p) const {
+    for (const auto& a : this->args) {
+      if (a->dependsOnVariable(p)) {
+        return true;
+      }
+    }
+    return false;
+  }  // end of dependsOnVariable
 
   template <unsigned short N>
   void EvaluatorFunction2PNV<N>::checkCyclicDependency(
@@ -903,6 +964,27 @@ namespace tfel::math::parser {
   }  // end of EvaluatorFunction1UPNV<N>::clone
 
   template <unsigned short N>
+  bool EvaluatorFunction1UPNV<N>::isConstant() const {
+    for (const auto& a : this->args) {
+      if (!a->isConstant()) {
+        return false;
+      }
+    }
+    return true;
+  }  // end of isConstant
+
+  template <unsigned short N>
+  bool EvaluatorFunction1UPNV<N>::dependsOnVariable(
+      const std::vector<double>::size_type p) const {
+    for (const auto& a : this->args) {
+      if (a->dependsOnVariable(p)) {
+        return true;
+      }
+    }
+    return false;
+  }  // end of dependsOnVariable
+
+  template <unsigned short N>
   void EvaluatorFunction1UPNV<N>::checkCyclicDependency(
       std::vector<std::string>& names) const {
     using namespace std;
@@ -986,12 +1068,31 @@ namespace tfel::math::parser {
   template <unsigned short N>
   void EvaluatorFunction2UPNV<N>::getParametersNames(
       std::set<std::string>& p) const {
-    using namespace std;
-    typename vector<shared_ptr<Expr>>::const_iterator pa;
-    for (pa = this->args.begin(); pa != this->args.end(); ++pa) {
-      (*pa)->getParametersNames(p);
+    for (const auto& pa : this->args) {
+      pa->getParametersNames(p);
     }
   }  // end of EvaluatorFunction2UPNV<N>::getParametersNames
+
+  template <unsigned short N>
+  bool EvaluatorFunction2UPNV<N>::isConstant() const {
+    for (const auto& a : this->args) {
+      if (!a->isConstant()) {
+        return false;
+      }
+    }
+    return true;
+  }  // end of isConstant
+
+  template <unsigned short N>
+  bool EvaluatorFunction2UPNV<N>::dependsOnVariable(
+      const std::vector<double>::size_type p) const {
+    for (const auto& a : this->args) {
+      if (a->dependsOnVariable(p)) {
+        return true;
+      }
+    }
+    return false;
+  }  // end of dependsOnVariable
 
   template <unsigned short N>
   void EvaluatorFunction2UPNV<N>::checkCyclicDependency(
@@ -1007,8 +1108,7 @@ namespace tfel::math::parser {
   }  // end of EvaluatorFunction2UPNV<N>::checkCyclicDependency
 
   template <unsigned short N>
-  EvaluatorFunction2UPNV<N>::~EvaluatorFunction2UPNV() {
-  }  // end of EvaluatorFunction2UPNV<N>::~EvaluatorFunctionNV()
+  EvaluatorFunction2UPNV<N>::~EvaluatorFunction2UPNV() = default;
 
   template <unsigned short N, typename EvaluatorFunctionWrapper<N>::type f>
   std::shared_ptr<tfel::math::parser::Expr> EvaluatorFunctionNVGenerator(

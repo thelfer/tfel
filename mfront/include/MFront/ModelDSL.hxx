@@ -43,7 +43,7 @@ namespace mfront {
     //
     void setInterfaces(const std::set<std::string>&) override;
     //! \brief destructor
-    virtual ~ModelDSL();
+    ~ModelDSL() override;
   };  // end of ModelDSL
 
 }  // end of namespace mfront

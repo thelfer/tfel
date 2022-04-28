@@ -14,6 +14,7 @@
 
 #include <stdexcept>
 #include "TFEL/Raise.hxx"
+#include "TFEL/Math/General/IEEE754.hxx"
 #include "TFEL/Math/Evaluator.hxx"
 
 namespace tfel::math {
@@ -94,16 +95,28 @@ namespace tfel::math {
 
   parser::ExprPtr Evaluator::TBinaryOperation::analyse() {
     using namespace tfel::math::parser;
+    auto ea = a->analyse();
+    auto eb = b->analyse();
     if (op->getOperatorType() == "+") {
-      return ExprPtr(new BinaryOperation<OpPlus>(a->analyse(), b->analyse()));
+      return std::make_shared<BinaryOperation<OpPlus>>(ea, eb);
     } else if (op->getOperatorType() == "-") {
-      return ExprPtr(new BinaryOperation<OpMinus>(a->analyse(), b->analyse()));
+      return std::make_shared<BinaryOperation<OpMinus>>(ea, eb);
     } else if (op->getOperatorType() == "*") {
-      return ExprPtr(new BinaryOperation<OpMult>(a->analyse(), b->analyse()));
+      return std::make_shared<BinaryOperation<OpMult>>(ea, eb);
     } else if (op->getOperatorType() == "/") {
-      return ExprPtr(new BinaryOperation<OpDiv>(a->analyse(), b->analyse()));
+      return std::make_shared<BinaryOperation<OpDiv>>(ea, eb);
     } else if (op->getOperatorType() == "**") {
-      return ExprPtr(new BinaryOperation<OpPower>(a->analyse(), b->analyse()));
+      if (eb->isConstant()) {
+        const auto v = eb->getValue();
+        double integer_part;
+        if ((v > -16.5) && (v < 16.5) &&
+            (tfel::math::ieee754::fpclassify(std::modf(v, &integer_part)) ==
+             FP_ZERO)) {
+          const auto n = static_cast<int>(v);
+          return Evaluator::makePowerFunctionExpression(ea, n);
+        }
+      }
+      return std::make_shared<BinaryOperation<OpPower>>(ea, eb);
     }
     raise(
         "Evaluator::TBinaryOperation : "

@@ -14,6 +14,7 @@
 #include <cmath>
 #include <limits>
 #include "TFEL/Raise.hxx"
+#include "TFEL/Math/Parser/Number.hxx"
 #include "TFEL/Math/Parser/ConditionalExpr.hxx"
 
 namespace tfel::math::parser {
@@ -22,6 +23,18 @@ namespace tfel::math::parser {
                                    const std::shared_ptr<Expr> a_,
                                    const std::shared_ptr<Expr> b_)
       : c(c_), a(a_), b(b_) {}  // end of ConditionalExpr::ConditionalExpr
+
+  bool ConditionalExpr::isConstant() const {
+    return this->a->isConstant() &&  //
+           this->b->isConstant() &&  //
+           this->c->isConstant();
+  }  // end of isConstant
+
+  bool ConditionalExpr::dependsOnVariable(const std::vector<double>::size_type p) const{
+    return this->a->dependsOnVariable(p) ||  //
+           this->b->dependsOnVariable(p) ||  //
+           this->c->dependsOnVariable(p);
+  } // end of dependsOnVariable
 
   double ConditionalExpr::getValue() const {
     if (this->c->getValue()) {
@@ -67,6 +80,10 @@ namespace tfel::math::parser {
   std::shared_ptr<Expr> ConditionalExpr::differentiate(
       const std::vector<double>::size_type pos,
       const std::vector<double>& v) const {
+    if ((!this->a->dependsOnVariable(pos)) &&  //
+        (!this->b->dependsOnVariable(pos))) {
+      return Number::zero();
+    }
     return std::make_shared<ConditionalExpr>(this->c->clone(v),
                                              this->a->differentiate(pos, v),
                                              this->b->differentiate(pos, v));

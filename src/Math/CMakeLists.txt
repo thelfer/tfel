@@ -44,6 +44,7 @@ set(TFELMathParser_SOURCES
     IntegerEvaluator.cxx
     IntegerEvaluatorTExpr.cxx
     Function.cxx
+    PowerFunction.cxx
     Negation.cxx
     Number.cxx
     LevenbergMarquardtEvaluatorWrapper.cxx

@@ -104,7 +104,7 @@ namespace mfront {
           "DSLFactory::createNewDSL: "
           "no DSL named '" +
           n + "'.\nAvailable dsls are:";
-      for (const auto dsl : this->getRegistredParsers()) {
+      for (const auto& dsl : this->getRegistredParsers()) {
         msg += " " + dsl;
       }
       tfel::raise(msg);

@@ -645,9 +645,6 @@ namespace mtest {
                    "the number of external variables names and "
                    "the number of external variables types do not match");
     return this->evtypes[p - this->evnames.begin()];
-    tfel::raise(
-        "StandardBehaviourBase::getExternalStateVariableType: "
-        "unsupported external variable type");
   }
 
   unsigned short StandardBehaviourBase::getExternalStateVariablePosition(

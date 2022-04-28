@@ -170,7 +170,7 @@ namespace mfront {
         std::copy(l.sources.begin(), l.sources.end(),
                   std::ostream_iterator<std::string>(std::cout, " "));
         if (lmelt_sources) {
-          for (const auto d : l.deps) {
+          for (const auto& d : l.deps) {
             const auto pd = std::find_if(
                 libraries.begin(), libraries.end(),
                 [&d](const LibraryDescription& lib) { return lib.name == d; });

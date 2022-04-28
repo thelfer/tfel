@@ -31,7 +31,16 @@ namespace tfel::math::parser {
         expr2(e2) {}  // end of StandardBinaryFunction::StandardBinaryFunction
 
   template <double (*f)(const double, const double)>
-  StandardBinaryFunction<f>::~StandardBinaryFunction() = default;
+  bool StandardBinaryFunction<f>::isConstant() const {
+    return (this->expr1->isConstant()) && (this->expr2->isConstant());
+  }  // end of isConstant
+
+  template <double (*f)(const double, const double)>
+  bool StandardBinaryFunction<f>::dependsOnVariable(
+      const std::vector<double>::size_type p) const {
+    return this->expr1->dependsOnVariable(p) ||
+           this->expr2->dependsOnVariable(p);
+  } // end of dependsOnVariable
 
   template <double (*f)(const double, const double)>
   std::string StandardBinaryFunction<f>::getCxxFormula(
@@ -113,6 +122,9 @@ namespace tfel::math::parser {
                                                                      pos);
     return std::make_shared<StandardBinaryFunction<f>>(this->name, e1, e2);
   }
+
+  template <double (*f)(const double, const double)>
+  StandardBinaryFunction<f>::~StandardBinaryFunction() = default;
 
 }  // end of namespace tfel::math::parser
 

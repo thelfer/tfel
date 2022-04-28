@@ -20,23 +20,30 @@ namespace tfel::math::parser {
   template <typename Op>
   BinaryOperation<Op>::BinaryOperation(const std::shared_ptr<Expr> a_,
                                        const std::shared_ptr<Expr> b_)
-      : a(a_), b(b_) {}  // end of BinaryOperation<Op>::BinaryOperation
+      : a(a_), b(b_) {}  // end of BinaryOperation
 
   template <typename Op>
-  BinaryOperation<Op>::~BinaryOperation() {
-  }  // end of BinaryOperation<Op>::~BinaryOperation()
+  bool BinaryOperation<Op>::isConstant() const {
+    return (this->a->isConstant()) && (this->b->isConstant());
+  }  // end of isConstant
+
+  template <typename Op>
+  bool BinaryOperation<Op>::dependsOnVariable(
+      const std::vector<double>::size_type p) const {
+    return this->a->dependsOnVariable(p) || this->b->dependsOnVariable(p);
+  }  // end of dependsOnVariable
 
   template <typename Op>
   double BinaryOperation<Op>::getValue() const {
     return Op::apply(this->a->getValue(), this->b->getValue());
-  }  // end of BinaryOperation<Op>::getValue
+  }  // end of getValue
 
   template <typename Op>
   std::string BinaryOperation<Op>::getCxxFormula(
       const std::vector<std::string>& m) const {
     return Op::getCxxFormula(this->a->getCxxFormula(m),
                              this->b->getCxxFormula(m));
-  }  // end of BinaryOperation<Op>::getCxxFormula
+  }  // end of getCxxFormula
 
   template <typename Op>
   void BinaryOperation<Op>::checkCyclicDependency(
@@ -49,27 +56,27 @@ namespace tfel::math::parser {
     this->b->checkCyclicDependency(b_names);
     mergeVariablesNames(names, a_names);
     mergeVariablesNames(names, b_names);
-  }  // end of BinaryOperation<Op>::checkCyclicDependency
+  }  // end of checkCyclicDependency
 
   template <typename Op>
   void BinaryOperation<Op>::getParametersNames(std::set<std::string>& p) const {
     this->a->getParametersNames(p);
     this->b->getParametersNames(p);
-  }  // end of BinaryOperation<Op>::getParametersNames
+  }  // end of getParametersNames
 
   template <typename Op>
   std::shared_ptr<Expr> BinaryOperation<Op>::resolveDependencies(
       const std::vector<double>& v) const {
     return std::shared_ptr<Expr>(new BinaryOperation<Op>(
         this->a->resolveDependencies(v), this->b->resolveDependencies(v)));
-  }  // end of BinaryOperation<Op>::resolveDependencies
+  }  // end of resolveDependencies
 
   template <typename Op>
   std::shared_ptr<Expr> BinaryOperation<Op>::clone(
       const std::vector<double>& v) const {
     return std::shared_ptr<Expr>(
         new BinaryOperation<Op>(this->a->clone(v), this->b->clone(v)));
-  }  // end of BinaryOperation<Op>::clone
+  }  // end of clone
 
   template <typename Op>
   std::shared_ptr<Expr>
@@ -85,8 +92,7 @@ namespace tfel::math::parser {
         this->b->createFunctionByChangingParametersIntoVariables(v, params,
                                                                  pos));
     return shared_ptr<Expr>(new BinaryOperation<Op>(na, nb));
-  }  // end of
-     // BinaryOperation<Op>::createFunctionByChangingParametersIntoVariables
+  }  // end of createFunctionByChangingParametersIntoVariables
 
   template <typename BinaryOperation>
   std::shared_ptr<Expr> differentiateBinaryOperation(
@@ -99,6 +105,9 @@ namespace tfel::math::parser {
     return {};
 #endif
   }  // end of differentiateBinaryOperation
+
+  template <typename Op>
+  BinaryOperation<Op>::~BinaryOperation() {}  // end of ~BinaryOperation()
 
   template <>
   std::shared_ptr<Expr> differentiateBinaryOperation<OpPlus>(
@@ -140,7 +149,7 @@ namespace tfel::math::parser {
       const std::vector<double>::size_type pos,
       const std::vector<double>& v) const {
     return differentiateBinaryOperation<Op>(this->a, this->b, pos, v);
-  }  // end of BinaryOperation<Op>::differentiate
+  }  // end of differentiate
 
 }  // end of namespace tfel::math::parser
 

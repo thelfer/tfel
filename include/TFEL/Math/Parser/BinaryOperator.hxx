@@ -101,12 +101,10 @@ namespace tfel::math::parser {
       : public Expr,
         protected BinaryOperationBase {
     BinaryOperation(const std::shared_ptr<Expr>, const std::shared_ptr<Expr>);
+    //
+    bool isConstant() const override;
     double getValue() const override final;
-    /*!
-     * \return a string representation of the evaluator suitable to
-     * be integrated in a C++ code.
-     * \param[in] m: a map used to change the names of the variables
-     */
+    bool dependsOnVariable(const std::vector<double>::size_type) const override;
     std::string getCxxFormula(
         const std::vector<std::string>&) const override final;
     void checkCyclicDependency(std::vector<std::string>&) const override final;

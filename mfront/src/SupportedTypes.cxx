@@ -445,7 +445,7 @@ namespace mfront {
       }
     }
     auto treatDerivative =
-        [&t](const std::pair<int, int> id1,
+        [](const std::pair<int, int> id1,
              const std::pair<int, int> id2) -> std::pair<int, int> {
       return {4 + (id1.first << 3) + (id2.first << (3 + id1.second)),
               3 + id1.second + id2.second};
@@ -461,7 +461,7 @@ namespace mfront {
       return treatStandardTensorialObjectBase(N, id);
     };
     auto treatStandardTensorObjectDerivative =
-        [&t, &treatDerivative, &treatStandardTensorialObject](
+        [&treatDerivative, &treatStandardTensorialObject](
             const int id1, const int id2) -> std::pair<int, int> {
       return treatDerivative(treatStandardTensorialObject(id1),
                              treatStandardTensorialObject(id2));

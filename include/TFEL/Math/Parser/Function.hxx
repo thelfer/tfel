@@ -21,13 +21,10 @@
 
 namespace tfel::math::parser {
 
-  struct Function : public Expr {
-    ~Function() override;
-  };
-
-  typedef double (*StandardFunctionPtr)(double);
-
-  struct StandardFunctionBase {
+  /*!
+   * \brief base class with some helpful methods
+   */
+  struct FunctionBase {
     [[noreturn]] static void throwUnimplementedDifferentiateFunctionException();
     [[noreturn]] static void throwInvalidCallException(const double, const int);
     /*!
@@ -37,8 +34,36 @@ namespace tfel::math::parser {
      * \param[in] e: argument
      */
     static std::string getCxxFormula(const char*, const std::string&);
-  };  // end of struct StandardFunctionBase
+  };  // end of struct FunctionBase
 
+  /*!
+   * \brief base class for unary functions
+   */
+  struct Function : public Expr {
+    //
+    bool isConstant() const override;
+    bool dependsOnVariable(const std::vector<double>::size_type) const override;
+    void checkCyclicDependency(std::vector<std::string>&) const override;
+    void getParametersNames(std::set<std::string>&) const override;
+    //! \brief destructor
+    ~Function() override;
+
+   protected:
+    /*!
+     * \brief constructor
+     * \param[in] e: expression representing the argument of the function
+     */
+    Function(const std::shared_ptr<Expr>) noexcept;
+    //! \brief argument
+    const std::shared_ptr<Expr> expr;
+  };
+
+  //! \brief a simple alias
+  typedef double (*StandardFunctionPtr)(double);
+
+  /*!
+   * \brief implementation of an unary function from a standard C-function
+   */
   template <StandardFunctionPtr f>
   struct TFEL_VISIBILITY_LOCAL StandardFunction final : public Function {
     /*!
@@ -46,18 +71,8 @@ namespace tfel::math::parser {
      * \param[in] e: expression
      */
     StandardFunction(const char* const, const std::shared_ptr<Expr>) noexcept;
-    /*!
-     *\return the value resulting for the evaluation of the
-     * function and its argument
-     */
     double getValue() const override;
-    /*!
-     * \return a string representation of the evaluator suitable to
-     * be integrated in a C++ code.
-     * \param[in] m: a map used to change the names of the variables
-     */
     std::string getCxxFormula(const std::vector<std::string>&) const override;
-    void checkCyclicDependency(std::vector<std::string>&) const override;
     std::shared_ptr<Expr> resolveDependencies(
         const std::vector<double>&) const override;
     std::shared_ptr<Expr> differentiate(
@@ -69,16 +84,14 @@ namespace tfel::math::parser {
         const std::vector<std::string>&,
         const std::map<std::string, std::vector<double>::size_type>&)
         const override;
-    void getParametersNames(std::set<std::string>&) const override;
+    //! \brief destructor
     ~StandardFunction() override;
 
    private:
     StandardFunction& operator=(const StandardFunction&) = delete;
     StandardFunction& operator=(StandardFunction&&) = delete;
-    //! name
+    //! \brief name
     const char* const name;
-    //! argument
-    const std::shared_ptr<Expr> expr;
   };  // end of struct StandardFunction
 
 }  // end of namespace tfel::math::parser

@@ -385,7 +385,6 @@ namespace mtest {
       SingleStructureScheme& t, tokens_iterator& p) {
     const auto& evt = this->readEvolutionType(p);
     const auto& n = this->readString(p, this->tokens.end());
-    const auto& b = t.getBehaviour();
     const auto esvs = t.getBehaviour()->getExternalStateVariablesNames();
     const auto esvs2 = t.getBehaviour()->expandExternalStateVariablesNames();
     const auto p1 = std::find(esvs.begin(), esvs.end(), n);

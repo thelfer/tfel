@@ -38,81 +38,116 @@
 
 namespace tfel::math::parser {
 
-  Function::~Function() = default;
-
-  void
-  StandardFunctionBase::throwUnimplementedDifferentiateFunctionException() {
+  void FunctionBase::throwUnimplementedDifferentiateFunctionException() {
     raise(
-        "StandardFunctionBase::"
+        "FunctionBase::"
         "throwUnimplementedDifferentiateFunctionException : "
         "unimplemented feature");
-  }  // end of
-     // StandardFunctionBase::throwUnimplementedDifferentiateFunctionException()
+  }  // end of throwUnimplementedDifferentiateFunctionException
 
-  void StandardFunctionBase::throwInvalidCallException(const double v,
-                                                       const int e) {
+  void FunctionBase::throwInvalidCallException(const double v, const int e) {
     raise(
-        "StandardFunctionBase::throwInvalidCallException: "
+        "FunctionBase::throwInvalidCallException: "
         "call to function failed for value " +
         std::to_string(v) +
         " "
         "(" +
         std::string(strerror(e)) + ")");
-  }  // end of struct StandardFunctionBase::throwInvalidCallException()
+  }  // end of throwInvalidCallException
 
-  std::string StandardFunctionBase::getCxxFormula(const char* const n,
-                                                  const std::string& e) {
+  std::string FunctionBase::getCxxFormula(const char* const n,
+                                          const std::string& e) {
     return std::string(n) + '(' + e + ')';
-  }  // end of StandardFunctionBase::getCxxFormula
+  }  // end of getCxxFormula
+
+  Function::Function(const std::shared_ptr<Expr> e) noexcept
+      : expr(e) {}  // end of Function
+
+  bool Function::isConstant() const { return this->expr->isConstant(); }
+
+  void Function::checkCyclicDependency(std::vector<std::string>& names) const {
+    this->expr->checkCyclicDependency(names);
+  }  // end of checkCyclicDependency
+
+  void Function::getParametersNames(std::set<std::string>& p) const {
+    this->expr->getParametersNames(p);
+  }  // end of getParametersNames
+
+  bool Function::dependsOnVariable(
+      const std::vector<double>::size_type p) const {
+    return this->expr->dependsOnVariable(p);
+  }  // end of dependsOnVariable
+
+  Function::~Function() = default;
 
   TFEL_MATH_DIFFERENTIATEFUNCTION_PARTIALSPECIALISATION_DEFINITION(exp) {
+    if (!expr->dependsOnVariable(pos)) {
+      return Number::zero();
+    }
     auto ce = expr->clone(v);
     auto de = expr->differentiate(pos, v);
     auto expe = std::make_shared<StandardFunction<::exp>>("exp", ce);
-    return std::make_shared<BinaryOperation<OpMult>>(expe, de);
+    return applyChainRule(expe, de);
   }  // end of differentiateFunction
 
   TFEL_MATH_DIFFERENTIATEFUNCTION_PARTIALSPECIALISATION_DEFINITION(sin) {
+    if (!expr->dependsOnVariable(pos)) {
+      return Number::zero();
+    }
     auto ce = expr->clone(v);
     auto de = expr->differentiate(pos, v);
     auto cose = std::make_shared<StandardFunction<::cos>>("cos", ce);
-    return std::make_shared<BinaryOperation<OpMult>>(cose, de);
+    return applyChainRule(cose, de);
   }  // end of differentiateFunction
 
   TFEL_MATH_DIFFERENTIATEFUNCTION_PARTIALSPECIALISATION_DEFINITION(cos) {
+    if (!expr->dependsOnVariable(pos)) {
+      return Number::zero();
+    }
     auto ce = expr->clone(v);
     auto de = expr->differentiate(pos, v);
     auto sine = std::make_shared<StandardFunction<::sin>>("sin", ce);
-    return std::make_shared<BinaryOperation<OpMult>>(
-        std::make_shared<Negation>(sine), de);
+    return applyChainRule(std::make_shared<Negation>(sine), de);
   }  // end of differentiateFunction
 
   TFEL_MATH_DIFFERENTIATEFUNCTION_PARTIALSPECIALISATION_DEFINITION(tan) {
+    if (!expr->dependsOnVariable(pos)) {
+      return Number::zero();
+    }
     auto ce = expr->clone(v);
     auto de = expr->differentiate(pos, v);
     auto tane = std::make_shared<StandardFunction<::tan>>("tan", ce);
     auto tan2e = std::make_shared<BinaryOperation<OpMult>>(tane, tane);
-    auto tan2e_ = std::make_shared<BinaryOperation<OpPlus>>(
-        std::make_shared<Number>("1", 1.), tan2e);
-    return std::make_shared<BinaryOperation<OpMult>>(tan2e_, de);
+    auto tan2e_ =
+        std::make_shared<BinaryOperation<OpPlus>>(Number::one(), tan2e);
+    return applyChainRule(tan2e_, de);
   }  // end of differentiateFunction
 
   TFEL_MATH_DIFFERENTIATEFUNCTION_PARTIALSPECIALISATION_DEFINITION(sqrt) {
+    if (!expr->dependsOnVariable(pos)) {
+      return Number::zero();
+    }
     auto ce = expr->clone(v);
     auto de = expr->differentiate(pos, v);
     auto sqrte = std::make_shared<StandardFunction<::sqrt>>("sqrt", ce);
     auto sqrte_ = std::make_shared<BinaryOperation<OpDiv>>(
         std::make_shared<Number>("0.5", 0.5), sqrte);
-    return std::make_shared<BinaryOperation<OpMult>>(sqrte_, de);
+    return applyChainRule(sqrte_, de);
   }  // end of differentiateFunction
 
   TFEL_MATH_DIFFERENTIATEFUNCTION_PARTIALSPECIALISATION_DEFINITION(log) {
+    if (!expr->dependsOnVariable(pos)) {
+      return Number::zero();
+    }
     auto ce = expr->clone(v);
     auto de = expr->differentiate(pos, v);
     return std::make_shared<BinaryOperation<OpDiv>>(de, ce);
   }  // end of differentiateFunction
 
   TFEL_MATH_DIFFERENTIATEFUNCTION_PARTIALSPECIALISATION_DEFINITION(log10) {
+    if (!expr->dependsOnVariable(pos)) {
+      return Number::zero();
+    }
     static double ln10 = std::log(10.);
     auto ce = expr->clone(v);
     auto de = expr->differentiate(pos, v);
@@ -122,51 +157,66 @@ namespace tfel::math::parser {
   }  // end of differentiateFunction
 
   TFEL_MATH_DIFFERENTIATEFUNCTION_PARTIALSPECIALISATION_DEFINITION(asin) {
+    if (!expr->dependsOnVariable(pos)) {
+      return Number::zero();
+    }
     auto ce = expr->clone(v);
     auto de = expr->differentiate(pos, v);
     auto den1 = std::make_shared<BinaryOperation<OpMult>>(ce, ce);
-    auto den2 = std::make_shared<BinaryOperation<OpMinus>>(
-        std::make_shared<Number>("1", 1.), den1);
+    auto den2 = std::make_shared<BinaryOperation<OpMinus>>(Number::one(), den1);
     auto den3 = std::make_shared<StandardFunction<::sqrt>>("sqrt", den2);
     return std::make_shared<BinaryOperation<OpDiv>>(de, den3);
   }  // end of differentiateFunction
 
   TFEL_MATH_DIFFERENTIATEFUNCTION_PARTIALSPECIALISATION_DEFINITION(acos) {
+    if (!expr->dependsOnVariable(pos)) {
+      return Number::zero();
+    }
     auto ce = expr->clone(v);
     auto de = expr->differentiate(pos, v);
     auto num1 = std::make_shared<Number>("-1", -1.);
     auto num2 = std::make_shared<BinaryOperation<OpMult>>(num1, de);
     auto den1 = std::make_shared<BinaryOperation<OpMult>>(ce, ce);
-    auto den2 = std::make_shared<BinaryOperation<OpMinus>>(
-        std::make_shared<Number>("1", 1.), den1);
+    auto den2 = std::make_shared<BinaryOperation<OpMinus>>(Number::one(), den1);
     auto den3 = std::make_shared<StandardFunction<::sqrt>>("sqrt", den2);
     return std::make_shared<BinaryOperation<OpDiv>>(num2, den3);
   }  // end of differentiateFunction
 
   TFEL_MATH_DIFFERENTIATEFUNCTION_PARTIALSPECIALISATION_DEFINITION(atan) {
+    if (!expr->dependsOnVariable(pos)) {
+      return Number::zero();
+    }
     auto ce = expr->clone(v);
     auto de = expr->differentiate(pos, v);
     auto den1 = std::make_shared<BinaryOperation<OpMult>>(ce, ce);
-    auto den2 = std::make_shared<BinaryOperation<OpPlus>>(
-        std::make_shared<Number>("1", 1.), den1);
+    auto den2 = std::make_shared<BinaryOperation<OpPlus>>(Number::one(), den1);
     return std::make_shared<BinaryOperation<OpDiv>>(de, den2);
   }  // end of differentiateFunction
 
   TFEL_MATH_DIFFERENTIATEFUNCTION_PARTIALSPECIALISATION_DEFINITION(sinh) {
+    if (!expr->dependsOnVariable(pos)) {
+      return Number::zero();
+    }
     auto ce = expr->clone(v);
     auto de = expr->differentiate(pos, v);
     auto coshe = std::make_shared<StandardFunction<::cosh>>("cosh", ce);
-    return std::make_shared<BinaryOperation<OpMult>>(coshe, de);
+    return applyChainRule(coshe, de);
   }  // end of differentiateFunction
 
   TFEL_MATH_DIFFERENTIATEFUNCTION_PARTIALSPECIALISATION_DEFINITION(cosh) {
+    if (!expr->dependsOnVariable(pos)) {
+      return Number::zero();
+    }
     auto ce = expr->clone(v);
     auto de = expr->differentiate(pos, v);
     auto sinhe = std::make_shared<StandardFunction<::sinh>>("sinh", ce);
-    return std::make_shared<BinaryOperation<OpMult>>(sinhe, de);
+    return applyChainRule(sinhe, de);
   }  // end of differentiateFunction
 
   TFEL_MATH_DIFFERENTIATEFUNCTION_PARTIALSPECIALISATION_DEFINITION(tanh) {
+    if (!expr->dependsOnVariable(pos)) {
+      return Number::zero();
+    }
     auto ce = expr->clone(v);
     auto de = expr->differentiate(pos, v);
     auto coshe = std::make_shared<StandardFunction<::cosh>>("cosh", ce);
