@@ -17,6 +17,7 @@
 #define LIB_TFEL_TYPETRAITS_ISASSIGNABLETO_HXX
 
 #include <type_traits>
+#include "TFEL/Config/TFELConfig.hxx"
 #include "TFEL/TypeTraits/Promote.hxx"
 #include "TFEL/Math/Forward/Complex.hxx"
 

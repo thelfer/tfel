@@ -16,6 +16,7 @@
 #define LIB_TFEL_TYPETRAITS_ISFUNDAMENTALNUMERICTYPE_HXX
 
 #include <type_traits>
+#include "TFEL/Config/TFELConfig.hxx"
 #include "TFEL/Math/Forward/Complex.hxx"
 
 namespace tfel::typetraits {

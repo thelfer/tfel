@@ -15,6 +15,7 @@
 #define LIB_TFEL_TYPETRAITS_ISINVALID_HXX
 
 #include <type_traits>
+#include "TFEL/Config/TFELConfig.hxx"
 #include "TFEL/Metaprogramming/InvalidType.hxx"
 
 namespace tfel::typetraits {

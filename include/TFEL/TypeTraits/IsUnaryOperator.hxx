@@ -15,6 +15,7 @@
 #define LIB_TFEL_TYPETRAITS_ISUNARYOPERATOR_HXX
 
 #include <type_traits>
+#include "TFEL/Config/TFELConfig.hxx"
 
 namespace tfel::typetraits {
 
