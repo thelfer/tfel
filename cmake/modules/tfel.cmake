@@ -209,12 +209,8 @@ function(mtest_library name)
   tfel_library_internal(${name} mtest ${ARGN})
 endfunction(mtest_library)
 
-macro(add_mfront_behaviour_generated_source lib interface dir file)
-  if(NOT "${dir}" STREQUAL "")
-    set(mfront_file   "${PROJECT_SOURCE_DIR}/mfront/tests/behaviours/${dir}/${file}.mfront")
-  else(NOT "${dir}" STREQUAL "")
-    set(mfront_file   "${PROJECT_SOURCE_DIR}/mfront/tests/behaviours/${file}.mfront")
-  endif(NOT "${dir}" STREQUAL "")
+macro(add_mfront_behaviour_generated_source lib interface dir intrinsic_source file)
+  set(mfront_file "${PROJECT_SOURCE_DIR}/mfront/tests/${dir}/${file}.mfront")
   set(iprefix "")
   set(isuffix "")
   if("${interface}" STREQUAL "generic")
@@ -244,10 +240,14 @@ macro(add_mfront_behaviour_generated_source lib interface dir file)
   else(CMAKE_BUILD_TYPE STREQUAL "Debug")
     set(mfront_flags "")
   endif(CMAKE_BUILD_TYPE STREQUAL "Debug")
+  set(output_files)
+  list(APPEND output_files  "src/${iprefix}${file}${isuffix}.cxx")
+  if(${intrinsic_source} STREQUAL "ON")
+    list(APPEND output_files  "src/${file}.cxx")
+  endif(${intrinsic_source} STREQUAL "ON")
   if((CMAKE_HOST_WIN32) AND (NOT MSYS))
     add_custom_command(
-      OUTPUT  "src/${file}.cxx"
-      OUTPUT  "src/${iprefix}${file}${isuffix}.cxx"
+      OUTPUT  "${output_files}"
       COMMAND "set"
       ARGS "PATH=$<TARGET_FILE_DIR:TFELMFront>;%PATH%"
       COMMAND "set"
@@ -280,8 +280,7 @@ macro(add_mfront_behaviour_generated_source lib interface dir file)
       COMMENT "treating mfront source ${file}.mfront")
     else((CMAKE_HOST_WIN32) AND (NOT MSYS))
       add_custom_command(
-	OUTPUT  "src/${file}.cxx"
-	OUTPUT  "src/${iprefix}${file}${isuffix}.cxx"
+    	OUTPUT  "${output_files}"
 	COMMAND "${mfront_executable}"
 	ARGS    "--search-path=${PROJECT_SOURCE_DIR}/mfront/tests/models"
 	ARGS    "--search-path=${PROJECT_SOURCE_DIR}/mfront/tests/behaviours"
@@ -302,8 +301,10 @@ macro(add_mfront_behaviour_generated_source lib interface dir file)
 	  WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/generation-test")
       endif(CMAKE_VERSION AND (${CMAKE_VERSION} GREATER "2.8.2"))
     endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
-  set(${lib}_SOURCES "src/${file}.cxx" "src/${iprefix}${file}${isuffix}.cxx"
-    ${${lib}_SOURCES})
+  set(${lib}_SOURCES "src/${iprefix}${file}${isuffix}.cxx" ${${lib}_SOURCES})
+  if(${intrinsic_source} STREQUAL "ON")
+    set(${lib}_SOURCES "src/${file}.cxx" ${${lib}_SOURCES})
+  endif(${intrinsic_source} STREQUAL "ON")
 endmacro(add_mfront_behaviour_generated_source)
 
 macro(mfront_dependencies lib)
@@ -374,12 +375,13 @@ macro(mfront_dependencies lib)
   endforeach(source)
 endmacro(mfront_dependencies)
 
-function(mfront_behaviour_check_library lib interface)
+function(mfront_check_library_base lib interface directory intrinsic_sources)
   if(${ARGC} LESS 1)
     message(FATAL_ERROR "mfront_library : no source specified")
   endif(${ARGC} LESS 1)
   foreach(source ${ARGN})
-    add_mfront_behaviour_generated_source(${lib} ${interface} "" ${source})
+    add_mfront_behaviour_generated_source(${lib} ${interface} ${directory}
+                                          ${intrinsic_sources} ${source})
   endforeach(source)
   add_library(${lib} MODULE EXCLUDE_FROM_ALL
     ${${lib}_SOURCES}
@@ -395,30 +397,19 @@ function(mfront_behaviour_check_library lib interface)
     PRIVATE TFELUtilities
     PRIVATE TFELException)
   add_dependencies(check ${lib})
+endfunction(mfront_check_library_base)
+
+function(mfront_behaviour_check_library lib interface)
+  mfront_check_library_base(${lib} ${interface} "behaviours" ON ${ARGN})
 endfunction(mfront_behaviour_check_library)
 
 function(mfront_behaviour_brick_check_library lib dir interface)
-  if(${ARGC} LESS 1)
-    message(FATAL_ERROR "mfront_library : no source specified")
-  endif(${ARGC} LESS 1)
-  foreach(source ${ARGN})
-    add_mfront_behaviour_generated_source(${lib} ${interface} "bricks/${dir}" ${source})
-  endforeach(source)
-  add_library(${lib} MODULE EXCLUDE_FROM_ALL
-    ${${lib}_SOURCES}
-    ${${lib}_ADDITIONAL_SOURCES})
-  set_target_properties(${lib} PROPERTIES
-      COMPILE_FLAGS "-DMFRONT_COMPILING")
-  target_include_directories(${lib}
-    PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/include")
-  target_link_libraries(${lib}
-    PRIVATE MFrontProfiling
-    PRIVATE TFELMaterial
-    PRIVATE TFELMath
-    PRIVATE TFELUtilities
-    PRIVATE TFELException)
-  add_dependencies(check ${lib})
+  mfront_check_library_base(${lib} ${interface} "behaviours/bricks/${dir}" ON ${ARGN})
 endfunction(mfront_behaviour_brick_check_library)
+
+function(mfront_model_check_library lib interface)
+  mfront_check_library_base(${lib} ${interface} "models" OFF ${ARGN})
+endfunction(mfront_model_check_library)
 
 function(python_module_base fullname name)
     if(${ARGC} LESS 1)

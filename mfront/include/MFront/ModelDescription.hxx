@@ -19,6 +19,7 @@
 #include <string>
 #include "MFront/MFrontConfig.hxx"
 #include "MFront/VariableDescription.hxx"
+#include "MFront/BehaviourDescription.hxx"
 #include "MFront/StaticVariableDescription.hxx"
 #include "MFront/VariableBoundsDescription.hxx"
 #include "MFront/MaterialKnowledgeDescription.hxx"
@@ -28,38 +29,38 @@ namespace mfront {
   //! \brief class describing a model
   struct MFRONT_VISIBILITY_EXPORT ModelDescription
       : public MaterialKnowledgeDescription {
-    //! a model may contain several function
+    //! \brief a model may contain several function
     struct MFRONT_VISIBILITY_EXPORT Function {
-      //! default constructor
+      //! \brief default constructor
       Function();
-      //! copy constructor
+      //! \brief copy constructor
       Function(const Function&);
-      //! move constructor
+      //! \brief move constructor
       Function(Function&&);
-      //! assignement
+      //! \brief assignement
       Function& operator=(const Function&);
-      //! move assignement
+      //! \brief move assignement
       Function& operator=(Function&&);
-      //! destructor
+      //! \brief destructor
       ~Function();
-      //! list of variables used by the function
+      //! \brief list of variables used by the function
       std::set<std::string> usedVariables;
-      //! list of variables modified by the function
+      //! \brief list of variables modified by the function
       std::set<std::string> modifiedVariables;
-      //! list of constant material properties used by the function
+      //! \brief list of constant material properties used by the function
       std::set<std::string> constantMaterialProperties;
-      //! list of parameters used by the function
+      //! \brief list of parameters used by the function
       std::set<std::string> parameters;
-      //! depths of each variables
+      //! \brief depths of each variables
       std::map<std::string, unsigned short> depths;
-      //! name of the function
+      //! \brief name of the function
       std::string name;
-      //! body of the function
+      //! \brief body of the function
       std::string body;
-      //! line starting the definition of the function in the initial
-      //! MFront file
+      //! \brief line starting the definition of the function in the initial
+      //! \brief MFront file
       unsigned int line = 0u;
-      //! if true, the body of the function uses the time increment dt
+      //! \brief if true, the body of the function uses the time increment dt
       bool useTimeIncrement = false;
     };  // end of struct MFrontData::Function
         /*!
@@ -68,15 +69,15 @@ namespace mfront {
          */
     std::pair<std::string, unsigned short> decomposeVariableName(
         const std::string&) const;
-    //! defaut constructor
+    //! \brief defaut constructor
     ModelDescription();
-    //! copy constructor
+    //! \brief copy constructor
     ModelDescription(const ModelDescription&);
-    //! move constructor
+    //! \brief move constructor
     ModelDescription(ModelDescription&&);
-    //! assignement operator
+    //! \brief assignement operator
     ModelDescription& operator=(const ModelDescription&);
-    //! move assignement operator
+    //! \brief move assignement operator
     ModelDescription& operator=(ModelDescription&&);
     /*!
      * \return the variable description with the given name
@@ -116,8 +117,6 @@ namespace mfront {
      * \brief append the given code to the sources
      */
     void appendToSources(const std::string&);
-    //! \brief destructor
-    virtual ~ModelDescription();
     /*!
      * \brief register a name.
      * \param[in] n : name
@@ -144,7 +143,9 @@ namespace mfront {
      * \param[in] n : name
      */
     bool isNameReserved(const std::string&) const;
-    //! \brief \return the list of reserved names
+    //! \brief destructor
+    virtual ~ModelDescription();
+    //! \return the list of reserved names
     std::set<std::string>& getReservedNames();
     //! \brief list of functions declared
     std::vector<Function> functions;
@@ -186,11 +187,11 @@ namespace mfront {
 
    protected:
     /*!
-     * check that a variable exists
+     * \brief check that a variable exists
      * \param[in] v: variable name
      */
     void checkVariableExistence(const std::string&) const;
-    //! \brief \return the list of reserved names
+    //! \return the list of reserved names
     const std::set<std::string>& getReservedNames() const;
 
    private:
@@ -206,6 +207,15 @@ namespace mfront {
     //! \brief list of reserved names
     std::set<std::string> reservedNames;
   };  // end of struct ModelDescription
+
+  /*!
+   * \brief convert a model description to a behaviour description
+   * \return the behaviour description
+   * \param[in] md: model description
+   */
+  BehaviourDescription convertToBehaviourDescription(
+      const ModelDescription& );
+
 
 }  // end of namespace mfront
 

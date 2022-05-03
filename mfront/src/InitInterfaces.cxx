@@ -18,6 +18,7 @@
 
 #include "MFront/MFrontMaterialPropertyInterface.hxx"
 #include "MFront/GenericBehaviourInterface.hxx"
+#include "MFront/GenericModelInterface.hxx"
 #include "MFront/CMaterialPropertyInterface.hxx"
 #include "MFront/ExcelMaterialPropertyInterface.hxx"
 #include "MFront/ExcelMaterialPropertyInternalInterface.hxx"
@@ -204,6 +205,7 @@ namespace mfront {
 #endif /* HAVE_LSDYNA */
 
     BehaviourInterfaceProxy<GenericBehaviourInterface> gbProxy;
+    ModelInterfaceProxy<GenericModelInterface> gmProxy;
 
     ModelInterfaceProxy<MFrontModelInterface> mmi;
 

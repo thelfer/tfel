@@ -226,12 +226,14 @@ namespace mfront {
    */
   MFRONT_VISIBILITY_EXPORT void writeF77FUNCMacros(std::ostream&);
   /*!
-   * \brief define export directives (visibility attributes) and
-   * calling conventions through the MFRONT_SHAREDOBJ and the
-   * MFRONT_CALLING_CONVENTION macros
-   * \param[out] f   : output file
+   * \brief define the MFRONT_SHAREDOBJ macro which contains visibility
+   * attributes.
+   * \param[out] os: output file
+   * \param[in] b: boolean stating if the `MFRONT_COMPILING` macro shall be
+   * taken into account.
    */
-  MFRONT_VISIBILITY_EXPORT void writeExportDirectives(std::ostream&);
+  MFRONT_VISIBILITY_EXPORT void writeExportDirectives(std::ostream&,
+                                                      const bool = true);
 
   MFRONT_VISIBILITY_EXPORT std::string makeUpperCase(const std::string&);
 
@@ -302,8 +304,8 @@ namespace mfront {
    * `madnex:<file>:<type>:<material>:<implementation>`
    * \param[in] path : implementation
    * \return a tuple of strings containng the file path, the type of the
-   * implementation (material property, behaviour or model), the material name,
-   * the name of the implementation
+   * implementation (material property, behaviour or model), the material
+   * name, the name of the implementation
    */
   MFRONT_VISIBILITY_EXPORT
   std::tuple<std::string, std::string, std::string, std::string>

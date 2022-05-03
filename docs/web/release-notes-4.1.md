@@ -1,4 +1,4 @@
----
+`---
 title: Release notes of the 4.1 version of `TFEL`, `MFront` and `MTest`
 author: Thomas Helfer
 date: 2022
@@ -642,6 +642,47 @@ code.
 
 The domain specific language `ImplicitCZMDSL` allows to implement a
 cohesive zone model using an implicit scheme.
+
+## `generic` interface for point-wise models implemented using the `Model` domain specific language {#sec:tfel:4.1:mfront:generic_model_interface}
+
+The `Model` domain specific language (DSL) is mostly superseeded by the
+domain specific languages introduced in Version 3.4.3 (namely the
+`DefaultModel`, `RungeKuttaModel` and `ImplicitModel` DSL). However,
+backward-compatibility still requires to maintain the `Model` domain
+specific language.
+
+It is also interesting to use of the existing point-wise models in
+solvers based on the `MFrontGenericInterfaceSupport`. This is the main
+motivation of the development for `generic` interface for point-wise
+models implemented using the `Model` domain specific language.
+
+An interesting consequence of this development is those point-wise
+models can now be tested in `MTest`.
+
+### Example of usage
+
+~~~~{.bash}
+$ mfront --obuild --interface=generic UO2_Shrinkage_RAPHAEL2008.mfront
+Treating target : all
+The following libraries have been built :
+- libUO2-generic.so :  UO2_Shrinkage_RAPHAEL2008_AxisymmetricalGeneralisedPlaneStrain UO2_Shrinkage_RAPHAEL2008_AxisymmetricalGeneralisedPlaneStress UO2_Shrinkage_RAPHAEL2008_Axisymmetrical UO2_Shrinkage_RAPHAEL2008_PlaneStress UO2_Shrinkage_RAPHAEL2008_PlaneStrain UO2_Shrinkage_RAPHAEL2008_GeneralisedPlaneStrain UO2_Shrinkage_RAPHAEL2008_Tridimensional
+$ 
+~~~~
+
+This can be tested in `MTest`. As an exemple, the following test
+computes the swelling of uranium dioxide for a constant temperature for
+a burn-up increasing from \(0\) to \(5\, at.%\) (time has no physical
+meaning here):
+
+~~~~{.cxx}
+@ModellingHypothesis 'Tridimensional';
+@Behaviour<generic> 'src/libUO2-generic.so' 'UO2_Shrinkage_RAPHAEL2008';
+
+@ExternalStateVariable 'BurnUp_AtPercent' {0 : 0, 1 : 5};
+@ExternalStateVariable 'Temperature' 800;
+
+@Times{0, 1 in 100};
+~~~~
 
 # `MTest` improvements
 
@@ -1330,6 +1371,13 @@ This feature is described in Section
 @sec:tfel:4.1:mfront:global_options:parameters_initialization_from_file.
 
 For more details, see : <https://github.com/thelfer/tfel/issues/94>.
+
+## Issue 92: [mfront] create a generic interface for point wise models
+
+This feature is described in Section
+@sec:tfel:4.1:mfront:generic_model_interface.
+
+For more details, see : <https://github.com/thelfer/tfel/issues/92>.
 
 ## Issue 91: [mfront] define build identifier using options
 

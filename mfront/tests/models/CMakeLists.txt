@@ -1,5 +1,14 @@
 add_subdirectory(interfaces)
 
+set(mfront_tests_SOURCES
+  B4C_ConcentrationModel
+  SiC_IrradiationSwellingModel_GoFaster
+  UO2_Shrinkage_RAPHAEL2008
+  Zircaloy4_AxialGrowth_BISON2014
+  NickelAlloyPK33_ThermalExpansion_MechAlloy33
+  FastNeutronFluence
+  NeutronFluence)
+
 macro(mfront_model)
   if(${ARGC} LESS 1)
     message(FATAL_ERROR "mfront_model: no source specified")
@@ -74,13 +83,7 @@ macro(mfront_model)
   endforeach(source)
 endmacro(mfront_model)
 
-mfront_model(B4C_ConcentrationModel
-  SiC_IrradiationSwellingModel_GoFaster
-  UO2_Shrinkage_RAPHAEL2008
-  Zircaloy4_AxialGrowth_BISON2014
-  NickelAlloyPK33_ThermalExpansion_MechAlloy33
-  FastNeutronFluence
-  NeutronFluence)
+mfront_model(${mfront_tests_SOURCES})
 
 # a simple macro
 macro(tests_model test_arg)
@@ -101,3 +104,8 @@ tests_model(test_model)
 set_source_files_properties(test_model.cxx
   PROPERTIES OBJECT_DEPENDS
   "${CMAKE_CURRENT_BINARY_DIR}/include/MFront/B4C_ConcentrationModel.hxx;${CMAKE_CURRENT_BINARY_DIR}/include/MFront/SiC_IrradiationSwellingModel_GoFaster.hxx;${CMAKE_CURRENT_BINARY_DIR}/include/MFront/UO2_Shrinkage_RAPHAEL2008.hxx;${CMAKE_CURRENT_BINARY_DIR}/include/MFront/FastNeutronFluence.hxx;${CMAKE_CURRENT_BINARY_DIR}/include/MFront/NeutronFluence.hxx")
+
+## Testing the generic model interface
+
+mfront_model_check_library(MFrontGenericModels generic
+  ${mfront_tests_SOURCES})

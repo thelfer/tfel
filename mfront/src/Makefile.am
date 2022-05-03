@@ -134,6 +134,7 @@ libTFELMFront_la_SOURCES = MFront.cxx                                     \
 		           SymbolsGenerator.cxx                                   \
 		           GenericBehaviourInterface.cxx                          \
 		           GenericBehaviourSymbolsGenerator.cxx                   \
+		           GenericModelInterface.cxx                              \
 		           OptionDescription.cxx                                  \
 		           BrickUtilities.cxx                                     \
 		           StressPotential.cxx                                    \

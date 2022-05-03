@@ -98,6 +98,7 @@ nobase_include_HEADERS= MFront/MFront.hxx                                     \
 			MFront/StandardBehaviourInterface.hxx                             \
 			MFront/UMATInterfaceBase.hxx                                      \
 			MFront/GenericBehaviourInterface.hxx                              \
+			MFront/GenericModelInterface.hxx                                  \
             MFront/SymbolsGenerator.hxx                                       \
             MFront/GenericBehaviourSymbolsGenerator.hxx                       \
 			MFront/MTestFileGeneratorBase.hxx                                            \

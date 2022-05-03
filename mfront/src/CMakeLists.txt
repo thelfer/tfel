@@ -156,6 +156,7 @@ set(TFELMFront_SOURCES
     UMATInterfaceBase.cxx
     GenericBehaviourInterface.cxx
     GenericBehaviourSymbolsGenerator.cxx
+    GenericModelInterface.cxx
     OptionDescription.cxx
     BrickUtilities.cxx
     StressPotential.cxx

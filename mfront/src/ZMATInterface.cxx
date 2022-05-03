@@ -1042,7 +1042,7 @@ namespace mfront {
         << "#include\"TFEL/Material/" << mb.getClassName() << ".hxx\"\n"
         << "#include\"MFront/ZMAT/" << headerFileName << "\"\n"
         << '\n';
-    writeExportDirectives(out);
+    mfront::writeExportDirectives(out, false);
     const auto zcn = "ZMAT" + mb.getClassName();
     writeBuildIdentifierSymbol(out, zcn, mb);
     writeEntryPointSymbol(out, zcn);

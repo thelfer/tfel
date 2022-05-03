@@ -482,15 +482,18 @@ namespace mfront {
     f << "#endif\n\n";
   }  // end of writeF77FuncMacros
 
-  void writeExportDirectives(std::ostream& file) {
-    file << "#ifdef _WIN32\n"
-         << "#ifndef NOMINMAX\n"
-         << "#define NOMINMAX\n"
-         << "#endif /* NOMINMAX */\n"
-         << "#include <windows.h>\n"
-         << "#ifdef small\n"
-         << "#undef small\n"
-         << "#endif /* small */\n"
+  void writeExportDirectives(std::ostream& os, const bool b) {
+    os << "#ifdef _WIN32\n"
+       << "#ifndef NOMINMAX\n"
+       << "#define NOMINMAX\n"
+       << "#endif /* NOMINMAX */\n"
+       << "#include <windows.h>\n"
+       << "#ifdef small\n"
+       << "#undef small\n"
+       << "#endif /* small */\n"
+       << "#endif /* _WIN32 */\n\n";
+    if (b) {
+      os << "#ifdef _WIN32\n"
          << "#ifndef MFRONT_SHAREDOBJ\n"
          << "#ifdef  MFRONT_COMPILING\n"
          << "#define MFRONT_SHAREDOBJ __declspec(dllexport)\n"
@@ -502,12 +505,17 @@ namespace mfront {
          << "#ifndef MFRONT_SHAREDOBJ\n"
          << "#ifdef __GNUC__\n"
          << "#define MFRONT_SHAREDOBJ "
-            "__attribute__((visibility(\"default\")))\n"
+         << "__attribute__((visibility(\"default\")))\n"
          << "#else\n"
          << "#define MFRONT_SHAREDOBJ\n"
          << "#endif /* __GNUC__ */\n"
          << "#endif /* MFRONT_SHAREDOBJ */\n"
          << "#endif /* _WIN32 */\n\n";
+    } else {
+      os << "#ifndef MFRONT_SHAREDOBJ\n"
+         << "#define MFRONT_SHAREDOBJ TFEL_VISIBILITY_EXPORT\n"
+         << "#endif /* MFRONT_SHAREDOBJ */\n\n";
+    }
   }  // end of writeExportDirectives
 
   std::string makeUpperCase(const std::string& n) {

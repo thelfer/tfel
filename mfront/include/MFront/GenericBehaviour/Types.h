@@ -14,6 +14,12 @@
 #ifndef LIB_MFRONT_GENERICBEHAVIOUR_TYPES_H
 #define LIB_MFRONT_GENERICBEHAVIOUR_TYPES_H
 
+#ifdef __cplusplus
+#include <cstddef>
+#else  /* __cplusplus */
+#include <stddef.h>
+#endif /* __cplusplus */
+
 /*!
  * \brief numerical type used by the interface
  */

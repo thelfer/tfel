@@ -261,4 +261,56 @@ namespace mfront {
 
   ModelDescription::~ModelDescription() = default;
 
+  BehaviourDescription convertToBehaviourDescription(
+      const ModelDescription& md) {
+    using tfel::material::ModellingHypothesis;
+    constexpr auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+    const auto* const Topt = BehaviourDescription::
+        automaticDeclarationOfTheTemperatureAsFirstExternalStateVariable;
+    const auto opts = tfel::utilities::DataMap{{Topt, false}};
+    auto bd = BehaviourDescription{opts};
+    bd.setDSLName("Model");
+    bd.declareAsGenericBehaviour();
+    //
+    bd.setBehaviourName(md.modelName);
+    if (!md.material.empty()) {
+      bd.setMaterialName(md.material);
+    }
+    if (!md.library.empty()) {
+      bd.setLibrary(md.library);
+    }
+    //
+    const auto mhs = ModellingHypothesis::getModellingHypotheses();
+    bd.setModellingHypotheses(
+        std::set<ModellingHypothesis::Hypothesis>{mhs.begin(), mhs.end()});
+    bd.addMaterialProperties(uh, md.constantMaterialProperties);
+    bd.addStateVariables(uh, md.outputs);
+    bd.addExternalStateVariables(uh, md.inputs);
+    //
+    for (const auto& v : md.staticVars) {
+      bd.addStaticVariable(uh, v);
+    }
+    //
+    for (const auto& m : md.materialLaws) {
+      bd.addMaterialLaw(m);
+    }
+    //
+    auto parameters = VariableDescriptionContainer{};
+    for (const auto& p : md.parameters) {
+      if (!((p.type == "double") || (p.type == "real"))) {
+        continue;
+      }
+      bd.addParameter(uh, p);
+      if (md.overriding_parameters.count(p.name) != 0) {
+        bd.setParameterDefaultValue(uh, p.name,
+                                    md.overriding_parameters.at(p.name));
+      } else {
+        const auto v =
+            p.getAttribute<double>(VariableDescription::defaultValue);
+        bd.setParameterDefaultValue(uh, p.name, v);
+      }
+    }
+    return bd;
+  }  // end of convertToBehaviourDescription
+
 }  // end of namespace mfront

@@ -272,7 +272,7 @@ simplified if the following assumptions are made:
   \(f_{\tepsilonel}\). Thus, \(\deriv{\vec{F}}{\Delta\,\tepsilonto}\)
   has the form:
   \[
-  \deriv{\vec{F}}{\Delta\,\tepsilonto}=
+  \deriv{\vec{F}}{\Delta\,\tepsilonto}=-
   \begin{pmatrix}
     1& 0 & 0 & 0& 0 &0 \\
     0& 1& 0 & 0& 0 &0 \\

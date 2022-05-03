@@ -99,18 +99,7 @@ namespace mfront {
 
   void StandardBehaviourInterface::writeVisibilityDefines(
       std::ostream& out) const {
-    out << "#ifdef _WIN32\n"
-        << "#ifndef NOMINMAX\n"
-        << "#define NOMINMAX\n"
-        << "#endif /* NOMINMAX */\n"
-        << "#include <windows.h>\n"
-        << "#ifdef small\n"
-        << "#undef small\n"
-        << "#endif /* small */\n"
-        << "#endif /* _WIN32 */\n\n"
-        << "#ifndef MFRONT_SHAREDOBJ\n"
-        << "#define MFRONT_SHAREDOBJ TFEL_VISIBILITY_EXPORT\n"
-        << "#endif /* MFRONT_SHAREDOBJ */\n\n";
+    mfront::writeExportDirectives(out, false);
   }  // end of writeVisibilityDefines
 
   std::pair<std::vector<BehaviourMaterialProperty>, SupportedTypes::TypeSize>
