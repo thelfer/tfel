@@ -28,6 +28,19 @@
 
 namespace mfront {
 
+  static bool isRealParameter(const VariableDescription& p) {
+    return (p.type == "double") || (p.type == "real");
+  } // end of isRealParameter
+
+  static bool hasRealParameters(const ModelDescription& md) {
+    for (const auto& p : md.parameters) {
+      if (isRealParameter(p)) {
+        return true;
+      }
+    }
+    return false;
+  } // end of hasRealParameters
+
   static std::string getHeaderGuard(const ModelDescription& md) {
     auto header = std::string{"LIB_GENERICMODEL_"};
     if (!md.library.empty()) {
@@ -123,6 +136,17 @@ namespace mfront {
        << "extern \"C\"{\n"
        << "#endif /* __cplusplus */\n\n";
 
+    if (hasRealParameters(md)) {
+      os << "/*!\n"
+         << " * \\brief function allowing to modify the parameters of the "
+         << name << " model\n"
+         << " * \\param[in] n: name of the parameter\n"
+         << " * \\param[in] v: value of the parameter\n"
+         << " */\n"
+         << "MFRONT_SHAREDOBJ int\n"
+         << name << "_setParameter(const char *const,const double);\n\n";
+    }
+
     for (const auto& h : ModellingHypothesis::getModellingHypotheses()) {
       const auto f = name + "_" + ModellingHypothesis::toString(h);
       os << "/*!\n"
@@ -165,6 +189,7 @@ namespace mfront {
     const auto name = md.library + md.className;
     const auto header = name + "-generic.hxx";
     const auto src = name + "-generic.cxx";
+    const auto cn = md.className + "RealParametersInitializer";
     std::ofstream os("src/" + src);
     if (!os) {
       raise("could not open file '" + src + "'");
@@ -177,6 +202,7 @@ namespace mfront {
        << " * \\date   " << fd.date << '\n'
        << " */\n\n"
        << "#include <cmath>\n"
+       << "#include <cstring>\n"
        << "#include <sstream>\n"
        << "#include \"TFEL/Config/TFELTypes.hxx\"\n"
        << "#include \"TFEL/Math/Array/View.hxx\"\n"
@@ -195,49 +221,81 @@ namespace mfront {
     //
     if (!md.sources.empty()) {
       os << md.sources << "\n\n";
-      }
+    }
     //
-    const auto has_constructor = !md.constantMaterialProperties.empty();
+    const auto has_constructor =
+        (!md.constantMaterialProperties.empty()) || (hasRealParameters(md));
     //
     os << "namespace mfront::gm{\n\n";
+    //
+    if (hasRealParameters(md)) {
+      os << "struct " << cn << "{\n";
+      writeScalarStandardTypedefs(os, md);
+      os << '\n';
+      os << "//! \\return the unique instance of the " << cn << " class\n"
+         << "static " << cn << "& get(){\n"
+         << "static " << cn << " parameters;\n"
+         << "return parameters;\n"
+         << "}\n\n";
+      //
+      for (const auto& p : md.parameters) {
+        if (!isRealParameter(p)) {
+          continue;
+        }
+        os << p.type << " " << p.name << " = "
+           << p.getAttribute<double>(VariableDescription::defaultValue) << ";\n";
+      }
+      os << "private:\n"
+         << cn << "() = default;\n"
+         << "};\n\n";
+    }
     //
     os << "struct " << md.className << "{\n\n";
     writeScalarStandardTypedefs(os, md);
     os << '\n';
     if (has_constructor) {
-      os << md.className
-         << "(mfront_gb_BehaviourData* const mfront_model_data)\n:";
-      for (auto pmp = md.constantMaterialProperties.begin();
-           pmp != md.constantMaterialProperties.end();) {
-        os << pmp->name << "(mfront_model_data->s1.material_properties["
-           << getVariablePosition(md.constantMaterialProperties, pmp->name)
-           << "])";
-        if (++pmp != md.constantMaterialProperties.end()) {
-          os << ",\n";
-        } else {
-          os << "\n";
-        }
+      os << md.className << "(";
+      if (!md.constantMaterialProperties.empty()) {
+        os << "const mfront_gb_BehaviourData& mfront_model_data";
       }
-      os << "{}\n";
+      os << ")\n:";
+      auto first = true;
+      for (const auto& mp : md.constantMaterialProperties) {
+        os << (first ? "" : ",\n");
+        os << mp.name << "(mfront_model_data.s1.material_properties["
+           << getVariablePosition(md.constantMaterialProperties, mp.name)
+           << "])";
+        first = false;
+      }
+      for (const auto& p : md.parameters) {
+        if (!isRealParameter(p)) {
+          continue;
+        }
+        os << (first ? "" : ",\n");
+        os << p.name << "(" << cn << "::get()." << p.name << ")";
+        first = false;
+      }
+      os << "\n"
+         << "{}\n\n";
     }
     for (const auto& f : md.functions) {
       os << "void execute_" << f.name
-         << "(mfront_gb_BehaviourData* const mfront_model_data) const{\n";
+         << "(mfront_gb_BehaviourData& mfront_model_data) const{\n";
       os << "using namespace std;\n";
       os << "using namespace tfel::math;\n";
       if (f.useTimeIncrement) {
-        os << "const auto dt = time{mfront_model_data->dt};\n";
+        os << "const auto dt = time{mfront_model_data.dt};\n";
       }
       for (const auto& mv : f.modifiedVariables) {
         const auto& v = md.outputs.getVariable(mv);
         const auto pos = getVariablePosition(md.outputs, mv);
         os << "auto " << v.name << " = " << v.type
-           << "{mfront_model_data->s0.internal_state_variables[" << pos
+           << "{mfront_model_data.s0.internal_state_variables[" << pos
            << "]};\n";
       }
       for (const auto& mv : f.usedVariables) {
         const auto [n, vdepth] = md.decomposeVariableName(mv);
-        const auto [v, type, pos] = [&md, &n, &getVariablePosition]()
+        const auto [v, type, pos] = [&md, &getVariablePosition, n = n]()
             -> std::tuple<VariableDescription, std::string, std::ptrdiff_t> {
           if (md.outputs.contains(n)) {
             const auto vpos = getVariablePosition(md.outputs, n);
@@ -251,11 +309,11 @@ namespace mfront {
         }
         if (vdepth == 1) {
           os << "const auto " << v.name << "_1 = " << v.type
-             << "{mfront_model_data->s0." << type << "_state_variables[" << pos
+             << "{mfront_model_data.s0." << type << "_state_variables[" << pos
              << "]};\n";
         } else {
           os << "const auto " << v.name << " = " << v.type
-             << "{mfront_model_data->s1." << type << "_state_variables[" << pos
+             << "{mfront_model_data.s1." << type << "_state_variables[" << pos
              << "]};\n";
         }
       }
@@ -264,7 +322,7 @@ namespace mfront {
         const auto [n, vdepth] = md.decomposeVariableName(mv);
         const auto& v = md.outputs.getVariable(mv);
         os << "tfel::math::map<" << v.type
-           << ">(mfront_model_data->s1.internal_state_variables[0]) = " << v.name
+           << ">(mfront_model_data.s1.internal_state_variables[0]) = " << v.name
            << ";\n";
       }
       os << "} // end of execute_" << f.name << "\n\n";
@@ -288,11 +346,13 @@ namespace mfront {
       if (!getDebugMode()) {
         os << "#line " << p.lineNumber << " \"" << fd.fileName << "\"\n";
       }
+      if (isRealParameter(p)) {
+        os << "const " << p.type << " " << p.name << ";\n";
+        continue;
+      }
       os << "const " << p.type << " " << p.name << " = ";
       if (p.type == "string") {
         os << p.getAttribute<std::string>(VariableDescription::defaultValue);
-      } else if ((p.type == "double") || (p.type == "real")) {
-        os << p.getAttribute<double>(VariableDescription::defaultValue);
       } else if (p.type == "bool") {
         os << p.getAttribute<bool>(VariableDescription::defaultValue);
       } else {
@@ -309,25 +369,53 @@ namespace mfront {
          << v.value << ";\n";
     }
     os << "}; // end of struct " << md.className << "\n\n";
+    //
+
     os << "static int " << name
-       << "_implementation(mfront_gb_BehaviourData* const d){\n";
+       << "_implementation(mfront_gb_BehaviourData& d){\n";
     os << "try{\n";
-    os << "const " << md.className << " m;\n";
+    if (!md.constantMaterialProperties.empty()) {
+      os << "const " << md.className << " m(d);\n";
+    } else {
+      os << "const " << md.className << " m;\n";
+    }
     for (const auto& f : md.functions) {
       os << "m.execute_" << f.name << "(d);\n";
     }
     os << "} catch(...){\n"
-       << "mfront::gb::reportFailureByException(*d);\n"
-       << "*(d->rdt) = 0.1;\n"
+       << "mfront::gb::reportFailureByException(d);\n"
+       << "*(d.rdt) = 0.1;\n"
        << "return -1;"
        << "}\n"
        << "return 1;\n"
        << "}\n\n";
     os << "} // end of namespace mfront::gm\n\n";
+    //
+    if (hasRealParameters(md)) {
+      os << "MFRONT_SHAREDOBJ int\n"
+         << name << "_setParameter(const char *const n, const double v){\n"
+         << "auto& parameters = mfront::gm::" << cn << "::get();\n";
+      auto first = true;
+      for (const auto& p : md.parameters) {
+        if (!isRealParameter(p)) {
+          continue;
+        }
+        const auto en = p.getExternalName();
+        os << (first ? "if" : "} else if")  //
+           << "(std::strcmp(\"" << en << "\", n) == 0){\n"
+           << "parameters." << p.name << " = v;\n"
+           << "return 0;\n";
+        first = false;
+      }
+      os << "}\n"
+         << "return -1;\n"
+         << "} // end of " << name << "_setParameter\n\n";
+    }
+    //
     for (const auto& h : ModellingHypothesis::getModellingHypotheses()) {
       const auto fct = name + "_" + ModellingHypothesis::toString(h);
       os << "int " << fct << "(mfront_gb_BehaviourData* const d){\n"
-         << "return mfront::gm::" << name << "_implementation(d);\n"
+         << "return mfront::gm::" << name << "_implementation(*d);\n"
          << "}\n\n";
     }
   }  // end of writeSourceFile
