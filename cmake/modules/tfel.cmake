@@ -247,7 +247,7 @@ macro(add_mfront_behaviour_generated_source lib interface dir intrinsic_source f
   endif(${intrinsic_source} STREQUAL "ON")
   if((CMAKE_HOST_WIN32) AND (NOT MSYS))
     add_custom_command(
-      OUTPUT  "${output_files}"
+      OUTPUT  ${output_files}
       COMMAND "set"
       ARGS "PATH=$<TARGET_FILE_DIR:TFELMFront>;%PATH%"
       COMMAND "set"
@@ -280,7 +280,7 @@ macro(add_mfront_behaviour_generated_source lib interface dir intrinsic_source f
       COMMENT "treating mfront source ${file}.mfront")
     else((CMAKE_HOST_WIN32) AND (NOT MSYS))
       add_custom_command(
-    	OUTPUT  "${output_files}"
+    	OUTPUT  ${output_files}
 	COMMAND "${mfront_executable}"
 	ARGS    "--search-path=${PROJECT_SOURCE_DIR}/mfront/tests/models"
 	ARGS    "--search-path=${PROJECT_SOURCE_DIR}/mfront/tests/behaviours"
