@@ -271,6 +271,24 @@ namespace mfront {
     auto bd = BehaviourDescription{opts};
     bd.setDSLName("Model");
     bd.declareAsGenericBehaviour();
+    // global options
+    bd.setAttribute(MaterialKnowledgeDescription::buildIdentifier,
+                    md.getAttribute<std::string>(
+                        MaterialKnowledgeDescription::buildIdentifier, ""),
+                    false);
+    bd.setAttribute(MaterialKnowledgeDescription::defaultOutOfBoundsPolicy,
+                    getDefaultOutOfBoundsPolicyAsString(md), false);
+    bd.setAttribute(
+        MaterialKnowledgeDescription::runtimeModificationOfTheOutOfBoundsPolicy,
+        allowRuntimeModificationOfTheOutOfBoundsPolicy(md), false);
+    bd.setAttribute(MaterialKnowledgeDescription::parametersAsStaticVariables,
+                    areParametersTreatedAsStaticVariables(md), false);
+    bd.setAttribute(MaterialKnowledgeDescription::initializeParametersFromFile,
+                    allowsParametersInitializationFromFile(md), false);
+    // exernal files
+    for (const auto& efiles : md.getExternalMFrontFiles()) {
+      bd.addExternalMFrontFile(efiles.first, efiles.second);
+    }
     //
     bd.setBehaviourName(md.modelName);
     if (!md.material.empty()) {

@@ -160,7 +160,8 @@ namespace mfront {
   bool allowRuntimeModificationOfTheOutOfBoundsPolicy(
       const MaterialKnowledgeDescription& d) {
     return d.getAttribute<bool>(
-        MaterialKnowledgeDescription::parametersAsStaticVariables, true);
+        MaterialKnowledgeDescription::runtimeModificationOfTheOutOfBoundsPolicy,
+        true);
   } // end of allowRuntimeModificationOfTheOutOfBoundsPolicy
 
   bool areParametersTreatedAsStaticVariables(

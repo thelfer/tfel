@@ -33,6 +33,9 @@ namespace mfront {
   } // end of isRealParameter
 
   static bool hasRealParameters(const ModelDescription& md) {
+    if (areParametersTreatedAsStaticVariables(md)) {
+      return false;
+    }
     for (const auto& p : md.parameters) {
       if (isRealParameter(p)) {
         return true;
@@ -346,15 +349,20 @@ namespace mfront {
       if (!getDebugMode()) {
         os << "#line " << p.lineNumber << " \"" << fd.fileName << "\"\n";
       }
-      if (isRealParameter(p)) {
+      if ((isRealParameter(p)) &&
+          (!areParametersTreatedAsStaticVariables(md))) {
         os << "const " << p.type << " " << p.name << ";\n";
         continue;
       }
-      os << "const " << p.type << " " << p.name << " = ";
       if (p.type == "string") {
-        os << p.getAttribute<std::string>(VariableDescription::defaultValue);
+        os << "const std::string " << p.name << " = "
+           << p.getAttribute<std::string>(VariableDescription::defaultValue);
+      } else if (isRealParameter(p)) {
+        os << "static constexpr " << p.type << " " << p.name << " = "
+           << p.getAttribute<double>(VariableDescription::defaultValue);
       } else if (p.type == "bool") {
-        os << p.getAttribute<bool>(VariableDescription::defaultValue);
+        os << "static constexpr " << p.type << " " << p.name << " = "
+           << p.getAttribute<bool>(VariableDescription::defaultValue);
       } else {
         raise("parameter type '" + p.type + "' is not supported.\n");
       }
