@@ -417,6 +417,9 @@ actuellement disponibles~:
 \begin{itemize}
 \item l'analyseur \texttt{DefaultParser} qui permet de traiter
   tous types de lois de comportements~;
+\item l'analyseur \texttt{RungeKutta} qui propose la résolution
+  d'une loi de comportement mécanique quelconque à l'aide de l'une des
+  méthodes de \nom{Runge-Kutta}~;
 \item l'analyseur \texttt{IsotropicMisesCreep} qui gère
   exclusivement les lois de comportement mécanique viscoplastique
   incompressible sans écrouissage des matériaux isotropes~;
