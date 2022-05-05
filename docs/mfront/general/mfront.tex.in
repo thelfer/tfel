@@ -686,7 +686,7 @@ sur une quantité (conductivité thermique, coefficient d'échange) ou
 l'impact d'une valeur numérique (critère de convergence) sur les
 résultats du code.
 
-Il est donc intéressant de pourvoir paramétrer une connaissance
+Il est donc intéressant de pouvoir paramétrer une connaissance
 matériau. Plusieurs solutions sont possibles.
 
 La plus évidente est de prévoir une ou plusieurs entrées
@@ -750,7 +750,7 @@ matériau par matériau. Nous pouvons donner deux cas pouvant poser
 problème~:
 \begin{itemize}
 \item dans le cas d'une aiguille absorbante, il arrive que la partie
-  inférieure de la colonne absorbante est constituée de \(\bqc\) à un
+  inférieure de la colonne absorbante soit constituée de \(\bqc\) à un
   enrichissement en \(\bd\) donné tandis que la partie supérieure soit
   constituée de \(\bqc\) à un enrichissement différent. Il est naturel
   de définir deux matériaux distincts pour décrire cette situation que
