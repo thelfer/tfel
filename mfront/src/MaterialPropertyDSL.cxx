@@ -286,7 +286,7 @@ namespace mfront {
     throw_if(!this->md.f.body.empty(), "function already defined");
     if (this->md.output.name.empty()) {
       this->reserveName("res");
-      this->md.output.name = "res";
+      this->md.output = VariableDescription{"real", "res", 1u, 0u};
     }
     this->md.f.modified = false;
     this->md.f.line = this->current->line;
@@ -594,10 +594,11 @@ namespace mfront {
                               "invalid output name.");
     }
     this->reserveName(n);
-    this->md.output.name = n;
     if (s != n) {
       this->reserveName(s);
-      this->md.output.symbolic_form = s;
+      this->md.output = VariableDescription{"real", s, n, 1u, 0u};
+    } else {
+      this->md.output = VariableDescription{"real", n, 1u, 0u};
     }
   }  // end of MaterialPropertyDSL::treatOutput
 
