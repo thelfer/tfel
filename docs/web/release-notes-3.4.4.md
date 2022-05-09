@@ -145,6 +145,10 @@ argument is used.
 
 # Issues solved
 
+## Issue #185: [mfront] missing inclusion of the `cstddef` header in `MFront/GenericBehaviour/Types.h`
+
+For more details, see : <https://github.com/thelfer/tfel/issues/185>
+
 ## Issue #131: [mfront] The content of a madnex files is erased when writting an overridable implementation 
 
 For more details, see : <https://github.com/thelfer/tfel/issues/131>

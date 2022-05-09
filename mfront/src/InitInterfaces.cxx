@@ -17,6 +17,7 @@
 #include "MFront/ModelInterfaceProxy.hxx"
 
 #include "MFront/MFrontMaterialPropertyInterface.hxx"
+#include "MFront/GenericMaterialPropertyInterface.hxx"
 #include "MFront/GenericBehaviourInterface.hxx"
 #include "MFront/GenericModelInterface.hxx"
 #include "MFront/CMaterialPropertyInterface.hxx"
@@ -204,6 +205,7 @@ namespace mfront {
     BehaviourInterfaceProxy<LSDYNAInterface> lsdynaProxy;
 #endif /* HAVE_LSDYNA */
 
+    MaterialPropertyInterfaceProxy<GenericMaterialPropertyInterface> gmpProxy;
     BehaviourInterfaceProxy<GenericBehaviourInterface> gbProxy;
     ModelInterfaceProxy<GenericModelInterface> gmProxy;
 

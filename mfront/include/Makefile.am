@@ -97,6 +97,8 @@ nobase_include_HEADERS= MFront/MFront.hxx                                     \
             MFront/BehaviourMaterialProperty.hxx                              \
 			MFront/StandardBehaviourInterface.hxx                             \
 			MFront/UMATInterfaceBase.hxx                                      \
+			MFront/GenericMaterialPropertyInterfaceBase.hxx                   \
+			MFront/GenericMaterialPropertyInterface.hxx                       \
 			MFront/GenericBehaviourInterface.hxx                              \
 			MFront/GenericModelInterface.hxx                                  \
             MFront/SymbolsGenerator.hxx                                       \
@@ -171,6 +173,11 @@ nobase_include_HEADERS= MFront/MFront.hxx                                     \
 			MFront/BehaviourBrick/Chaboche2012KinematicHardeningRule.hxx       \
 			MFront/BehaviourBrick/BurletCailletaudKinematicHardeningRule.hxx   \
 			MFront/BehaviourBrick/KinematicHardeningRuleFactory.hxx            \
+			MFront/GenericMaterialProperty/MaterialProperty.h                  \
+			MFront/GenericMaterialProperty/OutOfBoundsPolicy.h                 \
+			MFront/GenericMaterialProperty/OutputStatus.h                      \
+			MFront/GenericMaterialProperty/Types.h                             \
+			MFront/GenericMaterialProperty/Types.hxx                           \
 			MFront/GenericBehaviour/GenericBehaviourTraits.hxx                 \
 			MFront/GenericBehaviour/Types.h                                    \
 			MFront/GenericBehaviour/Types.hxx                                  \

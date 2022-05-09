@@ -1,8 +1,8 @@
 /*!
- * \file   include/MFront/GenericBehaviour/Types.hxx
+ * \file   include/MFront/GenericMaterialProperty/Types.hxx
  * \brief
  * \author Thomas Helfer
- * \date   02/07/2018
+ * \date   03/05/2022
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence
@@ -11,16 +11,16 @@
  * project under specific licensing conditions.
  */
 
-#ifndef LIB_MFRONT_GENERICBEHAVIOUR_TYPES_HXX
-#define LIB_MFRONT_GENERICBEHAVIOUR_TYPES_HXX
+#ifndef LIB_MFRONT_GENERICMATERIALPROPERTY_TYPES_HXX
+#define LIB_MFRONT_GENERICMATERIALPROPERTY_TYPES_HXX
 
-#include "MFront/GenericBehaviour/Types.h"
+#include "MFront/GenericMaterialProperty/Types.h"
 
-namespace mfront::gb {
+namespace mfront::gmp {
 
   //! a simple alias
-  using real = ::mfront_gb_real;
+  using real = ::mfront_gmp_real;
 
-}  // namespace mfront::gb
+}  // namespace mfront::gmp
 
-#endif /* LIB_MFRONT_GENERICBEHAVIOUR_TYPES_HXX */
+#endif /* LIB_MFRONT_GENERICMATERIALPROPERTY_TYPES_HXX */

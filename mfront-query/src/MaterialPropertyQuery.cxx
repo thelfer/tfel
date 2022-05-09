@@ -23,30 +23,6 @@
 
 namespace mfront {
 
-  static void display_variable(const mfront::VariableDescription& v) {
-    const auto& n = v.getExternalName();
-    if (n == v.name) {
-      std::cout << "- " << displayName(v);
-    } else {
-      std::cout << "- " << n;
-    }
-    if (v.arraySize != 1u) {
-      std::cout << '[' << v.arraySize << ']';
-    }
-    if (n != v.name) {
-      std::cout << " (" << mfront::displayName(v) << ")";
-    }
-    if (!v.description.empty()) {
-      std::cout << ": " << v.description;
-    } else {
-      const auto& glossary = tfel::glossary::Glossary::getGlossary();
-      if (glossary.contains(n)) {
-        std::cout << ": " << glossary.getGlossaryEntry(n).getShortDescription();
-      }
-    }
-    std::cout << '\n';
-  }  // end of display_variable
-
   MaterialPropertyQuery::MaterialPropertyQuery(
       const int argc,
       const char* const* const argv,
@@ -77,6 +53,9 @@ namespace mfront {
         {"--date", "show the file implementation date"},
         {"--material", "show the material name"},
         {"--library", "show the library name"},
+        {"--output", "show the output of the material law"},
+        {"--inputs", "show the list of inputs"},
+        {"--state-variables", "show the list of state variables. Equivalent to the `--inputs` query"},
         {"--parameters", "show the list of parameters"},
         {"--list-dependencies", "list the MFront dependencies"}};
     for (const auto& q : sq) {
@@ -188,12 +167,26 @@ namespace mfront {
              const auto& l = d.library;
              cout << (!l.empty() ? l : "(undefined)") << endl;
            }});
+    } else if (qn == "--output") {
+      this->queries.push_back(
+          {"output",
+           [](const FileDescription&, const MaterialPropertyDescription& mpd) {
+             QueryHandlerBase::displayVariable(mpd.output);
+           }});
+    } else if ((qn == "--inputs") || (qn == "--parameters")) {
+      this->queries.push_back(
+          {"inputs",
+           [](const FileDescription&, const MaterialPropertyDescription& mpd) {
+             for (const auto& p : mpd.inputs) {
+               QueryHandlerBase::displayVariable(p);
+             }
+           }});
     } else if (qn == "--parameters") {
       this->queries.push_back(
           {"parameters",
            [](const FileDescription&, const MaterialPropertyDescription& mpd) {
              for (const auto& p : mpd.parameters) {
-               display_variable(p);
+               QueryHandlerBase::displayVariable(p);
              }
            }});
     } else {

@@ -23,6 +23,7 @@ namespace mfront {
 
   // forward declarations
   struct AbstractDSL;
+  struct VariableDescription;
   struct FileDescription;
 
   //! \brief base class for queries handler
@@ -46,6 +47,14 @@ namespace mfront {
     void treatUnknownArgument() override final;
     std::string getVersionDescription() const override final;
     std::string getUsageDescription() const override final;
+    /*!
+     * \brief print the description of a variable
+     * \param[in] v: variable
+     * \param[in] spaces: string placed in front of the description (generally
+     * spaces, hence the name)
+     */
+    static void displayVariable(const mfront::VariableDescription &,
+                                const std::string & = std::string{});
     //! \brief register call-backs associated with command line arguments
     virtual void registerCommandLineCallBacks();
     //! \return the abstract domain specific language

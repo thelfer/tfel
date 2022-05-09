@@ -2,6 +2,7 @@ set(TFELMTest_SOURCES
   MTestFileExport.cxx
   MaterialProperty.cxx
   MaterialPropertyBase.cxx
+  GenericMaterialProperty.cxx
   CastemMaterialProperty.cxx
   CyranoMaterialProperty.cxx
   RoundingMode.cxx
@@ -18,6 +19,7 @@ set(TFELMTest_SOURCES
   AnalyticalTest.cxx
   ReferenceFileComparisonTest.cxx
   Evolution.cxx
+  GenericEvolution.cxx
   CastemEvolution.cxx
   CyranoEvolution.cxx
   FunctionEvolution.cxx

@@ -154,6 +154,8 @@ set(TFELMFront_SOURCES
     StandardBehaviourInterface.cxx
     SymbolsGenerator.cxx
     UMATInterfaceBase.cxx
+    GenericMaterialPropertyInterfaceBase.cxx
+    GenericMaterialPropertyInterface.cxx
     GenericBehaviourInterface.cxx
     GenericBehaviourSymbolsGenerator.cxx
     GenericModelInterface.cxx

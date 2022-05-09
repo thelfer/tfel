@@ -6,6 +6,7 @@ EXTRA_DIST = CMakeLists.txt \
 if WITH_TESTS
 
 AM_CPPFLAGS = -I$(top_srcdir)/include \
+              -I$(top_srcdir)/mfront/include \
               -I@builddir@/include
 
 LDADD = -lTFELSystem -lTFELException -lTFELTests \

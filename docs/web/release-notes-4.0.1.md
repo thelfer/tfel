@@ -19,6 +19,10 @@ eqnPrefixTemplate: "($$i$$)"
 
 # Issues fixed
 
+## Issue #178: [mfront] add type alias for invert_type, result_type and derivative_type in material properties and models
+
+For more details, see <https://github.com/thelfer/tfel/issues/178>
+
 ## Issue #168: [tfel-math] output operator is empty for views
 
 For more details, see <https://github.com/thelfer/tfel/issues/168>

@@ -71,7 +71,8 @@ libTFELMathParser_la_SOURCES = ExternalCFunction.cxx                         \
 			       IntegerEvaluatorTExpr.cxx
 
 
-libTFELMathParser_la_CPPFLAGS  = -I$(top_srcdir)/include
+libTFELMathParser_la_CPPFLAGS  = -I$(top_srcdir)/include        \
+                                 -I$(top_srcdir)/mfront/include
 if TFEL_WIN
 libTFELMathParser_la_CPPFLAGS += $(AM_CPPFLAGS) -DTFELMathParser_EXPORTS
 endif

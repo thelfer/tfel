@@ -142,7 +142,7 @@ namespace mfront {
     if (b.boundsType == VariableBoundsDescription::LOWER) {
       out << "if(" << v.name << " < " << v.type << "(" << b.lowerBound
           << ")){\n"
-          << "ostringstream msg;\nmsg << \"" << name << " : " << v.name
+          << "std::ostringstream msg;\nmsg << \"" << name << " : " << v.name
           << " is below its physical lower bound (\"\n << " << v.name
           << " << \"<" << b.lowerBound << ").\";\n"
           << "return throwPythonRuntimeException(msg.str());\n"
@@ -150,7 +150,7 @@ namespace mfront {
     } else if (b.boundsType == VariableBoundsDescription::UPPER) {
       out << "if(" << v.name << " > " << v.type << "(" << b.upperBound
           << ")){\n"
-          << "ostringstream msg;\nmsg << \"" << name << " : " << v.name
+          << "std::ostringstream msg;\nmsg << \"" << name << " : " << v.name
           << " is beyond its physical upper bound (\"\n << " << v.name
           << " << \">" << b.upperBound << ").\";\n"
           << "return throwPythonRuntimeException(msg.str());\n"
@@ -161,12 +161,13 @@ namespace mfront {
           << "(" << v.name << " > " << v.type << "(" << b.upperBound << "))){\n"
           << "if(" << v.name << " < " << v.type << "(" << b.lowerBound
           << ")){\n"
-          << "ostringstream msg;\nmsg << \"" << name << " : " << v.name
+          << "std::ostringstream msg;\nmsg << \"" << name << " : " << v.name
           << " is below its physical lower bound (\"\n << " << v.name
           << " << \"<" << b.lowerBound << ").\";\n"
           << "return throwPythonRuntimeException(msg.str());\n"
           << "} else {\n"
-          << "ostringstream msg;\nmsg << \"" << name << " : " << v.name
+          << "std::ostringstream msg;\n"
+          << "msg << \"" << name << " : " << v.name
           << " is beyond its physical upper bound (\"\n << " << v.name
           << " << \">" << b.upperBound << ").\";\n"
           << "return throwPythonRuntimeException(msg.str());\n"
@@ -187,7 +188,6 @@ namespace mfront {
       return;
     }
     const auto& b = v.getBounds();
-    const auto default_policy = getDefaultOutOfBoundsPolicyAsUpperCaseString(mpd);
     const auto get_policy = [&mpd] {
       const auto default_policy =
           getDefaultOutOfBoundsPolicyAsUpperCaseString(mpd);
@@ -213,7 +213,7 @@ namespace mfront {
           << get_policy  //
           << "if((::strcmp(mfront_policy,\"STRICT\")==0)||"
           << "(::strcmp(mfront_policy,\"WARNING\")==0)){\n"
-          << "ostringstream msg;\n"
+          << "std::ostringstream msg;\n"
           << "msg << \"" << name << " : " << v.name
           << " is below its lower bound (\"\n << " << v.name << " << \"<"
           << b.lowerBound << ").\";\n"
@@ -232,7 +232,7 @@ namespace mfront {
           << get_policy  //
           << "if((::strcmp(mfront_policy,\"STRICT\")==0)||"
           << "(::strcmp(mfront_policy,\"WARNING\")==0)){\n"
-          << "ostringstream msg;\n"
+          << "std::ostringstream msg;\n"
           << "msg << \"" << name << " : " << v.name
           << " is over its upper bound (\"\n << " << v.name << " << \">"
           << b.upperBound << ").\";\n"
@@ -391,11 +391,6 @@ namespace mfront {
       } else {
         srcFile << "auto " << i.name << " = real{};\n";
       }
-    }
-    if (hasBounds(mpd.inputs) || hasBounds(mpd.output)) {
-      srcFile << "#ifndef PYTHON_NO_BOUNDS_CHECK\n";
-      srcFile << "const char * policy;\n";
-      srcFile << "#endif /* PYTHON_NO_BOUNDS_CHECK */\n";
     }
     if (!inputs.empty()) {
       srcFile << "if(!PyArg_ParseTuple(py_args_,\"";

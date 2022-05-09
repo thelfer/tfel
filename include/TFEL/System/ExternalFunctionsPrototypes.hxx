@@ -63,13 +63,15 @@ typedef double EuroplexusRealType;
 typedef double CalculiXRealType;
 typedef double DianaFEARealType;
 
-#ifndef LIB_MFRONT_GENERICBEHAVIOUR_BEHAVIOURDATA_H
-#define MFRONT_GB_BEHAVIOURDATA_FORWARD_DECLARATION
+#include"MFront/GenericMaterialProperty/Types.h"
+#include"MFront/GenericMaterialProperty/OutputStatus.h"
+#include"MFront/GenericMaterialProperty/OutOfBoundsPolicy.h"
+#include"MFront/GenericMaterialProperty/MaterialProperty.h"
+#include"MFront/GenericBehaviour/Types.h"
+typedef mfront_gmp_MaterialPropertyPtr GenericMaterialPropertyPtr;
+
 // forward declaration
 typedef struct mfront_gb_BehaviourData mfront_gb_BehaviourData;
-typedef double mfront_gb_real;
-typedef size_t mfront_gb_size_type;
-#endif /* LIB_MFRONT_GENERICBEHAVIOUR_BEHAVIOURDATA_H */
 
 #ifdef __cplusplus
 }

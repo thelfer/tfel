@@ -3,7 +3,9 @@ SUBDIRS = include ExpressionTemplates RungeKutta  \
 	  stensor tensor st2tost2 t2tost2 st2tot2 \
 	  t2tot2 cadna
 
-AM_CPPFLAGS = -I$(top_srcdir)/include -I$(srcdir)/include
+AM_CPPFLAGS = -I$(top_srcdir)/include        \
+              -I$(top_srcdir)/mfront/include \
+              -I$(srcdir)/include
 
 if WITH_TESTS
 

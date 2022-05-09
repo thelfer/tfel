@@ -483,6 +483,32 @@ namespace tfel::system {
                                        const std::string&,
                                        const std::string&);
     /*!
+     * \param[in] l : name of the library
+     * \param[in] f : function name
+     */
+    unsigned short getGenericMaterialPropertyNumberOfVariables(
+        const std::string&, const std::string&);
+    /*!
+     * \param[in] l : name of the library
+     * \param[in] f : function name
+     */
+    std::vector<std::string> getGenericMaterialPropertyVariables(
+        const std::string&, const std::string&);
+    /*!
+     * \param[out] n: names of  the variables
+     * \param[in] l : name of the library
+     * \param[in] f : function name
+     */
+    void getGenericMaterialPropertyVariables(std::vector<std::string>&,
+                                            const std::string&,
+                                            const std::string&);
+    /*!
+     * \param[in] l : name of the library
+     * \param[in] f : law name
+     */
+    GenericMaterialPropertyPtr getGenericMaterialProperty(const std::string&,
+                                                          const std::string&);
+    /*!
      * \param[in] l: name of the library
      * \param[in] f: function name
      */

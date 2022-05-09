@@ -3,18 +3,54 @@
  * \brief
  * \author Thomas Helfer
  * \date   22/11/2021
+ * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
  */
 
 #include <iterator>
 #include <iostream>
 #include <algorithm>
 #include "TFEL/Raise.hxx"
+#include "TFEL/Glossary/Glossary.hxx"
+#include "TFEL/Glossary/GlossaryEntry.hxx"
 #include "MFront/MFrontHeader.hxx"
 #include "MFront/AbstractDSL.hxx"
+#include "MFront/VariableDescription.hxx"
 #include "MFront/TargetsDescription.hxx"
 #include "MFront/QueryHandlerBase.hxx"
 
 namespace mfront {
+
+  void QueryHandlerBase::displayVariable(
+      const mfront::VariableDescription& v,
+      const std::string& spaces) {
+    const auto& n = v.getExternalName();
+    std::cout << spaces;
+    if (n == v.name) {
+      std::cout << "- " << displayName(v);
+    } else {
+      std::cout << "- " << n;
+    }
+    if (v.arraySize != 1u) {
+      std::cout << '[' << v.arraySize << ']';
+    }
+    if (n != v.name) {
+      std::cout << " (" << mfront::displayName(v) << ")";
+    }
+    if (!v.description.empty()) {
+      std::cout << ": " << v.description;
+    } else {
+      const auto& glossary = tfel::glossary::Glossary::getGlossary();
+      if (glossary.contains(n)) {
+        std::cout << ": " << glossary.getGlossaryEntry(n).getShortDescription();
+      }
+    }
+    std::cout << '\n';
+  }  // end of displayVariable
 
   QueryHandlerBase::QueryHandlerBase(const int argc,
                                      const char* const* const argv)

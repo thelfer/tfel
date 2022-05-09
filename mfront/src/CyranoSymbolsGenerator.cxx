@@ -34,7 +34,7 @@ namespace mfront {
       if (bd.areElasticMaterialPropertiesDefined()) {
         for (const auto& e : bd.getElasticMaterialPropertiesDescriptions()) {
           CyranoMaterialPropertyInterface imp;
-          names.push_back(imp.getCyranoFunctionName(e));
+          names.push_back(imp.getFunctionName(e));
         }
       }
       return names;
@@ -49,7 +49,7 @@ namespace mfront {
       if (bd.areThermalExpansionCoefficientsDefined()) {
         for (const auto& e : bd.getThermalExpansionCoefficientsDescriptions()) {
           CyranoMaterialPropertyInterface imp;
-          names.push_back(imp.getCyranoFunctionName(e));
+          names.push_back(imp.getFunctionName(e));
         }
       }
       return names;

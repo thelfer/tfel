@@ -11,6 +11,7 @@
 
 #include "TFEL/Raise.hxx"
 #include "MTest/MaterialProperty.hxx"
+#include "MTest/GenericMaterialProperty.hxx"
 #include "MTest/CastemMaterialProperty.hxx"
 #include "MTest/CyranoMaterialProperty.hxx"
 
@@ -23,6 +24,9 @@ namespace mtest {
     }
     if ((i == "cyrano") || (i == "Cyrano")) {
       return std::make_shared<CyranoMaterialProperty>(l, f);
+    }
+    if ((i == "generic") || (i == "Generic")) {
+      return std::make_shared<GenericMaterialProperty>(l, f);
     }
     tfel::raise(
         "MaterialProperty::getMaterialProperty: "

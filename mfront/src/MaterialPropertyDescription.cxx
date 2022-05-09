@@ -35,7 +35,10 @@ namespace mfront {
       const FileDescription& fd,
       const std::string& numeric_type,
       const bool areQuantitiesSupported) {
-    os << "using namespace std;\n";
+    os << "using namespace std;\n"
+       << "using tfel::math::invert_type;\n"
+       << "using tfel::math::result_type;\n"
+       << "using tfel::math::derivative_type;\n";
     writeScalarStandardTypedefs(os, mpd, numeric_type, areQuantitiesSupported);
     writeMaterialLaws(os, mpd.materialLaws);
     writeStaticVariables(os, mpd.staticVars, fd.fileName);

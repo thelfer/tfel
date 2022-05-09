@@ -19,6 +19,7 @@
 #include "MTest/MTest.hxx"
 #include "MTest/Behaviour.hxx"
 #include "MTest/Evolution.hxx"
+#include "MTest/GenericEvolution.hxx"
 #include "MTest/CastemEvolution.hxx"
 #include "MTest/CyranoEvolution.hxx"
 #include "MTest/FunctionEvolution.hxx"
@@ -219,8 +220,10 @@ namespace mtest {
     this->checkNotEndOfLine(
         "SingleStructureSchemeParser::handleMaterialProperty", p,
         this->tokens.end());
-    if ((p->value == "constant") || (p->value == "castem") ||
-        (p->value == "cyrano") || (p->value == "function")) {
+    if ((p->value == "constant") || (p->value == "function") ||  //
+        (p->value == "castem") || (p->value == "Castem") ||
+        (p->value == "cyrano") || (p->value == "Cyrano") ||
+        (p->value == "generic") || (p->value == "Generic")) {
       i = p->value;
     } else {
       tfel::raise(
@@ -247,14 +250,21 @@ namespace mtest {
       mpev = std::shared_ptr<Evolution>(
           new FunctionEvolution(f, t.getEvolutions()));
       t.setMaterialProperty(n, mpev, true);
-    } else if (i == "castem") {
+    } else if ((i == "generic") || (i == "Generic")) {
+      std::shared_ptr<Evolution> mpev;
+      const auto l = this->readString(p, this->tokens.end());
+      const auto f = this->readString(p, this->tokens.end());
+      mpev = std::shared_ptr<Evolution>(
+          new GenericEvolution(l, f, t.getEvolutions()));
+      t.setMaterialProperty(n, mpev, true);
+    } else if ((i == "castem") || (i == "Castem")) {
       std::shared_ptr<Evolution> mpev;
       const auto l = this->readString(p, this->tokens.end());
       const auto f = this->readString(p, this->tokens.end());
       mpev = std::shared_ptr<Evolution>(
           new CastemEvolution(l, f, t.getEvolutions()));
       t.setMaterialProperty(n, mpev, true);
-    } else if (i == "cyrano") {
+    } else if ((i == "cyrano") || (i == "Cyrano")) {
       std::shared_ptr<Evolution> mpev;
       const auto l = this->readString(p, this->tokens.end());
       const auto f = this->readString(p, this->tokens.end());

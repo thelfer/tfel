@@ -19,6 +19,10 @@ eqnPrefixTemplate: "($$i$$)"
 
 # Issues fixed
 
+## Issue #184: [mfront] The output variable of a material property is only partially defined
+
+For more details, see <https://github.com/thelfer/tfel/issues/184>.
+
 ## Issue #71: [mfront] Single-crystal behaviours fails to compile with `intel/oneapi` (2021.1 and 2021.5) with `TFEL-3.4.3`
 
 The `offset` methods of the generated class handling the slips system

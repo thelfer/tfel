@@ -643,6 +643,139 @@ code.
 The domain specific language `ImplicitCZMDSL` allows to implement a
 cohesive zone model using an implicit scheme.
 
+## `generic` interface for material properties {#sec:tfel:4.1:mfront:generic_material_property_interface}
+
+The `generic` interface for material properties generates functions
+matching the following prototype:
+
+~~~~{.cxx}
+mfront_gmp_real (*)(mfront_gmp_OutputStatus* const,       // output status
+                    const mfront_gmp_real* const,         // arguments
+                    const mfront_gmp_size_type,           // number of arguments
+                    const mfront_gmp_OutOfBoundsPolicy);  // out of bounds policy
+~~~~
+
+The `mfront_gmp_OutputStatus` structure and the
+`mfront_gmp_OutOfBoundsPolicy` enumeration type are described in the
+next paragraphs.
+
+The arguments are passed using a continuous array. The number of
+arguments is used to make some basic consistency checks. The list of
+arguments can be retrieved using the `ExternalLibraryManager` class (See
+Section @???).
+
+If the material property declares parameters (and that the
+`parameters_as_static_variables` DSL option was not specified), their
+names and default values can be retrieved using the
+`ExternalLibraryManager` class. The value of those parameters can also
+be modified using the `ExternalLibraryManager` class (See Section @???).
+
+> **Note: link with the `cyrano` interface for material properties**
+>
+> The `generic` interface for material properties is very similar to the
+> `cyrano` interface. In pratice, both interfaces shares a common base
+> class (called `GenericMaterialPropertyInterfaceBase`).
+
+### The `mfront_gmp_OutputStatus` structure
+
+The `mfront_gmp_OutputStatus` structure describes the output status of
+the evaluation of a material property.
+
+This data structure is defined as follows:
+
+~~~~{.cxx}
+/*!
+ * \brief this structure summarizes the exit status of a function conforming to
+ * one of the `generic` material property interface.
+ */
+typedef struct {
+  /*!
+   * \brief exit status
+   *
+   * The exit status is zero if the result has been correctly evaluated.
+   *
+   * If the exit status is 1, a result has been computed, but it must be used
+   * with caution. This is typically used to report that one argument was out of
+   * its bounds.
+   *
+   * All negative values indicates that the result is not usable. For a material
+   * property, thereturned is `nan`.
+   *
+   * For a material property, a negative value has the following meaning:
+   *
+   * - If the exit status is -1, an argument was out of its physical bounds, or
+   *   out of its bounds and a strict out of bounds policy is declared.
+   * - If the exit status is -2, a C++ exception was thrown. If the exception
+   *   was a child of `std::exception`, the content of the string returned by
+   *   the `what` method is copyied in the `message` field. Otherwise, the
+   *   message field contains the "unknown exception" string.
+   * - If the exit status is -3, an error occured in the `C` library, i.e. the
+   *   `errno` value was set to a non zero value during the computation.
+   *   The value of `errno` corresponding to the error is stored to in the
+   *   `c_error_number` field of this structure. The string returned by
+   *   `strerrno` is returned. Note that the `errno` value is always reset to
+   *   the  value it had before the call.
+   * - If the exit status is -4, the computed value is invalid (either \nan`,
+   *   `inf`, or `-inf`).
+   * - If the exit status is -5, the number of arguments is invalid.
+   */
+  int status;
+  //! \brief error number reported by the C library.
+  int c_error_number;
+  /*!
+   * \brief bounds status
+   * This status has the following meaning:
+   * - zero means that no argument was outside its bounds or its physical
+   * bounds.
+   * - a negative values means that one argument went beyond its physical
+   * bounds.
+   *   The absolute value gives the rank of this argument (here the rank starts
+   * at 1).
+   * - a positive value means that one argument went beyond its bounds.
+   *   The value gives the rank of this argument (here the rank starts at 1).
+   */
+  int bounds_status;
+  //! \brief error message
+  char msg[512];
+} mfront_gmp_OutputStatus;  // end of struct mfront_gmp_OutputStatus
+~~~~
+
+### The `mfront_gmp_OutOfBoundsPolicy` enumeration type
+
+The `mfront_gmp_OutOfBoundsPolicy` enumeration type is defined as follows:
+
+~~~~{.cxx}
+/*!
+ * \brief available out of bounds policies
+ */
+typedef enum {
+  GENERIC_MATERIALPROPERTY_NONE_POLICY,    /*!<
+                                            * With this policy, nothing is done if
+                                            * the arguments are    out of their
+                                            * bounds    (checks are not even
+                                            * performed).
+                                            */
+  GENERIC_MATERIALPROPERTY_WARNING_POLICY, /*!<
+                                            * With this policy, checks on the
+                                            * arguments are performed. If one
+                                            * argument if out of its bounds,
+                                            * this will be reported in the
+                                            * output status and an
+                                            * appropriate error message will be
+                                            * reported. The computations are
+                                            * however performed.
+                                            */
+  GENERIC_MATERIALPROPERTY_STRICT_POLICY   /*!<
+                                            * With this policy, checks on the
+                                            * arguments are   performed. If one
+                                            * argument   if out of its bounds,
+                                            * this   will be reported in the
+                                            * output   status and an   appropriate
+                                            * error   message will be reported.
+                                            */
+} mfront_gmp_OutOfBoundsPolicy;  // end of mfront_gmp_OutOfBoundsPolicy
+~~~~
+
 ## `generic` interface for point-wise models implemented using the `Model` domain specific language {#sec:tfel:4.1:mfront:generic_model_interface}
 
 The `Model` domain specific language (DSL) is mostly superseeded by the
@@ -961,6 +1094,20 @@ of the behaviour, as described in [Issue
 behaviours. The wrapper handles the pre and post-processing steps around
 the behaviour integration.
 
+## Support for material properties built using the `generic` interface {#sec:tfel:4.1:mtest:generic_material_property_support}
+
+`MTest` support material properties built using the `generic` interface:
+
+- The `mtest::MaterialProperty` can manipulate can load such material
+  properties.
+- The `@MaterialProperty` keyword now has a `generic` option.
+
+### Example of usage
+
+~~~~{.cxx}
+@MaterialProperty<generic> 'YoungModulus' 'src/libGenericInconel600.so' 'Inconel600_YoungModulus';
+~~~~
+
 # `mfm-test-generator` improvements
 
 ## Support for `madnex` file {#sec:tfel:4.1:mfmtg:madnex_support}
@@ -1160,6 +1307,32 @@ $ mfront-query --list-dependencies --search-path=generate   \
 madnex:generate/MaterialProperties.mdnx:MaterialProperty::YoungModulusTest
 ~~~~
 
+## New material property query
+
+### Output of a material property{#sec:tfel_4.1:mfront_query:mp:output}
+
+The `--output` query displays information about the output of a material
+property.
+
+#### Example of usage
+
+~~~~{.cxx}
+$ mfront-query --output Inconel600_YoungModulus.mfront 
+- YoungModulus (E): The Young modulus of an isotropic material
+~~~~
+
+### Inputs of a material property{#sec:tfel_4.1:mfront_query:mp:inputs}
+
+The `--inputs` query displays information about the inputs of a material
+property.
+
+#### Example of usage
+
+~~~~{.cxx}
+$ mfront-query --inputs Inconel600_YoungModulus.mfront 
+- Temperature (TK): The temperature
+~~~~
+
 ## New behaviour queries
 
 ### List of initialize functions
@@ -1167,7 +1340,7 @@ madnex:generate/MaterialProperties.mdnx:MaterialProperty::YoungModulusTest
 The list of initialize functions defined by a behaviour can be retrieved
 using the `--initialize functions` query, as follows:
 
-~~~~{.bash}
+s~~~~{.bash}
  mfront-query --initialize-functions Plasticity.mfront 
 - ElasticStrainFromInitialStress: no description available.
 ~~~~
@@ -1241,6 +1414,27 @@ $ mfront-query --list-behaviour-mfm-test-generator-tests=unsorted --test=".+Tens
 
 # Issues fixed
 ￼
+
+## Issue #181: [mfront-query] add query about the output of a material property
+
+This feature is described in Section
+@sec:tfel_4.1:mfront_query:mp:output.
+
+For more details, see <https://github.com/thelfer/tfel/issues/181>
+
+## Issue #180: [mfront-query] add query about the inputs of a material property
+
+This feature is described in Section
+@sec:tfel_4.1:mfront_query:mp:inputs.
+
+For more details, see <https://github.com/thelfer/tfel/issues/180>
+
+## Issue #177: [mtest] Support of material properties generated with the generic interface
+
+The feature is described in Section
+@sec:tfel:4.1:mtest:generic_material_property_support.
+
+For more details, see : <https://github.com/thelfer/tfel/issues/177>.
 
 ## Issue #172: [tfel-math-parser] Add the ability to derive the power function enhancement {#sec:tfel:4.1:issue:172}
 
@@ -1384,7 +1578,14 @@ For more details, see : <https://github.com/thelfer/tfel/issues/92>.
 This feature is described in Section
 @sec:tfel:4.1:mfront:global_options:build_identifier.
 
-For more details, see : <https://github.com/thelfer/tfel/issues/91>.
+For more details, see : <https://github.com/thelfer/tfel/issues/90>.
+
+## Issue 90: [mfront] create a generic interface for material properties
+
+This feature is described in Section
+@sec:tfel:4.1:mfront:generic_material_property_interface.
+
+For more details, see : <https://github.com/thelfer/tfel/issues/90>.
 
 ## Issue #83: [mfront] Add a command line argument to retrieve the list of options associated with a domain specific language
 

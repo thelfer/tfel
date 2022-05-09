@@ -37,32 +37,6 @@
 
 namespace mfront {
 
-  static void display_variable(const mfront::VariableDescription& v,
-                               const std::string& spaces = std::string{}) {
-    const auto& n = v.getExternalName();
-    std::cout << spaces;
-    if (n == v.name) {
-      std::cout << "- " << displayName(v);
-    } else {
-      std::cout << "- " << n;
-    }
-    if (v.arraySize != 1u) {
-      std::cout << '[' << v.arraySize << ']';
-    }
-    if (n != v.name) {
-      std::cout << " (" << mfront::displayName(v) << ")";
-    }
-    if (!v.description.empty()) {
-      std::cout << ": " << v.description;
-    } else {
-      const auto& glossary = tfel::glossary::Glossary::getGlossary();
-      if (glossary.contains(n)) {
-        std::cout << ": " << glossary.getGlossaryEntry(n).getShortDescription();
-      }
-    }
-    std::cout << '\n';
-  }  // end of display_variable
-
   static const MaterialKnowledgeAttribute& getAttribute(
       const std::string& n,
       const BehaviourDescription& d,
@@ -685,7 +659,7 @@ namespace mfront {
       this->queries2.push_back({"gradients", [](const FileDescription&,
                                                 const BehaviourDescription& d) {
                                   for (const auto& v : d.getMainVariables()) {
-                                    display_variable(v.first);
+                                    QueryHandlerBase::displayVariable(v.first);
                                   }
                                 }});
     } else if (qn == "--thermodynamic-forces") {
@@ -693,7 +667,7 @@ namespace mfront {
           {"thermodynamic-forces",
            [](const FileDescription&, const BehaviourDescription& d) {
              for (const auto& v : d.getMainVariables()) {
-               display_variable(v.second);
+               QueryHandlerBase::displayVariable(v.second);
              }
            }});
     } else if (qn == "--tangent-operator-blocks") {
@@ -830,7 +804,7 @@ namespace mfront {
                  if (!ivariables.empty()) {
                    std::cout << "Expected initialize function variables are:\n";
                    for (const auto& v : ivariables) {
-                     display_variable(v, "  ");
+                     QueryHandlerBase::displayVariable(v, "  ");
                    }
                  } else {
                    std::cout << '\n';
@@ -858,7 +832,7 @@ namespace mfront {
                          c, CodeBlock::used_postprocessing_variables);
                  std::cout << ". Modified post-processing variables are:\n";
                  for (const auto& v : pvariables) {
-                   display_variable(v, "  ");
+                   QueryHandlerBase::displayVariable(v, "  ");
                  }
                }
              }
@@ -1150,7 +1124,7 @@ namespace mfront {
       const auto& d = bd.getBehaviourData(h);
       const auto& vars = (d.*m)();
       for (const auto& v : vars) {
-        display_variable(v);
+        QueryHandlerBase::displayVariable(v);
       }
     };
   }

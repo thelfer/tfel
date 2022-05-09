@@ -81,6 +81,7 @@ tfel_library(TFELMathParser ${TFELMathParser_SOURCES})
 add_dependencies(TFELMathParser TFELMath)
 target_include_directories(TFELMath
    PUBLIC 
+   $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/mfront/include>
    $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/include>
    $<INSTALL_INTERFACE:include>)
 target_link_libraries(TFELMathParser

@@ -13,6 +13,7 @@
 
 #include <fstream>
 #include <algorithm>
+#include "TFEL/Raise.hxx"
 #include "TFEL/Config/GetInstallPath.hxx"
 #include "TFEL/System/System.hxx"
 #include "TFEL/Material/ModellingHypothesis.hxx"
@@ -89,11 +90,15 @@ namespace mfront {
   }  // end of getName
 
   std::pair<bool, GenericModelInterface::tokens_iterator>
-  GenericModelInterface::treatKeyword(const std::string&,
-                                      const std::vector<std::string>&,
-                                      tokens_iterator p,
+  GenericModelInterface::treatKeyword(const std::string& k,
+                                      const std::vector<std::string>& i,
+                                      tokens_iterator current,
                                       const tokens_iterator) {
-    return {false, p};
+    tfel::raise_if(
+        (std::find(i.begin(), i.end(), "generic") != i.end()) ||
+            (std::find(i.begin(), i.end(), "Generic") != i.end()),
+        "GenericModelInterface::treatKeyword: unsupported keyword '" + k + "'");
+    return {false, current};
   }  // end of treatKeyword
 
   void GenericModelInterface::declareReservedNames(std::set<std::string>&) {

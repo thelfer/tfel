@@ -1,8 +1,8 @@
 /*!
- * \file   mfront/include/MFront/CyranoMaterialPropertyInterface.hxx
- * \brief  This file declares the CyranoMaterialPropertyInterface class
+ * \file   mfront/include/MFront/GenericMaterialPropertyInterface.hxx
+ * \brief  This file declares the GenericMaterialPropertyInterface class
  * \author Thomas Helfer
- * \date   06 mai 2008
+ * \date   04/05/2022
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence
@@ -11,25 +11,22 @@
  * project under specific licensing conditions.
  */
 
-#ifndef LIB_MFRONT_CYRANOMATERIALPROPERTYINTERFACE_HXX
-#define LIB_MFRONT_CYRANOMATERIALPROPERTYINTERFACE_HXX
+#ifndef LIB_MFRONT_GENERICMATERIALPROPERTYINTERFACE_HXX
+#define LIB_MFRONT_GENERICMATERIALPROPERTYINTERFACE_HXX
 
 #include "MFront/GenericMaterialPropertyInterfaceBase.hxx"
 
 namespace mfront {
 
-  /*!
-   * \brief material properties' interface for EDF' `Cyrano` fuel
-   * performance code.
-   */
-  struct CyranoMaterialPropertyInterface
+  //! \brief generic interface for material properties
+  struct GenericMaterialPropertyInterface
       : public GenericMaterialPropertyInterfaceBase {
     //! \return the interface name
     static std::string getName();
     //! \brief default constructor
-    CyranoMaterialPropertyInterface();
+    GenericMaterialPropertyInterface();
     //! \brief destructor
-    ~CyranoMaterialPropertyInterface() override;
+    ~GenericMaterialPropertyInterface() override;
 
    protected:
     TypesDescription getTypesDescription() const override;
@@ -38,8 +35,8 @@ namespace mfront {
     std::string getInterfaceNameInCamelCase() const override;
     std::string getInterfaceNameInUpperCase() const override;
     std::string getOutOfBoundsPolicyEnumerationPrefix() const override;
-  };  // end of CyranoMaterialPropertyInterface
+  };  // end of GenericMaterialPropertyInterface
 
 }  // end of namespace mfront
 
-#endif /* LIB_MFRONT_CYRANOMATERIALPROPERTYINTERFACE_HXX */
+#endif /* LIB_MFRONT_GENERICMATERIALPROPERTYINTERFACE_HXX */

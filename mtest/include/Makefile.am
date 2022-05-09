@@ -3,6 +3,7 @@ nobase_include_HEADERS = MTest/Config.hxx	                         \
 			 MTest/MTestFileExport.hxx                              \
 			 MTest/MaterialProperty.hxx                             \
 			 MTest/MaterialPropertyBase.hxx                             \
+			 MTest/GenericMaterialProperty.hxx                             \
 			 MTest/CastemMaterialProperty.hxx                             \
 			 MTest/CyranoMaterialProperty.hxx                             \
 			 MTest/RoundingMode.hxx	                         \
@@ -68,6 +69,7 @@ nobase_include_HEADERS = MTest/Config.hxx	                         \
 			 MTest/AnsysNormaliseTangentOperator.hxx         \
 			 MTest/CyranoBehaviour.hxx                       \
 			 MTest/Evolution.hxx                             \
+			 MTest/GenericEvolution.hxx                       \
 			 MTest/CastemEvolution.hxx                       \
 			 MTest/CyranoEvolution.hxx                       \
 			 MTest/FunctionEvolution.hxx                     \

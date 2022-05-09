@@ -1033,6 +1033,36 @@ namespace tfel::system {
     this->getMaterialPropertyVariables(vars, l, f);
   }  // end of getCastemFunctionVariables
 
+  unsigned short
+  ExternalLibraryManager::getGenericMaterialPropertyNumberOfVariables(
+      const std::string& l, const std::string& f) {
+    return this->getMaterialPropertyNumberOfVariables(l, f);
+  }
+
+  std::vector<std::string>
+  ExternalLibraryManager::getGenericMaterialPropertyVariables(
+      const std::string& l, const std::string& f) {
+    return this->getMaterialPropertyVariables(l, f);
+  }  // end of getGenericMaterialPropertyVariables
+
+  void ExternalLibraryManager::getGenericMaterialPropertyVariables(
+      std::vector<std::string>& vars,
+      const std::string& l,
+      const std::string& f) {
+    this->getMaterialPropertyVariables(vars, l, f);
+  }  // end of getGenericMaterialPropertyVariables
+
+  GenericMaterialPropertyPtr ExternalLibraryManager::getGenericMaterialProperty(
+      const std::string& l, const std::string& f) {
+    const auto lib = this->loadLibrary(l);
+    const auto fct = ::tfel_getGenericMaterialProperty(lib, f.c_str());
+    raise_if(fct == nullptr,
+             "ExternalLibraryManager::getGenericMaterialProperty: "
+             "could not load generic material property '" +
+                 f + "' (" + getErrorMessage() + ")");
+    return fct;
+  }
+
   GenericBehaviourFctPtr ExternalLibraryManager::getGenericBehaviourFunction(
       const std::string& l, const std::string& f) {
     const auto lib = this->loadLibrary(l);

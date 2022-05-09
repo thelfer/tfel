@@ -132,6 +132,8 @@ libTFELMFront_la_SOURCES = MFront.cxx                                     \
 		           StandardBehaviourInterface.cxx                         \
                            UMATInterfaceBase.cxx                                  \
 		           SymbolsGenerator.cxx                                   \
+			       GenericMaterialPropertyInterfaceBase.cxx               \
+			       GenericMaterialPropertyInterface.cxx                   \
 		           GenericBehaviourInterface.cxx                          \
 		           GenericBehaviourSymbolsGenerator.cxx                   \
 		           GenericModelInterface.cxx                              \
