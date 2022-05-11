@@ -1567,7 +1567,7 @@ namespace mfront {
     void registerStaticMemberName(const Hypothesis, const std::string&);
     /*!
      * \brief check variable existence
-     * \return a pair of iterator. The first part tells if the
+     * \return a pair of booleans. The first part tells if the
      * variable was found in a least one specialisation of the
      * behaviour and the second tells if the variable is available
      * for all distinct modelling hypothesis.
@@ -1578,7 +1578,7 @@ namespace mfront {
     std::pair<bool, bool> checkVariableExistence(const std::string&) const;
     /*!
      * \brief check variable existence for a particular sort of variable.
-     * \return a pair of iterator. The first part tells if the
+     * \return a pair of booleans. The first part tells if the
      * variable was found in a least one specialisation of the
      * behaviour and the second tells if the variable is available
      * for all distinct modelling hypothesis.
@@ -1630,7 +1630,7 @@ namespace mfront {
      */
     void getSymbols(std::map<std::string, std::string>&,
                     const Hypothesis) const;
-    //! destructor
+    //! \brief destructor
     ~BehaviourDescription() override;
 
    private:

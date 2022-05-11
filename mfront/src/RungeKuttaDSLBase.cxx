@@ -15,9 +15,12 @@
 #include <sstream>
 #include <stdexcept>
 #include "TFEL/Raise.hxx"
+#include "TFEL/Glossary/Glossary.hxx"
+#include "TFEL/Glossary/GlossaryEntry.hxx"
 #include "TFEL/Utilities/StringAlgorithms.hxx"
 #include "MFront/DSLUtilities.hxx"
 #include "MFront/DSLFactory.hxx"
+#include "MFront/PedanticMode.hxx"
 #include "MFront/MFrontDebugMode.hxx"
 #include "MFront/MFrontLogStream.hxx"
 #include "MFront/PerformanceProfiling.hxx"
@@ -271,6 +274,12 @@ namespace mfront {
     this->registerNewCallBack("@Derivative",
                               &RungeKuttaDSLBase::treatDerivative);
     this->registerNewCallBack("@Epsilon", &RungeKuttaDSLBase::treatEpsilon);
+    this->registerNewCallBack(
+        "@StressErrorNormalizationFactor",
+        &RungeKuttaDSLBase::treatStressErrorNormalizationFactor);
+    this->registerNewCallBack(
+        "@StressErrorNormalisationFactor",
+        &RungeKuttaDSLBase::treatStressErrorNormalizationFactor);
     this->registerNewCallBack("@MinimalTimeStep",
                               &RungeKuttaDSLBase::treatMinimalTimeStep);
     this->disableCallBack("@Integrator");
@@ -307,17 +316,17 @@ namespace mfront {
       return "@TangentOperator{}\n";
     }
     return "";
-  }  // end of RungeKuttaDSLBase::getCodeBlockTemplate
+  }  // end of getCodeBlockTemplate
 
   void RungeKuttaDSLBase::treatUpdateAuxiliaryStateVariables() {
     this->treatCodeBlock(*this, BehaviourData::UpdateAuxiliaryStateVariables,
                          &RungeKuttaDSLBase::standardModifier, true, true);
-  }  // end of RungeKuttaDSLBase::treatUpdateAuxiliaryStateVarBase
+  }  // end of treatUpdateAuxiliaryStateVarBase
 
   void RungeKuttaDSLBase::treatComputeFinalThermodynamicForces() {
     this->treatCodeBlock(*this, BehaviourData::ComputeFinalThermodynamicForces,
                          &RungeKuttaDSLBase::standardModifier, true, true);
-  }  // end of RungeKuttaDSLBase::treatUpdateAuxiliaryStateVarBase
+  }  // end of treatUpdateAuxiliaryStateVarBase
 
   std::string RungeKuttaDSLBase::computeThermodynamicForcesVariableModifier1(
       const Hypothesis h, const std::string& var, const bool addThisPtr) {
@@ -363,7 +372,7 @@ namespace mfront {
       return "this->" + var;
     }
     return var;
-  }  // end of RungeKuttaDSLBase::computeThermodynamicForcesVariableModifier1
+  }  // end of computeThermodynamicForcesVariableModifier1
 
   std::string RungeKuttaDSLBase::computeThermodynamicForcesVariableModifier2(
       const Hypothesis h, const std::string& var, const bool addThisPtr) {
@@ -392,7 +401,7 @@ namespace mfront {
       return "this->" + var;
     }
     return var;
-  }  // end of RungeKuttaDSLBase::computeThermodynamicForcesVariableModifier2
+  }  // end of computeThermodynamicForcesVariableModifier2
 
   void RungeKuttaDSLBase::treatComputeThermodynamicForces() {
     if (this->mb.getMainVariables().empty()) {
@@ -406,7 +415,7 @@ namespace mfront {
         &RungeKuttaDSLBase::computeThermodynamicForcesVariableModifier1,
         &RungeKuttaDSLBase::computeThermodynamicForcesVariableModifier2, true,
         true);
-  }  // end of RungeKuttaDSLBase::treatComputeThermodynamicForces
+  }  // end of treatComputeThermodynamicForces
 
   void RungeKuttaDSLBase::treatUnknownVariableMethod(const Hypothesis h,
                                                      const std::string& n) {
@@ -456,14 +465,14 @@ namespace mfront {
       }
     }
     BehaviourDSLCommon::treatUnknownVariableMethod(h, n);
-  }  // end of RungeKuttaDSLBase::treatUnknowVariableMethod
+  }  // end of treatUnknowVariableMethod
 
   void RungeKuttaDSLBase::treatDerivative() {
     this->treatCodeBlock(
         *this, BehaviourData::ComputeDerivative,
         &RungeKuttaDSLBase::computeThermodynamicForcesVariableModifier1, true,
         true);
-  }  // end of RungeKuttaDSLBase::treatDerivative
+  }  // end of treatDerivative
 
   void RungeKuttaDSLBase::treatEpsilon() {
     const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
@@ -489,7 +498,55 @@ namespace mfront {
     this->mb.addParameter(h, VariableDescription("real", "epsilon", 1u, 0u),
                           BehaviourData::ALREADYREGISTRED);
     this->mb.setParameterDefaultValue(h, "epsilon", epsilon);
-  }  // end of RungeKuttaDSLBase::treatEpsilon
+  }  // end of treatEpsilon
+
+
+  void RungeKuttaDSLBase::treatStressErrorNormalizationFactor() {
+    const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+    if (!this->mb.hasAttribute(BehaviourData::algorithm)) {
+      this->throwRuntimeError(
+          "RungeKuttaDSLBase::treatStressErrorNormalizationFactor",
+          "the Runge-Kutta algorithm has not been set.");
+    }
+    const auto& algorithm =
+        this->mb.getAttribute<std::string>(BehaviourData::algorithm);
+    if (algorithm != "RungeKuttaCastem") {
+      this->throwRuntimeError(
+          "RungeKuttaDSLBase::treatStressErrorNormalizationFactor",
+          "defining the normalization factor for the stress error is only "
+          "meaningful if the Runge-Kutta algorithm has not been set.");
+    }
+    if (this->mb.hasParameter(h, "stress_error_normalization_factor")) {
+      this->throwRuntimeError(
+          "RungeKuttaDSLBase::treatStressErrorNormalizationFactor",
+          "value already specified.");
+    }
+    double stress_error_normalization_factor;
+    this->checkNotEndOfFile(
+        "RungeKuttaDSLBase::treatStressErrorNormalizationFactor",
+        "Cannot read the normalization factor for the stress error value.");
+    std::istringstream flux(current->value);
+    flux >> stress_error_normalization_factor;
+    if ((flux.fail()) || (!flux.eof())) {
+      this->throwRuntimeError(
+          "RungeKuttaDSLBase::treatStressErrorNormalizationFactor",
+          "Failed to read the normalization factor for the stress error "
+          "value.");
+    }
+    if (stress_error_normalization_factor < 0) {
+      this->throwRuntimeError(
+          "RungeKuttaDSLBase::treatStressErrorNormalizationFactor",
+          "StressErrorNormalizationFactor value must be positive.");
+    }
+    ++(this->current);
+    this->readSpecifiedToken(
+        "RungeKuttaDSLBase::treatStressErrorNormalizationFactor", ";");
+    auto v = VariableDescription("stress", "stress_error_normalization_factor",
+                                 1u, 0u);
+    this->mb.addParameter(h, v);
+    this->mb.setParameterDefaultValue(h, "stress_error_normalization_factor",
+                                      stress_error_normalization_factor);
+  }  // end of treatStressErrorNormalizationFactor
 
   void RungeKuttaDSLBase::treatMinimalTimeStep() {
     const Hypothesis h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
@@ -515,7 +572,7 @@ namespace mfront {
     this->mb.addParameter(h, VariableDescription("real", "dtmin", 1u, 0u),
                           BehaviourData::ALREADYREGISTRED);
     this->mb.setParameterDefaultValue(h, "dtmin", dtmin);
-  }  // end of RungeKuttaDSLBase::treatEpsilon
+  }  // end of treatEpsilon
 
   void RungeKuttaDSLBase::setDefaultAlgorithm() {
     using ushort = unsigned short;
@@ -523,7 +580,7 @@ namespace mfront {
                           std::string("RungeKutta5/4"), false);
     this->mb.setAttribute(BehaviourData::numberOfEvaluations, ushort(6u),
                           false);
-  }  // end of RungeKuttaDSLBase::setDefaultAlgorithm
+  }  // end of setDefaultAlgorithm
 
   void RungeKuttaDSLBase::treatAlgorithm() {
     using ushort = unsigned short;
@@ -561,6 +618,13 @@ namespace mfront {
     } else if (this->current->value == "rk54") {
       this->setDefaultAlgorithm();
     } else if (this->current->value == "rkCastem") {
+      const auto bt = this->mb.getBehaviourType();
+      if ((bt != BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) &&
+          (bt != BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR)) {
+        this->throwRuntimeError("RungeKuttaDSLBase::treatAlgorithm",
+                                "the rkCastem algorithm is only meaningful for "
+                                "small strain and finite strain behaviours.");
+      }
       this->reserveName("ra");
       this->reserveName("sqra");
       this->reserveName("errabs");
@@ -702,6 +766,15 @@ namespace mfront {
     }
     const auto& algorithm =
         this->mb.getAttribute<std::string>(BehaviourData::algorithm);
+    if (algorithm == "RungeKuttaCastem") {
+      const auto bt = this->mb.getBehaviourType();
+      if ((bt != BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) &&
+          (bt != BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR)) {
+        this->throwRuntimeError("RungeKuttaDSLBase::endsInputFileProcessing",
+                                "the rkCastem algorithm is only meaningful for "
+                                "small strain and finite strain behaviours.");
+      }
+    }
     // some checks
     for (const auto& h : this->mb.getDistinctModellingHypotheses()) {
       const auto& d = this->mb.getBehaviourData(h);
@@ -803,7 +876,7 @@ namespace mfront {
     if (getVerboseMode() >= VERBOSE_DEBUG) {
       getLogStream() << "RungeKuttaDSLBase::endsInputFileProcessing: end\n";
     }
-  }  // end of RungeKuttaDSLBase::endsInputFileProcessing
+  }  // end of endsInputFileProcessing
 
   void RungeKuttaDSLBase::writeBehaviourParserSpecificIncludes(
       std::ostream& os) const {
@@ -846,7 +919,7 @@ namespace mfront {
       this->writeStiffnessTensorComputation(os, "this->D", bts);
     }
     BehaviourDSLCommon::writeBehaviourLocalVariablesInitialisation(os, h);
-  }  // end of RungeKuttaDSLBase::writeBehaviourLocalVariablesInitialisation
+  }  // end of writeBehaviourLocalVariablesInitialisation
 
   void RungeKuttaDSLBase::writeBehaviourParserSpecificTypedefs(
       std::ostream& os) const {
@@ -959,7 +1032,7 @@ namespace mfront {
           d.getCodeBlock(BehaviourData::ComputeThermodynamicForces).members;
       uvs.insert(uvs2.begin(), uvs2.end());
     }
-    os << "constexpr const auto cste1_2 = NumericType{1}/NumericType{2};\n"
+    os << "constexpr auto cste1_2 = NumericType{1}/NumericType{2};\n"
        << "// Compute K1's values\n";
     if (this->mb.hasCode(h, BehaviourData::ComputeThermodynamicForces)) {
       os << "this->computeThermodynamicForces();\n";
@@ -1073,56 +1146,56 @@ namespace mfront {
       eev = ERRORSUMMATIONEVALUATION;
     }
     if (shallUpdateExternalStateValues) {
-      os << "constexpr const auto cste1_2         = "
+      os << "constexpr auto cste1_2         = "
             "NumericType{1}/NumericType{2};\n"
-         << "constexpr const auto cste3_8         = "
+         << "constexpr auto cste3_8         = "
             "NumericType{3}/NumericType{8};\n"
-         << "constexpr const auto cste12_13       = "
+         << "constexpr auto cste12_13       = "
             "NumericType(12)/NumericType(13);\n";
     }
     if (shallUpdateInternalStateValues) {
-      os << "constexpr const auto cste3544_2565   = "
+      os << "constexpr auto cste3544_2565   = "
             "NumericType(3544)/NumericType(2565);\n"
-         << "constexpr const auto cste11_40       = "
+         << "constexpr auto cste11_40       = "
             "NumericType(11)/NumericType(40);\n"
-         << "constexpr const auto cste1859_4104   = "
+         << "constexpr auto cste1859_4104   = "
             "NumericType(1859)/NumericType(4104);\n"
-         << "constexpr const auto cste8_27        = "
+         << "constexpr auto cste8_27        = "
             "NumericType(8)/NumericType(27);\n"
-         << "constexpr const auto cste845_4104    = "
+         << "constexpr auto cste845_4104    = "
             "NumericType(845)/NumericType(4104);\n"
-         << "constexpr const auto cste3680_513    = "
+         << "constexpr auto cste3680_513    = "
             "NumericType(3680)/NumericType(513);\n"
-         << "constexpr const auto cste439_216     = "
+         << "constexpr auto cste439_216     = "
             "NumericType(439)/NumericType(216);\n"
-         << "constexpr const auto cste7296_2197   = "
+         << "constexpr auto cste7296_2197   = "
             "NumericType(7296)/NumericType(2197);\n"
-         << "constexpr const auto cste7200_2197   = "
+         << "constexpr auto cste7200_2197   = "
             "NumericType(7200)/NumericType(2197);\n"
-         << "constexpr const auto cste3_32        = "
+         << "constexpr auto cste3_32        = "
             "NumericType{3}/NumericType{32};\n"
-         << "constexpr const auto cste1932_2197   = "
+         << "constexpr auto cste1932_2197   = "
             "NumericType(1932)/NumericType(2197);\n";
     }
-    os << "constexpr const auto cste1_4         = "
+    os << "constexpr auto cste1_4         = "
           "NumericType{1}/NumericType{4};\n"
-       << "constexpr const auto cste16_135      = "
+       << "constexpr auto cste16_135      = "
           "NumericType(16)/NumericType(135);\n"
-       << "constexpr const auto cste6656_12825  = "
+       << "constexpr auto cste6656_12825  = "
           "NumericType(6656)/NumericType(12825);\n"
-       << "constexpr const auto cste28561_56430 = "
+       << "constexpr auto cste28561_56430 = "
           "NumericType(28561)/NumericType(56430);\n"
-       << "constexpr const auto cste9_50        = "
+       << "constexpr auto cste9_50        = "
           "NumericType(9)/NumericType(50);\n"
-       << "constexpr const auto cste2_55        = "
+       << "constexpr auto cste2_55        = "
           "NumericType(2)/NumericType(55);\n"
-       << "constexpr const auto cste1_360       = "
+       << "constexpr auto cste1_360       = "
           "NumericType(1)/NumericType(360);\n"
-       << "constexpr const auto cste128_4275    = "
+       << "constexpr auto cste128_4275    = "
           "NumericType(128)/NumericType(4275);\n"
-       << "constexpr const auto cste2197_75240  = "
+       << "constexpr auto cste2197_75240  = "
           "NumericType(2197)/NumericType(75240);\n"
-       << "constexpr const auto cste1_50        = "
+       << "constexpr auto cste1_50        = "
           "NumericType(1)/NumericType(50);\n"
        << "time t      = time(0);\n"
        << "time dt_    = this->dt;\n"
@@ -1642,7 +1715,169 @@ namespace mfront {
        << "}\n"
        << "}\n"
        << "}\n";
-  }  // end of RungeKuttaDSLBase::writeBehaviourRK54Integrator
+  }  // end of writeBehaviourRK54Integrator
+
+  // Older versions of TFEL assumed that a variable called young was always
+  // defined to define the factor used to normalize the stress error in
+  // the rkCastem algorithm.
+  //
+  // For backward compatibility, the findErrorNormalizationFactor looks if such
+  // a variable exists and makes some consistency checks.
+  //
+  // Otherwise, one checks if the stiffness matrix is computed.
+  //
+  // see Issue 183 for details (https://github.com/thelfer/tfel/issues/183)
+  static std::string findStressErrorNormalizationFactor(
+      const BehaviourDescription& bd) {
+    //
+    auto checkVariableDefinition = [](const auto& v) {
+      if (v.getTypeFlag() != SupportedTypes::SCALAR) {
+        tfel::raise("findStressErrorNormalizationFactor: the `" + v.name +
+                    "` variable is not "
+                    "defined as a scalar.");
+      }
+      if ((getPedanticMode()) && (v.type != "stress")) {
+        auto& log = getLogStream();
+        log << "findStressErrorNormalizationFactor: "
+            << "inconsistent type for variable '" << v.name << "' ('" << v.type
+            << "' vs 'stress')\n";
+      }
+    };
+    auto testInGivenVariableCategory = [&bd, &checkVariableDefinition](
+                                           const std::string& k,
+                                           const std::string& n,
+                                           const std::string& e) {
+      const auto exists = bd.checkVariableExistence(n, k, false);
+      if (exists.first) {
+        if (!exists.second) {
+          tfel::raise("findStressErrorNormalizationFactor: the `" + n +
+                      "` variable is not "
+                      "defined for all modelling hypotheses as a '" +
+                      k + "'.");
+        }
+        const auto& mh = bd.getDistinctModellingHypotheses();
+        for (const auto& h : mh) {
+          const auto& v = bd.getBehaviourData(h).getVariables(k).getVariable(n);
+          checkVariableDefinition(v);
+          if (!e.empty()) {
+            if ((getPedanticMode()) && (v.getExternalName() != e)) {
+              auto& log = getLogStream();
+              log << "findStressErrorNormalizationFactor: "
+                  << "inconsistent external name for variable '" << v.name
+                  << "' ('" << v.type << "' vs '" << e << "')\n";
+            }
+          }
+        }
+        return true;
+      }
+      return false;
+    };
+    //
+    if (bd.isNameReserved("stress_error_normalization_factor")) {
+      const auto senf_exists =
+          bd.checkVariableExistence("stress_error_normalization_factor");
+      if (!senf_exists.first) {
+        tfel::raise(
+            "findStressErrorNormalizationFactor: the "
+            "`stress_error_normalization_factor` variable is not defined "
+            "as a paramter.");
+      }
+      if (!senf_exists.second) {
+        tfel::raise(
+            "findStressErrorNormalizationFactor: the "
+            "`stress_error_normalization_factor` variable is not defined "
+            "for all modelling hypotheses.");
+      }
+      if (testInGivenVariableCategory(
+              "Parameter", "stress_error_normalization_factor", "")) {
+        return "this->stress_error_normalization_factor";
+      }
+      tfel::raise(
+          "findStressErrorNormalizationFactor: the "
+          "`stress_error_normalization_factor` variable is not "
+          "defined as a material property or a parameter");
+    }
+    //
+    if (bd.isNameReserved("young")) {
+      const auto exists = bd.checkVariableExistence("young");
+      if (exists.first) {
+        if (!exists.second) {
+          tfel::raise(
+              "findStressErrorNormalizationFactor: the `young` variable is not "
+              "defined "
+              "for all modelling hypotheses.");
+        }
+        if (testInGivenVariableCategory(
+                "MaterialProperty", "young",
+                tfel::glossary::Glossary::YoungModulus)) {
+          return "this->young";
+        }
+        if (testInGivenVariableCategory(
+                "Parameter", "young", tfel::glossary::Glossary::YoungModulus)) {
+          return "this->young";
+        }
+        tfel::raise(
+            "findStressErrorNormalizationFactor: the `young` variable is not "
+            "defined as a material property or a parameter");
+      }
+      // look if young is defined as a local variable
+      const auto& mh = bd.getDistinctModellingHypotheses();
+      const auto found_as_local_variable =
+          bd.isLocalVariableName(*(mh.begin()), "young");
+      for (const auto& h : mh) {
+        const auto is_local_variable = bd.isLocalVariableName(h, "young");
+        if (found_as_local_variable != is_local_variable) {
+          tfel::raise(
+              "findStressErrorNormalizationFactor: the `young` variable is not "
+              "defined as a local variable in all modelling hypotheses");
+        }
+        if (is_local_variable) {
+          const auto& v =
+              bd.getBehaviourData(h).getLocalVariables().getVariable("young");
+          checkVariableDefinition(v);
+        }
+      }
+      if (found_as_local_variable) {
+        return "this->young";
+      }
+      // look if young is defined as a static variable
+      const auto found_as_static_variable =
+          bd.isStaticVariableName(*(mh.begin()), "young");
+      for (const auto& h : mh) {
+        const auto is_static_variable = bd.isStaticVariableName(h, "young");
+        if (found_as_static_variable != is_static_variable) {
+          tfel::raise(
+              "findStressErrorNormalizationFactor: the `young` variable is not "
+              "defined as a static variable in all modelling hypotheses");
+        }
+        if (is_static_variable) {
+          const auto& v =
+              bd.getBehaviourData(h).getStaticVariables().get("young");
+          checkVariableDefinition(v);
+        }
+      }
+      if (found_as_static_variable) {
+        return bd.getClassName() + "::young";
+      }
+      tfel::raise(
+          "findStressErrorNormalizationFactor: the `young` variable is not "
+          "defined as a material property, a static variable, a parameter or a "
+          "local variable");
+    }
+    // look if the stiffness tensor shall be provided by the solver
+    if (bd.getAttribute<bool>(BehaviourDescription::requiresStiffnessTensor,
+                              false)) {
+      return "this->D(0,0)";
+    }
+    // look if the stiffness tensor is computed
+    if (!(bd.getAttribute<bool>(BehaviourDescription::computesStiffnessTensor,
+                                false))) {
+      tfel::raise(
+          "findStressErrorNormalizationFactor: "
+          "no appropriate error normalization factor found");
+    }
+    return "this->D(0,0)";
+  }  // end of findStressErrorNormalizationFactor
 
   void RungeKuttaDSLBase::writeBehaviourRKCastemIntegrator(
       std::ostream& os, const Hypothesis h) const {
@@ -1660,9 +1895,9 @@ namespace mfront {
     for (const auto& v : d.getStateVariables()) {
       stateVarsSize += this->getTypeSize(v.type, v.arraySize);
     }
-    os << "constexpr const auto cste1_2 = NumericType{1}/NumericType{2};\n"
-       << "constexpr const auto cste1_4 = NumericType{1}/NumericType{4};\n"
-       << "constexpr const auto cste1_6 = NumericType(1)/NumericType(6);\n"
+    os << "constexpr auto cste1_2 = NumericType{1}/NumericType{2};\n"
+       << "constexpr auto cste1_4 = NumericType{1}/NumericType{4};\n"
+       << "constexpr auto cste1_6 = NumericType(1)/NumericType(6);\n"
        << "time t   = time(0);\n"
        << "time dt_ = this->dt;\n"
        << "StressStensor sigf;\n"
@@ -1680,10 +1915,14 @@ namespace mfront {
     os << "if(failed){\n"
        << "throw(tfel::material::DivergenceException());\n"
        << "}\n"
-       << "const auto asig = tfel::math::power<1, 2>((this->sig) | "
-          "(this->sig));\n"
-       << "if ((this->young)*NumericType(1.e-3)>asig){\n"
-       << "  errabs = (this->young) * NumericType(1.e-3) * (this->epsilon);\n"
+       << "const auto asig = "
+       << "tfel::math::power<1, 2>((this->sig) | (this->sig));\n";
+    const auto error_normalization_factor =
+        findStressErrorNormalizationFactor(this->mb);
+    os << "if ((" << error_normalization_factor
+       << ")*NumericType(1.e-3)>asig){\n"
+       << "  errabs = (" << error_normalization_factor
+       << ") * NumericType(1.e-3) * (this->epsilon);\n"
        << "}else{\n"
        << "  errabs = (this->epsilon) * asig;\n"
        << "}\n\n"
@@ -2039,7 +2278,7 @@ namespace mfront {
        << "}\n"
        << "}\n"
        << "}\n";
-  }  // end of RungeKuttaDSLBase::writeBehaviourRKCastemIntegrator
+  }  // end of writeBehaviourRKCastemIntegrator
 
   void RungeKuttaDSLBase::writeBehaviourRK42Integrator(
       std::ostream& os, const Hypothesis h) const {
@@ -2065,9 +2304,9 @@ namespace mfront {
     for (const auto& v : d.getStateVariables()) {
       stateVarsSize += this->getTypeSize(v.type, v.arraySize);
     }
-    os << "constexpr const auto cste1_2 = NumericType{1}/NumericType{2};\n"
-       << "constexpr const auto cste1_6  = NumericType(1)/NumericType(6);\n"
-       << "constexpr const auto cste1_3  = NumericType(1)/NumericType(3);\n"
+    os << "constexpr auto cste1_2 = NumericType{1}/NumericType{2};\n"
+       << "constexpr auto cste1_6  = NumericType(1)/NumericType(6);\n"
+       << "constexpr auto cste1_3  = NumericType(1)/NumericType(3);\n"
        << "time t   = time(0);\n"
        << "time dt_ = this->dt;\n"
        << "time dtprec = 100 * (this->dt) * "
@@ -2457,7 +2696,7 @@ namespace mfront {
        << "}\n"
        << "}\n"
        << "}\n";
-  }  // end of RungeKuttaDSLBase::writeBehaviourRK42Integrator
+  }  // end of writeBehaviourRK42Integrator
 
   void RungeKuttaDSLBase::writeBehaviourRK4Integrator(
       std::ostream& os, const Hypothesis h) const {
@@ -2469,7 +2708,7 @@ namespace mfront {
           d.getCodeBlock(BehaviourData::ComputeThermodynamicForces).members;
       uvs.insert(uvs2.begin(), uvs2.end());
     }
-    os << "constexpr const auto cste1_2 = NumericType{1}/NumericType{2};\n"
+    os << "constexpr auto cste1_2 = NumericType{1}/NumericType{2};\n"
        << "// Compute K1's values\n";
     if (this->mb.hasCode(h, BehaviourData::ComputeThermodynamicForces)) {
       os << "this->computeThermodynamicForces();\n";
@@ -2582,7 +2821,7 @@ namespace mfront {
     if (this->mb.hasCode(h, BehaviourData::UpdateAuxiliaryStateVariables)) {
       os << "this->updateAuxiliaryStateVariables(this->dt);\n";
     }
-  }  // end of RungeKuttaDSLBase::writeBehaviourRK4Integrator
+  }  // end of writeBehaviourRK4Integrator
 
   void RungeKuttaDSLBase::writeBehaviourIntegrator(std::ostream& os,
                                                    const Hypothesis h) const {
@@ -2716,7 +2955,7 @@ namespace mfront {
       mfront::getIncrementSymbols(symbols, d.getExternalStateVariables());
       mfront::addSymbol(symbols, "\u0394t", "dt");
     }
-  }  // end of RungeKuttaDSLBase::getSymbols
+  }  // end of getSymbols
 
   RungeKuttaDSLBase::~RungeKuttaDSLBase() = default;
 

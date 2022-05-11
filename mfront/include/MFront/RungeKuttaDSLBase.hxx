@@ -61,6 +61,8 @@ namespace mfront {
     virtual void treatMinimalTimeStep();
     //! treat the `@Algorithm` keywork
     virtual void treatAlgorithm();
+    //! treat the `@StressErrorNormalizationFactor` keywork
+    virtual void treatStressErrorNormalizationFactor();
     //! treat the `@ComputeThermodynamicForces` keywork
     virtual void treatComputeThermodynamicForces();
     //! treat the `@ComputeFinalThermodynamicForces` keywork

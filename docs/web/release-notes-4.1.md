@@ -638,6 +638,26 @@ code.
 };
 ~~~~
 
+## Improvements to the `RungeKutta` domain specific language
+
+### Improvements to the `rkCastem` algorithm{#sec:tfel_4.1:mfront:rkCastem}
+
+The `rkCastem` algorithm compares the values of the stress computed by a
+predictor step and corrector step. The error between those values must
+be normalised. In previous versions, the existence of a variable named
+`young` was assumed.
+
+The `@StressErrorNormalizationFactor` allows to specify this
+normalization factor more explicitely and consistenly.
+
+For backward compatibility with previous versions, the `young` variable
+will be used, if an appropriate variable is defined and if the
+`@StressErrorNormalizationFactor` keyword was not used.
+
+Note that if the `@StressErrorNormalizationFactor` keyword is not used
+and that the `young` variable is not defined, `MFront` will look is the
+stiffnes matrix is defined and take its first component.
+
 ## New domain specific language `ImplicitCZMDSL`
 
 The domain specific language `ImplicitCZMDSL` allows to implement a
@@ -1414,6 +1434,13 @@ $ mfront-query --list-behaviour-mfm-test-generator-tests=unsorted --test=".+Tens
 
 # Issues fixed
 ￼
+
+## Issue #183: [mfront] The `rkCastem` algorithm assumes that a variable `young` is defined
+
+This feature is described in Section
+@sec:tfel_4.1:mfront:rkCastem.
+
+For more details, see <https://github.com/thelfer/tfel/issues/183>.
 
 ## Issue #181: [mfront-query] add query about the output of a material property
 
