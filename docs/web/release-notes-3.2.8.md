@@ -19,6 +19,10 @@ eqnPrefixTemplate: "($$i$$)"
 
 # Issues fixed
 
+## Issue #190:  [tfel-utilities] Error in Data::read_map
+
+For more details, see <https://github.com/thelfer/tfel/issues/190>.
+
 ## Issue #163: [mfront] The equivalent stress is ill defined in the Plastic inelastic flow
 
 For more details, see <https://github.com/thelfer/tfel/issues/163>.

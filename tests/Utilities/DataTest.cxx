@@ -30,6 +30,13 @@ struct DataTest final : public tfel::tests::TestCase {
   DataTest()
       : tfel::tests::TestCase("TFEL/Utilities", "DataTest") {}  // end of MyTest
   tfel::tests::TestResult execute() override {
+    this->test1();
+    this->test2();
+    return this->result;
+  }
+
+ private:
+  void test1() {
     using namespace tfel::utilities;
     CxxTokenizer t;
     // C++ style comments
@@ -77,9 +84,31 @@ struct DataTest final : public tfel::tests::TestCase {
     TFEL_TESTS_ASSERT(md.at("key1").get<int>() == 4);
     TFEL_TESTS_ASSERT(md.at("key2").is<int>());
     TFEL_TESTS_ASSERT(md.at("key2").get<int>() == -5);
-    return this->result;
-  }  // end of execute()
- private:
+  }  // end of test1
+
+  void test2() {
+    using namespace tfel::utilities;
+    CxxTokenizer t;
+    t.parseString(
+        "{\n"
+        " criterion: \"Mises\",\n"
+        " isotropic_hardening : \"Linear\" {R0 : 150e6, H : 2e9},\n"
+        " isotropic_hardening : \"Voce\" {R0 : 260e6, Rinf : 280e6, b : "
+        "31.51},\n"
+        " kinematic_hardening : \"Chaboche 2012\" {C : 250e7, D : 100, m : 2, "
+        "w : 0.6},\n"
+        " kinematic_hardening : \"Chaboche 2012\" {C :  3e11, D : 500, m : 1, "
+        "w : 0.0}\n"
+        "}");
+    DataParsingOptions o;
+    o.allowMultipleKeysInMap = true;
+    auto p = t.begin();
+    const auto m = Data::read(p, t.end(), o).get<DataMap>();
+    TFEL_TESTS_ASSERT(m.count("criterion") == 1u);
+    TFEL_TESTS_ASSERT(m.count("isotropic_hardening") == 1u);
+    TFEL_TESTS_ASSERT(m.at("isotropic_hardening").is<std::vector<Data>>());
+    TFEL_TESTS_ASSERT(m.at("kinematic_hardening").is<std::vector<Data>>());
+  }  // end of test2
 };
 
 TFEL_TESTS_GENERATE_PROXY(DataTest, "CxxTokenizer");
