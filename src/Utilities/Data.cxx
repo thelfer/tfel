@@ -80,7 +80,7 @@ namespace tfel {
         } else {
           throw_if(!o.allowMultipleKeysInMap,
                    "key '" + k + "' multiply defined");
-          if (std::find(mkeys.begin(), mkeys.begin(), k) == mkeys.end()) {
+          if (std::find(mkeys.begin(), mkeys.end(), k) == mkeys.end()) {
             std::vector<Data> mdata;
             mdata.push_back(pv->second);
             mdata.push_back(v);
