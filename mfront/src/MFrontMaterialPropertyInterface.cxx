@@ -62,7 +62,7 @@ namespace mfront {
     insert_if(l.sources, name + ".cxx");
     insert_if(l.link_libraries, "m");
     insert_if(l.epts, {f, f + "_checkBounds"});
-  }  // end of MFrontMaterialPropertyInterface::getTargetsDescription
+  }  // end of getTargetsDescription
 
   std::string MFrontMaterialPropertyInterface::getHeaderFileName(
       const std::string& material, const std::string& className) const {
@@ -70,7 +70,7 @@ namespace mfront {
       return className + "-mfront";
     }
     return material + "_" + className + "-mfront";
-  }  // end of MFrontMaterialPropertyInterface::getHeaderFileName
+  }  // end of getHeaderFileName
 
   std::string MFrontMaterialPropertyInterface::getSrcFileName(
       const std::string& material, const std::string& className) const {
@@ -78,34 +78,34 @@ namespace mfront {
       return className + "-mfront";
     }
     return material + "_" + className + "-mfront";
-  }  // end of MFrontMaterialPropertyInterface::getSrcFileName
+  }  // end of getSrcFileName
 
   void MFrontMaterialPropertyInterface::writeBeginHeaderNamespace(
       std::ostream& os) const {
     os << "namespace mfront{\n\n";
-  }  // end of MFrontMaterialPropertyInterface::writeBeginHeaderNamespace
+  }  // end of writeBeginHeaderNamespace
 
   void MFrontMaterialPropertyInterface::writeEndHeaderNamespace(
       std::ostream& os) const {
     os << "} // end of namespace mfront\n\n";
-  }  // end of MFrontMaterialPropertyInterface::writeEndHeaderNamespace()
+  }  // end of writeEndHeaderNamespace()
 
   void MFrontMaterialPropertyInterface::writeBeginSrcNamespace(
       std::ostream& os) const {
     os << "namespace mfront{\n";
-  }  // end of MFrontMaterialPropertyInterface::writeBeginSrcNamespace
+  }  // end of writeBeginSrcNamespace
 
   void MFrontMaterialPropertyInterface::writeEndSrcNamespace(
       std::ostream& os) const {
     os << "} // end of namespace mfront\n";
-  }  // end of MFrontMaterialPropertyInterface::writeEndSrcNamespace()
+  }  // end of writeEndSrcNamespace()
 
   std::string MFrontMaterialPropertyInterface::getFunctionName(
       const MaterialPropertyDescription& mpd) const {
     const auto material = mpd.material;
     const auto law = mpd.className;
     return material.empty() ? law : material + '_' + law;
-  }  // end of MFrontMaterialPropertyInterface::getFunctionName
+  }  // end of getFunctionName
 
   bool MFrontMaterialPropertyInterface::requiresCheckBoundsFunction() const {
     return true;
@@ -114,43 +114,50 @@ namespace mfront {
   std::string MFrontMaterialPropertyInterface::getCheckBoundsFunctionName(
       const MaterialPropertyDescription& mpd) const {
     return this->getFunctionName(mpd) + "_checkBounds";
-  }  // end of MFrontMaterialPropertyInterface::getCheckBoundsFunctionName
+  }  // end of getCheckBoundsFunctionName
+
+  void MFrontMaterialPropertyInterface::writeFileDescriptionSymbols(
+      std::ostream&,
+      const MaterialPropertyDescription&,
+      const FileDescription&) const {}  // end of writeFileDescriptionSymbols
 
   void MFrontMaterialPropertyInterface::writeBuildIdentifierSymbol(
       std::ostream&, const MaterialPropertyDescription&) const {
-  }  // end of MFrontMaterialPropertyInterface::writeBuildIdentifierSymbol
+  }  // end of writeBuildIdentifierSymbol
 
   void MFrontMaterialPropertyInterface::writeEntryPointSymbol(
       std::ostream&, const MaterialPropertyDescription&) const {
-  }  // end of MFrontMaterialPropertyInterface::writeEntryPointSymbol
+  }  // end of writeEntryPointSymbol
 
   void MFrontMaterialPropertyInterface::writeTFELVersionSymbol(
       std::ostream&, const MaterialPropertyDescription&) const {
-  }  // end of MFrontMaterialPropertyInterface::writeTFELVersionSymbol
+  }  // end of writeTFELVersionSymbol
 
+  void MFrontMaterialPropertyInterface::writeLawSymbol(
+      std::ostream&, const MaterialPropertyDescription&) const {
+  }  // end of writeMaterialSymbol
+  
   void MFrontMaterialPropertyInterface::writeMaterialSymbol(
       std::ostream&, const MaterialPropertyDescription&) const {
-  }  // end of MFrontMaterialPropertyInterface::writeMaterialSymbol
+  }  // end of writeMaterialSymbol
 
   void MFrontMaterialPropertyInterface::writeInterfaceSymbol(
       std::ostream&, const MaterialPropertyDescription&) const {
-  }  // end of MFrontMaterialPropertyInterface::writeInterfaceSymbol
+  }  // end of writeInterfaceSymbol
 
   void MFrontMaterialPropertyInterface::writeMaterialKnowledgeTypeSymbol(
       std::ostream&, const MaterialPropertyDescription&) const {
-  }  // end of MFrontMaterialPropertyInterface::writeEntryPointSymbol
+  }  // end of writeEntryPointSymbol
 
   void MFrontMaterialPropertyInterface::writeVariablesNamesSymbol(
       std::ostream&,
-      const std::string&,
       const MaterialPropertyDescription&) const {
-  }  // end of MFrontMaterialPropertyInterface::writeVariablesNamesSymbol
+  }  // end of writeVariablesNamesSymbol
 
   void MFrontMaterialPropertyInterface::writeVariablesBoundsSymbols(
       std::ostream&,
-      const std::string&,
       const MaterialPropertyDescription&) const {
-  }  // end of MFrontMaterialPropertyInterface::writeVariablesBoundsSymbols
+  }  // end of writeVariablesBoundsSymbols
 
   MFrontMaterialPropertyInterface::~MFrontMaterialPropertyInterface() = default;
 

@@ -33,6 +33,7 @@ namespace mfront {
   struct VariableBoundsDescription;
   struct StaticVariableDescription;
   struct StaticVariableDescriptionContainer;
+  struct FileDescription;
   struct MaterialKnowledgeDescription;
   struct MaterialPropertyDescription;
   struct BehaviourDescription;
@@ -121,6 +122,14 @@ namespace mfront {
       std::ostream&,
       const std::string&,
       const mfront::MaterialPropertyDescription&);
+  /*!
+   * \brief write symbols associated with the file description.
+   * \param[out] os: output stream
+   * \param[in]  n: entry point name
+   * \param[out] fd: description
+   */
+  MFRONT_VISIBILITY_EXPORT void writeFileDescriptionSymbols(
+      std::ostream&, const std::string&, const FileDescription&);
 
   /*!
    * \brief write a symbol associated with the build identifier.
@@ -170,6 +179,17 @@ namespace mfront {
   MFRONT_VISIBILITY_EXPORT void writeInterfaceSymbol(std::ostream&,
                                                      const std::string&,
                                                      const std::string&);
+  /*!
+   * \brief write a symbol stating that a given entry point is
+   * associated to a material law.
+   * \param[out] os: output stream
+   * \param[out] n: entry point name
+   * \param[in]  l: law name
+   * name
+   */
+  MFRONT_VISIBILITY_EXPORT void writeLawSymbol(std::ostream&,
+					       const std::string&,
+					       const std::string&);
   /*!
    * \brief write a symbol stating that a given entry point is
    * associated to a material.

@@ -358,6 +358,7 @@ namespace mfront {
     writeEntryPointSymbol(srcFile, name);
     writeTFELVersionSymbol(srcFile, name);
     writeInterfaceSymbol(srcFile, name, "Python");
+    writeLawSymbol(srcFile, name, mpd.material);
     writeMaterialSymbol(srcFile, name, mpd.material);
     writeMaterialKnowledgeTypeSymbol(srcFile, name, MATERIALPROPERTY);
     if (!inputs.empty()) {

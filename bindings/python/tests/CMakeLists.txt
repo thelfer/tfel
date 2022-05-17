@@ -52,6 +52,7 @@ endif(HAVE_ASTER)
 test_pymfront(test2)
 test_pymfront(test3)
 
+test_pymfront_mp("generic" "$<TARGET_FILE:MFrontMaterialProperties-generic>" "VanadiumAlloy_YoungModulus_SRMA")
 test_pymfront_mp("c" "$<TARGET_FILE:MFrontMaterialProperties>" "VanadiumAlloy_YoungModulus_SRMA")
 test_pymfront_mp("cxx" "$<TARGET_FILE:MFrontMaterialProperties-cxx>" "VanadiumAlloy_YoungModulus_SRMA")
 if(HAVE_FORTRAN)

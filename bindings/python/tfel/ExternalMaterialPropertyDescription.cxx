@@ -31,15 +31,13 @@ void declareExternalMaterialPropertyDescription() {
   using namespace boost::python;
   using namespace tfel::system;
 
-  class_<ExternalMaterialPropertyDescription>(
+  class_<ExternalMaterialPropertyDescription,
+         bases<ExternalMaterialKnowledgeDescription>>(
       "ExternalMaterialPropertyDescription", init<>())
       .def(init<std::string, std::string>())
-      .def_readonly("tfel_version",
-                    &ExternalMaterialPropertyDescription::tfel_version)
-      .def_readonly("build_id", &ExternalMaterialPropertyDescription::build_id)
-      .def_readonly("source", &ExternalMaterialPropertyDescription::source)
-      .def_readonly("mfront_interface",
-                    &ExternalMaterialPropertyDescription::mfront_interface)
+      .def_readonly("law", &ExternalMaterialPropertyDescription::law)
+      .def_readonly("material_property",
+		    &ExternalMaterialPropertyDescription::material_property)
       .add_property("arguments", &get_args)
       .add_property("parameters", &get_parameters);
 

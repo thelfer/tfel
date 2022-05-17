@@ -17,31 +17,104 @@
 #include <vector>
 #include <string>
 #include "TFEL/Config/TFELConfig.hxx"
+#include "TFEL/System/ExternalMaterialKnowledgeDescription.hxx"
 
 namespace tfel::system {
 
   /*!
-   * \brief a structure containing the information  a given behaviour.
+   * \brief a structure containing the information that could be retrieved
+   * by the `ExternalLibraryManger` class about a given behaviour for
+   * a given hypothesis.
    */
-  struct TFELSYSTEM_VISIBILITY_EXPORT ExternalBehaviourData {
+  struct TFELSYSTEM_VISIBILITY_EXPORT ExternalBehaviourDescription
+      : public ExternalMaterialKnowledgeDescription {
+    /*!
+     * \param[in] l : library
+     * \param[in] f : function
+     * \param[in] h : hypothesis
+     */
+    ExternalBehaviourDescription(const std::string&,
+                                 const std::string&,
+                                 const std::string&);
     //! \brief default constructor
-    ExternalBehaviourData();
+    ExternalBehaviourDescription();
     //! \brief move constructor
-    ExternalBehaviourData(ExternalBehaviourData&&);
+    ExternalBehaviourDescription(ExternalBehaviourDescription&&);
     //! \brief copy constructor
-    ExternalBehaviourData(const ExternalBehaviourData&);
+    ExternalBehaviourDescription(const ExternalBehaviourDescription&);
     //! \brief move assignement
-    ExternalBehaviourData& operator=(ExternalBehaviourData&&);
+    ExternalBehaviourDescription& operator=(ExternalBehaviourDescription&&);
     //! \brief standard assignement
-    ExternalBehaviourData& operator=(const ExternalBehaviourData&);
-    //! \brief version of TFEL used to generate the behaviour
-    std::string tfel_version;
-    //! \brief build identifier
-    std::string build_id;
-    //! \brief name of the library
-    std::string library;
-    //! \brief name of the interface used to generate the behaviour
-    std::string mfront_interface;
+    ExternalBehaviourDescription& operator=(
+        const ExternalBehaviourDescription&);
+    //! \brief destructor
+    ~ExternalBehaviourDescription();
+    /*!
+     * \brief get the default value of a double parameter
+     * \param[in] p: parameter name
+     */
+    double getRealParameterDefaultValue(const std::string&) const;
+    /*!
+     * \brief get the default value of an integer parameter
+     * \param[in] p: parameter name
+     */
+    int getIntegerParameterDefaultValue(const std::string&) const;
+    /*!
+     * \brief get the default value of an unsigned short parameter
+     * \param[in] p: parameter name
+     */
+    unsigned short getUnsignedShortParameterDefaultValue(
+        const std::string&) const;
+    /*!
+     * \return true if the given variable has bounds
+     * \param[in] v: variable name
+     */
+    bool hasBounds(const std::string&) const;
+    /*!
+     * \return true if the given variable has a lower bound
+     * \param[in] v: variable name
+     */
+    bool hasLowerBound(const std::string&) const;
+    /*!
+     * \return true if the given variable has a upper bound
+     * \param[in] v: variable name
+     */
+    bool hasUpperBound(const std::string&) const;
+    /*!
+     * \return the lower bound of the given variable
+     * \param[in] v: variable name
+     */
+    long double getLowerBound(const std::string&) const;
+    /*!
+     * \return the upper bound of the given variable
+     * \param[in] v: variable name
+     */
+    long double getUpperBound(const std::string&) const;
+    /*!
+     * \return true if the given variable has bounds
+     * \param[in] v: variable name
+     */
+    bool hasPhysicalBounds(const std::string&) const;
+    /*!
+     * \return true if the given variable has a lower physical bound
+     * \param[in] v: variable name
+     */
+    bool hasLowerPhysicalBound(const std::string&) const;
+    /*!
+     * \return true if the given variable has a upper physical bound
+     * \param[in] v: variable name
+     */
+    bool hasUpperPhysicalBound(const std::string&) const;
+    /*!
+     * \return the lower bound of the given variable
+     * \param[in] v: variable name
+     */
+    long double getLowerPhysicalBound(const std::string&) const;
+    /*!
+     * \return the upper bound of the given variable
+     * \param[in] v: variable name
+     */
+    long double getUpperPhysicalBound(const std::string&) const;
     //! \brief name of the behavior
     std::string behaviour;
     //! \brief name of the hypothesis
@@ -199,101 +272,8 @@ namespace tfel::system {
     bool hasTemperatureBeenRemovedFromExternalStateVariables = true;
   };
 
-  /*!
-   * A structure containing the information that could be retrieved
-   * by the ExternalLibraryManger class about a given behaviour for
-   * a given hypothesis.
-   */
-  struct TFELSYSTEM_VISIBILITY_EXPORT ExternalBehaviourDescription
-      : public ExternalBehaviourData {
-    /*!
-     * \param[in] l : library
-     * \param[in] f : function
-     * \param[in] h : hypothesis
-     */
-    ExternalBehaviourDescription(const std::string&,
-                                 const std::string&,
-                                 const std::string&);
-    //! default constructor
-    ExternalBehaviourDescription();
-    //! copy constructor
-    ExternalBehaviourDescription(const ExternalBehaviourDescription&);
-    //! move constructor
-    ExternalBehaviourDescription(ExternalBehaviourDescription&&);
-    /*!
-     * \brief get the default value of a double parameter
-     * \param[in] p: parameter name
-     */
-    double getRealParameterDefaultValue(const std::string&) const;
-    /*!
-     * \brief get the default value of an integer parameter
-     * \param[in] p: parameter name
-     */
-    int getIntegerParameterDefaultValue(const std::string&) const;
-    /*!
-     * \brief get the default value of an unsigned short parameter
-     * \param[in] p: parameter name
-     */
-    unsigned short getUnsignedShortParameterDefaultValue(
-        const std::string&) const;
-    /*!
-     * \return true if the given variable has bounds
-     * \param[in] v: variable name
-     */
-    bool hasBounds(const std::string&) const;
-    /*!
-     * \return true if the given variable has a lower bound
-     * \param[in] v: variable name
-     */
-    bool hasLowerBound(const std::string&) const;
-    /*!
-     * \return true if the given variable has a upper bound
-     * \param[in] v: variable name
-     */
-    bool hasUpperBound(const std::string&) const;
-    /*!
-     * \return the lower bound of the given variable
-     * \param[in] v: variable name
-     */
-    long double getLowerBound(const std::string&) const;
-    /*!
-     * \return the upper bound of the given variable
-     * \param[in] v: variable name
-     */
-    long double getUpperBound(const std::string&) const;
-    /*!
-     * \return true if the given variable has bounds
-     * \param[in] v: variable name
-     */
-    bool hasPhysicalBounds(const std::string&) const;
-    /*!
-     * \return true if the given variable has a lower physical bound
-     * \param[in] v: variable name
-     */
-    bool hasLowerPhysicalBound(const std::string&) const;
-    /*!
-     * \return true if the given variable has a upper physical bound
-     * \param[in] v: variable name
-     */
-    bool hasUpperPhysicalBound(const std::string&) const;
-    /*!
-     * \return the lower bound of the given variable
-     * \param[in] v: variable name
-     */
-    long double getLowerPhysicalBound(const std::string&) const;
-    /*!
-     * \return the upper bound of the given variable
-     * \param[in] v: variable name
-     */
-    long double getUpperPhysicalBound(const std::string&) const;
-    //! assignement
-    ExternalBehaviourDescription& operator=(
-        const ExternalBehaviourDescription&);
-    //! move assignement
-    ExternalBehaviourDescription& operator=(ExternalBehaviourDescription&&);
-    //! destructor
-    ~ExternalBehaviourDescription();
-  };
+  //! \brief a simple alias
+  using ExternalBehaviourData = ExternalBehaviourDescription;
 
 }  // end of namespace tfel::system
 

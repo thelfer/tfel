@@ -28,8 +28,10 @@ TK.setGlossaryName("Temperature");
 @PhysicalBounds TK in [0:*[;
 @Bounds TK in [293.15:973.15];
 
+@Parameter stress E0 = 127.8e9;
+			   
 @Function
 {
   const real TC = TK - 273.15 ;
-  E = 127.8e9*(1-7.825e-5*(TC-20.));
+  E = E0*(1-7.825e-5*(TC-20.));
 }

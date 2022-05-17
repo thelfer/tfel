@@ -232,10 +232,12 @@ namespace mfront {
         << "extern \"C\"{\n"
         << "#endif /* __cplusplus */\n\n";
     // mfront metadata
+    writeFileDescriptionSymbols(src, name, fd);
     writeVariablesNamesSymbol(src, name, mpd);
     writeVariablesBoundsSymbols(src, name, mpd);
 
     writeEntryPointSymbol(src, name);
+    writeLawSymbol(src, name, mpd.law);
     writeTFELVersionSymbol(src, name);
     writeInterfaceSymbol(src, name, "C++");
     writeMaterialSymbol(src, name, mpd.material);

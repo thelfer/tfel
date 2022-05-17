@@ -17,48 +17,16 @@
 #include <string>
 #include <vector>
 #include "TFEL/Config/TFELConfig.hxx"
+#include "TFEL/System/ExternalMaterialKnowledgeDescription.hxx"
 
 namespace tfel::system {
 
   /*!
-   * \brief a structure containing the information  a given behaviour.
-   */
-  struct TFELSYSTEM_VISIBILITY_EXPORT ExternalMaterialPropertyData {
-    //! \brief default constructor
-    ExternalMaterialPropertyData();
-    //! \brief move constructor
-    ExternalMaterialPropertyData(ExternalMaterialPropertyData&&);
-    //! \brief move constructor
-    ExternalMaterialPropertyData(const ExternalMaterialPropertyData&);
-    //! \brief move assignement
-    ExternalMaterialPropertyData& operator=(ExternalMaterialPropertyData&&);
-    //! \brief standard assignement
-    ExternalMaterialPropertyData& operator=(
-        const ExternalMaterialPropertyData&);
-    //! \brief version of TFEL used to generate the behaviour
-    std::string tfel_version;
-    //! \brief build identifier
-    std::string build_id;
-    //! \brief MFront source file
-    std::string source;
-    //! \brief name of the interface used to generate the material property
-    std::string mfront_interface;
-    //! \brief name of the library
-    std::string library;
-    //! \brief name of the material property
-    std::string material_property;
-    //! \brief list of arguments
-    std::vector<std::string> arguments;
-    //! \brief list of parameters
-    std::vector<std::string> parameters;
-  };  // end of struct ExternalMaterialPropertyData
-
-  /*!
-   * \brief A structure containing the information that could be retrieved
-   * by the `ExternalLibraryManger` class about a material property
+   * \brief a structure containing the information about a given material
+   * property.
    */
   struct TFELSYSTEM_VISIBILITY_EXPORT ExternalMaterialPropertyDescription
-      : public ExternalMaterialPropertyData {
+      : public ExternalMaterialKnowledgeDescription {
     /*!
      * \param[in] l: library
      * \param[in] m: material property
@@ -66,20 +34,29 @@ namespace tfel::system {
     ExternalMaterialPropertyDescription(const std::string&, const std::string&);
     //! \brief default constructor
     ExternalMaterialPropertyDescription();
-    //! \brief copy constructor
-    ExternalMaterialPropertyDescription(
-        const ExternalMaterialPropertyDescription&);
     //! \brief move constructor
     ExternalMaterialPropertyDescription(ExternalMaterialPropertyDescription&&);
-    //! \brief assignement
+    //! \brief move constructor
+    ExternalMaterialPropertyDescription(const ExternalMaterialPropertyDescription&);
+    //! \brief move assignement
+    ExternalMaterialPropertyDescription& operator=(ExternalMaterialPropertyDescription&&);
+    //! \brief standard assignement
     ExternalMaterialPropertyDescription& operator=(
         const ExternalMaterialPropertyDescription&);
-    //! \brief move assignement
-    ExternalMaterialPropertyDescription& operator=(
-        ExternalMaterialPropertyDescription&&);
     //! \brief destructor
     ~ExternalMaterialPropertyDescription();
-  };  // end of ExternalMaterialPropertyDescription
+    //! \brief name of the law defining the material property
+    std::string law;
+    //! \brief name of the enty point associated with the material property
+    std::string material_property;
+    //! \brief list of arguments
+    std::vector<std::string> arguments;
+    //! \brief list of parameters
+    std::vector<std::string> parameters;
+  };  // end of struct ExternalMaterialPropertyDescription
+
+  //! \brief a simple alias for backward compatibility
+  using ExternalMaterialPropertyData = ExternalMaterialPropertyDescription;
 
 }  // end of namespace tfel::system
 

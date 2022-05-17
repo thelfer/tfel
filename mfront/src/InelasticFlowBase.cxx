@@ -96,6 +96,9 @@ namespace mfront::bbrick {
                                      const std::string& id,
                                      const DataMap& d) {
     constexpr auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+    if (getVerboseMode() >= VERBOSE_DEBUG) {
+      getLogStream() << "InelasticFlowBase::initialize\n";
+    }
     auto raise = [](const std::string& m) {
       tfel::raise("InelasticFlowBase::initialize: " + m);
     };  // end of raise
@@ -111,6 +114,9 @@ namespace mfront::bbrick {
       return ds.get<tfel::utilities::DataStructure>();
     };  // end of getDataStructure
     // checking options
+    if (getVerboseMode() >= VERBOSE_DEBUG) {
+      getLogStream() << "checking options\n";
+    }
     this->checkOptions(d);
     // parsing options
     for (const auto& e : d) {
@@ -140,6 +146,11 @@ namespace mfront::bbrick {
       } else if (e.first == "isotropic_hardening") {
         auto add_isotropic_hardening_rule =
             [this, &bd, &dsl, &id](const tfel::utilities::DataStructure& ds) {
+              if (getVerboseMode() >= VERBOSE_DEBUG) {
+                getLogStream()
+                    << "adding isotropic hardening rule '" + ds.name + "'"
+                    << std::endl;
+              }
               auto& rf = IsotropicHardeningRuleFactory::getFactory();
               const auto ihr = rf.generate(ds.name);
               ihr->initialize(bd, dsl, id, std::to_string(this->ihrs.size()),
@@ -151,8 +162,13 @@ namespace mfront::bbrick {
             add_isotropic_hardening_rule(getDataStructure(e.first, ird));
           }
         } else {
-          auto& rf = IsotropicHardeningRuleFactory::getFactory();
           const auto ds = getDataStructure(e.first, e.second);
+          if (getVerboseMode() >= VERBOSE_DEBUG) {
+            getLogStream() << "adding isotropic hardening rule '" + ds.name +
+                                  "'"
+                           << std::endl;
+          }
+          auto& rf = IsotropicHardeningRuleFactory::getFactory();
           const auto ihr = rf.generate(ds.name);
           ihr->initialize(bd, dsl, id, "", ds.data);
           this->ihrs.push_back(ihr);
@@ -160,6 +176,11 @@ namespace mfront::bbrick {
       } else if (e.first == "kinematic_hardening") {
         auto add_kinematic_hardening_rule =
             [this, &bd, &dsl, &id](const tfel::utilities::DataStructure& ds) {
+              if (getVerboseMode() >= VERBOSE_DEBUG) {
+                getLogStream()
+                    << "adding kinematic hardening rule '" + ds.name + "'"
+                    << std::endl;
+              }
               auto& kf = KinematicHardeningRuleFactory::getFactory();
               const auto k = kf.generate(ds.name);
               k->initialize(bd, dsl, id, std::to_string(this->khrs.size()),

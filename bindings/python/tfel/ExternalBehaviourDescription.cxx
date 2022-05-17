@@ -56,7 +56,9 @@ void declareExternalBehaviourDescription() {
   using namespace boost::python;
   using namespace tfel::system;
 
-  class_<ExternalBehaviourDescription>("ExternalBehaviourDescription", init<>())
+  class_<ExternalBehaviourDescription,
+         bases<ExternalMaterialKnowledgeDescription>>(
+      "ExternalBehaviourDescription", init<>())
       .def(init<std::string, std::string, std::string>())
       .add_property("elastic_material_properties_epts", &get_emps_epts)
       .add_property("linear_thermal_expansion_coefficients_epts",
@@ -66,11 +68,6 @@ void declareExternalBehaviourDescription() {
       .add_property("ivtypes", &get_ivs_types)
       .add_property("evnames", &get_evs)
       .add_property("evtypes", &get_evs_types)
-      .def_readonly("tfel_version", &ExternalBehaviourDescription::tfel_version)
-      .def_readonly("build_id", &ExternalBehaviourDescription::build_id)
-      .def_readonly("source", &ExternalBehaviourDescription::source)
-      .def_readonly("mfront_interface",
-                    &ExternalBehaviourDescription::mfront_interface)
       .def_readonly("btype", &ExternalBehaviourDescription::btype)
       .def_readonly("stype", &ExternalBehaviourDescription::stype)
       .def_readonly("etype", &ExternalBehaviourDescription::etype)

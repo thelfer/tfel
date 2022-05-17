@@ -8,6 +8,7 @@ endif
 lib_LTLIBRARIES = libTFELSystem.la 
 libTFELSystem_la_SOURCES  = LibraryInformation.cxx       \
 			    ExternalLibraryManager.cxx               \
+			    ExternalMaterialKnowledgeDescription.cxx \
 			    ExternalMaterialPropertyDescription.cxx  \
 			    ExternalBehaviourDescription.cxx         \
 			    System.cxx                               \

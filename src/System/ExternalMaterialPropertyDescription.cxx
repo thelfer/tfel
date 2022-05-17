@@ -21,25 +21,12 @@
 
 namespace tfel::system {
 
-  ExternalMaterialPropertyData::ExternalMaterialPropertyData() = default;
-  ExternalMaterialPropertyData::ExternalMaterialPropertyData(
-      ExternalMaterialPropertyData&&) = default;
-  ExternalMaterialPropertyData::ExternalMaterialPropertyData(
-      const ExternalMaterialPropertyData&) = default;
-  ExternalMaterialPropertyData& ExternalMaterialPropertyData::operator=(
-      ExternalMaterialPropertyData&&) = default;
-  ExternalMaterialPropertyData& ExternalMaterialPropertyData::operator=(
-      const ExternalMaterialPropertyData&) = default;
-
   ExternalMaterialPropertyDescription::ExternalMaterialPropertyDescription(
-      const std::string& l, const std::string& f) {
+      const std::string& l, const std::string& f)
+      : ExternalMaterialKnowledgeDescription(l, f) {
     auto& elm = ExternalLibraryManager::getExternalLibraryManager();
-    this->library = l;
     this->material_property = f;
-    this->tfel_version = elm.getTFELVersion(l, f);
-    this->build_id = elm.getBuildId(l, f);
-    this->source = elm.getSource(l, f);
-    this->mfront_interface = elm.getInterface(l, f);
+    this->law = elm.getLaw(l, f);
     this->arguments = elm.getMaterialPropertyVariables(l, f);
     try {
       this->parameters = elm.getMaterialPropertyParameters(l, f);

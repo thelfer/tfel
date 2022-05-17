@@ -40,7 +40,7 @@ namespace mfront {
 
   void ExcelMaterialPropertyInternalInterface::writeInterfaceSymbol(
       std::ostream& os, const MaterialPropertyDescription& mpd) const {
-    mfront::writeInterfaceSymbol(os, this->getFunctionName(mpd), "Excel");
+    mfront::writeInterfaceSymbol(os, this->getSymbolName(mpd), "Excel");
   }  // end of ExcelMaterialPropertyInternalInterface::writeInterfaceSymbol
 
   void

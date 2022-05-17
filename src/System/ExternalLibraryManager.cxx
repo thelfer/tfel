@@ -334,14 +334,23 @@ namespace tfel::system {
 #endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
   }    // end of contains
 
-  std::string ExternalLibraryManager::getBuildId(const std::string& l,
-                                                 const std::string& s) {
+  std::string ExternalLibraryManager::getString(const std::string& l,
+						const std::string& s) {
+    if(!this->contains(l, s)){
+      tfel::raise("ExternalLibraryManager::getString: "
+		  "no symbol named '" + s +"' in library '" + l + "'");
+    }
+    return this->getStringIfDefined(l, s);
+  }  // end of ExternalLibraryManager::getString
+  
+  std::string ExternalLibraryManager::getStringIfDefined(const std::string& l,
+                                                        const std::string& s) {
     const auto lib = this->loadLibrary(l);
 #if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__)
     const auto p =
-        (const char* const*)::GetProcAddress(lib, (s + "_build_id").c_str());
+        (const char* const*)::GetProcAddress(lib, s.c_str());
 #else
-    const auto p = ::dlsym(lib, (s + "_build_id").c_str());
+    const auto p = ::dlsym(lib, s.c_str());
 #endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
     if (p == nullptr) {
       return "";
@@ -351,26 +360,31 @@ namespace tfel::system {
 #else
     return *(static_cast<const char* const*>(p));
 #endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
-  }    // end of getBuildId
+  }  // end of ExternalLibraryManager::getStringIfDefined
+
+  std::string ExternalLibraryManager::getAuthor(const std::string& l,
+                                                const std::string& s) {
+    return this->getStringIfDefined(l, s + "_author");
+  }  // end of getAuthor
+
+  std::string ExternalLibraryManager::getDate(const std::string& l,
+                                              const std::string& s) {
+    return this->getStringIfDefined(l, s + "_date");
+  }  // end of getDate
+
+  std::string ExternalLibraryManager::getDescription(const std::string& l,
+                                                     const std::string& s) {
+    return this->getStringIfDefined(l, s + "_description");
+  }  // end of getDescription
+
+  std::string ExternalLibraryManager::getBuildId(const std::string& l,
+                                                 const std::string& s) {
+    return this->getStringIfDefined(l, s + "_build_id");
+  }  // end of getBuildId
 
   std::string ExternalLibraryManager::getSource(const std::string& l,
                                                 const std::string& f) {
-    auto s = std::string{};
-    const auto lib = this->loadLibrary(l);
-#if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__)
-    const auto p =
-        (const char* const*)::GetProcAddress(lib, (f + "_src").c_str());
-#else
-    auto p = ::dlsym(lib, (f + "_src").c_str());
-#endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
-    if (p != nullptr) {
-#if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__)
-      s = *p;
-#else
-      s = *(static_cast<const char* const*>(p));
-#endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
-    }
-    return s;
+    return this->getStringIfDefined(l, f + "_src");
   }  // end of getSource
 
   std::string ExternalLibraryManager::getInterface(const std::string& l,
@@ -396,42 +410,19 @@ namespace tfel::system {
 #endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
   }    // end of getInterface
 
+  std::string ExternalLibraryManager::getLaw(const std::string& l,
+                                                  const std::string& f) {
+    return this->getString(l, f + "_mfront_law");
+  }  // end of getLaw
+  
   std::string ExternalLibraryManager::getMaterial(const std::string& l,
                                                   const std::string& f) {
-    const auto lib = this->loadLibrary(l);
-#if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__)
-    const auto p = (const char* const*)::GetProcAddress(
-        lib, (f + "_mfront_material").c_str());
-#else
-    const auto p = ::dlsym(lib, (f + "_mfront_material").c_str());
-#endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
-    if (p == nullptr) {
-      return "";
-    }
-#if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__)
-    return *p;
-#else
-    return *(static_cast<const char* const*>(p));
-#endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
-  }    // end of getMaterial
+    return this->getStringIfDefined(l, f + "_mfront_material");
+  }  // end of getMaterial
 
   std::string ExternalLibraryManager::getTFELVersion(const std::string& l,
                                                      const std::string& f) {
-    const auto lib = this->loadLibrary(l);
-#if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__)
-    const auto p = (const char* const*)::GetProcAddress(
-        lib, (f + "_tfel_version").c_str());
-#else
-    const auto p = ::dlsym(lib, (f + "_tfel_version").c_str());
-#endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
-    if (p == nullptr) {
-      return "";
-    }
-#if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__)
-    return *p;
-#else
-    return *(static_cast<const char* const*>(p));
-#endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
+    return this->getStringIfDefined(l, f + "_tfel_version");
   }    // end of getTFELVersion
 
   std::vector<std::string>

@@ -96,11 +96,12 @@ material_la_LIBADD  = -L@top_builddir@/src/Material -lTFELMaterial \
 		      -L@PYTHONPATH@/lib -lpython@PYTHON_VERSION@
 material_la_LDFLAGS = -module
 
-system_la_SOURCES = system.cxx                      \
-		    ProcessManagerCommand.cxx               \
-		    LibraryInformation.cxx                  \
-		    ExternalLibraryManager.cxx              \
-		    ExternalMaterialPropertyDescription.cxx \
+system_la_SOURCES = system.cxx                       \
+		    ProcessManagerCommand.cxx                \
+		    LibraryInformation.cxx                   \
+		    ExternalLibraryManager.cxx               \
+		    ExternalMaterialKnowledgeDescription.cxx \
+		    ExternalMaterialPropertyDescription.cxx  \
 		    ExternalBehaviourDescription.cxx
 system_la_LIBADD  = -L@top_builddir@/src/System -lTFELSystem    \
 		    @BOOST_LIBS@ @BOOST_PYTHON_LIBS@            \

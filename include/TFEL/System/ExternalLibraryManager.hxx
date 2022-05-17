@@ -419,6 +419,14 @@ namespace tfel::system {
      */
     std::string getInterface(const std::string&, const std::string&);
     /*!
+     * \return the law associated with the entry point
+     * \param[in] l: name of the library
+     * \param[in] s: name of function or mechanical behaviour
+     * This function looks for the symbol s+'_mfront_law' in the library
+     * and expect it to a pointer to characters.
+     */
+    std::string getLaw(const std::string&, const std::string&);
+    /*!
      * \return the material associated with the entry point
      * \param[in] l: name of the library
      * \param[in] s: name of function or mechanical behaviour
@@ -442,6 +450,24 @@ namespace tfel::system {
      * \param[in] s : symbol name
      */
     bool contains(const std::string&, const std::string&);
+    /*!
+     * \return the author associated with the current symbol, if any
+     * \param[in] l : name of the library
+     * \param[in] s : symbol name
+     */
+    std::string getAuthor(const std::string&, const std::string&);
+    /*!
+     * \return the date associated with the current symbol, if any
+     * \param[in] l : name of the library
+     * \param[in] s : symbol name
+     */
+    std::string getDate(const std::string&, const std::string&);
+    /*!
+     * \return the description associated with the current symbol, if any
+     * \param[in] l : name of the library
+     * \param[in] s : symbol name
+     */
+    std::string getDescription(const std::string&, const std::string&);
     /*!
      * \return the build id associated with the current symbol, if any.
      * \param[in] l : name of the library
@@ -500,8 +526,8 @@ namespace tfel::system {
      * \param[in] f : function name
      */
     void getGenericMaterialPropertyVariables(std::vector<std::string>&,
-                                            const std::string&,
-                                            const std::string&);
+                                             const std::string&,
+                                             const std::string&);
     /*!
      * \param[in] l : name of the library
      * \param[in] f : law name
@@ -554,8 +580,7 @@ namespace tfel::system {
      * \param[in] h: modelling hypothesis
      * \param[in] p: initialize function function name
      */
-    std::vector<int>
-    getGenericBehaviourInitializeFunctionInputsTypes(
+    std::vector<int> getGenericBehaviourInitializeFunctionInputsTypes(
         const std::string&,
         const std::string&,
         const std::string&,
@@ -600,8 +625,7 @@ namespace tfel::system {
      * \param[in] h: modelling hypothesis
      * \param[in] p: post-processing function name
      */
-    std::vector<int>
-    getGenericBehaviourPostProcessingFunctionOutputsTypes(
+    std::vector<int> getGenericBehaviourPostProcessingFunctionOutputsTypes(
         const std::string&,
         const std::string&,
         const std::string&,
@@ -1372,6 +1396,19 @@ namespace tfel::system {
     ExternalLibraryManager& operator=(ExternalLibraryManager&&) = delete;
     ExternalLibraryManager& operator=(const ExternalLibraryManager&) = delete;
 
+    /*!
+     * \return the string associated with the given symbol.
+     * \param[in] l: library
+     * \param[in] s: symbol
+     */
+    std::string getString(const std::string&, const std::string&);
+    /*!
+     * \return the string associated with the given symbol if defined. If the
+     * symbol is not defined, an empty string is returned.
+     * \param[in] l: library
+     * \param[in] s: symbol
+     */
+    std::string getStringIfDefined(const std::string&, const std::string&);
     /*!
      * \return an array of strings associated with an entry point
      * \param[in] l: library

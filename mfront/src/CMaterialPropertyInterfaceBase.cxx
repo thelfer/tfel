@@ -220,44 +220,61 @@ namespace mfront {
     }
   }
 
+  std::string CMaterialPropertyInterfaceBase::getSymbolName(
+      const MaterialPropertyDescription& mpd) const {
+    const auto material = mpd.material;
+    const auto className = mpd.className;
+    return material.empty() ? className : material + "_" + className;
+  }  // end of getSymbolName
+
+  void CMaterialPropertyInterfaceBase::writeFileDescriptionSymbols(
+      std::ostream& os,
+      const MaterialPropertyDescription& mpd,
+      const FileDescription& fd) const {
+    mfront::writeFileDescriptionSymbols(os, this->getSymbolName(mpd), fd);
+  }  // end of writeFileDescriptionSymbols
+
   void CMaterialPropertyInterfaceBase::writeBuildIdentifierSymbol(
       std::ostream& os, const MaterialPropertyDescription& mpd) const {
-    mfront::writeBuildIdentifierSymbol(os, this->getFunctionName(mpd), mpd);
+    mfront::writeBuildIdentifierSymbol(os, this->getSymbolName(mpd), mpd);
   }  // end of writeBuildIdentifierSymbol
 
   void CMaterialPropertyInterfaceBase::writeEntryPointSymbol(
       std::ostream& os, const MaterialPropertyDescription& mpd) const {
-    mfront::writeEntryPointSymbol(os, this->getFunctionName(mpd));
+    mfront::writeEntryPointSymbol(os, this->getSymbolName(mpd));
   }  // end of writeEntryPointSymbol
 
   void CMaterialPropertyInterfaceBase::writeTFELVersionSymbol(
       std::ostream& os, const MaterialPropertyDescription& mpd) const {
-    mfront::writeTFELVersionSymbol(os, this->getFunctionName(mpd));
+    mfront::writeTFELVersionSymbol(os, this->getSymbolName(mpd));
   }  // end of writeTFELVersionSymbol
 
+  void CMaterialPropertyInterfaceBase::writeLawSymbol(
+      std::ostream& os, const MaterialPropertyDescription& mpd) const {
+    mfront::writeLawSymbol(os, this->getSymbolName(mpd), mpd.law);
+  }  // end of writeLawSymbol
+  
   void CMaterialPropertyInterfaceBase::writeMaterialSymbol(
       std::ostream& os, const MaterialPropertyDescription& mpd) const {
-    mfront::writeMaterialSymbol(os, this->getFunctionName(mpd), mpd.material);
+    mfront::writeMaterialSymbol(os, this->getSymbolName(mpd), mpd.material);
   }  // end of writeMaterialSymbol
 
   void CMaterialPropertyInterfaceBase::writeMaterialKnowledgeTypeSymbol(
       std::ostream& os, const MaterialPropertyDescription& mpd) const {
-    mfront::writeMaterialKnowledgeTypeSymbol(os, this->getFunctionName(mpd),
+    mfront::writeMaterialKnowledgeTypeSymbol(os, this->getSymbolName(mpd),
                                              MATERIALPROPERTY);
   }  // end of writeMaterialKnowledgeTypeSymbol
 
   void CMaterialPropertyInterfaceBase::writeVariablesNamesSymbol(
       std::ostream& os,
-      const std::string& name,
       const MaterialPropertyDescription& mpd) const {
-    mfront::writeVariablesNamesSymbol(os, name, mpd);
+    mfront::writeVariablesNamesSymbol(os, this->getSymbolName(mpd), mpd);
   }  // end of writeVariablesNamesSymbol
 
   void CMaterialPropertyInterfaceBase::writeVariablesBoundsSymbols(
       std::ostream& os,
-      const std::string& name,
       const MaterialPropertyDescription& mpd) const {
-    mfront::writeVariablesBoundsSymbols(os, name, mpd);
+    mfront::writeVariablesBoundsSymbols(os, this->getSymbolName(mpd), mpd);
   }  // end of writeVariablesBoundsSymbols
 
   void CMaterialPropertyInterfaceBase::writeSrcFile(
@@ -265,8 +282,6 @@ namespace mfront {
     // opening the source file
     const auto src = this->getSrcFileName(mpd.material, mpd.className);
     const auto fn = "src/" + src + ".cxx";
-    const auto name =
-        (!mpd.material.empty()) ? mpd.material + "_" + mpd.law : mpd.law;
     std::ofstream os(fn);
     tfel::raise_if(!os,
                    "CMaterialPropertyInterfaceBase::writeOutputFiles : "
@@ -304,14 +319,18 @@ namespace mfront {
       os << "#include\"" + header + ".hxx\"\n\n";
     }
     this->writeSrcPreprocessorDirectives(os, mpd);
-    this->writeVariablesNamesSymbol(os, name, mpd);
-    this->writeVariablesBoundsSymbols(os, name, mpd);
+    //
+    this->writeFileDescriptionSymbols(os, mpd, fd);
+    this->writeVariablesNamesSymbol(os, mpd);
+    this->writeVariablesBoundsSymbols(os, mpd);
     this->writeBuildIdentifierSymbol(os, mpd);
     this->writeEntryPointSymbol(os, mpd);
     this->writeTFELVersionSymbol(os, mpd);
     this->writeInterfaceSymbol(os, mpd);
+    this->writeLawSymbol(os, mpd);
     this->writeMaterialSymbol(os, mpd);
     this->writeMaterialKnowledgeTypeSymbol(os, mpd);
+    //
     this->writeBeginSrcNamespace(os);
     os << "double " << this->getFunctionName(mpd) << "(";
     this->writeArgumentsList(os, mpd);

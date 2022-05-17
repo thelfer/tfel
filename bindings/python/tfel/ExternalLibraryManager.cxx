@@ -147,6 +147,11 @@ void declareExternalLibraryManager() {
            return_value_policy<reference_existing_object>())
       .staticmethod("getExternalLibraryManager")
       .def("loadLibrary", ELM_loadLibrary)
+      .def("getAuthor", &ELM::getAuthor)
+      .def("getDate", &ELM::getDate)
+      .def("getDescription", &ELM::getDescription)
+      .def("getBuildId", &ELM::getBuildId)
+      .def("getMaterial", &ELM::getMaterial)
       .def("getSource", &ELM::getSource)
       .def("getEntryPoints", &ELM::getEntryPoints,
            "return the list of all mfront generated entry points\n"

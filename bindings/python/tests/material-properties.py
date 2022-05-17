@@ -8,7 +8,8 @@ import tfel.system
 
 
 class PyMFrontMaterialProperty(unittest.TestCase):
-    def test_pass(self):
+
+    def test_elm(self):
 
         eps = 1.e-14
 
@@ -32,6 +33,34 @@ class PyMFrontMaterialProperty(unittest.TestCase):
         self.assertTrue(
             abs(elm.getUpperBound(l, mp, "Temperature") - 973.15) < eps)
 
+    def test_externalmaterialpropertydescription(self):
+
+        l = os.environ['MFRONT_MATERIAL_PROPERTY_LIBRARY']
+        mp = os.environ['MFRONT_MATERIAL_PROPERTY_FUNCTION']
+        emp = tfel.system.ExternalMaterialPropertyDescription(l, mp)
+
+        print(emp.law)
+        
+        self.assertTrue(emp.author == "T . Helfer")
+        self.assertTrue(emp.date == "2008 - 11 - 17")
+        self.assertTrue(emp.law == "YoungModulus_SRMA")
+        self.assertTrue(emp.material == "VanadiumAlloy")
+        
+        self.assertTrue(emp.description ==
+                        ("Corrélation établie sur la nuance V - 4 Cr - 4 Ti .\n"
+                         "\n"
+                         "Propriétés extraites du document :\n"
+                         "\n"
+                         "Propriétés et comportement mécanique d alliages\n"
+                         "de Vanadium avant , après et sous irradiation\n"
+                         "\n"
+                         "Marion Le Flem , Jean - Luc Bechade , Annick Bougault ,\n"
+                         "Aurore Michaux , Lionel Gosmain , Jean - Louis Seran\n"
+                         "DMN / SRMA / LA2M / NT / 2008 - 2967 / A"))
+        
+        self.assertTrue(len(emp.arguments) == 1)
+        self.assertTrue(emp.arguments[0] == "Temperature")
+        
 
 if __name__ == '__main__':
     unittest.main()

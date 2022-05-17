@@ -103,6 +103,7 @@ if(NOT WIN32)
     ProcessManagerCommand.cxx
     LibraryInformation.cxx
     ExternalLibraryManager.cxx
+    ExternalMaterialKnowledgeDescription.cxx
     ExternalMaterialPropertyDescription.cxx
     ExternalBehaviourDescription.cxx)
 else(NOT WIN32)

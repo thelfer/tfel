@@ -365,12 +365,14 @@ namespace mfront {
         << "extern \"C\"{\n"
         << "#endif /* __cplusplus */\n\n";
 
+    writeFileDescriptionSymbols(out, name, fd);
     writeVariablesNamesSymbol(out, name, mpd);
     writeVariablesBoundsSymbols(out, name, mpd);
     writeBuildIdentifierSymbol(out, name, mpd);
     writeEntryPointSymbol(out, name);
     writeTFELVersionSymbol(out, name);
     writeInterfaceSymbol(out, name, "Castem");
+    writeLawSymbol(out, name, mpd.law);
     writeMaterialSymbol(out, name, mpd.material);
     writeMaterialKnowledgeTypeSymbol(out, name, MATERIALPROPERTY);
     writeParametersSymbols(out, name, mpd);

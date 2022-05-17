@@ -36,6 +36,8 @@ namespace mfront {
         const MaterialPropertyDescription&) const override;
     std::string getHeaderFileName(const std::string&,
                                   const std::string&) const override;
+     void writeLawSymbol(std::ostream&,
+			 const MaterialPropertyDescription&) const override;
     void writeMaterialSymbol(std::ostream&,
                              const MaterialPropertyDescription&) const override;
     void writeInterfaceSymbol(
@@ -53,6 +55,9 @@ namespace mfront {
                                const std::string&) const override;
     std::string getCheckBoundsFunctionName(
         const MaterialPropertyDescription&) const override;
+    void writeFileDescriptionSymbols(std::ostream&,
+                                     const MaterialPropertyDescription&,
+                                     const FileDescription&) const override;
     void writeBuildIdentifierSymbol(
         std::ostream&, const MaterialPropertyDescription&) const override;
     void writeEntryPointSymbol(
@@ -63,11 +68,9 @@ namespace mfront {
         std::ostream&, const MaterialPropertyDescription&) const override;
     void writeVariablesNamesSymbol(
         std::ostream&,
-        const std::string&,
         const MaterialPropertyDescription&) const override;
     void writeVariablesBoundsSymbols(
         std::ostream&,
-        const std::string&,
         const MaterialPropertyDescription&) const override;
     bool requiresCheckBoundsFunction() const override;
 

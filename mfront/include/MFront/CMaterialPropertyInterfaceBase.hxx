@@ -53,6 +53,7 @@ namespace mfront {
                                     const MaterialPropertyDescription&) const;
     /*!
      * \param[out] os:  output file stream
+     * \param[in] mpd : material property description
      */
     virtual void writeInterfaceSpecificVariables(
         std::ostream&, const MaterialPropertyDescription&) const;
@@ -64,6 +65,14 @@ namespace mfront {
      * \param[out] os:  output file stream
      */
     virtual void writeEndHeaderNamespace(std::ostream&) const = 0;
+    /*!
+     * \param[out] os:  output file stream
+     * \param[out] mpd: material property description
+     * \param[out] mpd: file description
+     */
+    virtual void writeFileDescriptionSymbols(std::ostream&,
+                                             const MaterialPropertyDescription&,
+                                             const FileDescription&) const;
     /*!
      * \param[out] os:  output file stream
      * \param[out] mpd: material property description
@@ -82,6 +91,12 @@ namespace mfront {
      */
     virtual void writeTFELVersionSymbol(
         std::ostream&, const MaterialPropertyDescription&) const;
+    /*!
+     * \param[out] os:  output file stream
+     * \param[in]  mpd: material property description
+     */
+    virtual void writeLawSymbol(std::ostream&,
+				const MaterialPropertyDescription&) const;
     /*!
      * \param[out] os:  output file stream
      * \param[in]  mpd: material property description
@@ -107,7 +122,6 @@ namespace mfront {
      */
     virtual void writeVariablesNamesSymbol(
         std::ostream&,
-        const std::string&,
         const MaterialPropertyDescription&) const;
     /*!
      * \param[out] os:  output file stream
@@ -116,7 +130,6 @@ namespace mfront {
      */
     virtual void writeVariablesBoundsSymbols(
         std::ostream&,
-        const std::string&,
         const MaterialPropertyDescription&) const;
     /*!
      * \param[out] os:  output file stream
@@ -149,6 +162,13 @@ namespace mfront {
 
     virtual bool requiresCheckBoundsFunction() const = 0;
     /*!
+     * \return the name used to generate the symbols associated with the
+     * material property.
+     * \param[in] mpd: material property description
+     */
+    virtual std::string getSymbolName(const MaterialPropertyDescription&) const;
+    /*!
+     * \return the name of the generated function.
      * \param[in] mpd: material property description
      */
     virtual std::string getFunctionName(

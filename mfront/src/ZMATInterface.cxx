@@ -1044,6 +1044,7 @@ namespace mfront {
         << '\n';
     mfront::writeExportDirectives(out, false);
     const auto zcn = "ZMAT" + mb.getClassName();
+    writeFileDescriptionSymbols(out, zcn, fd);
     writeBuildIdentifierSymbol(out, zcn, mb);
     writeEntryPointSymbol(out, zcn);
     writeTFELVersionSymbol(out, zcn);

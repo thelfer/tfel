@@ -204,7 +204,6 @@ namespace mfront {
       return;
     }
     const auto& b = v.getBounds();
-    const auto default_policy = getDefaultOutOfBoundsPolicyAsUpperCaseString(mpd);
     const auto get_policy = [&mpd] {
       const auto default_policy =
           getDefaultOutOfBoundsPolicyAsUpperCaseString(mpd);
@@ -325,10 +324,12 @@ namespace mfront {
     writeVariablesNamesSymbol(srcFile, name, mpd);
     writeVariablesBoundsSymbols(srcFile, name, mpd);
     // mfront metadata
+    writeFileDescriptionSymbols(srcFile, name, fd);
     writeBuildIdentifierSymbol(srcFile, name, mpd);
     writeEntryPointSymbol(srcFile, name);
     writeTFELVersionSymbol(srcFile, name);
     writeInterfaceSymbol(srcFile, name, "Java");
+    writeLawSymbol(srcFile, name, mpd.material);
     writeMaterialSymbol(srcFile, name, mpd.material);
     writeMaterialKnowledgeTypeSymbol(srcFile, name, MATERIALPROPERTY);
     // java

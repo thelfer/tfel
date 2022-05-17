@@ -72,7 +72,7 @@ namespace mfront {
 
   void CMaterialPropertyInterface::writeInterfaceSymbol(
       std::ostream& out, const MaterialPropertyDescription& mpd) const {
-    mfront::writeInterfaceSymbol(out, this->getFunctionName(mpd), "C");
+    mfront::writeInterfaceSymbol(out, this->getSymbolName(mpd), "C");
   }  // end of CMaterialPropertyInterface
 
   std::string CMaterialPropertyInterface::getHeaderFileName(

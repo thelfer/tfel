@@ -17,6 +17,7 @@ void declareProcessManagerCommand();
 #endif /* _WIN32 */
 void declareExternalLibraryManager();
 void declareLibraryInformation();
+void declareExternalMaterialKnowledgeDescription();
 void declareExternalMaterialPropertyDescription();
 void declareExternalBehaviourDescription();
 
@@ -26,6 +27,7 @@ BOOST_PYTHON_MODULE(system) {
 #endif /* _WIN32 */
   declareLibraryInformation();
   declareExternalLibraryManager();
+  declareExternalMaterialKnowledgeDescription();
   declareExternalMaterialPropertyDescription();
   declareExternalBehaviourDescription();
 }

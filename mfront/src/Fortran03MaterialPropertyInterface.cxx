@@ -119,7 +119,7 @@ namespace mfront {
 
   void Fortran03MaterialPropertyInterface::writeInterfaceSymbol(
       std::ostream& out, const MaterialPropertyDescription& mpd) const {
-    mfront::writeInterfaceSymbol(out, this->getFunctionName(mpd), "Fortran03");
+    mfront::writeInterfaceSymbol(out, this->getSymbolName(mpd), "Fortran03");
   }  // end of writeInterfaceSymbol
 
   void Fortran03MaterialPropertyInterface::writeArgumentsList(

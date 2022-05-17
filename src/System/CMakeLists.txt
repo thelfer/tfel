@@ -2,6 +2,7 @@ set(TFELSystem_SOURCES
   RecursiveFind.cxx
   LibraryInformation.cxx
   ExternalLibraryManager.cxx
+  ExternalMaterialKnowledgeDescription.cxx
   ExternalMaterialPropertyDescription.cxx
   ExternalBehaviourDescription.cxx
   System.cxx

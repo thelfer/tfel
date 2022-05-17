@@ -25,7 +25,9 @@
 #include "TFEL/System/System.hxx"
 #include "MFront/MFrontDebugMode.hxx"
 #include "MFront/DSLUtilities.hxx"
+#include "MFront/VariableDescription.hxx"
 #include "MFront/StaticVariableDescription.hxx"
+#include "MFront/FileDescription.hxx"
 #include "MFront/MaterialKnowledgeDescription.hxx"
 #include "MFront/MaterialPropertyDescription.hxx"
 #include "MFront/MaterialPropertyParametersHandler.hxx"
@@ -321,6 +323,40 @@ namespace mfront {
     out.precision(prec);
   }  // end of writeVariablesBoundsSymbols
 
+  void writeFileDescriptionSymbols(std::ostream& os,
+                                   const std::string& n,
+                                   const FileDescription& fd) {
+    auto description = [&fd] {
+      auto rtrim = [](const std::string& s) {
+        auto end = s.find_last_not_of(" \n\r\t\f\v");
+        return (end == std::string::npos) ? "" : s.substr(0, end + 1);
+      };
+      auto transform = [rtrim](const std::string& s) {
+        return tfel::utilities::replace_all(rtrim(s), "\\", "\\\\");
+      };
+      auto r = std::string{};
+      auto lines = std::vector<std::string>{};
+      std::istringstream d(fd.description);
+      for (std::string line; std::getline(d, line);) {
+        if (!r.empty()) {
+          r += "\\n";
+        }
+        if (tfel::utilities::starts_with(line, "* ")) {
+          r += transform(line.substr(2));
+        } else {
+          r += transform(rtrim(line));
+        }
+      }
+      return r;
+    }();
+    os << "MFRONT_SHAREDOBJ const char* \n"
+       << n << "_author = \"" << fd.authorName << "\";\n";
+    os << "MFRONT_SHAREDOBJ const char* \n"
+       << n << "_date = \"" << fd.date << "\";\n";
+    os << "MFRONT_SHAREDOBJ const char* \n"
+       << n << "_description = \"" << description << "\";\n\n";
+  }  // end of writeFileDescriptionSymbols
+
   void writeBuildIdentifierSymbol(std::ostream& os,
                                   const std::string& n,
                                   const MaterialKnowledgeDescription& d) {
@@ -358,6 +394,13 @@ namespace mfront {
         << n << "_mfront_interface = \"" << i << "\";\n\n";
   }  // end of writeInterfaceSymbol
 
+  void writeLawSymbol(std::ostream& out,
+                           const std::string& n,
+                           const std::string& l) {
+    out << "MFRONT_SHAREDOBJ const char* " << n << "_mfront_law = \""
+	<< l << "\";\n";
+  }  // end of writeLawSymbol
+
   void writeMaterialSymbol(std::ostream& out,
                            const std::string& n,
                            const std::string& m) {
@@ -366,7 +409,7 @@ namespace mfront {
           << m << "\";\n";
     }
   }  // end of writeMaterialSymbol
-
+  
   void writeMaterialKnowledgeTypeSymbol(std::ostream& out,
                                         const std::string& n,
                                         const MaterialKnowledgeType& t) {

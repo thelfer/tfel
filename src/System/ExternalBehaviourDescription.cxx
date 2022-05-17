@@ -21,18 +21,9 @@
 
 namespace tfel::system {
 
-  ExternalBehaviourData::ExternalBehaviourData() = default;
-  ExternalBehaviourData::ExternalBehaviourData(ExternalBehaviourData&&) =
-      default;
-  ExternalBehaviourData::ExternalBehaviourData(const ExternalBehaviourData&) =
-      default;
-  ExternalBehaviourData& ExternalBehaviourData::operator=(
-      ExternalBehaviourData&&) = default;
-  ExternalBehaviourData& ExternalBehaviourData::operator=(
-      const ExternalBehaviourData&) = default;
-
   ExternalBehaviourDescription::ExternalBehaviourDescription(
-      const std::string& l, const std::string& f, const std::string& h) {
+      const std::string& l, const std::string& f, const std::string& h)
+      : ExternalMaterialKnowledgeDescription(l, f) {
     auto throw_if = [l, f](const bool c, const std::string& m) {
       if (c) {
         tfel::raise(
@@ -49,11 +40,8 @@ namespace tfel::system {
     throw_if(
         std::find(hypotheses.begin(), hypotheses.end(), h) == hypotheses.end(),
         "unsupported hypothesis");
-    this->library = l;
     this->behaviour = f;
     this->hypothesis = h;
-    this->tfel_version = elm.getTFELVersion(l, f);
-    this->build_id = elm.getBuildId(l, f);
     if (elm.contains(l, f + "_ElasticMaterialPropertiesEntryPoints")) {
       this->elastic_material_properties_epts =
           elm.getUMATElasticMaterialPropertiesEntryPoints(l, f);
@@ -62,8 +50,6 @@ namespace tfel::system {
       this->linear_thermal_expansion_coefficients_epts =
           elm.getUMATLinearThermalExpansionCoefficientsEntryPoints(l, f);
     }
-    this->source = elm.getSource(l, f);
-    this->mfront_interface = elm.getInterface(l, f);
     this->btype = elm.getUMATBehaviourType(l, f);
     this->kinematic = elm.getUMATBehaviourKinematic(l, f);
     this->stype = elm.getUMATSymmetryType(l, f);

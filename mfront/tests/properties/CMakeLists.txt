@@ -137,6 +137,16 @@ set(mfront_SOURCES
   T91MartensiticSteel_YieldStress_ROUX2007
   T91MartensiticSteel_YoungModulus_ROUX2007)
 
+mfront_dependencies(MFrontMaterialProperties-generic
+  MaterialLawDSLOptionsTest
+  VanadiumAlloy_YoungModulus_SRMA
+  VanadiumAlloy_PoissonRatio_SRMA)
+mfront_check_library(MFrontMaterialProperties-generic generic "generic" ${mfront_SOURCES})
+target_include_directories(MFrontMaterialProperties-generic
+  PRIVATE "${CMAKE_SOURCE_DIR}/include"
+  PRIVATE "${CMAKE_SOURCE_DIR}/mfront/include"
+  PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/include")
+
 mfront_dependencies(MFrontMaterialProperties
   MaterialLawDSLOptionsTest
   VanadiumAlloy_YoungModulus_SRMA
