@@ -1497,6 +1497,18 @@ namespace mtest {
            [this, n](std::ostream& os, const StudyCurrentState& s) {
              os << this->computeMaximumValue(s, n);
            }});
+    } else if (t == "integral_value") {
+      this->aoutputs.push_back(
+          {"integral value of '" + n + "'",
+           [this, n](std::ostream& os, const StudyCurrentState& s) {
+             os << this->computeIntegralValue(s, n);
+           }});
+    } else if (t == "mean_value") {
+      this->aoutputs.push_back(
+          {"mean value of '" + n + "'",
+           [this, n](std::ostream& os, const StudyCurrentState& s) {
+             os << this->computeMeanValue(s, n);
+           }});
     } else {
       tfel::raise(
           "PipeTest::addAdditionalOutput: "
@@ -1505,7 +1517,9 @@ namespace mtest {
           "'.\n"
           "Valid additional output types are:\n"
           "- minimum_value\n"
-          "- maximum_value\n");
+          "- maximum_value\n"
+          "- integral_value\n"
+          "- mean_value\n");
     }
   }  // end of addAdditionalOutput
 
@@ -1518,6 +1532,40 @@ namespace mtest {
                                      const std::string& n) const {
     return this->computeMinimumAndMaximumValues(state, n).second;
   }  // end of computeMaximumValue
+
+  real PipeTest::computeIntegralValue(const StudyCurrentState& state,
+                                      const std::string& n) const {
+    // extract the field values
+    auto& scs = state.getStructureCurrentState("");
+    auto g = buildValueExtractor(*(this->b), n);
+    auto values = tfel::math::vector<real>{};
+    values.resize(getNumberOfGaussPoints(this->mesh));
+    // loop over the elements
+    for (size_type i = 0; i != getNumberOfGaussPoints(this->mesh); ++i) {
+      values[i] = g(scs.istates[i]);
+    }
+    if (this->mesh.etype == PipeMesh::LINEAR) {
+      return PipeLinearElement::computeIntegralValue(this->mesh, values);
+    } else if (this->mesh.etype == PipeMesh::QUADRATIC) {
+      return PipeQuadraticElement::computeIntegralValue(this->mesh, values);
+    } else if (this->mesh.etype == PipeMesh::CUBIC) {
+      return PipeCubicElement::computeIntegralValue(this->mesh, values);
+    } else {
+      tfel::raise(
+          "PipeTest::getNumberOfUnknowns: "
+          "unknown element type");
+    }
+  }  // end of computeIntegralValue
+
+  real PipeTest::computeMeanValue(const StudyCurrentState& state,
+                                  const std::string& n) const {
+    constexpr real pi = 3.14159265358979323846;
+    const auto ri = this->mesh.inner_radius;
+    const auto re = this->mesh.outer_radius;
+    const auto h = 1;
+    const auto V = pi * h * (re * re - ri * ri);
+    return this->computeIntegralValue(state, n) / V;
+  }  // end of computeMeanValue
 
   void PipeTest::addProfile(const std::string& f,
                             const std::vector<std::string>& cn) {

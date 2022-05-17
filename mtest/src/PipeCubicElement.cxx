@@ -40,6 +40,46 @@ namespace mtest {
                                         0.652145154862546, 0.347854845137454};
 #endif /* _MSC_VER */
 
+  real PipeCubicElement::computeIntegralValue(
+      const PipeMesh& m, const tfel::math::vector<real>& values) {
+    //
+    constexpr real pi = 3.14159265358979323846;
+    // number of elements
+    const auto ne = size_t(m.number_of_elements);
+    // inner radius
+    const auto Ri = m.inner_radius;
+    // outer radius
+    const auto Re = m.outer_radius;
+    // radius increment
+    const auto dr = (Re - Ri) / ne;
+    // result
+    auto integral = real{};
+    // loop over elements
+    for (size_t i = 0; i != ne; ++i) {
+      // radial position of the first node
+      const auto r0 = Ri + dr * i;
+      // radial position of the second node
+      const auto r1 = r0 + dr / 3;
+      // radial position of the third node
+      const auto r2 = r0 + 2 * dr / 3;
+      // radial position of the fourth node
+      const auto r3 = r0 + dr;
+      // loop over Gauss point
+      for (const auto g : {0, 1, 2, 3}) {
+        // Gauss point position in the reference element
+        const auto pg = pg_radii[g];
+        // 
+        const auto rg = interpolate(r0, r1, r2, r3, pg);
+        // jacobian of the transformation
+        const auto J = PipeCubicElement::jacobian(r0, r1, r2, r3, pg);
+        const auto w = 2 * pi * rg * wg[g] * J;
+        const auto v = values[4 * i + g];
+        integral += w * v;
+      }
+    }
+    return integral;
+  }  // end of computeIntegralValue
+
   constexpr real PipeCubicElement::sf0(const real x) {
     return cste * (1 - x) * (x - one_third) * (x + one_third);
   }

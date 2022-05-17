@@ -11,6 +11,7 @@
  * project under specific licensing conditions.
  */
 
+
 #include <ostream>
 #include "TFEL/Material/ModellingHypothesis.hxx"
 #include "MFront/MFrontLogStream.hxx"
@@ -66,6 +67,49 @@ namespace mtest {
       }
     }
   }
+
+  real PipeLinearElement::computeIntegralValue(
+      const PipeMesh& m, const tfel::math::vector<real>& values) {
+    if (values.size() != 2 * m.number_of_elements) {
+      tfel::raise(
+          "PipeLinearElement::computeIntegralValue: "
+          "invalid number of values (" +
+          std::to_string(values.size()) + " vs " +
+          std::to_string(2 * m.number_of_elements) + ")");
+    }
+    //
+    constexpr real pi = 3.14159265358979323846;
+    // number of elements
+    const auto ne = size_t(m.number_of_elements);
+    // inner radius
+    const auto Ri = m.inner_radius;
+    // outer radius
+    const auto Re = m.outer_radius;
+    // radius increment
+    const auto dr = (Re - Ri) / ne;
+    // jacobian of the transformation
+    const auto J = dr / 2;
+    // result
+    auto integral = real{};
+    // loop over elements
+    for (size_t i = 0; i != ne; ++i) {
+      // radial position of the first node
+      const auto r0 = Ri + dr * i;
+      // radial position of the second node
+      const auto r1 = Ri + dr * (i + 1);
+      // loop over Gauss point
+      for (const auto g : {0, 1}) {
+        // Gauss point position in the reference element
+        const auto pg = pg_radii[g];
+        // radial position of the Gauss point
+        const auto rg = interpolate(r0, r1, pg);
+        const auto w = 2 * pi * rg * wg * J;
+        const auto v = values[2 * i + g];
+        integral += w * v;
+      }
+    }
+    return integral;
+  }  // end of computeIntegralValue
 
   void PipeLinearElement::computeStrain(StructureCurrentState& scs,
                                         const PipeMesh& m,

@@ -36,6 +36,50 @@ namespace mtest {
       real(5.) / real(9.), real(8.) / real(9.), real(5.) / real(9.)};
 #endif /* _MSC_VER */
 
+  real PipeQuadraticElement::computeIntegralValue(
+      const PipeMesh& m, const tfel::math::vector<real>& values) {
+    //
+    constexpr real pi = 3.14159265358979323846;
+    // number of elements
+    const auto ne = size_t(m.number_of_elements);
+    // inner radius
+    const auto Ri = m.inner_radius;
+    // outer radius
+    const auto Re = m.outer_radius;
+    // radius increment
+    const auto dr = (Re - Ri) / ne;
+    // result
+    auto integral = real{};
+    // loop over elements
+    for (size_t i = 0; i != ne; ++i) {
+      // radial position of the first node
+      const auto r0 = Ri + dr * i;
+      // radial position of the second node
+      const auto r1 = r0 + dr / 2;
+      // radial position of the thrid node
+      const auto r2 = r0 + dr;
+      // loop over Gauss point
+      for (const auto g : {0, 1, 2}) {
+        // radial position of the first node
+        const auto r0 = Ri + dr * i;
+        // radial position of the second node
+        const auto r1 = r0 + dr / 2;
+        // radial position of the second node
+        const auto r2 = r0 + dr;
+        // Gauss point position in the reference element
+        const auto pg = pg_radii[g];
+        // radial position of the Gauss point
+        const auto rg = interpolate(r0, r1, r2, pg);
+        // jacobian of the transformation
+        const auto J = r0 * (pg - 0.5) + r2 * (pg + 0.5) - 2 * r1 * pg;
+        const auto w = 2 * pi * rg * wg[g] * J;
+        const auto v = values[3 * i + g];
+        integral += w * v;
+      }
+    }
+    return integral;
+  }  // end of computeIntegralValue
+
   real PipeQuadraticElement::interpolate(const real v0,
                                          const real v1,
                                          const real v2,

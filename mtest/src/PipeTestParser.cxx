@@ -672,31 +672,29 @@ namespace mtest {
     using tfel::utilities::Data;
     this->checkNotEndOfLine("PipeTestParser::handleAdditionalOutputs", p,
                             this->tokens.end());
-    auto handle_min = [&t](const Data& v) {
-      if (v.is<std::string>()) {
-        t.addOutput("minimum_value", v.get<std::string>());
-      } else {
-        for (const auto& f :
-             tfel::utilities::convert<std::vector<std::string>>(v)) {
-          t.addOutput("minimum_value", f);
-        }
-      }
+    auto generate_function = [&t](const std::string& n) {
+      return
+          [&t, n = n](const Data& v) {
+            if (v.is<std::string>()) {
+              t.addOutput(n, v.get<std::string>());
+            } else {
+              for (const auto& f :
+                   tfel::utilities::convert<std::vector<std::string>>(v)) {
+                t.addOutput(n, f);
+              }
+            }
+          };
     };
-    auto handle_max = [&t](const Data& v) {
-      if (v.is<std::string>()) {
-        t.addOutput("maximum_value", v.get<std::string>());
-      } else {
-        for (const auto& f :
-             tfel::utilities::convert<std::vector<std::string>>(v)) {
-          t.addOutput("maximum_value", f);
-        }
-      }
-    };
-    tfel::utilities::Data::parse(p, this->tokens.end(),
-                                 {{"minimum_value", handle_min},
-                                  {"minimum_values", handle_min},
-                                  {"maximum_value", handle_max},
-                                  {"maximum_values", handle_max}});
+    tfel::utilities::Data::parse(
+        p, this->tokens.end(),
+        {{"minimum_value", generate_function("minimum_value")},
+         {"minimum_values", generate_function("minimum_value")},
+         {"maximum_value", generate_function("maximum_value")},
+         {"maximum_values", generate_function("maximum_value")},
+         {"integral_value", generate_function("integral_value")},
+         {"integral_values", generate_function("integral_value")},
+         {"mean_value", generate_function("mean_value")},
+         {"mean_values", generate_function("mean_value")}});
     this->readSpecifiedToken("PipeTestParser::handleAdditionalOutputs", ";", p,
                              this->tokens.end());
   }  // end of PipeTestParser::handleAdditionalOutput

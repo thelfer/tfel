@@ -53,6 +53,14 @@ namespace mtest {
     static const real wg;
 #endif /* _MSC_VER */
     /*!
+     * \return the integral value of the given values at integration
+     * points.
+     * \param[in] m: mesh
+     * \param[in] values
+     */
+    static real computeIntegralValue(const PipeMesh&,
+                                     const tfel::math::vector<real>&);
+    /*!
      * \brief interpolate nodal value in the element
      * \param[in] v0: value at the first node
      * \param[in] v1: value at the second node

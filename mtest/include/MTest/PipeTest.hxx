@@ -401,6 +401,20 @@ namespace mtest {
     virtual real computeMaximumValue(const StudyCurrentState&,
                                      const std::string&) const;
     /*!
+     * \brief compute the integral value of a scalar variable
+     * \param[in] s: structure state
+     * \param[in] n: variable name
+     */
+    virtual real computeIntegralValue(const StudyCurrentState&,
+                                      const std::string&) const;
+    /*!
+     * \brief compute the mean value of a scalar variable
+     * \param[in] s: structure state
+     * \param[in] n: variable name
+     */
+    virtual real computeMeanValue(const StudyCurrentState&,
+                                  const std::string&) const;
+    /*!
      * \brief add a test comparing to results stored in a reference
      * file to the computed ones
      * \param[in] n: named of the variable tested

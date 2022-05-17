@@ -48,6 +48,14 @@ namespace mtest {
     static const real wg[4];
 #endif /* _MSC_VER */
     /*!
+     * \return the integral value of the given values at integration
+     * points.
+     * \param[in] m: mesh
+     * \param[in] values
+     */
+    static real computeIntegralValue(const PipeMesh&,
+                                     const tfel::math::vector<real>&);
+    /*!
      * \brief set the position of the gauss points
      * \param[out] scs: structure current state
      * \param[in]  m:   pipe mesh
