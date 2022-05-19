@@ -193,6 +193,26 @@ new data members:
   introduced by the `@Law` keyword.
 - `output`: the external name of the ouput of the the material property.
 
+### New member functions
+
+#### Retrieving the default value of a parameter {#sec:tfel_4.1:system:empd:getParameterDefaultValue}
+
+The `getParameterDefaultValue` returns the default value of a parameter.
+
+#### Retrieving information about bounds of a variable {#sec:tfel_4.1:system:empd:bounds}
+
+- The `hasBounds` method indicates if the given variable has bounds (either lower or upper bounds).
+- The `hasLowerBound` method indicates if the given variable has a lower bound.
+- The `hasUpperBound` method indicates if the given variable has a upper bound.
+- The `getLowerBound` method returns the lower bound of the given variable.
+- The `getUpperBound` method returns the upper bound of the given variable.
+- The `hasPhysicalBounds` method indicates if the given variable has physical bounds (either lower or upper physical bounds).
+- The `hasLowerPhysicalBound` method indicates if the given variable has a lower physical bound.
+- The `hasUpperPhysicalBound` method indicates if the given variable has a upper physical bound.
+- The `getLowerPhysicalBound` method returns the lower physical bound of the given variable.
+- The `getUpperPhysicalBound` method returns the upper physical bound of the given variable.
+
+
 ## Improvements to the `ExternalBehaviourDescription` class
 
 The `ExternalBehaviourDescription` class now inherits from the
@@ -1507,6 +1527,19 @@ $ mfront-query --list-behaviour-mfm-test-generator-tests=unsorted --test=".+Tens
 
 # Issues fixed
 ￼
+
+## Issue #192: [TFEL/System] Access to default values of parameters of a material property through the `ExternalMaterialPropertyDescription` class
+
+This feature is described in Section
+@sec:tfel_4.1:system:empd:getParameterDefaultValue.
+
+For more details, see <https://github.com/thelfer/tfel/issues/192>.
+
+## Issue #191: [TFEL/System] Ability to request bounds of variables (inputs, outputs) of a material property in the `ExternalMaterialPropertyDescription` class
+
+Those features are described in Section @sec:tfel_4.1:system:empd:bounds.
+
+For more details, see <https://github.com/thelfer/tfel/issues/191>.
 
 ## Issue #187: [mfront] Get `@Output` from compiled file through `python` bindings
 
