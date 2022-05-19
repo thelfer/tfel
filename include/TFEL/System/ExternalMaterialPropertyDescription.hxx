@@ -43,13 +43,70 @@ namespace tfel::system {
     //! \brief standard assignement
     ExternalMaterialPropertyDescription& operator=(
         const ExternalMaterialPropertyDescription&);
+    /*!
+     * \brief get the default value of a parameter
+     * \param[in] p: parameter name
+     */
+    double getParameterDefaultValue(const std::string&) const;
+    /*!
+     * \return true if the given variable has bounds
+     * \param[in] v: variable name
+     */
+    bool hasBounds(const std::string&) const;
+    /*!
+     * \return true if the given variable has a lower bound
+     * \param[in] v: variable name
+     */
+    bool hasLowerBound(const std::string&) const;
+    /*!
+     * \return true if the given variable has a upper bound
+     * \param[in] v: variable name
+     */
+    bool hasUpperBound(const std::string&) const;
+    /*!
+     * \return the lower bound of the given variable
+     * \param[in] v: variable name
+     */
+    long double getLowerBound(const std::string&) const;
+    /*!
+     * \return the upper bound of the given variable
+     * \param[in] v: variable name
+     */
+    long double getUpperBound(const std::string&) const;
+    /*!
+     * \return true if the given variable has bounds
+     * \param[in] v: variable name
+     */
+    bool hasPhysicalBounds(const std::string&) const;
+    /*!
+     * \return true if the given variable has a lower physical bound
+     * \param[in] v: variable name
+     */
+    bool hasLowerPhysicalBound(const std::string&) const;
+    /*!
+     * \return true if the given variable has a upper physical bound
+     * \param[in] v: variable name
+     */
+    bool hasUpperPhysicalBound(const std::string&) const;
+    /*!
+     * \return the lower bound of the given variable
+     * \param[in] v: variable name
+     */
+    long double getLowerPhysicalBound(const std::string&) const;
+    /*!
+     * \return the upper bound of the given variable
+     * \param[in] v: variable name
+     */
+    long double getUpperPhysicalBound(const std::string&) const;
     //! \brief destructor
     ~ExternalMaterialPropertyDescription();
     //! \brief name of the law defining the material property
     std::string law;
     //! \brief name of the enty point associated with the material property
     std::string material_property;
-    //! \brief list of arguments
+    //! \brief external name of the output
+    std::string output;
+    //! \brief external names of the arguments/inputs
     std::vector<std::string> arguments;
     //! \brief list of parameters
     std::vector<std::string> parameters;

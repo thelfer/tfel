@@ -481,6 +481,16 @@ namespace tfel::system {
     unsigned short getMaterialPropertyNumberOfVariables(const std::string&,
                                                         const std::string&);
     /*!
+     * \brief return the external name associated with the output of a material
+     * property.
+     * \param[in] l : name of the library
+     * \param[in] f : function name
+     */
+    std::string getMaterialPropertyOutput(const std::string&,
+                                          const std::string&);
+    /*!
+     * \brief return the external name associated with the inputs of a material
+     * property.
      * \param[in] l : name of the library
      * \param[in] f : function name
      */

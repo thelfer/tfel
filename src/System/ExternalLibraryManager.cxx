@@ -1313,6 +1313,11 @@ namespace tfel::system {
     return static_cast<unsigned short>(res);
   }
 
+  std::string ExternalLibraryManager::getMaterialPropertyOutput(
+      const std::string& l, const std::string& f) {
+    return this->getString(l, f + "_output");
+  }  // end of getMaterialPropertyOutput
+
   std::vector<std::string> ExternalLibraryManager::getMaterialPropertyVariables(
       const std::string& l, const std::string& f) {
     std::vector<std::string> vars;

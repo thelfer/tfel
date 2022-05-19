@@ -197,6 +197,8 @@ namespace mfront {
       std::ostream& out,
       const std::string& name,
       const mfront::MaterialPropertyDescription& mpd) {
+    out << "MFRONT_SHAREDOBJ const char *\n"
+        << name << "_output = \"" << mpd.output.getExternalName() << "\";\n\n";
     if (!mpd.inputs.empty()) {
       out << "MFRONT_SHAREDOBJ const char *\n"
           << name << "_args[" << mpd.inputs.size() << "] = {";

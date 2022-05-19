@@ -27,12 +27,80 @@ namespace tfel::system {
     auto& elm = ExternalLibraryManager::getExternalLibraryManager();
     this->material_property = f;
     this->law = elm.getLaw(l, f);
+    this->output = elm.getMaterialPropertyOutput(l, f);
     this->arguments = elm.getMaterialPropertyVariables(l, f);
     try {
       this->parameters = elm.getMaterialPropertyParameters(l, f);
     } catch (...) {
     }
   }  // end of ExternalMaterialPropertyDescription
+
+  double ExternalMaterialPropertyDescription::getParameterDefaultValue(
+      const std::string& p) const {
+    auto& elm = ExternalLibraryManager::getExternalLibraryManager();
+    return elm.getRealParameterDefaultValue(this->library,
+                                            this->material_property, "", p);
+  }  // end of getParameterDefaultValue
+
+  bool ExternalMaterialPropertyDescription::hasBounds(
+      const std::string& v) const {
+    auto& elm = ExternalLibraryManager::getExternalLibraryManager();
+    return elm.hasBounds(this->library, this->material_property, v);
+  }  // end of hasBounds
+
+  bool ExternalMaterialPropertyDescription::hasLowerBound(
+      const std::string& v) const {
+    auto& elm = ExternalLibraryManager::getExternalLibraryManager();
+    return elm.hasLowerBound(this->library, this->material_property, v);
+  }  // end of hasLowerBound
+
+  bool ExternalMaterialPropertyDescription::hasUpperBound(
+      const std::string& v) const {
+    auto& elm = ExternalLibraryManager::getExternalLibraryManager();
+    return elm.hasUpperBound(this->library, this->material_property, v);
+  }  // end of hasUpperBound
+
+  long double ExternalMaterialPropertyDescription::getLowerBound(
+      const std::string& v) const {
+    auto& elm = ExternalLibraryManager::getExternalLibraryManager();
+    return elm.getLowerBound(this->library, this->material_property, v);
+  }  // end of getLowerBound
+
+  long double ExternalMaterialPropertyDescription::getUpperBound(
+      const std::string& v) const {
+    auto& elm = ExternalLibraryManager::getExternalLibraryManager();
+    return elm.getUpperBound(this->library, this->material_property, v);
+  }  // end of getUpperBound
+
+  bool ExternalMaterialPropertyDescription::hasPhysicalBounds(
+      const std::string& v) const {
+    auto& elm = ExternalLibraryManager::getExternalLibraryManager();
+    return elm.hasPhysicalBounds(this->library, this->material_property, v);
+  }  // end of hasPhysicalBounds
+
+  bool ExternalMaterialPropertyDescription::hasLowerPhysicalBound(
+      const std::string& v) const {
+    auto& elm = ExternalLibraryManager::getExternalLibraryManager();
+    return elm.hasLowerPhysicalBound(this->library, this->material_property, v);
+  }  // end of hasLowerPhysicalBound
+
+  bool ExternalMaterialPropertyDescription::hasUpperPhysicalBound(
+      const std::string& v) const {
+    auto& elm = ExternalLibraryManager::getExternalLibraryManager();
+    return elm.hasUpperPhysicalBound(this->library, this->material_property, v);
+  }  // end of hasUpperPhysicalBound
+
+  long double ExternalMaterialPropertyDescription::getLowerPhysicalBound(
+      const std::string& v) const {
+    auto& elm = ExternalLibraryManager::getExternalLibraryManager();
+    return elm.getLowerPhysicalBound(this->library, this->material_property, v);
+  }  // end of getLowerPhysicalBound
+
+  long double ExternalMaterialPropertyDescription::getUpperPhysicalBound(
+      const std::string& v) const {
+    auto& elm = ExternalLibraryManager::getExternalLibraryManager();
+    return elm.getUpperPhysicalBound(this->library, this->material_property, v);
+  }  // end of getUpperPhysicalBound
 
   ExternalMaterialPropertyDescription::ExternalMaterialPropertyDescription() =
       default;

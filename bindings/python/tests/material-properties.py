@@ -35,11 +35,11 @@ class PyMFrontMaterialProperty(unittest.TestCase):
 
     def test_externalmaterialpropertydescription(self):
 
+        eps = 1.e-14
+
         l = os.environ['MFRONT_MATERIAL_PROPERTY_LIBRARY']
         mp = os.environ['MFRONT_MATERIAL_PROPERTY_FUNCTION']
         emp = tfel.system.ExternalMaterialPropertyDescription(l, mp)
-
-        print(emp.law)
         
         self.assertTrue(emp.author == "T . Helfer")
         self.assertTrue(emp.date == "2008 - 11 - 17")
@@ -57,10 +57,21 @@ class PyMFrontMaterialProperty(unittest.TestCase):
                          "Marion Le Flem , Jean - Luc Bechade , Annick Bougault ,\n"
                          "Aurore Michaux , Lionel Gosmain , Jean - Louis Seran\n"
                          "DMN / SRMA / LA2M / NT / 2008 - 2967 / A"))
-        
+    
+        self.assertTrue(emp.output == "YoungModulus")
         self.assertTrue(len(emp.arguments) == 1)
         self.assertTrue(emp.arguments[0] == "Temperature")
-        
+        self.assertTrue(emp.hasPhysicalBounds("Temperature"))
+        self.assertTrue(not emp.hasUpperPhysicalBound("Temperature"))
+        self.assertTrue(emp.hasLowerPhysicalBound("Temperature"))
+        self.assertTrue(emp.hasUpperBound("Temperature"))
+        self.assertTrue(emp.hasLowerBound("Temperature"))
+        self.assertTrue(
+            abs(emp.getLowerPhysicalBound("Temperature")) < eps)
+        self.assertTrue(
+            abs(emp.getLowerBound("Temperature") - 293.15) < eps)
+        self.assertTrue(
+            abs(emp.getUpperBound("Temperature") - 973.15) < eps)
 
 if __name__ == '__main__':
     unittest.main()

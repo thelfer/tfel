@@ -80,5 +80,20 @@ void declareExternalBehaviourDescription() {
                     &ExternalBehaviourDescription::requiresStiffnessTensor)
       .def_readonly("requiresThermalExpansionCoefficientTensor",
                     &ExternalBehaviourDescription::
-                        requiresThermalExpansionCoefficientTensor);
+                        requiresThermalExpansionCoefficientTensor)
+      .def("hasBounds", &ExternalBehaviourDescription::hasBounds)
+      .def("hasLowerBound", &ExternalBehaviourDescription::hasLowerBound)
+      .def("hasUpperBound", &ExternalBehaviourDescription::hasUpperBound)
+      .def("getLowerBound", &ExternalBehaviourDescription::getLowerBound)
+      .def("getUpperBound", &ExternalBehaviourDescription::getUpperBound)
+      .def("hasPhysicalBounds",
+           &ExternalBehaviourDescription::hasPhysicalBounds)
+      .def("hasLowerPhysicalBound",
+           &ExternalBehaviourDescription::hasLowerPhysicalBound)
+      .def("hasUpperPhysicalBound",
+           &ExternalBehaviourDescription::hasUpperPhysicalBound)
+      .def("getLowerPhysicalBound",
+           &ExternalBehaviourDescription::getLowerPhysicalBound)
+      .def("getUpperPhysicalBound",
+           &ExternalBehaviourDescription::getUpperPhysicalBound);
 }

@@ -38,7 +38,24 @@ void declareExternalMaterialPropertyDescription() {
       .def_readonly("law", &ExternalMaterialPropertyDescription::law)
       .def_readonly("material_property",
 		    &ExternalMaterialPropertyDescription::material_property)
+      .def_readonly("output",
+		    &ExternalMaterialPropertyDescription::output)
       .add_property("arguments", &get_args)
-      .add_property("parameters", &get_parameters);
+      .add_property("parameters", &get_parameters)
+      .def("hasBounds", &ExternalMaterialPropertyDescription::hasBounds)
+      .def("hasLowerBound", &ExternalMaterialPropertyDescription::hasLowerBound)
+      .def("hasUpperBound", &ExternalMaterialPropertyDescription::hasUpperBound)
+      .def("getLowerBound", &ExternalMaterialPropertyDescription::getLowerBound)
+      .def("getUpperBound", &ExternalMaterialPropertyDescription::getUpperBound)
+      .def("hasPhysicalBounds",
+           &ExternalMaterialPropertyDescription::hasPhysicalBounds)
+      .def("hasLowerPhysicalBound",
+           &ExternalMaterialPropertyDescription::hasLowerPhysicalBound)
+      .def("hasUpperPhysicalBound",
+           &ExternalMaterialPropertyDescription::hasUpperPhysicalBound)
+      .def("getLowerPhysicalBound",
+           &ExternalMaterialPropertyDescription::getLowerPhysicalBound)
+      .def("getUpperPhysicalBound",
+           &ExternalMaterialPropertyDescription::getUpperPhysicalBound);
 
 }  // end of declareExternalMaterialPropertyDescription

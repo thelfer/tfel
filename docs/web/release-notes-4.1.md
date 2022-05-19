@@ -148,6 +148,11 @@ The `getDescription` method returns the description associated with an
 entry point as defined by the `@Description` keyword in `MFront`. If
 this description is not defined, an empty string is returned.
 
+### The `getMaterialPropertyOutput` method {#sec:tfel_4.1:system:elm:getMaterialPropertyOutput}
+
+The `getMaterialPropertyOutput` method returns the external name
+associated with the output of a material property.
+
 ## New class `ExternalMaterialKnowledgeDescription`
 
 The `ExternalMaterialKnowledgeDescription` gathers information exported
@@ -186,6 +191,7 @@ new data members:
 
 - `law`: the name of the law defining the material property as
   introduced by the `@Law` keyword.
+- `output`: the external name of the ouput of the the material property.
 
 ## Improvements to the `ExternalBehaviourDescription` class
 
@@ -1501,6 +1507,13 @@ $ mfront-query --list-behaviour-mfm-test-generator-tests=unsorted --test=".+Tens
 
 # Issues fixed
 ￼
+
+## Issue #187: [mfront] Get `@Output` from compiled file through `python` bindings
+
+This feature is described in Section
+@sec:tfel_4.1:system:elm:getMaterialPropertyOutput.
+
+For more details, see <https://github.com/thelfer/tfel/issues/187>.
 
 ## Issue #186: [mfront] Get `@Material`, `@Law`, `@Author`, `@Date`, `@Description` from compiled file through Python binding
 
