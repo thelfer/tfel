@@ -366,7 +366,8 @@ namespace mfront {
      */
     static std::optional<TypeFlag> getTypeFlag(const TypeInformation&);
     /*!
-     * \return a integer encoding the type of a tensorial variable and the number of bits used for the encoding
+     * \return a integer encoding the type of a tensorial variable and the
+     * number of bits used for the encoding.
      * \param[in] t : type
      */
     static std::pair<int, int> getTypeIdentifier(const TypeInformation&);

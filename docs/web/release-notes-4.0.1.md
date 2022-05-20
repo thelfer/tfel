@@ -19,6 +19,10 @@ eqnPrefixTemplate: "($$i$$)"
 
 # Issues fixed
 
+## Issue #196: [mfront] Declaration of a state variable fails if the `invert_type` metafunction is used to define its type.
+
+For more details, see <https://github.com/thelfer/tfel/issues/196>
+
 ## Issue #178: [mfront] add type alias for invert_type, result_type and derivative_type in material properties and models
 
 For more details, see <https://github.com/thelfer/tfel/issues/178>

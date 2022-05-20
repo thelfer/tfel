@@ -569,6 +569,18 @@ namespace mfront {
       const auto id1 = getTypeIdentifier(t1);
       const auto id2 = getTypeIdentifier(t2);
       return treatDerivative(id1, id2);
+    } else if (t.type == "tfel::math::invert_type") {
+      SupportedTypes::checkNumberOfTemplateArguments(t, 1u);
+      const auto& args = *(t.template_arguments);
+      const auto& t1 = std::get<TypeInformation>(args[0]);
+      const auto id1 = getTypeIdentifier(t1);
+      if (!((id1.first == 0) || (id1.first == 1) || (id1.first == 3))) {
+        tfel::raise(
+            "SupportedTypes::getTypeIdentifier: "
+            "unsupported case for type '" +
+            encode(t) + "'");
+      }
+      return id1;
     }
     tfel::raise(
         "SupportedTypes::getTypeIdentifier: "
@@ -1205,7 +1217,7 @@ namespace mfront {
       t.type = "tfel::math::result_type";
     } else if (SupportedTypes::matchesTFELMathType(t.type, "derivative_type")) {
       if (!t.template_arguments) {
-        tfel::raise("derivative_type must have 2 template arguments");
+        tfel::raise("derivative_type must have template arguments");
       }
       auto& args = *(t.template_arguments);
       if (args.size() != 2u) {
