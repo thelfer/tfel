@@ -445,7 +445,7 @@ namespace mfront {
       }
     }
     auto treatDerivative =
-        [&t](const std::pair<int, int> id1,
+        [](const std::pair<int, int> id1,
              const std::pair<int, int> id2) -> std::pair<int, int> {
       return {4 + (id1.first << 3) + (id2.first << (3 + id1.second)),
               3 + id1.second + id2.second};
@@ -461,7 +461,7 @@ namespace mfront {
       return treatStandardTensorialObjectBase(N, id);
     };
     auto treatStandardTensorObjectDerivative =
-        [&t, &treatDerivative, &treatStandardTensorialObject](
+        [&treatDerivative, &treatStandardTensorialObject](
             const int id1, const int id2) -> std::pair<int, int> {
       return treatDerivative(treatStandardTensorialObject(id1),
                              treatStandardTensorialObject(id2));
@@ -501,24 +501,6 @@ namespace mfront {
             SupportedTypes::encode(t) + "'");
       }
       return treatArrayBase({std::get<int>(size)}, value_type);
-    };
-    auto treatArray2D = [&t, &treatArrayBase]() -> std::pair<int, int> {
-      SupportedTypes::checkNumberOfTemplateArguments(t, 3u);
-      const auto& args = *(t.template_arguments);
-      const auto& s1 =
-          std::get<TypeInformation ::IntegerTemplateArgument>(args[0]);
-      const auto& s2 =
-          std::get<TypeInformation ::IntegerTemplateArgument>(args[1]);
-      const auto& value_type = std::get<TypeInformation>(args[2]);
-      if ((std::holds_alternative<std::string>(s1)) ||
-          (std::holds_alternative<std::string>(s2))) {
-        tfel::raise(
-            "SupportedTypes::getTypeIdentifier: "
-            "arrays whose dimension is not an integer are not supported. "
-            "Error while treating type '" +
-            SupportedTypes::encode(t) + "'");
-      }
-      return treatArrayBase({std::get<int>(s1), std::get<int>(s2)}, value_type);
     };
     auto isST2toST2TypeAliases = [](const std::string_view type) {
       const auto types = mfront::getST2toST2TypeAliases();
@@ -587,6 +569,18 @@ namespace mfront {
       const auto id1 = getTypeIdentifier(t1);
       const auto id2 = getTypeIdentifier(t2);
       return treatDerivative(id1, id2);
+    } else if (t.type == "tfel::math::invert_type") {
+      SupportedTypes::checkNumberOfTemplateArguments(t, 1u);
+      const auto& args = *(t.template_arguments);
+      const auto& t1 = std::get<TypeInformation>(args[0]);
+      const auto id1 = getTypeIdentifier(t1);
+      if (!((id1.first == 0) || (id1.first == 1) || (id1.first == 3))) {
+        tfel::raise(
+            "SupportedTypes::getTypeIdentifier: "
+            "unsupported case for type '" +
+            encode(t) + "'");
+      }
+      return id1;
     }
     tfel::raise(
         "SupportedTypes::getTypeIdentifier: "
