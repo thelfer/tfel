@@ -57,6 +57,9 @@ namespace mfront {
         {"--inputs", "show the list of inputs"},
         {"--state-variables", "show the list of state variables. Equivalent to the `--inputs` query"},
         {"--parameters", "show the list of parameters"},
+        {"--parameters-file",
+         "display the name of a text file which can be used to modify the "
+         "default value of the parameters"},
         {"--list-dependencies", "list the MFront dependencies"}};
     for (const auto& q : sq) {
       this->registerCallBack(
@@ -188,6 +191,12 @@ namespace mfront {
              for (const auto& p : mpd.parameters) {
                QueryHandlerBase::displayVariable(p);
              }
+           }});
+    } else if (qn == "--parameters-file") {
+      this->queries.push_back(
+          {"parameters-file",
+           [](const FileDescription&, const MaterialPropertyDescription& mpd) {
+             std::cout << mfront::getParametersFileName(mpd) << '\n';
            }});
     } else {
       tfel::raise(

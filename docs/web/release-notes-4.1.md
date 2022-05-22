@@ -1532,6 +1532,10 @@ $ mfront-query --list-behaviour-mfm-test-generator-tests=unsorted --test=".+Tens
 
 For more details, see <https://github.com/thelfer/tfel/issues/200>.
 
+## Issue #199: [mfront-query] Add the `--parameters-file` query for material properties
+
+For more details, see <https://github.com/thelfer/tfel/issues/199>.
+
 ## Issue #192: [TFEL/System] Access to default values of parameters of a material property through the `ExternalMaterialPropertyDescription` class
 
 This feature is described in Section

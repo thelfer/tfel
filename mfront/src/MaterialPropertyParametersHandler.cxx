@@ -74,7 +74,7 @@ namespace mfront {
          << "  	  std::back_inserter(tokens));\n"
          << "  return tokens;\n"
          << "};\n"
-         << "std::ifstream pfile(\"" << n << "-parameters.txt\");\n"
+         << "std::ifstream pfile(\"" << getParametersFileName(mpd) << "\");\n"
          << "if(!pfile){\n"
          << "this->ok=true;\n"
          << "return;\n"

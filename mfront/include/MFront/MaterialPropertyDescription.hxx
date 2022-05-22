@@ -208,6 +208,13 @@ namespace mfront {
       const MaterialPropertyDescription&,
       const std::string&,
       const bool);
+  /*!
+   * \return the name of a text file allowing the change the name of the
+   * parameters of the given material property
+   * \param[in] mpd: material property description
+   */
+  MFRONT_VISIBILITY_EXPORT std::string getParametersFileName(
+      const MaterialPropertyDescription&);
 
 }  // end of namespace mfront
 

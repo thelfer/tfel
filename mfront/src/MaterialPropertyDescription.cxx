@@ -276,4 +276,11 @@ namespace mfront {
       MaterialPropertyDescription&&) = default;
   MaterialPropertyDescription::~MaterialPropertyDescription() = default;
 
+  std::string getParametersFileName(const MaterialPropertyDescription& mpd) {
+    if (mpd.material.empty()) {
+      return mpd.className + "-parameters.txt";
+    }
+    return mpd.material + "_" + mpd.className + "-parameters.txt";
+  } // end of getParametersFileName
+
 }  // end of namespace mfront
