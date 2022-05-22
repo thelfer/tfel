@@ -1526,7 +1526,11 @@ $ mfront-query --list-behaviour-mfm-test-generator-tests=unsorted --test=".+Tens
 ~~~~
 
 # Issues fixed
+
+## Issue #200: [mfront] Generate a `setParameter` function for material properties generated with the `python` interface
 ￼
+
+For more details, see <https://github.com/thelfer/tfel/issues/200>.
 
 ## Issue #192: [TFEL/System] Access to default values of parameters of a material property through the `ExternalMaterialPropertyDescription` class
 

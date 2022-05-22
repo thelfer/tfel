@@ -361,6 +361,25 @@ namespace mfront {
     writeLawSymbol(srcFile, name, mpd.material);
     writeMaterialSymbol(srcFile, name, mpd.material);
     writeMaterialKnowledgeTypeSymbol(srcFile, name, MATERIALPROPERTY);
+    // parameters
+    if ((!areParametersTreatedAsStaticVariables(mpd)) &&
+        (!mpd.parameters.empty())) {
+      const auto hn = getMaterialPropertyParametersHandlerClassName(name);
+      srcFile << "MFRONT_SHAREDOBJ int\n"
+              << name << "_setParameter(const char *const p,"
+              << "const double v"
+              << "){\n";
+      for (const auto& p : mpd.parameters) {
+        srcFile << "if(strcmp(\"" << p.name << "\",p)==0){\n"
+                << "python::" << hn << "::get" << hn << "()." << p.name
+                << " = v;\n"
+                << "return 1;\n"
+                << "}\n";
+      }
+      srcFile << "return 0;\n"
+              << "}\n\n";
+    }
+    //
     if (!inputs.empty()) {
       srcFile << "PyObject *\n"
               << name << "_wrapper("
