@@ -19,6 +19,10 @@ eqnPrefixTemplate: "($$i$$)"
 
 # Issues fixed
 
+## Issue #201: [mfront] Missing `DeformationGradientRateTensor` type alias
+
+For more details, see <https://github.com/thelfer/tfel/issues/201>
+
 ## Issue #196: [mfront] Declaration of a state variable fails if the `invert_type` metafunction is used to define its type.
 
 For more details, see <https://github.com/thelfer/tfel/issues/196>
