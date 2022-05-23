@@ -66,7 +66,8 @@ namespace mfront {
   }
 
   std::vector<std::string> getTensorTypeAliases() {
-    return {"Tensor", "DeformationGradientTensor", "StressTensor"};
+    return {"Tensor", "DeformationGradientTensor",
+            "DeformationGradientRateTensor", "StressTensor"};
   }
 
   std::vector<std::string> getST2toST2TypeAliases() {
