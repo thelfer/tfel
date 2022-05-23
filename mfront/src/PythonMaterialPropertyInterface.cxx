@@ -354,6 +354,7 @@ namespace mfront {
     writeVariablesBoundsSymbols(srcFile, name, mpd);
 
     // mfront metadata
+    writeFileDescriptionSymbols(srcFile, name, fd);
     writeBuildIdentifierSymbol(srcFile, name, mpd);
     writeEntryPointSymbol(srcFile, name);
     writeTFELVersionSymbol(srcFile, name);
@@ -361,6 +362,7 @@ namespace mfront {
     writeLawSymbol(srcFile, name, mpd.material);
     writeMaterialSymbol(srcFile, name, mpd.material);
     writeMaterialKnowledgeTypeSymbol(srcFile, name, MATERIALPROPERTY);
+    writeParametersSymbols(srcFile, name, mpd);
     // parameters
     if ((!areParametersTreatedAsStaticVariables(mpd)) &&
         (!mpd.parameters.empty())) {
