@@ -381,6 +381,7 @@ EXTRA_DIST=CMakeLists.txt					      \
        ./img/tfel-math/solveNonLinearSystem2.svg		      \
        ./img/tfel-math/view.svg					      \
        ./img/ModelDSLs.svg					      \
+       ./img/material-property-tutorial-figure1.png                   \
 	   ./media/epx1.mp4                                           \
 	   ./media/epx2.mp4                                           \
 	   ./media/abaqus-explicit.mp4                                \
