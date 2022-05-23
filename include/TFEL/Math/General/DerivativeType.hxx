@@ -15,6 +15,7 @@
 #define LIB_TFEL_MATH_DERIVATIVETYPE_HXX
 
 #include <type_traits>
+#include "TFEL/Config/TFELConfig.hxx"
 #include "TFEL/Metaprogramming/InvalidType.hxx"
 #include "TFEL/Math/General/ComputeObjectTag.hxx"
 #include "TFEL/Math/General/MathObjectTraits.hxx"
@@ -173,15 +174,43 @@ namespace tfel::math {
   };  // end of DerivativeType
 
   /*!
-   * \brief a simple alias giving the type representing the derivative of an
-   * object of type `FunctionType` with respect to an object of type
-   * `VariableType`.
-   * \param[in] FunctionType: function type
-   * \param[in] VariableType: variable type
+   * \brief an helper metafunction to define the derivative of a function with
+   * respect to several variables.
+   * \tparam FunctionType: type of the function
+   * \tparam VariableType: type of the first variable
+   * \tparam OtherVariableTypes: type of the other variables
+   */
+  template <typename FunctionType,
+            typename VariableType,
+            typename... OtherVariableTypes>
+  struct DerivativeTypeMetaFunction {
+    //! \brief result of the metafunction
+    using type = typename DerivativeTypeMetaFunction<
+        typename DerivativeTypeMetaFunction<FunctionType, VariableType>::type,
+        OtherVariableTypes...>::type;
+  };
+  /*!
+   * \brief partial specialisation of the helper metafunction
+   * to end the recursion.
+   * \tparam FunctionType: type of the function
+   * \tparam VariableType: type of the variable
    */
   template <typename FunctionType, typename VariableType>
+  struct DerivativeTypeMetaFunction<FunctionType, VariableType> {
+    //! \brief result of the metafunction
+    using type =
+        typename tfel::math::DerivativeType<FunctionType, VariableType>::type;
+  };
+  /*!
+   * \brief a simple alias giving the type representing the derivative of an
+   * object of type `FunctionType` with respect to objects of the type
+   * given by the template argument pack `VariableTypes`.
+   * \param[in] FunctionType: function type
+   * \param[in] VariableTypes: variable types
+   */
+  template <typename FunctionType, typename... VariableTypes>
   using derivative_type =
-      typename DerivativeType<FunctionType, VariableType>::type;
+      typename DerivativeTypeMetaFunction<FunctionType, VariableTypes...>::type;
 
   /*!
    * \brief compute a numerical approximation of the derivative  a a function

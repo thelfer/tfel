@@ -231,6 +231,33 @@ external state variables.
 
 ## Port to GPUs
 
+
+## Miscellaneous improvements
+
+### Extension of the `derivative_type` metafunction to higher order derivatives 
+
+The `derivative_type` metafunction now accepts multiple arguments
+defining the variable types with respect to which the function type is
+derived.
+
+#### Example
+
+The declarations:
+
+~~~~{.cxx}
+// declaration valid in Version 4.0 and 4.1
+auto d2E_dT2 = derivative_type<derivative_type<stress, temperature>, temperature>{};
+~~~~
+
+and
+
+~~~~{.cxx}
+// declaration valid in Version 4.1
+auto d2E_dT2 = derivative_type<stress, temperature, temperature>{};
+~~~~
+
+are now equivalent.
+
 # `TFEL/Math/Parser` improvements
 
 ## Improved differentiation
@@ -930,6 +957,32 @@ meaning here):
 @Times{0, 1 in 100};
 ~~~~
 
+## Miscellaneous improvements
+
+### Extension of the `derivative_type` metafunction to higher order derivatives 
+
+In variable declaration, the `derivative_type` metafunction now accepts
+multiple arguments defining the variable types with respect to which the
+function type is derived.
+
+#### Example
+
+The following declarations
+
+~~~~{.cxx}
+// declaration valid in Version 4.0 and 4.1
+@LocalVariable derivative_type<derivative_type<stress, temperature>, temperature> d2E_dT2;
+~~~~
+
+and
+
+~~~~{.cxx}
+// declaration valid in Version 4.1
+@LocalVariable derivative_type<stress, temperature, temperature> d2E_dT2;
+~~~~
+
+ are now equivalent.
+
 # `MTest` improvements
 
 ## Support for `madnex` file {#sec:tfel:4.1:mtest:madnex_support}
@@ -1535,6 +1588,10 @@ For more details, see <https://github.com/thelfer/tfel/issues/200>.
 ## Issue #199: [mfront-query] Add the `--parameters-file` query for material properties
 
 For more details, see <https://github.com/thelfer/tfel/issues/199>.
+
+## Issue #197: [mfront] Extension of the `derivative_type` metafunction to higher order derivatives
+
+For more details, see <https://github.com/thelfer/tfel/issues/197>.
 
 ## Issue #192: [TFEL/System] Access to default values of parameters of a material property through the `ExternalMaterialPropertyDescription` class
 

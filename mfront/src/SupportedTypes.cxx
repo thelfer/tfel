@@ -446,7 +446,7 @@ namespace mfront {
     }
     auto treatDerivative =
         [](const std::pair<int, int> id1,
-             const std::pair<int, int> id2) -> std::pair<int, int> {
+           const std::pair<int, int> id2) -> std::pair<int, int> {
       return {4 + (id1.first << 3) + (id2.first << (3 + id1.second)),
               3 + id1.second + id2.second};
     };
@@ -1219,20 +1219,44 @@ namespace mfront {
       if (!t.template_arguments) {
         tfel::raise("derivative_type must have template arguments");
       }
-      auto& args = *(t.template_arguments);
-      if (args.size() != 2u) {
-        tfel::raise("derivative_type must have a two template arguments");
+      const auto args = *(t.template_arguments);
+      if (args.size() < 2u) {
+        tfel::raise("derivative_type must have a least two template arguments");
       }
       if (std::holds_alternative<TypeInformation::IntegerTemplateArgument>(
               args[0]) ||
           std::holds_alternative<TypeInformation::IntegerTemplateArgument>(
               args[1])) {
         tfel::raise(
-            "derivative_type must have only types as template argument");
+            "derivative_type must the two first template arguments must be "
+            "types");
       }
-      SupportedTypes::normalize(std::get<TypeInformation>(args[0]), opts);
-      SupportedTypes::normalize(std::get<TypeInformation>(args[1]), opts);
-      t.type = "tfel::math::derivative_type";
+      auto ntype = TypeInformation{};
+      ntype.type = "tfel::math::derivative_type";
+      ntype.template_arguments =
+          std::vector<TypeInformation::TemplateArgument>{args[0], args[1]};
+      SupportedTypes::normalize(
+          std::get<TypeInformation>((*(ntype.template_arguments))[0]), opts);
+      SupportedTypes::normalize(
+          std::get<TypeInformation>((*(ntype.template_arguments))[1]), opts);
+      auto pa = std::next(std::next(args.begin()));
+      auto pae = args.end();
+      for (; pa != pae; ++pa) {
+        if (std::holds_alternative<TypeInformation::IntegerTemplateArgument>(
+                *pa)) {
+          tfel::raise(
+              "integer template argument i the "
+              "derivative_type metafunction is not allowed");
+        }
+        auto ntype2 = TypeInformation{};
+        ntype2.type = "tfel::math::derivative_type";
+        ntype2.template_arguments =
+            std::vector<TypeInformation::TemplateArgument>{ntype, *pa};
+        SupportedTypes::normalize(
+            std::get<TypeInformation>((*(ntype2.template_arguments))[1]), opts);
+        std::swap(ntype, ntype2);
+      }
+      std::swap(t, ntype);
     } else if (SupportedTypes::matchesTFELMathType(t.type, "quantity")) {
       SupportedTypes::normalizeScalarType(t, opts);
     } else {
