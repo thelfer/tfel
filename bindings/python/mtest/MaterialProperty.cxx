@@ -94,4 +94,4 @@ void declareMaterialProperty() {
       .def("__call__", getValue3, "evaluate the material property")
       .def("__call__", getValue4, "evaluate the material property");
 
-}  // end of declareMaterialProperty()
+}  // end of declareMaterialProperty
