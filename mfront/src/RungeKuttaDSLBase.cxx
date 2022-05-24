@@ -2,7 +2,7 @@
  * \file   mfront/src/RungeKuttaDSLBase.cxx
  * \brief
  * \author Thomas Helfer
- * \date   10 Nov 2006
+ * \date   10/11/2006
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence
@@ -1729,6 +1729,7 @@ namespace mfront {
   // see Issue 183 for details (https://github.com/thelfer/tfel/issues/183)
   static std::string findStressErrorNormalizationFactor(
       const BehaviourDescription& bd) {
+    using tfel::glossary::Glossary;
     //
     auto checkVariableDefinition = [](const auto& v) {
       if (v.getTypeFlag() != SupportedTypes::SCALAR) {
@@ -1772,6 +1773,70 @@ namespace mfront {
       }
       return false;
     };
+    auto checkVariable = [bd, testInGivenVariableCategory,
+                          checkVariableDefinition](const std::string& n) {
+      const auto exists = bd.checkVariableExistence(n);
+      if (exists.first) {
+        if (!exists.second) {
+          tfel::raise(
+              "findStressErrorNormalizationFactor: the `" + n +
+              "` variable is not defined for all modelling hypotheses.");
+        }
+        if (testInGivenVariableCategory("MaterialProperty", n,
+                                        Glossary::YoungModulus)) {
+          return "this->"+n;
+        }
+        if (testInGivenVariableCategory("Parameter", n,
+                                        Glossary::YoungModulus)) {
+          return "this->"+n;
+        }
+        tfel::raise(
+            "findStressErrorNormalizationFactor: the `" + n +
+            "` variable is not defined as a material property or a parameter");
+      }
+      // look if young is defined as a local variable
+      const auto& mh = bd.getDistinctModellingHypotheses();
+      const auto found_as_local_variable =
+          bd.isLocalVariableName(*(mh.begin()), n);
+      for (const auto& h : mh) {
+        const auto is_local_variable = bd.isLocalVariableName(h, n);
+        if (found_as_local_variable != is_local_variable) {
+          tfel::raise("findStressErrorNormalizationFactor: the `" + n +
+                      "` variable is not defined as a local variable in all "
+                      "modelling hypotheses");
+        }
+        if (is_local_variable) {
+          const auto& v =
+              bd.getBehaviourData(h).getLocalVariables().getVariable(n);
+          checkVariableDefinition(v);
+        }
+      }
+      if (found_as_local_variable) {
+        return "this->"+n;
+      }
+      // look if young is defined as a static variable
+      const auto found_as_static_variable =
+          bd.isStaticVariableName(*(mh.begin()), n);
+      for (const auto& h : mh) {
+        const auto is_static_variable = bd.isStaticVariableName(h, n);
+        if (found_as_static_variable != is_static_variable) {
+          tfel::raise("findStressErrorNormalizationFactor: the `" + n +
+                      "` variable is not defined as a static variable in all "
+                      "modelling hypotheses");
+        }
+        if (is_static_variable) {
+          const auto& v =
+              bd.getBehaviourData(h).getStaticVariables().get(n);
+          checkVariableDefinition(v);
+        }
+      }
+      if (found_as_static_variable) {
+        return bd.getClassName() + "::"+n;
+      }
+      tfel::raise("findStressErrorNormalizationFactor: the `" + n +
+                  "` variable is not defined as a material property, a static "
+                  "variable, a parameter or a local variable");
+    };
     //
     if (bd.isNameReserved("stress_error_normalization_factor")) {
       const auto senf_exists =
@@ -1799,70 +1864,7 @@ namespace mfront {
     }
     //
     if (bd.isNameReserved("young")) {
-      const auto exists = bd.checkVariableExistence("young");
-      if (exists.first) {
-        if (!exists.second) {
-          tfel::raise(
-              "findStressErrorNormalizationFactor: the `young` variable is not "
-              "defined "
-              "for all modelling hypotheses.");
-        }
-        if (testInGivenVariableCategory(
-                "MaterialProperty", "young",
-                tfel::glossary::Glossary::YoungModulus)) {
-          return "this->young";
-        }
-        if (testInGivenVariableCategory(
-                "Parameter", "young", tfel::glossary::Glossary::YoungModulus)) {
-          return "this->young";
-        }
-        tfel::raise(
-            "findStressErrorNormalizationFactor: the `young` variable is not "
-            "defined as a material property or a parameter");
-      }
-      // look if young is defined as a local variable
-      const auto& mh = bd.getDistinctModellingHypotheses();
-      const auto found_as_local_variable =
-          bd.isLocalVariableName(*(mh.begin()), "young");
-      for (const auto& h : mh) {
-        const auto is_local_variable = bd.isLocalVariableName(h, "young");
-        if (found_as_local_variable != is_local_variable) {
-          tfel::raise(
-              "findStressErrorNormalizationFactor: the `young` variable is not "
-              "defined as a local variable in all modelling hypotheses");
-        }
-        if (is_local_variable) {
-          const auto& v =
-              bd.getBehaviourData(h).getLocalVariables().getVariable("young");
-          checkVariableDefinition(v);
-        }
-      }
-      if (found_as_local_variable) {
-        return "this->young";
-      }
-      // look if young is defined as a static variable
-      const auto found_as_static_variable =
-          bd.isStaticVariableName(*(mh.begin()), "young");
-      for (const auto& h : mh) {
-        const auto is_static_variable = bd.isStaticVariableName(h, "young");
-        if (found_as_static_variable != is_static_variable) {
-          tfel::raise(
-              "findStressErrorNormalizationFactor: the `young` variable is not "
-              "defined as a static variable in all modelling hypotheses");
-        }
-        if (is_static_variable) {
-          const auto& v =
-              bd.getBehaviourData(h).getStaticVariables().get("young");
-          checkVariableDefinition(v);
-        }
-      }
-      if (found_as_static_variable) {
-        return bd.getClassName() + "::young";
-      }
-      tfel::raise(
-          "findStressErrorNormalizationFactor: the `young` variable is not "
-          "defined as a material property, a static variable, a parameter or a "
-          "local variable");
+      checkVariable("young");
     }
     // look if the stiffness tensor shall be provided by the solver
     if (bd.getAttribute<bool>(BehaviourDescription::requiresStiffnessTensor,
@@ -1870,13 +1872,38 @@ namespace mfront {
       return "this->D(0,0)";
     }
     // look if the stiffness tensor is computed
-    if (!(bd.getAttribute<bool>(BehaviourDescription::computesStiffnessTensor,
-                                false))) {
-      tfel::raise(
-          "findStressErrorNormalizationFactor: "
-          "no appropriate error normalization factor found");
+    if (bd.getAttribute<bool>(BehaviourDescription::computesStiffnessTensor,
+                              false)) {
+      return "this->D(0,0)";
     }
-    return "this->D(0,0)";
+    // look if a variable with the YoungModulus glossary name is defined
+    auto contains = [](const VariableDescriptionContainer& v) {
+      return findByExternalName(v, Glossary::YoungModulus) != v.end();
+    };
+    const auto& mhs = bd.getDistinctModellingHypotheses();
+    const auto& bdata = bd.getBehaviourData(*(mhs.begin()));
+    if (contains(bdata.getMaterialProperties())) {
+      const auto& v = bdata.getMaterialProperties().getVariableByExternalName(
+          Glossary::YoungModulus);
+      checkVariable(v.name);
+      return "this->" + v.name;
+    }
+    if (contains(bdata.getParameters())) {
+      const auto& v = bdata.getParameters().getVariableByExternalName(
+          Glossary::YoungModulus);
+      checkVariable(v.name);
+      return "this->" + v.name;
+    }
+    if (contains(bdata.getLocalVariables())) {
+      const auto& v = bdata.getLocalVariables().getVariableByExternalName(
+          Glossary::YoungModulus);
+      checkVariable(v.name);
+      return "this->" + v.name;
+    }
+    // nothing worked...
+    tfel::raise(
+        "findStressErrorNormalizationFactor: "
+        "no appropriate error normalization factor found");
   }  // end of findStressErrorNormalizationFactor
 
   void RungeKuttaDSLBase::writeBehaviourRKCastemIntegrator(

@@ -775,8 +775,11 @@ will be used, if an appropriate variable is defined and if the
 `@StressErrorNormalizationFactor` keyword was not used.
 
 Note that if the `@StressErrorNormalizationFactor` keyword is not used
-and that the `young` variable is not defined, `MFront` will look is the
-stiffnes matrix is defined and take its first component.
+and that the `young` variable is not defined, `MFront` will look:
+
+1. if the stiffnes matrix is defined and take its first component.
+1. if a material property, a parameter or a local variable is associated
+  with the `YoungModulus` glossary name.
 
 ## New domain specific language `ImplicitCZMDSL`
 
