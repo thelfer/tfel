@@ -537,11 +537,11 @@ int main(const int argc, const char* const* const argv) {
                   << "--usage                                  : "
                   << "show how to use " << argv[0] << '\n'
                   << "--help-material-property-queries-list    : "
-                  << "list all queries avaiable for mfront behaviour files\n"
+                  << "list all queries avaiable for material property files\n"
                   << "--help-behaviour-queries-list            : "
-                  << "list all queries avaiable for mfront behaviour files\n"
+                  << "list all queries avaiable for behaviour files\n"
                   << "--help-model-queries-list                : "
-                  << "list all queries avaiable for mfront model files\n";
+                  << "list all queries avaiable for model files\n";
 #ifdef MFRONT_QUERY_HAVE_MADNEX
         std::cout << "--material                               : "
                   << "specify a material (regular expression)\n"
