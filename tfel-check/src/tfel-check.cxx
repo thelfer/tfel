@@ -117,7 +117,7 @@ namespace tfel {
                              const CallBack& c) {
         this->registerCallBack(n, a, c);
       };
-      declare2("--config", "c",
+      declare2("--config", "-c",
                CallBack("add a configuration file", add_config_files, true));
     }  // end of TFELCheck::registerArgumentCallBacks
 
