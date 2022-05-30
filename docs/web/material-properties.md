@@ -28,13 +28,12 @@ abstract: |
   allow to introduce some key concepts of `MFront`, making a perfect
   introduction for beginners.
   
-  This tutorial consider the example of the Young' modulus of uranium
+  This tutorial consider the example of the Young's modulus of uranium
   dioxide, which can be represented, according to Martin
   [@martin_elastic_1989], by the following expression:
   \[
   E(T,f)=2.2693\,10^{11}\,(1-2.5\,f)\,(1-6.786\,10^{-5}\,T-4.23\,10^{-8}\,T^{2})
   \]
-  
   where \(T\) is the temperature (Kelvin) and \(f\) is the porosity. This
   expression is assumed valid for a temperature in the range
   \([273.15:2610.15]\).
@@ -56,7 +55,7 @@ much simplier. However, their implementations, while straightforward,
 allow to introduce some key concepts of `MFront`, making a perfect
 introduction for beginners.
 
-This tutorial consider the example of the Young' modulus of uranium
+This tutorial consider the example of the Young's modulus of uranium
 dioxide, which can be represented, according to Martin
 [@martin_elastic_1989], by the following expression:
 \[
@@ -151,7 +150,7 @@ from matplotlib import pyplot as plt
 T = np.linspace(400, 1600) 
 E = np.array([materiallaw.YoungModulus(Ti, 0.1) for Ti in T])
 plt.xlabel("Temperature (K)") 
-plt.ylabel("Young' modulus (Pa)") 
+plt.ylabel("Young's modulus (Pa)") 
 plt.plot(T, E) 
 plt.show()
 ~~~~
@@ -273,7 +272,7 @@ introduced by the `@Function` keyword. By default, this code block must
 store the result of the material property in a variable called `res`.
 
 Its is worth emphasing that this implementation is here reasonably
-closed to Equation @eq:mfront:material_properties:UO2_YoungModulus.
+close to Equation @eq:mfront:material_properties:UO2_YoungModulus.
 
 The code introduced by `@Function` is standard `C++` with a few implicit
 additions, such as:
@@ -309,7 +308,7 @@ using the `@Includes` and `@Library` keywords.
 
 # Improvements
 
-A this stage, the `MFront`' implementation is barely working. This
+A this stage, the `MFront`'s implementation is barely working. This
 section is devoted to the improvements that must be considered to have a
 production-ready implementation.
 
@@ -349,7 +348,7 @@ from matplotlib import pyplot as plt
 T = np.linspace(400, 1600) 
 E = np.array([UO2YoungModulus(Ti, 0.1) for Ti in T])
 plt.xlabel("Temperature (K)") 
-plt.ylabel("Young' modulus (Pa)") 
+plt.ylabel("Young's modulus (Pa)") 
 plt.plot(T, E) 
 plt.show()
 ~~~~
@@ -611,7 +610,7 @@ $ mfront-query --inputs YoungModulus.mfront
 - f
 ~~~~
 
-While `MFront`' users hardly ever use `mfront-query` directly, its
+While `MFront`'s users hardly ever use `mfront-query` directly, its
 mention here is meant to highlight the fact that and `MFront` file (or
 the shared library generated thanks to this `MFront` file, see below)
 generally must be self-descriptive and provide meaningful information to
