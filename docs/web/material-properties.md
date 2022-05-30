@@ -34,7 +34,6 @@ abstract: |
   \[
   E(T,f)=2.2693\,10^{11}\,(1-2.5\,f)\,(1-6.786\,10^{-5}\,T-4.23\,10^{-8}\,T^{2})
   \]
-  
   where \(T\) is the temperature (Kelvin) and \(f\) is the porosity. This
   expression is assumed valid for a temperature in the range
   \([273.15:2610.15]\).
@@ -273,7 +272,7 @@ introduced by the `@Function` keyword. By default, this code block must
 store the result of the material property in a variable called `res`.
 
 Its is worth emphasing that this implementation is here reasonably
-closed to Equation @eq:mfront:material_properties:UO2_YoungModulus.
+close to Equation @eq:mfront:material_properties:UO2_YoungModulus.
 
 The code introduced by `@Function` is standard `C++` with a few implicit
 additions, such as:
