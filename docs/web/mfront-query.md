@@ -1,20 +1,53 @@
 ---
-title: mfront-query
+title: Description of `mfront-query`
 author: Thomas Helfer
 date: 15/03/2022
 lang: en-EN
-link-citations: true
-colorlinks: true
 geometry:
   - margin=2cm
 papersize: a4
+link-citations: true
+colorlinks: true
 figPrefixTemplate: "$$i$$"
 tblPrefixTemplate: "$$i$$"
 secPrefixTemplate: "$$i$$"
 eqnPrefixTemplate: "($$i$$)"
 ---
 
-# General queries
+# Introduction
+
+`mfront-query` is a command line tool used to retrieve information from
+an `MFront` file.
+
+## Usage
+
+`mfront-query` can be used as follows:
+
+~~~~{.cxx}
+$ mfront-query [queries] [input-files]
+~~~~
+
+> `madnex` files
+>
+> The support of madnex files is treated in depth in Section
+> @msec:mfront_query:madnex_support.
+
+The list of available queries depends on the kind of material knowledge
+described by the input files. The list of available queries can be
+displayed using one the following command line arguments:
+
+- `--help-material-property-queries-list`: lists the queries associated
+  with material properties.
+- `--help-behaviour-queries-list`: list all queries avaiable for mfront
+  behaviour files. Section @sec:mfront_query:behaviour_queries describes
+  some of those queries in depth.
+- `--help-model-queries-list`: list all queries avaiable for mfront
+  model files.
+
+Section @sec:mfront_query:general_queries describes queries valid for
+all `MFront` files.
+
+# General queries {#sec:mfront_query:general_queries}
 
 ## List of dependencies of an `MFront` file
 
@@ -126,7 +159,7 @@ $ mfront-query --list-implementation-paths=unsorted --all-behaviours Plasticity.
 madnex:Plasticity.mdnx:behaviour::Plasticity
 ~~~~
 
-# Behaviour queries
+# Behaviour queries {#sec:mfront_query:behaviour_queries}
 
 ## List of initialize functions
 
@@ -205,3 +238,89 @@ $ mfront-query --list-behaviour-mfm-test-generator-tests --test=".+Tensile.+" Pl
 $ mfront-query --list-behaviour-mfm-test-generator-tests=unsorted --test=".+Tensile.+" Plasticity.mdnx
 ~~~~
 
+# `madnex` files support {#sec:mfront_query:madnex_support}
+
+## Options specific to `madnex` files
+
+Several options has been added to the `mfront-query` specifically for
+`madnex` files.
+
+Queries of the file itself (list of materials, behaviours, etc...) are
+also provided by the `madnex-query` tool.
+
+### Listing all material a `madnex` file
+
+The `--list-materials` returns the list of all materials in a `MFront`
+file:
+
+~~~~{.bash}
+$ mfront-query --list-materials file.madnex
+~~~~
+
+### Listing of all material properties, all behaviours or all models
+
+The following options are available:
+
+- `--list-material-properties`: list of material properties.
+- `--list-behaviours`: list of all behaviours.
+- `--list-models`: list of all models.
+
+A typical call is as follows:
+
+~~~~{.bash}
+$ mfront-query --list-behaviours file.madnex
+~~~~
+
+The previous options are affected by the the definition of a material,
+as follows:
+
+~~~~{.bash}
+$ mfront-query --material=<material_id> --list-behaviours file.madnex
+~~~~
+
+## Querying information about implementation, options specific to `madnex` files
+
+For a behaviour, the selection of an implementation on which the queries
+are made is done through the `--material` and `--behaviour` options. For
+example:
+
+~~~~{.bash}
+$ mfront-query --obuild --interface=generic --material=<material_id> --behaviour=<behaviour_id> file.madnex --state-variables
+~~~~
+
+Here, `behaviour_id` can be a regular expression.
+
+For material properties and models, the `--material-property` and
+`--model` options have a similar role than the `--behaviour` option for
+behaviours.
+
+### List of `MTest` tests associated with a behaviour in a `madnex` file
+
+The `--list-behaviour-mtest-tests` command line argument can be used to
+display the list of tests associated with a behaviour in a `madnex`
+file.
+
+Optionnally, this command line argument accept the options
+`sorted-by-behaviours` or `unsorted` (see the examples below).
+
+#### Examples of usage
+
+~~~~{.cxx}
+$ mfront-query --list-behaviour-mtest-tests --test=".+Tensile.+" Plasticity.mdnx
+- tests associated with behaviour Plasticity
+    - UniaxialTensileTest
+~~~~
+
+~~~~{.cxx}
+$ mfront-query --list-behaviour-mtest-tests=unsorted --test=".+Tensile.+" Plasticity.mdnx
+UniaxialTensileTest
+~~~~
+
+### List of `mfm-test-generator` tests associated with a behaviour in a `madnex` file
+
+The `--list-behaviour-mfm-test-generator-tests` command line argument
+can be used to display the list of tests associated with a behaviour in
+a `madnex` file.
+
+Optionnally, this command line argument accept the options
+`sorted-by-behaviours` or `unsorted` (see the examples below).
