@@ -88,20 +88,24 @@ namespace tfel {
 #endif
   }  // end of getInstallPath
 
-  std::string getTFELConfigExecutableName() {
+  std::string getTFELExecutableName(const std::string& n) {
 #ifdef _WIN32
 #ifdef TFEL_APPEND_SUFFIX
-    return "tfel-config-" TFEL_SUFFIX ".exe";
+    return n+"-" TFEL_SUFFIX ".exe";
 #else  /* TFEL_APPEND_SUFFIX */
-    return "tfel-config.exe";
+    return n+".exe";
 #endif /* TFEL_APPEND_SUFFIX */
 #else  /* WIN32 */
 #ifdef TFEL_APPEND_SUFFIX
-    return "tfel-config-" TFEL_SUFFIX;
+    return n+"-" TFEL_SUFFIX;
 #else  /* TFEL_APPEND_SUFFIX */
-    return "tfel-config";
+    return n;
 #endif /* TFEL_APPEND_SUFFIX */
 #endif /* _WIN32 */
+  }
+
+  std::string getTFELConfigExecutableName() {
+    return getTFELExecutableName("tfel-config");
   }
 
   std::string getLibraryInstallName(const std::string& l) {

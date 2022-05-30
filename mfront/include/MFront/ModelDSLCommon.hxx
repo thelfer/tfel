@@ -47,6 +47,8 @@ namespace mfront {
     ModelDSLCommon(const DSLOptions&);
     //
     DSLTarget getTargetType() const override final;
+    const MaterialKnowledgeDescription& getMaterialKnowledgeDescription()
+        const override;
     std::string getMaterialKnowledgeIdentifier() const override;
     std::string getMaterialName() const override;
     std::string getOverridableVariableNameByExternalName(
@@ -60,9 +62,8 @@ namespace mfront {
 
    protected:
     //
-    MaterialKnowledgeDescription& getMaterialKnowledgeDescription() override;
-    const MaterialKnowledgeDescription& getMaterialKnowledgeDescription()
-        const override;
+    void addExternalMFrontFile(const std::string&,
+                               const std::vector<std::string>&) override;
     DSLOptions buildDSLOptions() const override;
     void disableQuantitiesUsageIfNotAlreadySet() override;
     bool useQt() const override;

@@ -32,8 +32,7 @@
 
 namespace mfront {
 
-  // forward declarations
-  struct MaterialKnowledgeDescription;
+  // forward declaration
   struct MaterialPropertyDescription;
 
   /*!
@@ -182,11 +181,13 @@ namespace mfront {
      * \param[in] opts: options passed to the DSL
      */
     DSLBase(const DSLOptions&);
-    //! \return the material knowledge description
-    virtual MaterialKnowledgeDescription& getMaterialKnowledgeDescription() = 0;
-    //! \return the material knowledge description
-    virtual const MaterialKnowledgeDescription&
-    getMaterialKnowledgeDescription() const = 0;
+    /*!
+     * \brief add a dependency to an external `MFront` file
+     * \param[in] f: file path
+     * \param[in] interfaces: list of interfaces used to treat the file
+     */
+    virtual void addExternalMFrontFile(const std::string&,
+                                       const std::vector<std::string>&) = 0;
     // \return options for child DSL (DSL called by this DSL)
     virtual DSLOptions buildDSLOptions() const = 0;
     /*!

@@ -932,10 +932,10 @@ namespace mfront {
     this->md.appendToSources(c);
   }  // end of appendToSources
 
-  MaterialKnowledgeDescription&
-  ModelDSLCommon::getMaterialKnowledgeDescription() {
-    return this->md;
-  }  // end of getMaterialKnowledgeDescription
+  void ModelDSLCommon::addExternalMFrontFile(
+      const std::string& f, const std::vector<std::string>& vinterfaces) {
+    this->md.addExternalMFrontFile(f, vinterfaces);
+  }  // end of addExternalMFrontFile
 
   const MaterialKnowledgeDescription&
   ModelDSLCommon::getMaterialKnowledgeDescription() const {

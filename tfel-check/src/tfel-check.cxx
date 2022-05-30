@@ -26,6 +26,7 @@
 #include <libgen.h>
 
 #include "TFEL/Raise.hxx"
+#include "TFEL/Config/GetInstallPath.hxx"
 #include "TFEL/Utilities/ArgumentParserBase.hxx"
 #include "TFEL/Utilities/StringAlgorithms.hxx"
 #include "TFEL/System/System.hxx"
@@ -85,6 +86,16 @@ namespace tfel::check {
       c.addComponent("mfront::model::" + i + "_interface");
     }
   }  // end of declareTFELComponents
+
+  static void declareTFELExecutables(ConfigurationManager& c) {
+    for (const std::string e : {"mfront", "mtest", "mfront-doc",
+                                "mfm-test-generator", "mfront-query"}) {
+      c.addSubstitution('@' + e + '@', tfel::getTFELExecutableName(e), false);
+    }
+#ifdef TFEL_PYTHON_EXECUTABLE
+    c.addSubstitution("@python@", TFEL_PYTHON_EXECUTABLE, false);
+#endif /* */
+  }  // end of declareTFELExecutables
 
   /*!
    * \brief main entry point
@@ -172,7 +183,7 @@ namespace tfel::check {
                            const CallBack& c) {
       this->registerCallBack(n, a, c);
     };
-    declare2("--config", "c",
+    declare2("--config", "-c",
              CallBack("add a configuration file",
                       [this] {
                         const auto f = this->currentArgument->getOption();
@@ -206,6 +217,9 @@ namespace tfel::check {
     this->setArguments(argc, argv);
     this->registerArgumentCallBacks();
     this->parseArguments();
+    // this is done after argument parsing to allow the user to modify default
+    // executables' names
+    declareTFELExecutables(this->configurations);
   }  // end of TFELCheck::TFELCheck
 
   int TFELCheck::execute() {

@@ -30,6 +30,11 @@ target_link_libraries(TFELCheck
   TFELMath TFELUtilities TFELSystem)
 
 add_executable(tfel-check tfel-check.cxx)
+if(enable-python OR enable-python-bindings)
+  target_compile_definitions(tfel-check
+    PRIVATE TFEL_PYTHON_EXECUTABLE="${PYTHON_EXECUTABLE}")
+endif(enable-python OR enable-python-bindings)
+
 target_link_libraries(tfel-check
   TFELMFront TFELCheck TFELUtilities TFELSystem)
 if(TFEL_APPEND_SUFFIX)

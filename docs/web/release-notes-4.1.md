@@ -1581,7 +1581,42 @@ $ mfront-query --list-behaviour-mfm-test-generator-tests --test=".+Tensile.+" Pl
 $ mfront-query --list-behaviour-mfm-test-generator-tests=unsorted --test=".+Tensile.+" Plasticity.mdnx
 ~~~~
 
+# `tfel-check` improvements
+
+## Automatic declaration of substitutions for `TFEL` executables and `python` interpreter {#sec:tfel_4.1:tfel_check:default_substitutions}
+
+The following substitutions are automatically declared: `@mfront@`,
+`@mfront-query@`, `@mtest@`, `@mfront-doc@`, `@mfm-test-generator@`.
+
+In `python` bindings are enabled, the `@python` substitution is also
+automatically declared.
+
+Those substitutions are declared after reading the configuration files
+and after parsing the command line arguments, so those default
+substitutions can be overriden by the user.
+
 # Issues fixed
+
+## Issue #210: [tfel-check] Allow to split command in multiple strings
+
+For more details, see <https://github.com/thelfer/tfel/issues/210>.
+
+## Issue #209: [tfel-utilities] Convertion from `Data` to `std::vector` and `std::map` shall work if the object is empty
+
+￼
+For more details, see <https://github.com/thelfer/tfel/issues/209>.
+
+￼
+## Issue #208: [tfel-check] Automatic declaration of substitutions for `TFEL` executables and `python` interpreter 
+
+This feature is described in Section
+@sec:tfel_4.1:tfel_check:default_substitutions.
+
+For more details, see <https://github.com/thelfer/tfel/issues/208>.
+
+## Issue #207: [tfel-check] allow comments in config files
+
+For more details, see <https://github.com/thelfer/tfel/issues/207>.
 
 ## Issue #200: [mfront] Generate a `setParameter` function for material properties generated with the `python` interface
 ￼

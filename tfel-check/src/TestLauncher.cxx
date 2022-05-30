@@ -23,6 +23,7 @@
 #include <unistd.h>  // sysconf
 
 #include "TFEL/Raise.hxx"
+#include "TFEL/System/System.hxx"
 #include "TFEL/System/ProcessManager.hxx"
 #include "TFEL/Utilities/Data.hxx"
 #include "TFEL/Utilities/TerminalColors.hxx"
@@ -76,8 +77,10 @@ namespace tfel::check {
     this->registerCallBack("@TestType", &TestLauncher::treatTestType);
     this->registerCallBack("@Precision", &TestLauncher::treatPrecision);
     this->registerCallBack("@Interpolation", &TestLauncher::treatInterpolation);
+    this->registerCallBack("@CleanFiles", &TestLauncher::treatCleanFiles);
+    this->registerCallBack("@CleanDirectories", &TestLauncher::treatCleanDirectories);
     this->analyseInputFile(c);
-  }  // end of TestLauncher::TestLauncher
+  }  // end of TestLauncher
 
   void TestLauncher::registerCallBack(const std::string& name,
                                       const CallBack& f) {
@@ -85,7 +88,7 @@ namespace tfel::check {
              "TestLauncher::registerCallBack: "
              "keyword '" +
                  name + "' has already been registred");
-  }  // end of TestLauncher::registerCallBack
+  }  // end of registerCallBack
 
   void TestLauncher::throwRuntimeError(const std::string& m,
                                        const std::string& msg) {
@@ -104,7 +107,7 @@ namespace tfel::check {
     }();
     this->log.addMessage(e);
     raise(e);
-  }  // end of TestLauncher::throwRuntimeError
+  }  // end of throwRuntimeError
 
   void TestLauncher::checkNotEndOfFile(const std::string& m) {
     if (this->current == this->end()) {
@@ -128,7 +131,8 @@ namespace tfel::check {
     this->checkNotEndOfFile(m);
     if (((this->current->flag != tfel::utilities::Token::String) &&
          (this->current->flag != tfel::utilities::Token::Char))) {
-      this->throwRuntimeError(m, "expected a string");
+      this->throwRuntimeError(
+          m, "expected a string, read '" + this->current->value + "'");
     }
     const auto v =
         this->current->value.substr(1, this->current->value.size() - 2);
@@ -166,13 +170,40 @@ namespace tfel::check {
     }
     ++(this->current);
     this->readSpecifiedToken("TestLauncher::treatEnvironment", ";");
-  }  // end of TestLauncher::treatEnvironment
+  }  // end of treatEnvironment
 
   void TestLauncher::treatRequires() {
     const auto r = CxxTokenizer::readStringArray(this->current, this->end());
     this->requirements.insert(this->requirements.end(), r.begin(), r.end());
     this->readSpecifiedToken("TestLauncher::treatRequires", ";");
-  }  // end of TestLauncher::treatRequires
+  }  // end of treatRequires
+
+  void TestLauncher::treatCleanFiles() {
+    const auto files = CxxTokenizer::readStringArray(this->current, this->end());
+    for (const auto& f : files) {
+      if (std::find(this->cleanfiles.begin(), this->cleanfiles.end(), f) !=
+          this->cleanfiles.end()) {
+        this->throwRuntimeError("TestLauncher::treatCleanFiles",
+                                "file '" + f + "' multiply declared");
+      }
+      this->cleanfiles.push_back(f);
+    }
+    this->readSpecifiedToken("TestLauncher::treatCleanFiles", ";");
+  }  // end of treatCleanFiles
+
+  void TestLauncher::treatCleanDirectories() {
+    const auto directories =
+        CxxTokenizer::readStringArray(this->current, this->end());
+    for (const auto& d : directories) {
+      if (std::find(this->cleandirectories.begin(), this->cleandirectories.end(), d) !=
+          this->cleandirectories.end()) {
+        this->throwRuntimeError("TestLauncher::treatCleanDirectories",
+                                "directory '" + d + "' multiply declared");
+      }
+      this->cleandirectories.push_back(d);
+    }
+    this->readSpecifiedToken("TestLauncher::treatCleanDirectories", ";");
+  }  // end of treatCleanDirectories
 
   void TestLauncher::treatCommand() {
     auto c = Command();
@@ -203,13 +234,20 @@ namespace tfel::check {
           }
         };  // end of parseCommandOptions
     c.command = this->readString("TestLauncher::treatCommand");
+    this->checkNotEndOfFile("TestLauncher::treatCommand");
+    while ((this->current->value != "{") &&  //
+           (this->current->value != ";")) {
+      std::cout << "current begin: " << this->current->value << std::endl;
+      c.command += " " + this->readString("TestLauncher::treatCommand");
+      this->checkNotEndOfFile("TestLauncher::treatCommand");
+    }
     if (this->current->value == "{") {
       parseCommandOptions(
           tfel::utilities::Data::read_map(this->current, this->end()));
     }
     this->commands.push_back(c);
     this->readSpecifiedToken("TestLauncher::treatCommand", ";");
-  }  // end of TestLauncher::treatCommand
+  }  // end of treatCommand
 
   void TestLauncher::treatTestType() {
     if (this->current->value == "Absolute") {
@@ -259,7 +297,7 @@ namespace tfel::check {
       this->colIntegralInterpolated.reset(new Column(c));
     }
     this->readSpecifiedToken("TestLauncher::treatTestType", ";");
-  }  // end of TestLauncher::treatTestType
+  }  // end of treatTestType
 
   void TestLauncher::treatTest() {
     auto getColumn = [this] {
@@ -335,7 +373,7 @@ namespace tfel::check {
       }
     }
     this->readSpecifiedToken("TestLauncher::treatTest", ";");
-  }  // end of TestLauncher::treatTest
+  }  // end of treatTest
 
   void TestLauncher::treatPrecision() {
     this->prec = CxxTokenizer::readDouble(this->current, this->end());
@@ -345,7 +383,7 @@ namespace tfel::check {
       this->precision2 = CxxTokenizer::readDouble(this->current, this->end());
     }
     this->readSpecifiedToken("TestLauncher::treatPrecision", ";");
-  }  // end of TestLauncher::treatPrecision
+  }  // end of treatPrecision
 
   void TestLauncher::setInterpolation(const std::string& m) {
     this->checkNotEndOfFile(m);
@@ -427,7 +465,7 @@ namespace tfel::check {
     }
     // a bit of clean-up
     this->clear();
-  }  // end of TestLauncher::analyseInputFile
+  }  // end of analyseInputFile
 
   static std::string getFileContent(const std::string& f) {
     std::ifstream file(f);
@@ -545,8 +583,15 @@ namespace tfel::check {
               "', column '" + c.getColA()->getName() + "' ",
           success);
     }
+    // files and directories clean-up
+    for (const auto& f : this->cleanfiles) {
+      tfel::system::systemCall::unlink(f);
+    }
+    for (const auto& d : this->cleandirectories) {
+      tfel::system::systemCall::rmdir(d);
+    }
     return gsuccess;
-  }  // end of TestLauncher::execute
+  }  // end of execute
 
   TestLauncher::~TestLauncher() { this->log.terminate(); }
 

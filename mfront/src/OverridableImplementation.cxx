@@ -19,6 +19,7 @@
 #endif /* MFRONT_HAVE_MADNEX */
 
 #include "TFEL/Raise.hxx"
+#include "MFront/MaterialKnowledgeDescription.hxx"
 #include "MFront/FileDescription.hxx"
 #include "MFront/OverridableImplementation.hxx"
 
@@ -74,6 +75,12 @@ namespace mfront {
   const std::string& OverridableImplementation::getSourceFilePath() const {
     return this->source;
   }  // end of OverridableImplementation::getSourceFilePath
+
+  const std::map<std::string, std::vector<std::string>, std::less<>>&
+  OverridableImplementation::getExternalMFrontFiles() const{
+    return this->dsl->getMaterialKnowledgeDescription()
+        .getExternalMFrontFiles();
+  }
 
   OverridableImplementation::~OverridableImplementation() = default;
 
@@ -145,8 +152,13 @@ namespace mfront {
     } else {
       g = madnex::createGroup(r, "MFront/" + mkt);
     }
+    // writing dependencies
+    for (const auto& d :i.getExternalMFrontFiles()) {
+      writeMadnexFile(OverridableImplementation(d.first), f);
+    }
+    //
     madnex::write(g, impl);
-        }  // end of writeMadnexFile
+  }    // end of writeMadnexFile
 #endif /* MFRONT_HAVE_MADNEX */
 
     void

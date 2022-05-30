@@ -654,10 +654,10 @@ namespace mfront {
     }
   }  // end of disableQuantitiesUsageIfNotAlreadySet
 
-  MaterialKnowledgeDescription&
-  MaterialPropertyDSL::getMaterialKnowledgeDescription() {
-    return this->md;
-  }  // end of getMaterialKnowledgeDescription
+  void MaterialPropertyDSL::addExternalMFrontFile(
+      const std::string& f, const std::vector<std::string>& vinterfaces) {
+    this->md.addExternalMFrontFile(f, vinterfaces);
+  }  // end of addExternalMFrontFile
 
   const MaterialKnowledgeDescription&
   MaterialPropertyDSL::getMaterialKnowledgeDescription() const {

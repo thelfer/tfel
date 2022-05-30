@@ -19,6 +19,10 @@ eqnPrefixTemplate: "($$i$$)"
 
 # Issues fixed
 
+## Issue #204: [tfel-check] Invalid option `c` (must be `-c`)
+
+For more details, see <https://github.com/thelfer/tfel/issues/204>.
+
 ## Issue #184: [mfront] The output variable of a material property is only partially defined
 
 For more details, see <https://github.com/thelfer/tfel/issues/184>.

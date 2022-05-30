@@ -322,3 +322,15 @@ $ tfel-check --list-default-components
 - mfront::behaviour::generic_interface
 - mfront::model::mfront_interface
 ~~~~
+
+# Automatic declaration of substitutions for `TFEL` executables and `python` interpreter
+
+The following substitutions are automatically declared: `@mfront@`,
+`@mfront-query@`, `@mtest@`, `@mfront-doc@`, `@mfm-test-generator@`.
+
+In `python` bindings are enabled, the `@python` substitution is also
+automatically declared.
+
+Those substitutions are declared after reading the configuration files
+and after parsing the command line arguments, so those default
+substitutions can be overriden by the user.

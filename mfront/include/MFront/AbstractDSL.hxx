@@ -29,6 +29,8 @@ namespace mfront {
   // forward declaration
   struct TargetsDescription;
   // forward declaration
+  struct MaterialKnowledgeDescription;
+  // forward declaration
   struct MaterialPropertyDescription;
 
   /*!
@@ -54,6 +56,9 @@ namespace mfront {
     virtual std::vector<DSLOptionDescription> getDSLOptions() const = 0;
     //! \return the target of the dsl
     virtual DSLTarget getTargetType() const = 0;
+    //! \return the description of the considered material knowledge
+    virtual const MaterialKnowledgeDescription&
+    getMaterialKnowledgeDescription() const = 0;
     //! \return the file description associated with the treated file
     virtual const FileDescription& getFileDescription() const = 0;
     /*!

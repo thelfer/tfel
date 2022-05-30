@@ -66,8 +66,12 @@ namespace tfel::check {
      * \brief add a new substitution
      * \param[in] s1: string to be substituted
      * \param[in] s2: substitution string
+     * \param[in] b: if true, throws if the substitution already exists.
+     * Otherwise, nothing is done.
      */
-    void addSubstitution(const std::string&, const std::string&);
+    void addSubstitution(const std::string&,
+                         const std::string&,
+                         const bool = true);
     /*!
      * \brief add a new component
      * \param[in] c: component

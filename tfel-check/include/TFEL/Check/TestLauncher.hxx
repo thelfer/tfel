@@ -102,6 +102,10 @@ namespace tfel::check {
     void treatInterpolation();
     //! \brief treat the `@Requires` keyword
     void treatRequires();
+    //! \brief treat the `@CleanFiles` keyword
+    void treatCleanFiles();
+    //! \brief treat the `@CleanDirectories` keyword
+    void treatCleanDirectories();
     /*!
      * \brief register the error and throw an runtime_error
      * \param[in] m:   calling method
@@ -138,6 +142,10 @@ namespace tfel::check {
       GET
     }; /**!< ClockAction supported event. */
     double ClockAction(ClockEventType clockevent);
+    //! \brief list of files to be removed after the tests
+    std::vector<std::string> cleanfiles;
+    //! \brief list of directories to be removed after the tests execution
+    std::vector<std::string> cleandirectories;
     //! \brief list of environment variables
     std::map<std::string, std::string> environments;
     //! list of requirements

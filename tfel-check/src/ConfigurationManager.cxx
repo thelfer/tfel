@@ -37,13 +37,13 @@ namespace tfel::check {
       return {n.substr(b), ""};
     }
     return {n.substr(b, pos), n.substr(pos + 1)};
-  }  // end of ConfigurationManager::extract
+  }  // end of extract
 
   ConfigurationManager::ConfigurationManager() = default;
 
   ConfigurationManager::ConfigurationManager(const Configuration& src)
       : configuration(src) {
-  }  // end of ConfigurationManager::ConfigurationManager
+  }  // end of ConfigurationManager
 
   ConfigurationManager::ConfigurationManager(ConfigurationManager&&) = default;
 
@@ -55,7 +55,7 @@ namespace tfel::check {
       s.second.modify(f);
     }
     f(this->configuration);
-  }  // end of ConfigurationManager::modify
+  }  // end of modify
 
   ConfigurationManager& ConfigurationManager::getConfigurationManager(
       const std::string& n) {
@@ -68,7 +68,7 @@ namespace tfel::check {
       p = this->subordinates.insert({r.first, this->configuration}).first;
     }
     return p->second.getConfigurationManager(r.second);
-  }  // end of ConfigurationManager::getConfigurationManager
+  }  // end of getConfigurationManager
 
   const Configuration& ConfigurationManager::getConfiguration(
       const std::string& n) const {
@@ -81,19 +81,20 @@ namespace tfel::check {
       return this->configuration;
     }
     return p->second.getConfiguration(r.second);
-  }  // end of ConfigurationManager::getConfigurationManager
+  }  // end of getConfigurationManager
 
   void ConfigurationManager::addSubstitution(const std::string& s1,
-                                             const std::string& s2) {
-    this->modify([&s1, &s2](Configuration& c) {
-      if (!c.substitutions.insert({s1, s2}).second) {
+                                             const std::string& s2,
+                                             const bool b) {
+    this->modify([&s1, &s2, b](Configuration& c) {
+      if ((!c.substitutions.insert({s1, s2}).second) && (b)) {
         tfel::raise(
             "ConfigurationManager::addSubstitution: "
             "a substitution for '" +
             s1 + "' has already been defined");
       }
     });
-  }  // end of ConfigurationManager::addSubstitution
+  }  // end of addSubstitution
 
   void ConfigurationManager::addComponent(const std::string& c) {
     this->modify([&c](Configuration& cf) {
@@ -105,11 +106,11 @@ namespace tfel::check {
       }
       components.push_back(c);
     });
-  }  // end of ConfigurationManager::addComponent
+  }  // end of addComponent
 
   const Configuration& ConfigurationManager::getConfiguration() const {
     return this->configuration;
-  }  // end of ConfigurationManager::getConfiguration
+  }  // end of getConfiguration
 
   ConfigurationManager& ConfigurationManager::operator=(
       ConfigurationManager&&) = default;
@@ -126,6 +127,7 @@ namespace tfel::check {
     tokenizer.treatCharAsString(true);
     tokenizer.mergeStrings(false);
     tokenizer.openFile(n);
+    tokenizer.stripComments();
     auto p = tokenizer.begin();
     const auto pe = tokenizer.end();
     while (p != pe) {

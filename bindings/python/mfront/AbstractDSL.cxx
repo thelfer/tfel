@@ -16,6 +16,7 @@
 #include "TFEL/Python/SharedPtr.hxx"
 #include <boost/python.hpp>
 
+#include "MFront/MaterialKnowledgeDescription.hxx"
 #include "MFront/FileDescription.hxx"
 #include "MFront/TargetsDescription.hxx"
 #include "MFront/AbstractDSL.hxx"
@@ -59,6 +60,9 @@ void declareAbstractDSL() {
   class_<AbstractDSL, std::shared_ptr<AbstractDSL>, boost::noncopyable>(
       "AbstractDSL", no_init)
       .def("getTargetType", &AbstractDSL::getTargetType)
+      .def("getMaterialKnowledgeDescription",
+           &AbstractDSL::getMaterialKnowledgeDescription,
+           return_internal_reference<>())
       .def("getFileDescription", &AbstractDSL::getFileDescription,
            return_internal_reference<>())
       .def("analyseFile", analyseFile1)

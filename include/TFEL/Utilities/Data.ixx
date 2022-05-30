@@ -64,6 +64,9 @@ namespace tfel::utilities::internals {
       auto throw_if = [](const bool b, const std::string& msg) {
         tfel::raise_if(b, "convert<std::vector<T>>: " + msg);
       };
+      if (d.empty()) {
+        return {};
+      }
       throw_if(!d.is<std::vector<Data>>(), "invalid data type");
       const auto& vd = d.get<std::vector<Data>>();
       auto r = std::vector<T>{};
@@ -74,6 +77,9 @@ namespace tfel::utilities::internals {
       return r;
     }  // end of exe
     static bool is_convertible(const Data& d) {
+      if (d.empty()) {
+        return true;
+      }
       if (!d.is<std::vector<tfel::utilities::Data>>()) {
         return false;
       }
@@ -94,6 +100,9 @@ namespace tfel::utilities::internals {
       auto throw_if = [](const bool b, const std::string& msg) {
         tfel::raise_if(b, "convert<std::map<std::string,T>>: " + msg);
       };
+      if (d.empty()) {
+        return {};
+      }
       throw_if(!d.is<DataMap>(), "invalid data type");
       const auto& m = d.get<DataMap>();
       auto r = std::map<std::string, T>{};
@@ -103,6 +112,9 @@ namespace tfel::utilities::internals {
       return r;
     }  // end of exe
     static bool is_convertible(const Data& d) {
+      if (d.empty()) {
+        return true;
+      }
       if (!d.is<tfel::utilities::DataMap>()) {
         return false;
       }

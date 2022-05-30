@@ -769,10 +769,10 @@ namespace mfront {
     return this->mb;
   }  // end of getBehaviourDescription
 
-  MaterialKnowledgeDescription&
-  BehaviourDSLCommon::getMaterialKnowledgeDescription() {
-    return this->mb;
-  }  // end of getMaterialKnowledgeDescription
+  void BehaviourDSLCommon::addExternalMFrontFile(
+      const std::string& f, const std::vector<std::string>& vinterfaces) {
+    this->mb.addExternalMFrontFile(f, vinterfaces);
+  }  // end of addExternalMFrontFile
 
   const MaterialKnowledgeDescription&
   BehaviourDSLCommon::getMaterialKnowledgeDescription() const {

@@ -180,7 +180,8 @@ namespace mfront {
      */
     BehaviourDSLCommon(const DSLOptions&);
     //
-    MaterialKnowledgeDescription& getMaterialKnowledgeDescription() override;
+    void addExternalMFrontFile(const std::string&,
+                               const std::vector<std::string>&) override;
     const MaterialKnowledgeDescription& getMaterialKnowledgeDescription()
         const override;
     std::vector<DSLOptionDescription> getDSLOptions() const override;

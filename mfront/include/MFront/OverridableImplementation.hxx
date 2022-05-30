@@ -119,6 +119,11 @@ namespace mfront {
     const FileDescription& getSourceFileDescription() const;
     //! \return the path to the source file
     const std::string& getSourceFilePath() const;
+    //! \return the external `MFront` files
+    const std::map<std::string,               // file path
+                   std::vector<std::string>,  // list of interfaces
+                   std::less<>>&
+    getExternalMFrontFiles() const;
     //! \brief destructor
     ~OverridableImplementation();
 
