@@ -19,6 +19,8 @@
 #endif /* MFRONT_HAVE_MADNEX */
 
 #include "TFEL/Raise.hxx"
+#include "TFEL/Utilities/StringAlgorithms.hxx"
+#include "MFront/DSLUtilities.hxx"
 #include "MFront/MaterialKnowledgeDescription.hxx"
 #include "MFront/FileDescription.hxx"
 #include "MFront/OverridableImplementation.hxx"
@@ -41,7 +43,10 @@ namespace mfront {
 
   OverridableImplementation::OverridableImplementation(const std::string& f)
       : dsl(generateAbstractDSL(f)),
-        source(f) {}  // end of OverridableImplementation
+        source(f) {
+    const auto params = this->dsl->getOverridenParameters();
+    this->parameters.insert(params.begin(), params.end());
+  }  // end of OverridableImplementation
 
   const std::map<std::string, double>&
   OverridableImplementation::getOverridingParameters() const {
@@ -86,6 +91,14 @@ namespace mfront {
 
 #ifdef MFRONT_HAVE_MADNEX
   static std::string getSourceFileContent(const std::string& f) {
+    if (tfel::utilities::starts_with(f, "madnex:")) {
+      const auto path = decomposeImplementationPathInMadnexFile(f);
+      const auto& material = std::get<2>(path);
+      const auto& name = std::get<3>(path);
+      const auto impl = madnex::getMFrontImplementation(
+          std::get<0>(path), std::get<1>(path), material, name);
+      return impl.source;
+    }
     std::ifstream file(f);
     if (!file) {
       tfel::raise("mfront::getSourceFileContent: can't open file '" +
@@ -96,8 +109,64 @@ namespace mfront {
     return s.str();
   }  // end of getSourceFileContent
 
-  static void writeMadnexFile(const OverridableImplementation& i,
-                              const std::string& f) {
+  static std::string getMaterialKnowledgeIdentifier(const OverridableImplementation& i) {
+    using Tags = OverridableImplementation::Tags;
+    const auto& n = i.getOverridenValue<Tags::MATERIAL_KNOWLEDGE_IDENTIFIER>();
+    return n.empty() ? i.getSourceMaterialKnowledgeIdentifier() : n;
+  }
+
+  static std::string getMaterial(const OverridableImplementation& i) {
+    using Tags = OverridableImplementation::Tags;
+    const auto& m = i.getOverridenValue<Tags::MATERIAL_NAME>();
+    return m.empty() ? i.getSourceMaterialName() : m;
+  }
+
+  static std::string getPathBaseName(const OverridableImplementation& i) {
+    const auto mkt = [i]() -> std::string {
+      const auto t = i.getTargetType();
+      if (t == AbstractDSL::MATERIALPROPERTYDSL) {
+        return "MaterialProperties";
+      } else if (t == AbstractDSL::BEHAVIOURDSL) {
+        return "Behaviours";
+      } else if (t != AbstractDSL::MODELDSL) {
+        tfel::raise(
+            "mfront::writeMadnexFile: "
+            "unsupported DSL target");
+      }
+      return "Models";
+    }();
+    const auto m = getMaterial(i);
+    if (!m.empty()) {
+      return "MFront/" + m+ '/' + mkt;
+    }
+    return "MFront/" + mkt;
+  }  // end of getPath
+
+  static std::string getPath(const OverridableImplementation& i) {
+    const auto b = getPathBaseName(i);
+    const auto n = getMaterialKnowledgeIdentifier(i);
+    return b + '/' + n;
+  }  // end of getPath
+
+  static std::vector<std::string> getPaths(const OverridableImplementation& i) {
+    auto r = std::vector<std::string>{};
+    auto append_if = [&r](const std::string& p) {
+      if (std::find(r.begin(), r.end(), p) == r.end()) {
+        r.push_back(p);
+      }
+    };  // end of append_if
+    append_if(getPath(i));
+    for (const auto& d :i.getExternalMFrontFiles()) {
+      OverridableImplementation impl(d.first);
+      for(const auto& p : getPaths(impl)){
+        append_if(p);
+      }
+    }
+    return r;
+  } // end of getPaths
+
+  static madnex::MFrontImplementation getMFrontImplementation(
+      const OverridableImplementation& i) {
     using Tags = OverridableImplementation::Tags;
     auto copy_if = [](std::string& dest, const std::string& src1,
                       const std::string& src2) {
@@ -118,24 +187,15 @@ namespace mfront {
     copy_if(impl.metadata.date, i.getOverridenValue<Tags::DATE>(), fd.date);
     copy_if(impl.metadata.description, i.getOverridenValue<Tags::DESCRIPTION>(),
             fd.description);
-    auto material = std::string{};
-    copy_if(material, i.getOverridenValue<Tags::MATERIAL_NAME>(),
-            i.getSourceMaterialName());
     impl.source = getSourceFileContent(i.getSourceFilePath());
     impl.parameters = i.getOverridingParameters();
-    const auto mkt = [i]() -> std::string {
-      const auto t = i.getTargetType();
-      if (t == AbstractDSL::MATERIALPROPERTYDSL) {
-        return "MaterialProperties";
-      } else if (t == AbstractDSL::BEHAVIOURDSL) {
-        return "Behaviours";
-      } else if (t != AbstractDSL::MODELDSL) {
-        tfel::raise(
-            "mfront::writeMadnexFile: "
-            "unsupported DSL target");
-      }
-      return "Models";
-    }();
+    return impl;
+  }
+
+  static void writeMadnexFile(const OverridableImplementation& i,
+                              const std::string& f,
+                              const std::vector<std::string>& already_treated_implementations) {
+    const auto impl = getMFrontImplementation(i);
     auto file = [&f] {
       std::ifstream infile(f);
       if (infile.good()) {
@@ -144,17 +204,29 @@ namespace mfront {
       return madnex::File(f, H5F_ACC_TRUNC);
     }();
     auto r = file.getRoot();
-    madnex::createGroup(r, "MFront");
-    auto g = madnex::Group();
-    if (!material.empty()) {
-      madnex::createGroup(r, "MFront/" + material);
-      g = madnex::createGroup(r, "MFront/" + material + "/" + mkt);
-    } else {
-      g = madnex::createGroup(r, "MFront/" + mkt);
+    // check if paths already exists
+    for (const auto p : getPaths(i)) {
+      if (madnex::exists(r, p)) {
+        tfel::raise(
+            "mfront::writeMadnexFile: "
+            "path '" +
+            p + "' already exists");
+      }
     }
+    //
+    const auto m = getMaterial(i);
+    madnex::createGroup(r, "MFront");
+    if (!m.empty()) {
+      madnex::createGroup(r, "MFront/" + m);
+    }
+    auto g = madnex::createGroup(r, getPathBaseName(i));
+    const auto gpath = getPath(i);
     // writing dependencies
+    auto already_treated_implementations2 = already_treated_implementations;
+    already_treated_implementations2.push_back(gpath);
     for (const auto& d :i.getExternalMFrontFiles()) {
-      writeMadnexFile(OverridableImplementation(d.first), f);
+      writeMadnexFile(OverridableImplementation(d.first), f,
+                      already_treated_implementations2);
     }
     //
     madnex::write(g, impl);
@@ -172,7 +244,7 @@ namespace mfront {
         }();
 #ifdef MFRONT_HAVE_MADNEX
         if ((ext == "madnex") || (ext == "mdnx") || (ext == "edf")) {
-          writeMadnexFile(i, f);
+          writeMadnexFile(i, f, {});
         } else {
           tfel::raise("write: unsupported file extension '" + ext + "'");
         }
@@ -181,4 +253,5 @@ namespace mfront {
     tfel::raise("write: unsupported file extension '" + ext + "'");
 #endif /* MFRONT_HAVE_MADNEX */
     }  // end of write
-    }    // end of namespace mfront
+
+}  // end of namespace mfront

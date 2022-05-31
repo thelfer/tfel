@@ -3188,6 +3188,16 @@ namespace mfront {
     }
   }  // end of overrideByAParameter
 
+  std::map<std::string, double> BehaviourDescription::getOverridenParameters()
+      const {
+    auto parameters = this->d.getOverridenParameters();
+    for (auto& md : this->sd) {
+      const auto params = md.second->getOverridenParameters();
+      parameters.insert(params.begin(), params.end());
+    }
+    return parameters;
+  } // end of getOverridenParameters
+
   BehaviourDescription::~BehaviourDescription() = default;
 
   void setElasticSymmetryType(BehaviourDescription& bd,

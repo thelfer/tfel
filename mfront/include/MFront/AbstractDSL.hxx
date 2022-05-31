@@ -77,6 +77,8 @@ namespace mfront {
      */
     virtual std::string getOverridableVariableNameByExternalName(
         const std::string&) const = 0;
+    //! \return the list of overriden parameters
+    virtual std::map<std::string, double> getOverridenParameters() const = 0;
     /*!
      * \brief analyse a file
      * \param[in] f     : file name

@@ -1893,6 +1893,10 @@ namespace mfront {
     this->overriding_parameters[n] = v;
   }  // end of overrideByAParameter
 
+  std::map<std::string, double> BehaviourData::getOverridenParameters() const {
+    return this->overriding_parameters;
+  } // end of getOverridenParameters
+
   const CodeBlock& BehaviourData::getUserDefinedInitializeCodeBlock(
       const std::string& n) const {
     return this->getCodeBlock(BehaviourData::UserDefinedInitializeCodeBlock +

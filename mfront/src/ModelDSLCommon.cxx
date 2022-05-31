@@ -95,9 +95,13 @@ namespace mfront {
         "unimplemented feature");
   }  // end of getOverridableVariableNameByExternalName
 
-  void ModelDSLCommon::overrideByAParameter(const std::string&, const double) {
+  void ModelDSLCommon::overrideByAParameter(const std::string&, const double){
 #pragma message("unimplemented")
   }  // end of overrideByAParameter
+
+  std::map<std::string, double> ModelDSLCommon::getOverridenParameters() const {
+    return this->overriding_parameters;
+  }  // end of getOverridenParameters
 
   void ModelDSLCommon::endsInputFileProcessing() {
   }  // end of endsInputFileProcessing
@@ -762,7 +766,7 @@ namespace mfront {
       this->throwRuntimeError("DSLBase::handleParameter",
                               "Expected ';' before end of file");
     }
-  }  // end of treatParameter()
+  }  // end of treatParameter
 
   void ModelDSLCommon::treatLocalParameter() {
     VariableDescriptionContainer gp;
@@ -771,7 +775,7 @@ namespace mfront {
       this->md.registerMemberName(v.name);
       this->md.parameters.push_back(v);
     }
-  }  // end of treatLocalParameter()
+  }  // end of treatLocalParameter
 
   void ModelDSLCommon::treatParameterMethod() {
     auto throw_if = [this](const bool b, const std::string& m) {

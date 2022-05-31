@@ -145,6 +145,10 @@ argument is used.
 
 # Issues solved
 
+## Issue #212: [mfront] `OverridableImplementation` does not take into account overriden parameters
+
+For more details, see : <https://github.com/thelfer/tfel/issues/212>
+
 ## Issue #185: [mfront] missing inclusion of the `cstddef` header in `MFront/GenericBehaviour/Types.h`
 
 For more details, see : <https://github.com/thelfer/tfel/issues/185>
