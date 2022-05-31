@@ -27,7 +27,8 @@ target_include_directories(TFELUtilities
    $<INSTALL_INTERFACE:include>)
 target_link_libraries(TFELCheck
   TFELMathCubicSpline TFELMathParser
-  TFELMath TFELUtilities TFELSystem)
+  TFELMath TFELUtilities TFELSystem
+  TFELConfig)
 
 add_executable(tfel-check tfel-check.cxx)
 if(enable-python OR enable-python-bindings)

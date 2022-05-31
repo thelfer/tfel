@@ -30,7 +30,8 @@ libTFELCheck_la_SOURCES = Configuration.cxx     \
 libTFELCheck_la_LDFLAGS  = -L$(top_builddir)/src/System  -lTFELSystem       \
 			   -L$(top_builddir)/src/Utilities  -lTFELUtilities \
 			   -L$(top_builddir)/src/Math  -lTFELMathParser     \
-			   -lTFELMathCubicSpline
+			   -lTFELMathCubicSpline                            \
+			   -L$(top_builddir)/src/Config -lTFELConfig
 libTFELCheck_la_CPPFLAGS = $(AM_CPPFLAGS) -DTFELCheck_EXPORTS
 
 bin_PROGRAMS = tfel-check
@@ -39,5 +40,7 @@ tfel_check_SOURCES = tfel-check.cxx
 tfel_check_LDADD   = libTFELCheck.la
 tfel_check_LDFLAGS = -L$(top_builddir)/mfront/src    -lTFELMFront    \
                      -L$(top_builddir)/src/System    -lTFELSystem    \
-                     -L$(top_builddir)/src/Utilities -lTFELUtilities
+                     -L$(top_builddir)/src/Utilities -lTFELUtilities \
+		     -L$(top_builddir)/src/Config    -lTFELConfig
+
 EXTRA_DIST=CMakeLists.txt
