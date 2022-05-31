@@ -244,9 +244,9 @@ implementation is encoded.
 ~~~~{.python}
 import mfront
 
-paths = mfront.getImplementationPaths("file.madnex",
-                                      material=<material_id>,
-                                      behaviour=behaviour_id>)
+paths = mfront.getImplementationsPaths("file.madnex",
+                                       material=<material_id>,
+                                       behaviour=behaviour_id>)
 if len(paths) == 0:
   raise("no matching implementation")
 
