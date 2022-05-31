@@ -1,0 +1,22 @@
+@DSL Default;
+@Author Thomas Helfer;
+@Date 11 / 03 / 2022;
+@Behaviour Test;
+@UseQt true;
+
+@MaterialLaw "YoungModulusTest.mfront";
+
+@LocalVariable stress lambda, mu;
+
+@InitLocalVariables {
+  const auto young = stress{YoungModulusTest((T + dT).getValue())};
+  const auto nu = real{0.3};
+  lambda = computeLambda(young, nu);
+  mu = computeMu(young, nu);
+}
+
+@Integrator {
+  static_cast<void>(computeTangentOperator_);
+  const auto e = eto + deto;
+  sig = lambda * trace(e) * Stensor::Id() + 2 * mu * e;
+}

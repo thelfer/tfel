@@ -1,0 +1,15 @@
+@Requires{"mfront::python", "tfel::madnex"};
+
+@Command "@python@ generate.py";
+@Command
+    "@mfront-query@ --madnex-search-path=MaterialProperties.mdnx"
+    "--list-dependencies Test.mfront" {
+      expected_output :
+          "madnex:MaterialProperties.mdnx:MaterialProperty::YoungModulusTest"
+    };
+@Command
+    "@mfront@ --obuild --interface=generic "
+    "--madnex-search-path=MaterialProperties.mdnx Test.mfront";
+
+@CleanFiles {"MaterialProperties.mdnx"};
+@CleanDirectories {"include", "src"};

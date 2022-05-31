@@ -1,8 +1,10 @@
 /* Generating MFront behaviour and material properties */
-
 @Requires {"tfel::madnex","mfront::python"};
+
 @Command "@python@ MadnexTest.py";
 @Command "@python@ OverridableImplementation.py";
-@Command "mfront-query --author --material=A316LN --behaviour=Plasticity_SRMA2022 Plasticity.madnex"{
+@Command "@mfront-query@ --author --material=A316LN --behaviour=Plasticity_SRMA2022 Plasticity.madnex" {
   expected_output : "John Mac Enroe"
 };
+
+@CleanFiles {"Plasticity.madnex"};

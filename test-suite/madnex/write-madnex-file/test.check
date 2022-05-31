@@ -1,0 +1,13 @@
+@Requires{"mfront::python", "tfel::madnex"};
+
+@Command "@python@ generate.py";
+@Command "@mfront-query@ --list-material-properties=unsorted Test.mdnx" {
+  expected_output : "YoungModulusTest"
+};
+@Command "@mfront-query@ --list-behaviours=unsorted Test.mdnx" {
+  expected_output : "Test"
+};
+@Command "@mfront@ --obuild --interface=generic --behaviour=Test Test.mdnx";
+
+@CleanFiles {"Test.mdnx"};
+@CleanDirectories {"include", "src"};
