@@ -48,6 +48,7 @@ namespace mfront {
     std::string getOverridableVariableNameByExternalName(
         const std::string&) const override;
     void overrideByAParameter(const std::string&, const double) override;
+    std::map<std::string, double> getOverridenParameters() const override;
     void endsInputFileProcessing() override;
     void generateOutputFiles() override;
     void setInterfaces(const std::set<std::string>&) override;

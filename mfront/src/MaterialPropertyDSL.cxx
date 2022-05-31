@@ -129,7 +129,12 @@ namespace mfront {
           n + "' has already been defined");
     }
     this->overriding_parameters[n] = v;
-  }  // end of MaterialPropertyDSL::overrideByAParameter
+  }  // end of overrideByAParameter
+
+  std::map<std::string, double> MaterialPropertyDSL::getOverridenParameters()
+      const {
+    return this->overriding_parameters;
+  }  // end of getOverridenParameters
 
   void MaterialPropertyDSL::endsInputFileProcessing() {
   }  // end of MaterialPropertyDSL::endsInputFileProcessing

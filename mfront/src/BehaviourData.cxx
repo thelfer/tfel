@@ -1827,6 +1827,10 @@ namespace mfront {
     this->overriding_parameters[n] = v;
   }  // end of BehaviourData::overrideByAParameter
 
+  std::map<std::string, double> BehaviourData::getOverridenParameters() const {
+    return this->overriding_parameters;
+  } // end of getOverridenParameters
+
   BehaviourData::~BehaviourData() = default;
 
 }  // end of namespace mfront
