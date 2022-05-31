@@ -1759,6 +1759,10 @@ See Section @sec:tfel_4.1:tfel_material:constexpr.
 
 For more details, see : <https://github.com/thelfer/tfel/issues/148>.
 
+## Issue #146: [mfront] Export dependencies of MFront files in madnex files
+
+For more details, see : <https://github.com/thelfer/tfel/issues/146>.
+
 ## Issue #145: [mfront] Automatically add a madnex input file to the search paths 
 
 This feature is described in Section
