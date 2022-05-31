@@ -318,6 +318,8 @@ namespace mfront {
      * \param[in] v: variable value
      */
     void overrideByAParameter(const std::string&, const double);
+    //! \return the list of overriden parameters
+    std::map<std::string, double> getOverridenParameters() const;
     /*!
      * This method has been introduced to optimize the mechanical
      * resolution in licos : a purely implicit resolution only

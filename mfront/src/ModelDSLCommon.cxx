@@ -92,6 +92,10 @@ namespace mfront {
 #pragma message("unimplemented")
   }  // end of overrideByAParameter
 
+  std::map<std::string, double> ModelDSLCommon::getOverridenParameters() const {
+    return this->overriding_parameters;
+  }  // end of getOverridenParameters
+
   void ModelDSLCommon::endsInputFileProcessing() {
   }  // end of endsInputFileProcessing
 

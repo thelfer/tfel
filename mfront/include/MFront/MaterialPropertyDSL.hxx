@@ -50,6 +50,7 @@ namespace mfront {
     std::string getOverridableVariableNameByExternalName(
         const std::string&) const override;
     void overrideByAParameter(const std::string&, const double) override;
+    std::map<std::string, double> getOverridenParameters() const override;
     void getKeywordsList(std::vector<std::string>&) const override;
     void setInterfaces(const std::set<std::string>&) override;
     void analyseFile(const std::string&,

@@ -19,6 +19,7 @@
 #endif /* MFRONT_HAVE_MADNEX */
 
 #include "TFEL/Raise.hxx"
+#include "TFEL/Utilities/StringAlgorithms.hxx"
 #include "MFront/FileDescription.hxx"
 #include "MFront/OverridableImplementation.hxx"
 
@@ -40,7 +41,10 @@ namespace mfront {
 
   OverridableImplementation::OverridableImplementation(const std::string& f)
       : dsl(generateAbstractDSL(f)),
-        source(f) {}  // end of OverridableImplementation
+        source(f) {
+    const auto params = this->dsl->getOverridenParameters();
+    this->parameters.insert(params.begin(), params.end());
+  }  // end of OverridableImplementation
 
   const std::map<std::string, double>&
   OverridableImplementation::getOverridingParameters() const {
@@ -79,7 +83,19 @@ namespace mfront {
 
 #ifdef MFRONT_HAVE_MADNEX
   static std::string getSourceFileContent(const std::string& f) {
+    if (tfel::utilities::starts_with(f, "madnex:")) {
+      const auto path = decomposeImplementationPathInMadnexFile(f);
+      const auto& material = std::get<2>(path);
+      const auto& name = std::get<3>(path);
+      const auto impl = madnex::getMFrontImplementation(
+          std::get<0>(path), std::get<1>(path), material, name);
+      return impl.source;
+    }
     std::ifstream file(f);
+    if (!file) {
+      tfel::raise("mfront::getSourceFileContent: can't open file '" +
+                  std::string{f} + "'");
+    }
     std::ostringstream s;
     s << file.rdbuf();
     return s.str();
@@ -125,7 +141,13 @@ namespace mfront {
       }
       return "Models";
     }();
-    auto file = madnex::File(f, H5F_ACC_TRUNC);
+    auto file = [&f] {
+      std::ifstream infile(f);
+      if (infile.good()) {
+        return madnex::File(f, H5F_ACC_RDWR);
+      }
+      return madnex::File(f, H5F_ACC_TRUNC);
+    }();
     auto r = file.getRoot();
     madnex::createGroup(r, "MFront");
     auto g = madnex::Group();

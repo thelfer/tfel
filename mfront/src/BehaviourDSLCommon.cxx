@@ -8914,6 +8914,11 @@ namespace mfront {
     this->mb.overrideByAParameter(n, v);
   }  // end of overrideByAParameter
 
+  std::map<std::string, double> BehaviourDSLCommon::getOverridenParameters()
+      const {
+    return this->mb.getOverridenParameters();
+  }  // end of getOverridenParameters
+
   BehaviourDSLCommon::~BehaviourDSLCommon() = default;
 
 }  // end of namespace mfront

@@ -221,6 +221,8 @@ namespace mfront {
      * \note This must be called before the declaration of the variable.
      */
     void overrideByAParameter(const std::string&, const double);
+    //! \return the list of overriden parameters
+    std::map<std::string, double> getOverridenParameters() const;
     /*!
      * \brief set the behaviour name
      * \param[in] b: behaviour name
