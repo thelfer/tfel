@@ -85,7 +85,7 @@ macro(mfront_check_library lib interface ext)
   foreach(source ${ARGN})
     add_mfront_generated_source(${lib} ${interface} "${ext}" ${source})
   endforeach(source)
-  add_library(${lib} SHARED EXCLUDE_FROM_ALL
+  add_library(${lib} EXCLUDE_FROM_ALL
     ${${lib}_SOURCES}
     ${${lib}_ADDITIONAL_SOURCES})
   set_target_properties(${lib} PROPERTIES

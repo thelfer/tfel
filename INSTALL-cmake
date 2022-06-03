@@ -108,6 +108,8 @@ cmake usefull variables
   wheezy).
 - `USE_EXTERNAL_COMPILER_FLAGS`: set to `ON` to use the `CFLAGS` and
   `CXXFLAGS` environment variables to build `TFEL`
+- `BUILD_SHARED_LIBS`: Builds shared libraries (`ON` by default). Set to
+  `OFF` to build static libraries instead.
 
 cmake typical usage
 ===================
