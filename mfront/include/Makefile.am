@@ -75,6 +75,7 @@ nobase_include_HEADERS= MFront/MFront.hxx                                     \
 			MFront/BehaviourSymmetryType.hxx                                  \
 			MFront/InterfaceBase.hxx                                          \
 			MFront/DSLUtilities.hxx                                           \
+			MFront/DSLUtilities.ixx                                           \
 			MFront/SupportedTypes.hxx                                         \
 			MFront/SearchPathsHandler.hxx                                     \
 			MFront/Gradient.hxx                                               \
