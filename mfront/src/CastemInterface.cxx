@@ -1082,6 +1082,8 @@ namespace mfront {
                   exportArrayOfIntegersSymbol(out, fn + "_GradientsTypes", {1});
                   exportArrayOfStringsSymbol(out, fn + "_Gradients",
                                              {"Strain"});
+                  exportUnsignedShortSymbol(out, fn + "_nThermodynamicForces",
+                                            1);
                   exportArrayOfIntegersSymbol(
                       out, fn + "_ThermodynamicForcesTypes", {1});
                   exportArrayOfStringsSymbol(out, fn + "_ThermodynamicForces",
@@ -1201,6 +1203,7 @@ namespace mfront {
         exportUnsignedShortSymbol(out, fn + "_nGradients", 1u);
         exportArrayOfIntegersSymbol(out, fn + "_GradientsTypes", {2});
         exportArrayOfStringsSymbol(out, fn + "_Gradients", {"OpeningDisplacement"});
+        exportUnsignedShortSymbol(out, fn + "_nThermodynamicForces", 1);
         exportArrayOfIntegersSymbol(out, fn + "_ThermodynamicForcesTypes", {2});
         exportArrayOfStringsSymbol(out, fn + "_ThermodynamicForces",
                                    {"CohesiveForce"});

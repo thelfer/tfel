@@ -149,7 +149,7 @@ q3.setEntryName("ThirdGursonParameter");
     const real  trn = dPhi_dp;
     const Stensor4 dn_deel = (2*mu*(d2Phi_dsigeq2*(nH^nH)+dPhi_dsigeq*(H-(nH^nH))*inv_sigeq
 				    +one_third*one_third*d2Phi_dp2*(id^id))
-			      +lambda*((one_third*d2Phi_dp2*id)^id));;
+			      +lambda*((one_third*d2Phi_dp2*id)^id));
     const real  dtrn_dfeq = d2Phi_dpdf;
     const Stensor  dn_dfeq   = one_third*dtrn_dfeq*id;
     const Stensor  dtrn_deel = (2*mu*one_third*d2Phi_dp2+lambda*d2Phi_dp2)*id;
