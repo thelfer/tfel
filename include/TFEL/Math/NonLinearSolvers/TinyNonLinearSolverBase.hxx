@@ -68,7 +68,7 @@ namespace tfel::math {
     static_assert(std::is_floating_point_v<NumericType>,
                   "invalid numeric type");
     //! \brief a simple alias
-    using size_type = unsigned short;
+    using iteration_number_type = unsigned short;
     //! \brief default constructor
     TinyNonLinearSolverBase() = default;
     //! \brief default constructor
@@ -211,9 +211,9 @@ namespace tfel::math {
      * This variable is set to zero at the beginning of the
      * `solveNonLinearSystem` method
      */
-    size_type iter;
+    iteration_number_type iter;
     //! \brief maximum number of iterations
-    size_type iterMax;
+    iteration_number_type iterMax;
     /*!
      * \brief boolean stating if an increment of the unknowns has been computed.
      */

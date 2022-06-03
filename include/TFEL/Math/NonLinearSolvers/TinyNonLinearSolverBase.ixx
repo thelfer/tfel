@@ -64,7 +64,8 @@ namespace tfel::math {
     auto& child = static_cast<Child&>(*this);
     child.reportBeginningOfResolution();
     this->iter =
-        typename TinyNonLinearSolverBase<N, NumericType, Child>::size_type{};
+        typename TinyNonLinearSolverBase<N, NumericType,
+                                         Child>::iteration_number_type{};
     this->is_delta_zeros_defined = false;
     child.executeInitialisationTaskBeforeResolution();
     while (this->iter != this->iterMax) {

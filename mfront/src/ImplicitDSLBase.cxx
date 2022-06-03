@@ -2139,12 +2139,13 @@ namespace mfront {
            << givd.name << "{\n"
            << "GetIntegrationVariablesDerivatives_" << givd.name << "("
            << this->mb.getClassName() << "& b,\n"
-           << "const tfel::math::TinyPermutation<" << nivs << ">& p,\n"
-           << rhs_type << "& v,\n"
+           << "const tfel::math::TinyPermutation<" << nivs << ">& "
+           << "mfront_permutation_argument,\n"
+           << rhs_type << "& mfront_rhs_argument,\n"
            << "bool& mfront_success_argument)\n"
            << ": behaviour(b),\n"
-           << "permutation(p)\n,"
-           << "rhs(v),\n"
+           << "mfront_local_permutation(mfront_permutation_argument)\n,"
+           << "mfront_local_rhs(mfront_rhs_argument),\n"
            << "mfront_success_reference(mfront_success_argument)\n"
            << "{}\n";
         for (size_type i = 0; i != isvs.size(); ++i) {
@@ -2159,11 +2160,11 @@ namespace mfront {
             }
           }
           os << "){\n"
-             << rhs_type << " lhs(-(this->rhs));\n"
+             << rhs_type << " mfront_local_lhs(-(this->mfront_local_rhs));\n"
              << "if(!tfel::math::TinyMatrixSolve<" << nivs
              << ", NumericType, false>"
              << "::back_substitute(this->behaviour.jacobian, "
-             << "this->permutation, lhs)){\n"
+             << "this->mfront_local_permutation, mfront_local_lhs)){\n"
              << "this->mfront_success_reference=false;\n"
              << "}\n";
           auto cr = SupportedTypes::TypeSize{};  // current row
@@ -2173,7 +2174,7 @@ namespace mfront {
             derivative_view.derivative_name =
                 "integration_variable_derivative_d" + v.name + "_dd" +
                 givd.name + "_view";
-            derivative_view.matrix_name = "lhs";
+            derivative_view.matrix_name = "mfront_local_lhs";
             derivative_view.first_variable = v;
             derivative_view.second_variable = givd;
             derivative_view.matrix_number_of_rows = nivs;
@@ -2191,12 +2192,12 @@ namespace mfront {
                  << v.name << "_dd" << givd.name << "_view;\n";
             } else {
               os << "for(typename " << rhs_type
-                 << "::size_type mfront_idx; mfront_idx !=" << v.arraySize
-                 << "; ++mfront_idx){\n"
+                 << "::size_type mfront_local_idx; mfront_local_idx !="
+                 << v.arraySize << "; ++mfront_local_idx){\n"
                  << "integration_variable_derivative_d" << v.name << "_dd"
                  << givd.name
-                 << "(mfront_idx) = integration_variable_derivative_d" << v.name
-                 << "_dd" << givd.name << "_view(mfront_idx);"
+                 << "(mfront_local_idx) = integration_variable_derivative_d"
+                 << v.name << "_dd" << givd.name << "_view(mfront_local_idx);"
                  << "}\n";
             }
           }
@@ -2205,8 +2206,8 @@ namespace mfront {
         os << "private:\n"
            << this->mb.getClassName() << "& behaviour;\n"
            << "const tfel::math::TinyPermutation<" << nivs
-           << ">& permutation;\n"
-           << rhs_type << "& rhs;\n"
+           << ">& mfront_local_permutation;\n"
+           << rhs_type << "& mfront_local_rhs;\n"
            << "bool& mfront_success_reference;\n"
            << "};\n"
            << "GetIntegrationVariablesDerivatives_" << givd.name << " "

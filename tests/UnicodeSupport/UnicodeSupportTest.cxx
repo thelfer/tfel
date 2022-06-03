@@ -46,9 +46,13 @@ struct UnicodeSupportTest final : public tfel::tests::TestCase {
   void test2() {
     using namespace tfel::unicode;
     TFEL_TESTS_ASSERT(getMangledString("εᵗᵒ") ==
-                      "tum_03B5__tum_1D57__tum_1D52__");
+                      "tfel_unicode_mangling_03B5"
+                      "tfel_unicode_mangling_1D57"
+                      "tfel_unicode_mangling_1D52");
     TFEL_TESTS_ASSERT(getMangledString("εᵉˡ") ==
-                      "tum_03B5__tum_1D49__tum_02E1__");
+                      "tfel_unicode_mangling_03B5"
+                      "tfel_unicode_mangling_1D49"
+                      "tfel_unicode_mangling_02E1");
   }
 };
 
