@@ -528,7 +528,10 @@ add_subdirectory(mfront-query)
 add_subdirectory(mfm)
 add_subdirectory(mfront-doc)
 add_subdirectory(mtest)
-add_subdirectory(tests)
+option(enable-testing "enable tests" ON)
+if(enable-testing)
+  add_subdirectory(tests)
+endif()
 add_subdirectory(mfm-test-generator)
 
 #documentations
