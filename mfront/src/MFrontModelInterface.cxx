@@ -26,7 +26,7 @@ namespace mfront {
 
   static std::string getHeaderGuard(const ModelDescription& mb) {
     const auto& m = mb.material;
-    std::string header = "LIB_MFRONTMODEL_";
+    std::string header = "LIB_MFRONT_MODEL";
     if (!mb.library.empty()) {
       header += "_";
       header += makeUpperCase(mb.library);

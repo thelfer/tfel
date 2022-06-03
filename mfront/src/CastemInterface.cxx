@@ -969,6 +969,33 @@ namespace mfront {
 
     out << "extern \"C\"{\n\n";
 
+    auto exportSmallStrainBehaviourSymbols = [&out](const std::string& fn) {
+      exportUnsignedShortSymbol(out, fn + "_BehaviourType", 1u);
+      exportUnsignedShortSymbol(out, fn + "_BehaviourKinematic", 1u);
+      exportUnsignedShortSymbol(out, fn + "_Interface", 1u);
+      exportUnsignedShortSymbol(out, fn + "_nMainVariables", 1u);
+      exportUnsignedShortSymbol(out, fn + "_nGradients", 1u);
+      exportArrayOfIntegersSymbol(out, fn + "_GradientsTypes", {1});
+      exportArrayOfStringsSymbol(out, fn + "_Gradients", {"Strain"});
+      exportUnsignedShortSymbol(out, fn + "_nThermodynamicForces", 1);
+      exportArrayOfIntegersSymbol(out, fn + "_ThermodynamicForcesTypes", {1});
+      exportArrayOfStringsSymbol(out, fn + "_ThermodynamicForces", {"Stress"});
+    };
+
+    auto exportFiniteStrainBehaviourSymbols = [&out](const std::string& fn) {
+      exportUnsignedShortSymbol(out, fn + "_BehaviourType", 2u);
+      exportUnsignedShortSymbol(out, fn + "_BehaviourKinematic", 3u);
+      exportUnsignedShortSymbol(out, fn + "_Interface", 2u);
+      exportUnsignedShortSymbol(out, fn + "_nMainVariables", 1u);
+      exportUnsignedShortSymbol(out, fn + "_nGradients", 1u);
+      exportArrayOfIntegersSymbol(out, fn + "_GradientsTypes", {3});
+      exportArrayOfStringsSymbol(out, fn + "_Gradients",
+                                 {"DeformationGradient"});
+      exportUnsignedShortSymbol(out, fn + "_nThermodynamicForces", 1);
+      exportArrayOfIntegersSymbol(out, fn + "_ThermodynamicForcesTypes", {1});
+      exportArrayOfStringsSymbol(out, fn + "_ThermodynamicForces", {"Stress"});
+    };
+
     if (mb.getBehaviourType() ==
         BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) {
       if (!areFiniteStrainStrategiesDefined(mb)) {
@@ -983,26 +1010,7 @@ namespace mfront {
             sg.generateSymbols(out, *this, mb, fd, name, h);
           }
         }
-        const auto fn = this->getFunctionNameBasis(name);
-        out << "MFRONT_SHAREDOBJ unsigned short " << fn
-            << "_BehaviourType = 1u;\n\n";
-        out << "MFRONT_SHAREDOBJ unsigned short " << fn
-            << "_BehaviourKinematic = 1u;\n\n";
-        out << "MFRONT_SHAREDOBJ unsigned short " << fn
-            << "_Interface = 1u;\n\n";
-        out << "MFRONT_SHAREDOBJ unsigned short " << fn
-            << "_nMainVariables = 1u;\n\n";
-        out << "MFRONT_SHAREDOBJ unsigned short " << fn
-            << "_nGradients = 1u;\n";
-        out << "MFRONT_SHAREDOBJ int " << fn << "_GradientsTypes[1u] = {1};\n";
-        out << "MFRONT_SHAREDOBJ const char* " << fn
-            << "_Gradients[1u] = {\"Strain\"};\n\n";
-        out << "MFRONT_SHAREDOBJ unsigned short " << fn
-            << "_nThermodynamicForces = 1u;\n";
-        out << "MFRONT_SHAREDOBJ int " << fn
-            << "_ThermodynamicForcesTypes[1u] = {1};\n";
-        out << "MFRONT_SHAREDOBJ const char* " << fn
-            << "_ThermodynamicForces[1u] = {\"Stress\"};\n\n";
+        exportSmallStrainBehaviourSymbols(this->getFunctionNameBasis(name));
       } else {
         const auto fss = getFiniteStrainStrategies(mb);
         for (const auto& fs : fss) {
@@ -1018,27 +1026,8 @@ namespace mfront {
                 sg.generateSymbols(out, *this, mb, fd, name + "_frst", h);
               }
             }
-            const auto fn = this->getFunctionNameBasis(name + "_frst");
-            out << "MFRONT_SHAREDOBJ unsigned short " << fn
-                << "_BehaviourType = 2u;\n\n";
-            out << "MFRONT_SHAREDOBJ unsigned short " << fn
-                << "_BehaviourKinematic = 3u;\n\n";
-            out << "MFRONT_SHAREDOBJ unsigned short " << fn
-                << "_Interface = 2u;\n\n";
-            out << "MFRONT_SHAREDOBJ unsigned short " << fn
-                << "_nMainVariables = 1u;\n\n";
-            out << "MFRONT_SHAREDOBJ unsigned short " << fn
-                << "_nGradients = 1u;\n";
-            out << "MFRONT_SHAREDOBJ int " << fn
-                << "_GradientsTypes[1u] = {3};\n";
-            out << "MFRONT_SHAREDOBJ const char* " << fn
-                << "_Gradients[1u] = {\"DeformationGradient\"};\n\n";
-            out << "MFRONT_SHAREDOBJ unsigned short " << fn
-                << "_nThermodynamicForces = 1u;\n";
-            out << "MFRONT_SHAREDOBJ int " << fn
-                << "_ThermodynamicForcesTypes[1u] = {1};\n";
-            out << "MFRONT_SHAREDOBJ const char* " << fn
-                << "_ThermodynamicForces[1u] = {\"Stress\"};\n\n";
+            exportFiniteStrainBehaviourSymbols(
+                this->getFunctionNameBasis(name + "_frst"));
             if (fss.size() == 1u) {
               sg.generateGeneralSymbols(out, *this, mb, fd, mhs, name);
               if (!mb.areAllMechanicalDataSpecialised(mhs)) {
@@ -1050,27 +1039,8 @@ namespace mfront {
                   sg.generateSymbols(out, *this, mb, fd, name, h);
                 }
               }
-              const auto fn2 = this->getFunctionNameBasis(name);
-              out << "MFRONT_SHAREDOBJ unsigned short " << fn2
-                  << "_BehaviourType = 2u;\n\n";
-              out << "MFRONT_SHAREDOBJ unsigned short " << fn2
-                  << "_BehaviourKinematic = 3u;\n\n";
-              out << "MFRONT_SHAREDOBJ unsigned short " << fn2
-                  << "_Interface = 2u;\n\n";
-              out << "MFRONT_SHAREDOBJ unsigned short " << fn2
-                  << "_nMainVariables = 1u;\n\n";
-              out << "MFRONT_SHAREDOBJ unsigned short " << fn2
-                  << "_nGradients = 1u;\n";
-              out << "MFRONT_SHAREDOBJ int " << fn2
-                  << "_GradientsTypes[1u] = {3};\n";
-              out << "MFRONT_SHAREDOBJ const char* " << fn2
-                  << "_Gradients[1u] = {\"DeformationGradient\"};\n\n";
-              out << "MFRONT_SHAREDOBJ unsigned short " << fn2
-                  << "_nThermodynamicForces = 1u;\n";
-              out << "MFRONT_SHAREDOBJ int " << fn2
-                  << "_ThermodynamicForcesTypes[1u] = {1};\n";
-              out << "MFRONT_SHAREDOBJ const char* " << fn2
-                  << "_ThermodynamicForces[1u] = {\"Stress\"};\n\n";
+              exportFiniteStrainBehaviourSymbols(
+                  this->getFunctionNameBasis(name));
             }
           } else if (fs == "MieheApelLambrechtLogarithmicStrain") {
             CastemSymbolsGenerator sg;
@@ -1084,27 +1054,8 @@ namespace mfront {
                 sg.generateSymbols(out, *this, mb, fd, name + "_malls", h);
               }
             }
-            const auto fn = this->getFunctionNameBasis(name + "_malls");
-            out << "MFRONT_SHAREDOBJ unsigned short " << fn
-                << "_BehaviourType = 2u;\n\n";
-            out << "MFRONT_SHAREDOBJ unsigned short " << fn
-                << "_BehaviourKinematic = 3u;\n\n";
-            out << "MFRONT_SHAREDOBJ unsigned short " << fn
-                << "_Interface = 2u;\n\n";
-            out << "MFRONT_SHAREDOBJ unsigned short " << fn
-                << "_nMainVariables = 1u;\n\n";
-            out << "MFRONT_SHAREDOBJ unsigned short " << fn
-                << "_nGradients = 1u;\n";
-            out << "MFRONT_SHAREDOBJ int " << fn
-                << "_GradientsTypes[1u] = {3};\n";
-            out << "MFRONT_SHAREDOBJ const char* " << fn
-                << "_Gradients[1u] = {\"DeformationGradient\"};\n\n";
-            out << "MFRONT_SHAREDOBJ unsigned short " << fn
-                << "_nThermodynamicForces = 1u;\n";
-            out << "MFRONT_SHAREDOBJ int " << fn
-                << "_ThermodynamicForcesTypes[1u] = {1};\n";
-            out << "MFRONT_SHAREDOBJ const char* " << fn
-                << "_ThermodynamicForces[1u] = {\"Stress\"};\n\n";
+            exportFiniteStrainBehaviourSymbols(
+                this->getFunctionNameBasis(name + "_malls"));
             if (fss.size() == 1u) {
               sg.generateGeneralSymbols(out, *this, mb, fd, mhs, name);
               if (!mb.areAllMechanicalDataSpecialised(mhs)) {
@@ -1116,29 +1067,26 @@ namespace mfront {
                   sg.generateSymbols(out, *this, mb, fd, name, h);
                 }
               }
-              const auto fn2 = this->getFunctionNameBasis(name);
-              out << "MFRONT_SHAREDOBJ unsigned short " << fn2
-                  << "_BehaviourType = 2u;\n\n";
-              out << "MFRONT_SHAREDOBJ unsigned short " << fn2
-                  << "_BehaviourKinematic = 3u;\n\n";
-              out << "MFRONT_SHAREDOBJ unsigned short " << fn2
-                  << "_Interface = 2u;\n\n";
-              out << "MFRONT_SHAREDOBJ unsigned short " << fn2
-                  << "_nMainVariables = 1u;\n\n";
-              out << "MFRONT_SHAREDOBJ unsigned short " << fn2
-                  << "_nGradients = 1u;\n";
-              out << "MFRONT_SHAREDOBJ int " << fn2
-                  << "_GradientsTypes[1u] = {3};\n";
-              out << "MFRONT_SHAREDOBJ const char* " << fn2
-                  << "_Gradients[1u] = {\"DeformationGradient\"};\n\n";
-              out << "MFRONT_SHAREDOBJ unsigned short " << fn2
-                  << "_nThermodynamicForces = 1u;\n";
-              out << "MFRONT_SHAREDOBJ int " << fn2
-                  << "_ThermodynamicForcesTypes[1u] = {1};\n";
-              out << "MFRONT_SHAREDOBJ const char* " << fn2
-                  << "_ThermodynamicForces[1u] = {\"Stress\"};\n\n";
+              exportFiniteStrainBehaviourSymbols(
+                  this->getFunctionNameBasis(name));
             }
           } else if (fs == "LogarithmicStrain1D") {
+            auto exportLogarithmicStrain1DFiniteStrainBehaviourSymbols =
+                [&out](const std::string& fn) {
+                  exportUnsignedShortSymbol(out, fn + "_BehaviourType", 2u);
+                  exportUnsignedShortSymbol(out, fn + "_BehaviourKinematic",
+                                            4u);
+                  exportUnsignedShortSymbol(out, fn + "_Interface", 1u);
+                  exportUnsignedShortSymbol(out, fn + "_nMainVariables", 1u);
+                  exportUnsignedShortSymbol(out, fn + "_nGradients", 1u);
+                  exportArrayOfIntegersSymbol(out, fn + "_GradientsTypes", {1});
+                  exportArrayOfStringsSymbol(out, fn + "_Gradients",
+                                             {"Strain"});
+                  exportArrayOfIntegersSymbol(
+                      out, fn + "_ThermodynamicForcesTypes", {1});
+                  exportArrayOfStringsSymbol(out, fn + "_ThermodynamicForces",
+                                             {"Stress"});
+                };
             const auto agps =
                 ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN;
             CastemSymbolsGenerator sg;
@@ -1155,36 +1103,18 @@ namespace mfront {
                 }
               }
             }
-            const auto fn = this->getFunctionNameBasis(name + "_log1D");
-            out << "MFRONT_SHAREDOBJ unsigned short " << fn
-                << "_BehaviourType = 2u;\n\n";
-            out << "MFRONT_SHAREDOBJ unsigned short " << fn
-                << "_BehaviourKinematic = 4u;\n\n";
-            out << "MFRONT_SHAREDOBJ unsigned short " << fn
-                << "_Interface = 1u;\n\n";
-            out << "MFRONT_SHAREDOBJ unsigned short " << fn
-                << "_nMainVariables = 1u;\n\n";
-            out << "MFRONT_SHAREDOBJ unsigned short " << fn
-                << "_nGradients = 1u;\n";
-            out << "MFRONT_SHAREDOBJ int " << fn
-                << "_GradientsTypes[1u] = {1};\n";
-            out << "MFRONT_SHAREDOBJ const char* " << fn
-                << "_Gradients[1u] = {\"Strain\"};\n\n";
-            out << "MFRONT_SHAREDOBJ unsigned short " << fn
-                << "_nThermodynamicForces = 1u;\n";
-            out << "MFRONT_SHAREDOBJ int " << fn
-                << "_ThermodynamicForcesTypes[1u] = {1};\n";
-            out << "MFRONT_SHAREDOBJ const char* " << fn
-                << "_ThermodynamicForces[1u] = {\"Stress\"};\n\n";
+            exportLogarithmicStrain1DFiniteStrainBehaviourSymbols(
+                this->getFunctionNameBasis(name + "_log1D"));
             if (fss.size() == 1u) {
               sg.generateGeneralSymbols(out, *this, mb, fd, mhs, name);
-              out << "MFRONT_SHAREDOBJ unsigned short "
-                  << this->getFunctionNameBasis(name)
-                  << "_nModellingHypotheses = " << 1u << "u;\n\n";
-              out << "MFRONT_SHAREDOBJ const char * \n"
-                  << this->getFunctionNameBasis(name)
-                  << "_ModellingHypotheses[1u] = {\""
-                  << ModellingHypothesis::toString(agps) << "\"};\n";
+              exportUnsignedShortSymbol(
+                  out,
+                  this->getFunctionNameBasis(name) + "_nModellingHypotheses",
+                  1u);
+              exportArrayOfStringsSymbol(
+                  out,
+                  this->getFunctionNameBasis(name) + "_ModellingHypotheses",
+                  {ModellingHypothesis::toString(agps)});
               if (!mb.areAllMechanicalDataSpecialised(mhs)) {
                 const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
                 sg.generateSymbols(out, *this, mb, fd, name, uh);
@@ -1194,27 +1124,8 @@ namespace mfront {
                   sg.generateSymbols(out, *this, mb, fd, name, h);
                 }
               }
-              const auto fn2 = this->getFunctionNameBasis(name);
-              out << "MFRONT_SHAREDOBJ unsigned short " << fn2
-                  << "_BehaviourType = 2u;\n\n";
-              out << "MFRONT_SHAREDOBJ unsigned short " << fn2
-                  << "_BehaviourKinematic = 4u;\n\n";
-              out << "MFRONT_SHAREDOBJ unsigned short " << fn2
-                  << "_Interface = 1u;\n\n";
-              out << "MFRONT_SHAREDOBJ unsigned short " << fn2
-                  << "_nMainVariables = 1u;\n\n";
-              out << "MFRONT_SHAREDOBJ unsigned short " << fn2
-                  << "_nGradients = 1u;\n";
-              out << "MFRONT_SHAREDOBJ int " << fn2
-                  << "_GradientsTypes[1u] = {1};\n";
-              out << "MFRONT_SHAREDOBJ const char* " << fn2
-                  << "_Gradients[1u] = {\"Strain\"};\n\n";
-              out << "MFRONT_SHAREDOBJ unsigned short " << fn2
-                  << "_nThermodynamicForces = 1u;\n";
-              out << "MFRONT_SHAREDOBJ int " << fn2
-                  << "_ThermodynamicForcesTypes[1u] = {1};\n";
-              out << "MFRONT_SHAREDOBJ const char* " << fn2
-                  << "_ThermodynamicForces[1u] = {\"Stress\"};\n\n";
+              exportLogarithmicStrain1DFiniteStrainBehaviourSymbols(
+                  this->getFunctionNameBasis(name));
             }
           } else if (fs == "None") {
             CastemSymbolsGenerator sg;
@@ -1228,27 +1139,8 @@ namespace mfront {
                 sg.generateSymbols(out, *this, mb, fd, name + "_ss", h);
               }
             }
-            const auto fn = this->getFunctionNameBasis(name + "_ss");
-            out << "MFRONT_SHAREDOBJ unsigned short " << fn
-                << "_BehaviourType = 1u;\n\n";
-            out << "MFRONT_SHAREDOBJ unsigned short " << fn
-                << "_BehaviourKinematic = 1u;\n\n";
-            out << "MFRONT_SHAREDOBJ unsigned short " << fn
-                << "_Interface = 1u;\n\n";
-            out << "MFRONT_SHAREDOBJ unsigned short " << fn
-                << "_nMainVariables = 1u;\n\n";
-            out << "MFRONT_SHAREDOBJ unsigned short " << fn
-                << "_nGradients = 1u;\n";
-            out << "MFRONT_SHAREDOBJ int " << fn
-                << "_GradientsTypes[1u] = {1};\n";
-            out << "MFRONT_SHAREDOBJ const char* " << fn
-                << "_Gradients[1u] = {\"Strain\"};\n\n";
-            out << "MFRONT_SHAREDOBJ unsigned short " << fn
-                << "_nThermodynamicForces = 1u;\n";
-            out << "MFRONT_SHAREDOBJ int " << fn
-                << "_ThermodynamicForcesTypes[1u] = {1};\n";
-            out << "MFRONT_SHAREDOBJ const char* " << fn
-                << "_ThermodynamicForces[1u] = {\"Stress\"};\n\n";
+            exportSmallStrainBehaviourSymbols(
+                this->getFunctionNameBasis(name + "_ss"));
             if (fss.size() == 1u) {
               sg.generateGeneralSymbols(out, *this, mb, fd, mhs, name);
               if (!mb.areAllMechanicalDataSpecialised(mhs)) {
@@ -1260,27 +1152,8 @@ namespace mfront {
                   sg.generateSymbols(out, *this, mb, fd, name, h);
                 }
               }
-              const auto fn2 = this->getFunctionNameBasis(name);
-              out << "MFRONT_SHAREDOBJ unsigned short " << fn2
-                  << "_BehaviourType = 1u;\n\n";
-              out << "MFRONT_SHAREDOBJ unsigned short " << fn2
-                  << "_BehaviourKinematic = 1u;\n\n";
-              out << "MFRONT_SHAREDOBJ unsigned short " << fn2
-                  << "_Interface = 1u;\n\n";
-              out << "MFRONT_SHAREDOBJ unsigned short " << fn2
-                  << "_nMainVariables = 1u;\n\n";
-              out << "MFRONT_SHAREDOBJ unsigned short " << fn2
-                  << "_nGradients = 1u;\n";
-              out << "MFRONT_SHAREDOBJ int " << fn2
-                  << "_GradientsTypes[1u] = {1};\n";
-              out << "MFRONT_SHAREDOBJ const char* " << fn2
-                  << "_Gradients[1u] = {\"Strain\"};\n\n";
-              out << "MFRONT_SHAREDOBJ unsigned short " << fn2
-                  << "_nThermodynamicForces = 1u;\n";
-              out << "MFRONT_SHAREDOBJ int " << fn2
-                  << "_ThermodynamicForcesTypes[1u] = {1};\n";
-              out << "MFRONT_SHAREDOBJ const char* " << fn2
-                  << "_ThermodynamicForces[1u] = {\"Stress\"};\n\n";
+              exportSmallStrainBehaviourSymbols(
+                  this->getFunctionNameBasis(name));
             }
           } else {
             throw_if(true,
@@ -1300,27 +1173,7 @@ namespace mfront {
               sg.generateSymbols(out, *this, mb, fd, name, h);
             }
           }
-          const auto fn = this->getFunctionNameBasis(name);
-          out << "MFRONT_SHAREDOBJ unsigned short " << fn
-              << "_BehaviourType = 1u;\n\n";
-          out << "MFRONT_SHAREDOBJ unsigned short " << fn
-              << "_BehaviourKinematic = 1u;\n\n";
-          out << "MFRONT_SHAREDOBJ unsigned short " << fn
-              << "_Interface = 1u;\n\n";
-          out << "MFRONT_SHAREDOBJ unsigned short " << fn
-              << "_nMainVariables = 1u;\n\n";
-          out << "MFRONT_SHAREDOBJ unsigned short " << fn
-              << "_nGradients = 1u;\n";
-          out << "MFRONT_SHAREDOBJ int " << fn
-              << "_GradientsTypes[1u] = {1};\n";
-          out << "MFRONT_SHAREDOBJ const char* " << fn
-              << "_Gradients[1u] = {\"Strain\"};\n\n";
-          out << "MFRONT_SHAREDOBJ unsigned short " << fn
-              << "_nThermodynamicForces = 1u;\n";
-          out << "MFRONT_SHAREDOBJ int " << fn
-              << "_ThermodynamicForcesTypes[1u] = {1};\n";
-          out << "MFRONT_SHAREDOBJ const char* " << fn
-              << "_ThermodynamicForces[1u] = {\"Stress\"};\n\n";
+          exportSmallStrainBehaviourSymbols(this->getFunctionNameBasis(name));
         }
       }
     } else {
@@ -1337,48 +1190,20 @@ namespace mfront {
       }
       if (mb.getBehaviourType() ==
           BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR) {
-        const auto fn = this->getFunctionNameBasis(name);
-        out << "MFRONT_SHAREDOBJ unsigned short " << fn
-            << "_BehaviourType = 2u;\n\n";
-        out << "MFRONT_SHAREDOBJ unsigned short " << fn
-            << "_BehaviourKinematic = 3u;\n\n";
-        out << "MFRONT_SHAREDOBJ unsigned short " << fn
-            << "_Interface = 2u;\n\n";
-        out << "MFRONT_SHAREDOBJ unsigned short " << fn
-            << "_nMainVariables = 1u;\n\n";
-        out << "MFRONT_SHAREDOBJ unsigned short " << fn
-            << "_nGradients = 1u;\n";
-        out << "MFRONT_SHAREDOBJ int " << fn << "_GradientsTypes[1u] = {3};\n";
-        out << "MFRONT_SHAREDOBJ const char* " << fn
-            << "_Gradients[1u] = {\"DeformationGradient\"};\n\n";
-        out << "MFRONT_SHAREDOBJ unsigned short " << fn
-            << "_nThermodynamicForces = 1u;\n";
-        out << "MFRONT_SHAREDOBJ int " << fn
-            << "_ThermodynamicForcesTypes[1u] = {1};\n";
-        out << "MFRONT_SHAREDOBJ const char* " << fn
-            << "_ThermodynamicForces[1u] = {\"Stress\"};\n\n";
+        exportFiniteStrainBehaviourSymbols(this->getFunctionNameBasis(name));
       } else {
         // cohesize zone model
         const auto fn = this->getFunctionNameBasis(name);
-        out << "MFRONT_SHAREDOBJ unsigned short " << fn
-            << "_BehaviourType = 3u;\n\n";
-        out << "MFRONT_SHAREDOBJ unsigned short " << fn
-            << "_BehaviourKinematic = 2u;\n\n";
-        out << "MFRONT_SHAREDOBJ unsigned short " << fn
-            << "_Interface = 1u;\n\n";
-        out << "MFRONT_SHAREDOBJ unsigned short " << fn
-            << "_nMainVariables = 1u;\n\n";
-        out << "MFRONT_SHAREDOBJ unsigned short " << fn
-            << "_nGradients = 1u;\n";
-        out << "MFRONT_SHAREDOBJ int " << fn << "_GradientsTypes[1u] = {2};\n";
-        out << "MFRONT_SHAREDOBJ const char* " << fn
-            << "_Gradients[1u] = {\"OpeningDisplacement\"};\n\n";
-        out << "MFRONT_SHAREDOBJ unsigned short " << fn
-            << "_nThermodynamicForces = 1u;\n";
-        out << "MFRONT_SHAREDOBJ int " << fn
-            << "_ThermodynamicForcesTypes[1u] = {2};\n";
-        out << "MFRONT_SHAREDOBJ const char* " << fn
-            << "_ThermodynamicForces[1u] = {\"CohesiveForce\"};\n\n";
+        exportUnsignedShortSymbol(out, fn + "_BehaviourType", 3u);
+        exportUnsignedShortSymbol(out, fn + "_BehaviourKinematic", 2u);
+        exportUnsignedShortSymbol(out, fn + "_Interface", 1u);
+        exportUnsignedShortSymbol(out, fn + "_nMainVariables", 1u);
+        exportUnsignedShortSymbol(out, fn + "_nGradients", 1u);
+        exportArrayOfIntegersSymbol(out, fn + "_GradientsTypes", {2});
+        exportArrayOfStringsSymbol(out, fn + "_Gradients", {"OpeningDisplacement"});
+        exportArrayOfIntegersSymbol(out, fn + "_ThermodynamicForcesTypes", {2});
+        exportArrayOfStringsSymbol(out, fn + "_ThermodynamicForces",
+                                   {"CohesiveForce"});
       }
     }
 
@@ -2566,7 +2391,7 @@ namespace mfront {
     // list of material properties (must use the real hypothesis)
     const auto mprops = this->buildMaterialPropertiesList(bd, h);
     //
-    const auto nonlin = [&bd, &throw_if]() -> std::string {
+    const auto nonlin = [&bd]() -> std::string {
       if (bd.getBehaviourType() ==
           BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) {
         return "'NON_LINEAIRE' 'UTILISATEUR'";
@@ -2574,7 +2399,9 @@ namespace mfront {
                  BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR) {
         return "'NON_LINEAIRE' 'UTILISATEUR' 'EPSILON' 'UTILISATEUR'";
       }
-      throw_if(true, "internal error, unsupported behaviour type");
+      tfel::raise(
+          "CastemInterface::generateInputFileExampleForHypothesis: "
+          "internal error, unsupported behaviour type");
     }();
     // gibiane declaration starts here
     auto tmp = std::string{};

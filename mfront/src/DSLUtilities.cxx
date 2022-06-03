@@ -89,6 +89,20 @@ namespace mfront {
     return aliases;
   }  // end of getTypeAliases
 
+  void exportStringSymbol(std::ostream& os,
+                          const std::string& n,
+                          const std::string& v){
+    exportSymbol(os, "const char*", n, '"' + v + '"');
+  } // end of exportStringSymbol
+
+  void exportUnsignedShortSymbol(std::ostream& os,
+                                 const std::string& n,
+                                 const unsigned short v) {
+    std::ostringstream value;
+    value << v;
+    exportSymbol(os, "unsigned short", n, value.str() + "u");
+  }  // end of exportUnsignedShortSymbol
+
   void writeParametersSymbols(std::ostream& os,
                               const std::string& n,
                               const MaterialPropertyDescription& mpd) {
@@ -106,16 +120,23 @@ namespace mfront {
       std::ostream& os,
       const std::string& n,
       const VariableDescriptionContainer& parameters) {
-    os << "MFRONT_SHAREDOBJ unsigned short " << n
-       << "_nParameters = " << parameters.getNumberOfVariables() << ";\n";
-    writeArrayOfStringsSymbol(os, n + "_Parameters",
-                              parameters.getExternalNames());
+    exportUnsignedShortSymbol(os, n + "_nParameters",
+                              parameters.getNumberOfVariables());
+    exportArrayOfStringsSymbol(os, n + "_Parameters",
+                               parameters.getExternalNames());
     if (parameters.empty()) {
-      os << "MFRONT_SHAREDOBJ const int * " << n
-         << "_ParametersTypes = nullptr;\n\n";
+      exportSymbol(os, "const int *", n + "_ParametersTypes", "nullptr");
       return;
     }
-    os << "MFRONT_SHAREDOBJ int " << n << "_ParametersTypes [] = {";
+    const auto size = [&parameters] {
+      auto s = std::size_t{};
+      for (const auto& p : parameters) {
+        s += p.arraySize;
+      }
+      return s;
+    }();
+    os << "MFRONT_EXPORT_ARRAY_OF_SYMBOLS(int, " << n << "_ParametersTypes, "
+       << size << ", MFRONT_EXPORT_ARRAY_ARGUMENTS(";
     for (auto p = parameters.begin(); p != parameters.end();) {
       for (unsigned short is = 0; is != p->arraySize;) {
         if (p->type == "int") {
@@ -139,7 +160,7 @@ namespace mfront {
         os << ",";
       }
     }
-    os << "};\n\n";
+    os << "));\n\n";
   }  // end of writeParametersDeclarationSymbols
 
   void writeParametersDefaultValuesSymbols(
@@ -161,25 +182,50 @@ namespace mfront {
             "writeParameterDefaultValueSymbols: "
             "array of parameters is not supported");
       }
-      os << "MFRONT_SHAREDOBJ double " << n << "_" << p.getExternalName()
-         << "_ParameterDefaultValue"
-         << " = " << p.getAttribute<double>(VariableDescription::defaultValue)
-         << ";\n\n";
+      exportSymbol(os, "double",
+                   n + "_" + p.getExternalName() + "_ParameterDefaultValue",
+                   p.getAttribute<double>(VariableDescription::defaultValue));
       os.precision(prec);
     }
   }  // end of writeParametersDefaultValuesSymbols
 
-  void writeArrayOfStringsSymbol(std::ostream& os,
-                                 const std::string& s,
-                                 const std::vector<std::string>& values) {
+  void exportArrayOfIntegersSymbol(std::ostream& os,
+                                   const std::string& s,
+                                   const std::vector<int>& values) {
+
     if (values.empty()) {
-      os << "MFRONT_SHAREDOBJ const char * const * " << s << " = nullptr;\n\n";
+      exportSymbol(os, "const int *", s, "nullptr");
       return;
     }
     auto i = decltype(values.size()){};
     auto p = values.begin();
-    os << "MFRONT_SHAREDOBJ const char * " << s << "[" << values.size()
-       << "] = {";
+    os << "MFRONT_EXPORT_ARRAY_OF_SYMBOLS(int, " << s << ", "
+       << values.size() << ", MFRONT_EXPORT_ARRAY_ARGUMENTS(";
+    while (p != values.end()) {
+      os << *p;
+      if (++p != values.end()) {
+        if (i % 5 == 0) {
+          os << ",\n";
+        } else {
+          os << ",";
+        }
+      }
+      ++i;
+    }
+    os << "));\n\n";
+  }  // end of exportArrayOfIntegersSymbol
+
+  void exportArrayOfStringsSymbol(std::ostream& os,
+                                  const std::string& s,
+                                  const std::vector<std::string>& values) {
+    if (values.empty()) {
+      exportSymbol(os, "const char * const *", s, "nullptr");
+      return;
+    }
+    auto i = decltype(values.size()){};
+    auto p = values.begin();
+    os << "MFRONT_EXPORT_ARRAY_OF_SYMBOLS(const char *, " << s << ", "
+       << values.size() << ", MFRONT_EXPORT_ARRAY_ARGUMENTS(";
     while (p != values.end()) {
       os << '"' << *p << '"';
       if (++p != values.end()) {
@@ -191,18 +237,19 @@ namespace mfront {
       }
       ++i;
     }
-    os << "};\n";
-  }  // end of writeArrayOfStringsSymbol
+    os << "));\n\n";
+  }  // end of exportArrayOfStringsSymbol
 
   void writeVariablesNamesSymbol(
       std::ostream& out,
       const std::string& name,
       const mfront::MaterialPropertyDescription& mpd) {
-    out << "MFRONT_SHAREDOBJ const char *\n"
-        << name << "_output = \"" << mpd.output.getExternalName() << "\";\n\n";
+    exportStringSymbol(out, name + "_output", mpd.output.getExternalName());
+    exportUnsignedShortSymbol(out, name + "_nargs", mpd.inputs.size());
     if (!mpd.inputs.empty()) {
-      out << "MFRONT_SHAREDOBJ const char *\n"
-          << name << "_args[" << mpd.inputs.size() << "] = {";
+      out << "MFRONT_EXPORT_ARRAY_OF_SYMBOLS(const char *, " << name
+          << "_args, " << mpd.inputs.size()
+          << ", MFRONT_EXPORT_ARRAY_ARGUMENTS(";
       for (auto p3 = mpd.inputs.begin(); p3 != mpd.inputs.end();) {
         const auto iname = '\"' + p3->getExternalName() + '\"';
         out << iname;
@@ -210,10 +257,8 @@ namespace mfront {
           out << ",";
         }
       }
-      out << "};\n\n";
+      out << "));\n\n";
     }
-    out << "MFRONT_SHAREDOBJ unsigned short\n"
-        << name << "_nargs = " << mpd.inputs.size() << "u;\n\n";
   }  // end of writeVariableNamesSymbol
 
   void writeBoundsSymbol(std::ostream& out,
@@ -223,13 +268,17 @@ namespace mfront {
                          const VariableBoundsDescription& b) {
     if ((b.boundsType == VariableBoundsDescription::LOWER) ||
         (b.boundsType == VariableBoundsDescription::LOWERANDUPPER)) {
-      out << "MFRONT_SHAREDOBJ long double " << n << "_" << vn << "_"
-          << "Lower" << bt << "Bound = " << b.lowerBound << ";\n\n";
+      out << "MFRONT_EXPORT_SYMBOL(long double, "  //
+          << n << "_" << vn << "_"
+          << "Lower" << bt << "Bound, "  //
+          << "static_cast<long double>(" << b.lowerBound << "));\n\n";
     }
     if ((b.boundsType == VariableBoundsDescription::UPPER) ||
         (b.boundsType == VariableBoundsDescription::LOWERANDUPPER)) {
-      out << "MFRONT_SHAREDOBJ long double " << n << "_" << vn << "_"
-          << "Upper" << bt << "Bound = " << b.upperBound << ";\n\n";
+      out << "MFRONT_EXPORT_SYMBOL(long double, "  //
+          << n << "_" << vn << "_"
+          << "Upper" << bt << "Bound, "  //
+          << "static_cast<long double>(" << b.upperBound << "));\n\n";
     }
   }  // end of writeBoundsSymbol
 
@@ -352,26 +401,23 @@ namespace mfront {
       }
       return r;
     }();
-    os << "MFRONT_SHAREDOBJ const char* \n"
-       << n << "_author = \"" << fd.authorName << "\";\n";
-    os << "MFRONT_SHAREDOBJ const char* \n"
-       << n << "_date = \"" << fd.date << "\";\n";
-    os << "MFRONT_SHAREDOBJ const char* \n"
-       << n << "_description = \"" << description << "\";\n\n";
+    exportStringSymbol(os, n + "_author", fd.authorName);
+    exportStringSymbol(os, n + "_date", fd.date);
+    exportStringSymbol(os, n + "_description", description);
   }  // end of writeFileDescriptionSymbols
 
   void writeBuildIdentifierSymbol(std::ostream& os,
                                   const std::string& n,
                                   const MaterialKnowledgeDescription& d) {
-    const auto* const build_id = std::getenv("TFEL_BUILD_ID");
-    os << "MFRONT_SHAREDOBJ const char* \n" << n << "_build_id =";
-    if (build_id != nullptr) {
-      os << '\"' << build_id << "\";\n\n";
-      return;
-    }
-    const auto bid = d.getAttribute<std::string>(
-        MaterialKnowledgeDescription::buildIdentifier, "");
-    os << "\"" << bid << "\";\n\n";
+    const auto build_id = [&d]() -> std::string {
+      const auto* const bid = std::getenv("TFEL_BUILD_ID");
+      if (bid != nullptr) {
+        return bid;
+      }
+      return d.getAttribute<std::string>(
+          MaterialKnowledgeDescription::buildIdentifier, "");
+    }();
+    exportStringSymbol(os, n + "_build_id", build_id);
   }  // end of writeBuildIdentifierSymbols
 
   void writeEntryPointSymbol(std::ostream& out, const std::string& n) {
@@ -381,52 +427,50 @@ namespace mfront {
   void writeEntryPointSymbol(std::ostream& out,
                              const std::string& n,
                              const std::string& n2) {
-    out << "MFRONT_SHAREDOBJ const char* \n"
-        << n << "_mfront_ept = \"" << n2 << "\";\n\n";
+    exportStringSymbol(out, n + "_mfront_ept", n2);
   }  // end of writeEntryPointSymbols
 
   void writeTFELVersionSymbol(std::ostream& out, const std::string& n) {
-    out << "MFRONT_SHAREDOBJ const char* \n"
-        << n << "_tfel_version = \"" << ::getTFELVersion() << "\";\n\n";
+    exportStringSymbol(out, n + "_tfel_version", ::getTFELVersion());
   }  // end of writeTFELVersionSymbol
 
   void writeInterfaceSymbol(std::ostream& out,
                             const std::string& n,
                             const std::string& i) {
-    out << "MFRONT_SHAREDOBJ const char *\n"
-        << n << "_mfront_interface = \"" << i << "\";\n\n";
+    exportStringSymbol(out, n + "_mfront_interface", i);
   }  // end of writeInterfaceSymbol
 
   void writeLawSymbol(std::ostream& out,
                            const std::string& n,
                            const std::string& l) {
-    out << "MFRONT_SHAREDOBJ const char* " << n << "_mfront_law = \""
-	<< l << "\";\n";
+    exportStringSymbol(out, n + "_mfront_law", l);
   }  // end of writeLawSymbol
 
   void writeMaterialSymbol(std::ostream& out,
                            const std::string& n,
                            const std::string& m) {
     if (!m.empty()) {
-      out << "MFRONT_SHAREDOBJ const char* " << n << "_mfront_material = \""
-          << m << "\";\n";
+      exportStringSymbol(out, n + "_mfront_material", m);
     }
   }  // end of writeMaterialSymbol
   
   void writeMaterialKnowledgeTypeSymbol(std::ostream& out,
                                         const std::string& n,
                                         const MaterialKnowledgeType& t) {
-    if (t == MATERIALPROPERTY) {
-      out << "MFRONT_SHAREDOBJ unsigned short " << n << "_mfront_mkt = 0u;\n\n";
-    } else if (t == BEHAVIOUR) {
-      out << "MFRONT_SHAREDOBJ unsigned short " << n << "_mfront_mkt = 1u;\n\n";
-    } else if (t == MODEL) {
-      out << "MFRONT_SHAREDOBJ unsigned short " << n << "_mfront_mkt = 2u;\n\n";
-    } else {
-      tfel::raise(
-          "writeMaterialKnowledgeTypeSymbol: "
-          "internal error, (unsupported material knowledge type)");
-    }
+    const auto s = [&t] {
+      if (t == MATERIALPROPERTY) {
+        return 0;
+      } else if (t == BEHAVIOUR) {
+        return 1;
+      } else if (t == MODEL) {
+        return 2;
+      } else {
+        tfel::raise(
+            "writeMaterialKnowledgeTypeSymbol: "
+            "internal error, (unsupported material knowledge type)");
+      }
+    }();
+    exportUnsignedShortSymbol(out, n + "_mfront_mkt", s);
   }  // end of writeMaterialKnowledgeTypeSymbol
 
   void writeMaterialLaws(std::ostream& os,
@@ -562,6 +606,19 @@ namespace mfront {
          << "#define MFRONT_SHAREDOBJ TFEL_VISIBILITY_EXPORT\n"
          << "#endif /* MFRONT_SHAREDOBJ */\n\n";
     }
+    os << "#ifndef MFRONT_EXPORT_SYMBOL\n"
+       << "#define MFRONT_EXPORT_SYMBOL(TYPE, NAME, VALUE) \\\n"
+       << "  MFRONT_SHAREDOBJ extern TYPE NAME;            \\\n"
+       << "  MFRONT_SHAREDOBJ TYPE NAME = VALUE\n"
+       << "#endif /* MFRONT_EXPORT_SYMBOL*/\n\n"
+       << "#ifndef MFRONT_EXPORT_ARRAY_ARGUMENTS\n"
+       << "#define MFRONT_EXPORT_ARRAY_ARGUMENTS(...) __VA_ARGS__\n"
+       << "#endif /* MFRONT_EXPORT_ARRAY_ARGUMENTS */\n\n"
+       << "#ifndef MFRONT_EXPORT_ARRAY_OF_SYMBOLS\n"
+       << "#define MFRONT_EXPORT_ARRAY_OF_SYMBOLS(TYPE, NAME, SIZE, VALUE) \\\n"
+       << "  MFRONT_SHAREDOBJ extern TYPE NAME[SIZE];                      \\\n"
+       << "  MFRONT_SHAREDOBJ TYPE NAME[SIZE] = {VALUE}\n"
+       << "#endif /* MFRONT_EXPORT_ARRAY_OF_SYMBOLS*/\n\n";
   }  // end of writeExportDirectives
 
   std::string makeUpperCase(const std::string& n) {

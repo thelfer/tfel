@@ -9,9 +9,12 @@
 @Input T;
 T.setGlossaryName("Temperature");
 
+// required if used by a behaviour
 @Constant ReferenceTemperature = 273.15;
 
 @Function{
+  // remove compiler warnings
+  static_cast<void>(ReferenceTemperature);
   a = 2.e-5*(1+(T-273.15)/500);
 } // end of Function
 

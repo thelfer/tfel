@@ -13,6 +13,7 @@
 
 #include <ostream>
 #include "TFEL/Raise.hxx"
+#include "MFront/DSLUtilities.hxx"
 #include "MFront/BehaviourDescription.hxx"
 #include "MFront/StandardBehaviourInterface.hxx"
 #include "MFront/EuroplexusInterface.hxx"
@@ -27,18 +28,17 @@ namespace mfront {
       const StandardBehaviourInterface& i,
       const BehaviourDescription& mb,
       const std::string& name) const {
-    out << "MFRONT_SHAREDOBJ unsigned short " << i.getFunctionNameBasis(name)
-        << "_BehaviourType = ";
+    const auto s = i.getFunctionNameBasis(name) + "_BehaviourType";
     if (mb.getBehaviourType() ==
         BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) {
       tfel::raise_if(!EuroplexusInterface::hasFiniteStrainStrategy(mb),
                      "EuroplexusSymbolsGenerator::writeBehaviourTypeSymbols: "
                      "behaviours written in the small strain framework "
                      "must be embedded in a strain strategy");
-      out << "2u;\n\n";
+      exportUnsignedShortSymbol(out, s, 2u);
     } else if (mb.getBehaviourType() ==
                BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR) {
-      out << "2u;\n\n";
+      exportUnsignedShortSymbol(out, s, 2u);
     } else {
       tfel::raise(
           "EuroplexusSymbolsGenerator::writeBehaviourTypeSymbols: "
@@ -51,8 +51,7 @@ namespace mfront {
       const StandardBehaviourInterface& i,
       const BehaviourDescription& mb,
       const std::string& name) const {
-    out << "MFRONT_SHAREDOBJ unsigned short " << i.getFunctionNameBasis(name)
-        << "_BehaviourKinematic = ";
+    const auto s = i.getFunctionNameBasis(name) + "_BehaviourKinematic";
     if (mb.getBehaviourType() ==
         BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) {
       tfel::raise_if(
@@ -60,10 +59,10 @@ namespace mfront {
           "EuroplexusSymbolsGenerator::writeBehaviourKinematicSymbols: "
           "behaviours written in the small strain framework "
           "must be embedded in a strain strategy");
-      out << "3u;\n\n";
+      exportUnsignedShortSymbol(out, s, 3u);
     } else if (mb.getBehaviourType() ==
                BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR) {
-      out << "3u;\n\n";
+      exportUnsignedShortSymbol(out, s, 3u);
     } else {
       tfel::raise(
           "EuroplexusSymbolsGenerator::writeBehaviourKinematicSymbols: "

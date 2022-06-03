@@ -380,10 +380,8 @@ namespace mfront {
         sg.generateSymbols(out, *this, mb, fd, name, h);
       }
     }
-
-    out << "MFRONT_SHAREDOBJ unsigned short cyrano" << makeLowerCase(name)
-        << "_Interface = 1u;\n\n";
-
+    exportUnsignedShortSymbol(
+        out, "cyrano" + makeLowerCase(name) + "_Interface", 1u);
     this->writeSetParametersFunctionsImplementations(out, mb, name);
     this->writeSetOutOfBoundsPolicyFunctionImplementation(out, mb, name);
 

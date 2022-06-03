@@ -13,6 +13,7 @@
 
 #include <ostream>
 #include "TFEL/Raise.hxx"
+#include "MFront/DSLUtilities.hxx"
 #include "MFront/BehaviourDescription.hxx"
 #include "MFront/StandardBehaviourInterface.hxx"
 #include "MFront/AnsysInterface.hxx"
@@ -47,19 +48,18 @@ namespace mfront {
       tfel::raise_if(b,
                      "AnsysSymbolsGenerator::writeBehaviourTypeSymbols: " + m);
     };
-    out << "MFRONT_SHAREDOBJ unsigned short " << i.getFunctionNameBasis(name)
-        << "_BehaviourType = ";
+    const auto s = i.getFunctionNameBasis(name) + "_BehaviourType";
     if (mb.getBehaviourType() ==
         BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) {
       if ((AnsysInterface::hasFiniteStrainStrategy(mb)) &&
           (AnsysInterface::getFiniteStrainStrategy(mb) != "Native")) {
-        out << "2u;\n\n";
+        exportUnsignedShortSymbol(out, s, 2u);
       } else {
-        out << "1u;\n\n";
+        exportUnsignedShortSymbol(out, s, 1u);
       }
     } else if (mb.getBehaviourType() ==
                BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR) {
-      out << "2u;\n\n";
+      exportUnsignedShortSymbol(out, s, 2u);
     } else {
       throw_if(true, "unsupported behaviour type");
     }
@@ -74,19 +74,18 @@ namespace mfront {
       tfel::raise_if(
           b, "AnsysSymbolsGenerator::writeBehaviourKinematicSymbols: " + m);
     };
-    out << "MFRONT_SHAREDOBJ unsigned short " << i.getFunctionNameBasis(name)
-        << "_BehaviourKinematic = ";
+    const auto s = i.getFunctionNameBasis(name) + "_BehaviourKinematic";
     if (mb.getBehaviourType() ==
         BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) {
       if ((AnsysInterface::hasFiniteStrainStrategy(mb)) &&
           (AnsysInterface::getFiniteStrainStrategy(mb) != "Native")) {
-        out << "3u;\n\n";
+        exportUnsignedShortSymbol(out, s, 3u);
       } else {
-        out << "1u;\n\n";
+        exportUnsignedShortSymbol(out, s, 1u);
       }
     } else if (mb.getBehaviourType() ==
                BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR) {
-      out << "3u;\n\n";
+      exportUnsignedShortSymbol(out, s, 3u);
     } else {
       throw_if(true, "unsupported behaviour type");
     }

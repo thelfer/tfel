@@ -376,11 +376,9 @@ namespace mfront {
     writeMaterialSymbol(out, name, mpd.material);
     writeMaterialKnowledgeTypeSymbol(out, name, MATERIALPROPERTY);
     writeParametersSymbols(out, name, mpd);
-
-    out << "MFRONT_SHAREDOBJ const char *\n"
-        << name << "_src = \""
-        << tfel::utilities::tokenize(file, tfel::system::dirSeparator()).back()
-        << "\";\n\n";
+    exportStringSymbol(
+        out, name + "_src",
+        tfel::utilities::tokenize(file, tfel::system::dirSeparator()).back());
 
     if ((!areParametersTreatedAsStaticVariables(mpd)) && (!params.empty())) {
       const auto hn = getMaterialPropertyParametersHandlerClassName(name);

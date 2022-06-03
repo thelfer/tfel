@@ -13,6 +13,7 @@
 
 #include <ostream>
 #include "TFEL/Raise.hxx"
+#include "MFront/DSLUtilities.hxx"
 #include "MFront/BehaviourDescription.hxx"
 #include "MFront/StandardBehaviourInterface.hxx"
 #include "MFront/CalculiXInterface.hxx"
@@ -27,24 +28,21 @@ namespace mfront {
       const StandardBehaviourInterface& i,
       const BehaviourDescription& mb,
       const std::string& name) const {
-    auto throw_if = [](const bool b, const std::string& m) {
-      tfel::raise_if(
-          b, "CalculiXSymbolsGenerator::writexxBehaviourTypeSymbols: " + m);
-    };
-    out << "MFRONT_SHAREDOBJ unsigned short " << i.getFunctionNameBasis(name)
-        << "_BehaviourType = ";
+    const auto s = i.getFunctionNameBasis(name) + "_BehaviourType";
     if (mb.getBehaviourType() ==
         BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) {
       if (!CalculiXInterface::hasFiniteStrainStrategy(mb)) {
-        out << "1u;\n\n";
+        exportUnsignedShortSymbol(out, s, 1u);
       } else {
-        out << "2u;\n\n";
+        exportUnsignedShortSymbol(out, s, 2u);
       }
     } else if (mb.getBehaviourType() ==
                BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR) {
-      out << "2u;\n\n";
+      exportUnsignedShortSymbol(out, s, 2u);
     } else {
-      throw_if(true, "unsupported behaviour type");
+      tfel::raise(
+          "CalculiXSymbolsGenerator::writexxBehaviourTypeSymbols: "
+          "unsupported behaviour type");
     }
   }  // end of CalculiXSymbolsGenerator::writexxBehaviourTypeSymbols
 
@@ -53,25 +51,21 @@ namespace mfront {
       const StandardBehaviourInterface& i,
       const BehaviourDescription& mb,
       const std::string& name) const {
-    auto throw_if = [](const bool b, const std::string& m) {
-      tfel::raise_if(
-          b,
-          "CalculiXSymbolsGenerator::writexxBehaviourKinematicSymbols: " + m);
-    };
-    out << "MFRONT_SHAREDOBJ unsigned short " << i.getFunctionNameBasis(name)
-        << "_BehaviourKinematic = ";
+    const auto s = i.getFunctionNameBasis(name) + +"_BehaviourKinematic";
     if (mb.getBehaviourType() ==
         BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) {
       if (CalculiXInterface::hasFiniteStrainStrategy(mb)) {
-        out << "3u;\n\n";
+        exportUnsignedShortSymbol(out, s, 3u);
       } else {
-        out << "1u;\n\n";
+        exportUnsignedShortSymbol(out, s, 1u);
       }
     } else if (mb.getBehaviourType() ==
                BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR) {
-      out << "3u;\n\n";
+      exportUnsignedShortSymbol(out, s, 3u);
     } else {
-      throw_if(true, "unsupported behaviour type");
+      tfel::raise(
+          "CalculiXSymbolsGenerator::writeBehaviourKinematicSymbols: "
+          "unsupported behaviour type");
     }
   }  // end of CalculiXSymbolsGenerator::writexxBehaviourKinematicSymbols
 

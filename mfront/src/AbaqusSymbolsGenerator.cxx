@@ -13,6 +13,7 @@
 
 #include <ostream>
 #include "TFEL/Raise.hxx"
+#include "MFront/DSLUtilities.hxx"
 #include "MFront/BehaviourDescription.hxx"
 #include "MFront/StandardBehaviourInterface.hxx"
 #include "MFront/AbaqusInterface.hxx"
@@ -38,21 +39,17 @@ namespace mfront {
       const FileDescription&,
       const std::string& name) const {
     if (mb.getSymmetryType() == mfront::ORTHOTROPIC) {
+      const auto s =
+          i.getFunctionNameBasis(name) + "_OrthotropyManagementPolicy";
       if (!mb.hasAttribute(AbaqusInterface::orthotropyManagementPolicy)) {
-        out << "MFRONT_SHAREDOBJ unsigned short "
-            << i.getFunctionNameBasis(name)
-            << "_OrthotropyManagementPolicy = 0u;\n\n";
+        exportUnsignedShortSymbol(out, s, 0u);
       } else {
         const auto omp = mb.getAttribute<std::string>(
             AbaqusInterface::orthotropyManagementPolicy);
         if (omp == "MFront") {
-          out << "MFRONT_SHAREDOBJ unsigned short "
-              << i.getFunctionNameBasis(name)
-              << "_OrthotropyManagementPolicy = 2u;\n\n";
+          exportUnsignedShortSymbol(out, s, 2u);
         } else if (omp == "Native") {
-          out << "MFRONT_SHAREDOBJ unsigned short "
-              << i.getFunctionNameBasis(name)
-              << "_OrthotropyManagementPolicy = 1u;\n\n";
+          exportUnsignedShortSymbol(out, s, 1u);
         } else {
           tfel::raise(
               "AbaqusSymbolsGenerator::writeSpecificSymbols: "
@@ -71,19 +68,18 @@ namespace mfront {
       tfel::raise_if(b,
                      "AbaqusSymbolsGenerator::writeBehaviourTypeSymbols: " + m);
     };
-    out << "MFRONT_SHAREDOBJ unsigned short " << i.getFunctionNameBasis(name)
-        << "_BehaviourType = ";
+    const auto s = i.getFunctionNameBasis(name) + "_BehaviourType";
     if (mb.getBehaviourType() ==
         BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) {
       if ((AbaqusInterfaceBase::hasFiniteStrainStrategy(mb)) &&
           (AbaqusInterfaceBase::getFiniteStrainStrategy(mb) != "Native")) {
-        out << "2u;\n\n";
+        exportUnsignedShortSymbol(out, s, 2u);
       } else {
-        out << "1u;\n\n";
+        exportUnsignedShortSymbol(out, s, 1u);
       }
     } else if (mb.getBehaviourType() ==
                BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR) {
-      out << "2u;\n\n";
+      exportUnsignedShortSymbol(out, s, 2u);
     } else {
       throw_if(true, "unsupported behaviour type");
     }
@@ -98,18 +94,17 @@ namespace mfront {
       tfel::raise_if(
           b, "AbaqusSymbolsGenerator::writeBehaviourKinematicSymbols: " + m);
     };
-    out << "MFRONT_SHAREDOBJ unsigned short " << i.getFunctionNameBasis(name)
-        << "_BehaviourKinematic = ";
+    const auto s = i.getFunctionNameBasis(name) + "_BehaviourKinematic";
     if (mb.getBehaviourType() ==
         BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) {
       if (AbaqusInterfaceBase::hasFiniteStrainStrategy(mb)) {
-        out << "3u;\n\n";
+        exportUnsignedShortSymbol(out, s, 3u);
       } else {
-        out << "1u;\n\n";
+        exportUnsignedShortSymbol(out, s, 1u);
       }
     } else if (mb.getBehaviourType() ==
                BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR) {
-      out << "3u;\n\n";
+      exportUnsignedShortSymbol(out, s, 3u);
     } else {
       throw_if(true, "unsupported behaviour type");
     }

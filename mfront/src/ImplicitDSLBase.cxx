@@ -2018,8 +2018,8 @@ namespace mfront {
           }
         }
         os << ")){\n"
-           << "this->mfront_success_reference = false;"
-           << "};\n"
+           << "this->mfront_success_reference = false;\n"
+           << "}\n"
            << "}\n";
       }
       os << "private:\n"

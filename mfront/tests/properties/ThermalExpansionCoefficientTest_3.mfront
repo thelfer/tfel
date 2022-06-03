@@ -6,9 +6,12 @@
 // output of law
 @Output a ;
 
+// required if used by a behaviour
 @Constant ReferenceTemperature = 293.15;
 
 @Function{
+  // remove compiler warnings
+  static_cast<void>(ReferenceTemperature);
   a = 4.63e-5;
 } // end of Function
 

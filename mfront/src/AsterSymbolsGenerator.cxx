@@ -13,6 +13,7 @@
 
 #include <ostream>
 #include "TFEL/Raise.hxx"
+#include "MFront/DSLUtilities.hxx"
 #include "MFront/BehaviourDescription.hxx"
 #include "MFront/StandardBehaviourInterface.hxx"
 #include "MFront/AsterInterface.hxx"
@@ -40,17 +41,16 @@ namespace mfront {
       tfel::raise_if(b,
                      "AsterSymbolsGenerator::writeBehaviourTypeSymbols: " + m);
     };
-    out << "MFRONT_SHAREDOBJ unsigned short " << i.getFunctionNameBasis(name)
-        << "_BehaviourType = ";
+    const auto s = i.getFunctionNameBasis(name) + "_BehaviourType";
     if (mb.getBehaviourType() ==
         BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) {
-      out << "1u;\n\n";
+      exportUnsignedShortSymbol(out, s, 1u);
     } else if (mb.getBehaviourType() ==
                BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR) {
-      out << "2u;\n\n";
+      exportUnsignedShortSymbol(out, s, 2u);
     } else if (mb.getBehaviourType() ==
                BehaviourDescription::COHESIVEZONEMODEL) {
-      out << "3u;\n\n";
+      exportUnsignedShortSymbol(out, s, 3u);
     } else {
       throw_if(true, "unsupported behaviour type");
     }
@@ -65,30 +65,29 @@ namespace mfront {
       tfel::raise_if(
           b, "AsterSymbolsGenerator::writeBehaviourKinematicSymbols: " + m);
     };
-    out << "MFRONT_SHAREDOBJ unsigned short " << i.getFunctionNameBasis(name)
-        << "_BehaviourKinematic = ";
+    const auto s = i.getFunctionNameBasis(name) + "_BehaviourKinematic";
     if (mb.getBehaviourType() ==
         BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) {
       if (mb.isStrainMeasureDefined()) {
         const auto fs = mb.getStrainMeasure();
         if (fs == BehaviourDescription::LINEARISED) {
-          out << "1u;\n\n";
+          exportUnsignedShortSymbol(out, s, 1u);
         } else if (fs == BehaviourDescription::GREENLAGRANGE) {
-          out << "5u;\n\n";
+          exportUnsignedShortSymbol(out, s, 5u);
         } else if (fs == BehaviourDescription::HENCKY) {
-          out << "6u;\n\n";
+          exportUnsignedShortSymbol(out, s, 6u);
         } else {
-          out << "0u;\n\n";
+          exportUnsignedShortSymbol(out, s, 0u);
         }
       } else {
-        out << "0u;\n\n";
+        exportUnsignedShortSymbol(out, s, 0u);
       }
     } else if (mb.getBehaviourType() ==
                BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR) {
-      out << "3u;\n\n";
+      exportUnsignedShortSymbol(out, s, 3u);
     } else if (mb.getBehaviourType() ==
                BehaviourDescription::COHESIVEZONEMODEL) {
-      out << "2u;\n\n";
+      exportUnsignedShortSymbol(out, s, 2u);
     } else {
       throw_if(true, "unsupported behaviour type");
     }
@@ -100,35 +99,34 @@ namespace mfront {
       const BehaviourDescription& bd,
       const FileDescription&,
       const std::string& name) const {
-    auto throw_if = [](const bool c, const std::string& m) {
-      tfel::raise_if(c, "AsterSymbolsGenerator::writeSpecificSymbols: " + m);
-    };
-    out << "MFRONT_SHAREDOBJ unsigned short " << i.getFunctionNameBasis(name)
-        << "_savesTangentOperator = ";
-    if (bd.getAttribute<bool>(AsterInterface::saveTangentOperator, false)) {
-      out << "1";
-    } else {
-      out << "0";
-    }
-    out << ";\n";
+    const auto v = [&bd]() -> unsigned short {
+      if (bd.getAttribute<bool>(AsterInterface::saveTangentOperator, false)) {
+        return 1u;
+      }
+      return 0u;
+    }();
+    exportUnsignedShortSymbol(
+        out, i.getFunctionNameBasis(name) + "_savesTangentOperator", v);
     if (bd.getBehaviourType() ==
         BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR) {
-      out << "MFRONT_SHAREDOBJ unsigned short " << i.getFunctionNameBasis(name)
-          << "_FiniteStrainFormulation = ";
-      if (!bd.hasAttribute(AsterInterface::finiteStrainFormulation)) {
-        out << "1u;\n";
-      } else {
-        const auto& afsf = bd.getAttribute<std::string>(
-            AsterInterface::finiteStrainFormulation);
-        if (afsf == AsterInterface::simo_miehe) {
-          out << "1u;\n";
-        } else if (afsf == AsterInterface::grot_gdep) {
-          out << "2u;\n";
+      const auto fs = [&bd]() -> unsigned short {
+        if (!bd.hasAttribute(AsterInterface::finiteStrainFormulation)) {
+          return 1u;
         } else {
-          throw_if(true,
-                   "internal error: unsupported finite strain formulation");
+          const auto& afsf = bd.getAttribute<std::string>(
+              AsterInterface::finiteStrainFormulation);
+          if (afsf == AsterInterface::simo_miehe) {
+            return 1u;
+          } else if (afsf == AsterInterface::grot_gdep) {
+            return 2u;
+          }
+          tfel::raise(
+              "AsterSymbolsGenerator::writeSpecificSymbols: "
+              "internal error: unsupported finite strain formulation");
         }
-      }
+      }();
+      exportUnsignedShortSymbol(
+          out, i.getFunctionNameBasis(name) + "_FiniteStrainFormulation", fs);
     }
   }  // end of AsterSymbolsGenerator::writeSpecificSymbols
 

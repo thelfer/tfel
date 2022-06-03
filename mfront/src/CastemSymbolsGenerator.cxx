@@ -13,6 +13,7 @@
 
 #include <ostream>
 #include "TFEL/Raise.hxx"
+#include "MFront/DSLUtilities.hxx"
 #include "MFront/MaterialPropertyDescription.hxx"
 #include "MFront/BehaviourDescription.hxx"
 #include "MFront/StandardBehaviourInterface.hxx"
@@ -60,13 +61,9 @@ namespace mfront {
       const BehaviourDescription& bd,
       const FileDescription&,
       const std::string& name) const {
-    if (CastemInterface::usesGenericPlaneStressAlgorithm(bd)) {
-      os << "MFRONT_SHAREDOBJ unsigned short " << i.getFunctionNameBasis(name)
-         << "_UsesGenericPlaneStressAlgorithm = 1u;\n\n";
-    } else {
-      os << "MFRONT_SHAREDOBJ unsigned short " << i.getFunctionNameBasis(name)
-         << "_UsesGenericPlaneStressAlgorithm = 0u;\n\n";
-    }
+    exportUnsignedShortSymbol(
+        os, i.getFunctionNameBasis(name) + "_UsesGenericPlaneStressAlgorithm",
+        CastemInterface::usesGenericPlaneStressAlgorithm(bd) ? 1u : 0u);
     const auto fn = i.getFunctionNameBasis(name);
     // elastic material properties
     auto emps = [&bd] {
@@ -79,8 +76,8 @@ namespace mfront {
       }
       return names;
     }();
-    os << "MFRONT_SHAREDOBJ unsigned short " << fn
-       << "_nElasticMaterialPropertiesEntryPoints = " << emps.size() << "u;\n";
+    exportUnsignedShortSymbol(os, fn + "_nElasticMaterialPropertiesEntryPoints",
+                              emps.size());
     this->writeArrayOfStringsSymbol(
         os, fn + "_ElasticMaterialPropertiesEntryPoints", emps);
     // material properties associated with the thermal expansion coefficients
@@ -94,9 +91,9 @@ namespace mfront {
       }
       return names;
     }();
-    os << "MFRONT_SHAREDOBJ unsigned short " << fn
-       << "_nLinearThermalExpansionCoefficientsEntryPoints = "  //
-       << themps.size() << "u;\n";
+    exportUnsignedShortSymbol(
+        os, fn + "_nLinearThermalExpansionCoefficientsEntryPoints",
+        themps.size());
     this->writeArrayOfStringsSymbol(
         os, fn + "_LinearThermalExpansionCoefficientsEntryPoints", themps);
   }  // end of CastemSymbolsGenerator::writeSpecificSymbols

@@ -2584,7 +2584,7 @@ namespace mfront {
         this->throwRuntimeError(m, msg);
       }
     };
-    auto addTref = [this, throw_if, h, n](const double v) {
+    auto addTref = [this, throw_if, n](const double v) {
       if (this->mb.hasParameter(h, n)) {
         const auto Tref = this->mb.getFloattingPointParameterDefaultValue(h, n);
         throw_if(tfel::math::ieee754::fpclassify(Tref - v) != FP_ZERO,
@@ -8530,11 +8530,12 @@ namespace mfront {
          << "auto line = std::string{};\n"
          << "std::getline(f,line);\n"
          << "auto tokens = tokenize(line);\n"
-         << "auto throw_if = [ln,line,fn](const bool c,const std::string& m){\n"
-         << "tfel::raise_if(c,\"" << cname << "::readParameters: \"\n"
+         << "auto throw_if = [ln,line,fn](const bool mfront_c,\n"
+         << "const std::string& mfront_error_message){\n"
+         << "tfel::raise_if(mfront_c,\"" << cname << "::readParameters: \"\n"
          << "\"error at line '\"+std::to_string(ln)+\"' \"\n"
          << "\"while reading parameter file '\"+std::string(fn)+\"'\"\n"
-         << "\"(\"+m+\")\");\n"
+         << "\"(\"+mfront_error_message+\")\");\n"
          << "};\n"
          << "if(tokens.empty()){\n"
          << "continue;\n"

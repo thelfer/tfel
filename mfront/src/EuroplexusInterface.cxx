@@ -461,7 +461,7 @@ namespace mfront {
         << "! \\date   " << fd.date << '\n'
         << "!\n";
     for (const auto& h : this->getModellingHypothesesToBeTreated(mb)) {
-      auto display = [&h, &out, &throw_if](const SupportedTypes::TypeFlag f) {
+      auto display = [&h, &out](const SupportedTypes::TypeFlag f) {
         const auto s = SupportedTypes::TypeSize(f, 1u);
         for (int c = 0; c != s.getValueForModellingHypothesis(h);) {
           out << " ???";

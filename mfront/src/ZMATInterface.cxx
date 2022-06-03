@@ -1049,9 +1049,8 @@ namespace mfront {
     writeEntryPointSymbol(out, zcn);
     writeTFELVersionSymbol(out, zcn);
     writeMaterialSymbol(out, zcn, mb.getMaterialName());
-    out << "MFRONT_SHAREDOBJ const char *\n"
-        << zcn << "_mfront_interface = \"" << this->getInterfaceName()
-        << "\";\n\n";
+    exportStringSymbol(out, zcn + "_mfront_interface",
+                       this->getInterfaceName());
     out << '\n'
         << "Z_START_NAMESPACE;\n"
         << '\n'

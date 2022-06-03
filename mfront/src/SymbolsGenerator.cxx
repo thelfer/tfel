@@ -202,14 +202,11 @@ namespace mfront {
       nmvs += dv.arraySize;
     }
     const auto fn = i.getFunctionNameBasis(name);
-    out << "MFRONT_SHAREDOBJ unsigned short " << fn
-        << "_nMainVariables = " << nmvs << ";\n";
-    out << "MFRONT_SHAREDOBJ unsigned short " << fn << "_nGradients = " << nmvs
-        << ";\n\n";
+    exportUnsignedShortSymbol(out, fn + "_nMainVariables", nmvs);
+    exportUnsignedShortSymbol(out, fn + "_nGradients", nmvs);
     this->writeArrayOfIntsSymbol(out, fn + "_GradientsTypes", dvtypes);
     this->writeArrayOfStringsSymbol(out, fn + "_Gradients", dvnames);
-    out << "MFRONT_SHAREDOBJ unsigned short " << fn
-        << "_nThermodynamicForces = " << nmvs << ";\n\n";
+    exportUnsignedShortSymbol(out, fn + "_nThermodynamicForces", nmvs);
     this->writeArrayOfIntsSymbol(out, fn + "_ThermodynamicForcesTypes",
                                  thtypes);
     this->writeArrayOfStringsSymbol(out, fn + "_ThermodynamicForces", thnames);
@@ -223,8 +220,8 @@ namespace mfront {
     auto write_impl = [this, &out, &i,
                        &name](const std::vector<std::string>& bns) {
       const auto fn = i.getFunctionNameBasis(name);
-      out << "MFRONT_SHAREDOBJ unsigned short " << fn
-          << "_nTangentOperatorBlocks = " << bns.size() << ";\n\n";
+      exportUnsignedShortSymbol(out, fn + "_nTangentOperatorBlocks",
+                                bns.size());
       this->writeArrayOfStringsSymbol(out, fn + "_TangentOperatorBlocks", bns);
     };
     auto default_impl = [&bd, &write_impl] {
@@ -244,8 +241,7 @@ namespace mfront {
       // the derivative of a flux with respect to
       // a gradient
       const auto fn = i.getFunctionNameBasis(name);
-      out << "MFRONT_SHAREDOBJ unsigned short " << fn
-          << "_nTangentOperatorBlocks = 0;\n\n";
+      exportUnsignedShortSymbol(out, fn + "_nTangentOperatorBlocks", 0u);
       this->writeArrayOfStringsSymbol(out, fn + "_TangentOperatorBlocks", {});
     };
     if (bd.getBehaviourType() ==
@@ -304,9 +300,9 @@ namespace mfront {
       const BehaviourDescription& bd,
       const std::string& name,
       const Hypothesis h) const {
-    const auto b = bd.hasCode(h, BehaviourData::ComputeInternalEnergy) ? 1 : 0;
-    out << "MFRONT_SHAREDOBJ unsigned short " << this->getSymbolName(i, name, h)
-        << "_ComputesInternalEnergy = " << b << ";\n\n";
+    exportUnsignedShortSymbol(
+        out, this->getSymbolName(i, name, h) + "_ComputesInternalEnergy",
+        bd.hasCode(h, BehaviourData::ComputeInternalEnergy) ? 1u : 0u);
   }  // end of writeComputesInternalEnergySymbol
 
   void SymbolsGenerator::writeComputesDissipatedEnergySymbol(
@@ -315,10 +311,9 @@ namespace mfront {
       const BehaviourDescription& bd,
       const std::string& name,
       const Hypothesis h) const {
-    const auto b =
-        bd.hasCode(h, BehaviourData::ComputeDissipatedEnergy) ? 1 : 0;
-    out << "MFRONT_SHAREDOBJ unsigned short " << this->getSymbolName(i, name, h)
-        << "_ComputesDissipatedEnergy = " << b << ";\n\n";
+    exportUnsignedShortSymbol(
+        out, this->getSymbolName(i, name, h) + "_ComputesDissipatedEnergy",
+        bd.hasCode(h, BehaviourData::ComputeDissipatedEnergy) ? 1u : 0u);
   }  // end of writeComputesDissipatedEnergySymbol
 
   void SymbolsGenerator::writeTemperatureRemovedFromExternalStateVariablesSymbol(
@@ -326,13 +321,10 @@ namespace mfront {
       const StandardBehaviourInterface& i,
       const BehaviourDescription& bd,
       const std::string& name) const {
-    if (shallRemoveTemperatureFromExternalStateVariables(bd)) {
-      out << "MFRONT_SHAREDOBJ unsigned short " << i.getFunctionNameBasis(name)
-          << "_TemperatureRemovedFromExternalStateVariables = 1u;\n";
-    } else {
-      out << "MFRONT_SHAREDOBJ unsigned short " << i.getFunctionNameBasis(name)
-          << "_TemperatureRemovedFromExternalStateVariables = 0u;\n";
-    }
+    const auto s = i.getFunctionNameBasis(name) +
+                   "_TemperatureRemovedFromExternalStateVariables";
+    exportUnsignedShortSymbol(
+        out, s, shallRemoveTemperatureFromExternalStateVariables(bd) ? 1u : 0u);
   }  // end of writeTemperatureRemovedFromExternalStateVariablesSymbol
 
   void SymbolsGenerator::writeSpecificSymbols(std::ostream&,
@@ -348,25 +340,18 @@ namespace mfront {
       const BehaviourDescription&,
       const std::set<Hypothesis>& mhs,
       const std::string& name) const {
-    if (mhs.empty()) {
-      out << "MFRONT_SHAREDOBJ unsigned short " << i.getFunctionNameBasis(name)
-          << "_nModellingHypotheses = 0u;\n\n"
-          << "MFRONT_SHAREDOBJ const char * const * "
-          << i.getFunctionNameBasis(name) << "_ModellingHypotheses = 0;\n\n";
-    } else {
-      out << "MFRONT_SHAREDOBJ unsigned short " << i.getFunctionNameBasis(name)
-          << "_nModellingHypotheses = " << mhs.size() << "u;\n\n"
-          << "MFRONT_SHAREDOBJ const char * \n"
-          << i.getFunctionNameBasis(name) << "_ModellingHypotheses["
-          << mhs.size() << "u] = {";
-      for (auto ph = mhs.begin(); ph != mhs.end();) {
-        out << "\"" << ModellingHypothesis::toString(*ph) << "\"";
-        if (++ph != mhs.end()) {
-          out << ",\n";
-        }
-      }
-      out << "};\n\n";
-    }
+    exportUnsignedShortSymbol(
+        out, i.getFunctionNameBasis(name) + "_nModellingHypotheses",
+        mhs.size());
+    const auto hypotheses = [&mhs] {
+      auto hs = std::vector<std::string>{};
+      std::for_each(mhs.begin(), mhs.end(), [&hs](const auto h) {
+        hs.push_back(ModellingHypothesis::toString(h));
+      });
+      return hs;
+    }();
+    this->writeArrayOfStringsSymbol(
+        out, i.getFunctionNameBasis(name) + "_ModellingHypotheses", hypotheses);
   }  // end of writeSupportedModellingHypothesis
 
   void SymbolsGenerator::writeMaterialPropertiesSymbols(
@@ -375,78 +360,64 @@ namespace mfront {
       const BehaviourDescription& mb,
       const std::string& name,
       const Hypothesis h) const {
-    using namespace std;
-    auto throw_if = [](const bool b, const std::string_view m) {
-      if (b) {
-        tfel::raise("SymbolsGenerator::writeMaterialPropertiesSymbols: " +
-                    std::string{m});
-      }
-    };
     const auto mprops = i.buildMaterialPropertiesList(mb, h);
     for (const auto& mp : mprops.first) {
       if (SupportedTypes::getTypeFlag(mp.type) != SupportedTypes::SCALAR) {
-        throw_if(
-            true,
+        tfel::raise(
+            "SymbolsGenerator::writeMaterialPropertiesSymbols: "
             "internal error: the material properties shall all be scalars");
       }
     }
+    auto empty_case = [this, &out, &i, &name, h] {
+      exportUnsignedShortSymbol(
+          out, this->getSymbolName(i, name, h) + "_nMaterialProperties", 0u);
+      this->writeArrayOfStringsSymbol(
+          out, this->getSymbolName(i, name, h) + "_MaterialProperties", {});
+    };
     if (mprops.first.empty()) {
-      out << "MFRONT_SHAREDOBJ unsigned short "
-          << this->getSymbolName(i, name, h) << "_nMaterialProperties = 0u;\n\n"
-          << "MFRONT_SHAREDOBJ const char * const *"
-          << this->getSymbolName(i, name, h)
-          << "_MaterialProperties = nullptr;\n\n";
-    } else {
-      const auto& last = mprops.first.back();
-      SupportedTypes::TypeSize s;
-      s = last.offset;
-      s += SupportedTypes::getTypeSize(last.type, last.arraySize);
-      s -= mprops.second;
-      vector<BehaviourMaterialProperty>::size_type ib =
-          0; /* index of the first element which
-              * is not imposed by the material properties */
-      bool found = false;
-      for (decltype(mprops.first.size()) idx = 0;
-           (idx != mprops.first.size()) && (!found); ++idx) {
-        if (mprops.first[idx].offset == mprops.second) {
-          ib = idx;
-          found = true;
-        }
-      }
-      if (!found) {
-        out << "MFRONT_SHAREDOBJ unsigned short "
-            << this->getSymbolName(i, name, h)
-            << "_nMaterialProperties = 0u;\n\n";
-        out << "MFRONT_SHAREDOBJ const char * const *"
-            << this->getSymbolName(i, name, h)
-            << "_MaterialProperties = nullptr;\n\n";
-      } else {
-        out << "MFRONT_SHAREDOBJ unsigned short "
-            << this->getSymbolName(i, name, h) << "_nMaterialProperties = " << s
-            << "u;\n\n";
-        out << "MFRONT_SHAREDOBJ const char *"
-            << this->getSymbolName(i, name, h) << "_MaterialProperties[" << s
-            << "u] = {";
-        for (auto idx = ib; idx != mprops.first.size();) {
-          const auto& m = mprops.first[idx];
-          if (m.arraySize == 1u) {
-            out << "\"" << m.name << "\"";
-          } else {
-            for (unsigned short j = 0; j != m.arraySize;) {
-              out << "\"" << m.name << "[" << j << "]\"";
-              if (++j != m.arraySize) {
-                out << ",\n";
-              }
-            }
-          }
-          if (++idx != mprops.first.size()) {
-            out << ",\n";
-          }
-        }
-        out << "};\n\n";
+      empty_case();
+      return;
+    }
+    const auto& last = mprops.first.back();
+    SupportedTypes::TypeSize s;
+    s = last.offset;
+    s += SupportedTypes::getTypeSize(last.type, last.arraySize);
+    s -= mprops.second;
+    // index of the first element which is not imposed by the material
+    // properties
+    auto ib = std::vector<BehaviourMaterialProperty>::size_type{}; 
+    bool found = false;
+    for (decltype(mprops.first.size()) idx = 0;
+         (idx != mprops.first.size()) && (!found); ++idx) {
+      if (mprops.first[idx].offset == mprops.second) {
+        ib = idx;
+        found = true;
       }
     }
-  }  // end of UMATInterface::writeMaterialPropertiesSymbol
+    if (!found) {
+      empty_case();
+      return;
+    }
+    const auto mpnames = [&mprops, &ib] {
+      auto mps = std::vector<std::string>{};
+      for (auto idx = ib; idx != mprops.first.size(); ++idx) {
+        const auto& m = mprops.first[idx];
+        if (m.arraySize == 1u) {
+          mps.push_back(m.name);
+        } else {
+          for (unsigned short j = 0; j != m.arraySize; ++j) {
+            mps.push_back(m.name + '[' + std::to_string(j) + ']');
+          }
+        }
+      }
+      return mps;
+    }();
+    exportUnsignedShortSymbol(
+        out, this->getSymbolName(i, name, h) + "_nMaterialProperties",
+        static_cast<unsigned short>(s.getValueForDimension(1)));
+    this->writeArrayOfStringsSymbol(
+        out, this->getSymbolName(i, name, h) + "_MaterialProperties", mpnames);
+  }  // end of writeMaterialPropertiesSymbol
 
   void SymbolsGenerator::writeVariablesTypesSymbol(
       std::ostream& out,
@@ -456,8 +427,16 @@ namespace mfront {
       const VariableDescriptionContainer& variables,
       const std::string& variables_identifier) const {
     if (!variables.empty()) {
-      out << "MFRONT_SHAREDOBJ int " << this->getSymbolName(i, name, h) << "_"
-          << variables_identifier << "Types [] = {";
+      const auto size = [&variables] {
+        auto s = std::size_t{};
+        for (const auto& p : variables) {
+          s += p.arraySize;
+        }
+        return s;
+      }();
+      out << "MFRONT_EXPORT_ARRAY_OF_SYMBOLS(int, "
+          << this->getSymbolName(i, name, h) << "_" << variables_identifier
+          << "Types, " << size << ", MFRONT_EXPORT_ARRAY_ARGUMENTS(";
       for (auto p = variables.begin(); p != variables.end();) {
         const auto t = p->getVariableTypeIdentifier();
         for (unsigned short is = 0; is != p->arraySize;) {
@@ -470,10 +449,11 @@ namespace mfront {
           out << ",";
         }
       }
-      out << "};\n\n";
+      out << "));\n\n";
     } else {
-      out << "MFRONT_SHAREDOBJ const int * " << this->getSymbolName(i, name, h)
-          << "_" << variables_identifier << "Types  = nullptr;\n\n";
+      out << "MFRONT_EXPORT_SYMBOL(const int *, "
+          << this->getSymbolName(i, name, h) << "_" << variables_identifier
+          << "Types, nullptr);\n\n";
     }
   }  // end of writeVariablesTypesSymbol
 
@@ -487,8 +467,9 @@ namespace mfront {
     const auto& persistentVarsHolder = d.getPersistentVariables();
     const unsigned short nStateVariables = static_cast<unsigned short>(
         persistentVarsHolder.getNumberOfVariables());
-    out << "MFRONT_SHAREDOBJ unsigned short " << this->getSymbolName(i, name, h)
-        << "_nInternalStateVariables = " << nStateVariables << ";\n";
+    out << "MFRONT_EXPORT_SYMBOL(unsigned short, "
+        << this->getSymbolName(i, name, h) << "_nInternalStateVariables, "
+        << nStateVariables << "u);\n";
     std::vector<std::string> stateVariablesNames;
     mb.getExternalNames(stateVariablesNames, h, persistentVarsHolder);
     this->writeExternalNames(out, i, name, h, stateVariablesNames,
@@ -509,9 +490,9 @@ namespace mfront {
       // removing the temperature
       esvs.erase(esvs.begin());
     }
-    out << "MFRONT_SHAREDOBJ unsigned short " << this->getSymbolName(i, name, h)
-        << "_nExternalStateVariables = " << esvs.getNumberOfVariables()
-        << ";\n";
+    out << "MFRONT_EXPORT_SYMBOL(unsigned short, "
+        << this->getSymbolName(i, name, h) << "_nExternalStateVariables, "
+        << esvs.getNumberOfVariables() << "u);\n";
     this->writeExternalNames(out, i, name, h, mb.getExternalNames(h, esvs),
                              "ExternalStateVariables");
     this->writeVariablesTypesSymbol(out, i, name, h, esvs,
@@ -566,15 +547,15 @@ namespace mfront {
       if (p.type == "int") {
         throw_if(p.arraySize != 1u,
                  "unsupported parameters array of type '" + p.type + "'");
-        os << "MFRONT_SHAREDOBJ int " << n << "_" << p.getExternalName()
-           << "_ParameterDefaultValue  = "
-           << mb.getIntegerParameterDefaultValue(h, p.name) << ";\n\n";
+        exportSymbol(os, "int",
+                     n + "_" + p.getExternalName() + "_ParameterDefaultValue",
+                     mb.getIntegerParameterDefaultValue(h, p.name));
       } else if (p.type == "ushort") {
         throw_if(p.arraySize != 1u,
                  "unsupported parameters array of type '" + p.type + "'");
-        os << "MFRONT_SHAREDOBJ unsigned short " << n << "_"
-           << p.getExternalName() << "_ParameterDefaultValue  = "
-           << mb.getUnsignedShortParameterDefaultValue(h, p.name) << ";\n\n";
+        exportSymbol(os, "unsigned short",
+                     n + "_" + p.getExternalName() + "_ParameterDefaultValue",
+                     mb.getUnsignedShortParameterDefaultValue(h, p.name));
       } else {
         const auto f = SupportedTypes::getTypeFlag(p.type);
         throw_if(f != SupportedTypes::SCALAR,
@@ -582,16 +563,18 @@ namespace mfront {
         const auto prec = os.precision();
         os.precision(14);
         if (p.arraySize == 1u) {
-          os << "MFRONT_SHAREDOBJ double " << n << "_" << p.getExternalName()
-             << "_ParameterDefaultValue"
-             << " = " << mb.getFloattingPointParameterDefaultValue(h, p.name)
-             << ";\n\n";
+          exportSymbol(os, "double",
+                       n + "_" + p.getExternalName() + "_ParameterDefaultValue",
+                       mb.getFloattingPointParameterDefaultValue(h, p.name));
+
         } else {
           for (unsigned short is = 0; is != p.arraySize; ++is) {
-            os << "MFRONT_SHAREDOBJ double " << n << "_" << p.getExternalName()
-               << "_mfront_index_" << is << "_ParameterDefaultValue = "
-               << mb.getFloattingPointParameterDefaultValue(h, p.name, is)
-               << ";\n\n";
+            exportSymbol(
+                os, "double",
+                n + "_" + p.getExternalName() + "_mfront_index_" +
+                    std::to_string(static_cast<int>(is)) +
+                    "_ParameterDefaultValue",
+                mb.getFloattingPointParameterDefaultValue(h, p.name, is));
           }
         }
         os.precision(prec);
@@ -636,27 +619,17 @@ namespace mfront {
       const BehaviourDescription& mb,
       const std::string& name,
       const Hypothesis h) const {
-    out << "MFRONT_SHAREDOBJ unsigned short "
-        << this->getSymbolName(i, name, h);
-    out << "_requiresStiffnessTensor = ";
-    if (mb.getAttribute(BehaviourDescription::requiresStiffnessTensor, false)) {
-      out << "1";
-    } else {
-      out << "0";
-    }
-    out << ";\n";
-    out << "MFRONT_SHAREDOBJ unsigned short "
-        << this->getSymbolName(i, name, h);
-    out << "_requiresThermalExpansionCoefficientTensor = ";
-    if (mb.getAttribute(
-            BehaviourDescription::requiresThermalExpansionCoefficientTensor,
-            false)) {
-      out << "1";
-    } else {
-      out << "0";
-    }
-    out << ";\n";
-
+    const auto b1 =
+        mb.getAttribute(BehaviourDescription::requiresStiffnessTensor, false);
+    exportUnsignedShortSymbol(
+        out, this->getSymbolName(i, name, h) + "_requiresStiffnessTensor",
+        b1 ? 1 : 0);
+    const auto b2 = mb.getAttribute(
+        BehaviourDescription::requiresThermalExpansionCoefficientTensor, false);
+    exportUnsignedShortSymbol(out,
+                              this->getSymbolName(i, name, h) +
+                                  "_requiresThermalExpansionCoefficientTensor",
+                              b2 ? 1 : 0);
   }  // end of writeRequirementsSymbols
 
   void SymbolsGenerator::writeIsUsableInPurelyImplicitResolutionSymbols(
@@ -666,34 +639,31 @@ namespace mfront {
       const std::string& name,
       const Hypothesis h) const {
     const auto& d = mb.getBehaviourData(h);
-    out << "MFRONT_SHAREDOBJ unsigned short " << this->getSymbolName(i, name, h)
-        << "_UsableInPurelyImplicitResolution = ";
-    if (d.isUsableInPurelyImplicitResolution()) {
-      out << "1;\n\n";
-    } else {
-      out << "0;\n\n";
-    }
-  }  // end of
-     // SymbolsGenerator::writeIsUsableInPurelyImplicitResolution
+    const auto b = d.isUsableInPurelyImplicitResolution();
+    const auto s =
+        this->getSymbolName(i, name, h) + "_UsableInPurelyImplicitResolution";
+    exportUnsignedShortSymbol(out, s, b ? 1 : 0);
+  }  // end of writeIsUsableInPurelyImplicitResolution
 
   void SymbolsGenerator::writeSymmetryTypeSymbols(
       std::ostream& out,
       const StandardBehaviourInterface& i,
       const BehaviourDescription& mb,
       const std::string& name) const {
-    out << "MFRONT_SHAREDOBJ unsigned short " << i.getFunctionNameBasis(name)
-        << "_SymmetryType = ";
-    if (mb.getSymmetryType() == mfront::ISOTROPIC) {
-      out << "0u;\n\n";
-    } else if (mb.getSymmetryType() == mfront::ORTHOTROPIC) {
-      out << "1u;\n\n";
-    } else {
+    const auto st = [&mb]() -> unsigned short {
+      if (mb.getSymmetryType() == mfront::ISOTROPIC) {
+        return 0u;
+      } else if (mb.getSymmetryType() == mfront::ORTHOTROPIC) {
+        return 1u;
+      }
       tfel::raise(
           "SymbolsGenerator::writeSymmetryTypeSymbols: "
           "unsupported behaviour type.\n"
           "only isotropic or orthotropic behaviours "
           "are supported at this time.");
-    }
+    }();
+    exportUnsignedShortSymbol(
+        out, i.getFunctionNameBasis(name) + "_SymmetryType", st);
   }  // end of writeSymmetryTypeSymbols
 
   void SymbolsGenerator::writeElasticSymmetryTypeSymbols(
@@ -701,19 +671,20 @@ namespace mfront {
       const StandardBehaviourInterface& i,
       const BehaviourDescription& mb,
       const std::string& name) const {
-    out << "MFRONT_SHAREDOBJ unsigned short " << i.getFunctionNameBasis(name)
-        << "_ElasticSymmetryType = ";
-    if (mb.getElasticSymmetryType() == mfront::ISOTROPIC) {
-      out << "0u;\n\n";
-    } else if (mb.getElasticSymmetryType() == mfront::ORTHOTROPIC) {
-      out << "1u;\n\n";
-    } else {
+    const auto est = [&mb]() -> unsigned short {
+      if (mb.getElasticSymmetryType() == mfront::ISOTROPIC) {
+        return 0u;
+      } else if (mb.getElasticSymmetryType() == mfront::ORTHOTROPIC) {
+        return 1u;
+      }
       tfel::raise(
           "SymbolsGenerator::writeElasticSymmetryTypeSymbols: "
           "unsupported behaviour type.\n"
           "only isotropic or orthotropic behaviours are "
           "supported at this time.");
-    }
+    }();
+    exportUnsignedShortSymbol(
+        out, i.getFunctionNameBasis(name) + "_ElasticSymmetryType", est);
   }  // end of writeElasticSymmetryTypeSymbols
 
   void SymbolsGenerator::writeSourceFileSymbols(
@@ -724,10 +695,9 @@ namespace mfront {
       const std::string& name) const {
     using namespace tfel::system;
     using namespace tfel::utilities;
-    out << "MFRONT_SHAREDOBJ const char *\n"
-        << i.getFunctionNameBasis(name) << "_src = \""
-        << tokenize(fd.fileName, dirSeparator()).back() << "\";\n\n";
-  }
+    exportStringSymbol(out, i.getFunctionNameBasis(name) + "_src",
+                       tokenize(fd.fileName, dirSeparator()).back());
+  } // end of writeSourceFileSymbols
 
   void SymbolsGenerator::writeInterfaceNameSymbols(
       std::ostream& out,
@@ -753,30 +723,12 @@ namespace mfront {
       std::ostream& os,
       const std::string& s,
       const std::vector<std::string>& v) const {
-    mfront::writeArrayOfStringsSymbol(os, s, v);
+    mfront::exportArrayOfStringsSymbol(os, s, v);
   }  // end of writeArrayOfStringsSymbol
 
   void SymbolsGenerator::writeArrayOfIntsSymbol(
-      std::ostream& f, const std::string& s, const std::vector<int>& v) const {
-    if (v.empty()) {
-      f << "MFRONT_SHAREDOBJ const int * " << s << " = nullptr;\n\n";
-    } else {
-      auto i = decltype(v.size()){};
-      auto p = v.begin();
-      f << "MFRONT_SHAREDOBJ int " << s << "[" << v.size() << "] = {";
-      while (p != v.end()) {
-        f << *p;
-        if (++p != v.end()) {
-          if (i % 5 == 0) {
-            f << ",\n";
-          } else {
-            f << ",";
-          }
-        }
-        ++i;
-      }
-      f << "};\n";
-    }
+      std::ostream& os, const std::string& s, const std::vector<int>& v) const {
+    mfront::exportArrayOfIntegersSymbol(os, s, v);
   }  // end of writeArrayOfIntsSymbol
 
   SymbolsGenerator::~SymbolsGenerator() = default;

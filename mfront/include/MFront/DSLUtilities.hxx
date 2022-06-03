@@ -17,9 +17,9 @@
 
 #include <map>
 #include <tuple>
-#include <iosfwd>
 #include <vector>
 #include <string>
+#include <iostream>
 
 #include "MFront/MFrontConfig.hxx"
 #include "TFEL/Glossary/Forward/Glossary.hxx"
@@ -70,6 +70,34 @@ namespace mfront {
    */
   MFRONT_VISIBILITY_EXPORT std::vector<std::string> getST2toST2TypeAliases();
 
+  /*!
+   * \brief export a symbol using the `MFRONT_EXPORT_SYMBOL` macro
+   * \param[out] os: output stream
+   * \param[in] t: type of the symbol
+   * \param[in] n: name of the symbol
+   * \param[in] v: value of the symbol
+   */
+  template <typename ValueType>
+  void exportSymbol(std::ostream&,
+                    const std::string&,
+                    const std::string&,
+                    const ValueType&);
+  /*!
+   * \brief export string symbol using the `MFRONT_EXPORT_SYMBOL` macro
+   * \param[out] os: output stream
+   * \param[in] n: name of the symbol
+   */
+  void exportStringSymbol(std::ostream&,
+                          const std::string&,
+                          const std::string&);
+  /*!
+   * \brief export string symbol using the `MFRONT_EXPORT_SYMBOL` macro
+   * \param[out] os: output stream
+   * \param[in] n: name of the symbol
+   */
+  void exportUnsignedShortSymbol(std::ostream&,
+                                 const std::string&,
+                                 const unsigned short);
   /*!
    * \brief write the name of the variable
    * \param[out] os: output stream
@@ -306,15 +334,25 @@ namespace mfront {
   MFRONT_VISIBILITY_EXPORT void writeParametersDefaultValuesSymbols(
       std::ostream&, const std::string&, const VariableDescriptionContainer&);
   /*!
+   * \brief write a symbol describing an array of integers
+   * \param[out] os: output stream
+   * \param[out] n: name of the generated symbol
+   * \param[out] values: array of integers
+   */
+  MFRONT_VISIBILITY_EXPORT
+  void exportArrayOfIntegersSymbol(std::ostream&,
+                                   const std::string&,
+                                   const std::vector<int>&);
+  /*!
    * \brief write a symbol describing an array of strings
    * \param[out] os: output stream
    * \param[out] n: name of the generated symbol
    * \param[out] values: array of strings
    */
   MFRONT_VISIBILITY_EXPORT
-  void writeArrayOfStringsSymbol(std::ostream&,
-                                 const std::string&,
-                                 const std::vector<std::string>&);
+  void exportArrayOfStringsSymbol(std::ostream&,
+                                  const std::string&,
+                                  const std::vector<std::string>&);
 
 #ifdef MFRONT_HAVE_MADNEX
 
@@ -334,5 +372,7 @@ namespace mfront {
 #endif /* MFRONT_HAVE_MADNEX */
 
 }  // end of namespace mfront
+
+#include "MFront/DSLUtilities.ixx"
 
 #endif /* LIB_MFRONT_DSLUTILITIES_HXX */

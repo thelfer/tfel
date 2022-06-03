@@ -12,5 +12,5 @@
 // to an error because the `mfront_behaviour_check_library` function used by
 // TFEL' cmake infrastructure does not support when no sources are generated
 @Sources {
-  static void f(){};
+  [[maybe_unused]] static void f(){}
 }

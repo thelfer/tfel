@@ -13,6 +13,7 @@
 
 #include <ostream>
 #include "TFEL/Raise.hxx"
+#include "MFront/DSLUtilities.hxx"
 #include "MFront/BehaviourDescription.hxx"
 #include "MFront/StandardBehaviourInterface.hxx"
 #include "MFront/DianaFEAInterface.hxx"
@@ -37,9 +38,8 @@ namespace mfront {
     throw_if((mb.isStrainMeasureDefined()) &&
                  (mb.getStrainMeasure() != BehaviourDescription::LINEARISED),
              "unsupported strain measure");
-    out << "MFRONT_SHAREDOBJ unsigned short " << i.getFunctionNameBasis(name)
-        << "_BehaviourType = ";
-    out << "1u;\n\n";
+    exportUnsignedShortSymbol(
+        out, i.getFunctionNameBasis(name) + "_BehaviourType", 1u);
   }  // end of DianaFEASymbolsGenerator::writexxBehaviourTypeSymbols
 
   void DianaFEASymbolsGenerator::writeBehaviourKinematicSymbols(
@@ -47,8 +47,8 @@ namespace mfront {
       const StandardBehaviourInterface& i,
       const BehaviourDescription&,
       const std::string& name) const {
-    out << "MFRONT_SHAREDOBJ unsigned short " << i.getFunctionNameBasis(name)
-        << "_BehaviourKinematic = 1u;\n\n";
+    exportUnsignedShortSymbol(
+        out, i.getFunctionNameBasis(name) + "_BehaviourKinematic", 1u);
   }  // end of DianaFEASymbolsGenerator::writexxBehaviourKinematicSymbols
 
   void DianaFEASymbolsGenerator::writeAdditionalSymbols(

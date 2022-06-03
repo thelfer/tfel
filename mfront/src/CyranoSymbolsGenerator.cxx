@@ -13,6 +13,7 @@
 
 #include <ostream>
 #include "TFEL/Raise.hxx"
+#include "MFront/DSLUtilities.hxx"
 #include "MFront/MaterialPropertyDescription.hxx"
 #include "MFront/BehaviourDescription.hxx"
 #include "MFront/StandardBehaviourInterface.hxx"
@@ -40,8 +41,8 @@ namespace mfront {
       return names;
     }();
     const auto fn = i.getFunctionNameBasis(name);
-    os << "MFRONT_SHAREDOBJ unsigned short " << fn
-       << "_nElasticMaterialPropertiesEntryPoints = " << emps.size() << "u;\n";
+    exportUnsignedShortSymbol(os, fn + "_nElasticMaterialPropertiesEntryPoints",
+                              emps.size());
     this->writeArrayOfStringsSymbol(
         os, fn + "_ElasticMaterialPropertiesEntryPoints", emps);
     auto themps = [&bd] {
@@ -54,9 +55,9 @@ namespace mfront {
       }
       return names;
     }();
-    os << "MFRONT_SHAREDOBJ unsigned short " << fn
-       << "_nLinearThermalExpansionCoefficientsEntryPoints = "  //
-       << themps.size() << "u;\n";
+    exportUnsignedShortSymbol(
+        os, fn + "_nLinearThermalExpansionCoefficientsEntryPoints",
+        themps.size());
     this->writeArrayOfStringsSymbol(
         os, fn + "_LinearThermalExpansionCoefficientsEntryPoints", themps);
   }  // end of CyranoSymbolsGenerator::writeSpecificSymbols
@@ -71,73 +72,73 @@ namespace mfront {
   }  // end of CyranoSymbolsGenerator::writeAdditionalSymbols
 
   void CyranoSymbolsGenerator::writeBehaviourTypeSymbols(
-      std::ostream& out,
+      std::ostream& os,
       const StandardBehaviourInterface& i,
-      const BehaviourDescription& mb,
+      const BehaviourDescription& bd,
       const std::string& name) const {
-    auto throw_if = [](const bool b, const std::string& m) {
-      tfel::raise_if(b,
-                     "CyranoSymbolsGenerator::writeBehaviourTypeSymbols: " + m);
-    };
-    out << "MFRONT_SHAREDOBJ unsigned short " << i.getFunctionNameBasis(name)
-        << "_BehaviourType = ";
-    if (mb.getBehaviourType() ==
-        BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) {
-      if (mb.isStrainMeasureDefined()) {
-        if (mb.getStrainMeasure() == BehaviourDescription::LINEARISED) {
-          out << "1u;\n\n";
-        } else if (mb.getStrainMeasure() == BehaviourDescription::HENCKY) {
-          out << "2u;\n\n";
+    const auto bt = [&bd] {
+      if (bd.getBehaviourType() ==
+          BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) {
+        if (bd.isStrainMeasureDefined()) {
+          if (bd.getStrainMeasure() == BehaviourDescription::LINEARISED) {
+            return 1u;
+          } else if (bd.getStrainMeasure() == BehaviourDescription::HENCKY) {
+            return 2u;
+          } else {
+            tfel::raise(
+                "CyranoSymbolsGenerator::writeBehaviourTypeSymbols: "
+                "the cyrano interface only supports:\n"
+                "- small strain behaviours: the only strain measure "
+                "supported is the HPP one (linearised)\n"
+                "- finite strain behaviours based on the Hencky strain "
+                "measure");
+          }
         } else {
-          throw_if(true,
-                   "the cyrano interface only supports:\n"
-                   "- small strain behaviours: the only strain measure "
-                   "supported is the HPP one (linearised)\n"
-                   "- finite strain behaviours based on the Hencky strain "
-                   "measure");
+          return 1u;
         }
       } else {
-        out << "1u;\n\n";
+        tfel::raise(
+            "CyranoSymbolsGenerator::writeBehaviourTypeSymbols: "
+            "unsupported behaviour type");
       }
-    } else {
-      throw_if(true, "unsupported behaviour type");
-    }
+    }();
+    exportUnsignedShortSymbol(
+        os, i.getFunctionNameBasis(name) + "_BehaviourType", bt);
   }  // end of CyranoSymbolsGenerator::writeBehaviourTypeSymbols
 
   void CyranoSymbolsGenerator::writeBehaviourKinematicSymbols(
-      std::ostream& out,
+      std::ostream& os,
       const StandardBehaviourInterface& i,
-      const BehaviourDescription& mb,
+      const BehaviourDescription& bd,
       const std::string& name) const {
-    auto throw_if = [](const bool b, const std::string& m) {
-      if (b) {
-        tfel::raise("CyranoSymbolsGenerator::writeBehaviourKinematicSymbols: " +
-                    m);
-      }
-    };
-    out << "MFRONT_SHAREDOBJ unsigned short " << i.getFunctionNameBasis(name)
-        << "_BehaviourKinematic = ";
-    if (mb.getBehaviourType() ==
-        BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) {
-      if (mb.isStrainMeasureDefined()) {
-        if (mb.getStrainMeasure() == BehaviourDescription::LINEARISED) {
-          out << "1u;\n\n";
-        } else if (mb.getStrainMeasure() == BehaviourDescription::HENCKY) {
-          out << "4u;\n\n";
+    const auto bk = [&bd] {
+      if (bd.getBehaviourType() ==
+          BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) {
+        if (bd.isStrainMeasureDefined()) {
+          if (bd.getStrainMeasure() == BehaviourDescription::LINEARISED) {
+            return 1u;
+          } else if (bd.getStrainMeasure() == BehaviourDescription::HENCKY) {
+            return 4u;
+          } else {
+            tfel::raise(
+                "CyranoSymbolsGenerator::writeBehaviourKinematicSymbols: "
+                "the cyrano interface only supports:\n"
+                "- small strain behaviours: the only strain measure "
+                "supported is the HPP one (linearised)\n"
+                "- finite strain behaviours based on the Hencky strain "
+                "measure");
+          }
         } else {
-          throw_if(
-              true,
-              "the cyrano interface only supports:\n"
-              "- small strain behaviours: the only strain measure "
-              "supported is the HPP one (linearised)\n"
-              "- finite strain behaviours based on the Hencky strain measure");
+          return 1u;
         }
       } else {
-        out << "1u;\n\n";
+        tfel::raise(
+            "CyranoSymbolsGenerator::writeBehaviourKinematicSymbols: "
+            "unsupported behaviour type");
       }
-    } else {
-      throw_if(true, "unsupported behaviour type");
-    }
+    }();
+    exportUnsignedShortSymbol(
+        os, i.getFunctionNameBasis(name) + "_BehaviourKinematic", bk);
   }  // end of CyranoSymbolsGenerator::writeBehaviourKinematicSymbols
 
   bool CyranoSymbolsGenerator::handleStrainMeasure() const {
