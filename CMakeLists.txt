@@ -17,6 +17,8 @@ option(TFEL_APPEND_VERSION
 option(BUILD_SHARED_LIBS  "enable shared libraries" ON)
 if(NOT BUILD_SHARED_LIBS)
   set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+  # when BUILD_SHARED_LIBS=OFF then disable option enable-static
+  set(enable-static OFF CACHE BOOL "enable additional static libraries" FORCE)
 endif()
 
 if(EXISTS "${CMAKE_BINARY_DIR}/conanbuildinfo.cmake")
