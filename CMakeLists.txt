@@ -15,6 +15,9 @@ set(TFEL_VERSION_FLAVOUR "" CACHE STRING
 option(TFEL_APPEND_VERSION
   "append TFEL version number to all libraries, executables and directories" OFF)
 option(BUILD_SHARED_LIBS  "enable shared libraries" ON)
+if(NOT BUILD_SHARED_LIBS)
+  set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+endif()
 
 if(EXISTS "${CMAKE_BINARY_DIR}/conanbuildinfo.cmake")
   include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
