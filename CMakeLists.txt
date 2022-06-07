@@ -99,14 +99,17 @@ add_definitions("-DTFEL_CMAKE_GENERATOR=\\\"\"${CMAKE_GENERATOR}\"\\\"")
 # testing
 set(CTEST_CONFIGURATION_TYPE "${JOB_BUILD_CONFIGURATION}")
 # (must be placed *before* any add_subdirectory, cmake bug ?)
-enable_testing()
-if(CMAKE_CONFIGURATION_TYPES)
-  add_custom_target(check COMMAND 
-    ${CMAKE_CTEST_COMMAND} -T test -C $<CONFIGURATION>)
-else(CMAKE_CONFIGURATION_TYPES)
-  add_custom_target(check COMMAND 
-    ${CMAKE_CTEST_COMMAND} -T test )
-endif(CMAKE_CONFIGURATION_TYPES)
+option(enable-testing "enable tests" ON)
+if(enable-testing)
+  enable_testing()
+  if(CMAKE_CONFIGURATION_TYPES)
+    add_custom_target(check COMMAND
+      ${CMAKE_CTEST_COMMAND} -T test -C $<CONFIGURATION>)
+  else(CMAKE_CONFIGURATION_TYPES)
+    add_custom_target(check COMMAND
+      ${CMAKE_CTEST_COMMAND} -T test )
+  endif(CMAKE_CONFIGURATION_TYPES)
+endif()
 
 option(enable-cppcheck "analyse targets with cppcheck" OFF)
 if(enable-cppcheck)
@@ -528,7 +531,6 @@ add_subdirectory(mfront-query)
 add_subdirectory(mfm)
 add_subdirectory(mfront-doc)
 add_subdirectory(mtest)
-option(enable-testing "enable tests" ON)
 if(enable-testing)
   add_subdirectory(tests)
 endif()
