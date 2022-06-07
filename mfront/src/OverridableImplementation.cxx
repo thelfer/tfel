@@ -51,41 +51,41 @@ namespace mfront {
   const std::map<std::string, double>&
   OverridableImplementation::getOverridingParameters() const {
     return this->parameters;
-  }  // end of OverridableImplementation::getOverridingParameters
+  }  // end of getOverridingParameters
 
   void OverridableImplementation::overrideByAParameter(const std::string& n,
                                                        const double v) {
     const auto vn = dsl->getOverridableVariableNameByExternalName(n);
     this->parameters[vn] = v;
-  }  // end of OverridableImplementation::overrideByAParameter
+  }  // end of overrideByAParameter
 
   AbstractDSL::DSLTarget OverridableImplementation::getTargetType() const {
     return this->dsl->getTargetType();
-  }  // end of OverridableImplementation::getTargetType
+  }  // end of getTargetType
 
   const FileDescription& OverridableImplementation::getSourceFileDescription()
       const {
     return this->dsl->getFileDescription();
-  }  // end of OverridableImplementation::getSourceFileDescription
+  }  // end of getSourceFileDescription
 
   std::string OverridableImplementation::getSourceMaterialKnowledgeIdentifier()
       const {
     return this->dsl->getMaterialKnowledgeIdentifier();
-  }  // end of OverridableImplementation::getSourceMaterialKnowledgeIdentifier
+  }  // end of getSourceMaterialKnowledgeIdentifier
 
   std::string OverridableImplementation::getSourceMaterialName() const {
     return this->dsl->getMaterialName();
-  }  // end of OverridableImplementation::getSourceMaterialName
+  }  // end of getSourceMaterialName
 
   const std::string& OverridableImplementation::getSourceFilePath() const {
     return this->source;
-  }  // end of OverridableImplementation::getSourceFilePath
+  }  // end of getSourceFilePath
 
   const std::map<std::string, std::vector<std::string>, std::less<>>&
   OverridableImplementation::getExternalMFrontFiles() const{
     return this->dsl->getMaterialKnowledgeDescription()
         .getExternalMFrontFiles();
-  }
+  } // end of getExternalMFrontFiles
 
   OverridableImplementation::~OverridableImplementation() = default;
 
