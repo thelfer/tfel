@@ -1,7 +1,7 @@
 ---
 title: Material properties in `MFront`
 author: Thomas Helfer, Maxence Wangermez
-date: 19/08/2021
+date: 06/2022
 lang: en-EN
 geometry:
   - margin=2cm
@@ -28,7 +28,7 @@ abstract: |
   allow to introduce some key concepts of `MFront`, making a perfect
   introduction for beginners.
   
-  This tutorial consider the example of the Young's modulus of uranium
+  This tutorial considers the example of the Young's modulus of uranium
   dioxide, which can be represented, according to Martin
   [@martin_elastic_1989], by the following expression:
   \[
@@ -48,14 +48,14 @@ pandoc -f markdown+tex_math_single_backslash -F pandoc-crossref --citeproc mater
 Material properties are function of some state variables which describe
 the current thermodynamical state of the material.
 
-Compared to behaviours, which often requires to solve a system of
+Compared to behaviours, which often require to solve a system of
 ordinary differential equations to describe the evolution of the state
 variables describing the material, material properties are conceptually
-much simplier. However, their implementations, while straightforward,
+much simpler. However, their implementations, while straightforward,
 allow to introduce some key concepts of `MFront`, making a perfect
 introduction for beginners.
 
-This tutorial consider the example of the Young's modulus of uranium
+This tutorial considers the example of the Young's modulus of uranium
 dioxide, which can be represented, according to Martin
 [@martin_elastic_1989], by the following expression:
 \[
@@ -88,7 +88,7 @@ This code is assumed to be in a standard text file called
 > **About editing `MFront` files**
 >
 > Most text editors have special modes for `C++` highlighting and we
-> strongly recommand to associate file with the extension `.mfront` with `C++` mode.
+> strongly recommand to associate files with the extension `.mfront` with `C++` mode.
 >
 > Note that an experimental text editor called `tfel-editor` with specific
 > support for `MFront` is also available here: 
@@ -171,9 +171,9 @@ at sign `@`.
 
 ### The `@DSL` keyword
 
-The first line, staring with the `@DSL` keyword, defines the domain
+The first line, starting with the `@DSL` keyword, defines the domain
 specific language used by `MFront` to interpret the file. Domain
-specific languages defines the kind of material knowledge treated by the
+specific languages define the kind of material knowledge treated by the
 file (material property, behaviour, model) and also, for behaviours, a
 class of numerical algorithms used to integrate the constitutive
 equations over a time step. Each DSL has its own conventions and defines
@@ -199,7 +199,7 @@ its own keywords (however, many keywords are common to several DSLs).
 > ~~~~
 >
 > where `DSLName` is the name of the DSL. For example, the list of keywords
-> defined by the `MaterialLaw` DSL using in this tutorial is given by:
+> defined by the `MaterialLaw` DSL used in this tutorial is given by:
 >
 > ~~~~{.bash}
 > $ mfront --help-keywords-list=MaterialLaw
@@ -241,7 +241,7 @@ reference to the original paper as follows:
 ~~~~
 
 Note that the generated name of the function also changes, so the
-previous tests case must be adapted. This is stated by the ouput of
+previous test case must be adapted. This is stated by the ouput of
 `MFront`:
 
 ~~~~{.bash}
@@ -271,19 +271,18 @@ The implementation of Expression
 introduced by the `@Function` keyword. By default, this code block must
 store the result of the material property in a variable called `res`.
 
-Its is worth emphasing that this implementation is here reasonably
-close to Equation @eq:mfront:material_properties:UO2_YoungModulus.
+It is worth noting that this implementation here is reasonably close to Equation @eq:mfront:material_properties:UO2_YoungModulus.
 
 The code introduced by `@Function` is standard `C++` with a few implicit
 additions, such as:
 
-- The declaration of some MFront types, such as `real`, `stress`,
+- the declaration of some `MFront` types, such as `real`, `stress`,
   `temperature`, etc. (see Section
-  @sec:mfront:material_properties:types).
-- The declaration of external material properties (not discussed in this
+  @sec:mfront:material_properties:types),
+- the declaration of external material properties (not discussed in this
   tutorial, see the documentation of the `@MaterialLaw` keyword for
-  details)
-- The fact that every function of the standard library is automatically
+  details),
+- the fact that every function of the standard library is automatically
   used (i.e. the line `using namespace std;` is inserted before the code
   block).
 
@@ -301,14 +300,14 @@ using the `@Includes` and `@Library` keywords.
 > is also placed inside a `try/catch` block to avoid the propagation of
 > `C++` exceptions in languages and solvers that can't handle them.
 > 
-> Interfaces are responible for translating `C++` exceptions into errors
+> Interfaces are responsible for translating `C++` exceptions into errors
 > in an appropriate way if possible. For example, most interfaces will
 > handle exceptions derived from `std::exception` specifically and
 > use the `what` method to retrieve the error message.
 
 # Improvements
 
-A this stage, the `MFront`'s implementation is barely working. This
+At this stage, the `MFront`'s implementation is barely working. This
 section is devoted to the improvements that must be considered to have a
 production-ready implementation.
 
@@ -324,7 +323,7 @@ follows:
 
 Associating a material name to the material property has two effects:
 
-- it changes the name of the generated function.
+- it changes the name of the generated function,
 - it changes the name of the library generated.
 
 This can be readily seen on the output of `MFront`:
@@ -393,7 +392,7 @@ reflect the change in the name of the output:
 ### Physical bounds
 
 At this stage, the function barely works, but can be used very
-inappropriately. For example, one may request the value of the Young
+inappropriately. For example, one may request the value of the Young's
 modulus for a negative temperature, something which in our opinion shall
 lead to an error to indicate to the user that something very wrong is
 happening their code.
@@ -411,8 +410,10 @@ follows:
 @PhysicalBounds f in [0:1];
 ~~~~
 
-where the `*` characters means infinity (and is followed by an
+where the `*` character means infinity (and is followed by an
 open-bracket).
+
+A violation of the physical bounds is __always__ a cause for the calculation stop and the return of an error.
 
 ### Standard bounds
 
@@ -431,19 +432,19 @@ in the range \([273.15:2610.15]\):
 ~~~~
 
 `MFront` defines three policies to let the solver choose how to treat
-an out-of-bounds evalation:
+an out-of-bounds evaluation:
 
-- `None`: nothing is done
+- `None`: nothing is done,
 - `Warning`: the user shall be informed but the computation is performed
   as usual. How the user is informed depends on the interface
-  considered.
+  considered,
 - `Strict`: the computation are stopped and an error is reported. The
   mechanism used to stop the computation depends on the interface
   considered.
 
 `MFront` automatically selects the `None` policy by default. 
 
-#### Changing the default policy. Introducing DSL options
+#### Changing the default policy with DSL options -
 
 Since Version 4.1, this behaviour can now be changed by using the
 `default_out_of_bounds_policy` string option of the `MaterialLaw` DSL as
@@ -452,7 +453,7 @@ follows:
 ~~~~{.cxx}
 @DSL MaterialLaw {
   default_out_of_bounds_policy: "Strict"
-}
+};
 ~~~~
 
 > **List of available DSL options**
@@ -476,9 +477,11 @@ follows:
 >   This option shall only be specified on the command line.
 > ~~~~
 
-We do not recommend to hard coding a DSL options in the source file as
+We do not recommend to hard coding DSL options in the source file as
 `MFront` files must be sharable across different users which may have
 different needs.
+
+#### Changing the default policy with command line -
 
 `DSL` options can be specified on the command line as follows:
 
@@ -493,7 +496,7 @@ Note that a double-quote is required here to pass a string option.
 > **Statement of need**
 > 
 > DSL options have been introduced to customize `MFront`.
-> While most user may want to control the out-of-bounds policy
+> While most users may want to control the out-of-bounds policy
 > at runtime, this may not be compatible with quality assurance
 > in safety critical studies.
 >
@@ -508,7 +511,7 @@ Note that a double-quote is required here to pass a string option.
 > its validation domain without explicit stating it in their input
 > files using a specific keyword. In this case, the developpers of
 > the fuel performance code are no more responsible of the results
-> obtained and may explicitely state it in the result files by
+> obtained and may explicitly state it in the result files by
 > a warning (for example).
 
 ### Testing in `python`
@@ -529,7 +532,7 @@ implementation is as follows:
 }
 ~~~~
 
-After recompiling the `python` module, we may try to evaluate the Young'
+After recompiling the `python` module, we may try to evaluate the Young's
 modulus for a negative temperature. The output is the following:
 
 ~~~~{.python}
@@ -552,7 +555,7 @@ any specific behaviour:
 70754504700.0
 ~~~~
 
-#### Changing the out-of-bounds policy
+#### Changing the out-of-bounds policy -
 
 By default, the out-of-bounds policy can be changed using the
 environment variable `PYTHON_OUT_OF_BOUNDS_POLICY` as follows:
@@ -568,7 +571,7 @@ YoungModulus : T is over its upper bound (3000>2610.15).
 Here, one sees that a warning is displayed in the terminal on the
 standard error stream.
 
-If the out-of-bounds policy is set to `STRICT`, violation of standards
+If the out-of-bounds policy is set to `STRICT`, violation of standard
 bounds is treated as the violation of physical bounds:
 
 ~~~~{.python}
@@ -579,10 +582,9 @@ Traceback (most recent call last):
 RuntimeError: YoungModulus : T is over its upper bound (3000>2610.15).
 ~~~~
 
-#### Disabling the runtime modification of the out-of-bounds policy
+#### Disabling the runtime modification of the out-of-bounds policy -
 
-Since Version 4.1, the `out_of_bounds_policy_runtime_modification`
-boolean DSL option can be used to enable or disable the runtime
+Since Version 4.1, it is possible to use the `out_of_bounds_policy_runtime_modification` DSL option boolean to enable or disable the runtime
 modification of the out-of-bounds policy.
 
 If this option is set to `false`, the environment variable
@@ -598,7 +600,7 @@ calling solver. Among others, these information include the name of the
 inputs and the name of the output, as well as description of those
 variables.
 
-To emphasize this point, let us consider an handy tool called
+To emphasize this point, let us consider a handy tool called
 [`mfront-query`](mfront-query.html) which can be used to request all
 kind of information about an `MFront` file from the command line. Using
 `mfront-query` to list the inputs of this implementation leads to this
@@ -611,7 +613,7 @@ $ mfront-query --inputs YoungModulus.mfront
 ~~~~
 
 While `MFront`'s users hardly ever use `mfront-query` directly, its
-mention here is meant to highlight the fact that and `MFront` file (or
+mention here is meant to highlight the fact that an `MFront` file (or
 the shared library generated thanks to this `MFront` file, see below)
 generally must be self-descriptive and provide meaningful information to
 the solver that will use it.
@@ -626,7 +628,7 @@ practice. We do not recommend this solution.
 ### About standard C++ comments
 
 Another idea would be to highlight the meaning of those variables using
-`C++` comments has follows:
+`C++` comments as follows:
 
 ~~~~{.cxx}
 // T stands for the temperature
@@ -638,9 +640,9 @@ Another idea would be to highlight the meaning of those variables using
 However, those comments are not associated to the variables by `MFront`,
 so the output of `mfront-query` is unchanged.
 
-### `doxgen`-like comments
+### `doxygen`-like comments
 
-`MFront` support [`doxygen`-like](https://www.doxygen.nl/index.html)
+`MFront` supports [`doxygen`-like](https://www.doxygen.nl/index.html)
 comments to document variables, as follows:
 
 ~~~~{.cxx}
@@ -676,7 +678,7 @@ f.setGlossaryName("Porosity");
 ~~~~
 
 The glossary name automatically defines the **external name** of the
-variable and automatically adds an approriate documentation. The output
+variable and automatically adds an appropriate documentation. The output
 of `mfront-query` is now:
 
 ~~~~{.cxx}
@@ -694,8 +696,8 @@ $ mfront-query --inputs YoungModulus.mfront
 
 ## Parameters
 
-Sensitivy analysis, uncertainties propagations, re-identification,
-requires to be able to modify the coefficients of the material property.
+Sensitivity analysis, uncertainties propagations, re-identification,
+require to be able to modify the coefficients of the material property.
 
 `MFront` introduces the concept of *parameters*: a parameter is a
 variable which has a default value that can be changed at runtime. In
@@ -718,12 +720,12 @@ implementation can be turned into a more explicit version as follows:
 
 ### Modification of parameters
 
-#### Using external txt files
+#### Using external txt files -
 
 Parameters can usually be changed using an external txt file,
 although this may depend on the interface considered.
 
-Since Version 4.1, the name of expected parameter file can be retrieved
+Since Version 4.1, the name of expected parameters file can be retrieved
 using `mfront-query` as follows:
 
 ~~~~{.bash}
@@ -748,14 +750,14 @@ d2E_dT2 -1.9198278e4
 f0 0.4
 ~~~~
 
-This file may contain commented line starting with the `#` character.
+This file may contain commented lines starting with the `#` character.
 
 Note that this file is read, if present in the current working
 directory, only at the very first evaluation of the material property.
-As a consequence, changing the this file after this first evaluation
+As a consequence, changing this file after this first evaluation
 will not have any effect.
 
-#### Using the `ExternalLibraryManager`
+#### Using the `ExternalLibraryManager` -
 
 The `ExternalLibraryManager` class, provided by the `TFEL/System`
 library provides the `setParameter` method which can be used to modify
@@ -778,7 +780,7 @@ This method can be used as follows:
 136152708000.0
 ~~~~
 
-#### Disabling the modification of parameter from external txt file
+#### Disabling the modification of parameter from external txt file -
 
 Since Version 4.1, initializing parameters from an external file can be
 disabled using the `parameters_initialization_from_file` boolean DSL
@@ -795,11 +797,11 @@ control on the users ability to modify parameters of well-qualified
 material properties: if such parameter is modified, strict assurance
 quality of the solver is compromised.
  
-#### Disabling the runtime modification of parameters
+#### Disabling the runtime modification of parameters -
 
-Since Version 4.1, the boolean DSL option
-`parameters_as_static_variables` modifies the way parameters are
-treated:
+Since Version 4.1, it is possible to use the boolean DSL option
+`parameters_as_static_variables` in order to modify the way parameters are
+processed:
 
 ~~~~{.bash}
 $ mfront --obuild --interface=python                      \
@@ -824,7 +826,7 @@ implementation and a short description can be added by the `@Author`,
 `@Date` and `@Description` keywords respectively.
 
 
-For example, those information can added as follows:
+For example, those information can be added as follows:
 
 ~~~~{.cxx}
 @Author   T. Helfer;  // author name
@@ -835,7 +837,7 @@ For example, those information can added as follows:
   (U, Pu) mixed oxides: a review and recommendations
   Martin, DG
   High Temperatures. High Pressures, 1989
-}
+};
 ~~~~
 
 Those information will be exported by `MFront` and can be retrieved by
@@ -860,7 +862,7 @@ We strongly encourage `MFront` users to never use directly any of the
 ### Default variable type in the `MaterialLaw` DSL
 
 By default, variables in the `MaterialLaw` DSL have the `real` type.
-Hence the declaration
+Hence the declaration:
 
 ~~~~{.cxx}
 @Input f;
@@ -900,9 +902,9 @@ functions.
 Note that quantities are implemented by the `TFEL/Math` library and
 supported in `MFront` only since Version 4.0.
 
-#### Error generated by invalid operations on quantities
+#### Error generated by invalid operations on quantities -
 
-The following code won't compile if quantities are set:
+The following code will not compile if quantities are set:
 
 ~~~~{.cxx}
 const auto a = strain{1e-8};
@@ -918,9 +920,9 @@ invalid operation
     static_assert(std::is_same_v<UnitType, UnitType2>, "invalid operation");
 ~~~~
 
-#### The `derivative_type` metafunction
+#### The `derivative_type` metafunction -
 
-Defining the type to the parameters `E0` and `f0` is straightforward:
+Defining the type of the parameters `E0` and `f0` is straightforward:
 
 ~~~~{.cxx}
 @Parameter stress E0 = 2.2693e11;
@@ -943,20 +945,20 @@ In Version 4.1, the definition of `d2E_dT2` can be simplified as follows:
 @Parameter derivative_type<stress, temperature, temperature> d2E_dT2 = -1.9198278e4;
 ~~~~
 
-#### Impact on runtime performances
+#### Impact on runtime performances -
 
 Quantities have a compile-time overhead as:
 
-- The compiler must perform the dimensional analysis to check if every
-  operation is valid.
-- Quantities have been implemented to have a negligible runtime
+- the compiler must perform the dimensional analysis to check if every
+  operation is valid,
+- quantities have been implemented to have a negligible runtime
   overhead, if any (see comment below), at least in optimised builds.
   This requires that the compiler does extra work, such as function
   inlining and intermediate variable elimination.
 
 
-The following listings show the
-assembly resulting from the compilation of the code generated by the `c`
+The following listings show the exact same
+assemblies resulting from the compilation of the code generated by the `c`
 interface with (right) and without (left) the usage of quantities.
 
 ~~~~{.nasm}
@@ -989,7 +991,7 @@ does not have any runtime overhead.
 
 ## `mfront-query`
 
-`mfront-query` is a convenient tool to analyse an `MFront` file.
+`mfront-query` is a convenient tool to analyse an `MFront` source file.
 
 The list of queries for material properties can be displayed using the
 `--help-material-property-queries-list` command line argument, as
@@ -1011,14 +1013,16 @@ Available options are :
 ....
 ~~~~
 
-For example, the following query shows the list of `C++` file generated
+For example, the following query shows the list of `C++` files generated
 when using the `python` interface:
 
 ~~~~{.bash}
-$ mfront-query --interface=python --generated-sources UO2_YoungModulus_Martin1989.mfront 
+$ mfront-query --interface=python \
+               --generated-sources UO2_YoungModulus_Martin1989.mfront 
 uo2 : UO2_YoungModulus_Martin1989-python.cxx UO2lawwrapper.cxx
 $ # do not sort by library
-$ mfront-query --interface=python --generated-sources=unsorted UO2_YoungModulus_Martin1989.mfront 
+$ mfront-query --interface=python \
+               --generated-sources=unsorted UO2_YoungModulus_Martin1989.mfront 
 UO2_YoungModulus_Martin1989-python.cxx UO2lawwrapper.cxx 
 ~~~~
 
@@ -1027,14 +1031,13 @@ UO2_YoungModulus_Martin1989-python.cxx UO2lawwrapper.cxx
 
 ## The `tfel::system::ExternalMaterialPropertyDescription` class
 
-While `mfront-query` works on the `MFront` source file, the
-`TFEL/System` provides the `ExternalMaterialPropertyDescription` class
+The `TFEL/System` provides the `ExternalMaterialPropertyDescription` class
 which can be used to retrieve numerous information about a material
 property contained in a shared library. This class has been wrapped in
 `python`.
 
-The `ExternalMaterialPropertyDescription` is mostly a convenient wrapper
-around the `ExternalLibraryManager` which is more flexible but also more
+The `ExternalMaterialPropertyDescription` is a convenient layer around the
+`ExternalLibraryManager` which is more flexible but also more
 difficult to use directly. It allows to retrieve various other
 information, such as:
 
@@ -1083,13 +1086,13 @@ page](mtest-python.html).
 This class has the following core interface:
 
 - `getVariablesNames`, which returns the names of the arguments of
-  the material property.
+  the material property,
 - `setVariableValue` which allows to set the value of an argument of the
-  material property.
+  material property,
 - `getValue` which evaluates the material property for the values of the
-  arguments set by the `setVariableValue` method.
+  arguments set by the `setVariableValue` method,
 - `getParametersNames`, which returns the names of the parameters of
-  material property.
+  material property,
 - `setParameter` which allows to change the value of a parameter.
 
 As described in the next paragraph, several convenient methods and
@@ -1106,11 +1109,10 @@ young_modulus = mtest.MaterialProperty(
     'src/libCastemUO2.so', 'UO2_YoungModulus_Martin1989')
 ~~~~
 
-Note that the `MaterialProperty` constructor automatically detects the
-interface used to generate the material property and instantiates the
-proper concrete implementation internally. In this example, an instance
-of the `CastemMaterialProperty` class is instanciated.
+Note that the constructor of `MaterialProperty` automatically detects the interface used to generate the material property and instantiates the correct implementation internally. 
 
+In this example, an instantiation
+of the `CastemMaterialProperty` class is created.
 The arguments of the material property can then be set and the material
 property can be evaluated:
 
@@ -1138,12 +1140,12 @@ E = young_modulus({'Temperature': 562, 'Porosity': 0.1})
 ## The `mfm` utility
 
 Once a shared library has been generated by `MFront`, it is convenient
-to be able to analyse its content rapidely. This can be done in `python`
+to be able to analyse its content rapidly. This can be done in `python`
 and `C++` using the `tfel::system::ExternalLibraryManager` class.
 
 The `mfm` utility is a small command-line program built on top of the
 `ExternalLibraryManager` class. It allows to request all the entry
-points generated by MFront in shared library, i.e. the list of material
+points generated by `MFront` in shared library, i.e. the list of material
 properties, behaviours and models. Those entry points can be filtered by
 name and material using regular expressions.
 
@@ -1155,13 +1157,15 @@ $ mfm --filter-by-type=material_property --filter-by-name='.+Young.+' src/uo2.so
 - UO2_YoungModulus_Martin1989
 ~~~~
 
-<!--
 # Conclusions
+In this tutorial, several key concepts of `MFront` are discussed using an example of a material property: the Young's modulus of uranium dioxide.
 
+With increasing difficulty, this tutorial leads the user to write a first `MFront` file, to implement it and to use the resulting libraries. 
 
+Moreover, different implementation or compilation options are described as well as good practices in terms of using the material properties of the `MFront` software.
+
+\newpage
 \appendix
--->
-
 # Appendices
 
 ## About the analysis of errors generated by `MFront` or the `C++` compiler {#sec:mfront:material_properties:compiling_errors}
