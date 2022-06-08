@@ -1,4 +1,6 @@
 add_subdirectory(include)
 add_subdirectory(src)
-add_subdirectory(tests)
+if(enable-testing)
+  add_subdirectory(tests)
+endif()
 add_subdirectory(Examples)

@@ -14,6 +14,12 @@ set(TFEL_VERSION_FLAVOUR "" CACHE STRING
   "Append a flavour to the version number")
 option(TFEL_APPEND_VERSION
   "append TFEL version number to all libraries, executables and directories" OFF)
+option(BUILD_SHARED_LIBS  "enable shared libraries" ON)
+if(NOT BUILD_SHARED_LIBS)
+  set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+  # when BUILD_SHARED_LIBS=OFF then disable option enable-static
+  set(enable-static OFF CACHE BOOL "enable additional static libraries" FORCE)
+endif()
 
 if(EXISTS "${CMAKE_BINARY_DIR}/conanbuildinfo.cmake")
   include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
@@ -98,14 +104,17 @@ add_definitions("-DTFEL_CMAKE_GENERATOR=\\\"\"${CMAKE_GENERATOR}\"\\\"")
 # testing
 set(CTEST_CONFIGURATION_TYPE "${JOB_BUILD_CONFIGURATION}")
 # (must be placed *before* any add_subdirectory, cmake bug ?)
-enable_testing()
-if(CMAKE_CONFIGURATION_TYPES)
-  add_custom_target(check COMMAND 
-    ${CMAKE_CTEST_COMMAND} -T test -C $<CONFIGURATION>)
-else(CMAKE_CONFIGURATION_TYPES)
-  add_custom_target(check COMMAND 
-    ${CMAKE_CTEST_COMMAND} -T test )
-endif(CMAKE_CONFIGURATION_TYPES)
+option(enable-testing "enable tests" ON)
+if(enable-testing)
+  enable_testing()
+  if(CMAKE_CONFIGURATION_TYPES)
+    add_custom_target(check COMMAND
+      ${CMAKE_CTEST_COMMAND} -T test -C $<CONFIGURATION>)
+  else(CMAKE_CONFIGURATION_TYPES)
+    add_custom_target(check COMMAND
+      ${CMAKE_CTEST_COMMAND} -T test )
+  endif(CMAKE_CONFIGURATION_TYPES)
+endif()
 
 option(enable-cppcheck "analyse targets with cppcheck" OFF)
 if(enable-cppcheck)
@@ -527,7 +536,9 @@ add_subdirectory(mfront-query)
 add_subdirectory(mfm)
 add_subdirectory(mfront-doc)
 add_subdirectory(mtest)
-add_subdirectory(tests)
+if(enable-testing)
+  add_subdirectory(tests)
+endif()
 add_subdirectory(mfm-test-generator)
 
 #documentations

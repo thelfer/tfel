@@ -159,6 +159,8 @@ then
     mkdir build-cmake-release
     mkdir install-cmake-debug
     mkdir build-cmake-debug
+    mkdir install-cmake-release-static
+    mkdir build-cmake-release-static
 fi
 pushd build-cmake
 cmake ../tfel-$pkg_name/ -DTFEL_BROKEN_LIBMATH=$broken_libmath -Dlocal-castem-header=ON -Denable-fortran=ON ${python_cmake_arg} ${python_bindings_cmake_arg} -Denable-aster=ON -Denable-abaqus=ON -Denable-calculix=ON -Denable-comsol=ON -Denable-diana-fea=ON -Denable-ansys=ON -Denable-europlexus=ON -Denable-zmat=ON -Denable-cyrano=ON -Denable-lsdyna=ON -Denable-random-tests=${rtests} -Denable-reference-doc=${rdoc} -Denable-portable-build=${portable_build} -DCMAKE_INSTALL_PREFIX=$build/build-check/cmake/install-cmake
@@ -195,6 +197,17 @@ then
     fi
     $make_exec install
     popd #from build-cmake-debug
+    pushd build-cmake-release-static
+    cmake ../tfel-$pkg_name/ -DBUILD_SHARED_LIBS=OFF -DCMAKE_BUILD_TYPE=Release -DTFEL_BROKEN_LIBMATH=$broken_libmath -Dlocal-castem-header=ON -Denable-fortran=ON ${python_cmake_arg} ${python_bindings_cmake_arg} -Denable-aster=ON -Denable-abaqus=ON -Denable-calculix=ON -Denable-comsol=ON -Denable-diana-fea=ON -Denable-ansys=ON -Denable-europlexus=ON -Denable-zmat=ON -Denable-cyrano=ON -Denable-lsdyna=ON -Denable-random-tests=${rtests} -Denable-reference-doc=${rdoc} -Denable-portable-build=${portable_build} -DCMAKE_INSTALL_PREFIX=$build/build-check/cmake/install-cmake-release-static
+    $make_exec
+    if [ test "x$pbuild" == "xyes" ];
+    then
+	make check ARGS="-j $nbproc"
+    else
+	$make_exec check
+    fi
+    $make_exec install
+    popd #from build-cmake-release-static
 fi
 
 if test "x$wbuild" == "xyes" ;
