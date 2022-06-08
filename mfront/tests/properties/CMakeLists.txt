@@ -1,6 +1,6 @@
 add_subdirectory(interfaces)
 
-macro(add_mfront_generated_source lib interface ext file)
+function(add_mfront_generated_source lib interface ext file)
   set(mfront_file   "${CMAKE_CURRENT_SOURCE_DIR}/${file}.mfront")
   if(CMAKE_VERSION AND (${CMAKE_VERSION} GREATER "2.8.2"))
     set(mfront_executable "$<TARGET_FILE:mfront>")
@@ -73,23 +73,38 @@ macro(add_mfront_generated_source lib interface ext file)
 	WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/generation-test")
     endif(CMAKE_VERSION AND (${CMAKE_VERSION} GREATER "2.8.2"))
   endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
-  set(${lib}_SOURCES ${mfront_output} ${${lib}_SOURCES})
-endmacro(add_mfront_generated_source)
+  set(${lib}_SOURCES ${mfront_output} ${${lib}_SOURCES} PARENT_SCOPE)
+endfunction(add_mfront_generated_source)
 
-macro(mfront_check_library lib interface ext)
+function(mfront_check_library lib interface ext)
   if(${ARGC} LESS 1)
     message(FATAL_ERROR "mfront_library : no source specified")
   endif(${ARGC} LESS 1)
   foreach(source ${ARGN})
     add_mfront_generated_source(${lib} ${interface} "${ext}" ${source})
   endforeach(source)
-  add_library(${lib} SHARED EXCLUDE_FROM_ALL
+  add_library(${lib} EXCLUDE_FROM_ALL
     ${${lib}_SOURCES}
     ${${lib}_ADDITIONAL_SOURCES})
   set_target_properties(${lib} PROPERTIES
       COMPILE_FLAGS "-DMFRONT_COMPILING")
   add_dependencies(check ${lib})
-endmacro(mfront_check_library)
+endfunction(mfront_check_library)
+
+function(mfront_check_module lib interface ext)
+  if(${ARGC} LESS 1)
+    message(FATAL_ERROR "mfront_library : no source specified")
+  endif(${ARGC} LESS 1)
+  foreach(source ${ARGN})
+    add_mfront_generated_source(${lib} ${interface} "${ext}" ${source})
+  endforeach(source)
+  add_library(${lib} MODULE EXCLUDE_FROM_ALL
+    ${${lib}_SOURCES}
+    ${${lib}_ADDITIONAL_SOURCES})
+  set_target_properties(${lib} PROPERTIES
+      COMPILE_FLAGS "-DMFRONT_COMPILING")
+  add_dependencies(check ${lib})
+endfunction(mfront_check_module)
 
 set(mfront_SOURCES
   ErrnoHandlingCheck
@@ -141,7 +156,7 @@ mfront_dependencies(MFrontMaterialProperties-generic
   MaterialLawDSLOptionsTest
   VanadiumAlloy_YoungModulus_SRMA
   VanadiumAlloy_PoissonRatio_SRMA)
-mfront_check_library(MFrontMaterialProperties-generic generic "generic" ${mfront_SOURCES})
+mfront_check_module(MFrontMaterialProperties-generic generic "generic" ${mfront_SOURCES})
 target_include_directories(MFrontMaterialProperties-generic
   PRIVATE "${CMAKE_SOURCE_DIR}/include"
   PRIVATE "${CMAKE_SOURCE_DIR}/mfront/include"
@@ -161,7 +176,7 @@ if(HAVE_CASTEM)
     MaterialLawDSLOptionsTest
     VanadiumAlloy_YoungModulus_SRMA
     VanadiumAlloy_PoissonRatio_SRMA)
-  mfront_check_library(MFrontMaterialProperties-castem castem "castem" ${mfront_SOURCES})
+  mfront_check_module(MFrontMaterialProperties-castem castem "castem" ${mfront_SOURCES})
   target_include_directories(MFrontMaterialProperties-castem
     PRIVATE "${CMAKE_SOURCE_DIR}/include"
     PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/include")

@@ -1,2 +1,4 @@
 add_subdirectory(src)
-add_subdirectory(tests)
+if(enable-testing)
+  add_subdirectory(tests)
+endif()
