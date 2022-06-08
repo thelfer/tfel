@@ -15,7 +15,7 @@ if(NOT WIN32)
     PRIVATE TFELMFront
     PRIVATE MFrontLogStream
     PRIVATE TFELSystem)
-  add_library(PleiadesModelInterface-2.0
+  add_library(PleiadesModelInterface-2.0 MODULE
     PleiadesModelInterface-2.0.cxx)
   target_include_directories(PleiadesModelInterface-2.0
     PRIVATE ${CMAKE_SOURCE_DIR}/mfront/tests/models/interfaces/include)
