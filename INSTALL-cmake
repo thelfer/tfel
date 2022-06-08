@@ -81,6 +81,7 @@ Options
   care.
 - `enable-glibcxx-debug`: use the debug version of the STL implemented
   by the GLIB
+- `enable-testing`: enables tests. ON by default.
 
 cmake usefull variables
 =======================
@@ -108,6 +109,8 @@ cmake usefull variables
   wheezy).
 - `USE_EXTERNAL_COMPILER_FLAGS`: set to `ON` to use the `CFLAGS` and
   `CXXFLAGS` environment variables to build `TFEL`
+- `BUILD_SHARED_LIBS`: Builds shared libraries (`ON` by default). Set to
+  `OFF` to build static libraries instead.
 
 cmake typical usage
 ===================

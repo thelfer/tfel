@@ -1,4 +1,4 @@
-tfel_library(TFELNUMODIS SHARED
+tfel_library(TFELNUMODIS
   BCC.cxx
   Crystallo.cxx
   Cubic.cxx
