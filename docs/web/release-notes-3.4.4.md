@@ -288,3 +288,17 @@ See Section @sec:tfel-3.4.4:mfront-query:generated_sources for a
 description of the new features of the `--generated-sources` query.
 
 For more details, see <https://github.com/thelfer/tfel/issues/40>.
+
+# Build system changes
+
+## Build static libraries
+
+When specifying `-DBUILD_SHARED_LIBS=OFF` (for CMake-based builds only) all
+libraries except of modules are build as static libraries. This allows for
+easier deployment of downstream applications which use TFEL / MFront.
+
+Also added the CMake-option `enable-testing` (defaults to `ON`) to disable
+all tests to speed-up compilation times.
+
+For more details, see <https://github.com/thelfer/tfel/pull/217>.
+
