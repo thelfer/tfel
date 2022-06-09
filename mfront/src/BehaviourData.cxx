@@ -586,7 +586,7 @@ namespace mfront {
       dv.setEntryName("d" + v.getExternalName());
       dv.description = "increment of variable '" + v.getExternalName() +
                        "' over the time step";
-      const auto increment_value = [this] {
+      const auto increment_value = [this, &v]() -> double {
         const auto odp = this->overriding_parameters.find("d" + v.name);
         if (odp == this->overriding_parameters.end()) {
           return 0;

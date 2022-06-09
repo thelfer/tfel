@@ -1630,7 +1630,7 @@ For more details, see <https://github.com/thelfer/tfel/issues/216>.
 
 ## Issue #215: [mfront] Allow to override external state variables as parameters
 
-Scalar external state variables can now be overriden by parameters. Note
+Scalar external state variables can be overriden by parameters. Note
 that if an external state variable is overriden, the increment of this
 variable must also be overriden. If no overriding parameter is specified
 for this increment, `MFront` will automatically define such a parameter
