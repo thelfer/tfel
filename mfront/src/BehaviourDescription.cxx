@@ -33,6 +33,8 @@ namespace mfront {
       automaticDeclarationOfTheTemperatureAsFirstExternalStateVariable =
           "automatic_declaration_of_the_temperature_as_first_external_state_"
           "variable";
+  const char* const BehaviourDescription::overridingParameters =
+      "overriding_parameters";
 
   static MaterialPropertyDescription buildMaterialPropertyDescription(
       const BehaviourDescription::ConstantMaterialProperty& mp,
@@ -413,6 +415,14 @@ namespace mfront {
   BehaviourDescription::BehaviourDescription(
       const tfel::utilities::DataMap& opts) {
     constexpr auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+    const auto oparameters =
+        tfel::utilities::convert<std::map<std::string, double>>(
+            tfel::utilities::get_if<tfel::utilities::DataMap>(
+                opts, BehaviourDescription::overridingParameters,
+                tfel::utilities::DataMap{}));
+    for (const auto& op : oparameters) {
+      this->overrideByAParameter(op.first, op.second);
+    }
     // treating the temperature
     const auto* const Topt = BehaviourDescription::
         automaticDeclarationOfTheTemperatureAsFirstExternalStateVariable;

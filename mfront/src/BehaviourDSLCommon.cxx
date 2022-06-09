@@ -72,9 +72,12 @@ namespace mfront {
 
   tfel::utilities::DataMapValidator
   BehaviourDSLCommon::getDSLOptionsValidator() {
-    return DSLBase::getDSLOptionsValidator().addDataTypeValidator<bool>(
-        BehaviourDescription::
-            automaticDeclarationOfTheTemperatureAsFirstExternalStateVariable);
+    return DSLBase::getDSLOptionsValidator()
+        .addDataTypeValidator<bool>(
+            BehaviourDescription::
+                automaticDeclarationOfTheTemperatureAsFirstExternalStateVariable)
+        .addDataTypeValidator<tfel::utilities::DataMap>(
+            BehaviourDescription::overridingParameters);
   }  // end of getDSLOptionsValidator
 
   BehaviourDSLCommon::StandardVariableModifier::StandardVariableModifier(
@@ -111,7 +114,8 @@ namespace mfront {
         mb(tfel::utilities::extract(
             opts,
             {BehaviourDescription::
-                 automaticDeclarationOfTheTemperatureAsFirstExternalStateVariable})),
+                 automaticDeclarationOfTheTemperatureAsFirstExternalStateVariable,
+             BehaviourDescription::overridingParameters})),
         useStateVarTimeDerivative(false),
         explicitlyDeclaredUsableInPurelyImplicitResolution(false) {
     //
@@ -246,8 +250,11 @@ namespace mfront {
         {BehaviourDescription::
              automaticDeclarationOfTheTemperatureAsFirstExternalStateVariable,
          "boolean stating if the temperature shall be automatically declared "
-         "as "
-         "an external state variable"});
+         "as an external state variable"});
+    opts.push_back(
+        {BehaviourDescription::overridingParameters,
+         "map allowing to override material properties, parameters and "
+         "external state variables by parameters"});
     return opts;
   }  // end of getDSLOptions
 
@@ -9202,18 +9209,25 @@ namespace mfront {
       const std::string& en) const {
     constexpr auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     const auto& d = this->mb.getBehaviourData(uh);
-    const auto pp = findByExternalName(d.getParameters(), en);
-    if (pp != d.getParameters().end()) {
+    const auto& parameters = d.getParameters();
+    const auto pp = findByExternalName(parameters, en);
+    if (pp != parameters.end()) {
       return pp->name;
     }
-    const auto pmp = findByExternalName(d.getMaterialProperties(), en);
-    if (pmp == d.getMaterialProperties().end()) {
+    const auto& mps = d.getMaterialProperties();
+    const auto pmp = findByExternalName(mps, en);
+    if (pmp != mps.end()) {
+      return pmp->name;
+    }
+    const auto& esvs = d.getExternalStateVariables();
+    const auto pesv = findByExternalName(esvs, en);
+    if (pesv == esvs.end()) {
       tfel::raise(
           "BehaviourDSLCommon::getOverridableVariableNameByExternalName: "
           "no overridable variable associated with external name '" +
           en + "'");
     }
-    return pmp->name;
+    return pesv->name;
   }  // end of getOverridableVariableNameByExternalName
 
   void BehaviourDSLCommon::overrideByAParameter(const std::string& n,

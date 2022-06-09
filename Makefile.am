@@ -102,21 +102,24 @@ dist_licences_DATA = LICENCE-GNU-GPL \
                      LICENCE-CECILL-A-FR
 
 testsuitedir = $(pkgdatadir)
-nobase_dist_testsuite_DATA =			        	   \
-  test-suite/clean.sh				       	           \
-  test-suite/madnex/write-madnex-file/madnex.check		   \
-  test-suite/madnex/write-madnex-file/test.check		   \
-  test-suite/madnex/write-madnex-file/Test.mfront		   \
-  test-suite/madnex/write-madnex-file/YoungModulusTest.mfront	   \
-  test-suite/madnex/write-madnex-file/Plasticity.mfront		   \
-  test-suite/madnex/write-madnex-file/OverridableImplementation.py \
-  test-suite/madnex/write-madnex-file/generate.py		   \
-  test-suite/madnex/write-madnex-file/MFront-test1.madnex	   \
-  test-suite/madnex/write-madnex-file/MadnexTest.py		   \
-  test-suite/madnex/external-madnex-file/test.check		   \
-  test-suite/madnex/external-madnex-file/Test.mfront		   \
-  test-suite/madnex/external-madnex-file/YoungModulusTest.mfront   \
-  test-suite/madnex/external-madnex-file/generate.py		   \
-  test-suite/python-bindings/material-properties.check 	           \
-  test-suite/python-bindings/MaterialPropertyTest.py   	           \
+nobase_dist_testsuite_DATA =			        	     \
+  test-suite/clean.sh				       	             \
+  test-suite/overriding-parameters/overriding-parameters.check       \
+  test-suite/overriding-parameters/Plasticity.mfront                 \
+  test-suite/madnex/write-madnex-file/madnex.check		     \
+  test-suite/madnex/write-madnex-file/test.check		     \
+  test-suite/madnex/write-madnex-file/Test.mfront		     \
+  test-suite/madnex/write-madnex-file/YoungModulusTest.mfront	     \
+  test-suite/madnex/write-madnex-file/Plasticity.mfront		     \
+  test-suite/madnex/write-madnex-file/OverridableImplementation.py   \
+  test-suite/madnex/write-madnex-file/OverridableImplementation-2.py \
+  test-suite/madnex/write-madnex-file/generate.py		     \
+  test-suite/madnex/write-madnex-file/MFront-test1.madnex	     \
+  test-suite/madnex/write-madnex-file/MadnexTest.py		     \
+  test-suite/madnex/external-madnex-file/test.check		     \
+  test-suite/madnex/external-madnex-file/Test.mfront		     \
+  test-suite/madnex/external-madnex-file/YoungModulusTest.mfront     \
+  test-suite/madnex/external-madnex-file/generate.py		     \
+  test-suite/python-bindings/material-properties.check 	             \
+  test-suite/python-bindings/MaterialPropertyTest.py   	             \
   test-suite/python-bindings/test-mp.mfront

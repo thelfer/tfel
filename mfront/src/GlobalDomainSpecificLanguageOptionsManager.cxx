@@ -11,7 +11,10 @@
  * project under specific licensing conditions.
  */
 
+#include <ostream>
 #include "TFEL/Utilities/CxxTokenizer.hxx"
+#include "MFront/MFrontLogStream.hxx"
+#include "MFront/MFrontDebugMode.hxx"
 #include "MFront/GlobalDomainSpecificLanguageOptionsManager.hxx"
 
 namespace mfront {
@@ -43,16 +46,32 @@ namespace mfront {
 
   void GlobalDomainSpecificLanguageOptionsManager::addMaterialPropertyDSLOption(
       const std::string& n, const std::string& v) {
+    if (getVerboseMode() >= VERBOSE_LEVEL2) {
+      getLogStream() << "GlobalDomainSpecificLanguageOptionsManager::"
+                     << "addMaterialPropertyDSLOption: "
+                     << "adding option '" << n << "' with value '" << v
+                     << "'\n";
+    }
     add_option(this->material_property_dsl_options, n, v);
   }  // end of addMaterialPropertyDSLOption
 
   void GlobalDomainSpecificLanguageOptionsManager::addBehaviourDSLOption(
       const std::string& n, const std::string& v) {
+    if (getVerboseMode() >= VERBOSE_LEVEL2) {
+      getLogStream() << "GlobalDomainSpecificLanguageOptionsManager::"
+                     << "addBehaviourDSLOption: adding option '" << n
+                     << "' with value '" << v << "'\n";
+    }
     add_option(this->behaviour_dsl_options, n, v);
   }  // end of addBehaviourDSLOption
 
   void GlobalDomainSpecificLanguageOptionsManager::addModelDSLOption(
       const std::string& n, const std::string& v) {
+    if (getVerboseMode() >= VERBOSE_LEVEL2) {
+      getLogStream() << "GlobalDomainSpecificLanguageOptionsManager::"
+                     << "addModelDSLOption: adding option '" << n
+                     << "' with value '" << v << "'\n";
+    }
     add_option(this->model_dsl_options, n, v);
   }  // end of addModelDSLOption
 

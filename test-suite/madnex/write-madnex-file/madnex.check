@@ -6,5 +6,18 @@
 @Command "@mfront-query@ --author --material=A316LN --behaviour=Plasticity_SRMA2022 Plasticity.madnex" {
   expected_output : "John Mac Enroe"
 };
+@Command "@mfront-query@ --parameter-default-value=H --material=A316LN --behaviour=Plasticity_SRMA2022 Plasticity.madnex" {
+  expected_output : "2e+09"
+};
+@Command "@python@ OverridableImplementation-2.py";
+@Command "@mfront-query@ --author --material=A316LN --behaviour=Plasticity_SRMA2022b Plasticity-2.madnex" {
+  expected_output : "John Mac Enroe"
+};
+@Command "@mfront-query@ --parameter-default-value=H --material=A316LN --behaviour=Plasticity_SRMA2022b Plasticity-2.madnex" {
+  expected_output : "2.4e+09"
+};
+@Command "@mfront-query@ --parameter-default-value=H madnex:Plasticity-2.madnex:behaviour:A316LN:Plasticity_SRMA2022b" {
+  expected_output : "2.4e+09"
+};
 
-@CleanFiles {"Plasticity.madnex"};
+@CleanFiles {"Plasticity.madnex", "Plasticity-2.madnex"};

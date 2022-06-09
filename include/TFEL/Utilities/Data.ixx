@@ -61,13 +61,12 @@ namespace tfel::utilities::internals {
   template <typename T>
   struct DataConvertor<std::vector<T>> {
     static std::vector<T> exe(const Data& d) {
-      auto throw_if = [](const bool b, const std::string& msg) {
-        tfel::raise_if(b, "convert<std::vector<T>>: " + msg);
-      };
       if (d.empty()) {
         return {};
       }
-      throw_if(!d.is<std::vector<Data>>(), "invalid data type");
+      if(!d.is<std::vector<Data>>()){
+        tfel::raise("convert<std::vector<T>>: invalid data type");
+      }
       const auto& vd = d.get<std::vector<Data>>();
       auto r = std::vector<T>{};
       r.reserve(vd.size());
@@ -97,13 +96,12 @@ namespace tfel::utilities::internals {
   template <typename T>
   struct DataConvertor<std::map<std::string, T>> {
     static std::map<std::string, T> exe(const Data& d) {
-      auto throw_if = [](const bool b, const std::string& msg) {
-        tfel::raise_if(b, "convert<std::map<std::string,T>>: " + msg);
-      };
       if (d.empty()) {
         return {};
       }
-      throw_if(!d.is<DataMap>(), "invalid data type");
+      if(!d.is<DataMap>()){
+        tfel::raise("convert<std::map<std::string,T>>: invalid data type");
+      }
       const auto& m = d.get<DataMap>();
       auto r = std::map<std::string, T>{};
       for (const auto& e : m) {

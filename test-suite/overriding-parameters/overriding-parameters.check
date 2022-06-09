@@ -1,0 +1,3 @@
+@Command "@mfront@ --obuild --interface=generic --dsl-option=overriding_parameters:{T:293.15,dT:0} --dsl-option=parameters_as_static_variables:true  Plasticity.mfront";
+
+@CleanDirectories {"include", "src"};

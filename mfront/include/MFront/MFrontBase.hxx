@@ -37,9 +37,33 @@ namespace mfront {
      * \return an abstract dsl that will handle the file
      */
     static std::shared_ptr<AbstractDSL> getDSL(const std::string&);
-    //! constructor
+    /*!
+     * \brief add a new DSL option
+     * \param[in] o: option. Must of a string of the form
+     * `<option_name>:<option_value>`.
+     */
+    static void addDSLOption(const std::string&);
+    /*!
+     * \brief add a new material property DSL option
+     * \param[in] o: option. Must of a string of the form
+     * `<option_name>:<option_value>`.
+     */
+    static void addMaterialPropertyDSLOption(const std::string&);
+    /*!
+     * \brief add a new behaviour DSL option
+     * \param[in] o: option. Must of a string of the form
+     * `<option_name>:<option_value>`.
+     */
+    static void addBehaviourDSLOption(const std::string&);
+    /*!
+     * \brief add a new model DSL option
+     * \param[in] o: option. Must of a string of the form
+     * `<option_name>:<option_value>`.
+     */
+    static void addModelDSLOption(const std::string&);
+    //! \brief constructor
     MFrontBase();
-    //! add a new interaface
+    //! \brief add a new interaface
     void setInterface(const std::string&);
     //! desctructor
     virtual ~MFrontBase();

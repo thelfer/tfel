@@ -139,8 +139,8 @@ namespace mfront {
           tfel::raise("MFrontBase::getDSL: unsupported DSL target type");
         }
       } catch (std::exception& e) {
-        tfel::raise("MFrontBase::getDSL: error while creating DSL '" +
-                    dslName + "'\n" + std::string(e.what()));
+        tfel::raise("MFrontBase::getDSL: error while creating DSL '" + dslName +
+                    "'\n" + std::string(e.what()));
       }
     } else {
       if (getVerboseMode() >= VERBOSE_LEVEL2) {
@@ -409,7 +409,7 @@ namespace mfront {
     this->material_property_identifier.clear();
     this->behaviour_identifier.clear();
     this->model_identifier.clear();
-  } // end of addInputPaths
+  }  // end of addInputPaths
 
   void MFrontBase::treatVerbose() {
     const auto& o = this->getCurrentCommandLineArgument().getOption();
@@ -448,41 +448,59 @@ namespace mfront {
 
   void MFrontBase::treatDebug() { setDebugMode(true); }
 
-  static std::pair<std::string, std::string> slipDSLOption(
+  static std::pair<std::string, std::string> splitDSLOption(
       const std::string& o) {
-    std::vector<std::string> tokens = tfel::utilities::tokenize(o, ':');
-    if (tokens.size() != 2u) {
-      tfel::raise("slip_dsl_option: invalid DSL option '" + o + "'");
+    auto raise_invalid_options = [&o] {
+      tfel::raise("splitDSLoption: invalid DSL option '" + o + "'");
+    };
+    const auto pos = o.find_first_of(':');
+    if ((pos == std::string::npos) || (pos + 1 == o.size())) {
+      raise_invalid_options();
     }
-    return {tokens[0], tokens[1]};
-  } // end of slipDSLOption
+    return {o.substr(0, pos), o.substr(pos + 1)};
+  }  // end of splitDSLOption
+
+  void MFrontBase::addDSLOption(const std::string& o) {
+    auto& g = GlobalDomainSpecificLanguageOptionsManager::get();
+    const auto& kv = splitDSLOption(o);
+    g.addDSLOption(kv.first, kv.second);
+  }
+
+  void MFrontBase::addMaterialPropertyDSLOption(const std::string& o) {
+    auto& g = GlobalDomainSpecificLanguageOptionsManager::get();
+    const auto& kv = splitDSLOption(o);
+    g.addMaterialPropertyDSLOption(kv.first, kv.second);
+  }
+
+  void MFrontBase::addBehaviourDSLOption(const std::string& o) {
+    auto& g = GlobalDomainSpecificLanguageOptionsManager::get();
+    const auto& kv = splitDSLOption(o);
+    g.addBehaviourDSLOption(kv.first, kv.second);
+  }
+
+  void MFrontBase::addModelDSLOption(const std::string& o) {
+    auto& g = GlobalDomainSpecificLanguageOptionsManager::get();
+    const auto& kv = splitDSLOption(o);
+    g.addModelDSLOption(kv.first, kv.second);
+  }
 
   void MFrontBase::treatDSLOption() {
-    auto& g = GlobalDomainSpecificLanguageOptionsManager::get();
-    const auto& kv =
-        slipDSLOption(this->getCurrentCommandLineArgument().getOption());
-    g.addDSLOption(kv.first, kv.second);
+    MFrontBase::addDSLOption(this->getCurrentCommandLineArgument().getOption());
   }  // end of treatDSLOption
 
   void MFrontBase::treatMaterialPropertyDSLOption() {
-    auto& g = GlobalDomainSpecificLanguageOptionsManager::get();
-    const auto& kv =
-        slipDSLOption(this->getCurrentCommandLineArgument().getOption());
-    g.addMaterialPropertyDSLOption(kv.first, kv.second);
+    MFrontBase::addMaterialPropertyDSLOption(
+        this->getCurrentCommandLineArgument().getOption());
   }  // end of treatMaterialPropertyDSLOption
 
   void MFrontBase::treatBehaviourDSLOption() {
-    auto& g = GlobalDomainSpecificLanguageOptionsManager::get();
-    const auto& kv =
-        slipDSLOption(this->getCurrentCommandLineArgument().getOption());
-    g.addBehaviourDSLOption(kv.first, kv.second);
+    MFrontBase::addBehaviourDSLOption(
+        this->getCurrentCommandLineArgument().getOption());
   }  // end of treatBehaviourDSLOption
 
   void MFrontBase::treatModelDSLOption() {
-    auto& g = GlobalDomainSpecificLanguageOptionsManager::get();
-    const auto& kv =
-        slipDSLOption(this->getCurrentCommandLineArgument().getOption());
-    g.addModelDSLOption(kv.first, kv.second);
+    MFrontBase::addModelDSLOption(
+        this->getCurrentCommandLineArgument().getOption());
   }  // end of treatModelDSLOption
 
   void MFrontBase::setInterface(const std::string& i) {

@@ -382,6 +382,26 @@ option is `true`.
 If `true`, many interfaces (`Cast3M`, `Python`, `Java`, etc..) uses
 environment variables to modify the out of bounds policy.
 
+### Specifying overriding parameters {#sec:tfel:4.1:mfront:global_options:overriding_parameters}
+
+The `overriding_parameters` option allows to specify overriding
+parameters. This parameters must be a map associating variables names
+and default values of the overriding parameters.
+
+#### Example of usage
+
+The following codes allows to turn the temperature, defined by default
+as an external state variable, into a parameter:
+
+~~~~{.bash}
+$ mfront --obuild --interface=generic                              \
+         --behaviour-dsl-option='overriding_parameters:{T:293.15}' \
+         Plasticity.mfront 
+~~~~
+
+Note that the temperature increment is implicitly overriden but a
+parameter whose default value is null.
+
 ### Defining global options from the command line {#sec:tfel_4.1:mfront:global_dsl_options}
 
 Options passed to domain specific languages can be defined globally
@@ -1596,6 +1616,27 @@ and after parsing the command line arguments, so those default
 substitutions can be overriden by the user.
 
 # Issues fixed
+
+## Issue #219: [mfront] Allow to override "overriden" parameters 
+
+For more details, see <https://github.com/thelfer/tfel/issues/219>.
+
+## Issue #216: [mfront] Add behaviour `DSL` options to override material properties, external state variables and parameters
+
+This feature is described in Section
+@sec:tfel:4.1:mfront:global_options:overriding_parameters.
+
+For more details, see <https://github.com/thelfer/tfel/issues/216>.
+
+## Issue #215: [mfront] Allow to override external state variables as parameters
+
+Scalar external state variables can now be overriden by parameters. Note
+that if an external state variable is overriden, the increment of this
+variable must also be overriden. If no overriding parameter is specified
+for this increment, `MFront` will automatically define such a parameter
+with a null default value.
+
+For more details, see <https://github.com/thelfer/tfel/issues/215>.
 
 ## Issue #210: [tfel-check] Allow to split command in multiple strings
 

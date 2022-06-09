@@ -97,25 +97,25 @@ namespace mfront {
         "get the kind of material knowledge treated by the dsl (material "
         "property, behaviour, or model)",
         false);
-    this->registerNewCallBack(
-        "--dsl-option", &QueryHandlerBase::treatDSLOption,
-        "allow to define options passed to domain specific languages", true);
-    this->registerNewCallBack(
-        "--material-property-dsl-option",
-        &QueryHandlerBase::treatMaterialPropertyDSLOption,
-        "allow to define options passed to domain specific languages related "
-        "to material properties",
-        true);
-    this->registerNewCallBack(
-        "--behaviour-dsl-option", &QueryHandlerBase::treatBehaviourDSLOption,
-        "allow to define options passed to domain specific languages related "
-        "to behaviours",
-        true);
-    this->registerNewCallBack(
-        "--model-dsl-option", &QueryHandlerBase::treatModelDSLOption,
-        "allow to define options passed to domain specific languages related "
-        "to models",
-        true);
+    this->registerCallBack(
+        "--dsl-option",
+        CallBack("allow to define options passed to domain specific languages",
+                 [] {}, true));
+    this->registerCallBack(
+        "--dsl-material-property-option",
+        CallBack("allow to define options passed to domain specific languages "
+                 "related to material properties",
+                 [] {}, true));
+    this->registerCallBack(
+        "--dsl-behaviour-option",
+        CallBack("allow to define options passed to domain specific languages "
+                 "related to behaviours",
+                 [] {}, true));
+    this->registerCallBack(
+        "--dsl-model-option",
+        CallBack("allow to define options passed to domain specific languages "
+                 "related to models",
+                 [] {}, true));
     this->registerNewCallBack(
         "--include", "-I", &QueryHandlerBase::treatSearchPath,
         "add a new path at the beginning of the search paths", true);

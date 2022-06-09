@@ -233,7 +233,6 @@ static void listImplementationPaths(const mfront::PathSpecifier& p,
         "mfront-query: listing implementation paths is only supported for "
         "madnex files");
   }
-  auto d = madnex::MFrontDataBase{p.file};
   auto first = true;
   auto display = [&first](std::string_view path) {
     if (!first) {
@@ -242,15 +241,27 @@ static void listImplementationPaths(const mfront::PathSpecifier& p,
     first = false;
     std::cout << path;
   };
-  const auto paths = getImplementationsPaths(p);
   if (sorted_by_files) {
     std::cout << "- " << p.file << ": ";
   }
-  for (const auto& path : paths) {
+  const auto npath = [&p] {
+    if ((p.material_property_identifier.empty()) &&
+        (p.behaviour_identifier.empty()) && (p.model_identifier.empty())) {
+      auto path = mfront::PathSpecifier{};
+      path.file = p.file;
+      path.material_identifier = p.material_identifier;
+      path.material_property_identifier = ".*";
+      path.behaviour_identifier = ".*";
+      path.model_identifier = ".*";
+      return path;
+    }
+    return p;
+  }();
+  for (const auto& path : mfront::getImplementationsPaths(npath)) {
     display(path);
   }
   std::cout << '\n';
-}  // end of listMaterials
+}  // end of listImplementationPaths
 
 static std::vector<std::string> filter(const std::vector<std::string>& values,
                                        const std::string& rvalue) {
@@ -586,6 +597,18 @@ int main(const int argc, const char* const* const argv) {
       } else if (a == "--usage") {
         std::cout << "Usage : " << argv[0] << " [options] [files]\n";
         std::exit(EXIT_SUCCESS);
+      } else if (tfel::utilities::starts_with(a, "--dsl-option=")) {
+        MFrontBase::addDSLOption(a.substr(std::strlen("--dsl-option=")));
+      } else if (tfel::utilities::starts_with(
+                     a, "--material-property-dsl-option=")) {
+        MFrontBase::addMaterialPropertyDSLOption(
+            a.substr(std::strlen("--material-property-dsl-option=")));
+      } else if (tfel::utilities::starts_with(a, "--behaviour-dsl-option=")) {
+        MFrontBase::addBehaviourDSLOption(
+            a.substr(std::strlen("--behaviour-dsl-option=")));
+      } else if (tfel::utilities::starts_with(a, "--model-dsl-option=")) {
+        MFrontBase::addModelDSLOption(
+            a.substr(std::strlen("--model-dsl-option=")));
       } else if (tfel::utilities::starts_with(
                      a, "--has-material-property-query")) {
         const char* args[1] = {argv[0]};

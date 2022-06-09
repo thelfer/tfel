@@ -323,8 +323,9 @@ namespace mfront {
 
   BehaviourData::BehaviourData() {
     this->registerMemberName("dt");
-    this->reserveName("\u0394t");  // symbolic value
-  }  // end of BehaviourData()
+    // symbolic value
+    this->reserveName("\u0394t");
+  }  // end of BehaviourData
 
   BehaviourData::BehaviourData(const BehaviourData&) = default;
 
@@ -543,7 +544,8 @@ namespace mfront {
     this->postProcessingVariables.push_back(v);
   }  // end of addPostProcessingVariable
 
-  void BehaviourData::addInitializeFunctionVariable(const VariableDescription& v) {
+  void BehaviourData::addInitializeFunctionVariable(
+      const VariableDescription& v) {
     this->reserveName(v.name);
     if (!v.symbolic_form.empty()) {
       this->reserveName(v.symbolic_form);
@@ -559,7 +561,53 @@ namespace mfront {
 
   void BehaviourData::addExternalStateVariable(const VariableDescription& v,
                                                const RegistrationStatus s) {
-    this->addVariable(this->externalStateVariables, v, s, true);
+    const auto op = this->overriding_parameters.find(v.name);
+    if (op != this->overriding_parameters.end()) {
+      if (v.getTypeFlag() != SupportedTypes::SCALAR) {
+        tfel::raise(
+            "BehaviourData::addExternalStateVariable: "
+            "only scalar external state variables can be overriden by a "
+            "parameter");
+      }
+      if (v.arraySize != 1u) {
+        tfel::raise(
+            "BehaviourData::addExternalStateVariable: "
+            "overriding arrays of external state variables "
+            "is not supported yet");
+      }
+      auto dv = [&v] {
+        if (!v.symbolic_form.empty()) {
+          return VariableDescription{v.type, "\u0394" + v.symbolic_form,
+                                     "d" + v.name, 1u, 0u};
+        } else {
+          return VariableDescription{v.type, "d" + v.name, 1u, 0u};
+        }
+      }();
+      dv.setEntryName("d" + v.getExternalName());
+      dv.description = "increment of variable '" + v.getExternalName() +
+                       "' over the time step";
+      const auto increment_value = [this] {
+        const auto odp = this->overriding_parameters.find("d" + v.name);
+        if (odp == this->overriding_parameters.end()) {
+          return 0;
+        }
+        return odp->second;
+      }();
+      this->addParameter(v, s);
+      this->setParameterDefaultValue(v.name, op->second);
+      this->addParameter(dv, s);
+      this->setParameterDefaultValue(dv.name, increment_value);
+    } else {
+      const auto odp = this->overriding_parameters.find("d" + v.name);
+      if (odp != this->overriding_parameters.end()) {
+        tfel::raise(
+            "BehaviourData::addExternalStateVariable: "
+            "increment of external state variable '" +
+            v.name + "' is overriden, but external state variable '" + v.name +
+            "' is not");
+      }
+      this->addVariable(this->externalStateVariables, v, s, true);
+    }
   }  // end of addExternalStateVariable
 
   void BehaviourData::addLocalVariable(const VariableDescription& v,
@@ -666,7 +714,8 @@ namespace mfront {
     return this->getParameters().contains(n);
   }  // end of isParameterName
 
-  bool BehaviourData::isInitializeFunctionVariableName(const std::string& n) const {
+  bool BehaviourData::isInitializeFunctionVariableName(
+      const std::string& n) const {
     return this->getInitializeFunctionVariables().contains(n);
   }  // end of isInitializeFunctionVariableName
 
@@ -748,8 +797,8 @@ namespace mfront {
     return this->auxiliaryStateVariables;
   }  // end of getAuxiliaryStateVariables
 
-  const VariableDescriptionContainer& BehaviourData::getInitializeFunctionVariables()
-      const {
+  const VariableDescriptionContainer&
+  BehaviourData::getInitializeFunctionVariables() const {
     return this->initializeVariables;
   }  // end of getInitializeFunctionVariables
 
@@ -1721,8 +1770,8 @@ namespace mfront {
     }
   }  // end of addInitialize
 
-  const std::map<std::string, CodeBlock>& BehaviourData::getInitializeFunctions()
-      const {
+  const std::map<std::string, CodeBlock>&
+  BehaviourData::getInitializeFunctions() const {
     return this->initialize_functions;
   }  // end of getInitializeFuntions
 
@@ -1895,7 +1944,7 @@ namespace mfront {
 
   std::map<std::string, double> BehaviourData::getOverridenParameters() const {
     return this->overriding_parameters;
-  } // end of getOverridenParameters
+  }  // end of getOverridenParameters
 
   const CodeBlock& BehaviourData::getUserDefinedInitializeCodeBlock(
       const std::string& n) const {

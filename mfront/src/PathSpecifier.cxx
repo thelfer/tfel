@@ -148,7 +148,7 @@ namespace mfront {
     auto inputs = std::vector<std::string>{};
     auto db = madnex::MFrontDataBase{f};
     auto raise = [](const std::string& m) {
-      tfel::raise("MFrontBase::treatMadnexFile: " + m);
+      tfel::raise("getImplementationsPathsInMadnexFiles: " + m);
     };
     if ((material_property_identifier.empty()) &&
         (behaviour_identifier.empty()) && (model_identifier.empty())) {
@@ -185,7 +185,7 @@ namespace mfront {
       if (!material_property_identifier.empty()) {
         const auto mps = filter(db.getAvailableMaterialProperties(),
                                 material_property_identifier);
-        if (mps.empty()) {
+        if ((mps.empty()) && (material_property_identifier != ".*")) {
           raise("no material property matching '" +
                 material_property_identifier + "' in file '" + f + "'");
         }
@@ -194,7 +194,7 @@ namespace mfront {
       if (!behaviour_identifier.empty()) {
         const auto bs =
             filter(db.getAvailableBehaviours(), behaviour_identifier);
-        if (bs.empty()) {
+        if ((bs.empty()) && (behaviour_identifier != ".*")) {
           raise("no behaviour matching '" + behaviour_identifier +
                 "' in file '" + f + "'");
         }
@@ -202,7 +202,7 @@ namespace mfront {
       }
       if (!model_identifier.empty()) {
         const auto ms = filter(db.getAvailableModels(), model_identifier);
-        if (ms.empty()) {
+        if ((ms.empty()) && (model_identifier != ".*")) {
           raise("no model matching '" + model_identifier + "' in file '" + f +
                 "'");
         }

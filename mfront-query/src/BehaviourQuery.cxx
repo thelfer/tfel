@@ -1039,7 +1039,7 @@ namespace mfront {
         const auto& bd = d.getBehaviourData(h);
         const auto& p = bd.getParameterDescriptionByExternalName(o);
         const auto& n = p.name;
-        if (p.type == "real") {
+        if (p.getTypeFlag() == mfront::SupportedTypes::SCALAR) {
           if (p.arraySize == 1) {
             cout << bd.getFloattingPointParameterDefaultValue(n) << '\n';
           } else {

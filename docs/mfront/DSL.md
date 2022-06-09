@@ -5,7 +5,7 @@ The list of available dsl's is returned by the `--list-dsl` option of
 
 ~~~~{.bash}
 $ mfront --list-dsl
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~
 
 As the time of writting this notice, the following dsl's are available:
 
@@ -120,9 +120,13 @@ The following options are available for all DSLs:
 - `automatic_declaration_of_the_temperature_as_first_external_state_variable`
   (boolean), which states if the temperature shall be automatically
   declared as an external state variable.
+- `overriding_parameters`, which allows to specify overriding
+  parameters. This parameters must be a map associating variables names
+  and default values of the overriding parameters.
 
 ## Example
 
 ~~~~{.cpp}
 @DSL Implicit;
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~
+
