@@ -19,6 +19,10 @@ eqnPrefixTemplate: "($$i$$)"
 
 # Issues fixed
 
+## Issue #221: [mfront] Error in the computation of the bulk modulus in the `MiehePhaseFieldDisplacementDeviatoricSplit.mfront` example
+
+For more details, see <https://github.com/thelfer/tfel/issues/221>
+
 ## Issue #201: [mfront] Missing `DeformationGradientRateTensor` type alias
 
 For more details, see <https://github.com/thelfer/tfel/issues/201>
