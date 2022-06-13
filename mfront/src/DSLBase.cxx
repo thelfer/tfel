@@ -150,9 +150,18 @@ namespace mfront {
             {DSLBase::buildIdentifierOption, build_id}};
   }  // end of buildCommonOptions
 
-  DSLBase::DSLBase(const DSLOptions&) {
+  DSLBase::DSLBase(const DSLOptions& /* opts */) {
     this->addSeparator("\u2297");
     this->addSeparator("\u22C5");
+    //
+    //     const auto oparameters =
+    //         tfel::utilities::convert<std::map<std::string, double>>(
+    //             tfel::utilities::get_if<tfel::utilities::DataMap>(
+    //                 opts, BehaviourDescription::overridingParameters,
+    //                 tfel::utilities::DataMap{}));
+    //     for (const auto& op : oparameters) {
+    //       this->overrideByAParameter(op.first, op.second);
+    //     }
   }  // end of DSLBase::DSLBase
 
   std::vector<AbstractDSL::DSLOptionDescription> DSLBase::getDSLOptions()
@@ -959,15 +968,17 @@ namespace mfront {
                    pt->line);
         }
         throw_if(
-            ++pt == pte,
+            std::next(pt) == pte,
             "unexepected end of file '" + file + "' (expected " + *p + ").\n",
             (--pt)->line);
+        ++pt;
         const auto value = pt->value;
         throw_if(pt->value == ";",
                  "unexepected token ';' (exepected " + *p + ")", pt->line);
-        throw_if(++pt == pte,
+        throw_if(std::next(pt) == pte,
                  "unexepected end of file '" + file + "' (expected ';').\n",
                  (--pt)->line);
+        ++pt;
         throw_if(pt->value != ";",
                  "unexepected token '" + pt->value + "' (exepected ';')",
                  pt->line);
