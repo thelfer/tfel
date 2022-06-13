@@ -1517,10 +1517,7 @@ namespace tfel::system {
              "number of variables names could not be read "
              "(" +
                  getErrorMessage() + ")");
-    char** res = nullptr;
-    if (res == nullptr) {
-      res = ::tfel_getArrayOfStrings(lib, (e + '_' + n).c_str());
-    }
+    const auto res = ::tfel_getArrayOfStrings(lib, (e + '_' + n).c_str());
     raise_if(res == nullptr,
              "ExternalLibraryManager::getArrayOfStrings: "
              "variables names could not be read "

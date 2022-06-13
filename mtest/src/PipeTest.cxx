@@ -1586,22 +1586,22 @@ namespace mtest {
       *(ph.out) << "#Column " << i << ": ";
       if (c == "SRR") {
         *(ph.out) << "radial stress \n";
-        ph.profiles.emplace_back(new PipeStressProfile(0u));
+        ph.profiles.emplace_back(std::make_shared<PipeStressProfile>(0u));
       } else if (c == "STT") {
         *(ph.out) << "hoop stress \n";
-        ph.profiles.emplace_back(new PipeStressProfile(2u));
+        ph.profiles.emplace_back(std::make_shared<PipeStressProfile>(2u));
       } else if (c == "SZZ") {
         *(ph.out) << "axial stress \n";
-        ph.profiles.emplace_back(new PipeStressProfile(1u));
+        ph.profiles.emplace_back(std::make_shared<PipeStressProfile>(1u));
       } else if (c == "ERR") {
         *(ph.out) << "radial strain \n";
-        ph.profiles.emplace_back(new PipeStrainProfile(0u));
+        ph.profiles.emplace_back(std::make_shared<PipeStrainProfile>(0u));
       } else if (c == "ETT") {
         *(ph.out) << "hoop strain \n";
-        ph.profiles.emplace_back(new PipeStrainProfile(2u));
+        ph.profiles.emplace_back(std::make_shared<PipeStrainProfile>(2u));
       } else if (c == "EZZ") {
         *(ph.out) << "axial strain \n";
-        ph.profiles.emplace_back(new PipeStrainProfile(1u));
+        ph.profiles.emplace_back(std::make_shared<PipeStrainProfile>(1u));
       } else {
         const auto piv =
             std::find(this->ivfullnames.begin(), this->ivfullnames.end(), c);
@@ -1611,7 +1611,8 @@ namespace mtest {
                            c + "'");
         *(ph.out) << c << " internal state variable\n";
         auto pos = size_type(piv - this->ivfullnames.begin());
-        ph.profiles.emplace_back(new PipeInternalStateVariableProfile(pos));
+        ph.profiles.emplace_back(
+            std::make_shared<PipeInternalStateVariableProfile>(pos));
       }
     }
     this->profiles.push_back(ph);

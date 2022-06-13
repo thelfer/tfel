@@ -124,7 +124,7 @@ namespace numodis {
     for (unsigned i = 0; i < right.size(); i++)
       if (right[i] != 0) {
         if (right[i] < 0)
-          for (unsigned j = i; j != left.size(); j++) right[j] = -right[j];
+          for (unsigned j = i; j != right.size(); j++) right[j] = -right[j];
         break;
       }
 

@@ -82,8 +82,8 @@ struct TinyBroydenSolverTest final : public tfel::tests::TestCase {
     TFEL_TESTS_ASSERT(b);
     const auto vf = f(x);
     TFEL_TESTS_ASSERT(norm(vf) < 1e-11);
-    TFEL_TESTS_ASSERT(abs(x(0) - 1.5560974843220530275) < 1.e-11);
-    TFEL_TESTS_ASSERT(abs(x(1) + 0.57565076961884345) < 1.e-11);
+    TFEL_TESTS_ASSERT(std::abs(x(0) - 1.5560974843220530275) < 1.e-11);
+    TFEL_TESTS_ASSERT(std::abs(x(1) + 0.57565076961884345) < 1.e-11);
   }
 
   void test2() {
@@ -95,8 +95,8 @@ struct TinyBroydenSolverTest final : public tfel::tests::TestCase {
     TFEL_TESTS_ASSERT(b);
     const auto vf = f2(x);
     TFEL_TESTS_ASSERT(norm(vf) < 1.e-11);
-    TFEL_TESTS_ASSERT(abs(x(0)) < 1.e-11);
-    TFEL_TESTS_ASSERT(abs(x(1) - 1) < 1.e-11);
+    TFEL_TESTS_ASSERT(std::abs(x(0)) < 1.e-11);
+    TFEL_TESTS_ASSERT(std::abs(x(1) - 1) < 1.e-11);
   }
 
   void test3() {
@@ -106,16 +106,16 @@ struct TinyBroydenSolverTest final : public tfel::tests::TestCase {
     TFEL_TESTS_ASSERT(b);
     const auto vf = f2(x);
     TFEL_TESTS_ASSERT(norm(vf) < 1.e-11);
-    TFEL_TESTS_ASSERT(abs(x(0) - 2) < 1.e-11);
-    TFEL_TESTS_ASSERT(abs(x(1)) < 1.e-11);
+    TFEL_TESTS_ASSERT(std::abs(x(0) - 2) < 1.e-11);
+    TFEL_TESTS_ASSERT(std::abs(x(1)) < 1.e-11);
   }
 
   void test4() {
     BroydenSolver s;
     TFEL_TESTS_ASSERT(s.solve());
     const auto x = s.getCurrentEstimate();
-    TFEL_TESTS_ASSERT(abs(x(0)) < 1.e-11);
-    TFEL_TESTS_ASSERT(abs(x(1) - 1) < 1.e-11);
+    TFEL_TESTS_ASSERT(std::abs(x(0)) < 1.e-11);
+    TFEL_TESTS_ASSERT(std::abs(x(1) - 1) < 1.e-11);
   }
 };
 
