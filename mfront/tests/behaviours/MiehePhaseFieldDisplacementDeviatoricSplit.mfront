@@ -43,7 +43,7 @@ H.setEntryName("HistoryFunction");
   const auto λ = computeLambda(Yg, ν);
   const auto μ = computeMu(Yg, ν);
   // compression modulus
-  const auto κ = λ + 2 / 3 ⋅ μ;
+  const auto κ = λ + 2 ⋅ μ / 3;
   // computation of the stress, positive energy density and consistent
   // tangent operator
   const auto ε = eval(εᵗᵒ + Δεᵗᵒ);
