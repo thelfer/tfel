@@ -65,6 +65,7 @@ namespace mfront {
       "parameters_as_static_variables";
   const char* const DSLBase::initializationFromFileOption =
       "parameters_initialization_from_file";
+  const char* const DSLBase::overridingParameters = "overriding_parameters";
 
   const char* const DSLBase::buildIdentifierOption = "build_identifier";
 
@@ -78,13 +79,14 @@ namespace mfront {
 
   tfel::utilities::DataMapValidator DSLBase::getDSLOptionsValidator() {
     auto v = tfel::utilities::DataMapValidator{};
-    v.addDataTypeValidator<std::string>(
-        DSLBase::defaultOutOfBoundsPolicyOption);
-    v.addDataTypeValidator<bool>(
-        DSLBase::runtimeModificationOfTheOutOfBoundsPolicyOption);
-    v.addDataTypeValidator<bool>(DSLBase::parametersAsStaticVariablesOption);
-    v.addDataTypeValidator<bool>(DSLBase::initializationFromFileOption);
-    v.addDataTypeValidator<std::string>(DSLBase::buildIdentifierOption);
+    v.addDataTypeValidator<std::string>(DSLBase::defaultOutOfBoundsPolicyOption)
+        .addDataTypeValidator<bool>(
+            DSLBase::runtimeModificationOfTheOutOfBoundsPolicyOption)
+        .addDataTypeValidator<bool>(DSLBase::parametersAsStaticVariablesOption)
+        .addDataTypeValidator<bool>(DSLBase::initializationFromFileOption)
+        .addDataTypeValidator<std::string>(DSLBase::buildIdentifierOption)
+        .addDataTypeValidator<tfel::utilities::DataMap>(
+            DSLBase::overridingParameters);
     return v;
   }  // end of getDSLOptionsValidator
 
@@ -147,21 +149,13 @@ namespace mfront {
              areParametersTreatedAsStaticVariables(d)},
             {DSLBase::initializationFromFileOption,
              allowsParametersInitializationFromFile(d)},
-            {DSLBase::buildIdentifierOption, build_id}};
+            {DSLBase::buildIdentifierOption, build_id},
+            {DSLBase::overridingParameters, tfel::utilities::DataMap{}}};
   }  // end of buildCommonOptions
 
   DSLBase::DSLBase(const DSLOptions& /* opts */) {
     this->addSeparator("\u2297");
     this->addSeparator("\u22C5");
-    //
-    //     const auto oparameters =
-    //         tfel::utilities::convert<std::map<std::string, double>>(
-    //             tfel::utilities::get_if<tfel::utilities::DataMap>(
-    //                 opts, BehaviourDescription::overridingParameters,
-    //                 tfel::utilities::DataMap{}));
-    //     for (const auto& op : oparameters) {
-    //       this->overrideByAParameter(op.first, op.second);
-    //     }
   }  // end of DSLBase::DSLBase
 
   std::vector<AbstractDSL::DSLOptionDescription> DSLBase::getDSLOptions()
@@ -180,7 +174,10 @@ namespace mfront {
              "an external file"},
             {DSLBase::buildIdentifierOption,
              "string specifying a build identifier. This option shall only be "
-             "specified on the command line"}};
+             "specified on the command line"},
+            {DSLBase::overridingParameters,
+             "map allowing to override material properties, parameters and "
+             "external state variables by parameters"}};
   }  // end of getDSLOptions
 
   std::vector<std::string> DSLBase::getDefaultReservedNames() {

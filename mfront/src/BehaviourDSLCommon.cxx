@@ -75,9 +75,7 @@ namespace mfront {
     return DSLBase::getDSLOptionsValidator()
         .addDataTypeValidator<bool>(
             BehaviourDescription::
-                automaticDeclarationOfTheTemperatureAsFirstExternalStateVariable)
-        .addDataTypeValidator<tfel::utilities::DataMap>(
-            BehaviourDescription::overridingParameters);
+                automaticDeclarationOfTheTemperatureAsFirstExternalStateVariable);
   }  // end of getDSLOptionsValidator
 
   BehaviourDSLCommon::StandardVariableModifier::StandardVariableModifier(
@@ -114,8 +112,7 @@ namespace mfront {
         mb(tfel::utilities::extract(
             opts,
             {BehaviourDescription::
-                 automaticDeclarationOfTheTemperatureAsFirstExternalStateVariable,
-             BehaviourDescription::overridingParameters})),
+                 automaticDeclarationOfTheTemperatureAsFirstExternalStateVariable})),
         useStateVarTimeDerivative(false),
         explicitlyDeclaredUsableInPurelyImplicitResolution(false) {
     //
@@ -123,6 +120,14 @@ namespace mfront {
     constexpr auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     //
     DSLBase::handleDSLOptions(this->mb, opts);
+    const auto oparameters =
+        tfel::utilities::convert<std::map<std::string, double>>(
+            tfel::utilities::get_if<tfel::utilities::DataMap>(
+                opts, DSLBase::overridingParameters,
+                tfel::utilities::DataMap{}));
+    for (const auto& op : oparameters) {
+      this->overrideByAParameter(op.first, op.second);
+    }
     // By default, a behaviour can be used in a purely implicit resolution
     this->mb.setUsableInPurelyImplicitResolution(h, true);
     // reserve names
@@ -251,10 +256,6 @@ namespace mfront {
              automaticDeclarationOfTheTemperatureAsFirstExternalStateVariable,
          "boolean stating if the temperature shall be automatically declared "
          "as an external state variable"});
-    opts.push_back(
-        {BehaviourDescription::overridingParameters,
-         "map allowing to override material properties, parameters and "
-         "external state variables by parameters"});
     return opts;
   }  // end of getDSLOptions
 

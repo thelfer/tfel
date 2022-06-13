@@ -60,6 +60,14 @@ namespace mfront {
       : DSLBase(opts) {
     //
     DSLBase::handleDSLOptions(this->md, opts);
+    const auto oparameters =
+        tfel::utilities::convert<std::map<std::string, double>>(
+            tfel::utilities::get_if<tfel::utilities::DataMap>(
+                opts, DSLBase::overridingParameters,
+                tfel::utilities::DataMap{}));
+    for (const auto& op : oparameters) {
+      this->overrideByAParameter(op.first, op.second);
+    }
     // Call Back
     this->registerNewCallBack(";", &MaterialPropertyDSL::treatLonelySeparator);
     this->registerNewCallBack("@UseQt", &MaterialPropertyDSL::treatUseQt);

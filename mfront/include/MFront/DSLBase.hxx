@@ -62,6 +62,8 @@ namespace mfront {
     static const char* const initializationFromFileOption;
     //! \brief standard option name
     static const char* const buildIdentifierOption;
+    //! \brief standard option
+    static const char* const overridingParameters;
     //! \return a validator for the options passed to the DSL
     static tfel::utilities::DataMapValidator getDSLOptionsValidator();
     //

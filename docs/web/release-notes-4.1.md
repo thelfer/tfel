@@ -1617,7 +1617,9 @@ substitutions can be overriden by the user.
 
 # Issues fixed
 
+## Issue #224 [mfront] add DSL options to override parameters in material properties and point-wise models
 
+For more details, see <https://github.com/thelfer/tfel/issues/224>.
 
 ## Issue #219: [mfront] Allow to override "overriden" parameters 
 

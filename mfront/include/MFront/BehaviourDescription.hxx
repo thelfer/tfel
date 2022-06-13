@@ -62,8 +62,6 @@ namespace mfront {
     //! \brief standard option and attribute name
     static const char* const
         automaticDeclarationOfTheTemperatureAsFirstExternalStateVariable;
-    //! \brief standard option
-    static const char* const overridingParameters;
     //! \brief a simple alias
     using ModellingHypothesis = tfel::material::ModellingHypothesis;
     //! \brief a simple alias
