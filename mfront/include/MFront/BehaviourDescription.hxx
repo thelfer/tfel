@@ -62,6 +62,10 @@ namespace mfront {
     //! \brief standard option and attribute name
     static const char* const
         automaticDeclarationOfTheTemperatureAsFirstExternalStateVariable;
+    //! \brief standard option
+    static const char* const modellingHypothesis;
+    //! \brief standard option
+    static const char* const modellingHypotheses;
     //! \brief a simple alias
     using ModellingHypothesis = tfel::material::ModellingHypothesis;
     //! \brief a simple alias
@@ -1847,12 +1851,17 @@ namespace mfront {
     //! specific sources
     std::string sources;
     /*!
-     * list of modelling hypotheses for
+     * \brief list of modelling hypotheses overriding by the modellingHypothesis
+     * option or the modellingHypotheses option
+     */
+    std::set<Hypothesis> overriden_hypotheses;
+    /*!
+     * \brief list of modelling hypotheses for
      * which the behaviour is defined
      */
-    mutable std::set<Hypothesis> hypotheses;
+    std::set<Hypothesis> hypotheses;
     /*!
-     * list of modelling hypotheses for
+     * \brief list of modelling hypotheses for
      * which this class returned a mechanical data
      */
     mutable std::set<Hypothesis> requestedHypotheses;

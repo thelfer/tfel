@@ -509,6 +509,31 @@ namespace mfront {
         "allow to define options passed to domain specific languages related "
         "to models",
         true);
+    this->registerNewCallBack(
+        "--dsl-options-file",
+        &BehaviourDocumentationGenerator::treatDSLOptionsFile,
+        "allow to define options passed to domain specific languages thanks to "
+        "an external file in a JSON-like format",
+        true);
+    this->registerNewCallBack(
+        "--material-property-dsl-options-file",
+        &BehaviourDocumentationGenerator::treatMaterialPropertyDSLOptionsFile,
+        "allow to define options passed to domain specific languages related "
+        "to material properties thanks to an external file in a JSON-like "
+        "format",
+        true);
+    this->registerNewCallBack(
+        "--behaviour-dsl-options-file",
+        &BehaviourDocumentationGenerator::treatBehaviourDSLOptionsFile,
+        "allow to define options passed to domain specific languages related "
+        "to behaviours thanks to an external file in a JSON-like format",
+        true);
+    this->registerNewCallBack(
+        "--model-dsl-options-file",
+        &BehaviourDocumentationGenerator::treatModelDSLOptionsFile,
+        "allow to define options passed to domain specific languages related "
+        "to models thanks to an external file in a JSON-like format",
+        true);
     Parser::registerNewCallBack(
         "--unicode-output",
         &BehaviourDocumentationGenerator::treatUnicodeOutput,

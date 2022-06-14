@@ -1,0 +1,6 @@
+@Command "@mfront@ --obuild --interface=generic --dsl-option=modelling_hypothesis:PlaneStrain Plasticity.mfront";
+@Command "@mfront-query@ --dsl-option=modelling_hypothesis:PlaneStrain --supported-modelling-hypotheses Plasticity.mfront"{
+  expected_output: "PlaneStrain"
+};
+
+@CleanDirectories {"include", "src"};

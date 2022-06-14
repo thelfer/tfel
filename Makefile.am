@@ -105,7 +105,11 @@ testsuitedir = $(pkgdatadir)
 nobase_dist_testsuite_DATA =			        	     \
   test-suite/clean.sh				       	             \
   test-suite/overriding-parameters/overriding-parameters.check       \
+  test-suite/overriding-parameters/overriding-parameters-2.check     \
+  test-suite/overriding-parameters/options.json                      \
   test-suite/overriding-parameters/Plasticity.mfront                 \
+  test-suite/dsl-options/Plasticity.mfront                           \
+  test-suite/dsl-options/behaviour-dsl-options.check                 \
   test-suite/madnex/write-madnex-file/madnex.check		     \
   test-suite/madnex/write-madnex-file/test.check		     \
   test-suite/madnex/write-madnex-file/Test.mfront		     \

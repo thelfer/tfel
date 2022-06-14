@@ -25,7 +25,9 @@
 #include "MFront/LocalDataStructure.hxx"
 #include "MFront/ModelDescription.hxx"
 #include "MFront/MaterialPropertyDescription.hxx"
+#include "MFront/DSLBase.hxx"
 #include "MFront/BehaviourDescription.hxx"
+
 
 namespace mfront {
 
@@ -33,6 +35,10 @@ namespace mfront {
       automaticDeclarationOfTheTemperatureAsFirstExternalStateVariable =
           "automatic_declaration_of_the_temperature_as_first_external_state_"
           "variable";
+  const char* const BehaviourDescription::modellingHypothesis =
+      "modelling_hypothesis";
+  const char* const BehaviourDescription::modellingHypotheses =
+      "modelling_hypotheses";
 
   static MaterialPropertyDescription buildMaterialPropertyDescription(
       const BehaviourDescription::ConstantMaterialProperty& mp,
@@ -412,7 +418,44 @@ namespace mfront {
 
   BehaviourDescription::BehaviourDescription(
       const tfel::utilities::DataMap& opts) {
-    constexpr auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+    constexpr auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+    //
+    if ((opts.count(BehaviourDescription::modellingHypothesis) != 0) &&
+        (opts.count(BehaviourDescription::modellingHypotheses) != 0)) {
+      tfel::raise(
+          "BehaviourDescription::BehaviourDescription: "
+          "can't specify both options '" +
+          std::string{BehaviourDescription::modellingHypothesis} + "' and '" +
+          std::string{BehaviourDescription::modellingHypotheses} + "'");
+    }
+    if (opts.count(BehaviourDescription::modellingHypothesis) != 0) {
+      this->overriden_hypotheses.insert(ModellingHypothesis::fromString(
+          opts.at(BehaviourDescription::modellingHypothesis)
+              .get<std::string>()));
+    }
+    if (opts.count(BehaviourDescription::modellingHypotheses) != 0) {
+      const auto& mhs = opts.at(BehaviourDescription::modellingHypotheses)
+                            .get<std::vector<tfel::utilities::Data>>();
+      for (const auto& h : mhs) {
+        if (h.is<std::string>()) {
+          tfel::raise(
+              "BehaviourDescription::BehaviourDescription: "
+              "invalid data type in option '" +
+              std::string{BehaviourDescription::modellingHypotheses} + "'");
+        }
+        this->overriden_hypotheses.insert(
+            ModellingHypothesis::fromString(h.get<std::string>()));
+      }
+    }
+    // override parameters
+    const auto oparameters =
+        tfel::utilities::convert<std::map<std::string, double>>(
+            tfel::utilities::get_if<tfel::utilities::DataMap>(
+                opts, DSLBase::overridingParameters,
+                tfel::utilities::DataMap{}));
+    for (const auto& op : oparameters) {
+      this->overrideByAParameter(op.first, op.second);
+    }
     // treating the temperature
     const auto* const Topt = BehaviourDescription::
         automaticDeclarationOfTheTemperatureAsFirstExternalStateVariable;
@@ -421,7 +464,7 @@ namespace mfront {
     if (bT) {
       auto T = VariableDescription{"temperature", "T", 1u, 0u};
       T.setGlossaryName("Temperature");
-      this->addExternalStateVariable(h, T, BehaviourData::UNREGISTRED);
+      this->addExternalStateVariable(uh, T, BehaviourData::UNREGISTRED);
     }
   }  // end of BehaviourDescription
 
@@ -1859,15 +1902,32 @@ namespace mfront {
   }
 
   void BehaviourDescription::setModellingHypotheses(
-      const std::set<Hypothesis>& mh, const bool b) {
+      const std::set<Hypothesis>& mhs, const bool b) {
     constexpr auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     auto throw_if = [](const bool c, const std::string& m) {
       tfel::raise_if(c, "BehaviourDescription::setHypotheses: " + m);
     };
+    auto update_hypotheses = [this,
+                              throw_if](const std::set<Hypothesis>& nmhs) {
+      if (this->overriden_hypotheses.empty()) {
+        this->hypotheses = nmhs;
+      } else {
+        for (const auto& h : this->overriden_hypotheses) {
+          if (nmhs.find(h) == nmhs.end()) {
+            tfel::raise(
+                "BehaviourDescription::setHypotheses: "
+                "overriden modelling hypothesis '" +
+                ModellingHypothesis::toString(h) +
+                "' is not part of the supported modelling hypothesis");
+          }
+        }
+        this->hypotheses = this->overriden_hypotheses;
+      }
+    };
     // never ever trust a user
-    throw_if(mh.empty(), "empty set of modelling hypotheses specificied");
+    throw_if(mhs.empty(), "empty set of modelling hypotheses specificied");
     // never ever trust a user
-    throw_if(mh.find(uh) != mh.end(),
+    throw_if(mhs.find(uh) != mhs.end(),
              "undefined modelling hypothesis specified");
     // check that the user did not already set the modelling hypotheses
     throw_if(!this->hypotheses.empty(),
@@ -1875,7 +1935,7 @@ namespace mfront {
     // check that if a specialised version of the behaviour
     // is defined, it is present in the set of hypotheses defined here
     for (const auto& ld : this->sd) {
-      throw_if(mh.find(ld.first) == mh.end(),
+      throw_if(mhs.find(ld.first) == mhs.end(),
                "partial specialisation of the behaviour exists for "
                "the hypothesis '" +
                    ModellingHypothesis::toString(ld.first) +
@@ -1884,7 +1944,7 @@ namespace mfront {
                    "supported by the behaviour.");
     }
     for (const auto h : this->requestedHypotheses) {
-      throw_if(mh.find(h) == mh.end(),
+      throw_if(mhs.find(h) == mhs.end(),
                "a description of the behaviour for "
                "the hypothesis '" +
                    ModellingHypothesis::toString(h) +
@@ -1901,34 +1961,34 @@ namespace mfront {
           (this->oacIsDefined) &&
           (this->getOrthotropicAxesConvention() ==
            OrthotropicAxesConvention::PLATE)) {
-        for (const auto h : mh) {
-          throw_if((h != ModellingHypothesis::TRIDIMENSIONAL) &&
-                       (h != ModellingHypothesis::PLANESTRESS) &&
-                       (h != ModellingHypothesis::PLANESTRAIN) &&
-                       (h != ModellingHypothesis::GENERALISEDPLANESTRAIN),
+        for (const auto h : mhs) {
+          throw_if(((h != ModellingHypothesis::TRIDIMENSIONAL) &&
+                    (h != ModellingHypothesis::PLANESTRESS) &&
+                    (h != ModellingHypothesis::PLANESTRAIN) &&
+                    (h != ModellingHypothesis::GENERALISEDPLANESTRAIN)),
                    "Modelling hypothesis '" + ModellingHypothesis::toString(h) +
-                       "' is not compatible "
-                       "with the `Plate` orthotropic axes convention");
+                       "' is not compatible with the `Plate` orthotropic axes "
+                       "convention");
         }
       }
-      this->hypotheses.insert(mh.begin(), mh.end());
+      update_hypotheses(mhs);
     } else {
       if (b) {
         // find the intersection of the given hypotheses and the
         // existing one
-        std::set<Hypothesis> nh;
+        std::set<Hypothesis> nmhs;
         for (const auto h : this->hypotheses) {
-          if (mh.find(h) != mh.end()) {
-            nh.insert(h);
+          if (mhs.find(h) != mhs.end()) {
+            nmhs.insert(h);
           }
         }
-        throw_if(nh.empty(),
+        throw_if(nmhs.empty(),
                  "intersection of previously modelling hypotheses "
                  "with the new ones is empty");
         // as this is the intersection with previously defined
         // hyppotheses, restrictions related to the orthotropic axes
         // conditions does not have to be checked.
-        this->hypotheses.swap(nh);
+        update_hypotheses(nmhs);
       } else {
         throw_if(true,
                  "supported modelling hypotheses have already been declared");

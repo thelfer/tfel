@@ -301,7 +301,8 @@ If the current domain specific language calls other domain specific
 languages (for example, a behaviour calling an external material
 property), the value of this option is automatically passed to those
 domain specific languages (unless superceeded by global options, as
-detailled in Section @sec:tfel_4.1:mfront:global_dsl_options).
+detailled in Sections @sec:tfel_4.1:mfront:global_dsl_options and
+@sec:tfel_4.1:mfront:global_dsl_options:external_file).
 
 ### Specifying a build identifier {#sec:tfel:4.1:mfront:global_options:build_identifier}
 
@@ -388,7 +389,7 @@ The `overriding_parameters` option allows to specify overriding
 parameters. This parameters must be a map associating variables names
 and default values of the overriding parameters.
 
-#### Example of usage
+#### Example of usage {.unnumbered}
 
 The following codes allows to turn the temperature, defined by default
 as an external state variable, into a parameter:
@@ -402,7 +403,22 @@ $ mfront --obuild --interface=generic                              \
 Note that the temperature increment is implicitly overriden but a
 parameter whose default value is null.
 
-### Defining global options from the command line {#sec:tfel_4.1:mfront:global_dsl_options}
+### Specifying the modelling hypotheses to be treated {#sec:tfel:4.1:mfront:global_options:modelling_hypothesis}
+
+The `modelling_hypothesis` and `modelling_hypotheses` options can be
+used to specify the modelling hypotheses to be treated. This option is
+specific to behaviours.
+
+The hypotheses must be a subset of the hypotheses supported be the
+behaviour.
+
+~~~~{.bash}
+$ mfront --obuild --interface=generic                      \
+   --behaviour-dsl-option=modelling_hypothesis:PlaneStrain \
+   Plasticity.mfront
+~~~~
+
+### Defining global DSL options from the command line {#sec:tfel_4.1:mfront:global_dsl_options}
 
 Options passed to domain specific languages can be defined globally
 using one of the following command line arguments:
@@ -421,12 +437,40 @@ options defined inside the `MFront` file. In case of conflicts, an
 option defined on the command-line overwrites the option defined in the
 `MFront` file.
 
-#### Example of usage
+#### Example of usage {.unnumbered}
 
 ~~~~{.cxx}
 $ mfront --obuild --interface=generic                          \
     --behaviour-dsl-option=parameters_as_static_variables:true \
     Plasticity.mfront
+~~~~
+
+### Defining global DSL options from an external file {#sec:tfel_4.1:mfront:global_dsl_options:external_file}
+
+Options passed to domain specific languages can be defined globally
+using an external file in a JSON-like format using one of the following
+command line arguments: `--dsl-options-file`,
+`--material-property-dsl-options-file`, `--behaviour-dsl-options-file`
+or `--model-dsl-options-file`.
+
+The options defined by command line arguments are merged with the
+options defined inside the `MFront` file. In case of conflicts, an
+option defined on the command-line overwrites the option defined in the
+`MFront` file.
+
+#### Example of usage {.unnumbered}
+
+~~~~{.cxx}
+$ mfront --obuild --interface=generic    \
+    --behaviour-dsls-option=options.json \
+    Plasticity.mfront
+~~~~
+
+where the `options.json` file may look like:
+
+~~~~{.json}
+overriding_parameters : {T : 293.15, dT : 0},
+parameters_as_static_variables : true
 ~~~~
 
 ### Retrieving the list of options associated with a domain specific language {#sec:tfel_4.1:mfront:list_dsl_options}
@@ -702,7 +746,7 @@ used. The user shall be warned that the automatic differentiation
 provided by the `tfel::math::Evaluator` class may result in inefficient
 code.
 
-#### Example of usage
+#### Example of usage {.unnumbered}
 
 ~~~~{.cxx}
 @Parameter stress R0 = 200e6;
@@ -758,7 +802,7 @@ used. The user shall be warned that the automatic differentiation
 provided by the `tfel::math::Evaluator` class may result in inefficient
 code.
 
-#### Example of usage
+#### Example of usage {.unnumbered}
 
 ~~~~{.cxx}
 @Parameter temperature Ta = 600;
@@ -1090,7 +1134,7 @@ To execute a test stored in a `madnex` file, the user must specify:
 Note that the `--test` (or `-t`) command line argument can accept
 regular expressions to select as set of tests.
 
-#### Example of usage
+#### Example of usage {.unnumbered}
 
 The following example executes the UniaxialTensileTest` test 
 associated with the `Plasticity` behaviour (and not attached to any
@@ -1487,7 +1531,7 @@ The `--list-dependencies` query lists all the dependencies of an
 If a dependency is encoded in a `madnex` file, an internal representation of
 the path to this dependency is returned (see example below).
 
-#### Example of usage
+#### Example of usage {.unnumbered}
 
 ~~~~{.bash}
 $ mfront-query --list-dependencies --search-path=generate   \
@@ -1503,7 +1547,7 @@ madnex:generate/MaterialProperties.mdnx:MaterialProperty::YoungModulusTest
 The `--output` query displays information about the output of a material
 property.
 
-#### Example of usage
+#### Example of usage {.unnumbered}
 
 ~~~~{.cxx}
 $ mfront-query --output Inconel600_YoungModulus.mfront 
@@ -1515,7 +1559,7 @@ $ mfront-query --output Inconel600_YoungModulus.mfront
 The `--inputs` query displays information about the inputs of a material
 property.
 
-#### Example of usage
+#### Example of usage {.unnumbered}
 
 ~~~~{.cxx}
 $ mfront-query --inputs Inconel600_YoungModulus.mfront 
@@ -1617,9 +1661,23 @@ substitutions can be overriden by the user.
 
 # Issues fixed
 
-## Issue #224 [mfront] add DSL options to override parameters in material properties and point-wise models
+## Issue #224: [mfront] add DSL options to override parameters in material properties and point-wise models
 
 For more details, see <https://github.com/thelfer/tfel/issues/224>.
+
+## Issue #223: [mfront] Allow to define dsl options from a file
+
+This feature is described in depth in Section
+@sec:tfel_4.1:mfront:global_dsl_options:external_file.
+
+For more details, see <https://github.com/thelfer/tfel/issues/223>.
+
+## Issue #222: [mfront] Add a behaviour DSL option to define the modelling hypotheses to be treated
+
+This feature is described in depth in Section
+@sec:tfel:4.1:mfront:global_options:modelling_hypothesis.
+
+For more details, see <https://github.com/thelfer/tfel/issues/222>.
 
 ## Issue #219: [mfront] Allow to override "overriden" parameters 
 

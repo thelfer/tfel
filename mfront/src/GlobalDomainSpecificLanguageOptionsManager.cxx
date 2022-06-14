@@ -21,15 +21,21 @@ namespace mfront {
 
   static void add_option(tfel::utilities::DataMap& options,
                          const std::string& o,
-                         const std::string& v) {
+                         const tfel::utilities::Data& v) {
     if (options.find(o) != options.end()) {
       tfel::raise("add_option: option '" + o + "' already defined");
     }
+    options.insert({o, v});
+  } // end of add_option
+
+  static void add_option(tfel::utilities::DataMap& options,
+                         const std::string& o,
+                         const std::string& v) {
     tfel::utilities::CxxTokenizer t;
     t.parseString(v);
     auto b = t.begin();
-    options.insert({o, tfel::utilities::Data::read(b, t.end())});
-  }
+    add_option(options, o, tfel::utilities::Data::read(b, t.end()));
+  } // end of add_option
 
   GlobalDomainSpecificLanguageOptionsManager&
   GlobalDomainSpecificLanguageOptionsManager::get() {
@@ -73,6 +79,28 @@ namespace mfront {
                      << "' with value '" << v << "'\n";
     }
     add_option(this->model_dsl_options, n, v);
+  }  // end of addModelDSLOption
+
+  void GlobalDomainSpecificLanguageOptionsManager::addDSLOption(
+      const std::string& n, const tfel::utilities::Data& d) {
+    this->addMaterialPropertyDSLOption(n, d);
+    this->addBehaviourDSLOption(n, d);
+    this->addModelDSLOption(n, d);
+  } // end of addDSLOption
+
+  void GlobalDomainSpecificLanguageOptionsManager::addMaterialPropertyDSLOption(
+      const std::string& n, const tfel::utilities::Data& d) {
+    add_option(this->material_property_dsl_options, n, d);
+  }  // end of addMaterialPropertyDSLOption
+
+  void GlobalDomainSpecificLanguageOptionsManager::addBehaviourDSLOption(
+      const std::string& n, const tfel::utilities::Data& d) {
+    add_option(this->behaviour_dsl_options, n, d);
+  }  // end of addBehaviourDSLOption
+
+  void GlobalDomainSpecificLanguageOptionsManager::addModelDSLOption(
+      const std::string& n, const tfel::utilities::Data& d) {
+    add_option(this->model_dsl_options, n, d);
   }  // end of addModelDSLOption
 
   tfel::utilities::DataMap

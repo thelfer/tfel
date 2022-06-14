@@ -116,6 +116,29 @@ namespace mfront {
         CallBack("allow to define options passed to domain specific languages "
                  "related to models",
                  [] {}, true));
+    this->registerCallBack(
+        "--dsl-options-file",
+        CallBack("allow to define options passed to domain specific languages  "
+                 "thanks to an external file in a JSON-like format",
+                 [] {}, true));
+    this->registerCallBack(
+        "--dsl-material-property-options-file",
+        CallBack("allow to define options passed to domain specific languages "
+                 "related to material properties thanks to an external file in "
+                 "a JSON-like format",
+                 [] {}, true));
+    this->registerCallBack(
+        "--dsl-behaviour-options-file",
+        CallBack("allow to define options passed to domain specific languages "
+                 "related to behaviours thanks to an external file in a "
+                 "JSON-like format",
+                 [] {}, true));
+    this->registerCallBack(
+        "--dsl-model-options-file",
+        CallBack("allow to define options passed to domain specific languages "
+                 "related to models thanks to an external file in a JSON-like "
+                 "format",
+                 [] {}, true));
     this->registerNewCallBack(
         "--include", "-I", &QueryHandlerBase::treatSearchPath,
         "add a new path at the beginning of the search paths", true);

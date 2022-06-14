@@ -1,3 +1,6 @@
 @Command "@mfront@ --obuild --interface=generic --dsl-option=overriding_parameters:{T:293.15,dT:0} --dsl-option=parameters_as_static_variables:true  Plasticity.mfront";
+@Command "@mfront-query@ --dsl-option=overriding_parameters:{T:293.15,dT:0} --external-state-variables  Plasticity.mfront"{
+  expected_output: ""
+};
 
 @CleanDirectories {"include", "src"};

@@ -75,7 +75,11 @@ namespace mfront {
     return DSLBase::getDSLOptionsValidator()
         .addDataTypeValidator<bool>(
             BehaviourDescription::
-                automaticDeclarationOfTheTemperatureAsFirstExternalStateVariable);
+                automaticDeclarationOfTheTemperatureAsFirstExternalStateVariable)
+        .addDataTypeValidator<std::string>(
+            BehaviourDescription::modellingHypothesis)
+        .addDataTypeValidator<std::vector<tfel::utilities::Data>>(
+            BehaviourDescription::modellingHypotheses);
   }  // end of getDSLOptionsValidator
 
   BehaviourDSLCommon::StandardVariableModifier::StandardVariableModifier(
@@ -111,8 +115,11 @@ namespace mfront {
       : DSLBase(opts),
         mb(tfel::utilities::extract(
             opts,
-            {BehaviourDescription::
-                 automaticDeclarationOfTheTemperatureAsFirstExternalStateVariable})),
+            {DSLBase::overridingParameters,
+             BehaviourDescription::
+                 automaticDeclarationOfTheTemperatureAsFirstExternalStateVariable,
+             BehaviourDescription::modellingHypothesis,
+             BehaviourDescription::modellingHypotheses})),
         useStateVarTimeDerivative(false),
         explicitlyDeclaredUsableInPurelyImplicitResolution(false) {
     //
@@ -120,14 +127,6 @@ namespace mfront {
     constexpr auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     //
     DSLBase::handleDSLOptions(this->mb, opts);
-    const auto oparameters =
-        tfel::utilities::convert<std::map<std::string, double>>(
-            tfel::utilities::get_if<tfel::utilities::DataMap>(
-                opts, DSLBase::overridingParameters,
-                tfel::utilities::DataMap{}));
-    for (const auto& op : oparameters) {
-      this->overrideByAParameter(op.first, op.second);
-    }
     // By default, a behaviour can be used in a purely implicit resolution
     this->mb.setUsableInPurelyImplicitResolution(h, true);
     // reserve names

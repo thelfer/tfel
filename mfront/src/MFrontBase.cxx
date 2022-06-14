@@ -484,6 +484,55 @@ namespace mfront {
     g.addModelDSLOption(kv.first, kv.second);
   }
 
+  template <typename CallBack>
+  static void parseDSLOptionsFile(const CallBack& callback,
+                                 const std::string& f) {
+    std::ifstream ifs(f);
+    if (!ifs) {
+      tfel::raise("parseDSLOptionsFile: can't open file '" + f + "'");
+    }
+    tfel::utilities::CxxTokenizer t;
+    t.parseString('{' + std::string{std::istreambuf_iterator<char>{ifs}, {}} +
+                  '}');
+    auto b = t.begin();
+    const auto data = tfel::utilities::Data::read(b, t.end());
+    for (const auto& d : data.get<tfel::utilities::DataMap>()) {
+      callback(d.first, d.second);
+    }
+  }  // end of parseDSLOptionsFile
+
+  void MFrontBase::parseDSLOptionsFile(const std::string& f) {
+    const auto c = [](const std::string& k, const tfel::utilities::Data& d) {
+      auto& g = GlobalDomainSpecificLanguageOptionsManager::get();
+      g.addDSLOption(k, d);
+    };
+    mfront::parseDSLOptionsFile(c, f);
+  }
+
+  void MFrontBase::parseMaterialPropertyDSLOptionsFile(const std::string& f) {
+    const auto c = [](const std::string& k, const tfel::utilities::Data& d) {
+      auto& g = GlobalDomainSpecificLanguageOptionsManager::get();
+      g.addMaterialPropertyDSLOption(k, d);
+    };
+    mfront::parseDSLOptionsFile(c, f);
+  }
+
+  void MFrontBase::parseBehaviourDSLOptionsFile(const std::string& f) {
+    const auto c = [](const std::string& k, const tfel::utilities::Data& d) {
+      auto& g = GlobalDomainSpecificLanguageOptionsManager::get();
+      g.addBehaviourDSLOption(k, d);
+    };
+    mfront::parseDSLOptionsFile(c, f);
+  }
+
+  void MFrontBase::parseModelDSLOptionsFile(const std::string& f) {
+    const auto c = [](const std::string& k, const tfel::utilities::Data& d) {
+      auto& g = GlobalDomainSpecificLanguageOptionsManager::get();
+      g.addModelDSLOption(k, d);
+    };
+    mfront::parseDSLOptionsFile(c, f);
+  }
+
   void MFrontBase::treatDSLOption() {
     MFrontBase::addDSLOption(this->getCurrentCommandLineArgument().getOption());
   }  // end of treatDSLOption
@@ -502,6 +551,26 @@ namespace mfront {
     MFrontBase::addModelDSLOption(
         this->getCurrentCommandLineArgument().getOption());
   }  // end of treatModelDSLOption
+
+  void MFrontBase::treatDSLOptionsFile() {
+    MFrontBase::parseDSLOptionsFile(
+        this->getCurrentCommandLineArgument().getOption());
+  }  // end of treatDSLOptionsFile
+
+  void MFrontBase::treatMaterialPropertyDSLOptionsFile() {
+    MFrontBase::parseMaterialPropertyDSLOptionsFile(
+        this->getCurrentCommandLineArgument().getOption());
+  }  // end of treatMaterialPropertyDSLOptionsFile
+
+  void MFrontBase::treatBehaviourDSLOptionsFile() {
+    MFrontBase::parseBehaviourDSLOptionsFile(
+        this->getCurrentCommandLineArgument().getOption());
+  }  // end of treatBehaviourDSLOptionsFile
+
+  void MFrontBase::treatModelDSLOptionsFile() {
+    MFrontBase::parseModelDSLOptionsFile(
+        this->getCurrentCommandLineArgument().getOption());
+  }  // end of treatModelDSLOptionsFile
 
   void MFrontBase::setInterface(const std::string& i) {
     tfel::raise_if(!this->interfaces.insert(i).second,

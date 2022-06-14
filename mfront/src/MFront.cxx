@@ -348,6 +348,28 @@ namespace mfront {
         "allow to define options passed to domain specific languages related "
         "to models",
         true);
+    this->registerNewCallBack(
+        "--dsl-options-file", &MFront::treatDSLOptionsFile,
+        "allow to define options passed to domain "
+        "specific languages thanks to an external file in a JSON-like format",
+        true);
+    this->registerNewCallBack(
+        "--material-property-dsl-options-file",
+        &MFront::treatMaterialPropertyDSLOptionsFile,
+        "allow to define options passed to domain specific languages related "
+        "to material properties thanks to an external file in a JSON-like "
+        "format",
+        true);
+    this->registerNewCallBack(
+        "--behaviour-dsl-options-file", &MFront::treatBehaviourDSLOptionsFile,
+        "allow to define options passed to domain specific languages related "
+        "to behaviours thanks to an external file in a JSON-like format",
+        true);
+    this->registerNewCallBack(
+        "--model-dsl-options-file", &MFront::treatModelDSLOptionsFile,
+        "allow to define options passed to domain specific languages related "
+        "to models thanks to an external file in a JSON-like format",
+        true);
 #ifdef MFRONT_HAVE_MADNEX
     this->registerNewCallBack("--material", &MFront::treatMaterialIdentifier,
                               "specify a material identifier", true);

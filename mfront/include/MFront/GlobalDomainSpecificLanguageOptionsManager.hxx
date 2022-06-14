@@ -53,6 +53,33 @@ namespace mfront {
      */
     void addModelDSLOption(const std::string&, const std::string&);
     /*!
+     * \brief add an option that will be passed to all DSLs
+     * \param[in] n: name of the option
+     * \param[in] o: value of the option
+     */
+    void addDSLOption(const std::string&, const tfel::utilities::Data&);
+    /*!
+     * \brief add an option that will be passed to DSLs related to material
+     * properties.
+     * \param[in] n: name of the option
+     * \param[in] o: value of the option
+     */
+    void addMaterialPropertyDSLOption(const std::string&,
+                                      const tfel::utilities::Data&);
+    /*!
+     * \brief add an option that will be passed to DSLs related to behaviours.
+     * \param[in] n: name of the option
+     * \param[in] o: value of the option
+     */
+    void addBehaviourDSLOption(const std::string&,
+                               const tfel::utilities::Data&);
+    /*!
+     * \brief add an option that will be passed to DSLs related to models.
+     * \param[in] n: name of the option
+     * \param[in] o: value of the option
+     */
+    void addModelDSLOption(const std::string&, const tfel::utilities::Data&);
+    /*!
      * \return the global options to be passed to DSLs related to material
      * properties.
      */

@@ -270,7 +270,7 @@ static std::vector<std::string> filter(const std::vector<std::string>& values,
   std::copy_if(values.begin(), values.end(), std::back_inserter(results),
                [&r](const std::string& n) { return std::regex_match(n, r); });
   return results;
-} // end of filter
+}  // end of filter
 
 template <std::vector<std::string> (madnex::DataBase::*getAvailableTests)(
     const std::string&, const std::string&) const>
@@ -323,7 +323,7 @@ static void listBehaviourTests(const mfront::PathSpecifier& p,
       if (sorted_by_behaviours) {
         std::cout << "- tests associated with behaviour " << b;
         if ((!m.empty()) && (m != "<none>")) {
-         std::cout << " associated with material " << m;
+          std::cout << " associated with material " << m;
         }
         std::cout << '\n';
         for (const auto& t : tests) {
@@ -349,10 +349,11 @@ static void listBehaviourMTestTests(const mfront::PathSpecifier& p,
       const std::string&, const std::string&) const;
   constexpr MemberType ptr = &madnex::DataBase::getAvailableMTestTests;
   listBehaviourTests<ptr>(p, sorted_by_behaviours, test_specifier);
-#else /* MADNEX_MTEST_TEST_SUPPORT */
-  tfel::raise("mfront-query: mtest tests are not supported by the madnex library");
+#else  /* MADNEX_MTEST_TEST_SUPPORT */
+  tfel::raise(
+      "mfront-query: mtest tests are not supported by the madnex library");
 #endif /* MADNEX_MTEST_TEST_SUPPORT */
-} // end of listBehaviourMTestTests
+}  // end of listBehaviourMTestTests
 
 static void listBehaviourMFMTestGeneratorTests(
     const mfront::PathSpecifier& p,
@@ -414,9 +415,7 @@ static bool treatListMaterialKnowledge(bool& b,
       } else if (o == "=unsorted") {
         sorted = false;
       } else {
-        tfel::raise(
-            "invalid command line argument '" +
-            arg + "'");
+        tfel::raise("invalid command line argument '" + arg + "'");
       }
     } else {
       sorted = true;
@@ -442,9 +441,7 @@ static bool treatListImplementationPathsOption(bool& b,
       } else if (o == "=unsorted") {
         sorted = false;
       } else {
-        tfel::raise(
-            "invalid command line argument '" +
-            arg + "'");
+        tfel::raise("invalid command line argument '" + arg + "'");
       }
     } else {
       sorted = true;
@@ -456,9 +453,9 @@ static bool treatListImplementationPathsOption(bool& b,
 }  // end of treatListImplementationPathsOption
 
 static bool treatListBehaviourTestsOptions(bool& b,
-                                                bool& sorted,
-                                                const char* const opt,
-                                                const std::string& arg) {
+                                           bool& sorted,
+                                           const char* const opt,
+                                           const std::string& arg) {
   if (tfel::utilities::starts_with(arg, opt)) {
     if (b) {
       tfel::raise("mfront-query: " + std::string{opt} + " multiply defined");
@@ -470,9 +467,7 @@ static bool treatListBehaviourTestsOptions(bool& b,
       } else if (o == "=unsorted") {
         sorted = false;
       } else {
-        tfel::raise(
-            "invalid command line argument '" +
-            arg + "'");
+        tfel::raise("invalid command line argument '" + arg + "'");
       }
     } else {
       sorted = true;
@@ -535,7 +530,7 @@ int main(const int argc, const char* const* const argv) {
       return true;
     };
 #endif /* MFRONT_QUERY_HAVE_MADNEX */
-                     queries_arguments.push_back(argv[0]);
+    queries_arguments.push_back(argv[0]);
     for (auto arg = argv + 1; arg != argv + argc; ++arg) {
       const auto a = std::string{*arg};
       if (mfront::parsePathSpecifierArguments(path_specifiers,
@@ -609,6 +604,20 @@ int main(const int argc, const char* const* const argv) {
       } else if (tfel::utilities::starts_with(a, "--model-dsl-option=")) {
         MFrontBase::addModelDSLOption(
             a.substr(std::strlen("--model-dsl-option=")));
+      } else if (tfel::utilities::starts_with(a, "--dsl-options-file=")) {
+        MFrontBase::parseDSLOptionsFile(
+            a.substr(std::strlen("--dsl-options-file=")));
+      } else if (tfel::utilities::starts_with(
+                     a, "--material-property-dsl-options-file=")) {
+        MFrontBase::parseMaterialPropertyDSLOptionsFile(
+            a.substr(std::strlen("--material-property-dsl-options-file=")));
+      } else if (tfel::utilities::starts_with(
+                     a, "--behaviour-dsl-options-file=")) {
+        MFrontBase::parseBehaviourDSLOptionsFile(
+            a.substr(std::strlen("--behaviour-dsl-options-file=")));
+      } else if (tfel::utilities::starts_with(a, "--model-dsl-options-file=")) {
+        MFrontBase::parseModelDSLOptionsFile(
+            a.substr(std::strlen("--model-dsl-options-file=")));
       } else if (tfel::utilities::starts_with(
                      a, "--has-material-property-query")) {
         const char* args[1] = {argv[0]};
@@ -653,10 +662,10 @@ int main(const int argc, const char* const* const argv) {
       } else if (treatListMaterialKnowledge(list_behaviours,
                                             sort_behaviours_list,
                                             "--list-behaviours", a)) {
-      } else if (treatListBehaviourTestsOptions(
-                     list_behaviour_mtest_tests,
-                     sort_behaviour_mtest_tests_list,
-                     "--list-behaviour-mtest-tests", a)) {
+      } else if (treatListBehaviourTestsOptions(list_behaviour_mtest_tests,
+                                                sort_behaviour_mtest_tests_list,
+                                                "--list-behaviour-mtest-tests",
+                                                a)) {
       } else if (treatListBehaviourTestsOptions(
                      list_behaviour_mfm_test_generator_tests,
                      sort_behaviour_mfm_test_generator_tests_list,
@@ -680,10 +689,10 @@ int main(const int argc, const char* const* const argv) {
       } else if ((tfel::utilities::starts_with(a, "/test")) &&
                  (treatTest(a.substr(strlen("/test"))))) {
         treatTest(a.substr(strlen("/test")));
-      } else if (treatListBehaviourTestsOptions(
-                     list_behaviour_mtest_tests,
-                     sort_behaviour_mtest_tests_list,
-                     "/list-behaviour-mtest-tests", a)) {
+      } else if (treatListBehaviourTestsOptions(list_behaviour_mtest_tests,
+                                                sort_behaviour_mtest_tests_list,
+                                                "/list-behaviour-mtest-tests",
+                                                a)) {
       } else if (treatListBehaviourTestsOptions(
                      list_behaviour_mfm_test_generator_tests,
                      sort_behaviour_mfm_test_generator_tests_list,
@@ -708,7 +717,7 @@ int main(const int argc, const char* const* const argv) {
           "with --list-materials, --list-material-properties, "
           "--list-behaviour, --list-behaviour-mtest-tests or --list-models");
     }
-    if (!test.empty()){
+    if (!test.empty()) {
       if ((!list_behaviour_mtest_tests) &&
           (!list_behaviour_mfm_test_generator_tests)) {
         tfel::raise(

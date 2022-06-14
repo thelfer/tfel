@@ -61,6 +61,26 @@ namespace mfront {
      * `<option_name>:<option_value>`.
      */
     static void addModelDSLOption(const std::string&);
+    /*!
+     * \brief parse a DSL options file
+     * \param[in] f: option file in JSON-like format.
+     */
+    static void parseDSLOptionsFile(const std::string&);
+    /*!
+     * \brief parse a DSL options file
+     * \param[in] f: option file in JSON-like format.
+     */
+    static void parseMaterialPropertyDSLOptionsFile(const std::string&);
+    /*!
+     * \brief parse a DSL options file
+     * \param[in] f: option file in JSON-like format.
+     */
+    static void parseBehaviourDSLOptionsFile(const std::string&);
+    /*!
+     * \brief parse a DSL options file
+     * \param[in] f: option file in JSON-like format.
+     */
+    static void parseModelDSLOptionsFile(const std::string&);
     //! \brief constructor
     MFrontBase();
     //! \brief add a new interaface
@@ -116,6 +136,17 @@ namespace mfront {
     virtual void treatBehaviourDSLOption();
     //! \brief treat the `--model-dsl-option` command line option
     virtual void treatModelDSLOption();
+    //! \brief treat the `--dsl-options-file` command line option
+    virtual void treatDSLOptionsFile();
+    /*!
+     * \brief treat the `--material-property-dsl-options-file` command line
+     * option
+     */
+    virtual void treatMaterialPropertyDSLOptionsFile();
+    //! \brief treat the `--behaviour-dsl-options-file` command line option
+    virtual void treatBehaviourDSLOptionsFile();
+    //! \brief treat the `--model-dsl-options-file` command line option
+    virtual void treatModelDSLOptionsFile();
     //! \brief treat the `--warning` command line option
     virtual void treatWarning();
     //! \brief treat the `--debug` command line option

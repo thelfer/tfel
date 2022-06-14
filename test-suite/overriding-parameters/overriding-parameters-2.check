@@ -1,0 +1,9 @@
+@Command "@mfront@ --obuild --interface=generic --dsl-options-file=options.json  Plasticity.mfront";
+@Command "@mfront-query@ --parameters --dsl-options-file=options.json  Plasticity.mfront"{
+  expected_output: ""
+};
+@Command "@mfront-query@ --external-state-variables --dsl-options-file=options.json  Plasticity.mfront"{
+  expected_output: ""
+};
+
+@CleanDirectories {"include", "src"};
