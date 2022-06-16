@@ -20,7 +20,17 @@ eqnPrefixTemplate: "($$i$$)"
 The page describes the new functionalities of Version 3.4.4 of the
 `TFEL` project.
 
-# New features of `mfront`
+# Known incompatilities
+
+## Known incompatilities in `MFront`
+
+Declaration of variables in the `MaterialLaw` DSL is more restrictive:
+they they must now be defined before the `@Function` keyword.
+
+The same restriction apply to the declaration of external names
+(glossary or entry names).
+
+# New features of `MFront`
 
 ## Alternative way to select a single material knowledge (material property, behaviour, model) in a `madnex` file {#sec:tfel-3.4.4:mfront:mandex_full_path}
 
@@ -144,6 +154,14 @@ specific targets are also displayed, unless the `--nomelt` command line
 argument is used.
 
 # Issues solved
+
+## Issue #228: [mfront] check if overriding parameters are well defined
+
+For more details, see : <https://github.com/thelfer/tfel/issues/228>
+
+## Issue #227:￼ ￼[mfront] Override parameters by external, symbolic or variable names
+
+For more details, see : <https://github.com/thelfer/tfel/issues/227>
 
 ## Issue #212: [mfront] `OverridableImplementation` does not take into account overriden parameters
 

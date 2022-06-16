@@ -2,5 +2,11 @@
 @Command "@mfront-query@ --dsl-option=overriding_parameters:{T:293.15,dT:0} --external-state-variables  Plasticity.mfront"{
   expected_output: ""
 };
+@Command "@mfront-query@ --dsl-option=overriding_parameters:{Temperature:293.15} --external-state-variables  Plasticity.mfront"{
+  expected_output: ""
+};
+@Command "@mfront-query@ --dsl-option=overriding_parameters:{Temperature:293.15,dTemperature:0} --external-state-variables  Plasticity.mfront"{
+  expected_output: ""
+};
 
 @CleanDirectories {"include", "src"};

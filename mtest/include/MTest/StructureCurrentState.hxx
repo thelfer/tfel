@@ -65,13 +65,11 @@ namespace mtest {
      * \return the behaviour workspace associated to the current thread.
      */
     BehaviourWorkSpace& getBehaviourWorkSpace() const;
-    /*!
-     * \return the behaviour associated to the structure
-     */
+    //! \return the behaviour associated to the structure
     const Behaviour& getBehaviour() const;
-    //! destructor
+    //! \brief destructor
     ~StructureCurrentState();
-    //! current state of each integration points
+    //! \brief current state of each integration points
     tfel::math::vector<CurrentState> istates;
 
    private:
