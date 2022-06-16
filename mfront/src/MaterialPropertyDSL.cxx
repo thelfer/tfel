@@ -94,7 +94,7 @@ namespace mfront {
       this->reserveName(v);
     }
     this->reserveName("params");
-  }  // end of MaterialPropertyDSL::MaterialPropertyDSL()
+  }  // end of MaterialPropertyDSL()
 
   AbstractDSL::DSLTarget MaterialPropertyDSL::getTargetType() const {
     return MATERIALPROPERTYDSL;
@@ -102,11 +102,11 @@ namespace mfront {
 
   std::string MaterialPropertyDSL::getMaterialKnowledgeIdentifier() const {
     return this->md.law;
-  }  // end of MaterialPropertyDSL::getMaterialKnowledgeIdentifier
+  }  // end of getMaterialKnowledgeIdentifier
 
   std::string MaterialPropertyDSL::getMaterialName() const {
     return this->md.material;
-  }  // end of MaterialPropertyDSL::getMaterialName(
+  }  // end of getMaterialName(
 
   std::string MaterialPropertyDSL::getOverridableVariableNameByExternalName(
       const std::string& en) const {
@@ -118,16 +118,14 @@ namespace mfront {
           en + "'");
     }
     return p->name;
-  }  // end of MaterialPropertyDSL::getOverridableVariableNameByExternalName
+  }  // end of getOverridableVariableNameByExternalName
 
   void MaterialPropertyDSL::overrideByAParameter(const std::string& n,
                                                  const double v) {
-    if (this->overriding_parameters.count(n) != 0) {
-      tfel::raise(
-          "MaterialPropertyDSL::overrideByAParameter: "
-          "an override for variable '" +
-          n + "' has already been defined");
-    }
+    tfel::raise_if(!this->md.f.body.empty(),
+                   "MaterialPropertyDSL::overrideByAParameter: "
+                   "overriding parameters can't be declared at "
+                   "this stage (function is already defined)");
     this->overriding_parameters[n] = v;
   }  // end of overrideByAParameter
 
@@ -137,13 +135,13 @@ namespace mfront {
   }  // end of getOverridenParameters
 
   void MaterialPropertyDSL::endsInputFileProcessing() {
-  }  // end of MaterialPropertyDSL::endsInputFileProcessing
+  }  // end of endsInputFileProcessing
 
   void MaterialPropertyDSL::registerNewCallBack(const std::string& keyword,
                                                 const MemberFuncPtr ptr) {
     this->callBacks.insert({keyword, ptr});
     this->registredKeyWords.insert(keyword);
-  }  // end of MaterialPropertyDSL::registerNewCall
+  }  // end of registerNewCall
 
   void MaterialPropertyDSL::getKeywordsList(std::vector<std::string>& k) const {
     for (const auto& c : this->callBacks) {
@@ -153,13 +151,13 @@ namespace mfront {
 
   std::string MaterialPropertyDSL::getClassName() const {
     return this->md.className;
-  }  // end of MaterialPropertyDSL::getClassName
+  }  // end of getClassName
 
   void MaterialPropertyDSL::addStaticVariableDescription(
       const StaticVariableDescription& v) {
     this->reserveName(v.name);
     this->md.staticVars.push_back(v);
-  }  // end of MaterialPropertyDSL::addStaticVariableDescription
+  }  // end of addStaticVariableDescription
 
   int MaterialPropertyDSL::getIntegerConstant(const std::string& n) const {
     for (const auto& v : this->md.staticVars) {
@@ -173,7 +171,7 @@ namespace mfront {
     }
     this->throwRuntimeError("MaterialPropertyDSL::getIntegerConstant",
                             "unknown variable '" + n + "'");
-  }  // end of MaterialPropertyDSL::getIntegerConstant
+  }  // end of getIntegerConstant
 
   std::string MaterialPropertyDSL::getDescription() {
     using MLIF = MaterialPropertyInterfaceFactory;
@@ -192,11 +190,11 @@ namespace mfront {
       }
     }
     return msg;
-  }  // end of MaterialPropertyDSL::getDescription
+  }  // end of getDescription
 
   std::string MaterialPropertyDSL::getName() {
     return "MaterialLaw";
-  }  // end of MaterialPropertyDSL::getName()
+  }  // end of getName()
 
   void MaterialPropertyDSL::setMaterial(const std::string& m) {
     if (!this->md.material.empty()) {
@@ -208,7 +206,7 @@ namespace mfront {
                               "invalid material name '" + m + "'");
     }
     this->md.material = m;
-  }  // end of MaterialPropertyDSL::setMaterial
+  }  // end of setMaterial
 
   void MaterialPropertyDSL::treatLibrary() {
     if (!this->md.library.empty()) {
@@ -237,11 +235,15 @@ namespace mfront {
     this->readSpecifiedToken("MaterialPropertyDSL::treatConstant", ";");
     this->addStaticVariableDescription(
         StaticVariableDescription("real", name, line, value.second));
-  }  // end of MaterialPropertyDSL::treatConstant
+  }  // end of treatConstant
 
   void MaterialPropertyDSL::treatParameter() {
     this->checkNotEndOfFile("MaterialPropertyDSL::treatParameter",
                             "Expected parameter name.");
+    tfel::raise_if(
+        !this->md.f.body.empty(),
+        "MaterialPropertyDSL::Parameter: parameters can't be declared at "
+        "this stage (function is already defined)");
     const auto type = [this]() -> std::string {
       SupportedTypes stypes;
       if (stypes.isSupportedType(this->current->value)) {
@@ -274,17 +276,12 @@ namespace mfront {
     }();
     const auto value = this->readInitialisationValue<double>(p.name, false);
     if (value.first) {
-      const auto op = this->overriding_parameters.find(p.name);
-      if (op == this->overriding_parameters.end()) {
-        p.setAttribute(VariableDescription::defaultValue, value.second, false);
-      } else {
-        p.setAttribute(VariableDescription::defaultValue, op->second, false);
-      }
+      p.setAttribute(VariableDescription::defaultValue, value.second, false);
     }
     this->readSpecifiedToken("MaterialPropertyDSL::treatParameter", ";");
     this->reserveName(p.name);
     this->md.parameters.push_back(p);
-  }  // MaterialPropertyDSL::treatParameter
+  }  // end of treatParameter
 
   void MaterialPropertyDSL::setMaterialKnowledgeIdentifier(
       const std::string& i) {
@@ -301,7 +298,7 @@ namespace mfront {
     throw_if(!this->md.law.empty(), "law name has already been declared");
     this->md.law = i;
     this->md.className = i;
-  }  // end of MaterialPropertyDSL::setMaterialKnowledgeIdentifier
+  }  // end of setMaterialKnowledgeIdentifier
 
   void MaterialPropertyDSL::treatLaw() {
     const auto& l = this->readOnlyOneToken();
@@ -312,7 +309,7 @@ namespace mfront {
     if (this->overriden_implementation_name.empty()) {
       this->setMaterialKnowledgeIdentifier(l);
     }
-  }  // end of MaterialPropertyDSL::treatLaw
+  }  // end of treatLaw
 
   void MaterialPropertyDSL::addInterface(const std::string& i) {
     using MLIF = mfront::MaterialPropertyInterfaceFactory;
@@ -320,7 +317,7 @@ namespace mfront {
       auto& mlif = MLIF::getMaterialPropertyInterfaceFactory();
       this->interfaces.insert({i, mlif.getInterface(i)});
     }
-  }  // end of MaterialPropertyDSL::addInterface
+  }  // end of addInterface
 
   void MaterialPropertyDSL::setInterfaces(const std::set<std::string>& inames) {
     using MLIF = mfront::MaterialPropertyInterfaceFactory;
@@ -332,7 +329,7 @@ namespace mfront {
       }
       this->addInterface(i);
     }
-  }  // end of MaterialPropertyDSL::setInterface
+  }  // end of setInterface
 
   void MaterialPropertyDSL::treatInterface() {
     this->checkNotEndOfFile("MaterialPropertyDSL::treatInterface",
@@ -345,7 +342,35 @@ namespace mfront {
     }
     ++(this->current);
     this->readSpecifiedToken("MaterialPropertyDSL::treatInterface", ";");
-  }  // end of MaterialPropertyDSL::treatInterface
+  }  // end of treatInterface
+
+  void MaterialPropertyDSL::finalizeVariablesDeclaration() {
+    for(const auto op : this->overriding_parameters){
+      auto p =
+          std::find_if(this->md.parameters.begin(), this->md.parameters.end(),
+                       [&op](const VariableDescription& v) {
+                         return (v.symbolic_form == op.first) || (v.name == op.first) ||
+                                (v.getExternalName() == op.first);
+                       });
+      if (p == this->md.parameters.end()) {
+        tfel::raise(
+            "MaterialPropertyDSL::finalizeVariablesDeclaration: "
+            "no variable named '" +
+            op.first + "' to be overriden");
+      }
+      if (p->getTypeFlag() != SupportedTypes::SCALAR) {
+        tfel::raise(
+            "MaterialPropertyDSL::finalizeVariablesDeclaration: "
+            "only scalar variables can be overriden by a parameter");
+      }
+      if (p->arraySize != 1u) {
+        tfel::raise(
+            "MaterialPropertyDSL::finalizeVariablesDeclaration: "
+            "overriding array of parameters is not supported yet");
+      }
+      p->setAttribute(VariableDescription::defaultValue, op.second, true);
+    }
+  }  // end of finalizeVariablesDeclaration
 
   void MaterialPropertyDSL::treatFunction() {
     auto throw_if = [this](const bool b, const std::string& m) {
@@ -353,6 +378,7 @@ namespace mfront {
         this->throwRuntimeError("MaterialPropertyDSL::treatFunction", m);
       }
     };
+    this->finalizeVariablesDeclaration();
     unsigned int openedBrackets = 0;
     unsigned int openedParenthesis = 0;
     unsigned int currentLine;
@@ -456,7 +482,7 @@ namespace mfront {
              "parenthesis still opened at the end of function");
     throw_if(this->md.f.body.empty(), "empty function");
     throw_if(!this->md.f.modified, "function does not modifiy output.");
-  }  // end of MaterialPropertyDSL::treatFunction()
+  }  // end of treatFunction()
 
   void MaterialPropertyDSL::treatMethod() {
     using namespace tfel::utilities;
@@ -479,6 +505,9 @@ namespace mfront {
                  "'setEntryName' and 'setDefaultValue'");
     ++(this->current);
     this->readSpecifiedToken("MaterialPropertyDSL::treatMethod", "(");
+    throw_if(!this->md.f.body.empty(),
+             "MaterialPropertyDSL::treatMethod: variables methods "
+             "can't be called at this stage (function is already defined)");
     if (methodName == "setGlossaryName") {
       const auto& glossary = Glossary::getGlossary();
       this->checkNotEndOfFile("MaterialPropertyDSL::treatMethod",
@@ -519,12 +548,7 @@ namespace mfront {
           "Expected to read value of variable '" + this->currentVar + "'");
       auto& p = this->md.parameters.getVariable(this->currentVar);
       const auto v = this->readDouble();
-      const auto op = this->overriding_parameters.find(p.name);
-      if (op == this->overriding_parameters.end()) {
-        p.setAttribute(VariableDescription::defaultValue, v, false);
-      } else {
-        p.setAttribute(VariableDescription::defaultValue, op->second, false);
-      }
+      p.setAttribute(VariableDescription::defaultValue, v, false);
       --(this->current);
     } else {
       throw_if(true, "internal error (untreated method '" + methodName + "'");
@@ -532,7 +556,7 @@ namespace mfront {
     ++(this->current);
     this->readSpecifiedToken("MaterialPropertyDSL::treatMethod", ")");
     this->readSpecifiedToken("MaterialPropertyDSL::treatMethod", ";");
-  }  // end of MaterialPropertyDSL::treatMethod
+  }  // end of treatMethod
 
   void MaterialPropertyDSL::importFile(
       const std::string& fn,
@@ -652,9 +676,13 @@ namespace mfront {
       }
       i.second->writeOutputFiles(this->md, this->fd);
     }
-  }  // end of MaterialPropertyDSL::generateOutputFiles
+  }  // end of generateOutputFiles
 
   void MaterialPropertyDSL::treatInput() {
+    tfel::raise_if(
+        !this->md.f.body.empty(),
+        "MaterialPropertyDSL::treatInput: inputs can't be declared at "
+        "this stage (function is already defined)");
     this->checkNotEndOfFile("MaterialPropertyDSL::treatInput");
     const auto type = [this]() -> std::string {
       SupportedTypes stypes;
@@ -672,9 +700,13 @@ namespace mfront {
       this->reserveName(i.name);
       this->md.inputs.push_back(i);
     }
-  }  // end of MaterialPropertyDSL::treatInput
+  }  // end of treatInput
 
   void MaterialPropertyDSL::treatOutput() {
+    tfel::raise_if(
+        !this->md.f.body.empty(),
+        "MaterialPropertyDSL::treatOutput: output can't be declared at "
+        "this stage (function is already defined)");
     if (!this->md.output.name.empty()) {
       this->throwRuntimeError("MaterialPropertyDSL::treatOutput",
                               "Output already defined.");
@@ -707,21 +739,21 @@ namespace mfront {
     } else {
       this->md.output = VariableDescription{type, n, 1u, 0u};
     }
-  }  // end of MaterialPropertyDSL::treatOutput
+  }  // end of treatOutput
 
   void MaterialPropertyDSL::treatBounds() {
     const auto b = this->readVariableBounds();
     this->readSpecifiedToken("MaterialPropertyDSL::treatBounds", ";");
     auto& v = this->md.inputs.getVariable(std::get<0>(b));
     v.setBounds(std::get<1>(b));
-  }  // end of MaterialPropertyDSL::treatBounds
+  }  // end of treatBounds
 
   void MaterialPropertyDSL::treatPhysicalBounds() {
     const auto b = this->readVariableBounds();
     this->readSpecifiedToken("MaterialPropertyDSL::treatPhysicalBounds", ";");
     auto& v = this->md.inputs.getVariable(std::get<0>(b));
     v.setPhysicalBounds(std::get<1>(b));
-  }  // end of MaterialPropertyDSL::treatPhysicalBounds
+  }  // end of treatPhysicalBounds
 
   void MaterialPropertyDSL::treatUnknownKeyword() {
     TokensContainer::const_iterator p2;
@@ -805,32 +837,32 @@ namespace mfront {
       DSLBase::treatUnknownKeyword();
     }
     this->current = p2;
-  }  // end of MaterialPropertyDSL::treatUnknownKeyword
+  }  // end of treatUnknownKeyword
 
   const MaterialPropertyDescription&
   MaterialPropertyDSL::getMaterialPropertyDescription() const {
     return this->md;
-  }  // end of MaterialPropertyDSL::getMaterialPropertyDescription
+  }  // end of getMaterialPropertyDescription
 
   void MaterialPropertyDSL::appendToIncludes(const std::string& c) {
     this->md.appendToIncludes(c);
-  }  // end of MaterialPropertyDSL::appendToIncludes
+  }  // end of appendToIncludes
 
   void MaterialPropertyDSL::appendToMembers(const std::string& c) {
     this->md.appendToMembers(c);
-  }  // end of MaterialPropertyDSL::appendToMembers
+  }  // end of appendToMembers
 
   void MaterialPropertyDSL::appendToPrivateCode(const std::string& c) {
     this->md.appendToPrivateCode(c);
-  }  // end of MaterialPropertyDSL::appendToPrivateCode
+  }  // end of appendToPrivateCode
 
   void MaterialPropertyDSL::appendToSources(const std::string& c) {
     this->md.appendToSources(c);
-  }  // end of MaterialPropertyDSL::appendToSources
+  }  // end of appendToSources
 
   void MaterialPropertyDSL::addMaterialLaw(const std::string& m) {
     this->md.addMaterialLaw(m);
-  }  // end of MaterialPropertyDSL::addMaterialLaw
+  }  // end of addMaterialLaw
 
   MaterialPropertyDSL::~MaterialPropertyDSL() = default;
 

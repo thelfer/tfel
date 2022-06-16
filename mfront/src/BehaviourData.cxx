@@ -12,6 +12,7 @@
  * project under specific licensing conditions.
  */
 
+#include <cstring>
 #include <sstream>
 #include <iterator>
 #include <algorithm>
@@ -21,6 +22,7 @@
 #include "TFEL/Glossary/Glossary.hxx"
 #include "TFEL/Glossary/GlossaryEntry.hxx"
 #include "TFEL/Utilities/CxxTokenizer.hxx"
+#include "TFEL/Utilities/StringAlgorithms.hxx"
 #include "MFront/MFrontUtilities.hxx"
 #include "MFront/DSLUtilities.hxx"
 #include "MFront/PerformanceProfiling.hxx"
@@ -155,13 +157,13 @@ namespace mfront {
         "BehaviourData::getAttribute: "
         "no attribute named '" +
         n + "'");
-  }  // end of BehaviourData::throwUndefinedAttribute
+  }  // end of throwUndefinedAttribute
 
   BehaviourData::CodeBlocksAggregator::CodeBlocksAggregator() = default;
 
   bool BehaviourData::CodeBlocksAggregator::isMutable() const {
     return this->is_mutable;
-  }  // end of BehaviourData::CodeBlocksAggregator::isMutable
+  }  // end of CodeBlocksAggregator::isMutable
 
   void BehaviourData::CodeBlocksAggregator::update() {
     // updating code
@@ -200,7 +202,7 @@ namespace mfront {
       }
     }
     this->cblock.description += cdoc_end;
-  }  // end of BehaviourData::update
+  }  // end of update
 
   void BehaviourData::CodeBlocksAggregator::set(const CodeBlock& c,
                                                 const Position p,
@@ -291,7 +293,7 @@ namespace mfront {
     }
     this->update();
     this->is_mutable = b;
-  }  // end of BehaviourData::CodeBlocksAggregator::set
+  }  // end of CodeBlocksAggregator::set
 
   void BehaviourData::CodeBlocksAggregator::replace(const CodeBlock& c,
                                                     const Position p,
@@ -304,18 +306,18 @@ namespace mfront {
     this->cblock.members.clear();
     this->cblock.staticMembers.clear();
     this->set(c, p, b);
-  }  // end of BehaviourData::CodeBlocksAggregator::set
+  }  // end of CodeBlocksAggregator::set
 
   void BehaviourData::CodeBlocksAggregator::check() const {
     tfel::raise_if(!this->is_mutable,
                    "BehaviourData::CodeBlocksAggregator::set: "
                    "can't modifiy a code block");
-  }  // end of BehaviourData::CodeBlocksAggregator::check
+  }  // end of CodeBlocksAggregator::check
 
   const CodeBlock& BehaviourData::CodeBlocksAggregator::get() const {
     this->is_mutable = false;
     return this->cblock;
-  }  // end of BehaviourData::CodeBlocksAggregator::get
+  }  // end of CodeBlocksAggregator::get
 
   BehaviourData::CodeBlocksAggregator::~CodeBlocksAggregator() = default;
 
@@ -326,7 +328,7 @@ namespace mfront {
     auto T = VariableDescription{"temperature", "T", 1u, 0u};
     T.setGlossaryName("Temperature");
     this->addExternalStateVariable(T, UNREGISTRED);
-  }  // end of BehaviourData::BehaviourData()
+  }  // end of BehaviourData()
 
   BehaviourData::BehaviourData(const BehaviourData&) = default;
 
@@ -369,7 +371,7 @@ namespace mfront {
       checkAlreadyRegistred(this->reservedNames, v.name);
     }
     this->staticVariables.push_back(v);
-  }  // end of BehaviourData::addStaticVariable
+  }  // end of addStaticVariable
 
   int BehaviourData::getIntegerConstant(const std::string& n) const {
     for (const auto& v : this->staticVariables) {
@@ -385,100 +387,89 @@ namespace mfront {
         "MaterialPropertyDSL::getIntegerConstant: "
         "unknown variable '" +
         n + "'");
-  }  // end of BehaviourData::getIntegerConstant
+  }  // end of getIntegerConstant
 
   const StaticVariableDescriptionContainer& BehaviourData::getStaticVariables()
       const {
     return this->staticVariables;
-  }  // end of BehaviourData::getStaticVariables
+  }  // end of getStaticVariables
 
   const VariableDescription& BehaviourData::getPersistentVariableDescription(
       const std::string& v) const {
     return this->getPersistentVariables().getVariable(v);
-  }  // end of BehaviourData::getPersistentVariableDescription
+  }  // end of getPersistentVariableDescription
 
   const VariableDescription&
   BehaviourData::getPersistentVariableDescriptionByExternalName(
       const std::string& v) const {
     return this->getPersistentVariables().getVariableByExternalName(v);
-  }  // end of BehaviourData::getPersistentVariableDescriptionByExternalName
+  }  // end of getPersistentVariableDescriptionByExternalName
 
   const VariableDescription& BehaviourData::getIntegrationVariableDescription(
       const std::string& v) const {
     return this->getIntegrationVariables().getVariable(v);
-  }  // end of BehaviourData::getIntegrationVariableDescription
+  }  // end of getIntegrationVariableDescription
 
   const VariableDescription&
   BehaviourData::getIntegrationVariableDescriptionByExternalName(
       const std::string& v) const {
     return this->getIntegrationVariables().getVariableByExternalName(v);
-  }  // end of BehaviourData::getIntegrationVariableDescriptionByExternalName
+  }  // end of getIntegrationVariableDescriptionByExternalName
 
   const VariableDescription& BehaviourData::getStateVariableDescription(
       const std::string& v) const {
     return this->getStateVariables().getVariable(v);
-  }  // end of BehaviourData::getStateVariableDescription
+  }  // end of getStateVariableDescription
 
   const VariableDescription&
   BehaviourData::getStateVariableDescriptionByExternalName(
       const std::string& v) const {
     return this->getStateVariables().getVariableByExternalName(v);
-  }  // end of BehaviourData::getStateVariableDescriptionByExternalName
+  }  // end of getStateVariableDescriptionByExternalName
 
   const VariableDescription& BehaviourData::getExternalStateVariableDescription(
       const std::string& v) const {
     return this->getExternalStateVariables().getVariable(v);
-  }  // end of BehaviourData::getExternalStateVariableDescription
+  }  // end of getExternalStateVariableDescription
 
   const VariableDescription&
   BehaviourData::getExternalStateVariableDescriptionByExternalName(
       const std::string& v) const {
     return this->getExternalStateVariables().getVariableByExternalName(v);
-  }  // end of BehaviourData::getExternalStateVariableDescriptionByExternalName
+  }  // end of getExternalStateVariableDescriptionByExternalName
 
   const VariableDescription&
   BehaviourData::getAuxiliaryStateVariableDescription(
       const std::string& v) const {
     return this->getAuxiliaryStateVariables().getVariable(v);
-  }  // end of BehaviourData::getAuxiliaryStateVariableDescription
+  }  // end of getAuxiliaryStateVariableDescription
 
   const VariableDescription&
   BehaviourData::getAuxiliaryStateVariableDescriptionByExternalName(
       const std::string& v) const {
     return this->getAuxiliaryStateVariables().getVariableByExternalName(v);
-  }  // end of BehaviourData::getAuxiliaryStateVariableDescriptionByExternalName
+  }  // end of getAuxiliaryStateVariableDescriptionByExternalName
 
   const VariableDescription& BehaviourData::getParameterDescription(
       const std::string& v) const {
     return this->getParameters().getVariable(v);
-  }  // end of BehaviourData::getParameterDescription
+  }  // end of getParameterDescription
 
   const VariableDescription&
   BehaviourData::getParameterDescriptionByExternalName(
       const std::string& v) const {
     return this->getParameters().getVariableByExternalName(v);
-  }  // end of BehaviourData::getParameterDescriptionByExternalName
+  }  // end of getParameterDescriptionByExternalName
 
   void BehaviourData::addMaterialProperty(const VariableDescription& v,
                                           const RegistrationStatus s) {
-    const auto op = this->overriding_parameters.find(v.name);
-    if (op != this->overriding_parameters.end()) {
-      if (v.arraySize != 1u) {
-        tfel::raise(
-            "BehaviourData::addMaterialProperty: "
-            "overriding arrays of material properties is not supported yet");
-      }
-      this->addParameter(v, s);
-      this->setParameterDefaultValue(v.name, op->second);
-    } else {
-      this->addVariable(this->materialProperties, v, s, false);
-    }
-  }  // end of BehaviourData::addMaterialProperty
+    this->addVariable(this->materialProperties, v, s, false);
+  }  // end of addMaterialProperty
 
   void BehaviourData::addIntegrationVariable(const VariableDescription& v,
                                              const RegistrationStatus s) {
     this->addVariable(this->integrationVariables, v, s, true);
-  }  // end of BehaviourData::addIntegrationVariable
+  }  // end of addIntegrationVariable
 
   void BehaviourData::addStateVariable(const VariableDescription& v,
                                        const RegistrationStatus s) {
@@ -508,7 +499,7 @@ namespace mfront {
     if (!found) {
       this->persistentVariables.push_back(v);
     }
-  }  // end of BehaviourData::addStateVariable
+  }  // end of addStateVariable
 
   void BehaviourData::addAuxiliaryStateVariable(const VariableDescription& v,
                                                 const RegistrationStatus s) {
@@ -519,30 +510,22 @@ namespace mfront {
     } else {
       this->addVariable(this->persistentVariables, v, ALREADYREGISTRED, false);
     }
-  }  // end of BehaviourData::addAuxiliaryStateVariable
+  }  // end of addAuxiliaryStateVariable
 
   void BehaviourData::addExternalStateVariable(const VariableDescription& v,
                                                const RegistrationStatus s) {
     this->addVariable(this->externalStateVariables, v, s, true);
-  }  // end of BehaviourData::addExternalStateVariable
+  }  // end of addExternalStateVariable
 
   void BehaviourData::addLocalVariable(const VariableDescription& v,
                                        const RegistrationStatus s) {
     this->addVariable(this->localVariables, v, s, false, true);
-  }  // end of BehaviourData::addLocalVariable
+  }  // end of addLocalVariable
 
   void BehaviourData::addParameter(const VariableDescription& v,
                                    const RegistrationStatus s) {
-    const auto op = this->overriding_parameters.find(v.name);
-    if (op != this->overriding_parameters.end()) {
-      if (v.arraySize != 1u) {
-        tfel::raise(
-            "BehaviourData::addParameter: "
-            "overriding array of parameters is not supported yet");
-      }
-    }
     this->addVariable(this->parameters, v, s, false);
-  }  // end of BehaviourData::addParameter
+  }  // end of addParameter
 
   bool BehaviourData::hasParameter(const std::string& n) const {
     return this->parameters.contains(n);
@@ -560,27 +543,27 @@ namespace mfront {
       }
     }
     return false;
-  }  // end of BehaviourData::isMemberUsedInCodeBlocks
+  }  // end of isMemberUsedInCodeBlocks
 
   bool BehaviourData::isMaterialPropertyName(const std::string& n) const {
     return this->getMaterialProperties().contains(n);
-  }  // end of BehaviourData::isMaterialPropertyName
+  }  // end of isMaterialPropertyName
 
   bool BehaviourData::isStaticVariableName(const std::string& n) const {
     return this->getStaticVariables().contains(n);
-  }  // end of BehaviourData::isStaticVariableName
+  }  // end of isStaticVariableName
 
   bool BehaviourData::isLocalVariableName(const std::string& n) const {
     return this->getLocalVariables().contains(n);
-  }  // end of BehaviourData::isLocalVariableName
+  }  // end of isLocalVariableName
 
   bool BehaviourData::isPersistentVariableName(const std::string& n) const {
     return this->getPersistentVariables().contains(n);
-  }  // end of BehaviourData::isPersistentVariableName
+  }  // end of isPersistentVariableName
 
   bool BehaviourData::isIntegrationVariableName(const std::string& n) const {
     return this->getIntegrationVariables().contains(n);
-  }  // end of BehaviourData::isIntegrationVariableName
+  }  // end of isIntegrationVariableName
 
   bool BehaviourData::isIntegrationVariableIncrementName(
       const std::string& n) const {
@@ -591,11 +574,11 @@ namespace mfront {
       return false;
     }
     return this->getIntegrationVariables().contains(n.substr(1));
-  }  // end of BehaviourData::isIntegrationVariableName
+  }  // end of isIntegrationVariableName
 
   bool BehaviourData::isStateVariableName(const std::string& n) const {
     return this->getStateVariables().contains(n);
-  }  // end of BehaviourData::isStateVariableName
+  }  // end of isStateVariableName
 
   bool BehaviourData::isStateVariableIncrementName(const std::string& n) const {
     if (n.size() < 2) {
@@ -605,15 +588,15 @@ namespace mfront {
       return false;
     }
     return this->getStateVariables().contains(n.substr(1));
-  }  // end of BehaviourData::isStateVariableName
+  }  // end of isStateVariableName
 
   bool BehaviourData::isAuxiliaryStateVariableName(const std::string& n) const {
     return this->getAuxiliaryStateVariables().contains(n);
-  }  // end of BehaviourData::isStateVariableName
+  }  // end of isAuxiliaryStateVariableName
 
   bool BehaviourData::isExternalStateVariableName(const std::string& n) const {
     return this->getExternalStateVariables().contains(n);
-  }  // end of BehaviourData::isExternalStateVariableName
+  }  // end of isExternalStateVariableName
 
   bool BehaviourData::isExternalStateVariableIncrementName(
       const std::string& n) const {
@@ -624,21 +607,21 @@ namespace mfront {
       return false;
     }
     return this->getExternalStateVariables().contains(n.substr(1));
-  }  // end of BehaviourData::isExternalStateVariableName
+  }  // end of isExternalStateVariableName
 
   bool BehaviourData::isParameterName(const std::string& n) const {
     return this->getParameters().contains(n);
-  }  // end of BehaviourData::isParameterName
+  }  // end of isParameterName
 
   const VariableDescriptionContainer& BehaviourData::getMaterialProperties()
       const {
     return this->materialProperties;
-  }  // end of BehaviourData::getMaterialProperties
+  }  // end of getMaterialProperties
 
   const VariableDescriptionContainer& BehaviourData::getPersistentVariables()
       const {
     return this->persistentVariables;
-  }  // end of BehaviourData::getPersistentVariables
+  }  // end of getPersistentVariables
 
   std::set<std::string> BehaviourData::getVariablesNames() const {
     auto getNames = [](std::set<std::string>& r,
@@ -658,7 +641,7 @@ namespace mfront {
     getNames(n, this->getExternalStateVariables());
     getNames(n, this->getParameters());
     return n;
-  }  // end of BehaviourData::getVariablesNames
+  }  // end of getVariablesNames
 
   const VariableDescriptionContainer& BehaviourData::getVariables(
       const std::string& t) const {
@@ -684,34 +667,34 @@ namespace mfront {
           t + "'");
     }
     return (this->*m)();
-  }  // end of BehaviourData::getIntegrationVariables
+  }  // end of getIntegrationVariables
 
   const VariableDescriptionContainer& BehaviourData::getIntegrationVariables()
       const {
     return this->integrationVariables;
-  }  // end of BehaviourData::getIntegrationVariables
+  }  // end of getIntegrationVariables
 
   const VariableDescriptionContainer& BehaviourData::getStateVariables() const {
     return this->stateVariables;
-  }  // end of BehaviourData::getStateVariables
+  }  // end of getStateVariables
 
   const VariableDescriptionContainer&
   BehaviourData::getAuxiliaryStateVariables() const {
     return this->auxiliaryStateVariables;
-  }  // end of BehaviourData::getAuxiliaryStateVariables
+  }  // end of getAuxiliaryStateVariables
 
   const VariableDescriptionContainer& BehaviourData::getExternalStateVariables()
       const {
     return this->externalStateVariables;
-  }  // end of BehaviourData::getExternalStateVariables
+  }  // end of getExternalStateVariables
 
   const VariableDescriptionContainer& BehaviourData::getLocalVariables() const {
     return this->localVariables;
-  }  // end of BehaviourData::getLocalVariables
+  }  // end of getLocalVariables
 
   bool BehaviourData::isUsableInPurelyImplicitResolution() const {
     return this->usableInPurelyImplicitResolution;
-  }  // end of BehaviourData::isUsableInPurelyImplicitResolution
+  }  // end of isUsableInPurelyImplicitResolution
 
   void BehaviourData::setBounds(const std::string& n,
                                 const VariableBoundsDescription& b) {
@@ -734,7 +717,7 @@ namespace mfront {
                    "BehaviourData::setBounds: "
                    "no variable named '" +
                        n + "'");
-  }  // end of BehaviourData::getBounds
+  }  // end of getBounds
 
   void BehaviourData::setBounds(const std::string& n,
                                 const unsigned short i,
@@ -805,7 +788,7 @@ namespace mfront {
         "- an integration variable\n"
         "- an external state variable\n"
         "- a parameter");
-  }  // end of BehaviourData::getVariableDescriptionByExternalName
+  }  // end of getVariableDescriptionByExternalName
 
   const VariableDescription& BehaviourData::getVariableDescription(
       const std::string& n) const {
@@ -843,7 +826,7 @@ namespace mfront {
         "- an integration variable\n"
         "- an external state variable\n"
         "- a parameter");
-  }  // end of BehaviourData::getVariableDescription
+  }  // end of getVariableDescription
 
   void BehaviourData::setVariableAttribute(const std::string& v,
                                            const std::string& n,
@@ -878,7 +861,7 @@ namespace mfront {
                        "- a  persistent variable\n"
                        "- an external state variable\n"
                        "- a parameter");
-  }  // end of BehaviourData::setVariableAttribute
+  }  // end of setVariableAttribute
 
   VariableDescription& BehaviourData::getVariableDescription(
       const std::string& n) {
@@ -916,7 +899,7 @@ namespace mfront {
         "- an integration variable\n"
         "- an external state variable\n"
         "- a parameter");
-  }  // end of BehaviourData::getVariableDescription
+  }  // end of getVariableDescription
 
   void BehaviourData::setPhysicalBounds(const std::string& n,
                                         const VariableBoundsDescription& b) {
@@ -939,7 +922,7 @@ namespace mfront {
                    "BehaviourData::setPhysicalBounds: "
                    "no variable named '" +
                        n + "'");
-  }  // end of BehaviourData::setPhysicalBounds
+  }  // end of setPhysicalBounds
 
   void BehaviourData::setPhysicalBounds(const std::string& n,
                                         const unsigned short i,
@@ -963,11 +946,11 @@ namespace mfront {
                    "BehaviourData::setPhysicalBounds: "
                    "no variable named '" +
                        n + "'");
-  }  // end of BehaviourData::setPhysicalBounds
+  }  // end of setPhysicalBounds
 
   void BehaviourData::setUsableInPurelyImplicitResolution(const bool b) {
     this->usableInPurelyImplicitResolution = b;
-  }  // end of BehaviourData::setUsableInPurelyImplicitResolution
+  }  // end of setUsableInPurelyImplicitResolution
 
   void BehaviourData::
       declareExternalStateVariableProbablyUnusableInPurelyImplicitResolution(
@@ -1101,14 +1084,14 @@ namespace mfront {
       }
     }
     c.push_back(v);
-  }  // end of BehaviourData::addVariable
+  }  // end of addVariable
 
   void BehaviourData::reserveName(const std::string& n) {
     tfel::raise_if(!this->reservedNames.insert(n).second,
                    "BehaviourData::reserveName: "
                    "name '" +
                        n + "' already registred");
-  }  // end of BehaviourData::reserveName
+  }  // end of reserveName
 
   bool BehaviourData::isNameReserved(const std::string& n) const {
     return this->reservedNames.count(n) != 0;
@@ -1150,7 +1133,7 @@ namespace mfront {
                    "BehaviourData::registerGlossaryName: "
                    "a variable named '" +
                        n + "' has already been registred");
-  }  // end of BehaviourData::registerGlossaryName
+  }  // end of registerGlossaryName
 
   void BehaviourData::registerEntryName(const std::string& n,
                                         const std::string& e) {
@@ -1182,7 +1165,7 @@ namespace mfront {
                    "BehaviourData::registerEntryName: "
                    "a variable named '" +
                        n + "' has already been registred");
-  }  // end of BehaviourData::registerEntryName
+  }  // end of registerEntryName
 
   void BehaviourData::registerMemberName(const std::string& n) {
     using namespace tfel::glossary;
@@ -1208,7 +1191,7 @@ namespace mfront {
                    "BehaviourData::registerMemberName: "
                    "a variable named '" +
                        n + "' has already been registred");
-  }  // end of BehaviourData::registerMemberName
+  }  // end of registerMemberName
 
   void BehaviourData::registerStaticMemberName(const std::string& n) {
     const auto& g = tfel::glossary::Glossary::getGlossary();
@@ -1232,16 +1215,16 @@ namespace mfront {
                    "BehaviourData::registerStaticMemberName: "
                    "a variable named '" +
                        n + "' has already been registred");
-  }  // end of BehaviourData::registerStaticMemberName
+  }  // end of registerStaticMemberName
 
   const std::set<std::string>& BehaviourData::getRegistredMembersNames() const {
     return this->membersNames;
-  }  // end of BehaviourData::getRegistredMemberNames
+  }  // end of getRegistredMemberNames
 
   const std::set<std::string>& BehaviourData::getRegistredStaticMembersNames()
       const {
     return this->staticMembersNames;
-  }  // end of BehaviourData::getRegistredStaticMemberNames
+  }  // end of getRegistredStaticMemberNames
 
   void BehaviourData::checkVariableName(const std::string& n) const {
     if ((this->materialProperties.contains(n)) ||
@@ -1258,7 +1241,7 @@ namespace mfront {
         "BehaviourData::checkVariableName: "
         "no variable named '" +
         n + "'");
-  }  // end of BehaviourData::checkVariableName
+  }  // end of checkVariableName
 
   void BehaviourData::setCode(const std::string& n,
                               const CodeBlock& c,
@@ -1293,7 +1276,7 @@ namespace mfront {
       }
     }
     pc->second.set(c, p, b);
-  }  // end of BehaviourData::setCode
+  }  // end of setCode
 
   const CodeBlock& BehaviourData::getCodeBlock(const std::string& n) const {
     auto p = this->cblocks.find(n);
@@ -1302,7 +1285,7 @@ namespace mfront {
                    "no code block associated with '" +
                        n + "'");
     return p->second.get();
-  }  // end of BehaviourData::getCodeBlock
+  }  // end of getCodeBlock
 
   std::string BehaviourData::getCode(const std::string& n,
                                      const std::string& cn,
@@ -1315,7 +1298,7 @@ namespace mfront {
     out << this->getCodeBlock(n).code;
     writeStandardPerformanceProfilingEnd(out);
     return out.str();
-  }  // end of BehaviourData::getCode
+  }  // end of getCode
 
   bool BehaviourData::hasCode(const std::string& n) const {
     return this->cblocks.find(n) != this->cblocks.end();
@@ -1331,15 +1314,9 @@ namespace mfront {
     const auto f = SupportedTypes::getTypeFlag(p.type);
     throw_if(f != SupportedTypes::SCALAR,
              "parameter '" + n + "' is not a scalar");
-    const auto op = this->overriding_parameters.find(n);
-    if (op == this->overriding_parameters.end()) {
-      throw_if(!this->parametersDefaultValues.insert({n, v}).second,
-               "default value for parameter '" + n + "' already defined");
-    } else {
-      throw_if(!this->parametersDefaultValues.insert({n, op->second}).second,
-               "default value for parameter '" + n + "' already defined");
-    }
-  }  // end of BehaviourData::setParameterDefaultValue
+    throw_if(!this->parametersDefaultValues.insert({n, v}).second,
+             "default value for parameter '" + n + "' already defined");
+  }  // end of setParameterDefaultValue
 
   void BehaviourData::setParameterDefaultValue(const std::string& n,
                                                const unsigned short i,
@@ -1358,9 +1335,6 @@ namespace mfront {
     throw_if(i >= p.arraySize, "index " + idx + " is greater than parameter '" +
                                    n + "' array size");
     const auto n2 = n + '[' + idx + ']';
-    //     const auto op = this->overriding_parameters.find(n2);
-    //     if (op != this->overriding_parameters.end()) {
-    //     }
     throw_if(!this->parametersDefaultValues.insert({n2, v}).second,
              "default value for parameter '" + n2 + "' already defined");
   }
@@ -1401,7 +1375,7 @@ namespace mfront {
     throw_if(p == this->parametersDefaultValues.end(),
              "no default value defined for parameter '" + n + "'");
     return p->second;
-  }  // end of BehaviourData::getFloattingPointParameterDefaultValue
+  }  // end of getFloattingPointParameterDefaultValue
 
   double BehaviourData::getFloattingPointParameterDefaultValue(
       const std::string& n, const unsigned short i) const {
@@ -1418,7 +1392,7 @@ namespace mfront {
     throw_if(p == this->parametersDefaultValues.end(),
              "no default value defined for parameter '" + n2 + "'");
     return p->second;
-  }  // end of BehaviourData::getFloattingPointParameterDefaultValue
+  }  // end of getFloattingPointParameterDefaultValue
 
   int BehaviourData::getIntegerParameterDefaultValue(
       const std::string& n) const {
@@ -1432,7 +1406,7 @@ namespace mfront {
                    "no default value defined for parameter '" +
                        n + "'");
     return p->second;
-  }  // end of BehaviourData::getIntegerParameterDefaultValue
+  }  // end of getIntegerParameterDefaultValue
 
   unsigned short BehaviourData::getUnsignedShortParameterDefaultValue(
       const std::string& n) const {
@@ -1446,7 +1420,7 @@ namespace mfront {
                    "no default value defined for parameter '" +
                        n + "'");
     return p->second;
-  }  // end of BehaviourData::getUnsignedShortParameterDefaultValue
+  }  // end of getUnsignedShortParameterDefaultValue
 
   void BehaviourData::setAttribute(const std::string& n,
                                    const BehaviourAttribute& a,
@@ -1462,7 +1436,7 @@ namespace mfront {
     if (!this->attributes.insert({n, a}).second) {
       throw_if(!b, "attribute '" + n + "' already declared");
     }
-  }  // end of BehaviourData::setAttribute
+  }  // end of setAttribute
 
   void BehaviourData::updateAttribute(const std::string& n,
                                       const BehaviourAttribute& a) {
@@ -1474,16 +1448,16 @@ namespace mfront {
     throw_if(a.getTypeIndex() != p->second.getTypeIndex(),
              "attribute already exists with a different type");
     p->second = a;
-  }  // end of BehaviourData::setAttribute
+  }  // end of setAttribute
 
   bool BehaviourData::hasAttribute(const std::string& n) const {
     return this->attributes.count(n) != 0u;
-  }  // end of BehaviourData::hasAttribute
+  }  // end of hasAttribute
 
   const std::map<std::string, BehaviourAttribute>&
   BehaviourData::getAttributes() const {
     return this->attributes;
-  }  // end of BehaviourData::getAttributes
+  }  // end of getAttributes
 
   std::vector<std::string> BehaviourData::getCodeBlockNames() const {
     auto names = std::vector<std::string>{};
@@ -1491,17 +1465,17 @@ namespace mfront {
       names.push_back(c.first);
     }
     return names;
-  }  // end of BehaviourData::getCodeBlockNames
+  }  // end of getCodeBlockNames
 
   bool BehaviourData::hasGlossaryName(const std::string& n) const {
     this->checkVariableName(n);
     return this->glossaryNames.find(n) != this->glossaryNames.end();
-  }  // end of BehaviourData::hasGlossaryName
+  }  // end of hasGlossaryName
 
   bool BehaviourData::hasEntryName(const std::string& n) const {
     this->checkVariableName(n);
     return this->entryNames.find(n) != this->entryNames.end();
-  }  // end of BehaviourData::hasEntryName
+  }  // end of hasEntryName
 
   std::string BehaviourData::getExternalName(const std::string& n) const {
     this->checkVariableName(n);
@@ -1514,26 +1488,33 @@ namespace mfront {
       return p->second;
     }
     return n;
-  }  // end of BehaviourData::getExternalName
+  }  // end of getExternalName
 
   std::vector<std::string> BehaviourData::getExternalNames(
       const VarContainer& v) const {
     return v.getExternalNames();
-  }  // end of BehaviourData::getExternalNames
+  }  // end of getExternalNames
 
   void BehaviourData::getExternalNames(std::vector<std::string>& names,
                                        const VarContainer& v) const {
     v.getExternalNames(names);
-  }  // end of BehaviourData::getExternalNames
+  }  // end of getExternalNames
 
   void BehaviourData::appendExternalNames(std::vector<std::string>& names,
                                           const VarContainer& v) const {
     v.appendExternalNames(names);
-  }  // end of BehaviourData::appendExternalNames
+  }  // end of appendExternalNames
 
   void BehaviourData::setGlossaryName(const std::string& n,
                                       const std::string& g) {
     using tfel::glossary::Glossary;
+    if ((this->hasAttribute(BehaviourData::allowsNewUserDefinedVariables)) &&
+        (!this->getAttribute<bool>(
+            BehaviourData::allowsNewUserDefinedVariables))) {
+      tfel::raise(
+          "BehaviourData::setGlossaryName: "
+          "glossary names can't be defined at this stage");
+    }
     const auto& glossary = Glossary::getGlossary();
     tfel::raise_if(!glossary.contains(g),
                    "BehaviourData::setGlossaryName: "
@@ -1563,7 +1544,7 @@ namespace mfront {
                    "BehaviourData::setGlossaryName: "
                    "no variable named '" +
                        n + "'");
-  }  // end of BehaviourData::addGlossaryName
+  }  // end of addGlossaryName
 
   bool BehaviourData::isGlossaryNameUsed(const std::string& n) const {
     using namespace tfel::glossary;
@@ -1578,10 +1559,17 @@ namespace mfront {
       }
     }
     return false;
-  }  // end of BehaviourData::isGlossaryName
+  }  // end of isGlossaryName
 
   void BehaviourData::setEntryName(const std::string& n, const std::string& e) {
     using namespace tfel::glossary;
+    if ((this->hasAttribute(BehaviourData::allowsNewUserDefinedVariables)) &&
+        (!this->getAttribute<bool>(
+            BehaviourData::allowsNewUserDefinedVariables))) {
+      tfel::raise(
+          "BehaviourData::setEntryName: "
+          "entry names can't be defined at this stage");
+    }
     const auto& glossary = Glossary::getGlossary();
     bool treated = false;
     auto set_entry_name = [&n, &e, &treated](VariableDescriptionContainer& c) {
@@ -1620,7 +1608,7 @@ namespace mfront {
                    "BehaviourData::setEntryName: "
                    "no variable named '" +
                        n + "'");
-  }  // end of BehaviourData::addEntryName
+  }  // end of addEntryName
 
   bool BehaviourData::isUsedAsEntryName(const std::string& n) const {
     for (const auto& en : this->entryNames) {
@@ -1629,7 +1617,7 @@ namespace mfront {
       }
     }
     return false;
-  }  // end of BehaviourData::isEntryName
+  }  // end of isEntryName
 
   std::string BehaviourData::getVariableNameFromGlossaryNameOrEntryName(
       const std::string& n) const {
@@ -1647,11 +1635,11 @@ namespace mfront {
         "BehaviourData::getVariableNameFromGlossaryNameOrEntryName: "
         "no variable with glossary or entry name '" +
         n + "'");
-  }  // end of BehaviourData::getVariableNameFromGlossaryNameOrEntryName
+  }  // end of getVariableNameFromGlossaryNameOrEntryName
 
   const VariableDescriptionContainer& BehaviourData::getParameters() const {
     return this->parameters;
-  }  // end of BehaviourData::getParameters
+  }  // end of getParameters
 
   void BehaviourData::appendToMembers(const std::string& c) {
     this->members += c;
@@ -1660,11 +1648,11 @@ namespace mfront {
         this->members += '\n';
       }
     }
-  }  // end of BehaviourData::appendToMembers
+  }  // end of appendToMembers
 
   std::string BehaviourData::getMembers() const {
     return this->members;
-  }  // end of BehaviourData::getMembers
+  }  // end of getMembers
 
   void BehaviourData::appendToPrivateCode(const std::string& c) {
     this->privateCode += c;
@@ -1673,11 +1661,11 @@ namespace mfront {
         this->privateCode += '\n';
       }
     }
-  }  // end of BehaviourData::appendToPrivateCode
+  }  // end of appendToPrivateCode
 
   std::string BehaviourData::getPrivateCode() const {
     return this->privateCode;
-  }  // end of BehaviourData::getPrivateCode
+  }  // end of getPrivateCode
 
   void BehaviourData::addStressFreeExpansion(
       const StressFreeExpansionDescription& sfed) {
@@ -1778,12 +1766,12 @@ namespace mfront {
       throw_if(true, "internal error, unsupported stress free expansion type");
     }
     this->sfeds.push_back(sfed);
-  }  // end of BehaviourData::addStressFreeExpansion
+  }  // end of addStressFreeExpansion
 
   const std::vector<BehaviourData::StressFreeExpansionDescription>&
   BehaviourData::getStressFreeExpansionDescriptions() const {
     return this->sfeds;
-  }  // end of BehaviourData::getStressFreeExpansionDescriptions
+  }  // end of getStressFreeExpansionDescriptions
 
   bool BehaviourData::isStressFreeExansionAnisotropic() const {
     for (const auto& sfed : this->sfeds) {
@@ -1802,7 +1790,7 @@ namespace mfront {
       }
     }
     return false;
-  }  // end of BehaviourData::isStressFreeExansionAnisotropic
+  }  // end of isStressFreeExansionAnisotropic
 
   void BehaviourData::getSymbols(
       std::map<std::string, std::string>& symbols) const {
@@ -1814,22 +1802,175 @@ namespace mfront {
     mfront::getSymbols(symbols, this->externalStateVariables);
     mfront::getSymbols(symbols, this->localVariables);
     mfront::getSymbols(symbols, this->parameters);
-  }  // end of BehaviourData::getSymbols
+  }  // end of getSymbols
 
   void BehaviourData::overrideByAParameter(const std::string& n,
                                            const double v) {
-    if (this->overriding_parameters.count(n) != 0) {
+    if ((this->hasAttribute(BehaviourData::allowsNewUserDefinedVariables)) &&
+        (!this->getAttribute<bool>(
+            BehaviourData::allowsNewUserDefinedVariables))) {
       tfel::raise(
           "BehaviourData::overrideByAParameter: "
-          "an override for variable '" +
-          n + "' has already been specified");
+          "overriding parameters can't be defined at this stage");
     }
     this->overriding_parameters[n] = v;
-  }  // end of BehaviourData::overrideByAParameter
+  }  // end of overrideByAParameter
 
   std::map<std::string, double> BehaviourData::getOverridenParameters() const {
     return this->overriding_parameters;
   } // end of getOverridenParameters
+
+  void BehaviourData::finalizeVariablesDeclaration() {
+    auto check = [](const VariableDescription& v) {
+      if (v.getTypeFlag() != SupportedTypes::SCALAR) {
+        tfel::raise(
+            "BehaviourData::finalizeVariablesDeclaration: "
+            "error while treating variable '" +
+            v.name +
+            "', only scalar variables can be overriden by a parameter");
+      }
+      if (v.arraySize != 1u) {
+        tfel::raise(
+            "BehaviourData::finalizeVariablesDeclaration: "
+            "error while treating variable '" +
+            v.name + "', overriding array of parameters is not supported yet");
+      }
+    };
+    auto find_variable = [](VariableDescriptionContainer& variables,
+                            const std::string& n) {
+      return std::find_if(variables.begin(), variables.end(),
+                          [&n](const VariableDescription& v) {
+                            return (v.symbolic_form == n) || (v.name == n) ||
+                                   (v.getExternalName() == n);
+                          });
+    };
+    auto override_variable = [this, find_variable, check](
+                                 VariableDescriptionContainer& variables,
+                                 const std::string& n, const double value) {
+      const auto p = find_variable(variables, n);
+      if (p != variables.end()) {
+        check(*p);
+        this->addParameter(*p, ALREADYREGISTRED);
+        this->setParameterDefaultValue(p->name, value);
+        variables.erase(p);
+        return true;
+      }
+      return false;
+    };
+    auto oparameters = this->overriding_parameters;
+    auto pp = oparameters.begin();
+    while (pp != oparameters.end()) {
+      if (pp->first.empty()) {
+          tfel::raise(
+              "BehaviourData::finalizeVariablesDeclaration: "
+              "overriding parameter with empty name specified");
+      }
+      if (override_variable(this->materialProperties, pp->first, pp->second)) {
+        pp = oparameters.erase(pp);
+        continue;
+      }
+      const auto p = find_variable(this->parameters, pp->first);
+      if (p != this->parameters.end()) {
+        check(*p);
+        if (this->parametersDefaultValues.count(p->name) == 0) {
+          tfel::raise(
+              "BehaviourData::finalizeVariablesDeclaration: "
+              "no default value defined for parameter '" +
+              p->name + "'");
+        }
+        this->parametersDefaultValues[p->name] = pp->second;
+        pp = oparameters.erase(pp);
+        continue;
+      }
+      const auto pev = find_variable(this->externalStateVariables, pp->first);
+      if (pev != this->externalStateVariables.end()) {
+        const auto& v = *pev;
+        check(v);
+        auto dv = [&v] {
+          if (!v.symbolic_form.empty()) {
+            return VariableDescription{v.type, "\u0394" + v.symbolic_form,
+                                       "d" + v.name, 1u, 0u};
+          } else {
+            return VariableDescription{v.type, "d" + v.name, 1u, 0u};
+          }
+        }();
+        dv.setEntryName("d" + v.getExternalName());
+        dv.description = "increment of variable '" + v.getExternalName() +
+                         "' over the time step";
+        const auto dp = [&oparameters, &v]() {
+          const auto odp = oparameters.find("d" + v.name);
+          if (odp != oparameters.end()) {
+            return odp;
+          }
+          const auto odp2 =
+              oparameters.find("d" + v.getExternalName());
+          if (odp2 != oparameters.end()) {
+            return odp2;
+          }
+          if (v.symbolic_form.empty()) {
+            const auto odp3 =
+                oparameters.find("\u0394" + v.symbolic_form);
+            if (odp3 != oparameters.end()) {
+              return odp3;
+            }
+          }
+          return oparameters.end();
+        }();
+        this->addParameter(v, ALREADYREGISTRED);
+        this->setParameterDefaultValue(v.name, pp->second);
+        this->addParameter(dv, ALREADYREGISTRED);
+        if (dp != oparameters.end()) {
+          this->setParameterDefaultValue(dv.name, dp->second);
+        } else {
+          this->setParameterDefaultValue(dv.name, double{});
+        }
+        this->externalStateVariables.erase(pev);
+        if (dp != oparameters.end()) {
+          oparameters.erase(dp);
+        }
+        pp = oparameters.erase(pp);
+        continue;
+      }
+      // checking if this is the increment of an external state variable
+      if (pp->first[0] == 'd') {
+        const auto vname = pp->first.substr(1);
+        if (!vname.empty()) {
+          const auto predicate = [&vname](const VariableDescription& v) {
+            return (v.name == vname);
+          };
+          if (std::find_if(this->externalStateVariables.begin(),
+                           this->externalStateVariables.end(),
+                           predicate) != this->externalStateVariables.end()) {
+            ++pp;
+            continue;
+          }
+        }
+      }
+      if (tfel::utilities::starts_with(pp->first, "\u0394")) {
+        const auto vname = pp->first.substr(std::strlen("\u0394"));
+        if (!vname.empty()) {
+          const auto predicate = [&vname](const VariableDescription& v) {
+            return (v.symbolic_form == vname);
+          };
+          if (std::find_if(this->externalStateVariables.begin(),
+                           this->externalStateVariables.end(),
+                           predicate) != this->externalStateVariables.end()) {
+            ++pp;
+            continue;
+          }
+        }
+      }
+      tfel::raise(
+          "BehaviourData::finalizeVariablesDeclaration: "
+          "no variable named '" +
+          pp->first + "' to be overriden");
+    }
+    if (!oparameters.empty()) {
+      tfel::raise(
+          "BehaviourData::finalizeVariablesDeclaration: "
+          "internal error while treating overriding parameters");
+    }
+  }  // end of finalizeVariablesDeclaration
 
   BehaviourData::~BehaviourData() = default;
 

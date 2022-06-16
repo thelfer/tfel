@@ -909,6 +909,12 @@ namespace mfront {
      * \param[out] symbols: map between symbols and replacement strings
      */
     void getSymbols(std::map<std::string, std::string>&) const;
+    /*!
+     * \brief method that shall be called when all variables are declared.
+     *
+     * This method overrides variables by parameters
+     */
+    void finalizeVariablesDeclaration();
     //! \brief destructor
     ~BehaviourData() override;
 

@@ -400,6 +400,10 @@ namespace mfront {
 
   void BehaviourDescription::disallowNewUserDefinedVariables() {
     const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+    this->d.finalizeVariablesDeclaration();
+    for (const auto& bd : this->sd) {
+      bd.second->finalizeVariablesDeclaration();
+    }
     this->setAttribute(uh, BehaviourData::allowsNewUserDefinedVariables, false);
   }  // end of disallowNewUserDefinedVariables
 
