@@ -124,12 +124,10 @@ namespace mfront {
 
   void MaterialPropertyDSL::overrideByAParameter(const std::string& n,
                                                  const double v) {
-    if (this->overriding_parameters.count(n) != 0) {
-      tfel::raise(
-          "MaterialPropertyDSL::overrideByAParameter: "
-          "an override for variable '" +
-          n + "' has already been defined");
-    }
+    tfel::raise_if(!this->md.f.body.empty(),
+                   "MaterialPropertyDSL::overrideByAParameter: "
+                   "overriding parameters can't be declared at "
+                   "this stage (function is already defined)");
     this->overriding_parameters[n] = v;
   }  // end of overrideByAParameter
 
@@ -261,6 +259,10 @@ namespace mfront {
   void MaterialPropertyDSL::treatParameter() {
     this->checkNotEndOfFile("MaterialPropertyDSL::treatParameter",
                             "Expected parameter name.");
+    tfel::raise_if(
+        !this->md.f.body.empty(),
+        "MaterialPropertyDSL::Parameter: parameters can't be declared at "
+        "this stage (function is already defined)");
     const auto type = [this]() -> std::string {
       const auto otype = this->readVariableTypeIfPresent();
       if (!otype) {
@@ -290,17 +292,12 @@ namespace mfront {
     }();
     const auto value = this->readInitialisationValue<double>(p.name, false);
     if (value.first) {
-      const auto op = this->overriding_parameters.find(p.name);
-      if (op == this->overriding_parameters.end()) {
-        p.setAttribute(VariableDescription::defaultValue, value.second, false);
-      } else {
-        p.setAttribute(VariableDescription::defaultValue, op->second, false);
-      }
+      p.setAttribute(VariableDescription::defaultValue, value.second, false);
     }
     this->readSpecifiedToken("MaterialPropertyDSL::treatParameter", ";");
     this->reserveName(p.name);
     this->md.parameters.push_back(p);
-  }  // MaterialPropertyDSL::treatParameter
+  }  // end of treatParameter
 
   void MaterialPropertyDSL::setMaterialKnowledgeIdentifier(
       const std::string& i) {
@@ -363,12 +360,41 @@ namespace mfront {
     this->readSpecifiedToken("MaterialPropertyDSL::treatInterface", ";");
   }  // end of treatInterface
 
+  void MaterialPropertyDSL::finalizeVariablesDeclaration() {
+    for(const auto op : this->overriding_parameters){
+      auto p =
+          std::find_if(this->md.parameters.begin(), this->md.parameters.end(),
+                       [&op](const VariableDescription& v) {
+                         return (v.symbolic_form == op.first) || (v.name == op.first) ||
+                                (v.getExternalName() == op.first);
+                       });
+      if (p == this->md.parameters.end()) {
+        tfel::raise(
+            "MaterialPropertyDSL::finalizeVariablesDeclaration: "
+            "no variable named '" +
+            op.first + "' to be overriden");
+      }
+      if (p->getTypeFlag() != SupportedTypes::SCALAR) {
+        tfel::raise(
+            "MaterialPropertyDSL::finalizeVariablesDeclaration: "
+            "only scalar variables can be overriden by a parameter");
+      }
+      if (p->arraySize != 1u) {
+        tfel::raise(
+            "MaterialPropertyDSL::finalizeVariablesDeclaration: "
+            "overriding array of parameters is not supported yet");
+      }
+      p->setAttribute(VariableDescription::defaultValue, op.second, true);
+    }
+  }  // end of finalizeVariablesDeclaration
+
   void MaterialPropertyDSL::treatFunction() {
     auto throw_if = [this](const bool b, const std::string& m) {
       if (b) {
         this->throwRuntimeError("MaterialPropertyDSL::treatFunction", m);
       }
     };
+    this->finalizeVariablesDeclaration();
     unsigned int openedBrackets = 0;
     unsigned int openedParenthesis = 0;
     unsigned int currentLine;
@@ -495,6 +521,9 @@ namespace mfront {
                  "'setEntryName' and 'setDefaultValue'");
     ++(this->current);
     this->readSpecifiedToken("MaterialPropertyDSL::treatMethod", "(");
+    throw_if(!this->md.f.body.empty(),
+             "MaterialPropertyDSL::treatMethod: variables methods "
+             "can't be called at this stage (function is already defined)");
     if (methodName == "setGlossaryName") {
       const auto& glossary = Glossary::getGlossary();
       this->checkNotEndOfFile("MaterialPropertyDSL::treatMethod",
@@ -535,12 +564,7 @@ namespace mfront {
           "Expected to read value of variable '" + this->currentVar + "'");
       auto& p = this->md.parameters.getVariable(this->currentVar);
       const auto v = this->readDouble();
-      const auto op = this->overriding_parameters.find(p.name);
-      if (op == this->overriding_parameters.end()) {
-        p.setAttribute(VariableDescription::defaultValue, v, false);
-      } else {
-        p.setAttribute(VariableDescription::defaultValue, op->second, false);
-      }
+      p.setAttribute(VariableDescription::defaultValue, v, false);
       --(this->current);
     } else {
       throw_if(true, "internal error (untreated method '" + methodName + "'");
@@ -684,6 +708,10 @@ namespace mfront {
   }  // end of generateOutputFiles
 
   void MaterialPropertyDSL::treatInput() {
+    tfel::raise_if(
+        !this->md.f.body.empty(),
+        "MaterialPropertyDSL::treatInput: inputs can't be declared at "
+        "this stage (function is already defined)");
     this->checkNotEndOfFile("MaterialPropertyDSL::treatInput");
     const auto type = [this]() -> std::string {
       const auto otype = this->readVariableTypeIfPresent();
@@ -701,6 +729,10 @@ namespace mfront {
   }  // end of treatInput
 
   void MaterialPropertyDSL::treatOutput() {
+    tfel::raise_if(
+        !this->md.f.body.empty(),
+        "MaterialPropertyDSL::treatOutput: output can't be declared at "
+        "this stage (function is already defined)");
     if (!this->md.output.name.empty()) {
       this->throwRuntimeError("MaterialPropertyDSL::treatOutput",
                               "Output already defined.");

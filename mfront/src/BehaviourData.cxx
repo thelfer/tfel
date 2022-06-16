@@ -566,14 +566,6 @@ namespace mfront {
 
   void BehaviourData::addParameter(const VariableDescription& v,
                                    const RegistrationStatus s) {
-    const auto op = this->overriding_parameters.find(v.name);
-    if (op != this->overriding_parameters.end()) {
-      if (v.arraySize != 1u) {
-        tfel::raise(
-            "BehaviourData::addParameter: "
-            "overriding array of parameters is not supported yet");
-      }
-    }
     this->addVariable(this->parameters, v, s, false);
   }  // end of addParameter
 
@@ -1388,14 +1380,8 @@ namespace mfront {
     const auto f = SupportedTypes::getTypeFlag(p.type);
     throw_if(f != SupportedTypes::SCALAR,
              "parameter '" + n + "' is not a scalar");
-    const auto op = this->overriding_parameters.find(n);
-    if (op == this->overriding_parameters.end()) {
-      throw_if(!this->parametersDefaultValues.insert({n, v}).second,
-               "default value for parameter '" + n + "' already defined");
-    } else {
-      throw_if(!this->parametersDefaultValues.insert({n, op->second}).second,
-               "default value for parameter '" + n + "' already defined");
-    }
+    throw_if(!this->parametersDefaultValues.insert({n, v}).second,
+             "default value for parameter '" + n + "' already defined");
   }  // end of setParameterDefaultValue
 
   void BehaviourData::setParameterDefaultValue(const std::string& n,
@@ -1415,9 +1401,6 @@ namespace mfront {
     throw_if(i >= p.arraySize, "index " + idx + " is greater than parameter '" +
                                    n + "' array size");
     const auto n2 = n + '[' + idx + ']';
-    //     const auto op = this->overriding_parameters.find(n2);
-    //     if (op != this->overriding_parameters.end()) {
-    //     }
     throw_if(!this->parametersDefaultValues.insert({n2, v}).second,
              "default value for parameter '" + n2 + "' already defined");
   }
@@ -1591,6 +1574,13 @@ namespace mfront {
   void BehaviourData::setGlossaryName(const std::string& n,
                                       const std::string& g) {
     using tfel::glossary::Glossary;
+    if ((this->hasAttribute(BehaviourData::allowsNewUserDefinedVariables)) &&
+        (!this->getAttribute<bool>(
+            BehaviourData::allowsNewUserDefinedVariables))) {
+      tfel::raise(
+          "BehaviourData::setGlossaryName: "
+          "glossary names can't be defined at this stage");
+    }
     const auto& glossary = Glossary::getGlossary();
     tfel::raise_if(!glossary.contains(g),
                    "BehaviourData::setGlossaryName: "
@@ -1640,6 +1630,13 @@ namespace mfront {
 
   void BehaviourData::setEntryName(const std::string& n, const std::string& e) {
     using namespace tfel::glossary;
+    if ((this->hasAttribute(BehaviourData::allowsNewUserDefinedVariables)) &&
+        (!this->getAttribute<bool>(
+            BehaviourData::allowsNewUserDefinedVariables))) {
+      tfel::raise(
+          "BehaviourData::setEntryName: "
+          "entry names can't be defined at this stage");
+    }
     const auto& glossary = Glossary::getGlossary();
     bool treated = false;
     auto set_entry_name = [&n, &e, &treated](VariableDescriptionContainer& c) {
@@ -1878,11 +1875,12 @@ namespace mfront {
 
   void BehaviourData::overrideByAParameter(const std::string& n,
                                            const double v) {
-    if (this->overriding_parameters.count(n) != 0) {
+    if ((this->hasAttribute(BehaviourData::allowsNewUserDefinedVariables)) &&
+        (!this->getAttribute<bool>(
+            BehaviourData::allowsNewUserDefinedVariables))) {
       tfel::raise(
           "BehaviourData::overrideByAParameter: "
-          "an override for variable '" +
-          n + "' has already been specified");
+          "overriding parameters can't be defined at this stage");
     }
     this->overriding_parameters[n] = v;
   }  // end of overrideByAParameter
@@ -1909,6 +1907,158 @@ namespace mfront {
     }
     return initialize_methods;
   }  // end of getUserDefinedInitializeCodeBlocksNames
+
+  void BehaviourData::finalizeVariablesDeclaration() {
+    auto check = [](const VariableDescription& v) {
+      if (v.getTypeFlag() != SupportedTypes::SCALAR) {
+        tfel::raise(
+            "BehaviourData::finalizeVariablesDeclaration: "
+            "error while treating variable '" +
+            v.name +
+            "', only scalar variables can be overriden by a parameter");
+      }
+      if (v.arraySize != 1u) {
+        tfel::raise(
+            "BehaviourData::finalizeVariablesDeclaration: "
+            "error while treating variable '" +
+            v.name + "', overriding array of parameters is not supported yet");
+      }
+    };
+    auto find_variable = [](VariableDescriptionContainer& variables,
+                            const std::string& n) {
+      return std::find_if(variables.begin(), variables.end(),
+                          [&n](const VariableDescription& v) {
+                            return (v.symbolic_form == n) || (v.name == n) ||
+                                   (v.getExternalName() == n);
+                          });
+    };
+    auto override_variable = [this, find_variable, check](
+                                 VariableDescriptionContainer& variables,
+                                 const std::string& n, const double value) {
+      const auto p = find_variable(variables, n);
+      if (p != variables.end()) {
+        check(*p);
+        this->addParameter(*p, ALREADYREGISTRED);
+        this->setParameterDefaultValue(p->name, value);
+        variables.erase(p);
+        return true;
+      }
+      return false;
+    };
+    auto oparameters = this->overriding_parameters;
+    auto pp = oparameters.begin();
+    while (pp != oparameters.end()) {
+      if (pp->first.empty()) {
+          tfel::raise(
+              "BehaviourData::finalizeVariablesDeclaration: "
+              "overriding parameter with empty name specified");
+      }
+      if (override_variable(this->materialProperties, pp->first, pp->second)) {
+        pp = oparameters.erase(pp);
+        continue;
+      }
+      const auto p = find_variable(this->parameters, pp->first);
+      if (p != this->parameters.end()) {
+        check(*p);
+        if (this->parametersDefaultValues.count(p->name) == 0) {
+          tfel::raise(
+              "BehaviourData::finalizeVariablesDeclaration: "
+              "no default value defined for parameter '" +
+              p->name + "'");
+        }
+        this->parametersDefaultValues[p->name] = pp->second;
+        pp = oparameters.erase(pp);
+        continue;
+      }
+      const auto pev = find_variable(this->externalStateVariables, pp->first);
+      if (pev != this->externalStateVariables.end()) {
+        const auto& v = *pev;
+        check(v);
+        auto dv = [&v] {
+          if (!v.symbolic_form.empty()) {
+            return VariableDescription{v.type, "\u0394" + v.symbolic_form,
+                                       "d" + v.name, 1u, 0u};
+          } else {
+            return VariableDescription{v.type, "d" + v.name, 1u, 0u};
+          }
+        }();
+        dv.setEntryName("d" + v.getExternalName());
+        dv.description = "increment of variable '" + v.getExternalName() +
+                         "' over the time step";
+        const auto dp = [&oparameters, &v]() {
+          const auto odp = oparameters.find("d" + v.name);
+          if (odp != oparameters.end()) {
+            return odp;
+          }
+          const auto odp2 =
+              oparameters.find("d" + v.getExternalName());
+          if (odp2 != oparameters.end()) {
+            return odp2;
+          }
+          if (v.symbolic_form.empty()) {
+            const auto odp3 =
+                oparameters.find("\u0394" + v.symbolic_form);
+            if (odp3 != oparameters.end()) {
+              return odp3;
+            }
+          }
+          return oparameters.end();
+        }();
+        this->addParameter(v, ALREADYREGISTRED);
+        this->setParameterDefaultValue(v.name, pp->second);
+        this->addParameter(dv, ALREADYREGISTRED);
+        if (dp != oparameters.end()) {
+          this->setParameterDefaultValue(dv.name, dp->second);
+        } else {
+          this->setParameterDefaultValue(dv.name, double{});
+        }
+        this->externalStateVariables.erase(pev);
+        if (dp != oparameters.end()) {
+          oparameters.erase(dp);
+        }
+        pp = oparameters.erase(pp);
+        continue;
+      }
+      // checking if this is the increment of an external state variable
+      if (pp->first[0] == 'd') {
+        const auto vname = pp->first.substr(1);
+        if (!vname.empty()) {
+          const auto predicate = [&vname](const VariableDescription& v) {
+            return (v.name == vname);
+          };
+          if (std::find_if(this->externalStateVariables.begin(),
+                           this->externalStateVariables.end(),
+                           predicate) != this->externalStateVariables.end()) {
+            ++pp;
+            continue;
+          }
+        }
+      }
+      if (tfel::utilities::starts_with(pp->first, "\u0394")) {
+        const auto vname = pp->first.substr(std::strlen("\u0394"));
+        if (!vname.empty()) {
+          const auto predicate = [&vname](const VariableDescription& v) {
+            return (v.symbolic_form == vname);
+          };
+          if (std::find_if(this->externalStateVariables.begin(),
+                           this->externalStateVariables.end(),
+                           predicate) != this->externalStateVariables.end()) {
+            ++pp;
+            continue;
+          }
+        }
+      }
+      tfel::raise(
+          "BehaviourData::finalizeVariablesDeclaration: "
+          "no variable named '" +
+          pp->first + "' to be overriden");
+    }
+    if (!oparameters.empty()) {
+      tfel::raise(
+          "BehaviourData::finalizeVariablesDeclaration: "
+          "internal error while treating overriding parameters");
+    }
+  }  // end of finalizeVariablesDeclaration
 
   BehaviourData::~BehaviourData() = default;
 

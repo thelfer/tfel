@@ -124,6 +124,12 @@ namespace mfront {
     virtual void treatPhysicalBounds();
 
     virtual void registerNewCallBack(const std::string&, const MemberFuncPtr);
+    /*!
+     * \brief method that shall be called when all variables are declared.
+     *
+     * This method overrides variables by parameters
+     */
+    void finalizeVariablesDeclaration();
     //! \brief description of the material property
     MaterialPropertyDescription md;
     //! \brief overriding parameters

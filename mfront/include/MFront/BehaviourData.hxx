@@ -946,6 +946,12 @@ namespace mfront {
     //! \return the list of user defined initialize blocks
     const CodeBlock& getUserDefinedInitializeCodeBlock(
         const std::string&) const;
+    /*!
+     * \brief method that shall be called when all variables are declared.
+     *
+     * This method overrides variables by parameters
+     */
+    void finalizeVariablesDeclaration();
     //! \brief destructor
     ~BehaviourData() override;
 
