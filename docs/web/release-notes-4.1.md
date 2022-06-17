@@ -1659,7 +1659,47 @@ Those substitutions are declared after reading the configuration files
 and after parsing the command line arguments, so those default
 substitutions can be overriden by the user.
 
+## Test for failure {#sec:tfel_4.1:tfel_check:test_failure}
+
+The `shall_fail` option allows to specify if a given command is expected
+to fail (or succeed).
+
+## Testing the output of commands {#sec:tfel_4.1:tfel_check:command_outputs}
+
+### The `expected_output` option
+
+The `expected_output` option to `@Command` allows to specifiy the output
+of a command. This option may be a string (single line output) or an
+array of strings (multiple lines output).
+
+Note that the output lines of commands are always trimmed on the end.
+
+### The `expected_numerical_output` option
+
+The `expected_numerical_output` option to `@Command` allows to test the
+numerical output of a command. This option must be defined as a map with
+two entries:
+
+- `value`: the expected value
+- `criterion_value`: the criterion value used to test the output
+
 # Issues fixed
+
+## Issue #230: [tfel-check] All to compare commands output to numerical values
+
+This feature is described in Section
+@sec:tfel_4.1:tfel_check:command_outputs.
+
+￼
+For more details, see <https://github.com/thelfer/tfel/issues/230>.
+
+￼
+## Issue #229:[tfel-check] Allow to specify that a command shall fail 
+
+This feature is described in Section
+@sec:tfel_4.1:tfel_check:test_failure.
+
+For more details, see <https://github.com/thelfer/tfel/issues/229>.
 
 ## Issue #224: [mfront] add DSL options to override parameters in material properties and point-wise models
 

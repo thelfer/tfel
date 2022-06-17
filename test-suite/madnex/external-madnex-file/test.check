@@ -2,7 +2,7 @@
 
 @Command "@python@ generate.py";
 @Command
-    "@mfront-query@ --madnex-search-path=MaterialProperties.mdnx"
+    "@mfront-query@ --madnex-search-path=MaterialProperties.mdnx "
     "--list-dependencies Test.mfront" {
       expected_output :
           "madnex:MaterialProperties.mdnx:MaterialProperty::YoungModulusTest"

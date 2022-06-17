@@ -291,7 +291,7 @@ namespace tfel::utilities {
     /*!
      * \brief set if '-' shall be treated as as sperator
      * \param[in] b : boolean telling if '-' shall be treated as as
-     * sperator
+     * separator
      */
     void treatMinusAsSeparator(const bool);
     /*!

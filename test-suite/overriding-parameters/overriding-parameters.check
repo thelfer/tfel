@@ -1,12 +1,18 @@
 @Command "@mfront@ --obuild --interface=generic --dsl-option=overriding_parameters:{T:293.15,dT:0} --dsl-option=parameters_as_static_variables:true  Plasticity.mfront";
+@Command "@mfront-query@ --dsl-option=overriding_parameters:{invalid_parameter:0} --external-state-variables  Plasticity.mfront"{
+  shall_fail: true
+};
 @Command "@mfront-query@ --dsl-option=overriding_parameters:{T:293.15,dT:0} --external-state-variables  Plasticity.mfront"{
-  expected_output: ""
+  empty_output: true
+};
+@Command "@mfront-query@ --dsl-option=overriding_parameters:{T:293.15,dT:0} --parameter-default-value=Temperature Plasticity.mfront"{
+  expected_numerical_output: {value: 293.15, criterion_value: 1e-14}
 };
 @Command "@mfront-query@ --dsl-option=overriding_parameters:{Temperature:293.15} --external-state-variables  Plasticity.mfront"{
-  expected_output: ""
+  empty_output: true
 };
 @Command "@mfront-query@ --dsl-option=overriding_parameters:{Temperature:293.15,dTemperature:0} --external-state-variables  Plasticity.mfront"{
-  expected_output: ""
+  empty_output: true
 };
 
 @CleanDirectories {"include", "src"};

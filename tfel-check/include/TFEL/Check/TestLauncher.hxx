@@ -15,12 +15,16 @@
 #ifndef LIB_TFELCHECK_TESTLAUNCHER_HXX
 #define LIB_TFELCHECK_TESTLAUNCHER_HXX
 
-#include <fstream>
+#include <map>
+#include <set>
+#include <tuple>
 #include <vector>
 #include <string>
 #include <memory>
-#include <map>
-#include <set>
+#include <fstream>
+#include <fstream>
+#include <optional>
+#include <functional>
 #include <sys/times.h>
 
 #include "TFEL/Utilities/CxxTokenizer.hxx"
@@ -79,9 +83,20 @@ namespace tfel::check {
       ~Command();
       //! \brief command to be executed
       std::string command;
-      //! \brief expected output
-      std::string expected_output;
+      //! \brief function testing the output of the command
+      std::function<std::tuple<bool, std::string>(
+          const std::vector<std::string>&)>
+          output_check;
+      //! \brief shall_fail
+      bool shall_fail = false;
     };  // end of struct Command
+    /*!
+     * \brief execute the given comment
+     * \param[in] c: command
+     * \param[in] output_file: output file name
+     * \param[in] step:
+     */
+    bool execute(const Command&, const std::string&, const std::string&);
     /*!
      * \brief register a new callback
      */

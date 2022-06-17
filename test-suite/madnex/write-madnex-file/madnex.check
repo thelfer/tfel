@@ -3,7 +3,7 @@
 
 @Command "@python@ MadnexTest.py";
 @Command "@python@ OverridableImplementation.py";
-@Command "@mfront-query@ --list-implementation-paths Plasticity.madnex" {
+@Command "@mfront-query@ --list-implementation-paths=unsorted Plasticity.madnex" {
   expected_output : "madnex:Plasticity.madnex:behaviour:A316LN:Plasticity_SRMA2022"
 };
 @Command "@mfront-query@ --author --material=A316LN --behaviour=Plasticity_SRMA2022 Plasticity.madnex" {
@@ -13,7 +13,7 @@
   expected_output : "2e+09"
 };
 @Command "@python@ OverridableImplementation-2.py";
-@Command "@mfront-query@ --list-implementation-paths Plasticity-2.madnex" {
+@Command "@mfront-query@ --list-implementation-paths=unsorted Plasticity-2.madnex" {
   expected_output : "madnex:Plasticity-2.madnex:behaviour:A316LN:Plasticity_SRMA2022b"
 };
 @Command "@mfront-query@ --author --material=A316LN --behaviour=Plasticity_SRMA2022b Plasticity-2.madnex" {

@@ -78,7 +78,8 @@ namespace tfel::check {
     this->registerCallBack("@Precision", &TestLauncher::treatPrecision);
     this->registerCallBack("@Interpolation", &TestLauncher::treatInterpolation);
     this->registerCallBack("@CleanFiles", &TestLauncher::treatCleanFiles);
-    this->registerCallBack("@CleanDirectories", &TestLauncher::treatCleanDirectories);
+    this->registerCallBack("@CleanDirectories",
+                           &TestLauncher::treatCleanDirectories);
     this->analyseInputFile(c);
   }  // end of TestLauncher
 
@@ -179,7 +180,8 @@ namespace tfel::check {
   }  // end of treatRequires
 
   void TestLauncher::treatCleanFiles() {
-    const auto files = CxxTokenizer::readStringArray(this->current, this->end());
+    const auto files =
+        CxxTokenizer::readStringArray(this->current, this->end());
     for (const auto& f : files) {
       if (std::find(this->cleanfiles.begin(), this->cleanfiles.end(), f) !=
           this->cleanfiles.end()) {
@@ -195,8 +197,9 @@ namespace tfel::check {
     const auto directories =
         CxxTokenizer::readStringArray(this->current, this->end());
     for (const auto& d : directories) {
-      if (std::find(this->cleandirectories.begin(), this->cleandirectories.end(), d) !=
-          this->cleandirectories.end()) {
+      if (std::find(this->cleandirectories.begin(),
+                    this->cleandirectories.end(),
+                    d) != this->cleandirectories.end()) {
         this->throwRuntimeError("TestLauncher::treatCleanDirectories",
                                 "directory '" + d + "' multiply declared");
       }
@@ -204,6 +207,112 @@ namespace tfel::check {
     }
     this->readSpecifiedToken("TestLauncher::treatCleanDirectories", ";");
   }  // end of treatCleanDirectories
+
+  static std::function<
+      std::tuple<bool, std::string>(const std::vector<std::string>&)>
+  generateEmptyOutputCheck(const tfel::utilities::Data& option) {
+    if (!option.is<bool>()) {
+      tfel::raise(
+          "TestLaucher::treatCommand: invalid type "
+          "for option 'empty_output'");
+    }
+    const auto value = option.get<bool>();
+    return [value](const std::vector<std::string>& output)
+               -> std::tuple<bool, std::string> {
+      if ((value) && (output.empty())) {
+        return {true, ""};
+      }
+      auto msg = std::string{"Unexpected command output "};
+      if (value) {
+        msg += "(empty output expected)";
+        msg += "# Command output:\n\n";
+        for (const auto& l : output) {
+          msg += "'" + l + "'\n";
+        }
+      } else {
+        msg += "(non empty output expected)";
+      }
+      return {false, msg};
+    };
+  }  // end of generateEmptyOutputCheck
+
+  static std::function<
+      std::tuple<bool, std::string>(const std::vector<std::string>&)>
+  generateExpectedOutputCheck(const tfel::utilities::Data& option) {
+    if (option.is<std::string>()) {
+      return [value = option.get<std::string>()](
+                 const std::vector<std::string>& output)
+                 -> std::tuple<bool, std::string> {
+        if ((output.size() == 1u) && (output[0] == value)) {
+          return {true, ""};
+        }
+        auto msg = std::string{"Unexpected command output.\n"};
+        msg += "# Expected output:\n\n'" + value + "'\n\n";
+        msg += "# Command output:\n\n";
+        for (const auto& l : output) {
+          msg += "'" + l + "'\n";
+        }
+        return {false, msg};
+      };
+    } else if (option.is<std::vector<tfel::utilities::Data>>()) {
+      const auto values =
+          tfel::utilities::convert<std::vector<std::string>>(option);
+      return [values](const std::vector<std::string>& output)
+                 -> std::tuple<bool, std::string> {
+        if ((output.size() == values.size()) &&
+            (std::equal(output.begin(), output.end(), values.begin()))) {
+          return {true, ""};
+        }
+        auto msg = std::string{"Unexpected command output.\n"};
+        msg += "# Expected output:\n\n";
+        for (const auto& l : values) {
+          msg += "'" + l + "'\n";
+        }
+        msg += "\n# Command output:\n\n";
+        for (const auto& l : output) {
+          msg += "'" + l + "'\n";
+        }
+        return {false, msg};
+      };
+    }
+    tfel::raise(
+        "TestLaucher::treatCommand: invalid type "
+        "for option 'expected_output'");
+  }  // end of generateExpectedOutputCheck
+
+  static std::function<
+      std::tuple<bool, std::string>(const std::vector<std::string>&)>
+  generateExpectedNumericalOutputCheck(const tfel::utilities::Data& option) {
+    if (!option.is<tfel::utilities::DataMap>()) {
+      tfel::raise(
+          "TestLaucher::treatCommand: invalid type "
+          "for option 'expected_numerical_output'");
+    }
+    const auto& m = option.get<tfel::utilities::DataMap>();
+    if ((m.size() != 2u) || (m.count("value") == 0) ||
+        (m.count("criterion_value") == 0) || (!m.at("value").is<double>()) ||
+        (!m.at("criterion_value").is<double>())) {
+      tfel::raise(
+          "TestLaucher::treatCommand: invalid options passed "
+          "to 'expected_numerical_output'. Expected two real "
+          "numbers named 'value' and 'criterion_value'");
+    }
+    const auto value = m.at("value").get<double>();
+    const auto eps = m.at("criterion_value").get<double>();
+    if (eps < 0) {
+      tfel::raise(
+          "TestLaucher::treatCommand: "
+          "invalid criterion value");
+    }
+    return [value, eps](const std::vector<std::string>& output)
+               -> std::tuple<bool, std::string> {
+      if (output.size() != 1) {
+        return {false, "unexected multiline output"};
+      }
+      const auto output_value = tfel::utilities::convert<double>(output[0]);
+      return {std::abs(output_value - value) < eps, ""};
+    };
+  }  // end of generateExpectedNumericalOutputCheck
 
   void TestLauncher::treatCommand() {
     auto c = Command();
@@ -214,25 +323,49 @@ namespace tfel::check {
      *
      * Valid options are:
      *
-     * - `expected_output`: if specified, a test is added to which compares
+     * - `empty_output` (boolean): if specified, a test is added which checks if
+     *   the command output is empty or not.
+     * - `expected_output` (string or array of strings): if specified, a test is
+     added to which compares
      *    the command output to the expected value.
+     * - `expected_numerical_output`: if specified, a test is added to which
+     *   compares the command output to the expected value.
+     * - `shall_fail`: if specified and set to true, the command shall return an
+     *   invalid exit status.
      */
-    auto parseCommandOptions =
-        [&c](const tfel::utilities::DataMap& options) {
-          for (const auto& o : options) {
-            if (o.first == "expected_output") {
-              if (!o.second.is<std::string>()) {
-                tfel::raise(
-                    "parseCommandOptions: invalid type "
-                    "for option 'expected_output'");
-              }
-              c.expected_output = o.second.get<std::string>();
-            } else {
-              tfel::raise("parseCommandOptions: invalid option '" + o.first +
-                          "'");
-            }
+    auto parseCommandOptions = [&c](const tfel::utilities::DataMap& options) {
+      auto is_output_check_defined = [&c] {
+        if (c.output_check) {
+          tfel::raise(
+              "TestLaucher::treatCommand: an output check has already been "
+              "defined");
+        }
+      };
+      for (const auto& o : options) {
+        if (o.first == "expected_output") {
+          is_output_check_defined();
+          c.output_check = generateExpectedOutputCheck(o.second);
+        } else if (o.first == "expected_numerical_output") {
+          is_output_check_defined();
+          c.output_check = generateExpectedNumericalOutputCheck(o.second);
+        } else if (o.first == "empty_output") {
+          is_output_check_defined();
+          c.output_check = generateEmptyOutputCheck(o.second);
+        } else if (o.first == "shall_fail") {
+          if (!o.second.is<bool>()) {
+            tfel::raise(
+                "TestLaucher::treatCommand: invalid type "
+                "for option 'shall_fail'");
           }
-        };  // end of parseCommandOptions
+          c.shall_fail = o.second.get<bool>();
+        } else {
+          tfel::raise(
+              "TestLaucher::treatCommand: "
+              "invalid option '" +
+              o.first + "'");
+        }
+      }
+    };  // end of parseCommandOptions
     c.command = this->readString("TestLauncher::treatCommand");
     this->checkNotEndOfFile("TestLauncher::treatCommand");
     while ((this->current->value != "{") &&  //
@@ -467,11 +600,21 @@ namespace tfel::check {
     this->clear();
   }  // end of analyseInputFile
 
-  static std::string getFileContent(const std::string& f) {
+  static std::vector<std::string> getFileContent(const std::string& f) {
+    auto rtrim = [](const std::string& s) {
+      auto end = s.find_last_not_of(" \n\r\t\f\v");
+      return (end == std::string::npos) ? "" : s.substr(0, end + 1);
+    };
     std::ifstream file(f);
-    std::ostringstream s;
-    s << file.rdbuf();
-    return s.str();
+    if (!file) {
+      tfel::raise("getFileContent: can't open file '" + f + "'");
+    }
+    auto content = std::vector<std::string>{};
+    auto line = std::string{};
+    while (std::getline(file, line)) {
+      content.push_back(rtrim(line));
+    }
+    return content;
   }  // end of getSourceFileContent
 
   double TestLauncher::ClockAction(ClockEventType clockevent) {
@@ -502,13 +645,46 @@ namespace tfel::check {
     return 0.;
   }
 
+  bool TestLauncher::execute(const Command& c,
+                             const std::string& output_file,
+                             const std::string& step) {
+    tfel::system::ProcessManager manager;
+    try {
+      this->ClockAction(START);
+      manager.execute(c.command, "", output_file, this->environments);
+      this->ClockAction(STOP);
+      if (c.output_check) {
+        const auto output = getFileContent(output_file);
+        const auto [success, msg] = c.output_check(output);
+        if (success) {
+          this->log.addTestResult(this->testname, step, c.command,
+                                  this->ClockAction(GET), true);
+        } else {
+          this->log.addTestResult(this->testname, step, c.command,
+                                  this->ClockAction(GET), false, msg);
+        }
+        return success;
+      } else {
+        this->log.addTestResult(this->testname, step, c.command,
+                                this->ClockAction(GET), true);
+      }
+    } catch (std::exception& e) {
+      this->log.addTestResult(this->testname, step, c.command, 0.0,
+                              c.shall_fail, e.what());
+      return c.shall_fail;
+    } catch (...) {
+      this->log.addTestResult(this->testname, step, c.command, 0.0,
+                              c.shall_fail, "unhandled exception thrown");
+      return c.shall_fail;
+    }
+    return true;
+  }  // end of execute
+
   bool TestLauncher::execute(const Configuration& configuration) {
     using namespace tfel::utilities;
-    tfel::system::ProcessManager manager;
     bool gsuccess = true; /* global success indicator : false only
                              if comparison fails or when command
                              fails if no comparison are given*/
-    bool success = true;  // current test success indicator
     // checking that the requirements are met
     const auto& components = configuration.available_components;
     for (const auto& r : this->requirements) {
@@ -527,38 +703,19 @@ namespace tfel::check {
     unsigned short i = 1;
     for (const auto& c : this->commands) {
       const auto step = "Exec-" + std::to_string(i);
-      success = true;
-      try {
-        this->ClockAction(START);
-        manager.execute(c.command, "", this->testname + "-" + step + ".out",
-                        this->environments);
-        this->ClockAction(STOP);
-        if (!c.expected_output.empty()) {
-          const auto output =
-              getFileContent(this->testname + "-" + step + ".out");
-          this->log.addTestResult(this->testname, step, c.command,
-                                  this->ClockAction(GET),
-                                  c.expected_output == output);
-        } else {
-          this->log.addTestResult(this->testname, step, c.command,
-                                  this->ClockAction(GET), true);
-        }
-      } catch (std::exception& e) {
-        this->log.addTestResult(this->testname, step, c.command, 0.0, false,
-                                e.what());
-        if (this->comparisons.empty()) {
-          gsuccess = false;
-        }
-        success = false;
-      }
+      const auto output_file = this->testname + "-" + step + ".out";
+      const auto success = this->execute(c, output_file, step);
       this->glog.addSimpleTestResult("** " + step + " " + c.command, success);
-      i++;
+      if ((!success) && (this->comparisons.empty())) {
+        gsuccess = false;
+      }
+      ++i;
     }
     i = 1;
     // Compare
     for (auto& c : this->comparisons) {
       const auto step = "Compare-" + std::to_string(i);
-      success = true;
+      bool success = true;
       try {
         c.applyInterpolation();
         c.compare();
