@@ -1543,18 +1543,9 @@ namespace mfront {
   void BehaviourData::setGlossaryName(const std::string& n,
                                       const std::string& g) {
     using tfel::glossary::Glossary;
-    if ((this->hasAttribute(BehaviourData::allowsNewUserDefinedVariables)) &&
-        (!this->getAttribute<bool>(
-            BehaviourData::allowsNewUserDefinedVariables))) {
-      tfel::raise(
-          "BehaviourData::setGlossaryName: "
-          "glossary names can't be defined at this stage");
-    }
     const auto& glossary = Glossary::getGlossary();
-    tfel::raise_if(!glossary.contains(g),
-                   "BehaviourData::setGlossaryName: "
-                   "'" +
-                       g + "' is not a glossary name");
+    tfel::raise_if(!glossary.contains(g), "BehaviourData::setGlossaryName: '" +
+                                              g + "' is not a glossary name");
     bool treated = false;
     auto set_glossary_name = [&n, &g,
                               &treated](VariableDescriptionContainer& c) {
@@ -1564,14 +1555,20 @@ namespace mfront {
       }
     };
     this->checkVariableName(n);
-    BehaviourDataAddToGlossaryOrEntryNames(
-        this->glossaryNames, this->glossaryNames, this->entryNames,
-        this->reservedNames, n, glossary.getGlossaryEntry(g).getKey());
+    set_glossary_name(this->postProcessingVariables);
+    if (!treated) {
+      if ((this->hasAttribute(BehaviourData::allowsNewUserDefinedVariables)) &&
+          (!this->getAttribute<bool>(
+              BehaviourData::allowsNewUserDefinedVariables))) {
+        tfel::raise(
+            "BehaviourData::setGlossaryName: "
+            "glossary names can't be defined at this stage");
+      }
+    }
     set_glossary_name(this->materialProperties);
     set_glossary_name(this->localVariables);
     set_glossary_name(this->stateVariables);
     set_glossary_name(this->auxiliaryStateVariables);
-    set_glossary_name(this->postProcessingVariables);
     set_glossary_name(this->integrationVariables);
     set_glossary_name(this->persistentVariables);
     set_glossary_name(this->externalStateVariables);
@@ -1580,6 +1577,9 @@ namespace mfront {
                    "BehaviourData::setGlossaryName: "
                    "no variable named '" +
                        n + "'");
+    BehaviourDataAddToGlossaryOrEntryNames(
+        this->glossaryNames, this->glossaryNames, this->entryNames,
+        this->reservedNames, n, glossary.getGlossaryEntry(g).getKey());
   }  // end of addGlossaryName
 
   bool BehaviourData::isGlossaryNameUsed(const std::string& n) const {
@@ -1599,13 +1599,6 @@ namespace mfront {
 
   void BehaviourData::setEntryName(const std::string& n, const std::string& e) {
     using namespace tfel::glossary;
-    if ((this->hasAttribute(BehaviourData::allowsNewUserDefinedVariables)) &&
-        (!this->getAttribute<bool>(
-            BehaviourData::allowsNewUserDefinedVariables))) {
-      tfel::raise(
-          "BehaviourData::setEntryName: "
-          "entry names can't be defined at this stage");
-    }
     const auto& glossary = Glossary::getGlossary();
     bool treated = false;
     auto set_entry_name = [&n, &e, &treated](VariableDescriptionContainer& c) {
@@ -1629,14 +1622,20 @@ namespace mfront {
                    "'" +
                        e + "' is a not a valid entry name");
     this->checkVariableName(n);
-    BehaviourDataAddToGlossaryOrEntryNames(
-        this->entryNames, this->glossaryNames, this->entryNames,
-        this->reservedNames, n, e);
+    set_entry_name(this->postProcessingVariables);
+    if (!treated) {
+      if ((this->hasAttribute(BehaviourData::allowsNewUserDefinedVariables)) &&
+          (!this->getAttribute<bool>(
+              BehaviourData::allowsNewUserDefinedVariables))) {
+        tfel::raise(
+            "BehaviourData::setEntryName: "
+            "entry names can't be defined at this stage");
+      }
+    }
     set_entry_name(this->materialProperties);
     set_entry_name(this->localVariables);
     set_entry_name(this->stateVariables);
     set_entry_name(this->auxiliaryStateVariables);
-    set_entry_name(this->postProcessingVariables);
     set_entry_name(this->integrationVariables);
     set_entry_name(this->persistentVariables);
     set_entry_name(this->externalStateVariables);
@@ -1645,6 +1644,9 @@ namespace mfront {
                    "BehaviourData::setEntryName: "
                    "no variable named '" +
                        n + "'");
+    BehaviourDataAddToGlossaryOrEntryNames(
+        this->entryNames, this->glossaryNames, this->entryNames,
+        this->reservedNames, n, e);
   }  // end of addEntryName
 
   bool BehaviourData::isUsedAsEntryName(const std::string& n) const {
