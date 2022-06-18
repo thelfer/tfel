@@ -1555,6 +1555,11 @@ namespace mfront {
       }
     };
     this->checkVariableName(n);
+    //
+    BehaviourDataAddToGlossaryOrEntryNames(
+        this->glossaryNames, this->glossaryNames, this->entryNames,
+        this->reservedNames, n, glossary.getGlossaryEntry(g).getKey());
+    //
     set_glossary_name(this->postProcessingVariables);
     if (!treated) {
       if ((this->hasAttribute(BehaviourData::allowsNewUserDefinedVariables)) &&
@@ -1577,9 +1582,6 @@ namespace mfront {
                    "BehaviourData::setGlossaryName: "
                    "no variable named '" +
                        n + "'");
-    BehaviourDataAddToGlossaryOrEntryNames(
-        this->glossaryNames, this->glossaryNames, this->entryNames,
-        this->reservedNames, n, glossary.getGlossaryEntry(g).getKey());
   }  // end of addGlossaryName
 
   bool BehaviourData::isGlossaryNameUsed(const std::string& n) const {
@@ -1622,6 +1624,9 @@ namespace mfront {
                    "'" +
                        e + "' is a not a valid entry name");
     this->checkVariableName(n);
+    BehaviourDataAddToGlossaryOrEntryNames(
+        this->entryNames, this->glossaryNames, this->entryNames,
+        this->reservedNames, n, e);
     set_entry_name(this->postProcessingVariables);
     if (!treated) {
       if ((this->hasAttribute(BehaviourData::allowsNewUserDefinedVariables)) &&
@@ -1644,9 +1649,6 @@ namespace mfront {
                    "BehaviourData::setEntryName: "
                    "no variable named '" +
                        n + "'");
-    BehaviourDataAddToGlossaryOrEntryNames(
-        this->entryNames, this->glossaryNames, this->entryNames,
-        this->reservedNames, n, e);
   }  // end of addEntryName
 
   bool BehaviourData::isUsedAsEntryName(const std::string& n) const {
