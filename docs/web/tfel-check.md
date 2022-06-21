@@ -218,9 +218,18 @@ The `@Command` keyword specifies a command to be launched.
 
 This keyword has the following options:
 
-- `expected_output`: a string specifying the expected output. If the
+- `expected_output`: a string (single line output) or an array of
+  strings (multiline output) specifying the expected output. If the
   actual output differs from the expected one, the tests is marked as
   failed.
+- `expected_numerical_output`, which allows to test the numerical output
+  of a command. This option must be defined as a map with two entries:
+  - `value`: the expected value
+  - `criterion_value`: the criterion value used to test the output
+- `output_validation_regex`, which allows to specifiy a regular
+  expression which shall validate the output of the command. The output
+  of the command is concatenated in a single string for the test.
+- `shall_fail`: a boolean stating if the command shall succeed or fail.
 
 ### The `@Precision` keyword
 

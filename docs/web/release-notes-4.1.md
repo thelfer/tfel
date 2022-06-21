@@ -1683,7 +1683,21 @@ two entries:
 - `value`: the expected value
 - `criterion_value`: the criterion value used to test the output
 
+### The `output_validation_regex` option
+
+The `output_validation_regex` allows to specifiy a regular expression
+which shall validate the output of the command. The output of the
+command is concatenated in a single string for the test.
+
 # Issues fixed
+
+## Issue #231:[tfel-check] Allow to compare the result of a command to a regular expression 
+
+This feature is described in Section
+@sec:tfel_4.1:tfel_check:command_outputs.
+
+￼
+For more details, see <https://github.com/thelfer/tfel/issues/231>.
 
 ## Issue #230: [tfel-check] All to compare commands output to numerical values
 
