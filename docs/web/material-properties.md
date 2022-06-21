@@ -36,7 +36,7 @@ abstract: |
   \]
   where \(T\) is the temperature (Kelvin) and \(f\) is the porosity. This
   expression is assumed valid for a temperature in the range
-  \([273.15:2610.15]\).
+  \([273.15:2610.15]\) and a porosity in the range \([0:0.3]\).
 ---
 
 <!--
@@ -64,7 +64,7 @@ E(T,f)=2.2693\,10^{11}\,(1-2.5\,f)\,(1-6.786\,10^{-5}\,T-4.23\,10^{-8}\,T^{2})
 
 where \(T\) is the temperature (Kelvin) and \(f\) is the porosity. This
 expression is assumed valid for a temperature in the range
-\([273.15:2610.15]\).
+\([273.15:2610.15]\) and a porosity in the range \([0:0.3]\).
 
 # First implementation and first tests in `Python`
 
