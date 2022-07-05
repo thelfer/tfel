@@ -162,6 +162,7 @@ EXTRA_DIST=CMakeLists.txt					      \
 	   ./RambergOsgoodNonLinearElasticity.md                      \
 	   ./MericCailletaudSingleCrystalPlasticity.md                \
            ./ExplicitBerveillerZaouiPolyCrystals.md                   \
+           ./ImplicitBerveillerZaouiPolyCrystals.md                   \
        ./Burger_EDF_CIWAP_2021.md                                 \
 	   ./MohrCoulomb.md                                           \
 	   ./FichantLaBorderieDamageBehaviour.md                            \
@@ -382,6 +383,8 @@ EXTRA_DIST=CMakeLists.txt					      \
        ./img/tfel-math/view.svg					      \
        ./img/ModelDSLs.svg					      \
        ./img/material-property-tutorial-figure1.png                   \
+       ./img/ImplicitBerveillerZaoui/Comparison.svg                   \
+       ./img/ImplicitBerveillerZaoui/LocalResidual.svg                \
 	   ./media/epx1.mp4                                           \
 	   ./media/epx2.mp4                                           \
 	   ./media/abaqus-explicit.mp4                                \

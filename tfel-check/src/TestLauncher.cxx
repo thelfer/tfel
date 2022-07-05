@@ -20,6 +20,7 @@
 #include <cmath>
 #include <limits>
 #include <ctime>
+#include <regex>
 #include <unistd.h>  // sysconf
 
 #include "TFEL/Raise.hxx"
@@ -282,6 +283,44 @@ namespace tfel::check {
 
   static std::function<
       std::tuple<bool, std::string>(const std::vector<std::string>&)>
+  generateRegularExpressionOutputCheck(const tfel::utilities::Data& option) {
+    if (!option.is<std::string>()) {
+      tfel::raise(
+          "TestLaucher::treatCommand: invalid type "
+          "for option 'output_validation_regex'");
+    }
+    try {
+      const auto value = option.get<std::string>();
+      std::regex e(value);
+      return [value, e](const std::vector<std::string>& output)
+                 -> std::tuple<bool, std::string> {
+        auto content = std::string{};
+        if (!output.empty()) {
+          for (const auto& l : output) {
+            content += l + '\n';
+          }
+          content.pop_back();
+        }
+        if (std::regex_match(content, e)) {
+          return {true, ""};
+        }
+        return {false,
+                "output does not match regular expression '" + value + "'"};
+      };
+    } catch (std::exception& e) {
+      tfel::raise(
+          "TestLaucher::treatCommand: "
+          "error while building regular expression (" +
+          std::string{e.what()} + ")");
+    } catch (...) {
+      tfel::raise(
+          "TestLaucher::treatCommand: "
+          "error while building regular expression (unknown exception)");
+    }
+  }  // end of generateRegularExpressionOutputCheck
+
+  static std::function<
+      std::tuple<bool, std::string>(const std::vector<std::string>&)>
   generateExpectedNumericalOutputCheck(const tfel::utilities::Data& option) {
     if (!option.is<tfel::utilities::DataMap>()) {
       tfel::raise(
@@ -351,6 +390,9 @@ namespace tfel::check {
         } else if (o.first == "empty_output") {
           is_output_check_defined();
           c.output_check = generateEmptyOutputCheck(o.second);
+        } else if (o.first == "output_validation_regex") {
+          is_output_check_defined();
+          c.output_check = generateRegularExpressionOutputCheck(o.second);
         } else if (o.first == "shall_fail") {
           if (!o.second.is<bool>()) {
             tfel::raise(
@@ -587,7 +629,7 @@ namespace tfel::check {
     // starts parsing the file
     this->current = this->begin();
     while (this->current != this->end()) {
-      auto p = this->callBacks.find(this->current->value);
+      const auto p = this->callBacks.find(this->current->value);
       if (p == this->callBacks.end()) {
         this->throwRuntimeError(
             "TestLauncher::analyseInputFile",
@@ -619,30 +661,23 @@ namespace tfel::check {
 
   double TestLauncher::ClockAction(ClockEventType clockevent) {
     using namespace std;
-    clock_t r;
-
-    switch (clockevent) {
-      case START:
-        r = times(&this->timeStart);
-        raise_if(r == static_cast<clock_t>(-1),
-                 "Failed times system call in "
-                 "TestLauncher::ClockAction");
-        break;
-      case STOP:
-        r = times(&this->timeStop);
-        raise_if(r == static_cast<clock_t>(-1),
-                 "Failed times system call in "
-                 "TestLauncher::ClockAction");
-        break;
-      case GET:
-        return (this->timeStop.tms_cutime - this->timeStart.tms_cutime) * 1.0 /
-               sysconf(_SC_CLK_TCK);
-      default:
-        raise(
-            "Wrong clockevent in "
-            "TestLauncher::ClockAction");
+    if (clockevent == START) {
+      const auto r = times(&this->timeStart);
+      raise_if(r == static_cast<clock_t>(-1),
+               "TestLauncher::ClockAction: 'times' system call failed");
+      return r;
     }
-    return 0.;
+    if (clockevent == STOP) {
+      const auto r = times(&this->timeStop);
+      raise_if(r == static_cast<clock_t>(-1),
+               "TestLauncher::ClockAction: 'times' system call failed");
+      return r;
+    }
+    if (clockevent == GET){
+      return (this->timeStop.tms_cutime - this->timeStart.tms_cutime) * 1.0 /
+             sysconf(_SC_CLK_TCK);
+    }
+    tfel::raise("TestLauncher::ClockAction: invalid clockevent");
   }
 
   bool TestLauncher::execute(const Command& c,
