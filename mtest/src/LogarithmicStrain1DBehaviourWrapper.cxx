@@ -16,6 +16,7 @@
 #include <iterator>
 #include <stdexcept>
 #include <algorithm>
+#include <iostream>
 #include "TFEL/Raise.hxx"
 #include "TFEL/FSAlgorithm/copy.hxx"
 #include "MTest/RoundingMode.hxx"
@@ -268,6 +269,7 @@ namespace mtest {
       const real dt,
       const StiffnessMatrixType ktype) const {
     const auto eps = std::numeric_limits<real>::epsilon();
+    std::cout << "LogarithmicStrain1DBehaviourWrapper::integrate" << '\n';
     // logarithmic strains
     if ((1 + s.e0[0] < eps) || (1 + s.e0[1] < eps) || (1 + s.e0[2] < eps) ||
         (1 + s.e1[0] < eps) || (1 + s.e1[1] < eps) || (1 + s.e1[2] < eps) ||

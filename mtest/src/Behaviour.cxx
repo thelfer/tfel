@@ -13,6 +13,7 @@
 
 #include <bitset>
 #include <climits>
+#include <iostream>
 #include <ostream>
 #include <stdexcept>
 #include "TFEL/Raise.hxx"

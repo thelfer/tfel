@@ -15,6 +15,8 @@
 #include <fstream>
 #include <sstream>
 #include <stdexcept>
+#include <iostream>
+
 
 #include "TFEL/Raise.hxx"
 #include "TFEL/Math/General/IEEE754.hxx"
@@ -1470,14 +1472,19 @@ namespace mtest {
 
   std::pair<real, real> PipeTest::computeMinimumAndMaximumValues(
       const StudyCurrentState& state, const std::string& n) const {
+    auto g = buildValueExtractor(*(this->b), n);
+    return this->computeMinimumAndMaximumValues(state, g);
+  }  // end of computeMinimumAndMaximumValues
+
+  std::pair<real, real> PipeTest::computeMinimumAndMaximumValues(
+      const StudyCurrentState& state, const std::function<real(const mtest::CurrentState&)>& e) const {
     // current pipe state
     auto& scs = state.getStructureCurrentState("");
-    auto g = buildValueExtractor(*(this->b), n);
     auto vmin = std::numeric_limits<real>::max();
     auto vmax = -std::numeric_limits<real>::max();
     // loop over the elements
     for (size_type i = 0; i != getNumberOfGaussPoints(this->mesh); ++i) {
-      const auto v = g(scs.istates[i]);
+      const auto v = e(scs.istates[i]);
       vmin = std::min(vmin, v);
       vmax = std::max(vmax, v);
     }
@@ -1525,30 +1532,50 @@ namespace mtest {
 
   real PipeTest::computeMinimumValue(const StudyCurrentState& state,
                                      const std::string& n) const {
-    return this->computeMinimumAndMaximumValues(state, n).first;
+    auto g = buildValueExtractor(*(this->b), n);
+    return this->computeMinimumAndMaximumValues(state, g).first;
+  }  // end of computeMaximumValue
+
+  real PipeTest::computeMinimumValue(const StudyCurrentState& state,
+                                     const std::function<real(const mtest::CurrentState&)>& e) const {
+    return this->computeMinimumAndMaximumValues(state, e).first;
   }  // end of computeMaximumValue
 
   real PipeTest::computeMaximumValue(const StudyCurrentState& state,
                                      const std::string& n) const {
-    return this->computeMinimumAndMaximumValues(state, n).second;
+    auto g = buildValueExtractor(*(this->b), n);
+    return this->computeMinimumAndMaximumValues(state, g).second;
+  }  // end of computeMaximumValue
+
+  real PipeTest::computeMaximumValue(const StudyCurrentState& state,
+                                     const std::function<real(const mtest::CurrentState&)>& e) const {
+    return this->computeMinimumAndMaximumValues(state, e).second;
   }  // end of computeMaximumValue
 
   real PipeTest::computeIntegralValue(const StudyCurrentState& state,
                                       const std::string& n) const {
+    auto g = buildValueExtractor(*(this->b), n);
+    return this->computeIntegralValue(state,g);
+  }  // end of computeIntegralValue
+
+  real PipeTest::computeIntegralValue(const StudyCurrentState& state,
+                                      const std::function<real(const mtest::CurrentState&)>& e) const {
     // extract the field values
     auto& scs = state.getStructureCurrentState("");
-    auto g = buildValueExtractor(*(this->b), n);
     auto values = tfel::math::vector<real>{};
     values.resize(getNumberOfGaussPoints(this->mesh));
     // loop over the elements
     for (size_type i = 0; i != getNumberOfGaussPoints(this->mesh); ++i) {
-      values[i] = g(scs.istates[i]);
+      values[i] = e(scs.istates[i]);
     }
     if (this->mesh.etype == PipeMesh::LINEAR) {
+      std::cout << "Linear elements" << '\n';
       return PipeLinearElement::computeIntegralValue(this->mesh, values);
     } else if (this->mesh.etype == PipeMesh::QUADRATIC) {
+      std::cout << "Quadratic elements" << '\n';
       return PipeQuadraticElement::computeIntegralValue(this->mesh, values);
     } else if (this->mesh.etype == PipeMesh::CUBIC) {
+      std::cout << "Cubic elements" << '\n';
       return PipeCubicElement::computeIntegralValue(this->mesh, values);
     } else {
       tfel::raise(
@@ -1566,6 +1593,8 @@ namespace mtest {
     const auto V = pi * h * (re * re - ri * ri);
     return this->computeIntegralValue(state, n) / V;
   }  // end of computeMeanValue
+
+
 
   void PipeTest::addProfile(const std::string& f,
                             const std::vector<std::string>& cn) {

@@ -12,6 +12,7 @@
  */
 
 #include <ostream>
+#include <iostream>
 #include "TFEL/Material/ModellingHypothesis.hxx"
 #include "MFront/MFrontLogStream.hxx"
 #include "MTest/RoundingMode.hxx"
@@ -38,6 +39,7 @@ namespace mtest {
 
   real PipeQuadraticElement::computeIntegralValue(
       const PipeMesh& m, const tfel::math::vector<real>& values) {
+    std::cout << "Compute Integrale Value" << '\n';
     //
     constexpr real pi = 3.14159265358979323846;
     // number of elements

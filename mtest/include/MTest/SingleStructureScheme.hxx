@@ -84,6 +84,8 @@ namespace mtest {
     virtual Kinematic getBehaviourKinematic() const;
     //! \return the behaviour
     virtual std::shared_ptr<Behaviour> getBehaviour();
+    //! \return the behaviour
+    virtual std::shared_ptr<const Behaviour> getBehaviour() const;
     /*!
      * \brief set if mtest shall handle thermal expansion coefficient
      * If true, the thermal expansion will be handled if the thermal

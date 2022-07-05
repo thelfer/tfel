@@ -212,7 +212,10 @@ void declareSingleStructureScheme() {
   boost::python::class_<SingleStructureScheme, boost::noncopyable,
                         boost::python::bases<SchemeBase>>(
       "SingleStructureScheme", boost::python::no_init)
-      .def("getBehaviour", &SingleStructureScheme::getBehaviour)
+      .def("getBehaviour",
+            static_cast<std::shared_ptr<Behaviour>(SingleStructureScheme::*)()>(&SingleStructureScheme::getBehaviour))
+      .def("getBehaviour",
+            static_cast<std::shared_ptr<const Behaviour>(SingleStructureScheme::*)() const>(&SingleStructureScheme::getBehaviour))
       .def("getBehaviourType", &SingleStructureScheme_getBehaviourType)
       .def("getBehaviourKinematic",
            &SingleStructureScheme_getBehaviourKinematic)
