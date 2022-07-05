@@ -1685,6 +1685,10 @@ two entries:
 
 # Issues fixed
 
+## Issue #245 [mfront] [mfront] add a getOutputName for MaterialProperty class
+
+For more details, see <https://github.com/thelfer/tfel/issues/245>
+
 ## Issue #230: [tfel-check] All to compare commands output to numerical values
 
 This feature is described in Section
