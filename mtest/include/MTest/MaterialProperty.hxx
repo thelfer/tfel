@@ -37,6 +37,8 @@ namespace mtest {
     virtual std::vector<std::string> getVariablesNames() const = 0;
     //! \return the names of the parameters
     virtual std::vector<std::string> getParametersNames() const = 0;
+    //! \return the names of the output
+    virtual std::string getOutputName() const = 0;
     /*!
      * \brief set variable value
      * \param[in] n: name of the variable

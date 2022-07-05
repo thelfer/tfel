@@ -78,6 +78,8 @@ void declareMaterialProperty() {
            "return the names of the arguments of the function")
       .def("getParametersNames", &MaterialProperty::getParametersNames,
            "return the names of the parameters of the function")
+      .def("getOutputName", &MaterialProperty::getOutputName,
+           "return the names of the output of the function")
       .def("setVariableValue", setValue1, "set the value of a variable")
       .def("setVariableValue", setValue2, "set the value of a variable")
       .def("setParameter", &MaterialProperty::setParameter,

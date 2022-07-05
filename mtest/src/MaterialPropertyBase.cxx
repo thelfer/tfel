@@ -35,6 +35,10 @@ namespace mtest {
     return this->parameters;
   }  // end of getParametersNames
 
+  std::string MaterialPropertyBase::getOutputName() const {
+    return this->output;
+  }  // end of getOutputName
+
   void MaterialPropertyBase::setVariableValue(const std::string& n,
                                               const real v) {
     const auto pb = std::begin(this->arguments);
