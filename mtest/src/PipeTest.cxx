@@ -15,8 +15,6 @@
 #include <fstream>
 #include <sstream>
 #include <stdexcept>
-#include <iostream>
-
 
 #include "TFEL/Raise.hxx"
 #include "TFEL/Math/General/IEEE754.hxx"
@@ -1569,13 +1567,10 @@ namespace mtest {
       values[i] = e(scs.istates[i]);
     }
     if (this->mesh.etype == PipeMesh::LINEAR) {
-      std::cout << "Linear elements" << '\n';
       return PipeLinearElement::computeIntegralValue(this->mesh, values);
     } else if (this->mesh.etype == PipeMesh::QUADRATIC) {
-      std::cout << "Quadratic elements" << '\n';
       return PipeQuadraticElement::computeIntegralValue(this->mesh, values);
     } else if (this->mesh.etype == PipeMesh::CUBIC) {
-      std::cout << "Cubic elements" << '\n';
       return PipeCubicElement::computeIntegralValue(this->mesh, values);
     } else {
       tfel::raise(
@@ -1593,8 +1588,6 @@ namespace mtest {
     const auto V = pi * h * (re * re - ri * ri);
     return this->computeIntegralValue(state, n) / V;
   }  // end of computeMeanValue
-
-
 
   void PipeTest::addProfile(const std::string& f,
                             const std::vector<std::string>& cn) {

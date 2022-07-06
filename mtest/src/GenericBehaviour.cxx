@@ -16,7 +16,6 @@
 #include <cstring>
 #include <ostream>
 #include <algorithm>
-#include <iostream>
 
 #include "TFEL/Raise.hxx"
 #include "TFEL/Math/tmatrix.hxx"
@@ -328,7 +327,6 @@ namespace mtest {
       BehaviourWorkSpace& wk,
       const real dt,
       const StiffnessMatrixType ktype) const {
-    std::cout << "GenericBehaviour::integrate" << '\n';
     return this->call_behaviour(wk.k, s, wk, dt, ktype, true);
   }  // end of integrate
 
