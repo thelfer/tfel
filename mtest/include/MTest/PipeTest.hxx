@@ -444,14 +444,6 @@ namespace mtest {
     virtual real computeMeanValue(const StudyCurrentState&,
                                   const std::string&) const;
     /*!
-     * \brief compute the mean value of a scalar variable
-     * \param[in] s: structure state
-     * \param[in] e: function returning value at integration point
-     */
-    virtual real computeMeanValue(const StudyCurrentState&,
-                                const std::function<real(const mtest::CurrentState&)>&) const;
-
-    /*!
      * \brief add a test comparing to results stored in a reference
      * file to the computed ones
      * \param[in] n: named of the variable tested
