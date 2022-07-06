@@ -79,13 +79,13 @@ namespace mfront {
     // }
     cn += name;
     insert_if(l.epts, cn);
-  }  // end of CMaterialPropertyInterface::getTargetsDescription
+  }  // end of getTargetsDescription
 
   void CppMaterialPropertyInterface::writeOutputFiles(
       const MaterialPropertyDescription& mpd, const FileDescription& fd) const {
     this->writeHeaderFile(mpd, fd);
     this->writeSrcFile(mpd, fd);
-  }  // end of CppMaterialPropertyInterface::writeOutputFiles
+  }  // end of writeOutputFiles
 
   void CppMaterialPropertyInterface::writeHeaderFile(
       const MaterialPropertyDescription& mpd, const FileDescription& fd) const {
@@ -123,7 +123,9 @@ namespace mfront {
            << "#include<cmath>\n"
            << "#include<algorithm>\n"
            << "#include<stdexcept>\n"
-           << "#include\"TFEL/Config/TFELTypes.hxx\"\n";
+           << "#include\"TFEL/Config/TFELTypes.hxx\"\n"
+           << "#include\"TFEL/PhysicalConstants.hxx\"\n"
+           << "#include\"TFEL/Math/General/IEEE754.hxx\"\n\n";
     if (useQuantities(mpd)) {
       header << "#include\"TFEL/Math/qt.hxx\"\n"
              << "#include\"TFEL/Math/Quantity/qtIO.hxx\"\n";
@@ -172,8 +174,8 @@ namespace mfront {
     }
     for (const auto& p : mpd.parameters) {
       const auto t = useQuantities(mpd) ? p.type : "double";
-      header << "const " << t << "& get" << p.name << "() const;\n";
-      header << t << "& get" << p.name << "();\n";
+      header << "auto get" << p.name << "() const -> const " << t << "&;\n";
+      header << "auto get" << p.name << "() -> " << t << "&;\n";
       header << "void set" << p.name << "(const double);\n";
     }
     if (!mpd.parameters.empty()) {
@@ -189,7 +191,7 @@ namespace mfront {
            << "} // end of namespace mfront\n\n"
            << "#endif /* LIB_MFRONT_" << makeUpperCase(name) << "_HXX */\n";
     header.close();
-  }  // end of CppMaterialPropertyInterface::writeHeaderFile()
+  }  // end of writeHeaderFile()
 
   void CppMaterialPropertyInterface::writeSrcFile(
       const MaterialPropertyDescription& mpd, const FileDescription& fd) const {
@@ -262,12 +264,12 @@ namespace mfront {
     }
     src << "{} // end of " << name << "::" << name << "\n\n";
     for (const auto& p : mpd.parameters) {
-      const auto t = useQuantities(mpd) ? name + "::" + p.type : "double";
-      src << "const " << t << "& "  //
-          << name << "::get" << p.name << "() const{\n"
+      const auto t = useQuantities(mpd) ? p.type : "double";
+      src << "auto " << name << "::get" << p.name << "() const "  //
+          << "-> const " << t << "& {\n"
           << "return this->" << p.name << ";\n"
           << "} // end of " << name << "::get" << p.name << "\n\n";
-      src << t << "& " << name << "::get" << p.name << "(){\n"
+      src << "auto " << name << "::get" << p.name << "() -> " << t << "& {\n"
           << "return " << p.name << ";\n"
           << "} // end of " << name << "::get\n\n";
       src << "void " << name << "::set" << p.name  //
@@ -518,7 +520,7 @@ namespace mfront {
     src << "return os;\n}// end of operator(std::ostream& os," << name << "\n\n"
         << "} // end of namespace mfront\n\n";
     src.close();
-  }  // end of CppMaterialPropertyInterface::writeSrcFile()
+  }  // end of writeSrcFile
 
   CppMaterialPropertyInterface::~CppMaterialPropertyInterface() = default;
 

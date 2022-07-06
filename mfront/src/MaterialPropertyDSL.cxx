@@ -239,6 +239,10 @@ namespace mfront {
   void MaterialPropertyDSL::treatUseQt() {
     this->checkNotEndOfFile("MaterialPropertyDSL::treatUseQt",
                             "Expected 'true' or 'false'.");
+    if (this->md.use_qt.has_value()) {
+      this->throwRuntimeError("MaterialPropertyDSL::treatUseQt",
+                              "quantity usage has already been specified");
+    }
     this->md.use_qt = this->readBooleanValue("MaterialPropertyDSL::treatUseQt");
     this->readSpecifiedToken("MaterialPropertyDSL::treatUseQt", ";");
   }  // end of treatUseQt
@@ -763,7 +767,7 @@ namespace mfront {
       this->throwRuntimeError("MaterialPropertyDSL::treatOutput",
                               "Output already defined.");
     }
-    this->checkNotEndOfFile("MaterialPropertyDSL::treatInput");
+    this->checkNotEndOfFile("MaterialPropertyDSL::treatOutput");
     const auto type = [this]() -> std::string {
       const auto otype = this->readVariableTypeIfPresent();
       if (!otype) {

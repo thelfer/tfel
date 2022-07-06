@@ -67,14 +67,16 @@ struct SupportedTypesTest final : public tfel::tests::TestCase {
     check("result_type<toto,tata,tfel::math::OpDiv>",
           "tfel::math::result_type<toto,tata,tfel::math::OpDiv>");
     check("quantity<real,1,0,0,3,2,-1,0>",
-          "tfel::math::quantity<real,1,0,0,3,2,-1,0>");
+          "tfel::math::quantity<numeric_type,1,0,0,3,2,-1,0>");
     check("test_empty_template_arguments<>", "test_empty_template_arguments<>");
     check("derivative_type<quantity<real,1,0,0,3,2,-1,0>,time>",
           "tfel::math::derivative_type<"
-          "tfel::math::quantity<real,1,0,0,3,2,-1,0>,time>");
+          "tfel::math::quantity<numeric_type,1,0,0,3,2,-1,0>,time>");
     check("vector<2u,3u+3u>", "vector<2,6>");
-    check("quantity<real,0,1>", "tfel::math::quantity<real,0,1,0,0,0,0,0>");
-    check("quantity<real,0,1,2>", "tfel::math::quantity<real,0,1,2,0,0,0,0>");
+    check("quantity<real,0,1>",
+          "tfel::math::quantity<numeric_type,0,1,0,0,0,0,0>");
+    check("quantity<real,0,1,2>",
+          "tfel::math::quantity<numeric_type,0,1,2,0,0,0,0>");
     check("tvector<Nss,real>", "tfel::math::tvector<12,real>");
     check("stensor<N,real>", "tfel::math::stensor<N,real>");
     check("tensor<N,real>", "tfel::math::tensor<N,real>");
@@ -173,13 +175,13 @@ struct SupportedTypesTest final : public tfel::tests::TestCase {
     check("strain", 0);
     check("stress", 0);
     //
-    check("StrainStensor", 1);    
+    check("StrainStensor", 1);
     //
     check("tvector<N,stress>", 2);
     check("tvector<3u,strain>", 2 + (3 << 3));
     check("TVector", 2);
     //
-    check("Tensor", 3);    
+    check("Tensor", 3);
     //
     check("st2tost2<N,stress>", sid);
     check("StiffnessTensor", sid);
@@ -189,7 +191,7 @@ struct SupportedTypesTest final : public tfel::tests::TestCase {
     check("tmatrix<N, N, stress>", 4 + (2 << 3) + (2 << 8));
     check("tmatrix<3u, 2u, stress>",
           4 + ((2 + (3 << 3)) << 3) + ((2 + (2 << 3)) << 8));
-    // 
+    //
     check("derivative_type<tvector<N,stress>,stress>", mid);
     check("derivative_type<stensor<N,stress>, stensor<N,stress>>",
           4 + (1 << 3) + (1 << 8));

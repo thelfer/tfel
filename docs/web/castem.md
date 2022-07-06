@@ -93,13 +93,13 @@ the `castem` interface :
 
 ~~~~ {.bash}
 $ mfront --obuild --interface=castem norton.mfront
-~~~~~~~~~~~~~~~~~~~
+~~~~
 
 This is equivalent to:
 
 ~~~~ {.bash}
 $ mfront --obuild --interface=umat norton.mfront
-~~~~~~~~~~~~~~~~~~~
+~~~~
 
 The `umat` interface is deprecated as it may be confusing for `Abaqus`
 users.
@@ -137,7 +137,7 @@ it is better to modify the `LD_LIBRARY_PATH` environment variable.
 
 ## Test
 
-To test our behaviour, we can use the following input file:
+To test our behaviour, we can use the following input file (Cast3M 2019):
 
 ~~~~{.python .numberLines}
 'OPTION' 'ERREUR' 'FATALE' ;
@@ -271,7 +271,7 @@ Here is the implementation of this material property using `MFront`:
 @Input T,p,Bu; //< inputs of the law
 T.setGlossaryName("Temperature"); //< pleiades name
 p.setGlossaryName("Porosity"); //< pleiades name
-Bu.setGlossaryName("BurnUp"); //< pleiades name
+Bu.setGlossaryName("BurnUp (at.%)"); //< pleiades name
 @PhysicalBounds T in [0 :*[; //< temperature physical bounds
 @Bounds T in [0 :2573.15]; //< temperature bounds
 @PhysicalBounds p in [0 :1]; //< porosity physical bounds
@@ -291,7 +291,7 @@ This implementation can be turned in a shared library callable from `Cast3M`:
 
 ~~~~{#UPuCThermalConductivity-mfront .bash}
 $ mfront --obuild --interface=castem UPuCThermalConductivity.mfront
-~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~
 
 ## Usage in `Cast3M`
 
@@ -319,7 +319,7 @@ Tmat. 'LIBRAIRIE' = 'libUPuCMaterialProperties.so';
 Tmat. 'VARIABLES' = 'MOTS' 'T' 'PORO' 'FIMA';
 * Création du matériau.
 MatT1 = 'MATERIAU' ModT1 'K' Tmat;
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~
 
 When using `PASAPAS`, loadings named `PORO` and `FIMA` must be
 declared for the material properties to be evaluated.

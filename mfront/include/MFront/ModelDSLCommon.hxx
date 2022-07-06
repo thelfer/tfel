@@ -83,6 +83,8 @@ namespace mfront {
     void treatUnknownKeyword() override;
     void setMaterial(const std::string&) override;
     void setMaterialKnowledgeIdentifier(const std::string&) override;
+    //! treat the `@UseQt` keyword
+    virtual void treatUseQt();
     //! treat the `@Library` keyword
     virtual void treatLibrary();
 

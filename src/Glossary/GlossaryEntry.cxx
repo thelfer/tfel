@@ -19,6 +19,8 @@
 
 namespace tfel::glossary {
 
+  const char* GlossaryEntry::separator = "@^separator^@";
+
   static std::string nothrow(const char* c) noexcept {
     std::string r;
     try {
@@ -62,7 +64,7 @@ namespace tfel::glossary {
   static std::vector<std::string> tokenize(const char* c) noexcept {
     std::vector<std::string> r;
     try {
-      r = tfel::utilities::tokenize(c, "@^separator^@");
+      r = tfel::utilities::tokenize(c, GlossaryEntry::separator);
     } catch (std::exception& e) {
       std::cerr << "tfel::glossary::tokenize: " << e.what() << '\n';
     } catch (...) {
@@ -81,7 +83,7 @@ namespace tfel::glossary {
                                const std::vector<std::string>& no)
       : key(k),
         names(1u, n),
-        unit(u),
+//        unit(u),
         type(t),
         short_description(sd),
         description(d),
@@ -98,11 +100,11 @@ namespace tfel::glossary {
                                const std::string& no)
       : key(k),
         names(1u, n),
-        unit(u),
+//        unit(u),
         type(t),
         short_description(sd),
-        description(tfel::utilities::tokenize(d, "@^separator^@")),
-        notes(tfel::utilities::tokenize(no, "@^separator^@")) {
+        description(tfel::utilities::tokenize(d, GlossaryEntry::separator)),
+        notes(tfel::utilities::tokenize(no, GlossaryEntry::separator)) {
     this->check();
   }
 
@@ -115,7 +117,7 @@ namespace tfel::glossary {
                                const char* const no) noexcept
       : key(nothrow(k)),
         names(nothrow2(n)),
-        unit(nothrow(u)),
+//        unit(nothrow(u)),
         type(nothrow(t)),
         short_description(nothrow(sd)),
         description(tfel::glossary::tokenize(d)),
@@ -139,7 +141,7 @@ namespace tfel::glossary {
                                const std::vector<std::string>& no)
       : key(k),
         names(n),
-        unit(u),
+//        unit(u),
         type(t),
         short_description(sd),
         description(d),
@@ -156,11 +158,11 @@ namespace tfel::glossary {
                                const std::string& no)
       : key(k),
         names(n),
-        unit(u),
+//        unit(u),
         type(t),
         short_description(sd),
-        description(tfel::utilities::tokenize(d, "@^separator^@")),
-        notes(tfel::utilities::tokenize(no, "@^separator^@")) {
+        description(tfel::utilities::tokenize(d, GlossaryEntry::separator)),
+        notes(tfel::utilities::tokenize(no, GlossaryEntry::separator)) {
     this->check();
   }
 
@@ -174,7 +176,7 @@ namespace tfel::glossary {
                                const std::vector<std::string>& no)
       : key(k),
         names(b, e),
-        unit(u),
+//        unit(u),
         type(t),
         short_description(sd),
         description(d),
@@ -192,11 +194,11 @@ namespace tfel::glossary {
                                const std::string& no)
       : key(k),
         names(b, e),
-        unit(u),
+//        unit(u),
         type(t),
         short_description(sd),
-        description(tfel::utilities::tokenize(d, "@^separator^@")),
-        notes(tfel::utilities::tokenize(no, "@^separator^@")) {
+        description(tfel::utilities::tokenize(d, GlossaryEntry::separator)),
+        notes(tfel::utilities::tokenize(no, GlossaryEntry::separator)) {
     this->check();
   }
 
@@ -210,7 +212,7 @@ namespace tfel::glossary {
                                const char* const no) noexcept
       : key(nothrow(k)),
         names(nothrow2(b, e)),
-        unit(nothrow(u)),
+//        unit(nothrow(u)),
         type(nothrow(t)),
         short_description(nothrow(sd)),
         description(tfel::glossary::tokenize(d)),
@@ -249,7 +251,11 @@ namespace tfel::glossary {
     return this->names;
   }
 
-  const std::string& GlossaryEntry::getUnit() const { return this->unit; }
+  const std::string& GlossaryEntry::getUnit() const {
+#pragma "Test"
+    static std::string unit;
+    return unit;  // this->unit;
+  }
 
   const std::string& GlossaryEntry::getType() const { return this->type; }
 

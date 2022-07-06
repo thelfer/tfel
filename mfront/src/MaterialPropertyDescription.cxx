@@ -39,6 +39,13 @@ namespace mfront {
        << "using tfel::math::invert_type;\n"
        << "using tfel::math::result_type;\n"
        << "using tfel::math::derivative_type;\n";
+    if (areQuantitiesSupported) {
+      os << "using PhysicalConstants = "
+         << "tfel::PhysicalConstants<" << numeric_type << ", true>;\n";
+    } else {
+      os << "using PhysicalConstants = "
+         << "tfel::PhysicalConstants<" << numeric_type << ", false>;\n";
+    }
     writeScalarStandardTypedefs(os, mpd, numeric_type, areQuantitiesSupported);
     writeMaterialLaws(os, mpd.materialLaws);
     writeStaticVariables(os, mpd.staticVars, fd.fileName);

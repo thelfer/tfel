@@ -32,6 +32,7 @@ namespace mfront {
     this->registerNewCallBack("@Material", &Child::treatMaterial);
     this->registerNewCallBack("@Author", &Child::treatAuthor);
     this->registerNewCallBack("@Date", &Child::treatDate);
+    this->registerNewCallBack("@UseQt", &Child::treatUseQt);
     this->registerNewCallBack("@Includes", &Child::treatIncludes);
     this->registerNewCallBack("@StaticVar", &Child::treatStaticVar);
     this->registerNewCallBack("@StaticVariable", &Child::treatStaticVar);
@@ -49,7 +50,9 @@ namespace mfront {
     this->registerNewCallBack("@Domains", &Child::treatDomains);
     this->registerNewCallBack("@Material", &Child::treatMaterial);
     this->registerNewCallBack("@Output", &Child::treatOutput);
+    this->registerNewCallBack("@StateVariable", &Child::treatOutput);
     this->registerNewCallBack("@Input", &Child::treatInput);
+    this->registerNewCallBack("@ExternalStateVariable", &Child::treatInput);
     this->registerNewCallBack("@Function", &Child::treatFunction);
     this->registerNewCallBack("@MaterialLaw", &Child::treatMaterialLaw);
   }  // end of ModelDSLBase<Child>::registerDefaultCallBacks()

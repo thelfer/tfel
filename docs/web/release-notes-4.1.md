@@ -1024,6 +1024,60 @@ meaning here):
 @Times{0, 1 in 100};
 ~~~~
 
+## Improvements to the `MaterialProperty` DSL
+
+### Dedicated tutorial
+
+A new tutorial dedicated to the `MaterialProperty` DSL is available on
+[this page](material-properties.html).
+
+### Physical constants {#sec:mfront:material_property:issue_243}
+
+The physical constants defined in the [`TFEL/PhysicalConstants`
+library](physical-constants.html) are available through the
+`PhysicalConstants` type alias. This alias is defined by taking the
+numeric type and the usage of quantity.
+
+#### Example of usage
+
+~~~~{.cxx}
+constexpr auto R = PhysicalConstants::R;
+~~~~
+
+## Improvements to the `Model` DSL
+
+### New keywords `@StateVariable` and `@ExternalStateVariable`
+
+The keywords `@StateVariable` and `@ExternalStateVariable` are
+synomymous of the `@Output` and `@Input` keywords respectively. Those
+aliases were introduced for consistency with behaviours.
+
+### Defining types for parameters, inputs and outputs {#sec:mfront:model:issue_241}
+
+The keywords `@StateVariable`, `@ExternalStateVariable`, `@Output`,
+`@Input` and `@Parameters` now allow to specify the type of the
+variables they define. See [this page](mfront-types.html) for details on
+types supported by `MFront`.
+
+Note that only scalar types are supported by models.
+
+### Support for quantities {#sec:mfront:model:issue_242}
+
+Quantities are now fully supported in the `Model` DSL.
+
+### Physical constants {#sec:mfront:model:issue_244}
+
+The physical constants defined in the [`TFEL/PhysicalConstants`
+library](physical-constants.html) are available through the
+`PhysicalConstants` type alias. This alias is defined by taking the
+numeric type and the usage of quantity.
+
+#### Example of usage
+
+~~~~{.cxx}
+constexpr auto R = PhysicalConstants::R;
+~~~~
+
 ## Miscellaneous improvements
 
 ### Extension of the `derivative_type` metafunction to higher order derivatives 
@@ -1699,9 +1753,39 @@ command is concatenated in a single string for the test.
 
 # Issues fixed
 
-## Issue #245 [mtest] add a `getOutputName` for `MaterialProperty` class
+## Issue #249: [mfront] The C++ interface for material properties is broken when declaring parameters with complex types
+
+For more details, see <https://github.com/thelfer/tfel/issues/249>
+
+## Issue #245: [mtest] add a `getOutputName` for `MaterialProperty` class
 
 For more details, see <https://github.com/thelfer/tfel/issues/245>
+￼
+
+## Issue #244: [mfront] Support for `PhysicalConstants` in the `Model` DSL
+
+This feature is described in Section @sec:mfront:model:issue_244.
+
+For more details, see <https://github.com/thelfer/tfel/issues/244>
+
+## Issue #243: [mfront] Support for `PhysicalConstants` in the `MaterialProperty` DSL
+
+This feature is described in Section
+@sec:mfront:material_property:issue_243
+
+For more details, see <https://github.com/thelfer/tfel/issues/243>
+
+## Issue #242: [mfront] Quantity support in the `Model` DSL
+
+This feature is described in Section @sec:mfront:model:issue_242.
+
+For more details, see <https://github.com/thelfer/tfel/issues/242>
+
+## Issue #241: [mfront] Allow to specify types in the `Model` DSL
+
+This feature is described in Section @sec:mfront:model:issue_241.
+
+For more details, see <https://github.com/thelfer/tfel/issues/241>
 
 ## Issue #231:[tfel-check] Allow to compare the result of a command to a regular expression 
 

@@ -17,6 +17,7 @@ nocite: |
     @seidlhofer_hygro-coupled_2022
     @kafle_numerical_2022
     @elabdi:tel-03247723
+    @marano_fft-based_2021
     @singh_irradiation_2021
     @guo_nspfem2d_2021
     @parise_etude_2021

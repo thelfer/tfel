@@ -271,6 +271,10 @@ namespace mfront {
     auto bd = BehaviourDescription{opts};
     bd.setDSLName("Model");
     bd.declareAsGenericBehaviour();
+    //
+    if (md.use_qt.has_value()) {
+      bd.setUseQt(*(md.use_qt));
+    }
     // global options
     bd.setAttribute(MaterialKnowledgeDescription::buildIdentifier,
                     md.getAttribute<std::string>(
@@ -315,7 +319,7 @@ namespace mfront {
     //
     auto parameters = VariableDescriptionContainer{};
     for (const auto& p : md.parameters) {
-      if (!((p.type == "double") || (p.type == "real"))) {
+      if (!((p.type == "double") || (p.isScalar()))) {
         continue;
       }
       bd.addParameter(uh, p);

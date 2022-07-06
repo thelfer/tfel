@@ -58,22 +58,12 @@ monofont: DejaVuSansMono.ttf
 The aim of this tutorial is to describe briefly the implementation of a
 simple self-consistent polycrystalline model based on the use of the
 Berveiller-Zaoui concentration rule [@berveiller_extension_1978] using
-an implicit scheme. This tutorial follows [another
-tutorial](ExplicitBerveillerZaoui.html) which presented an explicit
-scheme for the same behaviour.
-
-In this work, a phase is defined as a set of grains having the same
-crystallographic orientation.
-
-This model provides an explicit relationship between the average stress,
-inside a crystallographic phase, and the macroscopic applied stress.
-This model assumes both an isotropic elastic behaviour and isotropic
-plastic behaviour at the macroscopic scale.
-
-## Outline
-
-After a quick recall of the equations involved, an implicit
-implementation is presented in Section @sec:mfront:bz:implicit_scheme.
+an implicit scheme. This concentration rule provides an explicit
+relationship between the average stress, inside a crystallographic
+phase, and the macroscopic applied stress. This model assumes both an
+isotropic elastic behaviour and isotropic plastic behaviour at the
+macroscopic scale. In this work, a phase is defined as a set of grains
+having the same crystallographic orientation.
 
 Implicit schemes for the integration of polycrystal behaviours obtained
 by homogeneization have been studied in previous works, see
@@ -91,6 +81,10 @@ structural scale. The latter point may allow the widespread use of such
 models in large scale structural computations. Moreover, this scheme is
 easily adaptable for complex local behaviours of the phases and/or other
 homogeneization schemes.
+
+This tutorial follows [another tutorial](ExplicitBerveillerZaoui.html)
+which presented an explicit scheme for the same behaviour. Reading this
+tutorial before is highly recommended.
 
 ## Notations
 
@@ -418,8 +412,8 @@ due to the accomodation function.
 > \[
 > \deriv{\alpha}{P}=-\dfrac{6\,M\,\Sigmaeq}{\paren{2\,\Sigmaeq+3\,M\,P}^{2}}
 > \]
-> 
-> ## Derivatives of the local stress 
+
+> **Derivatives of the local stress**
 > 
 > \[
 > \deriv{\kphase{\tsigma}}{\tSigma}=

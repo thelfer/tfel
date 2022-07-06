@@ -306,6 +306,7 @@ namespace mfront {
        << "#include<cerrno>\n"
        << "#include<algorithm>\n"
        << "#include\"TFEL/Config/TFELTypes.hxx\"\n"
+       << "#include\"TFEL/PhysicalConstants.hxx\"\n"
        << "#include\"TFEL/Math/General/IEEE754.hxx\"\n\n";
     if (useQuantities(mpd)) {
       os << "#include\"TFEL/Math/qt.hxx\"\n\n"

@@ -145,6 +145,8 @@ namespace mfront {
     bool isNameReserved(const std::string&) const;
     //! \brief destructor
     virtual ~ModelDescription();
+    //! \brief use quantities if available
+    std::optional<bool> use_qt;
     //! \return the list of reserved names
     std::set<std::string>& getReservedNames();
     //! \brief list of functions declared

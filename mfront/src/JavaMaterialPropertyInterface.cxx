@@ -307,7 +307,9 @@ namespace mfront {
             << "#include<cstdlib>\n"
             << "#include<string>\n"
             << "#include<cmath>\n\n"
-            << "#include\"TFEL/Config/TFELTypes.hxx\"\n";
+            << "#include\"TFEL/Config/TFELTypes.hxx\"\n"
+            << "#include\"TFEL/PhysicalConstants.hxx\"\n"
+            << "#include\"TFEL/Math/General/IEEE754.hxx\"\n\n";
     if (useQuantities(mpd)) {
       srcFile << "#include\"TFEL/Math/qt.hxx\"\n"
               << "#include\"TFEL/Math/Quantity/qtIO.hxx\"\n";
