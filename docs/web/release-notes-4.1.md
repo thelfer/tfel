@@ -1341,6 +1341,10 @@ the behaviour integration.
 @MaterialProperty<generic> 'YoungModulus' 'src/libGenericInconel600.so' 'Inconel600_YoungModulus';
 ~~~~
 
+## Adding `computeIntegralValue` and `computeMeanValue`
+
+Added two `PipeTest` functions to calculate the integral and the average of a scalar value in the thickness of the tube for a `ptest` problem.
+
 # `mfm-test-generator` improvements
 
 ## Support for `madnex` file {#sec:tfel:4.1:mfmtg:madnex_support}
@@ -1445,6 +1449,10 @@ The `ExternalLibraryManager` class now exposes the following methods:
   types of the outputs of a post-processing function.
 
 ## Improvements to the `mtest` `python` module
+The following `PipeTest` methods are now available:
+
+- `computeMeanValue`, which computes the mean value of a scalar variable.
+- `computeIntegralValue`, which computes the integral value of a scalar variable.
 
 ## Support of named arguments in the constructor of the `Behaviour` class {#sec:tfel_4.1:pymtest:behaviour_constructor}
 
@@ -1691,9 +1699,10 @@ command is concatenated in a single string for the test.
 
 # Issues fixed
 
-## Issue #245 [mfront] [mfront] add a getOutputName for MaterialProperty class
+## Issue #245 [mtest] Add a getOutputName for MaterialProperty
 
 For more details, see <https://github.com/thelfer/tfel/issues/245>
+
 ## Issue #231:[tfel-check] Allow to compare the result of a command to a regular expression 
 
 This feature is described in Section
