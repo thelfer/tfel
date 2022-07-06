@@ -1184,7 +1184,7 @@ where:
 - `<behaviour>` is the name of the behaviour
 - `<test>` is the name of the test
 
-## Support for a boundary condition modelling the effet of a mandrel in pipe modelling {#sec:tfel_4.1:mtest:mandrel}
+## Support for a boundary condition modelling the effect of a mandrel in pipe modelling {#sec:tfel_4.1:mtest:mandrel}
 
 The effect of a non-deformable mandrel located inside the pipe can be
 modelled by defining the evolution of its radius \(R_{m}\) using the
@@ -1691,9 +1691,10 @@ command is concatenated in a single string for the test.
 
 # Issues fixed
 
-## Issue #245 [mfront] [mfront] add a getOutputName for MaterialProperty class
+## Issue #245 [mtest] add a `getOutputName` for `MaterialProperty` class
 
 For more details, see <https://github.com/thelfer/tfel/issues/245>
+
 ## Issue #231:[tfel-check] Allow to compare the result of a command to a regular expression 
 
 This feature is described in Section
