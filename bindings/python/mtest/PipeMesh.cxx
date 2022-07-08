@@ -19,7 +19,8 @@ void declarePipeMesh();
 void declarePipeMesh() {
   boost::python::enum_<mtest::PipeMesh::ElementType>("PipeMeshElementType")
       .value("DEFAULT", mtest::PipeMesh::DEFAULT)
-      .value("LINEAR", mtest::PipeMesh::QUADRATIC)
+      .value("LINEAR", mtest::PipeMesh::LINEAR)
+      .value("QUADRATIC", mtest::PipeMesh::QUADRATIC)
       .value("CUBIC", mtest::PipeMesh::CUBIC);
 
   boost::python::class_<mtest::PipeMesh, boost::noncopyable>("PipeMesh")
