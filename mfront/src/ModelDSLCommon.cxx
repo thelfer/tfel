@@ -114,9 +114,14 @@ namespace mfront {
   void ModelDSLCommon::endsInputFileProcessing() {
   }  // end of endsInputFileProcessing
 
-  bool ModelDSLCommon::useQt() const { return false; }
+  bool ModelDSLCommon::useQt() const {
+    return this->md.use_qt.has_value() ? *(this->md.use_qt) : false;
+  }
 
   void ModelDSLCommon::disableQuantitiesUsageIfNotAlreadySet() {
+    if (!this->md.use_qt.has_value()) {
+      this->md.use_qt = false;
+    }
   }  // end of disableQuantitiesUsageIfNotAlreadySet
 
   void ModelDSLCommon::reserveName(const std::string& n) {
@@ -178,6 +183,17 @@ namespace mfront {
       this->md.className = this->md.material + "_" + this->md.modelName;
     }
   }  // end of setMaterial
+
+  void ModelDSLCommon::treatUseQt() {
+    this->checkNotEndOfFile("ModelDSLCommon::treatUseQt",
+                            "Expected 'true' or 'false'.");
+    if (this->md.use_qt.has_value()) {
+      this->throwRuntimeError("ModelDSLCommon::treatUseQt",
+                              "quantity usage has already been specified");
+    }
+    this->md.use_qt = this->readBooleanValue("ModelDSLCommon::treatUseQt");
+    this->readSpecifiedToken("ModelDSLCommon::treatUseQt", ";");
+  }  // end of treatUseQt
 
   void ModelDSLCommon::treatLibrary() {
     const auto& l = this->readOnlyOneToken();
@@ -586,12 +602,23 @@ namespace mfront {
 
   void ModelDSLCommon::treatOutput() {
     if (!this->md.functions.empty()) {
-      this->throwRuntimeError("ModelDSLCommon::treatInput",
+      this->throwRuntimeError("ModelDSLCommon::treatOutput",
                               "outputs must be declared before "
                               "declaring functions");
     }
     VariableDescriptionContainer noutputs;
-    this->readVarList(noutputs, "real", false);
+    const auto type = [this]() -> std::string {
+      const auto otype = this->readVariableTypeIfPresent();
+      if (!otype) {
+        return "real";
+      }
+      return *otype;
+    }();
+    if (SupportedTypes::getTypeFlag(type) != SupportedTypes::SCALAR) {
+      this->throwRuntimeError("DSLBase::treatOutput",
+                              "output type'" + type + "' is not valid.");
+    }
+    this->readVarList(noutputs, type, false);
     for (const auto& v : noutputs) {
       if (!v.symbolic_form.empty()) {
         this->reserveName(v.symbolic_form);
@@ -599,7 +626,7 @@ namespace mfront {
       this->md.registerMemberName(v.name);
       this->md.outputs.push_back(v);
     }
-  }  // end of treatOutput()
+  }  // end of treatOutput
 
   void ModelDSLCommon::treatInput() {
     if (!this->md.functions.empty()) {
@@ -608,7 +635,18 @@ namespace mfront {
                               "declaring functions");
     }
     VariableDescriptionContainer ninputs;
-    this->readVarList(ninputs, "real", false);
+    const auto type = [this]() -> std::string {
+      const auto otype = this->readVariableTypeIfPresent();
+      if (!otype) {
+        return "real";
+      }
+      return *otype;
+    }();
+    if (SupportedTypes::getTypeFlag(type) != SupportedTypes::SCALAR) {
+      this->throwRuntimeError("DSLBase::treatInput",
+                              "input type'" + type + "' is not valid.");
+    }
+    this->readVarList(ninputs, type, false);
     for (const auto& v : ninputs) {
       if (!v.symbolic_form.empty()) {
         this->reserveName(v.symbolic_form);
@@ -616,7 +654,7 @@ namespace mfront {
       this->md.registerMemberName(v.name);
       this->md.inputs.push_back(v);
     }
-  }  // end of treatInput()
+  }  // end of treatInput
 
   void ModelDSLCommon::treatOutputMethod() {
     if (!this->md.functions.empty()) {
@@ -736,6 +774,17 @@ namespace mfront {
 
   void ModelDSLCommon::treatParameter() {
     auto endOfTreatment = false;
+    const auto type = [this]() -> std::string {
+      const auto otype = this->readVariableTypeIfPresent();
+      if (!otype) {
+        return "real";
+      }
+      return *otype;
+    }();
+    if (SupportedTypes::getTypeFlag(type) != SupportedTypes::SCALAR) {
+      this->throwRuntimeError("DSLBase::treatParameter",
+                              "parameter type'" + type + "' is not valid.");
+    }
     while ((this->current != this->tokens.end()) && (!endOfTreatment)) {
       if (!this->isValidIdentifier(this->current->value)) {
         this->throwRuntimeError("DSLBase::handleParameter : ",
@@ -744,7 +793,7 @@ namespace mfront {
       }
       const auto n = this->current->value;
       const auto lineNumber = this->current->line;
-      VariableDescription v("real", n, 1u, lineNumber);
+      VariableDescription v(type, n, 1u, lineNumber);
       ++(this->current);
       this->checkNotEndOfFile("DSLBase::handleParameter");
       auto value = this->readInitialisationValue<double>(n, false);

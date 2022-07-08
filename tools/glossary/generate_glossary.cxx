@@ -32,7 +32,9 @@
 #include <cstdlib>
 #include <string>
 #include <set>
+#include <optional>
 #include "TFEL/Raise.hxx"
+#include "TFEL/Utilities/Data.hxx"
 #include "TFEL/Utilities/CxxTokenizer.hxx"
 #include "TFEL/Utilities/StringAlgorithms.hxx"
 #include "TFEL/Glossary/GlossaryEntry.hxx"
@@ -64,12 +66,14 @@ struct GlossaryTokenizer : protected tfel::utilities::CxxTokenizer,
     while (p != pe) {
       std::string key;
       std::string name;
-      std::string unit;
       std::string type;
       std::string short_description;
+      std::map<std::string,std::string> units;
       std::vector<std::string> description;
       std::vector<std::string> notes;
       std::vector<std::string> aliases;
+      std::optional<std::map<std::string, double>> lower_bound;
+      std::optional<std::map<std::string, double>> upper_bound;
       key = CxxTokenizer::readString(p, pe);
       tfel::raise_if(!this->isValidIdentifier(key, false),
                      "GlossaryTokenizer: invalid glossary key '" + key + "'");
@@ -98,12 +102,13 @@ struct GlossaryTokenizer : protected tfel::utilities::CxxTokenizer,
                            "aliases already defined for key '" +
                                key + "'");
             this->readBlock(aliases, p, pe);
-          } else if (k == "unit") {
-            tfel::raise_if(!unit.empty(),
+          } else if (k == "units") {
+            tfel::raise_if(!units.empty(),
                            "GlossaryTokenizer::execute: "
                            "unit already defined for key '" +
                                key + "'");
-            unit = CxxTokenizer::readString(p, pe);
+            units = convert<std::map<std::string, std::string>>(
+                Data::read_map(p, pe));
           } else if (k == "name") {
             tfel::raise_if(!name.empty(),
                            "GlossaryTokenizer::execute: "
@@ -138,6 +143,20 @@ struct GlossaryTokenizer : protected tfel::utilities::CxxTokenizer,
             this->readBlock(notes, p, pe);
             CxxTokenizer::readSpecifiedToken("GlossaryTokenizer::execute", "}",
                                              p, pe);
+          } else if (k == "lower_bound") {
+            tfel::raise_if(lower_bound.has_value(),
+                           "GlossaryTokenizer::execute: "
+                           "lower bound already defined for key '" +
+                               key + "'");
+            lower_bound =
+                convert<std::map<std::string, double>>(Data::read_map(p, pe));
+          } else if (k == "upper_bound") {
+            tfel::raise_if(upper_bound.has_value(),
+                           "GlossaryTokenizer::execute: "
+                           "upper bound already defined for key '" +
+                               key + "'");
+            upper_bound =
+                convert<std::map<std::string, double>>(Data::read_map(p, pe));
           } else {
             tfel::raise(
                 "GlossaryTokenizer::execute: "
@@ -190,7 +209,8 @@ struct GlossaryTokenizer : protected tfel::utilities::CxxTokenizer,
                            key + "'");
       }
       aliases.push_back(name);
-      this->insert(GlossaryEntry(key, aliases, unit, type, short_description,
+#pragma "units !!"
+      this->insert(GlossaryEntry(key, aliases, "", type, short_description,
                                  description, notes));
     }
   }  // end of execute
@@ -221,14 +241,14 @@ struct GlossaryTokenizer : protected tfel::utilities::CxxTokenizer,
 
 };  // end of struct GlossaryTokenizer
 
-std::string serialize(const std::vector<std::string>& v, const std::string& d) {
+std::string serialize(const std::vector<std::string>& lines, const std::string& d) {
   std::ostringstream out;
-  if (v.empty()) {
+  if (lines.empty()) {
     out << "\"\" /* no '" << d << "' defined */";
   } else {
-    for (auto p = v.begin(); p != v.end(); ++p) {
-      if (p != v.begin()) {
-        out << "\"@^separator^@\"\n";
+    for (auto p = lines.begin(); p != lines.end(); ++p) {
+      if (p != lines.begin()) {
+        out << tfel::glossary::GlossaryEntry::separator << "\n";
       }
       out << "\"" << *p << "\"";
     }

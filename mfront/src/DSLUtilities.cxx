@@ -42,7 +42,8 @@ static const char* const constexpr_c = "const";
 namespace mfront {
 
   std::vector<std::string> getScalarTypeAliases() {
-    return {"real",
+    return {"numeric_type",
+            "real",
             "time",
             "length",
             "frequency",

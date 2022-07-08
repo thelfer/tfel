@@ -77,6 +77,7 @@ pandoc_html(parameters "--toc" "--toc-depth=3"  "--number-sections")
 pandoc_html(publications)
 pandoc_html(release-notes "--toc" "--toc-depth=1")
 pandoc_html(mfront-query "--toc" "--toc-depth=2")
+pandoc_html(compiling-mfront-shared-libraries)
 pandoc_html(madnex "--toc" "--toc-depth=2")
 pandoc_html(math "--toc" "--toc-depth=2" "--number-sections")
 pandoc_html(mfm)
@@ -180,7 +181,7 @@ pandoc_html(ExtendingStandardElastoViscoPlasticityBrick-PorousStressCriterion "-
 pandoc_html(HookeStressPotential "--toc" "--toc-depth=2")
 pandoc_html(DDIF2StressPotential "--toc" "--toc-depth=2")
 pandoc_html(ExplicitBerveillerZaouiPolyCrystals "--toc" "--toc-depth=2")
-pandoc_html(ImplicitBerveillerZaouiPolyCrystals "--toc" "--toc-depth=2")
+pandoc_html(ImplicitBerveillerZaouiPolyCrystals "--toc" "--toc-depth=2" "--number-sections")
 pandoc_html(Burger_EDF_CIWAP_2021 "--toc" "--toc-depth=2")
 
 # mfront keywords

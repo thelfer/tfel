@@ -115,7 +115,7 @@ namespace mfront {
      * \param[in] n : name
      */
     bool isNameReserved(const std::string&) const;
-    //! destructor
+    //! \brief destructor
     ~MaterialPropertyDescription();
     //! \brief use quantities if available
     std::optional<bool> use_qt;

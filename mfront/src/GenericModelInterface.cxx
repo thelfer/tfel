@@ -30,7 +30,7 @@
 namespace mfront {
 
   static bool isRealParameter(const VariableDescription& p) {
-    return (p.type == "double") || (p.type == "real");
+    return (p.type == "double") || (p.isScalar());
   } // end of isRealParameter
 
   static bool hasRealParameters(const ModelDescription& md) {
@@ -61,9 +61,14 @@ namespace mfront {
     return header;
   }  // end of getHeaderGuard
 
+  static bool useQuantities(const ModelDescription& md) {
+    return md.use_qt.has_value() ? *(md.use_qt) : false;
+  } // end of useQuantities
+
   static void writeScalarStandardTypedefs(std::ostream& os,
-                                          const ModelDescription& /* md */) {
-    const auto use_qt = "false";  // useQuantities(md) ? "true" : "false";
+                                          const ModelDescription& md) {
+    const auto use_qt = useQuantities(md) ? "true" : "false";
+    os << "using NumericType [[maybe_unused]] = double;\n";
     for (const auto& a : getScalarTypeAliases()) {
       os << "using " << a << " [[maybe_unused]] = "
          << "typename tfel::config::ScalarTypes<double, " << use_qt
@@ -178,7 +183,7 @@ namespace mfront {
     using tfel::material::ModellingHypothesis;
     constexpr auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     auto raise = [](const std::string& m) {
-      tfel::raise("GenericBehaviourInterface::writeSourceFile: " + m);
+      tfel::raise("GenericModelInterface::writeSourceFile: " + m);
     };
     auto getVariablePosition = [&raise](const auto& variables, const auto& n) {
       const auto pv = std::find_if(
@@ -212,10 +217,18 @@ namespace mfront {
        << "#include <cmath>\n"
        << "#include <cstring>\n"
        << "#include <sstream>\n"
+       << "#include \"TFEL/PhysicalConstants.hxx\"\n"
        << "#include \"TFEL/Config/TFELTypes.hxx\"\n"
-       << "#include \"TFEL/Math/Array/View.hxx\"\n"
-       << "#include \"MFront/GenericBehaviour/Integrate.hxx\"\n\n"
+       << "#include \"TFEL/Math/Array/View.hxx\"\n";
+    if (useQuantities(md)) {
+      os << "#include \"TFEL/Math/qt.hxx\"\n";
+    }
+    os << "#include \"MFront/GenericBehaviour/Integrate.hxx\"\n\n"
        << "#include \"MFront/GenericModel/" << header << "\"\n\n";
+    //
+    if (!md.includes.empty()) {
+      os << md.includes << "\n\n";
+    }
     //
     const auto mhs = ModellingHypothesis::getModellingHypotheses();
     const auto hypotheses =
@@ -250,8 +263,9 @@ namespace mfront {
         if (!isRealParameter(p)) {
           continue;
         }
-        os << p.type << " " << p.name << " = "
-           << p.getAttribute<double>(VariableDescription::defaultValue) << ";\n";
+        os << p.type << " " << p.name << " = " << p.type << "{"
+           << p.getAttribute<double>(VariableDescription::defaultValue)
+           << "};\n";
       }
       os << "private:\n"
          << cn << "() = default;\n"
@@ -291,6 +305,13 @@ namespace mfront {
          << "(mfront_gb_BehaviourData& mfront_model_data) const{\n";
       os << "using namespace std;\n";
       os << "using namespace tfel::math;\n";
+      if (useQuantities(md)) {
+        os << "using PhysicalConstants = "
+           << "tfel::PhysicalConstants<NumericType, true>;\n";
+      } else {
+        os << "using PhysicalConstants = "
+           << "tfel::PhysicalConstants<NumericType, false>;\n";
+      }
       if (f.useTimeIncrement) {
         os << "const auto dt = time{mfront_model_data.dt};\n";
       }
@@ -363,8 +384,8 @@ namespace mfront {
         os << "const std::string " << p.name << " = "
            << p.getAttribute<std::string>(VariableDescription::defaultValue);
       } else if (isRealParameter(p)) {
-        os << "static constexpr " << p.type << " " << p.name << " = "
-           << p.getAttribute<double>(VariableDescription::defaultValue);
+        os << "static constexpr auto " << p.name << " = " << p.type << "{"
+           << p.getAttribute<double>(VariableDescription::defaultValue) << "}";
       } else if (p.type == "bool") {
         os << "static constexpr " << p.type << " " << p.name << " = "
            << p.getAttribute<bool>(VariableDescription::defaultValue);
@@ -408,6 +429,7 @@ namespace mfront {
       os << "MFRONT_SHAREDOBJ int\n"
          << name << "_setParameter(const char *const n, const double v){\n"
          << "auto& parameters = mfront::gm::" << cn << "::get();\n";
+      writeScalarStandardTypedefs(os, md);
       auto first = true;
       for (const auto& p : md.parameters) {
         if (!isRealParameter(p)) {
@@ -416,7 +438,7 @@ namespace mfront {
         const auto en = p.getExternalName();
         os << (first ? "if" : "} else if")  //
            << "(std::strcmp(\"" << en << "\", n) == 0){\n"
-           << "parameters." << p.name << " = v;\n"
+           << "parameters." << p.name << " = " << p.type << "{v};\n"
            << "return 0;\n";
         first = false;
       }

@@ -334,6 +334,7 @@ namespace mfront {
        << "#include<vector>\n"
        << "#include<cmath>\n"
        << "#include\"TFEL/Config/TFELTypes.hxx\"\n"
+       << "#include\"TFEL/PhysicalConstants.hxx\"\n"
        << "#include\"TFEL/Math/General/IEEE754.hxx\"\n";
     if (useQuantities(mpd)) {
       os << "#include\"TFEL/Math/qt.hxx\"\n"

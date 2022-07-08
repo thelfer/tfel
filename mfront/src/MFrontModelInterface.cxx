@@ -266,10 +266,10 @@ namespace mfront {
     for (const auto& p : md.parameters) {
       throw_if(!p.hasAttribute(VariableDescription::defaultValue),
                "no default value for variable '" + p.name + "'");
-      if ((p.type == "double") || (p.type == "real")) {
+      if ((p.type == "double") || (p.isScalar())) {
         const auto v =
             p.getAttribute<double>(VariableDescription::defaultValue);
-        header << "real " << p.name << " = " << v << ";\n";
+        header << "real " << p.name << " = " << p.type << "{" << v << "};\n";
       } else if (p.type == "bool") {
         if (p.getAttribute<bool>(VariableDescription::defaultValue)) {
           header << "bool " << p.name << " = true;\n";

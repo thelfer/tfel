@@ -991,17 +991,28 @@ namespace mfront {
           "quantity must have at most eight template arguments");
     }
     if (args.empty()) {
-      TypeInformation numeric_type;
-      numeric_type.type = "real";
-      args.push_back(numeric_type);
+      TypeInformation etype;
+      etype.type = "real";
+      args.push_back(etype);
     } else {
       if (!std::holds_alternative<TypeInformation>(args[0])) {
         tfel::raise(
             "SupportedTypes::normalizeQuantity: "
-            "quantity must have at most eight template arguments");
+            "first template argument of quantity must be an type");
       }
       SupportedTypes::normalizeRawScalarType(
           std::get<TypeInformation>(args[0]));
+      auto& type_info = std::get<TypeInformation>(args[0]);
+      if (type_info.type == "numeric_type") {
+      } else if (type_info.type == "real") {
+        // for backward compatibility
+        type_info.type = "numeric_type";
+      } else {
+        tfel::raise(
+            "SupportedTypes::normalizeQuantity: "
+            "invalid first template argument of quantity "
+            "(must be 'numeric_type' or 'real')");
+      }
       for (decltype(args.size()) i = 1; i != args.size(); ++i) {
         if (!(std::holds_alternative<TypeInformation::IntegerTemplateArgument>(
                 args[i]))) {

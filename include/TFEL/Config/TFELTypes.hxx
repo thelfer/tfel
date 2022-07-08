@@ -34,6 +34,7 @@ namespace tfel::config {
    */
   template <typename T = double, bool use_quantities = true>
   struct ScalarTypes {
+    using numeric_type = T;
     using real = tfel::math::qt<tfel::math::NoUnit, T>;
     typedef tfel::math::qt<tfel::math::Time, T> time;
     typedef tfel::math::qt<tfel::math::Frequency, T> frequency;
@@ -61,6 +62,7 @@ namespace tfel::config {
    */
   template <typename T>
   struct ScalarTypes<T, false> {
+    using numeric_type = T;
     using real = T;
     using time = T;
     using frequency = T;
