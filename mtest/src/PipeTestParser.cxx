@@ -691,10 +691,18 @@ namespace mtest {
          {"minimum_values", generate_function("minimum_value")},
          {"maximum_value", generate_function("maximum_value")},
          {"maximum_values", generate_function("maximum_value")},
-         {"integral_value", generate_function("integral_value")},
-         {"integral_values", generate_function("integral_value")},
-         {"mean_value", generate_function("mean_value")},
-         {"mean_values", generate_function("mean_value")}});
+         {"integral_value", generate_function("integral_value_initial_configuration")},
+         {"integral_values", generate_function("integral_value_initial_configuration")},
+         {"integral_value_initial_configuration", generate_function("integral_value_initial_configuration")},
+         {"integral_values_initial_configuration", generate_function("integral_value_initial_configuration")},
+         {"integral_value_current_configuration", generate_function("integral_value_current_configuration")},
+         {"integral_values_current_configuration", generate_function("integral_value_current_configuration")},
+         {"mean_value", generate_function("mean_value_initial_configuration")},
+         {"mean_values", generate_function("mean_value_initial_configuration")},
+         {"mean_value_initial_configuration", generate_function("mean_value_initial_configuration")},
+         {"mean_values_initial_configuration", generate_function("mean_value_initial_configuration")},
+         {"mean_value_current_configuration", generate_function("mean_value_current_configuration")},
+         {"mean_values_current_configuration", generate_function("mean_value_current_configuration")}});
     this->readSpecifiedToken("PipeTestParser::handleAdditionalOutputs", ";", p,
                              this->tokens.end());
   }  // end of PipeTestParser::handleAdditionalOutput

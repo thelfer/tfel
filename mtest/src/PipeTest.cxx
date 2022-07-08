@@ -1475,7 +1475,8 @@ namespace mtest {
   }  // end of computeMinimumAndMaximumValues
 
   std::pair<real, real> PipeTest::computeMinimumAndMaximumValues(
-      const StudyCurrentState& state, const std::function<real(const mtest::CurrentState&)>& e) const {
+      const StudyCurrentState& state,
+      const std::function<real(const mtest::CurrentState&)>& e) const {
     // current pipe state
     auto& scs = state.getStructureCurrentState("");
     auto vmin = std::numeric_limits<real>::max();
@@ -1502,17 +1503,29 @@ namespace mtest {
            [this, n](std::ostream& os, const StudyCurrentState& s) {
              os << this->computeMaximumValue(s, n);
            }});
-    } else if (t == "integral_value") {
+    } else if (t == "integral_value_initial_configuration") {
       this->aoutputs.push_back(
-          {"integral value of '" + n + "'",
+          {"integral value of '" + n + "' in the initial configuration",
            [this, n](std::ostream& os, const StudyCurrentState& s) {
              os << this->computeIntegralValue(s, n);
            }});
-    } else if (t == "mean_value") {
+    } else if (t == "integral_value_current_configuration") {
       this->aoutputs.push_back(
-          {"mean value of '" + n + "'",
+          {"integral value of '" + n + "' in the current configuration",
+           [this, n](std::ostream& os, const StudyCurrentState& s) {
+             os << this->computeIntegralValue(s, n, Configuration::CURRENT_CONFIGURATION);
+           }});
+    } else if (t == "mean_value_initial_configuration") {
+      this->aoutputs.push_back(
+          {"mean value of '" + n + "' in the initial configuration",
            [this, n](std::ostream& os, const StudyCurrentState& s) {
              os << this->computeMeanValue(s, n);
+           }});
+    } else if (t == "mean_value_current_configuration") {
+      this->aoutputs.push_back(
+          {"mean value of '" + n + "' in the current configuration",
+           [this, n](std::ostream& os, const StudyCurrentState& s) {
+             os << this->computeMeanValue(s, n, Configuration::CURRENT_CONFIGURATION);
            }});
     } else {
       tfel::raise(
@@ -1523,8 +1536,10 @@ namespace mtest {
           "Valid additional output types are:\n"
           "- minimum_value\n"
           "- maximum_value\n"
-          "- integral_value\n"
-          "- mean_value\n");
+          "- integral_value_initial_configuration\n"
+          "- integral_value_current_configuration\n"
+          "- mean_value_initial_configuration\n"
+          "- mean_value_current_configuration\n");
     }
   }  // end of addAdditionalOutput
 
@@ -1534,8 +1549,9 @@ namespace mtest {
     return this->computeMinimumAndMaximumValues(state, g).first;
   }  // end of computeMaximumValue
 
-  real PipeTest::computeMinimumValue(const StudyCurrentState& state,
-                                     const std::function<real(const mtest::CurrentState&)>& e) const {
+  real PipeTest::computeMinimumValue(
+      const StudyCurrentState& state,
+      const std::function<real(const mtest::CurrentState&)>& e) const {
     return this->computeMinimumAndMaximumValues(state, e).first;
   }  // end of computeMaximumValue
 
@@ -1545,26 +1561,38 @@ namespace mtest {
     return this->computeMinimumAndMaximumValues(state, g).second;
   }  // end of computeMaximumValue
 
-  real PipeTest::computeMaximumValue(const StudyCurrentState& state,
-                                     const std::function<real(const mtest::CurrentState&)>& e) const {
+  real PipeTest::computeMaximumValue(
+      const StudyCurrentState& state,
+      const std::function<real(const mtest::CurrentState&)>& e) const {
     return this->computeMinimumAndMaximumValues(state, e).second;
   }  // end of computeMaximumValue
 
   real PipeTest::computeIntegralValue(const StudyCurrentState& state,
-                                      const std::string& n) const {
+                                      const std::string& n,
+                                      const Configuration c) const {
     auto g = buildValueExtractor(*(this->b), n);
-    return this->computeIntegralValue(state,g);
+    return this->computeIntegralValue(state, g, c);
   }  // end of computeIntegralValue
 
-  real PipeTest::computeIntegralValue(const StudyCurrentState& state,
-                                      const std::function<real(const mtest::CurrentState&)>& e) const {
+  real PipeTest::computeIntegralValue(
+      const StudyCurrentState& state,
+      const std::function<real(const mtest::CurrentState&)>& e,
+      const Configuration c) const {
     // extract the field values
     auto& scs = state.getStructureCurrentState("");
     auto values = tfel::math::vector<real>{};
     values.resize(getNumberOfGaussPoints(this->mesh));
     // loop over the elements
     for (size_type i = 0; i != getNumberOfGaussPoints(this->mesh); ++i) {
-      values[i] = e(scs.istates[i]);
+      // current state
+      const auto& cs = scs.istates[i];
+      const auto detF = [this, &cs, c]() -> real {
+        if ((!this->hpp) && (c == Configuration::CURRENT_CONFIGURATION)) {
+          return (1 + cs.e1[0]) * (1 + cs.e1[1]) * (1 + cs.e1[2]);
+        }
+        return 1;
+      }();
+      values[i] = e(cs) * detF;
     }
     if (this->mesh.etype == PipeMesh::LINEAR) {
       return PipeLinearElement::computeIntegralValue(this->mesh, values);
@@ -1580,13 +1608,31 @@ namespace mtest {
   }  // end of computeIntegralValue
 
   real PipeTest::computeMeanValue(const StudyCurrentState& state,
-                                  const std::string& n) const {
+                                  const std::string& n,
+                                  const Configuration c) const {
     constexpr real pi = 3.14159265358979323846;
-    const auto ri = this->mesh.inner_radius;
-    const auto re = this->mesh.outer_radius;
-    const auto h = 1;
+    const auto ri = [this, state, c]() -> real {
+      if ((!this->hpp) && (c == Configuration::CURRENT_CONFIGURATION)) {
+        return state.u1[0];
+      }
+      return this->mesh.inner_radius;
+    }();
+    const auto re = [this, state, c]() -> real {
+      if ((!this->hpp) && (c == Configuration::CURRENT_CONFIGURATION)) {
+        const size_type ln = this->getNumberOfNodes() - 1;
+        const auto Re = this->mesh.outer_radius;
+        return (this->hpp) ? Re : Re + state.u1[ln];
+      }
+      return this->mesh.outer_radius;
+    }();
+    const auto h = [this, state, c]() -> real {
+      if ((!this->hpp) && (c == Configuration::CURRENT_CONFIGURATION)) {
+        return state.u1[this->getNumberOfNodes()];
+      }
+      return 1;
+    }();
     const auto V = pi * h * (re * re - ri * ri);
-    return this->computeIntegralValue(state, n) / V;
+    return this->computeIntegralValue(state, n, c) / V;
   }  // end of computeMeanValue
 
   void PipeTest::addProfile(const std::string& f,

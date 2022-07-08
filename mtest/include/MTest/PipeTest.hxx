@@ -393,7 +393,8 @@ namespace mtest {
      * \param[in] e: function returning value at integration point
      */
     virtual std::pair<real, real> computeMinimumAndMaximumValues(
-      const StudyCurrentState&, const std::function<real(const mtest::CurrentState&)>&) const;
+        const StudyCurrentState&,
+        const std::function<real(const mtest::CurrentState&)>&) const;
     /*!
      * \brief compute the minimum value of a scalar variable
      * \param[in] s: structure state
@@ -406,8 +407,9 @@ namespace mtest {
      * \param[in] s: structure state
      * \param[in] e: function returning value at integration point
      */
-    virtual real computeMinimumValue(const StudyCurrentState&,
-                                     const std::function<real(const mtest::CurrentState&)>&) const;
+    virtual real computeMinimumValue(
+        const StudyCurrentState&,
+        const std::function<real(const mtest::CurrentState&)>&) const;
     /*!
      * \brief compute the maximum value of a scalar variable
      * \param[in] s: structure state
@@ -420,29 +422,45 @@ namespace mtest {
      * \param[in] s: structure state
      * \param[in] e: function returning value at integration point
      */
-    virtual real computeMaximumValue(const StudyCurrentState&,
-                                     const std::function<real(const mtest::CurrentState&)>&) const;
+    virtual real computeMaximumValue(
+        const StudyCurrentState&,
+        const std::function<real(const mtest::CurrentState&)>&) const;
+    
+    /*!
+     *
+     */
+    enum struct Configuration { INTIAL_CONFIGURATION, CURRENT_CONFIGURATION };
+    
     /*!
      * \brief compute the integral value of a scalar variable
      * \param[in] s: structure state
      * \param[in] n: variable name
      */
     virtual real computeIntegralValue(const StudyCurrentState&,
-                                      const std::string&) const;
+                                      const std::string&,
+                                      const Configuration = Configuration::INTIAL_CONFIGURATION) const;
+
+    
+
     /*!
      * \brief compute the integral value of a scalar variable
      * \param[in] s: structure state
      * \param[in] e: function returning value at integration point
+     * \param[in] c: enum element to choose the initial or final configuration
      */
-    virtual real computeIntegralValue(const StudyCurrentState&,
-                                      const std::function<real(const mtest::CurrentState&)>&) const;
+    virtual real computeIntegralValue(
+        const StudyCurrentState&,
+        const std::function<real(const mtest::CurrentState&)>&,
+        const Configuration = Configuration::INTIAL_CONFIGURATION) const;
     /*!
      * \brief compute the mean value of a scalar variable
      * \param[in] s: structure state
      * \param[in] n: variable name
+     * \param[in] c: enum element to choose the initial or final configuration
      */
     virtual real computeMeanValue(const StudyCurrentState&,
-                                  const std::string&) const;
+                                  const std::string&,
+                                  const Configuration = Configuration::INTIAL_CONFIGURATION) const;
     /*!
      * \brief add a test comparing to results stored in a reference
      * file to the computed ones

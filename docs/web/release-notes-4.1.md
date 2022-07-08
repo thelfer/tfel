@@ -1343,7 +1343,16 @@ the behaviour integration.
 
 ## Adding `computeIntegralValue` and `computeMeanValue`
 
-Added two `PipeTest` functions to calculate the integral and the average of a scalar value in the thickness of the tube for a `ptest` problem.
+Added two `PipeTest` functions to calculate the integral and the average of a scalar value in the thickness of the tube for a `ptest` problem. Each function allows to calculate the corresponding quantities in the current or initial configurations
+
+### Example of usage
+
+~~~~{.cxx}
+@AdditionalOutputs {'mean_value_initial_configuration':'SRR',
+                    'mean_value_current_configuration':'SRR'}; // compute mean values of SRR
+@AdditionalOutputs {'integral_value_initial_configuration':'SRR',
+                    'integral_value_current_configuration':'SRR'}; // compute integral values of SRR
+~~~~
 
 # `mfm-test-generator` improvements
 
@@ -1453,6 +1462,48 @@ The following `PipeTest` methods are now available:
 
 - `computeMeanValue`, which computes the mean value of a scalar variable.
 - `computeIntegralValue`, which computes the integral value of a scalar variable.
+
+### Example of usage
+
+~~~~{.python}
+import std
+from mtest import PipeTest, StudyCurrentState, SolverWorkSpace, \
+     PipeTestConfiguration as ptc
+
+t = PipeTest()
+# geometry and meshing
+t.setInnerRadius(4.2e-3)
+t.setOuterRadius(4.7e-3)
+t.setNumberOfElements(10)
+t.setElementType('Linear')
+
+# modelling hypothesis
+t.setAxialLoading('None')
+
+t.setTimes([0,1])
+t.setInnerPressureEvolution(1.5e6)
+t.setOuterPressureEvolution({0:1.5e6,1:10e6})
+
+t.setBehaviour('LogarithmicStrain1D','castem','../behaviours/castem/libMFrontCastemBehaviours.so','umatelasticity')
+t.setMaterialProperty('YoungModulus',150e9)
+t.setMaterialProperty('PoissonRatio',0.3)
+t.setExternalStateVariable('Temperature',{0:293.15,1:693.15})
+
+t.setOutputFileName("pipe.res")
+
+s  = StudyCurrentState()
+wk = SolverWorkSpace()
+
+t.completeInitialisation()
+t.initializeCurrentState(s)
+t.initializeWorkSpace(wk)
+
+mean_ic     = t.computeMeanValue(s,'SRR',ptc.INTIAL_CONFIGURATION)
+mean_cc     = t.computeMeanValue(s,'SRR',ptc.CURRENT_CONFIGURATION)
+integral_ic = t.computeIntegralValue(s,'SRR',ptc.INTIAL_CONFIGURATION)
+integral_cc = t.computeIntegralValue(s,'SRR',ptc.CURRENT_CONFIGURATION)
+~~~~
+
 
 ## Support of named arguments in the constructor of the `Behaviour` class {#sec:tfel_4.1:pymtest:behaviour_constructor}
 
