@@ -115,6 +115,15 @@ namespace mfront {
      * \param[in] n : name
      */
     bool isNameReserved(const std::string&) const;
+    //! \brief check and complete the physical bounds of variables
+    void checkAndComplePhysicalBoundsDeclaration();
+    /*!
+     * \return a variable description associated with the given
+     * external name.
+     * \param[in] n: external name.
+     */
+    const VariableDescription& getVariableDescriptionByExternalName(
+        const std::string&) const;
     //! \brief destructor
     ~MaterialPropertyDescription();
     //! \brief use quantities if available

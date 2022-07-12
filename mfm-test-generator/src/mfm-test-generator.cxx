@@ -487,7 +487,7 @@ namespace mfmtg {
     //! \brief test name (required for madnex files)
     std::string test;
 #endif /* MADNEX_MFM_TEST_GENERATOR_TEST_SUPPORT */
-  };  // end of MFMTestGenerator
+  };   // end of MFMTestGenerator
 
 }  // end of namespace mfmtg
 

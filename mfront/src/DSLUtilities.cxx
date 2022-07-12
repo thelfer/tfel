@@ -92,9 +92,9 @@ namespace mfront {
 
   void exportStringSymbol(std::ostream& os,
                           const std::string& n,
-                          const std::string& v){
+                          const std::string& v) {
     exportSymbol(os, "const char*", n, '"' + v + '"');
-  } // end of exportStringSymbol
+  }  // end of exportStringSymbol
 
   void exportUnsignedShortSymbol(std::ostream& os,
                                  const std::string& n,
@@ -193,15 +193,14 @@ namespace mfront {
   void exportArrayOfIntegersSymbol(std::ostream& os,
                                    const std::string& s,
                                    const std::vector<int>& values) {
-
     if (values.empty()) {
       exportSymbol(os, "const int *", s, "nullptr");
       return;
     }
     auto i = decltype(values.size()){};
     auto p = values.begin();
-    os << "MFRONT_EXPORT_ARRAY_OF_SYMBOLS(int, " << s << ", "
-       << values.size() << ", MFRONT_EXPORT_ARRAY_ARGUMENTS(";
+    os << "MFRONT_EXPORT_ARRAY_OF_SYMBOLS(int, " << s << ", " << values.size()
+       << ", MFRONT_EXPORT_ARRAY_ARGUMENTS(";
     while (p != values.end()) {
       os << *p;
       if (++p != values.end()) {
@@ -442,8 +441,8 @@ namespace mfront {
   }  // end of writeInterfaceSymbol
 
   void writeLawSymbol(std::ostream& out,
-                           const std::string& n,
-                           const std::string& l) {
+                      const std::string& n,
+                      const std::string& l) {
     exportStringSymbol(out, n + "_mfront_law", l);
   }  // end of writeLawSymbol
 
@@ -454,7 +453,7 @@ namespace mfront {
       exportStringSymbol(out, n + "_mfront_material", m);
     }
   }  // end of writeMaterialSymbol
-  
+
   void writeMaterialKnowledgeTypeSymbol(std::ostream& out,
                                         const std::string& n,
                                         const MaterialKnowledgeType& t) {

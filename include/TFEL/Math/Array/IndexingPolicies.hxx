@@ -118,8 +118,8 @@ namespace tfel::math {
    * `IndexingPoliciesCompatiblityCheck::runtimeTimeCheck`.
    */
   template <typename IndexingPolicy1, typename IndexingPolicy2>
-  TFEL_HOST_DEVICE constexpr bool areIndexingPoliciesCompatibleAtRunTime(const IndexingPolicy1&,
-                                                        const IndexingPolicy2&);
+  TFEL_HOST_DEVICE constexpr bool areIndexingPoliciesCompatibleAtRunTime(
+      const IndexingPolicy1&, const IndexingPolicy2&);
 
   /*!
    * \brief check if two indexing policies are compatible at runtime.

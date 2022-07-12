@@ -33,8 +33,9 @@ namespace mfront {
 
   template <typename T>
   constexpr bool isMaterialKnowledgeAttributeType() {
-    return tfel::meta::TLCountNbrOfT<
-               T, MaterialKnowledgeAttributeTypes>::value == 1;
+    return tfel::meta::TLCountNbrOfT<T,
+                                     MaterialKnowledgeAttributeTypes>::value ==
+           1;
   }  // end of isMaterialKnowledgeAttributeType
 
 }  // end of namespace mfront

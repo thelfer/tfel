@@ -64,7 +64,9 @@ namespace tfel::utilities {
         return CxxTokenizer::readString(p, pe);
       }();
       CxxTokenizer::readSpecifiedToken("Data::read_map", ":", p, pe);
+      CxxTokenizer::checkNotEndOfLine("Data::read_map", p, pe);
       const auto v = Data::read(p, pe, o);
+      CxxTokenizer::checkNotEndOfLine("Data::read_map", p, pe);
       if (p->value == ",") {
         CxxTokenizer::readSpecifiedToken("Data::read_map", ",", p, pe);
         CxxTokenizer::checkNotEndOfLine("Data::read_map", p, pe);
@@ -318,8 +320,7 @@ namespace tfel::utilities {
       }
       return e;
     }  // end of apply
-    static bool apply(const DataMap& v1,
-                      const DataMap& v2) {
+    static bool apply(const DataMap& v1, const DataMap& v2) {
       bool e = true;
       if (v1.size() != v2.size()) {
         return false;
@@ -400,7 +401,7 @@ namespace tfel::utilities {
         std::string{n} + "'is not the expected one");
   }  // end of raiseUnmatchedParameterType
 
-  const Data& get(const DataMap& m, std::string_view n){
+  const Data& get(const DataMap& m, std::string_view n) {
     const auto i = m.find(n);
     if (i == m.end()) {
       auto msg = std::string{"Datas::get: parameter '"};

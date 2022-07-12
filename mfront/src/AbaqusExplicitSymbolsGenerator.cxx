@@ -29,8 +29,7 @@ namespace mfront {
       const BehaviourDescription&,
       const FileDescription&,
       const std::string&,
-      const Hypothesis) const {
-  }  // end of writeAdditionalSymbols
+      const Hypothesis) const {}  // end of writeAdditionalSymbols
 
   void AbaqusExplicitSymbolsGenerator::writeSpecificSymbols(
       std::ostream& out,

@@ -41,39 +41,40 @@ namespace mfront {
         const BehaviourDescription &,
         const std::string &) const override;
     void writeInterfaceSpecificIncludes(
-        std::ostream&, const BehaviourDescription&) const override;
+        std::ostream &, const BehaviourDescription &) const override;
     std::pair<bool, tokens_iterator> treatKeyword(
-        BehaviourDescription&,
-        const std::string&,
-        const std::vector<std::string>&,
+        BehaviourDescription &,
+        const std::string &,
+        const std::vector<std::string> &,
         tokens_iterator,
         const tokens_iterator) override;
-    void endTreatment(const BehaviourDescription&,
-                      const FileDescription&) const override;
-    void getTargetsDescription(TargetsDescription&,
-                               const BehaviourDescription&) override;
+    void endTreatment(const BehaviourDescription &,
+                      const FileDescription &) const override;
+    void getTargetsDescription(TargetsDescription &,
+                               const BehaviourDescription &) override;
     //! destructor
     ~CyranoInterface() override;
 
    protected:
     static int getModellingHypothesisIdentifier(const Hypothesis);
 
-    std::string getLibraryName(const BehaviourDescription&) const override;
+    std::string getLibraryName(const BehaviourDescription &) const override;
 
     std::string getInterfaceName() const override;
 
-    std::string getFunctionNameBasis(const std::string&) const override;
+    std::string getFunctionNameBasis(const std::string &) const override;
 
-    std::string getBehaviourName(const std::string&, const std::string&) const;
+    std::string getBehaviourName(const std::string &,
+                                 const std::string &) const;
 
-    virtual std::string getUmatFunctionName(const std::string&,
-                                            const std::string&) const;
+    virtual std::string getUmatFunctionName(const std::string &,
+                                            const std::string &) const;
 
     void writeMTestFileGeneratorSetModellingHypothesis(
-        std::ostream&) const override;
+        std::ostream &) const override;
 
-    virtual void writeCyranoFunctionDeclaration(std::ostream&,
-                                                const std::string&) const;
+    virtual void writeCyranoFunctionDeclaration(std::ostream &,
+                                                const std::string &) const;
     /*!
      * \brief write the standard cyrano function
      * \param[in] out : ouptut file
@@ -82,9 +83,10 @@ namespace mfront {
      *                   and the behaviour name)
      * \param[in] mb  : behaviour description
      */
-    virtual void writeStandardCyranoFunction(std::ostream&,
-                                             const std::string&,
-                                             const BehaviourDescription&) const;
+    virtual void writeStandardCyranoFunction(
+        std::ostream &,
+        const std::string &,
+        const BehaviourDescription &) const;
 
     /*!
      * \brief write the cyrano function for behaviour based on the Hencky strain
@@ -96,7 +98,9 @@ namespace mfront {
      * \param[in] mb  : behaviour description
      */
     virtual void writeLogarithmicStrainCyranoFunction(
-        std::ostream&, const std::string&, const BehaviourDescription&) const;
+        std::ostream &,
+        const std::string &,
+        const BehaviourDescription &) const;
 
     /*!
      * \brief write a  specialisation of the CyranoTraits class
@@ -104,13 +108,13 @@ namespace mfront {
      * \param[in] mb  : behaviour description
      * \param[in] h   : modelling hypothesis
      */
-    virtual void writeCyranoBehaviourTraits(std::ostream&,
-                                            const BehaviourDescription&,
+    virtual void writeCyranoBehaviourTraits(std::ostream &,
+                                            const BehaviourDescription &,
                                             const Hypothesis) const;
 
     std::string getModellingHypothesisTest(const Hypothesis) const override;
     std::set<Hypothesis> getModellingHypothesesToBeTreated(
-        const BehaviourDescription&) const override;
+        const BehaviourDescription &) const override;
     //
     bool useTimeSubStepping;
 

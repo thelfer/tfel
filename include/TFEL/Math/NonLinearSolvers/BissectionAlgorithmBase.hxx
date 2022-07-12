@@ -76,7 +76,8 @@ namespace tfel::math {
     /*!
      * \brief return the current state of the bissection algorithm
      */
-    TFEL_HOST_DEVICE const BissectionAlgorithmData<NumericType>& getData() const;
+    TFEL_HOST_DEVICE const BissectionAlgorithmData<NumericType>& getData()
+        const;
 
    private:
     /*!
@@ -84,7 +85,8 @@ namespace tfel::math {
      * \param[in] a: first number
      * \param[in] b: second number
      */
-    TFEL_HOST_DEVICE static bool haveSameSign(const NumericType, const NumericType);
+    TFEL_HOST_DEVICE static bool haveSameSign(const NumericType,
+                                              const NumericType);
 
   };  // end of struct BissectionAlgorithmBase
 

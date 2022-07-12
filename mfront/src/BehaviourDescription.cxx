@@ -28,7 +28,6 @@
 #include "MFront/DSLBase.hxx"
 #include "MFront/BehaviourDescription.hxx"
 
-
 namespace mfront {
 
   const char* const BehaviourDescription::
@@ -485,6 +484,16 @@ namespace mfront {
     }
     this->setAttribute(uh, BehaviourData::allowsNewUserDefinedVariables, false);
   }  // end of disallowNewUserDefinedVariables
+
+  void BehaviourDescription::checkAndComplePhysicalBoundsDeclaration() {
+    if (this->hasUnitSystem()) {
+      this->d.checkAndComplePhysicalBoundsDeclaration(this->getUnitSystem());
+      for (const auto& bd : this->sd) {
+        bd.second->checkAndComplePhysicalBoundsDeclaration(
+            this->getUnitSystem());
+      }
+    }
+  }  // end of checkAndComplePhysicalBoundsDeclaration
 
   void BehaviourDescription::throwUndefinedAttribute(const std::string& n) {
     tfel::raise(
@@ -3260,7 +3269,7 @@ namespace mfront {
       parameters.insert(params.begin(), params.end());
     }
     return parameters;
-  } // end of getOverridenParameters
+  }  // end of getOverridenParameters
 
   BehaviourDescription::~BehaviourDescription() = default;
 

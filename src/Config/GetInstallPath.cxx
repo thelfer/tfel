@@ -91,13 +91,13 @@ namespace tfel {
   std::string getTFELExecutableName(const std::string& n) {
 #ifdef _WIN32
 #ifdef TFEL_APPEND_SUFFIX
-    return n+"-" TFEL_SUFFIX ".exe";
+    return n + "-" TFEL_SUFFIX ".exe";
 #else  /* TFEL_APPEND_SUFFIX */
-    return n+".exe";
+    return n + ".exe";
 #endif /* TFEL_APPEND_SUFFIX */
 #else  /* WIN32 */
 #ifdef TFEL_APPEND_SUFFIX
-    return n+"-" TFEL_SUFFIX;
+    return n + "-" TFEL_SUFFIX;
 #else  /* TFEL_APPEND_SUFFIX */
     return n;
 #endif /* TFEL_APPEND_SUFFIX */

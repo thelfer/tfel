@@ -1,13 +1,9 @@
 ---
-title: A description of the compilation process used by `MFront` and the available options to control this process
+title: Compilation process used by `MFront`
 author: Thomas Helfer, Maxence Wangermez
 date: 1/07/2020
 lang: en-EN
 link-citations: true
-colorlinks: true
-geometry:
-  - margin=2cm
-papersize: a4
 figPrefixTemplate: "$$i$$"
 tblPrefixTemplate: "$$i$$"
 secPrefixTemplate: "$$i$$"

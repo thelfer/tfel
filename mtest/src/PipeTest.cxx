@@ -1475,7 +1475,8 @@ namespace mtest {
   }  // end of computeMinimumAndMaximumValues
 
   std::pair<real, real> PipeTest::computeMinimumAndMaximumValues(
-      const StudyCurrentState& state, const std::function<real(const mtest::CurrentState&)>& e) const {
+      const StudyCurrentState& state,
+      const std::function<real(const mtest::CurrentState&)>& e) const {
     // current pipe state
     auto& scs = state.getStructureCurrentState("");
     auto vmin = std::numeric_limits<real>::max();
@@ -1534,8 +1535,9 @@ namespace mtest {
     return this->computeMinimumAndMaximumValues(state, g).first;
   }  // end of computeMaximumValue
 
-  real PipeTest::computeMinimumValue(const StudyCurrentState& state,
-                                     const std::function<real(const mtest::CurrentState&)>& e) const {
+  real PipeTest::computeMinimumValue(
+      const StudyCurrentState& state,
+      const std::function<real(const mtest::CurrentState&)>& e) const {
     return this->computeMinimumAndMaximumValues(state, e).first;
   }  // end of computeMaximumValue
 
@@ -1545,19 +1547,21 @@ namespace mtest {
     return this->computeMinimumAndMaximumValues(state, g).second;
   }  // end of computeMaximumValue
 
-  real PipeTest::computeMaximumValue(const StudyCurrentState& state,
-                                     const std::function<real(const mtest::CurrentState&)>& e) const {
+  real PipeTest::computeMaximumValue(
+      const StudyCurrentState& state,
+      const std::function<real(const mtest::CurrentState&)>& e) const {
     return this->computeMinimumAndMaximumValues(state, e).second;
   }  // end of computeMaximumValue
 
   real PipeTest::computeIntegralValue(const StudyCurrentState& state,
                                       const std::string& n) const {
     auto g = buildValueExtractor(*(this->b), n);
-    return this->computeIntegralValue(state,g);
+    return this->computeIntegralValue(state, g);
   }  // end of computeIntegralValue
 
-  real PipeTest::computeIntegralValue(const StudyCurrentState& state,
-                                      const std::function<real(const mtest::CurrentState&)>& e) const {
+  real PipeTest::computeIntegralValue(
+      const StudyCurrentState& state,
+      const std::function<real(const mtest::CurrentState&)>& e) const {
     // extract the field values
     auto& scs = state.getStructureCurrentState("");
     auto values = tfel::math::vector<real>{};

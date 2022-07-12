@@ -28,7 +28,7 @@ namespace mfront {
    * \brief a base class for material properties' interfaces such as the
    * `cyrano` and `generic` interfaces.
    */
-  struct  MFRONT_VISIBILITY_EXPORT GenericMaterialPropertyInterfaceBase
+  struct MFRONT_VISIBILITY_EXPORT GenericMaterialPropertyInterfaceBase
       : public AbstractMaterialPropertyInterface {
     //! \brief default constructor
     GenericMaterialPropertyInterfaceBase();

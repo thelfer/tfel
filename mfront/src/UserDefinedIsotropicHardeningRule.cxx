@@ -53,8 +53,8 @@ namespace mfront::bbrick {
     const auto& opts = this->getOptions();
     for (const auto& opt : d) {
       if ((opt.first == "p")) {
-        tfel::raise("UserDefinedIsotropicHardeningRule::initialize: '" + opt.first +
-                    "' is not a valid option");
+        tfel::raise("UserDefinedIsotropicHardeningRule::initialize: '" +
+                    opt.first + "' is not a valid option");
       }
       if (std::any_of(opts.begin(), opts.end(),
                       [&opt](const OptionDescription& o) {
@@ -69,7 +69,8 @@ namespace mfront::bbrick {
             "unexpected option '" +
             opt.first + "'");
       }
-      const auto opt_id = IsotropicHardeningRule::getVariableId(opt.first, fid, id);
+      const auto opt_id =
+          IsotropicHardeningRule::getVariableId(opt.first, fid, id);
       auto mp =
           getBehaviourDescriptionMaterialProperty(dsl, opt.first, opt.second);
       declareParameterOrLocalVariable(bd, mp, "real", opt_id);

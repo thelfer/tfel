@@ -673,17 +673,16 @@ namespace mtest {
     this->checkNotEndOfLine("PipeTestParser::handleAdditionalOutputs", p,
                             this->tokens.end());
     auto generate_function = [&t](const std::string& n) {
-      return
-          [&t, n = n](const Data& v) {
-            if (v.is<std::string>()) {
-              t.addOutput(n, v.get<std::string>());
-            } else {
-              for (const auto& f :
-                   tfel::utilities::convert<std::vector<std::string>>(v)) {
-                t.addOutput(n, f);
-              }
-            }
-          };
+      return [&t, n = n](const Data& v) {
+        if (v.is<std::string>()) {
+          t.addOutput(n, v.get<std::string>());
+        } else {
+          for (const auto& f :
+               tfel::utilities::convert<std::vector<std::string>>(v)) {
+            t.addOutput(n, f);
+          }
+        }
+      };
     };
     tfel::utilities::Data::parse(
         p, this->tokens.end(),

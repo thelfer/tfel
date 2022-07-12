@@ -32,22 +32,22 @@ namespace mfront {
   struct MFRONT_VISIBILITY_EXPORT VariableBoundsDescription {
     //! \brief bounds type
     enum BoundsType { LOWER, UPPER, LOWERANDUPPER };  // end of enum BoundsType
-    //! default constructor
+    //! \brief default constructor
     VariableBoundsDescription() = default;
-    //! copy constructor
+    //! \brief copy constructor
     VariableBoundsDescription(VariableBoundsDescription&&) = default;
-    //! move constructor
+    //! \brief move constructor
     VariableBoundsDescription(const VariableBoundsDescription&) = default;
-    //! move assignement
+    //! \brief move assignement
     VariableBoundsDescription& operator=(VariableBoundsDescription&&) = default;
-    //! standard assignement
+    //! \brief standard assignement
     VariableBoundsDescription& operator=(const VariableBoundsDescription&) =
         default;
     //! \return true if the bounds type is either LOWER or LOWERANDUPPER
     bool hasLowerBound() const;
     //! \return true if the bounds type is either UPPER or LOWERANDUPPER
     bool hasUpperBound() const;
-    //! destructor
+    //! \brief destructor
     ~VariableBoundsDescription() noexcept;
     //! \brief type of the bound
     BoundsType boundsType;

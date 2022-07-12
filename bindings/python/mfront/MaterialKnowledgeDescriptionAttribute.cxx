@@ -36,8 +36,7 @@ void declareMaterialKnowledgeAttribute() {
   using namespace boost::python;
   using namespace mfront;
   using namespace tfel::python;
-  class_<MaterialKnowledgeAttribute> w(
-      "MaterialKnowledgeAttribute");
+  class_<MaterialKnowledgeAttribute> w("MaterialKnowledgeAttribute");
   add_def<bool>(w, "Bool");
   add_def<unsigned short>(w, "UnsignedShort");
   add_def<std::string>(w, "String");

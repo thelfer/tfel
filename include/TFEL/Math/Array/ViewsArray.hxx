@@ -130,7 +130,8 @@ namespace tfel::math {
     //! \brief type of the pointer to the underlying data
     using data_pointer_type = ViewsArrayDataPointerType<MappedType>;
     //! brief default constructor
-    explicit TFEL_HOST_DEVICE constexpr ViewsArray(const data_pointer_type p) noexcept
+    explicit TFEL_HOST_DEVICE constexpr ViewsArray(
+        const data_pointer_type p) noexcept
         : data_pointer(p) {
       static_assert(MemoryIndexingPolicyType::hasFixedSizes, "invalid call");
     }
@@ -138,8 +139,8 @@ namespace tfel::math {
      * \brief constructor from an indexing policy
      * \param[in] p: indexing policy
      */
-    explicit TFEL_HOST_DEVICE constexpr ViewsArray(const data_pointer_type p,
-                                  const MemoryIndexingPolicyType& mp) noexcept
+    explicit TFEL_HOST_DEVICE constexpr ViewsArray(
+        const data_pointer_type p, const MemoryIndexingPolicyType& mp) noexcept
         : data_pointer(p), MemoryIndexingPolicyType(mp) {
       static_assert(!MemoryIndexingPolicyType::hasFixedSizes, "invalid call");
     }

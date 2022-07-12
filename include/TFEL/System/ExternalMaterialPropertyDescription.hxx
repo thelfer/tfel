@@ -37,9 +37,11 @@ namespace tfel::system {
     //! \brief move constructor
     ExternalMaterialPropertyDescription(ExternalMaterialPropertyDescription&&);
     //! \brief move constructor
-    ExternalMaterialPropertyDescription(const ExternalMaterialPropertyDescription&);
+    ExternalMaterialPropertyDescription(
+        const ExternalMaterialPropertyDescription&);
     //! \brief move assignement
-    ExternalMaterialPropertyDescription& operator=(ExternalMaterialPropertyDescription&&);
+    ExternalMaterialPropertyDescription& operator=(
+        ExternalMaterialPropertyDescription&&);
     //! \brief standard assignement
     ExternalMaterialPropertyDescription& operator=(
         const ExternalMaterialPropertyDescription&);

@@ -39,21 +39,21 @@
 
 #ifdef MADNEX_MTEST_TEST_SUPPORT
 
-  static std::tuple<std::string,  // file
-                    std::string,  // material
-                    std::string,  // behaviour
-                    std::string>  // test
-  decomposeMadnexPath(const std::string& p) {
-    using result_type =
-        std::tuple<std::string, std::string, std::string, std::string>;
-    const auto details = tfel::utilities::tokenize(p, ':', true);
-    if (details.size() != 5) {
-      tfel::raise("decomposeMadnexPath: invalid path '" + p + "'");
-    }
-    const auto mid = details[2] == "<none>" ? "" : details[2];
-    return result_type{std::move(details[1]), std::move(mid),
-                       std::move(details[3]), std::move(details[4])};
-  }  // end of decomposeMadnexPath
+static std::tuple<std::string,  // file
+                  std::string,  // material
+                  std::string,  // behaviour
+                  std::string>  // test
+decomposeMadnexPath(const std::string& p) {
+  using result_type =
+      std::tuple<std::string, std::string, std::string, std::string>;
+  const auto details = tfel::utilities::tokenize(p, ':', true);
+  if (details.size() != 5) {
+    tfel::raise("decomposeMadnexPath: invalid path '" + p + "'");
+  }
+  const auto mid = details[2] == "<none>" ? "" : details[2];
+  return result_type{std::move(details[1]), std::move(mid),
+                     std::move(details[3]), std::move(details[4])};
+}  // end of decomposeMadnexPath
 
 #endif /* MADNEX_MTEST_TEST_SUPPORT */
 

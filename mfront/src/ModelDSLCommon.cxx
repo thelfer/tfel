@@ -169,6 +169,10 @@ namespace mfront {
                             "unknown variable '" + n + "'");
   }  // end of getIntegerConstant
 
+  void ModelDSLCommon::setUnitSystem(const std::string_view s) {
+    this->md.setUnitSystem(s);
+  }  // end of setUnitSystem
+
   void ModelDSLCommon::setMaterial(const std::string& m) {
     if (!this->md.material.empty()) {
       this->throwRuntimeError("ModelDSLCommon::setMaterial",

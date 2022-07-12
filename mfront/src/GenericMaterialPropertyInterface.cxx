@@ -17,7 +17,8 @@ namespace mfront {
 
   std::string GenericMaterialPropertyInterface::getName() { return "generic"; }
 
-  GenericMaterialPropertyInterface::GenericMaterialPropertyInterface() = default;
+  GenericMaterialPropertyInterface::GenericMaterialPropertyInterface() =
+      default;
 
   GenericMaterialPropertyInterface::TypesDescription
   GenericMaterialPropertyInterface::getTypesDescription() const {
@@ -36,7 +37,7 @@ namespace mfront {
   }  // end of getInterfaceHeaderFiles
 
   std::string GenericMaterialPropertyInterface::getInterfaceName() const {
-return GenericMaterialPropertyInterface::getName();
+    return GenericMaterialPropertyInterface::getName();
   }  // end of getInterfaceName
 
   std::string GenericMaterialPropertyInterface::getInterfaceNameInCamelCase()
@@ -55,6 +56,7 @@ return GenericMaterialPropertyInterface::getName();
     return "GENERIC_MATERIALPROPERTY";
   }  // end of getOutOfBoundsPolicyEnumerationPrefix
 
-  GenericMaterialPropertyInterface::~GenericMaterialPropertyInterface() = default;
+  GenericMaterialPropertyInterface::~GenericMaterialPropertyInterface() =
+      default;
 
 }  // end of namespace mfront

@@ -36,7 +36,7 @@ namespace mfront {
   std::shared_ptr<NonLinearSystemSolver>
   NonLinearSystemSolverFactory::getSolver(const std::string& a) const {
     const auto p = this->constructors.find(a);
-    if(p == this->constructors.end()){
+    if (p == this->constructors.end()) {
       auto msg = std::string{"NonLinearSystemSolverFactory::getSolver: "};
       msg += "no solver '" + a + "' registred.\n";
       msg += "Available solvers are:";

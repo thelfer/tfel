@@ -33,6 +33,7 @@
 #include "MFront/FileDescription.hxx"
 #include "MFront/TargetsDescription.hxx"
 #include "MFront/BehaviourDescription.hxx"
+#include "MFront/QueryUtilities.hxx"
 #include "MFront/BehaviourQuery.hxx"
 
 namespace mfront {
@@ -939,15 +940,7 @@ namespace mfront {
         const auto& p = bd.getVariableDescriptionByExternalName(n);
         const auto& b =
             std::get<1>(vn) ? p.getBounds(std::get<2>(vn)) : p.getBounds();
-        if (b.boundsType == VariableBoundsDescription::LOWER) {
-          cout << "Lower\n";
-        } else if (b.boundsType == VariableBoundsDescription::UPPER) {
-          cout << "Upper\n";
-        } else if (b.boundsType == VariableBoundsDescription::LOWERANDUPPER) {
-          cout << "LowerAndUpper\n";
-        } else {
-          tfel::raise("unsupported bounds type");
-        }
+        displayBounds(cout, b);
       };
       this->queries.push_back({"bounds-type", l});
     } else if (qn == "--bounds-value") {
@@ -959,15 +952,7 @@ namespace mfront {
         const auto& p = bd.getVariableDescriptionByExternalName(n);
         const auto& b =
             std::get<1>(vn) ? p.getBounds(std::get<2>(vn)) : p.getBounds();
-        if (b.boundsType == VariableBoundsDescription::LOWER) {
-          cout << "[" << b.lowerBound << ":*[\n";
-        } else if (b.boundsType == VariableBoundsDescription::UPPER) {
-          cout << "]*:" << b.upperBound << "]\n";
-        } else if (b.boundsType == VariableBoundsDescription::LOWERANDUPPER) {
-          cout << "[" << b.lowerBound << ":" << b.upperBound << "]\n";
-        } else {
-          tfel::raise("unsupported bounds type");
-        }
+        displayBoundsValue(cout, b);
       };
       this->queries.push_back({"bounds-value", l});
     } else if (qn == "--has-physical-bounds") {
@@ -994,15 +979,7 @@ namespace mfront {
         const auto& p = bd.getVariableDescriptionByExternalName(n);
         const auto& b = (std::get<1>(vn) ? p.getPhysicalBounds(std::get<2>(vn))
                                          : p.getPhysicalBounds());
-        if (b.boundsType == VariableBoundsDescription::LOWER) {
-          cout << "Lower\n";
-        } else if (b.boundsType == VariableBoundsDescription::UPPER) {
-          cout << "Upper\n";
-        } else if (b.boundsType == VariableBoundsDescription::LOWERANDUPPER) {
-          cout << "LowerAndUpper\n";
-        } else {
-          tfel::raise("unsupported physical bounds type");
-        }
+        displayBounds(cout, b);
       };
       this->queries.push_back({"physical-bounds-type", l});
     } else if (qn == "--physical-bounds-value") {
@@ -1014,15 +991,7 @@ namespace mfront {
         const auto& p = bd.getVariableDescriptionByExternalName(n);
         const auto& b = (std::get<1>(vn) ? p.getPhysicalBounds(std::get<2>(vn))
                                          : p.getPhysicalBounds());
-        if (b.boundsType == VariableBoundsDescription::LOWER) {
-          cout << "[" << b.lowerBound << ":*[\n";
-        } else if (b.boundsType == VariableBoundsDescription::UPPER) {
-          cout << "]*:" << b.upperBound << "]\n";
-        } else if (b.boundsType == VariableBoundsDescription::LOWERANDUPPER) {
-          cout << "[" << b.lowerBound << ":" << b.upperBound << "]\n";
-        } else {
-          tfel::raise("unsupported bounds type");
-        }
+        displayBoundsValue(cout, b);
       };
       this->queries.push_back({"physical-bounds-value", l});
     } else if (qn == "--parameter-type") {

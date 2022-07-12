@@ -174,7 +174,7 @@ namespace mfront {
         }
       }
     }
-  } // end of writeAssignMaterialPropertyParameters
+  }  // end of writeAssignMaterialPropertyParameters
 
   std::string getMaterialPropertyParametersHandlerClassName(
       const std::string& n) {

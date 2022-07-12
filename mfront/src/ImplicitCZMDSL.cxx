@@ -21,8 +21,9 @@
 
 namespace mfront {
 
-  ImplicitCZMDSL::ImplicitCZMDSL(const DSLOptions& opts) : ImplicitDSLBase(opts) {
-//    const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+  ImplicitCZMDSL::ImplicitCZMDSL(const DSLOptions& opts)
+      : ImplicitDSLBase(opts) {
+    //    const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     this->mb.setDSLName("ImplicitCZM");
     this->mb.declareAsACohesiveZoneModel();
     this->registerNewCallBack("@ComputeCohesizeForce",

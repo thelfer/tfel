@@ -486,7 +486,7 @@ namespace mfront {
 
   template <typename CallBack>
   static void parseDSLOptionsFile(const CallBack& callback,
-                                 const std::string& f) {
+                                  const std::string& f) {
     std::ifstream ifs(f);
     if (!ifs) {
       tfel::raise("parseDSLOptionsFile: can't open file '" + f + "'");

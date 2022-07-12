@@ -175,8 +175,8 @@ namespace tfel::math {
       static_assert(hasFixedSizes, "invalid constructor call");
     }  // end of View
     //! \brief default constructor
-    explicit TFEL_HOST_DEVICE constexpr View(const data_pointer_type p,
-                            const IndexingPolicyType& i) noexcept
+    explicit TFEL_HOST_DEVICE constexpr View(
+        const data_pointer_type p, const IndexingPolicyType& i) noexcept
         : selectViewArrayBase<MappedType, IndexingPolicyType>(i),
           data_pointer(p) {
       static_assert(!hasFixedSizes, "invalid constructor call");
@@ -222,8 +222,9 @@ namespace tfel::math {
      * \param[in] src: array to be assigned
      */
     template <typename OtherArray>
-    TFEL_HOST_DEVICE constexpr std::enable_if_t<isAssignableTo<OtherArray, MappedType>(), View&>
-    operator=(const OtherArray& src) {
+    TFEL_HOST_DEVICE constexpr std::
+        enable_if_t<isAssignableTo<OtherArray, MappedType>(), View&>
+        operator=(const OtherArray& src) {
       static_assert(!is_const, "invalid call");
       //       checkIndexingPoliciesRuntimeCompatiblity(this->getIndexingPolicy(),
       //                                                src.getIndexingPolicy());
@@ -232,8 +233,9 @@ namespace tfel::math {
     }
     //
     template <typename OtherArray>
-    TFEL_HOST_DEVICE constexpr std::enable_if_t<isAssignableTo<OtherArray, MappedType>(), View&>
-    operator+=(const OtherArray& src) {
+    TFEL_HOST_DEVICE constexpr std::
+        enable_if_t<isAssignableTo<OtherArray, MappedType>(), View&>
+        operator+=(const OtherArray& src) {
       static_assert(!is_const, "invalid call");
       //       checkIndexingPoliciesRuntimeCompatiblity(this->getIndexingPolicy(),
       //                                                src.getIndexingPolicy());
@@ -242,8 +244,9 @@ namespace tfel::math {
     }
     //
     template <typename OtherArray>
-    TFEL_HOST_DEVICE constexpr std::enable_if_t<isAssignableTo<OtherArray, MappedType>(), View&>
-    operator-=(const OtherArray& src) {
+    TFEL_HOST_DEVICE constexpr std::
+        enable_if_t<isAssignableTo<OtherArray, MappedType>(), View&>
+        operator-=(const OtherArray& src) {
       static_assert(!is_const, "invalid call");
       //       checkIndexingPoliciesRuntimeCompatiblity(this->getIndexingPolicy(),
       //                                                src.getIndexingPolicy());

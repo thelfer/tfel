@@ -1,6 +1,6 @@
 /*!
  * \file   mfront/src/GlobalDomainSpecificLanguageOptionsManager.cxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   17/01/2022
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
@@ -26,7 +26,7 @@ namespace mfront {
       tfel::raise("add_option: option '" + o + "' already defined");
     }
     options.insert({o, v});
-  } // end of add_option
+  }  // end of add_option
 
   static void add_option(tfel::utilities::DataMap& options,
                          const std::string& o,
@@ -35,20 +35,20 @@ namespace mfront {
     t.parseString(v);
     auto b = t.begin();
     add_option(options, o, tfel::utilities::Data::read(b, t.end()));
-  } // end of add_option
+  }  // end of add_option
 
   GlobalDomainSpecificLanguageOptionsManager&
   GlobalDomainSpecificLanguageOptionsManager::get() {
     static GlobalDomainSpecificLanguageOptionsManager m;
     return m;
-  } // end of get
+  }  // end of get
 
   void GlobalDomainSpecificLanguageOptionsManager::addDSLOption(
       const std::string& n, const std::string& v) {
     this->addMaterialPropertyDSLOption(n, v);
     this->addBehaviourDSLOption(n, v);
     this->addModelDSLOption(n, v);
-  } // end of addDSLOption
+  }  // end of addDSLOption
 
   void GlobalDomainSpecificLanguageOptionsManager::addMaterialPropertyDSLOption(
       const std::string& n, const std::string& v) {
@@ -86,7 +86,7 @@ namespace mfront {
     this->addMaterialPropertyDSLOption(n, d);
     this->addBehaviourDSLOption(n, d);
     this->addModelDSLOption(n, d);
-  } // end of addDSLOption
+  }  // end of addDSLOption
 
   void GlobalDomainSpecificLanguageOptionsManager::addMaterialPropertyDSLOption(
       const std::string& n, const tfel::utilities::Data& d) {
@@ -115,8 +115,7 @@ namespace mfront {
   }  // end of getBehaviourDSLOptions
 
   tfel::utilities::DataMap
-  GlobalDomainSpecificLanguageOptionsManager::getModelDSLOptions()
-      const {
+  GlobalDomainSpecificLanguageOptionsManager::getModelDSLOptions() const {
     return this->model_dsl_options;
   }  // end of getModelDSLOptions
 

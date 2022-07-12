@@ -37,9 +37,8 @@ void declareExternalMaterialPropertyDescription() {
       .def(init<std::string, std::string>())
       .def_readonly("law", &ExternalMaterialPropertyDescription::law)
       .def_readonly("material_property",
-		    &ExternalMaterialPropertyDescription::material_property)
-      .def_readonly("output",
-		    &ExternalMaterialPropertyDescription::output)
+                    &ExternalMaterialPropertyDescription::material_property)
+      .def_readonly("output", &ExternalMaterialPropertyDescription::output)
       .add_property("arguments", &get_args)
       .add_property("parameters", &get_parameters)
       .def("hasBounds", &ExternalMaterialPropertyDescription::hasBounds)

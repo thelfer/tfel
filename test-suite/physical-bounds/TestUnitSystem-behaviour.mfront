@@ -1,0 +1,6 @@
+@DSL DefaultModel;
+@Model TestUnitSystem;
+@UnitSystem SI;
+@StateVariable real f;
+f.setGlossaryName("Porosity");
+@Integrator{};

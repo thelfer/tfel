@@ -37,6 +37,7 @@ namespace mfront {
 
   /*!
    * This structure gathers various behaviour characteristic
+   * for a given modelling hypothesis
    */
   struct MFRONT_VISIBILITY_EXPORT BehaviourData
       : public MaterialKnowledgeDescription,
@@ -323,6 +324,11 @@ namespace mfront {
     //! \return the list of overriden parameters
     std::map<std::string, double> getOverridenParameters() const;
     /*!
+     * \brief check and complete the physical bounds of variables
+     * \param[in] s: unit system
+     */
+    void checkAndComplePhysicalBoundsDeclaration(const std::string_view);
+    /*!
      * This method has been introduced to optimize the mechanical
      * resolution in licos : a purely implicit resolution only
      * evaluate external loadings at the end of the time step. This
@@ -481,7 +487,8 @@ namespace mfront {
     /*!
      * \param[in] n: external name
      */
-    const VariableDescription& getInitializeFunctionVariableDescriptionByExternalName(
+    const VariableDescription&
+    getInitializeFunctionVariableDescriptionByExternalName(
         const std::string&) const;
     /*!
      * \param[in] n: external name

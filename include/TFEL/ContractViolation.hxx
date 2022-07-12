@@ -25,7 +25,7 @@ namespace tfel {
 #ifndef TFEL_NO_REPORT_CONTRACT_VIOLATION
   TFEL_HOST [[noreturn]] TFEL_VISIBILITY_EXPORT void reportContractViolation(
       const char* const msg);
-#else /* TFEL_NO_REPORT_CONTRACT_VIOLATION */
+#else  /* TFEL_NO_REPORT_CONTRACT_VIOLATION */
   TFEL_DEVICE constexpr void reportContractViolation(const char* const) {
   }  // end of reportContractViolation
 #endif /* TFEL_NO_REPORT_CONTRACT_VIOLATION */

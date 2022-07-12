@@ -40,10 +40,10 @@ namespace mfront {
        << "using tfel::math::result_type;\n"
        << "using tfel::math::derivative_type;\n";
     if (areQuantitiesSupported) {
-      os << "using PhysicalConstants = "
+      os << "using PhysicalConstants [[maybe_unused]] = "
          << "tfel::PhysicalConstants<" << numeric_type << ", true>;\n";
     } else {
-      os << "using PhysicalConstants = "
+      os << "using PhysicalConstants [[maybe_unused]] = "
          << "tfel::PhysicalConstants<" << numeric_type << ", false>;\n";
     }
     writeScalarStandardTypedefs(os, mpd, numeric_type, areQuantitiesSupported);
@@ -63,6 +63,16 @@ namespace mfront {
          << use_qt << ">::" << a << ";\n";
     }
   }  // end of writeScalarStandardTypedefs
+
+  MaterialPropertyDescription::MaterialPropertyDescription() = default;
+  MaterialPropertyDescription::MaterialPropertyDescription(
+      const MaterialPropertyDescription&) = default;
+  MaterialPropertyDescription::MaterialPropertyDescription(
+      MaterialPropertyDescription&&) = default;
+  MaterialPropertyDescription& MaterialPropertyDescription::operator=(
+      const MaterialPropertyDescription&) = default;
+  MaterialPropertyDescription& MaterialPropertyDescription::operator=(
+      MaterialPropertyDescription&&) = default;
 
   const VariableDescription&
   MaterialPropertyDescription::getVariableDescription(
@@ -87,7 +97,7 @@ namespace mfront {
         "- The output.\n"
         "- An input.\n"
         "- A parameter.");
-  }  // end of MaterialPropertyDescription::getVariableDescription
+  }  // end of getVariableDescription
 
   VariableDescription& MaterialPropertyDescription::getVariableDescription(
       const std::string& n) {
@@ -111,7 +121,38 @@ namespace mfront {
         "- The output.\n"
         "- An input.\n"
         "- A parameter.");
-  }  // end of MaterialPropertyDescription::getVariableDescription
+  }  // end of getVariableDescription
+
+  const VariableDescription&
+  MaterialPropertyDescription::getVariableDescriptionByExternalName(
+      const std::string& n) const {
+    auto contains = [&n](const VariableDescriptionContainer& vc) {
+      for (const auto& v : vc) {
+        if (v.getExternalName() == n) {
+          return true;
+        }
+      }
+      return false;
+    };
+    if (this->output.getExternalName() == n) {
+      return this->output;
+    }
+    if (contains(this->inputs)) {
+      return this->inputs.getVariableByExternalName(n);
+    }
+    if (contains(this->parameters)) {
+      return this->parameters.getVariableByExternalName(n);
+    }
+    tfel::raise(
+        "MaterialPropertyDescription::getVariableDescriptionByExternalName: "
+        "no variable with external name '" +
+        n +
+        "' found. "
+        "Such variable is *not*:\n"
+        "- the output\n"
+        "- an input\n"
+        "- a parameter");
+  }  // end of getVariableDescriptionByExternalName
 
   bool MaterialPropertyDescription::isParameterName(
       const std::string& n) const {
@@ -135,7 +176,7 @@ namespace mfront {
   std::vector<std::string>
   MaterialPropertyDescription::getInputVariablesExternalNames() {
     return this->inputs.getExternalNames();
-  }  // end of MaterialPropertyDescription::getInputVariablesExternalNames
+  }  // end of getInputVariablesExternalNames
 
   bool MaterialPropertyDescription::isGlossaryNameUsed(
       const std::string& g) const {
@@ -166,7 +207,7 @@ namespace mfront {
       return true;
     }
     return is_used2(this->parameters, k);
-  }  // end of MaterialPropertyDescription::isGlossaryNameUsed
+  }  // end of isGlossaryNameUsed
 
   bool MaterialPropertyDescription::isEntryNameUsed(
       const std::string& e) const {
@@ -191,7 +232,7 @@ namespace mfront {
       return true;
     }
     return is_used2(this->parameters);
-  }  // end of MaterialPropertyDescription::isEntryNameUsed
+  }  // end of isEntryNameUsed
 
   void MaterialPropertyDescription::setGlossaryName(const std::string& n,
                                                     const std::string& g) {
@@ -204,7 +245,7 @@ namespace mfront {
     throw_if(this->isGlossaryNameUsed(g),
              "glossary name '" + g + "' already used");
     this->getVariableDescription(n).setGlossaryName(g);
-  }  // end of MaterialPropertyDescription::setGlossaryName
+  }  // end of setGlossaryName
 
   void MaterialPropertyDescription::setEntryName(const std::string& n,
                                                  const std::string& e) {
@@ -216,7 +257,7 @@ namespace mfront {
     throw_if(glossary.contains(e), "'" + e + "' is a glossary name");
     throw_if(this->isEntryNameUsed(e), "entry name '" + e + "' already used");
     this->getVariableDescription(n).setEntryName(e);
-  }  // end of MaterialPropertyDescription::setEntryName
+  }  // end of setEntryName
 
   void MaterialPropertyDescription::appendToIncludes(const std::string& c) {
     this->includes += c;
@@ -225,7 +266,7 @@ namespace mfront {
         this->includes += '\n';
       }
     }
-  }  // end of MaterialPropertyDescription::appendToIncludes
+  }  // end of appendToIncludes
 
   void MaterialPropertyDescription::appendToMembers(const std::string& c) {
     this->members += c;
@@ -234,7 +275,7 @@ namespace mfront {
         this->members += '\n';
       }
     }
-  }  // end of MaterialPropertyDescription::appendToMembers
+  }  // end of appendToMembers
 
   void MaterialPropertyDescription::appendToPrivateCode(const std::string& c) {
     this->privateCode += c;
@@ -243,7 +284,7 @@ namespace mfront {
         this->privateCode += '\n';
       }
     }
-  }  // end of MaterialPropertyDescription::appendToPrivateCode
+  }  // end of appendToPrivateCode
 
   void MaterialPropertyDescription::appendToSources(const std::string& c) {
     this->sources += c;
@@ -252,14 +293,14 @@ namespace mfront {
         this->sources += '\n';
       }
     }
-  }  // end of MaterialPropertyDescription::appendToSources
+  }  // end of appendToSources
 
   void MaterialPropertyDescription::addMaterialLaw(const std::string& m) {
     if (std::find(this->materialLaws.begin(), this->materialLaws.end(), m) ==
         this->materialLaws.end()) {
       this->materialLaws.push_back(m);
     }
-  }  // end of MaterialPropertyDescription::addMaterialLaw
+  }  // end of addMaterialLaw
 
   void MaterialPropertyDescription::reserveName(const std::string& n) {
     tfel::raise_if(!this->reservedNames.insert(n).second,
@@ -272,15 +313,15 @@ namespace mfront {
     return this->reservedNames.count(n) != 0;
   }
 
-  MaterialPropertyDescription::MaterialPropertyDescription() = default;
-  MaterialPropertyDescription::MaterialPropertyDescription(
-      const MaterialPropertyDescription&) = default;
-  MaterialPropertyDescription::MaterialPropertyDescription(
-      MaterialPropertyDescription&&) = default;
-  MaterialPropertyDescription& MaterialPropertyDescription::operator=(
-      const MaterialPropertyDescription&) = default;
-  MaterialPropertyDescription& MaterialPropertyDescription::operator=(
-      MaterialPropertyDescription&&) = default;
+  void MaterialPropertyDescription::checkAndComplePhysicalBoundsDeclaration() {
+    if (this->hasUnitSystem()) {
+      const auto& s = this->getUnitSystem();
+      mfront::checkAndComplePhysicalBoundsDeclaration(this->output, s);
+      mfront::checkAndComplePhysicalBoundsDeclaration(this->inputs, s);
+      mfront::checkAndComplePhysicalBoundsDeclaration(this->parameters, s);
+    }
+  }  // end of checkAndComplePhysicalBoundsDeclaration
+
   MaterialPropertyDescription::~MaterialPropertyDescription() = default;
 
   std::string getParametersFileName(const MaterialPropertyDescription& mpd) {
@@ -288,6 +329,6 @@ namespace mfront {
       return mpd.className + "-parameters.txt";
     }
     return mpd.material + "_" + mpd.className + "-parameters.txt";
-  } // end of getParametersFileName
+  }  // end of getParametersFileName
 
 }  // end of namespace mfront

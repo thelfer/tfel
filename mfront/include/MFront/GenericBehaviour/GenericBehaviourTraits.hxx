@@ -25,9 +25,9 @@ namespace mfront::gb {
    *
    * - The `hypothesis` data member shall always be defined.
    * - For plane stress hypotheses and finite strain behaviours defined through
-   *   a strain measure, the `has_axial_strain_offset` shall be defined. If true,
-   *   the data member `axial_strain_offset` gives the offset associated with the
-   *   axial strain in the internal state variables
+   *   a strain measure, the `has_axial_strain_offset` shall be defined. If
+   * true, the data member `axial_strain_offset` gives the offset associated
+   * with the axial strain in the internal state variables
    * - For plane stress hypotheses and standard finite strain behaviours,
    *   the `has_axial_deformation_gradient_offset` shall be defined. If true,
    *   the data member `axial_deformation_gradient_offset` gives the offset

@@ -19,8 +19,8 @@
 namespace mtest {
 
   GenericEvolution::GenericEvolution(const std::string& l,
-                                   const std::string& fn,
-                                   const EvolutionManager& evm_)
+                                     const std::string& fn,
+                                     const EvolutionManager& evm_)
       : evm(evm_) {
     using namespace tfel::system;
     using ELM = tfel::system::ExternalLibraryManager;

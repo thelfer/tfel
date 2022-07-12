@@ -39,15 +39,16 @@ namespace tfel::math {
      * \return a reference to the data associated with the given index
      * \param[in] i: requested index
      */
-    TFEL_HOST_DEVICE constexpr typename ArrayPolicyType::const_reference operator[](
-        const typename ArrayPolicyType::IndexingPolicy::size_type) const
+    TFEL_HOST_DEVICE constexpr typename ArrayPolicyType::const_reference
+    operator[](const typename ArrayPolicyType::IndexingPolicy::size_type) const
         noexcept;
     /*!
      * \brief access operator
      * \return a reference to the data associated with the given indices
      * \param[in] i: requested indices
      */
-    TFEL_HOST_DEVICE constexpr typename ArrayPolicyType::const_reference operator[](
+    TFEL_HOST_DEVICE constexpr typename ArrayPolicyType::const_reference
+    operator[](
         const std::array<typename ArrayPolicyType::IndexingPolicy::size_type,
                          ArrayPolicyType::IndexingPolicy::arity>&) const
         noexcept;
@@ -57,14 +58,15 @@ namespace tfel::math {
      * \param[in] i: requested indices
      */
     template <typename... Indices>
-    TFEL_HOST_DEVICE constexpr typename ArrayPolicyType::const_reference operator()(
-        const Indices...) const noexcept;
+    TFEL_HOST_DEVICE constexpr typename ArrayPolicyType::const_reference
+    operator()(const Indices...) const noexcept;
     /*!
      * \brief access operator
      * \return a reference to the data associated with the given indices
      * \param[in] i: requested indices
      */
-    TFEL_HOST_DEVICE constexpr typename ArrayPolicyType::const_reference operator()(
+    TFEL_HOST_DEVICE constexpr typename ArrayPolicyType::const_reference
+    operator()(
         const std::array<typename ArrayPolicyType::IndexingPolicy::size_type,
                          ArrayPolicyType::IndexingPolicy::arity>&) const
         noexcept;
@@ -131,8 +133,8 @@ namespace tfel::math {
      */
     template <typename ImportIndexingPolicy, typename InputIterator>
     TFEL_HOST_DEVICE constexpr void import(const ImportIndexingPolicy&,
-                          const InputIterator,
-                          const InputIterator);
+                                           const InputIterator,
+                                           const InputIterator);
     /*!
      * \brief fill the array with the given value
      * \param[in] v: value
@@ -168,7 +170,8 @@ namespace tfel::math {
      * are performed.
      */
     template <typename OtherArray>
-    TFEL_HOST_DEVICE constexpr void substractAndAssign(const OtherArray&) noexcept;
+    TFEL_HOST_DEVICE constexpr void substractAndAssign(
+        const OtherArray&) noexcept;
     /*!
      * \brief multiplication by a scalar
      * \param[in] s: scalar value

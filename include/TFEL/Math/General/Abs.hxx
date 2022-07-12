@@ -56,7 +56,9 @@ namespace tfel::math {
     /*!
      * \brief add the absolute value of the argument to the result member
      */
-    TFEL_HOST_DEVICE constexpr void operator()(const T& v) noexcept { result += abs(v); }
+    TFEL_HOST_DEVICE constexpr void operator()(const T& v) noexcept {
+      result += abs(v);
+    }
 
     //! \brief result
     T result;

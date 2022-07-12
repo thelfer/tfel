@@ -35,7 +35,7 @@ namespace mfront {
   }  // end of getInterfaceHeaderFiles
 
   std::string CyranoMaterialPropertyInterface::getInterfaceName() const {
-return CyranoMaterialPropertyInterface::getName();
+    return CyranoMaterialPropertyInterface::getName();
   }  // end of getInterfaceName
 
   std::string CyranoMaterialPropertyInterface::getInterfaceNameInCamelCase()

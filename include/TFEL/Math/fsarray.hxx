@@ -36,8 +36,12 @@ namespace tfel::math {
     //
     constexpr auto data() const noexcept { return this->v; }
     //! \brief access operator
-    TFEL_HOST_DEVICE constexpr ValueType& operator[](const size_type i) noexcept { return v[i]; }
-    TFEL_HOST_DEVICE constexpr const ValueType& operator[](const size_type i) const noexcept {
+    TFEL_HOST_DEVICE constexpr ValueType& operator[](
+        const size_type i) noexcept {
+      return v[i];
+    }
+    TFEL_HOST_DEVICE constexpr const ValueType& operator[](
+        const size_type i) const noexcept {
       return v[i];
     }
 
@@ -252,8 +256,8 @@ namespace tfel::math {
    * \tparam ValueType: type hold by the tiny vector
    */
   template <std::size_t i, unsigned short N, typename ValueType>
-  TFEL_HOST_DEVICE constexpr std::tuple_element_t<i, fsarray<N, ValueType>>& get(
-      fsarray<N, ValueType>& v) noexcept {
+  TFEL_HOST_DEVICE constexpr std::tuple_element_t<i, fsarray<N, ValueType>>&
+  get(fsarray<N, ValueType>& v) noexcept {
     return v[i];
   }  // end of get
   /*!
@@ -264,8 +268,9 @@ namespace tfel::math {
    * \tparam ValueType: type hold by the tiny vector
    */
   template <std::size_t i, unsigned short N, typename ValueType>
-  TFEL_HOST_DEVICE constexpr const std::tuple_element_t<i, fsarray<N, ValueType>>& get(
-      const fsarray<N, ValueType>& v) noexcept {
+  TFEL_HOST_DEVICE constexpr const std::tuple_element_t<i,
+                                                        fsarray<N, ValueType>>&
+  get(const fsarray<N, ValueType>& v) noexcept {
     return v[i];
   }  // end of get
 

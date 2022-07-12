@@ -673,7 +673,7 @@ namespace tfel::check {
                "TestLauncher::ClockAction: 'times' system call failed");
       return r;
     }
-    if (clockevent == GET){
+    if (clockevent == GET) {
       return (this->timeStop.tms_cutime - this->timeStart.tms_cutime) * 1.0 /
              sysconf(_SC_CLK_TCK);
     }

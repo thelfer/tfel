@@ -51,14 +51,14 @@ namespace mfront::gb::finite_strain {
       return -1;
     }
     tfel::math::stensor<N, real> s0;
-    auto *const thermodynamic_forces0_old = d.s0.thermodynamic_forces;
-    auto *const thermodynamic_forces1_old = d.s1.thermodynamic_forces;
+    auto* const thermodynamic_forces0_old = d.s0.thermodynamic_forces;
+    auto* const thermodynamic_forces1_old = d.s1.thermodynamic_forces;
     if (sm != StressMeasure::CAUCHY) {
       tfel::math::tensor<N, real> F0;
       tfel::fsalgo::copy<TensorSize>::exe(d.s0.gradients, F0.begin());
       if constexpr ((hypothesis == ModellingHypothesis::PLANESTRESS) ||
-                    (hypothesis ==
-                     ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS)) {
+                    (hypothesis == ModellingHypothesis::
+                                       AXISYMMETRICALGENERALISEDPLANESTRESS)) {
         if constexpr (Traits::has_axial_deformation_gradient_offset) {
           const auto F0zz = d.s0.internal_state_variables
                                 [Traits::axial_deformation_gradient_offset];
@@ -128,14 +128,14 @@ namespace mfront::gb::finite_strain {
     }
     tfel::math::stensor<N, real> s0;
     tfel::math::stensor<N, real> s1;
-    auto *const thermodynamic_forces0_old = d.s0.thermodynamic_forces;
-    auto *const thermodynamic_forces1_old = d.s1.thermodynamic_forces;
+    auto* const thermodynamic_forces0_old = d.s0.thermodynamic_forces;
+    auto* const thermodynamic_forces1_old = d.s1.thermodynamic_forces;
     if (sm != StressMeasure::CAUCHY) {
       tfel::math::tensor<N, real> F0;
       tfel::fsalgo::copy<TensorSize>::exe(d.s0.gradients, F0.begin());
       if constexpr ((hypothesis == ModellingHypothesis::PLANESTRESS) ||
-                    (hypothesis ==
-                     ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS)) {
+                    (hypothesis == ModellingHypothesis::
+                                       AXISYMMETRICALGENERALISEDPLANESTRESS)) {
         if constexpr (Traits::has_axial_deformation_gradient_offset) {
           const auto F0zz = d.s0.internal_state_variables
                                 [Traits::axial_deformation_gradient_offset];
@@ -173,8 +173,8 @@ namespace mfront::gb::finite_strain {
       tfel::math::tensor<N, real> F1;
       tfel::fsalgo::copy<TensorSize>::exe(d.s1.gradients, F1.begin());
       if constexpr ((hypothesis == ModellingHypothesis::PLANESTRESS) ||
-                    (hypothesis ==
-                     ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS)) {
+                    (hypothesis == ModellingHypothesis::
+                                       AXISYMMETRICALGENERALISEDPLANESTRESS)) {
         if constexpr (Traits::has_axial_deformation_gradient_offset) {
           const auto F1zz = d.s1.internal_state_variables
                                 [Traits::axial_deformation_gradient_offset];
@@ -240,16 +240,16 @@ namespace mfront::gb::finite_strain {
     }
     tfel::math::stensor<N, real> s0;
     tfel::math::stensor<N, real> s1;
-    auto *const thermodynamic_forces0_old = d.s0.thermodynamic_forces;
-    auto *const thermodynamic_forces1_old = d.s1.thermodynamic_forces;
+    auto* const thermodynamic_forces0_old = d.s0.thermodynamic_forces;
+    auto* const thermodynamic_forces1_old = d.s1.thermodynamic_forces;
     if (sm != StressMeasure::CAUCHY) {
       tfel::math::tensor<N, real> F0;
       tfel::math::tensor<N, real> F1;
       tfel::fsalgo::copy<TensorSize>::exe(d.s0.gradients, F0.begin());
       tfel::fsalgo::copy<TensorSize>::exe(d.s1.gradients, F1.begin());
       if constexpr ((hypothesis == ModellingHypothesis::PLANESTRESS) ||
-                    (hypothesis ==
-                     ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS)) {
+                    (hypothesis == ModellingHypothesis::
+                                       AXISYMMETRICALGENERALISEDPLANESTRESS)) {
         if constexpr (Traits::has_axial_deformation_gradient_offset) {
           const auto F0zz = d.s0.internal_state_variables
                                 [Traits::axial_deformation_gradient_offset];

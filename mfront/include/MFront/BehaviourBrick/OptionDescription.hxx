@@ -142,9 +142,8 @@ namespace mfront::bbrick {
    * \param[in] dv: list of data
    * \param[in] ov: list of options
    */
-  MFRONT_VISIBILITY_EXPORT void check(
-      const tfel::utilities::DataMap&,
-      const std::vector<OptionDescription>&);
+  MFRONT_VISIBILITY_EXPORT void check(const tfel::utilities::DataMap&,
+                                      const std::vector<OptionDescription>&);
   /*!
    * \brief check that the given data has a type compatible with the given
    * option type.

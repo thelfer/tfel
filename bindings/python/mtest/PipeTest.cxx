@@ -271,19 +271,28 @@ void declarePipeTest() {
            "method for details.\n")
       .def("setElementType", &PipeTest_setElementType)
       .def("addProfile", &PipeTest::addProfile)
-      .def("computeMinimumValue", 
-      static_cast<real(PipeTest::*)(const StudyCurrentState&,
-                                     const std::string&) const> (&PipeTest::computeMinimumValue),"compute the minimum value of a scalar variable")
-      .def("computeMaximumValue", 
-      static_cast<real(PipeTest::*)(const StudyCurrentState&,
-                                     const std::string&) const> (&PipeTest::computeMaximumValue),"compute the maximum value of a scalar variable")
-      .def("computeMeanValue", 
-      static_cast<real(PipeTest::*)(const StudyCurrentState&,
-                                     const std::string&) const> (&PipeTest::computeMeanValue),"compute the mean value of a scalar variable")
-      .def("computeIntegralValue", 
-      static_cast<real(PipeTest::*)(const StudyCurrentState&,
-                                     const std::string&) const> (&PipeTest::computeIntegralValue),"compute the integral value of a scalar variable")
-      .def("computeMinimumAndMaximumValues", PipeTest_computeMinimumAndMaximumValues)
+      .def("computeMinimumValue",
+           static_cast<real (PipeTest::*)(const StudyCurrentState&,
+                                          const std::string&) const>(
+               &PipeTest::computeMinimumValue),
+           "compute the minimum value of a scalar variable")
+      .def("computeMaximumValue",
+           static_cast<real (PipeTest::*)(const StudyCurrentState&,
+                                          const std::string&) const>(
+               &PipeTest::computeMaximumValue),
+           "compute the maximum value of a scalar variable")
+      .def("computeMeanValue",
+           static_cast<real (PipeTest::*)(const StudyCurrentState&,
+                                          const std::string&) const>(
+               &PipeTest::computeMeanValue),
+           "compute the mean value of a scalar variable")
+      .def("computeIntegralValue",
+           static_cast<real (PipeTest::*)(const StudyCurrentState&,
+                                          const std::string&) const>(
+               &PipeTest::computeIntegralValue),
+           "compute the integral value of a scalar variable")
+      .def("computeMinimumAndMaximumValues",
+           PipeTest_computeMinimumAndMaximumValues)
       .def("setGasEquationOfState", &PipeTest::setGasEquationOfState)
       .def("getMesh", &PipeTest::getMesh,
            boost::python::return_value_policy<

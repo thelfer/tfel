@@ -102,10 +102,11 @@ namespace tfel::math {
    * \param[in] s: symmetric tensor
    */
   template <typename StensorType>
-  TFEL_HOST_DEVICE TFEL_MATH_INLINE2 TFEL_HOST_DEVICE constexpr std::enable_if_t<
-      implementsStensorConcept<StensorType>(),
-      numeric_type<StensorType>>
-  sigmaeq(const StensorType&);
+  TFEL_HOST_DEVICE TFEL_MATH_INLINE2
+      TFEL_HOST_DEVICE constexpr std::enable_if_t<
+          implementsStensorConcept<StensorType>(),
+          numeric_type<StensorType>>
+      sigmaeq(const StensorType&);
   /*!
    * \return the deviator of a symmetric tensor
    */
@@ -129,7 +130,7 @@ namespace tfel::math {
    * \param[in]  s: argument
    */
   template <typename StensorResultType, typename StensorType>
-  TFEL_HOST_DEVICE TFEL_HOST_DEVICE constexpr  std::enable_if_t<
+  TFEL_HOST_DEVICE TFEL_HOST_DEVICE constexpr std::enable_if_t<
       (implementsStensorConcept<StensorResultType>() &&
        implementsStensorConcept<StensorType>() &&
        isAssignableTo<typename ComputeUnaryResult<numeric_type<StensorType>,

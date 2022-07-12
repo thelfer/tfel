@@ -30,11 +30,12 @@ namespace tfel::math::parser {
            this->c->isConstant();
   }  // end of isConstant
 
-  bool ConditionalExpr::dependsOnVariable(const std::vector<double>::size_type p) const{
+  bool ConditionalExpr::dependsOnVariable(
+      const std::vector<double>::size_type p) const {
     return this->a->dependsOnVariable(p) ||  //
            this->b->dependsOnVariable(p) ||  //
            this->c->dependsOnVariable(p);
-  } // end of dependsOnVariable
+  }  // end of dependsOnVariable
 
   double ConditionalExpr::getValue() const {
     if (this->c->getValue()) {

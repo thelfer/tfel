@@ -335,20 +335,21 @@ namespace tfel::system {
   }    // end of contains
 
   std::string ExternalLibraryManager::getString(const std::string& l,
-						const std::string& s) {
-    if(!this->contains(l, s)){
-      tfel::raise("ExternalLibraryManager::getString: "
-		  "no symbol named '" + s +"' in library '" + l + "'");
+                                                const std::string& s) {
+    if (!this->contains(l, s)) {
+      tfel::raise(
+          "ExternalLibraryManager::getString: "
+          "no symbol named '" +
+          s + "' in library '" + l + "'");
     }
     return this->getStringIfDefined(l, s);
   }  // end of ExternalLibraryManager::getString
-  
+
   std::string ExternalLibraryManager::getStringIfDefined(const std::string& l,
-                                                        const std::string& s) {
+                                                         const std::string& s) {
     const auto lib = this->loadLibrary(l);
 #if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__)
-    const auto p =
-        (const char* const*)::GetProcAddress(lib, s.c_str());
+    const auto p = (const char* const*)::GetProcAddress(lib, s.c_str());
 #else
     const auto p = ::dlsym(lib, s.c_str());
 #endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
@@ -360,7 +361,7 @@ namespace tfel::system {
 #else
     return *(static_cast<const char* const*>(p));
 #endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
-  }  // end of ExternalLibraryManager::getStringIfDefined
+  }    // end of ExternalLibraryManager::getStringIfDefined
 
   std::string ExternalLibraryManager::getAuthor(const std::string& l,
                                                 const std::string& s) {
@@ -411,10 +412,10 @@ namespace tfel::system {
   }    // end of getInterface
 
   std::string ExternalLibraryManager::getLaw(const std::string& l,
-                                                  const std::string& f) {
+                                             const std::string& f) {
     return this->getString(l, f + "_mfront_law");
   }  // end of getLaw
-  
+
   std::string ExternalLibraryManager::getMaterial(const std::string& l,
                                                   const std::string& f) {
     return this->getStringIfDefined(l, f + "_mfront_material");
@@ -423,7 +424,7 @@ namespace tfel::system {
   std::string ExternalLibraryManager::getTFELVersion(const std::string& l,
                                                      const std::string& f) {
     return this->getStringIfDefined(l, f + "_tfel_version");
-  }    // end of getTFELVersion
+  }  // end of getTFELVersion
 
   std::vector<std::string>
   ExternalLibraryManager::getSupportedModellingHypotheses(
@@ -1111,12 +1112,11 @@ namespace tfel::system {
     }
     const auto fct = ::tfel_getGenericBehaviourInitializeFunction(
         lib, (f + "_InitializeFunction_" + i).c_str());
-    raise_if(
-        fct == nullptr,
-        "ExternalLibraryManager::getGenericBehaviourInitializeFunction: "
-        "could not load post-processing function '" +
-            i + "' for generic behaviour function '" + f + "' (" +
-            getErrorMessage() + ")");
+    raise_if(fct == nullptr,
+             "ExternalLibraryManager::getGenericBehaviourInitializeFunction: "
+             "could not load post-processing function '" +
+                 i + "' for generic behaviour function '" + f + "' (" +
+                 getErrorMessage() + ")");
     return fct;
   }  // end of getGenericBehaviourInitializeFunction
 

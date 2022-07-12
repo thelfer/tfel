@@ -597,6 +597,7 @@ namespace mfront {
     bool isNameReserved(const std::string&) const override;
     //! \brief register the default variable names
     virtual void registerDefaultVarNames();
+    void setUnitSystem(const std::string_view) override;
     void setMaterial(const std::string&) override;
     void setMaterialKnowledgeIdentifier(const std::string&) override;
     //!\brief treat the `@Gradient` keyword.

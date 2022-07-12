@@ -64,7 +64,8 @@ namespace tfel::math {
      * \brief this method is called at the beginning of the
      * `solveNonLinearSystem` method.
      */
-    TFEL_HOST_DEVICE constexpr void executeInitialisationTaskBeforeResolution() noexcept {
+    TFEL_HOST_DEVICE constexpr void
+    executeInitialisationTaskBeforeResolution() noexcept {
       this->levmar_mu = this->levmar_mu0;
     }
     /*!

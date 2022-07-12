@@ -125,7 +125,7 @@ namespace tfel::math {
       r(2, 2) = F[2] * F[2];
       r(0, 3) = (F[0] * F[3] + F[0] * F[3]) * icste;
       r(1, 3) = (F[1] * F[4] + F[1] * F[4]) * icste;
-      r(3, 3) = F[0] * F[1]  + F[3] * F[4];
+      r(3, 3) = F[0] * F[1] + F[3] * F[4];
       r(2, 1) = r(0, 2) = r(1, 2) = r(3, 2) = r(2, 3) = r(2, 0) = zero;
     } else if constexpr (N == 3u) {
       constexpr auto cste = Cste<value_type>::sqrt2;
@@ -151,9 +151,9 @@ namespace tfel::math {
       r(0, 3) = (F[0] * F[3] + F[0] * F[3]) * icste;
       r(1, 3) = (F[1] * F[4] + F[1] * F[4]) * icste;
       r(2, 3) = (F[6] * F[8] + F[6] * F[8]) * icste;
-      r(3, 3) = F[0] * F[1]  + F[3] * F[4];
-      r(4, 3) = F[0] * F[8]  + F[3] * F[6];
-      r(5, 3) = F[4] * F[8]  + F[1] * F[6];
+      r(3, 3) = F[0] * F[1] + F[3] * F[4];
+      r(4, 3) = F[0] * F[8] + F[3] * F[6];
+      r(5, 3) = F[4] * F[8] + F[1] * F[6];
       r(0, 4) = (F[0] * F[5] + F[0] * F[5]) * icste;
       r(1, 4) = (F[4] * F[7] + F[4] * F[7]) * icste;
       r(2, 4) = (F[2] * F[6] + F[2] * F[6]) * icste;

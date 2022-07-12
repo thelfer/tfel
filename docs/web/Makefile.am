@@ -38,7 +38,7 @@ EXTRA_DIST=CMakeLists.txt					      \
 	   ./mfront-query.md                       \
 	   ./mfront-template.html				      \
 	   ./mfront-types.md                       \
-	   ./compiling-mfront-shared-libraries.md  \
+           ./compiling-mfront-shared-libraries.md  \
 	   ./benchmark.md					      \
 	   ./documentations.md					      \
 	   ./gallery.md					              \

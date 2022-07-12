@@ -31,7 +31,7 @@ namespace mfront {
 
   static bool isRealParameter(const VariableDescription& p) {
     return (p.type == "double") || (p.isScalar());
-  } // end of isRealParameter
+  }  // end of isRealParameter
 
   static bool hasRealParameters(const ModelDescription& md) {
     if (areParametersTreatedAsStaticVariables(md)) {
@@ -43,7 +43,7 @@ namespace mfront {
       }
     }
     return false;
-  } // end of hasRealParameters
+  }  // end of hasRealParameters
 
   static std::string getHeaderGuard(const ModelDescription& md) {
     auto header = std::string{"LIB_GENERICMODEL_"};
@@ -63,7 +63,7 @@ namespace mfront {
 
   static bool useQuantities(const ModelDescription& md) {
     return md.use_qt.has_value() ? *(md.use_qt) : false;
-  } // end of useQuantities
+  }  // end of useQuantities
 
   static void writeScalarStandardTypedefs(std::ostream& os,
                                           const ModelDescription& md) {

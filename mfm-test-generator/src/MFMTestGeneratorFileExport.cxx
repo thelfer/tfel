@@ -46,7 +46,8 @@ namespace mfmtg {
   TestDescription& TestDescription::operator=(const TestDescription&) = default;
   TestDescription::~TestDescription() noexcept = default;
 
-  void loadMFMTestGeneratorFileContent(TestDescription& d, const std::string& f) {
+  void loadMFMTestGeneratorFileContent(TestDescription& d,
+                                       const std::string& f) {
     d.content = getSourceFileContent(f);
   }  // end of loadMFMTestGeneratorFileContent
 
@@ -81,10 +82,11 @@ namespace mfmtg {
       tfel::raise_if(bid.empty(), "writeMadnexFile: empty behaviour");
       auto r = file.getRoot();
       if (!material.empty()) {
-        return createGroups(
-            r, {"MFront", material, "Behaviours", bid, "MFMTestGeneratorTests"});
+        return createGroups(r, {"MFront", material, "Behaviours", bid,
+                                "MFMTestGeneratorTests"});
       }
-      return createGroups(r, {"MFront", "Behaviours", bid, "MFMTestGeneratorTests"});
+      return createGroups(
+          r, {"MFront", "Behaviours", bid, "MFMTestGeneratorTests"});
     }();
     madnex::write(g, e);
   }  // end of writeMadnexFile

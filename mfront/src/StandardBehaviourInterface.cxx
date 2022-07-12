@@ -124,7 +124,7 @@ namespace mfront {
       std::ostream& out,
       const BehaviourDescription& bd,
       const std::string& name) const {
-    if (allowRuntimeModificationOfTheOutOfBoundsPolicy(bd)){
+    if (allowRuntimeModificationOfTheOutOfBoundsPolicy(bd)) {
       out << "static tfel::material::OutOfBoundsPolicy&\n"
           << this->getFunctionNameBasis(name) << "_getOutOfBoundsPolicy(){\n"
           << "static auto policy = tfel::material::"  //
@@ -145,7 +145,7 @@ namespace mfront {
       std::ostream& out,
       const BehaviourDescription& bd,
       const std::string& name) const {
-    if (!allowRuntimeModificationOfTheOutOfBoundsPolicy(bd)){
+    if (!allowRuntimeModificationOfTheOutOfBoundsPolicy(bd)) {
       out << "MFRONT_SHAREDOBJ void\n"
           << this->getFunctionNameBasis(name)
           << "_setOutOfBoundsPolicy(const int){\n"

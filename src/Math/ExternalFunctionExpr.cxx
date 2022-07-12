@@ -29,9 +29,7 @@ namespace tfel::math::parser {
       const std::string& fname,
       std::vector<std::shared_ptr<Expr>>& fargs,
       std::shared_ptr<tfel::math::parser::ExternalFunctionManager>& m)
-      : name(fname),
-        args(fargs),
-        manager(m) {}  // end of ExternalFunctionExpr
+      : name(fname), args(fargs), manager(m) {}  // end of ExternalFunctionExpr
 
   bool ExternalFunctionExpr::isConstant() const {
     for (const auto& a : this->args) {
@@ -50,7 +48,7 @@ namespace tfel::math::parser {
       }
     }
     return false;
-  } // end of dependsOnVariable
+  }  // end of dependsOnVariable
 
   double ExternalFunctionExpr::getValue() const {
     using namespace tfel::math::parser;

@@ -215,9 +215,7 @@ namespace mfront {
    * \return the behaviour description
    * \param[in] md: model description
    */
-  BehaviourDescription convertToBehaviourDescription(
-      const ModelDescription& );
-
+  BehaviourDescription convertToBehaviourDescription(const ModelDescription&);
 
 }  // end of namespace mfront
 

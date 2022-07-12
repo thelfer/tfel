@@ -274,7 +274,62 @@ previous versions in the following ev
 
 ## Port to GPUs {#sec:tfel_4.1:tfel_material:gpu}
 
+# `TFEL/Glossary` improvements
+
+## Physical bounds
+
+Most entries of the glossary now declare physical bounds. The physical
+bounds are associated with an unit system. Currently, only the Internal
+System of units (SI) is supported.
+
 # `MFront` improvements
+
+## Selecting an unit system {#sec:mfront:issue_239}
+
+The `@UnitSystem` allows to select an unit system. Currently, only the
+Internal System of units (SI) is supported.
+
+### Example of usage
+
+~~~~{.cxx}
+@UnitSystem SI;
+~~~~
+
+### Automatic definition of physical bounds of variable associated with a glossary entry
+
+If an unit system is declared and that a variable is associated with a
+glossary entry and that no physical bounds have been declared for this
+variable, `MFront` will automatically declare the physical bounds from
+the glossary entry.
+
+Consider the following example:
+
+~~~~{.cxx}
+@DSL MaterialLaw;
+@Law TestUnitSystem;
+@UnitSystem SI;
+
+@Output stress E;
+E.setGlossaryName("YoungModulus");
+
+@StateVariable temperature T;
+T.setGlossaryName("Temperature");
+
+@Function{
+  constexpr auto Ta = temperature{3000};
+  E = 150e9 * exp(T / Ta);
+};
+~~~~
+
+`MFront` will automatically associate the following physical bounds to
+the temperature `T`:
+
+~~~~{.bash}
+$ mfront-query --has-physical-bounds=Temperature TestUnitSystem.mfront 
+true
+$ mfront-query --physical-bounds-value=Temperature TestUnitSystem.mfront 
+[0:*[
+~~~~
 
 ## Options to domain specific languages
 
@@ -1602,7 +1657,7 @@ $ mfront-query --list-dependencies --search-path=generate   \
 madnex:generate/MaterialProperties.mdnx:MaterialProperty::YoungModulusTest
 ~~~~
 
-## New material property query
+## New queries on material properties
 
 ### Output of a material property{#sec:tfel_4.1:mfront_query:mp:output}
 
@@ -1628,7 +1683,38 @@ $ mfront-query --inputs Inconel600_YoungModulus.mfront
 - Temperature (TK): The temperature
 ~~~~
 
-## New behaviour queries
+### Bounds and physical bounds {#sec:mfront_query:issue_254}
+
+The following queries have been implemented:
+
+- `--has-bounds`, which returns `true` if a variable has bounds, `false`
+  otherwise.
+- `--bounds-type`, which returns the bounds type associated to a
+  variable.
+- `--bounds-value`, which shows the bounds value associated as a range.
+- `--has-physical-bounds`, which returns `true` if a variable has
+  physical bounds, `false` otherwise.
+- `--physical-bounds-type`, which returns the physical bounds type
+  associated to a variable.
+- `--physical-bounds-value`, which shows the physical bounds value
+  associated as a range.
+
+Those queries expects the external name of a variable as argument. The
+variable may be the output of the material property, any of the input or
+a parameter.
+
+### Example of usage
+
+~~~~{.cxx}
+$ mfront-query --has-physical-bounds=Temperature Inconel600_YoungModulus.mfront 
+- true
+$ $ mfront-query --physical-bounds-type=Temperature Inconel600_YoungModulus.mfront
+Lower
+$ mfront-query --physical-bounds-value=Temperature Inconel600_YoungModulus.mfront
+[0:*[
+~~~~
+
+## New queries on behaviours
 
 ### List of initialize functions
 
@@ -1753,6 +1839,12 @@ command is concatenated in a single string for the test.
 
 # Issues fixed
 
+## Issue #254: [mfront-query] add queries related to bounds for material properties
+
+This feature is described in Section @sec:mfront_query:issue_254.
+
+For more details, see <https://github.com/thelfer/tfel/issues/254>
+
 ## Issue #249: [mfront] The C++ interface for material properties is broken when declaring parameters with complex types
 
 For more details, see <https://github.com/thelfer/tfel/issues/249>
@@ -1786,6 +1878,25 @@ For more details, see <https://github.com/thelfer/tfel/issues/242>
 This feature is described in Section @sec:mfront:model:issue_241.
 
 For more details, see <https://github.com/thelfer/tfel/issues/241>
+
+## Issue #239: [mfront] Add support for defining an unit system enhancement mfront
+
+This feature is described in Section @sec:mfront:issue_239.
+
+For more details, see <https://github.com/thelfer/tfel/issues/239>
+
+## Issue #237: [mfront] Add physical bounds declaration in the glossary. Automatically use those bounds in `MFront`
+
+This feature is described in Section @sec:mfront:issue_239.
+
+For more details, see <https://github.com/thelfer/tfel/issues/237>
+
+## Issue #235: [mfront] Document the variable affecting the compilation of shared libraries
+
+The compilation process used by `MFront` is now documented on this page:
+<https://thelfer.github.io/tfel/web/compiling-mfront-shared-libraries.html>
+
+For more details, see <https://github.com/thelfer/tfel/issues/235>.
 
 ## Issue #231:[tfel-check] Allow to compare the result of a command to a regular expression 
 

@@ -46,7 +46,7 @@ namespace mfront {
     return "";
   }  // end of getFileExtension
 
-#endif/* MFRONT_HAVE_MADNEX */
+#endif /* MFRONT_HAVE_MADNEX */
 
   static bool fileExistsAndIsReadable(const std::string& f) {
     if (::access(f.c_str(), F_OK) == 0) {
@@ -271,8 +271,7 @@ namespace mfront {
             std::get<0>(decomposeImplementationPathInMadnexFile(path));
         SearchPathsHandler::addMadnexSearchPath(f);
 #else  /* MFRONT_HAVE_MADNEX */
-        tfel::raise(
-            "MFrontBase::addInputPaths: madnex support is not enabled");
+        tfel::raise("MFrontBase::addInputPaths: madnex support is not enabled");
 #endif /* MFRONT_HAVE_MADNEX */
       }
     }
@@ -306,4 +305,4 @@ namespace mfront {
     return msf;
   }  // end of getSearchPathsHandler
 
-  }  // end of namespace mfront
+}  // end of namespace mfront

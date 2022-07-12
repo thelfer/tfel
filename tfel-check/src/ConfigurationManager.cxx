@@ -42,8 +42,7 @@ namespace tfel::check {
   ConfigurationManager::ConfigurationManager() = default;
 
   ConfigurationManager::ConfigurationManager(const Configuration& src)
-      : configuration(src) {
-  }  // end of ConfigurationManager
+      : configuration(src) {}  // end of ConfigurationManager
 
   ConfigurationManager::ConfigurationManager(ConfigurationManager&&) = default;
 

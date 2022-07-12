@@ -64,7 +64,7 @@ namespace tfel::utilities::internals {
       if (d.empty()) {
         return {};
       }
-      if(!d.is<std::vector<Data>>()){
+      if (!d.is<std::vector<Data>>()) {
         tfel::raise("convert<std::vector<T>>: invalid data type");
       }
       const auto& vd = d.get<std::vector<Data>>();
@@ -99,7 +99,7 @@ namespace tfel::utilities::internals {
       if (d.empty()) {
         return {};
       }
-      if(!d.is<DataMap>()){
+      if (!d.is<DataMap>()) {
         tfel::raise("convert<std::map<std::string,T>>: invalid data type");
       }
       const auto& m = d.get<DataMap>();

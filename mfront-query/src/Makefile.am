@@ -16,6 +16,7 @@ bin_PROGRAMS = mfront-query
 
 mfront_query_SOURCES =      \
   mfront-query.cxx          \
+  QueryUtilities.cxx        \
   QueryHandlerBase.cxx      \
   MaterialPropertyQuery.cxx \
   BehaviourQuery.cxx        \

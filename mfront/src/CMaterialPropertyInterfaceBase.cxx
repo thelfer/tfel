@@ -253,7 +253,7 @@ namespace mfront {
       std::ostream& os, const MaterialPropertyDescription& mpd) const {
     mfront::writeLawSymbol(os, this->getSymbolName(mpd), mpd.law);
   }  // end of writeLawSymbol
-  
+
   void CMaterialPropertyInterfaceBase::writeMaterialSymbol(
       std::ostream& os, const MaterialPropertyDescription& mpd) const {
     mfront::writeMaterialSymbol(os, this->getSymbolName(mpd), mpd.material);
@@ -266,14 +266,12 @@ namespace mfront {
   }  // end of writeMaterialKnowledgeTypeSymbol
 
   void CMaterialPropertyInterfaceBase::writeVariablesNamesSymbol(
-      std::ostream& os,
-      const MaterialPropertyDescription& mpd) const {
+      std::ostream& os, const MaterialPropertyDescription& mpd) const {
     mfront::writeVariablesNamesSymbol(os, this->getSymbolName(mpd), mpd);
   }  // end of writeVariablesNamesSymbol
 
   void CMaterialPropertyInterfaceBase::writeVariablesBoundsSymbols(
-      std::ostream& os,
-      const MaterialPropertyDescription& mpd) const {
+      std::ostream& os, const MaterialPropertyDescription& mpd) const {
     mfront::writeVariablesBoundsSymbols(os, this->getSymbolName(mpd), mpd);
   }  // end of writeVariablesBoundsSymbols
 

@@ -167,6 +167,7 @@ namespace mfront {
     add("@Link", &BehaviourDSLCommon::treatLink);
     add("@Includes", &BehaviourDSLCommon::treatIncludes);
     add("@Members", &BehaviourDSLCommon::treatMembers);
+    add("@UnitSystem", &BehaviourDSLCommon::treatUnitSystem);
     add("@Coef", &BehaviourDSLCommon::treatCoef);
     add("@MaterialProperty", &BehaviourDSLCommon::treatCoef);
     add("@LocalVar", &BehaviourDSLCommon::treatLocalVar);
@@ -433,6 +434,10 @@ namespace mfront {
                                   this->mb.getClassName() + "')");
     }
   }  // end of setMaterial
+
+  void BehaviourDSLCommon::setUnitSystem(const std::string_view s) {
+    this->mb.setUnitSystem(s);
+  }  // end of setUnitSystem
 
   void BehaviourDSLCommon::treatDisabledCallBack() {
     --(this->current);
@@ -1373,6 +1378,9 @@ namespace mfront {
         }
       }
     }
+    // complete the declaration of physical bounds
+    this->mb.checkAndComplePhysicalBoundsDeclaration();
+    //
     if (getVerboseMode() >= VERBOSE_DEBUG) {
       getLogStream()
           << "BehaviourDSLCommon::completeVariableDeclaration: end\n";

@@ -33,13 +33,13 @@ namespace tfel::math {
     EmptyRunTimeProperties& operator=(const EmptyRunTimeProperties&) = default;
   };
 
-  inline TFEL_HOST_DEVICE constexpr bool operator==(const EmptyRunTimeProperties&,
-                                   const EmptyRunTimeProperties&) {
+  inline TFEL_HOST_DEVICE constexpr bool operator==(
+      const EmptyRunTimeProperties&, const EmptyRunTimeProperties&) {
     return true;
   }
 
-  inline TFEL_HOST_DEVICE constexpr bool operator!=(const EmptyRunTimeProperties&,
-                                   const EmptyRunTimeProperties&) {
+  inline TFEL_HOST_DEVICE constexpr bool operator!=(
+      const EmptyRunTimeProperties&, const EmptyRunTimeProperties&) {
     return false;
   }
 

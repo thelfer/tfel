@@ -57,7 +57,8 @@ namespace tfel::math::internals {
                                 (std::is_convertible_v<ValueType, T>)&&    //
                                 (!AllowImplicitConversion)),
                                bool> = false>
-    TFEL_HOST_DEVICE constexpr explicit QuantityValueOwnershipPolicy(const T& src) noexcept
+    TFEL_HOST_DEVICE constexpr explicit QuantityValueOwnershipPolicy(
+        const T& src) noexcept
         : value(src) {}
     /*!
      * \brief constructor from a value
@@ -68,10 +69,13 @@ namespace tfel::math::internals {
                                 (std::is_convertible_v<ValueType, T>)&&    //
                                 (AllowImplicitConversion)),
                                bool> = false>
-    TFEL_HOST_DEVICE constexpr QuantityValueOwnershipPolicy(const T& src) noexcept
+    TFEL_HOST_DEVICE constexpr QuantityValueOwnershipPolicy(
+        const T& src) noexcept
         : value(src) {}
     //! \brief return the value
-    TFEL_HOST_DEVICE constexpr ValueType& getValue() noexcept { return this->value; }
+    TFEL_HOST_DEVICE constexpr ValueType& getValue() noexcept {
+      return this->value;
+    }
     //! \brief return the value
     TFEL_HOST_DEVICE constexpr const ValueType& getValue() const noexcept {
       return this->value;
@@ -87,10 +91,11 @@ namespace tfel::math::internals {
      * \param src: the src.
      */
     template <typename T>
-    TFEL_HOST_DEVICE constexpr std::enable_if_t<((std::is_constructible_v<ValueType, T>)&&  //
-                                (std::is_convertible_v<ValueType, T>)&&    //
-                                (AllowImplicitConversion)),
-                               QuantityValueOwnershipPolicy&>
+    TFEL_HOST_DEVICE constexpr std::enable_if_t<
+        ((std::is_constructible_v<ValueType, T>)&&  //
+         (std::is_convertible_v<ValueType, T>)&&    //
+         (AllowImplicitConversion)),
+        QuantityValueOwnershipPolicy&>
     operator=(const T& src) noexcept {
       this->value = src;
       return *this;
@@ -133,12 +138,17 @@ namespace tfel::math::internals {
      * \brief constructor from a value
      * \param src: the src.
      */
-    TFEL_HOST_DEVICE constexpr explicit QuantityReferenceOwnershipPolicy(ValueType& src) noexcept
+    TFEL_HOST_DEVICE constexpr explicit QuantityReferenceOwnershipPolicy(
+        ValueType& src) noexcept
         : value(src) {}
     //! \brief return the value
-    TFEL_HOST_DEVICE constexpr ValueType& getValue() noexcept { return this->value; }
+    TFEL_HOST_DEVICE constexpr ValueType& getValue() noexcept {
+      return this->value;
+    }
     //! \brief return the value
-    TFEL_HOST_DEVICE constexpr const ValueType& getValue() const noexcept { return this->value; }
+    TFEL_HOST_DEVICE constexpr const ValueType& getValue() const noexcept {
+      return this->value;
+    }
     //! \brief assignement operator
     constexpr QuantityReferenceOwnershipPolicy& operator=(
         const QuantityReferenceOwnershipPolicy&) noexcept = default;
@@ -150,10 +160,11 @@ namespace tfel::math::internals {
      * \param src: the src.
      */
     template <typename T>
-    TFEL_HOST_DEVICE constexpr std::enable_if_t<((std::is_constructible_v<ValueType, T>)&&  //
-                                (std::is_convertible_v<ValueType, T>)&&    //
-                                (AllowImplicitConversion)),
-                               QuantityReferenceOwnershipPolicy&>
+    TFEL_HOST_DEVICE constexpr std::enable_if_t<
+        ((std::is_constructible_v<ValueType, T>)&&  //
+         (std::is_convertible_v<ValueType, T>)&&    //
+         (AllowImplicitConversion)),
+        QuantityReferenceOwnershipPolicy&>
     operator=(const T& src) noexcept {
       this->value = src;
       return *this;
@@ -305,7 +316,8 @@ namespace tfel::math {
       return *this;
     }
     //! \brief negation operator
-    TFEL_HOST_DEVICE constexpr qt<UnitType, ValueType> operator-() const noexcept {
+    TFEL_HOST_DEVICE constexpr qt<UnitType, ValueType> operator-() const
+        noexcept {
       return qt<UnitType, ValueType>(-(this->getValue()));
     }
   };  // end of struct Quantity

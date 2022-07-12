@@ -1,8 +1,8 @@
 /*!
- * \file   MaterialPropertyQuery.cxx
+ * \file   mfront-query/src/MaterialPropertyQuery.cxx
  * \brief
  * \author Thomas Helfer
- * \date   08 juin 2016
+ * \date   08/06/2016
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence
@@ -19,6 +19,7 @@
 #include "TFEL/Glossary/GlossaryEntry.hxx"
 #include "MFront/MaterialPropertyDSL.hxx"
 #include "MFront/MFrontLogStream.hxx"
+#include "MFront/QueryUtilities.hxx"
 #include "MFront/MaterialPropertyQuery.hxx"
 
 namespace mfront {
@@ -55,7 +56,9 @@ namespace mfront {
         {"--library", "show the library name"},
         {"--output", "show the output of the material law"},
         {"--inputs", "show the list of inputs"},
-        {"--state-variables", "show the list of state variables. Equivalent to the `--inputs` query"},
+        {"--state-variables",
+         "show the list of state variables. Equivalent to the `--inputs` "
+         "query"},
         {"--parameters", "show the list of parameters"},
         {"--parameters-file",
          "display the name of a text file which can be used to modify the "
@@ -70,6 +73,102 @@ namespace mfront {
         "--parameter-default-value",
         CallBack("display the default value of a parameter",
                  [this] { this->treatParameterDefaultValue(); }, true));
+    // bounds
+    auto has_bounds = [this] {
+      const auto& q = this->getCurrentCommandLineArgument();
+      const auto& o = q.getOption();
+      auto l = [o](const FileDescription&,
+                   const MaterialPropertyDescription& mpd) {
+        const auto& v = mpd.getVariableDescriptionByExternalName(o);
+        std::cout << (v.hasPhysicalBounds() ? "true" : "false") << '\n';
+      };
+      this->queries.push_back({"has-bounds", l});
+    };
+    this->registerCallBack("--has-bounds",
+                           CallBack("return `true` if a variable has bounds, "
+                                    "`false` otherwise",
+                                    has_bounds, true));
+    auto bounds_type = [this] {
+      const auto& q = this->getCurrentCommandLineArgument();
+      const auto& o = q.getOption();
+      auto l = [o](const FileDescription&,
+                   const MaterialPropertyDescription& mpd) {
+        const auto& v = mpd.getVariableDescriptionByExternalName(o);
+        displayBounds(std::cout, v.getPhysicalBounds());
+      };
+      this->queries.push_back({"bounds-type", l});
+    };
+    this->registerCallBack(
+        "--bounds-type",
+        CallBack("return the bounds type associated to a variable.\n"
+                 "The returned value has the follwing meaning:\n"
+                 "- `None`\n"
+                 "- `Lower`\n"
+                 "- `Upper`\n"
+                 "- `LowerAndUpper`",
+                 bounds_type, true));
+    const auto bounds_value = [this] {
+      const auto& q = this->getCurrentCommandLineArgument();
+      const auto& o = q.getOption();
+      auto l = [o](const FileDescription&,
+                   const MaterialPropertyDescription& mpd) {
+        const auto& v = mpd.getVariableDescriptionByExternalName(o);
+        displayBoundsValue(std::cout, v.getPhysicalBounds());
+      };
+      this->queries.push_back({"bounds-value", l});
+    };
+    this->registerCallBack(
+        "--bounds-value",
+        CallBack("show the bounds value associated as a range", bounds_value,
+                 true));
+    // physical bounds
+    auto has_physical_bounds = [this] {
+      const auto& q = this->getCurrentCommandLineArgument();
+      const auto& o = q.getOption();
+      auto l = [o](const FileDescription&,
+                   const MaterialPropertyDescription& mpd) {
+        const auto& v = mpd.getVariableDescriptionByExternalName(o);
+        std::cout << (v.hasPhysicalBounds() ? "true" : "false") << '\n';
+      };
+      this->queries.push_back({"has-physical-bounds", l});
+    };
+    this->registerCallBack("--has-physical-bounds",
+                           CallBack("return `true` if a variable has physical "
+                                    "bounds, `false` otherwise",
+                                    has_physical_bounds, true));
+    auto physical_bounds_type = [this] {
+      const auto& q = this->getCurrentCommandLineArgument();
+      const auto& o = q.getOption();
+      auto l = [o](const FileDescription&,
+                   const MaterialPropertyDescription& mpd) {
+        const auto& v = mpd.getVariableDescriptionByExternalName(o);
+        displayBounds(std::cout, v.getPhysicalBounds());
+      };
+      this->queries.push_back({"physical-bounds-type", l});
+    };
+    this->registerCallBack(
+        "--physical-bounds-type",
+        CallBack("return the physical bounds type associated to a variable.\n"
+                 "The returned value has the follwing meaning:\n"
+                 "- `None`\n"
+                 "- `Lower`\n"
+                 "- `Upper`\n"
+                 "- `LowerAndUpper`",
+                 physical_bounds_type, true));
+    const auto physical_bounds_value = [this] {
+      const auto& q = this->getCurrentCommandLineArgument();
+      const auto& o = q.getOption();
+      auto l = [o](const FileDescription&,
+                   const MaterialPropertyDescription& mpd) {
+        const auto& v = mpd.getVariableDescriptionByExternalName(o);
+        displayBoundsValue(std::cout, v.getPhysicalBounds());
+      };
+      this->queries.push_back({"physical-bounds-value", l});
+    };
+    this->registerCallBack(
+        "--physical-bounds-value",
+        CallBack("show the physical bounds value associated as a range",
+                 physical_bounds_value, true));
   }  // end of registerCommandLineCallBacks
 
   void MaterialPropertyQuery::treatParameterDefaultValue() {
@@ -104,6 +203,7 @@ namespace mfront {
     using namespace std;
     const auto& q = this->getCurrentCommandLineArgument();
     const auto& qn = q.as_string();
+    const auto pn = q.getOption();
     if (qn == "--law-name") {
       this->queries.push_back(
           {"law-name",

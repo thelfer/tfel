@@ -53,8 +53,7 @@ namespace tfel::math::parser {
     EvaluatorFunction1VBase(const std::shared_ptr<Expr>);
     //
     bool isConstant() const override;
-    bool dependsOnVariable(
-        const std::vector<double>::size_type) const override;
+    bool dependsOnVariable(const std::vector<double>::size_type) const override;
     void checkCyclicDependency(std::vector<std::string>&) const override;
     ~EvaluatorFunction1VBase() override;
 
@@ -69,8 +68,7 @@ namespace tfel::math::parser {
                             const std::shared_ptr<Expr>);
     //
     bool isConstant() const override;
-    bool dependsOnVariable(
-        const std::vector<double>::size_type) const override;
+    bool dependsOnVariable(const std::vector<double>::size_type) const override;
     void checkCyclicDependency(std::vector<std::string>&) const override;
     ~EvaluatorFunction2VBase() override;
 
@@ -189,8 +187,7 @@ namespace tfel::math::parser {
                         const std::vector<std::shared_ptr<Expr>>&);
     //
     bool isConstant() const override;
-    bool dependsOnVariable(
-        const std::vector<double>::size_type) const override;
+    bool dependsOnVariable(const std::vector<double>::size_type) const override;
     double getValue() const override;
     std::shared_ptr<Expr> resolveDependencies(
         const std::vector<double>&) const override;
@@ -219,8 +216,7 @@ namespace tfel::math::parser {
                           const std::vector<std::shared_ptr<Expr>>&);
     //
     bool isConstant() const override;
-    bool dependsOnVariable(
-        const std::vector<double>::size_type) const override;
+    bool dependsOnVariable(const std::vector<double>::size_type) const override;
     double getValue() const override;
     std::shared_ptr<Expr> resolveDependencies(
         const std::vector<double>&) const override;
@@ -251,8 +247,7 @@ namespace tfel::math::parser {
                           const std::vector<std::shared_ptr<Expr>>&);
     //
     bool isConstant() const override;
-    bool dependsOnVariable(
-        const std::vector<double>::size_type) const override;
+    bool dependsOnVariable(const std::vector<double>::size_type) const override;
     double getValue() const override;
     std::shared_ptr<Expr> resolveDependencies(
         const std::vector<double>&) const override;
@@ -282,8 +277,7 @@ namespace tfel::math::parser {
                            const std::vector<std::shared_ptr<Expr>>&);
     //
     bool isConstant() const override;
-    bool dependsOnVariable(
-        const std::vector<double>::size_type) const override;
+    bool dependsOnVariable(const std::vector<double>::size_type) const override;
     double getValue() const override;
     std::shared_ptr<Expr> resolveDependencies(
         const std::vector<double>&) const override;
@@ -314,8 +308,7 @@ namespace tfel::math::parser {
                            const std::vector<std::shared_ptr<Expr>>&);
     //
     bool isConstant() const override;
-    bool dependsOnVariable(
-        const std::vector<double>::size_type) const override;
+    bool dependsOnVariable(const std::vector<double>::size_type) const override;
     double getValue() const override;
     std::shared_ptr<Expr> resolveDependencies(
         const std::vector<double>&) const override;

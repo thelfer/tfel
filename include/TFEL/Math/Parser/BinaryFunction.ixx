@@ -40,7 +40,7 @@ namespace tfel::math::parser {
       const std::vector<double>::size_type p) const {
     return this->expr1->dependsOnVariable(p) ||
            this->expr2->dependsOnVariable(p);
-  } // end of dependsOnVariable
+  }  // end of dependsOnVariable
 
   template <double (*f)(const double, const double)>
   std::string StandardBinaryFunction<f>::getCxxFormula(

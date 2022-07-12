@@ -18,6 +18,7 @@
 #include "TFEL/Raise.hxx"
 #include "TFEL/Glossary/Glossary.hxx"
 #include "TFEL/Glossary/GlossaryEntry.hxx"
+#include "TFEL/Utilities/StringAlgorithms.hxx"
 #include "MFront/DSLUtilities.hxx"
 #include "MFront/SupportedTypes.hxx"
 #include "MFront/MFrontLogStream.hxx"
@@ -64,7 +65,7 @@ namespace mfront {
 
   int VariableDescription::getVariableTypeIdentifier() const {
     return SupportedTypes::getTypeIdentifier(this->type);
-  } // end of getVariableTypeIdentifier
+  }  // end of getVariableTypeIdentifier
 
   void VariableDescription::setGlossaryName(const std::string& g) {
     using tfel::glossary::Glossary;
@@ -461,6 +462,66 @@ namespace mfront {
               "d" + v.name);
   }  // end of getIncrementSymbol
 
+  void checkAndComplePhysicalBoundsDeclaration(VariableDescription& v,
+                                               const std::string_view s) {
+    using tfel::glossary::Glossary;
+    if (!v.hasGlossaryName()) {
+      return;
+    }
+    const auto& glossary = Glossary::getGlossary();
+    const auto& e = glossary.getGlossaryEntry(v.getExternalName());
+    if ((!e.hasLowerPhysicalBound(s)) && (!e.hasUpperPhysicalBound(s))) {
+      return;
+    }
+    if (v.hasPhysicalBounds()) {
+      // check
+      const auto& bounds = v.getPhysicalBounds();
+      if ((e.hasLowerPhysicalBound(s)) && (bounds.hasLowerBound())) {
+        const auto b1 = bounds.lowerBound;
+        const auto b2 =
+            tfel::utilities::convert<long double>(e.getLowerPhysicalBound(s));
+        if (b1 < b2) {
+          auto& os = getLogStream();
+          os << "checkAndComplePhysicalBoundsDeclaration: "
+             << "lower bound for variable '" << v.name
+             << "' is below the lower bound of the associated glossary entry ("
+             << b1 << " < " << b2 << ")";
+        }
+      }
+      if ((e.hasUpperPhysicalBound(s)) && (bounds.hasUpperBound())) {
+        const auto b1 = bounds.upperBound;
+        const auto b2 =
+            tfel::utilities::convert<long double>(e.getUpperPhysicalBound(s));
+        if (b1 > b2) {
+          auto& os = getLogStream();
+          os << "checkAndComplePhysicalBoundsDeclaration: "
+             << "upper bound for variable '" << v.name
+             << "' is greater than the lower bound of the associated glossary "
+             << "entry (" << b1 << " > " << b2 << ")";
+        }
+      }
+    } else {
+      // complete
+      auto b = VariableBoundsDescription{};
+      if ((e.hasLowerPhysicalBound(s)) && (e.hasUpperPhysicalBound(s))) {
+        b.boundsType = VariableBoundsDescription::LOWERANDUPPER;
+        b.lowerBound =
+            tfel::utilities::convert<long double>(e.getLowerPhysicalBound(s));
+        b.upperBound =
+            tfel::utilities::convert<long double>(e.getUpperPhysicalBound(s));
+      } else if (e.hasLowerPhysicalBound(s)) {
+        b.boundsType = VariableBoundsDescription::LOWER;
+        b.lowerBound =
+            tfel::utilities::convert<long double>(e.getLowerPhysicalBound(s));
+      } else if (e.hasUpperPhysicalBound(s)) {
+        b.boundsType = VariableBoundsDescription::UPPER;
+        b.upperBound =
+            tfel::utilities::convert<long double>(e.getUpperPhysicalBound(s));
+      }
+      v.setPhysicalBounds(b);
+    }
+  }  // end of checkAndComplePhysicalBoundsDeclaration
+
   VariableDescriptionContainer::VariableDescriptionContainer() = default;
 
   VariableDescriptionContainer::VariableDescriptionContainer(
@@ -648,5 +709,12 @@ namespace mfront {
     }
     tfel::raise("mfront::getOffset: no variable name '" + n + "'");
   }  // end of getOffset
+
+  void checkAndComplePhysicalBoundsDeclaration(
+      VariableDescriptionContainer& variables, const std::string_view s) {
+    for (auto& v : variables) {
+      checkAndComplePhysicalBoundsDeclaration(v, s);
+    }
+  }  // end of checkAndComplePhysicalBoundsDeclaration
 
 }  // end of namespace mfront

@@ -21,186 +21,38 @@ namespace tfel::glossary {
 
   const char* GlossaryEntry::separator = "@^separator^@";
 
-  static std::string nothrow(const char* c) noexcept {
-    std::string r;
-    try {
-      r = c;
-    } catch (std::exception& e) {
-      std::cerr << "tfel::glossary::nothrow2: " << e.what() << '\n';
-    } catch (...) {
-      std::cerr << "tfel::glossary::nothrow2: "
-                << "unknown exception\n";
-    }
-    return r;
-  }
-
-  static std::vector<std::string> nothrow2(const char* c) noexcept {
-    std::vector<std::string> r;
-    try {
-      r.emplace_back(c);
-    } catch (std::exception& e) {
-      std::cerr << "tfel::glossary::nothrow2: " << e.what() << '\n';
-    } catch (...) {
-      std::cerr << "tfel::glossary::nothrow2: "
-                << "unknown exception\n";
-    }
-    return r;
-  }
-
-  static std::vector<std::string> nothrow2(
+  static std::vector<std::string> vector_from_range(
       const char* const* const cb, const char* const* const ce) noexcept {
     std::vector<std::string> r;
-    try {
-      r.insert(r.end(), cb, ce);
-    } catch (std::exception& e) {
-      std::cerr << "tfel::glossary::nothrow2: " << e.what() << '\n';
-    } catch (...) {
-      std::cerr << "tfel::glossary::nothrow2: "
-                << "unknown exception\n";
-    }
+    r.insert(r.end(), cb, ce);
     return r;
   }
 
   static std::vector<std::string> tokenize(const char* c) noexcept {
-    std::vector<std::string> r;
-    try {
-      r = tfel::utilities::tokenize(c, GlossaryEntry::separator);
-    } catch (std::exception& e) {
-      std::cerr << "tfel::glossary::tokenize: " << e.what() << '\n';
-    } catch (...) {
-      std::cerr << "tfel::glossary::tokenize: "
-                << "unknown exception\n";
+    return tfel::utilities::tokenize(c, GlossaryEntry::separator);
+  }
+
+  static std::map<std::string, std::string, std::less<>> map_from_string(
+      const std::string_view& s) {
+    std::map<std::string, std::string, std::less<>> r;
+    const auto pairs = tfel::utilities::tokenize(s, GlossaryEntry::separator);
+    for (const auto& p : pairs) {
+      const auto kv = tfel::utilities::tokenize(p, ':');
+      if (kv.size() != 2u) {
+        tfel::raise(
+            "map_from_string: invalid map encoding. "
+            "Error while treating string '" +
+            std::string{s} + "'");
+      }
+      if (!r.insert({kv[0], kv[1]}).second) {
+        tfel::raise("map_from_string: key '" + kv[0] +
+                    "' multiply defined. "
+                    "Error while treating string '" +
+                    std::string{s} + "'");
+      }
     }
     return r;
-  }
-
-  GlossaryEntry::GlossaryEntry(const std::string& k,
-                               const std::string& n,
-                               const std::string& u,
-                               const std::string& t,
-                               const std::string& sd,
-                               const std::vector<std::string>& d,
-                               const std::vector<std::string>& no)
-      : key(k),
-        names(1u, n),
-//        unit(u),
-        type(t),
-        short_description(sd),
-        description(d),
-        notes(no) {
-    this->check();
-  }
-
-  GlossaryEntry::GlossaryEntry(const std::string& k,
-                               const std::string& n,
-                               const std::string& u,
-                               const std::string& t,
-                               const std::string& sd,
-                               const std::string& d,
-                               const std::string& no)
-      : key(k),
-        names(1u, n),
-//        unit(u),
-        type(t),
-        short_description(sd),
-        description(tfel::utilities::tokenize(d, GlossaryEntry::separator)),
-        notes(tfel::utilities::tokenize(no, GlossaryEntry::separator)) {
-    this->check();
-  }
-
-  GlossaryEntry::GlossaryEntry(const char* const k,
-                               const char* const n,
-                               const char* const u,
-                               const char* const t,
-                               const char* const sd,
-                               const char* const d,
-                               const char* const no) noexcept
-      : key(nothrow(k)),
-        names(nothrow2(n)),
-//        unit(nothrow(u)),
-        type(nothrow(t)),
-        short_description(nothrow(sd)),
-        description(tfel::glossary::tokenize(d)),
-        notes(tfel::glossary::tokenize(no)) {
-    try {
-      this->check();
-    } catch (std::exception& ex) {
-      std::cerr << "GlossaryEntry::GlossaryEntry: " << ex.what() << '\n';
-    } catch (...) {
-      std::cerr << "GlossaryEntry::GlossaryEntry: "
-                << "unknown exception\n";
-    }
-  }
-
-  GlossaryEntry::GlossaryEntry(const std::string& k,
-                               const std::vector<std::string>& n,
-                               const std::string& u,
-                               const std::string& t,
-                               const std::string& sd,
-                               const std::vector<std::string>& d,
-                               const std::vector<std::string>& no)
-      : key(k),
-        names(n),
-//        unit(u),
-        type(t),
-        short_description(sd),
-        description(d),
-        notes(no) {
-    this->check();
-  }
-
-  GlossaryEntry::GlossaryEntry(const std::string& k,
-                               const std::vector<std::string>& n,
-                               const std::string& u,
-                               const std::string& t,
-                               const std::string& sd,
-                               const std::string& d,
-                               const std::string& no)
-      : key(k),
-        names(n),
-//        unit(u),
-        type(t),
-        short_description(sd),
-        description(tfel::utilities::tokenize(d, GlossaryEntry::separator)),
-        notes(tfel::utilities::tokenize(no, GlossaryEntry::separator)) {
-    this->check();
-  }
-
-  GlossaryEntry::GlossaryEntry(const std::string& k,
-                               const char* const* const b,
-                               const char* const* const e,
-                               const std::string& u,
-                               const std::string& t,
-                               const std::string& sd,
-                               const std::vector<std::string>& d,
-                               const std::vector<std::string>& no)
-      : key(k),
-        names(b, e),
-//        unit(u),
-        type(t),
-        short_description(sd),
-        description(d),
-        notes(no) {
-    this->check();
-  }
-
-  GlossaryEntry::GlossaryEntry(const std::string& k,
-                               const char* const* const b,
-                               const char* const* const e,
-                               const std::string& u,
-                               const std::string& t,
-                               const std::string& sd,
-                               const std::string& d,
-                               const std::string& no)
-      : key(k),
-        names(b, e),
-//        unit(u),
-        type(t),
-        short_description(sd),
-        description(tfel::utilities::tokenize(d, GlossaryEntry::separator)),
-        notes(tfel::utilities::tokenize(no, GlossaryEntry::separator)) {
-    this->check();
-  }
+  }  // end of map_from_string
 
   GlossaryEntry::GlossaryEntry(const char* const k,
                                const char* const* const b,
@@ -209,40 +61,83 @@ namespace tfel::glossary {
                                const char* const t,
                                const char* const sd,
                                const char* const d,
-                               const char* const no) noexcept
-      : key(nothrow(k)),
-        names(nothrow2(b, e)),
-//        unit(nothrow(u)),
-        type(nothrow(t)),
-        short_description(nothrow(sd)),
+                               const char* const no,
+                               const char* const lbs,
+                               const char* const ubs)
+      : key(k),
+        names(vector_from_range(b, e)),
+        units(map_from_string(u)),
+        type(t),
+        short_description(sd),
         description(tfel::glossary::tokenize(d)),
-        notes(tfel::glossary::tokenize(no)) {
-    try {
-      this->check();
-    } catch (std::exception& ex) {
-      std::cerr << "GlossaryEntry::GlossaryEntry: " << ex.what() << '\n';
-    } catch (...) {
-      std::cerr << "GlossaryEntry::GlossaryEntry: "
-                << "unknown exception\n";
-    }
+        notes(tfel::glossary::tokenize(no)),
+        lower_physical_bounds(map_from_string(lbs)),
+        upper_physical_bounds(map_from_string(ubs)) {
+    this->check();
   }
 
   GlossaryEntry::GlossaryEntry(const GlossaryEntry&) = default;
   GlossaryEntry::GlossaryEntry(GlossaryEntry&&) = default;
 
   void GlossaryEntry::check() const {
-    raise_if(this->names.empty(),
-             "GlossaryEntry::check: "
-             "no name specified for key '" +
-                 this->getKey() + "'");
-    raise_if(!((this->type == "scalar") || (this->type == "vector") ||
-               (this->type == "symmetric tensor") || (this->type == "tensor")),
-             "GlossaryEntry::check: "
-             "unsupported type '" +
-                 this->type +
-                 "' "
-                 "for entry '" +
-                 this->getKey() + "'");
+    auto convert = [this](const std::string& s) {
+      auto throw_if = [this, &s](const bool b) {
+        if (b) {
+          tfel::raise<std::invalid_argument>(
+              "GlossaryEntry::check: "
+              "could not convert '" +
+              s +
+              "' "
+              "to double while treating bounds of entry '" +
+              this->key + "'");
+        }
+      };
+      throw_if(s.empty());
+      auto p = std::size_t{};
+      auto r = double{};
+      try {
+        r = std::stod(s, &p);
+      } catch (std::exception&) {
+        throw_if(true);
+      }
+      throw_if(p != s.size());
+      return r;
+    };
+    if (this->names.empty()) {
+      tfel::raise(
+          "GlossaryEntry::check: "
+          "no name specified for key '" +
+          this->getKey() + "'");
+    }
+    if (!((this->type == "scalar") || (this->type == "vector") ||
+          (this->type == "symmetric tensor") || (this->type == "tensor"))) {
+      tfel::raise(
+          "GlossaryEntry::check: "
+          "unsupported type '" +
+          this->type +
+          "' "
+          "for entry '" +
+          this->getKey() + "'");
+    }
+    for (const auto& lb : lower_physical_bounds) {
+      convert(lb.second);
+    }
+    for (const auto& ub : upper_physical_bounds) {
+      convert(ub.second);
+    }
+    for (const auto& lb : lower_physical_bounds) {
+      if (this->hasUpperPhysicalBound(lb.first)) {
+        const auto lbv = convert(lb.second);
+        const auto lbu = convert(this->upper_physical_bounds.at(lb.first));
+        if (lbv > lbu) {
+          tfel::raise(
+              "GlossaryEntry::check: "
+              "lower bound is greater than upper bound "
+              "for key '" +
+              this->key + "'");
+        }
+      }
+    }
   }  // end of GlossaryEntry::check
 
   const std::string& GlossaryEntry::getKey() const { return this->key; }
@@ -251,11 +146,23 @@ namespace tfel::glossary {
     return this->names;
   }
 
-  const std::string& GlossaryEntry::getUnit() const {
-#pragma "Test"
-    static std::string unit;
-    return unit;  // this->unit;
-  }
+  const std::string& GlossaryEntry::getUnit(const std::string_view s) const {
+    if (this->units.empty()) {
+      static const std::string empty;
+      return empty;
+    }
+    const auto p = this->units.find(s);
+    if (p == this->units.end()) {
+      raise("GlossaryEntry::getUnit: no unit defined for entry " +
+            std::string{*this} + " for unit system '" + std::string{s} + "'");
+    }
+    return p->second;
+  }  // end of getUnit
+
+  std::map<std::string, std::string> GlossaryEntry::getUnits() const {
+    return std::map<std::string, std::string>{this->units.begin(),
+                                              this->units.end()};
+  }  // end of getUnits
 
   const std::string& GlossaryEntry::getType() const { return this->type; }
 
@@ -274,6 +181,36 @@ namespace tfel::glossary {
   GlossaryEntry::operator const std::string&() const {
     return this->key;
   }  // end of operator std::string
+
+  bool GlossaryEntry::hasLowerPhysicalBound(const std::string_view s) const {
+    return this->lower_physical_bounds.count(s) != 0;
+  }  // end of hasLowerPhysicalBound
+
+  std::string GlossaryEntry::getLowerPhysicalBound(
+      const std::string_view s) const {
+    if (!this->hasLowerPhysicalBound(s)) {
+      tfel::raise(
+          "GlossaryEntry::getLowerPhysicalBound: "
+          "no physical lower bound defined for entry '" +
+          this->key + "' in the '" + std::string{s} + "' unit system");
+    }
+    return this->lower_physical_bounds.find(s)->second;
+  }  // end of getLowerPhysicalBound
+
+  bool GlossaryEntry::hasUpperPhysicalBound(const std::string_view s) const {
+    return this->upper_physical_bounds.count(s) != 0;
+  }  // end of hasUpperPhysicalBound
+
+  std::string GlossaryEntry::getUpperPhysicalBound(
+      const std::string_view s) const {
+    if (!this->hasUpperPhysicalBound(s)) {
+      tfel::raise(
+          "GlossaryEntry::getUpperPhysicalBound: "
+          "no physical upper bound defined for entry '" +
+          this->key + "' in the '" + std::string{s} + "' unit system");
+    }
+    return this->upper_physical_bounds.find(s)->second;
+  }  // end of getUpperPhysicalBound
 
   GlossaryEntry::~GlossaryEntry() = default;
 

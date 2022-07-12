@@ -217,7 +217,8 @@ namespace tfel::math::parser {
         const std::vector<double>& values) const override {
       return this->derivative->resolveDependencies(values);
     }  // end of resolveDependencies
-    std::shared_ptr<Expr> clone(const std::vector<double>& values) const override {
+    std::shared_ptr<Expr> clone(
+        const std::vector<double>& values) const override {
       return this->derivative->clone(values);
     }  // end of clone
     std::shared_ptr<Expr> differentiate(
@@ -228,7 +229,8 @@ namespace tfel::math::parser {
     void getParametersNames(std::set<std::string>& parameters) const override {
       this->derivative->getParametersNames(parameters);
     }  // end of getParametersNames
-    std::string getCxxFormula(const std::vector<std::string>& variables) const override {
+    std::string getCxxFormula(
+        const std::vector<std::string>& variables) const override {
       const auto df = this->derivative->getCxxFormula(variables);
       if (this->a->isConstant()) {
         return df;
@@ -260,8 +262,6 @@ namespace tfel::math::parser {
     std::shared_ptr<Expr> derivative;
   };  // end of ExponentDerivative
 
-
-
   template <>
   std::shared_ptr<Expr> differentiateBinaryOperation<OpPower>(
       const std::shared_ptr<Expr> a,
@@ -291,7 +291,7 @@ namespace tfel::math::parser {
     };
     auto derivative_wrt_b = [&b, &ca, &cb, pos, &v] {
       auto db = b->differentiate(pos, v);
-      return std::make_shared<ExponentDerivative>(ca,cb,db);
+      return std::make_shared<ExponentDerivative>(ca, cb, db);
     };
     if (ba && (!bb)) {
       return derivative_wrt_a();
