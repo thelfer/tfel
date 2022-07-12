@@ -258,6 +258,24 @@ auto d2E_dT2 = derivative_type<stress, temperature, temperature>{};
 
 are now equivalent.
 
+### Add support to clamp values of arrays {#sec:tfel_math:issue_256}
+
+The `clamp` method is available in all mutable arrays in `TFEL/Math`,
+including all tensorial objects.
+
+#### Example of usage
+
+~~~~{.cxx}
+constexpr auto a = [] {
+  auto values = tfel::math::fsarray<3u, int>{-14, 12, -3};
+  values.clamp(-4, 4);
+  return values;
+}();
+static_assert(a[0] == -4);
+static_assert(a[1] == 4);
+static_assert(a[2] == -3);
+~~~~
+
 # `TFEL/Math/Parser` improvements
 
 ## Improved differentiation
@@ -1838,6 +1856,12 @@ which shall validate the output of the command. The output of the
 command is concatenated in a single string for the test.
 
 # Issues fixed
+
+## Issue #256: [tfel-math] Add support to clamp `TFEL/Math` arrays
+
+This feature is described in Section @sec:tfel_math:issue_256.
+
+For more details, see <https://github.com/thelfer/tfel/issues/256>
 
 ## Issue #254: [mfront-query] add queries related to bounds for material properties
 

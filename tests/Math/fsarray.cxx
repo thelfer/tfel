@@ -25,11 +25,6 @@
 #include "TFEL/Math/fsarray.hxx"
 #include "TFEL/Math/Array/View.hxx"
 
-template <int N>
-struct structify {
-  static constexpr int value = N;
-};
-
 struct FSArrayTest final : public tfel::tests::TestCase {
   FSArrayTest()
       : tfel::tests::TestCase("TFEL/Math", "FSArrayTest") {
@@ -39,6 +34,7 @@ struct FSArrayTest final : public tfel::tests::TestCase {
     this->test2();
     this->test3();
     this->test4();
+    this->test5();
     return this->result;
   }  // end of execute
  private:
@@ -124,6 +120,16 @@ struct FSArrayTest final : public tfel::tests::TestCase {
     TFEL_TESTS_ASSERT(std::abs(v1[1] + 4.2) < eps);
     TFEL_TESTS_ASSERT(std::abs(v1[2] + 0.3) < eps);
   }  // end of test5
+  void test6() {
+    constexpr auto a = [] {
+      auto values = tfel::math::fsarray<3u, int>{-14, 12, -3};
+      values.clamp(-4, 4);
+      return values;
+    }();
+    TFEL_TESTS_STATIC_ASSERT(a[0] == -4);
+    TFEL_TESTS_STATIC_ASSERT(a[1] == 4);
+    TFEL_TESTS_STATIC_ASSERT(a[2] == -3);
+  }  // end of test6
 };
 
 TFEL_TESTS_GENERATE_PROXY(FSArrayTest, "FSArrayTest");

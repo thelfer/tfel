@@ -90,7 +90,7 @@ namespace tfel::math {
      * \param[in] i: requested index
      */
     TFEL_HOST_DEVICE constexpr typename ArrayPolicyType::reference operator[](
-        const typename ArrayPolicyType::IndexingPolicy::size_type i) noexcept;
+        const typename ArrayPolicyType::IndexingPolicy::size_type) noexcept;
     /*!
      * \brief access operator
      * \return a reference to the data associated with the given indices
@@ -106,7 +106,7 @@ namespace tfel::math {
      */
     template <typename... Indices>
     TFEL_HOST_DEVICE constexpr typename ArrayPolicyType::reference operator()(
-        const Indices... i) noexcept;
+        const Indices...) noexcept;
     /*!
      * \brief access operator
      * \return a reference to the data associated with the given indices
@@ -144,13 +144,24 @@ namespace tfel::math {
         isAssignableTo<ValueType2, typename ArrayPolicyType::value_type>(),
         void>
     fill(const ValueType2&);
+    /*!
+     * \brief clamp all the values between the given bounds
+     * \param[in] lower_bound: lower bound
+     * \param[in] upper_bound: upper bound
+     */
+    template <typename ValueType2, typename ValueType3>
+    constexpr std::enable_if_t<
+        (isAssignableTo<ValueType2, typename ArrayPolicyType::value_type>() &&
+         isAssignableTo<ValueType3, typename ArrayPolicyType::value_type>()),
+        void>
+        TFEL_HOST_DEVICE clamp(const ValueType2&, const ValueType3&);
 
    protected:
     /*!
      * \tparam OtherArray: type of the given array
-     * \brief assign the values of the given array to the values of this array.
-     * \note this shall not be used directly, because no runtime checks are
-     * performed.
+     * \brief assign the values of the given array to the values of this
+     * array. \note this shall not be used directly, because no runtime checks
+     * are performed.
      */
     template <typename OtherArray>
     TFEL_HOST_DEVICE constexpr void assign(const OtherArray&) noexcept;
@@ -185,7 +196,7 @@ namespace tfel::math {
             typename ArrayPolicyType::value_type>(),
         void>
     multiplyByScalar(const ValueType2&);
-  };
+    };
 
 }  // end of namespace tfel::math
 
