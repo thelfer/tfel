@@ -142,6 +142,8 @@ namespace mfront {
      * This method overrides variables by parameters
      */
     void finalizeVariablesDeclaration();
+    //! \brief perform pedantic checks
+    virtual void doPedanticChecks() const;
     //! \brief description of the material property
     MaterialPropertyDescription md;
     //! \brief overriding parameters

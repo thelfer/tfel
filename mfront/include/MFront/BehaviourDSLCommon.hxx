@@ -1379,9 +1379,7 @@ namespace mfront {
      */
     virtual void
     setComputeFinalThermodynamicForcesFromComputeFinalThermodynamicForcesCandidateIfNecessary();
-    /*!
-     * \brief perform pedantic checks
-     */
+    //! \brief perform pedantic checks
     virtual void doPedanticChecks() const;
     /*!
      * \return true if the user defined a block of code computing the

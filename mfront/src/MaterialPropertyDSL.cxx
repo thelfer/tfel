@@ -30,6 +30,7 @@
 #include "MFront/MFrontLogStream.hxx"
 #include "MFront/DSLUtilities.hxx"
 #include "MFront/MFrontUtilities.hxx"
+#include "MFront/PedanticMode.hxx"
 #include "MFront/MFrontDebugMode.hxx"
 #include "MFront/MFrontLogStream.hxx"
 #include "MFront/DSLFactory.hxx"
@@ -154,7 +155,16 @@ namespace mfront {
     return this->overriding_parameters;
   }  // end of getOverridenParameters
 
+  void MaterialPropertyDSL::doPedanticChecks() const {
+    // boucle sur md.inputs
+
+
+  }  // end of doPedanticChecks
+
   void MaterialPropertyDSL::endsInputFileProcessing() {
+    if (getPedanticMode()) {
+      this->doPedanticChecks();
+    }
   }  // end of endsInputFileProcessing
 
   void MaterialPropertyDSL::registerNewCallBack(const std::string& keyword,
