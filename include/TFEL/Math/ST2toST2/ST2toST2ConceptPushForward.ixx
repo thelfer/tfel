@@ -23,7 +23,7 @@ namespace tfel::math {
                               implementsST2toST2Concept<ST2toST2Type2>() &&
                               implementsTensorConcept<TensorType>() &&
                               getSpaceDimension<ST2toST2Type>() == 1u &&
-                              getSpaceDimension<ST2toST2Type2>() == 1u &
+                              getSpaceDimension<ST2toST2Type2>() == 1u &&
                                   getSpaceDimension<TensorType>() == 1u,
                           void>::type
   push_forward(ST2toST2Type& Ct, const ST2toST2Type2& C, const TensorType& F) {
@@ -46,7 +46,7 @@ namespace tfel::math {
                               implementsST2toST2Concept<ST2toST2Type2>() &&
                               implementsTensorConcept<TensorType>() &&
                               getSpaceDimension<ST2toST2Type>() == 2u &&
-                              getSpaceDimension<ST2toST2Type2>() == 2u &
+                              getSpaceDimension<ST2toST2Type2>() == 2u &&
                                   getSpaceDimension<TensorType>() == 2u,
                           void>::type
   push_forward(ST2toST2Type& Ct, const ST2toST2Type2& C, const TensorType& F) {
@@ -229,7 +229,7 @@ namespace tfel::math {
                               implementsST2toST2Concept<ST2toST2Type2>() &&
                               implementsTensorConcept<TensorType>() &&
                               getSpaceDimension<ST2toST2Type>() == 3u &&
-                              getSpaceDimension<ST2toST2Type2>() == 3u &
+                              getSpaceDimension<ST2toST2Type2>() == 3u &&
                                   getSpaceDimension<TensorType>() == 3u,
                           void>::type
   push_forward(ST2toST2Type& Ct, const ST2toST2Type2& C, const TensorType& F) {

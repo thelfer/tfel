@@ -503,13 +503,14 @@ namespace mfront {
         static_cast<size_type>(o.getValueForModellingHypothesis(h));
     auto args =
         WriteRotationFunctionArgument{os, h, v.name, variable_offset, ao};
-    if (SupportedTypes::getTypeFlag(v.type) == SupportedTypes::SCALAR) {
-    } else if (SupportedTypes::getTypeFlag(v.type) == SupportedTypes::TVECTOR) {
+    const auto f = SupportedTypes::getTypeFlag(v.type);
+    if (f == SupportedTypes::SCALAR) {
+    } else if (f == SupportedTypes::TVECTOR) {
       os << "std::cerr << \"rotation of vector is unsupported\";\n"
          << "std::exit(-1);\n";
-    } else if (SupportedTypes::getTypeFlag(v.type) == SupportedTypes::STENSOR) {
+    } else if (f == SupportedTypes::STENSOR) {
       writeStensorRotation(args);
-    } else if (SupportedTypes::getTypeFlag(v.type) == SupportedTypes::TENSOR) {
+    } else if (f == SupportedTypes::TENSOR) {
       writeTensorRotation(args);
     } else {
       tfel::raise("writeVariableRotation: unsupported variable type");
@@ -704,63 +705,53 @@ namespace mfront {
         const auto to_name = "d" + v1.name + "_d" + v2.name;
         auto args =
             WriteRotationFunctionArgument{os, h, to_name, o, array_offset};
-        if (SupportedTypes::getTypeFlag(v1.type) == SupportedTypes::SCALAR) {
-          if (SupportedTypes::getTypeFlag(v2.type) == SupportedTypes::SCALAR) {
-          } else if (SupportedTypes::getTypeFlag(v2.type) ==
-                     SupportedTypes::TVECTOR) {
+        const auto f1 = SupportedTypes::getTypeFlag(v1.type);
+        const auto f2 = SupportedTypes::getTypeFlag(v2.type);
+        if (f1 == SupportedTypes::SCALAR) {
+          if (f2 == SupportedTypes::SCALAR) {
+          } else if (f2 == SupportedTypes::TVECTOR) {
             os << "std::cerr << \"" << f << ": \"\n"
                << "          << \"unsupported tangent operator type\";\n"
                << "std::exit(-1);\n";
-          } else if (SupportedTypes::getTypeFlag(v2.type) ==
-                     SupportedTypes::STENSOR) {
+          } else if (f2 == SupportedTypes::STENSOR) {
             writeStensorRotation(args);
-          } else if (SupportedTypes::getTypeFlag(v2.type) ==
-                     SupportedTypes::TENSOR) {
+          } else if (f2 == SupportedTypes::TENSOR) {
             writeTensorRotation(args);
           } else {
             os << "std::cerr << \"" << f << ": \"\n"
                << "          << \"unsupported gradient type\";\n"
                << "std::exit(-1);\n";
           }
-        } else if (SupportedTypes::getTypeFlag(v1.type) ==
-                   SupportedTypes::TVECTOR) {
+        } else if (f1 == SupportedTypes::TVECTOR) {
           os << "std::cerr << \"" << f << ": \"\n"
              << "          << \"unsupported tangent operator type\";\n"
              << "std::exit(-1);\n";
-        } else if (SupportedTypes::getTypeFlag(v1.type) ==
-                   SupportedTypes::STENSOR) {
-          if (SupportedTypes::getTypeFlag(v2.type) == SupportedTypes::SCALAR) {
+        } else if (f1 == SupportedTypes::STENSOR) {
+          if (f2 == SupportedTypes::SCALAR) {
             writeStensorRotation(args);
-          } else if (SupportedTypes::getTypeFlag(v2.type) ==
-                     SupportedTypes::TVECTOR) {
+          } else if (f2 == SupportedTypes::TVECTOR) {
             os << "std::cerr << \"" << f << ": \"\n"
                << "          << \"unsupported tangent operator type\";\n"
                << "std::exit(-1);\n";
-          } else if (SupportedTypes::getTypeFlag(v2.type) ==
-                     SupportedTypes::STENSOR) {
+          } else if (f2 == SupportedTypes::STENSOR) {
             writeST2toST2Rotation(args);
-          } else if (SupportedTypes::getTypeFlag(v2.type) ==
-                     SupportedTypes::TENSOR) {
+          } else if (f2 == SupportedTypes::TENSOR) {
             writeT2toST2Rotation(args);
           } else {
             os << "std::cerr << \"" << f << ": \"\n"
                << "          << \"unsupported gradient type\";\n"
                << "std::exit(-1);\n";
           }
-        } else if (SupportedTypes::getTypeFlag(v1.type) ==
-                   SupportedTypes::TENSOR) {
-          if (SupportedTypes::getTypeFlag(v2.type) == SupportedTypes::SCALAR) {
+        } else if (f1 == SupportedTypes::TENSOR) {
+          if (f2 == SupportedTypes::SCALAR) {
             writeTensorRotation(args);
-          } else if (SupportedTypes::getTypeFlag(v2.type) ==
-                     SupportedTypes::TVECTOR) {
+          } else if (f2 == SupportedTypes::TVECTOR) {
             os << "std::cerr << \"" << f << ": \"\n"
                << "          << \"unsupported tangent operator type\";\n"
                << "std::exit(-1);\n";
-          } else if (SupportedTypes::getTypeFlag(v2.type) ==
-                     SupportedTypes::STENSOR) {
+          } else if (f2 == SupportedTypes::STENSOR) {
             writeST2toT2Rotation(args);
-          } else if (SupportedTypes::getTypeFlag(v2.type) ==
-                     SupportedTypes::TENSOR) {
+          } else if (f2 == SupportedTypes::TENSOR) {
             writeT2toT2Rotation(args);
           } else {
             os << "std::cerr << \"" << f << ": \"\n"
@@ -928,7 +919,7 @@ namespace mfront {
 
   std::string GenericBehaviourInterface::getInterfaceName() const {
     return "Generic";
-  }  // end of GenericBehaviourInterface::getInterfaceName
+  }  // end of getInterfaceName
 
   std::pair<bool, GenericBehaviourInterface::tokens_iterator>
   GenericBehaviourInterface::treatKeyword(BehaviourDescription& bd,
@@ -958,13 +949,13 @@ namespace mfront {
       return {true, current};
     }
     return {false, current};
-  }  // end of GenericBehaviourInterface::treatKeyword
+  }  // end of treatKeyword
 
   std::set<GenericBehaviourInterface::Hypothesis>
   GenericBehaviourInterface::getModellingHypothesesToBeTreated(
       const BehaviourDescription& bd) const {
     return bd.getModellingHypotheses();
-  }  // end of GenericBehaviourInterface::getModellingHypothesesToBeTreated
+  }  // end of getModellingHypothesesToBeTreated
 
   void GenericBehaviourInterface::writeInterfaceSpecificIncludes(
       std::ostream& os, const BehaviourDescription& bd) const {
@@ -973,7 +964,7 @@ namespace mfront {
     if (bd.getAttribute(BehaviourDescription::requiresStiffnessTensor, false)) {
       os << "#include \"MFront/GenericBehaviour/ComputeStiffnessTensor.hxx\"\n";
     }
-  }  // end of GenericBehaviourInterface::writeInterfaceSpecificIncludes
+  }  // end of writeInterfaceSpecificIncludes
 
   void GenericBehaviourInterface::getTargetsDescription(
       TargetsDescription& d, const BehaviourDescription& bd) {
@@ -999,7 +990,7 @@ namespace mfront {
     for (const auto h : this->getModellingHypothesesToBeTreated(bd)) {
       insert_if(l.epts, this->getFunctionNameForHypothesis(name, h));
     }
-  }  // end of GenericBehaviourInterface::getTargetsDescription
+  }  // end of getTargetsDescription
 
   void GenericBehaviourInterface::endTreatment(
       const BehaviourDescription& bd, const FileDescription& fd) const {
@@ -1011,9 +1002,9 @@ namespace mfront {
     const auto mhs = this->getModellingHypothesesToBeTreated(bd);
     const auto name = bd.getLibrary() + bd.getClassName();
     const auto header = name + "-generic.hxx";
+    const auto type = bd.getBehaviourType();
     const auto is_finite_strain_through_strain_measure =
-        (bd.getBehaviourType() ==
-         BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) &&
+        (type == BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) &&
         (bd.isStrainMeasureDefined()) &&
         (bd.getStrainMeasure() != BehaviourDescription::LINEARISED);
     std::ofstream out("include/MFront/GenericBehaviour/" + header);
@@ -1088,29 +1079,17 @@ namespace mfront {
       out << "#include\"MFront/BehaviourProfiler.hxx\"\n";
     }
     if (this->shallGenerateMTestFileOnFailure(bd)) {
-      if (bd.getBehaviourType() ==
-          BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) {
-        if (bd.isStrainMeasureDefined()) {
-          const auto ms = bd.getStrainMeasure();
-          if (ms == BehaviourDescription::LINEARISED) {
-            out << "#include "
-                << "\"MFront/"
-                   "GenericBehaviourSmallStrainMTestFileGenerator.hxx\"\n";
-          } else {
-            out << "#include "
-                << "\"MFront/"
-                   "GenericBehaviourFiniteStrainMTestFileGenerator.hxx\"\n";
-          }
+      if (type == BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) {
+        if (is_finite_strain_through_strain_measure) {
+          out << "#include \"MFront/"
+              << "GenericBehaviourFiniteStrainMTestFileGenerator.hxx\"\n";
         } else {
-          out << "#include "
-              << "\"MFront/"
-                 "GenericBehaviourSmallStrainMTestFileGenerator.hxx\"\n";
+          out << "#include \"MFront/"
+              << "GenericBehaviourSmallStrainMTestFileGenerator.hxx\"\n";
         }
-      } else if (bd.getBehaviourType() ==
-                 BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR) {
-        out << "#include "
-            << "\"MFront/"
-               "GenericBehaviourFiniteStrainMTestFileGenerator.hxx\"\n";
+      } else if (type == BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR) {
+        out << "#include \"MFront/"
+            << "GenericBehaviourFiniteStrainMTestFileGenerator.hxx\"\n";
       } else {
         tfel::raise(
             "GenericBehaviourInterface::writeInterfaceSpecificIncludes: "
@@ -1144,7 +1123,6 @@ namespace mfront {
     // parameters
     this->writeSetParametersFunctionsImplementations(out, bd, name);
     // behaviour implementations
-    const auto type = bd.getBehaviourType();
     for (const auto h : mhs) {
       const auto f = this->getFunctionNameForHypothesis(name, h);
       out << "MFRONT_SHAREDOBJ int " << f
@@ -1266,7 +1244,7 @@ namespace mfront {
         << "}\n"
         << "#endif /* __cplusplus */\n\n";
     out.close();
-  }  // end of GenericBehaviourInterface::endTreatment
+  }  // end of endTreatment
 
   void GenericBehaviourInterface::generateMTestFile(
       std::ostream& out,
@@ -1477,7 +1455,7 @@ namespace mfront {
         << "static_cast<void>(TVectorSize); // remove gcc warning\n"
         << "static_cast<void>(StensorSize); // remove gcc warning\n"
         << "static_cast<void>(TensorSize);  // remove gcc warning\n";
-  }  // end of GenericBehaviourInterface::generateMTestFile
+  }  // end of generateMTestFile
 
   std::string GenericBehaviourInterface::getLibraryName(
       const BehaviourDescription& bd) const {
@@ -1489,17 +1467,17 @@ namespace mfront {
       }
     }
     return bd.getLibrary() + "-generic";
-  }  // end of GenericBehaviourInterface::getLibraryName
+  }  // end of getLibraryName
 
   std::string GenericBehaviourInterface::getFunctionNameBasis(
       const std::string& n) const {
     return n;
-  }  // end of GenericBehaviourInterface::getFunctionName
+  }  // end of getFunctionName
 
   std::string GenericBehaviourInterface::getFunctionNameForHypothesis(
       const std::string& n, const Hypothesis h) const {
     return n + "_" + ModellingHypothesis::toString(h);
-  }  // end of GenericBehaviourInterface::getFunctionNameForHypothesis
+  }  // end of getFunctionNameForHypothesis
 
   void GenericBehaviourInterface::writeBehaviourConstructorHeader(
       std::ostream& os,
@@ -1526,7 +1504,7 @@ namespace mfront {
     if (!initStateVarsIncrements.empty()) {
       os << ",\n" << initStateVarsIncrements;
     }
-  }  // end of GenericBehaviourInterface::writeBehaviourConstructorHeader
+  }  // end of writeBehaviourConstructorHeader
 
   void GenericBehaviourInterface::writeBehaviourConstructorBody(
       std::ostream& os,
@@ -1659,7 +1637,7 @@ namespace mfront {
         }
       }
     }
-  }  // end of GenericBehaviourInterface::writeBehaviourConstructorBody
+  }  // end of writeBehaviourConstructorBody
 
   void GenericBehaviourInterface::writeBehaviourDataConstructor(
       std::ostream& os,
@@ -1941,7 +1919,7 @@ namespace mfront {
       os << ";\n";
     }
     os << "}\n\n";
-  }  // end of GenericBehaviourInterface::writeBehaviourDataConstructor
+  }  // end of writeBehaviourDataConstructor
 
   void GenericBehaviourInterface::writeIntegrationDataConstructor(
       std::ostream& os,
@@ -2002,11 +1980,11 @@ namespace mfront {
       }
     }
     os << "}\n\n";
-  }  // end of GenericBehaviourInterface::writeIntegrationDataConstructor
+  }  // end of writeIntegrationDataConstructor
 
   void GenericBehaviourInterface::writeBehaviourDataMainVariablesSetters(
       std::ostream&, const BehaviourDescription&) const {
-  }  // end of GenericBehaviourInterface::writeBehaviourDataMainVariablesSetters
+  }  // end of writeBehaviourDataMainVariablesSetters
 
   void GenericBehaviourInterface::writeIntegrationDataMainVariablesSetters(
       std::ostream&, const BehaviourDescription&) const {}  // end of
@@ -2016,19 +1994,6 @@ namespace mfront {
       std::ostream& os,
       const Hypothesis h,
       const BehaviourDescription& bd) const {
-    auto vsize = [](const SupportedTypes::TypeFlag f) {
-      if (f == SupportedTypes::TVECTOR) {
-        return "TVectorSize";
-      } else if (f == SupportedTypes::STENSOR) {
-        return "StensorSize";
-      } else if (f != SupportedTypes::TENSOR) {
-        tfel::raise(
-            "GenericBehaviourInterface::writeBehaviourDataMainVariablesSetters:"
-            " "
-            "invalid variable type");
-      }
-      return "TensorSize";
-    };
     auto export_variable = [this, &bd, &os](const VariableDescription& v,
                                             const char* const dest,
                                             const SupportedTypes::TypeSize o) {
@@ -2084,7 +2049,7 @@ namespace mfront {
       o += SupportedTypes::getTypeSize(iv.type, iv.arraySize);
     }
     os << "} // end of exportStateData\n\n";
-  }  // end of GenericBehaviourInterface::exportMechanicalData
+  }  // end of exportMechanicalData
 
   void GenericBehaviourInterface::writeStrainMeasureCommonPreProcessing1(
       std::ostream& out, const Hypothesis h) const {
@@ -2101,7 +2066,7 @@ namespace mfront {
         << ",F0.begin());\n";
     out << "tfel::fsalgo::copy<" << ts << ">::exe(d->s1.gradients"
         << ",F1.begin());\n";
-  }  // end of GenericBehaviourInterface::writeStrainMeasureCommonPreProcessing1
+  }  // end of writeStrainMeasureCommonPreProcessing1
 
   void
   GenericBehaviourInterface::writeStandardFiniteStrainBehaviourPreProcessing(
@@ -2122,12 +2087,15 @@ namespace mfront {
       }
       return true;
     }();
-    out << "tfel::math::stensor<" << N << ",real> s0;\n"
-        << "tfel::math::stensor<" << N << ",real> s1;\n"
+    if ((h != ModellingHypothesis::PLANESTRESS) &&
+	(h != ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS)) {
+      out << "tfel::math::stensor<" << N << ",real> s0;\n";
+    }
+    out << "tfel::math::stensor<" << N << ",real> s1;\n"
         << "auto *const thermodynamic_forces0_old = "
-           "d->s0.thermodynamic_forces;\n"
+        <<  "d->s0.thermodynamic_forces;\n"
         << "auto *const thermodynamic_forces1_old = "
-           "d->s1.thermodynamic_forces;\n"
+        << "d->s1.thermodynamic_forces;\n"
         << "if(sm!=StressMeasure::CAUCHY){\n";
     if (!b) {
       out << "return -1;\n";
@@ -2175,8 +2143,7 @@ namespace mfront {
           << "d->s1.thermodynamic_forces = s1.begin();\n";
     }
     out << "}\n";
-  }  // end of
-  // GenericBehaviourInterface::writeStandardFiniteStrainBehaviourPreProcessing
+  }  // end of writeStandardFiniteStrainBehaviourPreProcessing
 
   void GenericBehaviourInterface::writeGreenLagrangeStrainMeasurePreProcessing(
       std::ostream& out,
