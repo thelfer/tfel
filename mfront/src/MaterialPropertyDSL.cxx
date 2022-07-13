@@ -18,6 +18,7 @@
 #include <iterator>
 #include <algorithm>
 #include <stdexcept>
+#include <iostream>
 
 #include "TFEL/Raise.hxx"
 #include "TFEL/Utilities/Token.hxx"
@@ -30,6 +31,7 @@
 #include "MFront/MFrontLogStream.hxx"
 #include "MFront/DSLUtilities.hxx"
 #include "MFront/MFrontUtilities.hxx"
+#include "MFront/PedanticMode.hxx"
 #include "MFront/MFrontDebugMode.hxx"
 #include "MFront/MFrontLogStream.hxx"
 #include "MFront/DSLFactory.hxx"
@@ -154,7 +156,89 @@ namespace mfront {
     return this->overriding_parameters;
   }  // end of getOverridenParameters
 
+  /*!
+   * \brief various checks on variables
+   * \param[in] v  : variables
+   */
+  static void performPedanticChecks(const VariableDescriptionContainer& vc,
+                                    const std::set<std::string>& m,
+                                    const std::string& t) {
+    auto& log = getLogStream();
+    auto& glossary = tfel::glossary::Glossary::getGlossary();
+    // boucle sur md.inputs
+    for (const auto& v : vc) {
+      if (m.find(v.name) == m.end()) {
+        log << "- " << t << " '" << v.name << "' is unused.\n";
+      } else {
+        if ((!v.hasGlossaryName()) && (!v.hasEntryName())) {
+          log << "- " << t << " '" << v.name << "' has no external name.\n";
+        }
+        if (!v.hasPhysicalBounds()) {
+          log << "- " << t << " '" << v.name << "' has no physical bounds.\n";
+        }
+        if (!v.hasBounds()) {
+          log << "- " << t << " '" << v.name << "' has no bounds.\n";
+        }
+        if (v.description.empty()) {
+          auto hasDoc = false;
+          if (v.hasGlossaryName()) {
+            const auto& e = glossary.getGlossaryEntry(v.getExternalName());
+            hasDoc = (!e.getShortDescription().empty()) ||
+                     (!e.getDescription().empty());
+          }
+          if (!hasDoc) {
+            log << "- " << t << " '" << v.name << "' has no description.\n";
+          }
+        }
+      }
+    }
+  }  // end of performPedanticChecks
+
+  /*!
+   * \brief various checks on variables
+   * \param[in] v  : variables
+   */
+  static void performPedanticChecks(const VariableDescription& vd,
+                                    const std::string& t) {
+    auto& log = getLogStream();
+    auto& glossary = tfel::glossary::Glossary::getGlossary();
+    if ((!vd.hasGlossaryName()) && (!vd.hasEntryName())) {
+      log << "- " << t << " '" << vd.name << "' has no external name.\n";
+    }
+    if (!vd.hasPhysicalBounds()) {
+      log << "- " << t << " '" << vd.name << "' has no physical bounds.\n";
+    }
+    if (!vd.hasBounds()) {
+      log << "- " << t << " '" << vd.name << "' has no bounds.\n";
+    }
+    if (vd.description.empty()) {
+      auto hasDoc = false;
+      if (vd.hasGlossaryName()) {
+        const auto& e = glossary.getGlossaryEntry(vd.getExternalName());
+        hasDoc =
+            (!e.getShortDescription().empty()) || (!e.getDescription().empty());
+      }
+      if (!hasDoc) {
+        log << "- " << t << " '" << vd.name << "' has no description.\n";
+      }
+    }
+  }  // end of performPedanticChecks
+
+  void MaterialPropertyDSL::doPedanticChecks() const {
+    auto& log = getLogStream();
+    log << "\n* Pedantic checks of " << this->fd.fileName << "\n\n";
+    performPedanticChecks(this->fd);
+    performPedanticChecks(this->md.inputs, this->md.f.used_inputs, "input");
+    performPedanticChecks(this->md.parameters, md.f.used_parameters,
+                          "parameter");
+    performPedanticChecks(this->md.output, "output");
+    log << "\n# End of pedantic checks\n";
+  }  // end of doPedanticChecks
+
   void MaterialPropertyDSL::endsInputFileProcessing() {
+    if (getPedanticMode()) {
+      this->doPedanticChecks();
+    }
   }  // end of endsInputFileProcessing
 
   void MaterialPropertyDSL::registerNewCallBack(const std::string& keyword,
@@ -486,7 +570,19 @@ namespace mfront {
           this->md.f.body += " ";
         }
         const auto var = tfel::unicode::getMangledString(this->current->value);
-        if ((var == this->md.output.name) || (this->md.inputs.contains(var))) {
+        if (this->md.inputs.contains(var)) {
+          this->md.f.used_inputs.insert(var);
+        }
+        if (this->md.parameters.contains(var)) {
+          this->md.f.used_parameters.insert(var);
+        }
+        if (this->md.staticVars.contains(var)) {
+          this->md.f.used_static_variables.insert(var);
+        }
+        if ((var == this->md.output.name) ||  //
+            (this->md.inputs.contains(var)) ||
+            (this->md.parameters.contains(var)) ||
+            (this->md.staticVars.contains(var))) {
           treated = false;
           if (newInstruction) {
             ++(this->current);
@@ -684,6 +780,7 @@ namespace mfront {
       const std::vector<std::string>& ecmds,
       const std::map<std::string, std::string>& s) {
     this->importFile(fileName_, ecmds, s);
+    this->endsInputFileProcessing();
     for (const auto& i : this->interfaces) {
       i.second->getTargetsDescription(this->td, this->md);
     }
@@ -727,10 +824,11 @@ namespace mfront {
     };
     throw_if(this->md.className.empty(), "no material property name defined.");
     throw_if(this->md.f.body.empty(), "no function defined.");
-    throw_if(this->interfaces.empty(), "no interface defined.");
     // creating directories
-    tfel::system::systemCall::mkdir("include");
-    tfel::system::systemCall::mkdir("src");
+    if (!this->interfaces.empty()) {
+      tfel::system::systemCall::mkdir("include");
+      tfel::system::systemCall::mkdir("src");
+    }
     //! generating sources du to external material properties and models
     for (const auto& em : this->md.getExternalMFrontFiles()) {
       this->callMFront(em.second, {em.first});

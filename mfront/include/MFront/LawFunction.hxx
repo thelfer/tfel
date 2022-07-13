@@ -14,6 +14,7 @@
 #ifndef LIB_LAWFUNCTION_HXX
 #define LIB_LAWFUNCTION_HXX
 
+#include <set>
 #include <string>
 #include "MFront/MFrontConfig.hxx"
 
@@ -35,6 +36,12 @@ namespace mfront {
     ~LawFunction();
     //! \brief body of the function
     std::string body;
+    //! \brief used inputs
+    std::set<std::string> used_inputs;
+    //! \brief used parameters
+    std::set<std::string> used_parameters;
+    //! \brief used static variables
+    std::set<std::string> used_static_variables;
     //! \brief line a which the function is defined.
     unsigned int line = 0u;
     //! \brief boolean stating that the output is modified by the body.
