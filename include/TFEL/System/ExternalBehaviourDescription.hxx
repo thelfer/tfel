@@ -214,8 +214,6 @@ namespace tfel::system {
     std::vector<std::string> ipnames;
     //! \brief names of the unsigned short parameters
     std::vector<std::string> upnames;
-    //! \brief source file
-    std::string source;
     /*!
      * \brief behaviour type
      * 0 : general behaviour
