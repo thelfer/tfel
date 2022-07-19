@@ -1513,7 +1513,8 @@ namespace mtest {
       this->aoutputs.push_back(
           {"integral value of '" + n + "' in the current configuration",
            [this, n](std::ostream& os, const StudyCurrentState& s) {
-             os << this->computeIntegralValue(s, n, Configuration::CURRENT_CONFIGURATION);
+             os << this->computeIntegralValue(
+                 s, n, Configuration::CURRENT_CONFIGURATION);
            }});
     } else if (t == "mean_value_initial_configuration") {
       this->aoutputs.push_back(
@@ -1525,7 +1526,8 @@ namespace mtest {
       this->aoutputs.push_back(
           {"mean value of '" + n + "' in the current configuration",
            [this, n](std::ostream& os, const StudyCurrentState& s) {
-             os << this->computeMeanValue(s, n, Configuration::CURRENT_CONFIGURATION);
+             os << this->computeMeanValue(s, n,
+                                          Configuration::CURRENT_CONFIGURATION);
            }});
     } else {
       tfel::raise(
@@ -1613,7 +1615,8 @@ namespace mtest {
     constexpr real pi = 3.14159265358979323846;
     const auto ri = [this, state, c]() -> real {
       if ((!this->hpp) && (c == Configuration::CURRENT_CONFIGURATION)) {
-        return state.u1[0];
+        const auto Ri = this->mesh.inner_radius;
+        return Ri + state.u1[0];
       }
       return this->mesh.inner_radius;
     }();
@@ -1621,15 +1624,15 @@ namespace mtest {
       if ((!this->hpp) && (c == Configuration::CURRENT_CONFIGURATION)) {
         const size_type ln = this->getNumberOfNodes() - 1;
         const auto Re = this->mesh.outer_radius;
-        return (this->hpp) ? Re : Re + state.u1[ln];
+        return Re + state.u1[ln];
       }
       return this->mesh.outer_radius;
     }();
     const auto h = [this, state, c]() -> real {
       if ((!this->hpp) && (c == Configuration::CURRENT_CONFIGURATION)) {
-        return state.u1[this->getNumberOfNodes()];
+        return 1. + state.u1[this->getNumberOfNodes()];
       }
-      return 1;
+      return 1.;
     }();
     const auto V = pi * h * (re * re - ri * ri);
     return this->computeIntegralValue(state, n, c) / V;

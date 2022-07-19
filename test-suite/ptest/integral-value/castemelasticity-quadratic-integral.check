@@ -1,0 +1,12 @@
+@Command "mtest castemelasticity-quadratic-integral.ptest";
+@TestType Absolute;
+@Precision 1.e-10;
+
+@Test "castemelasticity-quadratic-integral.res" "castemelasticity-quadratic-integral.ref" 7;
+@Test "castemelasticity-quadratic-integral.res" "castemelasticity-quadratic-integral.ref" 8;
+@Test "castemelasticity-quadratic-integral.res" "castemelasticity-quadratic-integral.ref" 9;
+@Test "castemelasticity-quadratic-integral.res" "castemelasticity-quadratic-integral.ref" 10;
+@Test "castemelasticity-quadratic-integral.res" "castemelasticity-quadratic-integral.ref" 11;
+@Test "castemelasticity-quadratic-integral.res" "castemelasticity-quadratic-integral.ref" 12;
+@Test "castemelasticity-quadratic-integral.res" "castemelasticity-quadratic-integral.ref" 13;
+@Test "castemelasticity-quadratic-integral.res" "castemelasticity-quadratic-integral.ref" 14;

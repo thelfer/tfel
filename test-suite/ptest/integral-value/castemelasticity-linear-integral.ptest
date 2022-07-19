@@ -1,0 +1,32 @@
+@Author Maxence Wangermez;
+@Date   18/07/2022;
+@Description{
+  Unit test for integral and mean value computations for linear elements
+};
+
+
+@InnerRadius 4.2e-3;
+@OuterRadius 4.7e-3;
+@NumberOfElements 1;
+@ElementType 'Linear';
+@RadialLoading 'TightPipe';
+@FillingPressure      1.e5;
+@FillingTemperature 293.15;
+
+
+@Behaviour<castem,LogarithmicStrain1D> '/home/mw270857/Codes/tfel-mfront/master/sources/build/mfront/tests/behaviours/castem/libMFrontCastemBehaviours.so' 'umatelasticity';
+@MaterialProperty<constant> 'YoungModulus' 150e9;
+@MaterialProperty<constant> 'PoissonRatio' 0.3;
+@ExternalStateVariable 'Temperature' {0:293.15,1:693.15};
+
+@Times {0,1};
+
+@OutputFilePrecision 14;
+@AdditionalOutputs {'integral_value_initial_configuration':'SRR',
+                    'integral_value_current_configuration':'SRR'}; // compute integral values of SRR
+@AdditionalOutputs {'integral_value_initial_configuration':'STT',
+                    'integral_value_current_configuration':'STT'}; // compute integral values of STT
+@AdditionalOutputs {'integral_value_initial_configuration':'SZZ',
+                    'integral_value_current_configuration':'SZZ'}; // compute integral values of SZZ
+@AdditionalOutputs {'integral_value_initial_configuration':'Temperature',
+                    'integral_value_current_configuration':'Temperature'}; // compute integral values of Temperature

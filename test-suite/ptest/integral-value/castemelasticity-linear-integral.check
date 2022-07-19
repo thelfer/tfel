@@ -1,0 +1,12 @@
+@Command "mtest castemelasticity-linear-integral.ptest";
+@TestType Absolute;
+@Precision 1.e-10;
+
+@Test "castemelasticity-linear-integral.res" "castemelasticity-linear-integral.ref" 8;
+@Test "castemelasticity-linear-integral.res" "castemelasticity-linear-integral.ref" 9;
+@Test "castemelasticity-linear-integral.res" "castemelasticity-linear-integral.ref" 10;
+@Test "castemelasticity-linear-integral.res" "castemelasticity-linear-integral.ref" 11;
+@Test "castemelasticity-linear-integral.res" "castemelasticity-linear-integral.ref" 12;
+@Test "castemelasticity-linear-integral.res" "castemelasticity-linear-integral.ref" 13;
+@Test "castemelasticity-linear-integral.res" "castemelasticity-linear-integral.ref" 14;
+@Test "castemelasticity-linear-integral.res" "castemelasticity-linear-integral.ref" 15;
