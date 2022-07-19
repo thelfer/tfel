@@ -1,4 +1,5 @@
-PTEST_DOCS = AxialForceEvolution.md     \
+PTEST_DOCS = AdditionalOutputs.md       \
+         AxialForceEvolution.md         \
 	     AxialGrowthEvolution.md        \
 	     AxialLoading.md                \
 	     DisplacementEpsilon.md         \

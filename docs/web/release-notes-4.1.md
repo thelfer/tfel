@@ -1873,6 +1873,10 @@ For more details, see <https://github.com/thelfer/tfel/issues/254>
 
 For more details, see <https://github.com/thelfer/tfel/issues/249>
 
+## Issue #248: [mtest] Document the `@AdditionalOutputs` keyword
+
+For more details, see <https://github.com/thelfer/tfel/issues/248>
+
 ## Issue #245: [mtest] add a `getOutputName` for `MaterialProperty` class
 
 For more details, see <https://github.com/thelfer/tfel/issues/245>
