@@ -26,6 +26,7 @@
 #include "MFront/MFrontUtilities.hxx"
 #include "MFront/DSLUtilities.hxx"
 #include "MFront/PerformanceProfiling.hxx"
+#include "MFront/MFrontLogStream.hxx"
 #include "MFront/ModelDescription.hxx"
 #include "MFront/BehaviourData.hxx"
 
@@ -1889,7 +1890,7 @@ namespace mfront {
 
   std::map<std::string, double> BehaviourData::getOverridenParameters() const {
     return this->overriding_parameters;
-  } // end of getOverridenParameters
+  }  // end of getOverridenParameters
 
   const CodeBlock& BehaviourData::getUserDefinedInitializeCodeBlock(
       const std::string& n) const {
@@ -1951,9 +1952,9 @@ namespace mfront {
     auto pp = oparameters.begin();
     while (pp != oparameters.end()) {
       if (pp->first.empty()) {
-          tfel::raise(
-              "BehaviourData::finalizeVariablesDeclaration: "
-              "overriding parameter with empty name specified");
+        tfel::raise(
+            "BehaviourData::finalizeVariablesDeclaration: "
+            "overriding parameter with empty name specified");
       }
       if (override_variable(this->materialProperties, pp->first, pp->second)) {
         pp = oparameters.erase(pp);
@@ -1992,14 +1993,12 @@ namespace mfront {
           if (odp != oparameters.end()) {
             return odp;
           }
-          const auto odp2 =
-              oparameters.find("d" + v.getExternalName());
+          const auto odp2 = oparameters.find("d" + v.getExternalName());
           if (odp2 != oparameters.end()) {
             return odp2;
           }
           if (v.symbolic_form.empty()) {
-            const auto odp3 =
-                oparameters.find("\u0394" + v.symbolic_form);
+            const auto odp3 = oparameters.find("\u0394" + v.symbolic_form);
             if (odp3 != oparameters.end()) {
               return odp3;
             }
@@ -2061,6 +2060,20 @@ namespace mfront {
           "internal error while treating overriding parameters");
     }
   }  // end of finalizeVariablesDeclaration
+
+  void BehaviourData::checkAndComplePhysicalBoundsDeclaration(
+      const std::string_view s) {
+    mfront::checkAndComplePhysicalBoundsDeclaration(this->materialProperties,
+                                                    s);
+    mfront::checkAndComplePhysicalBoundsDeclaration(this->stateVariables, s);
+    mfront::checkAndComplePhysicalBoundsDeclaration(
+        this->auxiliaryStateVariables, s);
+    mfront::checkAndComplePhysicalBoundsDeclaration(this->integrationVariables,
+                                                    s);
+    mfront::checkAndComplePhysicalBoundsDeclaration(
+        this->externalStateVariables, s);
+    mfront::checkAndComplePhysicalBoundsDeclaration(this->parameters, s);
+  }  // end of checkAndComplePhysicalBoundsDeclaration
 
   BehaviourData::~BehaviourData() = default;
 

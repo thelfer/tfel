@@ -1,0 +1,14 @@
+@DSL MaterialLaw;
+@Law TestUnitSystem;
+@UnitSystem SI;
+
+@Output stress E;
+E.setGlossaryName("YoungModulus");
+
+@StateVariable temperature T;
+T.setGlossaryName("Temperature");
+
+@Function{
+  constexpr auto Ta = temperature{3000};
+  E = 150e9 * exp(T / Ta);
+};

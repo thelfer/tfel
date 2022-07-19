@@ -422,8 +422,7 @@ namespace tfel::math {
 
   // template<unsigned short N,unsigned short M,typename T>
   template <unsigned short N, unsigned short M, typename T>
-  constexpr tmatrix<M, N, T> transpose(
-      const tmatrix<N, M, T>& m) {
+  constexpr tmatrix<M, N, T> transpose(const tmatrix<N, M, T>& m) {
     tmatrix<M, N, T> tm;
     for (typename tmatrix<N, M, T>::size_type i = 0; i < N; ++i) {
       for (typename tmatrix<N, M, T>::size_type j = 0; j < M; ++j) {

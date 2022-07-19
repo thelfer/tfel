@@ -2739,7 +2739,10 @@ AC_OUTPUT([debug.sh Makefile Doxyfile docs/Makefile docs/tfel/Makefile
 	   bindings/python/tests/pymfronttest2.py
 	   bindings/python/tests/pymfronttest3.py
 	   bindings/fortran77/Makefile bindings/fortran90/Makefile
-	   tests/Makefile tests/Tests/Makefile tests/Math/Makefile
+	   tests/Makefile
+       tests/Tests/Makefile
+       tests/Glossary/Makefile
+       tests/Math/Makefile
 	   tests/Math/include/Makefile
 	   tests/Math/ExpressionTemplates/Makefile
 	   tests/Math/RungeKutta/Makefile

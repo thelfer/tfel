@@ -235,6 +235,21 @@ namespace mfront {
   };  // end of struct VariableDescription
 
   /*!
+   * \brief declare the physical bounds of a variable if:
+   *
+   * - the variable is associated with a glossary name and the glossary entry
+   *   declares lower or upper physical bounds
+   * - physical bounds were not already declared
+   *
+   * This method also checks if the declaration of the physical bounds are
+   * consistent with the one of the glossary entry.
+   *
+   * \param[in] v: variable
+   * \param[in] s: unit system
+   */
+  MFRONT_VISIBILITY_EXPORT void checkAndComplePhysicalBoundsDeclaration(
+      VariableDescription&, const std::string_view);
+  /*!
    * \return the size of the variable
    * \param[in] v: variable description
    */
@@ -434,8 +449,16 @@ namespace mfront {
    */
   MFRONT_VISIBILITY_EXPORT SupportedTypes::TypeSize getOffset(
       const VariableDescriptionContainer&, const std::string&);
+  /*!
+   * \brief declare the physical bounds of all variables using the glossary
+   * \param[in] variables: list of variables
+   * \param[in] s: unit system
+   */
+  MFRONT_VISIBILITY_EXPORT void checkAndComplePhysicalBoundsDeclaration(
+      VariableDescriptionContainer&, const std::string_view);
 
-  //! a simple alias for backward compatibility
+  //! \brief a simple alias for backward compatibility with previous version of
+  //! TFEL
   using VarContainer = VariableDescriptionContainer;
 
 }  // end of namespace mfront

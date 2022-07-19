@@ -1202,7 +1202,8 @@ namespace mfront {
         exportUnsignedShortSymbol(out, fn + "_nMainVariables", 1u);
         exportUnsignedShortSymbol(out, fn + "_nGradients", 1u);
         exportArrayOfIntegersSymbol(out, fn + "_GradientsTypes", {2});
-        exportArrayOfStringsSymbol(out, fn + "_Gradients", {"OpeningDisplacement"});
+        exportArrayOfStringsSymbol(out, fn + "_Gradients",
+                                   {"OpeningDisplacement"});
         exportUnsignedShortSymbol(out, fn + "_nThermodynamicForces", 1);
         exportArrayOfIntegersSymbol(out, fn + "_ThermodynamicForcesTypes", {2});
         exportArrayOfStringsSymbol(out, fn + "_ThermodynamicForces",
@@ -2526,9 +2527,9 @@ namespace mfront {
   void CastemInterface::generateInputFileExample(
       const BehaviourDescription& bd, const FileDescription& fd) const {
     try {
-    const auto name((!bd.getLibrary().empty())
-                        ? bd.getLibrary() + bd.getClassName()
-                        : bd.getClassName());
+      const auto name((!bd.getLibrary().empty())
+                          ? bd.getLibrary() + bd.getClassName()
+                          : bd.getClassName());
       const auto fileName("castem/" + name + ".dgibi");
       // opening output file
       tfel::system::systemCall::mkdir("castem");

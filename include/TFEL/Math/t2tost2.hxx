@@ -58,8 +58,9 @@ namespace tfel::math {
     static_assert(isScalar<numeric_type<T2toST2Type>>(),
                   "the t2tost2 type does not hold a scalar");
     //! \brief result
-    using type = t2tost2<getSpaceDimension<T2toST2Type>(),
-                        derivative_type<numeric_type<T2toST2Type>, ScalarType>>;
+    using type =
+        t2tost2<getSpaceDimension<T2toST2Type>(),
+                derivative_type<numeric_type<T2toST2Type>, ScalarType>>;
   };  // end of struct DerivativeTypeDispatcher
   /*!
    * \brief partial specialisation of the `DerivativeTypeDispatcher`
@@ -77,8 +78,9 @@ namespace tfel::math {
     static_assert(isScalar<numeric_type<T2toST2Type>>(),
                   "the t2tost2 type does not hold a scalar");
     //! \brief result
-    using type = t2tost2<getSpaceDimension<T2toST2Type>(),
-                        derivative_type<ScalarType, numeric_type<T2toST2Type>>>;
+    using type =
+        t2tost2<getSpaceDimension<T2toST2Type>(),
+                derivative_type<ScalarType, numeric_type<T2toST2Type>>>;
   };  // end of struct DerivativeTypeDispatcher
   /*!
    * \brief partial specialisation of the `DerivativeTypeDispatcher`
@@ -379,7 +381,7 @@ namespace tfel::math {
                                const StensorType&,
                                const TensorType&);
 
-  }  // end of namespace tfel::math
+}  // end of namespace tfel::math
 
 namespace tfel::typetraits {
 

@@ -22,7 +22,8 @@ namespace dianafea {
 
   struct MFRONT_DIANAFEA_VISIBILITY_EXPORT DianaFEAOutOfBoundsPolicy {
     static const DianaFEAOutOfBoundsPolicy& getDianaFEAOutOfBoundsPolicy();
-    std::optional<tfel::material::OutOfBoundsPolicy> getOutOfBoundsPolicy() const;
+    std::optional<tfel::material::OutOfBoundsPolicy> getOutOfBoundsPolicy()
+        const;
 
    private:
     DianaFEAOutOfBoundsPolicy();

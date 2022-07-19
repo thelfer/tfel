@@ -103,8 +103,8 @@ namespace tfel::math {
      * \param[in] v: pointer to an array used to initialise the
      * components of the tensor. This array is left unchanged.
      */
-    TFEL_HOST_DEVICE TFEL_MATH_INLINE2 static tensor<N, ValueType> buildFromFortranMatrix(
-        const base_type<ValueType>* const);
+    TFEL_HOST_DEVICE TFEL_MATH_INLINE2 static tensor<N, ValueType>
+    buildFromFortranMatrix(const base_type<ValueType>* const);
     //
     TFEL_MATH_FIXED_SIZE_ARRAY_DEFAULT_METHODS(tensor,
                                                GenericFixedSizeArrayBase);
@@ -117,12 +117,14 @@ namespace tfel::math {
      * \brief access operator
      * \param[in] i: index
      */
-    TFEL_HOST_DEVICE constexpr ValueType operator()(const typename tensor::size_type) const;
+    TFEL_HOST_DEVICE constexpr ValueType operator()(
+        const typename tensor::size_type) const;
     /*!
      * \brief access operator
      * \param[in] i: index
      */
-    TFEL_HOST_DEVICE constexpr ValueType& operator()(const typename tensor::size_type);
+    TFEL_HOST_DEVICE constexpr ValueType& operator()(
+        const typename tensor::size_type);
     /*!
      * \brief matrix-like access operator
      * \param[in] i: row number

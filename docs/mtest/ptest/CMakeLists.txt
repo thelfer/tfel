@@ -9,6 +9,7 @@ macro(install_ptest file)
   endif(TFEL_APPEND_SUFFIX)
 endmacro(install_ptest file)
 
+install_ptest(AdditionalOutputs)
 install_ptest(AxialForceEvolution)
 install_ptest(AxialGrowthEvolution)
 install_ptest(AxialLoading)

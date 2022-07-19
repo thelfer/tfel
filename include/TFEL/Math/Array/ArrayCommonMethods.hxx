@@ -39,15 +39,16 @@ namespace tfel::math {
      * \return a reference to the data associated with the given index
      * \param[in] i: requested index
      */
-    TFEL_HOST_DEVICE constexpr typename ArrayPolicyType::const_reference operator[](
-        const typename ArrayPolicyType::IndexingPolicy::size_type) const
+    TFEL_HOST_DEVICE constexpr typename ArrayPolicyType::const_reference
+    operator[](const typename ArrayPolicyType::IndexingPolicy::size_type) const
         noexcept;
     /*!
      * \brief access operator
      * \return a reference to the data associated with the given indices
      * \param[in] i: requested indices
      */
-    TFEL_HOST_DEVICE constexpr typename ArrayPolicyType::const_reference operator[](
+    TFEL_HOST_DEVICE constexpr typename ArrayPolicyType::const_reference
+    operator[](
         const std::array<typename ArrayPolicyType::IndexingPolicy::size_type,
                          ArrayPolicyType::IndexingPolicy::arity>&) const
         noexcept;
@@ -57,14 +58,15 @@ namespace tfel::math {
      * \param[in] i: requested indices
      */
     template <typename... Indices>
-    TFEL_HOST_DEVICE constexpr typename ArrayPolicyType::const_reference operator()(
-        const Indices...) const noexcept;
+    TFEL_HOST_DEVICE constexpr typename ArrayPolicyType::const_reference
+    operator()(const Indices...) const noexcept;
     /*!
      * \brief access operator
      * \return a reference to the data associated with the given indices
      * \param[in] i: requested indices
      */
-    TFEL_HOST_DEVICE constexpr typename ArrayPolicyType::const_reference operator()(
+    TFEL_HOST_DEVICE constexpr typename ArrayPolicyType::const_reference
+    operator()(
         const std::array<typename ArrayPolicyType::IndexingPolicy::size_type,
                          ArrayPolicyType::IndexingPolicy::arity>&) const
         noexcept;
@@ -88,7 +90,7 @@ namespace tfel::math {
      * \param[in] i: requested index
      */
     TFEL_HOST_DEVICE constexpr typename ArrayPolicyType::reference operator[](
-        const typename ArrayPolicyType::IndexingPolicy::size_type i) noexcept;
+        const typename ArrayPolicyType::IndexingPolicy::size_type) noexcept;
     /*!
      * \brief access operator
      * \return a reference to the data associated with the given indices
@@ -104,7 +106,7 @@ namespace tfel::math {
      */
     template <typename... Indices>
     TFEL_HOST_DEVICE constexpr typename ArrayPolicyType::reference operator()(
-        const Indices... i) noexcept;
+        const Indices...) noexcept;
     /*!
      * \brief access operator
      * \return a reference to the data associated with the given indices
@@ -131,8 +133,8 @@ namespace tfel::math {
      */
     template <typename ImportIndexingPolicy, typename InputIterator>
     TFEL_HOST_DEVICE constexpr void import(const ImportIndexingPolicy&,
-                          const InputIterator,
-                          const InputIterator);
+                                           const InputIterator,
+                                           const InputIterator);
     /*!
      * \brief fill the array with the given value
      * \param[in] v: value
@@ -142,13 +144,24 @@ namespace tfel::math {
         isAssignableTo<ValueType2, typename ArrayPolicyType::value_type>(),
         void>
     fill(const ValueType2&);
+    /*!
+     * \brief clamp all the values between the given bounds
+     * \param[in] lower_bound: lower bound
+     * \param[in] upper_bound: upper bound
+     */
+    template <typename ValueType2, typename ValueType3>
+    constexpr std::enable_if_t<
+        (isAssignableTo<ValueType2, typename ArrayPolicyType::value_type>() &&
+         isAssignableTo<ValueType3, typename ArrayPolicyType::value_type>()),
+        void>
+        TFEL_HOST_DEVICE clamp(const ValueType2&, const ValueType3&);
 
    protected:
     /*!
      * \tparam OtherArray: type of the given array
-     * \brief assign the values of the given array to the values of this array.
-     * \note this shall not be used directly, because no runtime checks are
-     * performed.
+     * \brief assign the values of the given array to the values of this
+     * array. \note this shall not be used directly, because no runtime checks
+     * are performed.
      */
     template <typename OtherArray>
     TFEL_HOST_DEVICE constexpr void assign(const OtherArray&) noexcept;
@@ -168,7 +181,8 @@ namespace tfel::math {
      * are performed.
      */
     template <typename OtherArray>
-    TFEL_HOST_DEVICE constexpr void substractAndAssign(const OtherArray&) noexcept;
+    TFEL_HOST_DEVICE constexpr void substractAndAssign(
+        const OtherArray&) noexcept;
     /*!
      * \brief multiplication by a scalar
      * \param[in] s: scalar value
@@ -182,7 +196,7 @@ namespace tfel::math {
             typename ArrayPolicyType::value_type>(),
         void>
     multiplyByScalar(const ValueType2&);
-  };
+    };
 
 }  // end of namespace tfel::math
 

@@ -96,8 +96,8 @@ namespace mfront::bbrick {
     auto c = "const auto " + R + " = (this->" + R0n + ")*";
     if (!this->p0.empty()) {
       const auto p0n = IsotropicHardeningRule::getVariableId("p0", fid, id);
-      c += "pow(max(this->" + pn + "+(this->theta) * (this->d" + pn + ")+this->" +
-           p0n + ",strain(0)),this->" + nn + ");\n";
+      c += "pow(max(this->" + pn + "+(this->theta) * (this->d" + pn +
+           ")+this->" + p0n + ",strain(0)),this->" + nn + ");\n";
     } else {
       c += "pow(max(this->" + pn + "+(this->theta) * (this->d" + pn + "),";
       c += "strain(0)),this->" + nn + ");\n";

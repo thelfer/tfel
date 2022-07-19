@@ -127,353 +127,468 @@ namespace tfel::glossary {
                                       "YoungModulus3"};
   const GlossaryEntry Glossary::AxialDeformationGradient(
       "AxialDeformationGradient",
-      "AxialDeformationGradient",
+      Glossary::names,
+      Glossary::names + 1,
       "",
       "scalar",
       "la composante axiale du gradient de la transformation (cette grandeur "
       "n'a de sens que pour les calculs en contraintes planes)",
       "" /* no 'description' defined */,
-      "" /* no 'notes' defined */);
+      "" /* no 'notes' defined */,
+      "",
+      "");
 
   const GlossaryEntry Glossary::AxialGrowth("AxialGrowth",
-                                            "AxialGrowth",
+                                            Glossary::names + 1,
+                                            Glossary::names + 2,
                                             "",
                                             "scalar",
                                             "axial growth under irradiation",
                                             "" /* no 'description' defined */,
-                                            "" /* no 'notes' defined */);
+                                            "" /* no 'notes' defined */,
+                                            "",
+                                            "");
 
   const GlossaryEntry Glossary::AxialStrain(
       "AxialStrain",
-      "AxialStrain",
+      Glossary::names + 2,
+      Glossary::names + 3,
       "",
       "scalar",
-      "la déformation axiale (cette grandeur n'a de sens que pour les "
-      "calculs en contraintes planes)",
+      "la déformation axiale (cette grandeur n'a de sens que pour les calculs "
+      "en contraintes planes)",
       "" /* no 'description' defined */,
-      "" /* no 'notes' defined */);
+      "" /* no 'notes' defined */,
+      "",
+      "");
 
   const GlossaryEntry Glossary::AxialStress(
       "AxialStress",
-      "AxialStress",
+      Glossary::names + 3,
+      Glossary::names + 4,
       "",
       "scalar",
       "la contrainte axiale",
       "" /* no 'description' defined */,
       "Cette grandeur est utilisée dans les calculs 1Daxisymétrique en "
-      "contraintes planes généralisées");
+      "contraintes planes généralisées",
+      "",
+      "");
 
   const GlossaryEntry Glossary::B10BurnUp(
       "B10BurnUp",
-      "B10BurnUp",
-      "m^{-3}",
+      Glossary::names + 4,
+      Glossary::names + 5,
+      "SI:m^{-3}",
       "scalar",
       "le taux d'usure en \\(\\mbox{}^{10}B\\)",
       "Ce nombre décrit le nombre d'atomes de \\(\\mbox{}^{10}B\\) consommé "
       "par unité de volume au cours de l'irradiation.",
-      "" /* no 'notes' defined */);
+      "" /* no 'notes' defined */,
+      "",
+      "");
 
   const GlossaryEntry Glossary::Broken("Broken",
-                                       "Broken",
-                                       "none",
+                                       Glossary::names + 5,
+                                       Glossary::names + 6,
+                                       "",
                                        "scalar",
                                        "material failure indicator",
                                        "" /* no 'description' defined */,
-                                       "" /* no 'notes' defined */);
+                                       "" /* no 'notes' defined */,
+                                       "",
+                                       "");
 
   const GlossaryEntry Glossary::BulkModulus(
       "BulkModulus",
-      "BulkModulus",
-      "Pa",
+      Glossary::names + 6,
+      Glossary::names + 7,
+      "SI:Pa",
       "scalar",
       "The bulk modulus of an isotropic material",
       "" /* no 'description' defined */,
-      "" /* no 'notes' defined */);
+      "" /* no 'notes' defined */,
+      "",
+      "");
 
   const GlossaryEntry Glossary::BurnUp_AtPercent(
       "BurnUp_AtPercent",
-      "BurnUp (at.%)",
-      "at./100",
+      Glossary::names + 7,
+      Glossary::names + 8,
+      "SI:at./100",
       "scalar",
       "le taux de combustion en atome pour cent",
       "" /* no 'description' defined */,
-      "" /* no 'notes' defined */);
+      "" /* no 'notes' defined */,
+      "",
+      "");
 
   const GlossaryEntry Glossary::BurnUp_MWJperTm(
       "BurnUp_MWJperTm",
-      "BurnUp (MWJ/tm)",
-      "MWJ/tm",
+      Glossary::names + 8,
+      Glossary::names + 9,
+      "SI:MWJ/tm",
       "scalar",
       "le taux de combustion en MegaWattJour par tonne (métal)",
       "" /* no 'description' defined */,
-      "" /* no 'notes' defined */);
+      "" /* no 'notes' defined */,
+      "",
+      "");
 
   const GlossaryEntry Glossary::CohesiveForce(
       "CohesiveForce",
-      "CohesiveForce",
-      "Newton",
+      Glossary::names + 9,
+      Glossary::names + 10,
+      "SI:Newton",
       "vector",
       "cohesive force for cohesize zone models",
       "" /* no 'description' defined */,
-      "" /* no 'notes' defined */);
+      "" /* no 'notes' defined */,
+      "",
+      "");
 
   const GlossaryEntry Glossary::ConvectiveHeatTransferCoefficient(
       "ConvectiveHeatTransferCoefficient",
-      "ConvectiveHeatTransferCoefficient",
-      "W.m^{-2}.K^{-1}",
+      Glossary::names + 10,
+      Glossary::names + 11,
+      "SI:W.m^{-2}.K^{-1}",
       "scalar",
       "le coefficient d'échange par convection",
       "" /* no 'description' defined */,
-      "" /* no 'notes' defined */);
+      "" /* no 'notes' defined */,
+      "",
+      "");
 
   const GlossaryEntry Glossary::CrossSectionArea(
       "CrossSectionArea",
-      "CrossSectionArea",
-      "??",
+      Glossary::names + 11,
+      Glossary::names + 12,
+      "SI:??",
       "scalar",
       "??",
       "" /* no 'description' defined */,
-      "" /* no 'notes' defined */);
+      "" /* no 'notes' defined */,
+      "",
+      "");
 
   const GlossaryEntry Glossary::CylindricalStress(
       "CylindricalStress",
-      "CylindricalStress",
-      "Pa",
+      Glossary::names + 12,
+      Glossary::names + 13,
+      "SI:Pa",
       "tensor",
       "les contraintes exprimées dans le repère cylindrique",
       "" /* no 'description' defined */,
-      "" /* no 'notes' defined */);
+      "" /* no 'notes' defined */,
+      "",
+      "");
 
   const GlossaryEntry Glossary::Damage("Damage",
-                                       "Damage",
+                                       Glossary::names + 13,
+                                       Glossary::names + 14,
                                        "",
                                        "scalar",
                                        "l'endommagement d'un matériau",
                                        "" /* no 'description' defined */,
-                                       "" /* no 'notes' defined */);
+                                       "" /* no 'notes' defined */,
+                                       "",
+                                       "");
 
   const GlossaryEntry Glossary::DeformationGradient(
       "DeformationGradient",
-      "DeformationGradient",
+      Glossary::names + 14,
+      Glossary::names + 15,
       "",
       "tensor",
       "gradient of the transformation",
       "" /* no 'description' defined */,
-      "" /* no 'notes' defined */);
+      "" /* no 'notes' defined */,
+      "",
+      "");
 
   const GlossaryEntry Glossary::Displacement("Displacement",
-                                             "Displacement",
-                                             "m",
+                                             Glossary::names + 15,
+                                             Glossary::names + 16,
+                                             "SI:m",
                                              "vector",
                                              "le déplacement",
                                              "" /* no 'description' defined */,
-                                             "" /* no 'notes' defined */);
+                                             "" /* no 'notes' defined */,
+                                             "",
+                                             "");
 
   const GlossaryEntry Glossary::DualStress("DualStress",
-                                           "DualStress",
-                                           "stress",
+                                           Glossary::names + 16,
+                                           Glossary::names + 17,
+                                           "SI:stress",
                                            "tensor",
                                            "dual stress of the strain measure",
                                            "" /* no 'description' defined */,
-                                           "" /* no 'notes' defined */);
+                                           "" /* no 'notes' defined */,
+                                           "",
+                                           "");
 
   const GlossaryEntry Glossary::ElasticStrain("ElasticStrain",
-                                              "ElasticStrain",
+                                              Glossary::names + 17,
+                                              Glossary::names + 18,
                                               "",
                                               "tensor",
                                               "The elastic strain",
                                               "" /* no 'description' defined */,
-                                              "" /* no 'notes' defined */);
+                                              "" /* no 'notes' defined */,
+                                              "",
+                                              "");
 
   const GlossaryEntry Glossary::Emissivity(
       "Emissivity",
-      "Emissivity",
-      "kg.m.T^{−3}",
+      Glossary::names + 18,
+      Glossary::names + 19,
+      "SI:kg.m.T^{−3}",
       "scalar",
       "Emissivity of the surface of a material is its effectiveness in "
       "emitting energy as thermal radiation",
       "" /* no 'description' defined */,
-      "" /* no 'notes' defined */);
+      "" /* no 'notes' defined */,
+      "",
+      "");
 
   const GlossaryEntry Glossary::EquivalentPlasticStrain(
       "EquivalentPlasticStrain",
-      "EquivalentPlasticStrain",
+      Glossary::names + 19,
+      Glossary::names + 20,
       "",
       "scalar",
       "The equivalent plastic strain",
       "" /* no 'description' defined */,
-      "" /* no 'notes' defined */);
+      "" /* no 'notes' defined */,
+      "",
+      "");
 
   const GlossaryEntry Glossary::EquivalentStrain(
       "EquivalentStrain",
-      "EquivalentStrain",
+      Glossary::names + 20,
+      Glossary::names + 21,
       "",
       "scalar",
       "la somme des déformations plastiques ou viscoplastiques équivalentes",
       "" /* no 'description' defined */,
-      "Cette quantité n'a pas de sens physique directe.");
+      "Cette quantité n'a pas de sens physique directe.",
+      "",
+      "");
 
   const GlossaryEntry Glossary::EquivalentViscoplasticStrain(
       "EquivalentViscoplasticStrain",
-      "EquivalentViscoplasticStrain",
+      Glossary::names + 21,
+      Glossary::names + 22,
       "",
       "scalar",
       "The equivalent viscoplastic strain",
       "" /* no 'description' defined */,
-      "" /* no 'notes' defined */);
+      "" /* no 'notes' defined */,
+      "",
+      "");
 
   const GlossaryEntry Glossary::FastNeutronFluence_01MeV(
       "FastNeutronFluence_01MeV",
-      "FastNeutronFluence (>0.1 MeV)",
-      "n.m^{-2}",
+      Glossary::names + 22,
+      Glossary::names + 23,
+      "SI:n.m^{-2}",
       "scalar",
       "la fluence rapide",
       "" /* no 'description' defined */,
-      "" /* no 'notes' defined */);
+      "" /* no 'notes' defined */,
+      "",
+      "");
 
   const GlossaryEntry Glossary::FastNeutronFluence_1MeV(
       "FastNeutronFluence_1MeV",
-      "FastNeutronFluence (>1 MeV)",
-      "n.m^{-2}",
+      Glossary::names + 23,
+      Glossary::names + 24,
+      "SI:n.m^{-2}",
       "scalar",
       "la fluence rapide",
       "" /* no 'description' defined */,
-      "" /* no 'notes' defined */);
+      "" /* no 'notes' defined */,
+      "",
+      "");
 
   const GlossaryEntry Glossary::FastNeutronFlux_01MeV(
       "FastNeutronFlux_01MeV",
-      "FastNeutronFlux (>0.1 MeV)",
-      "n.m^{-2}.s^{-1}",
+      Glossary::names + 24,
+      Glossary::names + 25,
+      "SI:n.m^{-2}.s^{-1}",
       "scalar",
       "le flux de neutron rapide",
       "" /* no 'description' defined */,
-      "" /* no 'notes' defined */);
+      "" /* no 'notes' defined */,
+      "",
+      "");
 
   const GlossaryEntry Glossary::FastNeutronFlux_1MeV(
       "FastNeutronFlux_1MeV",
-      "FastNeutronFlux (>1 MeV)",
-      "n.m^{-2}.s^{-1}",
+      Glossary::names + 25,
+      Glossary::names + 26,
+      "SI:n.m^{-2}.s^{-1}",
       "scalar",
       "le flux de neutron rapide",
       "" /* no 'description' defined */,
-      "" /* no 'notes' defined */);
+      "" /* no 'notes' defined */,
+      "",
+      "");
 
   const GlossaryEntry Glossary::FirstAxisSecondMomentArea(
       "FirstAxisSecondMomentArea",
-      "FirstAxisSecondMomentArea",
-      "??",
+      Glossary::names + 26,
+      Glossary::names + 27,
+      "SI:??",
       "scalar",
       "??",
       "" /* no 'description' defined */,
-      "" /* no 'notes' defined */);
+      "" /* no 'notes' defined */,
+      "",
+      "");
 
   const GlossaryEntry Glossary::FirstLameCoefficient(
       "FirstLameCoefficient",
-      "FirstLameCoefficient",
-      "Pa",
+      Glossary::names + 27,
+      Glossary::names + 28,
+      "SI:Pa",
       "scalar",
       "First Lamé coefficient of an isotropic material",
       "" /* no 'description' defined */,
-      "" /* no 'notes' defined */);
+      "" /* no 'notes' defined */,
+      "",
+      "");
 
   const GlossaryEntry Glossary::FissionDensity(
       "FissionDensity",
-      "FissionDensity",
-      "m^{-3}",
+      Glossary::names + 28,
+      Glossary::names + 29,
+      "SI:m^{-3}",
       "scalar",
       "la densité de fission",
       "" /* no 'description' defined */,
-      "" /* no 'notes' defined */);
+      "" /* no 'notes' defined */,
+      "",
+      "");
 
   const GlossaryEntry Glossary::GaseousSwelling(
       "GaseousSwelling",
-      "GaseousSwelling",
+      Glossary::names + 29,
+      Glossary::names + 30,
       "",
       "scalar",
       "un gonflement imposé dû à des produits de fission gazeux",
       "" /* no 'description' defined */,
       "L'utilisation de ce nom pour imposer un gonflement n'est pas "
-      "obligatoire");
+      "obligatoire",
+      "",
+      "");
 
   const GlossaryEntry Glossary::GrainSize("GrainSize",
-                                          "GrainSize",
-                                          "m",
+                                          Glossary::names + 30,
+                                          Glossary::names + 31,
+                                          "SI:m",
                                           "scalar",
                                           "la taille de grain",
                                           "" /* no 'description' defined */,
-                                          "" /* no 'notes' defined */);
+                                          "" /* no 'notes' defined */,
+                                          "",
+                                          "");
 
   const GlossaryEntry Glossary::HeatFlux("HeatFlux",
-                                         "HeatFlux",
-                                         "J.m^{-2}.s^{-1}",
+                                         Glossary::names + 31,
+                                         Glossary::names + 32,
+                                         "SI:J.m^{-2}.s^{-1}",
                                          "vector",
                                          "le flux de chaleur.",
                                          "" /* no 'description' defined */,
-                                         "" /* no 'notes' defined */);
+                                         "" /* no 'notes' defined */,
+                                         "",
+                                         "");
 
   const GlossaryEntry Glossary::HeatTransferCoefficient(
       "HeatTransferCoefficient",
-      "HeatTransferCoefficient",
-      "W.m^{-2}.K^{-1}",
+      Glossary::names + 32,
+      Glossary::names + 33,
+      "SI:W.m^{-2}.K^{-1}",
       "scalar",
       "The heat transfer coefficient is the proportionality constant between "
       "the heat flux and the temperature difference",
       "" /* no 'description' defined */,
-      "" /* no 'notes' defined */);
+      "" /* no 'notes' defined */,
+      "",
+      "");
 
   const GlossaryEntry Glossary::HillStress(
       "HillStress",
-      "HillStress",
-      "Pa",
+      Glossary::names + 33,
+      Glossary::names + 34,
+      "SI:Pa",
       "tensor",
       "la contrainte équivalente au sens de Hill",
       "" /* no 'description' defined */,
-      "" /* no 'notes' defined */);
+      "" /* no 'notes' defined */,
+      "",
+      "");
 
   const GlossaryEntry Glossary::HydrostaticPressure(
       "HydrostaticPressure",
-      "HydrostaticPressure",
-      "Pa",
+      Glossary::names + 34,
+      Glossary::names + 35,
+      "SI:Pa",
       "tensor",
       "la pression hydrostatique (égale au tiers de la trace du tenseur des "
       "contraintes)",
       "" /* no 'description' defined */,
-      "" /* no 'notes' defined */);
+      "" /* no 'notes' defined */,
+      "",
+      "");
 
   const GlossaryEntry Glossary::IrradiationDamage(
       "IrradiationDamage",
-      "IrradiationDamage",
-      "dpa",
+      Glossary::names + 35,
+      Glossary::names + 36,
+      "SI:dpa",
       "scalar",
       "le dommage due à l'irradiation, mesuré par le nombre de déplacement "
       "moyen de chaque atome (dpa)",
       "" /* no 'description' defined */,
-      "" /* no 'notes' defined */);
+      "" /* no 'notes' defined */,
+      "",
+      "");
 
   const GlossaryEntry Glossary::IrradiationInducedSwelling(
       "IrradiationInducedSwelling",
-      "IrradiationInducedSwelling",
+      Glossary::names + 36,
+      Glossary::names + 37,
       "",
       "scalar",
       "un gonflement imposé  dû à des dégâts d'irradiation",
       "" /* no 'description' defined */,
       "L'utilisation de ce nom pour imposer un gonflement n'est pas "
-      "obligatoire");
+      "obligatoire",
+      "",
+      "");
 
   const GlossaryEntry Glossary::IrradiationSwelling(
       "IrradiationSwelling",
-      "IrradiationSwelling",
+      Glossary::names + 37,
+      Glossary::names + 38,
       "",
       "scalar",
       "un gonflement imposé  dû à des dégâts d'irradiation",
       "" /* no 'description' defined */,
       "L'utilisation de ce nom pour imposer un gonflement n'est pas "
-      "obligatoire");
+      "obligatoire",
+      "",
+      "");
 
   const GlossaryEntry Glossary::IrradiationTemperature(
       "IrradiationTemperature",
-      "IrradiationTemperature",
-      "K",
+      Glossary::names + 38,
+      Glossary::names + 39,
+      "SI:K",
       "scalar",
       "la température moyenne (dans le temps) au cours de l'irradiation",
       "Cette température est définie ainsi :"
@@ -498,636 +613,830 @@ namespace tfel::glossary {
       "@^separator^@"
       ""
       "@^separator^@"
-      "En pratique, l'intégrale temporelle est évaluée de manière "
-      "incrémentale ainsi :"
+      "En pratique, l'intégrale temporelle est évaluée de manière incrémentale "
+      "ainsi :"
       "@^separator^@"
       "\\["
       "@^separator^@"
       "\\average{T}\\paren{t+dt,\\vec{r}} \\approx "
       "\\Frac{1}{t+dt-t_{0}}\\left[\\paren{t-t_{0}}\\,\\average{T}\\paren{t,"
-      "\\vec{r}}+\\Frac{dt}{2}\\left[T\\paren{t,\\vec{r}}+T\\paren{t+dt,"
-      "\\vec{r}}\\right]\\right]"
+      "\\vec{r}}+\\Frac{dt}{2}\\left[T\\paren{t,\\vec{r}}+T\\paren{t+dt,\\vec{"
+      "r}}\\right]\\right]"
       "@^separator^@"
       "\\]",
-      "Ce mode de calcul peut conduire à de légères erreurs numériques");
+      "Ce mode de calcul peut conduire à de légères erreurs numériques",
+      "SI:0",
+      "");
 
   const GlossaryEntry Glossary::KelvinTemperature(
       "KelvinTemperature",
-      "KelvinTemperature",
-      "K",
+      Glossary::names + 39,
+      Glossary::names + 40,
+      "SI:K",
       "scalar",
       "The temperature",
       "" /* no 'description' defined */,
       "Cette entrée a été rajoutée par compatibilité avec les choix "
       "d'implantation des lois de comportements mécaniques utilisés par le "
-      "code Germinal");
+      "code Germinal",
+      "SI:0",
+      "");
 
   const GlossaryEntry Glossary::MassDensity("MassDensity",
-                                            "MassDensity",
-                                            "kg.m^{-3}",
+                                            Glossary::names + 40,
+                                            Glossary::names + 41,
+                                            "SI:kg.m^{-3}",
                                             "scalar",
                                             "The mass density",
                                             "" /* no 'description' defined */,
-                                            "" /* no 'notes' defined */);
+                                            "" /* no 'notes' defined */,
+                                            "",
+                                            "");
 
   const GlossaryEntry Glossary::MeanBurnUp_AtPercent(
       "MeanBurnUp_AtPercent",
-      "MeanBurnUp (at.%)",
-      "at./100",
+      Glossary::names + 41,
+      Glossary::names + 42,
+      "SI:at./100",
       "scalar",
       "le taux de combustion en atome pour cent moyen (au sens spatial) pour "
       "un matériau donné",
       "" /* no 'description' defined */,
-      "" /* no 'notes' defined */);
+      "" /* no 'notes' defined */,
+      "",
+      "");
 
   const GlossaryEntry Glossary::MeanBurnUp_MWJperTm(
       "MeanBurnUp_MWJperTm",
-      "MeanBurnUp (MWJ/tm)",
-      "MWJ/tm",
+      Glossary::names + 42,
+      Glossary::names + 43,
+      "SI:MWJ/tm",
       "scalar",
-      "le taux de combustion en MegaWattJour par tonne (métal) moyen (au "
-      "sens spatial) pour un matériau donné",
+      "le taux de combustion en MegaWattJour par tonne (métal) moyen (au sens "
+      "spatial) pour un matériau donné",
       "" /* no 'description' defined */,
-      "" /* no 'notes' defined */);
+      "" /* no 'notes' defined */,
+      "",
+      "");
 
   const GlossaryEntry Glossary::MeanIrradiationTemperature(
       "MeanIrradiationTemperature",
-      "MeanIrradiationTemperature",
-      "K",
+      Glossary::names + 43,
+      Glossary::names + 44,
+      "SI:K",
       "scalar",
       "la température moyenne dans le temps et dans un domaine \\(\\Omega\\) "
       "donné",
       "Cette température est définie ainsi :\\[\\average{T}\\paren{t} "
-      "=\\Frac{1}{t-t_{0}}\\Frac{1}{\\int_{\\Omega}\\dtot\\,V}\\int_{t_{0}}^{"
-      "t}\\paren{\\int_{\\Omega}T\\paren{u,\\vec{r}}\\,\\dtot\\,V}\\]où "
+      "=\\Frac{1}{t-t_{0}}\\Frac{1}{\\int_{\\Omega}\\dtot\\,V}\\int_{t_{0}}^{t}"
+      "\\paren{\\int_{\\Omega}T\\paren{u,\\vec{r}}\\,\\dtot\\,V}\\]où "
       "\\(T\\paren{t,\\vec{r}}\\) est la valeur à un instant \\(t\\) de la "
       "température au point \\(\\vec{r}\\).",
       "En pratique, l'intégrale spatiale est calculée à l'aide de la "
       "discrétisation par éléments finis et l'intégrale temporelle est "
-      "calculée de manière incrémentale.");
+      "calculée de manière incrémentale.",
+      "",
+      "");
 
   const GlossaryEntry Glossary::MeanTemperature(
       "MeanTemperature",
-      "MeanTemperature",
-      "K",
+      Glossary::names + 44,
+      Glossary::names + 45,
+      "SI:K",
       "scalar",
       "la température moyenne dans un domaine \\(\\Omega\\) donné. ",
       "Cette température est définie ainsi :\\[\\average{T}\\paren{t}  = "
-      "\\Frac{1}{\\int_{\\Omega}\\dtot\\,V}\\int_{\\Omega}T\\paren{t,\\vec{r}"
-      "}\\,\\dtot\\, V\\]où \\(T\\paren{t,\\vec{r}}\\) est la valeur à un "
+      "\\Frac{1}{\\int_{\\Omega}\\dtot\\,V}\\int_{\\Omega}T\\paren{t,\\vec{r}}"
+      "\\,\\dtot\\, V\\]où \\(T\\paren{t,\\vec{r}}\\) est la valeur à un "
       "instant \\(t\\) de latempérature au point \\(\\vec{r}\\).",
       "En pratique, l'intégrale spatiale est calculée à l'aide de la "
-      "discrétisation par éléments finis.");
+      "discrétisation par éléments finis.",
+      "",
+      "");
 
   const GlossaryEntry Glossary::NeutronFluence(
       "NeutronFluence",
-      "NeutronFluence",
-      "n.m^{-2}",
+      Glossary::names + 45,
+      Glossary::names + 46,
+      "SI:n.m^{-2}",
       "scalar",
       "la fluence",
       "" /* no 'description' defined */,
-      "" /* no 'notes' defined */);
+      "" /* no 'notes' defined */,
+      "",
+      "");
 
   const GlossaryEntry Glossary::NeutronFlux("NeutronFlux",
-                                            "NeutronFlux",
-                                            "n.m^{-2}.s^{-1}",
+                                            Glossary::names + 46,
+                                            Glossary::names + 47,
+                                            "SI:n.m^{-2}.s^{-1}",
                                             "scalar",
                                             "le flux de neutron",
                                             "" /* no 'description' defined */,
-                                            "" /* no 'notes' defined */);
+                                            "" /* no 'notes' defined */,
+                                            "",
+                                            "");
 
   const GlossaryEntry Glossary::NormalStiffness(
       "NormalStiffness",
-      "NormalStiffness",
-      "Pa.m^{-1}",
+      Glossary::names + 47,
+      Glossary::names + 48,
+      "SI:Pa.m^{-1}",
       "scalar",
       "la raideur normale pour un modèle de zone cohésive",
       "" /* no 'description' defined */,
-      "" /* no 'notes' defined */);
+      "" /* no 'notes' defined */,
+      "",
+      "");
 
   const GlossaryEntry Glossary::NumberOfMoles(
       "NumberOfMoles",
-      "NumberOfMoles",
-      "mol",
+      Glossary::names + 48,
+      Glossary::names + 49,
+      "SI:mol",
       "scalar",
       "le nombre de moles d'une substance",
       "" /* no 'description' defined */,
-      "" /* no 'notes' defined */);
+      "" /* no 'notes' defined */,
+      "",
+      "");
 
   const GlossaryEntry Glossary::OpeningDisplacement(
       "OpeningDisplacement",
-      "OpeningDisplacement",
-      "m",
+      Glossary::names + 49,
+      Glossary::names + 50,
+      "SI:m",
       "vector",
       "opening displacement in cohesive zone models",
       "" /* no 'description' defined */,
-      "" /* no 'notes' defined */);
+      "" /* no 'notes' defined */,
+      "",
+      "");
 
   const GlossaryEntry Glossary::OrthotropicAxisX1(
       "OrthotropicAxisX1",
-      "OrthotropicAxisX1",
+      Glossary::names + 50,
+      Glossary::names + 51,
       "",
       "scalar",
       "la première coordonnée du premier axe d'orthotropie",
       "Cette quantité est automatiquementcalculée par Licos à partir de la "
       "définition du matériau",
-      "" /* no 'notes' defined */);
+      "" /* no 'notes' defined */,
+      "",
+      "");
 
   const GlossaryEntry Glossary::OrthotropicAxisX2(
       "OrthotropicAxisX2",
-      "OrthotropicAxisX2",
+      Glossary::names + 51,
+      Glossary::names + 52,
       "",
       "scalar",
       "la première coordonnée du second axe d'orthotropie",
       "Cette quantité est automatiquementcalculée par Licos à partir de la "
       "définition du matériau",
-      "" /* no 'notes' defined */);
+      "" /* no 'notes' defined */,
+      "",
+      "");
 
   const GlossaryEntry Glossary::OrthotropicAxisY1(
       "OrthotropicAxisY1",
-      "OrthotropicAxisY1",
+      Glossary::names + 52,
+      Glossary::names + 53,
       "",
       "scalar",
       "la deuxième coordonnée du premier axe d'orthotropie",
       "Cette quantité est automatiquementcalculée par Licos à partir de la "
       "définition du matériau",
-      "" /* no 'notes' defined */);
+      "" /* no 'notes' defined */,
+      "",
+      "");
 
   const GlossaryEntry Glossary::OrthotropicAxisY2(
       "OrthotropicAxisY2",
-      "OrthotropicAxisY2",
+      Glossary::names + 53,
+      Glossary::names + 54,
       "",
       "scalar",
       "la deuxième coordonnée du second axe d'orthotropie",
       "Cette quantité est automatiquement calculée par Licos à partir de la "
       "définition du matériau",
-      "" /* no 'notes' defined */);
+      "" /* no 'notes' defined */,
+      "",
+      "");
 
   const GlossaryEntry Glossary::OrthotropicAxisZ1(
       "OrthotropicAxisZ1",
-      "OrthotropicAxisZ1",
+      Glossary::names + 54,
+      Glossary::names + 55,
       "",
       "scalar",
       "la troisième coordonnée du premier axe d'orthotropie",
       "Cette quantité est automatiquementcalculée par Licos à partir de la "
       "définition du matériau",
-      "" /* no 'notes' defined */);
+      "" /* no 'notes' defined */,
+      "",
+      "");
 
   const GlossaryEntry Glossary::OrthotropicAxisZ2(
       "OrthotropicAxisZ2",
-      "OrthotropicAxisZ2",
+      Glossary::names + 55,
+      Glossary::names + 56,
       "",
       "scalar",
       "la troisième coordonnée du second axe d'orthotropie",
       "Cette quantité est automatiquementcalculée par Licos à partir de la "
       "définition du matériau",
-      "" /* no 'notes' defined */);
+      "" /* no 'notes' defined */,
+      "",
+      "");
 
   const GlossaryEntry Glossary::PlasticStrain("PlasticStrain",
-                                              "PlasticStrain",
+                                              Glossary::names + 56,
+                                              Glossary::names + 57,
                                               "",
                                               "tensor",
                                               "The plastic strain",
                                               "" /* no 'description' defined */,
-                                              "" /* no 'notes' defined */);
+                                              "" /* no 'notes' defined */,
+                                              "",
+                                              "");
 
   const GlossaryEntry Glossary::PlateWidth("PlateWidth",
-                                           "PlateWidth",
-                                           "??",
+                                           Glossary::names + 57,
+                                           Glossary::names + 58,
+                                           "SI:??",
                                            "scalar",
                                            "??",
                                            "" /* no 'description' defined */,
-                                           "" /* no 'notes' defined */);
+                                           "" /* no 'notes' defined */,
+                                           "",
+                                           "");
 
   const GlossaryEntry Glossary::PoissonRatio(
       "PoissonRatio",
-      "PoissonRatio",
+      Glossary::names + 58,
+      Glossary::names + 59,
       "",
       "scalar",
       "The Poisson ratio of an isotropic material",
       "" /* no 'description' defined */,
-      "" /* no 'notes' defined */);
+      "" /* no 'notes' defined */,
+      "",
+      "");
 
   const GlossaryEntry Glossary::PoissonRatio12(
       "PoissonRatio12",
-      "PoissonRatio12",
+      Glossary::names + 59,
+      Glossary::names + 60,
       "",
       "scalar",
-      "le coefficient de Poisson d'un matériau orthotrope relatif aux "
-      "première et deuxième directions d'orthotropie",
+      "le coefficient de Poisson d'un matériau orthotrope relatif aux première "
+      "et deuxième directions d'orthotropie",
       "" /* no 'description' defined */,
-      "" /* no 'notes' defined */);
+      "" /* no 'notes' defined */,
+      "",
+      "");
 
   const GlossaryEntry Glossary::PoissonRatio13(
       "PoissonRatio13",
-      "PoissonRatio13",
+      Glossary::names + 60,
+      Glossary::names + 61,
       "",
       "scalar",
-      "le coefficient de Poisson d'un matériau orthotrope relatif aux "
-      "première et troisième directions d'orthotropie",
+      "le coefficient de Poisson d'un matériau orthotrope relatif aux première "
+      "et troisième directions d'orthotropie",
       "" /* no 'description' defined */,
-      "" /* no 'notes' defined */);
+      "" /* no 'notes' defined */,
+      "",
+      "");
 
   const GlossaryEntry Glossary::PoissonRatio23(
       "PoissonRatio23",
-      "PoissonRatio23",
+      Glossary::names + 61,
+      Glossary::names + 62,
       "",
       "scalar",
-      "le coefficient de Poisson d'un matériau orthotrope relatif aux "
-      "deuxième et troisième directions d'orthotropie",
+      "le coefficient de Poisson d'un matériau orthotrope relatif aux deuxième "
+      "et troisième directions d'orthotropie",
       "" /* no 'description' defined */,
-      "" /* no 'notes' defined */);
+      "" /* no 'notes' defined */,
+      "",
+      "");
 
   const GlossaryEntry Glossary::Porosity("Porosity",
-                                         "Porosity",
+                                         Glossary::names + 62,
+                                         Glossary::names + 63,
                                          "",
                                          "scalar",
                                          "Porosity of the material",
                                          "" /* no 'description' defined */,
-                                         "" /* no 'notes' defined */);
+                                         "" /* no 'notes' defined */,
+                                         "SI:0",
+                                         "SI:1");
 
   const GlossaryEntry Glossary::PorosityIncreaseDueToInelasticFlow(
       "PorosityIncreaseDueToInelasticFlow",
-      "PorosityIncreaseDueToInelasticFlow",
+      Glossary::names + 63,
+      Glossary::names + 64,
       "",
       "scalar",
       "Part of the porosity increase du to inelastic flow",
       "" /* no 'description' defined */,
-      "" /* no 'notes' defined */);
+      "" /* no 'notes' defined */,
+      "",
+      "");
 
   const GlossaryEntry Glossary::PorosityIncreaseDueToNucleation(
       "PorosityIncreaseDueToNucleation",
-      "PorosityIncreaseDueToNucleation",
+      Glossary::names + 64,
+      Glossary::names + 65,
       "",
       "scalar",
       "Part of the porosity increase du to nucleation",
       "" /* no 'description' defined */,
-      "" /* no 'notes' defined */);
+      "" /* no 'notes' defined */,
+      "",
+      "");
 
   const GlossaryEntry Glossary::PowerDensity("PowerDensity",
-                                             "PowerDensity",
-                                             "W.m^{-3}",
+                                             Glossary::names + 65,
+                                             Glossary::names + 66,
+                                             "SI:W.m^{-3}",
                                              "scalar",
                                              "la densité de puissance",
                                              "" /* no 'description' defined */,
-                                             "" /* no 'notes' defined */);
+                                             "" /* no 'notes' defined */,
+                                             "",
+                                             "");
 
   const GlossaryEntry Glossary::Pressure("Pressure",
-                                         "Pressure",
-                                         "Pa",
+                                         Glossary::names + 66,
+                                         Glossary::names + 67,
+                                         "SI:Pa",
                                          "scalar",
                                          "la pression d'un gaz",
                                          "" /* no 'description' defined */,
-                                         "" /* no 'notes' defined */);
+                                         "" /* no 'notes' defined */,
+                                         "",
+                                         "");
 
   const GlossaryEntry Glossary::PrincipalStress1(
       "PrincipalStress1",
-      "PrincipalStress1",
-      "Pa",
+      Glossary::names + 67,
+      Glossary::names + 68,
+      "SI:Pa",
       "scalar",
       "la première contrainte principale",
       "" /* no 'description' defined */,
       "Son sens est précisé dans la notice de l'opérateur "
       "['PRIN'](http://www-cast3m.cea.fr/index.php?page=notices&notice=PRIN) "
-      "de [Cast3M](http://www-cast3m.cea.fr)");
+      "de [Cast3M](http://www-cast3m.cea.fr)",
+      "",
+      "");
 
   const GlossaryEntry Glossary::PrincipalStress2(
       "PrincipalStress2",
-      "PrincipalStress2",
-      "Pa",
+      Glossary::names + 68,
+      Glossary::names + 69,
+      "SI:Pa",
       "scalar",
       "la deuxième contrainte principale",
       "" /* no 'description' defined */,
       "Son sens est précisé dans la notice de l'opérateur "
       "['PRIN'](http://www-cast3m.cea.fr/index.php?page=notices&notice=PRIN) "
-      "de [Cast3M](http://www-cast3m.cea.fr)");
+      "de [Cast3M](http://www-cast3m.cea.fr)",
+      "",
+      "");
 
   const GlossaryEntry Glossary::PrincipalStress3(
       "PrincipalStress3",
-      "PrincipalStress3",
-      "Pa",
+      Glossary::names + 69,
+      Glossary::names + 70,
+      "SI:Pa",
       "scalar",
       "la troisième contrainte principale",
       "" /* no 'description' defined */,
       "Son sens est précisé dans la notice de l'opérateur "
       "['PRIN'](http://www-cast3m.cea.fr/index.php?page=notices&notice=PRIN) "
-      "de [Cast3M](http://www-cast3m.cea.fr)");
+      "de [Cast3M](http://www-cast3m.cea.fr)",
+      "",
+      "");
 
   const GlossaryEntry Glossary::SecondAxisSecondMomentArea(
       "SecondAxisSecondMomentArea",
-      "SecondAxisSecondMomentArea",
-      "??",
+      Glossary::names + 70,
+      Glossary::names + 71,
+      "SI:??",
       "scalar",
       "??",
       "" /* no 'description' defined */,
-      "" /* no 'notes' defined */);
+      "" /* no 'notes' defined */,
+      "",
+      "");
 
   const GlossaryEntry Glossary::ShearModulus(
       "ShearModulus",
-      "ShearModulus",
-      "Pa",
+      Glossary::names + 71,
+      Glossary::names + 72,
+      "SI:Pa",
       "scalar",
       "The shear modulus of an isotropic material",
       "" /* no 'description' defined */,
-      "" /* no 'notes' defined */);
+      "" /* no 'notes' defined */,
+      "",
+      "");
 
   const GlossaryEntry Glossary::ShearModulus12(
       "ShearModulus12",
-      "ShearModulus12",
-      "Pa",
+      Glossary::names + 72,
+      Glossary::names + 73,
+      "SI:Pa",
       "scalar",
-      "le module de cisaillement d'un matériau orthotrope relatif aux "
-      "première et deuxième directions d'orthotropie",
+      "le module de cisaillement d'un matériau orthotrope relatif aux première "
+      "et deuxième directions d'orthotropie",
       "" /* no 'description' defined */,
-      "" /* no 'notes' defined */);
+      "" /* no 'notes' defined */,
+      "",
+      "");
 
   const GlossaryEntry Glossary::ShearModulus13(
       "ShearModulus13",
-      "ShearModulus13",
-      "Pa",
+      Glossary::names + 73,
+      Glossary::names + 74,
+      "SI:Pa",
       "scalar",
-      "le module de cisaillement d'un matériau orthotrope relatif aux "
-      "première et troisième directions d'orthotropie",
+      "le module de cisaillement d'un matériau orthotrope relatif aux première "
+      "et troisième directions d'orthotropie",
       "" /* no 'description' defined */,
-      "" /* no 'notes' defined */);
+      "" /* no 'notes' defined */,
+      "",
+      "");
 
   const GlossaryEntry Glossary::ShearModulus23(
       "ShearModulus23",
-      "ShearModulus23",
-      "Pa",
+      Glossary::names + 74,
+      Glossary::names + 75,
+      "SI:Pa",
       "scalar",
-      "le module de cisaillement d'un matériau orthotrope relatif aux "
-      "deuxième et troisième directions d'orthotropie",
+      "le module de cisaillement d'un matériau orthotrope relatif aux deuxième "
+      "et troisième directions d'orthotropie",
       "" /* no 'description' defined */,
-      "" /* no 'notes' defined */);
+      "" /* no 'notes' defined */,
+      "",
+      "");
 
   const GlossaryEntry Glossary::SolidSwelling(
       "SolidSwelling",
-      "SolidSwelling",
+      Glossary::names + 75,
+      Glossary::names + 76,
       "",
       "scalar",
       "un gonflement imposé dû à des produits de fission solides",
       "" /* no 'description' defined */,
       "L'utilisation de ce nom pour imposer un gonflement n'est pas "
-      "obligatoire");
+      "obligatoire",
+      "",
+      "");
 
   const GlossaryEntry Glossary::SpecificHeat("SpecificHeat",
-                                             "SpecificHeat",
-                                             "J.kg^{-1}.K^{-1}",
+                                             Glossary::names + 76,
+                                             Glossary::names + 77,
+                                             "SI:J.kg^{-1}.K^{-1}",
                                              "scalar",
                                              "la chaleur spécifique",
                                              "" /* no 'description' defined */,
-                                             "" /* no 'notes' defined */);
+                                             "" /* no 'notes' defined */,
+                                             "",
+                                             "");
 
   const GlossaryEntry Glossary::SphericalStress(
       "SphericalStress",
-      "SphericalStress",
-      "Pa",
+      Glossary::names + 77,
+      Glossary::names + 78,
+      "SI:Pa",
       "tensor",
       "les contraintes exprimées dans le repère sphérique",
       "" /* no 'description' defined */,
-      "" /* no 'notes' defined */);
+      "" /* no 'notes' defined */,
+      "",
+      "");
 
   const GlossaryEntry Glossary::Strain("Strain",
-                                       "Strain",
+                                       Glossary::names + 78,
+                                       Glossary::names + 79,
                                        "",
                                        "tensor",
                                        "la déformation",
                                        "" /* no 'description' defined */,
-                                       "" /* no 'notes' defined */);
+                                       "" /* no 'notes' defined */,
+                                       "",
+                                       "");
 
   const GlossaryEntry Glossary::StrainMeasure("StrainMeasure",
-                                              "StrainMeasure",
-                                              "none",
+                                              Glossary::names + 79,
+                                              Glossary::names + 80,
+                                              "",
                                               "tensor",
                                               "strain measure",
                                               "" /* no 'description' defined */,
-                                              "" /* no 'notes' defined */);
+                                              "" /* no 'notes' defined */,
+                                              "",
+                                              "");
 
   const GlossaryEntry Glossary::Stress("Stress",
-                                       "Stress",
-                                       "Pa",
+                                       Glossary::names + 80,
+                                       Glossary::names + 81,
+                                       "SI:Pa",
                                        "tensor",
                                        "les contraintes",
                                        "" /* no 'description' defined */,
-                                       "" /* no 'notes' defined */);
+                                       "" /* no 'notes' defined */,
+                                       "",
+                                       "");
 
-  const GlossaryEntry Glossary::Swelling(
-      "Swelling",
-      "Swelling",
-      "",
-      "scalar",
-      "un gonflement imposé",
-      "" /* no 'description' defined */,
-      "l'utilisation de ce nom pour imposer un gonflement n'est "
-      "pasobligatoire.");
+  const GlossaryEntry Glossary::Swelling("Swelling",
+                                         Glossary::names + 81,
+                                         Glossary::names + 82,
+                                         "",
+                                         "scalar",
+                                         "un gonflement imposé",
+                                         "" /* no 'description' defined */,
+                                         "l'utilisation de ce nom pour imposer "
+                                         "un gonflement n'est pasobligatoire.",
+                                         "",
+                                         "");
 
   const GlossaryEntry Glossary::TangentialStiffness(
       "TangentialStiffness",
-      "TangentialStiffness",
-      "Pa.m^{-1}",
+      Glossary::names + 82,
+      Glossary::names + 83,
+      "SI:Pa.m^{-1}",
       "scalar",
       "la raideur tangentielle pour un modèle de zone cohésive",
       "" /* no 'description' defined */,
-      "" /* no 'notes' defined */);
+      "" /* no 'notes' defined */,
+      "",
+      "");
 
   const GlossaryEntry Glossary::Temperature("Temperature",
-                                            "Temperature",
-                                            "K",
+                                            Glossary::names + 83,
+                                            Glossary::names + 84,
+                                            "SI:K",
                                             "scalar",
                                             "The temperature",
                                             "" /* no 'description' defined */,
-                                            "" /* no 'notes' defined */);
+                                            "" /* no 'notes' defined */,
+                                            "SI:0",
+                                            "");
 
   const GlossaryEntry Glossary::TemperatureGradient(
       "TemperatureGradient",
-      "TemperatureGradient",
-      "T.m^{-1}",
+      Glossary::names + 84,
+      Glossary::names + 85,
+      "SI:T.m^{-1}",
       "vector",
       "le gradient de température",
       "" /* no 'description' defined */,
-      "" /* no 'notes' defined */);
+      "" /* no 'notes' defined */,
+      "",
+      "");
 
   const GlossaryEntry Glossary::ThermalConductivity(
       "ThermalConductivity",
-      "ThermalConductivity",
-      "W.m^{-1}",
+      Glossary::names + 85,
+      Glossary::names + 86,
+      "SI:W.m^{-1}",
       "scalar",
       "la conductivité thermique d'un matériau isotrope",
       "" /* no 'description' defined */,
-      "" /* no 'notes' defined */);
+      "" /* no 'notes' defined */,
+      "",
+      "");
 
   const GlossaryEntry Glossary::ThermalConductivity1(
       "ThermalConductivity1",
-      "ThermalConductivity1",
-      "W.m^{-1}",
+      Glossary::names + 86,
+      Glossary::names + 87,
+      "SI:W.m^{-1}",
       "scalar",
-      "la conductivité thermique d'un matériau orthotrope suivant la "
-      "première direction d'orthotropie",
+      "la conductivité thermique d'un matériau orthotrope suivant la première "
+      "direction d'orthotropie",
       "" /* no 'description' defined */,
-      "" /* no 'notes' defined */);
+      "" /* no 'notes' defined */,
+      "",
+      "");
 
   const GlossaryEntry Glossary::ThermalConductivity2(
       "ThermalConductivity2",
-      "ThermalConductivity2",
-      "W.m^{-1}",
+      Glossary::names + 87,
+      Glossary::names + 88,
+      "SI:W.m^{-1}",
       "scalar",
-      "la conductivité thermique d'un matériau orthotrope suivant la "
-      "deuxième direction d'orthotropie",
+      "la conductivité thermique d'un matériau orthotrope suivant la deuxième "
+      "direction d'orthotropie",
       "" /* no 'description' defined */,
-      "" /* no 'notes' defined */);
+      "" /* no 'notes' defined */,
+      "",
+      "");
 
   const GlossaryEntry Glossary::ThermalConductivity3(
       "ThermalConductivity3",
-      "ThermalConductivity3",
-      "W.m^{-1}",
+      Glossary::names + 88,
+      Glossary::names + 89,
+      "SI:W.m^{-1}",
       "scalar",
-      "la conductivité thermique d'un matériau orthotrope suivant la "
-      "troisième direction d'orthotropie",
+      "la conductivité thermique d'un matériau orthotrope suivant la troisième "
+      "direction d'orthotropie",
       "" /* no 'description' defined */,
-      "" /* no 'notes' defined */);
+      "" /* no 'notes' defined */,
+      "",
+      "");
 
   const GlossaryEntry Glossary::ThermalExpansion(
       "ThermalExpansion",
-      "ThermalExpansion",
-      "K^{-1}",
+      Glossary::names + 89,
+      Glossary::names + 90,
+      "SI:K^{-1}",
       "scalar",
       "le coefficient de dilatation linéique d'un matériau isotrope",
       "" /* no 'description' defined */,
-      "" /* no 'notes' defined */);
+      "" /* no 'notes' defined */,
+      "",
+      "");
 
   const GlossaryEntry Glossary::ThermalExpansion1(
       "ThermalExpansion1",
-      "ThermalExpansion1",
-      "K^{-1}",
+      Glossary::names + 90,
+      Glossary::names + 91,
+      "SI:K^{-1}",
       "scalar",
-      "le coefficient de dilatation linéique d'un matériau orthotrope "
-      "suivant la première direction d'orthotropie",
+      "le coefficient de dilatation linéique d'un matériau orthotrope suivant "
+      "la première direction d'orthotropie",
       "" /* no 'description' defined */,
-      "" /* no 'notes' defined */);
+      "" /* no 'notes' defined */,
+      "",
+      "");
 
   const GlossaryEntry Glossary::ThermalExpansion2(
       "ThermalExpansion2",
-      "ThermalExpansion2",
-      "K^{-1}",
+      Glossary::names + 91,
+      Glossary::names + 92,
+      "SI:K^{-1}",
       "scalar",
-      "le coefficient de dilatation linéique d'un matériau orthotrope "
-      "suivant la deuxième direction d'orthotropie",
+      "le coefficient de dilatation linéique d'un matériau orthotrope suivant "
+      "la deuxième direction d'orthotropie",
       "" /* no 'description' defined */,
-      "" /* no 'notes' defined */);
+      "" /* no 'notes' defined */,
+      "",
+      "");
 
   const GlossaryEntry Glossary::ThermalExpansion3(
       "ThermalExpansion3",
-      "ThermalExpansion3",
-      "K^{-1}",
+      Glossary::names + 92,
+      Glossary::names + 93,
+      "SI:K^{-1}",
       "scalar",
-      "le coefficient de dilatation linéique d'un matériau orthotrope "
-      "suivant la troisième direction d'orthotropie",
+      "le coefficient de dilatation linéique d'un matériau orthotrope suivant "
+      "la troisième direction d'orthotropie",
       "" /* no 'description' defined */,
-      "" /* no 'notes' defined */);
+      "" /* no 'notes' defined */,
+      "",
+      "");
 
   const GlossaryEntry Glossary::TorsionConstant(
       "TorsionConstant",
-      "TorsionConstant",
-      "??",
+      Glossary::names + 93,
+      Glossary::names + 94,
+      "SI:??",
       "scalar",
       "??",
       "" /* no 'description' defined */,
-      "" /* no 'notes' defined */);
+      "" /* no 'notes' defined */,
+      "",
+      "");
 
   const GlossaryEntry Glossary::TrescaStress(
       "TrescaStress",
-      "TrescaStress",
-      "Pa",
+      Glossary::names + 94,
+      Glossary::names + 95,
+      "SI:Pa",
       "scalar",
       "la contrainte équivalente au sens de Tresca",
       "" /* no 'description' defined */,
-      "" /* no 'notes' defined */);
+      "" /* no 'notes' defined */,
+      "",
+      "");
 
   const GlossaryEntry Glossary::UltimateTensileStrength(
       "UltimateTensileStrength",
       Glossary::names + 95,
       Glossary::names + 97,
-      "Pa",
+      "SI:Pa",
       "scalar",
       "la valeur maximale de la contrainte qu'un materiau peut supporter",
       "" /* no 'description' defined */,
-      "" /* no 'notes' defined */);
+      "" /* no 'notes' defined */,
+      "",
+      "");
 
   const GlossaryEntry Glossary::ViscoplasticStrain(
       "ViscoplasticStrain",
-      "ViscoplasticStrain",
+      Glossary::names + 97,
+      Glossary::names + 98,
       "",
       "tensor",
       "The viscoplatic strain",
       "" /* no 'description' defined */,
-      "" /* no 'notes' defined */);
+      "" /* no 'notes' defined */,
+      "",
+      "");
 
   const GlossaryEntry Glossary::VolumetricStrain(
       "VolumetricStrain",
-      "VolumetricStrain",
+      Glossary::names + 98,
+      Glossary::names + 99,
       "",
       "scalar",
       "la dilatation volumique",
       "" /* no 'description' defined */,
-      "" /* no 'notes' defined */);
+      "" /* no 'notes' defined */,
+      "",
+      "");
 
   const GlossaryEntry Glossary::VonMisesStress(
       "VonMisesStress",
-      "VonMisesStress",
-      "Pa",
+      Glossary::names + 99,
+      Glossary::names + 100,
+      "SI:Pa",
       "scalar",
       "la contrainte équivalente au sens de Von Mises",
       "" /* no 'description' defined */,
-      "" /* no 'notes' defined */);
+      "" /* no 'notes' defined */,
+      "",
+      "");
 
   const GlossaryEntry Glossary::YieldStrength("YieldStrength",
                                               Glossary::names + 100,
                                               Glossary::names + 102,
-                                              "Pa",
+                                              "SI:Pa",
                                               "scalar",
                                               "la limite d'élasticité",
                                               "" /* no 'description' defined */,
-                                              "" /* no 'notes' defined */);
+                                              "" /* no 'notes' defined */,
+                                              "",
+                                              "");
 
   const GlossaryEntry Glossary::YoungModulus(
       "YoungModulus",
-      "YoungModulus",
-      "Pa",
+      Glossary::names + 102,
+      Glossary::names + 103,
+      "SI:Pa",
       "scalar",
       "The Young modulus of an isotropic material",
       "" /* no 'description' defined */,
-      "" /* no 'notes' defined */);
+      "" /* no 'notes' defined */,
+      "",
+      "");
 
   const GlossaryEntry Glossary::YoungModulus1(
       "YoungModulus1",
-      "YoungModulus1",
-      "Pa",
+      Glossary::names + 103,
+      Glossary::names + 104,
+      "SI:Pa",
       "scalar",
       "le module d'Young d'un matériau orthotrope suivant la première "
       "direction d'orthotropie",
       "" /* no 'description' defined */,
-      "" /* no 'notes' defined */);
+      "" /* no 'notes' defined */,
+      "",
+      "");
 
   const GlossaryEntry Glossary::YoungModulus2(
       "YoungModulus2",
-      "YoungModulus2",
-      "Pa",
+      Glossary::names + 104,
+      Glossary::names + 105,
+      "SI:Pa",
       "scalar",
       "le module d'Young d'un matériau orthotrope suivant la deuxième "
       "direction d'orthotropie",
       "" /* no 'description' defined */,
-      "" /* no 'notes' defined */);
+      "" /* no 'notes' defined */,
+      "",
+      "");
 
   const GlossaryEntry Glossary::YoungModulus3(
       "YoungModulus3",
-      "YoungModulus3",
-      "Pa",
+      Glossary::names + 105,
+      Glossary::names + 106,
+      "SI:Pa",
       "scalar",
       "le module d'Young d'un matériau orthotrope suivant la troisième "
       "direction d'orthotropie",
       "" /* no 'description' defined */,
-      "" /* no 'notes' defined */);
+      "" /* no 'notes' defined */,
+      "",
+      "");
 
   Glossary& Glossary::getGlossary() {
     static Glossary glossary;

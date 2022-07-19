@@ -36,8 +36,8 @@ namespace mfront {
         const MaterialPropertyDescription&) const override;
     std::string getHeaderFileName(const std::string&,
                                   const std::string&) const override;
-     void writeLawSymbol(std::ostream&,
-			 const MaterialPropertyDescription&) const override;
+    void writeLawSymbol(std::ostream&,
+                        const MaterialPropertyDescription&) const override;
     void writeMaterialSymbol(std::ostream&,
                              const MaterialPropertyDescription&) const override;
     void writeInterfaceSymbol(
@@ -67,11 +67,9 @@ namespace mfront {
     void writeMaterialKnowledgeTypeSymbol(
         std::ostream&, const MaterialPropertyDescription&) const override;
     void writeVariablesNamesSymbol(
-        std::ostream&,
-        const MaterialPropertyDescription&) const override;
+        std::ostream&, const MaterialPropertyDescription&) const override;
     void writeVariablesBoundsSymbols(
-        std::ostream&,
-        const MaterialPropertyDescription&) const override;
+        std::ostream&, const MaterialPropertyDescription&) const override;
     bool requiresCheckBoundsFunction() const override;
 
   };  // end of MFrontMaterialPropertyInterface

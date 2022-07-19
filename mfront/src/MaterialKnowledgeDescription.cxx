@@ -29,6 +29,16 @@ namespace mfront {
   const char* const MaterialKnowledgeDescription::buildIdentifier =
       "build_identifier";
 
+  MaterialKnowledgeDescription::MaterialKnowledgeDescription() = default;
+  MaterialKnowledgeDescription::MaterialKnowledgeDescription(
+      MaterialKnowledgeDescription&&) = default;
+  MaterialKnowledgeDescription::MaterialKnowledgeDescription(
+      const MaterialKnowledgeDescription&) = default;
+  MaterialKnowledgeDescription& MaterialKnowledgeDescription::operator=(
+      const MaterialKnowledgeDescription&) = default;
+  MaterialKnowledgeDescription& MaterialKnowledgeDescription::operator=(
+      MaterialKnowledgeDescription&&) = default;
+
   void MaterialKnowledgeDescription::throwUndefinedAttribute(
       const std::string_view n) {
     tfel::raise(
@@ -40,7 +50,7 @@ namespace mfront {
   void MaterialKnowledgeDescription::setAttribute(
       const std::string& n, const MaterialKnowledgeAttribute& a, const bool b) {
     auto throw_if = [](const bool c, const std::string_view m) {
-      if(c){
+      if (c) {
         tfel::raise("MaterialKnowledgeDescription::setAttribute: " +
                     std::string{m});
       }
@@ -58,13 +68,14 @@ namespace mfront {
   void MaterialKnowledgeDescription::updateAttribute(
       const std::string_view n, const MaterialKnowledgeAttribute& a) {
     auto throw_if = [](const bool c, const std::string_view m) {
-      if(c){
+      if (c) {
         tfel::raise("MaterialKnowledgeDescription::updateAttribute: " +
                     std::string{m});
       }
     };
     auto p = this->attributes.find(n);
-    throw_if(p == this->attributes.end(), "unknown attribute '" + std::string{n} + "'");
+    throw_if(p == this->attributes.end(),
+             "unknown attribute '" + std::string{n} + "'");
     throw_if(a.getTypeIndex() != p->second.getTypeIndex(),
              "attribute already exists with a different type");
     p->second = a;
@@ -99,6 +110,36 @@ namespace mfront {
   MaterialKnowledgeDescription::getExternalMFrontFiles() const {
     return this->externalMFrontFiles;
   }  // end of getExternalMFrontFiles
+
+  bool MaterialKnowledgeDescription::hasUnitSystem() const {
+    return this->unit_system.has_value();
+  }
+
+  void MaterialKnowledgeDescription::setUnitSystem(const std::string_view s) {
+    if (this->hasUnitSystem()) {
+      tfel::raise(
+          "MaterialKnowledgeDescription::setUnitSystem: "
+          "an unit system has already been defined");
+    }
+    if (s != "SI") {
+      tfel::raise(
+          "MaterialKnowledgeDescription::setUnitSystem: "
+          "unsupported unit system '" +
+          std::string{s} + "'");
+    }
+    this->unit_system = s;
+  }  // end of setUnitSystem
+
+  const std::string& MaterialKnowledgeDescription::getUnitSystem() const {
+    if (!this->hasUnitSystem()) {
+      tfel::raise(
+          "MaterialKnowledgeDescription::getUnitSystem: "
+          "an unit system has not been defined");
+    }
+    return *(this->unit_system);
+  }  // end of setUnitSystem
+
+  MaterialKnowledgeDescription::~MaterialKnowledgeDescription() = default;
 
   void setDefaultOutOfBoundsPolicy(MaterialKnowledgeDescription& d,
                                    const std::string& policy) {
@@ -143,7 +184,7 @@ namespace mfront {
       const MaterialKnowledgeDescription& d) {
     const auto& policy = d.getAttribute<std::string>(
         MaterialKnowledgeDescription::defaultOutOfBoundsPolicy, "None");
-    if (policy == "None"){
+    if (policy == "None") {
       return "NONE";
     } else if (policy == "Warning") {
       return "WARNING";
@@ -162,7 +203,7 @@ namespace mfront {
     return d.getAttribute<bool>(
         MaterialKnowledgeDescription::runtimeModificationOfTheOutOfBoundsPolicy,
         true);
-  } // end of allowRuntimeModificationOfTheOutOfBoundsPolicy
+  }  // end of allowRuntimeModificationOfTheOutOfBoundsPolicy
 
   bool areParametersTreatedAsStaticVariables(
       const MaterialKnowledgeDescription& d) {

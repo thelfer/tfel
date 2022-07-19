@@ -180,15 +180,17 @@ namespace tfel::math {
   TFEL_HOST_DEVICE constexpr tvector<2u, T> makeTVector2D(const T, const T);
 
   template <typename T>
-  TFEL_HOST_DEVICE constexpr tvector<3u, T> makeTVector3D(const T, const T, const T);
+  TFEL_HOST_DEVICE constexpr tvector<3u, T> makeTVector3D(const T,
+                                                          const T,
+                                                          const T);
 
   template <typename T>
-  TFEL_HOST_DEVICE constexpr tvector<3u, T> cross_product(const tvector<2u, T>&,
-                                         const tvector<2u, T>&);
+  TFEL_HOST_DEVICE constexpr tvector<3u, T> cross_product(
+      const tvector<2u, T>&, const tvector<2u, T>&);
 
   template <typename T>
-  TFEL_HOST_DEVICE constexpr tvector<3u, T> cross_product(const tvector<3u, T>&,
-                                         const tvector<3u, T>&);
+  TFEL_HOST_DEVICE constexpr tvector<3u, T> cross_product(
+      const tvector<3u, T>&, const tvector<3u, T>&);
 
   /*!
    * find a vector perpendicular to the second one
@@ -393,8 +395,8 @@ namespace tfel::math {
    * \tparam ValueType: type hold by the tiny vector
    */
   template <std::size_t i, unsigned short N, typename ValueType>
-  TFEL_HOST_DEVICE constexpr std::tuple_element_t<i, tvector<N, ValueType>>& get(
-      tvector<N, ValueType>& v) noexcept {
+  TFEL_HOST_DEVICE constexpr std::tuple_element_t<i, tvector<N, ValueType>>&
+  get(tvector<N, ValueType>& v) noexcept {
     return v[i];
   }  // end of get
   /*!
@@ -405,8 +407,9 @@ namespace tfel::math {
    * \tparam ValueType: type hold by the tiny vector
    */
   template <std::size_t i, unsigned short N, typename ValueType>
-  TFEL_HOST_DEVICE constexpr const std::tuple_element_t<i, tvector<N, ValueType>>& get(
-      const tvector<N, ValueType>& v) noexcept {
+  TFEL_HOST_DEVICE constexpr const std::tuple_element_t<i,
+                                                        tvector<N, ValueType>>&
+  get(const tvector<N, ValueType>& v) noexcept {
     return v[i];
   }  // end of get
 

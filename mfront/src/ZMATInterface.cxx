@@ -144,7 +144,8 @@ namespace mfront {
 
   std::string ZMATInterface::getInterfaceVersion() const { return ""; }
 
-  void ZMATInterface::checkIfTemperatureIsDefinedAsTheFirstExternalStateVariable(
+  void
+  ZMATInterface::checkIfTemperatureIsDefinedAsTheFirstExternalStateVariable(
       const BehaviourDescription& bd) const {
     if (!bd.isTemperatureDefinedAsTheFirstExternalStateVariable()) {
       const auto v = this->getInterfaceVersion();
@@ -160,7 +161,6 @@ namespace mfront {
       tfel::raise(msg);
     }
   }  // end of checkIfTemperatureIsDefinedAsTheFirstExternalStateVariable
-
 
   std::pair<bool, ZMATInterface::tokens_iterator> ZMATInterface::treatKeyword(
       BehaviourDescription&,

@@ -30,6 +30,7 @@
 #include "MFront/MFrontLogStream.hxx"
 #include "MFront/DSLUtilities.hxx"
 #include "MFront/MFrontUtilities.hxx"
+#include "MFront/PedanticMode.hxx"
 #include "MFront/MFrontDebugMode.hxx"
 #include "MFront/MFrontLogStream.hxx"
 #include "MFront/DSLFactory.hxx"
@@ -82,6 +83,8 @@ namespace mfront {
     this->registerNewCallBack("@Law", &MaterialPropertyDSL::treatLaw);
     this->registerNewCallBack("@Author", &MaterialPropertyDSL::treatAuthor);
     this->registerNewCallBack("@Date", &MaterialPropertyDSL::treatDate);
+    this->registerNewCallBack("@UnitSystem",
+                              &MaterialPropertyDSL::treatUnitSystem);
     this->registerNewCallBack("@Includes", &MaterialPropertyDSL::treatIncludes);
     this->registerNewCallBack("@StaticVar",
                               &MaterialPropertyDSL::treatStaticVar);
@@ -152,7 +155,16 @@ namespace mfront {
     return this->overriding_parameters;
   }  // end of getOverridenParameters
 
+  void MaterialPropertyDSL::doPedanticChecks() const {
+    // boucle sur md.inputs
+
+
+  }  // end of doPedanticChecks
+
   void MaterialPropertyDSL::endsInputFileProcessing() {
+    if (getPedanticMode()) {
+      this->doPedanticChecks();
+    }
   }  // end of endsInputFileProcessing
 
   void MaterialPropertyDSL::registerNewCallBack(const std::string& keyword,
@@ -222,7 +234,11 @@ namespace mfront {
 
   std::string MaterialPropertyDSL::getName() {
     return "MaterialLaw";
-  }  // end of getName()
+  }  // end of getName
+
+  void MaterialPropertyDSL::setUnitSystem(const std::string_view s) {
+    this->md.setUnitSystem(s);
+  }  // end of setUnitSystem
 
   void MaterialPropertyDSL::setMaterial(const std::string& m) {
     if (!this->md.material.empty()) {
@@ -381,13 +397,13 @@ namespace mfront {
   }  // end of treatInterface
 
   void MaterialPropertyDSL::finalizeVariablesDeclaration() {
-    for(const auto op : this->overriding_parameters){
-      auto p =
-          std::find_if(this->md.parameters.begin(), this->md.parameters.end(),
-                       [&op](const VariableDescription& v) {
-                         return (v.symbolic_form == op.first) || (v.name == op.first) ||
-                                (v.getExternalName() == op.first);
-                       });
+    for (const auto op : this->overriding_parameters) {
+      auto p = std::find_if(
+          this->md.parameters.begin(), this->md.parameters.end(),
+          [&op](const VariableDescription& v) {
+            return (v.symbolic_form == op.first) || (v.name == op.first) ||
+                   (v.getExternalName() == op.first);
+          });
       if (p == this->md.parameters.end()) {
         tfel::raise(
             "MaterialPropertyDSL::finalizeVariablesDeclaration: "
@@ -406,6 +422,7 @@ namespace mfront {
       }
       p->setAttribute(VariableDescription::defaultValue, op.second, true);
     }
+    this->md.checkAndComplePhysicalBoundsDeclaration();
   }  // end of finalizeVariablesDeclaration
 
   void MaterialPropertyDSL::treatFunction() {

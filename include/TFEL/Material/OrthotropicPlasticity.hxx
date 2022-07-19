@@ -131,7 +131,7 @@ namespace tfel::material {
    * \param[in] a6: sixth coefficient
    */
   template <typename StensorType>
-TFEL_HOST_DEVICE constexpr   typename std::enable_if<
+  TFEL_HOST_DEVICE constexpr typename std::enable_if<
       tfel::meta::Implements<StensorType, tfel::math::StensorConcept>::cond &&
           tfel::math::getSpaceDimension<StensorType>() == 3u,
       tfel::math::UnaryOperationResult<tfel::math::numeric_type<StensorType>,
@@ -162,7 +162,7 @@ TFEL_HOST_DEVICE constexpr   typename std::enable_if<
    * \param[in] a: coefficients
    */
   template <typename StensorType>
-TFEL_HOST_DEVICE constexpr   typename std::enable_if<
+  TFEL_HOST_DEVICE constexpr typename std::enable_if<
       tfel::meta::Implements<StensorType, tfel::math::StensorConcept>::cond,
       tfel::math::stensor<tfel::math::getSpaceDimension<StensorType>(),
                           tfel::math::numeric_type<StensorType>>>::type
@@ -191,7 +191,7 @@ TFEL_HOST_DEVICE constexpr   typename std::enable_if<
    * \param[in] a6: sixth coefficient
    */
   template <typename StensorType>
-TFEL_HOST_DEVICE constexpr   typename std::enable_if<
+  TFEL_HOST_DEVICE constexpr typename std::enable_if<
       tfel::meta::Implements<StensorType, tfel::math::StensorConcept>::cond &&
           tfel::math::getSpaceDimension<StensorType>() == 1u,
       tfel::math::stensor<tfel::math::getSpaceDimension<StensorType>(),
@@ -227,7 +227,7 @@ TFEL_HOST_DEVICE constexpr   typename std::enable_if<
    * \param[in] a6: sixth coefficient
    */
   template <typename StensorType>
-TFEL_HOST_DEVICE constexpr   typename std::enable_if<
+  TFEL_HOST_DEVICE constexpr typename std::enable_if<
       tfel::meta::Implements<StensorType, tfel::math::StensorConcept>::cond &&
           tfel::math::getSpaceDimension<StensorType>() == 2u,
       tfel::math::stensor<tfel::math::getSpaceDimension<StensorType>(),
@@ -263,7 +263,7 @@ TFEL_HOST_DEVICE constexpr   typename std::enable_if<
    * \param[in] a6: sixth coefficient
    */
   template <typename StensorType>
-TFEL_HOST_DEVICE constexpr   typename std::enable_if<
+  TFEL_HOST_DEVICE constexpr typename std::enable_if<
       tfel::meta::Implements<StensorType, tfel::math::StensorConcept>::cond &&
           tfel::math::getSpaceDimension<StensorType>() == 3u,
       tfel::math::stensor<tfel::math::getSpaceDimension<StensorType>(),
@@ -294,7 +294,7 @@ TFEL_HOST_DEVICE constexpr   typename std::enable_if<
    * \param[in] a: coefficients
    */
   template <typename StensorType>
-TFEL_HOST_DEVICE constexpr   typename std::enable_if<
+  TFEL_HOST_DEVICE constexpr typename std::enable_if<
       tfel::meta::Implements<StensorType, tfel::math::StensorConcept>::cond,
       tfel::math::st2tost2<tfel::math::getSpaceDimension<StensorType>(),
                            tfel::math::BinaryOperationResult<
@@ -327,7 +327,7 @@ TFEL_HOST_DEVICE constexpr   typename std::enable_if<
    * \param[in] a6: sixth coefficient
    */
   template <typename StensorType>
-TFEL_HOST_DEVICE constexpr   typename std::enable_if<
+  TFEL_HOST_DEVICE constexpr typename std::enable_if<
       tfel::meta::Implements<StensorType, tfel::math::StensorConcept>::cond &&
           tfel::math::getSpaceDimension<StensorType>() == 1u,
       tfel::math::st2tost2<tfel::math::getSpaceDimension<StensorType>(),
@@ -366,7 +366,7 @@ TFEL_HOST_DEVICE constexpr   typename std::enable_if<
    * \param[in] a6: sixth coefficient
    */
   template <typename StensorType>
-TFEL_HOST_DEVICE constexpr   typename std::enable_if<
+  TFEL_HOST_DEVICE constexpr typename std::enable_if<
       tfel::meta::Implements<StensorType, tfel::math::StensorConcept>::cond &&
           tfel::math::getSpaceDimension<StensorType>() == 2u,
       tfel::math::st2tost2<tfel::math::getSpaceDimension<StensorType>(),
@@ -405,7 +405,7 @@ TFEL_HOST_DEVICE constexpr   typename std::enable_if<
    * \param[in] a6: sixth coefficient
    */
   template <typename StensorType>
-TFEL_HOST_DEVICE constexpr   typename std::enable_if<
+  TFEL_HOST_DEVICE constexpr typename std::enable_if<
       tfel::meta::Implements<StensorType, tfel::math::StensorConcept>::cond &&
           tfel::math::getSpaceDimension<StensorType>() == 3u,
       tfel::math::st2tost2<tfel::math::getSpaceDimension<StensorType>(),
@@ -449,7 +449,7 @@ TFEL_HOST_DEVICE constexpr   typename std::enable_if<
    * \param[in] b: coefficients
    */
   template <typename StensorType>
-TFEL_HOST_DEVICE constexpr   typename std::enable_if<
+  TFEL_HOST_DEVICE constexpr typename std::enable_if<
       tfel::meta::Implements<StensorType, tfel::math::StensorConcept>::cond,
       tfel::math::UnaryOperationResult<tfel::math::numeric_type<StensorType>,
                                        tfel::math::Power<3>>>::type
@@ -487,7 +487,7 @@ TFEL_HOST_DEVICE constexpr   typename std::enable_if<
    * \param[in] b11: eleventh coefficient
    */
   template <typename StensorType>
-TFEL_HOST_DEVICE constexpr   typename std::enable_if<
+  TFEL_HOST_DEVICE constexpr typename std::enable_if<
       tfel::meta::Implements<StensorType, tfel::math::StensorConcept>::cond &&
           tfel::math::getSpaceDimension<StensorType>() == 1u,
       tfel::math::UnaryOperationResult<tfel::math::numeric_type<StensorType>,
@@ -537,7 +537,7 @@ TFEL_HOST_DEVICE constexpr   typename std::enable_if<
    * \param[in] b11: eleventh coefficient
    */
   template <typename StensorType>
-TFEL_HOST_DEVICE constexpr   typename std::enable_if<
+  TFEL_HOST_DEVICE constexpr typename std::enable_if<
       tfel::meta::Implements<StensorType, tfel::math::StensorConcept>::cond &&
           tfel::math::getSpaceDimension<StensorType>() == 2u,
       tfel::math::UnaryOperationResult<tfel::math::numeric_type<StensorType>,
@@ -587,7 +587,7 @@ TFEL_HOST_DEVICE constexpr   typename std::enable_if<
    * \param[in] b11: eleventh coefficient
    */
   template <typename StensorType>
-TFEL_HOST_DEVICE constexpr   typename std::enable_if<
+  TFEL_HOST_DEVICE constexpr typename std::enable_if<
       tfel::meta::Implements<StensorType, tfel::math::StensorConcept>::cond &&
           tfel::math::getSpaceDimension<StensorType>() == 3u,
       tfel::math::UnaryOperationResult<tfel::math::numeric_type<StensorType>,
@@ -633,7 +633,7 @@ TFEL_HOST_DEVICE constexpr   typename std::enable_if<
    * \param[in] b: coefficients
    */
   template <typename StensorType>
-TFEL_HOST_DEVICE constexpr   typename std::enable_if<
+  TFEL_HOST_DEVICE constexpr typename std::enable_if<
       tfel::meta::Implements<StensorType, tfel::math::StensorConcept>::cond,
       tfel::math::stensor<tfel::math::getSpaceDimension<StensorType>(),
                           tfel::math::UnaryOperationResult<
@@ -679,7 +679,7 @@ TFEL_HOST_DEVICE constexpr   typename std::enable_if<
    * \param[in] b11: eleventh coefficient
    */
   template <typename StensorType>
-TFEL_HOST_DEVICE constexpr   typename std::enable_if<
+  TFEL_HOST_DEVICE constexpr typename std::enable_if<
       tfel::meta::Implements<StensorType, tfel::math::StensorConcept>::cond &&
           tfel::math::getSpaceDimension<StensorType>() == 1u,
       tfel::math::stensor<tfel::math::getSpaceDimension<StensorType>(),
@@ -737,7 +737,7 @@ TFEL_HOST_DEVICE constexpr   typename std::enable_if<
    * \param[in] b11: eleventh coefficient
    */
   template <typename StensorType>
-TFEL_HOST_DEVICE constexpr   typename std::enable_if<
+  TFEL_HOST_DEVICE constexpr typename std::enable_if<
       tfel::meta::Implements<StensorType, tfel::math::StensorConcept>::cond &&
           tfel::math::getSpaceDimension<StensorType>() == 2u,
       tfel::math::stensor<tfel::math::getSpaceDimension<StensorType>(),
@@ -795,7 +795,7 @@ TFEL_HOST_DEVICE constexpr   typename std::enable_if<
    * \param[in] b11: eleventh coefficient
    */
   template <typename StensorType>
-TFEL_HOST_DEVICE constexpr   typename std::enable_if<
+  TFEL_HOST_DEVICE constexpr typename std::enable_if<
       tfel::meta::Implements<StensorType, tfel::math::StensorConcept>::cond &&
           tfel::math::getSpaceDimension<StensorType>() == 3u,
       tfel::math::stensor<tfel::math::getSpaceDimension<StensorType>(),
@@ -844,7 +844,7 @@ TFEL_HOST_DEVICE constexpr   typename std::enable_if<
    * \param[in] b: coefficients
    */
   template <typename StensorType>
-TFEL_HOST_DEVICE constexpr   typename std::enable_if<
+  TFEL_HOST_DEVICE constexpr typename std::enable_if<
       tfel::meta::Implements<StensorType, tfel::math::StensorConcept>::cond,
       tfel::math::st2tost2<tfel::math::getSpaceDimension<StensorType>(),
                            tfel::math::numeric_type<StensorType>>>::type
@@ -889,7 +889,7 @@ TFEL_HOST_DEVICE constexpr   typename std::enable_if<
    * \param[in] b11: eleventh coefficient
    */
   template <typename StensorType>
-TFEL_HOST_DEVICE constexpr   typename std::enable_if<
+  TFEL_HOST_DEVICE constexpr typename std::enable_if<
       tfel::meta::Implements<StensorType, tfel::math::StensorConcept>::cond &&
           tfel::math::getSpaceDimension<StensorType>() == 1u,
       tfel::math::st2tost2<tfel::math::getSpaceDimension<StensorType>(),
@@ -945,7 +945,7 @@ TFEL_HOST_DEVICE constexpr   typename std::enable_if<
    * \param[in] b11: eleventh coefficient
    */
   template <typename StensorType>
-TFEL_HOST_DEVICE constexpr   typename std::enable_if<
+  TFEL_HOST_DEVICE constexpr typename std::enable_if<
       tfel::meta::Implements<StensorType, tfel::math::StensorConcept>::cond &&
           tfel::math::getSpaceDimension<StensorType>() == 2u,
       tfel::math::st2tost2<tfel::math::getSpaceDimension<StensorType>(),

@@ -123,7 +123,8 @@ namespace mfront::bbrick {
     }
   }  // end of KinematicHardeningRuleBase::endTreatment
 
-  bool HyperbolicSineViscoplasticFlow::describesStrainHardeningExplicitly() const {
+  bool HyperbolicSineViscoplasticFlow::describesStrainHardeningExplicitly()
+      const {
     return false;
   }  // end of describesStrainHardeningExplicitly
 

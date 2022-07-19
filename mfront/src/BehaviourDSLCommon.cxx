@@ -167,6 +167,7 @@ namespace mfront {
     add("@Link", &BehaviourDSLCommon::treatLink);
     add("@Includes", &BehaviourDSLCommon::treatIncludes);
     add("@Members", &BehaviourDSLCommon::treatMembers);
+    add("@UnitSystem", &BehaviourDSLCommon::treatUnitSystem);
     add("@Coef", &BehaviourDSLCommon::treatCoef);
     add("@MaterialProperty", &BehaviourDSLCommon::treatCoef);
     add("@LocalVar", &BehaviourDSLCommon::treatLocalVar);
@@ -433,6 +434,10 @@ namespace mfront {
                                   this->mb.getClassName() + "')");
     }
   }  // end of setMaterial
+
+  void BehaviourDSLCommon::setUnitSystem(const std::string_view s) {
+    this->mb.setUnitSystem(s);
+  }  // end of setUnitSystem
 
   void BehaviourDSLCommon::treatDisabledCallBack() {
     --(this->current);
@@ -1373,6 +1378,9 @@ namespace mfront {
         }
       }
     }
+    // complete the declaration of physical bounds
+    this->mb.checkAndComplePhysicalBoundsDeclaration();
+    //
     if (getVerboseMode() >= VERBOSE_DEBUG) {
       getLogStream()
           << "BehaviourDSLCommon::completeVariableDeclaration: end\n";
@@ -1422,10 +1430,11 @@ namespace mfront {
         }
       }
     }
-    // calling interfaces
+    //
     if (getPedanticMode()) {
       this->doPedanticChecks();
     }
+    //
     for (const auto& pb : this->bricks) {
       pb->endTreatment();
     }
@@ -1456,7 +1465,7 @@ namespace mfront {
    * \param[in] uv : list of all used variables
    * \param[in] b1 : check if the variable is used
    * \param[in] b2 : check if the variable increment (or rate) is used
-   * \param[in] b3 : check if glossary name is declared
+   * \param[in] b3 : check if external name is declared
    * \param[in] b4 : check if variable is used in more than one code block (test
    * for local variables)
    */
@@ -1464,7 +1473,7 @@ namespace mfront {
       const BehaviourData& md,
       const VarContainer& v,
       const std::string& t,
-      const std::map<std::string, unsigned short>& uv,
+      const std::map<std::string, std::size_t>& uv,
       const bool b1 = true,
       const bool b2 = true,
       const bool b3 = true,
@@ -1516,7 +1525,7 @@ namespace mfront {
    */
   static void performPedanticChecks(
       const StaticVarContainer& v,
-      const std::map<std::string, unsigned short>& uv) {
+      const std::map<std::string, std::size_t>& uv) {
     auto& log = getLogStream();
     for (const auto& vd : v) {
       if (uv.find(vd.name) == uv.end()) {
@@ -1541,11 +1550,10 @@ namespace mfront {
       }
       // getting all used variables
       const auto& cbs = md.getCodeBlockNames();
-      auto members =
-          std::map<std::string, unsigned short>{};  // variable names and counts
-      auto smembers =
-          std::map<std::string,
-                   unsigned short>{};  // static variable nanes and counts
+      // variable names and counts
+      auto members = std::map<std::string, std::size_t>{};
+      // static variable names and counts
+      auto smembers = std::map<std::string, std::size_t>{};
       for (const auto& cbs_pcbs : cbs) {
         const auto& cb = md.getCodeBlock(cbs_pcbs);
         if (cb.description.empty()) {

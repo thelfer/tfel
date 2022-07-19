@@ -500,7 +500,6 @@ namespace mfront {
     this->mb.setParameterDefaultValue(h, "epsilon", epsilon);
   }  // end of treatEpsilon
 
-
   void RungeKuttaDSLBase::treatStressErrorNormalizationFactor() {
     const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     if (!this->mb.hasAttribute(BehaviourData::algorithm)) {
@@ -1784,11 +1783,11 @@ namespace mfront {
         }
         if (testInGivenVariableCategory("MaterialProperty", n,
                                         Glossary::YoungModulus)) {
-          return "this->"+n;
+          return "this->" + n;
         }
         if (testInGivenVariableCategory("Parameter", n,
                                         Glossary::YoungModulus)) {
-          return "this->"+n;
+          return "this->" + n;
         }
         tfel::raise(
             "findStressErrorNormalizationFactor: the `" + n +
@@ -1812,7 +1811,7 @@ namespace mfront {
         }
       }
       if (found_as_local_variable) {
-        return "this->"+n;
+        return "this->" + n;
       }
       // look if young is defined as a static variable
       const auto found_as_static_variable =
@@ -1825,13 +1824,12 @@ namespace mfront {
                       "modelling hypotheses");
         }
         if (is_static_variable) {
-          const auto& v =
-              bd.getBehaviourData(h).getStaticVariables().get(n);
+          const auto& v = bd.getBehaviourData(h).getStaticVariables().get(n);
           checkVariableDefinition(v);
         }
       }
       if (found_as_static_variable) {
-        return bd.getClassName() + "::"+n;
+        return bd.getClassName() + "::" + n;
       }
       tfel::raise("findStressErrorNormalizationFactor: the `" + n +
                   "` variable is not defined as a material property, a static "

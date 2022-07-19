@@ -11,7 +11,6 @@
  * project under specific licensing conditions.
  */
 
-
 #include <ostream>
 #include "TFEL/Material/ModellingHypothesis.hxx"
 #include "MFront/MFrontLogStream.hxx"

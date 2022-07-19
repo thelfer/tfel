@@ -40,11 +40,7 @@ namespace mfront {
     //! \brief a simple alias
     using DSLOptions = tfel::utilities::DataMap;
     //! list of dsl targets
-    enum DSLTarget {
-      MATERIALPROPERTYDSL,
-      BEHAVIOURDSL,
-      MODELDSL
-    };
+    enum DSLTarget { MATERIALPROPERTYDSL, BEHAVIOURDSL, MODELDSL };
     /*!
      * \brief structure used to describe a DSL option
      */

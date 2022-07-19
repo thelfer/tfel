@@ -19,6 +19,10 @@ eqnPrefixTemplate: "($$i$$)"
 
 # Issues fixed
 
+## Issue #251: [mtest] Bad definition of `PipeMeshElementType` in `python` bindings
+
+For more details, see <https://github.com/thelfer/tfel/issues/251>.
+
 ## Issue #162: [mfront] Minors issues of syntax in `StandardElastoViscoPlasticity` Brick
 
 For more details, see <https://github.com/thelfer/tfel/issues/162>.

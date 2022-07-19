@@ -97,7 +97,7 @@ EXTRA_DIST = bootstrap.sh     \
 	     README.md
 
 licencesdir = $(pkgdatadir)
-dist_licences_DATA = LICENCE-GNU-GPL \
+dist_licences_DATA = LICENCE-GNU-GPL     \
                      LICENCE-CECILL-A-EN \
                      LICENCE-CECILL-A-FR
 
@@ -110,6 +110,9 @@ nobase_dist_testsuite_DATA =			        	     \
   test-suite/overriding-parameters/Plasticity.mfront                 \
   test-suite/dsl-options/Plasticity.mfront                           \
   test-suite/dsl-options/behaviour-dsl-options.check                 \
+  test-suite/physical-bounds/unit-system.check	                     \
+  test-suite/physical-bounds/TestUnitSystem-material-property.mfront \
+  test-suite/physical-bounds/TestUnitSystem-behaviour.mfront	     \
   test-suite/madnex/write-madnex-file/madnex.check		     \
   test-suite/madnex/write-madnex-file/test.check		     \
   test-suite/madnex/write-madnex-file/Test.mfront		     \

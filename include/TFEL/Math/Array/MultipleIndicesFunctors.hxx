@@ -18,10 +18,11 @@ namespace tfel::math {
 
   template <typename UnaryOperator, typename FirstArgument>
   struct MultiIndicesUnaryOperatorFunctor {
-    TFEL_HOST_DEVICE constexpr MultiIndicesUnaryOperatorFunctor(FirstArgument& a)
+    TFEL_HOST_DEVICE constexpr MultiIndicesUnaryOperatorFunctor(
+        FirstArgument& a)
         : first_argument(a) {}  // end of MultiIndicesUnaryOperatorFunctor
-    TFEL_HOST_DEVICE constexpr MultiIndicesUnaryOperatorFunctor(const UnaryOperator& o,
-                                               FirstArgument& a)
+    TFEL_HOST_DEVICE constexpr MultiIndicesUnaryOperatorFunctor(
+        const UnaryOperator& o, FirstArgument& a)
         : unary_operator(o),
           first_argument(a) {}  // end of MultiIndicesUnaryOperatorFunctor
 
@@ -35,13 +36,15 @@ namespace tfel::math {
   };
 
   template <typename UnaryOperator, typename FirstArgument>
-  TFEL_HOST_DEVICE constexpr MultiIndicesUnaryOperatorFunctor<UnaryOperator, FirstArgument>
+  TFEL_HOST_DEVICE constexpr MultiIndicesUnaryOperatorFunctor<UnaryOperator,
+                                                              FirstArgument>
   makeMultiIndicesUnaryOperatorFunctor(FirstArgument& a) {
     return MultiIndicesUnaryOperatorFunctor<UnaryOperator, FirstArgument>(a);
   }  // end of makeMultiIndicesUnaryOperatorFunctor
 
   template <typename UnaryOperator, typename FirstArgument>
-  TFEL_HOST_DEVICE constexpr MultiIndicesUnaryOperatorFunctor<UnaryOperator, FirstArgument>
+  TFEL_HOST_DEVICE constexpr MultiIndicesUnaryOperatorFunctor<UnaryOperator,
+                                                              FirstArgument>
   makeMultiIndicesUnaryOperatorFunctor(const UnaryOperator& o,
                                        FirstArgument& a) {
     return MultiIndicesUnaryOperatorFunctor<UnaryOperator, FirstArgument>(o, a);
@@ -51,13 +54,12 @@ namespace tfel::math {
             typename FirstArgument,
             typename SecondArgument>
   struct MultiIndicesBinaryOperatorFunctor {
-    TFEL_HOST_DEVICE constexpr MultiIndicesBinaryOperatorFunctor(FirstArgument& a,
-                                                SecondArgument& b)
+    TFEL_HOST_DEVICE constexpr MultiIndicesBinaryOperatorFunctor(
+        FirstArgument& a, SecondArgument& b)
         : first_argument(a),
           second_argument(b) {}  // end of MultiIndicesBinaryOperatorFunctor
-    TFEL_HOST_DEVICE constexpr MultiIndicesBinaryOperatorFunctor(const BinaryOperator& o,
-                                                FirstArgument& a,
-                                                const SecondArgument& b)
+    TFEL_HOST_DEVICE constexpr MultiIndicesBinaryOperatorFunctor(
+        const BinaryOperator& o, FirstArgument& a, const SecondArgument& b)
         : binary_operator(o),
           first_argument(a),
           second_argument(b) {}  // end of MultiIndicesBinaryOperatorFunctor
@@ -77,8 +79,8 @@ namespace tfel::math {
             typename FirstArgument,
             typename SecondArgument>
   TFEL_HOST_DEVICE constexpr MultiIndicesBinaryOperatorFunctor<BinaryOperator,
-                                              FirstArgument,
-                                              SecondArgument>
+                                                               FirstArgument,
+                                                               SecondArgument>
   makeMultiIndicesBinaryOperatorFunctor(FirstArgument& a, SecondArgument& b) {
     return MultiIndicesBinaryOperatorFunctor<BinaryOperator, FirstArgument,
                                              SecondArgument>(a, b);
@@ -88,8 +90,8 @@ namespace tfel::math {
             typename FirstArgument,
             typename SecondArgument>
   TFEL_HOST_DEVICE constexpr MultiIndicesBinaryOperatorFunctor<BinaryOperator,
-                                              FirstArgument,
-                                              SecondArgument>
+                                                               FirstArgument,
+                                                               SecondArgument>
   makeMultiIndicesBinaryOperatorFunctor(const BinaryOperator& o,
                                         FirstArgument& a,
                                         const SecondArgument& b) {
@@ -121,7 +123,8 @@ namespace tfel::math {
      * \brief access iterator
      */
     template <typename... Indices>
-    TFEL_HOST_DEVICE constexpr const_reference operator()(const Indices... i) const noexcept {
+    TFEL_HOST_DEVICE constexpr const_reference operator()(
+        const Indices... i) const noexcept {
       checkIndicesValiditity<IndexingPolicy, Indices...>();
       return this->iterator[this->getIndex(i...)];
     }

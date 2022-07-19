@@ -1,6 +1,6 @@
 /*!
  * \file   tests/Math/parser12.cxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   14/04/2022
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
@@ -119,12 +119,12 @@ struct ParserTest12 final : public tfel::tests::TestCase {
     check("x <0 ?  y : 2*y", "0", "((x)<(0)) ? (1) : ((2)*(1))");
   }  // end of test3
   void test4() {
-   const auto e = tfel::math::Evaluator("x**5.4");
-   const auto dx =
-       std::dynamic_pointer_cast<tfel::math::Evaluator>(e.differentiate("x"))
-           ->getCxxFormula();
-   const auto f = "(5.4)*(std::pow(x," + std::to_string(4.4) + "))";
-   TFEL_TESTS_ASSERT(dx == f);
+    const auto e = tfel::math::Evaluator("x**5.4");
+    const auto dx =
+        std::dynamic_pointer_cast<tfel::math::Evaluator>(e.differentiate("x"))
+            ->getCxxFormula();
+    const auto f = "(5.4)*(std::pow(x," + std::to_string(4.4) + "))";
+    TFEL_TESTS_ASSERT(dx == f);
   }  // end of test4
   void test5() {
     const auto e = tfel::math::Evaluator("2**x");

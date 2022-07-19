@@ -19,6 +19,10 @@ eqnPrefixTemplate: "($$i$$)"
 
 # Issues fixed
 
+## Issue #257: [mfront] Warnings in behavior
+
+For more details, see <https://github.com/thelfer/tfel/issues/257>
+
 ## Issue #221: [mfront] Error in the computation of the bulk modulus in the `MiehePhaseFieldDisplacementDeviatoricSplit.mfront` example
 
 For more details, see <https://github.com/thelfer/tfel/issues/221>

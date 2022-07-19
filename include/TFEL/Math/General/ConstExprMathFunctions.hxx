@@ -19,8 +19,8 @@
 namespace tfel::math::constexpr_fct {
 
   /*!
-   * \brief compute the absolute value of a number using a TFEL_HOST_DEVICE constexpr
-   * function.
+   * \brief compute the absolute value of a number using a TFEL_HOST_DEVICE
+   * constexpr function.
    */
   template <typename T>
   TFEL_HOST_DEVICE constexpr T abs(const T v) {

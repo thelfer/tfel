@@ -236,11 +236,11 @@ namespace mtest {
   }
 
   std::shared_ptr<const Behaviour> SingleStructureScheme::getBehaviour() const {
-      tfel::raise_if(this->b == nullptr,
-                    "SingleStructureScheme::getBehaviour: "
-                    "no behaviour defined");
-      return this->b;
-    }
+    tfel::raise_if(this->b == nullptr,
+                   "SingleStructureScheme::getBehaviour: "
+                   "no behaviour defined");
+    return this->b;
+  }
 
   void SingleStructureScheme::completeInitialisation() {
     tfel::raise_if(this->b == nullptr,

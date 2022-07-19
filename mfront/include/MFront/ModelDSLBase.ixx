@@ -32,6 +32,7 @@ namespace mfront {
     this->registerNewCallBack("@Material", &Child::treatMaterial);
     this->registerNewCallBack("@Author", &Child::treatAuthor);
     this->registerNewCallBack("@Date", &Child::treatDate);
+    this->registerNewCallBack("@UnitSystem", &Child::treatUnitSystem);
     this->registerNewCallBack("@UseQt", &Child::treatUseQt);
     this->registerNewCallBack("@Includes", &Child::treatIncludes);
     this->registerNewCallBack("@StaticVar", &Child::treatStaticVar);

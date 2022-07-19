@@ -96,7 +96,7 @@ namespace mfront {
      * \param[in]  mpd: material property description
      */
     virtual void writeLawSymbol(std::ostream&,
-				const MaterialPropertyDescription&) const;
+                                const MaterialPropertyDescription&) const;
     /*!
      * \param[out] os:  output file stream
      * \param[in]  mpd: material property description
@@ -121,16 +121,14 @@ namespace mfront {
      * \param[in]  mpd: material property description
      */
     virtual void writeVariablesNamesSymbol(
-        std::ostream&,
-        const MaterialPropertyDescription&) const;
+        std::ostream&, const MaterialPropertyDescription&) const;
     /*!
      * \param[out] os:  output file stream
      * \param[in]  name: name of the generated material property
      * \param[in]  mpd: material property description
      */
     virtual void writeVariablesBoundsSymbols(
-        std::ostream&,
-        const MaterialPropertyDescription&) const;
+        std::ostream&, const MaterialPropertyDescription&) const;
     /*!
      * \param[out] os:  output file stream
      */

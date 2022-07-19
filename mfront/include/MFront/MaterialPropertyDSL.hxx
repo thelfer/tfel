@@ -46,7 +46,8 @@ namespace mfront {
      *\param[in] opts: options passed to the DSL
      */
     MaterialPropertyDSL(const DSLOptions&);
-    //! \brief return the description of the material property treated by the DSL
+    //! \brief return the description of the material property treated by the
+    //! DSL
     virtual const MaterialPropertyDescription& getMaterialPropertyDescription()
         const;
     //
@@ -96,6 +97,7 @@ namespace mfront {
     void addStaticVariableDescription(
         const StaticVariableDescription&) override;
     int getIntegerConstant(const std::string&) const override;
+    void setUnitSystem(const std::string_view) override;
     void setMaterial(const std::string&) override;
     void setMaterialKnowledgeIdentifier(const std::string&) override;
     //! \brief method called by the analyseFile and analyseString method
@@ -140,6 +142,8 @@ namespace mfront {
      * This method overrides variables by parameters
      */
     void finalizeVariablesDeclaration();
+    //! \brief perform pedantic checks
+    virtual void doPedanticChecks() const;
     //! \brief description of the material property
     MaterialPropertyDescription md;
     //! \brief overriding parameters

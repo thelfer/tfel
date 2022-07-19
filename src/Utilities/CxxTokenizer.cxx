@@ -113,7 +113,7 @@ namespace tfel::utilities {
     }
   }  // end of CxxTokenizer::addSeparator
 
-  void CxxTokenizer::parseString(const std::string& s) {
+  void CxxTokenizer::parseString(const std::string &s) {
     std::istringstream iss(s);
     auto n = Token::size_type{};
     this->parseStream(iss, n, " of string '" + s + "'");

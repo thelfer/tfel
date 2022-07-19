@@ -16,18 +16,21 @@
 
 "Emissivity"{
  units: {"SI": "kg.m.T^{−3}"};
+ lower_physical_bounds : {"SI": 0};
  type: "scalar";
  short_description: "Emissivity of the surface of a material is its effectiveness in emitting energy as thermal radiation";
 };
 
 "HeatTransferCoefficient"{
  units: {"SI": "W.m^{-2}.K^{-1}"};
+ lower_physical_bounds : {"SI": 0};
  type: "scalar";
  short_description:"The heat transfer coefficient is the proportionality constant between the heat flux and the temperature difference";
 };
 
 "MassDensity"{
  units: {"SI": "kg.m^{-3}"};
+ lower_physical_bounds : {"SI": 0};
  type : "scalar";
  short_description : "The mass density";
 };
@@ -76,44 +79,49 @@
 
 "ThermalConductivity"{
  units: {"SI": "W.m^{-1}"};
+ lower_physical_bounds : {"SI": 0};
  type : "scalar";
  short_description : "la conductivité thermique d'un matériau isotrope";
 };
 
 "ThermalConductivity1"{
  units: {"SI": "W.m^{-1}"};
+ lower_physical_bounds : {"SI": 0};
  type : "scalar";
  short_description : "la conductivité thermique d'un matériau orthotrope suivant la première direction d'orthotropie";
 };
 
 "ThermalConductivity2"{
  units: {"SI": "W.m^{-1}"};
+ lower_physical_bounds : {"SI": 0};
  type : "scalar";
  short_description : "la conductivité thermique d'un matériau orthotrope suivant la deuxième direction d'orthotropie";
 };
 
 "ThermalConductivity3"{
  units: {"SI": "W.m^{-1}"};
+ lower_physical_bounds : {"SI": 0};
  type : "scalar";
  short_description : "la conductivité thermique d'un matériau orthotrope suivant la troisième direction d'orthotropie";
 };
 
 "SpecificHeat"{
  units: {"SI": "J.kg^{-1}.K^{-1}"};
+ lower_physical_bounds : {"SI": 0};
  type : "scalar";
  short_description : "la chaleur spécifique";
 };
 
 "Temperature"{
  units: {"SI": "K"};
- lower_bound : {"SI": 0};
+ lower_physical_bounds : {"SI": 0};
  type : "scalar";
  short_description : "The temperature";
 };
 
 "KelvinTemperature"{
  units: {"SI": "K"};
- lower_bound : {"SI": 0};
+ lower_physical_bounds : {"SI": 0};
  type : "scalar";
  short_description : "The temperature";
  notes :{"Cette entrée a été rajoutée par compatibilité avec les choix d'implantation des "
@@ -122,7 +130,7 @@
 
 "IrradiationTemperature"{
  units: {"SI": "K"};
- lower_bound : {"SI": 0};
+ lower_physical_bounds : {"SI": 0};
  type : "scalar";
  short_description : "la température moyenne (dans le temps) au cours de l'irradiation";
  description : {"Cette température est définie ainsi :",
@@ -142,6 +150,7 @@
 
 "MeanTemperature"{
  units: {"SI": "K"};
+ lower_physical_bounds : {"SI": 0};
  type : "scalar";
  short_description : "la température moyenne dans un domaine \(\Omega\) donné. ";
  description : {"Cette température est définie ainsi :"
@@ -156,6 +165,7 @@
 
 "MeanIrradiationTemperature"{
  units: {"SI": "K"};
+ lower_physical_bounds : {"SI": 0};
  type : "scalar";
  short_description : "la température moyenne dans le temps et dans un domaine \(\Omega\) donné";
  description : {"Cette température est définie ainsi :"
@@ -191,24 +201,28 @@
 
 "ConvectiveHeatTransferCoefficient"{
  units: {"SI": "W.m^{-2}.K^{-1}"};
+ lower_physical_bounds : {"SI": 0};
  type : "scalar";
  short_description :"le coefficient d'échange par convection";
 };
 
 "YoungModulus"{
  units: {"SI": "Pa"};
+ lower_physical_bounds : {"SI": 0};
  type : "scalar";
  short_description : "The Young modulus of an isotropic material";
 };
 
 "ShearModulus"{
  units: {"SI": "Pa"};
+ lower_physical_bounds : {"SI": 0};
  type : "scalar";
  short_description : "The shear modulus of an isotropic material";
 };
 
 "BulkModulus"{
  units: {"SI": "Pa"};
+ lower_physical_bounds : {"SI": 0};
  type : "scalar";
  short_description : "The bulk modulus of an isotropic material";
 };
@@ -221,56 +235,70 @@
 
 "YoungModulus1"{
  units: {"SI": "Pa"};
+ lower_physical_bounds : {"SI": 0};
  type : "scalar";
  short_description : "le module d'Young d'un matériau orthotrope suivant la première direction d'orthotropie";
 };
 
 "YoungModulus2"{
  units: {"SI": "Pa"};
+ lower_physical_bounds : {"SI": 0};
  type : "scalar";
  short_description : "le module d'Young d'un matériau orthotrope suivant la deuxième direction d'orthotropie";
 };
 
 "YoungModulus3"{
  units: {"SI": "Pa"};
+ lower_physical_bounds : {"SI": 0};
  type : "scalar";
  short_description : "le module d'Young d'un matériau orthotrope suivant la troisième direction d'orthotropie";
 };
 
 "PoissonRatio"{
  type : "scalar";
+ lower_physical_bounds : {"SI": -1};
+ upper_physical_bounds : {"SI": 0.5};
  short_description : "The Poisson ratio of an isotropic material";
 };
 
 "PoissonRatio12"{
  type : "scalar";
+ lower_physical_bounds : {"SI": -1};
+ upper_physical_bounds : {"SI": 0.5};
  short_description : "le coefficient de Poisson d'un matériau orthotrope relatif aux première et deuxième directions d'orthotropie";
 };
 
 "PoissonRatio23"{
  type : "scalar";
+ lower_physical_bounds : {"SI": -1};
+ upper_physical_bounds : {"SI": 0.5};
  short_description : "le coefficient de Poisson d'un matériau orthotrope relatif aux deuxième et troisième directions d'orthotropie";
 };
 
 "PoissonRatio13"{
  type : "scalar";
+ lower_physical_bounds : {"SI": -1};
+ upper_physical_bounds : {"SI": 0.5};
  short_description : "le coefficient de Poisson d'un matériau orthotrope relatif aux première et troisième directions d'orthotropie";
 };
 
 "ShearModulus12"{
  units: {"SI": "Pa"};
+ lower_physical_bounds : {"SI": 0};
  type : "scalar";
  short_description : "le module de cisaillement d'un matériau orthotrope relatif aux première et deuxième directions d'orthotropie";
 };
 
 "ShearModulus23"{
  units: {"SI": "Pa"};
+ lower_physical_bounds : {"SI": 0};
  type : "scalar";
  short_description : "le module de cisaillement d'un matériau orthotrope relatif aux deuxième et troisième directions d'orthotropie";
 };
 
 "ShearModulus13"{
  units: {"SI": "Pa"};
+ lower_physical_bounds : {"SI": 0};
  type : "scalar";
  short_description : "le module de cisaillement d'un matériau orthotrope relatif aux première et troisième directions d'orthotropie";
 };
@@ -345,11 +373,13 @@
 
 "EquivalentPlasticStrain"{
  type : "scalar";
+ lower_physical_bounds : {"SI": 0};
  short_description : "The equivalent plastic strain";
 };
 
 "EquivalentViscoplasticStrain"{
  type : "scalar";
+ lower_physical_bounds : {"SI": 0};
  short_description : "The equivalent viscoplastic strain";
 };
 
@@ -389,6 +419,7 @@
 
 "HillStress"{
  units: {"SI": "Pa"};
+ lower_physical_bounds : {"SI": 0};
  type : "tensor";
  short_description : "la contrainte équivalente au sens de Hill";
 };
@@ -413,12 +444,14 @@
 
 "VonMisesStress"{
  units: {"SI": "Pa"};
+ lower_physical_bounds : {"SI": 0};
  type : "scalar";
  short_description : "la contrainte équivalente au sens de Von Mises";
 };
 
 "TrescaStress"{
  units: {"SI": "Pa"};
+ lower_physical_bounds : {"SI": 0};
  type : "scalar";
  short_description : "la contrainte équivalente au sens de Tresca";
 };
@@ -481,16 +514,22 @@
 "Porosity"{
  type: "scalar";
  short_description : "Porosity of the material";
+ lower_physical_bounds : {"SI": 0};
+ upper_physical_bounds : {"SI": 1};
 };
 
 "PorosityIncreaseDueToInelasticFlow"{
  type: "scalar";
  short_description : "Part of the porosity increase du to inelastic flow";
+ lower_physical_bounds : {"SI": 0};
+ upper_physical_bounds : {"SI": 1};
 };
 
 "PorosityIncreaseDueToNucleation" {
  type: "scalar";
  short_description : "Part of the porosity increase du to nucleation";
+ lower_physical_bounds : {"SI": 0};
+ upper_physical_bounds : {"SI": 1};
 };
 
 "IrradiationInducedSwelling"{
@@ -522,6 +561,7 @@
 "YieldStrength"{
  alias: "YieldStress";
  units: {"SI": "Pa"};
+ lower_physical_bounds : {"SI": 0};
  type: "scalar";
  short_description : "la limite d'élasticité";
 };
@@ -529,6 +569,7 @@
 "UltimateTensileStrength"{
  alias : "UltimateTensileStress";
  units  : {"SI": "Pa"};
+ lower_physical_bounds : {"SI": 0};
  type  : "scalar";
  short_description : "la valeur maximale de la contrainte qu'un materiau peut supporter";
 };
@@ -540,18 +581,21 @@
 
 "GrainSize"{
  units: {"SI": "m"};
+ lower_physical_bounds : {"SI": 0};
  type : "scalar";
  short_description : "la taille de grain";
 };
 
 "FissionDensity"{
  units: {"SI": "m^{-3}"};
+ lower_physical_bounds : {"SI": 0};
  type : "scalar";
  short_description : "la densité de fission";
 };
 
 "IrradiationDamage"{
  units: {"SI": "dpa"};
+ lower_physical_bounds : {"SI": 0};
  type : "scalar";
  short_description : "le dommage due à l'irradiation, "
     "mesuré par le nombre de déplacement moyen de chaque atome (dpa)";
@@ -565,6 +609,7 @@
 
 "NeutronFluence"{
  units: {"SI": "n.m^{-2}"};
+ lower_physical_bounds : {"SI": 0};
  type : "scalar";
  short_description : "la fluence";
 };
@@ -572,6 +617,7 @@
 "FastNeutronFlux_01MeV"{
  name : "FastNeutronFlux (>0.1 MeV)";
  units: {"SI": "n.m^{-2}.s^{-1}"};
+ lower_physical_bounds : {"SI": 0};
  type : "scalar";
  short_description : "le flux de neutron rapide";
 };
@@ -579,6 +625,7 @@
 "FastNeutronFlux_1MeV"{
  name : "FastNeutronFlux (>1 MeV)";
  units: {"SI": "n.m^{-2}.s^{-1}"};
+ lower_physical_bounds : {"SI": 0};
  type : "scalar";
  short_description : "le flux de neutron rapide";
 };
@@ -586,6 +633,7 @@
 "FastNeutronFluence_01MeV"{
  name : "FastNeutronFluence (>0.1 MeV)";
  units: {"SI": "n.m^{-2}"};
+ lower_physical_bounds : {"SI": 0};
  type : "scalar";
  short_description : "la fluence rapide";
 };
@@ -593,6 +641,7 @@
 "FastNeutronFluence_1MeV"{
  name : "FastNeutronFluence (>1 MeV)";
  units: {"SI": "n.m^{-2}"};
+ lower_physical_bounds : {"SI": 0};
  type : "scalar";
  short_description : "la fluence rapide";
 };
@@ -600,6 +649,7 @@
 "BurnUp_AtPercent"{
  name : "BurnUp (at.%)";
  units: {"SI": "at./100"};
+ lower_physical_bounds : {"SI": 0};
  type : "scalar";
  short_description : "le taux de combustion en atome pour cent";
 };
@@ -607,6 +657,7 @@
 "MeanBurnUp_AtPercent"{
  name : "MeanBurnUp (at.%)";
  units: {"SI": "at./100"};
+ lower_physical_bounds : {"SI": 0};
  type : "scalar";
  short_description : "le taux de combustion en atome pour cent moyen (au sens spatial) pour un matériau donné";
 };
@@ -614,6 +665,7 @@
 "BurnUp_MWJperTm"{
  name : "BurnUp (MWJ/tm)";
  units: {"SI": "MWJ/tm"};
+ lower_physical_bounds : {"SI": 0};
  type : "scalar";
  short_description : "le taux de combustion en MegaWattJour par tonne (métal)";
 };
@@ -621,12 +673,14 @@
 "MeanBurnUp_MWJperTm"{
  name : "MeanBurnUp (MWJ/tm)";
  units: {"SI": "MWJ/tm"};
+ lower_physical_bounds : {"SI": 0};
  type : "scalar";
  short_description : "le taux de combustion en MegaWattJour par tonne (métal) moyen (au sens spatial) pour un matériau donné";
 };
 
 "B10BurnUp"{
  units: {"SI": "m^{-3}"};
+ lower_physical_bounds : {"SI": 0};
  type : "scalar";
  short_description : "le taux d'usure en \(\mbox{}^{10}B\)";
  description : {"Ce nombre décrit le nombre d'atomes de \(\mbox{}^{10}B\) "
@@ -665,6 +719,7 @@
 
 "NumberOfMoles"{
  units: {"SI": "mol"};
+ lower_physical_bounds : {"SI": 0};
  type  : "scalar";
  short_description : "le nombre de moles d'une substance";
 };

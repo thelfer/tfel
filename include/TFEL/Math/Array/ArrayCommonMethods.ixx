@@ -232,6 +232,27 @@ namespace tfel::math {
   }  // end of fill
 
   template <typename Child, typename ArrayPolicyType>
+  template <typename ValueType2, typename ValueType3>
+  constexpr std::enable_if_t<
+      (isAssignableTo<ValueType2, typename ArrayPolicyType::value_type>() &&
+       isAssignableTo<ValueType3, typename ArrayPolicyType::value_type>()),
+      void>
+  MutableArrayCommonMethods<Child, ArrayPolicyType>::clamp(
+      const ValueType2& lower_bound, const ValueType3& upper_bound) {
+    const auto f = makeMultiIndicesUnaryOperatorFunctor(
+        [lower_bound, upper_bound](typename ArrayPolicyType::reference a) {
+          if (a < lower_bound) {
+            a = lower_bound;
+          } else if (a > upper_bound) {
+            a = upper_bound;
+          }
+        },
+        *this);
+    auto& child = static_cast<Child&>(*this);
+    child.iterate(f);
+  }  // end of fill
+
+  template <typename Child, typename ArrayPolicyType>
   template <typename ValueType2>
   constexpr std::enable_if_t<
       isAssignableTo<BinaryOperationResult<ValueType2,

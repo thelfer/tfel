@@ -81,6 +81,7 @@ namespace mfront {
     std::map<std::string, int> getIntegerConstants() const override;
     int getIntegerConstant(const std::string&) const override;
     void treatUnknownKeyword() override;
+    void setUnitSystem(const std::string_view) override;
     void setMaterial(const std::string&) override;
     void setMaterialKnowledgeIdentifier(const std::string&) override;
     //! treat the `@UseQt` keyword

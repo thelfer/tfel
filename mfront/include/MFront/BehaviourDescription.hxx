@@ -266,6 +266,8 @@ namespace mfront {
      * declaration of user defined variables
      */
     bool allowsNewUserDefinedVariables() const;
+    //! \brief check and complete the physical bounds of variables
+    void checkAndComplePhysicalBoundsDeclaration();
     //! \brief disallow the declaration of user defined variables
     void disallowNewUserDefinedVariables();
     //! \brief set if dynamically allocated vectors are allowed
@@ -333,7 +335,7 @@ namespace mfront {
      * with UNDEFINEDHYPOTESIS).
      */
     MaterialPropertyInput getMaterialPropertyInput(const std::string&,
-                                                    const bool = true) const;
+                                                   const bool = true) const;
     /*!
      * \return the inputs of a material property
      * \param[in] i: list of variables used to evaluate the material
@@ -937,7 +939,7 @@ namespace mfront {
      * variables to the default data and to all the specialisations
      */
     void addInitializeFunctionVariables(const Hypothesis,
-                                const VariableDescriptionContainer&);
+                                        const VariableDescriptionContainer&);
     /*!
      * \brief add an initialize variable
      * \param[in] h: modelling hypothesis
@@ -947,7 +949,8 @@ namespace mfront {
      * \note if h is UNDEFINEDHYPOTHESIS, add the given initialize
      * variable to the default data and to all the specialisations
      */
-    void addInitializeFunctionVariable(const Hypothesis, const VariableDescription&);
+    void addInitializeFunctionVariable(const Hypothesis,
+                                       const VariableDescription&);
     /*!
      * \brief add post-processing variables
      * \param[in] h: modelling hypothesis
@@ -1258,7 +1261,8 @@ namespace mfront {
      * \param[in] h: modelling hypothesis
      * \param[in] n: name
      */
-    bool isInitializeFunctionVariableName(const Hypothesis, const std::string&) const;
+    bool isInitializeFunctionVariableName(const Hypothesis,
+                                          const std::string&) const;
     /*!
      * \return true if the given name is the name of post-processing variable
      * \param[in] h: modelling hypothesis

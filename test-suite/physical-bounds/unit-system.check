@@ -1,0 +1,19 @@
+// behaviour
+@Command "@mfront@ --obuild --interface=generic TestUnitSystem-behaviour.mfront";
+@Command "@mfront-query@ --has-physical-bounds=Porosity TestUnitSystem-behaviour.mfront" {
+  expected_output: "true"
+};
+@Command "@mfront-query@ --physical-bounds-type=Porosity TestUnitSystem-behaviour.mfront"  {
+  expected_output: "LowerAndUpper"
+};
+
+// material property
+@Command "@mfront@ --obuild --interface=generic TestUnitSystem-material-property.mfront";
+@Command "@mfront-query@ --has-physical-bounds=Temperature TestUnitSystem-material-property.mfront" {
+  expected_output: "true"
+};
+@Command "@mfront-query@ --physical-bounds-type=Temperature TestUnitSystem-material-property.mfront"  {
+  expected_output: "Lower"
+};
+
+@CleanDirectories {"include", "src"};

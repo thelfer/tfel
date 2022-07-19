@@ -28,9 +28,7 @@ void declareGlossaryEntry() {
       .add_property("names",
                     make_function(&GlossaryEntry::getNames,
                                   return_value_policy<copy_const_reference>()))
-      .add_property("unit",
-                    make_function(&GlossaryEntry::getUnit,
-                                  return_value_policy<copy_const_reference>()))
+      .add_property("units", &GlossaryEntry::getUnits)
       .add_property("type",
                     make_function(&GlossaryEntry::getType,
                                   return_value_policy<copy_const_reference>()))

@@ -34,8 +34,9 @@ namespace tfel::math {
     TFEL_HOST_DEVICE constexpr GenericFixedSizeConstArrayView(
         GenericFixedSizeConstArrayView&&) noexcept = default;
     //! \return a pointer to the underlying array serving as element storage.
-    TFEL_HOST_DEVICE constexpr typename GenericFixedSizeConstArrayView::const_pointer data()
-        const noexcept {
+    TFEL_HOST_DEVICE constexpr
+        typename GenericFixedSizeConstArrayView::const_pointer
+        data() const noexcept {
       return this->data_values;
     }  // end of data
     //! \brief destructor

@@ -17,6 +17,7 @@
 #include <map>
 #include <string>
 #include <vector>
+#include <optional>
 #include <string_view>
 #include "TFEL/Material/OutOfBoundsPolicy.hxx"
 #include "MFront/MFrontConfig.hxx"
@@ -43,6 +44,17 @@ namespace mfront {
      * exists
      */
     [[noreturn]] static void throwUndefinedAttribute(const std::string_view);
+    //! \brief default constructor
+    MaterialKnowledgeDescription();
+    //! \brief move constructor
+    MaterialKnowledgeDescription(MaterialKnowledgeDescription&&);
+    //! \brief copy constructor
+    MaterialKnowledgeDescription(const MaterialKnowledgeDescription&);
+    //! \brief default assignement
+    MaterialKnowledgeDescription& operator=(
+        const MaterialKnowledgeDescription&);
+    //! \brief move assignement
+    MaterialKnowledgeDescription& operator=(MaterialKnowledgeDescription&&);
     /*!
      * \brief insert a new attribute
      * \param[in] n : name
@@ -108,8 +120,27 @@ namespace mfront {
                    std::vector<std::string>,  // list of interfaces
                    std::less<>>&
     getExternalMFrontFiles() const;
+    /*!
+     * \brief return if an unit system has been associated to the material
+     * knowledge
+     */
+    bool hasUnitSystem() const;
+    /*!
+     * \brief associate an unit system to the material knowledge
+     * \param[in] s: unit system
+     */
+    void setUnitSystem(const std::string_view);
+    /*!
+     * \brief associate an unit system to the material knowledge
+     * \param[in] s: unit system
+     */
+    const std::string& getUnitSystem() const;
+    //! \brief destructor
+    ~MaterialKnowledgeDescription();
 
    protected:
+    //! \brief unit system
+    std::optional<std::string> unit_system;
     //! \brief behaviour attributes
     std::map<std::string, MaterialKnowledgeAttribute, std::less<>> attributes;
     /*!
@@ -129,7 +160,7 @@ namespace mfront {
    * \param[in] policy: out of bounds policy
    */
   MFRONT_VISIBILITY_EXPORT void setDefaultOutOfBoundsPolicy(
-      const MaterialKnowledgeDescription&, const std::string&);
+      MaterialKnowledgeDescription&, const std::string&);
   /*!
    * \brief this function returns the value of the
    * `MaterialKnowledgeDescription::defaultOutOfBoundsPolicy`

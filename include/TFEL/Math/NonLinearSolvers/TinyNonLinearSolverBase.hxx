@@ -121,7 +121,8 @@ namespace tfel::math {
      * This method can be used to initialize some internal state, including
      * numerical parameters.
      */
-    TFEL_HOST_DEVICE constexpr void executeInitialisationTaskBeforeResolution() noexcept {}
+    TFEL_HOST_DEVICE constexpr void
+    executeInitialisationTaskBeforeResolution() noexcept {}
     /*!
      * \brief this method is called at the beginning of the
      * `solveNonLinearSystem2` method.
@@ -140,7 +141,8 @@ namespace tfel::math {
      * \brief check the convergence of the method
      * \param[in] e: current error
      */
-    TFEL_HOST_DEVICE constexpr bool checkConvergence(const NumericType e) const noexcept {
+    TFEL_HOST_DEVICE constexpr bool checkConvergence(const NumericType e) const
+        noexcept {
       return e < this->epsilon;
     }
     /*!
@@ -183,20 +185,24 @@ namespace tfel::math {
      */
     TFEL_HOST_DEVICE constexpr void processNewEstimate() noexcept {}
     //! \brief method called when the resolution begins
-    TFEL_HOST_DEVICE constexpr void reportBeginningOfResolution() const noexcept {}
+    TFEL_HOST_DEVICE constexpr void reportBeginningOfResolution() const
+        noexcept {}
     //! \brief method called when the resolution succeeds
     TFEL_HOST_DEVICE constexpr void reportSuccess() const noexcept {}
     //! \brief method called when the resolution fails
     TFEL_HOST_DEVICE constexpr void reportFailure() const noexcept {}
     //! \brief method called when the evaluation of the residual failed.
-    TFEL_HOST_DEVICE constexpr void reportInvalidResidualEvaluation() const noexcept {}
+    TFEL_HOST_DEVICE constexpr void reportInvalidResidualEvaluation() const
+        noexcept {}
     //! \brief method called when the computation of a new correction failed.
-    TFEL_HOST_DEVICE constexpr void reportNewCorrectionComputationFailure() const noexcept {}
+    TFEL_HOST_DEVICE constexpr void reportNewCorrectionComputationFailure()
+        const noexcept {}
     /*!
      * \brief method called after a standard Newton step
      * \param[in] e: error
      */
-    TFEL_HOST_DEVICE constexpr void reportStandardIteration(const NumericType) const noexcept {}
+    TFEL_HOST_DEVICE constexpr void reportStandardIteration(
+        const NumericType) const noexcept {}
     //! \brief residual vector
     tvector<N, NumericType> fzeros;
     //! \brief current estimate of the unknowns

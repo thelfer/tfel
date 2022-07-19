@@ -45,8 +45,8 @@ namespace mfront {
     void writeBehaviourInitializeFunctions(std::ostream &,
                                            const BehaviourDescription &,
                                            const Hypothesis) const override;
-    void writeBehaviourPostProcessings(std::ostream&,
-                                       const BehaviourDescription&,
+    void writeBehaviourPostProcessings(std::ostream &,
+                                       const BehaviourDescription &,
                                        const Hypothesis) const override;
     /*!
      * \return the basis for the function(s)' names implementing the
@@ -96,8 +96,7 @@ namespace mfront {
     virtual void writeVisibilityDefines(std::ostream &) const;
 
     virtual void writeSetOutOfBoundsPolicyFunctionDeclaration(
-        std::ostream &,
-        const std::string &) const;
+        std::ostream &, const std::string &) const;
 
     virtual void writeGetOutOfBoundsPolicyFunctionImplementation(
         std::ostream &,

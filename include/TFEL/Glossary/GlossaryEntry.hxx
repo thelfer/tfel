@@ -18,265 +18,123 @@
 #include <set>
 #include <string>
 #include <vector>
+#include <string_view>
 
 #include "TFEL/Config/TFELConfig.hxx"
 
 namespace tfel::glossary {
 
-  /*!
-   * structure describing an entry of the glossary
-   */
+  // forward declaration
+  struct Glossary;
+
+  //! \brief structure describing an entry of the glossary
   struct TFELGLOSSARY_VISIBILITY_EXPORT GlossaryEntry {
     //! \brief internal name
     static const char* separator;
-    /*!
-     * constructor
-     * \param[in] k  : key used to store the entry
-     * \param[in] n  : name
-     * \param[in] u  : unit
-     * \param[in] t  : type
-     * \param[in] sd : short description
-     * \param[in] d  : description
-     * \param[in] no : note
-     */
-    GlossaryEntry(const std::string&,
-                  const std::string&,
-                  const std::string&,
-                  const std::string&,
-                  const std::string&,
-                  const std::vector<std::string>&,
-                  const std::vector<std::string>&);
-    /*!
-     * constructor
-     * \param[in] k  : key used to store
-     * \param[in] n  : name
-     * \param[in] u  : unit
-     * \param[in] t  : type
-     * \param[in] sd : short description
-     * \param[in] d  : description
-     * \param[in] no : note
-     */
-    GlossaryEntry(const std::string&,
-                  const std::string&,
-                  const std::string&,
-                  const std::string&,
-                  const std::string&,
-                  const std::string&,
-                  const std::string&);
-    /*!
-     * constructor
-     * \param[in] k  : key used to store
-     * \param[in] n  : name
-     * \param[in] u  : unit
-     * \param[in] t  : type
-     * \param[in] sd : short description
-     * \param[in] d  : description
-     * \param[in] no : note
-     */
-    GlossaryEntry(const char* const,
-                  const char* const,
-                  const char* const,
-                  const char* const,
-                  const char* const,
-                  const char* const,
-                  const char* const) noexcept;
-    /*!
-     * constructor
-     * \param[in] k  : key used to store the entry
-     * \param[in] n  : names
-     * \param[in] u  : unit
-     * \param[in] t  : type
-     * \param[in] sd : short description
-     * \param[in] d  : description
-     * \param[in] no : note
-     */
-    GlossaryEntry(const std::string&,
-                  const std::vector<std::string>&,
-                  const std::string&,
-                  const std::string&,
-                  const std::string&,
-                  const std::vector<std::string>&,
-                  const std::vector<std::string>&);
-    /*!
-     * constructor
-     * \param[in] k  : key used to store the entry
-     * \param[in] n  : names
-     * \param[in] u  : unit
-     * \param[in] t  : type
-     * \param[in] sd : short description
-     * \param[in] d  : description
-     * \param[in] no : note
-     */
-    GlossaryEntry(const std::string&,
-                  const std::vector<std::string>&,
-                  const std::string&,
-                  const std::string&,
-                  const std::string&,
-                  const std::string&,
-                  const std::string&);
-    /*!
-     * constructor
-     * \param[in] k  : key used to store the entry
-     * \param[in] b  : iterator to the first name
-     * \param[in] e  : iterator to the last name
-     * \param[in] u  : unit
-     * \param[in] t  : type
-     * \param[in] sd : short description
-     * \param[in] d  : description
-     * \param[in] no : note
-     */
-    GlossaryEntry(const std::string&,
-                  const char* const* const,
-                  const char* const* const,
-                  const std::string&,
-                  const std::string&,
-                  const std::string&,
-                  const std::vector<std::string>&,
-                  const std::vector<std::string>&);
-    /*!
-     * constructor
-     * \param[in] k  : key used to store the entry
-     * \param[in] b  : iterator to the first name
-     * \param[in] e  : iterator to the last name
-     * \param[in] u  : unit
-     * \param[in] t  : type
-     * \param[in] sd : short description
-     * \param[in] d  : description
-     * \param[in] no : note
-     */
-    GlossaryEntry(const std::string&,
-                  const char* const* const,
-                  const char* const* const,
-                  const std::string&,
-                  const std::string&,
-                  const std::string&,
-                  const std::string&,
-                  const std::string&);
-    /*!
-     * constructor
-     * \param[in] k  : key used to store the entry
-     * \param[in] b  : iterator to the first name
-     * \param[in] e  : iterator to the last name
-     * \param[in] u  : unit
-     * \param[in] t  : type
-     * \param[in] sd : short description
-     * \param[in] d  : description
-     * \param[in] no : note
-     */
-    GlossaryEntry(const char* const,
-                  const char* const* const,
-                  const char* const* const,
-                  const char* const,
-                  const char* const,
-                  const char* const,
-                  const char* const,
-                  const char* const) noexcept;
-    //! copy constructor
+    //! \brief copy constructor
     GlossaryEntry(const GlossaryEntry&);
-    //! move constructor
+    //! \brief move constructor
     GlossaryEntry(GlossaryEntry&&);
-    /*!
-     * \return the key
-     */
+    //! \return the key
     const std::string& getKey() const;
-    /*!
-     * \return names asssociated with this key
-     */
+    //! \return names asssociated with this key
     const std::vector<std::string>& getNames() const;
     /*!
      * \return the unit
+     * \param[in] s: unit system
      */
-    const std::string& getUnit() const;
-    /*!
-     * \return the type
-     */
+    const std::string& getUnit(const std::string_view) const;
+    //! \return the units
+    std::map<std::string, std::string> getUnits() const;
+    //! \return the type
     const std::string& getType() const;
-    /*!
-     * \return the short description
-     */
+    //! \return the short description
     const std::string& getShortDescription() const;
-    /*!
-     * \return the description
-     */
+    //! \return the description
     const std::vector<std::string>& getDescription() const;
-    /*!
-     * \return the notes
-     */
+    //! \return the notes
     const std::vector<std::string>& getNotes() const;
-    /*!
-     * cast operator to string. Equivalent to getKey()
-     */
+    //! \return if lower physical bound is defined
+    bool hasLowerPhysicalBound(const std::string_view) const;
+    //! \return the lower physical bound, if defined
+    std::string getLowerPhysicalBound(const std::string_view) const;
+    //! \return if upper physical bound is defined
+    bool hasUpperPhysicalBound(const std::string_view) const;
+    //! \return the upper physical bound, if defined
+    std::string getUpperPhysicalBound(const std::string_view) const;
+    //! \brief cast operator to string. Equivalent to getKey()
     operator const std::string&() const;
-    /*!
-     * comparison operator
-     */
+    //
     friend TFELGLOSSARY_VISIBILITY_EXPORT bool operator<(const GlossaryEntry&,
                                                          const GlossaryEntry&);
-    /*!
-     * comparison operator
-     */
     friend TFELGLOSSARY_VISIBILITY_EXPORT bool operator!=(const std::string&,
                                                           const GlossaryEntry&);
-    /*!
-     * comparison operator
-     */
     friend TFELGLOSSARY_VISIBILITY_EXPORT bool operator!=(const GlossaryEntry&,
                                                           const std::string&);
-    /*!
-     * comparison operator
-     */
     friend TFELGLOSSARY_VISIBILITY_EXPORT bool operator==(const std::string&,
                                                           const GlossaryEntry&);
-    /*!
-     * comparison operator
-     */
     friend TFELGLOSSARY_VISIBILITY_EXPORT bool operator==(const GlossaryEntry&,
                                                           const std::string&);
-    //! destructor
+    //! \brief destructor
     ~GlossaryEntry();
 
    private:
-    //! assignement operator
+    //
+    friend struct Glossary;
+    /*!
+     * \brief constructor
+     * \param[in] k  : key used to store the entry
+     * \param[in] b  : iterator to the first name
+     * \param[in] e  : iterator to the last name
+     * \param[in] u  : unit, sorted by system
+     * \param[in] t  : type
+     * \param[in] sd : short description
+     * \param[in] d  : description
+     * \param[in] no : note
+     * \param[in] lbs : lower bounds
+     * \param[in] ubs : upper bounds
+     */
+    GlossaryEntry(const char* const,
+                  const char* const* const,
+                  const char* const* const,
+                  const char* const,
+                  const char* const,
+                  const char* const,
+                  const char* const,
+                  const char* const,
+                  const char* const,
+                  const char* const);
+    //! \brief assignement operator
     GlossaryEntry& operator=(const GlossaryEntry&) = delete;
-    //! move assignement
+    //! \brief move assignement
     GlossaryEntry& operator=(GlossaryEntry&&) = delete;
     /*!
      * \brief check if this entry is valid.
      * Called by constructors
      */
     void check() const;
-    /*!
-     * key used to store this entry in the glossary
-     */
+    //! \brief key used to store this entry in the glossary
     const std::string key;
-    /*!
-     * names used in input file
-     */
+    //! \brief list of aliases
     const std::vector<std::string> names;
-    /*!
-     * unit of the entry
-     */
-    const std::map<std::string,std::string> units;
-    /*!
-     * type of the entry
-     */
+    //! \brief units of the entry, sorted by unit system
+    const std::map<std::string, std::string, std::less<>> units;
+    //! \brief type of the entry
     const std::string type;
-    /*!
-     * short description of the entry
-     */
+    //! \brief short description of the entry
     const std::string short_description;
-    /*!
-     * description
-     */
+    //! \brief description
     const std::vector<std::string> description;
-    /*!
-     * note
-     */
+    //! \brief notes
     const std::vector<std::string> notes;
+    //! \brief optional lower physical bounds, sorted by unit systems
+    const std::map<std::string, std::string, std::less<>> lower_physical_bounds;
+    //! \brief optional upper physical bound
+    const std::map<std::string, std::string, std::less<>> upper_physical_bounds;
   };  // end of struct GlossaryEntry
 
   /*!
-   * comparison operator
+   * \brief comparison operator
    */
   TFELGLOSSARY_VISIBILITY_EXPORT bool operator<(const GlossaryEntry&,
                                                 const GlossaryEntry&);

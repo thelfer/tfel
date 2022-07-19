@@ -42,8 +42,7 @@ namespace tfel::material {
   }  // end of MohrCoulombParameters<StressStensor>::MohrCoulombParameters
 
   template <typename StressStensor>
-  MohrCoulombParameters<StressStensor>::MohrCoulombParameters() =
-      default;
+  MohrCoulombParameters<StressStensor>::MohrCoulombParameters() = default;
 
   template <typename StressStensor>
   MohrCoulombParameters<StressStensor>::MohrCoulombParameters(
@@ -54,14 +53,12 @@ namespace tfel::material {
       const MohrCoulombParameters&) = default;
 
   template <typename StressStensor>
-  MohrCoulombParameters<StressStensor>&
-  MohrCoulombParameters<StressStensor>::operator=(MohrCoulombParameters&&) =
-      default;
+  MohrCoulombParameters<StressStensor>& MohrCoulombParameters<StressStensor>::
+  operator=(MohrCoulombParameters&&) = default;
 
   template <typename StressStensor>
-  MohrCoulombParameters<StressStensor>&
-  MohrCoulombParameters<StressStensor>::operator=(
-      const MohrCoulombParameters&) = default;
+  MohrCoulombParameters<StressStensor>& MohrCoulombParameters<StressStensor>::
+  operator=(const MohrCoulombParameters&) = default;
 
   template <typename StressStensor,
             typename MohrCoulombParameters<StressStensor>::AngleUnit u>

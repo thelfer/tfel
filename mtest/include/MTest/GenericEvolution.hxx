@@ -35,8 +35,8 @@ namespace mtest {
      * \param[in] vm_  : externally defined values
      */
     GenericEvolution(const std::string&,
-                    const std::string&,
-                    const EvolutionManager&);
+                     const std::string&,
+                     const EvolutionManager&);
     real operator()(const real) const override;
     bool isConstant() const override;
     void setValue(const real) override;

@@ -25,9 +25,8 @@
 
 namespace mfront {
 
-  void QueryHandlerBase::displayVariable(
-      const mfront::VariableDescription& v,
-      const std::string& spaces) {
+  void QueryHandlerBase::displayVariable(const mfront::VariableDescription& v,
+                                         const std::string& spaces) {
     const auto& n = v.getExternalName();
     std::cout << spaces;
     if (n == v.name) {

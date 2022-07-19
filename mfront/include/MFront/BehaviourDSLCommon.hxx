@@ -597,6 +597,7 @@ namespace mfront {
     bool isNameReserved(const std::string&) const override;
     //! \brief register the default variable names
     virtual void registerDefaultVarNames();
+    void setUnitSystem(const std::string_view) override;
     void setMaterial(const std::string&) override;
     void setMaterialKnowledgeIdentifier(const std::string&) override;
     //!\brief treat the `@Gradient` keyword.
@@ -1378,9 +1379,7 @@ namespace mfront {
      */
     virtual void
     setComputeFinalThermodynamicForcesFromComputeFinalThermodynamicForcesCandidateIfNecessary();
-    /*!
-     * \brief perform pedantic checks
-     */
+    //! \brief perform pedantic checks
     virtual void doPedanticChecks() const;
     /*!
      * \return true if the user defined a block of code computing the

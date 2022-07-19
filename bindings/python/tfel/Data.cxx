@@ -98,8 +98,7 @@ void declareData() {
   data_add_def<std::vector<Data>>(w, "DataVector");
   data_add_def<DataMap>(w, "DataMap");
 
-  class_<DataMap>("DataMap").def(
-      map_indexing_suite<DataMap>());
+  class_<DataMap>("DataMap").def(map_indexing_suite<DataMap>());
   class_<std::vector<Data>>("DataVector")
       .def(vector_indexing_suite<std::vector<Data>>());
 }

@@ -316,7 +316,8 @@ namespace mfront {
         bd.hasCode(h, BehaviourData::ComputeDissipatedEnergy) ? 1u : 0u);
   }  // end of writeComputesDissipatedEnergySymbol
 
-  void SymbolsGenerator::writeTemperatureRemovedFromExternalStateVariablesSymbol(
+  void
+  SymbolsGenerator::writeTemperatureRemovedFromExternalStateVariablesSymbol(
       std::ostream& out,
       const StandardBehaviourInterface& i,
       const BehaviourDescription& bd,
@@ -385,7 +386,7 @@ namespace mfront {
     s -= mprops.second;
     // index of the first element which is not imposed by the material
     // properties
-    auto ib = std::vector<BehaviourMaterialProperty>::size_type{}; 
+    auto ib = std::vector<BehaviourMaterialProperty>::size_type{};
     bool found = false;
     for (decltype(mprops.first.size()) idx = 0;
          (idx != mprops.first.size()) && (!found); ++idx) {
@@ -697,7 +698,7 @@ namespace mfront {
     using namespace tfel::utilities;
     exportStringSymbol(out, i.getFunctionNameBasis(name) + "_src",
                        tokenize(fd.fileName, dirSeparator()).back());
-  } // end of writeSourceFileSymbols
+  }  // end of writeSourceFileSymbols
 
   void SymbolsGenerator::writeInterfaceNameSymbols(
       std::ostream& out,

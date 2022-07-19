@@ -69,7 +69,7 @@ namespace tfel::material {
       T1& K, T1& n, const T2 E, const T2 Rp02, const T2 Rm, const T2 Ag) {
     n = std::log(500 * Ag) / std::log(Rm / Rp02);
     K = 0.2e-2 * E * std::pow(Rp02 / E, 1 - n) / Rp02;
-  } // end of computeRambergOsgoodParameters
+  }  // end of computeRambergOsgoodParameters
 
 }  // end of namespace tfel::material
 

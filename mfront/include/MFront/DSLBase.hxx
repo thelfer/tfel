@@ -486,6 +486,11 @@ namespace mfront {
      */
     virtual void setMaterial(const std::string&) = 0;
     /*!
+     * \brief set the unit system
+     * \param[in] s: unit system
+     */
+    virtual void setUnitSystem(const std::string_view) = 0;
+    /*!
      * \brief set the name of the implementation, i.e. the material property'
      * name, the behaviour' name or the model' name.
      * \param[in] i: implementation name
@@ -499,6 +504,8 @@ namespace mfront {
     virtual void setDescription(const std::string&);
     //! \brief treat the `@Material` keyword
     virtual void treatMaterial();
+    //! \brief treat the `@UnitSystem` keyword
+    virtual void treatUnitSystem();
     //! \brief handle the `@MFront` keyword
     virtual void treatMFront();
     //! \brief handle the `@Import` keyword

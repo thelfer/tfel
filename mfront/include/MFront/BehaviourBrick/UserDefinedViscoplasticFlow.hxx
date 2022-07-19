@@ -28,7 +28,8 @@ namespace mfront::bbrick {
    * \dot{p}=F\left(f,p\right)
    * \f]
    * where:
-   * - \f$f=\phi\left(\underline{\sigma}-\displaystyle\sum_{i}\underline{X}_{i}\right)-R\left(p\right)\f$
+   * -
+   * \f$f=\phi\left(\underline{\sigma}-\displaystyle\sum_{i}\underline{X}_{i}\right)-R\left(p\right)\f$
    * - \f$\phi\f$ is the stress criterion
    * - \f$\underline{X}_{i}\f$ is the \f$i^{\mathrm{th}}\f$ back stress
    * - \f$R\left(p\right)\f$ is the isotropic hardening rule

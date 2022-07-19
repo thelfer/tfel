@@ -34,8 +34,8 @@ namespace tfel::math {
   struct IterateOverMultipleIndices {
     template <typename Functor, typename GetSizeFunctor, typename... Indices>
     TFEL_HOST_DEVICE constexpr static void exe(Functor& f,
-                              const GetSizeFunctor g,
-                              const Indices... indices) {
+                                               const GetSizeFunctor g,
+                                               const Indices... indices) {
       auto iter = [&](const TypeSize i) {
         if constexpr (CurrentIndex + 1 == Arity) {
           f(indices..., i);

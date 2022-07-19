@@ -32,8 +32,7 @@ namespace tfel::math::parser {
         const std::vector<std::vector<double>::size_type>&);
     //
     bool isConstant() const override;
-    bool dependsOnVariable(
-        const std::vector<double>::size_type) const override;
+    bool dependsOnVariable(const std::vector<double>::size_type) const override;
     double getValue() const override;
     std::string getCxxFormula(const std::vector<std::string>&) const override;
     void checkCyclicDependency(std::vector<std::string>&) const override;

@@ -136,7 +136,7 @@ namespace mfront {
   void MFrontMaterialPropertyInterface::writeLawSymbol(
       std::ostream&, const MaterialPropertyDescription&) const {
   }  // end of writeMaterialSymbol
-  
+
   void MFrontMaterialPropertyInterface::writeMaterialSymbol(
       std::ostream&, const MaterialPropertyDescription&) const {
   }  // end of writeMaterialSymbol
@@ -150,13 +150,11 @@ namespace mfront {
   }  // end of writeEntryPointSymbol
 
   void MFrontMaterialPropertyInterface::writeVariablesNamesSymbol(
-      std::ostream&,
-      const MaterialPropertyDescription&) const {
+      std::ostream&, const MaterialPropertyDescription&) const {
   }  // end of writeVariablesNamesSymbol
 
   void MFrontMaterialPropertyInterface::writeVariablesBoundsSymbols(
-      std::ostream&,
-      const MaterialPropertyDescription&) const {
+      std::ostream&, const MaterialPropertyDescription&) const {
   }  // end of writeVariablesBoundsSymbols
 
   MFrontMaterialPropertyInterface::~MFrontMaterialPropertyInterface() = default;

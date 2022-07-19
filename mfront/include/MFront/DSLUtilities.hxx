@@ -216,8 +216,8 @@ namespace mfront {
    * name
    */
   MFRONT_VISIBILITY_EXPORT void writeLawSymbol(std::ostream&,
-					       const std::string&,
-					       const std::string&);
+                                               const std::string&,
+                                               const std::string&);
   /*!
    * \brief write a symbol stating that a given entry point is
    * associated to a material.

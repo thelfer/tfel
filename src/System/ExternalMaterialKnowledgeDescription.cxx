@@ -1,6 +1,6 @@
 /*!
  * \file   src/System/ExternalMaterialKnowledgeDescription.cxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   11/05/2022
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
@@ -46,9 +46,7 @@ namespace tfel::system {
   operator=(const ExternalMaterialKnowledgeDescription&) = default;
   ExternalMaterialKnowledgeDescription& ExternalMaterialKnowledgeDescription::
   operator=(ExternalMaterialKnowledgeDescription&&) = default;
-  ExternalMaterialKnowledgeDescription::~ExternalMaterialKnowledgeDescription() =
-      default;
+  ExternalMaterialKnowledgeDescription::
+      ~ExternalMaterialKnowledgeDescription() = default;
 
 }  // end of namespace tfel::system
-
-

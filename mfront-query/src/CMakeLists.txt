@@ -1,5 +1,6 @@
 # mfront-query
 add_executable(mfront-query mfront-query.cxx
+  QueryUtilities.cxx
   QueryHandlerBase.cxx
   MaterialPropertyQuery.cxx
   BehaviourQuery.cxx

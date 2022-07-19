@@ -68,7 +68,7 @@ namespace mtest {
       for (const auto g : {0, 1, 2, 3}) {
         // Gauss point position in the reference element
         const auto pg = pg_radii[g];
-        // 
+        //
         const auto rg = interpolate(r0, r1, r2, r3, pg);
         // jacobian of the transformation
         const auto J = PipeCubicElement::jacobian(r0, r1, r2, r3, pg);

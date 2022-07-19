@@ -2,7 +2,7 @@
  * \file  mfront-query/include/MFront/QueryHandlerBase.hxx
  * \brief
  * \author Thomas Helfer
- * \date   04 mars 2015
+ * \date   04/03/2015
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence

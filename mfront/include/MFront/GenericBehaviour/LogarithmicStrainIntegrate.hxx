@@ -80,7 +80,8 @@ namespace mfront::gb::logarithmic_strain {
       auto pk0 = tfel::math::tensor<N, real>{};
       tfel::fsalgo::copy<TensorSize>::exe(d.s0.thermodynamic_forces,
                                           pk0.begin());
-      const auto s0 = tfel::math::convertFirstPiolaKirchhoffStressToCauchyStress(pk0, F0);
+      const auto s0 =
+          tfel::math::convertFirstPiolaKirchhoffStressToCauchyStress(pk0, F0);
       T0 = lgh0.convertFromCauchyStress(s0);
     } else if (sm == StressMeasure::PK2) {
       auto S0 = tfel::math::stensor<N, real>{};
@@ -100,9 +101,8 @@ namespace mfront::gb::logarithmic_strain {
     d.s1.gradients = e0.begin();
     d.s0.thermodynamic_forces = T0.begin();
     d.s1.thermodynamic_forces = T0.begin();
-    const auto r =
-        mfront::gb::executeInitializeFunction<Behaviour, m>(
-            initialize_variables, d, p);
+    const auto r = mfront::gb::executeInitializeFunction<Behaviour, m>(
+        initialize_variables, d, p);
     d.s0.gradients = gradients0_old;
     d.s1.gradients = gradients1_old;
     d.s0.thermodynamic_forces = thermodynamic_forces0_old;
@@ -376,7 +376,8 @@ namespace mfront::gb::logarithmic_strain {
       auto pk0 = tfel::math::tensor<N, real>{};
       tfel::fsalgo::copy<TensorSize>::exe(d.s0.thermodynamic_forces,
                                           pk0.begin());
-      const auto s0 = tfel::math::convertFirstPiolaKirchhoffStressToCauchyStress(pk0, F0);
+      const auto s0 =
+          tfel::math::convertFirstPiolaKirchhoffStressToCauchyStress(pk0, F0);
       T0 = lgh0.convertFromCauchyStress(s0);
       //
       auto pk1 = tfel::math::tensor<N, real>{};

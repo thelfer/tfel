@@ -272,13 +272,13 @@ namespace tfel::math {
      * \param[in] K : size of the slice
      */
     template <unsigned short I, unsigned short J, unsigned short K>
-TFEL_HOST_DEVICE     constexpr auto row_view();
+    TFEL_HOST_DEVICE constexpr auto row_view();
     /*!
      * \return a view of a row of this matrix
      * \param[in] I : row index
      */
     template <unsigned short I>
-TFEL_HOST_DEVICE     constexpr auto row_view() const;
+    TFEL_HOST_DEVICE constexpr auto row_view() const;
     /*!
      * \return a view of a slice of row of this matrix
      * \param[in] I : row index
@@ -286,13 +286,13 @@ TFEL_HOST_DEVICE     constexpr auto row_view() const;
      * \param[in] K : size of the slice
      */
     template <unsigned short I, unsigned short J, unsigned short K>
-TFEL_HOST_DEVICE     constexpr auto row_view() const;
+    TFEL_HOST_DEVICE constexpr auto row_view() const;
     /*!
      * \return a view of a column of this matrix
      * \param[in] I : column index
      */
     template <unsigned short I>
-TFEL_HOST_DEVICE     constexpr auto column_view();
+    TFEL_HOST_DEVICE constexpr auto column_view();
     /*!
      * \return a view of a slice of column of this matrix
      * \param[in] I : column index
@@ -300,7 +300,7 @@ TFEL_HOST_DEVICE     constexpr auto column_view();
      * \param[in] K : size of the slice
      */
     template <unsigned short I, unsigned short J, unsigned short K>
-TFEL_HOST_DEVICE     constexpr auto column_view();
+    TFEL_HOST_DEVICE constexpr auto column_view();
     /*!
      * \return a view of a slice of column of this matrix
      * \param[in] I : column index
@@ -382,13 +382,13 @@ TFEL_HOST_DEVICE     constexpr auto column_view();
   TFEL_HOST_DEVICE constexpr auto det(const Expr<tmatrix<2, 2, T>, Operation>&);
 
   template <typename T>
-TFEL_HOST_DEVICE   constexpr auto det(const tmatrix<2, 2, T>&);
+  TFEL_HOST_DEVICE constexpr auto det(const tmatrix<2, 2, T>&);
 
   template <typename T, typename Operation>
-TFEL_HOST_DEVICE   constexpr auto det(const Expr<tmatrix<3, 3, T>, Operation>&);
+  TFEL_HOST_DEVICE constexpr auto det(const Expr<tmatrix<3, 3, T>, Operation>&);
 
   template <typename T>
-TFEL_HOST_DEVICE   constexpr auto det(const tmatrix<3, 3, T>&);
+  TFEL_HOST_DEVICE constexpr auto det(const tmatrix<3, 3, T>&);
 
   /*!
    * \brief a simple alias to a view type on a derivative in tiny
@@ -417,7 +417,9 @@ TFEL_HOST_DEVICE   constexpr auto det(const tmatrix<3, 3, T>&);
             typename VariableType,
             unsigned short N,
             unsigned short M>
-  TFEL_HOST_DEVICE constexpr derivative_view_from_tiny_matrix<M, FunctionType, VariableType>
+  TFEL_HOST_DEVICE constexpr derivative_view_from_tiny_matrix<M,
+                                                              FunctionType,
+                                                              VariableType>
   map_derivative(
       tmatrix<N,
               M,
@@ -437,7 +439,9 @@ TFEL_HOST_DEVICE   constexpr auto det(const tmatrix<3, 3, T>&);
             typename VariableType,
             unsigned short N,
             unsigned short M>
-  TFEL_HOST_DEVICE constexpr derivative_view_from_tiny_matrix<M, FunctionType, VariableType>
+  TFEL_HOST_DEVICE constexpr derivative_view_from_tiny_matrix<M,
+                                                              FunctionType,
+                                                              VariableType>
   map_derivative(
       tmatrix<N,
               M,

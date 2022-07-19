@@ -34,7 +34,7 @@ namespace castem {
     CastemOutOfBoundsPolicy();
     //!
     CastemOutOfBoundsPolicy(CastemOutOfBoundsPolicy&&) = delete;
-    CastemOutOfBoundsPolicy(const CastemOutOfBoundsPolicy&)= delete;
+    CastemOutOfBoundsPolicy(const CastemOutOfBoundsPolicy&) = delete;
     CastemOutOfBoundsPolicy& operator=(CastemOutOfBoundsPolicy&&) = delete;
     CastemOutOfBoundsPolicy& operator=(const CastemOutOfBoundsPolicy&) = delete;
     //! \brief out of bounds policy

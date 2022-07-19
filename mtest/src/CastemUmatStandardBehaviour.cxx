@@ -45,8 +45,7 @@ namespace mtest {
     } else {
       md.kinematic = 3u;
     }
-    throw_if(!p.is<tfel::utilities::DataMap>(),
-             "invalid parameters type");
+    throw_if(!p.is<tfel::utilities::DataMap>(), "invalid parameters type");
     const auto& mp = p.get<tfel::utilities::DataMap>();
     //! name or number of the behaviour
     std::string mname(16, ' ');

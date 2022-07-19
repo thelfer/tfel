@@ -1,6 +1,6 @@
 /*!
  * \file   src/Math/PowerFunction.cxx
- * \brief    
+ * \brief
  * \author Thomas Heler
  * \date   25/04/2022
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
@@ -83,4 +83,3 @@ namespace tfel::math::parser {
   GeneralPowerFunction::~GeneralPowerFunction() = default;
 
 }  // end of namespace tfel::math::parser
-

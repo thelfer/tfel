@@ -39,17 +39,102 @@
 #include "TFEL/Utilities/StringAlgorithms.hxx"
 #include "TFEL/Glossary/GlossaryEntry.hxx"
 
+static std::map<std::string, std::string> readPhysicalBoundsMap(
+    tfel::utilities::CxxTokenizer::const_iterator& p,
+    const tfel::utilities::CxxTokenizer::const_iterator pe) {
+  using CxxTokenizer = tfel::utilities::CxxTokenizer;
+  auto throw_if = [](const bool b, const std::string& msg) {
+    if (b) {
+      tfel::raise("readPhysicalBoundsMap: " + msg);
+    };
+  };
+  auto is_convertible = [throw_if](const std::string& s) {
+    throw_if(s.empty(), "empty string");
+    std::size_t p;
+    double r;
+    try {
+      r = std::stod(s, &p);
+    } catch (std::exception&) {
+      return false;
+    }
+    if (p != s.size()) {
+      return false;
+    }
+    return true;
+  };
+  std::map<std::string, std::string> bounds;
+  CxxTokenizer::checkNotEndOfLine("readPhysicalBoundsMap", p, pe);
+  CxxTokenizer::readSpecifiedToken("readPhysicalBoundsMap", "{", p, pe);
+  CxxTokenizer::checkNotEndOfLine("readPhysicalBoundsMap", p, pe);
+  while (p->value != "}") {
+    const auto k = [&p, pe]() -> std::string {
+      if (p->flag != tfel::utilities::Token::String) {
+        auto c = p;
+        ++p;
+        return c->value;
+      }
+      return CxxTokenizer::readString(p, pe);
+    }();
+    CxxTokenizer::readSpecifiedToken("readPhysicalBoundsMap", ":", p, pe);
+    CxxTokenizer::checkNotEndOfLine("readPhysicalBoundsMap", p, pe);
+    const auto v = p->value;
+    throw_if(!is_convertible(v), "invalid bound '" + v + "'");
+    ++p;
+    CxxTokenizer::checkNotEndOfLine("readPhysicalBoundsMap", p, pe);
+    if (p->value == ",") {
+      CxxTokenizer::readSpecifiedToken("readPhysicalBoundsMap", ",", p, pe);
+      CxxTokenizer::checkNotEndOfLine("readPhysicalBoundsMap", p, pe);
+      throw_if(p->value == "}", "unexpected token '}'");
+    } else {
+      throw_if(p->value != "}", "unexpected token '" + p->value + "'");
+    }
+    const auto pv = bounds.find(k);
+    if (pv == bounds.end()) {
+      bounds.insert({k, v});
+    } else {
+      throw_if(true, "key '" + k + "' multiply defined");
+    }
+  }
+  CxxTokenizer::readSpecifiedToken("readPhysicalBoundsMap", "}", p, pe);
+  return bounds;
+}  // end of readPhysicalBoundsMap
+
+struct GlossaryEntryData {
+  //! \brief main key
+  std::string key;
+  //! \brief aliases
+  std::vector<std::string> aliases;
+  //! \brief units of the entry, sorted by unit system
+  std::map<std::string, std::string> units;
+  //! \brief type of the entry
+  std::string type;
+  //! \brief short description of the entry
+  std::string short_description;
+  //! \brief description
+  std::vector<std::string> description;
+  //! \brief notes
+  std::vector<std::string> notes;
+  //! \brief lower physical bounds
+  std::map<std::string, std::string> lower_physical_bounds;
+  //! \brief upper physical bounds
+  std::map<std::string, std::string> upper_physical_bounds;
+};  // end of GlossaryEntryData
+
+bool operator<(const GlossaryEntryData& e1, const GlossaryEntryData& e2) {
+  return e1.key < e2.key;
+}
+
 struct GlossaryTokenizer : protected tfel::utilities::CxxTokenizer,
-                           protected std::set<tfel::glossary::GlossaryEntry> {
-  using std::set<tfel::glossary::GlossaryEntry>::begin;
+                           protected std::set<GlossaryEntryData> {
+  using std::set<GlossaryEntryData>::begin;
 
-  using std::set<tfel::glossary::GlossaryEntry>::end;
+  using std::set<GlossaryEntryData>::end;
 
-  using std::set<tfel::glossary::GlossaryEntry>::const_iterator;
+  using std::set<GlossaryEntryData>::const_iterator;
 
-  using std::set<tfel::glossary::GlossaryEntry>::empty;
+  using std::set<GlossaryEntryData>::empty;
 
-  using std::set<tfel::glossary::GlossaryEntry>::size;
+  using std::set<GlossaryEntryData>::size;
 
   void execute(const std::string& f) {
     using namespace tfel::utilities;
@@ -64,23 +149,15 @@ struct GlossaryTokenizer : protected tfel::utilities::CxxTokenizer,
     auto p = CxxTokenizer::begin();
     const auto pe = CxxTokenizer::end();
     while (p != pe) {
-      std::string key;
+      GlossaryEntryData d;
       std::string name;
-      std::string type;
-      std::string short_description;
-      std::map<std::string,std::string> units;
-      std::vector<std::string> description;
-      std::vector<std::string> notes;
-      std::vector<std::string> aliases;
-      std::optional<std::map<std::string, double>> lower_bound;
-      std::optional<std::map<std::string, double>> upper_bound;
-      key = CxxTokenizer::readString(p, pe);
-      tfel::raise_if(!this->isValidIdentifier(key, false),
-                     "GlossaryTokenizer: invalid glossary key '" + key + "'");
-      tfel::raise_if(!keys.insert(key).second,
+      d.key = CxxTokenizer::readString(p, pe);
+      tfel::raise_if(!this->isValidIdentifier(d.key, false),
+                     "GlossaryTokenizer: invalid glossary key '" + d.key + "'");
+      tfel::raise_if(!keys.insert(d.key).second,
                      "GlossaryTokenizer::execute: "
                      "key '" +
-                         key + "' already used");
+                         d.key + "' already used");
       CxxTokenizer::readSpecifiedToken("GlossaryTokenizer::execute", "{", p,
                                        pe);
       CxxTokenizer::checkNotEndOfLine("GlossaryTokenizer::execute", p, pe);
@@ -91,72 +168,70 @@ struct GlossaryTokenizer : protected tfel::utilities::CxxTokenizer,
                                          pe);
         try {
           if (k == "alias") {
-            tfel::raise_if(!aliases.empty(),
+            tfel::raise_if(!d.aliases.empty(),
                            "GlossaryTokenizer::execute: "
                            "aliases already defined for key '" +
-                               key + "'");
-            aliases.push_back(CxxTokenizer::readString(p, pe));
+                               d.key + "'");
+            d.aliases.push_back(CxxTokenizer::readString(p, pe));
           } else if (k == "aliases") {
-            tfel::raise_if(!aliases.empty(),
+            tfel::raise_if(!d.aliases.empty(),
                            "GlossaryTokenizer::execute: "
                            "aliases already defined for key '" +
-                               key + "'");
-            this->readBlock(aliases, p, pe);
+                               d.key + "'");
+            this->readBlock(d.aliases, p, pe);
           } else if (k == "units") {
-            tfel::raise_if(!units.empty(),
+            tfel::raise_if(!d.units.empty(),
                            "GlossaryTokenizer::execute: "
                            "unit already defined for key '" +
-                               key + "'");
-            units = convert<std::map<std::string, std::string>>(
-                Data::read_map(p, pe));
+                               d.key + "'");
+            d.units =
+                convert<std::map<std::string, std::string>>(Data::read(p, pe));
           } else if (k == "name") {
             tfel::raise_if(!name.empty(),
                            "GlossaryTokenizer::execute: "
                            "name already defined for key '" +
-                               key + "'");
+                               d.key + "'");
             name = CxxTokenizer::readString(p, pe);
           } else if (k == "type") {
-            tfel::raise_if(!type.empty(),
+            tfel::raise_if(!d.type.empty(),
                            "GlossaryTokenizer::execute: "
                            "type already defined for key '" +
-                               key + "'");
-            type = CxxTokenizer::readString(p, pe);
+                               d.key + "'");
+            d.type = CxxTokenizer::readString(p, pe);
           } else if (k == "short_description") {
-            tfel::raise_if(!short_description.empty(),
+            tfel::raise_if(!d.short_description.empty(),
                            "GlossaryTokenizer::execute: "
                            "short description already defined for key '" +
-                               key + "'");
-            short_description = CxxTokenizer::readString(p, pe);
+                               d.key + "'");
+            d.short_description = CxxTokenizer::readString(p, pe);
           } else if (k == "description") {
-            tfel::raise_if(!description.empty(),
+            tfel::raise_if(!d.description.empty(),
                            "GlossaryTokenizer::execute: "
                            "description already defined for key '" +
-                               key + "'");
-            this->readBlock(description, p, pe);
+                               d.key + "'");
+            this->readBlock(d.description, p, pe);
             CxxTokenizer::readSpecifiedToken("GlossaryTokenizer::execute", "}",
                                              p, pe);
           } else if (k == "notes") {
-            tfel::raise_if(!notes.empty(),
+            tfel::raise_if(!d.notes.empty(),
                            "GlossaryTokenizer::execute: "
                            "notes already defined for key '" +
-                               key + "'");
-            this->readBlock(notes, p, pe);
+                               d.key + "'");
+            this->readBlock(d.notes, p, pe);
             CxxTokenizer::readSpecifiedToken("GlossaryTokenizer::execute", "}",
                                              p, pe);
-          } else if (k == "lower_bound") {
-            tfel::raise_if(lower_bound.has_value(),
+          } else if (k == "lower_physical_bounds") {
+            tfel::raise_if(!d.lower_physical_bounds.empty(),
                            "GlossaryTokenizer::execute: "
                            "lower bound already defined for key '" +
-                               key + "'");
-            lower_bound =
-                convert<std::map<std::string, double>>(Data::read_map(p, pe));
-          } else if (k == "upper_bound") {
-            tfel::raise_if(upper_bound.has_value(),
+                               d.key + "'");
+            d.lower_physical_bounds = readPhysicalBoundsMap(p, pe);
+          } else if (k == "upper_physical_bounds") {
+            tfel::raise_if(!d.upper_physical_bounds.empty(),
                            "GlossaryTokenizer::execute: "
                            "upper bound already defined for key '" +
-                               key + "'");
-            upper_bound =
-                convert<std::map<std::string, double>>(Data::read_map(p, pe));
+                               d.key + "'");
+            d.upper_physical_bounds = readPhysicalBoundsMap(p, pe);
           } else {
             tfel::raise(
                 "GlossaryTokenizer::execute: "
@@ -170,7 +245,7 @@ struct GlossaryTokenizer : protected tfel::utilities::CxxTokenizer,
           tfel::raise(
               "GlossaryTokenizer::execute: "
               "error while treating key '" +
-              key +
+              d.key +
               "' "
               "(" +
               std::string(ex.what()) + ")");
@@ -181,16 +256,16 @@ struct GlossaryTokenizer : protected tfel::utilities::CxxTokenizer,
       CxxTokenizer::readSpecifiedToken("GlossaryTokenizer::execute", ";", p,
                                        pe);
       // postprocessing
-      tfel::raise_if(short_description.empty(),
+      tfel::raise_if(d.short_description.empty(),
                      "GlossaryTokenizer::execute: "
                      "no short_description given for glossary entry '" +
-                         key + "'");
-      tfel::raise_if(type.empty(),
+                         d.key + "'");
+      tfel::raise_if(d.type.empty(),
                      "GlossaryTokenizer::execute: "
                      "no type given for glossary entry '" +
-                         key + "'");
+                         d.key + "'");
       if (name.empty()) {
-        name = key;
+        name = d.key;
       }
       tfel::raise_if(!names.insert(name).second,
                      "GlossaryTokenizer::execute: "
@@ -198,20 +273,18 @@ struct GlossaryTokenizer : protected tfel::utilities::CxxTokenizer,
                          name +
                          "' already used. "
                          "Error while defining key '" +
-                         key + "'");
-      for (auto pa = aliases.begin(); pa != aliases.end(); ++pa) {
-        tfel::raise_if(!names.insert(*pa).second,
+                         d.key + "'");
+      for (const auto& a : d.aliases) {
+        tfel::raise_if(!names.insert(a).second,
                        "GlossaryTokenizer::execute: "
                        "name '" +
-                           *pa +
+                           a +
                            "' already used. "
                            "Error while defining key '" +
-                           key + "'");
+                           d.key + "'");
       }
-      aliases.push_back(name);
-#pragma "units !!"
-      this->insert(GlossaryEntry(key, aliases, "", type, short_description,
-                                 description, notes));
+      d.aliases.push_back(name);
+      this->insert(d);
     }
   }  // end of execute
 
@@ -241,17 +314,44 @@ struct GlossaryTokenizer : protected tfel::utilities::CxxTokenizer,
 
 };  // end of struct GlossaryTokenizer
 
-std::string serialize(const std::vector<std::string>& lines, const std::string& d) {
-  std::ostringstream out;
-  if (lines.empty()) {
-    out << "\"\" /* no '" << d << "' defined */";
-  } else {
-    for (auto p = lines.begin(); p != lines.end(); ++p) {
-      if (p != lines.begin()) {
-        out << tfel::glossary::GlossaryEntry::separator << "\n";
-      }
-      out << "\"" << *p << "\"";
+static std::string serialize(const std::vector<std::string>& lines) {
+  auto r = std::string{};
+
+  for (auto p = lines.begin(); p != lines.end(); ++p) {
+    if (p != lines.begin()) {
+      r += '\"';
+      r += tfel::glossary::GlossaryEntry::separator;
+      r += "\"\n";
     }
+    r += "\"" + *p + "\"";
+  }
+  return r;
+}
+
+static std::string serialize(const std::vector<std::string>& lines,
+                             const std::string& d) {
+  if (lines.empty()) {
+    return "\"\" /* no '" + d + "' defined */";
+  }
+  return serialize(lines);
+}
+
+static std::string serialize(const std::map<std::string, std::string>& m) {
+  auto check = [](const std::string& s) {
+    const auto& sep = tfel::glossary::GlossaryEntry::separator;
+    if ((s.find(sep) != std::string::npos) ||
+        ((s.find(':') != std::string::npos))) {
+      tfel::raise("serialize: invalid key or value '" + s + "'");
+    }
+  };
+  std::ostringstream out;
+  for (auto p = m.begin(); p != m.end(); ++p) {
+    if (p != m.begin()) {
+      out << tfel::glossary::GlossaryEntry::separator;
+    }
+    check(p->first);
+    check(p->second);
+    out << p->first << ':' << p->second;
   }
   return out.str();
 }
@@ -269,7 +369,7 @@ void generateCxxOutput(const GlossaryTokenizer& tokenizer) {
   // gathering all names
   std::vector<std::string> names;
   for (auto p = tokenizer.begin(); p != tokenizer.end(); ++p) {
-    const auto& n = p->getNames();
+    const auto& n = p->aliases;
     names.insert(names.end(), n.begin(), n.end());
   }
   // writting headers
@@ -297,10 +397,7 @@ void generateCxxOutput(const GlossaryTokenizer& tokenizer) {
       << '\n'
       << "#include\"TFEL/Glossary/Forward/Glossary.hxx\"\n"
       << '\n'
-      << "namespace tfel\n"
-      << "{\n"
-      << "namespace glossary\n"
-      << "{\n"
+      << "namespace tfel::glossary {\n"
       << '\n'
       << "/*!\n"
       << " * \\brief Structure in charge of handling the TFEL Glossary\n"
@@ -315,7 +412,7 @@ void generateCxxOutput(const GlossaryTokenizer& tokenizer) {
       << "getGlossary();\n"
       << '\n';
   for (auto p = tokenizer.begin(); p != tokenizer.end(); ++p) {
-    header << "static const GlossaryEntry " << p->getKey() << ";\n";
+    header << "static const GlossaryEntry " << p->key << ";\n";
   }
   header << '\n'
          << "/*!\n"
@@ -342,41 +439,40 @@ void generateCxxOutput(const GlossaryTokenizer& tokenizer) {
     header << "//! all glossary names (to initialise glossary entries)\n"
            << "static const char * names[" << names.size() << "];\n";
   }
-  header << "/*!\n"
-         << " * \\brief insert a new entry\n"
-         << " */\n"
-         << "void\n"
-         << "insert(const GlossaryEntry&);\n"
-         << '\n'
-         << "Glossary();\n"
-         << '\n'
-         << "Glossary(const Glossary&);\n"
-         << '\n'
-         << "Glossary&\n"
-         << "operator=(const Glossary&);\n"
-         << '\n'
-         << "/*!\n"
-         << "\\return an iterator to the glossary associated with the given "
-            "name or key. \n"
-         << "Return this->entries.end() if no matching entry is found. \n"
-         << "\\param[in] n: name or key.\n"
-         << "*/\n"
-         << "std::set<GlossaryEntry>::const_iterator\n"
-         << "findGlossaryEntry(const std::string&) const;\n"
-         << '\n'
-         << "//! list of all registred entries\n"
-         << "std::set<GlossaryEntry> entries;\n"
-         << '\n'
-         << "//! list of all registred keys\n"
-         << "std::vector<std::string> keys;\n"
-         << '\n'
-         << "}; // end of struct Glossary\n"
-         << '\n'
-         << "} // end of namespace glossary\n"
-         << '\n'
-         << "} // end of namespace tfel\n"
-         << '\n'
-         << "#endif /* TFEL_GLOSSARY_GLOSSARY_HXX */\n";
+  header
+      << "/*!\n"
+      << " * \\brief insert a new entry\n"
+      << " */\n"
+      << "void\n"
+      << "insert(const GlossaryEntry&);\n"
+      << '\n'
+      << "Glossary();\n"
+      << '\n'
+      << "Glossary(const Glossary&);\n"
+      << '\n'
+      << "Glossary&\n"
+      << "operator=(const Glossary&);\n"
+      << '\n'
+      << "/*!\n"
+      << " * \\return an iterator to the glossary associated with the given \n"
+      << " * name or key. If no matching key exists, this->entries.end() is \n"
+      << " * returned. \n"
+      << " * \\param[in] n: name or key.\n"
+      << "*/\n"
+      << "std::set<GlossaryEntry>::const_iterator\n"
+      << "findGlossaryEntry(const std::string&) const;\n"
+      << '\n'
+      << "//! \brief list of all registred entries\n"
+      << "std::set<GlossaryEntry> entries;\n"
+      << '\n'
+      << "//! \brief list of all registred keys\n"
+      << "std::vector<std::string> keys;\n"
+      << '\n'
+      << "}; // end of struct Glossary\n"
+      << '\n'
+      << "} // end of namespace tfel::glossary\n"
+      << '\n'
+      << "#endif /* TFEL_GLOSSARY_GLOSSARY_HXX */\n";
   /* writting src file */
   src << "/*!\n"
       << " * \\file   Glossary.cxx\n"
@@ -398,10 +494,7 @@ void generateCxxOutput(const GlossaryTokenizer& tokenizer) {
       << "#include\"TFEL/Glossary/Glossary.hxx\"\n"
       << "#include\"TFEL/Glossary/GlossaryEntry.hxx\"\n"
       << '\n'
-      << "namespace tfel\n"
-      << "{\n"
-      << "namespace glossary\n"
-      << "{\n"
+      << "namespace tfel::glossary{\n"
       << '\n';
   if (!names.empty()) {
     src << "const char* Glossary::names[" << names.size() << "] = {\n";
@@ -414,31 +507,26 @@ void generateCxxOutput(const GlossaryTokenizer& tokenizer) {
     src << "};\n";
   }
   std::vector<std::string>::size_type pos = 0;
-  for (auto p = tokenizer.begin(); p != tokenizer.end(); ++p) {
-    const auto& d = replace_all(serialize(p->getDescription(), "description"),
-                                "\\", "\\\\");
-    const auto& n =
-        replace_all(serialize(p->getNotes(), "notes"), "\\", "\\\\");
-    const auto& names = p->getNames();
-    src << "const GlossaryEntry Glossary::" << p->getKey() << "("
-        << "\"" << replace_all(p->getKey(), "\\", "\\\\") << "\",";
-    if (names.size() == 1u) {
-      src << '\"' << names[0u] << "\",\n";
+  for (const auto& t : tokenizer) {
+    const auto& d =
+        replace_all(serialize(t.description, "description"), "\\", "\\\\");
+    const auto& n = replace_all(serialize(t.notes, "notes"), "\\", "\\\\");
+    const auto& names = t.aliases;
+    src << "const GlossaryEntry Glossary::" << t.key << "("
+        << "\"" << replace_all(t.key, "\\", "\\\\") << "\",";
+    if (pos == 0) {
+      src << "Glossary::names,Glossary::names+" << names.size() << ",\n";
     } else {
-      if (pos == 0) {
-        src << "Glossary::names,Glossary::names+" << names.size() << ",\n";
-      } else {
-        src << "Glossary::names+" << pos << ",Glossary::names+"
-            << pos + names.size() << ",\n";
-      }
+      src << "Glossary::names+" << pos << ",Glossary::names+"
+          << pos + names.size() << ",\n";
     }
     pos += names.size();
-    src << "\"" << replace_all(p->getUnit(), "\\", "\\\\") << "\","
-        << "\"" << replace_all(p->getType(), "\\", "\\\\") << "\",\n"
-        << "\"" << replace_all(p->getShortDescription(), "\\", "\\\\")
-        << "\",\n"
+    src << "\"" << serialize(t.units) << "\","
+        << "\"" << replace_all(t.type, "\\", "\\\\") << "\",\n"
+        << "\"" << replace_all(t.short_description, "\\", "\\\\") << "\",\n"
         << d << ",\n"
-        << n << ");\n\n";
+        << n << ", \"" << serialize(t.lower_physical_bounds) << "\", \""
+        << serialize(t.upper_physical_bounds) << "\");\n\n";
   }
   src << "Glossary&\n"
       << "Glossary::getGlossary()\n"
@@ -453,7 +541,7 @@ void generateCxxOutput(const GlossaryTokenizer& tokenizer) {
     src << "this->keys.reserve(" << tokenizer.size() << ");\n";
   }
   for (auto p = tokenizer.begin(); p != tokenizer.end(); ++p) {
-    src << "this->insert(Glossary::" << p->getKey() << ");\n";
+    src << "this->insert(Glossary::" << p->key << ");\n";
   }
   src << "} // end of Glossary::Glossary\n"
       << '\n'
@@ -503,9 +591,7 @@ void generateCxxOutput(const GlossaryTokenizer& tokenizer) {
       << "return this->entries.end();\n"
       << "} // end of Glossary::findGlossaryEntry\n"
       << '\n'
-      << "} // end of namespace glossary\n"
-      << '\n'
-      << "} // end of namespace tfel\n";
+      << "} // end of namespace tfel::glossary\n";
 }
 
 void generatePleiadesCxxOutput(const GlossaryTokenizer& tokenizer) {
@@ -521,7 +607,7 @@ void generatePleiadesCxxOutput(const GlossaryTokenizer& tokenizer) {
   // gathering all names
   std::vector<std::string> names;
   for (auto p = tokenizer.begin(); p != tokenizer.end(); ++p) {
-    const auto& n = p->getNames();
+    const auto& n = p->aliases;
     names.insert(names.end(), n.begin(), n.end());
   }
   // writting headers
@@ -556,7 +642,7 @@ void generatePleiadesCxxOutput(const GlossaryTokenizer& tokenizer) {
       << "  static Glossary& getGlossary();\n"
       << '\n';
   for (auto p = tokenizer.begin(); p != tokenizer.end(); ++p) {
-    header << "  static const GlossaryEntry " << p->getKey() << ";\n";
+    header << "  static const GlossaryEntry " << p->key << ";\n";
   }
   header << '\n'
          << "  /*!\n"
@@ -625,13 +711,12 @@ void generatePleiadesCxxOutput(const GlossaryTokenizer& tokenizer) {
 
   std::vector<std::string>::size_type pos = 0;
   for (auto p = tokenizer.begin(); p != tokenizer.end(); ++p) {
-    const auto& d = replace_all(serialize(p->getDescription(), "description"),
-                                "\\", "\\\\");
-    const auto& n =
-        replace_all(serialize(p->getNotes(), "notes"), "\\", "\\\\");
-    const auto& names = p->getNames();
-    src << "const GlossaryEntry Glossary::" << p->getKey() << "("
-        << "\"" << replace_all(p->getKey(), "\\", "\\\\") << "\",";
+    const auto& d =
+        replace_all(serialize(p->description, "description"), "\\", "\\\\");
+    const auto& n = replace_all(serialize(p->notes, "notes"), "\\", "\\\\");
+    const auto& names = p->aliases;
+    src << "const GlossaryEntry Glossary::" << p->key << "("
+        << "\"" << replace_all(p->key, "\\", "\\\\") << "\",";
     if (names.size() == 1u) {
       src << '\"' << names[0u] << "\",\n";
     } else {
@@ -643,10 +728,9 @@ void generatePleiadesCxxOutput(const GlossaryTokenizer& tokenizer) {
       }
     }
     pos += names.size();
-    src << "\"" << replace_all(p->getUnit(), "\\", "\\\\") << "\","
-        << "\"" << replace_all(p->getType(), "\\", "\\\\") << "\",\n"
-        << "\"" << replace_all(p->getShortDescription(), "\\", "\\\\")
-        << "\",\n"
+    src << "\"" << serialize(p->units) << "\","
+        << "\"" << replace_all(p->type, "\\", "\\\\") << "\",\n"
+        << "\"" << replace_all(p->short_description, "\\", "\\\\") << "\",\n"
         << d << ",\n"
         << n << ");\n\n";
   }
@@ -662,7 +746,7 @@ void generatePleiadesCxxOutput(const GlossaryTokenizer& tokenizer) {
     src << '\n' << "  this->keys.reserve(" << tokenizer.size() << ");\n";
   }
   for (auto p = tokenizer.begin(); p != tokenizer.end(); ++p) {
-    src << "  this->insert(Glossary::" << p->getKey() << ");\n";
+    src << "  this->insert(Glossary::" << p->key << ");\n";
   }
   src << "} // end of Glossary::Glossary\n"
       << '\n'
@@ -727,9 +811,8 @@ void generateBoostPythonBindings(const GlossaryTokenizer& tokenizer) {
       << ".staticmethod(\"getGlossary\")\n"
       << ".def(\"contains\",&Glossary::contains)\n";
   for (auto p = tokenizer.begin(); p != tokenizer.end(); ++p) {
-    psrc << ".def_readonly(\"" << p->getKey()
-         << "\",&Glossary::" << p->getKey();
-    const auto& d = replace_all(p->getShortDescription(), "\\", "\\\\");
+    psrc << ".def_readonly(\"" << p->key << "\",&Glossary::" << p->key;
+    const auto& d = replace_all(p->short_description, "\\", "\\\\");
     if (!d.empty()) {
       psrc << ",\n\"" << d << "\"";
     }
@@ -747,18 +830,18 @@ void generateXMLOutput(const GlossaryTokenizer& tokenizer) {
   xml << "<?xml version=\"1.0\"?>\n"
       << "<glossary>\n";
   for (auto p = tokenizer.begin(); p != tokenizer.end(); ++p) {
-    const auto& n = p->getNames();
-    xml << "<glossary_entry key=\"" << p->getKey() << "\">\n";
+    const auto& n = p->aliases;
+    xml << "<glossary_entry key=\"" << p->key << "\">\n";
     for (auto pn = n.begin(); pn != n.end(); ++pn) {
       xml << "<name>" << *pn << "</name>\n";
     }
-    xml << "<unit>" << p->getUnit() << "</unit>\n"
-        << "<type>" << p->getType() << "</type>\n"
-        << "<short_description>" << p->getShortDescription()
+    xml << "<unit>" << serialize(p->units) << "</unit>\n"
+        << "<type>" << p->type << "</type>\n"
+        << "<short_description>" << p->short_description
         << "</short_description>\n"
         << "<description>\n"
         << "<![CDATA[\n";
-    const auto& d = p->getDescription();
+    const auto& d = p->description;
     for (auto p2 = d.begin(); p2 != d.end(); ++p2) {
       xml << *p2 << '\n';
     }
@@ -787,12 +870,11 @@ void generatePandocOutput(const GlossaryTokenizer& tokenizer) {
       << "\\newcommand{\\deriv}[2]{{\\displaystyle \\frac{\\displaystyle "
          "\\partial #1}{\\displaystyle \\partial #2}}}\n";
   for (auto p = tokenizer.begin(); p != tokenizer.end(); ++p) {
-    const auto& n = p->getNames();
+    const auto& n = p->aliases;
     doc << '\n';
-    doc << "# L'entrée " << p->getKey() << '\n' << '\n';
-    if (!p->getShortDescription().empty()) {
-      doc << "Cette entrée décrit " << p->getShortDescription() << ".\n"
-          << '\n';
+    doc << "# L'entrée " << p->key << '\n' << '\n';
+    if (!p->short_description.empty()) {
+      doc << "Cette entrée décrit " << p->short_description << ".\n" << '\n';
     }
     doc << "* noms : ";
     for (auto pn = n.begin(); pn != n.end();) {
@@ -802,34 +884,36 @@ void generatePandocOutput(const GlossaryTokenizer& tokenizer) {
       }
     }
     doc << '\n';
-    doc << "* unité: ";
-    if (!p->getUnit().empty()) {
-      doc << "\\(" << p->getUnit() << "\\)\n";
+    doc << "* units:\n";
+    if (!p->units.empty()) {
+      for (const auto& su : p->units) {
+        doc << "  *" << su.first << ": " << su.second << '\n';
+      }
     } else {
-      doc << "sans unité\n";
+      doc << "no units specified\n";
     }
-    if (p->getType() == "scalar") {
+    if (p->type == "scalar") {
       doc << "* type: scalaire " << '\n';
-    } else if (p->getType() == "vector") {
+    } else if (p->type == "vector") {
       doc << "* type: vecteur " << '\n';
-    } else if (p->getType() == "tensor") {
+    } else if (p->type == "tensor") {
       doc << "* type: tenseur symétrique\n";
     } else {
       doc << "* type: unsupported type\n";
     }
-    const auto& d = p->getDescription();
+    const auto& d = p->description;
     if (!d.empty()) {
       doc << '\n' << "## Description\n\n";
     }
     for (auto p2 = d.begin(); p2 != d.end(); ++p2) {
       doc << *p2 << '\n';
     }
-    const auto& notes = p->getNotes();
-    if (!notes.empty()) {
+    const auto& notes = p->notes;
+    if (!p->notes.empty()) {
       doc << '\n' << "## Notes \n\n";
-    }
-    for (auto p2 = notes.begin(); p2 != notes.end(); ++p2) {
-      doc << *p2 << '\n';
+      for (const auto& n : p->notes) {
+        doc << n << '\n';
+      }
     }
   }
   doc << "<!-- Local IspellDict: english -->\n";

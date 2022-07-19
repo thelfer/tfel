@@ -27,7 +27,7 @@ namespace tfel::math::parser {
    * expression.
    */
   template <int N>
-  struct TFEL_VISIBILITY_LOCAL PowerFunction final : public Function{
+  struct TFEL_VISIBILITY_LOCAL PowerFunction final : public Function {
     /*!
      * \brief constructor
      * \param[in] e: expression
