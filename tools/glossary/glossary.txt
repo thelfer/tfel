@@ -37,79 +37,79 @@
 
 "OrthotropicAxisX1"{
  type : "scalar";
- short_description : "la première coordonnée du premier axe d'orthotropie";
- description : {"Cette quantité est automatiquement"
-  "calculée par Licos à partir de la définition du matériau"};
+ short_description : "the first coordinate of the first orthotropy axis";
+ description : {"This quantity is automatically"
+  "calculated by Licos from the material definition"};
 };
 
 "OrthotropicAxisY1"{
  type : "scalar";
- short_description :"la deuxième coordonnée du premier axe d'orthotropie";
- description : {"Cette quantité est automatiquement"
-  "calculée par Licos à partir de la définition du matériau"};
+ short_description :"the second coordinate of the first orthotropy axis";
+ description : {"This quantity is automatically"
+  "calculated by Licos from the material definition"};
 };
 
 "OrthotropicAxisZ1"{
  type : "scalar";
- short_description : "la troisième coordonnée du premier axe d'orthotropie";
- description : {"Cette quantité est automatiquement"
-  "calculée par Licos à partir de la définition du matériau"};
+ short_description : "the third coordinate of the first orthotropy axis";
+ description : {"This quantity is automatically"
+  "calculated by Licos from the material definition"};
 };
 
 "OrthotropicAxisX2"{
  type : "scalar";
- short_description : "la première coordonnée du second axe d'orthotropie";
- description : {"Cette quantité est automatiquement"
-  "calculée par Licos à partir de la définition du matériau"};
+ short_description : "the first coordinate of the second orthotropy axis";
+ description : {"This quantity is automatically"
+  "calculated by Licos from the material definition"};
 };
 
 "OrthotropicAxisY2"{
  type : "scalar";
- short_description : "la deuxième coordonnée du second axe d'orthotropie";
- description : {"Cette quantité est automatiquement"
- " calculée par Licos à partir de la définition du matériau"};
+ short_description : "the second coordinate of the second orthotropy axis";
+ description : {"This quantity is automatically"
+ " calculated by Licos from the material definition"};
 };
 
 "OrthotropicAxisZ2"{
  type : "scalar";
- short_description : "la troisième coordonnée du second axe d'orthotropie";
- description : {"Cette quantité est automatiquement"
-  "calculée par Licos à partir de la définition du matériau"};
+ short_description : "the third coordinate of the second orthotropy axis";
+ description : {"This quantity is automatically"
+  "calculated by Licos from the material definition"};
 };
 
 "ThermalConductivity"{
  units: {"SI": "W.m^{-1}"};
  lower_physical_bounds : {"SI": 0};
  type : "scalar";
- short_description : "la conductivité thermique d'un matériau isotrope";
+ short_description : "the thermal conductivity of an isotropic material";
 };
 
 "ThermalConductivity1"{
  units: {"SI": "W.m^{-1}"};
  lower_physical_bounds : {"SI": 0};
  type : "scalar";
- short_description : "la conductivité thermique d'un matériau orthotrope suivant la première direction d'orthotropie";
+ short_description : "the thermal conductivity of an orthotropic material along the first orthotropy direction";
 };
 
 "ThermalConductivity2"{
  units: {"SI": "W.m^{-1}"};
  lower_physical_bounds : {"SI": 0};
  type : "scalar";
- short_description : "la conductivité thermique d'un matériau orthotrope suivant la deuxième direction d'orthotropie";
+ short_description : "the thermal conductivity of an orthotropic material along the second orthotropy direction";
 };
 
 "ThermalConductivity3"{
  units: {"SI": "W.m^{-1}"};
  lower_physical_bounds : {"SI": 0};
  type : "scalar";
- short_description : "la conductivité thermique d'un matériau orthotrope suivant la troisième direction d'orthotropie";
+ short_description : "the thermal conductivity of an orthotropic material along the third orthotropy direction";
 };
 
 "SpecificHeat"{
  units: {"SI": "J.kg^{-1}.K^{-1}"};
  lower_physical_bounds : {"SI": 0};
  type : "scalar";
- short_description : "la chaleur spécifique";
+ short_description : "the specific heat";
 };
 
 "Temperature"{
@@ -124,8 +124,8 @@
  lower_physical_bounds : {"SI": 0};
  type : "scalar";
  short_description : "The temperature";
- notes :{"Cette entrée a été rajoutée par compatibilité avec les choix d'implantation des "
-      "lois de comportements mécaniques utilisés par le code Germinal"};
+ notes :{"This entry has been introduced to be compatible with the implementation choices "
+          "of the mechanical behavior laws used by the Germinal code"};
 };
 
 "IrradiationTemperature"{
@@ -482,6 +482,7 @@
 
 "Pressure"{
  units: {"SI": "Pa"};
+ lower_physical_bounds : {"SI": 0};  
  type : "scalar";
  short_description : "la pression d'un gaz";
 };
@@ -688,25 +689,25 @@
 };
 
 "PlateWidth"{
- units: {"SI": "??"};
+ units: {"SI": "m"};
  type : "scalar";
  short_description : "??";
 };
 
 "CrossSectionArea"{
- units: {"SI": "??"};
+ units: {"SI": "m^{2}"};
  type : "scalar";
  short_description : "??";
 };
 
 "FirstAxisSecondMomentArea"{
- units: {"SI": "??"};
+ units: {"SI": "m^{4}"};
  type : "scalar";
  short_description : "??";
 };
 
 "SecondAxisSecondMomentArea"{
- units: {"SI": "??"};
+ units: {"SI": "m^{4}"};
  type : "scalar";
  short_description : "??";
 };
