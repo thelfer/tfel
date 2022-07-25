@@ -1857,13 +1857,15 @@ command is concatenated in a single string for the test.
 
 # Issues fixed
 
-
-
 ## Issue #256: [tfel-math] Add support to clamp `TFEL/Math` arrays
 
 This feature is described in Section @sec:tfel_math:issue_256.
 
 For more details, see <https://github.com/thelfer/tfel/issues/256>
+
+## Issue #255: [tfel-gossary] add physical bounds to entries of the glossary when appropriate
+
+For more details, see <https://github.com/thelfer/tfel/issues/255>
 
 ## Issue #254: [mfront-query] add queries related to bounds for material properties
 
