@@ -10,8 +10,8 @@
  * project under specific licensing conditions.
  */
 
-#ifndef TFEL_GLOSSARY_GLOSSARY_HXX
-#define TFEL_GLOSSARY_GLOSSARY_HXX
+#ifndef LIB_TFEL_GLOSSARY_GLOSSARY_HXX
+#define LIB_TFEL_GLOSSARY_GLOSSARY_HXX
 
 #include "TFEL/Config/TFELConfig.hxx"
 #include <set>
@@ -184,4 +184,4 @@ namespace tfel::glossary {
 
 }  // end of namespace tfel::glossary
 
-#endif /* TFEL_GLOSSARY_GLOSSARY_HXX */
+#endif /* LIB_TFEL_GLOSSARY_GLOSSARY_HXX */

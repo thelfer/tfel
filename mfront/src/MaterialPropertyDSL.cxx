@@ -158,7 +158,6 @@ namespace mfront {
   void MaterialPropertyDSL::doPedanticChecks() const {
     // boucle sur md.inputs
 
-
   }  // end of doPedanticChecks
 
   void MaterialPropertyDSL::endsInputFileProcessing() {

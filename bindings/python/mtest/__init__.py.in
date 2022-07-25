@@ -1,7 +1,47 @@
-import std
-import tfel.tests
-import tfel.math
+from __future__ import division
 from ._mtest import *
+
+def generateMaterialPropertyReferenceFile(library,
+                                          material_property,
+                                          output_file):
+    mp = mtest.MaterialProperty(library, material_property)
+    d = tfel.system.ExternalMaterialPropertyDescription(library, material_property)
+    
+    # output file
+    file = open(output_file, "w")
+    i = 0
+    for var in mp.getVariablesNames():
+        file.write('# '+str(i)+' column: '+var+'\n')
+        i +=1
+    file.write('# '+str(i+1)+' column: '+mp.getOutputName()+'\n')
+
+    def linspace(start, stop, n):
+        if n == 1:
+            yield stop
+            return
+        h = (stop - start) / (n - 1)
+        for i in range(n):
+            yield start + h * i
+    
+    # inner function for looping over all variables
+    def evaluate(mp, vars, variables_values = []):
+        if len(vars) == 0:
+            for v in variables_values:
+                file.write("{} ".format(v))
+                file.write("{:.15f} ".format(mp.getValue()))
+                file.write("\n")
+        else:
+            vname = vars[0]
+            values = linspace(d.getLowerBound(vname),
+                              d.getUpperBound(vname), 10)
+            for v in values:
+                variables_values.append(v)
+                mp.setVariableValue(vname, v)
+                evaluate(mp, vars[1:], variables_values)
+                variables_values.pop(-1)
+            vars.pop(0)
+
+    evaluate(mp,mp.getVariablesNames())
 
 MTestStiffnessMatrixType=StiffnessMatrixType
 MTestWorkSpace=SolverWorkSpace

@@ -1,6 +1,6 @@
 /*!
  * \file   mfront-query/src/QueryUtilities.cxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   12/07/2022
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights

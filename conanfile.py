@@ -1,6 +1,7 @@
 import os
 from conans import ConanFile, CMake
 
+
 class TFELConan(ConanFile):
     name = "TFEL"
     author = "Thomas Helfer (tfel-contact@cea.fr)"
@@ -30,19 +31,17 @@ class TFELConan(ConanFile):
         self.run("git clone https://github.com/thelfer/tfel.git")
 
     def build(self):
-        cmake = CMake(self,parallel=True)
-        args  = ['-DCMAKE_INSTALL_PREFIX="%s"' % self.package_folder,
-                 '-Denable-python-bindings=ON',
-                 '-Dlocal-castem-header=ON',
-                 '-Denable-aster=ON',
-                 '-Denable-europlexus=ON',
-                 '-Denable-abaqus=ON',
-                 '-Denable-calculix=ON',
-                 '-DTFEL_SVN_REVISION=0']
-        self.run('cmake %s/tfel %s %s'
-              % (self.conanfile_directory,
-                 cmake.command_line,
-                 ' '.join( args )))
+        cmake = CMake(self, parallel=True)
+        args = [
+            '-DCMAKE_INSTALL_PREFIX="%s"' % self.package_folder,
+            '-Denable-python-bindings=ON', '-Dlocal-castem-header=ON',
+            '-Denable-aster=ON', '-Denable-europlexus=ON',
+            '-Denable-abaqus=ON', '-Denable-calculix=ON',
+            '-DTFEL_SVN_REVISION=0'
+        ]
+        self.run(
+            'cmake %s/tfel %s %s' %
+            (self.conanfile_directory, cmake.command_line, ' '.join(args)))
         self.run("cmake --build . --target install %s" % cmake.build_config)
 
     def package(self):
@@ -52,5 +51,8 @@ class TFELConan(ConanFile):
         self.cpp_info.libs = ["tfel"]
         self.env_info.PATH.append(os.path.join(self.package_folder, "bin"))
         if not self.settings.os == "Windows":
-            self.env_info.LD_LIBRARY_PATH.append(os.path.join(self.package_folder, "lib"))
-            self.env_info.PYTHONPATH.append(os.path.join(self.package_folder, "lib/python2.7/site-packages/"))
+            self.env_info.LD_LIBRARY_PATH.append(
+                os.path.join(self.package_folder, "lib"))
+            self.env_info.PYTHONPATH.append(
+                os.path.join(self.package_folder,
+                             "lib/python2.7/site-packages/"))

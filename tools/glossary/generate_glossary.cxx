@@ -387,8 +387,8 @@ void generateCxxOutput(const GlossaryTokenizer& tokenizer) {
       << " * project under specific licensing conditions.\n"
       << " */\n"
       << '\n'
-      << "#ifndef TFEL_GLOSSARY_GLOSSARY_HXX\n"
-      << "#define TFEL_GLOSSARY_GLOSSARY_HXX\n"
+      << "#ifndef LIB_TFEL_GLOSSARY_GLOSSARY_HXX\n"
+      << "#define LIB_TFEL_GLOSSARY_GLOSSARY_HXX\n"
       << '\n'
       << "#include\"TFEL/Config/TFELConfig.hxx\"\n"
       << "#include<set>" << '\n'
@@ -472,7 +472,7 @@ void generateCxxOutput(const GlossaryTokenizer& tokenizer) {
       << '\n'
       << "} // end of namespace tfel::glossary\n"
       << '\n'
-      << "#endif /* TFEL_GLOSSARY_GLOSSARY_HXX */\n";
+      << "#endif /* LIB_TFEL_GLOSSARY_GLOSSARY_HXX */\n";
   /* writting src file */
   src << "/*!\n"
       << " * \\file   Glossary.cxx\n"
@@ -858,8 +858,22 @@ void generatePandocOutput(const GlossaryTokenizer& tokenizer) {
   tfel::raise_if(!doc,
                  "generatePandocOutput: "
                  "can't open file 'glossary-pandoc.txt'");
-  doc << "% TFEL Glossary description\n"
-      << "% Helfer Thomas; Bernaud Stéphane\n"
+  doc << "---\n"
+      << "title: Implementation of a perfect plastic behaviour using the "
+      << "Hosford equivalent stress\n"
+      << "author: Helfer Thomas, Maxence Wangermez Bernaud Stéphane\n"
+      << "date: 21/11/2017\n"
+      << "lang: en-EN\n"
+      << "link-citations: true\n"
+      << "colorlinks: true\n"
+      << "geometry:\n"
+      << "  - margin=2cm\n"
+      << "papersize: a4\n"
+      << "figPrefixTemplate: \"$$i$$\"\n"
+      << "tblPrefixTemplate: \"$$i$$\"\n"
+      << "secPrefixTemplate: \"$$i$$\"\n"
+      << "eqnPrefixTemplate: \"($$i$$)\"\n"
+      << "---\n"
       << '\n'
       << "\\newcommand{\\dtot}{\\mathrm{d}}\n"
       << "\\newcommand{\\paren}[1]{{\\displaystyle \\left(#1\\right)}}\n"
@@ -872,19 +886,18 @@ void generatePandocOutput(const GlossaryTokenizer& tokenizer) {
   for (auto p = tokenizer.begin(); p != tokenizer.end(); ++p) {
     const auto& n = p->aliases;
     doc << '\n';
-    doc << "# L'entrée " << p->key << '\n' << '\n';
+    doc << "# The `" << p->key << "` entry\n\n";
     if (!p->short_description.empty()) {
-      doc << "Cette entrée décrit " << p->short_description << ".\n" << '\n';
+      doc << "This entry describes " << p->short_description << ".\n" << '\n';
     }
-    doc << "* noms : ";
+    doc << "* alternative names: ";
     for (auto pn = n.begin(); pn != n.end();) {
       doc << *pn;
       if (++pn != n.end()) {
         doc << ", ";
       }
     }
-    doc << '\n';
-    doc << "* units:\n";
+    doc << '\n' << "* units:\n";
     if (!p->units.empty()) {
       for (const auto& su : p->units) {
         doc << "  *" << su.first << ": " << su.second << '\n';
@@ -892,14 +905,11 @@ void generatePandocOutput(const GlossaryTokenizer& tokenizer) {
     } else {
       doc << "no units specified\n";
     }
-    if (p->type == "scalar") {
-      doc << "* type: scalaire " << '\n';
-    } else if (p->type == "vector") {
-      doc << "* type: vecteur " << '\n';
-    } else if (p->type == "tensor") {
-      doc << "* type: tenseur symétrique\n";
+    doc << "* type: ";
+    if (p->type.empty()) {
+      doc << "unspecified\n";
     } else {
-      doc << "* type: unsupported type\n";
+      doc << p->type << "\n";
     }
     const auto& d = p->description;
     if (!d.empty()) {
