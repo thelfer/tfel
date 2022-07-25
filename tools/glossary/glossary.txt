@@ -369,8 +369,8 @@ type:
 lower_physical_bounds : { "SI" : -1 };
 upper_physical_bounds : { "SI" : 0.5 };
 short_description:
-  "le coefficient de Poisson d'un matériau orthotrope relatif aux première et "
-  "deuxième directions d'orthotropie";
+  "the Poisson's coefficient between the first and second directions of "
+  "orthotropy";
 };
 
 "PoissonRatio23" {
@@ -379,8 +379,8 @@ type:
 lower_physical_bounds : { "SI" : -1 };
 upper_physical_bounds : { "SI" : 0.5 };
 short_description:
-  "le coefficient de Poisson d'un matériau orthotrope relatif aux deuxième et "
-  "troisième directions d'orthotropie";
+  "the Poisson's coefficient between the second and third directions of "
+  "orthotropy";
 };
 
 "PoissonRatio13" {
@@ -389,8 +389,8 @@ type:
 lower_physical_bounds : { "SI" : -1 };
 upper_physical_bounds : { "SI" : 0.5 };
 short_description:
-  "le coefficient de Poisson d'un matériau orthotrope relatif aux première et "
-  "troisième directions d'orthotropie";
+  "the Poisson's coefficient between the first and third directions of "
+  "orthotropy";
 };
 
 "ShearModulus12" {
@@ -399,8 +399,8 @@ lower_physical_bounds : { "SI" : 0 };
 type:
   "scalar";
 short_description:
-  "le module de cisaillement d'un matériau orthotrope relatif aux première et "
-  "deuxième directions d'orthotropie";
+  "the shear moduls between the first and second directions of "
+  "orthotropy";
 };
 
 "ShearModulus23" {
@@ -409,8 +409,8 @@ lower_physical_bounds : { "SI" : 0 };
 type:
   "scalar";
 short_description:
-  "le module de cisaillement d'un matériau orthotrope relatif aux deuxième et "
-  "troisième directions d'orthotropie";
+  "the shear moduls between the second and third directions of "
+  "orthotropy";
 };
 
 "ShearModulus13" {
@@ -419,8 +419,8 @@ lower_physical_bounds : { "SI" : 0 };
 type:
   "scalar";
 short_description:
-  "le module de cisaillement d'un matériau orthotrope relatif aux première et "
-  "troisième directions d'orthotropie";
+  "the shear moduls between the first and third directions of "
+  "orthotropy";
 };
 
 "ThermalExpansion" {
@@ -428,7 +428,10 @@ units : { "SI" : "K^{-1}" };
 type:
   "scalar";
 short_description:
-  "le coefficient de dilatation linéique d'un matériau isotrope";
+  "the mean thermal expansion coefficient";
+notes:{
+  "This entry shall have be named MeanThermalExpansionCoefficient."
+};
 };
 
 "ThermalExpansion1" {
@@ -436,8 +439,10 @@ units : { "SI" : "K^{-1}" };
 type:
   "scalar";
 short_description:
-  "le coefficient de dilatation linéique d'un matériau orthotrope suivant la "
-  "première direction d'orthotropie";
+  "the mean thermal expansion coefficient along the first orthotropy direction";
+notes:{
+  "This entry shall have be named MeanThermalExpansionCoefficient1."
+};
 };
 
 "ThermalExpansion2" {
@@ -445,8 +450,10 @@ units : { "SI" : "K^{-1}" };
 type:
   "scalar";
 short_description:
-  "le coefficient de dilatation linéique d'un matériau orthotrope suivant la "
-  "deuxième direction d'orthotropie";
+  "the mean thermal expansion coefficient along the second orthotropy direction";
+notes:{
+  "This entry shall have be named MeanThermalExpansionCoefficient2."
+};
 };
 
 "ThermalExpansion3" {
@@ -454,8 +461,10 @@ units : { "SI" : "K^{-1}" };
 type:
   "scalar";
 short_description:
-  "le coefficient de dilatation linéique d'un matériau orthotrope suivant la "
-  "troisième direction d'orthotropie";
+  "the mean thermal expansion coefficient along the third orthotropy direction";
+notes:{
+  "This entry shall have be named MeanThermalExpansionCoefficient3."
+};
 };
 
 "Displacement" {
@@ -463,14 +472,14 @@ units : { "SI" : "m" };
 type:
   "vector";
 short_description:
-  "le déplacement";
+  "the displacement";
 };
 
 "Strain" {
 type:
   "tensor";
 short_description:
-  "la déformation";
+  "the strain tensor";
 };
 
 "DeformationGradient" {
@@ -513,9 +522,8 @@ short_description:
 type:
   "scalar";
 short_description:
-  "la somme des déformations plastiques ou "
-  "viscoplastiques équivalentes";
-notes : { "Cette quantité n'a pas de sens physique directe." };
+  "the sum of all plastic and viscoplastic equivalent strains";
+notes : { "This quantity has no direct physical meaning." };
 };
 
 "EquivalentPlasticStrain" {
@@ -523,7 +531,7 @@ type:
   "scalar";
 lower_physical_bounds : { "SI" : 0 };
 short_description:
-  "The equivalent plastic strain";
+  "the equivalent plastic strain";
 };
 
 "EquivalentViscoplasticStrain" {
@@ -531,30 +539,30 @@ type:
   "scalar";
 lower_physical_bounds : { "SI" : 0 };
 short_description:
-  "The equivalent viscoplastic strain";
+  "the equivalent viscoplastic strain";
 };
 
 "AxialStrain" {
 type:
   "scalar";
 short_description:
-  "la déformation axiale (cette grandeur n'a de sens que pour les calculs en "
-  "contraintes planes)";
+  "the axial strain";
+notes : { "This quantity is only meaningful under on of the plane stress modelling hypotheses." };
 };
 
 "AxialDeformationGradient" {
 type:
   "scalar";
 short_description:
-  "la composante axiale du gradient de la transformation (cette grandeur n'a "
-  "de sens que pour les calculs en contraintes planes)";
+  "the axial component of the deformation gradient";
+notes : { "This quantity is only meaningful under on of the plane stress modelling hypotheses." };
 };
 
 "VolumetricStrain" {
 type:
   "scalar";
 short_description:
-  "la dilatation volumique";
+  "the volumetric strain, defined as the trace of the strain tensor";
 };
 
 "Stress" {
@@ -562,7 +570,7 @@ units : { "SI" : "Pa" };
 type:
   "tensor";
 short_description:
-  "les contraintes";
+  "the stress tensor";
 };
 
 "CohesiveForce" {
@@ -577,11 +585,8 @@ short_description:
 type:
   "scalar";
 short_description:
-  "la contrainte axiale";
-notes : {
-  "Cette grandeur est utilisée dans les calculs 1D"
-  "axisymétrique en contraintes planes généralisées"
-};
+  "the axial stress";
+notes : { "This quantity is only meaningful under the axisymmetrical generalized plane stress modelling hypothesis." };
 };
 
 "HillStress" {
@@ -590,7 +595,7 @@ lower_physical_bounds : { "SI" : 0 };
 type:
   "tensor";
 short_description:
-  "la contrainte équivalente au sens de Hill";
+  "the Hill equivalent stress";
 };
 
 "CylindricalStress" {
@@ -598,7 +603,7 @@ units : { "SI" : "Pa" };
 type:
   "tensor";
 short_description:
-  "les contraintes exprimées dans le repère cylindrique";
+  "the stress in the cylindrical frame";
 };
 
 "SphericalStress" {
@@ -606,7 +611,7 @@ units : { "SI" : "Pa" };
 type:
   "tensor";
 short_description:
-  "les contraintes exprimées dans le repère sphérique";
+  "the stress in a spherical frame";
 };
 
 "HydrostaticPressure" {
@@ -614,8 +619,7 @@ units : { "SI" : "Pa" };
 type:
   "tensor";
 short_description:
-  "la pression hydrostatique (égale au tiers de la trace du tenseur des "
-  "contraintes)";
+  "the hydrostatic pressure, defined as the third of the trace of the stress tensor";
 };
 
 "VonMisesStress" {
@@ -624,7 +628,7 @@ lower_physical_bounds : { "SI" : 0 };
 type:
   "scalar";
 short_description:
-  "la contrainte équivalente au sens de Von Mises";
+  "the von Mises equivalent stress";
 };
 
 "TrescaStress" {
@@ -633,7 +637,7 @@ lower_physical_bounds : { "SI" : 0 };
 type:
   "scalar";
 short_description:
-  "la contrainte équivalente au sens de Tresca";
+  "the Tresca equivalent stress";
 };
 
 "PrincipalStress1" {
@@ -641,13 +645,7 @@ units : { "SI" : "Pa" };
 type:
   "scalar";
 short_description:
-  "la première contrainte principale";
-notes : {
-  "Son sens est précisé dans la notice "
-  "de l'opérateur "
-  "['PRIN'](http://www-cast3m.cea.fr/index.php?page=notices&notice=PRIN) de "
-  "[Cast3M](http://www-cast3m.cea.fr)"
-};
+  "the first principal stress";
 };
 
 "PrincipalStress2" {
@@ -655,13 +653,7 @@ units : { "SI" : "Pa" };
 type:
   "scalar";
 short_description:
-  "la deuxième contrainte principale";
-notes : {
-  "Son sens est précisé dans la notice "
-  "de l'opérateur "
-  "['PRIN'](http://www-cast3m.cea.fr/index.php?page=notices&notice=PRIN) de "
-  "[Cast3M](http://www-cast3m.cea.fr)"
-};
+  "the third principal stress";
 };
 
 "PrincipalStress3" {
@@ -669,13 +661,7 @@ units : { "SI" : "Pa" };
 type:
   "scalar";
 short_description:
-  "la troisième contrainte principale";
-notes : {
-  "Son sens est précisé dans la notice "
-  "de l'opérateur "
-  "['PRIN'](http://www-cast3m.cea.fr/index.php?page=notices&notice=PRIN) de "
-  "[Cast3M](http://www-cast3m.cea.fr)"
-};
+  "the third principal stress";
 };
 
 "Pressure" {
@@ -683,18 +669,14 @@ units : { "SI" : "Pa" };
 type:
   "scalar";
 short_description:
-  "la pression d'un gaz";
+  "the pressure of a gaz";
 };
 
 "Swelling" {
 type:
   "scalar";
 short_description:
-  "un gonflement imposé";
-notes : {
-  "l'utilisation de ce nom pour imposer un gonflement n'est pas"
-  "obligatoire."
-};
+  "an imposed swelling";
 };
 
 "AxialGrowth" {
@@ -708,21 +690,14 @@ short_description:
 type:
   "scalar";
 short_description:
-  "un gonflement imposé dû à des produits de fission solides";
-notes : {
-  "L'utilisation de ce nom pour imposer un gonflement n'est pas obligatoire"
-};
+  "swelling du to solid fission products";
 };
 
 "GaseousSwelling" {
 type:
   "scalar";
 short_description:
-  "un gonflement imposé dû à des produits de fission gazeux";
-notes : {
-  "L'utilisation de ce nom pour imposer un "
-  "gonflement n'est pas obligatoire"
-};
+  "swelling du to gazeous fission products";
 };
 
 "Porosity" {
@@ -756,22 +731,14 @@ upper_physical_bounds : { "SI" : 1 };
 type:
   "scalar";
 short_description:
-  "un gonflement imposé  dû à des dégâts d'irradiation";
-notes : {
-  "L'utilisation de ce nom pour imposer "
-  "un gonflement n'est pas obligatoire"
-};
+  "swelling du to irradiation damage";
 };
 
 "IrradiationSwelling" {
 type:
   "scalar";
 short_description:
-  "un gonflement imposé  dû à des dégâts d'irradiation";
-notes : {
-  "L'utilisation de ce nom pour imposer "
-  "un gonflement n'est pas obligatoire"
-};
+  "swelling du to irradiation damage";
 };
 
 "NormalStiffness" {
@@ -779,7 +746,7 @@ units : { "SI" : "Pa.m^{-1}" };
 type:
   "scalar";
 short_description:
-  "la raideur normale pour un modèle de zone cohésive";
+  "the normal elastic stiffness for a cohesive zone model";
 };
 
 "TangentialStiffness" {
@@ -787,7 +754,7 @@ units : { "SI" : "Pa.m^{-1}" };
 type:
   "scalar";
 short_description:
-  "la raideur tangentielle pour un modèle de zone cohésive";
+  "the tangential elastic stiffness for a cohesive zone model";
 };
 
 "YieldStrength" {
@@ -798,7 +765,8 @@ lower_physical_bounds : { "SI" : 0 };
 type:
   "scalar";
 short_description:
-  "la limite d'élasticité";
+  "the stress corresponding to the yield point at which the material begins to deform plastically";
+notes: {"When this limit is difficult to identify experimentally, the offset yield point is taken as the stress at which 0.2% plastic deformation occurs"};
 };
 
 "UltimateTensileStrength" {
@@ -809,14 +777,14 @@ lower_physical_bounds : { "SI" : 0 };
 type:
   "scalar";
 short_description:
-  "la valeur maximale de la contrainte qu'un materiau peut supporter";
+  "the maximum stress that a material can withstand while being stretched or pulled before breaking";
 };
 
 "Damage" {
 type:
   "scalar";
 short_description:
-  "l'endommagement d'un matériau";
+  "the damage, generally between 0 (sound material) and 1 (broken material)";
 };
 
 "GrainSize" {
@@ -825,7 +793,7 @@ lower_physical_bounds : { "SI" : 0 };
 type:
   "scalar";
 short_description:
-  "la taille de grain";
+  "the grain size";
 };
 
 "FissionDensity" {
@@ -834,7 +802,7 @@ lower_physical_bounds : { "SI" : 0 };
 type:
   "scalar";
 short_description:
-  "la densité de fission";
+  "the fission density";
 };
 
 "IrradiationDamage" {
@@ -843,8 +811,7 @@ lower_physical_bounds : { "SI" : 0 };
 type:
   "scalar";
 short_description:
-  "le dommage due à l'irradiation, "
-  "mesuré par le nombre de déplacement moyen de chaque atome (dpa)";
+  "the irradiation damage, measure by the mean number of displacements of each atoms";
 };
 
 "NeutronFlux" {
@@ -852,7 +819,7 @@ units : { "SI" : "n.m^{-2}.s^{-1}" };
 type:
   "scalar";
 short_description:
-  "le flux de neutron";
+  "the neutron flux";
 };
 
 "NeutronFluence" {
@@ -861,7 +828,7 @@ lower_physical_bounds : { "SI" : 0 };
 type:
   "scalar";
 short_description:
-  "la fluence";
+  "the neutron fluence";
 };
 
 "FastNeutronFlux_01MeV" {
@@ -872,7 +839,7 @@ lower_physical_bounds : { "SI" : 0 };
 type:
   "scalar";
 short_description:
-  "le flux de neutron rapide";
+  "the fast neutron fluence";
 };
 
 "FastNeutronFlux_1MeV" {
@@ -883,7 +850,7 @@ lower_physical_bounds : { "SI" : 0 };
 type:
   "scalar";
 short_description:
-  "le flux de neutron rapide";
+  "the fast neutron fluence";
 };
 
 "FastNeutronFluence_01MeV" {
@@ -894,7 +861,7 @@ lower_physical_bounds : { "SI" : 0 };
 type:
   "scalar";
 short_description:
-  "la fluence rapide";
+  "the fast neutron fluence, where the limit for fast neutron is 0.1 MeV";
 };
 
 "FastNeutronFluence_1MeV" {
@@ -905,7 +872,7 @@ lower_physical_bounds : { "SI" : 0 };
 type:
   "scalar";
 short_description:
-  "la fluence rapide";
+  "the fast neutron fluence, where the limit for fast neutron is 1 MeV";
 };
 
 "BurnUp_AtPercent" {
@@ -916,7 +883,7 @@ lower_physical_bounds : { "SI" : 0 };
 type:
   "scalar";
 short_description:
-  "le taux de combustion en atome pour cent";
+  "the burn-up in at.%";
 };
 
 "MeanBurnUp_AtPercent" {
@@ -927,8 +894,7 @@ lower_physical_bounds : { "SI" : 0 };
 type:
   "scalar";
 short_description:
-  "le taux de combustion en atome pour cent moyen (au sens spatial) pour un "
-  "matériau donné";
+  "the spatial average of the  burn-up in at.%";
 };
 
 "BurnUp_MWJperTm" {
@@ -939,7 +905,7 @@ lower_physical_bounds : { "SI" : 0 };
 type:
   "scalar";
 short_description:
-  "le taux de combustion en MegaWattJour par tonne (métal)";
+  "the burn-up in MegaWattJour per tons of metals";
 };
 
 "MeanBurnUp_MWJperTm" {
@@ -950,8 +916,7 @@ lower_physical_bounds : { "SI" : 0 };
 type:
   "scalar";
 short_description:
-  "le taux de combustion en MegaWattJour par tonne (métal) moyen (au sens "
-  "spatial) pour un matériau donné";
+  "the spatial average of the  burn-up in MegaWattJour per tons of metals";
 };
 
 "B10BurnUp" {
@@ -960,11 +925,7 @@ lower_physical_bounds : { "SI" : 0 };
 type:
   "scalar";
 short_description:
-  "le taux d'usure en \(\mbox{}^{10}B\)";
-description : {
-  "Ce nombre décrit le nombre d'atomes de \(\mbox{}^{10}B\) "
-  "consommé par unité de volume au cours de l'irradiation."
-};
+  "the burn-up of an absorant material containing \(\mbox{}^{10}B\)";
 };
 
 "PlateWidth" {
@@ -1013,5 +974,5 @@ lower_physical_bounds : { "SI" : 0 };
 type:
   "scalar";
 short_description:
-  "le nombre de moles d'une substance";
+  "the amount of substance";
 };

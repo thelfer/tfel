@@ -131,10 +131,10 @@ namespace tfel::glossary {
       Glossary::names + 1,
       "",
       "scalar",
-      "la composante axiale du gradient de la transformation (cette grandeur "
-      "n'a de sens que pour les calculs en contraintes planes)",
+      "the axial component of the deformation gradient",
       "" /* no 'description' defined */,
-      "" /* no 'notes' defined */,
+      "This quantity is only meaningful under on of the plane stress modelling "
+      "hypotheses.",
       "",
       "");
 
@@ -155,10 +155,10 @@ namespace tfel::glossary {
       Glossary::names + 3,
       "",
       "scalar",
-      "la déformation axiale (cette grandeur n'a de sens que pour les calculs "
-      "en contraintes planes)",
+      "the axial strain",
       "" /* no 'description' defined */,
-      "" /* no 'notes' defined */,
+      "This quantity is only meaningful under on of the plane stress modelling "
+      "hypotheses.",
       "",
       "");
 
@@ -168,10 +168,10 @@ namespace tfel::glossary {
       Glossary::names + 4,
       "",
       "scalar",
-      "la contrainte axiale",
+      "the axial stress",
       "" /* no 'description' defined */,
-      "Cette grandeur est utilisée dans les calculs 1Daxisymétrique en "
-      "contraintes planes généralisées",
+      "This quantity is only meaningful under the axisymmetrical generalized "
+      "plane stress modelling hypothesis.",
       "",
       "");
 
@@ -181,9 +181,8 @@ namespace tfel::glossary {
       Glossary::names + 5,
       "SI:m^{-3}",
       "scalar",
-      "le taux d'usure en \\(\\mbox{}^{10}B\\)",
-      "Ce nombre décrit le nombre d'atomes de \\(\\mbox{}^{10}B\\) consommé "
-      "par unité de volume au cours de l'irradiation.",
+      "the burn-up of an absorant material containing \\(\\mbox{}^{10}B\\)",
+      "" /* no 'description' defined */,
       "" /* no 'notes' defined */,
       "SI:0",
       "");
@@ -217,7 +216,7 @@ namespace tfel::glossary {
       Glossary::names + 8,
       "SI:at./100",
       "scalar",
-      "le taux de combustion en atome pour cent",
+      "the burn-up in at.%",
       "" /* no 'description' defined */,
       "" /* no 'notes' defined */,
       "SI:0",
@@ -229,7 +228,7 @@ namespace tfel::glossary {
       Glossary::names + 9,
       "SI:MWJ/tm",
       "scalar",
-      "le taux de combustion en MegaWattJour par tonne (métal)",
+      "the burn-up in MegaWattJour per tons of metals",
       "" /* no 'description' defined */,
       "" /* no 'notes' defined */,
       "SI:0",
@@ -277,7 +276,7 @@ namespace tfel::glossary {
       Glossary::names + 13,
       "SI:Pa",
       "tensor",
-      "les contraintes exprimées dans le repère cylindrique",
+      "the stress in the cylindrical frame",
       "" /* no 'description' defined */,
       "" /* no 'notes' defined */,
       "",
@@ -288,7 +287,8 @@ namespace tfel::glossary {
                                        Glossary::names + 14,
                                        "",
                                        "scalar",
-                                       "l'endommagement d'un matériau",
+                                       "the damage, generally between 0 (sound "
+                                       "material) and 1 (broken material)",
                                        "" /* no 'description' defined */,
                                        "" /* no 'notes' defined */,
                                        "",
@@ -311,7 +311,7 @@ namespace tfel::glossary {
                                              Glossary::names + 16,
                                              "SI:m",
                                              "vector",
-                                             "le déplacement",
+                                             "the displacement",
                                              "" /* no 'description' defined */,
                                              "" /* no 'notes' defined */,
                                              "",
@@ -359,7 +359,7 @@ namespace tfel::glossary {
       Glossary::names + 20,
       "",
       "scalar",
-      "The equivalent plastic strain",
+      "the equivalent plastic strain",
       "" /* no 'description' defined */,
       "" /* no 'notes' defined */,
       "SI:0",
@@ -371,9 +371,9 @@ namespace tfel::glossary {
       Glossary::names + 21,
       "",
       "scalar",
-      "la somme des déformations plastiques ou viscoplastiques équivalentes",
+      "the sum of all plastic and viscoplastic equivalent strains",
       "" /* no 'description' defined */,
-      "Cette quantité n'a pas de sens physique directe.",
+      "This quantity has no direct physical meaning.",
       "",
       "");
 
@@ -383,7 +383,7 @@ namespace tfel::glossary {
       Glossary::names + 22,
       "",
       "scalar",
-      "The equivalent viscoplastic strain",
+      "the equivalent viscoplastic strain",
       "" /* no 'description' defined */,
       "" /* no 'notes' defined */,
       "SI:0",
@@ -395,7 +395,7 @@ namespace tfel::glossary {
       Glossary::names + 23,
       "SI:n.m^{-2}",
       "scalar",
-      "la fluence rapide",
+      "the fast neutron fluence, where the limit for fast neutron is 0.1 MeV",
       "" /* no 'description' defined */,
       "" /* no 'notes' defined */,
       "SI:0",
@@ -407,7 +407,7 @@ namespace tfel::glossary {
       Glossary::names + 24,
       "SI:n.m^{-2}",
       "scalar",
-      "la fluence rapide",
+      "the fast neutron fluence, where the limit for fast neutron is 1 MeV",
       "" /* no 'description' defined */,
       "" /* no 'notes' defined */,
       "SI:0",
@@ -419,7 +419,7 @@ namespace tfel::glossary {
       Glossary::names + 25,
       "SI:n.m^{-2}.s^{-1}",
       "scalar",
-      "le flux de neutron rapide",
+      "the fast neutron fluence",
       "" /* no 'description' defined */,
       "" /* no 'notes' defined */,
       "SI:0",
@@ -431,7 +431,7 @@ namespace tfel::glossary {
       Glossary::names + 26,
       "SI:n.m^{-2}.s^{-1}",
       "scalar",
-      "le flux de neutron rapide",
+      "the fast neutron fluence",
       "" /* no 'description' defined */,
       "" /* no 'notes' defined */,
       "SI:0",
@@ -467,7 +467,7 @@ namespace tfel::glossary {
       Glossary::names + 29,
       "SI:m^{-3}",
       "scalar",
-      "la densité de fission",
+      "the fission density",
       "" /* no 'description' defined */,
       "" /* no 'notes' defined */,
       "SI:0",
@@ -479,10 +479,9 @@ namespace tfel::glossary {
       Glossary::names + 30,
       "",
       "scalar",
-      "un gonflement imposé dû à des produits de fission gazeux",
+      "swelling du to gazeous fission products",
       "" /* no 'description' defined */,
-      "L'utilisation de ce nom pour imposer un gonflement n'est pas "
-      "obligatoire",
+      "" /* no 'notes' defined */,
       "",
       "");
 
@@ -491,7 +490,7 @@ namespace tfel::glossary {
                                           Glossary::names + 31,
                                           "SI:m",
                                           "scalar",
-                                          "la taille de grain",
+                                          "the grain size",
                                           "" /* no 'description' defined */,
                                           "" /* no 'notes' defined */,
                                           "SI:0",
@@ -522,17 +521,16 @@ namespace tfel::glossary {
       "SI:0",
       "");
 
-  const GlossaryEntry Glossary::HillStress(
-      "HillStress",
-      Glossary::names + 33,
-      Glossary::names + 34,
-      "SI:Pa",
-      "tensor",
-      "la contrainte équivalente au sens de Hill",
-      "" /* no 'description' defined */,
-      "" /* no 'notes' defined */,
-      "SI:0",
-      "");
+  const GlossaryEntry Glossary::HillStress("HillStress",
+                                           Glossary::names + 33,
+                                           Glossary::names + 34,
+                                           "SI:Pa",
+                                           "tensor",
+                                           "the Hill equivalent stress",
+                                           "" /* no 'description' defined */,
+                                           "" /* no 'notes' defined */,
+                                           "SI:0",
+                                           "");
 
   const GlossaryEntry Glossary::HydrostaticPressure(
       "HydrostaticPressure",
@@ -540,8 +538,8 @@ namespace tfel::glossary {
       Glossary::names + 35,
       "SI:Pa",
       "tensor",
-      "la pression hydrostatique (égale au tiers de la trace du tenseur des "
-      "contraintes)",
+      "the hydrostatic pressure, defined as the third of the trace of the "
+      "stress tensor",
       "" /* no 'description' defined */,
       "" /* no 'notes' defined */,
       "",
@@ -553,8 +551,8 @@ namespace tfel::glossary {
       Glossary::names + 36,
       "SI:dpa",
       "scalar",
-      "le dommage due à l'irradiation, mesuré par le nombre de déplacement "
-      "moyen de chaque atome (dpa)",
+      "the irradiation damage, measure by the mean number of displacements of "
+      "each atoms",
       "" /* no 'description' defined */,
       "" /* no 'notes' defined */,
       "SI:0",
@@ -566,10 +564,9 @@ namespace tfel::glossary {
       Glossary::names + 37,
       "",
       "scalar",
-      "un gonflement imposé  dû à des dégâts d'irradiation",
+      "swelling du to irradiation damage",
       "" /* no 'description' defined */,
-      "L'utilisation de ce nom pour imposer un gonflement n'est pas "
-      "obligatoire",
+      "" /* no 'notes' defined */,
       "",
       "");
 
@@ -579,10 +576,9 @@ namespace tfel::glossary {
       Glossary::names + 38,
       "",
       "scalar",
-      "un gonflement imposé  dû à des dégâts d'irradiation",
+      "swelling du to irradiation damage",
       "" /* no 'description' defined */,
-      "L'utilisation de ce nom pour imposer un gonflement n'est pas "
-      "obligatoire",
+      "" /* no 'notes' defined */,
       "",
       "");
 
@@ -661,8 +657,7 @@ namespace tfel::glossary {
       Glossary::names + 42,
       "SI:at./100",
       "scalar",
-      "le taux de combustion en atome pour cent moyen (au sens spatial) pour "
-      "un matériau donné",
+      "the spatial average of the  burn-up in at.%",
       "" /* no 'description' defined */,
       "" /* no 'notes' defined */,
       "SI:0",
@@ -674,8 +669,7 @@ namespace tfel::glossary {
       Glossary::names + 43,
       "SI:MWJ/tm",
       "scalar",
-      "le taux de combustion en MegaWattJour par tonne (métal) moyen (au sens "
-      "spatial) pour un matériau donné",
+      "the spatial average of the  burn-up in MegaWattJour per tons of metals",
       "" /* no 'description' defined */,
       "" /* no 'notes' defined */,
       "SI:0",
@@ -721,7 +715,7 @@ namespace tfel::glossary {
       Glossary::names + 46,
       "SI:n.m^{-2}",
       "scalar",
-      "la fluence",
+      "the neutron fluence",
       "" /* no 'description' defined */,
       "" /* no 'notes' defined */,
       "SI:0",
@@ -732,7 +726,7 @@ namespace tfel::glossary {
                                             Glossary::names + 47,
                                             "SI:n.m^{-2}.s^{-1}",
                                             "scalar",
-                                            "le flux de neutron",
+                                            "the neutron flux",
                                             "" /* no 'description' defined */,
                                             "" /* no 'notes' defined */,
                                             "",
@@ -744,23 +738,22 @@ namespace tfel::glossary {
       Glossary::names + 48,
       "SI:Pa.m^{-1}",
       "scalar",
-      "la raideur normale pour un modèle de zone cohésive",
+      "the normal elastic stiffness for a cohesive zone model",
       "" /* no 'description' defined */,
       "" /* no 'notes' defined */,
       "",
       "");
 
-  const GlossaryEntry Glossary::NumberOfMoles(
-      "NumberOfMoles",
-      Glossary::names + 48,
-      Glossary::names + 49,
-      "SI:mol",
-      "scalar",
-      "le nombre de moles d'une substance",
-      "" /* no 'description' defined */,
-      "" /* no 'notes' defined */,
-      "SI:0",
-      "");
+  const GlossaryEntry Glossary::NumberOfMoles("NumberOfMoles",
+                                              Glossary::names + 48,
+                                              Glossary::names + 49,
+                                              "SI:mol",
+                                              "scalar",
+                                              "the amount of substance",
+                                              "" /* no 'description' defined */,
+                                              "" /* no 'notes' defined */,
+                                              "SI:0",
+                                              "");
 
   const GlossaryEntry Glossary::OpeningDisplacement(
       "OpeningDisplacement",
@@ -887,8 +880,8 @@ namespace tfel::glossary {
       Glossary::names + 60,
       "",
       "scalar",
-      "le coefficient de Poisson d'un matériau orthotrope relatif aux première "
-      "et deuxième directions d'orthotropie",
+      "the Poisson's coefficient between the first and second directions of "
+      "orthotropy",
       "" /* no 'description' defined */,
       "" /* no 'notes' defined */,
       "SI:-1",
@@ -900,8 +893,8 @@ namespace tfel::glossary {
       Glossary::names + 61,
       "",
       "scalar",
-      "le coefficient de Poisson d'un matériau orthotrope relatif aux première "
-      "et troisième directions d'orthotropie",
+      "the Poisson's coefficient between the first and third directions of "
+      "orthotropy",
       "" /* no 'description' defined */,
       "" /* no 'notes' defined */,
       "SI:-1",
@@ -913,8 +906,8 @@ namespace tfel::glossary {
       Glossary::names + 62,
       "",
       "scalar",
-      "le coefficient de Poisson d'un matériau orthotrope relatif aux deuxième "
-      "et troisième directions d'orthotropie",
+      "the Poisson's coefficient between the second and third directions of "
+      "orthotropy",
       "" /* no 'description' defined */,
       "" /* no 'notes' defined */,
       "SI:-1",
@@ -972,7 +965,7 @@ namespace tfel::glossary {
                                          Glossary::names + 67,
                                          "SI:Pa",
                                          "scalar",
-                                         "la pression d'un gaz",
+                                         "the pressure of a gaz",
                                          "" /* no 'description' defined */,
                                          "" /* no 'notes' defined */,
                                          "",
@@ -984,11 +977,9 @@ namespace tfel::glossary {
       Glossary::names + 68,
       "SI:Pa",
       "scalar",
-      "la première contrainte principale",
+      "the first principal stress",
       "" /* no 'description' defined */,
-      "Son sens est précisé dans la notice de l'opérateur "
-      "['PRIN'](http://www-cast3m.cea.fr/index.php?page=notices&notice=PRIN) "
-      "de [Cast3M](http://www-cast3m.cea.fr)",
+      "" /* no 'notes' defined */,
       "",
       "");
 
@@ -998,11 +989,9 @@ namespace tfel::glossary {
       Glossary::names + 69,
       "SI:Pa",
       "scalar",
-      "la deuxième contrainte principale",
+      "the third principal stress",
       "" /* no 'description' defined */,
-      "Son sens est précisé dans la notice de l'opérateur "
-      "['PRIN'](http://www-cast3m.cea.fr/index.php?page=notices&notice=PRIN) "
-      "de [Cast3M](http://www-cast3m.cea.fr)",
+      "" /* no 'notes' defined */,
       "",
       "");
 
@@ -1012,11 +1001,9 @@ namespace tfel::glossary {
       Glossary::names + 70,
       "SI:Pa",
       "scalar",
-      "la troisième contrainte principale",
+      "the third principal stress",
       "" /* no 'description' defined */,
-      "Son sens est précisé dans la notice de l'opérateur "
-      "['PRIN'](http://www-cast3m.cea.fr/index.php?page=notices&notice=PRIN) "
-      "de [Cast3M](http://www-cast3m.cea.fr)",
+      "" /* no 'notes' defined */,
       "",
       "");
 
@@ -1050,8 +1037,7 @@ namespace tfel::glossary {
       Glossary::names + 73,
       "SI:Pa",
       "scalar",
-      "le module de cisaillement d'un matériau orthotrope relatif aux première "
-      "et deuxième directions d'orthotropie",
+      "the shear moduls between the first and second directions of orthotropy",
       "" /* no 'description' defined */,
       "" /* no 'notes' defined */,
       "SI:0",
@@ -1063,8 +1049,7 @@ namespace tfel::glossary {
       Glossary::names + 74,
       "SI:Pa",
       "scalar",
-      "le module de cisaillement d'un matériau orthotrope relatif aux première "
-      "et troisième directions d'orthotropie",
+      "the shear moduls between the first and third directions of orthotropy",
       "" /* no 'description' defined */,
       "" /* no 'notes' defined */,
       "SI:0",
@@ -1076,8 +1061,7 @@ namespace tfel::glossary {
       Glossary::names + 75,
       "SI:Pa",
       "scalar",
-      "le module de cisaillement d'un matériau orthotrope relatif aux deuxième "
-      "et troisième directions d'orthotropie",
+      "the shear moduls between the second and third directions of orthotropy",
       "" /* no 'description' defined */,
       "" /* no 'notes' defined */,
       "SI:0",
@@ -1089,10 +1073,9 @@ namespace tfel::glossary {
       Glossary::names + 76,
       "",
       "scalar",
-      "un gonflement imposé dû à des produits de fission solides",
+      "swelling du to solid fission products",
       "" /* no 'description' defined */,
-      "L'utilisation de ce nom pour imposer un gonflement n'est pas "
-      "obligatoire",
+      "" /* no 'notes' defined */,
       "",
       "");
 
@@ -1113,7 +1096,7 @@ namespace tfel::glossary {
       Glossary::names + 78,
       "SI:Pa",
       "tensor",
-      "les contraintes exprimées dans le repère sphérique",
+      "the stress in a spherical frame",
       "" /* no 'description' defined */,
       "" /* no 'notes' defined */,
       "",
@@ -1124,7 +1107,7 @@ namespace tfel::glossary {
                                        Glossary::names + 79,
                                        "",
                                        "tensor",
-                                       "la déformation",
+                                       "the strain tensor",
                                        "" /* no 'description' defined */,
                                        "" /* no 'notes' defined */,
                                        "",
@@ -1148,7 +1131,7 @@ namespace tfel::glossary {
                                        Glossary::names + 81,
                                        "SI:Pa",
                                        "tensor",
-                                       "les contraintes",
+                                       "the stress tensor",
                                        "" /* no 'description' defined */,
                                        "" /* no 'notes' defined */,
                                        "",
@@ -1159,10 +1142,9 @@ namespace tfel::glossary {
                                          Glossary::names + 82,
                                          "",
                                          "scalar",
-                                         "un gonflement imposé",
+                                         "an imposed swelling",
                                          "" /* no 'description' defined */,
-                                         "l'utilisation de ce nom pour imposer "
-                                         "un gonflement n'est pasobligatoire.",
+                                         "" /* no 'notes' defined */,
                                          "",
                                          "");
 
@@ -1172,7 +1154,7 @@ namespace tfel::glossary {
       Glossary::names + 83,
       "SI:Pa.m^{-1}",
       "scalar",
-      "la raideur tangentielle pour un modèle de zone cohésive",
+      "the tangential elastic stiffness for a cohesive zone model",
       "" /* no 'description' defined */,
       "" /* no 'notes' defined */,
       "",
@@ -1258,9 +1240,9 @@ namespace tfel::glossary {
       Glossary::names + 90,
       "SI:K^{-1}",
       "scalar",
-      "le coefficient de dilatation linéique d'un matériau isotrope",
+      "the mean thermal expansion coefficient",
       "" /* no 'description' defined */,
-      "" /* no 'notes' defined */,
+      "This entry shall have be named MeanThermalExpansionCoefficient.",
       "",
       "");
 
@@ -1270,10 +1252,10 @@ namespace tfel::glossary {
       Glossary::names + 91,
       "SI:K^{-1}",
       "scalar",
-      "le coefficient de dilatation linéique d'un matériau orthotrope suivant "
-      "la première direction d'orthotropie",
+      "the mean thermal expansion coefficient along the first orthotropy "
+      "direction",
       "" /* no 'description' defined */,
-      "" /* no 'notes' defined */,
+      "This entry shall have be named MeanThermalExpansionCoefficient1.",
       "",
       "");
 
@@ -1283,10 +1265,10 @@ namespace tfel::glossary {
       Glossary::names + 92,
       "SI:K^{-1}",
       "scalar",
-      "le coefficient de dilatation linéique d'un matériau orthotrope suivant "
-      "la deuxième direction d'orthotropie",
+      "the mean thermal expansion coefficient along the second orthotropy "
+      "direction",
       "" /* no 'description' defined */,
-      "" /* no 'notes' defined */,
+      "This entry shall have be named MeanThermalExpansionCoefficient2.",
       "",
       "");
 
@@ -1296,10 +1278,10 @@ namespace tfel::glossary {
       Glossary::names + 93,
       "SI:K^{-1}",
       "scalar",
-      "le coefficient de dilatation linéique d'un matériau orthotrope suivant "
-      "la troisième direction d'orthotropie",
+      "the mean thermal expansion coefficient along the third orthotropy "
+      "direction",
       "" /* no 'description' defined */,
-      "" /* no 'notes' defined */,
+      "This entry shall have be named MeanThermalExpansionCoefficient3.",
       "",
       "");
 
@@ -1315,17 +1297,16 @@ namespace tfel::glossary {
       "",
       "");
 
-  const GlossaryEntry Glossary::TrescaStress(
-      "TrescaStress",
-      Glossary::names + 94,
-      Glossary::names + 95,
-      "SI:Pa",
-      "scalar",
-      "la contrainte équivalente au sens de Tresca",
-      "" /* no 'description' defined */,
-      "" /* no 'notes' defined */,
-      "SI:0",
-      "");
+  const GlossaryEntry Glossary::TrescaStress("TrescaStress",
+                                             Glossary::names + 94,
+                                             Glossary::names + 95,
+                                             "SI:Pa",
+                                             "scalar",
+                                             "the Tresca equivalent stress",
+                                             "" /* no 'description' defined */,
+                                             "" /* no 'notes' defined */,
+                                             "SI:0",
+                                             "");
 
   const GlossaryEntry Glossary::UltimateTensileStrength(
       "UltimateTensileStrength",
@@ -1333,7 +1314,8 @@ namespace tfel::glossary {
       Glossary::names + 97,
       "SI:Pa",
       "scalar",
-      "la valeur maximale de la contrainte qu'un materiau peut supporter",
+      "the maximum stress that a material can withstand while being stretched "
+      "or pulled before breaking",
       "" /* no 'description' defined */,
       "" /* no 'notes' defined */,
       "SI:0",
@@ -1357,7 +1339,7 @@ namespace tfel::glossary {
       Glossary::names + 99,
       "",
       "scalar",
-      "la dilatation volumique",
+      "the volumetric strain, defined as the trace of the strain tensor",
       "" /* no 'description' defined */,
       "" /* no 'notes' defined */,
       "",
@@ -1369,22 +1351,26 @@ namespace tfel::glossary {
       Glossary::names + 100,
       "SI:Pa",
       "scalar",
-      "la contrainte équivalente au sens de Von Mises",
+      "the von Mises equivalent stress",
       "" /* no 'description' defined */,
       "" /* no 'notes' defined */,
       "SI:0",
       "");
 
-  const GlossaryEntry Glossary::YieldStrength("YieldStrength",
-                                              Glossary::names + 100,
-                                              Glossary::names + 102,
-                                              "SI:Pa",
-                                              "scalar",
-                                              "la limite d'élasticité",
-                                              "" /* no 'description' defined */,
-                                              "" /* no 'notes' defined */,
-                                              "SI:0",
-                                              "");
+  const GlossaryEntry Glossary::YieldStrength(
+      "YieldStrength",
+      Glossary::names + 100,
+      Glossary::names + 102,
+      "SI:Pa",
+      "scalar",
+      "the stress corresponding to the yield point at which the material "
+      "begins to deform plastically",
+      "" /* no 'description' defined */,
+      "When this limit is difficult to identify experimentally, the offset "
+      "yield point is taken as the stress at which 0.2% plastic deformation "
+      "occurs",
+      "SI:0",
+      "");
 
   const GlossaryEntry Glossary::YoungModulus(
       "YoungModulus",

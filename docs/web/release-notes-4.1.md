@@ -1857,6 +1857,8 @@ command is concatenated in a single string for the test.
 
 # Issues fixed
 
+
+
 ## Issue #256: [tfel-math] Add support to clamp `TFEL/Math` arrays
 
 This feature is described in Section @sec:tfel_math:issue_256.
@@ -1912,6 +1914,10 @@ For more details, see <https://github.com/thelfer/tfel/issues/241>
 This feature is described in Section @sec:mfront:issue_239.
 
 For more details, see <https://github.com/thelfer/tfel/issues/239>
+
+## Issue #238: [tfel-glossary] Translate all the description in english
+
+For more details, see <https://github.com/thelfer/tfel/issues/238>
 
 ## Issue #237: [mfront] Add physical bounds declaration in the glossary. Automatically use those bounds in `MFront`
 

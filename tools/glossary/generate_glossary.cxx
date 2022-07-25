@@ -859,9 +859,8 @@ void generatePandocOutput(const GlossaryTokenizer& tokenizer) {
                  "generatePandocOutput: "
                  "can't open file 'glossary-pandoc.txt'");
   doc << "---\n"
-      << "title: Implementation of a perfect plastic behaviour using the "
-      << "Hosford equivalent stress\n"
-      << "author: Helfer Thomas, Maxence Wangermez Bernaud Stéphane\n"
+      << "title: Description of the TFEL glossary\n"
+      << "author: Helfer Thomas, Maxence Wangermez, Bernaud Stéphane\n"
       << "date: 21/11/2017\n"
       << "lang: en-EN\n"
       << "link-citations: true\n"
@@ -890,11 +889,13 @@ void generatePandocOutput(const GlossaryTokenizer& tokenizer) {
     if (!p->short_description.empty()) {
       doc << "This entry describes " << p->short_description << ".\n" << '\n';
     }
-    doc << "* alternative names: ";
-    for (auto pn = n.begin(); pn != n.end();) {
-      doc << *pn;
-      if (++pn != n.end()) {
-        doc << ", ";
+    if (n.size() != 1u) {
+      doc << "* alternative names: ";
+      for (auto pn = n.begin(); pn != n.end();) {
+        doc << *pn;
+        if (++pn != n.end()) {
+          doc << ", ";
+        }
       }
     }
     doc << '\n' << "* units:\n";
