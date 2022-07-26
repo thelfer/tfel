@@ -82,6 +82,9 @@ Options
 - `enable-glibcxx-debug`: use the debug version of the STL implemented
   by the GLIB
 - `enable-testing`: enables tests. ON by default.
+- `enable-mfront-quantity-tests`: enable tests of behaviours using 
+  quantities (such tests fails on old compilers, i.e. gcc-8.1.0). 
+  ON by default.
 
 cmake usefull variables
 =======================

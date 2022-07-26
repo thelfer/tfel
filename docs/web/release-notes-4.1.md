@@ -1857,6 +1857,17 @@ command is concatenated in a single string for the test.
 
 # Issues fixed
 
+## Issue #262: Installation issue of the `master` branch (future version 4.1) with `gcc-8.1.0`
+
+The issue is related to `MFront` tests using quantities such tests fails
+to build with old compilers, i.e. `gcc` `8.1.0`.
+
+The `enable-mfront-quantity-tests` option can be optionnaly specified to
+enable or disable tests of behaviours using quantities. This option is
+ON by default.
+
+For more details, see <https://github.com/thelfer/tfel/issues/262>
+
 ## Issue #256: [tfel-math] Add support to clamp `TFEL/Math` arrays
 
 This feature is described in Section @sec:tfel_math:issue_256.
