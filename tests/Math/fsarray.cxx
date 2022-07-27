@@ -39,6 +39,8 @@ struct FSArrayTest final : public tfel::tests::TestCase {
   }  // end of execute
  private:
   void test1() {
+    /* does not compile with icc 2021.1, but compiles with 2021.1 */
+#ifndef __INTEL_COMPILER 
     using namespace std;
     using namespace tfel::math;
     constexpr fsarray<3u, int> a1(0);
@@ -71,8 +73,11 @@ struct FSArrayTest final : public tfel::tests::TestCase {
     TFEL_TESTS_STATIC_ASSERT(*(a5.rbegin() + 0) == 9);
     TFEL_TESTS_STATIC_ASSERT(*(a5.rbegin() + 1) == 3);
     TFEL_TESTS_STATIC_ASSERT(*(a5.rbegin() + 2) == 5);
+#endif /* __INTEL_COMPILER  */
   }  // end of test1
   void test2() {
+    /* does not compile with icc 2021.1, but compiles with 2021.1 */
+#ifndef __INTEL_COMPILER 
     using namespace tfel::math;
     using usint = unsigned short;
     constexpr fsarray<3u, unsigned short> a1{{usint(2), usint(3), usint(4)}};
@@ -83,6 +88,7 @@ struct FSArrayTest final : public tfel::tests::TestCase {
     TFEL_TESTS_STATIC_ASSERT(a2[0] == 2);
     TFEL_TESTS_STATIC_ASSERT(a2[1] == 3);
     TFEL_TESTS_STATIC_ASSERT(a2[2] == 4);
+#endif /* __INTEL_COMPILER  */
   }  // end of test2
   void test3() {
     int values[] = {0, 2, 0};
@@ -121,6 +127,8 @@ struct FSArrayTest final : public tfel::tests::TestCase {
     TFEL_TESTS_ASSERT(std::abs(v1[2] + 0.3) < eps);
   }  // end of test5
   void test6() {
+    /* does not compile with icc 2021.1, but compiles with 2021.1 */
+#ifndef __INTEL_COMPILER 
     constexpr auto a = [] {
       auto values = tfel::math::fsarray<3u, int>{-14, 12, -3};
       values.clamp(-4, 4);
@@ -129,6 +137,7 @@ struct FSArrayTest final : public tfel::tests::TestCase {
     TFEL_TESTS_STATIC_ASSERT(a[0] == -4);
     TFEL_TESTS_STATIC_ASSERT(a[1] == 4);
     TFEL_TESTS_STATIC_ASSERT(a[2] == -3);
+#endif /* __INTEL_COMPILER  */
   }  // end of test6
 };
 
