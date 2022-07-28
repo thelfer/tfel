@@ -135,11 +135,8 @@ namespace tfel::math {
 
   template <typename real, typename value>
   void CubicSpline<real, value>::computeLocalCoefficients(
-      value& a2,
-      value& a3,
-      const typename std::vector<
-          typename CubicSpline<real, value>::Point>::const_iterator pa) {
-    const auto pb = pa + 1;
+      value& a2, value& a3, const point_const_iterator pa) {
+    const auto pb = std::next(pa);
     const auto usL = 1 / (pb->x - pa->x);
     const auto Dy = (pb->y - pa->y) * usL;
     a2 = (3 * Dy - pb->d - 2 * pa->d) * usL;
@@ -148,10 +145,7 @@ namespace tfel::math {
 
   template <typename real, typename value>
   value CubicSpline<real, value>::computeLocalIntegral(
-      const real xa,
-      const real xb,
-      const typename std::vector<
-          typename CubicSpline<real, value>::Point>::const_iterator pa) {
+      const real xa, const real xb, const point_const_iterator pa) {
     const auto py = pa->y;
     const auto d = pa->d;
     value a2;

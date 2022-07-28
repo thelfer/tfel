@@ -24,6 +24,20 @@
 
 namespace mfront {
 
+  static bool useQuantities(const ModelDescription& md) {
+    return md.use_qt.has_value() ? *(md.use_qt) : false;
+  }  // end of useQuantities
+
+  static void writeScalarStandardTypedefs(std::ostream& os,
+                                          const ModelDescription& md) {
+    const auto use_qt = useQuantities(md) ? "true" : "false";
+    for (const auto& a : getScalarTypeAliases()) {
+      os << "using " << a << " [[maybe_unused]] = "
+         << "typename tfel::config::ScalarTypes<double, " << use_qt
+         << ">::" << a << ";\n";
+    }
+  }  // end of writeScalarStandardTypedefs
+
   static std::string getHeaderGuard(const ModelDescription& mb) {
     const auto& m = mb.material;
     std::string header = "LIB_MFRONT_MODEL";
@@ -128,6 +142,8 @@ namespace mfront {
            << " */\n\n"
            << "#ifndef " << getHeaderGuard(md) << "\n"
            << "#define " << getHeaderGuard(md) << "\n\n"
+           << "#include\"TFEL/Config/TFELTypes.hxx\"\n"
+           << "#include\"TFEL/PhysicalConstants.hxx\"\n"
            << "#include\"TFEL/Material/BoundsCheck.hxx\"\n"
            << "#include\"TFEL/Material/OutOfBoundsPolicy.hxx\"\n";
     const auto hasBounds = [&md] {
@@ -153,11 +169,12 @@ namespace mfront {
            << " * \\brief  structure implementing the " << md.className
            << " model\n"
            << " */\n"
-           << "template<typename real>\n"
+           << "template<typename NumericType>\n"
            << "struct " << md.className << '\n'
            << "{\n"
            << "//! a simple alias\n"
            << "typedef tfel::material::OutOfBoundsPolicy OutOfBoundsPolicy;\n";
+    writeScalarStandardTypedefs(header, md);
     if (md.constantMaterialProperties.empty()) {
       header << "//! default constructor\n"
              << md.className << "() = default;\n";
@@ -236,7 +253,17 @@ namespace mfront {
       }
       header << ") const {\n"
              << "using namespace std;\n"
+             << "using namespace tfel::math;\n"
+             << "using namespace tfel::material;\n"
              << "using tfel::material::BoundsCheckBase;\n";
+      writeMaterialLaws(header, md.materialLaws);
+      if (useQuantities(md)) {
+        header << "using PhysicalConstants [[maybe_unused]] = "
+                << "tfel::PhysicalConstants<NumericType, true>;\n";
+      } else {
+        header << "using PhysicalConstants [[maybe_unused]] = "
+               << "tfel::PhysicalConstants<NumericType, false>;\n";
+      }
       if (f.modifiedVariables.size() == 1) {
         header << "real " << *(f.modifiedVariables.begin()) << ";\n";
       }

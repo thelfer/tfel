@@ -919,7 +919,7 @@ namespace tfel::utilities {
     out << '\n';
   }
 
-  bool CxxTokenizer::isValidIdentifier(const std::string &s, const bool b) {
+  bool CxxTokenizer::isValidIdentifier(std::string_view s, const bool b) {
     if (s.empty()) {
       return false;
     }

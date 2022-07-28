@@ -53,6 +53,10 @@ static constexpr unsigned short
 
 namespace mfront {
 
+  static bool useQuantities(const ModelDescription& md) {
+    return md.use_qt.has_value() ? *(md.use_qt) : false;
+  }  // end of useQuantities
+
   static std::string getDeclaration(const VariableDescription& v) {
     const auto& en = v.getExternalName();
     if (v.hasGlossaryName()) {
@@ -553,10 +557,11 @@ namespace mfront {
     }
     this->srcFile
         << " */\n\n"
+        << "#include<cmath>\n"
+        << "#include<sstream>\n"
         << "#include<iostream>\n"
         << "#include<stdexcept>\n"
-        << "#include<sstream>\n"
-        << "#include<cmath>\n\n"
+        << "#include\"TFEL/PhysicalConstants.hxx\"\n"
         << "#include\"Pleiades/Global.hxx\"\n"
         << "#include\"Pleiades/OutOfBoundsPolicy.hxx\"\n"
         << "#include\"Pleiades/Parser/Data.hxx\"\n"
@@ -635,7 +640,17 @@ namespace mfront {
       this->srcFile << ") const\n"
                     << "{\n"
                     << "using namespace std;\n"
+                    << "using namespace tfel::math;\n"
+                    << "using namespace tfel::material;\n"
                     << "using pleiades::field::real;\n";
+      if (useQuantities(md)) {
+        this->srcFile << "using PhysicalConstants [[maybe_unused]] = "
+                      << "tfel::PhysicalConstants<NumericType, true>;\n";
+      } else {
+        this->srcFile << "using PhysicalConstants [[maybe_unused]] = "
+                      << "tfel::PhysicalConstants<NumericType, false>;\n";
+      }
+      writeMaterialLaws(this->srcFile, md.materialLaws);
       if ((f.modifiedVariables.size() == 1) &&
           (f.usedVariables.size() <
            TFEL_MFRONTPLEAIDESPARSER_MAXUSEDVARIABLESFORUSINGAPPLY)) {
@@ -652,7 +667,6 @@ namespace mfront {
           ++i;
         }
       }
-      writeMaterialLaws(this->srcFile, md.materialLaws);
       i = 0;
       for (auto puv = f.usedVariables.begin(); puv != f.usedVariables.end();
            ++puv, ++i) {

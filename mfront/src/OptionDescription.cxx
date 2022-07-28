@@ -137,6 +137,9 @@ namespace mfront::bbrick {
       case OptionDescription::DATAMAP:
         throw_if(!d.is<tfel::utilities::DataMap>());
         break;
+      case OptionDescription::DOUBLEDOUBLEMAP:
+        throw_if(!d.is<std::map<double, double>>());
+        break;
       case OptionDescription::DATASTRUCTURE:
         throw_if(!((d.is<tfel::utilities::DataStructure>()) ||
                    (d.is<std::string>())));

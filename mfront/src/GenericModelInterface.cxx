@@ -303,13 +303,14 @@ namespace mfront {
     for (const auto& f : md.functions) {
       os << "void execute_" << f.name
          << "(mfront_gb_BehaviourData& mfront_model_data) const{\n";
-      os << "using namespace std;\n";
-      os << "using namespace tfel::math;\n";
+      os << "using namespace std;\n"
+         << "using namespace tfel::math;\n"
+         << "using namespace tfel::material;\n";
       if (useQuantities(md)) {
-        os << "using PhysicalConstants = "
+        os << "using PhysicalConstants [[maybe_unused]] = "
            << "tfel::PhysicalConstants<NumericType, true>;\n";
       } else {
-        os << "using PhysicalConstants = "
+        os << "using PhysicalConstants [[maybe_unused]] = "
            << "tfel::PhysicalConstants<NumericType, false>;\n";
       }
       if (f.useTimeIncrement) {

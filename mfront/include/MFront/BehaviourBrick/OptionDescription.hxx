@@ -47,6 +47,7 @@ namespace mfront::bbrick {
       BOOLEAN,                    //<! \brief boolean value
       REAL,                       //<! \brief floating point value
       STRING,                     //<! \brief string value
+      DOUBLEDOUBLEMAP,            //<! \brief a map associating pairs of floating point numbers
       DATAMAP,                    //<! \brief a map of data
       DATASTRUCTURE,              //<! \brief data structure
       DATASTRUCTURES /*! \brief the option must be a data structure or an
@@ -107,11 +108,11 @@ namespace mfront::bbrick {
     OptionDescription& operator=(OptionDescription&&);
     //! \brief destructor
     ~OptionDescription();
-    //! name of the option
+    //! \brief name of the option
     std::string name;
-    //! description of the option
+    //! \brief description of the option
     std::string description;
-    //! type of the option
+    //! \brief type of the option
     Type type;
     /*!
      * \brief list of the options that must be set if the current option is

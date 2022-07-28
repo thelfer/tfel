@@ -380,7 +380,7 @@ namespace mfront {
     //
     static void normalize(TypeInformation&, const TypeParsingOptions&);
     static bool matchesTFELMathType(const std::string_view, const std::string&);
-    static void normalizeRawScalarType(const TypeInformation&);
+    static void normalizeRawScalarType(TypeInformation&);
     static void normalizeQuantity(TypeInformation&, const TypeParsingOptions&);
     static void normalizeScalarType(TypeInformation&,
                                     const TypeParsingOptions&);

@@ -74,9 +74,11 @@ namespace tfel::math {
         const std::array<size_type, 1u>& i) const noexcept {
       return this->getIndex(i[0]);
     }
-    /*!
-     * \return the logical size of the array
-     */
+    // \brief return if the array is empty
+    TFEL_HOST_DEVICE constexpr bool empty() const noexcept {
+      return this->data_size == 0;
+    }
+    //! \return the logical size of the array
     TFEL_HOST_DEVICE constexpr size_type size() const noexcept {
       return this->data_size;
     }
@@ -178,6 +180,11 @@ namespace tfel::math {
     getRowMajorIndexingPolicy() {
       return RuntimeRowMajorMatrixIndexingPolicy(*this);
     }  // end of getRowMajorIndexingPolicy
+       //! \return if the matrix is empty
+    TFEL_HOST_DEVICE constexpr bool empty() const noexcept {
+      return (this->getNumberOfRows() == 0) ||
+             (this->getNumberOfColumns() == 0);
+    }
     //!
     TFEL_HOST_DEVICE constexpr size_type size() const noexcept {
       return this->getNumberOfRows() * this->getNumberOfColumns();

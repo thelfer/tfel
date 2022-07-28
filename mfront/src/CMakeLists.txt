@@ -208,6 +208,7 @@ set(TFELMFront_SOURCES
     PowerIsotropicHardeningRule.cxx
     SwiftIsotropicHardeningRule.cxx
     VoceIsotropicHardeningRule.cxx
+    DataIsotropicHardeningRule.cxx
     UserDefinedIsotropicHardeningRule.cxx
     IsotropicHardeningRuleFactory.cxx
     KinematicHardeningRule.cxx

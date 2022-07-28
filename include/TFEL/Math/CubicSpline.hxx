@@ -163,7 +163,7 @@ namespace tfel::math {
      *
      * \param[out] f   : spline value
      * \param[out] df  : spline derivative value
-     * \param[out] d2f : spline derivative value
+     * \param[out] d2f : spline second derivative value
      * \param[in]  x   : point at which the spline is evaluated
      *
      */
@@ -171,19 +171,19 @@ namespace tfel::math {
 
    protected:
     /*!
-     * internal structure which represents a collocation point
+     * \brief internal structure which represents a collocation point
      */
     struct Point {
-      //! abscissa
+      //! \brief abscissa
       real x;
-      //! ordinate
+      //! \brief ordinate
       value y;
-      //! derivate
+      //! \brief derivate
       value d;
     };  // end of struct Point
 
     /*!
-     * internal structure to compare collocation points
+     * \brief internal structure to compare collocation points
      */
     struct PointComparator {
       /*!
@@ -202,23 +202,25 @@ namespace tfel::math {
      */
     void solveTridiagonalLinearSystem(const real* const, real* const);
 
+    //! \brief a simple alias
+    using point_const_iterator = typename std::vector<Point>::const_iterator;
+
     /*!
-     * an helper function to ease integral computations
+     * \item an helper function to ease integral computations
      */
     static value computeLocalIntegral(
         const real,
         const real,
-        const typename std::vector<Point>::const_iterator);
+        const point_const_iterator);
 
     /*!
-     * an helper function to ease factorize computations
+     * \biref an helper function to ease factorize computations
      */
-    static void computeLocalCoefficients(
-        value&, value&, const typename std::vector<Point>::const_iterator);
+    static void computeLocalCoefficients(value&,
+                                         value&,
+                                         const point_const_iterator);
 
-    /*!
-     * build the spline interpolation
-     */
+    //! \brief build the spline interpolation
     void buildInterpolation();
 
     //! \brief collocation points

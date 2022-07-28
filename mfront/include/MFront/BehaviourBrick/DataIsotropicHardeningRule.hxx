@@ -11,9 +11,10 @@
  * project under specific licensing conditions.
  */
 
-#ifndef LIB_MFRONT_BEHAVIOURBRICK_VOCEISOTROPICHARDENINGRULE_HXX
-#define LIB_MFRONT_BEHAVIOURBRICK_VOCEISOTROPICHARDENINGRULE_HXX
+#ifndef LIB_MFRONT_BEHAVIOURBRICK_DATAISOTROPICHARDENINGRULE_HXX
+#define LIB_MFRONT_BEHAVIOURBRICK_DATAISOTROPICHARDENINGRULE_HXX
 
+#include <map>
 #include "MFront/BehaviourBrick/IsotropicHardeningRule.hxx"
 
 namespace mfront::bbrick {
@@ -53,11 +54,38 @@ namespace mfront::bbrick {
     ~DataIsotropicHardeningRule() override;
 
    protected:
-    BehaviourDescription::MaterialProperty R0;
-    BehaviourDescription::MaterialProperty Rinf;
-    BehaviourDescription::MaterialProperty b;
+    /*!
+     * \brief append two member functions beginning with `computeYieldRadius`
+     * and `computeYieldRadiusAndDerivative`.
+     * \param[in] bd: behaviour description
+     * \param[in] fid: flow id
+     * \param[in] id: identifier
+     */
+    virtual void writeLinearInterpolationOfYieldRadius(
+        BehaviourDescription&, const std::string&, const std::string&) const;
+    /*!
+     * \brief interpolation algorithm
+     */
+    enum InterpolationType {
+      LINEAR_INTERPOLATION
+      //,
+      //      CUBIC_SPLINE_INTERPOLATION
+    } itype = LINEAR_INTERPOLATION;
+    /*!
+     * \brief extrapolation type
+     *
+     * If true, extrapolation is allowed and based on the interpolation
+     * selected. If false, no extrapolation is performed and the value is kept
+     * constant, egal to the value of the closest point.
+     */
+    bool etype = true;
+    /*!
+     * \brief the values of the yield radius as a function of the equivalent
+     * plastic strain.
+     */
+    std::map<double, double> values;
   };  // end of struct DataIsotropicHardeningRule
 
 }  // end of namespace mfront::bbrick
 
-#endif /* LIB_MFRONT_BEHAVIOURBRICK_VOCEISOTROPICHARDENINGRULE_HXX */
+#endif /* LIB_MFRONT_BEHAVIOURBRICK_DATAISOTROPICHARDENINGRULE_HXX */

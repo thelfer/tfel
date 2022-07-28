@@ -20,17 +20,13 @@
 namespace mfront::bbrick {
 
   void DataIsotropicHardeningRule::initialize(BehaviourDescription& bd,
-                                              AbstractBehaviourDSL& dsl,
+                                              AbstractBehaviourDSL&,
                                               const std::string& fid,
                                               const std::string& id,
                                               const DataMap& d) {
     constexpr auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     // interpolation type
-    enum InterpolationType {
-      LINEAR_INTERPOLATION,
-      CUBLIC_SPLINE_INTERPOLATION
-    };
-    const auto itype = [&d] {
+    this->itype = [&d] {
       if (d.count("interpolation")) {
         const auto& opt = d.at("interpolation");
         if (!opt.is<std::string>()) {
@@ -42,8 +38,8 @@ namespace mfront::bbrick {
         const auto& i = opt.get<std::string>();
         if (i == "linear") {
           return LINEAR_INTERPOLATION;
-        } else if (i == "cubic_spline") {
-          return CUBLIC_SPLINE_INTERPOLATION;
+          //         } else if (i == "cubic_spline") {
+          //           return CUBIC_SPLINE_INTERPOLATION;
         } else {
           tfel::raise(
               "DataIsotropicHardeningRule::initialize: "
@@ -53,7 +49,7 @@ namespace mfront::bbrick {
       }
       return LINEAR_INTERPOLATION;
     }();
-    const auto etype = [&d] {
+    this->etype = [&d] {
       if (d.count("extrapolation")) {
         const auto& opt = d.at("extrapolation");
         if (opt.is<bool>()) {
@@ -89,9 +85,12 @@ namespace mfront::bbrick {
           "DataIsotropicHardeningRule::initialize: "
           "invalid type for option 'values'");
     }
-    const auto& values = opt.get<std::map<double, double>>();
-    //
-    
+    this->values = opt.get<std::map<double, double>>();
+    if (this->values.empty()) {
+      tfel::raise(
+          "DataIsotropicHardeningRule::initialize: "
+          "empty values provided");
+    }
     //
     const auto Rel = id.empty() ? "Rel" + fid : "Rel" + fid + "_" + id;
     const auto R = id.empty() ? "R" + fid : "R" + fid + "_" + id;
@@ -104,12 +103,20 @@ namespace mfront::bbrick {
   std::vector<OptionDescription> DataIsotropicHardeningRule::getOptions()
       const {
     std::vector<OptionDescription> opts;
-    opts.emplace_back("R0", "Yield strength",
-                      OptionDescription::MATERIALPROPERTY);
-    opts.emplace_back("Rinf", "Ultimate Yield strength",
-                      OptionDescription::MATERIALPROPERTY);
-    opts.emplace_back("b", "Parameter describing the hardening evolution",
-                      OptionDescription::MATERIALPROPERTY);
+    opts.emplace_back("values",
+                      "dictionnary giving the value of the yield surface "
+                      "radius as a function of the equivalent plastic strain",
+                      OptionDescription::DOUBLEDOUBLEMAP);
+    opts.emplace_back(
+        "interpolation",
+        "interpolation type. "
+        "Possible values are 'linear' (default choice) and 'cubic_spline'",
+        OptionDescription::STRING);
+    opts.emplace_back("extrapolation",
+                      "extrapolation type. "
+                      "Possible values are 'bound_to_last_value' (or "
+                      "'constant') and 'extrapolation' (default choice)",
+                      OptionDescription::STRING);
     return opts;
   }  // end of getOptions
 
@@ -143,43 +150,103 @@ namespace mfront::bbrick {
     const auto dR = "d" + R + "_ddp" + fid;
     const auto p = "this->p" + fid + " + (this->theta) * (this->dp" + fid + ")";
     return "const auto [" + R + ", " + dR + "]" +  //
-           " = this->computeYieldRadiusAndDerivative" + local_id + "(" + p + ");\n";
+           " = this->computeYieldRadiusAndDerivative" + local_id + "(" + p +
+           ");\n";
   }  // end of computeElasticLimitAndDerivative
 
   void DataIsotropicHardeningRule::endTreatment(BehaviourDescription& bd,
-                                                const AbstractBehaviourDSL& dsl,
+                                                const AbstractBehaviourDSL&,
                                                 const std::string& fid,
                                                 const std::string& id) const {
-    auto mts = getMiddleOfTimeStepModifier(bd);
-    // computation of the material properties
-    if ((!this->R0.is<BehaviourDescription::ConstantMaterialProperty>()) ||
-        (!this->Rinf.is<BehaviourDescription::ConstantMaterialProperty>()) ||
-        (!this->b.is<BehaviourDescription::ConstantMaterialProperty>())) {
-      constexpr auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
-      CodeBlock i;
-      std::ostringstream mps;
-      if (!this->R0.is<BehaviourDescription::ConstantMaterialProperty>()) {
-        const auto R0n = IsotropicHardeningRule::getVariableId("R0", fid, id);
-        mps << "this->" + R0n + " = ";
-        dsl.writeMaterialPropertyEvaluation(mps, this->R0, mts);
-        mps << ";\n";
-      }
-      if (!this->Rinf.is<BehaviourDescription::ConstantMaterialProperty>()) {
-        const auto Rin = IsotropicHardeningRule::getVariableId("Rinf", fid, id);
-        mps << "this->" + Rin + " = ";
-        dsl.writeMaterialPropertyEvaluation(mps, this->Rinf, mts);
-        mps << ";\n";
-      }
-      if (!this->b.is<BehaviourDescription::ConstantMaterialProperty>()) {
-        const auto bn = IsotropicHardeningRule::getVariableId("b", fid, id);
-        mps << "this->" + bn + " = ";
-        dsl.writeMaterialPropertyEvaluation(mps, this->b, mts);
-        mps << ";\n";
-      }
-      i.code += mps.str();
-      bd.setCode(uh, BehaviourData::BeforeInitializeLocalVariables, i,
-                 BehaviourData::CREATEORAPPEND, BehaviourData::AT_BEGINNING);
+    if (this->itype == LINEAR_INTERPOLATION) {
+      this->writeLinearInterpolationOfYieldRadius(bd, fid, id);
+      //     } else if (this->itype == CUBIC_SPLINE_INTERPOLATION) {
+      //       tfel::raise(
+      //           "DataIsotropicHardeningRule::endTreatment: internal error, "
+      //           "cubic spline interpolation are not yet implemented");
+    } else {
+      tfel::raise(
+          "DataIsotropicHardeningRule::endTreatment: internal error, "
+          "unsupported interpolation type");
     }
+  } // end of endTreatment
+
+  void DataIsotropicHardeningRule::writeLinearInterpolationOfYieldRadius(
+      BehaviourDescription& bd,
+      const std::string& fid,
+      const std::string& id) const {
+    constexpr auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+    const auto local_id = id.empty() ? fid : fid + "_" + id;
+    auto write_values = [this] {
+      std::ostringstream os;
+      os.precision(14);
+      os << "constexpr auto mfront_yield_surface_abscissae = ";
+      os << "tfel::math::fsarray<" + std::to_string(this->values.size()) +
+                ", strain>";
+      os << "{";
+      for (auto p = values.begin(); p != values.end();) {
+        os << "strain{" << p->first << "}";
+        if (++p != values.end()) {
+          os << ", ";
+        }
+      }
+      os << "};\n";
+      os << "constexpr auto mfront_yield_surface_values = ";
+      os << "tfel::math::fsarray<" + std::to_string(this->values.size()) +
+                ", stress>";
+      os << "{";
+      for (auto p = values.begin(); p != values.end();) {
+        os << "stress{" << p->second << "}";
+        if (++p != values.end()) {
+          os << ", ";
+        }
+      }
+      os << "};\n";
+      return os.str();
+    };
+    const auto etype_value = this->etype ? "true" : "false";
+    auto m = "stress computeYieldRadius" + local_id +
+             "(const strain mfront_arg_p) const{\n";
+    if (this->values.size() == 1) {
+      const auto& v = *(this->values.begin());
+      std::ostringstream os;
+      os.precision(14);
+      os << v.second;
+      m += "return stress{" + os.str() + "};\n";
+    } else {
+      m += write_values();
+      m += "return ";
+      m += "tfel::math::computeLinearInterpolation<";
+      m += etype_value;
+      m += ">(";
+      m += "mfront_yield_surface_abscissae, ";
+      m += "mfront_yield_surface_values, ";
+      m += "mfront_arg_p);\n";
+      m += "return {};\n";
+    }
+    m += "}\n";
+    m += "std::pair<stress, stress> computeYieldRadiusAndDerivative" +
+              local_id + "(const strain mfront_arg_p) const {\n";
+    if (this->values.size() == 1) {
+      const auto& v = *(this->values.begin());
+      std::ostringstream os;
+      os.precision(14);
+      os << v.second;
+      m += "return {stress{" + os.str() + "}, stress{0}};\n";
+    } else {
+      m += write_values();
+      m += "return ";
+      m += "tfel::math::computeLinearInterpolationAndDerivative<";
+      m += etype_value;
+      m += ">(";
+      m += "mfront_yield_surface_abscissae, ";
+      m += "mfront_yield_surface_values, ";
+      m += "mfront_arg_p);\n";
+      m += "return {};\n";
+    }
+    m += "}\n";
+    bd.appendToIncludes("#include \"TFEL/Math/LinearInterpolation.hxx\"");
+    bd.appendToMembers(uh, m, true);
   }  // end of endTreatment
 
   DataIsotropicHardeningRule::~DataIsotropicHardeningRule() = default;

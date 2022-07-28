@@ -165,6 +165,7 @@ nobase_include_HEADERS= MFront/MFront.hxx                                     \
 			MFront/BehaviourBrick/SwiftIsotropicHardeningRule.hxx                        \
 			MFront/BehaviourBrick/PowerIsotropicHardeningRule.hxx                        \
 			MFront/BehaviourBrick/VoceIsotropicHardeningRule.hxx                         \
+			MFront/BehaviourBrick/DataIsotropicHardeningRule.hxx                         \
 			MFront/BehaviourBrick/UserDefinedIsotropicHardeningRule.hxx                  \
 			MFront/BehaviourBrick/IsotropicHardeningRuleFactory.hxx                      \
 			MFront/BehaviourBrick/KinematicHardeningRule.hxx                             \

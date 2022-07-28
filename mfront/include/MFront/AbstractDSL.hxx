@@ -132,7 +132,7 @@ namespace mfront {
      * \param[out] k : the list of keywords registred for this parser
      */
     virtual void getKeywordsList(std::vector<std::string>&) const = 0;
-    //! destructor
+    //! \brief destructor
     virtual ~AbstractDSL();
   };
 

@@ -11,25 +11,26 @@
  * project under specific licensing conditions.
  */
 
-#ifndef LIB_TFEL_CXXKEYWORDS_HXX
-#define LIB_TFEL_CXXKEYWORDS_HXX
+#ifndef LIB_TFEL_UTILITIES_CXXKEYWORDS_HXX
+#define LIB_TFEL_UTILITIES_CXXKEYWORDS_HXX
 
-#include <string>
+#include <cstddef>
+#include <string_view>
 #include "TFEL/Config/TFELConfig.hxx"
 
 namespace tfel::utilities {
 
   //! \return the number of c++ keywords
   TFELUTILITIES_VISIBILITY_EXPORT
-  unsigned short getNumberOfCxxKeywords();
+  std::size_t getNumberOfCxxKeywords();
 
   /*!
    * \return true if the specified string is a of c++ keyword
    * \param[in] s : string to be tested
    */
   TFELUTILITIES_VISIBILITY_EXPORT
-  bool isReservedCxxKeywords(const std::string&);
+  bool isReservedCxxKeywords(std::string_view);
 
 }  // namespace tfel::utilities
 
-#endif /* LIB_TFEL_CXXKEYWORDS_HXX */
+#endif /* LIB_TFEL_UTILITIES_CXXKEYWORDS_HXX */

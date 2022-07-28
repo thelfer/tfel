@@ -69,19 +69,24 @@ namespace mfront {
 
   const char* const DSLBase::buildIdentifierOption = "build_identifier";
 
-  bool isValidMaterialName(const std::string& n) {
+  bool isValidMaterialName(std::string_view n) {
     return tfel::utilities::CxxTokenizer::isValidIdentifier(n, true);
   }
 
-  bool isValidLibraryName(const std::string& n) {
+  bool isValidLibraryName(std::string_view n) {
     return tfel::utilities::CxxTokenizer::isValidIdentifier(n, true);
   }
+
+  bool isValidUserDefinedVariableName(std::string_view n) {
+    return (tfel::utilities::CxxTokenizer::isValidIdentifier(n, true)) &&
+           (!tfel::utilities::starts_with(n, "mfront_"));
+  } // end of isValidUserDefinedVariableName
 
   tfel::utilities::DataMapValidator DSLBase::getDSLOptionsValidator() {
     auto v = tfel::utilities::DataMapValidator{};
     v.addDataTypeValidator<std::string>(DSLBase::defaultOutOfBoundsPolicyOption)
         .addDataTypeValidator<bool>(
-            DSLBase::runtimeModificationOfTheOutOfBoundsPolicyOption)
+           DSLBase::runtimeModificationOfTheOutOfBoundsPolicyOption)
         .addDataTypeValidator<bool>(DSLBase::parametersAsStaticVariablesOption)
         .addDataTypeValidator<bool>(DSLBase::initializationFromFileOption)
         .addDataTypeValidator<std::string>(DSLBase::buildIdentifierOption)
@@ -697,7 +702,7 @@ namespace mfront {
     while ((this->current != this->tokens.end()) && (!endOfTreatment)) {
       const auto sname = this->current->value;
       const auto vname = tfel::unicode::getMangledString(sname);
-      throw_if(!this->isValidIdentifier(vname),
+      throw_if(!isValidUserDefinedVariableName(vname),
                "variable given is not valid (read '" + sname + "').");
       auto lineNumber = this->current->line;
       ++(this->current);
@@ -1244,7 +1249,7 @@ namespace mfront {
                             "Cannot read variable name.");
     const auto sname = this->current->value;
     const auto vname = tfel::unicode::getMangledString(sname);
-    if (!this->isValidIdentifier(vname)) {
+    if (!isValidUserDefinedVariableName(vname)) {
       this->throwRuntimeError("DSLBase::treatStaticVar",
                               "Variable name '" + sname + "' is not valid.");
     }

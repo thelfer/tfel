@@ -218,6 +218,8 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Math/Parser/LevenbergMarquardtExternalFunctionWrapper.hxx                               \
 			TFEL/Math/Evaluator.hxx 						                     \
 			TFEL/Math/IntegerEvaluator.hxx 						                     \
+			TFEL/Math/LinearInterpolation.hxx					                             \
+			TFEL/Math/LinearInterpolation.ixx					                             \
 			TFEL/Math/CubicSpline.hxx					                             \
 			TFEL/Math/CubicSpline.ixx					                             \
 			TFEL/Math/Kriging.hxx						                             \
