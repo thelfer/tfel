@@ -22,6 +22,11 @@ The page describes the new functionalities of Version 4.1 of the
 
 # Known incompatiblities
 
+## New restrictions in user defined variable names
+
+The user defined variables shall not start with `mfront_` which is used
+internally.
+
 ## New reserved keywords in `MFront`
 
 As described in Section @sec:tfel_4.1:mfront:initialize_functions,
@@ -231,8 +236,35 @@ external state variables.
 
 ## Port to GPUs
 
-
 ## Miscellaneous improvements
+
+### Linear interpolation {#sec:tfel_4.1:tfel_math:issue_264}
+
+The `computeLinearInterpolation` allows to compute the linear
+inteporlation of a set of data by the arrays of abscissae and
+values respectively.
+
+The `computeLinearInterpolationAndDerivative` returns the a pair
+containing the value resulting for the linear interpolation and the
+derivative.
+
+The first template argument of those functions is a boolean stating if
+extrapolation must be performed.
+
+#### Notes
+
+1. Both functions assumes that the abscissae are ordered.
+2. Both functions are `constexpr`
+2. Both functions are compatible with quantitites.
+
+#### Example of usage
+
+~~~~{.cxx}
+constexpr std::array<time, 3u> abscissae{time{0}, time{1}, time{2}};
+constexpr std::array<stress, 3u> values{stress{1}, stress{2}, stress{4}};
+constexpr auto v = tfel::math::computeLinearInterpolation<true>(abscissae, values,
+                                                                time{-1});
+~~~~
 
 ### Extension of the `derivative_type` metafunction to higher order derivatives 
 
@@ -258,7 +290,7 @@ auto d2E_dT2 = derivative_type<stress, temperature, temperature>{};
 
 are now equivalent.
 
-### Add support to clamp values of arrays {#sec:tfel_math:issue_256}
+### Add support to clamp values of arrays {#sec:tfel_4.1:tfel_math:issue_256}
 
 The `clamp` method is available in all mutable arrays in `TFEL/Math`,
 including all tensorial objects.
@@ -1857,6 +1889,12 @@ command is concatenated in a single string for the test.
 
 # Issues fixed
 
+## Issue #264: Add support to compute linear intepolation
+
+This feature is described in Section @sec:tfel_4.1:tfel_math:issue_264.
+
+For more details, see <https://github.com/thelfer/tfel/issues/264>
+
 ## Issue #262: Installation issue of the `master` branch (future version 4.1) with `gcc-8.1.0`
 
 The issue is related to `MFront` tests using quantities such tests fails
@@ -1870,7 +1908,7 @@ For more details, see <https://github.com/thelfer/tfel/issues/262>
 
 ## Issue #256: [tfel-math] Add support to clamp `TFEL/Math` arrays
 
-This feature is described in Section @sec:tfel_math:issue_256.
+This feature is described in Section @sec:tfel_4.1:tfel_math:issue_256.
 
 For more details, see <https://github.com/thelfer/tfel/issues/256>
 

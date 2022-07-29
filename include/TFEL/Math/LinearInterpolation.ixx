@@ -15,6 +15,7 @@
 #define LIB_TFEL_MATH_LINEARINTERPOLATION_IXX
 
 #include <utility>
+#include <type_traits>
 #include "TFEL/ContractViolation.hxx"
 #include "TFEL/Math/General/BasicOperations.hxx"
 #include "TFEL/Math/General/ResultType.hxx"
@@ -59,7 +60,9 @@ namespace tfel::math {
   constexpr auto computeLinearInterpolation(const AbscissaContainer& abscissae,
                                             const ValueContainer& values,
                                             const AbscissaType a) {
-    auto interpolate = [&abscissae, &values, a](const auto i) {
+    using size_type = std::common_type_t<typename AbscissaContainer::size_type,
+                                         typename ValueContainer::size_type>;
+    auto interpolate = [&abscissae, &values, a](const size_type i) {
       const auto ai = abscissae[i];
       const auto vi = values[i];
       const auto d = (values[i + 1] - vi) / (abscissae[i + 1] - ai);
@@ -98,8 +101,11 @@ namespace tfel::math {
     using abscissa_type =
         result_type<AbscissaType, typename AbscissaContainer::value_type,
                     OpMinus>;
-    using value_type = typename AbscissaContainer::value_type;
-    auto interpolate = [&abscissae, &values, a](const auto i) {
+    using value_type = typename ValueContainer::value_type;
+    using size_type = std::common_type_t<typename AbscissaContainer::size_type,
+                                         typename ValueContainer::size_type>;
+    constexpr auto zero = value_type{0} / (abscissa_type{1});
+    auto interpolate = [&abscissae, &values, a](const size_type i) {
       const auto ai = abscissae[i];
       const auto vi = values[i];
       const auto d = (values[i + 1] - vi) / (abscissae[i + 1] - ai);
@@ -107,20 +113,20 @@ namespace tfel::math {
     };
     linear_interpolation_internals::makeChecks(abscissae, values);
     if (abscissae.size() == 1u){
-      return std::make_pair(values[0], value_type{0} / (abscissa_type{1}));
+      return std::make_pair(values[0], zero);
     }
     if (a <= abscissae[0]) {
       if constexpr (extrapolate) {
        return interpolate(0);
       } else {
-        return std::make_pair(values[0], value_type{0} / (abscissa_type{1}));
+        return std::make_pair(values[0], zero);
       }
     }
     if (a >= abscissae.back()) {
      if constexpr (extrapolate) {
        return interpolate(abscissae.size() - 2);
      } else {
-       return std::make_pair(values.back(), value_type{0} / (abscissa_type{1}));
+       return std::make_pair(values.back(), zero);
      }
     }
     const auto i = linear_interpolation_internals::findIndex(abscissae, a);

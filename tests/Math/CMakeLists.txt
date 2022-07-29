@@ -115,6 +115,7 @@ tests_math(ScalarNewtonRaphsonTest)
 tests_math(BissectionAlgorithmTest)
 tests_math(FixedSizeArrayDerivativeTest)
 tests_math(ComputeNumericalDerivativeTest)
+tests_math(LinearInterpolationTest)
 
 tests_math3(levenberg-marquardt4)
 

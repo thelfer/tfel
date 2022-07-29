@@ -173,6 +173,7 @@ EXTRA_DIST=CMakeLists.txt					      \
            ./TFELSystem.md                                            \
 	   ./tfel-check.md                                            \
 	   ./tfel-math.md                                            \
+	   ./tfel-math-data-interpolation.md                         \
 	   ./tfel-material.md					                        \
            ./theory.md                                                \
 	   ./robots.txt						      \

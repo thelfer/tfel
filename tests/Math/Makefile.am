@@ -31,6 +31,7 @@ test_PROGRAMS = IndexingPoliciesTest             \
 		tinymatrixsolve                          \
 		tinymatrixsolve2                         \
 		qr                                       \
+		LinearInterpolationTest                  \
 		CubicSplineTest                          \
 		krigeage                                 \
 		krigeage1D                               \
@@ -155,6 +156,14 @@ discretization1D_LDADD   = -L$(top_builddir)/src/Math      \
                           -L$(top_builddir)/src/Tests      \
 		          -lTFELMath -lTFELException       \
 			  -lTFELTests
+
+LinearInterpolationTest_SOURCES = LinearInterpolationTest.cxx
+LinearInterpolationTest_LDADD   = -L$(top_builddir)/src/Math       \
+		          -L$(top_builddir)/src/Utilities  \
+		          -L$(top_builddir)/src/Exception  \
+                  -L$(top_builddir)/src/Tests      \
+		          -lTFELMath -lTFELUtilities       \
+                  -lTFELException -lTFELTests
 
 CubicSplineTest_SOURCES = CubicSplineTest.cxx
 CubicSplineTest_LDADD   = -L$(top_builddir)/src/Math       \
