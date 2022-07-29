@@ -60,13 +60,18 @@ namespace tfel::math {
   constexpr auto computeLinearInterpolation(const AbscissaContainer& abscissae,
                                             const ValueContainer& values,
                                             const AbscissaType a) {
+    using abscissa_type =
+        result_type<AbscissaType, typename AbscissaContainer::value_type,
+                    OpMinus>;
+    using value_type = typename ValueContainer::value_type;
+    using derivative_value_type = derivative_type<value_type, abscissa_type>;
     using size_type = std::common_type_t<typename AbscissaContainer::size_type,
                                          typename ValueContainer::size_type>;
     auto interpolate = [&abscissae, &values, a](const size_type i) {
       const auto ai = abscissae[i];
       const auto vi = values[i];
-      const auto d = (values[i + 1] - vi) / (abscissae[i + 1] - ai);
-      return vi + d * (a - ai);
+      const auto d = derivative_value_type{(values[i + 1] - vi) / (abscissae[i + 1] - ai)};
+      return value_type{vi + d * (a - ai)};
     };
     linear_interpolation_internals::makeChecks(abscissae, values);
     if (abscissae.size() == 1u) {
@@ -102,14 +107,15 @@ namespace tfel::math {
         result_type<AbscissaType, typename AbscissaContainer::value_type,
                     OpMinus>;
     using value_type = typename ValueContainer::value_type;
+    using derivative_value_type = derivative_type<value_type, abscissa_type>;
     using size_type = std::common_type_t<typename AbscissaContainer::size_type,
                                          typename ValueContainer::size_type>;
-    constexpr auto zero = value_type{0} / (abscissa_type{1});
+    constexpr auto zero = derivative_value_type{0};
     auto interpolate = [&abscissae, &values, a](const size_type i) {
       const auto ai = abscissae[i];
       const auto vi = values[i];
-      const auto d = (values[i + 1] - vi) / (abscissae[i + 1] - ai);
-      return std::make_pair(vi + d * (a - ai), d);
+      const auto d = derivative_value_type{(values[i + 1] - vi) / (abscissae[i + 1] - ai)};
+      return std::make_pair(value_type{vi + d * (a - ai)}, d);
     };
     linear_interpolation_internals::makeChecks(abscissae, values);
     if (abscissae.size() == 1u){

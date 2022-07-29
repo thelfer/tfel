@@ -46,6 +46,7 @@ struct LinearInterpolationTest final : public tfel::tests::TestCase {
     this->test3();
     this->test4();
     this->test5();
+    this->test6();
     return this->result;
   }  // end of execute
  private:
@@ -225,6 +226,24 @@ struct LinearInterpolationTest final : public tfel::tests::TestCase {
     TFEL_TESTS_STATIC_ASSERT(
         (my_abs(std::get<0>(values2[4]) - stress{4}) < 10 * eps));
     TFEL_TESTS_STATIC_ASSERT((my_abs(std::get<1>(values2[4])) < 10 * eps2));
+  }
+  void test6() {
+    using tvector = tfel::math::tvector<3u, double>;
+    constexpr auto eps = std::numeric_limits<double>::epsilon();
+    constexpr auto id = tvector{1, 1, 1};
+    constexpr std::array<double, 3u> abscissae{0, 1, 2};
+    constexpr std::array<tvector, 3u> values{id, 2 * id, 4 * id};
+    constexpr auto vd =
+        tfel::math::computeLinearInterpolationAndDerivative<false>(abscissae,
+                                                                   values, 0.5);
+    constexpr auto v = std::get<0>(vd);
+    constexpr auto d = std::get<1>(vd);
+    TFEL_TESTS_STATIC_ASSERT((my_abs(v[0] - 1.5) < 10 * eps));
+    TFEL_TESTS_STATIC_ASSERT((my_abs(v[1] - 1.5) < 10 * eps));
+    TFEL_TESTS_STATIC_ASSERT((my_abs(v[2] - 1.5) < 10 * eps));
+    TFEL_TESTS_STATIC_ASSERT((my_abs(d[0] - 1) < 10 * eps));
+    TFEL_TESTS_STATIC_ASSERT((my_abs(d[1] - 1) < 10 * eps));
+    TFEL_TESTS_STATIC_ASSERT((my_abs(d[2] - 1) < 10 * eps));
   }
 };
 
