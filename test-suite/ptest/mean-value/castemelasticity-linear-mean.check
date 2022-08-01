@@ -1,4 +1,5 @@
-@Command "mtest castemelasticity-linear-mean.ptest";
+@Command "@mfront@ --obuild --interface=castem Elasticity.mfront";
+@Command "@mtest@ castemelasticity-linear-mean.ptest";
 @TestType Absolute;
 @Precision 1.e-10;
 
@@ -10,3 +11,6 @@
 @Test "castemelasticity-linear-mean.res" "castemelasticity-linear-mean.ref" 13;
 @Test "castemelasticity-linear-mean.res" "castemelasticity-linear-mean.ref" 14;
 @Test "castemelasticity-linear-mean.res" "castemelasticity-linear-mean.ref" 15;
+
+@CleanDirectories {"include","src"};
+@CleanFiles {"castemelasticity-linear-mean.res"};

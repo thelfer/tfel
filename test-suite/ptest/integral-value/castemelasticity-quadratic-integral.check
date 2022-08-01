@@ -1,4 +1,5 @@
-@Command "mtest castemelasticity-quadratic-integral.ptest";
+@Command "@mfront@ --obuild --interface=castem OrthotropicElastic.mfront";
+@Command "@mtest@ castemelasticity-quadratic-integral.ptest";
 @TestType Absolute;
 @Precision 1.e-10;
 
@@ -10,3 +11,6 @@
 @Test "castemelasticity-quadratic-integral.res" "castemelasticity-quadratic-integral.ref" 12;
 @Test "castemelasticity-quadratic-integral.res" "castemelasticity-quadratic-integral.ref" 13;
 @Test "castemelasticity-quadratic-integral.res" "castemelasticity-quadratic-integral.ref" 14;
+
+@CleanDirectories {"include","src"};
+@CleanFiles {"castemelasticity-quadratic-integral.res"};

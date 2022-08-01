@@ -1,4 +1,5 @@
-@Command "mtest castemelasticity-quadratic-mean.ptest";
+@Command "@mfront@ --obuild --interface=castem OrthotropicElastic.mfront";
+@Command "@mtest@ castemelasticity-quadratic-mean.ptest";
 @TestType Absolute;
 @Precision 1.e-10;
 
@@ -10,3 +11,6 @@
 @Test "castemelasticity-quadratic-mean.res" "castemelasticity-quadratic-mean.ref" 12;
 @Test "castemelasticity-quadratic-mean.res" "castemelasticity-quadratic-mean.ref" 13;
 @Test "castemelasticity-quadratic-mean.res" "castemelasticity-quadratic-mean.ref" 14;
+
+@CleanDirectories {"include","src"};
+@CleanFiles {"castemelasticity-quadratic-mean.res"};

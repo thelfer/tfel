@@ -1,6 +1,6 @@
 @Author Maxence Wangermez;
-@Date   18/07/2022;
-@Description{
+@Date 18 / 07 / 2022;
+@Description {
   Unit test for integral and mean value computations for quadratic elements
 };
 
@@ -10,7 +10,9 @@
 @ElementType 'Quadratic';
 @AxialLoading 'ImposedAxialForce';
 
-@Behaviour<castem,LogarithmicStrain1D> '/home/mw270857/Codes/tfel-mfront/master/sources/build/mfront/tests/behaviours/castem/libMFrontCastemBehaviours.so' 'umatorthotropicelastic';
+@Behaviour<
+    castem,
+    LogarithmicStrain1D> 'src/libUmatBehaviour.so' 'umatorthotropicelastic';
 @MaterialProperty<constant> 'YoungModulus1' 170.e9;
 @MaterialProperty<constant> 'YoungModulus2' 100.e9;
 @MaterialProperty<constant> 'YoungModulus3' 130.e9;
@@ -18,21 +20,29 @@
 @MaterialProperty<constant> 'PoissonRatio13' 0.2;
 @MaterialProperty<constant> 'PoissonRatio23' 0.4;
 
-@InnerPressureEvolution {0:0.,1.:300.e6};
-@OuterPressureEvolution {0:0.,1.:150.e6};
+@InnerPressureEvolution{0 : 0., 1. : 300.e6};
+@OuterPressureEvolution{0 : 0., 1. : 150.e6};
 @Real 'pz' 24.3e6;
 @Real 'pi' 3.14159265359;
-@AxialForceEvolution {0:0,1:'pz*pi*(Re*Re-Ri*Ri)'};
+@AxialForceEvolution{0 : 0, 1 : 'pz*pi*(Re*Re-Ri*Ri)'};
 @ExternalStateVariable 'Temperature' 293.15;
 
-@Times {0,1};
+@Times{0, 1};
 @OutputFilePrecision 14;
 
-@AdditionalOutputs {'mean_value_initial_configuration':'SRR',
-                    'mean_value_current_configuration':'SRR'}; // compute mean values of SRR
-@AdditionalOutputs {'mean_value_initial_configuration':'STT',
-                    'mean_value_current_configuration':'STT'}; // compute mean values of STT
-@AdditionalOutputs {'mean_value_initial_configuration':'SZZ',
-                    'mean_value_current_configuration':'SZZ'}; // compute mean values of SZZ
-@AdditionalOutputs {'mean_value_initial_configuration':'Temperature',
-                    'mean_value_current_configuration':'Temperature'}; // compute mean values of Temperature
+@AdditionalOutputs{
+  'mean_value_initial_configuration' : 'SRR',
+  'mean_value_current_configuration' : 'SRR'
+};  // compute mean values of SRR
+@AdditionalOutputs{
+  'mean_value_initial_configuration' : 'STT',
+  'mean_value_current_configuration' : 'STT'
+};  // compute mean values of STT
+@AdditionalOutputs{
+  'mean_value_initial_configuration' : 'SZZ',
+  'mean_value_current_configuration' : 'SZZ'
+};  // compute mean values of SZZ
+@AdditionalOutputs{
+  'mean_value_initial_configuration' : 'Temperature',
+  'mean_value_current_configuration' : 'Temperature'
+};  // compute mean values of Temperature
