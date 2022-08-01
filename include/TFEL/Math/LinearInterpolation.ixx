@@ -18,6 +18,7 @@
 #include <type_traits>
 #include "TFEL/ContractViolation.hxx"
 #include "TFEL/Math/General/BasicOperations.hxx"
+#include "TFEL/Math/General/DerivativeType.hxx"
 #include "TFEL/Math/General/ResultType.hxx"
 
 namespace tfel::math {

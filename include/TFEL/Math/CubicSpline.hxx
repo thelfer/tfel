@@ -17,6 +17,7 @@
 
 #include "TFEL/Config/TFELConfig.hxx"
 #include "TFEL/Math/MathException.hxx"
+#include "TFEL/Math/General/DerivativeType.hxx"
 
 namespace tfel::math {
 
@@ -102,14 +103,60 @@ namespace tfel::math {
     ~CubicSplineUnorderedAbscissaVector() noexcept override;
   };  // end of struct CubicSplineUnorderedAbscissaVector
 
+  //! \brief structure which represents a collocation point
+  template <typename AbscissaType, typename ValueType>
+  struct CubicSplineCollocationPoint {
+    //! \brief a simple alias
+    using abscissa_type = AbscissaType;
+    //! \brief a simple alias
+    using value_type = ValueType;
+    //! \brief abscissa
+    AbscissaType x;
+    //! \brief ordinate
+    ValueType y;
+    //! \brief derivate
+    derivative_type<ValueType, AbscissaType> d;
+  };  // end of struct Point
+
   /*!
-   * structure in charge of computing the cubic spline of a series
+   * \return the interpolation of a set of collocation points at the given
+   * abscissa
+   * \param[in] points: collocation points
+   * \param[in] x: abscissa
+   *
+   * \tparam extrapolate: boolean stating if extrapolation must be performed
+   *
+   * \note the points are assumed ordered from lower to greater values.
+   */
+  template <bool extrapolate,
+            typename CollocationPointContainer,
+            typename AbscissaType>
+  constexpr auto computeCubicSplineInterpolation(
+      const CollocationPointContainer&, const AbscissaType);
+  /*!
+   * \return the interpolation of a set of collocation points at the given
+   * abscissa and the derivative at this point
+   * \param[in] points: collocation points
+   * \param[in] x: abscissa
+   *
+   * \tparam extrapolate: boolean stating if extrapolation must be performed
+   *
+   * \note the points are assumed ordered from lower to greater values.
+   */
+  template <bool extrapolate,
+            typename CollocationPointContainer,
+            typename AbscissaType>
+  constexpr auto computeCubicSplineInterpolationAndDerivative(
+      const CollocationPointContainer&, const AbscissaType);
+
+  /*!
+   * \brief structure in charge of computing the cubic spline of a series
    * of collocation points
    *
-   * \param real  : floatting type number used for the computations
-   * \param value : result type
+   * \tparam AbscissaType: floatting type number used for the computations
+   * \tparam ValueType: result type
    */
-  template <typename real, typename value = real>
+  template <typename AbscissaType, typename ValueType = AbscissaType>
   struct CubicSpline {
     /*!
      * \param[in] px  : iterator to the first abscissa
@@ -129,24 +176,25 @@ namespace tfel::math {
      * \return the spline value at the given point
      * \param[in] x : point at which the spline is evaluated
      */
-    value operator()(const real) const;
+    ValueType operator()(const AbscissaType) const;
     /*!
      * \return the spline integral
-     * \param[in] xa : left end point
-     * \param[in] xb : right end point
+     * \param[in] xa: beginning of interval
+     * \param[in] xb: end of interval
      */
-    value computeIntegral(const real, const real) const;
+    result_type<ValueType, AbscissaType, OpMult> computeIntegral(
+        const AbscissaType, const AbscissaType) const;
     /*!
      * \return the spline mean value
-     * \param[in] xa : point at which the spline is evaluated
-     * \param[in] xb : point at which the spline is evaluated
+     * \param[in] xa: beginning of interval
+     * \param[in] xb: end of interval
      */
-    value computeMeanValue(const real, const real) const;
+    ValueType computeMeanValue(const AbscissaType, const AbscissaType) const;
     /*!
      * \return the spline value at the given point
      * \param[in] x : point at which the spline is evaluated
      */
-    value getValue(real) const;
+    ValueType getValue(const AbscissaType) const;
     /*!
      * \return the value of the spline and the value of its
      * derivative at the given point
@@ -156,7 +204,9 @@ namespace tfel::math {
      * \param[in]  x  : point at which the spline is evaluated
      *
      */
-    void getValues(value&, value&, real) const;
+    void getValues(ValueType&,
+                   derivative_type<ValueType, AbscissaType>&,
+                   const AbscissaType) const;
     /*!
      * \return the value of the spline and the value of its
      * derivative at the given point
@@ -165,33 +215,26 @@ namespace tfel::math {
      * \param[out] df  : spline derivative value
      * \param[out] d2f : spline second derivative value
      * \param[in]  x   : point at which the spline is evaluated
-     *
      */
-    void getValues(value&, value&, value&, real) const;
+    void getValues(ValueType&,
+                   derivative_type<ValueType, AbscissaType>&,
+                   derivative_type<ValueType, AbscissaType, AbscissaType>&,
+                   const AbscissaType) const;
+    //! \brief return the collocation points
+    const auto& getCollocationPoints() const;
 
    protected:
-    /*!
-     * \brief internal structure which represents a collocation point
-     */
-    struct Point {
-      //! \brief abscissa
-      real x;
-      //! \brief ordinate
-      value y;
-      //! \brief derivate
-      value d;
-    };  // end of struct Point
-
-    /*!
-     * \brief internal structure to compare collocation points
-     */
+    //! \brief a simple alias
+    using Point = CubicSplineCollocationPoint<AbscissaType, ValueType>;
+    //! \brief internal structure to compare collocation points
     struct PointComparator {
       /*!
        * \return true if p->x < x
        * \param p : first point
        * \param x : abscissa
        */
-      bool operator()(const Point&, const real&) const;
+      constexpr bool operator()(const Point&, const AbscissaType&) const
+          noexcept;
     };  // end of struct PointComparator
 
     /*!
@@ -200,35 +243,37 @@ namespace tfel::math {
      * c - sup-diagonal (means it is the diagonal above the main diagonal) --
      * indexed from 0..n-2 b - the main diagonal x - the answer
      */
-    void solveTridiagonalLinearSystem(const real* const, real* const);
-
-    //! \brief a simple alias
-    using point_const_iterator = typename std::vector<Point>::const_iterator;
-
-    /*!
-     * \item an helper function to ease integral computations
-     */
-    static value computeLocalIntegral(
-        const real,
-        const real,
-        const point_const_iterator);
-
-    /*!
-     * \biref an helper function to ease factorize computations
-     */
-    static void computeLocalCoefficients(value&,
-                                         value&,
-                                         const point_const_iterator);
+    void solveTridiagonalLinearSystem(const AbscissaType* const,
+                                      AbscissaType* const);
 
     //! \brief build the spline interpolation
     void buildInterpolation();
 
     //! \brief collocation points
-    std::vector<Point> values;
-
+    std::vector<Point> points;
   };  // end of struct CubicSpline
 
 }  // end of namespace tfel::math
+
+namespace tfel::typetraits{
+
+  template <typename AbscissaType,
+            typename ValueType,
+            typename AbscissaType2,
+            typename ValueType2>
+  struct IsAssignableTo<
+      tfel::math::CubicSplineCollocationPoint<AbscissaType, ValueType>,
+      tfel::math::CubicSplineCollocationPoint<AbscissaType2, ValueType2>> {
+    static constexpr bool value =
+        isAssignableTo<AbscissaType, AbscissaType2>() &&
+        isAssignableTo<ValueType, ValueType2>();
+    static constexpr bool cond =
+        isAssignableTo<AbscissaType, AbscissaType2>() &&
+        isAssignableTo<ValueType, ValueType2>();
+  };
+
+}  // end of namespace tfel::typetraits
+
 
 #include "TFEL/Math/CubicSpline.ixx"
 

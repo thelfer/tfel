@@ -13,6 +13,7 @@
 
 #include <sstream>
 #include "TFEL/Raise.hxx"
+#include "TFEL/Math/CubicSpline.hxx"
 #include "MFront/BehaviourBrick/BrickUtilities.hxx"
 #include "MFront/BehaviourBrick/OptionDescription.hxx"
 #include "MFront/BehaviourBrick/DataIsotropicHardeningRule.hxx"
@@ -38,8 +39,8 @@ namespace mfront::bbrick {
         const auto& i = opt.get<std::string>();
         if (i == "linear") {
           return LINEAR_INTERPOLATION;
-          //         } else if (i == "cubic_spline") {
-          //           return CUBIC_SPLINE_INTERPOLATION;
+        } else if (i == "cubic_spline") {
+          return CUBIC_SPLINE_INTERPOLATION;
         } else {
           tfel::raise(
               "DataIsotropicHardeningRule::initialize: "
@@ -127,7 +128,8 @@ namespace mfront::bbrick {
     const auto local_id = id.empty() ? fid : fid + "_" + id;
     const auto Rel = "Rel" + local_id;
     return "const auto " + Rel +  //
-           " = this->computeYieldRadius" + local_id + "(this->p" + fid + ");\n";
+           " = this->mfront_computeYieldRadius" + local_id + "(this->p" + fid +
+           ");\n";
   }  // end of computeElasticPrediction
 
   std::string DataIsotropicHardeningRule::computeElasticLimit(
@@ -138,7 +140,7 @@ namespace mfront::bbrick {
     const auto R = "R" + local_id;
     const auto p = "this->p" + fid + " + (this->theta) * (this->dp" + fid + ")";
     return "const auto " + R +  //
-           " = this->computeYieldRadius" + local_id + "(" + p + ");\n";
+           " = this->mfront_computeYieldRadius" + local_id + "(" + p + ");\n";
   }  // end of computeElasticLimit
 
   std::string DataIsotropicHardeningRule::computeElasticLimitAndDerivative(
@@ -150,8 +152,8 @@ namespace mfront::bbrick {
     const auto dR = "d" + R + "_ddp" + fid;
     const auto p = "this->p" + fid + " + (this->theta) * (this->dp" + fid + ")";
     return "const auto [" + R + ", " + dR + "]" +  //
-           " = this->computeYieldRadiusAndDerivative" + local_id + "(" + p +
-           ");\n";
+           " = this->mfront_computeYieldRadiusAndDerivative" + local_id + "(" +
+           p + ");\n";
   }  // end of computeElasticLimitAndDerivative
 
   void DataIsotropicHardeningRule::endTreatment(BehaviourDescription& bd,
@@ -160,16 +162,14 @@ namespace mfront::bbrick {
                                                 const std::string& id) const {
     if (this->itype == LINEAR_INTERPOLATION) {
       this->writeLinearInterpolationOfYieldRadius(bd, fid, id);
-      //     } else if (this->itype == CUBIC_SPLINE_INTERPOLATION) {
-      //       tfel::raise(
-      //           "DataIsotropicHardeningRule::endTreatment: internal error, "
-      //           "cubic spline interpolation are not yet implemented");
+    } else if (this->itype == CUBIC_SPLINE_INTERPOLATION) {
+      this->writeCubicSplineInterpolationOfYieldRadius(bd, fid, id);
     } else {
       tfel::raise(
           "DataIsotropicHardeningRule::endTreatment: internal error, "
           "unsupported interpolation type");
     }
-  } // end of endTreatment
+  }  // end of endTreatment
 
   void DataIsotropicHardeningRule::writeLinearInterpolationOfYieldRadius(
       BehaviourDescription& bd,
@@ -205,7 +205,7 @@ namespace mfront::bbrick {
       return os.str();
     };
     const auto etype_value = this->etype ? "true" : "false";
-    auto m = "stress computeYieldRadius" + local_id +
+    auto m = "stress mfront_computeYieldRadius" + local_id +
              "(const strain mfront_arg_p) const{\n";
     if (this->values.size() == 1) {
       const auto& v = *(this->values.begin());
@@ -222,11 +222,10 @@ namespace mfront::bbrick {
       m += "mfront_yield_surface_abscissae, ";
       m += "mfront_yield_surface_values, ";
       m += "mfront_arg_p);\n";
-      m += "return {};\n";
     }
     m += "}\n";
-    m += "std::pair<stress, stress> computeYieldRadiusAndDerivative" +
-              local_id + "(const strain mfront_arg_p) const {\n";
+    m += "std::pair<stress, stress> mfront_computeYieldRadiusAndDerivative" +
+         local_id + "(const strain mfront_arg_p) const {\n";
     if (this->values.size() == 1) {
       const auto& v = *(this->values.begin());
       std::ostringstream os;
@@ -246,6 +245,88 @@ namespace mfront::bbrick {
     }
     m += "}\n";
     bd.appendToIncludes("#include \"TFEL/Math/LinearInterpolation.hxx\"");
+    bd.appendToMembers(uh, m, true);
+  }  // end of endTreatment
+
+  void DataIsotropicHardeningRule::writeCubicSplineInterpolationOfYieldRadius(
+      BehaviourDescription& bd,
+      const std::string& fid,
+      const std::string& id) const {
+    constexpr auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+    const auto local_id = id.empty() ? fid : fid + "_" + id;
+    // add collocation points
+    tfel::math::CubicSpline<double, double> spline;
+    const auto points = [this] {
+      auto abscissae = std::vector<double> {};
+      auto lvalues = std::vector<double>{};
+      for (const auto& v : this->values) {
+        abscissae.push_back(v.first);
+        lvalues.push_back(v.second);
+      }
+      return std::make_pair(abscissae, lvalues);
+    }();
+    spline.setCollocationPoints(points.first, points.second);
+    auto write_collocation_points = [&spline, this] {
+      const auto& pts = spline.getCollocationPoints();
+      std::ostringstream os;
+      os.precision(14);
+      const auto type =
+          "tfel::math::CubicSplineCollocationPoint<strain, stress>";
+      os << "constexpr auto mfront_yield_surface_collocation_points = ";
+      os << "tfel::math::fsarray<" + std::to_string(this->values.size()) << ", "
+         << type << ">{\n";
+      for (auto p = pts.begin(); p != pts.end();) {
+        os << type << "{strain{" << p->x << "}, stress{" << p->y << "}, stress{"
+           << p->d << "}}";
+        if (++p != pts.end()) {
+          os << ", ";
+        }
+      }
+      os << "};\n";
+      return os.str();
+    };
+    //
+    const auto etype_value = this->etype ? "true" : "false";
+    const auto m1 = "mfront_computeYieldRadius" + local_id;
+    const auto m2 = "mfront_computeYieldRadiusAndDerivative" + local_id;
+    auto m = "stress "+m1 +
+             "(const strain mfront_arg_p) const{\n";
+    if (this->values.size() == 1) {
+      const auto& v = *(this->values.begin());
+      std::ostringstream os;
+      os.precision(14);
+      os << v.second;
+      m += "return stress{" + os.str() + "};\n";
+    } else {
+      m += write_collocation_points();
+      m += "return ";
+      m += "tfel::math::computeCubicSplineInterpolation<";
+      m += etype_value;
+      m += ">(";
+      m += "mfront_yield_surface_collocation_points, ";
+      m += "mfront_arg_p);\n";
+      m += "return {};\n";
+    }
+    m += "} // end of " + m1 + "\n\n";
+    m += "std::pair<stress, stress> " + m2 + local_id +
+         "(const strain mfront_arg_p) const {\n";
+    if (this->values.size() == 1) {
+      const auto& v = *(this->values.begin());
+      std::ostringstream os;
+      os.precision(14);
+      os << v.second;
+      m += "return {stress{" + os.str() + "}, stress{0}};\n";
+    } else {
+      m += write_collocation_points();
+      m += "return ";
+      m += "tfel::math::computeCubicSplineInterpolationAndDerivative<";
+      m += etype_value;
+      m += ">(";
+      m += "mfront_yield_surface_collocation_points, ";
+      m += "mfront_arg_p);\n";
+    }
+    m += "} // end of " + m2 + "\n\n";
+    bd.appendToIncludes("#include \"TFEL/Math/CubicSpline.hxx\"");
     bd.appendToMembers(uh, m, true);
   }  // end of endTreatment
 

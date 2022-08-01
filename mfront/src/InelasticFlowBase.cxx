@@ -361,7 +361,7 @@ namespace mfront::bbrick {
   }  // end of setPorosityEvolutionHandled
 
   bool InelasticFlowBase::contributesToPorosityGrowth() const {
-    if ((this->porosity_evolution_explicitely_handled == true) ||
+    if ((this->porosity_evolution_explicitely_handled) ||
         (this->isCoupledWithPorosityEvolution())) {
       if (this->sc == nullptr) {
         tfel::raise(

@@ -255,7 +255,8 @@ extrapolation must be performed.
 
 1. Both functions assumes that the abscissae are ordered.
 2. Both functions are `constexpr`
-2. Both functions are compatible with quantitites.
+3. Both functions are compatible with quantitites.
+4. Both functions can use arrays and tensorial objects as values.
 
 #### Example of usage
 
@@ -265,6 +266,41 @@ constexpr std::array<stress, 3u> values{stress{1}, stress{2}, stress{4}};
 constexpr auto v = tfel::math::computeLinearInterpolation<true>(abscissae, values,
                                                                 time{-1});
 ~~~~
+
+### Interpolation with cubic spline {#sec:tfel_4.1:tfel_math:issue_266}
+
+The `CubicSplineCollocationPoint` structure describes a collocation
+point used to build an interpolation by a cubic spline.
+
+Cubic spline interpolation requires a set of such collocation points.
+For example, the `CubicSpline` class can build a vector of collocation
+point from data. The set of collocation points can also be precomputed.
+
+The `computeCubicSplineInterpolation` allows to perform the
+interpolation using a set of collocation points. The
+`computeCubicSplineInterpolationAndDerivative` computes the interpolated
+value and the derivative at the cubic spline.
+
+The first template argument of those functions is a boolean stating if
+extrapolation must be performed.
+
+#### Notes
+
+1. Both functions assumes that the abscissae are ordered.
+2. Both functions are `constexpr`
+3. Both functions are compatible with quantitites.
+4. Both functions can use arrays and tensorial objects as values.
+
+<!--
+#### Example of usage
+
+~~~~{.cxx}
+constexpr std::array<time, 3u> abscissae{time{0}, time{1}, time{2}};
+constexpr std::array<stress, 3u> values{stress{1}, stress{2}, stress{4}};
+constexpr auto v = tfel::math::computeCubicSplineInterpolation<true>(abscissae, values,
+                                                                time{-1});
+~~~~
+-->
 
 ### Extension of the `derivative_type` metafunction to higher order derivatives 
 
@@ -1894,6 +1930,10 @@ command is concatenated in a single string for the test.
 This feature is described in Section @sec:tfel_4.1:tfel_math:issue_264.
 
 For more details, see <https://github.com/thelfer/tfel/issues/264>
+
+## Issue #263: [tfel-math] Add an empty method to `TFEL`' array
+
+For more details, see <https://github.com/thelfer/tfel/issues/263>
 
 ## Issue #262: Installation issue of the `master` branch (future version 4.1) with `gcc-8.1.0`
 

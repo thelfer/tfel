@@ -471,10 +471,11 @@ endif(HAVE_CASTEM)
 
 target_link_libraries(TFELMFront
   PUBLIC MFrontLogStream
-  PUBLIC TFELMaterial       PUBLIC TFELMathParser
-  PUBLIC TFELSystem         PUBLIC TFELUtilities
-  PUBLIC TFELUnicodeSupport PUBLIC TFELGlossary 
-  PUBLIC TFELException      PUBLIC TFELConfig)
+  PUBLIC TFELMaterial        PUBLIC TFELMathParser
+  PUBLIC TFELMathCubicSpline PUBLIC TFELMath
+  PUBLIC TFELSystem          PUBLIC TFELUtilities
+  PUBLIC TFELUnicodeSupport  PUBLIC TFELGlossary 
+  PUBLIC TFELException       PUBLIC TFELConfig)
 
 if(UNIX)
   if(NOT HAIKU)

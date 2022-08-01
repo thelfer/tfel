@@ -50,14 +50,15 @@ namespace tfel::check {
 
   double SplineLocalInterpolation::getValue(const double x) const {
     // if we have only one spline, return it
-    if (this->timesBefore.size() == 1)
+    if (this->timesBefore.size() == 1){
       return (this->splines.find(this->timesBefore.at(0)))->second.getValue(x);
-
+    }
     // else, we search the right spline
     for (unsigned i = 0; i < this->timesBefore.size(); ++i) {
-      if (this->timesBefore.at(i) > x)
+      if (this->timesBefore.at(i) > x){
         return (this->splines.find(this->timesBefore.at(i - 1)))
             ->second.getValue(x);
+      }
     }
     return this->splines.find(this->timesBefore.back())->second.getValue(x);
   }

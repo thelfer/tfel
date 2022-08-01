@@ -24,11 +24,11 @@ namespace mfront {
     //! \brief default constructor
     LawFunction();
     //! \brief move constructor
-    LawFunction(LawFunction&&);
+    LawFunction(LawFunction&&) noexcept;
     //! \brief copy constructor
     LawFunction(const LawFunction&);
     //! \brief move assignement
-    LawFunction& operator=(LawFunction&&);
+    LawFunction& operator=(LawFunction&&) noexcept;
     //! \brief copy assignement
     LawFunction& operator=(const LawFunction&);
     //! \brief destructor

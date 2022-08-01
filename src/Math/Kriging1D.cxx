@@ -20,13 +20,13 @@ namespace tfel::math {
 
   Kriging1D::Kriging1D(const std::vector<double>& vx,
                        const std::vector<double>& vy) {
-    std::vector<double>::const_iterator px;
-    std::vector<double>::const_iterator py;
     raise_if<KrigingErrorInvalidLength>(vx.size() != vy.size());
     const auto n = KrigingUtilities::normalize(vx);
     this->a = n.first;
     this->b = n.second;
-    for (px = vx.begin(), py = vy.begin(); px != vx.end(); ++px, ++py) {
+    auto px = vx.begin();
+    auto py = vy.begin();
+    for (; px != vx.end(); ++px, ++py) {
       Kriging<1u, double>::addValue((this->a) * (*px) + (this->b), *py);
     }
     Kriging<1u, double>::buildInterpolation();
@@ -35,13 +35,13 @@ namespace tfel::math {
   Kriging1D::Kriging1D(const tfel::math::vector<double>& vx,
                        const tfel::math::vector<double>& vy) {
     using tfel::math::vector;
-    vector<double>::const_iterator px;
-    vector<double>::const_iterator py;
     raise_if<KrigingErrorInvalidLength>(vx.size() != vy.size());
     const auto n = KrigingUtilities::normalize(vx);
     this->a = n.first;
     this->b = n.second;
-    for (px = vx.begin(), py = vy.begin(); px != vx.end(); ++px, ++py) {
+    auto px = vx.begin();
+    auto py = vy.begin();
+    for (; px != vx.end(); ++px, ++py) {
       Kriging<1u, double>::addValue((this->a) * (*px) + (this->b), *py);
     }
     Kriging<1u, double>::buildInterpolation();

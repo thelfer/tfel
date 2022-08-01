@@ -251,11 +251,11 @@ namespace tfel::system {
   }  // end of SignalManager::removeHandler
 
   void SignalManager::treatAction(int sig) {
-    auto& signalManager = SignalManager::getSignalManager();
-    auto p = signalManager.callBacks.find(sig);
-    if (p != signalManager.callBacks.end()) {
-      for (auto p2 = p->second.begin(); p2 != p->second.end(); ++p2) {
-        p2->second->execute(sig);
+    auto& sm = SignalManager::getSignalManager();
+    const auto p = sm.callBacks.find(sig);
+    if (p != sm.callBacks.end()) {
+      for (const auto& c : p->second) {
+        c.second->execute(sig);
       }
     }
   }  // end of SignalManager::treatAction

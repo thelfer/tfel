@@ -55,9 +55,8 @@ namespace mfront {
     if (mb.getLibrary().empty()) {
       if (!mb.getMaterialName().empty()) {
         return "Aster" + mb.getMaterialName();
-      } else {
-        return "AsterBehaviour";
       }
+      return "AsterBehaviour";
     }
     return "Aster" + mb.getLibrary();
   }  // end of AsterInterface::getLibraryName
@@ -102,12 +101,14 @@ namespace mfront {
       this->setGenerateMTestFileOnFailureAttribute(
           bd, this->readBooleanValue(key, current, end));
       return {true, current};
-    } else if (key == "@AsterCompareToNumericalTangentOperator") {
+    }
+    if (key == "@AsterCompareToNumericalTangentOperator") {
       this->compareToNumericalTangentOperator =
           this->readBooleanValue(key, current, end);
       return make_pair(true, current);
-    } else if ((key == "@AsterTangentOperatorComparisonCriterium") ||
-               (key == "@AsterTangentOperatorComparisonCriterion")) {
+    }
+    if ((key == "@AsterTangentOperatorComparisonCriterium") ||
+	(key == "@AsterTangentOperatorComparisonCriterion")) {
       throw_if(
           !this->compareToNumericalTangentOperator,
           "comparison to tangent operator is not enabled at this stage.\n"
@@ -121,7 +122,8 @@ namespace mfront {
                "expected ';', read '" + current->value + "'");
       ++(current);
       return {true, current};
-    } else if (key == "@AsterStrainPerturbationValue") {
+    }
+    if (key == "@AsterStrainPerturbationValue") {
       throw_if(!this->compareToNumericalTangentOperator,
                "time stepping is not enabled at this stage.\n"
                "Use the @AsterUseTimeSubStepping directive before "
@@ -133,14 +135,17 @@ namespace mfront {
                "expected ';', read '" + current->value + "'");
       ++(current);
       return {true, current};
-    } else if (key == "@AsterSaveTangentOperator") {
+    }
+    if (key == "@AsterSaveTangentOperator") {
       bd.setAttribute(AsterInterface::saveTangentOperator,
                       this->readBooleanValue(key, current, end), false);
       return {true, current};
-    } else if (key == "@AsterErrorReport") {
+    }
+    if (key == "@AsterErrorReport") {
       this->errorReport = this->readBooleanValue(key, current, end);
       return {true, current};
-    } else if (key == "@AsterFiniteStrainFormulation") {
+    }
+    if (key == "@AsterFiniteStrainFormulation") {
       throw_if(bd.getBehaviourType() !=
                    BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR,
                "the '@AsterFiniteStrainFormulation' is only valid "

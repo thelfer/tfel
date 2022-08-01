@@ -276,15 +276,15 @@ libTFELMFront_la_SOURCES += CyranoMaterialPropertyInterface.cxx \
 endif
 libTFELMFront_la_CPPFLAGS = $(AM_CPPFLAGS) -DTFELMFront_EXPORTS
 
-libTFELMFront_la_LIBADD  = -L$(top_builddir)/mfront/src -lMFrontLogStream      \
-	   	           -L$(top_builddir)/src/Material  -lTFELMaterial            \
-		           -L$(top_builddir)/src/Math      -lTFELMathParser          \
-		           -L$(top_builddir)/src/System    -lTFELSystem              \
-		           -L$(top_builddir)/src/Glossary  -lTFELGlossary            \
-		           -L$(top_builddir)/src/Utilities -lTFELUtilities           \
-		           -L$(top_builddir)/src/UnicodeSupport -lTFELUnicodeSupport \
-		           -L$(top_builddir)/src/Exception -lTFELException           \
-		           -L$(top_builddir)/src/Config    -lTFELConfig
+libTFELMFront_la_LIBADD  = -L$(top_builddir)/mfront/src    -lMFrontLogStream                                 \
+                           -L$(top_builddir)/src/Material  -lTFELMaterial                                    \
+                           -L$(top_builddir)/src/Math      -lTFELMathParser -lTFELMathCubicSpline -lTFELMath \
+                           -L$(top_builddir)/src/System    -lTFELSystem                                      \
+                           -L$(top_builddir)/src/Glossary  -lTFELGlossary                                    \
+                           -L$(top_builddir)/src/Utilities -lTFELUtilities                                   \
+                           -L$(top_builddir)/src/UnicodeSupport -lTFELUnicodeSupport                         \
+                           -L$(top_builddir)/src/Exception -lTFELException                                   \
+                           -L$(top_builddir)/src/Config    -lTFELConfig
 if TFEL_WIN
 libTFELMFront_la_LDFLAGS  = -no-undefined -avoid-version -Wl,--add-stdcall-alias -Wl,--kill-at
 endif # TFEL_WIN
