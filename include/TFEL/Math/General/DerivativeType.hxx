@@ -135,6 +135,17 @@ namespace tfel::math {
   };
 
   /*!
+   * \brief partial specialisation of both types are scalar
+   * \tparam FunctionType: function type
+   * \tparam VariableType: variable type
+   */
+  template <typename FunctionType, typename VariableType>
+  struct DerivativeTypeImplementation<false, true, FunctionType, VariableType> {
+    //! \brief the result
+    using type = result_type<FunctionType, VariableType, OpDiv>;
+  };
+
+  /*!
    * \brief a meta function returning the type of the derivative of
    * a variable of type `FunctionType` with respect to variables of type
    * `VariablesType`.

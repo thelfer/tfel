@@ -78,6 +78,14 @@ mfront_behaviour_brick_check_library(MFrontStandardElastoViscoPlasticityBrickBeh
   StandardElastoViscoPlasticityPlasticityTest16_nj
   StandardElastoViscoPlasticityPlasticityTest17
   StandardElastoViscoPlasticityPlasticityTest17_nj
+  StandardElastoViscoPlasticityPlasticityTest18
+  StandardElastoViscoPlasticityPlasticityTest18_nj
+  StandardElastoViscoPlasticityPlasticityTest19
+  StandardElastoViscoPlasticityPlasticityTest19_nj
+  StandardElastoViscoPlasticityPlasticityTest20
+  StandardElastoViscoPlasticityPlasticityTest20_nj
+  StandardElastoViscoPlasticityPlasticityTest21
+  StandardElastoViscoPlasticityPlasticityTest21_nj
   StandardElastoViscoPlasticityIsotropicDamageHookeLaw
   StandardElastoViscoPlasticityIsotropicDamageHookeLaw_nj
   StandardElastoViscoPlasticityIsotropicDamageHookeLaw2
@@ -107,8 +115,20 @@ mfront_behaviour_brick_check_library(MFrontStandardElastoViscoPlasticityBrickBeh
   UserDefinedViscoplasticityTest3
   UserDefinedViscoplasticityTest3_nj)
 
+if(enable-mfront-quantity-tests)
+  mfront_behaviour_brick_check_library(MFrontStandardElastoViscoPlasticityBrickBehaviours3
+    StandardElastoViscoPlasticity generic
+    StandardElastoViscoPlasticityPlasticityTest18_qt
+    StandardElastoViscoPlasticityPlasticityTest18_qt_nj
+    StandardElastoViscoPlasticityPlasticityTest19_qt
+    StandardElastoViscoPlasticityPlasticityTest19_qt_nj
+    StandardElastoViscoPlasticityPlasticityTest20_qt
+    StandardElastoViscoPlasticityPlasticityTest20_qt_nj
+    StandardElastoViscoPlasticityPlasticityTest21_qt
+    StandardElastoViscoPlasticityPlasticityTest21_qt_nj)
+endif(enable-mfront-quantity-tests)
 
-function(generictest_standardelastovicoplasticitybrick test_arg behaviour_name)
+function(generictest_standardelastovicoplasticitybrick test_name test_file library_name behaviour_name)
   set(_REFERENCE_FILE )
   set(_MODELLING_HYPOTHESES)
   foreach(_ARG ${ARGN})
@@ -125,33 +145,33 @@ function(generictest_standardelastovicoplasticitybrick test_arg behaviour_name)
   if(NOT _MODELLING_HYPOTHESES)
     set(_MODELLING_HYPOTHESES "Tridimensional")
   endif(NOT _MODELLING_HYPOTHESES)
-  set(file "${CMAKE_CURRENT_SOURCE_DIR}/${test_arg}.mtest")
+  set(file "${CMAKE_CURRENT_SOURCE_DIR}/${test_file}.mtest")
   foreach(mh ${_MODELLING_HYPOTHESES})
     foreach(rm ${IEEE754_ROUNDING_MODES})
       if(NOT _REFERENCE_FILE)
-        add_test(NAME brick${test_arg}_${behaviour_name}_${mh}_${rm}_generic_mtest
+        add_test(NAME brick${test_name}_${behaviour_name}_${mh}_${rm}_generic_mtest
           	     COMMAND mtest --rounding-direction-mode=${rm}
-                --verbose=level0 --xml-output=true --result-file-output=false
-                --@ModellingHypothesis="${mh}"
-                --@library@="$<TARGET_FILE:MFrontStandardElastoViscoPlasticityBrickBehaviours>"
-                --@behaviour@="${behaviour_name}"
-                --@xml_output@="${test_arg}-${behaviour_name}-${rm}.xml" ${file})
+                 --verbose=level0 --xml-output=true --result-file-output=false
+                 --@ModellingHypothesis="${mh}"
+                 --@library@="$<TARGET_FILE:${library_name}>"
+                 --@behaviour@="${behaviour_name}"
+                 --@xml_output@="${test_name}-${behaviour_name}-${rm}.xml" ${file})
       else(NOT _REFERENCE_FILE)
         set(rfile "${top_srcdir}/mfront/tests/behaviours/bricks/StandardElastoViscoPlasticity/references/${_REFERENCE_FILE}")
-        add_test(NAME brick${test_arg}_${behaviour_name}_${mh}_${rm}_generic_mtest
+        add_test(NAME brick${test_name}_${behaviour_name}_${mh}_${rm}_generic_mtest
           	     COMMAND mtest --rounding-direction-mode=${rm} --verbose=level0 --xml-output=true --result-file-output=false
                  --@ModellingHypothesis="${mh}"
-          	     --@library@="$<TARGET_FILE:MFrontStandardElastoViscoPlasticityBrickBehaviours>"
+          	     --@library@="$<TARGET_FILE:${library_name}>"
                  --@behaviour@="${behaviour_name}"
-          	     --@xml_output@="${test_arg}-${behaviour_name}-${rm}.xml"
+          	     --@xml_output@="${test_name}-${behaviour_name}-${rm}.xml"
           	     --@reference_file@="${rfile}" ${file})
       endif(NOT _REFERENCE_FILE)
       if((CMAKE_HOST_WIN32) AND (NOT MSYS))
-          	set_property(TEST brick${test_arg}_${behaviour_name}_${mh}_${rm}_generic_mtest
+          	set_property(TEST brick${test_name}_${behaviour_name}_${mh}_${rm}_generic_mtest
           	  PROPERTY DEPENDS "MFrontStandardElastoViscoPlasticityBrickBehaviours mtest"
           	  PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:TFELMTest>\;$<TARGET_FILE_DIR:TFELMFront>\;$<TARGET_FILE_DIR:MFrontLogStream>\;$<TARGET_FILE_DIR:TFELMaterial>\;$<TARGET_FILE_DIR:TFELNUMODIS>\;$<TARGET_FILE_DIR:TFELMathParser>\;$<TARGET_FILE_DIR:TFELGlossary>\;$<TARGET_FILE_DIR:TFELSystem>\;$<TARGET_FILE_DIR:TFELUtilities>\;$<TARGET_FILE_DIR:TFELException>\;$<TARGET_FILE_DIR:TFELTests>\;$<TARGET_FILE_DIR:TFELConfig>\;$<TARGET_FILE_DIR:TFELUnicodeSupport>\;$ENV{PATH}")
       elseif((CMAKE_HOST_WIN32) AND (NOT MSYS))
-        set_property(TEST brick${test_arg}_${behaviour_name}_${mh}_${rm}_generic_mtest
+        set_property(TEST brick${test_name}_${behaviour_name}_${mh}_${rm}_generic_mtest
           	  PROPERTY DEPENDS "MFrontStandardElastoViscoPlasticityBrickBehaviours mtest")
       endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
     endforeach(rm ${IEEE754_ROUNDING_MODES})
@@ -167,5 +187,36 @@ function(generictest_standardelastovicoplasticitybrick test_arg behaviour_name)
   endif(TFEL_APPEND_SUFFIX)
 endfunction(generictest_standardelastovicoplasticitybrick)
 
-generictest_standardelastovicoplasticitybrick(GursonTvergaardNeedleman1982-test1 GursonTvergaardNeedleman1982 GursonTvergaardNeedleman1982-test1.ref)
-generictest_standardelastovicoplasticitybrick(GursonTvergaardNeedleman1982-test2 GursonTvergaardNeedleman1982 GursonTvergaardNeedleman1982-test2.ref)
+generictest_standardelastovicoplasticitybrick(GursonTvergaardNeedleman1982-test1
+	GursonTvergaardNeedleman1982-test1
+    MFrontStandardElastoViscoPlasticityBrickBehaviours
+    GursonTvergaardNeedleman1982 GursonTvergaardNeedleman1982-test1.ref)
+generictest_standardelastovicoplasticitybrick(GursonTvergaardNeedleman1982-test2
+    GursonTvergaardNeedleman1982-test2
+    MFrontStandardElastoViscoPlasticityBrickBehaviours
+    GursonTvergaardNeedleman1982 GursonTvergaardNeedleman1982-test2.ref)
+
+foreach(id RANGE 18 21)
+  generictest_standardelastovicoplasticitybrick("DataIsotropicHardeningRuleTest-${id}"
+    DataIsotropicHardeningRuleTest
+    MFrontStandardElastoViscoPlasticityBrickBehaviours
+    "StandardElastoViscoPlasticityPlasticityTest${id}"
+    "DataIsotropicHardeningRuleTest-${id}.ref")
+  generictest_standardelastovicoplasticitybrick("DataIsotropicHardeningRuleTest-nj-${id}"
+    DataIsotropicHardeningRuleTest
+    MFrontStandardElastoViscoPlasticityBrickBehaviours
+    "StandardElastoViscoPlasticityPlasticityTest${id}_nj"
+    "DataIsotropicHardeningRuleTest-${id}.ref")
+  if(enable-mfront-quantity-tests)
+    generictest_standardelastovicoplasticitybrick("DataIsotropicHardeningRuleTest-qt-${id}"
+      DataIsotropicHardeningRuleTest
+      MFrontStandardElastoViscoPlasticityBrickBehaviours3
+      "StandardElastoViscoPlasticityPlasticityTest${id}_qt"
+      "DataIsotropicHardeningRuleTest-${id}.ref")
+    generictest_standardelastovicoplasticitybrick("DataIsotropicHardeningRuleTest-qt-nj-${id}"
+      DataIsotropicHardeningRuleTest
+      MFrontStandardElastoViscoPlasticityBrickBehaviours3
+      "StandardElastoViscoPlasticityPlasticityTest${id}_qt_nj"
+      "DataIsotropicHardeningRuleTest-${id}.ref")
+  endif(enable-mfront-quantity-tests)
+endforeach()

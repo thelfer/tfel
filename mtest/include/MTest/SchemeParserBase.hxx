@@ -261,15 +261,15 @@ namespace mtest {
     bool treatKeyword(SchemeBase&, tokens_iterator&);
     //! \return the list of keywords
     std::vector<std::string> getKeyWordsList() const;
-    //! a simple alias
+    //! \brief a simple alias
     using CallBack = void (SchemeParserBase::*)(SchemeBase&, tokens_iterator&);
-    //! a simple alias
+    //! \brief a simple alias
     using ExternalFunctionManager = tfel::math::parser::ExternalFunctionManager;
-    //! external function imported through the `@Import` keyword
+    //! \brief external function imported through the `@Import` keyword
     std::shared_ptr<ExternalFunctionManager> externalFunctions;
-    //! callbacks
+    //! \brief callbacks
     std::map<std::string, CallBack> callbacks;
-    //! input file
+    //! \brief input file
     std::string file;
 
    private:

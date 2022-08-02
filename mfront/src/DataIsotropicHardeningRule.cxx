@@ -181,8 +181,7 @@ namespace mfront::bbrick {
       std::ostringstream os;
       os.precision(14);
       os << "constexpr auto mfront_yield_surface_abscissae = ";
-      os << "tfel::math::fsarray<" + std::to_string(this->values.size()) +
-                ", strain>";
+      os << "std::array<strain, " + std::to_string(this->values.size()) + ">";
       os << "{";
       for (auto p = values.begin(); p != values.end();) {
         os << "strain{" << p->first << "}";
@@ -192,8 +191,7 @@ namespace mfront::bbrick {
       }
       os << "};\n";
       os << "constexpr auto mfront_yield_surface_values = ";
-      os << "tfel::math::fsarray<" + std::to_string(this->values.size()) +
-                ", stress>";
+      os << "std::array<stress, " + std::to_string(this->values.size()) + ">";
       os << "{";
       for (auto p = values.begin(); p != values.end();) {
         os << "stress{" << p->second << "}";
@@ -273,8 +271,8 @@ namespace mfront::bbrick {
       const auto type =
           "tfel::math::CubicSplineCollocationPoint<strain, stress>";
       os << "constexpr auto mfront_yield_surface_collocation_points = ";
-      os << "tfel::math::fsarray<" + std::to_string(this->values.size()) << ", "
-         << type << ">{\n";
+      os << "std::array<" << type << ", " << std::to_string(this->values.size())
+         << ">{\n";
       for (auto p = pts.begin(); p != pts.end();) {
         os << type << "{strain{" << p->x << "}, stress{" << p->y << "}, stress{"
            << p->d << "}}";

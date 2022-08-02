@@ -65,10 +65,14 @@ namespace tfel::math {
     constexpr auto computeCubicSplineLocalCoefficients(
         const CubicSplineCollocationPoint<AbscissaType, ValueType>& pa,
         const CubicSplineCollocationPoint<AbscissaType, ValueType>& pb) {
+      using ResultType1 =
+          derivative_type<ValueType, AbscissaType, AbscissaType>;
+      using ResultType2 =
+          derivative_type<ValueType, AbscissaType, AbscissaType, AbscissaType>;
       const auto usL = 1 / (pb.x - pa.x);
       const auto Dy = (pb.y - pa.y) * usL;
-      return std::make_pair(ValueType{(3 * Dy - pb.d - 2 * pa.d) * usL},
-                            ValueType{(-2 * Dy + pb.d + pa.d) * usL * usL});
+      return std::make_pair(ResultType1{(3 * Dy - pb.d - 2 * pa.d) * usL},
+                            ResultType2{(-2 * Dy + pb.d + pa.d) * usL * usL});
     }  // end of computeCubicSplineLocalCoefficients
 
     template <typename AbscissaType, typename ValueType>
@@ -306,7 +310,7 @@ namespace tfel::math {
       tfel::raise<CubicSplineUninitialised>();
     }
     std::tie(f, df) =
-        computeCubicSplineInterpolationAndDerivative(this->points, x);
+        computeCubicSplineInterpolationAndDerivative<true>(this->points, x);
   }  // end of getValues
 
   template <typename AbscissaType, typename ValueType>

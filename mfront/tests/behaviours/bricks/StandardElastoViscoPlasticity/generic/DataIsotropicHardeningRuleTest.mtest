@@ -1,0 +1,14 @@
+@Author HELFER Thomas 202608;
+@Date 29 / 07 / 2022;
+@XMLOutputFile @xml_output@;
+@Behaviour<generic> @library@ @behaviour@;
+@ExternalStateVariable 'Temperature' 293.15 ;
+@ImposedStrain 'EXX' {0 : 0, 1 : 1e-2};
+@Times{0, 1 in 50};
+
+@Test<file> @reference_file@ 'SXX'   8 1e-2;
+@Test<file> @reference_file@ 'SYY'   9 1e-2;
+@Test<file> @reference_file@ 'SZZ'  10 1e-2;
+@Test<file> @reference_file@ 'SXY'  11 1e-2;
+@Test<file> @reference_file@ 'SXZ'  12 1e-2;
+@Test<file> @reference_file@ 'SYZ'  13 1e-2;
