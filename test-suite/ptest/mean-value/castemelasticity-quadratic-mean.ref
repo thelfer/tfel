@@ -1,0 +1,16 @@
+# first  column : time
+# second column : inner radius
+# third  column : outer radius
+# fourth column : inner radius displacement
+# fifth  column : outer radius displacement
+# sixth  column : axial displacement
+# 7th column : mean value of 'SRR' in the initial configuration
+# 8th column : mean value of 'SRR' in the current configuration
+# 9th column : mean value of 'STT' in the initial configuration
+# 10th column : mean value of 'STT' in the current configuration
+# 11th column : mean value of 'SZZ' in the initial configuration
+# 12th column : mean value of 'SZZ' in the current configuration
+# 13th column : mean value of 'Temperature' in the initial configuration
+# 14th column : mean value of 'Temperature' in the current configuration
+0 0.0042 0.0047 0 0 0 0 0 0 0 0 0 0 0
+1 0.0042401699499679 0.0047388358785993 4.0169949967933e-05 3.8835878599301e-05 -0.0038685615275649 -220414550.69699 -220416306.94402 1116590284.6953 1116592233.4169 24299999.999955 24300486.80314 293.15 293.15

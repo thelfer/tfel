@@ -1,0 +1,16 @@
+# first  column : time
+# second column : inner radius
+# third  column : outer radius
+# fourth column : inner radius displacement
+# fifth  column : outer radius displacement
+# sixth  column : axial displacement
+# 7th column : integral value of 'SRR' in the initial configuration
+# 8th column : integral value of 'SRR' in the current configuration
+# 9th column : integral value of 'STT' in the initial configuration
+# 10th column : integral value of 'STT' in the current configuration
+# 11th column : integral value of 'SZZ' in the initial configuration
+# 12th column : integral value of 'SZZ' in the current configuration
+# 13th column : integral value of 'Temperature' in the initial configuration
+# 14th column : integral value of 'Temperature' in the current configuration
+0 0.0042 0.0047 0 0 0 0 0 0 0 0 0 0 0
+1 0.0042401699499679 0.0047388358785993 4.0169949967933e-05 3.8835878599301e-05 -0.0038685615275649 -3081.4146628021 -3088.5041601365 15610.029667835 15645.846742908 339.71612159531 340.50182414089 0.0040982625944793 0.0041076588529084

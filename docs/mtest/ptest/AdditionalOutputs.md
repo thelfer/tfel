@@ -9,11 +9,16 @@ The following outputs are available:
   the minimum value of the given field(s).
 - `maximum_value` (or `maximum_values`): this post-processing outputs
   the maximum value of the given field(s).
-- `integral_value` (or `integral_values`): this post-processing outputs
-  the integral value of the given field(s).
-- `mean_value` (or `mean_values`): this post-processing outputs the mean
+- `integral_value_initial_configuration` (or `integral_values_initial_configuration`): this post-processing outputs
+  the integral value of the given field(s) in the initial configuration.
+- `integral_value_current_configuration` (or `integral_values_current_configuration`): this post-processing outputs
+  the integral value of the given field(s) in the current configuration.
+- `mean_value_initial_configuration` (or `mean_values_initial_configuration`): this post-processing outputs the mean
   value of the given field(s), i.e. the integral value divided by the
-  volume of the tube.
+  volume of the tube, in the initial configuration.
+- `mean_value_current_configuration` (or `mean_values_current_configuration`): this post-processing outputs the mean
+  value of the given field(s), i.e. the integral value divided by the
+  volume of the tube, in the current configuration.
 
 ## Example
 
@@ -21,6 +26,7 @@ The following outputs are available:
 @AdditionalOutputs{
  "minimum_value" : "BetaPhaseFraction",
  "maximum_values" : {"Temperature","pres","BetaPhaseFraction",
-                    "ETT","EquivalentViscoplasticStrain"}
+                    "ETT","EquivalentViscoplasticStrain"},
+ "mean_value_initial_configuration" : "SRR"
 };
 ~~~~

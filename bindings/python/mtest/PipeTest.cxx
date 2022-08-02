@@ -167,6 +167,11 @@ void declarePipeTest() {
   tfel::tests::TestResult (PipeTest::*pm)() = &PipeTest::execute;
   void (PipeTest::*pm2)(StudyCurrentState&, SolverWorkSpace&, const real,
                         const real) const = &PipeTest::execute;
+  boost::python::enum_<mtest::PipeTest::Configuration>("PipeTestConfiguration")
+      .value("INTIAL_CONFIGURATION",
+             mtest::PipeTest::Configuration::INTIAL_CONFIGURATION)
+      .value("CURRENT_CONFIGURATION",
+             mtest::PipeTest::Configuration::CURRENT_CONFIGURATION);
   boost::python::class_<PipeTest, boost::noncopyable,
                         boost::python::bases<SingleStructureScheme>>("PipeTest")
       .def("setInnerRadius", &PipeTest::setInnerRadius)
@@ -283,12 +288,14 @@ void declarePipeTest() {
            "compute the maximum value of a scalar variable")
       .def("computeMeanValue",
            static_cast<real (PipeTest::*)(const StudyCurrentState&,
-                                          const std::string&) const>(
+                                          const std::string&,
+                                          const PipeTest::Configuration) const>(
                &PipeTest::computeMeanValue),
            "compute the mean value of a scalar variable")
       .def("computeIntegralValue",
            static_cast<real (PipeTest::*)(const StudyCurrentState&,
-                                          const std::string&) const>(
+                                          const std::string&,
+                                          const PipeTest::Configuration) const>(
                &PipeTest::computeIntegralValue),
            "compute the integral value of a scalar variable")
       .def("computeMinimumAndMaximumValues",
