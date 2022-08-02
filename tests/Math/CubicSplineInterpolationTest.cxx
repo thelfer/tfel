@@ -94,6 +94,7 @@ struct CubicSplineInterpolationTest final : public tfel::tests::TestCase {
     TFEL_TESTS_STATIC_ASSERT(my_abs(std::get<1>(fdf_values[3]) - 2.25) < eps);
   }
   void test3() {
+#ifndef __clang__
     using time = tfel::math::qt<tfel::math::Time, double>;
     using stress = tfel::math::qt<tfel::math::Stress, double>;
     using stressrate = tfel::math::derivative_type<stress, time>;
@@ -140,8 +141,10 @@ struct CubicSplineInterpolationTest final : public tfel::tests::TestCase {
                              eps1);
     TFEL_TESTS_STATIC_ASSERT(
         my_abs(std::get<1>(fdf_values[3]) - stressrate{2.25}) < eps2);
+#endif /* __clang__ */
   }
   void test4() {
+#ifndef __clang__
     using time = tfel::math::qt<tfel::math::Time, double>;
     using stress = tfel::math::qt<tfel::math::Stress, double>;
     using stressrate = tfel::math::derivative_type<stress, time>;
@@ -215,7 +218,7 @@ struct CubicSplineInterpolationTest final : public tfel::tests::TestCase {
         my_abs(std::get<1>(fdf_values[3])[0] - stressrate{2.25}) < eps2);
     TFEL_TESTS_STATIC_ASSERT(
         my_abs(std::get<1>(fdf_values[3])[1] - stressrate{2.25}) < eps2);
-
+#endif /* __clang__ */
   }
 };
 
