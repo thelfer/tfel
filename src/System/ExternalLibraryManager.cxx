@@ -1202,7 +1202,11 @@ namespace tfel {
         std::vector<std::string>& arguments,
         const std::string& l,
         const std::string& f) {
-      arguments = this->getArrayOfStrings(l, f, "args");
+      if (this->getMaterialPropertyNumberOfVariables(l, f) != 0) {
+        arguments = this->getArrayOfStrings(l, f, "args");
+      } else {
+        arguments.clear();
+      }
     }  // end of getMaterialPropertyVariables
 
     std::vector<std::string>
