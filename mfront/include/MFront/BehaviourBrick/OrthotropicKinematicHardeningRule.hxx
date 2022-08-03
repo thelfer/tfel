@@ -1,5 +1,5 @@
 /*!
- * \file   BurletCailletaudKinematicHardeningRule.hxx
+ * \file   OrthotropicKinematicHardeningRule.hxx
  * \brief
  * \author Thomas Helfer
  * \date   04/04/2018
@@ -11,22 +11,17 @@
  * project under specific licensing conditions.
  */
 
-#ifndef LIB_MFRONT_BEHAVIOURBRICK_BURLETCAILLETAUDKINEMATICHARDENINGRULE_HXX
-#define LIB_MFRONT_BEHAVIOURBRICK_BURLETCAILLETAUDKINEMATICHARDENINGRULE_HXX
+#ifndef LIB_MFRONT_BEHAVIOURBRICK_ORTHOTROPICKINEMATICHARDENINGRULE_HXX
+#define LIB_MFRONT_BEHAVIOURBRICK_ORTHOTROPICKINEMATICHARDENINGRULE_HXX
 
 #include "MFront/BehaviourBrick/KinematicHardeningRuleBase.hxx"
 
 namespace mfront::bbrick {
 
   /*!
-   * \brief This class describes the Burlet-Cailletaud kinematic hardening
-   * rule defined by the following evolution of the back-strain variable
-   * \f$\underline{a}\f$:
-   * \f[
-   * \underline{\dot{a}}=\underline{\dot{\varepsilon}}^{p}-\eta\,\,D\underline{a}-(1-\eta)\,D\,\left(\underline{a}\,\colon\,\underline{n}\right)\,\underline{n}
-   * \f]
+   * \brief 
    */
-  struct BurletCailletaudKinematicHardeningRule : KinematicHardeningRuleBase {
+  struct OrthotropicKinematicHardeningRule : KinematicHardeningRuleBase {
     std::vector<OptionDescription> getOptions() const override;
     void initialize(BehaviourDescription&,
                     AbstractBehaviourDSL&,
@@ -45,18 +40,22 @@ namespace mfront::bbrick {
         const std::string&,
         const std::string&,
         const bool) const override;
-    //! destructor
-    ~BurletCailletaudKinematicHardeningRule() override;
+    //! \brief destructor
+    ~OrthotropicKinematicHardeningRule() override;
 
    protected:
     //! \brief call-back
     BehaviourDescription::MaterialProperty D;
-    //! \brief parameter call-back
-    BehaviourDescription::MaterialProperty eta;
-
+    //! \brief call-back
+    BehaviourDescription::MaterialProperty f;
+    //! \brief coefficients of the first linear transformation
+    std::array<MaterialProperty, 9u> Ec;
+    //! \brief coefficients of the second linear transformation
+    std::array<MaterialProperty, 9u> Rd;
+    //! \brief coefficients of the third linear transformation
+    std::array<MaterialProperty, 9u> Rs;
   };  // end of struct KinematicHardeningRule
 
 }  // end of namespace mfront::bbrick
 
-#endif /* LIB_MFRONT_BEHAVIOURBRICK_BURLETCAILLETAUDKINEMATICHARDENINGRULE_HXX \
-        */
+#endif /* LIB_MFRONT_BEHAVIOURBRICK_ORTHOTROPICKINEMATICHARDENINGRULE_HXX */

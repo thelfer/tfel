@@ -56,7 +56,7 @@ namespace mfront::bbrick {
 
   BehaviourDescription::MaterialProperty
   getBehaviourDescriptionMaterialProperty(AbstractBehaviourDSL& dsl,
-                                          const std::string& n,
+                                          const std::string_view n,
                                           const tfel::utilities::Data& d) {
     if (d.is<double>()) {
       BehaviourDescription::ConstantMaterialProperty cmp;
@@ -71,7 +71,7 @@ namespace mfront::bbrick {
       tfel::raise(
           "getBehaviourDescriptionMaterialProperty: "
           "unsupported data type for material property '" +
-          n + "'");
+          std::string(n) + "'");
     }
     const auto mp = d.get<std::string>();
     if (tfel::utilities::ends_with(mp, ".mfront")) {
@@ -633,7 +633,7 @@ namespace mfront::bbrick {
   std::vector<BehaviourDescription::MaterialProperty>
   getArrayOfBehaviourDescriptionMaterialProperties(
       AbstractBehaviourDSL& dsl,
-      const std::string& n,
+      const std::string_view n,
       const tfel::utilities::Data& d) {
     std::vector<BehaviourDescription::MaterialProperty> mps;
     if (!d.is<std::vector<tfel::utilities::Data>>()) {
@@ -719,5 +719,39 @@ namespace mfront::bbrick {
     }
     return c;
   }  // end of generateMaterialPropertiesInitializationCode
+
+  std::array<BehaviourDescription::MaterialProperty, 9u>
+  extractLinearTransformation(AbstractBehaviourDSL& dsl,
+                              BehaviourDescription& bd,
+                              const tfel::utilities::DataMap& d,
+                              const std::string_view n,
+                              const std::string_view vn,
+                              const std::string_view en) {
+    using ConstantMaterialProperty =
+        BehaviourDescription::ConstantMaterialProperty;
+    const auto p = d.find(n);
+    if (p == d.end()) {
+      tfel::raise("extractLinearTransformation::initialize: entry '" +
+                  std::string(n) + "' is not defined");
+    }
+    const auto l =
+        getArrayOfBehaviourDescriptionMaterialProperties<9u>(dsl, n, p->second);
+    if (l[0].is<ConstantMaterialProperty>()) {
+      std::vector<double> values(9u);
+      for (unsigned short i = 0; i != 9; ++i) {
+        tfel::raise_if(!l[i].is<ConstantMaterialProperty>(),
+                       "extractLinearTransformation: "
+                       "if one component of '" +
+                           std::string(n) +
+                           "' is a constant value, all components must be "
+                           "constant values");
+        values[i] = l[i].get<ConstantMaterialProperty>().value;
+      }
+      addParameter(bd, std::string(vn), std::string(en), 9, values);
+    } else {
+      addLocalVariable(bd, "real", std::string(vn), 9);
+    }
+    return l;
+  }  // end of extractLinearTransformation
 
 }  // end of namespace mfront::bbrick

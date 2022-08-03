@@ -1,5 +1,5 @@
 /*!
- * \file   Chaboche2012KinematicHardeningRule.cxx
+ * \file   mfront/src/Chaboche2012KinematicHardeningRule.cxx
  * \brief
  * \author Thomas Helfer
  * \date   04/04/2018

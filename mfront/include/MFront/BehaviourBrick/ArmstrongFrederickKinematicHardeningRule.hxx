@@ -16,50 +16,45 @@
 
 #include "MFront/BehaviourBrick/KinematicHardeningRuleBase.hxx"
 
-namespace mfront {
+namespace mfront::bbrick {
 
-  namespace bbrick {
-
-    /*!
-     * \brief class describing the Armstrong-Frederick kinematic hardening rule
-     * defined by the following evolution of the back-strain variable
-     * \f$\underline{a}\f$:
-     * \f[
-     * \underline{\dot{a}}=\underline{\dot{\varepsilon}}^{p}-D\,\underline{a}
-     * \f]
-     */
-    struct ArmstrongFrederickKinematicHardeningRule
-        : KinematicHardeningRuleBase {
-      std::vector<OptionDescription> getOptions() const override;
-      void initialize(BehaviourDescription&,
-                      AbstractBehaviourDSL&,
+  /*!
+   * \brief class describing the Armstrong-Frederick kinematic hardening rule
+   * defined by the following evolution of the back-strain variable
+   * \f$\underline{a}\f$:
+   * \f[
+   * \underline{\dot{a}}=\underline{\dot{\varepsilon}}^{p}-D\,\underline{a}
+   * \f]
+   */
+  struct ArmstrongFrederickKinematicHardeningRule : KinematicHardeningRuleBase {
+    std::vector<OptionDescription> getOptions() const override;
+    void initialize(BehaviourDescription&,
+                    AbstractBehaviourDSL&,
+                    const std::string&,
+                    const std::string&,
+                    const DataMap&) override;
+    void endTreatment(BehaviourDescription&,
+                      const AbstractBehaviourDSL&,
                       const std::string&,
-                      const std::string&,
-                      const DataMap&) override;
-      void endTreatment(BehaviourDescription&,
-                        const AbstractBehaviourDSL&,
-                        const std::string&,
-                        const std::string&) const override;
-      std::string buildBackStrainImplicitEquations(
-          const BehaviourDescription&,
-          const StressPotential&,
-          const StressCriterion&,
-          const std::vector<std::shared_ptr<KinematicHardeningRule>>&,
-          const std::string&,
-          const std::string&,
-          const bool) const override;
-      //! destructor
-      ~ArmstrongFrederickKinematicHardeningRule() override;
+                      const std::string&) const override;
+    std::string buildBackStrainImplicitEquations(
+        const BehaviourDescription&,
+        const StressPotential&,
+        const StressCriterion&,
+        const std::vector<std::shared_ptr<KinematicHardeningRule>>&,
+        const std::string&,
+        const std::string&,
+        const bool) const override;
+    //! destructor
+    ~ArmstrongFrederickKinematicHardeningRule() override;
 
-     protected:
-      //! \brief call-back
-      BehaviourDescription::MaterialProperty D;
+   protected:
+    //! \brief call-back
+    BehaviourDescription::MaterialProperty D;
 
-    };  // end of struct KinematicHardeningRule
+  };  // end of struct KinematicHardeningRule
 
-  }  // end of namespace bbrick
-
-}  // end of namespace mfront
+}  // end of namespace mfront::bbrick
 
 #endif /* LIB_MFRONT_BEHAVIOURBRICK_ARMSTRONGFREDERICKKINEMATICHARDENINGRULE_HXX \
         */

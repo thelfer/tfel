@@ -22,40 +22,40 @@ namespace mfront {
   // forward declaration
   struct AbstractBehaviourDSL;
 
-  namespace bbrick {
-
-    // forward declaration
-    struct OptionDescription;
-
-    /*!
-     * \brief an helper class used to build a stress criterion.
-     */
-    struct MFRONT_VISIBILITY_EXPORT StressCriterionBase : StressCriterion {
-      void initialize(BehaviourDescription&,
-                      AbstractBehaviourDSL&,
-                      const std::string&,
-                      const DataMap&,
-                      const Role) override;
-      void endTreatment(BehaviourDescription&,
-                        const AbstractBehaviourDSL&,
-                        const std::string&,
-                        const Role) override;
-      std::vector<OptionDescription> getOptions() const override;
-      /*!
-       * \return the code updating the upper bound of the porosity.
-       * If this stress criterion is not coupled with porosity, the returned
-       * value may be empty.
-       * \param[in] bd: behaviour description
-       */
-      std::string updatePorosityUpperBound(const BehaviourDescription&,
-                                           const std::string&,
-                                           const Role) const override;
-      //! destructor
-      ~StressCriterionBase() override;
-    };  // end of StressCriterionBase
-
-  }  // end of namespace bbrick
-
 }  // end of namespace mfront
+
+namespace mfront::bbrick {
+
+  // forward declaration
+  struct OptionDescription;
+
+  /*!
+   * \brief an helper class used to build a stress criterion.
+   */
+  struct MFRONT_VISIBILITY_EXPORT StressCriterionBase : StressCriterion {
+    void initialize(BehaviourDescription&,
+                    AbstractBehaviourDSL&,
+                    const std::string&,
+                    const DataMap&,
+                    const Role) override;
+    void endTreatment(BehaviourDescription&,
+                      const AbstractBehaviourDSL&,
+                      const std::string&,
+                      const Role) override;
+    std::vector<OptionDescription> getOptions() const override;
+    /*!
+     * \return the code updating the upper bound of the porosity.
+     * If this stress criterion is not coupled with porosity, the returned
+     * value may be empty.
+     * \param[in] bd: behaviour description
+     */
+    std::string updatePorosityUpperBound(const BehaviourDescription&,
+                                         const std::string&,
+                                         const Role) const override;
+    //! \brief destructor
+    ~StressCriterionBase() override;
+  };  // end of StressCriterionBase
+
+}  // end of namespace mfront::bbrick
 
 #endif /* LIB_MFRONT_BEHAVIOURBRICK_STRESSCRITERIONBASE_HXX */

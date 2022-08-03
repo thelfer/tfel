@@ -23,24 +23,24 @@ namespace mfront {
   // forward declaration
   struct MaterialPropertyDescription;
 
-  namespace bbrick {
-
-    /*!
-     * \brief class describing the computation of the stress through the
-     * Hooke law coupled with isotropic damage.
-     * The evolution of the damage must be defined by the user.
-     */
-    struct IsotropicDamageHookeStressPotential
-        : IsotropicDamageHookeStressPotentialBase {
-      //! \brief constructor
-      IsotropicDamageHookeStressPotential();
-      //! destructor
-      ~IsotropicDamageHookeStressPotential() override;
-    };  // end of struct IsotropicDamageHookeStressPotential
-
-  }  // end of namespace bbrick
-
 }  // end of namespace mfront
+
+namespace mfront::bbrick {
+
+  /*!
+   * \brief class describing the computation of the stress through the
+   * Hooke law coupled with isotropic damage.
+   * The evolution of the damage must be defined by the user.
+   */
+  struct IsotropicDamageHookeStressPotential
+      : IsotropicDamageHookeStressPotentialBase {
+    //! \brief constructor
+    IsotropicDamageHookeStressPotential();
+    //! destructor
+    ~IsotropicDamageHookeStressPotential() override;
+  };  // end of struct IsotropicDamageHookeStressPotential
+
+}  // end of namespace mfront::bbrick
 
 #endif /* LIB_MFRONT_BEHAVIOURBRICK_ISOTROPICDAMAGEHOOKESTRESSPOTENTIAL_HXX \
         */

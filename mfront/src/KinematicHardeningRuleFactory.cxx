@@ -17,6 +17,7 @@
 #include "MFront/BehaviourBrick/Chaboche2012KinematicHardeningRule.hxx"
 #include "MFront/BehaviourBrick/BurletCailletaudKinematicHardeningRule.hxx"
 #include "MFront/BehaviourBrick/ArmstrongFrederickKinematicHardeningRule.hxx"
+#include "MFront/BehaviourBrick/OrthotropicKinematicHardeningRule.hxx"
 #include "MFront/BehaviourBrick/KinematicHardeningRuleFactory.hxx"
 
 namespace mfront::bbrick {
@@ -83,6 +84,9 @@ namespace mfront::bbrick {
     });
     this->addGenerator("Chaboche 2012", []() {
       return std::make_shared<bbrick::Chaboche2012KinematicHardeningRule>();
+    });
+    this->addGenerator("Orthotropic", []() {
+      return std::make_shared<bbrick::OrthotropicKinematicHardeningRule>();
     });
   }  // end of KinematicHardeningRuleFactory
 

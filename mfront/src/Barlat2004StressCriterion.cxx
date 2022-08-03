@@ -44,52 +44,31 @@ namespace mfront::bbrick {
                                              const std::string& id,
                                              const DataMap& d,
                                              const Role r) {
-    using ConstantMaterialProperty =
-        mfront::BehaviourDescription::ConstantMaterialProperty;
     tfel::raise_if(bd.getSymmetryType() != mfront::ORTHOTROPIC,
                    "Barlat2004StressCriterion::initialize: "
                    "the behaviour must be orthotropic");
-    // this is captured for gcc 4.7.2
-    auto get_l = [&dsl, &bd, &d, &r, &id](const std::string& n,
-                                          const char* const en) {
-      if (d.count(n) == 0) {
-        tfel::raise("Barlat2004StressCriterion::initialize: entry '" +
-                    std::string(n) + "' is not defined");
-      }
-      const auto vn = StressCriterion::getVariableId(n + "v", id, r);
-      const auto l =
-          getArrayOfBehaviourDescriptionMaterialProperties<9u>(dsl, n, d.at(n));
-      if (l[0].is<ConstantMaterialProperty>()) {
-        std::vector<double> values(9u);
-        for (unsigned short i = 0; i != 9; ++i) {
-          tfel::raise_if(!l[i].is<ConstantMaterialProperty>(),
-                         "Barlat2004StressCriterion::initialize: "
-                         "if one component of '" +
-                             n +
-                             "' is a constant value, all components must be "
-                             "constant values");
-          values[i] = l[i].get<ConstantMaterialProperty>().value;
-        }
-        addParameter(bd, vn, en, 9, values);
-      } else {
-        addLocalVariable(bd, "real", vn, 9);
-      }
-      return l;
-    };
     StressCriterionBase::initialize(bd, dsl, id, d, r);
     if (r == StressCriterion::STRESSANDFLOWCRITERION) {
-      this->l1 = get_l("l1", "FirstLinearTransformationCoefficients");
-      this->l2 = get_l("l2", "SecondLinearTransformationCoefficients");
+      this->l1 = extractLinearTransformation(
+          dsl, bd, d, "l1", StressCriterion::getVariableId("l1v", id, r),
+          "FirstLinearTransformationCoefficients");
+      this->l2 = extractLinearTransformation(
+          dsl, bd, d, "l2", StressCriterion::getVariableId("l2v", id, r),
+          "SecondLinearTransformationCoefficients");
     } else if (r == StressCriterion::STRESSCRITERION) {
-      this->l1 =
-          get_l("l1", "StressCriterionFirstLinearTransformationCoefficients");
-      this->l2 =
-          get_l("l2", "StressCriterionSecondLinearTransformationCoefficients");
+      this->l1 = extractLinearTransformation(
+          dsl, bd, d, "l1", StressCriterion::getVariableId("l1v", id, r),
+          "StressCriterionFirstLinearTransformationCoefficients");
+      this->l2 = extractLinearTransformation(
+          dsl, bd, d, "l2", StressCriterion::getVariableId("l2v", id, r),
+          "StressCriterionSecondLinearTransformationCoefficients");
     } else {
-      this->l1 =
-          get_l("l1", "FlowCriterionFirstLinearTransformationCoefficients");
-      this->l2 =
-          get_l("l2", "FlowCriterionSecondLinearTransformationCoefficients");
+      this->l1 = extractLinearTransformation(
+          dsl, bd, d, "l1", StressCriterion::getVariableId("l1v", id, r),
+          "FlowCriterionFirstLinearTransformationCoefficients");
+      this->l2 = extractLinearTransformation(
+          dsl, bd, d, "l2", StressCriterion::getVariableId("l2v", id, r),
+          "FlowCriterionSecondLinearTransformationCoefficients");
     }
     const auto an = StressCriterion::getVariableId("a", id, r);
     tfel::raise_if(d.count("a") == 0,

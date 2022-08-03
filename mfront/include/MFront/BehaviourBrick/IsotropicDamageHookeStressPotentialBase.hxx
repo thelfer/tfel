@@ -23,49 +23,47 @@ namespace mfront {
   // forward declaration
   struct MaterialPropertyDescription;
 
-  namespace bbrick {
-
-    /*!
-     * \brief base class for stress potential describing the computation of the
-     * stress through the Hooke law coupled with an isotropic damage.
-     */
-    struct IsotropicDamageHookeStressPotentialBase : HookeStressPotentialBase {
-      //! \brief constructor
-      IsotropicDamageHookeStressPotentialBase();
-      std::vector<OptionDescription> getOptions(const BehaviourDescription&,
-                                                const bool) const override;
-      void initialize(BehaviourDescription&,
-                      AbstractBehaviourDSL&,
-                      const DataMap&) override;
-      std::vector<std::tuple<std::string,
-                             std::string,
-                             mfront::SupportedTypes::TypeFlag>>
-      getStressDerivatives(const BehaviourDescription&) const override;
-      std::string generateImplicitEquationDerivatives(
-          const BehaviourDescription&,
-          const std::string&,
-          const std::string&,
-          const std::string&,
-          const bool) const override;
-      //! \brief destructor
-      ~IsotropicDamageHookeStressPotentialBase() override;
-
-     protected:
-      void declareComputeElasticPredictionMethod(
-          BehaviourDescription&) const override;
-      void declareComputeStressWhenStiffnessTensorIsDefined(
-          BehaviourDescription&) const override;
-      void declareComputeStressForIsotropicBehaviour(
-          BehaviourDescription&, LocalDataStructure&) const override;
-      void addGenericTangentOperatorSupport(
-          BehaviourDescription&, const AbstractBehaviourDSL&) const override;
-      void addGenericPredictionOperatorSupport(
-          BehaviourDescription&) const override;
-    };  // end of struct IsotropicDamageHookeStressPotentialBase
-
-  }  // end of namespace bbrick
-
 }  // end of namespace mfront
+
+namespace mfront::bbrick {
+
+  /*!
+   * \brief base class for stress potential describing the computation of the
+   * stress through the Hooke law coupled with an isotropic damage.
+   */
+  struct IsotropicDamageHookeStressPotentialBase : HookeStressPotentialBase {
+    //! \brief constructor
+    IsotropicDamageHookeStressPotentialBase();
+    std::vector<OptionDescription> getOptions(const BehaviourDescription&,
+                                              const bool) const override;
+    void initialize(BehaviourDescription&,
+                    AbstractBehaviourDSL&,
+                    const DataMap&) override;
+    std::vector<
+        std::tuple<std::string, std::string, mfront::SupportedTypes::TypeFlag>>
+    getStressDerivatives(const BehaviourDescription&) const override;
+    std::string generateImplicitEquationDerivatives(const BehaviourDescription&,
+                                                    const std::string&,
+                                                    const std::string&,
+                                                    const std::string&,
+                                                    const bool) const override;
+    //! \brief destructor
+    ~IsotropicDamageHookeStressPotentialBase() override;
+
+   protected:
+    void declareComputeElasticPredictionMethod(
+        BehaviourDescription&) const override;
+    void declareComputeStressWhenStiffnessTensorIsDefined(
+        BehaviourDescription&) const override;
+    void declareComputeStressForIsotropicBehaviour(
+        BehaviourDescription&, LocalDataStructure&) const override;
+    void addGenericTangentOperatorSupport(
+        BehaviourDescription&, const AbstractBehaviourDSL&) const override;
+    void addGenericPredictionOperatorSupport(
+        BehaviourDescription&) const override;
+  };  // end of struct IsotropicDamageHookeStressPotentialBase
+
+}  // end of namespace mfront::bbrick
 
 #endif /* LIB_MFRONT_BEHAVIOURBRICK_ISOTROPICDAMAGEHOOKESTRESSPOTENTIALBASE_HXX \
         */

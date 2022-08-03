@@ -17,39 +17,35 @@
 
 #include "MFront/BehaviourBrick/StandardPorousStressCriterionBase.hxx"
 
-namespace mfront {
+namespace mfront::bbrick {
 
-  namespace bbrick {
-
+  /*!
+   * \brief implementation of the RousselierTanguyBesson2002 stress criterion
+   */
+  struct RousselierTanguyBesson2002StressCriterion
+      : StandardPorousStressCriterionBase {
     /*!
-     * \brief implementation of the RousselierTanguyBesson2002 stress criterion
+     * \brief constructor
      */
-    struct RousselierTanguyBesson2002StressCriterion
-        : StandardPorousStressCriterionBase {
-      /*!
-       * \brief constructor
-       */
-      RousselierTanguyBesson2002StressCriterion();
+    RousselierTanguyBesson2002StressCriterion();
 
-      std::vector<BehaviourSymmetry> getSupportedBehaviourSymmetries()
-          const override;
+    std::vector<BehaviourSymmetry> getSupportedBehaviourSymmetries()
+        const override;
 
-      std::vector<OptionDescription> getOptions() const override;
+    std::vector<OptionDescription> getOptions() const override;
 
-      PorosityEffectOnFlowRule getPorosityEffectOnEquivalentPlasticStrain()
-          const override;
+    PorosityEffectOnFlowRule getPorosityEffectOnEquivalentPlasticStrain()
+        const override;
 
-      std::string updatePorosityUpperBound(const BehaviourDescription&,
-                                           const std::string&,
-                                           const Role) const override;
+    std::string updatePorosityUpperBound(const BehaviourDescription&,
+                                         const std::string&,
+                                         const Role) const override;
 
-      //! \brief destructor
-      ~RousselierTanguyBesson2002StressCriterion() override;
-    };  // end of struct RousselierTanguyBesson2002StressCriterion
+    //! \brief destructor
+    ~RousselierTanguyBesson2002StressCriterion() override;
+  };  // end of struct RousselierTanguyBesson2002StressCriterion
 
-  }  // end of namespace bbrick
+}  // end of namespace mfront::bbrick
 
-}  // end of namespace mfront
-
-#endif /* LIB__MFRONT_BEHAVIOURBRICK_ROUSSELIER_TANGUY_BESSON_2002_STRESSCRITERION_HXX \
+#endif /* LIB_MFRONT_BEHAVIOURBRICK_ROUSSELIER_TANGUY_BESSON_2002_STRESSCRITERION_HXX \
         */

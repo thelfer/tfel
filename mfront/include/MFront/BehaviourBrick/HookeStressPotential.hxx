@@ -10,45 +10,39 @@
 
 #include "MFront/BehaviourBrick/HookeStressPotentialBase.hxx"
 
-namespace mfront {
+namespace mfront::bbrick {
 
-  namespace bbrick {
+  /*!
+   * \brief class describing the computation of the stress through the
+   * standard Hooke law.
+   */
+  struct HookeStressPotential : HookeStressPotentialBase {
+    //! \brief default constructor
+    HookeStressPotential();
+    std::vector<
+        std::tuple<std::string, std::string, mfront::SupportedTypes::TypeFlag>>
+    getStressDerivatives(const BehaviourDescription&) const override;
+    std::string generateImplicitEquationDerivatives(const BehaviourDescription&,
+                                                    const std::string&,
+                                                    const std::string&,
+                                                    const std::string&,
+                                                    const bool) const override;
+    //! \brief destructor
+    ~HookeStressPotential() override;
 
-    /*!
-     * \brief class describing the computation of the stress through the
-     * standard Hooke law.
-     */
-    struct HookeStressPotential : HookeStressPotentialBase {
-      //! \brief default constructor
-      HookeStressPotential();
-      std::vector<std::tuple<std::string,
-                             std::string,
-                             mfront::SupportedTypes::TypeFlag>>
-      getStressDerivatives(const BehaviourDescription&) const override;
-      std::string generateImplicitEquationDerivatives(
-          const BehaviourDescription&,
-          const std::string&,
-          const std::string&,
-          const std::string&,
-          const bool) const override;
-      //! \brief destructor
-      ~HookeStressPotential() override;
+   protected:
+    void declareComputeElasticPredictionMethod(
+        BehaviourDescription&) const override;
+    void declareComputeStressWhenStiffnessTensorIsDefined(
+        BehaviourDescription&) const override;
+    void declareComputeStressForIsotropicBehaviour(
+        BehaviourDescription&, LocalDataStructure&) const override;
+    void addGenericTangentOperatorSupport(
+        BehaviourDescription&, const AbstractBehaviourDSL&) const override;
+    void addGenericPredictionOperatorSupport(
+        BehaviourDescription&) const override;
+  };  // end of struct HookeStressPotential
 
-     protected:
-      void declareComputeElasticPredictionMethod(
-          BehaviourDescription&) const override;
-      void declareComputeStressWhenStiffnessTensorIsDefined(
-          BehaviourDescription&) const override;
-      void declareComputeStressForIsotropicBehaviour(
-          BehaviourDescription&, LocalDataStructure&) const override;
-      void addGenericTangentOperatorSupport(
-          BehaviourDescription&, const AbstractBehaviourDSL&) const override;
-      void addGenericPredictionOperatorSupport(
-          BehaviourDescription&) const override;
-    };  // end of struct HookeStressPotential
-
-  }  // end of namespace bbrick
-
-}  // end of namespace mfront
+}  // end of namespace mfront::bbrick
 
 #endif /* LIB_MFRONT_BEHAVIOURBRICK_HOOKESTRESSPOTENTIAL_HXX */
