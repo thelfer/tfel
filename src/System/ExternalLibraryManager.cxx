@@ -971,14 +971,18 @@ namespace tfel {
         const std::string& f) {
       const auto lib = this->loadLibrary(l);
       unsigned short nb = this->getMaterialPropertyNumberOfVariables(l, f);
-      char** res = ::tfel_getMaterialPropertyVariables(lib, f.c_str());
-      char** p;
-      raise_if(res == nullptr,
-               "ExternalLibraryManager::getMaterialPropertyNumberOfVariables: "
-               " variables names could not be read (" +
+      if(nb==0){
+        char** res = ::tfel_getMaterialPropertyVariables(lib, f.c_str());
+        char** p;
+        raise_if(res == nullptr,
+                 "ExternalLibraryManager::getMaterialPropertyNumberOfVariables: "
+                  " variables names could not be read (" +
                    getErrorMessage() + ")");
-      for (p = res; p != res + nb; ++p) {
-        vars.emplace_back(*p);
+        for (p = res; p != res + nb; ++p) {
+          vars.emplace_back(*p);
+        }
+      } else {
+        vars.clear();
       }
     }  // end of ExternalLibraryManager::getMaterialPropertyVariables
 
