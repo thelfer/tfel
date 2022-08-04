@@ -812,15 +812,27 @@ namespace mfront {
   }  // end of predictorAnalyser
 
   void ImplicitDSLBase::treatIntegrator() {
-    this->treatCodeBlock(*this, BehaviourData::Integrator,
-                         &ImplicitDSLBase::integratorVariableModifier,
-                         &ImplicitDSLBase::integratorAnalyser, true);
+    std::function<std::string(const Hypothesis, const std::string&, const bool)>
+        m = [this](const Hypothesis h, const std::string& sv, const bool b) {
+          return this->integratorVariableModifier(h, sv, b);
+        };
+    std::function<void(CodeBlock&, const Hypothesis, const std::string&)> a =
+        [this](CodeBlock&, const Hypothesis h, const std::string& sv) {
+          this->integratorAnalyser(h, sv);
+        };
+    this->treatCodeBlock(BehaviourData::Integrator, m, a, true, true);
   }  // end of treatIntegrator
 
   void ImplicitDSLBase::treatPredictor() {
-    this->treatCodeBlock(*this, BehaviourData::ComputePredictor,
-                         &ImplicitDSLBase::standardModifier,
-                         &ImplicitDSLBase::predictorAnalyser, true);
+    std::function<std::string(const Hypothesis, const std::string&, const bool)>
+        m = [this](const Hypothesis h, const std::string& sv, const bool b) {
+          return this->standardModifier(h, sv, b);
+        };
+    std::function<void(CodeBlock&, const Hypothesis, const std::string&)> a =
+        [this](CodeBlock&, const Hypothesis h, const std::string& sv) {
+          this->predictorAnalyser(h, sv);
+        };
+    this->treatCodeBlock(BehaviourData::ComputePredictor, m, a, true, true);
   }  // end of treatPredictor
 
   void ImplicitDSLBase::treatComputeThermodynamicForces() {

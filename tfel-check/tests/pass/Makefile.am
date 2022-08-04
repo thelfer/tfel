@@ -8,10 +8,6 @@ checkfiles:
 		cp @srcdir@/test3.ref    test3.ref;                       \
 		cp @srcdir@/test4.check  test4.check;                     \
 		cp @srcdir@/test4.ref    test4.ref;                       \
-		cp @srcdir@/test4.check  test5.check;                     \
-		cp @srcdir@/test4.ref    test5.ref;                       \
-		cp @srcdir@/test4.check  test6.check;                     \
-		cp @srcdir@/test4.ref    test6.ref;                       \
 		cp @srcdir@/UPuN_GaseousFissionProductsReleaseModel.check \
 		   UPuN_GaseousFissionProductsReleaseModel.check;         \
 		cp @srcdir@/UPuN_GaseousFissionProductsReleaseModel.ref   \
@@ -23,15 +19,22 @@ checkfiles:
 		cp @srcdir@/Alcyone1D.check  Alcyone1D.check;             \
 	fi
 
+#		cp @srcdir@/test5.check  test5.check;                     \
+#		cp @srcdir@/test5.ref    test5.ref;                       \
+#		cp @srcdir@/test6.check  test6.check;                     \
+#		cp @srcdir@/test7.ref    test6.ref;
+
 check-am:checkfiles
 
-check_PROGRAMS = test1 test2 test3 test4 test5 test6
+check_PROGRAMS = test1 test2 test3 test4
+# test5 test6
+
 test1_SOURCES  = test1.cxx
 test2_SOURCES  = test2.cxx
 test3_SOURCES  = test3.cxx
 test4_SOURCES  = test4.cxx
-test5_SOURCES  = test5.cxx
-test6_SOURCES  = test6.cxx
+#test5_SOURCES  = test5.cxx
+#test6_SOURCES  = test6.cxx
 
 EXTRA_DIST = test1.check     \
 	     test2.ref       \
@@ -40,10 +43,6 @@ EXTRA_DIST = test1.check     \
 	     test3.check     \
 	     test4.ref       \
 	     test4.check     \
-	     test5.ref       \
-	     test5.check     \
-	     test6.ref       \
-	     test6.check     \
 	     Alcyone1D.res   \
 	     Alcyone1D.ref   \
 	     Alcyone1D.check \
@@ -51,6 +50,11 @@ EXTRA_DIST = test1.check     \
 	     UPuN_GaseousFissionProductsReleaseModel.txt   \
 	     UPuN_GaseousFissionProductsReleaseModel.ref   \
 	     CMakeLists.txt
+
+#	     test5.ref       \
+#	     test5.check     \
+#	     test6.ref       \
+#	     test6.check
 
 TESTS = @top_builddir@/tfel-check/src/tfel-check
 
@@ -71,11 +75,12 @@ clean-local:
 	  $(RM) -f test2.ref;					  \
 	  $(RM) -f test4.ref;					  \
 	  $(RM) -f test3.ref;					  \
-	  $(RM) -f test5.ref;					  \
-	  $(RM) -f test6.ref;					  \
 	  $(RM) -f Alcyone1D.check;				  \
 	  $(RM) -f Alcyone1D.ref;				  \
 	  $(RM) -f Alcyone1D.res;				  \
 	fi
 	$(RM) -f tfel-check.log *.checklog
 	$(RM) -f *.xml *.out
+
+#	  $(RM) -f test5.ref;					  \
+#	  $(RM) -f test6.ref;
