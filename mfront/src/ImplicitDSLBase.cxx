@@ -764,14 +764,14 @@ namespace mfront {
   void ImplicitDSLBase::treatIntegrator() {
     this->readCodeBlock(*this, BehaviourData::Integrator,
                         &ImplicitDSLBase::integratorVariableModifier,
-                        &ImplicitDSLBase::integratorAnalyser, true);
+                        &ImplicitDSLBase::integratorAnalyser, true, true);
   }  // end of ImplicitDSLBase::treatIntegrator
 
   void ImplicitDSLBase::treatPredictor() {
     using namespace std;
     this->readCodeBlock(*this, BehaviourData::ComputePredictor,
                         &ImplicitDSLBase::standardModifier,
-                        &ImplicitDSLBase::predictorAnalyser, true);
+                        &ImplicitDSLBase::predictorAnalyser, true, true);
   }  // end of ImplicitDSLBase::treatPredictor
 
   void ImplicitDSLBase::treatComputeStress() {
