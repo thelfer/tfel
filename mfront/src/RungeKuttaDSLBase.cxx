@@ -146,14 +146,22 @@ namespace mfront {
   }  // end of getCodeBlockTemplate
 
   void RungeKuttaDSLBase::treatUpdateAuxiliaryStateVariables() {
-    this->treatCodeBlock(*this, BehaviourData::UpdateAuxiliaryStateVariables,
-                         &RungeKuttaDSLBase::standardModifier, true, true);
+    std::function<std::string(const Hypothesis, const std::string&, const bool)>
+        m = [this](const Hypothesis h, const std::string& sv, const bool b) {
+          return this->standardModifier(h, sv, b);
+        };
+    this->treatCodeBlock(BehaviourData::UpdateAuxiliaryStateVariables,  //
+                         m, true, true);
   }  // end of treatUpdateAuxiliaryStateVarBase
 
   void RungeKuttaDSLBase::treatComputeFinalThermodynamicForces() {
-    this->treatCodeBlock(*this, BehaviourData::ComputeFinalThermodynamicForces,
-                         &RungeKuttaDSLBase::standardModifier, true, true);
-  }  // end of treatUpdateAuxiliaryStateVarBase
+    std::function<std::string(const Hypothesis, const std::string&, const bool)>
+        m = [this](const Hypothesis h, const std::string& sv, const bool b) {
+          return this->standardModifier(h, sv, b);
+        };
+    this->treatCodeBlock(BehaviourData::ComputeFinalThermodynamicForces,  //
+                         m, true, true);
+  }  // end of treatComputeFinalThermodynamicForces
 
   std::string RungeKuttaDSLBase::computeThermodynamicForcesVariableModifier1(
       const Hypothesis h, const std::string& var, const bool addThisPtr) {
@@ -236,12 +244,17 @@ namespace mfront {
           "RungeKuttaDSLBase::treatComputeThermodynamicForces",
           "no thermodynamic force defined");
     }
-    this->treatCodeBlock(
-        *this, BehaviourData::ComputeThermodynamicForces,
-        BehaviourData::ComputeFinalThermodynamicForces,
-        &RungeKuttaDSLBase::computeThermodynamicForcesVariableModifier1,
-        &RungeKuttaDSLBase::computeThermodynamicForcesVariableModifier2, true,
-        true);
+    std::function<std::string(const Hypothesis, const std::string&, const bool)>
+        m1 = [this](const Hypothesis h, const std::string& sv, const bool b) {
+          return this->computeThermodynamicForcesVariableModifier1(h, sv, b);
+        };
+    std::function<std::string(const Hypothesis, const std::string&, const bool)>
+        m2 = [this](const Hypothesis h, const std::string& sv, const bool b) {
+          return this->computeThermodynamicForcesVariableModifier2(h, sv, b);
+        };
+    this->treatCodeBlock(BehaviourData::ComputeThermodynamicForces,
+                         BehaviourData::ComputeFinalThermodynamicForces, m1, m2,
+                         true, true);
   }  // end of treatComputeThermodynamicForces
 
   void RungeKuttaDSLBase::treatUnknownVariableMethod(const Hypothesis h,
@@ -295,10 +308,11 @@ namespace mfront {
   }  // end of treatUnknowVariableMethod
 
   void RungeKuttaDSLBase::treatDerivative() {
-    this->treatCodeBlock(
-        *this, BehaviourData::ComputeDerivative,
-        &RungeKuttaDSLBase::computeThermodynamicForcesVariableModifier1, true,
-        true);
+    std::function<std::string(const Hypothesis, const std::string&, const bool)>
+        m = [this](const Hypothesis h, const std::string& sv, const bool b) {
+          return this->computeThermodynamicForcesVariableModifier1(h, sv, b);
+        };
+    this->treatCodeBlock(BehaviourData::ComputeDerivative, m, true, true);
   }  // end of treatDerivative
 
   void RungeKuttaDSLBase::treatEpsilon() {

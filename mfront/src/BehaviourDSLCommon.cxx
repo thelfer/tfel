@@ -956,8 +956,11 @@ namespace mfront {
   }  // end of treatThermodynamicForce
 
   void BehaviourDSLCommon::treatSpeedOfSound() {
-    this->treatCodeBlock(*this, BehaviourData::ComputeSpeedOfSound,
-                         &BehaviourDSLCommon::standardModifier, true, true);
+    std::function<std::string(const Hypothesis, const std::string&, const bool)>
+        m = [this](const Hypothesis h, const std::string& sv, const bool b) {
+          return this->standardModifier(h, sv, b);
+        };
+    this->treatCodeBlock(BehaviourData::ComputeSpeedOfSound, m, true, true);
   }  // end of treatSpeedOfSound
 
   void BehaviourDSLCommon::treatTangentOperatorBlock() {
@@ -1855,10 +1858,12 @@ namespace mfront {
 
   void BehaviourDSLCommon::readTangentOperatorCodeBlock(
       const CodeBlockOptions& o, const std::string& n) {
+    std::function<std::string(const Hypothesis, const std::string&, const bool)>
+        m = [this](const Hypothesis h, const std::string& sv, const bool b) {
+          return this->tangentOperatorVariableModifier(h, sv, b);
+        };
     this->treatUnsupportedCodeBlockOptions(o);
-    this->treatCodeBlock(*this, o, n,
-                         &BehaviourDSLCommon::tangentOperatorVariableModifier,
-                         true);
+    this->treatCodeBlock(o, n, m, true);
   }  // end of readTangentOperatorCodeBlock
 
   void BehaviourDSLCommon::treatIsTangentOperatorSymmetric() {
@@ -2780,18 +2785,29 @@ namespace mfront {
   }  // end of setInterfaces
 
   void BehaviourDSLCommon::treatAPrioriTimeStepScalingFactor() {
-    this->treatCodeBlock(*this, BehaviourData::APrioriTimeStepScalingFactor,
-                         &BehaviourDSLCommon::standardModifier, true, true);
+    std::function<std::string(const Hypothesis, const std::string&, const bool)>
+        m = [this](const Hypothesis h, const std::string& sv, const bool b) {
+          return this->standardModifier(h, sv, b);
+        };
+    this->treatCodeBlock(BehaviourData::APrioriTimeStepScalingFactor,  //
+                         m, true, true);
   }
 
   void BehaviourDSLCommon::treatIntegrator() {
-    this->treatCodeBlock(*this, BehaviourData::Integrator,
-                         &BehaviourDSLCommon::standardModifier, true, true);
+    std::function<std::string(const Hypothesis, const std::string&, const bool)>
+        m = [this](const Hypothesis h, const std::string& sv, const bool b) {
+          return this->standardModifier(h, sv, b);
+        };
+    this->treatCodeBlock(BehaviourData::Integrator, m, true, true);
   }  // end of treatIntegrator
 
   void BehaviourDSLCommon::treatAPosterioriTimeStepScalingFactor() {
-    this->treatCodeBlock(*this, BehaviourData::APosterioriTimeStepScalingFactor,
-                         &BehaviourDSLCommon::standardModifier, true, true);
+    std::function<std::string(const Hypothesis, const std::string&, const bool)>
+        m = [this](const Hypothesis h, const std::string& sv, const bool b) {
+          return this->standardModifier(h, sv, b);
+        };
+    this->treatCodeBlock(BehaviourData::APosterioriTimeStepScalingFactor,  //
+                         m, true, true);
   }
 
   void BehaviourDSLCommon::treatStateVariable() {
@@ -2959,13 +2975,21 @@ namespace mfront {
   }
 
   void BehaviourDSLCommon::treatUpdateAuxiliaryStateVariables() {
-    this->treatCodeBlock(*this, BehaviourData::UpdateAuxiliaryStateVariables,
-                         &BehaviourDSLCommon::standardModifier, true, true);
+    std::function<std::string(const Hypothesis, const std::string&, const bool)>
+        m = [this](const Hypothesis h, const std::string& sv, const bool b) {
+          return this->standardModifier(h, sv, b);
+        };
+    this->treatCodeBlock(BehaviourData::UpdateAuxiliaryStateVariables,  //
+                         m, true, true);
   }  // end of treatUpdateAuxiliaryStateVarBase
 
   void BehaviourDSLCommon::treatComputeStressFreeExpansion() {
-    this->treatCodeBlock(*this, BehaviourData::ComputeStressFreeExpansion,
-                         &BehaviourDSLCommon::standardModifier, true, true);
+    std::function<std::string(const Hypothesis, const std::string&, const bool)>
+        m = [this](const Hypothesis h, const std::string& sv, const bool b) {
+          return this->standardModifier(h, sv, b);
+        };
+    this->treatCodeBlock(BehaviourData::ComputeStressFreeExpansion,  //
+                         m, true, true);
   }  // end of treatComputeStressFreeExpansion
 
   void BehaviourDSLCommon::treatSwelling() {
@@ -3220,6 +3244,11 @@ namespace mfront {
       this->throwRuntimeError("BehaviourDSLCommon::treatTangentOperator",
                               "no thermodynamic force defined");
     }
+    std::function<std::string(const Hypothesis, const std::string&, const bool)>
+        modifier =
+            [this](const Hypothesis h, const std::string& sv, const bool b) {
+              return this->predictionOperatorVariableModifier(h, sv, b);
+            };
     CodeBlockOptions o;
     this->readCodeBlockOptions(o, true);
     if (this->mb.getBehaviourType() ==
@@ -3266,9 +3295,7 @@ namespace mfront {
       }
       const auto po =
           std::string(BehaviourData::ComputePredictionOperator) + "-" + ktype;
-      this->treatCodeBlock(
-          *this, o, po, &BehaviourDSLCommon::predictionOperatorVariableModifier,
-          true);
+      this->treatCodeBlock(o, po, modifier, true);
       for (const auto& h : o.hypotheses) {
         if (!this->mb.hasAttribute(h, BehaviourData::hasPredictionOperator)) {
           this->mb.setAttribute(h, BehaviourData::hasPredictionOperator, true);
@@ -3276,9 +3303,8 @@ namespace mfront {
       }
     } else {
       this->treatUnsupportedCodeBlockOptions(o);
-      this->treatCodeBlock(
-          *this, o, BehaviourData::ComputePredictionOperator,
-          &BehaviourDSLCommon::predictionOperatorVariableModifier, true);
+      this->treatCodeBlock(o, BehaviourData::ComputePredictionOperator,
+                           modifier, true);
       for (const auto& h : o.hypotheses) {
         this->mb.setAttribute(h, BehaviourData::hasPredictionOperator, true);
       }
@@ -3417,8 +3443,12 @@ namespace mfront {
   }  // end of treatParameter
 
   void BehaviourDSLCommon::treatInitLocalVariables() {
-    this->treatCodeBlock(*this, BehaviourData::InitializeLocalVariables,
-                         &BehaviourDSLCommon::standardModifier, true, true);
+    std::function<std::string(const Hypothesis, const std::string&, const bool)>
+        m = [this](const Hypothesis h, const std::string& sv, const bool b) {
+          return this->standardModifier(h, sv, b);
+        };
+    this->treatCodeBlock(BehaviourData::InitializeLocalVariables,  //
+                         m, true, true);
   }  // end of BehaviourDSLCommon:treatInitLocalVariables
 
   void BehaviourDSLCommon::treatMinimalTimeStepScalingFactor() {
@@ -3571,13 +3601,19 @@ namespace mfront {
   }  // end of treatInitialize
 
   void BehaviourDSLCommon::treatInternalEnergy() {
-    this->treatCodeBlock(*this, BehaviourData::ComputeInternalEnergy,
-                         &BehaviourDSLCommon::standardModifier, true, true);
+    std::function<std::string(const Hypothesis, const std::string&, const bool)>
+        m = [this](const Hypothesis h, const std::string& sv, const bool b) {
+          return this->standardModifier(h, sv, b);
+        };
+    this->treatCodeBlock(BehaviourData::ComputeInternalEnergy, m, true, true);
   }  // end of treatInternalEnergy
 
   void BehaviourDSLCommon::treatDissipatedEnergy() {
-    this->treatCodeBlock(*this, BehaviourData::ComputeDissipatedEnergy,
-                         &BehaviourDSLCommon::standardModifier, true, true);
+    std::function<std::string(const Hypothesis, const std::string&, const bool)>
+        m = [this](const Hypothesis h, const std::string& sv, const bool b) {
+          return this->standardModifier(h, sv, b);
+        };
+    this->treatCodeBlock(BehaviourData::ComputeDissipatedEnergy, m, true, true);
   }  // end of treatDissipatedEnergy
 
   static BehaviourDescription::SlipSystem readSlipSystem(

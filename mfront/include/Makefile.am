@@ -41,7 +41,6 @@ nobase_include_HEADERS= MFront/MFront.hxx                                     \
 			MFront/BehaviourDSLDescription.hxx                                \
 			MFront/AbstractBehaviourDSL.hxx                                   \
 			MFront/BehaviourDSLCommon.hxx                                     \
-			MFront/BehaviourDSLCommon.ixx                                     \
 			MFront/BehaviourDSLBase.hxx                                       \
 			MFront/BehaviourDSLBase.ixx                                       \
 			MFront/DSLFactory.hxx                                             \

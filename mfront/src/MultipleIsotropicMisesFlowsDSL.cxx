@@ -141,7 +141,7 @@ namespace mfront {
   }  // end of getCodeBlockTemplate
 
   void MultipleIsotropicMisesFlowsDSL::treatFlowRule() {
-    const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+    const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     FlowHandler flow;
     this->checkNotEndOfFile("MultipleIsotropicMisesFlowsDSL::treatFlowRule",
                             "Expected flow rule name.");
@@ -154,15 +154,15 @@ namespace mfront {
       f << "f" << this->flows.size();
       df_dseq << "df_dseq" << this->flows.size();
       df_dp << "df_dp" << this->flows.size();
-      this->mb.addStateVariable(h,
+      this->mb.addStateVariable(uh,
                                 VariableDescription("strain", p.str(), 1u, 0u),
                                 BehaviourData::FORCEREGISTRATION);
-      this->mb.addLocalVariable(h,
+      this->mb.addLocalVariable(uh,
                                 VariableDescription("stress", f.str(), 1u, 0u));
       this->mb.addLocalVariable(
-          h, VariableDescription("real", df_dseq.str(), 1u, 0u));
+          uh, VariableDescription("real", df_dseq.str(), 1u, 0u));
       this->mb.addLocalVariable(
-          h, VariableDescription("stress", df_dp.str(), 1u, 0u));
+          uh, VariableDescription("stress", df_dp.str(), 1u, 0u));
       flow.flow = FlowHandler::PlasticFlow;
     } else if (this->current->value == "Creep") {
       std::ostringstream p;
@@ -171,13 +171,13 @@ namespace mfront {
       p << "p" << this->flows.size();
       f << "f" << this->flows.size();
       df_dseq << "df_dseq" << this->flows.size();
-      this->mb.addStateVariable(h,
+      this->mb.addStateVariable(uh,
                                 VariableDescription("strain", p.str(), 1u, 0u),
                                 BehaviourData::FORCEREGISTRATION);
       this->mb.addLocalVariable(
-          h, VariableDescription("strainrate", f.str(), 1u, 0u));
+          uh, VariableDescription("strainrate", f.str(), 1u, 0u));
       this->mb.addLocalVariable(
-          h,
+          uh,
           VariableDescription("tfel::math::derivative_type<strainrate,stress>",
                               df_dseq.str(), 1u, 0u));
       flow.flow = FlowHandler::CreepFlow;
@@ -190,17 +190,17 @@ namespace mfront {
       f << "f" << this->flows.size();
       df_dseq << "df_dseq" << this->flows.size();
       df_dp << "df_dp" << this->flows.size();
-      this->mb.addStateVariable(h,
+      this->mb.addStateVariable(uh,
                                 VariableDescription("strain", p.str(), 1u, 0u),
                                 BehaviourData::FORCEREGISTRATION);
       this->mb.addLocalVariable(
-          h, VariableDescription("strainrate", f.str(), 1u, 0u));
+          uh, VariableDescription("strainrate", f.str(), 1u, 0u));
       this->mb.addLocalVariable(
-          h,
+          uh,
           VariableDescription("tfel::math::derivative_type<strainrate,stress>",
                               df_dseq.str(), 1u, 0u));
       this->mb.addLocalVariable(
-          h, VariableDescription("strainrate", df_dp.str(), 1u, 0u));
+          uh, VariableDescription("strainrate", df_dp.str(), 1u, 0u));
       flow.flow = FlowHandler::StrainHardeningCreepFlow;
     } else {
       this->throwRuntimeError("MultipleIsotropicMisesFlowsDSL::treatFlowRule",
@@ -230,16 +230,18 @@ namespace mfront {
       oseq_e << "seq_e" << this->flows.size();
       this->reserveName(ose.str());
       this->mb.addLocalVariable(
-          h, VariableDescription("stress", oseq_e.str(), 1u, 0u));
+          uh, VariableDescription("stress", oseq_e.str(), 1u, 0u));
       ++(this->current);
     } else {
       flow.hasSpecificTheta = false;
     }
     std::ostringstream cname;
     cname << BehaviourData::FlowRule << flows.size() << '\n';
-    this->treatCodeBlock(
-        *this, cname.str(),
-        &MultipleIsotropicMisesFlowsDSL::flowRuleVariableModifier, true, false);
+    std::function<std::string(const Hypothesis, const std::string&, const bool)>
+        m = [this](const Hypothesis h, const std::string& sv, const bool b) {
+          return this->flowRuleVariableModifier(h, sv, b);
+        };
+    this->treatCodeBlock(cname.str(), m, true, false);
     flow.flowRule =
         this->mb.getCode(ModellingHypothesis::UNDEFINEDHYPOTHESIS, cname.str());
     this->flows.push_back(flow);

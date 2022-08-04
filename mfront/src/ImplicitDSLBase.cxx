@@ -266,18 +266,27 @@ namespace mfront {
   }  // end of treatUnknownKeyword
 
   void ImplicitDSLBase::treatProcessNewCorrection() {
-    this->treatCodeBlock(*this, BehaviourData::ProcessNewCorrection,
-                         &ImplicitDSLBase::standardModifier, true, true);
+    std::function<std::string(const Hypothesis, const std::string&, const bool)>
+        m = [this](const Hypothesis h, const std::string& sv, const bool b) {
+          return this->standardModifier(h, sv, b);
+        };
+    this->treatCodeBlock(BehaviourData::ProcessNewCorrection, m, true, true);
   }  // end of treatProcessNewCorrection
 
   void ImplicitDSLBase::treatRejectCurrentCorrection() {
-    this->treatCodeBlock(*this, BehaviourData::RejectCurrentCorrection,
-                         &ImplicitDSLBase::standardModifier, true, true);
+    std::function<std::string(const Hypothesis, const std::string&, const bool)>
+        m = [this](const Hypothesis h, const std::string& sv, const bool b) {
+          return this->standardModifier(h, sv, b);
+        };
+    this->treatCodeBlock(BehaviourData::RejectCurrentCorrection, m, true, true);
   }  // end of treatRejectCurrentCorrection
 
   void ImplicitDSLBase::treatProcessNewEstimate() {
-    this->treatCodeBlock(*this, BehaviourData::ProcessNewEstimate,
-                         &ImplicitDSLBase::standardModifier, true, true);
+    std::function<std::string(const Hypothesis, const std::string&, const bool)>
+        m = [this](const Hypothesis h, const std::string& sv, const bool b) {
+          return this->standardModifier(h, sv, b);
+        };
+    this->treatCodeBlock(BehaviourData::ProcessNewEstimate, m, true, true);
   }  // end of treatProcessNewEstimate
 
   void ImplicitDSLBase::treatStateVariable() {
@@ -320,8 +329,11 @@ namespace mfront {
                               "@InitJacobian can not be used with "
                               "the current algorithm.");
     }
-    this->treatCodeBlock(*this, BehaviourData::InitializeJacobian,
-                         &ImplicitDSLBase::standardModifier, true, true);
+    std::function<std::string(const Hypothesis, const std::string&, const bool)>
+        m = [this](const Hypothesis h, const std::string& sv, const bool b) {
+          return this->standardModifier(h, sv, b);
+        };
+    this->treatCodeBlock(BehaviourData::InitializeJacobian, m, true, true);
   }  // end of treatInitJacobian
 
   void ImplicitDSLBase::treatInitJacobianInvert() {
@@ -336,8 +348,12 @@ namespace mfront {
                               "@InitJacobianInvert can not be used with "
                               "the current algorithm.");
     }
-    this->treatCodeBlock(*this, BehaviourData::InitializeJacobianInvert,
-                         &ImplicitDSLBase::standardModifier, true, true);
+    std::function<std::string(const Hypothesis, const std::string&, const bool)>
+        m = [this](const Hypothesis h, const std::string& sv, const bool b) {
+          return this->standardModifier(h, sv, b);
+        };
+    this->treatCodeBlock(BehaviourData::InitializeJacobianInvert,  //
+                         m, true, true);
   }  // end of treatInitJacobianInvert
 
   void ImplicitDSLBase::treatUnknownVariableMethod(const Hypothesis h,
@@ -558,8 +574,12 @@ namespace mfront {
   }  // ImplicitDSLBase::treatEpsilon
 
   void ImplicitDSLBase::treatAdditionalConvergenceChecks() {
-    this->treatCodeBlock(*this, BehaviourData::AdditionalConvergenceChecks,
-                         &ImplicitDSLBase::standardModifier, true, true);
+    std::function<std::string(const Hypothesis, const std::string&, const bool)>
+        m = [this](const Hypothesis h, const std::string& sv, const bool b) {
+          return this->standardModifier(h, sv, b);
+        };
+    this->treatCodeBlock(BehaviourData::AdditionalConvergenceChecks,  //
+                         m, true, true);
   }  // end of treatAdditionalConvergenceChecks()
 
   void
@@ -773,15 +793,27 @@ namespace mfront {
   }  // end of predictorAnalyser
 
   void ImplicitDSLBase::treatIntegrator() {
-    this->treatCodeBlock(*this, BehaviourData::Integrator,
-                         &ImplicitDSLBase::integratorVariableModifier,
-                         &ImplicitDSLBase::integratorAnalyser, true);
+    std::function<std::string(const Hypothesis, const std::string&, const bool)>
+        m = [this](const Hypothesis h, const std::string& sv, const bool b) {
+          return this->integratorVariableModifier(h, sv, b);
+        };
+    std::function<void(CodeBlock&, const Hypothesis, const std::string&)> a =
+        [this](CodeBlock&, const Hypothesis h, const std::string& sv) {
+          this->integratorAnalyser(h, sv);
+        };
+    this->treatCodeBlock(BehaviourData::Integrator, m, a, true, true);
   }  // end of treatIntegrator
 
   void ImplicitDSLBase::treatPredictor() {
-    this->treatCodeBlock(*this, BehaviourData::ComputePredictor,
-                         &ImplicitDSLBase::standardModifier,
-                         &ImplicitDSLBase::predictorAnalyser, true);
+    std::function<std::string(const Hypothesis, const std::string&, const bool)>
+        m = [this](const Hypothesis h, const std::string& sv, const bool b) {
+          return this->standardModifier(h, sv, b);
+        };
+    std::function<void(CodeBlock&, const Hypothesis, const std::string&)> a =
+        [this](CodeBlock&, const Hypothesis h, const std::string& sv) {
+          this->predictorAnalyser(h, sv);
+        };
+    this->treatCodeBlock(BehaviourData::ComputePredictor, m, a, true, true);
   }  // end of treatPredictor
 
   void ImplicitDSLBase::treatComputeThermodynamicForces() {
@@ -795,19 +827,27 @@ namespace mfront {
      * the user does not provide an alternative through the
      * @ComputeFinalStress
      */
+    std::function<std::string(const Hypothesis, const std::string&, const bool)>
+        m1 = [this](const Hypothesis h, const std::string& sv, const bool b) {
+          return this->computeThermodynamicForcesVariableModifier1(h, sv, b);
+        };
+    std::function<std::string(const Hypothesis, const std::string&, const bool)>
+        m2 = [this](const Hypothesis h, const std::string& sv, const bool b) {
+          return this->computeThermodynamicForcesVariableModifier2(h, sv, b);
+        };
     this->treatCodeBlock(
-        *this, BehaviourData::ComputeThermodynamicForces,
-        BehaviourData::ComputeFinalThermodynamicForcesCandidate,
-        &ImplicitDSLBase::computeThermodynamicForcesVariableModifier1,
-        &ImplicitDSLBase::computeThermodynamicForcesVariableModifier2, true,
-        true);
+        BehaviourData::ComputeThermodynamicForces,
+        BehaviourData::ComputeFinalThermodynamicForcesCandidate,  //
+        m1, m2, true, true);
   }  // end of treatComputeThermodynamicForces
 
   void ImplicitDSLBase::treatComputeFinalThermodynamicForces() {
-    this->treatCodeBlock(
-        *this, BehaviourData::ComputeFinalThermodynamicForces,
-        &ImplicitDSLBase::computeThermodynamicForcesVariableModifier2, true,
-        true);
+    std::function<std::string(const Hypothesis, const std::string&, const bool)>
+        m = [this](const Hypothesis h, const std::string& sv, const bool b) {
+          return this->computeThermodynamicForcesVariableModifier2(h, sv, b);
+        };
+    this->treatCodeBlock(BehaviourData::ComputeFinalThermodynamicForces, m,
+                         true, true);
   }  // end of treatComputeFinalThermodynamicForces
 
   void ImplicitDSLBase::readTangentOperatorCodeBlock(const CodeBlockOptions& o,

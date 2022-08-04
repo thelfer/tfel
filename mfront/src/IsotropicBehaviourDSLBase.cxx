@@ -197,9 +197,11 @@ namespace mfront {
   }  // end of IsotropicBehaviourDSLBase::flowRuleVariableModifier
 
   void IsotropicBehaviourDSLBase::treatFlowRule() {
-    this->treatCodeBlock(*this, BehaviourData::FlowRule,
-                         &IsotropicBehaviourDSLBase::flowRuleVariableModifier,
-                         true, false);
+    std::function<std::string(const Hypothesis, const std::string&, const bool)>
+        m = [this](const Hypothesis h, const std::string& sv, const bool b) {
+          return this->flowRuleVariableModifier(h, sv, b);
+        };
+    this->treatCodeBlock(BehaviourData::FlowRule, m, true, false);
   }  // end of IsotropicBehaviourDSLBase::treatFlowRule
 
   void IsotropicBehaviourDSLBase::treatExternalStateVariable() {
