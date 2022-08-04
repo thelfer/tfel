@@ -35,12 +35,6 @@ namespace mfront {
     ~RungeKuttaDSLBase() override;
 
    protected:
-    enum ErrorEvaluation {
-      DEFAULTERROREVALUATION,
-      ERRORSUMMATIONEVALUATION,
-      MAXIMUMVALUEERROREVALUATION
-    };  // end of ErrorEvaluation
-
     std::string computeThermodynamicForcesVariableModifier1(const Hypothesis,
                                                             const std::string&,
                                                             const bool);
@@ -48,13 +42,14 @@ namespace mfront {
     std::string computeThermodynamicForcesVariableModifier2(const Hypothesis,
                                                             const std::string&,
                                                             const bool);
-
+    //
     void getSymbols(std::map<std::string, std::string>&,
                     const Hypothesis,
                     const std::string&) override;
-
     void treatUnknownVariableMethod(const Hypothesis,
                                     const std::string&) override;
+    std::unique_ptr<AbstractBehaviourCodeGenerator> getCodeGenerator()
+        const override;
     //! treat the `@Epsilon` keywork
     virtual void treatEpsilon();
     //! treat the `@MinimalTimeStep` keywork
@@ -77,43 +72,6 @@ namespace mfront {
     void completeVariableDeclaration() override;
 
     void endsInputFileProcessing() override;
-
-    void writeBehaviourParserSpecificIncludes(std::ostream&) const override;
-
-    void writeBehaviourParserSpecificTypedefs(std::ostream&) const override;
-
-    void writeBehaviourParserSpecificMembers(std::ostream&,
-                                             const Hypothesis) const override;
-
-    void writeBehaviourLocalVariablesInitialisation(
-        std::ostream&, const Hypothesis) const override;
-
-    virtual void writeBehaviourEulerIntegrator(std::ostream&,
-                                               const Hypothesis) const;
-
-    virtual void writeBehaviourRK2Integrator(std::ostream&,
-                                             const Hypothesis) const;
-
-    virtual void writeBehaviourRK4Integrator(std::ostream&,
-                                             const Hypothesis) const;
-
-    virtual void writeBehaviourRK42Integrator(std::ostream&,
-                                              const Hypothesis) const;
-
-    virtual void writeBehaviourRK54Integrator(std::ostream&,
-                                              const Hypothesis) const;
-
-    virtual void writeBehaviourRKCastemIntegrator(std::ostream&,
-                                                  const Hypothesis) const;
-
-    void writeBehaviourUpdateStateVariables(std::ostream&,
-                                            const Hypothesis) const override;
-
-    void writeBehaviourUpdateAuxiliaryStateVariables(
-        std::ostream&, const Hypothesis) const override;
-
-    void writeBehaviourIntegrator(std::ostream&,
-                                  const Hypothesis) const override;
 
     friend struct BehaviourDSLBase<RungeKuttaDSLBase>;
   };

@@ -21,6 +21,9 @@
 
 namespace mfront {
 
+  // forward declaration
+  struct MultipleIsotropicMisesFlowsCodeGenerator;
+
   struct MultipleIsotropicMisesFlowsDSL : public IsotropicBehaviourDSLBase {
     //! \brief return the name of the DSL
     static std::string getName();
@@ -31,34 +34,24 @@ namespace mfront {
      *\param[in] opts: options passed to the DSL
      */
     MultipleIsotropicMisesFlowsDSL(const DSLOptions&);
-
+    //
     BehaviourDSLDescription getBehaviourDSLDescription() const override;
-
     void getSymbols(std::map<std::string, std::string>&,
                     const Hypothesis,
                     const std::string&) override;
-
     std::string getCodeBlockTemplate(
         const std::string&,
         const MFrontTemplateGenerationOptions&) const override;
-
     //! \brief destructor
     ~MultipleIsotropicMisesFlowsDSL() override;
 
+   protected:
+    std::unique_ptr<AbstractBehaviourCodeGenerator> getCodeGenerator()
+        const override;
+
    private:
-    void writeBehaviourParserSpecificInitializeMethodPart(
-        std::ostream&, const Hypothesis) const override;
-
-    void writeBehaviourParserSpecificMembers(std::ostream&,
-                                             const Hypothesis) const override;
-
-    void writeBehaviourParserSpecificIncludes(std::ostream&) const override;
-
-    void writeBehaviourIntegrator(std::ostream&,
-                                  const Hypothesis) const override;
-
-    void writeBehaviourComputeTangentOperator(std::ostream&,
-                                              const Hypothesis) const override;
+    //
+    friend struct MultipleIsotropicMisesFlowsCodeGenerator;
 
     void treatFlowRule() override;
 

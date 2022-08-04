@@ -36,9 +36,9 @@ namespace mfront {
                     const Hypothesis,
                     const std::string&) override;
     void completeVariableDeclaration() override;
-    void writeBehaviourParserSpecificIncludes(std::ostream&) const override;
-    void writeBehaviourLocalVariablesInitialisation(
-        std::ostream&, const Hypothesis) const override;
+    std::unique_ptr<AbstractBehaviourCodeGenerator> getCodeGenerator()
+        const override;
+    //
     virtual void treatProvidesTangentOperator();
     virtual void treatProvidesSymmetricTangentOperator();
   };  // end of struct DefaultDSLBase

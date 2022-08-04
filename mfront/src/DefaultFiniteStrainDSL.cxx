@@ -17,6 +17,7 @@
 
 #include "MFront/AbstractBehaviourInterface.hxx"
 #include "MFront/BehaviourInterfaceFactory.hxx"
+#include "MFront/DefaultFiniteStrainCodeGenerator.hxx"
 #include "MFront/DefaultFiniteStrainDSL.hxx"
 
 namespace mfront {
@@ -27,6 +28,12 @@ namespace mfront {
     this->mb.declareAsAFiniteStrainStandardBehaviour(false);
   }
 
+  std::unique_ptr<AbstractBehaviourCodeGenerator>
+  DefaultFiniteStrainDSL::getCodeGenerator() const {
+    return std::make_unique<DefaultFiniteStrainCodeGenerator>(
+        this->fd, this->mb, this->interfaces);
+  } // end of getCodeGenerator
+
   std::string DefaultFiniteStrainDSL::getDescription() {
     return "this parser is the most generic one as it does not make any "
            "restriction "
@@ -36,12 +43,6 @@ namespace mfront {
   std::string DefaultFiniteStrainDSL::getName() {
     return "DefaultFiniteStrainDSL";
   }
-
-  void DefaultFiniteStrainDSL::writeBehaviourParserSpecificIncludes(
-      std::ostream& os) const {
-    DefaultDSLBase::writeBehaviourParserSpecificIncludes(os);
-    os << "#include\"TFEL/Math/tensor.hxx\"\n";
-  }  // end of DefaultFiniteStrainDSL::writeBehaviourParserSpecificIncludes
 
   BehaviourDSLDescription DefaultFiniteStrainDSL::getBehaviourDSLDescription()
       const {
