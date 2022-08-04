@@ -971,7 +971,7 @@ namespace tfel {
         const std::string& f) {
       const auto lib = this->loadLibrary(l);
       unsigned short nb = this->getMaterialPropertyNumberOfVariables(l, f);
-      if(nb==0){
+      if (nb != 0) {
         char** res = ::tfel_getMaterialPropertyVariables(lib, f.c_str());
         char** p;
         raise_if(res == nullptr,
