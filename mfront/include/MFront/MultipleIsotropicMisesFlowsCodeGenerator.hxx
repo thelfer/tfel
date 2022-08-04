@@ -47,6 +47,7 @@ namespace mfront{
                                   const Hypothesis) const override;
     void writeBehaviourComputeTangentOperator(std::ostream&,
                                               const Hypothesis) const override;
+#pragma message("shall be removed, this is ugly !")
     const std::vector<MultipleIsotropicMisesFlowsDSL::FlowHandler>& flows;
   };  // end of MultipleIsotropicMisesFlowsCodeGenerator
 

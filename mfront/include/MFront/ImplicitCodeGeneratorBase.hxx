@@ -119,7 +119,7 @@ namespace mfront {
 
 #pragma message("shall be removed, this is ugly !")
     const std::set<std::string>& jacobianPartsUsedInIntegrator;
-
+#pragma message("shall be removed, this is ugly !")
     const std::set<std::string>& integrationVariablesIncrementsUsedInPredictor;
 
   };  // end of ImplicitCodeGeneratorBase
