@@ -39,7 +39,7 @@ namespace mfront {
       const bool s) {
     std::function<std::string(const Hypothesis, const std::string&, const bool)>
         fm = [&child, m](const Hypothesis h, const std::string& sv,
-                         const bool bv) { (child.*m)(h, sv, bv); };
+                         const bool bv) { return (child.*m)(h, sv, bv); };
     std::function<void(CodeBlock&, const Hypothesis, const std::string&)> fa =
         [&child, a](CodeBlock&, const Hypothesis h, const std::string& sv) {
           (child.*a)(h, sv);
@@ -57,7 +57,7 @@ namespace mfront {
       const bool b) {
     std::function<std::string(const Hypothesis, const std::string&, const bool)>
         fm = [&child, m](const Hypothesis h, const std::string& sv,
-                         const bool bv) { (child.*m)(h, sv, bv); };
+                         const bool bv) { return (child.*m)(h, sv, bv); };
     std::function<void(CodeBlock&, const Hypothesis, const std::string&)> fa =
         [&child, a](CodeBlock&, const Hypothesis h, const std::string& sv) {
           (child.*a)(h, sv);
