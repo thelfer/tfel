@@ -933,8 +933,8 @@ namespace mfront{
       const auto flag = SupportedTypes::getTypeFlag(v.type);
       const auto n = v.name;
       const auto t = this->usesStateVariableTimeDerivative()
-                         ? v.type
-                         : SupportedTypes::getTimeDerivativeType(v.type);
+                         ? SupportedTypes::getTimeDerivativeType(v.type)
+                         : v.type;
       if (p != vc.begin()) {
         f << ",\n";
       }
