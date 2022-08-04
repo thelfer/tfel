@@ -2143,6 +2143,10 @@ This feature is described in Section
 
 For more details, see <https://github.com/thelfer/tfel/issues/229>.
 
+## Issue #225: [mfront] Separate file generation from DSLs
+
+For more details, see <https://github.com/thelfer/tfel/issues/225>.
+
 ## Issue #224: [mfront] add DSL options to override parameters in material properties and point-wise models
 
 For more details, see <https://github.com/thelfer/tfel/issues/224>.
