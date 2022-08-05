@@ -65,6 +65,13 @@ struct CubicSplineTest final : public tfel::tests::TestCase {
   }
 
   tfel::tests::TestResult execute() override {
+    this->test1();
+    this->test2();
+    return this->result;
+  }  // end of execute
+
+ protected:
+  void test1() {
     using namespace std;
     using namespace tfel::math;
     using std::vector;
@@ -119,8 +126,48 @@ struct CubicSplineTest final : public tfel::tests::TestCase {
         abs(in5[0] - computeIntegral<sin, cos, msin>(-0.015, 0.01)) < eps);
     TFEL_TESTS_ASSERT(
         abs(in5[1] - computeIntegral<mcos, sin, cos>(-0.015, 0.01)) < eps);
-    return this->result;
-  }  // end of execute
+  }  // end of test1
+  void test2() {
+    using namespace std;
+    constexpr auto eps = double{1e-14};
+    constexpr std::array<double, 3u> abscissae{0, 1, 2};
+    constexpr std::array<double, 3u> values{1, 2, 4};
+    tfel::math::CubicSpline<double, double> spline;
+    spline.setCollocationPoints(abscissae.begin(), abscissae.end(),
+                                values.begin());
+    double f, df;
+    //
+    spline.getValues(f, df, -1);
+    TFEL_TESTS_ASSERT(abs(f - 0.25) < eps);
+    TFEL_TESTS_ASSERT(abs(df - 0.75) < eps);
+    spline.getValues(f, df, 0.4);
+    TFEL_TESTS_ASSERT(abs(f - 1.316) < eps);
+    TFEL_TESTS_ASSERT(abs(df - 0.87) < eps);
+    spline.getValues(f, df, 1.2);
+    TFEL_TESTS_ASSERT(abs(f - 2.328) < eps);
+    TFEL_TESTS_ASSERT(abs(df - 1.77) < eps);
+    spline.getValues(f, df, 3);
+    TFEL_TESTS_ASSERT(abs(f - 6.25) < eps);
+    TFEL_TESTS_ASSERT(abs(df - 2.25) < eps);
+    //
+    double d2f;
+    spline.getValues(f, df, d2f, -1);
+    TFEL_TESTS_ASSERT(abs(f - 0.25) < eps);
+    TFEL_TESTS_ASSERT(abs(df - 0.75) < eps);
+    TFEL_TESTS_ASSERT(abs(d2f) < eps);
+    spline.getValues(f, df, d2f, 0.4);
+    TFEL_TESTS_ASSERT(abs(f - 1.316) < eps);
+    TFEL_TESTS_ASSERT(abs(df - 0.87) < eps);
+    TFEL_TESTS_ASSERT(abs(d2f - 0.6) < eps);
+    spline.getValues(f, df, d2f, 1.2);
+    TFEL_TESTS_ASSERT(abs(f - 2.328) < eps);
+    TFEL_TESTS_ASSERT(abs(df - 1.77) < eps);
+    TFEL_TESTS_ASSERT(abs(d2f - 1.2) < eps);
+    spline.getValues(f, df, d2f, 3);
+    TFEL_TESTS_ASSERT(abs(f - 6.25) < eps);
+    TFEL_TESTS_ASSERT(abs(df - 2.25) < eps);
+    TFEL_TESTS_ASSERT(abs(d2f) < eps);
+  }
 };
 
 TFEL_TESTS_GENERATE_PROXY(CubicSplineTest, "CubicSplineTest");

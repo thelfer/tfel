@@ -209,25 +209,6 @@ namespace mfront {
     return names;
   }
 
-  std::string DSLBase::getTemporaryVariableName(
-      std::vector<std::string>& tmpnames, const std::string& p) const {
-    if (!this->isValidIdentifier(p)) {
-      this->throwRuntimeError("DSLBase::getTemporaryVariableName",
-                              "invalid variable prefix '" + p + "'");
-    }
-    for (size_type i = 0; i != std::numeric_limits<size_type>::max(); ++i) {
-      const auto c = p + std::to_string(i);
-      if (!this->isNameReserved(c)) {
-        if (std::find(tmpnames.begin(), tmpnames.end(), c) == tmpnames.end()) {
-          tmpnames.push_back(c);
-          return c;
-        }
-      }
-    }
-    this->throwRuntimeError("DSLBase::getTemporaryVariableName",
-                            "unable to find a temporary variable");
-  }
-
   void DSLBase::openFile(const std::string& f,
                          const std::vector<std::string>& ecmds,
                          const std::map<std::string, std::string>& s) {

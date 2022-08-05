@@ -16,9 +16,9 @@
 namespace mfront {
 
   LawFunction::LawFunction() = default;
-  LawFunction::LawFunction(LawFunction&&) = default;
+  LawFunction::LawFunction(LawFunction&&) noexcept = default;
   LawFunction::LawFunction(const LawFunction&) = default;
-  LawFunction& LawFunction::operator=(LawFunction&&) = default;
+  LawFunction& LawFunction::operator=(LawFunction&&) noexcept = default;
   LawFunction& LawFunction::operator=(const LawFunction&) = default;
   LawFunction::~LawFunction() = default;
 

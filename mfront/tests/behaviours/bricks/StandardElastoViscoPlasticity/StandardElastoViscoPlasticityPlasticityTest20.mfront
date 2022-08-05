@@ -1,0 +1,19 @@
+@DSL Implicit;
+@Behaviour StandardElastoViscoPlasticityPlasticityTest20;
+@Author Thomas Helfer;
+@Date 29 / 07 / 2022;
+
+@Algorithm NewtonRaphson;
+@Epsilon 1.e-14;
+@Theta 1;
+
+@Brick StandardElastoViscoPlasticity{
+  stress_potential : "Hooke" {young_modulus : 150e9, poisson_ratio : 0.3},
+  inelastic_flow : "Plastic" {
+    criterion : "Mises",
+    isotropic_hardening : "Data" {
+      values : {0 : 150e6, 1e-3 : 200e6, 2e-3 : 400e6},
+      interpolation : "cubic_spline"
+    }
+  }
+};

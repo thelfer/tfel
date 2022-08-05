@@ -38,10 +38,8 @@ namespace mfront {
     ~DefaultCZMDSL() override;
 
    protected:
-    std::string getLocalVariablesInitializers(const Hypothesis) const override;
-
-    void writeBehaviourParserSpecificIncludes(std::ostream&) const override;
-
+    std::unique_ptr<AbstractBehaviourCodeGenerator> getCodeGenerator()
+        const override;
   };  // end of struct DefaultCZMDSL
 
 }  // end of namespace mfront

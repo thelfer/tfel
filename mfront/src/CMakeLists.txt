@@ -141,6 +141,18 @@ set(TFELMFront_SOURCES
     PerformanceProfiling.cxx
     MultipleIsotropicMisesFlowsDSL.cxx
     IsotropicBehaviourDSLBase.cxx
+    AbstractBehaviourCodeGenerator.cxx
+    BehaviourCodeGeneratorBase.cxx
+    DefaultCodeGeneratorBase.cxx
+    DefaultCZMCodeGenerator.cxx
+    DefaultFiniteStrainCodeGenerator.cxx
+    RungeKuttaCodeGeneratorBase.cxx
+    ImplicitCodeGeneratorBase.cxx
+    IsotropicBehaviourCodeGeneratorBase.cxx
+    IsotropicStrainHardeningMisesCreepCodeGenerator.cxx
+    IsotropicMisesPlasticFlowCodeGenerator.cxx
+    IsotropicMisesCreepCodeGenerator.cxx
+    MultipleIsotropicMisesFlowsCodeGenerator.cxx
     MFrontMaterialPropertyInterface.cxx
     CMaterialPropertyInterfaceBase.cxx
     CMaterialPropertyInterface.cxx
@@ -471,10 +483,11 @@ endif(HAVE_CASTEM)
 
 target_link_libraries(TFELMFront
   PUBLIC MFrontLogStream
-  PUBLIC TFELMaterial       PUBLIC TFELMathParser
-  PUBLIC TFELSystem         PUBLIC TFELUtilities
-  PUBLIC TFELUnicodeSupport PUBLIC TFELGlossary 
-  PUBLIC TFELException      PUBLIC TFELConfig)
+  PUBLIC TFELMaterial        PUBLIC TFELMathParser
+  PUBLIC TFELMathCubicSpline PUBLIC TFELMath
+  PUBLIC TFELSystem          PUBLIC TFELUtilities
+  PUBLIC TFELUnicodeSupport  PUBLIC TFELGlossary 
+  PUBLIC TFELException       PUBLIC TFELConfig)
 
 if(UNIX)
   if(NOT HAIKU)

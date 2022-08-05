@@ -48,7 +48,7 @@ namespace mfront {
      * \brief move constructor
      * \param[in] src: source
      */
-    GeneratorOptions(GeneratorOptions&&);
+    GeneratorOptions(GeneratorOptions&&) noexcept;
     /*!
      * \brief copy assignement
      * \param[in] src: source
@@ -58,7 +58,7 @@ namespace mfront {
      * \brief move assignement
      * \param[in] src: source
      */
-    GeneratorOptions& operator=(GeneratorOptions&&);
+    GeneratorOptions& operator=(GeneratorOptions&&) noexcept;
     //! \brief destructor
     ~GeneratorOptions();
     //! targeted operating system

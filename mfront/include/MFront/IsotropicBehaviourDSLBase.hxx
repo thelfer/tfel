@@ -44,19 +44,6 @@ namespace mfront {
 
     void endsInputFileProcessing() override;
 
-    void writeBehaviourParserSpecificIncludes(std::ostream&) const override;
-
-    void writeBehaviourParserSpecificTypedefs(std::ostream&) const override;
-
-    void writeBehaviourLocalVariablesInitialisation(
-        std::ostream&, const Hypothesis) const override;
-
-    void writeBehaviourComputePredictionOperator(
-        std::ostream&, const Hypothesis) const override;
-
-    void writeBehaviourComputeTangentOperator(std::ostream&,
-                                              const Hypothesis) const override;
-
     virtual double getDefaultThetaValue() const;
 
     virtual void treatFlowRule();

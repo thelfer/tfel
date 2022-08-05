@@ -41,7 +41,6 @@ nobase_include_HEADERS= MFront/MFront.hxx                                     \
 			MFront/BehaviourDSLDescription.hxx                                \
 			MFront/AbstractBehaviourDSL.hxx                                   \
 			MFront/BehaviourDSLCommon.hxx                                     \
-			MFront/BehaviourDSLCommon.ixx                                     \
 			MFront/BehaviourDSLBase.hxx                                       \
 			MFront/BehaviourDSLBase.ixx                                       \
 			MFront/DSLFactory.hxx                                             \
@@ -227,7 +226,19 @@ nobase_noinst_HEADERS = MFront/IsotropicBehaviourDSLBase.hxx                    
 			MFront/ImplicitModelDSL.hxx                                   \
 			MFront/NewtonRaphsonSolvers.hxx                               \
 			MFront/FiniteStrainBehaviourTangentOperatorConversion.hxx     \
-			MFront/FiniteStrainBehaviourTangentOperatorConversionPath.hxx
+			MFront/FiniteStrainBehaviourTangentOperatorConversionPath.hxx \
+			MFront/AbstractBehaviourCodeGenerator.hxx                     \
+			MFront/BehaviourCodeGeneratorBase.hxx                         \
+			MFront/DefaultCodeGeneratorBase.hxx                           \
+			MFront/DefaultCZMCodeGenerator.hxx                            \
+			MFront/DefaultFiniteStrainCodeGenerator.hxx                   \
+			MFront/RungeKuttaCodeGeneratorBase.hxx                        \
+			MFront/ImplicitCodeGeneratorBase.hxx                          \
+			MFront/IsotropicBehaviourCodeGeneratorBase.hxx                \
+			MFront/IsotropicStrainHardeningMisesCreepCodeGenerator.hxx    \
+			MFront/IsotropicMisesPlasticFlowCodeGenerator.hxx             \
+			MFront/IsotropicMisesCreepCodeGenerator.hxx                   \
+			MFront/MultipleIsotropicMisesFlowsCodeGenerator.hxx
 
 nobase_noinst_HEADERS += MFront/CMaterialPropertyInterfaceBase.hxx          \
 			 MFront/CMaterialPropertyInterface.hxx              \

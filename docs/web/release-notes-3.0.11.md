@@ -19,6 +19,10 @@ eqnPrefixTemplate: "($$i$$)"
 
 # Issues fixed
 
+## Issue 274: [mfront] Analysers not called while parsing `@Integrator` and `@Predictor` in implicit DSLs
+
+For more details, see <https://github.com/thelfer/tfel/issues/274>.
+
 ## Issue #251: [mtest] Bad definition of `PipeMeshElementType` in `python` bindings
 
 For more details, see <https://github.com/thelfer/tfel/issues/251>.

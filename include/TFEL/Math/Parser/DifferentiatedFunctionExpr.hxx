@@ -28,8 +28,8 @@ namespace tfel::math::parser {
   struct DifferentiatedFunctionExpr final : public Expr {
     DifferentiatedFunctionExpr(
         std::shared_ptr<ExternalFunction>,
-        std::vector<std::shared_ptr<Expr>>&,
-        const std::vector<std::vector<double>::size_type>&);
+        std::vector<std::shared_ptr<Expr>>,
+        std::vector<std::vector<double>::size_type>);
     //
     bool isConstant() const override;
     bool dependsOnVariable(const std::vector<double>::size_type) const override;

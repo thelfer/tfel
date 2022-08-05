@@ -64,12 +64,20 @@ namespace mfront::bbrick {
     virtual void writeLinearInterpolationOfYieldRadius(
         BehaviourDescription&, const std::string&, const std::string&) const;
     /*!
+     * \brief append two member functions beginning with `computeYieldRadius`
+     * and `computeYieldRadiusAndDerivative`.
+     * \param[in] bd: behaviour description
+     * \param[in] fid: flow id
+     * \param[in] id: identifier
+     */
+    virtual void writeCubicSplineInterpolationOfYieldRadius(
+        BehaviourDescription&, const std::string&, const std::string&) const;
+    /*!
      * \brief interpolation algorithm
      */
     enum InterpolationType {
-      LINEAR_INTERPOLATION
-      //,
-      //      CUBIC_SPLINE_INTERPOLATION
+      LINEAR_INTERPOLATION,
+      CUBIC_SPLINE_INTERPOLATION
     } itype = LINEAR_INTERPOLATION;
     /*!
      * \brief extrapolation type

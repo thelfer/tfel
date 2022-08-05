@@ -316,14 +316,14 @@ namespace tfel::unicode {
       while (p != std::string::npos) {
         rs = r.size();
         r.resize(rs + p - pos + ss2);
-        std::copy(&v[0] + pos, &v[0] + p, &r[0] + rs);
-        std::copy(s2, s2 + ss2, &r[0] + rs + p - pos);
+        std::copy(&v[0] + pos, v.data() + p, r.data() + rs);
+        std::copy(s2, s2 + ss2, r.data() + rs + p - pos);
         pos = p + ss1;
         p = v.find(s1, pos);
       }
       rs = r.size();
       r.resize(rs + v.size() - pos);
-      std::copy(&v[0] + pos, &v[0] + v.size(), &r[0] + rs);
+      std::copy(v.data() + pos, v.data() + v.size(), r.data() + rs);
       v.swap(r);
     };  // end of replace_all
     const auto& ucds = getSupportedUnicodeCharactersDescriptions();

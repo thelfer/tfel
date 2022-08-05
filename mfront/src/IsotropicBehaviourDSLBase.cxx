@@ -197,9 +197,11 @@ namespace mfront {
   }  // end of IsotropicBehaviourDSLBase::flowRuleVariableModifier
 
   void IsotropicBehaviourDSLBase::treatFlowRule() {
-    this->treatCodeBlock(*this, BehaviourData::FlowRule,
-                         &IsotropicBehaviourDSLBase::flowRuleVariableModifier,
-                         true, false);
+    std::function<std::string(const Hypothesis, const std::string&, const bool)>
+        m = [this](const Hypothesis h, const std::string& sv, const bool b) {
+          return this->flowRuleVariableModifier(h, sv, b);
+        };
+    this->treatCodeBlock(BehaviourData::FlowRule, m, true, false);
   }  // end of IsotropicBehaviourDSLBase::treatFlowRule
 
   void IsotropicBehaviourDSLBase::treatExternalStateVariable() {
@@ -322,153 +324,6 @@ namespace mfront {
       log << "IsotropicBehaviourDSLBase::endsInputFileProcessing: end\n";
     }
   }  // end of IsotropicBehaviourDSLBase::endsInputFileProcessing
-
-  void IsotropicBehaviourDSLBase::writeBehaviourLocalVariablesInitialisation(
-      std::ostream& os, const Hypothesis h) const {
-    using Modifier = std::function<std::string(const MaterialPropertyInput&)>;
-    Modifier mts = [this](const MaterialPropertyInput& i) -> std::string {
-      if ((i.category == MaterialPropertyInput::TEMPERATURE) ||
-          (i.category ==
-           MaterialPropertyInput::AUXILIARYSTATEVARIABLEFROMEXTERNALMODEL) ||
-          (i.category == MaterialPropertyInput::EXTERNALSTATEVARIABLE)) {
-        return "this->" + i.name + "+(this->theta)*(this->d" + i.name + ')';
-      } else if ((i.category == MaterialPropertyInput::MATERIALPROPERTY) ||
-                 (i.category == MaterialPropertyInput::PARAMETER)) {
-        return "this->" + i.name;
-      } else if (i.category == MaterialPropertyInput::STATICVARIABLE) {
-        return this->mb.getClassName() + "::" + i.name;
-      } else {
-        this->throwRuntimeError(
-            "ImplicitDSLBase::writeBehaviourLocalVariablesInitialisation",
-            "unsupported input type for variable '" + i.name + "'");
-      }
-    };
-    Modifier ets = [this](const MaterialPropertyInput& i) -> std::string {
-      if ((i.category == MaterialPropertyInput::TEMPERATURE) ||
-          (i.category ==
-           MaterialPropertyInput::AUXILIARYSTATEVARIABLEFROMEXTERNALMODEL) ||
-          (i.category == MaterialPropertyInput::EXTERNALSTATEVARIABLE)) {
-        return "this->" + i.name + "+this->d" + i.name;
-      } else if ((i.category == MaterialPropertyInput::MATERIALPROPERTY) ||
-                 (i.category == MaterialPropertyInput::PARAMETER)) {
-        return "this->" + i.name;
-      } else if (i.category == MaterialPropertyInput::STATICVARIABLE) {
-        return this->mb.getClassName() + "::" + i.name;
-      } else {
-        this->throwRuntimeError(
-            "ImplicitDSLBase::writeBehaviourLocalVariablesInitialisation",
-            "unsupported input type for variable '" + i.name + "'");
-      }
-    };
-    if (this->mb.areElasticMaterialPropertiesDefined()) {
-      const auto& emps = this->mb.getElasticMaterialProperties();
-      if (emps.size() != 2u) {
-        this->throwRuntimeError(
-            "ImplicitDSLBase::writeBehaviourLocalVariablesInitialisation",
-            "invalid number of material properties");
-      }
-      if (!emps[0].is<BehaviourDescription::ConstantMaterialProperty>()) {
-        this->writeMaterialPropertyCheckBoundsEvaluation(os, emps[0], mts);
-      }
-      if (!emps[1].is<BehaviourDescription::ConstantMaterialProperty>()) {
-        this->writeMaterialPropertyCheckBoundsEvaluation(os, emps[1], mts);
-      }
-      if (!emps[0].is<BehaviourDescription::ConstantMaterialProperty>()) {
-        os << "this->young = stress(";
-        this->writeMaterialPropertyEvaluation(os, emps[0], mts);
-        os << ");\n";
-      }
-      if (!emps[1].is<BehaviourDescription::ConstantMaterialProperty>()) {
-        os << "this->nu = real(";
-        this->writeMaterialPropertyEvaluation(os, emps[1], mts);
-        os << ");\n";
-      }
-      os << "this->lambda = computeLambda(young,nu);\n";
-      os << "this->mu = computeMu(young,nu);\n";
-      if (!this->mb.isMaterialPropertyConstantDuringTheTimeStep(emps[0])) {
-        this->writeMaterialPropertyCheckBoundsEvaluation(os, emps[0], ets);
-        os << "this->young_tdt = stress(";
-        this->writeMaterialPropertyEvaluation(os, emps[0], ets);
-        os << ");\n";
-      } else {
-        os << "this->young_tdt  = this->young;\n";
-      }
-      if (!this->mb.isMaterialPropertyConstantDuringTheTimeStep(emps[1])) {
-        this->writeMaterialPropertyCheckBoundsEvaluation(os, emps[1], ets);
-        os << "this->nu_tdt = real(";
-        this->writeMaterialPropertyEvaluation(os, emps[1], ets);
-        os << ");\n";
-      } else {
-        os << "this->nu_tdt     = this->nu;\n";
-      }
-      if (!this->mb.areElasticMaterialPropertiesConstantDuringTheTimeStep()) {
-        os << "this->lambda_tdt = computeLambda(young_tdt,nu_tdt);\n";
-        os << "this->mu_tdt     = computeMu(young_tdt,nu_tdt);\n";
-      } else {
-        os << "this->lambda_tdt = this->lambda;\n"
-           << "this->mu_tdt     = this->mu;\n";
-      }
-    } else {
-      os << "this->lambda = "
-         << "tfel::material::computeLambda(this->young,this->nu);\n"
-         << "this->mu=tfel::material::computeMu(this->young,this->nu);\n"
-         << "this->lambda_tdt = this->lambda;\n"
-         << "this->mu_tdt     = this->mu;\n";
-    }
-    BehaviourDSLCommon::writeBehaviourLocalVariablesInitialisation(os, h);
-  }  // end of
-     // IsotropicBehaviourDSLBase::writeBehaviourLocalVariablesInitialisation
-
-  void IsotropicBehaviourDSLBase::writeBehaviourParserSpecificIncludes(
-      std::ostream& os) const {
-    this->checkBehaviourFile(os);
-  }  // end of IsotropicBehaviourDSLBase::writeBehaviourParserSpecificIncludes
-
-  void IsotropicBehaviourDSLBase::writeBehaviourParserSpecificTypedefs(
-      std::ostream& os) const {
-    this->checkBehaviourFile(os);
-  }  // end of IsotropicBehaviourDSLBase::writeBehaviourParserSpecificTypedefs
-
-  void IsotropicBehaviourDSLBase::writeBehaviourComputePredictionOperator(
-      std::ostream& os, const Hypothesis h) const {
-    const auto btype = this->mb.getBehaviourTypeFlag();
-    if (!this->mb.hasCode(h, BehaviourData::ComputePredictionOperator)) {
-      os << "IntegrationResult\n"
-         << "computePredictionOperator(const SMFlag smflag, const SMType smt) "
-            "override{\n";
-      os << "using namespace std;\n";
-      if (this->mb.useQt()) {
-        os << "if(smflag!=MechanicalBehaviour<" << btype
-           << ",hypothesis, NumericType, use_qt>::STANDARDTANGENTOPERATOR){\n";
-      } else {
-        os << "if(smflag!=MechanicalBehaviour<" << btype
-           << ",hypothesis, NumericType, false>::STANDARDTANGENTOPERATOR){\n";
-      }
-      os << "throw(runtime_error(\"" << this->mb.getClassName()
-         << "::computePredictionOperator : "
-         << "invalid tangent operator flag\"));\n"
-         << "}\n"
-         << "if((smt==ELASTIC)||(smt==SECANTOPERATOR)){\n"
-         << "Dt = "
-            "(this->lambda_tdt)*Stensor4::IxI()+2*(this->mu_tdt)*Stensor4::Id()"
-            ";\n"
-         << "} else {\n"
-         << "string msg(\"" << this->mb.getClassName()
-         << "::computePredictionOperator : \");\n"
-         << "msg +=\"unimplemented feature\";\n"
-         << "throw(runtime_error(msg));\n"
-         << "}\n\n"
-         << "return SUCCESS;\n"
-         << "}\n\n";
-    } else {
-      BehaviourDSLCommon::writeBehaviourComputePredictionOperator(os, h);
-    }
-  }  // end of
-     // IsotropicBehaviourDSLBase::writeBehaviourComputePredictionOperator()
-
-  void IsotropicBehaviourDSLBase::writeBehaviourComputeTangentOperator(
-      std::ostream&, const Hypothesis) const {
-  }  // end of IsotropicBehaviourDSLBase::writeBehaviourComputeTangentOperator
 
   IsotropicBehaviourDSLBase::~IsotropicBehaviourDSLBase() = default;
 

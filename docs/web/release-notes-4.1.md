@@ -255,7 +255,8 @@ extrapolation must be performed.
 
 1. Both functions assumes that the abscissae are ordered.
 2. Both functions are `constexpr`
-2. Both functions are compatible with quantitites.
+3. Both functions are compatible with quantitites.
+4. Both functions can use arrays and tensorial objects as values.
 
 #### Example of usage
 
@@ -264,6 +265,46 @@ constexpr std::array<time, 3u> abscissae{time{0}, time{1}, time{2}};
 constexpr std::array<stress, 3u> values{stress{1}, stress{2}, stress{4}};
 constexpr auto v = tfel::math::computeLinearInterpolation<true>(abscissae, values,
                                                                 time{-1});
+~~~~
+
+### Interpolation with cubic spline {#sec:tfel_4.1:tfel_math:issue_266}
+
+The `CubicSplineCollocationPoint` structure describes a collocation
+point used to build an interpolation by a cubic spline.
+
+Cubic spline interpolation requires a set of such collocation points.
+For example, the `CubicSpline` class can build a vector of collocation
+point from data. The set of collocation points can also be precomputed.
+
+The `computeCubicSplineInterpolation` allows to perform the
+interpolation using a set of collocation points. The
+`computeCubicSplineInterpolationAndDerivative` computes the interpolated
+value and the derivative at the cubic spline.
+
+The first template argument of those functions is a boolean stating if
+extrapolation must be performed.
+
+#### Notes
+
+1. Both functions assumes that the abscissae are ordered.
+2. Both functions are `constexpr`
+3. Both functions are compatible with quantitites.
+4. Both functions can use arrays and tensorial objects as values.
+
+#### Example of usage
+
+~~~~{.cxx}
+using CollocationPoint =
+    tfel::math::CubicSplineCollocationPoint<time, stress>;
+constexpr auto pts = std::array<CollocationPoint, 3u>{
+    CollocationPoint{time{0}, stress{1}, stressrate{0.75}},  //
+    CollocationPoint{time{1}, stress{2}, stressrate{1.5}},   //
+    CollocationPoint{time{2}, stress{4}, stressrate{2.25}}};
+constexpr auto f_values = std::array<stress, 4u>{
+    tfel::math::computeCubicSplineInterpolation<true>(pts, time{-1}),
+    tfel::math::computeCubicSplineInterpolation<true>(pts, time{0.4}),
+    tfel::math::computeCubicSplineInterpolation<true>(pts, time{1.2}),
+    tfel::math::computeCubicSplineInterpolation<true>(pts, time{3}),
 ~~~~
 
 ### Extension of the `derivative_type` metafunction to higher order derivatives 
@@ -927,6 +968,37 @@ code.
 };
 ~~~~
 
+### Isotropic harderning rule based defined by points
+
+The `Data` isotropic hardening rule allows the user to define an
+isotropic hardening rule using a curve defined by a set of pairs of
+equivalent strain and equivalent stress.
+
+This isotropic hardening rule can be parametrised using three entries:
+
+- `values`: which must a dictionnary giving the value of the yield
+  surface radius as a function of the equivalent plastic strain.
+- `interpolation`: which allows to select the interpolation type.
+  Possible values are `linear` (default choice) and `cubic_spline`.
+- `extrapolation`: which allows to select the extrapolation type.
+  Possible values are `bound_to_last_value` (or `constant`) and
+  `extrapolation` (default choice).
+
+#### Example of usage
+
+~~~~{.cxx}
+@Brick StandardElastoViscoPlasticity{
+  stress_potential : "Hooke" {young_modulus : 150e9, poisson_ratio : 0.3},
+  inelastic_flow : "Plastic" {
+    criterion : "Mises",
+    isotropic_hardening : "Data" {
+      values : {0 : 150e6, 1e-3 : 200e6, 2e-3 : 400e6},
+      interpolation : "linear"
+    }
+  }
+};
+~~~~
+
 ## Improvements to the `RungeKutta` domain specific language
 
 ### Improvements to the `rkCastem` algorithm{#sec:tfel_4.1:mfront:rkCastem}
@@ -1500,9 +1572,21 @@ the behaviour integration.
 @MaterialProperty<generic> 'YoungModulus' 'src/libGenericInconel600.so' 'Inconel600_YoungModulus';
 ~~~~
 
-## Adding `computeIntegralValue` and `computeMeanValue`
+## Adding `computeIntegralValue` and `computeMeanValue` post-processings for tests on pipes {#sec:tfel:4.1:ptest:integral_value}
 
-Added two `PipeTest` functions to calculate the integral and the average of a scalar value in the thickness of the tube for a `ptest` problem.
+Added two `PipeTest` functions to calculate the integral and the average
+of a scalar value in the thickness of the tube for a `ptest` problem.
+Each function allows to calculate the corresponding quantities in the
+current or initial configurations
+
+### Example of usage
+
+~~~~{.cxx}
+@AdditionalOutputs {'mean_value_initial_configuration':'SRR',
+                    'mean_value_current_configuration':'SRR'}; // compute mean values of SRR
+@AdditionalOutputs {'integral_value_initial_configuration':'SRR',
+                    'integral_value_current_configuration':'SRR'}; // compute integral values of SRR
+~~~~
 
 # `mfm-test-generator` improvements
 
@@ -1612,6 +1696,48 @@ The following `PipeTest` methods are now available:
 
 - `computeMeanValue`, which computes the mean value of a scalar variable.
 - `computeIntegralValue`, which computes the integral value of a scalar variable.
+
+### Example of usage
+
+~~~~{.python}
+import std
+from mtest import PipeTest, StudyCurrentState, SolverWorkSpace, \
+     PipeTestConfiguration as ptc
+
+t = PipeTest()
+# geometry and meshing
+t.setInnerRadius(4.2e-3)
+t.setOuterRadius(4.7e-3)
+t.setNumberOfElements(10)
+t.setElementType('Linear')
+
+# modelling hypothesis
+t.setAxialLoading('None')
+
+t.setTimes([0,1])
+t.setInnerPressureEvolution(1.5e6)
+t.setOuterPressureEvolution({0:1.5e6,1:10e6})
+
+t.setBehaviour('LogarithmicStrain1D','castem','../behaviours/castem/libMFrontCastemBehaviours.so','umatelasticity')
+t.setMaterialProperty('YoungModulus',150e9)
+t.setMaterialProperty('PoissonRatio',0.3)
+t.setExternalStateVariable('Temperature',{0:293.15,1:693.15})
+
+t.setOutputFileName("pipe.res")
+
+s  = StudyCurrentState()
+wk = SolverWorkSpace()
+
+t.completeInitialisation()
+t.initializeCurrentState(s)
+t.initializeWorkSpace(wk)
+
+mean_ic     = t.computeMeanValue(s,'SRR',ptc.INTIAL_CONFIGURATION)
+mean_cc     = t.computeMeanValue(s,'SRR',ptc.CURRENT_CONFIGURATION)
+integral_ic = t.computeIntegralValue(s,'SRR',ptc.INTIAL_CONFIGURATION)
+integral_cc = t.computeIntegralValue(s,'SRR',ptc.CURRENT_CONFIGURATION)
+~~~~
+
 
 ## Support of named arguments in the constructor of the `Behaviour` class {#sec:tfel_4.1:pymtest:behaviour_constructor}
 
@@ -1889,11 +2015,21 @@ command is concatenated in a single string for the test.
 
 # Issues fixed
 
+## Issue #266: [tfel-math] Add constexpr evaluation of spline and derivative 
+
+This feature is described in Section @sec:tfel_4.1:tfel_math:issue_266.
+
+For more details, see <https://github.com/thelfer/tfel/issues/266>
+
 ## Issue #264: Add support to compute linear intepolation
 
 This feature is described in Section @sec:tfel_4.1:tfel_math:issue_264.
 
 For more details, see <https://github.com/thelfer/tfel/issues/264>
+
+## Issue #263: [tfel-math] Add an empty method to `TFEL`' array
+
+For more details, see <https://github.com/thelfer/tfel/issues/263>
 
 ## Issue #262: Installation issue of the `master` branch (future version 4.1) with `gcc-8.1.0`
 
@@ -2006,6 +2142,10 @@ This feature is described in Section
 @sec:tfel_4.1:tfel_check:test_failure.
 
 For more details, see <https://github.com/thelfer/tfel/issues/229>.
+
+## Issue #225: [mfront] Separate file generation from DSLs
+
+For more details, see <https://github.com/thelfer/tfel/issues/225>.
 
 ## Issue #224: [mfront] add DSL options to override parameters in material properties and point-wise models
 
@@ -2136,6 +2276,12 @@ The feature is described in Section
 @sec:tfel:4.1:mtest:generic_material_property_support.
 
 For more details, see : <https://github.com/thelfer/tfel/issues/177>.
+
+## Issue #175: Add support for post-processing to mean-value and the integral value of a state variable
+
+The feature is described in Section sec:tfel:4.1:ptest:integral_value.
+
+For more details, see : <https://github.com/thelfer/tfel/issues/175>.
 
 ## Issue #172: [tfel-math-parser] Add the ability to derive the power function enhancement {#sec:tfel:4.1:issue:172}
 
