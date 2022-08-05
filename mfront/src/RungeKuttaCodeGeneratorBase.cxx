@@ -11,6 +11,7 @@
  * project under specific licensing conditions.
  */
 
+#include <ostream>
 #include "TFEL/Glossary/Glossary.hxx"
 #include "TFEL/Glossary/GlossaryEntry.hxx"
 #include "MFront/DSLUtilities.hxx"

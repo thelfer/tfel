@@ -11,6 +11,7 @@
  * project under specific licensing conditions.
  */
 
+#include <ostream>
 #include "MFront/DefaultFiniteStrainCodeGenerator.hxx"
 
 namespace mfront{

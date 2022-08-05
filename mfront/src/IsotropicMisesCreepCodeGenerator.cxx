@@ -11,6 +11,7 @@
  * project under specific licensing conditions.
  */
 
+#include <ostream>
 #include "MFront/DSLUtilities.hxx"
 #include "MFront/MFrontDebugMode.hxx"
 #include "MFront/IsotropicMisesCreepCodeGenerator.hxx"
