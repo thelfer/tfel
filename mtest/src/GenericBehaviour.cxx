@@ -191,7 +191,7 @@ namespace mtest {
       }
     }
     this->mpnames.insert(this->mpnames.begin(), mps.begin(), mps.end());
-  }  // end of GenericBehaviour::GenericBehaviour
+  }  // end of GenericBehaviour
 
   GenericBehaviour::GenericBehaviour(
       const Hypothesis h,
@@ -244,7 +244,7 @@ namespace mtest {
         }
       }
     }
-  }  // end of GenericBehaviour::GenericBehaviour
+  }  // end of GenericBehaviour
 
   void GenericBehaviour::allocate(BehaviourWorkSpace& wk) const {
     const auto ndv = this->getGradientsSize();
@@ -272,13 +272,61 @@ namespace mtest {
             "GenericBehaviour::allocate: "
             "unsupported tangent operator type");
       }
+    } else if ((this->btype == 1u) || (btype == 3u)) {
+      wk.D.resize(nth, ndv);
+      wk.k.resize(nth, ndv);
+      wk.kt.resize(nth, ndv);
     } else {
-      constexpr unsigned short one = 1u;
-      const auto enth = std::max(nth, one);
-      const auto endv = std::max(ndv, one);
-      wk.D.resize(enth, endv);
-      wk.k.resize(enth, endv);
+      using size_type = tfel::math::matrix<real>::size_type;
+      constexpr auto one = size_type{1u};
+      const auto endv = ndv == 0u ? one : ndv;
+      const auto enth = nth == 0u ? one : nth;
+      const auto tobs_size = [this] {
+        const auto h = this->getHypothesis();
+        auto s = size_type{};
+        for (const auto& to : this->getTangentOperatorBlocks()) {
+          const auto ptf =
+              std::find(this->thnames.begin(), this->thnames.end(), to.first);
+          const auto piv =
+              std::find(this->ivnames.begin(), this->ivnames.end(), to.first);
+          const auto pg =
+              std::find(this->gnames.begin(), this->gnames.end(), to.second);
+          const auto pev =
+              std::find(this->evnames.begin(), this->evnames.end(), to.second);
+          const auto to_ro = [&, this]() -> size_type {
+            if (pev != this->evnames.end()) {
+              return 1u;
+            }
+            if (pg == this->gnames.end()) {
+              tfel::raise(
+                  "GenericBehaviour::call_behaviour(1): "
+                  "invalid tangent operator block ('" +
+                  to.first + "'" + " vs '" + to.second + "')");
+            }
+            return mtest::getVariableSize(
+                this->gtypes[pg - this->gnames.begin()], h);
+          }();
+          const auto to_co = [&, this]() -> size_type {
+            if (piv != this->ivnames.end()) {
+              return mtest::getVariableSize(
+                  this->ivtypes[piv - this->ivnames.begin()], h);
+            }
+            if (ptf == this->thnames.end()) {
+              tfel::raise(
+                  "GenericBehaviour::call_behaviour(2): "
+                  "invalid tangent operator block ('" +
+                  to.first + "'" + " vs '" + to.second + "')");
+            }
+            return mtest::getVariableSize(
+                this->thtypes[ptf - this->thnames.begin()], h);
+          }();
+          s += to_ro * to_co;
+        }
+        return s;
+      }();
+      wk.D.resize(std::max(tobs_size, one), 1u);
       wk.kt.resize(enth, endv);
+      wk.k.resize(enth, endv);
     }
     wk.nk.resize(nth, ndv);
     wk.ne.resize(ndv);
@@ -304,7 +352,7 @@ namespace mtest {
         wk.S1.resize(ndv);
       }
     }
-  }  // end f GenericBehaviour::allocate
+  }  // end of GenericBehaviour::allocate
 
   void GenericBehaviour::getGradientsDefaultInitialValues(
       tfel::math::vector<real>& v) const {
@@ -386,9 +434,12 @@ namespace mtest {
       } else {
         throw_if(true, "unsupported tangent operator");
       }
+    } else if ((this->btype == 1u) || (this->btype == 3u)) {
+      throw_if(((wk.D.getNbRows() != Kt.getNbRows()) ||
+                (wk.D.getNbCols() != Kt.getNbCols())),
+               "the memory has not been allocated correctly");
     } else {
-      throw_if((wk.D.getNbRows() != Kt.getNbRows()) ||
-                   (wk.D.getNbCols() != Kt.getNbCols()),
+      throw_if(wk.D.getNbCols() != 1u,
                "the memory has not been allocated correctly");
     }
     std::fill(wk.D.begin(), wk.D.end(), 0.);
@@ -507,7 +558,7 @@ namespace mtest {
       if (this->stype == 1u) {
         this->rto_fct(&(wk.D(0, 0)), &(wk.D(0, 0)), s.r.begin());
       }
-      if ((this->gtypes.size() == 1u) && (this->thtypes.size() == 1u)) {
+      if (this->btype != 0u) {
         for (unsigned short i = 0; i != nth; ++i) {
           for (unsigned short j = 0; j != ndv; ++j) {
             Kt(i, j) = wk.D(i, j);
@@ -535,7 +586,7 @@ namespace mtest {
               std::find(this->evnames.begin(), this->evnames.end(), to.second);
           const auto to_ro = [&, this]() -> size_type {
             if (pev != this->evnames.end()) {
-              return 1;
+              return 1u;
             }
             if (pg == this->gnames.end()) {
               tfel::raise(
@@ -651,8 +702,7 @@ namespace mtest {
     } else {
       throw_if(true, "internal error, unexpected stress measure");
     }
-  }  // end of
-     // GenericBehaviour::executeFiniteStrainBehaviourStressPreProcessing
+  }  // end of executeFiniteStrainBehaviourStressPreProcessing
 
   void
   GenericBehaviour::executeFiniteStrainBehaviourTangentOperatorPreProcessing(
@@ -672,8 +722,7 @@ namespace mtest {
             "internal error, unexpected tangent operator type");
       }
     }
-  }  // end of
-  // GenericBehaviour::executeFiniteStrainBehaviourTangentOperatorPreProcessing
+  }  // end of executeFiniteStrainBehaviourTangentOperatorPreProcessing
 
   void GenericBehaviour::executeFiniteStrainBehaviourStressPostProcessing(
       BehaviourWorkSpace& wk, mfront::gb::BehaviourData& d) const {
