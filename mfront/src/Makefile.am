@@ -323,6 +323,7 @@ endif # TFEL_WIN
 libMTestFileGenerator_la_SOURCES = MTestFileGeneratorBase.cxx         \
 				   UmatSmallStrainMTestFileGenerator.cxx              \
 				   UmatFiniteStrainMTestFileGenerator.cxx             \
+                    GenericBehaviourMTestFileGenerator.cxx             \
 				   GenericBehaviourSmallStrainMTestFileGenerator.cxx  \
 				   GenericBehaviourFiniteStrainMTestFileGenerator.cxx
 

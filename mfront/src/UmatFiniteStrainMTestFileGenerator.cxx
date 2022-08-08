@@ -22,13 +22,12 @@
 namespace mfront {
 
   UmatFiniteStrainMTestFileGenerator::UmatFiniteStrainMTestFileGenerator(
-      const std::string& i, const std::string& l, const std::string& b)
+      const char* const i, const char* const l, const char* const b)
       : interface(i), library(l), behaviour(b) {
-    std::fill(this->F0, this->F0 + 36, 0.);
-    std::fill(this->F1, this->F1 + 36, 0.);
+    std::fill(this->F0, this->F0 + 9, 0.);
+    std::fill(this->F1, this->F1 + 9, 0.);
     std::fill(this->stress, this->stress + 6, 0.);
-  }  // end of
-     // UmatFiniteStrainMTestFileGenerator::UmatFiniteStrainMTestFileGenerator
+  }  // end of UmatFiniteStrainMTestFileGenerator
 
   void UmatFiniteStrainMTestFileGenerator::writeBehaviourDeclaration(
       std::ostream& os) const {
@@ -39,7 +38,7 @@ namespace mfront {
     os << "@Behaviour<" << this->interface << "> '" << this->library << ".so' '"
        << this->behaviour << "';" << std::endl;
 #endif
-  }  // end of UmatFiniteStrainMTestFileGenerator::writeBehaviourDeclaration
+  }  // end of writeBehaviourDeclaration
 
   void UmatFiniteStrainMTestFileGenerator::
       setDeformationGradientAtTheBeginningOfTheStimeStep(
@@ -57,7 +56,7 @@ namespace mfront {
         this->F0[8] = F[5];
       }
     }
-  }  // end of UmatFiniteStrainMTestFileGenerator::setStrainTensor
+  }  // end of setStrainTensor
 
   void UmatFiniteStrainMTestFileGenerator::
       setDeformationGradientAtTheEndOfTheStimeStep(const double* const F) {
@@ -74,13 +73,12 @@ namespace mfront {
         this->F1[8] = F[5];
       }
     }
-  }  // end of UmatFiniteStrainMTestFileGenerator::setStrainTensorIncrement
+  }  // end of setStrainTensorIncrement
 
   void UmatFiniteStrainMTestFileGenerator::setStressTensor(
       const double* const s) {
-    using namespace std;
-    copy(s, s + this->getStensorSize(), this->stress);
-  }  // end of UmatFiniteStrainMTestFileGenerator::setStressTensor
+    std::copy(s, s + this->getStensorSize(), this->stress);
+  }  // end of setStressTensor
 
   void UmatFiniteStrainMTestFileGenerator::writeGradients(
       std::ostream& os) const {
@@ -122,7 +120,7 @@ namespace mfront {
          << ":" << this->F0[i] << "," << t1 << ":" << this->F1[i] << "};\n";
     }
     os << '\n';
-  }  // end of UmatFiniteStrainMTestFileGenerator::writeGradients
+  }  // end of writeGradients
 
   UmatFiniteStrainMTestFileGenerator::~UmatFiniteStrainMTestFileGenerator() =
       default;

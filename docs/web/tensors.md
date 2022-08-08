@@ -284,7 +284,7 @@ The Frobenius inner product \(\tns{a}\,\colon\,\tns{b}\) of two tensors
 \(\tns{a}\) and \(\tns{b}\) is defined by:
 
 \[
-\tns{a}\,\colon\,\tns{b}=\trace{\transpose{\tns{a}}\,\dot\,\tns{b}}=\sum_{i,j}a_{ij}b_{ij}
+\tns{a}\,\colon\,\tns{b}=\trace{\transpose{\tns{a}}\,\cdot\,\tns{b}}=\sum_{i,j}a_{ij}b_{ij}
 \]
 
 This operation is implemented in `TFEL/Math` using the `|` operator,
@@ -736,7 +736,7 @@ The computation of \(\deriv{J_{2}}{\tsigma}\) is straight-forward by
 chain rule, using the expression of the derivatives of the invariants
 of a tensor (see Section&nbsp;@sec:invariants:derivatives):
 \[
-\deriv{J_{2}}{\tsigma}= \deriv{J_{2}}{\tenseur{s}}\,\dot\,\deriv{\tenseur{s}}{\tsigma}= \tenseur{s}
+\deriv{J_{2}}{\tsigma}= \deriv{J_{2}}{\tenseur{s}}\,\cdot\,\deriv{\tenseur{s}}{\tsigma}= \tenseur{s}
 \]
 
 In pratice, this can be implemented as follows:

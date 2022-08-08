@@ -27,6 +27,7 @@ mfront_library(MTestFileGenerator
   MTestFileGeneratorBase.cxx
   UmatSmallStrainMTestFileGenerator.cxx
   UmatFiniteStrainMTestFileGenerator.cxx
+  GenericBehaviourMTestFileGenerator.cxx
   GenericBehaviourSmallStrainMTestFileGenerator.cxx
   GenericBehaviourFiniteStrainMTestFileGenerator.cxx)
 target_include_directories(MTestFileGenerator

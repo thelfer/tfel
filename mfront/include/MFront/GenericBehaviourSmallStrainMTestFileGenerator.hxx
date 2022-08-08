@@ -27,8 +27,8 @@ namespace mfront {
      * \param[in] l : library
      * \param[in] b : behaviour
      */
-    GenericBehaviourSmallStrainMTestFileGenerator(const std::string&,
-                                                  const std::string&);
+    GenericBehaviourSmallStrainMTestFileGenerator(const char* const,
+                                                  const char* const);
     /*!
      * set the strain at the beginning of the time step
      * \param[in] e : strain
@@ -45,9 +45,7 @@ namespace mfront {
      * \param[in] s : stresses
      */
     virtual void setStressTensor(const double* const);
-    /*!
-     * destructor
-     */
+    //! \brief destructor
     ~GenericBehaviourSmallStrainMTestFileGenerator() override;
 
    protected:
@@ -61,10 +59,10 @@ namespace mfront {
      * \param[in] os : output stream
      */
     void writeGradients(std::ostream&) const override;
-    //! library name
-    std::string library;
-    //! behaviour name
-    std::string behaviour;
+    //! \brief library name
+    const char* const library;
+    //! \brief behaviour name
+    const char* const behaviour;
     //! strain
     double eto0[6];
     //! strain increment

@@ -14,6 +14,7 @@
 #include <fstream>
 #include <iterator>
 #include <stdexcept>
+#include <algorithm>
 #include "TFEL/Raise.hxx"
 #include "MFront/MTestFileGeneratorBase.hxx"
 
@@ -283,13 +284,87 @@ namespace mfront {
     os << '\n';
   }  // end of MTestFileGeneratorBase::writeExternalStateVariables
 
-  std::vector<std::string>
-  MTestFileGeneratorBase::getDeformationGradientComponentsNames() const {
+  static std::vector<std::string> transformComponents(
+      const std::vector<std::string>& components, const std::string& n) {
+    if (n.empty()) {
+      return components;
+    }
+    auto final_components = std::vector<std::string>{};
+    final_components.resize(components.size());
+    std::transform(components.begin(), components.end(), final_components.begin(),
+                   [&n](const std::string& c) { return n + c; });
+    return final_components;
+  }
+
+  std::vector<std::string> MTestFileGeneratorBase::getTVectorComponentsNames(
+      const std::string& n) const {
     using namespace tfel::material;
-    const std::string exts[9u] = {"FXX", "FYY", "FZZ", "FXY", "FYX",
-                                  "FXZ", "FZX", "FYZ", "FZY"};
-    const std::string aexts[5u] = {"FRR", "FZZ", "FTT", "FRZ", "FZR"};
-    std::vector<std::string> n;
+    const std::string exts[3u] = {"X", "Y", "Z"};
+    const std::string aexts[2u] = {"R", "Z"};
+    std::vector<std::string> components;
+    tfel::raise_if(this->hypothesis == ModellingHypothesis::UNDEFINEDHYPOTHESIS,
+                   "MTestFileGeneratorBase::getTVectorComponentsNames: "
+                   "undefined modelling hypothesis");
+    if ((this->hypothesis ==
+         ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN) ||
+        (this->hypothesis ==
+         ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS)) {
+      std::copy(aexts, aexts + 1u, std::back_inserter(components));
+    } else if (this->hypothesis == ModellingHypothesis::AXISYMMETRICAL) {
+      std::copy(aexts, aexts + 2u, std::back_inserter(components));
+    } else if ((this->hypothesis == ModellingHypothesis::PLANESTRESS) ||
+               (this->hypothesis == ModellingHypothesis::PLANESTRAIN) ||
+               (this->hypothesis ==
+                ModellingHypothesis::GENERALISEDPLANESTRAIN)) {
+      std::copy(exts, exts + 2u, std::back_inserter(components));
+    } else if (this->hypothesis == ModellingHypothesis::TRIDIMENSIONAL) {
+      std::copy(exts, exts + 3u, std::back_inserter(components));
+    } else {
+      tfel::raise(
+          "MTestFileGeneratorBase::getTVectorComponentsNames: "
+          "unsupported hypothesis");
+    }
+    return transformComponents(components, n);
+  }
+
+  std::vector<std::string> MTestFileGeneratorBase::getStensorComponentsNames(
+      const std::string& n) const {
+    using namespace tfel::material;
+    const std::string exts[6u] = {"XX", "YY", "ZZ", "XY", "XZ", "YZ"};
+    const std::string aexts[4u] = {"RR", "ZZ", "TT", "RZ"};
+    std::vector<std::string> components;
+    tfel::raise_if(this->hypothesis == ModellingHypothesis::UNDEFINEDHYPOTHESIS,
+                   "MTestFileGeneratorBase::getStensorComponentsNames: "
+                   "undefined modelling hypothesis");
+    if ((this->hypothesis ==
+         ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN) ||
+        (this->hypothesis ==
+         ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS)) {
+      std::copy(aexts, aexts + 3u, std::back_inserter(components));
+    } else if (this->hypothesis == ModellingHypothesis::AXISYMMETRICAL) {
+      std::copy(aexts, aexts + 4u, std::back_inserter(components));
+    } else if ((this->hypothesis == ModellingHypothesis::PLANESTRESS) ||
+               (this->hypothesis == ModellingHypothesis::PLANESTRAIN) ||
+               (this->hypothesis ==
+                ModellingHypothesis::GENERALISEDPLANESTRAIN)) {
+      std::copy(exts, exts + 4u, std::back_inserter(components));
+    } else if (this->hypothesis == ModellingHypothesis::TRIDIMENSIONAL) {
+      std::copy(exts, exts + 6u, std::back_inserter(components));
+    } else {
+      tfel::raise(
+          "MTestFileGeneratorBase::getStensorComponentsNames: "
+          "unsupported hypothesis");
+    }
+    return transformComponents(components, n);
+  }
+
+  std::vector<std::string> MTestFileGeneratorBase::getTensorComponentsNames(
+      const std::string& n) const {
+    using namespace tfel::material;
+    const std::string exts[9u] = {"XX", "YY", "ZZ", "XY", "YX",
+                                  "XZ", "ZX", "YZ", "ZY"};
+    const std::string aexts[5u] = {"RR", "ZZ", "TT", "RZ", "ZR"};
+    std::vector<std::string> components;
     tfel::raise_if(
         this->hypothesis == ModellingHypothesis::UNDEFINEDHYPOTHESIS,
         "MTestFileGeneratorBase::getDeformationGradientsComponentsNames: "
@@ -298,84 +373,37 @@ namespace mfront {
          ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN) ||
         (this->hypothesis ==
          ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS)) {
-      copy(aexts, aexts + 3u, back_inserter(n));
+      std::copy(aexts, aexts + 3u, std::back_inserter(components));
     } else if (this->hypothesis == ModellingHypothesis::AXISYMMETRICAL) {
-      copy(aexts, aexts + 5u, back_inserter(n));
+      std::copy(aexts, aexts + 5u, std::back_inserter(components));
     } else if ((this->hypothesis == ModellingHypothesis::PLANESTRESS) ||
                (this->hypothesis == ModellingHypothesis::PLANESTRAIN) ||
                (this->hypothesis ==
                 ModellingHypothesis::GENERALISEDPLANESTRAIN)) {
-      copy(exts, exts + 5u, back_inserter(n));
+      std::copy(exts, exts + 5u, std::back_inserter(components));
     } else if (this->hypothesis == ModellingHypothesis::TRIDIMENSIONAL) {
-      copy(exts, exts + 9u, back_inserter(n));
+      std::copy(exts, exts + 9u, std::back_inserter(components));
     } else {
       tfel::raise(
           "MTestFileGeneratorBase::getDeformationGradientsComponentsNames: "
           "unsupported hypothesis");
     }
-    return n;
+    return transformComponents(components, n);
+  }  // end of getTensorComponentsNames
+
+  std::vector<std::string>
+  MTestFileGeneratorBase::getDeformationGradientComponentsNames() const {
+    return this->getTensorComponentsNames("F");
   }
 
   std::vector<std::string> MTestFileGeneratorBase::getStrainComponentsNames()
       const {
-    using namespace tfel::material;
-    const std::string exts[6u] = {"EXX", "EYY", "EZZ", "EXY", "EXZ", "EYZ"};
-    const std::string aexts[4u] = {"ERR", "EZZ", "ETT", "ERZ"};
-    std::vector<std::string> n;
-    tfel::raise_if(this->hypothesis == ModellingHypothesis::UNDEFINEDHYPOTHESIS,
-                   "MTestFileGeneratorBase::getStrainComponentsNames: "
-                   "undefined modelling hypothesis");
-    if ((this->hypothesis ==
-         ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN) ||
-        (this->hypothesis ==
-         ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS)) {
-      copy(aexts, aexts + 3u, back_inserter(n));
-    } else if (this->hypothesis == ModellingHypothesis::AXISYMMETRICAL) {
-      copy(aexts, aexts + 4u, back_inserter(n));
-    } else if ((this->hypothesis == ModellingHypothesis::PLANESTRESS) ||
-               (this->hypothesis == ModellingHypothesis::PLANESTRAIN) ||
-               (this->hypothesis ==
-                ModellingHypothesis::GENERALISEDPLANESTRAIN)) {
-      copy(exts, exts + 4u, back_inserter(n));
-    } else if (this->hypothesis == ModellingHypothesis::TRIDIMENSIONAL) {
-      copy(exts, exts + 6u, back_inserter(n));
-    } else {
-      tfel::raise(
-          "MTestFileGeneratorBase::getStrainComponentsNames: "
-          "unsupported hypothesis");
-    }
-    return n;
+    return this->getStensorComponentsNames("E");
   }
 
   std::vector<std::string> MTestFileGeneratorBase::getStressComponentsNames()
       const {
-    using namespace tfel::material;
-    const std::string exts[6u] = {"SXX", "SYY", "SZZ", "SXY", "SXZ", "SYZ"};
-    const std::string aexts[4u] = {"SRR", "SZZ", "STT", "SRZ"};
-    std::vector<std::string> n;
-    tfel::raise_if(this->hypothesis == ModellingHypothesis::UNDEFINEDHYPOTHESIS,
-                   "MTestFileGeneratorBase::getStressComponentsNames: "
-                   "undefined modelling hypothesis");
-    if ((this->hypothesis ==
-         ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN) ||
-        (this->hypothesis ==
-         ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS)) {
-      copy(aexts, aexts + 3u, back_inserter(n));
-    } else if (this->hypothesis == ModellingHypothesis::AXISYMMETRICAL) {
-      copy(aexts, aexts + 4u, back_inserter(n));
-    } else if ((this->hypothesis == ModellingHypothesis::PLANESTRESS) ||
-               (this->hypothesis == ModellingHypothesis::PLANESTRAIN) ||
-               (this->hypothesis ==
-                ModellingHypothesis::GENERALISEDPLANESTRAIN)) {
-      copy(exts, exts + 4u, back_inserter(n));
-    } else if (this->hypothesis == ModellingHypothesis::TRIDIMENSIONAL) {
-      copy(exts, exts + 6u, back_inserter(n));
-    } else {
-      tfel::raise(
-          "MTestFileGeneratorBase::getStressComponentsNames: "
-          "unsupported hypothesis");
-    }
-    return n;
+    return this->getStensorComponentsNames("S");
   }
 
   unsigned short MTestFileGeneratorBase::getVariableSize(
