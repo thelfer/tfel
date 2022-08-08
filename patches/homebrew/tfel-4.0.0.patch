@@ -1,14 +1,20 @@
 diff --git a/bindings/python/tfel/CMakeLists.txt b/bindings/python/tfel/CMakeLists.txt
-index bf623156b..68caf5182 100644
+index bf623156b..6dd565a04 100644
 --- a/bindings/python/tfel/CMakeLists.txt
 +++ b/bindings/python/tfel/CMakeLists.txt
-@@ -21,7 +21,8 @@ if(TFEL_NUMPY_SUPPORT)
+@@ -20,8 +20,14 @@ if(TFEL_NUMPY_SUPPORT)
+     target_link_libraries(TFELNumpySupport
        ${CONAN_LIBS} ${PYTHON_LIBRARIES})
    else(TFEL_USES_CONAN)
++    if(python-static-interpreter-workaround)
++      if(APPLE)
++        set_target_properties(TFELNumpySupport PROPERTIES LINK_FLAGS "-undefined dynamic_lookup")
++      endif(APPLE)
++    endif(python-static-interpreter-workaround) 
      target_link_libraries(TFELNumpySupport
 -      PUBLIC ${Boost_NUMPY_LIBRARY} ${Boost_PYTHON_LIBRARY} ${PYTHON_LIBRARIES})
 +      PUBLIC ${Boost_NUMPY_LIBRARY} ${Boost_PYTHON_LIBRARY}
-+      ${TFEL_PYTHON_MODULES_PRIVATE_LINK_LIBRARIES})
++             ${TFEL_PYTHON_MODULES_PRIVATE_LINK_LIBRARIES})
    endif(TFEL_USES_CONAN)
  endif(TFEL_NUMPY_SUPPORT)
  
