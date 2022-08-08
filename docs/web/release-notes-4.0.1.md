@@ -19,6 +19,10 @@ eqnPrefixTemplate: "($$i$$)"
 
 # Issues fixed
 
+## Issue #275: [mtest] `MTest` segfaults with generic behaviours having additional tangent operator blocks
+
+For more details, see <https://github.com/thelfer/tfel/issues/275>
+
 ## Issue #257: [mfront] Warnings in behavior
 
 For more details, see <https://github.com/thelfer/tfel/issues/257>

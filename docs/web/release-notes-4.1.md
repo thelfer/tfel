@@ -2021,6 +2021,10 @@ This feature is described in Section @sec:tfel_4.1:tfel_math:issue_266.
 
 For more details, see <https://github.com/thelfer/tfel/issues/266>
 
+## Issue #265: [mfront] Add MTest file generation capability for `generic` behaviours
+
+For more details, see <https://github.com/thelfer/tfel/issues/265>
+
 ## Issue #264: Add support to compute linear intepolation
 
 This feature is described in Section @sec:tfel_4.1:tfel_math:issue_264.
