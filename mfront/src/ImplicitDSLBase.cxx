@@ -1244,7 +1244,7 @@ namespace mfront {
       }
     }
     if (!this->mb.hasParameter(uh, "iterMax")) {
-      ushort iterMax = 100u;
+      unsigned short iterMax = 100u;
       VariableDescription v("ushort", "iterMax", 1u, 0u);
       v.description = "maximum number of iterations allowed";
       this->mb.addParameter(uh, v, BehaviourData::ALREADYREGISTRED);
