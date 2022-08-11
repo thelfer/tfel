@@ -19,9 +19,13 @@ eqnPrefixTemplate: "($$i$$)"
 
 # Issues fixed
 
+## Issue #280: [mfront] the @UpdateAuxiliaryStateVariables is broken in the RungeKutta DSLs when using quantities
+
+For more details, see <https://github.com/thelfer/tfel/issues/280>
+
 ## Issue #279: [mfront] bounds checks are broken when using quantities
 
-For more details, see <https://github.com/thelfer/tfel/issues/276>
+For more details, see <https://github.com/thelfer/tfel/issues/279>
 
 ## Issue #275: [mtest] `MTest` segfaults with generic behaviours having additional tangent operator blocks
 
