@@ -15,6 +15,7 @@
 #define LIB_TFEL_BOUNDSCHECK_HXX
 
 #include <string>
+#include <string_view>
 
 #include "TFEL/Config/TFELConfig.hxx"
 #include "TFEL/Math/qt.hxx"
@@ -42,23 +43,36 @@ namespace tfel::material {
    */
   struct BoundsCheckBase {
     /*!
+     * \brief convert to string
+     * \param[in] value: value to be converted
+     */
+    template <typename T>
+    static std::string convert_to_string(const T& value) {
+      if constexpr (tfel::math::isQuantity<T>()) {
+        return std::to_string(value.getValue());
+      } else {
+        return std::to_string(value);
+      }
+    }
+
+    /*!
      * \param[in] n : variable name
      * \param[in] v : value
      * \param[in] b : lower bound value
      */
     [[noreturn]] TFEL_VISIBILITY_EXPORT static void
-    throwOutOfLowerBoundsException(const std::string&,
-                                   const std::string&,
-                                   const std::string&);
+    throwOutOfLowerBoundsException(const std::string_view,
+                                   const std::string_view,
+                                   const std::string_view);
     /*!
      * \param[in] n : variable name
      * \param[in] v : value
      * \param[in] b : upper bound value
      */
     [[noreturn]] TFEL_VISIBILITY_EXPORT static void
-    throwOutOfUpperBoundsException(const std::string&,
-                                   const std::string&,
-                                   const std::string&);
+    throwOutOfUpperBoundsException(const std::string_view,
+                                   const std::string_view,
+                                   const std::string_view);
     /*!
      * \param[in] n  : variable name
      * \param[in] v  : value
@@ -66,24 +80,24 @@ namespace tfel::material {
      * \param[in] ub : upper bound value
      */
     [[noreturn]] TFEL_VISIBILITY_EXPORT static void throwOutOfBoundsException(
-        const std::string&,
-        const std::string&,
-        const std::string&,
-        const std::string&);
+        const std::string_view,
+        const std::string_view,
+        const std::string_view,
+        const std::string_view);
     /*!
      * \param[in] n : variable name
      * \param[in] v : value
      * \param[in] b : lower bound value
      */
     TFEL_VISIBILITY_EXPORT static void displayOutOfLowerBoundsWarning(
-        const std::string&, const std::string&, const std::string&);
+        const std::string_view, const std::string_view, const std::string_view);
     /*!
      * \param[in] n : variable name
      * \param[in] v : value
      * \param[in] b : upper bound value
      */
     TFEL_VISIBILITY_EXPORT static void displayOutOfUpperBoundsWarning(
-        const std::string&, const std::string&, const std::string&);
+        const std::string_view, const std::string_view, const std::string_view);
     /*!
      * \param[in] n  : variable name
      * \param[in] v  : value
@@ -91,158 +105,121 @@ namespace tfel::material {
      * \param[in] ub : upper bound value
      */
     TFEL_VISIBILITY_EXPORT static void displayOutOfBoundsWarning(
-        const std::string&,
-        const std::string&,
-        const std::string&,
-        const std::string&);
+        const std::string_view,
+        const std::string_view,
+        const std::string_view,
+        const std::string_view);
+    //
     template <typename T>
-    static inline void lowerBoundCheck(const std::string& name,
+    static inline void lowerBoundCheck(const std::string_view name,
                                        const T value,
                                        const T lBound,
                                        const OutOfBoundsPolicy p = Strict) {
-      using std::to_string;
       if (value < lBound) {
         if (p == None) {
           return;
         }
-        switch (p) {
-          case Strict:
-            throwOutOfLowerBoundsException(name, to_string(value),
-                                           to_string(lBound));
-            break;
-          case Warning:
-            displayOutOfLowerBoundsWarning(name, to_string(value),
-                                           to_string(lBound));
-            break;
-          case None:
-            break;
+        if (p == Strict) {
+          throwOutOfLowerBoundsException(name, convert_to_string(value),
+                                         convert_to_string(lBound));
         }
+        displayOutOfLowerBoundsWarning(name, convert_to_string(value),
+                                       convert_to_string(lBound));
       }
     }
-    template <typename T, typename Unit>
-    static inline void lowerBoundCheck(const std::string& name,
-                                       const tfel::math::qt<Unit, T> value,
-                                       const T lBound,
-                                       const OutOfBoundsPolicy p = Strict) {
-      using std::to_string;
+    template <typename T, typename Unit, typename OwnerShipPolicy>
+    static inline void lowerBoundCheck(
+        const std::string_view name,
+        const tfel::math::Quantity<Unit, T, OwnerShipPolicy> value,
+        const T lBound,
+        const OutOfBoundsPolicy p = Strict) {
       if (value.getValue() < lBound) {
         if (p == None) {
           return;
         }
-        switch (p) {
-          case Strict:
-            throwOutOfLowerBoundsException(name, to_string(value.getValue()),
-                                           to_string(lBound.getValue()));
-            break;
-          case Warning:
-            displayOutOfLowerBoundsWarning(name, to_string(value.getValue()),
-                                           to_string(lBound.getValue()));
-            break;
-          case None:
-            break;
+        if (p == Strict) {
+          throwOutOfLowerBoundsException(name, convert_to_string(value),
+                                         convert_to_string(lBound));
         }
+        displayOutOfLowerBoundsWarning(name, convert_to_string(value),
+                                       convert_to_string(lBound));
       }
     }
     template <typename T>
-    static inline void upperBoundCheck(const std::string& name,
+    static inline void upperBoundCheck(const std::string_view name,
                                        const T value,
                                        const T uBound,
                                        const OutOfBoundsPolicy p = Strict) {
-      using std::to_string;
       if (value > uBound) {
         if (p == None) {
           return;
         }
-        switch (p) {
-          case Strict:
-            throwOutOfUpperBoundsException(name, to_string(value),
-                                           to_string(uBound));
-            break;
-          case Warning:
-            displayOutOfLowerBoundsWarning(name, to_string(value),
-                                           to_string(uBound));
-            break;
-          case None:
-            break;
+        if (p == Strict) {
+          throwOutOfUpperBoundsException(name, convert_to_string(value),
+                                         convert_to_string(uBound));
         }
+        displayOutOfUpperBoundsWarning(name, convert_to_string(value),
+                                       convert_to_string(uBound));
       }
     }
-    template <typename T, typename Unit>
-    static inline void upperBoundCheck(const std::string& name,
-                                       const tfel::math::qt<Unit, T> value,
-                                       const T uBound,
-                                       const OutOfBoundsPolicy p = Strict) {
-      using std::to_string;
+    template <typename T, typename Unit, typename OwnerShipPolicy>
+    static inline void upperBoundCheck(
+        const std::string_view name,
+        const tfel::math::Quantity<Unit, T, OwnerShipPolicy> value,
+        const T uBound,
+        const OutOfBoundsPolicy p = Strict) {
       if (value.getValue() > uBound) {
         if (p == None) {
           return;
         }
-        switch (p) {
-          case Strict:
-            throwOutOfUpperBoundsException(name, to_string(value.getValue()),
-                                           to_string(uBound.getValue()));
-            break;
-          case Warning:
-            displayOutOfLowerBoundsWarning(name, to_string(value.getValue()),
-                                           to_string(uBound.getValue()));
-            break;
-          case None:
-            break;
+        if (p == Strict) {
+          throwOutOfUpperBoundsException(name, convert_to_string(value),
+                                         convert_to_string(uBound));
         }
+        displayOutOfUpperBoundsWarning(name, convert_to_string(value),
+                                       convert_to_string(uBound));
       }
     }
     template <typename T>
     static inline void lowerAndUpperBoundsChecks(
-        const std::string& name,
+        const std::string_view name,
         const T value,
         const T lBound,
         const T uBound,
         const OutOfBoundsPolicy p = Strict) {
-      using std::to_string;
       if ((value < lBound) || (value > uBound)) {
         if (p == None) {
           return;
         }
-        switch (p) {
-          case Strict:
-            throwOutOfBoundsException(name, to_string(value), to_string(lBound),
-                                      to_string(uBound));
-            break;
-          case Warning:
-            displayOutOfBoundsWarning(name, to_string(value), to_string(lBound),
-                                      to_string(uBound));
-            break;
-          case None:
-            break;
+        if (p == Strict) {
+          throwOutOfBoundsException(name, convert_to_string(value),
+                                    convert_to_string(lBound),
+                                    convert_to_string(uBound));
         }
+        displayOutOfBoundsWarning(name, convert_to_string(value),
+                                  convert_to_string(lBound),
+                                  convert_to_string(uBound));
       }
     }
-    template <typename T, typename Unit>
+    template <typename T, typename Unit, typename OwnerShipPolicy>
     static inline void lowerAndUpperBoundsChecks(
-        const std::string& name,
-        const tfel::math::qt<Unit, T> value,
+        const std::string_view name,
+        const tfel::math::Quantity<Unit, T, OwnerShipPolicy> value,
         const T lBound,
         const T uBound,
         const OutOfBoundsPolicy p = Strict) {
-      using std::string;
       if ((value.getValue() < lBound) || (value.getValue() > uBound)) {
         if (p == None) {
           return;
         }
-        switch (p) {
-          case Strict:
-            throwOutOfBoundsException(name, to_string(value.getValue()),
-                                      to_string(lBound.getValue()),
-                                      to_string(uBound.getValue()));
-            break;
-          case Warning:
-            displayOutOfBoundsWarning(name, to_string(value.getValue()),
-                                      to_string(lBound.getValue()),
-                                      to_string(uBound.getValue()));
-            break;
-          case None:
-            break;
+        if (p == Strict) {
+          throwOutOfBoundsException(name, convert_to_string(value),
+                                    convert_to_string(lBound),
+                                    convert_to_string(uBound));
         }
+        displayOutOfBoundsWarning(name, convert_to_string(value),
+                                  convert_to_string(lBound),
+                                  convert_to_string(uBound));
       }
     }
   };  // end of struct BoundsCheckBase
@@ -286,10 +263,11 @@ namespace tfel::material {
       BoundsCheckBase::lowerAndUpperBoundsChecks(name + "(2)", s(2), lBound,
                                                  uBound, p);
     }
-    template <typename T, typename Unit>
+    template <typename T, typename Unit, typename OwnerShip>
     static void lowerBoundCheck(
         const std::string& name,
-        const tfel::math::stensor<1u, tfel::math::qt<Unit, T>>& s,
+        const tfel::math::stensor<1u, tfel::math::Quantity<Unit, T, OwnerShip>>&
+            s,
         const T lBound,
         const OutOfBoundsPolicy p = Strict) {
       BoundsCheckBase::lowerBoundCheck(name + "(0)", s(0).getValue(), lBound,
@@ -299,10 +277,11 @@ namespace tfel::material {
       BoundsCheckBase::lowerBoundCheck(name + "(2)", s(2).getValue(), lBound,
                                        p);
     }
-    template <typename T, typename Unit>
+    template <typename T, typename Unit, typename OwnerShip>
     static void upperBoundCheck(
         const std::string& name,
-        const tfel::math::stensor<1u, tfel::math::qt<Unit, T>>& s,
+        const tfel::math::stensor<1u, tfel::math::Quantity<Unit, T, OwnerShip>>&
+            s,
         const T uBound,
         const OutOfBoundsPolicy p = Strict) {
       BoundsCheckBase::upperBoundCheck(name + "(0)", s(0).getValue(), uBound,
@@ -312,10 +291,11 @@ namespace tfel::material {
       BoundsCheckBase::upperBoundCheck(name + "(2)", s(2).getValue(), uBound,
                                        p);
     }
-    template <typename T, typename Unit>
+    template <typename T, typename Unit, typename OwnerShip>
     static void lowerAndUpperBoundsChecks(
         const std::string& name,
-        const tfel::math::stensor<1u, tfel::math::qt<Unit, T>>& s,
+        const tfel::math::stensor<1u, tfel::math::Quantity<Unit, T, OwnerShip>>&
+            s,
         const T lBound,
         const T uBound,
         const OutOfBoundsPolicy p = Strict) {
@@ -333,10 +313,10 @@ namespace tfel::material {
     using BoundsCheckBase::lowerAndUpperBoundsChecks;
     using BoundsCheckBase::lowerBoundCheck;
     using BoundsCheckBase::upperBoundCheck;
-    template <typename T, typename Unit>
+    template <typename T, typename Unit, typename OwnerShip>
     static inline void lowerAndUpperBoundsChecks(
         const std::string& name,
-        const tfel::math::qt<Unit, T> value,
+        const tfel::math::Quantity<Unit, T, OwnerShip> value,
         const T lBound,
         const T uBound,
         const OutOfBoundsPolicy p = Strict) {
@@ -378,10 +358,11 @@ namespace tfel::material {
       BoundsCheckBase::lowerAndUpperBoundsChecks(name + "(3)", s(3), lBound,
                                                  uBound, p);
     }
-    template <typename T, typename Unit>
+    template <typename T, typename Unit, typename OwnerShip>
     static void lowerBoundCheck(
         const std::string& name,
-        const tfel::math::stensor<2u, tfel::math::qt<Unit, T>>& s,
+        const tfel::math::stensor<2u, tfel::math::Quantity<Unit, T, OwnerShip>>&
+            s,
         const T lBound,
         const OutOfBoundsPolicy p = Strict) {
       BoundsCheckBase::lowerBoundCheck(name + "(0)", s(0).getValue(), lBound,
@@ -393,10 +374,11 @@ namespace tfel::material {
       BoundsCheckBase::lowerBoundCheck(name + "(3)", s(3).getValue(), lBound,
                                        p);
     }
-    template <typename T, typename Unit>
+    template <typename T, typename Unit, typename OwnerShip>
     static void upperBoundCheck(
         const std::string& name,
-        const tfel::math::stensor<2u, tfel::math::qt<Unit, T>>& s,
+        const tfel::math::stensor<2u, tfel::math::Quantity<Unit, T, OwnerShip>>&
+            s,
         const T uBound,
         const OutOfBoundsPolicy p = Strict) {
       BoundsCheckBase::upperBoundCheck(name + "(0)", s(0).getValue(), uBound,
@@ -408,10 +390,11 @@ namespace tfel::material {
       BoundsCheckBase::upperBoundCheck(name + "(3)", s(3).getValue(), uBound,
                                        p);
     }
-    template <typename T, typename Unit>
+    template <typename T, typename Unit, typename OwnerShip>
     static void lowerAndUpperBoundsChecks(
         const std::string& name,
-        const tfel::math::stensor<2u, tfel::math::qt<Unit, T>>& s,
+        const tfel::math::stensor<2u, tfel::math::Quantity<Unit, T, OwnerShip>>&
+            s,
         const T lBound,
         const T uBound,
         const OutOfBoundsPolicy p = Strict) {
@@ -474,10 +457,11 @@ namespace tfel::material {
       BoundsCheckBase::lowerAndUpperBoundsChecks(name + "(5)", s(5), lBound,
                                                  uBound, p);
     }
-    template <typename T, typename Unit>
+    template <typename T, typename Unit, typename OwnerShip>
     static void lowerBoundCheck(
         const std::string& name,
-        const tfel::math::stensor<3u, tfel::math::qt<Unit, T>>& s,
+        const tfel::math::stensor<3u, tfel::math::Quantity<Unit, T, OwnerShip>>&
+            s,
         const T lBound,
         const OutOfBoundsPolicy p = Strict) {
       BoundsCheckBase::lowerBoundCheck(name + "(0)", s(0).getValue(), lBound,
@@ -493,10 +477,11 @@ namespace tfel::material {
       BoundsCheckBase::lowerBoundCheck(name + "(5)", s(5).getValue(), lBound,
                                        p);
     }
-    template <typename T, typename Unit>
+    template <typename T, typename Unit, typename OwnerShip>
     static void upperBoundCheck(
         const std::string& name,
-        const tfel::math::stensor<3u, tfel::math::qt<Unit, T>>& s,
+        const tfel::math::stensor<3u, tfel::math::Quantity<Unit, T, OwnerShip>>&
+            s,
         const T uBound,
         const OutOfBoundsPolicy p = Strict) {
       BoundsCheckBase::upperBoundCheck(name + "(0)", s(0).getValue(), uBound,
@@ -512,10 +497,11 @@ namespace tfel::material {
       BoundsCheckBase::upperBoundCheck(name + "(5)", s(5).getValue(), uBound,
                                        p);
     }
-    template <typename T, typename Unit>
+    template <typename T, typename Unit, typename OwnerShip>
     static void lowerAndUpperBoundsChecks(
         const std::string& name,
-        const tfel::math::stensor<3u, tfel::math::qt<Unit, T>>& s,
+        const tfel::math::stensor<3u, tfel::math::Quantity<Unit, T, OwnerShip>>&
+            s,
         const T lBound,
         const T uBound,
         const OutOfBoundsPolicy p = Strict) {

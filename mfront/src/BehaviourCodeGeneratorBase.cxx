@@ -1,6 +1,6 @@
 /*!
  * \file   mfront/src/BehaviourCodeGeneratorBase.cxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   03/08/2022
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
@@ -37,7 +37,7 @@
 #include "MFront/FiniteStrainBehaviourTangentOperatorConversionPath.hxx"
 #include "MFront/BehaviourCodeGeneratorBase.hxx"
 
-namespace mfront{
+namespace mfront {
 
   /*!
    * \return a temporary name which has not been reserved. This
@@ -69,7 +69,7 @@ namespace mfront{
     tfel::raise(
         "getTemporaryVariableName: "
         "unable to find a temporary variable");
-  } // end of getTemporaryVariableName
+  }  // end of getTemporaryVariableName
 
   static bool hasUserDefinedTangentOperatorCode(
       const BehaviourDescription& bd,
@@ -83,9 +83,8 @@ namespace mfront{
       for (const auto& t : tos) {
         const auto ktype =
             convertFiniteStrainBehaviourTangentOperatorFlagToString(t);
-        if (bd.hasCode(
-                h, std::string(BehaviourData::ComputeTangentOperator) + '-' +
-                       ktype)) {
+        if (bd.hasCode(h, std::string(BehaviourData::ComputeTangentOperator) +
+                              '-' + ktype)) {
           return true;
         }
       }
@@ -555,7 +554,8 @@ namespace mfront{
     auto write_imatrix = [&out, &sss, &nb, &nss, &ims](
                              const std::vector<long double>& m,
                              const std::string& n) {
-      auto count = std::size_t{};  // number of terms of the matrix treated so far
+      auto count =
+          std::size_t{};  // number of terms of the matrix treated so far
       out << "this->" << n << " = {";
       for (std::size_t idx = 0; idx != nb; ++idx) {
         const auto gsi = sss.getSlipSystems(idx);
@@ -790,7 +790,8 @@ namespace mfront{
       }
       return a;
     }();
-    const auto asvn = bdata.getExternalNames(bdata.getAuxiliaryStateVariables());
+    const auto asvn =
+        bdata.getExternalNames(bdata.getAuxiliaryStateVariables());
     for (auto pa = std::begin(args); pa != std::end(args);) {
       if (*pa == "dt") {
         out << "this->dt";
@@ -875,7 +876,8 @@ namespace mfront{
     }
   }
 
-  void BehaviourCodeGeneratorBase::writeNamespaceBegin(std::ostream& file) const {
+  void BehaviourCodeGeneratorBase::writeNamespaceBegin(
+      std::ostream& file) const {
     if ((!file) || (!file.good())) {
       this->throwRuntimeError("BehaviourCodeGeneratorBase::writeNamespaceBegin",
                               "output file is not valid");
@@ -921,11 +923,12 @@ namespace mfront{
     }
   }  // end of writeTypeAliases
 
-  bool BehaviourCodeGeneratorBase::usesStateVariableTimeDerivative() const{
+  bool BehaviourCodeGeneratorBase::usesStateVariableTimeDerivative() const {
     return false;
   }  // end of usesStateVariableTimeDerivative
 
-  std::string BehaviourCodeGeneratorBase::getIntegrationVariablesIncrementsInitializers(
+  std::string
+  BehaviourCodeGeneratorBase::getIntegrationVariablesIncrementsInitializers(
       const Hypothesis h) const {
     std::ostringstream f;
     const auto& vc = this->bd.getBehaviourData(h).getIntegrationVariables();
@@ -963,7 +966,8 @@ namespace mfront{
     return f.str();
   }  // end of SupportedTypes::getIntegrationVariablesInitializers
 
-  void BehaviourCodeGeneratorBase::checkBehaviourDataFile(std::ostream& os) const {
+  void BehaviourCodeGeneratorBase::checkBehaviourDataFile(
+      std::ostream& os) const {
     if ((!os) || (!os.good())) {
       this->throwRuntimeError(
           "BehaviourCodeGeneratorBase::checkBehaviourDataOutputFile",
@@ -1283,8 +1287,8 @@ namespace mfront{
        << "}\n\n";
   }  // end of writeBehaviourAssignementOperator
 
-  void BehaviourCodeGeneratorBase::writeBehaviourDataExport(std::ostream& os,
-                                                    const Hypothesis h) const {
+  void BehaviourCodeGeneratorBase::writeBehaviourDataExport(
+      std::ostream& os, const Hypothesis h) const {
     this->checkBehaviourDataFile(os);
     for (const auto& i : this->interfaces) {
       i.second->exportMechanicalData(os, h, this->bd);
@@ -1452,7 +1456,8 @@ namespace mfront{
     }
   }
 
-  void BehaviourCodeGeneratorBase::writeBehaviourDataClassEnd(std::ostream& os) const {
+  void BehaviourCodeGeneratorBase::writeBehaviourDataClassEnd(
+      std::ostream& os) const {
     this->checkBehaviourDataFile(os);
     os << "}; // end of " << this->bd.getClassName() << "BehaviourData"
        << "class\n\n";
@@ -1556,7 +1561,8 @@ namespace mfront{
        << "}\n\n";
   }  //  BehaviourCodeGeneratorBase::writeBehaviourDataOutputOperator
 
-  void BehaviourCodeGeneratorBase::writeBehaviourDataFileBegin(std::ostream& os) const {
+  void BehaviourCodeGeneratorBase::writeBehaviourDataFileBegin(
+      std::ostream& os) const {
     this->checkBehaviourDataFile(os);
     this->writeBehaviourDataFileHeader(os);
     this->writeBehaviourDataFileHeaderBegin(os);
@@ -1570,8 +1576,8 @@ namespace mfront{
     this->writeBehaviourDataForwardDeclarations(os);
   }  // end of writeBehaviourDataFile
 
-  void BehaviourCodeGeneratorBase::writeBehaviourDataClass(std::ostream& os,
-                                                   const Hypothesis h) const {
+  void BehaviourCodeGeneratorBase::writeBehaviourDataClass(
+      std::ostream& os, const Hypothesis h) const {
     this->checkBehaviourDataFile(os);
     this->writeBehaviourDataClassBegin(os, h);
     this->writeBehaviourDataTypeAliases(os);
@@ -1591,7 +1597,8 @@ namespace mfront{
     this->writeBehaviourDataOutputOperator(os, h);
   }
 
-  void BehaviourCodeGeneratorBase::writeBehaviourDataFileEnd(std::ostream& os) const {
+  void BehaviourCodeGeneratorBase::writeBehaviourDataFileEnd(
+      std::ostream& os) const {
     this->writeNamespaceEnd(os);
     this->writeBehaviourDataFileHeaderEnd(os);
   }  // end of writeBehaviourDataFileEnd
@@ -1649,8 +1656,8 @@ namespace mfront{
     }
   }  // end of writeBehaviourClassForwardDeclarations
 
-  void BehaviourCodeGeneratorBase::writeBehaviourClassBegin(std::ostream& os,
-                                                    const Hypothesis h) const {
+  void BehaviourCodeGeneratorBase::writeBehaviourClassBegin(
+      std::ostream& os, const Hypothesis h) const {
     this->checkBehaviourFile(os);
     os << "/*!\n";
     os << "* \\class " << this->bd.getClassName() << '\n';
@@ -1762,13 +1769,14 @@ namespace mfront{
     os << "static_assert(tfel::typetraits::IsReal<NumericType>::cond);\n\n";
   }
 
-  void BehaviourCodeGeneratorBase::writeBehaviourFriends(std::ostream& os,
-                                                 const Hypothesis) const {
+  void BehaviourCodeGeneratorBase::writeBehaviourFriends(
+      std::ostream& os, const Hypothesis) const {
     os << "friend std::ostream& operator<< <>(std::ostream&,const "
        << this->bd.getClassName() << "&);\n\n";
   }  // end of writeBehaviourFriends
 
-  void BehaviourCodeGeneratorBase::writeBehaviourFileHeader(std::ostream& os) const {
+  void BehaviourCodeGeneratorBase::writeBehaviourFileHeader(
+      std::ostream& os) const {
     this->checkBehaviourFile(os);
     os << "/*!\n"
        << "* \\file   " << this->getBehaviourFileName() << '\n'
@@ -1796,13 +1804,15 @@ namespace mfront{
        << "_HXX\n\n";
   }
 
-  void BehaviourCodeGeneratorBase::writeBehaviourFileHeaderEnd(std::ostream& os) const {
+  void BehaviourCodeGeneratorBase::writeBehaviourFileHeaderEnd(
+      std::ostream& os) const {
     this->checkBehaviourFile(os);
     os << "#endif /* LIB_TFELMATERIAL_"
        << makeUpperCase(this->bd.getClassName()) << "_HXX */\n";
   }
 
-  void BehaviourCodeGeneratorBase::writeBehaviourClassEnd(std::ostream& os) const {
+  void BehaviourCodeGeneratorBase::writeBehaviourClassEnd(
+      std::ostream& os) const {
     this->checkBehaviourFile(os);
     os << "}; // end of " << this->bd.getClassName() << " class\n\n";
   }
@@ -1869,7 +1879,8 @@ namespace mfront{
           os << "this->" << vn << " += this->d" << vn << ";\n";
         } else {
           this->throwRuntimeError(
-              "BehaviourCodeGeneratorBase::writeBehaviourUpdateAuxiliaryStateVariables",
+              "BehaviourCodeGeneratorBase::"
+              "writeBehaviourUpdateAuxiliaryStateVariables",
               "only models with one output are supported");
         }
       }
@@ -1882,7 +1893,8 @@ namespace mfront{
     } else {
       os << "\n{}\n\n";
     }
-  }  // end of  BehaviourCodeGeneratorBase::writeBehaviourUpdateAuxiliaryStateVariables
+  }  // end of
+     // BehaviourCodeGeneratorBase::writeBehaviourUpdateAuxiliaryStateVariables
 
   void BehaviourCodeGeneratorBase::writeBehaviourComputeInternalEnergy(
       std::ostream& os, const Hypothesis h) const {
@@ -1950,9 +1962,8 @@ namespace mfront{
     }
   }  // end of writeBehaviourComputeSpeedOfSound
 
-
-  void BehaviourCodeGeneratorBase::writeBehaviourIntegrator(std::ostream& os,
-                                                    const Hypothesis h) const {
+  void BehaviourCodeGeneratorBase::writeBehaviourIntegrator(
+      std::ostream& os, const Hypothesis h) const {
     const auto btype = this->bd.getBehaviourTypeFlag();
     this->checkBehaviourFile(os);
     os << "/*!\n"
@@ -2073,32 +2084,44 @@ namespace mfront{
       return;
     }
     const auto& bounds = v.getBounds();
+    const auto numeric_type = [&v] {
+      if (v.isScalar()) {
+        return v.type;
+      }
+      return "tfel::math::numeric_type<" + v.type + ">";
+    }();
     if (bounds.boundsType == VariableBoundsDescription::LOWER) {
       os << "BoundsCheck<N>::lowerBoundCheck(\"" << n << "\",this->" << n << ","
-         << "static_cast<real>(" << bounds.lowerBound << "),this->policy);\n";
+         << "static_cast<" << numeric_type << ">(" << bounds.lowerBound
+         << "),this->policy);\n";
       if (b) {
         os << "BoundsCheck<N>::lowerBoundCheck(\"" << n << "+d" << n
            << "\",this->" << n << "+this->d" << n << ","
-           << "static_cast<real>(" << bounds.lowerBound << "),this->policy);\n";
+           << "static_cast<" << numeric_type << ">(" << bounds.lowerBound
+           << "),this->policy);\n";
       }
     } else if (bounds.boundsType == VariableBoundsDescription::UPPER) {
       os << "BoundsCheck<N>::upperBoundCheck(\"" << n << "\",this->" << n << ","
-         << "static_cast<real>(" << bounds.upperBound << "),this->policy);\n";
+         << "static_cast<" << numeric_type << ">(" << bounds.upperBound
+         << "),this->policy);\n";
       if (b) {
         os << "BoundsCheck<N>::upperBoundCheck(\"" << n << "+d" << n
            << "\",this->" << n << "+this->d" << n << ","
-           << "static_cast<real>(" << bounds.upperBound << "),this->policy);\n";
+           << "static_cast<" << numeric_type << ">(" << bounds.upperBound
+           << "),this->policy);\n";
       }
     } else if (bounds.boundsType == VariableBoundsDescription::LOWERANDUPPER) {
       os << "BoundsCheck<N>::lowerAndUpperBoundsChecks(\"" << n << "\",this->"
          << n << ","
-         << "static_cast<real>(" << bounds.lowerBound << "),"
-         << "static_cast<real>(" << bounds.upperBound << "),this->policy);\n";
+         << "static_cast<" << numeric_type << ">(" << bounds.lowerBound << "),"
+         << "static_cast<" << numeric_type << ">(" << bounds.upperBound
+         << "),this->policy);\n";
       if (b) {
         os << "BoundsCheck<N>::lowerAndUpperBoundsChecks(\"" << n << "+d" << n
            << "\",this->" << n << "+this->d" << n << ","
-           << "static_cast<real>(" << bounds.lowerBound << "),"
-           << "static_cast<real>(" << bounds.upperBound << "),this->policy);\n";
+           << "static_cast<" << numeric_type << ">(" << bounds.lowerBound << "),"
+           << "static_cast<" << numeric_type << ">(" << bounds.upperBound
+           << "),this->policy);\n";
       }
     } else {
       tfel::raise(
@@ -2107,9 +2130,8 @@ namespace mfront{
     }
   }  // end of writeBoundsChecks
 
-  void BehaviourCodeGeneratorBase::writeBoundsChecks(std::ostream& os,
-                                             const VariableDescription& v,
-                                             const bool b) const {
+  void BehaviourCodeGeneratorBase::writeBoundsChecks(
+      std::ostream& os, const VariableDescription& v, const bool b) const {
     if (v.arraySize == 1u) {
       mfront::writeBoundsChecks(os, v, v.name, b);
     } else {
@@ -2128,32 +2150,40 @@ namespace mfront{
       return;
     }
     const auto& bounds = v.getPhysicalBounds();
+    const auto numeric_type = [&v] {
+      if (v.isScalar()) {
+        return v.type;
+      }
+      return "tfel::math::numeric_type<" + v.type + ">";
+    }();
     if (bounds.boundsType == VariableBoundsDescription::LOWER) {
       os << "BoundsCheck<N>::lowerBoundCheck(\"" << n << "\",this->" << n << ","
-         << "static_cast<real>(" << bounds.lowerBound << "));\n";
+         << "static_cast<" << numeric_type << ">(" << bounds.lowerBound << "));\n";
       if (b) {
         os << "BoundsCheck<N>::lowerBoundCheck(\"" << n << "+d" << n
            << "\",this->" << n << "+this->d" << n << ","
-           << "static_cast<real>(" << bounds.lowerBound << "));\n";
+           << "static_cast<" << numeric_type << ">(" << bounds.lowerBound << "));\n";
       }
     } else if (bounds.boundsType == VariableBoundsDescription::UPPER) {
       os << "BoundsCheck<N>::upperBoundCheck(\"" << n << "\",this->" << n << ","
-         << "static_cast<real>(" << bounds.upperBound << "));\n";
+         << "static_cast<" << numeric_type << ">(" << bounds.upperBound << "));\n";
       if (b) {
         os << "BoundsCheck<N>::upperBoundCheck(\"" << n << "+d" << n
            << "\",this->" << n << "+this->d" << n << ","
-           << "static_cast<real>(" << bounds.upperBound << "));\n";
+           << "static_cast<" << numeric_type << ">(" << bounds.upperBound << "));\n";
       }
     } else if (bounds.boundsType == VariableBoundsDescription::LOWERANDUPPER) {
       os << "BoundsCheck<N>::lowerAndUpperBoundsChecks(\"" << n << "\",this->"
          << n << ","
-         << "static_cast<real>(" << bounds.lowerBound << "),"
-         << "static_cast<real>(" << bounds.upperBound << "));\n";
+         << "static_cast<" << numeric_type << ">(" << bounds.lowerBound << "),"
+         << "static_cast<" << numeric_type << ">(" << bounds.upperBound << "));\n";
       if (b) {
         os << "BoundsCheck<N>::lowerAndUpperBoundsChecks(\"" << n << "+d" << n
            << "\",this->" << n << "+this->d" << n << ","
-           << "static_cast<real>(" << bounds.lowerBound << "),"
-           << "static_cast<real>(" << bounds.upperBound << "));\n";
+           << "static_cast<" << numeric_type << ">(" << bounds.lowerBound
+           << "),"
+           << "static_cast<" << numeric_type << ">(" << bounds.upperBound
+           << "));\n";
       }
     } else {
       tfel::raise(
@@ -2174,8 +2204,8 @@ namespace mfront{
     }
   }  // end of writePhysicalBoundsChecks
 
-  void BehaviourCodeGeneratorBase::writeBehaviourCheckBounds(std::ostream& os,
-                                                     const Hypothesis h) const {
+  void BehaviourCodeGeneratorBase::writeBehaviourCheckBounds(
+      std::ostream& os, const Hypothesis h) const {
     auto write_physical_bounds =
         [this, &os](const VariableDescriptionContainer& c, const bool b) {
           for (const auto& v : c) {
@@ -2229,7 +2259,8 @@ namespace mfront{
       tfel::raise_if(
           ((blocks.size() != 1u) || (blocks.front().first.arraySize != 1u) ||
            (blocks.front().second.arraySize != 1u)),
-          "BehaviourCodeGeneratorBase::getBehaviourConstructorsInitializers: internal "
+          "BehaviourCodeGeneratorBase::getBehaviourConstructorsInitializers: "
+          "internal "
           "error");
       if (this->bd.getBehaviourType() !=
           BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR) {
@@ -2559,7 +2590,8 @@ namespace mfront{
     } else if (!((m.is<BehaviourDescription::ConstantMaterialProperty>()) ||
                  (m.is<BehaviourDescription::AnalyticMaterialProperty>()))) {
       this->throwRuntimeError(
-          "BehaviourCodeGeneratorBase::writeMaterialPropertyCheckBoundsEvaluation",
+          "BehaviourCodeGeneratorBase::"
+          "writeMaterialPropertyCheckBoundsEvaluation",
           "unsupported material property type");
     }
   }  // end of writeMaterialPropertyEvaluation
@@ -2699,7 +2731,8 @@ namespace mfront{
     }
   }  // end of writeThermalExpansionCoefficientComputation
 
-  void BehaviourCodeGeneratorBase::writeThermalExpansionCoefficientsComputations(
+  void
+  BehaviourCodeGeneratorBase::writeThermalExpansionCoefficientsComputations(
       std::ostream& out,
       const BehaviourDescription::MaterialProperty& a,
       const std::string& suffix) const {
@@ -2739,7 +2772,9 @@ namespace mfront{
     auto throw_if = [this](const bool b, const std::string& m) {
       if (b) {
         this->throwRuntimeError(
-            "BehaviourCodeGeneratorBase::writeBehaviourComputeStressFreeExpansion", m);
+            "BehaviourCodeGeneratorBase::"
+            "writeBehaviourComputeStressFreeExpansion",
+            m);
       }
     };
     auto eval = [](std::ostream& out,
@@ -3201,7 +3236,8 @@ namespace mfront{
           const auto f = SupportedTypes::getTypeFlag(p.type);
           if (f != SupportedTypes::SCALAR) {
             this->throwRuntimeError(
-                "BehaviourCodeGeneratorBase::writeBehaviourParameterInitialisation",
+                "BehaviourCodeGeneratorBase::"
+                "writeBehaviourParameterInitialisation",
                 "unsupported parameter type '" + p.type +
                     "' "
                     "for parameter '" +
@@ -3298,8 +3334,8 @@ namespace mfront{
     os << '\n';
   }  // end od BehaviourCodeGeneratorBase::writeBehaviourIntegrationVariables
 
-  void BehaviourCodeGeneratorBase::writeBehaviourParameters(std::ostream& os,
-                                                    const Hypothesis h) const {
+  void BehaviourCodeGeneratorBase::writeBehaviourParameters(
+      std::ostream& os, const Hypothesis h) const {
     this->checkBehaviourFile(os);
     const auto use_static_variables =
         areParametersTreatedAsStaticVariables(this->bd);
@@ -3505,7 +3541,8 @@ namespace mfront{
       }
     }
     for (const auto& v : md.getLocalVariables()) {
-#pragma message("BehaviourCodeGeneratorBase: handle LocalDataStructure properly")
+#pragma message( \
+    "BehaviourCodeGeneratorBase: handle LocalDataStructure properly")
       if ((v.type.size() >= 7) && (v.type.substr(0, 7) != "struct{")) {
         os << "os << \"" << displayName(v) << " : \" << b." << v.name
            << " << '\\n';\n";
@@ -3519,7 +3556,8 @@ namespace mfront{
        << "}\n\n";
   }
 
-  void BehaviourCodeGeneratorBase::writeBehaviourDestructor(std::ostream& os) const {
+  void BehaviourCodeGeneratorBase::writeBehaviourDestructor(
+      std::ostream& os) const {
     this->checkBehaviourFile(os);
     os << "//!\n"
        << "~" << this->bd.getClassName() << "()\n"
@@ -3560,7 +3598,8 @@ namespace mfront{
     }
   }  // end of writeBehaviourPostProcessings
 
-  void BehaviourCodeGeneratorBase::writeBehaviourIncludes(std::ostream& os) const {
+  void BehaviourCodeGeneratorBase::writeBehaviourIncludes(
+      std::ostream& os) const {
     this->checkBehaviourFile(os);
     os << "#include<string>\n"
        << "#include<iostream>\n"
@@ -3617,8 +3656,8 @@ namespace mfront{
     }
   }
 
-  void BehaviourCodeGeneratorBase::writeBehaviourPrivate(std::ostream& os,
-                                                 const Hypothesis h) const {
+  void BehaviourCodeGeneratorBase::writeBehaviourPrivate(
+      std::ostream& os, const Hypothesis h) const {
     this->checkBehaviourFile(os);
     const auto& c = this->bd.getPrivateCode(h);
     if (!c.empty()) {
@@ -3626,7 +3665,8 @@ namespace mfront{
     }
   }  // end of void BehaviourCodeGeneratorBase::writeBehaviourPrivate
 
-  void BehaviourCodeGeneratorBase::writeBehaviourTypeAliases(std::ostream& os) const {
+  void BehaviourCodeGeneratorBase::writeBehaviourTypeAliases(
+      std::ostream& os) const {
     using namespace tfel::material;
     this->checkBehaviourFile(os);
     const auto btype = this->bd.getBehaviourTypeFlag();
@@ -3694,7 +3734,8 @@ namespace mfront{
     }
   }  // end of writeBehaviourTypeAliases
 
-  void BehaviourCodeGeneratorBase::writeBehaviourTraits(std::ostream& os) const {
+  void BehaviourCodeGeneratorBase::writeBehaviourTraits(
+      std::ostream& os) const {
     constexpr auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     this->checkBehaviourFile(os);
     const auto& ah = ModellingHypothesis::getModellingHypotheses();
@@ -3754,7 +3795,8 @@ namespace mfront{
         stateVarsSize += SupportedTypes::getTypeSize(v.type, v.arraySize);
       }
       for (const auto& v : d.getExternalStateVariables()) {
-        externalStateVarsSize += SupportedTypes::getTypeSize(v.type, v.arraySize);
+        externalStateVarsSize +=
+            SupportedTypes::getTypeSize(v.type, v.arraySize);
       }
     }
     os << "/*!\n"
@@ -3895,8 +3937,9 @@ namespace mfront{
        << "};\n\n";
   }
 
-  void BehaviourCodeGeneratorBase::writeBehaviourParserSpecificInheritanceRelationship(
-      std::ostream& os, const Hypothesis) const {
+  void BehaviourCodeGeneratorBase::
+      writeBehaviourParserSpecificInheritanceRelationship(
+          std::ostream& os, const Hypothesis) const {
     os << '\n';
   }
 
@@ -4049,12 +4092,14 @@ namespace mfront{
     os << "};\n\n";
   }  // end of writeBehaviourParametersInitializer
 
-  void BehaviourCodeGeneratorBase::writeBehaviourParserSpecificInitializeMethodPart(
+  void
+  BehaviourCodeGeneratorBase::writeBehaviourParserSpecificInitializeMethodPart(
       std::ostream&, const Hypothesis) const {
     // Empty member meant to be overriden in Child if necessary
   }
 
-  void BehaviourCodeGeneratorBase::writeBehaviourFileBegin(std::ostream& os) const {
+  void BehaviourCodeGeneratorBase::writeBehaviourFileBegin(
+      std::ostream& os) const {
     this->checkBehaviourFile(os);
     this->writeBehaviourFileHeader(os);
     this->writeBehaviourFileHeaderBegin(os);
@@ -4071,7 +4116,8 @@ namespace mfront{
     this->writeBehaviourProfiler(os);
   }  // end of writeBehaviourFileBegin
 
-  void BehaviourCodeGeneratorBase::writeBehaviourProfiler(std::ostream& os) const {
+  void BehaviourCodeGeneratorBase::writeBehaviourProfiler(
+      std::ostream& os) const {
     if (this->bd.getAttribute(BehaviourData::profiling, false)) {
       this->checkBehaviourFile(os);
       os << "/*!\n"
@@ -4085,8 +4131,8 @@ namespace mfront{
     }
   }  // end of writeBehaviourProfiler
 
-  void BehaviourCodeGeneratorBase::writeBehaviourClass(std::ostream& os,
-                                               const Hypothesis h) const {
+  void BehaviourCodeGeneratorBase::writeBehaviourClass(
+      std::ostream& os, const Hypothesis h) const {
     this->checkBehaviourFile(os);
     this->writeBehaviourClassBegin(os, h);
     this->writeBehaviourFriends(os, h);
@@ -4137,7 +4183,8 @@ namespace mfront{
     this->writeBehaviourOutputOperator(os, h);
   }
 
-  void BehaviourCodeGeneratorBase::writeBehaviourFileEnd(std::ostream& os) const {
+  void BehaviourCodeGeneratorBase::writeBehaviourFileEnd(
+      std::ostream& os) const {
     this->checkBehaviourFile(os);
     this->writeBehaviourTraits(os);
     this->writeNamespaceEnd(os);
@@ -4179,7 +4226,8 @@ namespace mfront{
                                       false)) &&
         (this->bd.hasCode(h, BehaviourData::ComputePredictionOperator))) {
       this->throwRuntimeError(
-          "BehaviourCodeGeneratorBase::writeBehaviourComputePredictionOperator : ",
+          "BehaviourCodeGeneratorBase::writeBehaviourComputePredictionOperator "
+          ": ",
           "attribute 'hasPredictionOperator' is set but no associated code "
           "defined");
     }
@@ -4507,7 +4555,8 @@ namespace mfront{
           "}\n\n";
   }
 
-  void BehaviourCodeGeneratorBase::writeBehaviourComputeAPrioriTimeStepScalingFactor(
+  void
+  BehaviourCodeGeneratorBase::writeBehaviourComputeAPrioriTimeStepScalingFactor(
       std::ostream& os) const {
     this->checkBehaviourFile(os);
     os << "std::pair<bool, time>\n"
@@ -4525,8 +4574,9 @@ namespace mfront{
   }  // end of
      // writeBehaviourComputeAPrioriTimeStepScalingFactor
 
-  void BehaviourCodeGeneratorBase::writeBehaviourComputeAPrioriTimeStepScalingFactorII(
-      std::ostream& os, const Hypothesis h) const {
+  void BehaviourCodeGeneratorBase::
+      writeBehaviourComputeAPrioriTimeStepScalingFactorII(
+          std::ostream& os, const Hypothesis h) const {
     this->checkBehaviourFile(os);
     os << "std::pair<bool, time> computeAPrioriTimeStepScalingFactorII() "
           "const{\n";
@@ -4542,9 +4592,9 @@ namespace mfront{
        << "}\n\n";
   }
 
-  void
-  BehaviourCodeGeneratorBase::writeBehaviourComputeAPosterioriTimeStepScalingFactor(
-      std::ostream& os) const {
+  void BehaviourCodeGeneratorBase::
+      writeBehaviourComputeAPosterioriTimeStepScalingFactor(
+          std::ostream& os) const {
     this->checkBehaviourFile(os);
     os << "std::pair<bool, time>\n"
           "computeAPosterioriTimeStepScalingFactor(const time "
@@ -4561,9 +4611,9 @@ namespace mfront{
   }  // end of
      // writeBehaviourComputeAPosterioriTimeStepScalingFactor
 
-  void
-  BehaviourCodeGeneratorBase::writeBehaviourComputeAPosterioriTimeStepScalingFactorII(
-      std::ostream& os, const Hypothesis h) const {
+  void BehaviourCodeGeneratorBase::
+      writeBehaviourComputeAPosterioriTimeStepScalingFactorII(
+          std::ostream& os, const Hypothesis h) const {
     this->checkBehaviourFile(os);
     os << "std::pair<bool, time> computeAPosterioriTimeStepScalingFactorII() "
           "const{\n";
@@ -4593,7 +4643,8 @@ namespace mfront{
       tfel::raise_if(
           ((blocks.size() != 1u) || (blocks.front().first.arraySize != 1u) ||
            (blocks.front().second.arraySize != 1u)),
-          "BehaviourCodeGeneratorBase::writeBehaviourTangentOperator: internal error");
+          "BehaviourCodeGeneratorBase::writeBehaviourTangentOperator: internal "
+          "error");
       if (this->bd.getBehaviourType() !=
           BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR) {
         os << "//! alias to the tangent operator;\n"
@@ -4620,7 +4671,8 @@ namespace mfront{
     }
   }  // end of writeBehaviourTangentOperator()
 
-  void BehaviourCodeGeneratorBase::checkIntegrationDataFile(std::ostream& os) const {
+  void BehaviourCodeGeneratorBase::checkIntegrationDataFile(
+      std::ostream& os) const {
     if ((!os) || (!os.good())) {
       this->throwRuntimeError(
           "BehaviourCodeGeneratorBase::checkIntegrationDataOutputFile",
@@ -4843,7 +4895,8 @@ namespace mfront{
        << "}\n\n";
   }  // end of writeIntegrationDataScaleOpeartors
 
-  void BehaviourCodeGeneratorBase::writeIntegrationDataUpdateDrivingVariablesMethod(
+  void
+  BehaviourCodeGeneratorBase::writeIntegrationDataUpdateDrivingVariablesMethod(
       std::ostream& os) const {
     bool iknown = true;
     for (const auto& v : this->bd.getMainVariables()) {
@@ -5105,8 +5158,8 @@ namespace mfront{
     this->writeIntegrationDataForwardDeclarations(os);
   }  // end of writeIntegrationDataFile
 
-  void BehaviourCodeGeneratorBase::writeIntegrationDataClass(std::ostream& os,
-                                                     const Hypothesis h) const {
+  void BehaviourCodeGeneratorBase::writeIntegrationDataClass(
+      std::ostream& os, const Hypothesis h) const {
     this->checkIntegrationDataFile(os);
     this->writeIntegrationDataClassBegin(os, h);
     this->writeIntegrationDataTypeAliases(os);
@@ -5122,7 +5175,8 @@ namespace mfront{
     this->writeIntegrationDataOutputOperator(os, h);
   }
 
-  void BehaviourCodeGeneratorBase::writeIntegrationDataFileEnd(std::ostream& os) const {
+  void BehaviourCodeGeneratorBase::writeIntegrationDataFileEnd(
+      std::ostream& os) const {
     this->checkIntegrationDataFile(os);
     this->writeNamespaceEnd(os);
     this->writeIntegrationDataFileHeaderEnd(os);
@@ -5165,7 +5219,8 @@ namespace mfront{
        << "#include\"" << this->getBehaviourFileName() << "\"\n\n";
   }  // end of writeSrcFileHeader()
 
-  void BehaviourCodeGeneratorBase::writeSrcFileUserDefinedCode(std::ostream& os) const {
+  void BehaviourCodeGeneratorBase::writeSrcFileUserDefinedCode(
+      std::ostream& os) const {
     this->checkSrcFile(os);
     const auto& s = this->bd.getSources();
     if (!s.empty()) {
@@ -5189,10 +5244,11 @@ namespace mfront{
     }
   }  // end of writeSrcFileParametersInitializer
 
-  static void BehaviourCodeGeneratorBase_writeConverter(std::ostream& f,
-                                                const std::string& cname,
-                                                const std::string& type,
-                                                const std::string& type2) {
+  static void BehaviourCodeGeneratorBase_writeConverter(
+      std::ostream& f,
+      const std::string& cname,
+      const std::string& type,
+      const std::string& type2) {
     f << type << '\n'
       << cname << "::get" << type2 << "(const std::string& n,\n"
       << "const std::string& v)\n"
@@ -5424,14 +5480,15 @@ namespace mfront{
     }
     if (allowsParametersInitializationFromFile(this->bd)) {
       if (rp2) {
-        BehaviourCodeGeneratorBase_writeConverter(os, cname, "double", "Double");
+        BehaviourCodeGeneratorBase_writeConverter(os, cname, "double",
+                                                  "Double");
       }
       if (ip2) {
         BehaviourCodeGeneratorBase_writeConverter(os, cname, "int", "Int");
       }
       if (up2) {
         BehaviourCodeGeneratorBase_writeConverter(os, cname, "unsigned short",
-                                          "UnsignedShort");
+                                                  "UnsignedShort");
       }
       os << "void\n" << cname << "::readParameters(" << cname << "&";
       if (rp2 || ip2 || up2) {
@@ -5489,7 +5546,8 @@ namespace mfront{
               const auto f = SupportedTypes::getTypeFlag(p.type);
               if (f != SupportedTypes::SCALAR) {
                 this->throwRuntimeError(
-                    "BehaviourCodeGeneratorBase::writeSrcFileParametersInitializer",
+                    "BehaviourCodeGeneratorBase::"
+                    "writeSrcFileParametersInitializer",
                     "invalid parameter type '" + p.type + "'");
               }
               os << cname << "::getDouble(tokens[0],tokens[1]);\n";
@@ -5504,7 +5562,8 @@ namespace mfront{
               const auto f = SupportedTypes::getTypeFlag(p.type);
               if (f != SupportedTypes::SCALAR) {
                 this->throwRuntimeError(
-                    "BehaviourCodeGeneratorBase::writeSrcFileParametersInitializer",
+                    "BehaviourCodeGeneratorBase::"
+                    "writeSrcFileParametersInitializer",
                     "invalid parameter type '" + p.type + "'");
               }
               os << dcname << "::getDouble(tokens[0],tokens[1])";
@@ -5558,4 +5617,4 @@ namespace mfront{
 
   BehaviourCodeGeneratorBase::~BehaviourCodeGeneratorBase() = default;
 
-} // end of namespace mfront
+}  // end of namespace mfront

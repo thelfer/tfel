@@ -224,7 +224,6 @@ namespace mfront {
     virtual void addCallBack(const std::string&,
                              const CallBack,
                              const bool = false);
-
     /*!
      * \brief get all symbols required to interpret the given code block.
      * \param[out] symbols: symbols

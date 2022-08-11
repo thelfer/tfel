@@ -19,6 +19,10 @@ eqnPrefixTemplate: "($$i$$)"
 
 # Issues fixed
 
+## Issue #279: [mfront] bounds checks are broken when using quantities
+
+For more details, see <https://github.com/thelfer/tfel/issues/276>
+
 ## Issue #275: [mtest] `MTest` segfaults with generic behaviours having additional tangent operator blocks
 
 For more details, see <https://github.com/thelfer/tfel/issues/275>
