@@ -900,7 +900,7 @@ namespace mfront {
          << "* \\brief Update auxiliary state variables at end of integration\n"
          << "*/\n"
          << "void\n"
-         << "updateAuxiliaryStateVariables(const real dt_)"
+         << "updateAuxiliaryStateVariables(const time dt_)"
          << "{\n"
          << "static_cast<void>(dt_);\n"
          << "using namespace std;\n"
