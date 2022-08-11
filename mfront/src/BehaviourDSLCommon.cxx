@@ -4897,36 +4897,48 @@ namespace mfront {
       return;
     }
     const auto& bounds = v.getBounds();
+    const auto numeric_type = [&v] {
+      if (v.isScalar()) {
+        return v.type;
+      }
+      return "tfel::math::numeric_type<" + v.type + ">";
+    }();
     if (bounds.boundsType == VariableBoundsDescription::LOWER) {
       os << "BoundsCheck<N>::lowerBoundCheck(\"" << n << "\",this->" << n << ","
-         << "static_cast<real>(" << bounds.lowerBound << "),this->policy);\n";
+         << "static_cast<" << numeric_type << ">(" << bounds.lowerBound
+         << "),this->policy);\n";
       if (b) {
         os << "BoundsCheck<N>::lowerBoundCheck(\"" << n << "+d" << n
            << "\",this->" << n << "+this->d" << n << ","
-           << "static_cast<real>(" << bounds.lowerBound << "),this->policy);\n";
+           << "static_cast<" << numeric_type << ">(" << bounds.lowerBound
+           << "),this->policy);\n";
       }
     } else if (bounds.boundsType == VariableBoundsDescription::UPPER) {
       os << "BoundsCheck<N>::upperBoundCheck(\"" << n << "\",this->" << n << ","
-         << "static_cast<real>(" << bounds.upperBound << "),this->policy);\n";
+         << "static_cast<" << numeric_type << ">(" << bounds.upperBound
+         << "),this->policy);\n";
       if (b) {
         os << "BoundsCheck<N>::upperBoundCheck(\"" << n << "+d" << n
            << "\",this->" << n << "+this->d" << n << ","
-           << "static_cast<real>(" << bounds.upperBound << "),this->policy);\n";
+           << "static_cast<" << numeric_type << ">(" << bounds.upperBound
+           << "),this->policy);\n";
       }
     } else if (bounds.boundsType == VariableBoundsDescription::LOWERANDUPPER) {
       os << "BoundsCheck<N>::lowerAndUpperBoundsChecks(\"" << n << "\",this->"
          << n << ","
-         << "static_cast<real>(" << bounds.lowerBound << "),"
-         << "static_cast<real>(" << bounds.upperBound << "),this->policy);\n";
+         << "static_cast<" << numeric_type << ">(" << bounds.lowerBound << "),"
+         << "static_cast<" << numeric_type << ">(" << bounds.upperBound
+         << "),this->policy);\n";
       if (b) {
         os << "BoundsCheck<N>::lowerAndUpperBoundsChecks(\"" << n << "+d" << n
            << "\",this->" << n << "+this->d" << n << ","
-           << "static_cast<real>(" << bounds.lowerBound << "),"
-           << "static_cast<real>(" << bounds.upperBound << "),this->policy);\n";
+           << "static_cast<" << numeric_type << ">(" << bounds.lowerBound << "),"
+           << "static_cast<" << numeric_type << ">(" << bounds.upperBound
+           << "),this->policy);\n";
       }
     } else {
       tfel::raise(
-          "BehaviourDSLCommon::writeBoundsChecks: "
+          "BehaviourCodeGeneratorBase::writeBoundsChecks: "
           "internal error (unsupported bounds type)");
     }
   }  // end of writeBoundsChecks
@@ -4952,36 +4964,44 @@ namespace mfront {
       return;
     }
     const auto& bounds = v.getPhysicalBounds();
+    const auto numeric_type = [&v] {
+      if (v.isScalar()) {
+        return v.type;
+      }
+      return "tfel::math::numeric_type<" + v.type + ">";
+    }();
     if (bounds.boundsType == VariableBoundsDescription::LOWER) {
       os << "BoundsCheck<N>::lowerBoundCheck(\"" << n << "\",this->" << n << ","
-         << "static_cast<real>(" << bounds.lowerBound << "));\n";
+         << "static_cast<" << numeric_type << ">(" << bounds.lowerBound << "));\n";
       if (b) {
         os << "BoundsCheck<N>::lowerBoundCheck(\"" << n << "+d" << n
            << "\",this->" << n << "+this->d" << n << ","
-           << "static_cast<real>(" << bounds.lowerBound << "));\n";
+           << "static_cast<" << numeric_type << ">(" << bounds.lowerBound << "));\n";
       }
     } else if (bounds.boundsType == VariableBoundsDescription::UPPER) {
       os << "BoundsCheck<N>::upperBoundCheck(\"" << n << "\",this->" << n << ","
-         << "static_cast<real>(" << bounds.upperBound << "));\n";
+         << "static_cast<" << numeric_type << ">(" << bounds.upperBound << "));\n";
       if (b) {
         os << "BoundsCheck<N>::upperBoundCheck(\"" << n << "+d" << n
            << "\",this->" << n << "+this->d" << n << ","
-           << "static_cast<real>(" << bounds.upperBound << "));\n";
+           << "static_cast<" << numeric_type << ">(" << bounds.upperBound << "));\n";
       }
     } else if (bounds.boundsType == VariableBoundsDescription::LOWERANDUPPER) {
       os << "BoundsCheck<N>::lowerAndUpperBoundsChecks(\"" << n << "\",this->"
          << n << ","
-         << "static_cast<real>(" << bounds.lowerBound << "),"
-         << "static_cast<real>(" << bounds.upperBound << "));\n";
+         << "static_cast<" << numeric_type << ">(" << bounds.lowerBound << "),"
+         << "static_cast<" << numeric_type << ">(" << bounds.upperBound << "));\n";
       if (b) {
         os << "BoundsCheck<N>::lowerAndUpperBoundsChecks(\"" << n << "+d" << n
            << "\",this->" << n << "+this->d" << n << ","
-           << "static_cast<real>(" << bounds.lowerBound << "),"
-           << "static_cast<real>(" << bounds.upperBound << "));\n";
+           << "static_cast<" << numeric_type << ">(" << bounds.lowerBound
+           << "),"
+           << "static_cast<" << numeric_type << ">(" << bounds.upperBound
+           << "));\n";
       }
     } else {
       tfel::raise(
-          "BehaviourDSLCommon::writePhysicalBoundsChecks: "
+          "BehaviourCodeGeneratorBase::writePhysicalBoundsChecks: "
           "internal error (unsupported bounds type)");
     }
   }  // end of writePhysicalBoundsChecks

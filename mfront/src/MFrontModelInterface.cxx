@@ -89,18 +89,26 @@ namespace mfront {
                                                   const,
                                               const std::string& p) {
         const auto& bd = (v.*m)();
+        const auto numeric_type = [&v] {
+          if (v.isScalar()) {
+            return v.type;
+          }
+          return "tfel::math::numeric_type<" + v.type + ">";
+        }();
         if (bd.boundsType == VariableBoundsDescription::LOWER) {
           out << "BoundsCheckBase::lowerBoundCheck"
-              << "(\"" << vn << "\"," << vn << ",real(" << bd.lowerBound << "),"
-              << p << ");\n";
+              << "(\"" << vn << "\"," << vn << ",static_cast<" << numeric_type
+              << ">(" << bd.lowerBound << ")," << p << ");\n";
         } else if (bd.boundsType == VariableBoundsDescription::UPPER) {
           out << "BoundsCheckBase::upperBoundCheck"
-              << "(\"" << vn << "\"," << vn << ",real(" << bd.upperBound << "),"
-              << p << ");\n";
+              << "(\"" << vn << "\"," << vn << ",static_cast<" << numeric_type
+              << ">(" << bd.upperBound << ")," << p << ");\n";
         } else if (bd.boundsType == VariableBoundsDescription::LOWERANDUPPER) {
           out << "BoundsCheckBase::lowerAndUpperBoundsChecks"
-              << "(\"" << vn << "\"," << vn << ",real(" << bd.lowerBound << "),"
-              << "real(" << bd.upperBound << ")," << p << ");\n";
+              << "(\"" << vn << "\"," << vn << ",static_cast<" << numeric_type
+              << ">(" << bd.lowerBound << "),"
+              << "static_cast<" << numeric_type << ">(" << bd.upperBound << "),"
+              << p << ");\n";
         } else {
           throw_if(true, "unsupported bound type for variable '" + vn + "'");
         }
