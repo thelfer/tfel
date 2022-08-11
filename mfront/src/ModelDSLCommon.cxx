@@ -112,6 +112,11 @@ namespace mfront {
   }  // end of getOverridenParameters
 
   void ModelDSLCommon::endsInputFileProcessing() {
+    if (this->md.modelName.empty()) {
+      tfel::raise(
+          "ModelDSLCommon::endsInputFileProcessing: "
+          "model name undefined");
+    }
   }  // end of endsInputFileProcessing
 
   bool ModelDSLCommon::useQt() const {
