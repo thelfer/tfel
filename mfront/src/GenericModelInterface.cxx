@@ -204,6 +204,7 @@ namespace mfront {
     const auto src = name + "-generic.cxx";
     const auto cn = md.className + "RealParametersInitializer";
     std::ofstream os("src/" + src);
+    os.precision(14);
     if (!os) {
       raise("could not open file '" + src + "'");
     }
@@ -351,9 +352,11 @@ namespace mfront {
       for (const auto& mv : f.modifiedVariables) {
         const auto [n, vdepth] = md.decomposeVariableName(mv);
         const auto& v = md.outputs.getVariable(mv);
+        const auto pos = getVariablePosition(md.outputs, mv);
         os << "tfel::math::map<" << v.type
-           << ">(mfront_model_data.s1.internal_state_variables[0]) = " << v.name
-           << ";\n";
+           << ">(mfront_model_data.s1.internal_state_variables[" << pos
+           << "]) = " << v.name << ";\n";
+        static_cast<void>(vdepth);
       }
       os << "} // end of execute_" << f.name << "\n\n";
     }
