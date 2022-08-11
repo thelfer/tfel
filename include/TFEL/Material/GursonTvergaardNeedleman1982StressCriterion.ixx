@@ -72,7 +72,8 @@ namespace tfel {
        */
       const auto seq = sigmaeq(sig);
       const auto pr = trace(sig) / 3;
-      const auto delta = ((1. / p.q_1) - p.f_c) / (p.f_r - p.f_c);
+      const auto fult = (p.q_1 - sqrt(p.q_1 * p.q_1 - p.q_3)) / p.q_3;
+      const auto delta = (fult - p.f_c) / (p.f_r - p.f_c);
       const auto fstar = (f < p.f_c) ? f : (p.f_c + delta * (f - p.f_c));
       // square of the positive value
       const auto seq2 = seq * seq;
@@ -155,7 +156,8 @@ namespace tfel {
       const auto iss = 1 / std::max(ss, seps);
       const auto seq = sigmaeq(sig);
       const auto pr = trace(sig) / 3;
-      const auto delta = ((1. / p.q_1) - p.f_c) / (p.f_r - p.f_c);
+      const auto fult = (p.q_1 - sqrt(p.q_1 * p.q_1 - p.q_3)) / p.q_3;
+      const auto delta = (fult - p.f_c) / (p.f_r - p.f_c);
       const auto fstar = (f < p.f_c) ? f : (p.f_c + delta * (f - p.f_c));
       const auto dfstar = (f < p.f_c) ? 1. : delta;
       const auto e = std::exp(3 * p.q_2 * pr * iss / 2);
@@ -218,7 +220,8 @@ namespace tfel {
       const auto seq = sigmaeq(sig);
       const auto seq2 = seq * seq;
       const auto pr = trace(sig) / 3;
-      const auto delta = ((1. / p.q_1) - p.f_c) / (p.f_r - p.f_c);
+      const auto fult = (p.q_1 - sqrt(p.q_1 * p.q_1 - p.q_3)) / p.q_3;
+      const auto delta = (fult - p.f_c) / (p.f_r - p.f_c);
       const auto fstar = (f < p.f_c) ? f : (p.f_c + delta * (f - p.f_c));
       const auto dfstar = (f < p.f_c) ? 1. : delta;
       const auto e = std::exp(3 * p.q_2 * pr * iss / 2);
