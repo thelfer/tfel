@@ -2015,6 +2015,10 @@ command is concatenated in a single string for the test.
 
 # Issues fixed
 
+## Issue #276: [mfront] Add unicode support the `Model` DSL
+
+For more details, see <https://github.com/thelfer/tfel/issues/276>
+
 ## Issue #266: [tfel-math] Add constexpr evaluation of spline and derivative 
 
 This feature is described in Section @sec:tfel_4.1:tfel_math:issue_266.
