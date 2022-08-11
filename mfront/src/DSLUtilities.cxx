@@ -682,6 +682,104 @@ namespace mfront {
     symbols.insert({s, r});
   }  // end of addSymbol
 
+  static void writeBoundsChecks(std::ostream& os,
+                                const VariableDescription& v,
+                                const std::string_view n,
+                                const std::string_view space_dimension,
+                                const std::string_view policy,
+                                const bool addThis,
+                                const bool checkEndOfTimeStepValue,
+                                const bool physicalBounds) {
+    if (physicalBounds) {
+      if (!v.hasPhysicalBounds()) {
+        return;
+      }
+    } else {
+      if (!v.hasBounds()) {
+        return;
+      }
+    }
+    const auto& bounds = physicalBounds ? v.getPhysicalBounds() : v.getBounds();
+    const auto numeric_type = [&v] {
+      if (v.isScalar()) {
+        return v.type;
+      }
+      return "tfel::math::numeric_type<" + v.type + ">";
+    }();
+    const auto this_pointer = addThis ? "this->" : "";
+    const auto policy_argument = [&physicalBounds, &policy]() -> std::string {
+      if (!physicalBounds) {
+        return ", " + std::string{policy};
+      }
+      return "";
+    }();
+    if (bounds.boundsType == VariableBoundsDescription::LOWER) {
+      os << "tfel::material::BoundsCheck<" << space_dimension
+         << ">::lowerBoundCheck(\"" << n << "\", " << this_pointer << n << ","
+         << "static_cast<" << numeric_type << ">(" << bounds.lowerBound << ")"
+         << policy_argument << ");\n";
+      if (checkEndOfTimeStepValue) {
+        os << "tfel::material::BoundsCheck<" << space_dimension
+           << ">::lowerBoundCheck(\"" << n << "+d" << n << "\", "
+           << this_pointer << n << "+this->d" << n << ","
+           << "static_cast<" << numeric_type << ">(" << bounds.lowerBound << ")"
+           << policy_argument << ");\n";
+      }
+    } else if (bounds.boundsType == VariableBoundsDescription::UPPER) {
+      os << "tfel::material::BoundsCheck<" << space_dimension
+         << ">::upperBoundCheck(\"" << n << "\", " << this_pointer << n << ","
+         << "static_cast<" << numeric_type << ">(" << bounds.upperBound << ")"
+         << policy_argument << ");\n";
+      if (checkEndOfTimeStepValue) {
+        os << "tfel::material::BoundsCheck<" << space_dimension
+           << ">::upperBoundCheck(\"" << n << "+d" << n << "\", "
+           << this_pointer << n << "+this->d" << n << ","
+           << "static_cast<" << numeric_type << ">(" << bounds.upperBound << ")"
+           << policy_argument << ");\n";
+      }
+    } else if (bounds.boundsType == VariableBoundsDescription::LOWERANDUPPER) {
+      os << "tfel::material::BoundsCheck<" << space_dimension
+         << ">::lowerAndUpperBoundsChecks(\"" << n << "\", " << this_pointer
+         << n << ","
+         << "static_cast<" << numeric_type << ">(" << bounds.lowerBound << "),"
+         << "static_cast<" << numeric_type << ">(" << bounds.upperBound << ")"
+         << policy_argument << ");\n";
+      if (checkEndOfTimeStepValue) {
+        os << "tfel::material::BoundsCheck<" << space_dimension
+           << ">::lowerAndUpperBoundsChecks(\"" << n << "+d" << n << "\", "
+           << this_pointer << n << "+this->d" << n << ","
+           << "static_cast<" << numeric_type << ">(" << bounds.lowerBound
+           << "),"
+           << "static_cast<" << numeric_type << ">(" << bounds.upperBound << ")"
+           << policy_argument << ");\n";
+      }
+    } else {
+      tfel::raise(
+          "writeBoundsChecks: internal error (unsupported bounds type)");
+    }
+  }
+
+  void writeBoundsChecks(std::ostream& os,
+                         const VariableDescription& v,
+                         const std::string_view n,
+                         const std::string_view space_dimension,
+                         const std::string_view policy,
+                         const bool addThis,
+                         const bool checkEndOfTimeStepValue) {
+    writeBoundsChecks(os, v, n, space_dimension, policy, addThis,
+                      checkEndOfTimeStepValue, false);
+  }  // end of writeBoundsChecks
+
+  void writePhysicalBoundsChecks(std::ostream& os,
+                                 const VariableDescription& v,
+                                 const std::string_view n,
+                                 const std::string_view space_dimension,
+                                 const bool addThis,
+                                 const bool checkEndOfTimeStepValue) {
+    writeBoundsChecks(os, v, n, space_dimension, "", addThis,
+                      checkEndOfTimeStepValue, true);
+  }  // end of writePhysicalBoundsChecks
+
 #ifdef MFRONT_HAVE_MADNEX
 
   std::tuple<std::string, std::string, std::string, std::string>

@@ -80,6 +80,8 @@ namespace mfront {
     this->fd.fileName = "user defined string";
     this->parseString(s);
     this->analyse();
+    // Adding some stuff
+    this->endsInputFileProcessing();
   }  // end of ModelDSLBase<Child>::analyseString
 
   template <typename Child>
@@ -143,6 +145,9 @@ namespace mfront {
       const std::vector<std::string>& ecmds,
       const std::map<std::string, std::string>& s) {
     this->importFile(fileName_, ecmds, s);
+    // Adding some stuff
+    this->endsInputFileProcessing();
+    //
     for (const auto& i : this->interfaces) {
       i.second->getTargetsDescription(this->td, md);
     }

@@ -421,7 +421,7 @@ namespace mfront {
       }
       p->setAttribute(VariableDescription::defaultValue, op.second, true);
     }
-    this->md.checkAndComplePhysicalBoundsDeclaration();
+    this->md.checkAndCompletePhysicalBoundsDeclaration();
   }  // end of finalizeVariablesDeclaration
 
   void MaterialPropertyDSL::treatFunction() {

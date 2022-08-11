@@ -116,7 +116,9 @@ namespace mfront {
       tfel::raise(
           "ModelDSLCommon::endsInputFileProcessing: "
           "model name undefined");
-    }
+      }
+    // complete the declaration of physical bounds
+    this->md.checkAndCompletePhysicalBoundsDeclaration();
   }  // end of endsInputFileProcessing
 
   bool ModelDSLCommon::useQt() const {

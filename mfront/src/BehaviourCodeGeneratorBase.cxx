@@ -2076,130 +2076,26 @@ namespace mfront {
     }
   }  // end of writeBehaviourSetOutOfBoundsPolicy
 
-  static void writeBoundsChecks(std::ostream& os,
-                                const VariableDescription& v,
-                                const std::string& n,
-                                const bool b) {
-    if (!v.hasBounds()) {
-      return;
-    }
-    const auto& bounds = v.getBounds();
-    const auto numeric_type = [&v] {
-      if (v.isScalar()) {
-        return v.type;
-      }
-      return "tfel::math::numeric_type<" + v.type + ">";
-    }();
-    if (bounds.boundsType == VariableBoundsDescription::LOWER) {
-      os << "BoundsCheck<N>::lowerBoundCheck(\"" << n << "\",this->" << n << ","
-         << "static_cast<" << numeric_type << ">(" << bounds.lowerBound
-         << "),this->policy);\n";
-      if (b) {
-        os << "BoundsCheck<N>::lowerBoundCheck(\"" << n << "+d" << n
-           << "\",this->" << n << "+this->d" << n << ","
-           << "static_cast<" << numeric_type << ">(" << bounds.lowerBound
-           << "),this->policy);\n";
-      }
-    } else if (bounds.boundsType == VariableBoundsDescription::UPPER) {
-      os << "BoundsCheck<N>::upperBoundCheck(\"" << n << "\",this->" << n << ","
-         << "static_cast<" << numeric_type << ">(" << bounds.upperBound
-         << "),this->policy);\n";
-      if (b) {
-        os << "BoundsCheck<N>::upperBoundCheck(\"" << n << "+d" << n
-           << "\",this->" << n << "+this->d" << n << ","
-           << "static_cast<" << numeric_type << ">(" << bounds.upperBound
-           << "),this->policy);\n";
-      }
-    } else if (bounds.boundsType == VariableBoundsDescription::LOWERANDUPPER) {
-      os << "BoundsCheck<N>::lowerAndUpperBoundsChecks(\"" << n << "\",this->"
-         << n << ","
-         << "static_cast<" << numeric_type << ">(" << bounds.lowerBound << "),"
-         << "static_cast<" << numeric_type << ">(" << bounds.upperBound
-         << "),this->policy);\n";
-      if (b) {
-        os << "BoundsCheck<N>::lowerAndUpperBoundsChecks(\"" << n << "+d" << n
-           << "\",this->" << n << "+this->d" << n << ","
-           << "static_cast<" << numeric_type << ">(" << bounds.lowerBound << "),"
-           << "static_cast<" << numeric_type << ">(" << bounds.upperBound
-           << "),this->policy);\n";
-      }
-    } else {
-      tfel::raise(
-          "BehaviourCodeGeneratorBase::writeBoundsChecks: "
-          "internal error (unsupported bounds type)");
-    }
-  }  // end of writeBoundsChecks
-
   void BehaviourCodeGeneratorBase::writeBoundsChecks(
       std::ostream& os, const VariableDescription& v, const bool b) const {
     if (v.arraySize == 1u) {
-      mfront::writeBoundsChecks(os, v, v.name, b);
+      mfront::writeBoundsChecks(os, v, v.name, "N", "policy", true, b);
     } else {
       for (unsigned short i = 0; i != v.arraySize; ++i) {
         mfront::writeBoundsChecks(os, v, v.name + '[' + std::to_string(i) + ']',
-                                  b);
+                                  "N", "policy", true, b);
       }
     }
   }  // end of writeBoundsChecks
-
-  static void writePhysicalBoundsChecks(std::ostream& os,
-                                        const VariableDescription& v,
-                                        const std::string& n,
-                                        const bool b) {
-    if (!v.hasPhysicalBounds()) {
-      return;
-    }
-    const auto& bounds = v.getPhysicalBounds();
-    const auto numeric_type = [&v] {
-      if (v.isScalar()) {
-        return v.type;
-      }
-      return "tfel::math::numeric_type<" + v.type + ">";
-    }();
-    if (bounds.boundsType == VariableBoundsDescription::LOWER) {
-      os << "BoundsCheck<N>::lowerBoundCheck(\"" << n << "\",this->" << n << ","
-         << "static_cast<" << numeric_type << ">(" << bounds.lowerBound << "));\n";
-      if (b) {
-        os << "BoundsCheck<N>::lowerBoundCheck(\"" << n << "+d" << n
-           << "\",this->" << n << "+this->d" << n << ","
-           << "static_cast<" << numeric_type << ">(" << bounds.lowerBound << "));\n";
-      }
-    } else if (bounds.boundsType == VariableBoundsDescription::UPPER) {
-      os << "BoundsCheck<N>::upperBoundCheck(\"" << n << "\",this->" << n << ","
-         << "static_cast<" << numeric_type << ">(" << bounds.upperBound << "));\n";
-      if (b) {
-        os << "BoundsCheck<N>::upperBoundCheck(\"" << n << "+d" << n
-           << "\",this->" << n << "+this->d" << n << ","
-           << "static_cast<" << numeric_type << ">(" << bounds.upperBound << "));\n";
-      }
-    } else if (bounds.boundsType == VariableBoundsDescription::LOWERANDUPPER) {
-      os << "BoundsCheck<N>::lowerAndUpperBoundsChecks(\"" << n << "\",this->"
-         << n << ","
-         << "static_cast<" << numeric_type << ">(" << bounds.lowerBound << "),"
-         << "static_cast<" << numeric_type << ">(" << bounds.upperBound << "));\n";
-      if (b) {
-        os << "BoundsCheck<N>::lowerAndUpperBoundsChecks(\"" << n << "+d" << n
-           << "\",this->" << n << "+this->d" << n << ","
-           << "static_cast<" << numeric_type << ">(" << bounds.lowerBound
-           << "),"
-           << "static_cast<" << numeric_type << ">(" << bounds.upperBound
-           << "));\n";
-      }
-    } else {
-      tfel::raise(
-          "BehaviourCodeGeneratorBase::writePhysicalBoundsChecks: "
-          "internal error (unsupported bounds type)");
-    }
-  }  // end of writePhysicalBoundsChecks
 
   void BehaviourCodeGeneratorBase::writePhysicalBoundsChecks(
       std::ostream& os, const VariableDescription& v, const bool b) const {
     if (v.arraySize == 1u) {
-      mfront::writePhysicalBoundsChecks(os, v, v.name, b);
+      mfront::writePhysicalBoundsChecks(os, v, v.name, "N", true, b);
     } else {
       for (unsigned short i = 0; i != v.arraySize; ++i) {
         mfront::writePhysicalBoundsChecks(
-            os, v, v.name + '[' + std::to_string(i) + ']', b);
+            os, v, v.name + '[' + std::to_string(i) + ']', "N", true, b);
       }
     }
   }  // end of writePhysicalBoundsChecks

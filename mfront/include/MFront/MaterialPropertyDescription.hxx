@@ -116,7 +116,7 @@ namespace mfront {
      */
     bool isNameReserved(const std::string&) const;
     //! \brief check and complete the physical bounds of variables
-    void checkAndComplePhysicalBoundsDeclaration();
+    void checkAndCompletePhysicalBoundsDeclaration();
     /*!
      * \return a variable description associated with the given
      * external name.

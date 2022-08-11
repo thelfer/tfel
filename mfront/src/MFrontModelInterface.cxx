@@ -163,7 +163,8 @@ namespace mfront {
         }
         return false;
       };
-      return hasBounds2(md.outputs) || hasBounds2(md.inputs);
+      return hasBounds2(md.outputs) || hasBounds2(md.inputs) ||
+             hasBounds2(md.parameters);
     }();
     if (hasBounds) {
       header << "#include\"TFEL/Material/BoundsCheck.hxx\"\n";

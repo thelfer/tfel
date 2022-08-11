@@ -143,6 +143,8 @@ namespace mfront {
      * \param[in] n : name
      */
     bool isNameReserved(const std::string&) const;
+    //! \brief check and complete the physical bounds of variables
+    void checkAndCompletePhysicalBoundsDeclaration();
     //! \brief destructor
     virtual ~ModelDescription();
     //! \brief use quantities if available

@@ -1273,7 +1273,7 @@ namespace mfront {
       }
     }
     // complete the declaration of physical bounds
-    this->mb.checkAndComplePhysicalBoundsDeclaration();
+    this->mb.checkAndCompletePhysicalBoundsDeclaration();
     //
     if (getVerboseMode() >= VERBOSE_DEBUG) {
       getLogStream()
