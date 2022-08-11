@@ -109,7 +109,6 @@ namespace tfel::material {
         const std::string_view,
         const std::string_view,
         const std::string_view);
-    //
     template <typename T>
     static inline void lowerBoundCheck(const std::string_view name,
                                        const T value,
@@ -119,12 +118,14 @@ namespace tfel::material {
         if (p == None) {
           return;
         }
+        const auto value_as_string = convert_to_string(value);
+        const auto lower_bound_as_string = convert_to_string(lBound);
         if (p == Strict) {
-          throwOutOfLowerBoundsException(name, convert_to_string(value),
-                                         convert_to_string(lBound));
+          throwOutOfLowerBoundsException(name, value_as_string,
+                                         lower_bound_as_string);
         }
-        displayOutOfLowerBoundsWarning(name, convert_to_string(value),
-                                       convert_to_string(lBound));
+        displayOutOfLowerBoundsWarning(name, value_as_string,
+                                       lower_bound_as_string);
       }
     }
     template <typename T, typename Unit, typename OwnerShipPolicy>
@@ -137,12 +138,14 @@ namespace tfel::material {
         if (p == None) {
           return;
         }
+        const auto value_as_string = convert_to_string(value);
+        const auto lower_bound_as_string = convert_to_string(lBound);
         if (p == Strict) {
-          throwOutOfLowerBoundsException(name, convert_to_string(value),
-                                         convert_to_string(lBound));
+          throwOutOfLowerBoundsException(name, value_as_string,
+                                         lower_bound_as_string);
         }
-        displayOutOfLowerBoundsWarning(name, convert_to_string(value),
-                                       convert_to_string(lBound));
+        displayOutOfLowerBoundsWarning(name, value_as_string,
+                                       lower_bound_as_string);
       }
     }
     template <typename T>
@@ -154,12 +157,14 @@ namespace tfel::material {
         if (p == None) {
           return;
         }
+        const auto value_as_string = convert_to_string(value);
+        const auto upper_bound_as_string = convert_to_string(uBound);
         if (p == Strict) {
-          throwOutOfUpperBoundsException(name, convert_to_string(value),
-                                         convert_to_string(uBound));
+          throwOutOfUpperBoundsException(name, value_as_string,
+                                         upper_bound_as_string);
         }
-        displayOutOfUpperBoundsWarning(name, convert_to_string(value),
-                                       convert_to_string(uBound));
+        displayOutOfUpperBoundsWarning(name, value_as_string,
+                                       upper_bound_as_string);
       }
     }
     template <typename T, typename Unit, typename OwnerShipPolicy>
@@ -172,12 +177,14 @@ namespace tfel::material {
         if (p == None) {
           return;
         }
+        const auto value_as_string = convert_to_string(value);
+        const auto upper_bound_as_string = convert_to_string(uBound);
         if (p == Strict) {
-          throwOutOfUpperBoundsException(name, convert_to_string(value),
-                                         convert_to_string(uBound));
+          throwOutOfUpperBoundsException(name, value_as_string,
+                                         upper_bound_as_string);
         }
-        displayOutOfUpperBoundsWarning(name, convert_to_string(value),
-                                       convert_to_string(uBound));
+        displayOutOfUpperBoundsWarning(name, value_as_string,
+                                       upper_bound_as_string);
       }
     }
     template <typename T>
@@ -191,14 +198,16 @@ namespace tfel::material {
         if (p == None) {
           return;
         }
+        const auto value_as_string = convert_to_string(value);
+        const auto lower_bound_as_string = convert_to_string(lBound);
+        const auto upper_bound_as_string = convert_to_string(uBound);
         if (p == Strict) {
-          throwOutOfBoundsException(name, convert_to_string(value),
-                                    convert_to_string(lBound),
-                                    convert_to_string(uBound));
+          throwOutOfBoundsException(name, value_as_string,
+                                    lower_bound_as_string,
+                                    upper_bound_as_string);
         }
-        displayOutOfBoundsWarning(name, convert_to_string(value),
-                                  convert_to_string(lBound),
-                                  convert_to_string(uBound));
+        displayOutOfBoundsWarning(name, value_as_string, lower_bound_as_string,
+                                  upper_bound_as_string);
       }
     }
     template <typename T, typename Unit, typename OwnerShipPolicy>
@@ -212,14 +221,16 @@ namespace tfel::material {
         if (p == None) {
           return;
         }
+        const auto value_as_string = convert_to_string(value);
+        const auto lower_bound_as_string = convert_to_string(lBound);
+        const auto upper_bound_as_string = convert_to_string(uBound);
         if (p == Strict) {
-          throwOutOfBoundsException(name, convert_to_string(value),
-                                    convert_to_string(lBound),
-                                    convert_to_string(uBound));
+          throwOutOfBoundsException(name, value_as_string,
+                                    lower_bound_as_string,
+                                    upper_bound_as_string);
         }
-        displayOutOfBoundsWarning(name, convert_to_string(value),
-                                  convert_to_string(lBound),
-                                  convert_to_string(uBound));
+        displayOutOfBoundsWarning(name, value_as_string, lower_bound_as_string,
+                                  upper_bound_as_string);
       }
     }
   };  // end of struct BoundsCheckBase
