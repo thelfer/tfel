@@ -1969,7 +1969,7 @@ namespace mfront {
     os << "/*!\n"
        << "* \\brief Integrate behaviour  over the time step\n"
        << "*/\n";
-    if (!this->bd.getMainVariables().empty()) {
+    if (!this->bd.getTangentOperatorBlocks().empty()) {
       os << "IntegrationResult\n"
          << "integrate(const SMFlag smflag, const SMType smt) override{\n";
     } else {
@@ -1979,7 +1979,7 @@ namespace mfront {
     os << "using namespace std;\n"
        << "using namespace tfel::math;\n";
     writeMaterialLaws(os, this->bd.getMaterialLaws());
-    if (!this->bd.getMainVariables().empty()) {
+    if (!this->bd.getTangentOperatorBlocks().empty()) {
       if ((this->bd.getBehaviourType() ==
            BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) ||
           (this->bd.getBehaviourType() ==
@@ -2015,7 +2015,7 @@ namespace mfront {
          this->bd.getBehaviourData(h).getPersistentVariables()) {
       this->writeBoundsChecks(os, v, false);
     }
-    if (!this->bd.getMainVariables().empty()) {
+    if (!this->bd.getTangentOperatorBlocks().empty()) {
       if (hasUserDefinedTangentOperatorCode(this->bd, h)) {
         os << "if(computeTangentOperator_){\n";
         if (this->bd.getBehaviourType() ==
@@ -4559,7 +4559,14 @@ namespace mfront {
       const auto bn = this->bd.getTangentOperatorBlockName(b);
       if ((v1.getTypeFlag() == SupportedTypes::SCALAR) &&
           (v2.getTypeFlag() == SupportedTypes::SCALAR)) {
-        os << "real& " << bn << ";\n";
+        if (this->bd.useQt()) {
+          os << "typename tfel::math::MakeQuantityReferenceType<"
+             << "tfel::math::derivative_type<" << v1.type << "," << v2.type
+             << ">>::type " << bn << ";\n";
+        } else {
+          os << "tfel::math::derivative_type<" << v1.type << "," << v2.type
+             << ">& " << bn << ";\n";
+        }
       } else {
         os << "tfel::math::View<tfel::math::derivative_type<" << v1.type << ","
            << v2.type << ">> " << bn << ";\n";

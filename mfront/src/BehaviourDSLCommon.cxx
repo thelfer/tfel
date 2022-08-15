@@ -1795,9 +1795,9 @@ namespace mfront {
   void BehaviourDSLCommon::treatTangentOperator() {
     using namespace tfel::material;
     using namespace tfel::utilities;
-    if (this->mb.getMainVariables().empty()) {
+    if (this->mb.getTangentOperatorBlocks().empty()) {
       this->throwRuntimeError("BehaviourDSLCommon::treatTangentOperator",
-                              "no thermodynamic force defined");
+                              "no tangent operator block defined");
     }
     CodeBlockOptions o;
     this->readCodeBlockOptions(o, true);
@@ -3240,7 +3240,7 @@ namespace mfront {
   void BehaviourDSLCommon::treatPredictionOperator() {
     using namespace tfel::material;
     using namespace tfel::utilities;
-    if (this->mb.getMainVariables().empty()) {
+    if (this->mb.getTangentOperatorBlocks().empty()) {
       this->throwRuntimeError("BehaviourDSLCommon::treatTangentOperator",
                               "no thermodynamic force defined");
     }

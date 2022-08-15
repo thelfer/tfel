@@ -1054,7 +1054,7 @@ namespace mfront {
     os << "using namespace tfel::math;\n";
     writeMaterialLaws(os, this->bd.getMaterialLaws());
     os << "this->stiffness_matrix_type = smt;" << '\n';
-    if (!this->bd.getMainVariables().empty()) {
+    if (!this->bd.getTangentOperatorBlocks().empty()) {
       if ((this->bd.getBehaviourType() ==
            BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) ||
           (this->bd.getBehaviourType() ==
@@ -1119,7 +1119,7 @@ namespace mfront {
     for (const auto& v : d.getPersistentVariables()) {
       this->writeBoundsChecks(os, v, false);
     }
-    if (!this->bd.getMainVariables().empty()) {
+    if (!this->bd.getTangentOperatorBlocks().empty()) {
       os << "if(smt!=NOSTIFFNESSREQUESTED){\n";
       if (this->bd.hasAttribute(h,
                                 BehaviourData::hasConsistentTangentOperator)) {

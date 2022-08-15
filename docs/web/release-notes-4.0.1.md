@@ -19,6 +19,10 @@ eqnPrefixTemplate: "($$i$$)"
 
 # Issues fixed
 
+## Issue #281: [mfront] Tangent operator blocks associated with derivatives of scalars by scalars are ill defined when quantities are used
+
+For more details, see <https://github.com/thelfer/tfel/issues/281>
+
 ## Issue #280: [mfront] the @UpdateAuxiliaryStateVariables is broken in the RungeKutta DSLs when using quantities
 
 For more details, see <https://github.com/thelfer/tfel/issues/280>

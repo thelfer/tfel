@@ -21,6 +21,18 @@ namespace mfront {
     this->mb.declareAsGenericBehaviour();
     this->disableCallBack("@Behaviour");
     this->registerNewCallBack("@Model", &RungeKuttaModelDSL::treatModel2, true);
+    this->registerNewCallBack(
+        "@TangentOperatorBlock",
+        &RungeKuttaModelDSL::treatTangentOperatorBlock);
+    this->registerNewCallBack(
+        "@TangentOperatorBlocks",
+        &RungeKuttaModelDSL::treatTangentOperatorBlocks);
+    this->registerNewCallBack(
+        "@AdditionalTangentOperatorBlock",
+        &RungeKuttaModelDSL::treatAdditionalTangentOperatorBlock);
+    this->registerNewCallBack(
+        "@AdditionalTangentOperatorBlocks",
+        &RungeKuttaModelDSL::treatAdditionalTangentOperatorBlocks);
   }  // end of RungeKuttaModelDSL
 
   std::string RungeKuttaModelDSL::getName() {
