@@ -310,6 +310,19 @@ namespace tfel::math {
                tfel::math::internals::QuantityReferenceOwnershipPolicy<
                    const ValueType,
                    std::is_same_v<UnitType, NoUnit>>>;
+  //! \brief an helper metafunction which transforms a quantity type into the a
+  //! reference
+  template <typename QuantityType>
+  struct MakeQuantityReferenceType {
+    //! \brief result
+    using type = tfel::meta::InvalidType;
+  };
+  //! \brief partial specialisation for quantities
+  template <typename UnitType, typename ValueType>
+  struct MakeQuantityReferenceType<qt<UnitType,ValueType>>{
+    //! \brief result
+    using type = qt_ref<UnitType,ValueType>;
+  }; // end of MakeQuantityReferenceType<qt<UnitType,ValueType>>
   //! \brief a simple alias
   template <typename ValueType,
             int N1 = 0,
