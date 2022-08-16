@@ -6039,22 +6039,13 @@ namespace mfront {
           os << getter << "." << p.name << ";\n";
         }
       } else {
-        os << "this->" << p.name << " = "
-           << "tfel::math::map<tfel::math::fsarray<" << p.arraySize << ", "
-           << p.type << ">>(" << getter << "." << p.name << ".data());\n";
-        //         if (this->mb.useQt()) {
-        //           os << "tfel::fsalgo::transform<" << p.arraySize <<
-        //           ">::exe("  //
-        //              << getter << "." << p.name << ".begin(), "    //
-        //              << "this->" << p.name << ".begin(), " //
-        //              << "[](const auto& parameter_value){"
-        //              << "return " << p.type << "(parameter_value);\n"
-        //              << "});\n";
-        //         } else {
-        //           os << "tfel::fsalgo::copy<" << p.arraySize << ">::exe("
-        //              << getter << "." << p.name << ".begin(),this->"
-        //              << p.name << ".begin());\n";
-        //         }
+        os << "tfel::fsalgo::transform<" << p.arraySize << ">::exe("  //
+           << getter << "." << p.name << ".begin(), "                 //
+           << "this->" << p.name << ".begin(), "
+           << "[](const auto& mfront_parameter_value){\n"
+           << "return " << p.type
+           << "{static_cast<NumericType>(mfront_parameter_value)};\n"
+           << "});\n";
       }
     }
   }  // end of writeBehaviourParameterInitialisation
