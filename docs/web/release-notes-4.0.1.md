@@ -19,6 +19,10 @@ eqnPrefixTemplate: "($$i$$)"
 
 # Issues fixed
 
+## Issue #283: [mfront] Array of parameters is broken with the AbaqusExplicit interface
+
+For more details, see <https://github.com/thelfer/tfel/issues/283>
+
 ## Issue #281: [mfront] Tangent operator blocks associated with derivatives of scalars by scalars are ill defined when quantities are used
 
 For more details, see <https://github.com/thelfer/tfel/issues/281>

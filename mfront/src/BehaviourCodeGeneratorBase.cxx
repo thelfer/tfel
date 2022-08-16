@@ -3168,9 +3168,13 @@ namespace mfront {
             os << getter << "." << p.name << ";\n";
           }
         } else {
-          os << "this->" << p.name << " = "
-             << "tfel::math::map<tfel::math::fsarray<" << p.arraySize << ", "
-             << p.type << ">>(" << getter << "." << p.name << ".data());\n";
+          os << "tfel::fsalgo::transform<" << p.arraySize << ">::exe("  //
+             << getter << "." << p.name << ".begin(), "                 //
+             << "this->" << p.name << ".begin(), "
+             << "[](const auto& mfront_parameter_value){\n"
+             << "return " << p.type
+             << "{static_cast<NumericType>(mfront_parameter_value)};\n"
+             << "});\n";
         }
       }
     }
