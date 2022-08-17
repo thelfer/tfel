@@ -149,7 +149,8 @@ namespace mfront {
        << "extern \"C\"{\n"
        << "#endif /* __cplusplus */\n\n";
 
-    if (hasRealParameters(md)) {
+    if ((hasRealParameters(md)) &&
+        (!areParametersTreatedAsStaticVariables(md))) {
       os << "/*!\n"
          << " * \\brief function allowing to modify the parameters of the "
          << name << " model\n"
@@ -251,7 +252,8 @@ namespace mfront {
     //
     os << "namespace mfront::gm{\n\n";
     //
-    if (hasRealParameters(md)) {
+    if ((hasRealParameters(md)) &&
+        (!areParametersTreatedAsStaticVariables(md))) {
       os << "struct " << cn << "{\n";
       writeScalarStandardTypedefs(os, md);
       os << '\n';
@@ -485,11 +487,12 @@ namespace mfront {
        << "}\n\n";
     os << "} // end of namespace mfront::gm\n\n";
     //
-    if (hasRealParameters(md)) {
+    if ((hasRealParameters(md)) &&
+        (!areParametersTreatedAsStaticVariables(md))) {
       os << "MFRONT_SHAREDOBJ int\n"
-         << name << "_setParameter(const char *const n, const double v){\n"
-         << "auto& parameters = mfront::gm::" << cn << "::get();\n";
+         << name << "_setParameter(const char *const n, const double v){\n";
       writeScalarStandardTypedefs(os, md);
+      os << "auto& parameters = mfront::gm::" << cn << "::get();\n";
       auto first = true;
       for (const auto& p : md.parameters) {
         if (!isRealParameter(p)) {
