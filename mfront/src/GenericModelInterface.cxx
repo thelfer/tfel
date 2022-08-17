@@ -502,11 +502,11 @@ namespace mfront {
         os << (first ? "if" : "} else if")  //
            << "(std::strcmp(\"" << en << "\", n) == 0){\n"
            << "parameters." << p.name << " = " << p.type << "{v};\n"
-           << "return 0;\n";
+           << "return 1;\n";
         first = false;
       }
       os << "}\n"
-         << "return -1;\n"
+         << "return 0;\n"
          << "} // end of " << name << "_setParameter\n\n";
     }
     //
