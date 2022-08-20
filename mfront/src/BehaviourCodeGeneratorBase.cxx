@@ -4450,7 +4450,7 @@ namespace mfront {
   void BehaviourCodeGeneratorBase::writeBehaviourGetTimeStepScalingFactor(
       std::ostream& os) const {
     this->checkBehaviourFile(os);
-    os << "time getMinimalTimeStepScalingFactor() const noexcept override{\n"
+    os << "real getMinimalTimeStepScalingFactor() const noexcept override{\n"
           "  return this->minimal_time_step_scaling_factor;\n"
           "}\n\n";
   }
@@ -4459,8 +4459,8 @@ namespace mfront {
   BehaviourCodeGeneratorBase::writeBehaviourComputeAPrioriTimeStepScalingFactor(
       std::ostream& os) const {
     this->checkBehaviourFile(os);
-    os << "std::pair<bool, time>\n"
-          "computeAPrioriTimeStepScalingFactor(const time "
+    os << "std::pair<bool, real>\n"
+          "computeAPrioriTimeStepScalingFactor(const real "
           "current_time_step_scaling_factor) const override{\n"
           "const auto time_scaling_factor = "
           "this->computeAPrioriTimeStepScalingFactorII();\n"
@@ -4471,14 +4471,13 @@ namespace mfront {
           "                          this->maximal_time_step_scaling_factor),\n"
           "                  current_time_step_scaling_factor)};\n"
           "}\n\n";
-  }  // end of
-     // writeBehaviourComputeAPrioriTimeStepScalingFactor
+  }  // end of writeBehaviourComputeAPrioriTimeStepScalingFactor
 
   void BehaviourCodeGeneratorBase::
       writeBehaviourComputeAPrioriTimeStepScalingFactorII(
           std::ostream& os, const Hypothesis h) const {
     this->checkBehaviourFile(os);
-    os << "std::pair<bool, time> computeAPrioriTimeStepScalingFactorII() "
+    os << "std::pair<bool, real> computeAPrioriTimeStepScalingFactorII() "
           "const{\n";
     if (this->bd.hasCode(h, BehaviourData::APrioriTimeStepScalingFactor)) {
       os << "using namespace std;\n"
@@ -4496,8 +4495,8 @@ namespace mfront {
       writeBehaviourComputeAPosterioriTimeStepScalingFactor(
           std::ostream& os) const {
     this->checkBehaviourFile(os);
-    os << "std::pair<bool, time>\n"
-          "computeAPosterioriTimeStepScalingFactor(const time "
+    os << "std::pair<bool, real>\n"
+          "computeAPosterioriTimeStepScalingFactor(const real "
           "current_time_step_scaling_factor) const override{\n"
           "const auto time_scaling_factor = "
           "this->computeAPosterioriTimeStepScalingFactorII();\n"
@@ -4515,7 +4514,7 @@ namespace mfront {
       writeBehaviourComputeAPosterioriTimeStepScalingFactorII(
           std::ostream& os, const Hypothesis h) const {
     this->checkBehaviourFile(os);
-    os << "std::pair<bool, time> computeAPosterioriTimeStepScalingFactorII() "
+    os << "std::pair<bool, real> computeAPosterioriTimeStepScalingFactorII() "
           "const{\n";
     if (this->bd.hasCode(h, BehaviourData::APosterioriTimeStepScalingFactor)) {
       os << "using namespace std;\n"

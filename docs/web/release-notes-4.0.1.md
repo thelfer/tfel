@@ -19,7 +19,15 @@ eqnPrefixTemplate: "($$i$$)"
 
 # Issues fixed
 
-## Issue #283: [mfront] Array of parameters is broken with the AbaqusExplicit interface
+## Issue 288: [TFEL/Math] The quantity metafunction shall work with a qt<NoUnit, ValueType> as argument
+
+For more details, see <https://github.com/thelfer/tfel/issues/288>
+
+## Issue 286: [mfront] computation of the time step scalor factor is broken when using quantities
+
+For more details, see <https://github.com/thelfer/tfel/issues/286>
+
+## Issue #283: [mfront] Array of parameters is broken with the AbaqusExplicit interface if quantities are used
 
 For more details, see <https://github.com/thelfer/tfel/issues/283>
 

@@ -1179,7 +1179,7 @@ namespace mfront {
     // time step scaling factors
     if (!this->mb.hasParameter(ModellingHypothesis::UNDEFINEDHYPOTHESIS,
                                "minimal_time_step_scaling_factor")) {
-      VariableDescription e("time", "minimal_time_step_scaling_factor", 1u, 0u);
+      VariableDescription e("real", "minimal_time_step_scaling_factor", 1u, 0u);
       e.description = "minimal value for the time step scaling factor";
       this->mb.addParameter(ModellingHypothesis::UNDEFINEDHYPOTHESIS, e,
                             BehaviourData::ALREADYREGISTRED);
@@ -1192,7 +1192,7 @@ namespace mfront {
     }
     if (!this->mb.hasParameter(ModellingHypothesis::UNDEFINEDHYPOTHESIS,
                                "maximal_time_step_scaling_factor")) {
-      VariableDescription e("time", "maximal_time_step_scaling_factor", 1u, 0u);
+      VariableDescription e("real", "maximal_time_step_scaling_factor", 1u, 0u);
       e.description = "maximal value for the time step scaling factor";
       this->mb.addParameter(ModellingHypothesis::UNDEFINEDHYPOTHESIS, e,
                             BehaviourData::ALREADYREGISTRED);
