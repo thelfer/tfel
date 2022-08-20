@@ -323,6 +323,23 @@ namespace tfel::math {
     //! \brief result
     using type = qt_ref<UnitType,ValueType>;
   }; // end of MakeQuantityReferenceType<qt<UnitType,ValueType>>
+
+  namespace internals {
+
+    template <typename ValueType>
+    struct MakeQuantityValueType{
+      //! \brief result of the metafunction
+      using type = ValueType;
+    }; // end of struct MakeQuantityValueType
+
+    template <typename ValueType>
+    struct MakeQuantityValueType<qt<NoUnit, ValueType>> {
+      //! \brief result of the metafunction
+      using type = ValueType;
+    }; // end of struct MakeQuantityValueType
+
+  }  // end of namespace internals
+
   //! \brief a simple alias
   template <typename ValueType,
             int N1 = 0,
@@ -339,21 +356,22 @@ namespace tfel::math {
             unsigned int D5 = 1,
             unsigned int D6 = 1,
             unsigned int D7 = 1>
-  using quantity = qt<typename GenerateUnit<N1,
-                                            N2,
-                                            N3,
-                                            N4,
-                                            N5,
-                                            N6,
-                                            N7,
-                                            D1,
-                                            D2,
-                                            D3,
-                                            D4,
-                                            D5,
-                                            D6,
-                                            D7>::type,
-                      ValueType>;
+  using quantity = qt<
+      typename GenerateUnit<N1,
+                            N2,
+                            N3,
+                            N4,
+                            N5,
+                            N6,
+                            N7,
+                            D1,
+                            D2,
+                            D3,
+                            D4,
+                            D5,
+                            D6,
+                            D7>::type,
+      typename tfel::math::internals::MakeQuantityValueType<ValueType>::type>;
   //! \brief cast the value to the base type
   template <typename UnitType, typename ValueType, typename OwnershipPolicy>
   constexpr ValueType& base_type_cast(
