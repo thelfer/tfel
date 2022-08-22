@@ -232,7 +232,7 @@ namespace mfront::bbrick {
       const std::string &,
       const std::array<BehaviourDescription::MaterialProperty, N> &);
   /*!
-   * \brief extract a linear transformation from the give map
+   * \brief extract a linear transformation from the given map
    * \param[in] dsl: abstract behaviour dsl.
    * \param[in] bd: behaviour description
    * \param[in] d: data map
@@ -241,13 +241,30 @@ namespace mfront::bbrick {
    * \param[in] en: external name of the variable associated with the linear transformation
    */
   MFRONT_VISIBILITY_EXPORT
-      std::array<BehaviourDescription::MaterialProperty, 9u>
-      extractLinearTransformation(AbstractBehaviourDSL &,
-                                  BehaviourDescription &,
-                                  const tfel::utilities::DataMap &,
-                                  const std::string_view,
-                                  const std::string_view,
-                                  const std::string_view);
+  std::array<BehaviourDescription::MaterialProperty, 9u>
+  extractLinearTransformation(AbstractBehaviourDSL &,
+                              BehaviourDescription &,
+                              const tfel::utilities::DataMap &,
+                              const std::string_view,
+                              const std::string_view,
+                              const std::string_view);
+  /*!
+   * \brief extract the coefficients describing a Hill tensor from the given map
+   * \param[in] dsl: abstract behaviour dsl.
+   * \param[in] bd: behaviour description
+   * \param[in] d: data map
+   * \param[in] o: name of option containing the linear transformation
+   * \param[in] n: name of the variable associated with the linear transformation
+   * \param[in] en: external name of the variable associated with the linear transformation
+   */
+  MFRONT_VISIBILITY_EXPORT
+  std::array<BehaviourDescription::MaterialProperty, 6u>
+  extractHillTensorCoefficients(AbstractBehaviourDSL &,
+                                BehaviourDescription &,
+                                const tfel::utilities::DataMap &,
+                                const std::string_view,
+                                const std::string_view,
+                                const std::string_view);
   /*!
    *\brief add a new material property
    *\param[in] bd: behaviour description

@@ -28,6 +28,8 @@ namespace mfront::bbrick {
                       OptionDescription::MATERIALPROPERTY);
     opts.emplace_back("f", "memory coefficient",
                       OptionDescription::MATERIALPROPERTY);
+    opts.emplace_back("m", "memory exponent",
+                      OptionDescription::MATERIALPROPERTY);
     opts.emplace_back("Ec",
                       "coefficients of the linear transformation of the "
                       "inelastic strain rate",
@@ -49,18 +51,19 @@ namespace mfront::bbrick {
     KinematicHardeningRuleBase::initialize(bd, dsl, fid, kid, d);
     const auto Dn = KinematicHardeningRule::getVariableId("D", fid, kid);
     const auto fn = KinematicHardeningRule::getVariableId("f", fid, kid);
+    const auto mn = KinematicHardeningRule::getVariableId("m", fid, kid);
     const auto Ecn = KinematicHardeningRule::getVariableId("Ec", fid, kid);
     const auto Rdn = KinematicHardeningRule::getVariableId("Rd", fid, kid);
     const auto Rsn = KinematicHardeningRule::getVariableId("Rs", fid, kid);
-    this->Ec =
-        extractLinearTransformation(dsl, bd, d, "Ec", Ecn + "_coefficients",
-                                    "InelasticStrainRateLinearTransformation");
-    this->Rd =
-        extractLinearTransformation(dsl, bd, d, "Rd", Rdn + "_coefficients",
-                                    "FirstBackStrainLinearTransformation");
-    this->Rs =
-        extractLinearTransformation(dsl, bd, d, "Rs", Rsn + "_coefficients",
-                                    "SecondBackStrainLinearTransformation");
+    this->Ec = extractHillTensorCoefficients(
+        dsl, bd, d, "Ec", Ecn + "_coefficients",
+        "InelasticStrainRateLinearTransformationCoefficients");
+    this->Rd = extractHillTensorCoefficients(
+        dsl, bd, d, "Rd", Rdn + "_coefficients",
+        "FirstBackStrainRateLinearTransformationCoefficients");
+    this->Rs = extractHillTensorCoefficients(
+        dsl, bd, d, "Rs", Rsn + "_coefficients",
+        "SecondBackStrainRateLinearTransformationCoefficients");
     for (const auto& n : {Ecn, Rdn, Rsn}) {
       addLocalVariable(bd, "Stensor4", n);
     }
@@ -83,6 +86,12 @@ namespace mfront::bbrick {
     }
     declareParameterOrLocalVariable(bd, this->f, "stress", fn);
     //
+    tfel::raise_if(d.count("m") != 0,
+                   "OrthotropicKinematicHardeningRule::initialize: "
+                   "'m' material property undefined");
+    this->m = getBehaviourDescriptionMaterialProperty(dsl, "m", d.at("m"));
+    declareParameterOrLocalVariable(bd, this->m, "stress", mn);
+    //
     constexpr auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     bd.reserveName(uh, KinematicHardeningRule::getVariableId("aeq", fid, kid));
     bd.reserveName(uh, KinematicHardeningRule::getVariableId("iaeq", fid, kid));
@@ -97,11 +106,13 @@ namespace mfront::bbrick {
     KinematicHardeningRuleBase::endTreatment(bd, dsl, fid, kid);
     const auto Dn = KinematicHardeningRule::getVariableId("D", fid, kid);
     const auto fn = KinematicHardeningRule::getVariableId("f", fid, kid);
+    const auto mn = KinematicHardeningRule::getVariableId("m", fid, kid);
     const auto Ecn = KinematicHardeningRule::getVariableId("Ec", fid, kid);
     const auto Rdn = KinematicHardeningRule::getVariableId("Rd", fid, kid);
     const auto Rsn = KinematicHardeningRule::getVariableId("Rs", fid, kid);
     auto c = generateMaterialPropertyInitializationCode(dsl, bd, Dn, this->D);
     c += generateMaterialPropertyInitializationCode(dsl, bd, fn, this->f);
+    c += generateMaterialPropertyInitializationCode(dsl, bd, mn, this->m);
     c += generateMaterialPropertiesInitializationCode(
         dsl, bd, Ecn + "_coefficients", this->Ec);
     c += generateMaterialPropertiesInitializationCode(
@@ -119,11 +130,11 @@ namespace mfront::bbrick {
         tfel::raise_if(
             bd.getOrthotropicAxesConvention() !=
                 tfel::material::OrthotropicAxesConvention::DEFAULT,
-            "Barlat2004StressCriterion::endTreatment: "
+            "OrthotropicKinematicHardeningRule::endTreatment: "
             "internal error, unsupported orthotropic axes convention");
         for (const auto mh : bd.getDistinctModellingHypotheses()) {
           tfel::raise_if(mh != ModellingHypothesis::TRIDIMENSIONAL,
-                         "Barlat2004StressCriterion::endTreatment: "
+                         "OrthotropicKinematicHardeningRule::endTreatment: "
                          "an orthotropic axes convention must be choosen when "
                          "defining a stress free expansion in behaviours "
                          "which shall be valid in other modelling hypothesis "
@@ -138,8 +149,8 @@ namespace mfront::bbrick {
     }();
     for (const auto& t : {Ecn, Rdn, Rsn}) {
       c += "this->" + t + " = ";
-      c += "makeBarlatLinearTransformation<hypothesis," + oac +
-           ",real>(this->" + t + "_coefficients);\n";
+      c += "makeHillTensor<hypothesis, " + oac +
+           ", real>(this->" + t + "_coefficients);\n";
     }
     CodeBlock i;
     i.code = c;
@@ -163,6 +174,7 @@ namespace mfront::bbrick {
     const auto aeqn = KinematicHardeningRule::getVariableId("aeq", fid, kid);
     const auto iaeqn = KinematicHardeningRule::getVariableId("iaeq", fid, kid);
     const auto Dn = get_member_id("D");
+    const auto mn = get_member_id("m");
     const auto fn = get_member_id("f");
     const auto Ecn = get_member_id("Ec");
     const auto Rdn = get_member_id("Rd");
@@ -173,13 +185,15 @@ namespace mfront::bbrick {
                        "::theta * (this->d" + an + ")";
     auto c = std::string{};
     c += "const auto " + aeqn + " = ";
-    c += "std::sqrt((" + a_mts + ") | (" + a_mts + "));\n";
+    c += "std::sqrt(std::max((" + a_mts + ") | (" + a_mts + "), ";
+    c += "                   strain(0) * strain(0));\n";
     c += "const auto " + iaeqn + " = ";
     c += "1/std::max(strain(1e-14)," + aeqn + ");\n";
     c += "f" + an + " -= ";
     c += "   (" + dpn + ") * (" + Ecn + ")  * " + n;
     c += " - (" + Dn + ")  * (" + dpn + ") * (" + Rdn + ") * (" + a_mts + ")";
-    c += " - (" + fn + ")  * (" + Rsn + ") * (" + a_mts + ") * " + iaeqn;
+    c += " - (" + fn + ")  * pow(" + aeqn + "," + mn + ")";
+    c += " * (" + Rsn + ") *  (" + a_mts + ") * " + iaeqn;
     c += ";\n";
     if (b) {
       tfel::raise(

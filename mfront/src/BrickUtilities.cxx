@@ -754,4 +754,38 @@ namespace mfront::bbrick {
     return l;
   }  // end of extractLinearTransformation
 
+  std::array<BehaviourDescription::MaterialProperty, 6u>
+  extractHillTensorCoefficients(AbstractBehaviourDSL& dsl,
+                                BehaviourDescription& bd,
+                                const tfel::utilities::DataMap& d,
+                                const std::string_view n,
+                                const std::string_view vn,
+                                const std::string_view en) {
+    using ConstantMaterialProperty =
+        BehaviourDescription::ConstantMaterialProperty;
+    const auto p = d.find(n);
+    if (p == d.end()) {
+      tfel::raise("extractHillTensorCoefficients::initialize: entry '" +
+                  std::string(n) + "' is not defined");
+    }
+    const auto l =
+        getArrayOfBehaviourDescriptionMaterialProperties<6u>(dsl, n, p->second);
+    if (l[0].is<ConstantMaterialProperty>()) {
+      std::vector<double> values(6u);
+      for (unsigned short i = 0; i != 6; ++i) {
+        tfel::raise_if(!l[i].is<ConstantMaterialProperty>(),
+                       "extractHillTensorCoefficients: "
+                       "if one component of '" +
+                           std::string(n) +
+                           "' is a constant value, all components must be "
+                           "constant values");
+        values[i] = l[i].get<ConstantMaterialProperty>().value;
+      }
+      addParameter(bd, std::string(vn), std::string(en), 6, values);
+    } else {
+      addLocalVariable(bd, "real", std::string(vn), 6);
+    }
+    return l;
+  }  // end of extractHillTensorCoefficients
+
 }  // end of namespace mfront::bbrick

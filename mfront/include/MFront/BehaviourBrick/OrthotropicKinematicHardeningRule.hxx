@@ -46,14 +46,16 @@ namespace mfront::bbrick {
    protected:
     //! \brief call-back
     BehaviourDescription::MaterialProperty D;
-    //! \brief call-back
+    //! \brief memory coefficient
     BehaviourDescription::MaterialProperty f;
+    //! \brief memory exponent
+    BehaviourDescription::MaterialProperty m;
     //! \brief coefficients of the first linear transformation
-    std::array<MaterialProperty, 9u> Ec;
+    std::array<MaterialProperty, 6u> Ec;
     //! \brief coefficients of the second linear transformation
-    std::array<MaterialProperty, 9u> Rd;
+    std::array<MaterialProperty, 6u> Rd;
     //! \brief coefficients of the third linear transformation
-    std::array<MaterialProperty, 9u> Rs;
+    std::array<MaterialProperty, 6u> Rs;
   };  // end of struct KinematicHardeningRule
 
 }  // end of namespace mfront::bbrick
