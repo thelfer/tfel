@@ -4217,7 +4217,7 @@ namespace mfront {
                     getFiniteStrainBehaviourTangentOperatorFlagType(pc->from());
                 os << "using namespace tfel::math;\n";
                 os << "// computing " << k << '\n';
-                os << "if(!this->computePredictionOperator_" << k << "(smt)){\n"
+                os << "if(this->computePredictionOperator_" << k << "(smt) != SUCCESS){\n"
                    << "return FAILURE;\n"
                    << "}\n"
                    << "const " << from_type_flag << "<N,stress> "
@@ -4367,7 +4367,7 @@ namespace mfront {
                 os << "// computing " << k << '\n';
                 os << "if(!this->computeConsistentTangentOperator_" << k
                    << "(smt)){\n"
-                   << "return FAILURE;\n"
+                   << "return false;\n"
                    << "}\n"
                    << "const " << k_type_flag << "<N,stress> "
                    << "tangentOperator_" << k << " = this->Dt.template get<"
