@@ -1037,7 +1037,7 @@ namespace mfront {
     os << "/*!\n"
        << " * \\brief Integrate behaviour law over the time step\n"
        << " */\n"
-       << "IntegrationResult ";
+       << "[[nodiscard]] IntegrationResult ";
     if (this->bd.hasAttribute(h, BehaviourData::hasConsistentTangentOperator)) {
       os << "integrate(const SMFlag smflag,const SMType smt) override{\n";
     } else {

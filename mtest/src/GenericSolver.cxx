@@ -288,7 +288,9 @@ namespace mtest {
               std::min(o.maximal_time_step_scaling_factor, r.second), 1.);
           if (mfront::getVerboseMode() >= mfront::VERBOSE_LEVEL1) {
             auto& log = mfront::getLogStream();
-            log << "Increasing time step by a factor: " << rdt << "\n\n";
+            log << "Increasing time step by a factor: " << rdt
+                << " (time step scaling factor proposed by the behaviour "
+                << r.second << ")\n\n";
           }
           dt *= rdt;
         }
@@ -313,7 +315,9 @@ namespace mtest {
           }
           if (mfront::getVerboseMode() >= mfront::VERBOSE_LEVEL1) {
             auto& log = mfront::getLogStream();
-            log << "Reducing time step by a factor: " << rdt << "\n\n";
+            log << "Reducing time step by a factor: " << rdt
+                << " (time step scaling factor proposed by the behaviour "
+                << r.second << ")\n\n";
           }
           dt *= rdt;
         } else {

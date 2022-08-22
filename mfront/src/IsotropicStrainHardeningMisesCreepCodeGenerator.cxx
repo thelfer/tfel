@@ -142,7 +142,7 @@ namespace mfront {
     os << "/*!\n"
        << "* \\brief Integrate behaviour law over the time step\n"
        << "*/\n"
-       << "IntegrationResult\n"
+       << "[[nodiscard]] IntegrationResult\n"
        << "integrate(const SMFlag smflag,const SMType smt) override{\n"
        << "using namespace std;\n";
     if (this->bd.useQt()) {

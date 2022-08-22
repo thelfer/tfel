@@ -1970,10 +1970,10 @@ namespace mfront {
        << "* \\brief Integrate behaviour  over the time step\n"
        << "*/\n";
     if (!this->bd.getTangentOperatorBlocks().empty()) {
-      os << "IntegrationResult\n"
+      os << "[[nodiscard]] IntegrationResult\n"
          << "integrate(const SMFlag smflag, const SMType smt) override{\n";
     } else {
-      os << "IntegrationResult\n"
+      os << "[[nodiscard]] IntegrationResult\n"
          << "integrate(const SMFlag, const SMType) override{\n";
     }
     os << "using namespace std;\n"
@@ -4132,7 +4132,7 @@ namespace mfront {
           "defined");
     }
     if (!hasUserDefinedPredictionOperatorCode(this->bd, h)) {
-      os << "IntegrationResult computePredictionOperator(const SMFlag,const "
+      os << "[[nodiscard]] IntegrationResult computePredictionOperator(const SMFlag,const "
             "SMType) override{\n"
          << "tfel::raise(\"" << this->bd.getClassName()
          << "::computePredictionOperator: \"\n"
@@ -4171,7 +4171,7 @@ namespace mfront {
           const auto ktype =
               convertFiniteStrainBehaviourTangentOperatorFlagToString(t);
           if (std::find(ktos.begin(), ktos.end(), t) != ktos.end()) {
-            os << "IntegrationResult\ncomputePredictionOperator_" << ktype
+            os << "[[nodiscard]] IntegrationResult\ncomputePredictionOperator_" << ktype
                << "(const SMType smt){\n"
                << "using namespace std;\n"
                << "using namespace tfel::math;\n"
@@ -4187,7 +4187,7 @@ namespace mfront {
             if ((h ==
                  ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS) ||
                 (h == ModellingHypothesis::PLANESTRESS)) {
-              os << "IntegrationResult computePredictionOperator_" << ktype
+              os << "[[nodiscard]] IntegrationResult computePredictionOperator_" << ktype
                  << "(const SMType){\n"
                  << "tfel::raise(\"" << this->bd.getClassName()
                  << "::computePredictionOperator_" << ktype << ": \"\n"
@@ -4199,7 +4199,7 @@ namespace mfront {
                   FiniteStrainBehaviourTangentOperatorConversionPath::
                       getShortestPath(paths, t);
               if (path.empty()) {
-                os << "IntegrationResult computePredictionOperator_" << ktype
+                os << "[[nodiscard]] IntegrationResult computePredictionOperator_" << ktype
                    << "(const SMType){\n"
                    << "tfel::raise(\"" << this->bd.getClassName()
                    << "::computePredictionOperator_" << ktype << ": \"\n"
@@ -4207,29 +4207,22 @@ namespace mfront {
                    << "' is not supported\");\n"
                    << "}\n\n";
               } else {
-                os << "IntegrationResult computePredictionOperator_" << ktype
+                os << "[[nodiscard]] IntegrationResult computePredictionOperator_" << ktype
                    << "(const SMType smt){\n";
                 auto pc = path.begin();
-                os << "using namespace tfel::math;\n";
-                os << "// computing "
-                   << convertFiniteStrainBehaviourTangentOperatorFlagToString(
-                          pc->from())
-                   << '\n';
                 const auto k =
                     convertFiniteStrainBehaviourTangentOperatorFlagToString(
                         pc->from());
-                os << "this->computePredictionOperator_" << k << "(smt);\n"
-                   << "const "
-                   << getFiniteStrainBehaviourTangentOperatorFlagType(
-                          pc->from())
-                   << "<N,stress>"
-                   << " tangentOperator_"
-                   << convertFiniteStrainBehaviourTangentOperatorFlagToString(
-                          pc->from())
-                   << " = this->Dt.template get<"
-                   << getFiniteStrainBehaviourTangentOperatorFlagType(
-                          pc->from())
-                   << "<N,stress> >();\n";
+                const auto from_type_flag =
+                    getFiniteStrainBehaviourTangentOperatorFlagType(pc->from());
+                os << "using namespace tfel::math;\n";
+                os << "// computing " << k << '\n';
+                os << "if(!this->computePredictionOperator_" << k << "(smt)){\n"
+                   << "return FAILURE;\n"
+                   << "}\n"
+                   << "const " << from_type_flag << "<N,stress> "
+                   << "tangentOperator_" << k << " = this->Dt.template get<"
+                   << from_type_flag << "<N,stress> >();\n";
                 for (; pc != path.end();) {
                   const auto converter = *pc;
                   if (++pc == path.end()) {
@@ -4244,7 +4237,7 @@ namespace mfront {
             }
           }
         }
-        os << "IntegrationResult computePredictionOperator(const SMFlag "
+        os << "[[nodiscard]] IntegrationResult computePredictionOperator(const SMFlag "
               "smflag,const SMType smt) override{\n"
            << "using namespace std;\n"
            << "switch(smflag){\n";
@@ -4262,7 +4255,7 @@ namespace mfront {
            << "}\n\n";
       }
     } else {
-      os << "IntegrationResult\n"
+      os << "[[nodiscard]] IntegrationResult\n"
          << "computePredictionOperator(const SMFlag smflag,const SMType smt) "
             "override{\n"
          << "using namespace std;\n"
@@ -4362,30 +4355,23 @@ namespace mfront {
                    << "' is not supported\");\n"
                    << "}\n\n";
               } else {
-                os << "bool computeConsistentTangentOperator_" << ktype
-                   << "(const SMType smt){\n";
                 auto pc = path.begin();
-                os << "using namespace tfel::math;\n";
-                os << "// computing "
-                   << convertFiniteStrainBehaviourTangentOperatorFlagToString(
-                          pc->from())
-                   << '\n';
                 const auto k =
                     convertFiniteStrainBehaviourTangentOperatorFlagToString(
                         pc->from());
-                os << "this->computeConsistentTangentOperator_" << k
-                   << "(smt);\n"
-                   << "const "
-                   << getFiniteStrainBehaviourTangentOperatorFlagType(
-                          pc->from())
-                   << "<N,stress>"
-                   << " tangentOperator_"
-                   << convertFiniteStrainBehaviourTangentOperatorFlagToString(
-                          pc->from())
-                   << " = this->Dt.template get<"
-                   << getFiniteStrainBehaviourTangentOperatorFlagType(
-                          pc->from())
-                   << "<N,stress> >();\n";
+                const auto k_type_flag =
+                    getFiniteStrainBehaviourTangentOperatorFlagType(pc->from());
+                os << "bool computeConsistentTangentOperator_" << ktype
+                   << "(const SMType smt){\n";
+                os << "using namespace tfel::math;\n";
+                os << "// computing " << k << '\n';
+                os << "if(!this->computeConsistentTangentOperator_" << k
+                   << "(smt)){\n"
+                   << "return FAILURE;\n"
+                   << "}\n"
+                   << "const " << k_type_flag << "<N,stress> "
+                   << "tangentOperator_" << k << " = this->Dt.template get<"
+                   << k_type_flag << "<N,stress>>();\n";
                 for (; pc != path.end();) {
                   const auto converter = *pc;
                   if (++pc == path.end()) {

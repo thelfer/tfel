@@ -1169,7 +1169,7 @@ namespace mfront {
   void DSLBase::setDescription(const std::string& d) {
     if (!this->fd.description.empty()) {
       this->throwRuntimeError("DSLBase::setDescription",
-                              "date already specified");
+                              "description already specified");
     }
     this->fd.description = d;
   }  // end of setDescription

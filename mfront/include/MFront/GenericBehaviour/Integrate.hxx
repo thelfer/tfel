@@ -217,7 +217,9 @@ namespace mfront::gb {
       }
       return Behaviour::TANGENTOPERATOR;
     }();
-    b.computePredictionOperator(f, smt);
+    if (!b.computePredictionOperator(f, smt)) {
+      return -1;
+    }
     exportTangentOperator(d.K, b.getTangentOperator());
     return 1;
   }  // end of computePredictionOperator

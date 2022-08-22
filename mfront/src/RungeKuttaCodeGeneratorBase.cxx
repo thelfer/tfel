@@ -12,6 +12,7 @@
  */
 
 #include <ostream>
+#include <string_view>
 #include "TFEL/Glossary/Glossary.hxx"
 #include "TFEL/Glossary/GlossaryEntry.hxx"
 #include "MFront/DSLUtilities.hxx"
@@ -204,6 +205,37 @@ namespace mfront {
     }
   }  // end of writeExternalVariablesCurrentValues2
 
+  static void writeReturnSuccess(std::ostream& os,
+                                 const BehaviourDescription& bd) {
+    const auto btype = bd.getBehaviourTypeFlag();
+    if (bd.useQt()) {
+      os << "return MechanicalBehaviour<" << btype
+         << ",hypothesis, NumericType,use_qt>::SUCCESS;\n";
+    } else {
+      os << "return MechanicalBehaviour<" << btype
+         << ",hypothesis, NumericType,false>::SUCCESS;\n";
+    }
+  }  // end of writeReturnSuccess
+
+  static void writeReturnFailure(std::ostream& os,
+                                 const BehaviourDescription& bd) {
+    const auto btype = bd.getBehaviourTypeFlag();
+    if (bd.useQt()) {
+      os << "return MechanicalBehaviour<" << btype
+         << ",hypothesis, NumericType,use_qt>::FAILURE;\n";
+    } else {
+      os << "return MechanicalBehaviour<" << btype
+         << ",hypothesis, NumericType,false>::FAILURE;\n";
+    }
+  }  // end of writeReturnFailure
+
+  static void writeAlgorithmConstant(std::ostream& os,
+                                     const std::string_view n,
+                                     const std::string_view d) {
+    os << "constexpr auto cste" << n << "_" << d << " = "  //
+       << "NumericType{" << n << "}/NumericType{" << d << "};\n";
+  }  // end of writeAlgorithmConstant
+
   RungeKuttaCodeGeneratorBase::RungeKuttaCodeGeneratorBase(
       const FileDescription& f,
       const BehaviourDescription& d,
@@ -255,7 +287,8 @@ namespace mfront {
       };
       this->writeStiffnessTensorComputation(os, "this->D", bts);
     }
-    BehaviourCodeGeneratorBase::writeBehaviourLocalVariablesInitialisation(os, h);
+    BehaviourCodeGeneratorBase::writeBehaviourLocalVariablesInitialisation(os,
+                                                                           h);
   }  // end of writeBehaviourLocalVariablesInitialisation
 
   void RungeKuttaCodeGeneratorBase::writeBehaviourParserSpecificTypedefs(
@@ -267,7 +300,7 @@ namespace mfront {
       std::ostream& os, const Hypothesis h) const {
     this->checkBehaviourFile(os);
     if (this->bd.hasCode(h, BehaviourData::ComputeThermodynamicForces)) {
-      os << "bool\ncomputeThermodynamicForces(){\n"
+      os << "[[nodiscard]] bool\ncomputeThermodynamicForces(){\n"
          << "using namespace std;\n"
          << "using namespace tfel::math;\n";
       writeMaterialLaws(os, this->bd.getMaterialLaws());
@@ -278,7 +311,7 @@ namespace mfront {
          << "::computeThermodynamicForces\n\n";
     }
     if (!this->bd.getMainVariables().empty()) {
-      os << "bool\ncomputeFinalThermodynamicForces(){\n"
+      os << "[[nodiscard]] bool\ncomputeFinalThermodynamicForces(){\n"
          << "using namespace std;\n"
          << "using namespace tfel::math;\n";
       writeMaterialLaws(os, this->bd.getMaterialLaws());
@@ -288,7 +321,7 @@ namespace mfront {
          << "} // end of " << this->bd.getClassName()
          << "::computeFinalThermodynamicForces\n\n";
     }
-    os << "bool\ncomputeDerivative(){\n"
+    os << "[[nodiscard]] bool\ncomputeDerivative(){\n"
        << "using namespace std;\n"
        << "using namespace tfel::math;\n";
     writeMaterialLaws(os, this->bd.getMaterialLaws());
@@ -320,8 +353,7 @@ namespace mfront {
          << '\n'
          << "}\n\n";
     }
-  }  // end of
-     // RungeKuttaCodeGeneratorBase::writeBehaviourUpdateAuxiliaryStateVariables
+  }  // end of writeBehaviourUpdateAuxiliaryStateVariables
 
   void RungeKuttaCodeGeneratorBase::writeBehaviourEulerIntegrator(
       std::ostream& os, const Hypothesis h) const {
@@ -331,13 +363,7 @@ namespace mfront {
       os << "this->computeThermodynamicForces();\n";
     }
     os << "if(!this->computeDerivative()){\n";
-    if (this->bd.useQt()) {
-      os << "return MechanicalBehaviour<" << btype
-         << ",hypothesis, NumericType,use_qt>::FAILURE;\n";
-    } else {
-      os << "return MechanicalBehaviour<" << btype
-         << ",hypothesis, NumericType,false>::FAILURE;\n";
-    }
+    writeReturnFailure(os, this->bd);
     os << "}\n";
     for (const auto& v : d.getStateVariables()) {
       os << "this->" << v.name << " += "
@@ -370,19 +396,13 @@ namespace mfront {
           d.getCodeBlock(BehaviourData::ComputeThermodynamicForces).members;
       uvs.insert(uvs2.begin(), uvs2.end());
     }
-    os << "constexpr auto cste1_2 = NumericType{1}/NumericType{2};\n"
-       << "// Compute K1's values\n";
+    writeAlgorithmConstant(os, "1", "2");
+    os << "// Compute K1's values\n";
     if (this->bd.hasCode(h, BehaviourData::ComputeThermodynamicForces)) {
       os << "this->computeThermodynamicForces();\n";
     }
     os << "if(!this->computeDerivative()){\n";
-    if (this->bd.useQt()) {
-      os << "return MechanicalBehaviour<" << btype
-         << ",hypothesis, NumericType,use_qt>::FAILURE;\n";
-    } else {
-      os << "return MechanicalBehaviour<" << btype
-         << ",hypothesis, NumericType,false>::FAILURE;\n";
-    }
+    writeReturnFailure(os, this->bd);
     os << "}\n";
     for (const auto& v : d.getStateVariables()) {
       os << "this->d" << v.name << "_K1 = (this->dt)*(this->d" << v.name
@@ -407,13 +427,7 @@ namespace mfront {
       os << "this->computeThermodynamicForces();\n";
     }
     os << "if(!this->computeDerivative()){\n";
-    if (this->bd.useQt()) {
-      os << "return MechanicalBehaviour<" << btype
-         << ",hypothesis, NumericType,use_qt>::FAILURE;\n";
-    } else {
-      os << "return MechanicalBehaviour<" << btype
-         << ",hypothesis, NumericType,false>::FAILURE;\n";
-    }
+    writeReturnFailure(os, this->bd);
     os << "}\n";
     os << "// Final Step\n";
     for (const auto& v : d.getStateVariables()) {
@@ -484,61 +498,37 @@ namespace mfront {
       eev = ERRORSUMMATIONEVALUATION;
     }
     if (shallUpdateExternalStateValues) {
-      os << "constexpr auto cste1_2         = "
-            "NumericType{1}/NumericType{2};\n"
-         << "constexpr auto cste3_8         = "
-            "NumericType{3}/NumericType{8};\n"
-         << "constexpr auto cste12_13       = "
-            "NumericType(12)/NumericType(13);\n";
+      writeAlgorithmConstant(os, "1", "2");
+      writeAlgorithmConstant(os, "3", "8");
+      writeAlgorithmConstant(os, "12", "13");
     }
     if (shallUpdateInternalStateValues) {
-      os << "constexpr auto cste3544_2565   = "
-            "NumericType(3544)/NumericType(2565);\n"
-         << "constexpr auto cste11_40       = "
-            "NumericType(11)/NumericType(40);\n"
-         << "constexpr auto cste1859_4104   = "
-            "NumericType(1859)/NumericType(4104);\n"
-         << "constexpr auto cste8_27        = "
-            "NumericType(8)/NumericType(27);\n"
-         << "constexpr auto cste845_4104    = "
-            "NumericType(845)/NumericType(4104);\n"
-         << "constexpr auto cste3680_513    = "
-            "NumericType(3680)/NumericType(513);\n"
-         << "constexpr auto cste439_216     = "
-            "NumericType(439)/NumericType(216);\n"
-         << "constexpr auto cste7296_2197   = "
-            "NumericType(7296)/NumericType(2197);\n"
-         << "constexpr auto cste7200_2197   = "
-            "NumericType(7200)/NumericType(2197);\n"
-         << "constexpr auto cste3_32        = "
-            "NumericType{3}/NumericType{32};\n"
-         << "constexpr auto cste1932_2197   = "
-            "NumericType(1932)/NumericType(2197);\n";
+      writeAlgorithmConstant(os, "3544", "2565");
+      writeAlgorithmConstant(os, "11", "40");
+      writeAlgorithmConstant(os, "1859", "4104");
+      writeAlgorithmConstant(os, "8", "27");
+      writeAlgorithmConstant(os, "845", "4104");
+      writeAlgorithmConstant(os, "3680", "513");
+      writeAlgorithmConstant(os, "439", "216");
+      writeAlgorithmConstant(os, "7296", "2197");
+      writeAlgorithmConstant(os, "7200", "2197");
+      writeAlgorithmConstant(os, "3", "32");
+      writeAlgorithmConstant(os, "1932", "2197");
     }
-    os << "constexpr auto cste1_4         = "
-          "NumericType{1}/NumericType{4};\n"
-       << "constexpr auto cste16_135      = "
-          "NumericType(16)/NumericType(135);\n"
-       << "constexpr auto cste6656_12825  = "
-          "NumericType(6656)/NumericType(12825);\n"
-       << "constexpr auto cste28561_56430 = "
-          "NumericType(28561)/NumericType(56430);\n"
-       << "constexpr auto cste9_50        = "
-          "NumericType(9)/NumericType(50);\n"
-       << "constexpr auto cste2_55        = "
-          "NumericType(2)/NumericType(55);\n"
-       << "constexpr auto cste1_360       = "
-          "NumericType(1)/NumericType(360);\n"
-       << "constexpr auto cste128_4275    = "
-          "NumericType(128)/NumericType(4275);\n"
-       << "constexpr auto cste2197_75240  = "
-          "NumericType(2197)/NumericType(75240);\n"
-       << "constexpr auto cste1_50        = "
-          "NumericType(1)/NumericType(50);\n"
-       << "time t      = time(0);\n"
+    writeAlgorithmConstant(os, "1", "4");
+    writeAlgorithmConstant(os, "16", "135");
+    writeAlgorithmConstant(os, "6656", "12825");
+    writeAlgorithmConstant(os, "28561", "56430");
+    writeAlgorithmConstant(os, "9", "50");
+    writeAlgorithmConstant(os, "2", "55");
+    writeAlgorithmConstant(os, "1", "360");
+    writeAlgorithmConstant(os, "128", "4275");
+    writeAlgorithmConstant(os, "2197", "75240");
+    writeAlgorithmConstant(os, "1", "50");
+    os << "time t      = time(0);\n"
        << "time dt_    = this->dt;\n"
        << "time dtprec = 100* (this->dt) * "
-          "std::numeric_limits<NumericType>::epsilon();\n"
+       << "std::numeric_limits<NumericType>::epsilon();\n"
        << "auto error = NumericType{};\n"
        << "bool converged = false;\n";
     if (getDebugMode()) {
@@ -1260,10 +1250,10 @@ namespace mfront {
     for (const auto& v : d.getStateVariables()) {
       stateVarsSize += SupportedTypes::getTypeSize(v.type, v.arraySize);
     }
-    os << "constexpr auto cste1_2 = NumericType{1}/NumericType{2};\n"
-       << "constexpr auto cste1_4 = NumericType{1}/NumericType{4};\n"
-       << "constexpr auto cste1_6 = NumericType(1)/NumericType(6);\n"
-       << "time t   = time(0);\n"
+    writeAlgorithmConstant(os, "1", "2");
+    writeAlgorithmConstant(os, "1", "4");
+    writeAlgorithmConstant(os, "1", "6");
+    os << "time t   = time(0);\n"
        << "time dt_ = this->dt;\n"
        << "StressStensor sigf;\n"
        << "stress errabs;\n"
@@ -1669,10 +1659,10 @@ namespace mfront {
     for (const auto& v : d.getStateVariables()) {
       stateVarsSize += SupportedTypes::getTypeSize(v.type, v.arraySize);
     }
-    os << "constexpr auto cste1_2 = NumericType{1}/NumericType{2};\n"
-       << "constexpr auto cste1_6  = NumericType(1)/NumericType(6);\n"
-       << "constexpr auto cste1_3  = NumericType(1)/NumericType(3);\n"
-       << "time t   = time(0);\n"
+    writeAlgorithmConstant(os, "1", "2");
+    writeAlgorithmConstant(os, "1", "6");
+    writeAlgorithmConstant(os, "1", "3");
+    os << "time t   = time(0);\n"
        << "time dt_ = this->dt;\n"
        << "time dtprec = 100 * (this->dt) * "
           "std::numeric_limits<NumericType>::epsilon();\n"
@@ -2074,19 +2064,13 @@ namespace mfront {
           d.getCodeBlock(BehaviourData::ComputeThermodynamicForces).members;
       uvs.insert(uvs2.begin(), uvs2.end());
     }
-    os << "constexpr auto cste1_2 = NumericType{1}/NumericType{2};\n"
-       << "// Compute K1's values\n";
+    writeAlgorithmConstant(os, "1", "2");
+    os << "// Compute K1's values\n";
     if (this->bd.hasCode(h, BehaviourData::ComputeThermodynamicForces)) {
       os << "this->computeThermodynamicForces();\n";
     }
     os << "if(!this->computeDerivative()){\n";
-    if (this->bd.useQt()) {
-      os << "return MechanicalBehaviour<" << btype
-         << ",hypothesis, NumericType,use_qt>::FAILURE;\n";
-    } else {
-      os << "return MechanicalBehaviour<" << btype
-         << ",hypothesis, NumericType,false>::FAILURE;\n";
-    }
+    writeReturnFailure(os, this->bd);
     os << "}\n";
     for (const auto& v : d.getStateVariables()) {
       os << "this->d" << v.name << "_K1 = (this->dt)*(this->d" << v.name
@@ -2113,13 +2097,7 @@ namespace mfront {
     }
     os << "// Compute K2's values\n"
        << "if(!this->computeDerivative()){\n";
-    if (this->bd.useQt()) {
-      os << "return MechanicalBehaviour<" << btype
-         << ",hypothesis, NumericType,use_qt>::FAILURE;\n";
-    } else {
-      os << "return MechanicalBehaviour<" << btype
-         << ",hypothesis, NumericType,false>::FAILURE;\n";
-    }
+    writeReturnFailure(os, this->bd);
     os << "}\n";
     for (const auto& v : d.getStateVariables()) {
       os << "this->d" << v.name << "_K2 = (this->dt)*(this->d" << v.name
@@ -2138,13 +2116,7 @@ namespace mfront {
     }
     os << "// Compute K3's values\n"
        << "if(!this->computeDerivative()){\n";
-    if (this->bd.useQt()) {
-      os << "return MechanicalBehaviour<" << btype
-         << ",hypothesis, NumericType,use_qt>::FAILURE;\n";
-    } else {
-      os << "return MechanicalBehaviour<" << btype
-         << ",hypothesis, NumericType,false>::FAILURE;\n";
-    }
+    writeReturnFailure(os, this->bd);
     os << "}\n";
     for (const auto& v : d.getStateVariables()) {
       os << "this->d" << v.name << "_K3 = (this->dt)*(this->d" << v.name
@@ -2162,13 +2134,7 @@ namespace mfront {
     }
     os << "// Compute K4's values\n"
        << "if(!this->computeDerivative()){\n";
-    if (this->bd.useQt()) {
-      os << "return MechanicalBehaviour<" << btype
-         << ",hypothesis, NumericType,use_qt>::FAILURE;\n";
-    } else {
-      os << "return MechanicalBehaviour<" << btype
-         << ",hypothesis, NumericType,false>::FAILURE;\n";
-    }
+    writeReturnFailure(os, this->bd);
     os << "}\n";
     for (const auto& v : d.getStateVariables()) {
       os << "this->d" << v.name << "_K4 = (this->dt)*(this->d" << v.name
@@ -2199,7 +2165,7 @@ namespace mfront {
     os << "/*!\n"
        << "* \\brief Integrate behaviour law over the time step\n"
        << "*/\n"
-       << "IntegrationResult\n";
+       << "[[nodiscard]] IntegrationResult\n";
     if (this->bd.hasAttribute(h, BehaviourData::hasConsistentTangentOperator)) {
       os << "integrate(const SMFlag smflag,const SMType smt) override{\n";
     } else {
@@ -2220,14 +2186,15 @@ namespace mfront {
          BehaviourDescription::COHESIVEZONEMODEL)) {
       if (this->bd.useQt()) {
         os << "if(smflag!=MechanicalBehaviour<" << btype
-           << ",hypothesis, NumericType,use_qt>::STANDARDTANGENTOPERATOR){\n"
-           << "throw(runtime_error(\"invalid tangent operator flag\"));\n"
-           << "}\n";
+           << ",hypothesis, NumericType, "
+              "use_qt>::STANDARDTANGENTOPERATOR){\n";
+        writeReturnFailure(os, this->bd);
+        os << "}\n";
       } else {
         os << "if(smflag!=MechanicalBehaviour<" << btype
-           << ",hypothesis, NumericType,false>::STANDARDTANGENTOPERATOR){\n"
-           << "throw(runtime_error(\"invalid tangent operator flag\"));\n"
-           << "}\n";
+           << ",hypothesis, NumericType, false>::STANDARDTANGENTOPERATOR){\n";
+        writeReturnFailure(os, this->bd);
+        os << "}\n";
       }
     }
     if (this->bd.getAttribute(BehaviourData::profiling, false)) {
@@ -2271,13 +2238,7 @@ namespace mfront {
       } else {
         os << "if(!this->computeConsistentTangentOperator(smt)){\n";
       }
-      if (this->bd.useQt()) {
-        os << "return MechanicalBehaviour<" << btype
-           << ",hypothesis, NumericType,use_qt>::FAILURE;\n";
-      } else {
-        os << "return MechanicalBehaviour<" << btype
-           << ",hypothesis, NumericType,false>::FAILURE;\n";
-      }
+      writeReturnFailure(os, this->bd);
       os << "}\n";
     } else {
       os << "string msg(\"" << this->bd.getClassName() << "::integrate : \");\n"
@@ -2285,13 +2246,7 @@ namespace mfront {
          << "throw(runtime_error(msg));\n";
     }
     os << "}\n";
-    if (this->bd.useQt()) {
-      os << "return MechanicalBehaviour<" << btype
-         << ",hypothesis, NumericType,use_qt>::SUCCESS;\n";
-    } else {
-      os << "return MechanicalBehaviour<" << btype
-         << ",hypothesis, NumericType,false>::SUCCESS;\n";
-    }
+    writeReturnSuccess(os, this->bd);
     os << "} // end of " << this->bd.getClassName() << "::integrate\n\n";
   }  // end of writeBehaviourIntegrator
 
