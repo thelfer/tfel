@@ -142,7 +142,7 @@ namespace tfel::material {
      * factor is used to decrease the time step if the integration
      * failed.
      */
-    virtual typename TFELTypes::time getMinimalTimeStepScalingFactor()
+    virtual typename TFELTypes::real getMinimalTimeStepScalingFactor()
         const = 0;
     /*!
      * \param[in] dt: time step scaling factor proposed by the calling code
@@ -160,9 +160,9 @@ namespace tfel::material {
      * give such a time step scaling factor. If not, behaviours
      * may return the NumType(1) value.
      */
-    virtual std::pair<bool, typename TFELTypes::time>
+    virtual std::pair<bool, typename TFELTypes::real>
     computeAPrioriTimeStepScalingFactor(
-        const typename TFELTypes::time) const = 0;
+        const typename TFELTypes::real) const = 0;
     /*!
      * \brief determine the value of the internal state variables at
      * the end of the time step
@@ -187,9 +187,9 @@ namespace tfel::material {
      * give such a time step scaling factor. If not, behaviours
      * may return the NumType(1) value.
      */
-    virtual std::pair<bool, typename TFELTypes::time>
+    virtual std::pair<bool, typename TFELTypes::real>
     computeAPosterioriTimeStepScalingFactor(
-        const typename TFELTypes::time) const = 0;
+        const typename TFELTypes::real) const = 0;
     //! destructor
     virtual ~MechanicalBehaviour() noexcept = default;
   };

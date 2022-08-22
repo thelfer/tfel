@@ -112,6 +112,13 @@ namespace mfront {
   }  // end of getOverridenParameters
 
   void ModelDSLCommon::endsInputFileProcessing() {
+    if (this->md.modelName.empty()) {
+      tfel::raise(
+          "ModelDSLCommon::endsInputFileProcessing: "
+          "model name undefined");
+      }
+    // complete the declaration of physical bounds
+    this->md.checkAndCompletePhysicalBoundsDeclaration();
   }  // end of endsInputFileProcessing
 
   bool ModelDSLCommon::useQt() const {
@@ -387,6 +394,22 @@ namespace mfront {
     return is(this->md.outputs, v);
   }  // end of isInputVariable()
 
+  std::map<std::string, std::string> ModelDSLCommon::getSymbols() {
+    auto symbols = std::map<std::string, std::string>{};
+    auto filtered_inputs = VariableDescriptionContainer{};
+    std::copy_if(
+        this->md.inputs.begin(), this->md.inputs.end(),
+        std::back_inserter(filtered_inputs), [](const VariableDescription& v) {
+          if (!v.hasAttribute(VariableDescription::depth)) {
+            return false;
+          }
+          return v.getAttribute<unsigned short>(VariableDescription::depth) > 0;
+        });
+    mfront::getIncrementSymbols(symbols, filtered_inputs);
+    mfront::addSymbol(symbols, "\u0394t", "dt");
+    return symbols;
+  }  // end of getSymbols
+
   void ModelDSLCommon::treatFunction() {
     auto throw_if = [this](const bool b, const std::string& m) {
       if (b) {
@@ -411,6 +434,17 @@ namespace mfront {
       }
       return false;
     };
+    const auto symbols = this->getSymbols();
+    auto demangle = [&symbols](const tfel::utilities::Token& t) {
+      if (t.flag != tfel::utilities::Token::Standard) {
+        return t.value;
+      }
+      const auto p = symbols.find(t.value);
+      if (p != symbols.end()) {
+        return p->second;
+      }
+      return tfel::unicode::getMangledString(t.value);
+    };
     ModelDescription::Function f;
     unsigned int openedBrackets = 0;
     unsigned int openedParenthesis = 0;
@@ -418,7 +452,7 @@ namespace mfront {
     this->md.registerMemberName("functor" +
                                 std::to_string(this->md.functions.size()));
     this->checkNotEndOfFile("ModelDSLCommon::treatFunction");
-    f.name = this->current->value;
+    f.name = demangle(*(this->current));
     throw_if(!this->isValidIdentifier(f.name),
              "function name '" + f.name + "' is not valid");
     this->md.registerMemberName(f.name);
@@ -471,7 +505,7 @@ namespace mfront {
         if (!newLine) {
           f.body += " ";
         }
-        const auto c = tfel::unicode::getMangledString(this->current->value);
+        const auto c = demangle(*(this->current));
         if (isStaticMemberName(this->md, c)) {
           f.body += "(" + this->md.className + ":: " + c + ")";
         } else if (isMemberName(this->md, c)) {

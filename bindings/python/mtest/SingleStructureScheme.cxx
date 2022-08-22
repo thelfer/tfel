@@ -248,6 +248,12 @@ void declareSingleStructureScheme() {
            "* The second argument (string) is the path to the "
            "dynamic library which implement the selected behaviour.\n"
            "* The third argument (string) is the name of the function.")
+      .def("setModel", ptr1)
+      .def("setModel", ptr2)
+      .def("setModel", SingleStructureScheme_setBehaviour,
+           "see the documentation of the setBehaviour method")
+      .def("setModel", SingleStructureScheme_setBehaviour2,
+           "see the documentation of the setBehaviour method")
       .def("handleThermalExpansion",
            &SingleStructureScheme::setHandleThermalExpansion,
            "This method override the (de)activation of the thermal "
@@ -413,5 +419,13 @@ void declareSingleStructureScheme() {
       .def("setInternalStateVariableInitialValue",
            SingleStructureScheme_setInternalStateVariableInitialValue2,
            "This method allow to specify the initial  value of an "
-           "internal state variable.");
+           "internal state variable.")
+      .def("setStateVariableInitialValue",
+           SingleStructureScheme_setInternalStateVariableInitialValue1,
+           "see the doumentation of the "
+           "setInternalStateVariableInitialValue method")
+      .def("setStateVariableInitialValue",
+           SingleStructureScheme_setInternalStateVariableInitialValue2,
+           "see the doumentation of the "
+           "setInternalStateVariableInitialValue method");
 }

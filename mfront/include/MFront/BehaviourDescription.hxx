@@ -267,7 +267,7 @@ namespace mfront {
      */
     bool allowsNewUserDefinedVariables() const;
     //! \brief check and complete the physical bounds of variables
-    void checkAndComplePhysicalBoundsDeclaration();
+    void checkAndCompletePhysicalBoundsDeclaration();
     //! \brief disallow the declaration of user defined variables
     void disallowNewUserDefinedVariables();
     //! \brief set if dynamically allocated vectors are allowed

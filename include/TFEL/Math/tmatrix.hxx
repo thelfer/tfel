@@ -139,18 +139,13 @@ namespace tfel::math::internals {
     //! \brief a simple alias
     using DerivativeType =
         tfel::math::derivative_type<FunctionType, VariableType>;
-    //! \brief a simple alias
-    using UnitType = typename QuantityTraits<DerivativeType>::UnitType;
-    //! \brief a simple alias
-    using ValueType = typename QuantityTraits<DerivativeType>::ValueType;
 
    public:
     //! \brief result of the metafunction
     using type = std::conditional_t<
-        tfel::math::isQuantity<
-            tfel::math::derivative_type<FunctionType, VariableType>>(),
-        tfel::math::qt_ref<UnitType, ValueType>,
-        tfel::math::derivative_type<FunctionType, VariableType>&>;
+        tfel::math::isQuantity<DerivativeType>(),
+        typename tfel::math::MakeQuantityReferenceType<DerivativeType>::type,
+        DerivativeType&>;
   };  // end of BuildDerivativeViewFromTinyMatrixImplementation
 
   /*!

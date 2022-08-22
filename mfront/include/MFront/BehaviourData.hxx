@@ -327,7 +327,7 @@ namespace mfront {
      * \brief check and complete the physical bounds of variables
      * \param[in] s: unit system
      */
-    void checkAndComplePhysicalBoundsDeclaration(const std::string_view);
+    void checkAndCompletePhysicalBoundsDeclaration(const std::string_view);
     /*!
      * This method has been introduced to optimize the mechanical
      * resolution in licos : a purely implicit resolution only

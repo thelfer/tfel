@@ -149,7 +149,8 @@ namespace mfront {
        << "extern \"C\"{\n"
        << "#endif /* __cplusplus */\n\n";
 
-    if (hasRealParameters(md)) {
+    if ((hasRealParameters(md)) &&
+        (!areParametersTreatedAsStaticVariables(md))) {
       os << "/*!\n"
          << " * \\brief function allowing to modify the parameters of the "
          << name << " model\n"
@@ -204,6 +205,7 @@ namespace mfront {
     const auto src = name + "-generic.cxx";
     const auto cn = md.className + "RealParametersInitializer";
     std::ofstream os("src/" + src);
+    os.precision(14);
     if (!os) {
       raise("could not open file '" + src + "'");
     }
@@ -223,6 +225,7 @@ namespace mfront {
     if (useQuantities(md)) {
       os << "#include \"TFEL/Math/qt.hxx\"\n";
     }
+    os << "#include \"TFEL/Material/BoundsCheck.hxx\"\n";
     os << "#include \"MFront/GenericBehaviour/Integrate.hxx\"\n\n"
        << "#include \"MFront/GenericModel/" << header << "\"\n\n";
     //
@@ -249,7 +252,8 @@ namespace mfront {
     //
     os << "namespace mfront::gm{\n\n";
     //
-    if (hasRealParameters(md)) {
+    if ((hasRealParameters(md)) &&
+        (!areParametersTreatedAsStaticVariables(md))) {
       os << "struct " << cn << "{\n";
       writeScalarStandardTypedefs(os, md);
       os << '\n';
@@ -313,6 +317,9 @@ namespace mfront {
         os << "using PhysicalConstants [[maybe_unused]] = "
            << "tfel::PhysicalConstants<NumericType, false>;\n";
       }
+      const auto policy = getDefaultOutOfBoundsPolicyAsString(md);
+      os << "[[maybe_unused]] constexpr const auto policy = "
+         << "tfel::material::" << policy << ";\n";
       if (f.useTimeIncrement) {
         os << "const auto dt = time{mfront_model_data.dt};\n";
       }
@@ -347,16 +354,70 @@ namespace mfront {
              << "]};\n";
         }
       }
+      auto write_physical_bounds = [&os, &raise](const VariableDescription& v,
+                                                 const std::string& n,
+                                                 const unsigned short vdepth) {
+        if (!v.isScalar()) {
+          raise("only scalar variable are supported");
+        }
+        writePhysicalBoundsChecks(os, v, n, "1u", false, false);
+        if (vdepth == 1u) {
+          writePhysicalBoundsChecks(os, v, v.name + "_1", "1u", false, false);
+        }
+      };
+      for (const auto& mv : f.usedVariables) {
+        const auto [n, vdepth] = md.decomposeVariableName(mv);
+        if (md.outputs.contains(n)) {
+          const auto& v = md.outputs.getVariable(n);
+          write_physical_bounds(v, v.name, vdepth);
+        }
+        if (md.inputs.contains(n)) {
+          const auto& v = md.inputs.getVariable(n);
+          write_physical_bounds(v, v.name, vdepth);
+        }
+      }
+      for (const auto& p : md.parameters) {
+        write_physical_bounds(p, p.name, 0u);
+      }
+      //
+      auto write_bounds = [&os, &raise](const VariableDescription& v,
+                                        const std::string& n,
+                                        const unsigned short vdepth) {
+        if (!v.isScalar()) {
+          raise("only scalar variable are supported");
+        }
+        writeBoundsChecks(os, v, n, "1u", "policy", false, false);
+        if (vdepth == 1u) {
+          writeBoundsChecks(os, v, v.name + "_1", "1u", "policy", false, false);
+        }
+      };
+      for (const auto& mv : f.usedVariables) {
+        const auto [n, vdepth] = md.decomposeVariableName(mv);
+        if (md.outputs.contains(n)) {
+          const auto& v = md.outputs.getVariable(n);
+          write_bounds(v, v.name, vdepth);
+        }
+        if (md.inputs.contains(n)) {
+          const auto& v = md.inputs.getVariable(n);
+          write_bounds(v, v.name, vdepth);
+        }
+      }
+      for (const auto& p : md.parameters) {
+        write_bounds(p, p.name, 0u);
+      }
+      //
       os << f.body << '\n';
       for (const auto& mv : f.modifiedVariables) {
         const auto [n, vdepth] = md.decomposeVariableName(mv);
         const auto& v = md.outputs.getVariable(mv);
+        const auto pos = getVariablePosition(md.outputs, mv);
         os << "tfel::math::map<" << v.type
-           << ">(mfront_model_data.s1.internal_state_variables[0]) = " << v.name
-           << ";\n";
-      }
-      os << "} // end of execute_" << f.name << "\n\n";
-    }
+           << ">(mfront_model_data.s1.internal_state_variables[" << pos
+           << "]) = " << v.name << ";\n";
+        static_cast<void>(vdepth);
+          }
+          os << "} // end of execute_" << f.name << "\n\n";
+        }
     os << "private:\n";
     if (!md.members.empty()) {
       os << md.members << "\n\n";
@@ -426,11 +487,12 @@ namespace mfront {
        << "}\n\n";
     os << "} // end of namespace mfront::gm\n\n";
     //
-    if (hasRealParameters(md)) {
+    if ((hasRealParameters(md)) &&
+        (!areParametersTreatedAsStaticVariables(md))) {
       os << "MFRONT_SHAREDOBJ int\n"
-         << name << "_setParameter(const char *const n, const double v){\n"
-         << "auto& parameters = mfront::gm::" << cn << "::get();\n";
+         << name << "_setParameter(const char *const n, const double v){\n";
       writeScalarStandardTypedefs(os, md);
+      os << "auto& parameters = mfront::gm::" << cn << "::get();\n";
       auto first = true;
       for (const auto& p : md.parameters) {
         if (!isRealParameter(p)) {
@@ -440,11 +502,11 @@ namespace mfront {
         os << (first ? "if" : "} else if")  //
            << "(std::strcmp(\"" << en << "\", n) == 0){\n"
            << "parameters." << p.name << " = " << p.type << "{v};\n"
-           << "return 0;\n";
+           << "return 1;\n";
         first = false;
       }
       os << "}\n"
-         << "return -1;\n"
+         << "return 0;\n"
          << "} // end of " << name << "_setParameter\n\n";
     }
     //

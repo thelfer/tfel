@@ -19,6 +19,34 @@ eqnPrefixTemplate: "($$i$$)"
 
 # Issues fixed
 
+## Issue 288: [TFEL/Math] The quantity metafunction shall work with a qt<NoUnit, ValueType> as argument
+
+For more details, see <https://github.com/thelfer/tfel/issues/288>
+
+## Issue 286: [mfront] computation of the time step scalor factor is broken when using quantities
+
+For more details, see <https://github.com/thelfer/tfel/issues/286>
+
+## Issue #283: [mfront] Array of parameters is broken with the AbaqusExplicit interface if quantities are used
+
+For more details, see <https://github.com/thelfer/tfel/issues/283>
+
+## Issue #281: [mfront] Tangent operator blocks associated with derivatives of scalars by scalars are ill defined when quantities are used
+
+For more details, see <https://github.com/thelfer/tfel/issues/281>
+
+## Issue #280: [mfront] the @UpdateAuxiliaryStateVariables is broken in the RungeKutta DSLs when using quantities
+
+For more details, see <https://github.com/thelfer/tfel/issues/280>
+
+## Issue #279: [mfront] bounds checks are broken when using quantities
+
+For more details, see <https://github.com/thelfer/tfel/issues/279>
+
+## Issue #275: [mtest] `MTest` segfaults with generic behaviours having additional tangent operator blocks
+
+For more details, see <https://github.com/thelfer/tfel/issues/275>
+
 ## Issue #257: [mfront] Warnings in behavior
 
 For more details, see <https://github.com/thelfer/tfel/issues/257>

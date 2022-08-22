@@ -54,35 +54,10 @@ namespace mfront {
     ~ImplicitDSLBase() override;
 
    protected:
-    /*!
-     * \brief a structure describing a view of a derivative in a tiny matrix.
-     */
-    struct DerivativeViewDescription {
-      //! \brief name of the view to be created
-      std::string derivative_name;
-      //! \brief name of the matrix frow which the view is created
-      std::string matrix_name;
-      //! \brief variable which is derivatived
-      VariableDescription first_variable;
-      //! \brief variable with respect to which the derivation is made
-      VariableDescription second_variable;
-      //! \brief number of rows of the matrix
-      SupportedTypes::TypeSize matrix_number_of_rows;
-      //! \brief number of columns of the matrix
-      SupportedTypes::TypeSize matrix_number_of_columns;
-      //! \brief row at which the view starts
-      SupportedTypes::TypeSize derivative_row_position;
-      //! \brief column at which the view starts
-      SupportedTypes::TypeSize derivative_column_position;
-    };  // end of struct DerivativeViewDescription
 
     virtual void predictorAnalyser(const Hypothesis, const std::string&);
 
     virtual void integratorAnalyser(const Hypothesis, const std::string&);
-
-    std::string tangentOperatorVariableModifier(const Hypothesis,
-                                                const std::string&,
-                                                const bool) override;
 
     virtual std::string integratorVariableModifier(const Hypothesis,
                                                    const std::string&,
@@ -93,6 +68,13 @@ namespace mfront {
 
     virtual std::string computeThermodynamicForcesVariableModifier2(
         const Hypothesis, const std::string&, const bool);
+
+    std::string tangentOperatorVariableModifier(const Hypothesis,
+                                                const std::string&,
+                                                const bool) override;
+
+    std::unique_ptr<AbstractBehaviourCodeGenerator> getCodeGenerator()
+        const override;
     /*!
      * treat an unknown keyword. This method is overriden so the
      * solver may have specific keywords
@@ -122,61 +104,6 @@ namespace mfront {
     void completeVariableDeclaration() override;
 
     void endsInputFileProcessing() override;
-
-    /*!
-     * \brief write the declaration and initialisation of the view of a
-     * derivative in a matrix
-     * \param[in,out] os: output stream
-     * \param[in] d: description of the derivative' view
-     */
-    virtual void writeDerivativeView(std::ostream&,
-                                     const DerivativeViewDescription&) const;
-
-    void writeBehaviourFriends(std::ostream&, const Hypothesis) const override;
-
-    void writeBehaviourLocalVariablesInitialisation(
-        std::ostream&, const Hypothesis) const override;
-
-    void writeBehaviourIntegrator(std::ostream&,
-                                  const Hypothesis) const override;
-
-    virtual void writeComputeFdF(std::ostream&, const Hypothesis) const;
-
-    void writeBehaviourParserSpecificInheritanceRelationship(
-        std::ostream&, const Hypothesis) const override;
-
-    void writeBehaviourParserSpecificIncludes(std::ostream&) const override;
-
-    void writeBehaviourParserSpecificTypedefs(std::ostream&) const override;
-
-    void writeBehaviourParserSpecificMembers(std::ostream&,
-                                             const Hypothesis) const override;
-
-    void writeBehaviourIntegrationVariablesIncrements(
-        std::ostream&, const Hypothesis) const override;
-
-    std::string getLocalVariablesInitializers(const Hypothesis) const override;
-
-    std::string getIntegrationVariablesIncrementsInitializers(
-        const Hypothesis) const override;
-
-    void writeBehaviourParserSpecificInitializeMethodPart(
-        std::ostream&, const Hypothesis) const override;
-
-    virtual void writeComputeNumericalJacobian(std::ostream&,
-                                               const Hypothesis) const;
-
-    void writeBehaviourComputeTangentOperatorBody(
-        std::ostream&, const Hypothesis, const std::string&) const override;
-    /*!
-     * \brief write the `computePartialJacobianInvert` methods. Those methods
-     * may be
-     * used to compute the consistent tangent operator.
-     * \param[in] os: output stream
-     * \param[in] h: modelling hypothesis
-     */
-    virtual void writeComputePartialJacobianInvert(std::ostream&,
-                                                   const Hypothesis) const;
     //! \brief treat the `@Theta` keyword
     virtual void treatTheta();
     //! \brief treat the `@IterMax` keyword

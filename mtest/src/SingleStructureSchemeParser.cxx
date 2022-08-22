@@ -471,6 +471,9 @@ namespace mtest {
         "@InternalStateVariable",
         &SingleStructureSchemeParser::handleInternalStateVariable);
     this->registerCallBack(
+        "@StateVariable",
+        &SingleStructureSchemeParser::handleInternalStateVariable);
+    this->registerCallBack(
         "@ExternalStateVariable",
         &SingleStructureSchemeParser::handleExternalStateVariable);
     this->registerCallBack(

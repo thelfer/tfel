@@ -41,7 +41,6 @@ nobase_include_HEADERS= MFront/MFront.hxx                                     \
 			MFront/BehaviourDSLDescription.hxx                                \
 			MFront/AbstractBehaviourDSL.hxx                                   \
 			MFront/BehaviourDSLCommon.hxx                                     \
-			MFront/BehaviourDSLCommon.ixx                                     \
 			MFront/BehaviourDSLBase.hxx                                       \
 			MFront/BehaviourDSLBase.ixx                                       \
 			MFront/DSLFactory.hxx                                             \
@@ -104,35 +103,36 @@ nobase_include_HEADERS= MFront/MFront.hxx                                     \
 			MFront/GenericModelInterface.hxx                                  \
             MFront/SymbolsGenerator.hxx                                       \
             MFront/GenericBehaviourSymbolsGenerator.hxx                       \
-			MFront/MTestFileGeneratorBase.hxx                                            \
-			MFront/UmatSmallStrainMTestFileGenerator.hxx                                 \
-			MFront/UmatFiniteStrainMTestFileGenerator.hxx                                \
-			MFront/GenericBehaviourSmallStrainMTestFileGenerator.hxx                     \
-			MFront/GenericBehaviourFiniteStrainMTestFileGenerator.hxx                    \
-			MFront/MFrontTemplateGenerationOptions.hxx                                   \
-			MFront/BehaviourBrickDescription.hxx                                         \
-			MFront/AbstractBehaviourBrick.hxx                                            \
-			MFront/BehaviourBrickBase.hxx                                                \
-			MFront/BehaviourBrickFactory.hxx                                             \
-			MFront/BehaviourBrick/OptionDescription.hxx                                  \
-			MFront/BehaviourBrick/BrickUtilities.hxx                                     \
-			MFront/BehaviourBrick/BrickUtilities.ixx                                     \
-			MFront/BehaviourBrick/PorosityEvolutionAlgorithm.hxx                         \
-			MFront/BehaviourBrick/StressPotential.hxx                                    \
-			MFront/BehaviourBrick/HookeStressPotentialBase.hxx                           \
-			MFront/BehaviourBrick/HookeStressPotential.hxx                               \
-			MFront/BehaviourBrick/DDIF2StressPotential.hxx                               \
-			MFront/BehaviourBrick/IsotropicDamageHookeStressPotentialBase.hxx            \
-			MFront/BehaviourBrick/IsotropicDamageHookeStressPotential.hxx                \
-			MFront/BehaviourBrick/StressPotentialFactory.hxx                             \
-			MFront/BehaviourBrick/InelasticFlowFactory.hxx                               \
-			MFront/BehaviourBrick/InelasticFlow.hxx                                      \
-			MFront/BehaviourBrick/InelasticFlowBase.hxx                                  \
-			MFront/BehaviourBrick/ViscoplasticFlowBase.hxx                               \
-			MFront/BehaviourBrick/NortonHoffViscoplasticFlow.hxx                         \
-			MFront/BehaviourBrick/HyperbolicSineViscoplasticFlow.hxx                     \
-			MFront/BehaviourBrick/UserDefinedViscoplasticFlow.hxx                        \
-			MFront/BehaviourBrick/PlasticInelasticFlow.hxx                               \
+			MFront/MTestFileGeneratorBase.hxx                                 \
+			MFront/UmatSmallStrainMTestFileGenerator.hxx                      \
+			MFront/UmatFiniteStrainMTestFileGenerator.hxx                     \
+			MFront/GenericBehaviourMTestFileGenerator.hxx                     \
+			MFront/GenericBehaviourSmallStrainMTestFileGenerator.hxx          \
+			MFront/GenericBehaviourFiniteStrainMTestFileGenerator.hxx         \
+			MFront/MFrontTemplateGenerationOptions.hxx                        \
+			MFront/BehaviourBrickDescription.hxx                              \
+			MFront/AbstractBehaviourBrick.hxx                                 \
+			MFront/BehaviourBrickBase.hxx                                     \
+			MFront/BehaviourBrickFactory.hxx                                  \
+			MFront/BehaviourBrick/OptionDescription.hxx                       \
+			MFront/BehaviourBrick/BrickUtilities.hxx                          \
+			MFront/BehaviourBrick/BrickUtilities.ixx                          \
+			MFront/BehaviourBrick/PorosityEvolutionAlgorithm.hxx              \
+			MFront/BehaviourBrick/StressPotential.hxx                         \
+			MFront/BehaviourBrick/HookeStressPotentialBase.hxx                \
+			MFront/BehaviourBrick/HookeStressPotential.hxx                    \
+			MFront/BehaviourBrick/DDIF2StressPotential.hxx                    \
+			MFront/BehaviourBrick/IsotropicDamageHookeStressPotentialBase.hxx \
+			MFront/BehaviourBrick/IsotropicDamageHookeStressPotential.hxx     \
+			MFront/BehaviourBrick/StressPotentialFactory.hxx                  \
+			MFront/BehaviourBrick/InelasticFlowFactory.hxx                    \
+			MFront/BehaviourBrick/InelasticFlow.hxx                           \
+			MFront/BehaviourBrick/InelasticFlowBase.hxx                       \
+			MFront/BehaviourBrick/ViscoplasticFlowBase.hxx                    \
+			MFront/BehaviourBrick/NortonHoffViscoplasticFlow.hxx              \
+			MFront/BehaviourBrick/HyperbolicSineViscoplasticFlow.hxx          \
+			MFront/BehaviourBrick/UserDefinedViscoplasticFlow.hxx             \
+			MFront/BehaviourBrick/PlasticInelasticFlow.hxx                    \
 			MFront/BehaviourBrick/HarmonicSumOfNortonHoffViscoplasticFlows.hxx           \
 			MFront/BehaviourBrick/PorosityNucleationModelFactory.hxx                     \
 			MFront/BehaviourBrick/PorosityNucleationModel.hxx                            \
@@ -228,7 +228,19 @@ nobase_noinst_HEADERS = MFront/IsotropicBehaviourDSLBase.hxx                    
 			MFront/ImplicitModelDSL.hxx                                   \
 			MFront/NewtonRaphsonSolvers.hxx                               \
 			MFront/FiniteStrainBehaviourTangentOperatorConversion.hxx     \
-			MFront/FiniteStrainBehaviourTangentOperatorConversionPath.hxx
+			MFront/FiniteStrainBehaviourTangentOperatorConversionPath.hxx \
+			MFront/AbstractBehaviourCodeGenerator.hxx                     \
+			MFront/BehaviourCodeGeneratorBase.hxx                         \
+			MFront/DefaultCodeGeneratorBase.hxx                           \
+			MFront/DefaultCZMCodeGenerator.hxx                            \
+			MFront/DefaultFiniteStrainCodeGenerator.hxx                   \
+			MFront/RungeKuttaCodeGeneratorBase.hxx                        \
+			MFront/ImplicitCodeGeneratorBase.hxx                          \
+			MFront/IsotropicBehaviourCodeGeneratorBase.hxx                \
+			MFront/IsotropicStrainHardeningMisesCreepCodeGenerator.hxx    \
+			MFront/IsotropicMisesPlasticFlowCodeGenerator.hxx             \
+			MFront/IsotropicMisesCreepCodeGenerator.hxx                   \
+			MFront/MultipleIsotropicMisesFlowsCodeGenerator.hxx
 
 nobase_noinst_HEADERS += MFront/CMaterialPropertyInterfaceBase.hxx          \
 			 MFront/CMaterialPropertyInterface.hxx              \

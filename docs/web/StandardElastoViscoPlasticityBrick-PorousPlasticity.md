@@ -262,9 +262,13 @@ Different stress criteria implemented in the brick are described below.
 
 \[\sstar = \sqrt{\sigma_{vM}^{2} + 9 f  \sigma_m^2} \]
 
-where $\displaystyle{\sigma_{vM} = \sqrt{\dfrac{3}{2} \tenseur{s} : \tenseur{s}}}$ is the von Mises equivalent stress, and $\displaystyle{\sigma_m = \dfrac{1}{3}\trace{\tsigma}}$ the mean stress.
+where $\displaystyle{\sigma_{vM} = \sqrt{\dfrac{3}{2} \tenseur{s} :
+\tenseur{s}}}$ is the von Mises equivalent stress, and
+$\displaystyle{\sigma_m = \dfrac{1}{3}\trace{\tsigma}}$ the mean stress.
 
-> **Note** This model is a particular case of [@fritzen_computational_2013] and is implemented mainly as a simple working example of a porous stress criterion. 
+> **Note** This model is a particular case of
+> [@fritzen_computational_2013] and is implemented mainly as a simple
+> working example of a porous stress criterion.
 -->
 
 - **Gurson-Tvergaard-Needleman** [@tvergaardneedleman1984]
@@ -272,8 +276,9 @@ where $\displaystyle{\sigma_{vM} = \sqrt{\dfrac{3}{2} \tenseur{s} : \tenseur{s}}
 \[
  S = \paren{\dfrac{\sigma_{vM}}{\sstar} }^2 + 2 q_1 f_{\star} \cosh{\paren{\dfrac{3}{2} q_2 \dfrac{\sigma_m}{\sstar}    }} - 1 - q_3 f_{\star}^2  = 0
 \] {#eq:mfront:porous_plasticity:GTN:S}
-
-which defines implicitly $\sigma_{\star}$, where $\sigma_{vM}$ is the von Mises equivalent stress, and $\sigma_m$ the mean stress. $f_{\star}$ is defined such that :
+which defines implicitly $\sigma_{\star}$, where $\sigma_{vM}$ is the
+von Mises equivalent stress, and $\sigma_m$ the mean stress. $f_{\star}$
+is defined such that:
 
 \[
 f_{\star} = \left\{
@@ -281,23 +286,26 @@ f_{\star} = \left\{
 \delta f & \mbox{if } f < f_c \\
 f_c + \delta (f - f_c)  & \mbox{otherwise}
 \end{array}
-\right. \]
-
-and :
-
+\right.
+\]
+and:
 \[
 \delta = \left\{
 \begin{array}{ll}
 1 & \mbox{if } f < f_c \\
-\dfrac{\dfrac{1}{q_1} - f_c }{f_r - f_c}   & \mbox{otherwise}
+\dfrac{f_u- f_c }{f_r - f_c}   & \mbox{otherwise}
 \end{array}
-\right. \]
+\right.
+\]
+where \(f_{u}\) is the root of \(2\,q_1\,f-1-q_3\,f^{2}\).
 
 The parameters of the model are:
 
 \[\left\{q_1,q_2,q_3,f_c,f_r \right\} \]
 
-For $\left\{q_1,q_2,q_3,f_c,f_r \right\} = \left\{1,1,1,+\infty,-\right\}$, Gurson-Tvergaard-Needleman model reduces to the Gurson model [@gurson1977] which has no free parameter.
+For $\left\{q_1,q_2,q_3,f_c,f_r \right\} =
+\left\{1,1,1,+\infty,-\right\}$, Gurson-Tvergaard-Needleman model
+reduces to the Gurson model [@gurson1977] which has no free parameter.
 
 - **Rousselier-Tanguy-Besson** [@tanguybesson2002]
 

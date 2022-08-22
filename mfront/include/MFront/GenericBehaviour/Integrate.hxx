@@ -217,7 +217,9 @@ namespace mfront::gb {
       }
       return Behaviour::TANGENTOPERATOR;
     }();
-    b.computePredictionOperator(f, smt);
+    if (!b.computePredictionOperator(f, smt)) {
+      return -1;
+    }
     exportTangentOperator(d.K, b.getTangentOperator());
     return 1;
   }  // end of computePredictionOperator
@@ -310,10 +312,10 @@ namespace mfront::gb {
                                   DoNothingEnergyComputer>::type;
     using speed = typename Behaviour::speed;
     using massdensity = typename Behaviour::massdensity;
-    using time = typename Behaviour::time;
+    using behaviour_real_type = typename Behaviour::real;
     Behaviour b(d);
     b.setOutOfBoundsPolicy(p);
-    auto&& rdt = tfel::math::map<time>(d.rdt);
+    auto&& rdt = tfel::math::map<behaviour_real_type>(d.rdt);
     try {
       b.initialize();
       b.checkBounds();
@@ -383,7 +385,7 @@ namespace mfront::gb {
       rdt = b.getMinimalTimeStepScalingFactor();
       return -1;
     }
-    return rdt < time(0.99) ? 0 : 1;
+    return rdt < behaviour_real_type{0.99} ? 0 : 1;
   }  // end of integrate
 
   /*!

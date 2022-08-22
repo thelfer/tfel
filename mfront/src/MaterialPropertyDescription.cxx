@@ -313,14 +313,14 @@ namespace mfront {
     return this->reservedNames.count(n) != 0;
   }
 
-  void MaterialPropertyDescription::checkAndComplePhysicalBoundsDeclaration() {
+  void MaterialPropertyDescription::checkAndCompletePhysicalBoundsDeclaration() {
     if (this->hasUnitSystem()) {
       const auto& s = this->getUnitSystem();
-      mfront::checkAndComplePhysicalBoundsDeclaration(this->output, s);
-      mfront::checkAndComplePhysicalBoundsDeclaration(this->inputs, s);
-      mfront::checkAndComplePhysicalBoundsDeclaration(this->parameters, s);
+      mfront::checkAndCompletePhysicalBoundsDeclaration(this->output, s);
+      mfront::checkAndCompletePhysicalBoundsDeclaration(this->inputs, s);
+      mfront::checkAndCompletePhysicalBoundsDeclaration(this->parameters, s);
     }
-  }  // end of checkAndComplePhysicalBoundsDeclaration
+  }  // end of checkAndCompletePhysicalBoundsDeclaration
 
   MaterialPropertyDescription::~MaterialPropertyDescription() = default;
 

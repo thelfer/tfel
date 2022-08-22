@@ -120,6 +120,24 @@ namespace mfront {
     virtual ~MTestFileGeneratorBase();
 
    protected:
+    /*!
+     * \return the names of the components of a vector
+     * \param[in] n: name of the vector
+     */
+    virtual std::vector<std::string> getTVectorComponentsNames(
+        const std::string& = "") const;
+    /*!
+     * \return the names of the components of a symmetric tensor
+     * \param[in] n: name of the symmetric tensor
+     */
+    virtual std::vector<std::string> getStensorComponentsNames(
+        const std::string& = "") const;
+    /*!
+     * \return the names of the components of a tensor
+     * \param[in] n: name of the tensor
+     */
+    virtual std::vector<std::string> getTensorComponentsNames(
+        const std::string& = "") const;
     //! \return the names of the components of the strain tensor
     virtual std::vector<std::string> getStrainComponentsNames() const;
     //! \return the names of the components of the deformation gradient

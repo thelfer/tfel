@@ -18,7 +18,7 @@
 
 namespace mfront::gb {
 
-  //! a simple alias
+  //! \brief a simple alias
   using real = ::mfront_gb_real;
 
 }  // namespace mfront::gb

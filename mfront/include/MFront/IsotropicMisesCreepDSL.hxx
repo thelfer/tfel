@@ -38,17 +38,8 @@ namespace mfront {
     ~IsotropicMisesCreepDSL() override;
 
    protected:
-    void writeBehaviourParserSpecificInitializeMethodPart(
-        std::ostream&, const Hypothesis) const override;
-
-    void writeBehaviourParserSpecificMembers(std::ostream&,
-                                             const Hypothesis) const override;
-
-    void writeBehaviourIntegrator(std::ostream&,
-                                  const Hypothesis) const override;
-
-    void writeBehaviourComputeTangentOperator(std::ostream&,
-                                              const Hypothesis) const override;
+    std::unique_ptr<AbstractBehaviourCodeGenerator> getCodeGenerator()
+        const override;
   };
 
 }  // end of namespace mfront

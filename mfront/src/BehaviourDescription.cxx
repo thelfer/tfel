@@ -485,15 +485,15 @@ namespace mfront {
     this->setAttribute(uh, BehaviourData::allowsNewUserDefinedVariables, false);
   }  // end of disallowNewUserDefinedVariables
 
-  void BehaviourDescription::checkAndComplePhysicalBoundsDeclaration() {
+  void BehaviourDescription::checkAndCompletePhysicalBoundsDeclaration() {
     if (this->hasUnitSystem()) {
-      this->d.checkAndComplePhysicalBoundsDeclaration(this->getUnitSystem());
+      this->d.checkAndCompletePhysicalBoundsDeclaration(this->getUnitSystem());
       for (const auto& bd : this->sd) {
-        bd.second->checkAndComplePhysicalBoundsDeclaration(
+        bd.second->checkAndCompletePhysicalBoundsDeclaration(
             this->getUnitSystem());
       }
     }
-  }  // end of checkAndComplePhysicalBoundsDeclaration
+  }  // end of checkAndCompletePhysicalBoundsDeclaration
 
   void BehaviourDescription::throwUndefinedAttribute(const std::string& n) {
     tfel::raise(

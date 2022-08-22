@@ -350,7 +350,9 @@ namespace mfront {
     if (!includes.empty()) {
       os << includes << "\n\n";
     }
+
     writeMaterialPropertyParametersHandler(os, mpd, name, "double", iname);
+
     os << "#ifdef __cplusplus\n"
        << "extern \"C\"{\n"
        << "#endif /* __cplusplus */\n\n";
@@ -370,7 +372,7 @@ namespace mfront {
         os, name + "_src",
         tfel::utilities::tokenize(file, tfel::system::dirSeparator()).back());
 
-    if (!params.empty()) {
+    if ((!areParametersTreatedAsStaticVariables(mpd)) && (!params.empty())) {
       const auto hn = getMaterialPropertyParametersHandlerClassName(name);
       os << "MFRONT_SHAREDOBJ int\n"
          << name << "_setParameter(const char *const p,"

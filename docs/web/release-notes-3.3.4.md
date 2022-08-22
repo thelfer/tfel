@@ -19,6 +19,10 @@ eqnPrefixTemplate: "($$i$$)"
 
 # Issues fixed
 
+## Issue 268: Python binding of ExternalMaterialPropertyDescription class: error if no input variable in the MFront 
+
+For more details, see <https://github.com/thelfer/tfel/issues/268>
+
 ## Issue 142: [mfm-test-generator] handing of evolutions is broken in MTestInputFileGenerators for evolutions defined by a dictionnary
 
 For more details, see <https://github.com/thelfer/tfel/issues/142>

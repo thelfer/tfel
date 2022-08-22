@@ -18,9 +18,7 @@
 #include <map>
 #include <vector>
 #include <string>
-
 #include "MFront/MFrontConfig.hxx"
-
 #include "MFront/DSLBase.hxx"
 #include "MFront/AbstractDSL.hxx"
 #include "MFront/ModelDescription.hxx"
@@ -84,6 +82,11 @@ namespace mfront {
     void setUnitSystem(const std::string_view) override;
     void setMaterial(const std::string&) override;
     void setMaterialKnowledgeIdentifier(const std::string&) override;
+    /*!
+     * \brief get all symbols required to interpret the `@Function` code block.
+     * \param[out] symbols: symbols
+     */
+    virtual std::map<std::string, std::string> getSymbols();
     //! treat the `@UseQt` keyword
     virtual void treatUseQt();
     //! treat the `@Library` keyword

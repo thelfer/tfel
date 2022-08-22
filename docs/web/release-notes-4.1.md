@@ -2015,11 +2015,23 @@ command is concatenated in a single string for the test.
 
 # Issues fixed
 
+## Issue #282: [mfront] Allow models based generic behaviours to define tangent operator blocks associated with the derivatives of state variables with respect to external state variables 
+
+For more details, see <https://github.com/thelfer/tfel/issues/282>
+
+## Issue #276: [mfront] Add unicode support the `Model` DSL
+
+For more details, see <https://github.com/thelfer/tfel/issues/276>
+
 ## Issue #266: [tfel-math] Add constexpr evaluation of spline and derivative 
 
 This feature is described in Section @sec:tfel_4.1:tfel_math:issue_266.
 
 For more details, see <https://github.com/thelfer/tfel/issues/266>
+
+## Issue #265: [mfront] Add MTest file generation capability for `generic` behaviours
+
+For more details, see <https://github.com/thelfer/tfel/issues/265>
 
 ## Issue #264: Add support to compute linear intepolation
 
@@ -2142,6 +2154,10 @@ This feature is described in Section
 @sec:tfel_4.1:tfel_check:test_failure.
 
 For more details, see <https://github.com/thelfer/tfel/issues/229>.
+
+## Issue #225: [mfront] Separate file generation from DSLs
+
+For more details, see <https://github.com/thelfer/tfel/issues/225>.
 
 ## Issue #224: [mfront] add DSL options to override parameters in material properties and point-wise models
 

@@ -27,6 +27,7 @@ mfront_library(MTestFileGenerator
   MTestFileGeneratorBase.cxx
   UmatSmallStrainMTestFileGenerator.cxx
   UmatFiniteStrainMTestFileGenerator.cxx
+  GenericBehaviourMTestFileGenerator.cxx
   GenericBehaviourSmallStrainMTestFileGenerator.cxx
   GenericBehaviourFiniteStrainMTestFileGenerator.cxx)
 target_include_directories(MTestFileGenerator
@@ -141,6 +142,18 @@ set(TFELMFront_SOURCES
     PerformanceProfiling.cxx
     MultipleIsotropicMisesFlowsDSL.cxx
     IsotropicBehaviourDSLBase.cxx
+    AbstractBehaviourCodeGenerator.cxx
+    BehaviourCodeGeneratorBase.cxx
+    DefaultCodeGeneratorBase.cxx
+    DefaultCZMCodeGenerator.cxx
+    DefaultFiniteStrainCodeGenerator.cxx
+    RungeKuttaCodeGeneratorBase.cxx
+    ImplicitCodeGeneratorBase.cxx
+    IsotropicBehaviourCodeGeneratorBase.cxx
+    IsotropicStrainHardeningMisesCreepCodeGenerator.cxx
+    IsotropicMisesPlasticFlowCodeGenerator.cxx
+    IsotropicMisesCreepCodeGenerator.cxx
+    MultipleIsotropicMisesFlowsCodeGenerator.cxx
     MFrontMaterialPropertyInterface.cxx
     CMaterialPropertyInterfaceBase.cxx
     CMaterialPropertyInterface.cxx
