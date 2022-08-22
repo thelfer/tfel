@@ -92,6 +92,7 @@ MFRONT_DOCS = AdditionalConvergenceChecks.md                            \
 	      TangentOperatorBlock.md		                               \
 	      TangentOperatorBlocks.md		                           \
 	      Theta.md		                                           \
+	      UnitSystem.md                                             \
 	      UpdateAuxiliaryStateVars.md                               \
 	      UpdateAuxiliaryStateVariables.md                          \
 	      UsableInPurelyImplicitResolution.md                       \
