@@ -41,7 +41,7 @@ namespace mfront::bbrick {
     opts.emplace_back("Rd", "Second linear transformation coefficients",
                       OptionDescription::ARRAYOFMATERIALPROPERTIES);
     return opts;
-  }  // end of OrthotropicKinematicHardeningRule::getOptions()
+  }  // end of getOptions()
 
   void OrthotropicKinematicHardeningRule::initialize(BehaviourDescription& bd,
                                                       AbstractBehaviourDSL& dsl,
@@ -86,7 +86,7 @@ namespace mfront::bbrick {
     }
     declareParameterOrLocalVariable(bd, this->f, "stress", fn);
     //
-    tfel::raise_if(d.count("m") != 0,
+    tfel::raise_if(d.count("m") == 0,
                    "OrthotropicKinematicHardeningRule::initialize: "
                    "'m' material property undefined");
     this->m = getBehaviourDescriptionMaterialProperty(dsl, "m", d.at("m"));
@@ -95,7 +95,7 @@ namespace mfront::bbrick {
     constexpr auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     bd.reserveName(uh, KinematicHardeningRule::getVariableId("aeq", fid, kid));
     bd.reserveName(uh, KinematicHardeningRule::getVariableId("iaeq", fid, kid));
-  }  // end of OrthotropicKinematicHardeningRule::initialize
+  }  // end of initialize
 
   void OrthotropicKinematicHardeningRule::endTreatment(
       BehaviourDescription& bd,
@@ -149,14 +149,19 @@ namespace mfront::bbrick {
     }();
     for (const auto& t : {Ecn, Rdn, Rsn}) {
       c += "this->" + t + " = ";
-      c += "makeHillTensor<hypothesis, " + oac +
-           ", real>(this->" + t + "_coefficients);\n";
+      c += "makeHillTensor<hypothesis, " + oac + ", real>(";
+      c += "this->" + t + "_coefficients[0], \n";
+      c += "this->" + t + "_coefficients[1], \n";
+      c += "this->" + t + "_coefficients[2], \n";
+      c += "this->" + t + "_coefficients[3], \n";
+      c += "this->" + t + "_coefficients[4], \n";
+      c += "this->" + t + "_coefficients[5]);\n";
     }
     CodeBlock i;
     i.code = c;
     bd.setCode(uh, BehaviourData::BeforeInitializeLocalVariables, i,
                BehaviourData::CREATEORAPPEND, BehaviourData::AT_BEGINNING);
-  }  // end of OrthotropicKinematicHardeningRule::endTreatment
+  }  // end of endTreatment
 
   std::string
   OrthotropicKinematicHardeningRule::buildBackStrainImplicitEquations(
@@ -186,7 +191,7 @@ namespace mfront::bbrick {
     auto c = std::string{};
     c += "const auto " + aeqn + " = ";
     c += "std::sqrt(std::max((" + a_mts + ") | (" + a_mts + "), ";
-    c += "                   strain(0) * strain(0));\n";
+    c += "                   strain(0) * strain(0)));\n";
     c += "const auto " + iaeqn + " = ";
     c += "1/std::max(strain(1e-14)," + aeqn + ");\n";
     c += "f" + an + " -= ";
