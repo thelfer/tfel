@@ -81,6 +81,13 @@ namespace mfront {
     for (const auto& v : DSLBase::getDefaultReservedNames()) {
       this->reserveName(v);
     }
+    //
+    this->appendToIncludes("#include<cmath>");
+    this->appendToIncludes("#include<limits>");
+    this->appendToIncludes("#include<string>");
+    this->appendToIncludes("#include<sstream>");
+    this->appendToIncludes("#include<iostream>");
+    this->appendToIncludes("#include<stdexcept>");
   }
 
   AbstractDSL::DSLOptions ModelDSLCommon::buildDSLOptions() const {

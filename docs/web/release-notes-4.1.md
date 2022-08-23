@@ -2015,6 +2015,10 @@ command is concatenated in a single string for the test.
 
 # Issues fixed
 
+## Issue #297: [mfront] Automatically include the `<iostream>` header in models
+
+For more details, see <https://github.com/thelfer/tfel/issues/297>
+
 ## Issue #282: [mfront] Allow models based generic behaviours to define tangent operator blocks associated with the derivatives of state variables with respect to external state variables 
 
 For more details, see <https://github.com/thelfer/tfel/issues/282>
