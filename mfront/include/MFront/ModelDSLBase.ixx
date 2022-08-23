@@ -43,6 +43,9 @@ namespace mfront {
     this->registerNewCallBack("@PhysicalBounds", &Child::treatPhysicalBounds);
     this->registerNewCallBack("@ConstantMaterialProperty",
                               &Child::treatConstantMaterialProperty);
+    this->registerNewCallBack("@Coef", &Child::treatConstantMaterialProperty);
+    this->registerNewCallBack("@MaterialProperty",
+                              &Child::treatConstantMaterialProperty);
     this->registerNewCallBack("@Parameter", &Child::treatParameter);
     this->registerNewCallBack("@LocalParameter", &Child::treatLocalParameter);
     this->registerNewCallBack("@ConstantMaterialProperty",

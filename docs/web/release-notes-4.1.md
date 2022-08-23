@@ -2015,6 +2015,15 @@ command is concatenated in a single string for the test.
 
 # Issues fixed
 
+## Issue #298: Add the `@MaterialProperty` keyword for models described by the `Model` DSL
+
+The `@MaterialProperty` and `@Coef` keywords have been added for
+consistency with DSLs related to behaviours and in particular the
+`@DefaultModel`, `@RungeKuttaModel` and `@ImplicitModel` DSLs. They are
+equivalent to the `@ConstantMaterialProperty` keyword.
+
+For more details, see <https://github.com/thelfer/tfel/issues/298>
+
 ## Issue #297: [mfront] Automatically include the `<iostream>` header in models
 
 For more details, see <https://github.com/thelfer/tfel/issues/297>
