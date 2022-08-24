@@ -2033,6 +2033,15 @@ For more details, see <https://github.com/thelfer/tfel/issues/298>
 
 For more details, see <https://github.com/thelfer/tfel/issues/297>
 
+## Issue #296: [mfront] Allow bidirectional convertion between the IntegrationResult enumeration and boolean values
+
+Some code blocks return boolean values and others return instances of
+the IntegrationResult enumeration. This is inconsistent from the user
+point of view. Allowing bidirectional convertion between the
+IntegrationResult enumeration and boolean values mitigates this issue.
+
+For more details, see <https://github.com/thelfer/tfel/issues/296>
+
 ## Issue #295: [mfront] Allow failure of the behaviour initialisation
 
 This feature is described in Section @sec:mfront:issue_295.
