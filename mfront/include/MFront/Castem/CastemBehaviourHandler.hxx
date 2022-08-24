@@ -453,7 +453,9 @@ namespace castem {
         AInitializer::exe(behaviour, PROPS);
         DVInitializer::exe(behaviour, STRAN, DSTRAN, sfeh);
         behaviour.setCASTEMBehaviourDataThermodynamicForces(STRESS);
-        behaviour.initialize();
+        if (!behaviour.initialize()) {
+          throwBehaviourInitializationFailed(Traits::getName());
+        }
         behaviour.setOutOfBoundsPolicy(this->policy);
         behaviour.checkBounds();
         const auto r =
@@ -506,28 +508,32 @@ namespace castem {
           AInitializer::exe(behaviour, PROPS);
           DVInitializer::exe(behaviour, STRAN, DSTRAN, sfeh);
           behaviour.setCASTEMBehaviourDataThermodynamicForces(STRESS);
-          behaviour.initialize();
-          auto tsf = behaviour.computeAPrioriTimeStepScalingFactor(*pnewdt);
-          *pnewdt = tsf.second;
-          if (!tsf.first) {
+          if(!behaviour.initialize()){
             r = BV::FAILURE;
           } else {
-            behaviour.setOutOfBoundsPolicy(this->policy);
-            behaviour.checkBounds();
-            r = behaviour.integrate(smflag, smtype);
-            if (r == BV::FAILURE) {
-              *pnewdt = behaviour.getMinimalTimeStepScalingFactor();
+            auto tsf = behaviour.computeAPrioriTimeStepScalingFactor(*pnewdt);
+            *pnewdt = tsf.second;
+            if (!tsf.first) {
+              r = BV::FAILURE;
             } else {
+              behaviour.setOutOfBoundsPolicy(this->policy);
               behaviour.checkBounds();
-              tsf = behaviour.computeAPosterioriTimeStepScalingFactor(*pnewdt);
-              *pnewdt = std::min(tsf.second, *pnewdt);
-              if (!tsf.first) {
-                r = BV::FAILURE;
+              r = behaviour.integrate(smflag, smtype);
+              if (r == BV::FAILURE) {
+                *pnewdt = behaviour.getMinimalTimeStepScalingFactor();
               } else {
-                if ((*pnewdt < 1) &&
-                    (std::abs(*pnewdt - 1) >
-                     10 * std::numeric_limits<CastemReal>::min())) {
-                  r = BV::UNRELIABLE_RESULTS;
+                behaviour.checkBounds();
+                tsf =
+                    behaviour.computeAPosterioriTimeStepScalingFactor(*pnewdt);
+                *pnewdt = std::min(tsf.second, *pnewdt);
+                if (!tsf.first) {
+                  r = BV::FAILURE;
+                } else {
+                  if ((*pnewdt < 1) &&
+                      (std::abs(*pnewdt - 1) >
+                       10 * std::numeric_limits<CastemReal>::min())) {
+                    r = BV::UNRELIABLE_RESULTS;
+                  }
                 }
               }
             }
@@ -593,13 +599,16 @@ namespace castem {
           BV behaviour(bData, iData);
           auto tsf = std::pair<bool, CastemReal>{};
           try {
-            behaviour.initialize();
-            behaviour.setOutOfBoundsPolicy(this->policy);
-            behaviour.checkBounds();
-            if (iterations == 1u) {
-              result = behaviour.integrate(smflag, smtype);
+            if (!behaviour.initialize()) {
+              result = BV::FAILURE;
             } else {
-              result = behaviour.integrate(smflag, BV::NOSTIFFNESSREQUESTED);
+              behaviour.setOutOfBoundsPolicy(this->policy);
+              behaviour.checkBounds();
+              if (iterations == 1u) {
+                result = behaviour.integrate(smflag, smtype);
+              } else {
+                result = behaviour.integrate(smflag, BV::NOSTIFFNESSREQUESTED);
+              }
             }
             if (result == BV::SUCCESS) {
               tsf = behaviour.computeAPosterioriTimeStepScalingFactor(*pnewdt);
@@ -712,7 +721,6 @@ namespace castem {
         AInitializer::exe(this->behaviour, PROPS);
         DVInitializer::exe(this->behaviour, STRAN, DSTRAN, sfeh);
         this->behaviour.setCASTEMBehaviourDataThermodynamicForces(STRESS);
-        this->behaviour.initialize();
         this->behaviour.setOutOfBoundsPolicy(op);
       }  // end of Integrator::Integrator
 
@@ -736,6 +744,9 @@ namespace castem {
             PredictionOperatorIsNotAvalaible>::type PredictionOperatorComputer;
         if (this->dt < 0.) {
           throwNegativeTimeStepException(Traits::getName());
+        }
+        if (!this->behaviour.initialize()) {
+          throwBehaviourInitializationFailed(Traits::getName());
         }
         this->behaviour.checkBounds();
         typename BV::IntegrationResult r = BV::SUCCESS;

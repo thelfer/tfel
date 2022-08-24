@@ -234,7 +234,6 @@ namespace abaqus {
         this->behaviour.setABAQUSBehaviourDataThermodynamicForces(d.STRESS,
                                                                   d.DROT);
         this->behaviour.setOutOfBoundsPolicy(d.op);
-        this->behaviour.initialize();
       }  // end of Integrator::Integrator
 
       TFEL_ABAQUS_INLINE2
@@ -246,7 +245,12 @@ namespace abaqus {
         if (this->dt < 0.) {
           throwNegativeTimeStepException(MTraits::getName());
         }
+        if (!this->behaviour.initialize()) {
+          *(d.PNEWDT) = behaviour.getMinimalTimeStepScalingFactor();
+          return;
+        }
         this->behaviour.checkBounds();
+
         auto r = BV::SUCCESS;
         const auto smflag =
             AbaqusTangentOperatorFlag<AbaqusTraits<BV>::btype>::value;

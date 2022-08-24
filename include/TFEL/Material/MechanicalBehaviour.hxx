@@ -57,15 +57,13 @@ namespace tfel::material {
      * \brief return values of the integrate method
      */
     enum IntegrationResult {
-      SUCCESS,            //<! Integration is a success
-      FAILURE,            //<! Integration failed
+      FAILURE = 0,        //<! Integration failed
+      SUCCESS = 1,        //<! Integration is a success
       UNRELIABLE_RESULTS  //<! Integration succeed, but one or more
                           //   internal criteria show that the
                           //   results may be inaccurate
     };                    // end of enum IntegrationResult
-    /*!
-     * list of possible tangent operator type
-     */
+    //! \brief list of possible tangent operator type
     enum SMType {
       ELASTIC,
       SECANTOPERATOR,

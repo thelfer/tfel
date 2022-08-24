@@ -656,6 +656,7 @@ AC_OUTPUT([debug.sh Makefile Doxyfile docs/Makefile docs/tfel/Makefile
 	   mfront/tests/behaviours/unit-tests/Makefile
 	   mfront/tests/behaviours/aster/Makefile
 	   mfront/tests/behaviours/epx/Makefile
+  	   mfront/tests/behaviours/epx/epxinitializationfailuretest.mtest
 	   mfront/tests/behaviours/epx/epxsaintvenantkirchhoffelasticity-uniaxialloading-sig11-2D.mtest
 	   mfront/tests/behaviours/epx/epxsaintvenantkirchhoffelasticity-uniaxialloading-sig22-2D.mtest
 	   mfront/tests/behaviours/epx/epxsaintvenantkirchhoffelasticity-uniaxialloading-sig33-2D.mtest
@@ -740,6 +741,7 @@ AC_OUTPUT([debug.sh Makefile Doxyfile docs/Makefile docs/tfel/Makefile
 	   mfront/tests/behaviours/epx/epxaxialgrowth.mtest
      	   mfront/tests/behaviours/epx/epxtensorialexternalstatevariabletest.mtest
 	   mfront/tests/behaviours/abaqus/Makefile
+	   mfront/tests/behaviours/abaqus/abaqusinitializationfailuretest.mtest
 	   mfront/tests/behaviours/abaqus/abaqusmaterialpropertiesboundscheck.mtest
 	   mfront/tests/behaviours/abaqus/abaqusmaterialpropertiesboundscheck2.mtest
 	   mfront/tests/behaviours/abaqus/abaqusmaterialpropertiesboundscheck3.mtest
@@ -945,6 +947,7 @@ AC_OUTPUT([debug.sh Makefile Doxyfile docs/Makefile docs/tfel/Makefile
 	   mfront/tests/behaviours/abaqus/abaqusparametertest2.mtest
   	   mfront/tests/behaviours/abaqus/abaqustensorialexternalstatevariabletest.mtest
 	   mfront/tests/behaviours/abaqus-explicit/Makefile
+	   mfront/tests/behaviours/abaqus-explicit/abaqusexplicitinitializationfailuretest.mtest
 	   mfront/tests/behaviours/abaqus-explicit/abaqusexplicitsaintvenantkirchhoffelasticity-uniaxialloading-sig11-2D.mtest
 	   mfront/tests/behaviours/abaqus-explicit/abaqusexplicitsaintvenantkirchhoffelasticity-uniaxialloading-sig22-2D.mtest
 	   mfront/tests/behaviours/abaqus-explicit/abaqusexplicitsaintvenantkirchhoffelasticity-uniaxialloading-sig33-2D.mtest
@@ -1045,6 +1048,7 @@ AC_OUTPUT([debug.sh Makefile Doxyfile docs/Makefile docs/tfel/Makefile
 	   mfront/tests/behaviours/abaqus-explicit/abaqusexplicitimplicitsimomieheelastoplasticity.mtest
   	   mfront/tests/behaviours/abaqus-explicit/abaqusexplicittensorialexternalstatevariabletest.mtest
 	   mfront/tests/behaviours/ansys/Makefile
+	   mfront/tests/behaviours/ansys/ansysinitializationfailuretest.mtest
 	   mfront/tests/behaviours/ansys/ansyselasticity.mtest
 	   mfront/tests/behaviours/ansys/ansyselasticity2.mtest
 	   mfront/tests/behaviours/ansys/ansyselasticity3.mtest
@@ -2093,6 +2097,7 @@ AC_OUTPUT([debug.sh Makefile Doxyfile docs/Makefile docs/tfel/Makefile
 	   mfront/tests/behaviours/crossed2deltabis/crossed2deltabisT91-viscositytest.mtest
 	   mfront/tests/behaviours/crossed2deltabis/crossed2deltabisviscoplasisocin.mtest
 	   mfront/tests/behaviours/cyrano/Makefile
+	   mfront/tests/behaviours/cyrano/cyranoinitializationfailuretest.mtest
 	   mfront/tests/behaviours/cyrano/cyranomaterialpropertiesboundscheck.mtest
 	   mfront/tests/behaviours/cyrano/cyranomaterialpropertiesboundscheck2.mtest
 	   mfront/tests/behaviours/cyrano/cyranomaterialpropertiesboundscheck3.mtest
@@ -2583,6 +2588,7 @@ AC_OUTPUT([debug.sh Makefile Doxyfile docs/Makefile docs/tfel/Makefile
 	   mfront/tests/behaviours/fanderson/fandersonviscochaboche.mtest
 	   mfront/tests/behaviours/fanderson/fandersonviscoplasisocin.mtest
 	   mfront/tests/behaviours/calculix/Makefile
+	   mfront/tests/behaviours/calculix/calculixinitializationfailuretest.mtest
 	   mfront/tests/behaviours/calculix/calculixelasticity.mtest
 	   mfront/tests/behaviours/calculix/calculixelasticity2.mtest
 	   mfront/tests/behaviours/calculix/calculixelasticity3.mtest

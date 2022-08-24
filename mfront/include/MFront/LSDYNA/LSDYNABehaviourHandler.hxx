@@ -213,7 +213,6 @@ namespace lsdyna {
         this->behaviour.setLSDYNABehaviourDataThermodynamicForces(d.STRESS,
                                                                   d.DROT);
         this->behaviour.setOutOfBoundsPolicy(d.op);
-        this->behaviour.initialize();
       }  // end of Integrator::Integrator
 
       TFEL_LSDYNA_INLINE2
@@ -228,26 +227,31 @@ namespace lsdyna {
         if (this->dt < 0.) {
           throwNegativeTimeStepException(Traits::getName());
         }
+        if (!this->behaviour.initialize()) {
+          *(d.PNEWDT) = this->behaviour.getMinimalTimeStepScalingFactor();
+          return;
+        }
         this->behaviour.checkBounds();
         auto r = BV::SUCCESS;
         const auto smflag =
             LSDYNATangentOperatorFlag<LSDYNATraits<BV>::btype>::value;
-        auto tsf = behaviour.computeAPrioriTimeStepScalingFactor(*(d.PNEWDT));
+        auto tsf =
+            this->behaviour.computeAPrioriTimeStepScalingFactor(*(d.PNEWDT));
         *(d.PNEWDT) = tsf.second;
         if (!tsf.first) {
           r = BV::FAILURE;
         } else {
           try {
-            r = this->behaviour.integrate(smflag,
-                                          BV::CONSISTENTTANGENTOPERATOR);
+            r = this->this->behaviour.integrate(smflag,
+                                                BV::CONSISTENTTANGENTOPERATOR);
           } catch (DivergenceException&) {
             r = BV::FAILURE;
           }
           if (r == BV::FAILURE) {
-            *(d.PNEWDT) = behaviour.getMinimalTimeStepScalingFactor();
+            *(d.PNEWDT) = this->behaviour.getMinimalTimeStepScalingFactor();
           } else {
-            tsf =
-                behaviour.computeAPosterioriTimeStepScalingFactor(*(d.PNEWDT));
+            tsf = this->behaviour.computeAPosterioriTimeStepScalingFactor(
+                *(d.PNEWDT));
             if (!tsf.first) {
               r = BV::FAILURE;
             }

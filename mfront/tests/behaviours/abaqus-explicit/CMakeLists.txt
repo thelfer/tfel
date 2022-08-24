@@ -1,5 +1,6 @@
 set(mfront_tests_SOURCES
   TensorialExternalStateVariableTest
+  InitializationFailureTest
   FiniteRotationSmallStrainElasticity
   SaintVenantKirchhoffElasticity
   SaintVenantKirchhoffElasticity2
@@ -112,6 +113,9 @@ macro(test_abaqus_explicit test_arg)
     endif(CMAKE_CONFIGURATION_TYPES)
   endforeach(rm ${IEEE754_ROUNDING_MODES})
 endmacro(test_abaqus_explicit)
+
+test_abaqus_explicit(initializationfailuretest
+  NO_XML_OUTPUT WILL_FAIL)
 
 test_abaqus_explicit(saintvenantkirchhoffelasticity-uniaxialloading-sig11-2D)
 test_abaqus_explicit(saintvenantkirchhoffelasticity-uniaxialloading-sig22-2D)

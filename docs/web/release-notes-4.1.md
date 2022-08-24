@@ -386,6 +386,11 @@ Internal System of units (SI) is supported.
 @UnitSystem SI;
 ~~~~
 
+### Allow failure of the `@InitLocalVariables` code block {#sec:mfront:issue_295}
+
+The user can now abort the behaviour integration by returning `false` or
+`FAILURE` from the `@InitLocalVariables` code block.
+
 ### Automatic definition of physical bounds of variable associated with a glossary entry
 
 If an unit system is declared and that a variable is associated with a
@@ -2027,6 +2032,12 @@ For more details, see <https://github.com/thelfer/tfel/issues/298>
 ## Issue #297: [mfront] Automatically include the `<iostream>` header in models
 
 For more details, see <https://github.com/thelfer/tfel/issues/297>
+
+## Issue #295: [mfront] Allow failure of the behaviour initialisation
+
+This feature is described in Section @sec:mfront:issue_295.
+
+For more details, see <https://github.com/thelfer/tfel/issues/295>
 
 ## Issue #282: [mfront] Allow models based generic behaviours to define tangent operator blocks associated with the derivatives of state variables with respect to external state variables 
 

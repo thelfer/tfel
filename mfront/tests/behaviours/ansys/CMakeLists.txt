@@ -1,4 +1,5 @@
 set(mfront_tests_SOURCES
+  InitializationFailureTest
   MaterialPropertiesBoundsCheck
   Elasticity
   OrthotropicElastic
@@ -121,6 +122,8 @@ macro(test_ansys test_arg)
   endforeach(rm ${IEEE754_ROUNDING_MODES})
 endmacro(test_ansys)
 
+test_ansys(initializationfailuretest
+  NO_XML_OUTPUT WILL_FAIL)
 test_ansys(materialpropertiesboundscheck
   NO_XML_OUTPUT WILL_FAIL)
 test_ansys(materialpropertiesboundscheck2 

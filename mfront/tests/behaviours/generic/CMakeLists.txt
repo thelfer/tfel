@@ -17,6 +17,7 @@ set(mfront_tests_SOURCES
   MaterialPropertiesBoundsCheck
   StateVariablesBoundsCheck
   ExternalStateVariablesBoundsCheck
+  InitializationFailureTest
   Elasticity3
   Elasticity4
   Elasticity5
@@ -376,6 +377,8 @@ function(test_generic_fs test_arg)
   install_generic_test_file("${file}")
 endfunction(test_generic_fs)
 
+test_generic(InitializationFailureTest
+  NO_XML_OUTPUT WILL_FAIL)
 test_generic(materialpropertiesboundscheck
   NO_XML_OUTPUT WILL_FAIL)
 test_generic(materialpropertiesboundscheck2 

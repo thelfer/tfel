@@ -21,7 +21,7 @@
 namespace aster {
 
   void AsterInterfaceExceptions::throwUnMatchedNumberOfMaterialProperties(
-      const std::string& b, const unsigned short n1, const AsterInt n2) {
+      const std::string_view b, const unsigned short n1, const AsterInt n2) {
     std::ostringstream msg;
     msg << "AsterInterfaceExceptions::throwUnMatchedNumberOfMaterialProperties "
            ": "
@@ -32,7 +32,7 @@ namespace aster {
   }  // end of throwUnMatchedNumberOfMaterialProperties
 
   void AsterInterfaceExceptions::throwUnMatchedNumberOfStateVariables(
-      const std::string& b, const unsigned short n1, const AsterInt n2) {
+      const std::string_view b, const unsigned short n1, const AsterInt n2) {
     std::ostringstream msg;
     msg << "AsterInterfaceExceptions::throwUnMatchedNumberOfStateVariables : "
         << "the number of internal state variables does not match. The "
@@ -42,48 +42,49 @@ namespace aster {
     tfel::raise<AsterException>(msg.str());
   }  // end of throwUnMatchedNumberOfStateVariables
 
-  void AsterInterfaceExceptions::treatAsterException(const std::string& b,
+  void AsterInterfaceExceptions::treatAsterException(const std::string_view b,
                                                      const AsterException& e) {
     std::cout << "The behaviour '" << b
               << "' has thrown an AsterException : " << e.what() << std::endl;
   }  // end of AsterInterfaceExceptions::treatAsterException
 
   void AsterInterfaceExceptions::treatMaterialException(
-      const std::string& b, const tfel::material::MaterialException& e) {
+      const std::string_view b, const tfel::material::MaterialException& e) {
     std::cout << "The behaviour '" << b
               << "' has thrown an MaterialException : " << e.what()
               << std::endl;
   }  // end of treatMaterialException
 
   void AsterInterfaceExceptions::treatTFELException(
-      const std::string& b, const tfel::exception::TFELException& e) {
+      const std::string_view b, const tfel::exception::TFELException& e) {
     std::cout << "The behaviour '" << b
               << "' has thrown a generic tfel exception : " << e.what()
               << std::endl;
   }  // end of treatTFELException
 
   void AsterInterfaceExceptions::treatStandardException(
-      const std::string& b, const std::exception& e) {
+      const std::string_view b, const std::exception& e) {
     std::cout << "The behaviour '" << b
               << "' has thrown a generic standard exception : " << e.what()
               << std::endl;
   }  // end of treatStandardException
 
-  void AsterInterfaceExceptions::treatUnknownException(const std::string& b) {
+  void AsterInterfaceExceptions::treatUnknownException(
+      const std::string_view b) {
     std::cout << "The behaviour '" << b << "' has thrown an unknown exception"
               << std::endl;
   }  // end of treatUnknownException
 
   void AsterInterfaceExceptions::throwNegativeTimeStepException(
-      const std::string& b) {
+      const std::string_view b) {
     tfel::raise(
         "AsterInterfaceExceptions::throwNegativeTimeStepException: "
         "negative time step detected for behaviour '" +
-        b + "'");
+        std::string{b} + "'");
   }  // end of AsterInterfaceExceptions::throwNegativeTimeStepException
 
   void AsterInterfaceExceptions::throwInvalidDDSOEException(
-      const std::string& b, const AsterReal v) {
+      const std::string_view b, const AsterReal v) {
     std::ostringstream msg;
     msg << "AsterInterfaceExceptions::throwInvalidDDSOEException : "
         << "an invalid value for the DDSOE parameter has been given ('" << v
@@ -109,51 +110,57 @@ namespace aster {
     tfel::raise(msg.str());
   }  // end of AsterInterfaceExceptions::throwInvalidDDSOEException
 
+  void AsterInterfaceExceptions::throwBehaviourInitializationFailedException(
+      const std::string_view b) {
+    tfel::raise(
+        "AsterInterfaceExceptions::"
+        "throwBehaviourInitializationFailedException: "
+        "initialization of behaviour '" +
+        std::string{b} + "' failed");
+  }  // end of throwBehaviourInitializationFailedException
+
   void AsterInterfaceExceptions::throwBehaviourIntegrationFailedException(
-      const std::string& b) {
+      const std::string_view b) {
     tfel::raise(
         "AsterInterfaceExceptions::throwBehaviourIntegrationFailedException: "
         "integration failed for behaviour '" +
-        b + "'");
-  }  // end of
-     // AsterInterfaceExceptions::throwBehaviourIntegrationFailedException
+        std::string{b} + "'");
+  }  // end of throwBehaviourIntegrationFailedException
 
   void AsterInterfaceExceptions::throwPredictionComputationFailedException(
-      const std::string& b) {
+      const std::string_view b) {
     tfel::raise(
         "AsterInterfaceExceptions::throwPredictionComputationFailedException: "
         "prediction computation failed for behaviour '" +
-        b + "'");
+        std::string{b} + "'");
   }
 
   void AsterInterfaceExceptions::throwPredictionOperatorIsNotAvalaible(
-      const std::string& b) {
+      const std::string_view b) {
     tfel::raise(
         "AsterInterfaceExceptions::throwPredictionOperatorIsNotAvalaible: "
         "behaviour '" +
-        b + "' can't compute a prediction operator");
-  }  // end of
-     // AsterInterfaceExceptions::throwBehaviourIntegrationFailedException
+        std::string{b} + "' can't compute a prediction operator");
+  }  // end of throwBehaviourIntegrationFailedException
 
   void AsterInterfaceExceptions::throwConsistentTangentOperatorIsNotAvalaible(
-      const std::string& b) {
+      const std::string_view b) {
     tfel::raise(
         "AsterInterfaceExceptions::"
         "throwConsistentTangentOperatorIsNotAvalaible: "
         "behaviour '" +
-        b + "' can't compute a consistent tangent operator");
-  }  // end of
-     // AsterInterfaceExceptions::throwBehaviourIntegrationFailedException
+        std::string{b} + "' can't compute a consistent tangent operator");
+  }  // end of throwBehaviourIntegrationFailedException
 
   void AsterInterfaceExceptions::throwUnsupportedStressFreeExpansionException(
-      const std::string& b) {
+      const std::string_view b) {
     tfel::raise(
         "AsterInterfaceExceptions::"
         "throwUnsupportedStressFreeExpansionException: "
         "behaviour '" +
-        b + "' can handle stress-free expansion but the Aster interface can't");
-  }  // end of
-     // AsterInterfaceExceptions::throwUnsupportedStressFreeExpansionException
+        std::string{b} +
+        "' can handle stress-free expansion but the Aster interface can't");
+  }  // end of throwUnsupportedStressFreeExpansionException
 
   void AsterInterfaceExceptions::displayUnsupportedHypothesisMessage() {
     std::cout

@@ -248,4 +248,5 @@ EXTRA_DIST = CMakeLists.txt                                                     
              ode_default.mtest                                                         \
              ode_implicit.mtest                                                        \
              ode_rk54.mtest                                                            \
-             TensorialExternalStateVariableTest.mtest
+             TensorialExternalStateVariableTest.mtest                                  \
+             InitializationFailureTest.mtest

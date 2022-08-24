@@ -289,7 +289,6 @@ namespace aster {
         DVInitializer::exe(this->behaviour, STRAN, DSTRAN, sfeh);
         this->behaviour.setASTERBehaviourDataThermodynamicForces(STRESS);
         this->behaviour.setOutOfBoundsPolicy(op);
-        this->behaviour.initialize();
       }  // end of Integrator::Integrator
 
       TFEL_ASTER_INLINE2
@@ -314,6 +313,9 @@ namespace aster {
         const unsigned short N = ModellingHypothesisToSpaceDimension<H>::value;
         if (this->dt < 0.) {
           throwNegativeTimeStepException(Traits::getName());
+        }
+        if (!this->behaviour.initialize()) {
+          throwBehaviourInitializationFailedException(Traits::getName());
         }
         this->behaviour.checkBounds();
         auto r = BV::SUCCESS;

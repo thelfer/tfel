@@ -1,0 +1,16 @@
+@Author Thomas Helfer;
+@Date   24/08/2022;
+@Description{
+  This test checks that an initialization failure
+  is correctly taken into account
+};
+
+@MaximumNumberOfSubSteps 1;
+@Behaviour<@interface@> @library@ 'umatinitializationfailuretest';
+@ExternalStateVariable 'Temperature' 293.15;
+
+@MaterialProperty<constant> 'YoungModulus' 150e9;
+@MaterialProperty<constant> 'PoissonRatio' 0.3;
+
+@Times {0., 1};
+

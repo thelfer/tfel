@@ -317,7 +317,10 @@ namespace mfront::gb {
     b.setOutOfBoundsPolicy(p);
     auto&& rdt = tfel::math::map<behaviour_real_type>(d.rdt);
     try {
-      b.initialize();
+      if (!b.initialize()) {
+        reportError(d, "behaviour initialisation failed");
+        return -1;
+      }
       b.checkBounds();
       const auto bs = d.K[0] > 50;
       const auto Ke = bs ? d.K[0] - 100 : d.K[0];
@@ -417,7 +420,10 @@ namespace mfront::gb {
       d.s1.material_properties = material_properties_old;
       d.s1.external_state_variables = external_state_variables_old;
       //
-      b.initialize();
+      if (!b.initialize()) {
+        reportError(d, "behaviour initialisation failed");
+        return -1;
+      }
       (b.*m)(initialize_variables);
       b.exportStateData(d.s1);
     } catch (...) {
@@ -461,7 +467,10 @@ namespace mfront::gb {
       d.s0.thermodynamic_forces = thermodynamic_forces_old;
       d.s0.internal_state_variables = internal_state_variables_old;
       //
-      b.initialize();
+      if (!b.initialize()) {
+        reportError(d, "behaviour initialisation failed");
+        return -1;
+      }
       if constexpr (use_initial_state) {
         // create an object containing the intial state
         // Here, we can't initialize an `Behaviour::BehaviourData` as it would

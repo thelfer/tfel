@@ -2203,18 +2203,6 @@ namespace mfront {
          << "using std::vector;\n";
       writeMaterialLaws(os, this->bd.getMaterialLaws());
       this->writeBehaviourParameterInitialisation(os, h);
-      // calling models
-      for (const auto& m : this->bd.getModelsDescriptions()) {
-        if (m.outputs.size() == 1) {
-          const auto vn = m.outputs[0].name;
-          this->writeModelCall(os, tmpnames, h, m, "d" + vn, vn, "em");
-          os << "this->d" << vn << " -= this->" << vn << ";\n";
-        } else {
-          this->throwRuntimeError(
-              "BehaviourCodeGeneratorBase::writeBehaviourInitializeMethod",
-              "only models with one output are supported yet");
-        }
-      }
       this->writeBehaviourLocalVariablesInitialisation(os, h);
     };
     this->checkBehaviourFile(os);
@@ -3047,11 +3035,25 @@ namespace mfront {
     os << "/*!\n"
        << " * \\ brief initialize the behaviour with user code\n"
        << " */\n"
-       << "void initialize(){\n"
+       << "[[nodiscard]] bool initialize(){\n"
        << "using namespace std;\n"
        << "using namespace tfel::math;\n"
        << "using std::vector;\n";
     writeMaterialLaws(os, this->bd.getMaterialLaws());
+    // calling models
+    auto tmpnames = std::vector<std::string>{};
+    for (const auto& m : this->bd.getModelsDescriptions()) {
+      if (m.outputs.size() == 1) {
+        const auto vn = m.outputs[0].name;
+        this->writeModelCall(os, tmpnames, h, m, "d" + vn, vn, "em");
+        os << "this->d" << vn << " -= this->" << vn << ";\n";
+      } else {
+        this->throwRuntimeError(
+            "BehaviourCodeGeneratorBase::writeBehaviourInitializeMethod",
+            "only models with one output are supported yet");
+      }
+    }
+    //
     if (this->bd.hasCode(h, BehaviourData::BeforeInitializeLocalVariables)) {
       if (this->bd.getAttribute(BehaviourData::profiling, false)) {
         writeStandardPerformanceProfilingBegin(
@@ -3094,8 +3096,9 @@ namespace mfront {
       }
     }
     this->writeBehaviourParserSpecificInitializeMethodPart(os, h);
-    os << "}\n\n";
-  }  // end of void BehaviourCodeGeneratorBase::writeBehaviourInitializeMethod
+    os << "return true;\n"
+       << "}\n\n";
+  }  // end of writeBehaviourInitializeMethod
 
   void BehaviourCodeGeneratorBase::writeBehaviourLocalVariablesInitialisation(
       std::ostream& os, const Hypothesis h) const {
