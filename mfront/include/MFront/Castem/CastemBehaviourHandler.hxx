@@ -32,6 +32,16 @@ namespace castem {
   struct CastemTangentOperatorFlag;
 
   template <>
+  struct CastemTangentOperatorFlag<castem::MODEL> {
+    typedef tfel::material::MechanicalBehaviourBase MechanicalBehaviourBase;
+    typedef tfel::material::TangentOperatorTraits<
+        MechanicalBehaviourBase::GENERALBEHAVIOUR>
+        TangentOperatorTraits;
+    static constexpr TangentOperatorTraits::SMFlag value =
+        TangentOperatorTraits::STANDARDTANGENTOPERATOR;
+  };
+
+  template <>
   struct CastemTangentOperatorFlag<castem::STANDARDSTRAINBASEDBEHAVIOUR> {
     typedef tfel::material::MechanicalBehaviourBase MechanicalBehaviourBase;
     typedef tfel::material::TangentOperatorTraits<
@@ -730,18 +740,19 @@ namespace castem {
                CastemReal *const STATEV,
                CastemReal *const PNEWDT) {
         using namespace tfel::material;
-        typedef MechanicalBehaviourTraits<BV> Traits;
-        typedef typename std::conditional<
+        using Traits = MechanicalBehaviourTraits<BV>;
+        using ConsistentTangentOperatorHandler = std::conditional_t<
             Traits::hasConsistentTangentOperator,
-            typename std::conditional<
-                Traits::isConsistentTangentOperatorSymmetric,
-                SymmetricConsistentTangentOperatorComputer,
-                GeneralConsistentTangentOperatorComputer>::type,
-            ConsistentTangentOperatorIsNotAvalaible>::type
-            ConsistentTangentOperatorHandler;
-        typedef typename std::conditional<
-            Traits::hasPredictionOperator, StandardPredictionOperatorComputer,
-            PredictionOperatorIsNotAvalaible>::type PredictionOperatorComputer;
+            std::conditional_t<Traits::isConsistentTangentOperatorSymmetric,
+                               SymmetricConsistentTangentOperatorComputer,
+                               GeneralConsistentTangentOperatorComputer>,
+            ConsistentTangentOperatorIsNotAvalaible>;
+        using PredictionOperatorComputer =
+            std::conditional_t<Traits::hasPredictionOperator,
+                               StandardPredictionOperatorComputer,
+                               PredictionOperatorIsNotAvalaible>;
+        constexpr auto smflag =
+            CastemTangentOperatorFlag<CastemTraits<BV>::btype>::value;
         if (this->dt < 0.) {
           throwNegativeTimeStepException(Traits::getName());
         }
@@ -749,9 +760,7 @@ namespace castem {
           throwBehaviourInitializationFailed(Traits::getName());
         }
         this->behaviour.checkBounds();
-        typename BV::IntegrationResult r = BV::SUCCESS;
-        const typename BV::SMFlag smflag =
-            CastemTangentOperatorFlag<CastemTraits<BV>::btype>::value;
+        auto r = BV::SUCCESS;
         if ((-3.25 < *DDSDDE) && (*DDSDDE < -2.75)) {
           r = PredictionOperatorComputer::exe(this->behaviour, smflag,
                                               BV::TANGENTOPERATOR);
@@ -762,7 +771,7 @@ namespace castem {
           r = PredictionOperatorComputer::exe(this->behaviour, smflag,
                                               BV::ELASTIC);
         } else {
-          typename BV::SMType smtype = BV::NOSTIFFNESSREQUESTED;
+          auto smtype = BV::NOSTIFFNESSREQUESTED;
           if ((-0.25 < *DDSDDE) && (*DDSDDE < 0.25)) {
           } else if ((0.75 < *DDSDDE) && (*DDSDDE < 1.25)) {
             smtype = BV::ELASTIC;

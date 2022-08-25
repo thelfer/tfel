@@ -470,6 +470,13 @@ namespace mfront {
   BehaviourDescription::BehaviourDescription(const BehaviourDescription&) =
       default;
 
+  bool BehaviourDescription::isModel() const noexcept {
+    if (this->getBehaviourType() != BehaviourDescription::GENERALBEHAVIOUR) {
+      return false;
+    }
+    return this->mvariables.empty();
+  }  // end of isModel
+
   bool BehaviourDescription::allowsNewUserDefinedVariables() const {
     constexpr auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     return this->getAttribute(h, BehaviourData::allowsNewUserDefinedVariables,

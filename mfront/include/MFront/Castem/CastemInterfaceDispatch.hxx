@@ -72,6 +72,60 @@ namespace castem {
 
   /*!
    * \class  CastemInterfaceDispatch
+   * \brief  partial specialisation for models
+   * \author Thomas Helfer
+   * \date   24 Jul 2013
+   */
+  template <
+      tfel::material::ModellingHypothesis::Hypothesis H,
+      template <tfel::material::ModellingHypothesis::Hypothesis, typename, bool>
+      class Model>
+  struct CastemInterfaceDispatch<MODEL, H, Model>
+      : public CastemInterfaceExceptions {
+    TFEL_CASTEM_INLINE2 static void exe(
+        const CastemInt *const NTENS,
+        const CastemReal *const DTIME,
+        const CastemReal *const DROT,
+        CastemReal *const DDSDDE,
+        const CastemReal *const STRAN,
+        const CastemReal *const DSTRAN,
+        const CastemReal *const TEMP,
+        const CastemReal *const DTEMP,
+        const CastemReal *const PROPS,
+        const CastemInt *const NPROPS,
+        const CastemReal *const PREDEF,
+        const CastemReal *const DPRED,
+        CastemReal *const STATEV,
+        const CastemInt *const NSTATV,
+        CastemReal *const STRESS,
+        CastemReal *const PNEWDT,
+        const tfel::material::OutOfBoundsPolicy op,
+        const StressFreeExpansionHandler &sfeh) {
+      using namespace tfel::material;
+      using ModelImplementation = Model<H, CastemReal, false>;
+      using Traits = CastemTraits<ModelImplementation>;
+      using MTraits =  MechanicalBehaviourTraits<ModelImplementation>;
+      using CBHandler = CastemBehaviourHandler<MODEL, H, Model>;
+      constexpr auto is_defined_ = MTraits::is_defined;
+      constexpr auto bs = Traits::requiresStiffnessTensor;
+      constexpr auto ba = Traits::requiresThermalExpansionCoefficientTensor;
+      static_assert(!bs,"mdoels can't require a stiffness tensor");
+      static_assert(!ba,"mdoels can't require a thermal expansion coefficient tensor");
+      using Handler = std::conditional_t<
+          is_defined_,
+          std::conditional_t<
+              Traits::useTimeSubStepping,
+              typename CBHandler::template IntegratorWithTimeStepping<bs, ba>,
+              typename CBHandler::template Integrator<bs, ba>>,
+          typename CBHandler::Error>;
+      Handler handler(DTIME, STRAN, DSTRAN, TEMP, DTEMP, PROPS, PREDEF, DPRED,
+                      STATEV, STRESS, op, sfeh);
+      handler.exe(DDSDDE, STRESS, STATEV, PNEWDT);
+    }  // end of exe
+  };   // end of struct CastemInterfaceDispatch
+
+  /*!
+   * \class  CastemInterfaceDispatch
    * \brief  partial specialisation for small strain behaviours
    * \author Thomas Helfer
    * \date   24 Jul 2013

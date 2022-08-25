@@ -262,6 +262,14 @@ namespace mfront {
      */
     bool hasAttribute(const Hypothesis, const std::string&) const;
     /*!
+     * \return if the behaviour can be considered as a point-wise model.
+     *
+     * A behaviour is considered as a model if its behaviour type is
+     * `GENERALBEHAVIOUR` and if it does not declared any gradient nor
+     * thermodynamic force.
+     */
+    bool isModel() const noexcept;
+    /*!
      * \brief return true if the behaviour description allows the
      * declaration of user defined variables
      */

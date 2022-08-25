@@ -103,6 +103,7 @@ libTFELMTest_la_SOURCES += CastemStandardBehaviour.cxx         \
 			   CastemFiniteStrainBehaviour.cxx     \
 			   CastemFiniteStrainBehaviour2.cxx    \
 			   CastemCohesiveZoneModel.cxx         \
+			   CastemModel.cxx                     \
 			   CastemUmatStandardBehaviour.cxx     \
 			   CastemUmatSmallStrainBehaviour.cxx  \
 			   CastemUmatFiniteStrainBehaviour.cxx \
