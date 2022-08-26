@@ -5,6 +5,7 @@ configure_file("${PROJECT_SOURCE_DIR}/mfront/tests/behaviours/references/PolyCry
 
 set(mfront_tests_SOURCES
   DSLOptionsTest
+  InitializationFailureTest
   Elasticity
   Elasticity2
   Elasticity3
@@ -125,6 +126,9 @@ macro(test_calculix test_arg)
     endif(CMAKE_CONFIGURATION_TYPES)
   endforeach(rm ${IEEE754_ROUNDING_MODES})
 endmacro(test_calculix)
+
+test_calculix(initializationfailuretest
+  NO_XML_OUTPUT WILL_FAIL)
 
 test_calculix(elasticity)
 test_calculix(elasticity2)

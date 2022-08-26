@@ -201,4 +201,5 @@ EXTRA_DIST=CMakeLists.txt \
   astermieheapellambrechtlogarithmicstrainelasticity-uniaxialloading-3-3D.mtest \
   astermieheapellambrechtlogarithmicstrainnortoncreep-uniaxialloading-1-3D.mtest \
   astermieheapellambrechtlogarithmicstrainnortoncreep-uniaxialloading-2-3D.mtest \
-  astermieheapellambrechtlogarithmicstrainnortoncreep-uniaxialloading-3-3D.mtest
+  astermieheapellambrechtlogarithmicstrainnortoncreep-uniaxialloading-3-3D.mtest \
+  asterinitializationfailuretest.mtest

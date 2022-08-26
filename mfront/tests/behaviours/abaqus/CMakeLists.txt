@@ -8,6 +8,7 @@ set(mfront_tests_SOURCES
   MaterialPropertiesBoundsCheck
   ExternalStateVariablesBoundsCheck
   TensorialExternalStateVariableTest
+  InitializationFailureTest
   Elasticity
   Elasticity2
   Elasticity3
@@ -202,6 +203,8 @@ macro(test_abaqus test_arg)
   endforeach(rm ${IEEE754_ROUNDING_MODES})
 endmacro(test_abaqus)
 
+test_abaqus(initializationfailuretest
+  NO_XML_OUTPUT WILL_FAIL)
 test_abaqus(materialpropertiesboundscheck
   NO_XML_OUTPUT WILL_FAIL)
 test_abaqus(materialpropertiesboundscheck2 

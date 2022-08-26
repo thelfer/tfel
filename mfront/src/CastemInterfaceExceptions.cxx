@@ -48,7 +48,7 @@ static bool displayErrorMessage() {
 namespace castem {
 
   void CastemInterfaceExceptions::throwUnMatchedNumberOfMaterialProperties(
-      const std::string& b, const unsigned short n1, const CastemInt n2) {
+      const std::string_view b, const unsigned short n1, const CastemInt n2) {
     std::ostringstream msg;
     msg << "CastemInterfaceExceptions::"
            "throwUnMatchedNumberOfMaterialProperties : "
@@ -59,7 +59,7 @@ namespace castem {
   }  // end of throwUnMatchedNumberOfMaterialProperties
 
   void CastemInterfaceExceptions::throwUnMatchedNumberOfStateVariables(
-      const std::string& b, const unsigned short n1, const CastemInt n2) {
+      const std::string_view b, const unsigned short n1, const CastemInt n2) {
     std::ostringstream msg;
     msg << "CastemInterfaceExceptions::throwUnMatchedNumberOfStateVariables : "
         << "the number of internal state variables does not match. The "
@@ -70,7 +70,7 @@ namespace castem {
   }  // end of throwUnMatchedNumberOfStateVariables
 
   void CastemInterfaceExceptions::treatCastemException(
-      const std::string& b, const CastemException& e) {
+      const std::string_view b, const CastemException& e) {
     if (displayErrorMessage()) {
       std::cout << "The behaviour '" << b
                 << "' has thrown an CastemException : " << e.what()
@@ -79,7 +79,7 @@ namespace castem {
   }  // end of treatCastemException
 
   void CastemInterfaceExceptions::treatMaterialException(
-      const std::string& b, const tfel::material::MaterialException& e) {
+      const std::string_view b, const tfel::material::MaterialException& e) {
     if (displayErrorMessage()) {
       std::cout << "The behaviour '" << b
                 << "' has thrown an MaterialException : " << e.what()
@@ -88,7 +88,7 @@ namespace castem {
   }  // end of treatMaterialException
 
   void CastemInterfaceExceptions::treatTFELException(
-      const std::string& b, const tfel::exception::TFELException& e) {
+      const std::string_view b, const tfel::exception::TFELException& e) {
     if (displayErrorMessage()) {
       std::cout << "The behaviour '" << b
                 << "' has thrown a generic tfel exception : " << e.what()
@@ -97,7 +97,7 @@ namespace castem {
   }  // end of treatTFELException
 
   void CastemInterfaceExceptions::treatStandardException(
-      const std::string& b, const std::exception& e) {
+      const std::string_view b, const std::exception& e) {
     if (displayErrorMessage()) {
       std::cout << "The behaviour '" << b
                 << "' has thrown a generic standard exception : " << e.what()
@@ -105,7 +105,8 @@ namespace castem {
     }
   }  // end of treatStandardException
 
-  void CastemInterfaceExceptions::treatUnknownException(const std::string& b) {
+  void CastemInterfaceExceptions::treatUnknownException(
+      const std::string_view b) {
     if (displayErrorMessage()) {
       std::cout << "The behaviour '" << b << "' has thrown an unknown exception"
                 << std::endl;
@@ -113,36 +114,40 @@ namespace castem {
   }  // end of treatUnknownException
 
   void CastemInterfaceExceptions::throwNegativeTimeStepException(
-      const std::string& b) {
+      const std::string_view b) {
     tfel::raise(
         "CastemInterfaceExceptions::throwNegativeTimeStepException: "
         "negative time step detected for behaviour '" +
-        b + "'");
-  }  // end of CastemInterfaceExceptions::throwNegativeTimeStepException
+        std::string{b} + "'");
+  }  // end of throwNegativeTimeStepException
+
+  void CastemInterfaceExceptions::throwBehaviourInitializationFailed(
+      const std::string_view b) {
+    tfel::raise("initialization of behaviour '" + std::string{b} + "' failed");
+  }  // end of throwBehaviourIntegrationFailedException
 
   void CastemInterfaceExceptions::throwBehaviourIntegrationFailedException(
-      const std::string& b) {
+      const std::string_view b) {
     tfel::raise<CastemIntegrationFailed>("integration failed for behaviour '" +
-                                         b + "'");
-  }  // end of
-     // CastemInterfaceExceptions::throwBehaviourIntegrationFailedException
+                                         std::string{b} + "'");
+  }  // end of throwBehaviourIntegrationFailedException
 
   void
   CastemInterfaceExceptions::throwMaximumNumberOfSubSteppingReachedException(
-      const std::string& b) {
+      const std::string_view b) {
     tfel::raise<CastemIntegrationFailed>(
-        "maximum number of sub stepping reached failed for behaviour '" + b +
-        "'");
+        "maximum number of sub stepping reached failed for behaviour '" +
+        std::string{b} + "'");
   }  // end of
      // CastemInterfaceExceptions::throwMaximumNumberOfSubSteppingReachedException
 
   void CastemInterfaceExceptions::
       throwPlaneStressMaximumNumberOfIterationsReachedException(
-          const std::string& b) {
+          const std::string_view b) {
     tfel::raise<CastemIntegrationFailed>(
         "maximum number of iterations of the plane stress algorithm "
         "reached failed for behaviour '" +
-        b + "'");
+        std::string{b} + "'");
   }  // end of
      // CastemInterfaceExceptions::throwPlaneStressMaximumNumberOfIterationsReachedException
 
@@ -158,88 +163,88 @@ namespace castem {
           "expected '" +
           std::to_string(static_cast<unsigned int>(s)) + "')");
     }
-  }  // end of CastemInterfaceExceptions::checkNTENSValue
+  }  // end of checkNTENSValue
 
   void
   CastemInterfaceExceptions::displayInvalidModellingHypothesisErrorMessage() {
     if (displayErrorMessage()) {
       std::cout << "CastemInterfaceExceptions::"
-                   "displayInvalidModellingHypothesisErrorMessage : "
+                << "displayInvalidModellingHypothesisErrorMessage : "
                 << "invalid value for the NDI parameter" << std::endl;
     }
   }
 
   void
   CastemInterfaceExceptions::throwInvalidBehaviourTypeAndModellingHypothesis(
-      const CastemBehaviourType, const std::string& h) {
+      const CastemBehaviourType, const std::string_view h) {
     tfel::raise(
         "CastemInterfaceExceptions::"
         "throwInvalidBehaviourTypeAndModellingHypothesis: "
         "behaviour can't be used in '" +
-        h + "'");
+        std::string{h} + "'");
   }  // end of
      // CastemInterfaceExceptions::throwInvalidBehaviourTypeAndModellingHypothesis
 
   void CastemInterfaceExceptions::throwPredictionComputationFailedException(
-      const std::string& b) {
+      const std::string_view b) {
     tfel::raise(
         "CastemInterfaceExceptions::throwPredictionComputationFailedException: "
         "prediction computation failed for behaviour '" +
-        b + "'");
+        std::string{b} + "'");
   }
 
   void CastemInterfaceExceptions::throwPredictionOperatorIsNotAvalaible(
-      const std::string& b) {
+      const std::string_view b) {
     tfel::raise(
         "CastemInterfaceExceptions::throwPredictionOperatorIsNotAvalaible: "
         "behaviour '" +
-        b + "' can't compute a prediction operator");
+        std::string{b} + "' can't compute a prediction operator");
   }  // end of
      // CastemInterfaceExceptions::throwBehaviourIntegrationFailedException
 
   void CastemInterfaceExceptions::throwConsistentTangentOperatorIsNotAvalaible(
-      const std::string& b) {
+      const std::string_view b) {
     tfel::raise(
         "CastemInterfaceExceptions::"
         "throwConsistentTangentOperatorIsNotAvalaible: "
         "behaviour '" +
-        b + "' can't compute a consistent tangent operator");
+        std::string{b} + "' can't compute a consistent tangent operator");
   }  // end of
      // CastemInterfaceExceptions::throwBehaviourIntegrationFailedException
 
   void CastemInterfaceExceptions::throwUnsupportedStressFreeExpansionException(
-      const std::string& b) {
+      const std::string_view b) {
     tfel::raise(
         "CastemInterfaceExceptions::"
         "throwUnsupportedStressFreeExpansionException: "
         "behaviour '" +
-        b +
+        std::string{b} +
         "' can handle stress-free expansion "
         "but the Castem interface can't");
   }  // end of
      // CastemInterfaceExceptions::throwUnsupportedStressFreeExpansionException
 
   void CastemInterfaceExceptions::throwThermalExpansionCoefficientShallBeNull(
-      const std::string& b) {
+      const std::string_view b) {
     tfel::raise(
         "CastemInterfaceExceptions::"
         "throwThermalExpansionCoefficientShallBeNull: "
         "behaviour '" +
-        b +
+        std::string{b} +
         "' handle thermal expansion, so "
         "the thermal expansion declared in Castem must be null.");
   }
 
   void CastemInterfaceExceptions::
       throwTangentOperatorNotAvailableThroughGenericPlaneStressHandler(
-          const std::string&) {
+          const std::string_view) {
     tfel::raise(
         "tangent operator is not available in the "
         "generic plane stress handler");
   }
 
   void CastemInterfaceExceptions::throwInvalidDDSDDEException(
-      const std::string& b, const CastemReal v) {
+      const std::string_view b, const CastemReal v) {
     tfel::raise(
         "CastemInterfaceExceptions::throwInvalidDDSDDEException : "
         "an invalid value for the DDSDDE parameter has been given "
@@ -247,7 +252,7 @@ namespace castem {
         std::to_string(v) +
         "')"
         " to the behaviour '" +
-        b +
+        std::string{b} +
         "'.\n"
         "The following values are accepted:\n"
         "-3 : compute the prediction tangent operator, no behaviour "
@@ -266,7 +271,7 @@ namespace castem {
         "requested\n"
         " 4 : integrate the behaviour over the time step, consistent tagent "
         "operator requested");
-  }  // end of CastemInterfaceExceptions::throwInvalidDDSDDEException
+  }  // end of throwInvalidDDSDDEException
 
   void CastemUnSupportedCaseHandler::exe(const CastemReal* const,
                                          const CastemReal* const,

@@ -23,7 +23,7 @@
 namespace mfront {
 
   /*!
-   * Interface for behaviours for use in the Cast3M finite element
+   * \brief Interface for behaviours for use in the Cast3M finite element
    * code.
    *
    * The name of this interface comes to the fact that the Cast3M
@@ -90,7 +90,7 @@ namespace mfront {
      */
     void endTreatment(const BehaviourDescription &,
                       const FileDescription &) const override;
-    //! destructor
+    //! \brief destructor
     ~CastemInterface() override;
 
    protected:

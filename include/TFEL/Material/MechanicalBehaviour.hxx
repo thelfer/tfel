@@ -56,16 +56,52 @@ namespace tfel::material {
     /*!
      * \brief return values of the integrate method
      */
-    enum IntegrationResult {
-      SUCCESS,            //<! Integration is a success
-      FAILURE,            //<! Integration failed
+    enum ExitStatus {
+      FAILURE = 0,        //<! Integration failed
+      SUCCESS = 1,        //<! Integration is a success
       UNRELIABLE_RESULTS  //<! Integration succeed, but one or more
                           //   internal criteria show that the
                           //   results may be inaccurate
-    };                    // end of enum IntegrationResult
+    };
     /*!
-     * list of possible tangent operator type
+     * \brief a small structure representing the result of the behaviour
+     * integration
+     * See Issue #296 for the rationale behind this class.
+     * <https://github.com/thelfer/tfel/issues/296>
      */
+    struct IntegrationResult {
+      //! \brief default constructor
+      constexpr IntegrationResult() noexcept : status(SUCCESS){};
+      //! \brief move constructor
+      constexpr IntegrationResult(IntegrationResult&&) noexcept = default;
+      //! \brief default constructor
+      constexpr IntegrationResult(const IntegrationResult&) noexcept = default;
+      //! \brief move assignement
+      constexpr IntegrationResult& operator=(IntegrationResult&&) noexcept =
+          default;
+      //! \brief standard assignement
+      constexpr IntegrationResult& operator=(
+          const IntegrationResult&) noexcept = default;
+      /*!
+       * \brief constructor from an ExitStatus
+       */
+      constexpr IntegrationResult(const ExitStatus s) noexcept
+          : status(s) {}  // end of IntegrationResult
+      /*!
+       * \brief constructor from a boolean value
+       */
+      constexpr IntegrationResult(const bool b) noexcept
+          : status(b ? SUCCESS : FAILURE) {}  // end of IntegrationResult
+
+      //! \brief convertion operator to the ExistStatus enumeration
+      constexpr operator ExitStatus() const noexcept { return this->status; }
+      //! \brief destructor
+      inline ~IntegrationResult() noexcept = default;
+
+     private:
+      ExitStatus status;
+    };  // end of enum IntegrationResult
+    //! \brief list of possible tangent operator type
     enum SMType {
       ELASTIC,
       SECANTOPERATOR,

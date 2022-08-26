@@ -84,6 +84,7 @@ if(HAVE_CASTEM)
     CastemFiniteStrainBehaviour.cxx
     CastemFiniteStrainBehaviour2.cxx
     CastemCohesiveZoneModel.cxx
+    CastemModel.cxx
     CastemUmatStandardBehaviour.cxx
     CastemUmatSmallStrainBehaviour.cxx
     CastemUmatFiniteStrainBehaviour.cxx

@@ -360,7 +360,9 @@ namespace mfront {
     const auto btype = this->bd.getBehaviourTypeFlag();
     const auto& d = this->bd.getBehaviourData(h);
     if (this->bd.hasCode(h, BehaviourData::ComputeThermodynamicForces)) {
-      os << "this->computeThermodynamicForces();\n";
+      os << "if(!this->computeThermodynamicForces()){\n";
+      writeReturnFailure(os, this->bd);
+      os << "}\n";
     }
     os << "if(!this->computeDerivative()){\n";
     writeReturnFailure(os, this->bd);
@@ -379,7 +381,9 @@ namespace mfront {
     }
     if (!this->bd.getMainVariables().empty()) {
       os << "// update the thermodynamic forces\n"
-         << "this->computeFinalThermodynamicForces();\n";
+         << "if(!this->computeFinalThermodynamicForces()){\n";
+      writeReturnFailure(os, this->bd);
+      os << "}\n";
     }
     if (d.hasCode(BehaviourData::UpdateAuxiliaryStateVariables)) {
       os << "this->updateAuxiliaryStateVariables(this->dt);\n";
@@ -399,7 +403,9 @@ namespace mfront {
     writeAlgorithmConstant(os, "1", "2");
     os << "// Compute K1's values\n";
     if (this->bd.hasCode(h, BehaviourData::ComputeThermodynamicForces)) {
-      os << "this->computeThermodynamicForces();\n";
+      os << "if(!this->computeThermodynamicForces()){\n";
+      writeReturnFailure(os, this->bd);
+      os << "}\n";
     }
     os << "if(!this->computeDerivative()){\n";
     writeReturnFailure(os, this->bd);
@@ -424,7 +430,9 @@ namespace mfront {
       this->writeStiffnessTensorComputation(os, "this->D", m);
     }
     if (this->bd.hasCode(h, BehaviourData::ComputeThermodynamicForces)) {
-      os << "this->computeThermodynamicForces();\n";
+      os << "if(!this->computeThermodynamicForces()){\n";
+      writeReturnFailure(os, this->bd);
+      os << "}\n";
     }
     os << "if(!this->computeDerivative()){\n";
     writeReturnFailure(os, this->bd);
@@ -444,7 +452,9 @@ namespace mfront {
     }
     if (!this->bd.getMainVariables().empty()) {
       os << "// update the thermodynamic forces\n"
-         << "this->computeFinalThermodynamicForces();\n";
+         << "if(!this->computeFinalThermodynamicForces()){\n";
+      writeReturnFailure(os, this->bd);
+      os << "}\n";
     }
     if (d.hasCode(BehaviourData::UpdateAuxiliaryStateVariables)) {
       os << "this->updateAuxiliaryStateVariables(this->dt);\n";
@@ -980,7 +990,9 @@ namespace mfront {
     }
     if (!this->bd.getMainVariables().empty()) {
       os << "// update the thermodynamic forces\n"
-         << "this->computeFinalThermodynamicForces();\n";
+         << "if(!this->computeFinalThermodynamicForces()){\n";
+      writeReturnFailure(os, this->bd);
+      os << "}\n";
     }
     if (d.hasCode(BehaviourData::UpdateAuxiliaryStateVariables)) {
       os << "this->updateAuxiliaryStateVariables(dt_);\n";
@@ -1587,7 +1599,9 @@ namespace mfront {
       this->writeStiffnessTensorComputation(os, "this->D", m);
     }
     if (!this->bd.getMainVariables().empty()) {
-      os << "this->computeFinalThermodynamicForces();\n";
+      os << "if(!this->computeFinalThermodynamicForces()){\n";
+      writeReturnFailure(os, this->bd);
+      os << "}\n";
     }
     if (this->bd.hasCode(h, BehaviourData::UpdateAuxiliaryStateVariables)) {
       os << "this->updateAuxiliaryStateVariables(dt_);\n";
@@ -1993,7 +2007,9 @@ namespace mfront {
          << "_K2);\n";
     }
     if (!this->bd.getMainVariables().empty()) {
-      os << "this->computeFinalThermodynamicForces();\n";
+      os << "if(!this->computeFinalThermodynamicForces()){\n";
+      writeReturnFailure(os, this->bd);
+      os << "}\n";
     }
     if (this->bd.hasCode(h, BehaviourData::UpdateAuxiliaryStateVariables)) {
       os << "this->updateAuxiliaryStateVariables(dt_);\n";
@@ -2067,7 +2083,9 @@ namespace mfront {
     writeAlgorithmConstant(os, "1", "2");
     os << "// Compute K1's values\n";
     if (this->bd.hasCode(h, BehaviourData::ComputeThermodynamicForces)) {
-      os << "this->computeThermodynamicForces();\n";
+      os << "if(!this->computeThermodynamicForces()){\n";
+      writeReturnFailure(os, this->bd);
+      os << "}\n";
     }
     os << "if(!this->computeDerivative()){\n";
     writeReturnFailure(os, this->bd);
@@ -2093,7 +2111,9 @@ namespace mfront {
     }
     if (this->bd.hasCode(h, BehaviourData::ComputeThermodynamicForces)) {
       os << "// update the thermodynamic forces\n"
-         << "this->computeThermodynamicForces();\n\n";
+         << "if(!this->computeThermodynamicForces()){\n";
+      writeReturnFailure(os, this->bd);
+      os << "}\n";
     }
     os << "// Compute K2's values\n"
        << "if(!this->computeDerivative()){\n";
@@ -2112,7 +2132,9 @@ namespace mfront {
     }
     if (this->bd.hasCode(h, BehaviourData::ComputeThermodynamicForces)) {
       os << "// update the thermodynamic forces\n"
-         << "this->computeThermodynamicForces();\n\n";
+         << "if(!this->computeThermodynamicForces()){\n";
+      writeReturnFailure(os, this->bd);
+      os << "}\n";
     }
     os << "// Compute K3's values\n"
        << "if(!this->computeDerivative()){\n";
@@ -2130,7 +2152,9 @@ namespace mfront {
     }
     if (this->bd.hasCode(h, BehaviourData::ComputeThermodynamicForces)) {
       os << "// update the thermodynamic forces\n"
-         << "this->computeThermodynamicForces();\n\n";
+         << "if(!this->computeThermodynamicForces()){\n";
+      writeReturnFailure(os, this->bd);
+      os << "}\n";
     }
     os << "// Compute K4's values\n"
        << "if(!this->computeDerivative()){\n";
@@ -2148,7 +2172,9 @@ namespace mfront {
     }
     if (!this->bd.getMainVariables().empty()) {
       os << "// update the thermodynamic forces\n"
-         << "this->computeFinalThermodynamicForces();\n";
+         << "if(!this->computeFinalThermodynamicForces()){\n";
+      writeReturnFailure(os, this->bd);
+      os << "}\n";
     }
     if (this->bd.hasCode(h, BehaviourData::UpdateAuxiliaryStateVariables)) {
       os << "this->updateAuxiliaryStateVariables(this->dt);\n";

@@ -91,13 +91,13 @@ namespace mfront {
   }  // end of getTypeAliases
 
   void exportStringSymbol(std::ostream& os,
-                          const std::string& n,
-                          const std::string& v) {
-    exportSymbol(os, "const char*", n, '"' + v + '"');
+                          const std::string_view n,
+                          const std::string_view v) {
+    exportSymbol(os, "const char*", n, '"' + std::string{v} + '"');
   }  // end of exportStringSymbol
 
   void exportUnsignedShortSymbol(std::ostream& os,
-                                 const std::string& n,
+                                 const std::string_view n,
                                  const unsigned short v) {
     std::ostringstream value;
     value << v;
@@ -105,7 +105,7 @@ namespace mfront {
   }  // end of exportUnsignedShortSymbol
 
   void writeParametersSymbols(std::ostream& os,
-                              const std::string& n,
+                              const std::string_view n,
                               const MaterialPropertyDescription& mpd) {
     if (areParametersTreatedAsStaticVariables(mpd)) {
       writeParametersDeclarationSymbols(os, n, {});
@@ -119,14 +119,14 @@ namespace mfront {
 
   void writeParametersDeclarationSymbols(
       std::ostream& os,
-      const std::string& n,
+      const std::string_view n,
       const VariableDescriptionContainer& parameters) {
-    exportUnsignedShortSymbol(os, n + "_nParameters",
+    exportUnsignedShortSymbol(os, std::string{n} + "_nParameters",
                               parameters.getNumberOfVariables());
-    exportArrayOfStringsSymbol(os, n + "_Parameters",
+    exportArrayOfStringsSymbol(os, std::string{n} + "_Parameters",
                                parameters.getExternalNames());
     if (parameters.empty()) {
-      exportSymbol(os, "const int *", n + "_ParametersTypes", "nullptr");
+      exportSymbol(os, "const int *", std::string{n} + "_ParametersTypes", "nullptr");
       return;
     }
     const auto size = [&parameters] {
@@ -166,7 +166,7 @@ namespace mfront {
 
   void writeParametersDefaultValuesSymbols(
       std::ostream& os,
-      const std::string& n,
+      const std::string_view n,
       const VariableDescriptionContainer& parameters) {
     const auto prec = os.precision();
     for (const auto& p : parameters) {
@@ -184,14 +184,14 @@ namespace mfront {
             "array of parameters is not supported");
       }
       exportSymbol(os, "double",
-                   n + "_" + p.getExternalName() + "_ParameterDefaultValue",
+                   std::string{n} + "_" + p.getExternalName() + "_ParameterDefaultValue",
                    p.getAttribute<double>(VariableDescription::defaultValue));
       os.precision(prec);
     }
   }  // end of writeParametersDefaultValuesSymbols
 
   void exportArrayOfIntegersSymbol(std::ostream& os,
-                                   const std::string& s,
+                                   const std::string_view s,
                                    const std::vector<int>& values) {
     if (values.empty()) {
       exportSymbol(os, "const int *", s, "nullptr");
@@ -216,7 +216,7 @@ namespace mfront {
   }  // end of exportArrayOfIntegersSymbol
 
   void exportArrayOfStringsSymbol(std::ostream& os,
-                                  const std::string& s,
+                                  const std::string_view s,
                                   const std::vector<std::string>& values) {
     if (values.empty()) {
       exportSymbol(os, "const char * const *", s, "nullptr");
@@ -242,10 +242,10 @@ namespace mfront {
 
   void writeVariablesNamesSymbol(
       std::ostream& out,
-      const std::string& name,
+      const std::string_view name,
       const mfront::MaterialPropertyDescription& mpd) {
-    exportStringSymbol(out, name + "_output", mpd.output.getExternalName());
-    exportUnsignedShortSymbol(out, name + "_nargs", mpd.inputs.size());
+    exportStringSymbol(out, std::string{name} + "_output", mpd.output.getExternalName());
+    exportUnsignedShortSymbol(out, std::string{name} + "_nargs", mpd.inputs.size());
     if (!mpd.inputs.empty()) {
       out << "MFRONT_EXPORT_ARRAY_OF_SYMBOLS(const char *, " << name
           << "_args, " << mpd.inputs.size()
@@ -262,9 +262,9 @@ namespace mfront {
   }  // end of writeVariableNamesSymbol
 
   void writeBoundsSymbol(std::ostream& out,
-                         const std::string& n,
-                         const std::string& vn,
-                         const std::string& bt,
+                         const std::string_view n,
+                         const std::string_view vn,
+                         const std::string_view bt,
                          const VariableBoundsDescription& b) {
     if ((b.boundsType == VariableBoundsDescription::LOWER) ||
         (b.boundsType == VariableBoundsDescription::LOWERANDUPPER)) {
@@ -283,7 +283,7 @@ namespace mfront {
   }  // end of writeBoundsSymbol
 
   void writeBoundsSymbols(std::ostream& os,
-                          const std::string& n,
+                          const std::string_view n,
                           const VariableDescriptionContainer& vc) {
     const auto prec = os.precision();
     os.precision(14);
@@ -310,7 +310,7 @@ namespace mfront {
   }  // end of writeBoundsSymbols
 
   void writePhysicalBoundsSymbols(std::ostream& os,
-                                  const std::string& n,
+                                  const std::string_view n,
                                   const VariableDescriptionContainer& vc) {
     const auto prec = os.precision();
     os.precision(14);
@@ -338,7 +338,7 @@ namespace mfront {
 
   void writeVariablesBoundsSymbols(
       std::ostream& out,
-      const std::string& name,
+      const std::string_view name,
       const mfront::MaterialPropertyDescription& mpd) {
     const auto prec = out.precision();
     out.precision(14);
@@ -376,14 +376,14 @@ namespace mfront {
   }  // end of writeVariablesBoundsSymbols
 
   void writeFileDescriptionSymbols(std::ostream& os,
-                                   const std::string& n,
+                                   const std::string_view n,
                                    const FileDescription& fd) {
     auto description = [&fd] {
-      auto rtrim = [](const std::string& s) {
+      auto rtrim = [](const std::string_view s) {
         auto end = s.find_last_not_of(" \n\r\t\f\v");
         return (end == std::string::npos) ? "" : s.substr(0, end + 1);
       };
-      auto transform = [rtrim](const std::string& s) {
+      auto transform = [rtrim](const std::string_view s) {
         return tfel::utilities::replace_all(rtrim(s), "\\", "\\\\");
       };
       auto r = std::string{};
@@ -401,13 +401,13 @@ namespace mfront {
       }
       return r;
     }();
-    exportStringSymbol(os, n + "_author", fd.authorName);
-    exportStringSymbol(os, n + "_date", fd.date);
-    exportStringSymbol(os, n + "_description", description);
+    exportStringSymbol(os, std::string{n} + "_author", fd.authorName);
+    exportStringSymbol(os, std::string{n} + "_date", fd.date);
+    exportStringSymbol(os, std::string{n} + "_description", description);
   }  // end of writeFileDescriptionSymbols
 
   void writeBuildIdentifierSymbol(std::ostream& os,
-                                  const std::string& n,
+                                  const std::string_view n,
                                   const MaterialKnowledgeDescription& d) {
     const auto build_id = [&d]() -> std::string {
       const auto* const bid = std::getenv("TFEL_BUILD_ID");
@@ -417,45 +417,45 @@ namespace mfront {
       return d.getAttribute<std::string>(
           MaterialKnowledgeDescription::buildIdentifier, "");
     }();
-    exportStringSymbol(os, n + "_build_id", build_id);
+    exportStringSymbol(os, std::string{n} + "_build_id", build_id);
   }  // end of writeBuildIdentifierSymbols
 
-  void writeEntryPointSymbol(std::ostream& out, const std::string& n) {
+  void writeEntryPointSymbol(std::ostream& out, const std::string_view n) {
     writeEntryPointSymbol(out, n, n);
   }  // end of writeEntryPointSymbols
 
   void writeEntryPointSymbol(std::ostream& out,
-                             const std::string& n,
-                             const std::string& n2) {
-    exportStringSymbol(out, n + "_mfront_ept", n2);
+                             const std::string_view n,
+                             const std::string_view n2) {
+    exportStringSymbol(out, std::string{n} + "_mfront_ept", n2);
   }  // end of writeEntryPointSymbols
 
-  void writeTFELVersionSymbol(std::ostream& out, const std::string& n) {
-    exportStringSymbol(out, n + "_tfel_version", ::getTFELVersion());
+  void writeTFELVersionSymbol(std::ostream& out, const std::string_view n) {
+    exportStringSymbol(out, std::string{n} + "_tfel_version", ::getTFELVersion());
   }  // end of writeTFELVersionSymbol
 
   void writeInterfaceSymbol(std::ostream& out,
-                            const std::string& n,
-                            const std::string& i) {
-    exportStringSymbol(out, n + "_mfront_interface", i);
+                            const std::string_view n,
+                            const std::string_view i) {
+    exportStringSymbol(out, std::string{n} + "_mfront_interface", i);
   }  // end of writeInterfaceSymbol
 
   void writeLawSymbol(std::ostream& out,
-                      const std::string& n,
-                      const std::string& l) {
-    exportStringSymbol(out, n + "_mfront_law", l);
+                      const std::string_view n,
+                      const std::string_view l) {
+    exportStringSymbol(out, std::string{n} + "_mfront_law", l);
   }  // end of writeLawSymbol
 
   void writeMaterialSymbol(std::ostream& out,
-                           const std::string& n,
-                           const std::string& m) {
+                           const std::string_view n,
+                           const std::string_view m) {
     if (!m.empty()) {
-      exportStringSymbol(out, n + "_mfront_material", m);
+      exportStringSymbol(out, std::string{n} + "_mfront_material", m);
     }
   }  // end of writeMaterialSymbol
 
   void writeMaterialKnowledgeTypeSymbol(std::ostream& out,
-                                        const std::string& n,
+                                        const std::string_view n,
                                         const MaterialKnowledgeType& t) {
     const auto s = [&t] {
       if (t == MATERIALPROPERTY) {
@@ -470,7 +470,7 @@ namespace mfront {
             "internal error, (unsupported material knowledge type)");
       }
     }();
-    exportUnsignedShortSymbol(out, n + "_mfront_mkt", s);
+    exportUnsignedShortSymbol(out, std::string{n} + "_mfront_mkt", s);
   }  // end of writeMaterialKnowledgeTypeSymbol
 
   void writeMaterialLaws(std::ostream& os,
@@ -483,7 +483,7 @@ namespace mfront {
 
   void writeStaticVariables(std::ostream& os,
                             const StaticVariableDescriptionContainer& vc,
-                            const std::string& f) {
+                            const std::string_view f) {
     if (vc.empty()) {
       return;
     }
@@ -621,21 +621,21 @@ namespace mfront {
        << "#endif /* MFRONT_EXPORT_ARRAY_OF_SYMBOLS*/\n\n";
   }  // end of writeExportDirectives
 
-  std::string makeUpperCase(const std::string& n) {
+  std::string makeUpperCase(const std::string_view n) {
     std::string s(n);
-    std::string::const_iterator p;
-    std::string::iterator p2;
-    for (p = n.begin(), p2 = s.begin(); p != n.end(); ++p, ++p2) {
+    auto p = n.begin();
+    auto p2 = s.begin();
+    for (; p != n.end(); ++p, ++p2) {
       *p2 = static_cast<char>(toupper(*p));
     }
     return s;
   }  // end of makeUpperCase
 
-  std::string makeLowerCase(const std::string& n) {
+  std::string makeLowerCase(const std::string_view n) {
     std::string s(n);
-    std::string::const_iterator p;
-    std::string::iterator p2;
-    for (p = n.begin(), p2 = s.begin(); p != n.end(); ++p, ++p2) {
+    auto p = n.begin();
+    auto p2 = s.begin();
+    for (; p != n.end(); ++p, ++p2) {
       *p2 = static_cast<char>(tolower(*p));
     }
     return s;
@@ -670,16 +670,17 @@ namespace mfront {
   }  // end of displayGlossaryEntryCompleteDescription
 
   void addSymbol(std::map<std::string, std::string>& symbols,
-                 const std::string& s,
-                 const std::string& r) {
-    if (symbols.find(s) != symbols.end()) {
-      if (symbols.at(s) != r) {
-        tfel::raise("addSymbol: symbol '" + s +
-                    "' has multiple replacement strings ('" + symbols.at(s) +
-                    "' and '" + r + "')");
+                 const std::string_view s,
+                 const std::string_view r) {
+    const auto sname = std::string{s};
+    if (symbols.find(sname) != symbols.end()) {
+      if (symbols.at(sname) != r) {
+        tfel::raise("addSymbol: symbol '" + sname +
+                    "' has multiple replacement strings ('" +
+                    symbols.at(sname) + "' and '" + std::string{r} + "')");
       }
     }
-    symbols.insert({s, r});
+    symbols.insert({sname, std::string{r}});
   }  // end of addSymbol
 
   static void writeBoundsChecks(std::ostream& os,
@@ -783,14 +784,14 @@ namespace mfront {
 #ifdef MFRONT_HAVE_MADNEX
 
   std::tuple<std::string, std::string, std::string, std::string>
-  decomposeImplementationPathInMadnexFile(const std::string& p) {
+  decomposeImplementationPathInMadnexFile(const std::string_view p) {
     using result_type =
         std::tuple<std::string, std::string, std::string, std::string>;
     const auto details = tfel::utilities::tokenize(p, ':');
     auto raise_if = [&p](const bool b) {
       if (b) {
         tfel::raise("decomposeImplementationPathInMadnexFile: invalid path '" +
-                    p + "'");
+                    std::string{p} + "'");
       }
     };
     raise_if((details.size() != 5) && (details.size() != 4));

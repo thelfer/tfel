@@ -350,4 +350,5 @@ EXTRA_DIST=CMakeLists.txt \
 	   castemparametertest2.mtest \
 	   castemelasticmaterialpropertiesboundschecktest.mtest \
 	   castemtemperatureupdateonsubsteppingcheck.mtest      \
-           castemtensorialexternalstatevariabletest.mtest
+           castemtensorialexternalstatevariabletest.mtest       \
+           casteminitializationfailuretest.mtest

@@ -213,7 +213,6 @@ namespace calculix {
         DVInitializer::exe(this->behaviour, d.DV0, d.DV1, d.sfeh);
         this->behaviour.setCALCULIXBehaviourDataThermodynamicForces(d.STRESS);
         this->behaviour.setOutOfBoundsPolicy(d.op);
-        this->behaviour.initialize();
       }  // end of Integrator::Integrator
 
       TFEL_CALCULIX_INLINE2
@@ -226,6 +225,10 @@ namespace calculix {
             ConsistentTangentOperatorHandler;
         if (this->dt < 0.) {
           throwNegativeTimeStepException(Traits::getName());
+        }
+        if (!this->behaviour.initialize()) {
+          *(d.PNEWDT) = this->behaviour.getMinimalTimeStepScalingFactor();
+          return;
         }
         this->behaviour.checkBounds();
         auto r = BV::SUCCESS;

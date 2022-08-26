@@ -81,6 +81,13 @@ namespace mfront {
     for (const auto& v : DSLBase::getDefaultReservedNames()) {
       this->reserveName(v);
     }
+    //
+    this->appendToIncludes("#include<cmath>");
+    this->appendToIncludes("#include<limits>");
+    this->appendToIncludes("#include<string>");
+    this->appendToIncludes("#include<sstream>");
+    this->appendToIncludes("#include<iostream>");
+    this->appendToIncludes("#include<stdexcept>");
   }
 
   AbstractDSL::DSLOptions ModelDSLCommon::buildDSLOptions() const {
@@ -905,12 +912,24 @@ namespace mfront {
 
   void ModelDSLCommon::treatConstantMaterialProperty() {
     VariableDescriptionContainer cmp;
-    this->readVarList(cmp, "real", false);
+    const auto type = [this]() -> std::string {
+      const auto otype = this->readVariableTypeIfPresent();
+      if (!otype) {
+        return "real";
+      }
+      return *otype;
+    }();
+    if (SupportedTypes::getTypeFlag(type) != SupportedTypes::SCALAR) {
+      this->throwRuntimeError(
+          "DSLBase::treatConstantMaterialProperty",
+          "the type'" + type + "' is not valid for material properties.");
+    }
+    this->readVarList(cmp, type, false);
     for (const auto& mp : cmp) {
       this->md.registerMemberName(mp.name);
       this->md.constantMaterialProperties.push_back(mp);
     }
-  }  // end of treatConstantMaterialProperty()
+  }  // end of treatConstantMaterialProperty
 
   void ModelDSLCommon::treatConstantMaterialPropertyMethod() {
     auto throw_if = [this](const bool b, const std::string& m) {

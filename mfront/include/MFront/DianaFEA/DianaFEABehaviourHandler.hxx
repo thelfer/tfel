@@ -191,7 +191,6 @@ namespace dianafea {
         DVInitializer::exe(this->behaviour, d.STRAN, d.DSTRAN, d.sfeh);
         this->behaviour.setDIANAFEABehaviourDataThermodynamicForces(d.STRESS);
         this->behaviour.setOutOfBoundsPolicy(d.op);
-        this->behaviour.initialize();
       }  // end of Integrator::Integrator
 
       TFEL_DIANAFEA_INLINE2
@@ -204,6 +203,9 @@ namespace dianafea {
             ConsistentTangentOperatorIsNotAvalaible>::type;
         if (this->dt < 0.) {
           throwNegativeTimeStepException(Traits::getName());
+        }
+        if (!this->behaviour.initialize()) {
+          return;
         }
         this->behaviour.checkBounds();
         auto r = BV::SUCCESS;

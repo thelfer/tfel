@@ -8,6 +8,7 @@ set(mfront_tests_SOURCES
   StateVariablesBoundsCheck
   ExternalStateVariablesBoundsCheck
   TensorialExternalStateVariableTest
+  InitializationFailureTest
   Elasticity
   Elasticity2
   Elasticity3

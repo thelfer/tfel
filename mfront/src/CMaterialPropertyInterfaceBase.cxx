@@ -12,6 +12,7 @@
  */
 
 #include <sstream>
+#include <algorithm>
 #include <stdexcept>
 #include "TFEL/Raise.hxx"
 #include "MFront/DSLUtilities.hxx"
@@ -38,6 +39,17 @@ namespace mfront {
   }  // end of transformHeaderName
 
   CMaterialPropertyInterfaceBase::CMaterialPropertyInterfaceBase() = default;
+
+  std::vector<std::string>
+  CMaterialPropertyInterfaceBase::getSupportedFloatingPointTypes() const {
+    return {"double"};
+  }  // end of getSupportedFloatingPointTypes
+
+  bool
+  CMaterialPropertyInterfaceBase::shallGenerateOverloadedFunctionForQuantities()
+      const {
+    return false;
+  }  // end of shallGenerateOverloadedFunctionForQuantities
 
   void CMaterialPropertyInterfaceBase::writeHeaderPreprocessorDirectives(
       std::ostream& os, const MaterialPropertyDescription&) const {
@@ -92,26 +104,68 @@ namespace mfront {
     os << " */\n\n"
        << "#ifndef " << headerGard << "\n"
        << "#define " << headerGard << "\n\n";
+
+    if ((useQuantities(mpd)) &&
+        (this->shallGenerateOverloadedFunctionForQuantities())) {
+      os << "#include \"TFEL/Config/TFELTypes.hxx\"\n\n";
+    }
     writeExportDirectives(os);
     this->writeHeaderPreprocessorDirectives(os, mpd);
     this->writeBeginHeaderNamespace(os);
-    os << "MFRONT_SHAREDOBJ double " << this->getCallingConvention() << '\n'
-       << this->getFunctionName(mpd);
-    os << "(";
-    this->writeArgumentsList(os, mpd);
-    os << ");\n\n";
-    if (((hasBounds(mpd.inputs)) || (hasPhysicalBounds(mpd.inputs))) ||
-        (this->requiresCheckBoundsFunction())) {
-      os << "MFRONT_SHAREDOBJ int " << this->getCallingConvention() << '\n'
-         << this->getCheckBoundsFunctionName(mpd);
-      os << "(";
-      this->writeArgumentsList(os, mpd);
-      os << ");\n\n";
+    if (mpd.inputs.empty()) {
+      const auto fptypes = this->getSupportedFloatingPointTypes();
+      if (fptypes.size() == 1) {
+        os << fptypes[0] << " " << this->getCallingConvention() << '\n'
+           << this->getFunctionName(mpd) << "();\n\n";
+      } else {
+        const auto default_fp_type = [&fptypes]() -> std::string {
+          if (std::find(fptypes.begin(), fptypes.end(), "double") !=
+              fptypes.end()) {
+            return "double";
+          }
+          if (std::find(fptypes.begin(), fptypes.end(), "long double") !=
+              fptypes.end()) {
+            return "long double";
+          }
+          return fptypes[0];
+        }();
+        os << "template <typename mfront_ValueType"  //
+           << " = " << default_fp_type << ">\n";
+        os << "mfront_ValueType " << this->getCallingConvention() << '\n'
+           << this->getFunctionName(mpd) << "();\n\n";
+        for (const auto& fptype : fptypes) {
+          os << "template <>\n";
+          os << fptype << " " << this->getCallingConvention() << '\n'
+             << this->getFunctionName(mpd) << "<" << fptype << ">();\n\n";
+        }
+      }
+      if (this->requiresCheckBoundsFunction()) {
+        os << "MFRONT_SHAREDOBJ int " << this->getCallingConvention() << '\n'
+           << this->getCheckBoundsFunctionName(mpd) << "();\n\n";
+      }
+    } else {
+      for (const auto& floating_point_type :
+           this->getSupportedFloatingPointTypes()) {
+        os << "MFRONT_SHAREDOBJ " << floating_point_type
+           << this->getCallingConvention() << '\n'
+           << this->getFunctionName(mpd);
+        os << "(";
+        this->writeArgumentsList(os, mpd, floating_point_type, false);
+        os << ");\n\n";
+        if (((hasBounds(mpd.inputs)) || (hasPhysicalBounds(mpd.inputs))) ||
+            (this->requiresCheckBoundsFunction())) {
+          os << "MFRONT_SHAREDOBJ int " << this->getCallingConvention() << '\n'
+             << this->getCheckBoundsFunctionName(mpd);
+          os << "(";
+          this->writeArgumentsList(os, mpd, floating_point_type, false);
+          os << ");\n\n";
+        }
+      }
     }
     this->writeEndHeaderNamespace(os);
     os << "#endif /* " << headerGard << " */\n";
     os.close();
-  }  // end of writeHeaderFile()
+  }  // end of writeHeaderFile
 
   void CMaterialPropertyInterfaceBase::writeInterfaceSpecificVariables(
       std::ostream& os, const MaterialPropertyDescription& mpd) const {
@@ -125,12 +179,15 @@ namespace mfront {
   }  // end of writeInterfaceSpecificVariables
 
   void CMaterialPropertyInterfaceBase::writeArgumentsList(
-      std::ostream& os, const MaterialPropertyDescription& mpd) const {
+      std::ostream& os,
+      const MaterialPropertyDescription& mpd,
+      const std::string_view t,
+      const bool) const {
     const auto use_qt = useQuantities(mpd);
     if (!mpd.inputs.empty()) {
       for (auto p = mpd.inputs.begin(); p != mpd.inputs.end();) {
         const auto n = (use_qt ? "mfront_" : "") + p->name;
-        os << "const double " << n;
+        os << "const " << t << " " << n;
         if ((++p) != mpd.inputs.end()) {
           os << ",";
         }
@@ -283,7 +340,7 @@ namespace mfront {
     std::ofstream os(fn);
     tfel::raise_if(!os,
                    "CMaterialPropertyInterfaceBase::writeOutputFiles : "
-                   "unable to open '" +
+                   "unable to open file '" +
                        fn + "' for writing output file.");
     os.exceptions(std::ios::badbit | std::ios::failbit);
     os << "/*!\n"
@@ -331,10 +388,64 @@ namespace mfront {
     this->writeMaterialKnowledgeTypeSymbol(os, mpd);
     //
     this->writeBeginSrcNamespace(os);
-    os << "double " << this->getFunctionName(mpd) << "(";
-    this->writeArgumentsList(os, mpd);
-    os << ")\n{\n";
-    writeBeginningOfMaterialPropertyBody(os, mpd, fd, "double", true);
+    if (mpd.inputs.empty()) {
+      const auto fptypes = this->getSupportedFloatingPointTypes();
+      if (fptypes.size() == 1) {
+        os << fptypes[0] << " " << this->getCallingConvention() << '\n'
+           << this->getFunctionName(mpd) << "(){\n";
+        this->writeMaterialPropertyBody(os, mpd, fd, fptypes[0]);
+        os << "} /* end of " << mpd.className << " */\n\n";
+      } else {
+        for (const auto& fptype : this->getSupportedFloatingPointTypes()) {
+          os << "template<>\n"
+             << fptype << " " << this->getCallingConvention() << '\n'
+             << this->getFunctionName(mpd) << "<" << fptype << ">(){\n";
+          this->writeMaterialPropertyBody(os, mpd, fd, fptype);
+          os << "} /* end of " << mpd.className << " */\n\n";
+        }
+      }
+    } else {
+      for (const auto& floating_point_type :
+           this->getSupportedFloatingPointTypes()) {
+        os << floating_point_type << " " << this->getFunctionName(mpd) << "(";
+        this->writeArgumentsList(os, mpd, floating_point_type, false);
+        os << ")\n{\n";
+        this->writeMaterialPropertyBody(os, mpd, fd, floating_point_type);
+        os << "} /* end of " << mpd.className << " */\n\n";
+      }
+    }
+    if (mpd.inputs.empty()) {
+      if (this->requiresCheckBoundsFunction()) {
+        os << "int " << this->getCheckBoundsFunctionName(mpd) << "(){";
+        this->writeMaterialPropertyCheckBoundsBody(os, mpd, "double");
+        os << "} /* end of " << mpd.className << "_checkBounds */\n\n";
+      }
+    } else {
+      for (const auto& floating_point_type :
+           this->getSupportedFloatingPointTypes()) {
+        if (((hasBounds(mpd.inputs)) || (hasPhysicalBounds(mpd.inputs))) ||
+            (this->requiresCheckBoundsFunction())) {
+          os << "int " << this->getCheckBoundsFunctionName(mpd);
+          os << "(";
+          this->writeArgumentsList(os, mpd, floating_point_type, false);
+          os << ")\n{\n";
+          this->writeMaterialPropertyCheckBoundsBody(os, mpd,
+                                                     floating_point_type);
+          os << "} /* end of " << mpd.className << "_checkBounds */\n\n";
+        }
+      }
+    }
+    this->writeEndSrcNamespace(os);
+    os.close();
+  }  // end of writeSrcFile
+
+  void CMaterialPropertyInterfaceBase::writeMaterialPropertyBody(
+      std::ostream& os,
+      const MaterialPropertyDescription& mpd,
+      const FileDescription& fd,
+      const std::string_view floating_point_type) const {
+    writeBeginningOfMaterialPropertyBody(os, mpd, fd, floating_point_type,
+                                         true);
     // parameters
     if (!mpd.parameters.empty()) {
       for (const auto& p : mpd.parameters) {
@@ -373,31 +484,27 @@ namespace mfront {
     } else {
       os << "return " << mpd.output.name << ";\n";
     }
-    os << "} /* end of " << mpd.className << " */\n\n";
-    if (((hasBounds(mpd.inputs)) || (hasPhysicalBounds(mpd.inputs))) ||
-        (this->requiresCheckBoundsFunction())) {
-      os << "int " << this->getCheckBoundsFunctionName(mpd);
-      os << "(";
-      this->writeArgumentsList(os, mpd);
-      os << ")\n{\n";
-      writeScalarStandardTypedefs(os, mpd, "double", true);
-      this->writeInterfaceSpecificVariables(os, mpd);
-      for (const auto& i : mpd.inputs) {
-        os << "static_cast<void>(" << i.name << ");\n";
-      }
-      if (hasPhysicalBounds(mpd.inputs)) {
-        os << "/* treating mpd.physical bounds */\n";
-        writePhysicalBounds(os, mpd);
-      }
-      if (hasBounds(mpd.inputs)) {
-        os << "/* treating standard bounds */\n";
-        writeBounds(os, mpd);
-      }
-      os << "return 0;\n} /* end of " << mpd.className << "_checkBounds */\n\n";
+  }  // end of writeMaterialPropertyBody
+
+  void CMaterialPropertyInterfaceBase::writeMaterialPropertyCheckBoundsBody(
+      std::ostream& os,
+      const MaterialPropertyDescription& mpd,
+      const std::string_view floating_point_type) const {
+    writeScalarStandardTypedefs(os, mpd, floating_point_type, true);
+    this->writeInterfaceSpecificVariables(os, mpd);
+    for (const auto& i : mpd.inputs) {
+      os << "static_cast<void>(" << i.name << ");\n";
     }
-    this->writeEndSrcNamespace(os);
-    os.close();
-  }  // end of writeSrcFile
+    if (hasPhysicalBounds(mpd.inputs)) {
+      os << "/* treating mpd.physical bounds */\n";
+      writePhysicalBounds(os, mpd);
+    }
+    if (hasBounds(mpd.inputs)) {
+      os << "/* treating standard bounds */\n";
+      writeBounds(os, mpd);
+    }
+    os << "return 0;\n";
+  }  // end of writeMaterialPropertyCheckBoundsBody
 
   void CMaterialPropertyInterfaceBase::writeCErrorTreatment(
       std::ostream& os, const MaterialPropertyDescription& mpd) const {
