@@ -31,14 +31,16 @@ namespace mfront {
         const tokens_iterator) override;
     void getTargetsDescription(
         TargetsDescription&, const MaterialPropertyDescription&) const override;
-    void writeInterfaceSymbol(
-        std::ostream&, const MaterialPropertyDescription&) const override;
+    void writeInterfaceSymbol(std::ostream&,
+                              const MaterialPropertyDescription&) const override;
     //! \brief destructor
     ~FortranMaterialPropertyInterface() override;
 
    private:
     void writeArgumentsList(std::ostream&,
-                            const MaterialPropertyDescription&) const override;
+                            const MaterialPropertyDescription&,
+                            const std::string_view,
+                            const bool) const override;
     void writeInterfaceSpecificVariables(
         std::ostream&, const MaterialPropertyDescription&) const override;
     void writeSrcPreprocessorDirectives(

@@ -123,7 +123,10 @@ namespace mfront {
   }  // end of writeInterfaceSymbol
 
   void Fortran03MaterialPropertyInterface::writeArgumentsList(
-      std::ostream& os, const MaterialPropertyDescription& mpd) const {
+      std::ostream& os,
+      const MaterialPropertyDescription& mpd,
+      const std::string_view,
+      const bool) const {
     if (!mpd.inputs.empty()) {
       for (auto p = mpd.inputs.begin(); p != mpd.inputs.end();) {
         os << "const double * const mfront_argument_" << p->name;
@@ -156,11 +159,11 @@ namespace mfront {
        << "extern \"C\"{\n"
        << "#endif /* __cplusplus */\n\n"
        << "MFRONT_SHAREDOBJ double " << this->getFunctionName(mpd) << "(";
-    this->writeArgumentsList(os, mpd);
+    this->writeArgumentsList(os, mpd, "double", false);
     os << ");\n"
        << "MFRONT_SHAREDOBJ int " << this->getCheckBoundsFunctionName(mpd)
        << "(";
-    this->writeArgumentsList(os, mpd);
+    this->writeArgumentsList(os, mpd, "double", false);
     os << ");\n\n"
        << "#ifdef __cplusplus\n"
        << "}\n"

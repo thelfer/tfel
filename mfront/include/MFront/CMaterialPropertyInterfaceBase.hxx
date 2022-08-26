@@ -16,6 +16,7 @@
 
 #include <string>
 #include <fstream>
+#include <string_view>
 
 #include "MFront/LawFunction.hxx"
 #include "MFront/VariableDescription.hxx"
@@ -49,14 +50,6 @@ namespace mfront {
     ~CMaterialPropertyInterfaceBase() override;
 
    protected:
-    virtual void writeArgumentsList(std::ostream&,
-                                    const MaterialPropertyDescription&) const;
-    /*!
-     * \param[out] os:  output file stream
-     * \param[in] mpd : material property description
-     */
-    virtual void writeInterfaceSpecificVariables(
-        std::ostream&, const MaterialPropertyDescription&) const;
     /*!
      * \param[out] os:  output file stream
      */
@@ -65,6 +58,99 @@ namespace mfront {
      * \param[out] os:  output file stream
      */
     virtual void writeEndHeaderNamespace(std::ostream&) const = 0;
+    /*!
+     * \param[out] os:  output file stream
+     * \param[in]  mpd: material property description
+     */
+    virtual void writeInterfaceSymbol(
+        std::ostream&, const MaterialPropertyDescription&) const = 0;
+    /*!
+     * \param[out] os:  output file stream
+     */
+    virtual void writeBeginSrcNamespace(std::ostream&) const = 0;
+    /*!
+     * \param[out] os:  output file stream
+     */
+    virtual void writeEndSrcNamespace(std::ostream&) const = 0;
+    //
+    virtual bool requiresCheckBoundsFunction() const = 0;
+    /*!
+     * \return the name of the generated function.
+     * \param[in] mpd: material property description
+     */
+    virtual std::string getFunctionName(
+        const MaterialPropertyDescription&) const = 0;
+    /*!
+     * \param[in] mpd: material property description
+     */
+    virtual std::string getCheckBoundsFunctionName(
+        const MaterialPropertyDescription&) const = 0;
+    /*!
+     * \param const std::string&, name of the material
+     * \param const std::string&, name of the class
+     */
+    virtual std::string getHeaderFileName(const std::string&,
+                                          const std::string&) const = 0;
+    /*!
+     * \param const std::string&, name of the material
+     * \param const std::string&, name of the class
+     */
+    virtual std::string getSrcFileName(const std::string&,
+                                       const std::string&) const = 0;
+    /*!
+     * \return the list of supported floating-point types. Supported
+     * floating-point types are `float`, `double` and `long double`. For each
+     * type one overload (or two if quantities are supported) will be generated.
+     *
+     * The default implementation only returns `double`.
+     */
+    virtual std::vector<std::string> getSupportedFloatingPointTypes() const;
+    /*!
+     * \brief if the material property supports quantities, this methods
+     * returns if an overloaded function supporting quantities shall be
+     * generated.
+     *
+     * The default implementation of this method returns `false`.
+     */
+    virtual bool shallGenerateOverloadedFunctionForQuantities() const;
+    /*!
+     * \brief write the list of arguments
+     * \param[out] os: output stream
+     * \param[in] mpd: material property description
+     * \param[in] t: floating-point type
+     * \param[in] b: boolean stating if quantities must be used
+     */
+    virtual void writeArgumentsList(std::ostream&,
+                                    const MaterialPropertyDescription&,
+                                    const std::string_view,
+                                    const bool) const;
+    /*!
+     * \brief write the body of the material property function
+     * \param[out] os: output stream
+     * \param[in] mpd: material property description
+     * \param[in] fd: file description
+     * \param[in] floating_point_type: floating-point type
+     */
+    virtual void writeMaterialPropertyBody(std::ostream&,
+                                           const MaterialPropertyDescription&,
+                                           const FileDescription&,
+                                           const std::string_view) const;
+    /*!
+     * \brief write the body of the check bounds function
+     * \param[out] os: output stream
+     * \param[in] mpd: material property description
+     * \param[in] floating_point_type: floating-point type
+     */
+    virtual void writeMaterialPropertyCheckBoundsBody(
+        std::ostream&,
+        const MaterialPropertyDescription&,
+        const std::string_view) const;
+    /*!
+     * \param[out] os:  output file stream
+     * \param[in] mpd : material property description
+     */
+    virtual void writeInterfaceSpecificVariables(
+        std::ostream&, const MaterialPropertyDescription&) const;
     /*!
      * \param[out] os:  output file stream
      * \param[out] mpd: material property description
@@ -107,12 +193,6 @@ namespace mfront {
      * \param[out] os:  output file stream
      * \param[in]  mpd: material property description
      */
-    virtual void writeInterfaceSymbol(
-        std::ostream&, const MaterialPropertyDescription&) const = 0;
-    /*!
-     * \param[out] os:  output file stream
-     * \param[in]  mpd: material property description
-     */
     virtual void writeMaterialKnowledgeTypeSymbol(
         std::ostream&, const MaterialPropertyDescription&) const;
     /*!
@@ -129,14 +209,6 @@ namespace mfront {
      */
     virtual void writeVariablesBoundsSymbols(
         std::ostream&, const MaterialPropertyDescription&) const;
-    /*!
-     * \param[out] os:  output file stream
-     */
-    virtual void writeBeginSrcNamespace(std::ostream&) const = 0;
-    /*!
-     * \param[out] os:  output file stream
-     */
-    virtual void writeEndSrcNamespace(std::ostream&) const = 0;
     /*!
      * \param[out] os:  output file stream
      * \param[in]  mpd: material property description
@@ -157,40 +229,12 @@ namespace mfront {
                                       const MaterialPropertyDescription&) const;
 
     virtual std::string getCallingConvention() const;
-
-    virtual bool requiresCheckBoundsFunction() const = 0;
     /*!
      * \return the name used to generate the symbols associated with the
      * material property.
      * \param[in] mpd: material property description
      */
     virtual std::string getSymbolName(const MaterialPropertyDescription&) const;
-    /*!
-     * \return the name of the generated function.
-     * \param[in] mpd: material property description
-     */
-    virtual std::string getFunctionName(
-        const MaterialPropertyDescription&) const = 0;
-    /*!
-     * \param[in] mpd: material property description
-     */
-    virtual std::string getCheckBoundsFunctionName(
-        const MaterialPropertyDescription&) const = 0;
-
-    /*!
-     * \param const std::string&, name of the material
-     * \param const std::string&, name of the class
-     */
-    virtual std::string getHeaderFileName(const std::string&,
-                                          const std::string&) const = 0;
-
-    /*!
-     * \param const std::string&, name of the material
-     * \param const std::string&, name of the class
-     */
-    virtual std::string getSrcFileName(const std::string&,
-                                       const std::string&) const = 0;
-
     /*!
      * \brief : write the source file. The headerFile member has been
      * opened appropriately and will be closed after the call.

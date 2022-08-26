@@ -89,7 +89,10 @@ namespace mfront {
   }  // end of FortranMaterialPropertyInterface
 
   void FortranMaterialPropertyInterface::writeArgumentsList(
-      std::ostream& file, const MaterialPropertyDescription& mpd) const {
+      std::ostream& file,
+      const MaterialPropertyDescription& mpd,
+      const std::string_view,
+      const bool) const {
     if (!mpd.inputs.empty()) {
       for (auto p = mpd.inputs.begin(); p != mpd.inputs.end();) {
         file << "const mfront_fortran_real8 * const mfront_argument_"
@@ -135,11 +138,11 @@ namespace mfront {
        << "#endif /* __cplusplus */\n\n"
        << "typedef double mfront_fortran_real8;\n\n"
        << "\nMFRONT_SHAREDOBJ double " << this->getFunctionName(mpd) << "(";
-    this->writeArgumentsList(os, mpd);
+    this->writeArgumentsList(os, mpd, "double", false);
     os << ");\n"
        << "MFRONT_SHAREDOBJ int " << this->getCheckBoundsFunctionName(mpd)
        << "(";
-    this->writeArgumentsList(os, mpd);
+    this->writeArgumentsList(os, mpd, "double", false);
     os << ");\n\n"
        << "#ifdef __cplusplus\n"
        << "}\n"

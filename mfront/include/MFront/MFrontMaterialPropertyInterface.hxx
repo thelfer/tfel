@@ -47,6 +47,8 @@ namespace mfront {
 
    private:
     //
+    std::vector<std::string> getSupportedFloatingPointTypes() const override;
+    bool shallGenerateOverloadedFunctionForQuantities() const override;
     void writeBeginHeaderNamespace(std::ostream&) const override;
     void writeEndHeaderNamespace(std::ostream&) const override;
     void writeBeginSrcNamespace(std::ostream&) const override;
