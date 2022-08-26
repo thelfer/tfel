@@ -69,20 +69,20 @@ namespace mfront::bbrick {
     }
     //
     if (d.count("D") != 0) {
+      this->D = getBehaviourDescriptionMaterialProperty(dsl, "D", d.at("D"));
+    } else {
       BehaviourDescription::ConstantMaterialProperty mp;
       mp.value = 1;
       this->D = mp;
-    } else {
-      this->D = getBehaviourDescriptionMaterialProperty(dsl, "D", d.at("D"));
     }
     declareParameterOrLocalVariable(bd, this->D, "stress", Dn);
     //
     if (d.count("f") != 0) {
+      this->f = getBehaviourDescriptionMaterialProperty(dsl, "f", d.at("f"));
+    } else {
       BehaviourDescription::ConstantMaterialProperty mp;
       mp.value = 1;
       this->f = mp;
-    } else {
-      this->f = getBehaviourDescriptionMaterialProperty(dsl, "f", d.at("f"));
     }
     declareParameterOrLocalVariable(bd, this->f, "stress", fn);
     //
@@ -197,7 +197,7 @@ namespace mfront::bbrick {
     c += "f" + an + " -= ";
     c += "   (" + dpn + ") * (" + Ecn + ")  * " + n;
     c += " - (" + Dn + ")  * (" + dpn + ") * (" + Rdn + ") * (" + a_mts + ")";
-    c += " - (" + fn + ")  * pow(" + aeqn + "," + mn + ")";
+    c += " - (this->dt) * (" + fn + ")  * pow(" + aeqn + "," + mn + ")";
     c += " * (" + Rsn + ") *  (" + a_mts + ") * " + iaeqn;
     c += ";\n";
     if (b) {
