@@ -190,7 +190,8 @@ namespace mfront::bbrick {
                        "::theta * (this->d" + an + ")";
     auto c = std::string{};
     c += "const auto " + aeqn + " = ";
-    c += "std::sqrt(std::max((" + a_mts + ") | (" + a_mts + "), ";
+    c += "std::sqrt(std::max((" + a_mts + ") | (" + Rsn + " * (" + a_mts +
+         ")), ";
     c += "                   strain(0) * strain(0)));\n";
     c += "const auto " + iaeqn + " = ";
     c += "1/std::max(strain(1e-14)," + aeqn + ");\n";
