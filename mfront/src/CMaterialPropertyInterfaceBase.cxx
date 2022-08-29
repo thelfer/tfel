@@ -38,6 +38,24 @@ namespace mfront {
     return header;
   }  // end of transformHeaderName
 
+  static std::string getOutputType(const MaterialPropertyDescription& mpd,
+                                   const std::string floating_point_type,
+                                   const bool use_qt) {
+    if ((!use_qt) || (!useQuantities(mpd))) {
+      return floating_point_type;
+    }
+    const auto& output_type = mpd.output.type;
+    const auto scalar_types = getScalarTypeAliases();
+    if (std::find(scalar_types.begin(), scalar_types.end(), output_type) ==
+        scalar_types.end()) {
+      tfel::raise(
+          "CMaterialPropertyInterfaceBase::writeOutputFiles: "
+          "unsupported output type");
+    }
+    return "typename tfel::config::ScalarTypes<" + floating_point_type +
+           ", true>::" + output_type;
+  }
+
   CMaterialPropertyInterfaceBase::CMaterialPropertyInterfaceBase() = default;
 
   std::vector<std::string>
@@ -80,7 +98,7 @@ namespace mfront {
     const auto fn = "include/" + header + ".hxx";
     std::ofstream os(fn);
     tfel::raise_if(!os,
-                   "CMaterialPropertyInterfaceBase::writeOutputFiles : "
+                   "CMaterialPropertyInterfaceBase::writeSrcFiles: "
                    "unable to open '" +
                        fn + "' for writing output file.");
     os.exceptions(std::ios::badbit | std::ios::failbit);
@@ -129,14 +147,30 @@ namespace mfront {
           }
           return fptypes[0];
         }();
-        os << "template <typename mfront_ValueType"  //
-           << " = " << default_fp_type << ">\n";
-        os << "mfront_ValueType " << this->getCallingConvention() << '\n'
-           << this->getFunctionName(mpd) << "();\n\n";
+        if ((useQuantities(mpd)) &&
+            (this->shallGenerateOverloadedFunctionForQuantities())) {
+          os << "template <typename mfront_ValueType"  //
+             << " = " << getOutputType(mpd, default_fp_type, true) << ">\n";
+          os << "mfront_ValueType " << this->getCallingConvention() << '\n'
+             << this->getFunctionName(mpd) << "();\n\n";
+        } else {
+          os << "template <typename mfront_ValueType"  //
+             << " = " << default_fp_type << ">\n";
+          os << "mfront_ValueType " << this->getCallingConvention() << '\n'
+             << this->getFunctionName(mpd) << "();\n\n";
+        }
         for (const auto& fptype : fptypes) {
           os << "template <>\n";
           os << fptype << " " << this->getCallingConvention() << '\n'
              << this->getFunctionName(mpd) << "<" << fptype << ">();\n\n";
+          if ((useQuantities(mpd)) &&
+              (this->shallGenerateOverloadedFunctionForQuantities())) {
+            const auto output_type = getOutputType(mpd, fptype, true);
+            os << "template <>\n";
+            os << output_type << " " << this->getCallingConvention() << '\n'
+               << this->getFunctionName(mpd) << "<" << output_type
+               << ">();\n\n";
+          }
         }
       }
       if (this->requiresCheckBoundsFunction()) {
@@ -146,12 +180,22 @@ namespace mfront {
     } else {
       for (const auto& floating_point_type :
            this->getSupportedFloatingPointTypes()) {
-        os << "MFRONT_SHAREDOBJ " << floating_point_type
+        os << "MFRONT_SHAREDOBJ " << floating_point_type << " "
            << this->getCallingConvention() << '\n'
            << this->getFunctionName(mpd);
         os << "(";
         this->writeArgumentsList(os, mpd, floating_point_type, false);
         os << ");\n\n";
+        if ((useQuantities(mpd)) &&
+            (this->shallGenerateOverloadedFunctionForQuantities())) {
+          os << "MFRONT_SHAREDOBJ "
+             << getOutputType(mpd, floating_point_type, true) << " "
+             << this->getCallingConvention() << '\n'
+             << this->getFunctionName(mpd);
+          os << "(";
+          this->writeArgumentsList(os, mpd, floating_point_type, true);
+          os << ");\n\n";
+        }
         if (((hasBounds(mpd.inputs)) || (hasPhysicalBounds(mpd.inputs))) ||
             (this->requiresCheckBoundsFunction())) {
           os << "MFRONT_SHAREDOBJ int " << this->getCallingConvention() << '\n'
@@ -159,6 +203,15 @@ namespace mfront {
           os << "(";
           this->writeArgumentsList(os, mpd, floating_point_type, false);
           os << ");\n\n";
+          if ((useQuantities(mpd)) &&
+              (this->shallGenerateOverloadedFunctionForQuantities())) {
+            os << "MFRONT_SHAREDOBJ int "  //
+               << this->getCallingConvention() << '\n'
+               << this->getCheckBoundsFunctionName(mpd);
+            os << "(";
+            this->writeArgumentsList(os, mpd, floating_point_type, true);
+            os << ");\n\n";
+          }
         }
       }
     }
@@ -182,12 +235,27 @@ namespace mfront {
       std::ostream& os,
       const MaterialPropertyDescription& mpd,
       const std::string_view t,
-      const bool) const {
+      const bool b) const {
     const auto use_qt = useQuantities(mpd);
     if (!mpd.inputs.empty()) {
       for (auto p = mpd.inputs.begin(); p != mpd.inputs.end();) {
         const auto n = (use_qt ? "mfront_" : "") + p->name;
-        os << "const " << t << " " << n;
+        const auto type = [&t, &p, b]() -> std::string {
+          if (b) {
+            const auto scalar_types = getScalarTypeAliases();
+            if (std::find(scalar_types.begin(), scalar_types.end(), p->type) ==
+                scalar_types.end()) {
+              tfel::raise(
+                  "CMaterialPropertyInterfaceBase::writeArgumentsList: "
+                  "unsupported type for argument '" +
+                  p->getExternalName() + "' (" + p->name + ")");
+            }
+            return "typename tfel::config::ScalarTypes<" + std::string{t} +
+                   ", true>::" + p->type;
+          }
+          return std::string{t};
+        }();
+        os << "const " << type << " " << n;
         if ((++p) != mpd.inputs.end()) {
           os << ",";
         }
@@ -339,7 +407,7 @@ namespace mfront {
     const auto fn = "src/" + src + ".cxx";
     std::ofstream os(fn);
     tfel::raise_if(!os,
-                   "CMaterialPropertyInterfaceBase::writeOutputFiles : "
+                   "CMaterialPropertyInterfaceBase::writeSrcFiles: "
                    "unable to open file '" +
                        fn + "' for writing output file.");
     os.exceptions(std::ios::badbit | std::ios::failbit);
@@ -393,15 +461,25 @@ namespace mfront {
       if (fptypes.size() == 1) {
         os << fptypes[0] << " " << this->getCallingConvention() << '\n'
            << this->getFunctionName(mpd) << "(){\n";
-        this->writeMaterialPropertyBody(os, mpd, fd, fptypes[0]);
+        this->writeMaterialPropertyBody(os, mpd, fd, fptypes[0], false);
         os << "} /* end of " << mpd.className << " */\n\n";
       } else {
         for (const auto& fptype : this->getSupportedFloatingPointTypes()) {
           os << "template<>\n"
              << fptype << " " << this->getCallingConvention() << '\n'
              << this->getFunctionName(mpd) << "<" << fptype << ">(){\n";
-          this->writeMaterialPropertyBody(os, mpd, fd, fptype);
+          this->writeMaterialPropertyBody(os, mpd, fd, fptype, false);
           os << "} /* end of " << mpd.className << " */\n\n";
+          if ((useQuantities(mpd)) &&
+              (this->shallGenerateOverloadedFunctionForQuantities())) {
+            const auto output_type = getOutputType(mpd, fptype, true);
+            os << "template <>\n";
+            os << output_type << " " << this->getCallingConvention() << '\n'
+               << this->getFunctionName(mpd) << "<" << output_type
+               << ">(){\n";
+            this->writeMaterialPropertyBody(os, mpd, fd, fptype, true);
+            os << "} /* end of " << mpd.className << " */\n\n";
+          }
         }
       }
     } else {
@@ -410,8 +488,18 @@ namespace mfront {
         os << floating_point_type << " " << this->getFunctionName(mpd) << "(";
         this->writeArgumentsList(os, mpd, floating_point_type, false);
         os << ")\n{\n";
-        this->writeMaterialPropertyBody(os, mpd, fd, floating_point_type);
+        this->writeMaterialPropertyBody(os, mpd, fd, floating_point_type,
+                                        false);
         os << "} /* end of " << mpd.className << " */\n\n";
+        if ((useQuantities(mpd)) &&
+            (this->shallGenerateOverloadedFunctionForQuantities())) {
+          os << getOutputType(mpd, floating_point_type, true) << " "
+             << this->getFunctionName(mpd) << "(";
+          this->writeArgumentsList(os, mpd, floating_point_type, true);
+          os << ")\n{\n";
+          this->writeMaterialPropertyBody(os, mpd, fd, floating_point_type, true);
+          os << "} /* end of " << mpd.className << " */\n\n";
+        }
       }
     }
     if (mpd.inputs.empty()) {
@@ -443,7 +531,8 @@ namespace mfront {
       std::ostream& os,
       const MaterialPropertyDescription& mpd,
       const FileDescription& fd,
-      const std::string_view floating_point_type) const {
+      const std::string_view floating_point_type,
+      const bool use_qt) const {
     writeBeginningOfMaterialPropertyBody(os, mpd, fd, floating_point_type,
                                          true);
     // parameters
@@ -469,17 +558,23 @@ namespace mfront {
     os << mpd.output.type << " " << mpd.output.name << ";\n"
        << mpd.f.body << "\n";
     if (!mpd.inputs.empty()) {
-      os << "#ifndef MFRONT_NOERRNO_HANDLING\n"
+      os << "#ifndef MFRONT_NOERRNO_HANDLING\n";
          // can't use std::swap here as errno might be a macro
-         << "const auto mfront_errno = errno;\n"
-         << "errno = mfront_errno_old;\n"
-         << "if((mfront_errno != 0)||"
-         << "(!tfel::math::ieee754::isfinite(" << mpd.output.name << "))){\n";
-      this->writeCErrorTreatment(os, mpd);
+      os << "const auto mfront_errno = errno;\n"
+         << "errno = mfront_errno_old;\n";
+      if (use_qt) {
+        os << "if((mfront_errno != 0)||"
+           << "(!tfel::math::ieee754::isfinite(" << mpd.output.name
+           << ".getValue()))){\n";
+      } else {
+        os << "if((mfront_errno != 0)||"
+           << "(!tfel::math::ieee754::isfinite(" << mpd.output.name << "))){\n";
+      }
+      this->writeCErrorTreatment(os, mpd, floating_point_type, use_qt);
       os << "}\n"
          << "#endif /* MFRONT_NOERRNO_HANDLING */\n";
     }
-    if (useQuantities(mpd)) {
+    if ((useQuantities(mpd)) && (!use_qt)) {
       os << "return " << mpd.output.name << ".getValue();\n";
     } else {
       os << "return " << mpd.output.name << ";\n";
@@ -507,9 +602,20 @@ namespace mfront {
   }  // end of writeMaterialPropertyCheckBoundsBody
 
   void CMaterialPropertyInterfaceBase::writeCErrorTreatment(
-      std::ostream& os, const MaterialPropertyDescription& mpd) const {
-    os << "return std::nan(\"" << this->getFunctionName(mpd)
-       << ": invalid call to a C function (errno is not null)\");\n";
+      std::ostream& os,
+      const MaterialPropertyDescription& mpd,
+      const std::string_view floating_point_type,
+      const bool use_qt) const {
+    os << "return ";
+    if (use_qt){
+      os << getOutputType(mpd, std::string{floating_point_type}, true) << "{";
+    }
+    os << "std::nan(\"" << this->getFunctionName(mpd)
+       << ": invalid call to a C function (errno is not null)\")";
+    if (use_qt){
+      os << "}";
+    }
+    os << ";\n";
   }  // end of writeCErrorTreatment
 
   CMaterialPropertyInterfaceBase::~CMaterialPropertyInterfaceBase() = default;

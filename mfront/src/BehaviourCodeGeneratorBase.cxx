@@ -2495,8 +2495,13 @@ namespace mfront {
       const auto& cmp =
           m.get<BehaviourDescription::ExternalMFrontMaterialProperty>();
       const auto& mpd = *(cmp.mpd);
-      out << MFrontMaterialPropertyInterface().getFunctionName(mpd);
-      this->writeExternalMFrontMaterialPropertyArguments(out, cmp, f);
+      if (mpd.inputs.empty()) {
+        out << MFrontMaterialPropertyInterface().getFunctionName(mpd);
+        out << "<NumericType>()";
+      } else {
+        out << MFrontMaterialPropertyInterface().getFunctionName(mpd);
+        this->writeExternalMFrontMaterialPropertyArguments(out, cmp, f);
+      }
     } else if (m.is<BehaviourDescription::AnalyticMaterialProperty>()) {
       const auto& amp = m.get<BehaviourDescription::AnalyticMaterialProperty>();
       tfel::math::Evaluator e(amp.f);

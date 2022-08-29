@@ -571,16 +571,24 @@ namespace mfront {
   }  // end of readSpecifiedToken
 
   std::string DSLBase::readUntilEndOfInstruction() {
+    using tfel::utilities::Token;
     auto res = std::string{};
     while ((this->current != this->tokens.end()) &&
            (this->current->value != ";")) {
-      if (!this->current->value.empty()) {
-        if (this->current->value[0] == '@') {
+      const auto value = [this] {
+        if (this->current->flag == Token::String) {
+          const auto s = this->current->value.size() - 2;
+          return this->current->value.substr(1, s);
+        }
+        return this->current->value;
+      }();
+      if (!value.empty()) {
+        if (value[0] == '@') {
           this->throwRuntimeError(
               "DSLBase::readUntilEndOfInstruction",
               "no word beginning with '@' are allowed here");
         }
-        res += this->current->value;
+        res += value;
         res += " ";
       }
       ++(this->current);
