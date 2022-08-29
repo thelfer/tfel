@@ -130,11 +130,13 @@ namespace mfront {
      * \param[in] mpd: material property description
      * \param[in] fd: file description
      * \param[in] floating_point_type: floating-point type
+     * \param[in] use_qt: use_quantities on input/outputs
      */
     virtual void writeMaterialPropertyBody(std::ostream&,
                                            const MaterialPropertyDescription&,
                                            const FileDescription&,
-                                           const std::string_view) const;
+                                           const std::string_view,
+                                           const bool) const;
     /*!
      * \brief write the body of the check bounds function
      * \param[out] os: output stream
@@ -224,9 +226,13 @@ namespace mfront {
     /*!
      * \param[out] os:  output file stream
      * \param[in]  mpd: material property description
+     * \param[in] floating_point_type: floating-point type
+     * \param[in] use_qt: use quantities
      */
     virtual void writeCErrorTreatment(std::ostream&,
-                                      const MaterialPropertyDescription&) const;
+                                      const MaterialPropertyDescription&,
+                                      const std::string_view,
+                                      const bool) const;
 
     virtual std::string getCallingConvention() const;
     /*!
