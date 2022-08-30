@@ -28,6 +28,10 @@ namespace mfront::bbrick {
                       OptionDescription::MATERIALPROPERTY);
     opts.emplace_back("f", "memory coefficient",
                       OptionDescription::MATERIALPROPERTY);
+    opts.emplace_back("a0",
+                      "normalisation coefficient of the "
+                      "equivalent back strain",
+                      OptionDescription::MATERIALPROPERTY);
     opts.emplace_back("m", "memory exponent",
                       OptionDescription::MATERIALPROPERTY);
     opts.emplace_back("Ec",
@@ -51,6 +55,7 @@ namespace mfront::bbrick {
     KinematicHardeningRuleBase::initialize(bd, dsl, fid, kid, d);
     const auto Dn = KinematicHardeningRule::getVariableId("D", fid, kid);
     const auto fn = KinematicHardeningRule::getVariableId("f", fid, kid);
+    const auto a0n = KinematicHardeningRule::getVariableId("a0n", fid, kid);
     const auto mn = KinematicHardeningRule::getVariableId("m", fid, kid);
     const auto Ecn = KinematicHardeningRule::getVariableId("Ec", fid, kid);
     const auto Rdn = KinematicHardeningRule::getVariableId("Rd", fid, kid);
@@ -84,6 +89,13 @@ namespace mfront::bbrick {
       mp.value = 1;
       this->f = mp;
     }
+    if (d.count("a0") != 0) {
+      this->a0 = getBehaviourDescriptionMaterialProperty(dsl, "a0", d.at("a0"));
+    } else {
+      BehaviourDescription::ConstantMaterialProperty mp;
+      mp.value = 1;
+      this->a0 = mp;
+    }
     declareParameterOrLocalVariable(bd, this->f, "stress", fn);
     //
     tfel::raise_if(d.count("m") == 0,
@@ -106,12 +118,14 @@ namespace mfront::bbrick {
     KinematicHardeningRuleBase::endTreatment(bd, dsl, fid, kid);
     const auto Dn = KinematicHardeningRule::getVariableId("D", fid, kid);
     const auto fn = KinematicHardeningRule::getVariableId("f", fid, kid);
+    const auto a0n = KinematicHardeningRule::getVariableId("a0", fid, kid);
     const auto mn = KinematicHardeningRule::getVariableId("m", fid, kid);
     const auto Ecn = KinematicHardeningRule::getVariableId("Ec", fid, kid);
     const auto Rdn = KinematicHardeningRule::getVariableId("Rd", fid, kid);
     const auto Rsn = KinematicHardeningRule::getVariableId("Rs", fid, kid);
     auto c = generateMaterialPropertyInitializationCode(dsl, bd, Dn, this->D);
     c += generateMaterialPropertyInitializationCode(dsl, bd, fn, this->f);
+    c += generateMaterialPropertyInitializationCode(dsl, bd, a0n, this->a0);
     c += generateMaterialPropertyInitializationCode(dsl, bd, mn, this->m);
     c += generateMaterialPropertiesInitializationCode(
         dsl, bd, Ecn + "_coefficients", this->Ec);
@@ -180,6 +194,7 @@ namespace mfront::bbrick {
     const auto iaeqn = KinematicHardeningRule::getVariableId("iaeq", fid, kid);
     const auto Dn = get_member_id("D");
     const auto mn = get_member_id("m");
+    const auto a0n = get_member_id("a0");
     const auto fn = get_member_id("f");
     const auto Ecn = get_member_id("Ec");
     const auto Rdn = get_member_id("Rd");
@@ -198,7 +213,8 @@ namespace mfront::bbrick {
     c += "f" + an + " -= ";
     c += "   (" + dpn + ") * (" + Ecn + ")  * " + n;
     c += " - (" + Dn + ")  * (" + dpn + ") * (" + Rdn + ") * (" + a_mts + ")";
-    c += " - (this->dt) * (" + fn + ")  * pow(" + aeqn + "," + mn + ")";
+    c += " - (this->dt) * (" + fn + ")  * ";
+    c += "pow(" + aeqn + " / " + a0n + "," + mn + ")";
     c += " * (" + Rsn + ") *  (" + a_mts + ") * " + iaeqn;
     c += ";\n";
     if (b) {

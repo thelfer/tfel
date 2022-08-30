@@ -48,6 +48,8 @@ namespace mfront::bbrick {
     BehaviourDescription::MaterialProperty D;
     //! \brief memory coefficient
     BehaviourDescription::MaterialProperty f;
+    //! \brief normalisation coefficient of the equivalent back strain
+    BehaviourDescription::MaterialProperty a0;
     //! \brief memory exponent
     BehaviourDescription::MaterialProperty m;
     //! \brief coefficients of the first linear transformation
