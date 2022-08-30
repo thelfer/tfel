@@ -795,8 +795,8 @@ $ mfront --obuild --interface=python                            \
 
 This option has mostly been introduced to let solver developpers have
 control on the users ability to modify parameters of well-qualified
-material properties: if such parameter is modified, strict assurance
-quality of the solver is compromised.
+material properties: if such parameter is modified, strict
+quality assurance of the solver is compromised.
  
 #### Disabling the runtime modification of parameters -
 
@@ -820,7 +820,7 @@ Modification of parameters may have runtime performances since a global
 variable is used to store the values of the parameters.
 
 
-## Other metadata for assurance quality
+## Other metadata for quality assurance
 
 Metadata describing the author of the implementation, the date of the
 implementation and a short description can be added by the `@Author`,
@@ -892,7 +892,7 @@ Hence, the temperature could be defined as follows:
 By default, `temperature`, `strain`, `stress` are defined as type
 aliases to floating point number type used by the interface.
 
-The keyword `@UseQT` allows the usage of quantities, i.e. floatting
+The keyword `@UseQT` allows the usage of quantities, i.e. floating
 point values associated with units. Quantities allow the compiler to
 perform *dimensional analysis* at compile-time.
 
