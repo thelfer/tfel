@@ -55,7 +55,7 @@ namespace mfront::bbrick {
     KinematicHardeningRuleBase::initialize(bd, dsl, fid, kid, d);
     const auto Dn = KinematicHardeningRule::getVariableId("D", fid, kid);
     const auto fn = KinematicHardeningRule::getVariableId("f", fid, kid);
-    const auto a0n = KinematicHardeningRule::getVariableId("a0n", fid, kid);
+    const auto a0n = KinematicHardeningRule::getVariableId("a0", fid, kid);
     const auto mn = KinematicHardeningRule::getVariableId("m", fid, kid);
     const auto Ecn = KinematicHardeningRule::getVariableId("Ec", fid, kid);
     const auto Rdn = KinematicHardeningRule::getVariableId("Rd", fid, kid);
@@ -89,6 +89,8 @@ namespace mfront::bbrick {
       mp.value = 1;
       this->f = mp;
     }
+    declareParameterOrLocalVariable(bd, this->f, "stress", fn);
+    //
     if (d.count("a0") != 0) {
       this->a0 = getBehaviourDescriptionMaterialProperty(dsl, "a0", d.at("a0"));
     } else {
@@ -96,7 +98,7 @@ namespace mfront::bbrick {
       mp.value = 1;
       this->a0 = mp;
     }
-    declareParameterOrLocalVariable(bd, this->f, "stress", fn);
+    declareParameterOrLocalVariable(bd, this->a0, "strain", a0n);
     //
     tfel::raise_if(d.count("m") == 0,
                    "OrthotropicKinematicHardeningRule::initialize: "
@@ -214,7 +216,7 @@ namespace mfront::bbrick {
     c += "   (" + dpn + ") * (" + Ecn + ")  * " + n;
     c += " - (" + Dn + ")  * (" + dpn + ") * (" + Rdn + ") * (" + a_mts + ")";
     c += " - (this->dt) * (" + fn + ")  * ";
-    c += "pow(" + aeqn + " / " + a0n + "," + mn + ")";
+    c += "pow(" + aeqn + " / (" + a0n + "), " + mn + ")";
     c += " * (" + Rsn + ") *  (" + a_mts + ") * " + iaeqn;
     c += ";\n";
     if (b) {
