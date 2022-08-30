@@ -108,7 +108,13 @@ namespace mfront::bbrick {
     //
     constexpr auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     bd.reserveName(uh, KinematicHardeningRule::getVariableId("aeq", fid, kid));
+    bd.reserveName(uh, KinematicHardeningRule::getVariableId("aeq_a0_m", fid, kid));
+    bd.reserveName(uh, KinematicHardeningRule::getVariableId("Rs_a", fid, kid));
+    bd.reserveName(uh, KinematicHardeningRule::getVariableId("Rd_a", fid, kid));
+    bd.reserveName(uh, KinematicHardeningRule::getVariableId("Ec_n", fid, kid));
     bd.reserveName(uh, KinematicHardeningRule::getVariableId("iaeq", fid, kid));
+    bd.reserveName(uh, KinematicHardeningRule::getVariableId("na", fid, kid));
+    bd.reserveName(uh, KinematicHardeningRule::getVariableId("dna_da", fid, kid));
   }  // end of initialize
 
   void OrthotropicKinematicHardeningRule::endTreatment(
@@ -193,7 +199,14 @@ namespace mfront::bbrick {
     };
     const auto an = KinematicHardeningRule::getVariableId("a", fid, kid);
     const auto aeqn = KinematicHardeningRule::getVariableId("aeq", fid, kid);
+    const auto nan = KinematicHardeningRule::getVariableId("na", fid, kid);
+    const auto dna_da = KinematicHardeningRule::getVariableId("dna_da", fid, kid);
     const auto iaeqn = KinematicHardeningRule::getVariableId("iaeq", fid, kid);
+    const auto aeq_a0_m =
+        KinematicHardeningRule::getVariableId("aeq_a0_m", fid, kid);
+    const auto Ec_n = KinematicHardeningRule::getVariableId("Ec_n", fid, kid);
+    const auto Rd_a = KinematicHardeningRule::getVariableId("Rd_a", fid, kid);
+    const auto Rs_a = KinematicHardeningRule::getVariableId("Rs_a", fid, kid);
     const auto Dn = get_member_id("D");
     const auto mn = get_member_id("m");
     const auto a0n = get_member_id("a0");
@@ -212,18 +225,40 @@ namespace mfront::bbrick {
     c += "                   strain(0) * strain(0)));\n";
     c += "const auto " + iaeqn + " = ";
     c += "1/std::max(strain(1e-14)," + aeqn + ");\n";
+    c += "const auto " + Ec_n + " = eval((" + Ecn + ")  * " + n + ");\n";
+    c += "const auto " + Rd_a + " = ";
+    c += "eval((" + Rdn + ") * (" + a_mts + "));\n";
+    c += "const auto " + Rs_a + " = ";
+    c += "eval((" + Rsn + ") * (" + a_mts + "));\n";
+    c += "const auto " + nan + " = " + Rs_a + " * " + iaeqn + ";\n";
+    c += "const auto " + aeq_a0_m;
+    c += " = pow(" + aeqn + " / (" + a0n + "), " + mn + ");\n";
     c += "f" + an + " -= ";
-    c += "   (" + dpn + ") * (" + Ecn + ")  * " + n;
-    c += " - (" + Dn + ")  * (" + dpn + ") * (" + Rdn + ") * (" + a_mts + ")";
-    c += " - (this->dt) * (" + fn + ")  * ";
-    c += "pow(" + aeqn + " / (" + a0n + "), " + mn + ")";
-    c += " * (" + Rsn + ") *  (" + a_mts + ") * " + iaeqn;
+    c += "   (" + dpn + ") * " + Ec_n;
+    c += " - (" + Dn + ")  * (" + dpn + ") * " + Rd_a ;
+    c += " - (this->dt) * (" + fn + ")  * " + aeq_a0_m + " * " + nan;
     c += ";\n";
     if (b) {
-      tfel::raise(
-          "OrthotropicKinematicHardeningRule::"
-          "buildBackStrainImplicitEquations: "
-          "computation of derivatives are not supported yet");
+      c += "df" + an + "_d" + dpn + " = - " + Ec_n + " + ";
+      c += "(" + Dn + ") * " + Rd_a + ";\n";
+      const auto mdf_ds =
+          "(this->dp" + fid + ") * (" + Ecn + ") * d" + n + "_ds" + fid;
+      c += sp.generateImplicitEquationDerivatives(
+          bd, "StrainStensor", an, "-" + mdf_ds, fc.isNormalDeviatoric());
+      auto kid2 = decltype(khrs.size()){};
+      for (const auto& khr : khrs) {
+        c += khr->generateImplicitEquationDerivatives(an, mdf_ds, fid,
+                                                      std::to_string(kid2));
+        ++kid2;
+      }
+      c += "const auto " + dna_da + " = ";
+      c += "(" + Rsn + " - ((" + nan + ") ^ (" + nan + "))) * " + iaeqn + ";\n";
+      const auto theta = bd.getClassName() + "::theta";
+      c += "df" + an + "_dd" + an + " += ";
+      c += "(" + theta + ") * (" + dpn + ") * (" + Dn + ") * " + Rdn;
+      c += " + (this->dt) * (" + fn + ")  * " + aeq_a0_m + " * " + theta;
+      c += " * (" + dna_da + " + (" + mn + ") * ((" + nan + ")^(" + nan +
+           ")) * " + iaeqn + ");\n";
     }
     return c;
   }  // end of buildBackStrainImplicitEquations
