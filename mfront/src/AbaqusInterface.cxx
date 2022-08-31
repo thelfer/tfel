@@ -1089,10 +1089,6 @@ namespace mfront {
           << "BehaviourProfiler::Timer total_timer(" << mb.getClassName()
           << "Profiler::getProfiler(),\n"
           << "BehaviourProfiler::TOTALTIME);\n";
-      out << "{\n"
-          << "BehaviourProfiler::Timer pre_timer(" << mb.getClassName()
-          << "Profiler::getProfiler(),\n"
-          << "BehaviourProfiler::FINITESTRAINPREPROCESSING);\n";
     }
     out << "using namespace abaqus;\n"
         << "using namespace tfel::math;\n"
@@ -1106,8 +1102,14 @@ namespace mfront {
         << "LogarithmicStrainHandler<" << d << ",AbaqusReal> "
         << "lsh1(LogarithmicStrainHandlerBase::EULERIAN,\n"
         << "     tensor<" << d
-        << ",AbaqusReal>::buildFromFortranMatrix(DFGRD1));\n"
-        << "lsh0.getHenckyLogarithmicStrain(eto);\n"
+        << ",AbaqusReal>::buildFromFortranMatrix(DFGRD1));\n";
+    if (mb.getAttribute(BehaviourData::profiling, false)) {
+      out << "{\n"
+          << "BehaviourProfiler::Timer pre_timer(" << mb.getClassName()
+          << "Profiler::getProfiler(),\n"
+          << "BehaviourProfiler::FINITESTRAINPREPROCESSING);\n";
+    }
+    out << "lsh0.getHenckyLogarithmicStrain(eto);\n"
         << "lsh1.getHenckyLogarithmicStrain(deto);\n";
     for (unsigned short i = 0; i != n; ++i) {
       out << "deto[" << i << "]-=eto[" << i << "];\n";
@@ -1123,14 +1125,18 @@ namespace mfront {
         << "CELENT,DFGRD0,DFGRD1,NOEL,NPT,LAYER,KSPT,KSTEP,KINC,size);\n"
         << "if(*PNEWDT>=0.99999){\n";
     if (mb.getAttribute(BehaviourData::profiling, false)) {
-      out << "BehaviourProfiler::Timer post_timer(" << mb.getClassName()
+      out << "{\n"
+          << "BehaviourProfiler::Timer post_timer(" << mb.getClassName()
           << "Profiler::getProfiler(),\n"
           << "BehaviourProfiler::FINITESTRAINPOSTPROCESSING);\n";
     }
     out << "lsh1.convertToAbaqusTangentModuli(DDSDDE,STRESS);\n"
         << "// converting the stress\n"
-        << "lsh1.convertToCauchyStress(STRESS);\n"
-        << "}\n"
+        << "lsh1.convertToCauchyStress(STRESS);\n";
+    if (mb.getAttribute(BehaviourData::profiling, false)) {
+      out << "}\n";
+    }
+    out << "}\n"
         << "}\n\n";
   }
 

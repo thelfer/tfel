@@ -147,7 +147,10 @@ set(mfront_tests_SOURCES
   TemperatureUpdateOnSubSteppingCheck
   GenerateMTestFileOnFailure
   StationaryHeatTransfer
-  StationaryHeatTransfer2)
+  StationaryHeatTransfer2
+  ProfilerTest
+  ProfilerTest2
+  ProfilerTest3)
 
 mfront_dependencies(MFrontGenericBehaviours
   Inconel600_YoungModulus

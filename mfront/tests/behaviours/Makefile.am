@@ -157,7 +157,10 @@ MFRONTS= DDIF2.mfront                                                      \
 	 LogarithmicStrainOrthotropicElasticity.mfront                     \
 	 GenerateMTestFileOnFailure.mfront				   \
 	 StationaryHeatTransfer.mfront					   \
-	 StationaryHeatTransfer2.mfront
+	 StationaryHeatTransfer2.mfront                                    \
+	 ProfilerTest.mfront                                               \
+	 ProfilerTest2.mfront                                              \
+	 ProfilerTest3.mfront
 
 testsdir = $(pkgdatadir)/mfront/tests/behaviours
 tests_DATA = $(MFRONTS)
