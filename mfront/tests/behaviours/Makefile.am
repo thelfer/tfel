@@ -184,10 +184,13 @@ MFRONTS= DDIF2.mfront                                                      \
 	 StationaryHeatTransfer.mfront					   \
 	 StationaryHeatTransfer2.mfront                                    \
 	 ThermoElasticity.mfront                                           \
-     MiehePhaseFieldDisplacementDeviatoricSplit.mfront                 \
-     ode_default.mfront                                                \
-     ode_rk54.mfront                                                   \
-     ode_implicit.mfront
+     MiehePhaseFieldDisplacementDeviatoricSplit.mfront                     \
+     ode_default.mfront                                                    \
+     ode_rk54.mfront                                                       \
+     ode_implicit.mfront                                                   \
+	 ProfilerTest.mfront                                               \
+	 ProfilerTest2.mfront                                              \
+	 ProfilerTest3.mfront
 
 testsdir = $(pkgdatadir)/mfront/tests/behaviours
 tests_DATA = $(MFRONTS)

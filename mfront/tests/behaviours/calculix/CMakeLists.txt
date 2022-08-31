@@ -22,7 +22,10 @@ set(mfront_tests_SOURCES
   ComputeThermalExpansion2
   ComputeThermalExpansion3
   ParameterTest
-  ParameterTest2)
+  ParameterTest2
+  ProfilerTest
+  ProfilerTest2
+  ProfilerTest3)
 mfront_dependencies(MFrontCalculiXBehaviours
   ThermalExpansionCoefficientTest
   ThermalExpansionCoefficientTest2

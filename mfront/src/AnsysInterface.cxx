@@ -1424,17 +1424,6 @@ namespace mfront {
         << this->getFunctionNameForHypothesis(name, h);
     writeArguments(out, mb, false);
     out << "{\n";
-    if (mb.getAttribute(BehaviourData::profiling, false)) {
-      out << "using mfront::BehaviourProfiler;\n"
-          << "using tfel::material::" << mb.getClassName() << "Profiler;\n"
-          << "BehaviourProfiler::Timer total_timer(" << mb.getClassName()
-          << "Profiler::getProfiler(),\n"
-          << "BehaviourProfiler::TOTALTIME);\n"
-          << "{\n"
-          << "BehaviourProfiler::Timer pre_timer(" << mb.getClassName()
-          << "Profiler::getProfiler(),\n"
-          << "BehaviourProfiler::FINITESTRAINPREPROCESSING);\n";
-    }
     out << "using namespace ansys;\n"
         << "using namespace tfel::math;\n"
         << "using namespace tfel::material;\n"
@@ -1458,6 +1447,17 @@ namespace mfront {
           << "// conversion to Abaqus conventions\n"
           << "std::swap(STRESS[4],STRESS[5]);\n";
     }
+    if (mb.getAttribute(BehaviourData::profiling, false)) {
+      out << "using mfront::BehaviourProfiler;\n"
+          << "using tfel::material::" << mb.getClassName() << "Profiler;\n"
+          << "BehaviourProfiler::Timer total_timer(" << mb.getClassName()
+          << "Profiler::getProfiler(),\n"
+          << "BehaviourProfiler::TOTALTIME);\n"
+          << "{\n"
+          << "BehaviourProfiler::Timer pre_timer(" << mb.getClassName()
+          << "Profiler::getProfiler(),\n"
+          << "BehaviourProfiler::FINITESTRAINPREPROCESSING);\n";
+    }
     out << "lsh0.convertFromCauchyStress(STRESS);\n";
     if (h == ModellingHypothesis::TRIDIMENSIONAL) {
       out << "std::swap(STRESS[4],STRESS[5]);\n";
@@ -1473,7 +1473,8 @@ namespace mfront {
         << " var1,var2,var3,var4,var5,var6,var7,var8);\n"
         << "if(*keycut==0){\n";
     if (mb.getAttribute(BehaviourData::profiling, false)) {
-      out << "BehaviourProfiler::Timer post_timer(" << mb.getClassName()
+      out << "{\n"
+          << "BehaviourProfiler::Timer post_timer(" << mb.getClassName()
           << "Profiler::getProfiler(),\n"
           << "BehaviourProfiler::FINITESTRAINPOSTPROCESSING);\n";
     }
@@ -1501,6 +1502,9 @@ namespace mfront {
       out << "tfel::math::ST2toST2View<2u,AnsysReal> Dt(DDSDDE);\n"
           << "Dt=D;\n"
           << "AnsysTangentOperator<AnsysReal>::normalize(Dt);\n";
+    }
+    if (mb.getAttribute(BehaviourData::profiling, false)) {
+      out << "}\n";
     }
     out << "}\n"
         << "}\n\n";

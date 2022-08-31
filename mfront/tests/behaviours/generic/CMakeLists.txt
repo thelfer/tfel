@@ -159,7 +159,10 @@ set(mfront_tests_SOURCES
   MiehePhaseFieldDisplacementDeviatoricSplit
   ode_default
   ode_rk54
-  ode_implicit)
+  ode_implicit
+  ProfilerTest
+  ProfilerTest2
+  ProfilerTest3)
 
 mfront_dependencies(MFrontGenericBehaviours
   Inconel600_YoungModulus
