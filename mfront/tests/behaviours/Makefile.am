@@ -173,8 +173,10 @@ MFRONTS= DDIF2.mfront                                                      \
          MiehePhaseFieldDisplacementDeviatoricSplit.mfront                 \
          ode_default.mfront                                                \
          ode_rk54.mfront                                                   \
-         ode_implicit.mfront
-
+         ode_implicit.mfront                                               \
+	 ProfilerTest.mfront                                               \
+	 ProfilerTest2.mfront                                              \
+	 ProfilerTest3.mfront
 testsdir = $(pkgdatadir)/mfront/tests/behaviours
 tests_DATA = $(MFRONTS)
 

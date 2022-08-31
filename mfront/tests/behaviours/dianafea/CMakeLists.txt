@@ -14,6 +14,7 @@
   ComputeThermalExpansion
   ParameterTest
   ParameterTest2
+  ProfilerTest
   )
 target_link_libraries(MFrontDianaFEABehaviours
   PRIVATE DianaFEAInterface)

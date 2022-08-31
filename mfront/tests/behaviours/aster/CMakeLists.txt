@@ -88,7 +88,10 @@ set(mfront_tests_SOURCES
   ComputeThermalExpansion3
   ParameterTest
   ParameterTest2
-  GenerateMTestFileOnFailure)
+  GenerateMTestFileOnFailure
+  ProfilerTest
+  ProfilerTest2
+  ProfilerTest3)
 mfront_dependencies(MFrontAsterBehaviours
   ThermalExpansionCoefficientTest
   ThermalExpansionCoefficientTest2
