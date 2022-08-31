@@ -145,7 +145,10 @@ set(mfront_tests_SOURCES
   StationaryHeatTransfer
   StationaryHeatTransfer2
   ThermoElasticity
-  MiehePhaseFieldDisplacementDeviatoricSplit)
+  MiehePhaseFieldDisplacementDeviatoricSplit
+  ProfilerTest
+  ProfilerTest2
+  ProfilerTest3)
 
 if(enable-mfront-quantity-tests)
   list(APPEND mfront_tests_SOURCES

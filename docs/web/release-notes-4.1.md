@@ -17,6 +17,14 @@ secPrefixTemplate: "$$i$$"
 eqnPrefixTemplate: "($$i$$)"
 ---
 
+\newcommand{\tenseur}[1]{\underline{#1}}
+\newcommand{\tenseurq}[1]{\underline{\mathbf{#1}}}
+\newcommand{\tsigma}{\underline{\sigma}}
+\newcommand{\sigmaeq}{\sigma_{\mathrm{eq}}}
+\newcommand{\paren}[1]{{\left(#1\right)}}
+\newcommand{\Frac}[2]{{{\displaystyle \frac{\displaystyle #1}{\displaystyle #2}}}}
+\newcommand{\deriv}[2]{{\displaystyle \frac{\displaystyle \partial #1}{\displaystyle \partial #2}}}
+
 The page describes the new functionalities of Version 4.1 of the
 `TFEL` project.
 
@@ -1003,6 +1011,22 @@ This isotropic hardening rule can be parametrised using three entries:
   }
 };
 ~~~~
+
+### New kinematic hardening rule for orthotropic behaviours
+
+\[
+\tenseur{\dot{a}}=
+\dot{p}\,\tenseurq{E}_{c}\,\colon\,\tenseur{n}
+-D\,\dot{p}\,\tenseurq{R}_{d}\,\colon\,\tenseur{a}
+-f\,\paren{\Frac{a_{\mathrm{eq}}}{a_{0}}}^{m}\,\deriv{a_{\mathrm{eq}}}{\tenseur{a}}
+\]
+with \(a_{\mathrm{eq}}=\sqrt{\tenseur{a}\,\colon\,\tenseurq{R}_{s}\,\colon\,\tenseur{a}}\) and 
+\(\deriv{a_{\mathrm{eq}}}{\tenseur{a}}=\Frac{\tenseurq{R}_{s}\,\colon\,\tenseur{a}}{a_{\mathrm{eq}}}\)
+
+The three fourth order tensors \(\tenseurq{E}_{c}\),
+\(\tenseurq{R}_{d}\) and \(\tenseurq{R}_{s}\) are assumed to have the
+same structure as the Hill tensors and are defined by \(6\) components
+(see [this page](tensors.html) for details).
 
 ## Improvements to the `RungeKutta` domain specific language
 
