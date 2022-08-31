@@ -85,7 +85,10 @@ set(mfront_tests_SOURCES
   IsotropicVolumeSwelling
   OrthotropicSwelling
   OrthotropicSwelling2
-  AxialGrowth)
+  AxialGrowth
+  ProfilerTest
+  ProfilerTest2
+  ProfilerTest3)
 mfront_dependencies(MFrontAsterBehaviours
   ThermalExpansionCoefficientTest
   ThermalExpansionCoefficientTest2

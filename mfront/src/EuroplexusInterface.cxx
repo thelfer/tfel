@@ -562,7 +562,8 @@ namespace mfront {
         << "epx::EuroplexusReal deto[6];\n"
         << "epx::EuroplexusReal sig[6];\n"
         << "epx::EuroplexusReal P0[36];\n"
-        << "epx::EuroplexusReal P1[36];\n";
+        << "epx::EuroplexusReal P1[36];\n"
+        << "const bool b = std::abs(*DDSDDE)>0.5;\n";
     if (mb.getAttribute(BehaviourData::profiling, false)) {
       out << "{\n"
           << "BehaviourProfiler::Timer pre_timer(" << mb.getClassName()
@@ -571,7 +572,6 @@ namespace mfront {
     }
     out << "epx::computeLogarithmicStrainAndDerivative(P0,P1,eto,deto,F0,F1,*"
            "HYPOTHESIS);\n"
-        << "const bool b = std::abs(*DDSDDE)>0.5;\n"
         << "if(*HYPOTHESIS==2){\n";
     if (mb.isModellingHypothesisSupported(ModellingHypothesis::PLANESTRESS)) {
       const auto v = this->checkIfAxialStrainIsDefinedAndGetItsOffset(mb);
@@ -597,9 +597,12 @@ namespace mfront {
     out << "} else {\n"
         << "epx::computeDualStressOfLogarithmicStrainFromCauchyStress(sig,"
            "STRESS,P0,F0,*HYPOTHESIS);\n"
-        << "}\n"
-        << "const epx::EPXData d = "
-           "{STATUS,sig,STATEV,DDSDDE,PNEWDT,BROKEN,MSG,\n"
+        << "}\n";
+    if (mb.getAttribute(BehaviourData::profiling, false)) {
+      out << "}\n";
+    }
+    out << "const epx::EPXData d = "
+        << "                       {STATUS,sig,STATEV,DDSDDE,PNEWDT,BROKEN,MSG,\n"
         << "                        *NSTATV,*DTIME,eto,deto,R,PROPS,*NPROPS,\n"
         << "                        TEMP,DTEMP,PREDEF,DPRED,*NPREDEF,\n"
         << "                        " << this->getFunctionName(name)
@@ -630,14 +633,23 @@ namespace mfront {
       out << "*STATUS=-2;\n"
           << "return;\n";
     }
-    out << "} else {\n"
-        << "epx::computeCauchyStressFromDualStressOfLogarithmicStrain(STRESS,"
+    out << "} else {\n";
+    if (mb.getAttribute(BehaviourData::profiling, false)) {
+      out << "{\n"
+          << "BehaviourProfiler::Timer post_timer(" << mb.getClassName()
+          << "Profiler::getProfiler(),\n"
+          << "BehaviourProfiler::FINITESTRAINPOSTPROCESSING);\n";
+    }
+    out << "epx::computeCauchyStressFromDualStressOfLogarithmicStrain(STRESS,"
            "sig,P1,F1,*HYPOTHESIS);\n"
         << "}\n"
         << "if(b){\n"
         << "epx::computeElasticModuli(DDSDDE,*HYPOTHESIS);\n"
-        << "}\n"
         << "}\n";
+    if (mb.getAttribute(BehaviourData::profiling, false)) {
+      out << "}\n";
+    }
+    out << "}\n";
   }
 
   void EuroplexusInterface::writeInterfaceSpecificIncludes(

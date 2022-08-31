@@ -84,7 +84,9 @@ set(mfront_tests_SOURCES
   IsotropicVolumeSwelling
   OrthotropicSwelling
   OrthotropicSwelling2
-  AxialGrowth)
+  AxialGrowth
+  ProfilerTest
+  ProfilerTest2)
 if(NOT WIN32)
   list(APPEND mfront_tests_SOURCES
        AbaqusAxialGrowth

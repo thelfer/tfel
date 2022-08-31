@@ -31,7 +31,8 @@ set(mfront_tests_SOURCES
   AxialGrowth
   AxialGrowth2
   AxialGrowth3
-  )
+  ProfilerTest)
+
 mfront_dependencies(MFrontCyranoBehaviours
   YoungModulusTest_1
   YoungModulusTest_2

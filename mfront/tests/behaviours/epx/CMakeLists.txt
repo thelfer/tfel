@@ -18,7 +18,9 @@ set(mfront_tests_SOURCES
   LogarithmicStrainNortonCreep
   OrthotropicSwelling
   OrthotropicSwelling2
-  AxialGrowth)
+  AxialGrowth
+  ProfilerTest2
+  ProfilerTest3)
 
 mfront_behaviour_check_library(MFrontEuroplexusBehaviours
   epx ${mfront_tests_SOURCES})
