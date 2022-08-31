@@ -97,7 +97,10 @@ set(mfront_tests_SOURCES
   ComputeThermalExpansion
   ComputeThermalExpansion2
   ComputeThermalExpansion3
-  GenerateMTestFileOnFailure)
+  GenerateMTestFileOnFailure
+  ProfilerTest
+  ProfilerTest2
+  ProfilerTest3)
 if((NOT WIN32) AND (NOT CYGWIN) AND (NOT MSYS))
   list(APPEND mfront_tests_SOURCES
        AbaqusAxialGrowth

@@ -51,7 +51,9 @@ set(mfront_tests_SOURCES
   LogarithmicStrainOrthotropicElasticity
   LogarithmicStrainNortonCreep
   LogarithmicStrainNortonCreep2
-  GenerateMTestFileOnFailure)
+  GenerateMTestFileOnFailure
+  ProfilerTest
+  ProfilerTest3)
 
 mfront_dependencies(MFrontCyranoBehaviours
   YoungModulusTest_1

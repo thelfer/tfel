@@ -135,7 +135,10 @@ set(mfront_tests_SOURCES
   ParameterTest2
   ElasticMaterialPropertiesBoundsCheckTest
   TemperatureUpdateOnSubSteppingCheck
-  GenerateMTestFileOnFailure)
+  GenerateMTestFileOnFailure
+  ProfilerTest
+  ProfilerTest2
+  ProfilerTest3)
 
 mfront_dependencies(MFrontGenericBehaviours
   Inconel600_YoungModulus

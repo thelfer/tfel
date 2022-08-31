@@ -167,3 +167,7 @@ install_mfront_data(tests/behaviours ParameterTest.mfront)
 install_mfront_data(tests/behaviours ParameterTest2.mfront)
 install_mfront_data(tests/behaviours ElasticMaterialPropertiesBoundsCheckTest.mfront)
 install_mfront_data(tests/behaviours TemperatureUpdateOnSubSteppingCheck.mfront)
+install_mfront_data(tests/behaviours ProfilerTest.mfront)
+install_mfront_data(tests/behaviours ProfilerTest2.mfront)
+install_mfront_data(tests/behaviours ProfilerTest3.mfront)
+

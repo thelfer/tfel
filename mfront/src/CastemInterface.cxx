@@ -2082,19 +2082,34 @@ namespace mfront {
             << ",CastemReal>::buildFromFortranMatrix(F1));\n";
       }
       out << "CastemReal eto[" << n << "];\n"
-          << "CastemReal deto[" << n << "];\n"
-          << "lsh0.getHenckyLogarithmicStrain(eto);\n"
+          << "CastemReal deto[" << n << "];\n";
+      if (mb.getAttribute(BehaviourData::profiling, false)) {
+        out << "{\n"
+            << "BehaviourProfiler::Timer pre_timer(" << mb.getClassName()
+            << "Profiler::getProfiler(),\n"
+            << "BehaviourProfiler::FINITESTRAINPREPROCESSING);\n";
+      }
+      out << "lsh0.getHenckyLogarithmicStrain(eto);\n"
           << "lsh1.getHenckyLogarithmicStrain(deto);\n";
       for (unsigned short i = 0; i != n; ++i) {
         out << "deto[" << i << "]-=eto[" << i << "];\n";
       }
       out << "lsh0.convertFromCauchyStress(STRESS);\n";
+      if (mb.getAttribute(BehaviourData::profiling, false)) {
+        out << "}\n";
+      }
     };
     auto postprocessing = [&out, this, &mb](const bool ps) {
       if (ps) {
         if (this->writeInitializeAxialStrain(out, mb, '1')) {
           out << "lsh1.updateAxialDeformationGradient(std::exp(ezz1));\n";
         }
+      }
+      if (mb.getAttribute(BehaviourData::profiling, false)) {
+        out << "{\n"
+            << "BehaviourProfiler::Timer post_timer(" << mb.getClassName()
+            << "Profiler::getProfiler(),\n"
+            << "BehaviourProfiler::FINITESTRAINPOSTPROCESSING);\n";
       }
       out << "// converting the consistent tangent operator\n"
           << "if(k){\n"
@@ -2104,6 +2119,9 @@ namespace mfront {
           << "}\n"
           << "// converting the stress\n"
           << "lsh1.convertToCauchyStress(STRESS);\n";
+      if (mb.getAttribute(BehaviourData::profiling, false)) {
+        out << "}\n";
+      }
     };
     auto ndi_dispatch = [this, &out, &name, &mb, &suffix, &preprocessing,
                          &postprocessing, &throw_if](
@@ -2120,12 +2138,6 @@ namespace mfront {
             << " castem::CastemLogarithmicStrainStressFreeExpansionHandler);\n"
             << "}";
         return;
-      }
-      if (mb.getAttribute(BehaviourData::profiling, false)) {
-        out << "{\n"
-            << "BehaviourProfiler::Timer pre_timer(" << mb.getClassName()
-            << "Profiler::getProfiler(),\n"
-            << "BehaviourProfiler::FINITESTRAINPREPROCESSING);\n";
       }
       if (h == ModellingHypothesis::TRIDIMENSIONAL) {
         preprocessing(3u, 6u, false);
@@ -2146,11 +2158,6 @@ namespace mfront {
           << " STATEV,NSTATV,STRESS,PNEWDT,KINC,\n"
           << " castem::CastemLogarithmicStrainStressFreeExpansionHandler);\n"
           << "if(*KINC==1){\n";
-      if (mb.getAttribute(BehaviourData::profiling, false)) {
-        out << "BehaviourProfiler::Timer post_timer(" << mb.getClassName()
-            << "Profiler::getProfiler(),\n"
-            << "BehaviourProfiler::FINITESTRAINPOSTPROCESSING);\n";
-      }
       if (h == ModellingHypothesis::TRIDIMENSIONAL) {
         postprocessing(false);
       } else if ((h == ModellingHypothesis::AXISYMMETRICAL) ||
@@ -2249,7 +2256,7 @@ namespace mfront {
         << "if(*KINC==1){\n";
     if (mb.getAttribute(BehaviourData::profiling, false)) {
       out << "{\n"
-          << "auto post_timer(" << mb.getClassName()
+          << "BehaviourProfiler::Timer post_timer(" << mb.getClassName()
           << "Profiler::getProfiler(),\n"
           << "BehaviourProfiler::FINITESTRAINPOSTPROCESSING);\n";
     }
