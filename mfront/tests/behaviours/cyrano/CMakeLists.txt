@@ -36,7 +36,9 @@ set(mfront_tests_SOURCES
   AxialGrowth2
   AxialGrowth3
   ElasticMaterialPropertiesBoundsCheckTest
-  TemperatureUpdateOnSubSteppingCheck)
+  TemperatureUpdateOnSubSteppingCheck
+  ProfilerTest)
+
 mfront_dependencies(MFrontCyranoBehaviours
   YoungModulusTest_1
   YoungModulusTest_2

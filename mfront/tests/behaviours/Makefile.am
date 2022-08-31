@@ -142,7 +142,10 @@ MFRONTS= DDIF2.mfront                                                      \
 	 AbaqusOrthotropicSwelling2.mfront                                 \
 	 RelocationTest.mfront                                             \
 	 ElasticMaterialPropertiesBoundsCheckTest.mfront                   \
-	 TemperatureUpdateOnSubSteppingCheck.mfront
+	 TemperatureUpdateOnSubSteppingCheck.mfront                        \
+	 ProfilerTest.mfront                                               \
+	 ProfilerTest2.mfront                                              \
+	 ProfilerTest3.mfront
 
 testsdir = $(pkgdatadir)/mfront/tests/behaviours
 tests_DATA = $(MFRONTS)

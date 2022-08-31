@@ -136,7 +136,10 @@ set(mfront_tests_SOURCES
   AxialGrowth
   AxialGrowth2
   AxialGrowth3
-  RelocationTest)
+  RelocationTest
+  ProfilerTest
+  ProfilerTest2
+  ProfilerTest3)
 
 mfront_dependencies(MFrontCastemBehaviours
   Inconel600_YoungModulus

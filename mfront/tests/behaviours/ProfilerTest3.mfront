@@ -1,0 +1,40 @@
+@Behaviour ProfilerTest3;
+@Author Thomas Helfer;
+@Date 23/11/06;
+@Description{
+ A very first test 
+ (the most simple one in fact).
+}
+
+@Profiling true;
+@StrainMeasure Hencky;
+
+// Material properties
+@MaterialProperty stress young;
+young.setGlossaryName("YoungModulus");
+@MaterialProperty real   nu;
+nu.setGlossaryName("PoissonRatio");
+
+// Lame Coefficients
+@LocalVariable stress lambda,mu;
+
+@InitLocalVariables{
+  lambda = computeLambda(young,nu);
+  mu = computeMu(young,nu);
+}
+
+@PredictionOperator{
+  static_cast<void>(smt); // remove unused variable warning
+  computeAlteredElasticStiffness<hypothesis,real>::exe(Dt,lambda,mu);
+}
+
+@Integrator{
+  const auto id = Stensor::Id();
+  const auto e = eto + deto;
+  sig = lambda * trace(e) * id + 2 * mu * (e);
+}
+
+@TangentOperator{
+  static_cast<void>(smt); // remove unused variable warning
+  Dt = lambda * Stensor4::IxI() + 2 * mu * Stensor4::Id();
+}

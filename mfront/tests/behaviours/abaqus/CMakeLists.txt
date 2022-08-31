@@ -93,7 +93,10 @@ set(mfront_tests_SOURCES
   LogarithmicStrainElasticity
   LogarithmicStrainElasticity2
   LogarithmicStrainElasticity3
-  LogarithmicStrainNortonCreep)
+  LogarithmicStrainNortonCreep
+  ProfilerTest
+  ProfilerTest2
+  ProfilerTest3)
 if((NOT WIN32) AND (NOT CYGWIN))
   list(APPEND mfront_tests_SOURCES
        AbaqusAxialGrowth
