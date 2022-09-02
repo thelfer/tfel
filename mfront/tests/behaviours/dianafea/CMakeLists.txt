@@ -16,6 +16,7 @@ mfront_behaviour_check_library(MFrontDianaFEABehaviours dianafea
   ComputeThermalExpansion
   ParameterTest
   ParameterTest2
+  ProfilerTest
   )
 target_link_libraries(MFrontDianaFEABehaviours
   PRIVATE DianaFEAInterface)

@@ -17,32 +17,28 @@
 
 #include "MFront/BehaviourBrick/StressBasedPorosityNucleationModelBase.hxx"
 
-namespace mfront {
+namespace mfront::bbrick {
 
-  namespace bbrick {
+  /*!
+   * \brief strain version of the nucleation model
+   * proposed by Chu and Needleman.
+   *
+   * Chu, C. C., and A. Needleman. 1980.
+   * “Void Nucleation Effects in Biaxially Stretched Sheets.”
+   * Journal of Engineering Materials and Technology 102 (3): 249–56
+   */
+  struct ChuNeedleman1980StressBasedPorosityNucleationModel final
+      : StressBasedPorosityNucleationModelBase {
+    //! \brief destructor
+    ~ChuNeedleman1980StressBasedPorosityNucleationModel() override;
 
-    /*!
-     * \brief strain version of the nucleation model
-     * proposed by Chu and Needleman.
-     *
-     * Chu, C. C., and A. Needleman. 1980.
-     * “Void Nucleation Effects in Biaxially Stretched Sheets.”
-     * Journal of Engineering Materials and Technology 102 (3): 249–56
-     */
-    struct ChuNeedleman1980StressBasedPorosityNucleationModel final
-        : StressBasedPorosityNucleationModelBase {
-      //! \brief destructor
-      ~ChuNeedleman1980StressBasedPorosityNucleationModel() override;
+   protected:
+    std::string getModelName() const override final;
+    std::vector<MaterialCoefficientDescription>
+    getMaterialCoefficientDescriptions() const override final;
+  };  // end of struct ChuNeedleman1980StressBasedPorosityNucleationModel
 
-     protected:
-      std::string getModelName() const override final;
-      std::vector<MaterialCoefficientDescription>
-      getMaterialCoefficientDescriptions() const override final;
-    };  // end of struct ChuNeedleman1980StressBasedPorosityNucleationModel
-
-  }  // end of namespace bbrick
-
-}  // end of namespace mfront
+}  // end of namespace mfront::bbrick
 
 #endif /* LIB_MFRONT_BEHAVIOURBRICK_CHUNEEDLEMAN1980STRESSBASEDPOROSITYNUCLEATIONMODEL_HXX \
         */

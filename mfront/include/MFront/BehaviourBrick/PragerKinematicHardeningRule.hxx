@@ -16,28 +16,24 @@
 
 #include "MFront/BehaviourBrick/KinematicHardeningRuleBase.hxx"
 
-namespace mfront {
+namespace mfront::bbrick {
 
-  namespace bbrick {
+  /*!
+   * \brief class describing the Prager kinematic hardening rule
+   */
+  struct PragerKinematicHardeningRule : KinematicHardeningRuleBase {
+    std::string buildBackStrainImplicitEquations(
+        const BehaviourDescription&,
+        const StressPotential&,
+        const StressCriterion&,
+        const std::vector<std::shared_ptr<KinematicHardeningRule>>&,
+        const std::string&,
+        const std::string&,
+        const bool) const override;
+    //! \brief destructor
+    ~PragerKinematicHardeningRule() override;
+  };  // end of struct KinematicHardeningRule
 
-    /*!
-     * \brief class describing the Prager kinematic hardening rule
-     */
-    struct PragerKinematicHardeningRule : KinematicHardeningRuleBase {
-      std::string buildBackStrainImplicitEquations(
-          const BehaviourDescription&,
-          const StressPotential&,
-          const StressCriterion&,
-          const std::vector<std::shared_ptr<KinematicHardeningRule>>&,
-          const std::string&,
-          const std::string&,
-          const bool) const override;
-      //! destructor
-      ~PragerKinematicHardeningRule() override;
-    };  // end of struct KinematicHardeningRule
-
-  }  // end of namespace bbrick
-
-}  // end of namespace mfront
+}  // end of namespace mfront::bbrick
 
 #endif /* LIB_MFRONT_BEHAVIOURBRICK_PRAGERKINEMATICHARDENINGRULE_HXX */

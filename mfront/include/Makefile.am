@@ -174,6 +174,7 @@ nobase_include_HEADERS= MFront/MFront.hxx                                     \
 			MFront/BehaviourBrick/ArmstrongFrederickKinematicHardeningRule.hxx \
 			MFront/BehaviourBrick/Chaboche2012KinematicHardeningRule.hxx       \
 			MFront/BehaviourBrick/BurletCailletaudKinematicHardeningRule.hxx   \
+			MFront/BehaviourBrick/DelobelleRobinetSchafflerKinematicHardeningRule.hxx        \
 			MFront/BehaviourBrick/KinematicHardeningRuleFactory.hxx            \
 			MFront/GenericMaterialProperty/MaterialProperty.h                  \
 			MFront/GenericMaterialProperty/OutOfBoundsPolicy.h                 \

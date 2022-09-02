@@ -17,27 +17,23 @@
 
 #include "MFront/BehaviourBrick/StressBasedPorosityNucleationModelBase.hxx"
 
-namespace mfront {
+namespace mfront::bbrick {
 
-  namespace bbrick {
+  /*!
+   * \brief stress version of the power law nucleation model
+   */
+  struct PowerLawStressBasedPorosityNucleationModel final
+      : StressBasedPorosityNucleationModelBase {
+    //! \brief destructor
+    ~PowerLawStressBasedPorosityNucleationModel() override;
 
-    /*!
-     * \brief stress version of the power law nucleation model
-     */
-    struct PowerLawStressBasedPorosityNucleationModel final
-        : StressBasedPorosityNucleationModelBase {
-      //! \brief destructor
-      ~PowerLawStressBasedPorosityNucleationModel() override;
+   protected:
+    std::string getModelName() const override final;
+    std::vector<MaterialCoefficientDescription>
+    getMaterialCoefficientDescriptions() const override final;
+  };  // end of struct PowerLawStressBasedPorosityNucleationModel
 
-     protected:
-      std::string getModelName() const override final;
-      std::vector<MaterialCoefficientDescription>
-      getMaterialCoefficientDescriptions() const override final;
-    };  // end of struct PowerLawStressBasedPorosityNucleationModel
-
-  }  // end of namespace bbrick
-
-}  // end of namespace mfront
+}  // end of namespace mfront::bbrick
 
 #endif /* LIB_MFRONT_BEHAVIOURBRICK_POWERLAWSTRESSBASEDPOROSITYNUCLEATIONMODEL_HXX \
         */

@@ -194,8 +194,10 @@ MFRONTS= DSLOptionsTest.mfront                                             \
      ElasticityParametersAsStaticVariables.mfront                      \
      RungeKuttaElasticityParametersAsStaticVariables.mfront            \
      ImplicitElasticityParametersAsStaticVariables.mfront              \
-     InitializationFailureTest.mfront
-
+     InitializationFailureTest.mfront                                  \
+	 ProfilerTest.mfront                                               \
+	 ProfilerTest2.mfront                                              \
+	 ProfilerTest3.mfront
 testsdir = $(pkgdatadir)/mfront/tests/behaviours
 tests_DATA = $(MFRONTS)
 

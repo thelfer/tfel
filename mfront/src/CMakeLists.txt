@@ -230,6 +230,7 @@ set(TFELMFront_SOURCES
     Chaboche2012KinematicHardeningRule.cxx
     BurletCailletaudKinematicHardeningRule.cxx
     ArmstrongFrederickKinematicHardeningRule.cxx
+    DelobelleRobinetSchafflerKinematicHardeningRule.cxx
     KinematicHardeningRuleFactory.cxx
     ${PROJECT_BINARY_DIR}/mfront/src/MFrontHeader.cxx)
 

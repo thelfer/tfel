@@ -14,59 +14,53 @@
 #include <functional>
 #include "MFront/MFrontConfig.hxx"
 
-namespace mfront {
+namespace mfront::bbrick {
 
-  namespace bbrick {
+  // forward declaration
+  struct KinematicHardeningRule;
 
-    // forward declaration
-    struct KinematicHardeningRule;
-
+  /*!
+   * \brief abstract factory for Kinematic hardening rules.
+   */
+  struct MFRONT_VISIBILITY_EXPORT KinematicHardeningRuleFactory {
+    //! a simple alias
+    using Generator = std::function<std::shared_ptr<KinematicHardeningRule>()>;
+    //! \return the uniq instance of the class
+    static KinematicHardeningRuleFactory& getFactory();
+    //! \brief return the list of kinematic hardening rules
+    std::vector<std::string> getRegistredKinematicHardeningRules() const;
     /*!
-     * \brief abstract factory for Kinematic hardening rules.
+     * \brief add a new generator
+     * \param[in] n: name of the generator
+     * \param[in] g: generator
      */
-    struct MFRONT_VISIBILITY_EXPORT KinematicHardeningRuleFactory {
-      //! a simple alias
-      using Generator =
-          std::function<std::shared_ptr<KinematicHardeningRule>()>;
-      //! \return the uniq instance of the class
-      static KinematicHardeningRuleFactory& getFactory();
-      //! \brief return the list of kinematic hardening rules
-      std::vector<std::string> getRegistredKinematicHardeningRules() const;
-      /*!
-       * \brief add a new generator
-       * \param[in] n: name of the generator
-       * \param[in] g: generator
-       */
-      void addGenerator(const std::string&, const Generator&);
-      /*!
-       * \brief generate a new inelastic potential
-       * \param[in] n: name of the inelastic potential
-       */
-      std::shared_ptr<KinematicHardeningRule> generate(
-          const std::string&) const;
+    void addGenerator(const std::string&, const Generator&);
+    /*!
+     * \brief generate a new inelastic potential
+     * \param[in] n: name of the inelastic potential
+     */
+    std::shared_ptr<KinematicHardeningRule> generate(const std::string&) const;
 
-     private:
-      //! default constructor
-      KinematicHardeningRuleFactory();
-      //! move constructor (deleted)
-      KinematicHardeningRuleFactory(KinematicHardeningRuleFactory&&) = delete;
-      //! copy constructor (deleted)
-      KinematicHardeningRuleFactory(const KinematicHardeningRuleFactory&) =
-          delete;
-      //! move assignement (deleted)
-      KinematicHardeningRuleFactory& operator=(
-          KinematicHardeningRuleFactory&&) = delete;
-      //! standard assignement(deleted)
-      KinematicHardeningRuleFactory& operator=(
-          const KinematicHardeningRuleFactory&) = delete;
-      //! \brief destructor
-      ~KinematicHardeningRuleFactory();
-      //! \brief generators
-      std::map<std::string, Generator> generators;
-    };  // end of struct KinematicHardeningRuleFactory
+   private:
+    //! default constructor
+    KinematicHardeningRuleFactory();
+    //! move constructor (deleted)
+    KinematicHardeningRuleFactory(KinematicHardeningRuleFactory&&) = delete;
+    //! copy constructor (deleted)
+    KinematicHardeningRuleFactory(const KinematicHardeningRuleFactory&) =
+        delete;
+    //! move assignement (deleted)
+    KinematicHardeningRuleFactory& operator=(KinematicHardeningRuleFactory&&) =
+        delete;
+    //! standard assignement(deleted)
+    KinematicHardeningRuleFactory& operator=(
+        const KinematicHardeningRuleFactory&) = delete;
+    //! \brief destructor
+    ~KinematicHardeningRuleFactory();
+    //! \brief generators
+    std::map<std::string, Generator> generators;
+  };  // end of struct KinematicHardeningRuleFactory
 
-  }  // end of namespace bbrick
-
-}  // end of namespace mfront
+}  // end of namespace mfront::bbrick
 
 #endif /* LIB_MFRONT_BEHAVIOURBRICK_KINEMATICHARDENINGRULEFACTORY_HXX */

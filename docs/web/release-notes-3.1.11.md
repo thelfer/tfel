@@ -19,6 +19,10 @@ eqnPrefixTemplate: "($$i$$)"
 
 # Issues fixed
 
+## Issue #306: [mfront] Profiling is broken in the `cyrano` interface 
+
+For more details, see <https://github.com/thelfer/tfel/issues/306>.
+
 ## Issue #204: [tfel-check] Invalid option `c` (must be `-c`)
 
 For more details, see <https://github.com/thelfer/tfel/issues/204>.

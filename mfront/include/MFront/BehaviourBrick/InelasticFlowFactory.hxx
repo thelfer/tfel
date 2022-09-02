@@ -14,52 +14,48 @@
 #include <functional>
 #include "MFront/MFrontConfig.hxx"
 
-namespace mfront {
+namespace mfront::bbrick {
 
-  namespace bbrick {
+  // forward declaration
+  struct InelasticFlow;
 
-    // forward declaration
-    struct InelasticFlow;
+  //! \brief abstract factory for inelastic Flows.
+  struct MFRONT_VISIBILITY_EXPORT InelasticFlowFactory {
+    //! a simple alias
+    using Generator = std::function<std::shared_ptr<InelasticFlow>()>;
+    //! \return the uniq instance of the class
+    static InelasticFlowFactory& getFactory();
+    /*!
+     * \brief add a new generator
+     * \param[in] n: name of the generator
+     * \param[in] g: generator
+     */
+    void addGenerator(const std::string&, const Generator&);
+    //! \return the list of available inelastic flows
+    std::vector<std::string> getRegistredInelasticFlows() const;
+    /*!
+     * \brief generate a new inelastic flow
+     * \param[in] n: name of the inelastic flow
+     */
+    std::shared_ptr<InelasticFlow> generate(const std::string&) const;
 
-    //! \brief abstract factory for inelastic Flows.
-    struct MFRONT_VISIBILITY_EXPORT InelasticFlowFactory {
-      //! a simple alias
-      using Generator = std::function<std::shared_ptr<InelasticFlow>()>;
-      //! \return the uniq instance of the class
-      static InelasticFlowFactory& getFactory();
-      /*!
-       * \brief add a new generator
-       * \param[in] n: name of the generator
-       * \param[in] g: generator
-       */
-      void addGenerator(const std::string&, const Generator&);
-      //! \return the list of available inelastic flows
-      std::vector<std::string> getRegistredInelasticFlows() const;
-      /*!
-       * \brief generate a new inelastic flow
-       * \param[in] n: name of the inelastic flow
-       */
-      std::shared_ptr<InelasticFlow> generate(const std::string&) const;
+   private:
+    //! default constructor
+    InelasticFlowFactory();
+    //! move constructor (deleted)
+    InelasticFlowFactory(InelasticFlowFactory&&) = delete;
+    //! copy constructor (deleted)
+    InelasticFlowFactory(const InelasticFlowFactory&) = delete;
+    //! move assignement (deleted)
+    InelasticFlowFactory& operator=(InelasticFlowFactory&&) = delete;
+    //! standard assignement(deleted)
+    InelasticFlowFactory& operator=(const InelasticFlowFactory&) = delete;
+    //! \brief destructor
+    ~InelasticFlowFactory();
+    //! \brief generators
+    std::map<std::string, Generator> generators;
+  };  // end of struct InelasticFlowFactory
 
-     private:
-      //! default constructor
-      InelasticFlowFactory();
-      //! move constructor (deleted)
-      InelasticFlowFactory(InelasticFlowFactory&&) = delete;
-      //! copy constructor (deleted)
-      InelasticFlowFactory(const InelasticFlowFactory&) = delete;
-      //! move assignement (deleted)
-      InelasticFlowFactory& operator=(InelasticFlowFactory&&) = delete;
-      //! standard assignement(deleted)
-      InelasticFlowFactory& operator=(const InelasticFlowFactory&) = delete;
-      //! \brief destructor
-      ~InelasticFlowFactory();
-      //! \brief generators
-      std::map<std::string, Generator> generators;
-    };  // end of struct InelasticFlowFactory
-
-  }  // end of namespace bbrick
-
-}  // end of namespace mfront
+}  // end of namespace mfront::bbrick
 
 #endif /* LIB_MFRONT_BEHAVIOURBRICK_INELASTICFLOWFACTORY_HXX */

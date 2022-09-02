@@ -17,28 +17,24 @@
 
 #include "MFront/BehaviourBrick/StrainBasedPorosityNucleationModelBase.hxx"
 
-namespace mfront {
+namespace mfront::bbrick {
 
-  namespace bbrick {
+  /*!
+   * \brief strain version of the power law nucleation model
+   */
+  struct PowerLawStrainBasedPorosityNucleationModel final
+      : StrainBasedPorosityNucleationModelBase {
+    //! \brief destructor
+    ~PowerLawStrainBasedPorosityNucleationModel() override;
 
-    /*!
-     * \brief strain version of the power law nucleation model
-     */
-    struct PowerLawStrainBasedPorosityNucleationModel final
-        : StrainBasedPorosityNucleationModelBase {
-      //! \brief destructor
-      ~PowerLawStrainBasedPorosityNucleationModel() override;
+   protected:
+    std::string getModelName() const override;
+    bool requiresLimitOnNucleationPorosity() const override;
+    std::vector<MaterialCoefficientDescription>
+    getMaterialCoefficientDescriptions() const override;
+  };  // end of struct PowerLawStrainBasedPorosityNucleationModel
 
-     protected:
-      std::string getModelName() const override;
-      bool requiresLimitOnNucleationPorosity() const override;
-      std::vector<MaterialCoefficientDescription>
-      getMaterialCoefficientDescriptions() const override;
-    };  // end of struct PowerLawStrainBasedPorosityNucleationModel
-
-  }  // end of namespace bbrick
-
-}  // end of namespace mfront
+}  // end of namespace mfront::bbrick
 
 #endif /* LIB_MFRONT_BEHAVIOURBRICK_POWERLAWSTRAINBASEDPOROSITYNUCLEATIONMODEL_HXX \
         */
