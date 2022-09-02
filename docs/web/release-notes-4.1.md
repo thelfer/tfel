@@ -1012,8 +1012,12 @@ This isotropic hardening rule can be parametrised using three entries:
 };
 ~~~~
 
-### New kinematic hardening rule for orthotropic behaviours
+### Delobelle-Robinet-Schaffler kinematic hardening rule
 
+The Delobelle-Robinet-Schaffler (DRS) kinematic hardening rule has been
+introduced to describe orthotropic viscoplasticity of Zircaloy alloys
+[@delobelle_model_1996;@schaffler_thermomechanical_1999]. It describes
+both dynamic and static recovery by the following evolution law:
 \[
 \tenseur{\dot{a}}=
 \dot{p}\,\tenseurq{E}_{c}\,\colon\,\tenseur{n}
@@ -1027,6 +1031,8 @@ The three fourth order tensors \(\tenseurq{E}_{c}\),
 \(\tenseurq{R}_{d}\) and \(\tenseurq{R}_{s}\) are assumed to have the
 same structure as the Hill tensors and are defined by \(6\) components
 (see [this page](tensors.html) for details).
+
+The `f` and `a0` parameters are optional and defaults to \(1\).
 
 ## Improvements to the `RungeKutta` domain specific language
 

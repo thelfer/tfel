@@ -13,6 +13,7 @@ eqnPrefixTemplate: "($$i$$)"
 
 ---
 nocite: |
+    @fokam_implantation_2022
     @gelebart_simple_2022
     @jamond_manta_2022
     @li_influence_2022

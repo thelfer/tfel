@@ -1151,4 +1151,40 @@ The following code can be added in a block defining an inelastic flow:
     }
 ~~~~
 
+### Delobelle-Robinet-Schaffler (DRS) kinematic hardening rule
+
+The Delobelle-Robinet-Schaffler (DRS) kinematic hardening rule has been
+introduced to describe orthotropic viscoplasticity of Zircaloy alloys
+[@delobelle_model_1996;@schaffler_thermomechanical_1999]. It describes
+both dynamic and static recovery by the following evolution law:
+\[
+\tenseur{\dot{a}}=
+\dot{p}\,\tenseurq{E}_{c}\,\colon\,\tenseur{n}
+-D\,\dot{p}\,\tenseurq{R}_{d}\,\colon\,\tenseur{a}
+-f\,\paren{\Frac{a_{\mathrm{eq}}}{a_{0}}}^{m}\,\deriv{a_{\mathrm{eq}}}{\tenseur{a}}
+\]
+with \(a_{\mathrm{eq}}=\sqrt{\tenseur{a}\,\colon\,\tenseurq{R}_{s}\,\colon\,\tenseur{a}}\) and 
+\(\deriv{a_{\mathrm{eq}}}{\tenseur{a}}=\Frac{\tenseurq{R}_{s}\,\colon\,\tenseur{a}}{a_{\mathrm{eq}}}\)
+
+The three fourth order tensors \(\tenseurq{E}_{c}\),
+\(\tenseurq{R}_{d}\) and \(\tenseurq{R}_{s}\) are assumed to have the
+same structure as the Hill tensors and are defined by \(6\) components
+(see [this page](tensors.html) for details).
+
+The `f` and `a0` parameters are optional and defaults to \(1\).
+
+#### Example
+
+~~~~{.cxx}
+    kinematic_hardening : "DRS" {
+      C : 150.e9,  // kinematic moduli
+      D : 1e2,    // back-strain callback coefficient
+      f : 10,
+      m : 5,
+      Ec : {0.33, 0.33, 0.33, 1, 1, 1},
+      Rs : {0.33, 0.63, 0.33, 1, 1, 1},
+      Rd : {0.33, 0.33, 0.33, 1, 1, 1}  //
+    },
+~~~~
+
 # References
