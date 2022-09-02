@@ -207,7 +207,7 @@ libTFELMFront_la_SOURCES = MFront.cxx                                     \
 		           Chaboche2012KinematicHardeningRule.cxx                 \
 		           BurletCailletaudKinematicHardeningRule.cxx             \
 		           ArmstrongFrederickKinematicHardeningRule.cxx           \
-		           OrthotropicKinematicHardeningRule.cxx                  \
+		           DelobelleRobinetSchafflerKinematicHardeningRule.cxx    \
 		           KinematicHardeningRuleFactory.cxx
 
 if HAVE_GNUPLOT

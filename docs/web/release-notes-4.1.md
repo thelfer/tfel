@@ -1034,6 +1034,21 @@ same structure as the Hill tensors and are defined by \(6\) components
 
 The `f` and `a0` parameters are optional and defaults to \(1\).
 
+
+#### Example
+
+~~~~{.cxx}
+    kinematic_hardening : "DRS" {
+      C : 150.e9,  // kinematic moduli
+      D : 1e2,    // back-strain callback coefficient
+      f : 10,
+      m : 5,
+      Ec : {0.33, 0.33, 0.33, 1, 1, 1},
+      Rs : {0.33, 0.63, 0.33, 1, 1, 1},
+      Rd : {0.33, 0.33, 0.33, 1, 1, 1}  //
+    },
+~~~~
+
 ## Improvements to the `RungeKutta` domain specific language
 
 ### Improvements to the `rkCastem` algorithm{#sec:tfel_4.1:mfront:rkCastem}

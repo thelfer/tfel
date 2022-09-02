@@ -1,5 +1,5 @@
 /*!
- * \file   OrthotropicKinematicHardeningRule.hxx
+ * \file   DelobelleRobinetSchafflerKinematicHardeningRule.hxx
  * \brief
  * \author Thomas Helfer
  * \date   04/04/2018
@@ -11,17 +11,30 @@
  * project under specific licensing conditions.
  */
 
-#ifndef LIB_MFRONT_BEHAVIOURBRICK_ORTHOTROPICKINEMATICHARDENINGRULE_HXX
-#define LIB_MFRONT_BEHAVIOURBRICK_ORTHOTROPICKINEMATICHARDENINGRULE_HXX
+#ifndef LIB_MFRONT_BEHAVIOURBRICK_DRSKINEMATICHARDENINGRULE_HXX
+#define LIB_MFRONT_BEHAVIOURBRICK_DRSKINEMATICHARDENINGRULE_HXX
 
 #include "MFront/BehaviourBrick/KinematicHardeningRuleBase.hxx"
 
 namespace mfront::bbrick {
 
   /*!
-   * \brief 
+   * \brief kinematic hardening rule derived from the work of Delobelle, Robinet
+   * and Schaffler on Zircaloy4 alloys. This orthotropic hardening kinematic
+   * rule describes static and dynamic recovery.
+   *
+   * Thermomechanical Behavior and Modeling Between 350°C and 400°C of
+   * Zircaloy-4 Cladding Tubes From an Unirradiated State to High Fluence (0 to
+   * 85s˙1024 nm−2,E>1MeV
+   * Schäffler, I. and Geyer, P. and Bouffioux, P. and Delobelle, P.
+   * Journal of Engineering Materials and Technology. 1999
+   *
+   * A model to describe the anisotropic viscoplastic behaviour of Zircaloy-4
+   * tubes.
+   * Delobelle, P. and Robinet, P. and Geyer, P. and Bouffioux, P.
+   * Journal of Nuclear Materials. 1996
    */
-  struct OrthotropicKinematicHardeningRule : KinematicHardeningRuleBase {
+  struct DelobelleRobinetSchafflerKinematicHardeningRule : KinematicHardeningRuleBase {
     std::vector<OptionDescription> getOptions() const override;
     void initialize(BehaviourDescription&,
                     AbstractBehaviourDSL&,
@@ -41,7 +54,7 @@ namespace mfront::bbrick {
         const std::string&,
         const bool) const override;
     //! \brief destructor
-    ~OrthotropicKinematicHardeningRule() override;
+    ~DelobelleRobinetSchafflerKinematicHardeningRule() override;
 
    protected:
     //! \brief call-back
@@ -62,4 +75,4 @@ namespace mfront::bbrick {
 
 }  // end of namespace mfront::bbrick
 
-#endif /* LIB_MFRONT_BEHAVIOURBRICK_ORTHOTROPICKINEMATICHARDENINGRULE_HXX */
+#endif /* LIB_MFRONT_BEHAVIOURBRICK_DRSKINEMATICHARDENINGRULE_HXX */
