@@ -1123,7 +1123,21 @@ namespace mfront {
 
   std::string BehaviourDSLCommon::getIntegrationDataFileName() const {
     return "TFEL/Material/" + this->mb.getClassName() + "IntegrationData.hxx";
-  }  // end of getIntegrationDataFileName
+  }  // end of BehaviourDSLCommon::getIntegrationDataFileName
+
+  std::string BehaviourDSLCommon::getSlipSystemHeaderFileName() const {
+    if (!this->mb.areSlipSystemsDefined()) {
+      return "";
+    }
+    return "TFEL/Material/" + this->mb.getClassName() + "SlipSystems.hxx";
+  }  // end of getSlipSystemHeaderFileName
+
+  std::string BehaviourDSLCommon::getSlipSystemImplementationFileName() const {
+    if (!this->mb.areSlipSystemsDefined()) {
+      return "";
+    }
+    return "TFEL/Material/" + this->mb.getClassName() + "SlipSystems.ixx";
+  }  // end of getSlipSystemImplementationFileName
 
   std::string BehaviourDSLCommon::getSrcFileName() const {
     return this->mb.getClassName() + ".cxx";
@@ -1147,6 +1161,10 @@ namespace mfront {
     insert_if(this->td.headers, this->getBehaviourFileName());
     insert_if(this->td.headers, this->getBehaviourDataFileName());
     insert_if(this->td.headers, this->getIntegrationDataFileName());
+    if (this->mb.areSlipSystemsDefined()) {
+      insert_if(this->td.headers, this->getSlipSystemHeaderFileName());
+      insert_if(this->td.headers, this->getSlipSystemImplementationFileName());
+    }
     this->completeTargetsDescription();
   }
 
@@ -1335,8 +1353,8 @@ namespace mfront {
       }
     }
     if (this->mb.areSlipSystemsDefined()) {
-      this->mb.appendToIncludes("#include \"TFEL/Material/" +
-                                this->mb.getClassName() + "SlipSystems.hxx\"");
+      this->mb.appendToIncludes("#include \"" +
+                                this->getSlipSystemHeaderFileName() + "\"");
     }
     //
     if (this->mb.getBehaviourType() ==
@@ -1711,7 +1729,7 @@ namespace mfront {
     tfel::system::systemCall::mkdir("include");
     tfel::system::systemCall::mkdir("include/TFEL/");
     tfel::system::systemCall::mkdir("include/TFEL/Material");
-    auto file = "include/TFEL/Material/" + cn + ".hxx";
+    auto file = "include/" + this->getSlipSystemHeaderFileName();
     std::ofstream out(file);
     throw_if(!out, "can't open file '" + file + "'");
     out.exceptions(std::ios::badbit | std::ios::failbit);
@@ -1877,7 +1895,7 @@ namespace mfront {
         << "#include\"TFEL/Material/" << cn << ".ixx\"\n\n"
         << "#endif /* LIB_TFEL_MATERIAL_" << makeUpperCase(cn) << "_HXX */\n";
     out.close();
-    file = "include/TFEL/Material/" + cn + ".ixx";
+    file = "include/" + this->getSlipSystemImplementationFileName();
     out.open(file);
     throw_if(!out, "can't open file '" + file + "'");
     out.exceptions(std::ios::badbit | std::ios::failbit);

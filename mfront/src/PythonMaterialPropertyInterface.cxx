@@ -74,7 +74,7 @@ namespace mfront {
     const auto name = (mpd.material.empty())
                           ? mpd.className
                           : mpd.material + "_" + mpd.className;
-    const auto headerFileName = "include/" + name + "-python.hxx";
+    const auto headerFileName = name + "-python.hxx";
     const auto tfel_config = tfel::getTFELConfigExecutableName();
     const auto* const python_include_path = std::getenv("PYTHON_INCLUDE_PATH");
     const auto* const python_library_path = std::getenv("PYTHON_LIBRARY_PATH");

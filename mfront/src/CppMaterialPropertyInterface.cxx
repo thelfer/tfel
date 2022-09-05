@@ -31,7 +31,7 @@
 namespace mfront {
 
   static std::string getHeaderFileName(const std::string& n) {
-    return "include/" + n + "-cxx.hxx";
+    return n + "-cxx.hxx";
   }
 
   std::string CppMaterialPropertyInterface::getName() { return "c++"; }
@@ -79,19 +79,19 @@ namespace mfront {
     // }
     cn += name;
     insert_if(l.epts, cn);
-  }  // end of CMaterialPropertyInterface::getTargetsDescription
+  }  // end of getTargetsDescription
 
   void CppMaterialPropertyInterface::writeOutputFiles(
       const MaterialPropertyDescription& mpd, const FileDescription& fd) const {
     this->writeHeaderFile(mpd, fd);
     this->writeSrcFile(mpd, fd);
-  }  // end of CppMaterialPropertyInterface::writeOutputFiles
+  }  // end of writeOutputFiles
 
   void CppMaterialPropertyInterface::writeHeaderFile(
       const MaterialPropertyDescription& mpd, const FileDescription& fd) const {
     const auto name = mpd.material.empty() ? mpd.className
                                            : mpd.material + "_" + mpd.className;
-    std::ofstream header(getHeaderFileName(name));
+    std::ofstream header("include/" + getHeaderFileName(name));
     tfel::raise_if(!header,
                    "CppMaterialPropertyInterface::writeHeaderFile: "
                    "unable to open '" +
@@ -189,7 +189,7 @@ namespace mfront {
            << "} // end of namespace mfront\n\n"
            << "#endif /* LIB_MFRONT_" << makeUpperCase(name) << "_HXX */\n";
     header.close();
-  }  // end of CppMaterialPropertyInterface::writeHeaderFile()
+  }  // end of writeHeaderFile()
 
   void CppMaterialPropertyInterface::writeSrcFile(
       const MaterialPropertyDescription& mpd, const FileDescription& fd) const {
@@ -506,7 +506,7 @@ namespace mfront {
     src << "return os;\n}// end of operator(std::ostream& os," << name << "\n\n"
         << "} // end of namespace mfront\n\n";
     src.close();
-  }  // end of CppMaterialPropertyInterface::writeSrcFile()
+  }  // end of writeSrcFile
 
   CppMaterialPropertyInterface::~CppMaterialPropertyInterface() = default;
 
