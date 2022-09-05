@@ -72,7 +72,7 @@ namespace mfront {
     insert_if(l.link_libraries, "m");
 #endif /* !((defined _WIN32) && (defined _MSC_VER)) */
     insert_if(l.epts, name);
-    d.headers.push_back("include/" + this->getHeaderFileName(name));
+    d.headers.push_back(this->getHeaderFileName(name));
   }  // end of getLibraryDescription
 
   void GenericMaterialPropertyInterfaceBase::getTargetsDescription(

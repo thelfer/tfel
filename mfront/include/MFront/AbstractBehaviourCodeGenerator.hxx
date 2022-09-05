@@ -42,6 +42,16 @@ namespace mfront {
     virtual std::string getBehaviourDataFileName() const = 0;
     //! \return the name of the integration data file
     virtual std::string getIntegrationDataFileName() const = 0;
+    /*!
+     * \return the name of the header file describing the slip systems,
+     * if declared
+     */
+    virtual std::string getSlipSystemHeaderFileName() const = 0;
+    /*!
+     * \return the name of the header file implementing the description of the
+     * the slip systems, if declared
+     */
+    virtual std::string getSlipSystemImplementationFileName() const = 0;
     //! \return the name of the source file
     virtual std::string getSrcFileName() const = 0;
     /*!
@@ -56,8 +66,7 @@ namespace mfront {
     virtual void writeMaterialPropertyEvaluation(
         std::ostream&,
         const BehaviourDescription::MaterialProperty&,
-        std::function<std::string(const MaterialPropertyInput&)>&)
-        const = 0;
+        std::function<std::string(const MaterialPropertyInput&)>&) const = 0;
     /*!
      * \return if the generation of the source file is required
      *

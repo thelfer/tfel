@@ -122,6 +122,21 @@ namespace mfront {
     return "TFEL/Material/" + this->bd.getClassName() + "IntegrationData.hxx";
   }  // end of getIntegrationDataFileName
 
+  std::string BehaviourCodeGeneratorBase::getSlipSystemHeaderFileName() const {
+    if (!this->bd.areSlipSystemsDefined()) {
+      return "";
+    }
+    return "TFEL/Material/" + this->bd.getClassName() + "SlipSystems.hxx";
+  }  // end of getSlipSystemHeaderFileName
+
+  std::string BehaviourCodeGeneratorBase::getSlipSystemImplementationFileName()
+      const {
+    if (!this->bd.areSlipSystemsDefined()) {
+      return "";
+    }
+    return "TFEL/Material/" + this->bd.getClassName() + "SlipSystems.ixx";
+  }  // end of getSlipSystemImplementationFileName
+
   std::string BehaviourCodeGeneratorBase::getSrcFileName() const {
     return this->bd.getClassName() + ".cxx";
   }  // end of getSrcFileName
@@ -313,7 +328,7 @@ namespace mfront {
     tfel::system::systemCall::mkdir("include");
     tfel::system::systemCall::mkdir("include/TFEL/");
     tfel::system::systemCall::mkdir("include/TFEL/Material");
-    auto file = "include/TFEL/Material/" + cn + ".hxx";
+    auto file = "include/" + this->getSlipSystemHeaderFileName();
     std::ofstream out(file);
     throw_if(!out, "can't open file '" + file + "'");
     out.exceptions(std::ios::badbit | std::ios::failbit);
@@ -479,7 +494,7 @@ namespace mfront {
         << "#include\"TFEL/Material/" << cn << ".ixx\"\n\n"
         << "#endif /* LIB_TFEL_MATERIAL_" << makeUpperCase(cn) << "_HXX */\n";
     out.close();
-    file = "include/TFEL/Material/" + cn + ".ixx";
+    file = "include/" + this->getSlipSystemImplementationFileName();
     out.open(file);
     throw_if(!out, "can't open file '" + file + "'");
     out.exceptions(std::ios::badbit | std::ios::failbit);

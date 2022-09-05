@@ -47,6 +47,8 @@ namespace mfront {
     std::string getBehaviourFileName() const override;
     std::string getBehaviourDataFileName() const override;
     std::string getIntegrationDataFileName() const override;
+    std::string getSlipSystemHeaderFileName() const override;
+    std::string getSlipSystemImplementationFileName() const override;
     std::string getSrcFileName() const override;
     bool isSrcFileRequired() const override;
     //! \brief destructor

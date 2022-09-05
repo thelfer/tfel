@@ -1116,6 +1116,10 @@ namespace mfront {
     insert_if(this->td.headers, g->getBehaviourFileName());
     insert_if(this->td.headers, g->getBehaviourDataFileName());
     insert_if(this->td.headers, g->getIntegrationDataFileName());
+    if (this->mb.areSlipSystemsDefined()) {
+      insert_if(this->td.headers, g->getSlipSystemHeaderFileName());
+      insert_if(this->td.headers, g->getSlipSystemImplementationFileName());
+    }
     this->completeTargetsDescription();
   }
 
