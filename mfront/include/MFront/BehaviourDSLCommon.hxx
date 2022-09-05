@@ -768,6 +768,16 @@ namespace mfront {
     //! \return the name of the source file
     virtual std::string getSrcFileName() const;
     /*!
+     * \return the name of the header file describing the slip systems,
+     * if declared
+     */
+    virtual std::string getSlipSystemHeaderFileName() const;
+    /*!
+     * \return the name of the header file implementing the description of the
+     * the slip systems, if declared
+     */
+    virtual std::string getSlipSystemImplementationFileName() const;
+    /*!
      * write the given variable declaration
      * \param[out] f                 : output file
      * \param[in]  v                 : variable to be declared

@@ -31,7 +31,7 @@
 namespace mfront {
 
   static std::string getHeaderFileName(const std::string& n) {
-    return "include/" + n + "-cxx.hxx";
+    return n + "-cxx.hxx";
   }
 
   std::string CppMaterialPropertyInterface::getName() { return "c++"; }
@@ -91,7 +91,7 @@ namespace mfront {
       const MaterialPropertyDescription& mpd, const FileDescription& fd) const {
     const auto name = mpd.material.empty() ? mpd.className
                                            : mpd.material + "_" + mpd.className;
-    std::ofstream header(getHeaderFileName(name));
+    std::ofstream header("include/" + getHeaderFileName(name));
     tfel::raise_if(!header,
                    "CppMaterialPropertyInterface::writeHeaderFile: "
                    "unable to open '" +
