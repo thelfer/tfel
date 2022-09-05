@@ -265,6 +265,7 @@ if(HAVE_CASTEM)
 	Castem21Interface.cxx
 	CastemSymbolsGenerator.cxx
 	CastemMaterialPropertyInterface.cxx
+	CastemModelInterface.cxx
 	AmitexInterface.cxx
 	${TFELMFront_SOURCES})
     set(CastemInterface_SOURCES

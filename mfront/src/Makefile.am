@@ -231,8 +231,9 @@ if HAVE_CASTEM
 libTFELMFront_la_SOURCES += CastemInterface.cxx                 \
                             Castem21Interface.cxx               \
                             CastemSymbolsGenerator.cxx          \
+                            AmitexInterface.cxx                 \
                             CastemMaterialPropertyInterface.cxx \
-                            AmitexInterface.cxx
+                            CastemModelInterface.cxx
 endif
 
 if HAVE_ASTER

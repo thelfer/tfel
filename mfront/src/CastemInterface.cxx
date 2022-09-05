@@ -42,33 +42,33 @@ static const char* const constexpr_c = "const";
 
 namespace mfront {
 
-  static void writeUMATArguments(std::ostream& out,
-                                 const BehaviourDescription::BehaviourType& t) {
+  void CastemInterface::writeUMATFunctionArguments(
+      std::ostream& os, const BehaviourDescription::BehaviourType& t) {
     if ((t == BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR) ||
         (t == BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) ||
         (t == BehaviourDescription::COHESIVEZONEMODEL)) {
-      out << "(castem::CastemReal *const STRESS,\n";
+      os << "(castem::CastemReal *const STRESS,\n";
     } else {
-      out << "(castem::CastemReal *const,\n";
+      os << "(castem::CastemReal *const,\n";
     }
-    out << " castem::CastemReal *const STATEV,\n"
-        << " castem::CastemReal *const DDSDDE,\n"
-        << " castem::CastemReal *const,\n"
-        << " castem::CastemReal *const,\n"
-        << " castem::CastemReal *const,\n"
-        << " castem::CastemReal *const,\n"
-        << " castem::CastemReal *const,\n"
-        << " castem::CastemReal *const,\n"
-        << " castem::CastemReal *const,\n";
+    os << " castem::CastemReal *const STATEV,\n"
+       << " castem::CastemReal *const DDSDDE,\n"
+       << " castem::CastemReal *const,\n"
+       << " castem::CastemReal *const,\n"
+       << " castem::CastemReal *const,\n"
+       << " castem::CastemReal *const,\n"
+       << " castem::CastemReal *const,\n"
+       << " castem::CastemReal *const,\n"
+       << " castem::CastemReal *const,\n";
     if ((t == BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) ||
         (t == BehaviourDescription::COHESIVEZONEMODEL)) {
-      out << " const castem::CastemReal *const STRAN,\n"
+      os << " const castem::CastemReal *const STRAN,\n"
           << " const castem::CastemReal *const DSTRAN,\n";
     } else {
-      out << " const castem::CastemReal *const,\n"
+      os << " const castem::CastemReal *const,\n"
           << " const castem::CastemReal *const,\n";
     }
-    out << " const castem::CastemReal *const,\n"
+    os << " const castem::CastemReal *const,\n"
         << " const castem::CastemReal *const DTIME,\n"
         << " const castem::CastemReal *const TEMP,\n"
         << " const castem::CastemReal *const DTEMP,\n"
@@ -86,61 +86,61 @@ namespace mfront {
         << "       castem::CastemReal *const PNEWDT,\n"
         << " const castem::CastemReal *const,\n";
     if (t == BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR) {
-      out << " const castem::CastemReal *const F0,\n"
+      os << " const castem::CastemReal *const F0,\n"
           << " const castem::CastemReal *const F1,\n";
     } else {
-      out << " const castem::CastemReal *const,\n"
+      os << " const castem::CastemReal *const,\n"
           << " const castem::CastemReal *const,\n";
     }
-    out << " const castem::CastemInt  *const,\n"
+    os << " const castem::CastemInt  *const,\n"
         << " const castem::CastemInt  *const,\n"
         << " const castem::CastemInt  *const,\n"
         << " const castem::CastemInt  *const,\n"
         << " const castem::CastemInt  *const,\n"
         << "       castem::CastemInt  *const KINC,\n"
         << "const int)";
-  }  // end of writeUMATArguments
+  }  // end of writeUMATFunctionArguments
 
-  static void writeUMATArguments(std::ostream& out) {
-    out << "(castem::CastemReal *const,\n"
-        << " castem::CastemReal *const,\n"
-        << " castem::CastemReal *const,\n"
-        << " castem::CastemReal *const,\n"
-        << " castem::CastemReal *const,\n"
-        << " castem::CastemReal *const,\n"
-        << " castem::CastemReal *const,\n"
-        << " castem::CastemReal *const,\n"
-        << " castem::CastemReal *const,\n"
-        << " castem::CastemReal *const,\n"
-        << " const castem::CastemReal *const,\n"
-        << " const castem::CastemReal *const,\n"
-        << " const castem::CastemReal *const,\n"
-        << " const castem::CastemReal *const,\n"
-        << " const castem::CastemReal *const,\n"
-        << " const castem::CastemReal *const,\n"
-        << " const castem::CastemReal *const,\n"
-        << " const castem::CastemReal *const,\n"
-        << " const char           *const,\n"
-        << " const castem::CastemInt  *const,\n"
-        << " const castem::CastemInt  *const,\n"
-        << " const castem::CastemInt  *const,\n"
-        << " const castem::CastemInt  *const,\n"
-        << " const castem::CastemReal *const,\n"
-        << " const castem::CastemInt  *const,\n"
-        << " const castem::CastemReal *const,\n"
-        << " const castem::CastemReal *const,\n"
-        << "       castem::CastemReal *const,\n"
-        << " const castem::CastemReal *const,\n"
-        << " const castem::CastemReal *const,\n"
-        << " const castem::CastemReal *const,\n"
-        << " const castem::CastemInt  *const,\n"
-        << " const castem::CastemInt  *const,\n"
-        << " const castem::CastemInt  *const,\n"
-        << " const castem::CastemInt  *const,\n"
-        << " const castem::CastemInt  *const,\n"
-        << "       castem::CastemInt  *const,\n"
-        << "const int)";
-  }  // end of writeUMATArguments
+  void CastemInterface::writeUMATFunctionArguments(std::ostream& os) {
+    os << "(castem::CastemReal *const,\n"
+       << " castem::CastemReal *const,\n"
+       << " castem::CastemReal *const,\n"
+       << " castem::CastemReal *const,\n"
+       << " castem::CastemReal *const,\n"
+       << " castem::CastemReal *const,\n"
+       << " castem::CastemReal *const,\n"
+       << " castem::CastemReal *const,\n"
+       << " castem::CastemReal *const,\n"
+       << " castem::CastemReal *const,\n"
+       << " const castem::CastemReal *const,\n"
+       << " const castem::CastemReal *const,\n"
+       << " const castem::CastemReal *const,\n"
+       << " const castem::CastemReal *const,\n"
+       << " const castem::CastemReal *const,\n"
+       << " const castem::CastemReal *const,\n"
+       << " const castem::CastemReal *const,\n"
+       << " const castem::CastemReal *const,\n"
+       << " const char           *const,\n"
+       << " const castem::CastemInt  *const,\n"
+       << " const castem::CastemInt  *const,\n"
+       << " const castem::CastemInt  *const,\n"
+       << " const castem::CastemInt  *const,\n"
+       << " const castem::CastemReal *const,\n"
+       << " const castem::CastemInt  *const,\n"
+       << " const castem::CastemReal *const,\n"
+       << " const castem::CastemReal *const,\n"
+       << "       castem::CastemReal *const,\n"
+       << " const castem::CastemReal *const,\n"
+       << " const castem::CastemReal *const,\n"
+       << " const castem::CastemReal *const,\n"
+       << " const castem::CastemInt  *const,\n"
+       << " const castem::CastemInt  *const,\n"
+       << " const castem::CastemInt  *const,\n"
+       << " const castem::CastemInt  *const,\n"
+       << " const castem::CastemInt  *const,\n"
+       << "       castem::CastemInt  *const,\n"
+       << "const int)";
+  }  // end of writeUMATFunctionArguments
 
   static int getCastemModellingHypothesisIndex(
       const tfel::material::ModellingHypothesis::Hypothesis h) {
@@ -1484,13 +1484,13 @@ namespace mfront {
 #ifdef CASTEM_ROOT
     const auto* castem_root = ::getenv("CASTEM_ROOT");
     if (castem_root != nullptr) {
-      insert_if(l.cppflags, "-I" + std::string(castem_root) + "/include");
+      insert_if(l.include_directories, std::string(castem_root) + "/include");
     } else {
-      insert_if(l.cppflags, "-I" + std::string(CASTEM_ROOT) + "/include");
+      insert_if(l.include_directories, std::string(CASTEM_ROOT) + "/include");
     }
 #else  /* CASTEM_ROOT */
     if (castem_root != 0) {
-      insert_if(l.cppflags, "-I" + std::string(castem_root) + "/include");
+      insert_if(l.include_directories, std::string(castem_root) + "/include");
     }
 #endif /* CASTEM_ROOT */
 #endif /* LOCAL_CASTEM_HEADER_FILE */
@@ -1817,7 +1817,7 @@ namespace mfront {
   void CastemInterface::writeCastemFunctionDeclaration(
       std::ostream& out, const std::string& name) const {
     out << "MFRONT_SHAREDOBJ void\n" << this->getFunctionNameBasis(name);
-    writeUMATArguments(out);
+    CastemInterface::writeUMATFunctionArguments(out);
     out << ";\n\n";
   }  // end of writeCastemFunctionDeclaration
 
@@ -1912,8 +1912,8 @@ namespace mfront {
         "CastemInterface::writeFiniteRotationSmallStrainCastemFunction: "
         "finite strain strategies shall be used with small strain behaviours");
     out << "MFRONT_SHAREDOBJ void\n" << fname;
-    writeUMATArguments(out,
-                       BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR);
+    CastemInterface::writeUMATFunctionArguments(
+        out, BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR);
     out << "\n{\n"
         << "using namespace castem;\n";
     if (mb.getAttribute(BehaviourData::profiling, false)) {
@@ -2004,8 +2004,8 @@ namespace mfront {
              "finite strain strategies shall be used with "
              "small strain behaviours");
     out << "MFRONT_SHAREDOBJ void\n" << fname;
-    writeUMATArguments(out,
-                       BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR);
+    CastemInterface::writeUMATFunctionArguments(
+        out, BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR);
     out << "\n{\n"
         << "using namespace castem;\n"
         << "using namespace tfel::math;\n"
@@ -2170,7 +2170,8 @@ namespace mfront {
         "CastemInterface::writeLogarithmicStrain1DCastemFunction : "
         "finite strain strategies shall be used with small strain behaviours");
     out << "MFRONT_SHAREDOBJ void\n" << fname;
-    writeUMATArguments(out, BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR);
+    CastemInterface::writeUMATFunctionArguments(
+        out, BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR);
     out << "\n{\n"
         << "using namespace castem;\n";
     if (mb.getAttribute(BehaviourData::profiling, false)) {
@@ -2269,7 +2270,7 @@ namespace mfront {
       const BehaviourDescription& mb) const {
     const auto btype = mb.getBehaviourType();
     out << "MFRONT_SHAREDOBJ void\n" << fname;
-    writeUMATArguments(out, mb.getBehaviourType());
+    CastemInterface::writeUMATFunctionArguments(out, mb.getBehaviourType());
     out << "\n{\n";
     if (mb.getAttribute(BehaviourData::profiling, false)) {
       out << "using mfront::BehaviourProfiler;\n";

@@ -124,6 +124,7 @@ EXTRA_DIST=CMakeLists.txt					      \
 	   ./singlecrystal.md                                         \
 	   ./finitestrainsinglecrystal.md                             \
 	   ./finitestrainsinglecrystal-huang.md                       \
+	   ./generic-material-property-interface.md                   \
 	   ./generic-behaviours-interface.md                          \
 	   ./phasefield.md				                          \
 	   ./pandoc-crossref.yaml                                     \

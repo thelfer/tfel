@@ -1,8 +1,8 @@
 /*!
- * \file   mfront/src/GenericModelInterface.cxx
+ * \file   mfront/src/CastemModelInterface.cxx
  * \brief
  * \author Thomas Helfer
- * \date   28/04/2022
+ * \date   03/07/2022
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence
@@ -15,6 +15,8 @@
 #include <algorithm>
 #include "TFEL/Raise.hxx"
 #include "TFEL/Config/GetInstallPath.hxx"
+#include "TFEL/Glossary/Glossary.hxx"
+#include "TFEL/Glossary/GlossaryEntry.hxx"
 #include "TFEL/System/System.hxx"
 #include "TFEL/Material/ModellingHypothesis.hxx"
 #include "MFront/MFrontDebugMode.hxx"
@@ -23,11 +25,20 @@
 #include "MFront/SupportedTypes.hxx"
 #include "MFront/VariableDescription.hxx"
 #include "MFront/TargetsDescription.hxx"
-#include "MFront/GenericBehaviourSymbolsGenerator.hxx"
-#include "MFront/GenericBehaviourInterface.hxx"
-#include "MFront/GenericModelInterface.hxx"
+// #include "MFront/CastemBehaviourSymbolsGenerator.hxx"
+#include "MFront/CastemInterface.hxx"
+#include "MFront/CastemSymbolsGenerator.hxx"
+#include "MFront/CastemModelInterface.hxx"
 
 namespace mfront {
+
+  static std::string getModelName(const ModelDescription& md) {
+    return md.library + md.className;
+  } // end of getModelName
+
+  static std::string getUmatFunctionName(const ModelDescription& md) {
+    return "umat" + makeLowerCase(getModelName(md));
+  } // end of getUmatFunctionName
 
   static bool isRealParameter(const VariableDescription& p) {
     return (p.type == "double") || (p.isScalar());
@@ -46,16 +57,11 @@ namespace mfront {
   }  // end of hasRealParameters
 
   static std::string getHeaderGuard(const ModelDescription& md) {
-    auto header = std::string{"LIB_GENERICMODEL_"};
+    auto header = std::string{"LIB_CASTEMMODEL_"};
     if (!md.library.empty()) {
-      header += "_";
       header += makeUpperCase(md.library);
-    }
-    if (!md.material.empty()) {
       header += "_";
-      header += makeUpperCase(md.material);
     }
-    header += "_";
     header += makeUpperCase(md.className);
     header += "_HXX";
     return header;
@@ -76,56 +82,58 @@ namespace mfront {
     }
   }  // end of writeScalarStandardTypedefs
 
-  GenericModelInterface::GenericModelInterface() = default;
+  CastemModelInterface::CastemModelInterface() = default;
 
-  std::string GenericModelInterface::getLibraryName(
+  std::string CastemModelInterface::getLibraryName(
       const ModelDescription& md) const {
     if (md.library.empty()) {
       if (!md.material.empty()) {
-        return md.material + "-generic";
+        return md.material + "-umat";
       } else {
         return "Model";
       }
     }
-    return md.library + "-generic";
+    return md.library + "-umat";
   }  // end of getLibraryName
 
-  std::string GenericModelInterface::getName() {
-    return "generic";
+  std::string CastemModelInterface::getName() {
+    return "castem";
   }  // end of getName
 
-  std::pair<bool, GenericModelInterface::tokens_iterator>
-  GenericModelInterface::treatKeyword(const std::string& k,
+  std::pair<bool, CastemModelInterface::tokens_iterator>
+  CastemModelInterface::treatKeyword(const std::string& k,
                                       const std::vector<std::string>& i,
                                       tokens_iterator current,
                                       const tokens_iterator) {
     tfel::raise_if(
-        (std::find(i.begin(), i.end(), "generic") != i.end()) ||
-            (std::find(i.begin(), i.end(), "Generic") != i.end()),
-        "GenericModelInterface::treatKeyword: unsupported keyword '" + k + "'");
+        ((std::find(i.begin(), i.end(), this->getName()) != i.end()) ||
+         (std::find(i.begin(), i.end(), "umat") != i.end()) ||
+         (std::find(i.begin(), i.end(), "Castem") != i.end()) ||
+         (std::find(i.begin(), i.end(), "Cast3M") != i.end())),
+        "CastemModelInterface::treatKeyword: unsupported keyword '" + k + "'");
     return {false, current};
   }  // end of treatKeyword
 
-  void GenericModelInterface::declareReservedNames(std::set<std::string>&) {
+  void CastemModelInterface::declareReservedNames(std::set<std::string>&) {
   }  // end of declareReservedNames
 
-  void GenericModelInterface::writeOutputFiles(const FileDescription& fd,
-                                               const ModelDescription& md) {
+  void CastemModelInterface::writeOutputFiles(const FileDescription& fd,
+                                              const ModelDescription& md) {
     this->writeHeaderFile(fd, md);
     this->writeSourceFile(fd, md);
   }  // end of writeOutputFiles
 
-  void GenericModelInterface::writeHeaderFile(const FileDescription& fd,
+  void CastemModelInterface::writeHeaderFile(const FileDescription& fd,
                                               const ModelDescription& md) {
     using tfel::material::ModellingHypothesis;
     auto raise = [](const std::string& m) {
-      tfel::raise("GenericModelInterface::writeHeaderFile: " + m);
+      tfel::raise("CastemModelInterface::writeHeaderFile: " + m);
     };
     tfel::system::systemCall::mkdir("include/MFront");
-    tfel::system::systemCall::mkdir("include/MFront/GenericModel");
-    const auto name = md.library + md.className;
-    const auto header = name + "-generic.hxx";
-    std::ofstream os("include/MFront/GenericModel/" + header);
+    tfel::system::systemCall::mkdir("include/MFront/CastemModel");
+    const auto name = getModelName(md);
+    const auto header = name + "-castem.hxx";
+    std::ofstream os("include/MFront/CastemModel/" + header);
     if (!os) {
       raise("could not open file '" + header + "'");
     }
@@ -141,7 +149,7 @@ namespace mfront {
     os << "#ifndef " << hg << "\n"
        << "#define " << hg << "\n\n"
        << "#include\"TFEL/Config/TFELConfig.hxx\"\n"
-       << "#include\"MFront/GenericBehaviour/BehaviourData.h\"\n\n";
+       << "#include\"MFront/Castem/Castem.hxx\"\n\n";
 
     writeExportDirectives(os, false);
 
@@ -161,48 +169,53 @@ namespace mfront {
          << name << "_setParameter(const char *const, const double);\n\n";
     }
 
-    for (const auto& h : ModellingHypothesis::getModellingHypotheses()) {
-      const auto f = name + "_" + ModellingHypothesis::toString(h);
-      os << "/*!\n"
-         << " * \\brief function implementing the " << name << " model for the "
-         << ModellingHypothesis::toString(h) << " modelling hypothesis\n"
-         << " * \\param[in,out] d: material data\n"
-         << " */\n"
-         << "MFRONT_SHAREDOBJ int " << f
-         << "(mfront_gb_BehaviourData* const);\n\n";
-    }
-
-    os << "#ifdef __cplusplus\n"
+    os << "/*!\n"
+       << " * \\brief function implementing the " << name << " model\n"
+       << " */\n"
+       << "MFRONT_SHAREDOBJ void " << getUmatFunctionName(md);
+    CastemInterface::writeUMATFunctionArguments(os);
+    os << ";\n\n"
+       << "#ifdef __cplusplus\n"
        << "}\n"
        << "#endif /* __cplusplus */\n\n"
        << "#endif /* " << hg << " */\n";
-
   }  // end of writeHeaderFile
 
-  void GenericModelInterface::writeSourceFile(const FileDescription& fd,
-                                              const ModelDescription& md) {
+  void CastemModelInterface::writeSourceFile(const FileDescription& fd,
+                                             const ModelDescription& md) {
+    using namespace tfel::glossary;
     using tfel::material::ModellingHypothesis;
     constexpr auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     auto raise = [](const std::string& m) {
-      tfel::raise("GenericModelInterface::writeSourceFile: " + m);
+      tfel::raise("CastemModelInterface::writeSourceFile: " + m);
     };
-    auto getVariablePosition = [&raise](const auto& variables, const auto& n) {
+    auto getVariablePosition = [&raise](const auto& variables, const auto& n,
+                                        const bool skip_temperature) {
+      auto temperature_found = false;
       const auto pv = std::find_if(
-          variables.begin(), variables.end(), [&n, &raise](const auto o) {
-            if (o.getTypeFlag() != SupportedTypes::SCALAR) {
-              raise("unsupported type for variable " + o.name);
+          variables.begin(), variables.end(),
+          [&n, &raise, &temperature_found, &skip_temperature](const auto& v) {
+            if (v.getTypeFlag() != SupportedTypes::SCALAR) {
+              raise("unsupported type for variable '" + v.name + "'");
             }
-            return o.name == n;
+            const auto found = v.name == n;
+            if ((v.getExternalName() == Glossary::Temperature) && (!found)) {
+              temperature_found = true;
+            }
+            return found;
           });
       if (pv == variables.end()) {
         raise("variable " + n + " not found");
+      }
+      if ((skip_temperature) && (temperature_found)) {
+        return (pv - variables.begin()) - 1;
       }
       return pv - variables.begin();
     };  // end of getVariablePosition
     tfel::system::systemCall::mkdir("src");
     const auto name = md.library + md.className;
-    const auto header = name + "-generic.hxx";
-    const auto src = name + "-generic.cxx";
+    const auto header = name + "-castem.hxx";
+    const auto src = name + "-castem.cxx";
     const auto cn = md.className + "RealParametersInitializer";
     std::ofstream os("src/" + src);
     os.precision(14);
@@ -225,9 +238,8 @@ namespace mfront {
     if (useQuantities(md)) {
       os << "#include \"TFEL/Math/qt.hxx\"\n";
     }
-    os << "#include \"TFEL/Material/BoundsCheck.hxx\"\n";
-    os << "#include \"MFront/GenericBehaviour/Integrate.hxx\"\n\n"
-       << "#include \"MFront/GenericModel/" << header << "\"\n\n";
+    os << "#include \"TFEL/Material/BoundsCheck.hxx\"\n"
+       << "#include \"MFront/CastemModel/" << header << "\"\n\n";
     //
     if (!md.includes.empty()) {
       os << md.includes << "\n\n";
@@ -237,11 +249,21 @@ namespace mfront {
     const auto hypotheses =
         std::set<ModellingHypothesis::Hypothesis>{mhs.begin(), mhs.end()};
     const auto bd = convertToBehaviourDescription(md);
-    GenericBehaviourSymbolsGenerator sg;
-    GenericBehaviourInterface bi;
-    sg.generateGeneralSymbols(os, bi, bd, fd, hypotheses, name);
-    os << '\n';
-    sg.generateSymbols(os, bi, bd, fd, name, uh);
+    CastemSymbolsGenerator sg;
+    CastemInterface i;
+    sg.generateGeneralSymbols(os, i, bd, fd, hypotheses, name);
+    sg.generateSymbols(os, i, bd, fd, name, uh);
+    const auto fn = getUmatFunctionName(md);
+    exportUnsignedShortSymbol(os, fn + "_BehaviourType", 0u);
+    exportUnsignedShortSymbol(os, fn + "_BehaviourKinematic", 0u);
+    exportUnsignedShortSymbol(os, fn + "_Interface", 1u);
+    exportUnsignedShortSymbol(os, fn + "_nMainVariables", 0u);
+    exportUnsignedShortSymbol(os, fn + "_nGradients", 0u);
+    exportArrayOfIntegersSymbol(os, fn + "_GradientsTypes", {});
+    exportArrayOfStringsSymbol(os, fn + "_Gradients", {});
+    exportUnsignedShortSymbol(os, fn + "_nThermodynamicForces", 0);
+    exportArrayOfIntegersSymbol(os, fn + "_ThermodynamicForcesTypes", {});
+    exportArrayOfStringsSymbol(os, fn + "_ThermodynamicForces", {""});
     //
     if (!md.sources.empty()) {
       os << md.sources << "\n\n";
@@ -250,7 +272,7 @@ namespace mfront {
     const auto has_constructor =
         (!md.constantMaterialProperties.empty()) || (hasRealParameters(md));
     //
-    os << "namespace mfront::gm{\n\n";
+    os << "namespace castem{\n\n";
     //
     if ((hasRealParameters(md)) &&
         (!areParametersTreatedAsStaticVariables(md))) {
@@ -289,7 +311,7 @@ namespace mfront {
       for (const auto& mp : md.constantMaterialProperties) {
         os << (first ? "" : ",\n");
         os << mp.name << "(mfront_model_data.s1.material_properties["
-           << getVariablePosition(md.constantMaterialProperties, mp.name)
+           << getVariablePosition(md.constantMaterialProperties, mp.name, false)
            << "])";
         first = false;
       }
@@ -306,7 +328,12 @@ namespace mfront {
     }
     for (const auto& f : md.functions) {
       os << "void execute_" << f.name
-         << "(mfront_gb_BehaviourData& mfront_model_data) const{\n";
+         << "(castem::CastemReal *const mfront_STATEV, \n"
+         << "const castem::CastemReal *const mfront_DTIME, \n"
+         << "const castem::CastemReal *const mfront_TEMP,\n "
+         << "const castem::CastemReal *const mfront_DTEMP,\n "
+         << "const castem::CastemReal *const mfront_PREDEF,\n "
+         << "const castem::CastemReal *const mfront_DPRED) const {\n";
       os << "using namespace std;\n"
          << "using namespace tfel::math;\n"
          << "using namespace tfel::material;\n";
@@ -321,37 +348,49 @@ namespace mfront {
       os << "[[maybe_unused]] constexpr const auto policy = "
          << "tfel::material::" << policy << ";\n";
       if (f.useTimeIncrement) {
-        os << "const auto dt = time{mfront_model_data.dt};\n";
+        os << "const auto dt = time{*mfront_DTIME};\n";
       }
       for (const auto& mv : f.modifiedVariables) {
         const auto& v = md.outputs.getVariable(mv);
-        const auto pos = getVariablePosition(md.outputs, mv);
-        os << "auto " << v.name << " = " << v.type
-           << "{mfront_model_data.s0.internal_state_variables[" << pos
-           << "]};\n";
+        const auto pos = getVariablePosition(md.outputs, mv, false);
+        os << "auto " << v.name << " = "  //
+           << v.type << "{mfront_STATEV[" << pos << "]};\n";
       }
       for (const auto& mv : f.usedVariables) {
         const auto [n, vdepth] = md.decomposeVariableName(mv);
-        const auto [v, type, pos] = [&md, &getVariablePosition, n = n]()
-            -> std::tuple<VariableDescription, std::string, std::ptrdiff_t> {
-          if (md.outputs.contains(n)) {
-            const auto vpos = getVariablePosition(md.outputs, n);
-            return {md.outputs.getVariable(n), "internal", vpos};
-          }
-          const auto vpos = getVariablePosition(md.inputs, n);
-          return {md.inputs.getVariable(n), "external", vpos};
-        }();
         if (vdepth > 1) {
-          raise("unsupported depth");
+          raise("unsupported depth for variable '" + n + "'");
         }
-        if (vdepth == 1) {
-          os << "const auto " << v.name << "_1 = " << v.type
-             << "{mfront_model_data.s0." << type << "_state_variables[" << pos
-             << "]};\n";
+        if (md.inputs.contains(n)) {
+          const auto& v = md.inputs.getVariable(n);
+          const auto pos = getVariablePosition(md.inputs, n, true);
+          if (v.getExternalName() == Glossary::Temperature) {
+            if (vdepth == 1) {
+              os << "const auto " << v.name << "_1 = " << v.type
+                 << "{mfront_TEMP[" << pos << "]};\n";
+            } else {
+              os << "const auto " << v.name << " = " << v.type
+                 << "{mfront_TEMP[" << pos << "] + "
+                 << "mfront_DTEMP[" << pos << "]};\n";
+            }
+          } else {
+            if (vdepth == 1) {
+              os << "const auto " << v.name << "_1 = " << v.type
+                 << "{mfront_PREDEF[" << pos << "]};\n";
+            } else {
+              os << "const auto " << v.name << " = " << v.type
+                 << "{mfront_PREDEF[" << pos << "] + "
+                 << "mfront_DPRED[" << pos << "]};\n";
+            }
+          }
         } else {
-          os << "const auto " << v.name << " = " << v.type
-             << "{mfront_model_data.s1." << type << "_state_variables[" << pos
-             << "]};\n";
+          const auto& v = md.outputs.getVariable(n);
+          const auto pos = getVariablePosition(md.outputs, n, false);
+          if (vdepth != 1) {
+            raise("unsupported depth for variable '" + n + "'");
+          }
+            os << "const auto " << v.name << "_1 = " << v.type
+               << "{mfront_STATEV[" << pos << "]};\n";
         }
       }
       auto write_physical_bounds = [&os, &raise](const VariableDescription& v,
@@ -410,9 +449,8 @@ namespace mfront {
       for (const auto& mv : f.modifiedVariables) {
         const auto [n, vdepth] = md.decomposeVariableName(mv);
         const auto& v = md.outputs.getVariable(mv);
-        const auto pos = getVariablePosition(md.outputs, mv);
-        os << "tfel::math::map<" << v.type
-           << ">(mfront_model_data.s1.internal_state_variables[" << pos
+        const auto pos = getVariablePosition(md.outputs, mv, false);
+        os << "tfel::math::map<" << v.type << ">(mfront_STATEV[" << pos
            << "]) = " << v.name << ";\n";
         static_cast<void>(vdepth);
           }
@@ -467,32 +505,40 @@ namespace mfront {
     os << "}; // end of struct " << md.className << "\n\n";
     //
 
-    os << "static int " << name
-       << "_implementation(mfront_gb_BehaviourData& d){\n";
-    os << "try{\n";
+    os << "static int " << name << "_implementation("
+       << "       castem::CastemReal *const mfront_STATEV,\n"
+       << "       castem::CastemReal *const mfront_PNEWDT,\n"
+       << " const castem::CastemReal *const mfront_DTIME,\n"
+       << " const castem::CastemReal *const mfront_TEMP,\n"
+       << " const castem::CastemReal *const mfront_DTEMP,\n"
+       << " const castem::CastemReal *const mfront_PREDEF,\n"
+       << " const castem::CastemReal *const mfront_DPRED,\n"
+       << " const castem::CastemReal *const mfront_PROPS){\n"
+       << "try{\n";
     if (!md.constantMaterialProperties.empty()) {
-      os << "const " << md.className << " m(d);\n";
+      os << "const " << md.className << " m(mfront_PROPS);\n";
     } else {
       os << "const " << md.className << " m;\n";
     }
     for (const auto& f : md.functions) {
-      os << "m.execute_" << f.name << "(d);\n";
+      os << "m.execute_" << f.name
+         << "(mfront_STATEV, mfront_DTIME, mfront_TEMP, mfront_DTEMP, "
+         << "mfront_PREDEF, mfront_DPRED);\n";
     }
     os << "} catch(...){\n"
-       << "mfront::gb::reportFailureByException(d);\n"
-       << "*(d.rdt) = 0.1;\n"
+       << "*mfront_PNEWDT = 0.1;\n"
        << "return -1;"
        << "}\n"
        << "return 1;\n"
        << "}\n\n";
-    os << "} // end of namespace mfront::gm\n\n";
+    os << "} // end of namespace castem\n\n";
     //
     if ((hasRealParameters(md)) &&
         (!areParametersTreatedAsStaticVariables(md))) {
       os << "MFRONT_SHAREDOBJ int\n"
          << name << "_setParameter(const char *const n, const double v){\n";
       writeScalarStandardTypedefs(os, md);
-      os << "auto& parameters = mfront::gm::" << cn << "::get();\n";
+      os << "auto& parameters = castem::" << cn << "::get();\n";
       auto first = true;
       for (const auto& p : md.parameters) {
         if (!isRealParameter(p)) {
@@ -510,15 +556,17 @@ namespace mfront {
          << "} // end of " << name << "_setParameter\n\n";
     }
     //
-    for (const auto& h : ModellingHypothesis::getModellingHypotheses()) {
-      const auto fct = name + "_" + ModellingHypothesis::toString(h);
-      os << "int " << fct << "(mfront_gb_BehaviourData* const d){\n"
-         << "return mfront::gm::" << name << "_implementation(*d);\n"
-         << "}\n\n";
-    }
+    os << "void " << fn;
+    CastemInterface::writeUMATFunctionArguments(
+        os, BehaviourDescription::GENERALBEHAVIOUR);
+    os << "{\n"
+       << "*KINC = castem::" << name
+       << "_implementation(STATEV, PNEWDT, DTIME, TEMP, DTEMP, PREDEF, "
+       << "DPRED, PROPS);\n"
+       << "}\n\n";
   }  // end of writeSourceFile
 
-  void GenericModelInterface::getTargetsDescription(
+  void CastemModelInterface::getTargetsDescription(
       TargetsDescription& td, const ModelDescription& md) {
     using tfel::material::ModellingHypothesis;
     const auto lib = this->getLibraryName(md);
@@ -527,10 +575,27 @@ namespace mfront {
     auto& l = td.getLibrary(lib);
     insert_if(l.cppflags,
               "$(shell " + tfel_config + " --cppflags --compiler-flags)");
+#ifdef CASTEM_CPPFLAGS
+    insert_if(l.cppflags, CASTEM_CPPFLAGS);
+#endif /* CASTEM_CPPFLAGS */
+#ifndef LOCAL_CASTEM_HEADER
+#ifdef CASTEM_ROOT
+    const auto* castem_root = ::getenv("CASTEM_ROOT");
+    if (castem_root != nullptr) {
+      insert_if(l.include_directories, std::string(castem_root) + "/include");
+    } else {
+      insert_if(l.include_directories, std::string(CASTEM_ROOT) + "/include");
+    }
+#else  /* CASTEM_ROOT */
+    if (castem_root != 0) {
+      insert_if(l.include_directories, std::string(castem_root) + "/include");
+    }
+#endif /* CASTEM_ROOT */
+#endif /* LOCAL_CASTEM_HEADER_FILE */
     insert_if(l.include_directories,
               "$(shell " + tfel_config + " --include-path)");
-    insert_if(l.sources, name + "-generic.cxx");
-    td.headers.push_back("MFront/GenericModel/" + name + "-generic.hxx");
+    insert_if(l.sources, name + "-castem.cxx");
+    td.headers.push_back("MFront/CastemModel/" + name + "-castem.hxx");
     insert_if(l.link_directories,
               "$(shell " + tfel_config + " --library-path)");
     insert_if(l.link_libraries, "$(shell " + tfel_config +
@@ -541,6 +606,6 @@ namespace mfront {
     }
   }  // end of getTargetsDescription
 
-  GenericModelInterface::~GenericModelInterface() = default;
+  CastemModelInterface::~CastemModelInterface() = default;
 
 }  // end of namespace mfront
