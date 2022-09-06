@@ -2130,6 +2130,16 @@ command is concatenated in a single string for the test.
 
 # Issues fixed
 
+## Issue #302: [mfront] `mfront` interface for material properties shall generate overloaded functions for every numerical type supported
+
+For more details, see <https://github.com/thelfer/tfel/issues/302>
+
+￼
+￼
+## Issue #301: [mfront] `mfront` interface for material properties shall generate a version of supporting quantites
+
+For more details, see <https://github.com/thelfer/tfel/issues/301>
+
 ## Issue #300: [mfront] Add a new `castem` interface for point-wise models handled by the `Model` DSL 
 
 This feature is described in Section
