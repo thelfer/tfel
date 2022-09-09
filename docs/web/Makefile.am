@@ -388,6 +388,7 @@ EXTRA_DIST=CMakeLists.txt					      \
        ./img/material-property-tutorial-figure1.png                   \
        ./img/ImplicitBerveillerZaoui/Comparison.svg                   \
        ./img/ImplicitBerveillerZaoui/LocalResidual.svg                \
+       ./img/InverseLangevinFunction.svg                              \
 	   ./media/epx1.mp4                                           \
 	   ./media/epx2.mp4                                           \
 	   ./media/abaqus-explicit.mp4                                \
