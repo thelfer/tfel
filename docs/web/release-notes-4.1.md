@@ -415,12 +415,14 @@ approximations that have been implemented and that can be evaluated in a
   \mathcal{L}^{-1}\paren{x} \approx
   y \, \Frac{c_{0} + c_{1}\,y + c_{2}\,y^{2}}{1 + d_{1}\,y + d_{2}\,y^{2}}
   \]
-- `MORCH_2022` is associated with a taylor expansion of
+- `KUHN_GRUN_1942` or `MORCH_2022` are associated with a taylor expansion of
   \(\mathcal{L}^{-1}\paren{x}\) at \(0\):
   \[
   \mathcal{L}^{-1}\paren{x} \approx
   y\,P\paren{y^{2}} \quad\text{with}\quad P\paren{y^{2}}=\sum_{i=0}^{9}c_{i}\,\paren{y^{2}}^{i}
   \]
+  where \(P\) is a \(9\)th order polynomial. Hence, the
+  Taylor expression is of order \(19\).
 
 The `computeApproximateInverseLangevinFunction` computes one
 approximation of the inverse Langevin function and the

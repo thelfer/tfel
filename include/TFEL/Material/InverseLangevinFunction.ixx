@@ -207,16 +207,30 @@ namespace tfel::material {
             typename NumericType>
   TFEL_HOST_DEVICE constexpr NumericType
   computeApproximateInverseLangevinFunction(const NumericType y) {
-    return tfel::material::internals::InverseLangevinFunction<
-        Approximation, NumericType>::computeFunction(y);
+    if constexpr (Approximation ==
+                  InverseLangevinFunctionApproximations::KUHN_GRUN_1942) {
+      return tfel::material::internals::InverseLangevinFunction<
+          InverseLangevinFunctionApproximations::MORCH_2022,
+          NumericType>::computeFunction(y);
+    } else {
+      return tfel::material::internals::InverseLangevinFunction<
+          Approximation, NumericType>::computeFunction(y);
+    }
   }  // end of computeApproximateInverseLangevinFunction
 
   template <InverseLangevinFunctionApproximations Approximation,
             typename NumericType>
   TFEL_HOST_DEVICE constexpr std::pair<NumericType, NumericType>
   computeApproximateInverseLangevinFunctionAndDerivative(const NumericType y) {
-    return tfel::material::internals::InverseLangevinFunction<
-        Approximation, NumericType>::computeFunctionAndDerivative(y);
+    if constexpr (Approximation ==
+                  InverseLangevinFunctionApproximations::KUHN_GRUN_1942) {
+      return tfel::material::internals::InverseLangevinFunction<
+          InverseLangevinFunctionApproximations::MORCH_2022,
+          NumericType>::computeFunctionAndDerivative(y);
+    } else {
+      return tfel::material::internals::InverseLangevinFunction<
+          Approximation, NumericType>::computeFunctionAndDerivative(y);
+    }
   }  // end of computeApproximateInverseLangevinFunctionAndDerivative
 
   template <typename NumericType>
