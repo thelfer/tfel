@@ -2,7 +2,7 @@
  * \file   StructureCurrentState.cxx
  * \brief
  * \author Thomas Helfer
- * \date   08 déc. 2015
+ * \date   08/12/2015
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence
@@ -27,4 +27,4 @@ void declareStructureCurrentState() {
   class_<mtest::StructureCurrentState>("StructureCurrentState")
       .add_property("istates",
                     make_function(&get_istates, return_internal_reference<>()));
-}
+} // end of declareStructureCurrentState

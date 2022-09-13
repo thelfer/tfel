@@ -21,13 +21,13 @@
 
 namespace mtest {
 
-  //! a simple alias
-  typedef double real;
-  //! a simple alias
+  //! \brief a simple alias
+  using real = double;
+  //! \brief a simple alias
   struct Evolution;
-  // ! a simple alias
+  //! \brief a simple alias
   using EvolutionPtr = std::shared_ptr<Evolution>;
-  // ! a simple alias
+  //! \brief a simple alias
   using EvolutionManager = std::map<std::string, EvolutionPtr>;
 
 }  // end of namespace mtest

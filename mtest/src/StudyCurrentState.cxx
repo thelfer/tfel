@@ -29,6 +29,43 @@ namespace mtest {
   StudyCurrentState& StudyCurrentState::operator=(StudyCurrentState&&) =
       default;
 
+  bool StudyCurrentState::getFailureStatus() const {
+    for (const auto& failure_status : this->failure_criterion_status) {
+      if (failure_status) {
+        return true;
+      }
+    }
+    return false;
+  }  // end of getFailureStatus
+
+  bool StudyCurrentState::getFailureCriterionStatus(const std::size_t i) const {
+    if (i >= this->failure_criterion_status.size()) {
+      tfel::raise(
+          "StudyCurrentState::getFailureCriterionStatus: "
+          "invalid index");
+    }
+    return this->failure_criterion_status[i];
+  }  // end of getFailureCriterionStatus
+
+  void StudyCurrentState::setFailureCriterionStatus(const std::size_t i,
+                                                    const bool status) {
+    if (i >= this->failure_criterion_status.size()) {
+      tfel::raise(
+          "StudyCurrentState::getFailureCriterionStatus: "
+          "invalid index");
+    }
+    this->failure_criterion_status[i] = status;
+  }  // end of setFailureCriterionStatus
+
+  void StudyCurrentState::setNumberOfFailureCriterionStatus(const std::size_t n) {
+    this->failure_criterion_status.resize(n, false);
+  }  // end of setNumberOfFailureCriterionStatus
+
+  std::size_t StudyCurrentState::getNumberOfFailureCriterionStatus() const
+      noexcept {
+    this->failure_criterion_status.size();
+  }  // end of getNumberOfFailureCriterionStatus
+
   void StudyCurrentState::initialize(const StudyCurrentState::size_type psz) {
     this->u_1.clear();
     this->u0.clear();

@@ -16,10 +16,8 @@
 
 #include <string>
 #include <vector>
-
 #include "TFEL/Math/vector.hxx"
 #include "TFEL/Material/ModellingHypothesis.hxx"
-
 #include "MTest/Config.hxx"
 #include "MTest/Types.hxx"
 #include "MTest/PipeProfileHandler.hxx"

@@ -423,7 +423,6 @@ namespace mtest {
         "invalid modelling hypothesis "
         "('" +
             ModellingHypothesis::toString(this->hypothesis) + "')");
-
     if (this->al == DEFAULTAXIALLOADING) {
       this->al = ENDCAPEFFECT;
     }
@@ -480,7 +479,7 @@ namespace mtest {
                      "filling temperature not set");
     }
     if (this->out) {
-      unsigned short c = 7;
+      auto c = 7u;
       this->out << "# first  column : time\n"
                    "# second column : inner radius\n"
                    "# third  column : outer radius\n"
@@ -507,6 +506,11 @@ namespace mtest {
       }
       for (const auto& ao : this->aoutputs) {
         this->out << "# " << c << "th column : " << ao.d << '\n';
+        ++c;
+      }
+      for (const auto& fc : this->failure_criteria) {
+        this->out << "# " << c << "th column : status of the " << fc->getName()
+                  << " criterion\n";
         ++c;
       }
     }
@@ -664,6 +668,8 @@ namespace mtest {
         cs.Tref = ev(0);
       }
     }
+    // failure criterion status
+    s.setNumberOfFailureCriterionStatus(this->failure_criteria.size());
   }  // end of initializeCurrentState
 
   std::string PipeTest::name() const { return "pipe test"; }  // end of name
@@ -761,34 +767,49 @@ namespace mtest {
                          SolverWorkSpace& wk,
                          const real ti,
                          const real te) const {
-    using vector = std::vector<real>;
+    if ((state.getFailureStatus()) && (this->failure_policy != REPORTONLY)) {
+      return;
+    }
     if ((this->rl == IMPOSEDINNERRADIUS) || (this->rl == IMPOSEDOUTERRADIUS) ||
         (this->mandrel_radius_evolution != nullptr)) {
       if (!state.containsEvolution("InnerPressure")) {
         // first call with this study state
-        state.addEvolution("InnerPressure",
-                           std::make_shared<LPIEvolution>(
-                               vector{ti, te}, vector{real(0), real(0)}));
+        state.addEvolution("InnerPressure", std::make_shared<LPIEvolution>(
+                                                std::vector{ti, te},
+                                                std::vector{real(0), real(0)}));
       }
     }
     if (this->rl == TIGHTPIPE) {
       if (!state.containsEvolution("InnerPressure")) {
-        state.addEvolution("InnerPressure",
-                           std::make_shared<LPIEvolution>(
-                               vector{ti, te}, vector{this->P0, this->P0}));
+        state.addEvolution(
+            "InnerPressure",
+            std::make_shared<LPIEvolution>(std::vector{ti, te},
+                                           std::vector{this->P0, this->P0}));
       }
     }
     if ((this->al == IMPOSEDAXIALFORCE) ||
         (this->mandrel_axial_growth_evolution != nullptr)) {
       if (!state.containsEvolution("AxialForce")) {
         // first call with this study state
-        state.addEvolution("AxialForce",
-                           std::make_shared<LPIEvolution>(
-                               vector{ti, te}, vector{real(0), real(0)}));
+        state.addEvolution("AxialForce", std::make_shared<LPIEvolution>(
+                                             std::vector{ti, te},
+                                             std::vector{real(0), real(0)}));
       }
     }
     GenericSolver().execute(state, wk, *this, this->options, ti, te);
-  }
+    // evaluate failure criteria
+    auto nfc = std::size_t{};
+    for (const auto& fc : this->failure_criteria) {
+      if (!state.getFailureCriterionStatus(nfc)) {
+        const auto failed = fc->execute(state, ti, te);
+        if ((failed) && (this->failure_policy == STOPCOMPUTATION)) {
+          tfel::raise("failure detected by criterion '" + fc->getName() + "'");
+        }
+        state.setFailureCriterionStatus(nfc, failed);
+      }
+      ++nfc;
+    }
+  } // end of execute
 
   void PipeTest::initializeWorkSpace(SolverWorkSpace& wk) const {
     const auto psz = this->getNumberOfUnknowns();
@@ -1553,6 +1574,10 @@ namespace mtest {
 
   void PipeTest::addFailureCriterion(const std::string& n,
                                      const tfel::utilities::DataMap& m) {
+    tfel::raise_if(this->initialisationFinished,
+                   "PipeTest::addFailureCriterion: "
+                   "no failure criterion can be added after the "
+                   "completeInitialisation method");
     const auto& f = PipeFailureCriteriaFactory::getFactory();
     this->failure_criteria.push_back(f.generate(n, m));
   }  // end of addFailureCriterion
@@ -1876,41 +1901,45 @@ namespace mtest {
     if ((!o) && (this->output_frequency == USERDEFINEDTIMES)) {
       return;
     }
-    if (this->out) {
-      const auto& u1 = state.u1;
-      const auto n = this->getNumberOfNodes();
-      // inner radius
-      const auto Ri = this->mesh.inner_radius;
-      // outer radius
-      const auto Re = this->mesh.outer_radius;
-      this->out << t << " " << Ri + u1[0] << " " << Re + u1[n - 1] << " "
-                << u1[0] << " " << u1[n - 1] << " " << u1[n];
-      if ((this->rl == IMPOSEDOUTERRADIUS) ||
-          (this->rl == IMPOSEDINNERRADIUS) || (this->rl == TIGHTPIPE) ||
-          (this->mandrel_radius_evolution != nullptr)) {
-        this->out << " " << state.getEvolution("InnerPressure")(t);
-      }
-      if ((this->al == IMPOSEDAXIALGROWTH) ||
-          (this->mandrel_axial_growth_evolution != nullptr)) {
-        this->out << " " << state.getEvolution("AxialForce")(t);
-      }
-      if (this->mandrel_radius_evolution != nullptr) {
-        if (state.containsParameter("MandrelContactStateAtEndOfTimeStep")) {
-          if (state.getParameter<bool>("MandrelContactStateAtEndOfTimeStep")) {
-            this->out << " " << 1;
-          } else {
-            this->out << " " << 0;
-          }
+    if (!this->out) {
+      return;
+    }
+    const auto& u1 = state.u1;
+    const auto n = this->getNumberOfNodes();
+    // inner radius
+    const auto Ri = this->mesh.inner_radius;
+    // outer radius
+    const auto Re = this->mesh.outer_radius;
+    this->out << t << " " << Ri + u1[0] << " " << Re + u1[n - 1] << " " << u1[0]
+              << " " << u1[n - 1] << " " << u1[n];
+    if ((this->rl == IMPOSEDOUTERRADIUS) || (this->rl == IMPOSEDINNERRADIUS) ||
+        (this->rl == TIGHTPIPE) ||
+        (this->mandrel_radius_evolution != nullptr)) {
+      this->out << " " << state.getEvolution("InnerPressure")(t);
+    }
+    if ((this->al == IMPOSEDAXIALGROWTH) ||
+        (this->mandrel_axial_growth_evolution != nullptr)) {
+      this->out << " " << state.getEvolution("AxialForce")(t);
+    }
+    if (this->mandrel_radius_evolution != nullptr) {
+      if (state.containsParameter("MandrelContactStateAtEndOfTimeStep")) {
+        if (state.getParameter<bool>("MandrelContactStateAtEndOfTimeStep")) {
+          this->out << " " << 1;
         } else {
           this->out << " " << 0;
         }
+      } else {
+        this->out << " " << 0;
       }
-      for (const auto& ao : this->aoutputs) {
-        this->out << " ";
-        ao.f(out, state);
-      }
-      this->out << '\n';
     }
+    for (const auto& ao : this->aoutputs) {
+      this->out << " ";
+      ao.f(out, state);
+    }
+    for (std::size_t i = 0; i != this->failure_criteria.size(); ++i) {
+      this->out << " " << (state.getFailureCriterionStatus(i) ? 1 : 0);
+    }
+    this->out << '\n';
   }  // end of printOutput
 
   PipeTest::~PipeTest() = default;

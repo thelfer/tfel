@@ -68,8 +68,8 @@ libTFELMTest_la_SOURCES =                               \
 			  PipeCubicElement.cxx                      \
 			  PipeProfile.cxx                           \
 			  PipeProfileHandler.cxx                    \
-			  PipeFailureCriterion.hxx                  \
-			  PipeFailureCriteriaFactory.hxx            \
+			  PipeFailureCriterion.cxx                  \
+			  PipeFailureCriteriaFactory.cxx            \
 			  TextDataUtilities.cxx                     \
 			  SchemeParserBase.cxx                      \
 			  SingleStructureSchemeParser.cxx           \
