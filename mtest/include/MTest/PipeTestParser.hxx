@@ -33,12 +33,10 @@ namespace mtest {
    */
   struct MTEST_VISIBILITY_EXPORT PipeTestParser
       : public SingleStructureSchemeParser {
-    /*!
-     * default constructor
-     */
+    //! \brief default constructor
     PipeTestParser();
     /*!
-     * execute mtest parser on a file
+     * \brief execute mtest parser on a file
      * \param[out] t:    structure to be filled
      * \param[in] f:     file name
      * \param[in] ecmds: external commands
@@ -51,27 +49,19 @@ namespace mtest {
                  const std::vector<std::string>&,
                  const std::map<std::string, std::string>&);
     /*!
-     * execute mtest parser on a string
+     * \brief execute mtest parser on a string
      * \param[in] s : string
      */
     void parseString(PipeTest&, const std::string&);
     //! \return the list of keywords
     virtual std::vector<std::string> getKeyWordsList() const;
-    /*!
-     * display the list of keywords
-     */
+    //! \brief display the list of keywords
     virtual void displayKeyWordsList() const;
-    /*!
-     * display the list of keywords
-     */
+    //! \brief display the list of keywords
     virtual void displayKeyWordsHelp() const;
-    /*!
-     * display the description of a keyword
-     */
+    //! \brief display the description of a keyword
     virtual void displayKeyWordDescription(const std::string&) const;
-    /*!
-     * destructor
-     */
+    //! \brief destructor
     ~PipeTestParser() override;
 
    protected:
@@ -213,16 +203,26 @@ namespace mtest {
      * \param[in,out] p: position in the input file
      */
     virtual void handleAdditionalOutputs(PipeTest&, tokens_iterator&);
-    //! a simple alias
+    /*!
+     * \brief handle the `@FailureCriterion` keyword
+     * \param[out]    t: test
+     * \param[in,out] p: position in the input file
+     */
+    virtual void handleFailureCriterion(PipeTest&, tokens_iterator&);
+    /*!
+     * \brief handle the `@FailurePolicy` keyword
+     * \param[out]    t: test
+     * \param[in,out] p: position in the input file
+     */
+    virtual void handleFailurePolicy(PipeTest&, tokens_iterator&);
+    //! \brief a simple alias
     typedef void (PipeTestParser::*CallBack)(PipeTest&, tokens_iterator&);
     /*!
-     * execute mtest parser after reading a file or parsing a string
+     * \brief execute mtest parser after reading a file or parsing a string
      * \param[out] t: structure to be filled
      */
     void execute(PipeTest& t);
-    /*!
-     * register the call backs associated with each command
-     */
+    //! \brief register the call backs associated with each command
     void registerCallBacks() override;
     /*!
      * \brief treat the current keyword
@@ -231,10 +231,10 @@ namespace mtest {
     bool treatKeyword(PipeTest&, tokens_iterator&);
 
    private:
-    //! callbacks
+    //! \brief callbacks
     std::map<std::string, CallBack> callbacks;
     /*!
-     * register a call back
+     * \brief register a call back
      * \param[in] k: key word
      * \param[in] p: pointer to a member function
      */

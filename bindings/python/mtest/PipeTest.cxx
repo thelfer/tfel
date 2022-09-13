@@ -170,8 +170,25 @@ void declarePipeTest() {
   boost::python::enum_<mtest::PipeTest::Configuration>("PipeTestConfiguration")
       .value("INTIAL_CONFIGURATION",
              mtest::PipeTest::Configuration::INTIAL_CONFIGURATION)
+      .value("Intial_Configuration",
+             mtest::PipeTest::Configuration::INTIAL_CONFIGURATION)
       .value("CURRENT_CONFIGURATION",
+             mtest::PipeTest::Configuration::CURRENT_CONFIGURATION)
+      .value("Current_Configuration",
              mtest::PipeTest::Configuration::CURRENT_CONFIGURATION);
+  boost::python::enum_<mtest::PipeTest::FailurePolicy>("PipeTestFailurePolicy")
+      .value("REPORTONLY", mtest::PipeTest::FailurePolicy::REPORTONLY)
+      .value("STOPCOMPUTATION", mtest::PipeTest::FailurePolicy::STOPCOMPUTATION)
+      .value("FREEZESTATEUNTILENDOFCOMPUTATION",
+             mtest::PipeTest::FailurePolicy::FREEZESTATEUNTILENDOFCOMPUTATION)
+      .value("ReportOnly", mtest::PipeTest::FailurePolicy::REPORTONLY)
+      .value("StopComputation", mtest::PipeTest::FailurePolicy::STOPCOMPUTATION)
+      .value("FREEZESTATE",
+             mtest::PipeTest::FailurePolicy::FREEZESTATEUNTILENDOFCOMPUTATION)
+      .value("FreezeStateUntilEndOfComputation",
+             mtest::PipeTest::FailurePolicy::FREEZESTATEUNTILENDOFCOMPUTATION)
+      .value("FreezeState",
+             mtest::PipeTest::FailurePolicy::FREEZESTATEUNTILENDOFCOMPUTATION);
   boost::python::class_<PipeTest, boost::noncopyable,
                         boost::python::bases<SingleStructureScheme>>("PipeTest")
       .def("setInnerRadius", &PipeTest::setInnerRadius)
@@ -307,5 +324,9 @@ void declarePipeTest() {
            "This method returns the underlying mesh")
       .def("completeInitialisation", &PipeTest::completeInitialisation,
            "complete the initialisation. This method must be called once. This "
-           "method may be called automatically by the execute method.");
+           "method may be called automatically by the execute method.")
+      .def("addFailureCriterion", &PipeTest::addFailureCriterion,
+           "add a failure criterion.")
+      .def("setFailurePolicy", &PipeTest::setFailurePolicy,
+           "set the failure policy.");
 }

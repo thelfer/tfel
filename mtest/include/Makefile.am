@@ -28,6 +28,8 @@ nobase_include_HEADERS = MTest/Config.hxx	                         \
 			 MTest/PipeCubicElement.hxx	                 \
 			 MTest/PipeProfile.hxx	                         \
 			 MTest/PipeProfileHandler.hxx	                 \
+			 MTest/PipeFailureCriterion.hxx               \
+			 MTest/PipeFailureCriteriaFactory.hxx         \
 			 MTest/UserDefinedPostProcessing.hxx             \
 			 MTest/AnalyticalTest.hxx	                 \
 			 MTest/ReferenceFileComparisonTest.hxx           \

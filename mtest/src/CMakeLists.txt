@@ -59,6 +59,8 @@ set(TFELMTest_SOURCES
   PipeCubicElement.cxx
   PipeProfile.cxx
   PipeProfileHandler.cxx
+  PipeFailureCriterion.cxx
+  PipeFailureCriteriaFactory.cxx
   TextDataUtilities.cxx
   SchemeParserBase.cxx
   SingleStructureSchemeParser.cxx

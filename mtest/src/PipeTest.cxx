@@ -35,6 +35,8 @@
 #include "MTest/PipeCubicElement.hxx"
 #include "MTest/PipeProfile.hxx"
 #include "MTest/PipeProfileHandler.hxx"
+#include "MTest/PipeFailureCriterion.hxx"
+#include "MTest/PipeFailureCriteriaFactory.hxx"
 #include "MTest/PipeTest.hxx"
 
 namespace mtest {
@@ -1544,6 +1546,16 @@ namespace mtest {
           "- mean_value_current_configuration\n");
     }
   }  // end of addAdditionalOutput
+
+  void PipeTest::setFailurePolicy(const FailurePolicy p) {
+    this->failure_policy = p;
+  }  // end of setFailurePolicy
+
+  void PipeTest::addFailureCriterion(const std::string& n,
+                                     const tfel::utilities::DataMap& m) {
+    const auto& f = PipeFailureCriteriaFactory::getFactory();
+    this->failure_criteria.push_back(f.generate(n, m));
+  }  // end of addFailureCriterion
 
   real PipeTest::computeMinimumValue(const StudyCurrentState& state,
                                      const std::string& n) const {
