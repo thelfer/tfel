@@ -1782,7 +1782,7 @@ supported (see Sections @sec:tfel:4.1:mfront:castem_model_interface and
 @Model 'src/libM5-umat.so' 'umatm5_deziroxoxidationmodel_srma2020';
 ~~~~
 
-## Support for failure criteria for pipes
+## Support for failure criteria for pipes {#sec:tfel:4.1:ptest:failure_criterion}
 
 Failure criteria can be added to pipe modelling using the
 `@FailureCriterion` keyword. Note that no failure criterion is currently
@@ -1822,6 +1822,9 @@ In case of failure, three policies can be selected using the
 @FailurePolicy 'FreezeState';
 @FailureCriterion 'ElongationAtBreak' {maximum_value : 1e-4};
 ~~~~
+
+**Note** This example assumes that a failure criterion named
+  `ElongationAtBreak` has been loaded from an external library.
 
 # `mfm-test-generator` improvements
 
@@ -2060,6 +2063,15 @@ mfm_test_generator.loadMFMTestGeneratorFileContent(d, 'Plasticity.mfmtg')
 
 mfm_test_generator.write(d,'Plasticity.mdnx')
 ~~~~
+
+## Support for failure criteria {#sec:tfel:4.1:python:ptest:failure_criterion}
+
+The `PipeTest` class have two methods related to failure criteria:
+
+- `addFailureCriterion`, which corresponds to the `@FailureCriterion`
+  keyword (see Section @sec:tfel:4.1:ptest:failure_criterion).
+- `setFailurePolicy`, which corresponds to the `@FailurePolicy` keyword
+  (see Section @sec:tfel:4.1:ptest:failure_criterion).
 
 # `mfront-query` improvements
 
@@ -2440,6 +2452,14 @@ The compilation process used by `MFront` is now documented on this page:
 <https://thelfer.github.io/tfel/web/compiling-mfront-shared-libraries.html>
 
 For more details, see <https://github.com/thelfer/tfel/issues/235>.
+
+## Issue #233: Add the ability to define failure criteria in `ptest`
+
+This feature is described in Sections
+@sec:tfel:4.1:ptest:failure_criterion and
+@sec:tfel:4.1:python:ptest:failure_criterion.
+
+For more details, see <https://github.com/thelfer/tfel/issues/233>.
 
 ## Issue #231:[tfel-check] Allow to compare the result of a command to a regular expression 
 
