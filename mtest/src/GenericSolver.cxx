@@ -63,7 +63,9 @@ namespace mtest {
     if (!r.first) {
       return r;
     }
-    s.postConvergence(scs, t, dt, scs.period);
+    if (!s.postConvergence(scs, t, dt, scs.period)) {
+      return {false, 0.1};
+    }
     return r;
   }  // end of iterate2
 
@@ -234,7 +236,9 @@ namespace mtest {
     if (o.aa != nullptr) {
       o.aa->postExecuteTasks();
     }
-    s.postConvergence(scs, t, dt, scs.period);
+    if (!s.postConvergence(scs, t, dt, scs.period)) {
+      return {false, 0.1};
+    }
     return {true, r_dt};
   }  // end of iterate
 

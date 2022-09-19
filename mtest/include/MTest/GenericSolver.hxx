@@ -35,7 +35,7 @@ namespace mtest {
                  const SolverOptions& o,
                  const real ti,
                  const real te) override;
-    //! destructor
+    //! \brief destructor
     ~GenericSolver() override;
   };  // end of struct GenericSolver
 

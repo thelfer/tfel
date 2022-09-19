@@ -179,10 +179,10 @@ namespace mtest {
      * \param[in]  dt: time increment
      * \param[in]  p:  period
      */
-    virtual void postConvergence(StudyCurrentState&,
-                                 const real,
-                                 const real,
-                                 const unsigned int) const = 0;
+    [[nodiscard]] virtual bool postConvergence(StudyCurrentState&,
+                                               const real,
+                                               const real,
+                                               const unsigned int) const = 0;
     /*!
      * \param[in] h : modelling hypothesis
      */

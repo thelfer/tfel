@@ -797,18 +797,6 @@ namespace mtest {
       }
     }
     GenericSolver().execute(state, wk, *this, this->options, ti, te);
-    // evaluate failure criteria
-    auto nfc = std::size_t{};
-    for (const auto& fc : this->failure_criteria) {
-      if (!state.getFailureCriterionStatus(nfc)) {
-        const auto failed = fc->execute(state, ti, te);
-        if ((failed) && (this->failure_policy == STOPCOMPUTATION)) {
-          tfel::raise("failure detected by criterion '" + fc->getName() + "'");
-        }
-        state.setFailureCriterionStatus(nfc, failed);
-      }
-      ++nfc;
-    }
   } // end of execute
 
   void PipeTest::initializeWorkSpace(SolverWorkSpace& wk) const {
@@ -1445,10 +1433,22 @@ namespace mtest {
     }
   }  // end of computeLoadingCorrection
 
-  void PipeTest::postConvergence(StudyCurrentState& state,
+  bool PipeTest::postConvergence(StudyCurrentState& state,
                                  const real t,
                                  const real dt,
                                  const unsigned int p) const {
+    // evaluate failure criteria
+    auto nfc = std::size_t{};
+    for (const auto& fc : this->failure_criteria) {
+      if (!state.getFailureCriterionStatus(nfc)) {
+        const auto failed = fc->execute(state, t, t + dt);
+        if ((failed) && (this->failure_policy == STOPCOMPUTATION)) {
+          return false;
+        }
+        state.setFailureCriterionStatus(nfc, failed);
+      }
+      ++nfc;
+    }
     // updating mandrel contact state
     if (this->mandrel_radius_evolution != nullptr) {
       const auto& active_bts = state.getParameter<bool>(
@@ -1489,6 +1489,7 @@ namespace mtest {
     for (const auto& test : this->tests) {
       test->check(state, t, dt, p);
     }
+    return true;
   }  // end of postConvergence
 
   std::pair<real, real> PipeTest::computeMinimumAndMaximumValues(

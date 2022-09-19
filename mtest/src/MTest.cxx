@@ -899,7 +899,7 @@ namespace mtest {
                                        const real) const {
   }  // end of MTest::computeLoadingCorrection
 
-  void MTest::postConvergence(StudyCurrentState& state,
+  bool MTest::postConvergence(StudyCurrentState& state,
                               const real t,
                               const real dt,
                               const unsigned int p) const {
@@ -913,6 +913,7 @@ namespace mtest {
     for (const auto& up : this->upostprocessings) {
       up->exe(s, t, dt);
     }
+    return true;
   }  // end of MTest::postConvergence
 
   void MTest::execute(StudyCurrentState& state,

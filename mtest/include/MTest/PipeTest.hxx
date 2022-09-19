@@ -363,10 +363,10 @@ namespace mtest {
      * \param[in]  dt: time increment
      * \param[in]  p:  period
      */
-    void postConvergence(StudyCurrentState&,
-                         const real,
-                         const real,
-                         const unsigned int) const override;
+    [[nodiscard]] bool postConvergence(StudyCurrentState&,
+                                       const real,
+                                       const real,
+                                       const unsigned int) const override;
     /*!
      * \brief add a new profile postprocessing
      * \param[in] f: file name

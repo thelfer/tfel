@@ -259,6 +259,8 @@ namespace mtest {
                            &PipeTestParser::handleGasEquationOfState);
     this->registerCallBack("@AdditionalOutputs",
                            &PipeTestParser::handleAdditionalOutputs);
+    this->registerCallBack("@FailurePolicy",
+                           &PipeTestParser::handleFailurePolicy);
     this->registerCallBack("@FailureCriterion",
                            &PipeTestParser::handleFailureCriterion);
   }
@@ -756,7 +758,7 @@ namespace mtest {
     const auto n = this->readString(p, this->tokens.end());
     this->checkNotEndOfLine("PipeTestParser::handleFailureCriterion", p,
                             this->tokens.end());
-    if (p->value != ";") {
+    if (p->value == ";") {
       t.addFailureCriterion(n, tfel::utilities::DataMap{});
     } else {
       t.addFailureCriterion(
