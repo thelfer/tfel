@@ -229,6 +229,46 @@ when the contact between the mandrel and the pipe is detected:
 This axial boundary condition is not compatible with the boundary
 condition imposing the evolution of the axial growth of the pipe.
 
+## Support for failure criteria for pipes
+
+Failure criteria can be added to pipe modelling using the
+`@FailureCriterion` keyword. Note that no failure criterion is currently
+shipped with `MTest`.
+
+A failure criterion is called at the end of each time step to detect
+failure of the pipe.
+
+Each failure criterion adds a column to the output file giving the
+status of the criterion:
+
+- `0` means that the criterion is not met, i.e. no failure is detected
+  and the pipe is sound.
+- `1` means that the criterion is met, i.e. failure is detected and the
+  pipe is broken.
+
+In case of failure, three policies can be selected using the
+`@FailurePolicy` keyword:
+
+- `ReportOnly`: failure does not affect computation. The evaluation of
+  the failure criteria only affects the output file.
+- `StopComputation`: failure leads to reject the current time step. If
+  substepping is enabled, the time step is divided by two. With this
+  policy, one can thus only approach the failure time, but never go
+  beyond.
+- `FreezeState` (or `FreezeStateUntilEndOfComputation`): if a failure is
+  detected, the state of the structure is freezed and do not evolve. No
+  equilibrium is performed, the behaviour is no more called and `PipeTest`
+  will output the same results again and again until the end of
+  computation. This option may be useful when optimizing material
+  parameters.
+
+### Example of usage
+
+~~~~{.cxx}
+@FailurePolicy 'FreezeState';
+@FailureCriterion 'ElongationAtBreak' {maximum_value : 1e-4};
+~~~~
+
 # References
 
 <!-- Local IspellDict: english -->

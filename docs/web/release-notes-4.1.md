@@ -1782,6 +1782,47 @@ supported (see Sections @sec:tfel:4.1:mfront:castem_model_interface and
 @Model 'src/libM5-umat.so' 'umatm5_deziroxoxidationmodel_srma2020';
 ~~~~
 
+## Support for failure criteria for pipes
+
+Failure criteria can be added to pipe modelling using the
+`@FailureCriterion` keyword. Note that no failure criterion is currently
+shipped with `MTest`. The failure criteria must be provided by external
+librairies.
+
+A failure criterion is called at the end of each time step to detect
+failure of the pipe.
+
+Each failure criterion adds a column to the output file giving the
+status of the criterion:
+
+- `0` means that the criterion is not met, i.e. no failure is detected
+  and the pipe is sound.
+- `1` means that the criterion is met, i.e. failure is detected and the
+  pipe is broken.
+
+In case of failure, three policies can be selected using the
+`@FailurePolicy` keyword:
+
+- `ReportOnly`: failure does not affect computation. The evaluation of
+  the failure criteria only affects the output file.
+- `StopComputation`: failure leads to reject the current time step. If
+  substepping is enabled, the time step is divided by two. With this
+  policy, one can thus only approach the failure time, but never go
+  beyond.
+- `FreezeState` (or `FreezeStateUntilEndOfComputation`): if a failure is
+  detected, the state of the structure is freezed and do not evolve. No
+  equilibrium is performed, the behaviour is no more called and `PipeTest`
+  will output the same results again and again until the end of
+  computation. This option may be useful when optimizing material
+  parameters.
+
+### Example of usage
+
+~~~~{.python}
+@FailurePolicy 'FreezeState';
+@FailureCriterion 'ElongationAtBreak' {maximum_value : 1e-4};
+~~~~
+
 # `mfm-test-generator` improvements
 
 ## Support for `madnex` file {#sec:tfel:4.1:mfmtg:madnex_support}

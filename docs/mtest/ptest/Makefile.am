@@ -3,6 +3,8 @@ PTEST_DOCS = AdditionalOutputs.md       \
 	     AxialGrowthEvolution.md        \
 	     AxialLoading.md                \
 	     DisplacementEpsilon.md         \
+	     FailureCriterion.md            \
+	     FailurePolicy.md               \
 	     InnerRadiusEvolution.md        \
 	     OuterRadiusEvolution.md        \
 	     MandrelRadiusEvolution.md      \
