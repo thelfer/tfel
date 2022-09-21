@@ -407,7 +407,9 @@ namespace mfront {
         << "//! normal to slip plane\n"
         << "tfel::math::tvector<Nss,vector> np;\n"
         << "//! unit vector in the slip direction\n"
-        << "tfel::math::tvector<Nss,vector> ns;\n";
+        << "tfel::math::tvector<Nss,vector> ns;\n"
+        << "//! glimb tensors\n"
+        << "tfel::math::tvector<Nss, stensor> climb_tensors;\n";
     for (std::size_t idx = 0; idx != nb; ++idx) {
       out << "//! tensor of directional sense\n"
           << "tfel::math::tvector<Nss" << idx << ",tensor> mu" << idx << ";\n"
@@ -415,6 +417,9 @@ namespace mfront {
           << "tfel::math::tvector<Nss" << idx << ",stensor> mus" << idx << ";\n"
           << "//! normal to slip plane\n"
           << "tfel::math::tvector<Nss" << idx << ",vector> np" << idx << ";\n"
+          << "//! glimb tensors\n"
+          << "tfel::math::tvector<Nss" << idx << ", stensor> "
+          << "climb_tensors" << idx << ";\n"
           << "//! unit vector in the slip direction\n"
           << "tfel::math::tvector<Nss" << idx << ",vector> ns" << idx << ";\n";
     }
@@ -555,9 +560,19 @@ namespace mfront {
     for (std::size_t idx = 0; idx != nb; ++idx) {
       const auto& nps = sss.getSlipPlaneNormals(idx);
       write_vector(out, "this->np" + std::to_string(idx), nps);
+      for (decltype(nps.size()) i = 0; i !=nps.size(); ++i) {
+        out << "this->climb_tensors" << idx << "[" << i << "] = "
+            << "stensor::buildFromVectorDiadicProduct("
+            << "this->np" << idx << "[" << i << "]);\n";
+      }
       gnps.insert(gnps.end(), nps.begin(), nps.end());
     }
     write_vector(out, "this->np", gnps);
+    for (decltype(gnps.size()) i = 0; i != gnps.size(); ++i) {
+      out << "this->climb_tensors[" << i << "] = "
+          << "stensor::buildFromVectorDiadicProduct("
+          << "this->np[" << i << "]);\n";
+    }
     // slip direction
     for (std::size_t idx = 0; idx != nb; ++idx) {
       const auto& nss2 = sss.getSlipDirections(idx);
