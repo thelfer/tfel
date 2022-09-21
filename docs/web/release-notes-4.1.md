@@ -1452,6 +1452,28 @@ and
 
  are now equivalent.
 
+## Generation of climb tensors
+
+For a given slip system of normal \(\vec{n}\), the climb tensor is
+defined as \(\vec{n}\,\otimes\vec{n}\).
+
+If sliding systems are declared, `MFront` generates a class containing
+the definition of all normals, slip directions, orientation tensors (see
+[this page](singlecrystal.html) for details).
+
+This class now contains the climb tensors:
+
+- The climb tensors of all slip systems are stored in a variable named
+  `climb_tensors`
+- The climb tensors all the `i`th family of slip systems' is stored in a
+  variable named `climb_tensors`i.
+
+> **Note**
+> 
+> In previous versions of `MFront`, climb tensors could have been
+> computed using the normals using `buildFromVectorDiadicProduct`
+> method from the `stensor` class.
+
 # `MTest` improvements
 
 ## Support for `madnex` file {#sec:tfel:4.1:mtest:madnex_support}
@@ -2229,6 +2251,16 @@ $ mfront-query --list-behaviour-mfm-test-generator-tests --test=".+Tensile.+" Pl
 ~~~~{.cxx}
 $ mfront-query --list-behaviour-mfm-test-generator-tests=unsorted --test=".+Tensile.+" Plasticity.mdnx
 ~~~~
+
+### Getting information about the climb tensors
+
+The following queries are available to retrieve information about climb tensors:
+
+- `--climb-tensors`: list all the climb tensors, sorted by
+  family".
+- `--climb-tensors-by-index`: list all the climb tensors.
+- `--climb-tensors-by-slip-system`: list all the climb
+  tensors sorted by slip systems.
 
 # `tfel-check` improvements
 

@@ -200,6 +200,9 @@ namespace mfront {
         {"--orientation-tensors-by-index", "list all the orientation tensors"},
         {"--orientation-tensors-by-slip-system",
          "list all the orientation tensors"},
+        {"--climb-tensors", "list all the climb tensors, sorted by family"},
+        {"--climb-tensors-by-index", "list all the climb tensors"},
+        {"--climb-tensors-by-slip-system", "list all the climb tensors"},
         {"--interaction-matrix", "show the interaction matrix"},
         {"--dislocations-mean-free-path-interaction-matrix",
          "show the interaction matrix associated to the effect of dislocations "
@@ -547,6 +550,60 @@ namespace mfront {
              auto r = size_t{};
              for (size_t i = 0; i != nss; ++i) {
                const auto os = ssd.getOrientationTensors(i);
+               const auto ss = ssd.getSlipSystems(i);
+               for (decltype(ss.size()) j = 0; j != ss.size(); ++j) {
+                 cout << "- " << to_string(ss[j]) << ": " << to_string(os[j])
+                      << '\n';
+                 ++r;
+               }
+             }
+           }});
+    } else if (qn == "--climb-tensors") {
+      this->queries2.push_back(
+          {"climb-tensors",
+           [](const FileDescription&, const BehaviourDescription& d) {
+             tfel::raise_if(!d.areSlipSystemsDefined(),
+                            "no slip system defined");
+             const auto& ssd = d.getSlipSystems();
+             const auto nss = ssd.getNumberOfSlipSystemsFamilies();
+             for (size_t i = 0; i != nss; ++i) {
+               const auto os = ssd.getClimbTensors(i);
+               cout << "- " << to_string(ssd.getSlipSystemFamily(i), true)
+                    << ":";
+               for (const auto& o : os) {
+                 cout << " " << to_string(o);
+               }
+               cout << '\n';
+             }
+           }});
+    } else if (qn == "--climb-tensors-by-index") {
+      this->queries2.push_back(
+          {"climb-tensors-by-index",
+           [](const FileDescription&, const BehaviourDescription& d) {
+             tfel::raise_if(!d.areSlipSystemsDefined(),
+                            "no slip system defined");
+             const auto& ssd = d.getSlipSystems();
+             const auto nss = ssd.getNumberOfSlipSystemsFamilies();
+             auto r = size_t{};
+             for (size_t i = 0; i != nss; ++i) {
+               const auto os = ssd.getClimbTensors(i);
+               for (const auto& o : os) {
+                 cout << "- " << r << ": " << to_string(o) << '\n';
+                 ++r;
+               }
+             }
+           }});
+    } else if (qn == "--climb-tensors-by-slip-system") {
+      this->queries2.push_back(
+          {"climb-tensors-by-slip-system",
+           [](const FileDescription&, const BehaviourDescription& d) {
+             tfel::raise_if(!d.areSlipSystemsDefined(),
+                            "no slip system defined");
+             const auto& ssd = d.getSlipSystems();
+             const auto nss = ssd.getNumberOfSlipSystemsFamilies();
+             auto r = size_t{};
+             for (size_t i = 0; i != nss; ++i) {
+               const auto os = ssd.getClimbTensors(i);
                const auto ss = ssd.getSlipSystems(i);
                for (decltype(ss.size()) j = 0; j != ss.size(); ++j) {
                  cout << "- " << to_string(ss[j]) << ": " << to_string(os[j])

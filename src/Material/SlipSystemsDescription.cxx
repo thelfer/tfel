@@ -196,7 +196,7 @@ namespace tfel::material {
 
   CrystalStructure SlipSystemsDescription::getCrystalStructure() const {
     return this->cs;
-  }  // end of SlipSystemsDescription::getCrystalStructure
+  }  // end of getCrystalStructure
 
   void SlipSystemsDescription::addSlipSystemsFamily(const vec3d& b,
                                                     const vec3d& p) {
@@ -215,7 +215,7 @@ namespace tfel::material {
                "internal error (unknown cristal structure)");
       tfel::material::addSlipSystemsFamily<CrystalStructure::FCC>(gs3d, b, p);
     }
-  }  // end of SlipSystemsDescription::addSlipSystemsFamily
+  }  // end of addSlipSystemsFamily
 
   void SlipSystemsDescription::addSlipSystemsFamily(const vec4d& b,
                                                     const vec4d& p) {
@@ -228,7 +228,7 @@ namespace tfel::material {
              "internal error (unknown cristal structure)");
     auto& gs4d = this->gs.get<std::vector<system4d>>();
     tfel::material::addSlipSystemsFamily<CrystalStructure::HCP>(gs4d, b, p);
-  }  // end of SlipSystemsDescription::addSlipSystemsFamily
+  }  // end of addSlipSystemsFamily
 
   SlipSystemsDescription::size_type
   SlipSystemsDescription::getNumberOfSlipSystemsFamilies() const {
@@ -241,7 +241,7 @@ namespace tfel::material {
              "SlipSystemsDescription::getNumberOfSlipSystemsFamilies: "
              "internal error (unsupported slip system type)");
     return size_type{};
-  }  // end of SlipSystemsDescription::getNumberOfSlipSystemsFamilies()
+  }  // end of getNumberOfSlipSystemsFamilies()
 
   SlipSystemsDescription::system SlipSystemsDescription::getSlipSystemFamily(
       const size_type i) const {
@@ -286,7 +286,7 @@ namespace tfel::material {
       r[i] = this->getSlipSystems(i);
     }
     return r;
-  }  // end of SlipSystemsDescription::getSlipSystems
+  }  // end of getSlipSystems
 
   static std::array<long double, 3u> to_array(const numodis::Vect3& v) {
     std::array<long double, 3u> r;
@@ -365,21 +365,33 @@ namespace tfel::material {
     return tensor{n[0] * m[0], n[1] * m[1], n[2] * m[2],
                   n[1] * m[0], n[0] * m[1], n[2] * m[0],
                   n[0] * m[2], n[2] * m[1], n[1] * m[2]};
-  }  // end of getOrentiationTensor
+  }  // end of getOrientationTensor
 
   static SlipSystemsDescription::tensor getOrientationTensor(
       const CrystalStructure cs, const SlipSystemsDescription::system3d& s) {
     const auto& n = normal(cs, s.plane);
     const auto& m = burgers(cs, s.burgers);
     return tfel::material::getOrientationTensor(n, m);
-  }  // end of getOrentiationTensor
+  }  // end of getOrientationTensor
 
   static SlipSystemsDescription::tensor getOrientationTensor(
       const CrystalStructure cs, const SlipSystemsDescription::system4d& s) {
     const auto& n = normal(cs, s.plane);
     const auto& m = burgers(cs, s.burgers);
     return tfel::material::getOrientationTensor(n, m);
-  }  // end of getOrentiationTensor
+  }  // end of getOrientationTensor
+
+  static SlipSystemsDescription::tensor getClimbTensor(
+      const CrystalStructure cs, const SlipSystemsDescription::system3d& s) {
+    const auto& n = normal(cs, s.plane);
+    return tfel::material::getOrientationTensor(n, n);
+  }  // end of getClimbTensor
+
+  static SlipSystemsDescription::tensor getClimbTensor(
+      const CrystalStructure cs, const SlipSystemsDescription::system4d& s) {
+    const auto& n = normal(cs, s.plane);
+    return tfel::material::getOrientationTensor(n, n);
+  }  // end of getClimbTensor
 
   static SlipSystemsDescription::vector getSlipPlaneNormal(
       const CrystalStructure cs, const SlipSystemsDescription::system& s) {
@@ -388,7 +400,7 @@ namespace tfel::material {
       return normal(cs, s3d.plane);
     }
     raise_if(!s.is<SlipSystemsDescription::system4d>(),
-             "getOrentiationTensor: "
+             "getSlipPlaneNormal: "
              "internal error (unsupported slip system type)");
     const auto& s4d = s.get<SlipSystemsDescription::system4d>();
     return normal(cs, s4d.plane);
@@ -401,7 +413,7 @@ namespace tfel::material {
       return burgers(cs, s3d.burgers);
     }
     raise_if(!s.is<SlipSystemsDescription::system4d>(),
-             "getOrentiationTensor: "
+             "getSlipDirection: "
              "internal error (unsupported slip system type)");
     const auto& s4d = s.get<SlipSystemsDescription::system4d>();
     return burgers(cs, s4d.burgers);
@@ -414,10 +426,21 @@ namespace tfel::material {
                                   s.get<SlipSystemsDescription::system3d>());
     }
     raise_if(!s.is<SlipSystemsDescription::system4d>(),
-             "getOrentiationTensor: "
+             "getOrientationTensor: "
              "internal error (unsupported slip system type)");
     return getOrientationTensor(cs, s.get<SlipSystemsDescription::system4d>());
-  }  // end of getOrentiationTensor
+  }  // end of getOrientationTensor
+
+  static SlipSystemsDescription::tensor getClimbTensor(
+      const CrystalStructure cs, const SlipSystemsDescription::system& s) {
+    if (s.is<SlipSystemsDescription::system3d>()) {
+      return getClimbTensor(cs, s.get<SlipSystemsDescription::system3d>());
+    }
+    raise_if(!s.is<SlipSystemsDescription::system4d>(),
+             "getClimbTensor: "
+             "internal error (unsupported slip system type)");
+    return getClimbTensor(cs, s.get<SlipSystemsDescription::system4d>());
+  }  // end of getClimbTensor
 
   std::vector<SlipSystemsDescription::vector>
   SlipSystemsDescription::getSlipPlaneNormals(const size_type i) const {
@@ -427,7 +450,7 @@ namespace tfel::material {
       r[idx] = tfel::material::getSlipPlaneNormal(this->cs, ss[idx]);
     }
     return r;
-  }  // end of SlipSystemsDescription::getSlipPlaneNormals()
+  }  // end of getSlipPlaneNormals()
 
   std::vector<std::vector<SlipSystemsDescription::vector>>
   SlipSystemsDescription::getSlipPlaneNormals() const {
@@ -437,7 +460,7 @@ namespace tfel::material {
       r[i] = this->getSlipPlaneNormals(i);
     }
     return r;
-  }  // end of SlipSystemsDescription::getSlipPlaneNormals()
+  }  // end of getSlipPlaneNormals()
 
   std::vector<SlipSystemsDescription::vector>
   SlipSystemsDescription::getSlipDirections(const size_type i) const {
@@ -447,7 +470,7 @@ namespace tfel::material {
       r[idx] = tfel::material::getSlipDirection(this->cs, ss[idx]);
     }
     return r;
-  }  // end of SlipSystemsDescription::getSlipDirections()
+  }  // end of getSlipDirections()
 
   std::vector<std::vector<SlipSystemsDescription::vector>>
   SlipSystemsDescription::getSlipDirections() const {
@@ -457,7 +480,7 @@ namespace tfel::material {
       r[i] = this->getSlipDirections(i);
     }
     return r;
-  }  // end of SlipSystemsDescription::getSlipDirections()
+  }  // end of getSlipDirections
 
   std::vector<SlipSystemsDescription::tensor>
   SlipSystemsDescription::getOrientationTensors(const size_type i) const {
@@ -467,7 +490,7 @@ namespace tfel::material {
       r[idx] = tfel::material::getOrientationTensor(this->cs, ss[idx]);
     }
     return r;
-  }  // end of SlipSystemsDescription::getOrientationTensors()
+  }  // end of getOrientationTensors
 
   std::vector<std::vector<SlipSystemsDescription::tensor>>
   SlipSystemsDescription::getOrientationTensors() const {
@@ -477,7 +500,27 @@ namespace tfel::material {
       r[i] = this->getOrientationTensors(i);
     }
     return r;
-  }  // end of SlipSystemsDescription::getOrientationTensors()
+  }  // end of getOrientationTensors
+
+  std::vector<SlipSystemsDescription::tensor>
+  SlipSystemsDescription::getClimbTensors(const size_type i) const {
+    const auto ss = this->getSlipSystems(i);
+    auto r = std::vector<tensor>(ss.size());
+    for (size_type idx = 0; idx != ss.size(); ++idx) {
+      r[idx] = tfel::material::getClimbTensor(this->cs, ss[idx]);
+    }
+    return r;
+  }  // end of getClimbTensors
+
+  std::vector<std::vector<SlipSystemsDescription::tensor>>
+  SlipSystemsDescription::getClimbTensors() const {
+    const auto s = this->getNumberOfSlipSystemsFamilies();
+    auto r = std::vector<std::vector<tensor>>(s);
+    for (size_type i = 0; i != this->getNumberOfSlipSystemsFamilies(); ++i) {
+      r[i] = this->getClimbTensors(i);
+    }
+    return r;
+  }  // end of getClimbTensors
 
   static std::array<long double, 3u> getDirection(
       const CrystalStructure cs, const SlipSystemsDescription::vec& d) {
@@ -537,7 +580,7 @@ namespace tfel::material {
              td[0] * mn[0];
     }
     return r;
-  }  // end of SlipSystemsDescription::getSchmidFactors
+  }  // end of getSchmidFactors
 
   std::vector<std::vector<long double>>
   SlipSystemsDescription::getSchmidFactors(const vec d) const {
@@ -547,12 +590,12 @@ namespace tfel::material {
       r[i] = this->getSchmidFactors(d, i);
     }
     return r;
-  }  // end of SlipSystemsDescription::getSchmidFactors
+  }  // end of getSchmidFactors
 
   SlipSystemsDescription::size_type
   SlipSystemsDescription::getNumberOfSlipSystems(const size_type i) const {
     return this->getSlipSystems(i).size();
-  }  // end of SlipSystemsDescription::getNumberOfSlipSystems
+  }  // end of getNumberOfSlipSystems
 
   SlipSystemsDescription::size_type
   SlipSystemsDescription::getNumberOfSlipSystems() const {
@@ -561,11 +604,11 @@ namespace tfel::material {
       s += this->getNumberOfSlipSystems(i);
     }
     return s;
-  }  // end of SlipSystemsDescription::getNumberOfSlipSystems
+  }  // end of getNumberOfSlipSystems
 
   bool SlipSystemsDescription::hasInteractionMatrix() const {
     return !this->m.empty();
-  }  // end of SlipSystemsDescription::hasInteractionMatrix
+  }  // end of hasInteractionMatrix
 
   void SlipSystemsDescription::setInteractionMatrix(
       const std::vector<long double>& v) {
@@ -583,7 +626,7 @@ namespace tfel::material {
                  std::to_string(im.rank()) + " vs " + std::to_string(v.size()) +
                  ")");
     this->m = v;
-  }  // end of SlipSystemsDescription::setInteractionMatrix
+  }  // end of setInteractionMatrix
 
   const std::vector<long double>& SlipSystemsDescription::getInteractionMatrix()
       const {
@@ -591,13 +634,12 @@ namespace tfel::material {
              "SlipSystemsDescription::getInteractionMatrix: "
              "no interaction matrix defined");
     return this->m;
-  }  // end of SlipSystemsDescription::getInteractionMatrix
+  }  // end of getInteractionMatrix
 
   bool SlipSystemsDescription::hasDislocationsMeanFreePathInteractionMatrix()
       const {
     return !this->mfpm.empty();
-  }  // end of
-     // SlipSystemsDescription::hasDislocationsMeanFreePathInteractionMatrix
+  }  // end of hasDislocationsMeanFreePathInteractionMatrix
 
   void SlipSystemsDescription::setDislocationsMeanFreePathInteractionMatrix(
       const std::vector<long double>& v) {
@@ -618,8 +660,7 @@ namespace tfel::material {
                  std::to_string(im.rank()) + " vs " + std::to_string(v.size()) +
                  ")");
     this->mfpm = v;
-  }  // end of
-     // SlipSystemsDescription::setDislocationsMeanFreePathInteractionMatrix
+  }  // end of setDislocationsMeanFreePathInteractionMatrix
 
   const std::vector<long double>&
   SlipSystemsDescription::getDislocationsMeanFreePathInteractionMatrix() const {
@@ -628,8 +669,7 @@ namespace tfel::material {
              "getDislocationsMeanFreePathInteractionMatrix: "
              "no interaction matrix defined");
     return this->mfpm;
-  }  // end of
-     // SlipSystemsDescription::getDislocationsMeanFreePathInteractionMatrix
+  }  // end of getDislocationsMeanFreePathInteractionMatrix
 
   template <CrystalStructure cs>
   static SlipSystemsDescription::InteractionMatrixStructure
@@ -676,8 +716,7 @@ namespace tfel::material {
   SlipSystemsDescription::InteractionMatrixStructure::
       InteractionMatrixStructure(
           const std::vector<std::vector<SlidingSystemsInteraction>>& r)
-      : ranks(r) {}  // end of
-  // SlipSystemsDescription::SlipSystemsDescription::InteractionMatrixStructure
+      : ranks(r) {}  // end of InteractionMatrixStructure
 
   SlipSystemsDescription::InteractionMatrixStructure::
       InteractionMatrixStructure(InteractionMatrixStructure&&) = default;
@@ -685,7 +724,7 @@ namespace tfel::material {
   SlipSystemsDescription::size_type
   SlipSystemsDescription::InteractionMatrixStructure::rank() const {
     return this->ranks.size();
-  }  // end of SlipSystemsDescription::InteractionMatrixStructure::rank()
+  }  // end of rank
 
   SlipSystemsDescription::size_type
   SlipSystemsDescription::InteractionMatrixStructure::getRank(
