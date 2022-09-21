@@ -1452,7 +1452,7 @@ and
 
  are now equivalent.
 
-## Generation of climb tensors
+## Generation of climb tensors {#sec:mfront:model:issue_317}
 
 For a given slip system of normal \(\vec{n}\), the climb tensor is
 defined as \(\vec{n}\,\otimes\vec{n}\).
@@ -2252,7 +2252,7 @@ $ mfront-query --list-behaviour-mfm-test-generator-tests --test=".+Tensile.+" Pl
 $ mfront-query --list-behaviour-mfm-test-generator-tests=unsorted --test=".+Tensile.+" Plasticity.mdnx
 ~~~~
 
-### Getting information about the climb tensors
+### Getting information about the climb tensors {#sec:mfront_query:model:issue_317}
 
 The following queries are available to retrieve information about climb tensors:
 
@@ -2307,6 +2307,13 @@ which shall validate the output of the command. The output of the
 command is concatenated in a single string for the test.
 
 # Issues fixed
+
+## Issue #317: [mfront] Automatic declaration of  climb tensors
+
+This feature is described in Sections @sec:mfront:model:issue_317 and
+@sec:mfront_query:model:issue_317.
+
+For more details, see <https://github.com/thelfer/tfel/issues/317>
 
 ## Issue #314: [tfel-material] Implement the inverse Langevin function
 
