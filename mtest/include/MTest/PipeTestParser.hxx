@@ -215,6 +215,12 @@ namespace mtest {
      * \param[in,out] p: position in the input file
      */
     virtual void handleFailurePolicy(PipeTest&, tokens_iterator&);
+    /*!
+     * \brief handle the `@OxidationModel` keyword
+     * \param[out]    t: test
+     * \param[in,out] p: position in the input file
+     */
+    virtual void handleOxidationModel(PipeTest&, tokens_iterator&);
     //! \brief a simple alias
     typedef void (PipeTestParser::*CallBack)(PipeTest&, tokens_iterator&);
     /*!

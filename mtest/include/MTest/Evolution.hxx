@@ -11,13 +11,12 @@
  * project under specific licensing conditions.
  */
 
-#ifndef LIB_MTEST_MTESTEVOLUTION_H
-#define LIB_MTEST_MTESTEVOLUTION_H
+#ifndef LIB_MTEST_MTESTEVOLUTION_HXX
+#define LIB_MTEST_MTESTEVOLUTION_HXX
 
 #include <map>
 #include <vector>
 #include <memory>
-
 #include "MTest/Config.hxx"
 #include "MTest/Types.hxx"
 
@@ -101,9 +100,7 @@ namespace mtest {
     real value;
   };
 
-  /*!
-   * a linear per interval evolution
-   */
+  //! \brief a linear per interval evolution
   struct MTEST_VISIBILITY_EXPORT LPIEvolution final : public Evolution {
     /*!
      * constructor
@@ -134,7 +131,7 @@ namespace mtest {
      * \param[in] v  : value
      */
     void setValue(const real, const real) override;
-    //! destructor
+    //! \brief destructor
     ~LPIEvolution() override;
 
    private:
@@ -160,7 +157,22 @@ namespace mtest {
   MTEST_VISIBILITY_EXPORT
   std::shared_ptr<tfel::math::parser::ExternalFunctionManager>
   buildExternalFunctionManagerFromConstantEvolutions(const EvolutionManager&);
+  /*!
+   * \brief check if evolutions with given names have been declared
+   */
+  MTEST_VISIBILITY_EXPORT
+  void checkIfDeclared(const std::vector<std::string>& ,
+                       const EvolutionManager& ,
+                       const std::string& );
+  /*!
+   * \brief check if evolutions with given names have been declared
+   */
+  MTEST_VISIBILITY_EXPORT
+  void checkIfDeclared(const std::vector<std::string>&,
+                       const EvolutionManager&,
+                       const EvolutionManager&,
+                       const std::string&);
 
 }  // end of namespace mtest
 
-#endif /* LIB_MTEST_MTESTEVOLUTION_H */
+#endif /* LIB_MTEST_MTESTEVOLUTION_HXX */

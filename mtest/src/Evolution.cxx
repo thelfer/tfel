@@ -129,4 +129,31 @@ namespace mtest {
     return efm;
   }  // end of buildExternalFunctionManagerFromConstantEvolutions
 
+  void checkIfDeclared(const std::vector<std::string>& names,
+                       const EvolutionManager& m,
+                       const std::string& type) {
+    for (const auto& n : names) {
+      if (m.find(n) == m.end()) {
+        tfel::raise("no " + type +
+                    " named "
+                    "'" +
+                    n + "' declared");
+      }
+    }
+  }
+
+  void checkIfDeclared(const std::vector<std::string>& names,
+                       const EvolutionManager& evm1,
+                       const EvolutionManager& evm2,
+                       const std::string& type) {
+    for (const auto& n : names) {
+      if (evm1.find(n) == evm1.end()) {
+        tfel::raise_if(evm2.find(n) == evm2.end(), "no " + type +
+                                                       " named "
+                                                       "'" +
+                                                       n + "' declared");
+      }
+    }
+  }
+
 }  // end of namespace mtest

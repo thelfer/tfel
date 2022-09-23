@@ -106,8 +106,10 @@ namespace mtest {
     CastemInt nprops = static_cast<CastemInt>(s.mprops1.size());
     CastemInt nstatv;
     const auto h = this->getHypothesis();
-#pragma "something wrong here"
-    if (h == ModellingHypothesis::PLANESTRESS) {
+    if (h == ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN) {
+      ndi = 14;
+      ntens = 3;
+    } else if (h == ModellingHypothesis::PLANESTRESS) {
       ndi = -2;
       ntens = 2;
     } else if (h == ModellingHypothesis::PLANESTRAIN) {

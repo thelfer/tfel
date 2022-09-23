@@ -63,7 +63,7 @@ namespace mtest {
 
   std::size_t StudyCurrentState::getNumberOfFailureCriterionStatus() const
       noexcept {
-    this->failure_criterion_status.size();
+    return this->failure_criterion_status.size();
   }  // end of getNumberOfFailureCriterionStatus
 
   void StudyCurrentState::initialize(const StudyCurrentState::size_type psz) {

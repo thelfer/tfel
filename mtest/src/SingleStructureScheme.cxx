@@ -32,33 +32,6 @@
 
 namespace mtest {
 
-  static void checkIfDeclared(const std::vector<std::string>& names,
-                              const EvolutionManager& m,
-                              const std::string& type) {
-    for (const auto& n : names) {
-      if (m.find(n) == m.end()) {
-        tfel::raise("no " + type +
-                    " named "
-                    "'" +
-                    n + "' declared");
-      }
-    }
-  }
-
-  static void checkIfDeclared(const std::vector<std::string>& names,
-                              const EvolutionManager& evm1,
-                              const EvolutionManager& evm2,
-                              const std::string& type) {
-    for (const auto& n : names) {
-      if (evm1.find(n) == evm1.end()) {
-        tfel::raise_if(evm2.find(n) == evm2.end(), "no " + type +
-                                                       " named "
-                                                       "'" +
-                                                       n + "' declared");
-      }
-    }
-  }
-
   SingleStructureScheme::SingleStructureScheme()
       : dmpv(new EvolutionManager()) {
   }  // end of SingleStructureScheme::SingleStructureScheme
@@ -342,9 +315,9 @@ namespace mtest {
     this->setInternalStateVariableInitialValue(n, v);
   }  // end of setTensorInternalStateVariableInitialValues
 
-  void SingleStructureScheme::prepare(StudyCurrentState& state,
-                                      const real t,
-                                      const real dt) const {
+  std::pair<bool, real> SingleStructureScheme::prepare(StudyCurrentState& state,
+                                                       const real t,
+                                                       const real dt) const {
     using namespace tfel::material;
     auto& scs = state.getStructureCurrentState("");
     // evaluations of the materials properties, state variables at the
@@ -385,6 +358,7 @@ namespace mtest {
       this->residual << '\n'
                      << "#resolution from " << t << " to " << t + dt << '\n';
     }
+    return {true, 1};
   }  // end of SingleStructureScheme::prepare
 
   void SingleStructureScheme::setHandleThermalExpansion(const bool b1) {

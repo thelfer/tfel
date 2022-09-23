@@ -263,6 +263,8 @@ namespace mtest {
                            &PipeTestParser::handleFailurePolicy);
     this->registerCallBack("@FailureCriterion",
                            &PipeTestParser::handleFailureCriterion);
+    this->registerCallBack("@OxidationModel",
+                           &PipeTestParser::handleOxidationModel);
   }
 
   void PipeTestParser::registerCallBack(const std::string& k,
@@ -743,7 +745,7 @@ namespace mtest {
           "but computations are performed as usual\n"
           "- 'StopComputation': if a failure is detected, computations are "
           "stopped\n"
-          "- 'FreezeState' or 'FreezeStateUntilEndOfComputation':  if a "
+          "- 'FreezeState' or 'FreezeStateUntilEndOfComputation': if a "
           "failure is detected, the state of the structure is freezed and do "
           "not evolve. No equilibrium is performed, the behaviour is no more "
           "called and PipeTest will output the same results again and again "
@@ -768,6 +770,47 @@ namespace mtest {
     this->readSpecifiedToken("PipeTestParser::handleFailureCriterion", ";", p,
                              this->tokens.end());
   }  // end of handleFailureCriterion
+
+  void PipeTestParser::handleOxidationModel(PipeTest& t, tokens_iterator& p) {
+    this->checkNotEndOfLine("PipeTestParser::handleOxidationModel", p,
+                            this->tokens.end());
+    const auto options = tfel::utilities::Data::read_map(p, this->tokens.end())
+                             .get<tfel::utilities::DataMap>();
+    this->readSpecifiedToken("PipeTestParser::handleOxidationModel", ";", p,
+                             this->tokens.end());
+    //
+    auto validator =
+        tfel::utilities::DataMapValidator()
+            .addDataTypeValidator<std::string>("model")
+            .addDataTypeValidator<std::string>("library")
+            .addDataValidator("boundary", [](const tfel::utilities::Data& d) {
+              if (!d.is<std::string>()) {
+                tfel::raise(
+                    "PipeTestParser::handleOxidationModel: "
+                    "invalid type for option 'boundary'");
+              }
+              const auto& b = d.get<std::string>();
+              if (!((b == "inner_boundary") || (b == "outer_boundary"))) {
+                tfel::raise(
+                    "PipeTestParser::handleOxidationModel: "
+                    "invalid value for option 'boundary', expected "
+                    "'inner_boundary' or 'outer_boundary', read '" +
+                    b + "'");
+              }
+            });
+    validator.validate(options);
+    //
+    if (options.size() != 3u) {
+      tfel::raise(
+          "PipeTestParser::handleOxidationModel: "
+          "invalid number of options, expected "
+          "'model', 'library', and 'boundary'");
+    }
+    //
+    t.addOxidationModel(options.at("library").get<std::string>(),
+                        options.at("model").get<std::string>(),
+                        options.at("boundary").get<std::string>());
+  }  // end of handleOxidationModel
 
   PipeTestParser::~PipeTestParser() = default;
 

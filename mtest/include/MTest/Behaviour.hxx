@@ -33,9 +33,8 @@
 
 namespace mtest {
 
-  // forward declaration
+  // forward declarations
   struct CurrentState;
-  // forward declaration
   struct BehaviourWorkSpace;
 
   //! \brief a simple wrapper around mechanical behaviours
@@ -101,25 +100,15 @@ namespace mtest {
      * thermodynamic forces
      */
     virtual unsigned short getThermodynamicForcesSize() const = 0;
-    /*!
-     * \return the components suffixes of a symmetric tensor
-     */
+    //! \return the components suffixes of a symmetric tensor
     virtual std::vector<std::string> getStensorComponentsSuffixes() const = 0;
-    /*!
-     * \return the components suffixes of a vector
-     */
+    //! \return the components suffixes of a vector
     virtual std::vector<std::string> getVectorComponentsSuffixes() const = 0;
-    /*!
-     * \return the components suffixes of a tensor
-     */
+    //! \return the components suffixes of a tensor
     virtual std::vector<std::string> getTensorComponentsSuffixes() const = 0;
-    /*!
-     * \return the components of the driving variables
-     */
+    //! \return the components of the driving variables
     virtual std::vector<std::string> getGradientsComponents() const = 0;
-    /*!
-     * \return the components of the thermodynamic forces
-     */
+    //! \return the components of the thermodynamic forces
     virtual std::vector<std::string> getThermodynamicForcesComponents()
         const = 0;
     /*!
@@ -132,9 +121,7 @@ namespace mtest {
      */
     virtual unsigned short getThermodynamicForceComponentPosition(
         const std::string&) const = 0;
-    /*!
-     * \return the size of the tangent operator used by `MTest`
-     */
+    //! \return the size of the tangent operator used by `MTest`
     virtual size_t getTangentOperatorArraySize() const = 0;
     /*!
      * \return the tangent operator blocks defined by the behaviour. Those
@@ -368,7 +355,7 @@ namespace mtest {
         BehaviourWorkSpace&,
         const real,
         const StiffnessMatrixType) const = 0;
-    //! destructor
+    //! \brief destructor
     virtual ~Behaviour();
   };  // end of struct Behaviour
 

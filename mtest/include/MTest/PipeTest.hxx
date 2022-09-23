@@ -38,6 +38,8 @@ namespace mtest {
 
   //! \brief a study describing mechanical tests on pipes
   struct MTEST_VISIBILITY_EXPORT PipeTest : public SingleStructureScheme {
+    //! \brief a simple alias
+    using size_type = tfel::math::vector<real>::size_type;
     //! \brief type of axial loading
     enum AxialLoading {
       DEFAULTAXIALLOADING,
@@ -76,8 +78,6 @@ namespace mtest {
                                         * optimizing material parameters.
                                         */
     };                                 // end of FailurePolicy
-    //! \brief a simple alias
-    using size_type = tfel::math::vector<real>::size_type;
     //! \brief base class for tests
     struct UTest {
       /*!
@@ -97,6 +97,13 @@ namespace mtest {
       //! \brief desctructor
       virtual ~UTest();
     };  // end of struct UnitTest
+    //! \brief structure describing an oxidation model
+    struct OxidationModel {
+      //! \brief oxidation model
+      std::shared_ptr<Behaviour> model;
+      //! \brief default material properties
+      std::shared_ptr<EvolutionManager> default_material_properties;
+    }; // end of OxidationModel
     //! \brief default constructor
     PipeTest();
     //! \return the name of the test
@@ -226,147 +233,58 @@ namespace mtest {
      * \param[in] e : criterion value
      */
     virtual void setResidualEpsilon(const real);
-    /*!
-     * \return the total number of unknowns
-     */
+    //! \return the total number of unknowns
     size_type getNumberOfUnknowns() const override;
-    /*!
-     * \return the total number of nodes
-     */
+    //! \return the total number of nodes
     virtual size_type getNumberOfNodes() const;
-    /*!
-     * \brief initialize the current state
-     * \param[in] s : current state
-     */
+    //
     void initializeCurrentState(StudyCurrentState&) const override;
-    /*!
-     * \brief initialize the workspace
-     * \param[in] wk : workspace
-     */
     void initializeWorkSpace(SolverWorkSpace&) const override;
-    /*!
-     * \brief update current state at the beginning of a new time step:
-     * - update the material properties
-     * - update the external state variables
-     * - compute the thermal expansion if mandatory
-     * \param[out] s: current structure state
-     * \param[in]  t: current time
-     * \param[in] dt: time increment
-     */
-    void prepare(StudyCurrentState&, const real, const real) const override;
-    /*!
-     * \brief make a linear prediction of the unknows and state
-     * \param[out] s: current structure state
-     * \param[in] dt: time increment
-     */
+    [[nodiscard]] std::pair<bool, real> prepare(StudyCurrentState&,
+                                  const real,
+                                  const real) const override;
     void makeLinearPrediction(StudyCurrentState&, const real) const override;
-    /*!
-     * \brief compute the stiffness matrix and the residual
-     * \return a pair containing:
-     * - a boolean syaing if the behaviour integration shall be
-     *   performed
-     * - a scaling factor that can be used to:
-     *     - increase the time step if the integration was successfull
-     *     - decrease the time step if the integration failed or if the
-     *       results were not reliable (time step too large).
-     * \param[out] s: current structure state
-     * \param[out] K:   tangent operator
-     * \param[out] r:   residual
-     * \param[in]  t:   current time
-     * \param[in]  dt:  time increment
-     * \param[in]  smt: type of tangent operator
-     * \note the memory has already been allocated
-     */
-    std::pair<bool, real> computePredictionStiffnessAndResidual(
+    [[nodiscard]] std::pair<bool, real> computePredictionStiffnessAndResidual(
         StudyCurrentState&,
         tfel::math::matrix<real>&,
         tfel::math::vector<real>&,
         const real&,
         const real&,
         const StiffnessMatrixType) const override;
-    /*!
-     * \brief compute the stiffness matrix and the residual
-     * \return a pair containing:
-     * - a boolean syaing if the behaviour integration shall be
-     *   performed
-     * - a scaling factor that can be used to:
-     *     - increase the time step if the integration was successfull
-     *     - decrease the time step if the integration failed or if the
-     *       results were not reliable (time step too large).
-     * \param[out] s: current structure state
-     * \param[out] K:   tangent operator
-     * \param[out] r:   residual
-     * \param[in]  t:   current time
-     * \param[in]  dt:  time increment
-     * \param[in]  smt: type of tangent operator
-     * \note the memory has already been allocated
-     */
-    std::pair<bool, real> computeStiffnessMatrixAndResidual(
+    [[nodiscard]] std::pair<bool, real> computeStiffnessMatrixAndResidual(
         StudyCurrentState&,
         tfel::math::matrix<real>&,
         tfel::math::vector<real>&,
         const real,
         const real,
         const StiffnessMatrixType) const override;
-    /*!
-     * \param[in] : du unknows increment difference between two iterations
-     */
-    real getErrorNorm(const tfel::math::vector<real>&) const override;
-    /*!
-     * \param[in]  s: current structure state
-     * \param[in] du: unknows increment estimation
-     * \param[in] r:  residual
-     * \param[in] o:  solver options
-     * \param[in] i:  iteration number
-     * \param[in] t:  current time
-     * \param[in] dt: time increment
-     * \return a boolean saying if all convergence criteria are met
-     */
-    bool checkConvergence(StudyCurrentState&,
-                          const tfel::math::vector<real>&,
-                          const tfel::math::vector<real>&,
-                          const SolverOptions&,
-                          const unsigned int,
-                          const real,
-                          const real) const override;
-    /*!
-     * \param[in]  s: current structure state
-     * \param[in] du: unknows increment estimation
-     * \param[in] r:  residual
-     * \param[in] o:  solver options
-     * \param[in] t:  current time
-     * \param[in] dt: time increment
-     * \return a description of all the criteria that were not met.
-     */
-    std::vector<std::string> getFailedCriteriaDiagnostic(
+    [[nodiscard]] real getErrorNorm(
+        const tfel::math::vector<real>&) const override;
+    [[nodiscard]] bool checkConvergence(StudyCurrentState&,
+                                        const tfel::math::vector<real>&,
+                                        const tfel::math::vector<real>&,
+                                        const SolverOptions&,
+                                        const unsigned int,
+                                        const real,
+                                        const real) const override;
+    [[nodiscard]] std::vector<std::string> getFailedCriteriaDiagnostic(
         const StudyCurrentState&,
         const tfel::math::vector<real>&,
         const tfel::math::vector<real>&,
         const SolverOptions&,
         const real,
         const real) const override;
-    /*!
-     * \param[in,out]  s: current structure state
-     * \param[in,out] wk: solver workspace
-     * \param[in] o:  solver options
-     * \param[in] t:  current time
-     * \param[in] dt: time increment
-     */
     void computeLoadingCorrection(StudyCurrentState&,
                                   SolverWorkSpace&,
                                   const SolverOptions&,
                                   const real,
                                   const real) const override;
-    /*!
-     * \param[out] s: current structure state
-     * \param[in]  t:  current time
-     * \param[in]  dt: time increment
-     * \param[in]  p:  period
-     */
     [[nodiscard]] bool postConvergence(StudyCurrentState&,
                                        const real,
                                        const real,
                                        const unsigned int) const override;
+    void setModellingHypothesis(const std::string&) override;
+    void setDefaultModellingHypothesis() override;
     /*!
      * \brief add a new profile postprocessing
      * \param[in] f: file name
@@ -374,12 +292,6 @@ namespace mtest {
      */
     virtual void addProfile(const std::string&,
                             const std::vector<std::string>&);
-    /*!
-     * \param[in] h : modelling hypothesis
-     */
-    void setModellingHypothesis(const std::string&) override;
-    //! \brief set the modelling hypothesis to the default one
-    void setDefaultModellingHypothesis() override;
     //! \brief turn hpp to true
     virtual void performSmallStrainAnalysis();
     /*!
@@ -518,6 +430,16 @@ namespace mtest {
      * \param[in] p: failure policy
      */
     void setFailurePolicy(const FailurePolicy);
+    /*!
+     * \brief change the way a failure is treated
+     * \param[in] library: library path
+     * \param[in] model: name of the oxidation model
+     * \param[in] boundary: boundary name. Must be `inner_boundary` or
+     * `outer_boundary`
+     */
+    void addOxidationModel(const std::string&,
+                           const std::string&,
+                           const std::string&);
     //
     void completeInitialisation() override;
     //! \brief destructor
@@ -558,6 +480,10 @@ namespace mtest {
     std::vector<PipeProfileHandler> profiles;
     //! \brief mesh data
     PipeMesh mesh;
+    //! \brief oxidation model at the inner boundary
+    OxidationModel inner_boundary_oxidation_model;
+    //! \brief oxidation model at the outer boundary
+    OxidationModel outer_boundary_oxidation_model;
     //! \brief user defined gas equation of state
     std::unique_ptr<GasEquationOfState> gseq;
     //! \brief inner radius evolution

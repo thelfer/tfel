@@ -30,13 +30,14 @@ namespace mtest {
   // forward declaration
   struct Behaviour;
   /*!
-   * an helper structure used to store information for the packaging step
+   * \brief an helper structure used to store information for the packaging step
    */
   using PackagingInfo = tfel::utilities::GenType<tfel::math::vector<real>,
                                                  tfel::math::matrix<real>>;
 
   /*!
-   * structure containing the state of the material.
+   * \brief structure containing the state of the material.
+   *
    * This structure is used internally and is declared public only
    * for the python bindings. In particular, the description of the
    * variables given here is only valid during the computations.

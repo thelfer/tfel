@@ -328,5 +328,8 @@ void declarePipeTest() {
       .def("addFailureCriterion", &PipeTest::addFailureCriterion,
            "add a failure criterion.")
       .def("setFailurePolicy", &PipeTest::setFailurePolicy,
-           "set the failure policy.");
+           "set the failure policy.")
+      .def("addOxidationModel", &PipeTest::addOxidationModel,
+           (boost::python::arg("library"), "model", "boundary"),
+           "add an oxidation model.");
 }

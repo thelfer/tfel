@@ -41,17 +41,17 @@ namespace mtest {
     bool isConstant() const override;
     void setValue(const real) override;
     void setValue(const real, const real) override;
-    //! destructor
+    //! \brief destructor
     ~GenericEvolution() override;
 
    protected:
-    //! externally defined evolutions
+    //! \brief externally defined evolutions
     const EvolutionManager& evm;
-    //! the cyrano function
+    //! \brief the generic function
     mfront_gmp_MaterialPropertyPtr f;
-    //! names of the variables
+    //! \brief names of the variables
     std::vector<std::string> vnames;
-    //! arguments send to the Cast3M function
+    //! \brief arguments send to the generic function
     mutable std::vector<real> args;
   };
 
