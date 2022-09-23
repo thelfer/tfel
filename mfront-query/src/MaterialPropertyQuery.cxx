@@ -276,7 +276,7 @@ namespace mfront {
            [](const FileDescription&, const MaterialPropertyDescription& mpd) {
              QueryHandlerBase::displayVariable(mpd.output);
            }});
-    } else if ((qn == "--inputs") || (qn == "--parameters")) {
+    } else if (qn == "--inputs") {
       this->queries.push_back(
           {"inputs",
            [](const FileDescription&, const MaterialPropertyDescription& mpd) {
