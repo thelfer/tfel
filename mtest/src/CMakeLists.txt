@@ -23,6 +23,7 @@ set(TFELMTest_SOURCES
   CastemEvolution.cxx
   CyranoEvolution.cxx
   FunctionEvolution.cxx
+  OxidationStatusEvolution.cxx
   Behaviour.cxx
   BehaviourWrapperBase.cxx
   SmallStrainTridimensionalBehaviourWrapper.cxx

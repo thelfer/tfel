@@ -7,6 +7,7 @@ PTEST_DOCS = AdditionalOutputs.md       \
 	     FailurePolicy.md               \
 	     InnerRadiusEvolution.md        \
 	     OuterRadiusEvolution.md        \
+	     OxidationModel.md              \
 	     MandrelRadiusEvolution.md      \
 	     MandrelAxialGrowthEvolution.md \
 	     RadialLoading.md               \

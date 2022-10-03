@@ -34,7 +34,7 @@ namespace mtest {
 
   SingleStructureScheme::SingleStructureScheme()
       : dmpv(new EvolutionManager()) {
-  }  // end of SingleStructureScheme::SingleStructureScheme
+  }  // end of SingleStructureScheme
 
   void SingleStructureScheme::setMaterialProperty(const std::string& n,
                                                   const EvolutionPtr p,
@@ -69,7 +69,7 @@ namespace mtest {
     } else {
       this->addEvolution(n, p, false, check);
     }
-  }  // end of SingleStructureScheme::setMaterialProperty
+  }  // end of setMaterialProperty
 
   void SingleStructureScheme::setExternalStateVariable(const std::string& n,
                                                        const EvolutionPtr p,
@@ -84,7 +84,7 @@ namespace mtest {
                    "external state variable named '" +
                        n + "'");
     this->addEvolution(n, p, false, check);
-  }  // end of SingleStructureScheme::setExternalStateVariable
+  }  // end of setExternalStateVariable
 
   void SingleStructureScheme::setOutOfBoundsPolicy(
       const tfel::material::OutOfBoundsPolicy p) {
@@ -159,7 +159,7 @@ namespace mtest {
       this->addEvolution(n + "::" + p, std::make_shared<ConstantEvolution>(v),
                          true, true);
     }
-  }  // end of SingleStructureScheme::setBehaviour
+  }  // end of setBehaviour
 
   void SingleStructureScheme::setParameter(const std::string& n,
                                            const double v) {
@@ -227,7 +227,7 @@ namespace mtest {
                                                         *(this->evm));
     checkIfDeclared(mpnames, *(this->evm), *(this->dmpv), "material property");
     checkIfDeclared(esvnames, *(this->evm), "external state variable");
-  }  // end of SingleStructureScheme::completeInitialisation
+  }  // end of completeInitialisation
 
   bool SingleStructureScheme::doPackagingStep(StudyCurrentState& state) const {
     auto& scs = state.getStructureCurrentState("");
@@ -238,7 +238,7 @@ namespace mtest {
       }
     }
     return true;
-  }  // end of SingleStructureScheme::doPackagingStep
+  }  // end of doPackagingStep
 
   StiffnessMatrixType SingleStructureScheme::getDefaultStiffnessMatrixType()
       const {
@@ -246,7 +246,7 @@ namespace mtest {
                    "SingleStructureScheme::getDefaultStiffnessMatrixType: "
                    "no behaviour defined");
     return this->b->getDefaultStiffnessMatrixType();
-  }  // end of SingleStructureScheme::getDefaultStiffnessMatrixType
+  }  // end of getDefaultStiffnessMatrixType
 
   void SingleStructureScheme::setInternalStateVariableInitialValue(
       const std::string& n, const real v) {
@@ -359,14 +359,14 @@ namespace mtest {
                      << "#resolution from " << t << " to " << t + dt << '\n';
     }
     return {true, 1};
-  }  // end of SingleStructureScheme::prepare
+  }  // end of prepare
 
   void SingleStructureScheme::setHandleThermalExpansion(const bool b1) {
     tfel::raise_if(!this->handleThermalExpansion,
                    "SingleStructureScheme::setHandleThermalExpansion: "
                    "thermal expansion is not handled");
     this->handleThermalExpansion = b1;
-  }
+  } // end of setHandleThermalExpansion
 
   SingleStructureScheme::~SingleStructureScheme() = default;
 

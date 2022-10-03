@@ -91,31 +91,40 @@ namespace mfront {
     virtual void treatUseQt();
     //! treat the `@Library` keyword
     virtual void treatLibrary();
-
+    //! treat the `@Model` keyword
     virtual void treatModel();
-
+    //! treat the `@Domain` keyword
     virtual void treatDomain();
-
+    //! treat the `@Domains` keyword
     virtual void treatDomains();
-
+    //! treat the `@Bounds` keyword
     virtual void treatBounds();
-
+    //! treat the `@PhysicalBounds` keyword
     virtual void treatPhysicalBounds();
-
+    //! \brief treat the `@ConstantMaterialProperty` keyword
     virtual void treatConstantMaterialProperty();
 
     virtual void treatConstantMaterialPropertyMethod();
-
+    //! \brief treat the `@Integrator` keyword
+    virtual void treatIntegrator();
+    //! \brief treat the `@Function` keyword
     virtual void treatFunction();
-
+    /*!
+     * \brief read the body of a function and register it
+     * \param[in] fn: function name
+     */
+    virtual void readFunction(const std::string&);
+    //! \brief treat the `@Output` keyword or the `@StateVariable` keyword
     virtual void treatOutput();
 
     virtual void treatOutputMethod();
-
+    /*!
+     * \brief treat the `@Input` keyword or the `@ExternalStateVariable` keyword
+     */
     virtual void treatInput();
 
     virtual void treatInputMethod();
-
+    //! \brief treat the `@Parameter` keyword
     virtual void treatParameter();
 
     virtual void treatLocalParameter();

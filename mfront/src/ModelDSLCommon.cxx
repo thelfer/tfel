@@ -417,7 +417,11 @@ namespace mfront {
     return symbols;
   }  // end of getSymbols
 
-  void ModelDSLCommon::treatFunction() {
+  void ModelDSLCommon::treatIntegrator() {
+    this->readFunction("DefaultFunction");
+  } // end of treatIntegrator
+
+  void ModelDSLCommon::readFunction(const std::string& fn) {
     auto throw_if = [this](const bool b, const std::string& m) {
       if (b) {
         this->throwRuntimeError("ModelDSLCommon::treatFunction", m);
@@ -456,17 +460,10 @@ namespace mfront {
     unsigned int openedBrackets = 0;
     unsigned int openedParenthesis = 0;
     f.useTimeIncrement = false;
-    this->md.registerMemberName("functor" +
-                                std::to_string(this->md.functions.size()));
-    this->checkNotEndOfFile("ModelDSLCommon::treatFunction");
-    f.name = demangle(*(this->current));
-    throw_if(!this->isValidIdentifier(f.name),
-             "function name '" + f.name + "' is not valid");
-    this->md.registerMemberName(f.name);
-    this->reserveName(f.name + ".Domain");
-    this->reserveName(f.name + ".Domains");
+    throw_if(!this->isValidIdentifier(fn),
+             "function name '" + fn + "' is not valid");
+    f.name = fn;
     f.line = this->current->line;
-    ++(this->current);
     this->readSpecifiedToken("ModelDSLCommon::treatFunction", "{");
     ++openedBrackets;
     this->checkNotEndOfFile("ModelDSLCommon::treatFunction",
@@ -642,8 +639,30 @@ namespace mfront {
         f.usedVariables.erase(*p3);
       }
     }
+    this->md.registerMemberName(f.name);
+    this->reserveName(f.name + ".Domain");
+    this->reserveName(f.name + ".Domains");
+    this->md.registerMemberName("functor" +
+                                std::to_string(this->md.functions.size()));
     this->md.functions.push_back(f);
-  }  // end of treatFunction()
+  }  // end of readFunction
+
+  void ModelDSLCommon::treatFunction() {
+    this->checkNotEndOfFile("ModelDSLCommon::treatFunction");
+    const auto fn = [this] {
+      const auto symbols = this->getSymbols();
+      if (this->current->flag != tfel::utilities::Token::Standard) {
+        return this->current->value;
+      }
+      const auto p = symbols.find(this->current->value);
+      if (p != symbols.end()) {
+        return p->second;
+      }
+      return tfel::unicode::getMangledString(this->current->value);
+    }();
+    ++(this->current);
+    this->readFunction(fn);
+  }  // end of treatFunction
 
   void ModelDSLCommon::treatOutput() {
     if (!this->md.functions.empty()) {

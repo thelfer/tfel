@@ -1560,7 +1560,7 @@ regular expressions to select as set of tests.
 
 #### Example of usage {.unnumbered}
 
-The following example executes the UniaxialTensileTest` test 
+The following example executes the `UniaxialTensileTest` test 
 associated with the `Plasticity` behaviour (and not attached to any
 material) using the behaviour `cyranoplasticity` compiled with the
 `cyrano` interface in a shared library `libCyranoBehaviours.so` located
@@ -1848,6 +1848,37 @@ In case of failure, three policies can be selected using the
 **Note** This example assumes that a failure criterion named
   `ElongationAtBreak` has been loaded from an external library.
 
+## Support for oxidation models for pipes {#sec:tfel:4.1:ptest:oxidation_model}
+
+The `@OxidationModel` keyword introduces a model which computes an
+oxidation length at either the inner boundary or the outer boundary of
+the pipe. This keyword must be followed by a data map with the following
+entries:
+
+- `model`: the name of model.
+- `library`: the name of the library in which the model is available.
+- `boundary`: the name of boundary on which the model is defined. This
+  variable must be equal to `inner_boundary` or `outer_boundary`.
+
+An oxidation model must define an internal state variable named
+`OxidationLength`. The values of the material properties and external
+state variables passed to an oxidation model are computed on the
+boundary on which the model is defined.
+
+The definition of a least one oxidation model automatically defines an
+evolution named `OxidationStatus` which states if an integration point
+is inside an oxidation layer.
+
+### Example of usage
+
+~~~~{.python}
+@OxidationModel{
+  model : 'umatm5deziroxoxidationmodel_srma2020b',
+  library : 'src/libUmatM5.so',
+  boundary : 'outer_boundary'
+};
+~~~~
+
 # `mfm-test-generator` improvements
 
 ## Support for `madnex` file {#sec:tfel:4.1:mfmtg:madnex_support}
@@ -1998,7 +2029,6 @@ integral_ic = t.computeIntegralValue(s,'SRR',ptc.INTIAL_CONFIGURATION)
 integral_cc = t.computeIntegralValue(s,'SRR',ptc.CURRENT_CONFIGURATION)
 ~~~~
 
-
 ## Support of named arguments in the constructor of the `Behaviour` class {#sec:tfel_4.1:pymtest:behaviour_constructor}
 
 Named arguments are now supported in the `Behaviour` constructor. The
@@ -2058,6 +2088,24 @@ by the `mtest.MaterialProperty` class.
 ~~~~{.python}
 import mtest
 mp = mtest.MaterialProperty('src/libGenericInconel600.so', 'Inconel600_YoungModulus')
+~~~~
+
+### Definition of oxidation models in the `PipeTest` class {#sec:tfel:4.1:python:mtest:oxidation_model}
+
+The `addOxidationModel` allows to define a new oxidation model. It
+accepts three named arguments:
+
+- `library`: the name of the library in which the model is available.
+- `model`: the name of model.
+- `boundary`: the name of boundary on which the model is defined. This
+  variable must be equal to `inner_boundary` or `outer_boundary`.
+
+#### Example of usage
+
+~~~~{.python}
+p.addOxidationModel(library = 'src/libUmatM5.so',
+                    model = 'umatm5deziroxoxidationmodel_srma2020b',
+                    boundary = 'outer_boundary')
 ~~~~
 
 ## The `mfm_test_generator` python module
@@ -2484,6 +2532,13 @@ For more details, see <https://github.com/thelfer/tfel/issues/238>
 This feature is described in Section @sec:mfront:issue_239.
 
 For more details, see <https://github.com/thelfer/tfel/issues/237>
+
+## Issue #236: [mtest] Allow to use oxidation models in `ptest`
+
+This feature is described in Sections @sec:tfel:4.1:ptest:oxidation_model
+and @sec:tfel:4.1:python:mtest:oxidation_model.
+
+For more details, see <https://github.com/thelfer/tfel/issues/236>.
 
 ## Issue #235: [mfront] Document the variable affecting the compilation of shared libraries
 

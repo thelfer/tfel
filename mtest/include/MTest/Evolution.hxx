@@ -32,30 +32,30 @@ namespace mtest {
   //! \brief base class for evolutions of external variables
   struct MTEST_VISIBILITY_EXPORT Evolution {
     /*!
-     * \return the value of the evolution
-     * at the given time
+     * \return the value of the evolution at the given time
+     * \param[in] t: time
      */
     virtual real operator()(const real) const = 0;
     /*!
-     * \return true if the evolution
-     * is constant
+     * \return true if the evolution is constant
      */
     virtual bool isConstant() const = 0;
     /*!
      * \brief set the evolution value
      * \note most evolution will throw an exception (this
      * method only makes sense for constant evolutions)
+     * \param[in] v  : value
      */
     virtual void setValue(const real) = 0;
     /*!
      * \brief set the evolution value for a given date
-     * \param[in] t  : time
-     * \param[in] v  : value
+     * \param[in] t: time
+     * \param[in] v: value
      * \note most evolution will throw an exception (for example, this
      * method does not makes sense for constant evolutions)
      */
     virtual void setValue(const real, const real) = 0;
-    //! destructor
+    //! \brief destructor
     virtual ~Evolution();
   };
 
@@ -68,30 +68,12 @@ namespace mtest {
      * \param[in] v : value of the evolution
      */
     ConstantEvolution(const real);
-    /*!
-     * \return the value of the evolution
-     * at the given time
-     */
+    //
     real operator()(const real) const override;
-    /*!
-     * \return true if the evolution
-     * is constant
-     */
     bool isConstant() const override;
-    /*!
-     * \brief set the evolution value for a given date
-     * \param[in] v  : value
-     * \note most evolution will throw an exception (this
-     * method only makes sense for constant evolutions)
-     */
     void setValue(const real) override;
-    /*!
-     * \brief set the evolution value for a given date
-     * \param[in] t  : time
-     * \param[in] v  : value
-     */
     void setValue(const real, const real) override;
-    //! destructor
+    //! \brief destructor
     ~ConstantEvolution() override;
 
    protected:
@@ -103,40 +85,28 @@ namespace mtest {
   //! \brief a linear per interval evolution
   struct MTEST_VISIBILITY_EXPORT LPIEvolution final : public Evolution {
     /*!
+     * \return the interpolation in a set of values
+     * \param[in] values: values use to create the interpolation
+     * \param[in] t: absicssa
+     */
+    static real interpolate(const std::map<real, real>&, const real);
+    /*!
      * constructor
      * \param[in] t : times
      * \param[in] v : values
      */
     LPIEvolution(const std::vector<real>&, const std::vector<real>&);
-    /*!
-     * \return the value of the evolution
-     * at the given time
-     */
+    //
     real operator()(const real) const override;
-    /*!
-     * \return true if the evolution
-     * is constant
-     */
     bool isConstant() const override;
-    /*!
-     * \brief set the evolution value for a given date
-     * \param[in] v  : value
-     * \note most evolution will throw an exception (this
-     * method only makes sense for constant evolutions)
-     */
     void setValue(const real) override;
-    /*!
-     * \brief set the evolution value for a given date
-     * \param[in] t  : time
-     * \param[in] v  : value
-     */
     void setValue(const real, const real) override;
     //! \brief destructor
     ~LPIEvolution() override;
 
    private:
     std::map<real, real> values;
-  };
+  }; // end of struct LPIEvolution
 
   /*!
    * \brief build a constant evolution from a real value

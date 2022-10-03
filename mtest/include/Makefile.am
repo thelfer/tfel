@@ -76,6 +76,7 @@ nobase_include_HEADERS = MTest/Config.hxx	                         \
 			 MTest/CastemEvolution.hxx                       \
 			 MTest/CyranoEvolution.hxx                       \
 			 MTest/FunctionEvolution.hxx                     \
+			 MTest/OxidationStatusEvolution.hxx              \
 			 MTest/Constraint.hxx                            \
 			 MTest/ConstraintBase.hxx                        \
 			 MTest/NonLinearConstraint.hxx                   \

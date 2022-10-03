@@ -2,7 +2,7 @@
  * \file   mtest/include/MTest/PipeTest.hxx
  * \brief
  * \author Thomas Helfer
- * \date   24 nov. 2015
+ * \date   24/11/2015
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence
@@ -35,6 +35,7 @@ namespace mtest {
   struct PipeProfileHandler;
   struct GasEquationOfState;
   struct PipeFailureCriterion;
+  struct OxidationStatusEvolution;
 
   //! \brief a study describing mechanical tests on pipes
   struct MTEST_VISIBILITY_EXPORT PipeTest : public SingleStructureScheme {
@@ -484,6 +485,8 @@ namespace mtest {
     OxidationModel inner_boundary_oxidation_model;
     //! \brief oxidation model at the outer boundary
     OxidationModel outer_boundary_oxidation_model;
+    //! \brief evolution defining the oxidation status
+    std::shared_ptr<OxidationStatusEvolution> oxidation_status_evolution;
     //! \brief user defined gas equation of state
     std::unique_ptr<GasEquationOfState> gseq;
     //! \brief inner radius evolution

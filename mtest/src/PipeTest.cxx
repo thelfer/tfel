@@ -33,6 +33,7 @@
 #include "MTest/PipeLinearElement.hxx"
 #include "MTest/PipeQuadraticElement.hxx"
 #include "MTest/PipeCubicElement.hxx"
+#include "MTest/OxidationStatusEvolution.hxx"
 #include "MTest/PipeProfile.hxx"
 #include "MTest/PipeProfileHandler.hxx"
 #include "MTest/PipeFailureCriterion.hxx"
@@ -289,6 +290,17 @@ namespace mtest {
     evm.insert({n, make_evolution(v)});
   }  // end of insert
 
+  static real getOxidationLength(const StudyCurrentState state,
+                                 const PipeTest::OxidationModel& m) {
+    if (m.model.get() == nullptr) {
+      tfel::raise("getOxidationLength: internal error");
+    }
+    const auto& cs =
+        state.getStructureCurrentState("").getModelCurrentState(*(m.model));
+    const auto p = m.model->getInternalStateVariablePosition("OxidationLength");
+    return cs.iv1[p];
+  } // end of getOxidationLength
+
   PipeTest::PipeTest() { insert(*(this->evm), "r", 0); }  // end of PipeTest
 
   void PipeTest::setInnerRadius(const real r) {
@@ -423,6 +435,13 @@ namespace mtest {
                                this->mesh.inner_radius);
     initialize_oxidation_model(this->outer_boundary_oxidation_model,
                                this->mesh.outer_radius);
+    if ((this->inner_boundary_oxidation_model.model.get() != nullptr) ||
+        (this->outer_boundary_oxidation_model.model.get() != nullptr)) {
+      this->oxidation_status_evolution =
+          std::make_shared<OxidationStatusEvolution>(this->mesh, *(this->evm));
+      this->addEvolution("OxidationStatus", this->oxidation_status_evolution,
+                         true, true);
+    }
     //
     if (this->options.eeps < 0) {
       this->options.eeps = 1.e-11;
@@ -901,10 +920,22 @@ namespace mtest {
         !r.first) {
       return r;
     }
+    if (this->inner_boundary_oxidation_model.model.get() != nullptr) {
+      const auto l =
+          getOxidationLength(state, this->inner_boundary_oxidation_model);
+      this->oxidation_status_evolution
+          ->setInnerBoundaryOxidationLengthEvolution(t + dt, l);
+    }
     if (const auto r = call_oxidation_model(
             this->outer_boundary_oxidation_model, this->mesh.outer_radius);
         !r.first) {
       return r;
+    }
+    if (this->outer_boundary_oxidation_model.model.get() != nullptr) {
+      const auto l =
+          getOxidationLength(state, this->outer_boundary_oxidation_model);
+      this->oxidation_status_evolution
+          ->setOuterBoundaryOxidationLengthEvolution(t + dt, l);
     }
     //
     if (this->mandrel_radius_evolution != nullptr) {
@@ -2069,18 +2100,13 @@ namespace mtest {
       this->out << " ";
       ao.f(out, state);
     }
-    auto get_oxidation_length = [&state](const OxidationModel& m) {
-      const auto& cs =
-          state.getStructureCurrentState("").getModelCurrentState(*(m.model));
-      const auto p =
-          m.model->getInternalStateVariablePosition("OxidationLength");
-      return cs.iv1[p];
-    };
     if (this->inner_boundary_oxidation_model.model != nullptr) {
-      this->out << get_oxidation_length(this->inner_boundary_oxidation_model);
+      this->out << getOxidationLength(state,
+                                      this->inner_boundary_oxidation_model);
     }
     if (this->outer_boundary_oxidation_model.model != nullptr) {
-      this->out << get_oxidation_length(this->outer_boundary_oxidation_model);
+      this->out << getOxidationLength(state,
+                                      this->outer_boundary_oxidation_model);
     }
     for (std::size_t i = 0; i != this->failure_criteria.size(); ++i) {
       this->out << " " << (state.getFailureCriterionStatus(i) ? 1 : 0);
