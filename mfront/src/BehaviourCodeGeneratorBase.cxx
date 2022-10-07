@@ -2233,6 +2233,18 @@ namespace mfront {
          << "using std::vector;\n";
       writeMaterialLaws(os, this->bd.getMaterialLaws());
       this->writeBehaviourParameterInitialisation(os, h);
+      // calling models
+      for (const auto& m : this->bd.getModelsDescriptions()) {
+        if (m.outputs.size() == 1) {
+          const auto vn = m.outputs[0].name;
+          this->writeModelCall(os, tmpnames, h, m, "d" + vn, vn, "em");
+          os << "this->d" << vn << " -= this->" << vn << ";\n";
+        } else {
+          this->throwRuntimeError(
+              "BehaviourDSLCommon::writeBehaviourInitializeMethod",
+              "only models with one output are supported yet");
+        }
+      }
       this->writeBehaviourLocalVariablesInitialisation(os, h);
     };
     this->checkBehaviourFile(os);
