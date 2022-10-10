@@ -17,8 +17,6 @@ TK.setGlossaryName("Temperature");
 @Output E;
 E.setGlossaryName("YoungModulus");
 
-@Bounds TK in [0:*[;
-
 @Function
 {
   const real TC = TK-273.15;

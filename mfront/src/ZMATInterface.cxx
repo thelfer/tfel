@@ -1048,7 +1048,7 @@ namespace mfront {
     writeBuildIdentifierSymbol(out, zcn, mb);
     writeEntryPointSymbol(out, zcn);
     writeTFELVersionSymbol(out, zcn);
-    writeUnitSystemSymbol(out, zcn);
+    writeUnitSystemSymbol(out, zcn, mb);
     writeMaterialSymbol(out, zcn, mb.getMaterialName());
     exportStringSymbol(out, zcn + "_mfront_interface",
                        this->getInterfaceName());
