@@ -1,0 +1,9 @@
+@Command "@mfront-query@ --unit-system Inconel600_YoungModulus.mfront"{
+  expected_output: "SI"
+};
+@Command "@mfront-query@ --has-physical-bounds=Temperature Inconel600_YoungModulus.mfront"{
+  expected_output: "true"
+};
+@Command "@mfront-query@ --physical-bounds-value=Temperature Inconel600_YoungModulus.mfront"{
+  expected_output: "[0:*["
+};
